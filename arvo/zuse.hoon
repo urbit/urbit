@@ -1048,6 +1048,28 @@
   ==
 ::
 ++  ze  !:
+  =+  ^=  silk
+      $&  [p=silk q=silk]
+      $%  [%bake p=mark q=beam r=path]
+          [%boil p=mark q=beam r=path]
+          [%call p=silk q=silk]
+          [%cast p=mark q=silk]
+          [%diff p=silk q=silk]
+          [%done p=(set beam) q=cage]
+          [%dude p=tank q=silk]
+          [%dune p=(set beam) q=(unit cage)]
+          [%mute p=silk q=(list (pair wing silk))]
+          [%pact p=silk q=silk]
+          [%plan p=beam q=spur r=hood]
+          [%reef ~]
+          [%ride p=twig q=silk]
+          [%vale p=mark q=ship r=*]
+      ==
+  =+  ^=  silk
+      $%  [%diff p=cage q=cage]
+          [%pact p=cage q=(list cage)]
+      ==
+  =|  mow=(list silk)
   |_  [lim=@da dome rang]
   ++  aeon-to-tako  ~(got by hit)
   ++  aeon-to-yaki  (cork aeon-to-tako tako-to-yaki)
@@ -1072,7 +1094,7 @@
     [%direct (mug p) p q]
   ::
   ++  make-delta                                        ::  make blob delta
-    |=  [p=lobe q=udon]
+    |=  [p=lobe q=cage]
     ^-  blob
     =+  t=[%delta 0 p q]
     =+  z=(blob-to-noun t)
@@ -1098,6 +1120,14 @@
        %indirect  q.p
     ==
   ::
+  ++  new-blob-to-cage
+    |=  p=blob
+    ::  ^-  (each cage ,[cage this])
+    ?-    -.p
+      %direct    [%& q.p]
+      %indirect  [%& q.p]
+      %delta     [%| r.p $(p q.p)]
+    ==
   ::
   ::
   ++  diff-yakis                                        ::  fundamental diff
@@ -1276,7 +1306,7 @@
     (~(put by gar) pat p.bar)
   ::
   ++  apply-changes                                     ::   apply-changes:ze
-    |=  lar=(list ,[p=path q=miso])                     ::  store changes
+    |=  lar=(list ,[p=path q=misu])                     ::  store changes
     ^-  (map path blob)
     =+  ^=  hat                                         ::  current state
         ?:  =(let 0)                                    ::  initial commit
@@ -1311,8 +1341,6 @@
         (make-delta u.har p.mys)
       %+  ~(put by bar)  pat
       (make-delta p.u.ber p.mys)
-        %mut
-      !!
     ==
   ++  checkout-ankh                                     ::    checkout-ankh:ze
     |=  hat=(map path lobe)                             ::  checkout commit
@@ -1332,7 +1360,7 @@
     ==
   ::
   ++  forge-yaki                                        ::    forge-yaki:ze
-    |=  [wen=@da par=(unit tako) lem=soba]              ::  forge yaki
+    |=  [wen=@da par=(unit tako) lem=suba]              ::  forge yaki
     =+  ^=  per
         ?~  par  ~
         ~[u.par]
@@ -1823,7 +1851,7 @@
     =((lobe-to-noun u.zat) (lobe-to-noun lob))
   ::
   ++  edit                                              ::    edit:ze
-    |=  [wen=@da lem=nori]                              ::  edit
+    |=  [wen=@da lem=nuri]                              ::  edit
     ^+  +>
     ?-  -.lem
       &  =^  yak  lat                                   ::  merge objects
@@ -2725,8 +2753,8 @@
               pac=rock                                  ::  packet data
           ==                                            ::
 ++  blob  $%  [%delta p=lobe q=lobe r=cage]             ::  delta on q
-              [%direct p=lobe q=* r=umph]               ::
-              [%indirect p=lobe q=* r=cage s=lobe]      ::
+              [%direct p=lobe q=cage]                   ::
+              [%indirect p=lobe q=cage r=cage s=lobe]   ::
           ==                                            ::
 ++  boat  ,[(list slip) tart]                           ::  user stage
 ++  boon                                                ::  fort output
@@ -3018,6 +3046,11 @@
               [%dif p=cage]                             ::  mutate from diff
               [%mut p=cage q=cage]                      ::  mutate from raw
           ==                                            ::
+++  misu                                                ::  computed delta
+          $%  [%del p=cage]                             ::  delete
+              [%ins p=cage]                             ::  insert
+              [%dif p=cage]                             ::  mutate from diff
+          ==                                            ::
 ++  mizu  ,[p=@u q=(map ,@ud tako) r=rang]              ::  new state
 ++  moar  ,[p=@ud q=@ud]                                ::  normal change range
 ++  moat  ,[p=case q=case r=path]                       ::  change range
@@ -3036,6 +3069,10 @@
           ==                                            ::
 ++  nori                                                ::  repository action
           $%  [& p=soba]                                ::  delta
+              [| p=@tas]                                ::  label
+          ==                                            ::
+++  nuri                                                ::  repository action
+          $%  [& p=suba]                                ::  delta
               [| p=@tas]                                ::  label
           ==                                            ::
 ++  octs  ,[p=@ud q=@]                                  ::  octet-stream
@@ -3146,6 +3183,7 @@
 ++  sock  ,[p=ship q=ship]                              ::  outgoing [from to]
 ++  spur  path                                          ::  ship desk case spur
 ++  step  ,[p=bray q=gens r=pass]                       ::  identity stage
+++  suba  ,[p=cart q=(list ,[p=path q=misu])]           ::  delta
 ++  tako  ,@                                            ::  yaki ref
 ++  tart  $+([@da path note] bowl)                      ::  process core
 ++  taxi  ,[p=lane q=rock]                              ::  routed packet

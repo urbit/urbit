@@ -3,8 +3,9 @@
 !:
 |=  pit=vase
 =>  |%
+++  bead  ,[p=(set beam) q=cage]                        ::  ford result
 ++  cult  (map duct rove)                               ::  subscriptions
-++  dojo  ,[p=cult q=dome]                              ::  domestic desk state
+++  dojo  ,[p=cult q=(unit work) r=dome]                ::  domestic desk state
 ++  gift                                                ::  out result <-$
           $%  [%ergo p=@p q=@tas r=@ud]                 ::  version update
               [%note p=@tD q=tank]                      ::  debug message
@@ -41,6 +42,9 @@
               $:  %d                                    ::
           $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::  to %dill
           ==  ==                                        ::
+              $:  %f                                    ::
+          $%  [%exec p=@p q=(unit silk)]                ::
+          ==  ==                                        ::
               $:  %t                                    ::
           $%  [%wait p=@da]                             ::
               [%rest p=@da]                             ::
@@ -53,12 +57,32 @@
               $:  %c                                    ::  by %clay
           $%  [%writ p=riot]                            ::
           ==  ==                                        ::
+              $:  %f                                    ::
+          $%  [%made p=(each bead (list tank))]         ::
+          ==  ==                                        ::
               $:  %t                                    ::
           $%  [%wake ~]                                 ::  timer activate
           ==  ==                                        ::
               $:  @tas                                  ::  by any
           $%  [%crud p=@tas q=(list tank)]              ::
           ==  ==  ==                                    ::
+++  silk                                                ::  construction layer
+          $&  [p=silk q=silk]                           ::  cons
+          $%  [%bake p=mark q=beam r=path]              ::  local synthesis
+              [%boil p=mark q=beam r=path]              ::  general synthesis
+              [%call p=silk q=silk]                     ::  slam
+              [%cast p=mark q=silk]                     ::  translate
+              [%diff p=silk q=silk]                     ::  diff
+              [%done p=(set beam) q=cage]               ::  literal
+              [%dude p=tank q=silk]                     ::  error wrap
+              [%dune p=(set beam) q=(unit cage)]        ::  unit literal
+              [%mute p=silk q=(list (pair wing silk))]  ::  mutant
+              [%pact p=silk q=silk]                     ::  patch
+              [%plan p=beam q=spur r=hood]              ::  structured assembly
+              [%reef ~]                                 ::  kernel reef
+              [%ride p=twig q=silk]                     ::  silk thru twig
+              [%vale p=mark q=ship r=*]                 ::  validate [our his]
+          ==                                            ::
 ++  raft                                                ::  filesystem
           $:  fat=(map ship room)                       ::  domestic
               hoy=(map ship rung)                       ::  foreign
@@ -73,6 +97,7 @@
           $:  lim=@da                                   ::  complete to
               qyx=cult                                  ::  subscribers
               ref=(unit rind)                           ::  outgoing requests
+              wok=work                                  ::  outstanding diffs
               dom=dome                                  ::  revision state
           ==                                            ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  request/desist
@@ -90,6 +115,10 @@
 ++  rove  (each mood moot)                              ::  stored request
 ++  rung  $:  rus=(map desk rede)                       ::  neighbor desks
           ==                                            ::
+++  work                                                ::
+          $:  sot=(list ,[p=path q=misu])               ::
+              lon=(list path)                           ::
+          ==                                            ::
 --  =>
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4cA, filesystem logic         ::
@@ -105,7 +134,7 @@
     =|  byn=(list ,[p=duct q=riot])
     =|  vag=(list ,[p=duct q=gift])
     =|  say=(list ,[p=duct q=path r=ship s=[p=@ud q=riff]])
-    =|  tag=(list ,[p=duct q=path c=note])
+    =|  tag=(list ,[p=duct q=path r=note])
     |%
     ++  abet
       ^-  [(list move) rede]
@@ -273,9 +302,65 @@
     ++  edit                                            ::  apply changes
       |=  [wen=@da lem=nori]
       ^+  +>
-      =+  axe=(~(edit ze lim dom ran) wen lem)
+      ?.  -.lem
+        =+  axe=(~(edit ze lim dom ran) wen lem)
+        =+  `[l=@da d=dome r=rang]`+<.axe
+        +>.$(dom d, ran r)
+      ?^  wok
+        ~&  %already-applying-changes  !!
+      =+  ^-  lon=(list path)
+          (murn q.p.lem |=([a=path b=miso] ?.(?=(%mut -.b) ~ `a)))
+      =+  ^-  sot=(list ,[p=path q=misu])
+          (murn q.p.lem |=([a=path b=miso] ?:(?=(%mut -.b) ~ `[a `misu`b])))
+      =.  wok `[sot lon]
+      ?~  lon
+        apply-edit
+      =+  ^-  los=(list ,[duct path note])
+          (murn q.p.lem |=([a=path b=miso] ?.(?=(%mut -.b) ~ `(silkify a b))))
+      %_(+>.$ tag (welp los tag))
+    ::
+    ++  silkify
+      |=  [a=path %mut b=cage c=cage]
+      ^-  [duct path note]
+      :+  hen
+        [%diffing (scot %p who) syd a]
+      [%f %exec who ~ %diff [%done ~ b] [%done ~ c]]
+    ::
+    ++  apply-edit
+      ^-  .
+      ?~  wok  ~&  %no-changes  !!
+      ?^  lon.u.wok  ~&  %not-done-diffing  !!
+      =+  axe=(~(edit ze lim dom ran) wen %& *cart wok.wok)
       =+  `[l=@da d=dome r=rang]`+<.axe
-      +>.$(dom d, ran r)
+      +>(dom d, ran r, wok ~)
+    ::
+    ++  take-diff
+      |=  [pax=path res=(each bead (list tank))]
+      ^+  +>
+      ?~  wok
+        ~&  %clay-unexpected-made  !!
+      ?.  (lien lon.u.wok |=(path =(+< pax)))
+        ~&  %clay-strange-made  !!
+      ?.  -.res
+        %_    +>.$
+            wok  ~
+            tag
+          %-  welp  :_  tag
+          ^-  (list ,[duct path note])
+          %+  murn  lon.u.wok
+          |=  a=path
+          ?:  =(pax a)
+          `[hen [%diffing (scot %p who) syd a] %f %exec who ~]
+        ::
+            yel
+          [[hen %note '!' %rose [" " "" ""] leaf/"clay diff failed" p.res] yel]
+        ==
+      =:  lon.wok  (skip lon.u.wok |=(path =(+< pax)))
+          sot.wok  [[pax %dif q.p.res] sot.u.wok]
+      ==
+      ?~  lon.wok
+        apply-edit
+      +>.$
     ::
     ++  edis                                            ::  apply subscription
       |=  nak=nako
@@ -491,7 +576,7 @@
         ?^(rug u.rug *rung)
     =+  ^=  red  ^-  rede
         =+  yit=(~(get by rus.rug) syd)
-        ?^(yit u.yit `rede`[~2000.1.1 ~ [~ *rind] *dome])
+        ?^(yit u.yit `rede`[~2000.1.1 ~ [~ *rind] ~ *dome])
     ((de now ~ ~) [who him] syd red ran.ruf)
   ::
   ++  posh
@@ -511,7 +596,10 @@
     ++  abet  ruf(fat (~(put by fat.ruf) who yar))
     ++  pish
       |=  [syd=@ta red=rede run=rang]
-      %_(+> dos.yar (~(put by dos.yar) syd [qyx.red dom.red]), ran.ruf run)
+      %_  +>
+        ran.ruf  run
+        dos.yar  (~(put by dos.yar) syd [qyx.red wok.red dom.red])
+      ==
     ::
     ++  wake
       =+  saz=(turn (~(tap by dos.yar) ~) |=([a=@tas b=*] a))
@@ -527,7 +615,7 @@
       =+  ^=  saq  ^-  dojo
           =+  saq=(~(get by dos.yar) syd)
           ?~(saq *dojo u.saq)
-      ((de now hun.yar hez.yar) [who who] syd [now p.saq ~ q.saq] ran.ruf)
+      ((de now hun.yar hez.yar) [who who] syd [now p.saq ~ r.saq q.saq] ran.ruf)
     --
   --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -707,6 +795,17 @@
     ?-    -.+.q.hin
         %crud
       [[[hen %slip %d %flog +.q.hin] ~] ..^$]
+    ::
+        %made
+      ?>  ?=([%diffing @ @ *] tea)
+      =+  who=(slav %p i.t.tea)
+      =+  syd=(slav %tas i.t.t.tea)
+      =^  mos  ruf
+        =+  ^=  zat
+          (take-diff:(di:wake:une syd) t.t.t.tea p.q.hin)
+        =+  zot=abet.zat
+        [-.zot abet:(pish:une syd +.zot ran.zat)]
+      [mos ..^$]
     ::
         %waft
       ?>  ?=([@ @ ~] tea)
