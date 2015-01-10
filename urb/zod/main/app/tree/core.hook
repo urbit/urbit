@@ -1,6 +1,7 @@
 //  /===/lib/sh-utils
 !:
 |_  [hid=hide ~]
+++  peer  ,_`.
 ++  poke-tree-args
   %+  args-into-gate  .
   |=  [pax=path fla=$|(~ [%full ~])]
@@ -16,8 +17,4 @@
     (sort (~(tap by r.ark)) aor)
   |=  [a=@t ~] 
   ^$(pax (welp pax /[a]))
-++  peer
-  |=
-    *
-  `+>
 --

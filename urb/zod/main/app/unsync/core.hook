@@ -1,5 +1,6 @@
 !:
 |_  [hid=hide ~]
+++  peer  ,_`.
 ++  poke-unsync-args
   |=  [ost=bone you=ship syd=@tas her=@p sud=@tas ~]
   :_  +>.$
@@ -12,8 +13,4 @@
       :-  %tang  :_  ~
       leaf/"unsynced"
   ==
-++  peer
-  |=
-    *
-  `+>
 --
