@@ -18,6 +18,7 @@
 ::
 !:
 |_  [hid=hide sat=state form]
+++  peer  ,_`.
 ++  done
   |=  ost=bone
   :_  +>.$
@@ -430,10 +431,6 @@
     [%leaf "begin failed"]
   ==
 
-++  peer
-  |=
-    *
-  `+>
 ::
 ++  spam
   |*  git=*

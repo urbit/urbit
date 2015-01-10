@@ -1,7 +1,8 @@
 //  /%%%/ls/subdir
-//  /===/lib/sh-utils
+//  /===lib/sh-utils
 !:
 |_  [hid=hide ~]
+++  peer  ,_`.
 ++  poke-cat-args
   %+  args-into-gate  .
   |=  [arg=(list path)]
@@ -25,8 +26,4 @@
         `tank`(subdir pax r.ark)
     ==
   ==
-++  peer
-  |=
-    *
-  `+>
 --

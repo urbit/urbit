@@ -1,5 +1,6 @@
 !:
 |_  [hid=hide ~]
+++  peer  ,_`.
 ++  poke-mv-args
   |=  [ost=bone you=ship input=path output=path ~]
   :_  +>.$
@@ -14,8 +15,4 @@
       :-  %tang  :_  ~
       leaf/"moved"
   ==
-++  peer
-  |=
-    *
-  `+>
 --

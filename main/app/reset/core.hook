@@ -1,5 +1,6 @@
 !:
 |_  [hid=hide ~]
+++  peer  ,_`.
 ++  poke-reset-args
   |=  [ost=bone you=ship ~]
   :_  +>.$
@@ -34,8 +35,4 @@
       .+
       (fall (slaw %ud (,@t .^(%cx paf))) 0)
   [ost %pass /touch %c %info our.hid (foal paf num)]
-++  peer
-  |=
-    *
-  `+>
 --

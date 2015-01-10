@@ -16,6 +16,7 @@
 ::
 !:
 |_  [hid=hide ~]
+++  peer  ,_`.
 ++  poke-hi-args
   |=  [ost=bone you=ship her=ship mes=?(~ [tex=tape ~])]
   :_  +>.$
@@ -44,8 +45,4 @@
     leaf/"hi {(trip i.t.pax)} successful"
   leaf/"hi {(trip i.t.pax)} unsuccessful"
 ::
-++  peer
-  |=
-    *
-  `+>
 --
