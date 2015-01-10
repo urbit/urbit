@@ -1,14 +1,11 @@
 //  /%%/subdir
-//  /===/lib/sh-utils
+//  /===lib/sh-utils
 !:
 |_  [hid=hide ~]
+++  peer  ,_`.
 ++  poke-ls-args
   %+  args-into-gate  .
   |=  [arg=path ~]
   =+  lon=((hard arch) .^(%cy arg))
   tang/[?~(r.lon leaf/"~" (subdir arg r.lon))]~
-++  peer
-  |=
-    *
-  `+>
 --

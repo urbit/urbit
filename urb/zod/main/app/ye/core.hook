@@ -15,6 +15,7 @@
 ::
 !:
 |_  [hid=hide ~]
+++  peer  ,_`.
 ++  poke-ye-args
   |=  [ost=bone you=ship tex=tape ~]
   :_  +>.$
@@ -41,8 +42,4 @@
     leaf/"ye failed"
   leaf/"ye received"
 ::
-++  peer
-  |=
-    *
-  `+>
 --

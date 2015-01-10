@@ -1,5 +1,6 @@
 !:
 |_  [hid=hide ~]
+++  peer  ,_`.
 ++  poke-reload-args
   |=  [ost=bone you=ship all=(list ,@tas)]
   :_  +>.$
@@ -15,8 +16,4 @@
   :^  ost  %give  %rush
   :-  %tang  :_  ~
   leaf/"done"
-++  peer
-  |=
-    *
-  `+>
 --
