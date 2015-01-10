@@ -1,39 +1,30 @@
 //  /%%%/ls/subdir
+//  /===/lib/sh-utils
 !:
 |_  [hid=hide ~]
 ++  poke-cat-args
-  |=  [ost=bone you=ship arg=(list path)]
-  :_  +>.$
-  :*  [ost %pass / %g %cide %$]
-      [ost %give %nice ~]
-      %+  turn  (~(tap by sup.hid))
-      |=  [ost=bone *]
-      :^  ost  %give  %rush
-      :-  %tang
-      %-  flop
-      ^-  (list tank)
-      %-  zing
-      %+  turn  arg
-      |=  pax=path
-      ^-  (list tank)
-      =+  ark=;;(arch .^(%cy pax))
-      ?^  q.ark
-        :-  leaf/(spud pax)
-        %+  turn  (lore ;;(@t .^(%cx pax)))
-        |=  a=cord
-        leaf/(trip a)
-      ?-     r.ark
-          ~
-        [rose/[" " `~]^~[leaf/"~" (smyt pax)]]~
-          [[@t ~] ~ ~]
-        $(pax (welp pax /[p.n.r.ark]))
-          *
-        =-  [palm/[": " ``~]^-]~
-        :~  rose/[" " `~]^~[leaf/"*" (smyt pax)] 
-            `tank`(subdir pax r.ark)
-        ==
-  ==  ==
-::
+  %+  args-into-gate  .
+  |=  [arg=(list path)]
+  =-  tang/(flop `(list tank)`(zing -))
+  %+  turn  arg
+  |=  pax=path
+  ^-  (list tank)
+  =+  ark=;;(arch .^(%cy pax))
+  ?^  q.ark
+    :-  leaf/(spud pax)
+    %+  turn  (lore ;;(@t .^(%cx pax)))
+    |=(a=cord leaf/(trip a))
+  ?-     r.ark                                          ::  handle ambiguity
+      ~
+    [rose/[" " `~]^~[leaf/"~" (smyt pax)]]~
+      [[@t ~] ~ ~]
+    $(pax (welp pax /[p.n.r.ark]))
+      *
+    =-  [palm/[": " ``~]^-]~
+    :~  rose/[" " `~]^~[leaf/"*" (smyt pax)] 
+        `tank`(subdir pax r.ark)
+    ==
+  ==
 ++  peer
   |=
     *
