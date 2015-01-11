@@ -8,6 +8,6 @@
 ::
 ++  pour
   |=  [ost=bone * sih=*]
-  ~&  bang-resp/;;([term term] [&1 &2]:sih)
+  ~&  bang-resp/(,[term term] [&1 &2]:sih)
   :_(+> [ost %pass / %g %cide %$]~)
 --
