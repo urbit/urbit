@@ -1,9 +1,13 @@
+::  ConCATenate file listings
+::  
+::::  /hook/core/cat/app
+  ::
 //  /%%%/ls/subdir
 //  /===lib/sh-utils
 !:
 |_  [hid=hide ~]
 ++  peer  ,_`.
-++  poke-cat-args
+++  poke--args
   %+  args-into-gate  .
   |=  [arg=(list path)]
   =-  tang/(flop `(list tank)`(zing -))
