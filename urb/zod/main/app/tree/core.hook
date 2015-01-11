@@ -1,8 +1,12 @@
+::  Tree view recursive directory contents
+::  
+::::  /hook/core/tree/app
+  ::
 //  /===lib/sh-utils
 !:
 |_  [hid=hide ~]
 ++  peer  ,_`.
-++  poke-tree-args
+++  poke--args
   %+  args-into-gate  .
   |=  [pax=path fla=$|(~ [%full ~])]
   =+  len=(lent pax)
