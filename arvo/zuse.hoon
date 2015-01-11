@@ -953,6 +953,11 @@
   ?:  =(0 a)  '0'
   (crip (flop |-(^-(tape ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])))))
 ::
+++  jode                                                ::  ms timestamp
+  |=  a=time 
+  =-  (jone (div (mul - 1.000) ~s1))
+  (add (div ~s1 2.000) (sub a ~1970.1.1))
+::
 ++  jesc
   |=  a=@  ^-  tape
   ?+  a  [a ~]

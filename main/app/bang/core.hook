@@ -1,13 +1,19 @@
+::  Bang: send cards to arvo
+::  
+::::  /hook/core/bang/app
+  ::
+//  /===lib/sh-utils
 !:
 |_  [hide ~]
 ++  lima  |*(a=(pole) ?~(a ~ [i t]=a(+ (..$ +.a))))
-++  poke-bang-args
+++  poke--args
   |*  [ost=bone @ a=[* (pole)]]
   =>  .(a ^.(lima a))
   :_(+> (turn a |*(b=_i.a [ost %pass / b])))
 ::
 ++  pour
-  |=  [ost=bone * sih=*]
+  %-  add-exit
+  |=  [@ * sih=*]
   ~&  bang-resp/(,[term term] [&1 &2]:sih)
-  :_(+> [ost %pass / %g %cide %$]~)
+  `+>.$
 --

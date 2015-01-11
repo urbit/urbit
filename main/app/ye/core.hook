@@ -13,32 +13,31 @@
           ==                                            ::
 --
 ::
+//  /===lib/sh-utils
 !:
 |_  [hid=hide ~]
 ++  peer  ,_`.
-++  poke-ye-args
-  |=  [ost=bone you=ship tex=tape ~]
-  :_  +>.$
-  =+  mez=(crip "{<our.hid>}: {tex}")
-  :~  [ost %pass /ye %a %want [our.hid (sein our.hid)] /q/ye mez]
-      [ost %give %nice ~]
-  ==
+++  poke--args
+  %+  gate-bang
+    |=  [tex=tape ~]
+    =+  mez=(crip "{<our.hid>}: {tex}")
+    [%a %want [our.hid (sein our.hid)] /q/ye mez]
+  %+  add-resp  [%give %nice ~]
+  ,_`.
 ::
 ++  poke-txt
-  |=  [ost=bone him=ship cor=@t]
-  :_  +>.$
-  ~[[ost %give %nice ~] [ost %pass /de %d %flog %text "> {(trip cor)}"]]
+  %+  add-resp  [%give %nice ~]
+  %+  gate-bang  |=(cor=@t [%d %flog `flog`[%text "> {(trip cor)}"]])
+  ,_`.
 ::
 ++  pour
   |=  [ost=bone pax=path sih=sign]
-  ?>  ?=([%ye ~] pax)
-  :_  +>.$
-  :-  [ost %pass / %g %cide %$]
-  =+  ack=?+(q.sih "failed" %good "recieved")
-  (spam tang/[leaf/"ye {ack}"]~)
-++  spam
-  |*  a=^
-  %+  turn  (~(tap by sup.hid))
-  |=([ost=bone *] [ost %give %rush a])
+  ?>  ?=([%bang ~] pax)
+  %.  +<
+  %-  add-exit
+  %^  add-output  +>.$
+    =+  ack=?+(q.sih "failed" %good "recieved")
+    rush/tang/[leaf/"ye {ack}"]~
+  ,_`+>.$
 ::
 --
