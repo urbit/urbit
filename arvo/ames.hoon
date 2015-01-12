@@ -546,11 +546,6 @@
           ?~  dyv  ~
           [~ u.dyv ..kuch]
         ::
-        ++  trox                                        ::    trox:lax:as:go
-          |=  [now=@da]                                 ::  expire by date
-          ^+  +>
-          +>    ::  XX
-        ::
         ++  wasc                                        ::    wasc:lax:as:go
           |=  key=code                                  ::  hear foreign code
           ^+  +>
