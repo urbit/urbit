@@ -71,7 +71,6 @@
               $:  @tas                                  ::  to any
           $%  [%meta p=vase]                            ::
           ==  ==  ==                                    ::
-++  rapt  |*(a=$+(* *) (qual path path ,@da a))         ::  versioned result
 ++  rave                                                ::  see %clay
           $%  [& p=mood]                                ::  single request
               [| p=moat]                                ::  change range
@@ -158,16 +157,6 @@
 ++  toil  (pair duct knob)                              ::  work in progress
 --  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::  functions
-++  byby                                                ::  double bind
-  |*  [a=(unit (unit)) b=$+(* *)]
-  ?~  a  ~
-  ?~  u.a  [~ u=~]
-  [~ u=[~ u=(b u.u.a)]]
-::                                                      ::
-++  colt                                                ::  reduce to save
-  |=  all=axle                                          ::
-  all
-::
 ++  read                                                ::  read permission
   |=  law=(unit cuff)
   ^-  (unit (set monk))
