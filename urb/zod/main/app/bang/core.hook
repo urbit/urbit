@@ -2,8 +2,10 @@
 ::  
 ::::  /hook/core/bang/app
   ::
-//  /===lib/sh-utils
+/+    sh-utils
 !:
+::::
+  ::
 |_  [hide ~]
 ++  lima  |*(a=(pole) ?~(a ~ [i t]=a(+ (..$ +.a))))
 ++  poke--args
