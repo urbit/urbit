@@ -723,6 +723,13 @@
     +<+.b
   $(a t.a, b b(+<+ (b i.a +<+.b)))
 ::
+++  skid                                                ::  separate
+  |*  [a=(list) b=$+(* ?)]
+  |-  ^+  [p=a q=a]
+  ?~  a  [~ ~]
+  =+  c=$(a t.a)
+  ?:((b i.a) [[i.a p.c] q.c] [p.c [i.a q.c]])
+::
 ++  skim                                                ::  only
   ~/  %skim
   |*  [a=(list) b=_|=(p=* .?(p))]
@@ -6040,6 +6047,15 @@
     %-  ~(play ut p.vax)
     [%wtgr [%wtts [%leaf %tas -.q.vax] [%$ 2]~] [%$ 1]]
   (~(fuse ut p.vax) [%cell %noun %noun])
+::
+++  slew                                                ::  get axis in vase
+  |=  [axe=@ vax=vase]  ^-  (unit vase)
+  ?.  |-  ^-  ?
+      ?:  =(1 axe)  &
+      ?.  ?=(^ q.vax)  |
+      $(axe (mas axe), q.vax .*(q.vax [0 (cap axe)]))
+    ~
+  `[(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
 ::
 ++  slab                                                
   |=  [cog=@tas typ=type]
