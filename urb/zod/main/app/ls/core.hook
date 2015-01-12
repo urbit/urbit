@@ -1,6 +1,12 @@
+::  LiSt directory subnodes
+::
+::::
+  ::
+/+    sh-utils
 //  /%%/subdir
-//  /===lib/sh-utils
 !:
+::::
+  ::
 |_  [hid=hide ~]
 ++  peer  ,_`.
 ++  poke-ls-args

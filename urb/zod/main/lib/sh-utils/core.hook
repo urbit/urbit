@@ -1,31 +1,37 @@
-!:
+::  App  construction utilities
+::
+::::  /hook/core/sh-utils/lib
+  ::
 |%
 ++  append
   |*  a=*
   |*  b=*
   [b a]
+--
 ::
+::::
+  ::
+|%
+++  args-done  |*(ref=_,[(list) ^] (add-exit (add-nice ref)))  ::  accept args
 ::
-++  args-done  |*(ref=_,[(list) ^] (add-exit (add-nice ref)))
-::
-++  add-exit
+++  add-exit                          ::  add "kill self" kiss
   |*  ref=_,[(list) ^]
   %+  add-resp  [%pass / %g %cide %$]
   ref
 ::
-++  add-nice
+++  add-nice                          ::  return "succcess" response
   |*  ref=_,[(list) ^]
   %+  add-resp  [%give %nice ~]
   ref
 ::
-++  args-into-gate
+++  args-into-gate                    ::  poke--args from gate: output and exit
   |*  [con=[* [hide *] *] gat=_,[@ *]]
   %-  args-done
   %^  gate-outs  con
     |=(a=_+<.gat [%rush (gat a)])
   ,_`con
 ::
-++  args-into-resp
+++  args-into-gift                    ::  compute gifts with gate and exit
   |*  [con=[* [hide *] *] gat=_,(pole ,[@ *])]
   %-  args-done
   |*  [ost=bone * arg=_+<.gat]
@@ -35,7 +41,7 @@
   ?~  a  ~ 
   a(- [ost %give -.a], + $(a +.a))
 ::
-++  add-output
+++  add-output                        ::  send gift to /out
   |*  [con=[* [hide *] *] ote=[@ *] ref=_,[(list) ^]]
   =>  .(+<-.con `hid=hide`+<-.con)
   =+  sus=(~(tap in `(set bone)`(~(get ju pus.hid.con) /out)))
@@ -44,31 +50,31 @@
   =+  neu=(ref +<)
   neu(- (welp mof -.neu))
 ::
-++  add-resp
+++  add-resp                          ::  add response move to requesting bone
   |*  [mof=[@ @ *] ref=_,[(list) ^]]
   |*  [ost=bone _?@(+<.ref ~ +<+.ref)]
   =+  neu=(ref +<)
   neu(- [[ost mof] -.neu])
 ::
-++  gate-give
-  |*  [gat=_,[@ @ *] ref=_,[(list) ^]]
+++  gate-give                         ::  respond with computed gift
+  |*  [gat=_,[@ *] ref=_,[(list) ^]]
   (gate-move |*(_+<.gat [%give (gat +<)]) ref)
 ::
-++  gate-bang
+++  gate-bang                         ::  respond with computed note
   |*  [gat=_,[@ @ *] ref=_,[(list) ^]]
   (gate-move |*(_+<.gat [%pass /bang (gat +<)]) ref)
 ::
-++  gate-move
-  |*  [gat=_,_*(mold) ref=_,[(list) ^]]
+++  gate-move                         ::  respond with computed move
+  |*  [gat=_,(mold) ref=_,[(list) ^]]
   |*  [ost=bone * arg=_+<.gat]
   ((add-resp (gat arg) ref) +<)
 ::
-++  gate-outs
+++  gate-outs                         ::  send computed gift to /out
   |*  [con=[* [hide *] *] gat=_,[@ *] ref=_,[(list) ^]]
   |*  [ost=bone * arg=_+<.gat]
   ((add-output con (gat arg) ref) +<)
 ::
-++  verify
+++  verify                            ::  type-check with context and move
   |*  [con=^ mof=[@ *]]
   |*  ref=_,[(list ,_mof) _con]
   |*  _+<.ref
