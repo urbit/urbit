@@ -31,7 +31,7 @@
     |=(a=_+<.gat [%rush (gat a)])
   ,_`con
 ::
-++  args-into-gift                    ::  compute gifts with gate and exit
+++  args-into-resp                    ::  compute gifts with gate and exit
   |*  [con=[* [hide *] *] gat=_,(pole ,[@ *])]
   %-  args-done
   |*  [ost=bone * arg=_+<.gat]
