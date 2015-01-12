@@ -133,7 +133,6 @@
   ==                                                    ::
 ++  dual  ,[p=@ud q=(each ,[p=ship q=hole] ship)]       ::  request handle
 ++  dude  ,[p=@tas q=@]                                 ::  client identity
-++  loco  ,[p=? q=(unit ,@tas) r=path]                  ::  logical construct
 ++  pest                                                ::  request in progress
   $|  $?  %new                                          ::  virgin
           %way                                          ::  waiting

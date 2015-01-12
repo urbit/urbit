@@ -62,9 +62,6 @@
 ++  cord  ,@t                                           ::  text atom (UTF-8)
 ++  date  ,[[a=? y=@ud] m=@ud t=tarp]                   ::  parsed date
 ++  dime  ,[p=@ta q=@]                                  ::
-++  dram  $%  [| p=(map ,@tas dram)]                    ::  simple unix dir
-              [& p=@ud q=@]                             ::
-          ==                                            ::
 ++  each  |*([a=$+(* *) b=$+(* *)] $%([& p=a] [| p=b])) ::  either a or b
 ++  edge  ,[p=hair q=(unit ,[p=* q=nail])]              ::  parsing output
 ++  foot  $%  [%ash p=twig]                             ::  dry arm, geometric
@@ -726,13 +723,6 @@
     +<+.b
   $(a t.a, b b(+<+ (b i.a +<+.b)))
 ::
-++  skid                                                ::  separate
-  |*  [a=(list) b=$+(* ?)]
-  |-  ^+  [p=a q=a]
-  ?~  a  [~ ~]
-  =+  c=$(a t.a)
-  ?:((b i.a) [[i.a p.c] q.c] [p.c [i.a q.c]])
-::
 ++  skim                                                ::  only
   ~/  %skim
   |*  [a=(list) b=_|=(p=* .?(p))]
@@ -1383,9 +1373,6 @@
   ::  black magic values
   ++  vl
     |%
-    ++  uzer  |=  [b=@u p=@u]
-              (szer b p %.y)
-
     ++  szer  |=  [b=@u p=@u s=?]
               [s=s e=`@s`(dec (^mul b 2)) a=(lia p 0b1)]
 
@@ -4451,22 +4438,6 @@
     $(hol t.hol, +> (merg (flop `(list ,@ud)`?~(guy ~ u.guy))))
   --
 ::
-++  locz                                                ::  trivial algorithm
-  |=  [hel=tape hev=tape]
-  ^-  tape
-  =+  [leh=(lent hel) veh=(lent hev)]
-  =-  (flop q.yun)
-  ^=  yun
-  |-  ^-  [p=@ud q=tape]
-  ~+
-  ?:  |(=(0 leh) =(0 veh))  [0 ~]
-  =+  [dis=(snag (dec leh) hel) dat=(snag (dec veh) hev)]
-  ?:  =(dis dat)
-    =+  say=$(leh (dec leh), veh (dec veh))
-    [+(p.say) [dis q.say]]
-  =+  [lef=$(leh (dec leh)) rig=$(veh (dec veh))]
-  ?:((gth p.lef p.rig) lef rig)
-::
 ++  lore                                                ::  atom to line list
   ~/  %lore
   |=  lub=@
@@ -6023,10 +5994,6 @@
   |=  vax=vase  ^-  tape
   ~(ram re (sell vax))
 ::
-++  loot                                                ::  cord pretty-print
-  |=  vax=vase  ^-  @ta
-  (rap 3 (pave vax))
-::
 ++  slam                                                ::  slam a gate
   |=  [gat=vase sam=vase]  ^-  vase
   =+  :-  ^=  typ  ^-  type
@@ -6074,15 +6041,6 @@
     [%wtgr [%wtts [%leaf %tas -.q.vax] [%$ 2]~] [%$ 1]]
   (~(fuse ut p.vax) [%cell %noun %noun])
 ::
-++  slew                                                ::  get axis in vase
-  |=  [axe=@ vax=vase]  ^-  (unit vase)
-  ?.  |-  ^-  ?
-      ?:  =(1 axe)  &
-      ?.  ?=(^ q.vax)  |
-      $(axe (mas axe), q.vax .*(q.vax [0 (cap axe)]))
-    ~
-  `[(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
-::
 ++  slab                                                
   |=  [cog=@tas typ=type]
   !=(~ q:(~(fino ut typ) 0 %free cog))
@@ -6098,16 +6056,6 @@
 ++  slot                                                ::  got axis in vase
   |=  [axe=@ vax=vase]  ^-  vase
   [(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
-::
-++  slum
-  |=  [vax=vase wad=(map term vase)]  ^-  vase
-  ?-  wad
-    ~        vax
-    [* ~ ~]  [[%cell p.vax [%face p.n.wad p.q.n.wad]] [q.vax q.q.n.wad]]
-    [* ~ *]  $(wad [n.wad ~ ~], vax $(wad r.wad))
-    [* * ~]  $(wad [n.wad ~ ~], vax $(wad l.wad))
-    [* * *]  $(wad [n.wad ~ r.wad], vax $(wad l.wad))
-  ==
 ::
 ++  wash                                                ::  render tank at width
   |=  [[tab=@ edg=@] tac=tank]  ^-  wall
@@ -6881,7 +6829,6 @@
     ==
   ::
   ++  dank  |=(pax=path ^-(tank (dish [~ %path] pax)))
-  ++  dart  |=(pax=path ^-(tape ~(ram re (dank pax))))
   ++  deal  |=(lum=* (dish dole lum))
   ++  dial
     |=  ham=calf
@@ -9231,7 +9178,7 @@
     ++  expq  |.(;~(gunk rope loaf loaf))               ::  wing and two twigs
     ++  expr  |.(;~(gunk loaf wisp))                    ::  twig and core tail
     ++  exps  |.((butt hank))                           ::  closed gapped twigs
-    ++  expt  |.((butt ;~(gunk loaf race)))             ::  twig, [tile twig]s
+    ::  expt
     ++  expu  |.(;~(gunk lobe wisp))                    ::  tile, core tail
     ++  expv  |.(lobe)                                  ::  tile
     ++  expw  |.(;~(gunk lobe teak))                    ::  tile and tiki
@@ -9239,8 +9186,6 @@
     ++  expy  |.((butt ;~(gunk teak loaf race)))        :: tiki twig [tile twig]s
     ++  expz  |.(loaf(bug &))                           ::  twig with tracing
     ::    Hint syntaces  (nock 10)
-    ++  hina  |.                                        ::  unused
-              ;~(gunk (ifix [sel ser] ;~(gunk dem dem)) loaf)
     ++  hinb  |.(;~(gunk bont loaf))                    ::  hint and twig
     ++  hinc  |.                                        ::  optional =en, twig
               ;~(pose ;~(gunk bony loaf) ;~(plug (easy ~) loaf))
@@ -9613,7 +9558,6 @@
           ==                                            ::
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
-++  herd  (hypo curd)                                   ::  typed card
 ++  hide                                                ::  standard app state
         $:  $:  our=ship                                ::  owner/operator
                 app=term                                ::  app identity
@@ -9626,7 +9570,6 @@
                 eny=@uvI                                ::  entropy
                 lat=@da                                 ::  date of last tick
         ==  ==                                          ::
-++  hilt  ?(0 1 2)                                      ::  lead iron gold
 ++  hypo  |*(a=$+(* *) (pair type a))                   ::  type associated
 ++  hobo  |*  a=$+(* *)                                 ::  kiss wrapper
           $?  $%  [%soft p=*]                           ::
