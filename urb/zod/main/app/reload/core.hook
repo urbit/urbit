@@ -9,11 +9,10 @@
 |_  [hid=hide ~]
 ++  peer  ,_`.
 ++  poke--args
-  %-  args-done
   %^  add-output  .
     rush/tang/[leaf/"done"]~
-  |=  [ost=bone you=ship all=(list ,@tas)]
-  :_  +>.$
+  %+  args-into-resp  . 
+  |=  all=(list ,@tas)
   %+  turn  (flop all)
   =+  ark=(arch .^(%cy /(scot %p our.hid)/arvo/(scot %da lat.hid)))
   =+  van=(~(tap by r.ark))
@@ -27,5 +26,5 @@
     `term`p.i.zaz
   =+  tip=(end 3 1 nam)
   =+  pax=[(scot %p our.hid) %arvo (scot %da lat.hid) nam %hoon ~]
-  [ost %give %veer ?:(=('z' tip) %$ tip) pax (,@ .^(%cx pax))]
+  [%veer ?:(=('z' tip) %$ tip) pax (,@ .^(%cx pax))]
 --
