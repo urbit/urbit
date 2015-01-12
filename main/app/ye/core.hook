@@ -2,6 +2,10 @@
 ::  
 ::::  /hook/gate/ye/bin
   ::
+/+    sh-utils
+::
+::::
+  ::
 |%
 ++  sign                                                ::
   $%  $:  %a                                            ::
@@ -12,9 +16,9 @@
               [%text p=tape]                            ::
           ==                                            ::
 --
-::
-//  /===lib/sh-utils
 !:
+::::
+  ::
 |_  [hid=hide ~]
 ++  peer  ,_`.
 ++  poke--args
