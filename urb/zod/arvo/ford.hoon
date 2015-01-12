@@ -37,9 +37,10 @@
               [%dub p=term q=horn]                      ::  /=  apply face
               [%fan p=(list horn)]                      ::  /.  list
               [%for p=path q=horn]                      ::  /,  descend
+              [%hel p=horn]                             ::  /%  propogate heel
               [%hub p=horn]                             ::  /@  list by @ud
               [%man p=(map span horn)]                  ::  /*  hetero map
-              [%nap p=horn]                             ::  /%  homo map
+              [%nap p=horn]                             ::  /_  homo map
               [%now p=horn]                             ::  /&  list by @da
               [%saw p=twig q=horn]                      ::  /;  operate on
               [%see p=beam q=horn]                      ::  /:  relative to
@@ -524,9 +525,10 @@
               (stag %dub ;~(pfix tis dub:read))
               (stag %fan ;~(pfix dot fan:read))
               (stag %for ;~(pfix com for:read))
+              (stag %hel ;~(pfix cen day:read))
               (stag %hub ;~(pfix pat day:read))
               (stag %man ;~(pfix tar man:read))
-              (stag %nap ;~(pfix cen day:read))
+              (stag %nap ;~(pfix cab day:read))
               (stag %now ;~(pfix pam day:read))
               (stag %saw ;~(pfix sem saw:read))
               (stag %see ;~(pfix col see:read))
@@ -1076,6 +1078,7 @@
           (slop i.tev $(tev t.tev))
         ::
             %for  $(hon q.hon, s.how (weld (flop p.hon) s.how))
+            %hel  $(hon p.hon, arg /, s.how (weld arg s.how))
             %hub  (chad cof bax %ud p.hon)
             %man
           |-  ^-  (bolt vase)
@@ -1110,7 +1113,7 @@
             (flaw cof [%leaf "type error: {<p.hon>} {<q.hon>}"]~)
           (fine cof [p.tug q.vax])
         ::
-            %toy  (cope (make cof %bake p.hon how arg) feel)
+            %toy  (cope (make cof %boil p.hon how ~) feel)
         ==
       ::
       ++  head                                          ::  consume structures
