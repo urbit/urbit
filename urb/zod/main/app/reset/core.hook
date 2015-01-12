@@ -8,10 +8,9 @@
   |=  [ost=bone you=ship ~]
   :_  +>.$
   =+  top=`path`/(scot %p our.hid)/arvo/(scot %da lat.hid)
-  =+  pax=`path`(weld top `path`[%hoon ~])
   :+  [ost %give %nice ~]
     [ost %pass / %t %wait lat.hid]
-  %-  welp  :_  [ost %give %vega pax]~
+  %-  welp  :_  [ost %give %vega (weld top `path`/hoon)]~
   %+  turn
     %-  flop
     ^-  (list ,[p=@tas q=@tas])
@@ -25,13 +24,13 @@
         [%t %time]
     ==
   |=  [p=@tas q=@tas]
-  =+  pax=(weld top `path`[q ~])
-  =+  txt=((hard ,@) .^(%cx (weld pax `path`[%hoon ~])))
+  =+  pax=`path`(welp top /[q])
+  =+  txt=((hard ,@) .^(%cx (welp pax /hoon)))
   [ost %give %veer p pax txt]
 ++  pour
   |=  [ost=bone pax=path *]
   :_  +>.$  :_  ~
-  =+  paf=/(scot %p our.hid)/main/(scot %da lat.hid)/app/reset/count/txt
+  =+  paf=/(scot %p our.hid)/=/(scot %da lat.hid)/==count/txt
   =+  nuf=(file paf)
   =+  num=?~(nuf 0 +((fall (slaw %ud (,@t u.nuf)) 0)))
   [ost %pass /touch %c %info our.hid (foal paf num)]
