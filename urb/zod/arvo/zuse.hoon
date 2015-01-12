@@ -997,10 +997,6 @@
   =+  buf=(rap 3 (turn wol |=(a=tape (crip (weld a `tape`[`@`10 ~])))))
   [(met 3 buf) buf]
 ::
-::
-++  txml                                                ::  string to xml
-    |=  tep=tape  ^-  mars
-    [[%$ [%$ tep] ~] ~]
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, tree sync                ::
 ::
@@ -2004,11 +2000,6 @@
       ==
   [p.one [%& [*cart (weld q.q.q.one q.q.q.two)]]]
 ::
-++  meat                                                ::  kite to .^ path
-  |=  kit=kite
-  ^-  path
-  [(cat 3 'c' p.kit) (scot %p r.kit) s.kit (scot `dime`q.kit) t.kit]
-::
 ++  tame                                                ::  parse kite path
   |=  hap=path
   ^-  (unit kite)
@@ -2064,16 +2055,6 @@
   ?~  raf
     [~ [i.rax ~]]
   [q.u.raf [p.u.raf ~]]
-::
-++  fain                                                ::  path restructure
-  |=  [hom=path raw=path]
-  =+  bem=(need (tome raw))
-  =+  [mer=(flop s.bem) moh=(flop hom)]
-  |-  ^-  (pair beam path)
-  ?~  moh
-    [bem(s hom) (flop mer)]
-  ?>  &(?=(^ mer) =(i.mer i.moh))
-  $(mer t.mer, moh t.moh)
 ::
 ++  fuel                                                ::  parse fcgi
   |=  [bem=beam but=path]
@@ -2701,7 +2682,6 @@
               q=(unit ,[p=cash q=*])                    ::  file
               r=(map ,@ta ankh)                         ::  folders
           ==                                            ::
-++  ankz  ,[p=@ (map ,@ta ankz)]                        ::  trimmed ankh
 ++  apex  ,[p=@uvI q=(map ,@ta ,@uvI) r=(map ,@ta ,~)]  ::  node report (old)
 ++  ares  (unit ,[p=term q=(list tank)])                ::  possible error
 ++  ball  ,@uw                                          ::  statement payload
@@ -2832,7 +2812,6 @@
               ton=town                                  ::  security
               zac=(map ship corn)                       ::  flows by server
           ==                                            ::
-++  frog  ,[p=@da q=nori]                               ::  time and change
 ++  gank  (each vase (list tank))                       ::  abstract result
 ++  gift                                                ::  one-way effect
           $%  [%$ p=vase]                               ::  trivial output
@@ -2945,10 +2924,6 @@
               [%n p=@ta]                                ::  number
               [%s p=@t]                                 ::  string
           ==                                            ::
-++  jsot                                                ::  strict json top
-          $%  [%a p=(list json)]                        ::  array
-              [%o p=(map ,@t json)]                     ::  object
-          ==                                            ::
 ++  lamb                                                ::  short path
           $%  [& p=@tas]                                ::  auto
               [| p=twig]                                ::  manual
@@ -2978,10 +2953,8 @@
               [%wan p=wain]                             ::  text lines
               [%zap p=@ud q=(list tank)]                ::  status/error
           ==                                            ::
-++  luge  ,[p=mark q=*]                                 ::  fully typed content
 ++  maki  ,[p=@ta q=@ta r=@ta s=path]                   ::
 ++  mace  (list ,[p=life q=ring])                       ::  private secrets
-++  marv  ?(%da %tas %ud)                               ::  release form
 ++  math  (map ,@t (list ,@t))                          ::  semiparsed headers
 ++  meal                                                ::  payload
           $%  [%back p=cape q=flap r=@dr]               ::  acknowledgment
@@ -3143,7 +3116,6 @@
 ++  step  ,[p=bray q=gens r=pass]                       ::  identity stage
 ++  tako  ,@                                            ::  yaki ref
 ++  tart  $+([@da path note] bowl)                      ::  process core
-++  taxi  ,[p=lane q=rock]                              ::  routed packet
 ++  tick  ,@ud                                          ::  process id
 ++  toro  ,[p=@ta q=nori]                               ::  general change
 ++  town                                                ::  all security state
@@ -3168,6 +3140,5 @@
               [%chan (list $|(@ud [p=@ud q=@ud]))]      ::
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action
 ++  will  (list deed)                                   ::  certificate
-++  worm  ,*                                            ::  vase of tart
 ++  zuse  %314                                          ::  hoon/zuse kelvin
 --

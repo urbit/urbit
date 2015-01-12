@@ -151,16 +151,6 @@
   ^-  cafe                                              ::
   [(grom p.a p.b) (grum q.a q.b)]                       ::
 ::                                                      ::
-++  colt                                                ::  reduce to save
-  |=  lex=axle                                          ::
-  ^-  axle
-  %=    lex
-      pol
-    %-  ~(run by pol.lex)
-    |=  bay=baby
-    bay(jav ~)
-  ==
-::
 ++  faun  |=([a=cafe b=vase] (fine a `cage`noun/b))     ::  vase to cage
 ++  feel  |=([a=cafe b=cage] (fine a q.b))              ::  cage to vase
 ++  fest  |*([a=cafe b=*] (fine a [~ u=b]))             ::  bolt to unit
