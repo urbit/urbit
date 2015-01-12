@@ -1,3 +1,4 @@
+::  Reset: recompile arvo, from hoon/hoon up
 !:
 ::::
   ::
@@ -31,10 +32,7 @@
   |=  [ost=bone pax=path *]
   :_  +>.$  :_  ~
   =+  paf=/(scot %p our.hid)/main/(scot %da lat.hid)/app/reset/count/txt
-  =+  ^=  num
-      ?:  ?=([%0 %0 %0] [.^(%cy paf)])  '0'
-      %+  scot  %ud
-      .+
-      (fall (slaw %ud (,@t .^(%cx paf))) 0)
+  =+  nuf=(file paf)
+  =+  num=?~(nuf 0 +((fall (slaw %ud (,@t u.nuf)) 0)))
   [ost %pass /touch %c %info our.hid (foal paf num)]
 --
