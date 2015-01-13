@@ -9740,7 +9740,8 @@
       ~/  %sike
       |=  [sub=type ref=*]
       ^-  (pair ,? veal)
-      ?:  (~(has in p.sew) [sub ref])  [& p.sew]
+      ?:  (~(has in p.sew) [sub ref])  
+        [& p.sew]
       =+  ^=  hip
         =+  gat=|=([a=type b=type] (~(nest ut a) | b))
         (,? .*(gat(+< [sub ref]) -.gat))
@@ -9777,7 +9778,8 @@
       ~/  %souk
       |=  [sub=type ref=type]
       ^-  (pair ,? veal)
-      ?:  (~(has in p.sew) [sub ref])  [& p.sew]
+      ?:  (~(has in p.sew) [sub ref])  
+        [& p.sew]
       =+  hip=(~(nest ut sub) | ref)
       ?.  hip  [| p.sew]
       [& (~(put in p.sew) [sub ref])]
@@ -9799,10 +9801,11 @@
       ?.  hip  ~                                        ::  a vase is a cell
       =^  hip  p.sew  (souk typ.vil p:(slot 2 tiv))     ::
       ?.  hip  ~                                        ::  vase head is type
-      %-  biff  :_  |=(a=milt `[[%| a] p.sew])          ::  milt to mill
+      %-  biff                                          ::
+      :_  |=(a=(pair milt veal) `[[%| p.a] q.a])        ::  milt to mill
       =+  mut=(milt q.tiv)                              ::  card type, value
-      |-  ^-  (unit milt)                               ::
-      ?.  ?=([%meta p=* q=milt] q.mut)  `mut            ::  ordinary metacard
+      |-  ^-  (unit (pair milt veal))                   ::
+      ?.  ?=([%meta p=* q=milt] q.mut)  `[mut p.sew]    ::  ordinary metacard
       =^  hip  p.sew  (sike mev.vil p.mut)              ::
       ?.  hip  ~                                        ::  meta-metacard
       $(mut +.q.mut)                                    ::  descend into meta
@@ -9901,6 +9904,7 @@
               hil=mill
           ==
       ^-  [[p=(list move) q=veal] q=vase]
+      ::  ~&  [%swim-wyt `@ud`~(wyt in p.sew)]
       =+  ^=  pru
           ?~  pux
             ~|  [%swim-call-vane lal]
@@ -9975,7 +9979,7 @@
   ++  hurl                                              ::  start loop
     |=  [lac=? ovo=ovum]
     ~?  &(!lac !=(%belt -.q.ovo))  [%unix -.q.ovo p.ovo]
-    ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
+    ^-  [p=(list ovum) q=(pair veal (list ,[p=@tas q=vase]))]
     ?>  ?=(^ p.ovo)
     %+  kick  lac
     :~  :*  i.p.ovo
@@ -10006,6 +10010,7 @@
       =+  tuh=$(naf t.naf)
       [-.tuh [+<.tuh [i.naf +>.tuh]]]
     =+  fiq=(race org lal pux hen hil q.i.naf)
+    ::  ~&  [%fire-veal [`@ud`~(wyt in p.niz) `@ud`~(wyt in q.p.fiq)]] 
     [[~ (turn p.p.fiq |=(a=move [lal a]))] [q.p.fiq [[p.i.naf q.fiq] t.naf]]]
   ::
   ++  jack                                              ::  dispatch card
@@ -10045,8 +10050,8 @@
   ++  kick                                              ::  new main loop
     |=  [lac=? mor=(list muse)]
     =|  ova=(list ovum)
-    |-  ^-  [p=(list ovum) q=(list ,[p=@tas q=vase])]
-    ?~  mor  [(flop ova) q.niz]
+    |-  ^-  [p=(list ovum) q=(pair veal (list ,[p=@tas q=vase]))]
+    ?~  mor  [(flop ova) niz]
     =^  nyx  niz  (jack lac i.mor)
     $(ova (weld p.nyx ova), mor (weld q.nyx t.mor))
   --
@@ -10136,7 +10141,7 @@
   =.  eny  (mix eny (shax now))
   ::  ~&  [%poke -.q.ovo]
   ^-  [(list ovum) _+>]
-  =^  zef  q.niz
+  =^  zef  niz
     (~(hurl (is vil eny bud niz) now) lac ovo)
   [zef +>.$]
 ::
