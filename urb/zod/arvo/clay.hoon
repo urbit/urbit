@@ -78,7 +78,6 @@
               [%dune p=(set beam) q=(unit cage)]        ::  unit literal
               [%mute p=silk q=(list (pair wing silk))]  ::  mutant
               [%pact p=silk q=silk]                     ::  patch
-              [%plan p=beam q=spur r=hood]              ::  structured assembly
               [%reef ~]                                 ::  kernel reef
               [%ride p=twig q=silk]                     ::  silk thru twig
               [%vale p=mark q=ship r=*]                 ::  validate [our his]
@@ -97,7 +96,7 @@
           $:  lim=@da                                   ::  complete to
               qyx=cult                                  ::  subscribers
               ref=(unit rind)                           ::  outgoing requests
-              wok=work                                  ::  outstanding diffs
+              wok=(unit work)                           ::  outstanding diffs
               dom=dome                                  ::  revision state
           ==                                            ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  request/desist
@@ -290,58 +289,61 @@
           |  :_  yel
              [hen %note '=' %leaf :(weld (trip p.lem) " " (spud pre))]
           &  |-  ^+  yel
-             ?~  q.q.lem  yel
-             :_  $(q.q.lem t.q.q.lem)
+             ?~  q.p.lem  yel
+             :_  $(q.p.lem t.q.p.lem)
              :-  hen
              :+  %note
-               ?-(-.q.i.q.q.lem %del '-', %ins '+', %mut ':')
-             [%leaf (spud (weld pre p.i.q.q.lem))]
+               ?-(-.q.i.q.p.lem %del '-', %ins '+', %mut ':', %dif ';')
+             [%leaf (spud (weld pre p.i.q.p.lem))]
         ==
       ==
     ::
     ++  edit                                            ::  apply changes
       |=  [wen=@da lem=nori]
       ^+  +>
-      ?.  -.lem
+      ?:  ?=(%| -.lem)
         =+  axe=(~(edit ze lim dom ran) wen lem)
         =+  `[l=@da d=dome r=rang]`+<.axe
-        +>.$(dom d, ran r)
-      ?^  wok
+        +>.$(dom d, ran r)                              ::  XX  checkout-ankh
+      ?.  =(~ wok)
         ~&  %already-applying-changes  !!
       =+  ^-  lon=(list path)
-          (murn q.p.lem |=([a=path b=miso] ?.(?=(%mut -.b) ~ `a)))
+          (murn q.p.lem |=([a=path b=miso] ?.(?=(%mut -.b) ~ (some a))))
       =+  ^-  sot=(list ,[p=path q=misu])
-          (murn q.p.lem |=([a=path b=miso] ?:(?=(%mut -.b) ~ `[a `misu`b])))
-      =.  wok `[sot lon]
+          %+  murn  q.p.lem
+          |=([a=path b=miso] ?:(?=(%mut -.b) ~ (some [a `misu`b])))
+      =.  wok  `[sot lon]
       ?~  lon
-        apply-edit
+        (apply-edit wen)
       =+  ^-  los=(list ,[duct path note])
-          (murn q.p.lem |=([a=path b=miso] ?.(?=(%mut -.b) ~ `(silkify a b))))
+          %+  murn  q.p.lem
+          |=([a=path b=miso] ?.(?=(%mut -.b) ~ (some (silkify wen a b))))
       %_(+>.$ tag (welp los tag))
     ::
     ++  silkify
-      |=  [a=path %mut b=cage c=cage]
+      |=  [wen=@da a=path %mut b=cage c=cage]
       ^-  [duct path note]
       :+  hen
-        [%diffing (scot %p who) syd a]
+        [%diffing (scot %p who) syd (scot %da wen) a]
       [%f %exec who ~ %diff [%done ~ b] [%done ~ c]]
     ::
     ++  apply-edit
-      ^-  .
+      |=  wen=@da
+      ^+  +>
       ?~  wok  ~&  %no-changes  !!
       ?^  lon.u.wok  ~&  %not-done-diffing  !!
-      =+  axe=(~(edit ze lim dom ran) wen %& *cart wok.wok)
+      =+  axe=(~(edit ze lim dom ran) wen %& *cart sot.u.wok)
       =+  `[l=@da d=dome r=rang]`+<.axe
-      +>(dom d, ran r, wok ~)
+      +>.$(dom d, ran r, wok ~)                         ::  XX  checkout-ankh
     ::
     ++  take-diff
-      |=  [pax=path res=(each bead (list tank))]
+      |=  [wen=@da pax=path res=(each bead (list tank))]
       ^+  +>
       ?~  wok
         ~&  %clay-unexpected-made  !!
       ?.  (lien lon.u.wok |=(path =(+< pax)))
         ~&  %clay-strange-made  !!
-      ?.  -.res
+      ?:  ?=(%| -.res)
         %_    +>.$
             wok  ~
             tag
@@ -349,17 +351,17 @@
           ^-  (list ,[duct path note])
           %+  murn  lon.u.wok
           |=  a=path
-          ?:  =(pax a)
-          `[hen [%diffing (scot %p who) syd a] %f %exec who ~]
+          ?:  =(pax a)  ~
+          `[hen [%diffing (scot %p who) syd (scot %da wen) a] %f %exec who ~]
         ::
             yel
           [[hen %note '!' %rose [" " "" ""] leaf/"clay diff failed" p.res] yel]
         ==
-      =:  lon.wok  (skip lon.u.wok |=(path =(+< pax)))
-          sot.wok  [[pax %dif q.p.res] sot.u.wok]
+      =:  lon.u.wok  (skip lon.u.wok |=(path =(+< pax)))
+          sot.u.wok  [[pax %dif q.p.res] sot.u.wok]
       ==
       ?~  lon.wok
-        apply-edit
+        (apply-edit wen)
       +>.$
     ::
     ++  edis                                            ::  apply subscription
@@ -797,12 +799,13 @@
       [[[hen %slip %d %flog +.q.hin] ~] ..^$]
     ::
         %made
-      ?>  ?=([%diffing @ @ *] tea)
+      ?>  ?=([%diffing @ @ @ *] tea)
       =+  who=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
+      =+  wen=(slav %da i.t.t.t.tea)
       =^  mos  ruf
         =+  ^=  zat
-          (take-diff:(di:wake:une syd) t.t.t.tea p.q.hin)
+          (take-diff:(di:wake:une syd) t.t.t.t.tea p.q.hin)
         =+  zot=abet.zat
         [-.zot abet:(pish:une syd +.zot ran.zat)]
       [mos ..^$]
