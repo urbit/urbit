@@ -1272,48 +1272,7 @@
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit (pair mark ,*)))
-  ?.  (~(has by pol.lex) who)
-    ~
-  =+  [bay=(~(got by pol.lex) who) ska=(slod ski)]
-  =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
-  ?~  luk  [~ ~]
-  ?:  =(%$ ren)
-    [~ ~]
-  =+  run=((soft care) ren)
-  ?~  run  
-    [~ ~]
-  =+  sup=(flop tyl)
-  ?~  sup
-    [~ ~]
-  =+  ^=  giv
-      |=  [mar=mark pax=path]
-      =+  sik=[%boil mar [[who syd u.luk] pax] /]
-      =+  stu=[our=who hen=/]                           ::  XX
-      (~(apel za [stu [now eny ska] ~] bay) hen.stu sik)
-  =+  ^=  git  
-      %-  giv
-      ?+  u.run  !!
-        %x  [i t]:sup
-        %y  [%arch sup]
-      ==
-  ?~  git
-    ~
-  ?:  ?=(%& -.p.u.git)
-    [~ ~ [p q.q]:`cage`q.p.p.u.git]
-  ?+    u.run  ~_(p.p.u.git [~ ~])                      ::  XX  properly?
-      %y  
-    =+  gif=(giv sup)
-    ?~  gif
-      ~
-    =+  cle=(ski fur %cy [who syd u.luk] sup)
-    ?.  ?=([~ ~ *] cle)
-      cle
-    :^  ~  ~  %arch
-    =-  `arch`[0v0 - r:;;(arch q.q.u.u.cle)]
-    ?.  ?=(%& -.p.u.gif)
-      ~
-    [~ (sham %ford q.q:`cage`q.p.p.u.gif)]
-  ==
+  !!
 ::
 ++  stay                                                ::  save w/o cache
   `axle`+>-.$(pol (~(run by pol) |=(a=baby [tad.a dym.a ~])))

@@ -1,5 +1,4 @@
-!:
-::  ::  %eyre, http servant
+!:  ::  %eyre, http servant
 !?  164
 ::::
 |=  pit=vase
@@ -1421,9 +1420,7 @@
     ++  foal                                            ::  url from query
       |=  [nam=@t yaq=(map ,@t ,@t)]
       ^-  (unit purl)
-      =+  uru=(~(get by yaq) %url)
-      ?~  uru  ~
-      (rush u.uru auri:epur)
+      (biff (~(get by yaq) %url) epur)
     ::
     ++  folk                                            ::  seal from query
       |=  quy=quay
@@ -1438,6 +1435,7 @@
       =+  thu=?~(tuh ~ (rush u.tuh fed:ag))
       =+  sus=(~(get by yaq) %ses)
       =+  foy=?~(sus ~ ?~(thu ~ [~ u.thu u.sus]))
+      ~&  folk-auth/aut.ced
       ?~  pyl  ~
       ?:  &(wit |(=(~ whu) =(~ ses)))  ~
       ::  ~&  [%folk-quay whu u.pyl wit foy pus]
@@ -1598,10 +1596,8 @@
     ++  holy                                            ::  structured request
       |=  [pul=purl moh=moth]
       ^-  (unit seam)
-      ?:  &(=(%get p.moh) ?=([~ [@ ~]] q.pul))          ::  app shortcut
-        ::  XX  use credential to figure out gog/gig
-        $(q.pul [`%html [%gog i.q.q.pul ~]])
       ?~  q.q.pul  ~
+      ~&  holy-aut/aut.ced
       =*  nep  i.q.q.pul
       =+  paw=t.q.q.pul
       =+  [one=(end 3 1 nep) two=(cut 3 [1 1] nep) tri=(cut 3 [2 1] nep)]
@@ -1642,7 +1638,10 @@
           ::
               !&(=(%c tri) !=(%o two))
               =(3 (met 3 nep))
-          ==
+            ==
+        ?:  &(=(%get p.moh) ?=([~ [@ ~]] q.pul))          ::  app shortcut
+          ::  XX  use credential to figure out gog/gig
+          $(q.pul [`%html [%gog i.q.q.pul ~]])
         ~
       =^  yun  paw
           ?+  two  ~
@@ -1765,8 +1764,9 @@
     ::
     ++  lass                                            ::  load secret
       ^-  @ta
+      =+  pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
       %^  rsh  3  1
-      (scot %p (,@ (need (sky %a (scot %p our) %code (scot %da now) ~))))
+      (scot %p (,@ (need (sky %a pax))))
     ::
     ++  step                                            ::  step in work
       |-  ^+  +
@@ -1855,6 +1855,7 @@
         ::
             %lon
           ?^  pus.p.som.pip
+            ~&  eyre-lass/=(lass u.pus.p.som.pip)
             ?.  =(lass u.pus.p.som.pip)
               :_  +>.$
               :-  ~
@@ -1863,6 +1864,7 @@
                 [%fin %mid /text/json (tact (pojo (jobe [%ok [%b |]]~)))]
               ==
             =.  aut.ced  (~(put ju aut.ced) %$ (scot %p (need whu.p.som.pip)))
+            ~&  lass-aut/aut.ced
             ?~  foy.p.som.pip
               =+  ^=  jon
                 %-  jobe
@@ -1888,7 +1890,7 @@
           ?:  wit.p.som.pip
             [~ pip(pez [%who %$ (scot %p (need whu.p.som.pip))])]
           =+  rul=(earn pul.p.som.pip)
-          =+  ruf=(earn (earl our pul.p.som.pip(q.q /pul, r ~)))
+          =+  ruf=(earn pul.p.som.pip(q.q /pul, r ~))
           =+  ham=(noon our whu.p.som.pip rul ruf)
           [~ pip(pez [%fin %ham ham])]
         ::
@@ -2308,6 +2310,9 @@
 ::
 ++  load
   |=  old=bolo
+  =.  own.old  
+    %-  ~(run by own.old)  |=  serf 
+     +<(wup (~(run by wup) |=(cyst +<(ced *cred))))
   ^+  ..^$
   ..^$(+>- old)
 ::
