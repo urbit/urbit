@@ -1083,6 +1083,11 @@
         (sham [%lobe z])
     [%delta has p q]
   ::
+  ++  bulb-to-cage
+    |=  p=bulb
+    ^-  cage
+    ?-(-.p %direct q.p, %indirect q.p)
+  ::
   ++  blob-to-cage
     |=  p=blob
     ::  ^-  (each cage ,[cage this])
@@ -1256,7 +1261,8 @@
     ^+  +>
     ?:  =(let yon)  +>
     ?:  (gth yon let)  !!                               ::  don't have version
-    +>(ank (checkout-ankh q:(aeon-to-yaki yon)), let yon)
+    !!
+    ::  +>(ank (checkout-ankh q:(aeon-to-yaki yon)), let yon)
   ::
   ::::
   ++  update-lat                                        ::   update-lat:ze
@@ -1306,18 +1312,18 @@
       %+  ~(put by bar)  pat
       (make-delta p.u.ber p.mys)
     ==
+  ::
   ++  checkout-ankh                                     ::    checkout-ankh:ze
-    |=  hat=(map path lobe)                             ::  checkout commit
+    |=  hat=(map path bulb)                             ::  checkout commit
     ^-  ankh
     %-  cosh
     %+  roll  (~(tap by hat) ~)
-    |=  [[pat=path bar=lobe] ank=ankh]
+    |=  [[pat=path bar=bulb] ank=ankh]
     ^-  ankh
     %-  cosh
     ?~  pat
-      =+  zar=(lobe-to-cage bar)
-      ?>  ?=(%& -.zar)
-      ank(q [~ (sham `cage`p.zar) p.zar])
+      =+  zar=(bulb-to-cage bar)
+      ank(q [~ (sham `cage`zar) zar])
     =+  nak=(~(get by r.ank) i.pat)
     %=  ank
       r  %+  ~(put by r.ank)  i.pat 
@@ -1816,7 +1822,7 @@
   ::
   ++  edit                                              ::    edit:ze
     |=  [wen=@da lem=nuri]                              ::  edit
-    ^+  +>
+    ^-  [(unit (map path lobe)) _+>]
     ?-  -.lem
       &  =^  yak  lat                                   ::  merge objects
              %+  forge-yaki  wen
@@ -1827,14 +1833,14 @@
                  !=((lent p.yak) 1)
                  !(equiv q.yak q:(aeon-to-yaki let))
              ==
-           +>.$                                         ::  silently ignore
+           `+>.$                                        ::  silently ignore
          =:  let  +(let)
              hit  (~(put by hit) +(let) r.yak)
              hut  (~(put by hut) r.yak yak)
          ==
-         +>.$
+         [`q.yak +>.$]
          ::  +>.$(ank (checkout-ankh q.yak))
-      |  +>.$(lab ?<((~(has by lab) p.lem) (~(put by lab) p.lem let)))
+      |  [~ +>.$(lab ?<((~(has by lab) p.lem) (~(put by lab) p.lem let)))]
     ==
   --
 ::
@@ -2719,9 +2725,6 @@
               [%direct p=lobe q=cage]                   ::
               [%indirect p=lobe q=cage r=cage s=lobe]   ::
           ==                                            ::
-++  blub  $%  [%direct p=lobe q=cage]                   ::
-              [%indirect p=lobe q=cage r=cage s=lobe]   ::
-          ==                                            ::
 ++  boat  ,[(list slip) tart]                           ::  user stage
 ++  boon                                                ::  fort output
           $%  [%beer p=ship q=@uvG]                     ::  gained ownership
@@ -2737,6 +2740,9 @@
 ++  bray  ,[p=life q=(unit life) r=ship s=@da]          ::  our parent us now
 ++  brow  ,[p=@da q=@tas]                               ::  browser version
 ++  buck  ,[p=mace q=will]                              ::  all security data
+++  bulb  $%  [%direct p=lobe q=cage]                   ::
+              [%indirect p=lobe q=cage r=cage s=lobe]   ::
+          ==                                            ::
 ++  cake  ,[p=sock q=skin r=@]                          ::  top level packet
 ++  cape                                                ::  end-to-end result
           $?  %good                                     ::  delivered
@@ -3078,7 +3084,7 @@
 ++  rant                                                ::  namespace binding
           $:  p=[p=care q=case r=@tas]                  ::  clade release book
               q=path                                    ::  spur
-              r=cage                                    ::  data
+              r=*                                       ::  data
           ==                                            ::
 ++  rave                                                ::  general request
           $%  [& p=mood]                                ::  single request
