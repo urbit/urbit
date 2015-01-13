@@ -652,15 +652,20 @@
   }
   _open_do_pqrs(sgwt)   //  ~?
   {
-    return u3nq(c3__tsgl,
-                        u3k(s_gen),
-                        c3__wtdt,
-                        u3nq(u3k(q_gen),
-                                     u3nc(u3_nul, 1),
-                                     c3__sgpm,
-		                     u3nt(u3k(p_gen),
-                                                  u3k(r_gen),
-                                                  u3nc(u3_nul, 1))));
+    return u3nt
+     (c3__tsls,
+             u3k(q_gen),
+             u3nq(c3__wtdt,
+                         u3nc(u3_nul, 2),
+                         u3nt(c3__tsgr,
+                                     u3nc(u3_nul, 3),
+                                     u3k(s_gen)),
+                         u3nq(c3__sgpm,
+                                     u3k(p_gen),
+                                     u3k(r_gen),
+                                     u3nt(c3__tsgr,
+                                                 u3nc(u3_nul, 3),
+                                                 u3k(s_gen)))));
   }
 /***
 ****
