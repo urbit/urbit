@@ -37,7 +37,7 @@
         =-  %.(+<.$ (gate-bang ,_noe (return tang/~[leaf/msg])))
         :-  noe=[%t %wait (add ~s1 lat)]                ::  set print timeout
         msg="generating carrier {(scow %p who)} (#{(scow %ud who)})"
-      ::
+  ::
     %t  =-  %.(+<.$ (add-exit (return tang/-)))
         =+  bur=(shax (add who (shax fra)))
         =+  arc=(cryp 2.048 bur)
