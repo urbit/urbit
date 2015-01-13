@@ -27,10 +27,12 @@
     ++  story                                           ::  persona
       $:  link=(grip bridge)                            ::  connection
           count=@ud                                     ::  message counter
-          mike=(pair ,? (set station))                  ::  passive/voice
+          mike=voice                                    ::  current audience
           quiet=?                                       ::  !verbose
           past=(list station)                           ::  past received auds
       ==                                                ::
+    ++  voice                                           ::  speaking to
+      (pair (unit (set station)) (set station))         ::  active/passive
     ++  bridge                                          ::  remote state
       $:  xm=config                                     ::  configuration
           am=register                                   ::  presence
@@ -325,7 +327,7 @@
     %_(+>.$ moz hy-abet:(hy-display:(hype moz) (flop tay)))
   ::
   ++  sy-prompt
-    |=  tou=(set station)
+    |=  [pas=? tou=(set station)]
     ^-  tape
     ;:  welp
       (scow %p our.hid)
@@ -630,7 +632,7 @@
   ::
       %time
     :_  +>.$
-    ~&  [%talk-pour-time lat.hid `@da`(add ~s12 lat.hid)]
+    ::  ~&  [%talk-pour-time lat.hid `@da`(add ~s12 lat.hid)]
     :~  [0 %pass /time %t %wait (add ~s12 lat.hid)]
     ==
   ::
