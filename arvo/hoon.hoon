@@ -6459,7 +6459,11 @@
       r.gen
     ::
         [%sgts *]  [%sggr [%germ p.gen] q.gen]
-        [%sgwt *]  [%tsgl s.gen %wtdt q.gen [~ 1] %sgpm p.gen r.gen [~ 1]]
+        [%sgwt *]
+      :+  %tsls  q.gen
+      :^  %wtdt  [~ 2]
+        [%tsgr [~ 3] s.gen]
+      [%sgpm p.gen r.gen [%tsgr [~ 3] s.gen]]
         [%smcl *]
       ?-    q.gen
           ~       [%zpzp ~]
