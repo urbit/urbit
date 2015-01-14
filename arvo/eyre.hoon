@@ -867,7 +867,7 @@
     [~ u=~(. ya [our ses] u.suf u.cuz)]
   ::
   ++  noon                                              ::  login page
-    |=  [our=ship whu=(unit ship) rul=tape ruf=tape]
+    |=  [our=ship ses=hole whu=(unit ship) rul=tape ruf=tape]
     ^-  manx
     =+  ^=  sic  ^-  manx
       ;script:'''
@@ -913,7 +913,7 @@
 
                       console.log('redirect')
                       window.location="http://"+seal.who+".urbit.org/gul"
-                                      + $.params(all);
+                                      + $.param(all);
                       return false;
                     }
 
@@ -985,6 +985,7 @@
         ; var goal = '{?~(whu ~ (trip (rsh 3 1 (scot %p u.whu))))}';
         ; var burl = '{rul}';
         ; var form = '{ruf}';
+        ; var session = '{(trip ses)}';
       ==
     =>  .(+.sic (weld `marl`cof `marl`+.sic))
     =+  jqu="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"
@@ -1435,7 +1436,6 @@
       =+  thu=?~(tuh ~ (rush u.tuh fed:ag))
       =+  sus=(~(get by yaq) %ses)
       =+  foy=?~(sus ~ ?~(thu ~ [~ u.thu u.sus]))
-      ~&  folk-auth/aut.ced
       ?~  pyl  ~
       ?:  &(wit |(=(~ whu) =(~ ses)))  ~
       ::  ~&  [%folk-quay whu u.pyl wit foy pus]
@@ -1585,11 +1585,10 @@
       ^-  (unit seam)
       :+  ~
         %red
-      ::  :+  [& q.p.pul r.p.pul]
-      %+  earl  our
-      :+  [p.p.pul q.p.pul r.p.pul]
+      ::  :+  [p.p.pul q.p.pul r.p.pul]
+      :+  [| q.p.pul r.p.pul]                           ::  XX  https
         [~ /gul]
-      :-  [%url (crip (urle (earn (earl our pul))))]
+      :-  [%url (crip (earn pul(p.p |)))]
       ?~  whu  ~
       [%who (rsh 3 1 (scot %p u.whu))]~
     ::
@@ -1597,7 +1596,6 @@
       |=  [pul=purl moh=moth]
       ^-  (unit seam)
       ?~  q.q.pul  ~
-      ~&  holy-aut/aut.ced
       =*  nep  i.q.q.pul
       =+  paw=t.q.q.pul
       =+  [one=(end 3 1 nep) two=(cut 3 [1 1] nep) tri=(cut 3 [2 1] nep)]
@@ -1650,10 +1648,11 @@
                       [(slav %p (cat 3 '~' i.paw)) t.paw]
             %o        [our paw]
           ==
-      ::  ?:  &(=(%i two) =(~ aut.ced))
-      ::    (holt ~ pul)
-      ::  ?:  &(=(%o two) !(~(has ju aut.ced) %$ (scot %p our)))
-      ::    (holt [~ our] pul)
+      ?:  &(=(%i two) !(~(has ju aut.ced) %$ (scot %p yun)))
+        (holt [~ yun] pul)
+      ?:  &(=(%o two) !(~(has ju aut.ced) %$ (scot %p our)))
+        ~&  holy-admin/[aut.ced pul]
+        (holt [~ our] pul)
       ?+    one  ~
           %g
         ?+  tri  ~
@@ -1784,6 +1783,7 @@
     ++  wink                                            ::  advance request
       |=  [num=@ud pip=pimp]
       ^-  [(unit pimp) _+>]
+      ::  ~&  wink-do/[?@(pez.pip pez.pip -.pez.pip) -.som.pip]
       ?-    pez.pip
           %way  [[~ pip] +>.$]
           %new
@@ -1854,45 +1854,43 @@
           +>.$(..ya (honk our num ses kas))
         ::
             %lon
-          ?^  pus.p.som.pip
-            ~&  eyre-lass/=(lass u.pus.p.som.pip)
-            ?.  =(lass u.pus.p.som.pip)
-              :_  +>.$
-              :-  ~
-              %=    pip
-                  pez
-                [%fin %mid /text/json (tact (pojo (jobe [%ok [%b |]]~)))]
+          ?~  pus.p.som.pip
+            :_  +>.$
+            ?:  wit.p.som.pip
+              [~ pip(pez [%who %$ (scot %p (need whu.p.som.pip))])]
+            =+  rul=(earn pul.p.som.pip)
+            =+  ruf=(earn pul.p.som.pip(q.q /pul, r ~))
+            =+  ham=(noon our ses whu.p.som.pip rul ruf)
+            [~ pip(pez [%fin %ham ham])]
+          ?.  =(lass u.pus.p.som.pip)
+            :_  +>.$
+            :-  ~
+            %=    pip
+                pez
+              [%fin %mid /text/json (tact (pojo (jobe [%ok [%b |]]~)))]
+            ==
+          =.  aut.ced  (~(put ju aut.ced) %$ (scot %p (need whu.p.som.pip)))
+          ?~  foy.p.som.pip
+            =+  ^=  jon
+              %-  jobe
+              :~  [%ok [%b &]]
+                  [%next (jape (earn pul.p.som.pip))]
               ==
-            =.  aut.ced  (~(put ju aut.ced) %$ (scot %p (need whu.p.som.pip)))
-            ~&  lass-aut/aut.ced
-            ?~  foy.p.som.pip
-              =+  ^=  jon
-                %-  jobe
-                :~  [%ok [%b &]]
-                    [%next (jape (earn pul.p.som.pip))]
-                ==
-              :_(+>.$ [~ pip(pez [%fin %mid /text/json (tact (pojo jon))])])
-            =.  ..ya   (haji our u.foy.p.som.pip)
-            =+  ^=  lup  ^-  purl
-              :+  ^-  hart
-                  :+  &   ~
-                  [%& ~[%org %urbit (rsh 3 1 (scot %p p.u.foy.p.som.pip))]]
-                ^-  pork
-                [~ /gul]
-              ^-  quay
-              :~  [%who (rsh 3 1 (scot %p (need whu.p.som.pip)))]
-                  [%url (crip (earn pul.p.som.pip))]
-                  [%wit %yes]
-              ==
-            =+  jon=(jobe ~[[%ok [%b &]] [%next (jape (earn lup))]])
             :_(+>.$ [~ pip(pez [%fin %mid /text/json (tact (pojo jon))])])
-          :_  +>.$
-          ?:  wit.p.som.pip
-            [~ pip(pez [%who %$ (scot %p (need whu.p.som.pip))])]
-          =+  rul=(earn pul.p.som.pip)
-          =+  ruf=(earn pul.p.som.pip(q.q /pul, r ~))
-          =+  ham=(noon our whu.p.som.pip rul ruf)
-          [~ pip(pez [%fin %ham ham])]
+          =.  ..ya   (haji our u.foy.p.som.pip)
+          =+  ^=  lup  ^-  purl
+            :+  ^-  hart
+                :+  &   ~
+                [%& ~[%org %urbit (rsh 3 1 (scot %p p.u.foy.p.som.pip))]]
+              ^-  pork
+              [~ /gul]
+            ^-  quay
+            :~  [%who (rsh 3 1 (scot %p (need whu.p.som.pip)))]
+                [%url (crip (earn pul.p.som.pip))]
+                [%wit %yes]
+            ==
+          =+  jon=(jobe ~[[%ok [%b &]] [%next (jape (earn lup))]])
+          :_(+>.$ [~ pip(pez [%fin %mid /text/json (tact (pojo jon))])])
         ::
             %red
           :_  +>.$
@@ -1901,7 +1899,7 @@
               pez
             :-  %fin
             :-  %raw
-            :+  301
+            :+  307
               [%location (crip (earn p.som.pip))]~
             ~
           ==
