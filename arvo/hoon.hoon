@@ -6463,10 +6463,10 @@
     ::
         [%sgts *]  [%sggr [%germ p.gen] q.gen]
         [%sgwt *]
-      :+  %tsls  q.gen
-      :^  %wtdt  [~ 2]
+      :+  %tsls  [%wtdt q.gen [%bczp %null] [[%bczp %null] r.gen]]
+      :^  %wtsg  [~ 2]~
         [%tsgr [~ 3] s.gen]
-      [%sgpm p.gen r.gen [%tsgr [~ 3] s.gen]]
+      [%sgpm p.gen [~ 5] [%tsgr [~ 3] s.gen]]
         [%smcl *]
       ?-    q.gen
           ~       [%zpzp ~]
