@@ -631,7 +631,7 @@ _unix_load(c3_c* pax_c)
     return 0;
   }
   fln_w = buf_u.st_size;
-  pad_y = c3_malloc(buf_u.st_size);
+  pad_y = c3_malloc(fln_w);
 
   red_w = read(fid_i, pad_y, fln_w);
   close(fid_i);
@@ -642,10 +642,24 @@ _unix_load(c3_c* pax_c)
     return 0;
   }
   else {
-    u3_noun pad = u3i_bytes(fln_w, (c3_y *)pad_y);
+    //  -:!>(*[[@tas @tas ~] @ud @])
+    u3_noun typ = u3nt(c3__cell,
+                      u3nt(c3__cell,
+                           u3nc(c3__atom, c3__tas),
+                           u3nt(c3__cell,
+                                u3nc(c3__atom, c3__tas),
+                                u3nt(c3__cube,
+                                     u3_nul,
+                                     u3nc(c3__atom, 'n')))),
+                      u3nt(c3__cell,
+                           u3nc(c3__atom, c3__ud),
+                           u3nc(c3__atom, u3_nul)));
+    u3_noun nam = u3nt(c3__text, u3i_string("plain"), u3_nul);
+    u3_noun pad = u3nt(nam, fln_w, u3i_bytes(fln_w, (c3_y *)pad_y));
+    u3_noun cay = u3nt(c3__mime, typ, pad);
     free(pad_y);
 
-    return pad;
+    return cay;
   }
 }
 
@@ -683,12 +697,15 @@ _unix_save(c3_c* pax_c, u3_atom oat)
 static u3_noun
 _unix_file_load(u3_ufil* fil_u)
 {
-  u3_noun raw = _unix_load(fil_u->pax_c);
+  return _unix_load(fil_u->pax_c);
 
+#if 0
   if ( (0 == raw) || ('^' != fil_u->dot_c[1]) ) {
     return raw;
   }
+
   else return u3ke_cue(raw);
+#endif
 }
 
 

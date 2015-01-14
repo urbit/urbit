@@ -1024,7 +1024,7 @@
   ^-  soba
   :-  [p.ank p.bus] 
   %-  flop
-  myz:(change-tree:(zu ank) %c bus)
+  myz:(change-tree:(zu ank) bus)
 ::
 ++  loth
   |=  pat=(map path ,*)
@@ -1892,7 +1892,7 @@
     ?~(way +> $(way t.way, +> (descend i.way)))
   ::
   ++  overwrite                                         ::  write over
-    |=  [pum=umph val=(unit ,[p=cash q=cage])]
+    |=  val=(unit ,[p=cash q=cage])
     ^+  +>
     ?~  q.ank
       ?~  val  +>
@@ -1903,9 +1903,9 @@
     (push-change %mut q.u.q.ank q.u.val)
   ::
   ++  change-tree                                       ::  modify tree
-    |=  [pum=umph bus=ankh]
+    |=  bus=ankh
     ^+  +>
-    =.  +>  (overwrite pum q.bus)
+    =.  +>  (overwrite q.bus)
     =+  [yeg=(~(tap by r.ank) ~) gey=(~(tap by r.bus) ~)]
     =.  +>.$
       |-  ^+  +>.^$

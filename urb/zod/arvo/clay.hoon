@@ -730,7 +730,11 @@
             q.hic
           ^-  kiss
           ?:  ?=(%soft -.q.hic)
-            ((hard kiss) p.q.hic)
+            =+  ((soft kiss) p.q.hic)
+            ?~  -
+              ~&  [%clay-bad-soft -.p.q.hic]
+              !!
+            u.-
           ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
           ~&  [%clay-call-flub (,@tas `*`-.q.hic)]
           ((hard kiss) q.hic)
@@ -770,6 +774,7 @@
         :-  -.zot
         =.  une  (pish:une q.q.hic +.zot ran.zat)
         abet:une(hez.yar ?.(=(%into -.q.hic) hez.yar.une [~ hen]))
+      ~&  %intoing
       [mos ..^$]
     ::
         ?(%ingo %invo)                                   ::  not yet used
