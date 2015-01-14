@@ -654,15 +654,18 @@
   {
     return u3nt
      (c3__tsls,
-             u3k(q_gen),
              u3nq(c3__wtdt,
-                         u3nc(u3_nul, 2),
+                         u3k(q_gen),
+                         u3nc(c3__bczp, c3__null),
+                         u3nc(u3nc(c3__bczp, c3__null), u3k(r_gen))),
+             u3nq(c3__wtsg,
+                         u3nc(u3nc(u3_nul, 2),u3_nul),
                          u3nt(c3__tsgr,
                                      u3nc(u3_nul, 3),
                                      u3k(s_gen)),
                          u3nq(c3__sgpm,
                                      u3k(p_gen),
-                                     u3k(r_gen),
+                                     u3nc(u3_nul, 5),
                                      u3nt(c3__tsgr,
                                                  u3nc(u3_nul, 3),
                                                  u3k(s_gen)))));
