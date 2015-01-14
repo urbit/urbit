@@ -3098,7 +3098,7 @@
     :-  '~'
     =+  e=(met 2 c)
     |-  ^-  tape
-    ?:  =(0 c)
+    ?:  =(0 e)
       ['.' d]
     =.  e  (dec e)
     =+  f=(rsh 2 e c)
@@ -3401,7 +3401,6 @@
             %t
           ?:  =('a' hay)
             ?:  =('s' (cut 3 [2 1] p.p.lot))
-              
               (weld (rip 3 q.p.lot) rex)
             ['~' '.' (weld (rip 3 q.p.lot) rex)]
           ['~' '~' (weld (rip 3 (wood q.p.lot)) rex)]
