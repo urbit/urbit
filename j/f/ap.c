@@ -560,7 +560,7 @@
   {
     return u3nt
       (c3__sggr,
-              u3nc(c3__yelp, u3k(p_gen)),
+              u3nc(c3__mean, u3k(p_gen)),
               u3k(q_gen));
   }
   _open_do_pq(sggl)   //  ~>
