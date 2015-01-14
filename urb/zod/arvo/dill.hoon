@@ -91,7 +91,7 @@
 ++  term-in                                             ::
           $:  pax=path                                  ::
           $=  jof                                       ::
-          $%  [%line p=span]                            ::
+          $%  [%line p=cord]                            ::
               [%res p=span]                             ::
               [%cmd p=char]                             ::
               [%type p=?]                               ::

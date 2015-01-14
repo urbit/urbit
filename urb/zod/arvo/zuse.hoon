@@ -2668,6 +2668,14 @@
   ?:  ?=(| -.mud)  mud
   (mule |.((slam p.mud sam)))
 ::
+++  pack                                                ::  light path encoding
+  |=  [a=term b=path]  ^-  span
+  %+  rap  3  :-  (wack a)
+  (turn b |=(c=span (cat 3 '_' (wack c))))
+::
+++  pick                                                ::  light path decoding
+  |=  a=span  ^-  (unit ,[p=term q=path])
+  (rush a (most cab (sear wick urt:ab)))
 ++  saxo                                                ::  autocanon
   |=  who=ship
   ^-  (list ship)
