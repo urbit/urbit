@@ -141,7 +141,7 @@
   ::
   --
 --
-!:
+::
 ::::  per event
   ::
 |%
@@ -478,7 +478,7 @@
     !>([%rush %term-line `term-line`[prompt [a]~ ~]])
   --
 --
-!:
+::
 ::::  formal interface
   ::
 |_  [hid=hide vat=axle]

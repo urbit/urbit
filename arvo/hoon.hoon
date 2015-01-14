@@ -3031,16 +3031,20 @@
 ::
 ++  wick                                                ::  span format
   |=  a=@
-  ^-  @ta
+  ^-  (unit ,@ta)
   =+  b=(rip 3 a)
-  %+  rap  3
-  |-  ^-  tape
-  ?~  b
-    ~
-  ?:  =('~' i.b)
-    ?~  t.b  !!
-    [?:(=('~' i.t.b) '~' ?>(=('-' i.t.b) '_')) $(b t.t.b)]
-  [i.b $(b t.b)]
+  =-  ?^(b ~ (some (rap 3 (flop c))))
+  =|  c=tape
+  |-  ^-  [b=tape c=tape]
+  ?~  b  [~ c]
+  ?.  =('~' i.b)
+    $(b t.b, c [i.b c])
+  ?~  t.b  [b ~]
+  ?-  i.t.b
+    %'~'  $(b t.t.b, c ['~' c])
+    %'-'  $(b t.t.b, c ['_' c])
+    @     [b ~]
+  ==
 ::
 ++  woad                                                ::  cord format
   |=  a=@ta
@@ -3313,7 +3317,7 @@
             =>  ^+(. .(rex ?~(f.yug rex ['.' (s-co f.yug)])))
             :-  '~'
             ?:  &(=(0 d.yug) =(0 m.yug) =(0 h.yug) =(0 s.yug))
-              ['.' 's' '0' rex]
+              ['s' '0' rex]
             =>  ^+(. ?:(=(0 s.yug) . .(rex ['.' 's' (a-co s.yug)])))
             =>  ^+(. ?:(=(0 m.yug) . .(rex ['.' 'm' (a-co m.yug)])))
             =>  ^+(. ?:(=(0 h.yug) . .(rex ['.' 'h' (a-co h.yug)])))
@@ -3562,7 +3566,7 @@
         :-  '~'        ;~(pfix sig ;~(pose twid (easy [~ %n 0])))
     ==
   ++  nusk
-    (sear |=(a=@ta (rush (wick a) nuck)) urt:ab)
+    :(sear |=(a=@ta (rush a nuck)) wick urt:ab)
   ++  perd
     ;~  pose
       (stag ~ zust)
@@ -7090,6 +7094,8 @@
         [%pear *]
       ?.  =(lum q.q.ham)
         ~
+      ?:  ?=([%tas ~] +.q.ham)
+        [~ %leaf '%' '$' ~]
       =+  fox=~(rend co [~ p.q.ham q.q.ham])
       [~ %leaf ?:(=(['~' ~] fox) fox ['%' fox])]
     ::

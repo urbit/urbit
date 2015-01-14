@@ -202,23 +202,12 @@
   :-  ?~(p.u.a ~ ?~(p.u.b ~ `(grom u.p.u.b u.p.u.a)))
   (grom q.u.b q.u.a)
 ::
-++  lamp
-  |=  con=(unit coin)
-  ^-  (unit path)
-  ?:  ?=([~ %$ %tas @] con)
-    (some [q.p.u.con]~)
-  ?.  ?=([~ %many *] con)  ~
-  %-  zl:jo
-  %+  turn  p.u.con
-  |=  tem=coin
-  ?.(?=([%$ %ta @] tem) ~ (some q.p.tem))
-::
 ++  lump                                                ::  position
   |=  pax=path
   ^-  [p=hapt q=path]
   ?>  ?=([@ @ *] pax)
   :-  :-  (slav %p i.pax)
-      (need (lamp (slay i.t.pax))) 
+      (need (pick i.t.pax))
   t.t.pax
 --
 .  ==                                                   ::  end preface
@@ -574,10 +563,7 @@
   ::
   ++  away                                              ::  application path
     |=  pax=path  ^-  path
-    =+  ?:  &(?=([@tas ~] imp) ((sane %tas) i.imp))
-          imc=[%$ %tas i.imp]
-        imc=[%many (turn imp |=(a=span [%$ %ta a]))]
-    [%a (scot %p our) ~(rent co imc) pax]
+    [%a (scot %p our) ?~(imp %$ (pack imp)) pax]
   ::
   ++  bear                                              ::  write backward
     |=  hen=duct
