@@ -208,7 +208,8 @@ u3i_cell(u3_noun a, u3_noun b)
   c3_assert(!_(u3a_is_junior(u3R, b)));
 
   {
-    c3_w*       nov_w = u3a_walloc(c3_wiseof(u3a_cell));
+    // c3_w*       nov_w = u3a_walloc(c3_wiseof(u3a_cell));
+    c3_w*       nov_w = u3a_celloc();
     u3a_cell* nov_u = (void *)nov_w;
     u3_noun     pro;
 
