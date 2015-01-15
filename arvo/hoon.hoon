@@ -9894,10 +9894,10 @@
       ^-  [p=(list move) q=vase]
       =+  ^=  pru
           ?~  pux
-            ~|  [%swim-call-vane lal]
+            =-  ?^(- - ~&([%swim-call-vane lal] -))
             %+  slur  (slap rig [%cnzy %call]) 
             (slid [%& duc.vil hen] (slix hil))
-          ~|  [%swim-take-vane lal]
+          =-  ?^(- - ~&([%swim-take-vane lal] -))
           %+  slur   (slap rig [%cnzy %take]) 
           ;:  slid
             [%& pah.vil u.pux] 
@@ -9906,6 +9906,7 @@
           ==
       ?~  pru
         ~&  [%swim-lost lal (,@tas +>-.hil)]
+        ~>  %slog.[1 (skol ?~(-.hil +<.hil (type +<.hil)))]
         [~ ves]
       =+  pro=(need pru)
       :-  (said (slap pro [%cnzy %p]))
@@ -10002,6 +10003,7 @@
   ++  jack                                              ::  dispatch card
     |=  [lac=? gum=muse]
     ^-  [[p=(list ovum) q=(list muse)] _fan]
+    =.  lac  |(lac ?=(?(%g %f) p.gum))
     %+  fire
       p.gum 
     ?-    -.r.gum
