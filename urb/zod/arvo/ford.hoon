@@ -1272,7 +1272,7 @@
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit (pair mark ,*)))
-  !!
+  [~ ~]
 ::
 ++  stay                                                ::  save w/o cache
   `axle`+>-.$(pol (~(run by pol) |=(a=baby [tad.a dym.a ~])))
