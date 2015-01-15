@@ -322,7 +322,7 @@
         0w2g.gLmg4.MtrHQ.A5VmH.WPk6G  ::  150, ~ryg, Dan Haffey (fortuna)
         0w0                           ::  151, ~ryx, Tlon (gleba)
         0w0                           ::  152, ~fep, Tlon (gleba)
-        0w3q.4RDyP.CTcbc.ZX4Hj.BH6Hu  ::  153, ~tyr, ~hobmed-hinrym (fidelis)
+        0w2j.T1u2s.BfXjV.ldOGR.aiZrQ  ::  153, ~tyr, ~hobmed-hinrym (fidelis)
         0w0                           ::  154, ~tus, Tlon (gleba)
         0w0                           ::  155, ~tyc, Tlon (gleba)
         0w0                           ::  156, ~leg, Tlon (gleba)
@@ -545,11 +545,6 @@
           =+  dyv=(~(get by qim.caq.dur) had)
           ?~  dyv  ~
           [~ u.dyv ..kuch]
-        ::
-        ++  trox                                        ::    trox:lax:as:go
-          |=  [now=@da]                                 ::  expire by date
-          ^+  +>
-          +>    ::  XX
         ::
         ++  wasc                                        ::    wasc:lax:as:go
           |=  key=code                                  ::  hear foreign code
@@ -1705,19 +1700,20 @@
         ?>  ?=([@ @ *] t.q.q.bon)
         :_  fox
         =+  [cak=i.t.q.q.bon ven=i.t.t.q.q.bon]
-        :~  =+  neh=(claw p.p.bon)
-            ?>  ?=(^ neh)
-            =+  ton=[%waft p.bon r.bon]
-            ::  ~&  [%milk-waft [[ven `path`t.t.t.q.q.bon] t.neh]]
-            :-  ?:  =(%c ven)
-                  ?>  =(%re cak)
-                  [[%c `path`t.t.t.q.q.bon] hen]
-                ?:  =(%e ven)
-                  ?>  |(=(%pr cak) =(%pc cak))
-                  [[%e `path`t.t.t.q.q.bon] hen]
-                [[ven `path`t.t.t.q.q.bon] t.neh]
-            [%sick ton]
-        ==
+        :_  ~
+        =+  neh=(claw p.p.bon)
+        ?>  ?=(^ neh)
+        ?:  ?=(%e ven)
+          ?>  |(=(%pr cak) =(%pc cak))
+          :_  [%sick %wart p.bon cak `path`t.t.t.q.q.bon r.bon]
+          [[%e `path`t.t.t.q.q.bon] hen]
+        =+  ton=[%waft p.bon r.bon]
+        ::  ~&  [%milk-waft [[ven `path`t.t.t.q.q.bon] t.neh]]
+        :_  [%sick ton]
+        ?:  =(%c ven)
+          ?>  =(%re cak)
+          [[%c `path`t.t.t.q.q.bon] hen]
+        [[ven `path`t.t.t.q.q.bon] t.neh]
       ?>  ?=(%q i.q.q.bon)
       ?>  ?=([@ *] t.q.q.bon)
       ?+    i.t.q.q.bon
@@ -1759,7 +1755,7 @@
         %+  turn  paz
         |=  him=ship
         :-  hen
-        [%pass /ye %g %mess [him ye/~] p.p.bon [%txt !>(;;(,@t r.bon))]]
+        [%pass /ye %g %mess [him ye/~] p.p.bon [%txt !>(((hard ,@t) r.bon))]]
       ==
     ::
         %mulk

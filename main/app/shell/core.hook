@@ -64,6 +64,7 @@
       [%comt ~]                                         ::  comment
       [%var p=term q=twig]                              ::  set variable
       [%rvar p=term]                                    ::  unset variable
+      [%help p=term]                                    ::  info about command
   ==                                                    ::
 ++  sign                                                ::
   $%  $:  %g                                            ::
@@ -116,6 +117,7 @@
       (stag %del ;~(pfix hep ace loca))
       (stag %mut ;~(pfix col ace ;~(plug loca expg)))
       (stag %ins ;~(pfix lus ace ;~(plug loca (opts expg))))
+      (stag %help ;~(pfix wut ace ;~(pfix col sym)))
       (stag %path (full ;~(sfix loca(pax paf) (star ace))))
       (stag %var ;~(plug ;~(pfix tis sym) expg))
       (stag %rvar ;~(pfix ;~(plug tis tis) sym))
@@ -139,7 +141,7 @@
   ::
   --
 --
-!:
+::
 ::::  per event
   ::
 |%
@@ -157,12 +159,11 @@
     +>.$(mow (welp mof mow))
   ::
   ++  chew-file
-    |=  [paf=path msg=tape tor=(unit toro)]
+    |=  [paf=path mor=$|(cord toro)]
     ^-  (list move)
-    %+  welp
-      (print palm/[" " ~ ~ ~]^~[leaf/msg (dank:ut paf)])
-    %+  turn  (drop tor)
-    |=(a=toro [ost %pass writ/paf %c %info our.hid a])
+    ?@  mor
+      (print palm/[" " ~ ~ ~]^~[leaf/(trip mor) (dank:ut paf)])
+    [ost %pass writ/paf %c %info our.hid mor]~
   ::
   ++  cubs                                              ::  tasks with open /in
     %-  sort  :_  |=([a=span b=span] (lth (slav %ud a) (slav %ud b)))
@@ -185,6 +186,7 @@
       %hoon  (eat-hoon +.com)
       %ins   (eat-ins +.com)
       %mut   (eat-mut +.com)
+      %help  (eat-help +.com)
       %path  (eat-path +.com)
       %run   (eat-run you +.com)
       %rvar  (eat-rvar +.com)
@@ -194,11 +196,10 @@
   ++  eat-del
     |=  paf=path
     ^+  +>
-    =.  &3.paf  '='
     %-  blab
     %+  chew-file  paf
-    ?^  (file paf)  ["! none" ~]
-    ["deleted" `(fray paf)]
+    ?~  (file paf)  '! none'
+    (fray paf)
   ::
   ++  eat-end                                           ::  XX  clean up state
     |=  poc=(each ,@u cord)
@@ -231,21 +232,34 @@
   ++  eat-ins
     |=  [paf=path gen=(unit twig)]
     ^+  +>
-    =.  &3.paf  '='
     %-  blab
     %+  chew-file  paf
-    ?^  (file paf)  ["! exists" ~]
-    :-  "written"
-    `(foal paf %$ (exec (fall gen [%bczp atom/%t])))
+    ?^  (file paf)  '! exists'
+    (foal paf %$ (exec (fall gen [%bczp atom/%t])))
   ::
   ++  eat-mut
     |=  [paf=path gen=twig]
     ^+  +>
-    =.  &3.paf  '='
     %-  blab
     %+  chew-file  paf
-    ?^  (file paf)  ["! none" ~]
-    ["changed" `(foal paf %$ (exec gen))]
+    ?~  (file paf)  '! none'
+    (foal paf %$ (exec gen))
+  ::
+  ++  eat-help
+    |=  app=term
+    ^+  +>
+    %-  blab  %-  print
+    ^-  tank
+    =+  rup=/(scot %p our.hid)/main/(scot %da lat.hid)
+    =+  paf=`path`(welp rup /app/[app]/core/hook)
+    =+  src=(file paf)
+    ?.  ?=([~ @t] src)
+      leaf/"app {<app>} does not exist"
+    =+  cot=;~(pfix col col (plus ace) (star prn))
+    =+  led=(cot 1^1 (trip u.src))
+    ?^  q.led
+      leaf/"::  {(wonk led)}"
+    palm/[" " ``~]^~[leaf/"no leading comment in" >paf<]
   ::
   ++  eat-path
     |=  paf=path
@@ -257,9 +271,9 @@
     |=  [you=ship mud=(list mand) mad=mand]
     ^+  +>
     ::  =.  +>.$  (blab (print leaf/"+ :{(trip p.mad)}"))
-    ?:  .=  [0 0 0]
-        +:[.^(%cy /(scot %p our.hid)/main/(scot %da lat.hid)/app/[p.mad])]
-      (blab (print leaf/"{<p.mad>} does not exist"))
+    ?.  =-  (~(has by r:(arch -)) %core)
+        +:.^(%cy /(scot %p our.hid)/main/(scot %da lat.hid)/app/[p.mad])
+      (blab (print leaf/"app {<p.mad>} does not exist"))
     =|  inp=(unit span) 
     =<  +>.$
     %+  reel
@@ -464,7 +478,7 @@
     !>([%rush %term-line `term-line`[prompt [a]~ ~]])
   --
 --
-!:
+::
 ::::  formal interface
   ::
 |_  [hid=hide vat=axle]

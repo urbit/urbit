@@ -1,21 +1,17 @@
+::  MoVe file from one location to another
+::
+::::  /hook/core/mv/app
+  ::
+/+    sh-utils
 !:
+::::
+  ::
 |_  [hid=hide ~]
-++  poke-mv-args
-  |=  [ost=bone you=ship input=path output=path ~]
-  :_  +>.$
-  :*  :^  ost  %pass  /mv
-      :^  %c  %info  our.hid
-      (furl (foal output .^(%cx input)) (fray input))
-      [ost %pass / %g %cide %$]
-      [ost %give %nice ~]
-      %+  turn  (~(tap by sup.hid))
-      |=  [ost=bone *]
-      :^  ost  %give  %rush
-      :-  %tang  :_  ~
-      leaf/"moved"
-  ==
-++  peer
-  |=
-    *
-  `+>
+++  peer  ,_`.
+++  poke--args
+  %+  gate-bang  
+    |=  [input=path output=path ~]
+    :^  %c  %info  our.hid
+    (furl (foal output .^(%cx input)) (fray input))
+  (args-into-gate . ,_[%txt 'moved'])
 --

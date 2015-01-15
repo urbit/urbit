@@ -3,7 +3,7 @@
 ::::  /hook/hymn/front/twit/app
   ::
 /?    314                                               ::  need urbit 314
-/=    urbit        /:/===/lib/urb:/hymn/                ::  urbit library (js)
+/=    urbit        /:/===lib/urb:/hymn/                ::  urbit library (js)
 /=    style        /:/%%%/style:/hymn/                  ::  stylesheet (css)
 /=    application  /:/%%%/app:/hymn/                    ::  application (js)
 !:
