@@ -529,28 +529,6 @@ u3a_calloc(size_t num_i, size_t len_i)
   return out_w;
 }
 
-#if 0
-/* u3a_malloc(): allocate storage measured in bytes.
-*/
-void*
-u3a_malloc(size_t len_i)
-{
-  c3_w len_w = (c3_w)len_i;
-
-  return u3a_walloc((len_w + 3) >> 2);
-}
-
-/* u3a_realloc(): realloc in bytes.
-*/
-void*
-u3a_realloc(void* lag_v, size_t len_i)
-{
-  c3_w len_w = (c3_w)len_i;
-
-  return u3a_wealloc(lag_v, (len_w + 3) >> 2);
-}
-
-#else
 /* u3a_malloc(): aligned storage measured in bytes.
 */
 void*
@@ -574,6 +552,43 @@ u3a_malloc(size_t len_i)
   out_w[-1] = pad_w;
 
   return out_w;
+}
+
+/* u3a_celloc(): allocate a cell.
+*/
+c3_w*
+u3a_celloc(void)
+{
+  u3p(u3a_fbox) cel_p;
+
+  if ( (u3R == &(u3H->rod_u)) || !(cel_p = u3R->all.cel_p) ) {
+    return u3a_walloc(c3_wiseof(u3a_cell));
+  }
+  else {
+    u3a_box* box_u = &(u3to(u3a_fbox, cel_p)->box_u);
+
+    box_u->use_w = 1;
+    u3R->all.cel_p = u3to(u3a_fbox, cel_p)->nex_p;
+
+    return u3a_boxto(box_u);
+  }
+}
+
+/* u3a_cfree(): free a cell.
+*/
+void
+u3a_cfree(c3_w* cel_w)
+{
+  if ( u3R == &(u3H->rod_u) ) {
+    return u3a_wfree(cel_w);
+  } 
+  else {
+    u3a_box*      box_u = u3a_botox(cel_w);
+    u3p(u3a_fbox) fre_p = u3of(u3a_fbox, box_u); 
+
+    u3to(u3a_fbox, fre_p)->nex_p = u3R->all.cel_p;
+    u3R->all.cel_p = fre_p;
+  }
 }
 
 /* u3a_realloc(): aligned realloc in bytes.
@@ -639,7 +654,6 @@ u3a_free2(void* tox_v, size_t siz_i)
 {
   return u3a_free(tox_v);
 }
-#endif
 
 #if 1
 /* _me_wash_north(): clean up mug slots after copy.
@@ -1045,9 +1059,14 @@ u3a_take(u3_noun som)
     return som;
   }
   else {
-    return _(u3a_is_north(u3R))
+    u3t_on(coy_o);
+
+    som = _(u3a_is_north(u3R))
               ? _me_take_north(som)
               : _me_take_south(som);
+
+    u3t_off(coy_o);
+    return som;
   }
 }
 
@@ -1138,7 +1157,7 @@ top:
           if ( !_(u3a_is_cat(h_dog)) ) {
             _me_lose_north(h_dog);
           }
-          u3a_wfree(dog_w);
+          u3a_cfree(dog_w);
           if ( !_(u3a_is_cat(t_dog)) ) {
             dog = t_dog;
             goto top;
@@ -1178,7 +1197,7 @@ top:
           if ( !_(u3a_is_cat(h_dog)) ) {
             _me_lose_south(h_dog);
           }
-          u3a_wfree(dog_w);
+          u3a_cfree(dog_w);
           if ( !_(u3a_is_cat(t_dog)) ) {
             dog = t_dog;
             goto top;
@@ -1512,7 +1531,7 @@ u3a_sweep(void)
 c3_w*
 u3a_slab(c3_w len_w)
 {
-  c3_w*       nov_w = u3a_walloc(len_w + c3_wiseof(u3a_atom));
+  c3_w*     nov_w = u3a_walloc(len_w + c3_wiseof(u3a_atom));
   u3a_atom* pug_u = (void *)nov_w;
 
   pug_u->mug_w = 0;
