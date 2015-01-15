@@ -1,0 +1,19 @@
+::
+::::  /hook/core/rodeo/lib
+  ::  
+  ::  This file is in the public domain.
+  ::
+/?    314
+/-    *rodeo
+::
+::::
+  ::
+|%
+++  main                                                ::  main story
+  |=  our=ship  ^-  cord
+  =+  can=(clan our)
+  ?+  can  %porch
+    %czar  %court
+    %king  %floor
+  == 
+--

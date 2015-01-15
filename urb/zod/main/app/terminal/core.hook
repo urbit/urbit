@@ -119,7 +119,7 @@
       ?-  gal
           %term   [ost %give %rust %hymn page]          ::  hymn front end
           %lines  [ost %give %rust %term-line tel]      ::  term-line output
-      ==
+      == 
     ==
   ::
   ++  poke
