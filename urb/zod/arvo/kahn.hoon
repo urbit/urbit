@@ -62,7 +62,7 @@
   =+  lox=((soft axle) old)
   ^+  ..^$
   ?~  lox
-    ~&  %lunt-reset
+    ~&  %khan-reset
     ..^$
   ..^$(+>- u.lox)
 ::
