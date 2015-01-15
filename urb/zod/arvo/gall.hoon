@@ -954,7 +954,7 @@
         ::
             %w                                          ::  autoboot
           ?>  ?=([%drug @ @ ~] t.pax)
-          =+  :*  sin=((hard ,[%c %writ p=riot]) q.hin)
+          =+  :*  sin=((hard ,[%c %writ p=(unit)]) q.hin)
                   our=(need (slaw %p i.t.t.pax))
                   syd=(need ((sand %tas) i.t.t.t.pax))
               ==
