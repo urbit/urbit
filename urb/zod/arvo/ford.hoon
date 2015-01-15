@@ -193,76 +193,6 @@
   =+  gib=(wox p.n.r.arc)
   ?~(gib rac [[u.gib p.n.r.arc] rac])
 ::
---
-.  ==
-=|  axle
-=*  lex  -
-|=  [now=@da eny=@ ski=sled]                            ::  activate
-^?                                                      ::  opaque core
-~%  %ford-d  +>+>+>+>+>+>  ~
-|%                                                      ::
-++  call                                                ::  request
-  ~/  %call
-  |=  [hen=duct hic=(hypo (hobo kiss))]
-  ^-  [p=(list move) q=_..^$]
-  =>  .(q.hic ?.(?=(%soft -.q.hic) q.hic ((hard kiss) p.q.hic)))
-  =+  ska=(slod ski)
-  =+  ^=  our  ^-  @p
-      ?-  -.q.hic
-        %exec  p.q.hic
-      ==
-  =+  ^=  bay  ^-  baby
-      =+  buy=(~(get by pol.lex) our)
-      ?~(buy *baby u.buy)
-  =^  mos  bay
-    abet:(~(apex za [[our ~ hen] [now eny ska] ~] bay) q.q.hic)
-  [mos ..^$(pol (~(put by pol) our bay))]
-::
-++  doze
-  |=  [now=@da hen=duct]
-  ^-  (unit ,@da)
-  ~
-::
-++  load                                                ::  highly forgiving
-  |=  old=*
-  =.  old  
-      ?.  ?=([%0 *] old)  old                           ::  remove at 1
-      :-  %1 
-      |-  ^-  *
-      ?~  +.old  ~
-      ?>  ?=([n=[p=* q=[tad=* dym=* jav=*]] l=* r=*] +.old)
-      :-  [p.n.+.old [tad.q.n.+.old dym.q.n.+.old ~]]
-      [$(+.old l.+.old) $(+.old r.+.old)]
-  =+  lox=((soft axle) old)
-  ^+  ..^$
-  ?~  lox
-    ~&  %ford-reset
-    ..^$
-  ..^$(+>- u.lox)
-::
-++  scry
-  |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
-  ^-  (unit (unit (pair mark ,*)))
-  ~
-::
-++  stay                                                ::  save w/o cache
-  `axle`+>-.$(pol (~(run by pol) |=(a=baby [tad.a dym.a ~])))
-::
-++  take                                                ::  response
-  ~/  %take
-  |=  [tea=wire hen=duct hin=(hypo sign)]
-  ^-  [p=(list move) q=_..^$]
-  =+  ska=(slod ski)
-  ?>  ?=([@ @ @ ~] tea)
-  =+  :*  our=(need (slaw %p i.tea))
-          num=(need (slaw %ud i.t.tea))
-          tik=(need (slaw %ud i.t.t.tea))
-      ==
-  =+  bay=(need (~(get by pol.lex) our))
-  =^  mos  bay
-    abet:(~(axon za [[our tea hen] [now eny ska] ~] bay) num tik q.hin)
-  [mos ..^$(pol (~(put by pol) our bay))]
-::
 ++  za                                                  ::  per event
   =|  $:  $:  $:  our=ship                              ::  computation owner
                   tea=wire                              ::  event place
@@ -276,7 +206,6 @@
           ==                                            ::
           bay=baby                                      ::  all owned state
       ==                                                ::
-  ~%  %za  +>  ~
   |%
   ++  abet                                              ::  resolve
     ^-  [(list move) baby]
@@ -312,7 +241,6 @@
     ==
   ::
   ++  zo
-    ~%  %zo  +>  ~
     |_  [num=@ud task]
     ++  abet  %_(..zo q.tad.bay (~(put by q.tad.bay) num +<+))
     ++  amok  
@@ -657,7 +585,6 @@
       --
     ::
     ++  kale                                            ::  mutate
-      ~/  %kale
       |=  [cof=cafe kas=silk muy=(list (pair wing silk))]
       ^-  (bolt cage)
       %+  cope
@@ -676,10 +603,9 @@
       (fine cof p.cay vax)
     ::
     ++  keel                                            ::  apply mutations
-      ~/  %keel
       |=  [cof=cafe suh=vase yom=(list (pair wing vase))]
       ^-  (bolt vase)
-      %^  maim-a  cof 
+      %^  maim  cof 
         %+  slop  suh
         |-  ^-  vase
         ?~  yom  [[%atom %n] ~]
@@ -744,7 +670,6 @@
       ((lake for [our %main [%da now]]) cof [%noun som])
     ::
     ++  lane                                            ::  type infer
-      ~/  %lane
       |=  [cof=cafe typ=type gen=twig]
       %+  (cowl cof)  (mule |.((~(play ut typ) gen)))
       |=(ref=type ref)
@@ -833,7 +758,7 @@
       ?:  &((slab %grow p.pro) (slab too p:(slap pro [%cnzy %grow])))
         %+  cope  (keel cof pro [[%& 6]~ vax]~)
         |=  [cof=cafe pox=vase]
-        (maim-b cof pox [%tsgr [%cnzy %grow] [%cnzy too]])
+        (maim cof pox [%tsgr [%cnzy %grow] [%cnzy too]])
       %+  cope  (fang cof too bek)
       |=  [cof=cafe pro=vase]
       =+  ^=  zat  ^-  (unit vase)
@@ -887,7 +812,6 @@
       ^$(cof cof, for i.yaw, yaw t.yaw, vax yed)
     ::
     ++  mail                                            ::  cached mint
-      ~/  %mail
       |=  [cof=cafe sut=type gen=twig]
       ^-  (bolt (pair type nock))
       %+  (clef %slim)  (fine cof sut gen) 
@@ -899,23 +823,12 @@
       ==
     ::
     ++  maim                                            ::  slap
-      ~/  %maim
       |=  [cof=cafe vax=vase gen=twig]
       ^-  (bolt vase)
       %+  cope  (mail cof p.vax gen)
       |=  [cof=cafe typ=type fol=nock]
       %+  (coup cof)  (mock [q.vax fol] (mole ska))
       |=(val=* `vase`[typ val])
-    ::
-    ++  maim-a  ~/(%maim-a |=([cof=cafe vax=vase gen=twig] (maim cof vax gen)))
-    ++  maim-b  ~/(%maim-b |=([cof=cafe vax=vase gen=twig] (maim cof vax gen)))
-    ++  maim-c  ~/(%maim-c |=([cof=cafe vax=vase gen=twig] (maim cof vax gen)))
-    ++  maim-d  ~/(%maim-d |=([cof=cafe vax=vase gen=twig] (maim cof vax gen)))
-    ++  maim-e  ~/(%maim-e |=([cof=cafe vax=vase gen=twig] (maim cof vax gen)))
-    ++  maim-f  ~/(%maim-f |=([cof=cafe vax=vase gen=twig] (maim cof vax gen)))
-    ++  maim-g  ~/(%maim-g |=([cof=cafe vax=vase gen=twig] (maim cof vax gen)))
-    ++  maim-h  ~/(%maim-h |=([cof=cafe vax=vase gen=twig] (maim cof vax gen)))
-    ++  maim-i  ~/(%maim-i |=([cof=cafe vax=vase gen=twig] (maim cof vax gen)))
     ::
     ++  make                                            ::  reduce silk
       |=  [cof=cafe kas=silk]
@@ -991,7 +904,7 @@
         %+  cool  |.(leaf/"ford: ride {<`@p`(mug kas)>}")
         %+  cope  $(kas q.kas)
         |=  [cof=cafe cay=cage]
-        %+  cope  (maim-c cof q.cay p.kas)
+        %+  cope  (maim cof q.cay p.kas)
         |=  [cof=cafe vax=vase]
         (fine cof %noun vax)
       ::
@@ -1003,7 +916,6 @@
       ==
     ::
     ++  malt                                            ::  cached slit
-      ~/  %malt
       |=  [cof=cafe gat=type sam=type]
       ^-  (bolt type)
       %+  (clef %slit)  (fine cof gat sam)
@@ -1015,7 +927,6 @@
       ==
     ::
     ++  maul                                            ::  slam
-      ~/  %maul
       |=  [cof=cafe gat=vase sam=vase]
       ^-  (bolt vase)
       %+  cope  (malt cof p.gat p.sam)
@@ -1031,7 +942,6 @@
               zeg=(set term)                            ::  library guard
               boy=(list twig)                           ::  body stack
           ==
-      ~%  %meow  +>+>  ~
       |%
       ++  able                                          ::  assemble preamble
         ^-  twig
@@ -1055,17 +965,16 @@
         [%ash [%tssg (flop boy)]]
       ::
       ++  abut                                          ::  generate
-        ~/  %abut
         |=  [cof=cafe hyd=hood]
         ^-  (bolt vase)
         %+  cope  (apex cof hyd)
         |=  [cof=cafe sel=_..abut]
         =.  ..abut  sel
-        %+  cope  (maim-d cof pit able)
+        %+  cope  (maim cof pit able)
         |=  [cof=cafe bax=vase]
         %+  cope  (chap cof bax [%fan fan.hyd])
         |=  [cof=cafe gox=vase]
-        %+  cope  (maim-e cof (slop gox bax) [%tssg (flop boy)])
+        %+  cope  (maim cof (slop gox bax) [%tssg (flop boy)])
         |=  [cof=cafe fin=vase]
         (fine cof fin) 
         ::  ~>  %slog.[0 ~(duck ut p.q.cay)]
@@ -1137,13 +1046,12 @@
         (slop $(doy l.doy) $(doy r.doy))
       ::
       ++  chap                                          ::  produce resources
-        ~/  %chap
         |=  [cof=cafe bax=vase hon=horn]
         ^-  (bolt vase)
         ?-    -.hon
-            %ape  (maim-f cof bax p.hon)
+            %ape  (maim cof bax p.hon)
             %arg  
-          %+  cope  (maim-g cof bax p.hon)
+          %+  cope  (maim cof bax p.hon)
           |=  [cof=cafe gat=vase]
           (maul cof gat !>([how arg]))
         ::
@@ -1190,14 +1098,14 @@
             %saw  
           %+  cope  $(hon q.hon)
           |=  [cof=cafe sam=vase]
-          %+  cope  (maim-h cof bax p.hon)
+          %+  cope  (maim cof bax p.hon)
           |=  [cof=cafe gat=vase]
           (maul cof gat sam)
         ::
             %sic
           %+  cope  $(hon q.hon)
           |=  [cof=cafe vax=vase]
-          %+  cope  (maim-i cof bax [%bctr p.hon])
+          %+  cope  (maim cof bax [%bctr p.hon])
           |=  [cof=cafe tug=vase]
           ?.  (~(nest ut p.tug) | p.vax)
             (flaw cof [%leaf "type error: {<p.hon>} {<q.hon>}"]~)
@@ -1314,4 +1222,72 @@
       exec(q.kig (~(del by q.kig) tik))
     --
   --
+::
+--
+.  ==
+=|  axle
+=*  lex  -
+|=  [now=@da eny=@ ski=sled]                            ::  activate
+^?                                                      ::  opaque core
+~%  %ford-d  +>+>+>+>+>+>  ~
+|%                                                      ::
+++  call                                                ::  request
+  |=  [hen=duct hic=(hypo (hobo kiss))]
+  ^-  [p=(list move) q=_..^$]
+  =>  .(q.hic ?.(?=(%soft -.q.hic) q.hic ((hard kiss) p.q.hic)))
+  =+  ska=(slod ski)
+  =+  ^=  our  ^-  @p
+      ?-  -.q.hic
+        %exec  p.q.hic
+      ==
+  =+  ^=  bay  ^-  baby
+      =+  buy=(~(get by pol.lex) our)
+      ?~(buy *baby u.buy)
+  =^  mos  bay
+    abet:(~(apex za [[our ~ hen] [now eny ska] ~] bay) q.q.hic)
+  [mos ..^$(pol (~(put by pol) our bay))]
+::
+++  doze
+  |=  [now=@da hen=duct]
+  ^-  (unit ,@da)
+  ~
+::
+++  load                                                ::  highly forgiving
+  |=  old=*
+  =.  old  
+      ?.  ?=([%0 *] old)  old                           ::  remove at 1
+      :-  %1 
+      |-  ^-  *
+      ?~  +.old  ~
+      ?>  ?=([n=[p=* q=[tad=* dym=* jav=*]] l=* r=*] +.old)
+      :-  [p.n.+.old [tad.q.n.+.old dym.q.n.+.old ~]]
+      [$(+.old l.+.old) $(+.old r.+.old)]
+  =+  lox=((soft axle) old)
+  ^+  ..^$
+  ?~  lox
+    ~&  %ford-reset
+    ..^$
+  ..^$(+>- u.lox)
+::
+++  scry
+  |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
+  ^-  (unit (unit (pair mark ,*)))
+  ~
+::
+++  stay                                                ::  save w/o cache
+  `axle`+>-.$(pol (~(run by pol) |=(a=baby [tad.a dym.a ~])))
+::
+++  take                                                ::  response
+  |=  [tea=wire hen=duct hin=(hypo sign)]
+  ^-  [p=(list move) q=_..^$]
+  =+  ska=(slod ski)
+  ?>  ?=([@ @ @ ~] tea)
+  =+  :*  our=(need (slaw %p i.tea))
+          num=(need (slaw %ud i.t.tea))
+          tik=(need (slaw %ud i.t.t.tea))
+      ==
+  =+  bay=(need (~(get by pol.lex) our))
+  =^  mos  bay
+    abet:(~(axon za [[our tea hen] [now eny ska] ~] bay) num tik q.hin)
+  [mos ..^$(pol (~(put by pol) our bay))]
 --
