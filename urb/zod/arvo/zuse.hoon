@@ -1247,22 +1247,31 @@
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ++  query                                             ::    query:ze
     |=  ren=?(%u %v %x %y %z)                           ::  endpoint query
-    ^-  (unit ,*)
+    ^-  (unit cage)
     ?-  ren
-      %u  [~ `rang`+<+>.query]
-      %v  [~ `dome`+<+<.query]
+      %u  [~ %rang !>(`rang`+<+>.query)]
+      %v  [~ %done !>(`dome`+<+<.query)]
       %x  ?~(q.ank ~ [~ q.u.q.ank])
-      %y  [~ as-arch]
-      %z  [~ ank]
+      %y  [~ %arch !>(as-arch)]
+      %z  [~ %ankh !>(ank)]
     ==
   ::
   ++  rewind                                            ::    rewind:ze
     |=  yon=aeon                                        ::  rewind to aeon
-    ^+  +>
-    ?:  =(let yon)  +>
+    ^-  (unit ,_+>)
+    ?:  =(let yon)  `+>
     ?:  (gth yon let)  !!                               ::  don't have version
-    !!
-    ::  +>(ank (checkout-ankh q:(aeon-to-yaki yon)), let yon)
+    =+  hat=q:(aeon-to-yaki yon)
+    ?:  (~(any by hat) |=(a=lobe ?=(%delta [-:(lobe-to-blob a)])))
+      ~
+    =+  ^-  (map path bulb)
+        %-  ~(run by hat)
+        |=  a=lobe
+        ^-  bulb
+        =+  (lobe-to-blob a)
+        ?<  ?=(%delta -.-)
+        -
+    `+>.$(ank (checkout-ankh -), let yon)
   ::
   ::::
   ++  update-lat                                        ::   update-lat:ze
@@ -1298,7 +1307,11 @@
         %ins                                            ::  insert if not exist
       ?:  (~(has by bar) pat)  !!                       ::
       ?:  (~(has by hat) pat)  !!                       ::
-      (~(put by bar) pat (make-direct p.mys))
+      %+  ~(put by bar)  pat
+      %-  make-direct
+      ?:  &(?=(%mime -.p.mys) =([%hook ~] (slag (dec (lent pat)) pat)))
+        `cage`[%hook [%atom %t] +.+.q.q.p.mys]
+      p.mys
         %del                                            ::  delete if exists
       ?.  |((~(has by hat) pat) (~(has by bar) pat))  !!
       (~(del by bar) pat)
@@ -1786,25 +1799,28 @@
   ::
   ++  read                                              ::    read:ze
     |=  mun=mood                                        ::  read at point
-    ^-  (unit)
+    ^-  (unit cage)
     ?:  ?=(%v p.mun)
-      [~ `dome`+<+<.read]
+      [~ %dome !>(`dome`+<+<.read)]
     ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))
-      ?^(r.mun ~ [~ let])
+      ?^(r.mun ~ [~ %aeon !>(let)])
     ?:  ?=(%w p.mun)
       =+  ^=  yak
           %-  aeon-to-yaki
           let
-      ?^(r.mun ~ [~ [t.yak (forge-nori yak)]])
+      ?^(r.mun ~ [~ %w !>([t.yak (forge-nori yak)])])
       ::?>  ?=(^ hit)  ?^(r.mun ~ [~ i.hit])     ::  what do?? need [@da nori]
     (query(ank ank:(descend-path:(zu ank) r.mun)) p.mun)
   ::
   ++  read-at-aeon                                      ::    read-at-aeon:ze
     |=  [yon=aeon mun=mood]                             ::  seek and read
-    ^-  (unit)
+    ^-  (unit cage)
     ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))                ::  NB only for speed
-      ?^(r.mun ~ [~ yon])
-    (read:(rewind yon) mun)
+      ?^(r.mun ~ [~ %aeon !>(yon)])
+    %+  biff
+      (rewind yon)
+    |=  a=_+>.$
+    (read:a mun)
   ::
   ++  equiv                                             ::  test paths
     |=  [p=(map path lobe) q=(map path lobe)]
@@ -3084,7 +3100,7 @@
 ++  rant                                                ::  namespace binding
           $:  p=[p=care q=case r=@tas]                  ::  clade release book
               q=path                                    ::  spur
-              r=*                                       ::  data
+              r=cage                                    ::  data
           ==                                            ::
 ++  rave                                                ::  general request
           $%  [& p=mood]                                ::  single request

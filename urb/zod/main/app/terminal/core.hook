@@ -4,7 +4,7 @@
   ::
 /?    314                                               ::  need urbit 314
 /-    term-line, term-in, term-ctrl, kyev
-/=    stat  /:/%%/:/hymn/
+::/=    stat  /:/%%/:/hymn/
 ::
 ::::  structures
   ::
@@ -103,18 +103,18 @@
     [(flop mow) (~(put by hiz) pax tel)]
   ::
   ++  page
-::    ;html
-::      ;head
-::        ;title: Not yet
-::      ==
-::      ;body;
-::    ==
-    %.  stat
-    %+  inject
-      ~[%html %head]
-    ;=  ;script: urb.appl = "{(trip app.hid)}"
-        ;script: urb.term = \{pax: "{(spud pax)}"}
+    ;html
+      ;head
+        ;title: Not yet
+      ==
+      ;body;
     ==
+::    %.  stat
+::    %+  inject
+::      ~[%html %head]
+::    ;=  ;script: urb.appl = "{(trip app.hid)}"
+::        ;script: urb.term = \{pax: "{(spud pax)}"}
+::    ==
   ::
   ++  peer
     |=  gal=glas

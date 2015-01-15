@@ -1005,9 +1005,9 @@ _unix_desk_sync_into(u3_noun  who,
   xun = _unix_dir_ankh(dir_u);
   bur = _unix_desk_peek(hox, u3k(syd), u3k(u3A->wen));
 
-  if ( (c3n == u3r_sing(u3h(xun), u3h(bur))))
+  if ( (c3n == u3r_sing(u3h(xun), u3h(u3t(bur)))))
   {
-    doz = u3dc("cost", xun, bur);
+    doz = u3dc("cost", xun, u3t(bur));
 
     pax = u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul);
     fav = u3nq(c3__into, who, syd, u3nc(c3y, doz));

@@ -105,7 +105,7 @@
           $:  nix=@ud                                   ::  request index
               bom=(map ,@ud ,[p=duct q=rave])           ::  outstanding
               fod=(map duct ,@ud)                       ::  current requests
-              haw=(map mood (unit))                     ::  simple cache
+              haw=(map mood (unit cage))                ::  simple cache
           ==                                            ::
 ++  room                                                ::  fs per ship
           $:  hun=duct                                  ::  terminal duct
@@ -164,7 +164,7 @@
     ::
     ++  aver                                            ::  read
       |=  mun=mood
-      ^-  (unit (unit ,*))
+      ^-  (unit (unit cage))
       ?:  &(=(p.mun %u) !=(p.q.mun now))                ::  prevent bad things
         ~&  [%clay-fail p.q.mun %now now]
         !!
@@ -189,14 +189,14 @@
       %_(+> tag :_(tag [hen /tyme %t %rest tym]))
     ::
     ++  blab                                            ::  ship result
-      |=  [hen=duct mun=mood dat=*]
+      |=  [hen=duct mun=mood dat=cage]
       ^+  +>
       +>(byn [[hen ~ [p.mun q.mun syd] r.mun dat] byn])
     ::
     ++  bleb                                            ::  ship sequence
       |=  [hen=duct ins=@ud hip=nako]
       ^+  +>
-      (blab hen [%w [%ud ins] ~] hip)
+      (blab hen [%w [%ud ins] ~] %nako !>(hip))
     ::
     ++  blub                                            ::  ship stop
       |=  hen=duct
@@ -524,7 +524,7 @@
       ?~  nex  +>+.^$
       ?~  u.nex  +>+.^$  ::  should never happen
       =.  +>+.^$
-        =+  roo=(edis ((hard nako) u.u.nex))
+        =+  roo=(edis ((hard nako) q.q.u.u.nex))
         ?>(?=(^ ref.roo) roo)
       %=  $
         haw.u.ref  (~(del by haw.u.ref) nez)
@@ -774,7 +774,6 @@
         :-  -.zot
         =.  une  (pish:une q.q.hic +.zot ran.zat)
         abet:une(hez.yar ?.(=(%into -.q.hic) hez.yar.une [~ hen]))
-      ~&  %intoing
       [mos ..^$]
     ::
         ?(%ingo %invo)                                   ::  not yet used
@@ -860,7 +859,7 @@
   ::
   ++  scry                                              ::  inspect
     |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
-    ^-  (unit (unit (pair mark ,*)))
+    ^-  (unit (unit cage))
     =+  got=(~(has by fat.ruf) his)
     =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
     ?~  luk  [~ ~]
@@ -868,13 +867,11 @@
       [~ ~]
     =+  run=((soft care) ren)
     ?~  run  [~ ~]
-    %+  bind
-      %.  [u.run u.luk tyl]
-      =<  aver
-      ?:  got
-        (di:(un his now ~ ruf) syd)
-      (do now ~ [his his] syd ruf)
-    |=(a=(unit) (bind a |=(b=* [%noun b])))
+    %.  [u.run u.luk tyl]
+    =<  aver
+    ?:  got
+      (di:(un his now ~ ruf) syd)
+    (do now ~ [his his] syd ruf)
   ::
   ++  stay  [%0 ruf]
   ++  take                                              ::  accept response

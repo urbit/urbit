@@ -236,7 +236,7 @@
     %+  chew-file  paf
     ?^  (file paf)  ["! exists" ~]
     :-  "written"
-    `(foal paf q:(exec (fall gen [%bczp atom/%t])))
+    `(foal paf %$ (exec (fall gen [%bczp atom/%t])))
   ::
   ++  eat-mut
     |=  [paf=path gen=twig]
@@ -245,7 +245,7 @@
     %-  blab
     %+  chew-file  paf
     ?^  (file paf)  ["! none" ~]
-    ["changed" `(foal paf q:(exec gen))]
+    ["changed" `(foal paf %$ (exec gen))]
   ::
   ++  eat-path
     |=  paf=path
