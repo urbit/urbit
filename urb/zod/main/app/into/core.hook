@@ -1,5 +1,8 @@
 !:
+::::
+  ::
 |_  [hid=hide ~]
+++  peer  ,_`.
 ++  poke-into-args
   |=  [ost=bone you=ship pax=path dat=@ ~]
   :_  +>.$
@@ -12,8 +15,4 @@
       :-  %tang  :_  ~
       leaf/"written"
   ==
-++  peer
-  |=
-    *
-  `+>
 --

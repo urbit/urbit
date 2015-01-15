@@ -1,19 +1,16 @@
+::  Desk sync
+::  
+::::  /hook/core/sync/app
+  ::
+/+    sh-utils
 !:
+::::
+  ::
 |_  [hid=hide ~]
-++  poke-sync-args
-  |=  [ost=bone you=ship syd=@tas her=@p sud=@tas ~]
-  :_  +>.$
-  :*  [ost %pass /sync %c %font our.hid syd her sud]
-      [ost %pass / %g %cide %$]
-      [ost %give %nice ~]
-      %+  turn  (~(tap by sup.hid))
-      |=  [ost=bone *]
-      :^  ost  %give  %rush
-      :-  %tang  :_  ~
-      leaf/"synced"
-  ==
-++  peer
-  |=
-    *
-  `+>
+++  peer  ,_`.
+++  poke--args
+  %+  gate-bang  
+    |=  [syd=@tas her=@p sud=@tas ~]
+    [%c %font our.hid syd her sud]
+  (args-into-gate . ,_[%txt 'synced'])
 --

@@ -117,7 +117,7 @@ static u3j_harm _mood__hoon_rexp_a[] = {{".2", u3we_rexp}, {}};
 static u3j_harm _mood__hoon_trip_a[] = {{".2", u3we_trip}, {}};
 
 static u3j_harm _mood__hoon__aesc_en_a[] = {{".2", u3wea_en}, {}};
-static u3j_harm _mood__hoon__aesc_de_a[] = {{".2", u3wea_en}, {}};
+static u3j_harm _mood__hoon__aesc_de_a[] = {{".2", u3wea_de}, {}};
 static u3j_core _mood__hoon__aesc_d[] =
   { { "en", _mood__hoon__aesc_en_a },
     { "de", _mood__hoon__aesc_de_a },

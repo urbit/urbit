@@ -1,5 +1,8 @@
 !:
+::::
+  ::
 |_  [hid=hide ~]
+++  peer  ,_`.
 ++  poke-cp-args
   |=  [ost=bone you=ship input=path output=path ~]
   :_  +>.$
@@ -12,8 +15,4 @@
       :-  %tang  :_  ~
       leaf/"copied"
   ==
-++  peer
-  |=
-    *
-  `+>
 --

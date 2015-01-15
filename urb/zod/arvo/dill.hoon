@@ -91,7 +91,7 @@
 ++  term-in                                             ::
           $:  pax=path                                  ::
           $=  jof                                       ::
-          $%  [%line p=span]                            ::
+          $%  [%line p=cord]                            ::
               [%res p=span]                             ::
               [%cmd p=char]                             ::
               [%type p=?]                               ::
@@ -374,7 +374,7 @@
       ==
     ::
         %wake
-      ?:  (lte q.s.yar (sub now ~s15))
+      ?:  (lte (sub now ~s15) q.s.yar)
         %_    +>.$
             mos
           :_  mos

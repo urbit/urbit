@@ -560,7 +560,7 @@
   {
     return u3nt
       (c3__sggr,
-              u3nc(c3__yelp, u3k(p_gen)),
+              u3nc(c3__mean, u3k(p_gen)),
               u3k(q_gen));
   }
   _open_do_pq(sggl)   //  ~>
@@ -652,15 +652,23 @@
   }
   _open_do_pqrs(sgwt)   //  ~?
   {
-    return u3nq(c3__tsgl,
-                        u3k(s_gen),
-                        c3__wtdt,
-                        u3nq(u3k(q_gen),
-                                     u3nc(u3_nul, 1),
-                                     c3__sgpm,
-		                     u3nt(u3k(p_gen),
-                                                  u3k(r_gen),
-                                                  u3nc(u3_nul, 1))));
+    return u3nt
+     (c3__tsls,
+             u3nq(c3__wtdt,
+                         u3k(q_gen),
+                         u3nc(c3__bczp, c3__null),
+                         u3nc(u3nc(c3__bczp, c3__null), u3k(r_gen))),
+             u3nq(c3__wtsg,
+                         u3nc(u3nc(u3_nul, 2),u3_nul),
+                         u3nt(c3__tsgr,
+                                     u3nc(u3_nul, 3),
+                                     u3k(s_gen)),
+                         u3nq(c3__sgpm,
+                                     u3k(p_gen),
+                                     u3nc(u3_nul, 5),
+                                     u3nt(c3__tsgr,
+                                                 u3nc(u3_nul, 3),
+                                                 u3k(s_gen)))));
   }
 /***
 ****
@@ -713,7 +721,7 @@
 	    u3nt(c3__tsls,
 		  u3nt(c3__ktts, c3__a,
 			u3nt(c3__tsgr, u3nc(c3__cnzy, c3__v),
-			      u3k(p_gen))),
+			      u3nc(c3__bccm, u3k(p_gen)))),
 		  u3nt(c3__tsls,
 			u3nt(c3__ktts, c3__b,
 			      u3nt(c3__tsgr,

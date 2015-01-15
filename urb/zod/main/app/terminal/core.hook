@@ -63,11 +63,6 @@
   ::
 |%
 ++  aut  %shell
-++  encode
-  |=  [a=term b=path]  ^-  span
-  (rap 3 a (turn b |=(c=span (cat 3 '_' c))))
-::
-++  decode  |=(a=span `[p=term q=path]`(rash a (most cab sym)))
 ++  inject
   |=  [a=[i=mane t=(list mane)] b=marl]
   |=  man=manx
@@ -80,7 +75,7 @@
 ++  start-shell
   |=  [our=ship imp=path ost=bone you=ship pax=path]
   ^-  (list move)
-  =+  auc=(encode aut pax)
+  =+  auc=(pack aut pax)
   :-  [ost %pass [%fork pax] %g %sire [aut auc]]
   [ost %pass [%resp pax] %g %show [our [auc imp]] you /out]~
 --
@@ -91,7 +86,7 @@
 ++  se
   |=  [hid=hide ost=bone you=ship hiz=(map path term-line) pax=path]
   =+  tel=(fall (~(get by hiz) pax) *term-line)
-  =+  auc=(encode aut pax)
+  =+  auc=(pack aut pax)
   =^  mow  tel
     ?:  (~(has by cub.hid) auc)
       [~ tel]
@@ -124,11 +119,11 @@
       ?-  gal
           %term   [ost %give %rust %hymn page]          ::  hymn front end
           %lines  [ost %give %rust %term-line tel]      ::  term-line output
-      ==
+      == 
     ==
   ::
   ++  poke
-    |=  jof=$%([%line p=span] [%res p=span] [%cmd p=char] [%type p=?])
+    |=  jof=$%([%line p=cord] [%res p=span] [%cmd p=char] [%type p=?])
     ^+  +>
     ?-    -.jof
         %res                                            ::  restart shell
@@ -212,7 +207,7 @@
       ^-  (list move)
       %+  murn  (~(tap by cub.hid))
       |=  [p=span q=term]
-      ?.  =(pax q:(decode p))  ~
+      ?.  =(p auc)   ~
       %-  some  ^-  move
       :^  ost  %pass  [-.mez pax]
       [%g %mess [our.hid p imp.hid] you mez]

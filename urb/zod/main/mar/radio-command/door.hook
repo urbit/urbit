@@ -19,14 +19,6 @@
             ping/auri
         ==
     |%
-    ++  op                                              ::  parse keys of map
-      |*  [fel=_rule wit=fist]
-      %+  cu  mo
-      %-  ci  :_  (om wit)
-      |=  a=(map cord ,_(need *wit))
-      ^-  (unit (list ,_[(wonk *fel) (need *wit)]))
-      (zl (turn (~(tap by a)) (head-rush fel)))
-    ::
     ++  as                                              ::  array as set
       :: |*(a=fist (cu sa (ar a)))  ::  XX  types
       |*  a=fist 
@@ -40,14 +32,6 @@
       ^-  (like (each ,_(wonk (-.a)) ,_(wonk (+.a))))
       %.  tub
       ;~(pose (stag %& -.a) (stag %| +.a))
-    ::
-    ++  head-rush
-      |*  a=_rule
-      |*  [b=cord c=*]
-      =+  nit=(rush b a) 
-      ?~  nit  ~
-      (some [u.nit c])
-    ::
     ::
     ++  thot
       ^-  $+(json (unit thought))
