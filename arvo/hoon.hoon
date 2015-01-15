@@ -6005,7 +6005,7 @@
 ::
 ++  reck                                                ::  parse hoon file
   |=  bon=path
-  (rain bon ((hard ,@t) .^(%cx (weld bon `path`[%hoon ~]))))
+  (rain bon ((hard ,@t) +.+.+:.^(%cx (weld bon `path`[%hoon ~]))))
 ::
 ++  seed                                                ::  hoon/hoon core vase
   ^-  vase
