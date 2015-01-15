@@ -1,8 +1,8 @@
 ::
-::::  /hook/door/radio-report/mar
+::::  /hook/door/rodeo-report/mar
   ::
 /?    314
-/-    *radio
+/-    *rodeo
 !:
 |_  rep=report
 ::

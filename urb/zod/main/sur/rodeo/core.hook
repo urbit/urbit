@@ -1,5 +1,5 @@
 ::
-::::  /hook/core/radio/sur
+::::  /hook/core/rodeo/sur
   ::
 |%
 ++  ache  |*([a=$+(* *) b=$+(* *)] $%([| p=b] [& p=a])) ::  PM 314
