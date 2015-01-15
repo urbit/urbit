@@ -700,7 +700,7 @@
       ^-  (bolt beam)
       =+  von=(ska %cw (tope bem(s ~)))
       ?~  von  [p=cof q=[%1 [%w bem ~] ~ ~]]
-      (fine cof bem(r [%ud ((hard ,@) (need u.von))]))
+      (fine cof bem(r [%ud ((hard ,@) +:(need u.von))]))
     ::
     ++  lave                                            ::  validate
       |=  [cof=cafe for=mark his=ship som=*]
@@ -725,7 +725,7 @@
       ^-  (bolt arch)
       =+  von=(ska %cy (tope bem))
       ?~  von  [p=cof q=[%1 [%y bem ~] ~ ~]]
-      (fine cof ((hard arch) (need u.von)))
+      (fine cof ((hard arch) +:(need u.von)))
     ::
     ++  liar                                            ::  load vase
       |=  [cof=cafe bem=beam]
@@ -735,7 +735,7 @@
         [p=*cafe q=[%1 [[%x bem ~] ~ ~]]]
       ?~  u.von
         (flaw cof (smyt (tope bem)) ~)
-      (fine cof ?^(u.u.von [%cell %noun %noun] [%atom %$]) u.u.von)
+      (fine cof ((hard vase) u.u.von))
     ::
     ++  lily                                            ::  translation targets
       |=  [cof=cafe for=mark bek=beak]
