@@ -2,7 +2,7 @@
 |_  [hid=hide ~]
 ++  poke-ls-args
   |=  [ost=bone you=ship arg=path ~]
-  =+  lon=((hard arch) .^(%cy arg))
+  =+  lon=((hard arch) +:.^(%cy arg))
   :_  +>.$
   :*  [ost %pass / %g %cide %$]
       [ost %give %nice ~]
