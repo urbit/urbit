@@ -672,8 +672,6 @@
   ++  here                                              ::  receive auth
     |=  [our=ship him=ship hez=*]
     ^+  +>
-    ~&  =+  sef=(~(got by own) our)
-        here-auth/[him (,@tas hez) (~(run by wup.sef) ,~)]
     =+  boy=(myth our (need ((sand %ta) ((hard ,@) hez))))
     ?~(boy +>.$ abet:(auth:u.boy him))
   ::
@@ -1101,7 +1099,6 @@
     ::
     ++  auth                                            ::  remote authorize
       |=  him=ship
-      ~&  auth-waiting/(~(run by q.rey) |=(pimp pez))
       %_(+> aut.ced (~(put ju aut.ced) %$ (scot %p him)))
     ::
     ++  dodo                                            ::  console s->c
@@ -1447,7 +1444,7 @@
       =+  foy=?~(sus ~ ?~(thu ~ [~ u.thu u.sus]))
       ?~  pyl  ~
       ?:  &(wit |(=(~ whu) =(~ ses)))  ~
-      ~&  [%folk-quay whu u.pyl wit foy pus]
+      ::  ~&  [%folk-quay whu u.pyl wit foy pus]
       [~ whu u.pyl wit foy pus]
     ::
     ++  fool                                            ::  domestic login get
@@ -1647,8 +1644,15 @@
               =(3 (met 3 nep))
             ==
         ?:  &(=(%get p.moh) ?=([~ [@ ~]] q.pul))          ::  app shortcut
-          ::  XX  use credential to figure out gog/gig
-          $(q.pul [`%html [%gog i.q.q.pul ~]])
+          =-  $(q.pul [`%html -])
+          =+  ato=(~(tap in (~(get ju aut.ced) %$)))
+          =+  att=`(list ship)`(murn ato |=(a=span (slaw %p a)))
+          ?~  att  [%geg i.q.q.pul ~]
+          ?:  (~(has in (sa att)) our)
+            [%gog i.q.q.pul ~]
+          :+  %gig
+            (rsh 3 1 (scot %p (snag 0 (sort att lth))))
+          /[i.q.q.pul]
         ~
       =^  yun  paw
           ?+  two  ~
@@ -1657,10 +1661,9 @@
                       [(slav %p (cat 3 '~' i.paw)) t.paw]
             %o        [our paw]
           ==
-      ?:  &(=(%i two) !(~(has ju aut.ced) %$ (scot %p yun)))
+      ?:  &(=(%i two) !(lash yun) !=(yun (shaf %fake ses)))
         (holt [~ yun] pul)
-      ?:  &(=(%o two) !(~(has ju aut.ced) %$ (scot %p our)))
-        ~&  holy-admin/[aut.ced pul]
+      ?:  &(=(%o two) !(lash our))
         (holt [~ our] pul)
       ?+    one  ~
           %g
@@ -1732,10 +1735,14 @@
       ==
     ::
     ++  erle                                            ::  url localize
-      |=  [a=ship b=purl]  ^-  purl
-      ?:  ?=(hoke r.p.b)
-        ~|(%no-port b(q.p [~ ?+(a !! %~zod 8.443, %~dozfyr 8.445)]))  ::  XX
-      b(p [& ~ [~ /org/urbit/(rsh 3 1 (scot %p a))]])
+      |=  [his=ship pul=purl]  ^-  purl
+      =+  pod=(mo (turn (~(tap by dop)) |=([p=host q=ship] [q p])))
+      ?:  (~(has by pod) his)
+        pul(p [& ~ (~(got by pod) his)])
+      ?:  ?=(hoke r.p.pul)
+        ~|  %no-port 
+        pul(q.p [~ ?+(his !! %~zod 8.443)])            ::  XX
+      pul(p [& ~ [~ /org/urbit/(rsh 3 1 (scot %p his))]])
     ::
     ++  inch                                            ::  function built
       |=  [num=@ud mez=(each bead (list tank))]
@@ -1781,6 +1788,9 @@
       =+  pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
       %^  rsh  3  1
       (scot %p (,@ (need (sky %a pax))))
+    ::
+    ++  lash                                            ::  user is authorized
+      |=(a=ship (~(has ju aut.ced) %$ (scot %p a)))
     ::
     ++  step                                            ::  step in work
       |-  ^+  +
@@ -1873,14 +1883,13 @@
           ?~  pus.p.som.pip
             :_  +>.$
             ?:  ?~  whu.p.som.pip  |
-                (~(has ju aut.ced) %$ (scot %p u.whu.p.som.pip))
+                (lash u.whu.p.som.pip)
               [~ pip(som [%red pul.p.som.pip])]
             ?:  wit.p.som.pip
               [~ pip(pez [%who %$ (scot %p (need whu.p.som.pip))])]
             =+  rul=(earn pul.p.som.pip)
             =+  ruf=(earn (erle our pul.p.som.pip(q.q /pul, r ~)))
             =+  sus=?~(foy.p.som.pip ses q.u.foy.p.som.pip)
-            ~&  serve-ses/sus
             =+  ham=(noon our sus whu.p.som.pip rul ruf)
             [~ pip(pez [%fin %ham ham])]
           ?.  =(lass u.pus.p.som.pip)
@@ -1890,7 +1899,6 @@
                 pez
               [%fin %mid /text/json (tact (pojo (jobe [%ok [%b |]]~)))]
             ==
-          ~&  lon-resp/[ses p.som.pip]
           =.  aut.ced  (~(put ju aut.ced) %$ (scot %p (need whu.p.som.pip)))
           ?~  foy.p.som.pip
             =+  ^=  jon
@@ -2329,9 +2337,6 @@
 ::
 ++  load
   |=  old=bolo
-  =.  own.old  
-    %-  ~(run by own.old)  |=  serf 
-     +<(wup (~(run by wup) |=(cyst +<(ced *cred))))
   ^+  ..^$
   ..^$(+>- old)
 ::
