@@ -1,21 +1,17 @@
+::  LiSt directory subnodes
+::
+::::
+  ::
+/+    sh-utils
+//  /%%/subdir
 !:
+::::
+  ::
 |_  [hid=hide ~]
+++  peer  ,_`.
 ++  poke-ls-args
-  |=  [ost=bone you=ship arg=path ~]
+  %+  args-into-gate  .
+  |=  [arg=path ~]
   =+  lon=((hard arch) .^(%cy arg))
-  :_  +>.$
-  :*  [ost %pass / %g %cide %$]
-      [ost %give %nice ~]
-      %+  turn  (~(tap by sup.hid))
-      |=  [ost=bone *]
-      :^  ost  %give  %rush
-      :-  %tang
-      :_  ~  
-      :+  %rose  [" " ~ ~]
-      (turn (~(tap by r.lon) ~) |=([a=@ta b=*] leaf/(trip a)))
-  ==
-++  peer
-  |=
-    *
-  `+>
+  tang/[?~(r.lon leaf/"~" (subdir arg r.lon))]~
 --

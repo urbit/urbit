@@ -191,23 +191,12 @@
   :-  ?~(p.u.a ~ ?~(p.u.b ~ `(grom u.p.u.b u.p.u.a)))
   (grom q.u.b q.u.a)
 ::
-++  lamp
-  |=  con=(unit coin)
-  ^-  (unit path)
-  ?:  ?=([~ %$ %tas @] con)
-    (some [q.p.u.con]~)
-  ?.  ?=([~ %many *] con)  ~
-  %-  zl:jo
-  %+  turn  p.u.con
-  |=  tem=coin
-  ?.(?=([%$ %ta @] tem) ~ (some q.p.tem))
-::
 ++  lump                                                ::  position
   |=  pax=path
   ^-  [p=hapt q=path]
   ?>  ?=([@ @ *] pax)
   :-  :-  (slav %p i.pax)
-      (need (lamp (slay i.t.pax))) 
+      (need (pick i.t.pax))
   t.t.pax
 --
 .  ==                                                   ::  end preface
@@ -563,10 +552,7 @@
   ::
   ++  away                                              ::  application path
     |=  pax=path  ^-  path
-    =+  ?:  &(?=([@tas ~] imp) ((sane %tas) i.imp))
-          imc=[%$ %tas i.imp]
-        imc=[%many (turn imp |=(a=span [%$ %ta a]))]
-    [%a (scot %p our) ~(rent co imc) pax]
+    [%a (scot %p our) ?~(imp %$ (pack imp)) pax]
   ::
   ++  bear                                              ::  write backward
     |=  hen=duct
@@ -1081,7 +1067,7 @@
             %boot
           =.  orm.sat  `now
           %+  ford  /s/park
-          :+  %dude  leaf/"booting"
+          ::  :+  %dude  leaf/"booting"
           ^-  silk
           :-  home
           ?~  huv.sat  nile
@@ -1140,17 +1126,22 @@
           (yawl [%pull ~] leaf/"pulling" u.huv.sat [[%atom %ud] ost])
         ::
             %mess
-          =+  ^-  [hyp=? cog=term]
-              =-  ?^(- - ?:((warm %pock) [& %pock] [| %poke]))
+          =+  ^-  cog=term
+              =-  |-  ?~  goz  %poke
+                      ?:  (warm i.goz)  i.goz
+                      $(goz t.goz)
+              ^-  goz=(list term)
               ?:  =(%$ p.q.kon)
-                ~
-              =+  guc=(cat 3 'pock-' p.q.kon)
-              ?:  (warm guc)
-                [& guc]
-              =+  goc=(cat 3 'poke-' p.q.kon)
-              ?:  (warm goc)
-                [| goc]
-              ~
+                /pock
+              =+  ^=  goc
+                  |=  [a=term b=(list term)]
+                  [(cat 3 'pock-' a) (cat 3 'poke-' a) b]
+              =+  ofs=(met 3 app.sat)
+              ?.  .=  (cat 3 app.sat '-')   ::  XX temporary, until /=main=/bin
+                  (end 3 +(ofs) p.q.kon)
+                (goc p.q.kon /pock)
+              :(goc p.q.kon (rsh 3 ofs p.q.kon) /pock)
+          =+  hyp=?=(%pock (end 3 4 cog))
           ?.  (warm cog)
             (give(qic.sat ~) %mean ~ %poke-find-fail ~)
           ?>  ?=(^ huv.sat)
