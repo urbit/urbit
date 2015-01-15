@@ -856,7 +856,7 @@ _unix_dir_ankh(u3_udir* dir_u)
         continue;
       }
       u3_noun baw = _unix_file_load(fil_u);
-      u3_noun woz = u3nt(u3_nul, u3do("sham", u3k(baw)), baw);
+      u3_noun woz = u3nt(u3_nul, u3do("sham", u3k(u3t(u3t(baw)))), baw);
       u3z(dur);
       pam = _unix_dir_ankh_file(pam, u3k(u3t(wib)), baw, woz);
       u3z(wib);
@@ -866,7 +866,7 @@ _unix_dir_ankh(u3_udir* dir_u)
   for ( fil_u = dir_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
     u3_noun wib = _unix_file_name(fil_u);
     u3_noun baw = _unix_file_load(fil_u);
-    u3_noun woz = u3nt(u3_nul, u3do("sham", u3k(baw)), baw);
+    u3_noun woz = u3nt(u3_nul, u3do("sham", u3k(u3t(u3t(baw)))), baw);
     pam = _unix_dir_ankh_file(pam, wib, baw, woz);
   }
   return u3do("cosh", u3nt(0, u3_nul, pam));
