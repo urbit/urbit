@@ -16,7 +16,9 @@
         c3_o noc_o;                 //  now executing in nock interpreter
         c3_o glu_o;                 //  now executing in jet glue
         c3_o mal_o;                 //  now executing in allocator
-        c3_o far_o;                 //  now executing in fragmentor.
+        c3_o far_o;                 //  now executing in fragmentor
+        c3_o coy_o;                 //  now executing in copy
+        c3_o euq_o;                 //  now executing in equal
       } u3t_trace;
 
   /**  Macros.
