@@ -2197,7 +2197,7 @@
     |=  har=hart
     ^-  tape
     ;:  weld
-      ?:(&(p.har !=([& /localhost] r.har)) "https://" "http://")
+      ?:(&(p.har !?=(hoke r.har)) "https://" "http://")
     ::
       ?-  -.r.har
         |  (trip (rsh 3 1 (scot %if p.r.har)))
@@ -2233,7 +2233,7 @@
   ++  auri                                              ::  2396 URL
     %+  cook
       |=  a=purl
-      ?.(=([& /localhost] r.p.a) a a(p.p &))
+      ?.(?=(hoke r.p.a) a a(p.p &))
     ;~  plug
       ;~  plug
         %+  sear
@@ -2949,6 +2949,8 @@
 ++  hoot  ,[p=? q=(unit ,@ud) r=host]                   ::  secure/port/host
 ++  hort  ,[p=(unit ,@ud) q=host]                       ::  http port/host
 ++  host  $%([& p=(list ,@t)] [| p=@if])                ::  http host
+++  hoke  %+  each   ,[%localhost ~]                    ::  local host
+          ?(%.0.0.0.0 %.127.0.0.1)                      ::
 ++  httq                                                ::  raw http request
           $:  p=meth                                    ::  method
               q=@t                                      ::  unparsed url

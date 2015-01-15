@@ -563,7 +563,7 @@
                ?>  ?=([~ @ ~] hot)
                [[sec (rash i.u.hot thor:epur)] p.ryp q.ryp]
           ==
-      =.  p.p.pul  |(p.p.pul =([& /localhost] r.p.pul))
+      =.  p.p.pul  |(p.p.pul ?=(hoke r.p.pul))
       (hell pul +.kyz [p.heq mah s.heq])
     ::
         %thud                                           ::  cancel request
@@ -649,12 +649,12 @@
   ++  haji                                              ::  send %pc login
     |=  [our=ship him=ship ses=hole]
     ^+  +>
-    +>.$(mow :_(mow [hen %pass ~ %a [%want [our him] [%r %pc ~] ses]]))
+    +>.$(mow :_(mow [hen %pass ~ %a [%want [our him] [%r %pc %e ~] ses]]))
   ::
   ++  hajj                                              ::  send %pr response
     |=  [our=ship him=ship tus=path har=httr]
     ^+  +>
-    +>.$(mow :_(mow [hen %pass ~ %a [%want [our him] [%r %pr tus] har]]))
+    +>.$(mow :_(mow [hen %pass ~ %a [%want [our him] [%r %pr %e tus] har]]))
   ::
   ++  hare                                              ::  receive request
     |=  [our=ship tus=path him=ship hor=*]
@@ -672,6 +672,8 @@
   ++  here                                              ::  receive auth
     |=  [our=ship him=ship hez=*]
     ^+  +>
+    ~&  =+  sef=(~(got by own) our)
+        here-auth/[him (,@tas hez) (~(run by wup.sef) ,~)]
     =+  boy=(myth our (need ((sand %ta) ((hard ,@) hez))))
     ?~(boy +>.$ abet:(auth:u.boy him))
   ::
@@ -874,7 +876,8 @@
               var seal = {
                 who: goal,
                 url: burl,
-                pas: null
+                pas: null,
+                ses: sesh
               }
               var hist = []
               var hind = 0
@@ -908,11 +911,12 @@
                     }
 
                     if(seal.who !== host) {
-                      var foreign = {oth: host, ses: session};
-                      var all = $.extend({}, seal, foreign);
+                      var all = $.extend({}, seal, {oth:host});
+                      delete all.pas;
 
                       console.log('redirect')
-                      window.location="http://"+seal.who+".urbit.org/gul"
+                      window.location= // "http://"+seal.who+".urbit.org/gul?"
+                                      "http://0:8445/gul?"
                                       + $.param(all);
                       return false;
                     }
@@ -927,10 +931,14 @@
 
                   login = function() {
                     seal.pas = $input.val()
+                    var oth = /[&?]oth=[^&]*/.exec(location.search)
+                    if(oth && oth.length)
+                      seal.oth = oth[0].slice(5)
 
                     output = $output.html()
                     console.log($output.html())
-                    $output.html(output.replace('sorry. please try again.<br>',''))
+                    $output.html(output.replace(
+                      'sorry. please try again.<br>',''))
 
                     $.post(form, seal, function(data,xhr,status) {
                       console.log(data);
@@ -985,7 +993,7 @@
         ; var goal = '{?~(whu ~ (trip (rsh 3 1 (scot %p u.whu))))}';
         ; var burl = '{rul}';
         ; var form = '{ruf}';
-        ; var session = '{(trip ses)}';
+        ; var sesh = '{(trip ses)}';
       ==
     =>  .(+.sic (weld `marl`cof `marl`+.sic))
     =+  jqu="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"
@@ -1093,6 +1101,7 @@
     ::
     ++  auth                                            ::  remote authorize
       |=  him=ship
+      ~&  auth-waiting/(~(run by q.rey) |=(pimp pez))
       %_(+> aut.ced (~(put ju aut.ced) %$ (scot %p him)))
     ::
     ++  dodo                                            ::  console s->c
@@ -1438,7 +1447,7 @@
       =+  foy=?~(sus ~ ?~(thu ~ [~ u.thu u.sus]))
       ?~  pyl  ~
       ?:  &(wit |(=(~ whu) =(~ ses)))  ~
-      ::  ~&  [%folk-quay whu u.pyl wit foy pus]
+      ~&  [%folk-quay whu u.pyl wit foy pus]
       [~ whu u.pyl wit foy pus]
     ::
     ++  fool                                            ::  domestic login get
@@ -1722,6 +1731,12 @@
         u.pup(pez [%fin %raw cod *mess `*octs])
       ==
     ::
+    ++  erle                                            ::  url localize
+      |=  [a=ship b=purl]  ^-  purl
+      ?:  ?=(hoke r.p.b)
+        ~|(%no-port b(q.p [~ ?+(a !! %~zod 8.443, %~dozfyr 8.445)]))  ::  XX
+      b(p [& ~ [~ /org/urbit/(rsh 3 1 (scot %p a))]])
+    ::
     ++  inch                                            ::  function built
       |=  [num=@ud mez=(each bead (list tank))]
       ^+  +>
@@ -1854,13 +1869,19 @@
           +>.$(..ya (honk our num ses kas))
         ::
             %lon
+          ^-  [(unit pimp) _+>.$]
           ?~  pus.p.som.pip
             :_  +>.$
+            ?:  ?~  whu.p.som.pip  |
+                (~(has ju aut.ced) %$ (scot %p u.whu.p.som.pip))
+              [~ pip(som [%red pul.p.som.pip])]
             ?:  wit.p.som.pip
               [~ pip(pez [%who %$ (scot %p (need whu.p.som.pip))])]
             =+  rul=(earn pul.p.som.pip)
-            =+  ruf=(earn pul.p.som.pip(q.q /pul, r ~))
-            =+  ham=(noon our ses whu.p.som.pip rul ruf)
+            =+  ruf=(earn (erle our pul.p.som.pip(q.q /pul, r ~)))
+            =+  sus=?~(foy.p.som.pip ses q.u.foy.p.som.pip)
+            ~&  serve-ses/sus
+            =+  ham=(noon our sus whu.p.som.pip rul ruf)
             [~ pip(pez [%fin %ham ham])]
           ?.  =(lass u.pus.p.som.pip)
             :_  +>.$
@@ -1869,6 +1890,7 @@
                 pez
               [%fin %mid /text/json (tact (pojo (jobe [%ok [%b |]]~)))]
             ==
+          ~&  lon-resp/[ses p.som.pip]
           =.  aut.ced  (~(put ju aut.ced) %$ (scot %p (need whu.p.som.pip)))
           ?~  foy.p.som.pip
             =+  ^=  jon
@@ -1879,9 +1901,8 @@
             :_(+>.$ [~ pip(pez [%fin %mid /text/json (tact (pojo jon))])])
           =.  ..ya   (haji our u.foy.p.som.pip)
           =+  ^=  lup  ^-  purl
-            :+  ^-  hart
-                :+  &   ~
-                [%& ~[%org %urbit (rsh 3 1 (scot %p p.u.foy.p.som.pip))]]
+            %+  erle  p.u.foy.p.som.pip
+            :+  `hart`p.pul.p.som.pip
               ^-  pork
               [~ /gul]
             ^-  quay

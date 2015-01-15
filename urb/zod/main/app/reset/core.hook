@@ -5,11 +5,11 @@
 |_  [hid=hide ~]
 ++  peer  ,_`.
 ++  poke-reset-args
-  |=  [ost=bone you=ship ~]
+  |=  [ost=bone you=ship arg=$|(~ [_| ~])]
   :_  +>.$
   =+  top=`path`/(scot %p our.hid)/arvo/(scot %da lat.hid)
   :+  [ost %give %nice ~]
-    [ost %pass / %t %wait lat.hid]
+    [ost %pass ?~(arg /refresh /) %t %wait lat.hid]
   %-  welp  :_  [ost %give %vega (weld top `path`/hoon)]~
   %+  turn
     %-  flop
@@ -29,7 +29,9 @@
   [ost %give %veer p pax txt]
 ++  pour
   |=  [ost=bone pax=path *]
-  :_  +>.$  :_  ~
+  :_  +>.$  
+  ?~  pax  ~
+  :_  ~
   =+  paf=/(scot %p our.hid)/=/(scot %da lat.hid)/==count/txt
   =+  nuf=(file paf)
   =+  num=?~(nuf 0 +((fall (slaw %ud (,@t u.nuf)) 0)))
