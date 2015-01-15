@@ -711,7 +711,13 @@ c3_o
 u3r_sing(u3_noun a,
            u3_noun b)
 {
-  return _sing_x(a, b);
+  c3_o ret_o;
+
+  u3t_on(euq_o);
+  ret_o = _sing_x(a, b);
+  u3t_off(euq_o);
+
+  return ret_o;
 }
 
 /* u3r_sung(): yes iff (a) and (b) are the same noun, unifying equals.

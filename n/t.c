@@ -196,6 +196,12 @@ u3t_samp(void)
     if ( _(u3T.mal_o) ) {
       mot_l = c3_s3('m','a','l');
     }
+    else if ( _(u3T.coy_o) ) {
+      mot_l = c3_s3('c','o','y');
+    }
+    else if ( _(u3T.euq_o) ) {
+      mot_l = c3_s3('e','u','q');
+    }
     else if ( _(u3T.far_o) ) {
       mot_l = c3_s3('f','a','r');
     }
@@ -285,6 +291,8 @@ u3t_init(void)
   u3T.glu_o = c3n;
   u3T.mal_o = c3n;
   u3T.far_o = c3n;
+  u3T.coy_o = c3n;
+  u3T.euq_o = c3n;
 }
 
 /* u3t_boot(): turn sampling on.
