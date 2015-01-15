@@ -2,8 +2,8 @@
 ::::  /hook/core/talk/app
   ::
 /?  314
-/-  *radio
-/+  radio
+/-  *rodeo
+/+  rodeo
 ::
 ::::
   ::
@@ -89,7 +89,7 @@
           $:  %rust
               $=  p
               $%  [%txt p=cord]
-                  [%radio-report p=report]
+                  [%rodeo-report p=report]
           ==  ==
       ==
     ++  sign
@@ -109,7 +109,7 @@
         |=  cod=command 
         %_    +>
             moz  :_  moz
-          [0 %pass /command %g %mess [our /radio] our [%radio-command !>(cod)]]
+          [0 %pass /command %g %mess [our /rodeo] our [%rodeo-command !>(cod)]]
         ==
       ::
       ++  hy-render                                     ::  return to console
@@ -124,11 +124,11 @@
       ::
       ++  hy-subscribe                                  ::  send %show
         |=  [way=path hoc=path]
-        %_(+> moz :_(moz [0 %pass way %g %show [our /radio] our hoc]))
+        %_(+> moz :_(moz [0 %pass way %g %show [our /rodeo] our hoc]))
       ::
       ++  hy-unsubscribe                                ::  send %nuke
         |=  way=path
-        %_(+> moz :_(moz [0 %pass way %g %nuke [our /radio] our]))
+        %_(+> moz :_(moz [0 %pass way %g %nuke [our /rodeo] our]))
       ::
       ++  hy-display                                    ::  print to console
         |=(tay=(list tank) (hy-render %tang tay))
@@ -449,7 +449,7 @@
       ?:  ?=(?(%cold %dead) link)
         ~&  [%sy-sign-rust-bad `@tas`link]
         +>.$
-      ?>  ?=(%radio-report +<.res)
+      ?>  ?=(%rodeo-report +<.res)
       ?:  ?=(%cool link)
         ::  XX workaround for inverted nice
         $(link %warm)
@@ -624,7 +624,7 @@
         %nice  [~ +>.$]
         %mean  ~&(%talk-server-crash !!)
         ?(%rush %rust)
-      ?>  ?=([%radio-report %house *] p.sih)
+      ?>  ?=([%rodeo-report %house *] p.sih)
       ny-abet:(ny-tell:ny +.p.p.sih)
     ==
   ::
@@ -653,7 +653,7 @@
       ^-  move
       :*  0    %pass  /server
           %g   %show  
-          [our.hid /radio]  our.hid
+          [our.hid /rodeo]  our.hid
           /
       ==
   ==
