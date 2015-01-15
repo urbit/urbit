@@ -37,9 +37,10 @@
               [%dub p=term q=horn]                      ::  /=  apply face
               [%fan p=(list horn)]                      ::  /.  list
               [%for p=path q=horn]                      ::  /,  descend
+              [%hel p=horn]                             ::  /%  propogate heel
               [%hub p=horn]                             ::  /@  list by @ud
               [%man p=(map span horn)]                  ::  /*  hetero map
-              [%nap p=horn]                             ::  /%  homo map
+              [%nap p=horn]                             ::  /_  homo map
               [%now p=horn]                             ::  /&  list by @da
               [%saw p=twig q=horn]                      ::  /;  operate on
               [%see p=beam q=horn]                      ::  /:  relative to
@@ -181,7 +182,6 @@
 ::
 ++  za                                                  ::  per event
   =|  $:  $:  $:  our=ship                              ::  computation owner
-                  tea=wire                              ::  event place
                   hen=duct                              ::  event floor
               ==                                        ::
               $:  now=@da                               ::  event date
@@ -213,6 +213,12 @@
         dym.bay    (~(put by dym.bay) hen num)
       ==
     ~(exec zo [num `task`[hen u.kus 0 ~]])
+  ::
+  ++  apel                                              ::  stateless
+    |=  [hen=duct kus=silk]
+    ^-  (unit gift)
+    =+  num=0                                           ::  XX
+    ~(exit zo [num `task`[hen kus 0 ~]])
   ::
   ++  axon                                              ::  take
     |=  [num=@ud tik=@ud sih=sign]
@@ -373,10 +379,19 @@
       ^+  +>
       %_(+> jav.bay q.cof)
     ::
+    ++  exit                                            ::  stateless exec
+      ^-  (unit gift)
+      =+  bot=(make [~ jav.bay] kas)
+      :: =.  ..exec  (dash p.bot)
+      ?-  -.q.bot
+        %0  `[%made %& p.q.bot q.q.bot]
+        %2  `[%made %| p.q.bot]
+        %1  ~
+      ==
+    ::
     ++  exec                                            ::  execute app
       ^+  ..zo
       ?:  !=(~ q.kig)  ..zo
-      |-  ^+  ..zo
       =+  bot=(make [~ jav.bay] kas)
       =.  ..exec  (dash p.bot)
       ?-  -.q.bot
@@ -500,9 +515,10 @@
               (stag %dub ;~(pfix tis dub:read))
               (stag %fan ;~(pfix dot fan:read))
               (stag %for ;~(pfix com for:read))
+              (stag %hel ;~(pfix cen day:read))
               (stag %hub ;~(pfix pat day:read))
               (stag %man ;~(pfix tar man:read))
-              (stag %nap ;~(pfix cen day:read))
+              (stag %nap ;~(pfix cab day:read))
               (stag %now ;~(pfix pam day:read))
               (stag %saw ;~(pfix sem saw:read))
               (stag %see ;~(pfix col see:read))
@@ -646,6 +662,7 @@
     ++  lamp                                            ::  normalize version
       |=  [cof=cafe bem=beam]
       ^-  (bolt beam)
+      ?:  ?=(%ud -.r.bem)  (fine cof bem)
       =+  von=(ska %cw (tope bem(s ~)))
       ?~  von  [p=cof q=[%1 [%w bem ~] ~ ~]]
       (fine cof bem(r [%ud ((hard ,@) (need u.von))]))
@@ -1051,6 +1068,7 @@
           (slop i.tev $(tev t.tev))
         ::
             %for  $(hon q.hon, s.how (weld (flop p.hon) s.how))
+            %hel  $(hon p.hon, arg /, s.how (weld arg s.how))
             %hub  (chad cof bax %ud p.hon)
             %man
           |-  ^-  (bolt vase)
@@ -1085,7 +1103,7 @@
             (flaw cof [%leaf "type error: {<p.hon>} {<q.hon>}"]~)
           (fine cof [p.tug q.vax])
         ::
-            %toy  (cope (make cof %bake p.hon how arg) feel)
+            %toy  (cope (make cof %boil p.hon how ~) feel)
         ==
       ::
       ++  head                                          ::  consume structures
@@ -1216,7 +1234,7 @@
       =+  buy=(~(get by pol.lex) our)
       ?~(buy *baby u.buy)
   =^  mos  bay
-    abet:(~(apex za [[our ~ hen] [now eny ska] ~] bay) q.q.hic)
+    abet:(~(apex za [[our hen] [now eny ska] ~] bay) q.q.hic)
   [mos ..^$(pol (~(put by pol) our bay))]
 ::
 ++  doze
@@ -1244,7 +1262,7 @@
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit (pair mark ,*)))
-  ~
+  [~ ~]
 ::
 ++  stay                                                ::  save w/o cache
   `axle`+>-.$(pol (~(run by pol) |=(a=baby [tad.a dym.a ~])))
@@ -1258,8 +1276,8 @@
           num=(need (slaw %ud i.t.tea))
           tik=(need (slaw %ud i.t.t.tea))
       ==
-  =+  bay=(need (~(get by pol.lex) our))
+  =+  bay=(~(got by pol.lex) our)
   =^  mos  bay
-    abet:(~(axon za [[our tea hen] [now eny ska] ~] bay) num tik q.hin)
+    abet:(~(axon za [[our hen] [now eny ska] ~] bay) num tik q.hin)
   [mos ..^$(pol (~(put by pol) our bay))]
 --

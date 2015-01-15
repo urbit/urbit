@@ -1,14 +1,12 @@
+::  Verb: toggle verbose mode
+::  
+::::  /hook/core/verb/app
+  ::
+/+    sh-utils
 !:
+::::
+  ::
 |_  [hid=hide ~]
-++  poke-verb-args
-  |=  [ost=bone you=ship ~]
-  :_  +>.$
-  :~  [ost %give %verb ~]
-      [ost %pass / %g %cide %$]
-      [ost %give %nice ~]
-  ==
-++  peer
-  |=
-    *
-  `+>
+++  peer  ,_`.
+++  poke--args  (add-resp [%give %verb ~] (args-done ,_`.))
 --
