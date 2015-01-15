@@ -305,8 +305,7 @@ _cj_hot_mean(c3_l par_l, u3_noun mop, u3_noun bat)
   return 0;
 }
 
-
-/* _cj_hot_mine(): in hoting state, declare a core.  RETAINS.
+/* _cj_hot_mine(): in hot state, declare a core.  RETAINS.
 */
 static c3_l
 _cj_hot_mine(u3_noun mop, u3_noun cor)
@@ -909,6 +908,7 @@ _cj_warm_reap(u3_noun kev)
     if ( !_(u3a_is_junior(u3R, bat)) &&
          (u3_none != u3h_git(u3R->jed.har_p, bat)) ) {
       fprintf(stderr, "reap: promote collision (bat %x)\r\n", u3r_mug(bat));
+      u3m_p("collision", u3h(u3t(u3t(u3h(cax)))));
     }
     else {
       u3_noun tab = u3a_take(bat);

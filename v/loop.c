@@ -646,6 +646,7 @@ u3_lo_loop()
 
   u3_raft_init();
 
+#if 1
   if ( _(u3_Host.ops_u.dry) ) {
     u3t_boff();
     u3t_damp();
@@ -654,7 +655,9 @@ u3_lo_loop()
     fprintf(stderr, "dry run: exit\r\n");
     exit(0);
   }
-  else { 
+  else 
+#endif
+  { 
     if ( c3n == u3_Host.ops_u.bat ) {
       uv_run(u3L, UV_RUN_DEFAULT);
     }

@@ -18,6 +18,10 @@
       return u3m_bail(c3__exit);
     }
     else {
-      return u3n_nock_in(u3k(fly), u3k(bus), u3k(fol));
+      u3_noun som;
+
+      som = u3n_nock_in(u3k(fly), u3k(bus), u3k(fol));
+
+      return som;
     }
   }
