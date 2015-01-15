@@ -1,0 +1,70 @@
+::
+::::  /hook/core/rodeo/sur
+  ::
+|%
+++  ache  |*([a=$+(* *) b=$+(* *)] $%([| p=b] [& p=a])) ::  PM 314
+++  audience  (map station delivery)                    ::  destination/state
+++  atlas  (map ship status)                            ::  presence map
+++  command                                             ::  effect on party
+  $%  [%design (pair span (unit config))]               ::  configure/destroy
+      [%publish (list thought)]                         ::  originate
+      [%review (list thought)]                          ::  deliver
+      [%ping (map station presence)]                    ::  declare status
+  ==                                                    ::
+++  config                                              ::  party configuration
+  $:  sources=(set station)                             ::  pulls from
+      cordon=control                                    ::  & white, | black
+  ==                                                    ::
+++  cousin  (pair ship span)                            ::  domestic flow
+++  control  (ache (set ship) (set ship))               ::  & white, | black
+++  delivery                                            ::  delivery state
+  $?  %pending                                          ::  undelivered
+      %received                                         ::  delivered
+      %rejected                                         ::  undeliverable
+      %released                                         ::  sent one-way
+      %accepted                                         ::  fully processed
+  ==                                                    ::
+++  human                                               ::  human identifier
+  $:  true=(unit (trel ,@t (unit ,@t) ,@t))             ::  true name
+      hand=(unit ,@t)                                   ::  handle
+  ==                                                    ::
+++  partner                                             ::  foreign flow
+  $%  [%twitter p=@t]                                   ::  twitter
+  ==                                                    ::
+++  presence   ?(%gone %hear %talk)                     ::  status type
+++  register  (pair atlas (map station atlas))          ::  ping me, ping srcs
+++  report                                              ::  unified rush/rust
+  $%  [%house (set span)]                               ::  meta-changes
+      [%grams (pair ,@ud (list telegram))]              ::  beginning, thoughts
+      [%group register]                                 ::  presence
+      [%config config]                                  ::  reconfigure
+  ==                                                    ::
+++  speech                                              ::  narrative action
+  ::  XX  unify %own and %say to %lin
+  ::
+  $%  [%lan p=span q=@t]                                ::  local announce
+      [%own p=@t]                                       ::  XX @ or /me
+      [%exp p=@t]                                       ::  hoon line
+      [%non ~]                                          ::  no content
+      [%ext p=@tas q=*]                                 ::  extended action
+      [%fat p=torso q=speech]                           ::  attachment
+      ::  [%inv p=station]                              ::  invite to station
+      [%ire p=serial q=speech]                          ::  in-reply-to
+      [%lin p=? q=@t]                                   ::  no=@, text line
+      [%mor p=(list speech)]                            ::  XX deleteme
+      [%say p=@t]                                       ::  XX normal line
+  ==                                                    ::
+++  serial     ,@uvH                                    ::  unique identity
+++  station    (each cousin partner)                    ::  interlocutor
+++  status     (pair presence human)                    ::  participant
+++  statement  (pair ,@da speech)                       ::  when this
+++  telegram   (pair ship thought)                      ::  who which whom what
+++  thought    (trel serial audience statement)         ::  which whom what
+++  torso                                               ::  attachment
+  $%  [%text (list ,@t)]                                ::  text lines
+      [%tank (list tank)]                               ::  tank list
+  ==                                                    ::
+  ::  markdown
+  ::  image
+  ::  mime object
+--

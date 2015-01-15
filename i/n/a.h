@@ -41,7 +41,7 @@
 
     /* u3a_fbox_no: number of free lists per size.
     */
-#     define u3a_fbox_no   28
+#     define u3a_fbox_no   27
 
 
   /**  Structures.
@@ -125,6 +125,7 @@
 
         struct {                              //  allocation pools
           u3p(u3a_fbox) fre_p[u3a_fbox_no];   //  heap by node size log
+          u3p(u3a_fbox) cel_p;                //  custom cell allocator
           c3_w fre_w;                         //  number of free words
         } all;
 
@@ -275,6 +276,11 @@
         */
           void*
           u3a_walloc(c3_w len_w);
+
+        /* u3a_celloc(): allocate a cell.  Faster, sometimes.
+        */
+          c3_w*
+          u3a_celloc(void);
 
         /* u3a_wfree(): free storage.
         */
