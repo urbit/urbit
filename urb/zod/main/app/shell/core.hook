@@ -59,7 +59,7 @@
       [%path p=path]                                    ::  chdir
       [%del p=path]                                     ::  rm file
       [%ins p=path q=(unit twig)]                       ::  add file
-      [%mut p=path q=twig]                              ::  change file
+      [%mut p=path q=(unit twig)]                       ::  change file
       [%hoon p=twig]                                    ::  eval expression
       [%comt ~]                                         ::  comment
       [%var p=term q=twig]                              ::  set variable
@@ -115,7 +115,7 @@
       (stag %run ;~(plug (star ;~(sfix (task(tol %0) bar) ace)) (task col)))
       (stag %end ;~(pfix col sem ;~(pose (stag %& dem) (stag %| sym))))
       (stag %del ;~(pfix hep ace loca))
-      (stag %mut ;~(pfix col ace ;~(plug loca expg)))
+      (stag %mut ;~(pfix col (plus ace) ;~(plug loca (opts expg))))
       (stag %ins ;~(pfix lus ace ;~(plug loca (opts expg))))
       (stag %help ;~(pfix wut ace ;~(pfix col sym)))
       (stag %path (full ;~(sfix loca(pax paf) (star ace))))
@@ -238,12 +238,15 @@
     (foal paf q:(exec (fall gen [%bczp atom/%t])))
   ::
   ++  eat-mut
-    |=  [paf=path gen=twig]
+    |=  [paf=path gen=(unit twig)]
     ^+  +>
     %-  blab
-    %+  chew-file  paf
-    ?~  (file paf)  '! none'
-    (foal paf q:(exec gen))
+    =+  fel=(file paf)  
+    ?~  fel
+      (chew-file paf '! none')
+    ?^  gen
+      (chew-file paf (foal paf q:(exec u.gen)))
+    (stray (crip ": {(spud paf)} {<(,@t u.fel)>}"))
   ::
   ++  eat-help
     |=  app=term
@@ -379,9 +382,12 @@
               [ost %give %logo ~]
             ~
           (eat-end:next-act %& (slav %ud u.act))
-      %g  =+  =-  tak=rose/[" " "[" "]"]^(turn cubs -)
-              |=  a=span
-              leaf/(trip (rap 3 (~(got by cub.hid) a) '(' a ')' ~))
+      %g  =+  =-  tak=rose/[" " "[" "]"]^(turn (~(tap by cub.hid)) -)
+              =+  c=(sa cubs)
+              |=  [a=span b=term]
+              :-  %leaf
+              =+  (trip (rap 3 b '(' a ')' ~))
+              ?.((~(has in c) a) - ?.(=([~ a] act) ['+' -] ['*' -]))
           (blab [ost give/nice/~] (print tak))
       %x  =.  +>.$  next-act
           (blab [ost %give %nice ~] ping)
@@ -420,7 +426,7 @@
     :(slop !>(%rush) !>(%term-line) !>(prompt) !>(~) tan)
   ::
   ++  prompt
-    ^-  [cord prom cord]
+    ^-  [p=cord q=prom r=cord]
     ?^  act
       =+  por=(~(get by pot) u.act)
       ?^  por  u.por
@@ -444,7 +450,11 @@
     ::
         %main
       ?>  ?=(?(%nice %mean) +<.sih)
-      (blab [ost %give +.sih] ping)
+      %+  blab
+        [ost %give +.sih]
+      ?.  ?=(%mean +<.sih)  
+        ping 
+      (welp ping (kill cil))
     ::
         %out
       ?.  ?=(?(%rust %rush) +<.sih)  +>.$
@@ -476,6 +486,12 @@
     |=  a=cord
     %^  spam  /out  %meta
     !>([%rush %term-line `term-line`[prompt [a]~ ~]])
+  ::
+  ++  stray
+    |=  a=cord
+    %^  spam  /out  %meta
+    =+  pro=prompt
+    !>([%rush %term-line `term-line`[pro(r a) ~ ~]])
   --
 --
 ::
