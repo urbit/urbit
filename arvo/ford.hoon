@@ -115,6 +115,8 @@
   ==                                                    ::
 ++  calx                                                ::  concrete cache line
   $%  [%hood p=calm q=(pair beam cage) r=hood]          ::  compile
+      [%slit p=calm q=[p=type q=type] r=type]           ::  slam type
+      [%slim p=calm q=[p=type q=twig] r=(pair type nock)]::  mint
       [%slap p=calm q=[p=vase q=twig] r=vase]           ::  compute
       [%slam p=calm q=[p=vase q=vase] r=vase]           ::  compute
   ==                                                    ::
@@ -132,6 +134,8 @@
     %hood  ?>(?=(%hood -.cax) r.cax)
     %slap  ?>(?=(%slap -.cax) r.cax)
     %slam  ?>(?=(%slam -.cax) r.cax)
+    %slim  ?>(?=(%slim -.cax) r.cax)
+    %slit  ?>(?=(%slit -.cax) r.cax)
   ==
 ::
 ++  calk                                                ::  cache lookup
@@ -814,18 +818,24 @@
       |=  [cof=cafe yed=vase]
       ^$(cof cof, for i.yaw, yaw t.yaw, vax yed)
     ::
+    ++  mail                                            ::  cached mint
+      |=  [cof=cafe sut=type gen=twig]
+      ^-  (bolt (pair type nock))
+      %+  (clef %slim)  (fine cof sut gen) 
+      |=  [cof=cafe sut=type gen=twig]
+      =+  puz=(mule |.((~(mint ut sut) [%noun gen])))
+      ?-  -.puz
+        |  (flaw cof p.puz)
+        &  (fine cof p.puz)
+      ==
+    ::
     ++  maim                                            ::  slap
       |=  [cof=cafe vax=vase gen=twig]
       ^-  (bolt vase)
-      %+  (clef %slap)  (fine cof vax gen)
-      |=  [cof=cafe vax=vase gen=twig]
-      =+  puz=(mule |.((~(mint ut p.vax) [%noun gen])))
-      ?-  -.puz
-        |  (flaw cof p.puz)
-        &  %+  (coup cof)  (mock [q.vax q.p.puz] (mole ska))
-           |=  val=*
-           `vase`[p.p.puz val]
-      ==
+      %+  cope  (mail cof p.vax gen)
+      |=  [cof=cafe typ=type fol=nock]
+      %+  (coup cof)  (mock [q.vax fol] (mole ska))
+      |=(val=* `vase`[typ val])
     ::
     ++  make                                            ::  reduce silk
       |=  [cof=cafe kas=silk]
@@ -912,18 +922,24 @@
         (fine cof `cage`[p.kas vax])
       ==
     ::
+    ++  malt                                            ::  cached slit
+      |=  [cof=cafe gat=type sam=type]
+      ^-  (bolt type)
+      %+  (clef %slit)  (fine cof gat sam)
+      |=  [cof=cafe gat=type sam=type]
+      =+  top=(mule |.((slit gat sam)))
+      ?-  -.top
+        |  (flaw cof p.top)
+        &  (fine cof p.top)
+      ==
+    ::
     ++  maul                                            ::  slam
       |=  [cof=cafe gat=vase sam=vase]
       ^-  (bolt vase)
-      %+  (clef %slam)  (fine cof gat sam)
-      |=  [cof=cafe gat=vase sam=vase]
-      =+  top=(mule |.((slit p.gat p.sam)))
-      ?-  -.top
-        |  (flaw cof p.top)
-        &  %+  (coup cof)  (mong [q.gat q.sam] (mole ska))
-           |=  val=*
-           `vase`[p.top val]
-      ==
+      %+  cope  (malt cof p.gat p.sam)
+      |=  [cof=cafe typ=type]
+      %+  (coup cof)  (mong [q.gat q.sam] (mole ska))
+      |=(val=* `vase`[typ val])
     ::
     ++  meow                                            ::  assemble
       |=  [how=beam arg=heel] 
@@ -1214,12 +1230,14 @@
       exec(q.kig (~(del by q.kig) tik))
     --
   --
+::
 --
 .  ==
 =|  axle
 =*  lex  -
 |=  [now=@da eny=@ ski=sled]                            ::  activate
 ^?                                                      ::  opaque core
+~%  %ford-d  +>+>+>+>+>+>  ~
 |%                                                      ::
 ++  call                                                ::  request
   |=  [hen=duct hic=(hypo (hobo kiss))]
