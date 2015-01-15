@@ -329,9 +329,12 @@
     ++  silkify
       |=  [wen=@da pax=path %mut a=cage b=cage]
       ^-  [duct path note]
+      =+  =+  (slag (dec (lent pax)) pax)
+          =+  ?~(- %$ i.-)
+          [%cast - [%done ~ b]]
       :+  hen
         [%diffing (scot %p who) syd (scot %da wen) pax]
-      [%f %exec who ~ %diff [%done ~ a] [%done ~ b]]
+      [%f %exec who ~ %diff [%done ~ a] -]
     ::
     ++  patch
       |=  [pax=path bar=lobe]
@@ -364,15 +367,15 @@
       ?~  pok  ~&  %no-patches  !!
       ?^  lon.u.pok  ~&  %not-done-patching  !!
       =+  ank=(~(checkout-ankh ze lim dom ran) sot.u.pok)
-      +(ank.dom ank, dok ~)
+      +(ank.dom ank, pok ~)
     ::
     ++  take-diff
       |=  [wen=@da pax=path res=(each bead (list tank))]
       ^+  +>
       ?~  dok
-        ~&  %clay-unexpected-made  !!
+        ~&  %clay-unexpected-made  +>.$
       ?.  (lien lon.u.dok |=(path =(+< pax)))
-        ~&  %clay-strange-made  !!
+        ~&  %clay-strange-made  +>.$
       ?:  ?=(%| -.res)
         %_    +>.$
             dok  ~
@@ -426,8 +429,9 @@
     ::
     ++  checkout-ankh
       |=  hat=(map path lobe)
-      ?.  =(~ pok)
-        ~&  %already-applying-patches  !!
+      ^+  +>
+      ::?.  =(~ pok)
+      ::  ~&  %already-applying-patches  +>.$
       =+  ^-  lon=(list path)
           %+  murn  (~(tap by hat))
           |=  [a=path b=lobe]

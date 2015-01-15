@@ -35,18 +35,6 @@
       [ost %pass / %g %cide %$]
       [ost %give %nice ~]
   ==
-::  ~&  %solid-jamming
-::  =+  pac=(jam [ken all])
-::  ~&  %solid-finished
-::  =+  nax=/(scot %p our.hid)/try/(scot %da lat.hid)/urbit/pill
-::  :*  [ost %pass /cp %c %info our.hid (foal nax pac)]
-::      [ost %give %nice ~]
-::      %+  turn  (~(tap by sup.hid))
-::      |=  [ost=bone *]
-::      :^  ost  %give  %rush
-::      :-  %tang  :_  ~
-::      leaf/"done"
-::  ==
 ++  peer
   |=
     *

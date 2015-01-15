@@ -1077,10 +1077,9 @@
     |=  [p=lobe q=cage]
     ^-  blob
     =+  t=[%delta 0 p q]
-    =+  z=(blob-to-cage t)
     =+  ^=  has
-        %^  cat  7  (sham [%blob z])
-        (sham [%lobe z])
+        %^  cat  7  (sham [%blob q.q.q])
+        (sham [%lobe p])
     [%delta has p q]
   ::
   ++  bulb-to-cage
@@ -1336,7 +1335,7 @@
     %-  cosh
     ?~  pat
       =+  zar=(bulb-to-cage bar)
-      ank(q [~ (sham `cage`zar) zar])
+      ank(q [~ (sham q.q.zar) zar])
     =+  nak=(~(get by r.ank) i.pat)
     %=  ank
       r  %+  ~(put by r.ank)  i.pat 
