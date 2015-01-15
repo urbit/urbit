@@ -870,6 +870,18 @@
     ?.  ?=([%o *] jon)  ~
     (zm (~(run by p.jon) wit))
   ::
+  ++  op                                                ::  parse keys of map
+    |*  [fel=_rule wit=fist]
+    %+  cu  mo
+    %-  ci  :_  (om wit)
+    |=  a=(map cord ,_(need *wit))
+    ^-  (unit (list ,_[(wonk *fel) (need *wit)]))
+    =-  (zl (turn (~(tap by a)) -))
+    |*  [a=cord b=*]
+    =+  nit=(rush a fel) 
+    ?~  nit  ~
+    (some [u.nit b])
+  ::
   ++  pe                                                ::  prefix
     |*  [pre=* wit=fist]
     (cu |*(a=* [pre a]) wit)
@@ -914,7 +926,7 @@
   ::
   ++  zm                                                ::  collapse unit map
     |*  lum=(map term (unit))
-    ?:  (~(rep by lum) | |=([[@ a=(unit)] b=?] |(b ?=(~ a))))
+    ?:  (~(rep by lum) |=([[@ a=(unit)] b=_|] |(b ?=(~ a))))
       ~
     (some (~(run by lum) need))
   --
@@ -940,6 +952,11 @@
   :-  %n
   ?:  =(0 a)  '0'
   (crip (flop |-(^-(tape ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])))))
+::
+++  jode                                                ::  ms timestamp
+  |=  a=time 
+  =-  (jone (div (mul - 1.000) ~s1))
+  (add (div ~s1 2.000) (sub a ~1970.1.1))
 ::
 ++  jesc
   |=  a=@  ^-  tape
@@ -2161,7 +2178,7 @@
     |=  har=hart
     ^-  tape
     ;:  weld
-      ?:(&(p.har !=([& /localhost] r.har)) "https://" "http://")
+      ?:(&(p.har !?=(hoke r.har)) "https://" "http://")
     ::
       ?-  -.r.har
         |  (trip (rsh 3 1 (scot %if p.r.har)))
@@ -2197,7 +2214,7 @@
   ++  auri                                              ::  2396 URL
     %+  cook
       |=  a=purl
-      ?.(=([& /localhost] r.p.a) a a(p.p &))
+      ?.(?=(hoke r.p.a) a a(p.p &))
     ;~  plug
       ;~  plug
         %+  sear
@@ -2632,6 +2649,14 @@
   ?:  ?=(| -.mud)  mud
   (mule |.((slam p.mud sam)))
 ::
+++  pack                                                ::  light path encoding
+  |=  [a=term b=path]  ^-  span
+  %+  rap  3  :-  (wack a)
+  (turn b |=(c=span (cat 3 '_' (wack c))))
+::
+++  pick                                                ::  light path decoding
+  |=  a=span  ^-  (unit ,[p=term q=path])
+  (rush a (most cab (sear wick urt:ab)))
 ++  saxo                                                ::  autocanon
   |=  who=ship
   ^-  (list ship)
@@ -2903,6 +2928,8 @@
 ++  hoot  ,[p=? q=(unit ,@ud) r=host]                   ::  secure/port/host
 ++  hort  ,[p=(unit ,@ud) q=host]                       ::  http port/host
 ++  host  $%([& p=(list ,@t)] [| p=@if])                ::  http host
+++  hoke  %+  each   ,[%localhost ~]                    ::  local host
+          ?(%.0.0.0.0 %.127.0.0.1)                      ::
 ++  httq                                                ::  raw http request
           $:  p=meth                                    ::  method
               q=@t                                      ::  unparsed url

@@ -1700,19 +1700,20 @@
         ?>  ?=([@ @ *] t.q.q.bon)
         :_  fox
         =+  [cak=i.t.q.q.bon ven=i.t.t.q.q.bon]
-        :~  =+  neh=(claw p.p.bon)
-            ?>  ?=(^ neh)
-            =+  ton=[%waft p.bon r.bon]
-            ::  ~&  [%milk-waft [[ven `path`t.t.t.q.q.bon] t.neh]]
-            :-  ?:  =(%c ven)
-                  ?>  =(%re cak)
-                  [[%c `path`t.t.t.q.q.bon] hen]
-                ?:  =(%e ven)
-                  ?>  |(=(%pr cak) =(%pc cak))
-                  [[%e `path`t.t.t.q.q.bon] hen]
-                [[ven `path`t.t.t.q.q.bon] t.neh]
-            [%sick ton]
-        ==
+        :_  ~
+        =+  neh=(claw p.p.bon)
+        ?>  ?=(^ neh)
+        ?:  ?=(%e ven)
+          ?>  |(=(%pr cak) =(%pc cak))
+          :_  [%sick %wart p.bon cak `path`t.t.t.q.q.bon r.bon]
+          [[%e `path`t.t.t.q.q.bon] hen]
+        =+  ton=[%waft p.bon r.bon]
+        ::  ~&  [%milk-waft [[ven `path`t.t.t.q.q.bon] t.neh]]
+        :_  [%sick ton]
+        ?:  =(%c ven)
+          ?>  =(%re cak)
+          [[%c `path`t.t.t.q.q.bon] hen]
+        [[ven `path`t.t.t.q.q.bon] t.neh]
       ?>  ?=(%q i.q.q.bon)
       ?>  ?=([@ *] t.q.q.bon)
       ?+    i.t.q.q.bon
@@ -1754,7 +1755,7 @@
         %+  turn  paz
         |=  him=ship
         :-  hen
-        [%pass /ye %g %mess [him ye/~] p.p.bon [%txt !>(;;(,@t r.bon))]]
+        [%pass /ye %g %mess [him ye/~] p.p.bon [%txt !>(((hard ,@t) r.bon))]]
       ==
     ::
         %mulk

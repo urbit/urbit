@@ -8,7 +8,10 @@
 --
 ::
 !:
+::::
+  ::
 |_  [hid=hide %0 ust=bone his=@p mac=mace]
+++  peer  ,_`.
 ++  poke-began-args
   |=  [ost=bone you=ship began-args]
   =+  bur=(shax :(mix (jam ges) eny))
@@ -42,8 +45,4 @@
     %went  ~
   ==
 ::
-++  peer
-  |=
-    *
-  `+>
 --
