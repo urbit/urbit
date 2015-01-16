@@ -407,6 +407,7 @@
   ++  sy-grams                                          ::  apply telegrams
     |=  [num=@ud gaz=(list telegram)]
     ^+  +>
+    ~&  [%sy-grams [num count] (lent gaz)]
     ?:  (gth num count)
       (sy-message(count 0) "message gap: {<num>} at {<count>}")
     =.  .  

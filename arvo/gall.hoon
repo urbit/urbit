@@ -87,9 +87,9 @@
               r=(map bone duct)                         ::  by bone
           ==                                            ::
 ++  roon                                                ::  foreign response
-          $%  [%d p=mark q=*]                           ::  diff
+          $%  [%d p=mark q=*]                           ::  diff (rush)
               [%e p=ares]                               ::  error
-              [%f p=mark q=*]                           ::  full refresh
+              [%f p=mark q=*]                           ::  full refresh (rust)
               [%k ~]                                    ::  message response
           ==                                            ::
 ++  rook                                                ::  foreign request
@@ -213,10 +213,13 @@
       ?-    -.q.hic
           %init
         [p=~ q=..^$(pol.all (~(put by pol.all) p.q.hic hen ~ ~))]
+      ::
           %rote
         (gawk hen p.q.hic q.q.hic ((hard ,[@ud rook]) r.q.hic))
+      ::
           %roth
         (gawd hen p.q.hic q.q.hic ((hard ,[@ud roon]) r.q.hic))
+      ::
           %wipe
         =+  mat=(~(got by pol.all) p.p.q.hic)
         ~?  !(~(has by bum.mat) q.p.q.hic)  [%wipe-lost q.p.q.hic]
@@ -408,6 +411,7 @@
           num=(slav %ud i.t.t.t.pax)
           imp=`path`t.t.t.t.pax
       ==
+  ~&  [%gall-gave hen [our you num imp] sih]
   :_  ..^$
   =+  rod=|=(ron=roon `note`[%a %wont [our you] [%q %gh imp] num ron])
   ?+  -.pax  !!
@@ -986,14 +990,28 @@
         =+  yov=(~(tap by vey.sat) ~)                   ::  XX ++pun
         +>.$(vey.sat (~(gas to *(qeu toil)) `_yov`[[hen kon] yov]))
       ::
-      ++  said
+      ++  said                                          ::  sayz, done wrong
         |=  vud=vase
-        |-  ^-  [(list toil) (list move)]
-        ?:  =(~ q.vud)  [~ mow]
+        =-  [p.fob (weld (flop q.fob) mow)]
+        ^=  fob
+        |-  ^-  (pair (list toil) (list move))
+        ?:  =(~ q.vud)  [~ ~]
         =+  sud=(sump (slot 2 vud))
         =+  res=$(vud (slot 3 vud))
         :-  ?~(-.sud -.res [u.-.sud -.res])
         ?~(+.sud +.res [u.+.sud +.res])
+      ::
+      ++  sayz                                          ::  dissect app moves
+        |=  vud=vase
+        =|  toy=(list toil)
+        |-  ^-  [(list toil) (list move)]
+        ?:  =(~ q.vud)  [toy mow]
+        =+  sud=(sump (slot 2 vud))
+        %=    $
+          vud  (slot 3 vud)
+          toy  ?~(-.sud toy [u.-.sud toy])
+          mow  ?~(+.sud mow [u.+.sud mow])
+        ==
       ::
       ++  show                                          ::  subscribe
         |=  [you=ship pax=path]                         ::  subscription
