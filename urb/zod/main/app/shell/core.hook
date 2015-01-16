@@ -403,7 +403,8 @@
       (spam /in/[u.act] %rush %txt txt)
     =+  pas=((full ~(parse from pax lat.hid)) [1 1] (trip txt))
     ?~  q.pas
-      (blab (print leaf/"<syntax error at {<`[@ @]`p.pas>}>"))
+      =-  (blab (weld (stray txt) (print leaf/-)))
+      "<syntax error at {<`[@ @]`p.pas>}>"
     =+  com=(wonk pas)
     =>  .(+>.$ (eat you com))
     =.  +>.$  (blab (stash txt))
@@ -446,8 +447,8 @@
       ?>  ?=(%gone +<.sih)
       =.  mow  :_(mow [ost %give %nice ~])
       ?.  =(act [~ cil])  +>.$
-      ~&  gone/[cil (~(got by cub.hid) cil)]
-      (blab(act ~) ping)
+      =.  act  ~
+      (blab ping)
     ::
         %main
       ?>  ?=(?(%nice %mean) +<.sih)
