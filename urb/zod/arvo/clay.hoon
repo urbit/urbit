@@ -734,11 +734,7 @@
             q.hic
           ^-  kiss
           ?:  ?=(%soft -.q.hic)
-            =+  ((soft kiss) p.q.hic)
-            ?~  -
-              ~&  [%clay-bad-soft -.p.q.hic]
-              !!
-            u.-
+            ~|([%bad-soft (,@t -.p.q.hic)] ((hard kiss) p.q.hic))
           ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
           ~&  [%clay-call-flub (,@tas `*`-.q.hic)]
           ((hard kiss) q.hic)
