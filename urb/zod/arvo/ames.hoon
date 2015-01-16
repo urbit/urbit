@@ -1768,6 +1768,7 @@
         :~  :-  (claw p.p.bon)
             [%sick %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
         ==
+      ::
           %ge                                         ::  %gall request
         =*  imp  t.t.q.q.bon
         ?>  (levy imp (sane %ta))
@@ -1776,6 +1777,7 @@
               (scot %p q.p.bon)
             q.q.bon
         :_  fox  [hen %pass pax %g %rote p.bon imp r.bon]~
+      ::
           %gh                                         ::  %gall response
         =*  imp  t.t.q.q.bon
         ?>  (levy imp (sane %ta))
