@@ -992,14 +992,18 @@
       ::
       ++  said                                          ::  sayz, done wrong
         |=  vud=vase
-        =-  [p.fob (weld (flop q.fob) mow)]
+        =-  [(flop p.fob) (weld (flop q.fob) mow)]
         ^=  fob
         |-  ^-  (pair (list toil) (list move))
         ?:  =(~ q.vud)  [~ ~]
         =+  sud=(sump (slot 2 vud))
         =+  res=$(vud (slot 3 vud))
-        :-  ?~(-.sud -.res [u.-.sud -.res])
-        ?~(+.sud +.res [u.+.sud +.res])
+        :-  ?~  -.sud 
+              -.res 
+            [u.-.sud -.res]
+        ?~  +.sud 
+          +.res 
+        [u.+.sud +.res]
       ::
       ++  sayz                                          ::  dissect app moves
         |=  vud=vase
