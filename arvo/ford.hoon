@@ -192,7 +192,7 @@
               ==                                        ::
               $:  now=@da                               ::  event date
                   eny=@                                 ::  unique entropy
-                  ska=$+(* (unit (unit)))               ::  system namespace
+                  ska=sled                              ::  system namespace
               ==                                        ::
               mow=(list move)                           ::  pending actions
           ==                                            ::
@@ -480,7 +480,7 @@
           :_  pax
           ?:  &(=(p.bek our) =(q.bek %main))  bek
           =+  oak=[our %main %da now]
-          ?:  ?=([~ ~ *] (ska %cy (tope [oak pax])))
+          ?:  ?=([~ ~ *] (ska ~ %cy [oak pax]))
             oak
           bek
       (cope (fade cof %hook bem) abut:(meow bem ~))
@@ -709,9 +709,10 @@
       |=  [cof=cafe bem=beam]
       ^-  (bolt beam)
       ?:  ?=(%ud -.r.bem)  (fine cof bem)
-      =+  von=(ska %cw (tope bem(s ~)))
+      =+  von=(ska ~ %cw bem(s ~))
       ?~  von  [p=cof q=[%1 [%w bem ~] ~ ~]]
-      (fine cof bem(r [%ud ((hard ,@) +:(need u.von))]))
+      ~&  `*`+.+.+:(need u.von)
+      (fine cof bem(r [%ud ((hard ,@) +.+.+:(need u.von))]))
     ::
     ++  lave                                            ::  validate
       |=  [cof=cafe for=mark his=ship som=*]
@@ -734,19 +735,19 @@
     ++  lend                                            ::  load arch
       |=  [cof=cafe bem=beam]
       ^-  (bolt arch)
-      =+  von=(ska %cy (tope bem))
+      =+  von=(ska ~ %cy bem)
       ?~  von  [p=cof q=[%1 [%y bem ~] ~ ~]]
-      (fine cof ((hard arch) +:(need u.von)))
+      (fine cof ((hard arch) +.q.q:(need u.von)))
     ::
     ++  liar                                            ::  load vase
       |=  [cof=cafe bem=beam]
       ^-  (bolt vase)
-      =+  von=(ska %cx (tope bem))
+      =+  von=(ska ~ %cx bem)
       ?~  von
         [p=*cafe q=[%1 [[%x bem ~] ~ ~]]]
       ?~  u.von
         (flaw cof (smyt (tope bem)) ~)
-      (fine cof ((hard vase) u.u.von))
+      (fine cof (slot 3 q.u.u.von))
     ::
     ++  lily                                            ::  translation targets
       |=  [cof=cafe for=mark bek=beak]
@@ -876,7 +877,7 @@
       ^-  (bolt vase)
       %+  cope  (mail cof p.vax gen)
       |=  [cof=cafe typ=type fol=nock]
-      %+  (coup cof)  (mock [q.vax fol] (mole ska))
+      %+  (coup cof)  (mock [q.vax fol] (mole (slod ska)))
       |=(val=* `vase`[typ val])
     ::
     ++  make                                            ::  reduce silk
@@ -932,6 +933,8 @@
         %+  cool  |.(leaf/"ford: cast {<p.kas>}")
         %+  cope  $(kas q.kas)
         |=  [cof=cafe cay=cage]
+        ^-  (bolt cage)
+        %+  cool  |.(leaf/"ford: casting {<p.cay>} to {<p.kas>}")
         %+  cope  (link cof p.kas p.cay [our %main %da now] q.cay)
         |=  [cof=cafe vax=vase]
         (fine cof [p.kas vax])
@@ -988,7 +991,7 @@
       ^-  (bolt vase)
       %+  cope  (malt cof p.gat p.sam)
       |=  [cof=cafe typ=type]
-      %+  (coup cof)  (mong [q.gat q.sam] (mole ska))
+      %+  (coup cof)  (mong [q.gat q.sam] (mole (slod ska)))
       |=(val=* `vase`[typ val])
     ::
     ++  meow                                            ::  assemble
@@ -1334,7 +1337,6 @@
   |=  [hen=duct hic=(hypo (hobo kiss))]
   ^-  [p=(list move) q=_..^$]
   =>  .(q.hic ?.(?=(%soft -.q.hic) q.hic ((hard kiss) p.q.hic)))
-  =+  ska=(slod ski)
   =+  ^=  our  ^-  @p
       ?-  -.q.hic
         %exec  p.q.hic
@@ -1343,7 +1345,7 @@
       =+  buy=(~(get by pol.lex) our)
       ?~(buy *baby u.buy)
   =^  mos  bay
-    abet:(~(apex za [[our hen] [now eny ska] ~] bay) q.q.hic)
+    abet:(~(apex za [[our hen] [now eny ski] ~] bay) q.q.hic)
   [mos ..^$(pol (~(put by pol) our bay))]
 ::
 ++  doze
@@ -1379,7 +1381,6 @@
 ++  take                                                ::  response
   |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [p=(list move) q=_..^$]
-  =+  ska=(slod ski)
   ?>  ?=([@ @ @ ~] tea)
   =+  :*  our=(need (slaw %p i.tea))
           num=(need (slaw %ud i.t.tea))
@@ -1387,6 +1388,6 @@
       ==
   =+  bay=(~(got by pol.lex) our)
   =^  mos  bay
-    abet:(~(axon za [[our hen] [now eny ska] ~] bay) num tik q.hin)
+    abet:(~(axon za [[our hen] [now eny ski] ~] bay) num tik q.hin)
   [mos ..^$(pol (~(put by pol) our bay))]
 --

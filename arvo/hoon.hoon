@@ -6062,7 +6062,7 @@
 ::
 ++  reck                                                ::  parse hoon file
   |=  bon=path
-  (rain bon ((hard ,@t) +.+.+:.^(%cx (weld bon `path`[%hoon ~]))))
+  (rain bon ((hard ,@t) +:.^(%cx (weld bon `path`[%hoon ~]))))
 ::
 ++  seed                                                ::  hoon/hoon core vase
   ^-  vase
@@ -10005,7 +10005,7 @@
       ?~  q.pro  ~
       ?~  +.q.pro  [~ ~]
       =+  dat=(slot 7 pro)
-      [~ ~ (mark q.dat) (slot 3 dat)]
+      [~ ~ (mark -.q.dat) +.q.dat]
     ::
     ++  soar                                            ::  scrub vane
       |=  sev=vase

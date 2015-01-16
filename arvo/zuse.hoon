@@ -1323,6 +1323,8 @@
       %-  make-direct
       ?:  &(?=(%mime -.p.mys) =([%hook ~] (slag (dec (lent pat)) pat)))
         `cage`[%hook [%atom %t] +.+.q.q.p.mys]
+      ?:  &(?=(%mime -.p.mys) =([%hoon ~] (slag (dec (lent pat)) pat)))
+        `cage`[%hoon [%atom %t] +.+.q.q.p.mys]
       p.mys
         %del                                            ::  delete if exists
       ?.  |((~(has by hat) pat) (~(has by bar) pat))  !!
