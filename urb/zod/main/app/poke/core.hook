@@ -12,6 +12,6 @@
 ::
 ++  pour
   |=  [ost=bone * sih=*]
-  ~&  poke-resp/;;([term term] [&1 &2]:sih)
+  ~&  poke-resp/(,[term term] [&1 &2]:sih)
   :_(+> [ost %pass / %g %cide %$]~)
 --
