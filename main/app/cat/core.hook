@@ -19,7 +19,7 @@
   =+  ark=;;(arch .^(%cy pax))
   ?^  q.ark
     :-  leaf/(spud pax)
-    %+  turn  (lore ;;(@t .^(%cx pax)))
+    %+  turn  (lore ;;(,@t .^(%cx pax)))
     |=(a=cord leaf/(trip a))
   ?-     r.ark                                          ::  handle ambiguity
       ~
