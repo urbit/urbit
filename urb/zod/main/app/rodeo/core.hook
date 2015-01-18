@@ -32,7 +32,7 @@
                   [%exp p=@t q=tank]                    ::
                   [%say p=@t]                           ::
       ==  ==  ==                                        ::
-    ++  story                                           ::  a conversation
+    ++  story                                           ::  wire content
       $:  count=@ud                                     ::  (lent grams)
           grams=(list telegram)                         ::  all history
           locals=(map ship (pair ,@da status))          ::  local presence
@@ -91,7 +91,8 @@
   |_  [ost=bone moves=(list move)]
   ++  ra-abet                                           ::  resolve core
     ^-  [(list move) _+>]
-    [(flop moves) +>]
+    ::  [(flop moves) +>]     ::  XX  return when order is correct
+    [moves +>]
   ::
   ++  ra-emil                                           ::  ra-emit move list
     |=  mol=(list move)
@@ -549,14 +550,15 @@
     ++  pa-start                                        ::  start stream
       |=  riv=river
       ^+  +>
-      =-  =.  +>.$  (pa-sauce ost [[%rust %rodeo-report %grams q.lab r.lab] ~])
+      =-  ~&  [%pa-start riv lab]
+          =.  +>.$  (pa-sauce ost [[%rust %rodeo-report %grams q.lab r.lab] ~])
           ?:  p.lab
             (pa-sauce ost [[%mean ~] ~])
           +>.$(guests (~(put by guests) ost riv))
       ^=  lab
       =+  [end=count gaz=grams dun=| zeg=*(list telegram)]
       |-  ^-  (trel ,? ,@ud (list telegram))
-      ?~  gaz  [dun end (flop zeg)]
+      ?~  gaz  [dun end zeg]
       ?:  ?-  -.q.riv                                   ::  after the end
             %ud  (lte p.q.riv end)
             %da  (lte p.q.riv p.r.q.i.gaz)
@@ -566,7 +568,7 @@
             %ud  (lth end p.p.riv)
             %da  (lth p.r.q.i.gaz p.p.riv)
           ==
-        [dun end (flop zeg)]
+        [dun end zeg]
       $(end (dec end), gaz t.gaz, zeg [i.gaz zeg])
     ::
     ++  pa-listen                                       ::  subscribe

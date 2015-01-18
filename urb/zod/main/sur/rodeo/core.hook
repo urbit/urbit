@@ -34,10 +34,11 @@
 ++  presence   ?(%gone %hear %talk)                     ::  status type
 ++  register  (pair atlas (map station atlas))          ::  ping me, ping srcs
 ++  report                                              ::  unified rush/rust
-  $%  [%house (set span)]                               ::  meta-changes
+  $%  [%config config]                                  ::  reconfigure
+  ::  [%folder (list report)]                           ::  multiple
       [%grams (pair ,@ud (list telegram))]              ::  beginning, thoughts
       [%group register]                                 ::  presence
-      [%config config]                                  ::  reconfigure
+      [%house (set span)]                               ::  station set
   ==                                                    ::
 ++  speech                                              ::  narrative action
   ::  XX  unify %own and %say to %lin
@@ -45,7 +46,7 @@
   $%  [%lan p=span q=@t]                                ::  local announce
       [%own p=@t]                                       ::  XX @ or /me
       [%exp p=@t]                                       ::  hoon line
-      [%non ~]                                          ::  no content
+      [%non ~]                                          ::  no content (yo)
       [%ext p=@tas q=*]                                 ::  extended action
       [%fat p=torso q=speech]                           ::  attachment
       ::  [%inv p=station]                              ::  invite to station
@@ -61,7 +62,8 @@
 ++  telegram   (pair ship thought)                      ::  who which whom what
 ++  thought    (trel serial audience statement)         ::  which whom what
 ++  torso                                               ::  attachment
-  $%  [%text (list ,@t)]                                ::  text lines
+  $%  [%name (pair ,@t torso)]                          ::  named attachment
+      [%text (list ,@t)]                                ::  text lines
       [%tank (list tank)]                               ::  tank list
   ==                                                    ::
   ::  markdown
