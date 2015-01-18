@@ -1889,6 +1889,7 @@
             =+  rul=(earn pul.p.som.pip)
             =+  ruf=(earn (erle our pul.p.som.pip(q.q /pul, r ~)))
             =+  sus=?~(foy.p.som.pip ses q.u.foy.p.som.pip)
+            ~&  auth-request/secret=`cord`lass
             =+  ham=(noon our sus whu.p.som.pip rul ruf)
             [~ pip(pez [%fin %ham ham])]
           ?.  =(lass u.pus.p.som.pip)
