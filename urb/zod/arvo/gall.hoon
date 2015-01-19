@@ -1103,7 +1103,7 @@
       ++  yawn                                          ::  start event
         |=  kon=knob
         ^+  +>
-        ~&  [%gall-yawn ost imp -.kon]
+        ::  ~&  [%gall-yawn ost imp -.kon]
         =.  qic.sat  `[hen kon]
         ?-    -.kon
             %boot
