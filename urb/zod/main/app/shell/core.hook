@@ -51,6 +51,7 @@
       [%mess p=hapt q=ship r=cage]                      ::
       [%meta p=vase]                                    ::
       [%nuke p=hapt q=ship]                             ::
+      [%took p=hapt q=ship]                             ::
   ==  ==  ==                                            ::
 ++  mand  ,[p=term q=(list twig)]                       ::  name and arguments
 ++  coma                                                ::
@@ -530,6 +531,8 @@
     [[ost %give +.sih]~ +>.$]
   ?~  pax  ~&  %no-path  !!
   ?>  ?=([%child span ?(%fork %out %main) ~] pax)
-  =+  abet:(purr:(ve hid ost vat) i.t.pax i.t.t.pax typ sih)
-  [-< +>.$(vat ->)]
+  =^  moz  vat  abet:(purr:(ve hid ost vat) i.t.pax i.t.t.pax typ sih)
+  :_  +>.$
+  ?.  ?=(%rush +<.sih)  moz
+  [[ost %pass pax %g %took [our.hid i.t.pax imp.hid] our.hid] moz]
 --

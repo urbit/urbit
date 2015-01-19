@@ -396,8 +396,8 @@
     ==
   %+  welp
     ?~(pot.res ~ (spam %rush %prompt u.pot.res))
-  %-  zing
-  (turn (flop tak.res) |=(a=cord (spam %rush %txt a)))
+  %^  spam  %rush  %tang
+  (turn (flop tak.res) |=(a=cord [%leaf (trip a)]))
 ::
 ++  pour
   |=  [ost=bone pax=path sih=*]
@@ -414,8 +414,8 @@
     :_  +>.$
     %+  welp
       ?~(pot.res ~ (spam %rush %prompt u.pot.res))
-    %-  zing
-    (turn (flop tak.res) |=(a=cord (spam %rush %txt a)))
+    %^  spam  %rush  %tang
+    (turn (flop tak.res) |=(a=cord [%leaf (trip a)]))
   :_  +>.$
   :-  [ost %give +.sih]
   ?+    +<.sih  ~
