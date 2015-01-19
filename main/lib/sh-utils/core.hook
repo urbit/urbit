@@ -74,6 +74,10 @@
   |*  [ost=bone * arg=_+<.gat]
   ((add-output con (gat arg) ref) +<)
 ::
+++  print
+  |*  [con=[* [hide *] *] tap=tape]
+  (add-output con [%rush %tang [%leaf tap] ~] ,_[~ con])
+::
 ++  verify                            ::  type-check with context and move
   |*  [con=^ mof=[@ *]]
   |*  ref=_,[(list ,_mof) _con]
