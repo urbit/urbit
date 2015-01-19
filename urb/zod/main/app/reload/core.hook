@@ -13,7 +13,7 @@
     rush/tang/[leaf/"done"]~
   %+  args-into-resp  . 
   |=  all=(list ,@tas)
-  %+  turn  (flop all)
+  %+  turn  all
   =+  ark=(arch .^(%cy /(scot %p our.hid)/arvo/(scot %da lat.hid)))
   =+  van=(~(tap by r.ark))
   |=  nam=@tas

@@ -27,7 +27,7 @@
   :*  :*  ost  %pass  /to-gan  %g  %mess  [our.hid /began]  our.hid
           %began-args  !>([his tic eny ges])
       ==
-      (spam %rush %prompt "[waiting...]" %text '')
+      (spam %rush %prompt '[waiting...]' %text '')
   ==
 ::
 ++  loon
@@ -383,7 +383,7 @@
   ==
 ::
 ++  poke-begin-args
-  |=  [ost=bone you=ship arg=?(~ [his=ship ~])]
+  |=  [ost=bone you=ship arg=$|(~ [his=ship ~])]
   =^  res  +>.$
     ^-  [[pot=(unit ,[cord prom cord]) tak=(list cord)] _+>.$]
     ?~  arg

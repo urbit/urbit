@@ -75,6 +75,7 @@
 ::
 ++  start-shell
   |=  [our=ship imp=path ost=bone you=ship pax=path]
+  %-  flop  
   ^-  (list move)
   =+  auc=(pack aut pax)
   :-  [ost %pass [%fork pax] %g %sire [aut auc]]
@@ -138,9 +139,9 @@
           r.tel  :_(r.tel leaf/"+ {(trip auc)}")
           mow
         ;:  welp
-            (spam tel)
-            [ost %give %nice ~]~
             (start-shell our.hid imp.hid ost you pax)
+            [ost %give %nice ~]~
+            (spam tel)
             mow
         ==
       ==

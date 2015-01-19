@@ -11,8 +11,8 @@
 ++  pock--args
   %+  args-into-gate  .
   |=  a=vase
-  :-  %tang  %-  flop
-  |-  ^-  (list tank)
+  :-  %tang
+  |-  ^-  tang
   =+  nex=(slew 3 a)
   ?~  nex  ~
   [(skol p:(slot 2 a)) $(a u.nex)]

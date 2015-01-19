@@ -40,10 +40,7 @@
   |=  [ost=bone pax=path sih=sign]
   ?>  ?=([%hi @t ~] pax)
   %.  +<
-  %-  add-exit
-  %^  add-output  +>.$
-    =+  ack=?+(+<.sih "unsuccesful" %nice "succesful")
-    rush/tang/[leaf/"hi {(trip i.t.pax)} {ack}"]~
-  ,_`+>.$
+  =+  ack=?+(+<.sih "unsuccesful" %nice "succesful")
+  (add-exit (print +>.$ "hi {(trip i.t.pax)} {ack}"))
 ::
 --
