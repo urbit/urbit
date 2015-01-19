@@ -142,7 +142,7 @@
   ::
   --
 --
-::
+!:
 ::::  per event
   ::
 |%
@@ -157,7 +157,7 @@
   ::
   ++  blab
     |=  mof=(list move)
-    +>.$(mow (welp mof mow))
+    +>.$(mow (welp (flop mof) mow))
   ::
   ++  chew-file
     |=  [paf=path mor=$|(cord toro)]
@@ -283,15 +283,16 @@
     |.
     =>  a
     =+  cil=(scot %ud pid)
-    %_    +>  
-        pid  +(pid)
+    =:  pid  +(pid)
         pip  ?~  inp  pip  (~(put by pip) cil u.inp)
         pop  ?~  inp  pop  (~(put by pop) u.inp cil)
         inp  `cil
-        mow
+      ==
+    %_    +>
+        ..blab
+      %-  blab
       =+  yon=[our.hid cil imp.hid]
       =+  mez=[(cat 3 p.app '-args') (exec [%clsg q.app])]
-      %-  welp  :_  mow
       ^-  (list move)
       :~  [ost %pass /child/[cil]/fork %g %sire p.app cil]
           [ost %pass /child/[cil]/out %g %show yon you /out]
@@ -364,7 +365,7 @@
     =.  act  `p.gal
     (blab ping)
   ::
-  ++  ping  (print-vase !>(*(list tank)))
+  ++  ping  (print-vase !>(*tang))
   ++  poke-kyev
     |=  [you=ship key=kyev]
     ^+  +>
@@ -383,7 +384,7 @@
       %g  =+  =-  tak=rose/[" " "[" "]"]^(turn cubs -)
               |=  a=span
               leaf/(trip (rap 3 (~(got by cub.hid) a) '(' a ')' ~))
-          (blab [ost give/nice/~] (print tak))
+          (blab [ost %give %nice ~] (print tak))
       %x  =.  +>.$  next-act
           (blab [ost %give %nice ~] ping)
     ==
@@ -413,9 +414,9 @@
       (spam /active/[u.act] %rush %type tiv)
     (blab [ost %give %nice ~] ~)
   ::
-  ++  print  |=(a=tank (print-vase !>(`(list tank)`[a ~])))
+  ++  print  |=(a=tank (print-vase !>(`tang`[a ~])))
   ++  print-vase
-    |=  tan=vase ::  [p=p:!>(*(list tank)) q=*]
+    |=  tan=vase ::  [p=p:!>(*tang) q=*]
     ^-  (list move)
     %^  spam  /out  %meta
     :(slop !>(%rush) !>(%term-line) !>(prompt) !>(~) tan)
@@ -459,7 +460,7 @@
       %-  print-vase
       ?+  p.sih 
         !>([(sell (slot 15 [typ sih]))]~)
-          %tang  (slot 15 [typ sih])
+          %tang  (slam !>(flop) p:!>(*tang) q.sih)
           %txt
         ?^  q.sih  !!                                   ::  move to vase space?
         !>([leaf/(trip q.sih)]~)
