@@ -1057,10 +1057,15 @@
           [%meta (spec (slot 15 caq))]
         ::
             [%give p=[p=@tas q=*]]
+          ~?  =(%meta p.p.q.caq)  %sump-meta
           ?:  ?=(%mean p.p.q.caq)
             :-  `[hon %nuke our]
             `[hon %give %mean (ares q.p.q.caq)]
-          :-  ?.  ?=(?(%rush %rust) p.p.q.caq)  ~
+          :-  ?.  ?|  ?=(?(%rush %rust) p.p.q.caq)
+                      ?&  ?=(%meta p.p.q.caq)
+                          ?=([* ?(%rush %rust) *] q.p.q.caq)
+                  ==  ==
+                ~
               `[hon %told our]
           :+  ~  hon
           :-  %give
@@ -1141,18 +1146,27 @@
           +>.$(qic.sat ~)
         ::
             %took
-          =+  qul=(~(got by qel.sat) ost)
-          ~&  [%yawn-took-has qul [our hen]]
-          +>.$(qic.sat ~, qel.sat (~(put by qel.sat) ost (dec qul)))
+          =+  qol=(~(get by qel.sat) ost)
+          ::  ~&  [%yawn-took-has qol [our hen]]
+          %=    +>.$
+              qic.sat  ~
+              qel.sat  
+            ?~  qol
+              ~&  [%took-underflow our hen]
+              qel.sat
+            ?:  =(`1 qol)
+              (~(del by qel.sat) ost)
+            (~(put by qel.sat) ost (dec u.qol))
+          ==
         ::
             %told
           =+  qol=(~(get by qel.sat) ost)
-          ~&  [%yawn-told-has qol [our hen]]
+          ::  ~&  [%yawn-told-has qol [our hen]]
           =+  qul=?~(qol 1 +(u.qol))
-          ::  ?:  =(10 qul)
-          ::  ~&  [%yawn-told-full our hen]
-          ::  +>.$(qic.sat `[hen %nuke p.kon])
-          +>.$(qic.sat ~, qel.sat (~(put by qel.sat) ost ?~(qol 1 +(u.qol))))
+          ?:  =(10 qul)
+            ~&  [%yawn-told-full our hen]
+            +>.$(qic.sat `[hen %nuke p.kon])
+          +>.$(qic.sat ~, qel.sat (~(put by qel.sat) ost qul))
         ::
             %load
           =+  [hom=(slot 2 q.p.kon) old=(slot 3 q.p.kon)]

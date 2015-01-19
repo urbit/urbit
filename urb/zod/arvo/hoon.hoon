@@ -10136,7 +10136,7 @@
   ++  jack                                              ::  dispatch card
     |=  [lac=? gum=muse]
     ^-  [[p=(list ovum) q=(list muse)] _niz]
-    =.  lac  |(lac ?=(?(%g %f) p.gum))
+    ::  =.  lac  |(lac ?=(?(%g %f) p.gum))
     %+  fire
       p.gum 
     ?-    -.r.gum
