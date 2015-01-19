@@ -1006,8 +1006,8 @@
       ::
       ++  said                                          ::  sayz, done wrong
         |=  vud=vase
-        ::  =-  [p.fob (weld (flop q.fob) mow)]
-        ::  ^=  fob
+        =-  [p.fob (weld (flop q.fob) mow)]
+        ^=  fob
         |-  ^-  (pair (list toil) (list move))
         ?:  =(~ q.vud)  [~ ~]
         =+  sud=(sump (slot 2 vud))

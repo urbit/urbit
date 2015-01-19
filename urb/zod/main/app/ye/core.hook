@@ -26,22 +26,17 @@
     |=  [tex=tape ~]
     =+  mez=(crip "{<our.hid>}: {tex}")
     [%a %want [our.hid (sein our.hid)] /q/ye mez]
-  %+  add-resp  [%give %nice ~]
-  ,_`.
+  (add-nice ,_`.)
 ::
 ++  poke-txt
-  %+  add-resp  [%give %nice ~]
   %+  gate-bang  |=(cor=@t [%d %flog `flog`[%text "> {(trip cor)}"]])
-  ,_`.
+  (add-nice ,_`.)
 ::
 ++  pour
   |=  [ost=bone pax=path sih=sign]
   ?>  ?=([%bang ~] pax)
   %.  +<
-  %-  add-exit
-  %^  add-output  +>.$
-    =+  ack=?+(q.sih "failed" %good "recieved")
-    rush/tang/[leaf/"ye {ack}"]~
-  ,_`+>.$
+  =+  ack=?+(q.sih "failed" %good "recieved")
+  (add-exit (print +>.$ "ye {ack}"))
 ::
 --

@@ -12,5 +12,5 @@
   %+  gate-bang  
     |=  [syd=@tas her=@p sud=@tas ~]
     [%c %plug our.hid syd her sud]
-  (args-into-gate . ,_[%txt 'unsynced'])
+  (print . "unsynced")
 --
