@@ -684,6 +684,7 @@
         :_  ~
         :-  [%$ 12]~
         (cave !>([[our app.sat imp] cub.sat sup.sat pus.sat [act.sat eny now]]))
+      ::
       ++  core  |=(vax=vase (cove %core vax))           ::  core as silk
       ++  cove                                          ::  cage as silk
         |=  cay=cage
@@ -1057,7 +1058,6 @@
           [%meta (spec (slot 15 caq))]
         ::
             [%give p=[p=@tas q=*]]
-          ~?  =(%meta p.p.q.caq)  %sump-meta
           ?:  ?=(%mean p.p.q.caq)
             :-  `[hon %nuke our]
             `[hon %give %mean (ares q.p.q.caq)]
@@ -1103,7 +1103,7 @@
       ++  yawn                                          ::  start event
         |=  kon=knob
         ^+  +>
-        ::  ~&  [%gall-yawn ost imp -.kon]
+        ~&  [%gall-yawn ost imp -.kon]
         =.  qic.sat  `[hen kon]
         ?-    -.kon
             %boot
