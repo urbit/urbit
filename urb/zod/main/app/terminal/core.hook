@@ -42,6 +42,7 @@
       [%show p=hapt q=ship r=path]                      ::
       [%sire p=term q=span]                             ::
       [%mess p=hapt q=ship r=mess]                      ::
+      [%took p=hapt q=ship]                             ::
   ==  ==  ==                                            ::
 ++  sign                                                ::
   $%  $:  %g                                            ::
@@ -176,7 +177,8 @@
           ?(%rust %rush)
         =.  p.q.sih  ?^(q.q.sih p.tel p.q.sih)          ::  XX prompt hack
         %_  +>.$
-          mow  (welp (spam q.sih) mow)
+          mow  :-  [ost %pass [%resp pax] %g %took [our.hid [auc imp.hid]] you]
+               (welp (spam q.sih) mow)
           tel  [p.q.sih (weld q.q.sih q.tel) (weld r.q.sih r.tel)]
         ==
       ==

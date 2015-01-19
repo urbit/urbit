@@ -51,6 +51,7 @@
           $%  [%mess p=[p=ship q=path] q=ship r=mess]   ::
               [%nuke p=[p=ship q=path] q=ship]          ::
               [%show p=[p=ship q=path] q=ship r=path]   ::
+              [%took p=[p=ship q=path] q=ship]          ::
           ==  ==                                        ::
               $:  %t                                    ::
           $%  [%wait p=@da]                             ::
@@ -322,6 +323,7 @@
         %nice  +>.$
         %note  ?.(p.yar +>.$ (fume p.+.sih q.+.sih))    ::  debug message
         ?(%rush %rust)                                  ::  XX  reset prompt
+      =.  mos  :_(mos [hen %pass tea %g %took [our /terminal] our])
       ?>  ?=(%term-line +>-.sih)
       =.  +>.$
         =+  lis=?-(-.+.sih %rust (scag 1.000 r.q.sih), %rush r.q.sih)
