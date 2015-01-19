@@ -16,7 +16,7 @@
         %earl  (bex 32)
       ==
   :-  %tang
-  |-  ^-  (list tank)
+  |-  ^-  tang
   ?:  ?=(0 n)  ~
   =+  tic=/(scot %p our.hid)/tick/(scot %da lat.hid)/(scot %p her)
   :-  leaf/"{<her>}: {<(,@p .^(%a tic))>}"
