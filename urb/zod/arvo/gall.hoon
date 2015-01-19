@@ -1163,9 +1163,9 @@
           =+  qol=(~(get by qel.sat) ost)
           ::  ~&  [%yawn-told-has qol [our hen]]
           =+  qul=?~(qol 1 +(u.qol))
-          ?:  =(10 qul)
-            ~&  [%yawn-told-full our hen]
-            +>.$(qic.sat `[hen %nuke p.kon])
+          ::  ?:  =(10 qul)
+          ::  ~&  [%yawn-told-full our hen]
+          ::  +>.$(qic.sat `[hen %nuke p.kon])
           +>.$(qic.sat ~, qel.sat (~(put by qel.sat) ost qul))
         ::
             %load
