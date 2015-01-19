@@ -537,6 +537,8 @@
   ^-  [(list move) _..^^$]
   =+  mut=(~(get by pol.all) our)
   ?^  mut
+    ?:  &(?=([@ @ *] imp) !(~(has by bum.u.mut) imp))   ::  %took for dead imps
+      [~ ..^^$]
     abet:work:(quem:(boar:(gent our imp u.mut) hen law) kon)
   ((gape hen law) our imp kon)
 ::
@@ -1163,9 +1165,9 @@
           =+  qol=(~(get by qel.sat) ost)
           ::  ~&  [%yawn-told-has qol [our hen]]
           =+  qul=?~(qol 1 +(u.qol))
-          ::  ?:  =(10 qul)
-          ::  ~&  [%yawn-told-full our hen]
-          ::  +>.$(qic.sat `[hen %nuke p.kon])
+          ?:  =(10 qul)
+            ~&  [%yawn-told-full our hen]
+            +>.$(qic.sat `[hen %nuke p.kon])
           +>.$(qic.sat ~, qel.sat (~(put by qel.sat) ost qul))
         ::
             %load
