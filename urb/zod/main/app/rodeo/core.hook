@@ -491,7 +491,7 @@
         %|  ~&  tweet-acquire/p.p.tay
             !!
       ::
-        %&  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
+        %&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
             :~  :-  /friend/show/(scot %p p.p.tay)/[man]
                 [%g %show [p.p.tay /rodeo] our.hid /af/[q.p.tay]/(scot %ud num)]
             ==
