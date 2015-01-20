@@ -351,7 +351,10 @@
   |=  [hen=duct law=(unit cuff)]
   |=  [our=@p imp=path kon=knob]
   ^-  [(list move) _..^^$]
-  ?>  ?=(?(%mess %show %nuke) -.kon)
+  ?>  ?=(?(%mess %show %nuke %took) -.kon)
+  ?:  ?=(%took -.kon)
+    ~&  [%gape-took our imp hen]
+    [~ ..^^$]
   =+  you=`ship`?-(-.kon %mess p.kon, %nuke p.kon, %show p.kon)
   =+  mat=(~(got by pol.all) you)
   =+  sad==+(sad=(~(get by sap.mat) our) ?^(sad u.sad [.(p 1)]:*scad))
@@ -451,9 +454,7 @@
           ==
         ==
     %s  ?+    -.sih  !!
-            %a  ~&  [%gave-a [our you num imp] -.+.sih]
-                ~&  [%gave-a-hen hen]
-                :_  ~  :-  hen
+            %a  :_  ~  :-  hen
                 [%pass [%r pax] %g %took [our imp] you]
             %g
           :_  ~  :-  hen
@@ -694,20 +695,7 @@
         [%done ~ cay]
       ::
       ++  deal                                          ::  reboot
-        ^+  .
-        =.  tik.sat  +(tik.sat)
-        =+  pys=(~(tap by sup.sat) ~)
-        ::  ~&  [%gall-deal tik.sat pys]
-        |-  ^+  +>.$
-        ?~  pys  +>.$
-        =.  +>.$  $(pys t.pys)
-        %_    +>.$
-            mow
-          :_  mow
-          :+  (able p.i.pys)
-            %slip 
-          [%g %show [our imp] q.i.pys]
-        ==
+        .(tik.sat +(tik.sat))
       ::
       ++  deff
         |=  [wir=wire hon=duct caq=vase]
@@ -1165,9 +1153,9 @@
           =+  qol=(~(get by qel.sat) ost)
           ::  ~&  [%yawn-told-has qol [our hen]]
           =+  qul=?~(qol 1 +(u.qol))
-          ?:  =(10 qul)
-            ~&  [%yawn-told-full our hen]
-            +>.$(qic.sat `[hen %nuke p.kon])
+          ::  ?:  =(10 qul)
+          ::  ~&  [%yawn-told-full our hen]
+          ::  +>.$(qic.sat `[hen %nuke p.kon])
           +>.$(qic.sat ~, qel.sat (~(put by qel.sat) ost qul))
         ::
             %load
