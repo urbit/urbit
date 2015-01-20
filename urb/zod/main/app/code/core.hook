@@ -1,0 +1,9 @@
+::  Show passcode
+/+  sh-utils  
+|_  [hide ~]
+++  peer  ,_`.
+++  poke--args
+  %+  args-into-gate  .
+  =+  pax=/(crip <our>)/code/(crip <lat>)/(crip <our>)
+  ,_tang/~[leaf/"{<(,@p .^(%a pax))>}"]
+--
