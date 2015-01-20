@@ -288,7 +288,7 @@
             :~  %afx
                 man
                 ?:  =(0 count)
-                  ~&  [%story-init man `@da`(sub lat.hid ~d1)]
+                  ::  ~&  [%story-init man `@da`(sub lat.hid ~d1)]
                   (scot %da (sub lat.hid ~d1))
                 (scot %ud count)
             ==
@@ -403,7 +403,7 @@
   ++  sy-grams                                          ::  apply telegrams
     |=  [num=@ud gaz=(list telegram)]
     ^+  +>
-    ~&  [%sy-grams [num count] (lent gaz)]
+    ::  ~&  [%sy-grams [num count] (lent gaz)]
     ?:  (gth num count)
       (sy-message(count 0) "message gap: {<num>} at {<count>}")
     =.  .  
@@ -607,7 +607,9 @@
         %mean  ~&([%pour-mean-cmd-in +>.sih] !!)
         %rush
       ?>  ?=(%txt -.p.sih)
-      (pour-shell p.p.sih)
+      =^  moz  +>.$  (pour-shell p.p.sih)
+      :_  +>.$
+      :_(moz [ost %pass pax %g %took [our.hid +.imp.hid] our.hid])
     ==
   ::
       %cmd-ac
