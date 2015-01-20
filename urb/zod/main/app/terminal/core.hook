@@ -18,7 +18,6 @@
   ==                                                    ::
 ++  gift                                                ::
   $%  [%rush gilt]                                      ::
-      [%rust gilt]                                      ::
       [%init p=@p]                                      ::
       [%logo @]                                         ::
       [%mean p=ares]                                    ::
@@ -51,7 +50,6 @@
       [%logo @]                                         ::
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
-      [%rust p=%term-line q=term-line]                  ::
       [%rush p=%term-line q=term-line]                  ::
       [%sage p=path q=*]                                ::
       [%verb ~]                                         ::
@@ -119,8 +117,8 @@
         mow
       :_  mow
       ?-  gal
-          %term   [ost %give %rust %hymn page]          ::  hymn front end
-          %lines  [ost %give %rust %term-line tel]      ::  term-line output
+          %term   [ost %give %rush %hymn page]          ::  hymn front end
+          %lines  [ost %give %rush %term-line tel]      ::  term-line output
       == 
     ==
   ::
@@ -175,7 +173,7 @@
         %resp
       ?+    +<.sih  !!
           %nice  +>.$
-          ?(%rust %rush)
+          %rush
         =.  p.q.sih  ?^(q.q.sih p.tel p.q.sih)          ::  XX prompt hack
         %_  +>.$
           mow  :-  [ost %pass [%resp pax] %g %took [our.hid [auc imp.hid]] you]

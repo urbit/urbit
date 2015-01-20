@@ -326,7 +326,7 @@
       =.  mos  :_(mos [hen %pass tea %g %took [our /terminal] our])
       ?>  ?=(%term-line +>-.sih)
       =.  +>.$
-        =+  lis=?-(-.+.sih %rust (scag 1.000 r.q.sih), %rush r.q.sih)
+        =+  lis=(scag 1.000 r.q.sih)
         =-  (furl (zing (turn (flop lis) -)))
         |=  a=tark
         ^-  wall
