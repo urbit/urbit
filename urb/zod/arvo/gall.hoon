@@ -103,21 +103,24 @@
           ==                                            ::
 ++  seat                                                ::  the living app
           $:  app=term                                  ::  app name
-              huv=(unit vase)                           ::  application vase
-              qic=(unit toil)                           ::  current project
-              onz=(unit (pair duct path))               ::  live fords
-              vey=(qeu toil)                            ::  pending projects
+              $:  huv=(unit vase)                       ::  application vase
+                  qic=(unit toil)                       ::  current project
+                  onz=(unit (pair duct path))           ::  live fords
+                  vey=(qeu toil)                        ::  pending projects
+              ==                                        ::
               nuc=(set duct)                            ::  nuked ducts
-              tik=@ud                                   ::  build number
-              act=@ud                                   ::  action number
-              lat=@da                                   ::  last change
-              orm=(unit ,@da)                           ::  build date
+              $:  tik=@ud                               ::  build number
+                  act=@ud                               ::  action number
+                  lat=@da                               ::  last change
+                  orm=(unit ,@da)                       ::  build date
+              ==                                        ::
               mom=(unit duct)                           ::  parent duct
               cub=(map span term)                       ::  offspring
-              sup=(map bone (pair ship path))           ::  subscribers
-              pus=(jug path bone)                       ::  srebircsbus
-              peq=(map bone ,@uvI)                      ::  peekers
-              qel=(map bone ,@ud)                       ::  rush queue length
+              $:  sup=(map bone (pair ship path))       ::  subscribers
+                  pus=(jug path bone)                   ::  srebircsbus
+                  peq=(map bone ,@uvI)                  ::  peekers
+                  qel=(map bone ,@ud)                   ::  rush queue length
+              ==                                        ::
               ped=(set (pair ship desk))                ::  active depends
               zam=scar                                  ::  opaque ducts
           ==                                            ::
@@ -340,6 +343,15 @@
   :-  :+  %cell  [%cube sem %atom %tas]
       [%cell [%cube p.cay %atom %tas] p.q.cay]
   [sem p.cay q.q.cay]
+::
+++  steb
+  |=  vax=vase  ::(hypo gilt)                           ::  gilt vase to cage
+  ?>  ?=(gilt q.vax)                  ::  XX  static
+  :-  -.q.vax
+  %+  slap  vax
+  :+  %wtgr 
+    [%wtts leaf/tas/-.q.vax [%& 2]~]
+  [%cnzz [%& 3]~]
 ::
 ++  gaff                                                ::  take and go
   |=  [our=@p imp=path]
@@ -719,8 +731,8 @@
       ::
       ++  drug                                          ::  set dependencies
         |=  pen=(set (pair ship desk))
-        ::  ~&  [%drug %pen pen]
-        ::  ~&  [%drug %ped ped.sat]
+        :: ~&  [%drug ped=ped.sat]
+        :: ~&  [%drug pen=pen]
         ^+  +>
         =+  ^=  new  ^-  (list move)
             %+  turn
@@ -729,7 +741,7 @@
             |=  a=(pair ship desk)
             :-  hun.mat
             :^  %pass  (away %w %drug (scot %p p.a) q.a ~)  %c
-            ::~&  [%sync-subscribe our p.a q.a]
+            ::  ~&  [%sync-subscribe our p.a q.a]
             [%warp [our p.a] q.a ~ %| [%da +(now)] [%da (add now ~d1000)] /]
         =+  ^=  old  ^-  (list move)
             %+  turn
@@ -1258,6 +1270,15 @@
           (xeno [q.kon imp] %feel ~)
         ::
             %take
+          ?:  &(?=([%g %rush @ *] q.q.kon) (warm %posh))
+            ?>  ?=(^ huv.sat)
+            =+  gil=(steb (slot 7 q.kon))
+            =+  gis=[[%cube -.gil [%atom %tas]] -.gil]
+            =+  sam=:(slop [[%atom %ud] ost] !>(p.kon) gis +.gil)
+            %+  ford  /s/pour
+            :+  %dude  leaf/"pouring"
+            :+  %dude  (skol %cell -.gis p.gil)
+            [%call (harm %posh (conf (core u.huv.sat))) (cove %$ sam)]
           ?:  (warm %purr)
             ?>  ?=(^ huv.sat)
             =+  sam=:(slop [[%atom %ud] ost] !>(p.kon) !>(p.q.kon) q.kon)
