@@ -450,6 +450,7 @@
     ::
         %out
       ?.  ?=(?(%rust %rush) +<.sih)  +>.$
+      =>  .(+<.sih %rush)
       ?:  ?=(%prompt p.sih)
         ?:  (~(has by pip) cil)  +>.$
         =.  pot  (~(put by pot) cil (,[cord prom cord] q.sih))

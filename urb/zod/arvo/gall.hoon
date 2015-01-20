@@ -696,18 +696,19 @@
       ++  deal                                          ::  reboot
         ^+  .
         =.  tik.sat  +(tik.sat)
-        =+  pys=(~(tap by sup.sat) ~)
-        ::  ~&  [%gall-deal tik.sat pys]
-        |-  ^+  +>.$
-        ?~  pys  +>.$
-        =.  +>.$  $(pys t.pys)
-        %_    +>.$
-            mow
-          :_  mow
-          :+  (able p.i.pys)
-            %slip 
-          [%g %show [our imp] q.i.pys]
-        ==
+        .
+        ::  =+  pys=(~(tap by sup.sat) ~)
+        ::  ::  ~&  [%gall-deal tik.sat pys]
+        ::  |-  ^+  +>.$
+        ::  ?~  pys  +>.$
+        ::  =.  +>.$  $(pys t.pys)
+        ::  %_    +>.$
+        ::      mow
+        ::    :_  mow
+        ::    :+  (able p.i.pys)
+        ::      %slip 
+        ::    [%g %show [our imp] q.i.pys]
+        ::  ==
       ::
       ++  deff
         |=  [wir=wire hon=duct caq=vase]
