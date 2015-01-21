@@ -50,7 +50,7 @@
           [%da p=@da]                                   ::  by date
       ==                                                ::
     ++  gift                                            ::  result
-      $%  [%rust %rodeo-report report]                  ::  refresh
+      $%  [%rush %rodeo-report report]                  ::  refresh
           [%mean ares]                                  ::  cancel
           [%nice ~]                                     ::  accept
       ==                                                ::
@@ -61,7 +61,7 @@
           $:  %g                                        ::  application
       $%  [%mean p=ares]                                ::  cancel
           [%nice ~]                                     ::  acknowledge
-          [%rust %rodeo-report report]                  ::  refresh
+          [%rush %rodeo-report report]                  ::  refresh
           ==  ==                                        ::
           $:  %t                                        ::
       $%  [%wake ~]                                     ::  timer wakeup
@@ -79,6 +79,7 @@
       $%  [%mess p=hapt q=ship r=cage]                  ::  message
           [%nuke p=hapt q=ship]                         ::  cancel
           [%show p=hapt q=ship r=path]                  ::  subscribe
+          [%took p=hapt q=ship]                         ::  acknowledge
           ==  ==                                        ::
           $:  %t                                        ::
       $%  [%wait p=@da]                                 ::
@@ -116,7 +117,7 @@
   ++  ra-house                                          ::  emit stations
     |=  ost=bone
     %+  ra-emit  ost
-    :^  %give  %rust  %rodeo-report
+    :^  %give  %rush  %rodeo-report
     :-  %house
     %-  ~(gas in *(set span))
     ^-  (list span)
@@ -168,11 +169,11 @@
     ?:(neu +>.$ ra-homes)
   ::
   ++  ra-friend                                         ::  %friend response
-    |=  [man=span sih=sign]
+    |=  [her=ship man=span sih=sign]
     ^+  +>
     =+  pur=(~(get by stories) man)
     ?~  pur  ~&  [%ra-friend-none man]  +>.$
-    pa-abet:(~(pa-friend pa man u.pur) sih)
+    pa-abet:(~(pa-friend pa man u.pur) her sih)
   ::
   ++  ra-stalk                                          ::  %stalk response
     |=  [man=span tay=station sih=sign]
@@ -385,7 +386,7 @@
         (pa-sauce ost [[%mean ~ %rodeo-master-unauthorized ~] ~])
       =.  owners  (~(put in owners) ost)
       ::  ~&  [%pa-master her man shape]
-      (pa-sauce ost [[%rust %rodeo-report %config shape] ~])
+      (pa-sauce ost [[%rush %rodeo-report %config shape] ~])
     ::
     ++  pa-display                                      ::  update presence
       |=  vew=(set bone)
@@ -399,7 +400,7 @@
       ?~  vew  +>.^$
       =.  +>.^$  $(vew l.vew)
       =.  +>.^$  $(vew r.vew)
-      (pa-sauce n.vew [[%rust %rodeo-report %group reg] ~])
+      (pa-sauce n.vew [[%rush %rodeo-report %group reg] ~])
     ::
     ++  pa-monitor                                      ::  update config
       =+  owe=owners
@@ -408,18 +409,22 @@
       =.  +>  $(owe l.owe)
       =.  +>  $(owe r.owe)
       ::  ~&  [%pa-monitor man shape]
-      (pa-sauce n.owe [[%rust %rodeo-report %config shape] ~])
+      (pa-sauce n.owe [[%rush %rodeo-report %config shape] ~])
     ::
     ++  pa-friend                                       ::  subscribed update
-      |=  sih=sign
+      |=  [her=ship sih=sign]
       ^+  +>
       ?+    sih  ~&([%rodeo-bad-friend sih] !!)
           [%g %nice ~]
         ::  ~&  %pa-friend-nice 
         +>.$
       ::
-          [%g %rust %rodeo-report *]
+          [%g %rush %rodeo-report *]
         ::  ~&  [%pa-friend-report +>+.sih]
+        =.  +>  %+  pa-scrub  ost 
+                :_  ~
+                :-  /friend/show/(scot %p her)/[man]
+                [%g %took [her /rodeo] our.hid]
         ?+  -.+>+.sih  ~&([%rodeo-odd-friend sih] !!)
           %config  +>.$
           %group   +>.$
@@ -435,7 +440,7 @@
         ::  ~&  %pa-stalk-nice 
         +>.$
       ::
-          [%g %rust %rodeo-report *]
+          [%g %rush %rodeo-report *]
         ?+    -.+>+.sih  ~&([%rodeo-odd-friend sih] !!)
             %group
           (pa-remind tay +.+>+.sih)
@@ -487,7 +492,7 @@
             !!
       ::
         %&  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
-            :~  :-  /friend/show/[man]
+            :~  :-  /friend/show/(scot %p p.p.tay)/[man]
                 [%g %show [p.p.tay /rodeo] our.hid /af/[q.p.tay]/(scot %ud num)]
             ==
       ==
@@ -550,7 +555,7 @@
       |=  riv=river
       ^+  +>
       =-  ~&  [%pa-start riv lab]
-          =.  +>.$  (pa-sauce ost [[%rust %rodeo-report %grams q.lab r.lab] ~])
+          =.  +>.$  (pa-sauce ost [[%rush %rodeo-report %grams q.lab r.lab] ~])
           ?:  p.lab
             (pa-sauce ost [[%mean ~] ~])
           +>.$(guests (~(put by guests) ost riv))
@@ -615,7 +620,7 @@
               ==
             old
           :-  p.old
-          [[p.n.guests %give %rust %rodeo-report %grams num gam ~] q.old]
+          [[p.n.guests %give %rush %rodeo-report %grams num gam ~] q.old]
       =.  moves  (welp q.moy moves)
       |-  ^+  +>.^$
       ?~  p.moy  +>.^$
@@ -694,11 +699,11 @@
     ==
   ::
       [%friend *]
-    ?>  ?=([@ @ ~] t.pax)
+    ?>  ?=([@ @ @ ~] t.pax)
     ?.  =(%show i.t.pax)
       ~&  [%pour-friend-nuke-nuke pax]
       [~ +>.$]
-    ra-abet:(~(ra-friend ra ost ~) i.t.t.pax sih)
+    ra-abet:(~(ra-friend ra ost ~) (slav %p i.t.t.pax) i.t.t.t.pax sih)
   ::
       [%stalk *]
     ?>  ?=([@ @ @ @ ~] t.pax)
