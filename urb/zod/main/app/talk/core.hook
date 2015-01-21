@@ -65,7 +65,6 @@
       $%  [%mean ares]
           [%nice ~]
           [%rush iron]
-          [%rust iron]
       ==
     ++  hapt  ,[p=ship q=path]
     ++  move  ,[p=bone q=(mold note gift)]
@@ -74,6 +73,7 @@
       $%  [%mess p=hapt q=ship r=cage]
           [%nuke p=hapt q=ship]
           [%show p=hapt q=ship r=path]
+          [%took p=hapt q=ship]
           ==  ==
           $:  %t
       $%  [%wait p=@da]
@@ -85,10 +85,6 @@
               $=  p
               $%  [%txt p=cord]                         ::  input text
                   [%type p=?]                           ::  typing notify
-          ==  ==
-          $:  %rust
-              $=  p
-              $%  [%txt p=cord]
                   [%rodeo-report p=report]
           ==  ==
       ==
@@ -443,10 +439,7 @@
     ::+>(link %warm) 
       +>.$
     ::
-        %rush                                           ::  should use, don't
-      ~&(%sy-sign-rush !!)
-    ::
-        %rust                                           ::  direct update
+        %rush                                           ::  direct update
       ?:  ?=(?(%cold %dead) link)
         ~&  [%sy-sign-rust-bad `@tas`link]
         +>.$
@@ -612,21 +605,29 @@
     ?+    +<.sih  !!
         %nice  [~ +>.$]
         %mean  ~&([%pour-mean-cmd-in +>.sih] !!)
-        ?(%rush %rust)
+        %rush
       ?>  ?=(%txt -.p.sih)
       (pour-shell p.p.sih)
     ==
   ::
       %cmd-ac
-    [~ +>.$]
+    ?+  +<.sih  !!
+        %nice  [~ +>.$]
+        %mean  ~&([%pour-mean-cmd-ac +>.sih] !!)
+        %rush
+      :_  +>.$
+      [ost %pass pax %g %took [our.hid +.imp.hid] our.hid]~
+    ==
   ::
       %server
     ?+    +<.sih  !!
         %nice  [~ +>.$]
         %mean  ~&(%talk-server-crash !!)
-        ?(%rush %rust)
+        %rush
       ?>  ?=([%rodeo-report %house *] p.sih)
-      ny-abet:(ny-tell:ny +.p.p.sih)
+      =^  moz  +>.$  ny-abet:(ny-tell:ny +.p.p.sih)  
+      :_  +>.$
+      :_(moz [ost %pass pax %g %took [our.hid /rodeo] our.hid])
     ==
   ::
       %time
@@ -637,11 +638,13 @@
   ::
       %fm
     ?>  ?=([@ *] t.pax)
-    ?.  &(?=(^ live) =(u.live i.t.pax))
+    ?.  =(& &(?=(^ live) =(u.live i.t.pax)))
       ~&  [%talk-wrong-story live i.t.pax] 
       [~ +>.$]
     ?>  ?=(%g -.sih)
-    sy-abet:(sy-sign:(need (novel ~)) +.sih)
+    =^  moz  +>.$  sy-abet:(sy-sign:(need (novel ~)) +.sih)
+    :_  +>.$
+    :_(moz `move`[ost %pass pax %g %took [our.hid /rodeo] our.hid])
   ==
 ::
 ++  poke-talk-args
