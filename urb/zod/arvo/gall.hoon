@@ -42,6 +42,7 @@
               [%feel ~]                                 ::  touch
               [%load p=cage]                            ::  continue boot
               [%mess p=ship q=cage]                     ::  typed message
+              [%shoe p=path q=ptah]                     ::  subscribe out
               [%show p=ship q=path]                     ::  subscribe
               [%sire p=term q=span]                     ::  spawn subprocess
               [%nuke p=ship]                            ::  clear duct
@@ -75,6 +76,7 @@
               $:  @tas                                  ::  to any
           $%  [%meta p=vase]                            ::
           ==  ==  ==                                    ::
+++  ptah  (trel hapt ship path)                         ::  subscription endpt.
 ++  rave                                                ::  see %clay
           $%  [& p=mood]                                ::  single request
               [| p=moat]                                ::  change range
@@ -120,6 +122,7 @@
                   pus=(jug path bone)                   ::  srebircsbus
                   peq=(map bone ,@uvI)                  ::  peekers
                   qel=(map bone ,@ud)                   ::  rush queue length
+                  res=(map ,[path ptah] (unit ,@ud))    ::  remote subscribed
               ==                                        ::
               ped=(set (pair ship desk))                ::  active depends
               zam=scar                                  ::  opaque ducts
@@ -343,15 +346,6 @@
   :-  :+  %cell  [%cube sem %atom %tas]
       [%cell [%cube p.cay %atom %tas] p.q.cay]
   [sem p.cay q.q.cay]
-::
-++  steb
-  |=  vax=vase  ::(hypo gilt)                           ::  gilt vase to cage
-  ?>  ?=(gilt q.vax)                  ::  XX  static
-  :-  -.q.vax
-  %+  slap  vax
-  :+  %wtgr 
-    [%wtts leaf/tas/-.q.vax [%& 2]~]
-  [%cnzz [%& 3]~]
 ::
 ++  gaff                                                ::  take and go
   |=  [our=@p imp=path]
@@ -1054,6 +1048,14 @@
           =+  wir=(away %u ((hard path) p.q.caq))
           ?:  ?=(%cide p.r.q.caq)  [`(deff wir hon caq) ~]
           ?:  ?=(%sire p.r.q.caq)  [~ `(birf wir hon caq)]
+          ?:  ?=(%show p.r.q.caq)  
+              ::  ~&  [hon %pass wir (,@tas q.q.caq)]
+              ::  ~>  %slog.`(skol p:!>(type=[hon %pass wir (,@tas q.q.caq)]))
+              ::  ~>  %slog.`(sell (spec (slot 15 caq)))
+              ::  ~>  %slog.`(skol %face %type p:(spec (slot 15 caq)))
+              ::  [~ `((hard move) [hon %pass wir %g q:(slot 15 caq)])]
+            :-  `[hon ((hard knob) [%shoe p.q.caq q.r.q.caq])]
+            `[hon %pass wir %g [%meta (spec (slot 15 caq))]]
           :^  ~  ~  hon
           :^  %pass  wir
             (need ((sand %tas) ((hard ,@) q.q.caq)))
@@ -1224,6 +1226,17 @@
           :+  %dude  leaf/"poking {err}"
           [%call (harm cog (conf (core u.huv.sat))) (cove %$ sam)]
         ::
+            %shoe
+          ::  ~&  shoe-found/kon
+          ::  ~&  [hen %pass (away %u p.kon) %g]
+          ::  ~>  %slog.`(skol p:!>(type=[hen %pass (away %u p.kon) %g]))
+          ::  ~&  [%show q.kon]
+          ::  ~>  %slog.`(skol p:!>(type=[%show q.kon]))
+          %_  +>.$
+            res.sat  (~(put by res.sat) [p q]:kon ~)
+            qic.sat  ~
+          ==
+        ::
             %show
           ?:  (warm %peer)
             =+  sam=!>([ost p.kon q.kon])
@@ -1257,14 +1270,16 @@
           (xeno [q.kon imp] %feel ~)
         ::
             %take
+          =.  q.kon  (spec q.kon)
+          =.  q.kon  (slop (slot 2 q.kon) (spec (slot 3 q.kon)))
           ?:  &(?=([%g %rush @ *] q.q.kon) (warm %posh))
+            ~&  posh-res/res.sat
             ?>  ?=(^ huv.sat)
-            =+  gil=(steb (slot 7 q.kon))
-            =+  gis=[[%cube -.gil [%atom %tas]] -.gil]
-            =+  sam=:(slop [[%atom %ud] ost] !>(p.kon) gis +.gil)
+            =+  gil=(spec (slot 7 q.kon))
+            =+  sam=:(slop [[%atom %ud] ost] !>(p.kon) gil)
             %+  ford  /s/pour
             :+  %dude  leaf/"pouring"
-            :+  %dude  (skol %cell -.gis p.gil)
+            :+  %dude  (skol p.gil)
             [%call (harm %posh (conf (core u.huv.sat))) (cove %$ sam)]
           ?:  (warm %purr)
             ?>  ?=(^ huv.sat)
