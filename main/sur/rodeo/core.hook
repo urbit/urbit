@@ -33,7 +33,7 @@
   ==                                                    ::
 ++  presence   ?(%gone %hear %talk)                     ::  status type
 ++  register  (pair atlas (map station atlas))          ::  ping me, ping srcs
-++  report                                              ::  unified rush/rust
+++  report                                              ::  radio update
   $%  [%config config]                                  ::  reconfigure
   ::  [%folder (list report)]                           ::  multiple
       [%grams (pair ,@ud (list telegram))]              ::  beginning, thoughts
