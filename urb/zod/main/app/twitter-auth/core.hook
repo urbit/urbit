@@ -5,8 +5,8 @@
 ++  prompts  
   `(list cord)`~['App token: ' 'App secret: ' 'User token: ' 'User secret: ' '']
 ++  peek  ,_prompt/[(snag (lent vat) prompts) %text '']
-++  posh  
-  |=  [@ * %txt p=cord] 
+++  posh-txt
+  |=  [@ * p=cord] 
   =.  vat  [p vat]
   ?.  =(4 (lent vat))  `+>.$
   %.(+< (add-exit ,_`+>.$))
