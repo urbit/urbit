@@ -401,7 +401,7 @@
 ++  wall  (list tape)                                   ::  text lines (no \n)
 ++  wain  (list cord)                                   ::  text lines (no \n)
 ++  wing  (list limb)                                   ::
-++  wine  $|  ?(%noun %path %tank %void %wall %wool %yarn)
+++  wine  $|  ?(%noun %path %type %void %wall %wool %yarn)
           $%  [%atom p=term]                            ::
               [%core p=(list ,@ta) q=wine]              ::
               [%face p=term q=wine]                     ::
@@ -7012,7 +7012,7 @@
     ?-    q.ham
         %noun      [%leaf '*' ~]
         %path      [%leaf '/' ~]
-        %tank      [%leaf '*' 't' ~]
+        %type      [%leaf '#' 't' ~]
         %void      [%leaf '#' ~]
         %wool      [%leaf '*' '"' '"' ~]
         %wall      [%leaf '*' '\'' '\'' ~]
@@ -7090,9 +7090,12 @@
       ?>  ?=(@ -.lum)
       [[%leaf (rip 3 -.lum)] $(lum +.lum)]
     ::
-        %tank
-      =+  cis=(tank lum)
-      ?.(=(lum cis) ~ [~ cis])
+        %type
+      =+  cis=(type lum)
+      ?.  =(lum cis)  ~
+      :^  ~   %palm
+        [~ ~ ~ ~] 
+      [[%leaf '#' 't' '/' ~] duck(sut cis) ~]
     ::
         %wall
       :-  ~
@@ -7359,6 +7362,8 @@
       [p.yad [%face p.sut q.yad]]
     ::
         [%fork *]
+      ?:  =(p.sut fork/[cube/[%noun atom/%tas]]^[cube/[%void atom/%tas]])
+        [dex %type]                    ::  XX  proper print
       =+  hin=$(sut p.sut)
       =+  yon=$(dex p.hin, sut q.sut)
       :-  p.yon
@@ -9840,6 +9845,7 @@
     =+  rig=(slym q.sew arg)
     =+  rev=(slym (slap bud (rain pax txt)) bud)
     =+  syg=(slym rev arg)
+    ~|  %load-lost
     +>.$(q.sew (slam (slap syg [%cnzy %load]) (slap rig [%cnzy %stay])))
   ::
   ++  wink                                              ::  deploy

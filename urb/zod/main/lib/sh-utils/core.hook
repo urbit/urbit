@@ -7,6 +7,8 @@
   |*  a=*
   |*  b=*
   [b a]
+::
+++  hapt  (pair ship path)
 --
 ::
 ::::
@@ -22,6 +24,12 @@
 ++  add-nice                          ::  return "succcess" response
   |*  ref=_,[(list) ^]
   %+  add-resp  [%give %nice ~]
+  ref
+::
+++  add-subs                          ::  add gall subscription
+  |*  [hat=[hapt ship path] ref=_,[(list) ^]]
+  =+  `[hapt ship path]`hat           ::  typecheck
+  %+  add-resp  [%pass /show %g %show hat]
   ref
 ::
 ++  args-into-gate                    ::  poke--args from gate: output and exit
@@ -73,6 +81,10 @@
   |*  [con=[* [hide *] *] gat=_,[@ *] ref=_,[(list) ^]]
   |*  [ost=bone * arg=_+<.gat]
   ((add-output con (gat arg) ref) +<)
+::
+++  listen-in                         ::  recieve standard input
+  |*  [con=[* [hide *] *] ref=_,[(list) ^]]
+  (add-subs [[our +.imp] our /in/[-.imp]]:con ref)
 ::
 ++  print
   |*  [con=[* [hide *] *] tap=tape]
