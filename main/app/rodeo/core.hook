@@ -157,7 +157,6 @@
     ::
         %review   ra-ever:(ra-think | her +.cod)
         %publish  ra-ever:(ra-think & her +.cod)
-        %ping     (ra-notice her +.cod)
     ==
   ::
   ++  ra-config                                         ::  configure story
@@ -182,15 +181,6 @@
     ?~  pur  ~&  [%ra-stalk-none man]  +>.$
     pa-abet:(~(pa-stalk pa man u.pur) tay sih)
   ::
-  ++  ra-timer                                          ::  timeout
-    ^+  .
-    =+  paz=stories
-    |-  ^+  +>
-    ?~  paz  +>.$
-    =.  +>.$  $(paz l.paz)
-    =.  +>.$  $(paz r.paz)
-    pa-abet:~(pa-timer pa p.n.paz q.n.paz)
-  ::
   ++  ra-twitter                                        ::  %twitter response
     |=  [met=twim sih=sign]
     ^+  +>
@@ -211,19 +201,24 @@
     (ra-think | our.hid u.oot ~)
   ::
   ++  ra-cancel                                         ::  drop a bone
-    %_    .
-        general  (~(del in general) ost)
-        stories
-      |-  ^-  (map span story)
-      ?~  stories  ~
-      :-  :-  p.n.stories
-          %=  q.n.stories
-            guests  (~(del by guests.q.n.stories) ost)
-            viewers  (~(del in viewers.q.n.stories) ost)
-            owners  (~(del in owners.q.n.stories) ost)
-          ==
-      [$(stories l.stories) $(stories r.stories)]
-    ==
+    ^+  .
+    =+  hap=(~(got by sup.hid) ost)
+    ~&  [%ra-cancel ost hap]
+    ?>  ?=([@ @ *] q.hap)
+    =*  man  i.t.q.hap
+    =+  pur=(~(get by stories) man)
+    ?~  pur  +>
+    pa-abet:pa-cancel:(~(pa-notify pa man u.pur) p.hap %gone *human)
+  ::
+  ++  ra-human                                          ::  look up person
+    |=  her=ship
+    ^-  [human _+>]
+    =^  who  folks
+        =+  who=(~(get by folks) her)
+        ?^  who  [u.who folks]
+        =+  who=`human`[~ `(scot %p her)]               ::  XX do right
+        [who (~(put by folks) her who)]
+    [who +>.$]
   ::
   ++  ra-subscribe                                      ::  listen to
     |=  [her=ship pax=path]
@@ -246,7 +241,8 @@
     =.  soy  ?.((~(has in vab) %a) soy (pa-watch:soy her))
     =.  soy  ?.((~(has in vab) %x) soy (pa-master:soy her))
     =.  soy  ?.((~(has in vab) %f) soy (pa-listen:soy her t.t.pax))
-    pa-abet:soy
+    =^  who  +>.$  (ra-human her)
+    pa-abet:(pa-notify:soy her %hear who)
   ::
   ++  ra-think                                          ::  publish/review
     |=  [pub=? her=ship tiz=(list thought)]
@@ -260,47 +256,6 @@
     |-  ^+  +>.^$
     ?~  aud  +>.^$
     $(aud t.aud, +>.^$ (ra-conduct pub her p.i.aud tip))
-  ::
-  ++  ra-notice                                         ::  declare presence
-    |=  [her=ship vig=(map station presence)]
-    ^+  +>
-    =+  sul=(~(tap by vig) ~)
-    |-  ^+  +>.^$
-    ?~  sul  ra-ever
-    =.  +>.^$  $(sul t.sul)
-    ?-  -.p.i.sul
-      %|  +>.^$
-      %&  ?:  =(`ship`p.p.p.i.sul our.hid)
-            (ra-appear her q.p.p.i.sul q.i.sul)
-          ?:  =(her our.hid)
-            (ra-provoke p.p.p.i.sul i.sul)
-          (ra-evil %rodeo-unauthorized-presence)
-    ==
-  ::
-  ++  ra-appear                                         ::  review presence
-    |=  [her=ship man=span per=presence]
-    =^  who  folks
-        =+  who=(~(get by folks) her)
-        ?^  who  [u.who folks]
-        =+  who=`human`[~ `(scot %p her)]               ::  XX do right
-        [who (~(put by folks) her who)]
-    =+  pur=(~(get by stories) man)
-    ?~  pur
-      ~&  [%bad-appear man]
-      (ra-evil %rodeo-no-story)
-    pa-abet:(~(pa-notify pa man u.pur) her per who)
-  ::
-  ++  ra-provoke                                        ::  forward presence
-    |=  [him=ship tay=station per=presence]
-    %+  ra-emit  ost
-    :*  %pass
-        /provoke
-        %g
-        %mess
-        [him /rodeo]
-        our.hid
-        [%rodeo-command !>(`command`[%ping [[tay per] ~ ~]])]
-    ==
   ::
   ++  ra-conduct                                        ::  thought to station
     |=  [pub=? her=ship tay=station tip=thought]
@@ -362,17 +317,6 @@
       ::==
       &
     ::
-    ++  pa-timer                                        ::  timer expire
-      ^+  .
-      =+  cul=(~(tap by locals) ~)
-      =+  ^=  hay
-          %+  skim  cul
-          |=  [a=ship b=@da c=status]
-          (lte lat.hid (add ~m2 b))
-      ?:  =(cul hay)  +>
-      %.  viewers
-      pa-display(locals (~(gas by *(map ship (pair ,@da status))) hay))
-    ::
     ++  pa-watch                                        ::  watch presence
       |=  her=ship
       ?.  (pa-admire her)
@@ -400,6 +344,7 @@
       ?~  vew  +>.^$
       =.  +>.^$  $(vew l.vew)
       =.  +>.^$  $(vew r.vew)
+      ~&  [%pa-display n.vew]
       (pa-sauce n.vew [[%rush %rodeo-report %group reg] ~])
     ::
     ++  pa-monitor                                      ::  update config
@@ -491,7 +436,7 @@
         %|  ~&  tweet-acquire/p.p.tay
             !!
       ::
-        %&  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
+        %&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
             :~  :-  /friend/show/(scot %p p.p.tay)/[man]
                 [%g %show [p.p.tay /rodeo] our.hid /af/[q.p.tay]/(scot %ud num)]
             ==
@@ -510,19 +455,21 @@
       pa-monitor
     ::
     ++  pa-cancel                                       ::  unsubscribe from
-      ^+  .
-      ::  ~&  [%pa-cancel ost]
-      =.  guests  (~(del in guests) ost)
-      (pa-sauce ost [[%mean ~] ~])
+      %_  .
+        guests  (~(del in guests) ost)
+        viewers  (~(del in viewers) ost)
+        owners  (~(del in owners) ost)
+      ==
     ::
     ++  pa-notify                                       ::  local presence
       |=  [her=ship saz=status]
       ^+  +>
-      =+  guz=(~(get by locals) her)
-      =.  locals  (~(put by locals) her lat.hid saz)
-      ?.  |(?=(~ guz) !=(saz q.u.guz))
-        +>.$
-      (pa-display viewers)
+      =+  ^=  nol
+          ?:  =(%gone p.saz) 
+            (~(del by locals) p.saz)
+          (~(put by locals) her lat.hid saz)
+      ?:  =(nol locals)  +>.$
+      (pa-display(locals nol) viewers)
     ::
     ++  pa-remind                                       ::  remote presence
       |=  [tay=station loc=atlas rem=(map station atlas)]
@@ -554,7 +501,7 @@
     ++  pa-start                                        ::  start stream
       |=  riv=river
       ^+  +>
-      =-  ~&  [%pa-start riv lab]
+      =-  ::  ~&  [%pa-start riv lab]
           =.  +>.$  (pa-sauce ost [[%rush %rodeo-report %grams q.lab r.lab] ~])
           ?:  p.lab
             (pa-sauce ost [[%mean ~] ~])
@@ -578,8 +525,6 @@
     ++  pa-listen                                       ::  subscribe
       |=  [her=ship pax=path]
       ^+  +>
-      =.  +>  (pa-watch her)
-      =.  +>  (pa-master her)
       ?.  (pa-admire her)
         (pa-sauce ost [[%mean ~ %rodeo-listen-unauthorized ~] ~])
       =+  ^=  ruv  ^-  (unit river)
@@ -672,7 +617,8 @@
   |=  [ost=bone her=ship cod=command]
   ^-  [(list move) _+>]
   ::  ~&  [%rodeo-poke-command her cod]
-  ra-abet:(~(ra-apply ra ost ~) her cod)
+  =^  moz  +>.$  ra-abet:(~(ra-apply ra ost ~) her cod)
+  [moz +>.$]
 ::
 ++  pour
   |=  [ost=bone pax=path sih=*]
@@ -681,12 +627,6 @@
   =+  sih=((hard sign) sih)
   ::  ~&  [%rodeo-pour ost pax sih]
   ?+    pax  ~&  [%rodeo-strange-path pax]  !!
-  ::
-      [%provoke ~]  [~ +>.$]
-      [%time ~]
-    ?>  ?=(0 ost)
-    =^  moz  +>.$  ra-abet:~(ra-timer ra 0 ~)
-    :_(+>.$ :_(moz [0 %pass /time %t %wait (add ~s10 lat.hid)]))
   ::
       [%twitter *]
     =-  ra-abet:(~(ra-twitter ra ost ~) met sih)
@@ -736,7 +676,7 @@
   |=  old=(unit (unit house-any))
   ^-  [(list move) _+>]
   ?>  ?=(^ old)
-  =+  moz=`(list move)`[0 %pass /time %t %wait (add ~s10 lat.hid)]~
+  =|  moz=(list move)
   |-
   ?~  u.old
     =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/rodeo/backlog/jam

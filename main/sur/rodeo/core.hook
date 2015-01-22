@@ -9,7 +9,6 @@
   $%  [%design (pair span (unit config))]               ::  configure/destroy
       [%publish (list thought)]                         ::  originate
       [%review (list thought)]                          ::  deliver
-      [%ping (map station presence)]                    ::  declare status
   ==                                                    ::
 ++  config                                              ::  party configuration
   $:  sources=(set station)                             ::  pulls from
