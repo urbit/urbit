@@ -12,6 +12,6 @@
 ++  poke-ls-args
   %+  args-into-gate  .
   |=  [arg=path ~]
-  =+  lon=((hard arch) +:.^(%cy arg))
+  =+  lon=((hard arch) .^(%cy arg))
   tang/[?~(r.lon leaf/"~" (subdir arg r.lon))]~
 --

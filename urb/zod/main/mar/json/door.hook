@@ -14,5 +14,9 @@
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  json                                ::  clam from %noun
---        --
-
+          --
+++  grad
+  |%
+  ++  sted  %mime
+  --
+--

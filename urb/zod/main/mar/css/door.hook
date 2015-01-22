@@ -11,4 +11,9 @@
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  ,@t                                 ::  clam from %noun
---        --
+          --
+++  grad
+  |%
+  ++  sted  %mime
+  --
+--

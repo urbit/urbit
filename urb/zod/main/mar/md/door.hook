@@ -4,4 +4,16 @@
 /?  314
 |_  mud=@t
 ++  garb  [%down ~]
+++  grow
+  |%
+  ++  mime  [/text/x-markdown (taco mud)]
+  --
+++  grab
+  |%
+  ++  mime  |=([p=mite q=octs] q.q)
+  --
+++  grad
+  |%
+  ++  sted  %mime
+  --
 --

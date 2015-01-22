@@ -1000,23 +1000,14 @@ _unix_desk_sync_into(u3_noun  who,
                      u3_noun  syd,
                      u3_udir* dir_u)
 {
-  u3_noun xun, bur, doz, fav, pax;
+  u3_noun xun, fav, pax;
 
   xun = _unix_dir_ankh(dir_u);
-  bur = _unix_desk_peek(hox, u3k(syd), u3k(u3A->wen));
 
-  if ( (c3n == u3r_sing(u3h(xun), u3h(u3t(bur)))))
-  {
-    doz = u3dc("cost", xun, u3t(bur));
+  pax = u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul);
+  fav = u3nq(c3__into, who, syd, xun);
 
-    pax = u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul);
-    fav = u3nq(c3__into, who, syd, u3nc(c3y, doz));
-
-    u3v_plan(pax, fav);
-  }
-  else {
-    u3z(who); u3z(syd); u3z(xun); u3z(bur);
-  }
+  u3v_plan(pax, fav);
 }
 
 /* _unix_ship_update(): update top level ship.

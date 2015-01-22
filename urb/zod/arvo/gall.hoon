@@ -287,7 +287,7 @@
               lot=coin
               tyl=path
           ==
-      ^-  (unit (unit (pair mark ,*)))
+      ^-  (unit (unit cage))
       =+  ^=  vew  ^-  lens                             ::  XX future scry
         %.  :-  use
             :-  [who syd ((hard case) p.lot)]
@@ -305,7 +305,7 @@
           %y  y.vew
           %z  z.vew
         ==
-      |=(a=(unit) (bind a |=(b=* [%noun b])))
+      |=(a=(unit) (bind a |=(b=* [%noun !>(b)])))
     ::
     ++  doze
       |=  [now=@da hen=duct]
