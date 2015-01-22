@@ -46,7 +46,7 @@
           $%  [%mess p=hapt q=ship r=cage]              ::
               [%nuke p=hapt q=ship]                     ::
               [%show p=hapt q=ship r=path]              ::
-              [%took p=hapt q=ship]                     ::
+              [%took p=hapt q=ship]                     ::  
           ==  ==                                        ::
               $:  %t                                    ::  to  %temp
           $%  [%wait p=@da]                             ::
