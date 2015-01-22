@@ -46,6 +46,7 @@
           $%  [%mess p=hapt q=ship r=cage]              ::
               [%nuke p=hapt q=ship]                     ::
               [%show p=hapt q=ship r=path]              ::
+              [%took p=hapt q=ship]                     ::
           ==  ==                                        ::
               $:  %t                                    ::  to  %temp
           $%  [%wait p=@da]                             ::
@@ -407,6 +408,8 @@
         ?>  ?=(%show i.mab)
         =+  can=(slav %ud i.t.mab)
         =+  sem=(need (~(get by can.sub.siq:beat:u.ouy) can))
+        =.  mow.u.ouy  
+            :_(mow.u.ouy [hen %pass tea [%g %took [- + ~]:hap.sem you.u.ouy]])
         ?:  =(0 can)
           =<  abet  =<  work  =<  abet
           ?~  num.sem
@@ -2052,7 +2055,7 @@
       |=  nap=@ud
       =+  suy=(~(get by sok) nap)
       ?~  suy  ~
-      (some ~(. yo nap u.suy))
+      (some ~(. yo nap=nap you=p.u.suy siq=q.u.suy))
     ::
     ++  yo                                              ::  app instance
       |_  $:  nap=@ud                                   ::  instance number
