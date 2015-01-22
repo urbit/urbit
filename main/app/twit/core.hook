@@ -1,0 +1,58 @@
+::  Twitter daemon
+::
+::::  /hook/core/twit/app
+  ::
+::  /-    twit-do  ::  XX  wherefore broken
+/+    twitter
+::
+::::  ~fyr
+  ::
+|%
+++  twit-do
+  $%  [%auth p=keys]
+      [%post p=cord]
+  ==
+::
+++  sign  ,[%e %thou p=httr]
+++  note  ,[%e %them ~ u=hiss]
+++  gift  $%  [%nice ~]
+              [%mean p=ares]
+          ==
+::
+++  move  ,[bone (mold note gift)]
+--
+!:
+::::
+  ::
+|_  [hide vat=(unit keys)]
+++  auth  ~|(%no-auth ~(. twit (need vat) lat `@`eny))
+++  poke-twit-do
+  |=  [ost=bone @ a=twit-do]
+  ^+  [*(list move) +>]
+  ?-    -.a
+      %auth
+    ::  ~&  twit-auth/p.a
+    =.  vat  `p.a
+    `+>.$
+      %post
+    =+  mez=(stat-upda:auth [%status p.a]~ ~)
+    :_  +>.$
+    [ost %pass /post %e %them ~ mez]~
+  ==
+::
+++  pour
+  |=  [ost=bone * sig=sign]
+  ^+  [*(list move) +>]
+  ?+  p.p.sig  ~|([%unknown-code p.p.sig] !!)
+    200  ~&  twit-resp/%.(q:(need r.p.sig) ;~(biff poja stat:twir))
+         :_  +>.$
+         [ost %give %nice ~]~
+    ?(400 401 403 404)
+      =-  [[ost %give `gift`-]~ +>.$]
+      =+  err=%.(q:(need r.p.sig) ;~(biff poja mean:twir))
+      :^  %mean  ~  %bad-http
+      [leaf/"HTTP Code {<p.p.sig>}" (turn (need err) mean:twip)]
+  ==
+::
+++  peek  ,_psal/;pre:"{(trip (role (turn (wash 0^100 >vat<) crip)))}"
+--
