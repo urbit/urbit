@@ -554,7 +554,7 @@
     ++  pa-start                                        ::  start stream
       |=  riv=river
       ^+  +>
-      =-  ~&  [%pa-start riv lab]
+      =-  ::  ~&  [%pa-start riv lab]
           =.  +>.$  (pa-sauce ost [[%rush %rodeo-report %grams q.lab r.lab] ~])
           ?:  p.lab
             (pa-sauce ost [[%mean ~] ~])
@@ -672,7 +672,8 @@
   |=  [ost=bone her=ship cod=command]
   ^-  [(list move) _+>]
   ::  ~&  [%rodeo-poke-command her cod]
-  ra-abet:(~(ra-apply ra ost ~) her cod)
+  =^  moz  +>.$  ra-abet:(~(ra-apply ra ost ~) her cod)
+  [moz +>.$]
 ::
 ++  pour
   |=  [ost=bone pax=path sih=*]
