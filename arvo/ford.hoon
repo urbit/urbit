@@ -711,8 +711,8 @@
       ?:  ?=(%ud -.r.bem)  (fine cof bem)
       =+  von=(ska ~ %cw bem(s ~))
       ?~  von  [p=cof q=[%1 [%w bem ~] ~ ~]]
-      ~&  `*`+.+.+:(need u.von)
-      (fine cof bem(r [%ud ((hard ,@) +.+.+:(need u.von))]))
+      ~&  `*`+.+:(need u.von)
+      (fine cof bem(r [%ud ((hard ,@) +.+:(need u.von))]))
     ::
     ++  lave                                            ::  validate
       |=  [cof=cafe for=mark his=ship som=*]
@@ -737,7 +737,7 @@
       ^-  (bolt arch)
       =+  von=(ska ~ %cy bem)
       ?~  von  [p=cof q=[%1 [%y bem ~] ~ ~]]
-      (fine cof ((hard arch) +.q.q:(need u.von)))
+      (fine cof ((hard arch) q.q:(need u.von)))
     ::
     ++  liar                                            ::  load vase
       |=  [cof=cafe bem=beam]
@@ -746,8 +746,8 @@
       ?~  von
         [p=*cafe q=[%1 [[%x bem ~] ~ ~]]]
       ?~  u.von
-        (flaw cof (smyt (tope bem)) ~)
-      (fine cof (slot 3 q.u.u.von))
+        (flaw cof leaf/"file unavailable" (smyt (tope bem)) ~)
+      (fine cof q.u.u.von)
     ::
     ++  lily                                            ::  translation targets
       |=  [cof=cafe for=mark bek=beak]
@@ -794,7 +794,7 @@
       |=  [cof=cafe vux=(unit vase)]
       ?^  vux  (fine cof u.vux)
       ?~  s.mob
-        (flaw cof (smyt (tope bem)) ~)
+        (flaw cof leaf/"beam unavailable" (smyt (tope bem)) ~)
       ^$(s.mob t.s.mob, mer [i.s.mob mer])
     ::
     ++  link                                            ::  translate
@@ -902,7 +902,7 @@
         %+  cope  (lima cof p.kas q.kas r.kas)
         |=  [cof=cafe vux=(unit vase)]
         ?~  vux
-          (flaw cof (smyt (tope q.kas)) ~)
+          (flaw cof leaf/"bake failed" (smyt (tope q.kas)) ~)
         (fine cof [p.kas u.vux])
       ::
           %boil
@@ -1372,7 +1372,7 @@
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
-  ^-  (unit (unit (pair mark ,*)))
+  ^-  (unit (unit cage))
   [~ ~]
 ::
 ++  stay                                                ::  save w/o cache

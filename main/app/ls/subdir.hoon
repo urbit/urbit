@@ -9,7 +9,7 @@
   =-  :+  %rose  ["/" ~ ?:(dir "/" ~)]
       (turn paf |=(a=span leaf/(trip a)))
   |-  ^-  [dir=? paf=path]
-  =+  arf=;;(arch +:.^(%cy (weld pax paf)))
+  =+  arf=;;(arch .^(%cy (weld pax paf)))
   ?^  q.arf  
     [| paf]
   ?~  r.arf

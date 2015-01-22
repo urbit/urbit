@@ -272,7 +272,7 @@
     ^+  +>
     ::  =.  +>.$  (blab (print leaf/"+ :{(trip p.mad)}"))
     ?.  =-  (~(has by r:(arch -)) %core)
-        +:.^(%cy /(scot %p our.hid)/main/(scot %da lat.hid)/app/[p.mad])
+        .^(%cy /(scot %p our.hid)/main/(scot %da lat.hid)/app/[p.mad])
       (blab (print leaf/"app {<p.mad>} does not exist"))
     =|  inp=(unit span) 
     =<  +>.$

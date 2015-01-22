@@ -6062,7 +6062,7 @@
 ::
 ++  reck                                                ::  parse hoon file
   |=  bon=path
-  (rain bon ((hard ,@t) +:.^(%cx (weld bon `path`[%hoon ~]))))
+  (rain bon ((hard ,@t) .^(%cx (weld bon `path`[%hoon ~]))))
 ::
 ++  seed                                                ::  hoon/hoon core vase
   ^-  vase
@@ -9794,6 +9794,8 @@
 ++  ship  ,@p                                           ::  network identity
 ++  sled  $+  [(unit (set monk)) term beam]             ::  namespace function
           (unit (unit cage))                            ::
+++  slad  $+  [(unit (set monk)) term beam]             ::  undertyped
+          (unit (unit (cask ,*)))                       ::
 ++  slut  $+(* (unit (unit)))                           ::  old namespace
 ++  vile                                                ::  reflexive constants
           $:  typ=type                                  ::  -:!>(*type)
@@ -9804,7 +9806,7 @@
 ++  wire  path                                          ::  event pretext
 ::::: hacks
 ++  slod  
-  |=  sed=sled
+  |=  sed=slad
   ^-  slut
   |=  raw=*
   =+  pux=((soft path) raw)
@@ -9825,7 +9827,7 @@
   =+  bop=(sed ~ ron bed)
   ?~  bop  ~
   ?~  u.bop  [~ ~]
-  [~ ~ q.q.u.u.bop]
+  [~ ~ +.q.u.u.bop]
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, Arvo core                ::
 ::
@@ -9843,7 +9845,7 @@
     +>.$(q.sew (slam (slap syg [%cnzy %load]) (slap rig [%cnzy %stay])))
   ::
   ++  wink                                              ::  deploy
-    |=  [now=@da eny=@ ski=sled]
+    |=  [now=@da eny=@ ski=slad]
     =+  rig=(slym q.sew +<)                             ::  activate vane
     ~%  %wink  +>+>  ~
     |%
@@ -9990,7 +9992,7 @@
               ren=care
               bed=beam
           ==
-      ^-  (unit (unit cage))
+      ^-  (unit (unit (cask ,*)))
       ::  ~&  [%arvo-scry ren bed]
       =+  ^=  old
           :*  fur
@@ -10000,7 +10002,7 @@
               `coin`[%$ r.bed]
               (flop s.bed)
           ==
-      ^-  (unit (unit cage))
+      ^-  (unit (unit (cask ,*)))
       =+  pro=(slym (slap rig [%cnzy %scry]) old)
       ?~  q.pro  ~
       ?~  +.q.pro  [~ ~]
@@ -10065,13 +10067,13 @@
   |=  [vil=vile eny=@ bud=vase niz=(pair worm (list ,[p=@tas q=vase]))]
   |_  now=@da
   ++  beck
-    ^-  sled
+    ^-  slad
     |=  [fur=(unit (set monk)) ron=term bed=beam]
-    ^-  (unit (unit cage))
+    ^-  (unit (unit (cask ,*)))
     =>  .(fur ?^(fur fur `[[%& p.bed] ~ ~]))            ::  XX heinous
     =+  lal=(end 3 1 ron)
     =+  ren=(care (rsh 3 1 ron))
-    |-  ^-  (unit (unit cage))
+    |-  ^-  (unit (unit (cask ,*)))
     ?~  q.niz  ~
     ?.  =(lal p.i.q.niz)  $(q.niz t.q.niz)
     %-  scry:(wink:(vent lal vil bud p.niz q.i.q.niz) now (shax now) ..^$)
