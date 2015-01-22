@@ -113,9 +113,16 @@
 ::::  library
   ::
 |%
+++  twip                                                ::  response printers
+  |%
+  ++  mean
+    |=  [msg=@t num=@ud]  ^-  tank
+    rose/[": " `~]^~[leaf/"Error {<num>}" leaf/(trip msg)]
+  --
 ++  twir                                                ::  response parsers
   |%
   ++  fasp  |*([a=@tas b=*] [(gsub '-' '_' a) b])
+  ++  mean  (ot errors/(ar (ot message/so code/ni ~)) ~):jo
   ++  stat
     =+  jo
     ^-  $+(json (unit ,[id=@u who=@ta now=@da txt=@t]))
