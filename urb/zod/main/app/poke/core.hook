@@ -13,6 +13,18 @@
 ::
 ++  pour
   |=  [ost=bone * sih=*]
-  ~&  poke-resp/;;([term term] [&1 &2]:sih)
+  ~&  =+  cod=(,[term term] [&1 &2]:sih)
+      ?+  +.cod  poke-resp/cod
+        %nice  %poke-nice
+        %mean  
+          =+  are=((soft ares) |2.sih)
+          ?~  are  %poke-mean
+          ?~  u.are  %poke-nil-mean
+          ~&  >  p.u.u.are
+          |-
+          ?~  q.u.u.are  %poke-mean
+          ~>  %slog.`rose/[~ "! " ~]^[i.q.u.u.are]~
+          $(q.u.u.are t.q.u.u.are)
+      ==
   :_(+> [ost %pass / %g %cide %$]~)
 --
