@@ -556,6 +556,7 @@
               u3nc(c3__germ, u3k(p_gen)),
               u3k(q_gen));
   }
+#if 0
   _open_do_pq(sgbr)   //  ~|
   {
     return u3nt
@@ -563,6 +564,7 @@
               u3nc(c3__mean, u3k(p_gen)),
               u3k(q_gen));
   }
+#endif
   _open_do_pq(sggl)   //  ~>
   {
     return u3nt
@@ -831,7 +833,7 @@
 	_open_pq  (kthp);
 
 	_open_pq  (sgts);
-	_open_pq  (sgbr);
+//	_open_pq  (sgbr);
 	_open_pq  (sggl);
 	_open_pq  (sgbc);
 	_open_pq  (sgcb);
