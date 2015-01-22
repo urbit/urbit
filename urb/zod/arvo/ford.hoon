@@ -871,7 +871,7 @@
         (fine cof `cage`[p.kas vax])
       ::
           %call
-        %+  cool  |.(leaf/"ford: call {<`@p`(mug kas)>}")
+        ::  %+  cool  |.(leaf/"ford: call {<`@p`(mug kas)>}")
         %.  [cof p.kas q.kas]
         ;~  cope
           ;~  coax

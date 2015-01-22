@@ -955,6 +955,10 @@
         |=  vax=vase
         ^+  +>
         =+  new=?~(huv.sat & !=(+<+.q.vax +<+.q.u.huv.sat))
+        ::  ?.  ?=(%core -.p.vax)
+        ::    ~|  [%morn-not-core -.p.vax app.sat imp]
+        ::    ~>  %mean.|.((skol p.vax))
+        ::    !!
         =.  huv.sat  `vax
         ?.  new  +>.$
         =:  act.sat  +(act.sat)
