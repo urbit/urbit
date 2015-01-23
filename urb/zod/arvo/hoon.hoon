@@ -9752,6 +9752,7 @@
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
 ++  hide                                                ::  standard app state
+st
         $:  $:  our=ship                                ::  owner/operator
                 app=term                                ::  app identity
                 imp=path                                ::  app instance
