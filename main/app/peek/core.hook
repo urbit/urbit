@@ -1,0 +1,34 @@
+::  Peek imp path || Poke ship imp path. Subscribe to an app.
+!:
+::::
+  ::
+|_  [hide ~]
+++  ptah  ,[p=path q=path ~]
+++  poke-peek-args
+  |=  [ost=bone @ a=?(ptah [her=ship ptah])]
+  =-  :_(+>.$ ~[[ost %give %nice ~] [ost %pass / %g %show -]])
+  ^-  [p=[ship path] q=ship r=path]
+  ?^  |2.a  [[her p]:a our q.a]
+  [[our p.a] our q.a]
+::
+++  posh
+  |*  [@ * git=[@tas *]]
+  ~&  peek-posh/git
+  `+>
+++  pour
+  |=  [ost=bone * sih=*]
+  ~&  =+  cod=(,[term term] [&1 &2]:sih)
+      ?+  +.cod  peek-resp/cod
+        %nice  %peek-nice
+        %mean  
+          =+  are=((soft ares) |2.sih)
+          ?~  are  %peek-mean
+          ?~  u.are  %peek-done
+          ~&  >  p.u.u.are
+          |-
+          ?~  q.u.u.are  %peek-mean
+          ~>  %slog.`rose/[~ "! " ~]^[i.q.u.u.are]~
+          $(q.u.u.are t.q.u.u.are)
+      ==
+  :_(+> ?+(&2.sih ~ %mean [ost %pass / %g %cide %$]~))
+--
