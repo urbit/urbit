@@ -711,7 +711,6 @@
       ?:  ?=(%ud -.r.bem)  (fine cof bem)
       =+  von=(ska ~ %cw bem(s ~))
       ?~  von  [p=cof q=[%1 [%w bem ~] ~ ~]]
-      ~&  `*`+.+:(need u.von)
       (fine cof bem(r [%ud ((hard ,@) +.+:(need u.von))]))
     ::
     ++  lave                                            ::  validate
