@@ -433,14 +433,14 @@
       ?:  ?=(%| -.res)
         %_    +>.$
             dok  ~
-            tag
-          %-  welp  :_  tag
-          ^-  (list ,[duct path note])
-          %+  murn  lon.u.dok
-          |=  a=path
-          ^-  (unit ,[duct path note])
-          ?:  =(pax a)  ~
-          `[hen [%diffing (scot %p who) syd (scot %da wen) a] %f %exec who ~]
+          ::    tag
+          ::  %-  welp  :_  tag
+          ::  ^-  (list ,[duct path note])
+          ::  %+  murn  lon.u.dok
+          ::  |=  a=path
+          ::  ^-  (unit ,[duct path note])
+          ::  ?:  =(pax a)  ~
+          ::  `[hen [%diffing (scot %p who) syd (scot %da wen) a] %f %exec who ~]
         ::
             yel
           [[hen %note '!' %rose [" " "" ""] leaf/"clay diff failed" p.res] yel]
@@ -456,20 +456,20 @@
       |=  [pax=path res=(each bead (list tank))]
       ^+  +>
       ?~  pok
-        ~&  %clay-unexpected-made  !!
+        ~&  %clay-patch-unexpected-made  +>
       ?.  (lien lon.u.pok |=(path =(+< pax)))
-        ~&  %clay-strange-made  !!
+        ~&  %clay-patch-strange-made  +>
       ?:  ?=(%| -.res)
         %_    +>.$
             pok  ~
-            tag
-          %-  welp  :_  tag
-          ^-  (list ,[duct path note])
-          %+  murn  lon.u.pok
-          |=  a=path
-          ^-  (unit ,[duct path note])
-          ?:  =(pax a)  ~
-          `[hen [%patching (scot %p who) syd a] %f %exec who ~]
+          ::    tag
+          ::  %-  welp  :_  tag
+          ::  ^-  (list ,[duct path note])
+          ::  %+  murn  lon.u.pok
+          ::  |=  a=path
+          ::  ^-  (unit ,[duct path note])
+          ::  ?:  =(pax a)  ~
+          ::  `[hen [%patching (scot %p who) syd a] %f %exec who ~]
         ::
             yel
           [[hen %note '!' %rose [" " "" ""] leaf/"clay patch failed" p.res] yel]
@@ -816,7 +816,6 @@
       [hen %pass / %c %font p.q.hic syd bos syd]
     ::
         %info
-      ~&  [%infoing p.q.hic q.q.hic ?.(?=(%& -.r.q.hic) ~ (lent q.p.r.q.hic))]
       ?:  =(%$ q.q.hic)
         [~ ..^$]
       =^  mos  ruf
@@ -830,19 +829,16 @@
       [mos ..^$]
     ::
         %into
-      ~&  [%intoing p.q.hic q.q.hic]
       =+  yar=(~(got by fat.ruf) p.q.hic)
       :_  ..^$(fat.ruf (~(put by fat.ruf) p.q.hic yar(hez [~ hen])))
       ^-  (list move)
       ?:  =(%$ q.q.hic)
-        ~&  %blipping
         ~
       =+  dos=(~(get by dos.yar) q.q.hic)
       ?:  &(?=(^ dos) !=(0 +>-.+>+.+.dos))            ::  ank.s.u.dos
         ?:  =(ank.s.u.dos q.q.hic)
           ~
         [hen %slip %c %info p.q.hic q.q.hic %& (cost r.q.hic ank.s.u.dos)]~
-      ~&  [%first-timer p.q.hic q.q.hic]
       =+  cos=(cost r.q.hic *ankh)
       =+  ^-  [one=(list ,[path miso]) two=(list ,[path miso])]
           %+  skid  q.cos

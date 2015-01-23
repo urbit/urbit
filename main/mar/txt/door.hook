@@ -1,4 +1,4 @@
-::  maybz
+::  maybe
 ::::  /hook/door/term-line/mar
   ::
 /?  314
@@ -12,9 +12,10 @@
   ++  json  :(corl lore need so:jo)
   --
 ++  grow
+  =>  v=.
   |%
-  ++  mime  [/text/plain (taco (role txt))]
-  ++  psal  ;div: {(trip (role txt))}
+  ++  mime  =>  v  [/text/plain (taco (role txt))]
+  ++  psal  =>  v  ;div: {(trip (role txt))}
   --
 ++  grad
   |%
@@ -22,7 +23,6 @@
   ++  diff
     |=  tyt=wain
     ^-  (urge cord)
-    =-  ~&  [%first (scag 1 txt) (scag 1 tyt)]  -
     (lusk txt tyt (loss txt tyt))
   ++  pact
     |=  dif=(urge cord)

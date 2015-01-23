@@ -12,9 +12,11 @@
   ++  mime                                              ::  convert to %mime
     [/text/json (taco (crip (pojo jon)))]
   --
-++  grab  |%                                            ::  convert from
-          ++  noun  json                                ::  clam from %noun
-          --
+++  grab
+  |%                                                    ::  convert from
+  ++  mime  |=([p=mite q=octs] *json) ::(fall (rush (,@t q.q) apex:poja) *json))
+  ++  noun  json                                        ::  clam from %noun
+  --
 ++  grad
   |%
   ++  sted  %mime
