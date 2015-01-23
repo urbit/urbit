@@ -344,7 +344,6 @@
       ?~  vew  +>.^$
       =.  +>.^$  $(vew l.vew)
       =.  +>.^$  $(vew r.vew)
-      ~&  [%pa-display n.vew]
       (pa-sauce n.vew [[%rush %rodeo-report %group reg] ~])
     ::
     ++  pa-monitor                                      ::  update config
@@ -464,11 +463,13 @@
     ++  pa-notify                                       ::  local presence
       |=  [her=ship saz=status]
       ^+  +>
+      ~&  [%pa-notify her saz]
       =+  ^=  nol
           ?:  =(%gone p.saz) 
-            (~(del by locals) p.saz)
+            (~(del by locals) her)
           (~(put by locals) her lat.hid saz)
       ?:  =(nol locals)  +>.$
+      ~&  [%pa-display her saz]
       (pa-display(locals nol) viewers)
     ::
     ++  pa-remind                                       ::  remote presence
