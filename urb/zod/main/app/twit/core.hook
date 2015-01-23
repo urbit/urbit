@@ -66,10 +66,14 @@
       [%twit-feed (need %.(jon (ar:jo stat:twir)))]
     ==
       ?(400 401 403 404)
-    =-  [[ost %give `gift`-]~ +>.$]
-    =+  err=%.(q:(need r.p.sig) ;~(biff poja mean:twir))
-    :^  %mean  ~  %bad-http
-    [leaf/"HTTP Code {<p.p.sig>}" (turn (need err) mean:twip)]
+    =+  ^-  git=gift
+        =+  err=%.(q:(need r.p.sig) ;~(biff poja mean:twir))
+        :^  %mean  ~  %bad-http
+        [leaf/"HTTP Code {<p.p.sig>}" (turn (need err) mean:twip)]
+    ?+    pax  [[ost %give git]~ +>.$]
+      [%post @ ~]
+        [(spam pax git) +>.$]
+    ==
   ==
 ::
 ++  peer
