@@ -311,7 +311,7 @@
         =+  `[l=@da d=dome r=rang]`+<.axe
         ?~  hat
           +>.$(dom d, ran r)
-        (checkout-ankh(dom d, ran r) u.hat)
+        (echo:(checkout-ankh(dom d, ran r) u.hat) wen lem)
       ?.  =(~ dok)
         ~&  %already-applying-changes  !!
       =+  ^=  sop
@@ -383,8 +383,8 @@
       =+  [hat axe]=(~(edit ze lim dom ran) wen %& *cart sot.u.dok)
       =+  `[l=@da d=dome r=rang]`+<.axe
       ?~  hat
-        +>.$(dom d, ran r, dok ~)
-      (checkout-ankh(dom d, ran r, dok ~) u.hat)
+        (echo(dom d, ran r, dok ~) wen %& *cart sot.u.dok)
+      (echo:(checkout-ankh(dom d, ran r, dok ~) u.hat) wen %& *cart sot.u.dok)
     ::
     ++  apply-patches
       ^+  .
@@ -446,7 +446,9 @@
           [[hen %note '!' %rose [" " "" ""] leaf/"clay diff failed" p.res] yel]
         ==
       =:  lon.u.dok  (skip lon.u.dok |=(path =(+< pax)))
-          sot.u.dok  [[pax %dif q.p.res] sot.u.dok]
+          sot.u.dok  ?:  =(%null p.q.p.res)
+                       sot.u.dok
+                     [[pax %dif q.p.res] sot.u.dok]
       ==
       ?~  lon.u.dok
         (apply-edit wen)
@@ -532,7 +534,7 @@
     ++  exec                                            ::  change and update
       |=  [wen=@da lem=nori]
       ^+  +>
-      (echo:wake:(edit wen lem) wen lem)
+      wake:(edit wen lem)
     ::
     ++  exem                                            ::  execute merge
       |=  [wen=@da mer=mizu]                   ::  aka direct change

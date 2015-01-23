@@ -398,6 +398,8 @@
         ?.  =(p.cay p.coy)
           %+  flaw  cof  :_  ~
           leaf/"diff on data of different marks: {(trip p.cay)} {(trip p.coy)}"
+        ?:  =(q.q.cay q.q.coy)
+          (fine cof %null [%atom %n] ~)
         %+  cope  (fang cof p.cay [our %main %da now])
         |=  [cof=cafe pro=vase]
         ?.  (slab %grad p.pro)
