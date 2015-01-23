@@ -58,6 +58,36 @@
       [%vega p=path]                                    ::
   ==  ==  ==
 --
+::
+::::  from future import wick, pack, pick  XX remove on breach or kelvin bump
+  ::
+|%
+++  wick                                                ::  span format
+  |=  a=@
+  ^-  (unit ,@ta)
+  =+  b=(rip 3 a)
+  =-  ?^(b ~ (some (rap 3 (flop c))))
+  =|  c=tape
+  |-  ^-  [b=tape c=tape]
+  ?~  b  [~ c]
+  ?.  =('~' i.b)
+    $(b t.b, c [i.b c])
+  ?~  t.b  [b ~]
+  ?-  i.t.b
+    %'~'  $(b t.t.b, c ['~' c])
+    %'-'  $(b t.t.b, c ['_' c])
+    @     [b ~]
+  ==
+::
+++  pack                                                ::  light path encoding
+  |=  [a=term b=path]  ^-  span
+  %+  rap  3  :-  (wack a)
+  (turn b |=(c=span (cat 3 '_' (wack c))))
+::
+++  pick                                                ::  light path decoding
+  |=  a=span  ^-  (unit ,[p=term q=path])
+  (rush a (most cab (sear wick urt:ab)))
+--
 !:
 ::::  helpers
   ::

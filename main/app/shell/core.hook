@@ -10,8 +10,7 @@
   ::
 |%                                                      ::
 ++  axle                                                ::
-  $:  %0                                                ::  version
-      tiv=?                                             ::  typing?
+  $:  tiv=?                                             ::  typing?
       pid=@u                                            ::  next process id
       pax=_`path`/=try=                                 ::  working directory
       act=(unit span)                                   ::  active child
