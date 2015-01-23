@@ -318,7 +318,7 @@
     |=  [msg=tape tay=(list tank)]
     =.  tay  (welp tay `(list tank)`[%leaf "::"]~)
     =.  tay  :_(tay [%leaf ":{(trip man)}: {msg}:: "])
-    %_(+>.$ moz hy-abet:(hy-display:(hype moz) (flop tay)))
+    %_(+>.$ moz hy-abet:(hy-display:(hype moz) tay))
   ::
   ++  sy-prompt
     |=  tou=(set station)
