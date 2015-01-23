@@ -188,9 +188,9 @@
           %mean
         =+  ^=  new
             =-  (turn - |=(a=tank rose/[~ "! " ~]^[a]~))
-            ^-  (list tank)
+            %-  flop  ^-  tang
             ?~  p.sih  ~
-            (welp q.u.p.sih leaf/(trip p.u.p.sih) ~)
+            [leaf/(trip p.u.p.sih) q.u.p.sih]
         %_    +>.$
             r.tel  (welp new r.tel)
             mow

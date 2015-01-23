@@ -10,7 +10,7 @@
 ::
 ++  hapt  (pair ship path)
 --
-::
+!:
 ::::
   ::
 |%
@@ -51,8 +51,8 @@
 ::
 ++  add-output                        ::  send gift to /out
   |*  [con=[* [hide *] *] ote=[@ *] ref=_,[(list) ^]]
-  =>  .(+<-.con `hid=hide`+<-.con)
-  =+  sus=(~(tap in `(set bone)`(~(get ju pus.hid.con) /out)))
+  =>  .(+<- `[* [hid=hide *] *]`con)
+  =+  sus=(~(tap in `(set bone)`(~(get ju pus.hid) /out)))
   =+  mof=(turn sus (append [%give ote]))
   |=  _+<.ref
   =+  neu=(ref +<)
@@ -72,10 +72,19 @@
   |*  [gat=_,[@ @ *] ref=_,[(list) ^]]
   (gate-move |*(_+<.gat [%pass /bang (gat +<)]) ref)
 ::
+++  gate-mess                         ::  respond with local message
+  |*  [con=[* [hide *] *] gat=_,[@ @ *] ref=_,[(list) ^]]
+  =>  .(+<- `[* [hid=hide *] *]`con)
+  %-  gate-move  :_  ref
+  |*  _+<.gat
+  =+  `[imp=path mez=cage]`(gat +<)
+  [%pass /poke %g %mess [our.hid imp] our.hid mez]
+::
 ++  gate-move                         ::  respond with computed move
   |*  [gat=_,(mold) ref=_,[(list) ^]]
   |*  [ost=bone * arg=_+<.gat]
   ((add-resp (gat arg) ref) +<)
+::
 ::
 ++  gate-outs                         ::  send computed gift to /out
   |*  [con=[* [hide *] *] gat=_,[@ *] ref=_,[(list) ^]]
@@ -84,7 +93,8 @@
 ::
 ++  listen-in                         ::  recieve standard input
   |*  [con=[* [hide *] *] ref=_,[(list) ^]]
-  (add-subs [[our +.imp] our /in/[-.imp]]:con ref)
+  =>  .(+<- `[* [hid=hide *] *]`con)
+  (add-subs [[our +.imp] our /in/[-.imp]]:hid ref)
 ::
 ++  print
   |*  [con=[* [hide *] *] tap=tape]
