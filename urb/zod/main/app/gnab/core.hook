@@ -1,0 +1,21 @@
+::  gnaB: send gift to arvo
+::  
+::::  /hook/core/gnab/app
+  ::
+/+    sh-utils
+!:
+::::
+  ::
+|_  [hide ~]
+++  lima  |*(a=(pole) ?~(a ~ [i t]=a(+ (..$ +.a))))
+++  poke--args
+  |*  [ost=bone @ a=[* (pole)]]
+  =>  .(a ^.(lima a))
+  :_(+> (turn a |*(b=_i.a [ost %give b])))
+::
+++  pour
+  %-  add-exit
+  |=  [@ * sih=*]
+  ~&  gnab-resp/(,[term term] [&1 &2]:sih)
+  `+>.$
+--
