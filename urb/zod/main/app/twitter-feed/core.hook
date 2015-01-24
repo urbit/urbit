@@ -12,7 +12,7 @@
 ++  rens
   |=(stat rose/[": " `~]^~[leaf/"{<now>} @{(trip who)}" leaf/(trip txt)])
 ++  peer  ,_`.
-++  poke--args  (add-subs [[our /twit] our /mine] ,_`.)
+++  poke--args  (add-subs [[our /twit] our /home] ,_`.)
 ++  posh-twit-feed 
   (args-into-gate . |=(a=(list stat) tang/(turn a rens)))
 :: ++  pour  |*([ost=@ * sih=[@ ^]] :_(+>.$ [ost %give +.sih]~))
