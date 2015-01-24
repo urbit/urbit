@@ -1927,6 +1927,7 @@
   +-  uni                                               ::  union
     ~/  %uni
     |*  b=_a
+    ?:  =(a b)  a
     |-  ^+  a
     ?~  b
       a

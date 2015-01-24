@@ -13,8 +13,19 @@
       [%post p=@uvI q=cord]
   ==
 ::
-++  sign  ,[%e %thou p=httr]
-++  note  ,[%e %them ~ u=hiss]
+++  axle  
+  $:  %0
+      kes=(unit keys)
+      out=(map ,@uvI (each cord ,@da))
+      ran=(map path ,[p=@ud q=@da])
+      fed=(map path tid:twit)
+  ==
+++  note  $%  [%e %them ~ u=hiss]
+              [%t %wait p=@da]
+          ==
+++  sign  $%  [%e %thou p=httr]
+              [%t %wake ~]
+          ==
 ++  gift  $%  [%nice ~]
               [%mean p=ares]
               [%rush p=gilt]
@@ -29,8 +40,39 @@
 !:
 ::::
   ::
-|_  [hide kes=(unit keys) out=(map ,@uvI (each cord ,@da))]
+|_  [hide axle]
 ++  auth  ~|(%no-auth ~(. twit (need kes) lat `@`eny))
+++  cull
+  |=  [pax=path rep=(list stat)]
+  =+  pev=(~(get by fed) pax)
+  ?~  pev  rep
+  ::   ~&  do-cull/[u.pev (turn rep |=(stat id))]
+  |-  ^+  rep
+  ?~  rep  ~
+  ?:  =(u.pev id.i.rep)  ~
+  [i.rep $(rep t.rep)]
+::
+++  dely
+  |=  pax=path
+  ^-  [(unit time) _ran]
+  =+  cur=(~(get by ran) pax)
+  =+  tym=(add lat (mul ~s8 (bex ?~(cur 0 p.u.cur))))
+  ~&  dely/`@dr`(sub tym lat)
+  ?:  &(?=(^ cur) (gte tym q.u.cur) (gth q.u.cur lat))
+    [~ ran]
+  [`tym (~(put by ran) pax ?~(cur 0 (min 5 +(p.u.cur))) tym)]
+::
+++  wait
+  |=  [ost=bone pax=path mof=(list move)]
+  =^  tym  ran  (dely pax)
+  :_  +>.$
+  ?~  tym  
+    ~&  no-wait/ran
+    mof
+  ~&  will-wait/u.tym
+  :-  [ost %pass pax %t %wait u.tym]
+  mof
+::
 ++  poke-twit-do
   |=  [ost=bone @ act=twit-do]
   ^+  [*(list move) +>]
@@ -40,8 +82,10 @@
     =.  kes  `p.act
     :_(+>.$ [ost %give %nice ~]~)
       %post
-    =.  out  (~(put by out) p.act %& q.act)
-    :_  +>.$
+    =:  out  (~(put by out) p.act %& q.act)
+        ran  (~(del by ran) /peer/mine)
+      ==
+    %^  wait  ost  /peer/mine
     :-  [ost %give %nice ~]
     =+  mez=(stat-upda:auth [%status q.act]~ ~)
     [ost %pass /post/(scot %uv p.act) %e %them ~ mez]~
@@ -50,31 +94,65 @@
 ++  pour
   |=  [ost=bone pax=path sig=sign]
   ^+  [*(list move) +>]
-  ?+    p.p.sig  ~|([%unknown-code p.p.sig] !!)
-      200  
-    =+  jon=(need (poja q:(need r.p.sig)))
-::     ~&  twit-resp/%.(jon ?+(-.jon !! %o stat:twir, %a (ar:jo stat:twir)))
-    ?+    pax  ~|([%path-missed pax] !!)
+  ?-    &2.sig
+      %wake
+    ~&  wake/[pax sig]
+    ?.  (~(has by ran) pax)
+      `+>
+    ?+  pax  ~|([%wake-missed pax] !!)
+      [%peer *]  
+        ?~  (~(get ju pus) t.pax)
+          `+>
+        ~&  peer-again/[t.pax ran]
+        (peer ost our t.pax)
+    ==
+      %thou
+    ?+    p.p.sig  ~|([%unknown-code p.p.sig] !!)
+        429  ::  Rate-limit
+      =.  ran  (~(put by ran) pax 6 lat)
+      =+  mez=(appl-rate:auth ~ [%resources 'statuses']~)
+      :_(+>.$ [ost %pass [%limi pax] %e %them ~ mez]~)
+        200  ::  OK
+      =+  jon=(need (poja q:(need r.p.sig)))
+  ::     ~&  twit-resp/%.(jon ?+(-.jon !! %o stat:twir, %a (ar:jo stat:twir)))
+      ?+    pax  ~|([%http-missed pax] !!)
+          [%limi *]
+        :_  +>.$
+        =+  num=|=([a=cord b=$+(json (unit ,@da))] (ot:jo [a b] ~))
+        =.  b.num  (cu |=(a=@u (add ~1970.1.1 (mul a ~s1))) ni):jo
+        =+  paf=`path`~[%resources %statuses '/statuses/home_timeline' %reset]
+        ~|  [%no-time `wain`paf jon]
+        =+  tym=(need %.(jon b:(reel paf num)))
+        ~&  retrying-in/`@dr`(sub tym lat)
+        [ost %pass t.pax %t %wait tym]~
+          [%post @ ~]
+        =.  out  (~(put by out) (slav %uv i.t.pax) %| lat)
+        :_  +>.$
+        (weld (spam pax %rush %time lat) (spam pax %mean ~))
+          [%peer *]
+        =+  ^=  rep
+            ~|  [%bad-tweets jon]
+            [(need %.(jon (ar:jo stat:twir)))]
+        ~&  got-feed/[(scag 5 (turn rep |=(stat id))) fed]
+        =.  rep  (cull t.pax rep)       ::  only new messages
+        ?~  rep
+          (wait ost pax ~)
+        ~&  spam-feed/rep
+        =:  ran  (~(del by ran) pax)
+            fed  (~(put by fed) t.pax id.i.rep)
+          ==
+        (wait ost pax (spam t.pax %rush twit-feed/(flop rep)))
+      ==
+        ?(400 401 403 404)  ::  Err
+      =+  ^-  git=gift
+          =+  err=%.(q:(need r.p.sig) ;~(biff poja mean:twir))
+          :^  %mean  ~  %bad-http
+          [leaf/"HTTP Code {<p.p.sig>}" (turn (need err) mean:twip)]
+      ?+    pax  [[ost %give git]~ +>.$]
         [%post @ ~]
-      =.  out  (~(put by out) (slav %uv i.t.pax) %| lat)
-      :_  +>.$
-      (weld (spam pax %rush %time lat) (spam pax %mean ~))
-        [%peer *]
-      :_  +>.$
-      %^  spam  t.pax  %rush
-      ~|  [%bad-tweets jon]
-      [%twit-feed (need %.(jon (ar:jo stat:twir)))]
+          [(spam pax git) +>.$]
+  ==  ==
     ==
-      ?(400 401 403 404)
-    =+  ^-  git=gift
-        =+  err=%.(q:(need r.p.sig) ;~(biff poja mean:twir))
-        :^  %mean  ~  %bad-http
-        [leaf/"HTTP Code {<p.p.sig>}" (turn (need err) mean:twip)]
-    ?+    pax  [[ost %give git]~ +>.$]
-      [%post @ ~]
-        [(spam pax git) +>.$]
-    ==
-  ==
 ::
 ++  peer
   |=  [ost=bone @ pax=path]
@@ -103,6 +181,15 @@
       ;~(pose (stag %user-id dem) (stag %screen-name user:twir))
   ==
 ::
+++  pull
+  |=  ost=bone
+  =+  [his pax]=(~(got by sup) ost)
+  ?:  (lth 1 ~(wyt in (~(get ju pus) pax)))
+    `+>.$
+  =:  ran  (~(del by ran) [%peer pax])
+      fed  (~(del by fed) pax)
+    ==
+  `+>.$
 ++  spam
   |=  [a=path b=gift]  ^-  (list move)
   %+  murn  (~(tap by sup))
