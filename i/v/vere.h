@@ -294,7 +294,7 @@
       struct _u3_udir;
       struct _u3_ufil;
 
-    /* u3_unod: file or directory.
+    /* u3_unod: in-file or in-directory.
     */
       typedef struct _u3_unod {
         uv_fs_event_t    was_u;             //  stat watcher
@@ -304,7 +304,7 @@
         struct _u3_udir* par_u;             //  in directory
       } u3_unod;
 
-    /* u3_ufil: synchronized file.
+    /* u3_ufil: synchronized in-file.
     */
       typedef struct _u3_ufil {
         uv_fs_event_t    was_u;             //  stat watcher
@@ -317,7 +317,7 @@
         struct _u3_ufil* nex_u;             //  internal list
       } u3_ufil;
 
-    /* u3_udir: synchronized directory.
+    /* u3_udir: synchronized in-directory.
     */
       typedef struct _u3_udir {
         uv_fs_event_t    was_u;             //  stat watcher
@@ -333,7 +333,8 @@
     /* u3_uhot: synchronized host.
     */
       typedef struct _u3_uhot {
-        u3_udir          dir_u;             //  root directory
+        u3_udir          dir_u;             //  in directory
+        c3_c*            dot_u;             //  out directory
         c3_w             who_w[4];          //  owner as words
         struct _u3_uhot* nex_u;             //  internal list
       } u3_uhot;

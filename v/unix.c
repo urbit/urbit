@@ -1046,7 +1046,13 @@ _unix_hot_gain(u3_noun who, u3_noun mek)
   u3_noun hox = u3dc("scot", 'p', u3k(who));
   c3_c*   hox_c = u3r_string(hox);
   c3_c*   pax_c = _unix_down(u3_Host.dir_c, hox_c + 1);
+  c3_c*   pin_c = _unix_down(pax_c, "in");
+  c3_c*   pot_c = _unix_down(pax_c, "out");
   DIR*    rid_u = opendir(pax_c);
+  DIR*    rin_u = opendir(pin_c);
+  DIR*    rot_u = opendir(pot_c);
+
+  free(pax_c);
 
   if ( !rid_u ) {
     if ( c3y == mek ) {
@@ -1057,17 +1063,38 @@ _unix_hot_gain(u3_noun who, u3_noun mek)
       return;
     }
   } else closedir(rid_u);
+  if ( !rin_u ) {
+    if ( c3y == mek ) {
+      _unix_mkdir(pin_c);
+    } else {
+      u3z(who);
+      u3z(hox);
+      return;
+    }
+  } else closedir(rin_u);
+  if ( !rot_u ) {
+    if ( c3y == mek ) {
+      _unix_mkdir(pot_c);
+    } else {
+      u3z(who);
+      u3z(hox);
+      return;
+    }
+  } else closedir(rot_u);
 
   // uL(fprintf(uH, "GAIN %s\n", pax_c));
 
   free(hox_c);
   u3z(hox);
-  u3_unix_acquire(pax_c);
+  u3_unix_acquire(pin_c);
 
   {
     u3_uhot* hot_u = c3_malloc(sizeof(u3_uhot));
 
-    _unix_dir_watch(&hot_u->dir_u, 0, pax_c);
+    _unix_dir_watch(&hot_u->dir_u, 0, pin_c);
+
+    hot_u->dot_u = pot_c;
+
     _unix_ship_out(who, hot_u->who_w);
     u3z(who);
 
@@ -1334,7 +1361,7 @@ u3_unix_ef_init(u3_noun who)
   u3v_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
              u3nq(c3__into, who,
                             u3_blip,
-                            u3nt(c3y, u3nc(0, 0), u3_nul)));
+                            u3nt(u3_nul, u3_nul, u3_nul)));
 }
 
 /* u3_unix_ef_ergo(): update filesystem, outbound.
@@ -1411,6 +1438,7 @@ u3_unix_ef_look(void)
         // uL(fprintf(uH, "sync: lose %s\n", hot_u->dir_u.pax_c));
         _unix_hot_lose(hot_u);
 
+        free(hot_u->dot_u);
         free(hot_u);
         continue;
       }
