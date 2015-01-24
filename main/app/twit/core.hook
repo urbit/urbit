@@ -110,21 +110,14 @@
     ?+    p.p.sig  ~|([%unknown-code p.p.sig] !!)
         429  ::  Rate-limit
       =.  ran  (~(put by ran) pax 6 lat)
-      =+  mez=(appl-rate:auth ~ [%resources 'statuses']~)
-      :_(+>.$ [ost %pass [%limi pax] %e %them ~ mez]~)
+      =+  lim=%.(%x-rate-limit-reset ;~(biff ~(get by (mo q.p.sig)) poja ni:jo))
+      =+  tym=?~(lim (add ~m7.s30 lat) (add ~1970.1.1 (mul ~s1 u.lim)))
+      ~&  retrying-in/`@dr`(sub tym lat)
+      :_(+>.$ [ost %pass pax %t %wait tym]~)
         200  ::  OK
       =+  jon=(need (poja q:(need r.p.sig)))
   ::     ~&  twit-resp/%.(jon ?+(-.jon !! %o stat:twir, %a (ar:jo stat:twir)))
       ?+    pax  ~|([%http-missed pax] !!)
-          [%limi *]
-        :_  +>.$
-        =+  num=|=([a=cord b=$+(json (unit ,@da))] (ot:jo [a b] ~))
-        =.  b.num  (cu |=(a=@u (add ~1970.1.1 (mul a ~s1))) ni):jo
-        =+  paf=`path`~[%resources %statuses '/statuses/home_timeline' %reset]
-        ~|  [%no-time `wain`paf jon]
-        =+  tym=(need %.(jon b:(reel paf num)))
-        ~&  retrying-in/`@dr`(sub tym lat)
-        [ost %pass t.pax %t %wait tym]~
           [%post @ ~]
         =.  out  (~(put by out) (slav %uv i.t.pax) %| lat)
         :_  +>.$
