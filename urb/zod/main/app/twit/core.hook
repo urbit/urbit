@@ -178,15 +178,18 @@
       ~
     :-  [ost %give %rush %twit-stat p.u.sta]
     [ost %give %mean ~]~                                ::  subscription end
-  :-  =-  [ost %pass [%peer pax] %e %them ~ `hiss`-]
-      ?-    -.pax
-        %home  (stat-home:auth)
-        %user  (stat-user:auth [(to-sd p.pax)]~ ~)
-      ==
-  ?.  ver  ~
   =+  ole=(~(get ja fed) pax)
-  ?~  ole  ~
-  [ost %give %rush %twit-feed (flop ole)]~
+  :_  ?.  ver  ~
+      ?~  ole  ~
+      [ost %give %rush %twit-feed (flop ole)]~
+  =-  [ost %pass [%peer pax] %e %them ~ `hiss`-]
+  ?-    -.pax
+    %user  (stat-user:auth [(to-sd p.pax)]~ ~)
+    %home  
+      ?~  ole  (stat-home:auth)
+      =+  opt=['since_id' (lutt:twit id.i.ole)]~
+      (stat-home:auth ~ opt)
+  ==
 ::
 ++  to-sd                                               ::  parse user name/numb
   |=  a=span  ^-  sd:twit
