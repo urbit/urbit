@@ -22,9 +22,9 @@
 ++  axle                                                ::  app state
   $:  %0
       kes=(unit keys)                                   ::  auth
-      out=(map ,@uvI (each cord ,@da))                  ::  sent tweets
+      out=(map ,@uvI (each cord stat))                  ::  sent tweets
       ran=(map path ,[p=@ud q=@da])                     ::  polls active
-      fed=(map path tid:twit)                           ::  last id published
+      fed=(jar path stat)                               ::  feed cache
   ==
 ::
 ++  gift                                                ::  app response
@@ -35,7 +35,7 @@
 ::
 ++  gilt  
   $%  [%twit-feed p=(list stat)]                        ::  posts in feed
-      [%time p=time]                                    ::  accepted time
+      [%twit-stat p=stat]                               ::  tweet accepted
   ==
 ::
 ++  move  ,[bone (mold note gift)]
@@ -57,14 +57,9 @@
 |_  [hide axle]
 ++  auth  ~|(%no-auth ~(. twit (need kes) lat `@`eny))  ::  build API door
 ++  cull                                                ::  remove seen tweets
-  |=  [pax=path rep=(list stat)]
-  =+  pev=(~(get by fed) pax)
-  ?~  pev  rep
-  ::   ~&  do-cull/[u.pev (turn rep |=(stat id))]
-  |-  ^+  rep
-  ?~  rep  ~
-  ?:  =(u.pev id.i.rep)  ~
-  [i.rep $(rep t.rep)]
+  |=  [pax=path rep=(list stat)]  ^+  rep
+  =+  pev=(sa (turn (~(get ja fed) pax) |=(stat id)))
+  (murn rep (flit |=(stat !(~(has in pev) id))))
 ::
 ++  dely                                                ::  next polling timeout
   |=  pax=path
@@ -111,14 +106,15 @@
   ?-    &2.sig
       %wake
     ~&  wake/[pax sig]
+    :_  +>.$
     ?.  (~(has by ran) pax)                             ::  ignore if retracted
-      `+>
+      ~
     ?+  pax  ~|([%wake-missed pax] !!)
       [%peer *]  
         ?~  (~(get ju pus) t.pax)
-          `+>
+          ~
         ~&  peer-again/[t.pax ran]
-        (peer ost our t.pax)
+        (pear | ost our t.pax)
     ==
       %thou
     ?+    p.p.sig  ~|([%unknown-code p.p.sig] !!)
@@ -130,25 +126,28 @@
       :_(+>.$ [ost %pass pax %t %wait tym]~)
         200                           ::  OK
       =+  jon=(need (poja q:(need r.p.sig)))
-  ::     ~&  twit-resp/%.(jon ?+(-.jon !! %o stat:twir, %a (ar:jo stat:twir)))
+      :: ~&  twit-resp/%.(jon ?+(-.jon !! %o stat:twir, %a (ar:jo stat:twir)))
       ?+    pax  ~|([%http-missed pax] !!)
           [%post @ ~]                                   ::  post acknowledged
-        =.  out  (~(put by out) (slav %uv i.t.pax) %| lat)
+        =+  ^=  rep
+            ~|  [%bad-post jon]
+            (need %.(jon stat:twir))
+        =.  out  (~(put by out) (slav %uv i.t.pax) %| rep)
         :_  +>.$
-        (weld (spam pax %rush %time lat) (spam pax %mean ~))
+        (weld (spam pax %rush %twit-stat rep) (spam pax %mean ~))
           [%peer *]                                     ::  feed data
         =+  ^=  rep
-            ~|  [%bad-tweets jon]
+            ~|  [%bad-feed jon]
             (need %.(jon (ar:jo stat:twir)))
         :: ~&  got-feed/[(scag 5 (turn rep |=(stat id))) fed]
-        =.  rep  (cull t.pax rep)                       ::  only new messages
-        ?~  rep
+        =+  ren=(cull t.pax rep)                       ::  new messages
+        ?~  ren
           (wait ost pax ~)                              ::  pump polling
-        ~&  spam-feed/rep
+        ~&  spam-feed/ren
         =:  ran  (~(del by ran) pax)                    ::  clear poll delay
-            fed  (~(put by fed) t.pax id.i.rep)         ::  saw last message
+            fed  (~(put by fed) t.pax rep)              ::  saw last message
           ==
-        (wait ost pax (spam t.pax %rush twit-feed/(flop rep)))
+        (wait ost pax (spam t.pax %rush twit-feed/(flop ren)))
       ==
         ?(400 401 403 404)            ::  Err
       =+  ^-  git=gift
@@ -162,24 +161,32 @@
     ==
 ::
 ++  peer                                                ::  accept subscription
-  |=  [ost=bone @ pax=path]
+  |=  [ost=bone ship path]
   ^+  [*(list move) +>]
-  :_  +>.$
+  :_(+> [[ost %give %nice ~] (pear & +<)])
+::
+++  pear                              ::  poll, possibly returning current data
+  |=  [ver=? ost=bone @ pax=path]
+  ^-  (list move)
   ?.  ?=(twit-path pax)
     ~|([%missed-path pax] !!)
   =>  .(pax `twit-path`pax)
-  :-  [ost %give %nice ~]
   ?:  ?=(%post -.pax)
+    ?.  ver  ~
     =+  sta=(~(get by out) (slav %uv p.pax))
-    ?.  ?=([~ %| @] sta)                                ::  post not received
+    ?.  ?=([~ %| ^] sta)                                ::  post not received
       ~
-    :-  [ost %give %rush %time p.u.sta]
+    :-  [ost %give %rush %twit-stat p.u.sta]
     [ost %give %mean ~]~                                ::  subscription end
-  =-  [ost %pass [%peer pax] %e %them ~ `hiss`-]~
-  ?-    -.pax
-    %home  (stat-home:auth)
-    %user  (stat-user:auth [(to-sd p.pax)]~ ~)
-  ==
+  :-  =-  [ost %pass [%peer pax] %e %them ~ `hiss`-]
+      ?-    -.pax
+        %home  (stat-home:auth)
+        %user  (stat-user:auth [(to-sd p.pax)]~ ~)
+      ==
+  ?.  ver  ~
+  =+  ole=(~(get ja fed) pax)
+  ?~  ole  ~
+  [ost %give %rush %twit-feed (flop ole)]~
 ::
 ++  to-sd                                               ::  parse user name/numb
   |=  a=span  ^-  sd:twit
@@ -189,6 +196,7 @@
 ::
 ++  pull                                                ::  release subscription
   |=  ost=bone
+  ?.  (~(has by sup) ost)  `+>.$      ::  XX should not occur
   =+  [his pax]=(~(got by sup) ost)
   ?:  (lth 1 ~(wyt in (~(get ju pus) pax)))
     `+>.$
