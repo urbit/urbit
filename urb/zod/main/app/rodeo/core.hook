@@ -36,8 +36,8 @@
       $:  count=@ud                                     ::  (lent grams)
           grams=(list telegram)                         ::  all history
           locals=(map ship (pair ,@da status))          ::  local presence
-          remotes=(map station atlas)                   ::  remote presence
-          sequence=(map station ,@ud)                   ::  stations heard
+          remotes=(map partner atlas)                   ::  remote presence
+          sequence=(map partner ,@ud)                   ::  partners heard
           shape=config                                  ::  configuration
           known=(map serial ,@ud)                       ::  messages heard
           guests=(map bone river)                       ::  message followers
@@ -114,16 +114,16 @@
     |=  [pax=path hiz=hiss]
     (ra-emit ost %pass pax %e %them ~ hiz)
   ::
-  ++  ra-house                                          ::  emit stations
+  ++  ra-house                                          ::  emit partners
     |=  ost=bone
     %+  ra-emit  ost
     :^  %give  %rush  %rodeo-report
     :-  %house
-    %-  ~(gas in *(set span))
-    ^-  (list span)
-    (turn (~(tap by stories) ~) |=([a=span *] a))
+    %-  ~(gas in *(map span (pair posture cord)))
+    %+  turn  (~(tap by stories)) 
+    |=([a=span b=story] [a p.cordon.shape.b caption.shape.b])
   ::
-  ++  ra-homes                                          ::  update stations
+  ++  ra-homes                                          ::  update partners
     =+  gel=general
     |-  ^+  +>
     ?~  gel  +>
@@ -136,7 +136,7 @@
     %+  ra-apply  our.hid
     :+  %design  (main our.hid)
     :-  ~
-    :_  [%| ~]
+    :_  [%default ?:((gte our.hid 65.536) %brown %black) ~]
     ?:(=(sir our.hid) ~ [[%& sir (main sir)] ~ ~])
   ::
   ++  ra-apply                                          ::  apply command
@@ -175,7 +175,7 @@
     pa-abet:(~(pa-friend pa man u.pur) her sih)
   ::
   ++  ra-stalk                                          ::  %stalk response
-    |=  [man=span tay=station sih=sign]
+    |=  [man=span tay=partner sih=sign]
     ^+  +>
     =+  pur=(~(get by stories) man)
     ?~  pur  ~&  [%ra-stalk-none man]  +>.$
@@ -192,8 +192,9 @@
     ?~  oot  ~&  [%ra-repeat-none num]  +>.$
     =.  q.outbox  (~(del by q.outbox) num)
     =.  q.u.oot
-      %+  ~(put by q.u.oot)
-        [%& her man]
+      =+  olg=(~(got by q.u.oot) [%& her man])
+      %+  ~(put by q.u.oot)  [%& her man]
+      :-  -.olg
       ?+  sih  !!
         [%g %mean *]  ~&([%rodeo-repeat-rejected num her man sih] %rejected)
         [%g %nice ~]  %received
@@ -252,13 +253,13 @@
   ::
   ++  ra-consume                                        ::  consume thought
     |=  [pub=? her=ship tip=thought]
-    =+  aud=`(list (pair station delivery))`(~(tap by q.tip) ~)
+    =+  aud=(~(tap by q.tip) ~)
     |-  ^+  +>.^$
     ?~  aud  +>.^$
     $(aud t.aud, +>.^$ (ra-conduct pub her p.i.aud tip))
   ::
-  ++  ra-conduct                                        ::  thought to station
-    |=  [pub=? her=ship tay=station tip=thought]
+  ++  ra-conduct                                        ::  thought to partner
+    |=  [pub=? her=ship tay=partner tip=thought]
     ^+  +>
     ::  ~&  [%ra-conduct pub her tay]
     ?-  -.tay
@@ -286,7 +287,7 @@
     pa-abet:(~(pa-learn pa man u.pur) gam)
   ::
   ++  ra-transmit                                       ::  send to neighbor
-    |=  [cuz=cousin tip=thought]
+    |=  [cuz=station tip=thought]
     ^+  +>
     =.  +>
         %+  ra-emit  ost
@@ -362,6 +363,9 @@
           [%g %nice ~]
         ::  ~&  %pa-friend-nice 
         +>.$
+          [%g %mean *]
+        ~&  %pa-friend-mean
+        +>.$
       ::
           [%g %rush %rodeo-report *]
         ::  ~&  [%pa-friend-report +>+.sih]
@@ -377,7 +381,7 @@
       ==
     ::
     ++  pa-stalk                                        ::  subscribed present
-      |=  [tay=station sih=sign]
+      |=  [tay=partner sih=sign]
       ^+  +>
       ?+    sih  ~&([%rodeo-bad-friend sih] !!)
           [%g %nice ~]
@@ -406,11 +410,11 @@
       ==
     ::
     ++  pa-abjure                                       ::  unsubscribe move
-      |=  tal=(list station)
+      |=  tal=(list partner)
       %+  pa-scrub  0
       %-  zing
       %+  turn  tal
-      |=  tay=station
+      |=  tay=partner
       ?-  -.tay
         %|  ~&  tweet-abjure/p.p.tay
             !!
@@ -424,11 +428,11 @@
       ==
     ::
     ++  pa-acquire                                      ::  subscribe to
-      |=  tal=(list station)
+      |=  tal=(list partner)
       %+  pa-scrub  0
       %-  zing
       %+  turn  tal
-      |=  tay=station
+      |=  tay=partner
       ^-  (list (pair path note))
       =+  num=(fall (~(get by sequence) tay) 0)
       ?-  -.tay
@@ -443,11 +447,11 @@
     ::
     ++  pa-reform                                       ::  reconfigure, ugly
       |=  cof=config
-      =+  ^=  dif  ^-  (pair (list station) (list station))
-          =+  old=`(list station)`(~(tap in sources.shape) ~)
-          =+  new=`(list station)`(~(tap in sources.cof) ~)
-          :-  (skip new |=(a=station (~(has in sources.shape) a)))
-          (skip old |=(a=station (~(has in sources.cof) a)))
+      =+  ^=  dif  ^-  (pair (list partner) (list partner))
+          =+  old=`(list partner)`(~(tap in sources.shape) ~)
+          =+  new=`(list partner)`(~(tap in sources.cof) ~)
+          :-  (skip new |=(a=partner (~(has in sources.shape) a)))
+          (skip old |=(a=partner (~(has in sources.cof) a)))
       =.  +>.$  (pa-acquire p.dif)
       =.  +>.$  (pa-abjure q.dif)
       =.  shape  cof
@@ -463,17 +467,15 @@
     ++  pa-notify                                       ::  local presence
       |=  [her=ship saz=status]
       ^+  +>
-      ~&  [%pa-notify her saz]
       =+  ^=  nol
           ?:  =(%gone p.saz) 
             (~(del by locals) her)
           (~(put by locals) her lat.hid saz)
       ?:  =(nol locals)  +>.$
-      ~&  [%pa-display her saz]
       (pa-display(locals nol) viewers)
     ::
     ++  pa-remind                                       ::  remote presence
-      |=  [tay=station loc=atlas rem=(map station atlas)]
+      |=  [tay=partner loc=atlas rem=(map partner atlas)]
       =+  ^=  buk
           =+  mer=(turn (~(tap by rem) ~) |=([* a=atlas] a))
           |-  ^-  atlas
@@ -584,7 +586,10 @@
       ?.  (pa-admire p.gam)
         ~&  %pa-admire-rejected
         +>.$
-      =.  q.q.gam  (~(put by q.q.gam) [%& our.hid man] %received)
+      =.  q.q.gam  
+        =+  ole=(~(get by q.q.gam) [%& our.hid man])
+        ?~  ole  q.q.gam
+        (~(put by q.q.gam) [%& our.hid man] -.u.ole %received)
       =+  old=(~(get by known) p.q.gam)
       ?~  old
         (pa-append gam)
@@ -711,7 +716,7 @@
           locals=~
           remotes=~
           sequence=~
-          shape=[.(cordon [%| ~])]:*config
+          shape=[.(cordon [%black ~])]:*config
           ^=  known  %-  mo  ^-  (list ,[serial @])  =<  +
           (roll grams |=([telegram a=@ b=(list ,[serial @])] [+(a) [a p.q] b]))
           guests=~
@@ -726,7 +731,7 @@
       =+  (turn a |=(d=span leaf/(trip d)))
       (crip ~(ram re %rose ["_" ~ ~] -))
   :-  par
-  =+  aud=`audience`[[[%& our.hid par] %received] `~]
+  =+  aud=`audience`[[[%& our.hid par] *envelope %received] `~]
   =+  ^=  spe
       |=  r=_r:*zong  ^-  speech
       ?-  -.r
@@ -736,5 +741,5 @@
       ==
   %+  turn  b
   |=  d=zong  ^-  telegram
-  [q.d (sham eny.hid d) aud p.d (spe r.d)]
+  [q.d (sham eny.hid d) aud p.d ~ (spe r.d)]
 --

@@ -1,21 +1,22 @@
 ::
 ::::  /hook/core/rodeo/sur
-  ::
+  !:
 |%
 ++  ache  |*([a=$+(* *) b=$+(* *)] $%([| p=b] [& p=a])) ::  PM 314
-++  audience  (map station delivery)                    ::  destination/state
+++  audience  (map partner (pair envelope delivery))    ::  destination/state
 ++  atlas  (map ship status)                            ::  presence map
+++  bouquet  (set flavor)                               ::  complete aroma
 ++  command                                             ::  effect on party
   $%  [%design (pair span (unit config))]               ::  configure/destroy
       [%publish (list thought)]                         ::  originate
       [%review (list thought)]                          ::  deliver
   ==                                                    ::
 ++  config                                              ::  party configuration
-  $:  sources=(set station)                             ::  pulls from
-      cordon=control                                    ::  & white, | black
+  $:  sources=(set partner)                             ::  pulls from
+      caption=cord                                      ::  about
+      cordon=control                                    ::  restricted to
   ==                                                    ::
-++  cousin  (pair ship span)                            ::  domestic flow
-++  control  (ache (set ship) (set ship))               ::  & white, | black
+++  control  (pair posture (set ship))                  ::  access control
 ++  delivery                                            ::  delivery state
   $?  %pending                                          ::  undelivered
       %received                                         ::  delivered
@@ -23,21 +24,29 @@
       %released                                         ::  sent one-way
       %accepted                                         ::  fully processed
   ==                                                    ::
+++  envelope  (pair ,? (unit partner))                  ::  visible, sender
+++  flavor  path                                        ::  content flavor
 ++  human                                               ::  human identifier
   $:  true=(unit (trel ,@t (unit ,@t) ,@t))             ::  true name
       hand=(unit ,@t)                                   ::  handle
   ==                                                    ::
-++  partner                                             ::  foreign flow
+++  passport                                            ::  foreign flow
   $%  [%twitter p=@t]                                   ::  twitter
   ==                                                    ::
+++  posture                                             ::  security posture
+  $?  %black                                            ::  public
+      %white                                            ::  private
+      %green                                            ::  readonly 
+      %brown                                            ::  writeonly
+  ==                                                    ::
 ++  presence   ?(%gone %hear %talk)                     ::  status type
-++  register  (pair atlas (map station atlas))          ::  ping me, ping srcs
+++  register  (pair atlas (map partner atlas))          ::  ping me, ping srcs
 ++  report                                              ::  radio update
   $%  [%config config]                                  ::  reconfigure
   ::  [%folder (list report)]                           ::  multiple
       [%grams (pair ,@ud (list telegram))]              ::  beginning, thoughts
       [%group register]                                 ::  presence
-      [%house (set span)]                               ::  station set
+      [%house (map span (pair posture cord))]           ::  station set
   ==                                                    ::
 ++  speech                                              ::  narrative action
   ::  XX  unify %own and %say to %lin
@@ -55,9 +64,10 @@
       [%say p=@t]                                       ::  XX normal line
   ==                                                    ::
 ++  serial     ,@uvH                                    ::  unique identity
-++  station    (each cousin partner)                    ::  interlocutor
+++  partner    (each station passport)                  ::  interlocutor
 ++  status     (pair presence human)                    ::  participant
-++  statement  (pair ,@da speech)                       ::  when this
+++  statement  (trel ,@da bouquet speech)               ::  when this
+++  station    (pair ship span)                         ::  domestic flow
 ++  telegram   (pair ship thought)                      ::  who which whom what
 ++  thought    (trel serial audience statement)         ::  which whom what
 ++  torso                                               ::  attachment
