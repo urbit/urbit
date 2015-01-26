@@ -1222,6 +1222,7 @@
           [%call (harm cog (conf (core u.huv.sat))) (cove %$ sam)]
         ::
             %show
+          ::  ~&  showing/[app.sat imp q.kon]
           ?:  (warm %peer)
             =+  sam=!>([ost p.kon q.kon])
             ?>  ?=(^ huv.sat)
