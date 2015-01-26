@@ -1062,7 +1062,7 @@
           ?:  ?=(%mean p.p.q.caq)
             :-  `[hon %nuke our]
             `[hon %give %mean (ares q.p.q.caq)]
-          :-  ?.  ?|  ?=(?(%rush %rust %nice) p.p.q.caq)
+          :-  ?.  ?|  ?=(?(%rush %rust) p.p.q.caq)
                       ?&  ?=(%meta p.p.q.caq)
                           ?=([* ?(%rush %rust) *] q.p.q.caq)
                   ==  ==
@@ -1153,7 +1153,7 @@
               qic.sat  ~
               qel.sat  
             ?~  qol
-              ~&  [%took-underflow our hen]
+              ::  ~&  [%took-underflow our hen]
               qel.sat
             ?:  =(`1 qol)
               (~(del by qel.sat) ost)
