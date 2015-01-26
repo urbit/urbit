@@ -56,21 +56,19 @@
         statement/stam
       ==
     ::
-    ++  audi  (op parn memb)                            ::  audience
-    ++  auri  (op parn (ci (soft presence) so))
-    ++  memb  (ot envelope/lope delivery/(ci (soft delivery) so) ~)
-    ++  lope  (ot visible/bo sender/(mu (su parn)) ~)
+    ++  audi  (op stati (ci (soft delivery) so))        ::  audience
+    ++  auri  (op stati (ci (soft presence) so))
     ::
-    ++  parn
-      ^-  $+(nail (like partner))
+    ++  stati
+      ^-  $+(nail (like station))
       %+  peach
         ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
-      %+  sear  (soft passport)
+      %+  sear  (soft partner)
       ;~((glue fas) sym urs:ab)                         ::  XX  [a-z0-9_]{1,15}
     ::
     ++  stam
       ^-  $+(json (unit statement))
-      =-  (ot date/di bouquet/(as (ar so)) speech/(of -) ~)
+      =-  (ot now/di speech/(of -) ~)
       :~  own/so
           say/so
           lin/(ot say/bo txt/so ~) 
@@ -82,10 +80,10 @@
     ++  conf
       ^-  $+(json (unit config))
       %-  ot  :~
-        sources/(as (su parn))
-        caption/so
+        sources/(as (su stati))
         :-  %cordon
-        (ot posture/(ci (soft posture) so) list/(as (su fed:ag)) ~)
+        %+  cu  |*(a=^ ?~(-.a a a))                     ::  XX  do type stuff
+        (ot white/bu list/(as (su fed:ag)) ~)
       ==
   --
 --  --
