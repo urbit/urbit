@@ -24,12 +24,14 @@
     ++  terminal                                        ::  terminal state
       $:  present=presence                              ::  presence state
       ==                                                ::
-    ++  story                                           ::  persona
-      $:  link=(grip bridge)                            ::  connection
+    ++  story                                           ::  station content
+      $:  poe=posture                                   ::  security posture
+          desc=@t                                       ::  description
+          link=(grip bridge)                            ::  connection
           count=@ud                                     ::  message counter
-          mike=(pair ,? (set station))                  ::  passive/voice
+          mike=(pair ,? (set partner))                  ::  passive/voice
           quiet=?                                       ::  !verbose
-          past=(list station)                           ::  past received auds
+          past=(list partner)                           ::  past received auds
       ==                                                ::
     ++  bridge                                          ::  remote state
       $:  xm=config                                     ::  configuration
@@ -41,14 +43,14 @@
           [%mor (list work)]                            ::  sequence
           [%rub work-adjust]                            ::  configure story
           [%say speech]                                 ::  publish in voice
-          [%who (unit station)]                         ::  show presence
+          [%who (unit partner)]                         ::  show presence
           [%wry work-construct]                         ::  configure system
       ==                                                ::
     ++  work-adjust                                     ::  adjust story
       $%  [%dark p=(set ship)]                          ::  toggle blacklist
           [%lite p=(set ship)]                          ::  toggle whitelist
-          [%love p=(set station)]                       ::  toggle stations
-          [%whom p=? q=(set station)]                   ::  active/voice
+          [%love p=(set partner)]                       ::  toggle partners
+          [%whom p=? q=(set partner)]                   ::  active/voice
           [%wind p=@dr]                                 ::  rewind by date
       ==                                                ::
     ++  work-construct                                  ::  configure system
@@ -158,7 +160,7 @@
           |=(a=(list ^ship) (~(gas in *(set ^ship)) a))
         (most ;~(plug com (star ace)) ship)
       ::
-      ++  stat                                          ::  station
+      ++  stat                                          ::  partner
         %+  posh
           ;~  plug
             ship
@@ -170,9 +172,9 @@
           ==
         ==
       ::
-      ++  staz                                          ::  station set
+      ++  staz                                          ::  partner set
         %+  cook
-          |=(a=(list station) (~(gas in *(set station)) a))
+          |=(a=(list partner) (~(gas in *(set partner)) a))
         (most ;~(plug com (star ace)) stat)
       ::
       ++  step                                          ::  rollback interval
@@ -217,7 +219,7 @@
           ;~(pfix cen (stag %exp wide:vag))
         ::
           %+  cook
-            |=  [a=(set station) b=(unit ,[%lin p=? q=@t])]
+            |=  [a=(set partner) b=(unit ,[%lin p=? q=@t])]
             ^-  ^work
             =.  b  ?~(b ~ ?:(=(0 q.u.b) ~ b))
             =+  c=[%rub %whom %& a]
@@ -231,8 +233,8 @@
         ==
       --
     ::
-    ++  swatch                                          ::  print station set
-      |=  [our=ship tou=(set station)]
+    ++  swatch                                          ::  print partner set
+      |=  [our=ship tou=(set partner)]
       =+  tuo=(~(tap in tou))
       |-  ^-  tape
       ?~  tuo  ~
@@ -307,8 +309,8 @@
   ::
   ++  sy-audience                                       ::  speech audience
     %-  ~(gas by *audience)
-    %+  turn  `(list station)`[[%& our.hid man] (~(tap in q.mike))]
-    |=(a=station [a %pending])
+    %+  turn  `(list partner)`[[%& our.hid man] (~(tap in q.mike))]
+    |=(a=partner [a *envelope %pending])
   ::
   ++  sy-message                                        ::  print message
     |=  msg=tape
@@ -318,10 +320,10 @@
     |=  [msg=tape tay=(list tank)]
     =.  tay  (welp tay `(list tank)`[%leaf "::"]~)
     =.  tay  :_(tay [%leaf ":{(trip man)}: {msg}:: "])
-    %_(+>.$ moz hy-abet:(hy-display:(hype moz) (flop tay)))
+    %_(+>.$ moz hy-abet:(hy-display:(hype moz) tay))
   ::
   ++  sy-prompt
-    |=  tou=(set station)
+    |=  tou=(set partner)
     ^-  tape
     ;:  welp
       (scow %p our.hid)
@@ -331,7 +333,7 @@
     ==
   ::
   ++  sy-voice                                          ::  set targets
-    |=  [pas=? tou=(set station)]
+    |=  [pas=? tou=(set partner)]
     ?:  &(!p.mike pas)  +>
     %_  +>.$
       mike  [pas tou]
@@ -362,8 +364,8 @@
       =+  suz=sy-live
       ?~  suz  (sy-message "not connected")
       ?-  +<.job
-        %lite  sz-abet:(sz-cordon:u.suz [%| +>.job])
-        %dark  sz-abet:(sz-cordon:u.suz [%& +>.job])
+        %lite  sz-abet:(sz-cordon:u.suz [%white +>.job])
+        %dark  sz-abet:(sz-cordon:u.suz [%black +>.job])
         %love  sz-abet:(sz-sources:u.suz +>.job)
       ==
     ::
@@ -373,7 +375,7 @@
           moz 
         =<  hy-abet
         %-  ~(hy-transmit hy moz hid)
-        [%publish [[sir sy-audience [lat.hid +.job]] ~]]
+        [%publish [[sir sy-audience [lat.hid ~ +.job]] ~]]
       ==
     ::
         %wry  ~&(%sy-work-wry !!)
@@ -388,14 +390,14 @@
       =<  hy-abet
       %-  hy-render:(hype moz)
       =*  sta  r.q.gam
-      ?+    -.q.sta  ~&([%strange-gram -.q.sta] !!)
+      ?+    -.r.sta  ~&([%strange-gram -.r.sta] !!)
       ::
           %lin  
         :-  %txt 
         %+  rap  3
         :~  (scot %ud num)  ')' 
-            (scot %p p.gam)  ?:(p.q.sta ': ' ' ') 
-            q.q.sta
+            (scot %p p.gam)  ?:(p.r.sta ': ' ' ') 
+            q.r.sta
         ==
       ==
     ==
@@ -466,23 +468,16 @@
       %_(+>+> link why)
     ::
     ++  sz-cordon                                       ::  design cordon
-      |=  con=(ache (set ship) (set ship))
+      |=  con=control
       ^+  +>
       =.  cordon.xm.big
-        ?-  -.cordon.xm.big
-          %&  ?-  -.con
-                %&  [%& (stog p.con p.cordon.xm.big)]
-                %|  con
-              ==
-          %|  ?-  -.con
-                %&  con
-                %|  [%| (stog p.con p.cordon.xm.big)]
-              ==
-        ==
+        ?:  =(p.cordon.xm.big p.con)
+          [p.con (stog q.con q.cordon.xm.big)]
+        con
       +>.$(moz hy-abet:(hy-transmit:(hype moz) [%design man ~ xm.big]))
     ::
     ++  sz-sources                                      ::  design sources
-      |=  src=(set station)
+      |=  src=(set partner)
       ^+  +>
       =.  sources.xm.big  (stog src sources.xm.big)
       +>.$(moz hy-abet:(hy-transmit:(hype moz) [%design man ~ xm.big]))
@@ -538,17 +533,24 @@
     (ny-amid(live ~) sy-unsubscribe:(need (novel moz)))
   ::
   ++  ny-tell                                           ::  hear from server
-    |=  sap=(set span)
+    |=  sap=(map span (pair posture cord))
     ^+  +>
-    =.  +>  ?.(&(?=(^ live) !(~(has in sap) u.live)) +> ny-stop)
+    =.  +>  ?.(&(?=(^ live) !(~(has by sap) u.live)) +> ny-stop)
     =.  stories
-      =+  ros=(skim (~(tap by stories)) |=([a=span *] (~(has in sap) a)))
-      =+  pas=(~(tap in sap))
+      =+  pas=(~(tap by sap))
+      =+  ros=(skim (~(tap by stories)) |=([a=span *] (~(has by sap) a)))
       %-  ~(gas by *(map span story))
       |-  ^-  (list (pair span story))
-      ?~  pas  ros
+      ?~  pas  
+        %+  turn  ros
+        |=  [a=span b=story]
+        =+  hig=(~(get by sap) a)
+        [a ?~(hig b b(poe p.u.hig, desc q.u.hig))]
       =+  sor=$(pas t.pas)
-      ?:((~(has by stories) i.pas) sor [[i.pas *story] sor])
+      ?:  (~(has by stories) i.pas) 
+        sor 
+      =+  soy=*story
+      [[p.i.pas soy(poe p.q.i.pas, desc q.q.i.pas)] sor]
     ?^  live  +>.$
     ?~  stories  +>.$
     ?:  (~(has by `(map span story)`stories) (main our.hid))
@@ -558,10 +560,14 @@
   ++  ny-work                                           ::  user command
     |=  jaw=work-construct
     ^+  +>
-    ?-  -.jaw
-      %raze  +>(moz hy-abet:(hy-transmit:(hype moz) [%design p.jaw ~]))
-      %make  +>(moz hy-abet:(hy-transmit:(hype moz) [%design p.jaw [~ ~ %| ~]]))
-      %tune  (ny-tune p.jaw)
+    ?-    -.jaw
+        %raze  +>(moz hy-abet:(hy-transmit:(hype moz) [%design p.jaw ~]))
+        %tune  (ny-tune p.jaw)
+        %make  
+      %=    +>
+          moz 
+        hy-abet:(hy-transmit:(hype moz) [%design p.jaw [~ ~ %default %black ~]])
+      ==
     ==
   --
 ::
