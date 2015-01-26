@@ -261,6 +261,7 @@
       ^-  [p=(list move) q=_..^$]
       ?:  ?=(%crud +<.q.hin)
         ~&  [%gall-crud-error pax hen]
+        ~&  [%gall-crud-data (,[@tas (list tank)] +>.q.hin)]
         ?>  ?=(%g -.q.hin)
         ?~  pax  ~&  %strange-path  [~ ..^$]
         =+  lum=(lump t.pax)
@@ -671,14 +672,14 @@
       ::
       ++  blow
         ^+  .
-        =>  (give %nice ~)
+        ~&  [%gall-blow ost]
+        =>  (give %mean ~)
         =+  pax=+:(fall (~(get by sup.sat) ost) *[ship path])
         %=  +
           qic.sat  ~
           sup.sat  (~(del by sup.sat) ost)
           pus.sat  (~(del ju pus.sat) pax ost)
           peq.sat  (~(del by peq.sat) ost)
-          qel.sat  (~(del by qel.sat) ost)
         ==
       ::
       ++  cave                                          ::  vase as silk
@@ -929,6 +930,7 @@
             deal:(drum u.gad)
           ::
               %pull
+            ~&  [%more-pull pax]
             =^  gud  +>.$  (mack q.hin)
             ?^  gud  +>.$
             blow
@@ -1146,7 +1148,7 @@
         ::
             %took
           =+  qol=(~(get by qel.sat) ost)
-          ::  ~&  [%yawn-took-has qol [our hen]]
+          ::  ~&  [%yawn-took-has ost qol [our hen]]
           %=    +>.$
               qic.sat  ~
               qel.sat  
@@ -1160,12 +1162,13 @@
         ::
             %told
           =+  qol=(~(get by qel.sat) ost)
-          ::  ~&  [%yawn-told-has qol [our hen]]
+          ::  ~&  [%yawn-told-has ost qol [our hen]]
           =+  qul=?~(qol 1 +(u.qol))
+          =.  qel.sat  (~(put by qel.sat) ost qul)
           ?:  =(10 qul)
-            ~&  [%yawn-told-full our hen]
+            ~&  [%yawn-told-full ost our hen]
             +>.$(qic.sat ~, vey.sat (~(put to vey.sat) hen %nuke p.kon))
-          +>.$(qic.sat ~, qel.sat (~(put by qel.sat) ost qul))
+          +>.$(qic.sat ~)
         ::
             %load
           =+  [hom=(slot 2 q.p.kon) old=(slot 3 q.p.kon)]
