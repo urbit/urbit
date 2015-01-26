@@ -2162,7 +2162,7 @@
         ^-  [(unit pimp) _+>]
         =.  +>.$
           %-  ~(rep by can.sub.siq)
-          |=  [p=[p=@ud q=stem] q=_+>.$]
+          =+  [*p=[p=@ud q=stem] q=+>.$]  |.
           ?.  =([hap pax] [hap.q.p pax.q.p])  q
           =.  q  q(can.sub.siq (~(del by can.sub.siq:q) p.p))
           ([-(hen +)]:[pass:q hen.q.p] `p.p %g %nuke [- + ~]:hap you)
