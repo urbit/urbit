@@ -401,8 +401,10 @@
         ?:  ?=(%mess i.mab)
           (hear:woy ~ %& %json !>(jon))
         =+  can=(slav %ud i.t.mab)
-        =+  sem=(need (~(get by can.sub.siq:beat:u.ouy) can))
-        (soon %& sem u.ouy can %show ?.(?=(%show i.mab) jon (wrap sem jon)))
+        =+  sem=(~(get by can.sub.siq:beat:u.ouy) can)
+        ?~  sem                                         ::  XX shouldn't occur
+          u.ouy
+        (soon %& u.sem u.ouy can %show ?.(?=(%show i.mab) jon (wrap u.sem jon)))
       ::
           ?(%rust %rush)
         ?>  ?=(%show i.mab)
