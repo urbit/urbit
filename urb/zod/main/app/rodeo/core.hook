@@ -18,7 +18,6 @@
       $:  stories=(map span story)                      ::  conversations
           general=(set bone)                            ::  meta-subscribe
           outbox=(pair ,@ud (map ,@ud thought))         ::  urbit outbox
-          sent=(map ,@ud serial)                        ::  own tweets
           folks=(map ship human)                        ::  human identities
       ==                                                ::
     ++  house-0                                         ::  legacy state
@@ -361,15 +360,16 @@
       ^+  +>
       ?+    sih  ~&([%rodeo-bad-friend sih] !!)
           [%g %nice ~]
-        ::  ~&  %pa-friend-nice 
         +>.$
       ::
           [%g %mean *]
-        ::  ~&  %pa-friend-mean
-        +>.$
+        ?~  +>.sih
+          (pa-acquire [%& her man]~)
+        ~&  [%pa-friend-mean +>.sih]
+        pa-monitor(sources.config (~(del in sources.config) [%& her man]))
       ::
           [%g %rush %rodeo-report *]
-        ::  ~&  [%pa-friend-report +>+.sih]
+        ~&  [%pa-friend-report +>+.sih]
         =.  +>  %+  pa-scrub  ost 
                 :_  ~
                 :-  /friend/show/(scot %p her)/[man]
@@ -461,7 +461,7 @@
     ++  pa-cancel                                       ::  unsubscribe from
       ~&  [%pa-cancel ost]
       %_  .
-        guests  (~(del in guests) ost)
+        guests  (~(del by guests) ost)
         viewers  (~(del in viewers) ost)
         owners  (~(del in owners) ost)
       ==
@@ -570,7 +570,6 @@
               ==
             old
           :-  p.old
-          ~&  [%pa-refresh-rush p.n.guests]
           [[p.n.guests %give %rush %rodeo-report %grams num gam ~] q.old]
       =.  moves  (welp q.moy moves)
       |-  ^+  +>.^$
@@ -707,7 +706,6 @@
   =-  :*  stories=-
           general=~
           outbox=[0 ~]
-          sent=~
           folks=~
       ==
   ^-  (map span story)
