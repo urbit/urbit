@@ -3653,9 +3653,9 @@
   |=  pax=path  ^-  tape
   =-  ~(ram re %rose ["/" "/" ~] -)
   (turn pax |=(a=span [%leaf (trip a)]))
-++  stab                                                ::  parse span to path
-  |=  zep=@ta  ^-  path
-  (rash zep ;~(pfix fas (more fas urs:ab)))
+++  stab                                                ::  parse cord to path
+  =+  fel=;~(pfix fas (more fas urs:ab))
+  |=(zep=@t `path`(rash zep fel))
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eM, regular-expressions      ::
 ::
