@@ -18,21 +18,12 @@
     |^  %+  joba  -.rep
         ?-  -.rep
           %config  ~!  rep  (conf +.rep)
-          %house  a/(turn (~(tap by +.rep)) jose)
+          %house  [%a (turn (~(tap by +.rep)) joce)]
           %grams  (jobe num/(jone p.rep) tele/[%a (turn q.rep gram)] ~)
-          %group  (jobe local/(grop p.rep) global/%.(q.rep (jome parn grop)) ~)
+        ::%group  (grop +.rep)
+          %group  (jobe local/(grop p.rep) global/%.(q.rep (jome stan grop)) ~)
         ==
     ++  joce  |=(a=span [%s a])
-    ++  jose
-      |=  [a=span b=posture c=cord]
-      (jobe name/[%s a] posture/[%s a] caption/[%s b] ~)
-    ::
-    ++  jove 
-      |=  [a=envelope b=delivery]
-      %-  jobe  :~
-        envelope/(jobe visible/[%b p.a] sender/?~(q.a ~ s/(parn u.q.a)) ~)
-        delivery/[%s b]
-      ==
     ++  jope  |=(a=ship (jape +:<a>)) ::[%s (crip +:(scow %p a))])
     ++  joke  |=(a=tank [%s (role (turn (wash 0^80 a) crip))])
     ++  jode  |=(a=time (jone (div (mul (sub a ~1970.1.1) 1.000) ~s1)))
@@ -60,23 +51,16 @@
       |=  thought 
       (jobe serial/(jape <p>) audience/(audi q) statement/(stam r) ~)
     ::
-    ++  audi  (jome parn jove)
-    ++  bouq
-      |=  a=bouquet
-      a/(turn (~(tap in a)) |=(b=path a/(turn b |=(c=span s/c))))
-    ::
-    ++  parn
-      |=  a=partner  ^-  cord
+    ++  audi  (jome stan joce)
+    ++  stan
+      |=  a=station  ^-  cord
       %-  crip
       ?~  -.a  "{<p.p.a>}/{(trip q.p.a)}"
       ?-  -.p.a
         %twitter  "{(trip -.p.a)}/{(trip p.p.a)}"
       ==
     ::
-    ++  stam  
-      |=  statement 
-      (jobe date/(jode p) bouquet/(bouq q) speech/(spec r) ~)
-    ::
+    ++  stam  |=(statement (jobe time/(jode p) speech/(spec q) ~))
     ++  spec
       |=  a=speech
       %+  joba  -.a
@@ -100,10 +84,9 @@
     ++  conf
       |=  config
       %-  jobe  :~
-        sources/[%a (turn (~(tap in sources)) |=(a=partner [%s (parn a)]))]
-        caption/[%s caption]
-        =-  cordon/(jobe posture/[%s -.cordon] list/[%a -] ~)
-        (turn (~(tap in q.cordon)) jope)                ::  XX  jase
+        sources/[%a (turn (~(tap in sources)) |=(a=station [%s (stan a)]))]
+        =-  cordon/(jobe white/[%b -.cordon] list/[%a -] ~)
+        (turn (~(tap in p.cordon)) jope)                ::  XX  jase
       ==
   --
 --  --
