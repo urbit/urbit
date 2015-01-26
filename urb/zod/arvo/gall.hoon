@@ -1153,7 +1153,7 @@
               qic.sat  ~
               qel.sat  
             ?~  qol
-              ~&  [%took-underflow our hen]
+              ::  ~&  [%took-underflow our hen]
               qel.sat
             ?:  =(`1 qol)
               (~(del by qel.sat) ost)
@@ -1225,6 +1225,7 @@
           [%call (harm cog (conf (core u.huv.sat))) (cove %$ sam)]
         ::
             %show
+          ::  ~&  showing/[app.sat imp q.kon]
           ?:  (warm %peer)
             =+  sam=!>([ost p.kon q.kon])
             ?>  ?=(^ huv.sat)
