@@ -539,6 +539,7 @@
           q.ask  (~(del by q.ask) sud)
           kes    (~(del by kes) hen)
         ==
+      ::  ~&  eyre-them/(earn p.u.p.kyz)
       %=  +>.$
         mow    :_(mow [ged [%give %thus p.ask p.kyz]])
         p.ask  +(p.ask)
@@ -548,6 +549,7 @@
     ::
         %they                                           ::  inbound response
       =+  kas=(need (~(get by q.ask) p.kyz))
+      ~&  >  eyre-they/[p.q.kyz (earn p.q.kas)]
       %=  +>.$
         mow    :_(mow [p.kas [%give %thou q.kyz]])
         q.ask  (~(del by q.ask) p.kas)
@@ -869,7 +871,7 @@
     [~ u=~(. ya [our ses] u.suf u.cuz)]
   ::
   ++  noon                                              ::  login page
-    |=  [our=ship ses=hole whu=(unit ship) rul=tape ruf=tape]
+    |=  [our=ship ses=hole whu=(unit ship) rul=tape]
     ^-  manx
     =+  ^=  sic  ^-  manx
       ;script:'''
@@ -940,7 +942,7 @@
                     $output.html(output.replace(
                       'sorry. please try again.<br>',''))
 
-                    $.post(form, seal, function(data,xhr,status) {
+                    $.post("/pul", seal, function(data,xhr,status) {
                       console.log(data);
                       if(data.ok == true) {
                         document.location = data.next;
@@ -992,7 +994,6 @@
         ; var host = '{(trip (rsh 3 1 (scot %p our)))}';
         ; var goal = '{?~(whu ~ (trip (rsh 3 1 (scot %p u.whu))))}';
         ; var burl = '{rul}';
-        ; var form = '{ruf}';
         ; var sesh = '{(trip ses)}';
       ==
     =>  .(+.sic (weld `marl`cof `marl`+.sic))
@@ -1890,10 +1891,9 @@
             ?:  wit.p.som.pip
               [~ pip(pez [%who %$ (scot %p (need whu.p.som.pip))])]
             =+  rul=(earn pul.p.som.pip)
-            =+  ruf=(earn (erle our pul.p.som.pip(q.q /pul, r ~)))
             =+  sus=?~(foy.p.som.pip ses q.u.foy.p.som.pip)
             ~&  auth-request/secret=`cord`lass
-            =+  ham=(noon our sus whu.p.som.pip rul ruf)
+            =+  ham=(noon our sus whu.p.som.pip rul)
             [~ pip(pez [%fin %ham ham])]
           ?.  =(lass u.pus.p.som.pip)
             :_  +>.$
