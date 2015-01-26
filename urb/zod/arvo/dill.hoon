@@ -66,15 +66,9 @@
           $%  [%logo p=@]                               ::
               [%mean p=ares]                            ::
               [%nice ~]                                 ::
-              $:  %rush                                 ::  XX
+              $:  %rush                                 ::
               $%  [%term-line q=term-line]              ::
                   [%hymn q=manx]                        ::
-                  [%json q=json]                        ::
-              ==  ==                                    ::
-              $:  %rust                                 ::
-              $%  [%term-line q=term-line]              ::
-                  [%hymn q=manx]                        ::
-                  [%json q=json]                        ::
               ==  ==                                    ::
               [%verb ~]                                 ::
               [%sage p=path q=*]                        ::
@@ -335,6 +329,8 @@
           ?:  =(q.s.yar p.a)  ~
           ~[(welp ~(ram re q.a) ~(ram re r.a))]
         ==
+      ?.  (levy r.q.sih |=(a=tark ?=(%stem -.a)))
+        +>.$                          ::  XX separate prompt/history messages
       %-  edit
       =|  bed=bein
       =+  ^=  hyt  ^-  hist
