@@ -366,10 +366,10 @@
         ?~  +>.sih
           (pa-acquire [%& her man]~)
         ~&  [%pa-friend-mean +>.sih]
-        pa-monitor(sources.config (~(del in sources.config) [%& her man]))
+        pa-monitor(sources.shape (~(del in sources.shape) [%& her man]))
       ::
           [%g %rush %rodeo-report *]
-        ~&  [%pa-friend-report +>+.sih]
+        ::  ~&  [%pa-friend-report +>+.sih]
         =.  +>  %+  pa-scrub  ost 
                 :_  ~
                 :-  /friend/show/(scot %p her)/[man]
