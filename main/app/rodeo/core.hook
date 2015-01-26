@@ -204,12 +204,12 @@
   ++  ra-cancel                                         ::  drop a bone
     ^+  .
     =+  hap=(~(got by sup.hid) ost)
-    ~&  [%ra-cancel ost hap]
-    ?>  ?=([@ @ *] q.hap)
+    ?.  ?=([@ @ *] q.hap)
+      +(general (~(del in general) ost))
     =*  man  i.t.q.hap
     =+  pur=(~(get by stories) man)
     ?~  pur  +>
-    pa-abet:pa-cancel:(~(pa-notify pa man u.pur) p.hap %gone *human)
+    pa-abet:(pa-notify:~(pa-cancel pa man u.pur) p.hap %gone *human)
   ::
   ++  ra-human                                          ::  look up person
     |=  her=ship
@@ -363,8 +363,9 @@
           [%g %nice ~]
         ::  ~&  %pa-friend-nice 
         +>.$
+      ::
           [%g %mean *]
-        ~&  %pa-friend-mean
+        ::  ~&  %pa-friend-mean
         +>.$
       ::
           [%g %rush %rodeo-report *]
@@ -458,6 +459,7 @@
       pa-monitor
     ::
     ++  pa-cancel                                       ::  unsubscribe from
+      ~&  [%pa-cancel ost]
       %_  .
         guests  (~(del in guests) ost)
         viewers  (~(del in viewers) ost)
@@ -568,6 +570,7 @@
               ==
             old
           :-  p.old
+          ~&  [%pa-refresh-rush p.n.guests]
           [[p.n.guests %give %rush %rodeo-report %grams num gam ~] q.old]
       =.  moves  (welp q.moy moves)
       |-  ^+  +>.^$
@@ -668,7 +671,7 @@
 ++  pull
   |=  ost=bone
   ^-  [(list move) _+>]
-  ::  ~&  [%rodeo-pull ost]
+  ~&  [%rodeo-pull `*`ost]
   ra-abet:~(ra-cancel ra ost ~)
 ::
 ++  poke-bit
