@@ -721,7 +721,7 @@
 	    u3nt(c3__tsls,
 		  u3nt(c3__ktts, c3__a,
 			u3nt(c3__tsgr, u3nc(c3__cnzy, c3__v),
-			      u3k(p_gen))),
+			      u3nc(c3__bccm, u3k(p_gen)))),
 		  u3nt(c3__tsls,
 			u3nt(c3__ktts, c3__b,
 			      u3nt(c3__tsgr,

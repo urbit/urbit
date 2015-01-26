@@ -272,7 +272,7 @@
             [%smdt p=twig q=tusk]                       ::
             [%smdq p=(list beer)]                       ::  assemble string
             [%smsg p=twig q=tusk]                       ::  gonads
-            [%smsm p=twig q=twig]                       ::  make sure q is a p
+            [%smsm p=tile q=twig]                       ::  make sure q is a p
           ::                                            ::::::  compositions
             [%tsbr p=tile q=twig]                       ::  push bunt: =+(_p q)
             [%tscl p=tram q=twig]                       ::  p changes, then q
@@ -6662,7 +6662,8 @@
     ::
         [%smsm *]                                       ::                  ;;
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
-      :+  %tsls  [%ktts %a [%tsgr [%cnzy %v] p.gen]]    ::  =+  a==>(v {p.gen})
+      :+  %tsls  :+  %ktts  %a                          ::  =+  ^=  a
+                 [%tsgr [%cnzy %v] [%bccm p.gen]]       ::      =>(v ,{p.gen})
       :+  %tsls  [%ktts %b [%tsgr [%cnzy %v] q.gen]]    ::  =+  b==>(v {q.gen})
       :+  %tsls                                         ::  =+  c=(a b)
         [%ktts %c [%cnhp [%cnzy %a] [%cnzy %b] ~]]      ::
@@ -8946,7 +8947,7 @@
                   =+  rev=(plex b)
                   ?~  rev  ~
                   %-  some
-                  :+  %smsm  ~(clam al a)
+                  :+  %smsm  a
                   [%dtkt %dtzz %$ %cx u.rev]
                 ;~(plug hill rood)
               ==
@@ -9194,7 +9195,7 @@
                 :~  [':' (rune col %smcl expi)]
                     ['.' (rune dot %smdt expi)]
                     ['~' (rune sig %smsg expi)]
-                    [';' (rune sem %smsm expb)]
+                    [';' (rune sem %smsm expo)]
                 ==
               ==
             :-  '='
