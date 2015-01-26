@@ -7092,11 +7092,12 @@
       [[%leaf (rip 3 -.lum)] $(lum +.lum)]
     ::
         %type
-      =+  cis=(type lum)
-      ?.  =(lum cis)  ~
+      =+  reb=(slap [p:!>(.) .(sut lum)] %cnzy %duck)
+      =+  cis=(tank q.reb)
+      ?.  =(cis q.reb)  ~
       :^  ~   %palm
         [~ ~ ~ ~] 
-      [[%leaf '#' 't' '/' ~] duck(sut cis) ~]
+      [[%leaf '#' 't' '/' ~] cis ~]
     ::
         %wall
       :-  ~

@@ -524,7 +524,7 @@
   ==
 ::
 ++  poja                                                ::  parse JSON
-  =<  |=(a=cord (rush a apex))
+  =<  |=(a=cord `(unit json)`(rush a apex))
   |%
   ++  apex                                              ::  JSON value
     %+  knee  *json  |.  ~+
@@ -2206,7 +2206,7 @@
   --
 ::
 ++  epur                                                ::  url/header parser
-  =<  |=(a=cord (rush a auri))
+  =<  |=(a=cord `(unit purl)`(rush a auri))
   |%
   ++  apat                                              ::  2396 abs_path
     %+  cook  deft
