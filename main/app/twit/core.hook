@@ -59,7 +59,7 @@
 ++  cull                                                ::  remove seen tweets
   |=  [pax=path rep=(list stat)]  ^+  rep
   =+  pev=(sa (turn (~(get ja fed) pax) |=(stat id)))
-  (murn rep (flit |=(stat !(~(has in pev) id))))
+  (skip rep |=(stat (~(has in pev) id)))
 ::
 ++  dely                                                ::  next polling timeout
   |=  pax=path
