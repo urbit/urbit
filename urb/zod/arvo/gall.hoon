@@ -1191,7 +1191,7 @@
         ::
             %mess
           =+  ^-  cog=term
-              =-  |-  ?~  goz  %poke
+              =-  |-  ?~  goz  ?:((warm %pock) %pock %poke)
                       ?:  (warm i.goz)  i.goz
                       $(goz t.goz)
               ^-  goz=(list term)
@@ -1254,14 +1254,17 @@
           (xeno [q.kon imp] %feel ~)
         ::
             %take
-          ?:  &(?=([%g %rush @ *] q.q.kon) (warm %posh))
+          ?:  ?&  ?=([%g %rush @ *] q.q.kon)
+                  |((warm %posh) (warm (cat 3 'posh-' &3.q.q.kon)))
+              ==
             ?>  ?=(^ huv.sat)
-            =+  gil=(spec (slot 7 q.kon))
+            =+  [goc gil]=[(cat 3 'posh-' &3.q.q.kon) (spec (slot 7 q.kon))]
+            =.  -  ?:((warm goc) [goc (slot 3 gil)] [%posh gil])
             =+  sam=:(slop [[%atom %ud] ost] !>(p.kon) gil)
             %+  ford  /s/pour
             :+  %dude  leaf/"pouring"
             :+  %dude  (skol p.gil)
-            [%call (harm %posh (conf (core u.huv.sat))) (cove %$ sam)]
+            [%call (harm goc (conf (core u.huv.sat))) (cove %$ sam)]
           ?:  (warm %purr)
             ?>  ?=(^ huv.sat)
             =+  sam=:(slop [[%atom %ud] ost] !>(p.kon) !>(p.q.kon) q.kon)

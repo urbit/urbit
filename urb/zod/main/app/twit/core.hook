@@ -8,51 +8,208 @@
 ::::  ~fyr
   ::
 |%
-++  twit-do
-  $%  [%auth p=keys]
-      [%post p=cord]
+++  twit-do                                             ::  action
+  $%  [%auth p=keys]                                    ::  set API keys
+      [%post p=@uvI q=cord]                             ::  post a tweet
   ==
 ::
-++  sign  ,[%e %thou p=httr]
-++  note  ,[%e %them ~ u=hiss]
-++  gift  $%  [%nice ~]
-              [%mean p=ares]
-          ==
+++  twit-path                                           ::  valid peer path
+  $%  [%home ~]                                         ::  home timeline
+      [%user p=@t ~]                                    ::  user's tweets
+      [%post p=@ta ~]                                   ::  status of status
+  ==
+::
+++  axle                                                ::  app state
+  $:  %0
+      kes=(unit keys)                                   ::  auth
+      out=(map ,@uvI (each cord stat))                  ::  sent tweets
+      ran=(map path ,[p=@ud q=@da])                     ::  polls active
+      fed=(jar path stat)                               ::  feed cache
+  ==
+::
+++  gift                                                ::  app response
+  $%  [%nice ~]                                         ::  acknowledgement
+      [%mean p=ares]                                    ::  error/termination
+      [%rush p=gilt]                                    ::  subscription data
+  ==
+::
+++  gilt  
+  $%  [%twit-feed p=(list stat)]                        ::  posts in feed
+      [%twit-stat p=stat]                               ::  tweet accepted
+  ==
 ::
 ++  move  ,[bone (mold note gift)]
+++  note                                                ::  arvo request
+  $%  [%e %them ~ u=hiss]                               ::  HTTP request
+      [%t %wait p=@da]                                  ::  timeout
+  ==
+::
+++  sign                                                ::  arvo response
+  $%  [%e %thou p=httr]                                 ::  HTTP result
+      [%t %wake ~]                                      ::  timeout ping
+  ==
+::
+++  stat  ,[id=@u who=@ta now=@da txt=@t]               ::  recieved tweet
 --
 !:
 ::::
   ::
-|_  [hide vat=(unit keys)]
-++  auth  ~|(%no-auth ~(. twit (need vat) lat `@`eny))
-++  poke-twit-do
-  |=  [ost=bone @ a=twit-do]
+|_  [hide axle]
+++  auth  ~|(%no-auth ~(. twit (need kes) lat `@`eny))  ::  build API door
+++  cull                                                ::  remove seen tweets
+  |=  [pax=path rep=(list stat)]  ^+  rep
+  =+  pev=(sa (turn (~(get ja fed) pax) |=(stat id)))
+  (murn rep (flit |=(stat !(~(has in pev) id))))
+::
+++  dely                                                ::  next polling timeout
+  |=  pax=path
+  ^-  [(unit time) _ran]
+  =+  cur=(~(get by ran) pax)
+  =+  tym=(add lat (mul ~s8 (bex ?~(cur 0 p.u.cur))))
+  :: ~&  dely/`@dr`(sub tym lat)
+  ?:  &(?=(^ cur) (gte tym q.u.cur) (gth q.u.cur lat))
+    [~ ran]
+  [`tym (~(put by ran) pax ?~(cur 0 (min 5 +(p.u.cur))) tym)]
+::
+++  wait                                                ::  ensure poll by path
+  |=  [ost=bone pax=path mof=(list move)]
+  =^  tym  ran  (dely pax)
+  :_  +>.$
+  ?~  tym  
+    :: ~&  no-wait/ran
+    mof
+  :: ~&  will-wait/u.tym
+  :-  [ost %pass pax %t %wait u.tym]
+  mof
+::
+++  poke-twit-do                                        ::  recieve request
+  |=  [ost=bone @ act=twit-do]
   ^+  [*(list move) +>]
-  ?-    -.a
+  ?-    -.act
       %auth
-    ::  ~&  twit-auth/p.a
-    =.  vat  `p.a
-    `+>.$
+    ::  ~&  twit-auth/p.act
+    =.  kes  `p.act
+    :_(+>.$ [ost %give %nice ~]~)                       ::  XX verify key
       %post
-    =+  mez=(stat-upda:auth [%status p.a]~ ~)
-    :_  +>.$
-    [ost %pass /post %e %them ~ mez]~
+    =:  out  (~(put by out) p.act %& q.act)
+        ran  (~(del by ran) /peer/home)
+      ==
+    %^  wait  ost  /peer/home
+    :-  [ost %give %nice ~]
+    =+  mez=(stat-upda:auth [%status q.act]~ ~)
+    [ost %pass /post/(scot %uv p.act) %e %them ~ mez]~
   ==
 ::
-++  pour
-  |=  [ost=bone * sig=sign]
+++  pour                                                ::  recieve response
+  |=  [ost=bone pax=path sig=sign]
   ^+  [*(list move) +>]
-  ?+  p.p.sig  ~|([%unknown-code p.p.sig] !!)
-    200  ~&  twit-resp/%.(q:(need r.p.sig) ;~(biff poja stat:twir))
-         :_  +>.$
-         [ost %give %nice ~]~
-    ?(400 401 403 404)
-      =-  [[ost %give `gift`-]~ +>.$]
-      =+  err=%.(q:(need r.p.sig) ;~(biff poja mean:twir))
-      :^  %mean  ~  %bad-http
-      [leaf/"HTTP Code {<p.p.sig>}" (turn (need err) mean:twip)]
-  ==
+  ?-    &2.sig
+      %wake
+    ~&  wake/[pax sig]
+    :_  +>.$
+    ?.  (~(has by ran) pax)                             ::  ignore if retracted
+      ~
+    ?+  pax  ~|([%wake-missed pax] !!)
+      [%peer *]  
+        ?~  (~(get ju pus) t.pax)
+          ~
+        ~&  peer-again/[t.pax ran]
+        (pear | ost our t.pax)
+    ==
+      %thou
+    ?+    p.p.sig  ~|([%unknown-code p.p.sig] !!)
+        429                           ::  Rate-limit
+      =.  ran  (~(put by ran) pax 6 lat)
+      =+  lim=%.(%x-rate-limit-reset ;~(biff ~(get by (mo q.p.sig)) poja ni:jo))
+      =+  tym=?~(lim (add ~m7.s30 lat) (add ~1970.1.1 (mul ~s1 u.lim)))
+      ~&  retrying-in/`@dr`(sub tym lat)
+      :_(+>.$ [ost %pass pax %t %wait tym]~)
+        200                           ::  OK
+      =+  jon=(need (poja q:(need r.p.sig)))
+      :: ~&  twit-resp/%.(jon ?+(-.jon !! %o stat:twir, %a (ar:jo stat:twir)))
+      ?+    pax  ~|([%http-missed pax] !!)
+          [%post @ ~]                                   ::  post acknowledged
+        =+  ^=  rep
+            ~|  [%bad-post jon]
+            (need %.(jon stat:twir))
+        =.  out  (~(put by out) (slav %uv i.t.pax) %| rep)
+        :_  +>.$
+        (weld (spam pax %rush %twit-stat rep) (spam pax %mean ~))
+          [%peer *]                                     ::  feed data
+        =+  ^=  rep
+            ~|  [%bad-feed jon]
+            (need %.(jon (ar:jo stat:twir)))
+        :: ~&  got-feed/[(scag 5 (turn rep |=(stat id))) fed]
+        =+  ren=(cull t.pax rep)                       ::  new messages
+        ?~  ren
+          (wait ost pax ~)                              ::  pump polling
+        ~&  spam-feed/ren
+        =:  ran  (~(del by ran) pax)                    ::  clear poll delay
+            fed  (~(put by fed) t.pax rep)              ::  saw last message
+          ==
+        (wait ost pax (spam t.pax %rush twit-feed/(flop ren)))
+      ==
+        ?(400 401 403 404)            ::  Err
+      =+  ^-  git=gift
+          =+  err=%.(q:(need r.p.sig) ;~(biff poja mean:twir))
+          :^  %mean  ~  %bad-http
+          [leaf/"HTTP Code {<p.p.sig>}" (turn (need err) mean:twip)]
+      ?+    pax  [[ost %give git]~ +>.$]
+        [%post @ ~]
+          [(spam pax git) +>.$]
+  ==  ==
+    ==
 ::
-++  peek  ,_psal/;pre:"{(trip (role (turn (wash 0^100 >vat<) crip)))}"
+++  peer                                                ::  accept subscription
+  |=  [ost=bone ship path]
+  ^+  [*(list move) +>]
+  :_(+> [[ost %give %nice ~] (pear & +<)])
+::
+++  pear                              ::  poll, possibly returning current data
+  |=  [ver=? ost=bone @ pax=path]
+  ^-  (list move)
+  ?.  ?=(twit-path pax)
+    ~|([%missed-path pax] !!)
+  =>  .(pax `twit-path`pax)
+  ?:  ?=(%post -.pax)
+    ?.  ver  ~
+    =+  sta=(~(get by out) (slav %uv p.pax))
+    ?.  ?=([~ %| ^] sta)                                ::  post not received
+      ~
+    :-  [ost %give %rush %twit-stat p.u.sta]
+    [ost %give %mean ~]~                                ::  subscription end
+  :-  =-  [ost %pass [%peer pax] %e %them ~ `hiss`-]
+      ?-    -.pax
+        %home  (stat-home:auth)
+        %user  (stat-user:auth [(to-sd p.pax)]~ ~)
+      ==
+  ?.  ver  ~
+  =+  ole=(~(get ja fed) pax)
+  ?~  ole  ~
+  [ost %give %rush %twit-feed (flop ole)]~
+::
+++  to-sd                                               ::  parse user name/numb
+  |=  a=span  ^-  sd:twit
+  ~|  [%not-user a]
+  %+  rash  a
+  ;~(pose (stag %user-id dem) (stag %screen-name user:twir))
+::
+++  pull                                                ::  release subscription
+  |=  ost=bone
+  ?.  (~(has by sup) ost)  `+>.$      ::  XX should not occur
+  =+  [his pax]=(~(got by sup) ost)
+  ?:  (lth 1 ~(wyt in (~(get ju pus) pax)))
+    `+>.$
+  =:  ran  (~(del by ran) [%peer pax])
+      fed  (~(del by fed) pax)
+    ==
+  `+>.$
+::
+++  spam                                                ::  send by path
+  |=  [a=path b=gift]  ^-  (list move)
+  %+  murn  (~(tap by sup))
+  |=  [ost=bone @ pax=path]
+  ^-  (unit move)
+  ?.  =(pax a)  ~
+  [~ [ost %give b]]
 --
