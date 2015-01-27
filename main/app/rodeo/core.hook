@@ -2,7 +2,7 @@
 ::::  /hook/core/rodeo/app
   ::
 /?  314
-/-  *rodeo
+/-  *rodeo, *twitter
 /+  rodeo
 ::
 ::::
@@ -60,11 +60,15 @@
           $:  %g                                        ::  application
       $%  [%mean p=ares]                                ::  cancel
           [%nice ~]                                     ::  acknowledge
-          [%rush %rodeo-report report]                  ::  refresh
+          [%rush p=silt]                                ::  subs data
           ==  ==                                        ::
           $:  %t                                        ::
       $%  [%wake ~]                                     ::  timer wakeup
       ==  ==  ==                                        ::
+    ++  silt
+      $%  [%rodeo-report p=report]                      ::  refresh
+          [%twit-stat p=twit-stat]                      ::  tweet reciept
+      ==
     ++  move  ,[p=bone q=(mold note gift)]              ::  all actions
     ++  hapt  ,[p=ship q=path]                          ::  app instance
     ++  note                                            ::  requests
@@ -84,7 +88,7 @@
       $%  [%wait p=@da]                                 ::
       ==  ==  ==                                        ::
     ++  twim                                            ::  twitter endpoints
-      $%([%mine p=span] [%stat p=@uv])                  ::
+      $%([%stat p=@uv])                                 ::
     --
 |_  [hid=hide house]
 ++  ra                                                  ::  transaction core
@@ -141,7 +145,7 @@
   ++  ra-apply                                          ::  apply command
     |=  [her=ship cod=command]
     ^+  +>
-    ::  ~&  [%ra-apply cod]
+    ~&  [%ra-apply cod]
     ?-    -.cod
         %design
       ?.  =(her our.hid)
@@ -167,23 +171,22 @@
     ?:(neu +>.$ ra-homes)
   ::
   ++  ra-friend                                         ::  %friend response
-    |=  [her=ship man=span sih=sign]
-    ^+  +>
-    =+  pur=(~(get by stories) man)
-    ?~  pur  ~&  [%ra-friend-none man]  +>.$
-    pa-abet:(~(pa-friend pa man u.pur) her sih)
-  ::
-  ++  ra-stalk                                          ::  %stalk response
     |=  [man=span tay=partner sih=sign]
     ^+  +>
     =+  pur=(~(get by stories) man)
-    ?~  pur  ~&  [%ra-stalk-none man]  +>.$
-    pa-abet:(~(pa-stalk pa man u.pur) tay sih)
+    ?~  pur  ~&  [%ra-friend-none man]  +>.$
+    pa-abet:(~(pa-friend pa man u.pur) tay sih)
   ::
   ++  ra-twitter                                        ::  %twitter response
     |=  [met=twim sih=sign]
     ^+  +>
-    !!
+    ?+    sih  ~|([%rodeo-bad-twitter sih] !!)
+        [%g ?(%nice %mean) ~]
+      +>
+        [%g %rush %twit-stat *]
+      ~&  got-tweet/p.p.sih
+      +>
+    ==
   ::
   ++  ra-repeat                                         ::  %repeat response
     |=  [num=@ud her=ship man=span sih=sign]
@@ -202,13 +205,14 @@
   ::
   ++  ra-cancel                                         ::  drop a bone
     ^+  .
-    =+  hap=(~(got by sup.hid) ost)
-    ?.  ?=([@ @ *] q.hap)
+    =+  hep=(~(get by sup.hid) ost)
+    ?~  hep  +
+    ?.  ?=([@ @ *] q.u.hep)
       +(general (~(del in general) ost))
-    =*  man  i.t.q.hap
+    =*  man  i.t.q.u.hep
     =+  pur=(~(get by stories) man)
     ?~  pur  +>
-    pa-abet:(pa-notify:~(pa-cancel pa man u.pur) p.hap %gone *human)
+    pa-abet:(pa-notify:~(pa-cancel pa man u.pur) p.u.hep %gone *human)
   ::
   ++  ra-human                                          ::  look up person
     |=  her=ship
@@ -273,7 +277,7 @@
       %|  ?.  pub  +>
           ?-    -.p.tay
               %twitter
-            !!
+            (ra-tweet p.p.tay tip)
     ==    ==
   ::
   ++  ra-record                                         ::  add to story
@@ -300,6 +304,22 @@
         ==
     +>(p.outbox +(p.outbox), q.outbox (~(put by q.outbox) p.outbox tip))
   ::
+  ++  ra-tweet                                          ::  send to /twit
+    |=  [who=span sey=serial * sta=statement]
+    ~!  sta
+    ?>  ?=(%lin -.r.sta)
+    %^    ra-emil 
+        :*  ost
+            %pass  /twitter/stat/(scot %uv sey)
+            %g  %mess
+            [our.hid /twit]  our.hid
+            [%twit-do !>(`twit-do`[who %post sey q.r.sta])]
+        ==
+      :*  ost
+          %pass  /twitter/stat/(scot %uv sey)
+          [%g %show [our.hid /twit] our.hid /post/(scot %uv sey)]
+      ==
+    ~
   ++  pa                                                ::  story core
     |_  $:  man=span
             story
@@ -356,43 +376,29 @@
       (pa-sauce n.owe [[%rush %rodeo-report %config shape] ~])
     ::
     ++  pa-friend                                       ::  subscribed update
-      |=  [her=ship sih=sign]
+      |=  [tay=partner sih=sign]
       ^+  +>
-      ?+    sih  ~&([%rodeo-bad-friend sih] !!)
+      ?>  ?=(& -.tay)
+      ?+    sih  ~|([%rodeo-bad-friend sih] !!)
           [%g %nice ~]
         +>.$
       ::
           [%g %mean *]
         ?~  +>.sih
-          (pa-acquire [%& her man]~)
+          (pa-acquire [tay ~])
         ~&  [%pa-friend-mean +>.sih]
-        pa-monitor(sources.shape (~(del in sources.shape) [%& her man]))
+        pa-monitor(sources.shape (~(del in sources.shape) tay))
       ::
           [%g %rush %rodeo-report *]
         ::  ~&  [%pa-friend-report +>+.sih]
         =.  +>  %+  pa-scrub  ost 
                 :_  ~
-                :-  /friend/show/(scot %p her)/[man]
-                [%g %took [her /rodeo] our.hid]
-        ?+  -.+>+.sih  ~&([%rodeo-odd-friend sih] !!)
+                :-  /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
+                [%g %took [p.p.tay /rodeo] our.hid]
+        ?+  -.p.p.sih  ~|([%rodeo-odd-friend sih] !!)
           %config  +>.$
-          %group   +>.$
-          %grams  (pa-lesson q.+.+>+.sih)
-        ==
-      ==
-    ::
-    ++  pa-stalk                                        ::  subscribed present
-      |=  [tay=partner sih=sign]
-      ^+  +>
-      ?+    sih  ~&([%rodeo-bad-friend sih] !!)
-          [%g %nice ~]
-        ::  ~&  %pa-stalk-nice 
-        +>.$
-      ::
-          [%g %rush %rodeo-report *]
-        ?+    -.+>+.sih  ~&([%rodeo-odd-friend sih] !!)
-            %group
-          (pa-remind tay +.+>+.sih)
+          %group  (pa-remind tay +.p.p.sih)
+          %grams  (pa-lesson q.+.p.p.sih)
         ==
       ==
     ::
@@ -421,9 +427,7 @@
             !!
       ::
         %&  ::  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
-            :~  :-  /friend/nuke/[man]
-                [%g %nuke [p.p.tay /rodeo] our.hid]
-                :-  /stalk/nuke/[man]
+            :~  :-  /friend/nuke/[man]/(scot %p p.p.tay)/[q.p.tay]
                 [%g %nuke [p.p.tay /rodeo] our.hid]
             ==
       ==
@@ -441,7 +445,7 @@
             !!
       ::
         %&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
-            :~  :-  /friend/show/(scot %p p.p.tay)/[man]
+            :~  :-  /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
                 [%g %show [p.p.tay /rodeo] our.hid /af/[q.p.tay]/(scot %ud num)]
             ==
       ==
@@ -459,7 +463,7 @@
       pa-monitor
     ::
     ++  pa-cancel                                       ::  unsubscribe from
-      ~&  [%pa-cancel ost]
+      ::  ~&  [%pa-cancel ost]
       %_  .
         guests  (~(del by guests) ost)
         viewers  (~(del in viewers) ost)
@@ -551,7 +555,7 @@
     ::
     ++  pa-refresh                                      ::  update stream
       |=  [num=@ud gam=telegram]
-      ::  ~&  [%pa-refresh num gam]
+      ~&  [%pa-refresh man num gam guests]
       =+  ^=  moy
           |-  ^-  (pair (list bone) (list move))
           ?~  guests  [~ ~]
@@ -640,26 +644,19 @@
     =-  ra-abet:(~(ra-twitter ra ost ~) met sih)
     ^=  met
     ?+    t.pax  ~&  [%rodeo-twitter-strange-path pax]  !!
-        [%mine @ @ ~]
-      [i.t.pax i.t.t.t.pax]
+      ::    [%mine @ @ ~]
+      ::  [i.t.pax i.t.t.t.pax]
         [%stat @ ~]
       [i.t.pax (slav %uv i.t.t.pax)]
     ==
   ::
       [%friend *]
-    ?>  ?=([@ @ @ ~] t.pax)
-    ?.  =(%show i.t.pax)
-      ~&  [%pour-friend-nuke-nuke pax]
-      [~ +>.$]
-    ra-abet:(~(ra-friend ra ost ~) (slav %p i.t.t.pax) i.t.t.t.pax sih)
-  ::
-      [%stalk *]
     ?>  ?=([@ @ @ @ ~] t.pax)
     ?.  =(%show i.t.pax)
       ~&  [%pour-friend-nuke-nuke pax]
       [~ +>.$]
     =+  [man tay]=[i.t.t.pax [%& (slav %p i.t.t.t.pax) i.t.t.t.t.pax]]
-    ra-abet:(~(ra-stalk ra ost ~) man tay sih)
+    ra-abet:(~(ra-friend ra ost ~) man tay sih)
   ::
       [%repeat *]
     ?>  ?=([@ @ @ ~] t.pax)

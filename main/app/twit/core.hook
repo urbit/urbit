@@ -2,27 +2,22 @@
 ::
 ::::  /hook/core/twit/app
   ::
-::  /-    twit-do  ::  XX  wherefore broken
+/-    *twitter
 /+    twitter
 ::
 ::::  ~fyr
   ::
 |%
-++  twit-do                                             ::  action
-  $%  [%auth p=keys]                                    ::  set API keys
-      [%post p=@uvI q=cord]                             ::  post a tweet
-  ==
-::
 ++  twit-path                                           ::  valid peer path
-  $%  [%home ~]                                         ::  home timeline
+  $%  ::  [%home ~]                                         ::  home timeline
       [%user p=@t ~]                                    ::  user's tweets
       [%post p=@ta ~]                                   ::  status of status
   ==
 ::
 ++  axle                                                ::  app state
   $:  %0
-      kes=(unit keys)                                   ::  auth
-      out=(map ,@uvI (each cord stat))                  ::  sent tweets
+      kes=(map span keys:twit-do)                       ::  auth
+      out=(map ,@uvI (each ,[span cord] stat))          ::  sent tweets
       ran=(map path ,[p=@ud q=@da])                     ::  polls active
       fed=(jar path stat)                               ::  feed cache
   ==
@@ -49,13 +44,18 @@
       [%t %wake ~]                                      ::  timeout ping
   ==
 ::
-++  stat  ,[id=@u who=@ta now=@da txt=@t]               ::  recieved tweet
+++  stat  twit-stat                                     ::  recieved tweet
 --
 !:
 ::::
   ::
 |_  [hide axle]
-++  auth  ~|(%no-auth ~(. twit (need kes) lat `@`eny))  ::  build API door
+++  any-auth  ?~(kes (auth) (auth p.n.kes))             ::  use any keys
+++  auth                                                ::  build API door
+  |=  a=span
+  ~|  [%no-auth a] 
+  ~(. twit (~(got by kes) a) lat `@`eny)
+::
 ++  cull                                                ::  remove seen tweets
   |=  [pax=path rep=(list stat)]  ^+  rep
   =+  pev=(sa (turn (~(get ja fed) pax) |=(stat id)))
@@ -85,19 +85,19 @@
 ++  poke-twit-do                                        ::  recieve request
   |=  [ost=bone @ act=twit-do]
   ^+  [*(list move) +>]
-  ?-    -.act
+  ?-    -.q.act
       %auth
     ::  ~&  twit-auth/p.act
-    =.  kes  `p.act
+    =.  kes  (~(put by kes) p.act p.q.act)
     :_(+>.$ [ost %give %nice ~]~)                       ::  XX verify key
       %post
-    =:  out  (~(put by out) p.act %& q.act)
+    =:  out  (~(put by out) p.q.act %& p.act q.q.act)
         ran  (~(del by ran) /peer/home)
       ==
     %^  wait  ost  /peer/home
     :-  [ost %give %nice ~]
-    =+  mez=(stat-upda:auth [%status q.act]~ ~)
-    [ost %pass /post/(scot %uv p.act) %e %them ~ mez]~
+    =+  mez=(stat-upda:(auth p.act) [%status q.q.act]~ ~)
+    [ost %pass /post/(scot %uv p.q.act) %e %them ~ mez]~
   ==
 ::
 ++  pour                                                ::  recieve response
@@ -183,12 +183,11 @@
       ?~  ole  ~
       [ost %give %rush %twit-feed (flop ole)]~
   =-  [ost %pass [%peer pax] %e %them ~ `hiss`-]
+  =+  opt=?~(ole ~ ['since_id' (lutt:twit id.i.ole)]~)
+  =+  aut=any-auth
   ?-    -.pax
-    %user  (stat-user:auth [(to-sd p.pax)]~ ~)
-    %home  
-      ?~  ole  (stat-home:auth)
-      =+  opt=['since_id' (lutt:twit id.i.ole)]~
-      (stat-home:auth ~ opt)
+    %user  (stat-user:aut [(to-sd p.pax)]~ opt)
+::     %home  (stat-home:auth ~ opt)
   ==
 ::
 ++  to-sd                                               ::  parse user name/numb
