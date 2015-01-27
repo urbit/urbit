@@ -52,7 +52,6 @@
   ::  XX  unify %own and %say to %lin
   ::
   $%  [%lan p=span q=@t]                                ::  local announce
-      [%own p=@t]                                       ::  XX @ or /me
       [%exp p=@t]                                       ::  hoon line
       [%non ~]                                          ::  no content (yo)
       [%ext p=@tas q=*]                                 ::  extended action
@@ -61,7 +60,6 @@
       [%ire p=serial q=speech]                          ::  in-reply-to
       [%lin p=? q=@t]                                   ::  no=@, text line
       [%mor p=(list speech)]                            ::  XX deleteme
-      [%say p=@t]                                       ::  XX normal line
   ==                                                    ::
 ++  serial     ,@uvH                                    ::  unique identity
 ++  partner    (each station passport)                  ::  interlocutor
