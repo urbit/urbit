@@ -145,7 +145,7 @@
   ++  ra-apply                                          ::  apply command
     |=  [her=ship cod=command]
     ^+  +>
-    ::  ~&  [%ra-apply cod]
+    ~&  [%ra-apply cod]
     ?-    -.cod
         %design
       ?.  =(her our.hid)
@@ -555,7 +555,7 @@
     ::
     ++  pa-refresh                                      ::  update stream
       |=  [num=@ud gam=telegram]
-      ::  ~&  [%pa-refresh num gam]
+      ~&  [%pa-refresh man num gam guests]
       =+  ^=  moy
           |-  ^-  (pair (list bone) (list move))
           ?~  guests  [~ ~]
