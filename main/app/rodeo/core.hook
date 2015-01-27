@@ -180,7 +180,7 @@
   ++  ra-twitter                                        ::  %twitter response
     |=  [met=twim sih=sign]
     ^+  +>
-    ?+    sih  ~&([%rodeo-bad-twitter sih] !!)
+    ?+    sih  ~|([%rodeo-bad-twitter sih] !!)
         [%g ?(%nice %mean) ~]
       +>
         [%g %rush %twit-stat *]
@@ -379,7 +379,7 @@
       |=  [tay=partner sih=sign]
       ^+  +>
       ?>  ?=(& -.tay)
-      ?+    sih  ~&([%rodeo-bad-friend sih] !!)
+      ?+    sih  ~|([%rodeo-bad-friend sih] !!)
           [%g %nice ~]
         +>.$
       ::
@@ -395,7 +395,7 @@
                 :_  ~
                 :-  /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
                 [%g %took [p.p.tay /rodeo] our.hid]
-        ?+  -.p.p.sih  ~&([%rodeo-odd-friend sih] !!)
+        ?+  -.p.p.sih  ~|([%rodeo-odd-friend sih] !!)
           %config  +>.$
           %group  (pa-remind tay +.p.p.sih)
           %grams  (pa-lesson q.+.p.p.sih)
