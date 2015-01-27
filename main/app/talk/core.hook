@@ -166,10 +166,8 @@
             ship
             ;~(pose ;~(pfix fas urs:ab) (easy (main our)))
           ==
-        ;~  pfix  ket
-          ;~  pose
-            ;~(pfix pat (stag %twitter urs:ab))
-          ==
+        ;~  pose
+          ;~(pfix pat (stag %twitter urs:ab))
         ==
       ::
       ++  staz                                          ::  partner set
@@ -245,7 +243,7 @@
                 ?:  =((main p.p.i.tuo) q.p.i.tuo)
                   sip
                 :(welp sip "/" (trip q.p.i.tuo))
-            %|  ['^' '@' (trip p.p.i.tuo)] 
+            %|  ['@' (trip p.p.i.tuo)] 
           ==
       ?~  ted  ind
       (welp ind `tape`[',' ' ' ted])
