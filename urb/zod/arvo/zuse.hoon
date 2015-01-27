@@ -3167,5 +3167,5 @@
               [%chan (list $|(@ud [p=@ud q=@ud]))]      ::
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action
 ++  will  (list deed)                                   ::  certificate
-++  zuse  %314                                          ::  hoon/zuse kelvin
+++  zuse  %310                                          ::  hoon/zuse kelvin
 --

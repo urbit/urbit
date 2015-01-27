@@ -612,7 +612,7 @@ _sist_zest()
     u3_uled led_u;
 
     led_u.mag_l = u3r_mug('g');
-    led_u.kno_w = 164;
+    led_u.kno_w = 163;
 
     if ( 0 == u3A->key ) {
       led_u.key_l = 0;
@@ -871,12 +871,12 @@ _sist_rest()
       u3_lo_bail();
     }
 
-    if ( led_u.kno_w != 164 ) {
+    if ( led_u.kno_w != 163 ) {
       //  XX perhaps we should actually do something here
       //
       uL(fprintf(uH, "rest: (not) translating events (old %d, now %d)\n",
                      led_u.kno_w,
-                     164));
+                     163));
     }
     sev_l = led_u.sev_l;
     sal_l = led_u.sal_l;
@@ -1178,7 +1178,7 @@ _sist_rest()
     led_u.sal_l = sal_l;
     led_u.sev_l = u3A->sev_l;
     led_u.key_l = u3A->key ? u3r_mug(u3A->key) : 0;
-    led_u.kno_w = 164;         //  may need actual translation!
+    led_u.kno_w = 163;         //  may need actual translation!
     led_u.tno_l = 1;
 
     if ( (-1 == lseek64(fid_i, 0, SEEK_SET)) ||
