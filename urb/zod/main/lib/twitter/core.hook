@@ -3,15 +3,7 @@
 ::::  /hook/core/twitter/lib
   ::
 /?    314
-::
-::::  structures
-  ::
-|%
-++  keys                                                ::  twitter-key type
-  $:  con=[tok=@t sec=@t]                               ::  user key pair
-      acc=[tok=@t sec=@t]                               ::  app key pair
-  ==
---
+/-   *twitter
 !:
 ::::  functions
   ::

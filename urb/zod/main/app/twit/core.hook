@@ -2,17 +2,12 @@
 ::
 ::::  /hook/core/twit/app
   ::
-::  /-    twit-do  ::  XX  wherefore broken
+/-    *twitter
 /+    twitter
 ::
 ::::  ~fyr
   ::
 |%
-++  twit-do                                             ::  action
-  $%  [%auth p=keys]                                    ::  set API keys
-      [%post p=@uvI q=cord]                             ::  post a tweet
-  ==
-::
 ++  twit-path                                           ::  valid peer path
   $%  [%home ~]                                         ::  home timeline
       [%user p=@t ~]                                    ::  user's tweets
