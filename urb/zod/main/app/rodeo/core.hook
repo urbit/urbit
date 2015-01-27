@@ -68,6 +68,7 @@
     ++  silt
       $%  [%rodeo-report p=report]                      ::  refresh
           [%twit-stat p=twit-stat]                      ::  tweet reciept
+          [%twit-feed p=(list twit-stat)]               ::  tweet reciept
       ==
     ++  move  ,[p=bone q=(mold note gift)]              ::  all actions
     ++  hapt  ,[p=ship q=path]                          ::  app instance
@@ -378,7 +379,6 @@
     ++  pa-friend                                       ::  subscribed update
       |=  [tay=partner sih=sign]
       ^+  +>
-      ?>  ?=(& -.tay)
       ?+    sih  ~|([%rodeo-bad-friend sih] !!)
           [%g %nice ~]
         +>.$
@@ -389,8 +389,20 @@
         ~&  [%pa-friend-mean +>.sih]
         pa-monitor(sources.shape (~(del in sources.shape) tay))
       ::
+          [%g %rush %twit-feed *]
+        %-  pa-lesson
+        %+  turn  p.p.sih  |=  twit-stat
+        ^-  telegram
+        :^    our.hid                 ::  XX inaccurate
+            (shas %twit id)
+          `audience`[[tay [& ~ tay] %received] `~]      ::  current party?
+        ^-  statement
+        :+  now
+          ~                           ::  XX  hashtags
+        [%lin & txt]
           [%g %rush %rodeo-report *]
         ::  ~&  [%pa-friend-report +>+.sih]
+        ?>  ?=(& -.tay)
         =.  +>  %+  pa-scrub  ost 
                 :_  ~
                 :-  /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
@@ -425,6 +437,9 @@
       ?-  -.tay
         %|  ~&  tweet-abjure/p.p.tay
             !!
+            ::  :~  :-  /friend/nuke/[man]/twitter/[p.p.tay]
+            ::      [%g %nuke [our.hid /twit] our.hid]
+            ::  ==
       ::
         %&  ::  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
             :~  :-  /friend/nuke/[man]/(scot %p p.p.tay)/[q.p.tay]
@@ -442,7 +457,9 @@
       =+  num=(fall (~(get by sequence) tay) 0)
       ?-  -.tay
         %|  ~&  tweet-acquire/p.p.tay
-            !!
+            :~  :-  /friend/show/[man]/twitter/[p.p.tay]
+                [%g %show [our.hid /twit] our.hid /user/[p.p.tay]]
+            ==
       ::
         %&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
             :~  :-  /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
@@ -655,7 +672,10 @@
     ?.  =(%show i.t.pax)
       ~&  [%pour-friend-nuke-nuke pax]
       [~ +>.$]
-    =+  [man tay]=[i.t.t.pax [%& (slav %p i.t.t.t.pax) i.t.t.t.t.pax]]
+    =+  man=i.t.t.pax
+    =+  ?:  ?=(%twitter i.t.t.t.pax)
+          tay=[%| i.t.t.t.pax i.t.t.t.t.pax]
+        tay=[%& (slav %p i.t.t.t.pax) i.t.t.t.t.pax]
     ra-abet:(~(ra-friend ra ost ~) man tay sih)
   ::
       [%repeat *]
