@@ -195,13 +195,14 @@
   ::
   ++  ra-cancel                                         ::  drop a bone
     ^+  .
-    =+  hap=(~(got by sup.hid) ost)
-    ?.  ?=([@ @ *] q.hap)
+    =+  hep=(~(get by sup.hid) ost)
+    ?~  hep  +
+    ?.  ?=([@ @ *] q.u.hep)
       +(general (~(del in general) ost))
-    =*  man  i.t.q.hap
+    =*  man  i.t.q.u.hep
     =+  pur=(~(get by stories) man)
     ?~  pur  +>
-    pa-abet:(pa-notify:~(pa-cancel pa man u.pur) p.hap %gone *human)
+    pa-abet:(pa-notify:~(pa-cancel pa man u.pur) p.u.hep %gone *human)
   ::
   ++  ra-human                                          ::  look up person
     |=  her=ship
@@ -436,7 +437,7 @@
       pa-monitor
     ::
     ++  pa-cancel                                       ::  unsubscribe from
-      ~&  [%pa-cancel ost]
+      ::  ~&  [%pa-cancel ost]
       %_  .
         guests  (~(del by guests) ost)
         viewers  (~(del in viewers) ost)
