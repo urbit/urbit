@@ -125,7 +125,7 @@ body {
   margin-right: 1rem;
   margin-bottom: 1rem;
 }
-#sources {
+#sources-container {
   width: 6rem;
 }
 #members {
@@ -136,11 +136,14 @@ body {
 }
 .station {
   display: inline-block;
-  width: 8rem;
+  width: 9rem;
   margin-bottom: 0.3rem;
   cursor: pointer;
-  text-transform: capitalize;
   font-weight: 200;
+}
+#stations .station {
+  display: block;
+  width: 24rem;
 }
 .station .name {
   border-bottom: 6px solid transparent;
@@ -149,7 +152,16 @@ body {
   border-bottom: 6px solid #000;
 }
 .station > div {
-  display: inline;
+  display: inline-block;
+}
+.toggle {
+  width: 0.4rem;
+  height: 0.4rem;
+  border: 2px solid #000;
+  margin-right: 0.6rem;
+}
+.toggle.active {
+  background-color: #000;
 }
 .station .remove {
   display: none;
@@ -161,7 +173,7 @@ body {
 .station:hover .remove {
   display: inline;
 }
-#sources .station {
+#sources-container .station {
   font-family: "source-code-pro";
   font-weight: 500;
   text-transform: lowercase;
@@ -176,8 +188,9 @@ body {
 }
 .sour-ctrl input::-webkit-input-placeholder {
   font-family: "bau";
-  font-size: 2rem;
+  font-size: 1rem;
   font-weight: 200;
+  margin-left: 0.6rem;
   color: #0003ff;
 }
 .message {
@@ -274,7 +287,7 @@ body {
   margin: 0;
   font-weight: 200;
   font-size: 2rem;
-  text-transform: capitalize;
+  text-transform: lowercase;
 }
 input.join {
   font-size: 4rem;
@@ -283,8 +296,9 @@ input.join {
   width: 24rem;
 }
 #station input.join {
-  font-size: 1rem;
-  line-height: 2.5rem;
+  font-family: "source-code-pro";
+  font-size: 0.7rem;
+  line-height: 1rem;
   width: 12rem;
 }
 input.join::-webkit-input-placeholder {
@@ -298,6 +312,7 @@ input.join:focus::-webkit-input-placeholder {
 }
 a.up {
   height: 2rem;
+  margin-top: 0.6rem;
   vertical-align: middle;
   display: inline-block;
 }

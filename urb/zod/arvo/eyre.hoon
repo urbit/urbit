@@ -551,7 +551,7 @@
     ::
         %they                                           ::  inbound response
       =+  kas=(need (~(get by q.ask) p.kyz))
-      ~&  >  eyre-they/[p.q.kyz (earn p.q.kas)]
+      ::  ~&  >  eyre-they/[p.q.kyz (earn p.q.kas)]
       %=  +>.$
         mow    :_(mow [p.kas [%give %thou q.kyz]])
         q.ask  (~(del by q.ask) p.kas)
