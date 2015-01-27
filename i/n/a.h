@@ -41,7 +41,7 @@
 
     /* u3a_fbox_no: number of free lists per size.
     */
-#     define u3a_fbox_no   28
+#     define u3a_fbox_no   27
 
 
   /**  Structures.
@@ -125,6 +125,7 @@
 
         struct {                              //  allocation pools
           u3p(u3a_fbox) fre_p[u3a_fbox_no];   //  heap by node size log
+          u3p(u3a_fbox) cel_p;                //  custom cell allocator
           c3_w fre_w;                         //  number of free words
         } all;
 
@@ -144,8 +145,8 @@
 
         struct {                              //  profile stack
           c3_d    nox_d;                      //  nock steps
-          u3_noun don;                        //  ++path
-          u3_noun day;                        //  profile data, ++doss
+          u3_noun don;                        //  (list batt)
+          u3_noun day;                        //  doss, only in u3H (moveme)
         } pro;
 
         struct {                              //  memoization
@@ -154,13 +155,10 @@
       } u3a_road;
       typedef u3a_road u3_road;
 
-    /* u3a_flag: flags for how.fag_w.
+    /* u3a_flag: flags for how.fag_w.  All arena related.
     */
       enum u3a_flag {
-        u3a_flag_debug = 0x1,                 //  debug memory
-        u3a_flag_gc    = 0x2,                 //  garbage collect once
-        u3a_flag_sand  = 0x4,                 //  sand mode, bump allocation
-        u3a_flag_die   = 0x8                  //  process was asked to exit
+        u3a_flag_sand  = 0x1,                 //  bump allocation (XX not impl)
       };
 
 
@@ -206,9 +204,6 @@
 
 #     define  u3a_into(x) ((void *)(u3_Loom + (x)))
 #     define  u3a_outa(p) (((c3_w*)(void*)(p)) - u3_Loom)
-
-#     define  u3to(type, x) ((type *) u3a_into(x))
-#     define  u3of(type, x) (u3a_outa((type *)x))
 
 #     define  u3a_is_north(r)  __(r->cap_p > r->hat_p)
 #     define  u3a_is_south(r)  !u3a_is_north(r)
@@ -282,10 +277,15 @@
           void*
           u3a_walloc(c3_w len_w);
 
-        /* u3a_wdrop(): free storage.
+        /* u3a_celloc(): allocate a cell.  Faster, sometimes.
+        */
+          c3_w*
+          u3a_celloc(void);
+
+        /* u3a_wfree(): free storage.
         */
           void
-          u3a_wdrop(void* lag_v);
+          u3a_wfree(void* lag_v);
 
         /* u3a_wealloc(): word realloc.
         */
@@ -298,6 +298,11 @@
         */
           void*
           u3a_malloc(size_t len_i);
+
+        /* u3a_calloc(): aligned storage measured in bytes.
+        */
+          void*
+          u3a_calloc(size_t num_i, size_t len_i);
 
         /* u3a_realloc(): aligned realloc in bytes.
         */
@@ -351,6 +356,11 @@
           c3_w
           u3a_use(u3_noun som);
 
+        /* u3a_luse(): check refcount sanity.
+        */
+          void
+          u3a_luse(u3_noun som);
+
         /* u3a_mark_ptr(): mark a pointer for gc.  Produce size.
         */
           c3_w
@@ -369,7 +379,7 @@
         /* u3a_sweep(): sweep a fully marked road.
         */
           void
-          u3a_sweep(c3_c* cap_c);
+          u3a_sweep(void);
 
         /* u3a_sane(): check allocator sanity.
         */
@@ -398,7 +408,7 @@
           c3_w*
           u3a_slab(c3_w len_w);
 
-        /* u3a_slaq(): u3a_slaq() with a defined blocksize.
+        /* u3a_slaq(): u3a_slab() with a defined blocksize.
         */
           c3_w*
           u3a_slaq(c3_g met_g, c3_w len_w);

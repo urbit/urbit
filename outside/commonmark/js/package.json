@@ -1,0 +1,25 @@
+{ "name": "commonmark",
+  "description": "a strongly specified, highly compatible variant of Markdown",
+  "version": "0.12.0",
+  "homepage": "http://commonmark.org",
+  "keywords":
+   [ "markdown",
+     "commonmark",
+     "md",
+     "stmd" ],
+  "repository":
+   { "type": "git",
+     "url": "https://github.com/jgm/CommonMark.git" },
+  "author": "John MacFarlane",
+  "bugs": { "url": "https://github.com/jgm/CommonMark/issues" },
+  "license": "BSD-3-Clause",
+  "main": "./lib/index.js",
+  "bin": { "commonmark": "./bin/commonmark" },
+  "scripts": { "test": "node ./test.js" },
+  "directories": {
+      "lib": "./lib"
+  },
+  "engines": {
+      "node": "*"
+  }
+}

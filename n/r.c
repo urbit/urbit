@@ -55,21 +55,25 @@ _frag_deep(c3_w a_w, u3_noun b)
 **   Return fragment (a) of (b), or u3_none if not applicable.
 */
 u3_weak
-u3r_at(u3_atom a,
-         u3_noun b)
+u3r_at(u3_atom a, u3_noun b)
 {
   c3_assert(u3_none != a);
   c3_assert(u3_none != b);
 
+  u3t_on(far_o);
+
   if ( 0 == a ) {
+    u3t_off(far_o);
     return u3_none;
   }
 
   if ( _(u3a_is_cat(a)) ) {
+    u3t_off(far_o);
     return _frag_word(a, b);
   }
   else {
     if ( !_(u3a_is_pug(a)) ) {
+      u3t_off(far_o);
       return u3_none;
     }
     else {
@@ -83,11 +87,15 @@ u3r_at(u3_atom a,
         b = _frag_deep(a_u->buf_w[len_w - 1], b);
 
         if ( u3_none == b ) {
+          u3t_off(far_o);
+
           return b;
         } else {
           len_w--;
         }
       }
+      u3t_off(far_o);
+
       return b;
     }
   }
@@ -387,7 +395,7 @@ u3r_mug(u3_noun veb)
   if ( _(u3a_is_cat(veb)) ) {
     c3_w x_w = veb;
 
-    return _mug_words(2166136261, (veb ? 1 : 0), &x_w);
+    return _mug_words(2166136261U, (veb ? 1 : 0), &x_w);
   } else {
     u3a_noun* veb_u = u3a_to_ptr(veb);
 
@@ -407,7 +415,7 @@ u3r_mug(u3_noun veb)
         u3a_atom* veb_u = u3a_to_ptr(veb);
         c3_w        len_w = veb_u->len_w;
 
-        veb_u->mug_w = _mug_words_buf(2166136261, len_w, veb);
+        veb_u->mug_w = _mug_words_buf(2166136261U, len_w, veb);
         return veb_u->mug_w;
       }
     }
@@ -422,7 +430,7 @@ c3_w
 u3r_mug_words(const c3_w *buf_w,
                 c3_w        len_w)
 {
-  return _mug_words(2166136261, len_w, buf_w);
+  return _mug_words(2166136261U, len_w, buf_w);
 }
 
 /* u3r_mug_string():
@@ -432,7 +440,7 @@ u3r_mug_words(const c3_w *buf_w,
 c3_w
 u3r_mug_string(const c3_c *a_c)
 {
-  return _mug_bytes(2166136261, strlen(a_c), (c3_y *)a_c);
+  return _mug_bytes(2166136261U, strlen(a_c), (c3_y *)a_c);
 }
 
 /* u3r_mug_cell():
@@ -703,7 +711,13 @@ c3_o
 u3r_sing(u3_noun a,
            u3_noun b)
 {
-  return _sing_x(a, b);
+  c3_o ret_o;
+
+  u3t_on(euq_o);
+  ret_o = _sing_x(a, b);
+  u3t_off(euq_o);
+
+  return ret_o;
 }
 
 /* u3r_sung(): yes iff (a) and (b) are the same noun, unifying equals.

@@ -72,7 +72,7 @@ _ch_buck_add(u3h_buck* hab_u, u3_noun kev)
       bah_u->kev[i_w + 1] = hab_u->kev[i_w];
     }
 
-    u3a_wdrop(hab_u);
+    u3a_wfree(hab_u);
     return bah_u;
   }
 }
@@ -150,7 +150,7 @@ _ch_node_add(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun kev)
     for ( i_w = inx_w; i_w < len_w; i_w++ ) {
       nah_u->sot_w[i_w + 1] = han_u->sot_w[i_w];
     }
-    u3a_wdrop(han_u);
+    u3a_wfree(han_u);
     return nah_u;
   }
 }
@@ -301,25 +301,25 @@ u3h_hum(u3p(u3h_root) har_p, c3_w mug_w)
   }
 }
 
-/* _ch_buck_get(): read in bucket.
+/* _ch_buck_git(): read in bucket.
 */
 static u3_weak
-_ch_buck_get(u3h_buck* hab_u, u3_noun key)
+_ch_buck_git(u3h_buck* hab_u, u3_noun key)
 {
   c3_w i_w;
 
   for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) {
     if ( _(u3r_sing(key, u3h(hab_u->kev[i_w]))) ) {
-      return u3a_gain(u3t(hab_u->kev[i_w]));
+      return u3t(hab_u->kev[i_w]);
     }
   }
   return u3_none;
 }
 
-/* _ch_node_get(): read in node.
+/* _ch_node_git(): read in node.
 */
 static u3_weak
-_ch_node_get(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun key)
+_ch_node_git(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun key)
 {
   c3_w bit_w, map_w;
 
@@ -339,7 +339,7 @@ _ch_node_get(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun key)
       u3_noun kev = u3h_slot_to_noun(sot_w);
 
       if ( _(u3r_sing(key, u3h(kev))) ) {
-        return u3a_gain(u3t(kev));
+        return u3t(kev);
       } 
       else {
         return u3_none;
@@ -349,19 +349,19 @@ _ch_node_get(u3h_node* han_u, c3_w lef_w, c3_w rem_w, u3_noun key)
       void* hav_v = u3h_slot_to_node(sot_w);
 
       if ( 0 == lef_w ) {
-        return _ch_buck_get(hav_v, key);
+        return _ch_buck_git(hav_v, key);
       }
-      else return _ch_node_get(hav_v, lef_w, rem_w, key);
+      else return _ch_node_git(hav_v, lef_w, rem_w, key);
     }
   }
 }
 
-/* u3h_get(): read from hashtable.
+/* u3h_git(): read from hashtable.
 **
-** `key` is RETAINED.
+** `key` is RETAINED; result is RETAINED.
 */
 u3_weak
-u3h_get(u3p(u3h_root) har_p, u3_noun key)
+u3h_git(u3p(u3h_root) har_p, u3_noun key)
 {
   u3h_root* har_u = u3to(u3h_root, har_p);
   c3_w        mug_w = u3r_mug(key);
@@ -377,7 +377,7 @@ u3h_get(u3p(u3h_root) har_p, u3_noun key)
 
     if ( _(u3r_sing(key, u3h(kev))) ) {
       har_u->sot_w[inx_w] = u3h_noun_be_warm(sot_w);
-      return u3a_gain(u3t(kev));
+      return u3t(kev);
     } 
     else {
       return u3_none;
@@ -386,8 +386,23 @@ u3h_get(u3p(u3h_root) har_p, u3_noun key)
   else {
     u3h_node* han_u = u3h_slot_to_node(sot_w);
 
-    return _ch_node_get(han_u, 25, rem_w, key);
+    return _ch_node_git(han_u, 25, rem_w, key);
   }
+}
+
+/* u3h_get(): read from hashtable.
+**
+** `key` is RETAINED; result is PRODUCED.
+*/
+u3_weak
+u3h_get(u3p(u3h_root) har_p, u3_noun key)
+{
+  u3_noun pro = u3h_git(har_p, key);
+
+  if ( u3_none != pro ) {
+    u3a_gain(pro);
+  }
+  return pro;
 }
 
 /* _ch_buck_gut(): read in bucket, unifying key nouns.
@@ -489,7 +504,7 @@ _ch_free_buck(u3h_buck* hab_u)
   for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) {
     u3a_lose(hab_u->kev[i_w]);
   }
-  u3a_wdrop(hab_u);
+  u3a_wfree(hab_u);
 }
 
 /* _ch_free_node(): free node.
@@ -520,7 +535,7 @@ _ch_free_node(u3h_node* han_u, c3_w lef_w)
       }
     }
   }
-  u3a_wdrop(han_u);
+  u3a_wfree(han_u);
 }
 
 /* u3h_free(): free hashtable.
@@ -545,7 +560,7 @@ u3h_free(u3p(u3h_root) har_p)
       _ch_free_node(han_u, 25);
     }
   }
-  u3a_wdrop(har_u);
+  u3a_wfree(har_u);
 }
 
 /* _ch_walk_buck(): walk bucket for gc.

@@ -57,12 +57,13 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.fog = c3n;
   u3_Host.ops_u.fak = c3n;
   u3_Host.ops_u.pro = c3n;
+  u3_Host.ops_u.dry = c3n;
   u3_Host.ops_u.veb = c3y;
   u3_Host.ops_u.nuu = c3n;
   u3_Host.ops_u.mem = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i = getopt(argc, argv, "I:X:f:k:l:n:p:r:LabcdgqvFM")) != -1 ) {
+  while ( (ch_i = getopt(argc, argv, "I:X:f:k:l:n:p:r:LabcdgqvFMPD")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
@@ -121,6 +122,8 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'c': { u3_Host.ops_u.nuu = c3y; break; }
       case 'd': { u3_Host.ops_u.dem = c3y; break; }
       case 'g': { u3_Host.ops_u.gab = c3y; break; }
+      case 'P': { u3_Host.ops_u.pro = c3y; break; }
+      case 'D': { u3_Host.ops_u.dry = c3y; break; }
       case 'q': { u3_Host.ops_u.veb = c3n; break; }
       case 'v': { u3_Host.ops_u.veb = c3y; break; }
       case '?': default: {
@@ -197,10 +200,6 @@ u3_ve_sysopt()
 {
   u3_Local = strdup(u3_Host.dir_c);
   u3_System = U3_LIB;
-  u3_Flag_Abort = u3_Host.ops_u.abo;
-  u3_Flag_Garbage = u3_Host.ops_u.gab;
-  u3_Flag_Profile = u3_Host.ops_u.pro;
-  u3_Flag_Verbose = u3_Host.ops_u.veb;
 }
 
 #if 0
@@ -307,8 +306,37 @@ main(c3_i   argc,
 
   //  Instantiate process globals.
   {
-    /*  Boot the image and checkpoint.
+    /*  Boot the image and checkpoint.  Set flags.
     */
+    {
+      /*  Set pier directory.
+      */
+      u3C.dir_c = u3_Host.dir_c;
+
+      /*  Set GC flag.
+      */
+      if ( _(u3_Host.ops_u.gab) ) {
+        u3C.wag_w |= u3o_debug_ram;
+      }
+
+      /*  Set profile flag.
+      */
+      if ( _(u3_Host.ops_u.pro) ) {
+        u3C.wag_w |= u3o_debug_cpu;
+      }
+
+      /*  Set verbose flag.
+      */
+      if ( _(u3_Host.ops_u.veb) ) {
+        u3C.wag_w |= u3o_verbose;
+      }
+      
+      /*  Set dry-run flag.
+      */
+      if ( _(u3_Host.ops_u.dry) ) {
+        u3C.wag_w |= u3o_dryrun;
+      }
+    }
     u3m_boot(u3_Host.ops_u.nuu, u3_Host.ops_u.gab, u3_Host.dir_c);
 
     /*  Start Arvo.

@@ -4,7 +4,6 @@
 */
 #include "all.h"
 
-
 /* _box_slot(): select the right free list to search for a block.
 */
 c3_w
@@ -336,8 +335,33 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
 static void*
 _ca_walloc(c3_w len_w, c3_w ald_w, c3_w alp_w)
 {
-  void* ptr_v = _ca_willoc(len_w, ald_w, alp_w);
+  void* ptr_v;
+  
+  u3t_on(mal_o);
+  ptr_v = _ca_willoc(len_w, ald_w, alp_w);
+  u3t_off(mal_o);
 
+#if 0
+  if ( SUB ) {
+    fprintf(stderr, "sub: at %p; kid %p\r\n", 
+            ptr_v, 
+            u3R->kid_u);
+
+    fprintf(stderr, "this: hat %p, cap %p, rut %p, mat %p\r\n",
+                    u3a_into(u3R->hat_p),
+                    u3a_into(u3R->cap_p),
+                    u3a_into(u3R->rut_p),
+                    u3a_into(u3R->mat_p));
+    
+    if ( u3R->kid_u ) {
+      fprintf(stderr, "kids: hat %p, cap %p, rut %p, mat %p\r\n\n",
+                      u3a_into(u3R->kid_u->hat_p),
+                      u3a_into(u3R->kid_u->cap_p),
+                      u3a_into(u3R->kid_u->rut_p),
+                      u3a_into(u3R->kid_u->mat_p));
+    }
+  }
+#endif
 #if 0
   if ( u3a_botox(ptr_v) == (u3a_box*)(void *)0x27f50a02c ) {
     static int xuc_i;
@@ -350,14 +374,14 @@ _ca_walloc(c3_w len_w, c3_w ald_w, c3_w alp_w)
   return ptr_v;
 }
 
-int FOO;
-
 /* u3a_walloc(): allocate storage words on hat.
 */
 void*
 u3a_walloc(c3_w len_w)
 {
-  void* ptr_v = _ca_walloc(len_w, 1, 0);
+  void* ptr_v;
+ 
+  ptr_v = _ca_walloc(len_w, 1, 0);
 
 #if 0
   if ( (703 == u3_Code) &&
@@ -369,9 +393,7 @@ u3a_walloc(c3_w len_w)
       u3a_box* box_u = u3a_botox(ptr_v);
 
       box_u->cod_w = 999;
-      FOO = 1;
     }
-    // if ( 9 == xuc_i ) { FOO = 1; }
     xuc_i++;
   }
 #endif
@@ -397,23 +419,28 @@ u3a_wealloc(void* lag_v, c3_w len_w)
       for ( i_w = 0; i_w < tiz_w; i_w++ ) {
         new_w[i_w] = old_w[i_w];
       }
-      u3a_wdrop(lag_v);
+      u3a_wfree(lag_v);
       return new_w;
     }
   }
 }
 
-/* u3a_wdrop(): free storage.
+/* u3a_wfree(): free storage.
 */
 void
-u3a_wdrop(void* tox_v)
+u3a_wfree(void* tox_v)
 {
   u3a_box* box_u = u3a_botox(tox_v);
   c3_w*      box_w = (c3_w *)(void *)box_u;
 
+  u3t_on(mal_o);
+
   c3_assert(box_u->use_w != 0);
   box_u->use_w -= 1;
-  if ( 0 != box_u->use_w ) return;
+  if ( 0 != box_u->use_w ) {
+    u3t_off(mal_o);
+    return;
+  }
 
 #if 0
   /* Clear the contents of the block, for debugging.
@@ -487,30 +514,21 @@ u3a_wdrop(void* tox_v)
       _box_attach(box_u);
     }
   }
+  u3t_off(mal_o);
 }
 
-#if 0
-/* u3a_malloc(): allocate storage measured in bytes.
+/* u3a_calloc(): allocate and zero-initialize array
 */
 void*
-u3a_malloc(size_t len_i)
+u3a_calloc(size_t num_i, size_t len_i)
 {
-  c3_w len_w = (c3_w)len_i;
+  size_t byt_i = num_i * len_i;
+  c3_w* out_w = u3a_malloc(byt_i);
+  memset(out_w, 0, byt_i);
 
-  return u3a_walloc((len_w + 3) >> 2);
+  return out_w;
 }
 
-/* u3a_realloc(): realloc in bytes.
-*/
-void*
-u3a_realloc(void* lag_v, size_t len_i)
-{
-  c3_w len_w = (c3_w)len_i;
-
-  return u3a_wealloc(lag_v, (len_w + 3) >> 2);
-}
-
-#else
 /* u3a_malloc(): aligned storage measured in bytes.
 */
 void*
@@ -536,6 +554,43 @@ u3a_malloc(size_t len_i)
   return out_w;
 }
 
+/* u3a_celloc(): allocate a cell.
+*/
+c3_w*
+u3a_celloc(void)
+{
+  u3p(u3a_fbox) cel_p;
+
+  if ( (u3R == &(u3H->rod_u)) || !(cel_p = u3R->all.cel_p) ) {
+    return u3a_walloc(c3_wiseof(u3a_cell));
+  }
+  else {
+    u3a_box* box_u = &(u3to(u3a_fbox, cel_p)->box_u);
+
+    box_u->use_w = 1;
+    u3R->all.cel_p = u3to(u3a_fbox, cel_p)->nex_p;
+
+    return u3a_boxto(box_u);
+  }
+}
+
+/* u3a_cfree(): free a cell.
+*/
+void
+u3a_cfree(c3_w* cel_w)
+{
+  if ( u3R == &(u3H->rod_u) ) {
+    return u3a_wfree(cel_w);
+  } 
+  else {
+    u3a_box*      box_u = u3a_botox(cel_w);
+    u3p(u3a_fbox) fre_p = u3of(u3a_fbox, box_u); 
+
+    u3to(u3a_fbox, fre_p)->nex_p = u3R->all.cel_p;
+    u3R->all.cel_p = fre_p;
+  }
+}
+
 /* u3a_realloc(): aligned realloc in bytes.
 */
 void*
@@ -559,7 +614,7 @@ u3a_realloc(void* lag_v, size_t len_i)
       for ( i_w = 0; i_w < tiz_w; i_w++ ) {
         new_w[i_w] = old_w[i_w];
       }
-      u3a_wdrop(org_w);
+      u3a_wfree(org_w);
       return new_w;
     }
   }
@@ -581,12 +636,15 @@ u3a_realloc2(void* lag_v, size_t old_i, size_t new_i)
 void
 u3a_free(void* tox_v)
 {
+  if (NULL == tox_v)
+    return;
+
   c3_w* tox_w = tox_v;
   c3_w  pad_w = tox_w[-1];
   c3_w* org_w = tox_w - (pad_w + 1);
 
   // printf("free %p %p\r\n", org_w, tox_w);
-  u3a_wdrop(org_w);
+  u3a_wfree(org_w);
 }
 
 /* u3a_free2(): gmp-shaped free.
@@ -596,7 +654,6 @@ u3a_free2(void* tox_v, size_t siz_i)
 {
   return u3a_free(tox_v);
 }
-#endif
 
 #if 1
 /* _me_wash_north(): clean up mug slots after copy.
@@ -1002,9 +1059,14 @@ u3a_take(u3_noun som)
     return som;
   }
   else {
-    return _(u3a_is_north(u3R))
+    u3t_on(coy_o);
+
+    som = _(u3a_is_north(u3R))
               ? _me_take_north(som)
               : _me_take_south(som);
+
+    u3t_off(coy_o);
+    return som;
   }
 }
 
@@ -1095,14 +1157,14 @@ top:
           if ( !_(u3a_is_cat(h_dog)) ) {
             _me_lose_north(h_dog);
           }
-          u3a_wdrop(dog_w);
+          u3a_cfree(dog_w);
           if ( !_(u3a_is_cat(t_dog)) ) {
             dog = t_dog;
             goto top;
           }
         }
         else {
-          u3a_wdrop(dog_w);
+          u3a_wfree(dog_w);
         }
       }
     }
@@ -1135,14 +1197,14 @@ top:
           if ( !_(u3a_is_cat(h_dog)) ) {
             _me_lose_south(h_dog);
           }
-          u3a_wdrop(dog_w);
+          u3a_cfree(dog_w);
           if ( !_(u3a_is_cat(t_dog)) ) {
             dog = t_dog;
             goto top;
           }
         }
         else {
-          u3a_wdrop(dog_w);
+          u3a_wfree(dog_w);
         }
       }
     }
@@ -1154,16 +1216,17 @@ top:
 u3_noun
 u3a_gain(u3_noun som)
 {
+  // u3t_on(mal_o);
   c3_assert(u3_none != som);
 
-  if ( _(u3a_is_cat(som)) ) {
-    return som;
-  }
-  else {
-    return _(u3a_is_north(u3R))
+  if ( !_(u3a_is_cat(som)) ) {
+    som = _(u3a_is_north(u3R))
               ? _me_gain_north(som)
               : _me_gain_south(som);
   }
+  // u3t_off(mal_o);
+
+  return som;
 }
 
 /* u3a_lose(): lose a reference count.
@@ -1171,6 +1234,7 @@ u3a_gain(u3_noun som)
 void
 u3a_lose(u3_noun som)
 {
+  // u3t_on(mal_o);
   if ( !_(u3a_is_cat(som)) ) {
     if ( _(u3a_is_north(u3R)) ) {
       _me_lose_north(som);
@@ -1178,6 +1242,7 @@ u3a_lose(u3_noun som)
       _me_lose_south(som);
     }
   }
+  // u3t_off(mal_o);
 }
 
 /* u3a_use(): reference count.
@@ -1193,6 +1258,21 @@ u3a_use(u3_noun som)
     u3a_box* box_u = u3a_botox(dog_w);
 
     return box_u->use_w;
+  }
+}
+
+/* u3a_luse(): check refcount sanity.
+*/
+void
+u3a_luse(u3_noun som)
+{
+  if ( 0 == u3a_use(som) ) {
+    fprintf(stderr, "luse: insane %d 0x%x\r\n", som, som);
+    abort();
+  }
+  if ( _(u3du(som)) ) {
+    u3a_luse(u3h(som));
+    u3a_luse(u3t(som));
   }
 }
 
@@ -1326,9 +1406,12 @@ u3a_print_memory(c3_c* cap_c, c3_w wor_w)
 /* u3a_sweep(): sweep a fully marked road.
 */
 void
-u3a_sweep(c3_c* cap_c)
+u3a_sweep(void)
 {
-  c3_w neg_w, pos_w, leq_w, weq_w, tot_w, caf_w;
+  c3_w neg_w, pos_w, leq_w, weq_w;
+#if 0
+  c3_w tot_w, caf_w;
+#endif
 
   /* Measure allocated memory by counting the free list.
   */
@@ -1423,6 +1506,7 @@ u3a_sweep(c3_c* cap_c)
     }
   }
 
+#if 0
   tot_w = _(u3a_is_north(u3R)) 
                 ? u3R->mat_p - u3R->rut_p
                 : u3R->rut_p - u3R->mat_p;
@@ -1430,9 +1514,10 @@ u3a_sweep(c3_c* cap_c)
                 ? u3R->mat_p - u3R->cap_p
                 : u3R->cap_p - u3R->mat_p;
 
-  // u3a_print_memory("available", (tot_w - pos_w));
-  // u3a_print_memory("allocated", pos_w);
-  // u3a_print_memory("volatile", caf_w);
+  u3a_print_memory("available", (tot_w - pos_w));
+  u3a_print_memory("allocated", pos_w);
+  u3a_print_memory("volatile", caf_w);
+#endif
   u3a_print_memory("leaked", leq_w);
   u3a_print_memory("weaked", weq_w);
 
@@ -1446,7 +1531,7 @@ u3a_sweep(c3_c* cap_c)
 c3_w*
 u3a_slab(c3_w len_w)
 {
-  c3_w*       nov_w = u3a_walloc(len_w + c3_wiseof(u3a_atom));
+  c3_w*     nov_w = u3a_walloc(len_w + c3_wiseof(u3a_atom));
   u3a_atom* pug_u = (void *)nov_w;
 
   pug_u->mug_w = 0;
@@ -1494,17 +1579,17 @@ u3a_malt(c3_w* sal_w)
 u3_noun
 u3a_moot(c3_w* sal_w)
 {
-  c3_w*       nov_w = (sal_w - c3_wiseof(u3a_atom));
+  c3_w*     nov_w = (sal_w - c3_wiseof(u3a_atom));
   u3a_atom* nov_u = (void*)nov_w;
-  c3_w        len_w = nov_u->len_w;
-  c3_w        las_w = nov_u->buf_w[len_w - 1];
+  c3_w      len_w = nov_u->len_w;
+  c3_w      las_w = nov_u->buf_w[len_w - 1];
 
   c3_assert(0 != len_w);
   c3_assert(0 != las_w);
 
   if ( 1 == len_w ) {
     if ( _(u3a_is_cat(las_w)) ) {
-      u3a_wdrop(nov_w);
+      u3a_wfree(nov_w);
 
       return las_w;
     }
@@ -1569,7 +1654,7 @@ u3a_mint(c3_w* sal_w, c3_w len_w)
   /* See if we can free the slab entirely.
   */
   if ( len_w == 0 ) {
-    u3a_wdrop(nov_w);
+    u3a_wfree(nov_w);
 
     return 0;
   }
@@ -1577,7 +1662,7 @@ u3a_mint(c3_w* sal_w, c3_w len_w)
     c3_w low_w = nov_u->buf_w[0];
 
     if ( _(u3a_is_cat(low_w)) ) {
-      u3a_wdrop(nov_w);
+      u3a_wfree(nov_w);
 
       return low_w;
     }

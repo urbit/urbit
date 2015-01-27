@@ -12,6 +12,8 @@ Urbit is a new programming and execution environment designed from scratch. Any
 resemblance to existing languages or operating systems is coincidental,
 cosmetic, or inevitable.
 
+All of the source code is entirely in the public domain.
+
 Install
 -------------------
 
@@ -25,21 +27,24 @@ Urbit depends on:
     openssl
     automake
     autoconf
+    ragel
+    cmake
+    re2c
     libtool
     libssl-dev (Linux only)
     ncurses (Linux only)
 
 ####Ubuntu or Debian
 
-    sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++ ragel
+    sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++ ragel cmake re2c
 
 ####Fedora
 
-    sudo yum install gcc gcc-c++ git gmp-devel openssl-devel openssl ncurses-devel libsigsegv-devel ctags automake autoconf libtool
+    sudo yum install gcc gcc-c++ git gmp-devel openssl-devel openssl ncurses-devel libsigsegv-devel ctags automake autoconf libtool cmake re2c
 
 ####AWS
 
-    sudo yum --enablerepo epel install gcc git gmp-devel openssl-devel ncurses-devel libsigsegv-devel ctags automake autoconf libtool
+    sudo yum --enablerepo epel install gcc git gmp-devel openssl-devel ncurses-devel libsigsegv-devel ctags automake autoconf libtool cmake re2c
 
 ####OS X
 
@@ -414,7 +419,6 @@ One, coding.  Two, chatting.
 To start chatting, simply type
 
     ~waclux-tomwyc/try=> :chat
-
 
 and type `?` for the list of commands once `:chat` is running. 
 

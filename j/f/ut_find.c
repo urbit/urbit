@@ -229,7 +229,7 @@
           u3_noun q_yor = u3t(yor);
           u3_noun puq_hax, quq_hax;
           u3_noun puq_yor, quq_yor;
-          u3_noun ret;
+          u3_noun ret = 0;
 
           if ( u3_nul != q_hax ) {
             u3r_mean(q_hax, 6, &puq_hax, 7, &quq_hax, 0);
@@ -582,7 +582,7 @@
           u3_noun q_yor = u3t(yor);
           u3_noun puq_hax, quq_hax;
           u3_noun puq_yor, quq_yor;
-          u3_noun ret;
+          u3_noun ret = 0;
 
           if ( u3_nul != q_hax ) {
             u3r_mean(q_hax, 6, &puq_hax, 7, &quq_hax, 0);
