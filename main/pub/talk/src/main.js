@@ -24,24 +24,38 @@ module.exports = {
       station: station
     });
   },
+  setTyping: function(state) {
+    return MessageDispatcher.handleViewAction({
+      type: "messages-typing",
+      state: state
+    });
+  },
   getMore: function(station, start, end) {
     MessageDispatcher.handleViewAction({
       type: "messages-fetch"
     });
     return window.chat.MessagePersistence.get(station, start, end);
   },
-  sendMessage: function(station, message) {
-    var serial, _audi, _message;
+  sendMessage: function(station, message, audience) {
+    var k, serial, v, _audi, _message;
     serial = window.util.uuid32();
-    station = "~" + window.urb.ship + "/" + station;
+    if (station[0] !== "~") {
+      station = "~" + window.urb.ship + "/" + station;
+    }
+    if (audience.length === 0) {
+      audience.push(station);
+    }
     _audi = {};
-    _audi[station] = {
-      envelope: {
-        visible: true,
-        sender: null
-      },
-      delivery: "pending"
-    };
+    for (k in audience) {
+      v = audience[k];
+      _audi[v] = {
+        envelope: {
+          visible: true,
+          sender: null
+        },
+        delivery: "pending"
+      };
+    }
     _message = {
       ship: window.urb.ship,
       thought: {
@@ -85,6 +99,18 @@ module.exports = {
   switchStation: function(station) {
     return StationDispatcher.handleViewAction({
       type: "station-switch",
+      station: station
+    });
+  },
+  setAudience: function(audience) {
+    return StationDispatcher.handleViewAction({
+      type: "station-set-audience",
+      audience: audience
+    });
+  },
+  toggleAudience: function(station) {
+    return StationDispatcher.handleViewAction({
+      type: "station-audience-toggle",
       station: station
     });
   },
@@ -170,7 +196,7 @@ module.exports = recl({
 
 
 },{}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/components/MessagesComponent.coffee":[function(require,module,exports){
-var Member, Message, MessageActions, MessageStore, StationStore, div, input, moment, recl, textarea, _ref;
+var Member, Message, MessageActions, MessageStore, StationActions, StationStore, div, input, moment, recl, textarea, _ref;
 
 moment = require('moment-timezone');
 
@@ -183,6 +209,8 @@ MessageStore = require('../stores/MessageStore.coffee');
 StationStore = require('../stores/StationStore.coffee');
 
 MessageActions = require('../actions/MessageActions.coffee');
+
+StationActions = require('../actions/StationActions.coffee');
 
 Member = require('./MemberComponent.coffee');
 
@@ -203,15 +231,20 @@ Message = recl({
     return "~" + h + "." + m + "." + s;
   },
   render: function() {
-    var audi, name, pendingClass;
-    pendingClass = "received";
+    var audi, delivery, name, pendingClass;
+    delivery = _.uniq(_.pluck(this.props.thought.audience, "delivery"));
+    pendingClass = delivery.indexOf("received") !== -1 ? "received" : "pending";
+    if (pendingClass === "pending") {
+      console.log(this.props.thought);
+      console.log(delivery);
+    }
     name = this.props.name ? this.props.name : "";
     audi = _.remove(_.keys(this.props.thought.audience), (function(_this) {
       return function(stat) {
         return stat !== "~" + window.urb.ship + "/" + _this.props.station;
       };
     })(this));
-    audi = audi.join("");
+    audi = audi.join(" ");
     return div({
       className: "message " + pendingClass
     }, [
@@ -242,7 +275,9 @@ module.exports = recl({
       fetching: MessageStore.getFetching(),
       listening: MessageStore.getListening(),
       station: StationStore.getStation(),
-      stations: StationStore.getStations()
+      stations: StationStore.getStations(),
+      configs: StationStore.getConfigs(),
+      typing: MessageStore.getTyping()
     };
   },
   getInitialState: function() {
@@ -257,6 +292,14 @@ module.exports = recl({
       }
       this.lastLength = this.length;
       return MessageActions.getMore(this.state.station, this.state.last + 1, end);
+    }
+  },
+  setAudience: function() {
+    if (!this.last) {
+      return;
+    }
+    if (_.keys(this.last.thought.audience).length > 0 && this.state.typing === false && _.difference(_.keys(this.last.thought.audience), this.state.audi).length === 0) {
+      return StationActions.setAudience(_.keys(this.last.thought.audience));
     }
   },
   componentDidMount: function() {
@@ -292,16 +335,21 @@ module.exports = recl({
     return this.setState(this.stateFromStore());
   },
   render: function() {
-    var messages, station, _messages, _station;
+    var messages, sources, station, _messages, _ref1, _ref2, _station;
     station = this.state.station;
     _station = "~" + window.urb.ship + "/" + station;
+    sources = _.clone((_ref1 = (_ref2 = this.state.configs[this.state.station]) != null ? _ref2.sources : void 0) != null ? _ref1 : []);
+    sources.push(_station);
     _messages = _.filter(this.state.messages, function(_message) {
-      return _.keys(_message.thought.audience).indexOf(_station) !== -1;
+      var audience;
+      audience = _.keys(_message.thought.audience);
+      return _.intersection(sources, audience).length > 0;
     });
     _messages = _.sortBy(_messages, function(_message) {
       _message.pending = _message.thought.audience[station];
       return _message.thought.statement.time;
     });
+    this.last = _messages[_messages.length - 1];
     this.length = _messages.length;
     setTimeout((function(_this) {
       return function() {
@@ -324,7 +372,7 @@ module.exports = recl({
 
 
 
-},{"../actions/MessageActions.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/actions/MessageActions.coffee","../stores/MessageStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/components/MemberComponent.coffee","moment-timezone":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/node_modules/moment-timezone/index.js"}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/components/StationComponent.coffee":[function(require,module,exports){
+},{"../actions/MessageActions.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/actions/MessageActions.coffee","../actions/StationActions.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/actions/StationActions.coffee","../stores/MessageStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/components/MemberComponent.coffee","moment-timezone":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/node_modules/moment-timezone/index.js"}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/components/StationComponent.coffee":[function(require,module,exports){
 var Member, StationActions, StationStore, a, div, h1, input, recl, textarea, _ref;
 
 recl = React.createClass;
@@ -340,6 +388,7 @@ Member = require('./MemberComponent.coffee');
 module.exports = recl({
   stateFromStore: function() {
     return {
+      audi: StationStore.getAudience(),
       members: StationStore.getMembers(),
       station: StationStore.getStation(),
       stations: StationStore.getStations(),
@@ -362,6 +411,12 @@ module.exports = recl({
   componentWillUnmount: function() {
     return StationStore.removeChangeListener(this._onChangeStore);
   },
+  _toggleAudi: function(e) {
+    var $e, station;
+    $e = $(e.target).closest('.station');
+    station = $e.find('.path').text();
+    return StationActions.toggleAudience(station);
+  },
   _onChangeStore: function() {
     return this.setState(this.stateFromStore());
   },
@@ -370,7 +425,8 @@ module.exports = recl({
     if (e.keyCode === 13) {
       v = this.$input.val();
       if (this.state.configs[this.state.station].sources.indexOf(v) === -1) {
-        _sources = [v];
+        _sources = _.clone(this.state.configs[this.state.station].sources);
+        _sources.push(v);
         StationActions.setSources(this.state.station, _sources);
         return this.$input.val('');
       }
@@ -381,11 +437,12 @@ module.exports = recl({
     e.stopPropagation();
     e.preventDefault();
     _station = $(e.target).attr("data-station");
-    _sources = [_station];
-    return StationActions.setSources(this.state.station, [_station]);
+    _sources = _.clone(this.state.configs[this.state.station].sources);
+    _sources.slice(_sources.indexOf(_station), 1);
+    return StationActions.setSources(this.state.station, _sources);
   },
   render: function() {
-    var members, parts, sourceCtrl, sourceInput, sources, station, _remove;
+    var members, parts, sourceCtrl, sourceInput, sources, station, _remove, _sources;
     parts = [];
     members = [];
     if (this.state.station && this.state.members[this.state.station]) {
@@ -411,17 +468,31 @@ module.exports = recl({
     sources = [];
     if (this.state.station && this.state.configs[this.state.station]) {
       _remove = this._remove;
-      sources = _.map(this.state.configs[this.state.station].sources, function(source) {
-        return div({
-          className: "station"
-        }, [
-          div({}, source), div({
-            className: "remove",
-            onClick: _remove,
-            "data-station": source
-          }, "×")
-        ]);
-      });
+      _sources = _.clone(this.state.configs[this.state.station].sources);
+      _sources.push("twitter/hoontap");
+      sources = _.map(_sources, (function(_this) {
+        return function(source) {
+          var toggleClass;
+          toggleClass = "toggle ";
+          if (_this.state.audi.indexOf(source) !== -1) {
+            toggleClass += "active";
+          }
+          return div({
+            className: "station",
+            onClick: _this._toggleAudi
+          }, [
+            div({
+              className: toggleClass
+            }), div({
+              className: "path"
+            }, source), div({
+              className: "remove",
+              onClick: _remove,
+              "data-station": source
+            }, "×")
+          ]);
+        };
+      })(this));
     } else {
       sources = "";
     }
@@ -439,14 +510,16 @@ module.exports = recl({
       id: "members"
     }, members));
     parts.push(div({
+      id: "station-container"
+    }, div({
       id: "station-meta"
-    }, station));
+    }, station)));
     parts.push(div({
-      id: "sources"
+      id: "sources-container"
     }, [
-      sourceCtrl, div({
+      div({
         "class": "sources-list"
-      }, sources)
+      }, sources), sourceCtrl
     ]));
     return div({
       id: "station"
@@ -586,6 +659,7 @@ module.exports = recl({
   },
   stateFromStore: function() {
     return {
+      audi: StationStore.getAudience(),
       members: StationStore.getMembers(),
       typing: StationStore.getTyping(),
       station: StationStore.getStation()
@@ -600,10 +674,15 @@ module.exports = recl({
     }
   },
   _blur: function() {
+    MessageActions.setTyping(false);
     return this.typing(false);
   },
+  _focus: function() {
+    MessageActions.setTyping(true);
+    return this.typing(true);
+  },
   sendMessage: function() {
-    MessageActions.sendMessage(this.state.station, this.$writing.text());
+    MessageActions.sendMessage(this.state.station, this.$writing.text(), this.state.audi);
     this.$length.text("0/69");
     this.$writing.text('');
     this.set();
@@ -614,8 +693,6 @@ module.exports = recl({
       e.preventDefault();
       this.sendMessage();
       return false;
-    } else {
-      this.typing(true);
     }
     this._input();
     return this.set();
@@ -643,7 +720,7 @@ module.exports = recl({
       return false;
     }
   },
-  _focus: function() {
+  _setFocus: function() {
     return this.$writing.focus();
   },
   getTime: function() {
@@ -700,7 +777,7 @@ module.exports = recl({
     }
     return div({
       className: k,
-      onClick: this._focus
+      onClick: this._setFocus
     }, [
       div({
         className: "attr"
@@ -711,6 +788,7 @@ module.exports = recl({
       ]), div({
         id: "writing",
         contentEditable: true,
+        onFocus: this._focus,
         onBlur: this._blur,
         onInput: this._input,
         onPaste: this._input,
@@ -838,7 +916,7 @@ $(function() {
   $c = $('#c');
   clean = function() {
     React.unmountComponentAtNode($('#stations-container')[0]);
-    React.unmountComponentAtNode($('#station-container')[0]);
+    React.unmountComponentAtNode($('#station-parts-container')[0]);
     React.unmountComponentAtNode($('#writing-container')[0]);
     return React.unmountComponentAtNode($('#messages-container')[0]);
   };
@@ -857,9 +935,9 @@ $(function() {
       $d = $('#messaging-container');
       $d.append("<div id='messages-container'></div>");
       $d.append("<div id='writing-container'></div>");
-      $c.append("<div id='station-container'></div>");
+      $d.append("<div id='station-parts-container'></div>");
       $c.append("<div id='scrolling'>BOTTOM</div>");
-      rend(StationComponent({}, ""), $('#station-container')[0]);
+      rend(StationComponent({}, ""), $('#station-parts-container')[0]);
       rend(MessagesComponent({}, ""), $('#messages-container')[0]);
       return rend(WritingComponent({}, ""), $('#writing-container')[0]);
     }
@@ -5220,7 +5298,7 @@ module.exports = {
 
 
 },{"../actions/StationActions.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/actions/StationActions.coffee"}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/stores/MessageStore.coffee":[function(require,module,exports){
-var EventEmitter, MessageDispatcher, MessageStore, moment, _fetching, _last, _listening, _messages, _station;
+var EventEmitter, MessageDispatcher, MessageStore, moment, _fetching, _last, _listening, _messages, _station, _typing;
 
 moment = require('moment-timezone');
 
@@ -5237,6 +5315,8 @@ _last = null;
 _station = null;
 
 _listening = [];
+
+_typing = false;
 
 MessageStore = _.merge(new EventEmitter, {
   removeChangeListener: function(cb) {
@@ -5266,6 +5346,12 @@ MessageStore = _.merge(new EventEmitter, {
   },
   getListening: function() {
     return _listening;
+  },
+  getTyping: function() {
+    return _typing;
+  },
+  setTyping: function(state) {
+    return _typing = state;
   },
   setListening: function(station) {
     if (_listening.indexOf(station) !== -1) {
@@ -5320,6 +5406,10 @@ MessageStore.dispatchToken = MessageDispatcher.register(function(payload) {
       MessageStore.setListening(action.station);
       MessageStore.emitChange();
       break;
+    case 'messages-typing':
+      MessageStore.setTyping(action.state);
+      MessageStore.emitChange();
+      break;
     case 'messages-fetch':
       MessageStore.setFetching(true);
       MessageStore.emitChange();
@@ -5344,11 +5434,13 @@ module.exports = MessageStore;
 
 
 },{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js","moment-timezone":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/node_modules/moment-timezone/index.js"}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/stores/StationStore.coffee":[function(require,module,exports){
-var EventEmitter, StationDispatcher, StationStore, _config, _listening, _members, _station, _stations, _typing;
+var EventEmitter, StationDispatcher, StationStore, _audience, _config, _listening, _members, _station, _stations, _typing;
 
 EventEmitter = require('events').EventEmitter;
 
 StationDispatcher = require('../dispatcher/Dispatcher.coffee');
+
+_audience = [];
 
 _members = {};
 
@@ -5371,6 +5463,19 @@ StationStore = _.merge(new EventEmitter, {
   },
   addChangeListener: function(cb) {
     return this.on('change', cb);
+  },
+  getAudience: function() {
+    return _audience;
+  },
+  setAudience: function(audience) {
+    return _audience = audience;
+  },
+  toggleAudience: function(station) {
+    if (_audience.indexOf(station) !== -1) {
+      return _audience.splice(_audience.indexOf(station), 1);
+    } else {
+      return _audience.push(station);
+    }
   },
   loadConfig: function(station, config) {
     return _config[station] = config;
@@ -5462,7 +5567,16 @@ StationStore.dispatchToken = StationDispatcher.register(function(payload) {
   var action;
   action = payload.action;
   switch (action.type) {
+    case 'station-audience-toggle':
+      StationStore.toggleAudience(action.station);
+      StationStore.emitChange();
+      break;
+    case 'station-set-audience':
+      StationStore.setAudience(action.audience);
+      StationStore.emitChange();
+      break;
     case 'station-switch':
+      StationStore.setAudience([]);
       StationStore.setStation(action.station);
       StationStore.emitChange();
       break;
