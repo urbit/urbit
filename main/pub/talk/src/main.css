@@ -139,8 +139,11 @@ body {
   width: 8rem;
   margin-bottom: 0.3rem;
   cursor: pointer;
-  text-transform: capitalize;
   font-weight: 200;
+}
+#stations .station {
+  display: block;
+  width: 24rem;
 }
 .station .name {
   border-bottom: 6px solid transparent;
@@ -274,7 +277,7 @@ body {
   margin: 0;
   font-weight: 200;
   font-size: 2rem;
-  text-transform: capitalize;
+  text-transform: lowercase;
 }
 input.join {
   font-size: 4rem;
@@ -298,6 +301,7 @@ input.join:focus::-webkit-input-placeholder {
 }
 a.up {
   height: 2rem;
+  margin-top: 0.6rem;
   vertical-align: middle;
   display: inline-block;
 }
