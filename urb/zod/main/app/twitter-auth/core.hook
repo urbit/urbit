@@ -3,24 +3,31 @@
 !:
 |_  [hide vat=wain]
 ++  prompts  
-  `(list cord)`~['App token: ' 'App secret: ' 'User token: ' 'User secret: ' '']
+  ^-  wain
+  :~  'User: '
+      'App token: '
+      'App secret: '
+      'User token: '
+      'User secret: '
+      ''
+  ==
 ++  peek  ,_prompt/[(snag (lent vat) prompts) %text '']
 ++  posh-txt
   |=  [@ * p=cord] 
   =.  vat  [p vat]
-  ?.  =(4 (lent vat))  `+>.$
+  ?.  =(5 (lent vat))  `+>.$
   %.(+< (add-exit ,_`+>.$))
 ::
 ++  part
   =.  vat  (flop vat)                 ::  put into order of entry
-  ?.  ?=([@ @ @ @ ~] vat)
+  ?.  ?=([@ @ @ @ @ ~] vat)
     ~|([%keys-missing vat] !!)
-  =+  =<  aut=[[ctok csec] atok asec]
-      `[ctok=cord csec=cord atok=cord asec=cord ~]`vat
+  =+  =<  aut=[acc %auth [ctok csec] atok asec]
+      `[acc=span ctok=cord csec=cord atok=cord asec=cord ~]`vat
   |=  ost=bone 
   :_  ~
   :^  ost  %pass  /out 
-  [%g %mess serv our %twit-do !>([%auth aut])]
+  [%g %mess serv our %twit-do !>(aut)]
 ::
 ++  poke--args  (listen-in . (add-nice ,_`.))
 ++  serv  [our /twit]

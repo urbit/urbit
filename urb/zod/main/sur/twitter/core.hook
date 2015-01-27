@@ -1,5 +1,6 @@
 |%
-++  twit-do
+++  twit-do  ,[p=span q=command]                        ::  user and action
+++  command                                             ::  poke action
   $%  [%auth p=keys]                                    ::  set API keys
       [%post p=@uvI q=cord]                             ::  post a tweet
   ==
