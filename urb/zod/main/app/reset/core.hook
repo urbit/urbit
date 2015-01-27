@@ -1,0 +1,38 @@
+::  Reset: recompile arvo, from hoon/hoon up
+!:
+::::
+  ::
+|_  [hid=hide ~]
+++  peer  ,_`.
+++  poke-reset-args
+  |=  [ost=bone you=ship arg=$|(~ [_| ~])]
+  :_  +>.$
+  =+  top=`path`/(scot %p our.hid)/arvo/(scot %da lat.hid)
+  :^    [ost %give %nice ~]
+      [ost %pass ?~(arg /refresh /) %t %wait lat.hid]
+    [ost %give %vega (weld top `path`/hoon)]
+  %+  turn
+    ^-  (list ,[p=@tas q=@tas])
+    :~  [%$ %zuse]
+        [%a %ames]
+        [%c %clay]
+        [%d %dill]
+        [%e %eyre]
+        [%f %ford]
+        [%g %gall]
+        [%t %time]
+    ==
+  |=  [p=@tas q=@tas]
+  =+  pax=`path`(welp top /[q])
+  =+  txt=((hard ,@) .^(%cx (welp pax /hoon)))
+  [ost %give %veer p pax txt]
+++  pour
+  |=  [ost=bone pax=path *]
+  :_  +>.$  
+  ?~  pax  ~
+  :_  ~
+  =+  paf=/(scot %p our.hid)/=/(scot %da lat.hid)/==count/txt
+  =+  nuf=(file paf)
+  =+  num=?~(nuf 0 +((fall (slaw %ud (,@t u.nuf)) 0)))
+  [ost %pass /touch %c %info our.hid (foal paf num)]
+--

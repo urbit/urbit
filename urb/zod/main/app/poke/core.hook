@@ -1,0 +1,30 @@
+::  Poke path [mark *] || Poke ship path [mark *]. Send message to an app.
+!:
+::::
+  ::
+|_  [hide ~]
+++  mess  ,[p=path q=[@ *] ~]
+++  pock-poke-args
+  |=  [ost=bone @ a=type b=?(mess [her=ship mess])]
+  =-  :_(+>.$ [ost %pass / %g %mess -]~)
+  ^-  [p=[ship path] q=ship r=cage]
+  ?^  |2.b  [[her p]:b our -.q.b (slot 29 [a b])]       ::  +.&3
+  [[our p.b] our -.q.b (slot 13 [a b])]                 ::  +.&2
+::
+++  pour
+  |=  [ost=bone * sih=*]
+  ~&  =+  cod=(,[term term] [&1 &2]:sih)
+      ?+  +.cod  poke-resp/cod
+        %nice  %poke-nice
+        %mean  
+          =+  are=((soft ares) |2.sih)
+          ?~  are  %poke-mean
+          ?~  u.are  %poke-nil-mean
+          ~&  >  p.u.u.are
+          |-
+          ?~  q.u.u.are  %poke-mean
+          ~>  %slog.`rose/[~ "! " ~]^[i.q.u.u.are]~
+          $(q.u.u.are t.q.u.u.are)
+      ==
+  :_(+> [ost %pass / %g %cide %$]~)
+--

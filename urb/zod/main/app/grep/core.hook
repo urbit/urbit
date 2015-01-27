@@ -10,6 +10,8 @@
 --
 ::
 !:
+::::
+  ::
 |_  [hid=hide arg=cord]
 ++  poke-grep-args
   |=  [ost=bone you=ship arg=cord ~]
@@ -29,7 +31,7 @@
       %nice
     [ost %give %nice ~]~
       %rush
-    %+  weld  (spam %rush %prompt 'searching for {<arg>}...')
+    %+  weld  (spam %rush %prompt 'searching for {<arg>}...' %text ~)
     %-  spam
     ?-  &3.sih
         %txt

@@ -121,7 +121,7 @@ u3_unix_acquire(c3_c* pax_c)
   FILE* loq_u;
 
   if ( NULL != (loq_u = fopen(paf_c, "r")) ) {
-    if ( 1 != fscanf(loq_u, "%u", &pid_w) ) {
+    if ( 1 != fscanf(loq_u, "%" SCNu32, &pid_w) ) {
       uL(fprintf(uH, "lockfile %s is corrupt!\n", paf_c));
       kill(getpid(), SIGTERM);
       sleep(1); c3_assert(0);
@@ -821,6 +821,10 @@ _unix_dir_ankh(u3_udir* dir_u)
     // uL(fprintf(uH, "dir %s\n", u3r_string(pre)));
     if ( 0 != u3h(ank) ) {
       pam = u3kdb_put(pam, pre, ank);
+    }
+    else
+    {
+      u3z(ank);
     }
   }
 

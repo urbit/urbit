@@ -1,11 +1,18 @@
 ::
 ::  zuse (3), standard library (tang)   
 ::
+~%  %zuse  +  ~
 |%
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::
 ::::              chapter 3b, Arvo libraries            ::::
 ::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bA, lite number theory       ::
+::
+++  dope
+  ~/  %dope
+  |=  a=@
+  ~&  [%dope-zuse (mug +>)]
+  :(mul a a a)
 ::
 ++  fu                                                  ::  modulo (mul p q)
   |=  a=[p=@ q=@]
@@ -415,31 +422,46 @@
       " "  "+0000"
   ==
 ::
-++  stud                                                ::  parse UTC format
-  |=  cud=tape
-  ^-  (unit date)
-  =-  ?~  tud  ~ 
-      `[[%.y &3.u.tud] &2.u.tud &1.u.tud &4.u.tud &5.u.tud &6.u.tud ~]
-  ^=  tud
-  %+  rust  cud
-  ;~  plug
-    ;~(pfix (stun [5 5] next) dim:ag)
+++  stud    !:                                            ::  parse UTC format
+  =<  |=  a=cord                                        ::  expose parsers
+      %+  biff  (rush a (more sepa elem))
+      |=  b=(list ,_(wonk *elem))  ^-  (unit date)
+      =-  ?.((za:jo -) ~ (some (zp:jo -)))
+      ^+  =+  [*date u=unit]
+          *[(u ,_[a y]) (u ,_m) (u ,_d.t) (u ,_+.t) ~]
+      :~                                                ::  XX  types
+          |-(?~(b ~ ?.(?=(%y -.i.b) $(b t.b) `+.i.b)))
+          |-(?~(b ~ ?.(?=(%m -.i.b) $(b t.b) `+.i.b)))
+          |-(?~(b ~ ?.(?=(%d -.i.b) $(b t.b) `+.i.b)))
+          |-(?~(b ~ ?.(?=(%t -.i.b) $(b t.b) `+.i.b)))
+      ==
+  |%
   ::
-    %+  cook
-      |=  a=tape
-      =+  b=0
-      |-  ^-  @
-      ?:  =(a (snag b (turn mon:yu |=(a=tape (scag 3 a)))))
-          +(b)
-      $(b +(b))
-    (ifix [ace ace] (star alf))
+  ++  snug
+    |=  a=wall
+    |=  b=tape
+    =+  [pos=1 len=(lent b)]
+    |-  ^-  (unit ,@u)
+    ?~  a  ~
+    ?:  =(b (scag len i.a))
+      `pos
+    $(pos +(pos), a t.a)
   ::
-    ;~(sfix dim:ag ace)  
-    ;~(sfix dim:ag col)
-    ;~(sfix dim:ag col)  
-    dim:ag  
-    (cold ~ (star next))
-  ==
+  ::
+  ++  sepa  ;~(pose ;~(plug com (star ace)) (plus ace))
+  ++  elem
+    ;~  pose 
+      (stag %t t)  (stag %y y)  (stag %m m)  (stag %d d)
+      (stag %w w)  (stag %z z)
+    == 
+  ::
+  ++  y  (stag %& (bass 10 (stun 3^4 dit)))
+  ++  m  (sear (snug mon:yu) (plus alf))
+  ++  d  (bass 10 (stun 1^2 dit))
+  ++  t  [;~(plug - - + (easy ~))]:[;~(sfix d col) d]
+  ++  w  (sear (snug wik:yu) (plus alf))
+  ++  z  [;~(plug (mask "-+") . .)]:(bass 10 (stun 2^2 dit))
+  --
 ::
 ++  unt                                                 ::  UGT to UTC time
   |=  a=@
@@ -502,19 +524,18 @@
   ==
 ::
 ++  poja                                                ::  parse JSON
-  =<  |=(a=cord (rush a apex))
+  =<  |=(a=cord `(unit json)`(rush a apex))
   |%
   ++  apex                                              ::  JSON value
     %+  knee  *json  |.  ~+
-    ;~  pfix  spac
-      ;~  pose
-        (cold ~ (jest 'null'))
-        (stag %b bool)
-        (stag %s stri)
-        (cook |=(s=tape [%n p=(rap 3 s)]) numb)
-        abox
-        obox
-      ==
+    %+  ifix  [spac spac]
+    ;~  pose
+      (cold ~ (jest 'null'))
+      (stag %b bool)
+      (stag %s stri)
+      (cook |=(s=tape [%n p=(rap 3 s)]) numb)
+      abox
+      obox
     ==
   ++  tops  ;~(pose abox obox)                          ::  JSON strict
   ::  JSON arrays
@@ -619,13 +640,16 @@
     =+  man=`mane`n.g.mex
     =.  unq  |(unq =(%script man) =(%style man))
     =+  tam=(name man)
-    =.  rez  :(weld "</" tam ">" rez)
     =+  att=`mart`a.g.mex
     :-  '<'
     %+  welp  tam
-    =.  rez  ['>' (many c.mex rez)]
-    ?~(att rez [' ' (attr att rez)])
-  ::
+    =-  ?~(att rez [' ' (attr att rez)])
+    ^-  rez=tape
+    ::?~  c.mex
+    ::  [' ' '/' '>' rez]
+    :-  '>'
+    (many c.mex :(weld "</" tam ">" rez))
+  ::  ::
   ++  attr                                              ::  attributes to tape
     |=  [tat=mart rez=tape]
     ^-  tape
@@ -670,17 +694,17 @@
 ::
 ++  poxa                                                ::  xml parser
   =<  |=(a=cord (rush a apex))
-  |%
+  |_  ent=_`(map term ,@t)`[[%apos '\''] ~ ~]
   ++  apex
     =+  spa=;~(pose comt whit)
     %+  knee  *manx  |.  ~+
     %+  ifix  [(star spa) (star spa)]
     ;~  pose
       %+  sear  |=([a=marx b=marl c=mane] ?.(=(c n.a) ~ (some [a b])))
-        ;~(plug head (more (star comt) ;~(pose apex chrd)) tail)
+        ;~(plug head many tail)
       empt
     == 
-  :: 
+  ::
   ++  attr                                              ::  attributes
     %+  knee  *mart  |.  ~+ 
     %-  star
@@ -696,7 +720,7 @@
   ::
   ++  chrd                                              ::  character data
     %+  cook  |=(a=tape ^-(mars :/(a)))
-    (plus ;~(less soq doq ;~(pose (just `@`10) escp)))
+    (plus ;~(less doq ;~(pose (just `@`10) escp)))
   ::
   ++  comt                                              ::  comments 
     =-  (ifix [(jest '<!--') (jest '-->')] (star -))
@@ -705,22 +729,29 @@
       whit
       ;~(less (jest '-->') hep)
     ==
-  ::
-  ++  escp
+  :: 
+  ++  escp  ;~(pose ;~(less gal gar pam prn) enty)
+  ++  enty                                              ::  entity
+    %+  ifix  pam^sem
     ;~  pose
-      ;~(less gal gar pam prn)
-      (cold '>' (jest '&gt;'))
-      (cold '<' (jest '&lt;'))
-      (cold '&' (jest '&amp;'))
-      (cold '"' (jest '&quot;'))
-      (cold '\'' (jest '&apos;'))
+      =+  def=`_ent`(mo [%gt '>'] [%lt '<'] [%amp '&'] [%quot '"'] ~)
+      %+  sear  ~(get by (~(uni by def) ent))
+      (cook crip ;~(plug alf (stun 1^31 aln)))
+      %+  cook  |=(a=@c ?:((gth a 0x10.ffff) '�' (tuft a)))
+      =<  ;~(pfix hax ;~(pose - +))
+      :-  (bass 10 (stun 1^8 dit))
+      (bass 16 ;~(pfix (mask "xX") (stun 1^8 hit)))
     ==
+  ::
   ++  empt                                              ::  self-closing tag
     %+  ifix  [gal (jest '/>')]
     ;~(plug ;~(plug name attr) (cold ~ (star whit)))
   ::
   ++  head                                              ::  opening tag
     (ifix [gal gar] ;~(plug name attr))
+  ::
+  ++  many
+    (more (star comt) ;~(pose apex chrd))
   ::
   ++  name                                              ::  tag name 
     =+  ^=  chx
@@ -769,6 +800,11 @@
   ++  bu                                                ::  boolean not
     |=(jon=json ?.(?=([%b *] jon) ~ [~ u=!p.jon]))
   ::
+  ++  ci                                                ::  maybe transform
+    |*  [poq=$+(* *) wit=fist]
+    |=  jon=json
+    (biff (wit jon) poq)
+  ::
   ++  cu                                                ::  transform
     |*  [poq=$+(* *) wit=fist]
     |=  jon=json
@@ -777,7 +813,7 @@
   ++  da                                                ::  UTC date
     |=  jon=json
     ?.  ?=([%s *] jon)  ~
-    (bind (stud (trip p.jon)) |=(a=date (year a)))
+    (bind (stud p.jon) |=(a=date (year a)))
   ::
   ++  di                                                ::  millisecond date
     %-  cu  :_  ni
@@ -834,6 +870,18 @@
     ?.  ?=([%o *] jon)  ~
     (zm (~(run by p.jon) wit))
   ::
+  ++  op                                                ::  parse keys of map
+    |*  [fel=_rule wit=fist]
+    %+  cu  mo
+    %-  ci  :_  (om wit)
+    |=  a=(map cord ,_(need *wit))
+    ^-  (unit (list ,_[(wonk *fel) (need *wit)]))
+    =-  (zl (turn (~(tap by a)) -))
+    |*  [a=cord b=*]
+    =+  nit=(rush a fel) 
+    ?~  nit  ~
+    (some [u.nit b])
+  ::
   ++  pe                                                ::  prefix
     |*  [pre=* wit=fist]
     (cu |*(a=* [pre a]) wit)
@@ -878,7 +926,7 @@
   ::
   ++  zm                                                ::  collapse unit map
     |*  lum=(map term (unit))
-    ?:  (~(rep by lum) | |=([[@ a=(unit)] b=?] |(b ?=(~ a))))
+    ?:  (~(rep by lum) |=([[@ a=(unit)] b=_|] |(b ?=(~ a))))
       ~
     (some (~(run by lum) need))
   --
@@ -904,6 +952,11 @@
   :-  %n
   ?:  =(0 a)  '0'
   (crip (flop |-(^-(tape ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])))))
+::
+++  jode                                                ::  ms timestamp
+  |=  a=time 
+  =-  (jone (div (mul - 1.000) ~s1))
+  (add (div ~s1 2.000) (sub a ~1970.1.1))
 ::
 ++  jesc
   |=  a=@  ^-  tape
@@ -961,10 +1014,6 @@
   =+  buf=(rap 3 (turn wol |=(a=tape (crip (weld a `tape`[`@`10 ~])))))
   [(met 3 buf) buf]
 ::
-::
-++  txml                                                ::  string to xml
-    |=  tep=tape  ^-  mars
-    [[%$ [%$ tep] ~] ~]
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, tree sync                ::
 ::
@@ -1968,11 +2017,6 @@
       ==
   [p.one [%& [*cart (weld q.q.q.one q.q.q.two)]]]
 ::
-++  meat                                                ::  kite to .^ path
-  |=  kit=kite
-  ^-  path
-  [(cat 3 'c' p.kit) (scot %p r.kit) s.kit (scot `dime`q.kit) t.kit]
-::
 ++  tame                                                ::  parse kite path
   |=  hap=path
   ^-  (unit kite)
@@ -2028,16 +2072,6 @@
   ?~  raf
     [~ [i.rax ~]]
   [q.u.raf [p.u.raf ~]]
-::
-++  fain                                                ::  path restructure
-  |=  [hom=path raw=path]
-  =+  bem=(need (tome raw))
-  =+  [mer=(flop s.bem) moh=(flop hom)]
-  |-  ^-  (pair beam path)
-  ?~  moh
-    [bem(s hom) (flop mer)]
-  ?>  &(?=(^ mer) =(i.mer i.moh))
-  $(mer t.mer, moh t.moh)
 ::
 ++  fuel                                                ::  parse fcgi
   |=  [bem=beam but=path]
@@ -2144,7 +2178,7 @@
     |=  har=hart
     ^-  tape
     ;:  weld
-      ?:(&(p.har !=([& /localhost] r.har)) "https://" "http://")
+      ?:(&(p.har !?=(hoke r.har)) "https://" "http://")
     ::
       ?-  -.r.har
         |  (trip (rsh 3 1 (scot %if p.r.har)))
@@ -2172,7 +2206,7 @@
   --
 ::
 ++  epur                                                ::  url/header parser
-  =<  |=(a=cord (rush a auri))
+  =<  |=(a=cord `(unit purl)`(rush a auri))
   |%
   ++  apat                                              ::  2396 abs_path
     %+  cook  deft
@@ -2180,7 +2214,7 @@
   ++  auri                                              ::  2396 URL
     %+  cook
       |=  a=purl
-      ?.(=([& /localhost] r.p.a) a a(p.p &))
+      ?.(?=(hoke r.p.a) a a(p.p &))
     ;~  plug
       ;~  plug
         %+  sear
@@ -2615,6 +2649,14 @@
   ?:  ?=(| -.mud)  mud
   (mule |.((slam p.mud sam)))
 ::
+++  pack                                                ::  light path encoding
+  |=  [a=term b=path]  ^-  span
+  %+  rap  3  :-  (wack a)
+  (turn b |=(c=span (cat 3 '_' (wack c))))
+::
+++  pick                                                ::  light path decoding
+  =+  fel=(most cab (sear wick urt:ab))
+  |=(a=span `(unit ,[p=term q=path])`(rush a fel))
 ++  saxo                                                ::  autocanon
   |=  who=ship
   ^-  (list ship)
@@ -2665,7 +2707,6 @@
               q=(unit ,[p=cash q=*])                    ::  file
               r=(map ,@ta ankh)                         ::  folders
           ==                                            ::
-++  ankz  ,[p=@ (map ,@ta ankz)]                        ::  trimmed ankh
 ++  apex  ,[p=@uvI q=(map ,@ta ,@uvI) r=(map ,@ta ,~)]  ::  node report (old)
 ++  ares  (unit ,[p=term q=(list tank)])                ::  possible error
 ++  ball  ,@uw                                          ::  statement payload
@@ -2796,7 +2837,6 @@
               ton=town                                  ::  security
               zac=(map ship corn)                       ::  flows by server
           ==                                            ::
-++  frog  ,[p=@da q=nori]                               ::  time and change
 ++  gank  (each vase (list tank))                       ::  abstract result
 ++  gift                                                ::  one-way effect
           $%  [%$ p=vase]                               ::  trivial output
@@ -2888,6 +2928,8 @@
 ++  hoot  ,[p=? q=(unit ,@ud) r=host]                   ::  secure/port/host
 ++  hort  ,[p=(unit ,@ud) q=host]                       ::  http port/host
 ++  host  $%([& p=(list ,@t)] [| p=@if])                ::  http host
+++  hoke  %+  each   ,[%localhost ~]                    ::  local host
+          ?(%.0.0.0.0 %.127.0.0.1)                      ::
 ++  httq                                                ::  raw http request
           $:  p=meth                                    ::  method
               q=@t                                      ::  unparsed url
@@ -2907,11 +2949,7 @@
               [%b p=?]                                  ::  boolean
               [%o p=(map ,@t json)]                     ::  object
               [%n p=@ta]                                ::  number
-              [%s p=@ta]                                ::  string
-          ==                                            ::
-++  jsot                                                ::  strict json top
-          $%  [%a p=(list json)]                        ::  array
-              [%o p=(map ,@t json)]                     ::  object
+              [%s p=@t]                                 ::  string
           ==                                            ::
 ++  lamb                                                ::  short path
           $%  [& p=@tas]                                ::  auto
@@ -2942,10 +2980,8 @@
               [%wan p=wain]                             ::  text lines
               [%zap p=@ud q=(list tank)]                ::  status/error
           ==                                            ::
-++  luge  ,[p=mark q=*]                                 ::  fully typed content
 ++  maki  ,[p=@ta q=@ta r=@ta s=path]                   ::
 ++  mace  (list ,[p=life q=ring])                       ::  private secrets
-++  marv  ?(%da %tas %ud)                               ::  release form
 ++  math  (map ,@t (list ,@t))                          ::  semiparsed headers
 ++  meal                                                ::  payload
           $%  [%back p=cape q=flap r=@dr]               ::  acknowledgment
@@ -3107,7 +3143,6 @@
 ++  step  ,[p=bray q=gens r=pass]                       ::  identity stage
 ++  tako  ,@                                            ::  yaki ref
 ++  tart  $+([@da path note] bowl)                      ::  process core
-++  taxi  ,[p=lane q=rock]                              ::  routed packet
 ++  tick  ,@ud                                          ::  process id
 ++  toro  ,[p=@ta q=nori]                               ::  general change
 ++  town                                                ::  all security state
@@ -3132,6 +3167,5 @@
               [%chan (list $|(@ud [p=@ud q=@ud]))]      ::
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action
 ++  will  (list deed)                                   ::  certificate
-++  worm  ,*                                            ::  vase of tart
-++  zuse  %314                                          ::  hoon/zuse kelvin
+++  zuse  %310                                          ::  hoon/zuse kelvin
 --

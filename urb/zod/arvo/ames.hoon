@@ -322,7 +322,7 @@
         0w2g.gLmg4.MtrHQ.A5VmH.WPk6G  ::  150, ~ryg, Dan Haffey (fortuna)
         0w0                           ::  151, ~ryx, Tlon (gleba)
         0w0                           ::  152, ~fep, Tlon (gleba)
-        0w3q.4RDyP.CTcbc.ZX4Hj.BH6Hu  ::  153, ~tyr, ~hobmed-hinrym (fidelis)
+        0w2j.T1u2s.BfXjV.ldOGR.aiZrQ  ::  153, ~tyr, ~hobmed-hinrym (fidelis)
         0w0                           ::  154, ~tus, Tlon (gleba)
         0w0                           ::  155, ~tyc, Tlon (gleba)
         0w0                           ::  156, ~leg, Tlon (gleba)
@@ -440,7 +440,7 @@
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
-    ?>  =(4 vez)
+    ?>  =(0 vez)
     ?>  =(chk (end 0 20 (mug bod)))
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
@@ -460,7 +460,7 @@
     =+  tay=(ksin q.kec)
     %+  mix
       %+  can  0
-      :~  [3 4]
+      :~  [3 0]
           [20 (mug bod)]
           [2 yax]
           [2 qax]
@@ -545,11 +545,6 @@
           =+  dyv=(~(get by qim.caq.dur) had)
           ?~  dyv  ~
           [~ u.dyv ..kuch]
-        ::
-        ++  trox                                        ::    trox:lax:as:go
-          |=  [now=@da]                                 ::  expire by date
-          ^+  +>
-          +>    ::  XX
         ::
         ++  wasc                                        ::    wasc:lax:as:go
           |=  key=code                                  ::  hear foreign code
@@ -1048,7 +1043,7 @@
     ++  gnaw                                            ::    gnaw:am
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
-      ?.  =(4 (end 0 3 pac))  [~ fox]
+      ?.  =(0 (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
       ?:  (goop p.p.kec)  [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
@@ -1096,7 +1091,8 @@
     ++  rack                                            ::    rack:am
       |=  [soq=sock cha=path cop=coop]                  ::  e2e ack
       =+  oh=(ho:(um p.soq) q.soq)
-      =.  oh  (cook:oh cop cha ~)
+      =^  gud  oh  (cook:oh cop cha ~)
+      ?.  gud  oh
       (cans:oh cha)
     ::
     ++  wake                                            ::    wake:am
@@ -1170,11 +1166,14 @@
         ::
         ++  cook                                        ::    cook:ho:um:am
           |=  [cop=coop cha=path ram=(unit ,[ryn=lane dam=flap])]
-          ^+  +>                                        ::  acknowledgment
+          ^-  [gud=? con=_+>]                           ::  acknowledgment
           ::  ~&  [%cook cop num cha ram]
           =+  rum=(need (~(get by raz.bah) cha))
           =+  lat=(~(get by mis.rum) did.rum)
-          ?:  &(?=(~ lat) ?=(~ ram))  ~&(%ack-late-or-redundant +>.$)
+          ?:  &(?=(~ lat) ?=(~ ram))
+            ~&  %ack-late-or-redundant
+            [%| +>.$]
+          :-  %&
           =+  ^-  [ryn=lane dam=flap]
               ?^  ram  [ryn.u.ram dam.u.ram]
               ?<  ?=(~ lat)
@@ -1322,7 +1321,7 @@
                 +>
               ?.  (gte num did.rum)                     ::  always ack a dup
                 ::  ~&  [%deer-1 num]
-                (cook (~(get by bum.rum) num) cha ~ ryn dam)
+                con:(cook (~(get by bum.rum) num) cha ~ ryn dam)
               ?:  dod.rum
                 ::  ~&  [%deer-2 num]
                 (coat cha rum(mis (~(put by mis.rum) num [kay ryn dam dut])))
@@ -1701,19 +1700,20 @@
         ?>  ?=([@ @ *] t.q.q.bon)
         :_  fox
         =+  [cak=i.t.q.q.bon ven=i.t.t.q.q.bon]
-        :~  =+  neh=(claw p.p.bon)
-            ?>  ?=(^ neh)
-            =+  ton=[%waft p.bon r.bon]
-            ::  ~&  [%milk-waft [[ven `path`t.t.t.q.q.bon] t.neh]]
-            :-  ?:  =(%c ven)
-                  ?>  =(%re cak)
-                  [[%c `path`t.t.t.q.q.bon] hen]
-                ?:  =(%e ven)
-                  ?>  |(=(%pr cak) =(%pc cak))
-                  [[%e `path`t.t.t.q.q.bon] hen]
-                [[ven `path`t.t.t.q.q.bon] t.neh]
-            [%sick ton]
-        ==
+        :_  ~
+        =+  neh=(claw p.p.bon)
+        ?>  ?=(^ neh)
+        ?:  ?=(%e ven)
+          ?>  |(=(%pr cak) =(%pc cak))
+          :_  [%sick %wart p.bon cak `path`t.t.t.q.q.bon r.bon]
+          [[%e `path`t.t.t.q.q.bon] hen]
+        =+  ton=[%waft p.bon r.bon]
+        ::  ~&  [%milk-waft [[ven `path`t.t.t.q.q.bon] t.neh]]
+        :_  [%sick ton]
+        ?:  =(%c ven)
+          ?>  =(%re cak)
+          [[%c `path`t.t.t.q.q.bon] hen]
+        [[ven `path`t.t.t.q.q.bon] t.neh]
       ?>  ?=(%q i.q.q.bon)
       ?>  ?=([@ *] t.q.q.bon)
       ?+    i.t.q.q.bon
@@ -1755,7 +1755,7 @@
         %+  turn  paz
         |=  him=ship
         :-  hen
-        [%pass /ye %g %mess [him ye/~] p.p.bon [%txt !>(;;(,@t r.bon))]]
+        [%pass /ye %g %mess [him ye/~] p.p.bon [%txt !>(((hard ,@t) r.bon))]]
       ==
     ::
         %mulk
@@ -1768,6 +1768,7 @@
         :~  :-  (claw p.p.bon)
             [%sick %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
         ==
+      ::
           %ge                                         ::  %gall request
         =*  imp  t.t.q.q.bon
         ?>  (levy imp (sane %ta))
@@ -1776,6 +1777,7 @@
               (scot %p q.p.bon)
             q.q.bon
         :_  fox  [hen %pass pax %g %rote p.bon imp r.bon]~
+      ::
           %gh                                         ::  %gall response
         =*  imp  t.t.q.q.bon
         ?>  (levy imp (sane %ta))

@@ -59,7 +59,7 @@ u3_sist_pack(c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
     c3_assert(0);
   }
 #if 0
-  uL(fprintf(uH, "sist_pack: write %llu, %llu: lar ent %llu, len %d, mug %x\n",
+  uL(fprintf(uH, "sist_pack: write %" PRIu64 ", %" PRIu64 ": lar ent %" PRIu64 ", len %d, mug %x\n",
                  lug_u->len_d,
                  tar_d,
                  lar_u.ent_d,
@@ -612,7 +612,7 @@ _sist_zest()
     u3_uled led_u;
 
     led_u.mag_l = u3r_mug('g');
-    led_u.kno_w = 164;
+    led_u.kno_w = 163;
 
     if ( 0 == u3A->key ) {
       led_u.key_l = 0;
@@ -813,7 +813,7 @@ _sist_rest()
   c3_d        old_d = u3A->ent_d;
   c3_d        las_d = 0;
   u3_noun     roe = u3_nul;
-  u3_noun     sev_l, tno_l, key_l, sal_l;
+  u3_noun     sev_l, key_l, sal_l;
   u3_noun     ohh = c3n;
 
   if ( 0 != u3A->ent_d ) {
@@ -871,17 +871,16 @@ _sist_rest()
       u3_lo_bail();
     }
 
-    if ( led_u.kno_w != 164 ) {
+    if ( led_u.kno_w != 163 ) {
       //  XX perhaps we should actually do something here
       //
       uL(fprintf(uH, "rest: (not) translating events (old %d, now %d)\n",
                      led_u.kno_w,
-                     164));
+                     163));
     }
     sev_l = led_u.sev_l;
     sal_l = led_u.sal_l;
     key_l = led_u.key_l;
-    tno_l = led_u.tno_l;
 
     {
       u3_noun old = u3dc("scot", c3__uv, sev_l);
@@ -932,7 +931,7 @@ _sist_rest()
     ent_d = 0;
 
     if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
-      fprintf(stderr, "end_d %llu\n", end_d);
+      fprintf(stderr, "end_d %" PRIu64 "\n", end_d);
       perror("lseek");
       uL(fprintf(uH, "record (%s) is corrupt (c)\n", ful_c));
       u3_lo_bail();
@@ -944,7 +943,7 @@ _sist_rest()
       c3_w*   img_w;
       u3_noun ron;
 
-      // uL(fprintf(uH, "rest: reading event at %llx\n", end_d));
+      // uL(fprintf(uH, "rest: reading event at %" PRIx64 "\n", end_d));
 
       if ( -1 == lseek64(fid_i, 4ULL * tar_d, SEEK_SET) ) {
         uL(fprintf(uH, "record (%s) is corrupt (d)\n", ful_c));
@@ -974,7 +973,7 @@ _sist_rest()
       }
 
 #if 0
-      uL(fprintf(uH, "log: read: at %d, %d: lar ent %llu, len %d, mug %x\n",
+      uL(fprintf(uH, "log: read: at %d, %d: lar ent %" PRIu64 ", len %d, mug %x\n",
                       (tar_w - lar_u.len_w),
                       tar_w,
                       lar_u.ent_d,
@@ -987,7 +986,7 @@ _sist_rest()
       else {
         if ( lar_u.ent_d != (ent_d - 1ULL) ) {
           uL(fprintf(uH, "record (%s) is corrupt (g)\n", ful_c));
-          uL(fprintf(uH, "lar_u.ent_d %llx, ent_d %llx\n", lar_u.ent_d, ent_d));
+          uL(fprintf(uH, "lar_u.ent_d %" PRIx64 ", ent_d %" PRIx64 "\n", lar_u.ent_d, ent_d));
           u3_lo_bail();
         }
         ent_d -= 1ULL;
@@ -1051,7 +1050,7 @@ _sist_rest()
     //
     c3_assert(u3A->ent_d == old_d);
     if ( las_d + 1 != old_d ) {
-      uL(fprintf(uH, "checkpoint and log disagree! las:%llu old:%llu\n",
+      uL(fprintf(uH, "checkpoint and log disagree! las:%" PRIu64 " old:%" PRIu64 "\n",
                      las_d + 1, old_d));
       uL(fprintf(uH, "Some events appear to be missing from the log.\n"
                      "Please contact the authorities, "
@@ -1065,7 +1064,7 @@ _sist_rest()
 
     //  Execute the fscking things.  This is pretty much certain to crash.
     //
-    uL(fprintf(uH, "rest: replaying through event %llu\n", las_d));
+    uL(fprintf(uH, "rest: replaying through event %" PRIu64 "\n", las_d));
     fprintf(uH, "---------------- playback starting----------------\n");
 
     xno_w = 0;
@@ -1179,7 +1178,7 @@ _sist_rest()
     led_u.sal_l = sal_l;
     led_u.sev_l = u3A->sev_l;
     led_u.key_l = u3A->key ? u3r_mug(u3A->key) : 0;
-    led_u.kno_w = 164;         //  may need actual translation!
+    led_u.kno_w = 163;         //  may need actual translation!
     led_u.tno_l = 1;
 
     if ( (-1 == lseek64(fid_i, 0, SEEK_SET)) ||

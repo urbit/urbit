@@ -84,7 +84,22 @@ window.urb.unsubscribe = function(params,cb) {
 
   var $this = this
   this.req(method,url,params,true,function(err,data) {
-    $this.cabs[$this.gsig(params)]('subscription closed')
-    delete $this.cabs[$this.gsig(params)]
+    cb(err,data)
   })
+}
+
+window.urb.util = {
+  toDate: function (dat){
+    var mils = Math.floor((0x10000 * dat.getUTCMilliseconds()) / 1000).toString(16)
+    function pad(num, str){
+      return ((new Array(num + 1)).join('0') + str).substr(-num,num)
+    }
+    return  '~' + dat.getUTCFullYear() + 
+            '.' + (dat.getUTCMonth() + 1) + 
+            '.' + dat.getUTCDate() + 
+           '..' + pad(2, dat.getUTCHours()) + 
+            '.' + pad(2, dat.getUTCMinutes()) + 
+            '.' + pad(2, dat.getUTCSeconds()) + 
+           '..' + pad(4, mils)
+  }
 }
