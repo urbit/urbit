@@ -597,6 +597,7 @@
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
+  ~|  sign=sih
   =>  .(sih ((hard sign) sih))
   ::  ~&  talk-pour/sih
   ?~  pax  ~&  talk-pour-strange-path/pax  !!
