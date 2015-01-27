@@ -37,9 +37,10 @@
               [%dub p=term q=horn]                      ::  /=  apply face
               [%fan p=(list horn)]                      ::  /.  list
               [%for p=path q=horn]                      ::  /,  descend
+              [%hel p=horn]                             ::  /%  propogate heel
               [%hub p=horn]                             ::  /@  list by @ud
               [%man p=(map span horn)]                  ::  /*  hetero map
-              [%nap p=horn]                             ::  /%  homo map
+              [%nap p=horn]                             ::  /_  homo map
               [%now p=horn]                             ::  /&  list by @da
               [%saw p=twig q=horn]                      ::  /;  operate on
               [%see p=beam q=horn]                      ::  /:  relative to
@@ -94,7 +95,7 @@
   $:  p=cafe                                            ::  cache
     $=  q                                               ::
       $%  [%0 p=(set beam) q=a]                         ::  depends/product
-          [%1 p=(set ,[p=beam q=(list tank)])]          ::  blocks
+          [%1 p=(set ,[p=care q=beam r=(list tank)])]   ::  blocks
           [%2 p=(list tank)]                            ::  error
       ==                                                ::
   ==                                                    ::
@@ -114,13 +115,15 @@
   ==                                                    ::
 ++  calx                                                ::  concrete cache line
   $%  [%hood p=calm q=(pair beam cage) r=hood]          ::  compile
+      [%slit p=calm q=[p=type q=type] r=type]           ::  slam type
+      [%slim p=calm q=[p=type q=twig] r=(pair type nock)]::  mint
       [%slap p=calm q=[p=vase q=twig] r=vase]           ::  compute
       [%slam p=calm q=[p=vase q=vase] r=vase]           ::  compute
   ==                                                    ::
 ++  task                                                ::  problem in progress
   $:  nah=duct                                          ::  cause
       kas=silk                                          ::  problem
-      kig=[p=@ud q=(map ,@ud beam)]                     ::  blocks
+      kig=[p=@ud q=(map ,@ud ,[p=care q=beam])]         ::  blocks
   ==                                                    ::
 --                                                      ::
 |%                                                      ::
@@ -131,6 +134,8 @@
     %hood  ?>(?=(%hood -.cax) r.cax)
     %slap  ?>(?=(%slap -.cax) r.cax)
     %slam  ?>(?=(%slam -.cax) r.cax)
+    %slim  ?>(?=(%slim -.cax) r.cax)
+    %slit  ?>(?=(%slit -.cax) r.cax)
   ==
 ::
 ++  calk                                                ::  cache lookup
@@ -151,16 +156,6 @@
   ^-  cafe                                              ::
   [(grom p.a p.b) (grum q.a q.b)]                       ::
 ::                                                      ::
-++  colt                                                ::  reduce to save
-  |=  lex=axle                                          ::
-  ^-  axle
-  %=    lex
-      pol
-    %-  ~(run by pol.lex)
-    |=  bay=baby
-    bay(jav ~)
-  ==
-::
 ++  faun  |=([a=cafe b=vase] (fine a `cage`noun/b))     ::  vase to cage
 ++  feel  |=([a=cafe b=cage] (fine a q.b))              ::  cage to vase
 ++  fest  |*([a=cafe b=*] (fine a [~ u=b]))             ::  bolt to unit
@@ -191,7 +186,6 @@
 ::
 ++  za                                                  ::  per event
   =|  $:  $:  $:  our=ship                              ::  computation owner
-                  tea=wire                              ::  event place
                   hen=duct                              ::  event floor
               ==                                        ::
               $:  now=@da                               ::  event date
@@ -224,6 +218,12 @@
       ==
     ~(exec zo [num `task`[hen u.kus 0 ~]])
   ::
+  ++  apel                                              ::  stateless
+    |=  [hen=duct kus=silk]
+    ^-  (unit gift)
+    =+  num=0                                           ::  XX
+    ~(exit zo [num `task`[hen kus 0 ~]])
+  ::
   ++  axon                                              ::  take
     |=  [num=@ud tik=@ud sih=sign]
     ^+  +>
@@ -246,7 +246,7 @@
       ==
     ++  camo                                            ::  stop requests
       ^+  .
-      =+  kiz=(~(tap by q.kig) *(list ,[p=@ud q=beam]))
+      =+  kiz=(~(tap by q.kig) *(list ,[p=@ud q=[p=care q=beam]]))
       |-  ^+  +>
       ?~  kiz  +>
       %=    $
@@ -255,19 +255,19 @@
         :-  hen
         :^  %pass  [(scot %p our) (scot %ud num) (scot %ud p.i.kiz) ~]
           %c
-        [%warp [our p.q.i.kiz] q.q.i.kiz ~]
+        [%warp [our p.q.q.i.kiz] q.q.q.i.kiz ~]
       ==
     ::
     ++  camp                                            ::  request a file
       |=  [ren=care bem=beam]
       ^+  +>
       %=    +>
-          kig  [+(p.kig) (~(put by q.kig) p.kig bem)]
+          kig  [+(p.kig) (~(put by q.kig) p.kig [ren bem])]
           mow  :_  mow
         :-  hen
         :^  %pass  [(scot %p our) (scot %ud num) (scot %ud p.kig) ~]
           %c
-        [%warp [our p.bem] q.bem [~ %& ren r.bem s.bem]]
+        [%warp [our p.bem] q.bem [~ %& ren r.bem (flop s.bem)]]
       ==
     ::
     ++  clef                                            ::  cache a result
@@ -339,22 +339,31 @@
       ?-  -.ton
         %2  [%2 p=p.ton]
         %0  [%0 p=*(set beam) q=(fun p.ton)]
-        %1  ~&  [%coup-need ((list path) p.ton)]
+        %1  ::  ~&  [%coup-need ((list path) p.ton)]
             =-  ?-  -.faw
-                  &  [%1 p=(sa (turn p.faw |=(a=beam [a *(list tank)])))]
+                  &  :-  %1
+                     ^=  p
+                     %-  sa
+                     %+  turn  p.faw
+                     |=(a=[care beam] [-.a +.a *(list tank)])
                   |  [%2 p=p.faw]
                 ==
             ^=  faw
-            |-  ^-  (each (list beam) (list tank))
+            |-  ^-  (each (list (pair care beam)) (list tank))
             ?~  p.ton  [%& ~]
             =+  nex=$(p.ton t.p.ton)
             =+  pax=(path i.p.ton)
             ?~  pax  [%| (smyt pax) ?:(?=(& -.nex) ~ p.nex)]
+            ?.  ?=(%c (end 3 1 i.pax))
+              [%| leaf/"blocking not clay" (smyt pax) ?:(?=(& -.nex) ~ p.nex)]
+            =+  ren=((soft care) (rsh 3 1 i.pax))
+            ?~  ren
+              [%| leaf/"blocking not care" (smyt pax) ?:(?=(& -.nex) ~ p.nex)]
             =+  zis=(tome t.pax)
             ?~  zis
-              [%| (smyt pax) ?:(?=(& -.nex) ~ p.nex)]
+              [%| leaf/"blocking not beam" (smyt pax) ?:(?=(& -.nex) ~ p.nex)]
             ?-  -.nex
-              &  [%& u.zis p.nex]
+              &  [%& [u.ren u.zis] p.nex]
               |  nex
             ==
       ==
@@ -374,10 +383,19 @@
       ^+  +>
       %_(+> jav.bay q.cof)
     ::
+    ++  exit                                            ::  stateless exec
+      ^-  (unit gift)
+      =+  bot=(make [~ jav.bay] kas)
+      :: =.  ..exec  (dash p.bot)
+      ?-  -.q.bot
+        %0  `[%made %& p.q.bot q.q.bot]
+        %2  `[%made %| p.q.bot]
+        %1  ~
+      ==
+    ::
     ++  exec                                            ::  execute app
       ^+  ..zo
       ?:  !=(~ q.kig)  ..zo
-      |-  ^+  ..zo
       =+  bot=(make [~ jav.bay] kas)
       =.  ..exec  (dash p.bot)
       ?-  -.q.bot
@@ -387,7 +405,7 @@
             =<  abet
             |-  ^+  ..exec
             ?~  zuk  ..exec
-            =+  foo=`_..exec`(camp %x `beam`p.i.zuk)
+            =+  foo=`_..exec`(camp p.i.zuk q.i.zuk)
             $(zuk t.zuk, ..exec foo)
       ==
     ::
@@ -418,9 +436,10 @@
       =+  pax=/door/[for]/mar
       =+  ^=  bem  ^-  beam
           :_  pax
-          ?:  =(p.bek our)  bek
+          ?:  &(=(p.bek our) =(q.bek %main))  bek
           =+  oak=[our %main %da now]
-          ?.  =(~ (ska %cy (tope [oak pax])))  oak
+          ?:  ?=([~ ~ *] (ska %cy (tope [oak pax])))
+            oak
           bek
       (cope (fade cof %hook bem) abut:(meow bem ~))
     ::
@@ -500,9 +519,10 @@
               (stag %dub ;~(pfix tis dub:read))
               (stag %fan ;~(pfix dot fan:read))
               (stag %for ;~(pfix com for:read))
+              (stag %hel ;~(pfix cen day:read))
               (stag %hub ;~(pfix pat day:read))
               (stag %man ;~(pfix tar man:read))
-              (stag %nap ;~(pfix cen day:read))
+              (stag %nap ;~(pfix cab day:read))
               (stag %now ;~(pfix pam day:read))
               (stag %saw ;~(pfix sem saw:read))
               (stag %see ;~(pfix col see:read))
@@ -646,8 +666,9 @@
     ++  lamp                                            ::  normalize version
       |=  [cof=cafe bem=beam]
       ^-  (bolt beam)
+      ?:  ?=(%ud -.r.bem)  (fine cof bem)
       =+  von=(ska %cw (tope bem(s ~)))
-      ?~  von  [p=cof q=[%1 [bem ~] ~ ~]]
+      ?~  von  [p=cof q=[%1 [%w bem ~] ~ ~]]
       (fine cof bem(r [%ud ((hard ,@) (need u.von))]))
     ::
     ++  lave                                            ::  validate
@@ -672,7 +693,7 @@
       |=  [cof=cafe bem=beam]
       ^-  (bolt arch)
       =+  von=(ska %cy (tope bem))
-      ?~  von  [p=cof q=[%1 [bem ~] ~ ~]]
+      ?~  von  [p=cof q=[%1 [%y bem ~] ~ ~]]
       (fine cof ((hard arch) (need u.von)))
     ::
     ++  liar                                            ::  load vase
@@ -680,7 +701,7 @@
       ^-  (bolt vase)
       =+  von=(ska %cx (tope bem))
       ?~  von
-        [p=*cafe q=[%1 [[bem ~] ~ ~]]]
+        [p=*cafe q=[%1 [[%x bem ~] ~ ~]]]
       ?~  u.von
         (flaw cof (smyt (tope bem)) ~)
       (fine cof ?^(u.u.von [%cell %noun %noun] [%atom %$]) u.u.von)
@@ -768,11 +789,11 @@
         ?.  ?=(%0 -.q.rof)  [rof +>.$]
         ?~  q.q.rof
           [[p.rof [%0 p.q.rof ~]] +>.$]
-        =^  orf  +>.$  (apse cof i.q.q.rof)
+        =^  orf  +>.$  (apse p.rof i.q.q.rof)
         ?.  ?=(%0 -.q.orf)
           [orf +>.$]
         ?~  q.q.orf
-          $(cof p.orf, q.q.rof t.q.q.rof)
+          $(p.rof p.orf, q.q.rof t.q.q.rof)
         [[p.orf [%0 (grom p.q.rof p.q.orf) q.q.orf]] +>.$]
       ::
       ++  apse
@@ -797,18 +818,24 @@
       |=  [cof=cafe yed=vase]
       ^$(cof cof, for i.yaw, yaw t.yaw, vax yed)
     ::
+    ++  mail                                            ::  cached mint
+      |=  [cof=cafe sut=type gen=twig]
+      ^-  (bolt (pair type nock))
+      %+  (clef %slim)  (fine cof sut gen) 
+      |=  [cof=cafe sut=type gen=twig]
+      =+  puz=(mule |.((~(mint ut sut) [%noun gen])))
+      ?-  -.puz
+        |  (flaw cof p.puz)
+        &  (fine cof p.puz)
+      ==
+    ::
     ++  maim                                            ::  slap
       |=  [cof=cafe vax=vase gen=twig]
       ^-  (bolt vase)
-      %+  (clef %slap)  (fine cof vax gen)
-      |=  [cof=cafe vax=vase gen=twig]
-      =+  puz=(mule |.((~(mint ut p.vax) [%noun gen])))
-      ?-  -.puz
-        |  (flaw cof p.puz)
-        &  %+  (coup cof)  (mock [q.vax q.p.puz] (mole ska))
-           |=  val=*
-           `vase`[p.p.puz val]
-      ==
+      %+  cope  (mail cof p.vax gen)
+      |=  [cof=cafe typ=type fol=nock]
+      %+  (coup cof)  (mock [q.vax fol] (mole ska))
+      |=(val=* `vase`[typ val])
     ::
     ++  make                                            ::  reduce silk
       |=  [cof=cafe kas=silk]
@@ -844,7 +871,7 @@
         (fine cof `cage`[p.kas vax])
       ::
           %call
-        %+  cool  |.(leaf/"ford: call {<`@p`(mug kas)>}")
+        ::  %+  cool  |.(leaf/"ford: call {<`@p`(mug kas)>}")
         %.  [cof p.kas q.kas]
         ;~  cope
           ;~  coax
@@ -895,18 +922,24 @@
         (fine cof `cage`[p.kas vax])
       ==
     ::
+    ++  malt                                            ::  cached slit
+      |=  [cof=cafe gat=type sam=type]
+      ^-  (bolt type)
+      %+  (clef %slit)  (fine cof gat sam)
+      |=  [cof=cafe gat=type sam=type]
+      =+  top=(mule |.((slit gat sam)))
+      ?-  -.top
+        |  (flaw cof p.top)
+        &  (fine cof p.top)
+      ==
+    ::
     ++  maul                                            ::  slam
       |=  [cof=cafe gat=vase sam=vase]
       ^-  (bolt vase)
-      %+  (clef %slam)  (fine cof gat sam)
-      |=  [cof=cafe gat=vase sam=vase]
-      =+  top=(mule |.((slit p.gat p.sam)))
-      ?-  -.top
-        |  (flaw cof p.top)
-        &  %+  (coup cof)  (mong [q.gat q.sam] (mole ska))
-           |=  val=*
-           `vase`[p.top val]
-      ==
+      %+  cope  (malt cof p.gat p.sam)
+      |=  [cof=cafe typ=type]
+      %+  (coup cof)  (mong [q.gat q.sam] (mole ska))
+      |=(val=* `vase`[typ val])
     ::
     ++  meow                                            ::  assemble
       |=  [how=beam arg=heel] 
@@ -1051,6 +1084,7 @@
           (slop i.tev $(tev t.tev))
         ::
             %for  $(hon q.hon, s.how (weld (flop p.hon) s.how))
+            %hel  $(hon p.hon, arg /, s.how (weld arg s.how))
             %hub  (chad cof bax %ud p.hon)
             %man
           |-  ^-  (bolt vase)
@@ -1085,7 +1119,7 @@
             (flaw cof [%leaf "type error: {<p.hon>} {<q.hon>}"]~)
           (fine cof [p.tug q.vax])
         ::
-            %toy  (cope (make cof %bake p.hon how arg) feel)
+            %toy  (cope (make cof %boil p.hon how ~) feel)
         ==
       ::
       ++  head                                          ::  consume structures
@@ -1191,16 +1225,19 @@
       ^+  ..zo
       ?>  (~(has by q.kig) tik)
       ?~  rot
-        amok:(expo [%made %| (smyt (tope (need (~(get by q.kig) tik)))) ~])
+        =+  `[ren=care bem=beam]`(~(got by q.kig) tik)
+        amok:(expo [%made %| (smyt ren (tope bem)) ~])
       exec(q.kig (~(del by q.kig) tik))
     --
   --
+::
 --
 .  ==
 =|  axle
 =*  lex  -
 |=  [now=@da eny=@ ski=sled]                            ::  activate
 ^?                                                      ::  opaque core
+~%  %ford-d  +>+>+>+>+>+>  ~
 |%                                                      ::
 ++  call                                                ::  request
   |=  [hen=duct hic=(hypo (hobo kiss))]
@@ -1215,7 +1252,7 @@
       =+  buy=(~(get by pol.lex) our)
       ?~(buy *baby u.buy)
   =^  mos  bay
-    abet:(~(apex za [[our ~ hen] [now eny ska] ~] bay) q.q.hic)
+    abet:(~(apex za [[our hen] [now eny ska] ~] bay) q.q.hic)
   [mos ..^$(pol (~(put by pol) our bay))]
 ::
 ++  doze
@@ -1243,7 +1280,7 @@
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit (pair mark ,*)))
-  ~
+  [~ ~]
 ::
 ++  stay                                                ::  save w/o cache
   `axle`+>-.$(pol (~(run by pol) |=(a=baby [tad.a dym.a ~])))
@@ -1257,8 +1294,8 @@
           num=(need (slaw %ud i.t.tea))
           tik=(need (slaw %ud i.t.t.tea))
       ==
-  =+  bay=(need (~(get by pol.lex) our))
+  =+  bay=(~(got by pol.lex) our)
   =^  mos  bay
-    abet:(~(axon za [[our tea hen] [now eny ska] ~] bay) num tik q.hin)
+    abet:(~(axon za [[our hen] [now eny ska] ~] bay) num tik q.hin)
   [mos ..^$(pol (~(put by pol) our bay))]
 --

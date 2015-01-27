@@ -1,9 +1,13 @@
 !:
+::::
+  ::
 |_  [hid=hide ~]
+++  peer  ,_`.
 ++  poke-rm-args
   |=  [ost=bone you=ship pax=path ~]
   :_  +>.$
-  :*  [ost %pass /cp %c %info our.hid (fray pax)]
+  :*  [ost %pass /rm %c %info our.hid (fray pax)]
+      [ost %pass / %g %cide %$]
       [ost %give %nice ~]
       %+  turn  (~(tap by sup.hid))
       |=  [ost=bone *]
@@ -11,8 +15,4 @@
       :-  %tang  :_  ~
       leaf/"removed"
   ==
-++  peer
-  |=
-    *
-  `+>
 --

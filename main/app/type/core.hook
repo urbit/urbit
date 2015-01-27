@@ -1,0 +1,19 @@
+::  Type, render tpyes of arguments
+::
+::::  /hook/core/type/app
+  ::
+/+    sh-utils
+!:
+::::
+  ::
+|_  [hide ~]
+++  peer  ,_`.
+++  pock--args
+  %+  args-into-gate  .
+  |=  a=vase
+  :-  %tang
+  |-  ^-  tang
+  =+  nex=(slew 3 a)
+  ?~  nex  ~
+  [(skol p:(slot 2 a)) $(a u.nex)]
+--

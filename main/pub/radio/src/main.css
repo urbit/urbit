@@ -1,0 +1,327 @@
+@font-face {
+  font-family: "bau";
+  src: url("https://s3-us-west-2.amazonaws.com/urbit/bauregular.otf");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "bau";
+  src: url("https://s3-us-west-2.amazonaws.com/urbit/bauregularitalic.otf");
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: "bau";
+  src: url("https://s3-us-west-2.amazonaws.com/urbit/baumedium.otf");
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "bau";
+  src: url("https://s3-us-west-2.amazonaws.com/urbit/baumediumitalic.otf");
+  font-weight: 500;
+  font-style: italic;
+}
+@font-face {
+  font-family: "bau";
+  src: url("https://s3-us-west-2.amazonaws.com/urbit/baubold.otf");
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: "bau";
+  src: url("https://s3-us-west-2.amazonaws.com/urbit/baubolditalic.otf");
+  font-weight: 600;
+  font-style: italic;
+}
+.iden,
+.time,
+#length,
+input.join,
+.stations {
+  font-family: "source-code-pro";
+}
+input {
+  -webkit-appearance: none;
+  border-radius: 0;
+}
+html,
+body {
+  height: 100%;
+  font-family: "bau";
+}
+#length,
+.time {
+  font-size: 0.6rem;
+  letter-spacing: 0;
+  font-weight: 200;
+}
+input.join,
+.stations,
+.iden,
+#station {
+  font-size: 0.7rem;
+}
+html,
+body {
+  font-size: 18px;
+}
+body {
+  background-color: #fefefe;
+  padding: 0;
+  margin: 0;
+}
+.hidden {
+  display: none;
+}
+#c {
+  width: 66rem;
+  top: 0;
+  padding: 1rem 1rem 0 1rem;
+  background-color: #fff;
+  height: 100%;
+}
+#stations-container {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  width: 12rem;
+}
+#station-container {
+  position: fixed;
+  top: 1rem;
+  left: 54rem;
+  width: 12rem;
+}
+#stations-container,
+#messages-container {
+  vertical-align: top;
+}
+#station {
+  width: 18rem;
+}
+#station .iden {
+  display: block;
+}
+.stations {
+  width: 4rem;
+}
+.station {
+  display: inline-block;
+  width: 9rem;
+  margin-bottom: 0.3rem;
+  cursor: pointer;
+}
+.station .name {
+  border-bottom: 2px solid transparent;
+}
+.station.selected .name {
+  font-weight: 600;
+  border-bottom: 2px solid #000;
+}
+.station > div {
+  display: inline;
+}
+.station .remove {
+  display: none;
+  float: right;
+  font-size: 0.8rem;
+  line-height: 1rem;
+}
+.station:hover .remove {
+  display: inline;
+}
+.join-ctrl {
+  margin-top: 1.2rem;
+}
+.join-ctrl input {
+  border: none;
+}
+.join-ctrl input::-webkit-input-placeholder {
+  font-weight: 200;
+}
+.join-ctrl input {
+  font-weight: 400;
+}
+.message {
+  margin-bottom: 0.2rem;
+}
+#messages .message:last-child {
+  margin-bottom: 2rem;
+}
+#messages .message .time {
+  opacity: 0;
+}
+#messages .message:last-child .time,
+#messages .message:hover .time {
+  opacity: 1;
+}
+.time {
+  margin-right: 0.6rem;
+}
+.member {
+  width: 12rem;
+  margin: 0.3rem 0.6rem 0.3rem 0;
+}
+#messages {
+  height: auto;
+}
+.attr {
+  width: 9rem;
+  text-align: right;
+  margin-right: 2rem;
+}
+.mess,
+.attr,
+.iden,
+.attr > div,
+#station .member div,
+#writing {
+  display: inline-block;
+}
+.iden > div {
+  display: inline;
+}
+.mess,
+#writing,
+#length {
+  vertical-align: top;
+}
+.mess {
+  font-size: 0.8rem;
+  letter-spacing: 0.03rem;
+  word-wrap: break-word;
+  max-width: 31rem;
+}
+.ship,
+.name {
+  font-weight: 500;
+}
+.ship.talk:before {
+  content: "...";
+  margin-left: -1.3rem;
+  margin-right: 0.3rem;
+  width: 1rem;
+  margin-top: -0.4rem;
+  vertical-align: middle;
+  display: inline-block;
+  line-height: 0.2rem;
+  letter-spacing: -0.1rem;
+}
+#writing-container {
+  bottom: 4rem;
+  margin-bottom: 1rem;
+}
+#messages-container,
+#writing-container {
+  margin-left: 12rem;
+}
+.writing #length {
+  display: inline;
+  margin-left: 1rem;
+  margin-top: 1.2rem;
+}
+#writing {
+  font-size: 0.8rem;
+}
+#writing,
+input.join {
+  min-height: 1.2rem;
+  padding: 0.3rem 0.6rem;
+  margin-left: -0.6rem;
+  outline: none;
+  background-color: #f9f9f9;
+}
+#writing:focus,
+input.join:focus {
+  background-color: #eee;
+}
+.pending {
+  color: #ccc;
+}
+#scrolling {
+  display: none;
+}
+.scrolling #scrolling {
+  position: fixed;
+  bottom: 3rem;
+  left: 2rem;
+  height: 1rem;
+  padding: 1rem;
+  height: 2rem;
+  background-color: #f9f9f9;
+  font-weight: 500;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+@media (max-width: 40rem) {
+  #c {
+    left: 0;
+    margin-left: 0;
+    width: 24rem;
+  }
+  #messages-container,
+  #writing-container {
+    margin-left: 1rem;
+  }
+  #stations-container,
+  #station-container {
+    position: relative;
+    float: left;
+  }
+  #stations-container {
+    width: 8rem;
+  }
+  #station-container {
+    left: auto;
+  }
+  .station {
+    width: 5rem;
+  }
+  .attr {
+    display: block;
+    text-align: left;
+    width: 2rem;
+    margin-right: 1rem;
+  }
+  .message {
+    height: 1.6rem;
+  }
+  .join-ctrl input,
+  .stations,
+  .iden,
+  #station {
+    font-size: 0.5rem;
+  }
+  .join-ctrl input {
+    width: 6rem;
+  }
+  .station .remove {
+    display: inline;
+    font-size: 0.6rem;
+    line-height: 0.6rem;
+  }
+  .ship.talk:before {
+    margin-left: -0.3rem;
+    margin-right: 0;
+  }
+  .attr {
+    width: 4rem;
+  }
+  .iden > div {
+    display: block;
+  }
+  .attr > .time {
+    display: none;
+  }
+  .mess {
+    max-width: 12rem;
+    margin-bottom: 1rem;
+  }
+  #writing {
+    max-width: 12rem;
+  }
+  #station {
+    width: 8rem;
+  }
+}

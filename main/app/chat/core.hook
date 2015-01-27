@@ -8,7 +8,7 @@
       $:  %0
           air=(map path station)
           pom=(unit ship)
-          sen=(qeu mess)
+          sen=(set mess)
           $=  fal
           $:  eth=?
               qit=?
@@ -59,6 +59,7 @@
               $%  [%mess p=hapt q=ship r=cage]
                   [%nuke p=hapt q=ship]
                   [%show p=hapt q=ship r=path]
+                  [%took p=hapt q=ship]
               ==  ==  ==
     ++  sign
               $?  $:  %g
@@ -141,12 +142,12 @@
     [(send /out %give %rush %tang [%leaf "invalid input"] ~) +>.$]
   |-
   ?-  -.u.rey
-    %all   =+  ^=  mof  
+    %all   =+  ^=  mof
                ?~  pom  ~
                (send /out %give %rush %prompt '& ' %text '')
            =^  mow  +>.^$
              (poke-zung(pom ~) ost our.hid %mess sat.fal p.u.rey)
-           [(welp mof mow) +>.^$(sen (~(put to sen) p.u.rey))]
+           [(welp mof mow) +>.^$(sen (~(put in sen) p.u.rey))]
     %back
       :_  +>.^$
       %^  send  /out  %give  :+  %rush  %tang
@@ -219,9 +220,7 @@
       ;title: Radio
       ;script(type "text/javascript", src "//use.typekit.net/fkv0sjk.js");
       ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js");
-      ;script:'''
-              try{Typekit.load();}catch(e){}
-              '''
+      ;script:'try{Typekit.load();}catch(e){}'
       ;link(rel "stylesheet", type "text/css", href "/gen/main/pub/src/chat/main.css");
     ==
     ;body
@@ -293,11 +292,17 @@
     ==
   [~ +>.$]
 ::
+++  pass-took
+  |=  [moz=(list move) ost=bone pax=path imp=path]
+  :_  +>.$
+  :_(moz [ost %pass pax %g %took [our.hid imp] our.hid])
+::
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
   ::  ~&  sih=sih
   =+  sih=((hard sign) sih)
+  =+  took=|=([imp=path moz=(list move)] (pass-took moz ost pax imp))
   ?~  pax  ~&  %chat-pour-strange-path  !!
   ::  ~&  [%pour-mess pax]
   ?+    i.pax  ~&  %chat-pour-strange-path  !!
@@ -307,7 +312,8 @@
       %mean  [(send /out %give +.sih) +>.$]
       ?(%rush %rust)
         ?>  ?=(%txt -.p.sih)
-        (exec-cmd ost p.p.sih)
+        =^  moz  +>.$  (exec-cmd ost p.p.sih)
+        (took +.imp.hid moz)
     ==
   ::
       ?(%mesg %priv)
@@ -319,14 +325,21 @@
       [~ +>.$]
     ?>  ?=(%rush +<.sih)
     ?>  ?=(%zong -.p.sih)
-    :_  +>.$
-    (send /out %give %rush %tang (zong-to-tank & p.p.sih) ~)
+    (took /chat (send /out %give %rush %tang (zong-to-tank & p.p.sih) ~))
   ::
       ?(%radi-a %radi-m)
-    ?:  ?=(?(%nice %mean) +<.sih)
+    ?:  ?=(%nice +<.sih)
       :_  +>.$  
       ?:  ?=(%radi-a i.pax)  ~
       [ost %give +.sih]~
+    ?:  ?=(%mean +<.sih)
+      :_  +>.$  :_  ~
+      =-  ~&  [%trying-again -]  -
+      :*  ost  %pass  pax  %g  %show
+          [pad.fal /radio]  our.hid
+          ?-(i.pax %radi-a %amigos, %radi-m %mensajes)
+          sat.fal
+      ==
     =+  ya=(grab t.pax)
     =.  ya
       ?-    i.pax
@@ -357,28 +370,33 @@
     =+  ^=  pout  ?:(=(i.pax %radi-a) %amigos %mensajes)
     =.  air  (~(put by air) t.pax ya)
     =+  mow=(send [pout t.pax] %give +.sih)
-    =<  [mow +>.$]
+    =<  (took /radio mow)
+    ::  =<  [mow +>.$]
     ::  XX  yes, I just used an inline comment
     ::  XX  and multiple XX's.  why?  because
     ::  XX  tmi is incredibly lame.
     ^+  .
     ?:  =(%zong -.p.sih)
       =+  zog=((hard zong) p.p.sih)
-      ?:  &(=(our.hid q.zog) =(`r.zog ~(top to sen)))
-        %_(+ sen ^+(sen ~(nap to sen)))
+      ?:  &(=(our.hid q.zog) (~(has in sen) r.zog))
+        +
+      ::  ?:  &(=(our.hid q.zog) =(`r.zog ~(top to sen)))
+      ::    %_(+ sen ^+(sen ~(nap to sen)))
       %_    +
           mow
         (welp mow (send /out %give %rush %tang (zong-to-tank | zog) ~))
       ==
     ?:  =(%zongs -.p.sih)
-      =+  zos=((hard (list zong)) p.p.sih)
+      =+  zos=(scag 200 ((hard (list zong)) p.p.sih))
       =<  +(mow (flop mow))
       |-  ^+  +.$
       ?:  =(~ zos)  +.$                                 ::  XX  tm freakin i
       =+  zoy=((hard zong) -.zos)
       =.  +.$  $(zos +.zos)
-      ?:  &(=(our.hid &3.zoy) =(`&4.zoy ~(top to sen)))
-        %_(+.$ sen `(qeu mess)`~(nap to sen))
+      ?:  &(=(our.hid &3.zoy) (~(has in sen) &4.zoy))
+        +.$
+      ::  ?:  &(=(our.hid &3.zoy) =(`&4.zoy ~(top to sen)))
+      ::    %_(+.$ sen `(qeu mess)`~(nap to sen))
       %_    +.$
           mow
         (welp mow (send /out %give %rush %tang (zong-to-tank | zoy) ~))

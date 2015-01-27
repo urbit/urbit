@@ -18,10 +18,10 @@
         [%history %a (turn q.tel |=(a=cord [%s a]))]
         :+  %lines  %a
         %-  zing  ^-  (list (list ^json))
-        %+  turn  (flop r.tel)  |=  a=?(tank [%stem p=tank q=tank])
+        %+  turn  (flop r.tel)  |=  a=?(tank [%stem p=@da q=tank r=tank])
         ?.  ?=(%stem -.a)
           (turn (wash 0^80 a) jape)
-        [(jobe prompt/(jape ~(ram re p.a)) task/(jape ~(ram re q.a)) ~)]~
+        [(jobe prompt/(jape ~(ram re q.a)) task/(jape ~(ram re r.a)) ~)]~
     ==
   --
 --

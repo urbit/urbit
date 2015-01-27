@@ -1,0 +1,47 @@
+::  Pope, generate key for carrier
+::
+::::  /hook/core/pope/app
+  ::
+/+    sh-utils
+!:
+::::
+  ::
+|%
+++  gilt  $%([%tang (list tank)] [%prompt @t prom @t])
+++  sign
+  $%  [%t %wake ~]
+      [%g $%([%nice ~] [%rush %txt p=cord])]
+  ==
+--
+!:
+::::
+  ::
+=+  cryp=bruw                         ::  XX  change to ec2 ++brew eventually
+|_  [hide who=@p fra=@t]
+++  peer  ,_`.
+++  poke--args
+  |=  [@ @ who=ship ~]
+  ?>  ?=(%czar (clan who))
+  =.  ^who  who
+  =-  %.(+<.$ (add-nice (gate-bang ,_noe (return git))))
+  :-  noe=[%g %show our^+.imp our /in/[-.imp]]             ::  request input
+  git=prompt/['passphrase: ' %pass '']
+::
+++  return  |=(a=gilt (add-output +> rush/a ,_`+>))
+++  pour
+  |=  [@ * sih=*]
+  =+  sih=;;(sign sih)
+  ?-  -.sih
+    %g  ?.  ?=(%rush +<.sih)  `+>.$
+        =.  fra  p.sih
+        =-  %.(+<.$ (gate-bang ,_noe (return tang/~[leaf/msg])))
+        :-  noe=[%t %wait (add ~s1 lat)]                ::  set print timeout
+        msg="generating carrier {(scow %p who)} (#{(scow %ud who)})"
+  ::
+    %t  =-  %.(+<.$ (add-exit (return tang/-)))
+        =+  bur=(shax (add who (shax fra)))
+        =+  arc=(cryp 2.048 bur)
+        :~  leaf/"generator: {(scow %uw bur)}"
+            leaf/"fingerprint: {(scow %uw fig:ex:arc)}"
+  ==    ==
+--
