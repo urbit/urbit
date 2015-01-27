@@ -356,7 +356,7 @@
       (pa-sauce n.owe [[%rush %rodeo-report %config shape] ~])
     ::
     ++  pa-friend                                       ::  subscribed update
-      |=  [her=ship nam=span sih=sign]
+      |=  [her=ship sih=sign]
       ^+  +>
       ?+    sih  ~&([%rodeo-bad-friend sih] !!)
           [%g %nice ~]
@@ -372,7 +372,7 @@
         ::  ~&  [%pa-friend-report +>+.sih]
         =.  +>  %+  pa-scrub  ost 
                 :_  ~
-                :-  /friend/show/(scot %p her)/[man]/[nam]
+                :-  /friend/show/(scot %p her)/[man]
                 [%g %took [her /rodeo] our.hid]
         ?+  -.+>+.sih  ~&([%rodeo-odd-friend sih] !!)
           %config  +>.$
@@ -421,9 +421,9 @@
             !!
       ::
         %&  ::  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
-            :~  :-  /friend/nuke/[q.p.tay]/[man]
+            :~  :-  /friend/nuke/[man]
                 [%g %nuke [p.p.tay /rodeo] our.hid]
-                :-  /stalk/nuke/[q.p.tay]/[man]
+                :-  /stalk/nuke/[man]
                 [%g %nuke [p.p.tay /rodeo] our.hid]
             ==
       ==
@@ -441,7 +441,7 @@
             !!
       ::
         %&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
-            :~  :-  /friend/show/(scot %p p.p.tay)/[q.p.tay]/[man]
+            :~  :-  /friend/show/(scot %p p.p.tay)/[man]
                 [%g %show [p.p.tay /rodeo] our.hid /af/[q.p.tay]/(scot %ud num)]
             ==
       ==
@@ -647,14 +647,10 @@
     ==
   ::
       [%friend *]
-    ?>  ?=([@ @ @ @ ~] t.pax)
+    ?>  ?=([@ @ @ ~] t.pax)
     ?.  =(%show i.t.pax)
       ~&  [%pour-friend-nuke-nuke pax]
       [~ +>.$]
-    =<  ra-abet
-    %-  ~(ra-friend ra ost ~)
-    :*  (slav %p i.t.t.pax)
-        i.
     ra-abet:(~(ra-friend ra ost ~) (slav %p i.t.t.pax) i.t.t.t.pax sih)
   ::
       [%stalk *]
