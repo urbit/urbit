@@ -16,7 +16,7 @@
 ::
 ++  axle                                                ::  app state
   $:  %0
-      kes=(map span keys)                               ::  auth
+      kes=(map span keys:twit-do)                       ::  auth
       out=(map ,@uvI (each ,[span cord] stat))          ::  sent tweets
       ran=(map path ,[p=@ud q=@da])                     ::  polls active
       fed=(jar path stat)                               ::  feed cache
@@ -44,7 +44,7 @@
       [%t %wake ~]                                      ::  timeout ping
   ==
 ::
-++  stat  ,[id=@u who=@ta now=@da txt=@t]               ::  recieved tweet
+++  stat  twit-stat                                     ::  recieved tweet
 --
 !:
 ::::

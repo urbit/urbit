@@ -2,7 +2,7 @@
 ::::  /hook/core/rodeo/app
   ::
 /?  314
-/-  *rodeo
+/-  *rodeo, *twitter
 /+  rodeo
 ::
 ::::
@@ -60,11 +60,15 @@
           $:  %g                                        ::  application
       $%  [%mean p=ares]                                ::  cancel
           [%nice ~]                                     ::  acknowledge
-          [%rush %rodeo-report report]                  ::  refresh
+          [%rush p=silt]                                ::  subs data
           ==  ==                                        ::
           $:  %t                                        ::
       $%  [%wake ~]                                     ::  timer wakeup
       ==  ==  ==                                        ::
+    ++  silt
+      $%  [%rodeo-report p=report]                      ::  refresh
+          [%twit-stat p=twit-stat]                      ::  tweet reciept
+      ==
     ++  move  ,[p=bone q=(mold note gift)]              ::  all actions
     ++  hapt  ,[p=ship q=path]                          ::  app instance
     ++  note                                            ::  requests
@@ -84,7 +88,7 @@
       $%  [%wait p=@da]                                 ::
       ==  ==  ==                                        ::
     ++  twim                                            ::  twitter endpoints
-      $%([%mine p=span] [%stat p=@uv])                  ::
+      $%([%stat p=@uv])                                 ::
     --
 |_  [hid=hide house]
 ++  ra                                                  ::  transaction core
@@ -176,7 +180,13 @@
   ++  ra-twitter                                        ::  %twitter response
     |=  [met=twim sih=sign]
     ^+  +>
-    !!
+    ?+    sih  ~&([%rodeo-bad-twitter sih] !!)
+        [%g ?(%nice %mean) ~]
+      +>
+        [%g %rush %twit-stat *]
+      ~&  got-tweet/p.p.sih
+      +>
+    ==
   ::
   ++  ra-repeat                                         ::  %repeat response
     |=  [num=@ud her=ship man=span sih=sign]
@@ -267,7 +277,7 @@
       %|  ?.  pub  +>
           ?-    -.p.tay
               %twitter
-            !!
+            (ra-tweet p.p.tay tip)
     ==    ==
   ::
   ++  ra-record                                         ::  add to story
@@ -294,6 +304,22 @@
         ==
     +>(p.outbox +(p.outbox), q.outbox (~(put by q.outbox) p.outbox tip))
   ::
+  ++  ra-tweet                                          ::  send to /twit
+    |=  [who=span sey=serial * sta=statement]
+    ~!  sta
+    ?>  ?=(%lin -.r.sta)
+    %^    ra-emil 
+        :*  ost
+            %pass  /twitter/stat/(scot %uv sey)
+            %g  %mess
+            [our.hid /twit]  our.hid
+            [%twit-do !>(`twit-do`[who %post sey q.r.sta])]
+        ==
+      :*  ost
+          %pass  /twitter/stat/(scot %uv sey)
+          [%g %show [our.hid /twit] our.hid /post/(scot %uv sey)]
+      ==
+    ~
   ++  pa                                                ::  story core
     |_  $:  man=span
             story
@@ -369,10 +395,10 @@
                 :_  ~
                 :-  /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
                 [%g %took [p.p.tay /rodeo] our.hid]
-        ?+  -.+>+.sih  ~&([%rodeo-odd-friend sih] !!)
+        ?+  -.p.p.sih  ~&([%rodeo-odd-friend sih] !!)
           %config  +>.$
-          %group  (pa-remind tay +.+>+.sih)
-          %grams  (pa-lesson q.+.+>+.sih)
+          %group  (pa-remind tay +.p.p.sih)
+          %grams  (pa-lesson q.+.p.p.sih)
         ==
       ==
     ::
@@ -618,8 +644,8 @@
     =-  ra-abet:(~(ra-twitter ra ost ~) met sih)
     ^=  met
     ?+    t.pax  ~&  [%rodeo-twitter-strange-path pax]  !!
-        [%mine @ @ ~]
-      [i.t.pax i.t.t.t.pax]
+      ::    [%mine @ @ ~]
+      ::  [i.t.pax i.t.t.t.pax]
         [%stat @ ~]
       [i.t.pax (slav %uv i.t.t.pax)]
     ==
