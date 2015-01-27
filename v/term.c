@@ -828,9 +828,9 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
       tat_u->fut.len_w = 1;
       tat_u->fut.syb_y[0] = cay_y;
 
-      if ( cay_y <= 224 ) {
+      if ( cay_y < 224 ) {
         tat_u->fut.wid_w = 2;
-      } else if ( cay_y <= 240 ) {
+      } else if ( cay_y < 240 ) {
         tat_u->fut.wid_w = 3;
       } else tat_u->fut.wid_w = 4;
     }

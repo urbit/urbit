@@ -18,7 +18,7 @@
         c3_o
         u3m_trap(void);
 #else
-#       define u3m_trap() (u3_noun)(setjmp(u3R->esc.buf))
+#       define u3m_trap() (u3_noun)(_setjmp(u3R->esc.buf))
 #endif
 
       /* u3m_signal(): treat a nock-level exception as a signal interrupt.
@@ -204,7 +204,7 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
     //  A top-level crash - rather odd.  We should GC.
     // 
     _cm_emergency("recover: top", sig_l);
-    u3H->rod_u.how.fag_w |= u3a_flag_gc;
+    u3C.wag_w |= u3o_check_corrupt;
 
     //  Reset the top road - the problem could be a fat cap.
     //
@@ -278,6 +278,8 @@ _cm_signal_deep(c3_w sec_w)
     setitimer(ITIMER_VIRTUAL, &itm_u, 0);
     signal(SIGVTALRM, _cm_signal_handle_alrm);
   }
+
+  u3t_boot();
 }
 
 /* _cm_signal_done():
@@ -299,6 +301,7 @@ _cm_signal_done()
     setitimer(ITIMER_VIRTUAL, &itm_u, 0);
   }
   u3_unix_ef_move();
+  u3t_boff();
 }
 
 /* u3m_signal(): treat a nock-level exception as a signal interrupt.
@@ -447,10 +450,6 @@ _cm_pave(c3_o nuu_o, c3_o bug_o)
                               u3a_words - 1);
     u3R = &u3H->rod_u;
   }
-
-  if ( _(bug_o) ) {
-    u3R->how.fag_w |= u3a_flag_debug;
-  }
 }
 
 #if 0
@@ -535,15 +534,10 @@ u3m_bail(u3_noun how)
   if ( (c3__exit == how) && (u3R == &u3H->rod_u) ) {
     abort();
   }
-  if ( c3__fail == how ) {
-    abort();
-  }
-  if ( c3__foul == how ) {
-    abort();
-  }
+
   /* Printf some metadata.
   */
-  if ( c3__exit != how ) {
+  if ( c3__exit != how && (_(u3ud(how)) || 1 != u3h(how)) ) {
     if ( _(u3ud(how)) ) {
       c3_c str_c[5];
 
@@ -562,8 +556,12 @@ u3m_bail(u3_noun how)
     }
   }
 
-  if ( c3__oops == how ) {
-    abort();
+  switch ( how ) {
+    case c3__fail:
+    case c3__foul:
+    case c3__meme:
+    case c3__oops:
+      abort();
   }
 
   if ( &(u3H->rod_u) == u3R ) {
@@ -623,12 +621,14 @@ u3m_leap(c3_w pad_w)
   /* Measure the pad - we'll need it.
   */
   {
+#if 0
     if ( pad_w < u3R->all.fre_w ) {
       pad_w = 0;
     } 
     else {
       pad_w -= u3R->all.fre_w;
     }
+#endif
     if ( (pad_w + c3_wiseof(u3a_road)) >= u3a_open(u3R) ) {
       u3m_bail(c3__meme);
     }
@@ -677,9 +677,6 @@ u3m_leap(c3_w pad_w)
   /* Set up the new road.
   */
   {
-    if ( u3R->how.fag_w & u3a_flag_debug ) {
-      rod_u->how.fag_w |= u3a_flag_debug;
-    }
     u3R = rod_u;
     _pave_parts();
   }
@@ -728,18 +725,19 @@ u3m_hate(c3_w pad_w)
 u3_noun
 u3m_love(u3_noun pro)
 {
-  u3_noun das           = u3R->jed.das;
-  u3p(u3h_root) har_p = u3R->jed.har_p;
+  {
+    u3_noun das         = u3R->jed.das;
+    u3p(u3h_root) har_p = u3R->jed.har_p;
 
-  u3m_fall();
+    u3m_fall();
 
-  pro = u3a_take(pro);
+    pro = u3a_take(pro);
 
-  u3j_reap(das, har_p);
+    u3j_reap(das, har_p);
 
-  u3R->cap_p = u3R->ear_p;
-  u3R->ear_p = 0;
-
+    u3R->cap_p = u3R->ear_p;
+    u3R->ear_p = 0;
+  }
   return pro;
 }
 
@@ -794,9 +792,9 @@ u3m_water(c3_w* low_w, c3_w* hig_w)
 */
 u3_noun 
 u3m_soft_top(c3_w    sec_w,                     //  timer seconds
-               c3_w    pad_w,                     //  base memory pad
-               u3_funk fun_f,
-               u3_noun arg)
+             c3_w    pad_w,                     //  base memory pad
+             u3_funk fun_f,
+             u3_noun arg)
 {
   u3_noun why, pro;
   c3_l    sig_l;
@@ -806,6 +804,10 @@ u3m_soft_top(c3_w    sec_w,                     //  timer seconds
   _cm_signal_deep(0);
 
   if ( 0 != (sig_l = sigsetjmp(u3_Signal, 1)) ) {
+    //  reinitialize trace state
+    //
+    u3t_init();
+
     //  return to blank state
     //
     _cm_signal_done();
@@ -821,13 +823,13 @@ u3m_soft_top(c3_w    sec_w,                     //  timer seconds
 
   /* Trap for ordinary nock exceptions.
   */
-  if ( 0 == (why = (u3_noun)setjmp(u3R->esc.buf)) ) {
+  if ( 0 == (why = (u3_noun)_setjmp(u3R->esc.buf)) ) {
     pro = fun_f(arg);
 
     /* Make sure the inner routine did not create garbage.
     */
-    if ( u3R->how.fag_w & u3a_flag_debug ) {
-      u3e_grab("top", pro, u3_none);
+    if ( u3C.wag_w & u3o_debug_ram ) {
+      u3m_grab(pro, u3_none);
     }
  
     /* Revert to external signal regime.
@@ -862,7 +864,7 @@ u3m_soft_top(c3_w    sec_w,                     //  timer seconds
 u3_noun 
 u3m_soft_sure(u3_funk fun_f, u3_noun arg)
 {
-  u3_noun pro, pru = u3m_soft_top(0, 32768, fun_f, arg);
+  u3_noun pro, pru = u3m_soft_top(0, (1 << 18), fun_f, arg);
 
   c3_assert(_(u3du(pru)));
   pro = u3k(u3t(pru));
@@ -893,15 +895,15 @@ u3m_soft_nock(u3_noun bus, u3_noun fol)
 */
 u3_noun 
 u3m_soft_run(u3_noun fly,
-               u3_funq fun_f,
-               u3_noun aga,
-               u3_noun agb)
+             u3_funq fun_f,
+             u3_noun aga,
+             u3_noun agb)
 {
-  u3_noun why, pro;
+  u3_noun why = 0, pro;
 
   /* Record the cap, and leap.
   */
-  u3m_hate(32768);
+  u3m_hate(1 << 18);
  
   /* Configure the new road.
   */
@@ -910,21 +912,21 @@ u3m_soft_run(u3_noun fly,
     u3R->pro.don = u3R->par_u->pro.don;
     u3R->bug.tax = 0;
   }
+  u3t_on(coy_o);
 
   /* Trap for exceptions.
   */
-  if ( 0 == (why = (u3_noun)setjmp(u3R->esc.buf)) ) {
+  if ( 0 == (why = (u3_noun)_setjmp(u3R->esc.buf)) ) {
+    u3t_off(coy_o);
     pro = fun_f(aga, agb);
 
-    if ( u3R->how.fag_w & u3a_flag_debug ) {
-      u3e_grab("top", pro, u3_none);
-    }
- 
     /* Produce success, on the old road.
     */
     pro = u3nc(0, u3m_love(pro));
   }
   else {
+    u3t_init();
+
     /* Produce - or fall again.
     */
     {
@@ -989,7 +991,7 @@ u3m_soft_esc(u3_noun sam)
 
   /* Record the cap, and leap.
   */
-  u3m_hate(32768);
+  u3m_hate(1 << 18);
  
   /* Configure the new road.
   */
@@ -1001,7 +1003,7 @@ u3m_soft_esc(u3_noun sam)
 
   /* Trap for exceptions.
   */
-  if ( 0 == (why = (u3_noun)setjmp(u3R->esc.buf)) ) {
+  if ( 0 == (why = (u3_noun)_setjmp(u3R->esc.buf)) ) {
     pro = u3n_slam_on(fly, sam);
 
     /* Fall back to the old road, leaving temporary memory intact.
@@ -1009,6 +1011,8 @@ u3m_soft_esc(u3_noun sam)
     pro = u3m_love(pro);
   }
   else {
+    u3t_init();
+
     /* Push the error back up to the calling context - not the run we
     ** are in, but the caller of the run, matching pure nock semantics.
     */
@@ -1024,6 +1028,34 @@ u3m_soft_esc(u3_noun sam)
   return pro;
 }
 
+/* u3m_grab(): garbage-collect the world, plus extra roots.
+*/
+void
+u3m_grab(u3_noun som, ...)   // terminate with u3_none
+{
+  // u3h_free(u3R->cax.har_p);
+  // u3R->cax.har_p = u3h_new();
+
+  u3v_mark();
+  u3m_mark();
+  {
+    va_list vap;
+    u3_noun tur;
+
+    va_start(vap, som);
+
+    if ( som != u3_none ) {
+      u3a_mark_noun(som);
+
+      while ( u3_none != (tur = va_arg(vap, u3_noun)) ) {
+        u3a_mark_noun(tur);
+      }
+    }
+    va_end(vap);
+  }
+  u3a_sweep();
+}
+
 /* u3m_soft(): top-level wrapper.  
 **
 ** Produces [0 product] or [%error (list tank)], top last.
@@ -1035,7 +1067,7 @@ u3m_soft(c3_w    sec_w,
 {
   u3_noun why;
  
-  why = u3m_soft_top(sec_w, (1 << 17), fun_f, arg);   // 512K pad
+  why = u3m_soft_top(sec_w, (1 << 18), fun_f, arg);   // 512K pad
 
   if ( 0 == u3h(why) ) {
     return why;
@@ -1328,6 +1360,22 @@ _cm_signals(void)
     exit(1);
   }
   // signal(SIGINT, _loom_stop);
+
+
+  //  Block SIGPROF, so that if/when we reactivate it on the
+  //  main thread for profiling, we won't get hits in parallel
+  //  on other threads.
+  {
+    sigset_t set;
+                                 
+    sigemptyset(&set);
+    sigaddset(&set, SIGPROF);
+
+    if ( 0 != pthread_sigmask(SIG_BLOCK, &set, NULL) ) {
+      perror("pthread_sigmask");
+      exit(1);
+    }
+  }
 }
 
 /* _cm_init(): start the environment, with/without checkpointing.
@@ -1372,34 +1420,6 @@ _cm_init(c3_o chk_o)
   }
 }
 
-/* u3e_grab(): garbage-collect the world, plus extra roots, then 
-*/
-void
-u3e_grab(c3_c* cap_c, u3_noun som, ...)   // terminate with u3_none
-{
-  // u3h_free(u3R->cax.har_p);
-  // u3R->cax.har_p = u3h_new();
-
-  u3v_mark();
-  u3m_mark();
-  {
-    va_list vap;
-    u3_noun tur;
-
-    va_start(vap, som);
-
-    if ( som != u3_none ) {
-      u3a_mark_noun(som);
-
-      while ( u3_none != (tur = va_arg(vap, u3_noun)) ) {
-        u3a_mark_noun(tur);
-      }
-    }
-    va_end(vap);
-  }
-  u3a_sweep(cap_c);
-}
-
 /* u3m_boot(): start the u3 system.
 */
 void
@@ -1412,6 +1432,10 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c)
   /* Activate the storage system.
   */
   nuu_o = u3e_live(nuu_o, dir_c);
+
+  /* Activate tracing.
+  */
+  u3t_init();
 
   /* Construct or activate the allocator.
   */

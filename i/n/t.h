@@ -2,8 +2,53 @@
 **
 ** This file is in the public domain.
 */
+  /**  Options.
+  **/
+    /* U3_CPU_DEBUG: activate profiling.
+    */
+#     define U3_CPU_DEBUG
+
+  /** Data structures.
+  **/
+    /* u3t_trace: fast execution flags.
+    */
+      typedef struct _u3t_trace {
+        c3_o noc_o;                 //  now executing in nock interpreter
+        c3_o glu_o;                 //  now executing in jet glue
+        c3_o mal_o;                 //  now executing in allocator
+        c3_o far_o;                 //  now executing in fragmentor
+        c3_o coy_o;                 //  now executing in copy
+        c3_o euq_o;                 //  now executing in equal
+      } u3t_trace;
+
+  /**  Macros.
+  **/
+#   ifdef U3_CPU_DEBUG
+#     define u3t_on(var)  \
+        (u3T.var = (u3C.wag_w & u3o_debug_cpu) \
+                 ? (c3n == u3T.var) ? c3y : (abort(), 0) \
+                 : u3T.var)
+#   else
+#     define u3t_on(var)
+#endif
+
+#   ifdef U3_CPU_DEBUG
+#     define u3t_off(var) \
+        (u3T.var = (u3C.wag_w & u3o_debug_cpu) \
+                 ? (c3y == u3T.var) ? c3n : (abort(), 0) \
+                 : u3T.var)
+#   else
+#     define u3t_off(var)
+#endif
+
+
   /**  Functions.
   **/
+    /* u3t_init(): initialize tracing layer.
+    */
+      void
+      u3t_init(void);
+
     /* u3t_push(): push on trace stack.
     */
       void
@@ -34,10 +79,10 @@
       void
       u3t_samp(void);
 
-    /* u3t_come(): push on profile stack.
+    /* u3t_come(): push on profile stack; return yes if active push.  RETAIN.
     */
-      void
-      u3t_come(u3_atom cog);
+      c3_o
+      u3t_come(u3_noun bat);
 
     /* u3t_flee(): pop off profile stack.
     */
@@ -58,3 +103,12 @@
     */
       void
       u3t_boot(void);
+
+
+  /** Globals.
+  **/
+    /* u3_Trace / u3C: global memory control.
+    */
+      c3_global u3t_trace u3t_Trace;
+#     define u3T u3t_Trace
+

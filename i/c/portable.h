@@ -17,6 +17,7 @@
   *** C file.
   **/
 #   if defined(U3_OS_linux)
+#     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>
 #     include <stdarg.h>
@@ -32,6 +33,7 @@
 #     include <sys/mman.h>
 
 #   elif defined(U3_OS_osx)
+#     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>
 #     include <stdarg.h>
@@ -48,6 +50,7 @@
 #     include <sys/mman.h>
 
 #   elif defined(U3_OS_bsd)
+#     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>
 #     include <stdarg.h>
@@ -70,7 +73,7 @@
   /** Address space layout.
   **/
 # if defined(U3_OS_linux)
-#   define U3_OS_LoomBase 0x404db000
+#   define U3_OS_LoomBase 0x36000000
 #   define U3_OS_LoomBits 29            //  ie, 2^29 words == 2GB
 # elif defined(U3_OS_osx)
 #   ifdef __LP64__

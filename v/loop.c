@@ -417,11 +417,24 @@ _lo_time(void)
 void
 u3_lo_open(void)
 {
-  if ( (u3H->rod_u.how.fag_w & u3a_flag_gc) || 
-       (u3H->rod_u.how.fag_w & u3a_flag_debug) ) 
-  {
-    u3e_grab("lo_open", u3_none);
+  if ( u3C.wag_w & (u3o_debug_ram | u3o_check_corrupt) ) {
+    //
+    //  Assumption: there are no noun roots outside u3A.
+    //
+    u3m_grab(u3_none);
   }
+#if 0
+  if ( u3C.wag_w & u3o_debug_cpu ) {
+    struct itimerval itm_u;
+
+    getitimer(ITIMER_VIRTUAL, &itm_u);
+    fprintf(stderr, "tv_sec %d, tv_usec %d, value %d/%d\r\n",
+                     itm_u.it_interval.tv_sec,
+                     itm_u.it_interval.tv_usec,
+                     itm_u.it_value.tv_sec,
+                     itm_u.it_interval.tv_usec);
+  }
+#endif
   _lo_time();
 }
 
@@ -430,7 +443,7 @@ u3_lo_open(void)
 void
 u3_lo_shut(c3_o inn)
 {
-  // u3e_grab("lo_shut a", u3_none);
+  // u3m_grab(u3_none);
 
   //  process actions
   //
@@ -461,9 +474,11 @@ u3_lo_shut(c3_o inn)
     // u3_lo_grab("lo_exit", u3_none);
     // u3_loom_save(u3A->ent_d);
     // u3_loom_exit();
-    // u3t_boff();
+    u3t_damp();
     u3_lo_exit();
 
+    //  save a checkpoint before exiting
+    u3e_save();
     exit(u3_Host.xit_i);
   }
   else {
@@ -628,11 +643,24 @@ u3_lo_loop()
   // signal(SIGIO, SIG_IGN);    //  linux is wont to produce for some reason
 
   _lo_init();
-  u3_raft_init();
-  // u3t_boot();                 //  activate profiling
 
-  if ( c3n == u3_Host.ops_u.bat ) {
-    uv_run(u3L, UV_RUN_DEFAULT);
+  u3_raft_init();
+
+#if 1
+  if ( _(u3_Host.ops_u.dry) ) {
+    u3t_boff();
+    u3t_damp();
+    u3_lo_exit();
+
+    fprintf(stderr, "dry run: exit\r\n");
+    exit(0);
+  }
+  else 
+#endif
+  { 
+    if ( c3n == u3_Host.ops_u.bat ) {
+      uv_run(u3L, UV_RUN_DEFAULT);
+    }
   }
 }
 

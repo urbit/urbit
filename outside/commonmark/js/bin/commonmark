@@ -1,0 +1,33 @@
+#!/usr/bin/env node
+var fs = require('fs');
+var util = require('util');
+var commonmark = require('../lib/index.js');
+
+var parser   = new commonmark.DocParser();
+var renderer;
+var inps = [];
+
+var output_ast = false;
+var files = [];
+
+if (process.argv[2] === '--ast') {
+  output_ast = true;
+  files = process.argv.slice(3);
+  renderer = { render: function(x) {
+                          return util.inspect(x, null, Infinity) + '\n';
+                        } };
+} else {
+  files = process.argv.slice(2);
+  renderer = new commonmark.HtmlRenderer();
+}
+
+if (files.length === 0) {
+  files = ['/dev/stdin'];
+}
+
+for (var i = 0; i < files.length; i++) {
+  file = files[i];
+  inps.push(fs.readFileSync(file, 'utf8'));
+}
+
+process.stdout.write(renderer.render(parser.parse(inps.join('\n'))));

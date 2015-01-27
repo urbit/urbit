@@ -1,0 +1,92 @@
+::
+::::  /hook/door/radio-report/mar
+  ::
+/?    314
+/-    *radio
+!:
+|_  rep=report
+::
+++  grab                                                ::  convert from
+  |%
+  ++  noun  report                                      ::  clam from %noun
+  --
+++  grow
+  |%
+  ++  mime  [/text/json (taco (crip (pojo json)))]
+  ++  json 
+    =>  +
+    |^  %+  joba  -.rep
+        ?-  -.rep
+          %config  ~!  rep  (conf +.rep)
+          %house  [%a (turn (~(tap by +.rep)) joce)]
+          %grams  (jobe num/(jone p.rep) tele/[%a (turn q.rep gram)] ~)
+        ::%group  (grop +.rep)
+          %group  (jobe local/(grop p.rep) global/%.(q.rep (jome stan grop)) ~)
+        ==
+    ++  joce  |=(a=span [%s a])
+    ++  jope  |=(a=ship (jape +:<a>)) ::[%s (crip +:(scow %p a))])
+    ++  joke  |=(a=tank [%s (role (turn (wash 0^80 a) crip))])
+    ++  jode  |=(a=time (jone (div (mul (sub a ~1970.1.1) 1.000) ~s1)))
+::     ++  jase  
+::       |*  a=,json
+::       |=  b=(set ,_+<.a)  ^-  json
+::       ~!  b
+::       [%a (turn (~(tap in b)) a)]
+    ::
+    ++  jome                                            ::  stringify keys
+      |*  [a=_cord b=_json]
+      |=  c=(map ,_+<.a ,_+<.b)
+      (jobe (turn (~(tap by c)) (both a b)))
+    ::
+    ++  both                                            ::  cons two gates
+      |*  [a=_,* b=_,*]
+      |=(c=_[+<.a +<.b] [(a -.c) (b +.c)])
+    ::
+    ::
+    ++  grop  (jome phon stas)                          ::  (map ship status)
+    ++  phon  |=(a=ship (scot %p a))
+    ++  stas  |=(status (jobe presence/(joce p) human/(huma q) ~))
+    ++  gram  |=(telegram (jobe ship/(jope p) thought/(thot q) ~))
+    ++  thot 
+      |=  thought 
+      (jobe serial/(jape <p>) audience/(audi q) statement/(stam r) ~)
+    ::
+    ++  audi  (jome stan joce)
+    ++  stan
+      |=  a=station  ^-  cord
+      %-  crip
+      ?~  -.a  "{<p.p.a>}/{(trip q.p.a)}"
+      ?-  -.p.a
+        %twitter  "{(trip -.p.a)}/{(trip p.p.a)}"
+      ==
+    ::
+    ++  stam  |=(statement (jobe time/(jode p) speech/(spec q) ~))
+    ++  spec
+      |=  a=speech
+      %+  joba  -.a
+      ?-  -.a
+        ?(%own %say)  [%s p.a]
+        %exp  (jobe code/[%s p.a] done/?~(q.a ~ (joke u.q.a)) ~)
+        %inv  (jobe ship/(jope p.a) party/[%s q.a] ~)
+      ==
+    ::
+    ++  huma
+      |=  human
+      %^  jobe
+        hand/?~(hand ~ [%s u.hand])
+        :-  %true
+        ?~  true  ~ 
+        =+  u.true 
+        (jobe first/[%s p] middle/?~(q ~ [%s u.q]) last/[%s r] ~)
+      ~
+    ::
+    ++  conf
+      |=  config
+      %-  jobe  :~
+        sources/[%a (turn (~(tap in sources)) |=(a=station [%s (stan a)]))]
+        =-  cordon/(jobe white/[%b -.cordon] list/[%a -] ~)
+        (turn (~(tap in p.cordon)) jope)                ::  XX  jase
+      ==
+  --
+--  --
+
