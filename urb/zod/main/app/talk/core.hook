@@ -166,10 +166,8 @@
             ship
             ;~(pose ;~(pfix fas urs:ab) (easy (main our)))
           ==
-        ;~  pfix  ket
-          ;~  pose
-            ;~(pfix pat (stag %twitter urs:ab))
-          ==
+        ;~  pose
+          ;~(pfix pat (stag %twitter urs:ab))
         ==
       ::
       ++  staz                                          ::  partner set
@@ -245,7 +243,7 @@
                 ?:  =((main p.p.i.tuo) q.p.i.tuo)
                   sip
                 :(welp sip "/" (trip q.p.i.tuo))
-            %|  ['^' '@' (trip p.p.i.tuo)] 
+            %|  ['@' (trip p.p.i.tuo)] 
           ==
       ?~  ted  ind
       (welp ind `tape`[',' ' ' ted])
@@ -348,8 +346,8 @@
     |=  job=work
     ^+  +>
     ?-    -.job
-        %ask  ~&(%sy-work-ask-stub !!)
-        %exp  ~&(%sy-work-exp-stub !!)
+        %ask  ~|(%sy-work-ask-stub !!)
+        %exp  ~|(%sy-work-exp-stub !!)
         %mor
       |-  ^+  +>.^$
       ?~  +.job  +>.^$
@@ -378,8 +376,8 @@
         [%publish [[sir sy-audience [lat.hid ~ +.job]] ~]]
       ==
     ::
-        %wry  ~&(%sy-work-wry !!)
-        %who  ~&(%sy-work-who-stub !!)
+        %wry  ~|(%sy-work-wry !!)
+        %who  ~|(%sy-work-who-stub !!)
     ==
   ::
   ++  sy-gram                                           ::  apply telegram
@@ -390,7 +388,7 @@
       =<  hy-abet
       %-  hy-render:(hype moz)
       =*  sta  r.q.gam
-      ?+    -.r.sta  ~&([%strange-gram -.r.sta] !!)
+      ?+    -.r.sta  ~|([%strange-gram -.r.sta] !!)
       ::
           %lin  
         :-  %txt 
@@ -497,7 +495,7 @@
       |=  rad=report
       ^+  +>
       ?-  -.rad
-        %house   ~&(%sz-apply-house !!)
+        %house   ~|(%sz-apply-house !!)
         %grams   +>(+> (sy-grams +.rad))
         %config  (sz-config +.rad)
         %group   (sz-group +.rad)
@@ -597,6 +595,7 @@
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
+  ~|  sign=sih
   =>  .(sih ((hard sign) sih))
   ::  ~&  talk-pour/sih
   ?~  pax  ~&  talk-pour-strange-path/pax  !!
@@ -606,12 +605,12 @@
       %command
     ?+    +<.sih  !!
       %nice  [~ +>.$]
-      %mean  ~&([%pour-mean-cmd-in +>.sih] !!)
+      %mean  ~|([%pour-mean-cmd-in +>.sih] !!)
     ==
       %cmd-in
     ?+    +<.sih  !!
         %nice  [~ +>.$]
-        %mean  ~&([%pour-mean-cmd-in +>.sih] !!)
+        %mean  ~|([%pour-mean-cmd-in +>.sih] !!)
         %rush
       ?>  ?=(%txt -.p.sih)
       =^  moz  +>.$  (pour-shell p.p.sih)
@@ -622,7 +621,7 @@
       %cmd-ac
     ?+  +<.sih  !!
         %nice  [~ +>.$]
-        %mean  ~&([%pour-mean-cmd-ac +>.sih] !!)
+        %mean  ~|([%pour-mean-cmd-ac +>.sih] !!)
         %rush
       :_  +>.$
       [ost %pass pax %g %took [our.hid +.imp.hid] our.hid]~
@@ -631,7 +630,7 @@
       %server
     ?+    +<.sih  !!
         %nice  [~ +>.$]
-        %mean  ~&(%talk-server-crash !!)
+        %mean  ~|(%talk-server-crash !!)
         %rush
       ?>  ?=([%rodeo-report %house *] p.sih)
       =^  moz  +>.$  ny-abet:(ny-tell:ny +.p.p.sih)  

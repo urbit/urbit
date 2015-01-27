@@ -473,7 +473,7 @@
             %mean  [%pass [%r pax] (rod %e p.+.sih)]
             %nice  [%give %nice ~]
             %rush  [%pass [%r pax] (rod %d p.+.sih q.+.sih)]
-            %rust  ~&  [%gave-rust [our you num imp] hen]
+            %rust  ::  ~&  [%gave-rust [our you num imp] hen]
                    [%pass [%r pax] (rod %f p.+.sih q.+.sih)]
             %sage  !!
             %verb  !!
@@ -672,7 +672,7 @@
       ::
       ++  blow
         ^+  .
-        ~&  [%gall-blow ost]
+        ::  ~&  [%gall-blow ost]
         =>  (give %mean ~)
         =+  pax=+:(fall (~(get by sup.sat) ost) *[ship path])
         %=  +
@@ -930,7 +930,6 @@
             deal:(drum u.gad)
           ::
               %pull
-            ~&  [%more-pull pax]
             =^  gud  +>.$  (mack q.hin)
             ?^  gud  +>.$
             blow
@@ -1165,9 +1164,10 @@
           ::  ~&  [%yawn-told-has ost qol [our hen]]
           =+  qul=?~(qol 1 +(u.qol))
           =.  qel.sat  (~(put by qel.sat) ost qul)
-          ?:  =(10 qul)
-            ~&  [%yawn-told-full ost our hen]
-            +>.$(qic.sat ~, vey.sat (~(put to vey.sat) hen %nuke p.kon))
+          ::  XX turn me back on!
+          ::  ?:  =(10 qul)
+          ::  ~&  [%yawn-told-full ost our hen]
+          ::  +>.$(qic.sat ~, vey.sat (~(put to vey.sat) hen %nuke p.kon))
           +>.$(qic.sat ~)
         ::
             %load
