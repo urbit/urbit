@@ -19,7 +19,7 @@
           [%nice ~]
       ==
     ++  move  ,[p=bone q=(mold note gift)]
-    ++  note  ,~
+    ++  note  ,[%c %info p=@p q=@tas r=nori]            ::  internal edit
     --
 |_  [hid=hide vat=axle]
 ++  grab
@@ -69,9 +69,8 @@
   |=  [ost=bone you=ship ~]
   ^-  [(list move) _+>]
   :_  +>.$
-  %+  turn  (~(tap by sup.hid))
-  |=  [ost=bone her=ship pax=path]
-  [ost %give %mean ~ %reload leaf/"please quit chat and re-enter" ~]
+  =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/radio/backlog/jam
+  [ost %pass /jamfile %c %info our.hid (foal paf (jam +<+.+>.$))]~
 ::
 ++  pull
   |=  ost=bone
