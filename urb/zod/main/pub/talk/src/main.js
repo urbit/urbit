@@ -50,7 +50,10 @@ module.exports = {
         statement: {
           bouquet: [],
           speech: {
-            say: message
+            lin: {
+              say: false,
+              txt: message
+            }
           },
           date: Date.now()
         }
@@ -224,7 +227,7 @@ Message = recl({
         }, this.convTime(this.props.thought.statement.date))
       ]), div({
         className: "mess"
-      }, this.props.thought.statement.speech.say)
+      }, this.props.thought.statement.speech.lin.txt)
     ]);
   }
 });
