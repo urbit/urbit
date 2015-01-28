@@ -249,6 +249,7 @@ static void
 _unix_file_watch(u3_ufil* fil_u,
                  u3_udir* dir_u,
                  c3_c*    pax_c,
+                 c3_c*    pot_c,
                  c3_w*    mod_w)
 {
   // (1) build data structure
@@ -256,6 +257,7 @@ _unix_file_watch(u3_ufil* fil_u,
   fil_u->non = c3n;
   fil_u->dry = c3n;
   fil_u->pax_c = pax_c;
+  fil_u->pot_c = pot_c;
   {
     c3_c* dot_c = strrchr(pax_c, '.');
     c3_c* fas_c = strrchr(pax_c, '/');
@@ -297,45 +299,46 @@ _unix_file_watch(u3_ufil* fil_u,
 /* _unix_file_form(): form a filename path downward.
 */
 static c3_c*
-_unix_file_form(u3_udir* dir_u,
+_unix_file_form(c3_c* pax_c,
                 u3_noun  pre,
                 u3_noun  ket,
                 u3_noun  ext)
 {
   c3_c* pre_c = u3r_string(pre);
   c3_c* ext_c = u3r_string(ext);
-  c3_w  pax_w = strlen(dir_u->pax_c);
+  c3_w  pax_w = strlen(pax_c);
   c3_w  pre_w = strlen(pre_c);
   c3_w  ext_w = strlen(ext_c);
   c3_w  ket_w = (c3y == ket) ? 1 : 0;
-  c3_c* pax_c = c3_malloc(pax_w + 1 + pre_w + 1 + ket_w + ext_w + 1);
+  c3_c* pox_c = c3_malloc(pax_w + 1 + pre_w + 1 + ket_w + ext_w + 1);
 
-  strncpy(pax_c, dir_u->pax_c, pax_w);
-  pax_c[pax_w] = '/';
-  strncpy(pax_c + pax_w + 1, pre_c, pre_w);
-  pax_c[pax_w + 1 + pre_w] = '.';
+  strncpy(pox_c, pax_c, pax_w);
+  pox_c[pax_w] = '/';
+  strncpy(pox_c + pax_w + 1, pre_c, pre_w);
+  pox_c[pax_w + 1 + pre_w] = '.';
   if ( c3y == ket ) {
-    pax_c[pax_w + 1 + pre_w + 1] = '^';
+    pox_c[pax_w + 1 + pre_w + 1] = '^';
   }
-  strncpy(pax_c + pax_w + 1 + pre_w + 1 + ket_w, ext_c, ext_w);
-  pax_c[pax_w + 1 + pre_w + 1 + ket_w + ext_w] = '\0';
+  strncpy(pox_c + pax_w + 1 + pre_w + 1 + ket_w, ext_c, ext_w);
+  pox_c[pax_w + 1 + pre_w + 1 + ket_w + ext_w] = '\0';
 
   free(pre_c); free(ext_c);
   u3z(pre); u3z(ext);
 
-  return pax_c;
+  return pox_c;
 }
 
 /* _unix_dir_watch(): instantiate directory tracker.
 */
 static void
-_unix_dir_watch(u3_udir* dir_u, u3_udir* par_u, c3_c* pax_c)
+_unix_dir_watch(u3_udir* dir_u, u3_udir* par_u, c3_c* pax_c, c3_c* pot_c)
 {
   // (1) build data structure
   //
   dir_u->yes = c3y;
   dir_u->dry = c3n;
   dir_u->pax_c = pax_c;
+  dir_u->pot_c = pot_c;
   dir_u->par_u = par_u;
   dir_u->dis_u = 0;
   dir_u->fil_u = 0;
@@ -372,17 +375,24 @@ _unix_dir_forge(u3_udir* dir_u, u3_udir* par_u, u3_noun tet)
   c3_w  pax_w = strlen(par_u->pax_c);
   c3_w  tet_w = strlen(tet_c);
   c3_c* pax_c = c3_malloc(pax_w + 1 + tet_w + 1);
+  c3_c* pot_c = c3_malloc(pax_w + 1 + 1 + tet_w + 1);
 
   strncpy(pax_c, par_u->pax_c, pax_w + 1);
   pax_c[pax_w] = '/';
   strncpy(pax_c + pax_w + 1, tet_c, tet_w + 1);
   pax_c[pax_w + tet_w + 1] = '\0';
 
+  strncpy(pot_c, par_u->pot_c, pax_w + 1 + 1);
+  pot_c[pax_w + 1] = '/';
+  strncpy(pot_c + pax_w + 1 + 1, tet_c, tet_w + 1);
+  pot_c[pax_w + 1 + tet_w + 1] = '\0';
+
   free(tet_c);
   u3z(tet);
 
   _unix_mkdir(pax_c);
-  _unix_dir_watch(dir_u, par_u, pax_c);
+  _unix_mkdir(pot_c);
+  _unix_dir_watch(dir_u, par_u, pax_c, pot_c);
 }
 
 /* _unix_file_done(): finish freeing file.
@@ -544,11 +554,13 @@ _unix_dir_update(u3_udir* dir_u, DIR* rid_u)
       }
       else {
         c3_c* pax_c = _unix_down(dir_u->pax_c, out_u->d_name);
+        c3_c* pot_c = _unix_down(dir_u->pot_c, out_u->d_name);
         struct stat buf_u;
 
         // uL(fprintf(uH, "  in %s\n", pax_c));
         if ( 0 != stat(pax_c, &buf_u) ) {
           free(pax_c);
+          free(pot_c);
           continue;
         }
         else {
@@ -577,7 +589,7 @@ _unix_dir_update(u3_udir* dir_u, DIR* rid_u)
               fil_u = c3_malloc(sizeof(u3_ufil));
 
               // uL(fprintf(uH, "found file %s\n", pax_c));
-              _unix_file_watch(fil_u, dir_u, pax_c, mod_w);
+              _unix_file_watch(fil_u, dir_u, pax_c, pot_c, mod_w);
 
               fil_u->nex_u = dir_u->fil_u;
               dir_u->fil_u = fil_u;
@@ -596,7 +608,7 @@ _unix_dir_update(u3_udir* dir_u, DIR* rid_u)
               dis_u = c3_malloc(sizeof(u3_udir));
 
               // uL(fprintf(uH, "found directory %s\n", pax_c));
-              _unix_dir_watch(dis_u, dir_u, pax_c);
+              _unix_dir_watch(dis_u, dir_u, pax_c, pot_c);
               _unix_dir_update(dis_u, red_u);
 
               dis_u->nex_u = dir_u->dis_u;
@@ -605,6 +617,7 @@ _unix_dir_update(u3_udir* dir_u, DIR* rid_u)
               closedir(red_u);
             } else {
               free(pax_c);
+              free(pot_c);
             }
           }
         }
@@ -1091,9 +1104,7 @@ _unix_hot_gain(u3_noun who, u3_noun mek)
   {
     u3_uhot* hot_u = c3_malloc(sizeof(u3_uhot));
 
-    _unix_dir_watch(&hot_u->dir_u, 0, pin_c);
-
-    hot_u->dot_u = pot_c;
+    _unix_dir_watch(&hot_u->dir_u, 0, pin_c, pot_c);
 
     _unix_ship_out(who, hot_u->who_w);
     u3z(who);
@@ -1165,8 +1176,10 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
                      u3_noun  ext,
                      u3_noun  mis)
 {
-  c3_c*     pox_c = _unix_file_form(dir_u, u3k(pre), c3n, u3k(ext));
-  c3_c*     pux_c = _unix_file_form(dir_u, u3k(pre), c3y, u3k(ext));
+  c3_c*     pox_c = _unix_file_form(dir_u->pax_c, u3k(pre), c3n, u3k(ext));
+  c3_c*     pot_c = _unix_file_form(dir_u->pot_c, u3k(pre), c3n, u3k(ext));
+  c3_c*     pux_c = _unix_file_form(dir_u->pax_c, u3k(pre), c3y, u3k(ext));
+  c3_c*     put_c = _unix_file_form(dir_u->pot_c, u3k(pre), c3y, u3k(ext));
   u3_ufil** fil_u;
 
   // uL(fprintf(uH, "tofu pox_c %s op %s\n", pox_c, u3r_string(u3h(mis))));
@@ -1203,11 +1216,14 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
     _unix_file_free(ded_u);
 
     free(pox_c);
+    free(pot_c);
     free(pux_c);
+    free(put_c);
   }
   else {
     u3_noun god, oat;
     c3_c*   pax_c;
+    c3_c*   pat_c;
 
     if ( *fil_u ) {
       u3_noun old = _unix_file_load(*fil_u);
@@ -1225,9 +1241,11 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
     if ( c3y == u3du(god) ) {
       oat = u3ke_jam(god);
       pax_c = pux_c; free(pox_c);
+      pat_c = put_c; free(pot_c);
     } else {
       oat = god;
       pax_c = pox_c; free(pux_c);
+      pat_c = pot_c; free(put_c);
     }
 
 #ifdef SYNCLOG
@@ -1238,10 +1256,12 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
 #endif
 
     _unix_save(pax_c, oat);
+    _unix_save(pat_c, oat);
 
     if ( *fil_u ) {
       (*fil_u)->dot_c = (pax_c + ((*fil_u)->dot_c - (*fil_u)->pax_c));
       (*fil_u)->pax_c = pax_c;
+      (*fil_u)->pot_c = pat_c;
 
       u3r_words(0, 4, (*fil_u)->mod_w, u3A->now);
     }
@@ -1251,7 +1271,7 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
       u3r_words(0, 4, mod_w, u3A->now);
       *fil_u = c3_malloc(sizeof(u3_ufil));
 
-      _unix_file_watch(*fil_u, dir_u, pax_c, mod_w);
+      _unix_file_watch(*fil_u, dir_u, pax_c, pat_c, mod_w);
     }
   }
   u3z(pre); u3z(ext); u3z(mis);
@@ -1438,7 +1458,6 @@ u3_unix_ef_look(void)
         // uL(fprintf(uH, "sync: lose %s\n", hot_u->dir_u.pax_c));
         _unix_hot_lose(hot_u);
 
-        free(hot_u->dot_u);
         free(hot_u);
         continue;
       }
