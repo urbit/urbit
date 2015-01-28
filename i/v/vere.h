@@ -300,8 +300,9 @@
         uv_fs_event_t    was_u;             //  stat watcher
         c3_o             dir;               //  always
         c3_o             dry;               //  ie, unmodified
-        c3_c*            pax_c;             //  absolute path
-        struct _u3_udir* par_u;             //  in directory
+        c3_c*            pax_c;             //  in absolute path
+        c3_c*            pot_c;             //  out absolute path
+        struct _u3_udir* par_u;             //  directory
       } u3_unod;
 
     /* u3_ufil: synchronized in-file.
@@ -310,8 +311,9 @@
         uv_fs_event_t    was_u;             //  stat watcher
         c3_o             non;               //  always u3_no
         c3_o             dry;               //  ie, unmodified
-        c3_c*            pax_c;             //  absolute path
-        struct _u3_udir* par_u;             //  in directory
+        c3_c*            pax_c;             //  in absolute path
+        c3_c*            pot_c;             //  out absolute path
+        struct _u3_udir* par_u;             //  directory
         c3_c*            dot_c;             //  extension point or 0
         c3_w             mod_w[4];          //  mtime
         struct _u3_ufil* nex_u;             //  internal list
@@ -323,7 +325,8 @@
         uv_fs_event_t    was_u;             //  stat watcher
         c3_o             yes;               //  always u3_yes
         c3_o             dry;               //  ie, unmodified
-        c3_c*            pax_c;             //  absolute path
+        c3_c*            pax_c;             //  in absolute path
+        c3_c*            pot_c;             //  out absolute path
         struct _u3_udir* par_u;             //  parent directory
         struct _u3_udir* dis_u;             //  subdirectories
         struct _u3_ufil* fil_u;             //  files
@@ -334,7 +337,6 @@
     */
       typedef struct _u3_uhot {
         u3_udir          dir_u;             //  in directory
-        c3_c*            dot_u;             //  out directory
         c3_w             who_w[4];          //  owner as words
         struct _u3_uhot* nex_u;             //  internal list
       } u3_uhot;

@@ -5,9 +5,15 @@
 =>  |%
 ++  bead  ,[p=(set beam) q=cage]                        ::  ford result
 ++  cult  (map duct rove)                               ::  subscriptions
-++  dojo  ,[p=cult q=(unit dork) r=(unit pork) s=dome]  ::  domestic desk state
+++  dojo                                                ::  domestic desk state
+          $:  qyx=cult                                  ::  subscribers
+              dom=dome                                  ::  desk data
+              dok=(unit dork)                           ::  outstanding diffs
+              pok=(unit pork)                           ::  outstanding patches
+              wok=(unit work)                           ::  outstanding ergos
+          ==                                            ::
 ++  gift                                                ::  out result <-$
-          $%  [%ergo p=@p q=@tas r=@ud]                 ::  version update
+          $%  [%ergo p=@p q=@tas r=@ud s=(list ,[path mime])] ::  version update
               [%note p=@tD q=tank]                      ::  debug message
               [%writ p=riot]                            ::  response
           ==                                            ::
@@ -97,9 +103,10 @@
           $:  lim=@da                                   ::  complete to
               qyx=cult                                  ::  subscribers
               ref=(unit rind)                           ::  outgoing requests
+              dom=dome                                  ::  revision state
               dok=(unit dork)                           ::  outstanding diffs
               pok=(unit pork)                           ::  outstanding patches
-              dom=dome                                  ::  revision state
+              wok=(unit work)                           ::  outstanding ergos
           ==                                            ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  request/desist
 ++  rind                                                ::  request manager
@@ -122,6 +129,10 @@
           ==                                            ::
 ++  pork                                                ::  patch work
           $:  sot=(map path bulb)                       ::
+              lon=(list path)                           ::
+          ==                                            ::
+++  work                                                ::
+          $:  sot=(list ,[p=path q=mime])               ::
               lon=(list path)                           ::
           ==                                            ::
 --  =>
@@ -279,16 +290,15 @@
       |=  [wen=@da mer=mizu]
       ^+  +>
       %=    +>
-          vag  vag  ::  ?~(hez vag :_(vag [u.hez [%ergo who syd let.dom]]))
-          ::yel  [[hen %note '=' %leaf ~] yel]     ::  XX do better
+          vag  ~&  %merge-announce  vag
+               ::  ?~(hez vag :_(vag [u.hez [%ergo who syd let.dom]]))
+          ::  yel  [[hen %note '=' %leaf ~] yel]     ::  XX do better
       ==
     ::
     ++  echo                                            ::  announce changes
       |=  [wen=@da lem=nori]
       ^+  +>
-      %=    +>
-          vag  vag  ::  ?~(hez vag :_(vag [u.hez [%ergo who syd let.dom]]))
-          yel
+      =.  yel
         =+  pre=`path`~[(scot %p for) syd (scot %ud let.dom)]
         ?-  -.lem
           |  :_  yel
@@ -301,6 +311,23 @@
                ?-(-.q.i.q.p.lem %del '-', %ins '+', %mut ':', %dif ';')
              [%leaf (spud (weld pre p.i.q.p.lem))]
         ==
+      ?~  hez  +>.$
+      ?.  ?=(%& -.lem)  +>.$
+      ?~  q.p.lem
+        apply-ergo(wok [~ ~ ~])
+      %_    +>.$
+          tag  ::  ?~(hez vag :_(vag [u.hez [%ergo who syd let.dom]]))
+        %-  welp  :_  tag
+        %+  turn  `(list ,[path miso])`q.p.lem
+        |=  [a=path *]
+        :+  u.hez
+          [%ergoing (scot %p who) syd a]
+        :*  %f  %exec  who  ~  %cast  %mime  %done  ~
+            ~|(%bad-echo (need (~(read ze lim dom ran) %x [%ud let.dom] a)))
+        ==
+      ::
+          wok
+        [~ ~ (turn `(list ,[path miso])`q.p.lem |=([a=path *] a))]
       ==
     ::
     ++  edit                                            ::  apply changes
@@ -385,6 +412,13 @@
       ?~  hat
         (echo(dom d, ran r, dok ~) wen %& *cart sot.u.dok)
       (echo:(checkout-ankh(dom d, ran r, dok ~) u.hat) wen %& *cart sot.u.dok)
+    ::
+    ++  apply-ergo
+      ^+  .
+      ?~  wok  ~&  %no-ergos  !!
+      ?^  lon.u.wok  ~&  %not-done-ergoing  !!
+      ?~  hez  ~&  %no-sync-duct  !!
+      .(wok ~, vag :_(vag [u.hez %ergo who syd let.dom sot.u.wok]))
     ::
     ++  apply-patches
       ^+  .
@@ -481,6 +515,35 @@
       ==
       ?~  lon.u.pok
         apply-patches
+      +>.$
+    ::
+    ++  take-ergo
+      |=  [pax=path res=(each bead (list tank))]
+      ^+  +>
+      ?~  wok
+        ~&  %clay-ergo-unexpected-made  +>
+      ?.  (lien lon.u.wok |=(path =(+< pax)))
+        ~&  %clay-ergo-strange-made  +>
+      ?:  ?=(%| -.res)
+        %_    +>.$
+            wok  ~
+          ::    tag
+          ::  %-  welp  :_  tag
+          ::  ^-  (list ,[duct path note])
+          ::  %+  murn  lon.u.wok
+          ::  |=  a=path
+          ::  ^-  (unit ,[duct path note])
+          ::  ?:  =(pax a)  ~
+          ::  `[hen [%ergoing (scot %p who) syd a] %f %exec who ~]
+        ::
+            yel
+          [[hen %note '!' %rose [" " "" ""] leaf/"clay patch failed" p.res] yel]
+        ==
+      =:  lon.u.wok  (skip lon.u.wok |=(path =(+< pax)))
+          sot.u.wok  [[pax ((hard mime) q.q.q.p.res)] sot.u.wok]
+      ==
+      ?~  lon.u.wok
+        apply-ergo
       +>.$
     ::
     ++  checkout-ankh
@@ -727,7 +790,7 @@
         ?^(rug u.rug *rung)
     =+  ^=  red  ^-  rede
         =+  yit=(~(get by rus.rug) syd)
-        ?^(yit u.yit `rede`[~2000.1.1 ~ [~ *rind] ~ ~ *dome])
+        ?^(yit u.yit `rede`[~2000.1.1 ~ [~ *rind] *dome ~ ~ ~])
     ((de now hen ~ ~) [who him] syd red ran.ruf)
   ::
   ++  posh
@@ -748,8 +811,9 @@
     ++  pish
       |=  [syd=@ta red=rede run=rang]
       %_  +>
-        ran.ruf  run
-        dos.yar  (~(put by dos.yar) syd [qyx.red dok.red pok.red dom.red])
+          ran.ruf  run
+          dos.yar
+        (~(put by dos.yar) syd [qyx.red dom.red dok.red pok.red wok.red])
       ==
     ::
     ++  wake
@@ -769,7 +833,7 @@
       %^    (de now hen hun.yar hez.yar)
           [who who]
         syd
-      [[now p.saq ~ q.saq r.saq s.saq] ran.ruf]
+      [[now qyx.saq ~ dom.saq dok.saq pok.saq wok.saq] ran.ruf]
     --
   --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -842,9 +906,9 @@
         ~
       =+  dos=(~(get by dos.yar) q.q.hic)
       ?:  &(?=(^ dos) !=(0 +>-.+>+.+.dos))            ::  ank.s.u.dos
-        ?:  =(ank.s.u.dos q.q.hic)
+        ?:  =(ank.dom.u.dos q.q.hic)
           ~
-        [hen %slip %c %info p.q.hic q.q.hic %& (cost r.q.hic ank.s.u.dos)]~
+        [hen %slip %c %info p.q.hic q.q.hic %& (cost r.q.hic ank.dom.u.dos)]~
       =+  cos=(cost r.q.hic *ankh)
       =+  ^-  [one=(list ,[path miso]) two=(list ,[path miso])]
           %+  skid  q.cos
@@ -1020,6 +1084,18 @@
               (take-patch:zax t.t.t.tea p.q.hin)
           =+  zot=abet.zat
           [-.zot (posh who syd +.zot ruf)]
+        [mos ..^$]
+      ::
+          %ergoing
+        ?>  ?=([@ @ *] t.tea)
+        =+  who=(slav %p i.t.tea)
+        =+  syd=(slav %tas i.t.t.tea)
+        =^  mos  ruf
+          =+  une=(un who now hen ruf)
+          =+  ^=  zat
+              (take-ergo:(di:wake:une syd) t.t.t.tea p.q.hin)
+          =+  zot=abet.zat
+          [-.zot abet:(pish:une syd +.zot ran.zat)]
         [mos ..^$]
       ==
     ::
