@@ -105,8 +105,8 @@ _unix_opendir(c3_c* pax_c)
 static void
 _unix_unlink(c3_c* pax_c)
 {
-  if ( 0 != unlink(pax_c) && ENOENT != errno) {
-    uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
+  if ( 0 != unlink(pax_c) /* && ENOENT != errno */) {
+    uL(fprintf(uH, "error unlinking %s: %s\n", pax_c, strerror(errno)));
     c3_assert(0);
   }
 }
@@ -686,7 +686,7 @@ _unix_save(c3_c* pax_c, u3_atom oat)
   c3_y* oat_y;
 
   if ( fid_i < 0 ) {
-    uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
+    uL(fprintf(uH, "error opening %s: %s\n", pax_c, strerror(errno)));
     u3m_bail(c3__fail);
   }
 
@@ -699,8 +699,8 @@ _unix_save(c3_c* pax_c, u3_atom oat)
   u3z(oat);
 
   rit_w = write(fid_i, oat_y, siz_w);
-  if ( rit_w != fln_w ) {
-    uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
+  if ( rit_w != siz_w ) {
+    uL(fprintf(uH, "error writing %s: %s\n", pax_c, strerror(errno)));
     c3_assert(0);
   }
 
@@ -1200,8 +1200,8 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
   fil_u = &(dir_u->fil_u);
   while ( 1 ) {                               //  XX crude!
     if ( !*fil_u ||
-         !strcmp((*fil_u)->pax_c, pox_c) ||
-         !strcmp((*fil_u)->pax_c, pux_c) )
+         !strcmp((*fil_u)->pax_c, pox_c) /* ||
+         !strcmp((*fil_u)->pax_c, pux_c) */ )
     {
       break;
     }
@@ -1236,6 +1236,8 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
     if ( *fil_u ) {
       _unix_unlink((*fil_u)->pax_c);
       free((*fil_u)->pax_c);
+      _unix_unlink((*fil_u)->pot_c);
+      free((*fil_u)->pot_c);
     }
 
 #if 0
@@ -1257,7 +1259,7 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
     u3_Host.unx_u.sylo[slot].pax_c = strdup(pax_c);
 #endif
 
-    _unix_save(pax_c, mim);
+    _unix_save(pax_c, u3k(mim));
     _unix_save(pat_c, mim);
 
     if ( *fil_u ) {
