@@ -149,7 +149,7 @@
     =*  red  +<+>-
     =|  yel=(list ,[p=duct q=gift])
     =|  byn=(list ,[p=duct q=riot])
-    =|  vag=(list ,[p=duct q=gift])
+    =|  reg=(list ,[p=duct q=gift])
     =|  say=(list ,[p=duct q=path r=ship s=[p=@ud q=riff]])
     =|  tag=(list ,[p=duct q=path r=note])
     |%
@@ -163,7 +163,7 @@
         %+  turn  (flop byn)
         |=([a=duct b=riot] [a %give [%writ b]])
       ::
-        %+  turn  (flop vag)
+        %+  turn  (flop reg)
         |=([a=duct b=gift] [a %give b])
       ::
         %+  turn  (flop say)
@@ -291,8 +291,8 @@
       |=  [wen=@da mer=mizu]
       ^+  +>
       %=    +>
-          vag  ~&  %merge-announce  vag
-               ::  ?~(hez vag :_(vag [u.hez [%ergo who syd let.dom]]))
+          reg  ~&  %merge-announce  reg
+               ::  ?~(hez reg :_(reg [u.hez [%ergo who syd let.dom]]))
           ::  yel  [[hen %note '=' %leaf ~] yel]     ::  XX do better
       ==
     ::
@@ -319,14 +319,15 @@
           |(&(?=(%ins -.a) ?=(%mime -.+.a)) &(?=(%mut -.a) ?=(%mime -.+>.a)))
       =.  wok
         :+  ~
-          (~(tap by mim))
+          %+  murn  `(list ,[path miso])`q.p.lem
+          |=([a=path *] (bind (~(get by mim) a) |=(b=mime [a b])))
         %+  murn  `(list ,[path miso])`q.p.lem
         |=([a=path b=miso] ?:((ceq b) ~ (some a)))
       ?>  ?=(^ wok)
       ?~  lon.u.wok
         apply-ergo
       %_    +>.$
-          tag  ::  ?~(hez vag :_(vag [u.hez [%ergo who syd let.dom]]))
+          tag  ::  ?~(hez reg :_(reg [u.hez [%ergo who syd let.dom]]))
         %-  welp  :_  tag
         ^-  (list ,[duct path note])
         %+  murn  `(list ,[path miso])`q.p.lem
@@ -444,7 +445,7 @@
       ?~  wok  ~&  %no-ergos  !!
       ?^  lon.u.wok  ~&  %not-done-ergoing  !!
       ?~  hez  ~&  %no-sync-duct  !!
-      .(wok ~, vag :_(vag [u.hez %ergo who syd let.dom sot.u.wok]))
+      .(wok ~, reg :_(reg [u.hez %ergo who syd let.dom sot.u.wok]))
     ::
     ++  apply-patches
       ^+  .
