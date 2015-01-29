@@ -126,6 +126,7 @@
 ++  dork                                                ::  diff work
           $:  sot=(list ,[p=path q=misu])               ::
               lon=(list path)                           ::
+              mim=(map path mime)                       ::
           ==                                            ::
 ++  pork                                                ::  patch work
           $:  sot=(map path bulb)                       ::
@@ -296,7 +297,7 @@
       ==
     ::
     ++  echo                                            ::  announce changes
-      |=  [wen=@da lem=nori]
+      |=  [wen=@da mim=(map path mime) lem=nori]
       ^+  +>
       =.  yel
         =+  pre=`path`~[(scot %p for) syd (scot %ud let.dom)]
@@ -313,21 +314,31 @@
         ==
       ?~  hez  +>.$
       ?.  ?=(%& -.lem)  +>.$
-      ?~  q.p.lem
-        apply-ergo(wok [~ ~ ~])
+      =+  ^=  ceq
+          |=  a=miso
+          |(&(?=(%ins -.a) ?=(%mime -.+.a)) &(?=(%mut -.a) ?=(%mime -.+>.a)))
+      =.  wok
+        :+  ~
+          (~(tap by mim))
+        %+  murn  `(list ,[path miso])`q.p.lem
+        |=([a=path b=miso] ?:((ceq b) ~ (some a)))
+      ?>  ?=(^ wok)
+      ?~  lon.u.wok
+        apply-ergo
       %_    +>.$
           tag  ::  ?~(hez vag :_(vag [u.hez [%ergo who syd let.dom]]))
         %-  welp  :_  tag
-        %+  turn  `(list ,[path miso])`q.p.lem
-        |=  [a=path *]
+        ^-  (list ,[duct path note])
+        %+  murn  `(list ,[path miso])`q.p.lem
+        |=  [a=path b=miso]
+        ?:  (ceq b)
+          ~
+        %-  some
         :+  u.hez
           [%ergoing (scot %p who) syd a]
         :*  %f  %exec  who  ~  %cast  %mime  %done  ~
             ~|(%bad-echo (need (~(read ze lim dom ran) %x [%ud let.dom] a)))
         ==
-      ::
-          wok
-        [~ ~ (turn `(list ,[path miso])`q.p.lem |=([a=path *] a))]
       ==
     ::
     ++  edit                                            ::  apply changes
@@ -338,7 +349,7 @@
         =+  `[l=@da d=dome r=rang]`+<.axe
         ?~  hat
           +>.$(dom d, ran r)
-        (echo:(checkout-ankh(dom d, ran r) u.hat) wen lem)
+        (echo:(checkout-ankh(dom d, ran r) u.hat) wen ~ lem)
       ?.  =(~ dok)
         ~&  %already-applying-changes  !!
       =+  ^=  sop
@@ -356,7 +367,18 @@
       =+  ^-  sot=(list ,[p=path q=misu])
           %+  murn  q.p.lem
           |=([a=path b=miso] ?.((sop a b) ~ (some [a ((hard misu) b)])))
-      =.  dok  `[sot lon]
+      =+  ^-  mim=(map path mime)
+          %-  mo
+          ^-  (list ,[path mime])
+          %+  murn  q.p.lem
+          |=  [a=path b=miso]
+          ?-  -.b
+            %del  ~
+            %ins  ?.(?=(%mime p.p.b) ~ (some a ((hard mime) q.q.p.b)))
+            %dif  ~
+            %mut  ?.(?=(%mime p.q.b) ~ (some a ((hard mime) q.q.q.b)))
+          ==
+      =.  dok  `[sot lon mim]
       ?~  lon
         (apply-edit wen)
       =+  ^-  los=(list ,[duct path note])
@@ -410,10 +432,14 @@
       =+  [hat axe]=(~(edit ze lim dom ran) wen %& *cart sot.u.dok)
       =+  `[l=@da d=dome r=rang]`+<.axe
       ?~  hat
-        (echo(dom d, ran r, dok ~) wen %& *cart sot.u.dok)
-      (echo:(checkout-ankh(dom d, ran r, dok ~) u.hat) wen %& *cart sot.u.dok)
+        (echo(dom d, ran r, dok ~) wen mim.u.dok %& *cart sot.u.dok)
+      %^    echo:(checkout-ankh(dom d, ran r, dok ~) u.hat)
+          wen
+        mim.u.dok
+      [%& *cart sot.u.dok]
     ::
     ++  apply-ergo
+      ~&  %apply-ergoing
       ^+  .
       ?~  wok  ~&  %no-ergos  !!
       ?^  lon.u.wok  ~&  %not-done-ergoing  !!
@@ -905,7 +931,7 @@
       ?:  =(%$ q.q.hic)
         ~
       =+  dos=(~(get by dos.yar) q.q.hic)
-      ?:  &(?=(^ dos) !=(0 +>-.+>+.+.dos))            ::  ank.s.u.dos
+      ?:  &(?=(^ dos) !=(0 +>-.+<.+.dos))            ::  ank.s.u.dos
         ?:  =(ank.dom.u.dos q.q.hic)
           ~
         [hen %slip %c %info p.q.hic q.q.hic %& (cost r.q.hic ank.dom.u.dos)]~
