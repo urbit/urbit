@@ -1597,8 +1597,8 @@
       :+  ~
         %red
       ::  :+  [p.p.pul q.p.pul r.p.pul]
-      :+  [| q.p.pul r.p.pul]                           ::  XX  https
-        [~ /gul]
+      :+  [| q.p.pul r.p.pul]                           ::  XX https
+        [p.q.pul /gul]                                  ::  XX js discrimination
       :-  [%url (crip (earn pul(p.p |)))]
       ?~  whu  ~
       [%who (rsh 3 1 (scot %p u.whu))]~
@@ -1797,6 +1797,12 @@
     ++  lash                                            ::  user is authorized
       |=(a=ship (~(has ju aut.ced) %$ (scot %p a)))
     ::
+    ++  redi                                            ::  js login redirect
+      |=  pul=purl  ^-  tape
+      "window.location = '{(earn pul)}".
+        "{?~(r.pul "?" "&")}url=' +".
+        "encodeURIComponent(window.location)"
+    ::
     ++  step                                            ::  step in work
       |-  ^+  +
       =^  zib  +.$
@@ -1932,9 +1938,13 @@
           %=    pip
               pez
             :-  %fin
+            =+  pul=p.som.pip
+            ?:  ?=([~ %js] p.q.pul)               ::  XX js discrimination
+              [%mid /application/javascript (tact (redi pul(p.q ~)))]
+            =.  p.q.pul  ~
             :-  %raw
             :+  307
-              [%location (crip (earn p.som.pip))]~
+              [%location (crip (earn pul))]~
             ~
           ==
         ::
