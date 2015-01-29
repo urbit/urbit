@@ -278,6 +278,7 @@ _sist_home()
 {
   c3_c    mak_c[2048];
   c3_c    ful_c[2048];
+  c3_c    fut_c[2048];
 
   //  Create subdirectories.
   //
@@ -334,6 +335,13 @@ _sist_home()
     printf("%s\r\n", ful_c);
     if ( 0 != system(ful_c) ) {
       uL(fprintf(uH, "could not %s\n", ful_c));
+      u3_lo_bail();
+    }
+    snprintf(fut_c, 2048, "cp -r %s/zod %s/%s/out",
+                    U3_LIB, u3_Host.dir_c, u3_Host.ops_u.imp_c+1);
+    printf("%s\r\n", fut_c);
+    if ( 0 != system(fut_c) ) {
+      uL(fprintf(uH, "could not %s\n", fut_c));
       u3_lo_bail();
     }
   }

@@ -682,7 +682,7 @@ static void
 _unix_save(c3_c* pax_c, u3_atom oat)
 {
   c3_i  fid_i = open(pax_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-  c3_w  fln_w, rit_w;
+  c3_w  fln_w, rit_w, siz_w;
   c3_y* oat_y;
 
   if ( fid_i < 0 ) {
@@ -690,12 +690,15 @@ _unix_save(c3_c* pax_c, u3_atom oat)
     u3m_bail(c3__fail);
   }
 
-  fln_w = u3r_met(3, oat);
-  oat_y = c3_malloc(fln_w);
-  u3r_bytes(0, fln_w, oat_y, oat);
+  siz_w = u3h(u3t(oat));
+  fln_w = u3r_met(3, u3t(u3t(oat)));
+  oat_y = c3_malloc(siz_w);
+  memset(oat_y, 0, siz_w);
+
+  u3r_bytes(0, fln_w, oat_y, u3t(u3t(oat)));
   u3z(oat);
 
-  rit_w = write(fid_i, oat_y, fln_w);
+  rit_w = write(fid_i, oat_y, siz_w);
   if ( rit_w != fln_w ) {
     uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
     c3_assert(0);
@@ -908,6 +911,7 @@ _find_mug(u3_noun som, c3_l mug_l)
 }
 #endif
 
+#if 0
 /* _unix_desk_peek(): peek for ankh.
 */
 static u3_noun
@@ -930,6 +934,7 @@ _unix_desk_peek(u3_noun hox,
     u3z(cay); return ank;
   }
 }
+#endif
 
 #if 0 
 /* _unix_ankh_sing_map(): compare ankh maps for u3_ankh_sing().
@@ -1160,6 +1165,7 @@ _unix_home(u3_noun who)
   return hot_u;
 }
 
+#if 0
 /* _unix_desk_sync_udon(): apply udon to existing value.
 */
 static u3_noun
@@ -1167,6 +1173,7 @@ _unix_desk_sync_udon(u3_noun don, u3_noun old)
 {
   return u3dc("lump", don, old);
 }
+#endif
 
 /* _unix_desk_sync_tofu(): sync out file install.
 */
@@ -1174,7 +1181,7 @@ static void
 _unix_desk_sync_tofu(u3_udir* dir_u,
                      u3_noun  pre,
                      u3_noun  ext,
-                     u3_noun  mis)
+                     u3_noun  mim)
 {
   c3_c*     pox_c = _unix_file_form(dir_u->pax_c, u3k(pre), c3n, u3k(ext));
   c3_c*     pot_c = _unix_file_form(dir_u->pot_c, u3k(pre), c3n, u3k(ext));
@@ -1201,6 +1208,7 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
     else fil_u = &((*fil_u)->nex_u);
   }
 
+#if 0
   if ( *fil_u && (c3__del == u3h(mis)) ) {
     u3_ufil* ded_u = *fil_u;
 
@@ -1221,32 +1229,26 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
     free(put_c);
   }
   else {
-    u3_noun god, oat;
+#endif
     c3_c*   pax_c;
     c3_c*   pat_c;
 
     if ( *fil_u ) {
-      u3_noun old = _unix_file_load(*fil_u);
-      c3_assert(c3__mut == u3h(mis));
-
-      god = _unix_desk_sync_udon(u3k(u3t(mis)), old);
       _unix_unlink((*fil_u)->pax_c);
       free((*fil_u)->pax_c);
     }
-    else {
-      c3_assert(c3__ins == u3h(mis));
-      god = u3k(u3t(mis));
-    }
 
+#if 0
     if ( c3y == u3du(god) ) {
-      oat = u3ke_jam(god);
       pax_c = pux_c; free(pox_c);
       pat_c = put_c; free(pot_c);
     } else {
-      oat = god;
+#endif
       pax_c = pox_c; free(pux_c);
       pat_c = pot_c; free(put_c);
+#if 0
     }
+#endif
 
 #ifdef SYNCLOG
     u3_Host.unx_u.sylo[slot].unx   = c3n;
@@ -1255,8 +1257,8 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
     u3_Host.unx_u.sylo[slot].pax_c = strdup(pax_c);
 #endif
 
-    _unix_save(pax_c, oat);
-    _unix_save(pat_c, oat);
+    _unix_save(pax_c, mim);
+    _unix_save(pat_c, mim);
 
     if ( *fil_u ) {
       (*fil_u)->dot_c = (pax_c + ((*fil_u)->dot_c - (*fil_u)->pax_c));
@@ -1273,14 +1275,16 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
 
       _unix_file_watch(*fil_u, dir_u, pax_c, pat_c, mod_w);
     }
+#if 0
   }
-  u3z(pre); u3z(ext); u3z(mis);
+#endif
+  u3z(pre); u3z(ext); u3z(mim);
 }
 
 /* _unix_desk_sync_tako(): sync out change.
 */
 static void
-_unix_desk_sync_tako(u3_udir* dir_u, u3_noun pax, u3_noun mis)
+_unix_desk_sync_tako(u3_udir* dir_u, u3_noun pax, u3_noun mim)
 {
   if ( (c3n == u3du(pax)) ) {
     c3_assert(!"tack");
@@ -1292,7 +1296,7 @@ _unix_desk_sync_tako(u3_udir* dir_u, u3_noun pax, u3_noun mis)
     u3_noun pem = u3i_string(par_u);
     c3_assert( u3_nul == t_pax );                      //  XX ugly, wrong
 
-    _unix_desk_sync_tofu(dir_u->par_u, pem, u3k(i_pax), mis);
+    _unix_desk_sync_tofu(dir_u->par_u, pem, u3k(i_pax), mim);
   }
   else {
     u3_noun i_pax = u3h(pax);
@@ -1301,7 +1305,7 @@ _unix_desk_sync_tako(u3_udir* dir_u, u3_noun pax, u3_noun mis)
     u3_noun tt_pax = u3t(t_pax);
 
     if ( u3_nul == tt_pax ) {
-      _unix_desk_sync_tofu(dir_u, u3k(i_pax), u3k(it_pax), mis);
+      _unix_desk_sync_tofu(dir_u, u3k(i_pax), u3k(it_pax), mim);
     }
     else {
       u3_udir** dis_u = _unix_pdir(dir_u, u3k(i_pax));
@@ -1311,7 +1315,7 @@ _unix_desk_sync_tako(u3_udir* dir_u, u3_noun pax, u3_noun mis)
 
         _unix_dir_forge(*dis_u, dir_u, u3k(i_pax));
       }
-      _unix_desk_sync_tako(*dis_u, u3k(t_pax), mis);
+      _unix_desk_sync_tako(*dis_u, u3k(t_pax), mim);
     }
   }
   u3z(pax);
@@ -1320,15 +1324,13 @@ _unix_desk_sync_tako(u3_udir* dir_u, u3_noun pax, u3_noun mis)
 /* _unix_desk_sync_soba(): sync computed changes.
 */
 static void
-_unix_desk_sync_soba(u3_udir* dir_u, u3_noun doz)
+_unix_desk_sync_list(u3_udir* dir_u, u3_noun can)
 {
-  u3_noun zod = u3t(doz);
-
-  while ( u3_nul != zod ) {
-    _unix_desk_sync_tako(dir_u, u3k(u3h(u3h(zod))), u3k(u3t(u3h(zod))));
-    zod = u3t(zod);
+  while ( u3_nul != can ) {
+    _unix_desk_sync_tako(dir_u, u3k(u3h(u3h(can))), u3k(u3t(u3h(can))));
+    can = u3t(can);
   }
-  u3z(doz);
+  u3z(can);
 }
 
 /* _unix_desk_sync_ergo(): sync desk changes to unix.
@@ -1337,10 +1339,10 @@ static void
 _unix_desk_sync_ergo(u3_noun  hox,
                      u3_noun  syd,
                      u3_noun  lok,
+                     u3_noun  can,
                      u3_uhot* hot_u)
 {
   u3_udir** dir_u = _unix_pdir(&(hot_u->dir_u), syd);
-  u3_noun   xun;
 
 #if 0
   uL(fprintf(uH, "ergo %s %s %s\n", u3r_string(hox),
@@ -1351,24 +1353,10 @@ _unix_desk_sync_ergo(u3_noun  hox,
   if ( !*dir_u ) {
     *dir_u = c3_malloc(sizeof(u3_udir));
 
-    xun = u3nt(0, u3_nul, u3_nul);
     _unix_dir_forge(*dir_u, &(hot_u->dir_u), u3k(syd));
-  } else {
-    xun = _unix_dir_ankh(*dir_u);
   }
 
-  {
-    u3_noun bur = _unix_desk_peek(hox, syd, lok);
-
-    if ( c3n == u3r_sing(xun, bur) ) {
-      u3_noun doz = u3dc("cost", bur, xun);
-
-      _unix_desk_sync_soba(*dir_u, doz);
-    }
-    else {
-      u3z(xun); u3z(bur);
-    }
-  }
+  _unix_desk_sync_list(*dir_u, can);
 }
 
 /* u3_unix_ef_init(): update filesystem for new acquisition.
@@ -1389,16 +1377,17 @@ u3_unix_ef_init(u3_noun who)
 void
 u3_unix_ef_ergo(u3_noun who,
                 u3_noun syd,
-                u3_noun rel)
+                u3_noun rel,
+                u3_noun can)
 {
-  u3_noun  hox = u3dc("scot", 'p', u3k(who));
-  u3_noun  lok = u3dc("scot", c3__ud, rel);
+  u3_noun  hox = u3dc("scot", 'p', u3k(who));           // XXX unnecessary?
+  u3_noun  lok = u3dc("scot", c3__ud, rel);             // XXX unnecessary?
   u3_uhot* hot_u;
 
   hot_u = _unix_home(who);
 
   if ( 0 != hot_u ) {
-    _unix_desk_sync_ergo(hox, syd, lok, hot_u);
+    _unix_desk_sync_ergo(hox, syd, lok, can, hot_u);
   }
 }
 

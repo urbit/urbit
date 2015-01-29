@@ -929,7 +929,8 @@
         void
         u3_unix_ef_ergo(u3_noun who,
                         u3_noun syd,
-                        u3_noun rel);
+                        u3_noun rel,
+                        u3_noun can);
 
       /* u3_unix_io_init(): initialize storage.
       */
