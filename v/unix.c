@@ -626,7 +626,7 @@ _unix_dir_update(u3_udir* dir_u, DIR* rid_u)
   }
 }
 
-/* unix_load(): load a file.
+/* unix_load(): load a file as a cage
 */
 static u3_noun
 _unix_load(c3_c* pax_c)
@@ -657,16 +657,16 @@ _unix_load(c3_c* pax_c)
   else {
     //  -:!>(*[[@tas @tas ~] @ud @])
     u3_noun typ = u3nt(c3__cell,
-                      u3nt(c3__cell,
-                           u3nc(c3__atom, c3__tas),
-                           u3nt(c3__cell,
-                                u3nc(c3__atom, c3__tas),
-                                u3nt(c3__cube,
-                                     u3_nul,
-                                     u3nc(c3__atom, 'n')))),
-                      u3nt(c3__cell,
-                           u3nc(c3__atom, c3__ud),
-                           u3nc(c3__atom, u3_nul)));
+                       u3nt(c3__cell,
+                            u3nc(c3__atom, c3__tas),
+                            u3nt(c3__cell,
+                                 u3nc(c3__atom, c3__tas),
+                                 u3nt(c3__cube,
+                                      u3_nul,
+                                      u3nc(c3__atom, 'n')))),
+                       u3nt(c3__cell,
+                            u3nc(c3__atom, c3__ud),
+                            u3nc(c3__atom, u3_nul)));
     u3_noun nam = u3nt(c3__text, u3i_string("plain"), u3_nul);
     u3_noun pad = u3nt(nam, fln_w, u3i_bytes(fln_w, (c3_y *)pad_y));
     u3_noun cay = u3nt(c3__mime, typ, pad);
@@ -882,6 +882,7 @@ _unix_dir_ankh(u3_udir* dir_u)
   for ( fil_u = dir_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
     u3_noun wib = _unix_file_name(fil_u);
     u3_noun baw = _unix_file_load(fil_u);
+    if (0 == baw) continue;
     u3_noun woz = u3nt(u3_nul, u3do("sham", u3k(u3t(u3t(baw)))), baw);
     pam = _unix_dir_ankh_file(pam, wib, baw, woz);
   }
@@ -1208,8 +1209,8 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
     else fil_u = &((*fil_u)->nex_u);
   }
 
-#if 0
-  if ( *fil_u && (c3__del == u3h(mis)) ) {
+  if ( *fil_u && u3_nul == mim ) {
+    uL(fprintf(uH, "file goning: %s\n", pox_c));
     u3_ufil* ded_u = *fil_u;
 
 #ifdef SYNCLOG
@@ -1221,7 +1222,17 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
 
     *fil_u = ded_u->nex_u;
     _unix_unlink(ded_u->pax_c);
+    _unix_unlink(ded_u->pot_c);
     _unix_file_free(ded_u);
+    free(ded_u->pot_c);
+
+    free(pox_c);
+    free(pot_c);
+    free(pux_c);
+    free(put_c);
+  }
+  else if (u3_nul == mim) {
+    uL(fprintf(uH, "file already gone: %s\n", pox_c));
 
     free(pox_c);
     free(pot_c);
@@ -1229,7 +1240,6 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
     free(put_c);
   }
   else {
-#endif
     c3_c*   pax_c;
     c3_c*   pat_c;
 
@@ -1259,8 +1269,8 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
     u3_Host.unx_u.sylo[slot].pax_c = strdup(pax_c);
 #endif
 
-    _unix_save(pax_c, u3k(mim));
-    _unix_save(pat_c, mim);
+    _unix_save(pax_c, u3k(u3t(mim)));
+    _unix_save(pat_c, u3t(mim));
 
     if ( *fil_u ) {
       (*fil_u)->dot_c = (pax_c + ((*fil_u)->dot_c - (*fil_u)->pax_c));
@@ -1277,9 +1287,8 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
 
       _unix_file_watch(*fil_u, dir_u, pax_c, pat_c, mod_w);
     }
-#if 0
   }
-#endif
+
   u3z(pre); u3z(ext); u3z(mim);
 }
 
