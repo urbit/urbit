@@ -1,0 +1,11 @@
+::  Time an operation, usage :time foo, |time :foo
+::
+::::  /hook/core/time/app
+  ::
+/+    sh-utils
+|_  [hide ~]
+++  peer  ,_`.
+++  poke--args  (add-resp [%pass /(scot %da lat) %t %wait lat] ,_`.)
+++  pour  |=([@ a=path *] %.(+< (args-into-gate +> ,_(resu a))))
+++  resu  |=(a=path tang/[>`@dr`(sub lat (slav %da -.a))<]~)
+--
