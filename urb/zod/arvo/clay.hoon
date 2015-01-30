@@ -13,9 +13,14 @@
               wok=(unit work)                           ::  outstanding ergos
           ==                                            ::
 ++  gift                                                ::  out result <-$
-          $%  [%ergo p=@p q=@tas r=@ud s=(list ,[path mime])] ::  version update
+          $%  [%ergo p=@p q=@tas r=@ud s=(list ,[path (unit mime)])]
+                                                        ::  version update
               [%note p=@tD q=tank]                      ::  debug message
               [%writ p=riot]                            ::  response
+          ==                                            ::
+++  khan                                                ::
+          $:  fil=(unit cage)                           ::
+              dir=(map ,@ta khan)                       ::
           ==                                            ::
 ++  kiss                                                ::  in request ->$
           $%  [%font p=@p q=@tas r=@p s=@tas]           ::  set upstream
@@ -133,7 +138,7 @@
               lon=(list path)                           ::
           ==                                            ::
 ++  work                                                ::
-          $:  sot=(list ,[p=path q=mime])               ::
+          $:  sot=(list ,[p=path q=(unit mime)])        ::
               lon=(list path)                           ::
           ==                                            ::
 --  =>
@@ -316,11 +321,16 @@
       ?.  ?=(%& -.lem)  +>.$
       =+  ^=  ceq
           |=  a=miso
-          |(&(?=(%ins -.a) ?=(%mime -.+.a)) &(?=(%mut -.a) ?=(%mime -.+>.a)))
+          ?|  ?=(%del -.a)
+              &(?=(%ins -.a) ?=(%mime -.+.a))
+              &(?=(%mut -.a) ?=(%mime -.+>.a))
+          ==
       =.  wok
         :+  ~
           %+  murn  `(list ,[path miso])`q.p.lem
-          |=([a=path *] (bind (~(get by mim) a) |=(b=mime [a b])))
+          |=  [a=path b=miso]
+          ?:  ?=(%del -.b)  (some a ~)
+          (bind (~(get by mim) a) |=(c=mime [a (some c)]))
         %+  murn  `(list ,[path miso])`q.p.lem
         |=([a=path b=miso] ?:((ceq b) ~ (some a)))
       ?>  ?=(^ wok)
@@ -392,7 +402,7 @@
       ^-  [duct path note]
       :-  hen
       ?+    -.mis  !!
-          %mut 
+          %mut
         :-  [%diffing (scot %p who) syd (scot %da wen) pax]
         :^  %f  %exec  who  :-  ~
         ^-  silk
@@ -567,7 +577,7 @@
           [[hen %note '!' %rose [" " "" ""] leaf/"clay patch failed" p.res] yel]
         ==
       =:  lon.u.wok  (skip lon.u.wok |=(path =(+< pax)))
-          sot.u.wok  [[pax ((hard mime) q.q.q.p.res)] sot.u.wok]
+          sot.u.wok  [[pax `((hard mime) q.q.q.p.res)] sot.u.wok]
       ==
       ?~  lon.u.wok
         apply-ergo
