@@ -1703,8 +1703,7 @@
         :_  ~
         =+  neh=(claw p.p.bon)
         ?>  ?=(^ neh)
-        ?:  ?=(%e ven)
-          ?>  |(=(%pr cak) =(%pc cak))
+        ?:  &(?=(%e ven) ?=(%pc cak)) ::  XX  fix eyre
           :_  [%sick %wart p.bon cak `path`t.t.t.q.q.bon r.bon]
           [[%e `path`t.t.t.q.q.bon] hen]
         =+  ton=[%waft p.bon r.bon]
