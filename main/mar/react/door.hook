@@ -32,7 +32,7 @@
     ;:  weld
       "React.createElement("
       =*  tan  n.g.own
-      ?^  tan  !!                     ::  namespaces unsupported
+      ?^  tan  !!                                       ::  namespaces unsupported
       ?:  (vale tan)
         "'{(trip tan)}'"
       (trip tan)
@@ -51,9 +51,11 @@
       ::
       ")"
     ==
-  ++  js  (crip tape)                             ::  convert to %js
+  ++  react-js  (crip tape)
+  ++  js  react-js                                      ::  convert to %js
   ++  mime  [/text/javascript (taco js)]                ::  convert to %mime
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  manx                                ::  clam from %noun
+          ++  psal  |=  a=manx  a
 --        --
