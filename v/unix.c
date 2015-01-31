@@ -105,7 +105,7 @@ _unix_opendir(c3_c* pax_c)
 static void
 _unix_unlink(c3_c* pax_c)
 {
-  if ( 0 != unlink(pax_c) /* && ENOENT != errno */) {
+  if ( 0 != unlink(pax_c) && ENOENT != errno ) {
     uL(fprintf(uH, "error unlinking %s: %s\n", pax_c, strerror(errno)));
     c3_assert(0);
   }
@@ -778,21 +778,21 @@ _unix_file_name(u3_ufil* fil_u)
   }
 }
 
-/* _unix_dir_ankh_file(): process a file for ankh.
+/* _unix_dir_khan_file(): process a file for khan.
 */
 static u3_noun
-_unix_dir_ankh_file(u3_noun pam, u3_noun wib, u3_noun baw, u3_noun woz)
+_unix_dir_khan_file(u3_noun pam, u3_noun wib, u3_noun baw, u3_noun woz)
 {
   u3_weak ole;
   if ( c3n == u3du(wib) ) {
     ole = u3kdb_get(u3k(pam), u3k(wib));
 
     if ( u3_none == ole ) {
-      ole = u3do("cosh", u3nt(0, woz, u3_nul));
+      ole = u3nc(woz, u3_nul);
     } else {
       u3_noun elo;
 
-      elo = u3do("cosh", u3nt(0, woz, u3k(u3t(u3t(ole)))));
+      elo = u3nc(woz, u3k(u3t(ole)));
       u3z(ole);
 
       ole = elo;
@@ -806,29 +806,28 @@ _unix_dir_ankh_file(u3_noun pam, u3_noun wib, u3_noun baw, u3_noun woz)
     ole = u3kdb_get(u3k(pam), u3k(fid));
 
     if ( u3_none == ole ) {
-      ole = u3nt
-        (0, u3_nul, u3kdb_put(u3_nul,
-                                  u3k(har),
-                                  u3do("cosh", u3nt(0, woz, u3_nul))));
-      ole = u3do("cosh", ole);
+      ole = u3nc(u3_nul,
+                 u3kdb_put(u3_nul,
+                           u3k(har),
+                           u3nc(woz, u3_nul)));
     }
     else {
-      u3_noun roo = u3t(u3t(ole));
+      u3_noun roo = u3t(ole);
       u3_weak tup = u3kdb_get(u3k(roo), u3k(har));
       u3_noun oor, elo;
 
       if ( u3_none == tup ) {
-        tup = u3do("cosh", u3nt(0, woz, u3_nul));
+        tup = u3nc(woz, u3_nul);
       } else {
         u3_noun upt;
 
-        upt = u3do("cosh", u3nt(0, woz, u3k(u3t(u3t(tup)))));
+        upt = u3nc(woz, u3k(u3t(tup)));
         u3z(tup);
 
         tup = upt;
       }
       oor = u3kdb_put(u3k(roo), u3k(har), tup);
-      elo = u3do("cosh", u3nt(0, u3k(u3h(u3t(ole))), oor));
+      elo = u3nc(u3k(u3h(ole)), oor);
 
       u3z(ole); ole = elo;
     }
@@ -838,10 +837,10 @@ _unix_dir_ankh_file(u3_noun pam, u3_noun wib, u3_noun baw, u3_noun woz)
   return pam;
 }
 
-/* _unix_dir_ankh(): resolve directory to new style ankh.
+/* _unix_dir_khan(): resolve directory to khan.
 */
 static u3_noun
-_unix_dir_ankh(u3_udir* dir_u)
+_unix_dir_khan(u3_udir* dir_u)
 {
   u3_udir* dis_u;
   u3_ufil* fil_u;
@@ -849,15 +848,15 @@ _unix_dir_ankh(u3_udir* dir_u)
 
   for ( dis_u = dir_u->dis_u; dis_u; dis_u = dis_u->nex_u ) {
     u3_noun pre = _unix_dir_name(dis_u);
-    u3_noun ank = _unix_dir_ankh(dis_u);
+    u3_noun kan = _unix_dir_khan(dis_u);
 
     // uL(fprintf(uH, "dir %s\n", u3r_string(pre)));
-    if ( 0 != u3h(ank) ) {
-      pam = u3kdb_put(pam, pre, ank);
+    if ( u3_nul != u3h(kan) || u3_nul != u3t(kan) ) {
+      pam = u3kdb_put(pam, pre, kan);
     }
     else
     {
-      u3z(ank);
+      u3z(kan);
     }
   }
 
@@ -874,7 +873,7 @@ _unix_dir_ankh(u3_udir* dir_u)
       u3_noun baw = _unix_file_load(fil_u);
       u3_noun woz = u3nt(u3_nul, u3do("sham", u3k(u3t(u3t(baw)))), baw);
       u3z(dur);
-      pam = _unix_dir_ankh_file(pam, u3k(u3t(wib)), baw, woz);
+      pam = _unix_dir_khan_file(pam, u3k(u3t(wib)), baw, woz);
       u3z(wib);
     }
   }
@@ -882,11 +881,13 @@ _unix_dir_ankh(u3_udir* dir_u)
   for ( fil_u = dir_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
     u3_noun wib = _unix_file_name(fil_u);
     u3_noun baw = _unix_file_load(fil_u);
-    if (0 == baw) continue;
-    u3_noun woz = u3nt(u3_nul, u3do("sham", u3k(u3t(u3t(baw)))), baw);
-    pam = _unix_dir_ankh_file(pam, wib, baw, woz);
+    if (0 == baw) {
+      pam = _unix_dir_khan_file(pam, wib, baw, u3nc(u3_nul, u3_nul));
+    } else {
+      pam = _unix_dir_khan_file(pam, wib, baw, u3nt(u3_nul, u3_nul, baw));
+    }
   }
-  return u3do("cosh", u3nt(0, u3_nul, pam));
+  return u3nc(u3_nul, pam);
 }
 
 /* _find_mug(): find a noun with a given mug.  retain. DELETEME
@@ -1021,7 +1022,7 @@ _unix_desk_sync_into(u3_noun  who,
 {
   u3_noun xun, fav, pax;
 
-  xun = _unix_dir_ankh(dir_u);
+  xun = _unix_dir_khan(dir_u);
 
   pax = u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul);
   fav = u3nq(c3__into, who, syd, xun);
@@ -1380,7 +1381,7 @@ u3_unix_ef_init(u3_noun who)
   u3v_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
              u3nq(c3__into, who,
                             u3_blip,
-                            u3nt(u3_nul, u3_nul, u3_nul)));
+                            u3nc(u3_nul, u3_nul)));
 }
 
 /* u3_unix_ef_ergo(): update filesystem, outbound.
