@@ -919,9 +919,9 @@
                       delete all.pas;
 
                       console.log('redirect')
-                      window.location= // "http://"+seal.who+".urbit.org/gul?"
-                                      "http://0:8445/gul?"
-                                      + $.param(all);
+                      window.location= 
+                        "http://"+seal.who+".urbit.org/gul?"
+                        + $.param(all);
                       return false;
                     }
 
