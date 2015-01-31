@@ -19,16 +19,14 @@
               [%writ p=riot]                            ::  response
           ==                                            ::
 ++  khan                                                ::
-          $:  fil=(unit cage)                           ::
+          $:  fil=(unit (unit cage))                    ::
               dir=(map ,@ta khan)                       ::
           ==                                            ::
 ++  kiss                                                ::  in request ->$
           $%  [%font p=@p q=@tas r=@p s=@tas]           ::  set upstream
               [%info p=@p q=@tas r=nori]                ::  internal edit
-              [%ingo p=@p q=@tas r=nori]                ::  internal noun edit
               [%init p=@p]                              ::  report install
-              [%into p=@p q=@tas r=ankh]                ::  external edit
-              [%invo p=@p q=@tas r=nori]                ::  external noun edit
+              [%into p=@p q=@tas r=khan]                ::  external edit
               [%merg p=@p q=@tas r=mizu]                ::  internal change
               [%plug p=@p q=@tas r=@p s=@tas]           ::  unset upstream
               [%wart p=sock q=@tas r=path s=*]          ::  network request
@@ -945,8 +943,11 @@
       ?:  &(?=(^ dos) !=(0 +>-.+<.+.dos))            ::  ank.s.u.dos
         ?:  =(ank.dom.u.dos q.q.hic)
           ~
-        [hen %slip %c %info p.q.hic q.q.hic %& (cost r.q.hic ank.dom.u.dos)]~
-      =+  cos=(cost r.q.hic *ankh)
+        :_  ~
+        :*  hen  %slip  %c  %info  p.q.hic  q.q.hic  %&
+            (khan-to-soba `ank.dom.u.dos `r.q.hic)
+        ==
+      =+  cos=(khan-to-soba ~ `r.q.hic)
       =+  ^-  [one=(list ,[path miso]) two=(list ,[path miso])]
           %+  skid  q.cos
           |=  [a=path b=miso]
@@ -959,21 +960,6 @@
       :~  [hen %slip %c %info p.q.hic q.q.hic %& p.cos one]
           [hen %slip %c %info p.q.hic q.q.hic %& p.cos two]
       ==
-    ::
-        ?(%ingo %invo)                                   ::  not yet used
-      ?:  =(%$ q.q.hic)
-        ?.  ?=(%invo -.q.hic)  [~ ..^$]
-        =+  yar=(need (~(get by fat.ruf) p.q.hic))
-        [~ ..^$(fat.ruf (~(put by fat.ruf) p.q.hic yar(hez [~ hen])))]
-      =^  mos  ruf
-        =+  une=(un p.q.hic now hen ruf)
-        =+  ^=  zat
-            (exec:(di:wake:une q.q.hic) now r.q.hic)
-        =+  zot=abet:zat
-        :-  -.zot
-        =.  une  (pish:une q.q.hic +.zot ran.zat)
-        abet:une(hez.yar ?.(=(%invo -.q.hic) hez.yar.une [~ hen]))
-      [mos ..^$]
     ::
         %merg                                               ::  direct state up
       =^  mos  ruf
@@ -1171,4 +1157,49 @@
       ~&  [%clay-lost p.+.q.hin tea]
       [~ ..^$]
     ==
+  ++  khan-to-soba
+    |=  [ank=(unit ankh) kan=(unit khan)]
+    ^-  soba
+    :-  *cart
+    =|  pax=path
+    |-  ^-  (list ,[p=path q=miso])
+    ?~  ank
+      ?~  kan
+        ~
+      =+  =+  (~(tap by dir.u.kan))
+          |-(?~(+< ~ (weld ^$(pax [p.i pax], kan `q.i) $(+< t))))
+      ?~  fil.u.kan
+        -
+      ?~  u.fil.u.kan
+        -
+      [[(flop pax) %ins u.u.fil.u.kan] -]
+    ?~  kan
+      =+  =+  (~(tap by r.u.ank))
+          |-(?~(+< ~ (weld ^$(pax [p.i pax], ank `q.i) $(+< t))))
+      ?~  q.u.ank
+        -
+      [[(flop pax) %del q.u.q.u.ank] -]
+    =+  %+  weld
+          =+  (~(tap by r.u.ank))
+          |-  ^-  (list ,[p=path q=miso])
+          ?~  +<  ~
+          %-  weld  :_  $(+< t)
+          ^$(pax [p.i pax], ank `q.i, kan (~(get by dir.u.kan) p.i))
+        =+  (~(tap by dir.u.kan))
+        |-  ^-  (list ,[p=path q=miso])
+        ?~  +<  ~
+        ?:  (~(has by r.u.ank) p.i)  ~
+        %-  weld  :_  $(+< t)
+        ^$(pax [p.i pax], kan `q.i, ank (~(get by r.u.ank) p.i))
+    ?~  q.u.ank
+      ?~  fil.u.kan
+        -
+      ?~  u.fil.u.kan
+        -
+      [[(flop pax) %ins u.u.fil.u.kan] -]
+    ?~  fil.u.kan
+      -
+    ?~  u.fil.u.kan
+      [[(flop pax) %del q.u.q.u.ank] -]
+    [[(flop pax) %mut q.u.q.u.ank u.u.fil.u.kan] -]
   --
