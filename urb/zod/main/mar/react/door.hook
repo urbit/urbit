@@ -40,6 +40,7 @@
       ", "
       =-  (pojo (jobe (turn a.g.own -)))
       |=  [a=mane b=^tape]
+      =.  a  ?+(a a %class 'className')
       ?^(a !! [a (jape b)])
       ", "
       ::
