@@ -16,13 +16,14 @@
 #include <termios.h>
 #include <term.h>
 #include <errno.h>
+#include <libgen.h>
 
 #include "all.h"
 #include "v/vere.h"
 
 /* _unix_ship_in(): c3_w[4] to ship.
 */
-static u3_noun 
+static u3_noun
 _unix_ship_in(c3_w* who_w)
 {
   return u3i_words(4, who_w);
@@ -79,6 +80,42 @@ _unix_mkdir(c3_c* pax_c)
     uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
     c3_assert(0);
   }
+}
+
+/* _unix_mkpath(): mkdir -p, asserting
+ *
+ * adapted from
+ * http://niallohiggins.com/2009/01/08/mkpath-mkdir-p-alike-in-c-for-unix/
+ */
+static void
+_unix_mkpath(const char *s)
+{
+  char *q, *r = NULL, *path = NULL, *up = NULL;
+
+  if (strcmp(s, ".") == 0 || strcmp(s, "/") == 0)
+    return;
+
+  if ((path = strdup(s)) == NULL)
+    c3_assert(0);
+
+  if ((q = strdup(s)) == NULL)
+    c3_assert(0);
+
+  if ((r = dirname(q)) == NULL)
+    goto out;
+
+  if ((up = strdup(r)) == NULL)
+    exit(1);
+
+  _unix_mkpath(up);
+
+  _unix_mkdir(path);
+
+out:
+  if (up != NULL)
+    free(up);
+  free(q);
+  free(path);
 }
 
 /* _unix_opendir(): opendir, recreating if nonexistent.
@@ -213,7 +250,7 @@ _unix_fs_event_cb(uv_fs_event_t* was_u,
                   c3_i           evt_i,
                   c3_i           sas_i)
 {
-  
+
   // note that we're doing something tricky and weird here.
   //
   // * libuv passes around a pointer to a uv_fs_event_t
@@ -277,7 +314,7 @@ _unix_file_watch(u3_ufil* fil_u,
   // (2) stuff data structure into libuv
   //
   c3_w ret_w = uv_fs_event_init(u3L,          // loop
-                                &fil_u->was_u // uv_fs_event_t 
+                                &fil_u->was_u // uv_fs_event_t
                                 );
   if (0 != ret_w){
     uL(fprintf(uH, "event init: %s\n", strerror(ret_w)));
@@ -576,7 +613,7 @@ _unix_dir_update(u3_udir* dir_u, DIR* rid_u)
 
             {
               u3_noun mod = c3_stat_mtime(&buf_u);
-              
+
               u3r_words(0, 4, mod_w, mod);
               u3z(mod);
             }
@@ -586,6 +623,7 @@ _unix_dir_update(u3_udir* dir_u, DIR* rid_u)
               }
             }
             if ( !fil_u ) {
+              fprintf(stderr, "new filez!\r\n");
               fil_u = c3_malloc(sizeof(u3_ufil));
 
               // uL(fprintf(uH, "found file %s\n", pax_c));
@@ -627,21 +665,26 @@ _unix_dir_update(u3_udir* dir_u, DIR* rid_u)
 }
 
 /* unix_load(): load a file as a cage
+ *
+ * return value of c3__none means delete, u3_nul means no change
 */
 static u3_noun
-_unix_load(c3_c* pax_c)
+_unix_load(u3_ufil* fil_u)
 {
   struct stat buf_u;
-  c3_i        fid_i = open(pax_c, O_RDONLY, 0644);
+  c3_i        fid_i = open(fil_u->pax_c, O_RDONLY, 0644);
   c3_w        fln_w, red_w;
   c3_y*       pad_y;
+  c3_i        fit_i = open(fil_u->pot_c, O_RDONLY, 0644);
+  c3_w        flt_w, ret_w;
+  c3_y*       pat_y;
 
   if ( (fid_i < 0) || (fstat(fid_i, &buf_u) < 0) ) {
     //  ignore if the file disappeared between getting the sync event and now
     if ( ENOENT != errno ) {
-      uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
+      uL(fprintf(uH, "error loading %s: %s\n", fil_u->pax_c, strerror(errno)));
     }
-    return 0;
+    return c3__none;
   }
   fln_w = buf_u.st_size;
   pad_y = c3_malloc(fln_w);
@@ -655,6 +698,27 @@ _unix_load(c3_c* pax_c)
     return 0;
   }
   else {
+    if ( !(fit_i < 0 || fstat(fit_i, &buf_u) < 0) ) {
+      flt_w = buf_u.st_size;
+      pat_y = c3_malloc(flt_w);
+
+      ret_w = read(fit_i, pat_y, flt_w);
+      close(fit_i);
+
+      if ( flt_w != ret_w ) {
+        free(pad_y);
+        c3_assert(0);
+        return 0;
+      }
+
+      if ( fln_w == flt_w && 0 == memcmp(pad_y, pat_y, fln_w) ) {
+        free(pat_y);
+        return u3_nul;
+      }
+
+      free(pat_y);
+    }
+
     //  -:!>(*[[@tas @tas ~] @ud @])
     u3_noun typ = u3nt(c3__cell,
                        u3nt(c3__cell,
@@ -681,6 +745,10 @@ _unix_load(c3_c* pax_c)
 static void
 _unix_save(c3_c* pax_c, u3_atom oat)
 {
+  c3_c* dir = strdup(pax_c);
+  _unix_mkpath(dirname(dir));
+  free(dir);
+
   c3_i  fid_i = open(pax_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
   c3_w  fln_w, rit_w, siz_w;
   c3_y* oat_y;
@@ -713,17 +781,8 @@ _unix_save(c3_c* pax_c, u3_atom oat)
 static u3_noun
 _unix_file_load(u3_ufil* fil_u)
 {
-  return _unix_load(fil_u->pax_c);
-
-#if 0
-  if ( (0 == raw) || ('^' != fil_u->dot_c[1]) ) {
-    return raw;
-  }
-
-  else return u3ke_cue(raw);
-#endif
+  return _unix_load(fil_u);
 }
-
 
 /* _unix_dir_name(): directory name.
 */
@@ -871,7 +930,7 @@ _unix_dir_khan(u3_udir* dir_u)
         continue;
       }
       u3_noun baw = _unix_file_load(fil_u);
-      u3_noun woz = u3nt(u3_nul, u3do("sham", u3k(u3t(u3t(baw)))), baw);
+      u3_noun woz = u3nt(u3_nul, u3_nul, baw);
       u3z(dur);
       pam = _unix_dir_khan_file(pam, u3k(u3t(wib)), baw, woz);
       u3z(wib);
@@ -881,11 +940,10 @@ _unix_dir_khan(u3_udir* dir_u)
   for ( fil_u = dir_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
     u3_noun wib = _unix_file_name(fil_u);
     u3_noun baw = _unix_file_load(fil_u);
-    if (0 == baw) {
-      pam = _unix_dir_khan_file(pam, wib, baw, u3nc(u3_nul, u3_nul));
-    } else {
-      pam = _unix_dir_khan_file(pam, wib, baw, u3nt(u3_nul, u3_nul, baw));
-    }
+    u3_noun wol = (c3__none == baw ? u3nc(u3_nul, u3_nul) :
+                   u3_nul == baw   ? u3_nul :
+                                     u3nt(u3_nul, u3_nul, baw));
+    pam = _unix_dir_khan_file(pam, wib, baw, wol);
   }
   return u3nc(u3_nul, pam);
 }
