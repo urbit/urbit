@@ -1,6 +1,6 @@
 !: 
 ::  clay (4c), revision control
-!:
+::
 |=  pit=vase
 =>  |%
 ++  bead  ,[p=(set beam) q=cage]                        ::  ford result
@@ -448,7 +448,6 @@
       [%& *cart sot.u.dok]
     ::
     ++  apply-ergo
-      ~&  %apply-ergoing
       ^+  .
       ?~  wok  ~&  %no-ergos  !!
       ?^  lon.u.wok  ~&  %not-done-ergoing  !!
@@ -1188,9 +1187,9 @@
         =+  (~(tap by dir.u.kan))
         |-  ^-  (list ,[p=path q=miso])
         ?~  +<  ~
-        ?:  (~(has by r.u.ank) p.i)  ~
+        ?:  (~(has by r.u.ank) p.i)  $(+< t)
         %-  weld  :_  $(+< t)
-        ^$(pax [p.i pax], kan `q.i, ank (~(get by r.u.ank) p.i))
+        ^$(pax [p.i pax], kan `q.i, ank ~)
     ?~  q.u.ank
       ?~  fil.u.kan
         -
