@@ -375,7 +375,7 @@
           (murn q.p.lem |=([a=path b=miso] ?:((sop a b) ~ (some a))))
       =+  ^-  sot=(list ,[p=path q=misu])
           %+  murn  q.p.lem
-          |=([a=path b=miso] ?.((sop a b) ~ (some [a ((hard misu) b)])))
+          |=([a=path b=miso] ?.((sop a b) ~ (some [a ?<(?=(%mut -.b) b)])))
       =+  ^-  mim=(map path mime)
           %-  mo
           ^-  (list ,[path mime])
