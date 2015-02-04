@@ -1,0 +1,20 @@
+::  Command-line URL fetch, :curl "http://example.com"
+::
+::::
+  ::
+/+  sh-utils  
+!:
+|_  [hide *]
+++  peer  ,_`.
+++  poke--args
+  %+  gate-bang 
+    |=([a=tape ~] [%e %them ~ ~|([%bad-url a] (scan a auri:epur)) %get ~ ~])
+  ,_`.
+::
+++  pour
+  %+  args-into-gate  .
+  |=  [%e %thou @ mess a=(unit octs)]
+  :-  %tang
+  ?~  a  ~
+  (turn (lore q.u.a) |=(b=cord leaf/(trip b)))
+--

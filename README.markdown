@@ -56,10 +56,10 @@ Otherwise, install XCode: `https://developer.apple.com/xcode/`, with the command
 
 To install dependencies pick either one of Homebrew or Macports, but not both:  
   Homebrew -  
-  `brew install git gmp libsigsegv openssl libtool autoconf automake`  
+  `brew install git gmp libsigsegv openssl libtool autoconf automake cmake`  
 
   Macports -  
-  `sudo port install git gmp libsigsegv openssl autoconf automake`
+  `sudo port install git gmp libsigsegv openssl autoconf automake cmake`
 
 Although automake/autoconf/libtool are generally installed by default, some
 have reported needing to uninstall and reinstall those three packages, at least
