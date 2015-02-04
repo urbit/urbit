@@ -1262,7 +1262,7 @@
     ^-  (unit cage)
     ?-  ren
       %u  [~ %rang !>(`rang`+<+>.query)]
-      %v  [~ %done !>(`dome`+<+<.query)]
+      %v  [~ %dome !>(`dome`+<+<.query)]
       %x  ?~(q.ank ~ [~ q.u.q.ank])
       %y  [~ %arch !>(as-arch)]
       %z  [~ %ankh !>(ank)]
