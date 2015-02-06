@@ -139,18 +139,18 @@
   ?:  =(0 txt)  [~ +>.$]
   =+  rey=(rush txt chat(lat lat.hid))
   ?~  rey
-    [(send /out %give %rush %tang [%leaf "invalid input"] ~) +>.$]
+    [(send /out %rush %tang [%leaf "invalid input"] ~) +>.$]
   |-
   ?-  -.u.rey
     %all   =+  ^=  mof
                ?~  pom  ~
-               (send /out %give %rush %prompt '& ' %text '')
+               (send /out %rush %prompt '& ' %text '')
            =^  mow  +>.^$
              (poke-zung(pom ~) ost our.hid %mess sat.fal p.u.rey)
            [(welp mof mow) +>.^$(sen (~(put in sen) p.u.rey))]
     %back
       :_  +>.^$
-      %^  send  /out  %give  :+  %rush  %tang
+      %+  send  /out  :+  %rush  %tang
       %-  turn  :_  |=(a=zong (zong-to-tank | a))
       ?-  p.u.rey
         %ud  (scag q.u.rey msg:(grab sat.fal))
@@ -164,10 +164,10 @@
               %mess  [p.u.rey %chat ~]  our.hid  %mess  !>(q.u.rey)
           ==
       ?:  =(pom [~ p.u.rey])  ~
-      (send /out %give %rush %prompt (cat 3 (scot %p p.u.rey) ' ') %text '')
+      (send /out %rush %prompt (cat 3 (scot %p p.u.rey) ' ') %text '')
     %who
       :_  +>.^$
-      %^  send  /out  %give  :+  %rush  %tang  :_  ~
+      %+  send  /out  :+  %rush  %tang  :_  ~
       :+  %rose  [", " "" ""]
       %+  turn  (~(tap by ami:(grab sat.fal)))
       |=  a=idad
@@ -175,7 +175,7 @@
       %-  trip  %^  cat  3  %^  cat  3  (scot %p p.a)  ' '  q.a
     %how
       :_  +>.^$
-      %^  send  /out  %give  :+  %rush  %tang
+      %+  send  /out  :+  %rush  %tang
       %-  flop
       %-  turn  :_  |=(a=@t [%leaf (trip a)])
       %-  lore
@@ -240,7 +240,7 @@
   %+  welp
     :+  [ost %pass /cmd-in %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
       [ost %pass /private %g %show [our.hid /chat] you /private]
-    (send /out %give %rush %prompt '& ' %text '')
+    (send /out %rush %prompt '& ' %text '')
   mow
 ::
 ++  poke-mess
@@ -309,7 +309,7 @@
       %cmd-in
     ?-  +<.sih
       %nice  [~ +>.$]
-      %mean  [(send /out %give +.sih) +>.$]
+      %mean  [(send /out +.sih) +>.$]
       ?(%rush %rust)
         ?>  ?=(%txt -.p.sih)
         =^  moz  +>.$  (exec-cmd ost p.p.sih)
@@ -325,7 +325,7 @@
       [~ +>.$]
     ?>  ?=(%rush +<.sih)
     ?>  ?=(%zong -.p.sih)
-    (took ost pax /chat (send /out %give %rush %tang (zong-to-tank & p.p.sih) ~))
+    (took ost pax /chat (send /out %rush %tang (zong-to-tank & p.p.sih) ~))
   ::
       ?(%radi-a %radi-m)
     ?:  ?=(%nice +<.sih)
@@ -369,7 +369,7 @@
       ==
     =+  ^=  pout  ?:(=(i.pax %radi-a) %amigos %mensajes)
     =.  air  (~(put by air) t.pax ya)
-    =+  mow=(send [pout t.pax] %give +.sih)
+    =+  mow=(send [pout t.pax] +.sih)
     =<  (took ost pax /radio mow)
     ::  =<  [mow +>.$]
     ::  XX  yes, I just used an inline comment
@@ -384,7 +384,7 @@
       ::    %_(+ sen ^+(sen ~(nap to sen)))
       %_    +
           mow
-        (welp mow (send /out %give %rush %tang (zong-to-tank | zog) ~))
+        (welp mow (send /out %rush %tang (zong-to-tank | zog) ~))
       ==
     ?:  =(%zongs -.p.sih)
       =+  zos=(scag 200 ((hard (list zong)) p.p.sih))
@@ -399,14 +399,14 @@
       ::    %_(+.$ sen `(qeu mess)`~(nap to sen))
       %_    +.$
           mow
-        (welp mow (send /out %give %rush %tang (zong-to-tank | zoy) ~))
+        (welp mow (send /out %rush %tang (zong-to-tank | zoy) ~))
       ==
     ?:  =(%user -.p.sih)
       =+  use=((hard user) p.p.sih)
       %_    +
           mow
         ?:  let.fal  ~
-        =-  (send /out %give %rush %tang [%leaf -] ~)
+        =-  (send /out %rush %tang [%leaf -] ~)
         %+  weld
           ?:  eth.fal  ""  (timestamp lat.hid)
         %+  weld  "{(iden p.p.use)} "
@@ -435,11 +435,11 @@
   ==
 ::
 ++  send
-  |=  [pax=path msg=(mold note gift)]
+  |=  [pax=path msg=gift]
   ^-  (list move)
   ::  ~&  [%send pus.hid]
   %+  turn  (~(tap in (~(get ju pus.hid) pax)))
-  |=(ost=bone [ost msg])
+  |=(ost=bone [ost %give msg])
 ::
 ++  since
   |=  [ya=msg=(list zong) tim=@da]
@@ -451,9 +451,9 @@
   |=  [pri=? zog=zong]
   ^-  (list move)
   %+  welp
-    (send /private %give %rush %zong zog)
+    (send /private %rush %zong zog)
   %+  welp
-    (send /out %give %rush %tang (zong-to-tank pri zog) ~)
+    (send /out %rush %tang (zong-to-tank pri zog) ~)
   %+  murn  (~(tap by sup.hid))
   |=  [ost=bone her=ship pax=path]
   ?~  pax  ~
