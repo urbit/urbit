@@ -139,7 +139,7 @@
   ?:  =(0 txt)  [~ +>.$]
   =+  rey=(rush txt chat(lat lat.hid))
   ?~  rey
-    [(send /out %rush %tang [%leaf "invalid input"] ~) +>.$]
+    [(print %leaf "invalid input") +>.$]
   |-
   ?-  -.u.rey
     %all   =+  ^=  mof
@@ -168,8 +168,7 @@
       (send /out %rush %prompt (cat 3 (scot %p p.u.rey) ' ') %text '')
     %who
       :_  +>.^$
-      %+  send  /out  :+  %rush  %tang  :_  ~
-      :+  %rose  [", " "" ""]
+      %^  print  %rose  [", " "" ""]
       %+  turn  (~(tap by ami:(grab sat.fal)))
       |=  a=idad
       :-  %leaf
@@ -325,7 +324,7 @@
       [~ +>.$]
     ?>  ?=(%rush +<.sih)
     ?>  ?=(%zong -.p.sih)
-    (took ost pax /chat (send /out %rush %tang (zong-to-tank & p.p.sih) ~))
+    (took ost pax /chat (print (zong-to-tank & p.p.sih)))
   ::
       ?(%radi-a %radi-m)
     ?:  ?=(%nice +<.sih)
@@ -384,7 +383,7 @@
       ::    %_(+ sen ^+(sen ~(nap to sen)))
       %_    +
           mow
-        (welp mow (send /out %rush %tang (zong-to-tank | zog) ~))
+        (welp mow (print (zong-to-tank | zog)))
       ==
     ?:  =(%zongs -.p.sih)
       =+  zos=(scag 200 ((hard (list zong)) p.p.sih))
@@ -398,14 +397,14 @@
       ::    %_(+>.$ sen `(qeu mess)`~(nap to sen))
       %_    +>.$
           mow
-        (welp mow (send /out %rush %tang (zong-to-tank | zoy) ~))
+        (welp mow (print (zong-to-tank | zoy)))
       ==
     ?:  =(%user -.p.sih)
       =+  use=((hard user) p.p.sih)
       %_    +
           mow
         ?:  let.fal  ~
-        =-  (send /out %rush %tang [%leaf -] ~)
+        %+  print   %leaf
         %+  weld
           ?:  eth.fal  ""  (timestamp lat.hid)
         %+  weld  "{(iden p.p.use)} "
@@ -433,6 +432,7 @@
     [%tower *]     b(|4 p.a)
   ==
 ::
+++  print  |=(a=tank (send /out %rush %tang [a]~))
 ++  send
   |=  [pax=path msg=gift]
   ^-  (list move)
@@ -452,7 +452,7 @@
   %+  welp
     (send /private %rush %zong zog)
   %+  welp
-    (send /out %rush %tang (zong-to-tank pri zog) ~)
+    (print (zong-to-tank pri zog))
   %+  murn  (~(tap by sup.hid))
   |=  [ost=bone her=ship pax=path]
   ?~  pax  ~
