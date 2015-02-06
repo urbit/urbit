@@ -152,6 +152,7 @@
       :_  +>.^$
       %+  send  /out  :+  %rush  %tang
       %-  turn  :_  |=(a=zong (zong-to-tank | a))
+      %-  flop
       ?-  p.u.rey
         %ud  (scag q.u.rey msg:(grab sat.fal))
         %da  (since msg:(grab sat.fal) q.u.rey)
@@ -176,7 +177,6 @@
     %how
       :_  +>.^$
       %+  send  /out  :+  %rush  %tang
-      %-  flop
       %-  turn  :_  |=(a=@t [%leaf (trip a)])
       %-  lore
       %-  (hard ,@t)
@@ -388,16 +388,15 @@
       ==
     ?:  =(%zongs -.p.sih)
       =+  zos=(scag 200 ((hard (list zong)) p.p.sih))
-      =<  +(mow (flop mow))
-      |-  ^+  +.$
-      ?:  =(~ zos)  +.$                                 ::  XX  tm freakin i
+      |-  ^+  +>.$
+      ?:  =(~ zos)  +>.$                                 ::  XX  tm freakin i
       =+  zoy=((hard zong) -.zos)
-      =.  +.$  $(zos +.zos)
+      =.  +>.$  $(zos +.zos)
       ?:  &(=(our.hid &3.zoy) (~(has in sen) &4.zoy))
-        +.$
+        +>.$
       ::  ?:  &(=(our.hid &3.zoy) =(`&4.zoy ~(top to sen)))
-      ::    %_(+.$ sen `(qeu mess)`~(nap to sen))
-      %_    +.$
+      ::    %_(+>.$ sen `(qeu mess)`~(nap to sen))
+      %_    +>.$
           mow
         (welp mow (send /out %rush %tang (zong-to-tank | zoy) ~))
       ==
