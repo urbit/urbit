@@ -377,8 +377,8 @@
     ^+  .
     ?:  =(%zong -.p.sih)
       =+  zog=((hard zong) p.p.sih)
-      ?:  &(=(our.hid q.zog) (~(has in sen) r.zog))
-        +
+      ::  ?:  &(=(our.hid q.zog) (~(has in sen) r.zog))
+      ::    +                             ::  suppress own messages
       ::  ?:  &(=(our.hid q.zog) =(`r.zog ~(top to sen)))
       ::    %_(+ sen ^+(sen ~(nap to sen)))
       %_    +
