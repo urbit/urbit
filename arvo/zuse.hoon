@@ -508,8 +508,7 @@
 ::
 ++  moon                                                ::  mime type to text
   |=  myn=mite
-  %+  rap
-    3
+  %-  crip
   |-  ^-  tape
   ?~  myn  ~
   ?:  =(~ t.myn)  (trip i.myn)
@@ -2080,17 +2079,11 @@
   =+  dyb=(slay i.t.but)
   ?>  ?&  ?=([~ %many *] dyb)
           ?=([* * *] p.u.dyb)
-          ::  ?=([%$ %tas *] i.p.u.dyb)
-          ?=([%many *] i.p.u.dyb)
+          ?=([%$ %ta *] i.p.u.dyb)
           ?=([%blob *] i.t.p.u.dyb)
       ==
   =+  ced=((hard cred) p.i.t.p.u.dyb)
   ::  =+  nep=q.p.i.p.u.dyb
-  =+  ^=  nyp  ^-  path
-      %+  turn  p.i.p.u.dyb
-      |=  a=coin  ^-  @ta
-      ?>  ?=([%$ %ta @] a)
-      ?>(((sane %ta) q.p.a) q.p.a)
   =+  ^=  gut  ^-  (list ,@t)
       %+  turn  t.t.p.u.dyb
       |=  a=coin  ^-  @t
@@ -2105,7 +2098,6 @@
       ced
       bem
       t.t.but
-      nyp
   ==
 ::
 ++  sifo                                                ::  64-bit encode
@@ -2823,7 +2815,6 @@
               ced=cred                                  ::  client credentials
               bem=beam                                  ::  original path
               but=path                                  ::  ending
-              nyp=path                                  ::  request model
           ==                                            ::
 ++  flap  ,@uvH                                         ::  network packet id
 ++  flow                                                ::  packet connection
@@ -3032,7 +3023,7 @@
           $%  [& q=soba]                                ::  delta
               [| p=@tas]                                ::  label
           ==                                            ::
-++  octs  ,[p=@ud q=@]                                  ::  octet-stream
+++  octs  ,[p=@ud q=@t]                                 ::  octet-stream
 ++  oryx  ,@t                                           ::  CSRF secret
 ++  pact  path                                          ::  routed path
 ++  pail  ?(%none %warm %cold)                          ::  connection status
