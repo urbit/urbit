@@ -219,7 +219,8 @@
     ;head
       ;title: Radio
       ;script(type "text/javascript", src "//use.typekit.net/fkv0sjk.js");
-      ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js");
+      ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs".
+        "/jquery/2.1.1/jquery.min.js");
       ;script:'try{Typekit.load();}catch(e){}'
       ;link(rel "stylesheet", type "text/css", href "/gen/main/pub/src/chat/main.css");
     ==
@@ -292,8 +293,8 @@
     ==
   [~ +>.$]
 ::
-++  pass-took
-  |=  [moz=(list move) ost=bone pax=path imp=path]
+++  took
+  |=  [ost=bone pax=path imp=path moz=(list move)]
   :_  +>.$
   :_(moz [ost %pass pax %g %took [our.hid imp] our.hid])
 ::
@@ -302,7 +303,6 @@
   ^-  [(list move) _+>]
   ::  ~&  sih=sih
   =+  sih=((hard sign) sih)
-  =+  took=|=([imp=path moz=(list move)] (pass-took moz ost pax imp))
   ?~  pax  ~&  %chat-pour-strange-path  !!
   ::  ~&  [%pour-mess pax]
   ?+    i.pax  ~&  %chat-pour-strange-path  !!
@@ -313,7 +313,7 @@
       ?(%rush %rust)
         ?>  ?=(%txt -.p.sih)
         =^  moz  +>.$  (exec-cmd ost p.p.sih)
-        (took +.imp.hid moz)
+        (took ost pax +.imp.hid moz)
     ==
   ::
       ?(%mesg %priv)
@@ -325,7 +325,7 @@
       [~ +>.$]
     ?>  ?=(%rush +<.sih)
     ?>  ?=(%zong -.p.sih)
-    (took /chat (send /out %give %rush %tang (zong-to-tank & p.p.sih) ~))
+    (took ost pax /chat (send /out %give %rush %tang (zong-to-tank & p.p.sih) ~))
   ::
       ?(%radi-a %radi-m)
     ?:  ?=(%nice +<.sih)
@@ -370,7 +370,7 @@
     =+  ^=  pout  ?:(=(i.pax %radi-a) %amigos %mensajes)
     =.  air  (~(put by air) t.pax ya)
     =+  mow=(send [pout t.pax] %give +.sih)
-    =<  (took /radio mow)
+    =<  (took ost pax /radio mow)
     ::  =<  [mow +>.$]
     ::  XX  yes, I just used an inline comment
     ::  XX  and multiple XX's.  why?  because
