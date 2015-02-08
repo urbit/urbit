@@ -188,6 +188,47 @@ _cm_signal_reset(void)
   u3R->kid_u = 0;
 }
 
+/* _cm_stack_recover(): recover stack trace, with lacunae.
+*/
+static u3_noun
+_cm_stack_recover(u3a_road* rod_u)
+{
+  c3_w len_w;
+
+  len_w = 0;
+  {
+    u3_noun tax = rod_u->bug.tax;
+
+    while ( tax ) {
+      len_w++;  
+      tax = u3t(tax);
+    }
+
+    if ( len_w < 4096 ) {
+      return u3a_take(rod_u->bug.tax);
+    } 
+    else {
+      u3_noun beg, fin;
+      c3_w i_w;
+
+      tax = rod_u->bug.tax;
+      beg = u3_nul;
+      for ( i_w = 0; i_w < 2048; i_w++ ) {
+        beg = u3nc(u3a_take(u3h(tax)), beg);
+        tax = u3t(tax);
+      }
+      beg = u3kb_flop(beg);
+
+      for ( i_w = 0; i_w < (len_w - 4096); i_w++ ) {
+        tax = u3t(tax);
+      }
+      fin = u3nc(u3nc(c3__lose, c3__over), u3a_take(tax));
+
+      return u3kb_weld(beg, fin);
+    }
+  }
+}
+
 /* _cm_signal_recover(): recover from a deep signal, after longjmp.  Free arg.
 */
 static u3_noun
@@ -235,9 +276,13 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
 
       u3R = &(u3H->rod_u);
       rod_u = u3R;
-      
+ 
       while ( rod_u->kid_u ) {
-        tax = u3kb_weld(u3a_take(rod_u->kid_u->bug.tax), tax);
+#if 0
+        fprintf(stderr, "collecting %d frames\r\n", 
+              u3kb_lent(rod_u->kid_u->bug.tax));
+#endif
+        tax = u3kb_weld(_cm_stack_recover(rod_u->kid_u), tax);    
         rod_u = rod_u->kid_u;
       }
     }
