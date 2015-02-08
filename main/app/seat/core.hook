@@ -1,0 +1,293 @@
+::                                                      ::  ::
+::::  /hook/core/seat/app                               ::  ::
+  ::                                                    ::  ::
+/?  314                                                 ::  zuse version
+/-  *console                                            ::  console structures
+/+  console                                             ::  console library
+::                                                      ::  ::
+::::                                                    ::  ::
+  !:                                                    ::  ::
+=>  |%                                                  ::  data structures
+    ++  house                                           ::  all state
+      $:  bin=(map bone source)                         ::  input devices
+      ==                                                ::
+    ++  source                                          ::  input device
+      $:  edg=@ud                                       ::  terminal columns
+          apt=(list term)                               ::  application ring
+          feg=(map term target)                         ::  live applications
+          mir=(pair ,@ud (list ,@c))                    ::  mirrored state
+      ==                                                ::
+    ++  target                                          ::  application target
+      $:  pom=console-prompt                            ::  static prompt
+          inp=console-input                             ::  input state
+      ==                                                ::
+    ++  message                                         ::  message to app
+      $%  [%console-action console-action]              ::
+      ==                                                ::
+    ++  gift                                            ::  out result <-$
+      $%  [%mean p=ares]                                ::  
+          [%nice ~]                                     ::
+          [%rush %dill-blit dill-blit]                  ::
+      ==                                                ::
+    ++  sign-gall                                       ::  sign from %gall
+      $%  [%mean p=ares]                                ::
+          [%nice ~]                                     ::
+          [%rush %console-effect console-effect]        ::
+    ++  sign                                            ::  in result $<-
+      $%  [%g sign-gall]                                ::
+      $%  [%mean p=ares]                                ::
+          [%nice ~]                                     ::
+          [%rush %console-effect console-effect]        ::
+      ==  ==  ==                                        ::
+    ++  move  ,[p=bone q=(mold note gift)]              ::
+    ++  note-gall                                       ::  note to %gall
+      $%  [%mess p=[p=ship q=path] q=ship r=message]    ::
+          [%nuke p=[p=ship q=path] q=ship]              ::
+          [%show p=[p=ship q=path] q=ship r=path]       ::
+          [%took p=[p=ship q=path] q=ship]              ::
+      ==                                                ::
+    ++  note                                            ::  out request $->
+      $%  [%g note-gall]                                ::
+      ==                                                ::
+    --                                                  ::
+|_  $:  hid=hide                                        ::  system state
+        house                                           ::  program state
+    ==                                                  ::
+++  se                                                  ::  per source
+  |_  [moz=(list move) [her=ship ost=bone] source]
+  ++  se-abet                                           ::  resolve
+    [(flop moz) %_(+> bin (~(put by bin) ost +<+>))]
+  ::
+  ++  se-belt                                           ::  handle input
+    |=  bet=belt
+    ^+  +>
+    ?:  =(%rez -.bet)
+      +>(wid q.rez)
+    ?:  =(%yow -.bet)
+      (se-link p.bet)
+    ?~  apt
+      ~&  %console-no-terminal
+      (se-blit %bel ~)
+    =+  nam=i.apt
+    =+  taz=~(. ta & nam (~(got by feg) nam))
+    =<  ta-abet
+    ?-  -.bet
+      %aro  (ta-aro:taz p.bet)
+      %bac  ta-bac:taz
+      %ctl  (ta-ctl:taz p.bet)
+      %del  (ta-del:taz p.bet)
+      %met  (ta-met:taz p.bet)
+      %ret  (ta-ret:taz p.bet)
+      %txt  (ta-txt:taz p.bet)
+    ==
+  ::
+  ++  se-drop                                           ::  passive drop
+    |=  nam=term
+    ^+  +>
+    ?>  (~(has by feg) nam)
+    %_  +>
+      feg  (~(del by feg) nam)
+      apt  (skip apt |=(a=term =(nam a)))
+    ==
+  ::
+  ++  se-join                                           ::  add connection
+    |=  nam=term
+    ^+  +>
+    ?<  (~(has by feg) nam)
+    +>(apt [nam apt], feg (~(put by feg) nam *target))
+  ::
+  ++  se-nuke                                           ::  active drop
+    |=  nam=term
+    se-drop:(se-send nam %nuke [her ~[nam]])
+  ::
+  ++  se-link                                           ::  connect to app
+    |=  nam=term
+    ^+  +>
+    %.  nam
+    =<  se-join
+    (se-send nam %show [her ~[nam]] her /console)
+  ::
+  ++  se-blit                                           ::  give output
+    |=  bil=blit
+    (se-emit ost %give %rush %dill-blit bil)
+  ::
+  ++  se-view                                           ::  flush buffer
+    ^+  .
+    =+  ^=  lin  ^-  (pair ,@ud (list ,@c))
+        ?~  apt  [0 ~]
+        ~(ta-vew ta & i.apt (~(got by feg) i.apt))
+    ?:  =(mir lin)  +
+    =.  +  ?:(=(q.mir q.lin) + (se-blit %pro q.lin))
+    =.  +  ?:(=(p.mir p.lin) + (se-blit %hop p.lin))
+    +(mir lin)
+  ::
+  ++  se-kill                                           ::  kill a source
+    |-  ^+  +
+    ?~  apt  +
+    $(apt +.apt, + (se-nuke i.apt))
+  ::
+  ++  se-emit                                           ::  emit move
+    |=  mov=move
+    %_(+> moz [mov moz])
+  ::
+  ++  se-send                                           ::  send a message
+    |=  [nam=term nog=note-gall]
+    (se-emit ost %pass [(scot %p her) nam ~] %g nog)
+  ::
+  ++  se-tame
+    |=  nam=term
+    ~(. ta & nam (~(got by feg) nam)) 
+  ::
+  ++  se-pour                                           ::  receive results
+    |=  [nam=term sil=sign-gall]
+    ^+  +>
+    ?-    -.sil
+        %mean  
+      ~&  [%se-pour-mean sil]
+      +>.$
+    ::  
+        %nice  
+      +>.$
+    ::
+        %rush
+      ta-abet:(ta-got:(se-tame nam) +>.sih)
+    ==
+  ::
+  ++  ta                                                ::  per target
+    |_  $:  $:  liv=?                                   ::  don't delete
+                nam=term                                ::  target app
+            ==                                          ::
+            target                                      ::  target state
+        ==                                              ::
+    ++  ta-abet                                         ::  resolve
+      ?.  liv  (se-nuke nam) 
+      %_(+> feg (~(put by feg) nam +<+))
+    ::
+    ++  ta-act                                          ::  send action
+      |=  act=console-action
+      %_(+> +>  (se-send nam %mess %console-action act))
+    ::
+    ++  ta-det                                          ::  send edit
+      |=  ted=console-edit
+      (ta-act [[q.ven p.ven] (sham buf.say) ted)
+    ::
+    ++  ta-aro                                          ::  hear arrow
+      |=  key=?(%d %l %r %u)
+      ^+  +>
+      ?-  key
+        %d  (sa-blit %bel ~)
+        %l  ?:  =(0 pos.inp)  
+              (sa-blit bel ~) 
+            +>(pos.inp (dec pos.inp)))
+        %r  ?:  =((lent buf.say.inp) pos.inp) 
+              (sa-blit bel ~) 
+            +>(pos.inp +(pos.inp))))
+        %u  (sa-blit %bel ~)
+      ==
+    ::
+    ++  ta-bac                                          ::  hear backspace
+      ^+  .
+      ?:  =(0 pos.inp)
+        (sa-blit bel ~)
+      (ta-hom %del (dec pos.inp))
+    ::
+    ++  ta-ctl                                          ::  hear control
+      |=  key=@ud
+      ~&  [%ta-ctl key]
+      +>
+    ::
+    ++  ta-del                                          ::  hear delete
+      ^+  .
+      ?:  =((lent buf.say.inp) pos.inp)
+        (sa-blit bel ~)
+      (ta-hom %del pos.inp)
+    ::
+    ++  ta-fec
+      |=  fec=console-effect
+      ^+  +>
+      ?-    -.fec
+        %bel  (blit %bel ~)
+        %blk  +>
+        %clr  (blit %clr ~)
+        %det  (ta-det p.fec q.fec)
+        %tan  (ta-tan p.fec)
+        %txt  $(fec %tan ~[%leaf p.fec])
+      ==
+    ::
+    ++  ta-got
+      |=  [ler=console-clock haw=@uvH ted=console-edit]
+      +>(inp abet:(~(receive cs inp) ler haw ted))
+    ::
+    ++  ta-hom                                          ::  local edit
+      |=  ted=console-edit
+      ^+  +>
+      =.  +>  (ta-det ted)
+      %_(+> inp abet:(~(commit cs inp) ted))
+    ::
+    ++  ta-met                                          ::  meta key
+      |=  key=@ud
+      ~&  [%ta-met key]
+      +>
+    ::
+    ++  ta-ret  (ta-act ret ~)                          ::  hear return
+    ++  ta-tan                                          ::  print tanks
+      |=  tac=(list tank)
+      =+  wol=`wall`(zing (turn tac |=(a=tank (~(win re [0 edg]) a))))
+      |-  ^+  +>.^$
+      ?~  wol  +>.^$
+      $(wol t.wol, +>.^$ (dill-blit %out (tuba i.wol)))
+    ::
+    ++  ta-txt                                          ::  hear text
+      |=  txt=(list ,@c)
+      %-  ta-hom
+      :-  %mor
+      |-  ^-  (list console-edit)
+      ?~  txt  ~
+      [[%ins pos.inp i.txt] $(pos.inp +(pos.inp), txt t.txt)]
+    ::
+    ++  ta-vew                                          ::  computed prompt
+      ^-  (pair ,@ud (list ,@c))
+      =- [(add pos (lent p.vew)) (weld p.vew q.vew)]
+      ^=  vew  ^-  (pair (list ,@c) (list ,@c))
+      ?:  vis.pom  [cap.pom buf.say.inp]
+      :-  ;:  welp
+            cap.pom
+            ?~  buf.say.inp ""
+            ;:  welp
+              "{"
+              (scow %p (end 4 1 (sham buf.say.inp)))
+              "} "
+            ==
+          ==
+      =+  len=(lent buf.say.inp) 
+      |-  ^-  (list ,@c) 
+      ?:(=(0 len) ~ ['*' $(len (dec len))])
+    --
+  --
+++  peer
+  |=  [ost=bone her=ship pax=path]
+  ^-  [(list move) _+>]
+  ?<  (~(has by bin) ost)
+  [~ (~(put by bin) [her 80 ~ ~])]
+  [~ +>]
+::
+++  poke-dill-belt
+  |=  [ost=bone her=ship bet=dill-belt]
+  ^-  [(list move) _+>]
+  se-abet:se-view:(~(se-belt se ~ [her ost] (~(got by bin) ost)) bet)
+::
+++  pour
+  |=  [ost=bone pax=path sih=*]
+  ^-  [(list move) _+>]
+  =+  sih=((hard sign) sih)
+  ?>  ?=([@ @ ~] pax)
+  =<  se-abet
+  =<  se-view
+  (~(se-pour se ~ [(slav %p i.pax) ost] (~(got by bin) ost)) i.t.pax sih)
+::
+++  pull
+  |=  ost=bone
+  ^-  [(list move) _+>]
+  =^  moz  +>  se-abet:se-view:~(se-kill ~ [our.hid ost] (~(got by bin) ost))
+  [moz +>.$(bin (~(del by bin) ost))]
+--

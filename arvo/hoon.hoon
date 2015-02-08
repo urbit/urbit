@@ -156,7 +156,12 @@
                   p=[p=tape q=tape r=tape]              ::  mid open close
                   q=(list tank)                         ::
               ==                                        ::
-          ==     
+          ==                                            ::
+++  tanq                                                ::  modern tank
+          $?  [~ p=(list tanq)]                         ::  list of printables
+              [~ ~ p=tape]                              ::  simple string
+              (pair ,@tas tanq)                         ::  captioned
+          ==                                            ::
 ++  tape  (list char)                                   ::  like a string
 ++  term  ,@tas                                         ::  Hoon ASCII subset
 ++  tiki                                                ::  test case

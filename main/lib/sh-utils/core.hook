@@ -28,9 +28,7 @@
 ::
 ++  add-subs                          ::  add gall subscription
   |*  [hat=[hapt ship path] ref=_,[(list) ^]]
-  =+  `[hapt ship path]`hat           ::  typecheck
-  %+  add-resp  [%pass /show %g %show hat]
-  ref
+  (add-resp [%pass /show %g %show hat] ref)
 ::
 ++  args-into-gate                    ::  poke--args from gate: output and exit
   |*  [con=[* [hide *] *] gat=_,[@ *]]

@@ -1,0 +1,31 @@
+::                                                      ::  ::
+::::  /hook/core/tease/app                              ::  ::
+  ::                                                    ::  ::
+/?  314                                                 ::  zuse version
+/-  *console                                            ::  console structures
+/+  console                                             ::  console library
+!:                                                      ::  ::
+::::                                                    ::  ::
+  ::                                                    ::  ::
+|_  [hid=hide town]
+++  peer  ,_`.
+++  tease
+  ^-  [(list move) _.]
+  :_  .
+  :_  ~
+  :*  0    %pass  ~
+      %g   %show  
+      [our.hid /seat]  our.hid
+      /
+  ==
+++  poke--args
+  |=  [ost=bone you=ship *]
+  ^-  [(list move) _+>]
+  tease
+:: 
+++  prep
+  |=  old=(unit (unit house-any))
+  ^-  [(list move) _+>]
+  ~&  %tease-prep
+  tease
+--
