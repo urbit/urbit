@@ -427,10 +427,7 @@
         :: ~&  e/ford/hen
         =+  our=(slav %p i.t.tea)
         ?-  -.p.sih
-          |  ::  (back our tea %tang !>(p.p.sih))  ::  XX broken tang door
-             =-  (muff (tuff text//plain (role (turn - crip))))
-             ^-  wall  %-  zing  ^-  (list wall)
-             (turn p.p.sih |=(a=tank (wash 0^160 a)))
+          |  (fail 404 p.p.sih)
           &  =*  cag  q.p.p.sih
              ?>  ?=(%mime p.cag)
              =+  ((hard ,[mit=mite rez=octs]) q.q.cag)  ::  XX
@@ -608,14 +605,14 @@
     ?.  &(?=(& -.hot) ?=(^ p.hot))  ~
     (rush -:(flop p.hot) fed:ag)
   ::
-::   ++  fail                                              ::  request failed
-::     |=  [sas=@ud str=tape]
-::     ^+  +>
-::     %-  muff
-::     :-  %thou
-::     ^-  httr
-::     [sas ~[content-type/'text/plain'] [~ (tact str)]]
-::   ::
+  ++  fail                                              ::  request failed
+    |=  [sas=@ud mez=tang]
+    ^+  +>
+    :: (back our tea %tang !>(mez))  ::  XX broken tang door
+    =-  (muff (tuff text//plain (role (turn - crip))))
+    ^-  wall  %-  zing  ^-  (list wall)
+    (turn mez |=(a=tank (wash 0^160 a)))
+  ::
 ::   ++  gale                                              ::  ya from response
 ::     |=  [our=ship ses=hole]
 ::     =+  sef=(need (~(get by own) our))
@@ -681,6 +678,15 @@
 ::     =+  boy=(myth our (need ((sand %ta) ((hard ,@) hez))))
 ::     ?~(boy +>.$ abet:(auth:u.boy him))
 ::   ::
+  ++  heck                                              ::  regular request
+    |=  [oar=ship pok=pork]
+    ^-  (unit beam)
+    ?~  q.pok
+      $(q.pok /index)
+    ?.  ((sane %tas) i.q.pok)
+      (tome q.pok)
+    `[[oar i.q.pok da/now] (flop t.q.pok)]
+  ::
   ++  hell                                              ::  request, no ship
     |=  [pul=purl hyx=httx moh=moth]
     ^+  +>
@@ -695,14 +701,13 @@
     ::  =+  oar=`(unit ship)`?^(wiq wiq (doss r.p.pul))
     =+  oar=(fall (doss r.p.pul) (need hov))
     =+  ext=(fall p.q.pul %html)
-    =+  ^-  bem=beam
-        |-  
-        ?~  q.q.pul  $(q.q.pul /index)
-        :-  [oar i.q.q.pul [%da now]]
-        :+  %web
-          ~(rent co (flux:ya /'' r.pul))
-        (flop t.q.q.pul)
-    (honk oar [%cast %mime %boil ext bem ~])
+    =+  hek=(heck oar q.pul)
+    ?^  hek
+      =:  s.u.hek  [%web ~(rent co (flux:ya /'' r.pul)) s.u.hek]
+          r.u.hek  ?+(r.u.hek r.u.hek [%ud %0] da/now)
+        ==
+      (honk oar [%cast %mime %boil ext u.hek ~])
+    (fail 404 >%irregular-path< (smyt q.q.pul) ~)
 ::     ?.  (home oar)
 ::       (hork oar hyx)
 ::     (huff oar q.hyx pul moh)
