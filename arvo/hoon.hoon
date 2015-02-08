@@ -6067,8 +6067,9 @@
 ::
 ++  seed                                                ::  hoon/hoon core vase
   ^-  vase
-  ~+
-  !;(*type ..seed)
+  !!
+  :: ~+                               :: trimmed 
+  :: !;(*type ..seed)
 ::
 ++  seem  |=(toy=typo `type`toy)                        ::  promote typo
 ++  seer  |=(vix=vise `vase`vix)                        ::  promote vise
@@ -7092,9 +7093,7 @@
       [[%leaf (rip 3 -.lum)] $(lum +.lum)]
     ::
         %type
-      =+  reb=(slap [p:!>(.) .(sut lum)] %cnzy %duck)
-      =+  cis=(tank q.reb)
-      ?.  =(cis q.reb)  ~
+      =+  cis=((hard tank) .*(.(sut lum) !=(duck)))     ::  type bypass
       :^  ~   %palm
         [~ ~ ~ ~] 
       [[%leaf '#' 't' '/' ~] cis ~]
@@ -8869,7 +8868,7 @@
         ;~  pose
           (stag %wtzp ;~(pfix zap wide))
           (stag %zpzp (cold ~ ;~(plug zap zap)))
-          (stag %zpcn (cold ~ ;~(plug zap cen)))
+          :: (stag %zpcn (cold ~ ;~(plug zap cen)))
         ==
       :-  '$'
         rump
