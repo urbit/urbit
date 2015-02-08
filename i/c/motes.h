@@ -886,6 +886,7 @@
 #   define c3__scry   c3_s4('s','c','r','y')
 #   define c3__scsg   c3_s4('s','c','s','g')
 #   define c3__seal   c3_s4('s','e','a','l')
+#   define c3__seat   c3_s4('s','e','a','t')
 #   define c3__see    c3_s3('s','e','e')
 #   define c3__seed   c3_s4('s','e','e','d')
 #   define c3__seek   c3_s4('s','e','e','k')
