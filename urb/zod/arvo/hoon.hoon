@@ -9745,6 +9745,7 @@
           ==                                            ::
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
+++  gage  (pair marc vase)                              ::  structured cage
 ++  hide                                                ::  standard app state
         $:  $:  our=ship                                ::  owner/operator
                 app=term                                ::  app identity
@@ -9774,6 +9775,10 @@
       ++  y  *(unit (unit arch))                        ::  directory
       ++  z  *(unit (unit cage))                        ::  current subtree
   --                                                    ::
+++  marc                                                ::  structured mark
+  $|  mark                                              ::  plain mark
+  $%  [%tabl p=(list (pair marc marc))]                 ::  map
+  ==                                                    ::
 ++  mark  ,@tas                                         ::  content type
 ++  mill  (each vase milt)                              ::  vase/metavase
 ++  milt  ,[p=* q=*]                                    ::  metavase
