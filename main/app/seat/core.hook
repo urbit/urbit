@@ -284,6 +284,7 @@
 ++  peer
   |=  [ost=bone her=ship pax=path]
   ^-  [(list move) _+>]
+  ~&  [%seat-peer ost her pax]
   ?<  (~(has by bin) ost)
   [~ +>(bin (~(put by bin) ost *source))]
 ::

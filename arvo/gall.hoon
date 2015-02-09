@@ -571,8 +571,8 @@
   ::
   ++  able                                              ::  bone to duct
     |=  ost=bone  ^-  duct
-    ?:  =(0 ost)
-      [(away ~) ~]
+    ::  ?:  =(0 ost)
+    ::  hun.mat
     (~(got by r.zam.sat) ost)
   ::
   ++  away                                              ::  application path
