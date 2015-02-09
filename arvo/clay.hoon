@@ -3,7 +3,7 @@
 ::
 |=  pit=vase
 =>  |%
-++  bead  ,[p=(set beam) q=cage]                        ::  ford result
+++  bead  ,[p=(set beam) q=gage]                        ::  ford result
 ++  cult  (map duct rove)                               ::  subscriptions
 ++  dojo                                                ::  domestic desk state
           $:  qyx=cult                                  ::  subscribers
@@ -484,6 +484,7 @@
             yel
           [[hen %note '!' %rose [" " "" ""] leaf/"clay diff failed" p.res] yel]
         ==
+      ?.  ?=(@ p.q.p.res)  ~|  %bad-marc  !!
       =:  lon.u.dok  (skip lon.u.dok |=(path =(+< pax)))
           sot.u.dok  [[pax %ins q.p.res] sot.u.dok]
       ==
@@ -513,6 +514,7 @@
             yel
           [[hen %note '!' %rose [" " "" ""] leaf/"clay diff failed" p.res] yel]
         ==
+      ?.  ?=(@ p.q.p.res)  ~|  %bad-marc  !!
       =:  lon.u.dok  (skip lon.u.dok |=(path =(+< pax)))
           sot.u.dok  ?:  =(%null p.q.p.res)
                        sot.u.dok
@@ -544,6 +546,7 @@
             yel
           [[hen %note '!' %rose [" " "" ""] leaf/"clay patch failed" p.res] yel]
         ==
+      ?.  ?=(@ p.q.p.res)  ~|  %bad-marc  !!
       =:  lon.u.pok  (skip lon.u.pok |=(path =(+< pax)))
           sot.u.pok  (~(put by sot.u.pok) pax %direct (mug q.p.res) q.p.res)
       ==
@@ -573,6 +576,7 @@
             yel
           [[hen %note '!' %rose [" " "" ""] leaf/"clay patch failed" p.res] yel]
         ==
+      ?.  ?=(@ p.q.p.res)  ~|  %bad-marc  !!
       =:  lon.u.wok  (skip lon.u.wok |=(path =(+< pax)))
           sot.u.wok  [[pax `((hard mime) q.q.q.p.res)] sot.u.wok]
       ==
