@@ -508,8 +508,7 @@
 ::
 ++  moon                                                ::  mime type to text
   |=  myn=mite
-  %+  rap
-    3
+  %-  crip
   |-  ^-  tape
   ?~  myn  ~
   ?:  =(~ t.myn)  (trip i.myn)
@@ -2066,12 +2065,13 @@
     [~ ~]
   ?^  t.rax
     [p.pok [i.rax q.pok]]:[pok=$(rax t.rax) .]
-  =+  ^-  raf=(unit ,[p=term q=(unit term)])
-      %+  rush  i.rax
-      ;~(plug sym ;~((bend) (easy ~) ;~(pfix dot sym)))
-  ?~  raf
+  =+  ^-  raf=(like tape)
+      %.  [1^1 (flop (trip i.rax))]
+      ;~(sfix (plus ;~(less dot next)) dot)
+  ?~  q.raf
     [~ [i.rax ~]]
-  [q.u.raf [p.u.raf ~]]
+  =+  `[ext=tape [@ @] fyl=tape]`u.q.raf
+  [[~ (crip (flop ext))] [(crip (flop fyl)) ~]]
 ::
 ++  fuel                                                ::  parse fcgi
   |=  [bem=beam but=path]
@@ -2080,17 +2080,11 @@
   =+  dyb=(slay i.t.but)
   ?>  ?&  ?=([~ %many *] dyb)
           ?=([* * *] p.u.dyb)
-          ::  ?=([%$ %tas *] i.p.u.dyb)
-          ?=([%many *] i.p.u.dyb)
+          ?=([%$ %ta *] i.p.u.dyb)
           ?=([%blob *] i.t.p.u.dyb)
       ==
   =+  ced=((hard cred) p.i.t.p.u.dyb)
   ::  =+  nep=q.p.i.p.u.dyb
-  =+  ^=  nyp  ^-  path
-      %+  turn  p.i.p.u.dyb
-      |=  a=coin  ^-  @ta
-      ?>  ?=([%$ %ta @] a)
-      ?>(((sane %ta) q.p.a) q.p.a)
   =+  ^=  gut  ^-  (list ,@t)
       %+  turn  t.t.p.u.dyb
       |=  a=coin  ^-  @t
@@ -2105,7 +2099,6 @@
       ced
       bem
       t.t.but
-      nyp
   ==
 ::
 ++  sifo                                                ::  64-bit encode
@@ -2610,22 +2603,22 @@
   ?~  two  one
   ?:((lth u.one u.two) one two)
 ::
-++  mojo                                                ::  compiling load
-  |=  [pax=path src=*]
-  ^-  (each twig (list tank))
-  ?.  ?=(@ src)
-    [%| ~[[leaf/"musk: malformed: {<pax>}"]]]
-  =+  ^=  mud
-      %-  mule  |.
-      ((full vest) [1 1] (trip src))
-  ?:  ?=(| -.mud)  mud
-  ?~  q.p.mud
-    :~  %|
-        leaf/"musk: syntax error: {<pax>}"
-        leaf/"musk: line {<p.p.p.mud>}, column {<q.p.p.mud>}"
-    ==
-  [%& p.u.q.p.mud]
-::
+:: ++  mojo                                                ::  compiling load
+::   |=  [pax=path src=*]
+::   ^-  (each twig (list tank))
+::   ?.  ?=(@ src)
+::     [%| ~[[leaf/"musk: malformed: {<pax>}"]]]
+::   =+  ^=  mud
+::       %-  mule  |.
+::       ((full vest) [1 1] (trip src))
+::   ?:  ?=(| -.mud)  mud
+::   ?~  q.p.mud
+::     :~  %|
+::         leaf/"musk: syntax error: {<pax>}"
+::         leaf/"musk: line {<p.p.p.mud>}, column {<q.p.p.mud>}"
+::     ==
+::   [%& p.u.q.p.mud]
+:: ::
 ++  mole                                                ::  new to old sky
   |=  ska=$+(* (unit (unit)))
   |=  a=*
@@ -2634,21 +2627,21 @@
   ?~  b  ~
   ?~  u.b  ~
   [~ u.u.b]
-::
-++  much                                                ::  constructing load
-  |=  [pax=path src=*]
-  ^-  gank
-   =+  moj=(mojo pax src)
-  ?:  ?=(| -.moj)  moj
-  (mule |.((slap !>(+>.$) `twig`p.moj)))
-::
-++  musk                                                ::  compiling apply
-  |=  [pax=path src=* sam=vase]
-  ^-  gank
-  =+  mud=(much pax src)
-  ?:  ?=(| -.mud)  mud
-  (mule |.((slam p.mud sam)))
-::
+:: ::
+:: ++  much                                                ::  constructing load
+::   |=  [pax=path src=*]
+::   ^-  gank
+::    =+  moj=(mojo pax src)
+::   ?:  ?=(| -.moj)  moj
+::   (mule |.((slap !>(+>.$) `twig`p.moj)))
+:: ::
+:: ++  musk                                                ::  compiling apply
+::   |=  [pax=path src=* sam=vase]
+::   ^-  gank
+::   =+  mud=(much pax src)
+::   ?:  ?=(| -.mud)  mud
+::   (mule |.((slam p.mud sam)))
+:: ::
 ++  pack                                                ::  light path encoding
   |=  [a=term b=path]  ^-  span
   %+  rap  3  :-  (wack a)
@@ -2823,7 +2816,6 @@
               ced=cred                                  ::  client credentials
               bem=beam                                  ::  original path
               but=path                                  ::  ending
-              nyp=path                                  ::  request model
           ==                                            ::
 ++  flap  ,@uvH                                         ::  network packet id
 ++  flow                                                ::  packet connection
@@ -3032,7 +3024,7 @@
           $%  [& q=soba]                                ::  delta
               [| p=@tas]                                ::  label
           ==                                            ::
-++  octs  ,[p=@ud q=@]                                  ::  octet-stream
+++  octs  ,[p=@ud q=@t]                                 ::  octet-stream
 ++  oryx  ,@t                                           ::  CSRF secret
 ++  pact  path                                          ::  routed path
 ++  pail  ?(%none %warm %cold)                          ::  connection status
