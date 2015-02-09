@@ -59,6 +59,7 @@
   ++  se-belt                                           ::  handle input
     |=  bet=dill-belt
     ^+  +>
+    ~&  [%se-belt bet]
     ?:  ?=(%rez -.bet)
       +>(edg q.bet)
     ?:  ?=(%yow -.bet)
@@ -289,14 +290,16 @@
 ++  poke-dill-belt
   |=  [ost=bone her=ship bet=dill-belt]
   ^-  [(list move) _+>]
+  ~&  [%dill-belt bet]
   =<  se-abet
   =<  se-view
-  (~(se-belt se ~ [her ost] (~(got by bin) ost)) bet)
+  (~(se-belt se [ost %give %nice ~]~ [her ost] (~(got by bin) ost)) bet)
 ::
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
   =+  sih=((hard sign) sih)
+  ~&  [%seat-pour sih]
   ?>  ?=([@ @ ~] pax)
   =<  se-abet
   =<  se-view
