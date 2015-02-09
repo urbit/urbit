@@ -7,25 +7,16 @@
 !:                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|_  [hid=hide town]
+|_  [hid=hide ~]
 ++  peer  ,_`.
-++  tease
-  ^-  [(list move) _.]
-  :_  .
+++  poke--args
+  |=  [ost=bone you=ship ~]
+  ~&  %tease
+  :_  +>.$
   :_  ~
   :*  0    %pass  ~
       %g   %show  
       [our.hid /seat]  our.hid
       /
   ==
-++  poke--args
-  |=  [ost=bone you=ship *]
-  ^-  [(list move) _+>]
-  tease
-:: 
-++  prep
-  |=  old=(unit (unit house-any))
-  ^-  [(list move) _+>]
-  ~&  %tease-prep
-  tease
 --
