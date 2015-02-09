@@ -27,6 +27,7 @@
       [%blk p=@ud q=@c]                                 ::  blink/match char at
       [%clr ~]                                          ::  clear screen
       [%det console-change]                             ::  edit input
+      [%pro console-prompt]                             ::  set prompt
       [%tan p=(list tank)]                              ::  classic tank
   ::  [%taq p=tanq]                                     ::  modern tank
       [%txt p=tape]                                     ::  text line
@@ -34,7 +35,11 @@
 ++  console-input                                       ::  input state
   $:  pos=@ud                                           ::  cursor position
       say=console-share                                 ::  cursor 
-  ==
+  ==                                                    ::
+++  console-prompt                                      ::  prompt definition
+  $:  vis=?                                             ::  input visible
+      cap=(list ,@c)                                    ::  caption
+  ==                                                    ::
 ++  console-share                                       ::  symmetric state
   $:  ven=console-clock                                 ::  our vector clock
       leg=(list console-edit)                           ::  unmerged edits

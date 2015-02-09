@@ -5,7 +5,7 @@
   ::
 /?    310
 /-    *console
-::
+!:
 ::::
   ::
 |%
@@ -21,7 +21,7 @@
       %mor  |-  ^+  +>.^$
             ?~  p.ted 
               +>.^$ 
-            $(p.ted t.p.ted, +>.$ ^$(ted i.p.ted))
+            $(p.ted t.p.ted, +>.^$ ^$(ted i.p.ted))
       %nop  +>.$
       %set  +>.$(buf p.ted, pos (lent p.ted))
     ==
@@ -60,10 +60,10 @@
     ::  
         %ins
       ?-  -.dex
-        %del  ?:((lte p.sin p.dex) dex(p (inc p.dex)) dex)
+        %del  ?:((lte p.sin p.dex) dex(p +(p.dex)) dex)
         %ins  ?:  =(p.sin p.dex)     
-                ?:((gth q.sin q.dex) dex dex(p (inc p.dex)))
-              ?:((lte p.sin p.dex) dex(p (inc p.dex)) dex)
+                ?:((gth q.sin q.dex) dex dex(p +(p.dex)))
+              ?:((lte p.sin p.dex) dex(p +(p.dex)) dex)
       ==
     ==   
   ::
