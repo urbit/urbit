@@ -1,6 +1,5 @@
 /* j/1/lte.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 

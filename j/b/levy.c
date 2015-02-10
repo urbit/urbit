@@ -1,6 +1,5 @@
 /* j/2/levy.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 

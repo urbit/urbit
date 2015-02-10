@@ -1,6 +1,5 @@
 /* gen164/5/ed_veri.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 
