@@ -1,6 +1,5 @@
 /* j/6/type.c
 **
-** This file is in the public domain.
 */
 
 /* new template for type switching

@@ -1,6 +1,5 @@
 /* j/6/ut_burn.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 

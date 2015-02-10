@@ -1,6 +1,5 @@
 /* j/6/fuse.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 
