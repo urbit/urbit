@@ -11,7 +11,7 @@
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
               [%veer p=@ta q=path r=@t]                 ::  drop-through
               [%vega p=path]                            ::  drop-through
-         ==                                             ::
+          ==                                            ::
 ++  hasp  ,[p=ship q=term]                              ::  don't see %gall
 ++  hapt  ,[p=ship q=path]                              ::  do see %gall
 ++  kiss                                                ::  in request ->$
@@ -26,34 +26,36 @@
           ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
-          $%  $:  %a                                    ::  to %ames
-          $%  [%want p=sock q=path r=*]                 ::
-          ==  ==                                        ::
+          $%  
+::           $:  %a                                    ::  to %ames
+::           $%  [%want p=sock q=path r=*]                 ::
+::           ==  ==                                        ::
               $:  %c                                    ::  to %clay
           $%  [%warp p=sock q=riff]                     ::
           ==  ==                                        ::
               $:  %d                                    ::  to %dill
           $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::
           ==  ==                                        ::
-              $:  %e                                    ::  to %eyre
-          $%  [%this p=? q=clip r=httq]                 ::
-              [%thud ~]                                 ::
-          ==  ==                                        ::
+::               $:  %e                                    ::  to %eyre
+::           $%  [%this p=? q=clip r=httq]                 ::
+::               [%thud ~]                                 ::
+::           ==  ==                                        ::
               $:  %f                                    ::  to %ford
           $%  [%exec p=@p q=(unit silk)]                ::
           ==  ==                                        ::
-              $:  %g                                    ::  to %gall
-          $%  [%mess p=hapt q=ship r=cage]              ::
-              [%nuke p=hapt q=ship]                     ::
-              [%show p=hapt q=ship r=path]              ::
-              [%took p=hapt q=ship]                     ::  
-          ==  ==                                        ::
-              $:  %t                                    ::  to  %temp
-          $%  [%wait p=@da]                             ::
-              [%rest p=@da]                             ::
-          ==  ==  ==                                    ::
+::               $:  %g                                    ::  to %gall
+::           $%  [%mess p=hapt q=ship r=cage]              ::
+::               [%nuke p=hapt q=ship]                     ::
+::               [%show p=hapt q=ship r=path]              ::
+::               [%took p=hapt q=ship]                     ::  
+::           ==  ==                                        ::
+::               $:  %t                                    ::  to  %temp
+::           $%  [%wait p=@da]                             ::
+::               [%rest p=@da]                             ::
+::           ==  ==  
+                  ==                                    ::
 ++  rave                                                ::  see %clay
-          $%  [| p=moat]                                ::
+          $%  [& p=mood]                                ::
           ==                                            ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  silk                                                ::  see %ford
@@ -105,91 +107,92 @@
       ged=duct                                          ::  client interface
       ney=@uvI                                          ::  rolling entropy
       dop=(map host ship)                               ::  host aliasing
-      own=(map ship serf)                               ::  domestic servers
-      fon=(map ship rote)                               ::  foreign servers
-      ask=[p=@ud q=(map ,@ud ,[p=duct q=hiss])]         ::  outgoing by number
-      kes=(map duct ,@ud)                               ::  outgoing by duct
-      lor=(map duct dual)                               ::  incoming by duct
+      liz=(jug beak (each duct oryx))
+::       own=(map ship serf)                               ::  domestic servers
+::       fon=(map ship rote)                               ::  foreign servers
+::       ask=[p=@ud q=(map ,@ud ,[p=duct q=hiss])]         ::  outgoing by number
+::       kes=(map duct ,@ud)                               ::  outgoing by duct
+::       lor=(map duct dual)                               ::  incoming by duct
   ==                                                    ::
-++  clue                                                ::  console
-  $:  ino=@ud                                           ::  input sequence
-      ono=@ud                                           ::  (lent out)
-      voy=(map ,@ud (list ,@ud))                        ::  waiters (q.rey)
-      out=(list json)                                   ::  output commands
-  ==                                                    ::
-++  cyst                                                ::  client session
-  $:  ced=cred                                          ::  credential
-      cow=(map ,@ud clue)                               ::  consoles
-      cug=(list ,@t)                                    ::  unacked cookies
-      lax=@da                                           ::  last used
-      sok=(map ,@ud (pair ship sink))                   ::  live apps by reqno
-      rey=[p=@ud q=(map ,@ud pimp)]                     ::  live requests
-  ==                                                    ::
-++  dual  ,[p=@ud q=(each ,[p=ship q=hole] ship)]       ::  request handle
-++  dude  ,[p=@tas q=@]                                 ::  client identity
-++  pest                                                ::  request in progress
-  $|  $?  %new                                          ::  virgin
-          %way                                          ::  waiting
-      ==                                                ::
-  $%  [%err p=@ud q=(list tank)]                        ::  error report
-      [%fin p=love]                                     ::  ready to send
-      [%fud p=(each bead (list tank))]                  ::  function finished
-      [%haz p=riot]                                     ::  clay responded
-      [%raw p=hiss]                                     ::  wild url
-      [%who p=@tas q=@ta]                               ::  awaiting auth
-  ==                                                    ::
-++  pimp                                                ::  traced request
-  $:  ful=?                                             ::  | === HEAD
-      fur=(unit mark)                                   ::  type goal
-      hen=duct                                          ::  event trace
-      som=seam                                          ::  logical request
-      pez=pest                                          ::  request state
-      sip=marl                                          ::  injected scripts
-  ==                                                    ::
-++  rote                                                ::  remote server
-  $:  cnt=@ud                                           ::  number served
-      sor=@p                                            ::  home sponsor
-      rem=[p=@ud q=(map ,@ud duct)]                     ::  active requests
-  ==                                                    ::
-++  seam                                                ::  logical request
-  $%  [%ape p=ship q=@ud r=@ud]                         ::  subscribe pull
-      [%aph p=ship q=@ud r=@ud s=json]                  ::  app heartbeat
-      [%apg p=term q=ship r=mark s=path]                ::  app get/start
-      [%apm p=ship q=@ud r=@ud s=hasp for=mark t=json]  ::  message send
-      [%app p=ship q=(unit ,@ud)]                       ::  script by port
-      [%aps p=ship q=@ud s=hasp t=path]                 ::  subscribe
-      [%apu p=ship q=@ud s=hasp t=path]                 ::  unsubscribe
-      [%cog p=@ud q=@ud]                                ::  console get
-      [%con p=@ud]                                      ::  console face
-      [%cop p=@ud q=@ud r=json]                         ::  console put
-      [%det p=desk q=moat]                              ::  load changes
-      [%fun p=term q=tube r=(list manx)]                ::  functional
-      [%lon p=seal]                                     ::  authentication flow
-      [%red p=purl]                                     ::  redirect
-      [%sil p=@ud q=silk]                               ::  status and silk
-  ==                                                    ::
-++  serf                                                ::  local server
-  $:  pef=@t                                            ::  server prefix
-      wup=(map hole cyst)                               ::  secure sessions
-      cah=(map cash vase)                               ::  compilation cache
-  ==                                                    ::
-++  sink                                                ::  page push system
-  $:  bet=[wig=swig num=@ud tim=@da hen=duct]           ::  heartbeat
-      meg=[wig=swig num=@ud]                            ::  messages
-      sub=[wig=swig num=@ud can=(map ,@ud stem)]        ::  subscriptions
-  ==                                                    ::
-++  stem                                                ::  subscription
-  $:  hap=hasp                                          ::
-      pax=path                                          ::
-      hen=duct                                          ::
-      num=(unit (each ,@ud ,@ud))                       ::
-  ==                                                    ::
-++  swig                                                ::  update channel
-  $:  cnt=@ud                                           ::  updates produced
-      toy=@ud                                           ::  updates sent
-      wan=(map ,@ud ,@ud)                               ::  upno to reqno
-      red=(map ,@ud (unit (each cage cage)))            ::  ready for pickup
-  ==                                                    ::
+:: ++  clue                                                ::  console
+::   $:  ino=@ud                                           ::  input sequence
+::       ono=@ud                                           ::  (lent out)
+::       voy=(map ,@ud (list ,@ud))                        ::  waiters (q.rey)
+::       out=(list json)                                   ::  output commands
+::   ==                                                    ::
+:: ++  cyst                                                ::  client session
+::   $:  ced=cred                                          ::  credential
+::       cow=(map ,@ud clue)                               ::  consoles
+::       cug=(list ,@t)                                    ::  unacked cookies
+::       lax=@da                                           ::  last used
+::       sok=(map ,@ud (pair ship sink))                   ::  live apps by reqno
+::       rey=[p=@ud q=(map ,@ud pimp)]                     ::  live requests
+::   ==                                                    ::
+:: ++  dual  ,[p=@ud q=(each ,[p=ship q=hole] ship)]       ::  request handle
+:: ++  dude  ,[p=@tas q=@]                                 ::  client identity
+:: ++  pest                                                ::  request in progress
+::   $|  $?  %new                                          ::  virgin
+::           %way                                          ::  waiting
+::       ==                                                ::
+::   $%  [%err p=@ud q=(list tank)]                        ::  error report
+::       [%fin p=love]                                     ::  ready to send
+::       [%fud p=(each bead (list tank))]                  ::  function finished
+::       [%haz p=riot]                                     ::  clay responded
+::       [%raw p=hiss]                                     ::  wild url
+::       [%who p=@tas q=@ta]                               ::  awaiting auth
+::   ==                                                    ::
+:: ++  pimp                                                ::  traced request
+::   $:  ful=?                                             ::  | === HEAD
+::       fur=(unit mark)                                   ::  type goal
+::       hen=duct                                          ::  event trace
+::       som=seam                                          ::  logical request
+::       pez=pest                                          ::  request state
+::       sip=marl                                          ::  injected scripts
+::   ==                                                    ::
+:: ++  rote                                                ::  remote server
+::   $:  cnt=@ud                                           ::  number served
+::       sor=@p                                            ::  home sponsor
+::       rem=[p=@ud q=(map ,@ud duct)]                     ::  active requests
+::   ==                                                    ::
+:: ++  seam                                                ::  logical request
+::   $%  [%ape p=ship q=@ud r=@ud]                         ::  subscribe pull
+::       [%aph p=ship q=@ud r=@ud s=json]                  ::  app heartbeat
+::       [%apg p=term q=ship r=mark s=path]                ::  app get/start
+::       [%apm p=ship q=@ud r=@ud s=hasp for=mark t=json]  ::  message send
+::       [%app p=ship q=(unit ,@ud)]                       ::  script by port
+::       [%aps p=ship q=@ud s=hasp t=path]                 ::  subscribe
+::       [%apu p=ship q=@ud s=hasp t=path]                 ::  unsubscribe
+::       [%cog p=@ud q=@ud]                                ::  console get
+::       [%con p=@ud]                                      ::  console face
+::       [%cop p=@ud q=@ud r=json]                         ::  console put
+::       [%det p=desk q=moat]                              ::  load changes
+::       [%fun p=term q=tube r=(list manx)]                ::  functional
+::       [%lon p=seal]                                     ::  authentication flow
+::       [%red p=purl]                                     ::  redirect
+::       [%sil p=@ud q=silk]                               ::  status and silk
+::   ==                                                    ::
+:: ++  serf                                                ::  local server
+::   $:  pef=@t                                            ::  server prefix
+::       wup=(map hole cyst)                               ::  secure sessions
+::       cah=(map cash vase)                               ::  compilation cache
+::   ==                                                    ::
+:: ++  sink                                                ::  page push system
+::   $:  bet=[wig=swig num=@ud tim=@da hen=duct]           ::  heartbeat
+::       meg=[wig=swig num=@ud]                            ::  messages
+::       sub=[wig=swig num=@ud can=(map ,@ud stem)]        ::  subscriptions
+::   ==                                                    ::
+:: ++  stem                                                ::  subscription
+::   $:  hap=hasp                                          ::
+::       pax=path                                          ::
+::       hen=duct                                          ::
+::       num=(unit (each ,@ud ,@ud))                       ::
+::   ==                                                    ::
+:: ++  swig                                                ::  update channel
+::   $:  cnt=@ud                                           ::  updates produced
+::       toy=@ud                                           ::  updates sent
+::       wan=(map ,@ud ,@ud)                               ::  upno to reqno
+::       red=(map ,@ud (unit (each cage cage)))            ::  ready for pickup
+::   ==                                                    ::
 --                                                      ::
 |%
 :: ++  coss                                                ::  cookie search
@@ -255,7 +258,7 @@
   |=  [a=[p=cord cord] b=math] 
   =.  p.a  (cass (trip p.a))
   (~(add ja b) a)
-:: ::
+::
 :: ++  eccu                                                ::  [hasp json]
 ::   |=  [orx=oryx moh=moth]
 ::   ^-  (unit ,[hasp mark json])
@@ -366,6 +369,29 @@
     ?-    -.+.sih
         %crud
       +>.$(mow [[hen %slip %d %flog +.sih] mow])
+    ::
+        %made
+      ?+    tea  +>.$
+          [%neu @ ~]
+        :: ~&  e/ford/hen
+        =+  our=(slav %p i.t.tea)
+        ?-  -.p.sih
+          |  (fail 404 p.p.sih)
+          &  =*  cag  q.p.p.sih
+             ?>  ?=(%mime p.cag)
+             =+  ((hard ,[mit=mite rez=octs]) q.q.cag)  ::  XX
+             (muff %thou 200 [content-type/(moon mit)]~ ~ rez)
+        ==
+      ==
+    ::
+        %writ
+      ?^  tea  ~&(e/missed/writ/tea=tea +>.$)
+      ?~  p.sih  +>.$
+      =+  caz=`case`q.p.u.p.sih
+      ?>  ?=(%ud -.caz)
+      (jive (jone p.caz))
+::       %-  gout
+::       [(slav %p i.t.tea) i.t.t.tea (slav %ud i.t.t.t.tea) p.+.sih]
 ::     ::
 ::         ?(%dumb %mean %nice %rush %rust)
 ::       ?>  ?=([%hoop @ @ @ ?([%mess @ @ ~] [%show @ ~])] tea)
@@ -420,19 +446,7 @@
 ::         =<  abet  =<  work  =<  abet
 ::         (soon ?=(%rust -.+.sih) sem u.ouy can %show (wrap sem (json q.+.sih)))
 ::       ==
-    ::
-        %made
-      ?+    tea  +>.$
-          [%neu @ ~]
-        :: ~&  e/ford/hen
-        =+  our=(slav %p i.t.tea)
-        ?-  -.p.sih
-          |  (fail 404 p.p.sih)
-          &  =*  cag  q.p.p.sih
-             ?>  ?=(%mime p.cag)
-             =+  ((hard ,[mit=mite rez=octs]) q.q.cag)  ::  XX
-             (muff %thou 200 [content-type/(moon mit)]~ ~ rez)
-        ==
+::     ::
 ::       ::
 ::           [%honk @ @ @ ~]
 ::         %-  galt
@@ -477,7 +491,6 @@
 ::           %^  hear:(yule:u.ouy %meg)  ~  %&
 ::           [%json !>((rong ~ %from-json-fail p.p.+.sih))]
 ::         ==
-      ==
 ::     ::
 ::         %thou                                           ::  remote return
 ::       ?>  ?=([@ @ *] tea)
@@ -502,12 +515,6 @@
 ::     ::
 ::         %went
 ::       +>.$
-    ::
-        %writ
-      ?<  ?=([%hoot @ @ @ ~] tea)
-        +>.$
-::       %-  gout
-::       [(slav %p i.t.tea) i.t.t.tea (slav %ud i.t.t.t.tea) p.+.sih]
     ==
   ::
   ++  apex
@@ -520,14 +527,15 @@
         %init                                           ::  register ownership
       %_    +>.$
           hov  ?~(hov [~ p.kyz] [~ (min u.hov p.kyz)])
-          own
-        %+  ~(put by own)
-          p.kyz
-        ^-  serf
-        :*  (cat 3 gub (rsh 3 1 (scot %p p.kyz)))
-            ~
-            ~
-        ==
+::       ::
+::           own
+::         %+  ~(put by own)
+::           p.kyz
+::         ^-  serf
+::         :*  (cat 3 gub (rsh 3 1 (scot %p p.kyz)))
+::             ~
+::             ~
+::         ==
       ==
 ::     ::
 ::         %them                                           ::  outbound request
@@ -553,7 +561,7 @@
 ::         mow    :_(mow [p.kas [%give %thou q.kyz]])
 ::         q.ask  (~(del by q.ask) p.kas)
 ::       ==
-    ::
+::     ::
         %this                                           ::  inbound request
       =*  sec  p.kyz    ::  ?                           ::  https bit
       =*  heq  r.kyz    ::  httq                        ::  request content
@@ -677,7 +685,7 @@
 ::     ^+  +>
 ::     =+  boy=(myth our (need ((sand %ta) ((hard ,@) hez))))
 ::     ?~(boy +>.$ abet:(auth:u.boy him))
-::   ::
+  ::
   ++  heck                                              ::  regular request
     |=  [oar=ship pok=pork]
     ^-  (unit beam)
@@ -701,13 +709,37 @@
     ::  =+  oar=`(unit ship)`?^(wiq wiq (doss r.p.pul))
     =+  oar=(fall (doss r.p.pul) (need hov))
     =+  ext=(fall p.q.pul %html)
+    %-  |=(a=(each ,_..hell tang) ?~(-.a p.a (fail 404 >%exit< p.a)))
+    %-  mule  |.  ^+  ..hell
     =+  hek=(heck oar q.pul)
     ?^  hek
       =:  s.u.hek  [%web ~(rent co (flux:ya /'' r.pul)) s.u.hek]
           r.u.hek  ?+(r.u.hek r.u.hek [%ud %0] da/now)
         ==
       (honk oar [%cast %mime %boil ext u.hek ~])
-    (fail 404 >%irregular-path< (smyt q.q.pul) ~)
+    =+  hem=(hemp oar [q r]:pul)
+    ?~  hem
+      ~|(strange-path/(smyt q.q.pul) !!)
+    %+  hoot  oar  
+    =-  [q.u.hem ~ %& %y ud/+(`@ud`-) /]
+    ?:  ?=(%ud -.r.u.hem)
+      p.r.u.hem
+    ;;(@ (need (sky %cw (tope u.hem /))))
+  ::
+  ++  hemp                                             ::  auxillary(/~) request
+    |=  [oar=ship pok=pork quy=quay]
+    ^-  (unit beak)
+    ?.  ?=([%'~' @ *] q.pok)  ~
+    :-  ~
+    =*  pef  i.t.q.pok
+    =+  but=t.t.q.pok                 ::  XX  =*
+    ?+  pef  ~|(pfix-lost/`path`/~/[pef] !!)
+      %on  ?~  but  !!  ::  XX look by query string
+           ?>  ?=([@ @ $|(~ [@ ~])] but)
+           =-  -:(need (tome -))
+           ?^  t.t.but  but(i (cat 3 '~' i.but))
+           [(scot %p oar) but]
+    ==
 ::     ?.  (home oar)
 ::       (hork oar hyx)
 ::     (huff oar q.hyx pul moh)
@@ -718,33 +750,20 @@
 ::     ?:  (~(has by own) who)  &
 ::     ?:  (~(has by fon) who)  |
 ::     !=(~ (sky /a/(scot %p who)/buck/(scot %da now)))
-::   ::
-::   ++  hoot                                              ::  clay request
-::     |=  [our=ship num=@ud ses=hole rif=riff]
-::     %_    +>
-::         mow
-::       :_  mow
-::       :+  hen  %pass
-::       [[%hoot (scot %p our) ses (scot %ud num) ~] %c [%warp [our our] rif]]
-::     ==
-::   ::
+  ::
+  ++  hoot                                              ::  clay request
+    |=  [our=ship rif=riff]
+    (miff ~ %c [%warp [our our] rif])
+  ::
   ++  hone                                              ::  kill ford
-    |=  [our=ship num=@ud ses=hole]
-    %_    +>
-        mow
-      :_  mow
-      [hen %pass [%honk (scot %p our) ses (scot %ud num) ~] %f [%exec our ~]]
-    ==
+    |=  [our=ship ses=hole]
+    (miff [%neu (scot %p our) ~] %f [%exec our ~])
   ::
   ++  honk                                              ::  ford request
     |=  [our=ship kas=silk]
     ::  ~&  [%honk our num ses -.kas]
-    %_    +>
-        mow
-      :_  mow
-      [hen %pass [%neu (scot %p our) ~] %f [%exec our `kas]]
-    ==
-::   ::
+    (miff [%neu (scot %p our) ~] %f [%exec our `kas])
+  ::
 ::   ++  hooj                                              ::  ford json request
 ::     |=  [our=ship ses=hole nap=@ud can=@ud ful=? kas=silk]
 ::     %_    +>
@@ -802,7 +821,7 @@
 ::         q.rem  (~(put by q.rem.rot) num hen)
 ::       ==
 ::     ==
-::   ::
+  ::
   ++  horn                                              ::  irregular request
     |=  [pul=purl cip=clip moh=moth]
     ^-  (unit gift)
@@ -867,15 +886,22 @@
 ::         ==
 ::     abet:work:(~(into ya [our p.saw] sef q.saw) pul moh)
   ::
+  ++  jive                                              ::  success json
+    |=  jon=json
+    (muff (tuff application//json (crip (pojo jon))))
   ++  muff                                              ::  return card
     |=  gef=gift
     +>(mow :_(mow [hen %give gef]))
+  ::
+  ++  miff                                              ::  pass card
+    |=  noe=[wire note]
+    +>(mow :_(mow [hen %pass noe]))
   ::
   ++  tuff
     |=  [mit=mite rez=@]                                   ::  success response
     ^-  gift
     [%thou 200 ~[content-type/(moon mit)] [~ (taco rez)]]
-::   ::
+  ::
 ::   ++  myth                                              ::  load session
 ::     |=  [our=ship ses=hole]
 ::     =+  suf=(~(get by own) our)
@@ -1101,12 +1127,21 @@
 ::         [%path %s (crip <pax.sem>)]
 ::         [%data `json`jon]
 ::     ==
-::   ::
+  ::
   ++  ya                                                ::  session engine
-    =|  [[our=ship ses=hole] serf cyst]
-    =*  sef  ->-
-    =*  cyz  ->+
+    =|  [[our=ship ses=hole] ~] ::serf cyst]
+::     =*  sef  ->-
+::     =*  cyz  ->+
     |%
+    ++  flux                                            ::  credential caboose
+      |=  [nyp=path quy=quay]  ^-  coin
+      :*  %many
+          [%$ %ta ~]
+          [%blob *cred] ::ced]
+          |-  ^-  (list coin)
+          ?~  quy  ~
+          [[%$ %t p.i.quy] [%$ %t q.i.quy] $(quy t.quy)]
+      ==
 ::     ++  abet                                            ::  resolve engine
 ::       ^+  ..ya
 ::       %=    ..ya
@@ -1470,15 +1505,6 @@
 ::         ~
 ::       [~ %cop u.fee u.fum u.jun]
 ::     ::
-    ++  flux                                            ::  credential caboose
-      |=  [nyp=path quy=quay]  ^-  coin
-      :*  %many
-          [%$ %ta ~]
-          [%blob ced]
-          |-  ^-  (list coin)
-          ?~  quy  ~
-          [[%$ %t p.i.quy] [%$ %t q.i.quy] $(quy t.quy)]
-      ==
 ::     ::
 ::     ++  foin                                            ::  version request
 ::       |=  [fur=(unit term) you=@p paw=(list ,@t) quy=quay]
@@ -1797,7 +1823,7 @@
 ::           =+  pot=`(list ,[p=@ud q=pimp])`?~(top ~ [[p.n.yub u.top] ~])
 ::           [:(weld pot dex sid) +.^$]
 ::       +.$(q.rey (~(gas by `_q.rey`~) zib))
-    ::
+    
 ::     ++  wink                                            ::  advance request
 ::       |=  [num=@ud pip=pimp]
 ::       ^-  [(unit pimp) _+>]
@@ -1982,7 +2008,7 @@
 ::         :_  +>.$
 ::         ?.((~(has ju aut.ced) p.pez.pip q.pez.pip) [~ pip] [~ pip(pez %new)])
 ::       ==
-    ::
+    
 ::     ++  work
 ::       |-  ^+  +
 ::       =+  sez=step
@@ -2333,9 +2359,9 @@
   ~
 ::
 ++  load
-  |=  old=bolo
+  |=  old=_[%0 gub hov ged ney dop **]
   ^+  ..^$
-  ..^$(+>- old)
+  ..^$(+>- (bolo old))
 ::
 ++  scry
   |=  [our=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
