@@ -2828,8 +2828,7 @@
           ==                                            ::
 ++  deed  ,[p=@ q=step r=?]                             ::  sig, stage, fake?
 ++  dome                                                ::  project state
-          $:  ang=agon                                  ::  pedigree
-              ank=ankh                                  ::  state
+          $:  ank=ankh                                  ::  state
               let=@ud                                   ::  top id
               hit=(map ,@ud tako)                       ::  changes by id
               lab=(map ,@tas ,@ud)                      ::  labels
