@@ -2066,12 +2066,13 @@
     [~ ~]
   ?^  t.rax
     [p.pok [i.rax q.pok]]:[pok=$(rax t.rax) .]
-  =+  ^-  raf=(unit ,[p=term q=(unit term)])
-      %+  rush  i.rax
-      ;~(plug sym ;~((bend) (easy ~) ;~(pfix dot sym)))
-  ?~  raf
+  =+  ^-  raf=(like tape)
+      %.  [1^1 (flop (trip i.rax))]
+      ;~(sfix (plus ;~(less dot next)) dot)
+  ?~  q.raf
     [~ [i.rax ~]]
-  [q.u.raf [p.u.raf ~]]
+  =+  `[ext=tape [@ @] fyl=tape]`u.q.raf
+  [[~ (crip (flop ext))] [(crip (flop fyl)) ~]]
 ::
 ++  fuel                                                ::  parse fcgi
   |=  [bem=beam but=path]
