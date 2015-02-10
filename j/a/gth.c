@@ -1,6 +1,5 @@
 /* j/1/gth.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 

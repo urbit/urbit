@@ -1,6 +1,5 @@
 /* j/6/look.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 
