@@ -82,13 +82,14 @@
               [%call p=silk q=silk]                     ::  slam
               [%cast p=mark q=silk]                     ::  translate
               [%diff p=silk q=silk]                     ::  diff
-              [%done p=(set beam) q=cage]               ::  literal
+              [%done p=(set beam) q=gage]               ::  literal
               [%dude p=tank q=silk]                     ::  error wrap
-              [%dune p=(set beam) q=(unit cage)]        ::  unit literal
+              [%dune p=(set beam) q=(unit gage)]        ::  unit literal
               [%mute p=silk q=(list (pair wing silk))]  ::  mutant
               [%pact p=silk q=silk]                     ::  patch
               [%reef ~]                                 ::  kernel reef
               [%ride p=twig q=silk]                     ::  silk thru twig
+              [%tabl p=(list (pair silk silk))]         ::  list
               [%vale p=mark q=ship r=*]                 ::  validate [our his]
           ==                                            ::
 ++  raft                                                ::  filesystem
@@ -347,6 +348,7 @@
   ++  edit                                            ::  apply changes
     |=  [wen=@da lem=nori]
     ^+  +>
+    ~&  >  [%editing syd]
     ?:  ?=(%| -.lem)
       =^  hat  +>.$
         (edit:ze wen lem)
@@ -512,7 +514,7 @@
     +>.$
   ::
   ++  take-patch
-    |=  [pax=path res=(each bead (list tank))]
+    |=  res=(each bead (list tank))
     ^+  +>
     ?:  ?=(%| -.res)  
       %_    +>.$
@@ -576,14 +578,15 @@
   ++  checkout-ankh
     |=  hat=(map path lobe)
     ^+  +>
+    ~&  >  [%first-checkout syd (lent (~(tap by hat)))]
     %_    +>.$
         tag
       :_  tag
       :^    hen
-          [%patching (scot %p who) syd pax]
+          [%patching (scot %p who) syd ~]
         %f
       :^  %exec  who  ~  :-  %tabl
-      ^-  (list (pair silk))
+      ^-  (list (pair silk silk))
       %+  turn  (~(tap by hat))
       |=  [a=path b=lobe]
       ^-  (pair silk silk)
@@ -593,7 +596,7 @@
       ?-  -.bob
         %direct     [%done ~ q.bob]
         %indirect   [%done ~ q.bob]
-        %delta      [%pact $(bar q.bob) [%done ~ r.bob]]
+        %delta      [%pact $(b q.bob) [%done ~ r.bob]]
       ==
     ==
   ::
@@ -835,7 +838,8 @@
           let.dom
       =-  =+  sar=(sa (turn lar |=([p=path *] p)))      ::  changed paths
           %+  roll  (~(tap by hat) ~)                   ::  find unchanged
-          |=  [[pat=path gar=lobe] bat=_bar]
+          =<  .(bat bar)
+          |=  [[pat=path gar=lobe] bat=(map path blob)]
           ?:  (~(has in sar) pat)                       ::  has update
             bat
           (~(put by bat) pat (lobe-to-blob gar))        ::  use original
@@ -977,6 +981,7 @@
       ::  ?~  p.yak  !!                                 ::  no parent, no diff
       ::  :+  %&  *cart                                 ::  diff w/ 1st parent
       ::  (~(tap by (diff-yakis (tako-to-yaki i.p.yak) yak)) ~)
+    ::
     ++  forge-yaki                                      ::    forge-yaki:ze
       |=  [wen=@da par=(unit tako) lem=suba]            ::  forge yaki
       =+  ^=  per
@@ -1003,6 +1008,11 @@
               =(-.pax -.p)
               $(p +.p, pax +.pax)
       ==  ==
+    ::
+    ++  make-nako                                       ::  gack a through b
+      |=  [a=aeon b=aeon]
+      ^-  [(map aeon tako) aeon (set yaki) (set blob)]
+      !!
     ::
     ++  query                                           ::    query:ze
       |=  ren=?(%u %v %x %y %z)                         ::  endpoint query
@@ -1063,6 +1073,7 @@
         [lut (~(put by gar) pat p.bar)]
       :-  (~(put by lut) p.bar bar)
       (~(put by gar) pat p.bar)
+    ::
     ++  zu                                              ::  filesystem
       |=  ank=ankh                                      ::  filesystem state
       =|  ram=path                                      ::  reverse path into
@@ -1356,19 +1367,19 @@
       [mos ..^$]
     ::
         %patching
-      ?>  ?=([@ @ *] t.tea)
+      ?>  ?=([@ @ ~] t.tea)
       =+  who=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
       =^  mos  ruf
         ?:  (~(has by fat.ruf) who)
           =+  une=(un who now hen ruf)
           =+  ^=  zat
-              (take-patch:(di:wake:une syd) t.t.t.tea p.q.hin)
+              (take-patch:(di:wake:une syd) p.q.hin)
           =+  zot=abet.zat
           [-.zot abet:(pish:une syd +.zot ran.zat)]
         =+  zax=(do now hen [who who] syd ruf)
         =+  ^=  zat
-            (take-patch:zax t.t.t.tea p.q.hin)
+            (take-patch:zax p.q.hin)
         =+  zot=abet.zat
         [-.zot (posh who syd +.zot ruf)]
       [mos ..^$]

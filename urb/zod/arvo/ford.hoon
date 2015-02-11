@@ -986,7 +986,7 @@
           |=  [cof=cafe rex=(list (pair marc marc)) rey=vase]
           (fine cof [[p.key p.val] rex] (slop (slop q.key q.val) rey))
         |=  [cof=cafe rex=(list (pair marc marc)) rey=vase]
-        (fine cof [%tabl rex] !>(rex))
+        (fine cof [%tabl rex] rey)
       ::
           %vale  
         %+  cool  |.(leaf/"ford: vale {<p.kas>} {<q.kas>} {<`@p`(mug r.kas)>}")
