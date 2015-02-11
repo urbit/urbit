@@ -9,7 +9,7 @@
 ::
 ++  bead  ,[p=(set beam) q=cage]                        ::  computed result
 ++  gift                                                ::  out result <-$
-          $%  [%made p=(each bead (list tank))]         ::  computed result
+          $%  [%made p=(set beam) q=(each cage tang)]   ::  computed result
           ==                                            ::
 ++  heel  path                                          ::  functional ending
 ++  hock                                                ::  standard label
@@ -95,8 +95,8 @@
   $:  p=cafe                                            ::  cache
     $=  q                                               ::
       $%  [%0 p=(set beam) q=a]                         ::  depends/product
-          [%1 p=(set ,[p=care q=beam r=(list tank)])]   ::  blocks
-          [%2 p=(list tank)]                            ::  error
+          [%1 p=(set ,[p=care q=beam r=tang])]   ::  blocks
+          [%2 p=(set beam) q=tang]               ::  depends/error
       ==                                                ::
   ==                                                    ::
 ::                                                      ::
@@ -161,7 +161,8 @@
 ++  fest  |*([a=cafe b=*] (fine a [~ u=b]))             ::  bolt to unit
 ++  fine  |*  [a=cafe b=*]                              ::  bolt from data
           [p=`cafe`a q=[%0 p=*(set beam) q=b]]          ::
-++  flaw  |=([a=cafe b=(list tank)] [p=a q=[%2 p=b]])   ::  bolt from error
+++  flaw  |=  [a=cafe b=tang] 
+          [p=a q=[%2 p=*(set beam) q=b]]                ::  bolt from error
 ::
 ++  grom                                                ::  merge sets
   |*  [one=(set) two=(set)]
@@ -315,7 +316,7 @@
     ++  cool                                            ::  error caption
       |*  [cyt=trap hoc=(bolt)]
       ?.  ?=(%2 -.q.hoc)  hoc
-      [p.hoc [%2 *cyt p.q.hoc]]
+      [p.hoc [%2 p.q.hoc *cyt q.q.hoc]]
     ::
     ++  cope                                            ::  bolt along
       |*  [hoc=(bolt) fun=(burg)]
@@ -337,7 +338,7 @@
       :-  p=cof
       ^=  q
       ?-  -.ton
-        %2  [%2 p=p.ton]
+        %2  [%2 p=*(set beam) q=p.ton]
         %0  [%0 p=*(set beam) q=(fun p.ton)]
         %1  ::  ~&  [%coup-need ((list path) p.ton)]
             =-  ?-  -.faw
@@ -345,23 +346,24 @@
                      ^=  p
                      %-  sa
                      %+  turn  p.faw
-                     |=(a=[care beam] [-.a +.a *(list tank)])
-                  |  [%2 p=p.faw]
+                     |=(a=[care beam] [-.a +.a *tang])
+                  |  [%2 p=*(set beam) q=p.faw]
                 ==
             ^=  faw
-            |-  ^-  (each (list (pair care beam)) (list tank))
+            |-  ^-  (each (list (pair care beam)) tang)
             ?~  p.ton  [%& ~]
             =+  nex=$(p.ton t.p.ton)
+            =+  err=|=(a=tape [%| leaf/a ?:(?=(& -.nex) ~ p.nex)])
             =+  pax=(path i.p.ton)
-            ?~  pax  [%| (smyt pax) ?:(?=(& -.nex) ~ p.nex)]
+            ?~  pax  (err "blocking empty")
             ?.  ?=(%c (end 3 1 i.pax))
-              [%| leaf/"blocking not clay" (smyt pax) ?:(?=(& -.nex) ~ p.nex)]
+              (err "blocking not clay")
             =+  ren=((soft care) (rsh 3 1 i.pax))
             ?~  ren
-              [%| leaf/"blocking not care" (smyt pax) ?:(?=(& -.nex) ~ p.nex)]
+              (err "blocking not care")
             =+  zis=(tome t.pax)
             ?~  zis
-              [%| leaf/"blocking not beam" (smyt pax) ?:(?=(& -.nex) ~ p.nex)]
+              (err "blocking not beam")
             ?-  -.nex
               &  [%& [u.ren u.zis] p.nex]
               |  nex
@@ -370,7 +372,7 @@
     ::
     ++  cowl                                            ::  each to bolt
       |=  cof=cafe
-      |*  [tod=(each ,* (list tank)) fun=$+(* *)]
+      |*  [tod=(each ,* tang) fun=$+(* *)]
       %+  (coup cof)
         ?-  -.tod
           %&  [%0 p=p.tod]
@@ -388,8 +390,8 @@
       =+  bot=(make [~ jav.bay] kas)
       :: =.  ..exec  (dash p.bot)
       ?-  -.q.bot
-        %0  `[%made %& p.q.bot q.q.bot]
-        %2  `[%made %| p.q.bot]
+        %0  `[%made p.q.bot %& q.q.bot]
+        %2  `[%made p.q.bot %| q.q.bot]
         %1  ~
       ==
     ::
@@ -399,8 +401,8 @@
       =+  bot=(make [~ jav.bay] kas)
       =.  ..exec  (dash p.bot)
       ?-  -.q.bot
-        %0  amok:(expo [%made %& p.q.bot q.q.bot])
-        %2  amok:(expo [%made %| p.q.bot])
+        %0  amok:(expo [%made p.q.bot %& q.q.bot])
+        %2  amok:(expo [%made p.q.bot %| q.q.bot])
         %1  =+  zuk=(~(tap by p.q.bot) ~)
             =<  abet
             |-  ^+  ..exec
@@ -902,7 +904,7 @@
           %done  [cof %0 p.kas q.kas]
           %dude  (cool |.(p.kas) $(kas q.kas))
           %dune
-        ?~  q.kas  [cof [%2 [%leaf "no data"]~]]
+        ?~  q.kas  [cof [%2 p.kas [%leaf "no data"]~]]
         $(kas [%done p.kas u.q.kas])
       ::
           %mute  (kale cof p.kas q.kas)
@@ -1236,7 +1238,7 @@
       ?>  (~(has by q.kig) tik)
       ?~  rot
         =+  `[ren=care bem=beam]`(~(got by q.kig) tik)
-        amok:(expo [%made %| (smyt ren (tope bem)) ~])
+        amok:(expo [%made ~ %| (smyt ren (tope bem)) ~])  ::  dependencies?
       exec(q.kig (~(del by q.kig) tik))
     --
   --

@@ -160,7 +160,7 @@
               [%vega p=path]                            ::
           ==  ==                                        ::
               $:  %f                                    ::  by %ford
-          $%  [%made p=(each bead (list tank))]         ::
+          $%  [%made p=(set beam) q=(each cage tang)]   ::
           ==  ==  ==                                    ::
 ++  toil  (pair duct knob)                              ::  work in progress
 --  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -407,12 +407,12 @@
     :_  ..^$
     :_  ~
     :-  hen
-    ?-    -.p.+.sih
+    ?-    -.q.+.sih
         %|
-      [%give %crud %gasp-crud p.p.+.sih]
+      [%give %crud %gasp-crud p.q.+.sih]
     ::
         %&
-      =+  cay=`cage`q.p.p.+.sih
+      =+  cay=`cage`p.q.+.sih
       ?+  -.pax  !!
         %d  [%give (best %rush cay)]
         %f  [%give (best %rust cay)]
@@ -436,9 +436,9 @@
         ?+    -.sih  ~&  [%gall-gave-m -.sih]  !!
             %f
           :_  ~  :-  hen
-          ?-  -.p.+.sih
-            %|  [%give %mean ~ %ford-fail p.p.+.sih]
-            %&  [%pass [%r pax] %g %mess [our imp] you `cage`q.p.p.+.sih]
+          ?-  -.q.+.sih
+            %|  [%give %mean ~ %ford-fail p.q.+.sih]
+            %&  [%pass [%r pax] %g %mess [our imp] you `cage`p.q.+.sih]
           ==
         ::
             %g
@@ -790,54 +790,54 @@
         |=  sih=sign
         ?>  ?=(%f -.sih)
         ^-  [(unit (list tank)) _+>]
-        ?-  -.p.+.sih
+        ?-  -.q.+.sih
           &  :-  ~
-             %-  obey:(morn (slot 3 q.q.p.p.+.sih))
-             (slot 2 q.q.p.p.+.sih)
-          |  [`p.p.+.sih (give %crud %mack-made p.p.+.sih)]
+             %-  obey:(morn (slot 3 q.p.q.+.sih))
+             (slot 2 q.p.q.+.sih)
+          |  [`p.q.+.sih (give %crud %mack-made p.q.+.sih)]
         ==
       ::
       ++  meek                                          ::  apply peek
         |=  sih=sign
         ^-  [(unit cage) _+>]
         ?>  ?=(%f -.sih)
-        ?-  -.p.+.sih
-          &  =+  vax=`vase`q.q.p.p.+.sih
+        ?-  -.q.+.sih
+          &  =+  vax=`vase`q.p.q.+.sih
              ?.  &(?=(^ q.vax) ?=(@ -.q.vax))
                [~ (give %crud %peek-lame *(list tank))]
              ::  ~>  %slog.[0 (skol p:(slot 3 vax))]
              :-  `[((hard mark) -.q.vax) (slot 3 vax)]
              +>.$
-          |  [~ (give %crud %meek-made p.p.+.sih)]
+          |  [~ (give %crud %meek-made p.q.+.sih)]
         ==
       ::
       ++  mick                                          ::  apply w/depends
         |=  sih=sign
         ?>  ?=(%f -.sih)
-        ^-  [(unit (set beam)) _+>]
-        ?-  -.p.+.sih
-          &  :-  `p.p.p.+.sih
-             %-  obey:(morn (slot 3 q.q.p.p.+.sih))
-             (slot 2 q.q.p.p.+.sih)
-          |  [~ (give %crud %mick-made p.p.+.sih)]
+        ^-  [[p=? q=(set beam)] _+>]
+        :-  [-.q.+.sih p.+.sih]
+        ?-  -.q.+.sih
+          &  %-  obey:(morn (slot 3 q.p.q.+.sih))
+             (slot 2 q.p.q.+.sih)
+          |  (give %crud %mick-made p.q.+.sih)
         ==
       ::
       ++  muck                                          ::  apply part
         |=  sih=sign
         ^-  [(unit (list tank)) _+>]
         ?>  ?=(%f -.sih)
-        ?-  -.p.+.sih
-          &  [~ (obey q.q.p.p.+.sih)]
-          |  [`p.p.+.sih (give %crud %muck-made p.p.+.sih)]
+        ?-  -.q.+.sih
+          &  [~ (obey q.p.q.+.sih)]
+          |  [`p.q.+.sih (give %crud %muck-made p.q.+.sih)]
         ==
       ::
       ++  murk                                          ::  apply park
         |=  sih=sign
         ^-  [(unit cage) _+>]
         ?>  ?=(%f -.sih)
-        ?-  -.p.+.sih
-          &  [`q.p.p.+.sih +>.$]
-          |  [~ (give %crud %murk-made p.p.+.sih)]
+        ?-  -.q.+.sih
+          &  [`p.q.+.sih +>.$]
+          |  [~ (give %crud %murk-made p.q.+.sih)]
         ==
       ::
       ++  moar                                          ::  foreign take
@@ -926,8 +926,8 @@
           ::
               %prep
             =^  gad  +>.$  (mick q.hin)
-            ?~  gad  (drum ~)
-            deal:(drum u.gad)
+            ?.  p.gad  (drum q.gad)
+            deal:(drum q.gad)
           ::
               %pull
             =^  gud  +>.$  (mack q.hin)
