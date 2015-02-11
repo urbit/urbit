@@ -342,12 +342,38 @@
 ::             ~[content-type/'text/html']
 ::           [~ (tact (poxo (loga "server error" ~ q.luv)))]
 ::   ==
+++  js                                                  ::  static javascript
+  |%
+  ++  poll
+    '''
+    urb.tries = 0;
+    urb.call = function() {
+      xhr = new XMLHttpRequest();
+      xhr.open('GET', urb.poll, true);
+      xhr.addEventListener('load', function() {
+        if(this.status !== 200) {
+          return urb.keep();
+        }
+        document.location.reload();
+      });
+      xhr.addEventListener('error', urb.keep);
+      xhr.addEventListener('abort', urb.keep);
+      xhr.send();
+    }
+    urb.keep = function() {
+      setTimeout(urb.call,1000*urb.tries);
+      urb.tries++;
+    }
+    urb.call();
+    '''
+  --
 --
 |%                                                      ::  functions
 ++  ye                                                  ::  per event
   =|  $:  $:  hen=duct                                  ::  event floor
               $:  now=@da                               ::  event date
                   eny=@                                 ::  unique entropy
+                  our=ship                              ::  current ship
                   sky=$+(* (unit))                      ::  system namespace
               ==                                        ::
               mow=(list move)                           ::  pending actions
@@ -372,13 +398,13 @@
     ::
         %made
       ?+    tea  +>.$
-          [%neu @ ~]
+          ~
         :: ~&  e/ford/hen
-        =+  our=(slav %p i.t.tea)
         ?-  -.p.sih
           |  (fail 404 p.p.sih)
           &  =*  cag  q.p.p.sih
              ?>  ?=(%mime p.cag)
+             ~|  q.q.cag
              =+  ((hard ,[mit=mite rez=octs]) q.q.cag)  ::  XX
              (muff %thou 200 [content-type/(moon mit)]~ ~ rez)
         ==
@@ -570,9 +596,9 @@
       =+  ^=  pul  ^-  purl
           ?-  -.ryp
             &  ?>(=(sec p.p.p.ryp) p.ryp)
-            |  =+  hot=(~(get by mah) %host)
-               ?>  ?=([~ @ ~] hot)
-               [[sec (rash i.u.hot thor:epur)] p.ryp q.ryp]
+            |  =+  hot=(~(get ja mah) %host)
+               ?>  ?=([@ ~] hot)
+               [[sec (rash i.hot thor:epur)] p.ryp q.ryp]
           ==
       =.  p.p.pul  |(p.p.pul ?=(hoke r.p.pul))
       (hell pul +.kyz [p.heq mah s.heq])
@@ -601,10 +627,8 @@
   ::
   ++  back                                              ::  %ford bounce
     |=  [our=ship tea=wire cag=cage]                
-    =+  sil=[%cast %mime %done ~ cag]
-    %_  +>.$
-      mow  :_(mow [hen %pass tea %f %exec our ~ sil])
-    ==
+    (miff tea %f %exec our `[%cast %mime %done `cag])
+  ::
   ++  doss                                              ::  host to ship
     |=  hot=host
     ^-  (unit ship)
@@ -616,7 +640,7 @@
   ++  fail                                              ::  request failed
     |=  [sas=@ud mez=tang]
     ^+  +>
-    :: (back our tea %tang !>(mez))  ::  XX broken tang door
+    ::  (back our ~ %tang !>(mez))  ::  XX broken tang->mime door in ford
     =-  (muff (tuff text//plain (role (turn - crip))))
     ^-  wall  %-  zing  ^-  (list wall)
     (turn mez |=(a=tank (wash 0^160 a)))
@@ -686,7 +710,18 @@
 ::     =+  boy=(myth our (need ((sand %ta) ((hard ,@) hez))))
 ::     ?~(boy +>.$ abet:(auth:u.boy him))
   ::
-  ++  heck                                              ::  regular request
+  ++  heck                                              ::  extract err beak
+    |=  [oar=ship pul=purl]
+    ^-  (unit beak)
+    %-  bind  :_  |=(a=$&(beam beak) ?^(-.a -.a a))
+    ^-  (unit $&(beam beak))
+    ?.  ?=([%'~' ^] q.q.pul)
+      (heft oar q.pul)
+    ?+  i.t.q.q.pul  ~
+      %as  ?~(t.t.q.q.pul ~ $(q.q.pul t.t.t.q.q.pul))
+      %on  ~ ::(tome (scot %p oar)
+    ==
+  ++  heft                                              ::  regular request
     |=  [oar=ship pok=pork]
     ^-  (unit beam)
     ?~  q.pok
@@ -711,15 +746,21 @@
     =+  ext=(fall p.q.pul %html)
     %-  |=(a=(each ,_..hell tang) ?~(-.a p.a (fail 404 >%exit< p.a)))
     %-  mule  |.  ^+  ..hell
-    =+  hek=(heck oar q.pul)
-    ?^  hek
-      =:  s.u.hek  [%web ~(rent co (flux:ya /'' r.pul)) s.u.hek]
-          r.u.hek  ?+(r.u.hek r.u.hek [%ud %0] da/now)
+    =+  hev=(heft oar q.pul)
+    ?^  hev
+      =:  s.u.hev  [%web ~(rent co (flux:ya /'' r.pul)) s.u.hev]
+          r.u.hev  ?+(r.u.hev r.u.hev [%ud %0] da/now)
         ==
-      (honk oar [%cast %mime %boil ext u.hek ~])
+      (honk oar [%cast %mime %boil ext u.hev ~])
     =+  hem=(hemp oar [q r]:pul)
     ?~  hem
       ~|(strange-path/(smyt q.q.pul) !!)
+    ?:  ?=([~ %js] p.q.pul)  ::  XX treat non-json cases?
+      =-  (muff (tuff text//javascript (crip -)))
+      """
+      window.urb = \{poll: "/{(body:earn q.pul(u.p %json))}"}
+      {(trip poll:js)}
+      """
     %+  hoot  oar  
     =-  [q.u.hem ~ %& %y ud/+(`@ud`-) /]
     ?:  ?=(%ud -.r.u.hem)
@@ -757,12 +798,12 @@
   ::
   ++  hone                                              ::  kill ford
     |=  [our=ship ses=hole]
-    (miff [%neu (scot %p our) ~] %f [%exec our ~])
+    (miff ~ %f [%exec our ~])
   ::
   ++  honk                                              ::  ford request
     |=  [our=ship kas=silk]
     ::  ~&  [%honk our num ses -.kas]
-    (miff [%neu (scot %p our) ~] %f [%exec our `kas])
+    (miff ~ %f [%exec our `kas])
   ::
 ::   ++  hooj                                              ::  ford json request
 ::     |=  [our=ship ses=hole nap=@ud can=@ud ful=? kas=silk]
@@ -1563,41 +1604,13 @@
 ::         toe(s (weld s.toe `path`[(flux nyp quy) %web ~]))
 ::       ?.  won  ~
 ::       :_  ~
-::       =-  =+  pey="{(scag 2 (trip nep))}v"
-::           =.  pey  %+  weld  pey
-::             ?.  =(%i (snag 1 pey))
-::               ""
-::             "/{(slag 1 (scow %p you))}"
-::           =+  ven=+((,@ (need (sky %cw p.toe q.toe r.toe ~))))
-::           =+  ^=  cal  :/
-::               "path='".
-::               "/{pey}".
-::               "/{(scow %ud ven)}".
-::               "/{(trip q.toe)}';"
-::           [-.sac [cal +.sac]]
-::       ^=  sac
-::       ;script
-::         ; 
-::         ; tries = 0;
-::         ; call = function() {
-::         ;   xhr = new XMLHttpRequest();
-::         ;   xhr.open('GET', path, true);
-::         ;   xhr.addEventListener('load', function() {
-::         ;     if(this.status !== 200) {
-::         ;       return keep();
-::         ;     }
-::         ;     document.location.reload();
-::         ;   });
-::         ;   xhr.addEventListener('error', keep);
-::         ;   xhr.addEventListener('abort', keep);
-::         ;   xhr.send();
-::         ; }
-::         ; keep = function() {
-::         ;   setTimeout(call,1000*tries);
-::         ;   tries++;
-::         ; }
-::         ; call();
-::       ==
+::       =+  pey="{(scag 2 (trip nep))}v"
+::       =.  pey  %+  weld  pey
+::         ?.  =(%i (snag 1 pey))
+::           ""
+::         "/{(slag 1 (scow %p you))}"
+::       =+  ven=+((,@ (need (sky %cw p.toe q.toe r.toe ~))))
+::       ;script@"/~/on/{pey}/{(scow %ud ven)}/{(trip q.toe)}.js";
 ::     ::
 ::     ++  holt                                            ::  login redirect
 ::       |=  [whu=(unit ship) pul=purl]
@@ -2344,13 +2357,14 @@
         ((hard kiss) q.hic)
       ==
   ^-  [p=(list move) q=_..^$]
+  =|  our=ship  ::  XX
   =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
   ^-  [p=(list move) q=_..^$]
   =.  gub  ?.(=(0 gub) gub (cat 3 (rsh 3 1 (scot %p (end 6 1 eny))) '-'))
   =^  mos  bol
-    abet:(apex:~(adit ye [hen [now eny sky] ~] bol) q.hic)
+    abet:(apex:~(adit ye [hen [now eny our sky] ~] bol) q.hic)
   [mos ..^$]
 ::
 ++  doze
@@ -2376,6 +2390,7 @@
     [[hen %give +.q.hin]~ ..^$]
   ?:  ?=(%vega +<.q.hin)                                ::  vomit
     [[hen %give +.q.hin]~ ..^$]
+  =|  our=ship  ::  XX
   =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
@@ -2383,7 +2398,7 @@
   =.  gub  ?.(=(0 gub) gub (cat 3 (rsh 3 1 (scot %p (end 6 1 eny))) '-'))
   =^  mos  bol
     =<  abet
-    %^  axon:~(adit ye [hen [now eny sky] ~] bol)  tea 
+    %^  axon:~(adit ye [hen [now eny our sky] ~] bol)  tea 
       (~(peek ut p.hin) %free 3) 
     q.hin
   [mos ..^$]
