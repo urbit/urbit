@@ -83,7 +83,7 @@
 ::           $%  [%thou p=httr]                            ::
 ::           ==  ==                                        ::
               $:  %f                                    ::  by %ford
-          $%  [%made p=(each bead (list tank))]         ::
+          $%  [%made p=(set beam) q=(each cage tang)]   ::
 ::           ==  ==                                        ::
 ::               $:  %g                                    ::  by %gall
 ::           $%  [%dumb ~]                                 ::
@@ -400,9 +400,9 @@
       ?+    tea  +>.$
           ~
         :: ~&  e/ford/hen
-        ?-  -.p.sih
-          |  (fail 404 p.p.sih)
-          &  =*  cag  q.p.p.sih
+        ?-  -.q.sih
+          |  (fail 404 p.q.sih)
+          &  =*  cag  p.q.sih
              ?>  ?=(%mime p.cag)
              ~|  q.q.cag
              =+  ((hard ,[mit=mite rez=octs]) q.q.cag)  ::  XX
