@@ -189,6 +189,7 @@
     |=  [hen=duct yon=@ud mun=mood]
     ^+  +>
     =+  vid=(read-at-aeon:ze yon mun)
+    ~&  >>  [%balking =(~ vid)]
     ?~  vid  (blub hen)  (blab hen mun u.vid)
   ::
   ++  bait
@@ -202,6 +203,7 @@
   ++  blab                                            ::  ship result
     |=  [hen=duct mun=mood dat=cage]
     ^+  +>
+    ~&  >>  [%blabbering hen]
     +>(byn [[hen ~ [p.mun q.mun syd] r.mun dat] byn])
   ::
   ++  bleb                                            ::  ship sequence
@@ -408,7 +410,7 @@
     ?^  lon.u.dok  ~&  %not-done-diffing  !!
     ?~  -.hat
       ([echo(dok ~)]:.(+>.$ +.hat) wen mim.u.dok %& *cart sot.u.dok)
-    (checkout-ankh u.-.hat)
+    (checkout-ankh(lat.ran lat.ran.+.hat) u.-.hat)
   ::
   ++  apply-ergo
     ^+  .
@@ -492,13 +494,14 @@
       ==
     =^  hat  +>.$
       (edit:ze now %& *cart ?~(dok ~|(%no-changes !!) sot.u.dok))
+    =.  +>.$  wake
     ?~  dok  ~&  %no-dok  +>.$
     ?^  lon.u.dok  ~&  %not-done-diffing  !!
     =>
       %=    .
           +>.$
         ?<  ?=(~ hat)
-        %^    echo:(checkout-ankh u.hat)
+        %^    echo ::  :(checkout-ankh u.hat)
             now
           mim.u.dok
         [%& *cart sot.u.dok]
@@ -1396,6 +1399,7 @@
           =+  ^=  zat
               (take-patch:(di:wake:une syd) p.q.hin)
           =+  zot=abet.zat
+          ~&  >>  [%moving-along (turn -.zot |=([duct *] +<-))]
           [-.zot abet:(pish:une syd +.zot ran.zat)]
         =+  zax=(do now hen [who who] syd ruf)
         =+  ^=  zat
