@@ -12,6 +12,7 @@
 ++  axon                                                ::  dill per duct
   $:  ram=term                                          ::  console program
       wid=_80                                           ::  terminal width
+      pos=@ud                                           ::  cursor position
       see=(list ,@c)                                    ::  current line
   ==                                                    ::
 --                                                      ::
@@ -41,6 +42,7 @@
       [%blk p=@ud q=@c]                                 ::  blink/match char at
       [%clr ~]                                          ::  clear screen
       [%det console-change]                             ::  edit input
+      [%nex ~]                                          ::  save and clear input
       [%tan p=(list tank)]                              ::  classic tank
   ::  [%taq p=tanq]                                     ::  modern tank
       [%txt p=tape]                                     ::  text line
@@ -193,10 +195,13 @@
           :~  [%lin p.bit]
               [%mor ~]
               [%lin see]
+              [%hop pos]
           ==
         ?:  ?=(%pro -.bit)
-          (done(see p.bit) %blit `(list blit)`[%lin p.bit]~)
-        (done %blit `(list blit)`[bit ~])
+          (done(see p.bit) %blit [[%lin p.bit] [%hop pos] ~])
+        ?:  ?=(%hop -.bit)
+          (done(pos p.bit) %blit [bit ~])
+        (done %blit [bit ~])
       ::
       ++  init                                          ::  initialize
         |=  gyl=(list gill)
@@ -220,19 +225,19 @@
         ^+  +>
         ?-    sih
             [%a %nice *]
-          ~&  [%take-nice-ames sih]
+          ::  ~&  [%take-nice-ames sih]
           +>
         ::
             [%g %crud *]
-          ~&  [%take-crud sih]
+          ::  ~&  [%take-crud sih]
           +>
         ::
             [%g %mean *]
-          ~&  [%take-mean sih]
+          ::  ~&  [%take-mean sih]
           +>
         ::
             [%g %nice *]
-          ~&  [%take-nice sih]
+          ::  ~&  [%take-nice sih]
           +>
         ::
             [%g %rush %dill-blit *]
@@ -240,20 +245,20 @@
           (from +>+.sih)
         ::
             [%t %wake *]
-          ~&  %dill-wake 
+          ::  ~&  %dill-wake 
           +>
         ==
       --
     ::
     ++  ax                                              ::  make as
       |=  [hen=duct kyz=kiss]                           ::
-      ~&  [%ax-kiss kyz]
       ?~  ore.all  ~
       =+  nux=(~(get by dug.all) hen)
       ?^  nux  (some ~(. as [~ hen u.ore.all] u.nux))
       ?.  ?=(%flow -.kyz)  ~
       %-  some
-      (~(init as [~ hen u.ore.all] [p.kyz 80 (tuba "<{(trip p.kyz)}>")]) q.kyz)
+      %.  q.kyz
+      ~(init as [~ hen u.ore.all] [p.kyz 80 0 (tuba "<{(trip p.kyz)}>")])
     --
 |%                                                      ::  poke/peek pattern
 ++  call                                                ::  handle request
@@ -283,7 +288,6 @@
     ~&  [%dill-no-flow q.hic]
     [~ ..^$]
   =^  moz  all  abet:(call:u.nus q.hic)
-  ~&  [%call-moves moz]
   [moz ..^$]
 ::
 ++  doze
@@ -308,9 +312,12 @@
   ?:  =(~ ore.all)
     ~&  [%take-back q.hin]
     [~ ..^$]
+  ?.  (~(has by dug.all) hen)
+    ~&  [%take-weird-sign q.hin]
+    ~&  [%take-weird-hen hen]
+    [~ ..^$]
   =+  our=?>(?=(^ ore.all) u.ore.all)
   =^  moz  all  
     abet:(~(take as [~ hen our] (~(got by dug.all) hen)) q.hin)
-  ~&  [%take-moves moz]
   [moz ..^$]
--i
+--

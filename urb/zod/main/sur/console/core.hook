@@ -27,6 +27,7 @@
       [%blk p=@ud q=@c]                                 ::  blink/match char at
       [%clr ~]                                          ::  clear screen
       [%det console-change]                             ::  edit input
+      [%nex ~]                                          ::  save and clear input
       [%pro console-prompt]                             ::  set prompt
       [%tan p=(list tank)]                              ::  classic tank
   ::  [%taq p=tanq]                                     ::  modern tank
@@ -38,6 +39,7 @@
   ==                                                    ::
 ++  console-prompt                                      ::  prompt definition
   $:  vis=?                                             ::  input visible
+      tag=term                                          ::  terminal mode
       cap=(list ,@c)                                    ::  caption
   ==                                                    ::
 ++  console-share                                       ::  symmetric state

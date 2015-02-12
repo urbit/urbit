@@ -412,6 +412,7 @@
 #   define c3__gab    c3_s3('g','a','b')
 #   define c3__galb   c3_s4('g','a','l','b')
 #   define c3__gald   c3_s4('g','a','l','d')
+#   define c3__galk   c3_s4('g','a','l','k')
 #   define c3__game   c3_s4('g','a','m','e')
 #   define c3__gamp   c3_s4('g','a','m','p')
 #   define c3__gant   c3_s4('g','a','n','t')

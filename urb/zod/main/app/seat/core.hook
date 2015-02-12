@@ -17,12 +17,21 @@
           feg=(map term target)                         ::  live applications
           mir=(pair ,@ud (list ,@c))                    ::  mirrored state
       ==                                                ::
-    ++  target                                          ::  application target
-      $:  pom=console-prompt                            ::  static prompt
-          inp=console-input                             ::  input state
+    ++  history                                         ::  past input
+      $:  pos=@ud                                       ::  input position
+          num=@ud                                       ::  number of entries
+          ris=(unit search)                             ::  reverse-i-search
+          lay=(map ,@ud (list ,@c))                     ::  editing overlay
+          old=(list (list ,@c))                         ::  entries proper
       ==                                                ::
-    ++  message                                         ::  message to app
-      $%  [%console-action console-action]              ::
+    ++  search                                          ::  reverse-i-search
+      $:  pos=@ud                                       ::  search position
+          str=(list ,@c)                                ::  search string
+      ==
+    ++  target                                          ::  application target
+      $:  hit=history                                   ::  all past input
+          pom=console-prompt                            ::  static prompt
+          inp=console-input                             ::  input state
       ==                                                ::
     ++  gift                                            ::  out result <-$
       $%  [%mean p=ares]                                ::  
@@ -39,7 +48,7 @@
       ==                                                ::
     ++  move  ,[p=bone q=(mold note gift)]              ::
     ++  note-gall                                       ::  note to %gall
-      $%  [%mess p=[p=ship q=path] q=ship r=message]    ::
+      $%  [%mess p=[p=ship q=path] q=ship r=cage]       ::
           [%nuke p=[p=ship q=path] q=ship]              ::
           [%show p=[p=ship q=path] q=ship r=path]       ::
           [%took p=[p=ship q=path] q=ship]              ::
@@ -59,7 +68,6 @@
   ++  se-belt                                           ::  handle input
     |=  bet=dill-belt
     ^+  +>
-    ~&  [%se-belt bet]
     ?:  ?=(%rez -.bet)
       +>(edg q.bet)
     ?:  ?=(%yow -.bet)
@@ -169,7 +177,7 @@
     ++  ta-act                                          ::  send action
       |=  act=console-action
       ^+  +>
-      %_(+> +> (se-send nam %mess [her ~[nam]] her %console-action act))
+      %_(+> +> (se-send nam %mess [her ~[nam]] her %console-action !>(act)))
     ::
     ++  ta-bel  .(+> (se-blit %bel ~))                  ::  beep
     ++  ta-det                                          ::  send edit
@@ -181,26 +189,61 @@
       |=  key=?(%d %l %r %u)
       ^+  +>
       ?-  key
-        %d  ta-bel
+        %d  ?.  =(num.hit pos.hit) 
+              (ta-mov +(pos.hit))
+            ?:  =(0 (lent buf.say.inp))
+              ta-bel
+            (ta-hom:ta-nex %set ~)
         %l  ?:  =(0 pos.inp)  
               ta-bel 
             +>(pos.inp (dec pos.inp))
         %r  ?:  =((lent buf.say.inp) pos.inp) 
               ta-bel
             +>(pos.inp +(pos.inp))
-        %u  ta-bel
+        %u  ?:(=(0 pos.hit) ta-bel (ta-mov (dec pos.hit)))
       ==
     ::
     ++  ta-bac                                          ::  hear backspace
       ^+  .
+      ?^  ris.hit
+        ?:  =(~ str.u.ris.hit)
+          ta-bel
+        .(str.u.ris.hit (scag (dec (lent str.u.ris.hit)) str.u.ris.hit))
       ?:  =(0 pos.inp)
         .(+> (se-blit %bel ~))
-      (ta-hom %del (dec pos.inp))
+      =+  pre=(dec pos.inp)
+      (ta-hom(pos.inp pre) %del pre)
     ::
     ++  ta-ctl                                          ::  hear control
       |=  key=@ud
-      ~&  [%ta-ctl key]
-      +>
+      ^+  +>
+      ?+    key  ta-bel
+          %a  +>(pos.inp 0)
+          %b  (ta-aro %l)
+          %d  ?:  &(=(0 pos.inp) =(0 (lent buf.say.inp)))
+                +>(liv |)
+              ta-del
+          %e  +>(pos.inp (lent buf.say.inp))
+          %f  (ta-aro %r)
+          %l  +>(+> (se-blit %clr ~))
+          %n  (ta-aro %d)
+          %p  (ta-aro %u)
+          %r  ?~(ris.hit +>(ris.hit `[pos.hit ~]) (ta-ser ~))
+          %t  =+  len=(lent buf.say.inp)
+              ?:  |(=(0 pos.inp) (lth len 2))
+                ta-bel
+              =+  sop=?:(=(len pos.inp) (dec pos.inp) pos.inp) 
+              =.  pos.inp  +(sop)
+              %-  ta-hom
+              :~  %mor
+                  [%del sop]
+                  [%ins (dec sop) (snag sop buf.say.inp)]
+              ==
+          %u  %-  ta-hom(pos.inp 0)
+              :-  %mor
+              =+  ded=0
+              |-(?:(=(ded pos.inp) ~ [[%del 0] $(ded +(ded))]))
+      ==
     ::
     ++  ta-cru                                          ::  hear crud
       |=  [lab=@tas tac=(list tank)]
@@ -213,7 +256,7 @@
         .(+> (se-blit %bel ~))
       (ta-hom %del pos.inp)
     ::
-    ++  ta-fec
+    ++  ta-fec                                          ::  apply effect
       |=  fec=console-effect
       ^+  +>
       ?-    -.fec
@@ -221,31 +264,84 @@
         %blk  +>
         %clr  +>(+> (se-blit %clr ~))
         %det  (ta-got +.fec)
+        %nex  ta-nex
         %pro  (ta-pro +.fec)
         %tan  (ta-tan p.fec)
         %txt  $(fec [%tan [%leaf p.fec]~])
       ==
     ::
-    ++  ta-got
-      |=  [ler=console-clock haw=@uvH ted=console-edit]
-      +>(inp abet:(~(receive cs inp) ler haw ted))
+    ++  ta-dog                                          ::  correct position
+      |=  ted=console-edit 
+      ?.  ?=(%set -.ted)  +>
+      +>(pos.inp (lent buf.say.inp))
+    ::
+    ++  ta-got                                          ::  apply change
+      |=  cal=console-change
+      =.  +>  (ta-dog:+>(say.inp abet:(~(receive cs say.inp) cal)) ted.cal)
+      +>
     ::
     ++  ta-hom                                          ::  local edit
       |=  ted=console-edit
       ^+  +>
       =.  +>  (ta-det ted)
-      %_(+> inp abet:(~(commit cs inp) ted))
+      =.  +>  (ta-dog:+>(say.inp abet:(~(commit cs say.inp) ted)) ted)
+      +>
     ::
     ++  ta-met                                          ::  meta key
       |=  key=@ud
       ~&  [%ta-met key]
       +>
     ::
+    ++  ta-mov                                          ::  move in history
+      |=  sop=@ud
+      ^+  +>
+      ?:  =(sop pos.hit)  +>
+      %+  %=  ta-hom
+            pos.hit  sop
+            lay.hit  %+  ~(put by lay.hit)  
+                       pos.hit 
+                     buf.say.inp
+          ==
+        %set
+      %-  (bond |.((snag (sub num.hit +(sop)) old.hit)))
+      (~(get by lay.hit) sop)
+    ::
+    ++  ta-nex                                          ::  advance history
+      %_  .
+        num.hit  +(num.hit)
+        pos.hit  +(num.hit)
+        ris.hit  ~
+        lay.hit  ~
+        old.hit  [buf.say.inp old.hit]
+      ==
+    ::
     ++  ta-pro                                          ::  set prompt
       |=  pom=console-prompt
       +>(pom pom)
     ::
     ++  ta-ret  (ta-act %ret ~)                         ::  hear return
+    ++  ta-ser                                          ::  reverse search
+      |=  ext=(list ,@c)
+      ^+  +>
+      ?:  |(?=(~ ris.hit) =(0 pos.u.ris.hit))  ta-bel
+      =+  tot=(weld str.u.ris.hit ext)
+      =+  dol=(slag (sub num.hit pos.u.ris.hit) old.hit)
+      =+  sop=pos.u.ris.hit
+      =+  ^=  ser
+          =+  ^=  beg
+              |=  [a=(list ,@c) b=(list ,@c)]  ^-  ?
+              ?~(a & ?~(b | &(=(i.a i.b) $(a t.a, b t.b))))
+          |=  [a=(list ,@c) b=(list ,@c)]  ^-  ?
+          ?~(a & ?~(b | |((beg a b) $(b t.b))))
+      =+  ^=  sup  
+          |-  ^-  (unit ,@ud)
+          ?~  dol  ~
+          ?:  (ser tot i.dol)
+            `sop
+          $(sop (dec sop), dol t.dol)
+      ?~  sup  ta-bel
+      (ta-mov(str.u.ris.hit tot) (dec u.sup))
+    ::
     ++  ta-tan                                          ::  print tanks
       |=  tac=(list tank)
       =+  wol=`wall`(zing (turn tac |=(a=tank (~(win re a) [0 edg]))))
@@ -255,14 +351,23 @@
     ::
     ++  ta-txt                                          ::  hear text
       |=  txt=(list ,@c)
-      %-  ta-hom
+      ^+  +>
+      ?^  ris.hit
+        (ta-ser txt)
+      %-  ta-hom(pos.inp (add (lent txt) pos.inp))
       :-  %mor
       |-  ^-  (list console-edit)
       ?~  txt  ~
       [[%ins pos.inp i.txt] $(pos.inp +(pos.inp), txt t.txt)]
     ::
     ++  ta-vew                                          ::  computed prompt
-      ^-  (pair ,@ud (list ,@c))
+      |-  ^-  (pair ,@ud (list ,@c))
+      ?^  ris.hit
+        %=    $
+            ris.hit  ~
+            cap.pom 
+          `(list ,@)`:(welp "(reverse-i-search)'" str.u.ris.hit "': ")
+        ==
       =-  [(add pos.inp (lent p.vew)) (weld p.vew q.vew)]
       ^=  vew  ^-  (pair (list ,@c) (list ,@c))
       ?:  vis.pom  [cap.pom buf.say.inp]
@@ -284,14 +389,12 @@
 ++  peer
   |=  [ost=bone her=ship pax=path]
   ^-  [(list move) _+>]
-  ~&  [%seat-peer ost her pax]
   ?<  (~(has by bin) ost)
   [~ +>(bin (~(put by bin) ost *source))]
 ::
 ++  poke-dill-belt
   |=  [ost=bone her=ship bet=dill-belt]
   ^-  [(list move) _+>]
-  ~&  [%dill-belt bet]
   =<  se-abet
   =<  se-view
   (~(se-belt se [ost %give %nice ~]~ [her ost] (~(got by bin) ost)) bet)
@@ -300,7 +403,6 @@
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
   =+  sih=((hard sign) sih)
-  ~&  [%seat-pour sih]
   ?>  ?=([@ @ ~] pax)
   =<  se-abet
   =<  se-view

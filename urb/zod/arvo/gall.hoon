@@ -19,7 +19,6 @@
               [%meta p=vase]                            ::  meta-gift
               [%nice ~]                                 ::  message success
           ==                                            ::
-::++  hasp  ,[p=ship q=term]                              ::  app identity
 ++  hapt  ,[p=ship q=path]                              ::  app instance
 ++  hath  ,[p=ship q=term]                              ::  app identity
 ++  kiss                                                ::  in request ->$
