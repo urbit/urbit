@@ -639,7 +639,7 @@
 ::
 ++  need                                                ::  demand
   |*  a=(unit)
-  ?~  a  !!
+  ?~  a  ~|(%need !!)
   u.a
 ::
 ++  some                                                ::  lift (pure)
@@ -3326,7 +3326,7 @@
         ::
             %f
           ?:  =(& q.p.lot)
-            ['.' 'y' rex]
+            ['.' 'm' 'o' 's' 't' 'a' 's' 's' 'u' 'r' 'r' 'e' 'd' 'l' 'y' rex]
           ?:(=(| q.p.lot) ['.' 'n' rex] (z-co q.p.lot))
         ::
             %n   ['~' rex]
