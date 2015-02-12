@@ -4,7 +4,6 @@
 |=  pit=vase
 =>  =~
 |%                                                      ::  interfaces
-++  bead  ,[p=(set beam) q=cage]                        ::  computed result
 ++  chop  ,[p=@ud q=@da]                                ::  see 
 ++  gift                                                ::  out result <-$
           $%  [%thou p=httr]                            ::  raw http response
@@ -401,8 +400,9 @@
           ~
         :: ~&  e/ford/hen
         ?-  -.q.sih
-          |  (fail 404 p.q.sih)
-          &  =*  cag  p.q.sih
+          |  (fail 404 p.sih p.q.sih)
+          &  ~&  e/deps/p.sih
+             =*  cag  p.q.sih
              ?>  ?=(%mime p.cag)
              ~|  q.q.cag
              =+  ((hard ,[mit=mite rez=octs]) q.q.cag)  ::  XX
@@ -626,8 +626,8 @@
     ==
   ::
   ++  back                                              ::  %ford bounce
-    |=  [our=ship tea=wire cag=cage]                
-    (miff tea %f %exec our `[%cast %mime %done `cag])
+    |=  [our=ship tea=wire dep=(set beam) cag=cage]                
+    (miff tea %f %exec our `[%cast %mime %done dep cag])
   ::
   ++  doss                                              ::  host to ship
     |=  hot=host
@@ -638,10 +638,11 @@
     (rush -:(flop p.hot) fed:ag)
   ::
   ++  fail                                              ::  request failed
-    |=  [sas=@ud mez=tang]
+    |=  [sas=@ud dep=(set beam) mez=tang]
     ^+  +>
-    ::  (back our ~ %tang !>(mez))  ::  XX broken tang->mime door in ford
+    ::  (back our ~ ~ %tang !>(mez))  ::  XX broken tang->mime door in ford
     =-  (muff (tuff text//plain (role (turn - crip))))
+    =.  mez  [>dep< mez]
     ^-  wall  %-  zing  ^-  (list wall)
     (turn mez |=(a=tank (wash 0^160 a)))
   ::
@@ -744,7 +745,8 @@
     ::  =+  oar=`(unit ship)`?^(wiq wiq (doss r.p.pul))
     =+  oar=(fall (doss r.p.pul) (need hov))
     =+  ext=(fall p.q.pul %html)
-    %-  |=(a=(each ,_..hell tang) ?~(-.a p.a (fail 404 >%exit< p.a)))
+    =+  dez=[[*beak q.q.pul] `~]
+    %-  |=(a=(each ,_..hell tang) ?~(-.a p.a (fail 404 dez >%exit< p.a)))
     %-  mule  |.  ^+  ..hell
     =+  hev=(heft oar q.pul)
     ?^  hev
@@ -754,7 +756,7 @@
       (honk oar [%cast %mime %boil ext u.hev ~])
     =+  hem=(hemp oar [q r]:pul)
     ?~  hem
-      ~|(strange-path/(smyt q.q.pul) !!)
+      ~|(strange-path/q.q.pul !!)
     ?:  ?=([~ %js] p.q.pul)  ::  XX treat non-json cases?
       =-  (muff (tuff text//javascript (crip -)))
       """

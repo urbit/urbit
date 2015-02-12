@@ -158,12 +158,18 @@
 ::                                                      ::
 ++  faun  |=([a=cafe b=vase] (fine a `cage`noun/b))     ::  vase to cage
 ++  feel  |=([a=cafe b=cage] (fine a q.b))              ::  cage to vase
-++  fest  |*([a=cafe b=*] (fine a [~ u=b]))             ::  bolt to unit
+++  fest                                                ::  bolt to success
+  |=  a=beam                                            ::
+  |*  [b=cafe c=*]                                      ::
+  [p=`cafe`b q=[%0 p=`(set beam)`[a ~ ~] q=[~ u=c]]]    ::
+::                                                      ::
 ++  fine  |*  [a=cafe b=*]                              ::  bolt from data
           [p=`cafe`a q=[%0 p=*(set beam) q=b]]          ::
-++  flaw  |=  [a=cafe b=tang] 
-          [p=a q=[%2 p=*(set beam) q=b]]                ::  bolt from error
-::
+::                                                      ::
+++  flaw  |=  [a=cafe b=tang]                           ::  bolt from error
+          [p=a q=[%2 p=*(set beam) q=b]]                ::
+::                                                      ::
+++  flue  |=(a=cafe (fine a ~))                         ::  cafe to empty
 ++  grom                                                ::  merge sets
   |*  [one=(set) two=(set)]
   ^+  one
@@ -602,7 +608,7 @@
       ^-  (bolt cage)
       %+  cope
         |-  ^-  (bolt (list (pair wing vase)))
-        ?~  muy  (fine cof ~)
+        ?~  muy  (flue cof)
         %+  cope  (make cof q.i.muy)
         |=  [cof=cafe cay=cage]
         %+  cope  ^$(muy t.muy)
@@ -638,12 +644,12 @@
       %+  cope  (lend cof bem)
       |=  [cof=cafe arc=arch]
       ?^  q.arc
-        (cope (cope (liar cof bem) (lake for bek)) fest)
+        (cope (cope (liar cof bem) (lake for bek)) (fest bem))
       ?:  (~(has by r.arc) %hook)
         %+  cope  (fade cof %hook bem)
         |=  [cof=cafe hyd=hood]
-        (cope (cope (abut:(meow bem arg) cof hyd) (lake for bek)) fest)
-      (fine cof ~)
+        (cope (cope (abut:(meow bem arg) cof hyd) (lake for bek)) (fest bem))
+      (flue cof)
     ::
     ++  lake                                            ::  check/coerce
       |=  [for=mark bek=beak]
@@ -739,16 +745,16 @@
       ?:  (~(has by r.arc) for)
         (lace cof for bem(s [for s.bem]) arg)
       =+  haz=(turn (~(tap by r.arc) ~) |=([a=@tas b=~] a))
-      ?~  haz  (fine cof ~)
+      ?~  haz  (flue cof)
       %+  cope  (lion cof for -.bem haz)
       |=  [cof=cafe wuy=(unit (list ,@tas))]
-      ?~  wuy  (fine cof ~)
+      ?~  wuy  (flue cof)
       ?>  ?=(^ u.wuy)
       %+  cope  (make cof %bake i.u.wuy bem arg)
       |=  [cof=cafe hoc=cage]
       %+  cope  (lope cof i.u.wuy t.u.wuy -.bem q.hoc)
       |=  [cof=cafe vax=vase]
-      (fine cof ~ vax)
+      ((fest bem) cof vax)
     ::
     ++  lime                                            ::  load beam
       |=  [cof=cafe for=mark bem=beam arg=heel]
@@ -808,7 +814,7 @@
         ^-  [(bolt (unit (list ,@tas))) _+>]
         ?:  =(for too)
           [(fine cof [~ too ~]) +>.$]
-        ?:  (~(has in war) for)  [(fine cof ~) +>]
+        ?:  (~(has in war) for)  [(flue cof) +>]
         =.  war  (~(put in war) for)
         =^  hoc  +>.$  (apex (lily cof for bek))
         :_  +>.$
@@ -1024,7 +1030,7 @@
             |=([a=[@ *] b=[@ *]] (lth -.a -.b))
         %+  cope
           |-  ^-  (bolt (list (pair ,@ vase)))
-          ?~  poy  (fine cof ~)
+          ?~  poy  (flue cof)
           %+  cope  $(poy t.poy)
           |=  [cof=cafe nex=(list (pair ,@ vase))]
           %+  cope  (chap(s.how [q.i.poy s.how]) cof bax hon)
@@ -1043,7 +1049,7 @@
         |=  [cof=cafe arc=arch]
         %+  cope
           |-  ^-  (bolt (map ,@ vase))
-          ?~  r.arc  (fine cof ~)
+          ?~  r.arc  (flue cof)
           %+  cope  $(r.arc l.r.arc)
           |=  [cof=cafe lef=(map ,@ vase)]
           %+  cope  `(bolt (map ,@ vase))`^$(cof cof, r.arc r.r.arc)
@@ -1078,7 +1084,7 @@
             %fan
           %+  cope
             |-  ^-  (bolt (list vase))
-            ?~  p.hon  (fine cof ~)
+            ?~  p.hon  (flue cof)
             %+  cope  ^$(hon i.p.hon)
             |=  [cof=cafe vax=vase]
             %+  cope  ^$(cof cof, p.hon t.p.hon)
