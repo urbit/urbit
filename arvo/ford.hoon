@@ -160,14 +160,18 @@
 ++  feel  |=([a=cafe b=cage] (fine a q.b))              ::  cage to vase
 ++  fest                                                ::  bolt to success
   |=  a=beam                                            ::
-  |*  [b=cafe c=*]                                      ::
-  [p=`cafe`b q=[%0 p=`(set beam)`[a ~ ~] q=[~ u=c]]]    ::
+  |*([b=cafe c=*] (flag a (fine b [~ u=c])))            ::
 ::                                                      ::
 ++  fine  |*  [a=cafe b=*]                              ::  bolt from data
           [p=`cafe`a q=[%0 p=*(set beam) q=b]]          ::
 ::                                                      ::
 ++  flaw  |=  [a=cafe b=tang]                           ::  bolt from error
           [p=a q=[%2 p=*(set beam) q=b]]                ::
+++  flag                                                ::  beam into deps
+  |*  [a=beam b=(bolt)]                                 ::
+  ?:  ?=(%1 -.q.b)  b
+  =.  p.q.b  (~(put in p.q.b) a)
+  b
 ::                                                      ::
 ++  flue  |=(a=cafe (fine a ~))                         ::  cafe to empty
 ++  grom                                                ::  merge sets
@@ -327,14 +331,14 @@
     ++  cope                                            ::  bolt along
       |*  [hoc=(bolt) fun=(burg)]
       ?-  -.q.hoc
-        %2  hoc
         %1  hoc
+        %2  hoc
         %0  =+  nuf=(fun p.hoc q.q.hoc)
             :-  p=p.nuf
             ^=  q
             ?-  -.q.nuf
-              %2  q.nuf
               %1  q.nuf
+              %2  [%2 p=(grom `_p.q.nuf`p.q.hoc p.q.nuf) q=q.q.nuf]
               %0  [%0 p=(grom `_p.q.nuf`p.q.hoc p.q.nuf) q=q.q.nuf]
       ==   ==
     ::
@@ -747,12 +751,11 @@
       =+  haz=(turn (~(tap by r.arc) ~) |=([a=@tas b=~] a))
       ?~  haz  (flue cof)
       %+  cope  (lion cof for -.bem haz)
-      |=  [cof=cafe wuy=(unit (list ,@tas))]
+      |=  [cof=cafe wuy=(list ,@tas)]
       ?~  wuy  (flue cof)
-      ?>  ?=(^ u.wuy)
-      %+  cope  (make cof %bake i.u.wuy bem arg)
+      %+  cope  (make cof %bake i.wuy bem arg)
       |=  [cof=cafe hoc=cage]
-      %+  cope  (lope cof i.u.wuy t.u.wuy -.bem q.hoc)
+      %+  cope  (lope cof i.wuy t.wuy -.bem q.hoc)
       |=  [cof=cafe vax=vase]
       ((fest bem) cof vax)
     ::
@@ -764,7 +767,7 @@
       |=  [cof=cafe vux=(unit vase)]
       ?^  vux  (fine cof u.vux)
       ?~  s.mob
-        (flaw cof (smyt (tope bem)) ~)
+        (flag mob (flaw cof (smyt (tope bem)) ~))
       ^$(s.mob t.s.mob, mer [i.s.mob mer])
     ::
     ++  link                                            ::  translate
@@ -792,13 +795,13 @@
     ::
     ++  lion                                            ::  translation search
       |=  [cof=cafe too=@tas bek=beak fro=(list ,@tas)]
-      ^-  (bolt (unit (list ,@tas)))
+      ^-  (bolt (list ,@tas))
       =|  war=(set ,@tas)
       =<  -:(apex (fine cof fro))
       |%
       ++  apex
         |=  rof=(bolt (list ,@tas))
-        ^-  [(bolt (unit (list ,@tas))) _+>]
+        ^-  [(bolt (list ,@tas)) _+>]
         ?.  ?=(%0 -.q.rof)  [rof +>.$]
         ?~  q.q.rof
           [[p.rof [%0 p.q.rof ~]] +>.$]
@@ -811,16 +814,16 @@
       ::
       ++  apse
         |=  [cof=cafe for=@tas]
-        ^-  [(bolt (unit (list ,@tas))) _+>]
+        ^-  [(bolt (list ,@tas)) _+>]
         ?:  =(for too)
-          [(fine cof [~ too ~]) +>.$]
+          [(fine cof [too ~]) +>.$]
         ?:  (~(has in war) for)  [(flue cof) +>]
         =.  war  (~(put in war) for)
         =^  hoc  +>.$  (apex (lily cof for bek))
         :_  +>.$
         %+  cope  hoc
-        |=  [cof=cafe ked=(unit (list ,@tas))]
-        (fine cof ?~(ked ~ [~ for u.ked]))
+        |=  [cof=cafe ked=(list ,@tas)]
+        (fine cof ?~(ked ~ [for ked]))
       --
     ::
     ++  lope                                            ::  translation pipe
