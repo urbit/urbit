@@ -319,10 +319,9 @@
       (fume:$(q.+.sih t.q.+.sih) '!' `tank`i.q.+.sih)
     ::
         %mean  ~&  %dill-mean  +>.$
-        %nice  ~&  >>  %dill-got-nice  +>.$
+        %nice  +>.$
         %note  ?.(p.yar +>.$ (fume p.+.sih q.+.sih))    ::  debug message
         ?(%rush %rust)                                  ::  XX  reset prompt
-      ~&  >>  %dill-got-rusht
       ?>  ?=(%term-line +>-.sih)
       =.  +>.$
         =+  lis=?-(-.+.sih %rust (scag 1.000 r.q.sih), %rush r.q.sih)
@@ -368,7 +367,6 @@
         ?(%init %logo %veer %vega %verb)                ::  drop-throughs
       +>(mos :_(mos [hen %give +.sih]))
         %writ                                           ::  file exists
-      ~&  >>  %dill-got-writ
       %_    +>.$
           mos
         :_  mos
