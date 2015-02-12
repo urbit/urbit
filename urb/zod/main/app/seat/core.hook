@@ -13,6 +13,7 @@
       ==                                                ::
     ++  source                                          ::  input device
       $:  edg=_80                                       ::  terminal columns
+          kil=(unit (list ,@c))
           apt=(list term)                               ::  application ring
           feg=(map term target)                         ::  live applications
           mir=(pair ,@ud (list ,@c))                    ::  mirrored state
@@ -179,12 +180,6 @@
       ^+  +>
       %_(+> +> (se-send nam %mess [her ~[nam]] her %console-action !>(act)))
     ::
-    ++  ta-bel  .(+> (se-blit %bel ~))                  ::  beep
-    ++  ta-det                                          ::  send edit
-      |=  ted=console-edit
-      ^+  +>
-      (ta-act %det [[his.ven.say.inp own.ven.say.inp] (sham buf.say.inp) ted])
-    ::
     ++  ta-aro                                          ::  hear arrow
       |=  key=?(%d %l %r %u)
       ^+  +>
@@ -203,6 +198,26 @@
         %u  ?:(=(0 pos.hit) ta-bel (ta-mov (dec pos.hit)))
       ==
     ::
+    ++  ta-bel  .(+> (se-blit %bel ~))                  ::  beep
+    ++  ta-cat                                          ::  mass insert
+      |=  [pos=@ud txt=(list ,@c)]
+      ^-  console-edit
+      :-  %mor
+      |-  ^-  (list console-edit)
+      ?~  txt  ~
+      [[%ins pos i.txt] $(pos +(pos), txt t.txt)]
+    ::
+    ++  ta-cut                                          ::  mass delete
+      |=  [pos=@ud num=@ud]
+      ^-  console-edit
+      :-  %mor
+      |-(?:(=(0 num) ~ [[%del pos] $(num (dec num))]))
+    ::
+    ++  ta-det                                          ::  send edit
+      |=  ted=console-edit
+      ^+  +>
+      (ta-act %det [[his.ven.say.inp own.ven.say.inp] (sham buf.say.inp) ted])
+    ::
     ++  ta-bac                                          ::  hear backspace
       ^+  .
       ?^  ris.hit
@@ -220,15 +235,26 @@
       ?+    key  ta-bel
           %a  +>(pos.inp 0)
           %b  (ta-aro %l)
+          %c  ta-bel(ris.hit ~)
           %d  ?:  &(=(0 pos.inp) =(0 (lent buf.say.inp)))
                 +>(liv |)
               ta-del
           %e  +>(pos.inp (lent buf.say.inp))
           %f  (ta-aro %r)
+          %g  ta-bel(ris.hit ~)
+          %k  =+  len=(lent buf.say.inp)
+              ?:  =(pos.inp len)
+                ta-bel 
+              %-  ta-hom(kil `(slag pos.inp buf.say.inp))
+              (ta-cut pos.inp (sub len pos.inp))
           %l  +>(+> (se-blit %clr ~))
           %n  (ta-aro %d)
           %p  (ta-aro %u)
-          %r  ?~(ris.hit +>(ris.hit `[pos.hit ~]) (ta-ser ~))
+          %r  ?~  ris.hit 
+                +>(ris.hit `[pos.hit ~]) 
+              ?:  =(0 pos.u.ris.hit)
+                ta-bel
+              (ta-ser ~)
           %t  =+  len=(lent buf.say.inp)
               ?:  |(=(0 pos.inp) (lth len 2))
                 ta-bel
@@ -239,10 +265,13 @@
                   [%del sop]
                   [%ins (dec sop) (snag sop buf.say.inp)]
               ==
-          %u  %-  ta-hom(pos.inp 0)
-              :-  %mor
-              =+  ded=0
-              |-(?:(=(ded pos.inp) ~ [[%del 0] $(ded +(ded))]))
+          %u  ?:  =(0 pos.inp)
+                ta-bel
+              %-  ta-hom(pos.inp 0, kil `(scag pos.inp buf.say.inp))
+              (ta-cut 0 pos.inp)
+          %y  ?~  kil  ta-bel 
+              %-  ta-hom(pos.inp (add pos.inp (lent u.kil)))
+              (ta-cat pos.inp u.kil)
       ==
     ::
     ++  ta-cru                                          ::  hear crud
@@ -340,7 +369,7 @@
             `sop
           $(sop (dec sop), dol t.dol)
       ?~  sup  ta-bel
-      (ta-mov(str.u.ris.hit tot) (dec u.sup))
+      (ta-mov(str.u.ris.hit tot, pos.u.ris.hit (dec u.sup)) (dec u.sup))
     ::
     ++  ta-tan                                          ::  print tanks
       |=  tac=(list tank)
