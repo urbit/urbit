@@ -297,7 +297,9 @@
   ++  echo                                            ::  announce changes
     |=  [wen=@da mim=(map path mime) lem=nori]
     ^+  +>
-    =.  yel
+    ~&  [%echoing syd]
+    %_    +>.$
+        yel
       =+  pre=`path`~[(scot %p for) syd (scot %ud let.dom)]
       ?-  -.lem
         |  :_  yel
@@ -309,39 +311,6 @@
            :+  %note
              ?-(-.q.i.q.p.lem %del '-', %ins '+', %mut ':', %dif ';')
            [%leaf (spud (weld pre p.i.q.p.lem))]
-      ==
-    ?~  hez  +>.$
-    ?.  ?=(%& -.lem)  +>.$
-    =+  ^=  ceq
-        |=  a=miso
-        ?|  ?=(%del -.a)
-            &(?=(%ins -.a) ?=(%mime -.+.a))
-            &(?=(%mut -.a) ?=(%mime -.+>.a))
-        ==
-    =.  wok
-      :+  ~
-        %+  murn  `(list ,[path miso])`q.p.lem
-        |=  [a=path b=miso]
-        ?:  ?=(%del -.b)  (some a ~)
-        (bind (~(get by mim) a) |=(c=mime [a (some c)]))
-      %+  murn  `(list ,[path miso])`q.p.lem
-      |=([a=path b=miso] ?:((ceq b) ~ (some a)))
-    ?>  ?=(^ wok)
-    ?~  lon.u.wok
-      apply-ergo
-    %_    +>.$
-        tag  ::  ?~(hez reg :_(reg [u.hez [%ergo who syd let.dom]]))
-      %-  welp  :_  tag
-      ^-  (list ,[duct path note])
-      %+  murn  `(list ,[path miso])`q.p.lem
-      |=  [a=path b=miso]
-      ?:  (ceq b)
-        ~
-      %-  some
-      :+  u.hez
-        [%ergoing (scot %p who) syd a]
-      :*  %f  %exec  who  ~  %cast  %mime  %done  ~
-          ~|(%bad-echo (need (read:ze %x [%ud let.dom] a)))
       ==
     ==
   ::
@@ -356,7 +325,7 @@
         +>.$
       (echo:(checkout-ankh u.hat) wen ~ lem)
     ?.  =(~ dok)
-      ~&  %already-applying-changes  !!
+      ~&  %already-applying-changes  +>
     =+  ^=  sop
         |=  [a=path b=miso]
         ^-  ?
@@ -432,16 +401,14 @@
   ++  apply-edit
     |=  wen=@da
     ^+  +>
-    =^  hat  +>.$
-      (edit:ze wen %& *cart ?~(dok ~|(%no-changes !!) sot.u.dok))
+    ~&  [%applying-edit syd]
+    =+  ^=  hat
+        (edit:ze wen %& *cart ?~(dok ~|(%no-changes !!) sot.u.dok))
     ?~  dok  ~&  %no-changes  !!
     ?^  lon.u.dok  ~&  %not-done-diffing  !!
-    ?~  hat
-      (echo(dok ~) wen mim.u.dok %& *cart sot.u.dok)
-    %^    echo:(checkout-ankh(dok ~) u.hat)
-        wen
-      mim.u.dok
-    [%& *cart sot.u.dok]
+    ?~  -.hat
+      ([echo(dok ~)]:.(+>.$ +.hat) wen mim.u.dok %& *cart sot.u.dok)
+    (checkout-ankh u.-.hat)
   ::
   ++  apply-ergo
     ^+  .
@@ -516,33 +483,81 @@
   ++  take-patch
     |=  res=(each bead (list tank))
     ^+  +>
+    ~&  [%taking-patch syd]
     ?:  ?=(%| -.res)  
       %_    +>.$
+          dok  ~
           yel
         [[hen %note '!' %rose [" " "" ""] leaf/"clay patch failed" p.res] yel]
       ==
+    =^  hat  +>.$
+      (edit:ze now %& *cart ?~(dok ~|(%no-changes !!) sot.u.dok))
+    ?~  dok  ~&  %no-dok  +>.$
+    ?^  lon.u.dok  ~&  %not-done-diffing  !!
+    =>
+      %=    .
+          +>.$
+        ?<  ?=(~ hat)
+        %^    echo:(checkout-ankh u.hat)
+            now
+          mim.u.dok
+        [%& *cart sot.u.dok]
+      ==
+    ?~  dok  ~&  %no-dok  +>.$
+    ?^  lon.u.dok  ~&  %not-done-diffing  !!
+    =+  cay=q.p.res
+    ?@  p.cay  ~|  %patch-bad-marc  !!
+    =+  ^=  can
+        |-  ^-  (list ,[path cage])
+        ?~  p.p.cay
+          ~
+        :_  %_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
+        ?.  ?=(%path p.i.p.p.cay)
+          ~|  %patch-strange-marc-a
+          !!
+        ?.  ?=(@ q.i.p.p.cay)
+          ~|  %patch-strange-marc-b
+          !!
+        =+  coy=(slot 2 q.cay)
+        ?@  q.coy
+          ~|  %patch-strange-coy
+          !!
+        :-  ((hard path) -.q.coy)
+        [q.i.p.p.cay (slot 3 coy)]
+    =.  ank.dom  (checkout-ankh:ze (mo can))
+    ?~  hez  +>.$(dok ~)
+    =+  ^=  ceq
+        |=  a=miso
+        ?|  ?=(%del -.a)
+            &(?=(%ins -.a) ?=(%mime -.+.a))
+            &(?=(%mut -.a) ?=(%mime -.+>.a))
+        ==
+    =.  wok
+      :+  ~
+        %+  murn  sot.u.dok
+        |=  [a=path b=miso]
+        ?:  ?=(%del -.b)  (some a ~)
+        (bind (~(get by mim.u.dok) a) |=(c=mime [a (some c)]))
+      %+  murn  sot.u.dok
+      |=([a=path b=miso] ?:((ceq b) ~ (some a)))
+    ?>  ?=(^ wok)
+    ?~  lon.u.wok
+      apply-ergo(dok ~)
     %_    +>.$
-        ank.dom
-      =+  cay=q.p.res
-      ?@  p.cay  ~|  %patch-bad-marc  !!
-      %-  checkout-ankh:ze
-      %-  mo
-      |-  ^-  (list ,[path cage])
-      ?~  p.p.cay
+        dok  ~
+        tag  ::  ?~(hez reg :_(reg [u.hez [%ergo who syd let.dom]]))
+      %-  welp  :_  tag
+      ^-  (list ,[duct path note])
+      %+  murn  sot.u.dok
+      |=  [a=path b=miso]
+      ?:  (ceq b)
         ~
-      :_  %_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
-      ?.  ?=(%path p.i.p.p.cay)
-        ~|  %patch-strange-marc-a
-        !!
-      ?.  ?=(@ q.i.p.p.cay)
-        ~|  %patch-strange-marc-b
-        !!
-      =+  coy=(slot 2 q.cay)
-      ?@  q.coy
-        ~|  %patch-strange-coy
-        !!
-      :-  ((hard path) -.q.coy)
-      [q.i.p.p.cay (slot 3 coy)]
+      %-  some
+      :+  u.hez
+        [%ergoing (scot %p who) syd a]
+      :*  %f  %exec  who  ~  %cast  %mime  %done  ~
+          ~|((crip <[%bad-echo syd let.dom a]>) (need (read:ze %x [%ud let.dom] a)))
+      ==
     ==
   ::
   ++  take-ergo
@@ -769,8 +784,8 @@
                     (blab p.i.xiq p.q.i.xiq u.u.cas)
         ==
       =+  nao=(case-to-aeon:ze q.p.q.i.xiq)
-      ?~  nao  $(xiq t.xiq, xaq [i.xiq xaq])
-      $(xiq t.xiq, ..wake (balk p.i.xiq u.nao p.q.i.xiq))
+      ?~  nao  ~&  [%not-waking syd]  $(xiq t.xiq, xaq [i.xiq xaq])
+      ~&  [%waking syd]  $(xiq t.xiq, ..wake (balk p.i.xiq u.nao p.q.i.xiq))
     ::
         |
       =+  mot=`moot`p.q.i.xiq
@@ -842,7 +857,8 @@
           |=  [[pat=path gar=lobe] bat=(map path blob)]
           ?:  (~(has in sar) pat)                       ::  has update
             bat
-          (~(put by bat) pat (lobe-to-blob gar))        ::  use original
+          %+  ~(put by bat)  pat
+          ~|((crip <pat gar (lent (~(tap by lat.ran)))>) (lobe-to-blob gar)) ::  use original
       ^=  bar  ^-  (map path blob)
       %+  roll  lar
       |=  [[pat=path mys=misu] bar=(map path blob)]
@@ -1012,7 +1028,10 @@
     ++  make-nako                                       ::  gack a through b
       |=  [a=aeon b=aeon]
       ^-  [(map aeon tako) aeon (set yaki) (set blob)]
-      !!
+      :^    hit.dom
+          let.dom
+        (sa `(list yaki)`(turn (~(tap by hut.ran)) |=([tako yaki] +<+)))
+      (sa `(list blob)`(turn (~(tap by lat.ran)) |=([lobe blob] +<+)))
     ::
     ++  query                                           ::    query:ze
       |=  ren=?(%u %v %x %y %z)                         ::  endpoint query
@@ -1068,7 +1087,8 @@
       |=  [lag=(map path blob) sta=(map lobe blob)]     ::  fix lat
       ^-  [(map lobe blob) (map path lobe)]
       %+  roll  (~(tap by lag) ~)
-      |=  [[pat=path bar=blob] [lut=_sta gar=(map path lobe)]]
+      =<  .(lut sta)
+      |=  [[pat=path bar=blob] [lut=(map lobe blob) gar=(map path lobe)]]
       ?~  (~(has by lut) p.bar)
         [lut (~(put by gar) pat p.bar)]
       :-  (~(put by lut) p.bar bar)
