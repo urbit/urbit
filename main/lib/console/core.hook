@@ -10,20 +10,20 @@
   ::
 |%
 ++  cs                                                  ::  shared-state engine
-  |_  [pos=@ud console-share]
+  |_  console-share
   ++  abet  +<
   ++  apply
     |=  ted=console-edit 
     ^+  +>
     ?-    -.ted
-        %del  +>.$(buf (weld (scag p.ted buf) (slag 1 buf)))
-      %ins  +>.$(buf (weld (scag p.ted buf) `_buf`[q.ted buf]))
+      %del  +>.$(buf (weld (scag p.ted buf) (slag +(p.ted) buf)))
+      %ins  +>.$(buf (weld (scag p.ted buf) `_buf`[q.ted (slag p.ted buf)]))
       %mor  |-  ^+  +>.^$
             ?~  p.ted 
               +>.^$ 
             $(p.ted t.p.ted, +>.^$ ^$(ted i.p.ted))
       %nop  +>.$
-      %set  +>.$(buf p.ted, pos (lent p.ted))
+      %set  +>.$(buf p.ted)
     ==
   ::
   ::  symmetric operational transformation.  for any console state, obeys
@@ -72,16 +72,23 @@
     ^+  +>
     (apply(own.ven +(own.ven)) ted)
   ::
+  ++  transmit
+    |=  ted=console-edit
+    ^-  [console-change _+>]
+    [[[his.ven own.ven] (sham buf) ted] (commit ted)]
+  ::
   ++  receive                                           ::  edit from other
     |=  $:  ler=console-clock                           ::  other's clock view
             haw=@uvH                                    ::  hash at edit
             ted=console-edit                            ::  edit content
         ==
     ^+  +>
+    ?.  &(=(his.ler his.ven) (lte own.ler own.ven))
+      ~&  [%receive-mismatch ler/ler ven/ven ~]
+      !!
     ?>  &(=(his.ler his.ven) (lte own.ler own.ven))
     ?>  |(!=(own.ler own.ven) =(haw (sham buf)))
     =:  his.ven  +(his.ven)
-        own.ven  +(own.ven)
         leg      (scag (sub own.ven own.ler) leg)
       ==
     (apply (transmute [%mor leg] ted))
