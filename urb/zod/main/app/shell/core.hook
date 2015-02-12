@@ -4,7 +4,7 @@
   ::
 /?    314
 /-    term-line, kyev
-/=    pit  /~  !>(.)                                    ::  kernel vase
+/=    pit  /~  !>(+)                                    ::  kernel vase
 ::
 ::::  structures
   ::
@@ -239,12 +239,17 @@
     |=  [paf=path gen=(unit twig)]
     ^+  +>
     =+  fel=(file paf)  
-    ?~  fel
-      (chew-file paf '! none')
-    ?^  gen 
+    ?^  fel
+      ?~  gen
+        (blab (stray (crip ": {(spud paf)} {<(,@t u.fel)>}"))) 
       %+  with  u.gen  |=  new=vase
       (chew-file paf (foal paf q.new))
-    (blab (stray (crip ": {(spud paf)} {<(,@t u.fel)>}"))) 
+    =+  ark=;;(arch .^(%cy paf))
+    ?-  r.ark
+      ~        (chew-file paf '! none')
+      [^ ~ ~]  $(paf (welp paf /[p.n.r.ark]))
+      *        (chew-file paf '! many')
+    ==
   ::
   ++  eat-help
     |=  app=term
