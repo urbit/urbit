@@ -188,6 +188,10 @@
   =+  gib=(wox p.n.r.arc)
   ?~(gib rac [[u.gib p.n.r.arc] rac])
 ::
+++  slob                                                ::  XX  belongs in h/h
+  |=  [cog=@tas typ=type]
+  (~(has in (sa (sloe typ))) cog)
+::
 ++  za                                                  ::  per event
   =|  $:  $:  $:  our=ship                              ::  computation owner
                   hen=duct                              ::  event floor
@@ -751,10 +755,10 @@
       =+  bob=(slot 6 tux)
       ?:  (~(nest ut p.bob) | p.sam)
         (fine cof sam)
-      ?.  (slab %grab p.tux)
+      ?.  (slob %grab p.tux)
         (flaw cof [%leaf "ford: no grab: {<[for bek]>}"]~)
       =+  gab=(slap tux [%cnzy %grab])
-      ?.  (slab %noun p.gab)
+      ?.  (slob %noun p.gab)
         (flaw cof [%leaf "ford: no noun: {<[for bek]>}"]~)
       %+  cope  (maul cof (slap gab [%cnzy %noun]) [%noun q.sam])
       |=  [cof=cafe pro=vase]
@@ -816,10 +820,10 @@
       %+  fine  cof
       %+  weld
         ^-  (list ,@tas)
-        ?.  (slab %garb p.vax)  ~
+        ?.  (slob %garb p.vax)  ~
         =+  gav=((soft (list ,@tas)) q:(slap vax [%cnzy %garb]))
         ?~(gav ~ u.gav)
-      ?.  (slab %grow p.vax)  ~
+      ?.  (slob %grow p.vax)  ~
       =+  gow=(slap vax [%cnzy %grow])
       (sloe p.gow)
     ::
@@ -862,16 +866,16 @@
         ((lake too bek) cof vax)
       %+  cope  (fang cof for bek)
       |=  [cof=cafe pro=vase]
-      ?:  &((slab %grow p.pro) (slab too p:(slap pro [%cnzy %grow])))
+      ?:  &((slob %grow p.pro) (slob too p:(slap pro [%cnzy %grow])))
         %+  cope  (keel cof pro [[%& 6]~ vax]~)
         |=  [cof=cafe pox=vase]
         (maim cof pox [%tsgr [%cnzy %grow] [%cnzy too]])
       %+  cope  (fang cof too bek)
       |=  [cof=cafe pro=vase]
       =+  ^=  zat  ^-  (unit vase)
-          ?.  (slab %grab p.pro)  ~
+          ?.  (slob %grab p.pro)  ~
           =+  gab=(slap pro [%cnzy %grab])
-          ?.  (slab for p.gab)  ~
+          ?.  (slob for p.gab)  ~
           `(slap gab [%cnzy for])
       ?~  zat
         (flaw cof [%leaf "ford: no link: {<[for too]>}"]~)
@@ -994,9 +998,16 @@
         %+  cool  |.(leaf/"ford: casting {<p.cay>} to {<p.kas>}")
         ?.  ?=(@ p.cay)
           (flaw cof leaf/"bad cast marc" ~)
-        %+  cope  (link cof p.kas p.cay [our %main %da now] q.cay)
+        =+  bek=[our %main %da now]   ::  XX
+        %+  cope  (link cof p.kas p.cay bek q.cay)
         |=  [cof=cafe vax=vase]
         (fine cof [p.kas vax])
+::         %+  cope  (lion cof p.kas bek [p.cay]~)
+::         |=  [cof=cafe wuy=(list ,@tas)]
+::         ?~  wuy  (flaw cof [%leaf "ford: no path: {<[p.cay p.kas]>}"]~)
+::         %+  cope  (lope cof i.wuy t.wuy bek q.cay)
+::         |=  [cof=cafe vax=vase]
+::         (fine cof [p.kas vax])
       ::
           %diff
         %+  cool  |.(leaf/"ford: diff {<`@p`(mug p.kas)>} {<`@p`(mug q.kas)>}")
