@@ -723,7 +723,7 @@
     |%
     ++  abet
       ^+  ..me
-      ..me(mer ?:(gon (~(put by mer) dat) (~(del by mer) dat)))
+      ..me(mer ?:(gon (~(put by mer) ali dat) (~(del by mer) dat)))
     ::
     ++  route
       |=  [sat=term res=(each bead (list tank))]        ::  XX  bad type (%c)
@@ -750,8 +750,8 @@
     ::
     ++  fetch-ali
       ^+  .
-      =-  %_(. tag [- tag])
-      :*  hen  [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ali]
+      =-  %_(+ tag [- tag])
+      :*  hen  [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ali ~]
           %c  %warp  [p.bob p.ali]  q.ali
           `[%& %v [%da now] /]
       ==
@@ -781,7 +781,7 @@
         ?.  (~(has in (reachable-takos r.ali.dat)) r.bob.dat)
           ~|  (crip <[%bad-fine-merge ali bob]>)
           !!
-        =.  new.dat ali.dat
+        =.  new.dat  ali.dat
         =.  let.dom  +(let.dom)
         =.  hit.dom  (~(put by hit) let.dom r.new.dat)
         checkout
@@ -801,8 +801,8 @@
     ::
     ++  diff-ali
       ^+  .
-      =-  %_(. tag [- tag])
-      :*  hen  [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %diff-ali]
+      =-  %_(+ tag [- tag])
+      :*  hen  [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %diff-ali ~]
           %f  %exec  p.bob  ~  %tabl
           ^-  (list (pair silk silk))
           !!
