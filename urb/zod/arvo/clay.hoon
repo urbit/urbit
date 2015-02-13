@@ -1148,7 +1148,9 @@
           !!
         =.  gem.dat  gem
         =.  cas.dat  [%da now]
-        =.  bob.dat  (~(got by hut.ran) (~(got by hit.dom) let.dom))
+        =.  bob.dat
+          ?:  ?=(%init gem)  bob.dat
+          (~(got by hut.ran) (~(got by hit.dom) let.dom))
         fetch-ali
       ::
       ++  fetch-ali
@@ -1165,7 +1167,9 @@
         ?~  rot
           ~|  (crip <[%bad-fetch-ali ali bob]>)
           !!
-        =+  dum=((hard dome) q.q.r.u.rot)
+        =+  ^=  dum
+            %-  (hard ,[ank=* let=@ud hit=(map ,@ud tako) lab=(map ,@tas ,@ud)])
+            q.q.r.u.rot
         =.  ali.dat  (~(got by hut.ran) (~(got by hit.dum) let.dum))
         |-
         ?-    gem.dat
@@ -1246,6 +1250,7 @@
       ::
       ++  checkout
         ^+  .
+        ~&  >  %checking-out
         =-  %_(+ tag [- tag])
         :*  hen
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout ~]
@@ -1280,6 +1285,7 @@
         =.  hit.dom  (~(put by hit.dom) let.dom r.new.dat)
         =+  cay=q.p.res
         ?@  p.cay  ~|  %patch-bad-marc  !!
+        ~&  >  [%checked-out (lent p.p.cay)]
         =.  ank.dat
           %-  checkout-ankh:ze
           %-  mo
@@ -1299,6 +1305,7 @@
             !!
           :-  ((hard path) -.q.coy)
           [q.i.p.p.cay (slot 3 coy)]
+        =.  ank.dom  ank.dat
         ?~  hez
           +>.$(gon |)                                   ::  XX  resolve
         ergo
@@ -1509,13 +1516,17 @@
     ==
   ::
       %merg                                               ::  direct state up
-    :_  ..^$
-    :~  :*  hen  %pass
-            /auto/(scot %p p.q.hic)/[q.q.hic]/(scot %p r.q.hic)/[s.q.hic]/y
-            %c  %warp  [p.q.hic r.q.hic]  s.q.hic
-            `[%& %y [%da now] /]
-        ==
-    ==
+    ?:  =(%$ q.q.hic)
+      [~ ..^$]
+    =^  mos  ruf
+      =+  une=(un p.q.hic now hen ruf)
+      =+  ^=  zat
+          abet:(start:(me:ze:(di:wake:une q.q.hic) r.q.hic s.q.hic) t.q.hic)
+      =+  zot=abet.zat
+      :-  -.zot
+      =.  une  (pish:une q.q.hic +.zot ran.zat)
+      abet:une
+    [mos ..^$]
   ::
       %plug
     ?.  (~(has by sor.ruf) +.q.hic)  `..^$

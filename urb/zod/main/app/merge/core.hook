@@ -1,0 +1,16 @@
+::  Desk sync
+::  
+::::  /hook/core/sync/app
+  ::
+/+    sh-utils
+!:
+::::
+  ::
+|_  [hid=hide ~]
+++  peer  ,_`.
+++  poke--args
+  %+  gate-bang  
+    |=  [syd=@tas her=@p sud=@tas gem=?([germ ~] ~)]
+    [%c %merg our.hid syd her sud ?~(gem %fine -.gem)]
+  (args-into-gate . ,_[%txt 'synced'])
+--
