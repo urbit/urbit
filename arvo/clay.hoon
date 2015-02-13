@@ -33,6 +33,7 @@
           ==                                            ::
 ++  mery                                                ::
           $:  gem=germ                                  ::  strategy
+              cas=case                                  ::  ali's case
               ali=yaki                                  ::  ali's commit
               bob=yaki                                  ::  bob's commit
               bas=yaki                                  ::  mergebase
@@ -40,6 +41,7 @@
               dob=(map path cage)                       ::  diff(bas,bob)
               new=yaki                                  ::  merge(dal,dob)
               ank=ankh                                  ::  new state
+              erg=(map path ,?)                         ::  ergoable changes
           ==                                            ::
 ++  moot  ,[p=case q=case r=path s=(map path lobe)]     ::  stored change range
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
@@ -715,141 +717,6 @@
     ^-  rove
     [%| p.p.rav q.p.rav r.p.rav ~]
   ::
-  ++  me                                                ::  merge ali into bob
-    |=  ali=(pair ship desk)                            ::  from
-    =+  bob=`(pair ship desk)`[who syd]                 ::  to
-    =+  dat=(fall (~(get by mer) ali) *mery)            ::  merge data
-    =|  gon=?                                           ::  keep going
-    |%
-    ++  abet
-      ^+  ..me
-      ..me(mer ?:(gon (~(put by mer) ali dat) (~(del by mer) dat)))
-    ::
-    ++  route
-      |=  [sat=term res=(each bead (list tank))]        ::  XX  bad type (%c)
-      ^+  +>.$
-      %.  res
-      ?+  sat  ~|((crip <[%bad-stage sat]>) !!)
-        %ali        fetched-ali
-        %diff-ali   diffed-ali
-        %diff-bob   diffed-bob
-        %merge      merged
-        %checkout   checked-out
-        %ergo       ergoed
-      ==
-    ::
-    ++  start
-      |=  gem=germ
-      ^+  +>
-      ?:  (~(has by mer) ali)
-        ~|  (crip <[%already-merging ali bob]>)
-        !!
-      =.  gem.dat  gem
-      =.  bob.dat  (~(got by hut.ran) (~(got by hit.dom) let.dom))
-      fetch-ali
-    ::
-    ++  fetch-ali
-      ^+  .
-      =-  %_(+ tag [- tag])
-      :*  hen  [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ali ~]
-          %c  %warp  [p.bob p.ali]  q.ali
-          `[%& %v [%da now] /]
-      ==
-    ::
-    ++  fetched-ali
-      |=  rot=riot
-      ^+  +>
-      ?~  rot
-        ~|  (crip <[%bad-fetch-ali ali bob]>)
-        !!
-      =+  dum=((hard dome) q.q.r.u.rot)
-      =.  ali.dat  (~(got by hut.ran) (~(got by hit.dum) let.dum))
-      ?-    gem.dat
-          %init
-        ?.  =(let.dom 0)
-          ~|  (crip <[%bad-init-merge ali bob]>)
-          !!
-        =.  new.dat  (make-yaki ~ q.q.ali now)
-        =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
-        checkout
-      ::
-          %fine
-        ?:  =(r.ali.dat r.bob.dat)
-          +>.$(gon |)
-        ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
-          +>.$(gon |)
-        ?.  (~(has in (reachable-takos r.ali.dat)) r.bob.dat)
-          ~|  (crip <[%bad-fine-merge ali bob]>)
-          !!
-        =.  new.dat  ali.dat
-        =.  let.dom  +(let.dom)
-        =.  hit.dom  (~(put by hit) let.dom r.new.dat)
-        checkout
-      ::
-          %this
-        !!
-      ::
-          %that
-        !!
-      ::
-          %mate
-        !!
-      ::
-          %meld
-        !!
-      ==
-    ::
-    ++  diff-ali
-      ^+  .
-      =-  %_(+ tag [- tag])
-      :*  hen  [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %diff-ali ~]
-          %f  %exec  p.bob  ~  %tabl
-          ^-  (list (pair silk silk))
-          !!
-      ==
-    ::
-    ++  diffed-ali
-      |=  res=(each bead (list tank))
-      ^+  +>
-      !!
-    ::
-    ++  diff-bob
-      ^+  .
-      !!
-    ::
-    ++  diffed-bob
-      |=  res=(each bead (list tank))
-      ^+  +>
-      !!
-    ::
-    ++  merge
-      ^+  .
-      !!
-    ::
-    ++  merged
-      |=  res=(each bead (list tank))
-      ^+  +>
-      !!
-    ::
-    ++  checkout
-      ^+  .
-      !!
-    ::
-    ++  checked-out
-      |=  res=(each bead (list tank))
-      ^+  +>
-      !!
-    ::
-    ++  ergo
-      ^+  .
-      !!
-    ::
-    ++  ergoed
-      |=  res=(each bead (list tank))
-      ^+  +>
-      !!
-    --
-  ::
   ++  merge-desks
     |=  [her=@p sud=@tas gem=germ rot=riot]
     ^+  +>.$
@@ -1172,6 +1039,18 @@
         %z  [~ %ankh !>(ank.dom)]
       ==
     ::
+    ++  reachable-takos                                 ::  reachable
+      |=  p=tako                                        ::  XX slow
+      ^-  (set tako)
+      =+  y=(tako-to-yaki p)
+      =+  t=(~(put in *(set tako)) p)
+      %+  roll  p.y
+      =<  .(s t)
+      |=  [q=tako s=(set tako)]
+      ?:  (~(has in s) q)                               ::  already done
+        s                                               ::  hence skip
+      (~(uni in s) ^$(p q))                             ::  otherwise traverse
+    ::
     ++  read                                            ::    read:ze
       |=  mun=mood                                      ::  read at point
       ^-  (unit cage)
@@ -1238,6 +1117,250 @@
         ?~(way +> $(way t.way, +> (descend i.way)))
       ::
       --
+    ::
+    ++  me                                              ::  merge ali into bob
+      |=  ali=(pair ship desk)                          ::  from
+      =+  bob=`(pair ship desk)`[who syd]               ::  to
+      =+  dat=(fall (~(get by mer) ali) *mery)          ::  merge data
+      =|  gon=?                                         ::  keep going
+      |%
+      ++  abet
+        ^+  ..me
+        ..me(mer ?:(gon (~(put by mer) ali dat) (~(del by mer) dat)))
+      ::
+      ++  route
+        |=  [sat=term res=(each riot (each bead (list tank)))]
+        ^+  +>.$
+        ?+  sat  ~|((crip <[%bad-stage sat]>) !!)
+          %ali        %-  fetched-ali  ?>  ?=(%& -.res)  p.res
+          %diff-ali   %-  diffed-ali   ?>  ?=(%| -.res)  p.res
+          %diff-bob   %-  diffed-bob   ?>  ?=(%| -.res)  p.res
+          %merge      %-  merged       ?>  ?=(%| -.res)  p.res
+          %checkout   %-  checked-out  ?>  ?=(%| -.res)  p.res
+          %ergo       %-  ergoed       ?>  ?=(%| -.res)  p.res
+        ==
+      ::
+      ++  start
+        |=  gem=germ
+        ^+  +>
+        ?:  (~(has by mer) ali)
+          ~|  (crip <[%already-merging ali bob]>)
+          !!
+        =.  gem.dat  gem
+        =.  cas.dat  [%da now]
+        =.  bob.dat  (~(got by hut.ran) (~(got by hit.dom) let.dom))
+        fetch-ali
+      ::
+      ++  fetch-ali
+        ^+  .
+        =-  %_(+ tag [- tag])
+        :*  hen  [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ali ~]
+            %c  %warp  [p.bob p.ali]  q.ali
+            `[%& %v cas.dat /]
+        ==
+      ::
+      ++  fetched-ali
+        |=  rot=riot
+        ^+  +>
+        ?~  rot
+          ~|  (crip <[%bad-fetch-ali ali bob]>)
+          !!
+        =+  dum=((hard dome) q.q.r.u.rot)
+        =.  ali.dat  (~(got by hut.ran) (~(got by hit.dum) let.dum))
+        |-
+        ?-    gem.dat
+            %init
+          ?.  =(let.dom 0)
+            ~|  (crip <[%bad-init-merge ali bob]>)
+            !!
+          =.  new.dat  (make-yaki ~ q.ali.dat now)
+          =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
+          checkout
+        ::
+            %fine
+          ?:  =(r.ali.dat r.bob.dat)
+            +>.^$(gon |)
+          ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
+            +>.^$(gon |)
+          ?.  (~(has in (reachable-takos r.ali.dat)) r.bob.dat)
+            ~|  (crip <[%bad-fine-merge ali bob]>)
+            !!
+          =.  new.dat  ali.dat
+          checkout
+        ::
+            %this
+          ?:  =(r.ali.dat r.bob.dat)
+            +>.^$(gon |)
+          ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
+            +>.^$(gon |)
+          =.  new.dat  (make-yaki [r.ali.dat r.bob.dat ~] q.bob.dat now)
+          checkout
+        ::
+            %that
+          ?:  =(r.ali.dat r.bob.dat)
+            +>.^$(gon |)
+          ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
+            +>.^$(gon |)
+          =.  new.dat  (make-yaki [r.ali.dat r.bob.dat ~] q.ali.dat now)
+          checkout
+        ::
+            %mate
+          !!
+        ::
+            %meld
+          !!
+        ==
+      ::
+      ++  diff-ali
+        ^+  .
+        =-  %_(+ tag [- tag])
+        :*  hen
+            [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %diff-ali ~]
+            %f  %exec  p.bob  ~  %tabl
+            ^-  (list (pair silk silk))
+            !!
+        ==
+      ::
+      ++  diffed-ali
+        |=  res=(each bead (list tank))
+        ^+  +>
+        !!
+      ::
+      ++  diff-bob
+        ^+  .
+        !!
+      ::
+      ++  diffed-bob
+        |=  res=(each bead (list tank))
+        ^+  +>
+        !!
+      ::
+      ++  merge
+        ^+  .
+        !!
+      ::
+      ++  merged
+        |=  res=(each bead (list tank))
+        ^+  +>
+        !!
+      ::
+      ++  checkout
+        ^+  .
+        =-  %_(+ tag [- tag])
+        :*  hen
+            [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout ~]
+            %f  %exec  p.bob  ~  %tabl
+            ^-  (list (pair silk silk))
+            %+  turn  (~(tap by q.new.dat))
+            |=  [a=path b=lobe]
+            ^-  (pair silk silk)
+            :-  [%done ~ %path !>(a)]
+            |-  ^-  silk
+            =+  bob=(~(got by lat.ran) b)
+            ?-  -.bob
+              %direct     [%done ~ q.bob]
+              %indirect   [%done ~ q.bob]
+              %delta      [%pact $(b q.bob) [%done ~ r.bob]]
+            ==
+        ==
+      ::
+      ++  checked-out
+        |=  res=(each bead (list tank))
+        ^+  +>
+        ?:  ?=(%| -.res)  
+          %_    +>.$
+              dok  ~
+              yel
+            :_  yel
+            :*  hen  %note  '!'  %rose  [" " "" ""]
+                leaf/"merge checkout failed"  p.res
+            ==
+          ==
+        =.  let.dom  +(let.dom)
+        =.  hit.dom  (~(put by hit.dom) let.dom r.new.dat)
+        =+  cay=q.p.res
+        ?@  p.cay  ~|  %patch-bad-marc  !!
+        =.  ank.dat
+          %-  checkout-ankh:ze
+          %-  mo
+          |-  ^-  (list ,[path cage])
+          ?~  p.p.cay
+            ~
+          :_  %_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
+          ?.  ?=(%path p.i.p.p.cay)
+            ~|  %patch-strange-marc-a
+            !!
+          ?.  ?=(@ q.i.p.p.cay)
+            ~|  %patch-strange-marc-b
+            !!
+          =+  coy=(slot 2 q.cay)
+          ?@  q.coy
+            ~|  %patch-strange-coy
+            !!
+          :-  ((hard path) -.q.coy)
+          [q.i.p.p.cay (slot 3 coy)]
+        ?~  hez
+          +>.$(gon |)                                   ::  XX  resolve
+        ergo
+      ::
+      ++  ergo
+        ^+  .
+        =-  %_(+ tag [- tag])
+        =+  zez=ze(ank.dom ank.dat)
+        :*  hen
+            [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ergo ~]
+            %f  %exec  p.bob  ~  %tabl
+            ^-  (list (pair silk silk))
+            %+  turn  (~(tap by erg.dat))
+            |=  [a=path b=?]
+            ^-  (pair silk silk)
+            :-  [%done ~ %path !>(a)]
+            ?.  b
+              [%done ~ %null !>(~)]
+            :^  %cast  %mime  %done
+            `(need (read:zez %x [%ud let.dom] a))
+        ==
+      ::
+      ++  ergoed
+        |=  res=(each bead (list tank))
+        ^+  +>
+        ?:  ?=(%| -.res)
+          %_    +>.$
+              yel
+            :_  yel
+            [hen %note '!' %rose [" " "" ""] leaf/"merge ergo failed" p.res]
+          ==
+        ?~  hez
+          ~|  (crip <[%no-hez ali bob]>)
+          !!
+        =+  cay=q.p.res
+        ?@  p.cay  ~|  %patch-bad-marc  !!
+        %=    +>.$
+            gon  |
+            reg
+          :_  reg
+          :*  u.hez  %ergo  who  syd  let.dom
+              |-  ^-  (list ,[path (unit mime)])
+              ?~  p.p.cay
+                ~
+              :_  %_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
+              ?.  ?=(%path p.i.p.p.cay)
+                ~|  %ergo-strange-marc-a
+                !!
+              ?.  ?=(@ q.i.p.p.cay)
+                ~|  %ergo-strange-marc-b
+                !!
+              =+  coy=(slot 2 q.cay)
+              ?@  q.coy
+                ~|  %ergo-strange-coy
+                !!
+              :-  ((hard path) -.q.coy)
+              ?.  ?=(%mime q.i.p.p.cay)
+                ~
+              `((hard mime) q:(slot 3 coy))
+          ==
+        ==
+      --
     --
 --
 ::
@@ -1291,7 +1414,7 @@
     %^    (de now hen hun.yar hez.yar)
         [who who]
       syd
-    [[now qyx.saq ~ dom.saq dok.saq] ran.ruf]
+    [[now qyx.saq ~ dom.saq dok.saq mer.saq] ran.ruf]
   --
 --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1470,7 +1593,7 @@
   |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [p=(list move) q=_..^$]
   ?:  ?=([%merge @ @ @ @ @ ~] tea)
-    ?>  ?=(%writ -.+.q.hin)
+    ?>  ?=(?(%writ %made) +<.q.hin)
     =+  our=(slav %p i.t.tea)
     =*  syd  i.t.t.tea
     =+  her=(slav %p i.t.t.t.tea)
@@ -1478,7 +1601,8 @@
     =*  sat  i.t.t.t.t.t.tea
     =+  une=(un our now hen ruf)
     =+  wex=(di:une syd)
-    =+  wao=abet:(route:(me:wex her sud) sat p.q.hin)
+    =+  dat=?-(+<.q.hin %writ [%& p.q.hin], %made [%| p.q.hin])
+    =+  wao=abet:(route:(me:ze:wex her sud) sat dat)
     =+  woo=abet:wao
     [-.woo ..^$(ruf abet:(pish:une syd +.woo ran.wao))]
   ?-    -.+.q.hin
