@@ -53,7 +53,7 @@
       ")"
     ==
   ++  react-js  (crip tape)
-  ++  js  react-js                                      ::  convert to %js
+::   ++  js  react-js                                      ::  convert to %js
   ++  mime  [/text/javascript (taco js)]                ::  convert to %mime
   --
 ++  grab  |%                                            ::  convert from

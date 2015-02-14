@@ -50,10 +50,14 @@
 ::
 ++  grow                                                         ::  convert to
   |%
-  ++  psal  own
-  ++  hymn  ;html:(head:title:"snip" body:"+{psal}")             ::  convert to %hymn
-  ++  html  (crip (poxo hymn))                                   ::  convert to %html
-  ++  mime  [/text/html (taco html)]                             ::  convert to %mime
+  ++  mime
+    =<  mime
+    |%
+    ++  psal  own
+    ++  hymn  ;html:(head:title:"snip" body:"+{psal}")           ::  convert to %hymn
+    ++  html  (crip (poxo hymn))                                 ::  convert to %html
+    ++  mime  [/text/html (taco html)]                           ::  convert to %mime
+    --
   --
 ++  garb  [%react-snip ~]
 ++  grab  |%                                                     ::  convert from
