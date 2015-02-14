@@ -8,15 +8,8 @@
   |%
   ++  html  (crip (poxo own))                          ::  convert to %html
   ++  mime  [/text/html (taco html)]                    ::  convert to %mime
-  ++  urb
-    ~|  hymn//mal-formed
-    ?>  ?=([[%html ~] [[%head ~] *] [[%body ~] ^] ~] own)
-    %_    own
-        c.i.c
-      :_  c.i.c.own
-      ;script@"/~/on/try/0.js";  ::  XX
-    ==
   --
+++  garb  [%urb ~]
 ++  grab  |%                                            ::  convert from
           ++  noun  manx                                ::  clam from %noun
 --        --
