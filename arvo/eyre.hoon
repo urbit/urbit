@@ -345,25 +345,25 @@
   |%
   ++  poll
     '''
-    urb.tries = 0;
+    urb.tries = 0
     urb.call = function() {
-      xhr = new XMLHttpRequest();
-      xhr.open('GET', urb.poll, true);
+      xhr = new XMLHttpRequest()
+      xhr.open('GET', urb.poll, true)
       xhr.addEventListener('load', function() {
         if(this.status !== 200) {
-          return urb.keep();
+          return urb.keep()
         }
-        document.location.reload();
-      });
-      xhr.addEventListener('error', urb.keep);
-      xhr.addEventListener('abort', urb.keep);
-      xhr.send();
+        document.location.reload()
+      })
+      xhr.addEventListener('error', urb.keep)
+      xhr.addEventListener('abort', urb.keep)
+      xhr.send()
     }
     urb.keep = function() {
-      setTimeout(urb.call,1000*urb.tries);
-      urb.tries++;
+      setTimeout(urb.call,1000*urb.tries)
+      urb.tries++
     }
-    urb.call();
+    urb.call()
     '''
   --
 --
@@ -400,13 +400,20 @@
           ~
         :: ~&  e/ford/hen
         ?-  -.q.sih
-          |  (fail 404 p.sih p.q.sih)
+          |  ~&  e/daps/p.sih
+             (fail 404 p.sih p.q.sih)
           &  ~&  e/deps/p.sih
              =*  cag  p.q.sih
-             ?>  ?=(%mime p.cag)
-             ~|  q.q.cag
-             =+  ((hard ,[mit=mite rez=octs]) q.q.cag)  ::  XX
-             (muff %thou 200 [content-type/(moon mit)]~ ~ rez)
+             ?+    p.cag  (back ~ p.sih cag)
+                 %hipo                                  ::  hacks!
+               ?>  ?=(@tas -.q.q.cag)
+               $(p.q.sih [-.q.q.cag (slot 3 q.cag)])
+             ::
+                 %mime
+               ~|  q.q.cag
+               =+  ((hard ,[mit=mite rez=octs]) q.q.cag)  ::  XX
+               (muff %thou 200 [content-type/(moon mit)]~ ~ rez)
+             ==
         ==
       ==
     ::
@@ -626,7 +633,7 @@
     ==
   ::
   ++  back                                              ::  %ford bounce
-    |=  [our=ship tea=wire dep=(set beam) cag=cage]                
+    |=  [tea=wire dep=(set beam) cag=cage]                
     (miff tea %f %exec our `[%cast %mime %done dep cag])
   ::
   ++  doss                                              ::  host to ship
@@ -640,11 +647,19 @@
   ++  fail                                              ::  request failed
     |=  [sas=@ud dep=(set beam) mez=tang]
     ^+  +>
-    ::  (back our ~ ~ %tang !>(mez))  ::  XX broken tang->mime door in ford
-    =-  (muff (tuff text//plain (role (turn - crip))))
-    =.  mez  [>dep< mez]
-    ^-  wall  %-  zing  ^-  (list wall)
-    (turn mez |=(a=tank (wash 0^160 a)))
+    ::  (back ~ ~ %tang !>(mez))  ::  XX broken tang->mime door in ford
+    =+  bek=(sa (turn (~(tap in dep)) |=(a=beam (tope a(s ~)))))
+    =-  (resp text//html (poxo -))
+    =+  rolt=|=(a=wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
+    =+  mec=(rolt (turn mez |=(a=tank (rolt (wash 0^160 a)))))
+    ;html
+      ;head
+        ;meta(charset "utf-8");
+        ;*  %+  turn  (~(tap by bek))
+            |=(loc=path ;script@"/~/on{(spud loc)}.js";)
+      ==
+      ;body:pre:code:"{mec}"
+    ==
   ::
 ::   ++  gale                                              ::  ya from response
 ::     |=  [our=ship ses=hole]
@@ -744,30 +759,31 @@
     ::      ?~(gow [~ q.q.pul] [gow t.q.q.pul])
     ::  =+  oar=`(unit ship)`?^(wiq wiq (doss r.p.pul))
     =+  oar=(fall (doss r.p.pul) (need hov))
-    =+  ext=(fall p.q.pul %html)
-    =+  dez=[[*beak q.q.pul] `~]
-    %-  |=(a=(each ,_..hell tang) ?~(-.a p.a (fail 404 dez >%exit< p.a)))
+    =+  ext=(fall p.q.pul %hymn)
+    %-  |=(a=(each ,_..hell tang) ?~(-.a p.a (fail 404 ~ >%exit< p.a)))
     %-  mule  |.  ^+  ..hell
     =+  hev=(heft oar q.pul)
     ?^  hev
       =:  s.u.hev  [%web ~(rent co (flux:ya /'' r.pul)) s.u.hev]
           r.u.hev  ?+(r.u.hev r.u.hev [%ud %0] da/now)
         ==
-      (honk oar [%cast %mime %boil ext u.hev ~])
+      (honk oar [%boil ext u.hev ~])
     =+  hem=(hemp oar [q r]:pul)
     ?~  hem
       ~|(strange-path/q.q.pul !!)
     ?:  ?=([~ %js] p.q.pul)  ::  XX treat non-json cases?
-      =-  (muff (tuff text//javascript (crip -)))
+      %+  resp  text//javascript
       """
       window.urb = \{poll: "/{(body:earn q.pul(u.p %json))}"}
       {(trip poll:js)}
       """
     %+  hoot  oar  
     =-  [q.u.hem ~ %& %y ud/+(`@ud`-) /]
-    ?:  ?=(%ud -.r.u.hem)
-      p.r.u.hem
-    ;;(@ (need (sky %cw (tope u.hem /))))
+    ?.  ?=(%ud -.r.u.hem)
+      ;;(@ (need (sky %cw (tope u.hem /))))
+    ?:  =(0 p.r.u.hem)
+      ;;(@ (need (sky %cw (tope u.hem(r da/now) /))))
+    p.r.u.hem
   ::
   ++  hemp                                             ::  auxillary(/~) request
     |=  [oar=ship pok=pork quy=quay]
@@ -780,7 +796,7 @@
       %on  ?~  but  !!  ::  XX look by query string
            ?>  ?=([@ @ $|(~ [@ ~])] but)
            =-  -:(need (tome -))
-           ?^  t.t.but  but(i (cat 3 '~' i.but))
+           ?^  t.t.but  but
            [(scot %p oar) but]
     ==
 ::     ?.  (home oar)
@@ -931,7 +947,8 @@
   ::
   ++  jive                                              ::  success json
     |=  jon=json
-    (muff (tuff application//json (crip (pojo jon))))
+    (resp application//json (pojo jon))
+  ::
   ++  muff                                              ::  return card
     |=  gef=gift
     +>(mow :_(mow [hen %give gef]))
@@ -940,8 +957,12 @@
     |=  noe=[wire note]
     +>(mow :_(mow [hen %pass noe]))
   ::
-  ++  tuff
-    |=  [mit=mite rez=@]                                   ::  success response
+  ++  resp                                              ::  mime response
+    |=  [mit=mite bod=tape]
+    (muff (tuff mit (crip bod)))
+  ::
+  ++  tuff                                              ::  success response
+    |=  [mit=mite rez=@]
     ^-  gift
     [%thou 200 ~[content-type/(moon mit)] [~ (taco rez)]]
   ::

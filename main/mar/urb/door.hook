@@ -1,0 +1,37 @@
+::
+::::  /hook/door/urb/mar
+  ::
+/?  314
+/=  dep  /$
+  !:
+  |=  [^ but=path]
+  ^-  (set path)
+  ?>  ?=([%dep @ ~] but)
+  %-  sa  
+  %+  turn  `path`(need (pick i.t.but))
+  |=(a=span (scag 3 `path`(need (pick a))))
+!:
+|_  own=manx
+::
+++  grow                                                ::  convert to
+  |%
+  ++  html  (crip (poxo own))                           ::  convert to %html
+  ++  mime  [/text/html (taco html)]                    ::  convert to %mime
+  --
+++  grab  
+  |%                                                    ::  convert from
+  ++  noun  manx                                        ::  clam from %noun
+  ++  hymn                                              ::  inject into %hymn
+    |=  old=manx
+    ~|  hymn//mal-formed
+    ?>  ?=([[%html ~] [[%head ~] *] [[%body ~] ^] ~] old) ::  XX static
+::     =+  bek=(sa (turn (turn dep) |=(a=beam (tope a(s ~)))))                                    ::  inject into %hymn
+    %_    old
+        c.i.c
+      :-  ;meta(charset "utf-8", urb_injected "");
+      %-  welp  :_  c.i.c.old
+      %+  turn  (~(tap in dep))
+      |=(loc=path ;script@"/~/on{(spud loc)}.js"(urb_injected "");)
+    ==
+  --
+--
