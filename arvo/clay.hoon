@@ -1179,6 +1179,7 @@
             !!
           =.  new.dat  (make-yaki ~ q.ali.dat now)
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
+          =.  erg.dat  (~(run by q.ali.dat) |=(lobe %&))
           checkout
         ::
             %fine
@@ -1190,6 +1191,9 @@
             ~|  (crip <[%bad-fine-merge ali bob]>)
             !!
           =.  new.dat  ali.dat
+          =.  erg.dat
+            %-  ~(uni by `(map path ,?)`(~(run by q.bob.dat) |=(lobe %|)))
+            `(map path ,?)`(~(run by q.ali.dat) |=(lobe %&))
           checkout
         ::
             %this
@@ -1198,6 +1202,7 @@
           ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
             +>.^$(gon |)
           =.  new.dat  (make-yaki [r.ali.dat r.bob.dat ~] q.bob.dat now)
+          =.  erg.dat  (~(run by q.ali.dat) |=(lobe %&))  ::  XX  needed?
           checkout
         ::
             %that
@@ -1206,6 +1211,9 @@
           ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
             +>.^$(gon |)
           =.  new.dat  (make-yaki [r.ali.dat r.bob.dat ~] q.ali.dat now)
+          =.  erg.dat
+            %-  ~(uni by `(map path ,?)`(~(run by q.bob.dat) |=(lobe %|)))
+            `(map path ,?)`(~(run by q.ali.dat) |=(lobe %&))
           checkout
         ::
             %mate
