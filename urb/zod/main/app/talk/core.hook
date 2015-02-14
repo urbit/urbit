@@ -2,16 +2,17 @@
 ::::  /hook/core/talk/app
   ::
 /?  314
-/-  *rodeo
-/+  rodeo
+/-  *console, *rodeo
+/+  console, rodeo
 ::
 ::::
   ::
 !:
 =>  |%                                                  ::  structures
     ++  town                                            ::  all client state
-      $:  live=(unit span)                              ::  present story
-          console=terminal                              ::  controlling terminal
+      $:  %0                                            ::  version
+          seat=console-share                            ::  command lines
+          live=(unit span)                              ::  present story
           stories=(map span story)                      ::  all stories
       ==                                                ::
     ++  grip                                            ::  subscription state
@@ -58,15 +59,10 @@
           [%raze p=span]                                ::  destroy story
           [%tune p=span]                                ::  switch to story
       ==                                                ::
-    ++  iron                                            ::  terminal output
-      $%  [%prompt p=cord q=prom r=cord]                ::  prompt
-          [%tang p=(list tank)]                         ::  prettyprintable
-          [%txt p=cord]                                 ::  simple text
-      ==
     ++  gift
       $%  [%mean ares]
           [%nice ~]
-          [%rush iron]
+          [%rush %console-effect console-effect]
       ==
     ++  hapt  ,[p=ship q=path]
     ++  move  ,[p=bone q=(mold note gift)]
@@ -103,21 +99,21 @@
     ++  hy                                              ::  messenger
       |_  [moz=(list move) hide]
       ++  hy-abet  moz                                  ::  resolve core
-      ++  hy-transmit                                   ::  send command
+      ++  hy-transmit                                   ::  send to radio
         |=  cod=command 
         %_    +>
             moz  :_  moz
           [0 %pass /command %g %mess [our /rodeo] our [%rodeo-command !>(cod)]]
         ==
       ::
-      ++  hy-render                                     ::  return to console
-        |=  rod=iron
+      ++  hy-effect                                     ::  return to seat
+        |=  fec=console-effect
         %_    +>
             moz
-          =+  oss=(~(tap in (~(get ju pus) /out)))
+          =+  oss=(~(tap in (~(get ju pus) /console)))
           |-  ^-  (list move)
           ?~  oss  moz
-          [`move`[i.oss %give %rush rod] $(oss t.oss)]
+          [`move`[i.oss %give %rush %console-effect fec] $(oss t.oss)]
         ==
       ::
       ++  hy-subscribe                                  ::  send %show
@@ -129,13 +125,13 @@
         %_(+> moz :_(moz [0 %pass way %g %nuke [our /rodeo] our]))
       ::
       ++  hy-display                                    ::  print to console
-        |=(tay=(list tank) (hy-render %tang tay))
+        |=(tay=(list tank) (hy-effect %tan tay))
       ::
       ++  hy-print                                      ::  simple print
         |=(tep=tape (hy-display [%leaf tep]~))
       ::
       ++  hy-accept                                     ::  set prompt
-        |=(asq=cord (hy-render [%prompt asq %text '']))
+        |=(asq=cord (hy-effect %pro & %gar (tuba (trip asq))))
       --
     ::
     ++  parse                                           ::  command parser
@@ -284,7 +280,7 @@
       link  %cool
       moz   =<  hy-abet
             %+  hy-subscribe:(hype moz)
-              /fm/[man]
+              /story/[man]
             :~  %afx
                 man
                 ?:  =(0 count)
@@ -298,7 +294,7 @@
     ?:  =(& ?=(?(%cold %dead) link))  .
     %_  .
       link  %cold
-      moz   hy-abet:(hy-unsubscribe:(hype moz) /fm/[man])
+      moz   hy-abet:(hy-unsubscribe:(hype moz) /story/[man])
     ==
   ::
   ++  sy-serial                                         ::  make serial no
@@ -309,6 +305,22 @@
     %-  ~(gas by *audience)
     %+  turn  `(list partner)`[[%& our.hid man] (~(tap in q.mike))]
     |=(a=partner [a *envelope %pending])
+  ::
+  ++  sy-awake                                          ::  introduce prompt
+    %_    .
+        moz   
+      =<  hy-abet
+      :-  hy-accept:(hype moz)
+      (crip (sy-prompt q.mike))
+    ==
+  ::
+  ++  sy-voice                                          ::  set targets
+    |=  [pas=? tou=(set partner)]
+    ?:  &(!p.mike pas)  +>
+    %_  +>.$
+      mike  [pas tou]
+      moz   hy-abet:(hy-accept:(hype moz) (crip (sy-prompt tou)))
+    ==
   ::
   ++  sy-message                                        ::  print message
     |=  msg=tape
@@ -386,12 +398,13 @@
     %=    +>
         moz
       =<  hy-abet
-      %-  hy-render:(hype moz)
+      %-  hy-effect:(hype moz)
       =*  sta  r.q.gam
       ?+    -.r.sta  ~|([%strange-gram -.r.sta] !!)
       ::
           %lin  
         :-  %txt 
+        %-  trip
         %+  rap  3
         :~  (scot %ud num)  ')' 
             (scot %p p.gam)  ?:(p.r.sta ': ' ' ') 
@@ -511,7 +524,7 @@
   ++  ny-amid                                           ::  integrate story
     |=  nov=_sy
     =^  zom  +>+>  sy-abet:nov
-    +>.$(moz (flop zom))
+    +>.$(moz (weld (flop zom) moz))
   ::
   ++  ny-tune                                           ::  connect to story
     |=  man=span
@@ -523,7 +536,7 @@
     =.  +>  ny-stop
     =.  live  `man
     ::  ~&  [%tune-start man]
-    (ny-amid sy-subscribe:(need (novel moz)))
+    (ny-amid sy-subscribe:sy-awake:(need (novel moz)))
   ::
   ++  ny-stop                                           ::  disconnect story
     ^+  .
@@ -578,9 +591,13 @@
 ++  peer
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
-  [~ +>.$]
+  =+  nuv=(novel ~)
+  ?~  nuv  
+    :_  +>.$
+    [ost %give %rush %console-effect %pro & %$ (tuba "no story ")]~
+  sy-abet:sy-awake:u.nuv
 ::
-++  pour-shell
+++  submit
   |=  txt=cord
   ^-  [(list move) _+>]
   =+  jub=(rush txt work:(parse our.hid))
@@ -605,26 +622,7 @@
       %command
     ?+    +<.sih  !!
       %nice  [~ +>.$]
-      %mean  ~|([%pour-mean-cmd-in +>.sih] !!)
-    ==
-      %cmd-in
-    ?+    +<.sih  !!
-        %nice  [~ +>.$]
-        %mean  ~|([%pour-mean-cmd-in +>.sih] !!)
-        %rush
-      ?>  ?=(%txt -.p.sih)
-      =^  moz  +>.$  (pour-shell p.p.sih)
-      :_  +>.$
-      :_(moz [ost %pass pax %g %took [our.hid +.imp.hid] our.hid])
-    ==
-  ::
-      %cmd-ac
-    ?+  +<.sih  !!
-        %nice  [~ +>.$]
-        %mean  ~|([%pour-mean-cmd-ac +>.sih] !!)
-        %rush
-      :_  +>.$
-      [ost %pass pax %g %took [our.hid +.imp.hid] our.hid]~
+      %mean  ~|([%pour-mean-command +>.sih] !!)
     ==
   ::
       %server
@@ -644,7 +642,7 @@
     :~  [0 %pass /time %t %wait (add ~s10 lat.hid)]
     ==
   ::
-      %fm
+      %story
     ?>  ?=([@ *] t.pax)
     ?.  =(& &(?=(^ live) =(u.live i.t.pax)))
       ~&  [%talk-wrong-story live i.t.pax] 
@@ -655,18 +653,34 @@
     :_(moz `move`[ost %pass pax %g %took [our.hid /rodeo] our.hid])
   ==
 ::
-++  poke-talk-args
-  |=  [ost=bone you=ship arg=~]
+++  prep
+  |=  old=(unit (unit town))
   ^-  [(list move) _+>]
+  ?:  ?=([~ ~ *] old)
+    [~ +>(+<+ u.u.old)]
   :_  +>
-  :~  [0 %pass /cmd-in %g %show [our.hid +.imp.hid] you /in/[-.imp.hid]]
-      [0 %pass /time %t %wait (add ~s10 lat.hid)]
-      [0 %pass /cmd-ac %g %show [our.hid +.imp.hid] you /active/[-.imp.hid]]
+  :~  [0 %pass /time %t %wait (add ~s10 lat.hid)]
       ^-  move
       :*  0    %pass  /server
           %g   %show  
           [our.hid /rodeo]  our.hid
           /
       ==
+  ==
+::
+++  poke-console-action
+  |=  [ost=bone her=ship act=console-action]
+  =+  moz=`(list move)`[ost %give %nice ~]~
+  ?+  -.act  [moz +>.$]
+    %det  [moz +>.$(seat abet:(~(receive cs seat) `console-change`+.act))]
+    %ret  =+  sed=buf.seat
+          =^  zom  +>.$  (submit (crip (tufa sed)))
+          =^  cal  seat  =<([- abet:+] (~(transmit cs seat) [%set ~]))
+          :_  +>.$
+          :*  [ost %give %rush %console-effect %nex ~]
+              [ost %give %rush %console-effect %det cal]
+              [ost %give %rush %console-effect %txt (tufa sed)]
+              (weld zom moz)
+          ==
   ==
 --
