@@ -839,13 +839,6 @@
           |  [~ (give %crud %murk-made p.p.+.sih)]
         ==
       ::
-      ++  moar                                          ::  foreign take
-        |=  $:  pax=path
-                sih=sign
-            ==
-        ^+  +>
-        !!
-      ::
       ++  more                                          ::  domestic take
         |=  $:  pax=path                                ::  internal position
                 hin=(hypo sign)                         ::  typed event
