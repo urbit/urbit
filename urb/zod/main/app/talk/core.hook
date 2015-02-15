@@ -97,7 +97,7 @@
   ::
 =>  |%                                                  ::  tools
     ++  hy                                              ::  messenger
-      |_  [moz=(list move) hide]
+      |_  [[moz=(list move)] hide]
       ++  hy-abet  moz                                  ::  resolve core
       ++  hy-transmit                                   ::  send to radio
         |=  cod=command 
@@ -106,7 +106,7 @@
           [0 %pass /command %g %mess [our /rodeo] our [%rodeo-command !>(cod)]]
         ==
       ::
-      ++  hy-effect                                     ::  return to seat
+      ++  hy-general                                    ::  serve all peers
         |=  fec=console-effect
         %_    +>
             moz
@@ -125,13 +125,13 @@
         %_(+> moz :_(moz [0 %pass way %g %nuke [our /rodeo] our]))
       ::
       ++  hy-display                                    ::  print to console
-        |=(tay=(list tank) (hy-effect %tan tay))
+        |=(tay=(list tank) (hy-general %tan tay))
       ::
       ++  hy-print                                      ::  simple print
         |=(tep=tape (hy-display [%leaf tep]~))
       ::
       ++  hy-accept                                     ::  set prompt
-        |=(asq=cord (hy-effect %pro & %gar (tuba (trip asq))))
+        |=(asq=cord (hy-general %pro & %gar (tuba (trip asq))))
       --
     ::
     ++  parse                                           ::  command parser
@@ -260,9 +260,12 @@
 ::::
   ::
 |_  [hid=hide town]
-++  hype  |=(moz=(list move) ~(. hy moz hid))
+++  hype                                                ::  global messenger
+  |=([moz=(list move)] ~(. hy moz hid))
+::
 ++  sy
-  |_  $:  $:  man=span                                  ::  u.live
+  |_  $:  $:  ost=bone                                  ::  cause
+              man=span                                  ::  u.live
               moz=(list move)                           ::  pending moves
           ==                                            ::
           story                                         ::  current story
@@ -398,7 +401,7 @@
     %=    +>
         moz
       =<  hy-abet
-      %-  hy-effect:(hype moz)
+      %-  hy-general:(hype moz)
       =*  sta  r.q.gam
       ?+    -.r.sta  ~|([%strange-gram -.r.sta] !!)
       ::
@@ -516,7 +519,7 @@
     --
   --
 ++  ny                                                  ::  top configuration
-  |_  moz=(list move)
+  |_  [ost=bone moz=(list move)]
   ++  ny-abet                                           ::  resolve core
     ^-  [(list move) _+>]
     [(flop moz) +>]
@@ -536,12 +539,12 @@
     =.  +>  ny-stop
     =.  live  `man
     ::  ~&  [%tune-start man]
-    (ny-amid sy-subscribe:sy-awake:(need (novel moz)))
+    (ny-amid sy-subscribe:sy-awake:(need (novel ost moz)))
   ::
   ++  ny-stop                                           ::  disconnect story
     ^+  .
     ?~  live  .
-    (ny-amid(live ~) sy-unsubscribe:(need (novel moz)))
+    (ny-amid(live ~) sy-unsubscribe:(need (novel ost moz)))
   ::
   ++  ny-tell                                           ::  hear from server
     |=  sap=(map span (pair posture cord))
@@ -577,35 +580,36 @@
         %make  
       %=    +>
           moz 
-        hy-abet:(hy-transmit:(hype moz) [%design p.jaw [~ ~ %default %black ~]])
+        =<  hy-abet
+        (hy-transmit:(hype moz) [%design p.jaw [~ ~ %default %black ~]])
       ==
     ==
   --
 ::
 ++  novel                                               ::  live story
-  |=  moz=(list move)
+  |=  [ost=bone moz=(list move)]
   ^-  (unit ,_sy)
   ?~  live  ~
-  `~(. sy [u.live moz] (~(got by stories) u.live))
+  `~(. sy [ost u.live moz] (~(got by stories) u.live))
 ::
 ++  peer
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
-  =+  nuv=(novel ~)
+  =+  nuv=(novel ost ~)
   ?~  nuv  
     :_  +>.$
     [ost %give %rush %console-effect %pro & %$ (tuba "no story ")]~
   sy-abet:sy-awake:u.nuv
 ::
 ++  submit
-  |=  txt=cord
+  |=  [ost=bone txt=cord]
   ^-  [(list move) _+>]
   =+  jub=(rush txt work:(parse our.hid))
   ?~  jub
     [hy-abet:(hy-print:(hype ~) "invalid input") +>.$]
   ?:  ?=(%wry -.u.jub)
-    ny-abet:(ny-work:ny +.u.jub)
-  =+  nuv=(novel ~)
+    ny-abet:(~(ny-work ny ost ~) +.u.jub)
+  =+  nuv=(novel ost ~)
   ?~  nuv  [hy-abet:(hy-print:(hype ~) "not tuned to any story") +>.$]
   sy-abet:(sy-work:u.nuv u.jub)
 ::
@@ -631,7 +635,7 @@
         %mean  ~|(%talk-server-crash !!)
         %rush
       ?>  ?=([%rodeo-report %house *] p.sih)
-      =^  moz  +>.$  ny-abet:(ny-tell:ny +.p.p.sih)  
+      =^  moz  +>.$  ny-abet:(~(ny-tell ny ost ~) +.p.p.sih)
       :_  +>.$
       :_(moz [ost %pass pax %g %took [our.hid /rodeo] our.hid])
     ==
@@ -648,7 +652,7 @@
       ~&  [%talk-wrong-story live i.t.pax] 
       [~ +>.$]
     ?>  ?=(%g -.sih)
-    =^  moz  +>.$  sy-abet:(sy-sign:(need (novel ~)) +.sih)
+    =^  moz  +>.$  sy-abet:(sy-sign:(need (novel ost ~)) +.sih)
     :_  +>.$
     :_(moz `move`[ost %pass pax %g %took [our.hid /rodeo] our.hid])
   ==
@@ -674,7 +678,7 @@
   ?+  -.act  [moz +>.$]
     %det  [moz +>.$(seat abet:(~(receive cs seat) `console-change`+.act))]
     %ret  =+  sed=buf.seat
-          =^  zom  +>.$  (submit (crip (tufa sed)))
+          =^  zom  +>.$  (submit ost (crip (tufa sed)))
           =^  cal  seat  =<([- abet:+] (~(transmit cs seat) [%set ~]))
           :_  +>.$
           :*  [ost %give %rush %console-effect %nex ~]
