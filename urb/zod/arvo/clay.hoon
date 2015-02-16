@@ -1126,7 +1126,7 @@
       |%
       ++  abet
         ^+  ..me
-        ..me(mer ?:(gon (~(put by mer) ali dat) (~(del by mer) dat)))
+        ..me(mer ?:(gon (~(put by mer) ali dat) (~(del by mer) ali)))
       ::
       ++  route
         |=  [sat=term res=(each riot (each bead (list tank)))]
@@ -1177,7 +1177,7 @@
           ?.  =(let.dom 0)
             ~|  (crip <[%bad-init-merge ali bob]>)
             !!
-          =.  new.dat  (make-yaki ~ q.ali.dat now)
+          =.  new.dat  ali.dat
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
           =.  erg.dat  (~(run by q.ali.dat) |=(lobe %&))
           checkout
@@ -1202,7 +1202,8 @@
           ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
             +>.^$(gon |)
           =.  new.dat  (make-yaki [r.ali.dat r.bob.dat ~] q.bob.dat now)
-          =.  erg.dat  (~(run by q.ali.dat) |=(lobe %&))  ::  XX  needed?
+          =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
+          =.  erg.dat  ~
           checkout
         ::
             %that
@@ -1211,6 +1212,7 @@
           ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
             +>.^$(gon |)
           =.  new.dat  (make-yaki [r.ali.dat r.bob.dat ~] q.ali.dat now)
+          =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
           =.  erg.dat
             %-  ~(uni by `(map path ,?)`(~(run by q.bob.dat) |=(lobe %|)))
             `(map path ,?)`(~(run by q.ali.dat) |=(lobe %&))
@@ -1258,7 +1260,6 @@
       ::
       ++  checkout
         ^+  .
-        ~&  >  %checking-out
         =-  %_(+ tag [- tag])
         :*  hen
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout ~]
@@ -1293,7 +1294,6 @@
         =.  hit.dom  (~(put by hit.dom) let.dom r.new.dat)
         =+  cay=q.p.res
         ?@  p.cay  ~|  %patch-bad-marc  !!
-        ~&  >  [%checked-out (lent p.p.cay)]
         =.  ank.dat
           %-  checkout-ankh:ze
           %-  mo
@@ -1341,6 +1341,7 @@
         ^+  +>
         ?:  ?=(%| -.res)
           %_    +>.$
+              gon  |
               yel
             :_  yel
             [hen %note '!' %rose [" " "" ""] leaf/"merge ergo failed" p.res]
