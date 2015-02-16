@@ -98,7 +98,7 @@
   $%  [%bbye ~]                                         ::  reset prompt
       [%blit p=(list blit)]                             ::  terminal output
       [%init p=@p]                                      ::  set owner
-      [%logo @]                                         ::  logout
+      [%logo ~]                                         ::  logout
       [%veer p=@ta q=path r=@t]                         ::  install vane
       [%vega p=path]                                    ::  reboot by path
       [%verb ~]                                         ::
@@ -233,8 +233,7 @@
           +>
         ::
             [%g %mean *]
-          ::  ~&  [%take-mean sih]
-          +>
+          +>(moz [[hen %give %logo ~] moz])
         ::
             [%g %nice *]
           ::  ~&  [%take-nice sih]

@@ -37,7 +37,7 @@
               [%dub p=term q=horn]                      ::  /=  apply face
               [%fan p=(list horn)]                      ::  /.  list
               [%for p=path q=horn]                      ::  /,  descend
-              [%hel p=horn]                             ::  /%  propogate heel
+              [%hel p=horn]                             ::  /%  propagate heel
               [%hub p=horn]                             ::  /@  list by @ud
               [%man p=(map span horn)]                  ::  /*  hetero map
               [%nap p=horn]                             ::  /_  homo map
