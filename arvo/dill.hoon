@@ -46,6 +46,7 @@
               $:  %d                                    ::
           $%  [%crud p=@tas q=(list tank)]              ::
               [%text p=tape]                            ::
+              [%logo ~]                                 ::
           ==  ==                                        ::
               $:  %g                                    ::
           $%  [%mess p=[p=ship q=path] q=ship r=mess]   ::
