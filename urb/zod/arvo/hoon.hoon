@@ -8533,7 +8533,7 @@
     =+  txt=(,@ta .^(%cx ruv))
     ~|  ruv
     %+  rash  txt
-    (ifix [gay gay] tall(was (~(put in was) u.rev), wer u.rev))
+    (ifix [gay gay] tall(was (~(put in was) u.rev), wer u.rev, bug |))
   ::
   ++  prey
     |=  gun=(list twig)  ^-  (unit twig)
