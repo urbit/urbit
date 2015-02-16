@@ -1955,8 +1955,8 @@
   |=  a=(tree ,[p=* q=*])
   ?~  a
     &
-  ?&  ?~(l.a & ?&((vor p.n.a p.n.l.a) (hor p.n.l.a p.n.a)))
-      ?~(r.a & ?&((vor p.n.a p.n.r.a) (hor p.n.a p.n.r.a)))
+  ?&  ?~(l.a & ?&((vor p.n.a p.n.l.a) (gor p.n.l.a p.n.a)))
+      ?~(r.a & ?&((vor p.n.a p.n.r.a) (gor p.n.a p.n.r.a)))
   ==
 ::
 ++  ja                                                  ::  jar engine
@@ -2088,12 +2088,12 @@
     ?:  (vor p.n.a p.n.b)
       ?:  =(p.n.b p.n.a)
         [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
-      ?:  (hor p.n.b p.n.a)
+      ?:  (gor p.n.b p.n.a)
         %-  uni(+< $(a l.a, b [n.b l.b ~]))  $(b r.b)
       %-  uni(+< $(a r.a, b [n.b ~ r.b]))  $(b l.b)
     ?:  =(p.n.a p.n.b)
       [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
-    ?:  (hor p.n.a p.n.b)
+    ?:  (gor p.n.a p.n.b)
       %-  uni(+< $(b l.b, a [n.a l.a ~]))  $(a r.a)
     %-  uni(+< $(b r.b, a [n.a ~ r.a]))  $(a l.a)
   ::
@@ -2166,12 +2166,12 @@
     ?:  (vor p.n.a p.n.b)
       ?:  =(p.n.b p.n.a)
         [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
-      ?:  (hor p.n.b p.n.a)
+      ?:  (gor p.n.b p.n.a)
         $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
       $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
     ?:  =(p.n.a p.n.b)
       [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
-    ?:  (hor p.n.a p.n.b)
+    ?:  (gor p.n.a p.n.b)
       $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
     $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
   ::
