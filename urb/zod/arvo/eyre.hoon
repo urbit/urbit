@@ -106,7 +106,7 @@
       ged=duct                                          ::  client interface
       ney=@uvI                                          ::  rolling entropy
       dop=(map host ship)                               ::  host aliasing
-      liz=(jug beak (each duct oryx))
+      liz=(jug beam (each duct oryx))                   ::  clay subscriptions
 ::       own=(map ship serf)                               ::  domestic servers
 ::       fon=(map ship rote)                               ::  foreign servers
 ::       ask=[p=@ud q=(map ,@ud ,[p=duct q=hiss])]         ::  outgoing by number
@@ -400,10 +400,8 @@
           ~
         :: ~&  e/ford/hen
         ?-  -.q.sih
-          |  ~&  e/daps/p.sih
-             (fail 404 p.sih p.q.sih)
-          &  ~&  e/deps/p.sih
-             =*  cag  p.q.sih
+          |  (fail 404 p.sih p.q.sih)
+          &  =*  cag  p.q.sih
              ?+    p.cag  (back ~ p.sih cag)
                  %hipo                                  ::  hacks!
                ?>  ?=(@tas -.q.q.cag)
@@ -418,11 +416,11 @@
       ==
     ::
         %writ
-      ?^  tea  ~&(e/missed/writ/tea=tea +>.$)
+      ::  ?^  tea  ~&(e/missed/writ/tea=tea +>.$)
       ?~  p.sih  +>.$
-      =+  caz=`case`q.p.u.p.sih
+      =+  `[@ caz=case dez=desk]`p.u.p.sih
       ?>  ?=(%ud -.caz)
-      (jive (jone p.caz))
+      (jive (joba dez (jone p.caz)))
 ::       %-  gout
 ::       [(slav %p i.t.tea) i.t.t.tea (slav %ud i.t.t.t.tea) p.+.sih]
 ::     ::
@@ -647,16 +645,17 @@
   ++  fail                                              ::  request failed
     |=  [sas=@ud dep=(set beam) mez=tang]
     ^+  +>
-    ::  (back ~ ~ %tang !>(mez))  ::  XX broken tang->mime door in ford
-    =+  bek=(sa (turn (~(tap in dep)) |=(a=beam (tope a(s ~)))))
+    ::  (back ~ ~ %tang !>(mez))  ::  XX broken tang->mime door in fo
     =-  (resp text//html (poxo -))
     =+  rolt=|=(a=wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
     =+  mec=(rolt (turn mez |=(a=tank (rolt (wash 0^160 a)))))
+    =+  det=`tang`(turn (~(tap in dep)) |=(a=beam leaf/+:(spud (tope a))))
+    =+  pax=~(ram re %rose ["&" `~] det)
     ;html
       ;head
         ;meta(charset "utf-8");
-        ;*  %+  turn  (~(tap by bek))
-            |=(loc=path ;script@"/~/on{(spud loc)}.js";)
+        ;*  ?~  dep  ~
+            [;script@"/~/on.js?{pax}";]~
       ==
       ;body:pre:code:"{mec}"
     ==
@@ -759,7 +758,7 @@
     ::      ?~(gow [~ q.q.pul] [gow t.q.q.pul])
     ::  =+  oar=`(unit ship)`?^(wiq wiq (doss r.p.pul))
     =+  oar=(fall (doss r.p.pul) (need hov))
-    =+  ext=(fall p.q.pul %hymn)
+    =+  ext=(fall p.q.pul %urb)
     %-  |=(a=(each ,_..hell tang) ?~(-.a p.a (fail 404 ~ >%exit< p.a)))
     %-  mule  |.  ^+  ..hell
     =+  hev=(heft oar q.pul)
@@ -767,36 +766,48 @@
       =:  s.u.hev  [%web ~(rent co (flux:ya /'' r.pul)) s.u.hev]
           r.u.hev  ?+(r.u.hev r.u.hev [%ud %0] da/now)
         ==
-      (honk oar [%boil ext u.hev ~])
+      (honk oar [%cast %mime [%boil ext u.hev ~]])
     =+  hem=(hemp oar [q r]:pul)
     ?~  hem
       ~|(strange-path/q.q.pul !!)
     ?:  ?=([~ %js] p.q.pul)  ::  XX treat non-json cases?
       %+  resp  text//javascript
       """
-      window.urb = \{poll: "/{(body:earn q.pul(u.p %json))}"}
+      window.urb = \{poll: "/{(apex:earn %| q.pul(u.p %json) r.pul)}"}
       {(trip poll:js)}
       """
-    %+  hoot  oar  
-    =-  [q.u.hem ~ %& %y ud/+(`@ud`-) /]
-    ?.  ?=(%ud -.r.u.hem)
-      ;;(@ (need (sky %cw (tope u.hem /))))
-    ?:  =(0 p.r.u.hem)
-      ;;(@ (need (sky %cw (tope u.hem(r da/now) /))))
-    p.r.u.hem
+    =+  dep=(~(tap in u.hem))
+    |-  ^+  ..hell
+    ?~  dep  ..hell
+    %^  hoot:$(dep t.dep)
+      oar  [%y (tope i.dep)]
+    =-  [q.i.dep ~ %& %y ud/+(`@ud`-) s.i.dep]
+    ?.  ?=(%ud -.r.i.dep)
+      ;;(@ (need (sky %cw (tope -.i.dep /))))
+    ?:  =(0 p.r.i.dep)
+      ;;(@ (need (sky %cw (tope -.i.dep(r da/now) /))))
+    p.r.i.dep
   ::
   ++  hemp                                             ::  auxillary(/~) request
     |=  [oar=ship pok=pork quy=quay]
-    ^-  (unit beak)
+    ^-  (unit (set beam))
     ?.  ?=([%'~' @ *] q.pok)  ~
     :-  ~
     =*  pef  i.t.q.pok
     =+  but=t.t.q.pok                 ::  XX  =*
     ?+  pef  ~|(pfix-lost/`path`/~/[pef] !!)
-      %on  ?~  but  !!  ::  XX look by query string
-           ?>  ?=([@ @ $|(~ [@ ~])] but)
-           =-  -:(need (tome -))
-           ?^  t.t.but  but
+      %on  ?~  but
+             %-  sa
+             %+  turn  quy  |=  [a=cord b=@]  ^-  beam
+             ~|  on/bad-query/quy
+             ?.  =('' b)  !!
+             %-  need  %-  tome  %-  stab
+             ?:  =('/' (end 3 1 a))
+               a
+             (cat 3 '/' a)
+           =-  ~|(on/bad-path/but [(need (tome -)) ~ ~])
+           ?:  =('~' (end 3 1 i.but))
+             but
            [(scot %p oar) but]
     ==
 ::     ?.  (home oar)
@@ -811,8 +822,8 @@
 ::     !=(~ (sky /a/(scot %p who)/buck/(scot %da now)))
   ::
   ++  hoot                                              ::  clay request
-    |=  [our=ship rif=riff]
-    (miff ~ %c [%warp [our our] rif])
+    |=  [our=ship wir=path rif=riff]
+    (miff wir %c [%warp [our our] rif])
   ::
   ++  hone                                              ::  kill ford
     |=  [our=ship ses=hole]
