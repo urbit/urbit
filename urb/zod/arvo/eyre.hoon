@@ -282,27 +282,28 @@
 ::   ?>  ?=(%mime p.cay)
 ::   ((hard love) [%mid q.q.cay])
 :: ::
-:: ++  loga                                                ::  tanks to manx
-::   |=  [til=tape mog=(list manx) tac=(list tank)]
-::   ^-  manx
-::   =+  ^=  wol
-::       |-  ^-  wall
-::       ?~  tac  ~
-::       (weld `wall`[~(ram re i.tac) ~] $(tac t.tac))
-::   =+  ^=  tax
-::       |-  ^-  (list manx)
-::       (turn wol |=(a=tape [/p ;"{a}"]))
-::   ;html
-::     ;head
-::       ;title: {til}
-::     ==
-::     ;body
-::       ;code
-::         ;*  (weld tax mog)
-::       ==
-::     ==
-::   ==
-:: ::
+++  loga                                                ::  tanks to manx
+  |=  tac=(list tank)
+  ^-  manx
+  =+  rolt=|=(a=wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
+  =+  mec=(rolt (turn tac |=(a=tank (rolt (wash 0^160 a)))))
+  ;html
+    ;head
+      ;meta(charset "utf-8");
+      ;title: server error
+    ==
+    ;body:pre:code:"{mec}"
+  ==
+::
+++  lode
+  |=  [dep=(set beam) max=manx]
+  ^-  manx
+  =+  det=`tang`(turn (~(tap in dep)) |=(a=beam leaf/+:(spud (tope a))))
+  =+  pax=~(ram re %rose ["&" `~] det)
+  ?>  ?=([[%html ~] [[%head ~] *] [[%body ~] ^] ~] max) ::  XX static
+  ?~  dep  max
+  max(c.i.c :_(c.i.c.max ;script@"/~/on.js?{pax}";))
+::
 :: ++  lofa                                                ::  scripts in head
 ::   |=  [mog=(list manx) luv=love]
 ::   ^-  love
@@ -350,7 +351,9 @@
       xhr = new XMLHttpRequest()
       xhr.open('GET', urb.poll, true)
       xhr.addEventListener('load', function() {
-        if(this.status !== 200) {
+        // if(~~(this.status / 100) == 4)
+        //   return document.write(xhr.responseText)
+        if(this.status !== 205) {
           return urb.keep()
         }
         document.location.reload()
@@ -646,19 +649,7 @@
     |=  [sas=@ud dep=(set beam) mez=tang]
     ^+  +>
     ::  (back ~ ~ %tang !>(mez))  ::  XX broken tang->mime door in fo
-    =-  (resp text//html (poxo -))
-    =+  rolt=|=(a=wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
-    =+  mec=(rolt (turn mez |=(a=tank (rolt (wash 0^160 a)))))
-    =+  det=`tang`(turn (~(tap in dep)) |=(a=beam leaf/+:(spud (tope a))))
-    =+  pax=~(ram re %rose ["&" `~] det)
-    ;html
-      ;head
-        ;meta(charset "utf-8");
-        ;*  ?~  dep  ~
-            [;script@"/~/on.js?{pax}";]~
-      ==
-      ;body:pre:code:"{mec}"
-    ==
+    (resp sas text//html (poxo (lode dep (loga mez))))
   ::
 ::   ++  gale                                              ::  ya from response
 ::     |=  [our=ship ses=hole]
@@ -771,7 +762,7 @@
     ?~  hem
       ~|(strange-path/q.q.pul !!)
     ?:  ?=([~ %js] p.q.pul)  ::  XX treat non-json cases?
-      %+  resp  text//javascript
+      %^  resp  200  text//javascript
       """
       window.urb = \{poll: "/{(apex:earn %| q.pul(u.p %json) r.pul)}"}
       {(trip poll:js)}
@@ -898,7 +889,7 @@
     ?+    [(fall p.q.pul %$) q.q.pul]  ~
         [?(%ico %png) %favicon ~]
       :-  ~
-      %+  tuff  image//png
+      %^  tuff  200  image//png
       0w89wg.GV4jA.l9000.00dPb.YzBT6.giO00.o100d.wZcqc.a9tg-.VTG0b.
       AUIvE.HBM3g.cK4SE.0aagi.l090p.I1P5g.Y-80r.y1YS9.1xE~Y.qgpFY.
       vKN1V.905y0.2UwvL.43TUw.uL406.0-31h.xwoJF.Ul454.ilk00.00Yps.
@@ -907,7 +898,7 @@
     ::
         [%txt %robots ~]
       :-  ~
-      %+  tuff  text//plain
+      %^  tuff  200  text//plain
       %-  role
       :~  'User-agent: *'
           'Disallow: /'
@@ -958,7 +949,7 @@
   ::
   ++  jive                                              ::  success json
     |=  jon=json
-    (resp application//json (pojo jon))
+    (resp 205 application//json (pojo jon))
   ::
   ++  muff                                              ::  return card
     |=  gef=gift
@@ -969,13 +960,13 @@
     +>(mow :_(mow [hen %pass noe]))
   ::
   ++  resp                                              ::  mime response
-    |=  [mit=mite bod=tape]
-    (muff (tuff mit (crip bod)))
+    |=  [sas=@uG mit=mite bod=tape]
+    (muff (tuff sas mit (crip bod)))
   ::
-  ++  tuff                                              ::  success response
-    |=  [mit=mite rez=@]
+  ++  tuff                                              ::  mimed response
+    |=  [sas=@uG mit=mite rez=@]
     ^-  gift
-    [%thou 200 ~[content-type/(moon mit)] [~ (taco rez)]]
+    [%thou sas ~[content-type/(moon mit)] [~ (taco rez)]]
   ::
 ::   ++  myth                                              ::  load session
 ::     |=  [our=ship ses=hole]
