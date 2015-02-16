@@ -2154,9 +2154,14 @@
   pul(q.q [(rsh 3 1 (scot %p who)) q.q.pul])
 ::
 ++  earn                                                ::  purl to tape
-  |^  |=  pul=purl
-      ^-  tape
-      :(weld (head p.pul) "/" (body q.pul) (tail r.pul))
+  =<  |=(pul=purl `tape`(apex ~ pul))
+  |%
+  ++  apex
+    |=  qur=quri
+    ?-  -.qur
+      %&  (weld (head p.p.qur) `tape`['/' $(qur [%| +.p.qur])])
+      %|  (weld (body p.qur) (tail q.qur))
+    ==
   ::
   ++  body
     |=  pok=pork  ^-  tape
@@ -2190,10 +2195,9 @@
     :-  '?'
     |-  ^-  tape
     ?~  kay  ~
-    ;:  weld
+    ;:  welp
       (urle (trip p.i.kay))
-      "="
-      (urle (trip q.i.kay))
+      ?~(q.i.kay ~ ['=' (urle (trip q.i.kay))])
       ?~(t.kay ~ `tape`['&' $(kay t.kay)])
     ==
   --
@@ -2235,7 +2239,7 @@
   ++  pesc  ;~(pfix cen mes)                            ::  2396 escaped
   ++  pold  (cold ' ' (just '+'))                       ::  old space code
   ++  pque  ;~(pose pcar fas wut)                       ::  3986 query char
-  ++  pquo  ;~(pose pure pesc pold)                     ::  normal query char
+  ++  pquo  ;~(pose pure pesc pold fas wut)             ::  normal query char
   ++  pure  ;~(pose aln hep dot cab sig)                ::  2396 unreserved
   ++  psub  ;~  pose                                    ::  3986 sub-delims
               zap  buc  pam  soq  pel  per
