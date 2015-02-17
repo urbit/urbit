@@ -119,14 +119,14 @@
 ::       voy=(map ,@ud (list ,@ud))                        ::  waiters (q.rey)
 ::       out=(list json)                                   ::  output commands
 ::   ==                                                    ::
-:: ++  cyst                                                ::  client session
-::   $:  ced=cred                                          ::  credential
+++  cyst                                                ::  client session
+  $:  ced=cred                                          ::  credential
 ::       cow=(map ,@ud clue)                               ::  consoles
-::       cug=(list ,@t)                                    ::  unacked cookies
-::       lax=@da                                           ::  last used
+      cug=(list ,@t)                                    ::  unacked cookies
+      lax=@da                                           ::  last used
 ::       sok=(map ,@ud (pair ship sink))                   ::  live apps by reqno
 ::       rey=[p=@ud q=(map ,@ud pimp)]                     ::  live requests
-::   ==                                                    ::
+  ==                                                    ::
 :: ++  dual  ,[p=@ud q=(each ,[p=ship q=hole] ship)]       ::  request handle
 :: ++  dude  ,[p=@tas q=@]                                 ::  client identity
 :: ++  pest                                                ::  request in progress
@@ -194,19 +194,19 @@
 ::   ==                                                    ::
 --                                                      ::
 |%
-:: ++  coss                                                ::  cookie search
-::   |=  [nam=@t mah=math]
-::   ^-  (unit hole)
-::   =+  ^=  cok  ^-  (list ,@t)
-::       =+  cok=(~(get by mah) 'cookie')
-::       ?~(cok ~ u.cok)
-::   |-  ^-  (unit hole)
-::   ?~  cok  ~
-::   =+  mar=`(unit (list ,[p=@t q=@t]))`(rush i.cok cock:epur)
-::   ?~  mar  $(cok t.cok)
-::   |-  ^-  (unit hole)
-::   ?~  u.mar  ^$(cok t.cok)
-::   ?:(=(nam p.i.u.mar) [~ q.i.u.mar] $(u.mar t.u.mar))
+++  coss                                                ::  cookie search
+  |=  [nam=@t mah=math]
+  ^-  (unit hole)
+  =+  ^=  cok  ^-  (list ,@t)
+      =+  cok=(~(get by mah) 'cookie')
+      ?~(cok ~ u.cok)
+  |-  ^-  (unit hole)
+  ?~  cok  ~
+  =+  mar=`(unit (list ,[p=@t q=@t]))`(rush i.cok cock:epur)
+  ?~  mar  $(cok t.cok)
+  |-  ^-  (unit hole)
+  ?~  u.mar  ^$(cok t.cok)
+  ?:(=(nam p.i.u.mar) [~ q.i.u.mar] $(u.mar t.u.mar))
 :: ::
 :: ++  ecca                                                ::  [hasp path]
 ::   |=  [orx=oryx moh=moth]
@@ -595,7 +595,7 @@
 ::         mow    :_(mow [p.kas [%give %thou q.kyz]])
 ::         q.ask  (~(del by q.ask) p.kas)
 ::       ==
-::     ::
+    ::
         %this                                           ::  inbound request
       =*  sec  p.kyz    ::  ?                           ::  https bit
       =*  heq  r.kyz    ::  httq                        ::  request content
@@ -648,7 +648,7 @@
   ++  fail                                              ::  request failed
     |=  [sas=@ud dep=(set beam) mez=tang]
     ^+  +>
-    ::  (back ~ ~ %tang !>(mez))  ::  XX broken tang->mime door in fo
+    ::  (back ~ ~ %tang !>(mez))  ::  XX broken tang->mime door in ford
     (resp sas text//html (poxo (lode dep (loga mez))))
   ::
 ::   ++  gale                                              ::  ya from response
@@ -715,7 +715,7 @@
 ::     ^+  +>
 ::     =+  boy=(myth our (need ((sand %ta) ((hard ,@) hez))))
 ::     ?~(boy +>.$ abet:(auth:u.boy him))
-  ::
+::   ::
   ++  heck                                              ::  extract err beak
     |=  [oar=ship pul=purl]
     ^-  (unit beak)
@@ -761,45 +761,44 @@
     =+  hem=(hemp oar [q r]:pul)
     ?~  hem
       ~|(strange-path/q.q.pul !!)
-    ?:  ?=([~ %js] p.q.pul)  ::  XX treat non-json cases?
-      %^  resp  200  text//javascript
-      """
-      window.urb = \{poll: "/{(apex:earn %| q.pul(u.p %json) r.pul)}"}
-      {(trip poll:js)}
-      """
-    =+  dep=(~(tap in u.hem))
-    |-  ^+  ..hell
-    ?~  dep  ..hell
-    %^  hoot:$(dep t.dep)
-      oar  [%y (tope i.dep)]
-    =-  [q.i.dep ~ %& %y ud/+(`@ud`-) s.i.dep]
-    ?.  ?=(%ud -.r.i.dep)
-      ;;(@ (need (sky %cw (tope -.i.dep /))))
-    ?:  =(0 p.r.i.dep)
-      ;;(@ (need (sky %cw (tope -.i.dep(r da/now) /))))
-    p.r.i.dep
+    ?-  -.u.hem
+      &  (onto p.u.hem pul)
+      |  ~|(aute/p.u.hem !!)
+    ==
   ::
   ++  hemp                                             ::  auxillary(/~) request
     |=  [oar=ship pok=pork quy=quay]
-    ^-  (unit (set beam))
+    ^-  (unit (each (set beam) ,[p=ship q=pork]))
     ?.  ?=([%'~' @ *] q.pok)  ~
     :-  ~
     =*  pef  i.t.q.pok
     =+  but=t.t.q.pok                 ::  XX  =*
-    ?+  pef  ~|(pfix-lost/`path`/~/[pef] !!)
-      %on  ?~  but
-             %-  sa
-             %+  turn  quy  |=  [a=cord b=@]  ^-  beam
-             ~|  on/bad-query/quy
-             ?.  =('' b)  !!
-             %-  need  %-  tome  %-  stab
-             ?:  =('/' (end 3 1 a))
-               a
-             (cat 3 '/' a)
-           =-  ~|(on/bad-path/but [(need (tome -)) ~ ~])
-           ?:  =('~' (end 3 1 i.but))
-             but
-           [(scot %p oar) but]
+    ?+    pef  ~|(pfix-lost/`path`/~/[pef] !!)
+        %on
+      :-  %&
+      ?^  but
+        ~|  on/bad-path/but
+        =-  [(need (tome -)) ~ ~]
+        ?:  =('~' (end 3 1 i.but))
+          but
+        [(scot %p oar) but]
+      %-  sa
+      %+  turn  quy  |=  [a=cord b=@]  ^-  beam
+      ~|  on/bad-query/quy
+      ?.  =('' b)  !!
+      %-  need  %-  tome  %-  stab
+      ?:  =('/' (end 3 1 a))
+        a
+      (cat 3 '/' a)
+        %as
+      :-  %|
+      ~|  bad-ship/?~(but ~ i.but)
+      ?~  but  !!
+      :_  pok(q t.but)
+      ?+  i.but  (slav %p i.but)
+        %anon  (add our ^~((bex 64)))
+        %own   our
+      ==
     ==
 ::     ?.  (home oar)
 ::       (hork oar hyx)
@@ -813,8 +812,8 @@
 ::     !=(~ (sky /a/(scot %p who)/buck/(scot %da now)))
   ::
   ++  hoot                                              ::  clay request
-    |=  [our=ship wir=path rif=riff]
-    (miff wir %c [%warp [our our] rif])
+    |=  [our=ship wir=path his=ship rif=riff]
+    (miff wir %c [%warp [our his] rif])
   ::
   ++  hone                                              ::  kill ford
     |=  [our=ship ses=hole]
@@ -882,7 +881,7 @@
 ::         q.rem  (~(put by q.rem.rot) num hen)
 ::       ==
 ::     ==
-  ::
+::   ::
   ++  horn                                              ::  irregular request
     |=  [pul=purl cip=clip moh=moth]
     ^-  (unit gift)
@@ -905,46 +904,48 @@
       ==
     ==
   ::
-::   ++  huff                                              ::  request by ship
-::     |=  [our=ship cip=clip pul=purl moh=moth]
-::     =*  sec  p.p.pul
+  ++  huff                                              ::  request by ship
+    |=  [our=ship cip=clip pul=purl moh=moth]
+    ^-  [p=hole q=cyst]
+    =*  sec  p.p.pul
 ::     =+  ^=  sef  ^-  serf
 ::         =+  suf=(~(get by own) our)
 ::         ?^  suf  u.suf
 ::         =+  sef=*serf
 ::         sef(pef (cat 3 gub (rsh 3 1 (scot %p our))))    ::  XX transitional
 ::     =+  ^=  saw  ^-  [p=hole q=cyst]
-::         =+  lig=(coss pef.sef q.moh)
-::         ?^  lig
-::           =+  cyz=(need (~(get by wup.sef) u.lig))
-::           [u.lig cyz(cug ~)]
-::         =+  ses=(rsh 3 1 (scot %p (end 6 1 ney)))
-::         :-  ses
-::         ^-  cyst
-::         :*  ^-  cred
-::             :*  [sec q.p.pul r.p.pul]
-::                 ~
-::                 (rsh 3 1 (scot %p (end 6 1 (shaf %oryx ses))))
-::             ::
-::                 =+  lag=(~(get by q.moh) %accept-language)
-::                 ?~(lag ~ ?~(u.lag ~ [~ i.u.lag]))
-::             ::
-::                 cip
-::                 ~
-::             ==
-::         ::
-::             ~
-::         ::
-::             :_  ~
-::             %^  cat  3
-::               (cat 3 (cat 3 pef.sef '=') ses)
-::             ::  (cat 3 '; HttpOnly' ?.(sec '' '; Secure'))
-::             '; Path=/; HttpOnly'
-::         ::
-::             now
-::             ~
-::             [1 ~]
-::         ==
+    =+  pef=(cat 3 gub (rsh 3 1 (scot %p our)))
+    =+  lig=(coss pef q.moh)
+::     ?^  lig
+::       =+  cyz=(need (~(get by wup.sef) u.lig))
+::       [u.lig cyz(cug ~)]
+    =+  ses=(rsh 3 1 (scot %p (end 6 1 ney)))
+    :-  ses
+    ^-  cyst
+    :*  ^-  cred
+        :*  [sec q.p.pul r.p.pul]
+            ~
+            (rsh 3 1 (scot %p (end 6 1 (shaf %oryx ses))))
+        ::
+            =+  lag=(~(get by q.moh) %accept-language)
+            ?~(lag ~ ?~(u.lag ~ [~ i.u.lag]))
+        ::
+            cip
+            ~
+        ==
+    ::
+::         ~
+    ::
+        :_  ~
+        %^  cat  3
+          (cat 3 (cat 3 pef '=') ses)
+        ::  (cat 3 '; HttpOnly' ?.(sec '' '; Secure'))
+        '; Path=/; HttpOnly'
+    ::
+        now
+::         ~
+::         [1 ~]
+    ==
 ::     abet:work:(~(into ya [our p.saw] sef q.saw) pul moh)
   ::
   ++  jive                                              ::  success json
@@ -958,6 +959,26 @@
   ++  miff                                              ::  pass card
     |=  noe=[wire note]
     +>(mow :_(mow [hen %pass noe]))
+  ::
+  ++  onto                                              ::  clay long-poll
+    |=  [dep=(set beam) pul=purl]
+    ?:  ?=([~ %js] p.q.pul)  ::  XX treat non-json cases?
+      %^  resp  200  text//javascript
+      """
+      window.urb = \{poll: "/{(apex:earn %| q.pul(u.p %json) r.pul)}"}
+      {(trip poll:js)}
+      """
+    =+  des=(~(tap in dep))
+    |-  ^+  ..onto
+    ?~  des  ..onto
+    %^  hoot:$(des t.des)
+      our  [%y (tope i.des)]
+    =-  [p.i.des q.i.des ~ %& %y ud/+(`@ud`-) s.i.des]
+    ?.  ?=(%ud -.r.i.des)
+      ;;(@ (need (sky %cw (tope -.i.des /))))
+    ?:  =(0 p.r.i.des)
+      ;;(@ (need (sky %cw (tope -.i.des(r da/now) /))))
+    p.r.i.des
   ::
   ++  resp                                              ::  mime response
     |=  [sas=@uG mit=mite bod=tape]
@@ -1193,7 +1214,7 @@
 ::         [%path %s (crip <pax.sem>)]
 ::         [%data `json`jon]
 ::     ==
-  ::
+::   ::
   ++  ya                                                ::  session engine
     =|  [[our=ship ses=hole] ~] ::serf cyst]
 ::     =*  sef  ->-
