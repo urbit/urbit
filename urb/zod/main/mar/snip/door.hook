@@ -4,15 +4,15 @@
 /?  314
 !:
 |%
-  ++  words  10
+  ++  words  1
   ++  hedtal
-    |=  a=marl  ^-  [hed=tape tal=marl]
+    |=  a=marl  ^-  [hed=marl tal=marl]
     ?~  a  [~ ~]
     ?.  ?=(%h1 n.g.i.a)
       =+  had=$(a c.i.a)
       ?^  -.had  had
       $(a t.a)
-    [(extract c.i.a) (limit words t.a)]
+    [c.i.a (limit words t.a)]
   ::
   ++  extract
     |=  a=marl  ^-  tape
@@ -38,11 +38,11 @@
     |=  [lim=@u tay=tape]  ^-  [lim=@u tay=tape]
     ?~  tay  [lim tay]
     ?~  lim  [0 ~]
-    =+  wer=((plus alp) 1^1 tay)
+    =+  wer=(dot 1^1 tay)
     ?~  q.wer
       [lim - tay]:[i.tay $(tay t.tay)]
     =+  nex=$(lim (dec lim), tay q.q.u.q.wer)
-    [-.nex (welp (wonk wer) +.nex)]
+    [-.nex [(wonk wer) +.nex]]
 --
 ::
 !:
@@ -61,5 +61,5 @@
           ++  psal  
             |=  a=manx
             =+  (hedtal +.a)
-            ;div:(h1:"{hed}" div:"*{tal}")
+            ;div:(h1:"*{hed}" div:"*{tal}")
 --        --
