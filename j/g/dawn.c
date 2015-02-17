@@ -1,6 +1,5 @@
 /* j/g/dawn.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 #include <cmark.h>
