@@ -393,17 +393,9 @@
   ++  patch
     |=  [pax=path bar=lobe]
     ^-  [duct path note]
-    :^    hen
-        [%patching (scot %p who) syd pax]
-      %f
-    :^  %exec  who  ~
-    |-  ^-  silk
-    =+  bob=(~(got by lat.ran) bar)
-    ?-  -.bob
-      %direct    [%done ~ q.bob]
-      %indirect  [%done ~ q.bob]
-      %delta     [%pact $(bar q.bob) [%done ~ r.bob]]
-    ==
+    :+  hen
+      [%patching (scot %p who) syd pax]
+    [%f %exec who ~ (lobe-to-silk:ze bar)]
   ::
   ++  apply-edit
     |=  wen=@da
@@ -816,6 +808,16 @@
     ++  aeon-to-yaki  (cork aeon-to-tako tako-to-yaki)
     ++  lobe-to-blob  ~(got by lat.ran)                 ::  grab blob
     ++  tako-to-yaki  ~(got by hut.ran)
+    ++  lobe-to-silk
+      |=  a=lobe
+      |-  ^-  silk
+      =+  bob=(~(got by lat.ran) a)
+      ?-  -.bob
+        %direct     [%done ~ q.bob]
+        %indirect   [%done ~ q.bob]
+        %delta      [%pact $(a q.bob) [%done ~ r.bob]]
+      ==
+    ::
     ++  make-direct                                     ::  make blob
       |=  [p=cage]
       ^-  blob
@@ -842,7 +844,7 @@
       |=  lar=(list ,[p=path q=misu])                   ::  store changes
       ^-  (map path blob)
       =+  ^=  hat                                       ::  current state
-          ?:  =(let.dom 0)                                  ::  initial commit
+          ?:  =(let.dom 0)                              ::  initial commit
             ~                                           ::  has nothing
           =<  q
           %-  aeon-to-yaki
@@ -942,10 +944,6 @@
           $(r.ank r.r.ank, axe (peg axe 3))
         ==
       ==
-    ::
-    ++  construct-merge
-      |=  [gem=germ her=ship sud=desk]
-      !!
     ::
     ++  edit                                            ::    edit:ze
       |=  [wen=@da lem=nuri]                            ::  edit
@@ -1146,19 +1144,19 @@
         |=  gem=germ
         ^+  +>
         ?:  (~(has by mer) ali)
-          +>.$(gon ``[%already-merging >[ali bob]< ~])
+          +>.$(gon ``[%already-merging >ali< >bob< ~])
         ?:  &(=(0 let.dom) !?=(%init gem))
-          +>.$(gon ``[%no-desk >[ali bob]< ~])
+          +>.$(gon ``[%no-bob-desk >ali< >bob< ~])
         =.  gem.dat  gem
         =.  cas.dat  [%da now]
-        ?:  ?=(%init gem)
+        ?:  ?=(%init gem.dat)
           fetch-ali
         =+  (~(get by hit.dom) let.dom)
         ?~  -
-          +>.$(gon ``[%no-version >[ali bob]< ~])
+          +>.$(gon ``[%no-bob--version >ali< >bob< ~])
         =+  (~(get by hut.ran) u.-)
         ?~  -
-          +>.$(gon ``[%no-commit >[ali bob]< ~])
+          +>.$(gon ``[%no-bob-commit >ali< >bob< ~])
         fetch-ali(bob.dat u.-)
       ::
       ++  fetch-ali
@@ -1173,16 +1171,24 @@
         |=  rot=riot
         ^+  +>
         ?~  rot
-          +>.$(gon ``[%bad-fetch-ali >[ali bob]< ~])
+          +>.$(gon ``[%bad-fetch-ali >ali< >bob< ~])
         =+  ^=  dum
             %-  (hard ,[ank=* let=@ud hit=(map ,@ud tako) lab=(map ,@tas ,@ud)])
             q.q.r.u.rot
-        =.  ali.dat  (~(got by hut.ran) (~(got by hit.dum) let.dum))
+        ?:  =(0 let.dum)
+          +>.$(gon ``[%no-ali-desk >ali< >bob< ~])
+        =+  (~(get by hit.dum) let.dum)
+        ?~  -
+          +>.$(gon ``[%no-ali-version >ali< >bob< ~])
+        =+  (~(get by hut.ran) u.-)
+        ?~  -
+          +>.$(gon ``[%no-ali-commit >ali< >bob< ~])
+        =.  ali.dat  u.-
         |-
         ?-    gem.dat
             %init
           ?.  =(let.dom 0)
-            +>.^$(gon ``[%bad-init-merge >[ali bob]< ~])
+            +>.^$(gon ``[%bad-init-merge >ali< >bob< ~])
           =.  new.dat  ali.dat
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
           =.  erg.dat  (~(run by q.ali.dat) |=(lobe %&))
@@ -1194,7 +1200,7 @@
           ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
             +>.^$(gon `~)
           ?.  (~(has in (reachable-takos r.ali.dat)) r.bob.dat)
-            +>.^$(gon ``[%bad-fine-merge >[ali bob]< ~])
+            +>.^$(gon ``[%bad-fine-merge >ali< >bob< ~])
           =.  new.dat  ali.dat
           =.  erg.dat
             %-  ~(uni by `(map path ,?)`(~(run by q.bob.dat) |=(lobe %|)))
@@ -1223,45 +1229,136 @@
             `(map path ,?)`(~(run by q.ali.dat) |=(lobe %&))
           checkout
         ::
-            %mate
-          +>.^$(gon ``[%mate-not-implemented >[ali bob]< ~])
-        ::
-            %meld
-          +>.^$(gon ``[%meld-not-implemented >[ali bob]< ~])
+            ?(%mate %meld)
+          ?:  =(r.ali.dat r.bob.dat)
+            +>.^$(gon `~)
+          ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
+            +>.^$(gon `~)
+          ?:  (~(has in (reachable-takos r.ali.dat)) r.bob.dat)
+            $(gem.dat %fine)
+          =+  r=(find-merge-points:he ali.dat bob.dat)
+          ?~  r
+            +>.^$(gon ``[%mate-no-merge-base >ali< >bob< ~])
+          ?.  ?=([* ~ ~] r)
+            +>.^$(gon ``[%mate-criss-cross >ali< >bob< ~])
+          =.  bas.dat  n.r
+          diff-ali
+        ==
+      ::
+      ++  diff-bas
+        |=  [nam=term yak=yaki]
+        ^+  +>
+        =-  %_(+>.$ tag [- tag])
+        :*  hen
+            =+  (cat 3 %diff- nam)
+            [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali - ~]
+            %f  %exec  p.bob  ~  %tabl
+            ^-  (list (pair silk silk))
+            %+  welp
+              ^-  (list (pair silk silk))
+              %+  murn  (~(tap by q.bas.dat))
+              |=  [pax=path lob=lobe]
+              ^-  (unit (pair silk silk))
+              =+  (~(get by q.yak) lob)
+              ?~  -
+                ~
+              ?:  =(lob u.-)
+                ~
+              :-  ~
+              :-  [%done ~ %path !>(pax)]
+              [%diff (lobe-to-silk lob) (lobe-to-silk u.-)]
+            %+  turn
+              %+  skip  (~(tap by q.yak))
+              |=([path lobe] (~(has by q.bas.dat) +<-))
+            |=  [pax=path lob=lobe]
+            ^-  (pair silk silk)
+            [[%done ~ %path !>(pax)] (lobe-to-silk lob)]
         ==
       ::
       ++  diff-ali
         ^+  .
-        =-  %_(+ tag [- tag])
-        :*  hen
-            [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %diff-ali ~]
-            %f  %exec  p.bob  ~  %tabl
-            ^-  (list (pair silk silk))
-            !!
-        ==
+        (diff-bas %ali ali.dat)
       ::
       ++  diffed-ali
         |=  res=(each bead (list tank))
         ^+  +>
-        !!
+        ?:  ?=(%| -.res)  
+          +>.$(gon ``[%diff-ali-bad-made leaf/"merge diff ali failed" p.res])
+        =+  cay=q.p.res
+        ?@  p.cay
+          +>.$(gon ``[%diff-ali-bad-marc >ali< >bob< >p.cay< ~])
+        =|  dal=(map path cage)
+        =>
+          |-  ^+  +
+          ?~  p.p.cay
+            +.$(dal ~)
+          =+  tal=%_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
+          ?^  gon.tal
+            tal
+          ?.  ?=(%path p.i.p.p.cay)
+            +.$(gon ``[%diff-ali-strange-marc-a >ali< >bob< >p.i.p.p.cay< ~])
+          ?.  ?=(@ q.i.p.p.cay)
+            +.$(gon ``[%diff-ali-strange-marc-b >ali< >bob< >q.i.p.p.cay< ~])
+          =+  coy=(slot 2 q.cay)
+          ?@  q.coy
+            +.$(gon ``[%diff-ali-strange-coy >ali< >bob< ~])
+          %_    +.$
+              dal
+            %+  ~(put by dal:tal)
+              ((hard path) -.q.coy)
+            [q.i.p.p.cay (slot 3 coy)]
+          ==
+        ?^  gon
+          +>.$
+        =.  dal.dat  dal
+        diff-bob
       ::
       ++  diff-bob
         ^+  .
-        !!
+        (diff-bas %bob bob.dat)
       ::
       ++  diffed-bob
         |=  res=(each bead (list tank))
         ^+  +>
-        !!
+        ?:  ?=(%| -.res)  
+          +>.$(gon ``[%diff-bob-bad-made leaf/"merge diff bob failed" p.res])
+        =+  cay=q.p.res
+        ?@  p.cay
+          +>.$(gon ``[%diff-bob-bad-marc >ali< >bob< >p.cay< ~])
+        =|  dal=(map path cage)
+        =>
+          |-  ^+  +
+          ?~  p.p.cay
+            +.$(dal ~)
+          =+  tal=%_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
+          ?^  gon.tal
+            tal
+          ?.  ?=(%path p.i.p.p.cay)
+            +.$(gon ``[%diff-bob-strange-marc-a >ali< >bob< >p.i.p.p.cay< ~])
+          ?.  ?=(@ q.i.p.p.cay)
+            +.$(gon ``[%diff-bob-strange-marc-b >ali< >bob< >q.i.p.p.cay< ~])
+          =+  coy=(slot 2 q.cay)
+          ?@  q.coy
+            +.$(gon ``[%diff-bob-strange-coy >ali< >bob< ~])
+          %_    +.$
+              dal
+            %+  ~(put by dal:tal)
+              ((hard path) -.q.coy)
+            [q.i.p.p.cay (slot 3 coy)]
+          ==
+        ?^  gon
+          +>.$
+        =.  dob.dat  dal
+        merge
       ::
       ++  merge
         ^+  .
-        !!
+        .(gon ``[%merge-not-implemented ~])
       ::
       ++  merged
         |=  res=(each bead (list tank))
         ^+  +>
-        !!
+        +>.$(gon ``[%merged-not-implemented ~])
       ::
       ++  checkout
         ^+  .
@@ -1273,14 +1370,7 @@
             %+  turn  (~(tap by q.new.dat))
             |=  [a=path b=lobe]
             ^-  (pair silk silk)
-            :-  [%done ~ %path !>(a)]
-            |-  ^-  silk
-            =+  bob=(~(got by lat.ran) b)
-            ?-  -.bob
-              %direct     [%done ~ q.bob]
-              %indirect   [%done ~ q.bob]
-              %delta      [%pact $(b q.bob) [%done ~ r.bob]]
-            ==
+            [[%done ~ %path !>(a)] (lobe-to-silk b)]
         ==
       ::
       ++  checked-out
@@ -1289,7 +1379,8 @@
         ?:  ?=(%| -.res)  
           +>.$(gon ``[%checkout-bad-made leaf/"merge checkout failed" p.res])
         =+  cay=q.p.res
-        ?@  p.cay  ~|  %patch-bad-marc  !!
+        ?@  p.cay
+          +>.$(gon ``[%patch-bad-marc >ali< >bob< >p.cay< ~])
         =|  can=(list ,[path cage])
         =>
           |-  ^+  +
@@ -1299,12 +1390,12 @@
           ?^  gon.tal
             tal
           ?.  ?=(%path p.i.p.p.cay)
-            +.$(gon ``[%patch-strange-marc-a >[ali bob]< >p.i.p.p.cay< ~])
+            +.$(gon ``[%patch-strange-marc-a >ali< >bob< >p.i.p.p.cay< ~])
           ?.  ?=(@ q.i.p.p.cay)
-            +.$(gon ``[%patch-strange-marc-b >[ali bob]< >p.i.p.p.cay< ~])
+            +.$(gon ``[%patch-strange-marc-b >ali< >bob< >q.i.p.p.cay< ~])
           =+  coy=(slot 2 q.cay)
           ?@  q.coy
-            +.$(gon ``[%patch-strange-coy >[ali bob]< ~])
+            +.$(gon ``[%patch-strange-coy >ali< >bob< ~])
           %_    +.$
               can
             :_  can:tal
@@ -1345,7 +1436,7 @@
         ?:  ?=(%| -.res)
           +>.$(gon ``[%ergo-bad-made leaf/"merge ergo failed" p.res])
         ?~  hez
-          +>.$(gon ``[%ergo-no-hez >[ali bob]< ~])
+          +>.$(gon ``[%ergo-no-hez >ali< >bob< ~])
         =+  cay=q.p.res
         ?@  p.cay  ~|  %patch-bad-marc  !!
         =|  can=(list ,[path (unit mime)])
@@ -1357,12 +1448,12 @@
           ?^  gon.tal
             tal
           ?.  ?=(%path p.i.p.p.cay)
-            +.$(gon ``[%patch-strange-marc-a >[ali bob]< >p.i.p.p.cay< ~])
+            +.$(gon ``[%patch-strange-marc-a >ali< >bob< >p.i.p.p.cay< ~])
           ?.  ?=(@ q.i.p.p.cay)
-            +.$(gon ``[%patch-strange-marc-b >[ali bob]< >p.i.p.p.cay< ~])
+            +.$(gon ``[%patch-strange-marc-b >ali< >bob< >p.i.p.p.cay< ~])
           =+  coy=(slot 2 q.cay)
           ?@  q.coy
-            +.$(gon ``[%patch-strange-coy >[ali bob]< ~])
+            +.$(gon ``[%patch-strange-coy >ali< >bob< ~])
           %_    +.$
               can
             :_  can:tal
@@ -1377,9 +1468,53 @@
             gon  `~
             reg  [[u.hez %ergo who syd let.dom can] reg]
         ==
+      ::
+      ++  he
+        |%
+        ++  find-merge-points
+          |=  [p=yaki q=yaki]                           ::  maybe need jet
+          ^-  (set yaki)
+          %-  reduce-merge-points
+          =+  r=(reachable-takos r.p)
+          |-  ^-  (set yaki)
+          ?:  (~(has in r) r.q)  (~(put in *(set yaki)) q)
+          %+  roll  p.q
+          |=  [t=tako s=(set yaki)]
+          ?:  (~(has in r) t)
+            (~(put in s) (tako-to-yaki t))              ::  found
+          (~(uni in s) ^$(q (tako-to-yaki t)))          ::  traverse
+        ::
+        ++  reduce-merge-points
+          |=  unk=(set yaki)                            ::  maybe need jet
+          =|  gud=(set yaki)
+          =+  ^=  zar
+              ^-  (map tako (set tako))
+              %+  roll  (~(tap in unk))
+              |=  [yak=yaki qar=(map tako (set tako))]
+              (~(put by qar) r.yak (reachable-takos r.yak))
+          |-  
+          ^-  (set yaki)
+          ?~  unk  gud
+          =+  bun=(~(del in `(set yaki)`unk) n.unk)
+          ?:  %+  levy  (~(tap by (~(uni in gud) bun)) ~)
+              |=  yak=yaki
+              !(~(has in (~(got by zar) r.yak)) n.unk)
+          ::  I'm pretty sure this is just wrong, but given
+          ::  the relative intelligence levels of me and Jared,
+          ::  I'm going to keep it here for a little bit
+          ::  ?:  %+  roll  (~(tap by (~(uni in gud) bun)) ~)
+          ::      |=  [tak=yaki god=?]                  ::  only good + unknown
+          ::      ^-  ?
+          ::      ?.  god  god
+          ::      (~(has in (~(got by zar) r.tak)) n.unk)
+          ::  Also, I'd be curious how often this actually
+          ::  elminates merge points
+            $(gud (~(put in gud) n.unk), unk bun)
+          $(unk bun)
+        --
       --
     --
---
+  --
 ::
 ++  do
   |=  [now=@da hen=duct [who=ship him=ship] syd=@tas ruf=raft]
