@@ -1,6 +1,5 @@
 /* w/test.c
 **
-** This file is in the public domain.
 */
 #define C3_GLOBAL
 

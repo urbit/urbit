@@ -1,6 +1,5 @@
 /* j/5/mule.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 

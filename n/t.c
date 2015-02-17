@@ -1,6 +1,5 @@
 /* g/t.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 #include <pthread.h>
