@@ -7,9 +7,9 @@
   |=  [^ but=path]
   ^-  (set path)
   ?>  ?=([%dep @ ~] but)
-  %-  sa  
+  %-  sa
   %+  turn  `path`(need (pick i.t.but))
-  |=(a=span (scag 3 `path`(need (pick a))))
+  |=(a=span `path`(need (pick a)))
 !:
 |_  own=manx
 ::
@@ -28,10 +28,11 @@
 ::     =+  bek=(sa (turn (turn dep) |=(a=beam (tope a(s ~)))))                                    ::  inject into %hymn
     %_    old
         c.i.c
-      :-  ;meta(charset "utf-8", urb_injected "");
-      %-  welp  :_  c.i.c.old
-      %+  turn  (~(tap in dep))
-      |=(loc=path ;script@"/~/on{(spud loc)}.js"(urb_injected "");)
+      :+  ;meta(charset "utf-8", urb_injected "");
+        =+  det=`tang`(turn (~(tap in dep)) |=(a=path leaf/+:(spud a)))
+        =+  pax=~(ram re %rose ["&" `~] det)
+        ;script@"/~/on.js?{pax}";
+      c.i.c.old
     ==
   --
 --
