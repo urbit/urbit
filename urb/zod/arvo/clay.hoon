@@ -14,6 +14,7 @@
 ++  gift                                                ::  out result <-$
           $%  [%ergo p=@p q=@tas r=@ud s=(list ,[path (unit mime)])]
                                                         ::  version update
+              [%mere p=ares]                            ::  merge result
               [%note p=@tD q=tank]                      ::  debug message
               [%writ p=riot]                            ::  response
           ==                                            ::
@@ -1115,18 +1116,19 @@
         |=  way=path
         ^+  +>
         ?~(way +> $(way t.way, +> (descend i.way)))
-      ::
       --
     ::
     ++  me                                              ::  merge ali into bob
       |=  ali=(pair ship desk)                          ::  from
       =+  bob=`(pair ship desk)`[who syd]               ::  to
       =+  dat=(fall (~(get by mer) ali) *mery)          ::  merge data
-      =|  gon=?                                         ::  keep going
+      =|  gon=(unit ares)                               ::  keep going
       |%
       ++  abet
         ^+  ..me
-        ..me(mer ?:(gon (~(put by mer) ali dat) (~(del by mer) ali)))
+        ?~  gon
+          ..me(mer (~(put by mer) ali dat))
+        ..me(mer (~(del by mer) ali), reg :_(reg [hen %mere u.gon]))
       ::
       ++  route
         |=  [sat=term res=(each riot (each bead (list tank)))]
@@ -1144,8 +1146,7 @@
         |=  gem=germ
         ^+  +>
         ?:  (~(has by mer) ali)
-          ~|  (crip <[%already-merging ali bob]>)
-          !!
+          +>.$(gon ``[%already-merging >[ali bob]< ~])
         =.  gem.dat  gem
         =.  cas.dat  [%da now]
         =.  bob.dat
@@ -1165,8 +1166,7 @@
         |=  rot=riot
         ^+  +>
         ?~  rot
-          ~|  (crip <[%bad-fetch-ali ali bob]>)
-          !!
+          +>.$(gon ``[%bad-fetch-ali >[ali bob]< ~])
         =+  ^=  dum
             %-  (hard ,[ank=* let=@ud hit=(map ,@ud tako) lab=(map ,@tas ,@ud)])
             q.q.r.u.rot
@@ -1175,8 +1175,7 @@
         ?-    gem.dat
             %init
           ?.  =(let.dom 0)
-            ~|  (crip <[%bad-init-merge ali bob]>)
-            !!
+            +>.^$(gon ``[%bad-init-merge >[ali bob]< ~])
           =.  new.dat  ali.dat
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
           =.  erg.dat  (~(run by q.ali.dat) |=(lobe %&))
@@ -1184,12 +1183,11 @@
         ::
             %fine
           ?:  =(r.ali.dat r.bob.dat)
-            +>.^$(gon |)
+            +>.^$(gon `~)
           ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
-            +>.^$(gon |)
+            +>.^$(gon `~)
           ?.  (~(has in (reachable-takos r.ali.dat)) r.bob.dat)
-            ~|  (crip <[%bad-fine-merge ali bob]>)
-            !!
+            +>.^$(gon ``[%bad-fine-merge >[ali bob]< ~])
           =.  new.dat  ali.dat
           =.  erg.dat
             %-  ~(uni by `(map path ,?)`(~(run by q.bob.dat) |=(lobe %|)))
@@ -1198,9 +1196,9 @@
         ::
             %this
           ?:  =(r.ali.dat r.bob.dat)
-            +>.^$(gon |)
+            +>.^$(gon `~)
           ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
-            +>.^$(gon |)
+            +>.^$(gon `~)
           =.  new.dat  (make-yaki [r.ali.dat r.bob.dat ~] q.bob.dat now)
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
           =.  erg.dat  ~
@@ -1208,9 +1206,9 @@
         ::
             %that
           ?:  =(r.ali.dat r.bob.dat)
-            +>.^$(gon |)
+            +>.^$(gon `~)
           ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
-            +>.^$(gon |)
+            +>.^$(gon `~)
           =.  new.dat  (make-yaki [r.ali.dat r.bob.dat ~] q.ali.dat now)
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
           =.  erg.dat
@@ -1219,10 +1217,10 @@
           checkout
         ::
             %mate
-          !!
+          +>.^$(gon ``[%mate-not-implemented >[ali bob]< ~])
         ::
             %meld
-          !!
+          +>.^$(gon ``[%meld-not-implemented >[ali bob]< ~])
         ==
       ::
       ++  diff-ali
@@ -1282,40 +1280,38 @@
         |=  res=(each bead (list tank))
         ^+  +>
         ?:  ?=(%| -.res)  
-          %_    +>.$
-              dok  ~
-              yel
-            :_  yel
-            :*  hen  %note  '!'  %rose  [" " "" ""]
-                leaf/"merge checkout failed"  p.res
-            ==
-          ==
-        =.  let.dom  +(let.dom)
-        =.  hit.dom  (~(put by hit.dom) let.dom r.new.dat)
+          +>.$(gon ``[%checkout-bad-made leaf/"merge checkout failed" p.res])
         =+  cay=q.p.res
         ?@  p.cay  ~|  %patch-bad-marc  !!
-        =.  ank.dat
-          %-  checkout-ankh:ze
-          %-  mo
-          |-  ^-  (list ,[path cage])
+        =|  can=(list ,[path cage])
+        =>
+          |-  ^+  +
           ?~  p.p.cay
-            ~
-          :_  %_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
+            +.$(can ~)
+          =+  tal=%_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
+          ?^  gon.tal
+            tal
           ?.  ?=(%path p.i.p.p.cay)
-            ~|  %patch-strange-marc-a
-            !!
+            +.$(gon ``[%patch-strange-marc-a >[ali bob]< >p.i.p.p.cay< ~])
           ?.  ?=(@ q.i.p.p.cay)
-            ~|  %patch-strange-marc-b
-            !!
+            +.$(gon ``[%patch-strange-marc-b >[ali bob]< >p.i.p.p.cay< ~])
           =+  coy=(slot 2 q.cay)
           ?@  q.coy
-            ~|  %patch-strange-coy
-            !!
-          :-  ((hard path) -.q.coy)
-          [q.i.p.p.cay (slot 3 coy)]
+            +.$(gon ``[%patch-strange-coy >[ali bob]< ~])
+          %_    +.$
+              can
+            :_  can:tal
+            :-  ((hard path) -.q.coy)
+            [q.i.p.p.cay (slot 3 coy)]
+          ==
+        ?^  gon
+          +>.$
+        =.  let.dom  +(let.dom)
+        =.  hit.dom  (~(put by hit.dom) let.dom r.new.dat)
+        =.  ank.dat  (checkout-ankh:ze (mo can))
         =.  ank.dom  ank.dat
         ?~  hez
-          +>.$(gon |)                                   ::  XX  resolve
+          +>.$(gon `~)                                  ::  XX  resolve
         ergo
       ::
       ++  ergo
@@ -1340,41 +1336,39 @@
         |=  res=(each bead (list tank))
         ^+  +>
         ?:  ?=(%| -.res)
-          %_    +>.$
-              gon  |
-              yel
-            :_  yel
-            [hen %note '!' %rose [" " "" ""] leaf/"merge ergo failed" p.res]
-          ==
+          +>.$(gon ``[%ergo-bad-made leaf/"merge ergo failed" p.res])
         ?~  hez
-          ~|  (crip <[%no-hez ali bob]>)
-          !!
+          +>.$(gon ``[%ergo-no-hez >[ali bob]< ~])
         =+  cay=q.p.res
         ?@  p.cay  ~|  %patch-bad-marc  !!
-        %=    +>.$
-            gon  |
-            reg
-          :_  reg
-          :*  u.hez  %ergo  who  syd  let.dom
-              |-  ^-  (list ,[path (unit mime)])
-              ?~  p.p.cay
-                ~
-              :_  %_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
-              ?.  ?=(%path p.i.p.p.cay)
-                ~|  %ergo-strange-marc-a
-                !!
-              ?.  ?=(@ q.i.p.p.cay)
-                ~|  %ergo-strange-marc-b
-                !!
-              =+  coy=(slot 2 q.cay)
-              ?@  q.coy
-                ~|  %ergo-strange-coy
-                !!
-              :-  ((hard path) -.q.coy)
-              ?.  ?=(%mime q.i.p.p.cay)
-                ~
-              `((hard mime) q:(slot 3 coy))
+        =|  can=(list ,[path (unit mime)])
+        =>
+          |-  ^+  +
+          ?~  p.p.cay
+            +.$(can ~)
+          =+  tal=%_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
+          ?^  gon.tal
+            tal
+          ?.  ?=(%path p.i.p.p.cay)
+            +.$(gon ``[%patch-strange-marc-a >[ali bob]< >p.i.p.p.cay< ~])
+          ?.  ?=(@ q.i.p.p.cay)
+            +.$(gon ``[%patch-strange-marc-b >[ali bob]< >p.i.p.p.cay< ~])
+          =+  coy=(slot 2 q.cay)
+          ?@  q.coy
+            +.$(gon ``[%patch-strange-coy >[ali bob]< ~])
+          %_    +.$
+              can
+            :_  can:tal
+            :-  ((hard path) -.q.coy)
+            ?.  ?=(%mime q.i.p.p.cay)
+              ~
+            `((hard mime) q:(slot 3 coy))
           ==
+        ?^  gon
+          +>.$
+        %=    +>.$
+            gon  `~
+            reg  [[u.hez %ergo who syd let.dom can] reg]
         ==
       --
     --
