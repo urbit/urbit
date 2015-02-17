@@ -9,8 +9,22 @@
 |_  [hid=hide ~]
 ++  peer  ,_`.
 ++  poke--args
-  %+  gate-bang  
-    |=  [syd=@tas her=@p sud=@tas gem=?([germ ~] ~)]
-    [%c %merg our.hid syd her sud ?~(gem %fine -.gem)]
-  (args-into-gate . ,_[%txt 'synced'])
+  |=  [ost=bone you=ship syd=@tas her=@p sud=@tas gem=?([germ ~] ~)]
+  [[ost %pass / %c %merg our.hid syd her sud ?~(gem %fine -.gem)]~ +>.$]
+::
+++  pour
+  |=  [ost=bone pax=path sih=*]
+  :_  +>.$
+  =+  ^-  tan=(list tank)
+      =+  ((soft ,[%c %mere are=ares]) sih)
+      ?~  -
+        [leaf/"not working so well" >sih< ~]
+      ?~  are.u
+        [leaf/"synced" ~]
+      [leaf/"failed to sync" >p.u.are.u< q.u.are.u]
+  %-  flop
+  :-  i=[ost %pass / %g %cide %$]
+  ^=  t
+  %+  turn  (~(tap in (~(get ju pus.hid) /out)))
+  |=(ost=bone [ost %give %rush %tang (flop tan)])
 --
