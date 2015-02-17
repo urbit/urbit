@@ -1147,12 +1147,19 @@
         ^+  +>
         ?:  (~(has by mer) ali)
           +>.$(gon ``[%already-merging >[ali bob]< ~])
+        ?:  &(=(0 let.dom) !?=(%init gem))
+          +>.$(gon ``[%no-desk >[ali bob]< ~])
         =.  gem.dat  gem
         =.  cas.dat  [%da now]
-        =.  bob.dat
-          ?:  ?=(%init gem)  bob.dat
-          (~(got by hut.ran) (~(got by hit.dom) let.dom))
-        fetch-ali
+        ?:  ?=(%init gem)
+          fetch-ali
+        =+  (~(get by hit.dom) let.dom)
+        ?~  -
+          +>.$(gon ``[%no-version >[ali bob]< ~])
+        =+  (~(get by hut.ran) u.-)
+        ?~  -
+          +>.$(gon ``[%no-commit >[ali bob]< ~])
+        fetch-ali(bob.dat u.-)
       ::
       ++  fetch-ali
         ^+  .
