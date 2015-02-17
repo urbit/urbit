@@ -1,6 +1,5 @@
 /* j/5/parse.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 
