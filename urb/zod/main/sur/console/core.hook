@@ -27,6 +27,7 @@
       [%blk p=@ud q=@c]                                 ::  blink/match char at
       [%clr ~]                                          ::  clear screen
       [%det console-change]                             ::  edit input
+      [%mor p=(list console-effect)]                    ::  multiple effects
       [%nex ~]                                          ::  save and clear input
       [%pro console-prompt]                             ::  set prompt
       [%tan p=(list tank)]                              ::  classic tank

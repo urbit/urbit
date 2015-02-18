@@ -26,11 +26,14 @@
       %set  +>.$(buf p.ted)
     ==
   ::
-  ::  symmetric operational transformation.  for any console state, obeys
+  ::::
+  ::  ++transmute: symmetric operational transformation.  
+  ::
+  ::  for any console state +>, obeys
   ::
   ::      =+  [x=(transmute a b) y=(transmute b a)]
-  ::      .=  (edit-apply:(edit-apply x) b) 
-  ::          (edit-apply:(edit-apply a) y)
+  ::      .=  (apply:(apply b) x) 
+  ::          (apply:(apply a) y)
   ::
   ++  transmute                                         ::  dex as after sin
     |=  [sin=console-edit dex=console-edit]
@@ -67,30 +70,70 @@
       ==
     ==   
   ::
-  ++  commit
+  ++  commit                                            ::  local change
     |=  ted=console-edit
     ^+  +>
     (apply(own.ven +(own.ven)) ted)
   ::
-  ++  transmit
+  ::::
+  ::  ++inverse: inverse of change in context.
+  ::
+  ::  for any console state +>, obeys
+  ::      
+  ::      =(+> (apply:(apply a) (inverse a)))
+  ::
+  ++  inverse                                           ::  relative inverse
+    |=  ted=console-edit
+    ^-  console-edit
+    ?-  -.ted
+      %del  [%ins p.ted (snag p.ted buf)]
+      %ins  [%del p.ted]
+      %mor  :-  %mor
+            %-  flop
+            |-  ^-  (list console-edit)
+            ?~  p.ted  ~
+            :-  ^$(ted i.p.ted)
+            $(p.ted t.p.ted, +>.^$ (apply i.p.ted))
+      %nop  [%nop ~]
+      %set  [%set buf]
+    ==
+  ::
+  ++  transmit                                          ::  outgoing change
     |=  ted=console-edit
     ^-  [console-change _+>]
     [[[his.ven own.ven] (sham buf) ted] (commit ted)]
   ::
-  ++  receive                                           ::  edit from other
-    |=  $:  ler=console-clock                           ::  other's clock view
-            haw=@uvH                                    ::  hash at edit
-            ted=console-edit                            ::  edit content
-        ==
-    ^+  +>
-    ?.  &(=(his.ler his.ven) (lte own.ler own.ven))
-      ~&  [%receive-mismatch ler/ler ven/ven ~]
-      !!
+  ++  realize                                           ::  naturalize event
+    |=  console-change
+    ^-  [console-edit _+>]
+    ?>  &(=(his.ler his.ven) (lte own.ler own.ven))
     ?>  &(=(his.ler his.ven) (lte own.ler own.ven))
     ?>  |(!=(own.ler own.ven) =(haw (sham buf)))
-    =:  his.ven  +(his.ven)
-        leg      (scag (sub own.ven own.ler) leg)
-      ==
-    (apply (transmute [%mor leg] ted))
+    =.  leg  (scag (sub own.ven own.ler) leg)
+    [(transmute [%mor leg] ted) +>]
+  ::
+  ++  remit                                             ::  conditional accept
+    |=  [cal=console-change ask=$+((list ,@c) ?)]
+    ^-  [(unit console-change) _+>]
+    =+  old=+>
+    =^  dat  +>.$  (realize cal)
+    =.  +>.$  (apply(his.ven +(his.ven)) dat)
+    ?:  (ask buf)
+      [~ +>.$]
+    =+  wad=(inverse dat)
+    ::  ~&  [%remit-old buf.old]
+    ::  ~&  [%remit-new buf]
+    ::  ~&  [%remit ted/ted.cal]
+    ::  ~&  [%remit dat/dat]
+    ::  ~&  [%remit wad/wad]
+    =^  lic  +>.$  (transmit wad)
+    ::  ~&  [%remit-end [lic buf]]
+    [`lic +>.$]
+  ::
+  ++  receive                                           ::  accept change
+    |=  cal=console-change
+    ^+  +>
+    =^  dat  +>  (realize cal)
+    (apply(his.ven +(his.ven)) dat)
   --
 --
