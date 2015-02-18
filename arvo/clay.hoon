@@ -819,7 +819,7 @@
       ==
     ::
     ++  make-direct                                     ::  make blob
-      |=  [p=cage]
+      |=  p=cage
       ^-  blob
       [%direct (mug p) p]
     ::
@@ -1353,7 +1353,30 @@
       ::
       ++  merge
         ^+  .
-        .(gon ``[%merge-not-implemented ~])
+        ?+    gem.dat  ~|  %merge-weird-gem  !!
+            %mate
+          =+  (~(int by dal.dat) dob.dat)
+          ?^  -
+            +(gon ``[%mate-conflict >ali< >bob< >[-]< ~])
+          =^  new  lat.ran                              ::  XX  forgot deletes
+              ^-  [(map path lobe) (map lobe blob)]
+              %+  roll  (~(tap by (~(uni by dal.dat) dob.dat)))
+              =<  .(lat lat.ran)
+              |=  [[pax=path cay=cage] new=(map path lobe) lat=(map lobe blob)]
+              =+  ^=  bol
+                  =+  (~(get by q.bas.dat) pax)
+                  ?~  -
+                    (make-direct cay)
+                  (make-delta u.- cay)
+              [(~(put by new) pax p.bol) (~(put by lat) p.bol bol)]
+          =.  new.dat
+            (make-yaki [r.ali.dat r.bob.dat ~] (~(uni by q.bas.dat) new) now)
+          =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
+          =.  erg.dat  (~(run by new) |=(lobe %&))
+          checkout
+        ::
+            %meld  .(gon ``[%merge-not-implemented ~])
+        ==
       ::
       ++  merged
         |=  res=(each bead (list tank))

@@ -1084,14 +1084,13 @@
   ++  make-direct                                       ::  make blob
     |=  [p=cage]
     ^-  blob
-    [%direct (mug p) p]
+    [%direct (mug p.p q.q.p) p]
   ::
   ++  make-delta                                        ::  make blob delta
     |=  [p=lobe q=cage]
     ^-  blob
-    =+  t=[%delta 0 p q]
     =+  ^=  has
-        %^  cat  7  (sham [%blob q.q.q])
+        %^  cat  7  (sham [%blob p.q q.q.q])
         (sham [%lobe p])
     [%delta has p q]
   ::
