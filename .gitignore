@@ -8,3 +8,4 @@
 /vere.pkg
 /.MAKEFILE-VERSION
 /make.conf
+node_modules/
