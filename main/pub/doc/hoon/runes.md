@@ -5,13 +5,16 @@ Runes
 
 In Hoon there are no reserved words. Instead, [`++twigs`]() (abstract
 syntax trees), are formed using a diagraph of two ASCII symbols, which
-is called a rune.
+is called a rune. 
+
+Runes are loosely divided into categories by their first character. To 
+find documentation on each individual category, follow these links:
+
+<list></list>
 
 </div>
 
 ------------------------------------------------------------------------
-
-<list></list>
 
 Introduction
 ------------

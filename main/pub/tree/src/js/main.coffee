@@ -56,15 +56,7 @@ $ ->
       dx = Math.abs po.cm.x-po.lm.x
       dy = Math.abs po.cm.y-po.lm.y
       
-      if dx > 20 or dy > 20
-        console.log "---"
-        console.log dy
-        console.log Math.abs po.cm.y-po.lm.y
-        console.log ds
-        console.log "---"
-        $('#nav').addClass 'moving'
-      else
-        $('#nav').removeClass 'moving'
+      $('#nav').toggleClass 'moving',(dx > 20 or dy > 20)
     po.lm = po.cm
     po.ls = po.cs
   setInterval checkMove,200
@@ -100,7 +92,8 @@ $ ->
         so.$n.addClass 'm-down m-fixed'
         return
 
-      if so.$n.hasClass 'm-fixed'
+      if so.$n.hasClass 'm-fixed' and
+      so.w < 1024
         so.$n.css left:-1*$(window).scrollLeft()
 
       if dy > 0
