@@ -41,6 +41,7 @@
 ::           ==  ==                                        ::
               $:  %f                                    ::  to %ford
           $%  [%exec p=@p q=(unit silk)]                ::
+              [%wasp p=@p q=@uvH]                       ::
           ==  ==                                        ::
 ::               $:  %g                                    ::  to %gall
 ::           $%  [%mess p=hapt q=ship r=cage]              ::
@@ -82,8 +83,9 @@
 ::           $%  [%thou p=httr]                            ::
 ::           ==  ==                                        ::
               $:  %f                                    ::  by %ford
-          $%  [%made p=(set beam) q=(each cage tang)]   ::
-::           ==  ==                                        ::
+          $%  [%made p=@uvH q=(each cage tang)]         ::
+              [%news ~]                                 ::
+          ==  ==                                        ::
 ::               $:  %g                                    ::  by %gall
 ::           $%  [%dumb ~]                                 ::
 ::               [%mean p=ares]                            ::
@@ -93,7 +95,7 @@
 ::           ==  ==                                        ::           
 ::               $:  %t                                    ::  by %time
 ::           $%  [%wake ~]                                 ::  timer activate
-          ==  ==                                        ::
+::           ==  ==                                        ::
               $:  @tas                                  ::  by any
           $%  [%crud p=@tas q=(list tank)]              ::
           ==  ==  ==                                    ::
@@ -296,13 +298,11 @@
   ==
 ::
 ++  lode
-  |=  [dep=(set beam) max=manx]
+  |=  [dep=@uvH max=manx]
   ^-  manx
-  =+  det=`tang`(turn (~(tap in dep)) |=(a=beam leaf/+:(spud (tope a))))
-  =+  pax=~(ram re %rose ["&" `~] det)
   ?>  ?=([[%html ~] [[%head ~] *] [[%body ~] ^] ~] max) ::  XX static
   ?~  dep  max
-  max(c.i.c :_(c.i.c.max ;script@"/~/on.js?{pax}";))
+  max(c.i.c :_(c.i.c.max ;script@"/~/on/{<dep>}.js";))
 ::
 :: ++  lofa                                                ::  scripts in head
 ::   |=  [mog=(list manx) luv=love]
@@ -418,6 +418,7 @@
         ==
       ==
     ::
+        %news  (jive %b &)                               ::  dependency updated
         %writ
       ::  ?^  tea  ~&(e/missed/writ/tea=tea +>.$)
       ?~  p.sih  +>.$
@@ -634,8 +635,8 @@
     ==
   ::
   ++  back                                              ::  %ford bounce
-    |=  [tea=wire dep=(set beam) cag=cage]                
-    (miff tea %f %exec our `[%cast %mime %done dep cag])
+    |=  [tea=wire dep=@uvH cag=cage]                
+    (miff tea %f %exec our `[%cast %mime %done ~ cag])  ::  XX deps
   ::
   ++  doss                                              ::  host to ship
     |=  hot=host
@@ -646,9 +647,9 @@
     (rush -:(flop p.hot) fed:ag)
   ::
   ++  fail                                              ::  request failed
-    |=  [sas=@ud dep=(set beam) mez=tang]
+    |=  [sas=@ud dep=@uvH mez=tang]
     ^+  +>
-    ::  (back ~ ~ %tang !>(mez))  ::  XX broken tang->mime door in ford
+    ::  (back ~ dep %tang !>(mez))  ::  XX broken tang->mime door in ford
     (resp sas text//html (poxo (lode dep (loga mez))))
   ::
 ::   ++  gale                                              ::  ya from response
@@ -750,7 +751,7 @@
     ::  =+  oar=`(unit ship)`?^(wiq wiq (doss r.p.pul))
     =+  oar=(fall (doss r.p.pul) (need hov))
     =+  ext=(fall p.q.pul %urb)
-    %-  |=(a=(each ,_..hell tang) ?~(-.a p.a (fail 404 ~ >%exit< p.a)))
+    %-  |=(a=(each ,_..hell tang) ?~(-.a p.a (fail 404 0v0 >%exit< p.a)))
     %-  mule  |.  ^+  ..hell
     =+  hev=(heft oar q.pul)
     ?^  hev
@@ -768,7 +769,7 @@
   ::
   ++  hemp                                             ::  auxillary(/~) request
     |=  [oar=ship pok=pork quy=quay]
-    ^-  (unit (each (set beam) ,[p=ship q=pork]))
+    ^-  (unit (each ?(~ @uvH (set beam)) ,[p=ship q=pork]))
     ?.  ?=([%'~' @ *] q.pok)  ~
     :-  ~
     =*  pef  i.t.q.pok
@@ -778,6 +779,8 @@
       :-  %&
       ?^  but
         ~|  on/bad-path/but
+        ?~  t.but
+          (slav %uv i.but)
         =-  [(need (tome -)) ~ ~]
         ?:  =('~' (end 3 1 i.but))
           but
@@ -904,6 +907,10 @@
       ==
     ==
   ::
+  ++  howa                                              ::  ford %wasp request
+    |=  [tea=wire dep=@uvH]
+    (miff tea %f [%wasp our dep])
+  ::
   ++  huff                                              ::  request by ship
     |=  [our=ship cip=clip pul=purl moh=moth]
     ^-  [p=hole q=cyst]
@@ -961,14 +968,16 @@
     +>(mow :_(mow [hen %pass noe]))
   ::
   ++  onto                                              ::  clay long-poll
-    |=  [dep=(set beam) pul=purl]
+    |=  [dep=?(~ @uvH (set beam)) pul=purl]
     ?:  ?=([~ %js] p.q.pul)  ::  XX treat non-json cases?
       %^  resp  200  text//javascript
       """
       window.urb = \{poll: "/{(apex:earn %| q.pul(u.p %json) r.pul)}"}
       {(trip poll:js)}
       """
-    =+  des=(~(tap in dep))
+    ?~  dep  ..onto  
+    ?@  dep  (howa ~ dep)
+    =+  des=(~(tap in `(set beam)`dep))
     |-  ^+  ..onto
     ?~  des  ..onto
     %^  hoot:$(des t.des)
