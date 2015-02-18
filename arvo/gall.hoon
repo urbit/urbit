@@ -260,7 +260,7 @@
       ^-  [p=(list move) q=_..^$]
       ?:  ?=(%crud +<.q.hin)
         ~&  [%gall-crud-error pax hen]
-        ::  ~&  [%gall-crud-data (,[@tas (list tank)] +>.q.hin)]
+        ~&  [%gall-crud-data (,[@tas (list tank)] +>.q.hin)]
         ?>  ?=(%g -.q.hin)
         ?~  pax  ~&  %strange-path  [~ ..^$]
         =+  lum=(lump t.pax)

@@ -162,6 +162,7 @@
   ++  se-just                                           ::  adjusted buffer 
     |=  lin=(pair ,@ud (list ,@c))
     ^+  +>
+    ~&  [%just lin mir]
     =.  off  ?:((lth p.lin edg) 0 (sub p.lin edg))
     (se-show (sub p.lin off) (scag edg (slag off q.lin)))
   ::
@@ -204,6 +205,7 @@
     ^+  +>
     ?-    -.sil
         %mean  
+      ~&  [%seat-mean sil]
       +>.$
     ::  
         %nice  
@@ -343,12 +345,16 @@
     ::
     ++  ta-fec                                          ::  apply effect
       |=  fec=console-effect
+      ~&  [%ta-fec fec]
       ^+  +>
       ?-    -.fec
         %bel  ta-bel
         %blk  +>
         %clr  +>(+> (se-blit %clr ~))
         %det  (ta-got +.fec)
+        %mor  |-  ^+  +>.^$
+              ?~  p.fec  +>.^$
+              $(p.fec t.p.fec, +>.^$ ^$(fec i.p.fec))
         %nex  ta-nex
         %pro  (ta-pro +.fec)
         %tan  (ta-tan p.fec)
@@ -453,7 +459,8 @@
             cap.pom 
           `(list ,@)`:(welp "(reverse-i-search)'" str.u.ris "': ")
         ==
-      =-  [(add pos.inp (lent p.vew)) (weld p.vew q.vew)]
+      =-  =.  pos.inp  (max pos.inp (lent q.vew))
+          [(add pos.inp (lent p.vew)) (weld p.vew q.vew)]
       ^=  vew  ^-  (pair (list ,@c) (list ,@c))
       ?:  vis.pom  [cap.pom buf.say.inp]
       :-  ;:  welp
@@ -500,6 +507,9 @@
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
+  =-  ~&  [%pour-moves -.foo]
+      foo
+  ^=  foo
   =+  sih=((hard sign) sih)
   ?>  ?=([@ @ ~] pax)
   =<  se-abet
