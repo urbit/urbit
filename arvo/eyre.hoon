@@ -763,13 +763,22 @@
     ?~  hem
       ~|(strange-path/q.q.pul !!)
     ?-  -.u.hem
-      &  (onto p.u.hem pul)
+      &  ?.  ?=([~ %js] p.q.pul)  ::  XX treat non-json cases?
+           ~!  hem
+           ?~  p.u.hem  ..hell
+           (howa ~ p.u.hem)
+         %^  resp  200  text//javascript
+         """
+         window.urb = \{poll: "/{(apex:earn %| q.pul(u.p %json) r.pul)}"}
+         {(trip poll:js)}
+         """
+    ::
       |  ~|(aute/p.u.hem !!)
     ==
   ::
   ++  hemp                                             ::  auxillary(/~) request
     |=  [oar=ship pok=pork quy=quay]
-    ^-  (unit (each ?(~ @uvH (set beam)) ,[p=ship q=pork]))
+    ^-  (unit (each ,@uvH ,[p=ship q=pork]))
     ?.  ?=([%'~' @ *] q.pok)  ~
     :-  ~
     =*  pef  i.t.q.pok
@@ -777,22 +786,9 @@
     ?+    pef  ~|(pfix-lost/`path`/~/[pef] !!)
         %on
       :-  %&
-      ?^  but
-        ~|  on/bad-path/but
-        ?~  t.but
-          (slav %uv i.but)
-        =-  [(need (tome -)) ~ ~]
-        ?:  =('~' (end 3 1 i.but))
-          but
-        [(scot %p oar) but]
-      %-  sa
-      %+  turn  quy  |=  [a=cord b=@]  ^-  beam
-      ~|  on/bad-query/quy
-      ?.  =('' b)  !!
-      %-  need  %-  tome  %-  stab
-      ?:  =('/' (end 3 1 a))
-        a
-      (cat 3 '/' a)
+      ~|  on/bad-path/but
+      ?>  ?=([@ ~] but)
+      (slav %uv i.but)
         %as
       :-  %|
       ~|  bad-ship/?~(but ~ i.but)
@@ -966,28 +962,6 @@
   ++  miff                                              ::  pass card
     |=  noe=[wire note]
     +>(mow :_(mow [hen %pass noe]))
-  ::
-  ++  onto                                              ::  clay long-poll
-    |=  [dep=?(~ @uvH (set beam)) pul=purl]
-    ?:  ?=([~ %js] p.q.pul)  ::  XX treat non-json cases?
-      %^  resp  200  text//javascript
-      """
-      window.urb = \{poll: "/{(apex:earn %| q.pul(u.p %json) r.pul)}"}
-      {(trip poll:js)}
-      """
-    ?~  dep  ..onto  
-    ?@  dep  (howa ~ dep)
-    =+  des=(~(tap in `(set beam)`dep))
-    |-  ^+  ..onto
-    ?~  des  ..onto
-    %^  hoot:$(des t.des)
-      our  [%y (tope i.des)]
-    =-  [p.i.des q.i.des ~ %& %y ud/+(`@ud`-) s.i.des]
-    ?.  ?=(%ud -.r.i.des)
-      ;;(@ (need (sky %cw (tope -.i.des /))))
-    ?:  =(0 p.r.i.des)
-      ;;(@ (need (sky %cw (tope -.i.des(r da/now) /))))
-    p.r.i.des
   ::
   ++  resp                                              ::  mime response
     |=  [sas=@uG mit=mite bod=tape]
