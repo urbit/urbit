@@ -90,7 +90,7 @@
 ++  baby                                                ::  state by ship
   $:  tad=[p=@ud q=(map ,@ud task)]                     ::  tasks by number
       dym=(map duct ,@ud)                               ::  duct to task number
-      deh=(map ,@uvH (set beam))                        ::  hashed depends
+      deh=deps                                          ::  depends by hash
       jav=(map ,* calx)                                 ::  cache
   ==                                                    ::
 ++  bolt                                                ::  gonadic edge
@@ -110,6 +110,7 @@
 ++  cafe                                                ::  live cache
   $:  p=(set calx)                                      ::  used
       q=(map ,* calx)                                   ::  cache
+      r=deps                                            ::  dependencies
   ==                                                    ::
 ::                                                      ::
 ++  calm                                                ::  cache metadata
@@ -123,6 +124,7 @@
       [%slap p=calm q=[p=vase q=twig] r=vase]           ::  compute
       [%slam p=calm q=[p=vase q=vase] r=vase]           ::  compute
   ==                                                    ::
+++  deps  (map ,@uvH (set beam))                        ::  hashed depends
 ++  task                                                ::  problem in progress
   $:  nah=duct                                          ::  cause
       kas=silk                                          ::  problem
@@ -157,7 +159,7 @@
 ++  chub                                                ::  cache merge
   |=  [a=cafe b=cafe]                                   ::
   ^-  cafe                                              ::
-  [(grom p.a p.b) (grum q.a q.b)]                       ::
+  [(grom p.a p.b) (grum q.a q.b) (grum r.a r.b)]        ::
 ::                                                      ::
 ++  faun  |=([a=cafe b=vase] (fine a `cage`noun/b))     ::  vase to cage
 ++  feel  |=([a=cafe b=cage] (fine a q.b))              ::  cage to vase
@@ -267,7 +269,7 @@
     %_    +>.$
         mow
       %-  welp  :_  mow
-      %+  turn  (~(tap in (~(got by deh.bay) dep)))
+      %+  turn  ~|(dep-missed/dep (~(tap in (~(got by deh.bay) dep))))
       |=  a=beam 
       :^  hen  %pass  [(scot %p our) (scot %uv dep) ~]
       =-  [%c [%warp [our p.a] q.a ~ [%& %y ud/+(`@ud`-) s.a]]]
@@ -428,17 +430,17 @@
     ++  dash                                            ::  process cache
       |=  cof=cafe
       ^+  +>
-      %_(+> jav.bay q.cof)
+      %_(+> jav.bay q.cof, deh.bay r.cof)
     ::
     ++  daze                                            ::  remember depends
       |=  dep=(set beam)
-      ^+  [*@uvH +>]
-      ?~  dep  [0v0 +>]
+      ^+  [*@uvH deh.bay]
+      ?~  dep  [0v0 deh.bay]
       =+  hap=(sham dep)
-      [hap %_(+>.$ deh.bay (~(put by deh.bay) hap dep))]
+      [hap (~(put by deh.bay) hap dep)]
     ::++  exit                                            ::  stateless exec
     ::  ^-  (unit gift)
-    ::  =+  bot=(make [~ jav.bay] kas)
+    ::  =+  bot=(make [~ jav.bay deh.bay] kas)
     ::  :: =.  ..exec  (dash p.bot)
     ::  ?-  -.q.bot
     ::    %0  `[%made p.q.bot %& q.q.bot]
@@ -449,12 +451,12 @@
     ++  exec                                            ::  execute app
       ^+  ..zo
       ?:  !=(~ q.kig)  ..zo
-      =+  bot=(make [~ jav.bay] kas)
+      =+  bot=(make [~ jav.bay deh.bay] kas)
       =.  ..exec  (dash p.bot)
       ?-  -.q.bot
-        %0  =^  dep  ..exec  (daze p.q.bot)
+        %0  =^  dep  deh.bay  (daze p.q.bot)
             amok:(expo [%made dep %& q.q.bot])
-        %2  =^  dep  ..exec  (daze p.q.bot)
+        %2  =^  dep  deh.bay  (daze p.q.bot)
             amok:(expo [%made dep %| q.q.bot])
         %1  =+  zuk=(~(tap by p.q.bot) ~)
             =<  abet
@@ -496,11 +498,8 @@
           ?:  ?=([~ ~ *] (ska %cy (tope [oak pax])))
             oak
           bek
-      =+  ^=  arg  ^-  spur
-          :-  %dep
-          =-  ?~(- /'' /(pack -))
-          %+  turn  (~(tap in dep))
-          |=(a=beam =+((tope a) ?~(- !! (pack -))))     ::  XX
+      =^  deh  r.cof  (daze(deh.bay r.cof) dep)         ::  XX sanity
+      =+  arg=`spur`[%dep (scot %uv deh) ~]
       (cope (fade cof %hook bem) abut:(meow bem arg))
     ::
     ++  fair                                            ::  hood parsing rule
@@ -905,7 +904,7 @@
     ++  make                                            ::  reduce silk
       |=  [cof=cafe kas=silk]
       ^-  (bolt cage)
-      ::  ~&  [%make -.kas]
+      :: ~&  [%make -.kas]
       ?-    -.kas
           ^
         %.  [cof p.kas q.kas]
@@ -1314,7 +1313,7 @@
       ?>  (~(has by q.kig) tik)
       ?~  rot
         =+  `[ren=care bem=beam]`(~(got by q.kig) tik)
-        =^  dep  ..resp  (daze ~)                       ::  dependencies?
+        =^  dep  deh.bay  (daze ~)                       ::  dependencies?
         amok:(expo [%made dep %| (smyt ren (tope bem)) ~])
       exec(q.kig (~(del by q.kig) tik))
     --
@@ -1382,7 +1381,7 @@
   ^-  [p=(list move) q=_..^$]
   =+  ska=(slod ski)
   ?.  ?=([@ @ $|(~ [@ ~])] tea)
-    [~ ..^$]
+    [~ ..^$]  ::  XX  remove on breach
   =+  our=(need (slaw %p i.tea))
   =+  bay=(~(got by pol.lex) our)
   =^  mos  bay
