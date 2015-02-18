@@ -9,7 +9,8 @@
 ::
 ++  bead  ,[p=(set beam) q=cage]                        ::  computed result
 ++  gift                                                ::  out result <-$
-          $%  [%made p=(set beam) q=(each cage tang)]   ::  computed result
+          $%  [%made p=@uvH q=(each cage tang)]         ::  computed result
+              [%news ~]                                 ::  fresh depends                                 
           ==                                            ::
 ++  heel  path                                          ::  functional ending
 ++  hock                                                ::  standard label
@@ -49,6 +50,7 @@
           ==                                            ::
 ++  kiss                                                ::  in request ->$
           $%  [%exec p=@p q=(unit silk)]                ::  make / kill
+              [%wasp p=@p q=@uvH]                       ::  depends query
           ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
@@ -88,6 +90,7 @@
 ++  baby                                                ::  state by ship
   $:  tad=[p=@ud q=(map ,@ud task)]                     ::  tasks by number
       dym=(map duct ,@ud)                               ::  duct to task number
+      deh=(map ,@uvH (set beam))                        ::  hashed depends
       jav=(map ,* calx)                                 ::  cache
   ==                                                    ::
 ++  bolt                                                ::  gonadic edge
@@ -95,8 +98,8 @@
   $:  p=cafe                                            ::  cache
     $=  q                                               ::
       $%  [%0 p=(set beam) q=a]                         ::  depends/product
-          [%1 p=(set ,[p=care q=beam r=tang])]   ::  blocks
-          [%2 p=(set beam) q=tang]               ::  depends/error
+          [%1 p=(set ,[p=care q=beam r=tang])]          ::  blocks
+          [%2 p=(set beam) q=tang]                      ::  depends/error
       ==                                                ::
   ==                                                    ::
 ::                                                      ::
@@ -233,12 +236,12 @@
       ==
     ~(exec zo [num `task`[hen u.kus 0 ~]])
   ::
-  ++  apel                                              ::  stateless
-    |=  [hen=duct kus=silk]
-    ^-  (unit gift)
-    =+  num=0                                           ::  XX
-    ~(exit zo [num `task`[hen kus 0 ~]])
-  ::
+  ::++  apel                                              ::  stateless
+  ::  |=  [hen=duct kus=silk]
+  ::  ^-  (unit gift)
+  ::  =+  num=0                                           ::  XX
+  ::  ~(exit zo [num `task`[hen kus 0 ~]])
+  ::::
   ++  axon                                              ::  take
     |=  [num=@ud tik=@ud sih=sign]
     ^+  +>
@@ -249,6 +252,30 @@
         ~&  [%ford-lost num]
         +>.$
       (~(resp zo [num u.tus]) tik p.+.sih)
+    ==
+  ::
+  ++  axun                                              ::  take rev update
+    |=  [dep=@uvH sih=sign]
+    ^+  +>
+    ?-    -.+.sih
+        %writ
+      +>.$(mow :_(mow [hen %give %news ~]))
+    ==
+  ::
+  ++  awap                                              ::  get next revision
+    |=  dep=@uvH
+    %_    +>.$
+        mow
+      %-  welp  :_  mow
+      %+  turn  (~(tap in (~(got by deh.bay) dep)))
+      |=  a=beam 
+      :^  hen  %pass  [(scot %p our) (scot %uv dep) ~]
+      =-  [%c [%warp [our p.a] q.a ~ [%& %y ud/+(`@ud`-) s.a]]]
+      ?.  ?=(%ud -.r.a)
+        ;;(@ (need (need (ska %cw (tope -.a /)))))
+      ?:  =(0 p.r.a)
+        ;;(@ (need (need (ska %cw (tope -.a(r da/now) /)))))
+      p.r.a
     ==
   ::
   ++  zo
@@ -403,24 +430,32 @@
       ^+  +>
       %_(+> jav.bay q.cof)
     ::
-    ++  exit                                            ::  stateless exec
-      ^-  (unit gift)
-      =+  bot=(make [~ jav.bay] kas)
-      :: =.  ..exec  (dash p.bot)
-      ?-  -.q.bot
-        %0  `[%made p.q.bot %& q.q.bot]
-        %2  `[%made p.q.bot %| q.q.bot]
-        %1  ~
-      ==
-    ::
+    ++  daze                                            ::  remember depends
+      |=  dep=(set beam)
+      ^+  [*@uvH +>]
+      ?~  dep  [0v0 +>]
+      =+  hap=(sham dep)
+      [hap %_(+>.$ deh.bay (~(put by deh.bay) hap dep))]
+    ::++  exit                                            ::  stateless exec
+    ::  ^-  (unit gift)
+    ::  =+  bot=(make [~ jav.bay] kas)
+    ::  :: =.  ..exec  (dash p.bot)
+    ::  ?-  -.q.bot
+    ::    %0  `[%made p.q.bot %& q.q.bot]
+    ::    %2  `[%made p.q.bot %| q.q.bot]
+    ::    %1  ~
+    ::  ==
+    ::::
     ++  exec                                            ::  execute app
       ^+  ..zo
       ?:  !=(~ q.kig)  ..zo
       =+  bot=(make [~ jav.bay] kas)
       =.  ..exec  (dash p.bot)
       ?-  -.q.bot
-        %0  amok:(expo [%made p.q.bot %& q.q.bot])
-        %2  amok:(expo [%made p.q.bot %| q.q.bot])
+        %0  =^  dep  ..exec  (daze p.q.bot)
+            amok:(expo [%made dep %& q.q.bot])
+        %2  =^  dep  ..exec  (daze p.q.bot)
+            amok:(expo [%made dep %| q.q.bot])
         %1  =+  zuk=(~(tap by p.q.bot) ~)
             =<  abet
             |-  ^+  ..exec
@@ -925,12 +960,13 @@
         %+  cope  (link cof dep p.kas p.cay bek q.cay)
         |=  [cof=cafe vax=vase]
         (fine cof [p.kas vax])
-::         %+  coze  (lion cof p.kas bek [p.cay]~)
-::         |=  dep=(set beam)  |=  [cof=cafe wuy=(list ,@tas)]
-::         ?~  wuy  (flaw cof [%leaf "ford: no path: {<[p.cay p.kas]>}"]~)
-::         %+  cope  (lope cof dep i.wuy t.wuy bek q.cay)
-::         |=  [cof=cafe vax=vase]
-::         (fine cof [p.kas vax])
+        ::
+        :: %+  coze  (lion cof p.kas bek [p.cay]~)
+        :: |=  dep=(set beam)  |=  [cof=cafe wuy=(list ,@tas)]
+        :: ?~  wuy  (flaw cof [%leaf "ford: no path: {<[p.cay p.kas]>}"]~)
+        :: %+  cope  (lope cof dep i.wuy t.wuy bek q.cay)
+        :: |=  [cof=cafe vax=vase]
+        :: (fine cof [p.kas vax])
       ::
           %done  [cof %0 p.kas q.kas]
           %dude  (cool |.(p.kas) $(kas q.kas))
@@ -1278,7 +1314,8 @@
       ?>  (~(has by q.kig) tik)
       ?~  rot
         =+  `[ren=care bem=beam]`(~(got by q.kig) tik)
-        amok:(expo [%made ~ %| (smyt ren (tope bem)) ~])  ::  dependencies?
+        =^  dep  ..resp  (daze ~)                       ::  dependencies?
+        amok:(expo [%made dep %| (smyt ren (tope bem)) ~])
       exec(q.kig (~(del by q.kig) tik))
     --
   --
@@ -1295,15 +1332,18 @@
   |=  [hen=duct hic=(hypo (hobo kiss))]
   ^-  [p=(list move) q=_..^$]
   =>  .(q.hic ?.(?=(%soft -.q.hic) q.hic ((hard kiss) p.q.hic)))
-  =+  ska=(slod ski)
+  =+  ska=(slod ski)                ::  XX  depends
   =+  ^=  our  ^-  @p
       ?-  -.q.hic
         %exec  p.q.hic
+        %wasp  p.q.hic
       ==
   =+  ^=  bay  ^-  baby
       =+  buy=(~(get by pol.lex) our)
       ?~(buy *baby u.buy)
   =^  mos  bay
+    ?:  ?=(%wasp -.q.hic)
+      abet:(~(awap za [[our hen] [now eny ska] ~] bay) q.q.hic)
     abet:(~(apex za [[our hen] [now eny ska] ~] bay) q.q.hic)
   [mos ..^$(pol (~(put by pol) our bay))]
 ::
@@ -1314,14 +1354,14 @@
 ::
 ++  load                                                ::  highly forgiving
   |=  old=*
-  =.  old  
-      ?.  ?=([%0 *] old)  old                           ::  remove at 1
-      :-  %1 
-      |-  ^-  *
-      ?~  +.old  ~
-      ?>  ?=([n=[p=* q=[tad=* dym=* jav=*]] l=* r=*] +.old)
-      :-  [p.n.+.old [tad.q.n.+.old dym.q.n.+.old ~]]
-      [$(+.old l.+.old) $(+.old r.+.old)]
+  ::=.  old  
+  ::    ?.  ?=([%0 *] old)  old                           ::  remove at 1
+  ::    :-  %1 
+  ::    |-  ^-  *
+  ::    ?~  +.old  ~
+  ::    ?>  ?=([n=[p=* q=[tad=* dym=* deh=* jav=*]] l=* r=*] +.old)
+  ::    :-  [p.n.+.old [tad.q.n.+.old dym.q.n.+.old deh.q.n.+.old ~]]
+  ::    [$(+.old l.+.old) $(+.old r.+.old)]
   =+  lox=((soft axle) old)
   ^+  ..^$
   ?~  lox
@@ -1335,19 +1375,22 @@
   [~ ~]
 ::
 ++  stay                                                ::  save w/o cache
-  `axle`+>-.$(pol (~(run by pol) |=(a=baby [tad.a dym.a ~])))
+  `axle`+>-.$(pol (~(run by pol) |=(a=baby [tad.a dym.a deh.a ~])))
 ::
 ++  take                                                ::  response
   |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [p=(list move) q=_..^$]
   =+  ska=(slod ski)
-  ?>  ?=([@ @ @ ~] tea)
-  =+  :*  our=(need (slaw %p i.tea))
-          num=(need (slaw %ud i.t.tea))
-          tik=(need (slaw %ud i.t.t.tea))
-      ==
+  ?.  ?=([@ @ $|(~ [@ ~])] tea)
+    [~ ..^$]
+  =+  our=(need (slaw %p i.tea))
   =+  bay=(~(got by pol.lex) our)
   =^  mos  bay
+    ?~  t.t.tea
+      abet:(~(axun za [[our hen] [now eny ska] ~] bay) (slav %uv i.t.tea) q.hin)
+    =+  :*  num=(need (slaw %ud i.t.tea))
+            tik=(need (slaw %ud i.t.t.tea))
+        ==
     abet:(~(axon za [[our hen] [now eny ska] ~] bay) num tik q.hin)
   [mos ..^$(pol (~(put by pol) our bay))]
 --

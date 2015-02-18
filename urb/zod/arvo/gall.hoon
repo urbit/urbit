@@ -160,7 +160,7 @@
               [%vega p=path]                            ::
           ==  ==                                        ::
               $:  %f                                    ::  by %ford
-          $%  [%made p=(set beam) q=(each cage tang)]   ::
+          $%  [%made p=@uvH q=(each cage tang)]         ::
           ==  ==  ==                                    ::
 ++  toil  (pair duct knob)                              ::  work in progress
 --  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -736,17 +736,18 @@
         %_(+>.$ ped.sat pen, mow :(weld new old mow))
       ::
       ++  drum                                          ::  raw dependencies
-        |=  dep=(set beam)
+        |=  dep=@uvH
         ^+  +>
         ?>  ?=(^ orm.sat)
         %-  drug
         =+  ped=`(set (pair ship desk))`[[our %main] ~ ~]
-        =+  mav=(~(tap by dep) ~)
-        |-  ^+  ped
-        ?~  mav  ped
-        ?:  =(r.i.mav [%da u.orm.sat])
-          $(mav t.mav, ped (~(put in ped) p.i.mav q.i.mav))
-        $(mav t.mav)
+        ped
+        ::=+  mav=(~(tap by dep) ~)
+        ::|-  ^+  ped
+        ::?~  mav  ped
+        ::?:  =(r.i.mav [%da u.orm.sat])
+        ::  $(mav t.mav, ped (~(put in ped) p.i.mav q.i.mav))
+        ::$(mav t.mav)
       ::
       ++  ford                                          ::  exec to ford
         |=  [pax=path kas=silk]
@@ -814,7 +815,7 @@
       ++  mick                                          ::  apply w/depends
         |=  sih=sign
         ?>  ?=(%f -.sih)
-        ^-  [[p=? q=(set beam)] _+>]
+        ^-  [[p=? q=@uvH] _+>]
         :-  [-.q.+.sih p.+.sih]
         ?-  -.q.+.sih
           &  %-  obey:(morn (slot 3 q.p.q.+.sih))
