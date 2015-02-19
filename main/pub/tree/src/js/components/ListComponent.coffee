@@ -4,7 +4,7 @@ TreeActions = require '../actions/TreeActions.coffee'
 load        = require './LoadComponent.coffee'
 
 recl = React.createClass
-[div,a,ul,li] = [React.DOM.div,React.DOM.a,React.DOM.ul,React.DOM.li]
+[div,a,ul,li,h1] = [React.DOM.div,React.DOM.a,React.DOM.ul,React.DOM.li,React.DOM.h1]
 
 module.exports = recl
   stateFromStore: -> 
@@ -48,7 +48,7 @@ module.exports = recl
           prev = @state.snip[_path]
         else
           c = ""
-          prev = v
+          prev = (h1 {},v)
         href = window.tree.basepath _path
         (li {}, (a {href:href,className:c,key:"list-a-"+_path}, prev))
     (ul {className:"list",key:"list-"+@state.path}, _list)

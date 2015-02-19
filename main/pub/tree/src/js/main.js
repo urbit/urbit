@@ -256,7 +256,7 @@ module.exports = recl({
         offset = 0;
       }
       s = {
-        marginTop: ((ci * -20) - offset) + "px"
+        marginTop: ((ci * -24) - offset) + "px"
       };
       parts.push(div({
         key: "sibs",
@@ -414,7 +414,7 @@ module.exports = recl({
 
 
 },{"../actions/TreeActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/stores/TreeStore.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/components/ListComponent.coffee":[function(require,module,exports){
-var TreeActions, TreeStore, a, div, li, load, recl, ul, _ref;
+var TreeActions, TreeStore, a, div, h1, li, load, recl, ul, _ref;
 
 TreeStore = require('../stores/TreeStore.coffee');
 
@@ -424,7 +424,7 @@ load = require('./LoadComponent.coffee');
 
 recl = React.createClass;
 
-_ref = [React.DOM.div, React.DOM.a, React.DOM.ul, React.DOM.li], div = _ref[0], a = _ref[1], ul = _ref[2], li = _ref[3];
+_ref = [React.DOM.div, React.DOM.a, React.DOM.ul, React.DOM.li, React.DOM.h1], div = _ref[0], a = _ref[1], ul = _ref[2], li = _ref[3], h1 = _ref[4];
 
 module.exports = recl({
   stateFromStore: function() {
@@ -484,7 +484,7 @@ module.exports = recl({
             prev = _this.state.snip[_path];
           } else {
             c = "";
-            prev = v;
+            prev = h1({}, v);
           }
           href = window.tree.basepath(_path);
           return li({}, a({

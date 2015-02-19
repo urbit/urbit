@@ -123,7 +123,7 @@ module.exports = recl
         (div {className:c}, (a {key:i+"-a",href:up+"/"+i,onClick:@_click}, i))
       offset = 0
       if ci > 0 then offset = 0
-      s = {marginTop:((ci*-20)-offset)+"px"}
+      s = {marginTop:((ci*-24)-offset)+"px"}
       parts.push (div {key:"sibs",id:"sibs",style:s}, sibs)
 
     obj =
