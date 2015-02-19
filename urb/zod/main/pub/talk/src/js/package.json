@@ -1,0 +1,12 @@
+{
+  "name": "urbit-radio",
+  "version": "0.0.0",
+  "description": "urbit radio frontend",
+  "main": "main.js",
+  "dependencies": {
+    "coffeeify": "~0.7.0",
+    "flux": "~2.0.1",
+    "lodash": "~2.4.1",
+    "moment-timezone": "~0.2.4"
+  }
+}
