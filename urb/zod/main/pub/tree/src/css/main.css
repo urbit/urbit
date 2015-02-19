@@ -406,13 +406,12 @@ li:before {
     z-index: 2;
   }
   #nav > div {
-    max-height: 1.2rem;
+    max-height: 1.4rem;
   }
   #nav > div {
     padding-top: 0.6rem;
   }
   #nav #sibs > div {
-    display: table-row;
     height: 20px;
     line-height: 20px;
   }

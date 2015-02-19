@@ -77,6 +77,14 @@ module.exports = recl
 
     @interval = setInterval @checkURL,100
 
+    $('body').on 'keyup', (e) =>
+      # left
+      if e.keyCode is 37
+        @goTo @state.prev
+      #right 
+      if e.keyCode is 39
+        @goTo @state.next
+
     $('body').on 'click', 'a', (e) =>
       href = $(e.target).closest('a').attr 'href'
       if href[0] is "/"
