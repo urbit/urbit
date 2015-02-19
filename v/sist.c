@@ -1,6 +1,5 @@
 /* v/sist.c
 **
-** This file is in the public domain.
 */
 #include <errno.h>
 #include <fcntl.h>
