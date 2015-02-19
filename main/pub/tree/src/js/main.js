@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/actions/TreeActions.coffee":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/actions/TreeActions.coffee":[function(require,module,exports){
 var TreeDispatcher, TreePersistence;
 
 TreeDispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -72,8 +72,8 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/dispatcher/Dispatcher.coffee","../persistence/TreePersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/components/AnchorComponent.coffee":[function(require,module,exports){
-var TreeActions, TreeStore, a, div, recl, _ref;
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/dispatcher/Dispatcher.coffee","../persistence/TreePersistence.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/components/AnchorComponent.coffee":[function(require,module,exports){
+var TreeActions, TreeStore, a, div, recl, ref;
 
 TreeStore = require('../stores/TreeStore.coffee');
 
@@ -81,7 +81,7 @@ TreeActions = require('../actions/TreeActions.coffee');
 
 recl = React.createClass;
 
-_ref = [React.DOM.div, React.DOM.a], div = _ref[0], a = _ref[1];
+ref = [React.DOM.div, React.DOM.a], div = ref[0], a = ref[1];
 
 module.exports = recl({
   stateFromStore: function() {
@@ -170,6 +170,16 @@ module.exports = recl({
     this.setTitle();
     this.checkUp();
     this.interval = setInterval(this.checkURL, 100);
+    $('body').on('keyup', (function(_this) {
+      return function(e) {
+        if (e.keyCode === 37) {
+          _this.goTo(_this.state.prev);
+        }
+        if (e.keyCode === 39) {
+          return _this.goTo(_this.state.next);
+        }
+      };
+    })(this));
     return $('body').on('click', 'a', (function(_this) {
       return function(e) {
         var href;
@@ -193,7 +203,7 @@ module.exports = recl({
     return this.setState(this.stateFromStore());
   },
   render: function() {
-    var ci, curr, href, k, obj, offset, p, parts, s, sibs, up, _parts;
+    var _parts, ci, curr, href, k, obj, offset, p, parts, s, sibs, up;
     parts = [];
     if (this.state.pare) {
       parts.push(div({
@@ -281,8 +291,8 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/stores/TreeStore.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/components/BodyComponent.coffee":[function(require,module,exports){
-var TreeActions, TreeStore, div, input, load, recl, textarea, _ref;
+},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/stores/TreeStore.coffee"}],"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/components/BodyComponent.coffee":[function(require,module,exports){
+var TreeActions, TreeStore, div, input, load, recl, ref, textarea;
 
 TreeStore = require('../stores/TreeStore.coffee');
 
@@ -292,7 +302,7 @@ load = require('./LoadComponent.coffee');
 
 recl = React.createClass;
 
-_ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = _ref[0], input = _ref[1], textarea = _ref[2];
+ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = ref[0], input = ref[1], textarea = ref[2];
 
 module.exports = recl({
   stateFromStore: function() {
@@ -332,12 +342,12 @@ module.exports = recl({
     }
   },
   render: function() {
-    var parts, _ref1;
+    var parts, ref1;
     parts = [];
     parts.push(div({
       id: 'body',
       key: "body" + this.state.curr
-    }, (_ref1 = this.state.body) != null ? _ref1 : div({
+    }, (ref1 = this.state.body) != null ? ref1 : div({
       className: "loading"
     }, load({}, ""))));
     return div({}, parts);
@@ -346,8 +356,8 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/components/LoadComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/components/KidsComponent.coffee":[function(require,module,exports){
-var TreeActions, TreeStore, a, div, hr, li, recl, ul, _ref;
+},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/components/LoadComponent.coffee"}],"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/components/KidsComponent.coffee":[function(require,module,exports){
+var TreeActions, TreeStore, a, div, hr, li, recl, ref, ul;
 
 TreeStore = require('../stores/TreeStore.coffee');
 
@@ -355,12 +365,12 @@ TreeActions = require('../actions/TreeActions.coffee');
 
 recl = React.createClass;
 
-_ref = [React.DOM.div, React.DOM.a, React.DOM.ul, React.DOM.li, React.DOM.hr], div = _ref[0], a = _ref[1], ul = _ref[2], li = _ref[3], hr = _ref[4];
+ref = [React.DOM.div, React.DOM.a, React.DOM.ul, React.DOM.li, React.DOM.hr], div = ref[0], a = ref[1], ul = ref[2], li = ref[3], hr = ref[4];
 
 module.exports = recl({
   stateFromStore: function() {
-    var path, _ref1;
-    path = (_ref1 = this.props.dataPath) != null ? _ref1 : TreeStore.getCurr();
+    var path, ref1;
+    path = (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
     return {
       cont: TreeStore.getCont(),
       tree: TreeStore.getTree(path.split("/")),
@@ -377,11 +387,11 @@ module.exports = recl({
     return this.setState(this.stateFromStore());
   },
   componentDidMount: function() {
-    var cont, k, _i, _len, _ref1;
+    var cont, i, k, len, ref1;
     cont = true;
-    _ref1 = _.keys(this.state.tree);
-    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-      k = _ref1[_i];
+    ref1 = _.keys(this.state.tree);
+    for (i = 0, len = ref1.length; i < len; i++) {
+      k = ref1[i];
       if (!this.state.cont[this.state.path + "/" + k]) {
         cont = false;
       }
@@ -391,8 +401,8 @@ module.exports = recl({
     }
   },
   render: function() {
-    var doc, _list, _ref1;
-    doc = (_ref1 = this.state.tree) != null ? _ref1 : [];
+    var _list, doc, ref1;
+    doc = (ref1 = this.state.tree) != null ? ref1 : [];
     _list = _.map(_.keys(doc).sort(), (function(_this) {
       return function(v) {
         var _path;
@@ -413,8 +423,8 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/stores/TreeStore.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/components/ListComponent.coffee":[function(require,module,exports){
-var TreeActions, TreeStore, a, div, h1, li, load, recl, ul, _ref;
+},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/stores/TreeStore.coffee"}],"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/components/ListComponent.coffee":[function(require,module,exports){
+var TreeActions, TreeStore, a, div, h1, li, load, recl, ref, ul;
 
 TreeStore = require('../stores/TreeStore.coffee');
 
@@ -424,12 +434,12 @@ load = require('./LoadComponent.coffee');
 
 recl = React.createClass;
 
-_ref = [React.DOM.div, React.DOM.a, React.DOM.ul, React.DOM.li, React.DOM.h1], div = _ref[0], a = _ref[1], ul = _ref[2], li = _ref[3], h1 = _ref[4];
+ref = [React.DOM.div, React.DOM.a, React.DOM.ul, React.DOM.li, React.DOM.h1], div = ref[0], a = ref[1], ul = ref[2], li = ref[3], h1 = ref[4];
 
 module.exports = recl({
   stateFromStore: function() {
-    var path, _ref1;
-    path = (_ref1 = this.props.dataPath) != null ? _ref1 : TreeStore.getCurr();
+    var path, ref1;
+    path = (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
     return {
       snip: TreeStore.getSnip(),
       tree: TreeStore.getTree(path.split("/")),
@@ -446,11 +456,11 @@ module.exports = recl({
     return this.setState(this.stateFromStore());
   },
   getCont: function() {
-    var cont, k, keys, _i, _len;
+    var cont, i, k, keys, len;
     cont = true;
     keys = _.keys(this.state.tree);
-    for (_i = 0, _len = keys.length; _i < _len; _i++) {
-      k = keys[_i];
+    for (i = 0, len = keys.length; i < len; i++) {
+      k = keys[i];
       if (!this.state.snip[this.state.path + "/" + k]) {
         cont = false;
       }
@@ -468,8 +478,8 @@ module.exports = recl({
     }
   },
   render: function() {
-    var doc, _list, _ref1;
-    doc = (_ref1 = this.state.tree) != null ? _ref1 : [];
+    var _list, doc, ref1;
+    doc = (ref1 = this.state.tree) != null ? ref1 : [];
     if (!this.getCont()) {
       _list = div({
         className: "loading"
@@ -477,7 +487,7 @@ module.exports = recl({
     } else {
       _list = _.map(_.keys(doc).sort(), (function(_this) {
         return function(v) {
-          var c, href, prev, _path;
+          var _path, c, href, prev;
           _path = _this.state.path + "/" + v;
           if (_this.props.dataPreview != null) {
             c = "preview";
@@ -504,12 +514,12 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/components/LoadComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/components/LoadComponent.coffee":[function(require,module,exports){
-var div, input, recl, textarea, _ref;
+},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/components/LoadComponent.coffee"}],"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/components/LoadComponent.coffee":[function(require,module,exports){
+var div, input, recl, ref, textarea;
 
 recl = React.createClass;
 
-_ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = _ref[0], input = _ref[1], textarea = _ref[2];
+ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = ref[0], input = ref[1], textarea = ref[2];
 
 module.exports = recl({
   getInitialState: function() {
@@ -542,7 +552,7 @@ module.exports = recl({
 
 
 
-},{}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
+},{}],"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -564,7 +574,7 @@ module.exports = _.extend(new Dispatcher(), {
 
 
 
-},{"flux":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/node_modules/flux/index.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/main.coffee":[function(require,module,exports){
+},{"flux":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/node_modules/flux/index.js"}],"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/main.coffee":[function(require,module,exports){
 var rend;
 
 rend = React.render;
@@ -722,7 +732,7 @@ $(function() {
 
 
 
-},{"./actions/TreeActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/actions/TreeActions.coffee","./components/AnchorComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/components/AnchorComponent.coffee","./components/BodyComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/components/BodyComponent.coffee","./components/KidsComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/components/KidsComponent.coffee","./components/ListComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/components/ListComponent.coffee","./persistence/TreePersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/node_modules/flux/index.js":[function(require,module,exports){
+},{"./actions/TreeActions.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/actions/TreeActions.coffee","./components/AnchorComponent.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/components/AnchorComponent.coffee","./components/BodyComponent.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/components/BodyComponent.coffee","./components/KidsComponent.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/components/KidsComponent.coffee","./components/ListComponent.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/components/ListComponent.coffee","./persistence/TreePersistence.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/node_modules/flux/index.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -734,7 +744,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js":[function(require,module,exports){
+},{"./lib/Dispatcher":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js"}],"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js":[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -986,7 +996,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/node_modules/flux/lib/invariant.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/node_modules/flux/lib/invariant.js":[function(require,module,exports){
+},{"./invariant":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/node_modules/flux/lib/invariant.js"}],"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/node_modules/flux/lib/invariant.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1041,7 +1051,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/persistence/TreePersistence.coffee":[function(require,module,exports){
+},{}],"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/persistence/TreePersistence.coffee":[function(require,module,exports){
 var TreeActions;
 
 TreeActions = require('../actions/TreeActions.coffee');
@@ -1063,7 +1073,7 @@ module.exports = {
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/actions/TreeActions.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/stores/TreeStore.coffee":[function(require,module,exports){
+},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/actions/TreeActions.coffee"}],"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/stores/TreeStore.coffee":[function(require,module,exports){
 var EventEmitter, MessageDispatcher, TreeStore, _cont, _curr, _load, _snip, _tree;
 
 EventEmitter = require('events').EventEmitter;
@@ -1094,24 +1104,24 @@ TreeStore = _.extend(EventEmitter.prototype, {
     return _path.split("/");
   },
   pathToObj: function(_path, _obj, kids) {
-    var i, __path, _i, _j, _ref, _ref1, _results;
+    var __path, i, j, l, ref, ref1, results;
     __path = this.pathToArr(_path);
-    for (i = _i = 0, _ref = __path.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+    for (i = j = 0, ref = __path.length - 1; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
       _obj = _obj[__path[i]] = {};
     }
     if ((kids != null ? kids.length : void 0) > 0) {
-      _results = [];
-      for (i = _j = 0, _ref1 = kids.length - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
-        _results.push(_obj[kids[i]] = {});
+      results = [];
+      for (i = l = 0, ref1 = kids.length - 1; 0 <= ref1 ? l <= ref1 : l >= ref1; i = 0 <= ref1 ? ++l : --l) {
+        results.push(_obj[kids[i]] = {});
       }
-      return _results;
+      return results;
     }
   },
   getTree: function(_path) {
-    var i, tree, _i, _ref;
+    var i, j, ref, tree;
     tree = _tree;
     if (_path.length > 0) {
-      for (i = _i = 0, _ref = _path.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+      for (i = j = 0, ref = _path.length - 1; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
         if (tree[_path[i]]) {
           tree = tree[_path[i]];
         } else {
@@ -1146,24 +1156,24 @@ TreeStore = _.extend(EventEmitter.prototype, {
     return _snip;
   },
   loadSnip: function(path, snip) {
-    var k, v, _results;
+    var k, results, v;
     this.mergePathToTree(path, _.pluck(snip, "name"));
-    _results = [];
+    results = [];
     for (k in snip) {
       v = snip[k];
-      _results.push(_snip[path + "/" + v.name] = window.tree.reactify(v.body));
+      results.push(_snip[path + "/" + v.name] = window.tree.reactify(v.body));
     }
-    return _results;
+    return results;
   },
   loadKids: function(path, kids) {
-    var k, v, _results;
+    var k, results, v;
     this.mergePathToTree(path, _.pluck(kids, "name"));
-    _results = [];
+    results = [];
     for (k in kids) {
       v = kids[k];
-      _results.push(_cont[path + "/" + v.name] = window.tree.reactify(v.body));
+      results.push(_cont[path + "/" + v.name] = window.tree.reactify(v.body));
     }
-    return _results;
+    return results;
   },
   loadPath: function(path, body, kids) {
     this.mergePathToTree(path, kids);
@@ -1225,7 +1235,7 @@ TreeStore = _.extend(EventEmitter.prototype, {
     }
   },
   getCrumbs: function() {
-    var crum, crums, k, v, _path;
+    var _path, crum, crums, k, v;
     _path = this.pathToArr(_curr);
     crum = "";
     crums = [];
@@ -1274,7 +1284,7 @@ module.exports = TreeStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js"}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js"}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1579,4 +1589,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},["/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/tree/src/js/main.coffee"]);
+},{}]},{},["/Users/galen/src/urbit/urb/zod/main/pub/tree/src/js/main.coffee"]);
