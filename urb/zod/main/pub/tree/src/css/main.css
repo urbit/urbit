@@ -234,6 +234,7 @@ li:before {
 }
 #nav #sibs > div {
   height: 20px;
+  margin-bottom: 4px;
 }
 .focus #sibs {
   margin-top: 0 !important;
@@ -245,7 +246,6 @@ li:before {
   font-size: 0.7rem;
   font-weight: 200;
   letter-spacing: 1px;
-  line-height: 0.8rem;
 }
 .list > li > a {
   border-bottom: none;
@@ -327,17 +327,18 @@ li:before {
 .list li a > div p code {
   font-size: 0.7rem;
   font-weight: 400;
+  text-transform: none;
+}
+.list li a h1 code {
+  text-transform: lowercase;
+  border-bottom: 1px solid #000;
 }
 .list li a code {
-  text-transform: lowercase;
-}
-.list li a h1 code span {
-  border-bottom: 1px solid #000;
+  padding: 0.2rem;
 }
 .list h1,
 .list li a > div div {
-  display: inline-block;
-  vertical-align: middle;
+  display: inline;
 }
 .list li a > div div {
   margin-left: 0.6rem;
