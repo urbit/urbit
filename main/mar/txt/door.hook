@@ -28,5 +28,9 @@
     |=  dif=(urge cord)
     ^-  wain
     (lurk txt dif)
+  ++  join
+    |=  [ali=(urge cord) bob=(urge cord)]
+    ^-  (urge cord)
+    ali
   --
 --

@@ -50,7 +50,7 @@
               [std=term kel=@]                          ::  kelvin version
               [ven=term pro=term kel=@]                 ::  vendor and product
               [ven=term pro=term ver=@ kel=@]           ::  all of the above
-          ==
+          ==                                            ::
 ++  clue  ,[p=chum q=nock r=(list (pair term nock))]    ::  battery definition
 ++  coil  $:  p=?(%gold %iron %lead %zinc)              ::  core type
               q=type                                    ::
