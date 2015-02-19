@@ -452,6 +452,7 @@
           dok  ~
         ::    tag
         ::  %-  welp  :_  tag
+
         ::  ^-  (list ,[duct path note])
         ::  %+  murn  lon.u.dok
         ::  |=  a=path
@@ -460,7 +461,8 @@
         ::  `[hen [%diffing (scot %p who) syd (scot %da wen) a] %f %exec who ~]
       ::
           yel
-        [[hen %note '!' %rose [" " "" ""] leaf/"clay diff failed" p.res] yel]
+        :_  yel
+        [hen %note '!' %rose [" " "" ""] leaf/"clay diff failed" >pax< p.res]
       ==
     ?.  ?=(@ p.q.p.res)  ~|  %bad-marc  !!
     =:  lon.u.dok  (skip lon.u.dok |=(path =(+< pax)))

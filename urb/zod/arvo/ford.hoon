@@ -416,8 +416,9 @@
           ?~  for
             (flaw cof leaf/"bad ++sted:grad" ~)
           %^  make  cof  %diff
-          :-  [%cast u.for [%done ~ cay]]
-          [%cast u.for [%done ~ coy]]
+          [kas kos]
+::          :-  [%cast u.for [%done ~ cay]]
+::          [%cast u.for [%done ~ coy]]
         ?.  (slab %diff p.gar)
           (flaw cof leaf/"no ++diff:grad" ~)
         %+  cope  (keel cof pro [[%& 6]~ q.cay]~)
