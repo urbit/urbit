@@ -4,7 +4,7 @@
 |=  pit=vase
 =>  =~
 |%                                                      ::  interfaces
-++  bead  ,[p=(set beam) q=cage]                        ::  computed result
+++  bead  ,[p=(set beam) q=gage]                        ::  computed result
 ++  chop  ,[p=@ud q=@da]                                ::  see 
 ++  gift                                                ::  out result <-$
           $%  [%thou p=httr]                            ::  raw http response
@@ -455,6 +455,7 @@
         ?-    -.p.+.sih
             %&
           =*  mab  t.t.t.t.tea
+          ?>  ?=(@ p.q.p.p.sih)
           %=    +>.$
               mow
             :_  mow
@@ -1968,7 +1969,7 @@
                :+  500
                  ~[content-type/'text/html']
                [~ (tact (poxo mad))]
-            &  [%fin (lofa mog (lopo q.p.p.pez.pip))]
+            &  [%fin (lofa mog (lopo [?>(?=(@ p) .)]:q.p.p.pez.pip))]
           ==
         ==
       ::
