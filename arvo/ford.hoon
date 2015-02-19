@@ -416,9 +416,8 @@
           ?~  for
             (flaw cof leaf/"bad ++sted:grad" ~)
           %^  make  cof  %diff
-          [kas kos]
-::          :-  [%cast u.for [%done ~ cay]]
-::          [%cast u.for [%done ~ coy]]
+          :-  [%cast u.for [%done ~ cay]]
+          [%cast u.for [%done ~ coy]]
         ?.  (slab %diff p.gar)
           (flaw cof leaf/"no ++diff:grad" ~)
         %+  cope  (keel cof pro [[%& 6]~ q.cay]~)
@@ -426,7 +425,7 @@
         %+  cope
           %^  maul  cof
             (slap (slap pox [%cnzy %grad]) [%cnzy %diff])
-          (slop q.cay q.coy)
+          q.coy
         |=  [cof=cafe dif=vase]
         =+  for=((soft ,@tas) q:(slap gar [%cnzy %form]))
         ?~  for
@@ -678,7 +677,7 @@
         %+  cope
           %^  maul  cof
             (slap (slap pro [%cnzy %grad]) [%cnzy %join])
-          q.coy
+          (slop q.cay q.coy)
         |=  [cof=cafe dif=vase]
         (fine cof p.cay dif)
       ==
