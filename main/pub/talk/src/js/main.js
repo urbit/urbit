@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/actions/MessageActions.coffee":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/MessageActions.coffee":[function(require,module,exports){
 var MessageDispatcher;
 
 MessageDispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -83,7 +83,7 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/dispatcher/Dispatcher.coffee"}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/actions/StationActions.coffee":[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/dispatcher/Dispatcher.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee":[function(require,module,exports){
 var StationDispatcher;
 
 StationDispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -166,7 +166,7 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/dispatcher/Dispatcher.coffee"}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/components/MemberComponent.coffee":[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/dispatcher/Dispatcher.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MemberComponent.coffee":[function(require,module,exports){
 var div, input, recl, textarea, _ref;
 
 recl = React.createClass;
@@ -195,7 +195,7 @@ module.exports = recl({
 
 
 
-},{}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/components/MessagesComponent.coffee":[function(require,module,exports){
+},{}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MessagesComponent.coffee":[function(require,module,exports){
 var Member, Message, MessageActions, MessageStore, StationActions, StationStore, div, input, moment, recl, textarea, _ref;
 
 moment = require('moment-timezone');
@@ -372,7 +372,7 @@ module.exports = recl({
 
 
 
-},{"../actions/MessageActions.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/actions/MessageActions.coffee","../actions/StationActions.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/actions/StationActions.coffee","../stores/MessageStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/components/MemberComponent.coffee","moment-timezone":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/node_modules/moment-timezone/index.js"}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/components/StationComponent.coffee":[function(require,module,exports){
+},{"../actions/MessageActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/MessageActions.coffee","../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","../stores/MessageStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MemberComponent.coffee","moment-timezone":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/moment-timezone/index.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/StationComponent.coffee":[function(require,module,exports){
 var Member, StationActions, StationStore, a, div, h1, input, recl, textarea, _ref;
 
 recl = React.createClass;
@@ -529,7 +529,7 @@ module.exports = recl({
 
 
 
-},{"../actions/StationActions.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/components/MemberComponent.coffee"}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/components/StationsComponent.coffee":[function(require,module,exports){
+},{"../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/StationsComponent.coffee":[function(require,module,exports){
 var StationActions, StationStore, div, input, recl, _ref;
 
 recl = React.createClass;
@@ -631,7 +631,7 @@ module.exports = recl({
 
 
 
-},{"../actions/StationActions.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/stores/StationStore.coffee"}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/components/WritingComponent.coffee":[function(require,module,exports){
+},{"../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/WritingComponent.coffee":[function(require,module,exports){
 var Member, MessageActions, StationActions, StationStore, div, input, recl, textarea, _ref;
 
 recl = React.createClass;
@@ -710,7 +710,7 @@ module.exports = recl({
         length += 10;
       }
     }
-    this.$length.text("" + length + "/69");
+    this.$length.text(length + "/69");
     if (length >= 69) {
       this.$writing.text(this.$writing.text().substr(0, 69));
       this.cursorAtEnd();
@@ -803,7 +803,7 @@ module.exports = recl({
 
 
 
-},{"../actions/MessageActions.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/actions/MessageActions.coffee","../actions/StationActions.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/components/MemberComponent.coffee"}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/dispatcher/Dispatcher.coffee":[function(require,module,exports){
+},{"../actions/MessageActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/MessageActions.coffee","../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -825,7 +825,7 @@ module.exports = _.merge(new Dispatcher(), {
 
 
 
-},{"flux":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/node_modules/flux/index.js"}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/main.coffee":[function(require,module,exports){
+},{"flux":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/flux/index.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/main.coffee":[function(require,module,exports){
 $(function() {
   var $c, MessagesComponent, StationActions, StationComponent, StationsComponent, WritingComponent, clean, rend, router, routes;
   StationActions = require('./actions/StationActions.coffee');
@@ -951,7 +951,7 @@ $(function() {
 
 
 
-},{"./actions/StationActions.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/actions/StationActions.coffee","./components/MessagesComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/components/MessagesComponent.coffee","./components/StationComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/components/StationComponent.coffee","./components/StationsComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/components/StationsComponent.coffee","./components/WritingComponent.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/components/WritingComponent.coffee","./persistence/MessagePersistence.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/persistence/MessagePersistence.coffee","./persistence/StationPersistence.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/persistence/StationPersistence.coffee"}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/node_modules/flux/index.js":[function(require,module,exports){
+},{"./actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","./components/MessagesComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MessagesComponent.coffee","./components/StationComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/StationComponent.coffee","./components/StationsComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/StationsComponent.coffee","./components/WritingComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/WritingComponent.coffee","./persistence/MessagePersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/persistence/MessagePersistence.coffee","./persistence/StationPersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/persistence/StationPersistence.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/flux/index.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -963,7 +963,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/node_modules/flux/lib/Dispatcher.js"}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/node_modules/flux/lib/Dispatcher.js":[function(require,module,exports){
+},{"./lib/Dispatcher":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/flux/lib/Dispatcher.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/flux/lib/Dispatcher.js":[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1215,7 +1215,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/node_modules/flux/lib/invariant.js"}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/node_modules/flux/lib/invariant.js":[function(require,module,exports){
+},{"./invariant":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/flux/lib/invariant.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/flux/lib/invariant.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1270,13 +1270,13 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/node_modules/moment-timezone/data/packed/latest.json":[function(require,module,exports){
+},{}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/moment-timezone/data/packed/latest.json":[function(require,module,exports){
 module.exports={
-	"version": "2014i",
+	"version": "2014j",
 	"zones": [
 		"Africa/Abidjan|LMT GMT|g.8 0|01|-2ldXH.Q",
 		"Africa/Accra|LMT GMT GHST|.Q 0 -k|012121212121212121212121212121212121212121212121|-26BbX.8 6tzX.8 MnE 1BAk MnE 1BAk MnE 1BAk MnE 1C0k MnE 1BAk MnE 1BAk MnE 1BAk MnE 1C0k MnE 1BAk MnE 1BAk MnE 1BAk MnE 1C0k MnE 1BAk MnE 1BAk MnE 1BAk MnE 1C0k MnE 1BAk MnE 1BAk MnE 1BAk MnE 1C0k MnE 1BAk MnE 1BAk MnE",
-		"Africa/Addis_Ababa|ADMT EAT|-2z.k -30|01|-1lVCz.k",
+		"Africa/Addis_Ababa|LMT EAT BEAT BEAUT|-2r.g -30 -2u -2J|01231|-1F3Cr.g 3Dzr.g okMu MFXJ",
 		"Africa/Algiers|PMT WET WEST CET CEST|-9.l 0 -10 -10 -20|0121212121212121343431312123431213|-2nco9.l cNb9.l HA0 19A0 1iM0 11c0 1oo0 Wo0 1rc0 QM0 1EM0 UM0 DA0 Imo0 rd0 De0 9Xz0 1fb0 1ap0 16K0 2yo0 mEp0 hwL0 jxA0 11A0 dDd0 17b0 11B0 1cN0 2Dy0 1cN0 1fB0 1cL0",
 		"Africa/Bangui|LMT WAT|-d.A -10|01|-22y0d.A",
 		"Africa/Bissau|LMT WAT GMT|12.k 10 0|012|-2ldWV.E 2xonV.E",
@@ -1284,15 +1284,10 @@ module.exports={
 		"Africa/Cairo|EET EEST|-20 -30|010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010|-1bIO0 vb0 1ip0 11z0 1iN0 1nz0 12p0 1pz0 10N0 1pz0 16p0 1jz0 s3d0 Vz0 1oN0 11b0 1oO0 10N0 1pz0 10N0 1pb0 10N0 1pb0 10N0 1pb0 10N0 1pz0 10N0 1pb0 10N0 1pb0 11d0 1oL0 11d0 1pb0 11d0 1oL0 11d0 1oL0 11d0 1oL0 11d0 1pb0 11d0 1oL0 11d0 1oL0 11d0 1oL0 11d0 1pb0 11d0 1oL0 11d0 1oL0 11d0 1oL0 11d0 1pb0 11d0 1oL0 11d0 1WL0 rd0 1Rz0 wp0 1pb0 11d0 1oL0 11d0 1oL0 11d0 1oL0 11d0 1pb0 11d0 1qL0 Xd0 1oL0 11d0 1oL0 11d0 1pb0 11d0 1oL0 11d0 1oL0 11d0 1ny0 11z0 1o10 11z0 1o10 11z0 1o10 11z0 1qN0 11z0 1o10 11z0 1o10 11z0 1o10 11z0 1o10 11z0 1qN0 11z0 1o10 11z0 1o10 WL0 1qN0 Rb0 1wp0 On0 1zd0 Lz0 1EN0 Fb0 c10 8n0 8Nd0 gL0 e10 mn0 1o10 jz0 gN0 pb0 1qN0 dX0 e10 xz0 1o10 bb0 e10 An0 1o10 5z0 e10 FX0 1o10 2L0 e10 IL0 1C10 Lz0 1wp0 TX0 1qN0 WL0 1o10 11z0 1o10 11z0 1o10 11z0 1o10 11z0 1qN0 11z0 1o10 11z0 1o10 11z0 1o10 11z0 1o10 11z0 1qN0 11z0 1o10 11z0 1o10 11z0 1o10 11z0 1o10 11z0 1o10 11z0",
 		"Africa/Casablanca|LMT WET WEST CET|u.k 0 -10 -10|012121212121212121312121212121212121212121212121212121212121212121212121212121212121212121212121212121|-2gMnt.E 130Lt.E rb0 Dd0 dVb0 b6p0 TX0 EoB0 LL0 gnd0 rz0 43d0 AL0 1Nd0 XX0 1Cp0 pz0 dEp0 4mn0 SyN0 AL0 1Nd0 wn0 1FB0 Db0 1zd0 Lz0 1Nf0 wM0 co0 go0 1o00 s00 dA0 vc0 11A0 A00 e00 y00 11A0 uo0 e00 DA0 11A0 rA0 e00 Jc0 WM0 m00 gM0 M00 WM0 jc0 e00 RA0 11A0 dA0 e00 Uo0 11A0 800 gM0 Xc0 11A0 5c0 e00 17A0 WM0 2o0 e00 1ao0 19A0 1g00 16M0 1iM0 1400 1lA0 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qo0 1200 1kM0 14M0 1i00",
 		"Africa/Ceuta|WET WEST CET CEST|0 -10 -10 -20|010101010101010101010232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232|-25KN0 11z0 drd0 18o0 3I00 17c0 1fA0 1a00 1io0 1a00 1y7p0 LL0 gnd0 rz0 43d0 AL0 1Nd0 XX0 1Cp0 pz0 dEp0 4VB0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
-		"Africa/Dar_es_Salaam|LMT EAT BEAUT|-2B.8 -30 -2J|0121|-1yW2B.8 FnzB.8 vDAf",
-		"Africa/Djibouti|LMT EAT|-2Q.A -30|01|-2mrCQ.A",
 		"Africa/El_Aaiun|LMT WAT WET WEST|Q.M 10 0 -10|0123232323232323232323232323232323232323232323232323232323232323232323232323232323232323232|-1rDz7.c 1GVA7.c 6L0 AL0 1Nd0 XX0 1Cp0 pz0 1cBB0 AL0 1Nd0 wn0 1FB0 Db0 1zd0 Lz0 1Nf0 wM0 co0 go0 1o00 s00 dA0 vc0 11A0 A00 e00 y00 11A0 uo0 e00 DA0 11A0 rA0 e00 Jc0 WM0 m00 gM0 M00 WM0 jc0 e00 RA0 11A0 dA0 e00 Uo0 11A0 800 gM0 Xc0 11A0 5c0 e00 17A0 WM0 2o0 e00 1ao0 19A0 1g00 16M0 1iM0 1400 1lA0 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qo0 1200 1kM0 14M0 1i00",
 		"Africa/Johannesburg|SAST SAST SAST|-1u -20 -30|012121|-2GJdu 1Ajdu 1cL0 1cN0 1cL0",
 		"Africa/Juba|LMT CAT CAST EAT|-2a.8 -20 -30 -30|01212121212121212121212121212121213|-1yW2a.8 1zK0a.8 16L0 1iN0 17b0 1jd0 17b0 1ip0 17z0 1i10 17X0 1hB0 18n0 1hd0 19b0 1gp0 19z0 1iN0 17b0 1ip0 17z0 1i10 18n0 1hd0 18L0 1gN0 19b0 1gp0 19z0 1iN0 17z0 1i10 17X0 yGd0",
-		"Africa/Kampala|LMT EAT BEAT BEAUT|-29.E -30 -2u -2J|01231|-1F3C9.E 3Dz9.E HNAu lTbJ",
-		"Africa/Mogadishu|EAT BEAT|-30 -2u|010|-1yW30 13iMu",
 		"Africa/Monrovia|MMT LRT GMT|H.8 I.u 0|012|-23Lzg.Q 29s01.m",
-		"Africa/Nairobi|LMT EAT BEAT BEAUT|-2r.g -30 -2u -2J|01231|-1F3Cr.g 3Dzr.g okMu MFXJ",
 		"Africa/Ndjamena|LMT WAT WAST|-10.c -10 -20|0121|-2le10.c 2J3c0.c Wn0",
 		"Africa/Tripoli|LMT CET CEST EET|-Q.I -10 -20 -20|012121213121212121212121213123123|-21JcQ.I 1hnBQ.I vx0 4iP0 xx0 4eN0 Bb0 7ip0 U0n0 A10 1db0 1cN0 1db0 1dd0 1db0 1eN0 1bb0 1e10 1cL0 1c10 1db0 1dd0 1db0 1cN0 1db0 1q10 fAn0 1ep0 1db0 AKq0 TA0 1o00",
 		"Africa/Tunis|PMT CET CEST|-9.l -10 -20|0121212121212121212121212121212121|-2nco9.l 18pa9.l 1qM0 DA0 3Tc0 11B0 1ze0 WM0 7z0 3d0 14L0 1cN0 1f90 1ar0 16J0 1gXB0 WM0 1rA0 11c0 nwo0 Ko0 1cM0 1cM0 1rA0 10M0 zuM0 10N0 1aN0 1qM0 WM0 1qM0 11A0 1o00",
@@ -1351,7 +1346,7 @@ module.exports={
 		"America/Glace_Bay|LMT AST ADT AWT APT|3X.M 40 30 30 30|012134121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121|-2IsI0.c CwO0.c 1in0 UGp0 8x50 iu0 iq10 11z0 Jg10 1cL0 1cN0 1cL0 1cN0 1cL0 1cN0 1cL0 1cN0 1fz0 1a10 1fz0 1cN0 1cL0 1cN0 1cL0 1cN0 1cL0 1cN0 1cL0 1cN0 1fz0 1a10 1fz0 1cN0 1cL0 1cN0 1cL0 1cN0 1cL0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
 		"America/Godthab|LMT WGT WGST|3q.U 30 20|0121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121|-2a5Ux.4 2z5dx.4 19U0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
 		"America/Goose_Bay|NST NDT NST NDT NWT NPT AST ADT ADDT|3u.Q 2u.Q 3u 2u 2u 2u 40 30 20|010232323232323245232323232323232323232323232323232323232326767676767676767676767676767676767676767676768676767676767676767676767676767676767676767676767676767676767676767676767676767676767676767676767676|-25TSt.8 1in0 DXb0 2HbX.8 WL0 1qN0 WL0 1qN0 WL0 1tB0 TX0 1tB0 WL0 1qN0 WL0 1qN0 7UHu itu 1tB0 WL0 1qN0 WL0 1qN0 WL0 1qN0 WL0 1tB0 WL0 1ld0 11z0 1o10 11z0 1o10 11z0 1o10 11z0 1o10 11z0 1qN0 11z0 1o10 11z0 1o10 11z0 1o10 11z0 1o10 1fz0 1cN0 1cL0 1cN0 1cL0 1cN0 1cL0 1cN0 1cL0 1cN0 1fz0 S10 g0u 1fz0 1cN0 1cL0 1cN0 1cL0 1cN0 1cL0 1cN0 1cL0 1cN0 1fz0 1cN0 1cL0 1cN0 1cL0 1cN0 1cL0 1cN0 1cL0 1cN0 1fz0 1a10 1fz0 1cN0 1cL0 1cN0 1cL0 1cN0 1cL0 1cN0 1cL0 1cN0 1fz0 1a10 1fz0 1cN0 1cL0 1cN0 1cL0 1cN0 1cL0 14n1 1lb0 14p0 1nW0 11C0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zcX Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
-		"America/Grand_Turk|KMT EST EDT AST|57.b 50 40 40|01212121212121212121212121212121212121212121212121212121212121212121212123|-2l1uQ.N 2HHBQ.N 1cL0 1cN0 1cL0 1cN0 1cL0 1cN0 1fz0 1a10 1fz0 1cN0 1cL0 1cN0 1cL0 1cN0 1cL0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
+		"America/Grand_Turk|KMT EST EDT AST|57.b 50 40 40|0121212121212121212121212121212121212121212121212121212121212121212121212123|-2l1uQ.N 2HHBQ.N 1cL0 1cN0 1cL0 1cN0 1cL0 1cN0 1fz0 1a10 1fz0 1cN0 1cL0 1cN0 1cL0 1cN0 1cL0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0",
 		"America/Guatemala|LMT CST CDT|62.4 60 50|0121212121|-24KhV.U 2efXV.U An0 mtd0 Nz0 ifB0 17b0 zDB0 11z0",
 		"America/Guayaquil|QMT ECT|5e 50|01|-1yVSK",
 		"America/Guyana|LMT GBGT GYT GYT GYT|3Q.E 3J 3J 30 40|01234|-2dvU7.k 24JzQ.k mlc0 Bxbf",
@@ -1496,14 +1491,14 @@ module.exports={
 		"Asia/Omsk|LMT OMST OMST OMSST OMSST OMST|-4R.u -50 -60 -70 -60 -70|012323232323232323232324123232323232323232323232323232323232323252|-224sR.u pMLR.u 23CL0 1db0 1cN0 1db0 1cN0 1db0 1dd0 1cO0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 1cN0 IM0 rU0 1cL0 1cQ0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 8Hz0",
 		"Asia/Oral|LMT URAT URAT URAST URAT URAST ORAT ORAST ORAT|-3p.o -40 -50 -60 -60 -50 -40 -50 -50|012343232323232323251516767676767676767676767676768|-1Pc3p.o eUnp.o 23CL0 1db0 1cM0 1dc0 1cN0 1db0 1dd0 1cO0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cN0 1cM0 1fA0 2UK0 Fz0 1cL0 1cQ0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 RW0",
 		"Asia/Pontianak|LMT PMT WIB JST WIB WITA WIB|-7h.k -7h.k -7u -90 -80 -80 -70|012324256|-2ua7h.k XE00 munL.k 8Rau 6kpu 4PXu xhcu Wqnu",
-		"Asia/Pyongyang|KST JCST JST KST KST|-8u -90 -90 -90 -80|01012343|-2CsUu Ucnu 9Iou dXXu jdA0 kQo0 hXB0",
+		"Asia/Pyongyang|LMT KST JCST JST KST|-8n -8u -90 -90 -90|01234|-2um8n 97XR 12FXu jdA0",
 		"Asia/Qatar|LMT GST AST|-3q.8 -40 -30|012|-21Jfq.8 27BXq.8",
 		"Asia/Qyzylorda|LMT KIZT KIZT KIZST KIZT QYZT QYZT QYZST|-4l.Q -40 -50 -60 -60 -50 -60 -70|012343232323232323232325676767676767676767676767676|-1Pc4l.Q eUol.Q 23CL0 1db0 1cM0 1dc0 1cN0 1db0 1dd0 1cO0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 2UK0 dC0 rU0 1cL0 1cQ0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0",
 		"Asia/Rangoon|RMT BURT JST MMT|-6o.E -6u -90 -6u|0123|-21Jio.E SmnS.E 7j9u",
 		"Asia/Riyadh|LMT AST|-36.Q -30|01|-TvD6.Q",
 		"Asia/Sakhalin|LMT JCST JST SAKT SAKST SAKST SAKT|-9u.M -90 -90 -b0 -c0 -b0 -a0|0123434343434343434343435634343434343565656565656565656565656565636|-2AGVu.M 1iaMu.M je00 1qFa0 1db0 1cN0 1db0 1cN0 1db0 1dd0 1cO0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 1cN0 IM0 rU0 1cL0 1cQ0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1o00 11A0 1o10 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 8Hz0",
 		"Asia/Samarkand|LMT SAMT SAMT SAMST TAST UZST UZT|-4r.R -40 -50 -60 -60 -60 -50|01234323232323232323232356|-1Pc4r.R eUor.R 23CL0 1db0 1cM0 1dc0 1cN0 1db0 1dd0 1cO0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 11x0 bf0",
-		"Asia/Seoul|KST JCST JST KST KST KDT KDT|-8u -90 -90 -90 -80 -90 -a0|010123454036363|-2CsUu Ucnu 9Iou dXXu jjA0 kKo0 eWN0 Mn0 2cp0 hnzu JhXu 11z0 1o10 11z0",
+		"Asia/Seoul|LMT KST JCST JST KST KDT KDT|-8r.Q -8u -90 -90 -90 -9u -a0|01234151515151515146464|-2um8r.Q 97XV.Q 12FXu jjA0 kKo0 2I0u OL0 1FB0 Rb0 1qN0 TX0 1tB0 TX0 1tB0 TX0 1tB0 TX0 2ap0 12FBu 11A0 1o00 11A0",
 		"Asia/Singapore|SMT MALT MALST MALT MALT JST SGT SGT|-6T.p -70 -7k -7k -7u -90 -7u -80|012345467|-2Bg6T.p 17anT.p 7hXE dM00 17bO 8Fyu Mspu DTA0",
 		"Asia/Srednekolymsk|LMT MAGT MAGT MAGST MAGST MAGT SRET|-ae.Q -a0 -b0 -c0 -b0 -c0 -b0|012323232323232323232324123232323232323232323232323232323232323256|-1Pcae.Q eUoe.Q 23CL0 1db0 1cN0 1db0 1cN0 1db0 1dd0 1cO0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 1cN0 IM0 rU0 1cL0 1cQ0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 8Hz0",
 		"Asia/Taipei|JWST JST CST CDT|-80 -90 -80 -90|01232323232323232323232323232323232323232|-1iw80 joM0 1yo0 Tz0 1ip0 1jX0 1cN0 11b0 1oN0 11b0 1oN0 11b0 1oN0 11b0 10N0 1BX0 10p0 1pz0 10p0 1pz0 10p0 1db0 1dd0 1db0 1cN0 1db0 1cN0 1db0 1cN0 1db0 1BB0 ML0 1Bd0 ML0 uq10 1db0 1cN0 1db0 97B0 AL0",
@@ -1615,16 +1610,13 @@ module.exports={
 		"Europe/Warsaw|WMT CET CEST EET EEST|-1o -10 -20 -20 -30|012121234312121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121212121|-2ctdo 1LXo 11d0 1iO0 11A0 1o00 11A0 1on0 11A0 6zy0 HWP0 5IM0 WM0 1fA0 1cM0 1dz0 1mL0 1en0 15B0 1aq0 1nA0 11A0 1io0 17c0 1fA0 1a00 iDX0 LA0 1cM0 1cM0 1C00 Oo0 1cM0 1cM0 1zc0 Oo0 1zc0 Oo0 1zc0 Oo0 1C00 LA0 uso0 1a00 1fA0 1cM0 1cM0 1cM0 1fA0 1a00 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cN0 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
 		"Europe/Zaporozhye|CUT EET MSK CEST CET MSD EEST|-2k -20 -30 -20 -10 -40 -30|01234342525252525252525252526161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161|-1Pc2k eUok rdb0 2RE0 WM0 1fA0 8m0 1v9a0 1db0 1cN0 1db0 1cN0 1db0 1dd0 1cO0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 1cK0 1cN0 1cL0 1cN0 1cL0 1cN0 1cL0 1cQ0 1cM0 1fA0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
 		"HST|HST|a0|0|",
-		"Indian/Antananarivo|LMT EAT EAST|-3a.4 -30 -40|0121|-2mrDa.4 1HRba.4 Ao0",
 		"Indian/Chagos|LMT IOT IOT|-4N.E -50 -60|012|-2xosN.E 3AGLN.E",
 		"Indian/Christmas|CXT|-70|0|",
 		"Indian/Cocos|CCT|-6u|0|",
-		"Indian/Comoro|LMT EAT|-2R.4 -30|01|-2mrCR.4",
 		"Indian/Kerguelen|zzz TFT|0 -50|01|-MG00",
 		"Indian/Mahe|LMT SCT|-3F.M -40|01|-2yO3F.M",
 		"Indian/Maldives|MMT MVT|-4S -50|01|-olgS",
 		"Indian/Mauritius|LMT MUT MUST|-3O -40 -50|012121|-2xorO 34unO 14L0 12kr0 11z0",
-		"Indian/Mayotte|LMT EAT|-30.U -30|01|-2mrD0.U",
 		"Indian/Reunion|LMT RET|-3F.Q -40|01|-2mDDF.Q",
 		"Kwajalein|MHT KWAT MHT|-b0 c0 -c0|012|-AX0 W9X0",
 		"MET|MET MEST|-10 -20|01010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010|-2aFe0 11d0 1iO0 11A0 1o00 11A0 Qrc0 6i00 WM0 1fA0 1cM0 1cM0 1cM0 16M0 1gMM0 1a00 1fA0 1cM0 1cM0 1cM0 1fA0 1a00 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00",
@@ -1682,6 +1674,14 @@ module.exports={
 		"Africa/Abidjan|Atlantic/St_Helena",
 		"Africa/Addis_Ababa|Africa/Asmara",
 		"Africa/Addis_Ababa|Africa/Asmera",
+		"Africa/Addis_Ababa|Africa/Dar_es_Salaam",
+		"Africa/Addis_Ababa|Africa/Djibouti",
+		"Africa/Addis_Ababa|Africa/Kampala",
+		"Africa/Addis_Ababa|Africa/Mogadishu",
+		"Africa/Addis_Ababa|Africa/Nairobi",
+		"Africa/Addis_Ababa|Indian/Antananarivo",
+		"Africa/Addis_Ababa|Indian/Comoro",
+		"Africa/Addis_Ababa|Indian/Mayotte",
 		"Africa/Bangui|Africa/Brazzaville",
 		"Africa/Bangui|Africa/Douala",
 		"Africa/Bangui|Africa/Kinshasa",
@@ -1860,13 +1860,13 @@ module.exports={
 		"Pacific/Pohnpei|Pacific/Ponape"
 	]
 }
-},{}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/node_modules/moment-timezone/index.js":[function(require,module,exports){
+},{}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/moment-timezone/index.js":[function(require,module,exports){
 var moment = module.exports = require("./moment-timezone");
 moment.tz.load(require('./data/packed/latest.json'));
 
-},{"./data/packed/latest.json":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/node_modules/moment-timezone/data/packed/latest.json","./moment-timezone":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/node_modules/moment-timezone/moment-timezone.js"}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/node_modules/moment-timezone/moment-timezone.js":[function(require,module,exports){
+},{"./data/packed/latest.json":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/moment-timezone/data/packed/latest.json","./moment-timezone":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/moment-timezone/moment-timezone.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/moment-timezone/moment-timezone.js":[function(require,module,exports){
 //! moment-timezone.js
-//! version : 0.2.4
+//! version : 0.2.5
 //! author : Tim Wood
 //! license : MIT
 //! github.com/moment/moment-timezone
@@ -1888,7 +1888,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 	// Do not load moment-timezone a second time.
 	if (moment.tz !== undefined) { return moment; }
 
-	var VERSION = "0.2.4",
+	var VERSION = "0.2.5",
 		zones = {},
 		links = {},
 
@@ -2267,10 +2267,10 @@ moment.tz.load(require('./data/packed/latest.json'));
 	return moment;
 }));
 
-},{"moment":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/node_modules/moment-timezone/node_modules/moment/moment.js"}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/node_modules/moment-timezone/node_modules/moment/moment.js":[function(require,module,exports){
+},{"moment":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/moment-timezone/node_modules/moment/moment.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/moment-timezone/node_modules/moment/moment.js":[function(require,module,exports){
 (function (global){
 //! moment.js
-//! version : 2.8.3
+//! version : 2.9.0
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
 //! license : MIT
 //! momentjs.com
@@ -2281,9 +2281,9 @@ moment.tz.load(require('./data/packed/latest.json'));
     ************************************/
 
     var moment,
-        VERSION = '2.8.3',
+        VERSION = '2.9.0',
         // the global-scope this is NOT the global object in Node.js
-        globalScope = typeof global !== 'undefined' ? global : this,
+        globalScope = (typeof global !== 'undefined' && (typeof window === 'undefined' || window === global.window)) ? global : this,
         oldGlobalMoment,
         round = Math.round,
         hasOwnProperty = Object.prototype.hasOwnProperty,
@@ -2304,7 +2304,7 @@ moment.tz.load(require('./data/packed/latest.json'));
         momentProperties = [],
 
         // check for nodeJS
-        hasModule = (typeof module !== 'undefined' && module.exports),
+        hasModule = (typeof module !== 'undefined' && module && module.exports),
 
         // ASP.NET json date format regex
         aspNetJsonRegex = /^\/?Date\((\-?\d+)/i,
@@ -2315,8 +2315,8 @@ moment.tz.load(require('./data/packed/latest.json'));
         isoDurationRegex = /^(-)?P(?:(?:([0-9,.]*)Y)?(?:([0-9,.]*)M)?(?:([0-9,.]*)D)?(?:T(?:([0-9,.]*)H)?(?:([0-9,.]*)M)?(?:([0-9,.]*)S)?)?|([0-9,.]*)W)$/,
 
         // format tokens
-        formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Q|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,4}|X|zz?|ZZ?|.)/g,
-        localFormattingTokens = /(\[[^\[]*\])|(\\)?(LT|LL?L?L?|l{1,4})/g,
+        formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Q|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,4}|x|X|zz?|ZZ?|.)/g,
+        localFormattingTokens = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g,
 
         // parsing token regexes
         parseTokenOneOrTwoDigits = /\d\d?/, // 0 - 99
@@ -2327,8 +2327,8 @@ moment.tz.load(require('./data/packed/latest.json'));
         parseTokenWord = /[0-9]*['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}/i, // any word (or two) characters or numbers including two/three word month in arabic.
         parseTokenTimezone = /Z|[\+\-]\d\d:?\d\d/gi, // +00:00 -00:00 +0000 -0000 or Z
         parseTokenT = /T/i, // T (ISO separator)
+        parseTokenOffsetMs = /[\+\-]?\d+/, // 1234567890123
         parseTokenTimestampMs = /[\+\-]?\d+(\.\d{1,3})?/, // 123456789 123456789.123
-        parseTokenOrdinal = /\d{1,2}/,
 
         //strict parsing regexes
         parseTokenOneDigit = /\d/, // 0 - 9
@@ -2360,7 +2360,7 @@ moment.tz.load(require('./data/packed/latest.json'));
             ['HH', /(T| )\d\d/]
         ],
 
-        // timezone chunker '+10:00' > ['10', '00'] or '-1530' > ['-15', '30']
+        // timezone chunker '+10:00' > ['10', '00'] or '-1530' > ['-', '15', '30']
         parseTimezoneChunker = /([\+\-]|\d\d)/gi,
 
         // getter and setter names
@@ -2520,7 +2520,7 @@ moment.tz.load(require('./data/packed/latest.json'));
                 return leftZeroFill(this.milliseconds(), 3);
             },
             Z    : function () {
-                var a = -this.zone(),
+                var a = this.utcOffset(),
                     b = '+';
                 if (a < 0) {
                     a = -a;
@@ -2529,7 +2529,7 @@ moment.tz.load(require('./data/packed/latest.json'));
                 return b + leftZeroFill(toInt(a / 60), 2) + ':' + leftZeroFill(toInt(a) % 60, 2);
             },
             ZZ   : function () {
-                var a = -this.zone(),
+                var a = this.utcOffset(),
                     b = '+';
                 if (a < 0) {
                     a = -a;
@@ -2543,6 +2543,9 @@ moment.tz.load(require('./data/packed/latest.json'));
             zz : function () {
                 return this.zoneName();
             },
+            x    : function () {
+                return this.valueOf();
+            },
             X    : function () {
                 return this.unix();
             },
@@ -2553,7 +2556,9 @@ moment.tz.load(require('./data/packed/latest.json'));
 
         deprecations = {},
 
-        lists = ['months', 'monthsShort', 'weekdays', 'weekdaysShort', 'weekdaysMin'];
+        lists = ['months', 'monthsShort', 'weekdays', 'weekdaysShort', 'weekdaysMin'],
+
+        updateInProgress = false;
 
     // Pick the first defined of two or three arguments. dfl comes from
     // default.
@@ -2622,6 +2627,26 @@ moment.tz.load(require('./data/packed/latest.json'));
         };
     }
 
+    function monthDiff(a, b) {
+        // difference in months
+        var wholeMonthDiff = ((b.year() - a.year()) * 12) + (b.month() - a.month()),
+            // b is in (anchor - 1 month, anchor + 1 month)
+            anchor = a.clone().add(wholeMonthDiff, 'months'),
+            anchor2, adjust;
+
+        if (b - anchor < 0) {
+            anchor2 = a.clone().add(wholeMonthDiff - 1, 'months');
+            // linear across the month
+            adjust = (b - anchor) / (anchor - anchor2);
+        } else {
+            anchor2 = a.clone().add(wholeMonthDiff + 1, 'months');
+            // linear across the month
+            adjust = (b - anchor) / (anchor2 - anchor);
+        }
+
+        return -(wholeMonthDiff + adjust);
+    }
+
     while (ordinalizeTokens.length) {
         i = ordinalizeTokens.pop();
         formatTokenFunctions[i + 'o'] = ordinalizeToken(formatTokenFunctions[i], i);
@@ -2632,6 +2657,31 @@ moment.tz.load(require('./data/packed/latest.json'));
     }
     formatTokenFunctions.DDDD = padToken(formatTokenFunctions.DDD, 3);
 
+
+    function meridiemFixWrap(locale, hour, meridiem) {
+        var isPm;
+
+        if (meridiem == null) {
+            // nothing to do
+            return hour;
+        }
+        if (locale.meridiemHour != null) {
+            return locale.meridiemHour(hour, meridiem);
+        } else if (locale.isPM != null) {
+            // Fallback
+            isPm = locale.isPM(meridiem);
+            if (isPm && hour < 12) {
+                hour += 12;
+            }
+            if (!isPm && hour === 12) {
+                hour = 0;
+            }
+            return hour;
+        } else {
+            // thie is not supposed to happen
+            return hour;
+        }
+    }
 
     /************************************
         Constructors
@@ -2647,6 +2697,13 @@ moment.tz.load(require('./data/packed/latest.json'));
         }
         copyConfig(this, config);
         this._d = new Date(+config._d);
+        // Prevent infinite loop in case updateOffset creates new moment
+        // objects.
+        if (updateInProgress === false) {
+            updateInProgress = true;
+            moment.updateOffset(this);
+            updateInProgress = false;
+        }
     }
 
     // Duration Constructor
@@ -2969,7 +3026,10 @@ moment.tz.load(require('./data/packed/latest.json'));
             overflow =
                 m._a[MONTH] < 0 || m._a[MONTH] > 11 ? MONTH :
                 m._a[DATE] < 1 || m._a[DATE] > daysInMonth(m._a[YEAR], m._a[MONTH]) ? DATE :
-                m._a[HOUR] < 0 || m._a[HOUR] > 23 ? HOUR :
+                m._a[HOUR] < 0 || m._a[HOUR] > 24 ||
+                    (m._a[HOUR] === 24 && (m._a[MINUTE] !== 0 ||
+                                           m._a[SECOND] !== 0 ||
+                                           m._a[MILLISECOND] !== 0)) ? HOUR :
                 m._a[MINUTE] < 0 || m._a[MINUTE] > 59 ? MINUTE :
                 m._a[SECOND] < 0 || m._a[SECOND] > 59 ? SECOND :
                 m._a[MILLISECOND] < 0 || m._a[MILLISECOND] > 999 ? MILLISECOND :
@@ -2996,7 +3056,8 @@ moment.tz.load(require('./data/packed/latest.json'));
             if (m._strict) {
                 m._isValid = m._isValid &&
                     m._pf.charsLeftOver === 0 &&
-                    m._pf.unusedTokens.length === 0;
+                    m._pf.unusedTokens.length === 0 &&
+                    m._pf.bigHour === undefined;
             }
         }
         return m._isValid;
@@ -3046,10 +3107,21 @@ moment.tz.load(require('./data/packed/latest.json'));
         return locales[name];
     }
 
-    // Return a moment from input, that is local/utc/zone equivalent to model.
+    // Return a moment from input, that is local/utc/utcOffset equivalent to
+    // model.
     function makeAs(input, model) {
-        return model._isUTC ? moment(input).zone(model._offset || 0) :
-            moment(input).local();
+        var res, diff;
+        if (model._isUTC) {
+            res = model.clone();
+            diff = (moment.isMoment(input) || isDate(input) ?
+                    +input : +moment(input)) - (+res);
+            // Use low-level api, because this fn is low-level api.
+            res._d.setTime(+res._d + diff);
+            moment.updateOffset(res, false);
+            return res;
+        } else {
+            return moment(input).local();
+        }
     }
 
     /************************************
@@ -3069,6 +3141,9 @@ moment.tz.load(require('./data/packed/latest.json'));
                     this['_' + i] = prop;
                 }
             }
+            // Lenient ordinal parsing accepts just a number in addition to
+            // number + (possibly) stuff coming from _ordinalParseLenient.
+            this._ordinalParseLenient = new RegExp(this._ordinalParse.source + '|' + /\d{1,2}/.source);
         },
 
         _months : 'January_February_March_April_May_June_July_August_September_October_November_December'.split('_'),
@@ -3081,22 +3156,32 @@ moment.tz.load(require('./data/packed/latest.json'));
             return this._monthsShort[m.month()];
         },
 
-        monthsParse : function (monthName) {
+        monthsParse : function (monthName, format, strict) {
             var i, mom, regex;
 
             if (!this._monthsParse) {
                 this._monthsParse = [];
+                this._longMonthsParse = [];
+                this._shortMonthsParse = [];
             }
 
             for (i = 0; i < 12; i++) {
                 // make the regex if we don't have it already
-                if (!this._monthsParse[i]) {
-                    mom = moment.utc([2000, i]);
+                mom = moment.utc([2000, i]);
+                if (strict && !this._longMonthsParse[i]) {
+                    this._longMonthsParse[i] = new RegExp('^' + this.months(mom, '').replace('.', '') + '$', 'i');
+                    this._shortMonthsParse[i] = new RegExp('^' + this.monthsShort(mom, '').replace('.', '') + '$', 'i');
+                }
+                if (!strict && !this._monthsParse[i]) {
                     regex = '^' + this.months(mom, '') + '|^' + this.monthsShort(mom, '');
                     this._monthsParse[i] = new RegExp(regex.replace('.', ''), 'i');
                 }
                 // test the regex
-                if (this._monthsParse[i].test(monthName)) {
+                if (strict && format === 'MMMM' && this._longMonthsParse[i].test(monthName)) {
+                    return i;
+                } else if (strict && format === 'MMM' && this._shortMonthsParse[i].test(monthName)) {
+                    return i;
+                } else if (!strict && this._monthsParse[i].test(monthName)) {
                     return i;
                 }
             }
@@ -3139,6 +3224,7 @@ moment.tz.load(require('./data/packed/latest.json'));
         },
 
         _longDateFormat : {
+            LTS : 'h:mm:ss A',
             LT : 'h:mm A',
             L : 'MM/DD/YYYY',
             LL : 'MMMM D, YYYY',
@@ -3171,6 +3257,7 @@ moment.tz.load(require('./data/packed/latest.json'));
             }
         },
 
+
         _calendar : {
             sameDay : '[Today at] LT',
             nextDay : '[Tomorrow at] LT',
@@ -3179,9 +3266,9 @@ moment.tz.load(require('./data/packed/latest.json'));
             lastWeek : '[Last] dddd [at] LT',
             sameElse : 'L'
         },
-        calendar : function (key, mom) {
+        calendar : function (key, mom, now) {
             var output = this._calendar[key];
-            return typeof output === 'function' ? output.apply(mom) : output;
+            return typeof output === 'function' ? output.apply(mom, [now]) : output;
         },
 
         _relativeTime : {
@@ -3216,6 +3303,7 @@ moment.tz.load(require('./data/packed/latest.json'));
             return this._ordinal.replace('%d', number);
         },
         _ordinal : '%d',
+        _ordinalParse : /\d{1,2}/,
 
         preparse : function (string) {
             return string;
@@ -3232,6 +3320,14 @@ moment.tz.load(require('./data/packed/latest.json'));
         _week : {
             dow : 0, // Sunday is the first day of the week.
             doy : 6  // The week that contains Jan 1st is the first week of the year.
+        },
+
+        firstDayOfWeek : function () {
+            return this._week.dow;
+        },
+
+        firstDayOfYear : function () {
+            return this._week.doy;
         },
 
         _invalidDate: 'Invalid date',
@@ -3357,6 +3453,8 @@ moment.tz.load(require('./data/packed/latest.json'));
         case 'a':
         case 'A':
             return config._locale._meridiemParse;
+        case 'x':
+            return parseTokenOffsetMs;
         case 'X':
             return parseTokenTimestampMs;
         case 'Z':
@@ -3391,21 +3489,21 @@ moment.tz.load(require('./data/packed/latest.json'));
         case 'E':
             return parseTokenOneOrTwoDigits;
         case 'Do':
-            return parseTokenOrdinal;
+            return strict ? config._locale._ordinalParse : config._locale._ordinalParseLenient;
         default :
             a = new RegExp(regexpEscape(unescapeFormat(token.replace('\\', '')), 'i'));
             return a;
         }
     }
 
-    function timezoneMinutesFromString(string) {
+    function utcOffsetFromString(string) {
         string = string || '';
         var possibleTzMatches = (string.match(parseTokenTimezone) || []),
             tzChunk = possibleTzMatches[possibleTzMatches.length - 1] || [],
             parts = (tzChunk + '').match(parseTimezoneChunker) || ['-', 0, 0],
             minutes = +(parts[1] * 60) + toInt(parts[2]);
 
-        return parts[0] === '+' ? -minutes : minutes;
+        return parts[0] === '+' ? minutes : -minutes;
     }
 
     // function to convert string input to date
@@ -3428,7 +3526,7 @@ moment.tz.load(require('./data/packed/latest.json'));
             break;
         case 'MMM' : // fall through to MMMM
         case 'MMMM' :
-            a = config._locale.monthsParse(input);
+            a = config._locale.monthsParse(input, token, config._strict);
             // if we didn't find a month name, mark the date as invalid.
             if (a != null) {
                 datePartArray[MONTH] = a;
@@ -3445,7 +3543,8 @@ moment.tz.load(require('./data/packed/latest.json'));
             break;
         case 'Do' :
             if (input != null) {
-                datePartArray[DATE] = toInt(parseInt(input, 10));
+                datePartArray[DATE] = toInt(parseInt(
+                            input.match(/\d{1,2}/)[0], 10));
             }
             break;
         // DAY OF YEAR
@@ -3468,13 +3567,16 @@ moment.tz.load(require('./data/packed/latest.json'));
         // AM / PM
         case 'a' : // fall through to A
         case 'A' :
-            config._isPm = config._locale.isPM(input);
+            config._meridiem = input;
+            // config._isPm = config._locale.isPM(input);
             break;
-        // 24 HOUR
-        case 'H' : // fall through to hh
-        case 'HH' : // fall through to hh
+        // HOUR
         case 'h' : // fall through to hh
         case 'hh' :
+            config._pf.bigHour = true;
+            /* falls through */
+        case 'H' : // fall through to HH
+        case 'HH' :
             datePartArray[HOUR] = toInt(input);
             break;
         // MINUTE
@@ -3494,6 +3596,10 @@ moment.tz.load(require('./data/packed/latest.json'));
         case 'SSSS' :
             datePartArray[MILLISECOND] = toInt(('0.' + input) * 1000);
             break;
+        // UNIX OFFSET (MILLISECONDS)
+        case 'x':
+            config._d = new Date(toInt(input));
+            break;
         // UNIX TIMESTAMP WITH MS
         case 'X':
             config._d = new Date(parseFloat(input) * 1000);
@@ -3502,7 +3608,7 @@ moment.tz.load(require('./data/packed/latest.json'));
         case 'Z' : // fall through to ZZ
         case 'ZZ' :
             config._useUTC = true;
-            config._tzm = timezoneMinutesFromString(input);
+            config._tzm = utcOffsetFromString(input);
             break;
         // WEEKDAY - human
         case 'dd':
@@ -3630,11 +3736,24 @@ moment.tz.load(require('./data/packed/latest.json'));
             config._a[i] = input[i] = (config._a[i] == null) ? (i === 2 ? 1 : 0) : config._a[i];
         }
 
+        // Check for 24:00:00.000
+        if (config._a[HOUR] === 24 &&
+                config._a[MINUTE] === 0 &&
+                config._a[SECOND] === 0 &&
+                config._a[MILLISECOND] === 0) {
+            config._nextDay = true;
+            config._a[HOUR] = 0;
+        }
+
         config._d = (config._useUTC ? makeUTCDate : makeDate).apply(null, input);
-        // Apply timezone offset from input. The actual zone can be changed
+        // Apply timezone offset from input. The actual utcOffset can be changed
         // with parseZone.
         if (config._tzm != null) {
-            config._d.setUTCMinutes(config._d.getUTCMinutes() + config._tzm);
+            config._d.setUTCMinutes(config._d.getUTCMinutes() - config._tzm);
+        }
+
+        if (config._nextDay) {
+            config._a[HOUR] = 24;
         }
     }
 
@@ -3649,7 +3768,7 @@ moment.tz.load(require('./data/packed/latest.json'));
         config._a = [
             normalizedInput.year,
             normalizedInput.month,
-            normalizedInput.day,
+            normalizedInput.day || normalizedInput.date,
             normalizedInput.hour,
             normalizedInput.minute,
             normalizedInput.second,
@@ -3722,15 +3841,13 @@ moment.tz.load(require('./data/packed/latest.json'));
             config._pf.unusedInput.push(string);
         }
 
-        // handle am pm
-        if (config._isPm && config._a[HOUR] < 12) {
-            config._a[HOUR] += 12;
+        // clear _12h flag if hour is <= 12
+        if (config._pf.bigHour === true && config._a[HOUR] <= 12) {
+            config._pf.bigHour = undefined;
         }
-        // if is 12 am, change hours to 0
-        if (config._isPm === false && config._a[HOUR] === 12) {
-            config._a[HOUR] = 0;
-        }
-
+        // handle meridiem
+        config._a[HOUR] = meridiemFixWrap(config._locale, config._a[HOUR],
+                config._meridiem);
         dateFromConfig(config);
         checkOverflow(config);
     }
@@ -3990,7 +4107,8 @@ moment.tz.load(require('./data/packed/latest.json'));
 
     function makeMoment(config) {
         var input = config._i,
-            format = config._f;
+            format = config._f,
+            res;
 
         config._locale = config._locale || moment.localeData(config._l);
 
@@ -4014,7 +4132,14 @@ moment.tz.load(require('./data/packed/latest.json'));
             makeDateFromInput(config);
         }
 
-        return new Moment(config);
+        res = new Moment(config);
+        if (res._nextDay) {
+            // Adding is smart enough around DST
+            res.add(1, 'd');
+            res._nextDay = undefined;
+        }
+
+        return res;
     }
 
     moment = function (input, format, locale, strict) {
@@ -4046,7 +4171,7 @@ moment.tz.load(require('./data/packed/latest.json'));
         'release. Please refer to ' +
         'https://github.com/moment/moment/issues/1407 for more info.',
         function (config) {
-            config._d = new Date(config._i);
+            config._d = new Date(config._i + (config._useUTC ? ' UTC' : ''));
         }
     );
 
@@ -4164,6 +4289,8 @@ moment.tz.load(require('./data/packed/latest.json'));
                 s: parseIso(match[7]),
                 w: parseIso(match[8])
             };
+        } else if (duration == null) {// checks for null or undefined
+            duration = {};
         } else if (typeof duration === 'object' &&
                 ('from' in duration || 'to' in duration)) {
             diffRes = momentsDifference(moment(duration.from), moment(duration.to));
@@ -4328,6 +4455,8 @@ moment.tz.load(require('./data/packed/latest.json'));
         return toInt(input) + (toInt(input) > 68 ? 1900 : 2000);
     };
 
+    moment.isDate = isDate;
+
     /************************************
         Moment Prototype
     ************************************/
@@ -4340,7 +4469,7 @@ moment.tz.load(require('./data/packed/latest.json'));
         },
 
         valueOf : function () {
-            return +this._d + ((this._offset || 0) * 60000);
+            return +this._d - ((this._offset || 0) * 60000);
         },
 
         unix : function () {
@@ -4358,7 +4487,12 @@ moment.tz.load(require('./data/packed/latest.json'));
         toISOString : function () {
             var m = moment(this).utc();
             if (0 < m.year() && m.year() <= 9999) {
-                return formatMoment(m, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+                if ('function' === typeof Date.prototype.toISOString) {
+                    // native implementation is ~50x faster, use it when we can
+                    return this.toDate().toISOString();
+                } else {
+                    return formatMoment(m, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+                }
             } else {
                 return formatMoment(m, 'YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
             }
@@ -4398,16 +4532,16 @@ moment.tz.load(require('./data/packed/latest.json'));
         },
 
         utc : function (keepLocalTime) {
-            return this.zone(0, keepLocalTime);
+            return this.utcOffset(0, keepLocalTime);
         },
 
         local : function (keepLocalTime) {
             if (this._isUTC) {
-                this.zone(0, keepLocalTime);
+                this.utcOffset(0, keepLocalTime);
                 this._isUTC = false;
 
                 if (keepLocalTime) {
-                    this.add(this._dateTzOffset(), 'm');
+                    this.subtract(this._dateUtcOffset(), 'm');
                 }
             }
             return this;
@@ -4424,29 +4558,20 @@ moment.tz.load(require('./data/packed/latest.json'));
 
         diff : function (input, units, asFloat) {
             var that = makeAs(input, this),
-                zoneDiff = (this.zone() - that.zone()) * 6e4,
-                diff, output, daysAdjust;
+                zoneDiff = (that.utcOffset() - this.utcOffset()) * 6e4,
+                anchor, diff, output, daysAdjust;
 
             units = normalizeUnits(units);
 
-            if (units === 'year' || units === 'month') {
-                // average number of days in the months in the given dates
-                diff = (this.daysInMonth() + that.daysInMonth()) * 432e5; // 24 * 60 * 60 * 1000 / 2
-                // difference in months
-                output = ((this.year() - that.year()) * 12) + (this.month() - that.month());
-                // adjust by taking difference in days, average number of days
-                // and dst in the given months.
-                daysAdjust = (this - moment(this).startOf('month')) -
-                    (that - moment(that).startOf('month'));
-                // same as above but with zones, to negate all dst
-                daysAdjust -= ((this.zone() - moment(this).startOf('month').zone()) -
-                        (that.zone() - moment(that).startOf('month').zone())) * 6e4;
-                output += daysAdjust / diff;
-                if (units === 'year') {
+            if (units === 'year' || units === 'month' || units === 'quarter') {
+                output = monthDiff(this, that);
+                if (units === 'quarter') {
+                    output = output / 3;
+                } else if (units === 'year') {
                     output = output / 12;
                 }
             } else {
-                diff = (this - that);
+                diff = this - that;
                 output = units === 'second' ? diff / 1e3 : // 1000
                     units === 'minute' ? diff / 6e4 : // 1000 * 60
                     units === 'hour' ? diff / 36e5 : // 1000 * 60 * 60
@@ -4467,7 +4592,8 @@ moment.tz.load(require('./data/packed/latest.json'));
 
         calendar : function (time) {
             // We want to compare the start of today, vs this.
-            // Getting start-of-today depends on whether we're zone'd or not.
+            // Getting start-of-today depends on whether we're locat/utc/offset
+            // or not.
             var now = time || moment(),
                 sod = makeAs(now, this).startOf('day'),
                 diff = this.diff(sod, 'days', true),
@@ -4477,7 +4603,7 @@ moment.tz.load(require('./data/packed/latest.json'));
                     diff < 1 ? 'sameDay' :
                     diff < 2 ? 'nextDay' :
                     diff < 7 ? 'nextWeek' : 'sameElse';
-            return this.format(this.localeData().calendar(format, this));
+            return this.format(this.localeData().calendar(format, this, moment(now)));
         },
 
         isLeapYear : function () {
@@ -4485,8 +4611,8 @@ moment.tz.load(require('./data/packed/latest.json'));
         },
 
         isDST : function () {
-            return (this.zone() < this.clone().month(0).zone() ||
-                this.zone() < this.clone().month(5).zone());
+            return (this.utcOffset() > this.clone().month(0).utcOffset() ||
+                this.utcOffset() > this.clone().month(5).utcOffset());
         },
 
         day : function (input) {
@@ -4546,36 +4672,49 @@ moment.tz.load(require('./data/packed/latest.json'));
 
         endOf: function (units) {
             units = normalizeUnits(units);
+            if (units === undefined || units === 'millisecond') {
+                return this;
+            }
             return this.startOf(units).add(1, (units === 'isoWeek' ? 'week' : units)).subtract(1, 'ms');
         },
 
         isAfter: function (input, units) {
+            var inputMs;
             units = normalizeUnits(typeof units !== 'undefined' ? units : 'millisecond');
             if (units === 'millisecond') {
                 input = moment.isMoment(input) ? input : moment(input);
                 return +this > +input;
             } else {
-                return +this.clone().startOf(units) > +moment(input).startOf(units);
+                inputMs = moment.isMoment(input) ? +input : +moment(input);
+                return inputMs < +this.clone().startOf(units);
             }
         },
 
         isBefore: function (input, units) {
+            var inputMs;
             units = normalizeUnits(typeof units !== 'undefined' ? units : 'millisecond');
             if (units === 'millisecond') {
                 input = moment.isMoment(input) ? input : moment(input);
                 return +this < +input;
             } else {
-                return +this.clone().startOf(units) < +moment(input).startOf(units);
+                inputMs = moment.isMoment(input) ? +input : +moment(input);
+                return +this.clone().endOf(units) < inputMs;
             }
         },
 
+        isBetween: function (from, to, units) {
+            return this.isAfter(from, units) && this.isBefore(to, units);
+        },
+
         isSame: function (input, units) {
+            var inputMs;
             units = normalizeUnits(units || 'millisecond');
             if (units === 'millisecond') {
                 input = moment.isMoment(input) ? input : moment(input);
                 return +this === +input;
             } else {
-                return +this.clone().startOf(units) === +makeAs(input, this).startOf(units);
+                inputMs = +moment(input);
+                return +(this.clone().startOf(units)) <= inputMs && inputMs <= +(this.clone().endOf(units));
             }
         },
 
@@ -4595,9 +4734,27 @@ moment.tz.load(require('./data/packed/latest.json'));
                 }
         ),
 
+        zone : deprecate(
+                'moment().zone is deprecated, use moment().utcOffset instead. ' +
+                'https://github.com/moment/moment/issues/1779',
+                function (input, keepLocalTime) {
+                    if (input != null) {
+                        if (typeof input !== 'string') {
+                            input = -input;
+                        }
+
+                        this.utcOffset(input, keepLocalTime);
+
+                        return this;
+                    } else {
+                        return -this.utcOffset();
+                    }
+                }
+        ),
+
         // keepLocalTime = true means only change the timezone, without
-        // affecting the local hour. So 5:31:26 +0300 --[zone(2, true)]-->
-        // 5:31:26 +0200 It is possible that 5:31:26 doesn't exist int zone
+        // affecting the local hour. So 5:31:26 +0300 --[utcOffset(2, true)]-->
+        // 5:31:26 +0200 It is possible that 5:31:26 doesn't exist with offset
         // +0200, so we adjust the time as needed, to be valid.
         //
         // Keeping the time actually adds/subtracts (one hour)
@@ -4605,38 +4762,51 @@ moment.tz.load(require('./data/packed/latest.json'));
         // a second time. In case it wants us to change the offset again
         // _changeInProgress == true case, then we have to adjust, because
         // there is no such time in the given timezone.
-        zone : function (input, keepLocalTime) {
+        utcOffset : function (input, keepLocalTime) {
             var offset = this._offset || 0,
                 localAdjust;
             if (input != null) {
                 if (typeof input === 'string') {
-                    input = timezoneMinutesFromString(input);
+                    input = utcOffsetFromString(input);
                 }
                 if (Math.abs(input) < 16) {
                     input = input * 60;
                 }
                 if (!this._isUTC && keepLocalTime) {
-                    localAdjust = this._dateTzOffset();
+                    localAdjust = this._dateUtcOffset();
                 }
                 this._offset = input;
                 this._isUTC = true;
                 if (localAdjust != null) {
-                    this.subtract(localAdjust, 'm');
+                    this.add(localAdjust, 'm');
                 }
                 if (offset !== input) {
                     if (!keepLocalTime || this._changeInProgress) {
                         addOrSubtractDurationFromMoment(this,
-                                moment.duration(offset - input, 'm'), 1, false);
+                                moment.duration(input - offset, 'm'), 1, false);
                     } else if (!this._changeInProgress) {
                         this._changeInProgress = true;
                         moment.updateOffset(this, true);
                         this._changeInProgress = null;
                     }
                 }
+
+                return this;
             } else {
-                return this._isUTC ? offset : this._dateTzOffset();
+                return this._isUTC ? offset : this._dateUtcOffset();
             }
-            return this;
+        },
+
+        isLocal : function () {
+            return !this._isUTC;
+        },
+
+        isUtcOffset : function () {
+            return this._isUTC;
+        },
+
+        isUtc : function () {
+            return this._isUTC && this._offset === 0;
         },
 
         zoneAbbr : function () {
@@ -4649,9 +4819,9 @@ moment.tz.load(require('./data/packed/latest.json'));
 
         parseZone : function () {
             if (this._tzm) {
-                this.zone(this._tzm);
+                this.utcOffset(this._tzm);
             } else if (typeof this._i === 'string') {
-                this.zone(this._i);
+                this.utcOffset(utcOffsetFromString(this._i));
             }
             return this;
         },
@@ -4661,10 +4831,10 @@ moment.tz.load(require('./data/packed/latest.json'));
                 input = 0;
             }
             else {
-                input = moment(input).zone();
+                input = moment(input).utcOffset();
             }
 
-            return (this.zone() - input) % 60 === 0;
+            return (this.utcOffset() - input) % 60 === 0;
         },
 
         daysInMonth : function () {
@@ -4727,9 +4897,17 @@ moment.tz.load(require('./data/packed/latest.json'));
         },
 
         set : function (units, value) {
-            units = normalizeUnits(units);
-            if (typeof this[units] === 'function') {
-                this[units](value);
+            var unit;
+            if (typeof units === 'object') {
+                for (unit in units) {
+                    this.set(unit, units[unit]);
+                }
+            }
+            else {
+                units = normalizeUnits(units);
+                if (typeof this[units] === 'function') {
+                    this[units](value);
+                }
             }
             return this;
         },
@@ -4752,7 +4930,7 @@ moment.tz.load(require('./data/packed/latest.json'));
         },
 
         lang : deprecate(
-            'moment().lang() is deprecated. Use moment().localeData() instead.',
+            'moment().lang() is deprecated. Instead, use moment().localeData() to get the language configuration. Use moment().locale() to change languages.',
             function (key) {
                 if (key === undefined) {
                     return this.localeData();
@@ -4766,11 +4944,12 @@ moment.tz.load(require('./data/packed/latest.json'));
             return this._locale;
         },
 
-        _dateTzOffset : function () {
+        _dateUtcOffset : function () {
             // On Firefox.24 Date#getTimezoneOffset returns a floating point.
             // https://github.com/moment/moment/pull/1871
-            return Math.round(this._d.getTimezoneOffset() / 15) * 15;
+            return -Math.round(this._d.getTimezoneOffset() / 15) * 15;
         }
+
     });
 
     function rawMonthSetter(mom, value) {
@@ -4838,6 +5017,9 @@ moment.tz.load(require('./data/packed/latest.json'));
 
     // add aliased format methods
     moment.fn.toJSON = moment.fn.toISOString;
+
+    // alias isUtc for dev-friendliness
+    moment.fn.isUTC = moment.fn.isUtc;
 
     /************************************
         Duration Prototype
@@ -4973,7 +5155,7 @@ moment.tz.load(require('./data/packed/latest.json'));
                 return units === 'month' ? months : months / 12;
             } else {
                 // handle milliseconds separately because of floating point math errors (issue #1867)
-                days = this._days + yearsToDays(this._months / 12);
+                days = this._days + Math.round(yearsToDays(this._months / 12));
                 switch (units) {
                     case 'week': return days / 7 + this._milliseconds / 6048e5;
                     case 'day': return days + this._milliseconds / 864e5;
@@ -5026,6 +5208,10 @@ moment.tz.load(require('./data/packed/latest.json'));
 
         localeData : function () {
             return this._locale;
+        },
+
+        toJSON : function () {
+            return this.toISOString();
         }
     });
 
@@ -5075,6 +5261,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 
     // Set default locale, other locale will inherit from English.
     moment.locale('en', {
+        ordinalParse: /\d{1,2}(th|st|nd|rd)/,
         ordinal : function (number) {
             var b = number % 10,
                 output = (toInt(number % 100 / 10) === 1) ? 'th' :
@@ -5112,7 +5299,7 @@ moment.tz.load(require('./data/packed/latest.json'));
     if (hasModule) {
         module.exports = moment;
     } else if (typeof define === 'function' && define.amd) {
-        define('moment', function (require, exports, module) {
+        define(function (require, exports, module) {
             if (module.config && module.config() && module.config().noGlobal === true) {
                 // release the global variable
                 globalScope.moment = oldGlobalMoment;
@@ -5127,7 +5314,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 }).call(this);
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/persistence/MessagePersistence.coffee":[function(require,module,exports){
+},{}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/persistence/MessagePersistence.coffee":[function(require,module,exports){
 var MessageActions;
 
 MessageActions = require('../actions/MessageActions.coffee');
@@ -5188,7 +5375,7 @@ module.exports = {
 
 
 
-},{"../actions/MessageActions.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/actions/MessageActions.coffee"}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/persistence/StationPersistence.coffee":[function(require,module,exports){
+},{"../actions/MessageActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/MessageActions.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/persistence/StationPersistence.coffee":[function(require,module,exports){
 var StationActions;
 
 StationActions = require('../actions/StationActions.coffee');
@@ -5297,7 +5484,7 @@ module.exports = {
 
 
 
-},{"../actions/StationActions.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/actions/StationActions.coffee"}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/stores/MessageStore.coffee":[function(require,module,exports){
+},{"../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/MessageStore.coffee":[function(require,module,exports){
 var EventEmitter, MessageDispatcher, MessageStore, moment, _fetching, _last, _listening, _messages, _station, _typing;
 
 moment = require('moment-timezone');
@@ -5340,7 +5527,7 @@ MessageStore = _.merge(new EventEmitter, {
     time = time.substr(1).split(".");
     time[1] = this.leadingZero(time[1]);
     time[2] = this.leadingZero(time[2]);
-    d = new moment("" + time[0] + "-" + time[1] + "-" + time[2] + "T" + time[4] + ":" + time[5] + ":" + time[6] + "Z");
+    d = new moment(time[0] + "-" + time[1] + "-" + time[2] + "T" + time[4] + ":" + time[5] + ":" + time[6] + "Z");
     d.tz("Europe/London");
     return d;
   },
@@ -5433,7 +5620,7 @@ module.exports = MessageStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js","moment-timezone":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/node_modules/moment-timezone/index.js"}],"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/stores/StationStore.coffee":[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js","moment-timezone":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/moment-timezone/index.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee":[function(require,module,exports){
 var EventEmitter, StationDispatcher, StationStore, _audience, _config, _listening, _members, _station, _stations, _typing;
 
 EventEmitter = require('events').EventEmitter;
@@ -5616,7 +5803,7 @@ module.exports = StationStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js"}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js"}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -5921,4 +6108,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},["/Users/galen/Documents/Projects/urbit.tlon/talk/pub/talk/src/main.coffee"]);
+},{}]},{},["/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/main.coffee"]);
