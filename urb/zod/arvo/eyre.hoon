@@ -11,6 +11,11 @@
               [%veer p=@ta q=path r=@t]                 ::  drop-through
               [%vega p=path]                            ::  drop-through
           ==                                            ::
+++  gram                                                ::  inter-ship message
+  $?  [[%lon ~] p=hole]                                 ::  login request
+      [[%aut ~] p=hole]                                 ::  login reply
+      [[%hat ~] p=hole q=hart]                          ::  login redirect
+  ==                                                    ::
 ++  hasp  ,[p=ship q=term]                              ::  don't see %gall
 ++  hapt  ,[p=ship q=path]                              ::  do see %gall
 ++  kiss                                                ::  in request ->$
@@ -21,7 +26,7 @@
 ::               [%they p=@ud q=httr]                      ::  inbound response
               [%this p=? q=clip r=httq]                 ::  inbound request
               [%thud ~]                                 ::  inbound cancel
-::               [%wart p=sock q=@tas r=path s=*]          ::  urbit message
+              [%wart p=sock q=@tas r=_`[path *]`*gram]  ::  urbit message
           ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
@@ -623,15 +628,20 @@
 ::            ?~(boy +>.$ abet:(idle:u.boy p.u.dul))
 ::         |  (hops p.q.u.dul p.u.dul)
 ::       ==
-::     ::
-::         %wart                                           ::  remote request
-::       ?+    q.kyz
-::         ~&  [%strange-wart p.kyz q.kyz]
-::         +>.$
+    ::
+        %wart                                           ::  remote request
+      =+  mez=((soft gram) r.kyz)
+      ?~  mez
+        ~&  [%strange-wart p.kyz q.kyz]
+        +>.$
+      ?-  -<.u.mez
+        %lon  !!
+        %aut  !!
+        %hat  !!
 ::       ::
 ::           %pr  (hare p.p.kyz r.kyz q.p.kyz s.kyz)
 ::           %pc  (here p.p.kyz q.p.kyz s.kyz)
-::       ==
+      ==
     ==
   ::
   ++  back                                              ::  %ford bounce
@@ -1199,9 +1209,9 @@
 ::     ==
 ::   ::
   ++  ya                                                ::  session engine
-    =|  [[our=ship ses=hole] ~] ::serf cyst]
+    =|  [[our=ship ses=hole] cyst] ::serf cyst]
 ::     =*  sef  ->-
-::     =*  cyz  ->+
+    =*  cyz  ->
     |%
     ++  flux                                            ::  credential caboose
       |=  [nyp=path quy=quay]  ^-  coin
@@ -1212,6 +1222,9 @@
           ?~  quy  ~
           [[%$ %t p.i.quy] [%$ %t q.i.quy] $(quy t.quy)]
       ==
+    ++  inte
+      ^-  (unit $&([%lon purl] gram))
+      ~ 
 ::     ++  abet                                            ::  resolve engine
 ::       ^+  ..ya
 ::       %=    ..ya
