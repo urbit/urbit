@@ -74,6 +74,7 @@
               [%done p=(set beam) q=gage]               ::  literal
               [%dude p=tank q=silk]                     ::  error wrap
               [%dune p=(set beam) q=(unit gage)]        ::  unit literal
+              [%join p=mark q=silk r=silk]              ::  merge
               [%mute p=silk q=(list (pair wing silk))]  ::  mutant
               [%pact p=silk q=silk]                     ::  patch
               [%plan p=beam q=spur r=hood]              ::  structured assembly
@@ -397,8 +398,7 @@
         ==
         |=  [cof=cafe cay=gage coy=gage]
         ?.  &(?=(@ p.cay) ?=(@ p.coy))
-          ~|  %bad-diff-marc
-          !!
+          (flaw cof leaf/"bad diff marc" ~)
         ?.  =(p.cay p.coy)
           %+  flaw  cof  :_  ~
           leaf/"diff on data of different marks: {(trip p.cay)} {(trip p.coy)}"
@@ -415,7 +415,9 @@
           =+  for=((soft ,@tas) q:(slap gar [%cnzy %sted]))
           ?~  for
             (flaw cof leaf/"bad ++sted:grad" ~)
-          (make cof %diff [%cast u.for kas] [%cast u.for kos])
+          %^  make  cof  %diff
+          :-  [%cast u.for [%done ~ cay]]
+          [%cast u.for [%done ~ coy]]
         ?.  (slab %diff p.gar)
           (flaw cof leaf/"no ++diff:grad" ~)
         %+  cope  (keel cof pro [[%& 6]~ q.cay]~)
@@ -423,7 +425,7 @@
         %+  cope
           %^  maul  cof
             (slap (slap pox [%cnzy %grad]) [%cnzy %diff])
-          q.coy
+          (slop q.cay q.coy)
         |=  [cof=cafe dif=vase]
         =+  for=((soft ,@tas) q:(slap gar [%cnzy %form]))
         ?~  for
@@ -637,6 +639,48 @@
         ::
         --
       --
+    ::
+    ++  join
+      |=  [cof=cafe for=mark kas=silk kos=silk]
+      ^-  (bolt gage)
+      %.  [cof kas kos]
+      ;~  cope
+        ;~  coax
+          |=([cof=cafe p=silk q=silk] (make cof p))
+          |=([cof=cafe p=silk q=silk] (make cof q))
+        ==
+        |=  [cof=cafe cay=gage coy=gage]
+        ?.  &(?=(@ p.cay) ?=(@ p.coy))
+          (flaw cof leaf/"bad join marc: {<p.cay>} {<p.coy>}" ~)
+        %+  cope  (fang cof for [our %main %da now])
+        |=  [cof=cafe pro=vase]
+        ?.  (slab %grad p.pro)
+          (flaw cof leaf/"no ++grad" ~)
+        =+  gar=(slap pro [%cnzy %grad])
+        ?.  (slab %form p.gar)
+          ?.  (slab %sted p.gar)
+            (flaw cof leaf/"no ++form:grad nor ++sted:grad" ~)
+          =+  too=((soft ,@tas) q:(slap gar [%cnzy %sted]))
+          ?~  too
+            (flaw cof leaf/"bad ++sted:grad" ~)
+          (make cof %join u.too [%done ~ cay] [%done ~ coy])
+        =+  fom=((soft ,@tas) q:(slap gar [%cnzy %form]))
+        ?~  fom
+          (flaw cof leaf/"bad ++form:grad" ~)
+        ?.  &(=(fom p.cay) =(fom p.coy))
+          %+  flaw  cof  :_  ~
+          leaf/"join on data of bad marks: {(trip p.cay)} {(trip p.coy)}"
+        ?:  =(q.q.cay q.q.coy)
+          (fine cof cay)
+        ?.  (slab %join p.gar)
+          (flaw cof leaf/"no ++join:grad" ~)
+        %+  cope
+          %^  maul  cof
+            (slap (slap pro [%cnzy %grad]) [%cnzy %join])
+          q.coy
+        |=  [cof=cafe dif=vase]
+        (fine cof p.cay dif)
+      ==
     ::
     ++  kale                                            ::  mutate
       |=  [cof=cafe kas=silk muy=(list (pair wing silk))]
@@ -940,7 +984,8 @@
         |=  [cof=cafe cay=gage]
         ^-  (bolt gage)
         %+  cool  |.(leaf/"ford: casting {<p.cay>} to {<p.kas>}")
-        ?.  ?=(@ p.cay)  ~|  %bad-cast-marc  !!
+        ?.  ?=(@ p.cay)
+          (flaw cof leaf/"bad cast marc" ~)
         %+  cope  (link cof p.kas p.cay [our %main %da now] q.cay)
         |=  [cof=cafe vax=vase]
         (fine cof [p.kas vax])
@@ -954,6 +999,12 @@
           %dune
         ?~  q.kas  [cof [%2 [%leaf "no data"]~]]
         $(kas [%done p.kas u.q.kas])
+      ::
+          %join
+        %+  cool
+          |.
+          leaf/"ford: join {<p.kas>} {<`@p`(mug q.kas)>} {<`@p`(mug r.kas)>}"
+        (join cof p.kas q.kas r.kas)
       ::
           %mute  (kale cof p.kas q.kas)
           %pact
@@ -1303,7 +1354,8 @@
           |=([cof=cafe p=silk q=silk] (make cof q))
         ==
         |=  [cof=cafe cay=gage coy=gage]
-        ?.  &(?=(@ p.cay) ?=(@ p.coy))  ~|  %bad-pact-marc  !!
+        ?.  &(?=(@ p.cay) ?=(@ p.coy))
+          (flaw cof leaf/"bad pact marc" ~)
         %+  cope  (fang cof p.cay [our %main %da now])
         |=  [cof=cafe pro=vase]
         ?.  (slab %grad p.pro)
@@ -1315,7 +1367,7 @@
           =+  for=((soft ,@tas) q:(slap gar [%cnzy %sted]))
           ?~  for
             (flaw cof leaf/"bad ++sted:grad" ~)
-          (make cof %cast p.cay %pact [%cast u.for kas] kos)
+          (make cof %cast p.cay %pact [%cast u.for [%done ~ cay]] [%done ~ coy])
         =+  for=((soft ,@tas) q:(slap gar [%cnzy %form]))
         ?~  for
           (flaw cof leaf/"bad ++form:grad" ~)
