@@ -1,6 +1,5 @@
 /* v/http.c
 **
-** This file is in the public domain.
 */
 #include <stdio.h>
 #include <stdlib.h>

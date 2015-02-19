@@ -1,6 +1,5 @@
 /* gen164/5/ed_puck.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 

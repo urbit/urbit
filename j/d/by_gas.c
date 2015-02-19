@@ -1,6 +1,5 @@
 /* j/4/gas.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 
