@@ -679,7 +679,9 @@
             (slap (slap pro [%cnzy %grad]) [%cnzy %join])
           (slop q.cay q.coy)
         |=  [cof=cafe dif=vase]
-        (fine cof p.cay dif)
+        ?@  q.dif
+          (fine cof %null dif)
+        (fine cof u.fom (slot 3 dif))
       ==
     ::
     ++  kale                                            ::  mutate

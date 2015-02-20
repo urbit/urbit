@@ -30,7 +30,7 @@
     (lurk txt dif)
   ++  join
     |=  [ali=(urge cord) bob=(urge cord)]
-    ^-  (urge cord)
+    ^-  (unit (urge cord))
     ali
   --
 --

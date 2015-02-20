@@ -1332,11 +1332,11 @@
         =+  cay=q.p.res
         ?@  p.cay
           +>.$(gon ``[%diff-bob-bad-marc >ali< >bob< >p.cay< ~])
-        =|  dal=(map path (unit cage))
+        =|  dob=(map path (unit cage))
         =>
           |-  ^+  +
           ?~  p.p.cay
-            +.$(dal ~)
+            +.$(dob ~)
           =+  tal=%_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
           ?^  gon.tal
             tal
@@ -1348,8 +1348,8 @@
           ?@  q.coy
             +.$(gon ``[%diff-bob-strange-coy >ali< >bob< ~])
           %_    +.$
-              dal
-            %+  ~(put by dal:tal)
+              dob
+            %+  ~(put by dob:tal)
               ((hard path) -.q.coy)
             ?:  ?=(%null q.i.p.p.cay)
               ~
@@ -1357,16 +1357,17 @@
           ==
         ?^  gon
           +>.$
-        =.  dob.dat  dal
+        =.  dob.dat  dob
         merge
       ::
       ++  merge
         ^+  .
+        |-
         ?+    gem.dat  ~|  %merge-weird-gem  !!
             %meet
-          =+  (~(int by dal.dat) dob.dat)
-          ?^  -
-            +(gon ``[%meet-conflict >ali< >bob< >[-]< ~])
+          =+  bof=(~(int by dal.dat) dob.dat)
+          ?^  bof
+            +.$(gon ``[%meet-conflict >ali< >bob< >bof< ~])
           =^  new  lat.ran
             ^-  [(map path lobe) (map lobe blob)]
             %+  roll  (~(tap by (~(uni by dal.dat) dob.dat)))
@@ -1400,13 +1401,90 @@
                        `(map path ,?)`(~(run by new) |=(lobe %&))
           checkout
         ::
-            ?(%mate %meld)  .(gon ``[%merge-not-implemented ~])
+            %mate
+          =+  bof=(~(int by dal.dat) dob.dat)
+          ?~  bof
+            $(gem.dat %meet)
+          =-  %_(+.$ tag [- tag])
+          :*  hen
+              [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali - ~]
+              %f  %exec  p.bob  ~  %tabl
+              ^-  (list (pair silk silk))
+              %+  murn  (~(tap by u.bof))
+              |=  [pax=path cay=(unit cage)]
+              ^-  (unit (pair silk silk))
+              =+  cal=(~(got by dal.dat) pax)
+              =+  cob=(~(got by dob.dat) pax)
+              ?~  cal
+                ?~  cob
+                  ~  ::  both delete
+                ~  ::  conflict
+              ?~  cob
+                ~  ::  conflict
+              :-  ~
+              :-  [%done ~ %path !>(pax)]
+              [%join for [%done ~ u.cal] [%done ~ u.cob]]
+          ==
+        ::
+            %meld  .(gon ``[%meld-not-implemented ~])
         ==
       ::
       ++  merged
         |=  res=(each bead (list tank))
         ^+  +>
-        +>.$(gon ``[%merged-not-implemented ~])
+        ?+    gem.dat  ~|  %merge-weird-gem  !!
+            %mate
+          ?:  ?=(%| -.res)  
+            +>.$(gon ``[%merge-bad-made leaf/"merging failed" p.res])
+          =+  cay=q.p.res
+          ?@  p.cay
+            +>.$(gon ``[%merge-bad-marc >ali< >bob< >p.cay< ~])
+          =|  bof=(map path cage)
+          =>
+            |-  ^+  +
+            ?~  p.p.cay
+              +.$(bof ~)
+            =+  tal=%_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
+            ?^  gon.tal
+              tal
+            ?.  ?=(%path p.i.p.p.cay)
+              +.$(gon ``[%merge-strange-marc-a >ali< >bob< >p.i.p.p.cay< ~])
+            ?.  ?=(@ q.i.p.p.cay)
+              +.$(gon ``[%merge-strange-marc-b >ali< >bob< >q.i.p.p.cay< ~])
+            =+  coy=(slot 2 q.cay)
+            ?@  q.coy
+              +.$(gon ``[%merge-strange-coy >ali< >bob< ~])
+            %_    +.$
+                bof
+              %+  ~(put by bof:tal)
+                ((hard path) -.q.coy)
+              [q.i.p.p.cay (slot 3 coy)]
+            ==
+          ?^  gon
+            +>.$
+          =+  ^-  con=(set path)
+              %-  sa
+              =-  %-  (~(run by -) |=([pax *] +<-))
+              %+  skim  (~(tap by u.bof))
+              |=  [pax=path cay=(unit cage)]
+              =+  cal=(~(got by dal.dat) pax)
+              =+  cob=(~(got by dob.dat) pax)
+              ?|  &(?=(~ cal) ?=(^ cob))
+                  &(?=(^ cal) ?=(~ cob))
+              ==
+          !!
+        ::
+            %meld
+          +>.$(gon ``[%meld-not-implemented ~])
+        ==
+
+        ::  %+  skim  (~(tap by u.bof))
+        ::  |=  [pax=path cay=(unit cage)]
+        ::  =+  cal=(~(got by dal.dat) pax)
+        ::  =+  cob=(~(got by dob.dat) pax)
+        ::  ?|  &(?=(~ cal) ?=(^ cob))
+        ::      &(?=(^ cal) ?=(~ cob))
+        ::  ==
       ::
       ++  checkout
         ^+  .
