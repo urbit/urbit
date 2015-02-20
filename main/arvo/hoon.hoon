@@ -3276,6 +3276,7 @@
   --
 ::
 ++  co
+  ~%  %co  ..co  ~
   =<  |_  lot=coin
       ++  rear  |=(rom=tape =>(.(rex rom) rend))
       ++  rent  `@ta`(rap 3 rend)
@@ -3487,6 +3488,7 @@
   --
 ::
 ++  so
+  ~%  %so  +  ~
   |%
   ++  bisk
     ;~  pose
@@ -3555,6 +3557,7 @@
       ;~(pfix hep (stag %c (cook turf (cook woad urs:ab))))
     ==
   ++  nuck
+    ~/  %nuck  |=  a=nail  %.  a
     %+  knee  *coin  |.  ~+
     %-  stew
     ^.  stet  ^.  limo
@@ -3638,7 +3641,10 @@
 ::
 ++  slay
   |=  txt=@ta  ^-  (unit coin)
-  =+  vex=((full nuck:so) [[1 1] (trip txt)])
+  =+  ^=  vex
+      ?:  (gth 0x7fff.ffff txt)                         ::  XX  petty cache
+        ~+  ((full nuck:so) [[1 1] (trip txt)])
+      ((full nuck:so) [[1 1] (trip txt)])
   ?~  q.vex
     ~
   [~ p.u.q.vex]
