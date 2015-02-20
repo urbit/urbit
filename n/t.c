@@ -52,8 +52,8 @@ u3t_slog(u3_noun hod)
     gettimeofday(&f2, 0); 
     timersub(&f2, &b4, &d0);
     ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
-    if(ms_w > 10){
-      printf("%3d.%dms ", ms_w, (d0.tv_usec % 1000) / 10);
+    if(ms_w > 10 || 1){
+      printf("%3d.%02dms ", ms_w, (d0.tv_usec % 1000) / 10);
       gettimeofday(&b4, 0);
     }
   }

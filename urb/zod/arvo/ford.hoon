@@ -474,7 +474,12 @@
       |=  [cof=cafe for=mark bem=beam]
       ^-  (bolt hood)
       %+  cool  |.(leaf/"ford: fade {<[(tope bem)]>}")
-      %+  cope  (make cof [%bake for bem ~])
+      %+  cope  ~&  fade/bem 
+                %-  ~&  %wat  make 
+                ~&  %wut  
+                =-  ~&  %wut-done  -
+                [cof [%bake for bem ~]]
+      ~&  %fade-clef
       |=  [cof=cafe cay=cage]
       %+  (clef %hood)  (fine cof bem cay)
       ^-  (burg (pair beam cage) hood)
@@ -493,7 +498,8 @@
       =+  pax=/door/[for]/mar
       =+  ^=  bem  ^-  beam
           :_  pax
-          ?:  &(=(p.bek our) =(q.bek %main))  bek
+          ?:  &(=(p.bek our) =(q.bek %main) !=(r.bek [%da now]))
+            bek
           =+  ren=(ska %cw (tope [our %main %da now] ~)) ::  XX at requested one
           ?.  ?=([~ ~ @u] ren)
             bek
@@ -503,6 +509,7 @@
           bek
       =^  deh  r.cof  (daze(deh.bay r.cof) dep)         ::  XX sanity
       =+  arg=`spur`[%dep (scot %uv deh) ~]
+      ~&  [%fang for]
       (cope (fade cof %hook bem) abut:(meow bem arg))
     ::
     ++  fair                                            ::  hood parsing rule
@@ -905,9 +912,12 @@
       |=(val=* `vase`[typ val])
     ::
     ++  make                                            ::  reduce silk
-      |=  [cof=cafe kas=silk]
+      ~&  %make-wha-bunt
+      =|  [cof=cafe kas=silk]
+      ~&  %make-wha-trap
+      |.
       ^-  (bolt cage)
-      :: ~&  [%make -.kas]
+      ~&  [%make -.kas]
       ?-    -.kas
           ^
         %.  [cof p.kas q.kas]
@@ -922,6 +932,7 @@
         ==
       ::
           %bake
+        ~&  >  (tope q.kas)
         %+  cool  |.(leaf/"ford: bake {<p.kas>} {<(tope q.kas)>}")
         %+  cope  (lima cof p.kas q.kas r.kas)
         |=  [cof=cafe vux=(unit vase)]
