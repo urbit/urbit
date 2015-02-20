@@ -494,7 +494,10 @@
       =+  ^=  bem  ^-  beam
           :_  pax
           ?:  &(=(p.bek our) =(q.bek %main))  bek
-          =+  oak=[our %main %da now]
+          =+  ren=(ska %cw (tope [our %main %da now] ~)) ::  XX at requested one
+          ?.  ?=([~ ~ @u] ren)
+            bek
+          =+  oak=[our %main %ud u.u.ren]
           ?:  ?=([~ ~ *] (ska %cy (tope [oak pax])))
             oak
           bek
