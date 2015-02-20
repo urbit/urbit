@@ -119,6 +119,7 @@
   ==                                                    ::
 ++  calx                                                ::  concrete cache line
   $%  [%hood p=calm q=(pair beam cage) r=hood]          ::  compile
+      [%bake p=calm q=(trel mark beam heel) r=(unit vase)]::  load
       [%slit p=calm q=[p=type q=type] r=type]           ::  slam type
       [%slim p=calm q=[p=type q=twig] r=(pair type nock)]::  mint
       [%slap p=calm q=[p=vase q=twig] r=vase]           ::  compute
@@ -137,6 +138,7 @@
   |=  cax=calx
   ?+  sem  !!
     %hood  ?>(?=(%hood -.cax) r.cax)
+    %bake  ?>(?=(%bake -.cax) r.cax)
     %slap  ?>(?=(%slap -.cax) r.cax)
     %slam  ?>(?=(%slam -.cax) r.cax)
     %slim  ?>(?=(%slim -.cax) r.cax)
@@ -265,6 +267,7 @@
     ==
   ::
   ++  awap                                              ::  get next revision
+    ~%  %ford-w  ..is  ~
     |=  dep=@uvH
     %_    +>.$
         mow
@@ -281,6 +284,19 @@
     ==
   ::
   ++  zo
+    ~%    %ford-z 
+        ..is
+      ==
+        %fade  fade
+        %fair  fair
+        %fang  fang
+        %lime  lime
+        %lima  lima
+        %link  link
+        %lope  lope
+        %make  make
+        %meow  meow
+      ==
     |_  [num=@ud task]
     ++  abet  %_(..zo q.tad.bay (~(put by q.tad.bay) num +<+))
     ++  amok  
@@ -322,16 +338,16 @@
           %1  hoc
           %0
         =^  cux  p.hoc  ((calk p.hoc) sem q.q.hoc)
-        ?~  cux
-          =+  nuf=(cope hoc fun)
-          ?-    -.q.nuf
-              %2  nuf
-              %1  nuf
-              %0
-            :-  p=(came p.nuf `calx`[sem `calm`[now p.q.nuf] q.q.hoc q.q.nuf])
-            q=q.nuf
-          ==
-        [p=p.hoc q=[%0 p=p.q.hoc q=((calf sem) u.cux)]]
+        ?^  cux
+          [p=p.hoc q=[%0 p=p.q.hoc q=((calf sem) u.cux)]]
+        =+  nuf=(cope hoc fun)
+        ?-    -.q.nuf
+            %2  nuf
+            %1  nuf
+            %0
+          :-  p=(came p.nuf `calx`[sem `calm`[now p.q.nuf] q.q.hoc q.q.nuf])
+          q=q.nuf
+        ==
       ==
     ::
     ++  coax                                            ::  bolt across
@@ -474,16 +490,12 @@
       |=  [cof=cafe for=mark bem=beam]
       ^-  (bolt hood)
       %+  cool  |.(leaf/"ford: fade {<[(tope bem)]>}")
-      %+  cope  ~&  fade/bem 
-                %-  ~&  %wat  make 
-                ~&  %wut  
-                =-  ~&  %wut-done  -
-                [cof [%bake for bem ~]]
-      ~&  %fade-clef
+      %+  cope  (make cof [%bake for bem ~])
       |=  [cof=cafe cay=cage]
       %+  (clef %hood)  (fine cof bem cay)
       ^-  (burg (pair beam cage) hood)
       |=  [cof=cafe bum=beam cay=cage]
+      :: ~&  fade/clef-miss/bem
       =+  rul=(fair bem)
       ?.  ?=(@ q.q.cay)
         (flaw cof ~)
@@ -500,23 +512,19 @@
           :_  pax
           ?:  &(=(p.bek our) =(q.bek %main) !=(r.bek [%da now]))
             bek
-          =+  ren=(ska %cw (tope [our %main %da now] ~)) ::  XX at requested one
-          ?.  ?=([~ ~ @u] ren)
-            bek
-          =+  oak=[our %main %ud u.u.ren]
+          =+  oak=-:(norm [our %main %da now] ~)        ::  XX at requested one
           ?:  ?=([~ ~ *] (ska %cy (tope [oak pax])))
             oak
           bek
       =^  deh  r.cof  (daze(deh.bay r.cof) dep)         ::  XX sanity
       =+  arg=`spur`[%dep (scot %uv deh) ~]
-      ~&  [%fang for]
       (cope (fade cof %hook bem) abut:(meow bem arg))
     ::
     ++  fair                                            ::  hood parsing rule
       |=  bem=beam
       =+  :*  vez=(vang | (tope bem(r [%ud 0])))
               voz=(vang | (tope bem))
-          == 
+          ==
       =<  hood
       |%  
       ++  case
@@ -800,6 +808,8 @@
     ::
     ++  lima                                            ::  load at depth
       |=  [cof=cafe for=mark bem=beam arg=heel]
+      %+  (clef %bake)  (fine cof for bem arg)
+      |=  [cof=cafe for=mark bem=beam arg=heel]
       ^-  (bolt (unit vase))
       %+  cope  (lend cof bem)
       |=  [cof=cafe arc=arch]
@@ -912,12 +922,9 @@
       |=(val=* `vase`[typ val])
     ::
     ++  make                                            ::  reduce silk
-      ~&  %make-wha-bunt
-      =|  [cof=cafe kas=silk]
-      ~&  %make-wha-trap
-      |.
+      |=  [cof=cafe kas=silk]
       ^-  (bolt cage)
-      ~&  [%make -.kas]
+      ::  ~&  [%make (,@tas -.kas)]
       ?-    -.kas
           ^
         %.  [cof p.kas q.kas]
@@ -932,7 +939,7 @@
         ==
       ::
           %bake
-        ~&  >  (tope q.kas)
+        ::  ~&  >  (tope q.kas)
         %+  cool  |.(leaf/"ford: bake {<p.kas>} {<(tope q.kas)>}")
         %+  cope  (lima cof p.kas q.kas r.kas)
         |=  [cof=cafe vux=(unit vase)]
@@ -1036,6 +1043,21 @@
               zeg=(set term)                            ::  library guard
               boy=(list twig)                           ::  body stack
           ==
+      ~%  %meow  ..meow
+        ==
+          %able  able
+          %ably  ably
+          %abut  abut
+          %apex  apex
+          %body  body
+          %chad  chad
+          %chai  chai
+          %chap  chap
+          %head  head
+          %hone  hone
+          %neck  neck
+          %wilt  wilt
+        ==
       |%
       ++  able                                          ::  assemble preamble
         ^-  twig
@@ -1339,7 +1361,7 @@
 =*  lex  -
 |=  [now=@da eny=@ ski=sled]                            ::  activate
 ^?                                                      ::  opaque core
-~%  %ford-d  +>+>+>+>+>+>  ~
+~%  %ford-d  ..is  ~
 |%                                                      ::
 ++  call                                                ::  request
   |=  [hen=duct hic=(hypo (hobo kiss))]
