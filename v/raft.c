@@ -1573,11 +1573,14 @@ _raft_punk(u3_noun ovo)
 
 #ifdef GHETTO
   c3_w ms_w;
+  c3_w clr_w;
 
   gettimeofday(&f2, 0);
   timersub(&f2, &b4, &d0);
   ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
-  uL(fprintf(uH, "%%punk %s %d.%dms\n", txt_c, ms_w, (d0.tv_usec % 1000) / 10));
+  clr_w = ms_w > 1000 ? 1 : ms_w < 100 ? 2 : 3; //  red, green, yellow
+  uL(fprintf(uH, "\x1b[3%dm%%punk %s %d.%dms\x1b[0m\n",
+                     clr_w, txt_c, ms_w, (d0.tv_usec % 1000) / 10));
   free(txt_c);
 #endif
 
