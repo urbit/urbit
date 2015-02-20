@@ -1,5 +1,6 @@
 /* g/t.c
 **
+** This file is in the public domain.
 */
 #include "all.h"
 #include <pthread.h>
@@ -42,8 +43,7 @@ u3_lo_tank(c3_l tab_l, u3_noun tac);
 void
 u3t_slog(u3_noun hod)
 {
-  #ifdef GHETTO
-  
+#ifdef GHETTO
   static int old; 
   static struct timeval b4, f2, d0;
   c3_w ms_w;
@@ -58,10 +58,9 @@ u3t_slog(u3_noun hod)
     }
   }
   else gettimeofday(&b4, 0);
-
   old = 1;
+#endif
 
-  #endif
   if ( c3y == u3du(hod) ) {
     u3_noun pri = u3h(hod);
 
