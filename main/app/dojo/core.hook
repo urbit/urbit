@@ -1,0 +1,331 @@
+::                                                      ::  ::
+::::  /hook/core/dojo/app                               ::  ::
+  ::                                                    ::  ::
+/?  314                                                 ::  zuse version
+/-  *console                                            ::  console structures
+/+  console                                             ::  console library
+::                                                      ::  ::
+::::                                                    ::  ::
+  !:                                                    ::  ::
+=>  |%                                                  ::  external structures
+    ++  house                                           ::  all state
+      $:  hoc=(map bone session)                        ::  conversations
+      ==                                                ::
+    ++  session                                         ::  per conversation
+      $:  say=console-share                             ::  command-line state
+          duy=(unit tape)                               ::  waiting
+          poy=(unit dojo-project)                       ::  working 
+          var=(map term cage)                           ::  variable state
+          old=(set term)                                ::  used TLVs
+      ==                                                ::
+    ++  dojo-command                                    ::
+      $%  [%poke p=hapt q=dojo-source]                  ::  make and poke
+          [%save p=? q=term r=dojo-source]              ::  save/print
+      ==                                                ::
+    ++  dojo-source                                     ::
+      $:  inx=@ud                                       ::  index, assigned
+          mar=mark                                      ::  content type
+          mod=dojo-model                                ::
+      ==                                                ::
+    ++  dojo-model                                      ::  data source
+      $%  [%& twig]                                     ::  
+          [%| (pair path dojo-config)]                  ::
+      ==                                                ::
+    ++  dojo-config                                     ::  configuration
+      $:  ord=(list dojo-source)                        ::  by order
+          key=(map term dojo-source)                    ::  by keyword
+      ==                                                ::
+    ++  dojo-project                                    ::  construction state
+      $:  mad=dojo-command                              ::  operation
+          num=@ud                                       ::  number of tasks
+          cur=@ud                                       ::  currently solving
+          pro=(unit vase)                               ::  prompting form
+          job=(map ,@ud dojo-source)                    ::  problems
+          rez=(map ,@ud cage)                           ::  results
+      ==                                                ::
+    ++  bead  ,[p=(set beam) q=cage]                    ::  computed result
+    ++  gift                                            ::  out result <-$
+      $%  [%mean p=ares]                                ::  error
+          [%nice ~]                                     ::  acknowledge
+          [%rush %console-effect console-effect]        ::  
+      ==                                                ::
+    ++  hapt  ,[p=ship q=path]                          ::  
+    ++  move  ,[p=bone q=(mold note gift)]              ::
+    ++  hood                                            ::  assembly plan
+      $:  zus=@ud                                       ::  zuse kelvin
+          sur=(list hoot)                               ::  structures
+          lib=(list hoof)                               ::  libraries
+          fan=(list horn)                               ::  resources
+          src=(list hoop)                               ::  program
+      ==                                                ::
+    ++  hoof  (pair term (unit (pair case ship)))       ::  resource reference
+    ++  hoot  (pair bean hoof)                          ::  structure gate/core
+    ++  hoop                                            ::  source in hood
+      $%  [%& p=twig]                                   ::  direct twig
+          [%| p=beam]                                   ::  resource location   
+      ==                                                ::
+    ++  horn                                            ::  resource tree
+      $%  [%ape p=twig]                                 ::  /~  twig by hand
+          [%arg p=twig]                                 ::  /$  argument
+          [%day p=horn]                                 ::  /|  list by @dr
+          [%dub p=term q=horn]                          ::  /=  apply face
+          [%fan p=(list horn)]                          ::  /.  list
+          [%for p=path q=horn]                          ::  /,  descend
+          [%hel p=horn]                                 ::  /%  propagate heel
+          [%hub p=horn]                                 ::  /@  list by @ud
+          [%man p=(map span horn)]                      ::  /*  hetero map
+          [%nap p=horn]                                 ::  /_  homo map
+          [%now p=horn]                                 ::  /&  list by @da
+          [%saw p=twig q=horn]                          ::  /;  operate on
+          [%see p=beam q=horn]                          ::  /:  relative to
+          [%sic p=tile q=horn]                          ::  /^  cast
+          [%toy p=mark]                                 ::  /mark/  static
+      ==                                                ::
+    ++  silk                                            ::  from %ford
+      $&  [p=silk q=silk]                               ::  cons
+      $%  [%bake p=mark q=beam r=path]                  ::  local synthesis
+          [%boil p=mark q=beam r=path]                  ::  general synthesis
+          [%call p=silk q=silk]                         ::  slam
+          [%cast p=mark q=silk]                         ::  translate
+          [%done p=(set beam) q=cage]                   ::  literal
+          [%dude p=tank q=silk]                         ::  error wrap
+          [%dune p=(set beam) q=(unit cage)]            ::  unit literal
+          [%mute p=silk q=(list (pair wing silk))]      ::  mutant
+          [%plan p=beam q=spur r=hood]                  ::  structured assembly
+          [%reef ~]                                     ::  kernel reef
+          [%ride p=twig q=silk]                         ::  silk thru twig
+          [%vale p=mark q=ship r=*]                     ::  validate [our his]
+      ==                                                ::
+    ++  note-ford                                       ::  note to ford
+      $%  [%exec p=@p q=(unit silk)]                    ::  make / kill
+      ==                                                ::
+    ++  note-gall                                       ::  note to %gall
+      $%  [%mess p=[p=ship q=path] q=ship r=cage]       ::
+      ==                                                ::
+    ++  sign-gall                                       ::  sign from %gall
+      $%  [%mean p=ares]                                ::
+          [%nice ~]                                     ::
+      ==                                                ::
+    ++  sign-ford                                       ::  sign from ford
+      $%  [%made p=(each bead (list tank))]             ::  computed result
+      ==                                                ::
+    ++  note                                            ::  out request $->
+      $%  [%f note-ford]                                ::
+          [%g note-gall]                                ::
+      ==                                                ::
+    ++  sign                                            ::  in result $<-
+      $%  [%f sign-ford]                                ::
+          [%g sign-gall]                                ::
+      ==                                                ::
+    --                                                  ::
+::                                                      ::
+::::                                                    ::
+  ::                                                    ::
+|_  $:  hid=hide                                        ::  system state
+        house                                           ::  program state
+    ==                                                  ::
+++  he                                                  ::  per session
+  |_  [[ost=bone moz=(list move)] session]              ::
+  ++  dy                                                ::  project work
+    |_  dojo-project                                    ::
+    ++  dy-abet  +>(poy `+<)                            ::  resolve
+    ++  dy-amok  +>(poy ~)                              ::  terminate
+    ++  dy-init-ordered                                 ::  prepare source list
+      |=  ord=(list dojo-source)
+      ^+  [ord +>]
+      ?~  ord  [~ +>.$]
+      =^  fir  +>.$  (dy-init-source i.ord)
+      =^  mor  +>.$  $(ord t.ord)
+      [[fir mor] +>.$]
+    ::
+    ++  dy-init-named                                   ::  prepare source map
+      |=  key=(map term dojo-source)
+      ^+  [key +>.$]
+      ?~  key  [~ +>.$]
+      =^  top  +>.$  (dy-init-source q.n.key)
+      =^  lef  +>.$  $(key l.key)
+      =^  rit  +>.$  $(key r.key)
+      [[[p.n.key top] lef rit] +>.$]
+    ::
+    ++  dy-init-model                                   ::  prepare dojo-model
+      |=  mod=dojo-model
+      ^+  [mod +>]
+      ?-  -.mod
+        %&  [mod +>]
+        %|  =^  cig  +>  (dy-init-config q.mod)
+            [mod(q cig) +>.$]
+      ==
+    ::
+    ++  dy-init-source                                  ::  prepare source
+      |=  src=dojo-source
+      ^+  [src +>]
+      =^  mod  +>  (dy-init-model mod.src)
+      =:  inx.src  num
+          mod.src  mod
+        ==
+      [src +>.$(num +(num), job (~(put by job) num src))]
+    ::
+    ++  dy-init-config                                  ::  prepare config
+      |=  cig=dojo-config
+      ^+  [cig +>]
+      =^  ord  +>.$  (dy-init-ordered ord.cig)
+      =^  key  +>.$  (dy-init-named key.cig)
+      [[ord key] +>.$]
+    ::
+    ++  dy-init
+      =+  dam=mad
+      ?-  -.dam
+        %poke  =^  src  +  (dy-init-source q.dam)
+               +>(mad dam(q src))
+        %save  =^  src  +  (dy-init-source r.dam)
+               +>(mad dam(r src))
+      ==
+    ::
+    ++  dy-made-hand
+      |=  cag=cage
+      ^+  +>+>
+      dy-step(cur +(cur), rez (~(put by rez) cur cag))
+    ::
+    ++  dy-over
+      ^+  +>
+      ?-    -.mad
+          %poke       
+        (he-pass(poy ~) /poke %g %mess p.mad our.hid (~(got by rez) inx.q.mad))
+      ::
+          %save
+        =+  cag=(~(got by rez) inx.r.mad)
+        =.  var  (~(put by var) q.mad cag)
+        ?.  p.mad  +>+
+        (he-rush(poy ~) [%tan (sell q.cag) ~])
+      ==
+    ::
+    ++  dy-step                                         ::  advance project
+      ^+  +>
+      ?:  =(cur num)
+        dy-over
+      =+  src=(~(got by job) cur)
+      ?-    -.mod.src
+          %&
+         %-  he-pass(poy `+>-) 
+         [/hand %f %exec our.hid `[%ride +.mod.src [%reef ~]]]
+      ::
+          %|  !!
+      ==
+    --
+  ::
+  ++  he-abet                                           ::  resolve
+    [(flop moz) %_(+> hoc (~(put by hoc) ost +<+))]     ::
+  ::                                                    ::
+  ++  he-give                                           ::  emit gift
+    |=  git=gift
+    ^+  +>
+    %_(+> moz [[ost %give git] moz])
+  ::
+  ++  he-pass
+    |=  [pax=path noy=note]
+    %_(+> moz [[ost %pass pax noy] moz])
+  ::
+  ++  he-rush                                           ::  emit update
+    |=  fec=console-effect 
+    ^+  +>
+    (he-give %rush %console-effect fec)
+  ::
+  ++  he-peer                                           ::  subscribe to
+    he-prom
+  ::
+  ++  he-prom                                           ::  send prompt
+    %-  he-rush
+    :-  %pro
+    ?^  duy
+      [& %$ (tuba u.duy)]
+    [& %$ (tuba (weld (scow %p our.hid) ":dojo> "))]
+  ::
+  ++  he-ford                                           ::  sign from ford
+    |=  [pax=path rey=(each bead (list tank))]
+    ^+  +>
+    ?>  ?=(^ poy)
+    ?-  -.rey
+      %&  ?+    pax  ~&(%he-ford-path !!)
+              [%hand ~]
+            (~(dy-made-hand dy u.poy) q.p.rey)
+          ==
+      %|  (he-rush(poy ~) %tan p.rey)
+    ==
+  ::
+  ++  he-like                                           ::  filter line
+    |=  buf=(list ,@c)
+    ^-  ?
+    =+  txt=(tufa buf)
+    =(+((lent txt)) q.p:(wide:(vang & ~) [1 1] txt))
+  ::
+  ++  he-stir                                           ::  apply change
+    |=  cal=console-change
+    ^+  +>
+    =^  dut  say  
+        =<  [- abet:+]
+        %+  ~(remit cs say)  cal
+        ?~(duy he-like |=((list ,@c) %|))
+    ?~  dut
+      +>.$
+    (he-rush %mor [%det u.dut] [%bel ~] ~)
+  ::
+  ++  he-plan                                           ::  execute command
+    |=  mad=dojo-command
+    ^+  +>
+    ?>  ?=(~ poy)
+    =<  dy-step
+    ~(dy-init dy mad [0 0 ~ ~ ~])
+  ::
+  ++  he-done                                           ::  parse command
+    |=  txt=tape
+    ^+  +>
+    ?^  duy  (he-rush %bel ~)
+    =+  foy=(rust txt wide:(vang & ~))
+    ?~  foy
+      (he-rush %bel ~)
+    =+  old=(weld "> " (tufa buf.say))
+    =^  cal  say  [- abet]:(~(transmit cs say) [%set ~])
+    %-  =<  he-plan
+        %-  he-rush
+        :~  %mor
+            [%txt old]
+            [%nex ~]
+            [%det cal]
+        ==
+    `dojo-command`[%save & %foo 0 %noun %& u.foy]
+  ::
+  ++  he-work                                           ::  apply input
+    |=  act=console-action
+    ^+  +>
+    ?-  -.act
+      %inn  +>.$
+      %out  +>.$
+      %det  (he-stir +.act)
+      %ret  (he-done (tufa buf.say))
+    ==
+  --
+::
+++  peer
+  |=  [ost=bone her=ship pax=path]
+  ^-  [(list move) _+>]
+  ?<  (~(has by hoc) ost)
+  ?>  =(/console pax)
+  ?>  =(her our.hid)
+  he-abet:~(he-peer he [ost ~] *session)
+::
+++  poke-console-action
+  |=  [ost=bone her=ship act=console-action]
+  ^-  [(list move) _+>]
+  he-abet:(~(he-work he [ost [ost %give %nice ~]~] (~(got by hoc) ost)) act)
+::
+++  pour
+  |=  [ost=bone pax=path sih=*]
+  ^-  [(list move) _+>]
+  =+  sih=((hard sign) sih)
+  ?-    -.sih
+      %f
+    he-abet:(~(he-ford he [[ost ~] (~(got by hoc) ost)]) pax +>.sih)
+  ::
+      %g  !!
+  ==
+--
