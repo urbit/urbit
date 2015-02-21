@@ -4,6 +4,11 @@
 |=  pit=vase
 =>  |%
 ++  bead  ,[p=(set beam) q=gage]                        ::  ford result
+++  cane                                                ::  change set
+          $:  new=(map path lobe)                       ::  new files
+              can=(map path cage)                       ::  diffs
+              old=(map path ,~)                         ::  deleted files
+          ==                                            ::
 ++  cult  (map duct rove)                               ::  subscriptions
 ++  dojo                                                ::  domestic desk state
           $:  qyx=cult                                  ::  subscribers
@@ -38,8 +43,8 @@
               ali=yaki                                  ::  ali's commit
               bob=yaki                                  ::  bob's commit
               bas=yaki                                  ::  mergebase
-              dal=(map path (unit cage))                ::  diff(bas,ali)
-              dob=(map path (unit cage))                ::  diff(bas,bob)
+              dal=cane                                  ::  diff(bas,ali)
+              dob=cane                                  ::  diff(bas,bob)
               new=yaki                                  ::  merge(dal,dob)
               ank=ankh                                  ::  new state
               erg=(map path ,?)                         ::  ergoable changes
@@ -1257,27 +1262,26 @@
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali - ~]
             %f  %exec  p.bob  ~  %tabl
             ^-  (list (pair silk silk))
-            %+  welp
-              ^-  (list (pair silk silk))
-              %+  murn  (~(tap by q.bas.dat))
-              |=  [pax=path lob=lobe]
-              ^-  (unit (pair silk silk))
-              =+  (~(get by q.yak) pax)
-              ?~  -
-                :-  ~
-                :-  [%done ~ %path !>(pax)]
-                [%done ~ %null !>(~)]
-              ?:  =(lob u.-)
-                ~
-              :-  ~
-              :-  [%done ~ %path !>(pax)]
-              [%diff (lobe-to-silk lob) (lobe-to-silk u.-)]
-            %+  turn
-              %+  skip  (~(tap by q.yak))
-              |=([path lobe] (~(has by q.bas.dat) +<-))
+            %+  murn  (~(tap by q.bas.dat))
             |=  [pax=path lob=lobe]
-            ^-  (pair silk silk)
-            [[%done ~ %path !>(pax)] (lobe-to-silk lob)]
+            ^-  (unit (pair silk silk))
+            =+  (~(get by q.yak) pax)
+            ?~  -
+              ~
+              ::  :-  ~
+              ::  :-  [%done ~ %path !>(pax)]
+              ::  [%done ~ %null !>(~)]
+            ?:  =(lob u.-)
+              ~
+            :-  ~
+            :-  [%done ~ %path !>(pax)]
+            [%diff (lobe-to-silk lob) (lobe-to-silk u.-)]
+            ::%+  turn
+            ::  %+  skip  (~(tap by q.yak))
+            ::  |=([path lobe] (~(has by q.bas.dat) +<-))
+            ::|=  [pax=path lob=lobe]
+            ::^-  (pair silk silk)
+            ::[[%done ~ %path !>(pax)] (lobe-to-silk lob)]
         ==
       ::
       ++  diff-ali
@@ -1292,11 +1296,11 @@
         =+  cay=q.p.res
         ?@  p.cay
           +>.$(gon ``[%diff-ali-bad-marc >ali< >bob< >p.cay< ~])
-        =|  dal=(map path (unit cage))
+        =|  can=(map path cage)
         =>
           |-  ^+  +
           ?~  p.p.cay
-            +.$(dal ~)
+            +.$(can ~)
           =+  tal=%_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
           ?^  gon.tal
             tal
@@ -1308,16 +1312,26 @@
           ?@  q.coy
             +.$(gon ``[%diff-ali-strange-coy >ali< >bob< ~])
           %_    +.$
-              dal
-            %+  ~(put by dal:tal)
+              can
+            %+  ~(put by can:tal)
               ((hard path) -.q.coy)
-            ?:  ?=(%null q.i.p.p.cay)
-              ~
-            `[q.i.p.p.cay (slot 3 coy)]
+            [q.i.p.p.cay (slot 3 coy)]
           ==
         ?^  gon
           +>.$
-        =.  dal.dat  dal
+        =.  new.dal.dat
+          %-  mo
+          %+  skip  (~(tap by q.ali.dat))
+          |=  [pax=path lob=lobe]
+          (~(has by q.bas.dat) pax)
+        =.  can.dal.dat  can
+        =.  old.dal.dat
+          %-  mo  ^-  (list ,[path ~])
+          %+  murn  (~(tap by q.bas.dat))
+          |=  [pax=path lob=lobe]
+          ?.  =(~ (~(get by q.ali.dat) pax))
+            ~
+          (some pax ~)
         diff-bob
       ::
       ++  diff-bob
@@ -1332,11 +1346,11 @@
         =+  cay=q.p.res
         ?@  p.cay
           +>.$(gon ``[%diff-bob-bad-marc >ali< >bob< >p.cay< ~])
-        =|  dob=(map path (unit cage))
+        =|  can=(map path cage)
         =>
           |-  ^+  +
           ?~  p.p.cay
-            +.$(dob ~)
+            +.$(can ~)
           =+  tal=%_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
           ?^  gon.tal
             tal
@@ -1348,85 +1362,100 @@
           ?@  q.coy
             +.$(gon ``[%diff-bob-strange-coy >ali< >bob< ~])
           %_    +.$
-              dob
-            %+  ~(put by dob:tal)
+              can
+            %+  ~(put by can:tal)
               ((hard path) -.q.coy)
-            ?:  ?=(%null q.i.p.p.cay)
-              ~
-            `[q.i.p.p.cay (slot 3 coy)]
+            [q.i.p.p.cay (slot 3 coy)]
           ==
         ?^  gon
           +>.$
-        =.  dob.dat  dob
+        =.  new.dob.dat
+          %-  mo
+          %+  skip  (~(tap by q.bob.dat))
+          |=  [pax=path lob=lobe]
+          (~(has by q.bas.dat) pax)
+        =.  can.dob.dat  can
+        =.  old.dob.dat
+          %-  mo  ^-  (list ,[path ~])
+          %+  murn  (~(tap by q.bas.dat))
+          |=  [pax=path lob=lobe]
+          ?.  =(~ (~(get by q.bob.dat) pax))
+            ~
+          (some pax ~)
         merge
       ::
       ++  merge
         ^+  .
-        |-
+        |-  ^+  +.$
         ?+    gem.dat  ~|  %merge-weird-gem  !!
             %meet
-          =+  bof=(~(int by dal.dat) dob.dat)
+          =+  ^=  bof
+              %-  %~  int  by
+                  %-  ~(uni by `(map path ,*)`new.dal.dat)
+                  %-  ~(uni by `(map path ,*)`can.dal.dat)
+                  `(map path ,*)`old.dal.dat
+              %-  ~(uni by `(map path ,*)`new.dob.dat)
+              %-  ~(uni by `(map path ,*)`can.dob.dat)
+              `(map path ,*)`old.dob.dat
           ?^  bof
-            +.$(gon ``[%meet-conflict >ali< >bob< >bof< ~])
+            =-  +.$(gon ``[%meet-conflict >ali< >bob< >[-]< ~])
+            (~(run by `(map path ,*)`bof) ,_~)
           =^  new  lat.ran
             ^-  [(map path lobe) (map lobe blob)]
-            %+  roll  (~(tap by (~(uni by dal.dat) dob.dat)))
+            %+  roll  (~(tap by (~(uni by can.dal.dat) can.dob.dat)))
             =<  .(lat lat.ran)
-            |=  $:  [pax=path cay=(unit cage)]
-                    new=(map path lobe)
-                    lat=(map lobe blob)
-                ==
-            ?~  cay
-              [new lat]
+            |=  [[pax=path cay=cage] new=(map path lobe) lat=(map lobe blob)]
             =+  ^=  bol
                 =+  (~(get by q.bas.dat) pax)
                 ?~  -
-                  (make-direct u.cay)
-                (make-delta u.- u.cay)
+                  ~|  %strange-diff-no-base
+                  !!
+                (make-delta u.- cay)
             [(~(put by new) pax p.bol) (~(put by lat) p.bol bol)]
-          =+  ^-  [del=(map path ,?) old=(map path lobe)]
-              %+  roll  (~(tap by (~(uni by dal.dat) dob.dat)))
+          =.  new  (~(uni by new) new.dal.dat)
+          =.  new  (~(uni by new) new.dob.dat)
+          =+  del=(~(run by (~(uni by old.dal.dat) old.dob.dat)) |=(~ %|))
+          =+  ^-  old=(map path lobe)
+              %+  roll  (~(tap by (~(uni by old.dal.dat) old.dob.dat)))
               =<  .(old q.bas.dat)
-              |=  $:  [pax=path cay=(unit cage)]
-                      del=(map path ,?)
-                      old=(map path lobe)
-                  ==
-              ?^  cay
-                [del old]
-              [(~(put by del) pax %|) (~(del by old) pax)]
+              |=  [[pax=path ~] old=(map path lobe)]
+              (~(del by old) pax)
           =.  new.dat
             (make-yaki [r.ali.dat r.bob.dat ~] (~(uni by old) new) now)
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
-          =.  erg.dat  %-  ~(uni by del)
+          =.  erg.dat  %-  ~(uni by `(map path ,?)`del)
                        `(map path ,?)`(~(run by new) |=(lobe %&))
           checkout
         ::
             %mate
-          =+  bof=(~(int by dal.dat) dob.dat)
+          =+  ^=  bof
+              %-  %~  int  by
+                  %-  ~(uni by `(map path ,*)`new.dal.dat)
+                  %-  ~(uni by `(map path ,*)`can.dal.dat)
+                  `(map path ,*)`old.dal.dat
+              %-  ~(uni by `(map path ,*)`new.dob.dat)
+              %-  ~(uni by `(map path ,*)`can.dob.dat)
+              `(map path ,*)`old.dob.dat
           ?~  bof
             $(gem.dat %meet)
           =-  %_(+.$ tag [- tag])
           :*  hen
-              [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali - ~]
+              [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %merge ~]
               %f  %exec  p.bob  ~  %tabl
               ^-  (list (pair silk silk))
-              %+  murn  (~(tap by u.bof))
-              |=  [pax=path cay=(unit cage)]
-              ^-  (unit (pair silk silk))
-              =+  cal=(~(got by dal.dat) pax)
-              =+  cob=(~(got by dob.dat) pax)
-              ?~  cal
-                ?~  cob
-                  ~  ::  both delete
-                ~  ::  conflict
-              ?~  cob
-                ~  ::  conflict
-              :-  ~
+              %+  turn  (~(tap by (~(int by can.dal.dat) can.dob.dat)))
+              |=  [pax=path *]
+              ^-  (pair silk silk)
+              =+  cal=(~(got by can.dal.dat) pax)
+              =+  cob=(~(got by can.dob.dat) pax)
+              =+  ^=  for
+                  =+  (slag (dec (lent pax)) pax)
+                  ?~(- %$ i.-)
               :-  [%done ~ %path !>(pax)]
-              [%join for [%done ~ u.cal] [%done ~ u.cob]]
+              [%join for [%done ~ cal] [%done ~ cob]]
           ==
         ::
-            %meld  .(gon ``[%meld-not-implemented ~])
+            %meld  +.$(gon ``[%meld-not-implemented ~])
         ==
       ::
       ++  merged
@@ -1439,7 +1468,7 @@
           =+  cay=q.p.res
           ?@  p.cay
             +>.$(gon ``[%merge-bad-marc >ali< >bob< >p.cay< ~])
-          =|  bof=(map path cage)
+          =|  bof=(map path (unit cage))
           =>
             |-  ^+  +
             ?~  p.p.cay
@@ -1458,33 +1487,48 @@
                 bof
               %+  ~(put by bof:tal)
                 ((hard path) -.q.coy)
-              [q.i.p.p.cay (slot 3 coy)]
+              ?:  ?=(%null q.i.p.p.cay)
+                ~
+              `[q.i.p.p.cay (slot 3 coy)]
             ==
           ?^  gon
             +>.$
-          =+  ^-  con=(set path)
-              %-  sa
-              =-  %-  (~(run by -) |=([pax *] +<-))
-              %+  skim  (~(tap by u.bof))
-              |=  [pax=path cay=(unit cage)]
-              =+  cal=(~(got by dal.dat) pax)
-              =+  cob=(~(got by dob.dat) pax)
-              ?|  &(?=(~ cal) ?=(^ cob))
-                  &(?=(^ cal) ?=(~ cob))
-              ==
+          =+  ^-  con=(map path ,*)
+              %-  mo
+              %+  skim  (~(tap by bof))
+              |=([pax=path cay=(unit cage)] ?=(~ cay))
+          =.  con
+            %-  ~(uni by con)
+            %-  mo  ^-  (list ,[path *])
+            %+  skim  (~(tap by old.dal.dat))
+            |=  [pax=path ~]
+            ?:  (~(has by new.dob.dat) pax)
+              ~|  %strange-add-and-del
+              !!
+            (~(has by can.dob.dat) pax)
+          =.  con
+            %-  ~(uni by con)
+            %-  mo  ^-  (list ,[path *])
+            %+  skim  (~(tap by old.dob.dat))
+            |=  [pax=path ~]
+            ?:  (~(has by new.dal.dat) pax)
+              ~|  %strange-del-and-add
+              !!
+            (~(has by can.dal.dat) pax)
+          =.  con
+            %-  ~(uni by con)
+            %-  mo  ^-  (list ,[path *])
+            %+  skip  (~(tap by (~(int by new.dal.dat) new.dob.dat)))
+            |=  [pax=path *]
+            =((~(got by new.dal.dat) pax) (~(got by new.dob.dat) pax))
+          ?^  con
+            =+  (turn (~(tap by `(map path ,*)`con)) |=([path *] >[+<-]<))
+            +>.$(gon ``[%mate-conflict >ali< >bob< -])
           !!
         ::
             %meld
           +>.$(gon ``[%meld-not-implemented ~])
         ==
-
-        ::  %+  skim  (~(tap by u.bof))
-        ::  |=  [pax=path cay=(unit cage)]
-        ::  =+  cal=(~(got by dal.dat) pax)
-        ::  =+  cob=(~(got by dob.dat) pax)
-        ::  ?|  &(?=(~ cal) ?=(^ cob))
-        ::      &(?=(^ cal) ?=(~ cob))
-        ::  ==
       ::
       ++  checkout
         ^+  .
