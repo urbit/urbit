@@ -3,8 +3,10 @@
   !:
 |%
 ++  console-action                                      ::  console to app
-  $%  [%det console-change]                             ::  edit prompt line
+  $%  [%abo ~]                                          ::  reset interaction
+      [%det console-change]                             ::  command line edit
       [%inn ~]                                          ::  enter session
+      [%mut p=(list tape)]                              ::  multiline input
       [%out ~]                                          ::  exit session
       [%ret ~]                                          ::  submit and clear
   ==                                                    :: 
@@ -26,21 +28,21 @@
   $%  [%bel ~]                                          ::  beep
       [%blk p=@ud q=@c]                                 ::  blink/match char at
       [%clr ~]                                          ::  clear screen
-      [%det console-change]                             ::  edit input
+      [%det console-change]                             ::  edit command
       [%mor p=(list console-effect)]                    ::  multiple effects
-      [%nex ~]                                          ::  save and clear input
+      [%nex ~]                                          ::  save, clear command
       [%pro console-prompt]                             ::  set prompt
       [%tan p=(list tank)]                              ::  classic tank
   ::  [%taq p=tanq]                                     ::  modern tank
       [%txt p=tape]                                     ::  text line
   ==                                                    ::
-++  console-input                                       ::  input state
+++  console-command                                     ::  command state
   $:  pos=@ud                                           ::  cursor position
       say=console-share                                 ::  cursor 
   ==                                                    ::
 ++  console-prompt                                      ::  prompt definition
-  $:  vis=?                                             ::  input visible
-      tag=term                                          ::  terminal mode
+  $:  vis=?                                             ::  command visible
+      tag=term                                          ::  history mode
       cap=(list ,@c)                                    ::  caption
   ==                                                    ::
 ++  console-share                                       ::  symmetric state

@@ -190,7 +190,6 @@
       ++  from                                          ::  receive belt
         |=  bit=dill-blit
         ^+  +>
-        ~&  [%from bit hen]
         ?:  ?=(%out -.bit)
           %+  done  %blit
           :~  [%lin p.bit]
