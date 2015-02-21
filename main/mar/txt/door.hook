@@ -31,6 +31,6 @@
   ++  join
     |=  [ali=(urge cord) bob=(urge cord)]
     ^-  (unit (urge cord))
-    ali
+    `ali
   --
 --
