@@ -162,7 +162,6 @@
   ++  se-just                                           ::  adjusted buffer 
     |=  lin=(pair ,@ud (list ,@c))
     ^+  +>
-    ~&  [%just lin mir]
     =.  off  ?:((lth p.lin edg) 0 (sub p.lin edg))
     (se-show (sub p.lin off) (scag edg (slag off q.lin)))
   ::
@@ -507,9 +506,6 @@
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
-  =-  ~&  [%pour-moves -.foo]
-      foo
-  ^=  foo
   =+  sih=((hard sign) sih)
   ?>  ?=([@ @ ~] pax)
   =<  se-abet
