@@ -344,7 +344,6 @@
     ::
     ++  ta-fec                                          ::  apply effect
       |=  fec=console-effect
-      ~&  [%ta-fec fec]
       ^+  +>
       ?-    -.fec
         %bel  ta-bel
