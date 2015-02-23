@@ -35,7 +35,7 @@ module.exports = recl
     dt = @ts - Number Date.now()
 
   setPath: (href,hist) ->
-    if hist isnt false then history.pushState {}, "", "/gen/main/tree"+href
+    if hist isnt false then history.pushState {}, "", "/gen/doc/tree"+href
     TreeActions.setCurr href
 
   goTo: (path) ->
@@ -47,7 +47,7 @@ module.exports = recl
 
   checkURL: ->
     if @state.url isnt window.location.pathname
-      @setPath window.location.pathname.replace("/gen/main/tree",""),false
+      @setPath window.location.pathname.replace("/gen/doc/tree",""),false
 
   setTitle: ->
     title = $('#cont h1').first().text()
