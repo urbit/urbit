@@ -667,9 +667,10 @@
         =+  fom=((soft ,@tas) q:(slap gar [%cnzy %form]))
         ?~  fom
           (flaw cof leaf/"bad ++form:grad" ~)
-        ?.  &(=(fom p.cay) =(fom p.coy))
-          %+  flaw  cof  :_  ~
-          leaf/"join on data of bad marks: {(trip p.cay)} {(trip p.coy)}"
+        ?.  &(=(u.fom p.cay) =(u.fom p.coy))
+          %+  flaw  cof  :_  :_  ~
+            leaf/"join on data of bad marks: {(trip p.cay)} {(trip p.coy)}"
+          leaf/"expected mark {(trip u.fom)}"
         ?:  =(q.q.cay q.q.coy)
           (fine cof cay)
         ?.  (slab %join p.gar)
