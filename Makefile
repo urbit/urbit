@@ -86,7 +86,7 @@ CWFLAGS=-Wall \
         -Wno-sign-compare \
         -Wno-unused-parameter \
         -Wno-missing-field-initializers \
-        -Wno-error=unused-result \
+        -Wno-strict-aliasing \
         -Werror
 
 ifdef NO_SILENT_RULES
@@ -377,7 +377,7 @@ $(LIBCOMMONMARK):
 	$(MAKE) -C outside/commonmark
 
 $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBRE2)
-	$(CXX) $(CXXFLAGS) -c $< $(LIBRE2) -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(V_OFILES): i/v/vere.h
 

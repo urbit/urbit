@@ -367,7 +367,7 @@ u3_ames_io_exit()
 {
   u3_ames* sam_u = &u3_Host.sam_u;
 
-  uv_close((uv_handle_t*)&sam_u->wax_u, 0);
+  uv_close(&sam_u->had_u, 0);
 }
 
 /* u3_ames_io_poll(): update ames IO state.
