@@ -1400,31 +1400,35 @@
           ?^  bof
             =-  +.$(gon ``[%meet-conflict >ali< >bob< >[-]< ~])
             (~(run by `(map path ,*)`bof) ,_~)
-          =^  new  lat.ran
-            ^-  [(map path lobe) (map lobe blob)]
-            %+  roll  (~(tap by (~(uni by can.dal.dat) can.dob.dat)))
-            =<  .(lat lat.ran)
-            |=  [[pax=path cay=cage] new=(map path lobe) lat=(map lobe blob)]
-            =+  ^=  bol
-                =+  (~(get by q.bas.dat) pax)
-                ?~  -
-                  ~|  %strange-diff-no-base
-                  !!
-                (make-delta u.- cay)
-            [(~(put by new) pax p.bol) (~(put by lat) p.bol bol)]
-          =.  new  (~(uni by new) new.dal.dat)
-          =.  new  (~(uni by new) new.dob.dat)
-          =+  del=(~(run by (~(uni by old.dal.dat) old.dob.dat)) |=(~ %|))
           =+  ^-  old=(map path lobe)
               %+  roll  (~(tap by (~(uni by old.dal.dat) old.dob.dat)))
               =<  .(old q.bas.dat)
               |=  [[pax=path ~] old=(map path lobe)]
               (~(del by old) pax)
+          =^  hat  lat.ran
+            ^-  [(map path lobe) (map lobe blob)]
+            %+  roll  (~(tap by (~(uni by can.dal.dat) can.dob.dat)))
+            =<  .(lat lat.ran)
+            |=  [[pax=path cay=cage] hat=(map path lobe) lat=(map lobe blob)]
+            =+  ^=  bol
+                =+  (~(get by q.bas.dat) pax)
+                ?~  -
+                  ~|  %meet-strange-diff-no-base
+                  !!
+                (make-delta u.- cay)
+            [(~(put by hat) pax p.bol) (~(put by lat) p.bol bol)]
+          =.  hat
+            %-  ~(uni by old)
+            %-  ~(uni by new.dal.dat)
+            %-  ~(uni by new.dob.dat)
+            hat
+          =+  ^-  del=(map path ,?)
+              (~(run by (~(uni by old.dal.dat) old.dob.dat)) |=(~ %|))
           =.  new.dat
-            (make-yaki [r.ali.dat r.bob.dat ~] (~(uni by old) new) now)
+            (make-yaki [r.ali.dat r.bob.dat ~] hat now)
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
-          =.  erg.dat  %-  ~(uni by `(map path ,?)`del)
-                       `(map path ,?)`(~(run by new) |=(lobe %&))
+          =.  erg.dat  %-  ~(uni by del)
+                       `(map path ,?)`(~(run by hat) |=(lobe %&))
           checkout
         ::
             %mate
@@ -1524,7 +1528,42 @@
           ?^  con
             =+  (turn (~(tap by `(map path ,*)`con)) |=([path *] >[+<-]<))
             +>.$(gon ``[%mate-conflict >ali< >bob< -])
-          !!
+          =+  ^-  old=(map path lobe)
+              %+  roll  (~(tap by (~(uni by old.dal.dat) old.dob.dat)))
+              =<  .(old q.bas.dat)
+              |=  [[pax=path ~] old=(map path lobe)]
+              (~(del by old) pax)
+          =+  ^-  can=(map path cage)
+              %-  ~(uni by can.dal.dat)
+              %-  ~(uni by can.dob.dat)
+              %-  ~(run by bof)
+              |=  cay=(unit cage)
+              (need cay)
+          =^  hat  lat.ran
+            ^-  [(map path lobe) (map lobe blob)]
+            %+  roll  (~(tap by can))
+            =<  .(lat lat.ran)
+            |=  [[pax=path cay=cage] hat=(map path lobe) lat=(map lobe blob)]
+            =+  ^=  bol
+                =+  (~(get by q.bas.dat) pax)
+                ?~  -
+                  ~|  %mate-strange-diff-no-base
+                  !!
+                (make-delta u.- cay)
+            [(~(put by hat) pax p.bol) (~(put by lat) p.bol bol)]
+          =.  hat
+            %-  ~(uni by old)
+            %-  ~(uni by new.dal.dat)
+            %-  ~(uni by new.dob.dat)
+            hat
+          =+  ^-  del=(map path ,?)
+              (~(run by (~(uni by old.dal.dat) old.dob.dat)) |=(~ %|))
+          =.  new.dat
+            (make-yaki [r.ali.dat r.bob.dat ~] hat now)
+          =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
+          =.  erg.dat  %-  ~(uni by del)
+                       `(map path ,?)`(~(run by hat) |=(lobe %&))
+          checkout
         ::
             %meld
           +>.$(gon ``[%meld-not-implemented ~])
