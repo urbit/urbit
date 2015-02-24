@@ -129,8 +129,8 @@
   ::
   ++  commit                                            ::  local change
     |=  ted=console-edit
-    ^+  +>
-    (apply(own.ven +(own.ven)) ted)
+    ^-  console-share
+    abet:(apply(own.ven +(own.ven)) ted)
   ::
   ::::
   ::  ++inverse: inverse of change in context.
@@ -157,40 +157,26 @@
   ::
   ++  transmit                                          ::  outgoing change
     |=  ted=console-edit
-    ^-  [console-change _+>]
+    ^-  [console-change console-share]
     [[[his.ven own.ven] (sham buf) ted] (commit ted)]
   ::
-  ++  realize                                           ::  naturalize event
+  ++  receive                                           ::  naturalize event
     |=  console-change
-    ^-  [console-edit _+>]
+    ^-  [console-edit console-share]
     ?>  &(=(his.ler his.ven) (lte own.ler own.ven))
     ?>  &(=(his.ler his.ven) (lte own.ler own.ven))
     ?>  |(!=(own.ler own.ven) =(haw (sham buf)))
     =.  leg  (scag (sub own.ven own.ler) leg)
-    [(transmute [%mor leg] ted) +>]
+    =+  dat=(transmute [%mor leg] ted)
+    [dat abet:(apply(his.ven +(his.ven)) dat)]
   ::
   ++  remit                                             ::  conditional accept
     |=  [cal=console-change ask=$+((list ,@c) ?)]
-    ^-  [(unit console-change) _+>]
-    =+  old=+>
-    =^  dat  +>.$  (realize cal)
-    =.  +>.$  (apply(his.ven +(his.ven)) dat)
+    ^-  [(unit console-change) console-share]
+    =^  dat  +>+<.$  (receive cal)
     ?:  (ask buf)
-      [~ +>.$]
-    =+  wad=(inverse dat)
-    ::  ~&  [%remit-old buf.old]
-    ::  ~&  [%remit-new buf]
-    ::  ~&  [%remit ted/ted.cal]
-    ::  ~&  [%remit dat/dat]
-    ::  ~&  [%remit wad/wad]
-    =^  lic  +>.$  (transmit wad)
-    ::  ~&  [%remit-end [lic buf]]
-    [`lic +>.$]
-  ::
-  ++  receive                                           ::  accept change
-    |=  cal=console-change
-    ^+  +>
-    =^  dat  +>  (realize cal)
-    (apply(his.ven +(his.ven)) dat)
+      [~ +>+<.$]
+    =^  lic  +>+<.$  (transmit (inverse dat))
+    [`lic +>+<.$]
   --
 --

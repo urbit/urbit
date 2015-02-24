@@ -206,7 +206,6 @@
       ++  init                                          ::  initialize
         |=  gyl=(list gill)
         ^+  +>
-        ~&  [%as-init ram gyl]
         =.  moz  :_(moz [hen %pass ~ %g %show [our [ram ~]] our ~])
         |-  ^+  +>.^$
         ?~  gyl  +>.^$
