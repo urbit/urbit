@@ -18,7 +18,7 @@
     ^+  [[p=*(list console-effect) q=(rust ~ sef)] *console-share]
     ?-    -.act
         %det
-      =^  dut  +>+>.$
+      =^  dut  +>+>+<.$
           %+  remit  +.act
           |=  buf=(list ,@c)
           =+  txt=(tufa buf)
@@ -29,7 +29,7 @@
       =+  dod=(rust (tufa buf) sef)
       ?~  dod
         [[[%bel ~]~ ~] +>+>+<.$]
-      =^  cal  +>+>.$  (transmit [%set ~])
+      =^  cal  +>+>+<.$  (transmit [%set ~])
       :_  +>+>+<.$
       :_  dod
       :~  [%det cal]
@@ -55,7 +55,7 @@
           ^+  init
           ?-    -.act
               %det
-            =^  dut  +>+>.$
+            =^  dut  +<.apse
                 %+  remit  +.act
                 |=  buf=(list ,@c)
                 !=(~ (nice:dog (tufa buf)))
