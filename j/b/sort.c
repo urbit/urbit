@@ -1,6 +1,5 @@
 /* j/2/sort.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 

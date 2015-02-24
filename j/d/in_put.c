@@ -1,6 +1,5 @@
 /* j/4/in_put.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 

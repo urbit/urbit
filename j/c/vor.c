@@ -1,6 +1,5 @@
 /* j/3/vor.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 

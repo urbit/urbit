@@ -440,7 +440,7 @@
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
-    ?>  =(1 vez)
+    ?>  =(2 vez)
     ?>  =(chk (end 0 20 (mug bod)))
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
@@ -460,7 +460,7 @@
     =+  tay=(ksin q.kec)
     %+  mix
       %+  can  0
-      :~  [3 1]
+      :~  [3 2]
           [20 (mug bod)]
           [2 yax]
           [2 qax]
@@ -1043,7 +1043,7 @@
     ++  gnaw                                            ::    gnaw:am
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
-      ?.  =(1 (end 0 3 pac))  [~ fox]
+      ?.  =(2 (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
       ?:  (goop p.p.kec)  [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
@@ -1704,9 +1704,12 @@
         =+  neh=(claw p.p.bon)
         ?>  ?=(^ neh)
         ?:  ?=(%e ven)
-          ?>  |(=(%pr cak) =(%pc cak))
-          :_  [%sick %wart p.bon cak `path`t.t.t.q.q.bon r.bon]
-          [[%e `path`t.t.t.q.q.bon] hen]
+          ?+  cak  !!                 ::  XX  fix eyre
+            %pr  :_  [%sick %waft p.bon r.bon]
+                 [[`path`t.t.t.q.q.bon] hen] 
+            %pc  :_  [%sick %wart p.bon cak `path`t.t.t.q.q.bon r.bon]
+                 [[%e `path`t.t.t.q.q.bon] hen]
+          ==
         =+  ton=[%waft p.bon r.bon]
         ::  ~&  [%milk-waft [[ven `path`t.t.t.q.q.bon] t.neh]]
         :_  [%sick ton]
