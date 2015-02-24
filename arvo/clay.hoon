@@ -1248,7 +1248,8 @@
           ?~  r
             +>.^$(gon ``[%merge-no-merge-base >ali< >bob< ~])
           ?.  ?=([* ~ ~] r)
-            +>.^$(gon ``[%merge-criss-cross >ali< >bob< ~])
+            =-  +>.^$(gon ``[%merge-criss-cross >ali< >bob< >[-]< ~])
+            (lent (~(tap in `(set yaki)`r)))
           =.  bas.dat  n.r
           diff-ali
         ==
@@ -1707,7 +1708,7 @@
           =+  bun=(~(del in `(set yaki)`unk) n.unk)
           ?:  %+  levy  (~(tap by (~(uni in gud) bun)) ~)
               |=  yak=yaki
-              !(~(has in (~(got by zar) r.yak)) n.unk)
+              !(~(has in (~(got by zar) r.yak)) r.n.unk)
           ::  I'm pretty sure this is just wrong, but given
           ::  the relative intelligence levels of me and Jared,
           ::  I'm going to keep it here for a little bit
