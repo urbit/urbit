@@ -21,7 +21,7 @@
               %verb                                     ::  verbose mode
           ==                                            ::
       $%  [%reload p=(list term)]                       ::  reload vanes
-          [%begin p=(qual @p @p @t gens)]               ::  start new ship
+          [%begin p=(qual ,@p ,@p ,@t gens)]            ::  start new ship
       ==                                                ::
     ::                                                  ::
     ++  gift                                            ::  out result <-$
@@ -115,8 +115,8 @@
   ::
   ++  he-wish-reset
     ^+  .
-    =-  $_(+ moz (weld zum moz))
-    ^=  zum
+    =-  %_(+ moz (weld zum moz))
+    ^=  zum  ^-  (list move)
     =+  top=`path`/(scot %p our.hid)/arvo/(scot %da lat.hid)
     :-  [ost %pass /reset %d %vega (weld top `path`/hoon)]
     %+  turn
@@ -136,7 +136,7 @@
     [ost %pass /reset %d %veer p pax txt]
   ::
   ++  he-wish-begin
-    |=  mes=(qual @p @p @t gens)
+    |=  mes=(qual ,@p ,@p ,@t gens)
     %_    +>
         moz  
       :_  moz
@@ -151,18 +151,17 @@
     ==
   ::
   ++  he-wish
-    |=  wis
-    %_    +>  
-        moz
-      %-  weld
-      :_  moz
-      ?-  wis
-        %verb       he-wish-verb
-        %solid      he-wish-solid
-        %reset      he-wish-reset
-        [%reload *] (he-wish-reload +.wis)
-        [%begin *]  (he-wish-begin +.wis)
-      ==
+    |=  wus=(unit helm-wish)
+    ^+  +>
+    ?~  wus
+      ~&(%he-wish-aborted +>)
+    ?-  u.wus 
+      %verb        he-wish-verb
+      %solid       he-wish-solid
+      %reset       he-wish-reset
+      [%reload *]  !!  ::  (he-wish-reload +.u.wus)  
+      [%begin *]   (he-wish-begin +.u.wus)
+    ==
   ::
   ++  he-work                                           ::  apply input
     |=  act=console-action

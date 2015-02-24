@@ -479,6 +479,7 @@
 #   define c3__head   c3_s4('h','e','a','d')
 #   define c3__heal   c3_s4('h','e','a','l')
 #   define c3__hear   c3_s4('h','e','a','r')
+#   define c3__helm   c3_s4('h','e','l','m')
 #   define c3__helo   c3_s4('h','e','l','o')
 #   define c3__hep    c3_s3('h','e','p')
 #   define c3__hept   c3_s4('h','e','p','t')

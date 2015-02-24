@@ -679,6 +679,7 @@ _term_io_flow(u3_utty* uty_u)
   // u3v_plan(pax, u3nq(c3__flow, c3__seat, c3__talk, u3_nul));
   // u3v_plan(pax, u3nt(c3__flow, c3__seat, u3_nul));
   u3v_plan(pax, u3nq(c3__flow, c3__seat, c3__dojo, u3_nul));
+  // u3v_plan(pax, u3nq(c3__flow, c3__seat, c3__helm, u3_nul));
 }
 
 /* _term_io_belt(): send belt.
