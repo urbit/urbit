@@ -262,13 +262,10 @@
     |=  cal=console-change
     ^+  +>
     =^  dut  say  
-        =<  [- abet:+]
         %+  ~(remit cs say)  cal
         ?~(duy he-like |=((list ,@c) %|))
     ?~  dut
       +>.$
-    ~&  [%he-reject-cal cal]
-    ~&  [%he-reject-dut u.dut]
     (he-rush %mor [%det u.dut] [%bel ~] ~)
   ::
   ++  he-plan                                           ::  execute command
@@ -286,7 +283,7 @@
     ?~  foy
       (he-rush %bel ~)
     =+  old=(weld "> " (tufa buf.say))
-    =^  cal  say  [- abet]:(~(transmit cs say) [%set ~])
+    =^  cal  say  (~(transmit cs say) [%set ~])
     %-  =<  he-plan
         %-  he-rush
         :~  %mor
