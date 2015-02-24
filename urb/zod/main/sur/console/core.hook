@@ -3,11 +3,8 @@
   !:
 |%
 ++  console-action                                      ::  console to app
-  $%  [%abo ~]                                          ::  reset interaction
+  $%  ::  [%abo ~]                                      ::  reset interaction
       [%det console-change]                             ::  command line edit
-      [%inn ~]                                          ::  enter session
-      [%mut p=(list tape)]                              ::  multiline input
-      [%out ~]                                          ::  exit session
       [%ret ~]                                          ::  submit and clear
   ==                                                    :: 
 ++  console-buffer  (list ,@c)                          ::  command state
@@ -16,6 +13,16 @@
       haw=@uvH                                          ::  source hash
       ted=console-edit                                  ::  state change
   ==                                                    ::
+++  console-dialog                                      ::  standard dialog
+  |*  out=$+(* *)                                       ::  output type
+  $_  ^?  |%                                            ::  
+  ++  init  =<  $                                       ::  initial response
+            %+  pair  tanq                              ::
+            %+  each  (unit out)                        ::
+            (pair console-prompt _.)                    ::
+  ++  kick  |=(console-input init)                      ::  next response
+  ++  nice  $+(console-input (unit ,?))                 ::  legal/partial
+  --                                                    ::
 ++  console-clock  ,[own=@ud his=@ud]                   ::  vector clock
 ++  console-edit                                        ::  shared state change
   $%  [%del p=@ud]                                      ::  delete one at
@@ -32,6 +39,8 @@
       [%mor p=(list console-effect)]                    ::  multiple effects
       [%nex ~]                                          ::  save, clear command
       [%pro console-prompt]                             ::  set prompt
+      [%sag p=path q=*]                                 ::  save to jamfile
+      [%sav p=path q=@]                                 ::  save to file
       [%tan p=(list tank)]                              ::  classic tank
   ::  [%taq p=tanq]                                     ::  modern tank
       [%txt p=tape]                                     ::  text line
@@ -45,6 +54,7 @@
       tag=term                                          ::  history mode
       cap=(list ,@c)                                    ::  caption
   ==                                                    ::
+++  console-input  tape                                 ::  prompt input
 ++  console-share                                       ::  symmetric state
   $:  ven=console-clock                                 ::  our vector clock
       leg=(list console-edit)                           ::  unmerged edits

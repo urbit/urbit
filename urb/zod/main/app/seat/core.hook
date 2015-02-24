@@ -33,12 +33,12 @@
     ++  search                                          ::  reverse-i-search
       $:  pos=@ud                                       ::  search position
           str=(list ,@c)                                ::  search string
-      ==
+      ==                                                ::
     ++  target                                          ::  application target
       $:  ris=(unit search)                             ::  reverse-i-search
           hit=history                                   ::  all past input
           pom=console-prompt                            ::  static prompt
-          inp=console-input                             ::  input state
+          inp=console-command                           ::  input state
       ==                                                ::
     ++  gift                                            ::  out result <-$
       $%  [%mean p=ares]                                ::  
@@ -348,7 +348,7 @@
       ?-    -.fec
         %bel  ta-bel
         %blk  +>
-        %clr  +>(+> (se-blit %clr ~))
+        %clr  +>(+> (se-blit fec))
         %det  (ta-got +.fec)
         %mor  |-  ^+  +>.^$
               ?~  p.fec  +>.^$
@@ -356,6 +356,8 @@
         %nex  ta-nex
         %pro  (ta-pro +.fec)
         %tan  (ta-tan p.fec)
+        %sag  +>(+> (se-blit fec))
+        %sav  +>(+> (se-blit fec))
         %txt  $(fec [%tan [%leaf p.fec]~])
       ==
     ::

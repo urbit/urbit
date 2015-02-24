@@ -298,8 +298,6 @@
     |=  act=console-action
     ^+  +>
     ?-  -.act
-      %inn  +>.$
-      %out  +>.$
       %det  (he-stir +.act)
       %ret  (he-done (tufa buf.say))
     ==
