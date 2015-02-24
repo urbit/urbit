@@ -267,6 +267,8 @@
         ?~(duy he-like |=((list ,@c) %|))
     ?~  dut
       +>.$
+    ~&  [%he-reject-cal cal]
+    ~&  [%he-reject-dut u.dut]
     (he-rush %mor [%det u.dut] [%bel ~] ~)
   ::
   ++  he-plan                                           ::  execute command

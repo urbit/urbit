@@ -17,9 +17,9 @@
   |*  out=$+(* *)                                       ::  output type
   $_  ^?  |%                                            ::  
   ++  init  =<  $                                       ::  initial response
-            %+  pair  tanq                              ::
+            %+  pair  (list tank)                       ::
             %+  each  (unit out)                        ::
-            (pair console-prompt _.)                    ::
+            (pair console-prompt ,_.)                   ::
   ++  kick  |=(console-input init)                      ::  next response
   ++  nice  $+(console-input (unit ,?))                 ::  legal/partial
   --                                                    ::

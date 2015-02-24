@@ -161,6 +161,7 @@
   ::
   ++  se-just                                           ::  adjusted buffer 
     |=  lin=(pair ,@ud (list ,@c))
+    ~&  [%se-just lin]
     ^+  +>
     =.  off  ?:((lth p.lin edg) 0 (sub p.lin edg))
     (se-show (sub p.lin off) (scag edg (slag off q.lin)))
