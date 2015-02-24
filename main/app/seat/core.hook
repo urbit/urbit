@@ -362,21 +362,34 @@
         %txt  $(fec [%tan [%leaf p.fec]~])
       ==
     ::
-    ++  ta-dog                                          ::  correct position
-      |=  ted=console-edit 
-      ?.  ?=(%set -.ted)  +>
-      +>(pos.inp (lent buf.say.inp))
+    ++  ta-dog                                          ::  change cursor
+      |=  ted=console-edit
+      %_    +>
+          pos.inp
+        =+  len=(lent buf.say.inp)
+        %+  min  len
+        |-  ^-  @ud
+        ?-  -.ted
+          %del  ?:((gth pos.inp p.ted) (dec pos.inp) pos.inp)
+          %ins  ?:((lte pos.inp p.ted) +(pos.inp) pos.inp)
+          %mor  |-  ^-  @ud
+                ?~  p.ted  pos.inp
+                $(p.ted t.p.ted, pos.inp ^$(ted i.p.ted))
+          %nop  pos.inp
+          %set  len
+        ==
+      ==
     ::
     ++  ta-got                                          ::  apply change
       |=  cal=console-change
-      =.  +>  (ta-dog:+>(say.inp abet:(~(receive cs say.inp) cal)) ted.cal)
-      +>
+      =^  ted  say.inp  (~(receive cs say.inp) cal)
+      (ta-dog ted)
     ::
     ++  ta-hom                                          ::  local edit
       |=  ted=console-edit
       ^+  +>
       =.  +>  (ta-det ted)
-      =.  +>  (ta-dog:+>(say.inp abet:(~(commit cs say.inp) ted)) ted)
+      =.  +>  (ta-dog(say.inp (~(commit cs say.inp) ted)) ted)
       +>
     ::
     ++  ta-met                                          ::  meta key
@@ -460,8 +473,7 @@
             cap.pom 
           `(list ,@)`:(welp "(reverse-i-search)'" str.u.ris "': ")
         ==
-      =-  =.  pos.inp  (max pos.inp (lent q.vew))
-          [(add pos.inp (lent p.vew)) (weld p.vew q.vew)]
+      =-  [(add pos.inp (lent p.vew)) (weld p.vew q.vew)]
       ^=  vew  ^-  (pair (list ,@c) (list ,@c))
       ?:  vis.pom  [cap.pom buf.say.inp]
       :-  ;:  welp
