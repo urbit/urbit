@@ -1,6 +1,5 @@
 /* j/3/rap.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 
