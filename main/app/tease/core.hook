@@ -22,7 +22,7 @@
           %g   %mess  
           [our.hid /seat]  our.hid
           %dill-belt
-          !>(`dill-belt`[%yow %dojo])
+          !>(`dill-belt`[%yow %helm])
       ==
   ==
 --

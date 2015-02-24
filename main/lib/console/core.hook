@@ -12,6 +12,52 @@
 ++  cs                                                  ::  shared-state engine
   |_  console-share
   ++  abet  +<
+  ++  apex                                              ::  engine by rule
+    |*  sef=_rule
+    |=  act=console-action
+    ^+  [[p=*(list console-effect) q=(rust ~ sef)] *console-share]
+    ?-    -.act
+        %det
+      =^  dut  +>+>.$
+          %+  remit  +.act
+          |=  buf=(list ,@c)
+          =+  txt=(tufa buf)
+          =((lent txt) q.p:(sef [0 0] txt))
+      [[?~(dut ~ [[%det u.dut] ~]) ~] +>+>+<.$]
+    ::
+        %ret
+      =+  dod=(rust (tufa buf) sef)
+      ?~  dod
+        [[[%bel ~]~ ~] +>+>+<.$]
+      =^  cal  +>+>.$  (transmit [%set ~])
+      :_  +>+>+<.$
+      :_  dod
+      :~  [%det cal]
+          [%nex ~]
+      ==
+    ==
+  ++  apse                                              ::  engine by dialog
+    |*  dog=_(console-dialog)
+    |=  act=console-action
+    ^+  :_  *console-share
+        :_  *(list console-effect)
+        ?>(?=(%& -.god) *(each ,_p.god ,_+)
+    ?-    -.act
+        %det
+      =^  dut  +>+>.$
+          %+  remit  +.act
+          |=  buf=(list ,@c)
+          !=(~ (nice:dog (tufa buf)))
+      
+      =+  foo=`(list console-effect)`?~(dut ~ [[%det u.dut] ~])
+      :-  :-  foo
+          [%| dog]
+      `console-share`+>+>+<.$
+    ::
+        %ret
+      ?.  =(`& (nice:dog 
+    ==
+  ::
   ++  apply
     |=  ted=console-edit 
     ^+  +>
