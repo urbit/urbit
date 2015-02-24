@@ -144,7 +144,6 @@
           ==                                            ::
 ++  ring  ,@                                            ::  private key
 ++  rule  |=(tub=nail `edge`[p.tub ~ ~ tub])            ::  parsing rule
-++  ruly  |*(pro=$+(* *) $+(nail (like pro)))           ::  rule like
 ++  span  ,@ta                                          ::  text-atom (ASCII)
 ++  spot  ,[p=path q=pint]                              ::  range in file
 ++  tang  (list tank)                                   ::  general error
@@ -10188,7 +10187,7 @@
     |-  ^-  [p=(list ovum) q=(pair worm (list ,[p=@tas q=vase]))]
     ?~  mor  [(flop ova) niz]
     =^  nyx  niz  (jack lac i.mor)
-    $(ova (weld p.nyx ova), mor (weld q.nyx t.mor))
+    $(ova (weld p.nyx ova), mor (weld t.mor q.nyx))
   --
 --
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
