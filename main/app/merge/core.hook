@@ -16,12 +16,12 @@
   |=  [ost=bone pax=path sih=*]
   :_  +>.$
   =+  ^-  tan=(list tank)
-      =+  ((soft ,[%c %mere are=ares]) sih)
+      =+  ((soft ,[%c %mere are=(each (set path) (pair term (list tank)))]) sih)
       ?~  -
         [leaf/"not working so well" >sih< ~]
-      ?~  are.u
-        [leaf/"merged" ~]
-      [leaf/"failed to merge" >p.u.are.u< q.u.are.u]
+      ?:  ?=(%& -.are.u)
+        [leaf/"merged" ?~(p.are.u ~ [>`(set path)`p.are.u< ~])]
+      [leaf/"failed to merge" >p.p.are.u< q.p.are.u]
   %-  flop
   :-  i=[ost %pass / %g %cide %$]
   ^=  t
