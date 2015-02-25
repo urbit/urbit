@@ -1151,6 +1151,30 @@
   ++  tos  ~/  %tos                                     ::  fetch suffix
            |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] sis)))
   --
+::
+++  fa                                                  ::  base58check
+  =+  key='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+  =+  ^-  yek=@ux  ~+
+      =-  yek:(roll (trip key) -)
+      |=  [a=char b=@ yek=_`@ux`(fil 3 256 0xff)]
+      [+(b) (mix yek (lsh 3 `@u`a (~(inv fe 3) b)))]
+  |%
+  ++  cha  |=(a=char `(unit ,@uF)`=+(b=(cut 3 [`@`a 1] yek) ?:(=(b 0xff) ~ `b)))
+  ++  tok
+    |=  a=@ux  ^-  @ux
+    =+  b=(pad a)
+    =-  (~(net fe 5) (end 3 4 (shay 32 -)))
+    (shay (add b (met 3 a)) (lsh 3 b (swap 3 a)))
+  ::
+  ++  pad  |=(a=@ =+(b=(met 3 a) ?:((gte b 21) 0 (sub 21 b))))
+  ++  enc  |=(a=@ux `@ux`(mix (lsh 3 4 a) (tok a)))
+  ++  den  
+    |=  a=@ux  ^-  (unit ,@ux)
+    =+  b=(rsh 3 4 a)
+    ?.  =((tok b) (end 3 4 a))
+      ~
+    `b
+  --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cF, signed and modular ints  ::
 ::
@@ -3208,6 +3232,7 @@
 ++  ab
   |%
   ++  bix  (bass 16 (stun [2 2] six))
+  ++  fem  (sear |=(a=@ (cha:fa a)) aln)
   ++  hif  (boss 256 ;~(plug tip tiq (easy ~)))
   ++  huf  %+  cook
              |=([a=@ b=@] (wred:un ~(zug mu ~(zag mu [a b]))))
@@ -3267,6 +3292,7 @@
              hif:ab
              tiq:ab
            ==
+  ++  fim  (sear den:fa (bass 58 (plus fem:ab)))
   ++  hex  (ape (bass 0x1.0000 ;~(plug qex:ab (star ;~(pfix dog qix:ab)))))
   ++  lip  =+  tod=(ape ted:ab)
            (bass 256 ;~(plug tod (stun [3 3] ;~(pfix dog tod))))
@@ -3388,6 +3414,7 @@
           ^=  gam  ^-  [p=tape q=tape]
           ?+  hay  [~ ((ox-co [10 3] |=(a=@ ~(d ne a))) q.p.lot)]
             %b  [['0' 'b' ~] ((ox-co [2 4] |=(a=@ ~(d ne a))) q.p.lot)]
+            %c  [['0' 'c' (reap (pad:fa q.p.lot) '1')] (c-co (enc:fa q.p.lot))]
             %i  [['0' 'i' ~] ((d-co 1) q.p.lot)]
             %x  [['0' 'x' ~] ((ox-co [16 4] |=(a=@ ~(x ne a))) q.p.lot)]
             %v  [['0' 'v' ~] ((ox-co [32 5] |=(a=@ ~(x ne a))) q.p.lot)]
@@ -3410,6 +3437,7 @@
   =+  rex=*tape
   =<  |%
       ++  a-co  |=(dat=@ ((d-co 1) dat))
+      ++  c-co  (em-co [58 1] |=([? b=@ c=tape] [~(c ne b) c]))
       ++  d-co  |=(min=@ (em-co [10 min] |=([? b=@ c=tape] [~(d ne b) c])))
       ++  r-co
         |=  [syn=? nub=@ der=@ ign=(unit tape) ne=?]
@@ -3474,6 +3502,7 @@
 ::
 ++  ne
   |_  tig=@
+  ++  c  (cut 3 [tig 1] key:fa)
   ++  d  (add tig '0')
   ++  x  ?:((gte tig 10) (add tig 87) d)
   ++  v  ?:((gte tig 10) (add tig 87) d)
@@ -3495,6 +3524,7 @@
       ;~  pfix  (just '0')
         ;~  pose
           (stag %ub ;~(pfix (just 'b') bay:ag))
+          (stag %uc ;~(pfix (just 'c') fim:ag))
           (stag %ui ;~(pfix (just 'i') dim:ag))
           (stag %ux ;~(pfix (just 'x') hex:ag))
           (stag %uv ;~(pfix (just 'v') viz:ag))
@@ -5329,10 +5359,16 @@
 ++  shax                                                ::  sha-256
   ~/  %shax
   |=  ruz=@  ^-  @
+  (shay [(met 3 ruz) ruz])
+::
+++  shay                                                ::  sha-256 with length
+  ~/  %shay
+  |=  [len=@u ruz=@]  ^-  @
   ~|  %sha
+  =>  .(ruz (cut 3 [0 len] ruz))
   =+  [few==>(fe .(a 5)) wac=|=([a=@ b=@] (cut 5 [a 1] b))]
   =+  [sum=sum.few ror=ror.few net=net.few inv=inv.few]
-  =+  ral=(lsh 0 3 (met 3 ruz))
+  =+  ral=(lsh 0 3 len)
   =+  ^=  ful
       %+  can  0
       :~  [ral ruz]
