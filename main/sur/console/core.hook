@@ -14,15 +14,16 @@
       ted=console-edit                                  ::  state change
   ==                                                    ::
 ++  console-dialog                                      ::  standard dialog
-  |*  out=$+(* *)                                       ::  output type
-  $_  ^?  |%                                            ::  
-  ++  init  =<  $                                       ::  initial response
-            %+  pair  (list tank)                       ::
-            %+  each  (unit out)                        ::
-            (pair console-prompt ,_.)                   ::
-  ++  kick  |=(console-input init)                      ::  next response
-  ++  nice  $+(console-input (unit ,?))                 ::  legal/partial
-  --                                                    ::
+  |*  out=$+(* *)                                       ::  final output
+  $_  ^?                                                ::
+  |=  (unit console-input)                              ::  ~ is init
+  =<  $                                                 ::
+  %-  unit                                              ::  ~ is invalid
+  %-  unit                                              ::  ~ is prefix
+  %+  pair  (list tank)                                 ::
+  %+  each  (unit out)                                  ::  ~ is abort
+  (pair console-prompt (console-dialog out))            ::  ask and continue
+::
 ++  console-clock  ,[own=@ud his=@ud]                   ::  vector clock
 ++  console-edit                                        ::  shared state change
   $%  [%del p=@ud]                                      ::  delete one at

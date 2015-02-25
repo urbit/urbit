@@ -18,19 +18,19 @@
     ^+  [[p=*(list console-effect) q=(rust ~ sef)] *console-share]
     ?-    -.act
         %det
-      =^  dut  +>+>+<.$
+      =^  dut  +<.apex
           %+  remit  +.act
           |=  buf=(list ,@c)
           =+  txt=(tufa buf)
           =((lent txt) q.p:(sef [0 0] txt))
-      [[?~(dut ~ [[%det u.dut] ~]) ~] +>+>+<.$]
+      [[?~(dut ~ [[%det u.dut] [%bel ~] ~]) ~] +<.apex]
     ::
         %ret
       =+  dod=(rust (tufa buf) sef)
       ?~  dod
-        [[[%bel ~]~ ~] +>+>+<.$]
-      =^  cal  +>+>+<.$  (transmit [%set ~])
-      :_  +>+>+<.$
+        [[[%bel ~]~ ~] +<.apex]
+      =^  cal  +<.apex  (transmit [%set ~])
+      :_  +<.apex
       :_  dod
       :~  [%det cal]
           [%nex ~]
@@ -38,35 +38,52 @@
     ==
   ++  apse                                              ::  dialog engine
     |*  dog=(console-dialog)
-    |%  ++  abet  `console-share`+>+>-                  ::  resolve
-        ++  dole                                        ::  
-          =+  fov=^+(init:dog [[~ ~] [%& ~]])
-          |-
-          =+  fex=[%tan p.fov]
-          ?-  -.q.fov
-            %&  [[p=fex q=[~ u=p.q.fov]] +>.$]
-            %|  :-  [p=[i=[%pro `console-prompt`p.p.q.fov] t=fex] q=~]
-                +>.$(dog q.p.q.fov)
-          ==
-        ::
-        ++  init  (dole init:dog)                       ::  initialize
-        ++  work
-          |=  act=console-action
-          ^+  init
-          ?-    -.act
-              %det
-            =^  dut  +<.apse
-                %+  remit  +.act
-                |=  buf=(list ,@c)
-                !=(~ (nice:dog (tufa buf)))
-            [[?~(dut ~ [[%det u.dut] ~]) ~] +>+>+<.$]
-          ::
-              %ret
-            =+  txt=(tufa buf)
-            ?.  =(`& (nice:dog txt))
-              [[[%bel ~]~ ~] +>+>+<.$]
-            (dole (kick:dog txt))
-          ==
+    |=  act=(unit console-action)
+    =<  abet  |%
+    ++  abet
+      ?~  act  (ajar ~)
+      ?-  -.u.act
+          %det
+        =^  dut  +<.apse
+            %+  remit  +.u.act
+            |=  buf=(list ,@c)
+            !=(~ (dog `(tufa buf)))
+        :_  +<.apse
+        :_  dog
+        :_  q=[~ u=~]
+        ^=  p   ^-  (list console-effect)
+        ?~(dut ~ [[%det u.dut] [%bel ~] ~])
+      ::
+          %ret  (ajar `(tufa buf))
+      ==
+    ++  ajar
+      |=  unp=(unit console-input)
+      =+  god=(dog unp)
+      ?:  |(?=(~ god) ?=(~ u.god))
+        :_  +<.apse
+        :_  dog
+        :-  p=`(list console-effect)`[%bel ~]~
+        q=[~ u=~]
+      =+  fex=`(list console-effect)`[%tan p.u.u.god]~
+      ?-    -.q.u.u.god
+          %&
+        :_  +<.apse
+        :_  dog
+        :-  p=fex
+        q=?~(p.q.u.u.god ~ [~ u=p.q.u.u.god])
+      ::
+          %|
+        =^  cal  +<.apse  (transmit [%set ~])
+        :_  +<.apse
+        :_  q.p.q.u.u.god
+        :_  q=[~ u=~]
+        ^=  p  ^+  fex
+        :*  [%det cal]
+            [%nex ~]
+            [%pro p.p.q.u.u.god]
+            fex
+        ==
+      == 
     --
   ::
   ++  apply

@@ -14,10 +14,12 @@
       ==                                                ::
     ++  helm-session                                    ::
       $:  say=console-share                             ::
+          mud=(unit (console-dialog ,@ud))              ::
       ==                                                ::
     ++  helm-wish                                       ::
       $|  $?  %solid                                    ::  save kernel pill
               %reset                                    ::  reset kernel
+              %test                                     ::  fun test
               %verb                                     ::  verbose mode
           ==                                            ::
       $%  [%reload p=(list term)]                       ::  reload vanes
@@ -50,6 +52,7 @@
     ++  parse-helm-wish
       %+  cook  |=(a=helm-wish a)
       ;~  pose
+        (cold %test (jest %test))
         (cold %solid (jest %solid))
         (cold %reset (jest %reset))
       ==
@@ -68,6 +71,23 @@
   ++  he-give                                           ::  emit gift
     |=  git=gift
     %_(+> moz [[ost %give git] moz])
+  ::
+  ++  he-test
+    ^-  (console-dialog ,@)
+    |=  fin=(unit console-input)
+    ?^  fin  !!
+    :-  ~  :-  ~  
+    :-  [%leaf "a number..."]~
+    :-  %|
+    :-  `console-prompt`[& %$ (tuba "number one> ")]
+    he-test-two
+  ::
+  ++  he-test-two
+    |=  fin=(unit console-input)
+    =+  uno=?~(fin ~ (ruse u.fin dem:ag))
+    ?~  uno  ~
+    ?~  u.uno  [~ ~]
+    [~ ~ ~ %& ~ u.u.uno]
   ::
   ++  he-peer                                           ::  subscribe to
     (he-rush [%pro %& %$ (tuba ":helm! ")]~)
@@ -150,13 +170,31 @@
       [ost %pass /verb %d %verb ~]
     ==
   ::
+  ++  he-proceed
+    |=  res=(unit (unit ,@))
+    ^+  +>
+    ?~  res
+      ~&  %abort
+      +>.$(mud ~)
+    ?~  u.res
+      +>.$
+    ~&  [%result u.u.res]
+    +>.$(mud ~)
+  ::
+  ++  he-wish-test
+    |-  ^+  +
+    =+  cow=he-test
+    =^  nib  say  ((~(apse cs say) cow) ~)
+    =^  don  cow  nib
+    (he-proceed:(he-rush(mud `cow) p.don) q.don)
+  ::
   ++  he-wish
     |=  wus=(unit helm-wish)
     ^+  +>
-    ?~  wus
-      ~&(%he-wish-aborted +>)
+    ?~  wus  +>
     ?-  u.wus 
       %verb        he-wish-verb
+      %test        he-wish-test
       %solid       he-wish-solid
       %reset       he-wish-reset
       [%reload *]  !!  ::  (he-wish-reload +.u.wus)  
@@ -166,8 +204,12 @@
   ++  he-work                                           ::  apply input
     |=  act=console-action
     ^+  +>
-    =^  wig  say  ((~(apex cs say) parse-helm-wish) act)
-    (he-wish:(he-rush p.wig) q.wig)
+    ?~  mud
+      =^  wig  say  ((~(apex cs say) parse-helm-wish) act)
+      (he-wish:(he-rush p.wig) q.wig)
+    =^  nib  say  ((~(apse cs say) u.mud) `act)
+    =^  don  u.mud  nib
+    (he-proceed:(he-rush p.don) q.don)
   --
 ::
 ++  peer
