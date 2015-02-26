@@ -114,6 +114,7 @@
       ney=@uvI                                          ::  rolling entropy
       dop=(map host ship)                               ::  host aliasing
       liz=(jug beam (each duct oryx))                   ::  clay subscriptions
+      wup=(map hole cyst)                               ::  secure sessions
 ::       own=(map ship serf)                               ::  domestic servers
 ::       fon=(map ship rote)                               ::  foreign servers
 ::       ask=[p=@ud q=(map ,@ud ,[p=duct q=hiss])]         ::  outgoing by number
@@ -128,6 +129,7 @@
 ::   ==                                                    ::
 ++  cyst                                                ::  client session
   $:  ced=cred                                          ::  credential
+      cez=[p=ship q=(set ship)]                         ::  authenticated
 ::       cow=(map ,@ud clue)                               ::  consoles
       cug=(list ,@t)                                    ::  unacked cookies
       lax=@da                                           ::  last used
@@ -179,7 +181,6 @@
 ::   ==                                                    ::
 :: ++  serf                                                ::  local server
 ::   $:  pef=@t                                            ::  server prefix
-::       wup=(map hole cyst)                               ::  secure sessions
 ::       cah=(map cash vase)                               ::  compilation cache
 ::   ==                                                    ::
 :: ++  sink                                                ::  page push system
@@ -396,6 +397,7 @@
   ++  adit
     .(ney (mix eny ney))
   ::
+  ++  anon  (add our ^~((bex 64)))                      ::  pseudo-sub
   ++  axon
     |=  [tea=wire typ=type sih=sign]
     ^+  +>
@@ -765,7 +767,8 @@
     %-  mule  |.  ^+  ..hell
     =+  hev=(heft oar q.pul)
     ?^  hev
-      =:  s.u.hev  [%web ~(rent co (flux:ya /'' r.pul)) s.u.hev]
+      =+  ced=ced.q:(huff our q.hyx pul moh)
+      =:  s.u.hev  [%web ~(rent co (flux:ya /'' r.pul ced)) s.u.hev]
           r.u.hev  ?+(r.u.hev r.u.hev [%ud %0] da/now)
         ==
       (honk oar [%cast %mime [%boil ext u.hev ~]])
@@ -783,12 +786,22 @@
          {(trip poll:js)}
          """
     ::
-      |  ~|(aute/p.u.hem !!)
+      |  ~|  aute/p.u.hem  ~|  q.moh 
+         =+  hez=(huff our q.hyx pul moh)
+         =.  wup  (~(put by wup) hez)
+         ?^  cug.q.hez
+           =+  rel=;html:script:"document.location.reload()"
+           =+  tuv=(tuff 200 text//html (crip (poxo rel)))
+           =.  q.tuv
+             (weld :_(q.tuv (turn `(list ,@t)`cug.q.hez |=(a=cord set-cookie/a))))
+           (muff tuv)
+         ~|  hez  !!
     ==
   ::
   ++  hemp                                             ::  auxillary(/~) request
     |=  [oar=ship pok=pork quy=quay]
     ^-  (unit (each ,@uvH ,[p=ship q=pork]))
+    ?:  ?=([%'~~' *] q.pok)  $(q.pok ['~' %as %own t.q.pok])  ::  auth shortcut
     ?.  ?=([%'~' @ *] q.pok)  ~
     :-  ~
     =*  pef  i.t.q.pok
@@ -805,7 +818,7 @@
       ?~  but  !!
       :_  pok(q t.but)
       ?+  i.but  (slav %p i.but)
-        %anon  (add our ^~((bex 64)))
+        %anon  anon
         %own   our
       ==
     ==
@@ -912,7 +925,7 @@
           'Disallow: /'
       ==
     ==
-  ::
+ ::
   ++  howa                                              ::  ford %wasp request
     |=  [tea=wire dep=@uvH]
     (miff tea %f [%wasp our dep])
@@ -927,11 +940,11 @@
 ::         =+  sef=*serf
 ::         sef(pef (cat 3 gub (rsh 3 1 (scot %p our))))    ::  XX transitional
 ::     =+  ^=  saw  ^-  [p=hole q=cyst]
-    =+  pef=(cat 3 gub (rsh 3 1 (scot %p our)))
+    =+  pef=(rsh 3 1 (scot %p our))
     =+  lig=(coss pef q.moh)
-::     ?^  lig
-::       =+  cyz=(need (~(get by wup.sef) u.lig))
-::       [u.lig cyz(cug ~)]
+    ?^  lig
+      =+  cyz=(need (~(get by wup) u.lig))
+      [u.lig cyz(cug ~)]
     =+  ses=(rsh 3 1 (scot %p (end 6 1 ney)))
     :-  ses
     ^-  cyst
@@ -946,6 +959,7 @@
             cip
             ~
         ==
+        [anon ~]
     ::
 ::         ~
     ::
@@ -979,8 +993,8 @@
   ::
   ++  tuff                                              ::  mimed response
     |=  [sas=@uG mit=mite rez=@]
-    ^-  gift
-    [%thou sas ~[content-type/(moon mit)] [~ (taco rez)]]
+    ::  (weld (turn cug |=(a=@t ['set-cookie' a]))
+    [%thou `httr`[sas ~[content-type/(moon mit)] [~ (taco rez)]]]
   ::
 ::   ++  myth                                              ::  load session
 ::     |=  [our=ship ses=hole]
@@ -1214,10 +1228,10 @@
     =*  cyz  ->
     |%
     ++  flux                                            ::  credential caboose
-      |=  [nyp=path quy=quay]  ^-  coin
+      |=  [nyp=path quy=quay ced=cred]  ^-  coin
       :*  %many
           [%$ %ta ~]
-          [%blob *cred] ::ced]
+          [%blob ced]
           |-  ^-  (list coin)
           ?~  quy  ~
           [[%$ %t p.i.quy] [%$ %t q.i.quy] $(quy t.quy)]
