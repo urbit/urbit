@@ -1486,15 +1486,15 @@
           ==
         ?:  ?=(%| -.gon.dat)
           +>.$
-        =+  ^-  con=(map path ,*)
+        =+  ^-  con=(map path ,*)                       ::  2-change conflict
             %-  mo
             %+  skim  (~(tap by bof))
             |=([pax=path cay=(unit cage)] ?=(~ cay))
-        =+  ^-  cas=(map path lobe)
+        =+  ^-  cas=(map path lobe)                     ::  conflict base
             %-  ~(urn by con)
             |=  [pax=path *] 
             (~(got by q.bas.dat) pax)
-        =.  con
+        =.  con                                         ::  add/del conflict
           %-  ~(uni by con)
           %-  mo  ^-  (list ,[path *])
           %+  skim  (~(tap by old.dal.dat))
@@ -1503,7 +1503,7 @@
             ~|  %strange-add-and-del
             !!
           (~(has by can.dob.dat) pax)
-        =.  con
+        =.  con                                         ::  add/del conflict
           %-  ~(uni by con)
           %-  mo  ^-  (list ,[path *])
           %+  skim  (~(tap by old.dob.dat))
@@ -1512,7 +1512,7 @@
             ~|  %strange-del-and-add
             !!
           (~(has by can.dal.dat) pax)
-        =.  con
+        =.  con                                         ::  add/add conflict
           %-  ~(uni by con)
           %-  mo  ^-  (list ,[path *])
           %+  skip  (~(tap by (~(int by new.dal.dat) new.dob.dat)))
@@ -1521,18 +1521,23 @@
         ?:  &(?=(%mate gem.dat) ?=(^ con))
           =+  (turn (~(tap by `(map path ,*)`con)) |=([path *] >[+<-]<))
           (error:he %mate-conflict -)
-        =+  ^-  old=(map path lobe)
+        =+  ^-  old=(map path lobe)                     ::  oldies but goodies
             %+  roll  (~(tap by (~(uni by old.dal.dat) old.dob.dat)))
             =<  .(old q.bas.dat)
             |=  [[pax=path ~] old=(map path lobe)]
             (~(del by old) pax)
-        =+  ^-  can=(map path cage)
+        =+  ^-  can=(map path cage)                     ::  content changes
             %-  ~(uni by can.dal.dat)
             %-  ~(uni by can.dob.dat)
-            %-  ~(run by bof)
-            |=  cay=(unit cage)
-            (need cay)
-        =^  hat  lat.ran
+            %-  mo
+            ^-  (list (pair path cage))
+            %+  murn  (~(tap by bof))
+            |=  [pax=path cay=(unit cage)]
+            ^-  (unit (pair path cage))
+            ?~  cay
+              ~
+            `[pax u.cay]
+        =^  hat  lat.ran                                ::  new content
           ^-  [(map path lobe) (map lobe blob)]
           %+  roll  (~(tap by can))
           =<  .(lat lat.ran)
@@ -1544,12 +1549,12 @@
                 !!
               (make-delta u.- cay)
           [(~(put by hat) pax p.bol) (~(put by lat) p.bol bol)]
-        =.  hat
+        =.  hat                                         ::  all the content
           %-  ~(uni by old)
           %-  ~(uni by new.dal.dat)
           %-  ~(uni by new.dob.dat)
-          %-  ~(uni by cas)
-          hat
+          %-  ~(uni by hat)
+          cas
         =+  ^-  del=(map path ,?)
             (~(run by (~(uni by old.dal.dat) old.dob.dat)) |=(~ %|))
         =.  gon.dat  [%& (sa (turn (~(tap by con)) |=([path *] +<-)))]
