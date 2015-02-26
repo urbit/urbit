@@ -808,7 +808,7 @@
     ::
     ++  lima                                            ::  load at depth
       |=  [cof=cafe for=mark bem=beam arg=heel]
-      %+  (clef %bake)  (fine cof for bem arg)
+      %+  (clef %bake)  [p=cof q=[%0 p=[bem `~] q=[for bem arg]]]
       |=  [cof=cafe for=mark bem=beam arg=heel]
       ^-  (bolt (unit vase))
       %+  cope  (lend cof bem)

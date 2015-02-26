@@ -2064,14 +2064,15 @@
   ?~  rax
     [~ ~]
   ?^  t.rax
-    [p.pok [i.rax q.pok]]:[pok=$(rax t.rax) .]
+    [p.pok [ire q.pok]]:[pok=$(rax t.rax) ire=i.rax]
   =+  ^-  raf=(like tape)
       %.  [1^1 (flop (trip i.rax))]
-      ;~(sfix (plus ;~(less dot next)) dot)
+      ;~(sfix (star ;~(less dot next)) dot)
   ?~  q.raf
     [~ [i.rax ~]]
   =+  `[ext=tape [@ @] fyl=tape]`u.q.raf
-  [[~ (crip (flop ext))] [(crip (flop fyl)) ~]]
+  :-  ?:(=(~ ext) ~ [~ (crip (flop ext))])
+  [(crip (flop fyl)) ~]
 ::
 ++  fuel                                                ::  parse fcgi
   |=  [bem=beam but=path]
