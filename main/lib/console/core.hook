@@ -190,10 +190,11 @@
   ++  remit                                             ::  conditional accept
     |=  [cal=console-change ask=$+((list ,@c) ?)]
     ^-  [(unit console-change) console-share]
+    =+  old=buf
     =^  dat  +>+<.$  (receive cal)
     ?:  (ask buf)
       [~ +>+<.$]
-    =^  lic  +>+<.$  (transmit (inverse dat))
+    =^  lic  +>+<.$  (transmit (inverse(buf old) dat))
     [`lic +>+<.$]
   --
 --
