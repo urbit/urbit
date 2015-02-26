@@ -104,12 +104,14 @@
   |-  ^-  (unit hole)
   ?~  u.mar  ^$(cok t.cok)
   ?:(=(nam p.i.u.mar) [~ q.i.u.mar] $(u.mar t.u.mar))
+::
 ++  ecco                                                ::  eat headers
   |=  hed=(list ,[p=@t q=@t])  ^-  math
   %+  roll  hed
   |=  [a=[p=cord cord] b=math] 
   =.  p.a  (cass (trip p.a))
   (~(add ja b) a)
+::
 ++  loga                                                ::  tanks to manx
   |=  tac=(list tank)
   ^-  manx
@@ -303,6 +305,7 @@
     =+  hon=(horn pul q.hyx moh)
     ?^  hon  (muff u.hon)
     =+  oar=(fall (doss r.p.pul) (need hov))
+    =.  our  oar  ::  XX
     =+  ext=(fall p.q.pul %urb)
     %-  |=(a=(each ,_..hell tang) ?~(-.a p.a (fail 404 0v0 >%exit< p.a)))
     %-  mule  |.  ^+  ..hell
@@ -506,7 +509,7 @@
         ((hard kiss) q.hic)
       ==
   ^-  [p=(list move) q=_..^$]
-  =|  our=ship  ::  XX
+  =+  our=`@p`0x100  ::  XX  sentinel
   =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
@@ -539,7 +542,7 @@
     [[hen %give +.q.hin]~ ..^$]
   ?:  ?=(%vega +<.q.hin)                                ::  vomit
     [[hen %give +.q.hin]~ ..^$]
-  =|  our=ship  ::  XX
+  =+  our=`@p`0x100  ::  XX  sentinel
   =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
