@@ -1,16 +1,88 @@
-::
+::  maybeze
 ::::  /hook/door/term-line/mar
   ::
 /?  314
-|_  txt=cord
+!:
+|_  txt=wain
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun  ,@t                                         ::  clam from %noun
-  ++  json  (cork so:jo need)
+  ++  mime  |=([p=mite q=octs] (lore q.q))
+  ++  noun  wain                                        ::  clam from %noun
+  ++  json  :(corl lore need so:jo)
   --
 ++  grow
+  =>  v=.
   |%
-  ++  psal  ;div: {(trip txt)}
+  ++  mime  =>  v  [/text/plain (taco (role txt))]
+  ++  psal  =>  v  ;div: {(trip (role txt))}
+  --
+++  grad
+  |%
+  ++  form  %txt-diff
+  ++  diff
+    |=  tyt=wain
+    ^-  (urge cord)
+    (lusk txt tyt (loss txt tyt))
+  ++  pact
+    |=  dif=(urge cord)
+    ^-  wain
+    (lurk txt dif)
+  ++  join
+    |=  [ali=(urge cord) bob=(urge cord)]
+    ^-  (unit (urge cord))
+    |^
+    =.  ali  (clean ali)
+    =.  bob  (clean bob)
+    |-  ^-  (unit (urge cord))
+    ?~  ali  `bob
+    ?~  bob  `ali
+    ?-    -.i.ali
+        %&
+      ?-    -.i.bob
+          %&
+        ?:  =(p.i.ali p.i.bob)
+          %+  bind  $(ali t.ali, bob t.bob)
+          |=(cud=(urge cord) [i.ali cud])
+        ?:  (gth p.i.ali p.i.bob)
+          %+  bind  $(p.i.ali (sub p.i.ali p.i.bob), bob t.bob)
+          |=(cud=(urge cord) [i.bob cud])
+        %+  bind  $(ali t.ali, p.i.bob (sub p.i.bob p.i.ali))
+        |=(cud=(urge cord) [i.ali cud])
+          %|
+        ?:  =(p.i.ali (lent p.i.bob))
+          %+  bind  $(ali t.ali, bob t.bob)
+          |=(cud=(urge cord) [i.bob cud])
+        ?:  (gth p.i.ali (lent p.i.bob))
+          %+  bind  $(p.i.ali (sub p.i.ali (lent p.i.bob)), bob t.bob)
+          |=(cud=(urge cord) [i.bob cud])
+        ~
+      ==
+        %|
+      ?-  -.i.bob
+          %|  ~
+          %&
+        ?:  =(p.i.bob (lent p.i.ali))
+          %+  bind  $(ali t.ali, bob t.bob)
+          |=(cud=(urge cord) [i.ali cud])
+        ?:  (gth p.i.bob (lent p.i.ali))
+          %+  bind  $(ali t.ali, p.i.bob (sub p.i.bob (lent p.i.ali)))
+          |=(cud=(urge cord) [i.ali cud])
+        ~
+      ==
+    ==
+    ++  clean                                          ::  clean
+      |=  wig=(urge cord)
+      ^-  (urge cord)
+      ?~  wig  ~
+      ?~  t.wig  wig
+      ?:  ?=(%& -.i.wig)
+        ?:  ?=(%& -.i.t.wig)
+          $(wig [[%& (add p.i.wig p.i.t.wig)] t.t.wig])
+        [i.wig $(wig t.wig)]
+      ?:  ?=(%| -.i.t.wig)
+        $(wig [[%| (welp p.i.wig p.i.t.wig) (welp q.i.wig q.i.t.wig)] t.t.wig])
+      [i.wig $(wig t.wig)]
+    --
   --
 --

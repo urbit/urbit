@@ -50,7 +50,7 @@
               [std=term kel=@]                          ::  kelvin version
               [ven=term pro=term kel=@]                 ::  vendor and product
               [ven=term pro=term ver=@ kel=@]           ::  all of the above
-          ==
+          ==                                            ::
 ++  clue  ,[p=chum q=nock r=(list (pair term nock))]    ::  battery definition
 ++  coil  $:  p=?(%gold %iron %lead %zinc)              ::  core type
               q=type                                    ::
@@ -272,7 +272,7 @@
             [%smdt p=twig q=tusk]                       ::
             [%smdq p=(list beer)]                       ::  assemble string
             [%smsg p=twig q=tusk]                       ::  gonads
-            [%smsm p=tile q=twig]                       ::  make sure q is a p
+            [%smsm p=twig q=twig]                       ::  make sure q is a p
           ::                                            ::::::  compositions
             [%tsbr p=tile q=twig]                       ::  push bunt: =+(_p q)
             [%tscl p=tram q=twig]                       ::  p changes, then q
@@ -401,7 +401,7 @@
 ++  wall  (list tape)                                   ::  text lines (no \n)
 ++  wain  (list cord)                                   ::  text lines (no \n)
 ++  wing  (list limb)                                   ::
-++  wine  $|  ?(%noun %path %type %void %wall %wool %yarn)
+++  wine  $|  ?(%noun %path %tank %void %wall %wool %yarn)
           $%  [%atom p=term]                            ::
               [%core p=(list ,@ta) q=wine]              ::
               [%face p=term q=wine]                     ::
@@ -639,7 +639,7 @@
 ::
 ++  need                                                ::  demand
   |*  a=(unit)
-  ?~  a  !!
+  ?~  a  ~|(%need !!)
   u.a
 ::
 ++  some                                                ::  lift (pure)
@@ -1955,8 +1955,8 @@
   |=  a=(tree ,[p=* q=*])
   ?~  a
     &
-  ?&  ?~(l.a & ?&((vor p.n.a p.n.l.a) (hor p.n.l.a p.n.a)))
-      ?~(r.a & ?&((vor p.n.a p.n.r.a) (hor p.n.a p.n.r.a)))
+  ?&  ?~(l.a & ?&((vor p.n.a p.n.l.a) (gor p.n.l.a p.n.a)))
+      ?~(r.a & ?&((vor p.n.a p.n.r.a) (gor p.n.a p.n.r.a)))
   ==
 ::
 ++  ja                                                  ::  jar engine
@@ -2088,12 +2088,12 @@
     ?:  (vor p.n.a p.n.b)
       ?:  =(p.n.b p.n.a)
         [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
-      ?:  (hor p.n.b p.n.a)
+      ?:  (gor p.n.b p.n.a)
         %-  uni(+< $(a l.a, b [n.b l.b ~]))  $(b r.b)
       %-  uni(+< $(a r.a, b [n.b ~ r.b]))  $(b l.b)
     ?:  =(p.n.a p.n.b)
       [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
-    ?:  (hor p.n.a p.n.b)
+    ?:  (gor p.n.a p.n.b)
       %-  uni(+< $(b l.b, a [n.a l.a ~]))  $(a r.a)
     %-  uni(+< $(b r.b, a [n.a ~ r.a]))  $(a l.a)
   ::
@@ -2166,12 +2166,12 @@
     ?:  (vor p.n.a p.n.b)
       ?:  =(p.n.b p.n.a)
         [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
-      ?:  (hor p.n.b p.n.a)
+      ?:  (gor p.n.b p.n.a)
         $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
       $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
     ?:  =(p.n.a p.n.b)
       [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
-    ?:  (hor p.n.a p.n.b)
+    ?:  (gor p.n.a p.n.b)
       $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
     $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
   ::
@@ -3326,7 +3326,7 @@
         ::
             %f
           ?:  =(& q.p.lot)
-            ['.' 'y' rex]
+            ['.' 'm' 'o' 's' 't' 'a' 's' 's' 'u' 'r' 'r' 'e' 'd' 'l' 'y' rex]
           ?:(=(| q.p.lot) ['.' 'n' rex] (z-co q.p.lot))
         ::
             %n   ['~' rex]
@@ -6662,8 +6662,7 @@
     ::
         [%smsm *]                                       ::                  ;;
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
-      :+  %tsls  :+  %ktts  %a                          ::  =+  ^=  a
-                 [%tsgr [%cnzy %v] [%bccm p.gen]]       ::      =>(v ,{p.gen})
+      :+  %tsls  [%ktts %a [%tsgr [%cnzy %v] p.gen]]    ::  =+  a==>(v {p.gen})
       :+  %tsls  [%ktts %b [%tsgr [%cnzy %v] q.gen]]    ::  =+  b==>(v {q.gen})
       :+  %tsls                                         ::  =+  c=(a b)
         [%ktts %c [%cnhp [%cnzy %a] [%cnzy %b] ~]]      ::
@@ -7012,7 +7011,7 @@
     ?-    q.ham
         %noun      [%leaf '*' ~]
         %path      [%leaf '/' ~]
-        %type      [%leaf '#' 't' ~]
+        %tank      [%leaf '*' 't' ~]
         %void      [%leaf '#' ~]
         %wool      [%leaf '*' '"' '"' ~]
         %wall      [%leaf '*' '\'' '\'' ~]
@@ -7090,12 +7089,9 @@
       ?>  ?=(@ -.lum)
       [[%leaf (rip 3 -.lum)] $(lum +.lum)]
     ::
-        %type
-      =+  cis=(type lum)
-      ?.  =(lum cis)  ~
-      :^  ~   %palm
-        [~ ~ ~ ~] 
-      [[%leaf '#' 't' '/' ~] duck(sut cis) ~]
+        %tank
+      =+  cis=(tank lum)
+      ?.(=(lum cis) ~ [~ cis])
     ::
         %wall
       :-  ~
@@ -7362,8 +7358,6 @@
       [p.yad [%face p.sut q.yad]]
     ::
         [%fork *]
-      ?:  =(p.sut fork/[cube/[%noun atom/%tas]]^[cube/[%void atom/%tas]])
-        [dex %type]                    ::  XX  proper print
       =+  hin=$(sut p.sut)
       =+  yon=$(dex p.hin, sut q.sut)
       :-  p.yon
@@ -8952,7 +8946,7 @@
                   =+  rev=(plex b)
                   ?~  rev  ~
                   %-  some
-                  :+  %smsm  a
+                  :+  %smsm  ~(clam al a)
                   [%dtkt %dtzz %$ %cx u.rev]
                 ;~(plug hill rood)
               ==
@@ -9200,7 +9194,7 @@
                 :~  [':' (rune col %smcl expi)]
                     ['.' (rune dot %smdt expi)]
                     ['~' (rune sig %smsg expi)]
-                    [';' (rune sem %smsm expo)]
+                    [';' (rune sem %smsm expb)]
                 ==
               ==
             :-  '='
@@ -9751,6 +9745,7 @@
           ==                                            ::
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
+++  gage  (pair marc vase)                              ::  structured cage
 ++  hide                                                ::  standard app state
         $:  $:  our=ship                                ::  owner/operator
                 app=term                                ::  app identity
@@ -9780,6 +9775,10 @@
       ++  y  *(unit (unit arch))                        ::  directory
       ++  z  *(unit (unit cage))                        ::  current subtree
   --                                                    ::
+++  marc                                                ::  structured mark
+  $|  mark                                              ::  plain mark
+  $%  [%tabl p=(list (pair marc marc))]                 ::  map
+  ==                                                    ::
 ++  mark  ,@tas                                         ::  content type
 ++  mill  (each vase milt)                              ::  vase/metavase
 ++  milt  ,[p=* q=*]                                    ::  metavase
@@ -9799,6 +9798,8 @@
 ++  ship  ,@p                                           ::  network identity
 ++  sled  $+  [(unit (set monk)) term beam]             ::  namespace function
           (unit (unit cage))                            ::
+++  slad  $+  [(unit (set monk)) term beam]             ::  undertyped
+          (unit (unit (cask ,*)))                       ::
 ++  slut  $+(* (unit (unit)))                           ::  old namespace
 ++  vile                                                ::  reflexive constants
           $:  typ=type                                  ::  -:!>(*type)
@@ -9809,7 +9810,7 @@
 ++  wire  path                                          ::  event pretext
 ::::: hacks
 ++  slod  
-  |=  sed=sled
+  |=  sed=slad
   ^-  slut
   |=  raw=*
   =+  pux=((soft path) raw)
@@ -9830,7 +9831,7 @@
   =+  bop=(sed ~ ron bed)
   ?~  bop  ~
   ?~  u.bop  [~ ~]
-  [~ ~ q.q.u.u.bop]
+  [~ ~ +.q.u.u.bop]
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, Arvo core                ::
 ::
@@ -9848,7 +9849,7 @@
     +>.$(q.sew (slam (slap syg [%cnzy %load]) (slap rig [%cnzy %stay])))
   ::
   ++  wink                                              ::  deploy
-    |=  [now=@da eny=@ ski=sled]
+    |=  [now=@da eny=@ ski=slad]
     =+  rig=(slym q.sew +<)                             ::  activate vane
     ~%  %wink  +>+>  ~
     |%
@@ -9995,7 +9996,7 @@
               ren=care
               bed=beam
           ==
-      ^-  (unit (unit cage))
+      ^-  (unit (unit (cask ,*)))
       ::  ~&  [%arvo-scry ren bed]
       =+  ^=  old
           :*  fur
@@ -10005,12 +10006,12 @@
               `coin`[%$ r.bed]
               (flop s.bed)
           ==
-      ^-  (unit (unit cage))
+      ^-  (unit (unit (cask ,*)))
       =+  pro=(slym (slap rig [%cnzy %scry]) old)
       ?~  q.pro  ~
       ?~  +.q.pro  [~ ~]
       =+  dat=(slot 7 pro)
-      [~ ~ (mark q.dat) (slot 3 dat)]
+      [~ ~ (mark -.q.dat) +.q.dat]
     ::
     ++  soar                                            ::  scrub vane
       |=  sev=vase
@@ -10070,13 +10071,13 @@
   |=  [vil=vile eny=@ bud=vase niz=(pair worm (list ,[p=@tas q=vase]))]
   |_  now=@da
   ++  beck
-    ^-  sled
+    ^-  slad
     |=  [fur=(unit (set monk)) ron=term bed=beam]
-    ^-  (unit (unit cage))
+    ^-  (unit (unit (cask ,*)))
     =>  .(fur ?^(fur fur `[[%& p.bed] ~ ~]))            ::  XX heinous
     =+  lal=(end 3 1 ron)
     =+  ren=(care (rsh 3 1 ron))
-    |-  ^-  (unit (unit cage))
+    |-  ^-  (unit (unit (cask ,*)))
     ?~  q.niz  ~
     ?.  =(lal p.i.q.niz)  $(q.niz t.q.niz)
     %-  scry:(wink:(vent lal vil bud p.niz q.i.q.niz) now (shax now) ..^$)

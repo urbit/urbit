@@ -742,8 +742,8 @@
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
-  ^-  (unit (unit (pair mark ,*)))
-  [~ ~ [%tank >dug<]]
+  ^-  (unit (unit cage))
+  [~ ~ [%tank !>(>dug<)]]
 ::
 ++  stay  [%1 our def dug]
 ++  take                                                ::  process move

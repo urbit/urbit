@@ -4,4 +4,22 @@
 /?  314
 |_  mud=@t
 ++  garb  [%down ~]
+++  grow
+  |%
+  ++  mime  [/text/x-markdown (taco mud)]
+  ++  txt
+    (lore (cat 3 mud '\0a'))
+  --
+++  grab
+  |%
+  ++  mime  |=([p=mite q=octs] q.q)
+  ++  txt
+    |=  wan=wain
+    =+  (role wan)
+    (end 3 (dec (met 3 -)) -)
+  --
+++  grad
+  |%
+  ++  sted  %txt
+  --
 --

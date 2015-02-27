@@ -1625,7 +1625,7 @@
     ::
     ++  scry
       |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
-      ^-  (unit (unit (pair mark ,*)))
+      ^-  (unit (unit cage))
       ?~  tyl  [~ ~]
       =+  hun=(slaw %p i.tyl)
       ?~  hun  [~ ~]
@@ -1637,13 +1637,13 @@
           [%$ %ud @]
         %+  bind
           (perm who u.hun q.p.lot [syd t.tyl])
-        |=(a=* [%noun a])
+        |=(a=* [%noun !>(a)])
       ::
           [%$ %da @]
         ?.  =(now q.p.lot)  ~
         %+  bind
           (temp who u.hun [syd t.tyl])
-        |=(a=* [%noun a])
+        |=(a=* [%noun !>(a)])
       ==
     ::
     ++  stay  fox

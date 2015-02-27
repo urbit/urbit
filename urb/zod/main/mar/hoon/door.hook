@@ -14,11 +14,13 @@
     (lore (cat 3 own '\0a'))
   --
 ++  grab
+  =>  v=.
   |%                                            ::  convert from
-  ++  mime  |=([p=mite q=octs] q.q)
-  ++  noun  ,@t                                 ::  clam from %noun
-  ++  txt
+  ++  mime  =>  v  |=([p=mite q=octs] q.q)
+  ++  noun  =>  v  ,@t                                 ::  clam from %noun
+  ++  txt   =>  v
     |=  wan=wain
+    ^-  @t
     =+  (role wan)
     (end 3 (dec (met 3 -)) -)
   --

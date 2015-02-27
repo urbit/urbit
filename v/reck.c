@@ -156,9 +156,10 @@ _reck_kick_sync(u3_noun pox, u3_noun fav)
     case c3__ergo: {
       u3_noun who = u3k(u3h(u3t(fav)));
       u3_noun syd = u3k(u3h(u3t(u3t(fav))));
-      u3_noun rel = u3k(u3t(u3t(u3t(fav))));
+      u3_noun rel = u3k(u3h(u3t(u3t(u3t(fav)))));
+      u3_noun can = u3k(u3t(u3t(u3t(u3t(fav)))));
 
-      u3_unix_ef_ergo(who, syd, rel);
+      u3_unix_ef_ergo(who, syd, rel, can);
       u3z(pox); u3z(fav); return c3y;
     } break;
   }
