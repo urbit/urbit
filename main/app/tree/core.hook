@@ -15,7 +15,7 @@
   =+  rend=?^(fla dank:ut |=(a=path (dank:ut (slag len a))))
   :-  %tang
   |-  ^-  (list tank)
-  =+  ark=;;(arch .^(cy/pax))
+  =+  ark=;;(arch +:.^(cy/pax))
   =-  ?~  q.ark  -
       [(rend pax) -]
   %-  zing

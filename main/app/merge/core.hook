@@ -1,0 +1,30 @@
+::  Desk sync
+::  
+::::  /hook/core/sync/app
+  ::
+/+    sh-utils
+!:
+::::
+  ::
+|_  [hid=hide ~]
+++  peer  ,_`.
+++  poke--args
+  |=  [ost=bone you=ship syd=@tas her=@p sud=@tas gem=?([germ ~] ~)]
+  [[ost %pass / %c %merg our.hid syd her sud ?~(gem %fine -.gem)]~ +>.$]
+::
+++  pour
+  |=  [ost=bone pax=path sih=*]
+  :_  +>.$
+  =+  ^-  tan=(list tank)
+      =+  ((soft ,[%c %mere are=(each (set path) (pair term (list tank)))]) sih)
+      ?~  -
+        [leaf/"not working so well" >sih< ~]
+      ?:  ?=(%& -.are.u)
+        [leaf/"merged" ?~(p.are.u ~ [>`(set path)`p.are.u< ~])]
+      [leaf/"failed to merge" >p.p.are.u< q.p.are.u]
+  %-  flop
+  :-  i=[ost %pass / %g %cide %$]
+  ^=  t
+  %+  turn  (~(tap in (~(get ju pus.hid) /out)))
+  |=(ost=bone [ost %give %rush %tang (flop tan)])
+--

@@ -16,7 +16,7 @@
   %-  turn   
   :_  |=  [tip=@tasD nam=@tas]
       =+  pax=[(scot %p our.hid) %arvo (scot %da lat.hid) nam %hoon ~]
-      [%veer tip pax (,@ .^(%cx pax))]
+      [%veer tip pax (,@ +:.^(%cx pax))]
   %-  flop
   ^-  (list ,[p=@tas q=@tas])
   :~  [%$ %zuse]
