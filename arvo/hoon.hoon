@@ -227,8 +227,8 @@
             [%cndt p=twig q=twig]                       ::  %-(q p)
             [%cnhp p=twig q=tusk]                       ::  slam p w/ sample q
             [%cntr p=wing q=twig r=tram]                ::  pull p.q w/ changes
-            [%cnkt p=twig q=twig r=twig s=twig]         ::  slam p w/ %*(q r s)
-            [%cnls p=twig q=twig r=twig]                ::  slam p w/ %*(q r)
+            [%cnkt p=twig q=twig r=twig s=twig]         ::  slam p w/ :*(q r s)
+            [%cnls p=twig q=twig r=twig]                ::  slam p w/ :*(q r)
             [%cnsg p=wing q=twig r=twig]                ::  pull p from q with r
             [%cnts p=wing q=tram]                       ::  eval. p w/ q changes
             [%cnzy p=term]                              ::  pulls limb p
@@ -2977,6 +2977,7 @@
 ++  teff                                                ::  length utf8
   |=  a=@t  ^-  @
   =+  b=(end 3 1 a)
+  ~|  %bad-utf8
   ?:  =(0 b)
     ?>(=(0 a) 0)
   ?>  |((gte b 32) =(10 b))
@@ -7170,7 +7171,8 @@
         ~
       :+  ~
         %leaf
-      ?+  p.q.ham  ~(rend co [~ p.q.ham lum])
+      ?+    (rash p.q.ham ;~(sfix (cook crip (star low)) (star hig)))
+          ~(rend co [~ p.q.ham lum])
         %$    ~(rend co [~ %ud lum])
         %t    (dash (rip 3 lum) '\'')
         %tas  ['%' ?.(=(0 lum) (rip 3 lum) ['$' ~])]
