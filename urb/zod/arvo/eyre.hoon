@@ -91,7 +91,7 @@
   ==                                                    ::
 --                                                      ::
 |%
-++  coss                                                ::  cookie search
+++  sesh                                                ::  session from cookies
   |=  [nam=@t mah=math]
   ^-  (unit hole)
   =+  ^=  cok  ^-  (list ,@t)
@@ -105,14 +105,14 @@
   ?~  u.mar  ^$(cok t.cok)
   ?:(=(nam p.i.u.mar) [~ q.i.u.mar] $(u.mar t.u.mar))
 ::
-++  ecco                                                ::  eat headers
+++  heat                                                ::  eat headers
   |=  hed=(list ,[p=@t q=@t])  ^-  math
   %+  roll  hed
   |=  [a=[p=cord cord] b=math] 
   =.  p.a  (cass (trip p.a))
   (~(add ja b) a)
 ::
-++  loga                                                ::  tanks to manx
+++  tanx                                                ::  tanks to manx
   |=  tac=(list tank)
   ^-  manx
   =+  rolt=|=(a=wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
@@ -125,7 +125,7 @@
     ;body:pre:code:"{mec}"
   ==
 ::
-++  lode
+++  depo                                                ::  inject dependency
   |=  [dep=@uvH max=manx]
   ^-  manx
   ?>  ?=([[%html ~] [[%head ~] *] [[%body ~] ^] ~] max) ::  XX static
@@ -134,7 +134,7 @@
 ::
 ++  js                                                  ::  static javascript
   |%
-  ++  poll
+  ++  poll                                              ::  dependency long-poll
     '''
     urb.tries = 0
     urb.call = function() {
@@ -174,15 +174,14 @@
       ==                                                ::
   =*  bol  ->
   |%
-  ++  abet
+  ++  abet                                              ::  resolve moves
     ^-  [(list move) bolo]
     [(flop mow) bol]
   ::
-  ++  adit
-    .(ney (mix eny ney))
+  ++  adit  .(ney (mix eny ney))                        ::  flip entropy
   ::
   ++  anon  (add our ^~((bex 64)))                      ::  pseudo-sub
-  ++  axon
+  ++  axon                                              ::  accept response
     |=  [tea=wire typ=type sih=sign]
     ^+  +>
     ?-    -.+.sih
@@ -218,7 +217,7 @@
       (jive (joba dez (jone p.caz)))
     ==
   ::
-  ++  apex
+  ++  apex                                              ::  accept request
     |=  kyz=kiss
     ^+  +>
     ?-    -.kyz
@@ -234,7 +233,7 @@
       =*  sec  p.kyz    ::  ?                           ::  https bit
       =*  heq  r.kyz    ::  httq                        ::  request content
       =+  ryp=`quri`(rash q.heq zest:epur)
-      =+  mah=(ecco r.heq)
+      =+  mah=(heat r.heq)
       =+  ^=  pul  ^-  purl
           ?-  -.ryp
             &  ?>(=(sec p.p.p.ryp) p.ryp)
@@ -254,7 +253,7 @@
       ?~  mez
         ~&  [%strange-wart p.kyz q.kyz]
         +>.$
-      ?-  -<.u.mez
+      ?-  -<.u.mez                                      ::  XX handle
         %lon  !!
         %aut  !!
         %hat  !!
@@ -270,26 +269,17 @@
     ^-  (unit ship)
     =+  gow=(~(get by dop) hot)
     ?^  gow  gow
-    ?.  &(?=(& -.hot) ?=(^ p.hot))  ~
-    (rush -:(flop p.hot) fed:ag)
+    ?.  ?=(& -.hot)  ~
+    =+  dom=(flop p.hot)                                ::  domain name
+    ?~  dom  ~
+    (rush i.dom fed:ag)
   ::
   ++  fail                                              ::  request failed
     |=  [sas=@ud dep=@uvH mez=tang]
     ^+  +>
     ::  (back ~ dep %tang !>(mez))  ::  XX broken tang->mime door in ford
-    (resp sas text//html (poxo (lode dep (loga mez))))
+    (resp sas text//html (poxo (depo dep (tanx mez))))
   ::
-  ++  heck                                              ::  extract err beak
-    |=  [oar=ship pul=purl]
-    ^-  (unit beak)
-    %-  bind  :_  |=(a=$&(beam beak) ?^(-.a -.a a))
-    ^-  (unit $&(beam beak))
-    ?.  ?=([%'~' ^] q.q.pul)
-      (heft oar q.pul)
-    ?+  i.t.q.q.pul  ~
-      %as  ?~(t.t.q.q.pul ~ $(q.q.pul t.t.t.q.q.pul))
-      %on  ~ ::(tome (scot %p oar)
-    ==
   ++  heft                                              ::  regular request
     |=  [oar=ship pok=pork]
     ^-  (unit beam)
@@ -306,36 +296,37 @@
     ?^  hon  (muff u.hon)
     =+  oar=(fall (doss r.p.pul) (need hov))
     =.  our  oar  ::  XX
-    =+  ext=(fall p.q.pul %urb)
     %-  |=(a=(each ,_..hell tang) ?~(-.a p.a (fail 404 0v0 >%exit< p.a)))
     %-  mule  |.  ^+  ..hell
+    =+  ext=(fall p.q.pul %urb)
     =+  hev=(heft oar q.pul)
     ?^  hev
-      =+  ced=ced.q:(huff our q.hyx pul moh)
-      =:  s.u.hev  [%web ~(rent co (flux:ya /'' r.pul ced)) s.u.hev]
-          r.u.hev  ?+(r.u.hev r.u.hev [%ud %0] da/now)
-        ==
-      (honk oar [%cast %mime [%boil ext u.hev ~]])
+      =+  huv=(huff our q.hyx pul moh)
+      (hons u.hev ext r.pul ced.q.huv)
     =+  hem=(hemp oar [q r]:pul)
-    ?~  hem
-      ~|(strange-path/q.q.pul !!)
-    ?-  -.u.hem
+    ?^  hem  (hemo u.hem pul q.hyx moh)
+    ~|(strange-path/q.q.pul !!)
+  ::
+  ++  hemo                                              ::  handle aux request
+    |=  $:  hem=(each ,@uvH ,[p=ship q=pork])
+            [pul=purl cip=clip moh=moth]
+        ==
+    ?-  -.hem
       &  ?.  ?=([~ %js] p.q.pul)  ::  XX treat non-json cases?
-           ~!  hem
-           ?~  p.u.hem  ..hell
-           (howa ~ p.u.hem)
+           ?~  p.hem  ..hell
+           (howa ~ p.hem)
          %^  resp  200  text//javascript
          """
          window.urb = \{poll: "/{(apex:earn %| q.pul(u.p %json) r.pul)}"}
          {(trip poll:js)}
          """
     ::
-      |  ~|  aute/p.u.hem  ~|  q.moh 
-         =+  hez=(huff our q.hyx pul moh)
+      |  ~|  aute/p.hem  ~|  q.moh 
+         =+  hez=(huff our cip pul moh)
          =.  q.cez.q.hez
-           ?.  =(anon p.p.u.hem)
+           ?.  =(anon p.p.hem)
              q.cez.q.hez
-           (~(put in q.cez.q.hez) p.p.u.hem)
+           (~(put in q.cez.q.hez) p.p.hem)
          =.  wup  (~(put by wup) hez)
          ?^  cug.q.hez
            =+  rel=;html:script:"document.location.reload()"
@@ -349,7 +340,8 @@
   ++  hemp                                             ::  auxillary(/~) request
     |=  [oar=ship pok=pork quy=quay]
     ^-  (unit (each ,@uvH ,[p=ship q=pork]))
-    ?:  ?=([%'~~' *] q.pok)  $(q.pok ['~' %as %own t.q.pok])  ::  auth shortcut
+    ?:  ?=([%'~~' *] q.pok)                            ::  auth shortcut
+      $(q.pok ['~' %as %own t.q.pok])
     ?.  ?=([%'~' @ *] q.pok)  ~
     :-  ~
     =*  pef  i.t.q.pok
@@ -384,6 +376,13 @@
     ::  ~&  [%honk our num ses -.kas]
     (miff ~ %f [%exec our `kas])
   ::
+  ++  hons                                              ::  regular ford request
+    |=  [bem=beam ext=term quy=quay ced=cred]
+    =:  s.bem  [%web ~(rent co (flux:ya quy ced)) s.bem]
+        r.bem  ?+(r.bem r.bem [%ud %0] da/now)
+    ==
+    (honk our [%cast %mime [%boil ext bem ~]])
+  ::
   ++  horn                                              ::  irregular request
     |=  [pul=purl cip=clip moh=moth]
     ^-  (unit gift)
@@ -410,12 +409,12 @@
     |=  [tea=wire dep=@uvH]
     (miff tea %f [%wasp our dep])
   ::
-  ++  huff                                              ::  request by ship
+  ++  huff                                              ::  get request state
     |=  [our=ship cip=clip pul=purl moh=moth]
     ^-  [p=hole q=cyst]
     =*  sec  p.p.pul
     =+  pef=(rsh 3 1 (scot %p our))
-    =+  lig=(coss pef q.moh)
+    =+  lig=(sesh pef q.moh)
     ?^  lig
       =+  cyz=(need (~(get by wup) u.lig))
       [u.lig cyz(cug ~)]
@@ -435,7 +434,7 @@
         ==
         [anon ~]
     ::
-::         ~
+      ::  ~
     ::
         :_  ~
         %^  cat  3
@@ -444,8 +443,8 @@
         '; Path=/; HttpOnly'
     ::
         now
-::         ~
-::         [1 ~]
+      ::  ~
+      ::  [1 ~]
     ==
   ::
   ++  jive                                              ::  success json
@@ -470,12 +469,12 @@
     [%thou `httr`[sas ~[content-type/(moon mit)] [~ (taco rez)]]]
   ::
   ++  ya                                                ::  session engine
-::     =|  [[our=ship ses=hole] cyst] ::serf cyst]
-::     =*  sef  ->-
-    =*  cyz  ->
+    :: =|  [[our=ship ses=hole] cyst] ::serf cyst]
+    :: =*  sef  ->-
+    :: =*  cyz  ->
     |%
     ++  flux                                            ::  credential caboose
-      |=  [nyp=path quy=quay ced=cred]  ^-  coin
+      |=  [quy=quay ced=cred]  ^-  coin
       :*  %many
           [%$ %ta ~]
           [%blob ced]
@@ -519,12 +518,12 @@
     abet:(apex:~(adit ye [hen [now eny our sky] ~] bol) q.hic)
   [mos ..^$]
 ::
-++  doze
+++  doze                                                ::  require no timer
   |=  [now=@da hen=duct]
   ^-  (unit ,@da)
   ~
 ::
-++  load
+++  load                                                ::  clam previous state
   |=  old=_[%0 gub hov ged ney dop **]
   ^+  ..^$
   ..^$(+>- (bolo old))
