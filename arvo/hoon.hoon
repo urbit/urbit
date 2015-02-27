@@ -6501,12 +6501,13 @@
   ++  hock
     |-  ^-  toga
     ?-  gen
-      [^ *]            [%2 $(gen p.gen) $(gen q.gen)]
       [%cnts [@ ~] ~]  i.p.gen
       [%cnzy @]        p.gen
       [%cnzz [@ ~]]    i.p.gen
       [%zpcb *]        $(gen q.gen)
-      *                =+(neg=open ?:(=(gen neg) [%0 ~] $(gen neg)))
+      [@ *]            =+(neg=open ?:(=(gen neg) [%0 ~] $(gen neg)))
+      [^ *]            =+  toe=[$(gen p.gen) $(gen q.gen)] 
+                       ?:(=(toe [[%0 ~] [%0 ~]]) [%0 ~] [%2 toe])
     ==
   ::
   ++  open
@@ -9003,7 +9004,6 @@
             ==
           ==
           (stag %cnzz rope)
-          (stag %bczp (cold %cell ket))
         ==
       :-  '`'
         ;~  pfix  tec
@@ -9016,8 +9016,6 @@
             (cook |=(a=twig [[%dtzz %n ~] a]) wide)
           ==
         ==
-      :-  '#'
-        ;~(pfix hax rupl)
       :-  '"'
         %+  cook
           |=  a=(list (list beer))
@@ -9480,11 +9478,12 @@
         ==
     ^-  (unit twig)
     ?-    -.vil
-        %tis  [~ %ktts ~(hock ap ros) p.vil]
         %col  [~ %tsgl ros p.vil]
         %pel  [~ %cnts ~(rake ap ros) p.vil]
         %pat  [~ %bcpt ~(rake ap ros) p.vil]
         %ket  [~ ros p.vil]
+        %tis  =+  tog=~(hock ap ros) 
+              ?:(=([%0 ~] tog) ~ [~ %ktts tog p.vil])
     ==
   ::
   ++  long
