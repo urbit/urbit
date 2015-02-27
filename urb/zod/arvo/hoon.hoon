@@ -9146,10 +9146,10 @@
               ;~  pfix  bar
                 %-  stew
                 ^.  stet  ^.  limo
-                :~  ['_' (rune cab %brcb expu)]
+                :~  ['_' (rune cab %brcb expv)]
                     ['%' (rune cen %brcn expe)]
                     ['.' (rune dot %brdt expa)]
-                    ['/' (rune fas %brfs expu)]
+                    ['/' (rune fas %brfs expv)]
                     ['-' (rune hep %brhp expa)]
                     ['^' (rune ket %brkt expr)]
                     ['+' (rune lus %brls expo)]
@@ -9175,7 +9175,15 @@
               ==
             :-  '$'
               ;~  pose
-                (rune com %bccm expv)
+                ;~  pfix  buc
+                  %-  stew
+                  ^.  stet  ^.  limo
+                  :~
+                    [',' (rune com %bccm expt)]
+                    ['*' (rune tar %bctr expt)]
+                    ['@' (rune pat %bcpt expu)]
+                  ==
+                ==
                 (stag %bccm (noil tol))
               ==
             :-  ':'
@@ -9404,9 +9412,9 @@
     ++  expq  |.(;~(gunk rope loaf loaf))               ::  wing and two twigs
     ++  expr  |.(;~(gunk loaf wisp))                    ::  twig and core tail
     ++  exps  |.((butt hank))                           ::  closed gapped twigs
-    ::  expt
-    ++  expu  |.(;~(gunk lobe wisp))                    ::  tile, core tail
-    ++  expv  |.(lobe)                                  ::  tile
+    ++  expt  |.(lobe)                                  ::  tile
+    ++  expu  |.(;~(gunk rope lobe))                    ::  wing and tile
+    ++  expv  |.(;~(gunk lobe wisp))                    ::  tile, core tail
     ++  expw  |.(;~(gunk lobe teak))                    ::  tile and tiki
     ++  expx  |.((butt ;~(gunk teak race)))             ::  tiki, [tile twig]s
     ++  expy  |.((butt ;~(gunk teak loaf race)))        :: tiki twig [tile twig]s
