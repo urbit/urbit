@@ -86,6 +86,7 @@ CWFLAGS=-Wall \
         -Wno-sign-compare \
         -Wno-unused-parameter \
         -Wno-missing-field-initializers \
+	-Wno-error=unused-result \
         -Wno-strict-aliasing \
         -Werror
 
