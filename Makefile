@@ -87,6 +87,7 @@ CWFLAGS=-Wall \
         -Wno-unused-parameter \
         -Wno-missing-field-initializers \
         -Wno-strict-aliasing \
+        -Wno-error=unused-result \
         -Werror
 
 ifdef NO_SILENT_RULES
