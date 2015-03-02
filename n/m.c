@@ -571,7 +571,7 @@ c3_w Exit;
 **        [%2 trace]
 **        [%3 code trace]
 **    ==
-*/ 
+*/
 c3_i
 u3m_bail(u3_noun how)
 {
@@ -636,11 +636,10 @@ u3m_bail(u3_noun how)
       }
     }
   }
- 
+
   /* Longjmp, with an underscore.
   */
   _longjmp(u3R->esc.buf, how);
-  return 0;
 }
 
 int c3_cooked() { return u3m_bail(c3__oops); }

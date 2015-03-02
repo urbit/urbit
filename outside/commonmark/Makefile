@@ -22,7 +22,7 @@ JSMODULES=$(wildcard js/lib/*.js)
 .PHONY: all spec leakcheck clean fuzztest dingus upload jshint test testjs benchjs update-site upload-site check npm debug mingw archive tarball ziparchive testarchive testtarball testziparchive testlib bench apidoc
 
 all: $(BUILDDIR)
-	@make -C $(BUILDDIR)
+	@$(MAKE) -C $(BUILDDIR)
 	@echo "Binaries can be found in $(BUILDDIR)/src"
 
 check:
@@ -34,19 +34,19 @@ $(BUILDDIR): check $(SRCDIR)/html/html_unescape.h $(SRCDIR)/case_fold_switch.inc
 	cmake .. -G "$(GENERATOR)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE)
 
 install: $(BUILDDIR)
-	make -C $(BUILDDIR) install
+	$(MAKE) -C $(BUILDDIR) install
 
 debug:
 	mkdir -p $(BUILDDIR); \
 	cd $(BUILDDIR); \
 	cmake .. -DCMAKE_BUILD_TYPE=Debug; \
-	make
+	$(MAKE)
 
 mingw:
 	mkdir -p $(MINGW_BUILDDIR); \
 	cd $(MINGW_BUILDDIR); \
 	cmake .. -DCMAKE_TOOLCHAIN_FILE=../toolchain-mingw32.cmake -DCMAKE_INSTALL_PREFIX=$(MINGW_INSTALLDIR) ;\
-	make && make install
+	$(MAKE) && $(MAKE) install
 
 archive: spec.html $(BUILDDIR)
 	@rm -rf $(PKGDIR); \
@@ -87,7 +87,7 @@ $(SRCDIR)/case_fold_switch.inc: $(DATADIR)/CaseFolding-3.2.0.txt
 	perl mkcasefold.pl < $< > $@
 
 test: $(SPEC) $(BUILDDIR)
-	make -C $(BUILDDIR) test ARGS="-V"
+	$(MAKE) -C $(BUILDDIR) test ARGS="-V"
 
 $(TARBALL): archive
 
@@ -100,13 +100,13 @@ testtarball: $(TARBALL)
 	rm -rf $(PKGDIR); \
 	tar xvzf $(TARBALL); \
 	cd $(PKGDIR); \
-	mkdir build && cd build && cmake .. && make && ctest -V
+	mkdir build && cd build && cmake .. && $(MAKE) && ctest -V
 
 testziparchive: $(ZIPARCHIVE)
 	rm -rf $(PKGDIR); \
 	unzip $(ZIPARCHIVE); \
 	cd $(PKGDIR); \
-	mkdir build && cd build && cmake .. && make && ctest -V
+	mkdir build && cd build && cmake .. && $(MAKE) && ctest -V
 
 $(ALLTESTS): spec.txt
 	python test/spec_tests.py --spec $< --dump-tests | python -c 'import json; import sys; tests = json.loads(sys.stdin.read()); print "\n".join([test["markdown"] for test in tests]).encode("utf-8")' > $@
@@ -188,7 +188,7 @@ spec.pdf: spec.md template.tex specfilter.hs
 ### Website ###
 
 update-site: spec.html js/commonmark.js
-	make -C $(SITE) update
+	$(MAKE) -C $(SITE) update
 
 upload-site: spec.html
-	make -C $(SITE) upload
+	$(MAKE) -C $(SITE) upload
