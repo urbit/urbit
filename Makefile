@@ -87,8 +87,10 @@ CWFLAGS=-Wall \
         -Wno-unused-parameter \
         -Wno-missing-field-initializers \
         -Wno-strict-aliasing \
-        -Wno-error=unused-result \
         -Werror
+ifneq ($(OS),bsd)
+  CWFLAGS+=-Wno-error=unused-result
+endif
 
 ifdef NO_SILENT_RULES
 %.o: %.c $(CORE)
