@@ -1,0 +1,109 @@
+::  Desk sync
+::  
+::::  /hook/core/sync/app
+  ::
+::  XX  give %nice
+|%
+++  gift
+  $%  [%nice ~]
+      [%rush %tang (list tank)]
+  ==
+++  move  ,[p=bone q=(mold note gift)]
+++  note
+  $%  $:  %c
+  $%  [%merg p=@p q=@tas r=@p s=@tas t=germ]
+  ==  ==
+      $:  %g
+  $%  [%cide span]
+  ==  ==  ==
+--
+!:
+::::
+  ::
+|_  [hid=hide auto=? gem=germ syd=@tas her=@p sud=@tas]
+++  peer  ,_`.
+++  poke--args
+  |=  [ost=bone you=ship syd=@tas her=@p sud=@tas gim=?([$|(%auto germ) ~] ~)]
+  ^-  [(list move) _+>.$]
+  ?~  gim
+    $(gim [%auto ~])
+  ?.  ?=(%auto -.gim)
+    =:  auto  |
+        gem   -.gim
+        ^syd  syd
+        ^her  her
+        ^sud  sud
+      ==
+    [[(merge ost) ~] +>.$]
+  =.  auto  &
+  ?:  =(0 .^(%cw /(scot %p our.hid)/[syd]/(scot %da lat.hid)))
+    =>  $(-.gim %init)
+    [- +(auto &)]
+  =>  $(-.gim %fine)
+  [- +(auto &)]
+::
+++  pour
+  |=  [ost=bone pax=path sih=*]
+  ^-  [(list move) _+>.$]
+  =+  ((soft ,[%c %mere are=(each (set path) (pair term (list tank)))]) sih)
+  ?~  -
+    [(spam leaf/"not working so well" >sih< ~) +>.$]
+  ?:  ?=(%& -.are.u)
+    %+  end
+      leaf/"successfully merged with strategy {<gem>}"
+    ?~(p.are.u ~ [>`(set path)`p.are.u< ~])
+  ?.  auto
+    (end leaf/"failed to merge with strategy {<p.p.are.u>}" q.p.are.u)
+  ?+    gem
+    [(spam leaf/"strange auto" >gem< ~) +>.$]
+  ::
+      %init
+    %^    end
+        leaf/"auto merge failed on strategy %init"
+      leaf/"I'm out of ideas"
+    [>p.p.are.u< q.p.are.u]
+  ::
+      %fine
+    ?.  ?=(%bad-fine-merge p.p.are.u)
+      (end leaf/"auto merge failed on strategy %fine" >p.p.are.u< q.p.are.u)
+    =>  .(gem %meet)
+    :_  +>.$
+    (flop i=(merge ost) t=(spam leaf/"%fine merge failed, trying %meet" ~))
+  ::
+      %meet
+    ?.  ?=(%meet-conflict p.p.are.u)
+      (end leaf/"auto merge failed on strategy %meet" >p.p.are.u< q.p.are.u)
+    =>  .(gem %mate)
+    :_  +>.$
+    (flop i=(merge ost) t=(spam leaf/"%meet merge failed, trying %mate" ~))
+      %mate
+  ::
+    ?.  ?=(%mate-conflict p.p.are.u)
+      (end leaf/"auto merge failed on strategy %mate" >p.p.are.u< q.p.are.u)
+    =>  .(gem %meld)
+    :_  +>.$
+    (flop i=(merge ost) t=(spam leaf/"%mate merge failed, trying %meld" ~))
+  ::
+      %meld
+    %^    end
+        leaf/"auto merge failed on strategy %meld"
+      leaf/"I'm out of ideas"
+    [>p.p.are.u< q.p.are.u]
+  ==
+::
+++  merge
+  |=  ost=bone
+  ^-  move
+  [ost %pass / %c %merg our.hid syd her sud gem]
+::
+++  spam
+  |=  mes=(list tank)
+  %+  turn  (~(tap in (~(get ju pus.hid) /out)))
+  |=  ost=bone
+  [ost %give %rush %tang mes]
+::
+++  end
+  |=  mes=(list tank)
+  ^-  [(list move) _+>.$]
+  [(flop i=[0 %pass / %g %cide %$] t=(spam mes)) +>.$]
+--
