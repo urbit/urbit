@@ -65,6 +65,7 @@
               $:  @tas                                  ::  by any
           $%  [%crud p=@tas q=(list tank)]              ::
           ==  ==  ==                                    ::
+++  whir  $|(~ $%([%at p=hole q=whir]))                 ::  wire subset
 --                                                      ::
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
@@ -80,10 +81,10 @@
 ::
 ++  cyst                                                ::  client session
   $:  ced=cred                                          ::  credential
-      [him=ship authed=(set ship)]                         ::  authenticated
+      [him=ship aut=(set ship)]                         ::  authenticated
       cug=(list ,@t)                                    ::  unacked cookies
       lax=@da                                           ::  last used
-      vew=(set oryx)                                    ::  open views
+      vew=(set oryx)                                    ::  open views XX expire
   ==                                                    ::
 ::
 ++  perk                                                ::  parsed request
@@ -95,10 +96,25 @@
 ::
 ++  perk-auth                                           ::  parsed auth
   $%  [%get him=ship rem=pork]
+      [%at p=pork]                               ::  inject auth
       [%js ~]
-      [%stat ~]    ::  json with authentication status
+      [%json ~]
       [%try him=ship cod=cord]
       [%del p=(unit ship)]
+  ==
+::
+++  pest                                                ::  result
+  $%  [%for p=whir q=beam r=term s=cred]                ::  %f block
+      [%fow p=@uvH]                                     ::  %f deps
+      [%fin $|(~ pest-fin)]                             ::  done
+      [%zap p=@ud q=(list tank)]                        ::  err
+  ==
+::
+++  pest-fin                                            ::  response
+  $%  [%json p=json] 
+      [%html p=manx] 
+      [%js p=@t] 
+      [%$ p=httr]
   ==
 --                                                      ::
 |%
@@ -143,6 +159,12 @@
   ?~  dep  max
   max(c.i.c :_(c.i.c.max ;script@"/~/on/{<dep>}.js";))
 ::
+++  jass                                                ::  inject window.urb
+  |=  [urb=json jaz=cord]  ^-  cord
+  %^  cat  3
+    (crip "window.urb = {(pojo urb)}\0a")
+  jaz
+::
 ++  js                                                  ::  static javascript
   |%
   ++  poll                                              ::  dependency long-poll
@@ -172,12 +194,11 @@
   ::
   ++  auth
     '''
-    window.urb = {}
-    window.urb.ship = 'zod' // XX
+    ship.innerText = urb.ship
     window.urb.submit = function(){
         xhr = new XMLHttpRequest()
         xhr.open('POST', "/~/auth.json?PUT", true)
-        var dat = {oryx:'hi', ship: ship.value, code: pass.value}
+        var dat = {oryx:'hi', ship: ship.innerText, code: pass.value}
         xhr.send(JSON.stringify(dat))
         xhr.addEventListener('load', function(){
           if(this.status !== 200)
@@ -193,10 +214,11 @@
     ;html
       ;head:title:'Hello World'
       ;body
-        ;p: Identify yourself, ~;{input#ship(value "zod")}?
+        ;p: Identify yourself, ~;{span#ship(contenteditable "")}?
+        ;style:'#ship {background: lightgray} #ship br {display: none}'
         ;input#pass(onchange "urb.submit()");
         ;pre:code#err;
-        ;script@"/~/auth.js";
+        ;script@"/~/at/~/auth.js";
       ==
     ==
   --
@@ -230,7 +252,7 @@
       +>.$(mow [[hen %slip %d %flog +.sih] mow])
     ::
         %made
-      ?+    tea  +>.$
+      ?+    tea  ~&  e/ford/lost/hen  +>.$
           ~
         :: ~&  e/ford/hen
         ?-  -.q.sih
@@ -302,7 +324,7 @@
     (give-html sas (depo dep (tanx mez)))
   ::
   ++  give-html                                       ::  request failed
-    |=([sas=@ud max=manx] (resp sas text//html (poxo max)))
+    |=([sas=@ud max=manx] (resp sas text//html (crip (poxo max))))
   ::
   ++  give-json                                       ::  success json
     |=  [sas=@uG cug=(list ,@t) jon=json]
@@ -317,17 +339,17 @@
     +>(mow :_(mow [hen %give gef]))
   ::
   ++  resp                                            ::  mime response
-    |=  [sas=@uG mit=mite bod=tape]
-    (give-gift (tuff sas mit (crip bod)))
+    |=  [sas=@uG mit=mite bod=cord]
+    (give-gift (tuff sas mit bod))
   ::
   ++  pass-note  |=(noe=[wire note] +>(mow :_(mow [hen %pass noe])))
   ++  ford-req
-    |=  [tea=wire our=ship kas=silk]
+    |=  [tea=whir our=ship kas=silk]
     ::  ~&  [%ford-req our num ses -.kas]
     (pass-note tea %f [%exec our `kas])
   ::
   ++  back                                              ::  %ford bounce
-    |=  [tea=wire dep=@uvH cag=cage]                
+    |=  [tea=whir dep=@uvH cag=cage]                
     (ford-req tea our [%cast %mime %done ~ cag])        ::  XX deps
   ::
   ++  tuff                                            ::  mimed response
@@ -346,7 +368,6 @@
     (rush i.dom fed:ag)
   ::
   ++  rq
-    =|  (unit ,@t)                                      ::  cookie given?
     |_  $:  [hat=hart pok=pork quy=quay]                ::  purl, parsed url
             cip=clip                                    ::  client ip
             [mef=meth maf=math bod=(unit octs)]         ::  method/headers/body
@@ -365,15 +386,15 @@
     ::
     ++  ford-kill  (pass-note ~ %f [%exec our ~])       :: XX unused
     ++  ford-wasp
-      |=  [tea=wire dep=@uvH]
+      |=  [tea=whir dep=@uvH]
       (pass-note tea %f [%wasp our dep])
     ::
     ++  beam-into-ford
-      |=  [bem=beam ext=term ced=cred]
+      |=  [tea=whir bem=beam ext=term ced=cred]
       =:  s.bem  [%web ~(rent co (flux:ya quy ced)) s.bem]
           r.bem  ?+(r.bem r.bem [%ud %0] da/now)
       ==
-      (ford-req ~ our [%cast %mime [%boil ext bem ~]])
+      (ford-req tea our [%cast %mime [%boil ext bem ~]])
     ::
     ::
     ++  as-beam
@@ -430,6 +451,7 @@
           %anon  anon
           %own   our
         ==
+          %at  [%auth %at pok(q but)]
           %auth
         :-  %auth
         |-
@@ -438,7 +460,7 @@
             [~ %js]    [%js ~]
             [~ %json]
           ?+    mef  ~|(%bad-meth !!)
-              %get   [%stat ~]
+              %get   [%json ~]
               %post
             ?+    quy  ~|(bad-quy/'"PUT" or "DELETE"' !!)
                 [[%'PUT' ~] ~]
@@ -453,106 +475,110 @@
     ::
     ++  handle
       ^+  done
-      =+  git=as-magic-filename
-      ?^  git  (give-gift u.git)
       =+  oar=(fall (host-to-ship r.hat) (need hov))
       =.  our  oar  ::  XX
-      %-  |=(a=(each ,_done tang) ?~(-.a p.a (fail 404 0v0 >%exit< p.a)))
-      %-  mule  |.  ^+  done    ~|  [mef maf bod]
-      =+  ext=(fall p.pok %urb)
+      =+  pez=process
+      ?:  ?=(%| -.pez)  p.pez  ::  XX transitional
+      |-  ^+  done
+      ?-  -.p.pez
+        %for  (beam-into-ford +.p.pez)
+        %fow  (ford-wasp ~ p.p.pez)
+        %zap  (fail p.p.pez 0v0 q.p.pez)
+        %fin  ?~  +.p.pez  done
+              ?-  &2.p.pez
+                ~  (give-gift %thou p.p.pez)
+                %js  (resp 200 text//javascript p.p.pez)
+                %html  (give-html 200 p.p.pez)
+                %json  (give-json 200 ~ p.p.pez)
+      ==      ==
+    ::
+    ++  process
+      ^-  (each pest ,_done)
+      =+  git=as-magic-filename
+      ?^  git  [%| (give-gift u.git)]
+      %-  |=  a=(each (each pest ,_done) tang) 
+          ?~(-.a p.a [%& %zap 404 >%exit< p.a])
+      %-  mule  |.  ^-  (each pest ,_done)
+      ~|  [mef maf bod]
       =+  bem=as-beam
-      ?^  bem
-        ::  abet:(~(into-ford ya (get-sess..)) ..$)
-        =+  [ses cyz]=get-session
-        (beam-into-ford u.bem ext ced.cyz)
+      ?^  bem  (process-parsed %beam u.bem)
       ?>  check-oryx
       =+  hem=as-aux-request
-      ?^  hem  (handle-parsed u.hem)
+      ?^  hem  (process-parsed u.hem)
       ~|(strange-path/q.pok !!)
     ::
     ++  check-oryx                    ::  | if json with bad oryx
       ^-  ?
       ?.  &(?=([~ %json] p.pok) ?=(%post mef) ?=(^ bod))  &
-      =|  cyz=cyst  ::  XX
       =+  oxe=(parse-to-oryx q.u.bod)
       ?~  oxe  |
-      &  ::  XX
-    ::     (~(has in vew.cyz) u.oxe)
+      & ::(~(has in vew.cyz:for-client) u.oxe) ::XX
     ::
     ++  parse-to-oryx  ;~(biff poja (ot oryx/so ~):jo)
     ++  continue-with-request  |=(rem=pork handle(pok rem))
     ++  foreign-auth  ,_!!
-    ++  handle-parsed
+    ++  root-beak  `beak`[our %main ud/0]               ::  XX
+    ++  process-parsed
       |=  hem=perk
-      ^+  +>
+      ^-  (each pest ,_done)
       ?-    -.hem
-          ?(%spur %beam)  !!
+          ?(%spur %beam)  
+        =+  ext=(fall p.pok %urb)
+        =+  bem=?-(-.hem %beam p.hem, %spur [root-beak p.hem])
+        [%& %for ~ bem ext ced.cyz:for-client]
           %poll
-        ?.  ?=([~ %js] p.pok)  ::  XX treat non-json cases?
-          ?~  p.hem  done
-          (ford-wasp ~ p.hem)
-        %^  resp  200  text//javascript
-        """
-        window.urb = \{poll: "/{(apex:earn %| pok(u.p %json) quy)}"}
-        {(trip poll:js)}
-        """
-          %auth  
-        =+  `[ses=hole cyz=cyst]`get-session
+        ?:  ?=([~ %js] p.pok)  ::  XX treat non-json cases?
+          =+  pol=(apex:earn %| pok(u.p %json) quy)      ::  polling url
+          :^  %&  %fin  %js
+          (jass (joba %poll (jape pol)) poll:js)
+        ?~  p.hem  [%| done]
+        [%& %fow p.hem]
+          %auth
+        =+  yac=for-client
         ?-    &2.hem
-            %js    (resp 200 text//javascript (trip auth:js))
-            %stat  (give-json 200 ~ (get-auth-status ses))
+            %json
+          :-  %|
+          =^  jon  ..ya  stat-json.yac
+          (give-json 200 ~ jon)
+            %js  [%& %fin %js auth:js]
+            %at
+          =.  ..ya  abet.yac
+          =+  pez=process(pok p.hem)
+          ?.  ?=(%& -.pez)  ~|(no-inject/p.hem !!)
+          ?-  -.p.pez
+            ?(%fow %zap)  pez
+            %for  pez(p.p [%at ses.yac p.p.pez])
+            %fin  
+              ~|  %not-script
+              ?>  ?=(%js &2.p.pez)
+              =^  jon  ..ya  stat-json:for-client       ::  XX  state lost
+              pez(p.p (jass jon p.p.pez))
+          ==
+        ::
             %try
+          :-  %|
           ?.  =(our him.hem)
             ~|(stub-foreign/him.hem !!)
           ?.  =(load-secret cod.hem)
             ~|(try/`@t`load-secret !!)
-          =.  authed.cyz  (~(put in authed.cyz) our)
-          =.  wup  (~(put by wup) ses cyz)
-          (give-json 200 cug.cyz (get-auth-status ses))
+          =^  jon  ..ya  stat-json:(logon:yac him.hem)
+          (give-json 200 cug.yac jon)
         ::  
-            %del
-          =<  (nice-json)
-          ?~  p.hem
-            .(wup (~(del by wup) ses))
-          =<  .(wup (~(put by wup) ses cyz))
-          =.  authed.cyz  (~(del in authed.cyz) u.p.hem)
-          ?.  =(u.p.hem him.cyz)  .
-          .(him.cyz anon)
+            %del  [%| (nice-json(..ya (logoff:yac p.hem)))]
         ::
             %get
           ~|  aute/+.hem
-          ?:  =(anon him.hem)
-            (continue-with-request rem.hem)
-          ?:  (~(has in authed.cyz) him.hem)
-            (continue-with-request rem.hem)
+          ?:  |(=(anon him.hem) (~(has in aut.yac) him.hem))
+            =+  pez=process(pok rem.hem)
+            ?.  ?=([%& %for ^] pez)
+              pez
+            pez(aut.s.p (~(put ju aut.s.p.pez) %$ (scot %p him.hem)))
           ?.  =(our him.hem)
             (foreign-auth)
-          (show-login-page)
+          [%& (show-login-page)]
         ==
-  ::       =.  q.cez
-  ::         ?.  =(anon p.p.hem)
-  ::           q.cez
-  ::         (~(put in q.cez) p.p.hem)
-  ::       =+  hez=(get-session our cip pul moh)
-  ::       =.  wup  (~(put by wup) hez)
-  ::       ?^  cug.q.hez
-  ::         =+  rel=;html:script:"document.location.reload()"
-  ::         =+  tuv=(tuff 200 text//html (crip (poxo rel)))
-  ::         =.  q.tuv
-  ::           =-  (weld :_(q.tuv -))
-  ::           (turn `(list ,@t)`cug.q.hez |=(a=cord set-cookie/a))))
-  ::         (give-gift tuv)
-  ::       ~|  hez  !!
       ==
-    ++  show-login-page  ,_(give-html 200 login-page:xml)
-    ++  get-auth-status  
-      |=  ses=hole
-      =+  [cyz=(~(get by wup) ses) orx=(rsh 3 1 (scot %p eny))]
-      %-  jobe  :~
-        oryx/s/orx
-        user/(jape +:<?~(cyz anon him.u.cyz)>)
-        auth/a/?~(cyz ~ (turn (~(tap in authed.u.cyz)) |=(a=@p (jape +:<a>))))
-      ==
+    ++  show-login-page  ,_[%fin %html login-page:xml]
     ++  nice-json  ,_(give-json 200 ~ (joba %ok %b &))
     ::
     ++  load-secret
@@ -561,8 +587,9 @@
       %^  rsh  3  1
       (scot %p (,@ (need (sky %a pax))))
     ::
-    ++  get-session                        ::  get request state
-      ^-  [hole cyst]
+    ++  for-client                        ::  stateful per-session engine
+      ^+  ya
+      %~  .  ya
       =*  sec  p.hat
       =+  pef=(rsh 3 1 (scot %p our))
       =+  lig=(sesh pef maf)
@@ -599,10 +626,31 @@
       ==
     --
   ++  ya                                                ::  session engine
-    :: =|  [[our=ship ses=hole] cyst] ::serf cyst]
-    :: =*  sef  ->-
-    :: =*  cyz  ->
+    =|  [ses=hole cyst]
+    =*  cyz  ->
     |%
+    ++  abet  ..ya(wup (~(put by wup) ses cyz))
+    ++  abut  ..ya(wup (~(del by wup) ses))
+    ++  logon     |=(her=ship +>(him her, aut (~(put in aut) her)))
+    ++  logoff    
+      |=  her=(unit ship)  ^+  ..ya
+      ?~  her  abut
+      =.  aut  (~(del in aut) u.her)
+      ?~  aut  abut
+      abet(him ?.(=(her him) him n.aut))
+    ::
+    ++  stat-json
+      ^+  [*json ..ya]
+      =+  orx=(rsh 3 1 (scot %p (shaf %orx eny)))
+      =.  vew  (~(put in vew) orx)
+      :_  abet
+      %-  jobe  :~
+        oryx/s/orx
+        ship/(jape +:<our>)
+        user/(jape +:<him>)
+        auth/a/(turn (~(tap in aut)) |=(a=@p (jape +:<a>)))
+      ==
+    ::
     ++  flux                                            ::  credential caboose
       |=  [quy=quay ced=cred]  ^-  coin
       :*  %many
