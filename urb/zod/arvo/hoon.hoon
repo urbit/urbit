@@ -9799,7 +9799,7 @@
 ++  sled  $+  [(unit (set monk)) term beam]             ::  namespace function
           (unit (unit cage))                            ::
 ++  slad  $+  [(unit (set monk)) term beam]             ::  undertyped
-          (unit (unit (cask ,*)))                       ::
+          (unit (unit (cask)))                          ::
 ++  slut  $+(* (unit (unit)))                           ::  old namespace
 ++  vile                                                ::  reflexive constants
           $:  typ=type                                  ::  -:!>(*type)
@@ -9996,7 +9996,7 @@
               ren=care
               bed=beam
           ==
-      ^-  (unit (unit (cask ,*)))
+      ^-  (unit (unit (cask)))
       ::  ~&  [%arvo-scry ren bed]
       =+  ^=  old
           :*  fur
@@ -10006,7 +10006,7 @@
               `coin`[%$ r.bed]
               (flop s.bed)
           ==
-      ^-  (unit (unit (cask ,*)))
+      ^-  (unit (unit (cask)))
       =+  pro=(slym (slap rig [%cnzy %scry]) old)
       ?~  q.pro  ~
       ?~  +.q.pro  [~ ~]
@@ -10073,11 +10073,11 @@
   ++  beck
     ^-  slad
     |=  [fur=(unit (set monk)) ron=term bed=beam]
-    ^-  (unit (unit (cask ,*)))
+    ^-  (unit (unit (cask)))
     =>  .(fur ?^(fur fur `[[%& p.bed] ~ ~]))            ::  XX heinous
     =+  lal=(end 3 1 ron)
     =+  ren=(care (rsh 3 1 ron))
-    |-  ^-  (unit (unit (cask ,*)))
+    |-  ^-  (unit (unit (cask)))
     ?~  q.niz  ~
     ?.  =(lal p.i.q.niz)  $(q.niz t.q.niz)
     %-  scry:(wink:(vent lal vil bud p.niz q.i.q.niz) now (shax now) ..^$)

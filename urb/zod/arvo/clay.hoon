@@ -53,10 +53,10 @@
           ==                                            ::
 ++  moot  ,[p=case q=case r=path s=(map path lobe)]     ::  stored change range
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
-++  nako  $:  gar=(map ,@ud tako)                       ::  new ids
-              let=@ud                                   ::  next id
+++  nako  $:  gar=(map aeon tako)                       ::  new ids
+              let=aeon                                  ::  next id
               lar=(set yaki)                            ::  new commits
-              bar=(set blob)                            ::  new content
+              bar=(set plop)                            ::  new content
           ==                                            ::
 ++  note                                                ::  out request $->
           $%  $:  %a                                    ::  to %ames
@@ -137,6 +137,7 @@
               bom=(map ,@ud ,[p=duct q=rave])           ::  outstanding
               fod=(map duct ,@ud)                       ::  current requests
               haw=(map mood (unit cage))                ::  simple cache
+              nak=(unit nako)                           ::  pending validation
           ==                                            ::
 ++  room                                                ::  fs per ship
           $:  hun=duct                                  ::  terminal duct
@@ -613,18 +614,22 @@
       ==
     ==
   ::
-  ++  edis                                            ::  apply subscription
-    |=  nak=nako
+  ++  apply-foreign-update                              ::  apply subscription
+    |=  $:  gar=(map aeon tako)                         ::  new ids
+            let=aeon                                    ::  next id
+            lar=(set yaki)                              ::  new commits
+            bar=(set blob)                              ::  new content
+        ==
     ^+  +>
     %=  +>
-      hit.dom  (~(uni by hit.dom) gar.nak)
-      let.dom  let.nak
-      lat.ran  %+  roll  (~(tap in bar.nak) ~)
+      hit.dom  (~(uni by hit.dom) gar)
+      let.dom  let
+      lat.ran  %+  roll  (~(tap in bar) ~)
                =<  .(yeb lat.ran)
                |=  [sar=blob yeb=(map lobe blob)]
                =+  zax=(blob-to-lobe sar)
                %+  ~(put by yeb)  zax  sar
-      hut.ran  %+  roll  (~(tap in lar.nak) ~)
+      hut.ran  %+  roll  (~(tap in lar) ~)
                =<  .(yeb hut.ran)
                |=  [sar=yaki yeb=(map tako yaki)]
                %+  ~(put by yeb)  r.sar  sar
@@ -652,7 +657,7 @@
     ::      let.dom
     ::  (echa:wake:(checkout-ankh hed))
   ::
-  ++  knit                                            ::  external change
+  ++  take-foreign-update                              ::  external change
     |=  [inx=@ud rot=riot]
     ^+  +>
     ?>  ?=(^ ref)
@@ -683,12 +688,77 @@
     =+  nex=(~(get by haw.u.ref) nez)
     ?~  nex  +>+.^$
     ?~  u.nex  +>+.^$  ::  should never happen
+    =.  nak.u.ref  `((hard nako) q.q.u.u.nex)
     =.  +>+.^$
-      =+  roo=(edis ((hard nako) q.q.u.u.nex))
+      =+  roo=(validate-plops for bar:(need nak.u.ref))
       ?>(?=(^ ref.roo) roo)
     %=  $
       haw.u.ref  (~(del by haw.u.ref) nez)
     ==
+  ::
+  ++  validate-plops
+    |=  [him=ship pop=(set plop)]
+    ^+  +>
+    =-  %_(+>.$ tag [- tag])
+    :*  hen
+        [%foreign-plops (scot %p who) (scot %p for) syd ~]
+        %f  %exec  who  ~  %tabl
+        ^-  (list (pair silk silk))
+        %+  turn  (~(tap in pop))
+        |=  a=plop
+        ?-    -.a
+            %delta
+          :-  [%done ~ %blob !>([%delta p.a q.a *cage])]
+          [%vale p.r.a him q.r.a]
+        ::
+            %direct
+          :-  [%done ~ %blob !>([%direct p.a *cage])]
+          [%vale p.q.a him q.q.a]
+        ::
+            %indirect  ~|  %foreign-indirect-not-implemented  !!
+        ==
+    ==
+  ::
+  ++  take-foreign-plops
+    |=  res=(each bead (list tank))
+    ^+  +>
+    ?>  ?=(^ ref)
+    ?>  ?=(^ nak.u.ref)
+    ?:  ?=(%| -.res)
+      %_    +>.$
+          yel
+        :_  yel
+        :*  hen  %note  '!'  %rose  [" " "" ""]
+            leaf/"validate foreign plops failed"
+            p.res
+        ==
+      ==
+    =+  cay=q.p.res
+    ?@  p.cay  ~|  %plop-bad-marc  !!
+    =+  |-  ^-  lat=(list blob)
+        ?~  p.p.cay
+          ~
+        :_  %_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
+        ?.  ?=(%blob p.i.p.p.cay)
+          ~|  %plop-strange-marc-a
+          !!
+        ?.  ?=(@ q.i.p.p.cay)
+          ~|  %plop-strange-marc-b
+          !!
+        =+  coy=(slot 2 q.cay)
+        ?@  q.coy
+          ~|  %plop-strange-coy
+          !!
+        =+  bob=((hard blob) -.q.coy)
+        ?-  -.bob
+          %delta      [-.bob p.bob q.bob q.i.p.p.cay (slot 3 coy)]
+          %direct     [-.bob p.bob q.i.p.p.cay (slot 3 coy)]
+          %indirect   ~|  %plop-indirect-not-implemented  !!
+        ==
+    %^    apply-foreign-update
+        gar.u.nak.u.ref
+      let.u.nak.u.ref
+    [lar.u.nak.u.ref (sa lat)]
   ::
   ++  mabe                                            ::  maybe fire function
     |*  [rov=rove fun=$+(@da _+>.^$)]
@@ -826,6 +896,16 @@
         %direct     [%done ~ q.bob]
         %indirect   [%done ~ q.bob]
         %delta      [%pact $(a q.bob) [%done ~ r.bob]]
+      ==
+    ::
+    ++  blob-to-plop
+      |=  a=blob
+      ^-  plop
+      =>  a
+      ?-  -
+        %delta      [- p q [p q.q]:r]
+        %direct     [- p [p q.q]:q]
+        %indirect   [- p [p q.q]:q [p q.q]:r s]
       ==
     ::
     ++  make-direct                                     ::  make blob
@@ -1031,11 +1111,14 @@
     ::
     ++  make-nako                                       ::  gack a through b
       |=  [a=aeon b=aeon]
-      ^-  [(map aeon tako) aeon (set yaki) (set blob)]
+      ^-  nako
       :^    hit.dom
           let.dom
         (sa `(list yaki)`(turn (~(tap by hut.ran)) |=([tako yaki] +<+)))
-      (sa `(list blob)`(turn (~(tap by lat.ran)) |=([lobe blob] +<+)))
+                                                        ::  XX  overkill
+      %-  sa  ^-  (list plop)
+      (turn (~(tap by lat.ran)) |=([lobe blob] (blob-to-plop +<+)))
+                                                        ::  XX  overkill
     ::
     ++  query                                           ::    query:ze
       |=  ren=?(%u %v %x %y %z)                         ::  endpoint query
@@ -2015,13 +2098,11 @@
       =^  mos  ruf
         ?:  (~(has by fat.ruf) who)
           =+  une=(un who now hen ruf)
-          =+  ^=  zat
-              (take-patch:(di:wake:une syd) p.q.hin)
+          =+  zat=(take-patch:(di:wake:une syd) p.q.hin)
           =+  zot=abet.zat
           [-.zot abet:(pish:une syd +.zot ran.zat)]
         =+  zax=(do now hen [who who] syd ruf)
-        =+  ^=  zat
-            (take-patch:zax p.q.hin)
+        =+  zat=(take-patch:zax p.q.hin)
         =+  zot=abet.zat
         [-.zot (posh who syd +.zot ruf)]
       [mos ..^$]
@@ -2037,15 +2118,28 @@
         =+  zot=abet.zat
         [-.zot abet:(pish:une syd +.zot ran.zat)]
       [mos ..^$]
+    ::
+        %foreign-plops
+      ?>  ?=([@ @ @ ~] t.tea)
+      =+  our=(slav %p i.t.tea)
+      =+  her=(slav %p i.t.t.tea)
+      =*  syd  i.t.t.t.tea
+      =^  mos  ruf
+        =+  zax=(do now hen [our her] syd ruf)
+        =+  zat=(take-foreign-plops:zax p.q.hin)
+        =+  zot=abet.zat
+        [-.zot (posh her syd +.zot ruf)]
+      [mos ..^$]
     ==
   ::
       %waft
     ?>  ?=([@ @ ~] tea)
-    =+  syd=(need (slaw %tas i.tea))
-    =+  inx=(need (slaw %ud i.t.tea))
+    =+  syd=(slav %tas i.tea)
+    =+  inx=(slav %ud i.t.tea)
     =+  ^=  zat
       =<  wake
-      (knit:(do now hen p.+.q.hin syd ruf) [inx ((hard riot) q.+.q.hin)])
+      %-  take-foreign-update:(do now hen p.+.q.hin syd ruf)
+      [inx ((hard riot) q.+.q.hin)]
     =^  mos  ruf
       =+  zot=abet.zat
       [-.zot (posh q.p.+.q.hin syd +.zot ruf)]
@@ -2062,8 +2156,8 @@
   ::
       %writ
     ?>  ?=([@ @ *] tea)
-    =+  our=(need (slaw %p i.tea))
-    =+  him=(need (slaw %p i.t.tea))
+    =+  our=(slav %p i.tea)
+    =+  him=(slav %p i.t.tea)
     :_  ..^$
     :~  :-  hen
         [%pass ~ %a [%want [our him] [%r %re %c t.t.tea] p.+.q.hin]]

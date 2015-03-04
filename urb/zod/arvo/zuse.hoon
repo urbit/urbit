@@ -2743,9 +2743,10 @@
               lys=@da                                   ::  last sent
               pac=rock                                  ::  packet data
           ==                                            ::
-++  blob  $%  [%delta p=lobe q=lobe r=cage]             ::  delta on q
-              [%direct p=lobe q=cage]                   ::
-              [%indirect p=lobe q=cage r=cage s=lobe]   ::
+++  blob                                                ::  fs blob
+          $%  [%delta p=lobe q=lobe r=cage]             ::  delta on q
+              [%direct p=lobe q=cage]                   ::  immediate
+              [%indirect p=lobe q=cage r=cage s=lobe]   ::  both
           ==                                            ::
 ++  boat  ,[(list slip) tart]                           ::  user stage
 ++  boon                                                ::  fort output
@@ -3068,6 +3069,11 @@
 ++  pail  ?(%none %warm %cold)                          ::  connection status
 ++  plan  (trel view (pair ,@da (unit ,@dr)) path)      ::  subscription
 ++  plea  ,[p=@ud q=[p=? q=@t]]                         ::  live prompt
+++  plop                                                ::  typeless blob
+          $%  [%delta p=lobe q=lobe r=(cask)]           ::  delta on q
+              [%direct p=lobe q=(cask)]                 ::  immediate
+              [%indirect p=lobe q=(cask) r=(cask) s=lobe]::  both
+          ==                                            ::
 ++  pork  ,[p=(unit ,@ta) q=(list ,@t)]                 ::  fully parsed url
 ++  pred  ,[p=@ta q=@tas r=@ta ~]                       ::  proto-path
 ++  prod  ,[p=prom q=tape r=tape]                       ::  prompt
