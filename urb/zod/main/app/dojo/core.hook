@@ -13,7 +13,6 @@
       ==                                                ::
     ++  session                                         ::  per conversation
       $:  say=console-share                             ::  command-line state
-          duy=(unit tape)                               ::  waiting
           poy=(unit dojo-project)                       ::  working 
           var=(map term cage)                           ::  variable state
           old=(set term)                                ::  used TLVs
@@ -24,12 +23,11 @@
       ==                                                ::
     ++  dojo-source                                     ::
       $:  inx=@ud                                       ::  index, assigned
-          mar=mark                                      ::  content type
           mod=dojo-model                                ::
       ==                                                ::
     ++  dojo-model                                      ::  data source
-      $%  [%& twig]                                     ::  
-          [%| (pair path dojo-config)]                  ::
+      $%  [%& twig]                                     ::  direct expression
+          [%| (trel term term dojo-config)]             ::  command engine
       ==                                                ::
     ++  dojo-config                                     ::  configuration
       $:  ord=(list dojo-source)                        ::  by order
@@ -39,7 +37,9 @@
       $:  mad=dojo-command                              ::  operation
           num=@ud                                       ::  number of tasks
           cur=@ud                                       ::  currently solving
-          pro=(unit vase)                               ::  prompting form
+          pro=(unit vase)                               ::  prompting loop
+          idl=?                                         ::  not calling ford
+          per=(unit console-edit)                       ::  pending reverse
           job=(map ,@ud dojo-source)                    ::  problems
           rez=(map ,@ud cage)                           ::  results
       ==                                                ::
@@ -130,6 +130,26 @@
     |_  dojo-project                                    ::
     ++  dy-abet  +>(poy `+<)                            ::  resolve
     ++  dy-amok  +>(poy ~)                              ::  terminate
+    ++  dy-ford                                         ::  send to ford
+      |=  [pax=path kas=silk]
+      ^+  +>+>
+      (he-pass(poy `+>+<(idl %|)) pax %f %exec our.hid `kas)
+    ::
+    ++  dy-slam                                         ::  call to ford
+      |=  [pax=path gat=vase sam=vase]
+      ^+  +>+>
+      (dy-ford pax %call [%done ~ %noun gat] [%done ~ %noun sam])
+    ::
+    ++  dy-rush                                         ::  send effects, abet
+      |=  fec=console-effect
+      ^+  +>+>
+      (he-rush(poy `+>+<) fec)
+    ::
+    ++  dy-rash                                         ::  send effects, amok
+      |=  fec=console-effect
+      ^+  +>+>
+      (he-rush(poy ~) fec)
+    ::
     ++  dy-init-ordered                                 ::  prepare source list
       |=  ord=(list dojo-source)
       ^+  [ord +>]
@@ -152,8 +172,8 @@
       ^+  [mod +>]
       ?-  -.mod
         %&  [mod +>]
-        %|  =^  cig  +>  (dy-init-config q.mod)
-            [mod(q cig) +>.$]
+        %|  =^  cig  +>  (dy-init-config r.mod)
+            [mod(r cig) +>.$]
       ==
     ::
     ++  dy-init-source                                  ::  prepare source
@@ -181,12 +201,61 @@
                +>(mad dam(r src))
       ==
     ::
-    ++  dy-made-hand
+    ++  dy-work                                         ::  console action
+      |=  act=console-action
+    ?-  -.act
+      %det  (he-stir +.act)
+      %ret  (he-done (tufa buf.say))
+    ==
+    ::
+    ++  dy-hand                                         ::  complete step
       |=  cag=cage
       ^+  +>+>
       dy-step(cur +(cur), rez (~(put by rez) cur cag))
     ::
-    ++  dy-over
+    ++  dy-made-edit                                    ::  console edit
+      |=  cag=cage
+      ^+  +>+>
+      ?>  ?=(^ per)
+      ?^  q.q.cag  
+        ~&  %dy-made-edit-good
+        dy-abet(per ~)
+      ~&  %dy-made-edit-bad
+      =^  lic  say  (~(transmit cs say) u.per)
+      (dy-rush(per ~) %mor [%bel ~] [%det lic] ~)
+    ::
+    ++  dy-made-make                                    ::  created prompt
+      |=  cag=cage
+      ^+  +>+>
+      ~&  %dy-made-make
+      (dy-slam /dial q.cag [[%atom %n] ~])
+    ::
+    ++  dy-made-dial                                    ::  dialog result
+      |=  cag=cage
+      ?.  ?=([~ ~ a=* b=*] q.q.cag)
+        ~&  %dy-made-init-fail
+        (dy-rash %bel ~)
+      =.  +>+>  
+          ?:  =(a.q.q.cag ~) 
+            +>+> 
+          (he-rush %tan ((list tank) a.q.q.cag))
+      ?+    -.b.q.q.cag  (dy-rash %bel ~)
+          %&
+        ?~  +.b.q.q.cag
+          (dy-rash %bel ~)
+        (dy-hand %noun (slot 63 q.cag))
+      ::
+          %|
+        (dy-rush(pro `(slot 63 q.cag)) %pro (console-prompt +<.b.q.q.cag))
+      ==
+    ::
+    ++  dy-done
+      |=  txt=tape
+      ~&  %dy-done
+      ?>  ?=(^ pro)
+      (dy-slam /dial u.pro (slop [[%atom %n] ~] !>(txt)))
+    ::
+    ++  dy-over                                         ::  finish construction
       ^+  +>
       ?-    -.mad
           %poke       
@@ -199,6 +268,26 @@
         (he-rush(poy ~) [%tan (sell q.cag) ~])
       ==
     ::
+    ++  dy-edit                                         ::  handle edit
+      |=  cal=console-change
+      ^+  +>+>
+      =+  old=buf.say
+      =^  dat  say  (~(receive cs say) cal)
+      =.  dat  (~(inverse cs say(buf old)) dat)
+      ?:  |(?=(^ per) !idl ?=(~ pro))
+        ~&  %dy-edit-busy
+        =^  lic  say  (~(transmit cs say) dat)
+        (dy-rush %mor [%det lic] [%bel ~] ~)
+      (dy-slam(per `dat) /edit u.pro !>(buf.say))
+    ::
+    ++  dy-work                                         ::  handle input
+      |=  act=console-action
+      ^+  +>+>
+      ?-  -.act
+        %det  (dy-edit +.act)
+        %ret  (dy-done (tufa buf.say))
+      ==
+    ::
     ++  dy-step                                         ::  advance project
       ^+  +>
       ?:  =(cur num)
@@ -206,16 +295,27 @@
       =+  src=(~(got by job) cur)
       ?-    -.mod.src
           %&
-         %-  he-pass(poy `+>-) 
-         [/hand %f %exec our.hid `[%ride +.mod.src [%reef ~]]]
+        %-  he-pass(poy `+>-) 
+        [/hand %f %exec our.hid `[%ride +.mod.src [%reef ~]]]
       ::
-          %|  !!
+          %|
+        %-  he-pass(poy `+>-)
+        :*  /make
+            %f
+            %exec
+            our.hid
+            ~
+            %boil
+            %noun
+            [[our.hid %main %da lat.hid] [p.mod.src %mad q.mod.src ~]]
+            ~
+        ==
       ==
     --
   ::
   ++  he-abet                                           ::  resolve
-    [(flop moz) %_(+> hoc (~(put by hoc) ost +<+))]     ::
-  ::                                                    ::
+    [(flop moz) %_(+> hoc (~(put by hoc) ost +<+))]
+  ::
   ++  he-give                                           ::  emit gift
     |=  git=gift
     ^+  +>
@@ -236,8 +336,6 @@
   ++  he-prom                                           ::  send prompt
     %-  he-rush
     :-  %pro
-    ?^  duy
-      [& %$ (tuba u.duy)]
     [& %$ (tuba (weld (scow %p our.hid) ":dojo> "))]
   ::
   ++  he-ford                                           ::  sign from ford
@@ -245,9 +343,13 @@
     ^+  +>
     ?>  ?=(^ poy)
     ?-  -.rey
-      %&  ?+    pax  ~&(%he-ford-path !!)
-              [%hand ~]
-            (~(dy-made-hand dy u.poy) q.p.rey)
+      %&  =+  dye=~(. dy u.poy)
+          =.  idl.dye  &
+          ?+  pax      ~&(%he-ford-path !!)
+            [%hand ~]  (dy-hand:dye q.p.rey)
+            [%dial ~]  (dy-made-dial:dye q.p.rey)
+            [%make ~]  (dy-made-make:dye q.p.rey)
+            [%edit ~]  (dy-made-edit:dye q.p.rey)
           ==
       %|  (he-rush(poy ~) %tan p.rey)
     ==
@@ -261,9 +363,7 @@
   ++  he-stir                                           ::  apply change
     |=  cal=console-change
     ^+  +>
-    =^  dut  say  
-        %+  ~(remit cs say)  cal
-        ?~(duy he-like |=((list ,@c) %|))
+    =^  dut  say  (~(remit cs say) cal he-like)
     ?~  dut
       +>.$
     (he-rush %mor [%det u.dut] [%bel ~] ~)
@@ -273,12 +373,11 @@
     ^+  +>
     ?>  ?=(~ poy)
     =<  dy-step
-    ~(dy-init dy mad [0 0 ~ ~ ~])
+    ~(dy-init dy mad [0 0 ~ %& ~ ~ ~])
   ::
   ++  he-done                                           ::  parse command
     |=  txt=tape
     ^+  +>
-    ?^  duy  (he-rush %bel ~)
     =+  foy=(rust txt wide:(vang & ~))
     ?~  foy
       (he-rush %bel ~)
@@ -291,11 +390,13 @@
             [%nex ~]
             [%det cal]
         ==
-    `dojo-command`[%save & %foo 0 %noun %& u.foy]
+    `dojo-command`[%save & %foo 0 %& u.foy]
   ::
   ++  he-work                                           ::  apply input
     |=  act=console-action
     ^+  +>
+    ?^  poy
+      (~(dy-work dy u.poy) act)
     ?-  -.act
       %det  (he-stir +.act)
       %ret  (he-done (tufa buf.say))
@@ -312,6 +413,7 @@
 ::
 ++  poke-console-action
   |=  [ost=bone her=ship act=console-action]
+  ~&  %poke-console-action
   ^-  [(list move) _+>]
   he-abet:(~(he-work he [ost [ost %give %nice ~]~] (~(got by hoc) ost)) act)
 ::
