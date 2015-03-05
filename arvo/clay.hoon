@@ -2145,6 +2145,12 @@
       [mos ..^$]
     ==
   ::
+      %mere
+    ~&  ?:  ?=(%& -.p.+.q.hin)
+          ['merge succeeded' p.p.+.q.hin]
+        ['merge failed' p.p.p.+.q.hin]
+    [~ ..^$]
+  ::
       %waft
     ?>  ?=([@ @ ~] tea)
     =+  syd=(slav %tas i.tea)

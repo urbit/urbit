@@ -12,14 +12,14 @@
 ++  poke--args
   %+  args-into-gate  .
   |=  [arg=(list path)]
-  =-  tang/(flop `(list tank)`(zing -))
+  =-  tang/(zing -)
   %+  turn  arg
   |=  pax=path
-  ^-  (list tank)
+  ^-  tang
   =+  ark=;;(arch .^(%cy pax))
   ?^  q.ark
     :-  leaf/(spud pax)
-    %+  turn  (lore ;;(,@t .^(%cx pax)))
+    %+  turn  (lore ;;(@t .^(%cx pax)))
     |=(a=cord leaf/(trip a))
   ?-     r.ark                                          ::  handle ambiguity
       ~

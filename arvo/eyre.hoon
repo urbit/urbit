@@ -46,6 +46,7 @@
           $%  [%mess p=hapt q=ship r=cage]              ::
               [%nuke p=hapt q=ship]                     ::
               [%show p=hapt q=ship r=path]              ::
+              [%took p=hapt q=ship]                     ::  
           ==  ==                                        ::
               $:  %t                                    ::  to  %temp
           $%  [%wait p=@da]                             ::
@@ -400,13 +401,17 @@
         ?:  ?=(%mess i.mab)
           (hear:woy ~ %& %json !>(jon))
         =+  can=(slav %ud i.t.mab)
-        =+  sem=(need (~(get by can.sub.siq:beat:u.ouy) can))
-        (soon %& sem u.ouy can %show ?.(?=(%show i.mab) jon (wrap sem jon)))
+        =+  sem=(~(get by can.sub.siq:beat:u.ouy) can)
+        ?~  sem                                         ::  XX shouldn't occur
+          u.ouy
+        (soon %& u.sem u.ouy can %show ?.(?=(%show i.mab) jon (wrap u.sem jon)))
       ::
           ?(%rust %rush)
         ?>  ?=(%show i.mab)
         =+  can=(slav %ud i.t.mab)
         =+  sem=(need (~(get by can.sub.siq:beat:u.ouy) can))
+        =.  mow.u.ouy  
+            :_(mow.u.ouy [hen %pass tea [%g %took [- + ~]:hap.sem you.u.ouy]])
         ?:  =(0 can)
           =<  abet  =<  work  =<  abet
           ?~  num.sem
@@ -537,6 +542,7 @@
           q.ask  (~(del by q.ask) sud)
           kes    (~(del by kes) hen)
         ==
+      ::  ~&  eyre-them/(earn p.u.p.kyz)
       %=  +>.$
         mow    :_(mow [ged [%give %thus p.ask p.kyz]])
         p.ask  +(p.ask)
@@ -546,6 +552,7 @@
     ::
         %they                                           ::  inbound response
       =+  kas=(need (~(get by q.ask) p.kyz))
+      ::  ~&  >  eyre-they/[p.q.kyz (earn p.q.kas)]
       %=  +>.$
         mow    :_(mow [p.kas [%give %thou q.kyz]])
         q.ask  (~(del by q.ask) p.kas)
@@ -867,7 +874,7 @@
     [~ u=~(. ya [our ses] u.suf u.cuz)]
   ::
   ++  noon                                              ::  login page
-    |=  [our=ship ses=hole whu=(unit ship) rul=tape ruf=tape]
+    |=  [our=ship ses=hole whu=(unit ship) rul=tape]
     ^-  manx
     =+  ^=  sic  ^-  manx
       ;script:'''
@@ -913,9 +920,9 @@
                       delete all.pas;
 
                       console.log('redirect')
-                      window.location= // "http://"+seal.who+".urbit.org/gul?"
-                                      "http://0:8445/gul?"
-                                      + $.param(all);
+                      window.location= 
+                        "http://"+seal.who+".urbit.org/gul?"
+                        + $.param(all);
                       return false;
                     }
 
@@ -938,7 +945,7 @@
                     $output.html(output.replace(
                       'sorry. please try again.<br>',''))
 
-                    $.post(form, seal, function(data,xhr,status) {
+                    $.post("/pul", seal, function(data,xhr,status) {
                       console.log(data);
                       if(data.ok == true) {
                         document.location = data.next;
@@ -990,7 +997,6 @@
         ; var host = '{(trip (rsh 3 1 (scot %p our)))}';
         ; var goal = '{?~(whu ~ (trip (rsh 3 1 (scot %p u.whu))))}';
         ; var burl = '{rul}';
-        ; var form = '{ruf}';
         ; var sesh = '{(trip ses)}';
       ==
     =>  .(+.sic (weld `marl`cof `marl`+.sic))
@@ -1592,8 +1598,8 @@
       :+  ~
         %red
       ::  :+  [p.p.pul q.p.pul r.p.pul]
-      :+  [| q.p.pul r.p.pul]                           ::  XX  https
-        [~ /gul]
+      :+  [| q.p.pul r.p.pul]                           ::  XX https
+        [p.q.pul /gul]                                  ::  XX js discrimination
       :-  [%url (crip (earn pul(p.p |)))]
       ?~  whu  ~
       [%who (rsh 3 1 (scot %p u.whu))]~
@@ -1792,6 +1798,12 @@
     ++  lash                                            ::  user is authorized
       |=(a=ship (~(has ju aut.ced) %$ (scot %p a)))
     ::
+    ++  redi                                            ::  js login redirect
+      |=  pul=purl  ^-  tape
+      "window.location = '{(earn pul)}".
+        "{?~(r.pul "?" "&")}url=' +".
+        "encodeURIComponent(window.location)"
+    ::
     ++  step                                            ::  step in work
       |-  ^+  +
       =^  zib  +.$
@@ -1888,10 +1900,9 @@
             ?:  wit.p.som.pip
               [~ pip(pez [%who %$ (scot %p (need whu.p.som.pip))])]
             =+  rul=(earn pul.p.som.pip)
-            =+  ruf=(earn (erle our pul.p.som.pip(q.q /pul, r ~)))
             =+  sus=?~(foy.p.som.pip ses q.u.foy.p.som.pip)
             ~&  auth-request/secret=`cord`lass
-            =+  ham=(noon our sus whu.p.som.pip rul ruf)
+            =+  ham=(noon our sus whu.p.som.pip rul)
             [~ pip(pez [%fin %ham ham])]
           ?.  =(lass u.pus.p.som.pip)
             :_  +>.$
@@ -1928,9 +1939,13 @@
           %=    pip
               pez
             :-  %fin
+            =+  pul=p.som.pip
+            ?:  ?=([~ %js] p.q.pul)               ::  XX js discrimination
+              [%mid /application/javascript (tact (redi pul(p.q ~)))]
+            =.  p.q.pul  ~
             :-  %raw
             :+  307
-              [%location (crip (earn p.som.pip))]~
+              [%location (crip (earn pul))]~
             ~
           ==
         ::
@@ -2053,7 +2068,7 @@
       |=  nap=@ud
       =+  suy=(~(get by sok) nap)
       ?~  suy  ~
-      (some ~(. yo nap u.suy))
+      (some ~(. yo nap=nap you=p.u.suy siq=q.u.suy))
     ::
     ++  yo                                              ::  app instance
       |_  $:  nap=@ud                                   ::  instance number
@@ -2160,7 +2175,7 @@
         ^-  [(unit pimp) _+>]
         =.  +>.$
           %-  ~(rep by can.sub.siq)
-          |=  [p=[p=@ud q=stem] q=_+>.$]
+          =+  [*p=[p=@ud q=stem] q=+>.$]  |.
           ?.  =([hap pax] [hap.q.p pax.q.p])  q
           =.  q  q(can.sub.siq (~(del by can.sub.siq:q) p.p))
           ([-(hen +)]:[pass:q hen.q.p] `p.p %g %nuke [- + ~]:hap you)

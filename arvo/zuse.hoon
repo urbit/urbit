@@ -525,7 +525,7 @@
   ==
 ::
 ++  poja                                                ::  parse JSON
-  =<  |=(a=cord (rush a apex))
+  =<  |=(a=cord `(unit json)`(rush a apex))
   |%
   ++  apex                                              ::  JSON value
     %+  knee  *json  |.  ~+
@@ -2005,7 +2005,8 @@
   ^-  miso
   =+  dir=((hard arch) .^(%cy pax))
   ?~  q.dir  [%ins val]
-  [%mut ((hard cage) .^(%cx pax)) val]
+  =+  for=((hard mark) -:(flop pax))
+  [%mut [for [%atom %$] .^(%cx pax)] val]
 ::
 ++  file                                                ::  simple file load
   |=  pax=path
@@ -2083,12 +2084,13 @@
     [~ ~]
   ?^  t.rax
     [p.pok [i.rax q.pok]]:[pok=$(rax t.rax) .]
-  =+  ^-  raf=(unit ,[p=term q=(unit term)])
-      %+  rush  i.rax
-      ;~(plug sym ;~((bend) (easy ~) ;~(pfix dot sym)))
-  ?~  raf
+  =+  ^-  raf=(like tape)
+      %.  [1^1 (flop (trip i.rax))]
+      ;~(sfix (plus ;~(less dot next)) dot)
+  ?~  q.raf
     [~ [i.rax ~]]
-  [q.u.raf [p.u.raf ~]]
+  =+  `[ext=tape [@ @] fyl=tape]`u.q.raf
+  [[~ (crip (flop ext))] [(crip (flop fyl)) ~]]
 ::
 ++  fuel                                                ::  parse fcgi
   |=  [bem=beam but=path]
@@ -2223,7 +2225,7 @@
   --
 ::
 ++  epur                                                ::  url/header parser
-  =<  |=(a=cord (rush a auri))
+  =<  |=(a=cord `(unit purl)`(rush a auri))
   |%
   ++  apat                                              ::  2396 abs_path
     %+  cook  deft
@@ -2672,8 +2674,8 @@
   (turn b |=(c=span (cat 3 '_' (wack c))))
 ::
 ++  pick                                                ::  light path decoding
-  |=  a=span  ^-  (unit ,[p=term q=path])
-  (rush a (most cab (sear wick urt:ab)))
+  =+  fel=(most cab (sear wick urt:ab))
+  |=(a=span `(unit ,[p=term q=path])`(rush a fel))
 ::
 ++  saxo                                                ::  autocanon
   |=  who=ship
@@ -3209,5 +3211,5 @@
               [%chan (list $|(@ud [p=@ud q=@ud]))]      ::
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action
 ++  will  (list deed)                                   ::  certificate
-++  zuse  %314                                          ::  hoon/zuse kelvin
+++  zuse  %310                                          ::  hoon/zuse kelvin
 --

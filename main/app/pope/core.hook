@@ -41,7 +41,6 @@
     %t  =-  %.(+<.$ (add-exit (return tang/-)))
         =+  bur=(shax (add who (shax fra)))
         =+  arc=(cryp 2.048 bur)
-        %-  flop  ^-  (list tank)
         :~  leaf/"generator: {(scow %uw bur)}"
             leaf/"fingerprint: {(scow %uw fig:ex:arc)}"
   ==    ==

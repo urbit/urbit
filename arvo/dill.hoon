@@ -51,6 +51,7 @@
           $%  [%mess p=[p=ship q=path] q=ship r=mess]   ::
               [%nuke p=[p=ship q=path] q=ship]          ::
               [%show p=[p=ship q=path] q=ship r=path]   ::
+              [%took p=[p=ship q=path] q=ship]          ::
           ==  ==                                        ::
               $:  %t                                    ::
           $%  [%wait p=@da]                             ::
@@ -65,15 +66,9 @@
           $%  [%logo p=@]                               ::
               [%mean p=ares]                            ::
               [%nice ~]                                 ::
-              $:  %rush                                 ::  XX
+              $:  %rush                                 ::
               $%  [%term-line q=term-line]              ::
                   [%hymn q=manx]                        ::
-                  [%json q=json]                        ::
-              ==  ==                                    ::
-              $:  %rust                                 ::
-              $%  [%term-line q=term-line]              ::
-                  [%hymn q=manx]                        ::
-                  [%json q=json]                        ::
               ==  ==                                    ::
               [%verb ~]                                 ::
               [%sage p=path q=*]                        ::
@@ -322,9 +317,10 @@
         %nice  +>.$
         %note  ?.(p.yar +>.$ (fume p.+.sih q.+.sih))    ::  debug message
         ?(%rush %rust)                                  ::  XX  reset prompt
+      =.  mos  :_(mos [hen %pass tea %g %took [our /terminal] our])
       ?>  ?=(%term-line +>-.sih)
       =.  +>.$
-        =+  lis=?-(-.+.sih %rust (scag 1.000 r.q.sih), %rush r.q.sih)
+        =+  lis=(scag 1.000 r.q.sih)
         =-  (furl (zing (turn (flop lis) -)))
         |=  a=tark
         ^-  wall
@@ -333,16 +329,19 @@
           ?:  =(q.s.yar p.a)  ~
           ~[(welp ~(ram re q.a) ~(ram re r.a))]
         ==
+      ?.  (levy r.q.sih |=(a=tark ?=(%stem -.a)))
+        +>.$                          ::  XX separate prompt/history messages
       %-  edit
       =|  bed=bein
       =+  ^=  hyt  ^-  hist
           =+  hyt=(~(get by r.yar) /)
           ?~(hyt *hist u.hyt)
       ?:  &(?=(^ q.q.yar) =(/ hux.u.q.q.yar))
+        =+  bun=(rip 5 (turf r.p.q.sih))
         %=  u.q.q.yar
-          bul  ?~  r.p.q.sih  bul.u.q.q.yar  (met 3 r.p.q.sih)
-          bus  ?~  r.p.q.sih  bus.u.q.q.yar  (met 3 r.p.q.sih)
-          but  ?~  r.p.q.sih  but.u.q.q.yar  (rip 3 r.p.q.sih)
+          bul  ?~  r.p.q.sih  bul.u.q.q.yar  (lent bun)
+          bus  ?~  r.p.q.sih  bus.u.q.q.yar  (lent bun)
+          but  ?~  r.p.q.sih  but.u.q.q.yar  bun
           hyt  [+(p.hyt) [%$ q.hyt]]
           pot  (trip p.p.q.sih)
           pol  (met 3 p.p.q.sih)

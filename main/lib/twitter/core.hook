@@ -3,15 +3,8 @@
 ::::  /hook/core/twitter/lib
   ::
 /?    314
-::
-::::  structures
-  ::
-|%
-++  keys                                                ::  twitter-key type
-  $:  con=[tok=@t sec=@t]                               ::  user key pair
-      acc=[tok=@t sec=@t]                               ::  app key pair
-  ==
---
+/-   *twitter
+=+   twit
 !:
 ::::  functions
   ::
@@ -113,15 +106,23 @@
 ::::  library
   ::
 |%
+++  twip                                                ::  response printers
+  |%
+  ++  mean
+    |=  [msg=@t num=@ud]  ^-  tank
+    rose/[": " `~]^~[leaf/"Error {<num>}" leaf/(trip msg)]
+  --
 ++  twir                                                ::  response parsers
   |%
   ++  fasp  |*([a=@tas b=*] [(gsub '-' '_' a) b])
+  ++  user  (cook crip (plus ;~(pose aln cab)))
+  ++  mean  (ot errors/(ar (ot message/so code/ni ~)) ~):jo
   ++  stat
     =+  jo
     ^-  $+(json (unit ,[id=@u who=@ta now=@da txt=@t]))
     %-  ot
     :~  id/ni
-        user/(ot (fasp screen-name/so) ~)
+        user/(ot (fasp screen-name/(su user)) ~)
         (fasp created-at/da)
         text/so
     ==
@@ -129,7 +130,7 @@
     =+  jo
     ^-  $+(json (unit (list ,who=@ta)))
     =-  (ot users/(ar -) ~)
-    (ot (fasp screen-name/so) ~)
+    (ot (fasp screen-name/(su user)) ~)
   --
 ++  twit
   =>  |%                                                ::  request structures

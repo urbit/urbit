@@ -16,7 +16,6 @@
     =<  :~  publish/(ar thot)
             review/(ar thot)
             design/(ot party/so config/(mu conf) ~)
-            ping/auri
         ==
     |%
     ++  op                                              ::  parse keys of map
@@ -57,22 +56,22 @@
         statement/stam
       ==
     ::
-    ++  audi  (op stati (ci (soft delivery) so))        ::  audience
-    ++  auri  (op stati (ci (soft presence) so))
+    ++  audi  (op parn memb)                            ::  audience
+    ++  auri  (op parn (ci (soft presence) so))
+    ++  memb  (ot envelope/lope delivery/(ci (soft delivery) so) ~)
+    ++  lope  (ot visible/bo sender/(mu (su parn)) ~)
     ::
-    ++  stati
-      ^-  $+(nail (like station))
+    ++  parn
+      ^-  $+(nail (like partner))
       %+  peach
         ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
-      %+  sear  (soft partner)
+      %+  sear  (soft passport)
       ;~((glue fas) sym urs:ab)                         ::  XX  [a-z0-9_]{1,15}
     ::
     ++  stam
       ^-  $+(json (unit statement))
-      =-  (ot now/di speech/(of -) ~)
-      :~  own/so
-          say/so
-          lin/(ot say/bo txt/so ~) 
+      =-  (ot date/di bouquet/(as (ar so)) speech/(of -) ~)
+      :~  lin/(ot say/bo txt/so ~) 
           ::  exp/(cu |=(a=cord [a ~]) so)
           ::  inv/(ot ship/(su fed:ag) party/(su urs:ab) ~)
       ==
@@ -81,10 +80,10 @@
     ++  conf
       ^-  $+(json (unit config))
       %-  ot  :~
-        sources/(as (su stati))
+        sources/(as (su parn))
+        caption/so
         :-  %cordon
-        %+  cu  |*(a=^ ?~(-.a a a))                     ::  XX  do type stuff
-        (ot white/bu list/(as (su fed:ag)) ~)
+        (ot posture/(ci (soft posture) so) list/(as (su fed:ag)) ~)
       ==
   --
 --  --

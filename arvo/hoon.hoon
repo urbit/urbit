@@ -9,13 +9,13 @@
     (make:all cud)                                      ::  else simple compile
 ^=  all                                                 ::  assemble engine
   =~                                                    ::  volume stack
-%164                                                    ::  version constant
+%163                                                    ::  version constant
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 0, version stub                ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-~%  %k.164  ~  ~                                        ::
+~%  %k.163  ~  ~                                        ::
 |%                                                      ::
-++  hoon  %164                                          ::  version stub
+++  hoon  %163                                          ::  version stub
 --                                                      ::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 1, Hoon models                 ::::::
@@ -272,7 +272,7 @@
             [%smdt p=twig q=tusk]                       ::
             [%smdq p=(list beer)]                       ::  assemble string
             [%smsg p=twig q=tusk]                       ::  gonads
-            [%smsm p=twig q=twig]                       ::  make sure q is a p
+            [%smsm p=tile q=twig]                       ::  make sure q is a p
           ::                                            ::::::  compositions
             [%tsbr p=tile q=twig]                       ::  push bunt: =+(_p q)
             [%tscl p=tram q=twig]                       ::  p changes, then q
@@ -401,7 +401,7 @@
 ++  wall  (list tape)                                   ::  text lines (no \n)
 ++  wain  (list cord)                                   ::  text lines (no \n)
 ++  wing  (list limb)                                   ::
-++  wine  $|  ?(%noun %path %tank %void %wall %wool %yarn)
+++  wine  $|  ?(%noun %path %type %void %wall %wool %yarn)
           $%  [%atom p=term]                            ::
               [%core p=(list ,@ta) q=wine]              ::
               [%face p=term q=wine]                     ::
@@ -1927,6 +1927,7 @@
   +-  uni                                               ::  union
     ~/  %uni
     |*  b=_a
+    ?:  =(a b)  a
     |-  ^+  a
     ?~  b
       a
@@ -3326,7 +3327,7 @@
         ::
             %f
           ?:  =(& q.p.lot)
-            ['.' 'm' 'o' 's' 't' 'a' 's' 's' 'u' 'r' 'r' 'e' 'd' 'l' 'y' rex]
+            ['.' 'y' rex]
           ?:(=(| q.p.lot) ['.' 'n' rex] (z-co q.p.lot))
         ::
             %n   ['~' rex]
@@ -3652,9 +3653,9 @@
   |=  pax=path  ^-  tape
   =-  ~(ram re %rose ["/" "/" ~] -)
   (turn pax |=(a=span [%leaf (trip a)]))
-++  stab                                                ::  parse span to path
-  |=  zep=@ta  ^-  path
-  (rash zep ;~(pfix fas (more fas urs:ab)))
+++  stab                                                ::  parse cord to path
+  =+  fel=;~(pfix fas (more fas urs:ab))
+  |=(zep=@t `path`(rash zep fel))
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eM, regular-expressions      ::
 ::
@@ -6662,7 +6663,8 @@
     ::
         [%smsm *]                                       ::                  ;;
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
-      :+  %tsls  [%ktts %a [%tsgr [%cnzy %v] p.gen]]    ::  =+  a==>(v {p.gen})
+      :+  %tsls  :+  %ktts  %a                          ::  =+  ^=  a
+                 [%tsgr [%cnzy %v] [%bccm p.gen]]       ::      =>(v ,{p.gen})
       :+  %tsls  [%ktts %b [%tsgr [%cnzy %v] q.gen]]    ::  =+  b==>(v {q.gen})
       :+  %tsls                                         ::  =+  c=(a b)
         [%ktts %c [%cnhp [%cnzy %a] [%cnzy %b] ~]]      ::
@@ -7011,7 +7013,7 @@
     ?-    q.ham
         %noun      [%leaf '*' ~]
         %path      [%leaf '/' ~]
-        %tank      [%leaf '*' 't' ~]
+        %type      [%leaf '#' 't' ~]
         %void      [%leaf '#' ~]
         %wool      [%leaf '*' '"' '"' ~]
         %wall      [%leaf '*' '\'' '\'' ~]
@@ -7089,9 +7091,13 @@
       ?>  ?=(@ -.lum)
       [[%leaf (rip 3 -.lum)] $(lum +.lum)]
     ::
-        %tank
-      =+  cis=(tank lum)
-      ?.(=(lum cis) ~ [~ cis])
+        %type
+      =+  reb=(slap [p:!>(.) .(sut lum)] %cnzy %duck)
+      =+  cis=(tank q.reb)
+      ?.  =(cis q.reb)  ~
+      :^  ~   %palm
+        [~ ~ ~ ~] 
+      [[%leaf '#' 't' '/' ~] cis ~]
     ::
         %wall
       :-  ~
@@ -7358,6 +7364,8 @@
       [p.yad [%face p.sut q.yad]]
     ::
         [%fork *]
+      ?:  =(p.sut fork/[cube/[%noun atom/%tas]]^[cube/[%void atom/%tas]])
+        [dex %type]                    ::  XX  proper print
       =+  hin=$(sut p.sut)
       =+  yon=$(dex p.hin, sut q.sut)
       :-  p.yon
@@ -8946,7 +8954,7 @@
                   =+  rev=(plex b)
                   ?~  rev  ~
                   %-  some
-                  :+  %smsm  ~(clam al a)
+                  :+  %smsm  a
                   [%dtkt %dtzz %$ %cx u.rev]
                 ;~(plug hill rood)
               ==
@@ -9194,7 +9202,7 @@
                 :~  [':' (rune col %smcl expi)]
                     ['.' (rune dot %smdt expi)]
                     ['~' (rune sig %smsg expi)]
-                    [';' (rune sem %smsm expb)]
+                    [';' (rune sem %smsm expo)]
                 ==
               ==
             :-  '='
@@ -9846,6 +9854,7 @@
     =+  rig=(slym q.sew arg)
     =+  rev=(slym (slap bud (rain pax txt)) bud)
     =+  syg=(slym rev arg)
+    ~|  %load-lost
     +>.$(q.sew (slam (slap syg [%cnzy %load]) (slap rig [%cnzy %stay])))
   ::
   ++  wink                                              ::  deploy
@@ -10142,7 +10151,7 @@
   ++  jack                                              ::  dispatch card
     |=  [lac=? gum=muse]
     ^-  [[p=(list ovum) q=(list muse)] _niz]
-    =.  lac  |(lac ?=(?(%g %f) p.gum))
+    ::  =.  lac  |(lac ?=(?(%g %f) p.gum))
     %+  fire
       p.gum 
     ?-    -.r.gum
