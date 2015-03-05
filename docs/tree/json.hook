@@ -1,13 +1,13 @@
 ::
 /?    314
 /=    gas    /$    fuel
-/=    ral    /:    /=doc=/pub    /%  /react-js/
-/=    pal    /:    /=doc=/pub
+/=    ral    /:    /=docs=/pub    /%  /react-js/
+/=    pal    /:    /=docs=/pub
              /;    |=  a=(map ,@ta cord)  a
              /%    2
              /_    /react-js/
 ::
-/=    sal    /:    /=doc=/pub
+/=    sal    /:    /=docs=/pub
              /;    |=  a=(map ,@ta cord)  a
              /%    2
              /_    /react-snip-js/
