@@ -6176,7 +6176,9 @@
     |=  [sut=type ref=type]
     ^-  [? worm]
     ?:  (~(has in nes) [sut ref])  [& +>+<]
-    ?.  (~(nest ut sut) | ref)  [| +>+<]
+    ?.  (~(nest ut sut) | ref)  
+      ::  ~&  %nest-failed
+      [| +>+<]
     [& +>+<(nes (~(put in nes) [sut ref]))]
   ::
   ++  nets                                              ::  typeless nest
@@ -6185,6 +6187,14 @@
     ?:  (~(has in nes) [sut ref])  [& +>+<]
     =+  gat=|=([a=type b=type] (~(nest ut a) | b))
     ?.  (,? .*(gat(+< [sut ref]) -.gat))
+      ::  ~&  %nets-failed
+      ::  =+  tag=`*`skol
+      ::  =+  foo=(tank .*(tag(+< ref) -.tag))
+      ::  =+  bar=(skol sut)
+      ::  ~&  %nets-need
+      ::  ~>  %slog.[0 bar]
+      ::  ~&  %nets-have
+      ::  ~>  %slog.[0 foo]
       [| +>+<.$]
     [& +>+<.$(nes (~(put in nes) [sut ref]))]
   ::
