@@ -1,6 +1,5 @@
 /* j/2/roll.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 

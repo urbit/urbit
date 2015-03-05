@@ -8,11 +8,10 @@
   |=  [ost=bone you=ship arg=$|(~ [_| ~])]
   :_  +>.$
   =+  top=`path`/(scot %p our.hid)/arvo/(scot %da lat.hid)
-  :+  [ost %give %nice ~]
-    [ost %pass ?~(arg /refresh /) %t %wait lat.hid]
-  %-  welp  :_  [ost %give %vega (weld top `path`/hoon)]~
+  :^    [ost %give %nice ~]
+      [ost %pass ?~(arg /refresh /) %t %wait lat.hid]
+    [ost %give %vega (weld top `path`/hoon)]
   %+  turn
-    %-  flop
     ^-  (list ,[p=@tas q=@tas])
     :~  [%$ %zuse]
         [%a %ames]

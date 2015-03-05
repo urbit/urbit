@@ -1,6 +1,5 @@
 /* g/v.c
 **
-** This file is in the public domain.
 */
 #include <stdio.h>
 #include "all.h"

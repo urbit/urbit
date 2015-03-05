@@ -10,12 +10,14 @@
   ::
 |%                                                      ::
 ++  axle                                                ::
-  $:  tiv=?                                             ::  typing?
+  $:  %1                                                ::  version
+      tiv=?                                             ::  typing?
+      wit=[p=@u q=(map ,@u coma)]                       ::  waiting commands
       pid=@u                                            ::  next process id
       pax=_`path`/=try=                                 ::  working directory
       act=(unit span)                                   ::  active child
-      pip=(map span span)                               ::  pipe out->in
-      pop=(map span span)                               ::  pipe in->out
+      pip=(jar span span)                               ::  pipe out->in
+      pop=(jar span span)                               ::  pipe in->out
       pot=(map span ,[cord prom cord])                  ::  prompts
       var=(map term vase)                               ::  variables
   ==                                                    ::
@@ -50,6 +52,7 @@
       [%mess p=hapt q=ship r=cage]                      ::
       [%meta p=vase]                                    ::
       [%nuke p=hapt q=ship]                             ::
+      [%took p=hapt q=ship]                             ::
   ==  ==  ==                                            ::
 ++  mand  ,[p=term q=(list twig)]                       ::  name and arguments
 ++  coma                                                ::
@@ -58,7 +61,7 @@
       [%path p=path]                                    ::  chdir
       [%del p=path]                                     ::  rm file
       [%ins p=path q=(unit twig)]                       ::  add file
-      [%mut p=path q=twig]                              ::  change file
+      [%mut p=path q=(unit twig)]                       ::  change file
       [%hoon p=twig]                                    ::  eval expression
       [%comt ~]                                         ::  comment
       [%var p=term q=twig]                              ::  set variable
@@ -113,11 +116,11 @@
     ;~  pose
       (stag %run ;~(plug (star ;~(sfix (task(tol %0) bar) ace)) (task col)))
       (stag %end ;~(pfix col sem ;~(pose (stag %& dem) (stag %| sym))))
-::      (stag %del ;~(pfix hep ace loca))
-::      (stag %mut ;~(pfix col ace ;~(plug loca expg)))
-::      (stag %ins ;~(pfix lus ace ;~(plug loca (opts expg))))
+      (stag %del ;~(pfix hep (plus ace) loca))
+      (stag %mut ;~(pfix col (plus ace) ;~(plug loca (opts expg))))
+      (stag %ins ;~(pfix lus (plus ace) ;~(plug loca (opts expg))))
       (stag %help ;~(pfix wut ace ;~(pfix col sym)))
-::      (stag %path (full ;~(sfix loca(pax paf) (star ace))))
+      (stag %path (full ;~(sfix loca(pax paf) (star ace))))
       (stag %var ;~(plug ;~(pfix tis sym) expg))
       (stag %rvar ;~(pfix ;~(plug tis tis) sym))
       (stag %hoon expr)
@@ -140,7 +143,7 @@
   ::
   --
 --
-::
+!:
 ::::  per event
   ::
 |%
@@ -155,10 +158,11 @@
   ::
   ++  blab
     |=  mof=(list move)
-    +>.$(mow (welp mof mow))
+    +>.$(mow (welp (flop mof) mow))
   ::
   ++  chew-file
     |=  [paf=path mor=$|(cord toro)]
+    %-  blab
     ^-  (list move)
     ?@  mor
       (print palm/[" " ~ ~ ~]^~[leaf/(trip mor) (dank:ut paf)])
@@ -167,14 +171,9 @@
   ++  cubs                                              ::  tasks with open /in
     %-  sort  :_  |=([a=span b=span] (lth (slav %ud a) (slav %ud b)))
     ^-  (list span)
-    %+  murn  (~(tap by sup.hid))
-    |=  [@ @ a=path] 
-    ?.  ?&  ?=([%in cord ~] a)
-            (~(has by cub.hid) i.t.a)
-            !(~(has by pop) i.t.a)
-        ==
-      ~
-    (some i.t.a)
+    %+  murn  (~(tap by cub.hid))
+    |=  [a=span @]
+    ?.(=([~ ~] (~(get by pop) a)) ~ (some a))
   ::
   ++  eat
     |=  [you=ship com=coma]
@@ -195,7 +194,6 @@
   ++  eat-del
     |=  paf=path
     ^+  +>
-    %-  blab
     %+  chew-file  paf
     ?~  (file paf)  '! none'
     (fray paf)
@@ -226,23 +224,29 @@
   ++  eat-hoon
     |=  gen=twig
     ^+  +>
-    (blab (print (sell (exec gen))))
+    %+  with  gen  |=  rez=vase
+    (blab (print (sell rez)))
   ::
   ++  eat-ins
     |=  [paf=path gen=(unit twig)]
     ^+  +>
-    %-  blab
-    %+  chew-file  paf
-    ?^  (file paf)  '! exists'
-    (foal paf %$ (exec (fall gen [%bczp atom/%t])))
+    ?^  (file paf)  (chew-file paf '! exists')
+    %+  with  (fall gen [%bczp atom/%t])
+    |=  new=vase
+    =+  for=((hard mark) -:(flop paf))
+    (chew-file paf (foal paf for new))
   ::
   ++  eat-mut
-    |=  [paf=path gen=twig]
+    |=  [paf=path gen=(unit twig)]
     ^+  +>
-    %-  blab
-    %+  chew-file  paf
-    ?~  (file paf)  '! none'
-    (foal paf %$ (exec gen))
+    =+  fel=(file paf)  
+    ?~  fel
+      (chew-file paf '! none')
+    ?^  gen 
+      %+  with  u.gen  |=  new=vase
+      =+  for=((hard mark) -:(flop paf))
+      (chew-file paf (foal paf for new))
+    (blab (stray (crip ": {(spud paf)} {<(,@t u.fel)>}"))) 
   ::
   ++  eat-help
     |=  app=term
@@ -273,25 +277,27 @@
     ?.  =-  (~(has by r:(arch -)) %core)
         .^(%cy /(scot %p our.hid)/main/(scot %da lat.hid)/app/[p.mad])
       (blab (print leaf/"app {<p.mad>} does not exist"))
-    =|  inp=(unit span) 
-    =<  +>.$
-    %+  reel
-      `(list mand)`(welp mud mad ~)
-    =+  a=[app=*mand .]
-    |.
-    =>  a
+    =+  liz=`(list mand)`(welp mud mad ~)
+    %+  with  [%clsg (turn liz |=(mand [%clsg q]))]  
+    |=  arg=vase
+    =|  inp=(unit span)
+    |-
+    ?~  liz  ..eat-run
     =+  cil=(scot %ud pid)
-    %_    +>  
+    %_    $
+        liz  t.liz
+        arg  (slot 3 arg)
         pid  +(pid)
-        pip  ?~  inp  pip  (~(put by pip) cil u.inp)
-        pop  ?~  inp  pop  (~(put by pop) u.inp cil)
+        pip  ?~  inp  pip  (~(add ja pip) cil u.inp)
+        pop  ?~  inp  pop  (~(add ja pop) u.inp cil)
         inp  `cil
         mow
+      =<  mow                         ::  XX  side effects?
+      %-  blab
       =+  yon=[our.hid cil imp.hid]
-      =+  mez=[(cat 3 p.app '-args') (exec [%clsg q.app])]
-      %-  welp  :_  mow
+      =+  mez=[(cat 3 p.i.liz '-args') (slot 2 arg)]
       ^-  (list move)
-      :~  [ost %pass /child/[cil]/fork %g %sire p.app cil]
+      :~  [ost %pass /child/[cil]/fork %g %sire p.i.liz cil]
           [ost %pass /child/[cil]/out %g %show yon you /out]
           [ost %pass /child/[cil]/main %g %meta !>([%mess yon you mez])]
       ==
@@ -307,14 +313,15 @@
   ++  eat-var
     |=  [vor=term gen=twig]
     ^+  +>
+    %+  with  gen  |=  new=vase
     =+  old=(~(get by var) vor)
-    =+  new=(exec gen)
     =+  mod=?~(old "new var" ?:(=(new u.old) "same var" "changed"))
     =.  var  (~(put by var) vor new)
     (blab (print leaf/"{mod} {<vor>}"))
   ::
-  ++  exec
-    |=  gen=twig
+  ++  with
+    |=  [gen=twig coz=$+(vase _..with)]
+    %-  coz
     %-  slap  :_  gen
     %+  slop
       %+  slop  [[%face %our p] q]:!>(our.hid)
@@ -359,10 +366,12 @@
       (blab [ost %give %rush %type %|] ~)
     ?.  (~(has by cub.hid) p.gal)  +>.$
     ?:  (~(has by pop) p.gal)  +>.$
-    =.  act  `p.gal
+    =:  act  `p.gal
+        pop  (~(put by pop) p.gal ~)                      ::  .=(~ standard-in)
+      ==
     (blab ping)
   ::
-  ++  ping  (print-vase !>(*(list tank)))
+  ++  ping  (print-vase !>(*tang))
   ++  poke-kyev
     |=  [you=ship key=kyev]
     ^+  +>
@@ -378,10 +387,13 @@
               [ost %give %logo ~]
             ~
           (eat-end:next-act %& (slav %ud u.act))
-      %g  =+  =-  tak=rose/[" " "[" "]"]^(turn cubs -)
-              |=  a=span
-              leaf/(trip (rap 3 (~(got by cub.hid) a) '(' a ')' ~))
-          (blab [ost give/nice/~] (print tak))
+      %g  =+  =-  tak=rose/[" " "[" "]"]^(turn (~(tap by cub.hid)) -)
+              =+  c=(sa cubs)
+              |=  [a=span b=term]
+              :-  %leaf
+              =+  (trip (rap 3 b '(' a ')' ~))
+              ?.((~(has in c) a) - ?.(=([~ a] act) ['+' -] ['*' -]))
+          (blab [ost %give %nice ~] (print tak))
       %x  =.  +>.$  next-act
           (blab [ost %give %nice ~] ping)
     ==
@@ -395,7 +407,8 @@
       (spam /in/[u.act] %rush %txt txt)
     =+  pas=((full ~(parse from pax lat.hid)) [1 1] (trip txt))
     ?~  q.pas
-      (blab (print leaf/"<syntax error at {<`[@ @]`p.pas>}>"))
+      =-  (blab (weld (stray txt) (print leaf/-)))
+      "<syntax error at {<`[@ @]`p.pas>}>"
     =+  com=(wonk pas)
     =>  .(+>.$ (eat you com))
     =.  +>.$  (blab (stash txt))
@@ -411,15 +424,15 @@
       (spam /active/[u.act] %rush %type tiv)
     (blab [ost %give %nice ~] ~)
   ::
-  ++  print  |=(a=tank (print-vase !>(`(list tank)`[a ~])))
+  ++  print  |=(a=tank (print-vase !>(`tang`[a ~])))
   ++  print-vase
-    |=  tan=vase ::  [p=p:!>(*(list tank)) q=*]
+    |=  tan=vase ::  [p=p:!>(*tang) q=*]
     ^-  (list move)
     %^  spam  /out  %meta
     :(slop !>(%rush) !>(%term-line) !>(prompt) !>(~) tan)
   ::
   ++  prompt
-    ^-  [cord prom cord]
+    ^-  [p=cord q=prom r=cord]
     ?^  act
       =+  por=(~(get by pot) u.act)
       ?^  por  u.por
@@ -436,28 +449,37 @@
     ?-    fom
         %fork
       ?>  ?=(%gone +<.sih)
-      %_  +>.$
-        mow  :_(mow [ost %give %nice ~])
-        act  ?:(=(act [~ cil]) ~ act)
-      ==
+      =.  mow  :_(mow [ost %give %nice ~])
+      ?.  =(act [~ cil])  +>.$
+      =.  act  ~
+      (blab ping)
     ::
         %main
       ?>  ?=(?(%nice %mean) +<.sih)
-      (blab [ost %give +.sih] ping)
+      %+  blab
+        [ost %give +.sih]
+      ?.  ?=(%mean +<.sih)  
+        ping 
+      (welp ping (kill cil))
     ::
         %out
       ?.  ?=(?(%rust %rush) +<.sih)  +>.$
+      =>  .(+<.sih %rush)
       ?:  ?=(%prompt p.sih)
-        ?:  (~(has by pip) cil)  +>.$
+        ?^  (~(get ja pip) cil)  +>.$
         =.  pot  (~(put by pot) cil (,[cord prom cord] q.sih))
         (blab ping)
       %-  blab
       ?:  (~(has by pip) cil)
-          (spam /in/(~(got by pip) cil) %meta (slot 3 typ sih))
+        =+  inp=(~(get ja pip) cil)
+        |-  
+        ?~  inp  ~
+        %+  weld  $(inp t.inp)
+        (spam /in/[i.inp] %meta (slot 3 typ sih))
       %-  print-vase
       ?+  p.sih 
         !>([(sell (slot 15 [typ sih]))]~)
-          %tang  (slot 15 [typ sih])
+          %tang  (slam !>(flop) p:!>(*tang) q.sih)
           %txt
         ?^  q.sih  !!                                   ::  move to vase space?
         !>([leaf/(trip q.sih)]~)
@@ -475,9 +497,15 @@
     |=  a=cord
     %^  spam  /out  %meta
     !>([%rush %term-line `term-line`[prompt [a]~ ~]])
+  ::
+  ++  stray
+    |=  a=cord
+    %^  spam  /out  %meta
+    =+  pro=prompt
+    !>([%rush %term-line `term-line`[pro(r a) ~ ~]])
   --
 --
-::
+!:
 ::::  formal interface
   ::
 |_  [hid=hide vat=axle]
@@ -529,6 +557,8 @@
     [[ost %give +.sih]~ +>.$]
   ?~  pax  ~&  %no-path  !!
   ?>  ?=([%child span ?(%fork %out %main) ~] pax)
-  =+  abet:(purr:(ve hid ost vat) i.t.pax i.t.t.pax typ sih)
-  [-< +>.$(vat ->)]
+  =^  moz  vat  abet:(purr:(ve hid ost vat) i.t.pax i.t.t.pax typ sih)
+  :_  +>.$
+  ?.  ?=(%rush +<.sih)  moz
+  [[ost %pass pax %g %took [our.hid i.t.pax imp.hid] our.hid] moz]
 --

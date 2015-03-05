@@ -37,7 +37,7 @@
               [%dub p=term q=horn]                      ::  /=  apply face
               [%fan p=(list horn)]                      ::  /.  list
               [%for p=path q=horn]                      ::  /,  descend
-              [%hel p=horn]                             ::  /%  propogate heel
+              [%hel p=@ud q=horn]                       ::  /%  propogate heel
               [%hub p=horn]                             ::  /@  list by @ud
               [%man p=(map span horn)]                  ::  /*  hetero map
               [%nap p=horn]                             ::  /_  homo map
@@ -569,7 +569,7 @@
               (stag %dub ;~(pfix tis dub:read))
               (stag %fan ;~(pfix dot fan:read))
               (stag %for ;~(pfix com for:read))
-              (stag %hel ;~(pfix cen day:read))
+              (stag %hel ;~(pfix cen hel:read))
               (stag %hub ;~(pfix pat day:read))
               (stag %man ;~(pfix tar man:read))
               (stag %nap ;~(pfix cab day:read))
@@ -609,6 +609,11 @@
                 %+  rail
                   ;~(plug (ifix [sel ser] hath) apex(tol |))
                 ;~(pfix gap ;~(plug hath ;~(pfix gap apex)))
+          ::
+              ++  hel
+                %+  rail
+                  ;~(plug ;~(pose ;~(sfix dem:ag cen) (easy 0)) apex(tol |))
+                ;~(pfix gap ;~(plug ;~(pose ;~(sfix dem:ag gap) (easy 0)) apex))
           ::
               ++  man
                 %+  rail  fail
@@ -966,7 +971,7 @@
         (fine cof `gage`[p.kas vax])
       ::
           %call
-        %+  cool  |.(leaf/"ford: call {<`@p`(mug kas)>}")
+        ::  %+  cool  |.(leaf/"ford: call {<`@p`(mug kas)>}")
         %.  [cof p.kas q.kas]
         ;~  cope
           ;~  coax
@@ -1176,7 +1181,7 @@
         |-  ^-  vase
         ?~  doy  [[%cube 0 [%atom %n]] 0]
         %+  slop
-          (slop [[%atom %a] p.n.doy] q.n.doy)
+          (slop [[%atom %ta] p.n.doy] q.n.doy)
         (slop $(doy l.doy) $(doy r.doy))
       ::
       ++  chap                                          ::  produce resources
@@ -1211,7 +1216,12 @@
           (slop i.tev $(tev t.tev))
         ::
             %for  $(hon q.hon, s.how (weld (flop p.hon) s.how))
-            %hel  $(hon p.hon, arg /, s.how (weld arg s.how))
+            %hel    
+          %=  $  
+            hon    q.hon
+            arg    (scag p.hon arg)
+            s.how  (weld (slag p.hon arg) s.how)
+          ==
             %hub  (chad cof bax %ud p.hon)
             %man
           |-  ^-  (bolt vase)

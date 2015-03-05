@@ -1,6 +1,5 @@
 /* j/dash.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 
@@ -487,13 +486,13 @@ static u3j_core _mood_d[] =
     {}
   };
 
-static u3j_core _k164_d[] =
+static u3j_core _k163_d[] =
   { { "mood", 0, _mood_d },
     {}
   };
 
 static u3j_core _d[] = {
-  { "k164", 0, _k164_d},
+  { "k163", 0, _k163_d},
   {}
 };
 

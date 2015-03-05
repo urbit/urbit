@@ -18,7 +18,6 @@
   ==                                                    ::
 ++  gift                                                ::
   $%  [%rush gilt]                                      ::
-      [%rust gilt]                                      ::
       [%init p=@p]                                      ::
       [%logo @]                                         ::
       [%mean p=ares]                                    ::
@@ -42,6 +41,7 @@
       [%show p=hapt q=ship r=path]                      ::
       [%sire p=term q=span]                             ::
       [%mess p=hapt q=ship r=mess]                      ::
+      [%took p=hapt q=ship]                             ::
   ==  ==  ==                                            ::
 ++  sign                                                ::
   $%  $:  %g                                            ::
@@ -50,7 +50,6 @@
       [%logo @]                                         ::
       [%mean p=ares]                                    ::
       [%nice ~]                                         ::
-      [%rust p=%term-line q=term-line]                  ::
       [%rush p=%term-line q=term-line]                  ::
       [%sage p=path q=*]                                ::
       [%verb ~]                                         ::
@@ -104,6 +103,7 @@
 ::
 ++  start-shell
   |=  [our=ship imp=path ost=bone you=ship pax=path]
+  %-  flop  
   ^-  (list move)
   =+  auc=(pack aut pax)
   :-  [ost %pass [%fork pax] %g %sire [aut auc]]
@@ -149,7 +149,7 @@
       ?-  gal
           %term   [ost %give %rust %hymn page]          ::  hymn front end
           %lines  [ost %give %rust %term-line tel]      ::  term-line output
-      == 
+      ==
     ==
   ::
   ++  poke
@@ -167,9 +167,9 @@
           r.tel  :_(r.tel leaf/"+ {(trip auc)}")
           mow
         ;:  welp
-            (spam tel)
-            [ost %give %nice ~]~
             (start-shell our.hid imp.hid ost you pax)
+            [ost %give %nice ~]~
+            (spam tel)
             mow
         ==
       ==
@@ -203,10 +203,12 @@
         %resp
       ?+    +<.sih  !!
           %nice  +>.$
-          ?(%rust %rush)
+          %rush
+        ::  ~?  !=(p.tel p.q.sih)  prompt/[p.q.sih ?=(~ q.q.sih)]
         =.  p.q.sih  ?^(q.q.sih p.tel p.q.sih)          ::  XX prompt hack
         %_  +>.$
-          mow  (welp (spam q.sih) mow)
+          mow  :-  [ost %pass [%resp pax] %g %took [our.hid [auc imp.hid]] you]
+               (welp (spam q.sih) mow)
           tel  [p.q.sih (weld q.q.sih q.tel) (weld r.q.sih r.tel)]
         ==
       ==
@@ -217,9 +219,9 @@
           %mean
         =+  ^=  new
             =-  (turn - |=(a=tank rose/[~ "! " ~]^[a]~))
-            ^-  (list tank)
+            %-  flop  ^-  tang
             ?~  p.sih  ~
-            (welp q.u.p.sih leaf/(trip p.u.p.sih) ~)
+            [leaf/(trip p.u.p.sih) q.u.p.sih]
         %_    +>.$
             r.tel  (welp new r.tel)
             mow

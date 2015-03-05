@@ -1,0 +1,13 @@
+::  Wipe path, retcon app existence
+::
+::::
+  ::
+/+    sh-utils
+!:
+::::
+  ::
+|_  [hide ~]
+++  poke--args
+  %+  gate-bang  |=([a=path ~] [%g %wipe our a])
+  (args-done ,_`.)
+--

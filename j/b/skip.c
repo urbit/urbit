@@ -1,6 +1,5 @@
 /* j/2/skip.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 

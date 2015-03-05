@@ -1,6 +1,5 @@
 /* j/3/con.c
 **
-** This file is in the public domain.
 */
 #include "all.h"
 
