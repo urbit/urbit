@@ -71,7 +71,7 @@
           [%dub p=term q=horn]                          ::  /=  apply face
           [%fan p=(list horn)]                          ::  /.  list
           [%for p=path q=horn]                          ::  /,  descend
-          [%hel p=horn]                                 ::  /%  propagate heel
+          [%hel p=@ud q=horn]                           ::  /%  propagate heel
           [%hub p=horn]                                 ::  /@  list by @ud
           [%man p=(map span horn)]                      ::  /*  hetero map
           [%nap p=horn]                                 ::  /_  homo map
@@ -81,7 +81,7 @@
           [%sic p=tile q=horn]                          ::  /^  cast
           [%toy p=mark]                                 ::  /mark/  static
       ==                                                ::
-    ++  silk                                            ::  from %ford
+    ++  silk                                            ::  construction layer
       $&  [p=silk q=silk]                               ::  cons
       $%  [%bake p=mark q=beam r=path]                  ::  local synthesis
           [%boil p=mark q=beam r=path]                  ::  general synthesis
@@ -323,6 +323,7 @@
   ::
   ++  he-pass
     |=  [pax=path noy=note]
+    ~&  [%he-pass pax noy]
     %_(+> moz [[ost %pass pax noy] moz])
   ::
   ++  he-rush                                           ::  emit update
