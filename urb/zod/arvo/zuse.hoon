@@ -3108,6 +3108,11 @@
               q=path                                    ::  spur
               r=cage                                    ::  data
           ==                                            ::
+++  rand                                                ::  vaseless rant
+          $:  p=[p=care q=case r=@tas]                  ::  clade release book
+              q=path                                    ::  spur
+              r=(cask)                                  ::  data
+          ==                                            ::
 ++  rave                                                ::  general request
           $%  [& p=mood]                                ::  single request
               [| p=moat]                                ::  change range

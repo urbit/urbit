@@ -65,7 +65,7 @@
               $:  %c                                    ::  to %clay
           $%  [%font p=@p q=@tas r=@p s=@tas]           ::
               [%info p=@p q=@tas r=nori]                ::  internal edit
-              [%merg p=@p q=@tas r=mizu]                ::
+              [%merg p=@p q=@tas r=@p s=@tas t=germ]    ::  merge desks
               [%warp p=sock q=riff]                     ::
           ==  ==                                        ::
               $:  %d                                    ::
@@ -84,7 +84,8 @@
               [%went p=ship q=cape]                     ::
           ==  ==                                        ::
               $:  %c                                    ::  by %clay
-          $%  [%writ p=riot]                            ::
+          $%  [%mere p=(each (set path) (pair term (list tank)))]
+              [%writ p=riot]                            ::
           ==  ==                                        ::
               $:  %f                                    ::
           $%  [%made p=(each bead (list tank))]         ::
@@ -658,18 +659,18 @@
     ::  (echa:wake:(checkout-ankh hed))
   ::
   ++  take-foreign-update                              ::  external change
-    |=  [inx=@ud rot=riot]
+    |=  [inx=@ud rut=(unit rand)]
     ^+  +>
     ?>  ?=(^ ref)
     |-  ^+  +>+.$
     =+  ruv=(~(get by bom.u.ref) inx)
     ?~  ruv  +>+.$
-    =>  ?.  |(?=(~ rot) ?=(& -.q.u.ruv))  .
+    =>  ?.  |(?=(~ rut) ?=(& -.q.u.ruv))  .
         %_  .
           bom.u.ref  (~(del by bom.u.ref) inx)
           fod.u.ref  (~(del by fod.u.ref) p.u.ruv)
         ==
-    ?~  rot
+    ?~  rut
       =+  rav=`rave`q.u.ruv
       %=    +>+.$
           lim
@@ -679,22 +680,79 @@
         ?.  ?=(& -.rav)  haw.u.ref
         (~(put by haw.u.ref) p.rav ~)
       ==
-    ?<  ?=(%v p.p.u.rot)
-    =.  haw.u.ref
-      (~(put by haw.u.ref) [p.p.u.rot q.p.u.rot q.u.rot] ~ r.u.rot)
-    ?.  ?=(%w p.p.u.rot)  +>+.$
-    |-  ^+  +>+.^$
-    =+  nez=[%w [%ud let.dom] ~]
-    =+  nex=(~(get by haw.u.ref) nez)
-    ?~  nex  +>+.^$
-    ?~  u.nex  +>+.^$  ::  should never happen
-    =.  nak.u.ref  `((hard nako) q.q.u.u.nex)
-    =.  +>+.^$
-      =+  roo=(validate-plops for bar:(need nak.u.ref))
-      ?>(?=(^ ref.roo) roo)
-    %=  $
-      haw.u.ref  (~(del by haw.u.ref) nez)
+    ?-    p.p.u.rut
+        %u
+      ~|  %im-thinkin-its-prolly-a-bad-idea-to-request-rang-over-the-network
+      !!
+    ::
+        %v
+      ~|  %weird-we-shouldnt-get-a-dome-request-over-the-network
+      !!
+    ::
+        %x
+      =<  ?>  ?=(^ ref)  .
+      (rand-to-rant u.rut)
+    ::
+        %w
+      =.  haw.u.ref
+        %+  ~(put by haw.u.ref)
+          [p.p.u.rut q.p.u.rut q.u.rut]
+        :+  ~
+          p.r.u.rut
+        ?+  p.r.u.rut  ~|  %strange-w-over-nextwork  !!
+          %aeon  !>(((hard aeon) q.r.u.rut))
+          %nako  !>(((hard nako) q.r.u.rut))
+        ==
+      ?.  ?=(%nako p.r.u.rut)  +>+.$
+      |-  ^+  +>+.^$
+      =+  nez=[%w [%ud let.dom] ~]
+      =+  nex=(~(get by haw.u.ref) nez)
+      ?~  nex  +>+.^$
+      ?~  u.nex  +>+.^$  ::  should never happen
+      =.  nak.u.ref  `((hard nako) q.q.u.u.nex)
+      =.  +>+.^$
+        =+  roo=(validate-plops for bar:(need nak.u.ref))
+        ?>(?=(^ ref.roo) roo)
+      %=  $
+        haw.u.ref  (~(del by haw.u.ref) nez)
+      ==
+    ::
+        %y
+      %_    +>+.$
+          haw.u.ref
+        %+  ~(put by haw.u.ref)
+          [p.p.u.rut q.p.u.rut q.u.rut]
+        `[p.r.u.rut !>(((hard arch) q.r.u.rut))]
+      ==
+    ::
+        %z
+      ~|  %its-prolly-reasonable-to-request-ankh-over-the-network-sorry
+      !!
     ==
+  ::
+  ++  rand-to-rant
+    |=  rut=rand
+    ^+  +>
+    ~|  %x-over-network-not-implemented  !!
+    ::  =-  %_(+>.$ tag [- tag])
+    ::  :*  hen
+    ::      [%foreign-plops (scot %p who) (scot %p for) syd ~]
+    ::      %f  %exec  who  ~  %tabl
+    ::      ^-  (list (pair silk silk))
+    ::      %+  turn  (~(tap in pop))
+    ::      |=  a=plop
+    ::      ?-    -.a
+    ::          %delta
+    ::        :-  [%done ~ %blob !>([%delta p.a q.a *cage])]
+    ::        [%vale p.r.a him q.r.a]
+    ::      ::
+    ::          %direct
+    ::        :-  [%done ~ %blob !>([%direct p.a *cage])]
+    ::        [%vale p.q.a him q.q.a]
+    ::      ::
+    ::          %indirect  ~|  %foreign-indirect-not-implemented  !!
+    ::      ==
+    ::  ==
   ::
   ++  validate-plops
     |=  [him=ship pop=(set plop)]
@@ -789,51 +847,6 @@
     |=  rav=[%| p=moat]
     ^-  rove
     [%| p.p.rav q.p.rav r.p.rav ~]
-  ::
-  ++  merge-desks
-    |=  [her=@p sud=@tas gem=germ rot=riot]
-    ^+  +>.$
-    ?~  rot
-      ~&  "autosync from {<sud>} on {<her>} to {<syd>} on {<who>} stopped"
-      +>.$
-    ?:  ?=(%y p.p.u.rot)
-      %=    +>.$
-          yel
-        [[hen %note ';' %leaf "starting to sync desk {(trip syd)}..."] yel]
-          tag
-        :_  tag
-        :*  hen  /auto/(scot %p who)/[syd]/(scot %p her)/[sud]/v
-            %c  %warp  [who her]  sud
-            `[%& %v q.p.u.rot /]
-        ==
-      ==
-    ?>  ?=(%v p.p.u.rot)
-    =+  der=((hard dome) r.u.rot)
-    =+  ^=  lum
-        ^-  (unit (unit mizu))
-        ~
-        ::%^  construct-merge:ze
-        ::    ?:(=(0 let.dom) %init %meld)
-        ::  who
-        :::+  syd
-        ::  `saba`[her sud [0 let.der] der]
-        ::now
-    ?~  lum
-      ~&  "autosync from {<sud>} on {<her>} to {<syd>} on {<who>} failed"
-      ~&  "please merge manually"
-      +>.$
-    ?~  u.lum
-      ~&  "autosync from {<sud>} on {<her>} to {<syd>} on {<who>} up to date"
-      +>.$
-    %=    +>.$
-        yel
-      [[hen %note ';' %leaf "successfully synced desk {(trip syd)}..."] yel]
-        tag
-      :_  tag
-      :*  hen  /auto/(scot %p who)/[syd]/(scot %p her)/[sud]/merg
-          %c  %merg  who  syd  u.u.lum
-      ==
-    ==
   ::
   ++  wake                                            ::  update subscribers
     ^+  .
@@ -1899,10 +1912,10 @@
     ?:  (~(has by sor.ruf) +.q.hic)  `..^$
     :_  ..^$(sor.ruf (~(put by sor.ruf) +.q.hic hen))
     ::  XX  pass %merg and handle response
-    :~  :*  hen  %pass
+    :~  ^-  move
+        :*  hen  %pass
             /auto/(scot %p p.q.hic)/[q.q.hic]/(scot %p r.q.hic)/[s.q.hic]/y
-            %c  %warp  [p.q.hic r.q.hic]  s.q.hic
-            `[%& %y [%da now] /]
+            %c  %merg  [p q r s %init]:q.hic
         ==
     ==
   ::
@@ -2139,7 +2152,8 @@
     =+  ^=  zat
       =<  wake
       %-  take-foreign-update:(do now hen p.+.q.hin syd ruf)
-      [inx ((hard riot) q.+.q.hin)]
+      ~&  [%rand q.+.q.hin ((soft (unit rand)) q.+.q.hin)]
+      [inx ((hard (unit rand)) q.+.q.hin)]
     =^  mos  ruf
       =+  zot=abet.zat
       [-.zot (posh q.p.+.q.hin syd +.zot ruf)]
@@ -2156,11 +2170,15 @@
   ::
       %writ
     ?>  ?=([@ @ *] tea)
+    ~|  i=i.tea
+    ~|  it=i.t.tea
     =+  our=(slav %p i.tea)
     =+  him=(slav %p i.t.tea)
     :_  ..^$
-    :~  :-  hen
-        [%pass ~ %a [%want [our him] [%r %re %c t.t.tea] p.+.q.hin]]
+    :~  :*  hen  %pass  ~  %a
+            %want  [our him]  [%r %re %c t.t.tea]
+            (bind p.+.q.hin rant-to-rand)
+        ==
     ==
   ::
       %went
@@ -2168,6 +2186,12 @@
     ~&  [%clay-lost p.+.q.hin tea]
     [~ ..^$]
   ==
+::
+++  rant-to-rand
+  |=  rant
+  ^-  rand
+  [p q [p q.q]:r]
+::
 ++  khan-to-soba
   |=  [ank=(unit ankh) kan=(unit khan)]
   ^-  soba

@@ -77,7 +77,7 @@ static void
 _unix_mkdir(c3_c* pax_c)
 {
   if ( 0 != mkdir(pax_c, 0755) && EEXIST != errno) {
-    uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
+    uL(fprintf(uH, "error mkdiring %s: %s\n", pax_c, strerror(errno)));
     c3_assert(0);
   }
 }
@@ -1117,6 +1117,9 @@ _unix_ship_update(u3_uhot* hot_u)
 }
 
 /* _unix_hot_gain(): gain ship.
+ *
+ * I feel like there's some freeing here I missed
+ * particularly pin_c and/org pot_c
 */
 static void
 _unix_hot_gain(u3_noun who, u3_noun mek)
@@ -1126,12 +1129,20 @@ _unix_hot_gain(u3_noun who, u3_noun mek)
   c3_c*   pax_c = _unix_down(u3_Host.dir_c, hox_c + 1);
   c3_c*   pin_c = _unix_down(pax_c, "in");
   c3_c*   pot_c = _unix_down(pax_c, "out");
+  DIR*    rox_u = opendir(hox_c);
   DIR*    rid_u = opendir(pax_c);
   DIR*    rin_u = opendir(pin_c);
   DIR*    rot_u = opendir(pot_c);
 
-  free(pax_c);
-
+  if ( !rox_u ) {
+    if ( c3y == mek ) {
+      _unix_mkdir(hox_c);
+    } else {
+      u3z(who);
+      u3z(hox);
+      return;
+    }
+  } else closedir(rox_u);
   if ( !rid_u ) {
     if ( c3y == mek ) {
       _unix_mkdir(pax_c);
@@ -1162,6 +1173,7 @@ _unix_hot_gain(u3_noun who, u3_noun mek)
 
   // uL(fprintf(uH, "GAIN %s\n", pax_c));
 
+  free(pax_c);
   free(hox_c);
   u3z(hox);
   u3_unix_acquire(pin_c);
