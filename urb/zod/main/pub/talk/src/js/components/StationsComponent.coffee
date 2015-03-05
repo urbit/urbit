@@ -7,7 +7,7 @@ StationActions = require '../actions/StationActions.coffee'
 module.exports = recl
   stateFromStore: -> {
     stations: StationStore.getStations()
-    station: StationStore.getStation()
+    station: "~zod/court"
   }
 
   getInitialState: -> @stateFromStore()

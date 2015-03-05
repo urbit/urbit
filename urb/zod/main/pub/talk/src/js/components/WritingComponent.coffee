@@ -14,10 +14,9 @@ module.exports = recl
     if window.localStorage then window.localStorage.getItem 'writing'
 
   stateFromStore: -> {
-    audi:StationStore.getAudience()
+    audi:["~zod/court"]
     members:StationStore.getMembers()
     typing:StationStore.getTyping()
-    station:StationStore.getStation()
   }
 
   getInitialState: -> @stateFromStore()
@@ -35,7 +34,7 @@ module.exports = recl
     @typing true
 
   sendMessage: ->
-    MessageActions.sendMessage @state.station,@$writing.text(),@state.audi
+    MessageActions.sendMessage @state.audi,@$writing.text(),@state.audi
     @$length.text "0/69"
     @$writing.text('')
     @set()
@@ -109,13 +108,16 @@ module.exports = recl
     name = if iden then iden.name else ""
 
     k = "writing"
-    k+= " hidden" if not @state?.station
 
-    div {className:k,onClick:@_setFocus}, [
+    div {className:k}, [
       (div {className:"attr"}, [
         (Member iden, "")
         (div {className:"time"}, @getTime())        
       ])
+      (div {
+        id:"audi"
+        contentEditable:true
+        }, "~zod/court")
       (div {
           id:"writing"
           contentEditable:true

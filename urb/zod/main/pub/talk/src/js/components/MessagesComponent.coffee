@@ -1,7 +1,7 @@
 moment = require 'moment-timezone'
 
 recl = React.createClass
-[div,input,textarea] = [React.DOM.div,React.DOM.input,React.DOM.textarea]
+[div,br,input,textarea] = [React.DOM.div,React.DOM.br,React.DOM.input,React.DOM.textarea]
 
 MessageStore = require '../stores/MessageStore.coffee'
 StationStore = require '../stores/StationStore.coffee'
@@ -29,14 +29,16 @@ Message = recl
       console.log delivery
 
     name = if @props.name then @props.name else ""
-    audi = _.remove _.keys(@props.thought.audience), (stat) => 
-      stat isnt "~"+window.urb.ship+"/"+@props.station
+    audi = _.keys(@props.thought.audience)
+    # audi = _.remove _.keys(@props.thought.audience), (stat) => 
+    #   stat isnt "~"+window.urb.ship+"/"+@props.station
     audi = audi.join " "
 
     div {className:"message "+pendingClass}, [
         (div {className:"attr"}, [
-          (Member {ship:@props.ship}, "")
           div {className:"audi"}, "#{audi}"
+          (Member {ship:@props.ship}, "")
+          (br {},"")
           div {className:"time"}, @convTime @props.thought.statement.date
         ])
         div {className:"mess"}, @props.thought.statement.speech.lin.txt
@@ -51,7 +53,7 @@ module.exports = recl
     last:MessageStore.getLast()
     fetching:MessageStore.getFetching()
     listening:MessageStore.getListening()
-    station:StationStore.getStation()
+    station:"court"
     stations:StationStore.getStations()
     configs:StationStore.getConfigs()
     typing:MessageStore.getTyping()
@@ -106,9 +108,10 @@ module.exports = recl
     _station = "~"+window.urb.ship+"/"+station
     sources = _.clone @state.configs[@state.station]?.sources ? []
     sources.push _station
-    _messages = _.filter @state.messages, (_message) ->
-      audience = _.keys(_message.thought.audience)
-      _.intersection(sources,audience).length > 0
+    _messages = @state.messages
+    # _messages = _.filter @state.messages, (_message) ->
+    #   audience = _.keys(_message.thought.audience)
+    #   _.intersection(sources,audience).length > 0
     _messages = _.sortBy _messages, (_message) -> 
       _message.pending = _message.thought.audience[station]
       _message.thought.statement.time

@@ -86,26 +86,14 @@ $(() ->
       React.unmountComponentAtNode $('#writing-container')[0]
       React.unmountComponentAtNode $('#messages-container')[0]
 
-    routes = 
-      '': ->
-        clean()
-        $c.html "<div id='stations-container'></div>"
-        rend (StationsComponent {}, ""),$('#stations-container')[0]
-      '/:station': (station) ->
-        clean()
-        StationActions.switchStation station
-        $c.html ""
-        $c.append("<div id='messaging-container'></div>")
-        $d = $('#messaging-container')
-        $d.append("<div id='messages-container'></div>")
-        $d.append("<div id='writing-container'></div>")
-        $d.append("<div id='station-parts-container'></div>")
-        $c.append("<div id='scrolling'>BOTTOM</div>")
-        rend (StationComponent {}, ""),$('#station-parts-container')[0]
-        rend (MessagesComponent {}, ""),$('#messages-container')[0]
-        rend (WritingComponent {}, ""),$('#writing-container')[0]
-
-    router = Router routes
-    if not window.location.hash then window.location.hash = "/"
-    router.init()
+    $c.html ""
+    $c.append("<div id='messaging-container'></div>")
+    $d = $('#messaging-container')
+    $d.append("<div id='messages-container'></div>")
+    $d.append("<div id='writing-container'></div>")
+    $d.append("<div id='station-parts-container'></div>")
+    $c.append("<div id='scrolling'>BOTTOM</div>")
+    rend (StationComponent {}, ""),$('#station-parts-container')[0]
+    rend (MessagesComponent {}, ""),$('#messages-container')[0]
+    rend (WritingComponent {}, ""),$('#writing-container')[0]
 )

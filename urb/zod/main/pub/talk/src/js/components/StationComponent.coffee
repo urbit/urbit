@@ -15,7 +15,7 @@ module.exports = recl
   stateFromStore: -> {
     audi:StationStore.getAudience()
     members:StationStore.getMembers()
-    station:StationStore.getStation()
+    station:"court"
     stations:StationStore.getStations()
     configs:StationStore.getConfigs()
     typing:StationStore.getTyping()
@@ -91,8 +91,8 @@ module.exports = recl
       sources = ""
 
     station = []
-    station.push (a {className:"up",href:"\#/"}, [(div {className:"arow-up"}, "")])
-    station.push (h1 {},@state.station)
+    # station.push (a {className:"up",href:"\#/"}, [(div {className:"arow-up"}, "")])
+    # station.push (h1 {},@state.station)
     station.push (div {id:"members"},members)
 
     parts.push (div {id:"station-container"}, (div {id:"station-meta"},station))
