@@ -22,15 +22,15 @@
 #include "all.h"
 #include "v/vere.h"
 
-static void _term_read_tn_cb(uv_stream_t* tcp_u,
-                             ssize_t      siz_i,
-                             const uv_buf_t *     buf_u);
-static void _term_read_cb(uv_stream_t* tcp_u,
-                          ssize_t      siz_i,
-                          const uv_buf_t *     buf_u);
-static void _term_suck(u3_utty*, const c3_y*, ssize_t);
-static void _tel_event(telnet_nvt*, telnet_event*);
-static void _tel_opt(telnet_nvt*, telnet_byte, telnet_telopt_event*);
+static        void _term_read_tn_cb(uv_stream_t* tcp_u,
+                                    ssize_t      siz_i,
+                                    const uv_buf_t *     buf_u);
+static        void _term_read_cb(uv_stream_t* tcp_u,
+                                 ssize_t      siz_i,
+                                 const uv_buf_t *     buf_u);
+static inline void _term_suck(u3_utty*, const c3_y*, ssize_t);
+static        void _tel_event(telnet_nvt*, telnet_event*);
+static        void _tel_opt(telnet_nvt*, telnet_byte, telnet_telopt_event*);
 
 #define _T_ECHO 1    //  local echo
 #define _T_CTIM 3    //  suppress GA/char-at-a-time
