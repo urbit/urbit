@@ -747,9 +747,14 @@
       |=  [cof=cafe sam=vase]
       ^-  (bolt vase)
       %+  cool  |.(leaf/"ford: check {<[for bek `@p`(mug q.sam)]>}")
-      ?:  ?=(?(%gate %core %door %hoon %hook) for)
+      ?:  ?=(?(%gate %core %door) for)
         ::  ~&  [%lake-easy for bek]
         (fine cof sam)
+      ?:  ?=(?(%hoon %hook) for)
+        =+  mas=((soft ,@t) q.sam)
+        ?~  mas
+          (flaw cof [leaf/"ford: bad hoon or hook: {<[for bek]>}"]~)
+        (fine cof [%atom %t] u.mas)
       %+  cope  (fang cof for bek)
       |=  [cof=cafe tux=vase]
       =+  bob=(slot 6 tux)
@@ -867,8 +872,10 @@
       %+  cope  (fang cof for bek)
       |=  [cof=cafe pro=vase]
       ?:  &((slob %grow p.pro) (slob too p:(slap pro [%cnzy %grow])))
+        ~&  [%herep-a -.vax]
         %+  cope  (keel cof pro [[%& 6]~ vax]~)
         |=  [cof=cafe pox=vase]
+        ~&  %herep-b
         (maim cof pox [%tsgr [%cnzy %grow] [%cnzy too]])
       %+  cope  (fang cof too bek)
       |=  [cof=cafe pro=vase]
@@ -1062,6 +1069,7 @@
         %+  cool  |.(leaf/"ford: vale {<p.kas>} {<q.kas>} {<`@p`(mug r.kas)>}")
         %+  cope  (lave cof p.kas q.kas r.kas)
         |=  [cof=cafe vax=vase]
+        ~&  [%valing p.kas p.vax]
         (fine cof `cage`[p.kas vax])
       ==
     ::
