@@ -623,7 +623,6 @@ _unix_dir_update(u3_udir* dir_u, DIR* rid_u)
               }
             }
             if ( !fil_u ) {
-              fprintf(stderr, "new filez!\r\n");
               fil_u = c3_malloc(sizeof(u3_ufil));
 
               // uL(fprintf(uH, "found file %s\n", pax_c));
