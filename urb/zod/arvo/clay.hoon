@@ -807,6 +807,7 @@
           ~|  %plop-strange-coy
           !!
         =+  bob=((hard blob) -.q.coy)
+        ~&  [%taking p.coy]
         ?-  -.bob
           %delta      [-.bob p.bob q.bob q.i.p.p.cay (slot 3 coy)]
           %direct     [-.bob p.bob q.i.p.p.cay (slot 3 coy)]

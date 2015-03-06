@@ -6,19 +6,19 @@
 |_  own=@t
 ::
 ++  grow                                                ::  convert to
+  ~&  hoon=(met 3 own)
   |%
-  ++  mime  [/text/hoon (taco own)]                     ::  convert to %mime
+  ++  mime  `^mime`[/text/hoon (taco own)]              ::  convert to %mime
   ++  psal  ;div:(pre:"{(trip own)}")                   ::  convert to %html
   ++  hymn  ;html:(head:title:"Source" "+{psal}")
   ++  txt
     (lore (cat 3 own '\0a'))
   --
 ++  grab
-  =>  v=.
   |%                                            ::  convert from
-  ++  mime  =>  v  |=([p=mite q=octs] q.q)
-  ++  noun  =>  v  ,@t                                 ::  clam from %noun
-  ++  txt   =>  v
+  ++  mime  |=([p=mite q=octs] q.q)
+  ++  noun  ,@t                                 ::  clam from %noun
+  ++  txt
     |=  wan=wain
     ^-  @t
     =+  (role wan)
