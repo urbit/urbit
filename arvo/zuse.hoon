@@ -2995,7 +2995,7 @@
 ++  lice  ,[p=ship q=buck]                              ::  full license
 ++  life  ,@ud                                          ::  regime number
 ++  lint  (list rock)                                   ::  fragment array
-++  lobe  ,@                                            ::  blob ref
+++  lobe  ,@uvF                                         ::  blob ref
 ++  love  $%                                            ::  http response
               [%ham p=manx]                             ::  html node
               [%mid p=mite q=octs]                      ::  mime-typed data

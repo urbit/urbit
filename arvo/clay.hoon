@@ -623,17 +623,21 @@
         ==
     ^+  +>
     %=  +>
-      hit.dom  (~(uni by hit.dom) gar)
-      let.dom  let
-      lat.ran  %+  roll  (~(tap in bar) ~)
-               =<  .(yeb lat.ran)
-               |=  [sar=blob yeb=(map lobe blob)]
-               =+  zax=(blob-to-lobe sar)
-               %+  ~(put by yeb)  zax  sar
-      hut.ran  %+  roll  (~(tap in lar) ~)
-               =<  .(yeb hut.ran)
-               |=  [sar=yaki yeb=(map tako yaki)]
-               %+  ~(put by yeb)  r.sar  sar
+      hit.dom   ~&  [%gar gar]
+                (~(uni by hit.dom) gar)
+      let.dom   let
+      hut.ran   ~&  [%lar lar]
+                =-  ~&  [%newhut (~(run by -) ,~)]  -
+                %-  ~(uni by hut.ran)
+                %-  mo  ^-  (list (pair tako yaki))
+                %+  turn  (~(tap in lar))
+                |=  yak=yaki
+                [r.yak yak]
+      lat.ran   %-  ~(uni by lat.ran)
+                %-  mo  ^-  (list (pair lobe blob))
+                %+  turn  (~(tap in bar))
+                |=  bob=blob
+                [p.bob bob]
     ==
   ::
   ++  exec                                            ::  change and update
@@ -783,14 +787,9 @@
     ?>  ?=(^ ref)
     ?>  ?=(^ nak.u.ref)
     ?:  ?=(%| -.res)
-      %_    +>.$
-          yel
-        :_  yel
-        :*  hen  %note  '!'  %rose  [" " "" ""]
-            leaf/"validate foreign plops failed"
-            p.res
-        ==
-      ==
+      ~|  "validate foreign plops failed"
+      ~&  [%plop-fail (turn p.res |=(tank ~(ram re +<)))]
+      !!
     =+  cay=q.p.res
     ?@  p.cay  ~|  %plop-bad-marc  !!
     =+  |-  ^-  lat=(list blob)
@@ -864,6 +863,7 @@
             ..wake  ?~  u.cas  (blub p.i.xiq)
                     (blab p.i.xiq p.q.i.xiq u.u.cas)
         ==
+      ~&  [%sydhit syd hit.dom let.dom]
       =+  nao=(case-to-aeon:ze q.p.q.i.xiq)
       ?~  nao  $(xiq t.xiq, xaq [i.xiq xaq])
       $(xiq t.xiq, ..wake (balk p.i.xiq u.nao p.q.i.xiq))
@@ -899,7 +899,7 @@
     |%
     ++  aeon-to-tako  ~(got by hit.dom)
     ++  aeon-to-yaki  (cork aeon-to-tako tako-to-yaki)
-    ++  lobe-to-blob  ~(got by lat.ran)                 ::  grab blob
+    ++  lobe-to-blob  ~(got by lat.ran)
     ++  tako-to-yaki  ~(got by hut.ran)
     ++  lobe-to-silk
       |=  a=lobe
@@ -1007,6 +1007,9 @@
         ?:  =(0 let.dom)  [~ 0]                             ::  avoid underflow
         ?:  %+  gte  p.lok 
             =<  t
+            ~|  [%letdom let=let.dom hit=hit.dom hut=(~(run by hut.ran) ,~)]
+            ~|  [%getdom (~(get by hit.dom) let.dom)]
+            ~|  [%gotdom (~(get by hut.ran) (~(got by hit.dom) let.dom))]
             %-  aeon-to-yaki
             let.dom
           [~ let.dom]
@@ -1142,16 +1145,16 @@
     ::
     ++  data-twixt-takos
       |=  [a=(unit tako) b=tako] 
-      ^-  [(set yaki) (set blob)]
+      ^-  [(set yaki) (set plop)]
       =+  yal=(turn (~(tap in (reachable-takos b))) tako-to-yaki)
       :-  (sa yal)
-      %-  sa    ^-  (list blob)
-      %-  zing  ^-  (list (list blob))
+      %-  sa    ^-  (list plop)
+      %-  zing  ^-  (list (list plop))
       %+  turn  yal
       |=  yak=yaki
       %+  turn  (~(tap by q.yak))
       |=  [pax=path lob=lobe]
-      (lobe-to-blob lob)
+      (blob-to-plop (lobe-to-blob lob))
     ::
     ++  reachable-takos                                 ::  reachable
       |=  p=tako                                        ::  XX slow
@@ -2146,12 +2149,12 @@
       =+  our=(slav %p i.t.tea)
       =+  her=(slav %p i.t.t.tea)
       =*  syd  i.t.t.t.tea
+      =+  zax=(do now hen [our her] syd ruf)
+      =+  zat=(take-foreign-plops:zax p.q.hin)
       =^  mos  ruf
-        =+  zax=(do now hen [our her] syd ruf)
-        =+  zat=(take-foreign-plops:zax p.q.hin)
         =+  zot=abet.zat
         [-.zot (posh her syd +.zot ruf)]
-      [mos ..^$]
+      [mos ..^$(ran.ruf ran.zat)]
     ==
   ::
       %mere
@@ -2172,6 +2175,7 @@
     =^  mos  ruf
       =+  zot=abet.zat
       [-.zot (posh q.p.+.q.hin syd +.zot ruf)]
+    ~&  %wafting
     [mos ..^$(ran.ruf ran.zat)]                         ::  merge in new obj
   ::
       %wake
