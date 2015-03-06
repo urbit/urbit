@@ -1122,16 +1122,12 @@
               $(p +.p, pax +.pax)
       ==  ==
     ::
-    ++  make-nako                                       ::  gack a through b
+    ++  make-nako
       |=  [a=aeon b=aeon]
       ^-  nako
-      :^    hit.dom
-          let.dom
-        (sa `(list yaki)`(turn (~(tap by hut.ran)) |=([tako yaki] +<+)))
-                                                        ::  XX  overkill
-      %-  sa  ^-  (list plop)
-      (turn (~(tap by lat.ran)) |=([lobe blob] (blob-to-plop +<+)))
-                                                        ::  XX  overkill
+      :+  hit.dom
+        let.dom
+      (data-twixt-takos (~(get by hit.dom) a) (aeon-to-tako b))
     ::
     ++  query                                           ::    query:ze
       |=  ren=?(%u %v %x %y %z)                         ::  endpoint query
@@ -1143,6 +1139,19 @@
         %y  [~ %arch !>(as-arch)]
         %z  [~ %ankh !>(ank.dom)]
       ==
+    ::
+    ++  data-twixt-takos
+      |=  [a=(unit tako) b=tako] 
+      ^-  [(set yaki) (set blob)]
+      =+  yal=(turn (~(tap in (reachable-takos b))) tako-to-yaki)
+      :-  (sa yal)
+      %-  sa    ^-  (list blob)
+      %-  zing  ^-  (list (list blob))
+      %+  turn  yal
+      |=  yak=yaki
+      %+  turn  (~(tap by q.yak))
+      |=  [pax=path lob=lobe]
+      (lobe-to-blob lob)
     ::
     ++  reachable-takos                                 ::  reachable
       |=  p=tako                                        ::  XX slow
@@ -2158,7 +2167,7 @@
     =+  ^=  zat
       =<  wake
       %-  take-foreign-update:(do now hen p.+.q.hin syd ruf)
-      ~&  [%rand q.+.q.hin ((soft (unit rand)) q.+.q.hin)]
+::      ~&  [%rand q.+.q.hin ((soft (unit rand)) q.+.q.hin)]
       [inx ((hard (unit rand)) q.+.q.hin)]
     =^  mos  ruf
       =+  zot=abet.zat
