@@ -35,10 +35,6 @@ module.exports = recl
   componentWillUnmount: ->
     StationStore.removeChangeListener @_onChangeStore
 
-  _toggleAudi: (e) ->
-    $e = $(e.target).closest('.station')
-    station = $e.find('.path').text()
-    StationActions.toggleAudience station
 
   _onChangeStore: -> 
     @setState @stateFromStore()
@@ -77,12 +73,8 @@ module.exports = recl
     if @state.station and @state.configs[@state.station]
       _remove = @_remove
       _sources = _.clone @state.configs[@state.station].sources
-      _sources.push "twitter/hoontap"
       sources = _.map _sources,(source) =>
-        toggleClass = "toggle "
-        if @state.audi.indexOf(source) isnt -1 then toggleClass += "active"
-        (div {className:"station",onClick:@_toggleAudi}, [
-          (div {className:toggleClass})
+        (div {className:"station"}, [
           (div {className:"path"}, source),
           (div {className:"remove",onClick:_remove,"data-station":source},"×")
         ])

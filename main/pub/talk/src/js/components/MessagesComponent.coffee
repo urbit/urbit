@@ -3,11 +3,11 @@ moment = require 'moment-timezone'
 recl = React.createClass
 [div,br,input,textarea] = [React.DOM.div,React.DOM.br,React.DOM.input,React.DOM.textarea]
 
-MessageStore = require '../stores/MessageStore.coffee'
-StationStore = require '../stores/StationStore.coffee'
 MessageActions  = require '../actions/MessageActions.coffee'
+MessageStore    = require '../stores/MessageStore.coffee'
 StationActions  = require '../actions/StationActions.coffee'
-Member = require './MemberComponent.coffee'
+StationStore    = require '../stores/StationStore.coffee'
+Member          = require './MemberComponent.coffee'
 
 Message = recl
   lz: (n) -> if n<10 then "0#{n}" else "#{n}"

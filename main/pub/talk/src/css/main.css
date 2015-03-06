@@ -70,6 +70,18 @@
   font-weight: 500;
   font-style: normal;
 }
+@font-face {
+  font-family: "scp";
+  src: url("http://storage.googleapis.com/urbit-extra/scp-bold.woff");
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: "scp";
+  src: url("http://storage.googleapis.com/urbit-extra/scp-black.woff");
+  font-weight: 700;
+  font-style: normal;
+}
 .iden,
 .audi,
 .time,
@@ -124,22 +136,9 @@ body {
   margin-left: -12rem;
   font-size: 4rem;
 }
-#station-container {
-  position: fixed;
-  top: 0;
-  left: 50%;
-  width: 28rem;
-  max-height: 2.6rem;
-  overflow: hidden;
-  margin-left: -14rem;
+#station #station-container {
+  display: block;
   padding-top: 1rem;
-  background-color: #f5f5f5;
-  border-bottom: 3px solid #ededed;
-  transition: max-height 0.15s ease-out;
-}
-#station-container:hover {
-  max-height: 12rem;
-  transition: max-height 0.25s ease-in;
 }
 #stations-container,
 #messages-container {
@@ -149,8 +148,8 @@ body {
   position: absolute;
   top: 4rem;
   left: 50%;
-  width: 24rem;
-  margin-left: -12rem;
+  width: 66rem;
+  margin-left: -46rem;
   margin-bottom: 4rem;
 }
 #station > div {
@@ -161,9 +160,14 @@ body {
   margin-bottom: 1rem;
 }
 #sources-container {
-  width: 6rem;
-  float: right;
-  margin: 1rem -6rem 0 0;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  margin-left: -35rem;
+  text-align: right;
+  background-color: #000;
+  color: #fff;
+  padding: 1rem;
 }
 #members {
   margin-left: 2rem;
@@ -172,8 +176,6 @@ body {
   display: block;
 }
 .station {
-  display: inline-block;
-  width: 9rem;
   margin-bottom: 0.3rem;
   cursor: pointer;
   font-weight: 200;
@@ -245,9 +247,6 @@ body {
 #messages .message:hover .time {
   opacity: 1;
 }
-.time {
-  margin-right: 0.6rem;
-}
 .member {
   width: 12rem;
   margin: 0.3rem 0.6rem 0.3rem 0;
@@ -271,20 +270,21 @@ body {
   vertical-align: top;
 }
 .attr {
-  color: #d7d7d7;
+  text-align: right;
+  display: inline-block;
+  margin-right: 0.3rem;
+  min-width: 30rem;
 }
 .attr .iden {
   color: #000;
-}
-.attr > div {
-  margin-right: 0.3rem;
+  width: 6rem;
 }
 .mess {
   font-size: 0.9rem;
-  line-height: 1.6rem;
   letter-spacing: 0.03rem;
   word-wrap: break-word;
-  max-width: 31rem;
+  max-width: 30rem;
+  margin-left: 0.3rem;
 }
 .ship {
   font-weight: 600;
@@ -303,7 +303,6 @@ body {
 #writing-container {
   bottom: 4rem;
   margin-bottom: 1rem;
-  float: left;
 }
 .writing {
   padding-top: 0.3rem;
@@ -313,14 +312,20 @@ body {
   margin-left: 1rem;
   margin-top: 1.2rem;
 }
+#audi {
+  background-color: #eee;
+  padding: 0.3rem;
+  margin-top: -0.3rem;
+  outline: none;
+}
 #writing {
   font-size: 0.9rem;
   min-height: 1.6rem;
-  line-height: 1.6rem;
   min-width: 1.3rem;
   padding: 0;
   outline: none;
   background-color: #eee;
+  margin-left: 0.3rem;
 }
 #writing:focus {
   background-color: #fff;
@@ -333,8 +338,9 @@ body {
   text-transform: lowercase;
 }
 input.join {
+  text-align: right;
   font-size: 4rem;
-  background-color: #fff;
+  background-color: transparent;
   outline: none;
   width: 24rem;
 }
@@ -345,10 +351,10 @@ input.join {
   width: 12rem;
 }
 input.join::-webkit-input-placeholder {
-  color: #0003ff;
+  color: #fff;
 }
 input.join:focus::-webkit-input-placeholder {
-  color: #fff;
+  color: #000;
 }
 .pending {
   color: #ccc;

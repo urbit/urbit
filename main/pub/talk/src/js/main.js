@@ -204,13 +204,13 @@ recl = React.createClass;
 
 ref = [React.DOM.div, React.DOM.br, React.DOM.input, React.DOM.textarea], div = ref[0], br = ref[1], input = ref[2], textarea = ref[3];
 
-MessageStore = require('../stores/MessageStore.coffee');
-
-StationStore = require('../stores/StationStore.coffee');
-
 MessageActions = require('../actions/MessageActions.coffee');
 
+MessageStore = require('../stores/MessageStore.coffee');
+
 StationActions = require('../actions/StationActions.coffee');
+
+StationStore = require('../stores/StationStore.coffee');
 
 Member = require('./MemberComponent.coffee');
 
@@ -403,12 +403,6 @@ module.exports = recl({
   componentWillUnmount: function() {
     return StationStore.removeChangeListener(this._onChangeStore);
   },
-  _toggleAudi: function(e) {
-    var $e, station;
-    $e = $(e.target).closest('.station');
-    station = $e.find('.path').text();
-    return StationActions.toggleAudience(station);
-  },
   _onChangeStore: function() {
     return this.setState(this.stateFromStore());
   },
@@ -461,21 +455,12 @@ module.exports = recl({
     if (this.state.station && this.state.configs[this.state.station]) {
       _remove = this._remove;
       _sources = _.clone(this.state.configs[this.state.station].sources);
-      _sources.push("twitter/hoontap");
       sources = _.map(_sources, (function(_this) {
         return function(source) {
-          var toggleClass;
-          toggleClass = "toggle ";
-          if (_this.state.audi.indexOf(source) !== -1) {
-            toggleClass += "active";
-          }
           return div({
-            className: "station",
-            onClick: _this._toggleAudi
+            className: "station"
           }, [
             div({
-              className: toggleClass
-            }), div({
               className: "path"
             }, source), div({
               className: "remove",
@@ -615,13 +600,15 @@ module.exports = recl({
 
 
 },{"../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/WritingComponent.coffee":[function(require,module,exports){
-var Member, MessageActions, StationActions, StationStore, div, input, recl, ref, textarea;
+var Member, MessageActions, MessageStore, StationActions, StationStore, br, div, input, recl, ref, textarea;
 
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = ref[0], input = ref[1], textarea = ref[2];
+ref = [React.DOM.div, React.DOM.br, React.DOM.input, React.DOM.textarea], div = ref[0], br = ref[1], input = ref[2], textarea = ref[3];
 
 MessageActions = require('../actions/MessageActions.coffee');
+
+MessageStore = require('../stores/MessageStore.coffee');
 
 StationActions = require('../actions/StationActions.coffee');
 
@@ -642,9 +629,10 @@ module.exports = recl({
   },
   stateFromStore: function() {
     return {
-      audi: ["~zod/court"],
+      audi: StationStore.getAudience(),
       members: StationStore.getMembers(),
-      typing: StationStore.getTyping()
+      typing: StationStore.getTyping(),
+      ludi: MessageStore.getLastAudience()
     };
   },
   getInitialState: function() {
@@ -705,6 +693,20 @@ module.exports = recl({
   _setFocus: function() {
     return this.$writing.focus();
   },
+  _commitAudi: function() {
+    _checkAudi();
+    return $('#writing').focus();
+  },
+  _checkAudi: function() {
+    var a, i, len, v;
+    v = $('#audi').text();
+    v = v.split(",");
+    for (i = 0, len = v.length; i < len; i++) {
+      a = v[i];
+      a = a.trim();
+    }
+    return StationActions.setAudience(v);
+  },
   getTime: function() {
     var d, seconds;
     d = new Date();
@@ -726,6 +728,7 @@ module.exports = recl({
   componentDidMount: function() {
     window.util.sendMessage = this.sendMessage;
     StationStore.addChangeListener(this._onChangeStore);
+    MessageStore.addChangeListener(this._onChangeStore);
     this.$el = $(this.getDOMNode());
     this.$length = $('#length');
     this.$writing = $('#writing');
@@ -748,11 +751,15 @@ module.exports = recl({
     return this.setState(this.stateFromStore());
   },
   render: function() {
-    var iden, k, name, ship, user;
+    var audi, iden, k, name, ship, user;
     user = "~" + window.urb.user;
     iden = StationStore.getMember(user);
     ship = iden ? iden.ship : user;
     name = iden ? iden.name : "";
+    audi = this.state.audi;
+    if (audi.length === 0) {
+      audi = this.state.ludi;
+    }
     k = "writing";
     return div({
       className: k
@@ -760,13 +767,16 @@ module.exports = recl({
       div({
         className: "attr"
       }, [
-        Member(iden, ""), div({
+        div({
+          id: "audi",
+          className: "audi",
+          contentEditable: true,
+          onBlur: this._checkAudi,
+          onKeyDown: this._commitAudi
+        }, audi.join(",")), Member(iden, ""), br({}, ""), div({
           className: "time"
         }, this.getTime())
       ]), div({
-        id: "audi",
-        contentEditable: true
-      }, "~zod/court"), div({
         id: "writing",
         contentEditable: true,
         onFocus: this._focus,
@@ -784,7 +794,7 @@ module.exports = recl({
 
 
 
-},{"../actions/MessageActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/MessageActions.coffee","../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
+},{"../actions/MessageActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/MessageActions.coffee","../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","../stores/MessageStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -5500,6 +5510,15 @@ MessageStore = _.merge(new EventEmitter, {
   },
   getTyping: function() {
     return _typing;
+  },
+  getLastAudience: function() {
+    if (_.keys(_messages).length === 0) {
+      return [];
+    }
+    _messages = _.sortBy(_messages, function(_message) {
+      return _message.thought.statement.time;
+    });
+    return _.keys(_messages[_messages.length - 1].thought.audience);
   },
   setTyping: function(state) {
     return _typing = state;

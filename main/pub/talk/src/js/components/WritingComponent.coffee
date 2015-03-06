@@ -1,10 +1,11 @@
 recl = React.createClass
-[div,input,textarea] = [React.DOM.div,React.DOM.input,React.DOM.textarea]
+[div,br,input,textarea] = [React.DOM.div,React.DOM.br,React.DOM.input,React.DOM.textarea]
 
 MessageActions  = require '../actions/MessageActions.coffee'
+MessageStore    = require '../stores/MessageStore.coffee'
 StationActions  = require '../actions/StationActions.coffee'
-StationStore = require '../stores/StationStore.coffee'
-Member = require './MemberComponent.coffee'
+StationStore    = require '../stores/StationStore.coffee'
+Member          = require './MemberComponent.coffee'
 
 module.exports = recl
   set: ->
@@ -14,9 +15,10 @@ module.exports = recl
     if window.localStorage then window.localStorage.getItem 'writing'
 
   stateFromStore: -> {
-    audi:["~zod/court"]
+    audi:StationStore.getAudience()
     members:StationStore.getMembers()
     typing:StationStore.getTyping()
+    ludi:MessageStore.getLastAudience()
   }
 
   getInitialState: -> @stateFromStore()
@@ -66,6 +68,17 @@ module.exports = recl
 
   _setFocus: -> @$writing.focus()
 
+  _commitAudi: ->
+    _checkAudi()
+    $('#writing').focus()
+
+  _checkAudi: ->
+    v = $('#audi').text()
+    v = v.split ","
+    for a in v
+      a = a.trim()
+    StationActions.setAudience v
+
   getTime: ->
     d = new Date()
     seconds = d.getSeconds()
@@ -84,6 +97,7 @@ module.exports = recl
   componentDidMount: ->
     window.util.sendMessage = @sendMessage
     StationStore.addChangeListener @_onChangeStore
+    MessageStore.addChangeListener @_onChangeStore
     @$el = $ @getDOMNode()
     @$length = $('#length')
     @$writing = $('#writing')
@@ -107,17 +121,25 @@ module.exports = recl
     ship = if iden then iden.ship else user
     name = if iden then iden.name else ""
 
+    audi = @state.audi
+    if audi.length is 0
+      audi = @state.ludi
+
     k = "writing"
 
     div {className:k}, [
       (div {className:"attr"}, [
+        (div {
+          id:"audi"
+          className:"audi"
+          contentEditable:true
+          onBlur:@_checkAudi
+          onKeyDown:@_commitAudi
+          }, audi.join(","))
         (Member iden, "")
+        (br {},"")
         (div {className:"time"}, @getTime())        
       ])
-      (div {
-        id:"audi"
-        contentEditable:true
-        }, "~zod/court")
       (div {
           id:"writing"
           contentEditable:true
