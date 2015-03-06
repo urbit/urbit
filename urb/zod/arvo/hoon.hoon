@@ -101,6 +101,11 @@
 ++  nail  ,[p=hair q=tape]                              ::  parsing input
 ++  numb  ,@                                            ::  just a number
 ++  pair  |*([a=$+(* *) b=$+(* *)] ,[p=a q=b])          ::  just a pair
+++  wand  |*  a=(list $+(* *))                          ::  hetero list
+          |=  b=*                                       ::
+          ?~  a  ~                                      ::
+          ?@  b  ~                                      ::
+          [i=(i.a -.b) t=$(a t.a, b +.b)]               ::
 ++  pass  ,@                                            ::  public key
 ++  path  (list span)                                   ::  filesys location
 ++  pint  ,[p=[p=@ q=@] q=[p=@ q=@]]                    ::  line/column range
