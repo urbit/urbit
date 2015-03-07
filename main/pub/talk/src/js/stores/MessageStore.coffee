@@ -35,8 +35,8 @@ MessageStore = _.merge new EventEmitter,{
 
   getLastAudience: ->
     if _.keys(_messages).length is 0 then return []
-    _messages = _.sortBy _messages, (_message) -> _message.thought.statement.time
-    _.keys _messages[_messages.length-1].thought.audience
+    messages = _.sortBy _messages, (_message) -> _message.thought.statement.time
+    _.keys messages[messages.length-1].thought.audience
 
   setTyping: (state) -> _typing = state
 

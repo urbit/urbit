@@ -19,6 +19,7 @@ module.exports = recl
     members:StationStore.getMembers()
     typing:StationStore.getTyping()
     ludi:MessageStore.getLastAudience()
+    valid:StationStore.getValidAudience()
   }
 
   getInitialState: -> @stateFromStore()
@@ -36,7 +37,15 @@ module.exports = recl
     @typing true
 
   sendMessage: ->
-    MessageActions.sendMessage @state.audi,@$writing.text(),@state.audi
+    if @_validateAudi() is false
+      $('#audi').focus()
+      return
+    if @state.audi.length is 0 and $('#audi').text().trim().length > 0
+      audi = @state.ludi
+      @_setAudi()
+    else
+      audi = @state.audi
+    MessageActions.sendMessage audi,@$writing.text(),audi
     @$length.text "0/69"
     @$writing.text('')
     @set()
@@ -68,16 +77,35 @@ module.exports = recl
 
   _setFocus: -> @$writing.focus()
 
-  _commitAudi: ->
-    _checkAudi()
-    $('#writing').focus()
+  _validateAudiPart: (a) ->
+    if a[0] isnt "~"
+      return false
+    if a.indexOf("/") is -1
+      return false
+    _a = a.split("/")
+    if _a[0].length < 3
+      return false
+    if _a[1].length is 0
+      return false
+    return true
 
-  _checkAudi: ->
+  _validateAudi: ->
     v = $('#audi').text()
     v = v.split ","
     for a in v
       a = a.trim()
-    StationActions.setAudience v
+      valid = @_validateAudiPart(a)
+    valid
+
+  _setAudi: ->
+    valid = _validateAudi()
+    StationActions.setValidAudience valid
+    if valid is true
+      v = $('#audi').text()
+      v = v.split ","
+      for a in v
+        a = a.trim()
+      StationActions.setAudience v
 
   getTime: ->
     d = new Date()
@@ -121,9 +149,7 @@ module.exports = recl
     ship = if iden then iden.ship else user
     name = if iden then iden.name else ""
 
-    audi = @state.audi
-    if audi.length is 0
-      audi = @state.ludi
+    audi = if @state.audi.length is 0 then @state.ludi else @state.audi
 
     k = "writing"
 
@@ -131,10 +157,9 @@ module.exports = recl
       (div {className:"attr"}, [
         (div {
           id:"audi"
-          className:"audi"
+          className:"audi valid-#{@state.valid}"
           contentEditable:true
-          onBlur:@_checkAudi
-          onKeyDown:@_commitAudi
+          onBlur:@_setAudi
           }, audi.join(","))
         (Member iden, "")
         (br {},"")
