@@ -204,7 +204,8 @@
     ^+  +>
     ?-    -.sil
         %mean  
-      ~&  [%seat-mean sil]
+      ::  ~&  [%seat-mean sil]
+      ~&  %seat-mean
       +>.$
     ::  
         %nice  

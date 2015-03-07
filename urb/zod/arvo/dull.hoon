@@ -147,6 +147,9 @@
 ++  sign-ames                                           ::
   $%  [%nice ~]                                         ::
   ==                                                    ::
+++  sign-clay                                           ::
+  $%  [%note p=@tD q=tank]                              ::
+  ==                                                    ::
 ++  sign-gall                                           ::
   $%  [%crud p=@tas q=(list tank)]                      ::
       [%mean p=ares]                                    ::
@@ -158,6 +161,7 @@
   ==                                                    ::
 ++  sign                                                ::  in result $<-
   $%  [%a sign-ames]                                    ::
+      [%c sign-clay]                                    ::
       [%g sign-gall]                                    ::
       [%t sign-time]                                    ::
   ==                                                    ::
@@ -180,6 +184,7 @@
         ?+    -.kyz  ~&  [%strange-kiss -.kyz]  +>
           %flow  +>
           %belt  (send `dill-belt`p.kyz)
+          %crud  (send `dill-belt`[%cru p.kyz q.kyz])
           %blew  (send %rez p.p.kyz q.p.kyz)
         ==
       ::
@@ -227,9 +232,11 @@
           ::  ~&  [%take-nice-ames sih]
           +>
         ::
+            [%c %note *]
+          (from %out (tuba ~(ram re q.+.sih)))
+        ::
             [%g %crud *]
-          ~&  [%take-crud sih]
-          +>
+          (send %cru p.+.sih q.+.sih)  
         ::
             [%g %mean *]
           +>(moz [[hen %give %logo ~] moz])
@@ -248,7 +255,7 @@
         ==
       --
     ::
-    ++  ax                                              ::  make as
+    ++  ax                                              ::  make ++as
       |=  [hen=duct kyz=kiss]                           ::
       ?~  ore.all  ~
       =+  nux=(~(get by dug.all) hen)
