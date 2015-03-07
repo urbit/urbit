@@ -403,6 +403,7 @@
                     u3k(p_gen),
                     u3k(q_gen)));
   }
+#if 0
   _open_do_pq(cncl)   //  %:
   {
     return u3nq
@@ -411,6 +412,7 @@
             u3k(p_gen),
             u3k(q_gen));
   }
+#endif
   _open_do_pq(cndt)   //  %.
   {
     return u3nt
@@ -816,7 +818,7 @@
         _open_p   (cltr);
         _open_p   (clsg);
         _open_pq  (cncb);
-        _open_pq  (cncl);
+        //  _open_pq  (cncl);
         _open_pq  (cndt);
         _open_pqrs(cnkt);
         _open_pq  (cnhp);
