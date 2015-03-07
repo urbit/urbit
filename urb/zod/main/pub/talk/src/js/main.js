@@ -108,6 +108,12 @@ module.exports = {
       audience: audience
     });
   },
+  setValidAudience: function(valid) {
+    return StationDispatcher.handleViewAction({
+      type: "station-set-valid-audience",
+      valid: valid
+    });
+  },
   toggleAudience: function(station) {
     return StationDispatcher.handleViewAction({
       type: "station-audience-toggle",
@@ -230,6 +236,12 @@ Message = recl({
     s = this.lz(d.getSeconds());
     return "~" + h + "." + m + "." + s;
   },
+  _handlePm: function(e) {
+    var $t;
+    $t = $(e.target).closest('.iden');
+    console.log('pm');
+    return console.log(window.util.mainStation($t.text().slice(1)));
+  },
   render: function() {
     var audi, delivery, name, pendingClass;
     delivery = _.uniq(_.pluck(this.props.thought.audience, "delivery"));
@@ -249,9 +261,11 @@ Message = recl({
       }, [
         div({
           className: "audi"
-        }, "" + audi), Member({
+        }, "" + audi), div({
+          onClick: this._handlePm
+        }, Member({
           ship: this.props.ship
-        }, ""), br({}, ""), div({
+        }, "")), br({}, ""), div({
           className: "time"
         }, this.convTime(this.props.thought.statement.date))
       ]), div({
@@ -270,7 +284,7 @@ module.exports = recl({
       last: MessageStore.getLast(),
       fetching: MessageStore.getFetching(),
       listening: MessageStore.getListening(),
-      station: "court",
+      station: window.util.mainStation(),
       stations: StationStore.getStations(),
       configs: StationStore.getConfigs(),
       typing: MessageStore.getTyping()
@@ -382,7 +396,7 @@ module.exports = recl({
     return {
       audi: StationStore.getAudience(),
       members: StationStore.getMembers(),
-      station: "court",
+      station: window.util.mainStation(),
       stations: StationStore.getStations(),
       configs: StationStore.getConfigs(),
       typing: StationStore.getTyping(),
@@ -632,7 +646,8 @@ module.exports = recl({
       audi: StationStore.getAudience(),
       members: StationStore.getMembers(),
       typing: StationStore.getTyping(),
-      ludi: MessageStore.getLastAudience()
+      ludi: MessageStore.getLastAudience(),
+      valid: StationStore.getValidAudience()
     };
   },
   getInitialState: function() {
@@ -652,7 +667,18 @@ module.exports = recl({
     return this.typing(true);
   },
   sendMessage: function() {
-    MessageActions.sendMessage(this.state.audi, this.$writing.text(), this.state.audi);
+    var audi;
+    if (this._validateAudi() === false) {
+      $('#audi').focus();
+      return;
+    }
+    if (this.state.audi.length === 0 && $('#audi').text().trim().length > 0) {
+      audi = this.state.ludi;
+      this._setAudi();
+    } else {
+      audi = this.state.audi;
+    }
+    MessageActions.sendMessage(audi, this.$writing.text(), audi);
     this.$length.text("0/69");
     this.$writing.text('');
     this.set();
@@ -693,19 +719,47 @@ module.exports = recl({
   _setFocus: function() {
     return this.$writing.focus();
   },
-  _commitAudi: function() {
-    _checkAudi();
-    return $('#writing').focus();
+  _validateAudiPart: function(a) {
+    var _a;
+    if (a[0] !== "~") {
+      return false;
+    }
+    if (a.indexOf("/") === -1) {
+      return false;
+    }
+    _a = a.split("/");
+    if (_a[0].length < 3) {
+      return false;
+    }
+    if (_a[1].length === 0) {
+      return false;
+    }
+    return true;
   },
-  _checkAudi: function() {
-    var a, i, len, v;
+  _validateAudi: function() {
+    var a, i, len, v, valid;
     v = $('#audi').text();
     v = v.split(",");
     for (i = 0, len = v.length; i < len; i++) {
       a = v[i];
       a = a.trim();
+      valid = this._validateAudiPart(a);
     }
-    return StationActions.setAudience(v);
+    return valid;
+  },
+  _setAudi: function() {
+    var a, i, len, v, valid;
+    valid = _validateAudi();
+    StationActions.setValidAudience(valid);
+    if (valid === true) {
+      v = $('#audi').text();
+      v = v.split(",");
+      for (i = 0, len = v.length; i < len; i++) {
+        a = v[i];
+        a = a.trim();
+      }
+      return StationActions.setAudience(v);
+    }
   },
   getTime: function() {
     var d, seconds;
@@ -756,10 +810,7 @@ module.exports = recl({
     iden = StationStore.getMember(user);
     ship = iden ? iden.ship : user;
     name = iden ? iden.name : "";
-    audi = this.state.audi;
-    if (audi.length === 0) {
-      audi = this.state.ludi;
-    }
+    audi = this.state.audi.length === 0 ? this.state.ludi : this.state.audi;
     k = "writing";
     return div({
       className: k
@@ -769,10 +820,9 @@ module.exports = recl({
       }, [
         div({
           id: "audi",
-          className: "audi",
+          className: "audi valid-" + this.state.valid,
           contentEditable: true,
-          onBlur: this._checkAudi,
-          onKeyDown: this._commitAudi
+          onBlur: this._setAudi
         }, audi.join(",")), Member(iden, ""), br({}, ""), div({
           className: "time"
         }, this.getTime())
@@ -829,7 +879,7 @@ $(function() {
       switch (window.urb.user.length) {
         case 3:
           return "court";
-        case 5:
+        case 6:
           return "floor";
         case 13:
           return "porch";
@@ -5512,13 +5562,14 @@ MessageStore = _.merge(new EventEmitter, {
     return _typing;
   },
   getLastAudience: function() {
+    var messages;
     if (_.keys(_messages).length === 0) {
       return [];
     }
-    _messages = _.sortBy(_messages, function(_message) {
+    messages = _.sortBy(_messages, function(_message) {
       return _message.thought.statement.time;
     });
-    return _.keys(_messages[_messages.length - 1].thought.audience);
+    return _.keys(messages[messages.length - 1].thought.audience);
   },
   setTyping: function(state) {
     return _typing = state;
@@ -5604,7 +5655,7 @@ module.exports = MessageStore;
 
 
 },{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js","moment-timezone":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/moment-timezone/index.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee":[function(require,module,exports){
-var EventEmitter, StationDispatcher, StationStore, _audience, _config, _listening, _members, _station, _stations, _typing;
+var EventEmitter, StationDispatcher, StationStore, _audience, _config, _listening, _members, _station, _stations, _typing, _validAudience;
 
 EventEmitter = require('events').EventEmitter;
 
@@ -5624,6 +5675,8 @@ _config = {};
 
 _typing = {};
 
+_validAudience = true;
+
 StationStore = _.merge(new EventEmitter, {
   removeChangeListener: function(cb) {
     return this.removeListener("change", cb);
@@ -5639,6 +5692,12 @@ StationStore = _.merge(new EventEmitter, {
   },
   setAudience: function(audience) {
     return _audience = audience;
+  },
+  getValidAudience: function() {
+    return _validAudience;
+  },
+  setValidAudience: function(valid) {
+    return _validAudience = valid;
   },
   toggleAudience: function(station) {
     if (_audience.indexOf(station) !== -1) {
@@ -5743,6 +5802,10 @@ StationStore.dispatchToken = StationDispatcher.register(function(payload) {
       break;
     case 'station-set-audience':
       StationStore.setAudience(action.audience);
+      StationStore.emitChange();
+      break;
+    case 'station-set-valid-audience':
+      StationStore.setValidAudience(action.valid);
       StationStore.emitChange();
       break;
     case 'station-switch':

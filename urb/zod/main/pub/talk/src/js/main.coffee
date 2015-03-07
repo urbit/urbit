@@ -8,11 +8,12 @@ $(() ->
     window.chat.StationPersistence = require './persistence/StationPersistence.coffee'
 
     window.util =
-      mainStation: ->
-        switch window.urb.user.length
+      mainStation (user): ->
+        if not user then user = window.urb.user
+        switch user.length
           when 3
             return "court"
-          when 5
+          when 6
             return "floor"
           when 13
             return "porch"

@@ -10,6 +10,8 @@ _station = null
 _config = {}
 _typing = {}
 
+_validAudience = true
+
 StationStore = _.merge new EventEmitter,{
   removeChangeListener: (cb) -> @removeListener "change", cb
 
@@ -20,6 +22,10 @@ StationStore = _.merge new EventEmitter,{
   getAudience: -> _audience
 
   setAudience: (audience) -> _audience = audience
+
+  getValidAudience: -> _validAudience
+
+  setValidAudience: (valid) -> _validAudience = valid
 
   toggleAudience: (station) ->
     if _audience.indexOf(station) isnt -1
@@ -92,6 +98,10 @@ StationStore.dispatchToken = StationDispatcher.register (payload) ->
       break
     when 'station-set-audience'
       StationStore.setAudience action.audience
+      StationStore.emitChange()
+      break
+    when 'station-set-valid-audience'
+      StationStore.setValidAudience action.valid
       StationStore.emitChange()
       break
     when 'station-switch'

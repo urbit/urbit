@@ -17,6 +17,11 @@ module.exports =
       type:"station-set-audience"
       audience:audience
 
+  setValidAudience: (valid) ->
+    StationDispatcher.handleViewAction
+      type:"station-set-valid-audience"
+      valid:valid
+
   toggleAudience: (station) ->
     StationDispatcher.handleViewAction
       type:"station-audience-toggle"

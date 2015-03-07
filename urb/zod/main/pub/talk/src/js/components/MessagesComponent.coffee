@@ -19,6 +19,11 @@ Message = recl
     s = @lz d.getSeconds()
     "~#{h}.#{m}.#{s}"
 
+  _handlePm: (e) ->
+    $t = $(e.target).closest('.iden')
+    console.log 'pm'
+    console.log window.util.mainStation $t.text().slice(1)
+
   render: ->
     # pendingClass = if @props.pending isnt "received" then "pending" else ""
     delivery = _.uniq _.pluck @props.thought.audience, "delivery"
@@ -30,14 +35,12 @@ Message = recl
 
     name = if @props.name then @props.name else ""
     audi = _.keys(@props.thought.audience)
-    # audi = _.remove _.keys(@props.thought.audience), (stat) => 
-    #   stat isnt "~"+window.urb.ship+"/"+@props.station
     audi = audi.join " "
 
     div {className:"message "+pendingClass}, [
         (div {className:"attr"}, [
           div {className:"audi"}, "#{audi}"
-          (Member {ship:@props.ship}, "")
+          (Member {onClick:@_handlePm,ship:@props.ship}, "")
           (br {},"")
           div {className:"time"}, @convTime @props.thought.statement.date
         ])
@@ -53,7 +56,7 @@ module.exports = recl
     last:MessageStore.getLast()
     fetching:MessageStore.getFetching()
     listening:MessageStore.getListening()
-    station:"court"
+    station:window.util.mainStation()
     stations:StationStore.getStations()
     configs:StationStore.getConfigs()
     typing:MessageStore.getTyping()
