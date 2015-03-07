@@ -2083,8 +2083,8 @@
   ::
   +-  get                                               ::  grab value by key
     ~/  %get
-    |*  b=*
-    |-  ^-  ?(~ [~ u=_?>(?=(^ a) q.n.a)])
+    |=  b=*
+    ^-  $|(~ [~ u=_?>(?=(^ a) q.n.a)])
     ?~  a
       ~
     ?:  =(b p.n.a)
@@ -6131,7 +6131,12 @@
       [i.p.gen $(p.gen t.p.gen)]
     ::
         [%cncb *]  [%ktls [%cnzz p.gen] %cnts p.gen q.gen]
-        [%cncl *]  [%cnsg [%$ ~] p.gen q.gen]
+        [%cncl *]  
+      =+  rem=[%cnsg [%$ ~] p.gen q.gen]
+      ?.  ?=([%zpcb ^ %cnzz @ ~] p.gen)  rem
+      =>  .(p.gen `[@ ^ @ p=@tas ~]`p.gen)
+      :+  %sgzp  [[%dtzz %tas 'slam'] [%dtzz %tas p.p.gen]]
+      rem
         [%cndt *]  [%cnhp q.gen [p.gen ~]]
         [%cnkt *]  [%cnhp p.gen q.gen r.gen s.gen ~]
         [%cnls *]  [%cnhp p.gen q.gen r.gen ~]
