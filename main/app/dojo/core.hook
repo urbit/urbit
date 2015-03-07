@@ -1,18 +1,19 @@
 ::                                                      ::  ::
-::::  /hook/core/dojo/app                               ::  ::
-  ::                                                    ::  ::
-/?  314                                                 ::  zuse version
+::::  /hook/core/dojo/app                               ::  ::::
+  ::                                                    ::    ::
+/?  314                                                 ::  arvo kelvin
 /-  *console                                            ::  console structures
 /+  console                                             ::  console library
 ::                                                      ::  ::
-::::                                                    ::  ::
-  !:                                                    ::  ::
+::::                                                    ::  ::::
+  !:                                                    ::    ::
 =>  |%                                                  ::  external structures
     ++  house                                           ::  all state
       $:  hoc=(map bone session)                        ::  conversations
       ==                                                ::
     ++  session                                         ::  per conversation
       $:  say=console-share                             ::  command-line state
+          bem=beam                                      ::  location
           poy=(unit dojo-project)                       ::  working 
           var=(map term cage)                           ::  variable state
           old=(set term)                                ::  used TLVs
@@ -53,7 +54,7 @@
       ==                                                ::
     ++  dojo-config                                     ::  configuration
       $:  p=(list dojo-source)                          ::  by order
-          q=(map term dojo-source)                      ::  by keyword
+          q=(map term (unit dojo-source))               ::  by keyword
       ==                                                ::
     ++  dojo-problem  (each dojo-source dojo-server)    ::  construction problem
     ++  dojo-project                                    ::  construction state
@@ -215,14 +216,11 @@
     ++  dp-config                                       ::  ++dojo-config
       %+  cook  |=(a=dojo-config a)
       ;~  plug
-        (more ;~(plug com ace) dp-value)
+        (more ace dp-value)
         %+  cook
-          |=  a=(list (pair term (unit dojo-source)))
-          %-  ~(gas by *(map term dojo-source))
-          %+  turn  a
-          |=  b=(pair term (unit dojo-source))
-          [p.b ?~(q.b [0 %ex [%dtzy %f &]] u.q.b)]
-        %+  more  ;~(plug com ace)
+          ~(gas by *(map term (unit dojo-source)))
+        %+  more  
+          ;~(plug com ace)
         ;~  plug 
           ;~(pfix tis sym)
           ;~  pose 
@@ -265,6 +263,13 @@
         %save  =^(src +>.$ (dy-init-source q.mad) [[%save p.mad src] +>.$])
         %show  =^(src +>.$ (dy-init-source p.mad) [[%show p.mad] +>.$])
       ==
+    ::
+    ++  dy-init-source-unit                             ::  (unit dojo-source)
+      |=  urc=(unit dojo-source)
+      ^+  [urc +>]
+      ?~  urc  [~ +>]
+      =^  src  +>  (dy-init-source u.urc)
+      [`src +>.$]
     ::
     ++  dy-init-source                                  ::  ++dojo-source
       |=  src=dojo-source
@@ -318,10 +323,10 @@
       [[fir mor] +>.$]
     ::
     ++  dy-init-named                                   ::  (map @tas dojo-src)
-      |=  key=(map term dojo-source)
+      |=  key=(map term (unit dojo-source))
       ^+  [key +>.$]
       ?~  key  [~ +>.$]
-      =^  top  +>.$  (dy-init-source q.n.key)
+      =^  top  +>.$  (dy-init-source-unit q.n.key)
       =^  lef  +>.$  $(key l.key)
       =^  rit  +>.$  $(key r.key)
       [[[p.n.key top] lef rit] +>.$]
@@ -357,7 +362,7 @@
       |=  cag=cage
       ^+  +>+>
       ~&  %dy-made-make
-      (dy-slam /dial q.cag [[%atom %n] ~])
+      (dy-slam /dial q.cag !>(~))
     ::
     ++  dy-made-dial                                    ::  dialog result
       |=  cag=cage
@@ -424,11 +429,38 @@
         %ret  (dy-done (tufa buf.say))
       ==
     ::
+    ++  dy-cage       |=(num=@ud (~(got by rez) num))   ::  known cage
+    ++  dy-vase       |=(num=@ud q:(dy-cage num))       ::  known vase
+    ++  dy-silk-vase  |=(vax=vase [%done ~ %noun vax])  ::  vase to silk
+    ++  dy-silk-form                                    ::  configure
+      |=  [cag=cage cig=dojo-config]
+      ^-  silk
+      :+  %ride  [%cnzy %$]
+      :+  %mute  [%done ~ cag]
+      ^-  (list (pair wing silk))
+      :*  :-  [[~ 12] ~]
+          (dy-silk-vase !>([p.bem lat.hid]))
+      ::
+          :-  [[~ 46] ~]
+          %-  dy-silk-vase
+          |-  ^-  vase
+          ?~  p.cig  !>(~)
+          (slop (dy-vase p.i.p.cig) $(p.cig t.p.cig))
+      ::
+          %+  turn  (~(tap by q.cig))
+          |=  [a=term b=(unit dojo-source)]
+          ^-  (pair wing silk)
+          :-  [a [~ 47] ~]
+          %-  dy-silk-vase
+          ?~(b !>([~ ~]) (dy-vase p.u.b))
+      ==
+    ::
     ++  dy-silk-build                                   ::  build to silk
       |=  bul=dojo-build
       ^-  silk
       ?^  -.bul  [$(bul -.bul) $(bul +.bul)]
       ?+  -.bul  !!
+        %fo  (dy-silk-form (dy-cage p.p.p.bul) q.p.bul)
         %ex  [%ride p.bul [%reef ~]]
       ==
     ::
@@ -436,11 +468,11 @@
       |=  dov=dojo-device
       ^-  silk
       :*  %boil
-          %noun
+          %gate
           :-  [our.hid %main %da lat.hid] 
             ?-  -.dov
-              %&  [%mad p.dov ~]
-              %|  [%app p.dov %mad q.dov]
+              %&  [p.dov %gun ~]
+              %|  (weld (flop q.dov) `path`[%gun p.dov %app ~])
             ==
           ~
       ==
@@ -483,7 +515,6 @@
   ::
   ++  he-pass
     |=  [pax=path noy=note]
-    ~&  [%he-pass pax noy]
     %_(+> moz [[ost %pass pax noy] moz])
   ::
   ++  he-rush                                           ::  emit update
@@ -512,7 +543,8 @@
             [%make ~]  (dy-made-make:dye q.p.rey)
             [%edit ~]  (dy-made-edit:dye q.p.rey)
           ==
-      %|  (he-rush(poy ~) %tan p.rey)
+      %|  ~&  [%he-ford-fail pax]
+          (he-rush(poy ~) %tan p.rey)
     ==
   ::
   ++  he-like                                           ::  accept line
@@ -580,14 +612,13 @@
 ::
 ++  poke-console-action
   |=  [ost=bone her=ship act=console-action]
-  ~&  %poke-console-action
   ^-  [(list move) _+>]
   he-abet:(~(he-work he [ost [ost %give %nice ~]~] (~(got by hoc) ost)) act)
 ::
 ++  pour
-  |=  [ost=bone pax=path sih=*]
+  |=  [ost=bone pax=path sih=sign]
   ^-  [(list move) _+>]
-  =+  sih=((hard sign) sih)
+  ::  ~&  [%dojo-pour pax]
   ?-    -.sih
       %f
     he-abet:(~(he-ford he [[ost ~] (~(got by hoc) ost)]) pax +>.sih)
