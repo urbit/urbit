@@ -13,7 +13,8 @@
       ==                                                ::
     ++  session                                         ::  per conversation
       $:  say=console-share                             ::  command-line state
-          bem=beam                                      ::  location
+          syd=desk                                      ::  active desk 
+          luc=(unit case)                               ::  special case
           poy=(unit dojo-project)                       ::  working 
           var=(map term cage)                           ::  variable state
           old=(set term)                                ::  used TLVs
@@ -46,11 +47,7 @@
       ==                                                ::
     ++  dojo-server                                     ::  numbered device
       $:  p=@ud                                         ::  assembly index
-          q=dojo-device                                 ::  loadable
-      ==                                                ::
-    ++  dojo-device                                     ::  core devices
-      $%  [%& p=term]                                   ::  general device
-          [%| p=term q=path]                            ::  special device
+          q=path                                        ::  gate path
       ==                                                ::
     ++  dojo-config                                     ::  configuration
       $:  p=(list dojo-source)                          ::  by order
@@ -173,8 +170,8 @@
       %+  knee  *dojo-build  |.  ~+
       ;~  pose
         (ifix [sel ser] dp-many)
-        ;~(pfix col (stag %fo dp-model))
-        ;~(pfix bar (stag %sc dp-model))
+        ;~(pfix col (stag %fo dp-model-gun))
+        ;~(pfix bar (stag %sc dp-model-sic))
         ;~(pfix buc (stag %va sym))
         (stag %ex dp-twig)
       ==
@@ -194,16 +191,12 @@
         ==
         (cook |=(a=term `goal`[our.hid a]) sym)
       ==
-    ++  dp-model   ;~(plug dp-server dp-config)         ::  ++dojo-model
-    ++  dp-server  (stag 0 dp-device)                   ::  ++dojo-server
-    ++  dp-twig    wide:(vang & ~)                      ::  ++twig
-    ++  dp-device                                       ::  ++dojo-device
-      %+  cook
-        |=  [a=term b=path]
-        ^-  dojo-device
-        ?~(b [%& a] [%| a b])
-      ;~(plug sym (more fas sym))
-    ::
+    ++  dp-model-gun  ;~(plug dp-server-gun dp-config)  ::  ++dojo-model
+    ++  dp-model-sic  ;~(plug dp-server-sic dp-config)  ::  ++dojo-model
+    ++  dp-server-gun   (stag 0 (stag %gun dp-device))  ::  ++dojo-server
+    ++  dp-server-sic   (stag 0 (stag %sic dp-device))  ::  ++dojo-server
+    ++  dp-twig         wide:(vang & ~)                 ::  ++twig
+    ++  dp-device       (most fas sym)                  ::  ++dojo-device
     ++  dp-value                                        ::  ++dojo-source
       %+  cook  |=(a=dojo-source a)
       %+  stag  0
@@ -347,6 +340,13 @@
       ^+  +>+>
       dy-step(cur +(cur), rez (~(put by rez) cur cag))
     ::
+    ++  dy-meal                                         ::  vase to cage
+      |=  vax=vase
+      ?.  &(?=(@ -.q.vax) !((sane %tas) -.q.vax))
+        ~&  %dy-meal-cage
+        (dy-rash %bel ~)
+      (dy-hand -.q.vax (slot 3 vax))
+    ::
     ++  dy-made-edit                                    ::  console edit
       |=  cag=cage
       ^+  +>+>
@@ -364,26 +364,26 @@
       ~&  %dy-made-make
       (dy-slam /dial q.cag !>(~))
     ::
-    ++  dy-made-dial                                    ::  dialog result
+    ++  dy-made-dial                                    ::  dialog product
       |=  cag=cage
-      ?.  ?=([~ ~ a=* b=*] q.q.cag)
-        ~&  %dy-made-init-fail
+      ^+  +>+>
+      ?.  ?=([~ ~ *] q.q.cag)
+        ~&  %dy-made-dial-fail
         (dy-rash %bel ~)
-      =.  +>+>  
-          ?:  =(a.q.q.cag ~) 
-            +>+> 
-          (he-rush %tan ((list tank) a.q.q.cag))
-      ?+    -.b.q.q.cag  (dy-rash %bel ~)
-          %&
-        ?~  +.b.q.q.cag
+      =+  tan=((list tank) +14.q.cag)
+      =+  vax=(spec (slot 15 q.cag))
+      ?+    -.q.vax  !!
+          %& 
+        ?~  +<.q.vax
+          ~&  %dy-made-dial-abort
           (dy-rash %bel ~)
-        (dy-hand %noun (slot 63 q.cag))
+        (dy-meal (slot 7 vax))
       ::
           %|
-        (dy-rush(pro `(slot 63 q.cag)) %pro (console-prompt +<.b.q.q.cag))
+        (dy-rush(pro `(slot 2 vax)) %pro (console-prompt +.q.vax))
       ==
     ::
-    ++  dy-done
+    ++  dy-done                                         ::  submit
       |=  txt=tape
       ~&  %dy-done
       ?>  ?=(^ pro)
@@ -439,7 +439,7 @@
       :+  %mute  [%done ~ cag]
       ^-  (list (pair wing silk))
       :*  :-  [[~ 12] ~]
-          (dy-silk-vase !>([p.bem lat.hid]))
+          (dy-silk-vase !>([he-beak lat.hid]))
       ::
           :-  [[~ 46] ~]
           %-  dy-silk-vase
@@ -465,17 +465,9 @@
       ==
     ::
     ++  dy-silk-device                                  ::  device to silk
-      |=  dov=dojo-device
+      |=  pax=path
       ^-  silk
-      :*  %boil
-          %gate
-          :-  [our.hid %main %da lat.hid] 
-            ?-  -.dov
-              %&  [p.dov %gun ~]
-              %|  (weld (flop q.dov) `path`[%gun p.dov %app ~])
-            ==
-          ~
-      ==
+      [%boil %gate [he-beak pax] ~]
     ::
     ++  dy-step                                         ::  advance project
       ^+  +>
@@ -507,6 +499,10 @@
   ::
   ++  he-abet                                           ::  resolve
     [(flop moz) %_(+> hoc (~(put by hoc) ost +<+))]
+  ::
+  ++  he-beak                                           ::  logical beam
+    ^-  beak
+    [our.hid syd ?^(luc u.luc [%da lat.hid])]
   ::
   ++  he-give                                           ::  emit gift
     |=  git=gift
@@ -608,7 +604,17 @@
   ?<  (~(has by hoc) ost)
   ?>  =(/console pax)
   ?>  =(her our.hid)
-  he-abet:~(he-peer he [ost ~] *session)
+  =<  he-abet
+  %~  he-peer  he
+  :-  [ost ~]
+  ^-  session
+  :*  *console-share  ::  say=console-share
+      %main           ::  syd=desk
+      ~               ::  luc=(unit case)
+      ~               ::  poy=(unit dojo-project)
+      ~               ::  var=(map term cage)
+      ~               ::  old=(set term)
+  ==
 ::
 ++  poke-console-action
   |=  [ost=bone her=ship act=console-action]
