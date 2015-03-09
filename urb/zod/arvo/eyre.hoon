@@ -93,6 +93,7 @@
       [%beam p=beam]
       [%poll p=@uvH]
       [%auth perk-auth]
+      [%away ~]
   ==
 ::
 ++  perk-auth                                           ::  parsed auth
@@ -122,7 +123,7 @@
   ==
 --                                                      ::
 |%
-++  sesh                                                ::  session from cookies
+++  session-from-cookies
   |=  [nam=@t maf=math]
   ^-  (unit hole)
   =+  ^=  cok  ^-  (list ,@t)
@@ -134,7 +135,9 @@
   ?~  mar  $(cok t.cok)
   |-  ^-  (unit hole)
   ?~  u.mar  ^$(cok t.cok)
-  ?:(=(nam p.i.u.mar) [~ q.i.u.mar] $(u.mar t.u.mar))
+  ?:  &(=(nam p.i.u.mar) !=('~' q.i.u.mar))
+    [~ q.i.u.mar]
+  $(u.mar t.u.mar)
 ::
 ++  heat                                                ::  eat headers
   |=  hed=(list ,[p=@t q=@t])  ^-  math
@@ -198,36 +201,58 @@
   ::
   ++  auth
     '''
+    var req = function(url,dat,cb){
+      var xhr = new XMLHttpRequest()
+      xhr.open('POST', url, true)
+      dat.oryx = urb.oryx
+      xhr.send(JSON.stringify(dat))
+      xhr.addEventListener('load', function(ev){
+        if(this.status !== 200)
+          return err.innerHTML = ":(\n" + xhr.responseText
+        else if(cb) return cb(xhr.responseText,ev)
+      })
+    }
+    
     ship.innerText = urb.ship
     urb.foreign = /^\/~\/am/.test(window.location.pathname)
     urb.submit = function(){
-        xhr = new XMLHttpRequest()
-        xhr.open('POST', "/~/auth.json?PUT", true)
-        var dat = {oryx:'hi', ship: ship.innerText, code: pass.value}
-        xhr.send(JSON.stringify(dat))
-        xhr.addEventListener('load', function(){
-          if(this.status !== 200)
-            return err.innerHTML = ":(\n" + xhr.responseText
-          else if(urb.foreign) document.location = 
+      req(
+        "/~/auth.json?PUT", 
+        {ship: ship.innerText, code: pass.value},
+        function(){
+          if(urb.foreign) document.location = 
             document.location.hash.match(/#[^?]+/)[0].slice(1) +
             document.location.pathname.replace(
               /^\/~\/am\/[^/]+/,
               '/~/as/~' + urb.ship) +
             document.location.search
           else document.location.reload()
-        })
+      })
     }
+    urb.away = function(){req("/~/auth.json?DELETE", {}, 
+      function(){document.write("success!")})}
     '''
   --
 ++  xml
   |%
   ++  login-page
     ;html
-      ;head:title:'Hello World'
+      ;head:title:'Log in'
       ;body
         ;p: Identify yourself, ~;{span#ship(contenteditable "")}?
         ;style:'#ship {background: lightgray} #ship br {display: none}'
         ;input#pass(onchange "urb.submit()");
+        ;pre:code#err;
+        ;script@"/~/at/~/auth.js";
+      ==
+    ==
+  ::
+  ++  logout-page
+    ;html
+      ;head:title:'Log out'
+      ;body
+        ;p: Goodbye ~;{span#ship}.
+        ;button#act(onclick "urb.away()"): Log out
         ;pre:code#err;
         ;script@"/~/at/~/auth.js";
       ==
@@ -504,9 +529,10 @@
         ==
           %am  ?~(but !! [%auth %xen i.but pok(q t.but)])
           %at  [%auth %at pok(q but)]
+          %away  [%away ~]
           %auth
         :-  %auth
-        |-
+        |-  ^-  perk-auth
         ?+    p.pok  !!
             ~          $(p.pok [~ %json])
             [~ %js]    [%js ~]
@@ -521,7 +547,11 @@
               [%try (need (paz (need (poja q:(need bod)))))]
             ::
                 [[%'DELETE' ~] ~]
-              !!
+              ~|  parsing/bod
+              =+  jon=(need (poja q:(need bod)))
+              ?>  ?=(%o -.jon)
+              =+  sip=(~(get by p.jon) %ship)
+              [%del ?~(sip ~ [~ (need ((su:jo fed:ag) u.sip))])]
         ==  ==
       ==  ==
     ::
@@ -583,11 +613,12 @@
         [%& %for ~ bem ext ced.cyz:for-client]
           %poll
         ?:  ?=([~ %js] p.pok)  ::  XX treat non-json cases?
-          =+  polling-url=(apex:earn %| pok(u.p %json) quy)
+          =+  polling-url=['/' (apex:earn %| pok(u.p %json) quy)]
           :^  %&  %fin  %js
           (jass (joba %poll (jape polling-url)) poll:js)
         ?~  p.hem  [%| done]
         [%& %fow p.hem]
+          %away  [%& %fin %html logout-page:xml]
           %auth
         =+  yac=for-client
         ?-    &2.hem
@@ -620,7 +651,10 @@
           =^  jon  ..ya  stat-json:(logon:yac him.hem)
           (give-json 200 cug.yac jon)
         ::  
-            %del  [%| (nice-json(..ya (logoff:yac p.hem)))]
+            %del  
+          =.  ..ya  (logoff:yac p.hem)
+          =+  cug=[(cat 3 cookie-prefix '=~; Path=/')]~
+          [%| (give-json 200 cug (joba %ok %b &))]
             %get
           ~|  aute/+.hem
           ?:  |(=(anon him.hem) (~(has in aut.yac) him.hem))
@@ -655,7 +689,7 @@
     ++  for-client                        ::  stateful per-session engine
       ^+  ya
       =+  pef=cookie-prefix
-      =+  lig=(sesh pef maf)
+      =+  lig=(session-from-cookies pef maf)
       ?^  lig
         =+  cyz=(~(got by wup) u.lig)
         ~(. ya u.lig cyz(cug ~))
@@ -737,7 +771,6 @@
       :+  %thou  307 
       [[location/(crip url)]~ ~]
     ::
-    ++  foreign-good  !!
     ++  stat-json
       ^+  [*json ..ya]
       =+  orx=(rsh 3 1 (scot %p (shaf %orx eny)))
