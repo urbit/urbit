@@ -98,7 +98,7 @@ module.exports = recl
     valid
 
   _setAudi: ->
-    valid = _validateAudi()
+    valid = @_validateAudi()
     StationActions.setValidAudience valid
     if valid is true
       v = $('#audi').text()

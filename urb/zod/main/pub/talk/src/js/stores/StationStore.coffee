@@ -1,14 +1,14 @@
-EventEmitter = require('events').EventEmitter
+EventEmitter      = require('events').EventEmitter
 
 StationDispatcher = require '../dispatcher/Dispatcher.coffee'
 
-_audience = []
-_members = {}
-_stations = []
-_listening = []
-_station = null
-_config = {}
-_typing = {}
+_audience   = []
+_members    = {}
+_stations   = []
+_listening  = []
+_station    = null
+_config     = {}
+_typing     = {}
 
 _validAudience = true
 
@@ -41,14 +41,12 @@ StationStore = _.merge new EventEmitter,{
 
   getMember: (ship) -> {ship:ship}
 
-  changeMember: (dir,name,ship) ->
-    if dir is "out"
-      _members = _.filter _members, (_member) ->
-        return (_member.ship isnt ship)
-    if dir is "in"
-      _members.push {name:name, ship:ship}
-
-  loadMembers: (station,members) -> _members[station] = members
+  loadMembers: (members) -> 
+    _members = {}
+    for station,list of members
+      for member,presence of list
+        _members[member] = {} if not _members[member]
+        _members[member][station] = presence
 
   getMembers: -> _members
 
@@ -131,7 +129,7 @@ StationStore.dispatchToken = StationDispatcher.register (payload) ->
       StationStore.emitChange()
       break
     when "members-load"
-      StationStore.loadMembers action.station,action.members
+      StationStore.loadMembers action.members
       StationStore.emitChange()
       break
     when "typing-set"

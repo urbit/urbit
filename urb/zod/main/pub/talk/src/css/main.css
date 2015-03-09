@@ -137,8 +137,9 @@ body {
   font-size: 4rem;
 }
 #station #station-container {
-  display: block;
   padding-top: 1rem;
+  min-width: 30rem;
+  text-align: right;
 }
 #stations-container,
 #messages-container {
@@ -155,9 +156,13 @@ body {
 #station > div {
   display: inline-block;
 }
-#station-meta {
-  margin-right: 1rem;
-  margin-bottom: 1rem;
+#station-meta .audi,
+#station-meta .iden {
+  display: inline-block;
+}
+#station-meta .iden {
+  width: 6rem;
+  margin-left: 0.3rem;
 }
 #sources-container {
   position: fixed;
@@ -171,9 +176,6 @@ body {
 }
 #members {
   margin-left: 2rem;
-}
-#station .iden {
-  display: block;
 }
 .station {
   margin-bottom: 0.3rem;
@@ -247,6 +249,9 @@ body {
 #messages .message:hover .time {
   opacity: 1;
 }
+#messages .message .ship {
+  cursor: pointer;
+}
 .member {
   width: 12rem;
   margin: 0.3rem 0.6rem 0.3rem 0;
@@ -278,6 +283,7 @@ body {
 .attr .iden {
   color: #000;
   width: 6rem;
+  margin-left: 0.3rem;
 }
 .mess {
   font-size: 0.9rem;
@@ -317,6 +323,7 @@ body {
   padding: 0.3rem;
   margin-top: -0.3rem;
   outline: none;
+  margin-right: -0.3rem;
 }
 #audi.valid-false {
   color: #ff2f2f;

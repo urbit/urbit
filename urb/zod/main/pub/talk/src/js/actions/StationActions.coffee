@@ -58,11 +58,10 @@ module.exports =
       type:"stations-load"
       stations:stations
 
-  loadMembers: (station,members) ->
+  loadMembers: (members) ->
     StationDispatcher.handleServerAction
       type:"members-load"
       members:members
-      station:station
 
   createStation: (station) ->
     StationDispatcher.handleViewAction

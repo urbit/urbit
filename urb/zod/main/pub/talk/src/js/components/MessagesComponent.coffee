@@ -20,18 +20,14 @@ Message = recl
     "~#{h}.#{m}.#{s}"
 
   _handlePm: (e) ->
-    $t = $(e.target).closest('.iden')
-    console.log 'pm'
-    console.log window.util.mainStation $t.text().slice(1)
+    return if not @props._handlePm
+    user = $(e.target).closest('.iden').text().slice(1)
+    @props._handlePm user
 
   render: ->
     # pendingClass = if @props.pending isnt "received" then "pending" else ""
     delivery = _.uniq _.pluck @props.thought.audience, "delivery"
     pendingClass = if delivery.indexOf("received") isnt -1 then "received" else "pending"
-
-    if pendingClass is "pending"
-      console.log @props.thought
-      console.log delivery
 
     name = if @props.name then @props.name else ""
     audi = _.keys(@props.thought.audience)
@@ -40,7 +36,7 @@ Message = recl
     div {className:"message "+pendingClass}, [
         (div {className:"attr"}, [
           div {className:"audi"}, "#{audi}"
-          (Member {onClick:@_handlePm,ship:@props.ship}, "")
+          (div {onClick:@_handlePm}, (Member {ship:@props.ship}, ""))
           (br {},"")
           div {className:"time"}, @convTime @props.thought.statement.date
         ])
@@ -106,6 +102,13 @@ module.exports = recl
 
   _onChangeStore: -> @setState @stateFromStore()
 
+  _handlePm: (user) ->
+    audi = [
+      window.util.mainStationPath(user)
+      window.util.mainStationPath(window.urb.user)
+    ]
+    StationActions.setAudience audi
+
   render: ->
     station = @state.station
     _station = "~"+window.urb.ship+"/"+station
@@ -128,5 +131,6 @@ module.exports = recl
 
     messages = _messages.map (_message) => 
       _message.station = @state.station
+      _message._handlePm = @_handlePm
       Message _message, ""
     div {id: "messages"}, messages

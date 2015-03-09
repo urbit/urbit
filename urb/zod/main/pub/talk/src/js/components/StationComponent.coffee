@@ -60,9 +60,10 @@ module.exports = recl
     parts = []
     members = []
 
-    if @state.station and @state.members[@state.station]
-      members = _.map @state.members[@state.station], (state,member) -> 
-          Member {ship:member,presence:state.presence}
+    if @state.station and @state.members
+      members = _.map @state.members, (stations,member) -> 
+          audi = _.map stations,(presence,station) -> (div {className:"audi"}, station)
+          (div {}, [audi,Member {ship:member}])
     else
       members = ""
 
