@@ -2115,7 +2115,19 @@
         ~
       =+  d=(end 0 6 pad)
       [(cut 3 [d 1] cha) $(pad (rsh 0 6 pad))]
-  (weld (flop (slag poc sif)) (trip (fil 3 poc '=')))
+  (weld (flop (slag poc sif)) (reap poc '='))
+::
+++  ofis
+  =-  |=(a=cord (rash a fel))
+  =-  fel=;~(sfix (boss 64 (plus siw)) (stun 0^3 tis))
+  ^=  siw
+  ;~  pose
+     dit
+     (cook |=(a=@ (sub a (sub 'A' 10))) (shim 'A' 'Z'))
+     (cook |=(a=@ (sub a (sub 'a' 36))) (shim 'a' 'z'))
+     (cold 62 (just '-'))
+     (cold 63 (just '~'))
+   ==
 ::
 ++  urle                                                ::  URL encode
   |=  tep=tape

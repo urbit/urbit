@@ -1688,6 +1688,8 @@
         %milk
       ::  ~&  [%rx p.bon q.bon]
       ?>  ?=([@ *] q.q.bon)
+      ?:  ?=(%e i.q.q.bon)
+        :_(fox [hen [%slip %e %wart p.bon %$ t.q.q.bon r.bon]]~)
       ?:  ?=(%r i.q.q.bon)
         ?:  ?=([%ta *] t.q.q.bon)
           =+  wil=((hard (unit will)) r.bon)
