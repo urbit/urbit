@@ -25,7 +25,7 @@
               [%writ p=riot]                            ::  response
           ==                                            ::
 ++  khan                                                ::
-          $:  fil=(unit (unit cage))                    ::
+          $:  fil=(unit (unit cage))                    ::  XX see khan-to-soba
               dir=(map ,@ta khan)                       ::
           ==                                            ::
 ++  kiss                                                ::  in request ->$
@@ -864,7 +864,6 @@
             ..wake  ?~  u.cas  (blub p.i.xiq)
                     (blab p.i.xiq p.q.i.xiq u.u.cas)
         ==
-      ~&  [%sydhit syd hit.dom let.dom]
       =+  nao=(case-to-aeon:ze q.p.q.i.xiq)
       ?~  nao  $(xiq t.xiq, xaq [i.xiq xaq])
       $(xiq t.xiq, ..wake (balk p.i.xiq u.nao p.q.i.xiq))
@@ -2176,7 +2175,6 @@
     =^  mos  ruf
       =+  zot=abet.zat
       [-.zot (posh q.p.+.q.hin syd +.zot ruf)]
-    ~&  %wafting
     [mos ..^$(ran.ruf ran.zat)]                         ::  merge in new obj
   ::
       %wake
@@ -2212,6 +2210,7 @@
   ^-  rand
   [p q [p q.q]:r]
 ::
+::  XX  perhaps fil.khan should be (unit (unit mime)) and !>
 ++  khan-to-soba
   |=  [ank=(unit ankh) kan=(unit khan)]
   ^-  soba

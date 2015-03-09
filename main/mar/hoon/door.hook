@@ -6,7 +6,6 @@
 |_  own=@t
 ::
 ++  grow                                                ::  convert to
-  ~&  hoon=(met 3 own)
   |%
   ++  mime  `^mime`[/text/hoon (taco own)]              ::  convert to %mime
   ++  psal  ;div:(pre:"{(trip own)}")                   ::  convert to %html

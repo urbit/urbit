@@ -872,10 +872,8 @@
       %+  cope  (fang cof for bek)
       |=  [cof=cafe pro=vase]
       ?:  &((slob %grow p.pro) (slob too p:(slap pro [%cnzy %grow])))
-        ~&  [%herep-a -.vax]
         %+  cope  (keel cof pro [[%& 6]~ vax]~)
         |=  [cof=cafe pox=vase]
-        ~&  %herep-b
         (maim cof pox [%tsgr [%cnzy %grow] [%cnzy too]])
       %+  cope  (fang cof too bek)
       |=  [cof=cafe pro=vase]
@@ -1069,7 +1067,6 @@
         %+  cool  |.(leaf/"ford: vale {<p.kas>} {<q.kas>} {<`@p`(mug r.kas)>}")
         %+  cope  (lave cof p.kas q.kas r.kas)
         |=  [cof=cafe vax=vase]
-        ~&  [%valing p.kas p.vax]
         (fine cof `cage`[p.kas vax])
       ==
     ::
