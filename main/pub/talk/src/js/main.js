@@ -154,11 +154,10 @@ module.exports = {
       stations: stations
     });
   },
-  loadMembers: function(station, members) {
+  loadMembers: function(members) {
     return StationDispatcher.handleServerAction({
       type: "members-load",
-      members: members,
-      station: station
+      members: members
     });
   },
   createStation: function(station) {
@@ -237,19 +236,17 @@ Message = recl({
     return "~" + h + "." + m + "." + s;
   },
   _handlePm: function(e) {
-    var $t;
-    $t = $(e.target).closest('.iden');
-    console.log('pm');
-    return console.log(window.util.mainStation($t.text().slice(1)));
+    var user;
+    if (!this.props._handlePm) {
+      return;
+    }
+    user = $(e.target).closest('.iden').text().slice(1);
+    return this.props._handlePm(user);
   },
   render: function() {
     var audi, delivery, name, pendingClass;
     delivery = _.uniq(_.pluck(this.props.thought.audience, "delivery"));
     pendingClass = delivery.indexOf("received") !== -1 ? "received" : "pending";
-    if (pendingClass === "pending") {
-      console.log(this.props.thought);
-      console.log(delivery);
-    }
     name = this.props.name ? this.props.name : "";
     audi = _.keys(this.props.thought.audience);
     audi = audi.join(" ");
@@ -344,6 +341,11 @@ module.exports = recl({
   _onChangeStore: function() {
     return this.setState(this.stateFromStore());
   },
+  _handlePm: function(user) {
+    var audi;
+    audi = [window.util.mainStationPath(user), window.util.mainStationPath(window.urb.user)];
+    return StationActions.setAudience(audi);
+  },
   render: function() {
     var _messages, _station, messages, ref1, ref2, sources, station;
     station = this.state.station;
@@ -367,6 +369,7 @@ module.exports = recl({
     messages = _messages.map((function(_this) {
       return function(_message) {
         _message.station = _this.state.station;
+        _message._handlePm = _this._handlePm;
         return Message(_message, "");
       };
     })(this));
@@ -445,12 +448,19 @@ module.exports = recl({
     var _remove, _sources, members, parts, sourceCtrl, sourceInput, sources, station;
     parts = [];
     members = [];
-    if (this.state.station && this.state.members[this.state.station]) {
-      members = _.map(this.state.members[this.state.station], function(state, member) {
-        return Member({
-          ship: member,
-          presence: state.presence
+    if (this.state.station && this.state.members) {
+      members = _.map(this.state.members, function(stations, member) {
+        var audi;
+        audi = _.map(stations, function(presence, station) {
+          return div({
+            className: "audi"
+          }, station);
         });
+        return div({}, [
+          audi, Member({
+            ship: member
+          })
+        ]);
       });
     } else {
       members = "";
@@ -749,7 +759,7 @@ module.exports = recl({
   },
   _setAudi: function() {
     var a, i, len, v, valid;
-    valid = _validateAudi();
+    valid = this._validateAudi();
     StationActions.setValidAudience(valid);
     if (valid === true) {
       v = $('#audi').text();
@@ -875,8 +885,14 @@ $(function() {
   window.chat.MessagePersistence = require('./persistence/MessagePersistence.coffee');
   window.chat.StationPersistence = require('./persistence/StationPersistence.coffee');
   window.util = {
-    mainStation: function() {
-      switch (window.urb.user.length) {
+    mainStationPath: function(user) {
+      return "~" + user + "/" + (window.util.mainStation(user));
+    },
+    mainStation: function(user) {
+      if (!user) {
+        user = window.urb.user;
+      }
+      switch (user.length) {
         case 3:
           return "court";
         case 6:
@@ -5496,8 +5512,8 @@ module.exports = {
       if (res.data.ok === true) {
         StationActions.listeningStation(station);
       }
-      if ((ref = res.data.group) != null ? ref.local : void 0) {
-        StationActions.loadMembers(station, res.data.group.local);
+      if ((ref = res.data.group) != null ? ref.global : void 0) {
+        StationActions.loadMembers(res.data.group.global);
       }
       if (res.data.config) {
         return StationActions.loadConfig(station, res.data.config);
@@ -5720,21 +5736,26 @@ StationStore = _.merge(new EventEmitter, {
       ship: ship
     };
   },
-  changeMember: function(dir, name, ship) {
-    if (dir === "out") {
-      _members = _.filter(_members, function(_member) {
-        return _member.ship !== ship;
-      });
+  loadMembers: function(members) {
+    var list, member, presence, results, station;
+    _members = {};
+    results = [];
+    for (station in members) {
+      list = members[station];
+      results.push((function() {
+        var results1;
+        results1 = [];
+        for (member in list) {
+          presence = list[member];
+          if (!_members[member]) {
+            _members[member] = {};
+          }
+          results1.push(_members[member][station] = presence);
+        }
+        return results1;
+      })());
     }
-    if (dir === "in") {
-      return _members.push({
-        name: name,
-        ship: ship
-      });
-    }
-  },
-  loadMembers: function(station, members) {
-    return _members[station] = members;
+    return results;
   },
   getMembers: function() {
     return _members;
@@ -5835,7 +5856,7 @@ StationStore.dispatchToken = StationDispatcher.register(function(payload) {
       StationStore.emitChange();
       break;
     case "members-load":
-      StationStore.loadMembers(action.station, action.members);
+      StationStore.loadMembers(action.members);
       StationStore.emitChange();
       break;
     case "typing-set":

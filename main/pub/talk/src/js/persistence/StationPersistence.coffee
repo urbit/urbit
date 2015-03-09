@@ -68,7 +68,7 @@ module.exports =
         console.log(res.data)
         if res.data.ok is true
           StationActions.listeningStation station
-        if res.data.group?.local
-          StationActions.loadMembers station,res.data.group.local
+        if res.data.group?.global
+          StationActions.loadMembers res.data.group.global
         if res.data.config
           StationActions.loadConfig station,res.data.config

@@ -8,7 +8,8 @@ $(() ->
     window.chat.StationPersistence = require './persistence/StationPersistence.coffee'
 
     window.util =
-      mainStation (user): ->
+      mainStationPath: (user) -> "~#{user}/#{window.util.mainStation(user)}"
+      mainStation: (user) ->
         if not user then user = window.urb.user
         switch user.length
           when 3
