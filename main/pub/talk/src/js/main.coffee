@@ -8,7 +8,10 @@ $(() ->
     window.chat.StationPersistence = require './persistence/StationPersistence.coffee'
 
     window.util =
+      mainStations: ["court","floor","porch"]
+      
       mainStationPath: (user) -> "~#{user}/#{window.util.mainStation(user)}"
+
       mainStation: (user) ->
         if not user then user = window.urb.user
         switch user.length
@@ -18,6 +21,19 @@ $(() ->
             return "floor"
           when 13
             return "porch"
+
+      clipAudi: (audi) ->
+        audi = audi.join " "
+        for v in window.util.mainStations
+          regx = new RegExp "/#{v}","g"
+          audi = audi.replace regx,""
+        audi.split " "
+
+      expandAudi: (audi) ->
+        for k,v of audi
+          if v.indexOf("/") is -1
+            audi[k] = "#{v}/#{window.util.mainStation(v.slice(1))}"
+        audi
 
       create: (name) ->
         window.chat.StationPersistence.createStation name, (err,res) ->

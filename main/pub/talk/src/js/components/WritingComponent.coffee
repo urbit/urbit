@@ -45,6 +45,7 @@ module.exports = recl
       @_setAudi()
     else
       audi = @state.audi
+    audi = window.util.expandAudi audi
     MessageActions.sendMessage audi,@$writing.text(),audi
     @$length.text "0/69"
     @$writing.text('')
@@ -80,18 +81,20 @@ module.exports = recl
   _validateAudiPart: (a) ->
     if a[0] isnt "~"
       return false
-    if a.indexOf("/") is -1
-      return false
-    _a = a.split("/")
-    if _a[0].length < 3
-      return false
-    if _a[1].length is 0
+    if a.indexOf("/") isnt -1
+      _a = a.split("/")
+      if _a[1].length is 0
+        return false
+      ship = _a[0]
+    else
+      ship = a
+    if ship.length < 3
       return false
     return true
 
   _validateAudi: ->
     v = $('#audi').text()
-    v = v.split ","
+    v = v.split " "
     for a in v
       a = a.trim()
       valid = @_validateAudiPart(a)
@@ -102,9 +105,8 @@ module.exports = recl
     StationActions.setValidAudience valid
     if valid is true
       v = $('#audi').text()
-      v = v.split ","
-      for a in v
-        a = a.trim()
+      v = v.split " "
+      v = window.util.expandAudi v
       StationActions.setAudience v
 
   getTime: ->
@@ -150,6 +152,7 @@ module.exports = recl
     name = if iden then iden.name else ""
 
     audi = if @state.audi.length is 0 then @state.ludi else @state.audi
+    audi = window.util.clipAudi audi
 
     k = "writing"
 
@@ -160,7 +163,7 @@ module.exports = recl
           className:"audi valid-#{@state.valid}"
           contentEditable:true
           onBlur:@_setAudi
-          }, audi.join(","))
+          }, audi.join(" "))
         (Member iden, "")
         (br {},"")
         (div {className:"time"}, @getTime())        

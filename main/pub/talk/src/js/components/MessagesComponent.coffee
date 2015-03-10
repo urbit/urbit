@@ -19,6 +19,10 @@ Message = recl
     s = @lz d.getSeconds()
     "~#{h}.#{m}.#{s}"
 
+  _handleAudi: (e) ->
+    audi = $(e.target).closest('.audi').text().split(" ")
+    @props._handleAudi audi
+
   _handlePm: (e) ->
     return if not @props._handlePm
     user = $(e.target).closest('.iden').text().slice(1)
@@ -30,12 +34,12 @@ Message = recl
     pendingClass = if delivery.indexOf("received") isnt -1 then "received" else "pending"
 
     name = if @props.name then @props.name else ""
-    audi = _.keys(@props.thought.audience)
+    audi = window.util.clipAudi _.keys @props.thought.audience
     audi = audi.join " "
 
     div {className:"message "+pendingClass}, [
         (div {className:"attr"}, [
-          div {className:"audi"}, "#{audi}"
+          div {onClick:@_handleAudi,className:"audi"}, "#{audi}"
           (div {onClick:@_handlePm}, (Member {ship:@props.ship}, ""))
           (br {},"")
           div {className:"time"}, @convTime @props.thought.statement.date
@@ -109,6 +113,8 @@ module.exports = recl
     ]
     StationActions.setAudience audi
 
+  _handleAudi: (audi) -> StationActions.setAudience audi
+
   render: ->
     station = @state.station
     _station = "~"+window.urb.ship+"/"+station
@@ -132,5 +138,6 @@ module.exports = recl
     messages = _messages.map (_message) => 
       _message.station = @state.station
       _message._handlePm = @_handlePm
+      _message._handleAudi = @_handleAudi
       Message _message, ""
     div {id: "messages"}, messages
