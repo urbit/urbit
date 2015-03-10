@@ -235,6 +235,11 @@ Message = recl({
     s = this.lz(d.getSeconds());
     return "~" + h + "." + m + "." + s;
   },
+  _handleAudi: function(e) {
+    var audi;
+    audi = $(e.target).closest('.audi').text().split(" ");
+    return this.props._handleAudi(audi);
+  },
   _handlePm: function(e) {
     var user;
     if (!this.props._handlePm) {
@@ -248,7 +253,7 @@ Message = recl({
     delivery = _.uniq(_.pluck(this.props.thought.audience, "delivery"));
     pendingClass = delivery.indexOf("received") !== -1 ? "received" : "pending";
     name = this.props.name ? this.props.name : "";
-    audi = _.keys(this.props.thought.audience);
+    audi = window.util.clipAudi(_.keys(this.props.thought.audience));
     audi = audi.join(" ");
     return div({
       className: "message " + pendingClass
@@ -257,6 +262,7 @@ Message = recl({
         className: "attr"
       }, [
         div({
+          onClick: this._handleAudi,
           className: "audi"
         }, "" + audi), div({
           onClick: this._handlePm
@@ -346,6 +352,9 @@ module.exports = recl({
     audi = [window.util.mainStationPath(user), window.util.mainStationPath(window.urb.user)];
     return StationActions.setAudience(audi);
   },
+  _handleAudi: function(audi) {
+    return StationActions.setAudience(audi);
+  },
   render: function() {
     var _messages, _station, messages, ref1, ref2, sources, station;
     station = this.state.station;
@@ -370,6 +379,7 @@ module.exports = recl({
       return function(_message) {
         _message.station = _this.state.station;
         _message._handlePm = _this._handlePm;
+        _message._handleAudi = _this._handleAudi;
         return Message(_message, "");
       };
     })(this));
@@ -688,6 +698,7 @@ module.exports = recl({
     } else {
       audi = this.state.audi;
     }
+    audi = window.util.expandAudi(audi);
     MessageActions.sendMessage(audi, this.$writing.text(), audi);
     this.$length.text("0/69");
     this.$writing.text('');
@@ -730,18 +741,20 @@ module.exports = recl({
     return this.$writing.focus();
   },
   _validateAudiPart: function(a) {
-    var _a;
+    var _a, ship;
     if (a[0] !== "~") {
       return false;
     }
-    if (a.indexOf("/") === -1) {
-      return false;
+    if (a.indexOf("/") !== -1) {
+      _a = a.split("/");
+      if (_a[1].length === 0) {
+        return false;
+      }
+      ship = _a[0];
+    } else {
+      ship = a;
     }
-    _a = a.split("/");
-    if (_a[0].length < 3) {
-      return false;
-    }
-    if (_a[1].length === 0) {
+    if (ship.length < 3) {
       return false;
     }
     return true;
@@ -749,7 +762,7 @@ module.exports = recl({
   _validateAudi: function() {
     var a, i, len, v, valid;
     v = $('#audi').text();
-    v = v.split(",");
+    v = v.split(" ");
     for (i = 0, len = v.length; i < len; i++) {
       a = v[i];
       a = a.trim();
@@ -758,16 +771,13 @@ module.exports = recl({
     return valid;
   },
   _setAudi: function() {
-    var a, i, len, v, valid;
+    var v, valid;
     valid = this._validateAudi();
     StationActions.setValidAudience(valid);
     if (valid === true) {
       v = $('#audi').text();
-      v = v.split(",");
-      for (i = 0, len = v.length; i < len; i++) {
-        a = v[i];
-        a = a.trim();
-      }
+      v = v.split(" ");
+      v = window.util.expandAudi(v);
       return StationActions.setAudience(v);
     }
   },
@@ -821,6 +831,7 @@ module.exports = recl({
     ship = iden ? iden.ship : user;
     name = iden ? iden.name : "";
     audi = this.state.audi.length === 0 ? this.state.ludi : this.state.audi;
+    audi = window.util.clipAudi(audi);
     k = "writing";
     return div({
       className: k
@@ -833,7 +844,7 @@ module.exports = recl({
           className: "audi valid-" + this.state.valid,
           contentEditable: true,
           onBlur: this._setAudi
-        }, audi.join(",")), Member(iden, ""), br({}, ""), div({
+        }, audi.join(" ")), Member(iden, ""), br({}, ""), div({
           className: "time"
         }, this.getTime())
       ]), div({
@@ -885,6 +896,7 @@ $(function() {
   window.chat.MessagePersistence = require('./persistence/MessagePersistence.coffee');
   window.chat.StationPersistence = require('./persistence/StationPersistence.coffee');
   window.util = {
+    mainStations: ["court", "floor", "porch"],
     mainStationPath: function(user) {
       return "~" + user + "/" + (window.util.mainStation(user));
     },
@@ -900,6 +912,27 @@ $(function() {
         case 13:
           return "porch";
       }
+    },
+    clipAudi: function(audi) {
+      var j, len, ref, regx, v;
+      audi = audi.join(" ");
+      ref = window.util.mainStations;
+      for (j = 0, len = ref.length; j < len; j++) {
+        v = ref[j];
+        regx = new RegExp("/" + v, "g");
+        audi = audi.replace(regx, "");
+      }
+      return audi.split(" ");
+    },
+    expandAudi: function(audi) {
+      var k, v;
+      for (k in audi) {
+        v = audi[k];
+        if (v.indexOf("/") === -1) {
+          audi[k] = v + "/" + (window.util.mainStation(v.slice(1)));
+        }
+      }
+      return audi;
     },
     create: function(name) {
       return window.chat.StationPersistence.createStation(name, function(err, res) {});
