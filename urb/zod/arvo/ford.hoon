@@ -83,6 +83,7 @@
               [%ride p=twig q=silk]                     ::  silk thru twig
               [%tabl p=(list (pair silk silk))]         ::  list
               [%vale p=mark q=ship r=*]                 ::  validate [our his]
+              [%volt p=(set beam) q=(cask ,*)]          ::  unsafe add type
           ==                                            ::
 --                                                      ::
 |%                                                      ::  structures
@@ -982,11 +983,11 @@
       ::
           %bunt
         %+  cool  |.(leaf/"ford: bunt {<p.kas>}")
-        ::  ?:  ?=(?(%hoon %hook) p.kas)
-        ::    (fine cof p.kas [%atom %t] '')
+        ?:  ?=(?(%hoon %hook) p.kas)
+          (fine cof p.kas [%atom %t] '')
         %+  cope  (fang cof p.kas [our %main [%da now]])
         |=  [cof=cafe tux=vase]
-        (fine cof [p.kas (slot 6 tux))
+        (fine cof [p.kas (slot 6 tux)])
       ::
           %call
         ::  %+  cool  |.(leaf/"ford: call {<`@p`(mug kas)>}")
@@ -1077,6 +1078,13 @@
         %+  cope  (lave cof p.kas q.kas r.kas)
         |=  [cof=cafe vax=vase]
         (fine cof `cage`[p.kas vax])
+      ::
+          %volt
+        %+  cool  |.(leaf/"ford: volt {<p.q.kas>}")
+        %+  cope  $(kas [%bunt p.q.kas])
+        |=  [cof=cafe cay=gage]
+        ^-  (bolt gage)
+        [cof %0 p.kas p.q.kas p.q.cay q.q.kas]
       ==
     ::
     ++  malt                                            ::  cached slit
