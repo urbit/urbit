@@ -68,6 +68,7 @@
           $&  [p=silk q=silk]                           ::  cons
           $%  [%bake p=mark q=beam r=path]              ::  local synthesis
               [%boil p=mark q=beam r=path]              ::  general synthesis
+              [%bunt p=mark]                            ::  example of mark
               [%call p=silk q=silk]                     ::  slam
               [%cast p=mark q=silk]                     ::  translate
               [%diff p=silk q=silk]                     ::  diff
@@ -978,6 +979,14 @@
         %+  cope  (lime cof p.kas bem r.kas)
         |=  [cof=cafe vax=vase]
         (fine cof `gage`[p.kas vax])
+      ::
+          %bunt
+        %+  cool  |.(leaf/"ford: bunt {<p.kas>}")
+        ::  ?:  ?=(?(%hoon %hook) p.kas)
+        ::    (fine cof p.kas [%atom %t] '')
+        %+  cope  (fang cof p.kas [our %main [%da now]])
+        |=  [cof=cafe tux=vase]
+        (fine cof [p.kas (slot 6 tux))
       ::
           %call
         ::  %+  cool  |.(leaf/"ford: call {<`@p`(mug kas)>}")

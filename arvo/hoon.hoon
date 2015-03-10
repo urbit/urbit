@@ -9745,8 +9745,8 @@
               [%ud p=@ud]                               ::  sequence
           ==                                            ::
 ++  desk  ,@tas                                         ::  ship desk case spur
-++  cage  (cask vase)                                   ::  global metadata
-++  cask  |*(a=_,* (pair mark a))                       ::  global data
+++  cage  (pair mark vase)                              ::  global metadata
+++  cask  (pair mark ,*)                                ::  global data
 ++  cuff                                                ::  permissions
           $:  p=kirk                                    ::  readers
               q=(set monk)                              ::  authors
