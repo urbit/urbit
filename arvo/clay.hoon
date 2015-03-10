@@ -114,6 +114,7 @@
               [%ride p=twig q=silk]                     ::  silk thru twig
               [%tabl p=(list (pair silk silk))]         ::  list
               [%vale p=mark q=ship r=*]                 ::  validate [our his]
+              [%volt p=(set beam) q=(cask ,*)]          ::  unsafe add type
           ==                                            ::
 ++  raft                                                ::  filesystem
           $:  fat=(map ship room)                       ::  domestic
@@ -363,7 +364,7 @@
         (edit:ze wen lem)
       ?~  hat
         +>.$
-      (echo:(checkout-ankh-a u.hat) wen ~ lem)
+      (echo:(checkout-ankh u.hat) wen ~ lem)
     ?.  =(~ dok)
       ~&  %already-applying-changes  +>
     =+  ^=  sop
@@ -607,52 +608,22 @@
       ==
     ==
   ::
-  ++  checkout-ankh-a
+  ++  checkout-ankh
     |=  hat=(map path lobe)
     ^+  +>
-    =-  %_(+>.$ tag [- tag])
-    :*  hen
-        [%patching-a (scot %p who) syd ~]
-        %f  %exec  who  ~  %tabl
-        ^-  (list (pair silk silk))
-        %+  turn  (~(tap by hat))
-        |=  [a=path b=lobe]
-        ^-  (pair silk silk)
-        :^    [%done ~ %path !>(a)]
-            [%bunt (lobe-to-mark b)]
-          =+  bol=(lobe-to-blob b)
-          ?.  ?=(%direct -.bol)
-            [%done ~ %null !>(~)]
-          [%bunt p.r.bol]
-        [%done ~ %$ !>(b)]
-    ==
-  ::
-  ++  take-patching-a
-    |=  res=(each bead (list tank))
-    ^+  +>
-    ~|  %patching-a
-    %-  checkout-ankh-b
-    %+  turn  (tage-to-cages (made-to-tage res))
-    |=  [pax=cage qal=cage]
-    ^-  [pax=cage bun=cage dif=cage lob=cage]
-    ?.  ?=(%path p.pax)   ~|(%strange-marc-a !!)
-    ?.  ?=(%$ p.qal)      ~|(%strange-marc-b !!)
-    [pax (slot 2 qal) (slot 6 qal) (slot 7 qal)]
-  ::
-  ++  checkout-ankh-b
-    |=  hab=(list ,[pax=cage bun=cage dif=cage lob=cage])
-    ^+  +>
-    =-  %_(+>.$ tag [- tag])
-    :*  hen
-        [%patching-b (scot %p who) syd ~]
-        %f  %exec  who  ~  %tabl
-        ^-  (list (pair silk silk))
-        %+  turn  hab
-        |=  [pax=cage bun=cage dif=cage lob=cage]
-        ^-  (pair silk silk)
-        :-  [%done ~ pax]
-        =+  tie=?:(?=(%null p.dif) ~ `p.q.dif)
-        (lobe-to-silk ((hard lobe) q.q.lob) p.q.bun tie)
+    %_    +>.$
+        tag
+      :_  tag
+      :^    hen
+          [%patching (scot %p who) syd ~]
+        %f
+      :^  %exec  who  ~  :-  %tabl
+      ^-  (list (pair silk silk))
+      %+  turn  (~(tap by hat))
+      |=  [a=path b=lobe]
+      ^-  (pair silk silk)
+      :-  [%done ~ %path !>(a)]
+      (lobe-to-silk:ze b)
     ==
   ::
   ++  apply-foreign-update                              ::  apply subscription
@@ -810,11 +781,11 @@
         |=  a=plop
         ?-    -.a
             %delta
-          :-  [%done ~ %blob !>([%delta p.a q.a *cask])]
+          :-  [%done ~ %blob !>([%delta p.a q.a *page])]
           [%vale p.r.a him q.r.a]
         ::
             %direct
-          :-  [%done ~ %blob !>([%direct p.a *cask])]
+          :-  [%done ~ %blob !>([%direct p.a *page])]
           [%vale p.q.a him q.q.a]
         ::
             %indirect  ~|  %foreign-indirect-not-implemented  !!
@@ -950,22 +921,22 @@
         %indirect   p.q
       ==
     ++  lobe-to-silk
-      |=  [a=lobe b=type c=(unit type)]
+      |=  a=lobe
       |-  ^-  silk
       =+  bob=(~(got by lat.ran) a)
       ?-  -.bob
-        %direct     [%done ~ p.q.bob b q.q.bob]
-        %indirect   [%done ~ p.q.bob b q.q.bob]
-        %delta      [%pact $(a q.q.bob) [%done ~ p.r.bob (need c)]]
+        %direct     [%volt ~ q.bob]
+        %indirect   [%volt ~ q.bob]
+        %delta      [%pact $(a q.q.bob) [%volt ~ r.bob]]
       ==
     ::
     ++  make-direct                                     ::  make blob
-      |=  p=cask
+      |=  p=page
       ^-  blob
-      [%direct (shax (jam p)) p]
+      [%direct (mug p) p]
     ::
     ++  make-delta                                      ::  make blob delta
-      |=  [p=[p=mark q=lobe] q=cask]
+      |=  [p=[p=mark q=lobe] q=page]
       ^-  blob
       =+  t=[%delta 0 p q]
       =+  ^=  has
@@ -993,40 +964,42 @@
       =-  =+  sar=(sa (turn lar |=([p=path *] p)))      ::  changed paths
           %+  roll  (~(tap by hat) ~)                   ::  find unchanged
           =<  .(bat bar)
-          |=  [[pat=path gar=lobe] bat=(map path blob)]
-          ?:  (~(has in sar) pat)                       ::  has update
+          |=  [[pax=path gar=lobe] bat=(map path blob)]
+          ?:  (~(has in sar) pax)                       ::  has update
             bat
-          %+  ~(put by bat)  pat
-          ~|  [pat gar (lent (~(tap by lat.ran)))]
+          %+  ~(put by bat)  pax
+          ~|  [pax gar (lent (~(tap by lat.ran)))]
           (lobe-to-blob gar)                            ::  use original
       ^=  bar  ^-  (map path blob)
       %+  roll  lar
-      |=  [[pat=path mys=misu] bar=(map path blob)]
+      |=  [[pax=path mys=misu] bar=(map path blob)]
       ^+  bar
       ?-    -.mys
           %ins                                          ::  insert if not exist
-        ?:  (~(has by bar) pat)  !!                     ::
-        ?:  (~(has by hat) pat)  !!                     ::
-        %+  ~(put by bar)  pat
+        ?:  (~(has by bar) pax)  !!                     ::
+        ?:  (~(has by hat) pax)  !!                     ::
+        %+  ~(put by bar)  pax
         %-  make-direct
-        ?:  &(?=(%mime -.p.mys) =([%hook ~] (slag (dec (lent pat)) pat)))
-          `cask`[%hook +.+.q.q.p.mys]
-        ?:  &(?=(%mime -.p.mys) =([%hoon ~] (slag (dec (lent pat)) pat)))
-          `cask`[%hoon +.+.q.q.p.mys]
+        ?:  &(?=(%mime -.p.mys) =([%hook ~] (slag (dec (lent pax)) pax)))
+          `page`[%hook +.+.q.q.p.mys]
+        ?:  &(?=(%mime -.p.mys) =([%hoon ~] (slag (dec (lent pax)) pax)))
+          `page`[%hoon +.+.q.q.p.mys]
         p.mys
           %del                                          ::  delete if exists
-        ?.  |((~(has by hat) pat) (~(has by bar) pat))  !!
-        (~(del by bar) pat)
+        ?.  |((~(has by hat) pax) (~(has by bar) pax))  !!
+        (~(del by bar) pax)
           %dif                                          ::  mutate, must exist
-        =+  ber=(~(get by bar) pat)                     ::  XX  typed
+        =+  ber=(~(get by bar) pax)                     ::  XX  typed
         =+  for==>((flop pax) ?~(. %$ i))
         ?~  ber
-          =+  har=(~(get by hat) pat)
+          =+  har=(~(get by hat) pax)
           ?~  har  !!
-          %+  ~(put by bar)  pat
-          (make-delta [(lobe-to-mark u.har) u.har] p.mys) :: XX check vase !evil
-        %+  ~(put by bar)  pat
-        (make-delta [(lobe-to-mark p.u.ber) p.u.ber] p.mys)::XX check vase !evil
+          %+  ~(put by bar)  pax
+          (make-delta [(lobe-to-mark u.har) u.har] [p q.q]:p.mys)
+                                                        :: XX check vase !evil
+        %+  ~(put by bar)  pax
+        (make-delta [(lobe-to-mark p.u.ber) p.u.ber] [p q.q]:p.mys)
+                                                        :: XX check vase !evil
       ==
     ::
     ++  as-arch
@@ -1240,12 +1213,13 @@
       =+  hat=q:(aeon-to-yaki yon)
       ?:  (~(any by hat) |=(a=lobe ?=(%delta [-:(lobe-to-blob a)])))
         ~
-      =+  ^-  (map path cage)
-          %-  ~(run by hat)
-          |=  a=lobe
-          =+  (lobe-to-blob a)
-          ?-(-.- %direct q.-, %indirect q.-, %delta !!)
-      `+>.$(ank.dom (checkout-ankh -), let.dom yon)
+      !!
+      ::=+  ^-  (map path cage)
+      ::    %-  ~(run by hat)
+      ::    |=  a=lobe
+      ::    =+  (lobe-to-blob a)
+      ::    ?-(-.- %direct q.-, %indirect q.-, %delta !!)
+      ::`+>.$(ank.dom (checkout-ankh -), let.dom yon)
     ::
     ++  update-lat                                      ::   update-lat:ze
       |=  [lag=(map path blob) sta=(map lobe blob)]     ::  fix lat
@@ -1695,7 +1669,7 @@
               ?~  -
                 ~|  %mate-strange-diff-no-base
                 !!
-              (make-delta [(lobe-to-mark u.-) u.-] cay)
+              (make-delta [(lobe-to-mark u.-) u.-] [p q.q]:cay)
           [(~(put by hat) pax p.bol) (~(put by lat) p.bol bol)]
         =.  hat                                         ::  all the content
           %-  ~(uni by old)
@@ -2156,23 +2130,7 @@
         [-.zot abet:(pish:une syd +.zot ran.zat)]
       [mos ..^$]
     ::
-        %patching-a
-      ?>  ?=([@ @ ~] t.tea)
-      =+  who=(slav %p i.t.tea)
-      =+  syd=(slav %tas i.t.t.tea)
-      =^  mos  ruf
-        ?:  (~(has by fat.ruf) who)
-          =+  une=(un who now hen ruf)
-          =+  zat=(take-patching-a:(di:wake:une syd) p.q.hin)
-          =+  zot=abet.zat
-          [-.zot abet:(pish:une syd +.zot ran.zat)]
-        =+  zax=(do now hen [who who] syd ruf)
-        =+  zat=(take-patching-a:zax p.q.hin)
-        =+  zot=abet.zat
-        [-.zot (posh who syd +.zot ruf)]
-      [mos ..^$]
-    ::
-        %patching-b
+        %patching
       ?>  ?=([@ @ ~] t.tea)
       =+  who=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)

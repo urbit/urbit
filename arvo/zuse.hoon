@@ -1763,9 +1763,9 @@
               pac=rock                                  ::  packet data
           ==                                            ::
 ++  blob                                                ::  fs blob
-          $%  [%delta p=lobe q=[p=mark q=lobe] r=cask]  ::  delta on q
-              [%direct p=lobe q=cask]                   ::  immediate
-              [%indirect p=lobe q=cask r=lobe s=cask]   ::  both
+          $%  [%delta p=lobe q=[p=mark q=lobe] r=page]  ::  delta on q
+              [%direct p=lobe q=page]                   ::  immediate
+              [%indirect p=lobe q=page r=lobe s=page]   ::  both
           ==                                            ::
 ++  boat  ,[(list slip) tart]                           ::  user stage
 ++  boon                                                ::  fort output
@@ -2070,6 +2070,7 @@
           ==                                            ::
 ++  octs  ,[p=@ud q=@]                                  ::  octet-stream
 ++  oryx  ,@t                                           ::  CSRF secret
+++  page  (cask)                                        ::  untyped cage
 ++  pail  ?(%none %warm %cold)                          ::  connection status
 ++  plan  (trel view (pair ,@da (unit ,@dr)) path)      ::  subscription
 ++  plea  ,[p=@ud q=[p=? q=@t]]                         ::  live prompt
@@ -2111,7 +2112,7 @@
 ++  rand                                                ::  vaseless rant
           $:  p=[p=care q=case r=@tas]                  ::  clade release book
               q=path                                    ::  spur
-              r=cask                                    ::  data
+              r=page                                    ::  data
           ==                                            ::
 ++  rave                                                ::  general request
           $%  [& p=mood]                                ::  single request
