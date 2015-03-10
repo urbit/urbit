@@ -1,3 +1,4 @@
+::  Over/write to location, usage :into %/foo/txt 'Contents'
 !:
 ::::
   ::
