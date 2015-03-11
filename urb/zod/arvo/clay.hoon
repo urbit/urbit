@@ -984,7 +984,7 @@
           `page`[%hook +.+.q.q.p.mys]
         ?:  &(?=(%mime -.p.mys) =([%hoon ~] (slag (dec (lent pax)) pax)))
           `page`[%hoon +.+.q.q.p.mys]
-        p.mys
+        [p q.q]:p.mys
           %del                                          ::  delete if exists
         ?.  |((~(has by hat) pax) (~(has by bar) pax))  !!
         (~(del by bar) pax)
