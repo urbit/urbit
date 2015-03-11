@@ -1210,8 +1210,10 @@
                 (goc p.q.kon /pock)
               :(goc p.q.kon (rsh 3 ofs p.q.kon) /pock)
           =+  hyp=?=(%pock (end 3 4 cog))
+          =+  ^-  err=tape
+              ?.(?=(?(%poke %pock) cog) <cog> "{<cog>} with mark {<p.q.kon>}")
           ?.  (warm cog)
-            (give(qic.sat ~) %mean ~ %poke-find-fail ~)
+            (give(qic.sat ~) %mean ~ %poke-find-fail leaf/err ~)
           ?>  ?=(^ huv.sat)
           =+  ^=  sam
               ;:  slop
@@ -1219,10 +1221,9 @@
                 [[%atom %p] p.kon] 
                 ?.(hyp q.q.kon (slop !>(p.q.q.kon) q.q.kon))
               ==
-          =+  err=?.(?=(?(%poke %pock) cog) <cog> "{<cog>} with mark <p.q.kon>")
           ::  ~&  [%mess-poke cog]
           %+  ford  /s/poke
-          :+  %dude  leaf/"poking {err}"
+          :+  %dude  leaf/err
           [%call (harm cog (conf (core u.huv.sat))) (cove %$ sam)]
         ::
             %show
