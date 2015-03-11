@@ -2058,30 +2058,6 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bG, URL handling             ::
 ::
-::  .=  [p=%ack q=~sarnel r=&]
-::  (dear /ack/~sarnel/.y p=%tas q=%p r=%f ~)
-++  dear                                                ::  parse odored path
-  =+  ^=  odo
-      |*  a=@tas
-      |=  b=*
-      =<  a(. (. b))                  ::  preserve face
-      ?+  a   ,@
-    %c  ,@c  %da  ,@da  %dr  ,@dr  %f   ,@f   %if  ,@if  %is  ,@is  %p   ,@p
-    %u  ,@u  %uc  ,@uc  %ub  ,@ub  %ui  ,@ui  %ux  ,@ux  %uv  ,@uv  %uw  ,@uw
-    %s  ,@s  %t   ,@t   %ta  ,@ta  %tas  ,@tas
-      ==
-  |*  [a=path b=[@tas (pole ,@tas)]]
-  %.  a  %.  b
-  |*  b=[@tas (pole ,@tas)]
-  |=  a=path
-  ?~  a  ~
-  =+  hed=(slaw -.b i.a)
-  ?~  +.b
-    ^-  (unit (odo -.b))
-    ?^(+.a ~ hed)
-  ^-  (unit ,[(odo -.b) _(need *(..^$ +.b))])
-  (both hed ((..^$ +.b) +.a))
-::
 ++  deft                                                ::  parse url extension
   |=  rax=(list ,@t)
   |-  ^-  pork
@@ -2152,6 +2128,34 @@
      (cold 62 (just '+'))
      (cold 63 (just '/'))
    ==
+::
+::  .=  [p=%ack q=~sarnel r=&]
+::  (raid /ack/~sarnel/.y p=%tas q=%p r=%f ~)
+++  raid                                                ::  demand path odors
+  =-  |*  [a=path b=[@tas (pole ,@tas)]]
+      ?~  +.b  `(odo -.b)`(slav -.b -.a)
+      [`(odo -.b)`(slav -.b -.a) (..$ +.a +.b)]
+  ^=  odo
+  |*  a=@tas
+  |=  b=*
+  =<  a(. (. b))                  ::  preserve face
+  ?+  a   ,@
+    %c  ,@c  %da  ,@da  %dr  ,@dr  %f   ,@f   %if  ,@if  %is  ,@is  %p   ,@p
+    %u  ,@u  %uc  ,@uc  %ub  ,@ub  %ui  ,@ui  %ux  ,@ux  %uv  ,@uv  %uw  ,@uw
+    %s  ,@s  %t   ,@t   %ta  ,@ta  %tas  ,@tas
+  ==
+::
+++  read                                                ::  parse odored path
+  =<  |*([a=path b=[@tas (pole ,@tas)]] ((+> b) a))
+  |*  b=[@tas (pole ,@tas)]
+  |=  a=path
+  ?~  a  ~
+  =+  hed=(slaw -.b i.a)
+  ?~  +.b
+    ^-  (unit (odo:raid -.b))
+    ?^(+.a ~ hed)
+  ^-  (unit ,[(odo:raid -.b) _(need *(..^$ +.b))])
+  (both hed ((..^$ +.b) +.a))
 ::
 ++  urle                                                ::  URL encode
   |=  tep=tape
