@@ -2058,6 +2058,30 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bG, URL handling             ::
 ::
+::  .=  [p=%ack q=~sarnel r=&]
+::  (dear /ack/~sarnel/.y p=%tas q=%p r=%f ~)
+++  dear                                                ::  parse odored path
+  =+  ^=  odo
+      |*  a=@tas
+      |=  b=*
+      =<  a(. (. b))                  ::  preserve face
+      ?+  a   ,@
+    %c  ,@c  %da  ,@da  %dr  ,@dr  %f   ,@f   %if  ,@if  %is  ,@is  %p   ,@p
+    %u  ,@u  %uc  ,@uc  %ub  ,@ub  %ui  ,@ui  %ux  ,@ux  %uv  ,@uv  %uw  ,@uw
+    %s  ,@s  %t   ,@t   %ta  ,@ta  %tas  ,@tas
+      ==
+  |*  [a=path b=[@tas (pole ,@tas)]]
+  %.  a  %.  b
+  |*  b=[@tas (pole ,@tas)]
+  |=  a=path
+  ?~  a  ~
+  =+  hed=(slaw -.b i.a)
+  ?~  +.b
+    ^-  (unit (odo -.b))
+    ?^(+.a ~ hed)
+  ^-  (unit ,[(odo -.b) _(need *(..^$ +.b))])
+  (both hed ((..^$ +.b) +.a))
+::
 ++  deft                                                ::  parse url extension
   |=  rax=(list ,@t)
   |-  ^-  pork
@@ -2117,16 +2141,16 @@
       [(cut 3 [d 1] cha) $(pad (rsh 0 6 pad))]
   (weld (flop (slag poc sif)) (reap poc '='))
 ::
-++  ofis
+++  ofis  ::  XX broken
   =-  |=(a=cord (rash a fel))
-  =-  fel=;~(sfix (boss 64 (plus siw)) (stun 0^3 tis))
+  =-  fel=;~(sfix (boss 64 (plus siw)) (stun 0^2 tis))
   ^=  siw
   ;~  pose
      dit
      (cook |=(a=@ (sub a (sub 'A' 10))) (shim 'A' 'Z'))
      (cook |=(a=@ (sub a (sub 'a' 36))) (shim 'a' 'z'))
-     (cold 62 (just '-'))
-     (cold 63 (just '~'))
+     (cold 62 (just '+'))
+     (cold 63 (just '/'))
    ==
 ::
 ++  urle                                                ::  URL encode
