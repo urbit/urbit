@@ -39,6 +39,12 @@
               $:  %f                                    ::  to %ford
           $%  [%exec p=@p q=(unit silk)]                ::
               [%wasp p=@p q=@uvH]                       ::
+          ==  ==                                        ::
+              $:  %g                                    ::  to %gall
+          $%  [%mess p=hapt q=ship r=cage]              ::
+              [%nuke p=hapt q=ship]                     ::
+              [%show p=hapt q=ship r=path]              ::
+              [%took p=hapt q=ship]                     ::
           ==  ==  ==                                    ::
 ++  rave                                                ::  see %clay
           $%  [& p=mood]                                ::
@@ -61,10 +67,20 @@
           $%  [%made p=@uvH q=(each cage tang)]         ::
               [%news ~]                                 ::
           ==  ==                                        ::
+              $:  %g                                    ::  by %gall
+          $%  [%dumb ~]                                 ::
+              [%mean p=ares]                            ::
+              [%nice ~]                                 ::
+              [%rush p=mark q=*]                        ::
+              [%rust p=mark q=*]                        ::
+          ==  ==                                        ::
               $:  @tas                                  ::  by any
           $%  [%crud p=@tas q=(list tank)]              ::
           ==  ==  ==                                    ::
-++  whir  $|(~ $%([%at p=hole q=whir]))                 ::  wire subset
+++  whir  $|  ~                                         ::  wire subset
+          $%  [%at p=hole q=whir]                       ::
+              [%to p=span:ship q=term r=span:ship ~]    ::
+          ==                                            ::
 --                                                      ::
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
@@ -94,6 +110,8 @@
       [%poll p=@uvH]
       [%auth perk-auth]
       [%away ~]
+      [%bugs %as ~]
+      [%mess p=hasp q=mark r=json]                      
   ==
 ::
 ++  perk-auth                                           ::  parsed auth
@@ -108,8 +126,10 @@
 ::
 ++  pest                                                ::  result
   $%  [%for p=whir q=beam r=term s=cred]                ::  %f block
+      [%fot p=whir q=mark r=cage]                       ::  %f translate
       [%fow p=@uvH]                                     ::  %f deps
       [%fin $|(~ pest-fin)]                             ::  done
+      [%mez p=hapt q=ship r=cage]                       ::  %g message
       [%red p=purl q=@t]                                ::  redirect
       [%zap p=@ud q=(list tank)]                        ::  err
   ==
@@ -146,17 +166,21 @@
   =.  p.a  (cass (trip p.a))
   (~(add ja b) a)
 ::
-++  tanx                                                ::  tanks to manx
-  |=  tac=(list tank)
-  ^-  manx
+++  wush
+  |=  [wid=@u tan=tang]
+  ^-  tape
   =+  rolt=|=(a=wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
-  =+  mec=(rolt (turn tac |=(a=tank (rolt (wash 0^160 a)))))
+  (rolt (turn tan |=(a=tank (rolt (wash 0^wid a)))))
+::
+++  tanx                                                ::  tanks to manx
+  |=  tan=tang
+  ^-  manx
   ;html
     ;head
       ;meta(charset "utf-8");
       ;title: server error
     ==
-    ;body:pre:code:"{mec}"
+    ;body:pre:code:"{(wush 160 tan)}"
   ==
 ::
 ++  depo                                                ::  inject dependency
@@ -208,7 +232,7 @@
       xhr.send(JSON.stringify(dat))
       xhr.addEventListener('load', function(ev){
         if(this.status !== 200)
-          return err.innerHTML = ":(\n" + xhr.responseText
+          return err.innerHTML = ":( " + Date.now() + "\n" + xhr.responseText
         else if(cb) return cb(xhr.responseText,ev)
       })
     }
@@ -288,12 +312,21 @@
         %crud
       +>.$(mow [[hen %slip %d %flog +.sih] mow])
     ::
+        ?(%dumb %rush %rust)    ~|(%gall-stub !!)
+        %nice  ?>(?=(~ tea) nice-json)    ::  XX subscriptions
+        %mean  ?>(?=(~ tea) (mean-json 500 p.sih))
         %made
       =+  tee=((soft whir) tea)
       ?~  tee  ~&  e/ford/lost/hen  +>.$
       =.  our  (need hov)                             ::  XX
       |-  ^+  ..axon
       ?-    u.tee
+          [%to ^]
+        ?:  ?=(%| -.q.sih)
+          (mean-json 500 ~ %cast-fail p.q.sih)
+        ~|  u.tee
+        =+  [her app him]=(raid +.u.tee %p %tas %p ~)
+        (pass-note ~ %g [%mess [her app ~] him p.q.sih])
           [%at ^]
         ?.  ?=([%& %js ^] q.sih)
           ~&  e/at-lost/p.u.tee
@@ -350,7 +383,7 @@
                [[sec (rash i.hot thor:epur)] p.ryp q.ryp]
           ==
       =.  p.p.pul  |(p.p.pul ?=(hoke r.p.pul))
-      abet:~(handle rq pul q.+.kyz [p.heq maf s.heq])
+      abet:~(handle rq pul [anon q.+.kyz] [p.heq maf s.heq])
     ::
         %thud                                           ::  cancel request
       ~&  e/gone/hen
@@ -401,6 +434,14 @@
     %+  add-cookies  cug
     (make-resp-gift sas application//json (crip (pojo jon)))
   ::
+  ++  nice-json  (give-json 200 ~ (joba %ok %b &))
+  ++  mean-json  
+    |=  [sas=@uG are=ares] 
+    =-  (give-json sas ~ (jobe fail/s/typ mess/(jape err) ~))
+    ^-  [typ=term err=tape]
+    ?~  are  [%fail "Unknown Error"]
+    [p.u.are (wush 160 q.u.are)]
+  ::
   ++  add-cookies
     |=  [cug=(list ,@t) git=[%thou httr]]
     ?~  cug  git
@@ -445,7 +486,7 @@
   ::
   ++  rq
     |_  $:  [hat=hart pok=pork quy=quay]                ::  purl, parsed url
-            cip=clip                                    ::  client ip
+            [him=ship cip=clip]                         ::  client ip
             [mef=meth maf=math bod=(unit octs)]         ::  method/headers/body
         ==
     ++  done  .
@@ -456,15 +497,12 @@
     ++  give-html  (teba ^give-html)
     ++  give-gift  (teba ^give-gift)
     ++  give-json  (teba ^give-json)
+    ++  nice-json  (teba ^nice-json)
     ++  pass-note  (teba ^pass-note)
     ++  ford-req   (teba ^ford-req)
     ++  back  (teba ^back)
     ::
     ++  ford-kill  (pass-note ~ %f [%exec our ~])       :: XX unused
-    ++  ford-wasp
-      |=  [tea=whir dep=@uvH]
-      (pass-note tea %f [%wasp our dep])
-    ::
     ++  beam-into-ford
       |=  [tea=whir bem=beam ext=term ced=cred]
       =:  s.bem  [%web ~(rent co (flux:ya quy ced)) s.bem]
@@ -509,15 +547,14 @@
       ?:  ?=([%'~~' *] q.pok)                            ::  auth shortcut
         $(q.pok ['~' %as %own t.q.pok])
       ?.  ?=([%'~' @ *] q.pok)  ~
-      :-  ~
+      :-  ~  ^-  perk
       =*  pef  i.t.q.pok
       =+  but=t.t.q.pok                 ::  XX  =*
       ?+    pef  ~|(pfix-lost/`path`/~/[pef] !!)
           %on
-        :-  %poll
         ~|  on/bad-path/but
-        ?>  ?=([@ ~] but)
-        (slav %uv i.but)
+        [%poll (raid but %uv ~)]
+      ::
           %as
         :+  %auth  %get
         ~|  bad-ship/?~(but ~ i.but)
@@ -527,9 +564,11 @@
           %anon  anon
           %own   our
         ==
+      ::
           %am  ?~(but !! [%auth %xen i.but pok(q t.but)])
           %at  [%auth %at pok(q but)]
           %away  [%away ~]
+          %debug  ;;(perk [%bugs but])
           %auth
         :-  %auth
         |-  ^-  perk-auth
@@ -544,7 +583,7 @@
                 [[%'PUT' ~] ~]
               =+  paz=(ot ship/(su fed:ag) code/so ~):jo
               ~|  parsing/bod
-              [%try (need (paz (need (poja q:(need bod)))))]
+              [%try (grab-body paz)]
             ::
                 [[%'DELETE' ~] ~]
               ~|  parsing/bod
@@ -552,8 +591,23 @@
               ?>  ?=(%o -.jon)
               =+  sip=(~(get by p.jon) %ship)
               [%del ?~(sip ~ [~ (need ((su:jo fed:ag) u.sip))])]
+          ==
         ==  ==
-      ==  ==
+      :: 
+            %to
+          =-  [%mess [- +<]:dir +>.dir (grab-body (ot:jo xyro/some ~))]
+          ^=  dir
+          =+  ful=(read but %p %tas %tas ~)
+          ?^  ful  u.ful
+          ~|  bad-mess/but
+          [our (raid but %tas %tas ~)]
+      ==
+    ::
+    ++  grab-body
+      |*  a=fist:jo  ^+  (need *a)
+      ~|  parse-fail/bod
+      ?>  &(?=(%post mef) ?=(^ bod))
+      (need %.(q.u.bod ;~(biff poja a)))
     ::
     ++  handle
       ^+  done
@@ -565,7 +619,9 @@
       |-  ^+  done
       ?-  -.p.pez
         %for  (beam-into-ford +.p.pez)
-        %fow  (ford-wasp ~ p.p.pez)
+        %fot  (ford-req p.p.pez our [%cast q.p.pez %done ~ r.p.pez])
+        %fow  (pass-note ~ %f [%wasp our p.p.pez])
+        %mez  (pass-note ~ %g [%mess +.p.pez])
         %zap  (fail p.p.pez 0v0 q.p.pez)
         %red  =+  fra=?~(q.p.pez "" ['#' (trip q.p.pez)])
               =+  url=(weld (earn p.p.pez) `tape`fra)
@@ -619,6 +675,12 @@
         ?~  p.hem  [%| done]
         [%& %fow p.hem]
           %away  [%& %fin %html logout-page:xml]
+          %bugs  (show-login-page)
+          %mess  =+  cay=[%json !>(`json`r.hem)]
+                 ?:  ?=(%json q.hem)
+                   [%& %mez [- + ~]:p.hem him cay]
+                 =+  wir=to//(scot %p p.p.hem)/[q.p.hem]/(scot %p him)
+                 [%& %fot wir q.hem cay]
           %auth
         =+  yac=for-client
         ?-    &2.hem
@@ -631,8 +693,8 @@
           =.  ..ya  abet.yac
           =+  pez=process(pok p.hem)
           ?.  ?=(%& -.pez)  ~|(no-inject/p.hem !!)
-          ?-  -.p.pez
-            ?(%fow %zap %red)  pez
+          ?+  -.p.pez  ~&(bad-inject/p.pez !!)
+            ?(%zap %red)  pez
             %for  pez(p.p [%at ses.yac p.p.pez])
             %fin  
               ~|  %not-script
@@ -658,6 +720,7 @@
             %get
           ~|  aute/+.hem
           ?:  |(=(anon him.hem) (~(has in aut.yac) him.hem))
+            =.  him  him.hem
             =+  pez=process(pok rem.hem)
             ?.  ?=([%& %for ^] pez)
               pez
@@ -676,8 +739,6 @@
       =+  yac=~(. ya u.ses (ses-cyst u.ses))
       =.  ..ya  abet.yac
       [%| (give-html 401 cug.yac login-page:xml)]
-    ::
-    ++  nice-json  ,_(give-json 200 ~ (joba %ok %b &))
     ::
     ++  load-secret
       ^-  @ta
