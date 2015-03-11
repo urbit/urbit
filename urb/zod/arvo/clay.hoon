@@ -634,12 +634,9 @@
         ==
     ^+  +>
     %=  +>
-      hit.dom   ~&  [%gar gar]
-                (~(uni by hit.dom) gar)
+      hit.dom   (~(uni by hit.dom) gar)
       let.dom   let
-      hut.ran   ~&  [%lar lar]
-                =-  ~&  [%newhut (~(run by -) ,~)]  -
-                %-  ~(uni by hut.ran)
+      hut.ran   %-  ~(uni by hut.ran)
                 %-  mo  ^-  (list (pair tako yaki))
                 %+  turn  (~(tap in lar))
                 |=  yak=yaki
@@ -726,8 +723,11 @@
       ?~  u.nex  +>+.^$  ::  should never happen
       =.  nak.u.ref  `((hard nako) q.q.u.u.nex)
       =.  +>+.^$
-        =+  roo=(validate-plops for bar:(need nak.u.ref))
-        ?>(?=(^ ref.roo) roo)
+        ?:  =(0 let.dom)
+          =>  (apply-foreign-update (need nak.u.ref))
+          ?>(?=(^ ref) .)
+        =>  (validate-plops for bar:(need nak.u.ref))
+        ?>(?=(^ ref) .)
       %=  $
         haw.u.ref  (~(del by haw.u.ref) nez)
       ==
@@ -818,10 +818,9 @@
           ~|  %plop-strange-coy
           !!
         =+  bob=((hard blob) -.q.coy)
-        ~&  [%taking p.coy]
         ?-  -.bob
-          %delta      [-.bob p.bob q.bob q.i.p.p.cay [!!]:(slot 3 coy)]
-          %direct     [-.bob p.bob q.i.p.p.cay [!!]:(slot 3 coy)]
+          %delta      [-.bob p.bob q.bob q.i.p.p.cay +.q.coy]
+          %direct     [-.bob p.bob q.i.p.p.cay +.q.coy]
           %indirect   ~|  %plop-indirect-not-implemented  !!
         ==
     %^    apply-foreign-update
@@ -1940,7 +1939,7 @@
     ::  XX  pass %merg and handle response
     :~  ^-  move
         :*  hen  %pass
-            /auto/(scot %p p.q.hic)/[q.q.hic]/(scot %p r.q.hic)/[s.q.hic]/y
+            /auto/(scot %p p.q.hic)/[q.q.hic]/(scot %p r.q.hic)/[s.q.hic]
             %c  %merg  [p q r s %init]:q.hic
         ==
     ==
