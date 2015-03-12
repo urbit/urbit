@@ -3289,7 +3289,10 @@
   ++  dim  (ape (bass 10 ;~(plug sed:ab (star sid:ab))))
   ++  dum  (bass 10 (plus sid:ab))
   ++  fed  ;~  pose
-             (bass 0x1.0000.0000.0000.0000 (most doh hyf:ab))
+             %+  bass  0x1.0000.0000.0000.0000
+             ;~((glue doh) ;~(pose hyf:ab huf:ab) (more doh hyf:ab))
+           ::
+             hyf:ab
              huf:ab
              hif:ab
              tiq:ab
@@ -3377,12 +3380,13 @@
               (trip (tod:po (rsh 3 1 q.p.lot)))
               rex
             ==
-          =+  [dyz=(met 5 q.p.lot) fin=|]
+          =+  [dyz=(met 5 q.p.lot) fin=| dub=&]
           |-  ^-  tape
           ?:  =(0 dyz)
             rex
           %=    $
               fin      &
+              dub      !dub
               dyz      (dec dyz)
               q.p.lot  (rsh 5 1 q.p.lot)
               rex
@@ -3394,7 +3398,7 @@
               `tape`['-' ~]
               (trip (tos:po (end 3 1 q.cog)))
               (trip (tod:po (rsh 3 1 q.cog)))
-              `tape`?:(fin ['-' ?:(=(1 (end 0 1 dyz)) ~ ['-' ~])] ~)
+              `tape`?.(fin ~ ['-' ?.(dub ~ ['-' ~])])
               rex
             ==
           ==
