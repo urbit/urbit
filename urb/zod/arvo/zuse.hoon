@@ -630,7 +630,7 @@
 ::
 ++  poxo                                                ::  node to tape
   =<  |=(a=manx `tape`(apex a ~))
-  |_  unq=_`?`|
+  |_  _[unq=`?`| cot=`?`|]                              ::  self-close all tags
   ++  apex                                              ::  top level
     |=  [mex=manx rez=tape]
     ^-  tape
@@ -644,8 +644,8 @@
     %+  welp  tam
     =-  ?~(att rez [' ' (attr att rez)])
     ^-  rez=tape
-    ::?~  c.mex
-    ::  [' ' '/' '>' rez]
+    ?:  &(?=(~ c.mex) |(cot (clot man)))
+      [' ' '/' '>' rez]
     :-  '>'
     (many c.mex :(weld "</" tam ">" rez))
   ::  ::
@@ -679,16 +679,23 @@
            ==
     ==
   ::
-  ++  name                                              ::  name to tape
-    |=  man=mane  ^-  tape
-    ?@  man  (trip man)
-    (weld (trip -.man) `tape`[':' (trip +.man)])
-  ::
   ++  many                                              ::  nodelist to tape
     |=  [lix=(list manx) rez=tape]
     |-  ^-  tape
     ?~  lix  rez
     (apex i.lix $(lix t.lix))
+  ::
+  ++  name                                              ::  name to tape
+    |=  man=mane  ^-  tape
+    ?@  man  (trip man)
+    (weld (trip -.man) `tape`[':' (trip +.man)])
+  ::
+  ++  clot  ~+                                          ::  self-closing tags
+    %~  has  in
+    %-  sa  ^-  (list term)  :~
+      %area  %base  %br  %col  %command  %embed  %hr  %img  %input  %keygen
+      %link  %meta  %param     %source   %track  %wbr 
+    ==
   --
 ::
 ++  poxa                                                ::  xml parser
