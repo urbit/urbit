@@ -33,7 +33,7 @@ ENDIAN=little
 #
 BIN=bin
 
-LIB=$(PWD)/urb
+LIB=$(shell pwd)/urb
 
 RM=rm -f
 CC=gcc
