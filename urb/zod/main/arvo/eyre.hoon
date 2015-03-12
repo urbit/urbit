@@ -40,7 +40,7 @@
               [%thud ~]                                 ::
           ==  ==                                        ::
               $:  %f                                    ::  to %ford
-          $%  [%exec p=@p q=(unit silk)]                ::
+          $%  [%exec p=@p q=beak r=(unit silk)]         ::
           ==  ==                                        ::
               $:  %g                                    ::  to %gall
           $%  [%mess p=hapt q=ship r=cage]              ::
@@ -720,7 +720,8 @@
     %_    +>
         mow
       :_  mow
-      [hen %pass [%honk (scot %p our) ses (scot %ud num) ~] %f [%exec our ~]]
+      =+  [%exec our [our %main %da now] ~]
+      [hen %pass [%honk (scot %p our) ses (scot %ud num) ~] %f -]
     ==
   ::
   ++  honk                                              ::  ford request
@@ -729,7 +730,8 @@
     %_    +>
         mow
       :_  mow
-      [hen %pass [%honk (scot %p our) ses (scot %ud num) ~] %f [%exec our `kas]]
+      =+  [%exec our [our %main %da now] `kas]
+      [hen %pass [%honk (scot %p our) ses (scot %ud num) ~] %f -]
     ==
   ::
   ++  hooj                                              ::  ford json request
@@ -739,7 +741,7 @@
       :_  mow
       :^  hen  %pass
         ~[%hooj (scot %p our) ses (scot %ud nap) (scot %ud can) (scot %f ful)]
-      [%f [%exec our `kas]]
+      [%f [%exec our [our %main %da now] `kas]]
     ==
   ::
   ++  hops                                              ::  cancel remote
@@ -2165,7 +2167,7 @@
         =.  +>.$
           ?.  =(cnt num.meg.siq)  +>.$
           %+  pass(num.meg.siq +(num.meg.siq))  [%| hap]
-          `note`[%f %exec our ~ %cast for %done ~ %json !>(jon)]
+          [%f %exec our [our %main %da now] ~ %cast for %done ~ %json !>(jon)]
         ?.  =(+(cnt) num.meg.siq)
           +>.$(..yo (bust 204 num))
         (hire:(yule %meg) cnt num)

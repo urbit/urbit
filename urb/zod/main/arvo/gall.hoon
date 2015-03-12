@@ -63,7 +63,7 @@
           $%  [%warp p=sock q=riff]                     ::
           ==  ==                                        ::
               $:  %f                                    ::  to %ford
-          $%  [%exec p=@p q=(unit silk)]                ::
+          $%  [%exec p=@p q=beak r=(unit silk)]         ::
           ==  ==                                        ::
               $:  %g                                    ::  to %gall
           $%  [%show p=hapt q=ship r=path]              ::
@@ -338,6 +338,7 @@
     --
 |%                                                      ::  inner core
 ::
+++  leak  |=(our=ship `beak`[our %main %da now])        ::  default beak
 ++  best                                                ::  cage to gift
   |=  [sem=?(%rush %rust) cay=cage]
   ^-  gift
@@ -497,9 +498,9 @@
   :-  [hen %give %nice ~]  :_  ~
   ^-  move  :-  neh
   ?-  -.ron
-    %d  [%pass /x/d `note`[%f %exec p.saq ~ %vale p.ron q.saq q.ron]]
+    %d  [%pass /x/d %f %exec p.saq (leak p.saq) ~ %vale p.ron q.saq q.ron]
     %e  [%give %mean p.ron]
-    %f  [%pass /x/f `note`[%f %exec p.saq ~ %vale p.ron q.saq q.ron]]
+    %f  [%pass /x/f %f %exec p.saq (leak p.saq) ~ %vale p.ron q.saq q.ron]
     %k  [%give %nice ~]
   ==
 ::
@@ -518,7 +519,7 @@
     ==
   ^-  note
   ?-  -.rok
-    %m  [%f %exec p.saq ~ %vale p.rok q.saq q.rok]
+    %m  [%f %exec p.saq (leak p.saq) ~ %vale p.rok q.saq q.rok]
     %s  [%g %show [p.saq imp] q.saq p.rok]
     %u  [%g %nuke [p.saq imp] q.saq]
   ==
@@ -757,9 +758,9 @@
           :+  %dude
             leaf/"error in app {<app.sat>} on {<our>} at instance {<imp>}"
           kas
-        %_    +>
-            mow      :_(mow [hen %pass (away pax) %f [%exec our `kas]])
-            onz.sat  `[hen pax]
+        %_  +>
+          mow      :_(mow [hen %pass (away pax) %f [%exec our (leak our) `kas]])
+          onz.sat  `[hen pax]
         ==
       ::
       ++  give                                          ::  give a gift
@@ -954,7 +955,9 @@
           =.  ped.sat  (~(del by ped.sat) [our syd])
           ?~  p.+.sin
             +>.$
-          +>.$(vey.sat (~(put to vey.sat) hen %boot ~))
+          ~&  %not-restarting-gall-apps
+          +>.$
+          ::+>.$(vey.sat (~(put to vey.sat) hen %boot ~))
         ==
       ::
       ++  morn                                          ::  install core
@@ -997,7 +1000,7 @@
             %=    +>
                 onz.sat  ~
                 mow
-              :_(mow [hen %pass (away q.u.onz.sat) %f [%exec our ~]])
+              :_(mow [hen %pass (away q.u.onz.sat) %f [%exec our (leak our) ~]])
             ==
         +>.$(vey.sat (~(put to vey.sat) hen kon))
       ::

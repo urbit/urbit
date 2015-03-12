@@ -72,7 +72,7 @@
           $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::  to %dill
           ==  ==                                        ::
               $:  %f                                    ::
-          $%  [%exec p=@p q=(unit silk)]                ::
+          $%  [%exec p=@p q=beak r=(unit silk)]         ::
           ==  ==                                        ::
               $:  %t                                    ::
           $%  [%wait p=@da]                             ::
@@ -408,7 +408,7 @@
     ?+    -.mis  !!
         %mut
       :-  [%diffing (scot %p who) syd (scot %da wen) pax]
-      :^  %f  %exec  who  :-  ~
+      :^  %f  %exec  who  :+  [who syd %da wen]  ~
       ^-  silk
       =+  =+  (slag (dec (lent pax)) pax)
           =+  ?~(- %$ i.-)
@@ -417,7 +417,7 @@
     ::
         %ins
       :-  [%casting (scot %p who) syd (scot %da wen) pax]
-      :^  %f  %exec  who  :-  ~
+      :^  %f  %exec  who  :+  [who syd %da wen]  ~
       ^-  silk
       =+  (slag (dec (lent pax)) pax)
       =+  ?~(- %$ i.-)
@@ -559,7 +559,7 @@
       :^    hen
           [%ergoing (scot %p who) syd ~]
         %f
-      :^  %exec  who  ~  :-  %tabl
+      :^  %exec  who  [who syd %da now]  :+  ~  %tabl
       ^-  (list (pair silk silk))
       %+  turn  sot.u.dok
       |=  [a=path b=misu]
@@ -617,7 +617,7 @@
       :^    hen
           [%patching (scot %p who) syd ~]
         %f
-      :^  %exec  who  ~  :-  %tabl
+      :^  %exec  who  [who syd %da now]  :+  ~  %tabl
       ^-  (list (pair silk silk))
       %+  turn  (~(tap by hat))
       |=  [a=path b=lobe]
@@ -775,7 +775,7 @@
     =-  %_(+>.$ tag [- tag])
     :*  hen
         [%foreign-plops (scot %p who) (scot %p for) syd ~]
-        %f  %exec  who  ~  %tabl
+        %f  %exec  who  [him syd %da now]  ~  %tabl
         ^-  (list (pair silk silk))
         %+  turn  (~(tap in pop))
         |=  a=plop
@@ -1021,7 +1021,6 @@
             =<  t
             ~|  [%letdom let=let.dom hit=hit.dom hut=(~(run by hut.ran) ,~)]
             ~|  [%getdom (~(get by hit.dom) let.dom)]
-            ~|  [%gotdom (~(get by hut.ran) (~(got by hit.dom) let.dom))]
             %-  aeon-to-yaki
             let.dom
           [~ let.dom]
@@ -1320,6 +1319,7 @@
             %init
           ?.  =(let.dom 0)
             (error:he %bad-init-merge ~)
+          ::  skim hook/hoon files/
           =.  new.dat  ali.dat
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
           =.  erg.dat  (~(run by q.ali.dat) |=(lobe %&))
@@ -1378,13 +1378,13 @@
         ==
       ::
       ++  diff-bas
-        |=  [nam=term yak=yaki]
+        |=  [nam=term yak=yaki oth=(pair ship desk)]
         ^+  +>
         =-  %_(+>.$ tag [- tag])
         :*  hen
             =+  (cat 3 %diff- nam)
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali - ~]
-            %f  %exec  p.bob  ~  %tabl
+            %f  %exec  p.bob  [p.oth q.oth %da now]  ~  %tabl
             ^-  (list (pair silk silk))
             %+  murn  (~(tap by q.bas.dat))
             |=  [pax=path lob=lobe]
@@ -1401,7 +1401,7 @@
       ::
       ++  diff-ali
         ^+  .
-        (diff-bas %ali ali.dat)
+        (diff-bas %ali ali.dat ali)
       ::
       ++  diffed-ali
         |=  res=(each bead (list tank))
@@ -1451,7 +1451,7 @@
       ::
       ++  diff-bob
         ^+  .
-        (diff-bas %bob bob.dat)
+        (diff-bas %bob bob.dat bob)
       ::
       ++  diffed-bob
         |=  res=(each bead (list tank))
@@ -1559,7 +1559,7 @@
           =-  %_(+.$ tag [- tag])
           :*  hen
               [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %merge ~]
-              %f  %exec  p.bob  ~  %tabl
+              %f  %exec  p.bob  [p.bob q.bob %da now]  ~  %tabl
               ^-  (list (pair silk silk))
               %+  turn  (~(tap by (~(int by can.dal.dat) can.dob.dat)))
               |=  [pax=path *]
@@ -1689,9 +1689,10 @@
       ++  checkout
         ^+  .
         =-  %_(+ tag [- tag])
+        =+  val=?:(?=(%init gem.dat) ali bob)
         :*  hen
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout ~]
-            %f  %exec  p.bob  ~  %tabl
+            %f  %exec  p.bob  [p.val q.val cas.dat]  ~  %tabl
             ^-  (list (pair silk silk))
             %+  turn  (~(tap by q.new.dat))
             |=  [a=path b=lobe]
@@ -1742,9 +1743,10 @@
         ^+  .
         =-  %_(+ tag [- tag])
         =+  zez=ze(ank.dom ank.dat)
+        =+  val=?:(?=(%init gem.dat) ali bob)
         :*  hen
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ergo ~]
-            %f  %exec  p.bob  ~  %tabl
+            %f  %exec  p.bob  [p.val q.val %da now]  ~  %tabl
             ^-  (list (pair silk silk))
             %+  turn  (~(tap by erg.dat))
             |=  [a=path b=?]
@@ -1950,7 +1952,7 @@
     ~&  [%bos bos p.q.hic]
     ?:  =(bos p.q.hic)  ~
     ^-  (list move)
-    %+  turn  (limo ~[%main %arvo %try])
+    %+  turn  (limo ~[%main])
     |=  syd=@tas
     [hen %pass / %c %font p.q.hic syd bos syd]
   ::
@@ -2173,7 +2175,9 @@
       %mere
     ~&  ?:  ?=(%& -.p.+.q.hin)
           ['merge succeeded' p.p.+.q.hin]
-        ['merge failed' p.p.p.+.q.hin]
+        :+  'merge failed'
+          p.p.p.+.q.hin
+        (turn q.p.p.+.q.hin |=(tank ~(ram re +<)))
     [~ ..^$]
   ::
       %waft
