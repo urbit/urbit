@@ -93,6 +93,9 @@
 ++  flog                                                ::  sent to %dill
   $%  [%crud p=@tas q=(list tank)]                      ::
       [%text p=tape]                                    ::
+      [%veer p=@ta q=path r=@t]                         ::  install vane
+      [%vega p=path]                                    ::  reboot by path
+      [%verb ~]                                         ::  verbose mode
   ==                                                    ::
 ++  gift                                                ::  out result <-$
   $%  [%bbye ~]                                         ::  reset prompt
@@ -101,7 +104,7 @@
       [%logo ~]                                         ::  logout
       [%veer p=@ta q=path r=@t]                         ::  install vane
       [%vega p=path]                                    ::  reboot by path
-      [%verb ~]                                         ::
+      [%verb ~]                                         ::  verbose mode
   ==                                                    ::
 ++  kiss                                                ::  in request ->$
   $%  [%belt p=belt]                                    ::  terminal input
@@ -117,6 +120,9 @@
       [%noop ~]                                         ::  no operation
       [%talk p=tank]                                    ::
       [%text p=tape]                                    ::
+      [%veer p=@ta q=path r=@t]                         ::  install vane
+      [%vega p=path]                                    ::  reboot by path
+      [%verb ~]                                         ::  verbose mode
   ==                                                    ::
 --  =>                                                  ::
 |%                                                      ::  protocol outward
@@ -131,6 +137,9 @@
 ++  note-dill                                           ::  note to self, odd
   $%  [%crud p=@tas q=(list tank)]                      ::
       [%text p=tape]                                    ::
+      [%veer p=@ta q=path r=@t]                         ::  install vane
+      [%vega p=path]                                    ::  reboot by path
+      [%verb ~]                                         ::  verbose mode
   ==                                                    ::
 ++  note-gall                                           ::  outbound message
   $%  [%mess p=[ship q=path] q=ship r=mess]             ::
@@ -186,7 +195,15 @@
           %belt  (send `dill-belt`p.kyz)
           %crud  (send `dill-belt`[%cru p.kyz q.kyz])
           %blew  (send %rez p.p.kyz q.p.kyz)
+          %veer  (dump kyz)
+          %vega  (dump kyz)
+          %verb  (dump kyz)
         ==
+      ::
+      ++  dump                                          ::  pass down to hey
+        |=  git=gift
+        ?>  ?=(^ hey.all)
+        +>(moz [[u.hey.all %give git] moz])
       ::
       ++  done                                          ::  return gift
         |=  git=gift
