@@ -10,20 +10,25 @@
 =>  |%                                                  ::  principal structures
     ++  helm-house                                      ::  all state
       $:  %0                                            ::  state version
+          
           hoc=(map bone helm-session)                   ::  consoles
       ==                                                ::
     ++  helm-session                                    ::
       $:  say=console-share                             ::
           mud=(unit (console-dialog ,@ud))              ::
       ==                                                ::
+    ++  funk  (pair ,@ ,@)                              ::
     ++  helm-wish                                       ::
-      $|  $?  %solid                                    ::  save kernel pill
-              %reset                                    ::  reset kernel
-              %test                                     ::  fun test
+      $|  $?  %reset                                    ::  reset kernel
               %verb                                     ::  verbose mode
           ==                                            ::
       $%  [%reload p=(list term)]                       ::  reload vanes
           [%begin p=(qual ,@p ,@p ,@t gens)]            ::  start new ship
+      ==                                                ::
+    ++  dill-flog                                       ::  sent to %dill
+      $%  [%veer p=@ta q=path r=@t]                     ::  install vane
+          [%vega p=path]                                ::  reboot by path
+          [%verb ~]                                     ::  verbose mode
       ==                                                ::
     ::                                                  ::
     ++  gift                                            ::  out result <-$
@@ -39,24 +44,13 @@
           [%took p=[p=ship q=path] q=ship]              ::
       ==                                                ::
     ++  note-dill                                       ::  system command
-      $%  [%veer p=@ta q=path r=@t]                     ::
-          [%vega p=path]                                ::
-          [%verb ~]                                     ::
+      $%  [%flog p=dill-flog]                           ::
       ==                                                ::
     ++  note                                            ::  out request $->
       $%  [%d note-dill]                                ::
           [%g note-gall]                                ::
       ==                                                ::
     --                                                  ::
-=>  |%                                                  ::  parser
-    ++  parse-helm-wish
-      %+  cook  |=(a=helm-wish a)
-      ;~  pose
-        (cold %test (jest %test))
-        (cold %solid (jest %solid))
-        (cold %reset (jest %reset))
-      ==
-    --
 ::                                                      ::
 ::::                                                    ::
   ::                                                    ::
@@ -72,73 +66,12 @@
     |=  git=gift
     %_(+> moz [[ost %give git] moz])
   ::
-  ++  he-test
-    ^-  (console-dialog ,@)
-    |=  fin=(unit console-input)
-    ?^  fin  !!
-    :-  ~  :-  ~  
-    :-  [%leaf "a number..."]~
-    :-  %|
-    :-  `console-prompt`[& %$ (tuba "number one> ")]
-    he-test-two
-  ::
-  ++  he-test-two
-    |=  fin=(unit console-input)
-    =+  uno=?~(fin ~ (ruse u.fin dem:ag))
-    ?~  uno  ~
-    ?~  u.uno  [~ ~]
-    [~ ~ ~ %& ~ u.u.uno]
-  ::
-  ++  he-peer                                           ::  subscribe to
-    (he-rush [%pro %& %$ (tuba ":helm! ")]~)
-  ::
-  ++  he-rush                                           ::  emit changes
-    |=  fes=(list console-effect)
-    ?~  fes  +>
-    (he-give %rush %console-effect ?~(t.fes i.fes [%mor fes]))
-  ::
-  ++  he-wish-solid
-    ^+  .
-    =-  %_    +
-            moz  :_  moz
-          [ost %give %rush %console-effect %sag /urbit/pill pil]
-        ==
-    ^=  pil
-    =+  top=`path`/(scot %p our.hid)/arvo/(scot %da lat.hid)
-    =+  pax=`path`(weld top `path`[%hoon ~])
-    ~&  %solid-start
-    =+  gen=(reck pax)
-    ~&  %solid-parsed
-    =+  ken=q:(~(mint ut %noun) %noun gen)
-    ~&  %solid-compiled
-    :-  ken
-    =+  all=.*(0 ken)
-    =+  ^=  vay  ^-  (list ,[p=@tas q=@tas])
-        :~  [%$ %zuse]
-            [%g %gall]
-            [%f %ford]
-            [%a %ames]
-            [%c %clay]
-            [%d %dill]
-            [%e %eyre]
-            [%t %time]
-        ==
-    |-  ^+  all
-    ?~  vay  all
-    =+  pax=(weld top `path`[q.i.vay ~])
-    =+  txt=((hard ,@) .^(%cx (weld pax `path`[%hoon ~])))
-    =+  sam=[lat.hid `ovum`[[%gold ~] [%veer p.i.vay pax txt]]]
-    ~&  [%solid-veer i.vay]
-    =+  gat=.*(all .*(all [0 42]))
-    =+  nex=+:.*([-.gat [sam +>.gat]] -.gat)
-    $(vay t.vay, all nex)
-  ::
   ++  he-wish-reset
     ^+  .
     =-  %_(+ moz (weld zum moz))
     ^=  zum  ^-  (list move)
     =+  top=`path`/(scot %p our.hid)/arvo/(scot %da lat.hid)
-    :-  [ost %pass /reset %d %vega (weld top `path`/hoon)]
+    :-  [ost %pass /reset %d %flog %vega (weld top `path`/hoon)]
     %+  turn
       ^-  (list ,[p=@tas q=@tas])
       :~  [%$ %zuse]
@@ -153,7 +86,35 @@
     |=  [p=@tas q=@tas]
     =+  pax=`path`(welp top /[q])
     =+  txt=((hard ,@) .^(%cx (welp pax /hoon)))
-    [ost %pass /reset %d %veer p pax txt]
+    [ost %pass /reset %d %flog %veer p pax txt]
+  ::
+  ++  he-wish-reload 
+    |=  all=(list term)
+    %_    +>.$
+        moz
+      %-  weld
+      :_  moz
+      %+  turn  all
+      =+  ark=(arch .^(%cy /(scot %p our.hid)/arvo/(scot %da lat.hid)))
+      =+  van=(~(tap by r.ark))
+      |=  nam=@tas
+      =.  nam
+        ?.  =(1 (met 3 nam))
+          nam
+        =+  ^-  zaz=(list ,[p=span ~])
+            (skim van |=([a=term ~] =(nam (end 3 1 a))))
+        ?>  ?=([[@ ~] ~] zaz)
+        `term`p.i.zaz
+      =+  tip=(end 3 1 nam)
+      =+  pax=[(scot %p our.hid) %arvo (scot %da lat.hid) nam %hoon ~]
+      :*  ost
+          %pass
+          /reload
+          %d
+          %flog
+          [%veer ?:(=('z' tip) %$ tip) pax (,@ .^(%cx pax))]
+      ==
+    ==
   ::
   ++  he-wish-begin
     |=  mes=(qual ,@p ,@p ,@t gens)
@@ -167,26 +128,8 @@
     %_    .
         moz
       :_  moz
-      [ost %pass /verb %d %verb ~]
+      [ost %pass /verb %d %flog %verb ~]
     ==
-  ::
-  ++  he-proceed
-    |=  res=(unit (unit ,@))
-    ^+  +>
-    ?~  res
-      ~&  %abort
-      +>.$(mud ~)
-    ?~  u.res
-      +>.$
-    ~&  [%result u.u.res]
-    +>.$(mud ~)
-  ::
-  ++  he-wish-test
-    |-  ^+  +
-    =+  cow=he-test
-    =^  nib  say  ((~(apse cs say) cow) ~)
-    =^  don  cow  nib
-    (he-proceed:(he-rush(mud `cow) p.don) q.don)
   ::
   ++  he-wish
     |=  wus=(unit helm-wish)
@@ -194,34 +137,24 @@
     ?~  wus  +>
     ?-  u.wus 
       %verb        he-wish-verb
-      %test        he-wish-test
-      %solid       he-wish-solid
       %reset       he-wish-reset
       [%reload *]  !!  ::  (he-wish-reload +.u.wus)  
       [%begin *]   (he-wish-begin +.u.wus)
     ==
-  ::
-  ++  he-work                                           ::  apply input
-    |=  act=console-action
-    ^+  +>
-    ?~  mud
-      =^  wig  say  ((~(apex cs say) parse-helm-wish) act)
-      (he-wish:(he-rush p.wig) q.wig)
-    =^  nib  say  ((~(apse cs say) u.mud) `act)
-    =^  don  u.mud  nib
-    (he-proceed:(he-rush p.don) q.don)
   --
 ::
-++  peer
-  |=  [ost=bone her=ship pax=path]
-  ^-  [(list move) _+>]
-  ?<  (~(has by hoc) ost)
-  ?>  =(/console pax)
+++  hake                                                ::  poke core
+  |=  [ost=bone her=ship]
   ?>  =(her our.hid)
-  he-abet:~(he-peer he [ost ~] *helm-session)
+  ~(. he [ost [ost %give %nice ~]~] (fall (~(get by hoc) ost) *helm-session))
 ::
-++  poke-console-action
-  |=  [ost=bone her=ship act=console-action]
-  ^-  [(list move) _+>]
-  he-abet:(~(he-work he [ost [ost %give %nice ~]~] (~(got by hoc) ost)) act)
+++  poke-helm-reset
+  |=  [ost=bone her=ship ~]
+  ~&  %poke-helm-reset
+  he-abet:he-wish-reset:(hake ost her)
+::
+++  poke-helm-reload
+  |=  [ost=bone her=ship all=(list term)]
+  ~&  %poke-helm-reload
+  he-abet:(he-wish-reload:(hake ost her) all)
 --

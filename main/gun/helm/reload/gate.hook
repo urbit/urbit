@@ -1,0 +1,12 @@
+::
+::::  /hook/gate/reload/helm/gun
+  ::
+/?  314
+/-  *console
+::
+::::
+  !:
+|=  $:  [now=@da bec=beak]
+        [arg=(list term) ~]
+    ==
+(console-so %helm-reload arg)
