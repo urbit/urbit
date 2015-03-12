@@ -6,7 +6,7 @@
 ++  poke-solid-args
   |=  [ost=bone you=ship ~]
   :_  +>.$
-  =+  top=`path`/(scot %p our.hid)/arvo/(scot %da lat.hid)
+  =+  top=`path`/(scot %p our.hid)/main/(scot %da lat.hid)/arvo
   =+  pax=`path`(weld top `path`[%hoon ~])
   ~&  %solid-start
   =+  gen=(reck pax)
