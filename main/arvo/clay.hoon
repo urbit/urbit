@@ -176,12 +176,13 @@
   ++  abet
     ^-  [(list move) rede]
     :_  red
+    ~&  >  %welding
     ;:  weld
       %+  turn  (flop yel)
       |=([a=duct b=gift] [hun %give b])
     ::
       %+  turn  (flop byn)
-      |=([a=duct b=riot] [a %give [%writ b]])
+      |=([a=duct b=riot] ~&(%giving-response [a %give [%writ b]]))
     ::
       %+  turn  (flop reg)
       |=([a=duct b=gift] [a %give b])
@@ -192,7 +193,7 @@
       [%pass b %a %want [who c] [%q %re p.q.d (scot %ud p.d) ~] q.d]
     ::
       %+  turn  (flop tag)
-      |=([a=duct b=path c=note] [a %pass b c])
+      |=([a=duct b=path c=note] ~&(%tagging [a %pass b c]))
     ==
   ::
   ++  aver                                            ::  read
@@ -231,7 +232,9 @@
   ++  balk                                          ::  read and send
     |=  [hen=duct cay=(unit cage) mun=mood]
     ^+  +>
-    ?~  cay  (blub hen)  (blab hen mun u.cay)
+    ?~  cay  (blub hen)
+    ~&  >  [%affirmative-balking hen mun]
+    (blab hen mun u.cay)
   ::
   ++  bait
     |=  [hen=duct tym=@da]
@@ -712,7 +715,7 @@
           p.r.u.rut
         ?+  p.r.u.rut  ~|  %strange-w-over-nextwork  !!
           %aeon  !>(((hard aeon) q.r.u.rut))
-          %nako  !>(((hard nako) q.r.u.rut))
+          %nako  !>(~|([%harding [&1 &2 &3]:q.r.u.rut] ((hard nako) q.r.u.rut)))
         ==
       ?.  ?=(%nako p.r.u.rut)  +>+.$
       |-  ^+  +>+.^$
@@ -874,9 +877,12 @@
                     (blab p.i.xiq p.q.i.xiq u.u.cas)
         ==
       =+  nao=(case-to-aeon:ze q.p.q.i.xiq)
+      ~&  >  [%checking-on p.q.i.xiq]
       ?~  nao  $(xiq t.xiq, xaq [i.xiq xaq])
+      ~&  >  %found-aeon
       =+  vid=(read-at-aeon:ze u.nao p.q.i.xiq)
       ?~  vid  ~&  %':( oh well'  $(xiq t.xiq, xaq [i.xiq xaq])
+      ~&  >  %found-the-thing
       $(xiq t.xiq, ..wake (balk p.i.xiq u.vid p.q.i.xiq))
     ::
         |
@@ -1197,7 +1203,10 @@
     ++  read-x
       |=  [yon=aeon pax=path]
       ^-  (unit (unit cage))
-      =+  yak=(aeon-to-yaki yon)
+      =+  tak=(~(get by hit.dom) yon)
+      ?~  tak
+        ~
+      =+  yak=(tako-to-yaki u.tak)
       =+  lob=(~(get by q.yak) pax)
       ?~  lob
         [~ ~]
@@ -1222,7 +1231,10 @@
     ++  read-y
       |=  [yon=aeon pax=path]
       ^-  (unit (unit (cask (hypo arch))))
-      =+  yak=(aeon-to-yaki yon)
+      =+  tak=(~(get by hit.dom) yon)
+      ?~  tak
+        ~
+      =+  yak=(tako-to-yaki u.tak)
       =+  len=(lent pax)
       :^  ~  ~  %arch 
       :-  -:!>(*arch)
@@ -2145,11 +2157,15 @@
     =*  sud  i.t.t.t.t.tea
     =*  sat  i.t.t.t.t.t.tea
     =+  une=(un our now hen ruf)
-    =+  wex=(di:une syd)
+    =+  wak=wake:une
+    =+  wex=(di:wak syd)
     =+  dat=?-(+<.q.hin %writ [%& p.q.hin], %made [%| p.q.hin])
+    ~&  >  %pre-abet
     =+  wao=abet:(route:(me:ze:wex her sud) sat dat)
+    ~&  >  %post-abet
     =+  woo=abet:wao
-    [-.woo ..^$(ruf abet:(pish:une syd +.woo ran.wao))]
+    ~&  >  [%merge-giving (turn -.woo |=(move ?+(-.q ~ %give -.p.q)))]
+    [(weld -.wak -.woo) ..^$(ruf abet:(pish:une syd +.woo ran.wao))]
   ?-    -.+.q.hin
       %crud
     [[[hen %slip %d %flog +.q.hin] ~] ..^$]

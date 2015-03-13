@@ -366,6 +366,7 @@
         ?(%init %logo %veer %vega %verb)                ::  drop-throughs
       +>(mos :_(mos [hen %give +.sih]))
         %writ                                           ::  file exists
+      ~&  >  %dill-got-writ
       %_    +>.$
           mos
         :_  mos
@@ -664,6 +665,7 @@
     ::
         %init
       =.  def  `(fall def +.hen)
+      ~&  >  %dill-sending-warp
       %=    +>.$
           our  p.kyz
           mos
