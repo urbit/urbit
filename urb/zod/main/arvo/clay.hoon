@@ -176,13 +176,12 @@
   ++  abet
     ^-  [(list move) rede]
     :_  red
-    ~&  >  %welding
     ;:  weld
       %+  turn  (flop yel)
       |=([a=duct b=gift] [hun %give b])
     ::
       %+  turn  (flop byn)
-      |=([a=duct b=riot] ~&(%giving-response [a %give [%writ b]]))
+      |=([a=duct b=riot] [a %give [%writ b]])
     ::
       %+  turn  (flop reg)
       |=([a=duct b=gift] [a %give b])
@@ -193,7 +192,7 @@
       [%pass b %a %want [who c] [%q %re p.q.d (scot %ud p.d) ~] q.d]
     ::
       %+  turn  (flop tag)
-      |=([a=duct b=path c=note] ~&(%tagging [a %pass b c]))
+      |=([a=duct b=path c=note] [a %pass b c])
     ==
   ::
   ++  aver                                            ::  read
@@ -233,7 +232,6 @@
     |=  [hen=duct cay=(unit cage) mun=mood]
     ^+  +>
     ?~  cay  (blub hen)
-    ~&  >  [%affirmative-balking hen mun]
     (blab hen mun u.cay)
   ::
   ++  bait
@@ -877,12 +875,9 @@
                     (blab p.i.xiq p.q.i.xiq u.u.cas)
         ==
       =+  nao=(case-to-aeon:ze q.p.q.i.xiq)
-      ~&  >  [%checking-on p.q.i.xiq]
       ?~  nao  $(xiq t.xiq, xaq [i.xiq xaq])
-      ~&  >  %found-aeon
       =+  vid=(read-at-aeon:ze u.nao p.q.i.xiq)
       ?~  vid  ~&  %':( oh well'  $(xiq t.xiq, xaq [i.xiq xaq])
-      ~&  >  %found-the-thing
       $(xiq t.xiq, ..wake (balk p.i.xiq u.vid p.q.i.xiq))
     ::
         |
@@ -2160,11 +2155,8 @@
     =+  wak=wake:une
     =+  wex=(di:wak syd)
     =+  dat=?-(+<.q.hin %writ [%& p.q.hin], %made [%| p.q.hin])
-    ~&  >  %pre-abet
     =+  wao=abet:(route:(me:ze:wex her sud) sat dat)
-    ~&  >  %post-abet
     =+  woo=abet:wao
-    ~&  >  [%merge-giving (turn -.woo |=(move ?+(-.q ~ %give -.p.q)))]
     [(weld -.wak -.woo) ..^$(ruf abet:(pish:une syd +.woo ran.wao))]
   ?-    -.+.q.hin
       %crud
@@ -2256,7 +2248,6 @@
     =+  ^=  zat
       =<  wake
       %-  take-foreign-update:(do now hen p.+.q.hin syd ruf)
-::      ~&  [%rand q.+.q.hin ((soft (unit rand)) q.+.q.hin)]
       [inx ((hard (unit rand)) q.+.q.hin)]
     =^  mos  ruf
       =+  zot=abet.zat
