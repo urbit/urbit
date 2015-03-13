@@ -128,13 +128,14 @@
   $%  [%for p=whir q=beam r=term s=cred]                ::  %f block
       [%fot p=whir q=mark r=cage]                       ::  %f translate
       [%fow p=@uvH]                                     ::  %f deps
-      [%fin $|(~ pest-fin)]                             ::  done
+      [%fin pest-fin]                                 ::  done
       [%mez p=hapt q=ship r=cage]                       ::  %g message
       [%red %html]                                      ::  redirect
       [%zap p=@ud q=(list tank)]                        ::  err
   ==
 ::
 ++  pest-fin                                            ::  response
+  $|  ~
   $%  [%code p=@ud q=pest-fin]
       [%json p=json] 
       [%html p=manx] 
@@ -624,7 +625,6 @@
       =.  our  ?~(oar our u.oar)  ::  XX
       =+  pez=process
       ?:  ?=(%| -.pez)  p.pez  ::  XX transitional
-      =+  status=200
       |-  ^+  done
       ?-  -.p.pez
           %for  (beam-into-ford +.p.pez)
@@ -632,6 +632,7 @@
           %fow  (pass-note ~ %f [%wasp our p.p.pez])
           %mez  (pass-note ~ %g [%mess +.p.pez])
           %zap  (fail p.p.pez 0v0 q.p.pez)
+          %fin  (finish +.p.pez)
           %red
         =+  url=(earn hat pok(p [~ %html]) quy)
         ?+    p.pok  (fail 404 0v0 leaf/"bad redirect" leaf/<p.pok> leaf/url ~)
@@ -640,16 +641,18 @@
             [~ %json]
           $(p.pez [%fin %json (jobe ok/b/| red/(jape url) ~)])
         ==
-      ::
-          %fin
-        ?~  +.p.pez  done
-        ?-  &2.p.pez
-          ~  (give-gift %thou p.p.pez)
-          %js  (resp status text//javascript p.p.pez)
-          %html  (give-html status ~ p.p.pez)
-          %json  (give-json status ~ p.p.pez)
-          %code  $(+.p.pez q.p.pez, status p.p.pez)
-        ==
+      ==
+    ::
+    ++  finish
+      =+  status=200
+      |=  pef=pest-fin  ^+  done
+      ?~  pef  done
+      ?-  -.pef
+        ~  (give-gift %thou p.pef)
+        %js  (resp status text//javascript p.pef)
+        %html  (give-html status ~ p.pef)
+        %json  (give-json status ~ p.pef)
+        %code  $(pef q.pef, status p.pef)
       ==
     ::
     ++  process
@@ -662,7 +665,8 @@
       ~|  [mef maf bod]
       =+  bem=as-beam
       ?^  bem  (process-parsed %beam u.bem)
-      ?>  check-oryx
+      ?.  check-oryx
+        ~|(%bad-oryx ~|([(parse-to-oryx q:(need bod)) vew.cyz:for-client] !!))
       =+  hem=as-aux-request
       ?^  hem  (process-parsed u.hem)
       ~|(strange-path/q.pok !!)
@@ -672,7 +676,7 @@
       ?.  &(?=([~ %json] p.pok) ?=(%post mef) ?=(^ bod))  &
       =+  oxe=(parse-to-oryx q.u.bod)
       ?~  oxe  |
-      & ::(~(has in vew.cyz:for-client) u.oxe) ::XX
+      (~(has in vew.cyz:for-client) u.oxe)
     ::
     ++  parse-to-oryx  ;~(biff poja (ot oryx/so ~):jo)
     ++  root-beak  `beak`[our %main ud/0]               ::  XX
@@ -723,8 +727,8 @@
             %fin  
               ~|  %not-script
               ?>  ?=(%js &2.p.pez)
-              =^  jon  ..ya  stat-json:for-client       ::  XX  state lost
-              pez(p.p (jass jon p.p.pez))
+              =^  jon  ..ya  stat-json:for-client
+              [%| (finish +.p.pez(p (jass jon p.p.pez)))] ::  XX better storage?
           ==
         ::
             %try
@@ -855,7 +859,7 @@
       =+  url=(welp (earn pul(p hat)) '#' (head:earn p.pul))
       %-  give-gift
       %+  add-cookies  cug
-      :+  %thou  307 
+      :+  %thou  307
       [[location/(crip url)]~ ~]
     ::
     ++  stat-json
