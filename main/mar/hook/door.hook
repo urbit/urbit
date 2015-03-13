@@ -10,8 +10,7 @@
   ++  mime  [/text/hoon (taco own)]                     ::  convert to %mime
   ++  psal  ;div:(pre:"{(trip own)}")                   ::  convert to %html
   ++  hymn  ;html:(head:title:"Source" "+{psal}")
-  ++  txt
-    (lore (cat 3 own '\0a'))
+  ++  txt   (lore (cat 3 own '\0a'))
   --
 ++  grab
   |%                                            ::  convert from

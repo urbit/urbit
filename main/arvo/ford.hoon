@@ -168,9 +168,8 @@
 ++  fine  |*  [a=cafe b=*]                              ::  bolt from data
           [p=`cafe`a q=[%0 p=*(set beam) q=b]]          ::
 ++  flaw  |=([a=cafe b=(list tank)] [p=a q=[%2 p=b]])   ::  bolt from error
-::
-++  clean-beak  |=([now=@da bek=beak] [p.bek q.bek %da now])
-::
+++  clean-beak  ::|=([now=@da bek=beak] [p.bek q.bek %da now])
+  |=([now=@da bek=beak] bek)
 ++  grom                                                ::  merge sets
   |*  [one=(set) two=(set)]
   ^+  one
@@ -1400,6 +1399,17 @@
         |=  [cof=cafe cay=gage coy=gage]
         ?.  &(?=(@ p.cay) ?=(@ p.coy))
           (flaw cof leaf/"bad pact marc" ~)
+        ?:  ?=(?(%hoon %hook) p.cay)
+          ?.  ?=(%txt-diff p.coy)
+            (flaw cof leaf/"{<p.cay>} mark with bad diff type: {<p.coy>}" ~)
+          =+  txt=((soft ,@t) q.q.cay)
+          ?~  txt
+            (flaw cof leaf/"{<p.cay>} mark on bad data" ~)
+          =+  dif=((soft (urge cord)) q.q.coy)
+          ?~  dif
+            (flaw cof leaf/"{<p.cay>} data with bad diff" ~)
+          =+  pac=(role (lurk (lore (cat 3 u.txt '\0a')) u.dif))
+          (fine cof p.cay [%atom %t] (end 3 (dec (met 3 pac)) pac))
         %+  cope  (fang cof p.cay)
         |=  [cof=cafe pro=vase]
         ?.  (slab %grad p.pro)
