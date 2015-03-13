@@ -130,7 +130,7 @@
       [%fow p=@uvH]                                     ::  %f deps
       [%fin $|(~ pest-fin)]                             ::  done
       [%mez p=hapt q=ship r=cage]                       ::  %g message
-      [%red p=purl q=@t]                                ::  redirect
+      [%red %html]                                      ::  redirect
       [%zap p=@ud q=(list tank)]                        ::  err
   ==
 ::
@@ -618,22 +618,30 @@
       =+  status=200
       |-  ^+  done
       ?-  -.p.pez
-        %for  (beam-into-ford +.p.pez)
-        %fot  (ford-req p.p.pez our [%cast q.p.pez %done ~ r.p.pez])
-        %fow  (pass-note ~ %f [%wasp our p.p.pez])
-        %mez  (pass-note ~ %g [%mess +.p.pez])
-        %zap  (fail p.p.pez 0v0 q.p.pez)
-        %red  =+  fra=?~(q.p.pez "" ['#' (trip q.p.pez)])
-              =+  url=(weld (earn p.p.pez) `tape`fra)
-              $(p.pez [%fin ~ 307 [location/(crip url)]~ ~])
-        %fin  ?~  +.p.pez  done
-              ?-  &2.p.pez
-                ~  (give-gift %thou p.p.pez)
-                %js  (resp status text//javascript p.p.pez)
-                %html  (give-html status ~ p.p.pez)
-                %json  (give-json status ~ p.p.pez)
-                %code  $(+.p.pez q.p.pez, status p.p.pez)
-      ==      ==
+          %for  (beam-into-ford +.p.pez)
+          %fot  (ford-req p.p.pez our [%cast q.p.pez %done ~ r.p.pez])
+          %fow  (pass-note ~ %f [%wasp our p.p.pez])
+          %mez  (pass-note ~ %g [%mess +.p.pez])
+          %zap  (fail p.p.pez 0v0 q.p.pez)
+          %red
+        =+  url=(earn hat pok(p [~ %html]) quy)
+        ?+    p.pok  (fail 404 0v0 leaf/"bad redirect" leaf/<p.pok> leaf/url ~)
+            [~ %js]
+          $(p.pez [%fin %js (crip "document.location = '{url}'")])
+            [~ %json]
+          $(p.pez [%fin %json (jobe ok/b/| red/(jape url) ~)])
+        ==
+      ::
+          %fin
+        ?~  +.p.pez  done
+        ?-  &2.p.pez
+          ~  (give-gift %thou p.p.pez)
+          %js  (resp status text//javascript p.p.pez)
+          %html  (give-html status ~ p.p.pez)
+          %json  (give-json status ~ p.p.pez)
+          %code  $(+.p.pez q.p.pez, status p.p.pez)
+        ==
+      ==
     ::
     ++  process
       ^-  (each pest ,_done)
@@ -734,6 +742,8 @@
       ==
     ++  show-login-page  
       |=  ses=(unit hole)  ^-  (each pest ,_done)
+      ?.  ?=($|(~ [~ %html]) p.pok)
+        [%& %red %html]
       ?~  ses
         [%& %fin %code 401 %html login-page:xml]
       =+  yac=~(. ya u.ses (ses-cyst u.ses))
