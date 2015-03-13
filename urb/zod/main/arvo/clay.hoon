@@ -205,7 +205,7 @@
     ?^  ezy  ezy
     =+  nao=(case-to-aeon:ze q.mun)
     ::  ~&  [%aver-mun nao [%from syd lim q.mun]]
-    ?~(nao ~ [~ (read-at-aeon:ze u.nao mun)])
+    ?~(nao ~ (read-at-aeon:ze u.nao mun))
   ::
   ++  made-to-tage
     |=  res=(each bead (list tank))
@@ -229,10 +229,9 @@
     [?^(q.i.p.tab !! q.i.p.tab) (slot 5 q.tab)]
   ::
   ++  balk                                          ::  read and send
-    |=  [hen=duct yon=@ud mun=mood]
+    |=  [hen=duct cay=(unit cage) mun=mood]
     ^+  +>
-    =+  vid=(read-at-aeon:ze yon mun)
-    ?~  vid  (blub hen)  (blab hen mun u.vid)
+    ?~  cay  (blub hen)  (blab hen mun u.cay)
   ::
   ++  bait
     |=  [hen=duct tym=@da]
@@ -644,8 +643,8 @@
       lat.ran   %-  ~(uni by lat.ran)
                 %-  mo  ^-  (list (pair lobe blob))
                 %+  turn  (~(tap in bar))
-                |=  bob=blob
-                [p.bob bob]
+                |=  bol=blob
+                [p.bol bol]
     ==
   ::
   ++  exec                                            ::  change and update
@@ -748,7 +747,7 @@
   ++  rand-to-rant
     |=  rut=rand
     ^+  +>
-    ~|  %x-over-network-not-implemented  !!
+    ~|  [%x-over-network-not-implemented [p q -.r]:rut hen]  !!
     ::  =-  %_(+>.$ tag [- tag])
     ::  :*  hen
     ::      [%foreign-plops (scot %p who) (scot %p for) syd ~]
@@ -817,10 +816,10 @@
         ?@  q.coy
           ~|  %plop-strange-coy
           !!
-        =+  bob=((hard blob) -.q.coy)
-        ?-  -.bob
-          %delta      [-.bob p.bob q.bob q.i.p.p.cay +.q.coy]
-          %direct     [-.bob p.bob q.i.p.p.cay +.q.coy]
+        =+  bol=((hard blob) -.q.coy)
+        ?-  -.bol
+          %delta      [-.bol p.bol q.bol q.i.p.p.cay +.q.coy]
+          %direct     [-.bol p.bol q.i.p.p.cay +.q.coy]
           %indirect   ~|  %plop-indirect-not-implemented  !!
         ==
     %^    apply-foreign-update
@@ -876,7 +875,9 @@
         ==
       =+  nao=(case-to-aeon:ze q.p.q.i.xiq)
       ?~  nao  $(xiq t.xiq, xaq [i.xiq xaq])
-      $(xiq t.xiq, ..wake (balk p.i.xiq u.nao p.q.i.xiq))
+      =+  vid=(read-at-aeon:ze u.nao p.q.i.xiq)
+      ?~  vid  ~&  %':( oh well'  $(xiq t.xiq, xaq [i.xiq xaq])
+      $(xiq t.xiq, ..wake (balk p.i.xiq u.vid p.q.i.xiq))
     ::
         |
       =+  mot=`moot`p.q.i.xiq
@@ -922,11 +923,11 @@
     ++  lobe-to-silk
       |=  a=lobe
       |-  ^-  silk
-      =+  bob=(~(got by lat.ran) a)
-      ?-  -.bob
-        %direct     [%volt ~ q.bob]
-        %indirect   [%volt ~ q.bob]
-        %delta      [%pact $(a q.q.bob) [%volt ~ r.bob]]
+      =+  bol=(~(got by lat.ran) a)
+      ?-  -.bol
+        %direct     [%volt ~ q.bol]
+        %indirect   [%volt ~ q.bol]
+        %delta      [%pact $(a q.q.bol) [%volt ~ r.bol]]
       ==
     ::
     ++  make-direct                                     ::  make blob
@@ -1016,7 +1017,7 @@
           %da
         ?:  (gth p.lok lim)  ~
         |-  ^-  (unit aeon)
-        ?:  =(0 let.dom)  [~ 0]                             ::  avoid underflow
+        ?:  =(0 let.dom)  [~ 0]                         ::  avoid underflow
         ?:  %+  gte  p.lok
             =<  t
             ~|  [%letdom let=let.dom hit=hit.dom hut=(~(run by hut.ran) ,~)]
@@ -1193,25 +1194,76 @@
         ?^(r.mun ~ [~ %w !>([t.yak (forge-nori yak)])])
       (query(ank.dom ank:(descend-path:(zu ank.dom) r.mun)) p.mun)
     ::
+    ++  read-x
+      |=  [yon=aeon pax=path]
+      ^-  (unit (unit cage))
+      =+  yak=(aeon-to-yaki yon)
+      =+  lob=(~(get by q.yak) pax)
+      ?~  lob
+        [~ ~]
+      =+  mar=(lobe-to-mark u.lob)
+      ?.  ?=(?(%hoon %hook) mar)
+        ~
+      :^  ~  ~  mar
+      :-  [%atom %t]
+      |-  ^-  @t                      ::  (urge cord) would be faster
+      =+  bol=(lobe-to-blob u.lob)
+      ?:  ?=(%direct -.bol)
+        ((hard ,@t) q.q.bol)
+      ?:  ?=(%indirect -.bol)
+        ((hard ,@t) q.q.bol)
+      ?>  ?=(%delta -.bol)
+      =+  txt=$(u.lob q.q.bol)
+      ?>  ?=(%txt-diff p.r.bol)
+      =+  dif=((hard (urge cord)) q.r.bol)
+      =+  pac=(role (lurk (lore (cat 3 txt '\0a')) dif))
+      (end 3 (dec (met 3 pac)) pac)
+    ::
+    ++  read-y
+      |=  [yon=aeon pax=path]
+      ^-  (unit (unit (cask (hypo arch))))
+      =+  yak=(aeon-to-yaki yon)
+      =+  len=(lent pax)
+      :^  ~  ~  %arch 
+      :-  -:!>(*arch)
+      ^-  arch
+      :+  *@uvI
+        ?.((~(has by q.yak) pax) ~ `0vfak.ehash)
+      ^-  (map span ,~)
+      %-  mo  ^-  (list (pair span ,~))
+      %+  turn
+        %+  skim  (~(tap by (~(del by q.yak) pax)))
+        |=  [paf=path lob=lobe]
+        =(pax (scag len paf))
+      |=  [paf=path lob=lobe]
+      [(snag len paf) ~]
+    ::
     ++  read-at-aeon                                    ::    read-at-aeon:ze
       |=  [yon=aeon mun=mood]                           ::  seek and read
-      ^-  (unit cage)
+      ^-  (unit (unit cage))
       ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))              ::  NB only for speed
-        ?^(r.mun ~ [~ %aeon !>(yon)])
+        ?^(r.mun [~ ~] [~ ~ %aeon !>(yon)])
+      ?:  ?=(%x p.mun)
+        (read-x yon r.mun)
+      ?:  ?=(%y p.mun)
+        (read-y yon r.mun)
       %+  biff
         (rewind yon)
-      |=  a=_+>.$
-      (read:a mun)
+      |=  a=(unit ,_+>.$)
+      ^-  (unit (unit cage))
+      ?~  a 
+        [~ ~]
+      `(read:u.a mun)
     ::
     ++  rewind                                          ::    rewind:ze
       |=  yon=aeon                                      ::  rewind to aeon
-      ^-  (unit ,_+>)
-      ?:  =(let.dom yon)  `+>
-      ?:  (gth yon let.dom)  !!                             ::  don't have version
+      ^-  (unit (unit ,_+>))
+      ?:  =(let.dom yon)  ``+>
+      ?:  (gth yon let.dom)  !!                         ::  don't have version
       =+  hat=q:(aeon-to-yaki yon)
       ?:  (~(any by hat) |=(a=lobe ?=(%delta [-:(lobe-to-blob a)])))
         ~
-      !!
+      ~
       ::=+  ^-  (map path cage)
       ::    %-  ~(run by hat)
       ::    |=  a=lobe
@@ -1746,7 +1798,7 @@
         =+  val=?:(?=(%init gem.dat) ali bob)
         :*  hen
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ergo ~]
-            %f  %exec  p.bob  [p.val q.val %da now]  ~  %tabl
+            %f  %exec  p.bob  [p.val q.val cas.dat]  ~  %tabl
             ^-  (list (pair silk silk))
             %+  turn  (~(tap by erg.dat))
             |=  [a=path b=?]
@@ -2173,9 +2225,10 @@
     ==
   ::
       %mere
-    ~&  ?:  ?=(%& -.p.+.q.hin)
-          ['merge succeeded' p.p.+.q.hin]
-        :+  'merge failed'
+    ?:  ?=(%& -.p.+.q.hin)
+      ~&  ['merge succeeded' p.p.+.q.hin]
+      [~ ..^$]
+    ~&  :+  'merge failed'
           p.p.p.+.q.hin
         (turn q.p.p.+.q.hin |=(tank ~(ram re +<)))
     [~ ..^$]
