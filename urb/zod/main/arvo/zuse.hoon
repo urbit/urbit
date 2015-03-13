@@ -2104,7 +2104,11 @@
 ++  rang  $:  hut=(map tako yaki)                       ::
               lat=(map lobe blob)                       ::
           ==                                            ::
-++  rand  rant                                          ::  unvalidated rant
+++  rand                                                ::  unvalidated rant
+          $:  p=[p=care q=case r=@tas]                  ::  clade release book
+              q=path                                    ::  spur
+              r=page                                    ::  data
+          ==                                            ::
 ++  rant                                                ::  namespace binding
           $:  p=[p=care q=case r=@tas]                  ::  clade release book
               q=path                                    ::  spur
