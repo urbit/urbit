@@ -110,7 +110,7 @@
       [%poll p=@uvH]
       [%auth perk-auth]
       [%away ~]
-      [%bugs %as ~]
+      [%bugs p=?(%as %to) ~]
       [%mess p=hasp q=mark r=json]                      
   ==
 ::
@@ -237,7 +237,7 @@
       })
     }
     
-    ship.innerText = urb.ship
+    if(window.ship) ship.innerText = urb.ship
     urb.foreign = /^\/~\/am/.test(window.location.pathname)
     urb.submit = function(){
       req(
@@ -254,33 +254,42 @@
       })
     }
     urb.away = function(){req("/~/auth.json?DELETE", {}, 
-      function(){document.write("success!")})}
+      function(){document.write("success!")}
+    )}
     '''
   --
 ++  xml
   |%
   ++  login-page
-    ;html
-      ;head:title:'Log in'
-      ;body
-        ;p: Identify yourself, ~;{span#ship(contenteditable "")}?
+    %+  titl  'Log in'
+    ;=  ;p: Identify yourself, ~;{span#ship(contenteditable "")}?
         ;style:'#ship {background: lightgray} #ship br {display: none}'
         ;input#pass(onchange "urb.submit()");
         ;pre:code#err;
         ;script@"/~/at/~/auth.js";
-      ==
     ==
   ::
   ++  logout-page
-    ;html
-      ;head:title:'Log out'
-      ;body
-        ;p: Goodbye ~;{span#ship}.
+    %+  titl  'Log out'
+    ;=  ;p: Goodbye ~;{span#ship}.
         ;button#act(onclick "urb.away()"): Log out
         ;pre:code#err;
         ;script@"/~/at/~/auth.js";
-      ==
     ==
+  ::
+  ++  poke-test
+    %+  titl  'Poke'
+    ;=  ;button(onclick "urb.testPoke('/~/to/hi/txt.json')"): Hi anonymous
+        ;button(onclick "urb.testPoke('/~/as/own/~/to/hi/txt.json')"): Hi
+        ;pre:code#err;
+        ;script@"/~/at/~/auth.js";
+        ;script:'''
+                urb.testPoke = function(url){
+                  req(url,{xyro:{test:true}}, function(t){err.innerText = t})
+                }
+                '''
+    ==
+  ++  titl  |=([a=cord b=marl] ;html:(head:title:"{(trip a)}" body:"*{b}"))
   --
 --
 |%                                                      ::  functions
@@ -675,6 +684,7 @@
         =+  ext=(fall p.pok %urb)
         =+  bem=?-(-.hem %beam p.hem, %spur [root-beak p.hem])
         [%& %for ~ bem ext ced.cyz:for-client]
+      ::
           %poll
         ?:  ?=([~ %js] p.pok)  ::  XX treat non-json cases?
           =+  polling-url=['/' (apex:earn %| pok(u.p %json) quy)]
@@ -682,13 +692,19 @@
           (jass (joba %poll (jape polling-url)) poll:js)
         ?~  p.hem  [%| done]
         [%& %fow p.hem]
+      ::
           %away  [%& %fin %html logout-page:xml]
-          %bugs  (show-login-page)
+          %bugs  ?-  p.hem
+                  %as  (show-login-page)
+                  %to  [%& %fin %html poke-test:xml]
+                 ==
+      ::
           %mess  =+  cay=[%json !>(`json`r.hem)]
                  ?:  ?=(%json q.hem)
                    [%& %mez [- + ~]:p.hem him cay]
                  =+  wir=to//(scot %p p.p.hem)/[q.p.hem]/(scot %p him)
                  [%& %fot wir q.hem cay]
+      ::
           %auth
         =+  yac=for-client
         ?-    &2.hem
