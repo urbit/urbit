@@ -44,7 +44,11 @@
           $%  [%mess p=hapt q=ship r=cage]              ::
               [%nuke p=hapt q=ship]                     ::
               [%show p=hapt q=ship r=path]              ::
-              [%took p=hapt q=ship]                     ::
+              [%took p=hapt q=ship]                     ::  
+          ==  ==                                        ::
+              $:  %t                                    ::  to  %temp
+          $%  [%wait p=@da]                             ::
+              [%rest p=@da]                             ::
           ==  ==  ==                                    ::
 ++  rave                                                ::  see %clay
           $%  [& p=mood]                                ::
@@ -73,13 +77,19 @@
               [%nice ~]                                 ::
               [%rush p=mark q=*]                        ::
               [%rust p=mark q=*]                        ::
+          ==  ==                                        ::           
+              $:  %t                                    ::  by %time
+          $%  [%wake ~]                                 ::  timer activate
           ==  ==                                        ::
               $:  @tas                                  ::  by any
           $%  [%crud p=@tas q=(list tank)]              ::
           ==  ==  ==                                    ::
+++  ixor  ,@t                                           ::  oryx hash
 ++  whir  $|  ~                                         ::  wire subset
-          $%  [%at p=hole q=whir]                       ::
-              [%to p=span:ship q=term r=span:ship ~]    ::
+          $%  [%at p=hole q=whir]                       ::  authenticated
+              [%of p=ixor ~]                            ::  associated view
+              [%to p=span:hasp q=span:ship ~]           ::  associated poke
+              [%is p=ixor q=span:hasp r=path]           ::  subscription
           ==                                            ::
 --                                                      ::
 |%                                                      ::  models
@@ -93,6 +103,7 @@
       liz=(jug beam (each duct oryx))                   ::  clay subscriptions
       wup=(map hole cyst)                               ::  secure sessions
       sop=(map hole ,[ship ?])                          ::  foreign session names
+      wix=(map ixor stem)                               ::  open views
   ==                                                    ::
 ::
 ++  cyst                                                ::  client session
@@ -104,6 +115,19 @@
       vew=(set oryx)                                    ::  open views XX expire
   ==                                                    ::
 ::
+++  stem                                                ::  client view
+  $:  ore=oryx
+      ude=(unit ,[p=duct q=?])                          ::  stream, long-poll?
+      era=@da                                           ::  next wake
+      eve=[p=@u q=(map ,@u even)]
+  ==
+::
+++  even                                                ::  client event
+  $%  [%mod p=@uv]
+      [%rush p=[hasp path] q=wain]
+      [%mean p=[hasp path] q=ares]
+  ==
+::
 ++  perk                                                ::  parsed request
   $%  [%spur p=spur]
       [%beam p=beam]
@@ -111,8 +135,11 @@
       [%auth perk-auth]
       [%away ~]
       [%bugs p=?(%as %to) ~]
-      [%mess p=hasp q=mark r=json]                      
+      [%mess p=hasp q=mark r=json]
+      [%subs p=ixor q=[hasp path]]
+      [%view p=ixor q=[~ u=@ud]]
   ==
+
 ::
 ++  perk-auth                                           ::  parsed auth
   $%  [%get him=ship rem=pork]
@@ -128,8 +155,9 @@
   $%  [%for p=whir q=beam r=term s=cred]                ::  %f block
       [%fot p=whir q=mark r=cage]                       ::  %f translate
       [%fow p=@uvH]                                     ::  %f deps
-      [%fin pest-fin]                                 ::  done
-      [%mez p=hapt q=ship r=cage]                       ::  %g message
+      [%gap p=hapt q=ship r=cage]                       ::  %g message
+      [%gas p=whir q=hapt r=ship s=path]                ::  %g subscription
+      [%fin pest-fin]                                   ::  done
       [%red %html]                                      ::  redirect
       [%zap p=@ud q=(list tank)]                        ::  err
   ==
@@ -325,18 +353,34 @@
         ?(%dumb %rush %rust)    ~|(%gall-stub !!)
         %nice  ?>(?=(~ tea) nice-json)    ::  XX subscriptions
         %mean  ?>(?=(~ tea) (mean-json 500 p.sih))
+        %wake  
+      =+  tee=((soft whir) tea)
+      ?~  tee  ~&  e/temp/lost/hen  +>.$
+      ?>  ?=([%of ^] u.tee)
+      =>  ~(wake ix p.u.tee (~(got by wix) p.u.tee))
+      (give-json 200 ~ %b &)
+    ::
         %made
       =+  tee=((soft whir) tea)
       ?~  tee  ~&  e/ford/lost/hen  +>.$
       =.  our  (need hov)                             ::  XX
       |-  ^+  ..axon
       ?-    u.tee
+          [?(%of) *]  ~|(e/ford/lost/-.u.tee !!)
+          [%is ^]
+        %+  ~(get-rush ix p.u.tee (~(got by wix) p.u.tee))
+          [(pick-hasp q.u.tee) r.u.tee]
+        ?>  ?=([%& %mime ^] q.sih)
+        ?>  ?=([@ @] |3.q.sih)
+        |3.q.sih
+      ::
           [%to ^]
         ?:  ?=(%| -.q.sih)
           (mean-json 500 ~ %cast-fail p.q.sih)
         ~|  u.tee
-        =+  [her app him]=(raid +.u.tee %p %tas %p ~)
+        =+  [[her app]=(pick-hasp p.u.tee) him=(slav %p q.u.tee)]
         (pass-note ~ %g [%mess [her app ~] him p.q.sih])
+      ::
           [%at ^]
         ?.  ?=([%& %js ^] q.sih)
           ~&  e/at-lost/p.u.tee
@@ -360,8 +404,7 @@
                ~|  q.q.cag
                =+  ((hard ,[mit=mite rez=octs]) q.q.cag)  ::  XX
                (give-gift %thou 200 [content-type/(moon mit)]~ ~ rez)
-             ==
-        ==
+        ==   ==
       ==
     ::
         %news  (give-json 205 ~ %b &)                     ::  dependency updated
@@ -416,6 +459,8 @@
       ==
     ==
   ::
+  ++  pack-hasp  |=(a=hasp `span`(pack /(scot %p p.a)/[q.a]))
+  ++  pick-hasp  |=(a=span (raid (need (pick a)) [%p %tas ~]))
   ++  ses-authed 
     |=  ses=hole
     =+  sap=(~(get by sop) ses)
@@ -565,6 +610,12 @@
         ~|  on/bad-path/but
         [%poll (raid but %uv ~)]
       ::
+          %of
+        ~|  of/bad-path/[but quy]
+        :+  %view  ?>(?=([@ ~] but) i.but)
+        ?>  ?=([[%poll @] ~] quy)     ::  XX eventsource
+        [~ (rash q.i.quy dem)]
+      ::
           %as
         :+  %auth  %get
         ~|  bad-ship/?~(but ~ i.but)
@@ -604,13 +655,13 @@
           ==
         ==  ==
       :: 
-            %to
-          =-  [%mess [- +<]:dir +>.dir (grab-body (ot:jo xyro/some ~))]
-          ^=  dir
-          =+  ful=(read but %p %tas %tas ~)
-          ?^  ful  u.ful
-          ~|  bad-mess/but
-          [our (raid but %tas %tas ~)]
+          %to
+        =-  [%mess [- +<]:dir +>.dir (grab-body (ot:jo xyro/some ~))]
+        ^=  dir
+        =+  ful=(read but %p %tas %tas ~)
+        ?^  ful  u.ful
+        ~|  bad-mess/but
+        [our (raid but %tas %tas ~)]
       ==
     ::
     ++  grab-body
@@ -630,7 +681,8 @@
           %for  (beam-into-ford +.p.pez)
           %fot  (ford-req p.p.pez our [%cast q.p.pez %done ~ r.p.pez])
           %fow  (pass-note ~ %f [%wasp our p.p.pez])
-          %mez  (pass-note ~ %g [%mess +.p.pez])
+          %gap  (pass-note ~ %g [%mess +.p.pez])
+          %gas  (pass-note p.p.pez %g [%show +>.p.pez])
           %zap  (fail p.p.pez 0v0 q.p.pez)
           %fin  (finish +.p.pez)
           %red
@@ -665,8 +717,8 @@
       ~|  [mef maf bod]
       =+  bem=as-beam
       ?^  bem  (process-parsed %beam u.bem)
-      ?.  check-oryx
-        ~|(%bad-oryx ~|([(parse-to-oryx q:(need bod)) vew.cyz:for-client] !!))
+::       ?.  check-oryx
+::         ~|(%bad-oryx ~|([(parse-to-oryx q:(need bod)) vew.cyz:for-client] !!))
       =+  hem=as-aux-request
       ?^  hem  (process-parsed u.hem)
       ~|(strange-path/q.pok !!)
@@ -705,9 +757,19 @@
       ::
           %mess  =+  cay=[%json !>(`json`r.hem)]
                  ?:  ?=(%json q.hem)
-                   [%& %mez [- + ~]:p.hem him cay]
-                 =+  wir=to//(scot %p p.p.hem)/[q.p.hem]/(scot %p him)
+                   [%& %gap [- + ~]:p.hem him cay]
+                 =+  wir=to//(pack-hasp p.hem)/(scot %p him)
                  [%& %fot wir q.hem cay]
+      ::
+          %subs
+        :^  %&  %gas
+          [%is p.hem (pack-hasp -.q.hem) +.q.hem]
+        [[- + ~]:-.q.hem him +.q.hem]
+      ::
+          %view
+        ~|  lost-ixor/p.hem
+        =+  sem=(~(got by wix) p.hem)
+        [%| ((teba ~(poll ix p.hem sem)) u.q.hem)]
       ::
           %auth
         =+  yac=for-client
@@ -817,6 +879,7 @@
         ::  [1 ~]
       ==
     --
+  ::
   ++  ya                                                ::  session engine
     =|  [ses=hole cyst]
     =*  cyz  ->
@@ -866,9 +929,12 @@
       ^+  [*json ..ya]
       =+  orx=(rsh 3 1 (scot %p (shaf %orx eny)))
       =.  vew  (~(put in vew) orx)
+      =+  ire=(rsh 3 1 (scot %p (end 6 1 (shas %ire orx))))
+      =.  wix  (~(put by wix) ire [orx ~ now [1 ~]])
       :_  abet
       %-  jobe  :~
         oryx/s/orx
+        ixor/s/ire
         ship/(jape +:<our>)
         user/(jape +:<him>)
         auth/a/(turn (~(tap in aut)) |=(a=@p (jape +:<a>)))
@@ -887,9 +953,46 @@
       ^-  (unit $&([%lon purl] gram))
       ~ 
     --
+  ::
+  ++  ix
+    =|  [ire=ixor stem]
+    =*  sem  ->
+    |%
+    ++  done  .
+    ++  abet  ..ix(wix (~(put by wix) ire sem))
+    ++  teba  |*(a=$+(* ..ix) |*(b=* %_(done ..ix (a b))))
+    ++  pass-note  (teba ^pass-note)
+    ::
+    ++  poll
+      |=  a=@u  ^+  ..ix
+      ?:  =(a p.eve)
+        =.  +>  
+          ?^  ude  ~&(e/ix/wait/%replaced done)
+          wait-era(era (add ~s3 now)) ::  XX ~s30
+        abet(ude [~ hen &])
+      ?:  (gth a p.eve)  ~|(seq-high/cur=p.eve !!)
+      =+  ven=~|(seq-low/cur=p.eve (~(got by q.eve) a))
+      =.  q.eve  (~(del by q.eve) (dec a))              ::  TODO ponder a-2
+      abet:(give-even & ven)
+    ::
+    ++  get-rush
+      |=  [a=[hasp path] b=octs]
+      =+  ven=`even`[%rush a [q.b]~]  ::  XX multiline
+      =.  eve  (get-even ven)
+      =<  abet
+      ?~  ude  done
+      (give-even(hen p.u.ude, ude ~) q.u.ude ven)
+    ::
+    ++  get-even
+      |=  a=even  ^+  eve
+      [+(p.eve) (~(put by q.eve) p.eve a)]
+    ::
+    ++  give-even  ,_`_.`!!
+    ++  wait-era  (pass-note of//[ire] [%t %wait era])
+    ++  wake  ^+(..ix abet(ude ~))  ::  XX other effects?
+--  --
   --
---
-.  ==
+.   ==
 =|  bolo
 =*  bol  -
 |=  [now=@da eny=@ ski=sled]                            ::  activate
@@ -925,7 +1028,7 @@
   ~
 ::
 ++  load                                                ::  clam previous state
-  |=  old=_[%0 gub hov ged ney dop liz wup=wup sop=sop]
+  |=  old=_[%0 gub hov ged ney dop liz wup sop **]
   ^+  ..^$
   ..^$(+>- (bolo old))
 ::
