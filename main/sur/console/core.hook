@@ -35,6 +35,10 @@
   ?~  u.res  [~ u=~]                                    ::
   [~ u=[~ u=[p=[i=tan t=p.u.u.res] q=q.u.u.res]]]       ::
 ::                                                      ::
+++  console-lo                                          ::  construct prompt
+  |*  [pom=console-prompt mor=(console-dialog)]         ::
+  [~ u=[~ u=[p=*(list tank) q=[%| p=pom q=mor]]]]       ::
+::                                                      ::
 ++  console-no                                          ::  empty result
   [~ u=[~ u=[p=*(list tank) q=~]]]                      ::
 ::                                                      ::

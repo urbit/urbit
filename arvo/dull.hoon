@@ -158,6 +158,7 @@
   ==                                                    ::
 ++  sign-clay                                           ::
   $%  [%note p=@tD q=tank]                              ::
+      [%riot p=writ]                                    ::
   ==                                                    ::
 ++  sign-gall                                           ::
   $%  [%crud p=@tas q=(list tank)]                      ::
@@ -193,6 +194,7 @@
         ?+    -.kyz  ~&  [%strange-kiss -.kyz]  +>
           %flow  +>
           %belt  (send `dill-belt`p.kyz)
+          %text  (dump %blit [%lin (tuba p.kyz)]~)
           %crud  (send `dill-belt`[%cru p.kyz q.kyz])
           %blew  (send %rez p.p.kyz q.p.kyz)
           %veer  (dump kyz)

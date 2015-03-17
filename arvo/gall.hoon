@@ -361,7 +361,11 @@
     ::  ~&  [%gape-took our imp hen]
     [~ ..^^$]
   =+  you=`ship`?-(-.kon %mess p.kon, %nuke p.kon, %show p.kon)
-  =+  mat=(~(got by pol.all) you)
+  =+  mut=(~(get by pol.all) you)
+  ?~  mut
+    ~&  [%gape-lost you hen]
+    !!
+  =+  mat=u.mut
   =+  sad==+(sad=(~(get by sap.mat) our) ?^(sad u.sad [.(p 1)]:*scad))
   =^  num  sad
       =+  nym=(~(get by q.sad) hen)
