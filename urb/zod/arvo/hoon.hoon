@@ -6136,12 +6136,11 @@
     ::
         [%cncb *]  [%ktls [%cnzz p.gen] %cnts p.gen q.gen]
         [%cncl *]  
-      :^  %cnsg  [%$ ~]  p.gen
-      ?.  ?=([%zpcb ^ %cnzz @ ~] p.gen)  q.gen
+      =+  rem=[%cnsg [%$ ~] p.gen q.gen]
+      ?.  ?=([%zpcb ^ %cnzz @ ~] p.gen)  rem
       =>  .(p.gen `[@ ^ @ p=@tas ~]`p.gen)
       :+  %sgzp  [[%dtzz %tas 'slam'] [%dtzz %tas p.p.gen]]
-      q.gen
-    ::
+      rem
         [%cndt *]  [%cnhp q.gen [p.gen ~]]
         [%cnkt *]  [%cnhp p.gen q.gen r.gen s.gen ~]
         [%cnls *]  [%cnhp p.gen q.gen r.gen ~]
