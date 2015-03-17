@@ -10,7 +10,7 @@
 =>  |%                                                  ::  principal structures
     ++  helm-house                                      ::  all state
       $:  %0                                            ::  state version
-          
+          bur=(unit (pair ship mace))                   ::  requesting ticket
           hoc=(map bone helm-session)                   ::  consoles
       ==                                                ::
     ++  helm-session                                    ::
@@ -18,12 +18,12 @@
           mud=(unit (console-dialog ,@ud))              ::
       ==                                                ::
     ++  funk  (pair ,@ ,@)                              ::
+    ++  begs  ,[his=@p tic=@p eny=@t ges=gens]          ::  begin data
     ++  helm-wish                                       ::
       $|  $?  %reset                                    ::  reset kernel
               %verb                                     ::  verbose mode
           ==                                            ::
       $%  [%reload p=(list term)]                       ::  reload vanes
-          [%begin p=(qual ,@p ,@p ,@t gens)]            ::  start new ship
       ==                                                ::
     ++  dill-flog                                       ::  sent to %dill
       $%  [%veer p=@ta q=path r=@t]                     ::  install vane
@@ -116,30 +116,11 @@
       ==
     ==
   ::
-  ++  he-wish-begin
-    |=  mes=(qual ,@p ,@p ,@t gens)
-    %_    +>
-        moz  
-      :_  moz
-      [ost %pass /begin %g %mess [our.hid /began] our.hid %began-args !>(mes)]
-    ==
-  ::
   ++  he-wish-verb
     %_    .
         moz
       :_  moz
       [ost %pass /verb %d %flog %verb ~]
-    ==
-  ::
-  ++  he-wish
-    |=  wus=(unit helm-wish)
-    ^+  +>
-    ?~  wus  +>
-    ?-  u.wus 
-      %verb        he-wish-verb
-      %reset       he-wish-reset
-      [%reload *]  !!  ::  (he-wish-reload +.u.wus)  
-      [%begin *]   (he-wish-begin +.u.wus)
     ==
   --
 ::
@@ -157,4 +138,31 @@
   |=  [ost=bone her=ship all=(list term)]
   ~&  %poke-helm-reload
   he-abet:(he-wish-reload:(hake ost her) all)
+::
+++  poke-helm-begin
+  |=  [ost=bone you=ship begs]
+  ~&  %poke-helm-begin
+  ?>  ?=(~ bur)
+  =+  buz=(shax :(mix (jam ges) eny))
+  =+  loy=(bruw 2.048 buz)
+  :_  +>.$(bur `[his [0 sec:ex:loy]~])
+  :~  :*  ost  %pass  /ticketing  %a  %want  [our.hid (sein his)]  /q/ta
+          his  tic  ges  pub:ex:loy
+      ==
+      [ost %give %nice ~]
+  ==
+::
+++  poke-will
+  |=  [ost=bone you=ship wil=(unit will)]
+  ~&  %poke-helm-will
+  ?>  ?=(^ bur)
+  :_  +>.$(bur ~)
+  ?~  wil
+    [ost %give %mean ~ %rejected ~]~
+  :~  [ost %pass / %a %cash p.u.bur q.u.bur u.wil]
+      [ost %pass / %c %plug our.hid %main (sein our.hid) %main]
+      [ost %pass / %c %plug our.hid %arvo (sein our.hid) %arvo]
+      [ost %pass / %c %plug our.hid %try (sein our.hid) %try]
+      [ost %give %nice ~]
+  ==
 --
