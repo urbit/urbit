@@ -18,6 +18,7 @@
               [%boot p=*]                               ::  weird %dill boot
               [%crud p=@tas q=(list tank)]              ::  error with trace
               [%flog p=flog]                            ::  wrapped error
+              [%flow p=*]                               ::  forward compat
               [%hail ~]                                 ::  terminal refresh
               [%hook ~]                                 ::  this term hung up
               [%harm ~]                                 ::  all terms hung up
@@ -645,6 +646,9 @@
       |-  ^+  +>.^$
       ?~  q.kyz  +>.^$
       (fume:$(q.kyz t.q.kyz) '!' `tank`i.q.kyz)
+    ::
+        %flow
+      +>.$
     ::
         %hail                                           ::  refresh
       +>.$
