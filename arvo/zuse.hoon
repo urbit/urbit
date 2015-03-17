@@ -2079,7 +2079,7 @@
     [~ [i.rax ~]]
   =+  `[ext=tape [@ @] fyl=tape]`u.q.raf
   :-  ?:(=(~ ext) ~ [~ (crip (flop ext))])
-  [(crip (flop fyl)) ~]
+  ?:(=(~ fyl) ~ [(crip (flop fyl)) ~])
 ::
 ++  fuel                                                ::  parse fcgi
   |=  [bem=beam but=path]
