@@ -303,7 +303,7 @@ _term_listen_cb(uv_stream_t *wax_u, int sas_i)
     {
       u3_noun tid = u3dc("scot", c3__ud, tty_u->tid_l);
       u3_noun pax = u3nq(u3_blip, c3__term, tid, u3_nul);
-      u3v_plan(u3k(pax), u3nq(c3__flow, c3__seat, c3__dojo, u3_nul));
+      // u3v_plan(u3k(pax), u3nq(c3__flow, c3__seat, c3__dojo, u3_nul));
       u3v_plan(u3k(pax), u3nc(c3__blew, u3nc(80, 25)));
       u3v_plan(u3k(pax), u3nc(c3__hail, u3_nul));
       u3z(pax);
@@ -673,12 +673,12 @@ _term_it_save(u3_noun pax, u3_noun pad)
 static void
 _term_io_flow(u3_utty* uty_u)
 {
-  u3_noun tid = u3dc("scot", c3__ud, uty_u->tid_l);
-  u3_noun pax = u3nq(u3_blip, c3__term, tid, u3_nul);
+  //  u3_noun tid = u3dc("scot", c3__ud, uty_u->tid_l);
+  //  u3_noun pax = u3nq(u3_blip, c3__term, tid, u3_nul);
 
   // u3v_plan(pax, u3nq(c3__flow, c3__seat, c3__talk, u3_nul));
   // u3v_plan(pax, u3nt(c3__flow, c3__seat, u3_nul));
-  u3v_plan(pax, u3nq(c3__flow, c3__seat, c3__dojo, u3_nul));
+  // u3v_plan(pax, u3nq(c3__flow, c3__seat, c3__dojo, u3_nul));
   // u3v_plan(pax, u3nq(c3__flow, c3__seat, c3__helm, u3_nul));
 }
 
@@ -1032,7 +1032,7 @@ u3_term_ef_bake(u3_noun fav)
   u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
 
   u3v_plan(u3k(pax), u3nc(c3__boot, fav));
-  u3v_plan(u3k(pax), u3nq(c3__flow, c3__seat, c3__dojo, u3_nul));
+  // u3v_plan(u3k(pax), u3nq(c3__flow, c3__seat, c3__dojo, u3_nul));
   u3v_plan(u3k(pax), u3nc(c3__blew, u3_term_get_blew(1)));
   u3v_plan(u3k(pax), u3nc(c3__hail, u3_nul));
 
