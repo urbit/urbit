@@ -512,6 +512,7 @@
 ::
 ++  poke-dill-belt
   |=  [ost=bone her=ship bet=dill-belt]
+  ::  ~&  %seat-poke
   ^-  [(list move) _+>]
   =<  se-abet
   =<  se-view
