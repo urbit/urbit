@@ -166,6 +166,9 @@
   $%  [%note p=@tD q=tank]                              ::
       [%writ p=riot]                                    ::
   ==                                                    ::
+++  sign-dill                                           ::
+  $%  [%blit p=(list blit)]                             ::
+  ==                                                    ::
 ++  sign-gall                                           ::
   $%  [%crud p=@tas q=(list tank)]                      ::
       [%mean p=ares]                                    ::
@@ -178,6 +181,7 @@
 ++  sign                                                ::  in result $<-
   $%  [%a sign-ames]                                    ::
       [%c sign-clay]                                    ::
+      [%d sign-dill]                                    ::  
       [%g sign-gall]                                    ::
       [%t sign-time]                                    ::
   ==                                                    ::
@@ -202,13 +206,23 @@
           %harm  +>
           %hail  +>
           %belt  (send `dill-belt`p.kyz)
-          %text  (dump %blit [%lin (tuba p.kyz)]~)
-          %crud  (send `dill-belt`[%cru p.kyz q.kyz])
+          %text  (from %out (tuba p.kyz))
+          %crud  ::  (send `dill-belt`[%cru p.kyz q.kyz])
+                 (crud p.kyz q.kyz)
           %blew  (send %rez p.p.kyz q.p.kyz)
           %veer  (dump kyz)
           %vega  (dump kyz)
           %verb  (dump kyz)
         ==
+      ::
+      ++  crud
+        |=  [err=@tas tac=(list tank)]
+        =+  ^=  wol  ^-  wall
+            :-  (trip err)
+            (zing (turn tac |=(a=tank (~(win re a) [0 wid]))))
+        |-  ^+  +>.^$
+        ?~  wol  +>.^$
+        $(wol t.wol, +>.^$ (from %out (tuba i.wol)))
       ::
       ++  dump                                          ::  pass down to hey
         |=  git=gift
@@ -285,8 +299,12 @@
             [%c %writ *]
           init
         ::
+            [%d %blit *]
+          (done +.sih)
+        ::
             [%g %crud *]
-          (send %cru p.+.sih q.+.sih)  
+          (crud p.+.sih q.+.sih)
+        ::  (send %cru p.+.sih q.+.sih)  
         ::
             [%g %mean *]
           +>(moz [[hen %give %logo ~] moz])
@@ -342,10 +360,17 @@
   ?:  ?=(%boot -.q.hic)
     :_(..^$ [hen %pass ~ (note %a p.q.hic)]~)
   ?:  ?=(%flog -.q.hic)
+    ::  ~&  [%dill-flog +.q.hic]
     :_(..^$ ?~(hey.all ~ [u.hey.all %slip %d p.q.hic]~))
-  ?:  ?=(%init -.q.hic)
-    [~ ..^$(ore.all `p.q.hic)]
   =.  hey.all  ?^(hey.all hey.all `hen)
+  ?:  ?=(%init -.q.hic)
+    ?:  =(ore.all `p.q.hic)
+      [~ ..^$]
+    =:  ore.all  `p.q.hic
+        dug.all   ~
+      ==
+    =^  moz  all  abet:(need (ax (need hey.all) [%flow %seat %dojo ~]))
+    [moz ..^$]
   =+  nus=(ax hen q.hic)
   ?~  nus
     ~&  [%dill-no-flow q.hic]
@@ -358,11 +383,11 @@
   ^-  (unit ,@da)
   ~
 ::
-++  load                                                ::  totally disabled
-  |=  old=*
-  ::  |=  old=axle
-  ::  ..^$(all old)
-  ..^$(ore.all `~zod)
+++  load                                                ::  trivial
+  |=  old=axle
+  ..^$(all old)
+  ::  |=  old=*   ::  diable
+  ::  ..^$(ore.all `~zod)
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
@@ -376,6 +401,8 @@
   ^-  [p=(list move) q=_..^$]
   ?:  =(~ ore.all)
     ?:  ?=([%a %init *] q.hin)
+      ~&  [%dill-take-dump-init hen +.q.hin]
+      =.  hey.all  ?^(hey.all hey.all `hen)
       [[[hen %give +.q.hin] ~] ..^$]
     ~&  [%take-back q.hin]
     [~ ..^$]

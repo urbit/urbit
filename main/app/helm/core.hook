@@ -134,6 +134,11 @@
   ~&  %poke-helm-reset
   he-abet:he-wish-reset:(hake ost her)
 ::
+++  poke-helm-verb
+  |=  [ost=bone her=ship ~]
+  ~&  %poke-helm-verb
+  he-abet:he-wish-verb:(hake ost her)
+::
 ++  poke-helm-reload
   |=  [ost=bone her=ship all=(list term)]
   ~&  %poke-helm-reload
@@ -159,6 +164,7 @@
   :_  +>.$(bur ~)
   ?~  wil
     [ost %give %mean ~ %rejected ~]~
+  ~&  [%poke-will-good bur]
   :~  [ost %pass / %a %cash p.u.bur q.u.bur u.wil]
       [ost %pass / %c %plug our.hid %main (sein our.hid) %main]
       [ost %pass / %c %plug our.hid %arvo (sein our.hid) %arvo]

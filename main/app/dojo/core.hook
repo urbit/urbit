@@ -31,7 +31,8 @@
           q=dojo-build                                  ::  general build
       ==                                                ::
     ++  dojo-build                                      ::  one ford step
-      $%  [%ex p=twig]                                  ::  hoon expression
+      $%  ::  [%ca p=mark q=dojo-build]                 ::  cast 
+          [%ex p=twig]                                  ::  hoon expression
           [%di p=dojo-model]                            ::  dialog
           [%dv p=path]                                  ::  gate from source
           [%fi p=(list dojo-filter) q=dojo-source]      ::  filter pipeline
