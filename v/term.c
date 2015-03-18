@@ -1016,7 +1016,6 @@ u3_term_ef_boil(void)
     u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
 
     //  u3v_plan(u3k(pax), u3nc(c3__init, u3k(u3h(u3A->own))));
-    u3v_plan(u3k(pax), u3nq(c3__flow, c3__seat, c3__dojo, u3_nul));
     u3v_plan(u3k(pax), u3nc(c3__harm, u3_nul));
     u3v_plan(u3k(pax), u3nc(c3__blew, u3_term_get_blew(1)));
     u3v_plan(u3k(pax), u3nc(c3__hail, u3_nul));
