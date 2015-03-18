@@ -623,7 +623,7 @@
       |=  [a=path b=lobe]
       ^-  (pair silk silk)
       :-  [%done ~ %path !>(a)]
-      (lobe-to-silk:ze b)
+      (lobe-to-silk:ze a b)
     ==
   ::
   ++  apply-foreign-update                              ::  apply subscription
@@ -922,13 +922,20 @@
         %indirect   p.q
       ==
     ++  lobe-to-silk
-      |=  a=lobe
+      |=  [pax=path lob=lobe]
+      ^-  silk
+      =+  ^-  hat=(map path lobe)
+          ?:  =(let.dom 0)
+            ~
+          q:(aeon-to-yaki let.dom)
+      ?:  =([~ lob] (~(get by hat) pax))
+        [%done ~ (need (read %x [%ud let.dom] pax))]
       |-  ^-  silk
-      =+  bol=(~(got by lat.ran) a)
+      =+  bol=(~(got by lat.ran) lob)
       ?-  -.bol
         %direct     [%volt ~ q.bol]
         %indirect   [%volt ~ q.bol]
-        %delta      [%pact $(a q.q.bol) [%volt ~ r.bol]]
+        %delta      [%pact $(lob q.q.bol) [%volt ~ r.bol]]
       ==
     ::
     ++  make-direct                                     ::  make blob
@@ -1455,7 +1462,7 @@
               ~
             :-  ~
             :-  [%done ~ %path !>(pax)]
-            [%diff (lobe-to-silk lob) (lobe-to-silk u.-)]
+            [%diff (lobe-to-silk pax lob) (lobe-to-silk pax u.-)]
         ==
       ::
       ++  diff-ali
@@ -1756,7 +1763,7 @@
             %+  turn  (~(tap by q.new.dat))
             |=  [a=path b=lobe]
             ^-  (pair silk silk)
-            [[%done ~ %path !>(a)] (lobe-to-silk b)]
+            [[%done ~ %path !>(a)] (lobe-to-silk a b)]
         ==
       ::
       ++  checked-out

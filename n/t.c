@@ -52,7 +52,7 @@ u3t_slog(u3_noun hod)
     gettimeofday(&f2, 0);
     timersub(&f2, &b4, &d0);
     ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
-    printf("%d.%dms ", ms_w, (d0.tv_usec % 1000) / 10);
+    printf("%d.%dms ", ms_w, (int) (d0.tv_usec % 1000) / 10);
   }
   gettimeofday(&b4, 0);
   old = 1;
