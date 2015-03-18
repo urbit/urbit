@@ -1231,6 +1231,7 @@
             =+  sam=!>([p.kon q.kon])
             ?>  ?=(^ huv.sat)
             (yawl [%peek (scot %p p.kon) q.kon] leaf/"peeking" u.huv.sat sam)
+          ~&  [%show-dumb app.sat imp q.kon]
           (give(qic.sat ~) %dumb ~)
         ::
             %sire
