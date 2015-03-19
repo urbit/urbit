@@ -101,6 +101,11 @@
 ++  nail  ,[p=hair q=tape]                              ::  parsing input
 ++  numb  ,@                                            ::  just a number
 ++  pair  |*([a=$+(* *) b=$+(* *)] ,[p=a q=b])          ::  just a pair
+++  wand  |*  a=(list $+(* *))                          ::  hetero list
+          |=  b=*                                       ::
+          ?~  a  ~                                      ::
+          ?@  b  ~                                      ::
+          [i=(i.a -.b) t=$(a t.a, b +.b)]               ::
 ++  pass  ,@                                            ::  public key
 ++  path  (list span)                                   ::  filesys location
 ++  pint  ,[p=[p=@ q=@] q=[p=@ q=@]]                    ::  line/column range
@@ -156,7 +161,12 @@
                   p=[p=tape q=tape r=tape]              ::  mid open close
                   q=(list tank)                         ::
               ==                                        ::
-          ==     
+          ==                                            ::
+++  tanq                                                ::  modern tank
+          $?  [~ p=(list tanq)]                         ::  list of printables
+              [~ ~ p=tape]                              ::  simple string
+              (pair ,@tas tanq)                         ::  captioned
+          ==                                            ::
 ++  tape  (list char)                                   ::  like a string
 ++  term  ,@tas                                         ::  Hoon ASCII subset
 ++  tiki                                                ::  test case
@@ -2850,6 +2860,12 @@
 ::                section 2eI, parsing (external)       ::
 ::
 ++  rash  |*([naf=@ sab=_rule] (scan (trip naf) sab))   ::
+++  ruse  |*  [los=tape sab=_rule]
+          =+  vex=(sab [[0 0] los])
+          ?.  =((lent los) q.p.vex)  ~
+          ?~  q.vex
+            [~ u=~]
+          [~ u=[~ u=p.u.q.vex]]
 ++  rush  |*([naf=@ sab=_rule] (rust (trip naf) sab))
 ++  rust  |*  [los=tape sab=_rule]
           =+  vex=((full sab) [[1 1] los])
@@ -6165,7 +6181,9 @@
     |=  [sut=type ref=type]
     ^-  [? worm]
     ?:  (~(has in nes) [sut ref])  [& +>+<]
-    ?.  (~(nest ut sut) | ref)  [| +>+<]
+    ?.  (~(nest ut sut) | ref)  
+      ::  ~&  %nest-failed
+      [| +>+<]
     [& +>+<(nes (~(put in nes) [sut ref]))]
   ::
   ++  nets                                              ::  typeless nest
@@ -6174,6 +6192,14 @@
     ?:  (~(has in nes) [sut ref])  [& +>+<]
     =+  gat=|=([a=type b=type] (~(nest ut a) | b))
     ?.  (,? .*(gat(+< [sut ref]) -.gat))
+      ::  ~&  %nets-failed
+      ::  =+  tag=`*`skol
+      ::  =+  foo=(tank .*(tag(+< ref) -.tag))
+      ::  =+  bar=(skol sut)
+      ::  ~&  %nets-need
+      ::  ~>  %slog.[0 bar]
+      ::  ~&  %nets-have
+      ::  ~>  %slog.[0 foo]
       [| +>+<.$]
     [& +>+<.$(nes (~(put in nes) [sut ref]))]
   ::
@@ -10182,7 +10208,7 @@
     |-  ^-  [p=(list ovum) q=(pair worm (list ,[p=@tas q=vase]))]
     ?~  mor  [(flop ova) niz]
     =^  nyx  niz  (jack lac i.mor)
-    $(ova (weld p.nyx ova), mor (weld q.nyx t.mor))
+    $(ova (weld p.nyx ova), mor (weld t.mor q.nyx))
   --
 --
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::

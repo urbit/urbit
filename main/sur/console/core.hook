@@ -1,0 +1,113 @@
+::
+::::  /hook/core/console/sur
+  !:
+|%
+++  console-action                                      ::  console to app
+  $%  ::  [%abo ~]                                      ::  reset interaction
+      [%det console-change]                             ::  command line edit
+      [%ret ~]                                          ::  submit and clear
+  ==                                                    :: 
+++  console-buffer  (list ,@c)                          ::  command state
+++  console-change                                      ::  network change
+  $:  ler=console-clock                                 ::  destination clock
+      haw=@uvH                                          ::  source hash
+      ted=console-edit                                  ::  state change
+  ==                                                    ::
+++  console-dialog                                      ::  standard dialog
+  |*  out=$+(* *)                                       ::  output structure
+  $+(console-input (console-result out))                ::  output function
+::                                                      ::
+++  console-result                                      ::  standard output
+  |*  out=$+(* *)                                       ::  output structure
+  %-  unit                                              ::  ~ is invalid
+  %-  unit                                              ::  ~ is prefix
+  %+  pair  (list tank)                                 ::
+  %+  each  (unit out)                                  ::  ~ is abort
+  (pair console-prompt (console-dialog out))            ::  ask and continue
+::                                                      ::
+++  console-so                                          ::  construct result
+  |*  pro=*                                             ::
+  [~ u=[~ u=[p=*(list tank) q=[%& p=[~ u=pro]]]]]       ::
+::                                                      ::
+++  console-yo                                          ::  add output tank
+  |*  [tan=tank res=(console-result)]                   ::
+  ?~  res  ~                                            ::
+  ?~  u.res  [~ u=~]                                    ::
+  [~ u=[~ u=[p=[i=tan t=p.u.u.res] q=q.u.u.res]]]       ::
+::                                                      ::
+++  console-lo                                          ::  construct prompt
+  |*  [pom=console-prompt mor=(console-dialog)]         ::
+  [~ u=[~ u=[p=*(list tank) q=[%| p=pom q=mor]]]]       ::
+::                                                      ::
+++  console-no                                          ::  empty result
+  [~ u=[~ u=[p=*(list tank) q=~]]]                      ::
+::                                                      ::
+++  console-go                                          ::  parse by rule
+  |*  [sef=_rule fun=$+(* *)]                           ::
+  |=  txt=console-input                                 ::
+  =+  yid=(ruse txt sef)                                ::
+  ?~  yid  ~                                            ::
+  ?~  u.yid  [~ u=~]                                    ::
+  (fun u.u.yid)                                         ::
+::                                                      ::
+++  console-clock  ,[own=@ud his=@ud]                   ::  vector clock
+++  console-edit                                        ::  shared state change
+  $%  [%del p=@ud]                                      ::  delete one at
+      [%ins p=@ud q=@c]                                 ::  insert at
+      [%mor p=(list console-edit)]                      ::  combination
+      [%nop ~]                                          ::  no-op
+      [%set p=console-buffer]                           ::  discontinuity
+  ==                                                    ::
+++  console-effect                                      ::  app to console
+  $%  [%bel ~]                                          ::  beep
+      [%blk p=@ud q=@c]                                 ::  blink/match char at
+      [%clr ~]                                          ::  clear screen
+      [%det console-change]                             ::  edit command
+      [%err p=@ud]                                      ::  error point
+      [%mor p=(list console-effect)]                    ::  multiple effects
+      [%nex ~]                                          ::  save, clear command
+      [%pro console-prompt]                             ::  set prompt
+      [%sag p=path q=*]                                 ::  save to jamfile
+      [%sav p=path q=@]                                 ::  save to file
+      [%tan p=(list tank)]                              ::  classic tank
+  ::  [%taq p=tanq]                                     ::  modern tank
+      [%txt p=tape]                                     ::  text line
+  ==                                                    ::
+++  console-command                                     ::  command state
+  $:  pos=@ud                                           ::  cursor position
+      say=console-share                                 ::  cursor 
+  ==                                                    ::
+++  console-prompt                                      ::  prompt definition
+  $:  vis=?                                             ::  command visible
+      tag=term                                          ::  history mode
+      cad=tape                                          ::  caption
+  ==                                                    ::
+++  console-input  tape                                 ::  prompt input
+++  console-share                                       ::  symmetric state
+  $:  ven=console-clock                                 ::  our vector clock
+      leg=(list console-edit)                           ::  unmerged edits
+      buf=console-buffer                                ::  console state
+  ==                                                    ::
+++  dill-belt                                           ::  console input
+  $%  [%aro p=?(%d %l %r %u)]                           ::  arrow key
+      [%bac ~]                                          ::  true backspace
+      [%cru p=@tas q=(list tank)]                       ::  echo error
+      [%ctl p=@ud]                                      ::  control-key
+      [%del ~]                                          ::  true delete
+      [%met p=@ud]                                      ::  meta-key
+      [%ret ~]                                          ::  return
+      [%rez p=@ud q=@ud]                                ::  resize, cols, rows
+      [%txt p=(list ,@c)]                               ::  utf32 text
+      [%yow p=gill]                                     ::  connect to app
+  ==                                                    ::
+++  dill-blit                                           ::  console output
+  $%  [%bel ~]                                          ::  make a noise
+      [%clr ~]                                          ::  clear the screen
+      [%hop p=@ud]                                      ::  set cursor position
+      [%pro p=(list ,@c)]                               ::  show as cursor/line
+      [%out p=(list ,@c)]                               ::  send output line
+      [%sag p=path q=*]                                 ::  save to jamfile
+      [%sav p=path q=@]                                 ::  save to file
+  ==                                                    ::
+++  gill  ,@tas                                         ::  general contact
+--

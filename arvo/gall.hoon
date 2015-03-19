@@ -19,7 +19,6 @@
               [%meta p=vase]                            ::  meta-gift
               [%nice ~]                                 ::  message success
           ==                                            ::
-::++  hasp  ,[p=ship q=term]                              ::  app identity
 ++  hapt  ,[p=ship q=path]                              ::  app instance
 ++  hath  ,[p=ship q=term]                              ::  app identity
 ++  kiss                                                ::  in request ->$
@@ -260,8 +259,8 @@
       |=  [pax=path hen=duct hin=(hypo sign)]           ::
       ^-  [p=(list move) q=_..^$]
       ?:  ?=(%crud +<.q.hin)
-        ~&  [%gall-crud-error pax hen]
-        ~&  [%gall-crud-data (,[@tas (list tank)] +>.q.hin)]
+        ::  ~&  [%gall-crud-error pax hen]
+        ::  ~&  [%gall-crud-data (,[@tas (list tank)] +>.q.hin)]
         ?>  ?=(%g -.q.hin)
         ?~  pax  ~&  %strange-path  [~ ..^$]
         =+  lum=(lump t.pax)
@@ -362,7 +361,11 @@
     ::  ~&  [%gape-took our imp hen]
     [~ ..^^$]
   =+  you=`ship`?-(-.kon %mess p.kon, %nuke p.kon, %show p.kon)
-  =+  mat=(~(got by pol.all) you)
+  =+  mut=(~(get by pol.all) you)
+  ?~  mut
+    ~&  [%gape-lost you hen]
+    !!
+  =+  mat=u.mut
   =+  sad==+(sad=(~(get by sap.mat) our) ?^(sad u.sad [.(p 1)]:*scad))
   =^  num  sad
       =+  nym=(~(get by q.sad) hen)
@@ -571,8 +574,8 @@
   ::
   ++  able                                              ::  bone to duct
     |=  ost=bone  ^-  duct
-    ?:  =(0 ost)
-      [(away ~) ~]
+    ::  ?:  =(0 ost)
+    ::  hun.mat
     (~(got by r.zam.sat) ost)
   ::
   ++  away                                              ::  application path
@@ -839,13 +842,6 @@
           &  [`q.p.p.+.sih +>.$]
           |  [~ (give %crud %murk-made p.p.+.sih)]
         ==
-      ::
-      ++  moar                                          ::  foreign take
-        |=  $:  pax=path
-                sih=sign
-            ==
-        ^+  +>
-        !!
       ::
       ++  more                                          ::  domestic take
         |=  $:  pax=path                                ::  internal position
@@ -1235,6 +1231,7 @@
             =+  sam=!>([p.kon q.kon])
             ?>  ?=(^ huv.sat)
             (yawl [%peek (scot %p p.kon) q.kon] leaf/"peeking" u.huv.sat sam)
+          ~&  [%show-dumb app.sat imp q.kon]
           (give(qic.sat ~) %dumb ~)
         ::
             %sire
