@@ -92,21 +92,21 @@ window.urb.poll = function(params) {
   this.puls = true
 
   $this = this
-  this.req("get",url,params,true,function(err,resp) {
-    if(resp){
-      if(resp.beat)
+  this.req("get",url,params,true,function(err,res) {
+    if(res){
+      if(res.data.beat)
         return $this.poll(params)
-      switch(resp.data.type){
+      switch(res.data.type){
           case "news":
         return document.location.reload()  // XX check autoreload
           case "rush":
-        var fn = $this.gsig(resp.data.from)
+        var fn = $this.gsig(res.data.from)
         if($this.cabs[fn])
           $this.cabs[fn].call(this,err,
-            {status: resp.status, data: resp.data.data.json}) // XX non-json
+            {status: res.status, data: res.data.data.json}) // XX non-json
         break;
           default:
-        throw new Error("Lost event %"+resp.type)
+        throw new Error("Lost event %"+res.type)
       }
     }
 
@@ -189,22 +189,24 @@ window.urb.send = function(params,cb) {
 
 window.urb.subscribe = function(params,cb) {   //  legacy interface
   if(!params) throw new Error("You must supply params to urb.subscribe")
-  return window.urb.bind(params.path, params, cb)
+  return window.urb.bind(params.path, params, cb, cb)
 }
-window.urb.bind = function(path, cb){ // or bind(path, params, cb, nice-cb?)
-  var params = {appl: window.urb.appl}
-  if(arguments.length == 3){params = cb; cb = arguments[2]}
-  
+window.urb.bind = function(path, cb){ // or bind(path, params, cb, nicecb?)
+  var params, nicecb
+  if(arguments.length > 2)
+    {params = cb; cb = arguments[2], nicecb = arguments[3]}
+  else params = {}
+    
+  params.path = path
+  params.ship = params.ship ? params.ship : this.ship
+  params.appl = params.appl ? params.appl : this.appl
+
   if(!path) throw new Error("You must specify a path for urb.bind.")
   if(!params.appl) throw new Error("You must specify an appl for urb.bind.")
   if(!cb) throw new Error("You must supply a callback to urb.bind.")
 
   if(path[0] !== "/") path = "/"+path
   
-  params.path = path
-  params.ship = params.ship ? params.ship : this.ship
-  params.appl = params.appl ? params.appl : this.appl
-
   var method, perm, url, $this
 
   this.cabs[this.gsig(params)] = cb
@@ -212,8 +214,8 @@ window.urb.bind = function(path, cb){ // or bind(path, params, cb, nice-cb?)
   url = "/~/is/"+this.gsig(params)
 
   $this = this
-  this.qreq("put",url,params,true,function(err,resp) {
-    if(cb) { cb.apply(this,[err,{status: resp.status, data: resp.data}])}
+  this.qreq("put",url,params,true,function(err,res) {
+    if(nicecb) { nicecb.apply(this,[err,{status: res.status, data: res.data}])}
     //  XX give raw data
     //
     if(!err && !$this.puls) $this.poll(params)
@@ -238,8 +240,8 @@ window.urb.unsubscribe = function(params,cb) {
   url = "/"+url.join("/")
 
   var $this = this
-  this.req(method,url,params,true,function(err,resp) {
-    cb(err,resp)
+  this.req(method,url,params,true,function(err,res) {
+    cb(err,res)
   })
 }
 
