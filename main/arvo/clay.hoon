@@ -268,6 +268,8 @@
       ?.  ?=([%& %v *] rav)  rav
       [%| [%ud let.dom] `case`q.p.rav r.p.rav]
     =+  inx=nix.u.ref
+    ~?  ?=([%& %x *] vaw)
+      [%remote-x-ing vaw hen]
     %=  +>+.$
       say        [[hen [(scot %ud inx) ~] for [inx syd ~ vaw]] say]
       nix.u.ref  +(nix.u.ref)
@@ -726,7 +728,7 @@
         ?:  =(0 let.dom)
           =>  (apply-foreign-update (need nak.u.ref))
           ?>(?=(^ ref) .)
-        =>  (validate-plops for bar:(need nak.u.ref))
+        =>  (validate-plops [%ud let.dom] bar:(need nak.u.ref))
         ?>(?=(^ ref) .)
       %=  $
         haw.u.ref  (~(del by haw.u.ref) nez)
@@ -770,23 +772,23 @@
     ::  ==
   ::
   ++  validate-plops
-    |=  [him=ship pop=(set plop)]
+    |=  [cas=case pop=(set plop)]
     ^+  +>
     =-  %_(+>.$ tag [- tag])
     :*  hen
         [%foreign-plops (scot %p who) (scot %p for) syd ~]
-        %f  %exec  who  [him syd %da now]  ~  %tabl
+        %f  %exec  who  [for syd cas]  ~  %tabl
         ^-  (list (pair silk silk))
         %+  turn  (~(tap in pop))
         |=  a=plop
         ?-    -.a
             %delta
           :-  [%done ~ %blob !>([%delta p.a q.a *page])]
-          [%vale p.r.a him q.r.a]
+          [%vale p.r.a for q.r.a]
         ::
             %direct
           :-  [%done ~ %blob !>([%direct p.a *page])]
-          [%vale p.q.a him q.q.a]
+          [%vale p.q.a for q.q.a]
         ::
             %indirect  ~|  %foreign-indirect-not-implemented  !!
         ==
@@ -1320,7 +1322,7 @@
       |%
       ++  abet
         ^+  ..me
-        ?~  don
+        ?:  don
           ..me(mer (~(put by mer) ali dat))
         ..me(mer (~(del by mer) ali), reg :_(reg [hen %mere gon.dat]))
       ::
@@ -1393,11 +1395,15 @@
         ::
             %fine
           ?:  =(r.ali.dat r.bob.dat)
+            ~&  >  [%fine-trivial ali=<ali> bob=<bob> r.ali.dat r.bob.dat]
             (done:he ~)
           ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
+            ~&  >  [%fine-mostly-trivial ali=<ali> bob=<bob>]
             (done:he ~)
           ?.  (~(has in (reachable-takos r.ali.dat)) r.bob.dat)
+            ~&  >  [%fine-not-so-trivial ali=<ali> bob=<bob>]
             (error:he %bad-fine-merge ~)
+          ~&  >  [%fine-lets-go ali=<ali> bob=<bob>]
           =.  new.dat  ali.dat
           =.  erg.dat
             %-  ~(uni by `(map path ,?)`(~(run by q.bob.dat) |=(lobe %|)))
@@ -1450,7 +1456,7 @@
         :*  hen
             =+  (cat 3 %diff- nam)
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali - ~]
-            %f  %exec  p.bob  [p.oth q.oth %da now]  ~  %tabl
+            %f  %exec  p.bob  [p.oth q.oth cas.dat]  ~  %tabl
             ^-  (list (pair silk silk))
             %+  murn  (~(tap by q.bas.dat))
             |=  [pax=path lob=lobe]
@@ -1625,7 +1631,7 @@
           =-  %_(+.$ tag [- tag])
           :*  hen
               [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %merge ~]
-              %f  %exec  p.bob  [p.bob q.bob %da now]  ~  %tabl
+              %f  %exec  p.bob  [p.bob q.bob cas.dat]  ~  %tabl
               ^-  (list (pair silk silk))
               %+  turn  (~(tap by (~(int by can.dal.dat) can.dob.dat)))
               |=  [pax=path *]
