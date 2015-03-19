@@ -63,6 +63,7 @@
       [%blk p=@ud q=@c]                                 ::  blink/match char at
       [%clr ~]                                          ::  clear screen
       [%det console-change]                             ::  edit command
+      [%err p=@ud]                                      ::  error point
       [%mor p=(list console-effect)]                    ::  multiple effects
       [%nex ~]                                          ::  save, clear command
       [%pro console-prompt]                             ::  set prompt
