@@ -125,7 +125,7 @@
 ::
 ++  even                                                ::  client event
   $%  [%news p=@uv]
-      [%rush p=[hasp path] q=wain]
+      [%rush p=[hasp path] q=json]
       [%mean p=[hasp path] q=ares]
   ==
 ::
@@ -358,8 +358,7 @@
       ?>  ?=([%is ^] tee)
       %-  ~(get-even ix p.tee (~(got by wix) p.tee))
       ?>  ?=(%json p.sih)             ::  XX cage
-      =+  dat=[(crip (pojo ;;(json q.sih)))]~
-      [%rush [(pick-hasp q.tee) r.tee] dat]
+      [%rush [(pick-hasp q.tee) r.tee] (joba %json ((hard json) q.sih))]
     ::
         %nice  ?>(?=($|(~ [%is ^]) tee) (nice-json))
         %mean  ?>(?=(~ tee) (mean-json 500 p.sih))
@@ -1034,7 +1033,7 @@
     ::
     ++  get-rush
       |=  [a=[hasp path] b=octs]  ^+  ..ix
-      (get-even [%rush a [q.b]~])  ::  XX multiline
+      (get-even [%rush a (joba %mime [%s q.b])])  ::  XX multiline
     ::
     ++  get-even
       |=  ven=even  ^+  ..ix
@@ -1055,13 +1054,11 @@
       %^  jobe  id/(jone num)  type/[%s -.ven]
       ?-  -.ven
         %news  ~[from/[%s (scot %uv p.ven)]]
-        %rush  ~[from/(subs-to-json p.ven) data/[%s (role q.ven)]]
-        %mean  ~[from/(subs-to-json p.ven) data/(ares-to-json q.ven)]
+        %rush  ~[from/(jape (print-subs p.ven)) data/q.ven]
+        %mean  ~[from/(jape (print-subs p.ven)) data/(ares-to-json q.ven)]
       ==
     ::
-    ++  subs-to-json
-      |=  [a=hasp b=path]
-      (jobe ship/[%s (scot %p p.a)] appl/[%s q.a] path/(jape (spud b)) ~)
+    ++  print-subs  |=([a=hasp b=path] "{<p.a>}/{(trip q.a)}{(spud b)}")
     ::
     ++  wait-era  (pass-note of//[ire] [%t %wait era])
     ++  wake  ^+(..ix abet(ude ~))  ::  XX other effects?
@@ -1103,7 +1100,7 @@
   ~
 ::
 ++  load                                                ::  clam previous state
-  |=  old=_[%0 gub hov ged ney dop liz=liz wup sop wix]
+  |=  old=_[%0 gub hov ged ney dop liz wup sop wix=**]
   ^+  ..^$
   ..^$(+>- (bolo old))
 ::
