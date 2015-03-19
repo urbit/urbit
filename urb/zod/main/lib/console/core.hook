@@ -159,6 +159,7 @@
   ++  inverse                                           ::  relative inverse
     |=  ted=console-edit
     ^-  console-edit
+    =.  ted  ?.(?=([%mor * ~] ted) ted i.p.ted)
     ?-  -.ted
       %del  [%ins p.ted (snag p.ted buf)]
       %ins  [%del p.ted]
@@ -176,6 +177,13 @@
     |=  ted=console-edit
     ^-  [console-change console-share]
     [[[his.ven own.ven] (sham buf) ted] (commit ted)]
+  ::
+  ++  transceive                                        ::  receive and invert
+    |=  console-change
+    ^-  [console-edit console-share]
+    =+  old=buf
+    =^  dat  +>+<.$  (receive +<.$)
+    [(inverse(buf old) dat) +>+<.$]
   ::
   ++  receive                                           ::  naturalize event
     |=  console-change
