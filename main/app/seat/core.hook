@@ -476,16 +476,15 @@
       ?^  ris
         %=    $
             ris  ~
-            cap.pom 
-          `(list ,@)`:(welp "(reverse-i-search)'" str.u.ris "': ")
+            cad.pom 
+          :(welp "(reverse-i-search)'" (tufa str.u.ris) "': ")
         ==
-      =-  [(add pos.inp (lent p.vew)) (weld p.vew q.vew)]
-      ^=  vew  ^-  (pair (list ,@c) (list ,@c))
-      ?:  vis.pom  [cap.pom buf.say.inp]
+      =-  [(add pos.inp (lent p.vew)) (weld (tuba p.vew) q.vew)]
+      ^=  vew  ^-  (pair tape (list ,@c))
+      ?:  vis.pom  [cad.pom buf.say.inp]
       :-  ;:  welp
-            cap.pom
+            cad.pom
             ?~  buf.say.inp  ~
-            %-  tuba
             ;:  welp
               "<"
               (scow %p (end 4 1 (sham buf.say.inp)))
