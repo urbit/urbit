@@ -111,7 +111,7 @@ StationStore.dispatchToken = StationDispatcher.register (payload) ->
       StationStore.setListening action.station
       StationStore.emitChange()
       break
-    when "config-load"
+    when "config-load" #[name:'loadConfig', args:['station', 'config']]
       StationStore.loadConfig action.station,action.config
       StationStore.emitChange()
       break
@@ -119,7 +119,10 @@ StationStore.dispatchToken = StationDispatcher.register (payload) ->
       StationStore.loadStations action.stations
       StationStore.emitChange()
       break
-    when "stations-leave"
+    when "stations-leave"  # stations-leave:[{name:'loadStations' args:['stations']} ['unsetStation' 'station']]
+                           # ...
+                           # for command in actionVtable[action.type]
+                           #   StationStore[command[0]].apply(command[1..].map(argname -> action[argname]))
       StationStore.loadStations action.stations
       StationStore.unsetStation action.station
       StationStore.emitChange()

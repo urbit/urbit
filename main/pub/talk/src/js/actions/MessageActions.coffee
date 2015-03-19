@@ -1,7 +1,5 @@
 MessageDispatcher = require '../dispatcher/Dispatcher.coffee'
 
-# hm
-
 module.exports =
   loadMessages: (grams,get) ->
     MessageDispatcher.handleServerAction
