@@ -42,8 +42,8 @@ Copy a file to a given location.
 
 `~zod/try=> :grep 'literal'`
 
-"grep" a file or standard input. Currently only supports literals, but
-will eventuall support regular expressions.
+"grep" a file or standard input. Currently only supports a literal cord, 
+but will eventuall support regular expressions.
 
 ------------------------------------------------------------------------
 
@@ -61,7 +61,7 @@ in the process. Often used to ping ships to check connectivity.
 `~zod/try=> :into /path/to/file 'contents'`
 
 Write text to a file. If the specified file does not exist, create a
-file by that name.
+file by that name. If it does exist, replace its contents.
 
 ------------------------------------------------------------------------
 
