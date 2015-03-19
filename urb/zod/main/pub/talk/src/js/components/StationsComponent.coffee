@@ -13,9 +13,9 @@ module.exports = recl
   getInitialState: -> @stateFromStore()
 
   componentDidMount: ->
-    @$el = $(@getDOMNode())
-    @$add = $('#stations .add')
-    @$input = @$el.find('input')
+    @$el = $ @getDOMNode()
+    @$add = $ '#stations .add'
+    @$input = @$el.find 'input'
     StationStore.addChangeListener @_onChangeStore
       
   componentWillUnmount: ->
