@@ -377,10 +377,13 @@
       |=  cag=cage
       ^+  +>+>
       ?>  ?=(^ per)
-      ?:  |(?=(^ q.q.cag) =((lent buf.say) q.q.cag))
+      ?:  ?|  ?=(^ q.q.cag) 
+              =((lent buf.say) q.q.cag)
+              !&(?=(%del -.u.per) =(+(p.u.per) (lent buf.say)))
+          ==
         dy-abet(per ~)
       =^  lic  say  (~(transmit cs say) u.per)
-      (dy-rush(per ~) %mor [%bel ~] [%det lic] ~)
+      (dy-rush(per ~) %mor [%det lic] [%err q.q.cag] ~)
     ::
     ++  dy-done                                         ::  dialog submit
       |=  txt=tape
@@ -474,8 +477,7 @@
       |=  cag=cage
       ^+  +>+>
       ?.  ?=(^ q.q.cag)
-        ~&  %dy-made-dial-fail
-        (dy-rash %bel ~)
+        (dy-rush %err q.q.cag)
       =+  tan=((list tank) +2.q.q.cag)
       =.  +>+>.$  (he-rush %tan tan)
       =+  vax=(spec (slot 3 q.cag))
