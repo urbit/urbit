@@ -343,6 +343,11 @@
         .(+> (se-blit %bel ~))
       (ta-hom %del pos.inp)
     ::
+    ++  ta-err                                          ::  hear error
+      |=  pos=@ud 
+      =.  pos  (~(transpose cs say.inp) pos)
+      ta-bel(pos.inp (min pos (lent buf.say.inp)))
+    ::
     ++  ta-fec                                          ::  apply effect
       |=  fec=console-effect
       ^+  +>
@@ -351,6 +356,7 @@
         %blk  +>
         %clr  +>(+> (se-blit fec))
         %det  (ta-got +.fec)
+        %err  (ta-err +.fec)
         %mor  |-  ^+  +>.^$
               ?~  p.fec  +>.^$
               $(p.fec t.p.fec, +>.^$ ^$(fec i.p.fec))

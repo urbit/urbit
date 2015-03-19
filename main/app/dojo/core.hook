@@ -523,8 +523,8 @@
   ++  he-dope                                           ::  sole user of ++dp
     |=  txt=tape                                        ::
     ^-  (each (unit dojo-command) hair)                 ::  prefix/result
-    =+  vex=(dp-command:dp [1 1] txt)
-    ?.  =(+((lent txt)) q.p.vex)                        ::  fully parsed
+    =+  vex=(dp-command:dp [0 0] txt)                   ::
+    ?.  =((lent txt) q.p.vex)                           ::  fully parsed
       [%| p.vex]                                        ::  syntax error
     [%& ?~(q.vex ~ `p.u.q.vex)]                         ::  prefix/complete
   ::
@@ -603,11 +603,12 @@
     =^  dat  say  (~(transceive cs say) cal)
     ?.  ?&  ?=(%del -.dat)
             =(+(p.dat) (lent buf.say))
-            =(%| -:(he-dope (tufa buf.say)))
         ==
       +>.$
+    =+  foy=(he-dope (tufa buf.say))
+    ?:  ?=(%& -.foy)  +>.$
     =^  lic  say  (~(transmit cs say) dat)
-    (he-rush %mor [%bel ~] [%det lic] ~)
+    (he-rush %mor [%det lic] [%err q.p.foy] ~)
   ::
   ++  he-plan                                           ::  execute command
     |=  mad=dojo-command
@@ -620,13 +621,7 @@
     ^+  +>
     =+  doy=(he-duke txt)
     ?-    -.doy
-        %|  
-      %-  he-rush 
-      :~  %mor 
-          [%tan [%leaf "syntax error at {<p.doy>}"]~]
-          [%bel ~]
-      ==
-    ::
+        %|  (he-rush [%err p.doy])
         %&
       =+  old=(weld "> " (tufa buf.say))
       =^  cal  say  (~(transmit cs say) [%set ~])

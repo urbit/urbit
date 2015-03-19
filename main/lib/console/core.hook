@@ -12,80 +12,6 @@
 ++  cs                                                  ::  shared-state engine
   |_  console-share
   ++  abet  +<
-  ++  apex                                              ::  engine by rule
-    |*  sef=_rule
-    |=  act=console-action
-    ^+  [[p=*(list console-effect) q=(rust ~ sef)] *console-share]
-    ?-    -.act
-        %det
-      =^  dut  +<.apex
-          %+  remit  +.act
-          |=  buf=(list ,@c)
-          =+  txt=(tufa buf)
-          =((lent txt) q.p:(sef [0 0] txt))
-      [[?~(dut ~ [[%det u.dut] [%bel ~] ~]) ~] +<.apex]
-    ::
-        %ret
-      =+  dod=(rust (tufa buf) sef)
-      ?~  dod
-        [[[%bel ~]~ ~] +<.apex]
-      =^  cal  +<.apex  (transmit [%set ~])
-      :_  +<.apex
-      :_  dod
-      :~  [%det cal]
-          [%nex ~]
-      ==
-    ==
-  ++  apse                                              ::  dialog engine
-    |*  dog=(console-dialog)
-    |=  act=(unit console-action)
-    =<  abet  |%
-    ++  abet
-      ?~  act  (ajar ~)
-      ?-  -.u.act
-          %det
-        =^  dut  +<.apse
-            %+  remit  +.u.act
-            |=  buf=(list ,@c)
-            !=(~ (dog `(tufa buf)))
-        :_  +<.apse
-        :_  dog
-        :_  q=[~ u=~]
-        ^=  p   ^-  (list console-effect)
-        ?~(dut ~ [[%det u.dut] [%bel ~] ~])
-      ::
-          %ret  (ajar `(tufa buf))
-      ==
-    ++  ajar
-      |=  unp=(unit console-input)
-      =+  god=(dog unp)
-      ?:  |(?=(~ god) ?=(~ u.god))
-        :_  +<.apse
-        :_  dog
-        :-  p=`(list console-effect)`[%bel ~]~
-        q=[~ u=~]
-      =+  fex=`(list console-effect)`[%tan p.u.u.god]~
-      ?-    -.q.u.u.god
-          %&
-        :_  +<.apse
-        :_  dog
-        :-  p=fex
-        q=?~(p.q.u.u.god ~ [~ u=p.q.u.u.god])
-      ::
-          %|
-        =^  cal  +<.apse  (transmit [%set ~])
-        :_  +<.apse
-        :_  q.p.q.u.u.god
-        :_  q=[~ u=~]
-        ^=  p  ^+  fex
-        :*  [%det cal]
-            [%nex ~]
-            [%pro p.p.q.u.u.god]
-            fex
-        ==
-      == 
-    --
-  ::
   ++  apply
     |=  ted=console-edit 
     ^+  +>
@@ -173,18 +99,6 @@
       %set  [%set buf]
     ==
   ::
-  ++  transmit                                          ::  outgoing change
-    |=  ted=console-edit
-    ^-  [console-change console-share]
-    [[[his.ven own.ven] (sham buf) ted] (commit ted)]
-  ::
-  ++  transceive                                        ::  receive and invert
-    |=  console-change
-    ^-  [console-edit console-share]
-    =+  old=buf
-    =^  dat  +>+<.$  (receive +<.$)
-    [(inverse(buf old) dat) +>+<.$]
-  ::
   ++  receive                                           ::  naturalize event
     |=  console-change
     ^-  [console-edit console-share]
@@ -204,5 +118,23 @@
       [~ +>+<.$]
     =^  lic  +>+<.$  (transmit (inverse(buf old) dat))
     [`lic +>+<.$]
+  ::
+  ++  transmit                                          ::  outgoing change
+    |=  ted=console-edit
+    ^-  [console-change console-share]
+    [[[his.ven own.ven] (sham buf) ted] (commit ted)]
+  ::
+  ++  transceive                                        ::  receive and invert
+    |=  console-change
+    ^-  [console-edit console-share]
+    =+  old=buf
+    =^  dat  +>+<.$  (receive +<.$)
+    [(inverse(buf old) dat) +>+<.$]
+  ::
+  ++  transpose                                         ::  adjust position
+    |=  pos=@ud
+    =+  dat=(transmute [%mor leg] [%ins pos `@c`0])
+    ?>  ?=(%ins -.dat)
+    p.dat
   --
 --
