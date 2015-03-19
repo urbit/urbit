@@ -3,6 +3,20 @@
 ::
 |=  pit=vase
 =>  |%                                                  ::  interface tiles
+++  axle                                                ::  all dill state
+  $:  %2                                                ::
+      ore=(unit ship)                                   ::  identity once set
+      hey=(unit duct)                                   ::  default duct
+      dug=(map duct axon)                               ::  conversations
+  ==                                                    ::  
+++  axon                                                ::  dill per duct
+  $:  ram=term                                          ::  console program
+      wid=_80                                           ::  terminal width
+      pos=@ud                                           ::  cursor position
+      see=(list ,@c)                                    ::  current line
+  ==                                                    ::
+--                                                      ::
+=>  |%                                                  ::  console protocol
 ++  console-action                                      ::  console to app
   $%  [%det console-change]                             ::  edit prompt line
       [%inn ~]                                          ::  enter session
@@ -55,21 +69,6 @@
       [%sav p=path q=@]                                 ::  save to file
   ==                                                    ::
 ++  gill  ,@tas                                         ::  general contact
---                                                      ::
-=>  |%                                                  ::  console protocol
-++  axle                                                ::  all dill state
-  $:  %2                                                ::
-      ore=(unit ship)                                   ::  identity once set
-      hey=(unit duct)                                   ::  default duct
-      dug=(map duct axon)                               ::  conversations
-  ==                                                    ::  
-++  axon                                                ::  dill per duct
-  $:  ram=term                                          ::  console program
-      tem=(unit (list dill-belt))                       ::  pending, reverse
-      wid=_80                                           ::  terminal width
-      pos=@ud                                           ::  cursor position
-      see=(list ,@c)                                    ::  current line
-  ==                                                    ::
 --  =>                                                  ::
 |%                                                      ::  protocol below
 ++  blew  ,[p=@ud q=@ud]                                ::  columns rows
@@ -135,9 +134,6 @@
   $%  [%make p=(unit ,@t) q=@ud r=@ s=?]                ::
       [%sith p=@p q=@uw r=?]                            ::
   ==                                                    ::
-++  note-clay                                           ::  wait for clay, hack
-  $%  [%warp p=sock q=riff]                             ::
-  ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
   $%  [%crud p=@tas q=(list tank)]                      ::
       [%text p=tape]                                    ::
@@ -153,21 +149,15 @@
   ==                                                    ::
 ++  note                                                ::
   $%  [%a note-ames]                                    ::  out request $->
-      [%c note-clay]
       [%d note-dill]                                    ::
       [%g note-gall]                                    ::
   ==                                                    ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  sign-ames                                           ::
   $%  [%nice ~]                                         ::
-      [%init p=ship]                                    ::
   ==                                                    ::
 ++  sign-clay                                           ::
   $%  [%note p=@tD q=tank]                              ::
-      [%writ p=riot]                                    ::
-  ==                                                    ::
-++  sign-dill                                           ::
-  $%  [%blit p=(list blit)]                             ::
   ==                                                    ::
 ++  sign-gall                                           ::
   $%  [%crud p=@tas q=(list tank)]                      ::
@@ -181,7 +171,6 @@
 ++  sign                                                ::  in result $<-
   $%  [%a sign-ames]                                    ::
       [%c sign-clay]                                    ::
-      [%d sign-dill]                                    ::  
       [%g sign-gall]                                    ::
       [%t sign-time]                                    ::
   ==                                                    ::
@@ -203,26 +192,13 @@
         ^+  +>
         ?+    -.kyz  ~&  [%strange-kiss -.kyz]  +>
           %flow  +>
-          %harm  +>
-          %hail  +>
           %belt  (send `dill-belt`p.kyz)
-          %text  (from %out (tuba p.kyz))
-          %crud  ::  (send `dill-belt`[%cru p.kyz q.kyz])
-                 (crud p.kyz q.kyz)
+          %crud  (send `dill-belt`[%cru p.kyz q.kyz])
           %blew  (send %rez p.p.kyz q.p.kyz)
           %veer  (dump kyz)
           %vega  (dump kyz)
           %verb  (dump kyz)
         ==
-      ::
-      ++  crud
-        |=  [err=@tas tac=(list tank)]
-        =+  ^=  wol  ^-  wall
-            :-  (trip err)
-            (zing (turn tac |=(a=tank (~(win re a) [0 wid]))))
-        |-  ^+  +>.^$
-        ?~  wol  +>.^$
-        $(wol t.wol, +>.^$ (from %out (tuba i.wol)))
       ::
       ++  dump                                          ::  pass down to hey
         |=  git=gift
@@ -250,32 +226,15 @@
         (done %blit [bit ~])
       ::
       ++  init                                          ::  initialize
-        ~&  [%dill-init our]
-        =+  myt=(flop (need tem))
-        =.  tem  ~
-        =.  moz  :_(moz [hen %pass ~ %g %show [our [ram ~]] our ~])
-        |-  ^+  +>
-        ?~  myt  +>
-        $(myt t.myt, +> (send i.myt))
-      ::
-      ++  into                                          ::  preinitialize
         |=  gyl=(list gill)
-        %_    +>
-            tem  `(turn gyl |=(a=gill [%yow a]))
-            moz
-          :_  moz
-          :*  hen
-              %pass 
-              / 
-              %c 
-              [%warp [our our] %main `[%& %y [%ud 1] /]]
-          ==
-        ==
+        ^+  +>
+        =.  moz  :_(moz [hen %pass ~ %g %show [our [ram ~]] our ~])
+        |-  ^+  +>.^$
+        ?~  gyl  +>.^$
+        $(gyl t.gyl, +>.^$ (send %yow i.gyl))
       ::
       ++  send                                          ::  send action
         |=  bet=dill-belt
-        ?^  tem
-          +>(tem `[bet u.tem])
         %_    +>
             moz
           :_  moz
@@ -290,21 +249,11 @@
           ::  ~&  [%take-nice-ames sih]
           +>
         ::
-            [%a %init *]
-          +>(moz :_(moz [hen %give +.sih]))
-        ::
             [%c %note *]
           (from %out (tuba ~(ram re q.+.sih)))
         ::
-            [%c %writ *]
-          init
-        ::
-            [%d %blit *]
-          (done +.sih)
-        ::
             [%g %crud *]
-          (crud p.+.sih q.+.sih)
-        ::  (send %cru p.+.sih q.+.sih)  
+          (send %cru p.+.sih q.+.sih)  
         ::
             [%g %mean *]
           +>(moz [[hen %give %logo ~] moz])
@@ -327,19 +276,11 @@
       |=  [hen=duct kyz=kiss]                           ::
       ?~  ore.all  ~
       =+  nux=(~(get by dug.all) hen)
-      ?^  nux  
-        (some ~(. as [~ hen u.ore.all] u.nux))
+      ?^  nux  (some ~(. as [~ hen u.ore.all] u.nux))
       ?.  ?=(%flow -.kyz)  ~
       %-  some
       %.  q.kyz
-      %~  into  as
-      :-  [~ hen u.ore.all]
-      :*  p.kyz
-          [~ ~]
-          80
-          0
-          (tuba "<{(trip p.kyz)}>")
-      ==
+      ~(init as [~ hen u.ore.all] [p.kyz 80 0 (tuba "<{(trip p.kyz)}>")])
     --
 |%                                                      ::  poke/peek pattern
 ++  call                                                ::  handle request
@@ -360,17 +301,10 @@
   ?:  ?=(%boot -.q.hic)
     :_(..^$ [hen %pass ~ (note %a p.q.hic)]~)
   ?:  ?=(%flog -.q.hic)
-    ::  ~&  [%dill-flog +.q.hic]
     :_(..^$ ?~(hey.all ~ [u.hey.all %slip %d p.q.hic]~))
-  =.  hey.all  ?^(hey.all hey.all `hen)
   ?:  ?=(%init -.q.hic)
-    ?:  =(ore.all `p.q.hic)
-      [~ ..^$]
-    =:  ore.all  `p.q.hic
-        dug.all   ~
-      ==
-    =^  moz  all  abet:(need (ax (need hey.all) [%flow %seat %dojo ~]))
-    [moz ..^$]
+    [~ ..^$(ore.all `p.q.hic)]
+  =.  hey.all  ?^(hey.all hey.all `hen)
   =+  nus=(ax hen q.hic)
   ?~  nus
     ~&  [%dill-no-flow q.hic]
@@ -383,11 +317,9 @@
   ^-  (unit ,@da)
   ~
 ::
-++  load                                                ::  trivial
-  |=  old=axle
-  ..^$(all old)
-  ::  |=  old=*   ::  diable
-  ::  ..^$(ore.all `~zod)
+++  load                                                ::  totally disabled
+  |=  old=*
+  ..^$(ore.all `~zod)
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
@@ -400,10 +332,6 @@
   |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [p=(list move) q=_..^$]
   ?:  =(~ ore.all)
-    ?:  ?=([%a %init *] q.hin)
-      ~&  [%dill-take-dump-init hen +.q.hin]
-      =.  hey.all  ?^(hey.all hey.all `hen)
-      [[[hen %give +.q.hin] ~] ..^$]
     ~&  [%take-back q.hin]
     [~ ..^$]
   ?.  (~(has by dug.all) hen)

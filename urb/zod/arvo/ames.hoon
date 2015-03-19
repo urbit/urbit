@@ -1662,7 +1662,7 @@
     ?-    -.bon
         %beer
       :_  fox(zac (~(put by zac.fox) p.bon `corn`[hen ~ ~ ~]))
-      ::  ~&  [%ames-clop p.bon hen]
+      ~&  [%ames-clop p.bon hen]
       :*  [hen [%slip %c %init p.bon]]
           [hen [%give %init p.bon]]
           [hen [%slip %a %kick now]]
@@ -1696,7 +1696,7 @@
               :+  (scot %p p.p.bon)
                 (scot %p q.p.bon)
               q.q.bon
-          [hen %pass pax %g %rote p.bon /began 0 %m %will wil]~
+          [hen %pass pax %g %rote p.bon /helm 0 %m %will wil]~
         ?>  ?=([@ @ *] t.q.q.bon)
         :_  fox
         =+  [cak=i.t.q.q.bon ven=i.t.t.q.q.bon]

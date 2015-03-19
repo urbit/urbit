@@ -144,7 +144,6 @@
   ++  ra-apply                                          ::  apply command
     |=  [her=ship cod=command]
     ^+  +>
-    ~&  [%ra-apply cod]
     ?-    -.cod
         %design
       ?.  =(her our.hid)
@@ -572,7 +571,6 @@
     ::
     ++  pa-refresh                                      ::  update stream
       |=  [num=@ud gam=telegram]
-      ~&  [%pa-refresh man num gam guests]
       =+  ^=  moy
           |-  ^-  (pair (list bone) (list move))
           ?~  guests  [~ ~]
@@ -706,10 +704,9 @@
   ?~  u.old
     =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/rodeo/backlog/jam
     ?.  ?=([%0 %0 %0] [.^(%cy paf)])
+      ~&  %rodeo-prep-restore
       $(u.old (some ((hard house-any) (cue ((hard ,@) .^(%cx paf))))))
-    ~&  %rodeo-prep-new
     ra-abet:~(ra-init ra 0 moz)
-  ~&  %rodeo-prep-old
   :-  moz
   |-
   ?-  -.u.u.old
