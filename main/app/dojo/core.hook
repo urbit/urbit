@@ -420,9 +420,7 @@
     ++  dy-edit                                         ::  handle edit
       |=  cal=console-change
       ^+  +>+>
-      =+  old=buf.say
-      =^  dat  say  (~(receive cs say) cal)
-      =.  dat  (~(inverse cs say(buf old)) dat)
+      =^  dat  say  (~(transceive cs say) cal)
       ?:  |(?=(^ per) ?=(^ pux) ?=(~ pro))
         ~&  %dy-edit-busy
         =^  lic  say  (~(transmit cs say) dat)
@@ -602,10 +600,14 @@
   ++  he-stir                                           ::  apply change
     |=  cal=console-change
     ^+  +>
-    =^  dut  say  (~(remit cs say) cal he-like)
-    ?~  dut
+    =^  dat  say  (~(transceive cs say) cal)
+    ?.  ?&  ?=(%del -.dat)
+            =(+(p.dat) (lent buf.say))
+            =(%| -:(he-dope (tufa buf.say)))
+        ==
       +>.$
-    (he-rush %mor [%det u.dut] [%bel ~] ~)
+    =^  lic  say  (~(transmit cs say) dat)
+    (he-rush %mor [%bel ~] [%det lic] ~)
   ::
   ++  he-plan                                           ::  execute command
     |=  mad=dojo-command
