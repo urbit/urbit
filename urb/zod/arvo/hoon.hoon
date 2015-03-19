@@ -6141,6 +6141,7 @@
       =>  .(p.gen `[@ ^ @ p=@tas ~]`p.gen)
       :+  %sgzp  [[%dtzz %tas 'slam'] [%dtzz %tas p.p.gen]]
       rem
+    ::
         [%cndt *]  [%cnhp q.gen [p.gen ~]]
         [%cnkt *]  [%cnhp p.gen q.gen r.gen s.gen ~]
         [%cnls *]  [%cnhp p.gen q.gen r.gen ~]

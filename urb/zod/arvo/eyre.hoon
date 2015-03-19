@@ -137,7 +137,7 @@
       [%away ~]
       [%bugs p=?(%as %to) ~]
       [%mess p=hasp q=mark r=json]
-      [%subs p=hasp q=path]
+      [%subs p=hasp %json q=path]
       [%deps p=@uvH q=?(%del %put)]
       [%view p=ixor q=[~ u=@ud]]
   ==
@@ -347,18 +347,26 @@
   ++  axon                                              ::  accept response
     |=  [tee=whir typ=type sih=sign]
     ^+  +>
+    ~?  ?=(%g -.sih)  e/+<.sih
     =.  our  ?~(hov our u.hov)  ::  XX
     ?-    -.+.sih
         %crud
       +>.$(mow [[hen %slip %d %flog +.sih] mow])
     ::
-        ?(%dumb %rush %rust)    ~|(%gall-stub !!)
-        %nice  ?>(?=(~ tee) (nice-json))    ::  XX subscriptions
+        %dumb  ~|(%gall-stub !!)
+        ?(%rush %rust)
+      ?>  ?=([%is ^] tee)
+      %-  ~(get-even ix p.tee (~(got by wix) p.tee))
+      ?>  ?=(%json p.sih)             ::  XX cage
+      =+  dat=[(crip (pojo ;;(json q.sih)))]~
+      [%rush [(pick-hasp q.tee) r.tee] dat]
+    ::
+        %nice  ?>(?=($|(~ [%is ^]) tee) (nice-json))
         %mean  ?>(?=(~ tee) (mean-json 500 p.sih))
         %wake
       ?>  ?=([%of ^] tee)
       =>  ~(wake ix p.tee (~(got by wix) p.tee))
-      (give-json 200 ~ %b &)
+      (give-json 200 ~ (joba %beat %b &))
     ::
         %news                                         ::  dependency updated
       ?.  ?=([%on ^] tee)
@@ -367,7 +375,6 @@
       %+  roll  (~(tap in (~(get ju liz) dep)))
       =<  .(con ..axon(liz (~(del by liz) dep)))
       |=  [sus=(each duct ixor) con=_..axon]
-      ~&  sus
       ?-  -.sus
         %&  (give-json(hen p.sus) 205 ~ %b &)
         %|  %-  ~(get-even ix p.sus (~(got by wix) p.sus))
@@ -499,12 +506,13 @@
     (make-resp-gift sas application//json (crip (pojo jon)))
   ::
   ++  nice-json  |=(* (give-json 200 ~ (joba %ok %b &)))
-  ++  mean-json  
-    |=  [sas=@uG are=ares] 
-    =-  (give-json sas ~ (jobe fail/s/typ mess/(jape err) ~))
-    ^-  [typ=term err=tape]
-    ?~  are  [%fail "Unknown Error"]
-    [p.u.are (wush 160 q.u.are)]
+  ++  mean-json  |=([sas=@uG err=ares] (give-json sas ~ (ares-to-json err)))
+  ++  ares-to-json
+    |=  err=ares
+    =-  (jobe fail/s/typ mess/(jape mez) ~)
+    ^-  [typ=term mez=tape]
+    ?~  err  [%fail "Unknown Error"]
+    [p.u.err (wush 160 q.u.err)]
   ::
   ++  add-cookies
     |=  [cug=(list ,@t) git=[%thou httr]]
@@ -645,11 +653,21 @@
         [our (raid but %tas %tas ~)]
       ::
           %in
-        ~|  expect/[%post '.json' /'@uv' '?PUT/DELETE']
+        ~|  expect/[%post 'application/json' /'@uv' '?PUT/DELETE']
         ?>  ?=([%post $|(~ [~ %json])] [mef p.pok])
         :+    %deps
           (raid but %uv ~)
         ?+(quy !! [[%'DELETE' ~] ~] %del, [[%'PUT' ~] ~] %put)
+      ::
+          %is
+        ?~  but
+          ~|(no-app/but=but !!)
+        |-  ^-  perk
+        ?~  p.pok  $(p.pok [~ %json])
+        ?>  ?=(%json u.p.pok)         ::  XX marks
+        ?:  ((sane %tas) i.but)
+          $(but [(scot %p our) but])
+        [%subs [(slav %p i.but) (slav %tas -.t.but)] u.p.pok +.t.but]
       ::
           %auth
         :-  %auth
@@ -689,21 +707,24 @@
       =.  our  ?~(oar our u.oar)  ::  XX
       =+  pez=process
       ?:  ?=(%| -.pez)  p.pez  ::  XX transitional
-      |-  ^+  done
-      ?-  -.p.pez
-          %for  (beam-into-ford +.p.pez)
-          %fot  (ford-req p.p.pez our [%cast q.p.pez %done ~ r.p.pez])
-          %gap  (pass-note ~ %g [%mess +.p.pez])
-          %gas  (pass-note p.p.pez %g [%show +>.p.pez])
-          %zap  (fail p.p.pez 0v0 q.p.pez)
-          %fin  (finish +.p.pez)
+      (handle-pest p.pez)
+    ::
+    ++  handle-pest
+      |=  pez=pest  ^+  done
+      ?-  -.pez
+          %for  (beam-into-ford +.pez)
+          %fot  (ford-req p.pez our [%cast q.pez %done ~ r.pez])
+          %gap  (pass-note ~ %g [%mess +.pez])
+          %gas  (pass-note p.pez %g [%show +>.pez])
+          %zap  (fail p.pez 0v0 q.pez)
+          %fin  (finish +.pez)
           %red
         =+  url=(earn hat pok(p [~ %html]) quy)
         ?+    p.pok  (fail 404 0v0 leaf/"bad redirect" leaf/<p.pok> leaf/url ~)
             [~ %js]
-          $(p.pez [%fin %js (crip "document.location = '{url}'")])
+          $(pez [%fin %js (crip "document.location = '{url}'")])
             [~ %json]
-          $(p.pez [%fin %json (jobe ok/b/| red/(jape url) ~)])
+          $(pez [%fin %json (jobe ok/b/| red/(jape url) ~)])
         ==
       ==
     ::
@@ -764,6 +785,7 @@
       ::
           %deps
         =+  ire=(oryx-to-ixor (grab-body to-oryx))
+        ?>  (~(has by wix) ire)  ::  XX made redundant by oryx checking
         =<  [%| (nice-json)]
         ?-  q.hem
           %del  done(liz (~(del ju liz) p.hem %| ire))
@@ -813,14 +835,17 @@
           =.  ..ya  abet.yac
           =+  pez=process(pok p.hem)
           ?.  ?=(%& -.pez)  ~|(no-inject/p.hem !!)
-          ?+  -.p.pez  ~&(bad-inject/p.pez !!)
-            ?(%zap %red)  pez
-            %for  pez(p.p [%at ses.yac p.p.pez])
-            %fin  
-              ~|  %not-script
-              ?>  ?=(%js &2.p.pez)
-              =^  jon  ..ya  stat-json:for-client
-              [%| (finish +.p.pez(p (jass jon p.p.pez)))] ::  XX better storage?
+          ?+    -.p.pez  ~&(bad-inject/p.pez !!)
+              ?(%zap %red)
+            pez
+              %for
+            =.  ..ya  abet:for-client                     
+            [%| (handle-pest p.pez(p [%at ses.yac p.p.pez]))]  ::  XX better storage?
+              %fin  
+            ~|  %not-script
+            ?>  ?=(%js &2.p.pez)
+            =^  jon  ..ya  stat-json:for-client
+            [%| (finish +.p.pez(p (jass jon p.p.pez)))] ::  XX better storage?
           ==
         ::
             %try
@@ -992,6 +1017,7 @@
     ++  done  .
     ++  abet  ..ix(wix (~(put by wix) ire sem))
     ++  teba  |*(a=$+(* ..ix) |*(b=* %_(done ..ix (a b))))
+    ++  give-json  (teba ^give-json)
     ++  pass-note  (teba ^pass-note)
     ::
     ++  poll
@@ -1004,24 +1030,39 @@
       ?:  (gth a p.eve)  ~|(seq-high/cur=p.eve !!)
       =+  ven=~|(seq-low/cur=p.eve (~(got by q.eve) a))
       =.  q.eve  (~(del by q.eve) (dec a))              ::  TODO ponder a-2
-      abet:(give-even & ven)
+      abet:(give-even & a ven)
     ::
     ++  get-rush
-      |=  [a=[hasp path] b=octs]
+      |=  [a=[hasp path] b=octs]  ^+  ..ix
       (get-even [%rush a [q.b]~])  ::  XX multiline
     ::
     ++  get-even
       |=  ven=even  ^+  ..ix
+      =+  num=p.eve
       =.  eve  (add-even ven)
       =<  abet
       ?~  ude  done
-      (give-even(hen p.u.ude, ude ~) q.u.ude ven)
+      (give-even(hen p.u.ude, ude ~) q.u.ude num ven)
     ::
     ++  add-even
       |=  a=even  ^+  eve
       [+(p.eve) (~(put by q.eve) p.eve a)]
     ::
-    ++  give-even  ,_`_.`!!
+    ++  give-even
+      |=  [pol=? num=@u ven=even]  ^+  done
+      ?>  pol                         ::  XX eventstream
+      %^  give-json  200  ~
+      %^  jobe  id/(jone num)  type/[%s -.ven]
+      ?-  -.ven
+        %news  ~[from/[%s (scot %uv p.ven)]]
+        %rush  ~[from/(subs-to-json p.ven) data/[%s (role q.ven)]]
+        %mean  ~[from/(subs-to-json p.ven) data/(ares-to-json q.ven)]
+      ==
+    ::
+    ++  subs-to-json
+      |=  [a=hasp b=path]
+      (jobe ship/[%s (scot %p p.a)] appl/[%s q.a] path/(jape (spud b)) ~)
+    ::
     ++  wait-era  (pass-note of//[ire] [%t %wait era])
     ++  wake  ^+(..ix abet(ude ~))  ::  XX other effects?
 --  --
@@ -1062,7 +1103,7 @@
   ~
 ::
 ++  load                                                ::  clam previous state
-  |=  old=_[%0 gub hov ged ney dop liz wup sop **]
+  |=  old=_[%0 gub hov ged ney dop liz=liz wup sop wix]
   ^+  ..^$
   ..^$(+>- (bolo old))
 ::
