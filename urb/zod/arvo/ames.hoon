@@ -227,7 +227,7 @@
         0w0                           ::   55, ~tep, Curtis Yarvin (sator)
         0w0                           ::   56, ~bes, Curtis Yarvin (sator)
         0w0                           ::   57, ~dex, Jared Hance (aestas) 
-        0w0                           ::   58, ~sef, Curtis Yarvin (sator)
+        0w0                           ::   58, ~sef, Owen Rescher (lex)
         0w0                           ::   59, ~wyc, Curtis Yarvin (sator)
         0w0                           ::   60, ~bur, Curtis Yarvin (sator)
         0w0                           ::   61, ~der, Curtis Yarvin (sator)
@@ -370,7 +370,7 @@
         0w0                           ::  198, ~len, Tlon (gleba)
         0w0                           ::  199, ~ner, Tlon (gleba)
         0wv.aixe9.7gG2w.7cJiy.i3Mg8   ::  200, ~lex, Michael Hartl (donum)
-        0w0                           ::  201, ~rup, Tlon (gleba)
+        0w0                           ::  201, ~rup, Owen Rescher (lex)
         0w0                           ::  202, ~ned, Tlon (gleba)
         0w0                           ::  203, ~lec, Tlon (gleba)
         0w0                           ::  204, ~ryd, Tlon (gleba)
@@ -631,12 +631,12 @@
             =^  gim  ..weft  wisp
             :_  +>.$
             ^-  (list rock)
-            =+  wit=(met 13 q.gim)
+            =+  wit=(met ?:(fak.ton 18 13) q.gim)
             ?<  =(0 wit)
             ?:  =(1 wit)
               =+  yup=(spit [our her] p.gim q.gim)
               [yup ~]
-            =+  ruv=(rip 13 q.gim)
+            =+  ruv=(rip ?:(fak.ton 18 13) q.gim)
             =+  gom=(shaf %thug q.gim)
             =+  inx=0
             |-  ^-  (list rock)
@@ -1409,7 +1409,7 @@
             =+  [nix=0 rax=*(list ,@)]
             |-  ^-  @
             ?:  =(p.duv nix)
-              (can 13 (turn (flop rax) |=(a=@ [1 a])))
+              (can ?:(fak.ton.fox 18 13) (turn (flop rax) |=(a=@ [1 a])))
             $(nix +(nix), rax [(need (~(get by q.duv) nix)) rax])
           --                                            ::  --la:ho:um:am
         ::
