@@ -377,7 +377,7 @@
       |=  cag=cage
       ^+  +>+>
       ?>  ?=(^ per)
-      ?^  q.q.cag  
+      ?:  |(?=(^ q.q.cag) =((lent buf.say) q.q.cag))
         dy-abet(per ~)
       =^  lic  say  (~(transmit cs say) u.per)
       (dy-rush(per ~) %mor [%bel ~] [%det lic] ~)
@@ -473,12 +473,12 @@
     ++  dy-made-dial                                    ::  dialog product
       |=  cag=cage
       ^+  +>+>
-      ?.  ?=([~ ~ *] q.q.cag)
+      ?.  ?=(^ q.q.cag)
         ~&  %dy-made-dial-fail
         (dy-rash %bel ~)
-      =+  tan=((list tank) +14.q.q.cag)
+      =+  tan=((list tank) +2.q.q.cag)
       =.  +>+>.$  (he-rush %tan tan)
-      =+  vax=(spec (slot 15 q.cag))
+      =+  vax=(spec (slot 3 q.cag))
       ?+    -.q.vax  !!
           %& 
         ?~  +.q.vax
