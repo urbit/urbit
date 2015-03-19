@@ -1,13 +1,15 @@
-window.urb.seqn_u = 0
-window.urb.seqn_h = 0
+window.urb.seqn_u = 1
 window.urb.dely = 0
-window.urb.puls = 0
+window.urb.puls = false
 window.urb.cabs = {}
 if(!window.urb.appl) window.urb.appl = null
 
 window.urb.req = function(method,url,params,json,cb) {
   var xhr = new XMLHttpRequest()
-  xhr.open(method.toUpperCase(), url)
+  method = method.toUpperCase()
+  if(method == "PUT" || method == "DELETE")
+    xhr.open("POST", url+"?"+method)
+  else xhr.open(method, url)
   
   if(json)
     xhr.setRequestHeader("content-type", "text/json")
@@ -29,6 +31,7 @@ window.urb.req = function(method,url,params,json,cb) {
         if(res.data.reload)
           res.reload = res.data.reload
       } catch(e) {
+        if(urb.wall || true) document.write(this.responseText) // XX
         err = {
           message:"Failed to parse JSON",
           raw:this.responseText
@@ -71,40 +74,43 @@ window.urb.gsig = function(params) {
   var path = params.path
   if(!path) path = ""
   if(path[0] != "/") path = "/"+path
-  return  params.ship+"/"+
+  return  "~"+params.ship+"/"+
           params.appl+
           path.replace(/[^\x00-\x7F]/g, "")
 }
 
-window.urb.poll = function(params,cb) {
-  if(!params)
-    throw new Error("You must supply params to urb.poll.")
+window.urb.poll = function(params) {
+  if(!params) throw new Error("You must supply params to urb.poll.")
 
-  var method, perm, url, $this
+  var url, $this
 
   seqn = this.seqn_u
-  if(params.seqn)
-    seqn = params.seqn()
+  if(params.seqn) seqn = params.seqn()
   
-  url = "/~/of/"+this.ixor
+  url = "/~/of/"+this.ixor+"?poll="+seqn
 
-  this.puls = 1
+  this.puls = true
 
   $this = this
-  this.req(method,url,params,true,function(err,data) {
-    if(data){
-      if (data.reload) {
-         return document.location.reload()
-      } else {
-        fn = $this.gsig(data.data)
-        if($this.cabs[fn]) {
+  this.req("get",url,params,true,function(err,resp) {
+    if(resp){
+      if(resp.beat)
+        return $this.poll(params)
+      switch(resp.data.type){
+          case "news":
+        return document.location.reload()  // XX check autoreload
+          case "rush":
+        var fn = $this.gsig(resp.data.from)
+        if($this.cabs[fn])
           $this.cabs[fn].call(this,err,
-            {status: data.status, data: data.data.data})
-        }
+            {status: resp.status, data: resp.data.data.json}) // XX non-json
+        break;
+          default:
+        throw new Error("Lost event %"+resp.type)
       }
     }
 
-     dely = params.dely ? params.dely : $this.dely
+    dely = params.dely ? params.dely : $this.dely
 
     if(err)
       dely = dely+Math.ceil(dely*.02)
@@ -112,24 +118,24 @@ window.urb.poll = function(params,cb) {
       $this.dely = 0
       if(params.incs)
         params.incs()
-      else
+      else 
         $this.seqn_u++
     }
 
     setTimeout(function() {
-      $this.poll(params,cb)
+      $this.poll(params)
     },dely)
   })
 }
 
-if (window.urb.auto) {
-  var tries = 0
-  var cnt = 0
-  var param = {
-    type:"pol"
-  }
-  window.urb.poll(param)
-}
+// if (window.urb.auto) {  // need dependencies
+//   var tries = 0
+//   var cnt = 0
+//   var param = {
+//     type:"pol"
+//   }
+//   window.urb.poll(param)
+// }
 
 // window.urb.heartbeat = function() {
 //   this.poll({
@@ -181,37 +187,36 @@ window.urb.send = function(params,cb) {
   })
 }
 
-window.urb.subscribe = function(params,cb) {
-  if(!cb)
-    throw new Error("You must supply a callback to urb.subscribe.")
-  if(!params)
-    throw new Error("You must supply params to urb.subscribe.")
-  if(!params.appl) {
-    if(!urb.appl)
-      throw new Error("You must specify an appl for urb.subscribe.")
-    params.appl = urb.appl
-  }
-  if(!params.path)
-    throw new Error("You must specify a path for urb.subscribe.")
+window.urb.subscribe = function(params,cb) {   //  legacy interface
+  if(!params) throw new Error("You must supply params to urb.subscribe")
+  return window.urb.bind(params.path, params, cb)
+}
+window.urb.bind = function(path, cb){ // or bind(path, params, cb, nice-cb?)
+  var params = {appl: window.urb.appl}
+  if(arguments.length == 3){params = cb; cb = arguments[2]}
+  
+  if(!path) throw new Error("You must specify a path for urb.bind.")
+  if(!params.appl) throw new Error("You must specify an appl for urb.bind.")
+  if(!cb) throw new Error("You must supply a callback to urb.bind.")
+
+  if(path[0] !== "/") path = "/"+path
+  
+  params.path = path
   params.ship = params.ship ? params.ship : this.ship
+  params.appl = params.appl ? params.appl : this.appl
 
   var method, perm, url, $this
 
-  params.type = "sub"
-
   this.cabs[this.gsig(params)] = cb
 
-  url = [this.perms["sub"],this.user,this.port]
-  url = "/"+url.join("/")
-  method = "put"
+  url = "/~/is/"+this.gsig(params)
 
   $this = this
-  this.qreq(method,url,params,true,function(err,data) {
-    if(cb) { cb.apply(this,[err,{status: data.status, data: data.data}])}
-    if(!err && $this.puls == 0) {
-      params.type = "pol"
-      $this.poll(params)
-    }
+  this.qreq("put",url,params,true,function(err,resp) {
+    if(cb) { cb.apply(this,[err,{status: resp.status, data: resp.data}])}
+    //  XX give raw data
+    //
+    if(!err && !$this.puls) $this.poll(params)
   })
 }
 
@@ -227,14 +232,14 @@ window.urb.unsubscribe = function(params,cb) {
     throw new Error("You must specify a path for urb.unsubscribe.")
   params.ship = params.ship ? params.ship : this.ship
 
-  method = "put"
+  method = "delete"
   type = "uns"
   url = [this.perms[type],this.user,this.port]
   url = "/"+url.join("/")
 
   var $this = this
-  this.req(method,url,params,true,function(err,data) {
-    cb(err,data)
+  this.req(method,url,params,true,function(err,resp) {
+    cb(err,resp)
   })
 }
 
