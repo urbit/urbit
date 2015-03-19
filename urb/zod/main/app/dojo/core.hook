@@ -574,7 +574,7 @@
   ++  he-prom                                           ::  send prompt
     %-  he-rush
     :-  %pro
-    [& %$ (tuba (weld (scow %p our.hid) ":dojo> "))]
+    [& %$ (weld (scow %p our.hid) ":dojo> ")]
   ::
   ++  he-made                                           ::  result from ford
     |=  [pax=path rey=(each bead (list tank))]

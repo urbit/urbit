@@ -80,7 +80,7 @@
 ++  console-prompt                                      ::  prompt definition
   $:  vis=?                                             ::  command visible
       tag=term                                          ::  history mode
-      cap=(list ,@c)                                    ::  caption
+      cad=tape                                          ::  caption
   ==                                                    ::
 ++  console-input  tape                                 ::  prompt input
 ++  console-share                                       ::  symmetric state
