@@ -1054,12 +1054,20 @@
       %^  jobe  id/(jone num)  type/[%s -.ven]
       ?-  -.ven
         %news  ~[from/[%s (scot %uv p.ven)]]
-        %rush  ~[from/(jape (print-subs p.ven)) data/q.ven]
-        %mean  ~[from/(jape (print-subs p.ven)) data/(ares-to-json q.ven)]
+        %rush  ~[from/(subs-to-json p.ven) data/q.ven]
+        %mean  ~[from/(subs-to-json p.ven) data/(ares-to-json q.ven)]
       ==
     ::
-    ++  print-subs  |=([a=hasp b=path] "{<p.a>}/{(trip q.a)}{(spud b)}")
+    ++  subs-to-json
+      |=  [a=hasp b=path]
+      %-  jobe  :~
+        ship/[%s (rsh 3 1 (scot %p p.a))]
+        appl/[%s q.a] 
+        path/(jape (spud b))
+      ==
     ::
+    ::  XX unused
+    ++  print-subs  |=([a=hasp b=path] "{<p.a>}/{(trip q.a)}{(spud b)}")
     ++  wait-era  (pass-note of//[ire] [%t %wait era])
     ++  wake  ^+(..ix abet(ude ~))  ::  XX other effects?
 --  --
