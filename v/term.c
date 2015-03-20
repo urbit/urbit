@@ -673,10 +673,10 @@ _term_it_save(u3_noun pax, u3_noun pad)
 static void
 _term_io_flow(u3_utty* uty_u)
 {
-  //  u3_noun tid = u3dc("scot", c3__ud, uty_u->tid_l);
-  //  u3_noun pax = u3nq(u3_blip, c3__term, tid, u3_nul);
+  u3_noun tid = u3dc("scot", c3__ud, uty_u->tid_l);
+  u3_noun pax = u3nq(u3_blip, c3__term, tid, u3_nul);
 
-  // u3v_plan(pax, u3nq(c3__flow, c3__seat, c3__talk, u3_nul));
+  u3v_plan(pax, u3nq(c3__flow, c3__seat, c3__talk, u3_nul));
   // u3v_plan(pax, u3nt(c3__flow, c3__seat, u3_nul));
   // u3v_plan(pax, u3nq(c3__flow, c3__seat, c3__dojo, u3_nul));
   // u3v_plan(pax, u3nq(c3__flow, c3__seat, c3__helm, u3_nul));
