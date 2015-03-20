@@ -621,6 +621,12 @@
   ++  he-done                                           ::  parse command
     |=  txt=tape
     ^+  +>
+    ?~  txt
+      %-  he-rush
+      :~  %mor
+          [%txt "> "]
+          [%nex ~]
+      ==
     =+  doy=(he-duke txt)
     ?-    -.doy
         %|  (he-rush [%err p.doy])
