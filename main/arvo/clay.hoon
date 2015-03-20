@@ -353,7 +353,7 @@
            :_  $(q.p.lem t.q.p.lem)
            :-  hen
            :+  %note
-             ?-(-.q.i.q.p.lem %del '-', %ins '+', %mut ':', %dif ';')
+             ?-(-.q.i.q.p.lem %del '-', %ins '+', %mut ';', %dif ':')
            [%leaf (spud (weld pre p.i.q.p.lem))]
       ==
     ==
@@ -1165,18 +1165,37 @@
         %z  [~ %ankh !>(ank.dom)]
       ==
     ::
+    ++  new-lobes                                       ::  object hash set
+      |=  [b=(set lobe) a=(set tako)]                   ::  that aren't in b
+      ^-  (set lobe)
+      %+  roll  (~(tap in a) ~)
+      |=  [tak=tako bar=(set lobe)]
+      ^-  (set lobe)
+      =+  yak=(tako-to-yaki tak)
+      %+  roll  (~(tap by q.yak) ~)
+      =<  .(far bar)
+      |=  [[path lob=lobe] far=(set lobe)]
+      ^-  (set lobe)
+      ?~  (~(has in b) lob)                             ::  don't need
+        far
+      =+  gar=(lobe-to-blob lob)
+      ?-  -.gar
+        %direct  (~(put in far) lob)
+        %delta  (~(put in $(lob q.q.gar)) lob)
+        %indirect  (~(put in $(lob r.gar)) lob)
+      ==
+    ::
     ++  data-twixt-takos
       |=  [a=(unit tako) b=tako]
       ^-  [(set yaki) (set plop)]
-      =+  yal=(turn (~(tap in (reachable-takos b))) tako-to-yaki)
-      :-  (sa yal)
-      %-  sa    ^-  (list plop)
-      %-  zing  ^-  (list (list plop))
-      %+  turn  yal
-      |=  yak=yaki
-      %+  turn  (~(tap by q.yak))
-      |=  [pax=path lob=lobe]
-      `plop`(lobe-to-blob lob)
+      =+  old=?~(a ~ (reachable-takos u.a))
+      =+  ^-  yal=(set tako)
+          %-  sa
+          %+  skip
+            (~(tap in (reachable-takos b)))
+          |=(tak=tako (~(has in old) tak))
+      :-  (sa (turn (~(tap in yal)) tako-to-yaki))
+      (sa (turn (~(tap in (new-lobes (new-lobes ~ old) yal))) lobe-to-blob))
     ::
     ++  reachable-takos                                 ::  reachable
       |=  p=tako                                        ::  XX slow
