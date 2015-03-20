@@ -17,38 +17,39 @@
   |*  out=$+(* *)                                       ::  output structure
   $+(console-input (console-result out))                ::  output function
 ::                                                      ::
-++  console-result                                      ::  standard output
+++  console-result                                      ::  conditional result
   |*  out=$+(* *)                                       ::  output structure
-  %-  unit                                              ::  ~ is invalid
-  %-  unit                                              ::  ~ is prefix
-  %+  pair  (list tank)                                 ::
+  $|(@ud (console-product out))                         ::  error position
+::                                                      ::
+++  console-product                                     ::  success result
+  |*  out=$+(* *)                                       ::
+  %+  pair  (list tank)                                 ::  
   %+  each  (unit out)                                  ::  ~ is abort
   (pair console-prompt (console-dialog out))            ::  ask and continue
 ::                                                      ::
 ++  console-so                                          ::  construct result
   |*  pro=*                                             ::
-  [~ u=[~ u=[p=*(list tank) q=[%& p=[~ u=pro]]]]]       ::
+  [p=*(list tank) q=[%& p=[~ u=pro]]]                   ::
 ::                                                      ::
 ++  console-yo                                          ::  add output tank
   |*  [tan=tank res=(console-result)]                   ::
-  ?~  res  ~                                            ::
-  ?~  u.res  [~ u=~]                                    ::
-  [~ u=[~ u=[p=[i=tan t=p.u.u.res] q=q.u.u.res]]]       ::
+  ?@  res  res                                          ::
+  [p=[i=tan t=p.res] q=q.res]                           ::
 ::                                                      ::
 ++  console-lo                                          ::  construct prompt
   |*  [pom=console-prompt mor=(console-dialog)]         ::
-  [~ u=[~ u=[p=*(list tank) q=[%| p=pom q=mor]]]]       ::
+  [p=*(list tank) q=[%| p=pom q=mor]]                   ::
 ::                                                      ::
 ++  console-no                                          ::  empty result
-  [~ u=[~ u=[p=*(list tank) q=~]]]                      ::
+  [p=*(list tank) q=~]                                  ::
 ::                                                      ::
 ++  console-go                                          ::  parse by rule
   |*  [sef=_rule fun=$+(* *)]                           ::
   |=  txt=console-input                                 ::
-  =+  yid=(ruse txt sef)                                ::
-  ?~  yid  ~                                            ::
-  ?~  u.yid  [~ u=~]                                    ::
-  (fun u.u.yid)                                         ::
+  =+  vex=(sef [0 0] txt)                               ::
+  ?:  |(!=((lent txt) q.p.vex) ?=(~ q.vex))             ::
+    q.p.vex                                             ::
+  (fun p.u.q.vex)                                       ::
 ::                                                      ::
 ++  console-clock  ,[own=@ud his=@ud]                   ::  vector clock
 ++  console-edit                                        ::  shared state change
