@@ -1160,11 +1160,10 @@
           ::  ~&  [%yawn-told-has ost qol [our hen]]
           =+  qul=?~(qol 1 +(u.qol))
           =.  qel.sat  (~(put by qel.sat) ost qul)
-          ::  XX turn me back on!
-          ::  ?:  =(10 qul)
-          ::  ~&  [%yawn-told-full ost our hen]
-          ::  +>.$(qic.sat ~, vey.sat (~(put to vey.sat) hen %nuke p.kon))
-          +>.$(qic.sat ~)
+          ?:  =(10 qul)
+            ~&  [%yawn-told-full ost our hen]
+          +>.$(qic.sat ~, vey.sat (~(put to vey.sat) hen %nuke p.kon))
+          ::  +>.$(qic.sat ~) 
         ::
             %load
           =+  [hom=(slot 2 q.p.kon) old=(slot 3 q.p.kon)]
