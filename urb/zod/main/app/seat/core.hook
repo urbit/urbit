@@ -212,7 +212,7 @@
       +>.$
     ::
         %rush
-      ta-abet:(ta-fec:(se-tame nam) +>.sil)
+      ta-abet:ta-rap:(ta-fec:(se-tame nam) +>.sil)
     ==
   ::
   ++  ta                                                ::  per target
@@ -367,6 +367,9 @@
         %sav  +>(+> (se-blit fec))
         %txt  $(fec [%tan [%leaf p.fec]~])
       ==
+    ::
+    ++  ta-rap                                          ::  send %took
+      .(+> (se-send nam %took [her ~[nam]] her))
     ::
     ++  ta-dog                                          ::  change cursor
       |=  ted=console-edit

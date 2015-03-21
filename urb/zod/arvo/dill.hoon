@@ -282,6 +282,12 @@
           [hen %pass ~ %g %mess [our [ram ~]] our [%dill-belt -:!>(bet) bet]]
         ==
       ::
+      ++  took                                          ::  send rush ack
+        %_    .
+            moz 
+          :_(moz [hen %pass ~ %g %took [our [ram ~]] our])
+        ==
+      ::
       ++  take                                          ::  receive
         |=  sih=sign
         ^+  +>
@@ -314,8 +320,7 @@
           +>
         ::
             [%g %rush %dill-blit *]
-          =.  moz  :_(moz `move`[hen %pass ~ %g %took [our [ram ~]] our])
-          (from +>+.sih)
+          took:(from +>+.sih)
         ::
             [%t %wake *]
           ::  ~&  %dill-wake 
@@ -369,7 +374,7 @@
     =:  ore.all  `p.q.hic
         dug.all   ~
       ==
-    =^  moz  all  abet:(need (ax (need hey.all) [%flow %seat %dojo ~]))
+    =^  moz  all  abet:(need (ax (need hey.all) [%flow %seat %dojo %talk ~]))
     [moz ..^$]
   =+  nus=(ax hen q.hic)
   ?~  nus
