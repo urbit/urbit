@@ -22,6 +22,7 @@
     ++  dojo-command                                    ::
       $%  [%flat p=path q=dojo-source]                  ::  noun to unix atom
           [%pill p=path q=dojo-source]                  ::  noun to unix pill
+          ::  [%tree p=path q=dojo-source]              ::  noun to unix tree
           [%poke p=goal q=dojo-source]                  ::  make and poke
           [%show p=dojo-source]                         ::  print
           [%verb p=term q=dojo-source]                  ::  store variable
@@ -31,19 +32,18 @@
           q=dojo-build                                  ::  general build
       ==                                                ::
     ++  dojo-build                                      ::  one ford step
-      $%  ::  [%ca p=mark q=dojo-build]                 ::  cast 
-          [%ex p=twig]                                  ::  hoon expression
+      $%  [%ex p=twig]                                  ::  hoon expression
           [%di p=dojo-model]                            ::  dialog
           [%dv p=path]                                  ::  gate from source
-          [%fi p=(list dojo-filter) q=dojo-source]      ::  filter pipeline
+          [%fi p=dojo-filter q=dojo-source]             ::  filter
           [%sc p=dojo-model]                            ::  script
           [%tu p=(list dojo-source)]                    ::  tuple
           [%va p=term]                                  ::  dojo variable
       ==                                                ::
     ++  dojo-filter                                     ::  pipeline filter
-      $%  [%a p=twig]                                   ::  direct gate
+      $%  [%a p=twig]                                   ::  function gate
           [%b p=mark]                                   ::  simple transmute
-          [%c p=dojo-source]                            ::  full filter
+          [%c p=dojo-model]                             ::  formal filter
       ==                                                ::
     ++  dojo-model                                      ::  data construction 
       $:  p=dojo-server                                 ::  core source

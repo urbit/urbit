@@ -54,7 +54,7 @@
       [%sag p=path q=*]                                 ::  save to jamfile
       [%sav p=path q=@]                                 ::  save to file
   ==                                                    ::
-++  gill  ,@tas                                         ::  general contact
+++  gill  (pair ship term)                              ::  general contact
 --                                                      ::
 =>  |%                                                  ::  console protocol
 ++  axle                                                ::  all dill state
@@ -374,7 +374,8 @@
     =:  ore.all  `p.q.hic
         dug.all   ~
       ==
-    =^  moz  all  abet:(need (ax (need hey.all) [%flow %seat %dojo %talk ~]))
+    =^  moz  all  
+        abet:(need (ax (need hey.all) [%flow %seat [p.q.hic %dojo] ~]))
     [moz ..^$]
   =+  nus=(ax hen q.hic)
   ?~  nus
