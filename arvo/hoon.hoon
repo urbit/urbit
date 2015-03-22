@@ -2862,10 +2862,11 @@
 ++  rash  |*([naf=@ sab=_rule] (scan (trip naf) sab))   ::
 ++  ruse  |*  [los=tape sab=_rule]
           =+  vex=(sab [[0 0] los])
-          ?.  =((lent los) q.p.vex)  ~
+          =+  len=(lent los)
+          ?.  =(len q.p.vex)  [%| p=q.p.vex]
           ?~  q.vex
-            [~ u=~]
-          [~ u=[~ u=p.u.q.vex]]
+            [%| p=len]
+          [%& p=p.u.q.vex]
 ++  rush  |*([naf=@ sab=_rule] (rust (trip naf) sab))
 ++  rust  |*  [los=tape sab=_rule]
           =+  vex=((full sab) [[1 1] los])

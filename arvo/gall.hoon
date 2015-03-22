@@ -1162,8 +1162,8 @@
           =.  qel.sat  (~(put by qel.sat) ost qul)
           ?:  =(10 qul)
             ~&  [%yawn-told-full ost our hen]
-          +>.$(qic.sat ~, vey.sat (~(put to vey.sat) hen %nuke p.kon))
-          ::  +>.$(qic.sat ~) 
+            +>.$(qic.sat ~, vey.sat (~(put to vey.sat) hen %nuke p.kon))
+          +>.$(qic.sat ~)
         ::
             %load
           =+  [hom=(slot 2 q.p.kon) old=(slot 3 q.p.kon)]
