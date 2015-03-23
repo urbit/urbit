@@ -261,7 +261,6 @@ body {
 }
 .mess,
 .iden,
-.attr > div,
 #station .member div,
 #writing {
   display: inline-block;
