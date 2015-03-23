@@ -605,14 +605,18 @@
   ++  he-stir                                           ::  apply change
     |=  cal=console-change
     ^+  +>
+    ::  ~&  [%his-clock ler.cal]
+    ::  ~&  [%our-clock ven.say]
     =^  dat  say  (~(transceive cs say) cal)
     ?.  ?&  ?=(%del -.dat)
-            =(+(p.dat) (lent buf.say))
+            ::  =(+(p.dat) (lent buf.say))
         ==
       +>.$
     =+  foy=(he-dope (tufa buf.say))
     ?:  ?=(%& -.foy)  +>.$
+    ::  ~&  [%bad-change dat ted.cal]
     =^  lic  say  (~(transmit cs say) dat)
+    ::  ~&  [%our-leg leg.say]
     (he-rush %mor [%det lic] [%err q.p.foy] ~)
   ::
   ++  he-plan                                           ::  execute command

@@ -73,7 +73,7 @@
   ++  commit                                            ::  local change
     |=  ted=console-edit
     ^-  console-share
-    abet:(apply(own.ven +(own.ven)) ted)
+    abet:(apply(own.ven +(own.ven), leg [ted leg]) ted)
   ::
   ::::
   ::  ++inverse: inverse of change in context.
@@ -106,7 +106,9 @@
     ?>  &(=(his.ler his.ven) (lte own.ler own.ven))
     ?>  |(!=(own.ler own.ven) =(haw (sham buf)))
     =.  leg  (scag (sub own.ven own.ler) leg)
+    ::  ~?  !=(own.ler own.ven)  [%miss-leg leg]
     =+  dat=(transmute [%mor leg] ted)
+    ::  ~?  !=(~ leg)  [%transmute from/ted to/dat ~]
     [dat abet:(apply(his.ven +(his.ven)) dat)]
   ::
   ++  remit                                             ::  conditional accept
