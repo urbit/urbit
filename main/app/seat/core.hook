@@ -146,7 +146,7 @@
   ++  se-nuke                                           ::  active drop
     |=  gyl=gill
     ^+  +>
-    (se-drop:(se-send gyl %nuke [p.gyl ~[q.gyl]] her) gyl)
+    (se-drop:(se-send(liv.maz |) gyl %nuke [p.gyl ~[q.gyl]] her) gyl)
   ::
   ++  se-like                                           ::  act in master
     |=  kus=ukase
