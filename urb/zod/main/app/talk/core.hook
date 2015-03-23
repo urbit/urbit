@@ -595,11 +595,17 @@
 ++  peer
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
-  =+  nuv=(novel ost ~)
-  ?~  nuv  
-    :_  +>.$
-    [ost %give %rush %console-effect %pro & %$ "no story "]~
-  sy-abet:sy-awake:u.nuv
+  :_  +>  :_  ~
+  :*  ost
+      %give
+      %rush
+      %console-effect
+      %pro
+      &
+      %talk
+      =+  nuv=(novel ost ~)
+      ?~(nuv "no story" (sy-prompt:u.nuv q.mike.u.nuv))
+  ==
 ::
 ++  submit
   |=  [ost=bone txt=cord]
