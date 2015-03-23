@@ -560,6 +560,10 @@
     ^+  +>
     (he-give %rush %console-effect fec)
   ::
+  ++  he-stop                                           ::  abort work
+    ^+  .
+    ?~(poy . ~(dy-stop dy u.poy))
+  ::
   ++  he-peer                                           ::  subscribe to
     he-prom
   ::
@@ -689,4 +693,11 @@
     ~&  [%dojo-pour sih]
     [~ +>.$]
   ==
+::
+++  pull
+  |=  ost=bone
+  ^-  [(list move) _+>]
+  =^  moz  +>
+    he-abet:~(he-stop he [[ost ~] (~(got by hoc) ost)])
+  [moz +>.$(hoc (~(del by hoc) ost))]
 --
