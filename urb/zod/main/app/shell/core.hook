@@ -14,7 +14,7 @@
       tiv=?                                             ::  typing?
       wit=[p=@u q=(map ,@u coma)]                       ::  waiting commands
       pid=@u                                            ::  next process id
-      pax=_`path`/=try=                                 ::  working directory
+      pax=_`path`/=main=/try                            ::  working directory
       act=(unit span)                                   ::  active child
       pip=(jar span span)                               ::  pipe out->in
       pop=(jar span span)                               ::  pipe in->out
