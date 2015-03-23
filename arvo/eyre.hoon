@@ -24,8 +24,8 @@
           $%  [%born ~]                                 ::  new unix process
               [%crud p=@tas q=(list tank)]              ::  XX rethink
               [%init p=@p]                              ::  report install
-::               [%them p=(unit hiss)]                     ::  outbound request
-::               [%they p=@ud q=httr]                      ::  inbound response
+              [%them p=(unit hiss)]                     ::  outbound request
+              [%they p=@ud q=httr]                      ::  inbound response
               [%this p=? q=clip r=httq]                 ::  inbound request
               [%thud ~]                                 ::  inbound cancel
               [%wart p=sack q=@tas r=_`[path *]`*gram]  ::  urbit message
@@ -112,6 +112,8 @@
       hov=(unit ship)                                   ::  master for remote
       ged=duct                                          ::  client interface
       pox=(map ,@uvH duct)                              ::  proxied sessions
+      ask=[p=@ud q=(map ,@ud ,[p=duct q=hiss])]         ::  outgoing by number
+      kes=(map duct ,@ud)                               ::  outgoing by duct
       ney=@uvI                                          ::  rolling entropy
       dop=(map host ship)                               ::  host aliasing
       liz=(jug ,@uvH (each duct ixor))                  ::  ford depsets
@@ -473,6 +475,30 @@
       =+  han=(sham hen)
       =.  pox  (~(put by pox) han hen)
       (ames-gram u.her [%get ~] han +.kyz)
+    ::
+        %them                                           ::  outbound request
+      ?~  p.kyz
+        =+  sud=(need (~(get by kes) hen))
+        %=  +>.$
+          mow    :_(mow [ged [%give %thus sud ~]])
+          q.ask  (~(del by q.ask) sud)
+          kes    (~(del by kes) hen)
+        ==
+      ::  ~&  eyre-them/(earn p.u.p.kyz)
+      %=  +>.$
+        mow    :_(mow [ged [%give %thus p.ask p.kyz]])
+        p.ask  +(p.ask)
+        q.ask  (~(put by q.ask) p.ask hen u.p.kyz)
+        kes    (~(put by kes) hen p.ask)
+      ==
+    ::
+        %they                                           ::  inbound response
+      =+  kas=(need (~(get by q.ask) p.kyz))
+      ::  ~&  >  eyre-they/[p.q.kyz (earn p.q.kas)]
+      %=  +>.$
+        mow    :_(mow [p.kas [%give %thou q.kyz]])
+        q.ask  (~(del by q.ask) p.kas)
+      ==
     ::
         %thud                                           ::  cancel request
       ~&  e/gone/hen
@@ -931,6 +957,7 @@
       ?^  lig
         =+  cyz=(~(got by wup) u.lig)
         ~(. ya u.lig cyz(cug ~))
+      =.  ..ya  adit                      ::  XX necessary?
       =+  ses=(rsh 3 1 (scot %p (end 6 1 ney)))
       ~(. ya ses (ses-cyst ses))
     ::
