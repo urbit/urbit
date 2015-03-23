@@ -54,9 +54,6 @@
           $?  $:  %a                                    ::  from %ames
           $%  [%went p=ship q=cape]                     ::
           ==  ==                                        ::
-              $:  %e                                    ::  from %eyre
-          $%  [%thou p=httr]                            ::
-          ==  ==                                        ::
               $:  %g                                    ::  from %gall
           $%  [%mean p=ares]                            ::
               [%nice ~]                                 ::
@@ -1823,7 +1820,6 @@
     ?-  +<.sih
         %crud  [[[hen [%slip %d %flog +.sih]] ~] +>]
         %went  [~ +>]
-        %thou  ~|(a/%eyre-stub !!)
         ?(%mean %nice)
       ?:  ?=([%ye ~] tea)
         [~ +>.$]

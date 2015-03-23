@@ -15,6 +15,8 @@
   $?  [[%lon ~] p=hole]                                 ::  login request
       [[%aut ~] p=hole]                                 ::  login reply
       [[%hat ~] p=hole q=hart]                          ::  login redirect
+      [[%get ~] p=@uvH q=[? clip httq]]                 ::  remote request
+      [[%got ~] p=@uvH q=httr]                          ::  remote response
   ==                                                    ::
 ++  hasp  ,[p=ship q=term]                              ::  don't see %gall
 ++  hapt  ,[p=ship q=path]                              ::  do see %gall
@@ -35,6 +37,9 @@
           ==  ==                                        ::
               $:  %d                                    ::  to %dill
           $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::
+          ==  ==                                        ::
+              $:  %e                                    ::  to self
+          $%  [%this p=? q=clip r=httq]                 ::  proxied request
           ==  ==                                        ::
               $:  %f                                    ::  to %ford
           $%  [%exec p=@p q=(unit silk)]                ::
@@ -67,7 +72,10 @@
               [%vega p=path]                            ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
-          $?  $:  %f                                    ::  by %ford
+          $?  $:  %e                                    ::  by self
+          $%  [%thou p=httr]                            ::  response for proxy
+          ==  ==                                        ::
+              $:  %f                                    ::  by %ford
           $%  [%made p=@uvH q=(each cage tang)]         ::
               [%news ~]                                 ::
           ==  ==                                        ::
@@ -87,6 +95,7 @@
 ++  ixor  ,@t                                           ::  oryx hash
 ++  whir  $|  ~                                         ::  wire subset
           $%  [%at p=hole q=whir]                       ::  authenticated
+              [%ay p=span:ship q=span:,@uvH ~]          ::  remote duct
               [%of p=ixor ~]                            ::  associated view
               [%on p=span:,@uvH ~]                      ::  dependency
               [%to p=span:hasp q=span:ship ~]           ::  associated poke
@@ -99,6 +108,7 @@
       gub=@t                                            ::  random identity
       hov=(unit ship)                                   ::  master for remote
       ged=duct                                          ::  client interface
+      pox=(map ,@uvH duct)                              ::  proxied sessions
       ney=@uvI                                          ::  rolling entropy
       dop=(map host ship)                               ::  host aliasing
       liz=(jug ,@uvH (each duct ixor))                  ::  ford depsets
@@ -347,13 +357,15 @@
   ++  axon                                              ::  accept response
     |=  [tee=whir typ=type sih=sign]
     ^+  +>
-    ~?  ?=(%g -.sih)  e/+<.sih
+    ~?  ?=(%g -.sih)  e/&2.sih
     =.  our  ?~(hov our u.hov)  ::  XX
-    ?-    -.+.sih
-        %crud
-      +>.$(mow [[hen %slip %d %flog +.sih] mow])
-    ::
+    ?-    &2.sih
+        %crud  +>.$(mow [[hen %slip %d %flog +.sih] mow])
         %dumb  ~|(%gall-stub !!)
+        %thou
+      ?>  ?=([%ay ^] tee)
+      (ames-gram (slav %p p.tee) got/~ (slav %uv q.tee) |2.sih)
+    ::
         ?(%rush %rust)
       ?>  ?=([%is ^] tee)
       %-  ~(get-even ix p.tee (~(got by wix) p.tee))
@@ -384,7 +396,7 @@
       =.  our  (need hov)                             ::  XX
       |-  ^+  ..axon
       ?-    tee
-          [?(%of %on) *]  ~|(e/ford/lost/-.tee !!)
+          [?(%of %on %ay) *]  ~|(e/ford/lost/-.tee !!)
           [%is ^]
         %+  ~(get-rush ix p.tee (~(got by wix) p.tee))
           [(pick-hasp q.tee) r.tee]
@@ -451,7 +463,12 @@
                [[sec (rash i.hot thor:epur)] p.ryp q.ryp]
           ==
       =.  p.p.pul  |(p.p.pul ?=(hoke r.p.pul))
-      abet:~(handle rq pul [anon q.+.kyz] [p.heq maf s.heq])
+      =+  her=(host-to-ship r.p.pul)
+      ?:  |(?=(~ her) =(our u.her))
+        abet:~(handle rq pul [anon q.+.kyz] [p.heq maf s.heq])
+      =+  han=(sham hen)
+      =.  pox  (~(put by pox) han hen)
+      (ames-gram u.her [%get ~] han +.kyz)
     ::
         %thud                                           ::  cancel request
       ~&  e/gone/hen
@@ -471,6 +488,16 @@
             (ames-gram q.p.kyz aut/~ p.u.mez)
           =.  sop  (~(put by sop) p.u.mez q.p.kyz |)
           (ames-gram q.p.kyz hat/~ p.u.mez our-host)
+      ::
+        %get
+          %+  pass-note  ay//(scot %p q.p.kyz)/(scot %uv p.u.mez)
+          [%e %this q.u.mez]
+      ::
+        %got
+          =:  hen  (~(got by pox) p.u.mez)
+              pox  (~(del by pox) p.u.mez)
+            ==
+          (give-gift %thou q.u.mez)
       ==
     ==
   ::
@@ -972,8 +999,10 @@
       |=  [him=ship hat=hart]  ^+  ..ya
       ~|  way
       =^  pul  hen  (~(got by way) him)
-      =.  way  (~(del by way) him)
-      =.  q.q.pul  ['~' %am ses q.q.pul]
+      =:  way       (~(del by way) him)
+          dop       (~(put by dop) r.hat him)  
+          q.q.pul   ['~' %am ses q.q.pul]
+        ==
       =+  url=(welp (earn pul(p hat)) '#' (head:earn p.pul))
       %-  give-gift
       %+  add-cookies  cug
@@ -1108,9 +1137,9 @@
   ~
 ::
 ++  load                                                ::  clam previous state
-  |=  old=_[%0 gub hov ged ney dop liz wup sop wix=**]
+  |=  old=bolo ::_[%0 gub hov ged ney dop liz wup sop wix=**]
   ^+  ..^$
-  ..^$(+>- (bolo old))
+  ..^$(+>- old)
 ::
 ++  scry
   |=  [our=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
