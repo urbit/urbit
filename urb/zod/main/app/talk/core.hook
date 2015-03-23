@@ -595,7 +595,7 @@
 ++  peer
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
-  ~?  !=(you our.hid)  [%talk-peer ost her pax]
+  ~?  !=(you our.hid)  [%talk-peer ost you pax]
   :_  +>  :_  ~
   :*  ost
       %give
