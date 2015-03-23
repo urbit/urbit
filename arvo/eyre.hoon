@@ -72,7 +72,10 @@
               [%vega p=path]                            ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
-          $?  $:  %e                                    ::  by self
+          $?  $:  %a                                    ::  by %ames
+          $%  [%went p=ship q=cape]                     ::
+          ==  ==                                        ::
+              $:  %e                                    ::  by self
           $%  [%thou p=httr]                            ::  response for proxy
           ==  ==                                        ::
               $:  %f                                    ::  by %ford
@@ -362,6 +365,7 @@
     ?-    &2.sih
         %crud  +>.$(mow [[hen %slip %d %flog +.sih] mow])
         %dumb  ~|(%gall-stub !!)
+        %went  +>.$
         %thou
       ?>  ?=([%ay ^] tee)
       (ames-gram (slav %p p.tee) got/~ (slav %uv q.tee) |2.sih)
