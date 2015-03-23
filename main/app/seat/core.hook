@@ -287,11 +287,11 @@
         feg  (~(put by feg) gyl +<+) 
       ==
     ::
-    ++  ta-act                                          ::  send ukase
+    ++  ta-act                                          ::  send action
       |=  act=console-action
       ^+  +>
       ?:  mav  
-        +>
+        +>.$
       %_    +> 
           +> 
         (se-send gyl %mess [p.gyl ~[q.gyl]] her %console-action !>(act))
