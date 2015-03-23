@@ -111,7 +111,7 @@
     ?:  ?=(%yow -.bet)
       (se-link p.bet)
     =+  gyl=?^(apt i.apt [~zod %$])
-    =+  taz=~(. ta [& gyl] ?:(liv.maz tar.maz (~(got by feg) gyl)))
+    =+  taz=~(. ta [& liv.maz gyl] ?:(liv.maz tar.maz (~(got by feg) gyl)))
     =<  ta-abet
     ?-  -.bet
       %aro  (ta-aro:taz p.bet)
@@ -130,17 +130,10 @@
     =<  se-prom
     ?>  (~(has by feg) gyl)
     %_  +>
-      feg  (~(del by feg) gyl)
-      apt  (skip apt |=(a=gill =(gyl a)))
+      feg      (~(del by feg) gyl)
+      apt      (skip apt |=(a=gill =(gyl a)))
+      liv.maz  ?~(apt & liv.maz)
     ==
-  ::
-  ++  ruse  |*  [los=tape sab=_rule]                    ::  XX
-            =+  vex=(sab [[0 0] los])
-            =+  len=(lent los)
-            ?.  =(len q.p.vex)  [%| p=q.p.vex]
-            ?~  q.vex
-              [%| p=len]
-            [%& p=p.u.q.vex]
   ::
   ++  se-join                                           ::  add connection
     |=  gyl=gill
@@ -166,7 +159,7 @@
         %del
       |-  ^+  +>.^$
       ?~  p.kus  +>.^$
-      $(p.kus t.p.kus, +>.^$ (se-drop i.p.kus))
+      $(p.kus t.p.kus, +>.^$ (se-nuke i.p.kus))
     ==
   ::
   ++  se-prom                                           ::  set master prompt
@@ -221,10 +214,11 @@
   ::
   ++  se-view                                           ::  flush buffer
     ?:  liv.maz
-      (se-just ~(ta-vew ta [& ~zod %$] tar.maz))
-    ?~  apt  .
+      (se-just ~(ta-vew ta [& & ~zod %$] tar.maz))
+    ?~  apt  
+      se-view(liv.maz &)
     %-  se-just
-    ~(ta-vew ta [& i.apt] (~(got by feg) i.apt))
+    ~(ta-vew ta [& | i.apt] (~(got by feg) i.apt))
   ::
   ++  se-kill                                           ::  kill a source
     =+  tup=apt
@@ -243,7 +237,7 @@
   ++  se-tame
     |=  gyl=gill
     ^+  ta
-    ~(. ta [& gyl] (~(got by feg) gyl))
+    ~(. ta [& %| gyl] (~(got by feg) gyl))
   ::
   ++  se-pour                                           ::  receive results
     |=  [gyl=gill sil=sign-gall]
@@ -261,13 +255,15 @@
   ::
   ++  ta                                                ::  per target
     |_  $:  $:  liv=?                                   ::  don't delete
+                mav=?                                   ::  showing master
                 gyl=gill                                ::  target app
             ==                                          ::
             target                                      ::  target state
         ==                                              ::
     ++  ta-abet                                         ::  resolve
       ^+  ..ta
-      ?:  liv.maz
+      =.  liv.maz  mav
+      ?:  mav
         ?.  liv
           (se-emit ost %give %mean ~)
         +>(tar.maz +<+)
@@ -278,23 +274,24 @@
     ::
     ++  ta-ant                                          ::  toggle master
       ^+  .
-      ?:  liv.maz
+      ?:  mav
         ?~  apt  ta-bel
         %_  .
-          liv.maz  |
+          mav      |
           +<+      (~(got by feg) gyl)
           tar.maz  +<+
         ==
       %_  .
-        liv.maz  &
-        +<+      tar.maz
-        feg      (~(put by feg) gyl +<+) 
+        mav  &
+        +<+  tar.maz
+        feg  (~(put by feg) gyl +<+) 
       ==
     ::
     ++  ta-act                                          ::  send ukase
       |=  act=console-action
       ^+  +>
-      ?:  liv.maz  +>
+      ?:  mav  
+        +>
       %_    +> 
           +> 
         (se-send gyl %mess [p.gyl ~[q.gyl]] her %console-action !>(act))
@@ -394,7 +391,7 @@
               (ta-cut 0 pos.inp)
           %v  ta-ant
           %x  ?:  =(~ apt)  ta-bel
-              ?:  liv.maz  ta-bel
+              ?:  mav  ta-bel
               +>(apt (welp (slag 1 apt) [(snag 0 apt) ~]))
           %y  ?~  kil  ta-bel 
               %-  ta-hom(pos.inp (add pos.inp (lent u.kil)))
@@ -503,7 +500,7 @@
       +>(pom pom)
     ::
     ++  ta-ret                                          ::  hear return
-      ?.  liv.maz
+      ?.  mav
         (ta-act %ret ~)
       =+  fey=(ruse (tufa buf.say.inp) sp-ukase:sp)
       ?-  -.fey
