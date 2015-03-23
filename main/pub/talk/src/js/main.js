@@ -268,7 +268,7 @@ Message = recl({
           onClick: this._handlePm
         }, Member({
           ship: this.props.ship
-        }, "")), br({}, ""), div({
+        }, "")), div({
           className: "time"
         }, this.convTime(this.props.thought.statement.date))
       ]), div({

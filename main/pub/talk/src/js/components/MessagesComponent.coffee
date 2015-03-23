@@ -41,7 +41,6 @@ Message = recl
         (div {className:"attr"}, [
           div {onClick:@_handleAudi,className:"audi"}, "#{audi}"
           (div {onClick:@_handlePm}, (Member {ship:@props.ship}, ""))
-          (br {},"")
           div {className:"time"}, @convTime @props.thought.statement.date
         ])
         div {className:"mess"}, @props.thought.statement.speech.lin.txt
