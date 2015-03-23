@@ -120,7 +120,8 @@
           $:  fat=(map ship room)                       ::  domestic
               hoy=(map ship rung)                       ::  foreign
               ran=rang                                  ::  hashes
-              sor=(map ,[p=@p q=@tas r=@p s=@tas] duct) ::  upstreams
+              $=  sor                                   ::  upstreams
+              (map ,[p=@p q=@tas r=@p s=@tas] ,[let=@ud hen=duct])
           ==                                            ::
 ++  rave                                                ::  general request
           $%  [& p=mood]                                ::  single request
@@ -2028,7 +2029,7 @@
   ?-    -.q.hic
       %font
     ?:  (~(has by sor.ruf) +.q.hic)  `..^$
-    :_  ..^$(sor.ruf (~(put by sor.ruf) +.q.hic hen))
+    :_  ..^$(sor.ruf (~(put by sor.ruf) +.q.hic [0 hen]))
     ::  XX  pass %merg and handle response
     :~  ^-  move
         :*  hen  %pass
@@ -2104,13 +2105,9 @@
       %plug
     ?.  (~(has by sor.ruf) +.q.hic)  `..^$
     :_  ..^$(sor.ruf (~(del by sor.ruf) +.q.hic))
-    =+  hyn=(~(got by sor.ruf) +.q.hic)
+    =+  hyn=hen:(~(got by sor.ruf) +.q.hic)
     :~  :*  hyn  %pass
-            /auto/(scot %p p.q.hic)/[q.q.hic]/(scot %p r.q.hic)/[s.q.hic]/y
-            %c  %warp  [p.q.hic r.q.hic]  s.q.hic  ~
-        ==
-        :*  hyn  %pass
-            /auto/(scot %p p.q.hic)/[q.q.hic]/(scot %p r.q.hic)/[s.q.hic]/v
+            /auto/(scot %p p.q.hic)/[q.q.hic]/(scot %p r.q.hic)/[s.q.hic]
             %c  %warp  [p.q.hic r.q.hic]  s.q.hic  ~
         ==
     ==
@@ -2190,6 +2187,28 @@
     =+  wao=abet:(route:(me:ze:wex her sud) sat dat)
     =+  woo=abet:wao
     [(weld -.wak -.woo) ..^$(ruf abet:(pish:une syd +.woo ran.wao))]
+  ?:  ?=([%auto @ @ @ @ ~] tea)
+    =+  our=(slav %p i.t.tea)
+    =*  syd  i.t.t.tea
+    =+  her=(slav %p i.t.t.t.tea)
+    =*  sud  i.t.t.t.t.tea
+    ?+    +<.q.hin  ~|(%weird-auto !!)
+        %mere
+      =+  nex=+(let:(~(got by sor.ruf) our syd her sud))
+      =.  sor.ruf  (~(put by sor.ruf) [our syd her sud] [nex hen])
+      =+  `move`[hen %pass tea %c %warp [our her] sud ~ %& %y [%ud nex] /]
+      ?:  ?=(%& -.p.+.q.hin)
+        ~&  ['merge succeeded' p.p.+.q.hin]
+        [[- ~] ..^$]
+      ~&  :+  'merge failed'
+            p.p.p.+.q.hin
+          (turn q.p.p.+.q.hin |=(tank ~(ram re +<)))
+      [[- ~] ..^$]
+    ::
+        %writ
+      =+  nex=let:(~(got by sor.ruf) our syd her sud)
+      [[hen %pass tea %c %merg our syd her sud %mate]~ ..^$]
+    ==
   ?-    -.+.q.hin
       %crud
     [[[hen %slip %d %flog +.q.hin] ~] ..^$]
@@ -2264,15 +2283,7 @@
       [mos ..^$(ran.ruf ran.zat)]
     ==
   ::
-      %mere
-    ?:  ?=(%& -.p.+.q.hin)
-      ~&  ['merge succeeded' p.p.+.q.hin]
-      [~ ..^$]
-    ~&  :+  'merge failed'
-          p.p.p.+.q.hin
-        (turn q.p.p.+.q.hin |=(tank ~(ram re +<)))
-    [~ ..^$]
-  ::
+      %mere  !!
       %waft
     ?>  ?=([@ @ ~] tea)
     =+  syd=(slav %tas i.tea)
