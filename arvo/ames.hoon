@@ -631,12 +631,12 @@
             =^  gim  ..weft  wisp
             :_  +>.$
             ^-  (list rock)
-            =+  wit=(met ?:(fak.ton 18 13) q.gim)
+            =+  wit=(met ?:(fak.ton 16 13) q.gim)
             ?<  =(0 wit)
             ?:  =(1 wit)
               =+  yup=(spit [our her] p.gim q.gim)
               [yup ~]
-            =+  ruv=(rip ?:(fak.ton 18 13) q.gim)
+            =+  ruv=(rip ?:(fak.ton 16 13) q.gim)
             =+  gom=(shaf %thug q.gim)
             =+  inx=0
             |-  ^-  (list rock)
@@ -1409,7 +1409,7 @@
             =+  [nix=0 rax=*(list ,@)]
             |-  ^-  @
             ?:  =(p.duv nix)
-              (can ?:(fak.ton.fox 18 13) (turn (flop rax) |=(a=@ [1 a])))
+              (can ?:(fak.ton.fox 16 13) (turn (flop rax) |=(a=@ [1 a])))
             $(nix +(nix), rax [(need (~(get by q.duv) nix)) rax])
           --                                            ::  --la:ho:um:am
         ::
