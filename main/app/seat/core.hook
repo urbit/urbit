@@ -81,12 +81,11 @@
       ::
       ++  sp-gills
         ;~  pose
+          (most ;~(plug com ace) sp-gill)
           %+  cook
             |=  a=ship
             [[a %dojo] [a %talk] ~]
           ;~(pfix sig fed:ag)
-        ::
-          (most ;~(plug com ace) sp-gill)
         ==
       ::
       ++  sp-gill
@@ -591,7 +590,7 @@
         :*  %&
             *(unit search)
             *history
-            `console-prompt`[%& %seat "{(scow %p our.hid)} #"]
+            `console-prompt`[%& %seat "{(scow %p our.hid)}# "]
             *console-command
         ==
         ~

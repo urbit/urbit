@@ -394,7 +394,6 @@
       ^+  +>
       ?-    -.mad
           %poke       
-        ~&  [%dy-over-poke p.mad]
         %-  he-pass(poy ~)
         :*  /poke
             %g
@@ -661,9 +660,10 @@
 ++  peer
   |=  [ost=bone her=ship pax=path]
   ^-  [(list move) _+>]
+  ~?  !=(her our.hid)  [%dojo-peer ost her pax]
   ?<  (~(has by hoc) ost)
   ?>  =(/console pax)
-  ?>  =(her our.hid)
+  ::  ?>  =(her our.hid)
   =<  he-abet
   %~  he-peer  he
   :-  [ost ~]
@@ -679,6 +679,7 @@
 ++  poke-console-action
   |=  [ost=bone her=ship act=console-action]
   ^-  [(list move) _+>]
+  ::  ~?  !=(her our.hid)  [%dojo-poke ost her]
   he-abet:(~(he-type he [ost [ost %give %nice ~]~] (~(got by hoc) ost)) act)
 ::
 ++  pour
@@ -690,7 +691,6 @@
     he-abet:(~(he-made he [[ost ~] (~(got by hoc) ost)]) pax +>.sih)
   ::
       %g
-    ~&  [%dojo-pour sih]
     [~ +>.$]
   ==
 ::
