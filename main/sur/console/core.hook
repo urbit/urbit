@@ -110,5 +110,5 @@
       [%sag p=path q=*]                                 ::  save to jamfile
       [%sav p=path q=@]                                 ::  save to file
   ==                                                    ::
-++  gill  ,@tas                                         ::  general contact
+++  gill  (pair ship term)                              ::  general contact
 --

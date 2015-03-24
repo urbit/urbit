@@ -11,11 +11,11 @@
 =>  |%                                                  ::  structures
     ++  town                                            ::  all client state
       $:  %0                                            ::  version
-          seat=console-share                            ::  command lines
+          say=console-share                            ::  command lines
           live=(unit span)                              ::  present story
           stories=(map span story)                      ::  all stories
       ==                                                ::
-    ++  grip                                            ::  subscription state
+    ++  grip                                            :: synchronized state
       |*  nub=$+(* *)                                   ::  wrapped state
       $|  $?  %warm                                     ::  activated
               %cool                                     ::  activating
@@ -131,7 +131,7 @@
         |=(tep=tape (hy-display [%leaf tep]~))
       ::
       ++  hy-accept                                     ::  set prompt
-        |=(asq=cord (hy-general %pro & %gar (tuba (trip asq))))
+        |=(asq=cord (hy-general %pro & %gar (trip asq)))
       --
     ::
     ++  parse                                           ::  command parser
@@ -595,11 +595,18 @@
 ++  peer
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
-  =+  nuv=(novel ost ~)
-  ?~  nuv  
-    :_  +>.$
-    [ost %give %rush %console-effect %pro & %$ (tuba "no story ")]~
-  sy-abet:sy-awake:u.nuv
+  ~?  !=(you our.hid)  [%talk-peer ost you pax]
+  :_  +>  :_  ~
+  :*  ost
+      %give
+      %rush
+      %console-effect
+      %pro
+      &
+      %talk
+      =+  nuv=(novel ost ~)
+      ?~(nuv "no story" (sy-prompt:u.nuv q.mike.u.nuv))
+  ==
 ::
 ++  submit
   |=  [ost=bone txt=cord]
@@ -675,11 +682,11 @@
 ++  poke-console-action
   |=  [ost=bone her=ship act=console-action]
   =+  moz=`(list move)`[ost %give %nice ~]~
-  ?+  -.act  [moz +>.$]
-    %det  [moz +>.$(seat abet:(~(receive cs seat) `console-change`+.act))]
-    %ret  =+  sed=buf.seat
+  ?-  -.act
+    %det  [moz +>.$(say +:(~(receive cs say) `console-change`+.act))]
+    %ret  =+  sed=buf.say
           =^  zom  +>.$  (submit ost (crip (tufa sed)))
-          =^  cal  seat  =<([- abet:+] (~(transmit cs seat) [%set ~]))
+          =^  cal  say  (~(transmit cs say) [%set ~])
           :_  +>.$
           :*  [ost %give %rush %console-effect %nex ~]
               [ost %give %rush %console-effect %det cal]

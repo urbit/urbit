@@ -259,8 +259,8 @@
       |=  [pax=path hen=duct hin=(hypo sign)]           ::
       ^-  [p=(list move) q=_..^$]
       ?:  ?=(%crud +<.q.hin)
-        ::  ~&  [%gall-crud-error pax hen]
-        ::  ~&  [%gall-crud-data (,[@tas (list tank)] +>.q.hin)]
+        ~&  [%gall-crud-error pax hen]
+        ~&  [%gall-crud-data (,[@tas (list tank)] +>.q.hin)]
         ?>  ?=(%g -.q.hin)
         ?~  pax  ~&  %strange-path  [~ ..^$]
         =+  lum=(lump t.pax)
@@ -435,8 +435,10 @@
   :_  ..^$
   =+  rod=|=(ron=roon `note`[%a %wont [our you] [%q %gh imp] num ron])
   ?+  -.pax  !!
-    %m  ?:  ?=(%a -.sih)  ~
-        ?+    -.sih  ~&  [%gall-gave-m -.sih]  !!
+    %z  ?+    -.sih  !!
+            %a  :_  ~  :-  hen
+                [%pass [%r pax] %g %took [our imp] you]
+        ::
             %f
           :_  ~  :-  hen
           ?-  -.p.+.sih
@@ -444,27 +446,6 @@
             %&  [%pass [%r pax] %g %mess [our imp] you `cage`q.p.p.+.sih]
           ==
         ::
-            %g
-          :_  ~  :-  hen
-          ?-  -.+.sih
-            %crud  !!
-            %dumb  !!
-            %gone  !!
-            %init  !!
-            %logo  !!
-            %mean  [%give %mean p.+.sih]
-            %nice  [%give %nice ~]
-            %rush  !!
-            %rust  !!
-            %sage  !!
-            %verb  !!
-            %veer  !!
-            %vega  !!
-          ==
-        ==
-    %s  ?+    -.sih  !!
-            %a  :_  ~  :-  hen
-                [%pass [%r pax] %g %took [our imp] you]
             %g
           :_  ~  :-  hen
           ?-  -.+.sih
@@ -511,7 +492,8 @@
   ^-  move  :-  hen
   :+  %pass
     :*  %r
-        ?-(-.rok %m %m, %s %s, %u %s)
+        ::  ?-(-.rok %m %m, %s %s, %u %s)
+        %z
         (scot %p p.saq)
         (scot %p q.saq)
         (scot %ud num)
@@ -1160,10 +1142,9 @@
           ::  ~&  [%yawn-told-has ost qol [our hen]]
           =+  qul=?~(qol 1 +(u.qol))
           =.  qel.sat  (~(put by qel.sat) ost qul)
-          ::  XX turn me back on!
-          ::  ?:  =(10 qul)
-          ::  ~&  [%yawn-told-full ost our hen]
-          ::  +>.$(qic.sat ~, vey.sat (~(put to vey.sat) hen %nuke p.kon))
+          ?:  =(10 qul)
+            ~&  [%yawn-told-full ost our hen]
+            +>.$(qic.sat ~, vey.sat (~(put to vey.sat) hen %nuke p.kon))
           +>.$(qic.sat ~)
         ::
             %load
