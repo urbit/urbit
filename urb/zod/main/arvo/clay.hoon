@@ -506,15 +506,19 @@
   ++  take-patch
     |=  res=(each bead (list tank))
     ^+  +>
+    ~&  >  %taking-patch
     ?:  ?=(%| -.res)
       %_    +>.$
           dok  ~
           yel
         [[hen %note '!' %rose [" " "" ""] leaf/"clay patch failed" p.res] yel]
       ==
+    ~&  >  %editing
     =^  hat  +>.$
       (edit:ze now %& *cart ?~(dok ~|(%no-changes !!) sot.u.dok))
+    ~&  >  %edited
     =.  +>.$  wake
+    ~&  >  %woked
     ?~  dok  ~&  %no-dok  +>.$
     ?^  lon.u.dok  ~&  %not-done-diffing  !!
     =>
@@ -886,7 +890,9 @@
         ==
       =+  nao=(case-to-aeon:ze q.p.q.i.xiq)
       ?~  nao  $(xiq t.xiq, xaq [i.xiq xaq])
+      ~&  >  %reading-at-aeon
       =+  vid=(read-at-aeon:ze u.nao p.q.i.xiq)
+      ~&  >  %red-at-aeon
       ?~  vid  ~&  %':( oh well'  $(xiq t.xiq, xaq [i.xiq xaq])
       $(xiq t.xiq, ..wake (balk p.i.xiq u.vid p.q.i.xiq))
     ::
@@ -896,6 +902,7 @@
       ?~  nab
         $(xiq t.xiq, xaq [i.xiq xaq])
       =+  huy=(case-to-aeon:ze q.mot)
+      ~&  >>  [%shipping p.i.xiq [p q r]:p.q.i.xiq]
       ?~  huy
         =+  ptr=[%ud +(let.dom)]
         %=  $
@@ -938,9 +945,10 @@
           ?:  =(let.dom 0)
             ~
           q:(aeon-to-yaki let.dom)
-      ?:  =([~ lob] (~(get by hat) pax))
-        [%done ~ (need (read %x [%ud let.dom] pax))]
+      =+  bol=(~(get by hat) pax)
       |-  ^-  silk
+      ?:  =([~ lob] bol)
+        [%done ~ (need (read %x [%ud let.dom] pax))]
       =+  bol=(~(got by lat.ran) lob)
       ?-  -.bol
         %direct     [%volt ~ q.bol]
@@ -1158,6 +1166,8 @@
     ++  make-nako
       |=  [a=aeon b=aeon]
       ^-  nako
+      ~&  >  %making-nako
+      =-  ~&  >  %made-nako  -
       :+  hit.dom
         let.dom
       (data-twixt-takos (~(get by hit.dom) a) (aeon-to-tako b))
