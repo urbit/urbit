@@ -609,7 +609,7 @@
     ::  ~&  [%our-clock ven.say]
     =^  dat  say  (~(transceive cs say) cal)
     ?.  ?&  ?=(%del -.dat)
-            ::  =(+(p.dat) (lent buf.say))
+            =(+(p.dat) (lent buf.say))
         ==
       +>.$
     =+  foy=(he-dope (tufa buf.say))
