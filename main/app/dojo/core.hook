@@ -215,7 +215,7 @@
     ++  dp-model-sic  ;~(plug dp-server-sic dp-config)  ::  ++dojo-model
     ++  dp-server-gun   (stag 0 (stag %gun dp-device))  ::  ++dojo-server
     ++  dp-server-sic   (stag 0 (stag %sic dp-device))  ::  ++dojo-server
-    ++  dp-twig         wide:(vang & ~)                 ::  ++twig
+    ++  dp-twig         long:(vang & ~)                 ::  ++twig
     ++  dp-device       (most fas sym)                  ::  ++dojo-device
     ++  dp-value                                        ::  ++dojo-source
       %+  cook  |=(a=dojo-source a)
