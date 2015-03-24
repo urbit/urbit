@@ -736,7 +736,7 @@
             :^  %pass  (away %w %drug (scot %p p.a) q.a ~)  %c
             ~&  [%sync-unsubscribe our p.a q.a]
             [%warp [our p.a] q.a ~]
-        %_(+>.$ ped.sat pen, mow :(weld new old mow))
+        %_(+>.$ ped.sat pen) ::  , mow :(weld new old mow))
       ::
       ++  drum                                          ::  raw dependencies
         |=  dep=(set beam)
