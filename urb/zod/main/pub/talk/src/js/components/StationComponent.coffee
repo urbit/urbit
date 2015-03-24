@@ -68,7 +68,7 @@ module.exports = recl
       members = ""
 
     sourceInput = [(input {className:"join",onKeyUp:@_keyUp,placeholder:"+"}, "")]
-    sourceCtrl = div {className:"sour-ctrl"}, sourceInput
+    sourceCtrl = div {className:"sour-ctrl"},sourceInput
 
     sources = []
     if @state.station and @state.configs[@state.station]
@@ -79,16 +79,13 @@ module.exports = recl
           (div {className:"path"}, source),
           (div {className:"remove",onClick:_remove,"data-station":source},"×")
         ])
-        
     else
       sources = ""
 
     station = []
-    # station.push (a {className:"up",href:"\#/"}, [(div {className:"arow-up"}, "")])
-    # station.push (h1 {},@state.station)
     station.push (div {id:"members"},members)
 
-    parts.push (div {id:"station-container"}, (div {id:"station-meta"},station))
-    parts.push (div {id:"sources-container"}, [(div {class:"sources-list"},sources),sourceCtrl])
+    parts.push (div {id:"audience"}, (div {},station))
+    parts.push (div {id:"stations"}, [(div {},sources),sourceCtrl])
 
     div {id:"station"},parts

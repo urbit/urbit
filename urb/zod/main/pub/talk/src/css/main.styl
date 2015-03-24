@@ -1,3 +1,7 @@
+//
+// fonts first
+//
+
 @import 'fonts'
 
 .iden
@@ -30,9 +34,16 @@ input.join
 #station
   font-size .7rem
 
+.iden
+  font-weight 600
+
 html
 body
   font-size 18px
+
+//
+// containers
+//
 
 body
   background-color #fefefe
@@ -43,33 +54,32 @@ body
   display none
 
 #c
-  top 0
-  background-color #fff
+  position absolute
+  top 4rem
+  left 50%
+  width 58rem
+  margin-left -29rem
+  margin-bottom 4rem
 
-#stations-container
+#station-container
   position absolute
   top 1rem
-  left 50%
-  width 24rem
-  margin-left -12rem
-  font-size 4rem
   
 #station #station-container
   padding-top 1rem
   min-width 30rem
   text-align right
 
-#stations-container
+#writing-container
+  bottom 4rem
+  margin-bottom 1rem
+
 #messages-container
   vertical-align top
 
-#messaging-container
-  position absolute
-  top 4rem
-  left 50%
-  width 66rem
-  margin-left -46rem
-  margin-bottom 4rem
+//
+// station
+//
 
 #station > div
   display inline-block
@@ -82,48 +92,6 @@ body
   width 6rem
   margin-left .3rem
 
-#sources-container
-  position fixed
-  top 0
-  left 50%
-  margin-left -35rem
-  text-align right
-  background-color #000
-  color #fff
-  padding 1rem
-
-#members
-  margin-left 2rem
-
-.station
-  margin-bottom .3rem
-  cursor pointer
-  font-weight 200
-
-#stations .station
-  display block
-  width 24rem
-
-.station .name
-  padding .3rem
-  border-bottom 6px solid transparent
-
-.station .name:hover
-  background-color #f5f5f5
-  border-bottom 6px solid #ededed
-
-.station > div
-  display inline-block
-
-.toggle
-  width .4rem
-  height .4rem
-  border 2px solid #000
-  margin-right .6rem
-
-.toggle.active
-  background-color #000
-
 .station .remove
   display none
   float right
@@ -134,16 +102,7 @@ body
 .station:hover .remove
   display inline
 
-#sources-container .station
-  font-family "scp"
-  font-weight 500
-  text-transform lowercase
-
-// hate this.
-.sour-ctrl
-  margin-bottom .16rem
-
-.join-ctrl input
+// add source
 .sour-ctrl input
   border none
   font-weight 400
@@ -154,6 +113,10 @@ body
   font-weight 200
   margin-left .6rem
   color #0003FF
+
+//
+// messages
+//
 
 .message
   padding-top .3rem
@@ -196,7 +159,7 @@ body
   text-align right
   display inline-block
   margin-right .3rem
-  min-width 30rem
+  min-width 10rem
 
 .attr .iden
   color #000
@@ -210,23 +173,22 @@ body
   max-width 30rem
   margin-left .3rem
 
-.ship
-  font-weight 600
+//
+// writing
+//
 
-.ship.talk:before
-  content "..."
-  margin-left -1.3rem
-  margin-right .3rem
-  width 1rem
-  margin-top -.4rem
-  vertical-align middle
-  display inline-block
-  line-height .2rem
-  letter-spacing -.1rem
+#writing
+  font-size .9rem
+  min-height 1.6rem
+  min-width 1.3rem
+  outline none
+  background-color #eee
+  padding .3rem .1rem
+  margin-left .2rem
+  margin-top -.3rem
 
-#writing-container
-  bottom 4rem
-  margin-bottom 1rem
+#writing:focus
+  background-color #fff
 
 .writing
   padding-top .3rem
@@ -236,72 +198,28 @@ body
   margin-left 1rem
   margin-top 1.2rem
 
+.writing .iden
+  display block
+  text-align right
+  width 100%
+
+.writing .iden .ship
+  margin-right .3rem
+
 #audi
+  display inline-block
   background-color #eee
-  padding .3rem
+  padding .3rem .1rem
   margin-top -.3rem
+  margin-right -.2rem
   outline none
-  margin-right -.3rem
 
 #audi.valid-false
   color #ff2f2f
 
-#writing
-  font-size .9rem
-  min-height 1.6rem
-  min-width 1.3rem
-  padding 0
-  outline none
-  background-color #eee
-  margin-left .3rem
-
-#writing:focus
-  background-color #fff
-  
-#station h1
-  display inline-block
-  margin 0
-  font-weight 200
-  font-size 2rem
-  text-transform lowercase
-
-input.join
-  text-align right
-  font-size 4rem
-  background-color transparent
-  outline none
-  width 24rem
-  color #fff
-
-#station input.join
-  font-family "scp"
-  font-size .7rem
-  line-height 1rem
-  width 12rem
-
-input.join::-webkit-input-placeholder
-  color #fff
-
-input.join:focus::-webkit-input-placeholder
-  color #000
-
-.pending
-  color #ccc
-
-a.up
-  height 2rem
-  margin-top .6rem
-  vertical-align middle
-  display inline-block
-
-.arow-up
-  display inline-block
-  margin 0 .5rem 0 .5rem
-  width 0 
-  height 0 
-  border-left 9px solid transparent
-  border-right 9px solid transparent
-  border-bottom 9px solid #000
+//
+// scrolling
+//
 
 #scrolling
   display none
@@ -317,67 +235,3 @@ a.up
   font-weight 500
   font-size .8rem
   text-transform uppercase
-
-@media (max-width: 40rem)
-  #c
-    left 0
-    margin-left 0
-    width 24rem
-  
-  #messages-container
-  #writing-container
-    margin-left 1rem
-
-  #stations-container
-  #station-container
-    position relative
-    float left
-  
-  #stations-container
-    width 8rem
-  
-  #station-container
-    left auto
-  
-  .station
-    width 5rem
-  
-  .attr
-    display block
-    text-align left
-    width 2rem
-    margin-right 1rem
-  
-  .message
-    height 1.6rem
-  
-  .stations
-  .iden
-  #station
-    font-size .5rem
-  
-  .station .remove
-    display inline
-    font-size .6rem
-    line-height .6rem
-  
-  .ship.talk:before
-    margin-left -.3rem
-    margin-right 0
-  
-  .attr
-    width 4rem
-  
-  .iden > div
-    display block
-  
-  .attr > .time
-    display none
-
-  .mess
-    max-width 12rem
-    margin-bottom 1rem
-  
-  #writing
-    max-width 12rem
-  
