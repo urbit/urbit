@@ -165,7 +165,6 @@ module.exports = recl
           onBlur:@_setAudi
           }, audi.join(" "))
         (Member iden, "")
-        (br {},"")
         (div {className:"time"}, @getTime())        
       ])
       (div {

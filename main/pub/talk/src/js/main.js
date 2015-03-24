@@ -512,17 +512,11 @@ module.exports = recl({
       id: "members"
     }, members));
     parts.push(div({
-      id: "station-container"
-    }, div({
-      id: "station-meta"
-    }, station)));
+      id: "audience"
+    }, div({}, station)));
     parts.push(div({
-      id: "sources-container"
-    }, [
-      div({
-        "class": "sources-list"
-      }, sources), sourceCtrl
-    ]));
+      id: "stations"
+    }, [div({}, sources), sourceCtrl]));
     return div({
       id: "station"
     }, parts);
@@ -531,109 +525,7 @@ module.exports = recl({
 
 
 
-},{"../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/StationsComponent.coffee":[function(require,module,exports){
-var StationActions, StationStore, div, input, recl, ref;
-
-recl = React.createClass;
-
-ref = [React.DOM.div, React.DOM.input], div = ref[0], input = ref[1];
-
-StationStore = require('../stores/StationStore.coffee');
-
-StationActions = require('../actions/StationActions.coffee');
-
-module.exports = recl({
-  stateFromStore: function() {
-    return {
-      stations: StationStore.getStations(),
-      station: "~zod/court"
-    };
-  },
-  getInitialState: function() {
-    return this.stateFromStore();
-  },
-  componentDidMount: function() {
-    this.$el = $(this.getDOMNode());
-    this.$add = $('#stations .add');
-    this.$input = this.$el.find('input');
-    return StationStore.addChangeListener(this._onChangeStore);
-  },
-  componentWillUnmount: function() {
-    return StationStore.removeChangeListener(this._onChangeStore);
-  },
-  _onChangeStore: function() {
-    return this.setState(this.stateFromStore());
-  },
-  _click: function(e) {
-    var s;
-    s = $(e.target).closest('.station').find('.name').text();
-    return window.location.hash = "/" + (s.toLowerCase());
-  },
-  _keyUp: function(e) {
-    var v;
-    if (e.keyCode === 13) {
-      v = this.$input.val().toLowerCase();
-      if (this.state.stations.indexOf(v) === -1) {
-        StationActions.createStation(v);
-        this.$input.val('');
-        return this.$input.blur();
-      }
-    }
-  },
-  _remove: function(e) {
-    var _station, _stations;
-    _station = $(e.target).parent().find('.name').text();
-    _stations = _.without(this.state.stations, _station);
-    StationActions.removeStation(_station, _stations);
-    e.stopPropagation();
-    return e.preventDefault();
-  },
-  render: function() {
-    var _click, _remove, station, stations;
-    station = this.state.station;
-    _click = this._click;
-    _remove = this._remove;
-    stations = this.state.stations.map(function(_station) {
-      var k, parts;
-      k = "station";
-      parts = [
-        div({
-          className: "name"
-        }, _station.name)
-      ];
-      if (_station.name !== window.util.mainStation()) {
-        parts.push(div({
-          className: "remove",
-          onClick: _remove,
-          dataStation: _station.name
-        }, "×"));
-      }
-      return div({
-        className: k,
-        onClick: _click
-      }, parts);
-    });
-    return div({
-      id: "stations"
-    }, [
-      div({
-        className: "stations"
-      }, stations), div({
-        className: "join-ctrl"
-      }, [
-        input({
-          className: "join",
-          onKeyUp: this._keyUp,
-          placeholder: "+"
-        }, "")
-      ])
-    ]);
-  }
-});
-
-
-
-},{"../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/WritingComponent.coffee":[function(require,module,exports){
+},{"../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/WritingComponent.coffee":[function(require,module,exports){
 var Member, MessageActions, MessageStore, StationActions, StationStore, br, div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -844,7 +736,7 @@ module.exports = recl({
           className: "audi valid-" + this.state.valid,
           contentEditable: true,
           onBlur: this._setAudi
-        }, audi.join(" ")), Member(iden, ""), br({}, ""), div({
+        }, audi.join(" ")), Member(iden, ""), div({
           className: "time"
         }, this.getTime())
       ]), div({
@@ -889,7 +781,7 @@ module.exports = _.merge(new Dispatcher(), {
 
 },{"flux":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/flux/index.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/main.coffee":[function(require,module,exports){
 $(function() {
-  var $c, $d, MessagesComponent, StationActions, StationComponent, StationsComponent, WritingComponent, clean, rend;
+  var $c, MessagesComponent, StationActions, StationComponent, WritingComponent, clean, rend;
   StationActions = require('./actions/StationActions.coffee');
   rend = React.render;
   window.chat = {};
@@ -980,7 +872,7 @@ $(function() {
       return send();
     },
     getScroll: function() {
-      return this.writingPosition = $('#messaging-container').outerHeight(true) + $('#messaging-container').offset().top - $(window).height();
+      return this.writingPosition = $('#c').outerHeight(true) + $('#c').offset().top - $(window).height();
     },
     setScroll: function() {
       window.util.getScroll();
@@ -1000,31 +892,26 @@ $(function() {
   $(window).on('scroll', window.util.checkScroll);
   window.chat.StationPersistence.listen();
   StationComponent = require('./components/StationComponent.coffee');
-  StationsComponent = require('./components/StationsComponent.coffee');
   MessagesComponent = require('./components/MessagesComponent.coffee');
   WritingComponent = require('./components/WritingComponent.coffee');
   $c = $('#c');
   clean = function() {
-    React.unmountComponentAtNode($('#stations-container')[0]);
-    React.unmountComponentAtNode($('#station-parts-container')[0]);
-    React.unmountComponentAtNode($('#writing-container')[0]);
-    return React.unmountComponentAtNode($('#messages-container')[0]);
+    React.unmountComponentAtNode($('#station-container')[0]);
+    React.unmountComponentAtNode($('#messages-container')[0]);
+    return React.unmountComponentAtNode($('#writing-container')[0]);
   };
-  $c.html("");
-  $c.append("<div id='messaging-container'></div>");
-  $d = $('#messaging-container');
-  $d.append("<div id='messages-container'></div>");
-  $d.append("<div id='writing-container'></div>");
-  $d.append("<div id='station-parts-container'></div>");
+  $c.append("<div id='station-container'></div>");
+  $c.append("<div id='messages-container'></div>");
+  $c.append("<div id='writing-container'></div>");
   $c.append("<div id='scrolling'>BOTTOM</div>");
-  rend(StationComponent({}, ""), $('#station-parts-container')[0]);
+  rend(StationComponent({}, ""), $('#station-container')[0]);
   rend(MessagesComponent({}, ""), $('#messages-container')[0]);
   return rend(WritingComponent({}, ""), $('#writing-container')[0]);
 });
 
 
 
-},{"./actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","./components/MessagesComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MessagesComponent.coffee","./components/StationComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/StationComponent.coffee","./components/StationsComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/StationsComponent.coffee","./components/WritingComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/WritingComponent.coffee","./persistence/MessagePersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/persistence/MessagePersistence.coffee","./persistence/StationPersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/persistence/StationPersistence.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/flux/index.js":[function(require,module,exports){
+},{"./actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","./components/MessagesComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MessagesComponent.coffee","./components/StationComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/StationComponent.coffee","./components/WritingComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/WritingComponent.coffee","./persistence/MessagePersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/persistence/MessagePersistence.coffee","./persistence/StationPersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/persistence/StationPersistence.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/flux/index.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.

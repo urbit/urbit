@@ -72,8 +72,7 @@ $(() ->
         send()
 
       getScroll: ->
-        @writingPosition = $('#messaging-container').outerHeight(true)+$('#messaging-container').offset().top-$(window).height()
-        #@writingPosition = $('#writing-container').position().top-$(window).height()+$('#writing-container').outerHeight(true)
+        @writingPosition = $('#c').outerHeight(true)+$('#c').offset().top-$(window).height()
 
       setScroll: ->
         window.util.getScroll()
@@ -92,26 +91,21 @@ $(() ->
     window.chat.StationPersistence.listen()
 
     StationComponent    = require './components/StationComponent.coffee'
-    StationsComponent   = require './components/StationsComponent.coffee'
     MessagesComponent   = require './components/MessagesComponent.coffee'
     WritingComponent    = require './components/WritingComponent.coffee'
 
     $c = $('#c')
 
     clean = ->
-      React.unmountComponentAtNode $('#stations-container')[0]
-      React.unmountComponentAtNode $('#station-parts-container')[0]
-      React.unmountComponentAtNode $('#writing-container')[0]
+      React.unmountComponentAtNode $('#station-container')[0]
       React.unmountComponentAtNode $('#messages-container')[0]
+      React.unmountComponentAtNode $('#writing-container')[0]
 
-    $c.html ""
-    $c.append("<div id='messaging-container'></div>")
-    $d = $('#messaging-container')
-    $d.append("<div id='messages-container'></div>")
-    $d.append("<div id='writing-container'></div>")
-    $d.append("<div id='station-parts-container'></div>")
-    $c.append("<div id='scrolling'>BOTTOM</div>")
-    rend (StationComponent {}, ""),$('#station-parts-container')[0]
+    $c.append "<div id='station-container'></div>"
+    $c.append "<div id='messages-container'></div>"
+    $c.append "<div id='writing-container'></div>"
+    $c.append "<div id='scrolling'>BOTTOM</div>"
+    rend (StationComponent {}, ""),$('#station-container')[0]
     rend (MessagesComponent {}, ""),$('#messages-container')[0]
     rend (WritingComponent {}, ""),$('#writing-container')[0]
 )
