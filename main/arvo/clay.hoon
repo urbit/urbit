@@ -530,6 +530,7 @@
     ?^  lon.u.dok  ~&  %not-done-diffing  !!
     =+  cay=q.p.res
     ?@  p.cay  ~|  %patch-bad-marc  !!
+    ~&  >  %canning
     =+  ^=  can
         |-  ^-  (list ,[path cage])
         ?~  p.p.cay
@@ -547,7 +548,10 @@
           !!
         :-  ((hard path) -.q.coy)
         [q.i.p.p.cay (slot 3 coy)]
+    ~&  >  %canned
+    ~&  >  %checking-out
     =.  ank.dom  (checkout-ankh:ze (mo can))
+    ~&  >  %checked-out
     ?~  hez  +>.$(dok ~)
     =+  ^=  ceq
         |=  a=miso
@@ -555,6 +559,8 @@
             &(?=(%ins -.a) ?=(%mime -.+.a))
             &(?=(%mut -.a) ?=(%mime -.+>.a))
         ==
+    ~&  >  %forming-ergo
+    =-  ~&  >  %formed-ergo  -
     %_    +>.$
         dok  ~
         tag  ::  ?~(hez reg :_(reg [u.hez [%ergo who syd let.dom]]))
@@ -570,9 +576,10 @@
       :-  [%done ~ %path !>(a)]
       ?:  ?=(%del -.b)
         [%done ~ %null !>(~)]
-      :^  %cast  %mime  %done
       =+  (~(get by mim.u.dok) a)
-      `?^(- [%mime !>(u.-)] (need (read:ze %x [%ud let.dom] a)))
+      ?^  -  [%done ~ %mime !>(u.-)]
+      :^  %cast  %mime  %done  :-  ~
+      (need (read:ze %x [%ud let.dom] a))
     ==
   ::
   ++  take-ergo
@@ -1426,8 +1433,15 @@
           ~&  >  [%fine-lets-go ali=<ali> bob=<bob>]
           =.  new.dat  ali.dat
           =.  erg.dat
-            %-  ~(uni by `(map path ,?)`(~(run by q.bob.dat) |=(lobe %|)))
-            `(map path ,?)`(~(run by q.ali.dat) |=(lobe %&))
+            %-  mo  ^-  (list ,[path ?])
+            %+  murn  (~(tap by (~(uni by q.bob.dat) q.ali.dat)))
+            |=  [pax=path lob=lobe]
+            ^-  (unit ,[path ?])
+            =+  a=(~(get by q.ali.dat) pax)
+            =+  b=(~(get by q.bob.dat) pax)
+            ?:  =(a b)
+              ~
+            `[pax !=(~ a)]
           checkout
         ::
             %this
@@ -1448,8 +1462,15 @@
           =.  new.dat  (make-yaki [r.ali.dat r.bob.dat ~] q.ali.dat now)
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
           =.  erg.dat
-            %-  ~(uni by `(map path ,?)`(~(run by q.bob.dat) |=(lobe %|)))
-            `(map path ,?)`(~(run by q.ali.dat) |=(lobe %&))
+            %-  mo  ^-  (list ,[path ?])
+            %+  murn  (~(tap by (~(uni by q.bob.dat) q.ali.dat)))
+            |=  [pax=path lob=lobe]
+            ^-  (unit ,[path ?])
+            =+  a=(~(get by q.ali.dat) pax)
+            =+  b=(~(get by q.bob.dat) pax)
+            ?:  =(a b)
+              ~
+            `[pax !=(~ a)]
           checkout
         ::
             ?(%meet %mate %meld)
@@ -1633,7 +1654,7 @@
           =.  new.dat
             (make-yaki [r.ali.dat r.bob.dat ~] hat now)
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
-          =.  erg.dat  %-  ~(uni by del)
+          =.  erg.dat  %-  ~(uni by del)                ::  XX  totes wrong
                        `(map path ,?)`(~(run by hat) |=(lobe %&))
           checkout
         ::
