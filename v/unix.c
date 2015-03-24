@@ -1117,7 +1117,7 @@ _unix_ship_update(u3_uhot* hot_u)
 /* _unix_hot_gain(): gain ship.
  *
  * I feel like there's some freeing here I missed
- * particularly pin_c and/org pot_c
+ * particularly pin_c and/or pot_c
 */
 static void
 _unix_hot_gain(u3_noun who, u3_noun mek)
