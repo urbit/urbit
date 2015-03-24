@@ -15,14 +15,14 @@
       $:  edg=_79                                       ::  terminal columns
           off=@ud                                       ::  window offset
           kil=(unit (list ,@c))                         ::  kill buffer
-          apt=(list term)                               ::  application ring
-          maz=(unit (list ,@c))                         ::  master window
-          feg=(map term target)                         ::  live applications
-          mir=(pair ,@ud (list ,@c))                    ::  mirrored state
+          apt=(list gill)                               ::  application ring
+          maz=master                                    ::  master window
+          feg=(map gill target)                         ::  live applications
+          mir=(pair ,@ud (list ,@c))                    ::  mirrored terminal
       ==                                                ::
     ++  master                                          ::  master buffer
-      $:  pos=@ud                                       ::  cursor position
-          buf=(list ,@c)                                ::  text entry
+      $:  liv=?                                         ::  master is live
+          tar=target                                    ::  master target
       ==                                                ::
     ++  history                                         ::  past input
       $:  pos=@ud                                       ::  input position
@@ -39,6 +39,10 @@
           hit=history                                   ::  all past input
           pom=console-prompt                            ::  static prompt
           inp=console-command                           ::  input state
+      ==                                                ::
+    ++  ukase                                           ::  master command
+      $%  [%add p=(list gill)]                          ::  add agents
+          [%del p=(list gill)]                          ::  delete agents
       ==                                                ::
     ++  gift                                            ::  out result <-$
       $%  [%mean p=ares]                                ::  
@@ -67,6 +71,32 @@
 |_  $:  hid=hide                                        ::  system state
         house                                           ::  program state
     ==                                                  ::
+++  sp
+  |%  ++  sp-ukase
+        %+  knee  *ukase  |.  ~+
+        ;~  pose
+          (stag %add ;~(pfix lus sp-gills))
+          (stag %del ;~(pfix hep sp-gills))
+        ==
+      ::
+      ++  sp-gills
+        ;~  pose
+          (most ;~(plug com ace) sp-gill)
+          %+  cook
+            |=  a=ship
+            [[a %dojo] [a %talk] ~]
+          ;~(pfix sig fed:ag)
+        ==
+      ::
+      ++  sp-gill
+        ;~  pose
+          (stag our.hid sym)
+          ;~  plug
+            ;~(pfix sig fed:ag)
+            ;~(pfix fas sym)
+          ==
+        ==
+  --
 ++  se                                                  ::  per source
   |_  [moz=(list move) [her=ship ost=bone] source]
   ++  se-abet                                           ::  resolve
@@ -79,29 +109,8 @@
       +>(edg (dec p.bet))
     ?:  ?=(%yow -.bet)
       (se-link p.bet)
-    ?^  maz
-      ?+    -.bet  (se-blit %bel ~)
-      ::
-          %bac  
-        ?:  =(0 (lent u.maz)) 
-          (se-blit %bel ~)
-        +>(u.maz (scag (dec (lent u.maz)) u.maz))
-      ::
-          %ctl  
-        ?+  p.bet  (se-blit %bel ~)
-          %d  (se-emit ost %give %mean ~)
-          %v  +>.$(maz ~)
-          %x  $(maz ~)
-        ==
-      ::   
-          %ret  (se-like(maz ~) u.maz)
-          %txt  +>(u.maz (weld u.maz p.bet))
-      ==
-    ?~  apt
-      ~&  %console-no-terminal
-      (se-blit %bel ~)
-    =+  nam=i.apt
-    =+  taz=~(. ta [& nam] (~(got by feg) nam))
+    =+  gyl=?^(apt i.apt [~zod %$])
+    =+  taz=~(. ta [& liv.maz gyl] ?:(liv.maz tar.maz (~(got by feg) gyl)))
     =<  ta-abet
     ?-  -.bet
       %aro  (ta-aro:taz p.bet)
@@ -115,37 +124,74 @@
     ==
   ::
   ++  se-drop                                           ::  passive drop
-    |=  nam=term
+    |=  gyl=gill
     ^+  +>
-    ?>  (~(has by feg) nam)
-    =:  feg  (~(del by feg) nam)
-        apt  (skip apt |=(a=term =(nam a)))
-      ==
-    ?^  apt  +>
-    ?^  maz  +>
-    +>(maz `~)
+    =<  se-prom
+    ?>  (~(has by feg) gyl)
+    %_  +>
+      feg      (~(del by feg) gyl)
+      apt      (skip apt |=(a=gill =(gyl a)))
+      liv.maz  ?~(apt & liv.maz)
+    ==
   ::
   ++  se-join                                           ::  add connection
-    |=  nam=term
+    |=  gyl=gill
     ^+  +>
-    ?<  (~(has by feg) nam)
-    +>(maz ~, apt [nam apt], feg (~(put by feg) nam *target))
+    =<  se-prom
+    ?:  (~(has by feg) gyl)
+      (se-blit %bel ~)
+    +>(liv.maz |, apt [gyl apt], feg (~(put by feg) gyl *target))
   ::
   ++  se-nuke                                           ::  active drop
-    |=  nam=term
+    |=  gyl=gill
     ^+  +>
-    (se-drop:(se-send nam %nuke [her ~[nam]] her) nam)
+    (se-drop:(se-send(liv.maz |) gyl %nuke [p.gyl ~[q.gyl]] her) gyl)
   ::
   ++  se-like                                           ::  act in master
-    |=  buf=(list ,@c)
-    (se-link (crip (tufa buf)))
+    |=  kus=ukase
+    ?-    -.kus
+        %add  
+      |-  ^+  +>.^$
+      ?~  p.kus  +>.^$
+      $(p.kus t.p.kus, +>.^$ (se-link i.p.kus))
+    ::
+        %del
+      |-  ^+  +>.^$
+      ?~  p.kus  +>.^$
+      $(p.kus t.p.kus, +>.^$ (se-nuke i.p.kus))
+    ==
+  ::
+  ++  se-prom                                           ::  set master prompt
+    ^+  .
+    %_    .
+        cad.pom.tar.maz
+      ^-  tape
+      %+  welp 
+        (scow %p our.hid)
+      =+  ^=  mux  
+          |-  ^-  tape
+          ?~  apt  ~
+          =+  ^=  mor  ^-  tape
+              ?~  t.apt  ~
+              [',' ' ' $(apt t.apt)]
+          %+  welp
+            ^-  tape
+            =+  txt=(trip q.i.apt)
+            ?:  =(our.hid p.i.apt)
+              txt
+            :(welp "~" (scow %p p.i.apt) "/" txt)
+          mor
+      ?~  mux
+        "# "
+      :(welp ":" mux "# ")
+    ==
   ::
   ++  se-link                                           ::  connect to app
-    |=  nam=term
+    |=  gyl=gill
     ^+  +>
-    %.  nam
+    %.  gyl
     =<  se-join
-    (se-send nam %show [her ~[nam]] her /console)
+    (se-send gyl %show [p.gyl ~[q.gyl]] her /console)
   ::
   ++  se-blit                                           ::  give output
     |=  bil=dill-blit
@@ -166,20 +212,12 @@
     (se-show (sub p.lin off) (scag edg (slag off q.lin)))
   ::
   ++  se-view                                           ::  flush buffer
-    %-  se-just
-    ?^  maz
-      =-  [(lent zil) zil]
-      ^=  zil  ^-  (list ,@c)
-      %-  welp
-      :_  u.maz
-      |-  ^-  (list ,@c)
-      ?~  apt  [`@c`0x23 `@c`0x20 ~]
-      =+  nex=$(apt t.apt)
-      %+  welp  (tuba (trip i.apt))
-      ?~(t.apt nex `_nex`[`@c`0x2c `@c`0x20 nex])
+    ?:  liv.maz
+      (se-just ~(ta-vew ta [& & ~zod %$] tar.maz))
     ?~  apt  
-      ~&(%se-no-view [0 ~])
-    ~(ta-vew ta [& i.apt] (~(got by feg) i.apt))
+      se-view(liv.maz &)
+    %-  se-just
+    ~(ta-vew ta [& | i.apt] (~(got by feg) i.apt))
   ::
   ++  se-kill                                           ::  kill a source
     =+  tup=apt
@@ -192,44 +230,71 @@
     %_(+> moz [mov moz])
   ::
   ++  se-send                                           ::  send a message
-    |=  [nam=term nog=note-gall]
-    (se-emit ost %pass [(scot %p her) nam ~] %g nog)
+    |=  [gyl=gill nog=note-gall]
+    (se-emit ost %pass [(scot %p her) (scot %p p.gyl) q.gyl ~] %g nog)
   ::
   ++  se-tame
-    |=  nam=term
-    ~(. ta [& nam] (~(got by feg) nam))
+    |=  gyl=gill
+    ^+  ta
+    ~(. ta [& %| gyl] (~(got by feg) gyl))
   ::
   ++  se-pour                                           ::  receive results
-    |=  [nam=term sil=sign-gall]
+    |=  [gyl=gill sil=sign-gall]
     ^+  +>
     ?-    -.sil
         %mean  
-      ::  ~&  [%seat-mean sil]
-      ~&  %seat-mean
       +>.$
     ::  
         %nice  
       +>.$
     ::
         %rush
-      ta-abet:(ta-fec:(se-tame nam) +>.sil)
+      ta-abet:ta-rap:(ta-fec:(se-tame gyl) +>.sil)
     ==
   ::
   ++  ta                                                ::  per target
     |_  $:  $:  liv=?                                   ::  don't delete
-                nam=term                                ::  target app
+                mav=?                                   ::  showing master
+                gyl=gill                                ::  target app
             ==                                          ::
             target                                      ::  target state
         ==                                              ::
     ++  ta-abet                                         ::  resolve
       ^+  ..ta
-      ?.  liv  (se-nuke nam) 
-      %_(+> feg (~(put by feg) nam +<+))
+      =.  liv.maz  mav
+      ?:  mav
+        ?.  liv
+          (se-emit ost %give %mean ~)
+        +>(tar.maz +<+)
+      ?.  liv  
+        =.  ..ta  (se-nuke gyl) 
+        ..ta(liv.maz =(~ apt))
+      %_(+> feg (~(put by feg) gyl +<+))
+    ::
+    ++  ta-ant                                          ::  toggle master
+      ^+  .
+      ?:  mav
+        ?~  apt  ta-bel
+        %_  .
+          mav      |
+          +<+      (~(got by feg) gyl)
+          tar.maz  +<+
+        ==
+      %_  .
+        mav  &
+        +<+  tar.maz
+        feg  (~(put by feg) gyl +<+) 
+      ==
     ::
     ++  ta-act                                          ::  send action
       |=  act=console-action
       ^+  +>
-      %_(+> +> (se-send nam %mess [her ~[nam]] her %console-action !>(act)))
+      ?:  mav  
+        +>.$
+      %_    +> 
+          +> 
+        (se-send gyl %mess [p.gyl ~[q.gyl]] her %console-action !>(act))
+      ==
     ::
     ++  ta-aro                                          ::  hear arrow
       |=  key=?(%d %l %r %u)
@@ -323,9 +388,9 @@
                 ta-bel
               %-  ta-hom(pos.inp 0, kil `(scag pos.inp buf.say.inp))
               (ta-cut 0 pos.inp)
-          %v  +>(maz `~)
+          %v  ta-ant
           %x  ?:  =(~ apt)  ta-bel
-              ?^  maz  ta-bel
+              ?:  mav  ta-bel
               +>(apt (welp (slag 1 apt) [(snag 0 apt) ~]))
           %y  ?~  kil  ta-bel 
               %-  ta-hom(pos.inp (add pos.inp (lent u.kil)))
@@ -367,6 +432,9 @@
         %sav  +>(+> (se-blit fec))
         %txt  $(fec [%tan [%leaf p.fec]~])
       ==
+    ::
+    ++  ta-rap                                          ::  send %took
+      .(+> (se-send gyl %took [p.gyl ~[q.gyl]] her))
     ::
     ++  ta-dog                                          ::  change cursor
       |=  ted=console-edit
@@ -430,7 +498,17 @@
       |=  pom=console-prompt
       +>(pom pom)
     ::
-    ++  ta-ret  (ta-act %ret ~)                         ::  hear return
+    ++  ta-ret                                          ::  hear return
+      ?.  mav
+        (ta-act %ret ~)
+      =+  fey=(ruse (tufa buf.say.inp) sp-ukase:sp)
+      ?-  -.fey
+        %|  (ta-err p.fey)
+        %&  =.  +>+  (se-like p.fey)
+            =.  pom  pom.tar.maz
+            (ta-hom:ta-nex %set ~)
+      ==
+    ::
     ++  ta-ser                                          ::  reverse search
       |=  ext=(list ,@c)
       ^+  +>
@@ -509,7 +587,12 @@
         0
         ~
         ~
-        `~
+        :*  %&
+            *(unit search)
+            *history
+            `console-prompt`[%& %seat "{(scow %p our.hid)}# "]
+            *console-command
+        ==
         ~
         [0 ~]
     ==
@@ -517,7 +600,6 @@
 ::
 ++  poke-dill-belt
   |=  [ost=bone her=ship bet=dill-belt]
-  ::  ~&  %seat-poke
   ^-  [(list move) _+>]
   =<  se-abet
   =<  se-view
@@ -527,10 +609,11 @@
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
   =+  sih=((hard sign) sih)
-  ?>  ?=([@ @ ~] pax)
+  ?>  ?=([@ @ @ ~] pax)
   =<  se-abet
   =<  se-view
-  (~(se-pour se ~ [(slav %p i.pax) ost] (~(got by bin) ost)) i.t.pax +.sih)
+  =+  gyl=[(slav %p i.t.pax) i.t.t.pax]
+  (~(se-pour se ~ [(slav %p i.pax) ost] (~(got by bin) ost)) gyl +.sih)
 ::
 ++  pull
   |=  ost=bone

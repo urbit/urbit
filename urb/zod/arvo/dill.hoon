@@ -54,7 +54,7 @@
       [%sag p=path q=*]                                 ::  save to jamfile
       [%sav p=path q=@]                                 ::  save to file
   ==                                                    ::
-++  gill  ,@tas                                         ::  general contact
+++  gill  (pair ship term)                              ::  general contact
 --                                                      ::
 =>  |%                                                  ::  console protocol
 ++  axle                                                ::  all dill state
@@ -250,7 +250,6 @@
         (done %blit [bit ~])
       ::
       ++  init                                          ::  initialize
-        ~&  [%dill-init our]
         =+  myt=(flop (need tem))
         =.  tem  ~
         =.  moz  :_(moz [hen %pass ~ %g %show [our [ram ~]] our ~])
@@ -280,6 +279,12 @@
             moz
           :_  moz
           [hen %pass ~ %g %mess [our [ram ~]] our [%dill-belt -:!>(bet) bet]]
+        ==
+      ::
+      ++  took                                          ::  send rush ack
+        %_    .
+            moz 
+          :_(moz [hen %pass ~ %g %took [our [ram ~]] our])
         ==
       ::
       ++  take                                          ::  receive
@@ -314,8 +319,7 @@
           +>
         ::
             [%g %rush %dill-blit *]
-          =.  moz  :_(moz `move`[hen %pass ~ %g %took [our [ram ~]] our])
-          (from +>+.sih)
+          took:(from +>+.sih)
         ::
             [%t %wake *]
           ::  ~&  %dill-wake 
@@ -369,7 +373,15 @@
     =:  ore.all  `p.q.hic
         dug.all   ~
       ==
-    =^  moz  all  abet:(need (ax (need hey.all) [%flow %seat %dojo ~]))
+    =+  ^=  flo  ^-  (list (pair ship term))
+        =+  myr=(clan p.q.hic)
+        ?:  =(%pawn myr)
+          ~
+        ?:  =(%earl myr)
+          =+  fap=(sein p.q.hic)
+          [[fap %dojo] [fap %talk] ~]
+        [[p.q.hic %dojo] [p.q.hic %talk] ~]
+    =^  moz  all  abet:(need (ax (need hey.all) [%flow %seat flo]))
     [moz ..^$]
   =+  nus=(ax hen q.hic)
   ?~  nus
@@ -401,7 +413,6 @@
   ^-  [p=(list move) q=_..^$]
   ?:  =(~ ore.all)
     ?:  ?=([%a %init *] q.hin)
-      ~&  [%dill-take-dump-init hen +.q.hin]
       =.  hey.all  ?^(hey.all hey.all `hen)
       [[[hen %give +.q.hin] ~] ..^$]
     ~&  [%take-back q.hin]

@@ -22,6 +22,7 @@
     ++  dojo-command                                    ::
       $%  [%flat p=path q=dojo-source]                  ::  noun to unix atom
           [%pill p=path q=dojo-source]                  ::  noun to unix pill
+          ::  [%tree p=path q=dojo-source]              ::  noun to unix tree
           [%poke p=goal q=dojo-source]                  ::  make and poke
           [%show p=dojo-source]                         ::  print
           [%verb p=term q=dojo-source]                  ::  store variable
@@ -31,19 +32,18 @@
           q=dojo-build                                  ::  general build
       ==                                                ::
     ++  dojo-build                                      ::  one ford step
-      $%  ::  [%ca p=mark q=dojo-build]                 ::  cast 
-          [%ex p=twig]                                  ::  hoon expression
+      $%  [%ex p=twig]                                  ::  hoon expression
           [%di p=dojo-model]                            ::  dialog
           [%dv p=path]                                  ::  gate from source
-          [%fi p=(list dojo-filter) q=dojo-source]      ::  filter pipeline
+          [%fi p=dojo-filter q=dojo-source]             ::  filter
           [%sc p=dojo-model]                            ::  script
           [%tu p=(list dojo-source)]                    ::  tuple
           [%va p=term]                                  ::  dojo variable
       ==                                                ::
     ++  dojo-filter                                     ::  pipeline filter
-      $%  [%a p=twig]                                   ::  direct gate
+      $%  [%a p=twig]                                   ::  function gate
           [%b p=mark]                                   ::  simple transmute
-          [%c p=dojo-source]                            ::  full filter
+          [%c p=dojo-model]                             ::  formal filter
       ==                                                ::
     ++  dojo-model                                      ::  data construction 
       $:  p=dojo-server                                 ::  core source
@@ -377,10 +377,13 @@
       |=  cag=cage
       ^+  +>+>
       ?>  ?=(^ per)
-      ?:  |(?=(^ q.q.cag) =((lent buf.say) q.q.cag))
+      ?:  ?|  ?=(^ q.q.cag) 
+              =((lent buf.say) q.q.cag)
+              !&(?=(%del -.u.per) =(+(p.u.per) (lent buf.say)))
+          ==
         dy-abet(per ~)
       =^  lic  say  (~(transmit cs say) u.per)
-      (dy-rush(per ~) %mor [%bel ~] [%det lic] ~)
+      (dy-rush(per ~) %mor [%det lic] [%err q.q.cag] ~)
     ::
     ++  dy-done                                         ::  dialog submit
       |=  txt=tape
@@ -391,7 +394,6 @@
       ^+  +>
       ?-    -.mad
           %poke       
-        ~&  [%dy-over-poke p.mad]
         %-  he-pass(poy ~)
         :*  /poke
             %g
@@ -474,8 +476,7 @@
       |=  cag=cage
       ^+  +>+>
       ?.  ?=(^ q.q.cag)
-        ~&  %dy-made-dial-fail
-        (dy-rash %bel ~)
+        (dy-rush %err q.q.cag)
       =+  tan=((list tank) +2.q.q.cag)
       =.  +>+>.$  (he-rush %tan tan)
       =+  vax=(spec (slot 3 q.cag))
@@ -558,6 +559,10 @@
     ^+  +>
     (he-give %rush %console-effect fec)
   ::
+  ++  he-stop                                           ::  abort work
+    ^+  .
+    ?~(poy . ~(dy-stop dy u.poy))
+  ::
   ++  he-peer                                           ::  subscribe to
     he-prom
   ::
@@ -600,14 +605,18 @@
   ++  he-stir                                           ::  apply change
     |=  cal=console-change
     ^+  +>
+    ::  ~&  [%his-clock ler.cal]
+    ::  ~&  [%our-clock ven.say]
     =^  dat  say  (~(transceive cs say) cal)
     ?.  ?&  ?=(%del -.dat)
-            =(+(p.dat) (lent buf.say))
+            ::  =(+(p.dat) (lent buf.say))
         ==
       +>.$
     =+  foy=(he-dope (tufa buf.say))
     ?:  ?=(%& -.foy)  +>.$
+    ::  ~&  [%bad-change dat ted.cal]
     =^  lic  say  (~(transmit cs say) dat)
+    ::  ~&  [%our-leg leg.say]
     (he-rush %mor [%det lic] [%err q.p.foy] ~)
   ::
   ++  he-plan                                           ::  execute command
@@ -619,6 +628,12 @@
   ++  he-done                                           ::  parse command
     |=  txt=tape
     ^+  +>
+    ?~  txt
+      %-  he-rush
+      :~  %mor
+          [%txt "> "]
+          [%nex ~]
+      ==
     =+  doy=(he-duke txt)
     ?-    -.doy
         %|  (he-rush [%err p.doy])
@@ -649,9 +664,10 @@
 ++  peer
   |=  [ost=bone her=ship pax=path]
   ^-  [(list move) _+>]
+  ~?  !=(her our.hid)  [%dojo-peer ost her pax]
   ?<  (~(has by hoc) ost)
   ?>  =(/console pax)
-  ?>  =(her our.hid)
+  ::  ?>  =(her our.hid)
   =<  he-abet
   %~  he-peer  he
   :-  [ost ~]
@@ -667,6 +683,7 @@
 ++  poke-console-action
   |=  [ost=bone her=ship act=console-action]
   ^-  [(list move) _+>]
+  ::  ~?  !=(her our.hid)  [%dojo-poke ost her]
   he-abet:(~(he-type he [ost [ost %give %nice ~]~] (~(got by hoc) ost)) act)
 ::
 ++  pour
@@ -678,7 +695,13 @@
     he-abet:(~(he-made he [[ost ~] (~(got by hoc) ost)]) pax +>.sih)
   ::
       %g
-    ~&  [%dojo-pour sih]
     [~ +>.$]
   ==
+::
+++  pull
+  |=  ost=bone
+  ^-  [(list move) _+>]
+  =^  moz  +>
+    he-abet:~(he-stop he [[ost ~] (~(got by hoc) ost)])
+  [moz +>.$(hoc (~(del by hoc) ost))]
 --
