@@ -98,9 +98,16 @@
         ==
   --
 ++  se                                                  ::  per source
-  |_  [moz=(list move) [her=ship ost=bone] source]
+  |_  $:  [moz=(list move) biz=(list dill-blit)]
+          [her=ship ost=bone] 
+          source
+      ==
   ++  se-abet                                           ::  resolve
-    [(flop moz) %_(+> bin (~(put by bin) ost +<+>))]
+    :_  %_(+> bin (~(put by bin) ost +<+>))
+    %+  welp  (flop moz) 
+    ^-  (list move)
+    ?~  biz  ~
+    [ost %give %rush %dill-blit ?~(t.biz i.biz [%mor (flop biz)])]~
   ::
   ++  se-belt                                           ::  handle input
     |=  bet=dill-belt
@@ -195,7 +202,7 @@
   ::
   ++  se-blit                                           ::  give output
     |=  bil=dill-blit
-    (se-emit ost %give %rush %dill-blit bil)
+    +>(biz [bil biz])
   ::
   ++  se-show                                           ::  show buffer, raw
     |=  lin=(pair ,@ud (list ,@c))
@@ -577,6 +584,7 @@
 ++  peer
   |=  [ost=bone her=ship pax=path]
   ^-  [(list move) _+>]
+  ~&  [%seat-peer ost her pax]
   ?<  (~(has by bin) ost)
   :-  [ost %give %rush %dill-blit %pro [`@c`0x23 `@c`0x20 ~]]~
   %=    +>
@@ -603,17 +611,18 @@
   ^-  [(list move) _+>]
   =<  se-abet
   =<  se-view
-  (~(se-belt se [ost %give %nice ~]~ [her ost] (~(got by bin) ost)) bet)
+  (~(se-belt se [[ost %give %nice ~]~ ~] [her ost] (~(got by bin) ost)) bet)
 ::
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
+  ~?  =(~ (~(get by bin) ost))  [%seat-pour ost pax]
   =+  sih=((hard sign) sih)
   ?>  ?=([@ @ @ ~] pax)
   =<  se-abet
   =<  se-view
   =+  gyl=[(slav %p i.t.pax) i.t.t.pax]
-  (~(se-pour se ~ [(slav %p i.pax) ost] (~(got by bin) ost)) gyl +.sih)
+  (~(se-pour se [~ ~] [(slav %p i.pax) ost] (~(got by bin) ost)) gyl +.sih)
 ::
 ++  pull
   |=  ost=bone
@@ -621,6 +630,6 @@
   =^  moz  +>  
     =<  se-abet
     =<  se-view
-    ~(se-kill se ~ [our.hid ost] (~(got by bin) ost))
+    ~(se-kill se [~ ~] [our.hid ost] (~(got by bin) ost))
   [moz +>.$(bin (~(del by bin) ost))]
 --
