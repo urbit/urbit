@@ -392,6 +392,7 @@
       %+  roll  (~(tap in (~(get ju liz) dep)))
       =<  .(con ..axon(liz (~(del by liz) dep)))
       |=  [sus=(each duct ixor) con=_..axon]
+      =.  ..axon  con
       ?-  -.sus
         %&  (give-json(hen p.sus) 205 ~ %b &)
         %|  %-  ~(get-even ix p.sus (~(got by wix) p.sus))
