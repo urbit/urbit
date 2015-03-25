@@ -1,45 +1,79 @@
 ::
 ::::  /hook/core/radio/sur
-  ::
+  !:
 |%
-++  audience  (map station delivery)                    ::  destination/state
+++  ache  |*([a=$+(* *) b=$+(* *)] $%([| p=b] [& p=a])) ::  PM 314
+++  audience  (map partner (pair envelope delivery))    ::  destination/state
 ++  atlas  (map ship status)                            ::  presence map
+++  bouquet  (set flavor)                               ::  complete aroma
 ++  command                                             ::  effect on party
   $%  [%design (pair span (unit config))]               ::  configure/destroy
       [%publish (list thought)]                         ::  originate
       [%review (list thought)]                          ::  deliver
-      [%ping (map station presence)]                    ::  declare status
   ==                                                    ::
 ++  config                                              ::  party configuration
-  $:  sources=(set station)                             ::  pulls from
-      cordon=(each (set ship) (set ship))               ::  white/blacklist
+  $:  sources=(set partner)                             ::  pulls from
+      caption=cord                                      ::  about
+      cordon=control                                    ::  restricted to
   ==                                                    ::
-++  cousin  (pair ship span)                            ::  domestic flow
-++  delivery  ?(%pending %received %rejected %released) ::  delivery state
+++  control  (pair posture (set ship))                  ::  access control
+++  delivery                                            ::  delivery state
+  $?  %pending                                          ::  undelivered
+      %received                                         ::  delivered
+      %rejected                                         ::  undeliverable
+      %released                                         ::  sent one-way
+      %accepted                                         ::  fully processed
+  ==                                                    ::
+++  envelope  (pair ,? (unit partner))                  ::  visible, sender
+++  flavor  path                                        ::  content flavor
 ++  human                                               ::  human identifier
   $:  true=(unit (trel ,@t (unit ,@t) ,@t))             ::  true name
       hand=(unit ,@t)                                   ::  handle
   ==                                                    ::
-++  partner                                             ::  foreign flow
+++  passport                                            ::  foreign flow
   $%  [%twitter p=@t]                                   ::  twitter
   ==                                                    ::
-++  presence   ?(%hear %talk)                           ::  status type
-++  report                                              ::  unified rush/rust
-  $%  [%house (set span)]                               ::  meta-changes
-      [%grams (pair ,@ud (list telegram))]              ::  thoughts
-      [%group (pair atlas (map station atlas))]         ::  presence
-      [%config config]                                  ::  reconfigure
+++  posture                                             ::  security posture
+  $?  %black                                            ::  public
+      %white                                            ::  private
+      %green                                            ::  readonly 
+      %brown                                            ::  writeonly
+  ==                                                    ::
+++  presence   ?(%gone %hear %talk)                     ::  status type
+++  register  (pair atlas (map partner atlas))          ::  ping me, ping srcs
+++  report                                              ::  radio update
+  $%  [%config config]                                  ::  reconfigure
+  ::  [%folder (list report)]                           ::  multiple
+      [%grams (pair ,@ud (list telegram))]              ::  beginning, thoughts
+      [%group register]                                 ::  presence
+      [%house (map span (pair posture cord))]           ::  station set
+  ==                                                    ::
+++  speech                                              ::  narrative action
+  ::  XX  unify %own and %say to %lin
+  ::
+  $%  [%lan p=span q=@t]                                ::  local announce
+      [%exp p=@t]                                       ::  hoon line
+      [%non ~]                                          ::  no content (yo)
+      [%ext p=@tas q=*]                                 ::  extended action
+      [%fat p=torso q=speech]                           ::  attachment
+      ::  [%inv p=station]                              ::  invite to station
+      [%ire p=serial q=speech]                          ::  in-reply-to
+      [%lin p=? q=@t]                                   ::  no=@, text line
+      [%mor p=(list speech)]                            ::  XX deleteme
   ==                                                    ::
 ++  serial     ,@uvH                                    ::  unique identity
-++  station    (each cousin partner)                    ::  interlocutor
+++  partner    (each station passport)                  ::  interlocutor
 ++  status     (pair presence human)                    ::  participant
-++  speech                                              ::  party action
-  $%  [%own p=@t]                                       ::  @ or /me
-      [%exp p=@t q=(unit tank)]                         ::  program output
-      [%say p=@t]                                       ::  normal line
-      [%inv p=ship q=span]                              ::  invite to
-  ==                                                    ::
-++  statement  (pair ,@da speech)                       ::  when this
+++  statement  (trel ,@da bouquet speech)               ::  when this
+++  station    (pair ship span)                         ::  domestic flow
 ++  telegram   (pair ship thought)                      ::  who which whom what
 ++  thought    (trel serial audience statement)         ::  which whom what
+++  torso                                               ::  attachment
+  $%  [%name (pair ,@t torso)]                          ::  named attachment
+      [%text (list ,@t)]                                ::  text lines
+      [%tank (list tank)]                               ::  tank list
+  ==                                                    ::
+  ::  markdown
+  ::  image
+  ::  mime object
 --

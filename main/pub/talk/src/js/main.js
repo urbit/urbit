@@ -5310,7 +5310,7 @@ MessageActions = require('../actions/MessageActions.coffee');
 module.exports = {
   listenStation: function(station, since) {
     return window.urb.subscribe({
-      appl: "rodeo",
+      appl: "radio",
       path: "/f/" + station + "/" + since
     }, function(err, res) {
       var ref, ref1;
@@ -5326,7 +5326,7 @@ module.exports = {
   },
   get: function(station, start, end) {
     return window.urb.subscribe({
-      appl: "rodeo",
+      appl: "radio",
       path: "/f/" + station + "/" + end + "/" + start
     }, function(err, res) {
       var ref, ref1;
@@ -5335,7 +5335,7 @@ module.exports = {
       if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
         MessageActions.loadMessages(res.data.grams, true);
         return window.urb.unsubscribe({
-          appl: "rodeo",
+          appl: "radio",
           path: "/f/" + station + "/" + end + "/" + start
         }, function(err, res) {
           console.log('done');
@@ -5346,8 +5346,8 @@ module.exports = {
   },
   sendMessage: function(message, cb) {
     return window.urb.send({
-      appl: "rodeo",
-      mark: "rodeo-command",
+      appl: "radio",
+      mark: "radio-command",
       data: {
         publish: [message]
       }
@@ -5371,8 +5371,8 @@ StationActions = require('../actions/StationActions.coffee');
 module.exports = {
   createStation: function(name, cb) {
     return window.urb.send({
-      appl: "rodeo",
-      mark: "rodeo-command",
+      appl: "radio",
+      mark: "radio-command",
       data: {
         design: {
           party: name,
@@ -5390,8 +5390,8 @@ module.exports = {
   },
   removeStation: function(name, cb) {
     return window.urb.send({
-      appl: "rodeo",
-      mark: "rodeo-command",
+      appl: "radio",
+      mark: "radio-command",
       data: {
         design: {
           party: name,
@@ -5403,8 +5403,8 @@ module.exports = {
   setSources: function(station, ship, sources) {
     var send;
     send = {
-      appl: "rodeo",
-      mark: "rodeo-command",
+      appl: "radio",
+      mark: "radio-command",
       data: {
         design: {
           party: station,
@@ -5426,7 +5426,7 @@ module.exports = {
   },
   members: function() {
     return window.urb.subscribe({
-      appl: "rodeo",
+      appl: "radio",
       path: "/a/court"
     }, function(err, res) {
       var ref, ref1;
@@ -5439,7 +5439,7 @@ module.exports = {
   },
   listen: function() {
     return window.urb.subscribe({
-      appl: "rodeo",
+      appl: "radio",
       path: "/"
     }, function(err, res) {
       console.log('house updates');
@@ -5451,7 +5451,7 @@ module.exports = {
   },
   listenStation: function(station) {
     return window.urb.subscribe({
-      appl: "rodeo",
+      appl: "radio",
       path: "/ax/" + station
     }, function(err, res) {
       var ref;

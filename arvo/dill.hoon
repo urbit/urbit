@@ -382,12 +382,12 @@
     =+  ^=  flo  ^-  (list (pair ship term))
         =+  myr=(clan p.q.hic)
         ?:  =(%pawn myr)
-          [p.q.hic %dojo]~
+          [[p.q.hic %dojo] [p.q.hic %hive] ~]
         ?:  =(%earl myr)
           =+  fap=(sein p.q.hic)
-          [[fap %dojo] [fap %talk] ~]
-        [[p.q.hic %dojo] [p.q.hic %talk] ~]
-    =^  moz  all  abet:(need (ax (need hey.all) [%flow %seat flo]))
+          [[fap %dojo] [fap %hive] ~]
+        [[p.q.hic %dojo] [p.q.hic %hive] ~]
+    =^  moz  all  abet:(need (ax (need hey.all) [%flow %sole flo]))
     [moz ..^$]
   =+  nus=(ax hen q.hic)
   ?~  nus
