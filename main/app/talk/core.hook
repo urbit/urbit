@@ -101,6 +101,7 @@
       ++  hy-abet  moz                                  ::  resolve core
       ++  hy-transmit                                   ::  send to radio
         |=  cod=command 
+        ~&  [%hy-transmit cod]
         %_    +>
             moz  :_  moz
           [0 %pass /command %g %mess [our /rodeo] our [%rodeo-command !>(cod)]]
@@ -118,10 +119,12 @@
       ::
       ++  hy-subscribe                                  ::  send %show
         |=  [way=path hoc=path]
+        ~&  [%hy-subscribe way hoc]
         %_(+> moz :_(moz [0 %pass way %g %show [our /rodeo] our hoc]))
       ::
       ++  hy-unsubscribe                                ::  send %nuke
         |=  way=path
+        ~&  [%hy-unsubscribe way]
         %_(+> moz :_(moz [0 %pass way %g %nuke [our /rodeo] our]))
       ::
       ++  hy-display                                    ::  print to console
@@ -205,6 +208,7 @@
               (come %lite shiz)
               (come %whom (stag %& staz))
               (come %wind step)
+              (come %love staz)
             ==
           ==
         ::
@@ -319,6 +323,7 @@
   ::
   ++  sy-voice                                          ::  set targets
     |=  [pas=? tou=(set partner)]
+    ~&  [%sy-voice pas tou]
     ?:  &(!p.mike pas)  +>
     %_  +>.$
       mike  [pas tou]
@@ -359,6 +364,7 @@
   ::
   ++  sy-work                                           ::  run user command
     |=  job=work
+    ~&  [%sy-work job]
     ^+  +>
     ?-    -.job
         %ask  ~|(%sy-work-ask-stub !!)
@@ -494,6 +500,7 @@
       |=  src=(set partner)
       ^+  +>
       =.  sources.xm.big  (stog src sources.xm.big)
+      ~&  [%xm-sources sources.xm.big]
       +>.$(moz hy-abet:(hy-transmit:(hype moz) [%design man ~ xm.big]))
     ::
     ++  sz-config                                       ::  apply config

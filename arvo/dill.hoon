@@ -382,7 +382,7 @@
     =+  ^=  flo  ^-  (list (pair ship term))
         =+  myr=(clan p.q.hic)
         ?:  =(%pawn myr)
-          [p.q.hic %dojo]~
+          [[p.q.hic %dojo] [p.q.hic %talk] ~]
         ?:  =(%earl myr)
           =+  fap=(sein p.q.hic)
           [[fap %dojo] [fap %talk] ~]

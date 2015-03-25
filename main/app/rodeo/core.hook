@@ -637,13 +637,13 @@
 ++  peer
   |=  [ost=bone her=ship pax=path]
   ^-  [(list move) _+>]
-  ::  ~&  [%rodeo-peer ost her pax]
+  ~&  [%rodeo-peer ost her pax]
   ra-abet:(~(ra-subscribe ra ost ~) her pax)
 ::
 ++  poke-rodeo-command
   |=  [ost=bone her=ship cod=command]
   ^-  [(list move) _+>]
-  ::  ~&  [%rodeo-poke-command her cod]
+  ~&  [%rodeo-poke-command her cod]
   =^  moz  +>.$  ra-abet:(~(ra-apply ra ost ~) her cod)
   [moz +>.$]
 ::
