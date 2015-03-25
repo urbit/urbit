@@ -86,7 +86,10 @@ $(() ->
         else
           $('body').removeClass 'scrolling'
 
+
     $(window).on 'scroll', window.util.checkScroll
+    $(window).on 'resize', window.util.checkResize
+
 
     window.chat.StationPersistence.listen()
 

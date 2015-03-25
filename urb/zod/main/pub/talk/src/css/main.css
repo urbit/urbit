@@ -422,3 +422,30 @@ body {
   font-size: 0.8rem;
   text-transform: uppercase;
 }
+@media only screen and (max-width: 1170px) {
+  #c,
+  #station-container {
+    width: 96%;
+    left: 0;
+    margin-left: 2%;
+    margin-right: 2%;
+  }
+  .mess,
+  #writing {
+    max-width: 40%;
+    line-height: 1.2rem;
+  }
+  .attr,
+  #stations,
+  #where {
+    width: 20%;
+    min-width: 20%;
+  }
+  #audience,
+  #who {
+    width: 60%;
+  }
+  #writing {
+    padding: 0.1rem;
+  }
+}
