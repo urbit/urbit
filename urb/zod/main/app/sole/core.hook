@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hook/core/seat/app                               ::  ::
+::::  /hook/core/sole/app                               ::  ::
   ::                                                    ::  ::
 /?  314                                                 ::  zuse version
 /-  *console                                            ::  console structures
@@ -584,7 +584,7 @@
 ++  peer
   |=  [ost=bone her=ship pax=path]
   ^-  [(list move) _+>]
-  ~&  [%seat-peer ost her pax]
+  ::  ~&  [%sole-peer ost her pax]
   ?<  (~(has by bin) ost)
   :-  [ost %give %rush %dill-blit %pro [`@c`0x23 `@c`0x20 ~]]~
   %=    +>
@@ -598,7 +598,7 @@
         :*  %&
             *(unit search)
             *history
-            `console-prompt`[%& %seat "{(scow %p our.hid)}# "]
+            `console-prompt`[%& %sole "{(scow %p our.hid)}# "]
             *console-command
         ==
         ~
@@ -616,7 +616,7 @@
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
-  ~?  =(~ (~(get by bin) ost))  [%seat-pour ost pax]
+  ~?  =(~ (~(get by bin) ost))  [%sole-pour ost pax]
   =+  sih=((hard sign) sih)
   ?>  ?=([@ @ @ ~] pax)
   =<  se-abet
