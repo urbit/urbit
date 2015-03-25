@@ -76,8 +76,8 @@ module.exports = recl
       _sources = _.clone @state.configs[@state.station].sources
       sources = _.map _sources,(source) =>
         (div {className:"station"}, [
-          (div {className:"path"}, source),
-          (div {className:"remove",onClick:_remove,"data-station":source},"×")
+          (div {className:"remove",onClick:_remove,"data-station":source},"×"),
+          (div {className:"path"}, source)
         ])
     else
       sources = "" 
@@ -89,7 +89,7 @@ module.exports = recl
       )
 
     parts.push head
-    parts.push (div {id:"audience"}, (div {},[(div {id:"members"},members)]))
-    parts.push (div {id:"stations"}, [(div {},sources),sourceCtrl])
+    parts.push (div {id:"stations"}, [(h1 {}, "Sources"),(div {},sources),sourceCtrl])
+    parts.push (div {id:"audience"}, (div {},[(h1 {}, "Audience"),(div {id:"members"},members)]))
 
     div {id:"station"},parts

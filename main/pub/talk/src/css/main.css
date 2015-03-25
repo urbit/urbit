@@ -87,7 +87,8 @@
 .time,
 #length,
 #where,
-#who {
+#who,
+.station {
   font-family: "scp";
 }
 .join-ctrl input {
@@ -145,6 +146,7 @@ body {
   border-bottom: 0.3rem solid #000;
   padding-bottom: 1rem;
   overflow: hidden;
+  z-index: 10;
   -webkit-transition: max-height 0.2s;
 }
 #station-container:hover {
@@ -198,12 +200,23 @@ body {
   width: 100%;
   height: 4rem;
 }
+#station-container h1 {
+  font-weight: 500;
+  font-size: 0.6rem;
+  letter-spacing: 0.06rem;
+  display: inline-block;
+  line-height: 1.2rem;
+}
+#audience,
+#stations,
 #head > div {
   display: inline-block;
   width: 17.3rem;
   text-align: right;
-  height: 3rem;
-  vertical-align: middle;
+  vertical-align: top;
+}
+#head > div {
+  height: 2rem;
   margin-top: 1.5rem;
 }
 #where .caret {
@@ -213,26 +226,46 @@ body {
 #who > span {
   margin-left: 1rem;
 }
+#members > div {
+  display: block;
+}
+#members > div div {
+  display: inline-block;
+}
+#members .iden {
+  min-width: 6rem;
+}
+.station div {
+  display: inline-block;
+}
 .station .remove {
-  display: none;
-  float: right;
-  margin-left: 1rem;
+  cursor: pointer;
+  width: 0.6rem;
+  margin-right: 0.6rem;
   font-weight: 600;
   color: #f00;
 }
 .station:hover .remove {
-  display: inline;
+  opacity: 1;
 }
 .sour-ctrl input {
+  font-family: "scp";
   border: none;
   font-weight: 400;
+  text-align: right;
+  line-height: 1rem;
+  outline: none;
+  cursor: pointer;
 }
 .sour-ctrl input::-webkit-input-placeholder {
-  font-family: "bau";
+  font-family: "scp";
   font-size: 1rem;
-  font-weight: 200;
+  font-weight: 600;
   margin-left: 0.6rem;
-  color: #0003ff;
+  color: #000;
+}
+.sour-ctrl input:focus::-webkit-input-placeholder {
+  color: #fff;
 }
 .message {
   padding-top: 0.3rem;

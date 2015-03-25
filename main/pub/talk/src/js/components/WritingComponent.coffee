@@ -53,7 +53,12 @@ module.exports = recl
     @typing false
 
   _audiKeyDown: (e) ->
-    if e.keyCode is 13 then $('#writing').focus()
+    if e.keyCode is 13 
+      e.preventDefault()
+      setTimeout () ->
+          $('#writing').focus()
+        ,0
+      return false
 
   _writingKeyDown: (e) ->
     if e.keyCode is 13
