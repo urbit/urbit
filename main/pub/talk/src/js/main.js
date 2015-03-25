@@ -933,6 +933,7 @@ $(function() {
     }
   };
   $(window).on('scroll', window.util.checkScroll);
+  $(window).on('resize', window.util.checkResize);
   window.chat.StationPersistence.listen();
   StationComponent = require('./components/StationComponent.coffee');
   MessagesComponent = require('./components/MessagesComponent.coffee');
