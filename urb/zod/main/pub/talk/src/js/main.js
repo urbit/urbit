@@ -495,12 +495,12 @@ module.exports = recl({
             className: "station"
           }, [
             div({
-              className: "path"
-            }, source), div({
               className: "remove",
               onClick: _remove,
               "data-station": source
-            }, "×")
+            }, "×"), div({
+              className: "path"
+            }, source)
           ]);
         };
       })(this));
@@ -526,15 +526,15 @@ module.exports = recl({
     ]);
     parts.push(head);
     parts.push(div({
+      id: "stations"
+    }, [h1({}, "Sources"), div({}, sources), sourceCtrl]));
+    parts.push(div({
       id: "audience"
     }, div({}, [
-      div({
+      h1({}, "Audience"), div({
         id: "members"
       }, members)
     ])));
-    parts.push(div({
-      id: "stations"
-    }, [div({}, sources), sourceCtrl]));
     return div({
       id: "station"
     }, parts);
@@ -617,7 +617,11 @@ module.exports = recl({
   },
   _audiKeyDown: function(e) {
     if (e.keyCode === 13) {
-      return $('#writing').focus();
+      e.preventDefault();
+      setTimeout(function() {
+        return $('#writing').focus();
+      }, 0);
+      return false;
     }
   },
   _writingKeyDown: function(e) {
@@ -1255,7 +1259,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 module.exports = invariant;
 
 },{}],"/Users/galen/src/urbit/urb/zod/main/pub/talk/src/js/node_modules/moment-timezone/data/packed/latest.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
 	"version": "2014j",
 	"zones": [
 		"Africa/Abidjan|LMT GMT|g.8 0|01|-2ldXH.Q",
