@@ -1,9 +1,9 @@
 ::
-::::  /hook/core/rodeo/app
+::::  /hook/core/radio/app
   ::
 /?  314
-/-  *rodeo, *twitter
-/+  rodeo
+/-  *radio, *twitter
+/+  radio
 ::
 ::::
   ::
@@ -11,7 +11,7 @@
 =>  |%                                                  ::  data structures
     ++  house  ,[%1 house-1]                            ::  full state
     ++  house-any                                       ::  app history
-      $%  [%1 house-1]                                  ::  1: rodeo
+      $%  [%1 house-1]                                  ::  1: radio
           [%0 house-0]                                  ::  0: initial version
       ==                                                ::
     ++  house-1                                         ::
@@ -49,7 +49,7 @@
           [%da p=@da]                                   ::  by date
       ==                                                ::
     ++  gift                                            ::  result
-      $%  [%rush %rodeo-report report]                  ::  refresh
+      $%  [%rush %radio-report report]                  ::  refresh
           [%mean ares]                                  ::  cancel
           [%nice ~]                                     ::  accept
       ==                                                ::
@@ -66,7 +66,7 @@
       $%  [%wake ~]                                     ::  timer wakeup
       ==  ==  ==                                        ::
     ++  silt
-      $%  [%rodeo-report p=report]                      ::  refresh
+      $%  [%radio-report p=report]                      ::  refresh
           [%twit-stat p=twit-stat]                      ::  tweet reciept
           [%twit-feed p=(list twit-stat)]               ::  tweet reciept
       ==
@@ -119,7 +119,7 @@
   ++  ra-house                                          ::  emit partners
     |=  ost=bone
     %+  ra-emit  ost
-    :^  %give  %rush  %rodeo-report
+    :^  %give  %rush  %radio-report
     :-  %house
     %-  ~(gas in *(map span (pair posture cord)))
     %+  turn  (~(tap by stories)) 
@@ -133,7 +133,7 @@
     =.  +>  $(gel r.gel)
     (ra-house n.gel)
   ::
-  ++  ra-init                                           ::  initialize rodeo
+  ++  ra-init                                           ::  initialize radio
     =+  sir=(sein our.hid)
     %+  ra-apply  our.hid
     :+  %design  (main our.hid)
@@ -147,10 +147,10 @@
     ?-    -.cod
         %design
       ?.  =(her our.hid)
-        (ra-evil %rodeo-no-owner)
+        (ra-evil %radio-no-owner)
       ?~  q.cod
         ?.  (~(has by stories) p.cod)
-          (ra-evil %rodeo-no-story)
+          (ra-evil %radio-no-story)
         =.  +>.$  (ra-config p.cod *config)
         ra-ever(stories (~(del by stories) p.cod))
       =.  +>.$  (ra-config p.cod u.q.cod)
@@ -178,7 +178,7 @@
   ++  ra-twitter                                        ::  %twitter response
     |=  [[num=@ud man=span] sih=sign]
     ^+  +>
-    ?+    sih  ~|([%rodeo-bad-twitter sih] !!)
+    ?+    sih  ~|([%radio-bad-twitter sih] !!)
         [%g ?(%nice %mean) ~]
       +>
         [%g %mean ^]
@@ -197,7 +197,7 @@
       %+  ~(put by q.u.oot)  pan
       :-  -.olg
       ?+  sih  !!
-        [%g %mean *]  ~&([%rodeo-repeat-rejected num pan sih] %rejected)
+        [%g %mean *]  ~&([%radio-repeat-rejected num pan sih] %rejected)
         [%g %nice ~]  %received
       ==
     (ra-think | our.hid u.oot ~)
@@ -230,7 +230,7 @@
     ?:  ?=(~ pax)
       (ra-house(general (~(put in general) ost)) ost)
     ?.  ?=([@ @ *] pax)
-      (ra-evil %rodeo-bad-path)
+      (ra-evil %radio-bad-path)
     =+  ^=  vab  ^-  (set ,@tas)
         =|  vab=(set ,@tas)
         |-  ^+  vab
@@ -239,7 +239,7 @@
     =+  pur=(~(get by stories) i.t.pax)
     ?~  pur
       ~&  [%bad-subscribe-story-c i.t.pax]
-      (ra-evil %rodeo-no-story)
+      (ra-evil %radio-no-story)
     =+  soy=~(. pa i.t.pax u.pur)
     =.  soy  ?.((~(has in vab) %a) soy (pa-watch:soy her))
     =.  soy  ?.((~(has in vab) %x) soy (pa-master:soy her))
@@ -297,9 +297,9 @@
             /repeat/(scot %ud p.outbox)/(scot %p p.cuz)/[q.cuz]
             %g
             %mess
-            [p.cuz /rodeo]
+            [p.cuz /radio]
             our.hid
-            [%rodeo-command !>(`command`[%review tip ~])]
+            [%radio-command !>(`command`[%review tip ~])]
         ==
     +>(p.outbox +(p.outbox), q.outbox (~(put by q.outbox) p.outbox tip))
   ::
@@ -340,17 +340,17 @@
     ++  pa-watch                                        ::  watch presence
       |=  her=ship
       ?.  (pa-admire her)
-        (pa-sauce ost [[%mean ~ %rodeo-watch-unauthorized ~] ~])
+        (pa-sauce ost [[%mean ~ %radio-watch-unauthorized ~] ~])
       =.  viewers  (~(put in viewers) ost)
       (pa-display ost ~ ~)
     ::
     ++  pa-master                                       ::  hear config
       |=  her=ship
       ?.  (pa-admire her)
-        (pa-sauce ost [[%mean ~ %rodeo-master-unauthorized ~] ~])
+        (pa-sauce ost [[%mean ~ %radio-master-unauthorized ~] ~])
       =.  owners  (~(put in owners) ost)
       ::  ~&  [%pa-master her man shape]
-      (pa-sauce ost [[%rush %rodeo-report %config shape] ~])
+      (pa-sauce ost [[%rush %radio-report %config shape] ~])
     ::
     ++  pa-display                                      ::  update presence
       |=  vew=(set bone)
@@ -364,7 +364,7 @@
       ?~  vew  +>.^$
       =.  +>.^$  $(vew l.vew)
       =.  +>.^$  $(vew r.vew)
-      (pa-sauce n.vew [[%rush %rodeo-report %group reg] ~])
+      (pa-sauce n.vew [[%rush %radio-report %group reg] ~])
     ::
     ++  pa-monitor                                      ::  update config
       =+  owe=owners
@@ -373,12 +373,12 @@
       =.  +>  $(owe l.owe)
       =.  +>  $(owe r.owe)
       ::  ~&  [%pa-monitor man shape]
-      (pa-sauce n.owe [[%rush %rodeo-report %config shape] ~])
+      (pa-sauce n.owe [[%rush %radio-report %config shape] ~])
     ::
     ++  pa-friend                                       ::  subscribed update
       |=  [tay=partner sih=sign]
       ^+  +>
-      ?+    sih  ~|([%rodeo-bad-friend sih] !!)
+      ?+    sih  ~|([%radio-bad-friend sih] !!)
           [%g %nice ~]
         +>.$
       ::
@@ -399,14 +399,14 @@
         :+  now
           ~                           ::  XX  hashtags
         [%lin & txt]
-          [%g %rush %rodeo-report *]
+          [%g %rush %radio-report *]
         ::  ~&  [%pa-friend-report +>+.sih]
         ?>  ?=(& -.tay)
         =.  +>  %+  pa-scrub  ost 
                 :_  ~
                 :-  /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
-                [%g %took [p.p.tay /rodeo] our.hid]
-        ?+  -.p.p.sih  ~|([%rodeo-odd-friend sih] !!)
+                [%g %took [p.p.tay /radio] our.hid]
+        ?+  -.p.p.sih  ~|([%radio-odd-friend sih] !!)
           %config  +>.$
           %group  (pa-remind tay +.p.p.sih)
           %grams  (pa-lesson q.+.p.p.sih)
@@ -442,7 +442,7 @@
       ::
         %&  ::  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
             :~  :-  /friend/nuke/[man]/(scot %p p.p.tay)/[q.p.tay]
-                [%g %nuke [p.p.tay /rodeo] our.hid]
+                [%g %nuke [p.p.tay /radio] our.hid]
             ==
       ==
     ::
@@ -462,7 +462,7 @@
       ::
         %&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
             :~  :-  /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
-                [%g %show [p.p.tay /rodeo] our.hid /af/[q.p.tay]/(scot %ud num)]
+                [%g %show [p.p.tay /radio] our.hid /af/[q.p.tay]/(scot %ud num)]
             ==
       ==
     ::
@@ -527,7 +527,7 @@
       |=  riv=river
       ^+  +>
       =-  ::  ~&  [%pa-start riv lab]
-          =.  +>.$  (pa-sauce ost [[%rush %rodeo-report %grams q.lab r.lab] ~])
+          =.  +>.$  (pa-sauce ost [[%rush %radio-report %grams q.lab r.lab] ~])
           ?:  p.lab
             (pa-sauce ost [[%mean ~] ~])
           +>.$(guests (~(put by guests) ost riv))
@@ -551,7 +551,7 @@
       |=  [her=ship pax=path]
       ^+  +>
       ?.  (pa-admire her)
-        (pa-sauce ost [[%mean ~ %rodeo-listen-unauthorized ~] ~])
+        (pa-sauce ost [[%mean ~ %radio-listen-unauthorized ~] ~])
       =+  ^=  ruv  ^-  (unit river)
           ?:  ?=(~ pax)
             `[[%ud count] [%da (dec (bex 128))]]
@@ -566,7 +566,7 @@
           `[(point +>.say) (point +>.den)]
       ::  ~&  [%pa-listen her pax ruv]
       ?~  ruv
-        (pa-sauce ost [[%mean ~ %rodeo-malformed ~] ~])
+        (pa-sauce ost [[%mean ~ %radio-malformed ~] ~])
       (pa-start u.ruv)
     ::
     ++  pa-refresh                                      ::  update stream
@@ -589,7 +589,7 @@
               ==
             old
           :-  p.old
-          [[p.n.guests %give %rush %rodeo-report %grams num gam ~] q.old]
+          [[p.n.guests %give %rush %radio-report %grams num gam ~] q.old]
       =.  moves  (welp q.moy moves)
       |-  ^+  +>.^$
       ?~  p.moy  +>.^$
@@ -637,13 +637,13 @@
 ++  peer
   |=  [ost=bone her=ship pax=path]
   ^-  [(list move) _+>]
-  ~&  [%rodeo-peer ost her pax]
+  ~&  [%radio-peer ost her pax]
   ra-abet:(~(ra-subscribe ra ost ~) her pax)
 ::
-++  poke-rodeo-command
+++  poke-radio-command
   |=  [ost=bone her=ship cod=command]
   ^-  [(list move) _+>]
-  ~&  [%rodeo-poke-command her cod]
+  ~&  [%radio-poke-command her cod]
   =^  moz  +>.$  ra-abet:(~(ra-apply ra ost ~) her cod)
   [moz +>.$]
 ::
@@ -652,13 +652,13 @@
   ^-  [(list move) _+>]
   ::  ~&  sih=sih
   =+  sih=((hard sign) sih)
-  ::  ~&  [%rodeo-pour ost pax sih]
-  ?+    pax  ~&  [%rodeo-strange-path pax]  !!
+  ::  ~&  [%radio-pour ost pax sih]
+  ?+    pax  ~&  [%radio-strange-path pax]  !!
   ::
       [%twitter *]
     =-  ra-abet:(~(ra-twitter ra ost ~) met sih)
     ^=  met
-    ?+    t.pax  ~|  [%rodeo-twitter-strange-path pax]  !!
+    ?+    t.pax  ~|  [%radio-twitter-strange-path pax]  !!
       ::    [%mine @ @ ~]
       ::  [i.t.pax i.t.t.t.pax]
         [%stat @ @ ~]
@@ -685,14 +685,14 @@
 ++  pull
   |=  ost=bone
   ^-  [(list move) _+>]
-  ~&  [%rodeo-pull `*`ost]
+  ~&  [%radio-pull `*`ost]
   ra-abet:~(ra-cancel ra ost ~)
 ::
 ++  poke-bit
   |=  [ost=bone you=ship ~]
   ^-  [(list move) _+>]
   :_  +>.$
-  =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/rodeo/backlog/jam
+  =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/radio/backlog/jam
   [ost %pass /jamfile %c %info our.hid (foal paf (jam +<+.+>.$))]~
 ::
 ++  prep
@@ -702,9 +702,9 @@
   =|  moz=(list move)
   |-
   ?~  u.old
-    =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/rodeo/backlog/jam
+    =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/radio/backlog/jam
     ?.  ?=([%0 %0 %0] [.^(%cy paf)])
-      ~&  %rodeo-prep-restore
+      ~&  %radio-prep-restore
       $(u.old (some ((hard house-any) (cue ((hard ,@) .^(%cx paf))))))
     ra-abet:~(ra-init ra 0 moz)
   :-  moz

@@ -1,8 +1,8 @@
 ::
-::::  /hook/door/rodeo-command/mar
+::::  /hook/door/radio-command/mar
   ::
 /?    314
-/-    *rodeo
+/-    *radio
 !:
 |_  cod=command
 ::
