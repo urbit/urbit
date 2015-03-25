@@ -47,7 +47,7 @@ machine directly.
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/1/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/1/
 
 #### What did you just do?
 
@@ -90,7 +90,7 @@ documentation](link).
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/2/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/2/
 
 ### What's going on there?
 
@@ -140,7 +140,7 @@ we need to explicitly convert our types.
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/3/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/3/
 
 #### How does that work?
 
@@ -212,7 +212,7 @@ values of `a` and `b` to any integers to produce similar results.
 
 (and be sure to put two spaces between `++` and arm names)
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/4/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/4/
 
 ### What's happening?
 
@@ -282,7 +282,7 @@ margin. In wide form we use parenthesis just like almost everyone else.
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/5/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/5/
 
 #### What's the difference?
 
@@ -362,7 +362,7 @@ You can read more about how faces work in the commentary on `++type`
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/6/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/6/
 
 #### What is that doing?
 
@@ -431,7 +431,7 @@ sequence at a given value `x`.
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/7/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/7/
     http://ship-name.urbit.org/gin/del/main/pub/fab/guide/exercise/7/
 
 Here we're putting our publishing framework, `%ford` to work a little
@@ -471,7 +471,7 @@ helpful trick when debugging. To fully understand what gets put in
 [`++epic`](link), which also contains a [`++cred`](link). You can follow
 those links to learn more about them.
 
-When we try changing the url from `gen/main` to `gin/del/main` we're
+When we try changing the url from `main` to `gin/del/main` we're
 using some of the access methods from `%eyre` (the urbit webserver) to
 pretend to be the urbit `~del`. You can find documentation on those
 access methods in the `%eyre` commentary, [here](link).
@@ -510,8 +510,8 @@ checking out as well.
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/8/
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/8/?code=yes-i-do
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/8/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/8/?code=yes-i-do
 
 This is a simple example, showing off another use of
 `/=    gas  /$  fuel`. In this case we're just pulling out the value of
@@ -569,7 +569,7 @@ learn more about them in the [map section](link) of the library doc.
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/9/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/9/
 
 #### How are they getting combined?
 
@@ -652,9 +652,9 @@ file. You can read more about how `%clay` paths are parsed in the
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/10/
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/10/?number=7
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/10/?number=12
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/10/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/10/?number=7
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/10/?number=12
 
 As you can see by changing the URL, we're now passing our query string
 parameter to our `++fib` script and printing the output. It's common to
@@ -742,9 +742,9 @@ odor and a value, and tries to cast the value to that odor.
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/11/
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/11/lib/1/
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/11/lib/2/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/11/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/11/lib/1/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/11/lib/2/
 
 #### Experiment with it
 
@@ -800,7 +800,7 @@ Then, further down, we use [`;*`](link) to write the list to the page.
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/
+    http://ship-name.urbit.org/main/pub/fab/guide/
 
 #### Bring it all together
 

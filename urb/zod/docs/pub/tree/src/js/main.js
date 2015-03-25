@@ -122,7 +122,7 @@ module.exports = recl({
   },
   setPath: function(href, hist) {
     if (hist !== false) {
-      history.pushState({}, "", "/gen/docs/tree" + href);
+      history.pushState({}, "", "/docs/tree" + href);
     }
     return TreeActions.setCurr(href);
   },
@@ -138,7 +138,7 @@ module.exports = recl({
   },
   checkURL: function() {
     if (this.state.url !== window.location.pathname) {
-      return this.setPath(window.location.pathname.replace("/gen/docs/tree", ""), false);
+      return this.setPath(window.location.pathname.replace("/docs/tree", ""), false);
     }
   },
   setTitle: function() {
