@@ -1,0 +1,43 @@
+::
+::::  /hook/gate/begin/helm/gun
+  ::
+/?  314
+/-  *console
+::
+::::
+  !:
+=>  |%
+    ++  begs  ,[his=@p tic=@p eny=@t ges=gens]
+    --
+|=  $:  [now=@da bec=beak]
+        [~ ~]
+    ==
+^-  (console-result (cask begs))
+%+  console-lo
+  [%& %helm-begin "your ship: ~"]
+%+  console-go  fed:ag
+|=  his=@p
+%+  console-lo
+  [%& %helm-ticket "your ticket: ~"]
+%+  console-go  fed:ag
+|=  tic=@p
+%+  console-lo  
+  [%& %helm-entropy "some entropy: "]
+%+  console-go  (boss 256 (more gon qit))
+|=  eny=@t
+%+  console-so  %helm-begin
+:*  his
+    tic
+    eny
+::
+    ^-  gens
+    :-  %en
+    =+  can=(clan his)
+    ?-  can
+      %czar  [%czar ~]
+      %duke  [%duke %anon ~]
+      %earl  [%earl (scot %p his)]
+      %king  [%king (scot %p his)]
+      %pawn  [%pawn ~]
+    ==
+==

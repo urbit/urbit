@@ -11,7 +11,7 @@
 =>  |%                                                  ::  structures
     ++  town                                            ::  all client state
       $:  %0                                            ::  version
-          say=console-share                            ::  command lines
+          say=console-share                             ::  command lines
           live=(unit span)                              ::  present story
           stories=(map span story)                      ::  all stories
       ==                                                ::
@@ -574,6 +574,7 @@
   ++  ny-work                                           ::  user command
     |=  jaw=work-construct
     ^+  +>
+    ~&  [%ny-work jaw]
     ?-    -.jaw
         %raze  +>(moz hy-abet:(hy-transmit:(hype moz) [%design p.jaw ~]))
         %tune  (ny-tune p.jaw)
