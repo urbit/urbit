@@ -30,8 +30,8 @@ module.exports =
   sendMessage: (station,message,audience) ->
     serial = window.util.uuid32()
 
-    if station[0] isnt "~" then station = "~"+window.urb.ship+"/"+station
 
+    if station[0] isnt "~" then station = "~"+window.urb.ship+"/"+station
     if audience.length is 0 then audience.push station
 
     _audi = {}
@@ -51,9 +51,13 @@ module.exports =
           bouquet:[]
           speech:
             lin:
-              say:false
+              say:true
               txt:message
           date: Date.now()
+    
+    if message[0] is "@"
+      _message.thought.statement.speech.lin.txt = _message.thought.statement.speech.lin.txt.slice(1).trim()
+      _message.thought.statement.speech.lin.say = false
 
     MessageDispatcher.handleViewAction
       type:"message-send"

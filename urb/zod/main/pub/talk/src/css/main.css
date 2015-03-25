@@ -291,7 +291,8 @@ body {
 #messages .message:hover .time {
   opacity: 1;
 }
-#messages .message .ship {
+#messages .message .ship,
+#messages .message .audi > div {
   cursor: pointer;
 }
 .member {
@@ -303,6 +304,9 @@ body {
 }
 .message.pending {
   color: #ccc;
+}
+.message.say .mess {
+  font-style: italic;
 }
 .mess,
 .iden,
