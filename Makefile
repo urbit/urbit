@@ -33,7 +33,7 @@ ENDIAN=little
 #
 BIN=bin
 
-LIB=$(PWD)/urb
+LIB=$(shell pwd)/urb
 
 RM=rm -f
 CC=gcc
@@ -86,8 +86,11 @@ CWFLAGS=-Wall \
         -Wno-sign-compare \
         -Wno-unused-parameter \
         -Wno-missing-field-initializers \
-        -Wno-error=unused-result \
+        -Wno-strict-aliasing \
         -Werror
+ifneq ($(OS),bsd)
+  CWFLAGS+=-Wno-error=unused-result
+endif
 
 ifdef NO_SILENT_RULES
 %.o: %.c $(CORE)
@@ -377,7 +380,7 @@ $(LIBCOMMONMARK):
 	$(MAKE) -C outside/commonmark
 
 $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBRE2)
-	$(CXX) $(CXXFLAGS) -c $< $(LIBRE2) -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(V_OFILES): i/v/vere.h
 
