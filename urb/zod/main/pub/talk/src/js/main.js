@@ -615,7 +615,12 @@ module.exports = recl({
     this.set();
     return this.typing(false);
   },
-  _keyDown: function(e) {
+  _audiKeyDown: function(e) {
+    if (e.keyCode === 13) {
+      return $('#writing').focus();
+    }
+  },
+  _writingKeyDown: function(e) {
     if (e.keyCode === 13) {
       e.preventDefault();
       this.sendMessage();
@@ -753,6 +758,7 @@ module.exports = recl({
           id: "audi",
           className: "audi valid-" + this.state.valid,
           contentEditable: true,
+          onKeyDown: this._audiKeyDown,
           onBlur: this._setAudi
         }, audi.join(" ")), Member(iden, ""), div({
           className: "time"
@@ -764,7 +770,7 @@ module.exports = recl({
         onBlur: this._blur,
         onInput: this._input,
         onPaste: this._input,
-        onKeyDown: this._keyDown,
+        onKeyDown: this._writingKeyDown,
         onFocus: this.cursorAtEnd
       }, ""), div({
         id: "length"
@@ -1249,7 +1255,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 module.exports = invariant;
 
 },{}],"/Users/galen/src/urbit/urb/zod/main/pub/talk/src/js/node_modules/moment-timezone/data/packed/latest.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports={
+module.exports=module.exports=module.exports=module.exports=module.exports=module.exports=module.exports={
 	"version": "2014j",
 	"zones": [
 		"Africa/Abidjan|LMT GMT|g.8 0|01|-2ldXH.Q",

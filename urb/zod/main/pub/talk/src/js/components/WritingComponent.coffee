@@ -52,7 +52,10 @@ module.exports = recl
     @set()
     @typing false
 
-  _keyDown: (e) ->
+  _audiKeyDown: (e) ->
+    if e.keyCode is 13 then $('#writing').focus()
+
+  _writingKeyDown: (e) ->
     if e.keyCode is 13
       e.preventDefault()
       @sendMessage()
@@ -162,6 +165,7 @@ module.exports = recl
           id:"audi"
           className:"audi valid-#{@state.valid}"
           contentEditable:true
+          onKeyDown: @_audiKeyDown
           onBlur:@_setAudi
           }, audi.join(" "))
         (Member iden, "")
@@ -174,7 +178,7 @@ module.exports = recl
           onBlur: @_blur
           onInput: @_input
           onPaste: @_input
-          onKeyDown: @_keyDown
+          onKeyDown: @_writingKeyDown
           onFocus: @cursorAtEnd
         }, "")
       div {id:"length"}, "0/69"
