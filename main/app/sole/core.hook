@@ -84,7 +84,7 @@
           (most ;~(plug com ace) sp-gill)
           %+  cook
             |=  a=ship
-            [[a %dojo] [a %talk] ~]
+            [[a %dojo] [a %hive] ~]
           ;~(pfix sig fed:ag)
         ==
       ::
@@ -503,7 +503,7 @@
     ::
     ++  ta-pro                                          ::  set prompt
       |=  pom=console-prompt
-      +>(pom pom)
+      +>(pom pom(cad :(welp (scow %p p.gyl) ":" (trip q.gyl) cad.pom)))
     ::
     ++  ta-ret                                          ::  hear return
       ?.  mav
