@@ -80,12 +80,16 @@ module.exports = recl
           (div {className:"remove",onClick:_remove,"data-station":source},"×")
         ])
     else
-      sources = ""
+      sources = "" 
 
-    station = []
-    station.push (div {id:"members"},members)
+    head = (div {id:"head"}, 
+        [(div {id:"where"},["/talk",(div {className:"caret"},"")]),
+         (div {id:"who"},[(div {className:"circle"},""),"~#{window.urb.user}"])
+        ]
+      )
 
-    parts.push (div {id:"audience"}, (div {},station))
+    parts.push head
+    parts.push (div {id:"audience"}, (div {},[(div {id:"members"},members)]))
     parts.push (div {id:"stations"}, [(div {},sources),sourceCtrl])
 
     div {id:"station"},parts

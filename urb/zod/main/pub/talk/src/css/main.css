@@ -85,7 +85,9 @@
 .iden,
 .audi,
 .time,
-#length {
+#length,
+#where,
+#who {
   font-family: "scp";
 }
 .join-ctrl input {
@@ -129,7 +131,7 @@ body {
 }
 #c {
   position: absolute;
-  top: 4rem;
+  top: 0rem;
   left: 50%;
   width: 58rem;
   margin-left: -29rem;
@@ -137,7 +139,18 @@ body {
 }
 #station-container {
   position: absolute;
-  top: 1rem;
+  width: 100%;
+  max-height: 2.7rem;
+  background-color: #fff;
+  border-bottom: 0.3rem solid #000;
+  padding-bottom: 1rem;
+  overflow: hidden;
+  -webkit-transition: max-height 0.2s;
+}
+#station-container:hover {
+  max-height: 30rem;
+  height: auto;
+  -webkit-transition: max-height 0.2s;
 }
 #station #station-container {
   padding-top: 1rem;
@@ -150,17 +163,55 @@ body {
 }
 #messages-container {
   vertical-align: top;
+  margin-top: 4rem;
 }
-#station > div {
+.caret,
+.circle {
   display: inline-block;
 }
-#station-meta .audi,
-#station-meta .iden {
-  display: inline-block;
+.caret {
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 6px solid #000;
 }
-#station-meta .iden {
-  width: 6rem;
-  margin-left: 0.3rem;
+.circle {
+  width: 6px;
+  height: 6px;
+  border: 3px solid #000;
+  border-radius: 6px;
+}
+#station-container #where .caret {
+  -webkit-transform: rotate(0deg);
+  -webkit-transform-origin: 0 50%;
+  -webkit-transition: -webkit-transform 0.2s;
+}
+#station-container:hover #where .caret {
+  transform: rotate(90deg);
+  transform-origin: 0 50%;
+  -webkit-transform: rotate(90deg);
+  -webkit-transition: -webkit-transform 0.2s;
+}
+#head {
+  width: 100%;
+  height: 4rem;
+}
+#head > div {
+  display: inline-block;
+  width: 17.3rem;
+  text-align: right;
+  height: 3rem;
+  vertical-align: middle;
+  margin-top: 1.5rem;
+}
+#where .caret {
+  border-left-color: #f00;
+  margin-left: 1rem;
+}
+#who > span {
+  margin-left: 1rem;
 }
 .station .remove {
   display: none;
@@ -224,7 +275,7 @@ body {
   text-align: right;
   display: inline-block;
   margin-right: 0.3rem;
-  min-width: 10rem;
+  min-width: 16rem;
 }
 .attr .iden {
   color: #000;
