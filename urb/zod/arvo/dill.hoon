@@ -49,6 +49,7 @@
   $%  [%bel ~]                                          ::  make a noise
       [%clr ~]                                          ::  clear the screen
       [%hop p=@ud]                                      ::  set cursor position
+      [%mor p=(list dill-blit)]                         ::  multiple blits
       [%pro p=(list ,@c)]                               ::  show as cursor/line
       [%out p=(list ,@c)]                               ::  send output line
       [%sag p=path q=*]                                 ::  save to jamfile
@@ -236,6 +237,10 @@
       ++  from                                          ::  receive belt
         |=  bit=dill-blit
         ^+  +>
+        ?:  ?=(%mor -.bit)
+          |-  ^+  +>.^$
+          ?~  p.bit  +>.^$
+          $(p.bit t.p.bit, +>.^$ ^$(bit i.p.bit))
         ?:  ?=(%out -.bit)
           %+  done  %blit
           :~  [%lin p.bit]
@@ -250,6 +255,7 @@
         (done %blit [bit ~])
       ::
       ++  init                                          ::  initialize
+        ~&  [%dill-init our]
         =+  myt=(flop (need tem))
         =.  tem  ~
         =.  moz  :_(moz [hen %pass ~ %g %show [our [ram ~]] our ~])
@@ -376,7 +382,7 @@
     =+  ^=  flo  ^-  (list (pair ship term))
         =+  myr=(clan p.q.hic)
         ?:  =(%pawn myr)
-          ~
+          [p.q.hic %dojo]~
         ?:  =(%earl myr)
           =+  fap=(sein p.q.hic)
           [[fap %dojo] [fap %talk] ~]
