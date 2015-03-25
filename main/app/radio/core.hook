@@ -399,6 +399,7 @@
         :+  now
           ~                           ::  XX  hashtags
         [%lin & txt]
+    ::
           [%g %rush %radio-report *]
         ::  ~&  [%pa-friend-report +>+.sih]
         ?>  ?=(& -.tay)
@@ -440,7 +441,7 @@
             ::      [%g %nuke [our.hid /twit] our.hid]
             ::  ==
       ::
-        %&  ::  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
+        %&  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
             :~  :-  /friend/nuke/[man]/(scot %p p.p.tay)/[q.p.tay]
                 [%g %nuke [p.p.tay /radio] our.hid]
             ==
@@ -668,7 +669,7 @@
       [%friend *]
     ?>  ?=([@ @ @ @ ~] t.pax)
     ?.  =(%show i.t.pax)
-      ~&  [%pour-friend-nuke-nuke pax]
+      ::  ~&  [%pour-friend-nuke-nuke pax]
       [~ +>.$]
     =+  man=i.t.t.pax
     =+  ?:  ?=(%twitter i.t.t.t.pax)
@@ -685,8 +686,8 @@
 ++  pull
   |=  ost=bone
   ^-  [(list move) _+>]
-  ~&  [%radio-pull `*`ost]
-  ra-abet:~(ra-cancel ra ost ~)
+  ::  ~&  [%radio-pull `*`ost]
+  ra-abet:ra-ever:~(ra-cancel ra ost ~)
 ::
 ++  poke-bit
   |=  [ost=bone you=ship ~]

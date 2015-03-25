@@ -362,7 +362,7 @@
   ::
   ++  sy-work                                           ::  run user command
     |=  job=work
-    ~&  [%sy-work job]
+    ::  ~&  [%sy-work job]
     ^+  +>
     ?-    -.job
         %ask  ~|(%sy-work-ask-stub !!)
