@@ -710,6 +710,7 @@ _unix_load(u3_ufil* fil_u)
       }
 
       if ( fln_w == flt_w && 0 == memcmp(pad_y, pat_y, fln_w) ) {
+        free(pad_y);
         free(pat_y);
         return u3_nul;
       }
