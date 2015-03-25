@@ -201,12 +201,15 @@
     /* u3_ames: ames networking.
     */
       typedef struct _u3_ames {             //  packet network state
-        uv_udp_t   wax_u;                   //  socket state
-        uv_timer_t tim_u;                   //  network timer
-        c3_o       alm;                     //  alarm on
-        c3_w       law_w;                   //  last wakeup, unix time
-        c3_s       por_s;                   //  public IPv4 port
-        c3_w       imp_w[256];              //  imperial IPs
+        union {
+          uv_udp_t    wax_u;
+          uv_handle_t had_u;
+        };
+        uv_timer_t    tim_u;                //  network timer
+        c3_o          alm;                  //  alarm on
+        c3_w          law_w;                //  last wakeup, unix time
+        c3_s          por_s;                //  public IPv4 port
+        c3_w          imp_w[256];           //  imperial IPs
       } u3_ames;
 
     /* u3_save: checkpoint control.
@@ -1090,6 +1093,11 @@
       */
         void
         u3_sist_get(const c3_c* key_c, c3_y* val_y);
+
+      /* u3_sist_rand(): fill 8 words (32 bytes) with high-quality entropy.
+      */
+        void
+        u3_sist_rand(c3_w* rad_w);
 
     /**  New timer system.
     **/
