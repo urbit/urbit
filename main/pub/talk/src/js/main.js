@@ -65,7 +65,7 @@ module.exports = {
           bouquet: [],
           speech: {
             lin: {
-              say: false,
+              say: true,
               txt: message
             }
           },
@@ -73,6 +73,10 @@ module.exports = {
         }
       }
     };
+    if (message[0] === "@") {
+      _message.thought.statement.speech.lin.txt = _message.thought.statement.speech.lin.txt.slice(1).trim();
+      _message.thought.statement.speech.lin.say = false;
+    }
     MessageDispatcher.handleViewAction({
       type: "message-send",
       message: _message
@@ -251,16 +255,19 @@ Message = recl({
     return this.props._handlePm(user);
   },
   render: function() {
-    var audi, delivery, name, pendingClass;
+    var audi, delivery, klass, name;
     delivery = _.uniq(_.pluck(this.props.thought.audience, "delivery"));
-    pendingClass = delivery.indexOf("received") !== -1 ? "received" : "pending";
+    klass = delivery.indexOf("received") !== -1 ? " received" : " pending";
+    if (this.props.thought.statement.speech.lin.say === false) {
+      klass += " say";
+    }
     name = this.props.name ? this.props.name : "";
     audi = window.util.clipAudi(_.keys(this.props.thought.audience));
     audi = audi.map(function(_audi) {
       return div({}, _audi);
     });
     return div({
-      className: "message " + pendingClass
+      className: "message " + klass
     }, [
       div({
         className: "attr"
@@ -448,7 +455,8 @@ module.exports = recl({
         _sources = _.clone(this.state.configs[this.state.station].sources);
         _sources.push(v);
         StationActions.setSources(this.state.station, _sources);
-        return this.$input.val('');
+        this.$input.val('');
+        return this.$input.blur();
       }
     }
   },
@@ -616,7 +624,7 @@ module.exports = recl({
       audi = this.state.audi;
     }
     audi = window.util.expandAudi(audi);
-    MessageActions.sendMessage(audi, this.$writing.text(), audi);
+    MessageActions.sendMessage(audi, this.$writing.text().trim(), audi);
     this.$length.text("0/69");
     this.$writing.text('');
     this.set();
@@ -5461,13 +5469,13 @@ module.exports = {
       appl: "radio",
       path: "/ax/" + station
     }, function(err, res) {
-      var ref;
       console.log('station subscription updates');
       console.log(res.data);
       if (res.data.ok === true) {
         StationActions.listeningStation(station);
       }
-      if ((ref = res.data.group) != null ? ref.global : void 0) {
+      if (res.data.group) {
+        res.data.group.global[window.util.mainStationPath(window.urb.user)] = res.data.group.local;
         StationActions.loadMembers(res.data.group.global);
       }
       if (res.data.config) {

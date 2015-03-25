@@ -31,13 +31,14 @@ Message = recl
   render: ->
     # pendingClass = if @props.pending isnt "received" then "pending" else ""
     delivery = _.uniq _.pluck @props.thought.audience, "delivery"
-    pendingClass = if delivery.indexOf("received") isnt -1 then "received" else "pending"
+    klass = if delivery.indexOf("received") isnt -1 then " received" else " pending"
+    if @props.thought.statement.speech.lin.say is false then klass += " say"
 
     name = if @props.name then @props.name else ""
     audi = window.util.clipAudi _.keys @props.thought.audience
     audi = audi.map (_audi) -> (div {}, _audi)
 
-    div {className:"message "+pendingClass}, [
+    div {className:"message #{klass}"}, [
         (div {className:"attr"}, [
           div {onClick:@_handleAudi,className:"audi"}, audi
           (div {onClick:@_handlePm}, (Member {ship:@props.ship}, ""))

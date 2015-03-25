@@ -46,7 +46,7 @@ module.exports = recl
     else
       audi = @state.audi
     audi = window.util.expandAudi audi
-    MessageActions.sendMessage audi,@$writing.text(),audi
+    MessageActions.sendMessage audi,@$writing.text().trim(),audi
     @$length.text "0/69"
     @$writing.text('')
     @set()

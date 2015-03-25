@@ -47,6 +47,7 @@ module.exports = recl
         _sources.push v
         StationActions.setSources @state.station,_sources
         @$input.val('')
+        @$input.blur()
 
   _remove: (e) ->
     e.stopPropagation()

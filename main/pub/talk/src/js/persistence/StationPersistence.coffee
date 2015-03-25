@@ -68,7 +68,8 @@ module.exports =
         console.log(res.data)
         if res.data.ok is true
           StationActions.listeningStation station
-        if res.data.group?.global
+        if res.data.group
+          res.data.group.global[window.util.mainStationPath(window.urb.user)] = res.data.group.local
           StationActions.loadMembers res.data.group.global
         if res.data.config
           StationActions.loadConfig station,res.data.config
