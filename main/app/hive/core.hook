@@ -101,7 +101,6 @@
       ++  hy-abet  moz                                  ::  resolve core
       ++  hy-transmit                                   ::  send to radio
         |=  cod=command 
-        ~&  [%hy-transmit cod]
         %_    +>
             moz  :_  moz
           [0 %pass /command %g %mess [our /radio] our [%radio-command !>(cod)]]
@@ -499,18 +498,17 @@
       |=  src=(set partner)
       ^+  +>
       =.  sources.xm.big  (stog src sources.xm.big)
-      ~&  [%xm-sources sources.xm.big]
       +>.$(moz hy-abet:(hy-transmit:(hype moz) [%design man ~ xm.big]))
     ::
     ++  sz-config                                       ::  apply config
       |=  cof=config
-      =.  +>+>  (sy-present "config" >cof< ~)
+      ::  =.  +>+>  (sy-present "config" >cof< ~)
       ::  ~&  [%sz-config cof]
       %_(+> xm.big cof, +> (sy-voice %& sources.cof))
     ::
     ++  sz-group                                        ::  apply register
       |=  rex=register
-      =.  +>+>  (sy-present "register" >rex< ~)
+      ::  =.  +>+>  (sy-present "register" >rex< ~)
       %_(+> am.big rex)
     ::
     ++  sz-apply                                        ::  apply report
@@ -580,7 +578,6 @@
   ++  ny-work                                           ::  user command
     |=  jaw=work-construct
     ^+  +>
-    ~&  [%ny-work jaw]
     ?-    -.jaw
         %raze  +>(moz hy-abet:(hy-transmit:(hype moz) [%design p.jaw ~]))
         %tune  (ny-tune p.jaw)

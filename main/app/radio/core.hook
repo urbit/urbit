@@ -637,13 +637,13 @@
 ++  peer
   |=  [ost=bone her=ship pax=path]
   ^-  [(list move) _+>]
-  ~&  [%radio-peer ost her pax]
+  ::  ~&  [%radio-peer ost her pax]
   ra-abet:(~(ra-subscribe ra ost ~) her pax)
 ::
 ++  poke-radio-command
   |=  [ost=bone her=ship cod=command]
   ^-  [(list move) _+>]
-  ~&  [%radio-poke-command her cod]
+  ::  ~&  [%radio-poke-command her cod]
   =^  moz  +>.$  ra-abet:(~(ra-apply ra ost ~) her cod)
   [moz +>.$]
 ::
