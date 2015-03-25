@@ -1,9 +1,9 @@
 ::
-::::  /hook/core/talk/app
+::::  /hook/core/hive/app
   ::
 /?  314
-/-  *console, *rodeo
-/+  console, rodeo
+/-  *console, *radio
+/+  console, radio
 ::
 ::::
   ::
@@ -83,7 +83,7 @@
               $=  p
               $%  [%txt p=cord]                         ::  input text
                   [%type p=?]                           ::  typing notify
-                  [%rodeo-report p=report]
+                  [%radio-report p=report]
           ==  ==
       ==
     ++  sign
@@ -104,7 +104,7 @@
         ~&  [%hy-transmit cod]
         %_    +>
             moz  :_  moz
-          [0 %pass /command %g %mess [our /rodeo] our [%rodeo-command !>(cod)]]
+          [0 %pass /command %g %mess [our /radio] our [%radio-command !>(cod)]]
         ==
       ::
       ++  hy-general                                    ::  serve all peers
@@ -120,12 +120,12 @@
       ++  hy-subscribe                                  ::  send %show
         |=  [way=path hoc=path]
         ~&  [%hy-subscribe way hoc]
-        %_(+> moz :_(moz [0 %pass way %g %show [our /rodeo] our hoc]))
+        %_(+> moz :_(moz [0 %pass way %g %show [our /radio] our hoc]))
       ::
       ++  hy-unsubscribe                                ::  send %nuke
         |=  way=path
         ~&  [%hy-unsubscribe way]
-        %_(+> moz :_(moz [0 %pass way %g %nuke [our /rodeo] our]))
+        %_(+> moz :_(moz [0 %pass way %g %nuke [our /radio] our]))
       ::
       ++  hy-display                                    ::  print to console
         |=(tay=(list tank) (hy-general %tan tay))
@@ -464,7 +464,7 @@
       ?:  ?=(?(%cold %dead) link)
         ~&  [%sy-sign-rust-bad `@tas`link]
         +>.$
-      ?>  ?=(%rodeo-report +<.res)
+      ?>  ?=(%radio-report +<.res)
       ?:  ?=(%cool link)
         ::  XX workaround for inverted nice
         $(link %warm)
@@ -602,7 +602,7 @@
 ++  peer
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
-  ~?  !=(you our.hid)  [%talk-peer ost you pax]
+  ~?  !=(you our.hid)  [%hive-peer ost you pax]
   :_  +>  :_  ~
   :*  ost
       %give
@@ -610,7 +610,7 @@
       %console-effect
       %pro
       &
-      %talk
+      %hive
       =+  nuv=(novel ost ~)
       ?~(nuv "no story" (sy-prompt:u.nuv q.mike.u.nuv))
   ==
@@ -632,9 +632,9 @@
   ^-  [(list move) _+>]
   ~|  sign=sih
   =>  .(sih ((hard sign) sih))
-  ::  ~&  talk-pour/sih
-  ?~  pax  ~&  talk-pour-strange-path/pax  !!
-  ?+    i.pax  ~&  talk-pour-strange-path/pax  
+  ::  ~&  hive-pour/sih
+  ?~  pax  ~&  hive-pour-strange-path/pax  !!
+  ?+    i.pax  ~&  hive-pour-strange-path/pax  
                ~&  sign/sih
                !!
       %command
@@ -646,29 +646,29 @@
       %server
     ?+    +<.sih  !!
         %nice  [~ +>.$]
-        %mean  ~|(%talk-server-crash !!)
+        %mean  ~|(%hive-server-crash !!)
         %rush
-      ?>  ?=([%rodeo-report %house *] p.sih)
+      ?>  ?=([%radio-report %house *] p.sih)
       =^  moz  +>.$  ny-abet:(~(ny-tell ny ost ~) +.p.p.sih)
       :_  +>.$
-      :_(moz [ost %pass pax %g %took [our.hid /rodeo] our.hid])
+      :_(moz [ost %pass pax %g %took [our.hid /radio] our.hid])
     ==
   ::
       %time
     :_  +>.$
-    ::  ~&  [%talk-pour-time lat.hid `@da`(add ~s10 lat.hid)]
+    ::  ~&  [%hive-pour-time lat.hid `@da`(add ~s10 lat.hid)]
     :~  [0 %pass /time %t %wait (add ~s10 lat.hid)]
     ==
   ::
       %story
     ?>  ?=([@ *] t.pax)
     ?.  =(& &(?=(^ live) =(u.live i.t.pax)))
-      ~&  [%talk-wrong-story live i.t.pax] 
+      ~&  [%hive-wrong-story live i.t.pax] 
       [~ +>.$]
     ?>  ?=(%g -.sih)
     =^  moz  +>.$  sy-abet:(sy-sign:(need (novel ost ~)) +.sih)
     :_  +>.$
-    :_(moz `move`[ost %pass pax %g %took [our.hid /rodeo] our.hid])
+    :_(moz `move`[ost %pass pax %g %took [our.hid /radio] our.hid])
   ==
 ::
 ++  prep
@@ -681,7 +681,7 @@
       ^-  move
       :*  0    %pass  /server
           %g   %show  
-          [our.hid /rodeo]  our.hid
+          [our.hid /radio]  our.hid
           /
       ==
   ==
