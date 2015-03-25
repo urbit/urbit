@@ -20,7 +20,7 @@ Message = recl
     "~#{h}.#{m}.#{s}"
 
   _handleAudi: (e) ->
-    audi = $(e.target).closest('.audi').text().split(" ")
+    audi = _.map $(e.target).closest('.audi').find('div'), (div) -> return $(div).text()
     @props._handleAudi audi
 
   _handlePm: (e) ->
@@ -35,11 +35,11 @@ Message = recl
 
     name = if @props.name then @props.name else ""
     audi = window.util.clipAudi _.keys @props.thought.audience
-    audi = audi.join " "
+    audi = audi.map (_audi) -> (div {}, _audi)
 
     div {className:"message "+pendingClass}, [
         (div {className:"attr"}, [
-          div {onClick:@_handleAudi,className:"audi"}, "#{audi}"
+          div {onClick:@_handleAudi,className:"audi"}, audi
           (div {onClick:@_handlePm}, (Member {ship:@props.ship}, ""))
           div {className:"time"}, @convTime @props.thought.statement.date
         ])
@@ -110,6 +110,7 @@ module.exports = recl
       window.util.mainStationPath(user)
       window.util.mainStationPath(window.urb.user)
     ]
+    if user is window.urb.user then audi.pop()
     StationActions.setAudience audi
 
   _handleAudi: (audi) -> StationActions.setAudience audi

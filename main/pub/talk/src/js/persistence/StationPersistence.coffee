@@ -3,8 +3,8 @@ StationActions = require '../actions/StationActions.coffee'
 module.exports =
   createStation: (name,cb) ->
     window.urb.send {
-      appl:"rodeo"
-      mark:"rodeo-command"
+      appl:"radio"
+      mark:"radio-command"
       data:
         design: 
           party:name
@@ -16,8 +16,8 @@ module.exports =
 
   removeStation: (name,cb) ->
     window.urb.send {
-      appl:"rodeo"
-      mark:"rodeo-command"
+      appl:"radio"
+      mark:"radio-command"
       data:
         design: 
           party:name
@@ -26,8 +26,8 @@ module.exports =
 
   setSources: (station,ship,sources) ->
     send = 
-      appl:"rodeo"
-      mark:"rodeo-command"
+      appl:"radio"
+      mark:"radio-command"
       data:
         design:
           party:station
@@ -41,7 +41,7 @@ module.exports =
 
   members: ->
     window.urb.subscribe {
-      appl:"rodeo"
+      appl:"radio"
       path:"/a/court"
     }, (err,res) ->
       console.log 'membership updates'
@@ -51,7 +51,7 @@ module.exports =
 
   listen: ->
     window.urb.subscribe {
-      appl:"rodeo"
+      appl:"radio"
       path:"/"
      }, (err,res) ->
         console.log 'house updates'
@@ -61,7 +61,7 @@ module.exports =
 
   listenStation: (station) ->
     window.urb.subscribe {
-      appl:"rodeo"
+      appl:"radio"
       path:"/ax/#{station}"
      }, (err,res) ->
         console.log('station subscription updates')

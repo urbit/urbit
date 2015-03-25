@@ -53,7 +53,7 @@ module.exports = recl
     e.preventDefault()
     _station = $(e.target).attr "data-station"
     _sources = _.clone @state.configs[@state.station].sources
-    _sources.slice _sources.indexOf(_station),1
+    _sources.splice _sources.indexOf(_station),1
     StationActions.setSources @state.station,_sources
 
   render: ->
