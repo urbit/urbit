@@ -344,7 +344,6 @@
     |=  tou=(set partner)
     ^-  tape
     ;:  welp
-      (scow %p our.hid)
       ?:(=(man (main our.hid)) "" `tape`:(welp "/" (trip man)))
       ?~  tou  "& "
       `tape`:(welp "(" (swatch our.hid tou) ")& ")
