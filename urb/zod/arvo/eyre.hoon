@@ -219,7 +219,6 @@
 ::
 ++  tanx                                                ::  tanks to manx
   |=  tan=tang
-  ^-  manx
   ;html
     ;head
       ;meta(charset "utf-8");
@@ -229,11 +228,10 @@
   ==
 ::
 ++  depo                                                ::  inject dependency
-  |=  [dep=@uvH max=manx]
+  |=  [dep=@uvH max=[[%html ~] [[%head ~] hed=marl] [[%body ~] manx marl] ~]]
   ^-  manx
-  ?>  ?=([[%html ~] [[%head ~] *] [[%body ~] ^] ~] max) ::  XX static
   ?~  dep  max
-  max(c.i.c :_(c.i.c.max ;script@"/~/on/{<dep>}.js";))
+  max(hed :_(hed.max ;script@"/~/on/{<dep>}.js";))
 ::
 ++  jass                                                ::  inject window.urb
   |=  [urb=json jaz=cord]  ^-  cord
@@ -362,7 +360,6 @@
   ++  axon                                              ::  accept response
     |=  [tee=whir typ=type sih=sign]
     ^+  +>
-    ~?  ?=(%g -.sih)  e/&2.sih
     =.  our  ?~(hov our u.hov)  ::  XX
     ?-    &2.sih
         %crud  +>.$(mow [[hen %slip %d %flog +.sih] mow])
@@ -374,8 +371,9 @@
     ::
         ?(%rush %rust)
       ?>  ?=([%is ^] tee)
+      ?.  ?=(%json p.sih)
+        (back tee 0v0 [p.sih (slot 3 (spec (slot 3 [typ +.sih])))])
       %-  ~(get-even ix p.tee (~(got by wix) p.tee))
-      ?>  ?=(%json p.sih)             ::  XX cage
       [%rush [(pick-hasp q.tee) r.tee] (joba %json ((hard json) q.sih))]
     ::
         %nice  ?>(?=($|(~ [%is ^]) tee) (nice-json))
@@ -394,7 +392,7 @@
       |=  [sus=(each duct ixor) con=_..axon]
       =.  ..axon  con
       ?-  -.sus
-        %&  (give-json(hen p.sus) 205 ~ %b &)
+        %&  (give-json(hen p.sus) 205 ~ %b &) 
         %|  %-  ~(get-even ix p.sus (~(got by wix) p.sus))
             [%news dep]
       ==
@@ -502,7 +500,7 @@
       ==
     ::
         %thud                                           ::  cancel request
-      ~&  e/gone/hen
+      :: ~&  e/gone/hen
       +>.$
     ::
         %wart                                           ::  remote request
@@ -543,7 +541,8 @@
     (~(has in aut.u.cyz) our)
   ::
   ++  ses-ya  |=(ses=hole ~(. ya ses (~(got by wup) ses)))
-  ++  our-host  `hart`[| [~ 8.445] `/localhost]       :: XX testing
+  ++  our-host  `hart`[& ~ `/com/urbit/(rsh 3 1 (scot %p our))]
+  ::                  [| [~ 8.445] `/localhost]       :: XX testing
   ++  fail                                            ::  request failed
     |=  [sas=@ud dep=@uvH mez=tang]
     ^+  +>
@@ -807,8 +806,8 @@
       ~|  [mef maf bod]
       =+  bem=as-beam
       ?^  bem  (process-parsed %beam u.bem)
-::       ?.  check-oryx
-::         ~|(%bad-oryx ~|([(parse-to-oryx q:(need bod)) vew.cyz:for-client] !!))
+      ?.  check-oryx
+        ~|(%bad-oryx ~|([(parse-body to-oryx) vew.cyz:for-client] !!))
       =+  hem=as-aux-request
       ?^  hem  (process-parsed u.hem)
       ~|(strange-path/q.pok !!)
@@ -958,7 +957,6 @@
       ?^  lig
         =+  cyz=(~(got by wup) u.lig)
         ~(. ya u.lig cyz(cug ~))
-      =.  ..ya  adit                      ::  XX necessary?
       =+  ses=(rsh 3 1 (scot %p (end 6 1 ney)))
       ~(. ya ses (ses-cyst ses))
     ::
