@@ -136,11 +136,11 @@ body {
   left: 50%;
   width: 58rem;
   margin-left: -29rem;
-  margin-bottom: 4rem;
+  margin-bottom: 12rem;
 }
 #station-container {
-  position: absolute;
-  width: 100%;
+  position: fixed;
+  width: 58rem;
   max-height: 2.7rem;
   background-color: #fff;
   border-bottom: 0.3rem solid #000;
@@ -208,10 +208,17 @@ body {
   line-height: 1.2rem;
 }
 #audience,
+#who {
+  width: 34.6rem;
+}
 #stations,
+#where {
+  width: 17.3rem;
+}
+#stations,
+#audience,
 #head > div {
   display: inline-block;
-  width: 17.3rem;
   text-align: right;
   vertical-align: top;
 }
@@ -232,6 +239,9 @@ body {
 #members > div div {
   display: inline-block;
 }
+#members .audi {
+  margin-right: 0.3rem;
+}
 #members .iden {
   min-width: 6rem;
 }
@@ -239,6 +249,7 @@ body {
   display: inline-block;
 }
 .station .remove {
+  opacity: 0;
   cursor: pointer;
   width: 0.6rem;
   margin-right: 0.6rem;
@@ -290,19 +301,22 @@ body {
 #messages {
   height: auto;
 }
+.message.pending {
+  color: #ccc;
+}
 .mess,
 .iden,
 #station .member div,
 #writing {
   display: inline-block;
 }
-.iden > div {
-  display: inline;
-}
 .mess,
 #writing,
 #length {
   vertical-align: top;
+}
+.attr > div {
+  max-width: 16rem;
 }
 .attr {
   text-align: right;
@@ -311,9 +325,35 @@ body {
   min-width: 16rem;
 }
 .attr .iden {
-  color: #000;
-  width: 6rem;
   margin-left: 0.3rem;
+}
+.audi {
+  white-space: nowrap;
+}
+.audi > div {
+  margin-right: 0.3rem;
+  max-width: 8rem;
+}
+.iden > div {
+  max-width: 16rem;
+}
+.iden > div,
+.audi > div {
+  display: inline-block;
+  background-color: #fff;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  -webkit-transition: max-height 0.2s;
+}
+.audi > div:last-child {
+  margin-right: 0;
+}
+.iden > div:hover,
+.audi > div:hover {
+  position: relative;
+  max-width: 30rem;
+  -webkit-transition: max-height 0.2s;
 }
 .mess {
   font-size: 0.9rem;
@@ -358,6 +398,7 @@ body {
   margin-top: -0.3rem;
   margin-right: -0.2rem;
   outline: none;
+  overflow: hidden;
 }
 #audi.valid-false {
   color: #ff2f2f;
