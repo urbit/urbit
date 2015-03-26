@@ -25,6 +25,6 @@
     ?>  ?=([[@ ~] ~] zaz)
     `term`p.i.zaz
   =+  tip=(end 3 1 nam)
-  =+  pax=[(scot %p our.hid) %arvo (scot %da lat.hid) nam %hoon ~]
-  [%veer ?:(=('z' tip) %$ tip) pax (,@ .^(%cx pax))]
+  =+  pax=[(scot %p our.hid) %arvo (scot %da lat.hid) nam ~]
+  [%veer ?:(=('z' tip) %$ tip) pax (,@ .^(%cx (welp pax /hoon)))]
 --

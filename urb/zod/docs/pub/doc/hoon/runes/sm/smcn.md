@@ -62,13 +62,13 @@ repeated child node `'repeat'`. [`++poxo`]() prints our result in XML.
     ;=
       ;%  |=(a=marl (turn a |=(b=manx ;script(src (poxo b));)))
       ; /gep/hart.js
-      ; /gen/main/lib/urb.js
+      ; /main/lib/urb.js
       ; //cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js
     ==
     ~[
       [[%script [%src "/gep/hart.js
     "] ~] ~]
-      [[%script [%src "/gen/main/lib/urb.js
+      [[%script [%src "/main/lib/urb.js
     "] ~] ~]
       [ [ %script
           [%src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js
@@ -83,10 +83,10 @@ repeated child node `'repeat'`. [`++poxo`]() prints our result in XML.
     ;=
       ;%  |=(a=marl (turn a |=(b=manx ;script(src (poxo b));)))
       ; /gep/hart.js
-      ; /gen/main/lib/urb.js
+      ; /main/lib/urb.js
       ; //cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js
     ==
-    "<script src="/gep/hart.js"></script><script src="/gen/main/lib/urb.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js"></script>" 
+    "<script src="/gep/hart.js"></script><script src="/main/lib/urb.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js"></script>" 
 
 Here we go through a similar example, passing a list of urls for a
 script tag to a gate that produces a `<script>` tag. Since we produce

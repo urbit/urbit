@@ -1,14 +1,14 @@
 # A simple makefile.
 #
 
-# Pick one of:
-#   linux
-#   osx
-
 default: all
 -include make.conf
 
 CORE=.MAKEFILE-VERSION
+
+# Pick one of:
+#   linux
+#   osx
 
 UNAME=$(shell uname)
 ifeq ($(UNAME),Darwin)

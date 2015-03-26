@@ -132,7 +132,7 @@
           [%nice ~]                                     ::
       ==                                                ::
     ++  sign-ford                                       ::  sign from ford
-      $%  [%made p=(each bead (list tank))]             ::  computed result
+      $%  [%made p=@uvH q=(each cage tang)]             ::  computed result
       ==                                                ::
     ++  note                                            ::  out request $->
       $%  [%f note-ford]                                ::
@@ -582,12 +582,12 @@
     [& %$ "> "]
   ::
   ++  he-made                                           ::  result from ford
-    |=  [pax=path rey=(each bead (list tank))]
+    |=  [pax=path dep=@uvH rey=(each cage tang)]
     ^+  +>
     ?>  ?=(^ poy)
     =<  he-pine
     ?-  -.rey
-      %&  %.  q.p.rey
+      %&  %.  p.rey
           =+  dye=~(. dy u.poy(pux ~))
           ?+  pax  !!
             [%hand ~]  dy-hand:dye
