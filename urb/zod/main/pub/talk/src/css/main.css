@@ -448,4 +448,19 @@ body {
   #writing {
     padding: 0.1rem;
   }
+  .m-down,
+  .m-up {
+    position: absolute;
+  }
+  .m-down.m-fixed {
+    position: fixed;
+    top: 0;
+  }
+}
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  .mess,
+  #writing {
+    max-width: 70%;
+    line-height: 1.2rem;
+  }
 }

@@ -35,7 +35,9 @@ Message = recl
     if @props.thought.statement.speech.lin.say is false then klass += " say"
 
     name = if @props.name then @props.name else ""
-    audi = window.util.clipAudi _.keys @props.thought.audience
+    audi = _.keys @props.thought.audience
+    audi = _.without audi,window.util.mainStationPath window.urb.user
+    audi = window.util.clipAudi audi
     audi = audi.map (_audi) -> (div {}, _audi)
 
     div {className:"message #{klass}"}, [
@@ -83,7 +85,8 @@ module.exports = recl
   componentDidMount: ->
     MessageStore.addChangeListener @_onChangeStore
     StationStore.addChangeListener @_onChangeStore
-    if @state.station and @state.listening.indexOf(@state.station) is -1
+    if @state.station and
+    @state.listening.indexOf(@state.station) is -1
       MessageActions.listenStation @state.station
     checkMore = @checkMore
     $(window).on 'scroll', checkMore

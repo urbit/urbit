@@ -27,12 +27,11 @@ module.exports =
       type:"messages-fetch"
     window.chat.MessagePersistence.get station,start,end
 
-  sendMessage: (station,message,audience) ->
+  sendMessage: (message,audience) ->
     serial = window.util.uuid32()
 
-
-    if station[0] isnt "~" then station = "~"+window.urb.ship+"/"+station
-    if audience.length is 0 then audience.push station
+    audience.push window.util.mainStationPath window.urb.user
+    audience = _.uniq audience
 
     _audi = {}
     for k,v of audience

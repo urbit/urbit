@@ -85,11 +85,74 @@ $(() ->
           $('body').addClass 'scrolling'
         else
           $('body').removeClass 'scrolling'
+  
+    # checkScroll = ->
+    #   if $(window).scrollTop() > 20
+    #     $('#nav').addClass 'scrolling'
+    #   else
+    #     $('#nav').removeClass 'scrolling'
+    # setInterval checkScroll, 500
 
+    so = {}
+    so.ls = $(window).scrollTop()
+    so.cs = $(window).scrollTop()
+    so.w = null
+    so.$n = $('#station-container')
+    so.$d = $('#nav > div')
+    so.nh = so.$n.outerHeight(true)
+    setSo = -> 
+      so.$n = $('#station-container')
+      so.w = $(window).width()
+    setInterval setSo,200
+
+    $(window).on 'resize', (e) ->
+      if so.w > 1170
+        so.$n.removeClass 'm-up m-down m-fixed'
+
+    $(window).on 'scroll', (e) -> 
+      so.cs = $(window).scrollTop()
+
+      if so.w > 1170
+        so.$n.removeClass 'm-up m-down m-fixed'
+      if so.w < 1170
+        dy = so.ls-so.cs
+
+        so.$d.removeClass 'focus'
+
+        if so.cs <= 0
+          so.$n.removeClass 'm-up'
+          so.$n.addClass 'm-down m-fixed'
+          return
+
+        if so.$n.hasClass 'm-fixed' and
+        so.w < 1024
+          so.$n.css left:-1*$(window).scrollLeft()
+
+        if dy > 0
+          if not so.$n.hasClass 'm-down'
+            so.$n.removeClass('m-up').addClass 'm-down'
+            top = so.cs-so.nh
+            if top < 0 then top = 0
+            so.$n.offset top:top
+          if so.$n.hasClass('m-down') and 
+          not so.$n.hasClass('m-fixed') and 
+          so.$n.offset().top >= so.cs
+            so.$n.addClass 'm-fixed'
+            so.$n.attr {style:''}
+
+        if dy < 0
+          if not so.$n.hasClass 'm-up'
+            so.$n.removeClass('m-down m-fixed').addClass 'm-up'
+            so.$n.attr {style:''}
+            top = so.cs
+            sto = so.$n.offset().top
+            if top < 0 then top = 0
+            if top > sto and top < sto+so.nh then top = sto
+            so.$n.offset top:top
+
+    so.ls = so.cs
 
     $(window).on 'scroll', window.util.checkScroll
-    $(window).on 'resize', window.util.checkResize
-
 
     window.chat.StationPersistence.listen()
 

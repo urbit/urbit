@@ -14,13 +14,16 @@ module.exports = recl
   get: ->
     if window.localStorage then window.localStorage.getItem 'writing'
 
-  stateFromStore: -> {
-    audi:StationStore.getAudience()
-    members:StationStore.getMembers()
-    typing:StationStore.getTyping()
-    ludi:MessageStore.getLastAudience()
-    valid:StationStore.getValidAudience()
-  }
+  stateFromStore: -> 
+    s =
+      audi:StationStore.getAudience()
+      ludi:MessageStore.getLastAudience()
+      members:StationStore.getMembers()
+      typing:StationStore.getTyping()
+      valid:StationStore.getValidAudience()
+    s.audi = _.without s.audi, window.util.mainStationPath window.urb.user
+    s.ludi = _.without s.ludi, window.util.mainStationPath window.urb.user
+    s
 
   getInitialState: -> @stateFromStore()
 
@@ -46,7 +49,7 @@ module.exports = recl
     else
       audi = @state.audi
     audi = window.util.expandAudi audi
-    MessageActions.sendMessage audi,@$writing.text().trim(),audi
+    MessageActions.sendMessage @$writing.text().trim(),audi
     @$length.text "0/69"
     @$writing.text('')
     @set()
@@ -102,6 +105,9 @@ module.exports = recl
 
   _validateAudi: ->
     v = $('#audi').text()
+    v = v.trim()
+    if v.length is 0
+      return true
     v = v.split " "
     for a in v
       a = a.trim()
