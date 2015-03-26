@@ -179,7 +179,7 @@ module.exports = recl
           onKeyDown: @_audiKeyDown
           onBlur:@_setAudi
           }, audi.join(" "))
-        (Member iden, "")
+        (React.createElement Member, iden)
         (div {className:"time"}, @getTime())        
       ])
       (div {

@@ -275,9 +275,9 @@ Message = recl({
           className: "audi"
         }, audi), div({
           onClick: this._handlePm
-        }, Member({
+        }, React.createElement(Member, {
           ship: this.props.ship
-        }, "")), div({
+        })), div({
           className: "time"
         }, this.convTime(this.props.thought.statement.date))
       ]), div({
@@ -392,7 +392,7 @@ module.exports = recl({
         _message.station = _this.state.station;
         _message._handlePm = _this._handlePm;
         _message._handleAudi = _this._handleAudi;
-        return Message(_message, "");
+        return React.createElement(Message, _message);
       };
     })(this));
     return div({
@@ -445,6 +445,9 @@ module.exports = recl({
   _onChangeStore: function() {
     return this.setState(this.stateFromStore());
   },
+  _toggleOpen: function() {
+    return $("#station-container").toggleClass('open');
+  },
   _keyUp: function(e) {
     var _sources, v;
     if (e.keyCode === 13) {
@@ -480,7 +483,7 @@ module.exports = recl({
           }, station);
         });
         return div({}, [
-          audi, Member({
+          audi, React.createElement(Member, {
             ship: member
           })
         ]);
@@ -540,16 +543,17 @@ module.exports = recl({
     parts.push(head);
     parts.push(div({
       id: "stations"
-    }, [h1({}, "Sources"), div({}, sources), sourceCtrl]));
+    }, [h1({}, "Listening to"), div({}, sources), sourceCtrl]));
     parts.push(div({
       id: "audience"
     }, div({}, [
-      h1({}, "Audience"), div({
+      h1({}, "Talking to"), div({
         id: "members"
       }, members)
     ])));
     return div({
-      id: "station"
+      id: "station",
+      onClick: this._toggleOpen
     }, parts);
   }
 });
@@ -785,7 +789,7 @@ module.exports = recl({
           contentEditable: true,
           onKeyDown: this._audiKeyDown,
           onBlur: this._setAudi
-        }, audi.join(" ")), Member(iden, ""), div({
+        }, audi.join(" ")), React.createElement(Member, iden), div({
           className: "time"
         }, this.getTime())
       ]), div({
@@ -1029,9 +1033,9 @@ $(function() {
   $c.append("<div id='messages-container'></div>");
   $c.append("<div id='writing-container'></div>");
   $c.append("<div id='scrolling'>BOTTOM</div>");
-  rend(StationComponent({}, ""), $('#station-container')[0]);
-  rend(MessagesComponent({}, ""), $('#messages-container')[0]);
-  return rend(WritingComponent({}, ""), $('#writing-container')[0]);
+  rend(React.createElement(StationComponent, {}), $('#station-container')[0]);
+  rend(React.createElement(MessagesComponent, {}), $('#messages-container')[0]);
+  return rend(React.createElement(WritingComponent, {}), $('#writing-container')[0]);
 });
 
 

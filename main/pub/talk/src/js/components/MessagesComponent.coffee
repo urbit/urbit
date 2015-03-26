@@ -43,7 +43,7 @@ Message = recl
     div {className:"message #{klass}"}, [
         (div {className:"attr"}, [
           div {onClick:@_handleAudi,className:"audi"}, audi
-          (div {onClick:@_handlePm}, (Member {ship:@props.ship}, ""))
+          (div {onClick:@_handlePm}, (React.createElement Member,{ship:@props.ship}))
           div {className:"time"}, @convTime @props.thought.statement.date
         ])
         div {className:"mess"}, @props.thought.statement.speech.lin.txt
@@ -143,5 +143,5 @@ module.exports = recl
       _message.station = @state.station
       _message._handlePm = @_handlePm
       _message._handleAudi = @_handleAudi
-      Message _message, ""
+      React.createElement Message,_message
     div {id: "messages"}, messages
