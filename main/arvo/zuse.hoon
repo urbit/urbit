@@ -2115,8 +2115,8 @@
               r=cage                                    ::  data
           ==                                            ::
 ++  rave                                                ::  general request
-          $%  [& p=mood]                                ::  single request
-              [| p=moat]                                ::  change range
+          $%  [%sing p=mood]                            ::  single request
+              [%many p=? q=moat]                        ::  change range
           ==                                            ::
 ++  rill                                                ::  outbound stream
           $:  sed=@ud                                   ::  sent

@@ -75,10 +75,6 @@
               $:  @tas                                  ::  to any
           $%  [%meta p=vase]                            ::
           ==  ==  ==                                    ::
-++  rave                                                ::  see %clay
-          $%  [& p=mood]                                ::  single request
-              [| p=moat]                                ::  change range
-          ==                                            ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  scad                                                ::  opaque for foreign
           $:  p=@ud                                     ::  index
@@ -723,10 +719,10 @@
               %+  skip  (~(tap in pen) ~)
               |=(a=(pair ship desk) (~(has in ped.sat) a))
             |=  a=(pair ship desk)
-            :-  hun.mat
-            :^  %pass  (away %w %drug (scot %p p.a) q.a ~)  %c
-            ::  ~&  [%sync-subscribe our p.a q.a]
-            [%warp [our p.a] q.a ~ %| [%da +(now)] [%da (add now ~d1000)] /]
+            :*  hun.mat  %pass  (away %w %drug (scot %p p.a) q.a ~)  %c
+                %warp  [our p.a]  q.a  ~
+                %many  %&  [%da +(now)]  [%da (add now ~d1000)]  /
+            ==
         =+  ^=  old  ^-  (list move)
             %+  turn
               %+  skip  (~(tap in ped.sat) ~)
@@ -734,9 +730,9 @@
             |=  a=(pair ship desk)
             :-  hun.mat
             :^  %pass  (away %w %drug (scot %p p.a) q.a ~)  %c
-            ~&  [%sync-unsubscribe our p.a q.a]
+            ::  ~&  [%sync-unsubscribe our p.a q.a]
             [%warp [our p.a] q.a ~]
-        %_(+>.$ ped.sat pen) ::  , mow :(weld new old mow))
+        %_(+>.$ ped.sat pen, mow :(weld new old mow))
       ::
       ++  drum                                          ::  raw dependencies
         |=  dep=(set beam)
@@ -955,9 +951,7 @@
           =.  ped.sat  (~(del by ped.sat) [our syd])
           ?~  p.+.sin
             +>.$
-          ~&  %not-restarting-gall-apps
-          +>.$
-          ::+>.$(vey.sat (~(put to vey.sat) hen %boot ~))
+          +>.$(vey.sat (~(put to vey.sat) hen %boot ~))
         ==
       ::
       ++  morn                                          ::  install core

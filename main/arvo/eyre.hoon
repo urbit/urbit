@@ -52,9 +52,6 @@
           $%  [%wait p=@da]                             ::
               [%rest p=@da]                             ::
           ==  ==  ==                                    ::
-++  rave                                                ::  see %clay
-          $%  [| p=moat]                                ::
-          ==                                            ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  silk                                                ::  see %ford
           $&  [p=silk q=silk]                           ::
@@ -1884,7 +1881,7 @@
         ::
             %det
           :-  [~ pip(pez %way)]
-          +>.$(..ya (hoot our num ses [p.som.pip ~ [%| q.som.pip]]))
+          +>.$(..ya (hoot our num ses [p.som.pip ~ [%many %& q.som.pip]]))
         ::
             %fun
           :-  [~ pip(pez %way)]

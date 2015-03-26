@@ -55,10 +55,6 @@
           $%  $:  %c                                    ::  to %clay
           $%  [%warp p=sock q=riff]                     ::
           ==  ==  ==                                    ::
-++  rave                                                ::  see %clay
-          $%  [& p=mood]                                ::  single request
-              [| p=moat]                                ::  change range
-          ==                                            ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  sign                                                ::  in result $<-
           $%  $:  %c                                    ::  by %clay
@@ -298,7 +294,7 @@
         :^    %pass
             [(scot %p our) (scot %ud num) (scot %ud p.kig) (tope bek ~)]
           %c
-        [%warp [our p.bem] q.bem [~ %& ren r.bem (flop s.bem)]]
+        [%warp [our p.bem] q.bem [~ %sing ren r.bem (flop s.bem)]]
       ==
     ::
     ++  clef                                            ::  cache a result

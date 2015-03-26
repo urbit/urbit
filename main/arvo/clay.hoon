@@ -123,10 +123,6 @@
               $=  sor                                   ::  upstreams
               (map ,[p=@p q=@tas r=@p s=@tas] ,[let=@ud hen=duct])
           ==                                            ::
-++  rave                                                ::  general request
-          $%  [& p=mood]                                ::  single request
-              [| p=moat]                                ::  change range
-          ==                                            ::
 ++  rede                                                ::  universal project
           $:  lim=@da                                   ::  complete to
               qyx=cult                                  ::  subscribers
@@ -148,7 +144,10 @@
               hez=(unit duct)                           ::  sync duct
               dos=(map desk dojo)                       ::  native desk
           ==                                            ::
-++  rove  (each mood moot)                              ::  stored request
+++  rove                                                ::  stored request
+          $%  [%sing p=mood]                            ::  single request
+              [%many p=? q=moot]                        ::  change range
+          ==                                            ::
 ++  rung  $:  rus=(map desk rede)                       ::  neighbor desks
           ==                                            ::
 ++  tage  ,[[%tabl p=(list (pair marc marc))] q=vase]   ::  %tabl gage
@@ -249,9 +248,12 @@
     +>(byn [[hen ~ [p.mun q.mun syd] r.mun dat] byn])
   ::
   ++  bleb                                            ::  ship sequence
-    |=  [hen=duct ins=@ud hip=nako]
+    |=  [hen=duct ins=@ud hip=(unit (pair aeon aeon))]
     ^+  +>
-    (blab hen [%w [%ud ins] ~] %nako !>(hip))
+    %^  blab  hen  [%w [%ud ins] ~]
+    ?~  hip
+      [%null [%atom %n] ~]
+    [%nako !>((make-nako:ze u.hip))]
   ::
   ++  blub                                            ::  ship stop
     |=  hen=duct
@@ -266,10 +268,10 @@
     |-  ^+  +>+.$                                     ::  XX  why?
     =+  rav=(reve rov)
     =+  ^=  vaw  ^-  rave
-      ?.  ?=([%& %v *] rav)  rav
-      [%| [%ud let.dom] `case`q.p.rav r.p.rav]
+      ?.  ?=([%sing %v *] rav)  rav
+      [%many %| [%ud let.dom] `case`q.p.rav r.p.rav]
     =+  inx=nix.u.ref
-    ~?  ?=([%& %x *] vaw)
+    ~?  ?=([%sing %x *] vaw)
       [%remote-x-ing vaw hen]
     %=  +>+.$
       say        [[hen [(scot %ud inx) ~] for [inx syd ~ vaw]] say]
@@ -298,7 +300,7 @@
     |=  rav=rave
     ^+  +>
     ?-    -.rav
-        &
+        %sing
       ?:  &(=(p.p.rav %u) !=(p.q.p.rav now))
         ~&  [%clay-fail p.q.p.rav %now now]
         !!
@@ -309,26 +311,25 @@
         (blub hen)
       (blab hen p.rav u.u.ver)
     ::
-        |
-      =+  nab=(case-to-aeon:ze p.p.rav)
+        %many
+      =+  nab=(case-to-aeon:ze p.q.rav)
       ?~  nab
-        ?>  =(~ (case-to-aeon:ze q.p.rav))
+        ?>  =(~ (case-to-aeon:ze q.q.rav))
         (duce (rive rav))
-      =+  huy=(case-to-aeon:ze q.p.rav)
+      =+  huy=(case-to-aeon:ze q.q.rav)
       ?:  &(?=(^ huy) |((lth u.huy u.nab) &(=(0 u.huy) =(0 u.nab))))
         (blub hen)
       =+  top=?~(huy let.dom u.huy)
-      =+  sar=(lobes-at-path:ze u.nab r.p.rav)
-      =+  ear=(lobes-at-path:ze top r.p.rav)
+      =+  sar=(lobes-at-path:ze u.nab r.q.rav)
+      =+  ear=(lobes-at-path:ze top r.q.rav)
       =.  +>.$
         ?:  =(sar ear)  +>.$
-        =+  fud=(make-nako:ze u.nab top)
-        (bleb hen u.nab fud)
+        (bleb hen u.nab ?:(p.rav ~ `[u.nab top]))
       ?^  huy
         (blub hen)
       =+  ^=  ptr  ^-  case
           [%ud +(let.dom)]
-      (duce `rove`[%| ptr q.p.rav r.p.rav ear])
+      (duce `rove`[%many p.rav ptr q.q.rav r.q.rav ear])
     ==
   ::
   ++  echa                                            ::  announce raw
@@ -691,7 +692,7 @@
     |-  ^+  +>+.$
     =+  ruv=(~(get by bom.u.ref) inx)
     ?~  ruv  +>+.$
-    =>  ?.  |(?=(~ rut) ?=(& -.q.u.ruv))  .
+    =>  ?.  |(?=(~ rut) ?=(%sing -.q.u.ruv))  .
         %_  .
           bom.u.ref  (~(del by bom.u.ref) inx)
           fod.u.ref  (~(del by fod.u.ref) p.u.ruv)
@@ -700,10 +701,10 @@
       =+  rav=`rave`q.u.ruv
       %=    +>+.$
           lim
-        ?.(&(?=(| -.rav) ?=(%da -.q.p.rav)) lim `@da`p.q.p.rav)
+        ?.(&(?=(%many -.rav) ?=(%da -.q.q.rav)) lim `@da`p.q.q.rav)
       ::
           haw.u.ref
-        ?.  ?=(& -.rav)  haw.u.ref
+        ?.  ?=(%sing -.rav)  haw.u.ref
         (~(put by haw.u.ref) p.rav ~)
       ==
     ?-    p.p.u.rut
@@ -727,6 +728,7 @@
           p.r.u.rut
         ?+  p.r.u.rut  ~|  %strange-w-over-nextwork  !!
           %aeon  !>(((hard aeon) q.r.u.rut))
+          %null  [[%atom %n] ~]
           %nako  !>(~|([%harding [&1 &2 &3]:q.r.u.rut] ((hard nako) q.r.u.rut)))
         ==
       ?.  ?=(%nako p.r.u.rut)  +>+.$
@@ -849,11 +851,11 @@
     %-  bind  :_  fun
     ^-  (unit ,@da)
     ?-    -.rov
-        %&
+        %sing
       ?.  ?=(%da -.q.p.rov)  ~
       `p.q.p.rov
-        %|
-      =*  mot  p.rov
+        %many
+      =*  mot  q.rov
       %+  hunt
         ?.  ?=(%da -.p.mot)  ~
         ?.((lth now p.p.mot) ~ [~ p.p.mot])
@@ -864,13 +866,13 @@
   ++  reve
     |=  rov=rove
     ^-  rave
-    ?:  ?=(%& -.rov)  rov
-    [%| p.p.rov q.p.rov r.p.rov]
+    ?:  ?=(%sing -.rov)  rov
+    [%many p.rov p.q.rov q.q.rov r.q.rov]
   ::
   ++  rive
-    |=  rav=[%| p=moat]
+    |=  rav=[%many p=? q=moat]
     ^-  rove
-    [%| p.p.rav q.p.rav r.p.rav ~]
+    [%many p.rav p.q.rav q.q.rav r.q.rav ~]
   ::
   ++  wake                                            ::  update subscribers
     ^+  .
@@ -880,7 +882,7 @@
     ?~  xiq
       ..wake(qyx (~(gas by *cult) xaq))
     ?-    -.q.i.xiq
-        &
+        %sing
       =+  cas=?~(ref ~ (~(get by haw.u.ref) `mood`p.q.i.xiq))
       ?^  cas
         %=    $
@@ -896,32 +898,30 @@
       ?~  vid  ~&  %':( oh well'  $(xiq t.xiq, xaq [i.xiq xaq])
       $(xiq t.xiq, ..wake (balk p.i.xiq u.vid p.q.i.xiq))
     ::
-        |
-      =+  mot=`moot`p.q.i.xiq
+        %many
+      =+  mot=`moot`q.q.i.xiq
       =+  nab=(case-to-aeon:ze p.mot)
       ?~  nab
         $(xiq t.xiq, xaq [i.xiq xaq])
       =+  huy=(case-to-aeon:ze q.mot)
-      ~&  >>  [%shipping p.i.xiq [p q r]:p.q.i.xiq]
+      ~&  >>  [%shipping p.i.xiq [p q r]:mot]
       ?~  huy
         =+  ptr=[%ud +(let.dom)]
         %=  $
           xiq     t.xiq
-          xaq     [[p.i.xiq [%| ptr q.mot r.mot s.mot]] xaq]
+          xaq     [[p.i.xiq [%many p.q.i.xiq ptr q.mot r.mot s.mot]] xaq]
           ..wake  =+  ^=  ear
-                      (lobes-at-path:ze let.dom r.p.q.i.xiq)
-                  ?:  =(s.p.q.i.xiq ear)  ..wake
-                  =+  fud=(make-nako:ze u.nab let.dom)
-                  (bleb p.i.xiq let.dom fud)
+                      (lobes-at-path:ze let.dom r.mot)
+                  ?:  =(s.mot ear)  ..wake
+                  (bleb p.i.xiq let.dom ?:(p.q.i.xiq ~ `[u.nab let.dom]))
         ==
       %=  $
         xiq     t.xiq
         ..wake  =-  (blub:- p.i.xiq)
                 =+  ^=  ear
-                    (lobes-at-path:ze u.huy r.p.q.i.xiq)
-                ?:  =(s.p.q.i.xiq ear)  (blub p.i.xiq)
-                =+  fud=(make-nako:ze u.nab u.huy)
-                (bleb p.i.xiq +(u.nab) fud)
+                    (lobes-at-path:ze u.huy r.mot)
+                ?:  =(s.mot ear)  (blub p.i.xiq)
+                (bleb p.i.xiq +(u.nab) ?:(p.q.i.xiq ~ `[u.nab u.huy]))
       ==
     ==
   ++  ze
@@ -1399,7 +1399,7 @@
         =-  %_(+ tag [- tag])
         :*  hen  [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ali ~]
             %c  %warp  [p.bob p.ali]  q.ali
-            `[%& %v cas.dat /]
+            `[%sing %v cas.dat /]
         ==
       ::
       ++  fetched-ali
@@ -2227,7 +2227,7 @@
         %mere
       =+  nex=+(let:(~(got by sor.ruf) our syd her sud))
       =.  sor.ruf  (~(put by sor.ruf) [our syd her sud] [nex hen])
-      =+  `move`[hen %pass tea %c %warp [our her] sud ~ %& %y [%ud nex] /]
+      =+  `move`[hen %pass tea %c %warp [our her] sud ~ %sing %y [%ud nex] /]
       ?:  ?=(%& -.p.+.q.hin)
         ~&  ['merge succeeded' p.p.+.q.hin]
         [[- ~] ..^$]
