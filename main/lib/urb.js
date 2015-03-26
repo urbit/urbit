@@ -201,6 +201,7 @@ window.urb.bind = function(path, cb){ // or bind(path, params, cb, nicecb?)
   params.path = path
   params.ship = params.ship ? params.ship : this.ship
   params.appl = params.appl ? params.appl : this.appl
+  params.mark = params.mark ? params.mark : "json"
 
   if(!path) throw new Error("You must specify a path for urb.bind.")
   if(!params.appl) throw new Error("You must specify an appl for urb.bind.")
@@ -212,7 +213,9 @@ window.urb.bind = function(path, cb){ // or bind(path, params, cb, nicecb?)
 
   this.cabs[this.gsig(params)] = cb
 
-  url = "/~/is/"+this.gsig(params)
+  if(params.mark !== "json")
+    throw new Error("Non-json subscriptions unimplemented.")  //  XX
+  url = "/~/is/"+this.gsig(params)+"."+params.mark
 
   $this = this
   this.qreq("put",url,params,true,function(err,res) {
