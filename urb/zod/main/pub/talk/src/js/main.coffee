@@ -171,7 +171,7 @@ $(() ->
     $c.append "<div id='messages-container'></div>"
     $c.append "<div id='writing-container'></div>"
     $c.append "<div id='scrolling'>BOTTOM</div>"
-    rend (StationComponent {}, ""),$('#station-container')[0]
-    rend (MessagesComponent {}, ""),$('#messages-container')[0]
-    rend (WritingComponent {}, ""),$('#writing-container')[0]
+    rend (React.createElement(StationComponent, {})),$('#station-container')[0]
+    rend (React.createElement(MessagesComponent, {})),$('#messages-container')[0]
+    rend (React.createElement(WritingComponent, {})),$('#writing-container')[0]
 )
