@@ -7,15 +7,15 @@ StationActions = require '../actions/StationActions.coffee'
 module.exports = recl
   stateFromStore: -> {
     stations: StationStore.getStations()
-    station: StationStore.getStation()
+    station: "~zod/court"
   }
 
   getInitialState: -> @stateFromStore()
 
   componentDidMount: ->
-    @$el = $(@getDOMNode())
-    @$add = $('#stations .add')
-    @$input = @$el.find('input')
+    @$el = $ @getDOMNode()
+    @$add = $ '#stations .add'
+    @$input = @$el.find 'input'
     StationStore.addChangeListener @_onChangeStore
       
   componentWillUnmount: ->

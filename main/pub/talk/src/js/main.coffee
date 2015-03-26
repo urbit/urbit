@@ -8,14 +8,32 @@ $(() ->
     window.chat.StationPersistence = require './persistence/StationPersistence.coffee'
 
     window.util =
-      mainStation: ->
-        switch window.urb.user.length
+      mainStations: ["court","floor","porch"]
+      
+      mainStationPath: (user) -> "~#{user}/#{window.util.mainStation(user)}"
+
+      mainStation: (user) ->
+        if not user then user = window.urb.user
+        switch user.length
           when 3
             return "court"
-          when 5
+          when 6
             return "floor"
           when 13
             return "porch"
+
+      clipAudi: (audi) ->
+        audi = audi.join " "
+        for v in window.util.mainStations
+          regx = new RegExp "/#{v}","g"
+          audi = audi.replace regx,""
+        audi.split " "
+
+      expandAudi: (audi) ->
+        for k,v of audi
+          if v.indexOf("/") is -1
+            audi[k] = "#{v}/#{window.util.mainStation(v.slice(1))}"
+        audi
 
       create: (name) ->
         window.chat.StationPersistence.createStation name, (err,res) ->
@@ -54,8 +72,7 @@ $(() ->
         send()
 
       getScroll: ->
-        @writingPosition = $('#messaging-container').outerHeight(true)+$('#messaging-container').offset().top-$(window).height()
-        #@writingPosition = $('#writing-container').position().top-$(window).height()+$('#writing-container').outerHeight(true)
+        @writingPosition = $('#c').outerHeight(true)+$('#c').offset().top-$(window).height()
 
       setScroll: ->
         window.util.getScroll()
@@ -68,44 +85,93 @@ $(() ->
           $('body').addClass 'scrolling'
         else
           $('body').removeClass 'scrolling'
+  
+    # checkScroll = ->
+    #   if $(window).scrollTop() > 20
+    #     $('#nav').addClass 'scrolling'
+    #   else
+    #     $('#nav').removeClass 'scrolling'
+    # setInterval checkScroll, 500
+
+    so = {}
+    so.ls = $(window).scrollTop()
+    so.cs = $(window).scrollTop()
+    so.w = null
+    so.$n = $('#station-container')
+    so.$d = $('#nav > div')
+    so.nh = so.$n.outerHeight(true)
+    setSo = -> 
+      so.$n = $('#station-container')
+      so.w = $(window).width()
+    setInterval setSo,200
+
+    $(window).on 'resize', (e) ->
+      if so.w > 1170
+        so.$n.removeClass 'm-up m-down m-fixed'
+
+    $(window).on 'scroll', (e) -> 
+      so.cs = $(window).scrollTop()
+
+      if so.w > 1170
+        so.$n.removeClass 'm-up m-down m-fixed'
+      if so.w < 1170
+        dy = so.ls-so.cs
+
+        so.$d.removeClass 'focus'
+
+        if so.cs <= 0
+          so.$n.removeClass 'm-up'
+          so.$n.addClass 'm-down m-fixed'
+          return
+
+        if so.$n.hasClass 'm-fixed' and
+        so.w < 1024
+          so.$n.css left:-1*$(window).scrollLeft()
+
+        if dy > 0
+          if not so.$n.hasClass 'm-down'
+            so.$n.removeClass('m-up').addClass 'm-down'
+            top = so.cs-so.nh
+            if top < 0 then top = 0
+            so.$n.offset top:top
+          if so.$n.hasClass('m-down') and 
+          not so.$n.hasClass('m-fixed') and 
+          so.$n.offset().top >= so.cs
+            so.$n.addClass 'm-fixed'
+            so.$n.attr {style:''}
+
+        if dy < 0
+          if not so.$n.hasClass 'm-up'
+            so.$n.removeClass('m-down m-fixed').addClass 'm-up'
+            so.$n.attr {style:''}
+            top = so.cs
+            sto = so.$n.offset().top
+            if top < 0 then top = 0
+            if top > sto and top < sto+so.nh then top = sto
+            so.$n.offset top:top
+
+    so.ls = so.cs
 
     $(window).on 'scroll', window.util.checkScroll
 
     window.chat.StationPersistence.listen()
 
     StationComponent    = require './components/StationComponent.coffee'
-    StationsComponent   = require './components/StationsComponent.coffee'
     MessagesComponent   = require './components/MessagesComponent.coffee'
     WritingComponent    = require './components/WritingComponent.coffee'
 
     $c = $('#c')
 
     clean = ->
-      React.unmountComponentAtNode $('#stations-container')[0]
-      React.unmountComponentAtNode $('#station-parts-container')[0]
-      React.unmountComponentAtNode $('#writing-container')[0]
+      React.unmountComponentAtNode $('#station-container')[0]
       React.unmountComponentAtNode $('#messages-container')[0]
+      React.unmountComponentAtNode $('#writing-container')[0]
 
-    routes = 
-      '': ->
-        clean()
-        $c.html "<div id='stations-container'></div>"
-        rend (StationsComponent {}, ""),$('#stations-container')[0]
-      '/:station': (station) ->
-        clean()
-        StationActions.switchStation station
-        $c.html ""
-        $c.append("<div id='messaging-container'></div>")
-        $d = $('#messaging-container')
-        $d.append("<div id='messages-container'></div>")
-        $d.append("<div id='writing-container'></div>")
-        $d.append("<div id='station-parts-container'></div>")
-        $c.append("<div id='scrolling'>BOTTOM</div>")
-        rend (StationComponent {}, ""),$('#station-parts-container')[0]
-        rend (MessagesComponent {}, ""),$('#messages-container')[0]
-        rend (WritingComponent {}, ""),$('#writing-container')[0]
-
-    router = Router routes
-    if not window.location.hash then window.location.hash = "/"
-    router.init()
+    $c.append "<div id='station-container'></div>"
+    $c.append "<div id='messages-container'></div>"
+    $c.append "<div id='writing-container'></div>"
+    $c.append "<div id='scrolling'>BOTTOM</div>"
+    rend (StationComponent {}, ""),$('#station-container')[0]
+    rend (MessagesComponent {}, ""),$('#messages-container')[0]
+    rend (WritingComponent {}, ""),$('#writing-container')[0]
 )
