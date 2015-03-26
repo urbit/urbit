@@ -14,6 +14,7 @@ window.urb.req = function(method,url,params,json,cb) {
   if(json)
     xhr.setRequestHeader("content-type", "text/json")
 
+  if(!window.urb.oryx) throw "No CSRF token" // XX fetch auth.json
   _data = {oryx: window.urb.oryx}
   if(params.xyro) { _data.xyro = params.xyro; }
   if(params.ship) { _data.ship = params.ship; }
