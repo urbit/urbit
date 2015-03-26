@@ -668,7 +668,7 @@
           our  p.kyz
           mos
         :_  mos
-        [(need def) %pass / %c %warp [p.kyz p.kyz] %main `[%& %y [%ud 1] /]]
+        [(need def) %pass / %c %warp [p.kyz p.kyz] %main `[%sing %y [%ud 1] /]]
       ==
     ::
         %talk  (furl (~(win re p.kyz) 0 p.q.yar))       ::  program output
