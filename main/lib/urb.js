@@ -227,24 +227,20 @@ window.urb.bind = function(path, cb){ // or bind(path, params, cb, nicecb?)
 }
 
 window.urb.unsubscribe = function(params,cb) {
-  if(!params)
-    throw new Error("You must supply params to urb.unsubscribe.")
-  if(!params.appl) {
-    if(!urb.appl)
-      throw new Error("You must specify an appl for urb.unsubscribe.")
-    params.appl = urb.appl
-  }
-  if(!params.path)
-    throw new Error("You must specify a path for urb.unsubscribe.")
+  if(!params) throw new Error("You must supply params to urb.unsubscribe.")
+  
   params.ship = params.ship ? params.ship : this.ship
+  params.appl = params.appl ? params.appl : this.appl
 
+  if(!params.path) throw new Error("You must specify a path for urb.unsubscribe.")
+  if(!params.appl) throw new Error("You must specify an appl for urb.unsubscribe.")
+  if(!cb) throw new Error("You must supply a callback to urb.unsubscribe.")
+
+  
+  url = "/~/is/"+this.gsig(params)+"/"
   method = "delete"
-  type = "uns"
-  url = [this.perms[type],this.user,this.port]
-  url = "/"+url.join("/")
-
-  var $this = this
-  this.req(method,url,params,true,function(err,res) {
+  throw "XX weird loop"
+  this.req("delete",url,params,true,function(err,res) {
     cb(err,res)
   })
 }
