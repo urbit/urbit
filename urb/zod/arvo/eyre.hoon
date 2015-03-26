@@ -140,7 +140,7 @@
 ::
 ++  even                                                ::  client event
   $%  [%news p=@uv]
-      [%rush p=[hasp path] q=json]
+      [%rush p=[hasp path] q=json r=duct]
       [%mean p=[hasp path] q=ares]
   ==
 ::
@@ -868,6 +868,7 @@
         =+  ire=(oryx-to-ixor (grab-body to-oryx))
         :-  %|
         %+  pass-note
+          :: =-  ~&  e/show/[p.hem `whir`-]  -
           [%is ire (pack-hasp p.hem) q.hem]
         [%g %show [- + ~]:p.hem him q.hem]
       ::
@@ -1042,7 +1043,6 @@
       ^+  [*json ..ya]
       =+  orx=`@t`(rsh 3 1 (scot %p (shaf %orx eny)))
       =.  vew  (~(put in vew) orx)
-      ~&  oryx-made/[ses orx]
       =+  ire=(oryx-to-ixor orx)
       =.  wix  (~(put by wix) ire [him ~ now [1 ~]])
       :_  abet
@@ -1084,15 +1084,15 @@
         =.  +>  
           ?^  ude  ~&(e/ix/wait/%replaced done)
           wait-era(era (add ~s30 now))
+        :: ~&  ude-wait/hen
         abet(ude [~ hen &])
       ?:  (gth a p.eve)  ~|(seq-high/cur=p.eve !!)
       =+  ven=~|(seq-low/cur=p.eve (~(got by q.eve) a))
-      =.  q.eve  (~(del by q.eve) (dec a))              ::  TODO ponder a-2
       abet:(give-even & a ven)
     ::
     ++  get-rush
       |=  [a=[hasp path] b=json]  ^+  ..ix
-      (get-even [%rush a (joba %json b)])
+      (get-even [%rush a (joba %json b) hen])
     ::
     ++  get-even
       |=  ven=even  ^+  ..ix
@@ -1100,6 +1100,7 @@
       =.  eve  (add-even ven)
       =<  abet
       ?~  ude  done
+      :: ~&  got-even/ude
       (give-even(hen p.u.ude, ude ~) q.u.ude num ven)
     ::
     ++  add-even
@@ -1108,11 +1109,15 @@
     ::
     ++  pass-took
       |=  [a=hasp b=path]
+      :: ~&  e/took/[a `whir`[%is ire (pack-hasp a) b]]
       (pass-note [%is ire (pack-hasp a) b] [%g %took [- + ~]:a him])
     ::
     ++  give-even
       |=  [pol=? num=@u ven=even]  ^+  done
-      =.  done  ?.(?=(%rush -.ven) done (pass-took p.ven))
+      =:  q.eve  (~(del by q.eve) (dec num))              ::  TODO ponder a-2
+          mow    ?.  ?=(%rush -.ven)  mow
+                 mow:(pass-took(hen r.ven) p.ven)
+        ==
       ?>  pol                         ::  XX eventstream
       %^  give-json  200  ~
       %^  jobe  id/(jone num)  type/[%s -.ven]
