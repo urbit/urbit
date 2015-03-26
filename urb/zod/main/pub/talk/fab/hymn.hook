@@ -9,8 +9,7 @@
     ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js");
     ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js");
     ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/react/0.12.1/react.js");
-    ;script(type "text/javascript", src "/main/pub/talk/src/js/dep/director.js");
-    ;meta(name "viewport", content "width=432, initial-scale=1");
+    ;meta(name "viewport", content "width=device-width, height=device-height, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0");
     ;link(type "text/css", rel "stylesheet", href "/main/pub/talk/src/css/main.css");
     ;script(type "text/javascript", src "/gop/hart.js");
     ;title: Radio

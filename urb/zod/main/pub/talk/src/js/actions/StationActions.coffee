@@ -17,6 +17,11 @@ module.exports =
       type:"station-set-audience"
       audience:audience
 
+  setValidAudience: (valid) ->
+    StationDispatcher.handleViewAction
+      type:"station-set-valid-audience"
+      valid:valid
+
   toggleAudience: (station) ->
     StationDispatcher.handleViewAction
       type:"station-audience-toggle"
@@ -53,11 +58,10 @@ module.exports =
       type:"stations-load"
       stations:stations
 
-  loadMembers: (station,members) ->
+  loadMembers: (members) ->
     StationDispatcher.handleServerAction
       type:"members-load"
       members:members
-      station:station
 
   createStation: (station) ->
     StationDispatcher.handleViewAction

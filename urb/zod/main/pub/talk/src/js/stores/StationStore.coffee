@@ -1,14 +1,16 @@
-EventEmitter = require('events').EventEmitter
+EventEmitter      = require('events').EventEmitter
 
 StationDispatcher = require '../dispatcher/Dispatcher.coffee'
 
-_audience = []
-_members = {}
-_stations = []
-_listening = []
-_station = null
-_config = {}
-_typing = {}
+_audience   = []
+_members    = {}
+_stations   = []
+_listening  = []
+_station    = null
+_config     = {}
+_typing     = {}
+
+_validAudience = true
 
 StationStore = _.merge new EventEmitter,{
   removeChangeListener: (cb) -> @removeListener "change", cb
@@ -20,6 +22,10 @@ StationStore = _.merge new EventEmitter,{
   getAudience: -> _audience
 
   setAudience: (audience) -> _audience = audience
+
+  getValidAudience: -> _validAudience
+
+  setValidAudience: (valid) -> _validAudience = valid
 
   toggleAudience: (station) ->
     if _audience.indexOf(station) isnt -1
@@ -35,14 +41,12 @@ StationStore = _.merge new EventEmitter,{
 
   getMember: (ship) -> {ship:ship}
 
-  changeMember: (dir,name,ship) ->
-    if dir is "out"
-      _members = _.filter _members, (_member) ->
-        return (_member.ship isnt ship)
-    if dir is "in"
-      _members.push {name:name, ship:ship}
-
-  loadMembers: (station,members) -> _members[station] = members
+  loadMembers: (members) -> 
+    _members = {}
+    for station,list of members
+      for member,presence of list
+        _members[member] = {} if not _members[member]
+        _members[member][station] = presence
 
   getMembers: -> _members
 
@@ -94,6 +98,10 @@ StationStore.dispatchToken = StationDispatcher.register (payload) ->
       StationStore.setAudience action.audience
       StationStore.emitChange()
       break
+    when 'station-set-valid-audience'
+      StationStore.setValidAudience action.valid
+      StationStore.emitChange()
+      break
     when 'station-switch'
       StationStore.setAudience []
       StationStore.setStation action.station
@@ -103,7 +111,7 @@ StationStore.dispatchToken = StationDispatcher.register (payload) ->
       StationStore.setListening action.station
       StationStore.emitChange()
       break
-    when "config-load"
+    when "config-load" #[name:'loadConfig', args:['station', 'config']]
       StationStore.loadConfig action.station,action.config
       StationStore.emitChange()
       break
@@ -111,7 +119,10 @@ StationStore.dispatchToken = StationDispatcher.register (payload) ->
       StationStore.loadStations action.stations
       StationStore.emitChange()
       break
-    when "stations-leave"
+    when "stations-leave"  # stations-leave:[{name:'loadStations' args:['stations']} ['unsetStation' 'station']]
+                           # ...
+                           # for command in actionVtable[action.type]
+                           #   StationStore[command[0]].apply(command[1..].map(argname -> action[argname]))
       StationStore.loadStations action.stations
       StationStore.unsetStation action.station
       StationStore.emitChange()
@@ -121,7 +132,7 @@ StationStore.dispatchToken = StationDispatcher.register (payload) ->
       StationStore.emitChange()
       break
     when "members-load"
-      StationStore.loadMembers action.station,action.members
+      StationStore.loadMembers action.members
       StationStore.emitChange()
       break
     when "typing-set"
