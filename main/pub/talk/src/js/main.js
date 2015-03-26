@@ -36,15 +36,11 @@ module.exports = {
     });
     return window.chat.MessagePersistence.get(station, start, end);
   },
-  sendMessage: function(station, message, audience) {
+  sendMessage: function(message, audience) {
     var _audi, _message, k, serial, v;
     serial = window.util.uuid32();
-    if (station[0] !== "~") {
-      station = "~" + window.urb.ship + "/" + station;
-    }
-    if (audience.length === 0) {
-      audience.push(station);
-    }
+    audience.push(window.util.mainStationPath(window.urb.user));
+    audience = _.uniq(audience);
     _audi = {};
     for (k in audience) {
       v = audience[k];
@@ -262,7 +258,9 @@ Message = recl({
       klass += " say";
     }
     name = this.props.name ? this.props.name : "";
-    audi = window.util.clipAudi(_.keys(this.props.thought.audience));
+    audi = _.keys(this.props.thought.audience);
+    audi = _.without(audi, window.util.mainStationPath(window.urb.user));
+    audi = window.util.clipAudi(audi);
     audi = audi.map(function(_audi) {
       return div({}, _audi);
     });
@@ -587,13 +585,17 @@ module.exports = recl({
     }
   },
   stateFromStore: function() {
-    return {
+    var s;
+    s = {
       audi: StationStore.getAudience(),
+      ludi: MessageStore.getLastAudience(),
       members: StationStore.getMembers(),
       typing: StationStore.getTyping(),
-      ludi: MessageStore.getLastAudience(),
       valid: StationStore.getValidAudience()
     };
+    s.audi = _.without(s.audi, window.util.mainStationPath(window.urb.user));
+    s.ludi = _.without(s.ludi, window.util.mainStationPath(window.urb.user));
+    return s;
   },
   getInitialState: function() {
     return this.stateFromStore();
@@ -624,7 +626,7 @@ module.exports = recl({
       audi = this.state.audi;
     }
     audi = window.util.expandAudi(audi);
-    MessageActions.sendMessage(audi, this.$writing.text().trim(), audi);
+    MessageActions.sendMessage(this.$writing.text().trim(), audi);
     this.$length.text("0/69");
     this.$writing.text('');
     this.set();
@@ -696,6 +698,10 @@ module.exports = recl({
   _validateAudi: function() {
     var a, i, len, v, valid;
     v = $('#audi').text();
+    v = v.trim();
+    if (v.length === 0) {
+      return true;
+    }
     v = v.split(" ");
     for (i = 0, len = v.length; i < len; i++) {
       a = v[i];
@@ -824,7 +830,7 @@ module.exports = _.merge(new Dispatcher(), {
 
 },{"flux":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/flux/index.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/main.coffee":[function(require,module,exports){
 $(function() {
-  var $c, MessagesComponent, StationActions, StationComponent, WritingComponent, clean, rend;
+  var $c, MessagesComponent, StationActions, StationComponent, WritingComponent, clean, rend, setSo, so;
   StationActions = require('./actions/StationActions.coffee');
   rend = React.render;
   window.chat = {};
@@ -932,8 +938,83 @@ $(function() {
       }
     }
   };
+  so = {};
+  so.ls = $(window).scrollTop();
+  so.cs = $(window).scrollTop();
+  so.w = null;
+  so.$n = $('#station-container');
+  so.$d = $('#nav > div');
+  so.nh = so.$n.outerHeight(true);
+  setSo = function() {
+    so.$n = $('#station-container');
+    return so.w = $(window).width();
+  };
+  setInterval(setSo, 200);
+  $(window).on('resize', function(e) {
+    if (so.w > 1170) {
+      return so.$n.removeClass('m-up m-down m-fixed');
+    }
+  });
+  $(window).on('scroll', function(e) {
+    var dy, sto, top;
+    so.cs = $(window).scrollTop();
+    if (so.w > 1170) {
+      so.$n.removeClass('m-up m-down m-fixed');
+    }
+    if (so.w < 1170) {
+      dy = so.ls - so.cs;
+      so.$d.removeClass('focus');
+      if (so.cs <= 0) {
+        so.$n.removeClass('m-up');
+        so.$n.addClass('m-down m-fixed');
+        return;
+      }
+      if (so.$n.hasClass('m-fixed' && so.w < 1024)) {
+        so.$n.css({
+          left: -1 * $(window).scrollLeft()
+        });
+      }
+      if (dy > 0) {
+        if (!so.$n.hasClass('m-down')) {
+          so.$n.removeClass('m-up').addClass('m-down');
+          top = so.cs - so.nh;
+          if (top < 0) {
+            top = 0;
+          }
+          so.$n.offset({
+            top: top
+          });
+        }
+        if (so.$n.hasClass('m-down') && !so.$n.hasClass('m-fixed') && so.$n.offset().top >= so.cs) {
+          so.$n.addClass('m-fixed');
+          so.$n.attr({
+            style: ''
+          });
+        }
+      }
+      if (dy < 0) {
+        if (!so.$n.hasClass('m-up')) {
+          so.$n.removeClass('m-down m-fixed').addClass('m-up');
+          so.$n.attr({
+            style: ''
+          });
+          top = so.cs;
+          sto = so.$n.offset().top;
+          if (top < 0) {
+            top = 0;
+          }
+          if (top > sto && top < sto + so.nh) {
+            top = sto;
+          }
+          return so.$n.offset({
+            top: top
+          });
+        }
+      }
+    }
+  });
+  so.ls = so.cs;
   $(window).on('scroll', window.util.checkScroll);
-  $(window).on('resize', window.util.checkResize);
   window.chat.StationPersistence.listen();
   StationComponent = require('./components/StationComponent.coffee');
   MessagesComponent = require('./components/MessagesComponent.coffee');
