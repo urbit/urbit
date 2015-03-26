@@ -17,8 +17,9 @@
   ++  hymn                                              ::  inject into %hymn
     |=  old=manx
     ~|  hymn//mal-formed
+    ::  ~|  old
     ?>  ?=([[%html ~] [[%head ~] *] [[%body ~] ^] ~] old) ::  XX static
-::     =+  bek=(sa (turn (turn dep) |=(a=beam (tope a(s ~)))))                                    ::  inject into %hymn
+    ::  =+  bek=(sa (turn (turn dep) |=(a=beam (tope a(s ~)))))
     %_    old
         c.i.c
       :-  ;meta(charset "utf-8", urb_injected "");

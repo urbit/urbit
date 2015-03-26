@@ -372,12 +372,13 @@
         ?(%rush %rust)
       ?>  ?=([%is ^] tee)
       ?.  ?=(%json p.sih)
-        (back tee 0v0 [p.sih (slot 3 (spec (slot 3 [typ +.sih])))])
-      %-  ~(get-even ix p.tee (~(got by wix) p.tee))
-      [%rush [(pick-hasp q.tee) r.tee] (joba %json ((hard json) q.sih))]
+        =-  (ford-req tee our [%cast %json %done ~ -])
+        `cage`[p.sih (slot 3 (spec (slot 3 [typ +.sih])))]
+      %-  ~(get-rush ix p.tee (~(got by wix) p.tee))
+      [[(pick-hasp q.tee) r.tee] ((hard json) q.sih)]
     ::
-        %nice  ?>(?=($|(~ [%is ^]) tee) (nice-json))
-        %mean  ?>(?=(~ tee) (mean-json 500 p.sih))
+        %nice  ~|(tee ?>(?=($|(~ [%is ^]) tee) (nice-json)))
+        %mean  ~|(tee ?>(?=($|(~ [%is ^]) tee) (mean-json 500 p.sih)))
         %wake
       ?>  ?=([%of ^] tee)
       =>  ~(wake ix p.tee (~(got by wix) p.tee))
@@ -405,9 +406,8 @@
           [%is ^]
         %+  ~(get-rush ix p.tee (~(got by wix) p.tee))
           [(pick-hasp q.tee) r.tee]
-        ?>  ?=([%& %mime ^] q.sih)
-        ?>  ?=([@ @] |3.q.sih)
-        |3.q.sih
+        ?>  ?=([%& %json ^] q.sih)                    ::  XX others
+        ((hard json) |3.q.sih)
       ::
           [%to ^]
         ?:  ?=(%| -.q.sih)
@@ -1091,8 +1091,8 @@
       abet:(give-even & a ven)
     ::
     ++  get-rush
-      |=  [a=[hasp path] b=octs]  ^+  ..ix
-      (get-even [%rush a (joba %mime [%s q.b])])  ::  XX multiline
+      |=  [a=[hasp path] b=json]  ^+  ..ix
+      (get-even [%rush a (joba %json b)])
     ::
     ++  get-even
       |=  ven=even  ^+  ..ix
