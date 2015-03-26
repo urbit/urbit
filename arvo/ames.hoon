@@ -35,31 +35,31 @@
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
           $?  $:  %d                                    ::  to %dill
-                  $%  [%flog p=flog]                    ::
-              ==  ==                                    ::
+          $%  [%flog p=flog]                            ::
+          ==  ==                                        ::
               $:  %a                                    ::  to %ames
-                  $%  [%kick p=@da]                     ::
-              ==  ==                                    ::
+          $%  [%kick p=@da]                             ::
+          ==  ==                                        ::
               $:  %g                                    ::  to %gall
-                  $%  [%rote p=sack q=path r=*]         ::
-                      [%roth p=sack q=path r=*]         ::
-                      [%mess p=[@p %ye ~] q=@p r=cage]  ::
-              ==  ==                                    ::
+          $%  [%rote p=sack q=path r=*]                 ::
+              [%roth p=sack q=path r=*]                 ::
+              [%mess p=[@p %ye ~] q=@p r=cage]          ::
+          ==  ==                                        ::
               $:  @tas                                  ::  to any
-                  $%  [%init p=@p]                      ::
-                      [%want p=sock q=path r=*]         ::
-                      [%wart p=sock q=@tas r=path s=*]  ::
+          $%  [%init p=@p]                              ::
+              [%want p=sock q=path r=*]                 ::
+              [%wart p=sock q=@tas r=path s=*]          ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  from %ames
-                  $%  [%went p=ship q=cape]             ::
-              ==  ==                                    ::
+          $%  [%went p=ship q=cape]                     ::
+          ==  ==                                        ::
               $:  %g                                    ::  from %gall
-                  $%  [%mean p=ares]                    ::
-                      [%nice ~]                         ::
-              ==  ==                                    ::
+          $%  [%mean p=ares]                            ::
+              [%nice ~]                                 ::
+          ==  ==                                        ::
               $:  @tas                                  ::
-                  $%  [%crud p=@tas q=(list tank)]      ::  by any
+          $%  [%crud p=@tas q=(list tank)]              ::  by any
           ==  ==  ==                                    ::
 --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -440,7 +440,7 @@
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
-    ?>  =(2 vez)
+    ?>  =(1 vez)
     ?>  =(chk (end 0 20 (mug bod)))
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
@@ -460,7 +460,7 @@
     =+  tay=(ksin q.kec)
     %+  mix
       %+  can  0
-      :~  [3 2]
+      :~  [3 1]
           [20 (mug bod)]
           [2 yax]
           [2 qax]
@@ -1043,7 +1043,7 @@
     ++  gnaw                                            ::    gnaw:am
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
-      ?.  =(2 (end 0 3 pac))  [~ fox]
+      ?.  =(1 (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
       ?:  (goop p.p.kec)  [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
@@ -1687,6 +1687,8 @@
         %milk
       ::  ~&  [%rx p.bon q.bon]
       ?>  ?=([@ *] q.q.bon)
+      ?:  ?=(%e i.q.q.bon)
+        :_(fox [hen [%slip %e %wart p.bon %$ t.q.q.bon r.bon]]~)
       ?:  ?=(%r i.q.q.bon)
         ?:  ?=([%ta *] t.q.q.bon)
           =+  wil=((hard (unit will)) r.bon)
