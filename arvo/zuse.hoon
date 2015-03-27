@@ -2206,8 +2206,7 @@
     ==
   --
 ::
-++  epur                                                ::  url/header parser
-  =<  |=(a=cord `(unit purl)`(rush a auri))
+++  urlp                                                ::  url/header parser
   |%
   ++  apat                                              ::  2396 abs_path
     %+  cook  deft
@@ -2306,6 +2305,8 @@
       (stag %| ;~(plug apat yque))
     ==
   --
+++  epur                                                ::  url/header parser
+  =>(urlp |=(a=cord `(unit purl)`(rush a auri)))
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bH, names etc                ::

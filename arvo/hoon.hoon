@@ -2860,13 +2860,13 @@
 ::                section 2eI, parsing (external)       ::
 ::
 ++  rash  |*([naf=@ sab=_rule] (scan (trip naf) sab))   ::
-++  ruse  |*  [los=tape sab=_rule]
-          =+  vex=(sab [[0 0] los])
+++  rose  |*  [los=tape sab=_rule]
+          =+  vex=(sab [[1 1] los])
           =+  len=(lent los)
-          ?.  =(len q.p.vex)  [%| p=q.p.vex]
+          ?.  =(+(len) q.p.vex)  [%| p=(dec q.p.vex)]
           ?~  q.vex
-            [%| p=len]
-          [%& p=p.u.q.vex]
+            [%& p=~]
+          [%& p=[~ u=p.u.q.vex]]
 ++  rush  |*([naf=@ sab=_rule] (rust (trip naf) sab))
 ++  rust  |*  [los=tape sab=_rule]
           =+  vex=((full sab) [[1 1] los])
@@ -8973,21 +8973,6 @@
         (stag %bccm ;~(pfix com hill))
       :-  '^'
         ;~  pose
-          ;~  pfix  ket
-            ;~  pose
-              ;~  pfix  col
-                %+  sear
-                  |=  [a=tile b=twig]                     ::  XX shd be static
-                  =+  rev=(plex b)
-                  ?~  rev  ~
-                  %-  some
-                  :+  %smsm  a
-                  [%dtkt %dtzz %$ %cx u.rev]
-                ;~(plug hill rood)
-              ==
-              (sear prey (most ket rood))
-            ==
-          ==
           (stag %cnzz rope)
           (stag %bczp (cold %cell ket))
         ==
