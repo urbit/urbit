@@ -415,10 +415,13 @@
         .(+> (se-blit %bel ~))
       (ta-hom %del pos.inp)
     ::
-    ++  ta-err                                          ::  hear error
+    ++  ta-erl                                          ::  hear local error
       |=  pos=@ud 
-      =.  pos  (~(transpose cs say.inp) pos)
       ta-bel(pos.inp (min pos (lent buf.say.inp)))
+    ::
+    ++  ta-err                                          ::  hear remote error
+      |=  pos=@ud 
+      (ta-erl (~(transpose cs say.inp) pos))
     ::
     ++  ta-fec                                          ::  apply effect
       |=  fec=console-effect
@@ -508,10 +511,13 @@
     ++  ta-ret                                          ::  hear return
       ?.  mav
         (ta-act %ret ~)
-      =+  fey=(ruse (tufa buf.say.inp) sp-ukase:sp)
+      =+  txt=(tufa buf.say.inp)
+      =+  fey=(rose txt sp-ukase:sp)
       ?-  -.fey
-        %|  (ta-err p.fey)
-        %&  =.  +>+  (se-like p.fey)
+        %|  (ta-erl (lent (tuba (scag p.fey txt))))
+        %&  ?~  p.fey 
+              (ta-erl (lent buf.say.inp))
+            =.  +>+>  (se-like u.p.fey)
             =.  pom  pom.tar.maz
             (ta-hom:ta-nex %set ~)
       ==

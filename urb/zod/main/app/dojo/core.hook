@@ -195,11 +195,11 @@
     ++  dp-build                                        ::  ++dojo-build
       %+  knee  *dojo-build  |.  ~+
       ;~  pose
-        (ifix [sel ser] (stag %tu (most ace dp-source)))
-        ;~(pfix col (stag %di dp-model-gun))
+        ;~(pfix wut (stag %di dp-model-gun))
         ;~(pfix pam (stag %sc dp-model-sic))
         ;~(pfix buc (stag %va sym))
         (stag %ex dp-twig)
+        (ifix [sel ser] (stag %tu (most ace dp-source)))
       ==
     :: 
     ++  dp-goal                                         ::  ++goal
@@ -215,7 +215,7 @@
     ++  dp-model-sic  ;~(plug dp-server-sic dp-config)  ::  ++dojo-model
     ++  dp-server-gun   (stag 0 (stag %gun dp-device))  ::  ++dojo-server
     ++  dp-server-sic   (stag 0 (stag %sic dp-device))  ::  ++dojo-server
-    ++  dp-twig         long:(vang & ~)                 ::  ++twig
+    ++  dp-twig         wide:(vang & ~)                 ::  ++twig
     ++  dp-device       (most fas sym)                  ::  ++dojo-device
     ++  dp-value                                        ::  ++dojo-source
       %+  cook  |=(a=dojo-source a)
@@ -524,9 +524,9 @@
   ++  he-dope                                           ::  sole user of ++dp
     |=  txt=tape                                        ::
     ^-  (each (unit dojo-command) hair)                 ::  prefix/result
-    =+  vex=(dp-command:dp [0 0] txt)                   ::
-    ?.  =((lent txt) q.p.vex)                           ::  fully parsed
-      [%| p.vex]                                        ::  syntax error
+    =+  vex=(dp-command:dp [1 1] txt)                   ::
+    ?.  =(+((lent txt)) q.p.vex)                        ::  fully parsed
+      [%| p.p.vex (dec q.p.vex)]                        ::  syntax error
     [%& ?~(q.vex ~ `p.u.q.vex)]                         ::  prefix/complete
   ::
   ++  he-duke                                           ::  ++he-dope variant
