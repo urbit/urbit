@@ -149,11 +149,6 @@ body {
   z-index: 10;
   -webkit-transition: max-height 0.2s;
 }
-#station-container:hover {
-  max-height: 30rem;
-  height: auto;
-  -webkit-transition: max-height 0.2s;
-}
 #station #station-container {
   padding-top: 1rem;
   min-width: 30rem;
@@ -178,22 +173,18 @@ body {
   border-right: 6px solid transparent;
   border-bottom: 6px solid transparent;
   border-left: 6px solid #000;
+  margin-top: 2px;
 }
 .circle {
   width: 6px;
   height: 6px;
   border: 3px solid #000;
   border-radius: 6px;
+  margin-top: 2px;
 }
 #station-container #where .caret {
   -webkit-transform: rotate(0deg);
   -webkit-transform-origin: 0 50%;
-  -webkit-transition: -webkit-transform 0.2s;
-}
-#station-container:hover #where .caret {
-  transform: rotate(90deg);
-  transform-origin: 0 50%;
-  -webkit-transform: rotate(90deg);
   -webkit-transition: -webkit-transform 0.2s;
 }
 #head {
@@ -230,6 +221,10 @@ body {
   border-left-color: #f00;
   margin-left: 1rem;
 }
+#where > span,
+#who > span {
+  vertical-align: top;
+}
 #who > span {
   margin-left: 1rem;
 }
@@ -238,12 +233,13 @@ body {
 }
 #members > div div {
   display: inline-block;
+  vertical-align: bottom;
 }
 #members .audi {
   margin-right: 0.3rem;
 }
 #members .iden {
-  min-width: 6rem;
+  min-width: 10rem;
 }
 .station div {
   display: inline-block;
@@ -339,7 +335,7 @@ body {
   max-width: 8rem;
 }
 .iden > div {
-  max-width: 16rem;
+  max-width: 10rem;
 }
 .iden > div,
 .audi > div {
@@ -348,7 +344,7 @@ body {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  -webkit-transition: max-height 0.2s;
+  -webkit-transition: max-width 0.2s;
 }
 .audi > div:last-child {
   margin-right: 0;
@@ -357,7 +353,7 @@ body {
 .audi > div:hover {
   position: relative;
   max-width: 30rem;
-  -webkit-transition: max-height 0.2s;
+  -webkit-transition: max-width 0.2s;
 }
 .mess {
   font-size: 0.9rem;
@@ -422,6 +418,19 @@ body {
   font-size: 0.8rem;
   text-transform: uppercase;
 }
+@media only screen and (min-width: 1024px) {
+  #station-container:hover {
+    max-height: 30rem;
+    height: auto;
+    -webkit-transition: max-height 0.2s;
+  }
+  #station-container:hover #where .caret {
+    transform: rotate(90deg);
+    transform-origin: 0 50%;
+    -webkit-transform: rotate(90deg);
+    -webkit-transition: -webkit-transform 0.2s;
+  }
+}
 @media only screen and (max-width: 1170px) {
   #c,
   #station-container {
@@ -448,11 +457,11 @@ body {
   #writing {
     padding: 0.1rem;
   }
-  .m-down,
-  .m-up {
+  #station-container.m-down,
+  #station-container.m-up {
     position: absolute;
   }
-  .m-down.m-fixed {
+  #station-container.m-down.m-fixed {
     position: fixed;
     top: 0;
   }
@@ -462,5 +471,28 @@ body {
   #writing {
     max-width: 70%;
     line-height: 1.2rem;
+  }
+  #stations,
+  #audience {
+    width: 96%;
+  }
+  #stations,
+  #audience,
+  .sour-ctrl input {
+    text-align: left;
+  }
+  #station {
+    cursor: pointer;
+  }
+  #station-container.open {
+    max-height: 30rem;
+    height: auto;
+    -webkit-transition: max-height 0.2s;
+  }
+  #station-container.open #where .caret {
+    transform: rotate(90deg);
+    transform-origin: 0 50%;
+    -webkit-transform: rotate(90deg);
+    -webkit-transition: -webkit-transform 0.2s;
   }
 }

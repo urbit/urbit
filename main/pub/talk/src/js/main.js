@@ -275,9 +275,9 @@ Message = recl({
           className: "audi"
         }, audi), div({
           onClick: this._handlePm
-        }, Member({
+        }, React.createElement(Member, {
           ship: this.props.ship
-        }, "")), div({
+        })), div({
           className: "time"
         }, this.convTime(this.props.thought.statement.date))
       ]), div({
@@ -336,12 +336,11 @@ module.exports = recl({
     return window.util.setScroll();
   },
   componentDidUpdate: function() {
-    var $window, h, st;
+    var $window, st;
     $window = $(window);
     if (this.lastLength) {
-      h = $('.message').height() * (this.length - this.lastLength);
-      st = $window.scrollTop();
-      $window.scrollTop(st + h);
+      st = $window.height();
+      $window.scrollTop(st);
       return this.lastLength = null;
     } else {
       if ($('#writing-container').length > 0) {
@@ -392,7 +391,7 @@ module.exports = recl({
         _message.station = _this.state.station;
         _message._handlePm = _this._handlePm;
         _message._handleAudi = _this._handleAudi;
-        return Message(_message, "");
+        return React.createElement(Message, _message);
       };
     })(this));
     return div({
@@ -445,6 +444,12 @@ module.exports = recl({
   _onChangeStore: function() {
     return this.setState(this.stateFromStore());
   },
+  _toggleOpen: function(e) {
+    if ($(e.target).closest('.sour-ctrl').length > 0) {
+      return;
+    }
+    return $("#station-container").toggleClass('open');
+  },
   _keyUp: function(e) {
     var _sources, v;
     if (e.keyCode === 13) {
@@ -480,7 +485,7 @@ module.exports = recl({
           }, station);
         });
         return div({}, [
-          audi, Member({
+          audi, React.createElement(Member, {
             ship: member
           })
         ]);
@@ -540,16 +545,17 @@ module.exports = recl({
     parts.push(head);
     parts.push(div({
       id: "stations"
-    }, [h1({}, "Sources"), div({}, sources), sourceCtrl]));
+    }, [h1({}, "Listening to"), div({}, sources), sourceCtrl]));
     parts.push(div({
       id: "audience"
     }, div({}, [
-      h1({}, "Audience"), div({
+      h1({}, "Talking to"), div({
         id: "members"
       }, members)
     ])));
     return div({
-      id: "station"
+      id: "station",
+      onClick: this._toggleOpen
     }, parts);
   }
 });
@@ -785,7 +791,7 @@ module.exports = recl({
           contentEditable: true,
           onKeyDown: this._audiKeyDown,
           onBlur: this._setAudi
-        }, audi.join(" ")), Member(iden, ""), div({
+        }, audi.join(" ")), React.createElement(Member, iden), div({
           className: "time"
         }, this.getTime())
       ]), div({
@@ -830,7 +836,7 @@ module.exports = _.merge(new Dispatcher(), {
 
 },{"flux":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/flux/index.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/main.coffee":[function(require,module,exports){
 $(function() {
-  var $c, MessagesComponent, StationActions, StationComponent, WritingComponent, clean, rend, setSo, so;
+  var $c, MessagesComponent, StationActions, StationComponent, WritingComponent, clean, ldy, rend, setSo, so;
   StationActions = require('./actions/StationActions.coffee');
   rend = React.render;
   window.chat = {};
@@ -925,7 +931,7 @@ $(function() {
     },
     setScroll: function() {
       window.util.getScroll();
-      return $(window).scrollTop(window.util.writingPosition);
+      return $(window).scrollTop($("#c").height());
     },
     checkScroll: function() {
       if (!window.util.writingPosition) {
@@ -942,19 +948,22 @@ $(function() {
   so.ls = $(window).scrollTop();
   so.cs = $(window).scrollTop();
   so.w = null;
-  so.$n = $('#station-container');
   so.$d = $('#nav > div');
-  so.nh = so.$n.outerHeight(true);
   setSo = function() {
     so.$n = $('#station-container');
-    return so.w = $(window).width();
+    so.w = $(window).width();
+    so.h = $(window).height();
+    so.dh = $("#c").height();
+    return so.nh = so.$n.outerHeight(true);
   };
+  setSo();
   setInterval(setSo, 200);
   $(window).on('resize', function(e) {
     if (so.w > 1170) {
       return so.$n.removeClass('m-up m-down m-fixed');
     }
   });
+  ldy = 0;
   $(window).on('scroll', function(e) {
     var dy, sto, top;
     so.cs = $(window).scrollTop();
@@ -963,10 +972,12 @@ $(function() {
     }
     if (so.w < 1170) {
       dy = so.ls - so.cs;
-      so.$d.removeClass('focus');
       if (so.cs <= 0) {
         so.$n.removeClass('m-up');
         so.$n.addClass('m-down m-fixed');
+        return;
+      }
+      if (so.cs + so.h > so.dh) {
         return;
       }
       if (so.$n.hasClass('m-fixed' && so.w < 1024)) {
@@ -974,7 +985,7 @@ $(function() {
           left: -1 * $(window).scrollLeft()
         });
       }
-      if (dy > 0) {
+      if (dy > 0 && ldy > 0) {
         if (!so.$n.hasClass('m-down')) {
           so.$n.removeClass('m-up').addClass('m-down');
           top = so.cs - so.nh;
@@ -992,8 +1003,9 @@ $(function() {
           });
         }
       }
-      if (dy < 0) {
+      if (dy < 0 && ldy < 0) {
         if (!so.$n.hasClass('m-up')) {
+          so.$n.removeClass('open');
           so.$n.removeClass('m-down m-fixed').addClass('m-up');
           so.$n.attr({
             style: ''
@@ -1006,14 +1018,15 @@ $(function() {
           if (top > sto && top < sto + so.nh) {
             top = sto;
           }
-          return so.$n.offset({
+          so.$n.offset({
             top: top
           });
         }
       }
     }
+    ldy = dy;
+    return so.ls = so.cs;
   });
-  so.ls = so.cs;
   $(window).on('scroll', window.util.checkScroll);
   window.chat.StationPersistence.listen();
   StationComponent = require('./components/StationComponent.coffee');
@@ -1029,9 +1042,9 @@ $(function() {
   $c.append("<div id='messages-container'></div>");
   $c.append("<div id='writing-container'></div>");
   $c.append("<div id='scrolling'>BOTTOM</div>");
-  rend(StationComponent({}, ""), $('#station-container')[0]);
-  rend(MessagesComponent({}, ""), $('#messages-container')[0]);
-  return rend(WritingComponent({}, ""), $('#writing-container')[0]);
+  rend(React.createElement(StationComponent, {}), $('#station-container')[0]);
+  rend(React.createElement(MessagesComponent, {}), $('#messages-container')[0]);
+  return rend(React.createElement(WritingComponent, {}), $('#writing-container')[0]);
 });
 
 

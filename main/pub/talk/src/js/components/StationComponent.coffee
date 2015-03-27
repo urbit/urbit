@@ -39,6 +39,11 @@ module.exports = recl
   _onChangeStore: -> 
     @setState @stateFromStore()
 
+  _toggleOpen: (e) ->
+    if $(e.target).closest('.sour-ctrl').length > 0
+      return
+    $("#station-container").toggleClass 'open'
+
   _keyUp: (e) ->
     if e.keyCode is 13
       v = @$input.val()
@@ -64,7 +69,7 @@ module.exports = recl
     if @state.station and @state.members
       members = _.map @state.members, (stations,member) -> 
           audi = _.map stations,(presence,station) -> (div {className:"audi"}, station)
-          (div {}, [audi,Member {ship:member}])
+          (div {}, [audi,(React.createElement Member, {ship:member})])
     else
       members = ""
 
@@ -90,7 +95,7 @@ module.exports = recl
       )
 
     parts.push head
-    parts.push (div {id:"stations"}, [(h1 {}, "Sources"),(div {},sources),sourceCtrl])
-    parts.push (div {id:"audience"}, (div {},[(h1 {}, "Audience"),(div {id:"members"},members)]))
+    parts.push (div {id:"stations"}, [(h1 {}, "Listening to"),(div {},sources),sourceCtrl])
+    parts.push (div {id:"audience"}, (div {},[(h1 {}, "Talking to"),(div {id:"members"},members)]))
 
-    div {id:"station"},parts
+    div {id:"station",onClick:@_toggleOpen},parts

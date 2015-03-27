@@ -43,7 +43,7 @@ Message = recl
     div {className:"message #{klass}"}, [
         (div {className:"attr"}, [
           div {onClick:@_handleAudi,className:"audi"}, audi
-          (div {onClick:@_handlePm}, (Member {ship:@props.ship}, ""))
+          (div {onClick:@_handlePm}, (React.createElement Member,{ship:@props.ship}))
           div {className:"time"}, @convTime @props.thought.statement.date
         ])
         div {className:"mess"}, @props.thought.statement.speech.lin.txt
@@ -95,9 +95,8 @@ module.exports = recl
   componentDidUpdate: ->
     $window = $(window)
     if @lastLength
-      h = $('.message').height() * (@length-@lastLength)
-      st = $window.scrollTop()
-      $window.scrollTop st+h
+      st = $window.height()
+      $window.scrollTop st
       @lastLength = null
     else
       if $('#writing-container').length > 0
@@ -125,9 +124,6 @@ module.exports = recl
     sources = _.clone @state.configs[@state.station]?.sources ? []
     sources.push _station
     _messages = @state.messages
-    # _messages = _.filter @state.messages, (_message) ->
-    #   audience = _.keys(_message.thought.audience)
-    #   _.intersection(sources,audience).length > 0
     _messages = _.sortBy _messages, (_message) -> 
       _message.pending = _message.thought.audience[station]
       _message.thought.statement.time
@@ -143,5 +139,5 @@ module.exports = recl
       _message.station = @state.station
       _message._handlePm = @_handlePm
       _message._handleAudi = @_handleAudi
-      Message _message, ""
+      React.createElement Message,_message
     div {id: "messages"}, messages

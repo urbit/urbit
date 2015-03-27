@@ -74,11 +74,6 @@ body
   overflow hidden
   z-index 10
   -webkit-transition max-height .2s
-
-#station-container:hover
-  max-height 30rem
-  height auto
-  -webkit-transition max-height .2s
   
 #station #station-container
   padding-top 1rem
@@ -108,12 +103,14 @@ body
   border-right 6px solid transparent
   border-bottom 6px solid transparent
   border-left 6px solid #000
+  margin-top 2px
 
 .circle
   width 6px
   height 6px
   border 3px solid black
   border-radius 6px
+  margin-top 2px
 
 //
 // station
@@ -122,12 +119,6 @@ body
 #station-container #where .caret
   -webkit-transform rotate(0deg)
   -webkit-transform-origin 0 50%
-  -webkit-transition -webkit-transform .2s
-
-#station-container:hover #where .caret
-  transform rotate(90deg)
-  transform-origin 0 50%
-  -webkit-transform rotate(90deg)
   -webkit-transition -webkit-transform .2s
 
 #head
@@ -164,6 +155,10 @@ body
   border-left-color red
   margin-left 1rem
 
+#where > span
+#who > span
+  vertical-align top
+
 #who > span
   margin-left 1rem
 
@@ -172,12 +167,13 @@ body
 
 #members > div div
   display inline-block
+  vertical-align bottom
 
 #members .audi
   margin-right .3rem
 
 #members .iden
-  min-width 6rem
+  min-width 10rem
 
 .station div
   display inline-block
@@ -278,7 +274,7 @@ body
   max-width 8rem
 
 .iden > div
-  max-width 16rem
+  max-width 10rem
 
 .iden > div
 .audi > div
@@ -287,7 +283,7 @@ body
   overflow hidden
   white-space nowrap
   text-overflow ellipsis
-  -webkit-transition max-height .2s
+  -webkit-transition max-width .2s
 
 .audi > div:last-child
   margin-right 0
@@ -296,7 +292,7 @@ body
 .audi > div:hover
   position relative
   max-width 30rem
-  -webkit-transition max-height .2s
+  -webkit-transition max-width .2s
 
 .mess
   font-size .9rem
