@@ -7,9 +7,9 @@
 ::::
   !:
 =>  |%
-    ++  begs  ,[his=@p tic=@p eny=@t ges=gens]
+    ++  begs  ,[his=@p tic=@p yen=@t ges=gens]
     --
-|=  $:  [now=@da bec=beak]
+|=  $:  [now=@da eny=@uvI bec=beak]
         [~ ~]
     ==
 ^-  (console-result (cask begs))
@@ -24,11 +24,11 @@
 %+  console-lo  
   [%& %helm-entropy "some entropy: "]
 %+  console-go  (boss 256 (more gon qit))
-|=  eny=@t
+|=  yen=@t
 %+  console-so  %helm-begin
 :*  his
     tic
-    eny
+    yen
 ::
     ^-  gens
     :-  %en
@@ -37,7 +37,7 @@
       %czar  [%czar ~]
       %duke  [%duke %anon ~]
       %earl  [%earl (scot %p his)]
-      %king  [%king (scot %p his)]
+      %king  [%king ?:(=(~doznec his) 'Urban Republic' (scot %p his))]
       %pawn  [%pawn ~]
     ==
 ==
