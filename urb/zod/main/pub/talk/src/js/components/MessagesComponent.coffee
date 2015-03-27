@@ -95,9 +95,8 @@ module.exports = recl
   componentDidUpdate: ->
     $window = $(window)
     if @lastLength
-      h = $('.message').height() * (@length-@lastLength)
-      st = $window.scrollTop()
-      $window.scrollTop st+h
+      st = $window.height()
+      $window.scrollTop st
       @lastLength = null
     else
       if $('#writing-container').length > 0
@@ -125,9 +124,6 @@ module.exports = recl
     sources = _.clone @state.configs[@state.station]?.sources ? []
     sources.push _station
     _messages = @state.messages
-    # _messages = _.filter @state.messages, (_message) ->
-    #   audience = _.keys(_message.thought.audience)
-    #   _.intersection(sources,audience).length > 0
     _messages = _.sortBy _messages, (_message) -> 
       _message.pending = _message.thought.audience[station]
       _message.thought.statement.time
