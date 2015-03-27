@@ -1,3 +1,16 @@
+/* computers --------*/
+@media only screen and (min-width: 1024px)
+  #station-container:hover
+    max-height 30rem
+    height auto
+    -webkit-transition max-height .2s
+
+  #station-container:hover #where .caret
+    transform rotate(90deg)
+    transform-origin 0 50%
+    -webkit-transform rotate(90deg)
+    -webkit-transition -webkit-transform .2s
+
 /* laptops / small screens ----------- */
 @media only screen and (max-width: 1170px)
   #c
@@ -25,11 +38,11 @@
   #writing
     padding .1rem
     
-  .m-down
-  .m-up
+  #station-container.m-down
+  #station-container.m-up
     position absolute
   
-  .m-down.m-fixed
+  #station-container.m-down.m-fixed
     position fixed
     top 0
 
@@ -43,11 +56,25 @@
     max-width 70%
     line-height 1.2rem
   
+  #stations
+  #audience
+    width 96%
+  
+  #stations
+  #audience
+  .sour-ctrl input
+    text-align left
+  
   #station
     cursor pointer
-  
-  #station-container:hover
-    max-height 2.7rem
-  
-  #station-container:hover #where .caret
-    transform none
+
+  #station-container.open
+    max-height 30rem
+    height auto
+    -webkit-transition max-height .2s
+    
+  #station-container.open #where .caret
+    transform rotate(90deg)
+    transform-origin 0 50%
+    -webkit-transform rotate(90deg)
+    -webkit-transition -webkit-transform .2s

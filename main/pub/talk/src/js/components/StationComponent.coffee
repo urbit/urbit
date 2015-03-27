@@ -39,7 +39,10 @@ module.exports = recl
   _onChangeStore: -> 
     @setState @stateFromStore()
 
-  _toggleOpen: -> $("#station-container").toggleClass 'open'
+  _toggleOpen: (e) ->
+    if $(e.target).closest('.sour-ctrl').length > 0
+      return
+    $("#station-container").toggleClass 'open'
 
   _keyUp: (e) ->
     if e.keyCode is 13
