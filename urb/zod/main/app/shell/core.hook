@@ -4,7 +4,7 @@
   ::
 /?    314
 /-    term-line, kyev
-/=    pit  /~  !>(.)                                    ::  kernel vase
+/=    pit  /~  !>(+)                                    ::  kernel vase
 ::
 ::::  structures
   ::
@@ -83,7 +83,7 @@
       [%vega p=path]                                    ::
   ==  ==  ==                                            ::
 --
-!:
+::
 ::::  parsers
   ::
 |%
@@ -129,9 +129,9 @@
     ==
   ::
   ++  expg  (rais ;~(pfix ace expr(tol %1)) ;~(pfix gap expr))
-  ++  expr  (rais [wide tall]:(vang & pax))
-  ++  loca  %+  sear  ;~(biff plex:(vang & pax) vabe)   ::  path in %clay
-            [;~(pose rood ;~(simu cen scat))]:(vang & pax)
+  ++  expr  (rais [wide tall]:(vang | pax))
+  ++  loca  %+  sear  ;~(biff plex:(vang | pax) vabe)   ::  path in %clay
+            [;~(pose rood ;~(simu cen scat))]:(vang | pax)
   ++  vabe  |=(a=path ?~((tome a) ~ (some a)))          ::  check valid beam
   ++  args                                              ::  task arguments
     %^  rail
@@ -143,7 +143,7 @@
   ::
   --
 --
-!:
+::
 ::::  per event
   ::
 |%
@@ -239,12 +239,17 @@
     |=  [paf=path gen=(unit twig)]
     ^+  +>
     =+  fel=(file paf)  
-    ?~  fel
-      (chew-file paf '! none')
-    ?^  gen 
+    ?^  fel
+      ?~  gen
+        (blab (stray (crip ": {(spud paf)} {<(,@t u.fel)>}"))) 
       %+  with  u.gen  |=  new=vase
       (chew-file paf (foal paf q.new))
-    (blab (stray (crip ": {(spud paf)} {<(,@t u.fel)>}"))) 
+    =+  ark=;;(arch .^(%cy paf))
+    ?-  r.ark
+      ~        (chew-file paf '! none')
+      [^ ~ ~]  $(paf (welp paf /[p.n.r.ark]))
+      *        (chew-file paf '! many')
+    ==
   ::
   ++  eat-help
     |=  app=term
@@ -503,7 +508,7 @@
     !>([%rush %term-line `term-line`[pro(r a) ~ ~]])
   --
 --
-!:
+::
 ::::  formal interface
   ::
 |_  [hid=hide vat=axle]

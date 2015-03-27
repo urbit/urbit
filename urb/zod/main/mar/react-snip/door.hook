@@ -53,8 +53,8 @@
       ")"
     ==
   ++  react-snip-js  (crip tape)
-  ++  js  react-snip-js                                 ::  convert to %js
-  ++  mime  [/text/javascript (taco js)]                ::  convert to %mime
+::   ++  js  react-snip-js                                 ::  convert to %js
+  ++  mime  [/text/javascript (taco react-snip-js)]                ::  convert to %mime
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  manx                                ::  clam from %noun

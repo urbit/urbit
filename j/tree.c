@@ -236,6 +236,7 @@ static u3j_harm _mood__hoon_plug_a[] = {{".2", u3we_plug}, {}};
 static u3j_harm _mood__hoon_pose_a[] = {{".2", u3we_pose}, {}};
 static u3j_harm _mood__hoon_sfix_a[] = {{".2", u3we_sfix}, {}};
 static u3j_harm _mood__hoon_shax_a[] = {{".2", u3we_shax}, {}};
+static u3j_harm _mood__hoon_shay_a[] = {{".2", u3we_shay}, {}};
 static u3j_harm _mood__hoon_shas_a[] = {{".2", u3we_shas}, {}};
 static u3j_harm _mood__hoon_shal_a[] = {{".2", u3we_shal}, {}};
 
@@ -454,6 +455,7 @@ static u3j_core _mood__hoon_d[] =
     { "sfix", _mood__hoon_sfix_a },
 
     { "shax", _mood__hoon_shax_a },
+    { "shay", _mood__hoon_shay_a },
     { "shas", _mood__hoon_shas_a },
     { "shal", _mood__hoon_shal_a },
 

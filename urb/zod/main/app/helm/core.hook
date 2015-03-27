@@ -69,7 +69,7 @@
   ++  he-wish-reset
     ^+  .
     =-  %_(+ moz (weld zum moz))
-    ^=  zum  ^-  (list move)
+    ^=  zum  %-  flop  ^-  (list move)
     =+  top=`path`/(scot %p our.hid)/arvo/(scot %da lat.hid)
     :-  [ost %pass /reset %d %flog %vega (weld top `path`/hoon)]
     %+  turn

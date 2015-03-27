@@ -6,7 +6,7 @@
 ::::  /hook/core/test/app
   ::
 /?    314                                               ::  need urbit 314
-/=    front  /:/%%/front:/hymn/                         ::  load front page
+:: /=    front  /:/%%/front:/hymn/                         ::  load front page
 ::
 ::::  structures
   ::
@@ -297,7 +297,7 @@
   |=  [ost=bone you=ship pax=path]
   ^-  [(list move) _+>]
   ~&  [%test-peer hid]
-  ?~  pax  [[ost %give %rust %hymn front]~ +>.$]
+  ?~  pax  !! ::[[ost %give %rust %hymn front]~ +>.$]
   ?:  ?=(%tests -.pax)
     [[ost %give %rust %json tests-json:et]~ +>.$]
   :_  +>.$  :_  ~
@@ -308,7 +308,7 @@
 ++  poke-json                                           ::  browser message
   |=  [ost=bone you=ship jon=json]
   ^-  [(list move) _+>]
-  ~&  [%test-poke hid]
+  ~&  [%test-poke hid you]
   =+  tes=((of [%test so] ~):jo jon)
   ?~  tes  [[ost %give %mean ~ %strange-json ~]~ +>.$]
   =+  tst=(~(get by tests) +.u.tes)
