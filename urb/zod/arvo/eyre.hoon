@@ -266,6 +266,9 @@
     urb.call()
     '''
   ::
+  ++  auth-redir
+    'document.location.pathname = "/~~"+document.location.pathname'
+  ::
   ++  auth
     '''
     var req = function(url,dat,cb){
@@ -778,7 +781,7 @@
         =+  url=(earn hat pok(p [~ %html]) quy)
         ?+    p.pok  (fail 404 0v0 leaf/"bad redirect" leaf/<p.pok> leaf/url ~)
             [~ %js]
-          $(pez [%fin %js (crip "document.location = '{url}'")])
+          $(pez [%fin %js auth-redir:js])
             [~ %json]
           $(pez [%fin %json (jobe ok/b/| red/(jape url) ~)])
         ==
