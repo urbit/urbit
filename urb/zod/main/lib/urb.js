@@ -101,13 +101,14 @@ window.urb.poll = function(params) {
           case "news":
         return document.location.reload()  // XX check autoreload
           case "rush":
+          case "mean":
         var fn = $this.gsig(res.data.from)
         if($this.cabs[fn])
           $this.cabs[fn].call(this,err,
             {status: res.status, data: res.data.data.json}) // XX non-json
         break;
           default:
-        throw new Error("Lost event %"+res.type)
+        throw new Error("Lost event %"+res.data.type)
       }
     }
 
@@ -239,7 +240,6 @@ window.urb.unsubscribe = function(params,cb) {
   
   url = "/~/is/"+this.gsig(params)+"/"
   method = "delete"
-  throw "XX weird loop"
   this.req("delete",url,params,true,function(err,res) {
     cb(err,res)
   })

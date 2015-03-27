@@ -102,7 +102,6 @@
               [%of p=ixor ~]                            ::  associated view
               [%on p=span:,@uvH ~]                      ::  dependency
               [%to p=span:hasp q=span:ship ~]           ::  associated poke
-              [%is p=ixor q=span:hasp r=path]           ::  subscription
           ==                                            ::
 --                                                      ::
 |%                                                      ::  models
@@ -135,12 +134,14 @@
   $:  him=ship                                          ::  static identity
       ude=(unit ,[p=duct q=?])                          ::  stream, long-poll?
       era=@da                                           ::  next wake
-      eve=[p=@u q=(map ,@u even)]
+      eve=[p=@u q=(map ,@u even)]                       ::  queued events
+      sud=(map ,[hasp path] duct)                       ::  cancel data
+      dus=(map duct ,[hasp path])                       ::  subscription by duct
   ==
 ::
 ++  even                                                ::  client event
   $%  [%news p=@uv]
-      [%rush p=[hasp path] q=json r=duct]
+      [%rush p=[hasp path] q=json]
       [%mean p=[hasp path] q=ares]
   ==
 ::
@@ -152,8 +153,8 @@
       [%away ~]
       [%bugs p=?(%as %to) ~]
       [%mess p=hasp q=mark r=json]
-      [%subs p=hasp %json q=path]
-      [%deps p=@uvH q=?(%del %put)]
+      [%subs p=?(%del %put) q=[hasp %json q=path]]
+      [%deps p=?(%del %put) q=@uvH]
       [%view p=ixor q=[~ u=@ud]]
   ==
 
@@ -369,15 +370,20 @@
       (ames-gram (slav %p p.tee) got/~ (slav %uv q.tee) |2.sih)
     ::
         ?(%rush %rust)
-      ?>  ?=([%is ^] tee)
+      ?>  ?=([%of ^] tee)
       ?.  ?=(%json p.sih)
         =-  (ford-req tee our [%cast %json %done ~ -])
         `cage`[p.sih (slot 3 (spec (slot 3 [typ +.sih])))]
-      %-  ~(get-rush ix p.tee (~(got by wix) p.tee))
-      [[(pick-hasp q.tee) r.tee] ((hard json) q.sih)]
+      (~(get-rush ix p.tee (~(got by wix) p.tee)) ((hard json) q.sih))
     ::
-        %nice  ~|(tee ?>(?=($|(~ [%is ^]) tee) (nice-json)))
-        %mean  ~|(tee ?>(?=($|(~ [%is ^]) tee) (mean-json 500 p.sih)))
+        %nice  ~|(tee ?>(?=($|(~ [%of ^]) tee) (nice-json)))
+        %mean  
+      ~|  tee 
+      ?+  tee  !!
+        ~        (mean-json 500 p.sih)
+        [%of ^]  (~(get-mean ix p.tee (~(got by wix) p.tee)) p.sih)
+      ==
+    ::
         %wake
       ?>  ?=([%of ^] tee)
       =>  ~(wake ix p.tee (~(got by wix) p.tee))
@@ -401,10 +407,9 @@
       =.  our  (need hov)                             ::  XX
       |-  ^+  ..axon
       ?-    tee
-          [?(%of %on %ay) *]  ~|(e/ford/lost/-.tee !!)
-          [%is ^]
-        %+  ~(get-rush ix p.tee (~(got by wix) p.tee))
-          [(pick-hasp q.tee) r.tee]
+          [?(%on %ay) *]  ~|(e/ford/lost/-.tee !!)
+          [%of ^]
+        %-  ~(get-rush ix p.tee (~(got by wix) p.tee))
         ?>  ?=([%& %json ^] q.sih)                    ::  XX others
         ((hard json) |3.q.sih)
       ::
@@ -705,8 +710,7 @@
           %in
         ~|  expect/[%post 'application/json' /'@uv' '?PUT/DELETE']
         ?>  ?=([%post $|(~ [~ %json])] [mef p.pok])
-        :+    %deps
-          (raid but %uv ~)
+        =-  [%deps - (raid but %uv ~)]
         ?+(quy !! [[%'DELETE' ~] ~] %del, [[%'PUT' ~] ~] %put)
       ::
           %is
@@ -718,7 +722,9 @@
           ~|(is/stub/u.p.pok !!)      ::  XX marks
         ?:  ((sane %tas) i.but)
           $(but [(scot %p our) but])
-        [%subs [(slav %p i.but) (slav %tas -.t.but)] u.p.pok +.t.but]
+        :+  %subs
+          ?+(quy !! [[%'DELETE' ~] ~] %del, [[%'PUT' ~] ~] %put)
+        [[(slav %p i.but) (slav %tas -.t.but)] u.p.pok +.t.but]
       ::
           %auth
         :-  %auth
@@ -839,9 +845,9 @@
         =+  ire=(oryx-to-ixor (grab-body to-oryx))
         ?>  (~(has by wix) ire)  ::  XX made redundant by oryx checking
         =<  [%| (nice-json)]
-        ?-  q.hem
-          %del  done(liz (~(del ju liz) p.hem %| ire))
-          %put  (add-depend p.hem %| ire)
+        ?-  p.hem
+          %del  done(liz (~(del ju liz) q.hem %| ire))
+          %put  (add-depend q.hem %| ire)
         ==
       ::
           %poll
@@ -866,11 +872,10 @@
       ::
           %subs
         =+  ire=(oryx-to-ixor (grab-body to-oryx))
-        :-  %|
-        %+  pass-note
-          :: =-  ~&  e/show/[p.hem `whir`-]  -
-          [%is ire (pack-hasp p.hem) q.hem]
-        [%g %show [- + ~]:p.hem him q.hem]
+        ?-  p.hem
+          %put  [%| done(..ix (~(add-subs ix ire (~(got by wix) ire)) q.hem))]
+          %del  [%| done(..ix (~(del-subs ix ire (~(got by wix) ire)) q.hem))]
+        ==
       ::
           %view
         ~|  lost-ixor/p.hem
@@ -1044,7 +1049,7 @@
       =+  orx=`@t`(rsh 3 1 (scot %p (shaf %orx eny)))
       =.  vew  (~(put in vew) orx)
       =+  ire=(oryx-to-ixor orx)
-      =.  wix  (~(put by wix) ire [him ~ now [1 ~]])
+      =.  wix  (~(put by wix) ire [him ~ now [1 ~] ~ ~])
       :_  abet
       %-  jobe  :~
         oryx/s/orx
@@ -1090,10 +1095,26 @@
       =+  ven=~|(seq-low/cur=p.eve (~(got by q.eve) a))
       abet:(give-even & a ven)
     ::
-    ++  get-rush
-      |=  [a=[hasp path] b=json]  ^+  ..ix
-      (get-even [%rush a (joba %json b) hen])
+    ++  add-subs
+      |=  [a=hasp %json b=path]  ^+  ..ix
+      =:  sud  (~(put by sud) [a b] hen)
+          dus  (~(put by dus) hen [a b])
+        ==
+      abet:(pass-note of//[ire] [%g %show [- + ~]:a him b])
     ::
+    ++  del-subs
+      |=  [a=hasp %json b=path]  ^+  ..ix
+      =.  hen  (~(got by sud) [a b])
+      =:  sud  (~(del by sud) [a b] hen)
+          dus  (~(del by dus) hen [a b])
+        ==
+      abet:(pass-note of//[ire] [%g %nuke [- + ~]:a him])
+    ::
+    ++  get-rush
+      |=  a=json  ^+  ..ix
+      (get-even [%rush (~(got by dus) hen) (joba %json a)])
+    ::
+    ++  get-mean  |=(a=ares (get-even [%mean (~(got by dus) hen) a]))
     ++  get-even
       |=  ven=even  ^+  ..ix
       =+  num=p.eve
@@ -1108,15 +1129,14 @@
       [+(p.eve) (~(put by q.eve) p.eve a)]
     ::
     ++  pass-took
-      |=  [a=hasp b=path]
-      :: ~&  e/took/[a `whir`[%is ire (pack-hasp a) b]]
-      (pass-note [%is ire (pack-hasp a) b] [%g %took [- + ~]:a him])
+      |=  a=[p=hasp path]
+      =.  hen  (~(got by sud) a)
+      (pass-note of//[ire] [%g %took [- + ~]:p.a him])
     ::
     ++  give-even
       |=  [pol=? num=@u ven=even]  ^+  done
       =:  q.eve  (~(del by q.eve) (dec num))              ::  TODO ponder a-2
-          mow    ?.  ?=(%rush -.ven)  mow
-                 mow:(pass-took(hen r.ven) p.ven)
+          mow    ?.(?=(%rush -.ven) mow mow:(pass-took p.ven))
         ==
       ?>  pol                         ::  XX eventstream
       %^  give-json  200  ~
