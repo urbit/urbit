@@ -110,8 +110,8 @@
   ++  ra-evil                                           ::  emit error
     |=  msg=cord
     ~&  [%ra-evil msg]
-    ::  (ra-emit ost %give %mean ~ msg ~)
-    (ra-emit ost %give %nice ~)
+    (ra-emit ost %give %mean ~ msg ~)
+    ::  (ra-emit ost %give %nice ~)
   ::
   ++  ra-hiss                                           ::  emit http request
     |=  [pax=path hiz=hiss]
