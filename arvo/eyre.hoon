@@ -132,7 +132,7 @@
   ==                                                    ::
 ::
 ++  stem                                                ::  client view
-  $:  ore=oryx
+  $:  him=ship                                          ::  static identity
       ude=(unit ,[p=duct q=?])                          ::  stream, long-poll?
       era=@da                                           ::  next wake
       eve=[p=@u q=(map ,@u even)]
@@ -172,7 +172,6 @@
   $%  [%for p=whir q=beam r=term s=cred]                ::  %f block
       [%fot p=whir q=mark r=cage]                       ::  %f translate
       [%gap p=hapt q=ship r=cage]                       ::  %g message
-      [%gas p=whir q=hapt r=ship s=path]                ::  %g subscription
       [%fin pest-fin]                                   ::  done
       [%red %html]                                      ::  redirect
       [%zap p=@ud q=(list tank)]                        ::  err
@@ -553,13 +552,13 @@
     |=  [sas=@ud cug=(list ,@t) max=manx]
     %-  give-gift
     %+  add-cookies  cug
-    (make-resp-gift sas text//html (crip (poxo max)))
+    (resp sas text//html (crip (poxo max)))
   ::
   ++  give-json                                       ::  success json
     |=  [sas=@uG cug=(list ,@t) jon=json]
     %-  give-gift
     %+  add-cookies  cug
-    (make-resp-gift sas application//json (crip (pojo jon)))
+    (resp sas application//json (crip (pojo jon)))
   ::
   ++  nice-json  |=(* (give-json 200 ~ (joba %ok %b &)))
   ++  mean-json  |=([sas=@uG err=ares] (give-json sas ~ (ares-to-json err)))
@@ -580,10 +579,6 @@
     |=  gef=gift
     +>(mow :_(mow [hen %give gef]))
   ::
-  ++  resp                                            ::  mime response
-    |=  [sas=@uG mit=mite bod=cord]
-    (give-gift (make-resp-gift sas mit bod))
-  ::
   ++  pass-note  |=(noe=[whir note] +>(mow :_(mow [hen %pass noe])))
   ++  ames-gram
     |=([him=ship gam=gram] (pass-note ~ %a %want [our him] [%e -.gam] +.gam))
@@ -597,7 +592,7 @@
     |=  [tea=whir dep=@uvH cag=cage]                
     (ford-req tea our [%cast %mime %done ~ cag])        ::  XX deps
   ::
-  ++  make-resp-gift                                            ::  mimed response
+  ++  resp                                            ::  mimed response
     |=  [sas=@uG mit=mite rez=@]
     ::  (weld (turn cug |=(a=@t ['set-cookie' a]))
     [%thou `httr`[sas ~[content-type/(moon mit)] [~ (taco rez)]]]
@@ -621,7 +616,6 @@
     ++  abet  ..rq
     ++  teba  |*(a=$+(* ..rq) |*(b=* %_(done ..rq (a b))))
     ++  fail  (teba ^fail)
-    ++  resp  (teba ^resp)
     ++  give-html  (teba ^give-html)
     ++  give-gift  (teba ^give-gift)
     ++  give-json  (teba ^give-json)
@@ -653,7 +647,7 @@
       ?+    [(fall p.pok %$) q.pok]  ~
           [?(%ico %png) %favicon ~]
         :-  ~
-        %^  make-resp-gift  200  image//png
+        %^  resp  200  image//png
         0w89wg.GV4jA.l9000.00dPb.YzBT6.giO00.o100d.wZcqc.a9tg-.VTG0b.
         AUIvE.HBM3g.cK4SE.0aagi.l090p.I1P5g.Y-80r.y1YS9.1xE~Y.qgpFY.
         vKN1V.905y0.2UwvL.43TUw.uL406.0-31h.xwoJF.Ul454.ilk00.00Yps.
@@ -662,7 +656,7 @@
       ::
           [%txt %robots ~]
         :-  ~
-        %^  make-resp-gift  200  text//plain
+        %^  resp  200  text//plain
         %-  role
         :~  'User-agent: *'
             'Disallow: /'
@@ -720,7 +714,8 @@
           ~|(no-app/but=but !!)
         |-  ^-  perk
         ?~  p.pok  $(p.pok [~ %json])
-        ?>  ?=(%json u.p.pok)         ::  XX marks
+        ?.  ?=(%json u.p.pok)
+          ~|(is/stub/u.p.pok !!)      ::  XX marks
         ?:  ((sane %tas) i.but)
           $(but [(scot %p our) but])
         [%subs [(slav %p i.but) (slav %tas -.t.but)] u.p.pok +.t.but]
@@ -771,9 +766,8 @@
           %for  (beam-into-ford +.pez)
           %fot  (ford-req p.pez our [%cast q.pez %done ~ r.pez])
           %gap  (pass-note ~ %g [%mess +.pez])
-          %gas  (pass-note p.pez %g [%show +>.pez])
           %zap  (fail p.pez 0v0 q.pez)
-          %fin  (finish +.pez)
+          %fin  (finish ~ +.pez)
           %red
         =+  url=(earn hat pok(p [~ %html]) quy)
         ?+    p.pok  (fail 404 0v0 leaf/"bad redirect" leaf/<p.pok> leaf/url ~)
@@ -786,13 +780,13 @@
     ::
     ++  finish
       =+  status=200
-      |=  pef=pest-fin  ^+  done
+      |=  [cug=(list ,@t) pef=pest-fin]  ^+  done
       ?~  pef  done
       ?-  -.pef
-        ~  (give-gift %thou p.pef)
-        %js  (resp status text//javascript p.pef)
-        %html  (give-html status ~ p.pef)
-        %json  (give-json status ~ p.pef)
+        ~  (give-gift (add-cookies cug %thou p.pef))
+        %js  $(pef [~ +:(resp status text//javascript p.pef)])
+        %html  (give-html status cug p.pef)
+        %json  (give-json status cug p.pef)
         %code  $(pef q.pef, status p.pef)
       ==
     ::
@@ -817,7 +811,9 @@
       ?.  &(?=([~ %json] p.pok) ?=(%post mef) ?=(^ bod))  &
       =+  oxe=(parse-body to-oryx)
       ?~  oxe  |
-      (~(has in vew.cyz:for-client) u.oxe)
+      ?:  (~(has in vew.cyz:for-client) u.oxe)
+        &
+      ~&(bad-oryx/[u.oxe vew.cyz:for-client] &)         ::  XX
     ::
     ++  to-oryx  (ot oryx/so ~):jo
     ++  root-beak  `beak`[our %main ud/0]               ::  XX
@@ -870,9 +866,10 @@
       ::
           %subs
         =+  ire=(oryx-to-ixor (grab-body to-oryx))
-        :^  %&  %gas
+        :-  %|
+        %+  pass-note
           [%is ire (pack-hasp p.hem) q.hem]
-        [[- + ~]:p.hem him q.hem]
+        [%g %show [- + ~]:p.hem him q.hem]
       ::
           %view
         ~|  lost-ixor/p.hem
@@ -896,12 +893,12 @@
             pez
               %for
             =.  ..ya  abet:for-client                     
-            [%| (handle-pest p.pez(p [%at ses.yac p.p.pez]))]  ::  XX better storage?
-              %fin  
+            [%| (handle-pest p.pez(p [%at ses.yac p.p.pez]))]
+              %fin
             ~|  %not-script
             ?>  ?=(%js &2.p.pez)
-            =^  jon  ..ya  stat-json:for-client
-            [%| (finish +.p.pez(p (jass jon p.p.pez)))] ::  XX better storage?
+            =^  jon  ..ya  stat-json.yac
+            [%| (finish cug.yac +.p.pez(p (jass jon p.p.pez)))]
           ==
         ::
             %try
@@ -918,6 +915,7 @@
           =.  ..ya  (logoff:yac p.hem)
           =+  cug=[(cat 3 cookie-prefix '=~; Path=/')]~
           [%| (give-json 200 cug (joba %ok %b &))]
+        ::
             %get
           ~|  aute/+.hem
           ?:  |(=(anon him.hem) (~(has in aut.yac) him.hem))
@@ -955,6 +953,7 @@
       =+  pef=cookie-prefix
       =+  lig=(session-from-cookies pef maf)
       ?^  lig
+        ~|  bad-cookie/u.lig
         =+  cyz=(~(got by wup) u.lig)
         ~(. ya u.lig cyz(cug ~))
       =+  ses=(rsh 3 1 (scot %p (end 6 1 ney)))
@@ -1041,10 +1040,11 @@
     ::
     ++  stat-json
       ^+  [*json ..ya]
-      =+  orx=(rsh 3 1 (scot %p (shaf %orx eny)))
+      =+  orx=`@t`(rsh 3 1 (scot %p (shaf %orx eny)))
       =.  vew  (~(put in vew) orx)
+      ~&  oryx-made/[ses orx]
       =+  ire=(oryx-to-ixor orx)
-      =.  wix  (~(put by wix) ire [orx ~ now [1 ~]])
+      =.  wix  (~(put by wix) ire [him ~ now [1 ~]])
       :_  abet
       %-  jobe  :~
         oryx/s/orx
@@ -1106,8 +1106,13 @@
       |=  a=even  ^+  eve
       [+(p.eve) (~(put by q.eve) p.eve a)]
     ::
+    ++  pass-took
+      |=  [a=hasp b=path]
+      (pass-note [%is ire (pack-hasp a) b] [%g %took [- + ~]:a him])
+    ::
     ++  give-even
       |=  [pol=? num=@u ven=even]  ^+  done
+      =.  done  ?.(?=(%rush -.ven) done (pass-took p.ven))
       ?>  pol                         ::  XX eventstream
       %^  give-json  200  ~
       %^  jobe  id/(jone num)  type/[%s -.ven]
@@ -1167,9 +1172,9 @@
   ~
 ::
 ++  load                                                ::  clam previous state
-  |=  old=bolo ::_[%0 gub hov ged ney dop liz wup sop wix=**]
+  |=  old=bolo ::_[.(wix **)]:*bolo
   ^+  ..^$
-  ..^$(+>- old)
+  ..^$(+>- old) ::(wix ~))
 ::
 ++  scry
   |=  [our=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
