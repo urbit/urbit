@@ -522,7 +522,10 @@ void*
 u3a_calloc(size_t num_i, size_t len_i)
 {
   size_t byt_i = num_i * len_i;
-  c3_w* out_w = u3a_malloc(byt_i);
+  c3_w* out_w;
+
+  c3_assert(byt_i / len_i == num_i);
+  out_w = u3a_malloc(byt_i);
   memset(out_w, 0, byt_i);
 
   return out_w;
