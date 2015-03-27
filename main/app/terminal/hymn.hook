@@ -13,7 +13,7 @@
   ;head
     ;title: Hi
     ;script: window.urb = window.urb || \{};
-    ;script@"/gen/main/lib/urb.js";
+    ;script@"/~/at/main/lib/urb.js";
     ;script@"//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js";
     ;script@"//cdnjs.cloudflare.com/ajax/libs/mousetrap/1.4.6/mousetrap.js";
     ;script@"//use.typekit.net/fkv0sjk.js";

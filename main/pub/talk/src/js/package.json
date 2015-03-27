@@ -1,6 +1,10 @@
 {
   "name": "urbit-radio",
   "version": "0.0.0",
+  "repository": {
+    "type":"git",
+    "url":"https://github.com/urbit/urbit"
+  },
   "description": "urbit radio frontend",
   "main": "main.js",
   "dependencies": {
