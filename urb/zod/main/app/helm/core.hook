@@ -2,8 +2,8 @@
 ::::  /hook/core/helm/app                               ::  ::
   ::                                                    ::  ::
 /?  314                                                 ::  zuse version
-/-  *console                                            ::  structures
-/+  console                                             ::  libraries
+/-  *sole                                               ::  structures
+/+  sole                                                ::  libraries
 ::                                                      ::  ::
 ::::                                                    ::  ::
   !:                                                    ::  ::
@@ -14,8 +14,8 @@
           hoc=(map bone helm-session)                   ::  consoles
       ==                                                ::
     ++  helm-session                                    ::
-      $:  say=console-share                             ::
-          mud=(unit (console-dialog ,@ud))              ::
+      $:  say=sole-share                                ::
+          mud=(unit (sole-dialog ,@ud))                 ::
       ==                                                ::
     ++  funk  (pair ,@ ,@)                              ::
     ++  begs  ,[his=@p tic=@p eny=@t ges=gens]          ::  begin data
@@ -34,7 +34,7 @@
     ++  gift                                            ::  out result <-$
       $%  [%mean p=ares]                                ::  error
           [%nice ~]                                     ::  acknowledge
-          [%rush %console-effect console-effect]        ::  effect 
+          [%rush %sole-effect sole-effect]              ::  effect 
       ==                                                ::
     ++  hapt  ,[p=ship q=path]                          ::  
     ++  move  ,[p=bone q=(mold note gift)]              ::

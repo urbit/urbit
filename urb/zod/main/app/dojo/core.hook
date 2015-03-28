@@ -2,8 +2,8 @@
 ::::  /hook/core/dojo/app                               ::  ::::
   ::                                                    ::    ::
 /?  314                                                 ::  arvo kelvin
-/-  *console                                            ::  console structures
-/+  console                                             ::  console library
+/-  *sole                                               ::  console structures
+/+  sole                                                ::  console library
 ::                                                      ::  ::
 ::::                                                    ::  ::::
   !:                                                    ::    ::
@@ -12,7 +12,7 @@
       $:  hoc=(map bone session)                        ::  conversations
       ==                                                ::
     ++  session                                         ::  per conversation
-      $:  say=console-share                             ::  command-line state
+      $:  say=sole-share                                ::  command-line state
           syd=desk                                      ::  active desk 
           luc=(unit case)                               ::  special case
           poy=(unit dojo-project)                       ::  working 
@@ -63,7 +63,7 @@
           cud=(unit dojo-source)                        ::  now solving
           pux=(unit path)                               ::  ford working
           pro=(unit vase)                               ::  prompting loop
-          per=(unit console-edit)                       ::  pending reverse
+          per=(unit sole-edit)                          ::  pending reverse
           job=(map ,@ud dojo-build)                     ::  problems
           rez=(map ,@ud cage)                           ::  results
       ==                                                ::
@@ -72,7 +72,7 @@
     ++  gift                                            ::  out result <-$
       $%  [%mean p=ares]                                ::  error
           [%nice ~]                                     ::  acknowledge
-          [%rush %console-effect console-effect]        ::  
+          [%rush %sole-effect sole-effect]              ::  
       ==                                                ::
     ++  hapt  ,[p=ship q=path]                          ::  
     ++  move  ,[p=bone q=(mold note gift)]              ::
@@ -265,12 +265,12 @@
       (dy-ford pax %call [%done ~ %noun gat] [%done ~ %noun sam])
     ::
     ++  dy-rush                                         ::  send effects, abet
-      |=  fec=console-effect
+      |=  fec=sole-effect
       ^+  +>+>
       (he-rush(poy `+>+<) fec)
     ::
     ++  dy-rash                                         ::  send effects, amok
-      |=  fec=console-effect
+      |=  fec=sole-effect
       ^+  +>+>
       (he-rush(poy ~) fec)
     ::
@@ -373,7 +373,7 @@
         (dy-rash %bel ~)
       (dy-hand -.q.vax (slot 3 vax))
     ::
-    ++  dy-made-edit                                    ::  console edit
+    ++  dy-made-edit                                    ::  sole edit
       |=  cag=cage
       ^+  +>+>
       ?>  ?=(^ per)
@@ -420,7 +420,7 @@
       ==
     ::
     ++  dy-edit                                         ::  handle edit
-      |=  cal=console-change
+      |=  cal=sole-change
       ^+  +>+>
       =^  dat  say  (~(transceive cs say) cal)
       ?:  |(?=(^ per) ?=(^ pux) ?=(~ pro))
@@ -429,8 +429,8 @@
         (dy-rush %mor [%det lic] [%bel ~] ~)
       (dy-slam(per `dat) /edit u.pro !>((tufa buf.say)))
     ::
-    ++  dy-type                                         ::  console action
-      |=  act=console-action
+    ++  dy-type                                         ::  sole action
+      |=  act=sole-action
       ?-  -.act
         %det  (dy-edit +.act)
         %ret  (dy-done (tufa buf.say))
@@ -490,7 +490,7 @@
           %|
         =<  he-pone
         %-  dy-rush(pro `(slap (slot 7 vax) [%cnzy %q]))
-        [%pro (console-prompt +<.q.vax)]
+        [%pro (sole-prompt +<.q.vax)]
       ==
     ::
     ++  dy-make                                         ::  build step
@@ -555,9 +555,9 @@
     %_(+> moz [[ost %pass pax noy] moz])
   ::
   ++  he-rush                                           ::  emit update
-    |=  fec=console-effect 
+    |=  fec=sole-effect 
     ^+  +>
-    (he-give %rush %console-effect fec)
+    (he-give %rush %sole-effect fec)
   ::
   ++  he-stop                                           ::  abort work
     ^+  .
@@ -603,7 +603,7 @@
     =(%& -:(he-dope (tufa buf)))
   ::
   ++  he-stir                                           ::  apply change
-    |=  cal=console-change
+    |=  cal=sole-change
     ^+  +>
     ::  ~&  [%his-clock ler.cal]
     ::  ~&  [%our-clock ven.say]
@@ -651,7 +651,7 @@
     ==
   ::
   ++  he-type                                           ::  apply input
-    |=  act=console-action
+    |=  act=sole-action
     ^+  +>
     ?^  poy
       he-pine:(~(dy-type dy u.poy) act)
@@ -666,13 +666,13 @@
   ^-  [(list move) _+>]
   ~?  !=(her our.hid)  [%dojo-peer ost her pax]
   ?<  (~(has by hoc) ost)
-  ?>  =(/console pax)
+  ?>  =(/sole pax)
   ::  ?>  =(her our.hid)
   =<  he-abet
   %~  he-peer  he
   :-  [ost ~]
   ^-  session
-  :*  *console-share  ::  say=console-share
+  :*  *sole-share  ::  say=sole-share
       %main           ::  syd=desk
       ~               ::  luc=(unit case)
       ~               ::  poy=(unit dojo-project)
@@ -680,8 +680,8 @@
       ~               ::  old=(set term)
   ==
 ::
-++  poke-console-action
-  |=  [ost=bone her=ship act=console-action]
+++  poke-sole-action
+  |=  [ost=bone her=ship act=sole-action]
   ^-  [(list move) _+>]
   ::  ~?  !=(her our.hid)  [%dojo-poke ost her]
   he-abet:(~(he-type he [ost [ost %give %nice ~]~] (~(got by hoc) ost)) act)

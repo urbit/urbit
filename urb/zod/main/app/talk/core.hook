@@ -2,8 +2,8 @@
 ::::  /hook/core/hive/app
   ::
 /?  314
-/-  *console, *radio
-/+  console, radio
+/-  *sole, *radio
+/+  sole, radio
 ::
 ::::
   ::
@@ -11,7 +11,7 @@
 =>  |%                                                  ::  structures
     ++  town                                            ::  all client state
       $:  %0                                            ::  version
-          say=console-share                             ::  command lines
+          say=sole-share                                ::  command lines
           live=(unit span)                              ::  present story
           stories=(map span story)                      ::  all stories
       ==                                                ::
@@ -38,7 +38,7 @@
       $:  xm=config                                     ::  configuration
           am=register                                   ::  presence
       ==                                                ::
-    ++  work                                            ::  general action
+    ++  work                                            ::  interface action
       $%  [%ask (unit work)]                            ::  help (about)
           [%exp twig]                                   ::  compute
           [%mor (list work)]                            ::  sequence
@@ -62,7 +62,7 @@
     ++  gift
       $%  [%mean ares]
           [%nice ~]
-          [%rush %console-effect console-effect]
+          [%rush %sole-effect sole-effect]
       ==
     ++  hapt  ,[p=ship q=path]
     ++  move  ,[p=bone q=(mold note gift)]
@@ -107,13 +107,13 @@
         ==
       ::
       ++  hy-general                                    ::  serve all peers
-        |=  fec=console-effect
+        |=  fec=sole-effect
         %_    +>
             moz
-          =+  oss=(~(tap in (~(get ju pus) /console)))
+          =+  oss=(~(tap in (~(get ju pus) /sole)))
           |-  ^-  (list move)
           ?~  oss  moz
-          [`move`[i.oss %give %rush %console-effect fec] $(oss t.oss)]
+          [`move`[i.oss %give %rush %sole-effect fec] $(oss t.oss)]
         ==
       ::
       ++  hy-subscribe                                  ::  send %show
@@ -126,7 +126,7 @@
         ~&  [%hy-unsubscribe way]
         %_(+> moz :_(moz [0 %pass way %g %nuke [our /radio] our]))
       ::
-      ++  hy-display                                    ::  print to console
+      ++  hy-display                                    ::  print to sole
         |=(tay=(list tank) (hy-general %tan tay))
       ::
       ++  hy-print                                      ::  simple print
@@ -604,7 +604,7 @@
   :*  ost
       %give
       %rush
-      %console-effect
+      %sole-effect
       %pro
       &
       %hive
@@ -683,18 +683,18 @@
       ==
   ==
 ::
-++  poke-console-action
-  |=  [ost=bone her=ship act=console-action]
+++  poke-sole-action
+  |=  [ost=bone her=ship act=sole-action]
   =+  moz=`(list move)`[ost %give %nice ~]~
   ?-  -.act
-    %det  [moz +>.$(say +:(~(receive cs say) `console-change`+.act))]
+    %det  [moz +>.$(say +:(~(receive cs say) `sole-change`+.act))]
     %ret  =+  sed=buf.say
           =^  zom  +>.$  (submit ost (crip (tufa sed)))
           =^  cal  say  (~(transmit cs say) [%set ~])
           :_  +>.$
-          :*  [ost %give %rush %console-effect %nex ~]
-              [ost %give %rush %console-effect %det cal]
-              [ost %give %rush %console-effect %txt (tufa sed)]
+          :*  [ost %give %rush %sole-effect %nex ~]
+              [ost %give %rush %sole-effect %det cal]
+              [ost %give %rush %sole-effect %txt (tufa sed)]
               (weld zom moz)
           ==
   ==
