@@ -1,19 +1,19 @@
 ::
-::::  /hook/core/console/lib
+::::  /hook/core/sole/lib
   ::  
   ::  This file is in the public domain.
   ::
 /?    310
-/-    *console
+/-    *sole
 !:
 ::::
   ::
 |%
 ++  cs                                                  ::  shared-state engine
-  |_  console-share
+  |_  sole-share
   ++  abet  +<
   ++  apply
-    |=  ted=console-edit 
+    |=  ted=sole-edit 
     ^+  +>
     ?-    -.ted
       %del  +>.$(buf (weld (scag p.ted buf) (slag +(p.ted) buf)))
@@ -29,23 +29,23 @@
   ::::
   ::  ++transmute: symmetric operational transformation.  
   ::
-  ::  for any console state +>, obeys
+  ::  for any sole state +>, obeys
   ::
   ::      =+  [x=(transmute a b) y=(transmute b a)]
   ::      .=  (apply:(apply b) x) 
   ::          (apply:(apply a) y)
   ::
   ++  transmute                                         ::  dex as after sin
-    |=  [sin=console-edit dex=console-edit]
-    ^-  console-edit
+    |=  [sin=sole-edit dex=sole-edit]
+    ^-  sole-edit
     ?:  ?=(%mor -.sin)
-      |-  ^-  console-edit
+      |-  ^-  sole-edit
       ?~  p.sin  dex
       $(p.sin t.p.sin, dex ^$(sin i.p.sin))
     ::
     ?:  ?=(%mor -.dex)
       :-  %mor
-      |-  ^-  (list console-edit)
+      |-  ^-  (list sole-edit)
       ?~  p.dex  ~
       [^$(dex i.p.dex) $(p.dex t.p.dex)]
     ::
@@ -71,27 +71,27 @@
     ==   
   ::
   ++  commit                                            ::  local change
-    |=  ted=console-edit
-    ^-  console-share
+    |=  ted=sole-edit
+    ^-  sole-share
     abet:(apply(own.ven +(own.ven), leg [ted leg]) ted)
   ::
   ::::
   ::  ++inverse: inverse of change in context.
   ::
-  ::  for any console state +>, obeys
+  ::  for any sole state +>, obeys
   ::      
   ::      =(+> (apply:(apply a) (inverse a)))
   ::
   ++  inverse                                           ::  relative inverse
-    |=  ted=console-edit
-    ^-  console-edit
+    |=  ted=sole-edit
+    ^-  sole-edit
     =.  ted  ?.(?=([%mor * ~] ted) ted i.p.ted)
     ?-  -.ted
       %del  [%ins p.ted (snag p.ted buf)]
       %ins  [%del p.ted]
       %mor  :-  %mor
             %-  flop
-            |-  ^-  (list console-edit)
+            |-  ^-  (list sole-edit)
             ?~  p.ted  ~
             :-  ^$(ted i.p.ted)
             $(p.ted t.p.ted, +>.^$ (apply i.p.ted))
@@ -100,8 +100,8 @@
     ==
   ::
   ++  receive                                           ::  naturalize event
-    |=  console-change
-    ^-  [console-edit console-share]
+    |=  sole-change
+    ^-  [sole-edit sole-share]
     ?>  &(=(his.ler his.ven) (lte own.ler own.ven))
     ?>  &(=(his.ler his.ven) (lte own.ler own.ven))
     ?>  |(!=(own.ler own.ven) =(haw (sham buf)))
@@ -112,8 +112,8 @@
     [dat abet:(apply(his.ven +(his.ven)) dat)]
   ::
   ++  remit                                             ::  conditional accept
-    |=  [cal=console-change ask=$+((list ,@c) ?)]
-    ^-  [(unit console-change) console-share]
+    |=  [cal=sole-change ask=$+((list ,@c) ?)]
+    ^-  [(unit sole-change) sole-share]
     =+  old=buf
     =^  dat  +>+<.$  (receive cal)
     ?:  (ask buf)
@@ -122,13 +122,13 @@
     [`lic +>+<.$]
   ::
   ++  transmit                                          ::  outgoing change
-    |=  ted=console-edit
-    ^-  [console-change console-share]
+    |=  ted=sole-edit
+    ^-  [sole-change sole-share]
     [[[his.ven own.ven] (sham buf) ted] (commit ted)]
   ::
   ++  transceive                                        ::  receive and invert
-    |=  console-change
-    ^-  [console-edit console-share]
+    |=  sole-change
+    ^-  [sole-edit sole-share]
     =+  old=buf
     =^  dat  +>+<.$  (receive +<.$)
     [(inverse(buf old) dat) +>+<.$]

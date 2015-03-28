@@ -2,8 +2,8 @@
 ::::  /hook/core/sole/app                               ::  ::
   ::                                                    ::  ::
 /?  314                                                 ::  zuse version
-/-  *console                                            ::  console structures
-/+  console                                             ::  console library
+/-  *sole                                               ::  console structures
+/+  sole                                                ::  console library
 ::                                                      ::  ::
 ::::                                                    ::  ::
   !:                                                    ::  ::
@@ -37,8 +37,8 @@
     ++  target                                          ::  application target
       $:  ris=(unit search)                             ::  reverse-i-search
           hit=history                                   ::  all past input
-          pom=console-prompt                            ::  static prompt
-          inp=console-command                           ::  input state
+          pom=sole-prompt                               ::  static prompt
+          inp=sole-command                              ::  input state
       ==                                                ::
     ++  ukase                                           ::  master command
       $%  [%add p=(list gill)]                          ::  add agents
@@ -52,7 +52,7 @@
     ++  sign-gall                                       ::  sign from %gall
       $%  [%mean p=ares]                                ::
           [%nice ~]                                     ::
-          [%rush %console-effect console-effect]        ::
+          [%rush %sole-effect sole-effect]              ::
       ==                                                ::
     ++  sign                                            ::  in result $<-
       $%  [%g sign-gall]                                ::
@@ -198,7 +198,7 @@
     ^+  +>
     %.  gyl
     =<  se-join
-    (se-send gyl %show [p.gyl ~[q.gyl]] her /console)
+    (se-send gyl %show [p.gyl ~[q.gyl]] her /sole)
   ::
   ++  se-blit                                           ::  give output
     |=  bil=dill-blit
@@ -294,13 +294,13 @@
       ==
     ::
     ++  ta-act                                          ::  send action
-      |=  act=console-action
+      |=  act=sole-action
       ^+  +>
       ?:  mav  
         +>.$
       %_    +> 
           +> 
-        (se-send gyl %mess [p.gyl ~[q.gyl]] her %console-action !>(act))
+        (se-send gyl %mess [p.gyl ~[q.gyl]] her %sole-action !>(act))
       ==
     ::
     ++  ta-aro                                          ::  hear arrow
@@ -327,20 +327,20 @@
     ++  ta-bel  .(+> (se-blit %bel ~))                  ::  beep
     ++  ta-cat                                          ::  mass insert
       |=  [pos=@ud txt=(list ,@c)]
-      ^-  console-edit
+      ^-  sole-edit
       :-  %mor
-      |-  ^-  (list console-edit)
+      |-  ^-  (list sole-edit)
       ?~  txt  ~
       [[%ins pos i.txt] $(pos +(pos), txt t.txt)]
     ::
     ++  ta-cut                                          ::  mass delete
       |=  [pos=@ud num=@ud]
-      ^-  console-edit
+      ^-  sole-edit
       :-  %mor
       |-(?:(=(0 num) ~ [[%del pos] $(num (dec num))]))
     ::
     ++  ta-det                                          ::  send edit
-      |=  ted=console-edit
+      |=  ted=sole-edit
       ^+  +>
       (ta-act %det [[his.ven.say.inp own.ven.say.inp] (sham buf.say.inp) ted])
     ::
@@ -424,7 +424,7 @@
       (ta-erl (~(transpose cs say.inp) pos))
     ::
     ++  ta-fec                                          ::  apply effect
-      |=  fec=console-effect
+      |=  fec=sole-effect
       ^+  +>
       ?-    -.fec
         %bel  ta-bel
@@ -447,7 +447,7 @@
       .(+> (se-send gyl %took [p.gyl ~[q.gyl]] her))
     ::
     ++  ta-dog                                          ::  change cursor
-      |=  ted=console-edit
+      |=  ted=sole-edit
       %_    +>
           pos.inp
         =+  len=(lent buf.say.inp)
@@ -465,12 +465,12 @@
       ==
     ::
     ++  ta-got                                          ::  apply change
-      |=  cal=console-change
+      |=  cal=sole-change
       =^  ted  say.inp  (~(receive cs say.inp) cal)
       (ta-dog ted)
     ::
     ++  ta-hom                                          ::  local edit
-      |=  ted=console-edit
+      |=  ted=sole-edit
       ^+  +>
       =.  +>  (ta-det ted)
       =.  +>  (ta-dog(say.inp (~(commit cs say.inp) ted)) ted)
@@ -505,7 +505,7 @@
       ==
     ::
     ++  ta-pro                                          ::  set prompt
-      |=  pom=console-prompt
+      |=  pom=sole-prompt
       +>(pom pom(cad :(welp (scow %p p.gyl) ":" (trip q.gyl) cad.pom)))
     ::
     ++  ta-ret                                          ::  hear return
@@ -558,7 +558,7 @@
         (ta-ser txt)
       %-  ta-hom(pos.inp (add (lent txt) pos.inp))
       :-  %mor
-      |-  ^-  (list console-edit)
+      |-  ^-  (list sole-edit)
       ?~  txt  ~
       [[%ins pos.inp i.txt] $(pos.inp +(pos.inp), txt t.txt)]
     ::
@@ -604,8 +604,8 @@
         :*  %&
             *(unit search)
             *history
-            `console-prompt`[%& %sole "{(scow %p our.hid)}# "]
-            *console-command
+            `sole-prompt`[%& %sole "{(scow %p our.hid)}# "]
+            *sole-command
         ==
         ~
         [0 ~]
