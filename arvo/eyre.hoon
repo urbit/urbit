@@ -140,42 +140,40 @@
   ==
 ::
 ++  even                                                ::  client event
-  $%  [%news p=@uv]
+  $%  [%mean p=[hasp path] q=ares]
+      [%news p=@uv]
       [%rush p=[hasp path] q=json]
-      [%mean p=[hasp path] q=ares]
   ==
 ::
 ++  perk                                                ::  parsed request
-  $%  [%spur p=spur]
-      [%beam p=beam]
-      [%poll p=@uvH]
-      [%auth perk-auth]
+  $%  [%auth p=perk-auth]
       [%away ~]
       [%bugs p=?(%as %to) ~]
+      [%beam p=beam]
+      [%deps p=?(%put %delt) q=@uvH]
       [%mess p=hasp q=mark r=json]
-      [%subs p=?(%del %put) q=[hasp %json q=path]]
-      [%deps p=?(%del %put) q=@uvH]
+      [%poll p=@uvH]
+      [%spur p=spur]
+      [%subs p=?(%put %delt) q=[hasp %json q=path]]
       [%view p=ixor q=[~ u=@ud]]
   ==
 
 ::
 ++  perk-auth                                           ::  parsed auth
-  $%  [%get him=ship rem=pork]
-      [%xen ses=hole rem=pork]
-      [%at p=pork]                               ::  inject auth
+  $%  [%at p=pork]                               ::  inject auth
+      [%del p=(unit ship)]
+      [%get him=ship rem=pork]
       [%js ~]
       [%json ~]
       [%try him=ship cod=cord]
-      [%del p=(unit ship)]
+      [%xen ses=hole rem=pork]
   ==
 ::
 ++  pest                                                ::  result
   $%  [%for p=whir q=beam r=term s=cred]                ::  %f block
-      [%fot p=whir q=mark r=cage]                       ::  %f translate
       [%gap p=hapt q=ship r=cage]                       ::  %g message
       [%fin pest-fin]                                   ::  done
       [%red %html]                                      ::  redirect
-      [%zap p=@ud q=(list tank)]                        ::  err
   ==
 ::
 ++  pest-fin                                            ::  response
@@ -188,6 +186,23 @@
   ==
 --                                                      ::
 |%
+++  eat-headers
+  |=  hed=(list ,[p=@t q=@t])  ^-  math
+  %+  roll  hed
+  |=  [a=[p=cord cord] b=math] 
+  =.  p.a  (cass (trip p.a))
+  (~(add ja b) a)
+::
+++  fcgi                                                ::  credential caboose
+  |=  [quy=quay ced=cred]  ^-  coin
+  :*  %many
+      [%$ %ta ~]
+      [%blob ced]
+      |-  ^-  (list coin)
+      ?~  quy  ~
+      [[%$ %t p.i.quy] [%$ %t q.i.quy] $(quy t.quy)]
+  ==
+::
 ++  session-from-cookies
   |=  [nam=@t maf=math]
   ^-  (unit hole)
@@ -204,20 +219,44 @@
     [~ q.i.u.mar]
   $(u.mar t.u.mar)
 ::
-++  heat                                                ::  eat headers
-  |=  hed=(list ,[p=@t q=@t])  ^-  math
-  %+  roll  hed
-  |=  [a=[p=cord cord] b=math] 
-  =.  p.a  (cass (trip p.a))
-  (~(add ja b) a)
-::
 ++  wush
   |=  [wid=@u tan=tang]
   ^-  tape
   =+  rolt=|=(a=wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
   (rolt (turn tan |=(a=tank (rolt (wash 0^wid a)))))
 ::
-++  tanx                                                ::  tanks to manx
+::
+++  add-cookies
+  |=  [cug=(list ,@t) hit=httr]  ^-  httr
+  ?~  cug  hit
+  =+  cuh=(turn `(list ,@t)`cug |=(a=@t set-cookie/a))
+  hit(q (weld cuh q.hit))
+::
+++  add-poll                                            ::  inject dependency
+  |=  [dep=@uvH max=[[%html ~] [[%head ~] hed=marl] [[%body ~] manx marl] ~]]
+  ^-  manx
+  ?~  dep  max
+  max(hed :_(hed.max ;script@"/~/on/{<dep>}.js";))
+::
+++  add-json                                            ::  inject window.urb
+  |=  [urb=json jaz=cord]  ^-  cord
+  (cat 3 (crip "window.urb = {(pojo urb)}\0a") jaz)
+::
+++  ares-to-json
+  |=  err=ares  ^-  json
+  =-  (jobe fail/s/typ mess/(jape mez) ~)
+  ^-  [typ=term mez=tape]
+  ?~  err  [%fail "Unknown Error"]
+  [p.u.err (wush 160 q.u.err)]
+::
+++  pack-hasp  |=(a=hasp `span`(pack /(scot %p p.a)/[q.a]))
+++  pick-hasp  |=(a=span (raid (need (pick a)) [%p %tas ~]))
+++  resp                                                ::  mimed response
+  |=  [sas=@uG mit=mite rez=@]  ^-  httr
+  ::  (weld (turn cug |=(a=@t ['set-cookie' a]))
+  [sas ~[content-type/(moon mit)] [~ (taco rez)]]
+::
+++  render-tang                                         ::  tanks to manx
   |=  tan=tang
   ;html
     ;head
@@ -226,18 +265,6 @@
     ==
     ;body:pre:code:"{(wush 160 tan)}"
   ==
-::
-++  depo                                                ::  inject dependency
-  |=  [dep=@uvH max=[[%html ~] [[%head ~] hed=marl] [[%body ~] manx marl] ~]]
-  ^-  manx
-  ?~  dep  max
-  max(hed :_(hed.max ;script@"/~/on/{<dep>}.js";))
-::
-++  jass                                                ::  inject window.urb
-  |=  [urb=json jaz=cord]  ^-  cord
-  %^  cat  3
-    (crip "window.urb = {(pojo urb)}\0a")
-  jaz
 ::
 ++  js                                                  ::  static javascript
   |%
@@ -360,95 +387,6 @@
   ++  adit  .(ney (mix eny ney))                        ::  flip entropy
   ::
   ++  anon  `@p`(add our ^~((bex 64)))                  ::  pseudo-sub
-  ++  axon                                              ::  accept response
-    |=  [tee=whir typ=type sih=sign]
-    ^+  +>
-    =.  our  ?~(hov our u.hov)  ::  XX
-    ?-    &2.sih
-        %crud  +>.$(mow [[hen %slip %d %flog +.sih] mow])
-        %dumb  ~|(%gall-stub !!)
-        %went  +>.$
-        %thou
-      ?>  ?=([%ay ^] tee)
-      (ames-gram (slav %p p.tee) got/~ (slav %uv q.tee) |2.sih)
-    ::
-        ?(%rush %rust)
-      ?>  ?=([%of ^] tee)
-      ?.  ?=(%json p.sih)
-        =-  (ford-req tee our [%cast %json %done ~ -])
-        `cage`[p.sih (slot 3 (spec (slot 3 [typ +.sih])))]
-      (~(get-rush ix p.tee (~(got by wix) p.tee)) ((hard json) q.sih))
-    ::
-        %nice  ~|(tee ?>(?=($|(~ [%of ^]) tee) (nice-json)))
-        %mean  
-      ~|  tee 
-      ?+  tee  !!
-        ~        (mean-json 500 p.sih)
-        [%of ^]  (~(get-mean ix p.tee (~(got by wix) p.tee)) p.sih)
-      ==
-    ::
-        %wake
-      ?>  ?=([%of ^] tee)
-      =>  ~(wake ix p.tee (~(got by wix) p.tee))
-      (give-json 200 ~ (joba %beat %b &))
-    ::
-        %news                                         ::  dependency updated
-      ?.  ?=([%on ^] tee)
-        ~&(e/lost/[tee hen] +>.$)
-      =+  dep=(slav %uv p.tee)
-      %+  roll  (~(tap in (~(get ju liz) dep)))
-      =<  .(con ..axon(liz (~(del by liz) dep)))
-      |=  [sus=(each duct ixor) con=_..axon]
-      =.  ..axon  con
-      ?-  -.sus
-        %&  (give-json(hen p.sus) 205 ~ %b &) 
-        %|  %-  ~(get-even ix p.sus (~(got by wix) p.sus))
-            [%news dep]
-      ==
-    ::
-        %made
-      =.  our  (need hov)                             ::  XX
-      |-  ^+  ..axon
-      ?-    tee
-          [?(%on %ay) *]  ~|(e/ford/lost/-.tee !!)
-          [%of ^]
-        %-  ~(get-rush ix p.tee (~(got by wix) p.tee))
-        ?>  ?=([%& %json ^] q.sih)                    ::  XX others
-        ((hard json) |3.q.sih)
-      ::
-          [%to ^]
-        ?:  ?=(%| -.q.sih)
-          (mean-json 500 ~ %cast-fail p.q.sih)
-        ~|  tee
-        =+  [[her app]=(pick-hasp p.tee) him=(slav %p q.tee)]
-        (pass-note ~ %g [%mess [her app ~] him p.q.sih])
-      ::
-          [%at ^]
-        ?.  ?=([%& %js ^] q.sih)
-          ~&  e/at-lost/p.tee
-          $(tee q.tee)
-        =*  cag  p.q.sih
-        ?>  ?=(@ q.q.cag)
-        =+  cyz=(~(got by wup) p.tee)
-        =^  jon  ..ya  ~(stat-json ya p.tee cyz)
-        $(tee q.tee, q.q.p.q.sih (jass jon q.q.cag))
-          ~      
-        :: ~&  e/ford/hen
-        ?-  -.q.sih
-          |  (fail 404 p.sih p.q.sih)
-          &  =*  cag  p.q.sih
-             ?+    p.cag  (back ~ p.sih cag)
-                 %hipo                                  ::  hacks!
-               ?>  ?=(@tas -.q.q.cag)
-               $(p.q.sih [-.q.q.cag (slot 3 q.cag)])
-             ::
-                 %mime
-               ~|  q.q.cag
-               =+  ((hard ,[mit=mite rez=octs]) q.q.cag)  ::  XX
-               (give-gift %thou 200 [content-type/(moon mit)]~ ~ rez)
-      ==     ==
-    ==  ==
-  ::
   ++  apex                                              ::  accept request
     |=  kyz=kiss
     ^+  +>
@@ -457,16 +395,16 @@
         %born  +>.$(ged hen)                            ::  register external
         %crud
       +>.$(mow [[hen %slip %d %flog kyz] mow])
+    ::
         %init                                           ::  register ownership
-      %_    +>.$
-          hov  ?~(hov [~ p.kyz] [~ (min u.hov p.kyz)])
-      ==
+      +>.$(hov ?~(hov [~ p.kyz] [~ (min u.hov p.kyz)]))
     ::
         %this                                           ::  inbound request
+      %-  emule  |.  ^+  ..apex
       =*  sec  p.kyz    ::  ?                           ::  https bit
       =*  heq  r.kyz    ::  httq                        ::  request content
       =+  ryp=`quri`(rash q.heq zest:epur)
-      =+  maf=(heat r.heq)
+      =+  maf=(eat-headers r.heq)
       =+  ^=  pul  ^-  purl
           ?-  -.ryp
             &  ?>(=(sec p.p.p.ryp) p.ryp)
@@ -477,7 +415,7 @@
       =.  p.p.pul  |(p.p.pul ?=(hoke r.p.pul))
       =+  her=(host-to-ship r.p.pul)
       ?:  |(?=(~ her) =(our u.her))
-        abet:~(handle rq pul [anon q.+.kyz] [p.heq maf s.heq])
+        (handle pul [anon q.+.kyz] [p.heq maf s.heq])
       =+  han=(sham hen)
       =.  pox  (~(put by pox) han hen)
       (ames-gram u.her [%get ~] han +.kyz)
@@ -507,7 +445,7 @@
       ==
     ::
         %thud                                           ::  cancel request
-      :: ~&  e/gone/hen
+      ::  ford-kill  ::  XX discriminate
       +>.$
     ::
         %wart                                           ::  remote request
@@ -533,12 +471,103 @@
           =:  hen  (~(got by pox) p.u.mez)
               pox  (~(del by pox) p.u.mez)
             ==
-          (give-gift %thou q.u.mez)
+          (give-thou q.u.mez)
       ==
     ==
   ::
-  ++  pack-hasp  |=(a=hasp `span`(pack /(scot %p p.a)/[q.a]))
-  ++  pick-hasp  |=(a=span (raid (need (pick a)) [%p %tas ~]))
+  ++  axon                                              ::  accept response
+    |=  [tee=whir typ=type sih=sign]
+    ^+  +>
+    :: %-  emule  |.  ^+  ..axon
+    =.  our  ?~(hov our u.hov)  ::  XX
+    ?-    &2.sih
+        %crud  +>.$(mow [[hen %slip %d %flog +.sih] mow])
+        %dumb  (emule |.(~|(%gall-stub !!)))
+        %went  +>.$
+        %thou
+      ?>  ?=([%ay ^] tee)
+      (ames-gram (slav %p p.tee) got/~ (slav %uv q.tee) |2.sih)
+    ::
+        ?(%rush %rust)
+      ?>  ?=([%of ^] tee)
+      ?.  ?=(%json p.sih)
+        =-  (back tee 0v0 %json -)
+        `cage`[p.sih (slot 3 (spec (slot 3 [typ +.sih])))]
+      (get-rush:(ire-ix p.tee) ((hard json) q.sih))
+    ::
+        %nice  ~|(tee ?>(?=($|(~ [%of ^]) tee) (nice-json)))
+        %mean  
+      ~|  tee 
+      ?+  tee  !!
+        ~        (mean-json 500 p.sih)
+        [%of ^]  (get-mean:(ire-ix p.tee) p.sih)      ::  XX initial mean
+      ==
+    ::
+        %wake
+      ?>  ?=([%of ^] tee)
+      =>  wake:(ire-ix p.tee)
+      (give-json 200 ~ (joba %beat %b &))
+    ::
+        %news                                         ::  dependency updated
+      ?.  ?=([%on ^] tee)
+        ~&(e/lost/[tee hen] +>.$)
+      =+  dep=(slav %uv p.tee)
+      %+  roll  (~(tap in (~(get ju liz) dep)))
+      =<  .(con ..axon(liz (~(del by liz) dep)))
+      |=  [sus=(each duct ixor) con=_..axon]
+      =.  ..axon  con
+      ?-  -.sus
+        %&  (give-json(hen p.sus) 205 ~ %b &) 
+        %|  (get-even:(ire-ix p.sus) [%news dep])
+      ==
+    ::
+        %made
+      =.  our  (need hov)                             ::  XX
+      |-  ^+  ..axon
+      ?-    tee
+          [?(%on %ay) *]  ~|(e/ford/lost/-.tee !!)
+          [%of ^]
+        %-  get-rush:(ire-ix p.tee)
+        ?>  ?=([%& %json ^] q.sih)                    ::  XX others
+        ((hard json) |3.q.sih)
+      ::
+          [%to ^]
+        ?:  ?=(%| -.q.sih)
+          (mean-json 500 ~ %cast-fail p.q.sih)
+        ~|  tee
+        =+  [[her app]=(pick-hasp p.tee) him=(slav %p q.tee)]
+        (pass-note ~ %g [%mess [her app ~] him p.q.sih])
+      ::
+          [%at ^]
+        ?.  ?=([%& %js ^] q.sih)
+          ~&  e/at-lost/p.tee
+          $(tee q.tee)
+        =*  cay  p.q.sih
+        ?>  ?=(@ q.q.cay)
+        =+  cyz=(~(got by wup) p.tee)
+        =^  jon  ..ya  ~(stat-json ya p.tee cyz)
+        $(tee q.tee, q.q.p.q.sih (add-json jon q.q.cay))
+      ::
+          ~      
+        :: ~&  e/ford/hen
+        ?.  ?=(%& -.q.sih)
+          (fail 404 p.sih p.q.sih)
+        =*  cay  p.q.sih
+        ?.  ?=(%mime p.cay)
+          (back tee p.sih %mime cay)
+        ~|  q.q.cay
+        =+  ((hard ,[mit=mite rez=octs]) q.q.cay)
+        (give-thou 200 [content-type/(moon mit)]~ ~ rez)
+      ==
+    ==
+  ::
+  ++  emule
+    |=  a=_|?(..emule)  ^+  ..emule
+    =+  mul=(mule a)
+    ?~  -.mul  p.mul
+    (fail 500 0v0 >%exit< p.mul)
+  ::
+  ++  ire-ix  |=(ire=ixor ~(. ix ire (~(got by wix) ire)))
   ++  ses-authed 
     |=  ses=hole
     =+  sap=(~(get by sop) ses)
@@ -550,61 +579,46 @@
   ++  ses-ya  |=(ses=hole ~(. ya ses (~(got by wup) ses)))
   ++  our-host  `hart`[& ~ `/com/urbit/(rsh 3 1 (scot %p our))]
   ::                  [| [~ 8.445] `/localhost]       :: XX testing
-  ++  fail                                            ::  request failed
-    |=  [sas=@ud dep=@uvH mez=tang]
-    ^+  +>
-    ::  (back ~ dep %tang !>(mez))  ::  XX broken tang->mime door in ford
-    (give-html sas ~ (depo dep (tanx mez)))
   ::
-  ++  give-html                                       ::  request failed
-    |=  [sas=@ud cug=(list ,@t) max=manx]
-    %-  give-gift
-    %+  add-cookies  cug
-    (resp sas text//html (crip (poxo max)))
-  ::
-  ++  give-json                                       ::  success json
-    |=  [sas=@uG cug=(list ,@t) jon=json]
-    %-  give-gift
-    %+  add-cookies  cug
-    (resp sas application//json (crip (pojo jon)))
-  ::
-  ++  nice-json  |=(* (give-json 200 ~ (joba %ok %b &)))
-  ++  mean-json  |=([sas=@uG err=ares] (give-json sas ~ (ares-to-json err)))
-  ++  ares-to-json
-    |=  err=ares
-    =-  (jobe fail/s/typ mess/(jape mez) ~)
-    ^-  [typ=term mez=tape]
-    ?~  err  [%fail "Unknown Error"]
-    [p.u.err (wush 160 q.u.err)]
-  ::
-  ++  add-cookies
-    |=  [cug=(list ,@t) git=[%thou httr]]
-    ?~  cug  git
-    =+  cuh=(turn `(list ,@t)`cug |=(a=@t set-cookie/a))
-    git(q (weld cuh q.git))
-  ::
-  ++  give-gift                                       ::  done card
-    |=  gef=gift
-    +>(mow :_(mow [hen %give gef]))
-  ::
-  ++  pass-note  |=(noe=[whir note] +>(mow :_(mow [hen %pass noe])))
   ++  ames-gram
     |=([him=ship gam=gram] (pass-note ~ %a %want [our him] [%e -.gam] +.gam))
   ::
+  ++  back                                              ::  %ford bounce
+    |=  [tea=whir dep=@uvH mar=mark cay=cage]                
+    (ford-req tea our [%cast mar %done ~ cay])        ::  XX deps
+  ::
+  ++  ford-kill  (pass-note ~ %f [%exec our ~])        :: XX unused
   ++  ford-req
     |=  [tea=whir our=ship kas=silk]
     ::  ~&  [%ford-req our num ses -.kas]
     (pass-note tea %f [%exec our `kas])
   ::
-  ++  back                                              ::  %ford bounce
-    |=  [tea=whir dep=@uvH cag=cage]                
-    (ford-req tea our [%cast %mime %done ~ cag])        ::  XX deps
+  ++  fail
+    |=  [sas=@ud dep=@uvH mez=tang]
+    ^+  +>
+    ::  (back ~ dep %tang !>(mez))  ::  tang->urb chain may be source of failure
+    (give-html sas ~ (add-poll dep (render-tang mez)))
   ::
-  ++  resp                                            ::  mimed response
-    |=  [sas=@uG mit=mite rez=@]
-    ::  (weld (turn cug |=(a=@t ['set-cookie' a]))
-    [%thou `httr`[sas ~[content-type/(moon mit)] [~ (taco rez)]]]
+  ++  give-html
+    |=  [sas=@ud cug=(list ,@t) max=manx]
+    %-  give-thou
+    %+  add-cookies  cug
+    (resp sas text//html (crip (poxo max)))
   ::
+  ++  give-json
+    |=  [sas=@uG cug=(list ,@t) jon=json]
+    %-  give-thou
+    %+  add-cookies  cug
+    (resp sas application//json (crip (pojo jon)))
+  ::
+  ++  give-thou                                       ::  done request
+    |=  hit=httr
+    +>(mow :_(mow [hen %give %thou hit]))
+  ::
+  ++  mean-json  |=([sas=@uG err=ares] (give-json sas ~ (ares-to-json err)))
+  ++  nice-json  |=(* (give-json 200 ~ (joba %ok %b &)))
+  ::
+  ++  pass-note  |=(noe=[whir note] +>(mow :_(mow [hen %pass noe])))
   ++  host-to-ship                                              ::  host to ship
     |=  hot=host
     ^-  (unit ship)
@@ -615,171 +629,59 @@
     ?~  dom  ~
     (rush i.dom fed:ag)
   ::
-  ++  rq
-    |_  $:  [hat=hart pok=pork quy=quay]                ::  purl, parsed url
+  ++  load-secret
+    ^-  @ta
+    =+  pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
+    %^  rsh  3  1
+    (scot %p (,@ (need (sky %a pax))))
+  ::
+  ::
+  ++  handle
+    |=  $:  [hat=hart pok=pork quy=quay]                ::  purl, parsed url
             [him=ship cip=clip]                         ::  client ip
             [mef=meth maf=math bod=(unit octs)]         ::  method/headers/body
         ==
+    =<  apex
+    |%
+    ++  abet  ..handle
     ++  done  .
-    ++  abet  ..rq
-    ++  teba  |*(a=$+(* ..rq) |*(b=* %_(done ..rq (a b))))
+    ++  teba  |*(a=$+(* ..handle) |*(b=* %_(done ..handle (a b))))
+    ::
     ++  fail  (teba ^fail)
+    ++  back  (teba ^back)
+    ++  ford-req   (teba ^ford-req)
     ++  give-html  (teba ^give-html)
-    ++  give-gift  (teba ^give-gift)
+    ++  give-thou  (teba ^give-thou)
     ++  give-json  (teba ^give-json)
     ++  nice-json  (teba ^nice-json)
     ++  pass-note  (teba ^pass-note)
-    ++  ford-req   (teba ^ford-req)
-    ++  back  (teba ^back)
     ::
-    ++  ford-kill  (pass-note ~ %f [%exec our ~])       :: XX unused
-    ++  beam-into-ford
+    ++  ford-get-beam
       |=  [tea=whir bem=beam ext=term ced=cred]
-      =:  s.bem  [%web ~(rent co (flux:ya quy ced)) s.bem]
+      =:  s.bem  [%web ~(rent co (fcgi quy ced)) s.bem]
           r.bem  ?+(r.bem r.bem [%ud %0] da/now)
       ==
       (ford-req tea our [%boil ext bem ~])
     ::
     ::
-    ++  as-beam
-      ^-  (unit beam)
-      |-
-      ?~  q.pok
-        $(q.pok /index)
-      ?.  ((sane %tas) i.q.pok)
-        (tome q.pok)
-      `[[our i.q.pok da/now] (flop t.q.pok)]
-    ::
-    ++  as-magic-filename
-      ^-  (unit gift)
-      ?+    [(fall p.pok %$) q.pok]  ~
-          [?(%ico %png) %favicon ~]
-        :-  ~
-        %^  resp  200  image//png
-        0w89wg.GV4jA.l9000.00dPb.YzBT6.giO00.o100d.wZcqc.a9tg-.VTG0b.
-        AUIvE.HBM3g.cK4SE.0aagi.l090p.I1P5g.Y-80r.y1YS9.1xE~Y.qgpFY.
-        vKN1V.905y0.2UwvL.43TUw.uL406.0-31h.xwoJF.Ul454.ilk00.00Yps.
-        BNumh.xpl9B.pS5Ji.i1BoC.ZAgg1.BsC5T.t6pLk.Thohn.gp000.0ov~P.
-        7M000.0o840.00010.0001i.h4x93.g0000.Eq2wR.7jB29
-      ::
-          [%txt %robots ~]
-        :-  ~
-        %^  resp  200  text//plain
-        %-  role
-        :~  'User-agent: *'
-            'Disallow: /'
-        ==
-      ==
-    ::
-    ++  as-aux-request                                ::  /~/... req parser
-      ^-  (unit perk)
-      |-
-      ?:  ?=([%'~~' *] q.pok)                            ::  auth shortcut
-        $(q.pok ['~' %as %own t.q.pok])
-      ?.  ?=([%'~' @ *] q.pok)  ~
-      :-  ~  ^-  perk
-      =*  pef  i.t.q.pok
-      =+  but=t.t.q.pok                 ::  XX  =*
-      ~|  [pef %bad-path but quy]
-      ?+    pef  ~|(pfix-lost/`path`/~/[pef] !!)
-          %on  [%poll (raid but %uv ~)]
-          %of
-        :+  %view  ?>(?=([@ ~] but) i.but)
-        ?>  ?=([[%poll @] ~] quy)     ::  XX eventsource
-        [~ (rash q.i.quy dem)]
-      ::
-          %as
-        :+  %auth  %get
-        ~|  bad-ship/?~(but ~ i.but)
-        ?~  but  !!
-        :_  pok(q t.but)
-        ?+  i.but  (slav %p i.but)
-          %anon  anon
-          %own   our
-        ==
-      ::
-          %am  ?~(but !! [%auth %xen i.but pok(q t.but)])
-          %at  [%auth %at pok(q but)]
-          %away  [%away ~]
-          %debug  ;;(perk [%bugs but])
-          %to
-        =-  [%mess [- +<]:dir +>.dir (grab-body (ot:jo xyro/some ~))]
-        ^=  dir
-        =+  ful=(read but %p %tas %tas ~)
-        ?^  ful  u.ful
-        ~|  bad-mess/but
-        [our (raid but %tas %tas ~)]
-      ::
-          %in
-        ~|  expect/[%post 'application/json' /'@uv' '?PUT/DELETE']
-        ?>  ?=([%post $|(~ [~ %json])] [mef p.pok])
-        =-  [%deps - (raid but %uv ~)]
-        ?+(quy !! [[%'DELETE' ~] ~] %del, [[%'PUT' ~] ~] %put)
-      ::
-          %is
-        ?~  but
-          ~|(no-app/but=but !!)
-        |-  ^-  perk
-        ?~  p.pok  $(p.pok [~ %json])
-        ?.  ?=(%json u.p.pok)
-          ~|(is/stub/u.p.pok !!)      ::  XX marks
-        ?:  ((sane %tas) i.but)
-          $(but [(scot %p our) but])
-        :+  %subs
-          ?+(quy !! [[%'DELETE' ~] ~] %del, [[%'PUT' ~] ~] %put)
-        [[(slav %p i.but) (slav %tas -.t.but)] u.p.pok +.t.but]
-      ::
-          %auth
-        :-  %auth
-        |-  ^-  perk-auth
-        ?+    p.pok  !!
-            ~          $(p.pok [~ %json])
-            [~ %js]    [%js ~]
-            [~ %json]
-          ?+    mef  ~|(%bad-meth !!)
-              %get   [%json ~]
-              %post
-            ?+    quy  ~|(bad-quy/'"PUT" or "DELETE"' !!)
-                [[%'PUT' ~] ~]
-              =+  paz=(ot ship/(su fed:ag) code/so ~):jo
-              ~|  parsing/bod
-              [%try (grab-body paz)]
-            ::
-                [[%'DELETE' ~] ~]
-              ~|  parsing/bod
-              =+  jon=(need (poja q:(need bod)))
-              ?>  ?=(%o -.jon)
-              =+  sip=(~(get by p.jon) %ship)
-              [%del ?~(sip ~ [~ (need ((su:jo fed:ag) u.sip))])]
-        ==  ==
-      ==  ==
-    ::
-    ++  grab-body  |*(a=fist:jo (need (parse-body a)))
-    ++  parse-body
-      |*  a=fist:jo  ^+  *a
-      ?.  &(?=(%post mef) ?=(^ bod))
-        ~
-      %.(q.u.bod ;~(biff poja a))
-    ::
-    ++  handle
+    ++  apex                                              
+      =<  abet
       ^+  done
       =+  oar=(host-to-ship r.hat)
       =.  our  ?~(oar our u.oar)  ::  XX
       =+  pez=process
-      ?:  ?=(%| -.pez)  p.pez  ::  XX transitional
-      (handle-pest p.pez)
+      ?:  ?=(%| -.pez)  p.pez
+      (resolve p.pez)
     ::
-    ++  handle-pest
+    ++  resolve
       |=  pez=pest  ^+  done
       ?-  -.pez
-          %for  (beam-into-ford +.pez)
-          %fot  (ford-req p.pez our [%cast q.pez %done ~ r.pez])
+          %for  (ford-get-beam +.pez)
+          %fin  (resolve-fin ~ +.pez)
           %gap  (pass-note ~ %g [%mess +.pez])
-          %zap  (fail p.pez 0v0 q.pez)
-          %fin  (finish ~ +.pez)
           %red
         =+  url=(earn hat pok(p [~ %html]) quy)
-        ?+    p.pok  (fail 404 0v0 leaf/"bad redirect" leaf/<p.pok> leaf/url ~)
+        ?+    p.pok  ~|(bad-redirect/[p.pok url] !!)
             [~ %js]
           $(pez [%fin %js auth-redir:js])
             [~ %json]
@@ -787,46 +689,40 @@
         ==
       ==
     ::
-    ++  finish
+    ++  resolve-fin
       =+  status=200
       |=  [cug=(list ,@t) pef=pest-fin]  ^+  done
       ?~  pef  done
       ?-  -.pef
-        ~  (give-gift (add-cookies cug %thou p.pef))
-        %js  $(pef [~ +:(resp status text//javascript p.pef)])
+        ~  (give-thou (add-cookies cug p.pef))
+        %js  $(pef [~ (resp status text//javascript p.pef)])
+        %code  $(pef q.pef, status p.pef)
         %html  (give-html status cug p.pef)
         %json  (give-json status cug p.pef)
-        %code  $(pef q.pef, status p.pef)
       ==
     ::
-    ++  process
-      ^-  (each pest ,_done)
-      =+  git=as-magic-filename
-      ?^  git  [%| (give-gift u.git)]
-      %-  |=  a=(each (each pest ,_done) tang) 
-          ?~(-.a p.a [%& %zap 404 >%exit< p.a])
-      %-  mule  |.  ^-  (each pest ,_done)
-      ~|  [mef maf bod]
-      =+  bem=as-beam
-      ?^  bem  (process-parsed %beam u.bem)
-      ?.  check-oryx
-        ~|(%bad-oryx ~|([(parse-body to-oryx) vew.cyz:for-client] !!))
-      =+  hem=as-aux-request
-      ?^  hem  (process-parsed u.hem)
-      ~|(strange-path/q.pok !!)
     ::
     ++  check-oryx                    ::  | if json with bad oryx
       ^-  ?
       ?.  &(?=([~ %json] p.pok) ?=(%post mef) ?=(^ bod))  &
-      =+  oxe=(parse-body to-oryx)
+      =+  oxe=(grab-body to-oryx)
       ?~  oxe  |
       ?:  (~(has in vew.cyz:for-client) u.oxe)
         &
       ~&(bad-oryx/[u.oxe vew.cyz:for-client] &)         ::  XX
     ::
-    ++  to-oryx  (ot oryx/so ~):jo
+    ++  grab-body
+      |*  a=fist:jo  ^+  *a
+      ?.  &(?=(%post mef) ?=(^ bod))
+        ~
+      %.(q.u.bod ;~(biff poja a))
+    ::
+    ++  need-body  |*(a=fist:jo (need (grab-body a)))
     ++  root-beak  `beak`[our %main ud/0]               ::  XX
-    ++  add-depend
+    ++  to-oryx  (ot oryx/so ~):jo
+    ::
+    ::
+    ++  new-dependency
       |=  [a=@uvH b=(each duct ixor)]  ^+  done
       ?~  a  done
       =+  had=(~(has by liz) a)
@@ -834,129 +730,262 @@
       ?:  had  done
       (pass-note on//(scot %uv a) %f [%wasp our a])
     ::
-    ++  process-parsed
-      |=  hem=perk
+    ++  parse
+      ^-  (each perk httr)
+      |^  =+  hit=as-magic-filename
+          ?^  hit  [%| u.hit]
+          =+  bem=as-beam
+          ?^  bem  [%& %beam u.bem]
+          ?.  check-oryx
+            ~|(%bad-oryx ~|([(grab-body to-oryx) vew.cyz:for-client] !!))
+          =+  hem=as-aux-request
+          ?^  hem  [%& u.hem]
+          ~|(strange-path/q.pok !!)
+      ::
+      ++  as-magic-filename
+        ^-  (unit httr)
+        ?+    [(fall p.pok %$) q.pok]  ~
+            [?(%ico %png) %favicon ~]
+          :-  ~
+          %^  resp  200  image//png
+          0w89wg.GV4jA.l9000.00dPb.YzBT6.giO00.o100d.wZcqc.a9tg-.VTG0b.
+          AUIvE.HBM3g.cK4SE.0aagi.l090p.I1P5g.Y-80r.y1YS9.1xE~Y.qgpFY.
+          vKN1V.905y0.2UwvL.43TUw.uL406.0-31h.xwoJF.Ul454.ilk00.00Yps.
+          BNumh.xpl9B.pS5Ji.i1BoC.ZAgg1.BsC5T.t6pLk.Thohn.gp000.0ov~P.
+          7M000.0o840.00010.0001i.h4x93.g0000.Eq2wR.7jB29
+        ::
+            [%txt %robots ~]
+          :-  ~
+          %^  resp  200  text//plain
+          %-  role
+          :~  'User-agent: *'
+              'Disallow: /'
+          ==
+        ==
+      ::
+      ++  as-beam
+        ^-  (unit beam)
+        |-
+        ?~  q.pok
+          $(q.pok /index)
+        ?.  ((sane %tas) i.q.pok)
+          (tome q.pok)
+        `[[our i.q.pok da/now] (flop t.q.pok)]
+      ::
+      ++  as-aux-request                                ::  /~/... req parser
+        ^-  (unit perk)
+        =.  mef
+          ?.  ?=(%post mef)  mef
+          ?+  quy  ~|(bad-quy/[req='"?PUT" or "?DELETE"' quy] !!)
+            ~   mef
+            [[%'DELETE' ~] ~]  %delt
+            [[%'PUT' ~] ~]     %put
+          ==
+        |-
+        ?:  ?=([%'~~' *] q.pok)                            ::  auth shortcut
+          $(q.pok ['~' %as %own t.q.pok])
+        ?.  ?=([%'~' @ *] q.pok)  ~
+        :-  ~  ^-  perk
+        =*  pef  i.t.q.pok
+        =+  but=t.t.q.pok                 ::  XX  =*
+        ~|  [pef %bad-path but quy]
+        ?+    pef  ~|(pfix-lost/`path`/~/[pef] !!)
+            %debug  ;;(perk [%bugs but])
+            %away  [%away ~]
+            %at  [%auth %at pok(q but)]
+            %am  ?~(but !! [%auth %xen i.but pok(q t.but)])
+            %as
+          :+  %auth  %get
+          ~|  bad-ship/?~(but ~ i.but)
+          ?~  but  !!
+          :_  pok(q t.but)
+          ?+  i.but  (slav %p i.but)
+            %anon  anon
+            %own   our
+          ==
+        ::
+            %on  [%poll (raid but %uv ~)]
+            %of
+          :+  %view  ?>(?=([@ ~] but) i.but)
+          ?>  ?=([[%poll @] ~] quy)     ::  XX eventsource
+          [~ (rash q.i.quy dem)]
+        ::
+            %to
+          =-  [%mess [- +<]:dir +>.dir (need-body (ot:jo xyro/some ~))]
+          ^=  dir
+          =+  ful=(read but %p %tas %tas ~)
+          ?^  ful  u.ful
+          ~|  bad-mess/but
+          [our (raid but %tas %tas ~)]
+        ::
+            %in
+          ~|  expect/[%post 'application/json' /'@uv' '?PUT/DELETE']
+          ?>  &(?=(?(%delt %put) mef) ?=($|(~ [~ %json]) p.pok))
+          [%deps mef (raid but %uv ~)]
+        ::
+            %is
+          ?~  but
+            ~|(no-app/but=but !!)
+          |-  ^-  perk
+          ?~  p.pok  $(p.pok [~ %json])
+          ?.  ?=(%json u.p.pok)
+            ~|(is/stub/u.p.pok !!)      ::  XX marks
+          ?:  ((sane %tas) i.but)
+            $(but [(scot %p our) but])
+          ?>  ?=(?(%delt %put) mef)
+          [%subs mef [(slav %p i.but) (slav %tas -.t.but)] u.p.pok +.t.but]
+        ::
+            %auth
+          :-  %auth
+          |-  ^-  perk-auth
+          ?+    p.pok  !!
+              ~          $(p.pok [~ %json])
+              [~ %js]    [%js ~]
+              [~ %json]
+            ?+    mef  ~|(bad-meth/mef !!)
+                %get   [%json ~]
+                %post
+              ?+    quy  ~|(bad-quy/'"PUT" or "DELETE"' !!)
+                  [[%'PUT' ~] ~]
+                =+  paz=(ot ship/(su fed:ag) code/so ~):jo
+                ~|  parsing/bod
+                [%try (need-body paz)]
+              ::
+                  [[%'DELETE' ~] ~]
+                ~|  parsing/bod
+                =+  jon=(need (poja q:(need bod)))
+                ?>  ?=(%o -.jon)
+                =+  sip=(~(get by p.jon) %ship)
+                [%del ?~(sip ~ [~ (need ((su:jo fed:ag) u.sip))])]
+          ==  ==
+        ==  ==
+      --
+    ::
+    ++  process
       ^-  (each pest ,_done)
+      =+  pet=parse
+      ?:  ?=(%| -.pet)
+        [%& %fin ~ p.pet]
+      (process-parsed p.pet)
+    ::
+    ++  process-parsed
+      |=  hem=perk  ^-  (each pest ,_done)
       ?-    -.hem
+          %auth  (process-auth p.hem)
           %away  [%& %fin %html logout-page:xml]
-          ?(%spur %beam)  
+          ?(%beam %spur)
         =+  ext=(fall p.pok %urb)
         =+  bem=?-(-.hem %beam p.hem, %spur [root-beak p.hem])
         [%& %for ~ bem ext ced.cyz:for-client]
       ::
+          %bugs  
+        ?-  p.hem
+          %as  (show-login-page)
+          %to  [%& %fin %html poke-test:xml]
+        ==
+      ::
           %deps
-        =+  ire=(oryx-to-ixor (grab-body to-oryx))
+        =+  ire=(oryx-to-ixor (need-body to-oryx))
         ?>  (~(has by wix) ire)  ::  XX made redundant by oryx checking
         =<  [%| (nice-json)]
         ?-  p.hem
-          %del  done(liz (~(del ju liz) q.hem %| ire))
-          %put  (add-depend q.hem %| ire)
-        ==
-      ::
-          %poll
-        ?.  ?=([~ %js] p.pok)  ::  XX treat non-json cases?
-          [%| (add-depend p.hem %& hen)]
-        =+  polling-url=['/' (apex:earn %| pok(u.p %json) quy)]
-        :^  %&  %fin  %js
-        (jass (joba %poll (jape polling-url)) poll:js)
-      ::
-          %bugs  
-        ?-  p.hem
-         %as  (show-login-page)
-         %to  [%& %fin %html poke-test:xml]
+          %put   (new-dependency q.hem %| ire)
+          %delt  done(liz (~(del ju liz) q.hem %| ire))
         ==
       ::
           %mess
         =+  cay=[%json !>(`json`r.hem)]
         ?:  ?=(%json q.hem)
           [%& %gap [- + ~]:p.hem him cay]
-        =+  wir=to//(pack-hasp p.hem)/(scot %p him)
-        [%& %fot wir q.hem cay]
+        [%| (back to//(pack-hasp p.hem)/(scot %p him) 0v0 q.hem cay)]
+      ::
+          %poll
+        ?.  ?=([~ %js] p.pok)  ::  XX treat non-json cases?
+          [%| (new-dependency p.hem %& hen)]
+        =+  polling-url=['/' (apex:earn %| pok(u.p %json) quy)]
+        :^  %&  %fin  %js
+        (add-json (joba %poll (jape polling-url)) poll:js)
       ::
           %subs
-        =+  ire=(oryx-to-ixor (grab-body to-oryx))
         ?-  p.hem
-          %put  [%| done(..ix (~(add-subs ix ire (~(got by wix) ire)) q.hem))]
-          %del  [%| done(..ix (~(del-subs ix ire (~(got by wix) ire)) q.hem))]
+          %put   [%| ((teba add-subs:for-view) q.hem)]
+          %delt  [%| ((teba del-subs:for-view) q.hem)]
         ==
       ::
           %view
         ~|  lost-ixor/p.hem
-        =+  sem=(~(got by wix) p.hem)
-        [%| ((teba ~(poll ix p.hem sem)) u.q.hem)]
-      ::
-          %auth
-        =+  yac=for-client
-        ?-    &2.hem
-            %json
-          :-  %|
-          =^  jon  ..ya  stat-json.yac
-          (give-json 200 ~ jon)
-            %js  [%& %fin %js auth:js]
-            %at
-          =.  ..ya  abet.yac
-          =+  pez=process(pok p.hem)
-          ?.  ?=(%& -.pez)  ~|(no-inject/p.hem !!)
-          ?+    -.p.pez  ~&(bad-inject/p.pez !!)
-              ?(%zap %red)
-            pez
-              %for
-            =.  ..ya  abet:for-client                     
-            [%| (handle-pest p.pez(p [%at ses.yac p.p.pez]))]
-              %fin
-            ~|  %not-script
-            ?>  ?=(%js &2.p.pez)
-            =^  jon  ..ya  stat-json.yac
-            [%| (finish cug.yac +.p.pez(p (jass jon p.p.pez)))]
-          ==
-        ::
-            %try
-          ~&  ses-try/ses.yac
-          :-  %|
-          ?.  =(our him.hem)
-            ~|(stub-foreign/him.hem !!)
-          ?.  =(load-secret cod.hem)
-            ~|(try/`@t`load-secret !!)
-          =^  jon  ..ya  stat-json:(logon:yac him.hem)
-          (give-json 200 cug.yac jon)
-        ::  
-            %del  
-          =.  ..ya  (logoff:yac p.hem)
-          =+  cug=[(cat 3 cookie-prefix '=~; Path=/')]~
-          [%| (give-json 200 cug (joba %ok %b &))]
-        ::
-            %get
-          ~|  aute/+.hem
-          ?:  |(=(anon him.hem) (~(has in aut.yac) him.hem))
-            =.  him  him.hem
-            =+  pez=process(pok rem.hem)
-            ?.  ?=([%& %for ^] pez)
-              pez
-            pez(aut.s.p (~(put ju aut.s.p.pez) %$ (scot %p him.hem)))
-          ?.  =(our him.hem)
-            [%| ((teba foreign-auth:for-client) him.hem hat rem.hem quy)]
-          (show-login-page ~)
-            %xen
-          (show-login-page ~ ses.hem)
-        ==
+        [%| ((teba poll:(ire-ix p.hem)) u.q.hem)]
       ==
-    ++  show-login-page  
+    ::
+    ++  process-auth
+      |=  ham=perk-auth  ^-  (each pest ,_done)
+      =+  yac=for-client
+      ?-    -.ham
+          %js    [%& %fin %js auth:js]
+          %json  =^  jon  ..ya  stat-json.yac
+                 [%| (give-json 200 ~ jon)]
+          %xen   (show-login-page ~ ses.ham)
+      ::
+          %at
+        =.  ..ya  abet.yac
+        =+  pez=process(pok p.ham)
+        ?.  ?=(%& -.pez)  ~|(no-inject/p.ham !!)
+        ?+    -.p.pez  ~&(bad-inject/p.pez !!)
+            %red  pez
+            %for
+          =.  ya  abet.yac 
+          [%| (resolve p.pez(p [%at ses.yac p.p.pez]))]
+        ::
+            %fin
+          ~|  %not-script
+          ?>  ?=(%js &2.p.pez)
+          =^  jon  ..ya  stat-json.yac
+          [%| (resolve-fin cug.yac +.p.pez(p (add-json jon p.p.pez)))]
+        ==
+      ::
+          %del  
+        =.  ..ya  (logoff:yac p.ham)
+        =+  cug=[(cat 3 cookie-prefix '=~; Path=/')]~
+        [%| (give-json 200 cug (joba %ok %b &))]
+      ::
+          %get
+        ~|  aute/ham
+        ?:  |(=(anon him.ham) (~(has in aut.yac) him.ham))
+          =.  him  him.ham
+          =+  pez=process(pok rem.ham)
+          ?.  ?=([%& %for ^] pez)
+            pez
+          pez(aut.s.p (~(put ju aut.s.p.pez) %$ (scot %p him.ham)))
+        ?.  =(our him.ham)
+          [%| ((teba foreign-auth:for-client) him.ham hat rem.ham quy)]
+        (show-login-page ~)
+      ::
+          %try
+        ~&  ses-try/ses.yac
+        :-  %|
+        ?.  =(our him.ham)
+          ~|(stub-foreign/him.ham !!)
+        ?.  =(load-secret cod.ham)
+          ~|(try/`@t`load-secret !!)
+        =^  jon  ..ya  stat-json:(logon:yac him.ham)
+        (give-json 200 cug.yac jon)
+      ==
+    ::
+    ++  show-login-page
       |=  ses=(unit hole)  ^-  (each pest ,_done)
       ?.  ?=($|(~ [~ %html]) p.pok)
         [%& %red %html]
       ?~  ses
         [%& %fin %code 401 %html login-page:xml]
-      =+  yac=~(. ya u.ses (ses-cyst u.ses))
+      ?:  (~(has by wup) u.ses)
+        [%& %fin %code 401 %html login-page:xml]
+      =+  yac=(new-ya u.ses)
       =.  ..ya  abet.yac
       [%| (give-html 401 cug.yac login-page:xml)]
     ::
-    ++  load-secret
-      ^-  @ta
-      =+  pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
-      %^  rsh  3  1
-      (scot %p (,@ (need (sky %a pax))))
-    ::
     ++  cookie-prefix  (rsh 3 1 (scot %p our))
+    ++  for-view  ^+(ix (ire-ix (oryx-to-ixor (need-body to-oryx))))
+    ::
     ++  for-client                        ::  stateful per-session engine
       ^+  ya
       =+  pef=cookie-prefix
@@ -965,10 +994,10 @@
         ~|  bad-cookie/u.lig
         =+  cyz=(~(got by wup) u.lig)
         ~(. ya u.lig cyz(cug ~))
-      =+  ses=(rsh 3 1 (scot %p (end 6 1 ney)))
-      ~(. ya ses (ses-cyst ses))
+      (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
     ::
-    ++  ses-cyst
+    ++  new-ya  |=(ses=hole ~(. ya ses (new-cyst ses)))
+    ++  new-cyst
       |=  ses=hole
       =*  sec  p.hat
       =+  pef=cookie-prefix
@@ -1006,6 +1035,23 @@
     |%
     ++  abet  ..ya(wup (~(put by wup) ses cyz))
     ++  abut  ..ya(wup (~(del by wup) ses))
+    ++  foreign-auth
+      |=  [him=ship pul=purl]  ^+  ..ya
+      =.  way  (~(put by way) him pul hen)
+      (ames-gram:abet him [lon/~ ses])
+    ::
+    ++  foreign-hat
+      |=  [him=ship hat=hart]  ^+  ..ya
+      ~|  way
+      =^  pul  hen  (~(got by way) him)
+      =:  way       (~(del by way) him)
+          dop       (~(put by dop) r.hat him)  
+          q.q.pul   ['~' %am ses q.q.pul]
+        ==
+      =+  url=(welp (earn pul(p hat)) '#' (head:earn p.pul))
+      %-  give-thou:abet
+      (add-cookies cug [307 [location/(crip url)]~ ~])
+    ::
     ++  logon     
       |=  her=ship
       %_  +>
@@ -1028,25 +1074,6 @@
       ?~  aut  abut
       abet(him ?.(=(her him) him n.aut))
     ::
-    ++  foreign-auth
-      |=  [him=ship pul=purl]  ^+  ..ya
-      =.  way  (~(put by way) him pul hen)
-      (ames-gram:abet him [lon/~ ses])
-    ::
-    ++  foreign-hat
-      |=  [him=ship hat=hart]  ^+  ..ya
-      ~|  way
-      =^  pul  hen  (~(got by way) him)
-      =:  way       (~(del by way) him)
-          dop       (~(put by dop) r.hat him)  
-          q.q.pul   ['~' %am ses q.q.pul]
-        ==
-      =+  url=(welp (earn pul(p hat)) '#' (head:earn p.pul))
-      %-  give-gift
-      %+  add-cookies  cug
-      :+  %thou  307
-      [[location/(crip url)]~ ~]
-    ::
     ++  stat-json
       ^+  [*json ..ya]
       =+  orx=`@t`(rsh 3 1 (scot %p (shaf %orx eny)))
@@ -1061,42 +1088,21 @@
         user/(jape +:<him>)
         auth/a/(turn (~(tap in aut)) |=(a=@p (jape +:<a>)))
       ==
-    ::
-    ++  flux                                            ::  credential caboose
-      |=  [quy=quay ced=cred]  ^-  coin
-      :*  %many
-          [%$ %ta ~]
-          [%blob ced]
-          |-  ^-  (list coin)
-          ?~  quy  ~
-          [[%$ %t p.i.quy] [%$ %t q.i.quy] $(quy t.quy)]
-      ==
-    ++  inte
-      ^-  (unit $&([%lon purl] gram))
-      ~ 
     --
   ::
   ++  ix
     =|  [ire=ixor stem]
     =*  sem  ->
     |%
-    ++  done  .
     ++  abet  ..ix(wix (~(put by wix) ire sem))
-    ++  teba  |*(a=$+(* ..ix) |*(b=* %_(done ..ix (a b))))
+    ++  done  .
     ++  give-json  (teba ^give-json)
     ++  pass-note  (teba ^pass-note)
+    ++  teba  |*(a=$+(* ..ix) |*(b=* %_(done ..ix (a b))))
     ::
-    ++  poll
-      |=  a=@u  ^+  ..ix
-      ?:  =(a p.eve)
-        =.  +>  
-          ?^  ude  ~&(e/ix/wait/%replaced done)
-          wait-era(era (add ~s30 now))
-        :: ~&  ude-wait/hen
-        abet(ude [~ hen &])
-      ?:  (gth a p.eve)  ~|(seq-high/cur=p.eve !!)
-      =+  ven=~|(seq-low/cur=p.eve (~(got by q.eve) a))
-      abet:(give-even & a ven)
+    ++  add-even
+      |=  a=even  ^+  eve
+      [+(p.eve) (~(put by q.eve) p.eve a)]
     ::
     ++  add-subs
       |=  [a=hasp %json b=path]  ^+  ..ix
@@ -1127,15 +1133,6 @@
       :: ~&  got-even/ude
       (give-even(hen p.u.ude, ude ~) q.u.ude num ven)
     ::
-    ++  add-even
-      |=  a=even  ^+  eve
-      [+(p.eve) (~(put by q.eve) p.eve a)]
-    ::
-    ++  pass-took
-      |=  a=[p=hasp path]
-      =.  hen  (~(got by sud) a)
-      (pass-note of//[ire] [%g %took [- + ~]:p.a him])
-    ::
     ++  give-even
       |=  [pol=? num=@u ven=even]  ^+  done
       =:  q.eve  (~(del by q.eve) (dec num))              ::  TODO ponder a-2
@@ -1150,6 +1147,23 @@
         %mean  ~[from/(subs-to-json p.ven) data/(ares-to-json q.ven)]
       ==
     ::
+    ++  pass-took
+      |=  a=[p=hasp path]
+      =.  hen  (~(got by sud) a)
+      (pass-note of//[ire] [%g %took [- + ~]:p.a him])
+    ::
+    ++  poll
+      |=  a=@u  ^+  ..ix
+      ?:  =(a p.eve)
+        =.  +>  
+          ?^  ude  ~&(e/ix/wait/%replaced done)
+          wait-era(era (add ~s30 now))
+        :: ~&  ude-wait/hen
+        abet(ude [~ hen &])
+      ?:  (gth a p.eve)  ~|(seq-high/cur=p.eve !!)
+      =+  ven=~|(seq-low/cur=p.eve (~(got by q.eve) a))
+      abet:(give-even & a ven)
+    ::
     ++  subs-to-json
       |=  [a=hasp b=path]
       %-  jobe  :~
@@ -1158,10 +1172,10 @@
         path/(jape (spud b))
       ==
     ::
-    ::  XX unused
-    ++  print-subs  |=([a=hasp b=path] "{<p.a>}/{(trip q.a)}{(spud b)}")
     ++  wait-era  (pass-note of//[ire] [%t %wait era])
     ++  wake  ^+(..ix abet(ude ~))  ::  XX other effects?
+    ::  XX unused
+    ++  print-subs  |=([a=hasp b=path] "{<p.a>}/{(trip q.a)}{(spud b)}")
 --  --
   --
 .   ==
