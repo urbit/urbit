@@ -456,22 +456,19 @@
       ?-  -<.u.mez
         %aut  abet:(logon:(ses-ya p.u.mez) q.p.kyz)
         %hat  (foreign-hat:(ses-ya p.u.mez) q.p.kyz q.u.mez)
+        %get  (pass-note ay/(dray p/uv/~ q.p.kyz p.u.mez) [%e %this q.u.mez])
+        %got
+          =:  hen  (~(got by pox) p.u.mez)
+              pox  (~(del by pox) p.u.mez)
+            ==
+          (give-thou q.u.mez)
+      ::
         %lon  
           ~&  ses-ask/[p.u.mez sop (~(run by wup) ,~)]
           ?:  (ses-authed p.u.mez)  
             (ames-gram q.p.kyz aut/~ p.u.mez)
           =.  sop  (~(put by sop) p.u.mez q.p.kyz |)
           (ames-gram q.p.kyz hat/~ p.u.mez our-host)
-      ::
-        %get
-          %+  pass-note  ay//(scot %p q.p.kyz)/(scot %uv p.u.mez)
-          [%e %this q.u.mez]
-      ::
-        %got
-          =:  hen  (~(got by pox) p.u.mez)
-              pox  (~(del by pox) p.u.mez)
-            ==
-          (give-thou q.u.mez)
       ==
     ==
   ::
