@@ -2,14 +2,14 @@
 ::::  /hook/gate/solid/gun
   ::
 /?  314
-/-  *console
+/-  *sole
 ::
 ::::
   !:
 |=  $:  [now=@da eny=@uvI bec=beak]
         [~ ~]
     ==
-%+  console-so  %noun
+%+  sole-so  %noun
 =+  top=`path`/(scot %p p.bec)/arvo/(scot %da now)
 =+  pax=`path`(weld top `path`[%hoon ~])
 ~&  %solid-start
