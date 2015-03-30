@@ -49,8 +49,6 @@
       [%house (map span (pair posture cord))]           ::  station set
   ==                                                    ::
 ++  speech                                              ::  narrative action
-  ::  XX  unify %own and %say to %lin
-  ::
   $%  [%lan p=span q=@t]                                ::  local announce
       [%exp p=@t]                                       ::  hoon line
       [%non ~]                                          ::  no content (yo)
@@ -59,7 +57,7 @@
       ::  [%inv p=station]                              ::  invite to station
       [%ire p=serial q=speech]                          ::  in-reply-to
       [%lin p=? q=@t]                                   ::  no=@, text line
-      [%mor p=(list speech)]                            ::  XX deleteme
+      [%mor p=(list speech)]                            ::  multiplex
   ==                                                    ::
 ++  serial     ,@uvH                                    ::  unique identity
 ++  partner    (each station passport)                  ::  interlocutor
