@@ -615,20 +615,27 @@
 ++  poke-dill-belt
   |=  [ost=bone her=ship bet=dill-belt]
   ^-  [(list move) _+>]
+  =+  yog=(~(get by bin) ost)
+  ?~  yog
+    ~&  [%sole-poke-stale ost]
+    [~ +>.$]
   =<  se-abet
   =<  se-view
-  (~(se-belt se [[ost %give %nice ~]~ ~] [her ost] (~(got by bin) ost)) bet)
+  (~(se-belt se [[ost %give %nice ~]~ ~] [her ost] u.yog) bet)
 ::
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
-  ~?  =(~ (~(get by bin) ost))  [%sole-pour ost pax]
+  =+  yog=(~(get by bin) ost)
+  ?~  yog
+    ~&  [%sole-pour-stale ost pax]
+    [~ +>.$] 
   =+  sih=((hard sign) sih)
   ?>  ?=([@ @ @ ~] pax)
   =<  se-abet
   =<  se-view
   =+  gyl=[(slav %p i.t.pax) i.t.t.pax]
-  (~(se-pour se [~ ~] [(slav %p i.pax) ost] (~(got by bin) ost)) gyl +.sih)
+  (~(se-pour se [~ ~] [(slav %p i.pax) ost] u.yog) gyl +.sih)
 ::
 ++  pull
   |=  ost=bone
