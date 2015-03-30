@@ -2,8 +2,8 @@
 ::::  /hook/core/radio/app
   ::
 /?  314
-/-  *radio, *twitter
-/+  radio
+/-  *radio, *twitter, *sole
+/+  radio, sole
 ::
 ::::
   ::
@@ -19,6 +19,7 @@
           general=(set bone)                            ::  meta-subscribe
           outbox=(pair ,@ud (map ,@ud thought))         ::  urbit outbox
           folks=(map ship human)                        ::  human identities
+          shells=(map bone shell)                       ::  interaction state
       ==                                                ::
     ++  house-0                                         ::  legacy state
       %+  map  path                                     ::
@@ -43,13 +44,20 @@
           viewers=(set bone)                            ::  presence followers
           owners=(set bone)                             ::  config followers
       ==                                                ::
+    ++  shell                                           ::  console session
+      $:  her=ship                                      ::  client identity
+          man=span                                      ::  mailbox
+          say=sole-share                                ::  console state
+          active=(unit (set partner))                   ::  active targets
+          passive=(set partner)                         ::  passive targets
+      ==                                                ::
     ++  river  (pair point point)                       ::  stream definition
     ++  point                                           ::  stream endpoint
       $%  [%ud p=@ud]                                   ::  by number
           [%da p=@da]                                   ::  by date
       ==                                                ::
     ++  gift                                            ::  result
-      $%  [%rush %radio-report report]                  ::  refresh
+      $%  [%rush salt]                                  ::  refresh
           [%mean ares]                                  ::  cancel
           [%nice ~]                                     ::  accept
       ==                                                ::
@@ -65,19 +73,20 @@
           $:  %t                                        ::
       $%  [%wake ~]                                     ::  timer wakeup
       ==  ==  ==                                        ::
-    ++  silt
+    ++  salt                                            ::  output rush
+      $%  [%radio-report p=report]                      ::
+          [%sole-effect p=sole-effect]                  ::
+      ==                                                ::
+    ++  silt                                            ::  input rush
       $%  [%radio-report p=report]                      ::  refresh
-          [%twit-stat p=twit-stat]                      ::  tweet reciept
-          [%twit-feed p=(list twit-stat)]               ::  tweet reciept
-      ==
+          [%twit-stat p=twit-stat]                      ::  tweet receipt
+          [%twit-feed p=(list twit-stat)]               ::  tweet receipt
+      ==                                                ::
     ++  move  ,[p=bone q=(mold note gift)]              ::  all actions
     ++  hapt  ,[p=ship q=path]                          ::  app instance
     ++  note                                            ::  requests
       $%  $:  %c                                        ::
       $%  [%info p=@p q=@tas r=nori]                    ::
-          ==  ==                                        ::
-          $:  %e                                        ::  through %eyre
-      $%  [%them p=(unit hiss)]                         ::  HTTP request
           ==  ==                                        ::
           $:  %g                                        ::  network
       $%  [%mess p=hapt q=ship r=cage]                  ::  message
@@ -112,10 +121,6 @@
     ~&  [%ra-evil msg]
     (ra-emit ost %give %mean ~ msg ~)
     ::  (ra-emit ost %give %nice ~)
-  ::
-  ++  ra-hiss                                           ::  emit http request
-    |=  [pax=path hiz=hiss]
-    (ra-emit ost %pass pax %e %them ~ hiz)
   ::
   ++  ra-house                                          ::  emit partners
     |=  ost=bone
@@ -571,8 +576,9 @@
         (pa-sauce ost [[%mean ~ %radio-malformed ~] ~])
       (pa-start u.ruv)
     ::
-    ++  pa-refresh                                      ::  update stream
+    ++  pa-refresh                                      ::  update to guests
       |=  [num=@ud gam=telegram]
+      ^+  +>
       =+  ^=  moy
           |-  ^-  (pair (list bone) (list move))
           ?~  guests  [~ ~]
@@ -636,10 +642,271 @@
       (pa-refresh num gam)
     --
   --
+::
+++  sigh                                                ::  assemble label
+  |=  [len=@ud pre=tape yiz=cord]
+  %+  welp  pre
+  ^-  tape
+  =+  nez=(trip yiz)
+  ?>  (gth len (lent pre))
+  =.  len  (sub len (lent pre))
+  ?.  (gth (lent nez) len)  nez
+  (welp (scag (dec len) nez) ">")  
+::
+++  sn                                                  ::  station render core
+  |_  one=station 
+  ++  sn-best                                           ::  best to show
+    |=  two=station
+    ^-  ?
+    ?:  =(our.hid p.one)  %|
+    ?:  =(our.hid p.two)  %&
+    (lth p.one p.two)
+  ::
+  ++  sn-curt                                           ::  render name in 14
+    |=  mup=?
+    ^-  tape
+    =+  ^=  syl
+        |=  [len=@ud sez=(list cord)]
+        ?>  !=(0 len)
+        |-  ^-  tape
+        ?~  sez  ~
+        =+  nez=(trip i.sez)
+        =+  nel=(lent nez)
+        ?:  (gte nel len)
+          (welp (scag (dec len) nez) ">")
+        (welp nez $(sez t.sez))
+    ::
+    ?:  =(p.one our.hid)
+      (sigh 14 ?:(mup "*%" "%") q.one)
+    ?:  =(p.one (sein our.hid))
+      (sigh 14 ?:(mup "*/" "/") q.one)
+    =+  rac=(clan p.one) 
+    =+  raw=(scow %p p.one)
+    =.  raw  ?.(mup raw ['*' (slag 2 raw)])
+    ?-    rac
+        %czar  (weld "          " raw)
+        %king  (weld "       " raw)
+        %duke  raw
+        ?(%earl %pawn)  
+      ;:  welp
+        (scag 7 raw)
+        ?:(=(%earl rac) "^" "_")
+        (scag 6 (slag 14 raw))
+      ==
+    ==
+  ::
+  ++  sn-phat                                           ::  render accurately
+    ^-  tape
+    ?:  =(p.one our.hid)
+      ['%' (trip q.one)]
+    ?:  =(p.one (sein our.hid))
+      ['/' (trip q.one)]
+    :(welp (scow %p p.one) "/" (trip q.one))
+  --
+::
+++  ta                                                  ::  partner core
+  |_  one=partner
+  ++  ta-best                                           ::  more important
+    |=  two=partner
+    =-  ?:(bet one two)
+    ^=  bet  
+    |-  ^-  ?
+    ?-    -.one
+        %&  
+      ?-  -.two
+        %|  %&
+        %&  (~(sn-best sn p.one) p.two)
+      ==
+    ::
+        %|
+      ?-  -.two
+        %&  %|
+        %|  ?:  =(-.p.two -.p.one)
+              (lth (mug +.p.one) (mug +.p.two))
+            (lth -.p.two -.p.one)
+      ==
+    ==
+  ++  ta-show                                           ::  render partner
+    |=  moy=(unit ,?)
+    ^-  tape
+    ?-    -.one
+        %&  
+      ?~  moy 
+        ~(sn-phat sn p.one)
+      (~(sn-curt sn p.one) u.moy)
+    ::
+        %|
+      =+  ^=  pre  ^-  tape
+          ?-  -.p.one
+            %twitter  "@t:"
+          ==
+      ?~  moy
+        (weld pre (trip p.p.one))
+      =.  pre  ?.(=(& u.moy) pre ['*' pre])
+      (sigh 14 pre p.p.one)
+    ==
+  --
+::
+++  te                                                  ::  audience renderer
+  |_  [man=span aud=audience]
+  ++  te-best  ^-  (unit partner)
+    ?~  aud  ~
+    :-  ~
+    |-  ^-  partner
+    =+  lef=`(unit partner)`te-best(aud l.aud)
+    =+  rit=`(unit partner)`te-best(aud r.aud)
+    =.  p.n.aud  ?~(lef p.n.aud (~(ta-best ta p.n.aud) u.lef))
+    =.  p.n.aud  ?~(rit p.n.aud (~(ta-best ta p.n.aud) u.rit))
+    p.n.aud
+  ::
+  ++  te-deaf  ^+  .                                    ::  except for self
+    .(aud (~(del by aud) `partner`[%& our.hid man]))
+  ::
+  ++  te-maud  ^-  ?                                    ::  multiple audience
+    =.  .  te-deaf
+    ?~  aud  %&
+    |(!=(~ l.aud) !=(~ r.aud))
+  ::
+  ++  te-prom                                           ::  render targets
+    =.  .  te-deaf
+    =+  bez=(need te-best)
+    =+  all=(~(tap by (~(del by aud) bez)))
+    %+  weld  (~(ta-show ta bez) ~)
+    |-  ^-  tape
+    ?~  all  ~
+    ;:  welp
+      " "
+      (~(ta-show ta p.i.all) ~)
+      $(all t.all)
+    ==
+  ::
+  ++  te-whom                                           ::  render sender
+    (~(ta-show ta (need te-best)) ~ te-maud)
+  --
+::
+++  tr                                                  ::  telegram renderer
+  |_  $:  man=span
+          who=ship
+          sen=serial
+          aud=audience
+          wen=@da
+          bou=(set flavor)
+          sep=speech
+      ==
+  ::
+  ++  tr-line  ^-  tape                                 ::  one-line print
+    =+  txt=tr-text
+    ?~  txt  ~ 
+    (welp tr-prof txt)
+  ::
+  ++  tr-text  ^-  tape
+    !!
+  ::
+  ++  tr-prof  ^-  tape                                 ::  prefix 
+    =+  dul=[%& our.hid man]
+    ?:  =(who our.hid)
+      :*  '<'
+          ?:((~(has in aud) dul) '+' '-')
+          (~(sn-curt sn [who (main who)]) |)
+      ==
+    :*  '>'
+        ?:((~(has in aud) dul) '+' '-') 
+        ~(te-whom te man aud)
+    ==
+  -- 
+++  sh                                                  ::  shell i/o
+  |_  $:  $:  ost=bone 
+              moves=(list move) 
+              commands=(list command)
+          ==
+          she=shell
+      ==
+  ++  sh-abed  [(flop moves) +>]                        ::  final reduce
+  ++  sh-abet  sh-abed:sh-axel:sh-amor                  ::  resolve and keep
+  ++  sh-amok  sh-abed:sh-axel:sh-aver                  ::  resolve and lose
+  ++  sh-amor  %_(. shells (~(put by shells) ost she))  ::  accept shell
+  ++  sh-aver  %_(. shells (~(del by shells) ost))      ::  abandon shell 
+  ++  sh-axel                                           ::  apply commands
+    =+  :*  rah=~(. ra ost *(list move))
+            coz=(flop commands)
+        ==
+    |-  ^+  +>
+    ?~  coz
+      =^  moz  +>+>.$  ra-abet:rah
+      (sh-axon(commands ~) moz)
+    $(coz t.coz, rah (ra-apply:rah her.she i.coz))
+  ::
+  ++  sh-axon                                           ::  capture reports
+    |=  moz=(list move)
+    ^+  +>
+    ?~  moz  +>
+    %=    $
+        moz  t.moz
+        +>
+      ?.  ?&  (~(has by shells) `bone`p.i.moz)
+              ?=([%give %rush %radio-report *] q.i.moz)
+          ==  
+        +>(moves [i.moz moves])
+      (sh-repo `report`+>+.q.i.moz)
+    ==
+  ::
+  ++  sh-fact                                           ::  send console effect
+    |=  fec=sole-effect
+    ^+  +>
+    +>(moves :_(moves [ost %give %rush %sole-effect fec]))
+  ::
+  ++  sh-peep                                           ::  subscribe to
+    |=  pax=path
+    =^  moz  +>+>.$  
+        ra-abet:(~(ra-subscribe ra ost ~) her.she pax)
+    (sh-axon moz)
+  ::
+  ++  sh-peer                                           ::  subscribe shell
+    sh-prod:(sh-peep:(sh-peep ~) [%afx man.she ~])
+  ::
+  ++  sh-prod                                           ::  show prompt
+    ^+  .
+    !!
+  ::
+  ++  sh-rend                                           ::  print on one line
+    |=  gam=telegram
+    (sh-fact %txt ~(tr-line tr man.she gam))
+  ::
+  ++  sh-repo-grams                                     ::  apply telegrams
+    |=  [num=@ud gaz=(list telegram)]
+    ^+  +>
+    !!
+  ::
+  ++  sh-repo                                           ::  apply report
+    |=  rad=report
+    ^+  +>
+    ?-  -.rad
+      %house   ~&  [%sh-repo-house rad]
+               +>
+      %grams   ~&  [%sh-repo-grams +.rad]
+               +>
+      %config  ~&  [%sh-repo-config +.rad]
+               +>
+      %group   ~&  [%sh-group +.rad]
+               +>
+    ==
+  ::
+  ++  sh-sole                                 
+    |=  act=sole-action
+    ^+  +>
+    !!
+  --
+::
 ++  peer
   |=  [ost=bone her=ship pax=path]
   ^-  [(list move) _+>]
-  ::  ~&  [%radio-peer ost her pax]
+  ?:  ?=([%sole *] pax)
+    ~&  [%radio-peer-sole ost her pax]
+    ?<  (~(has by shells) ost)
+    ?>  =(our.hid her)
+    =+  man=`span`?~(t.pax (main her) ?>(?=(~ t.t.pax) i.t.pax))
+    sh-abet:~(sh-peer sh [ost ~ ~] `shell`[her man *sole-share ~ ~])
+  ::  ~&  [%radio-peer-data ost her pax]
   ra-abet:(~(ra-subscribe ra ost ~) her pax)
 ::
 ++  poke-radio-command
@@ -648,6 +915,10 @@
   ::  ~&  [%radio-poke-command her cod]
   =^  moz  +>.$  ra-abet:(~(ra-apply ra ost ~) her cod)
   [moz +>.$]
+::
+++  poke-sole-action
+  |=  [ost=bone her=ship act=sole-action]
+  sh-abet:(~(sh-sole sh [ost ~ ~] (~(got by shells) ost)) act)
 ::
 ++  pour
   |=  [ost=bone pax=path sih=*]
@@ -688,6 +959,7 @@
   |=  ost=bone
   ^-  [(list move) _+>]
   ::  ~&  [%radio-pull `*`ost]
+  =.  shells  (~(del by shells) ost)
   ra-abet:ra-ever:~(ra-cancel ra ost ~)
 ::
 ++  poke-bit
@@ -723,6 +995,7 @@
           general=~
           outbox=[0 ~]
           folks=~
+          shells=~
       ==
   ^-  (map span story)
   =-  %-  ~(run by -)
