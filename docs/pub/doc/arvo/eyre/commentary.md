@@ -14,7 +14,9 @@ browser to server to browser and back.
 An http request for `http://sampel-sipnym.urbit.org/tic` will be [redirected](dns)
 to the `%eyre` on ~sampel-sipnym, and come in as a `%this` kiss.
 
-From arvo, requests
+From arvo, requests enter `++call`, which after some type reification are passed
+along to `++apex:ye`. In the case of a `%this` kiss, its components are parsed
+and handed off to `++handle`.
 
 ## Apendix A: DNS[#dns]
 

@@ -2136,6 +2136,16 @@
      (cold 63 (just '/'))
    ==
 ::
+::  .=  ~[p=~.ack q=~.~sarnel r=~..y]
+::  (dray ~[p=%tas q=%p r=%f] %ack ~sarnel &)
+++  dray                                                ::  load tuple into path
+  =-  |*  [a=[@tas (pole ,@tas)] b=*]  ^-  (paf a)
+      =>  .(b `(tup a)`b)
+      ?~  +.a  [(scot -.a b) ~]
+      [(scot -.a -.b) `(paf +.a)`(..$ +.a +.b)]
+  :-  paf=|*(a=(pole) ?~(a ,~ ,[(odo:raid -.a(. %ta)) (..$ +.a)]))
+  tup=|*([a=@tas b=(pole ,@tas)] =+(c=(odo:raid a) ?~(b c ,[c (..$ b)])))
+::
 ::  .=  [p=%ack q=~sarnel r=&]
 ::  (raid /ack/~sarnel/.y p=%tas q=%p r=%f ~)
 ++  raid                                                ::  demand path odors
