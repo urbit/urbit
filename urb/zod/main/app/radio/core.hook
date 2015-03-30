@@ -748,35 +748,35 @@
   --
 ::
 ++  te                                                  ::  audience renderer
-  |_  [man=span aud=audience]
+  |_  [man=span lix=(set partner)]
   ++  te-best  ^-  (unit partner)
-    ?~  aud  ~
+    ?~  lix  ~
     :-  ~
     |-  ^-  partner
-    =+  lef=`(unit partner)`te-best(aud l.aud)
-    =+  rit=`(unit partner)`te-best(aud r.aud)
-    =.  p.n.aud  ?~(lef p.n.aud (~(ta-best ta p.n.aud) u.lef))
-    =.  p.n.aud  ?~(rit p.n.aud (~(ta-best ta p.n.aud) u.rit))
-    p.n.aud
+    =+  lef=`(unit partner)`te-best(lix l.lix)
+    =+  rit=`(unit partner)`te-best(lix r.lix)
+    =.  n.lix  ?~(lef n.lix (~(ta-best ta n.lix) u.lef))
+    =.  n.lix  ?~(rit n.lix (~(ta-best ta n.lix) u.rit))
+    n.lix
   ::
   ++  te-deaf  ^+  .                                    ::  except for self
-    .(aud (~(del by aud) `partner`[%& our.hid man]))
+    .(lix (~(del in lix) `partner`[%& our.hid man]))
   ::
   ++  te-maud  ^-  ?                                    ::  multiple audience
     =.  .  te-deaf
-    ?~  aud  %&
-    |(!=(~ l.aud) !=(~ r.aud))
+    ?~  lix  %&
+    |(!=(~ l.lix) !=(~ r.lix))
   ::
   ++  te-prom                                           ::  render targets
     =.  .  te-deaf
     =+  bez=(need te-best)
-    =+  all=(~(tap by (~(del by aud) bez)))
+    =+  all=(~(tap in (~(del in lix) bez)))
     %+  weld  (~(ta-show ta bez) ~)
     |-  ^-  tape
     ?~  all  ~
     ;:  welp
       " "
-      (~(ta-show ta p.i.all) ~)
+      (~(ta-show ta i.all) ~)
       $(all t.all)
     ==
   ::
@@ -799,19 +799,28 @@
     ?~  txt  ~ 
     (welp tr-prof txt)
   ::
-  ++  tr-text  ^-  tape
-    !!
+  ++  tr-pals  ^-  (set partner)                        ::  audience to set
+    %-  ~(gas in *(set partner))
+    %+  turn  (~(tap by aud))
+    |=([a=partner *] a)
   ::
   ++  tr-prof  ^-  tape                                 ::  prefix 
     =+  dul=[%& our.hid man]
     ?:  =(who our.hid)
       :*  '<'
-          ?:((~(has in aud) dul) '+' '-')
+          ?:((~(has by aud) dul) '+' '-')
           (~(sn-curt sn [who (main who)]) |)
       ==
     :*  '>'
-        ?:((~(has in aud) dul) '+' '-') 
-        ~(te-whom te man aud)
+        ?:((~(has by aud) dul) '+' '-') 
+        ~(te-whom te man tr-pals)
+    ==
+  ::
+  ++  tr-text  ^-  tape
+    ?+  -.sep  ""
+      %lin  ?:  p.sep
+              (weld ": " (trip q.sep))
+            (weld " " (trip q.sep))
     ==
   -- 
 ++  sh                                                  ::  shell i/o
@@ -866,7 +875,15 @@
   ::
   ++  sh-prod                                           ::  show prompt
     ^+  .
-    !!
+    %+  sh-fact  %pro
+    :+  &  %radio-line
+    ^-  tape
+    =+  ^=  rew  ^-  (pair (pair ,@t ,@t) (set partner))
+        ?~  active.she
+          [['(' ')'] passive.she]
+        [['[' ']'] u.active.she]
+    =+  por=~(te-prom te man.she q.rew)
+    (weld `tape`[p.p.rew por] `tape`[q.p.rew ~])
   ::
   ++  sh-rend                                           ::  print on one line
     |=  gam=telegram
@@ -894,7 +911,8 @@
   ++  sh-sole                                 
     |=  act=sole-action
     ^+  +>
-    !!
+    ~&  [%sh-sole-act act]
+    +>
   --
 ::
 ++  peer
