@@ -597,8 +597,9 @@ generating html, it's a `.hook`, and our source file is just a `.hoon`.
 In order to find our file one level up we need two `%%` to get to
 `/pub/fab/guide/exercise/9/`. Adding `lib` resolve to our neighboring
 file. You can read more about how `%clay` paths are parsed in the
-[`%clay` overview](link). It's also pretty easy to try them out using
-`:cd` and `:ls` in your `%arvo` terminal.
+[`%clay` overview](link). It's also pretty easy to try them out using 
+`/=main=`, `/=try`, `/try/a/b/c/d`, etc.
+and `:ls` in your `%arvo` terminal.
 
 <hr>
 </hr>
