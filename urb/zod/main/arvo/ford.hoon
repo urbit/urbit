@@ -126,6 +126,7 @@
 ++  task                                                ::  problem in progress
   $:  nah=duct                                          ::  cause
       kas=silk                                          ::  problem
+      keg=(map (pair term beam) cage)                   ::  block results
       kig=[p=@ud q=(map ,@ud ,[p=care q=beam])]         ::  blocks
   ==                                                    ::
 --                                                      ::
@@ -226,13 +227,13 @@
     =:  p.tad.bay  +(p.tad.bay)
         dym.bay    (~(put by dym.bay) hen num)
       ==
-    ~(exec zo [num `task`[hen u.kus 0 ~]])
+    ~(exec zo [num `task`[hen u.kus ~ 0 ~]])
   ::
   ++  apel                                              ::  stateless
     |=  [hen=duct kus=silk]
     ^-  (unit gift)
     =+  num=0                                           ::  XX
-    ~(exit zo [num `task`[hen kus 0 ~]])
+    ~(exit zo [num `task`[hen kus ~ 0 ~]])
   ::
   ++  axon                                              ::  take
     |=  [num=@ud tik=@ud sih=sign]
@@ -956,7 +957,7 @@
       ^-  (bolt vase)
       %+  cope  (mail cof p.vax gen)
       |=  [cof=cafe typ=type fol=nock]
-      %+  (coup cof)  (mock [q.vax fol] (mole (slod ska)))
+      %+  (coup cof)  (mock [q.vax fol] (mole (slod (save ska))))
       |=(val=* `vase`[typ val])
     ::
     ++  make                                            ::  reduce silk
@@ -1114,7 +1115,7 @@
       ^-  (bolt vase)
       %+  cope  (malt cof p.gat p.sam)
       |=  [cof=cafe typ=type]
-      %+  (coup cof)  (mong [q.gat q.sam] (mole (slod ska)))
+      %+  (coup cof)  (mong [q.gat q.sam] (mole (slod (save ska))))
       |=(val=* `vase`[typ val])
     ::
     ++  meow                                            ::  assemble
@@ -1474,10 +1475,21 @@
       |=  [tik=@ud rot=riot]
       ^+  ..zo
       ?>  (~(has by q.kig) tik)
+      =+  `[ren=care bem=beam]`(~(got by q.kig) tik)
       ?~  rot
-        =+  `[ren=care bem=beam]`(~(got by q.kig) tik)
         amok:(expo [%made %| (smyt ren (tope bem)) ~])
-      exec(q.kig (~(del by q.kig) tik))
+      =+  (cat 3 'c' ren)
+      exec(q.kig (~(del by q.kig) tik), keg (~(put by keg) [- bem] r.u.rot))
+    ::
+    ++  save
+      |=  sky=sled
+      ^-  sled
+      |=  [(unit (set monk)) tem=term bem=beam]
+      ^-  (unit (unit cage))
+      =+  (~(get by keg) tem bem)
+      ?^  -
+        ``u.-
+      (sky +<.$)
     --
   --
 ::

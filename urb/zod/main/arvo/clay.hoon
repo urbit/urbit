@@ -197,12 +197,13 @@
   ::
   ++  aver                                            ::  read
     |=  mun=mood
-    ^-  (unit (unit cage))
+    ^-  (unit (unit (each cage silk)))
     ?:  &(=(p.mun %u) !=(p.q.mun now))                ::  prevent bad things
       ~&  [%clay-fail p.q.mun %now now]
       !!
     =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
-    ?^  ezy  ezy
+    ?^  ezy
+      `(bind u.ezy (cury same %&))
     =+  nao=(case-to-aeon:ze q.mun)
     ::  ~&  [%aver-mun nao [%from syd lim q.mun]]
     ?~(nao ~ (read-at-aeon:ze u.nao mun))
@@ -229,7 +230,7 @@
     [?^(q.i.p.tab !! q.i.p.tab) (slot 5 q.tab)]
   ::
   ++  balk                                          ::  read and send
-    |=  [hen=duct cay=(unit cage) mun=mood]
+    |=  [hen=duct cay=(unit (each cage silk)) mun=mood]
     ^+  +>
     ?~  cay  (blub hen)
     (blab hen mun u.cay)
@@ -243,14 +244,20 @@
     %_(+> tag :_(tag [hen /tyme %t %rest tym]))
   ::
   ++  blab                                            ::  ship result
-    |=  [hen=duct mun=mood dat=cage]
+    |=  [hen=duct mun=mood dat=(each cage silk)]
     ^+  +>
-    +>(byn [[hen ~ [p.mun q.mun syd] r.mun dat] byn])
+    ?:  ?=(%& -.dat)
+      +>.$(byn [[hen ~ [p.mun q.mun syd] r.mun p.dat] byn])
+    =-  +>.$(tag [- tag])
+    :*  hen  [%blab p.mun (scot q.mun) syd r.mun]
+        %f  %exec  who  [who syd q.mun]  ~  p.dat
+    ==
   ::
   ++  bleb                                            ::  ship sequence
     |=  [hen=duct ins=@ud hip=(unit (pair aeon aeon))]
     ^+  +>
     %^  blab  hen  [%w [%ud ins] ~]
+    :-  %&
     ?~  hip
       [%null [%atom %n] ~]
     [%nako !>((make-nako:ze u.hip))]
@@ -888,7 +895,7 @@
         %=    $
             xiq  t.xiq
             ..wake  ?~  u.cas  (blub p.i.xiq)
-                    (blab p.i.xiq p.q.i.xiq u.u.cas)
+                    (blab p.i.xiq p.q.i.xiq %& u.u.cas)
         ==
       =+  nao=(case-to-aeon:ze q.p.q.i.xiq)
       ?~  nao  $(xiq t.xiq, xaq [i.xiq xaq])
@@ -904,7 +911,6 @@
       ?~  nab
         $(xiq t.xiq, xaq [i.xiq xaq])
       =+  huy=(case-to-aeon:ze q.mot)
-      ~&  >>  [%shipping p.i.xiq [p q r]:mot]
       ?~  huy
         =+  ptr=[%ud +(let.dom)]
         %=  $
@@ -948,7 +954,9 @@
       =+  bol=(~(get by hat) pax)
       |-  ^-  silk
       ?:  =([~ lob] bol)
-        [%done ~ (need (read %x [%ud let.dom] pax))]
+        =+  (need (need (read-x let.dom pax)))
+        ?>  ?=(%& -<)
+        [%done ~ p.-]
       =+  bol=(~(got by lat.ran) lob)
       ?-  -.bol
         %direct     [%volt ~ q.bol]
@@ -1243,19 +1251,21 @@
     ::
     ++  read-x
       |=  [yon=aeon pax=path]
-      ^-  (unit (unit cage))
+      ^-  (unit (unit (each cage silk)))
       =+  tak=(~(get by hit.dom) yon)
       ?~  tak
         ~
+      ?:  =(yon let.dom)
+        `(bind q.ank:(descend-path:(zu ank.dom) pax) (corl (cury same %&) tail))
       =+  yak=(tako-to-yaki u.tak)
       =+  lob=(~(get by q.yak) pax)
       ?~  lob
         [~ ~]
       =+  mar=(lobe-to-mark u.lob)
       ?.  ?=(?(%hoon %hook) mar)
-        ~
-      :^  ~  ~  mar
-      :-  [%atom %t]
+        [~ ~ %| (lobe-to-silk pax u.lob)]
+      :^  ~  %&  ~
+      :+  mar  [%atom %t]
       |-  ^-  @t                      ::  (urge cord) would be faster
       =+  bol=(lobe-to-blob u.lob)
       ?:  ?=(%direct -.bol)
@@ -1293,20 +1303,20 @@
     ::
     ++  read-at-aeon                                    ::    read-at-aeon:ze
       |=  [yon=aeon mun=mood]                           ::  seek and read
-      ^-  (unit (unit cage))
+      ^-  (unit (unit (each cage silk)))
       ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))              ::  NB only for speed
-        ?^(r.mun [~ ~] [~ ~ %aeon !>(yon)])
+        ?^(r.mun [~ ~] [~ ~ %& %aeon !>(yon)])
       ?:  ?=(%x p.mun)
         (read-x yon r.mun)
       ?:  ?=(%y p.mun)
-        (read-y yon r.mun)
-      %+  biff
+        (bind (read-y yon r.mun) (curr bind (cury same %&)))
+      %+  bind
         (rewind yon)
       |=  a=(unit ,_+>.$)
-      ^-  (unit (unit cage))
+      ^-  (unit (each cage silk))
       ?~  a 
-        [~ ~]
-      `(read:u.a mun)
+        ~
+      `(unit (each cage silk))`(bind (read:u.a mun) (cury same %&))
     ::
     ++  rewind                                          ::    rewind:ze
       |=  yon=aeon                                      ::  rewind to aeon
@@ -1877,8 +1887,8 @@
             :-  [%done ~ %path !>(a)]
             ?.  b
               [%done ~ %null !>(~)]
-            :^  %cast  %mime  %done
-            `(need (read:zez %x [%ud let.dom] a))
+            :+  %cast  %mime
+            (lobe-to-silk:zez a (~(got by q.new.dat) a))
         ==
       ::
       ++  ergoed
@@ -2194,11 +2204,15 @@
     [~ ~]
   =+  run=((soft care) ren)
   ?~  run  [~ ~]
-  %.  [u.run u.luk tyl]
-  =<  aver
-  ?:  got
-    (di:(un his now ~ ruf) syd)
-  (do now ~ [his his] syd ruf)
+  =+  %.  [u.run u.luk tyl]
+      =<  aver
+      ?:  got
+        (di:(un his now ~ ruf) syd)
+      (do now ~ [his his] syd ruf)
+  ?~  -               -
+  ?~  u.-             -
+  ?:  ?=(%& -.u.u.-)  ``p.u.u.-
+  ~
 ::
 ++  stay  [%0 ruf]
 ++  take                                              ::  accept response
@@ -2239,6 +2253,19 @@
         %writ
       =+  nex=let:(~(got by sor.ruf) our syd her sud)
       [[hen %pass tea %c %merg our syd her sud %mate]~ ..^$]
+    ==
+  ?:  ?=([%blab care @ @ *] tea)
+    ?>  ?=(%made +<.q.hin)
+    ?:  ?=(%| -.p.q.hin)  
+      ~|  %blab-fail
+      ~>  %mean.|.(p.p.q.hin)         ::  interpolate ford fail into stack trace
+      !!
+    ?^  p.q.p.p.q.hin
+      ~|(%bad-marc !!)
+    :_  ..^$  :_  ~
+    :*  hen  %give  %writ  ~
+        `[care case @tas]`[i.t.tea ((hard case) +>:(slay i.t.t.tea)) i.t.t.t.tea]
+        `path`t.t.t.t.tea  `cage`q.p.p.q.hin
     ==
   ?-    -.+.q.hin
       %crud

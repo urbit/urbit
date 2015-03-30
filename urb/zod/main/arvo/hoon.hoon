@@ -1764,6 +1764,16 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cI, almost macros            ::
 ::
+++  same  |*(* +<)                                      ::  identity
+++  head  |*(^ +<-)                                     ::  get head
+++  tail  |*(^ +<+)                                     ::  get head
+++  cork  |*([a=_,* b=gate] (corl b a))                 ::  compose forward
+++  corl                                                ::  compose backwards
+  |*  [a=gate b=_,*]
+  =<  +:|.((a (b)))      ::  type check
+  |*  c=_+<.b
+  (a (b c))
+::
 ++  cury                                                ::  curry left
   |*  [a=_|=(^ **) b=*]
   |*  c=_+<+.a
@@ -1773,14 +1783,6 @@
   |*  [a=_|=(^ **) c=*]
   |*  b=_+<+.a
   (a b c)
-::
-++  cork  |*([a=_,* b=gate] (corl b a))                 ::  compose forward
-::
-++  corl                                                ::  compose backwards
-  |*  [a=gate b=_,*]
-  =<  +:|.((a (b)))      ::  type check
-  |*  c=_+<.b
-  (a (b c))
 ::
 ++  hard                                                ::  force coerce to type
   |*  han=$+(* *)
