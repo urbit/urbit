@@ -710,7 +710,7 @@
     ::
     ++  grab-body
       |*  a=fist:jo  ^+  *a
-      ?.  &(?=(%post mef) ?=(^ bod))
+      ?.  &(?=(^ bod) ?=(?(%post %put %delt) mef))
         ~
       %.(q.u.bod ;~(biff poja a))
     ::
@@ -785,7 +785,6 @@
         :-  ~  ^-  perk
         =*  pef  i.t.q.pok
         =+  but=t.t.q.pok                 ::  XX  =*
-        ~|  [pef %bad-path but quy]
         ?+    pef  ~|(pfix-lost/`path`/~/[pef] !!)
             %debug  ;;(perk [%bugs but])
             %away  [%away ~]
@@ -841,21 +840,18 @@
               [~ %json]
             ?+    mef  ~|(bad-meth/mef !!)
                 %get   [%json ~]
-                %post
-              ?+    quy  ~|(bad-quy/'"PUT" or "DELETE"' !!)
-                  [[%'PUT' ~] ~]
-                =+  paz=(ot ship/(su fed:ag) code/so ~):jo
-                ~|  parsing/bod
-                [%try (need-body paz)]
-              ::
-                  [[%'DELETE' ~] ~]
-                ~|  parsing/bod
-                =+  jon=(need (poja q:(need bod)))
-                ?>  ?=(%o -.jon)
-                =+  sip=(~(get by p.jon) %ship)
-                [%del ?~(sip ~ [~ (need ((su:jo fed:ag) u.sip))])]
-          ==  ==
+                %put
+              ~|  parsing/bod
+              [%try (need-body (ot ship/(su fed:ag) code/so ~):jo)]
+            ::
+                %delt
+              ~|  parsing/bod
+              =+  jon=(need (poja q:(need bod)))
+              ?>  ?=(%o -.jon)
+              =+  sip=(~(get by p.jon) %ship)
+              [%del ?~(sip ~ [~ (need ((su:jo fed:ag) u.sip))])]
         ==  ==
+        ==
       --
     ::
     ++  process
@@ -954,7 +950,7 @@
             pez
           pez(aut.s.p (~(put ju aut.s.p.pez) %$ (scot %p him.ham)))
         ?.  =(our him.ham)
-          [%| ((teba foreign-auth:for-client) him.ham hat rem.ham quy)]
+          [%| ((teba foreign-auth.yac) him.ham hat rem.ham quy)]
         (show-login-page ~)
       ::
           %try
@@ -987,11 +983,11 @@
       ^+  ya
       =+  pef=cookie-prefix
       =+  lig=(session-from-cookies pef maf)
-      ?^  lig
-        ~|  bad-cookie/u.lig
-        =+  cyz=(~(got by wup) u.lig)
-        ~(. ya u.lig cyz(cug ~))
-      (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
+      ?~  lig
+        (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
+      ~|  bad-cookie/u.lig
+      =+  cyz=(~(got by wup) u.lig)
+      ~(. ya u.lig cyz(cug ~))
     ::
     ++  new-ya  |=(ses=hole ~(. ya ses (new-cyst ses)))
     ++  new-cyst
