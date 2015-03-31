@@ -1255,7 +1255,7 @@
       =+  tak=(~(get by hit.dom) yon)
       ?~  tak
         ~
-      ?:  =(yon let.dom)
+      ?:  &(?=(~ ref) =(yon let.dom))
         `(bind q.ank:(descend-path:(zu ank.dom) pax) (corl (cury same %&) tail))
       =+  yak=(tako-to-yaki u.tak)
       =+  lob=(~(get by q.yak) pax)
@@ -1264,7 +1264,7 @@
       =+  mar=(lobe-to-mark u.lob)
       ?.  ?=(?(%hoon %hook) mar)
         [~ ~ %| (lobe-to-silk pax u.lob)]
-      :^  ~  %&  ~
+      :^  ~  ~  %&
       :+  mar  [%atom %t]
       |-  ^-  @t                      ::  (urge cord) would be faster
       =+  bol=(lobe-to-blob u.lob)
