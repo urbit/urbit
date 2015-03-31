@@ -869,7 +869,7 @@
           ?(%beam %spur)
         =+  ext=(fall p.pok %urb)
         =+  bem=?-(-.hem %beam p.hem, %spur [root-beak p.hem])
-        [%& %for ~ bem ext ced.cyz:for-client]
+        [%& %for ~ bem ext fcgi-cred:for-client]
       ::
           %bugs  
         ?-  p.hem
@@ -944,11 +944,11 @@
           %get
         ~|  aute/ham
         ?:  |(=(anon him.ham) (~(has in aut.yac) him.ham))
-          =.  him  him.ham
-          =+  pez=process(pok rem.ham)
-          ?.  ?=([%& %for ^] pez)
-            pez
-          pez(aut.s.p (~(put ju aut.s.p.pez) %$ (scot %p him.ham)))
+          %_  process
+            pok   rem.ham
+            him   him.ham
+            ..ya  abet.yac(him him.ham)
+          ==
         ?.  =(our him.ham)
           [%| ((teba foreign-auth.yac) him.ham hat rem.ham quy)]
         (show-login-page ~)
@@ -1067,6 +1067,7 @@
       ?~  aut  abut
       abet(him ?.(=(her him) him n.aut))
     ::
+    ++  fcgi-cred  %_(ced aut (~(put ju aut.ced) %$ (scot %p him)))
     ++  stat-json
       ^+  [*json ..ya]
       =+  orx=`@t`(rsh 3 1 (scot %p (shaf %orx eny)))
