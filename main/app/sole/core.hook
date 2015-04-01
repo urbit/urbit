@@ -271,7 +271,7 @@
       =.  liv.maz  mav
       ?:  mav
         ?.  liv
-          (se-emit ost %give %mean ~)
+          (se-blit `dill-blit`[%qit ~])
         +>(tar.maz +<+)
       ?.  liv  
         =.  ..ta  (se-nuke gyl) 
@@ -615,6 +615,7 @@
 ++  poke-dill-belt
   |=  [ost=bone her=ship bet=dill-belt]
   ^-  [(list move) _+>]
+  ::  ~&  [%sole-poke ost her bet]
   =+  yog=(~(get by bin) ost)
   ?~  yog
     ~&  [%sole-poke-stale ost]
@@ -640,6 +641,7 @@
 ++  pull
   |=  ost=bone
   ^-  [(list move) _+>]
+  ::  ~&  [%sole-pull ost]
   =^  moz  +>  
     =<  se-abet
     =<  se-view

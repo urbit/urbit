@@ -51,6 +51,7 @@
       [%hop p=@ud]                                      ::  set cursor position
       [%mor p=(list dill-blit)]                         ::  multiple blits
       [%pro p=(list ,@c)]                               ::  show as cursor/line
+      [%qit ~]                                          ::  close console
       [%out p=(list ,@c)]                               ::  send output line
       [%sag p=path q=*]                                 ::  save to jamfile
       [%sav p=path q=@]                                 ::  save to file
@@ -252,6 +253,8 @@
           (done(see p.bit) %blit [[%lin p.bit] [%hop pos] ~])
         ?:  ?=(%hop -.bit)
           (done(pos p.bit) %blit [bit ~])
+        ?:  ?=(%qit -.bit)
+          (dump %logo ~)
         (done %blit [bit ~])
       ::
       ++  init                                          ::  initialize
@@ -318,7 +321,8 @@
         ::  (send %cru p.+.sih q.+.sih)  
         ::
             [%g %mean *]
-          +>(moz [[hen %give %logo ~] moz])
+          ~&  %dill-take-mean 
+          +>
         ::
             [%g %nice *]
           ::  ~&  [%take-nice sih]
