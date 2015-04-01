@@ -1,5 +1,5 @@
 ::
-::::  /hook/core/radio/sur
+::::  /hook/core/talk/sur
   !:
 |%
 ++  ache  |*([a=$+(* *) b=$+(* *)] $%([| p=b] [& p=a])) ::  PM 314
@@ -41,7 +41,7 @@
   ==                                                    ::
 ++  presence   ?(%gone %hear %talk)                     ::  status type
 ++  register  (pair atlas (map partner atlas))          ::  ping me, ping srcs
-++  report                                              ::  radio update
+++  report                                              ::  talk update
   $%  [%config config]                                  ::  reconfigure
   ::  [%folder (list report)]                           ::  multiple
       [%grams (pair ,@ud (list telegram))]              ::  beginning, thoughts

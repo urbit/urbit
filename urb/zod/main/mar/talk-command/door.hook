@@ -1,8 +1,8 @@
 ::
-::::  /hook/door/radio-command/mar
+::::  /hook/door/talk-command/mar
   ::
 /?    314
-/-    *radio
+/-    *talk
 !:
 |_  cod=command
 ::

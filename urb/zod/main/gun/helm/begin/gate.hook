@@ -2,7 +2,7 @@
 ::::  /hook/gate/begin/helm/gun
   ::
 /?  314
-/-  *console
+/-  *sole
 ::
 ::::
   !:
@@ -12,20 +12,20 @@
 |=  $:  [now=@da eny=@uvI bec=beak]
         [~ ~]
     ==
-^-  (console-result (cask begs))
-%+  console-lo
+^-  (sole-result (cask begs))
+%+  sole-lo
   [%& %helm-begin "your ship: ~"]
-%+  console-go  fed:ag
+%+  sole-go  fed:ag
 |=  his=@p
-%+  console-lo
+%+  sole-lo
   [%& %helm-ticket "your ticket: ~"]
-%+  console-go  fed:ag
+%+  sole-go  fed:ag
 |=  tic=@p
-%+  console-lo  
+%+  sole-lo  
   [%& %helm-entropy "some entropy: "]
-%+  console-go  (boss 256 (more gon qit))
+%+  sole-go  (boss 256 (more gon qit))
 |=  yen=@t
-%+  console-so  %helm-begin
+%+  sole-so  %helm-begin
 :*  his
     tic
     yen

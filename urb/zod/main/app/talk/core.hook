@@ -1,9 +1,9 @@
 ::
-::::  /hook/core/radio/app
+::::  /hook/core/talk/app
   ::
 /?  314
-/-  *radio, *twitter, *sole
-/+  radio, sole
+/-  *talk, *twitter, *sole
+/+  talk, sole
 ::
 ::::
   ::
@@ -11,7 +11,7 @@
 =>  |%                                                  ::  data structures
     ++  house  ,[%1 house-1]                            ::  full state
     ++  house-any                                       ::  app history
-      $%  [%1 house-1]                                  ::  1: radio
+      $%  [%1 house-1]                                  ::  1: talk
           [%0 house-0]                                  ::  0: initial version
       ==                                                ::
     ++  house-1                                         ::
@@ -75,11 +75,11 @@
       $%  [%wake ~]                                     ::  timer wakeup
       ==  ==  ==                                        ::
     ++  salt                                            ::  output rush
-      $%  [%radio-report p=report]                      ::
+      $%  [%talk-report p=report]                       ::
           [%sole-effect p=sole-effect]                  ::
       ==                                                ::
     ++  silt                                            ::  input rush
-      $%  [%radio-report p=report]                      ::  refresh
+      $%  [%talk-report p=report]                       ::  refresh
           [%twit-stat p=twit-stat]                      ::  tweet receipt
           [%twit-feed p=(list twit-stat)]               ::  tweet receipt
       ==                                                ::
@@ -137,7 +137,7 @@
 ++  ra                                                  ::  transaction core
   |_  [ost=bone moves=(list move)]
   ++  sh                                                ::  console interface
-    |_  $:  coz=(list command)                          ::  radio actions
+    |_  $:  coz=(list command)                          ::  talk actions
             she=shell
         ==
     ++  sh-abet
@@ -177,7 +177,7 @@
     ++  sh-prod                                         ::  show prompt
       ^+  .
       %+  sh-fact  %pro
-      :+  &  %radio-line
+      :+  &  %talk-line
       ^-  tape
       =+  ^=  rew  ^-  (pair (pair ,@t ,@t) (set partner))
           ?~  active.she
@@ -186,9 +186,17 @@
       =+  por=~(te-prom te man.she q.rew)
       (weld `tape`[p.p.rew por] `tape`[q.p.rew ' ' ~])
     ::
+    ++  sh-pass                                         ::  update passive aud
+      |=  aud=audience
+      %_    +>
+          passive.she
+        %-  ~(gas in *(set partner))
+        (turn (~(tap by aud)) |=([a=partner *] a))
+      ==
+    ::
     ++  sh-rend                                         ::  print on one line
       |=  gam=telegram
-      (sh-fact %txt ~(tr-line tr man.she gam))
+      (sh-pass:(sh-fact %txt ~(tr-line tr man.she gam)) q.q.gam) 
     ::
     ++  sh-numb                                         ::  print msg number
       |=  num=@ud
@@ -256,13 +264,13 @@
         ((sh-sane-rule work:cp) inv (tufa buf))
       (sh-sane-chat buf)
     ::
-    ++  sh-slug                                         ::  edit with beep
+    ++  sh-slug                                         ::  edit to sanity
       |=  lit=(list sole-edit)
       ^+  +>
       ?~  lit  +>
       =^  lic  say.she
           (~(transmit cs say.she) `sole-edit`?~(t.lit i.lit [%mor lit]))
-      (sh-fact [%mor [%det lic] [%bel ~] ~])
+      (sh-fact [%mor [%det lic] ~])
     ::
     ++  sh-stir                                         ::  apply edit
       |=  cal=sole-change
@@ -301,7 +309,7 @@
       |=  job=work
       ^+  +>
       ?+    -.job  
-          ~&  [%radio-work job]
+          ~&  [%talk-work job]
           +>
       ::
           %say
@@ -349,7 +357,7 @@
           [~ ~]
         =+  mor=$(moves t.moves)
         ?.  ?&  (~(has by shells) `bone`p.i.moves)
-                ?=([%give %rush %radio-report *] q.i.moves)
+                ?=([%give %rush %talk-report *] q.i.moves)
             ==  
           [[i.moves p.mor] q.mor]
         [p.mor [[p.i.moves +>+.q.i.moves] q.mor]]
@@ -389,7 +397,7 @@
   ++  ra-house                                          ::  emit partners
     |=  ost=bone
     %+  ra-emit  ost
-    :^  %give  %rush  %radio-report
+    :^  %give  %rush  %talk-report
     :-  %house
     %-  ~(gas in *(map span (pair posture cord)))
     %+  turn  (~(tap by stories)) 
@@ -403,7 +411,7 @@
     =.  +>  $(gel r.gel)
     (ra-house n.gel)
   ::
-  ++  ra-init                                           ::  initialize radio
+  ++  ra-init                                           ::  initialize talk
     =+  sir=(sein our.hid)
     %+  ra-apply  our.hid
     :+  %design  (main our.hid)
@@ -417,10 +425,10 @@
     ?-    -.cod
         %design
       ?.  =(her our.hid)
-        (ra-evil %radio-no-owner)
+        (ra-evil %talk-no-owner)
       ?~  q.cod
         ?.  (~(has by stories) p.cod)
-          (ra-evil %radio-no-story)
+          (ra-evil %talk-no-story)
         =.  +>.$  (ra-config p.cod *config)
         ra-ever(stories (~(del by stories) p.cod))
       =.  +>.$  (ra-config p.cod u.q.cod)
@@ -448,7 +456,7 @@
   ++  ra-twitter                                        ::  %twitter response
     |=  [[num=@ud man=span] sih=sign]
     ^+  +>
-    ?+    sih  ~|([%radio-bad-twitter sih] !!)
+    ?+    sih  ~|([%talk-bad-twitter sih] !!)
         [%g ?(%nice %mean) ~]
       +>
         [%g %mean ^]
@@ -467,7 +475,7 @@
       %+  ~(put by q.u.oot)  pan
       :-  -.olg
       ?+  sih  !!
-        [%g %mean *]  ~&([%radio-repeat-rejected num pan sih] %rejected)
+        [%g %mean *]  ~&([%talk-repeat-rejected num pan sih] %rejected)
         [%g %nice ~]  %received
       ==
     (ra-think | our.hid u.oot ~)
@@ -506,7 +514,7 @@
     ?:  ?=(~ pax)
       (ra-house(general (~(put in general) ost)) ost)
     ?.  ?=([@ @ *] pax)
-      (ra-evil %radio-bad-path)
+      (ra-evil %talk-bad-path)
     =+  ^=  vab  ^-  (set ,@tas)
         =|  vab=(set ,@tas)
         |-  ^+  vab
@@ -515,7 +523,7 @@
     =+  pur=(~(get by stories) i.t.pax)
     ?~  pur
       ~&  [%bad-subscribe-story-c i.t.pax]
-      (ra-evil %radio-no-story)
+      (ra-evil %talk-no-story)
     =+  soy=~(. pa i.t.pax u.pur)
     =.  soy  ?.((~(has in vab) %a) soy (pa-watch:soy her))
     =.  soy  ?.((~(has in vab) %x) soy (pa-master:soy her))
@@ -573,9 +581,9 @@
             /repeat/(scot %ud p.outbox)/(scot %p p.cuz)/[q.cuz]
             %g
             %mess
-            [p.cuz /radio]
+            [p.cuz /talk]
             our.hid
-            [%radio-command !>(`command`[%review tip ~])]
+            [%talk-command !>(`command`[%review tip ~])]
         ==
     +>(p.outbox +(p.outbox), q.outbox (~(put by q.outbox) p.outbox tip))
   ::
@@ -616,17 +624,17 @@
     ++  pa-watch                                        ::  watch presence
       |=  her=ship
       ?.  (pa-admire her)
-        (pa-sauce ost [[%mean ~ %radio-watch-unauthorized ~] ~])
+        (pa-sauce ost [[%mean ~ %talk-watch-unauthorized ~] ~])
       =.  viewers  (~(put in viewers) ost)
       (pa-display ost ~ ~)
     ::
     ++  pa-master                                       ::  hear config
       |=  her=ship
       ?.  (pa-admire her)
-        (pa-sauce ost [[%mean ~ %radio-master-unauthorized ~] ~])
+        (pa-sauce ost [[%mean ~ %talk-master-unauthorized ~] ~])
       =.  owners  (~(put in owners) ost)
       ::  ~&  [%pa-master her man shape]
-      (pa-sauce ost [[%rush %radio-report %config shape] ~])
+      (pa-sauce ost [[%rush %talk-report %config shape] ~])
     ::
     ++  pa-display                                      ::  update presence
       |=  vew=(set bone)
@@ -640,7 +648,7 @@
       ?~  vew  +>.^$
       =.  +>.^$  $(vew l.vew)
       =.  +>.^$  $(vew r.vew)
-      (pa-sauce n.vew [[%rush %radio-report %group reg] ~])
+      (pa-sauce n.vew [[%rush %talk-report %group reg] ~])
     ::
     ++  pa-monitor                                      ::  update config
       =+  owe=owners
@@ -649,12 +657,12 @@
       =.  +>  $(owe l.owe)
       =.  +>  $(owe r.owe)
       ::  ~&  [%pa-monitor man shape]
-      (pa-sauce n.owe [[%rush %radio-report %config shape] ~])
+      (pa-sauce n.owe [[%rush %talk-report %config shape] ~])
     ::
     ++  pa-friend                                       ::  subscribed update
       |=  [tay=partner sih=sign]
       ^+  +>
-      ?+    sih  ~|([%radio-bad-friend sih] !!)
+      ?+    sih  ~|([%talk-bad-friend sih] !!)
           [%g %nice ~]
         +>.$
       ::
@@ -676,14 +684,14 @@
           ~                           ::  XX  hashtags
         [%lin & txt]
     ::
-          [%g %rush %radio-report *]
+          [%g %rush %talk-report *]
         ::  ~&  [%pa-friend-report +>+.sih]
         ?>  ?=(& -.tay)
         =.  +>  %+  pa-scrub  ost 
                 :_  ~
                 :-  /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
-                [%g %took [p.p.tay /radio] our.hid]
-        ?+  -.p.p.sih  ~|([%radio-odd-friend sih] !!)
+                [%g %took [p.p.tay /talk] our.hid]
+        ?+  -.p.p.sih  ~|([%talk-odd-friend sih] !!)
           %config  +>.$
           %group  (pa-remind tay +.p.p.sih)
           %grams  (pa-lesson q.+.p.p.sih)
@@ -719,7 +727,7 @@
       ::
         %&  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
             :~  :-  /friend/nuke/[man]/(scot %p p.p.tay)/[q.p.tay]
-                [%g %nuke [p.p.tay /radio] our.hid]
+                [%g %nuke [p.p.tay /talk] our.hid]
             ==
       ==
     ::
@@ -739,7 +747,7 @@
       ::
         %&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
             :~  :-  /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
-                [%g %show [p.p.tay /radio] our.hid /af/[q.p.tay]/(scot %ud num)]
+                [%g %show [p.p.tay /talk] our.hid /af/[q.p.tay]/(scot %ud num)]
             ==
       ==
     ::
@@ -804,7 +812,7 @@
       |=  riv=river
       ^+  +>
       =-  ::  ~&  [%pa-start riv lab]
-          =.  +>.$  (pa-sauce ost [[%rush %radio-report %grams q.lab r.lab] ~])
+          =.  +>.$  (pa-sauce ost [[%rush %talk-report %grams q.lab r.lab] ~])
           ?:  p.lab
             (pa-sauce ost [[%mean ~] ~])
           +>.$(guests (~(put by guests) ost riv))
@@ -828,7 +836,7 @@
       |=  [her=ship pax=path]
       ^+  +>
       ?.  (pa-admire her)
-        (pa-sauce ost [[%mean ~ %radio-listen-unauthorized ~] ~])
+        (pa-sauce ost [[%mean ~ %talk-listen-unauthorized ~] ~])
       =+  ^=  ruv  ^-  (unit river)
           ?:  ?=(~ pax)
             `[[%ud count] [%da (dec (bex 128))]]
@@ -843,7 +851,7 @@
           `[(point +>.say) (point +>.den)]
       ::  ~&  [%pa-listen her pax ruv]
       ?~  ruv
-        (pa-sauce ost [[%mean ~ %radio-malformed ~] ~])
+        (pa-sauce ost [[%mean ~ %talk-malformed ~] ~])
       (pa-start u.ruv)
     ::
     ++  pa-refresh                                      ::  update to guests
@@ -867,7 +875,7 @@
               ==
             old
           :-  p.old
-          [[p.n.guests %give %rush %radio-report %grams num gam ~] q.old]
+          [[p.n.guests %give %rush %talk-report %grams num gam ~] q.old]
       =.  moves  (welp q.moy moves)
       |-  ^+  +>.^$
       ?~  p.moy  +>.^$
@@ -1174,13 +1182,13 @@
     ?>  =(our.hid her)
     ?<  (~(has by shells) ost)
     ra-abet:(~(ra-console ra ost ~) her t.pax)
-  ::  ~&  [%radio-peer-data ost her pax]
+  ::  ~&  [%talk-peer-data ost her pax]
   ra-abet:(~(ra-subscribe ra ost ~) her pax)
 ::
-++  poke-radio-command
+++  poke-talk-command
   |=  [ost=bone her=ship cod=command]
   ^-  [(list move) _+>]
-  ::  ~&  [%radio-poke-command her cod]
+  ::  ~&  [%talk-poke-command her cod]
   ra-abet:(~(ra-apply ra ost ~) her cod)
 ::
 ++  poke-sole-action
@@ -1192,13 +1200,13 @@
   ^-  [(list move) _+>]
   ::  ~&  sih=sih
   =+  sih=((hard sign) sih)
-  ::  ~&  [%radio-pour ost pax sih]
-  ?+    pax  ~&  [%radio-strange-path pax]  !!
+  ::  ~&  [%talk-pour ost pax sih]
+  ?+    pax  ~&  [%talk-strange-path pax]  !!
   ::
       [%twitter *]
     =-  ra-abet:(~(ra-twitter ra ost ~) met sih)
     ^=  met
-    ?+    t.pax  ~|  [%radio-twitter-strange-path pax]  !!
+    ?+    t.pax  ~|  [%talk-twitter-strange-path pax]  !!
       ::    [%mine @ @ ~]
       ::  [i.t.pax i.t.t.t.pax]
         [%stat @ @ ~]
@@ -1225,7 +1233,7 @@
 ++  pull
   |=  ost=bone
   ^-  [(list move) _+>]
-  ::  ~&  [%radio-pull `*`ost]
+  ::  ~&  [%talk-pull `*`ost]
   =.  shells  (~(del by shells) ost)
   ra-abet:ra-ever:~(ra-cancel ra ost ~)
 ::
@@ -1233,7 +1241,7 @@
   |=  [ost=bone you=ship ~]
   ^-  [(list move) _+>]
   :_  +>.$
-  =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/radio/backlog/jam
+  =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/talk/backlog/jam
   [ost %pass /jamfile %c %info our.hid (foal paf (jam +<+.+>.$))]~
 ::
 ++  prep
@@ -1243,9 +1251,9 @@
   =|  moz=(list move)
   |-
   ?~  u.old
-    =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/radio/backlog/jam
+    =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/talk/backlog/jam
     ?.  ?=([%0 %0 %0] [.^(%cy paf)])
-      ~&  %radio-prep-restore
+      ~&  %talk-prep-restore
       $(u.old (some ((hard house-any) (cue ((hard ,@) .^(%cx paf))))))
     ra-abet:~(ra-init ra 0 moz)
   :-  moz
