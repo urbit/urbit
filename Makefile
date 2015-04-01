@@ -2,7 +2,7 @@
 #
 
 default: all
--include make.conf
+-include .make.conf
 
 CORE=.MAKEFILE-VERSION
 
@@ -351,12 +351,12 @@ LIBCOMMONMARK=outside/commonmark/build/src/libcmark.a
 
 all: vere
 
-.MAKEFILE-VERSION: Makefile make.conf
+.MAKEFILE-VERSION: Makefile .make.conf
 	@echo "Makefile update."
 	@touch .MAKEFILE-VERSION
 
-make.conf:
-	@echo "# Set custom configuration here, please!" > "make.conf"
+.make.conf:
+	@echo "# Set custom configuration here, please!" > ".make.conf"
 
 vere: $(BIN)/vere
 meme: $(BIN)/meme
