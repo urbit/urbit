@@ -902,7 +902,7 @@
       ~&  >  %reading-at-aeon
       =+  vid=(read-at-aeon:ze u.nao p.q.i.xiq)
       ~&  >  %red-at-aeon
-      ?~  vid  ~&  %':( oh well'  $(xiq t.xiq, xaq [i.xiq xaq])
+      ?~  vid  ~&  [%oh-well mood=p.q.i.xiq]  $(xiq t.xiq, xaq [i.xiq xaq])
       $(xiq t.xiq, ..wake (balk p.i.xiq u.vid p.q.i.xiq))
     ::
         %many
@@ -967,7 +967,7 @@
     ++  make-direct                                     ::  make blob
       |=  p=page
       ^-  blob
-      [%direct (mug p) p]
+      [%direct (shax (jam p)) p]
     ::
     ++  make-delta                                      ::  make blob delta
       |=  [p=[p=mark q=lobe] q=page]

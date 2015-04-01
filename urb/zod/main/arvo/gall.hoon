@@ -770,7 +770,8 @@
       ::
       ++  home                                          ::  load application
         ^-  silk
-        [%boil %core [[our %main [%da now]] app.sat %app ~] ~]
+        =+  let=((hard ,@) q.q:(need (need (ska ~ %cw [our %main %da now] /))))
+        [%boil %core [[our %main %ud ?:(=(let 0) 1 let)] app.sat %app ~] ~]
       ::
       ++  leav
         %_  .
@@ -1080,6 +1081,14 @@
       ::
       ++  work                                          ::  eat queue
         |-  ^+  +
+        ::  ~&  >  :*  %workeando
+        ::             our=our
+        ::             vey==(~ vey.sat)
+        ::             ^=  qic
+        ::             ?:  ?=(^ qic.sat)
+        ::               [p -.q]:u.qic.sat
+        ::             ~
+        ::         ==
         ?:  |(?=(^ qic.sat) =(~ vey.sat))  +.$          ::  nothing to do
         =^  yev  vey.sat  [p q]:~(get to vey.sat)
         ?:  (~(has in nuc.sat) p.yev)  $

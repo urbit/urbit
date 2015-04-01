@@ -369,7 +369,7 @@
       %_    +>.$
           mos
         :_  mos
-        [hen %pass /term-show %g %show [our /terminal] our /lines]
+        [hen %pass /term-show/(scot %p our) %g %show [our /terminal] our /lines]
       ==
     ::
         %wake
@@ -510,8 +510,12 @@
           %o  %_    +>.$
                   mos
                 :_  :_  mos
-                  [hen %pass /term-show %g %nuke [our /terminal] our]
-                [hen %pass /term-show %g %show [our /terminal] our /lines]
+                  :*  hen  %pass  /term-show/(scot %p our)
+                      %g  %nuke  [our /terminal]  our
+                  ==
+                :*  hen  %pass  /term-show/(scot %p our)
+                    %g  %show  [our /terminal]  our  /lines
+                ==
               ==
           %p  $(kyz [%belt %aro %u])
           %u  ?:  =(0 bus.u.q.q.yar)
