@@ -47,6 +47,7 @@
     ++  shell                                           ::  console session
       $:  her=ship                                      ::  client identity
           man=span                                      ::  mailbox
+          count=@ud                                     ::  messages shown
           say=sole-share                                ::  console state
           active=(unit (set partner))                   ::  active targets
           passive=(set partner)                         ::  passive targets
@@ -121,18 +122,21 @@
     ::                                                  ::
     ++  sigh                                            ::  assemble label
       |=  [len=@ud pre=tape yiz=cord]
-      %+  welp  pre
       ^-  tape
       =+  nez=(trip yiz)
+      =+  lez=(lent nez)
       ?>  (gth len (lent pre))
       =.  len  (sub len (lent pre))
-      ?.  (gth (lent nez) len)  nez
-      (welp (scag (dec len) nez) ">")  
+      ?.  (gth lez len)  
+        =.  nez  (welp pre nez)
+        ?.  (lth lez len)  nez
+        (runt [(sub len lez) '-'] nez)
+      :(welp pre (scag (dec len) nez) ">")  
     --
 |_  [hid=hide house]
 ++  ra                                                  ::  transaction core
   |_  [ost=bone moves=(list move)]
-  ++  sh
+  ++  sh                                                ::  console interface
     |_  $:  coz=(list command)                          ::  radio actions
             she=shell
         ==
@@ -146,7 +150,6 @@
     ++  sh-deal                                         ::  apply from shell
       |=  cod=command
       ^+  +>
-      ~&  [%sh-deal cod]
       ?-    -.cod
           %design
         ?~  q.cod
@@ -163,7 +166,7 @@
       ^+  +>
       +>(moves :_(moves [ost %give %rush %sole-effect fec]))
     ::
-    ++  sh-peep                                         ::  subscribe to
+    ++  sh-peep                                         ::  peer to path
       |=  pax=path
       ^+  +>
       +>(+> (~(ra-subscribe ra ost ~) her.she pax))
@@ -187,30 +190,149 @@
       |=  gam=telegram
       (sh-fact %txt ~(tr-line tr man.she gam))
     ::
+    ++  sh-numb                                         ::  print msg number
+      |=  num=@ud
+      ^+  +>
+      (sh-fact %txt "    [{(scow %ud num)}]")
+    ::
+    ++  sh-repo-gram
+      |=  [num=@ud gam=telegram]
+      ^+  +>
+      ?:  =(num count.she)
+        =.  +>  ?:(=(0 (mod num 5)) (sh-numb num) +>)
+        (sh-rend(count.she +(num)) gam)
+      ?:  (gth num count.she)
+        =.  +>  (sh-numb num)
+        (sh-rend(count.she +(num)) gam)
+      +> 
+    ::
     ++  sh-repo-grams                                   ::  apply telegrams
       |=  [num=@ud gaz=(list telegram)]
       ^+  +>
-      !!
+      ?~  gaz  +>
+      $(gaz t.gaz, num +(num), +> (sh-repo-gram num i.gaz))
     ::
     ++  sh-repo                                         ::  apply report
       |=  rad=report
       ^+  +>
-      ?-  -.rad
-        %house   ~&  [%sh-repo-house rad]
-                 +>
-        %grams   ~&  [%sh-repo-grams +.rad]
-                 +>
-        %config  ~&  [%sh-repo-config +.rad]
-                 +>
-        %group   ~&  [%sh-group +.rad]
-                 +>
+      ?+  -.rad  +>
+        %grams  (sh-repo-grams +.rad)
       ==
     ::
-    ++  sh-sole                                 
+    ++  sh-sane-chat                                    ::  sanitize chatter
+      |=  buf=(list ,@c)
+      ^-  (list sole-edit)
+      =+  :-  inx=0
+          ^=  fix
+          |=  [inx=@ud cha=@t lit=(list sole-edit)]
+          ^+  lit
+          [[%mor [%del inx] [%ins inx `@c`cha] ~] lit]
+      |-  ^-  (list sole-edit)
+      ?:  =(62 inx)
+        |-  ^-  (list sole-edit)
+        ?~(buf ~ [[%del 62] $(buf t.buf)])
+      ?~  buf  ~
+      =+  lit=$(inx +(inx), buf t.buf)
+      ?:  |((lth i.buf 32) (gth i.buf 126))
+        (fix inx '?' lit)
+      ?:  &((gte i.buf 'A') (lte i.buf 'Z'))
+        (fix inx (add 32 i.buf) lit)
+      ?:  &(=('/' i.buf) ?=([47 *] t.buf))
+        (fix inx '\\' lit)
+      lit
+    ::
+    ++  sh-sane-rule                                    ::  sanitize by rule
+      |*  sef=_rule
+      |=  [inv=sole-edit txt=tape]
+      ^-  (list sole-edit)
+      =+  ryv=(rose txt sef)
+      ?.(-.ryv ~ [inv ~])
+    ::
+    ++  sh-sane                                         ::  sanitize input
+      |=  [inv=sole-edit buf=(list ,@c)]
+      ^-  (list sole-edit)
+      ?~  buf  ~
+      ?:  =(';' i.buf)
+        ((sh-sane-rule work:cp) inv (tufa buf))
+      (sh-sane-chat buf)
+    ::
+    ++  sh-slug                                         ::  edit with beep
+      |=  lit=(list sole-edit)
+      ^+  +>
+      ?~  lit  +>
+      =^  lic  say.she
+          (~(transmit cs say.she) `sole-edit`?~(t.lit i.lit [%mor lit]))
+      (sh-fact [%mor [%det lic] [%bel ~] ~])
+    ::
+    ++  sh-stir                                         ::  apply edit
+      |=  cal=sole-change
+      ^+  +>
+      =^  inv  say.she  (~(transceive cs say.she) cal)
+      =+  lit=(sh-sane inv buf.say.she)
+      ?~  lit
+        +>.$
+      (sh-slug lit)
+    ::
+    ++  sh-pork                                         ::  parse work
+      ^-  (unit work)
+      ?~  buf.say.she  ~
+      ?:  =(';' -.buf.say.she)
+        (rust (tufa buf.say.she) work:cp)
+      `[%say %lin & (crip (tufa buf.say.she))]
+    ::
+    ++  sh-hear                                         ::  hear back
+      |=  paz=(set partner)
+      ?~  paz  |
+      ?|  $(paz l.paz) 
+          $(paz r.paz)
+          (~(has in sources.shape:(~(got by stories) man.she)) `partner`n.paz)
+      ==
+    ::
+    ++  sh-whom                                         ::  current audience
+      ^-  audience
+      =+  paz=`(set partner)`?~(active.she passive.she u.active.she)
+      =+  zup=(~(tap in paz)) 
+      =.  zup  ?:((sh-hear paz) zup [[%& our.hid man.she] zup])
+      %-  ~(gas by *audience)
+      %+  turn  zup
+      |=(a=partner [a *envelope %pending])
+    ::
+    ++  sh-work                                         ::  do work
+      |=  job=work
+      ^+  +>
+      ?+    -.job  
+          ~&  [%radio-work job]
+          +>
+      ::
+          %say
+        =^  sir  +>.$  sh-uniq
+        %=    +>.$
+            coz  :_  coz
+          [%publish [[sir sh-whom [lat.hid ~ +.job]] ~]]
+        ==
+      ==
+    ::
+    ++  sh-done                                         ::  apply result
+      =+  lit=(sh-sane [%nop ~] buf.say.she)
+      ?^  lit
+        (sh-slug lit)
+      =+  jub=sh-pork
+      ?~  jub  (sh-fact %bel ~)
+      =.  +>  (sh-work u.jub)
+      =^  cal  say.she  (~(transmit cs say.she) [%set ~])
+      (sh-fact %mor [%nex ~] [%det cal] ~)
+    ::
+    ++  sh-sole                                         ::  apply edit
       |=  act=sole-action
       ^+  +>
-      ~&  [%sh-sole-act act]
-      +>
+      ?-  -.act
+        %det  (sh-stir +.act)
+        %ret  sh-done
+      ==
+    ::
+    ++  sh-uniq
+      ^-  [serial _.]
+      [(shaf %serial eny.hid) .(eny.hid (shax eny.hid))]
     --
   ++  ra-abed                                           ::  resolve core
     ^-  [(list move) _+>]
@@ -375,7 +497,7 @@
     |=  [her=ship pax=path]
     ^+  +>
     =+  man=`span`?~(pax (main her) ?>(?=(~ t.pax) i.pax))
-    sh-abet:~(sh-peer sh ~ [her man *sole-share ~ ~])
+    sh-abet:~(sh-peer sh ~ [her man 0 *sole-share ~ ~])
   ::
   ++  ra-subscribe                                      ::  listen to
     |=  [her=ship pax=path]
@@ -825,12 +947,8 @@
         %czar  (weld "          " raw)
         %king  (weld "       " raw)
         %duke  raw
-        ?(%earl %pawn)  
-      ;:  welp
-        (scag 7 raw)
-        ?:(=(%earl rac) "^" "_")
-        (scag 6 (slag 14 raw))
-      ==
+        %earl  :(welp (scag 7 raw) "^" (scag 6 (slag 22 raw)))
+        %pawn  :(welp (scag 7 raw) "_" (scag 6 (slag 51 raw)))
     ==
   ::
   ++  sn-phat                                           ::  render accurately
@@ -947,11 +1065,11 @@
     =+  dul=[%& our.hid man]
     ?:  =(who our.hid)
       :*  '<'
-          ?:((~(has by aud) dul) '+' '-')
+          ?:((~(has by aud) dul) '|' '-')
           (~(sn-curt sn [who (main who)]) |)
       ==
     :*  '>'
-        ?:((~(has by aud) dul) '+' '-') 
+        ?:((~(has by aud) dul) '|' '-') 
         ~(te-whom te man tr-pals)
     ==
   ::
@@ -963,8 +1081,7 @@
     ==
   -- 
 ::
-++  parse                                           ::  command parser
-  |=  our=ship
+++  cp                                              ::  command parser
   =+  vag=(vang | [&1:% &2:% '0' |3:%])
   |%  
   ++  come                                          ::  keyword command
@@ -989,7 +1106,7 @@
     %+  posh
       ;~  plug
         ship
-        ;~(pose ;~(pfix fas urs:ab) (easy (main our)))
+        ;~(pose ;~(pfix fas urs:ab) (easy (main our.hid)))
       ==
     ;~  pose
       ;~(pfix pat (stag %twitter urs:ab))
