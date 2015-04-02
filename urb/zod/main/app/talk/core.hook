@@ -98,6 +98,7 @@
           $:  %t                                        ::
       $%  [%wait p=@da]                                 ::
       ==  ==  ==                                        ::
+    ::
     ++  work                                            ::  interface action
       $%  [%ask (unit work)]                            ::  help (about)
           [%exp twig]                                   ::  compute
@@ -1058,49 +1059,36 @@
           bou=(set flavor)
           sep=speech
       ==
-  ::
   ++  tr-line  ^-  tape                                 ::  one-line print
-    =+  txt=tr-text
+    =+  oug==(who our.hid)
+    =+  txt=(tr-text oug)
+    ?:  =(~ txt)  ""
     =+  eck=?:((~(has by aud) [%& our.hid man]) '|' '-')
-    ?:  =(who our.hid)
-      :*  '<' 
-          eck
-          ~(te-whom te man pals)
-          ?:  p.sep
-            (weld "> " txt)
-          (weld "@ " txt)
-      ==
-    :*  '>'
-        eck
-
-  ++  tr-text
-    ^-  tape
-
-    =+  txt=tr-text
-    ?~  txt  ~ 
-    (welp tr-prof txt)
+    =+  heb=?:(oug '<' '>')
+    =+  ^=  baw
+        ?:  oug 
+          ~(te-whom te man tr-pals)
+        (~(sn-curt sn [who (main who)]) |)
+    [heb eck (weld baw txt)]
   ::
-  ++  tr-pals  ^-  (set partner)                        ::  convert to partners
+  ++  tr-pals
+    ^-  (set partner)
     %-  ~(gas in *(set partner))
-    %+  turn  (~(tap by aud))
-    |=([a=partner *] a)
+    (turn (~(tap by aud)) |=([a=partner *] a))
   ::
-  ++  tr-prof  ^-  tape                                 ::  prefix 
-    ?:  =(who our.hid>)
-      :*  '<'
-          ?:((~(has by aud) dul) '|' '-')
-          (~(sn-curt sn [who (main who)]) |)
-      ==
-    :*  '>'
-        ?:((~(has by aud) dul) '|' '-') 
-        ~(te-whom te man tr-pals)
-    ==
-  ::
-  ++  tr-text  ^-  tape
-    ?+  -.sep  ""
-      %lin  ?:  p.sep
-              (weld ": " (trip q.sep))
-            (weld " " (trip q.sep))
+  ++  tr-text
+    |=  oug=?
+    ^-  tape
+    ?+    -.sep  ""
+        %lin
+      =+  txt=(trip q.sep)
+      ?:  oug
+        ?:  p.sep
+          (weld "> " txt)
+        (weld "@ " txt)
+      ?:  p.sep
+        (weld "< " txt)
+      (weld " " txt)
     ==
   -- 
 ::
