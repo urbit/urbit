@@ -159,12 +159,10 @@
 ::
 ++  poke-will
   |=  [ost=bone you=ship wil=(unit will)]
-  ~&  %poke-helm-will
   ?>  ?=(^ bur)
   :_  +>.$(bur ~)
   ?~  wil
     [ost %give %mean ~ %rejected ~]~
-  ~&  [%poke-will-good bur]
   :~  [ost %pass / %a %cash p.u.bur q.u.bur u.wil]
       [ost %pass / %c %plug our.hid %main (sein our.hid) %main]
       [ost %pass / %c %plug our.hid %arvo (sein our.hid) %arvo]

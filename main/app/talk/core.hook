@@ -131,7 +131,7 @@
         =.  nez  (welp pre nez)
         ?.  (lth lez len)  nez
         (runt [(sub len lez) '-'] nez)
-      :(welp pre (scag (dec len) nez) ">")  
+      :(welp pre (scag (dec len) nez) "+")  
     --
 |_  [hid=hide house]
 ++  ra                                                  ::  transaction core
@@ -1061,17 +1061,32 @@
   ::
   ++  tr-line  ^-  tape                                 ::  one-line print
     =+  txt=tr-text
+    =+  eck=?:((~(has by aud) [%& our.hid man]) '|' '-')
+    ?:  =(who our.hid)
+      :*  '<' 
+          eck
+          ~(te-whom te man pals)
+          ?:  p.sep
+            (weld "> " txt)
+          (weld "@ " txt)
+      ==
+    :*  '>'
+        eck
+
+  ++  tr-text
+    ^-  tape
+
+    =+  txt=tr-text
     ?~  txt  ~ 
     (welp tr-prof txt)
   ::
-  ++  tr-pals  ^-  (set partner)                        ::  audience to set
+  ++  tr-pals  ^-  (set partner)                        ::  convert to partners
     %-  ~(gas in *(set partner))
     %+  turn  (~(tap by aud))
     |=([a=partner *] a)
   ::
   ++  tr-prof  ^-  tape                                 ::  prefix 
-    =+  dul=[%& our.hid man]
-    ?:  =(who our.hid)
+    ?:  =(who our.hid>)
       :*  '<'
           ?:((~(has by aud) dul) '|' '-')
           (~(sn-curt sn [who (main who)]) |)
