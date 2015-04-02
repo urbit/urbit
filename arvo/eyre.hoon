@@ -4,7 +4,6 @@
 |=  pit=vase
 =>  =~
 |%                                                      ::  interfaces
-++  chop  ,[p=@ud q=@da]                                ::  see 
 ++  gift                                                ::  out result <-$
           $%  [%thou p=httr]                            ::  raw http response
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
@@ -55,10 +54,6 @@
           $%  [%wait p=@da]                             ::
               [%rest p=@da]                             ::
           ==  ==  ==                                    ::
-++  rave                                                ::  see %clay
-          $%  [& p=mood]                                ::
-          ==                                            ::
-++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  silk                                                ::  see %ford
           $&  [p=silk q=silk]                           ::
           $%  [%boil p=mark q=beam r=path]              ::
@@ -641,8 +636,8 @@
     ++  pass-note  (teba ^pass-note)
     ::
     ++  ford-get-beam
-      |=  [bem=beam ext=term ced=cred]
-      =:  s.bem  [%web ~(rent co (fcgi quy ced)) s.bem]
+      |=  [bem=beam ext=term]
+      =:  s.bem  [%web ~(rent co (fcgi quy fcgi-cred:for-client)) s.bem]
           r.bem  ?+(r.bem r.bem [%ud %0] da/now)
         ==
       (ford-req [%boil ext bem ~])
@@ -685,7 +680,7 @@
       ?~  oxe  |
       ?:  (~(has in vew.cyz:for-client) u.oxe)
         &
-      ~&(bad-oryx/[u.oxe vew.cyz:for-client] &)         ::  XX
+      ~&(bad-oryx/[u.oxe vew.cyz:for-client] &)         ::  XX security
     ::
     ++  grab-body
       |*  a=fist:jo  ^+  *a
@@ -848,7 +843,7 @@
           ?(%beam %spur)
         =+  ext=(fall p.pok %urb)
         =+  bem=?-(-.hem %beam p.hem, %spur [root-beak p.hem])
-        [%& %| ~ (ford-get-beam bem ext fcgi-cred:for-client)]
+        [%& %| ~ (ford-get-beam bem ext)]
       ::
           %bugs  
         ?-  p.hem
@@ -938,7 +933,7 @@
         ?.  =(our him.ham)
           ~|(stub-foreign/him.ham !!)
         ?.  =(load-secret cod.ham)
-          ~|(try/`@t`load-secret !!)
+          ~|(try/`@t`load-secret !!)  ::  XX security
         =^  jon  ..ya  stat-json:(logon:yac him.ham)
         (give-json 200 cug.yac jon)
       ==
