@@ -120,7 +120,11 @@ To understand `/~/at`, there will first be a brief diversion to `~/auth.json`.
 `auth.json`, perk `[%auth %json]`, in `++process-auth` serves `++stat-json:ya`,
 containing such information as the serving ship, which identities are associated
 with this session, and `oryx`, a CSRF token. The latter must be present on all
-stateful requests, in this case needed to execute a log in.
+stateful requests, and is assigned a new `cyst` to track the current client
+incarnation of the session. In this case, however, it is needed only to execute
+a log in.
+
+XX explain `ixor` here and not [later](#ixor)?
 
 `/~/at` is an alternate interface, which injects `auth.json` data into the
 requested file. `/~/at/auth.js`, then, is a request for the built-in `auth:js`
@@ -138,7 +142,7 @@ parsed to a `[%auth %try {password}]` perk, and upon success produces an updated
 `auth.json` which reflects the changed `user`. Upon recieving this, the page is
 refreshed to retry the original request.
 
-## Authentication: success. [#auth-ok]
+## Post-authentication: app communication. [#auth-ok]
 
 Upon refresh, `/~~/cli` brings us for the third time to `%get:process-auth`, but
 this time the cookie is set, and the `yac` fetched contains the serving ship as
@@ -147,11 +151,50 @@ and the `process` continues for the rest of the pork, once again serving the
 ford page.
 
 The `/~/on/[deps].json` poll starts anew, and `/~~/~/at/main/lib/urb.js` we now
-know to serve the window.urb necessary to make requests, and the sandard library
-which extends it with a number of wrappers to them and other useful functions.
+know to serve the window.urb necessary to make requests, and the `urb.js`
+standard library which extends it with a number of wrappers to them and other
+useful functions.
 
-One of those functions is `urb.bind`, which is used to subscribe to application data.
-Userspace javascript sets `urb.appl` to `/tic`, and binds XXX
+One of those functions is `urb.bind`, which is used to subscribe to application
+data. Userspace javascript sets `urb.appl` to `/tic`, and binds `lines` to a
+`;pre;` text display, using a callback.
+
+This triggers a `PUT` to `/~/is/{ixor}/cli/lines.json`, where `ixor` is a hash
+of `oryx` that identifies the connection. `++as-aux-request`, an `%is` is a
+`%subs` subscription update update, which for `%put` forwards to
+`++add-subs:for-view`.
+
+[#ixor] A view has all the state associated with a client that must be
+remembered between events. In this case, this is what app/path the request duct
+is associated with; but mainly, `++add-subs:ix` will `pass-note` to `%gall` so
+it `%show`s the data on the path, current and future.
+
+This will immediately(assuming the ship is local) result in a `%nice` by the
+`/cli` app, returning `nice-json` to `urb.bind`'s second callback as
+`{ok:true}`. The initial `%rush` results also arrive, and in `++axon` are
+converted to json using `++back`(ford `%cast` wrapper), and when `%made` get
+passed to `++get-rush:ix`. There the source application/path are decoded by
+duct, and then the full event goes to `++get-even`; it is added to the queue,
+however as there is no long poll it simply stays there.
+
+Upon receipt, the client realizes the long-poll isn't actually running, so that
+is started using `urb.poll`. At `/~/of/{ixor}`, perk
+`[%view ixor ~ {sequence-number}]`, it is `process`ed by `++poll:ix` (the cyst
+is retrieved by `++ire-ix` form global state, using the pest `ixor`): the
+sequence number is in the past, so the previously recieved `%rush` is 
+`give-even`. After deleting the previous message in the queue and invoking 
+`pass-took` to signal `%gall` of this occurrence, the data is annotated with
+the source app+path, and returned to the polling bone.
+
+On the client, the user callback receives the `/cli` history, and displays it on
+the page. The `/~/of` long poll is continued, this time reaching `++poll:ix`
+with the "pending" sequence number, and being stored in the `cyst` for its troubles.
+
+---
+
+Its next update proceeds idenitcally, but first it must be triggered, which
+happens when the user enters "(add 2 2)\n", firing an `urb.send` from the event
+handler XXX
 
 ## A path not taken: magic filenames [#mage]
 
