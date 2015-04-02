@@ -35,7 +35,7 @@ of `0`, the current revision.
 
 XX spur: when the desks are merged, `/cli` shall point to `/=main=/pub/cli`
 
-The parsed `perk` generates a `%for` pest, `mark`ed as its extension(here
+The parsed `perk` generates a `%f %boil` note, `mark`ed as its extension(here
 defaulting to `%urb`) and `wire`d with `~` to return unaltered to the client. It
 goes on to `++resolve` by being passed to `++ford-get-beam`, which translates
 the perk it into a `%f %exec %boil` note, adding an fcgi path-segment containing
@@ -67,8 +67,7 @@ answers with a direct `%fin %js`. Its contents are the static `++poll:js`, which
 initiates the long-polling loop, run against an injected `urb.js` of 
 `{poll: [hash]}`.
 
-A `%fin` `perk` is `resolve`d by `resolve-fin`, which serves `%js` as a
-`text/javascript` success `%this`.
+A `%js` `pest` is `resolve`d as a `text/javascript` success `%this`.
 
 When `poll.js` is recieved by the client, it opens an `XMLHttpRequest` for
 `/~/on/{window.urb.poll}.json`, bringing us back to `%poll:process`.
@@ -131,9 +130,9 @@ requested file. `/~/at/auth.js`, then, is a request for the built-in `auth:js`
 (parsed to and processed from an `[%auth %js ~]` perk), with session data added
 as `window.urb`. And indeed, ``[`%js /~/at/auth]`` is parsed to
 ``[%auth at [`%js /auth]``, which in `++process-auth` is re-`process`ed to
-`[%fin %js {static script}]`, which is `++resolve-fin` after an `++add-json` of 
+`[%fin %js {static script}]`, which is `++resolve`d after an `++add-json` of 
 the relevant data. (immediate resolution is necessary to preserve any `..ya`
-state change effected by `++auth-json:ya`.
+state change effected by `++stat-json:ya`.
 
 It is at this point that there is first occasion for user input, namely the password.
 
@@ -154,6 +153,8 @@ The `/~/on/[deps].json` poll starts anew, and `/~~/~/at/main/lib/urb.js` we now
 know to serve the window.urb necessary to make requests, and the `urb.js`
 standard library which extends it with a number of wrappers to them and other
 useful functions.
+
+---
 
 One of those functions is `urb.bind`, which is used to subscribe to application
 data. Userspace javascript sets `urb.appl` to `/tic`, and binds `lines` to a
@@ -180,7 +181,7 @@ however as there is no long poll it simply stays there.
 Upon receipt, the client realizes the long-poll isn't actually running, so that
 is started using `urb.poll`. At `/~/of/{ixor}`, perk
 `[%view ixor ~ {sequence-number}]`, it is `process`ed by `++poll:ix` (the cyst
-is retrieved by `++ire-ix` form global state, using the pest `ixor`): the
+is retrieved by `++ire-ix` form global state, using the perk `ixor`): the
 sequence number is in the past, so the previously recieved `%rush` is 
 `give-even`. After deleting the previous message in the queue and invoking 
 `pass-took` to signal `%gall` of this occurrence, the data is annotated with
@@ -194,7 +195,11 @@ with the "pending" sequence number, and being stored in the `cyst` for its troub
 
 Its next update proceeds idenitcally, but first it must be triggered, which
 happens when the user enters "(add 2 2)\n", firing an `urb.send` from the event
-handler XXX
+handler. This sends a `POST` request to `/~/to/cli/json.json`, perk `%mess`,
+`++process`ed to a `%g %mess`. Were the mark not `%json`, a `%ford` conversion
+would occur first, and `%made:axon` would send the gall message proper. In
+either case, eventually a `%mean` or `%nice` arrives, is encoded as json, and
+sent to the client callback.
 
 ## A path not taken: magic filenames [#mage]
 
@@ -206,20 +211,21 @@ XX index.html?
 ## A path not taken: foreign auth [#xeno]
 
 While this example details a login `/~/as/own`, it is possible to be
-authenticated as any ship on the network. A request for such seen in `%get:
-process-auth` is passed to `++foreign-auth:ya`, which sends an `%ames /lon`
-message to the ship in question. The foreign ship stores the inquiry a responds
-with a `/hat`, containing the redirection host; this host is used to send the
-client to a `/~/am` url on the foreign client, which acts as a normal login page
-but later sends the client back. XX expand, basically the status quo is you're
-logged in and `/~/as/foo` is ignored, just setting your `urb.user` XX
+authenticated as any ship on the network. A request for such seen in
+`%get:process-auth` is passed to `++foreign-auth:ya`, which sends an
+`%ames /lon` message to the ship in question. The foreign ship stores the
+inquiry a responds with a `/hat`, containing the redirection host; this host is
+used to send the client to a `/~/am` url on the foreign client, which acts as a
+normal login page but later sends the client back. XX expand, basically the
+status quo is you're logged in and `/~/as/foo` is ignored, just setting your
+`urb.user` XX
 
 
 ## A path not taken: deauthentication
 
 `/~/away`, perk `[%away ~]`, produces a static `++logout-page:xml`, which also
 uses `/~/at/auth.js`, to send a `DELETE /~/auth.json`, perk `[%auth %del]`. This
-wipes the session from memory.
+executes `++abut:ya` for the provided oryx, wiping the session from memory.
 
 ## Appendix A: DNS [#dns]
 
