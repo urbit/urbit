@@ -98,7 +98,19 @@
           $:  %t                                        ::
       $%  [%wait p=@da]                                 ::
       ==  ==  ==                                        ::
-    ::
+    ::                                                  ::
+    ++  krow                                            ::  interface action
+      $%  [%number p=? q=@ud]                           ::
+          [%listen p=(list partner)]                    ::
+          [%say p=speech]                               ::
+          [%invite p=span q=(list partner)]             ::
+          [%banish p=span q=(list partner)]             ::
+          [%target p=(list partner)]                    ::
+          ::  [%destroy p=span]                         ::
+          [%create p=span q=posture r=tape]             ::
+          [%probe p=station]                            ::
+      ==                                                ::
+    ::                                                  ::
     ++  work                                            ::  interface action
       $%  [%ask (unit work)]                            ::  help (about)
           [%exp twig]                                   ::  compute
@@ -297,6 +309,10 @@
           (~(has in sources.shape:(~(got by stories) man.she)) `partner`n.paz)
       ==
     ::
+    ++  sh-lame                                         ::  send error
+      |=  txt=tape
+      (sh-fact [%txt txt])
+    ::
     ++  sh-whom                                         ::  current audience
       ^-  audience
       =+  paz=`(set partner)`?~(active.she passive.she u.active.she)
@@ -305,6 +321,105 @@
       %-  ~(gas by *audience)
       %+  turn  zup
       |=(a=partner [a *envelope %pending])
+    ::
+    ++  sh-tell                                         ::  add command
+      |=  cod=command
+      %_(+> coz [cod coz])
+    ::
+    ++  sh-krow                                         ::  do work
+      |=  job=krow
+      ^+  +>
+      =+  roy=(~(got by stories) man.she)
+      =<  krow
+      |%
+      ++  krow
+        ?-  -.job
+          %number  (number +.job)
+          %listen  (listen +.job)
+          %invite  (invite +.job)
+          %banish  (banish +.job)
+          %create  (create +.job)
+          %target  (target +.job)
+          %probe   (probe +.job)
+          %say     (say +.job)
+        ==
+      ::
+      ++  activate                                      ::  from %number
+        |=  gam=telegram
+        ^+  +>+>+>
+        sh-prod(active.she `~(tr-pals tr man.she gam))
+      ::
+      ++  listen                                        ::  %listen
+        |=  tal=(list partner)
+        ^+  +>+>+>
+        %^  sh-tell  %design  man.she
+        :-  ~
+        %_    shape.roy
+            sources
+          |-  ^-  (set partner)
+          ?~  tal  sources.shape.roy
+          ?:  (~(has in sources.shape.roy) i.tal)
+            $(tal t.tal, sources.shape.roy (~(del in sources.shape.roy) i.tal))
+          $(tal t.tal, sources.shape.roy (~(put in sources.shape.roy) i.tal))
+        ==
+      ::
+      ++  invite                                        ::  %invite
+        |=  [nom=span tal=(list partner)]
+        ^+  +>+>+>
+        !!
+      ::
+      ++  banish                                        ::  %banish
+        |=  [nom=span tal=(list partner)]
+        ^+  +>+>+>
+        !!
+      ::
+      ++  create                                        ::  %create
+        |=  [nom=span por=posture cap=tape]
+        ^+  +>+>+>
+        ?:  (~(has in stories) nom) 
+          (sh-lame "{(trip nom)}: already exists")
+        %^  sh-tell  %design  nom
+        :-  ~
+        :+  *(set partner)
+          (crip (scag 62 cap))
+        [por ~]
+      ::
+      ++  target                                        ::  %target
+        |=  [tal=(list partner)]
+        ^+  +>+>+>
+        ?~  tal 
+          +>+>+>(active.she ~) 
+        +>+>+>(active.she `(~(gas in *(set partner)) tal))
+      ::
+      ++  number                                        ::  %number
+        |=  [rel=? num=@ud]
+        ^+  +>+>+>
+        ~&  [%sh-pose rel num]
+        =+  roy=(~(got by stories) man.she)
+        =.  num
+            ?.  rel  num
+            =+  dog=|-(?:(=(0 num) 1 (mul 10 $(num (div num 10)))))
+            (add num (mul dog (div count.roy dog)))
+        ~&  [%sh-poser num]
+        ?:  (gte num count.roy)
+          (sh-lame "{(scow %ud num)}: no such telegram")
+        (activate (snag (sub count.roy +(num)) grams.roy))
+      ::
+      ++  probe                                         ::  inquire
+        |=  cuz=station
+        ^+  +>+>+>
+        ~&  [%probe cuz]
+        +>+>+>
+      ::
+      ++  say
+        |=  sep=speech
+        ^+  +>+>+>
+        =^  sir  +>+>+>  sh-uniq
+        %=    +>+>+>.$
+            coz  :_  coz
+          [%publish [[sir sh-whom [lat.hid ~ sep]] ~]]
+        ==
+      --
     ::
     ++  sh-work                                         ::  do work
       |=  job=work
