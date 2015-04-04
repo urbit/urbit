@@ -279,7 +279,6 @@
           %-  sh-pare
           %-  ~(gas in *(set partner))
           (turn (~(tap by aud)) |=([a=partner *] a))
-      ~&  [%sh-pass passive.she aud sap]
       ?:  =(sap passive.she)
         +>.$
       sh-prod(passive.she sap)

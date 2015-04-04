@@ -491,7 +491,7 @@
         =<  he-pone
         %-  dy-rush(pro `(slap (slot 7 vax) [%cnzy %q]))
         =+  pom=(sole-prompt +<.q.vax)
-        [%pro pom(cad ':' ' ' cad.pom)]
+        [%pro pom(cad [':' ' ' cad.pom])]
       ==
     ::
     ++  dy-make                                         ::  build step
