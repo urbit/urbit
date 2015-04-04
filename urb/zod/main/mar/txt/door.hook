@@ -84,5 +84,10 @@
         $(wig [[%| (welp p.i.wig p.i.t.wig) (welp q.i.wig q.i.t.wig)] t.t.wig])
       [i.wig $(wig t.wig)]
     --
+  ::
+  ++  mash
+    |=  [ali=(urge cord) bob=(urge cord)]
+    ^-  (urge cord)
+    (fall (join ali bob) ali)
   --
 --

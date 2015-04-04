@@ -1174,8 +1174,6 @@
     ++  make-nako
       |=  [a=aeon b=aeon]
       ^-  nako
-      ~&  >  %making-nako
-      =-  ~&  >  %made-nako  -
       :+  hit.dom
         let.dom
       (data-twixt-takos (~(get by hit.dom) a) (aeon-to-tako b))
