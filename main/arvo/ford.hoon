@@ -72,6 +72,7 @@
               [%dude p=tank q=silk]                     ::  error wrap
               [%dune p=(set beam) q=(unit gage)]        ::  unit literal
               [%join p=mark q=silk r=silk]              ::  merge
+              [%mash p=mark q=silk r=silk]              ::  merge
               [%mute p=silk q=(list (pair wing silk))]  ::  mutant
               [%pact p=silk q=silk]                     ::  patch
               [%plan p=beam q=spur r=hood]              ::  structured assembly
@@ -707,6 +708,49 @@
         (fine cof u.fom (slot 3 dif))
       ==
     ::
+    ++  mash
+      |=  [cof=cafe for=mark kas=silk kos=silk]
+      ^-  (bolt gage)
+      %.  [cof kas kos]
+      ;~  cope
+        ;~  coax
+          |=([cof=cafe p=silk q=silk] (make cof p))
+          |=([cof=cafe p=silk q=silk] (make cof q))
+        ==
+        |=  [cof=cafe cay=gage coy=gage]
+        ?.  &(?=(@ p.cay) ?=(@ p.coy))
+          (flaw cof leaf/"bad mash marc: {<p.cay>} {<p.coy>}" ~)
+        %+  cope  (fang cof for)
+        |=  [cof=cafe pro=vase]
+        ?.  (slab %grad p.pro)
+          (flaw cof leaf/"no ++grad" ~)
+        =+  gar=(slap pro [%cnzy %grad])
+        ?.  (slab %form p.gar)
+          ?.  (slab %sted p.gar)
+            (flaw cof leaf/"no ++form:grad nor ++sted:grad" ~)
+          =+  too=((soft ,@tas) q:(slap gar [%cnzy %sted]))
+          ?~  too
+            (flaw cof leaf/"bad ++sted:grad" ~)
+          (make cof %mash u.too [%done ~ cay] [%done ~ coy])
+        =+  fom=((soft ,@tas) q:(slap gar [%cnzy %form]))
+        ?~  fom
+          (flaw cof leaf/"bad ++form:grad" ~)
+        ?.  &(=(u.fom p.cay) =(u.fom p.coy))
+          %+  flaw  cof  :_  :_  ~
+            leaf/"mash on data of bad marks: {(trip p.cay)} {(trip p.coy)}"
+          leaf/"expected mark {(trip u.fom)}"
+        ?:  =(q.q.cay q.q.coy)
+          (fine cof cay)
+        ?.  (slab %mash p.gar)
+          (fine cof %null [%atom %n] ~)
+        %+  cope
+          %^  maul  cof
+            (slap (slap pro [%cnzy %grad]) [%cnzy %mash])
+          (slop q.cay q.coy)
+        |=  [cof=cafe dif=vase]
+        (fine cof u.fom dif)
+      ==
+    ::
     ++  kale                                            ::  mutate
       |=  [cof=cafe kas=silk muy=(list (pair wing silk))]
       ^-  (bolt gage)
@@ -1051,6 +1095,12 @@
           |.
           leaf/"ford: join {<p.kas>} {<`@p`(mug q.kas)>} {<`@p`(mug r.kas)>}"
         (join cof p.kas q.kas r.kas)
+      ::
+          %mash
+        %+  cool
+          |.
+          leaf/"ford: mash {<p.kas>} {<`@p`(mug q.kas)>} {<`@p`(mug r.kas)>}"
+        (mash cof p.kas q.kas r.kas)
       ::
           %mute  (kale cof p.kas q.kas)
           %pact
