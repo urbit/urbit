@@ -8185,10 +8185,12 @@
     ?:  (~(has in was) u.rev)
       ~|(%pray-loop !!)
     =+  ruv=`path`(weld u.rev `path`[%hoon ~])
-    =+  txt=(,@ta .^(%cx ruv))
-    ~|  ruv
-    %+  rash  txt
-    (ifix [gay gay] tall(was (~(put in was) u.rev), wer u.rev, bug |))
+    ~&  [%pray-disabled ruv]
+    !!
+    ::  =+  txt=(,@ta .^(%cx ruv))
+    ::  ~|  ruv
+    ::  %+  rash  txt
+    ::  (ifix [gay gay] tall(was (~(put in was) u.rev), wer u.rev, bug |))
   ::
   ++  prey
     |=  gun=(list twig)  ^-  (unit twig)
