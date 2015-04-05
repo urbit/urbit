@@ -41,12 +41,13 @@
   ==                                                    ::
 ++  presence   ?(%gone %hear %talk)                     ::  status type
 ++  register  (pair atlas (map partner atlas))          ::  ping me, ping srcs
+++  shelf  (map span (pair posture cord))               ::  ship shape
 ++  report                                              ::  talk update
   $%  [%config config]                                  ::  reconfigure
   ::  [%folder (list report)]                           ::  multiple
       [%grams (pair ,@ud (list telegram))]              ::  beginning, thoughts
       [%group register]                                 ::  presence
-      [%house (map span (pair posture cord))]           ::  station set
+      [%house shelf]                                    ::  station set
   ==                                                    ::
 ++  speech                                              ::  narrative action
   $%  [%lan p=span q=@t]                                ::  local announce
