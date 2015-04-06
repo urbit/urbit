@@ -49,7 +49,7 @@
     ^+  +>
     +>.$(mow (welp new mow))
   ::
-  ++  end   ?:(?=([* ~ ~] merges) . (blab [0 %pass / %g %cide %$] ~))
+  ++  end   ?.(?=([* ~ ~] merges) . (blab [0 %pass / %g %cide %$] ~))
   ++  win   end:(blab [ost %give %nice ~] ~)
   ++  lose  end:(blab [ost %give %mean ~] ~)
   ::
@@ -61,8 +61,8 @@
     |=  [syd=desk her=@p sud=desk gem=$|(%auto germ)]
     ^+  +>
     %-  blab  :_  ~
-    :*  ost  %pass  /[syd]  %g  %mess  [our.hid imp.hid]  our.hid
-        %merge-args  !>([our.hid syd her sud gem ~])
+    :*  ost  %pass  /[^syd]  %g  %mess  [our.hid imp.hid]  our.hid
+        %merge-args  !>([syd her sud gem ~])
     ==
   ::
   ++  spam  (corl blab ^spam)
@@ -80,11 +80,15 @@
   ++  work
     |=  sih=sign
     ^+  +>
+    ~|  [%working auto=auto gem=gem syd=syd her=her sud=sud]
     ?:  ?=(%meld gem)
       ?:  ?=(%g -.sih)
         ?:  ?=(%nice +<.sih)
-          =>  (spam leaf/"set up scratch space" ~)
-          merge(syd (cat 3 syd '-scratch'))
+          =>  (spam leaf/"%melding %{(trip sud)} into scratch space" ~)
+          %-  blab  :_  ~
+          :*  ost  %pass  /[syd]  %c  %merg  our.hid
+              (cat 3 syd '-scratch')  her  sud  gem
+          ==
         =+  :-  "failed to set up conflict resolution scratch space"
             "I'm out of ideas"
         lose:(spam leaf/-< leaf/-> ~)
@@ -139,8 +143,9 @@
         lose:(spam leaf/- >p.p.are.sih< q.p.are.sih)
       =>  .(gem %meld)
       =+  tic=(cat 3 syd '-scratch')
-      =>  =+  "%mate merge failed with conflicts, %melding into %{(trip tic)}"
-          [tic=tic (spam leaf/- ~)]
+      =>  =+  :-  "%mate merge failed with conflicts,"
+              "setting up scratch space at %{(trip tic)}"
+          [tic=tic (spam leaf/-< leaf/-> ~)]
       (fancy-merge tic our.hid syd %auto)
     ==
   --
@@ -155,9 +160,11 @@
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>.$]
+  ~|  [%pour-pax pax]
   =+  ((soft sign) sih)
   ?~  -
     [(spam leaf/"not working so well" >sih< ~) +>.$]
+  ~|  [%pour-sih -.sih +<.sih]
   abet:(work:(me ost -.pax) u)
 ::
 ++  spam

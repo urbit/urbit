@@ -1487,7 +1487,8 @@
             (flaw cof leaf/"{<p.cay>} mark on bad data" ~)
           =+  dif=((soft (urge cord)) q.q.coy)
           ?~  dif
-            (flaw cof leaf/"{<p.cay>} data with bad diff" ~)
+            =-  (flaw cof leaf/"{<p.cay>} data with bad diff" -)
+            [>type=p.q.coy< >shouldbe=-:!>(*(urge cord))< ~]
           =+  pac=(role (lurk (lore (cat 3 u.txt '\0a')) u.dif))
           (fine cof p.cay [%atom %t] (end 3 (dec (met 3 pac)) pac))
         %+  cope  (fang cof p.cay)
