@@ -177,6 +177,8 @@ window.urb.send = function(params,cb) {
   params.appl = params.appl ? params.appl : this.appl
   params.mark = params.mark ? params.mark : "json"
   params.xyro = params.data ? params.data : {}
+  params.wire = params.wire ? params.wire : "/"
+
 
   url = ["to",params.appl,params.mark]
   url = "/~/"+url.join("/")
@@ -236,7 +238,9 @@ window.urb.unsubscribe = function(params,cb) {
   
   params.ship = params.ship ? params.ship : this.ship
   params.appl = params.appl ? params.appl : this.appl
+  params.wire = params.wire ? params.wire : params.path
 
+  
   if(!params.path) throw new Error("You must specify a path for urb.unsubscribe.")
   if(!params.appl) throw new Error("You must specify an appl for urb.unsubscribe.")
   if(!cb) throw new Error("You must supply a callback to urb.unsubscribe.")
