@@ -21,6 +21,7 @@ window.urb.req = function(method,url,params,json,cb) {
   if(params.path) { _data.path = params.path; }
   if(params.appl) { _data.appl = params.appl; }
   if(params.mark) { _data.mark = params.mark; }
+  if(params.wire) { _data.wire = params.wire; }
   if(cb) {
     xhr.onload = function() {
       try {
@@ -74,8 +75,7 @@ window.urb.qreq = function(method,url,params,json,cb) {
 window.urb.gsig = function(params) {
   var path = params.path
   if(!path) path = ""
-  if(path[0] != "/") path = "/"+path
-  if(path == "/") path = ""
+  if(path[0] !== "/") path = "/"+path
   return  "~"+params.ship+"/"+
           params.appl+
           path.replace(/[^\x00-\x7F]/g, "")
@@ -201,23 +201,26 @@ window.urb.bind = function(path, cb){ // or bind(path, params, cb, nicecb?)
   else params = {}
     
   params.path = path
+  if(params.path[0] !== "/") params.path = "/"+params.path
   params.ship = params.ship ? params.ship : this.ship
   params.appl = params.appl ? params.appl : this.appl
   params.mark = params.mark ? params.mark : "json"
+  params.wire = params.wire ? params.wire : params.path
 
-  if(!path) throw new Error("You must specify a path for urb.bind.")
+  if(typeof path != "string")
+    throw new Error("You must specify a string path for urb.bind.")
   if(!params.appl) throw new Error("You must specify an appl for urb.bind.")
   if(!cb) throw new Error("You must supply a callback to urb.bind.")
 
-  if(path[0] !== "/") path = "/"+path
   
   var method, perm, url, $this
-
-  this.cabs[this.gsig(params)] = cb
 
   if(params.mark !== "json")
     throw new Error("Non-json subscriptions unimplemented.")  //  XX
   url = "/~/is/"+this.gsig(params)+"."+params.mark
+  
+  params.path = params.wire
+  this.cabs[this.gsig(params)] = cb
 
   $this = this
   this.qreq("put",url,params,true,function(err,res) {

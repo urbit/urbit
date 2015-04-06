@@ -1,7 +1,28 @@
 Eyre: Reference
 ===============
 
-todo
+## State
+
+Stored
+
+- `++bolo`
+- `++cyst`
+- `++stem`
+
+Runtime
+
+- `perk`
+  + `perk-auth`
+- `pest`
+- `even`
+
+## Cores
+
+- `++handle`
+  + `++parse`
+     - `++as...`
+- `++ya`
+- `++ix`
 
 Eyre: Commentary
 ================
@@ -64,9 +85,9 @@ This triggers another `%this` request. Its handling is identical to that of
 `/cli` up until `++parse`, where it is seen not `++as-beam` but
 `++as-aux-request`(auxillary requests starting with `/~/` or `/~~/`).
 `/on/[hash]` is a long-`%poll`, which `++process-parsed`, for a `.js` mark,
-answers with a direct `%fin %js`. Its contents are the static `++poll:js`, which
-initiates the long-polling loop, run against an injected `urb.js` of 
-`{poll: [hash]}`.
+answers with a direct `%js`. Its contents are the static `++poll:js`, which
+initiates the long-polling loop, run against an injected `urb.js` of
+`{poll:[hash]}`.
 
 A `%js` `pest` is `resolve`d as a `text/javascript` success `%this`.
 
