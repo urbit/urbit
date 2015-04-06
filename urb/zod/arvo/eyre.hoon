@@ -483,7 +483,6 @@
       (get-rush:(ire-ix p.tee) q.tee ((hard json) q.sih))
     ::
         ?(%nice %mean)
-      ~&  ack/[tee hen]
       ?+  tee  !!
         ~        ?-(&2.sih %nice (nice-json), %mean (mean-json 500 p.sih))
         [%of @ ^]  (get-ack:(ire-ix p.tee) +.sih)
