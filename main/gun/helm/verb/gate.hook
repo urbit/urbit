@@ -2,11 +2,11 @@
 ::::  /hook/gate/verb/helm/gun
   ::
 /?  314
-/-  *console
+/-  *sole
 ::
 ::::
   !:
 |=  $:  [now=@da bec=beak]
         [~ ~]
     ==
-(console-so %helm-verb ~)
+(sole-so %helm-verb ~)
