@@ -37,6 +37,7 @@
           grams=(list telegram)                         ::  all history
           locals=(map ship (pair ,@da status))          ::  local presence
           remotes=(map partner atlas)                   ::  remote presence
+          mirrors=(map station config)                  ::  remote config
           sequence=(map partner ,@ud)                   ::  partners heard
           shape=config                                  ::  configuration
           known=(map serial ,@ud)                       ::  messages heard
@@ -53,7 +54,7 @@
           passive=(set partner)                         ::  passive targets
           guests=register                               ::  presence mirror
           harbor=(map span (pair posture cord))         ::  stations mirror
-          shape=config                                  ::  config mirror
+          system=cabal                                  ::  config mirror
       ==                                                ::
     ++  river  (pair point point)                       ::  stream definition
     ++  point                                           ::  stream endpoint
@@ -205,7 +206,6 @@
       ++  work
         %+  knee  *^work  |.  ~+
         ;~  pose
-        ::
           %+  stag  %create
           ;~  pfix  (jest %create)
             ;~  plug
@@ -214,11 +214,12 @@
               ;~(pfix ace qut)
             ==
           ==
-          (stag %number nump)
-          (stag %target parz)
         ::
           %+  stag  %listen
           ;~(pfix (jest %listen) ;~(pfix ace parq))
+        ::
+          (stag %number nump)
+          (stag %target parz)
         ==
       --
     ++  sh-abet
@@ -368,6 +369,34 @@
         ret(new [i.owt new.ret])
       ret 
     ::
+    ++  sh-repo-cabal-diff
+      |=  [one=(map station config) two=(map station config)]
+      =|  $=  ret
+          $:  new=(list (pair station config))
+              old=(list (pair station config))
+              cha=(list (pair station config))
+          ==
+      ^+  ret
+      =.  ret
+        =+  eno=(~(tap by one))
+        |-  ^+  ret
+        ?~  eno  ret
+        =.  ret  $(eno t.eno)
+        =+  unt=(~(get by two) p.i.eno)
+        ?~  unt
+          ret(old [i.eno old.ret])
+        ?:  =(q.i.eno u.unt)  ret 
+        ret(cha [[p.i.eno u.unt] cha.ret])
+      =.  ret
+        =+  owt=(~(tap by two))
+        |-  ^+  ret
+        ?~  owt  ret
+        =.  ret  $(owt t.owt)
+        ?:  (~(has by one) p.i.owt)
+          ret
+        ret(new [i.owt new.ret])
+      ret
+    ::
     ++  sh-repo-rogue-diff
       |=  [one=(map partner atlas) two=(map partner atlas)]
       =|  $=  ret
@@ -394,7 +423,7 @@
         ?:  (~(has by one) p.i.owt)
           ret
         ret(new [i.owt new.ret])
-      ret 
+      ret
     ::
     ++  sh-repo-whom-diff
       |=  [one=(set partner) two=(set partner)]
@@ -419,7 +448,7 @@
         ?:  (~(has in one) i.owt)
           ret
         ret(new [i.owt new.ret])
-      ret 
+      ret
     ::
     ++  sh-repo-ship-diff
       |=  [one=(set ship) two=(set ship)]
@@ -456,10 +485,9 @@
       ==
     ::
     ++  sh-repo-config-exceptions
-      |=  [nom=span por=posture old=(list ship) new=(list ship)]
+      |=  [pre=tape por=posture old=(list ship) new=(list ship)]
       =+  out=?:(?=(?(%black %brown) por) "try " "cut ")
       =+  inn=?:(?=(?(%black %brown) por) "ban " "add ")
-      =+  pre=(weld (trip nom) ": ")
       =.  +>.$
           |-  ^+  +>.^$
           ?~  old  +>.^$
@@ -473,9 +501,8 @@
       +>.$
     ::
     ++  sh-repo-config-sources
-      |=  [nom=span old=(list partner) new=(list partner)]
+      |=  [pre=tape old=(list partner) new=(list partner)]
       ^+  +>
-      =+  pre=(weld (trip nom) ": ")
       =.  +>.$
           |-  ^+  +>.^$
           ?~  old  +>.^$
@@ -488,23 +515,59 @@
           (sh-note (weld pre "hey {~(ta-full ta man.she i.new)}"))
       +>.$
     ::
-    ++  sh-repo-config
-      |=  con=config
+    ++  sh-repo-config-show
+      |=  [pre=tape laz=config loc=config]
       ^+  +>
-      =+  old=shape.she
-      =.  shape.she  con
       =.  +>.$
-        ?:  =(caption.con caption.old)  +>.$
-        (sh-note (weld "cap " (trip caption.con)))
+        ?:  =(caption.loc caption.laz)  +>.$
+        (sh-note :(weld pre "cap " (trip caption.loc)))
       =.  +>.$
-          %+  sh-repo-config-sources  man.she
-          (sh-repo-whom-diff sources.shape.she sources.con)
-      ?:  !=(p.cordon.con p.cordon.old)
-        =.  +>.$  (sh-note (weld "but " (sh-puss p.cordon.con)))
-        %^  sh-repo-config-exceptions  man.she  p.cordon.con
-        [~ (~(tap in q.cordon.con))]
-      %^  sh-repo-config-exceptions  man.she  p.cordon.con
-      (sh-repo-ship-diff q.cordon.old q.cordon.con)
+          %+  sh-repo-config-sources
+            (weld (trip man.she) ": ")
+          (sh-repo-whom-diff sources.laz sources.loc)
+      ?:  !=(p.cordon.loc p.cordon.laz)
+        =.  +>.$  (sh-note :(weld pre "but " (sh-puss p.cordon.loc)))
+        %^    sh-repo-config-exceptions  
+            (weld (trip man.she) ": ")  
+          p.cordon.loc
+        [~ (~(tap in q.cordon.loc))]
+      %^    sh-repo-config-exceptions  
+          (weld (trip man.she) ": ")
+        p.cordon.loc
+      (sh-repo-ship-diff q.cordon.laz q.cordon.loc)
+    ::
+    ++  sh-repo-cabal-changes
+      |=  $:  laz=(map station config)
+              new=(list (pair station config))
+              old=(list (pair station config))
+              cha=(list (pair station config))
+          ==
+      =.  +>.$
+          |-  ^+  +>.^$
+          ?~  new  +>.^$
+          =.  +>.^$  $(new t.new)
+          %+  sh-repo-config-show  
+            (weld ~(sn-phat sn man.she p.i.new) ": ")
+          [*config q.i.new]
+      =.  +>.$
+          |-  ^+  +>.^$
+          ?~  cha  +>.^$
+          =.  +>.^$  $(cha t.cha)
+          %+  sh-repo-config-show  
+            (weld ~(sn-phat sn man.she p.i.cha) ": ")
+          [(~(got by laz) `station`p.i.cha) q.i.cha]
+      +>.$
+    ::
+    ++  sh-repo-cabal
+      |=  bal=cabal
+      ^+  +>
+      =+  laz=loc.system.she
+      =.  loc.system.she  loc.bal
+      =.  +>.$  (sh-repo-config-show "" laz loc.bal)
+      =+  laz=ham.system.she
+      =.  ham.system.she  ham.bal
+      %+  sh-repo-cabal-changes  laz
+      (sh-repo-cabal-diff laz ham.bal)
     ::
     ++  sh-repo-house
       |=  awl=(map span (pair posture cord))
@@ -538,7 +601,7 @@
     ::
     ++  sh-note                                         ::  shell message
       |=  txt=tape
-      (sh-fact %txt (runt [16 ' '] `tape`[':' ' ' txt]))
+      (sh-fact %txt (runt [16 '-'] `tape`[':' ' ' txt]))
     ::
     ++  sh-spaz                                         ::  print status
       |=  saz=status
@@ -634,8 +697,7 @@
       |=  rad=report
       ^+  +>
       ?-  -.rad
-        %config  ~&  [%sh-repo-config +.rad]
-                 +>
+        %cabal   (sh-repo-cabal +.rad)
         %grams   (sh-repo-grams +.rad)
         %group   (sh-repo-group +.rad)
         %house   (sh-repo-house +.rad)
@@ -997,13 +1059,13 @@
     ^+  +>
     =+  man=`span`?~(pax (main her) ?>(?=(~ t.pax) i.pax))
     =+  ^=  she  ^-  shell
-        [her man 0 *sole-share ~ [[%& our.hid man] ~ ~] [~ ~] ~ *config]
+        [her man 0 *sole-share ~ [[%& our.hid man] ~ ~] [~ ~] ~ *cabal]
     sh-abet:~(sh-peer sh ~ she)
   ::
   ++  ra-subscribe                                      ::  listen to
     |=  [her=ship pax=path]
     ^+  +>
-    ~&  [%ra-subscribe ost her pax]
+    ::  ~&  [%ra-subscribe ost her pax]
     ?:  ?=(~ pax)
       (ra-house(general (~(put in general) ost)) ost)
     ?.  ?=([@ @ *] pax)
@@ -1127,7 +1189,7 @@
         (pa-sauce ost [[%mean ~ %talk-master-unauthorized ~] ~])
       =.  owners  (~(put in owners) ost)
       ::  ~&  [%pa-master her man shape]
-      (pa-sauce ost [[%rush %talk-report %config shape] ~])
+      (pa-sauce ost [[%rush %talk-report %cabal shape mirrors] ~])
     ::
     ++  pa-display                                      ::  update presence
       |=  vew=(set bone)
@@ -1150,7 +1212,16 @@
       =.  +>  $(owe l.owe)
       =.  +>  $(owe r.owe)
       ::  ~&  [%pa-monitor man shape]
-      (pa-sauce n.owe [[%rush %talk-report %config shape] ~])
+      (pa-sauce n.owe [[%rush %talk-report %cabal shape mirrors] ~])
+    ::
+    ++  pa-cabal
+      |=  [cuz=station con=config ham=(map station config)]
+      ^+  +>
+      =+  old=mirrors
+      =.  mirrors  (~(put by mirrors) cuz con)
+      ?:  =(mirrors old)
+        +>.$
+      pa-monitor 
     ::
     ++  pa-friend                                       ::  subscribed update
       |=  [tay=partner sih=sign]
@@ -1179,13 +1250,13 @@
     ::
           [%g %rush %talk-report *]
         ::  ~&  [%pa-friend-report +>+.sih]
-        ?>  ?=(& -.tay)
+        ?>  ?=(%& -.tay)
         =.  +>  %+  pa-scrub  ost 
                 :_  ~
                 :-  /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
                 [%g %took [p.p.tay /talk] our.hid]
         ?+  -.p.p.sih  ~|([%talk-odd-friend sih] !!)
-          %config  +>.$
+          %cabal  (pa-cabal `station`p.tay `cabal`+.p.p.sih)
           %group  (pa-remind tay +.p.p.sih)
           %grams  (pa-lesson q.+.p.p.sih)
         ==
@@ -1705,6 +1776,7 @@
           grams=grams
           locals=~
           remotes=~
+          mirrors=~
           sequence=~
           shape=[.(cordon [%black ~])]:*config
           ^=  known  %-  mo  ^-  (list ,[serial @])  =<  +
