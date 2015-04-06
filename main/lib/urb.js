@@ -75,6 +75,7 @@ window.urb.gsig = function(params) {
   var path = params.path
   if(!path) path = ""
   if(path[0] != "/") path = "/"+path
+  if(path == "/") path = ""
   return  "~"+params.ship+"/"+
           params.appl+
           path.replace(/[^\x00-\x7F]/g, "")

@@ -5420,7 +5420,7 @@ MessageActions = require('../actions/MessageActions.coffee');
 module.exports = {
   listenStation: function(station, since) {
     return window.urb.subscribe({
-      appl: "radio",
+      appl: "talk",
       path: "/f/" + station + "/" + since
     }, function(err, res) {
       var ref, ref1;
@@ -5436,7 +5436,7 @@ module.exports = {
   },
   get: function(station, start, end) {
     return window.urb.subscribe({
-      appl: "radio",
+      appl: "talk",
       path: "/f/" + station + "/" + end + "/" + start
     }, function(err, res) {
       var ref, ref1;
@@ -5445,7 +5445,7 @@ module.exports = {
       if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
         MessageActions.loadMessages(res.data.grams, true);
         return window.urb.unsubscribe({
-          appl: "radio",
+          appl: "talk",
           path: "/f/" + station + "/" + end + "/" + start
         }, function(err, res) {
           console.log('done');
@@ -5456,8 +5456,8 @@ module.exports = {
   },
   sendMessage: function(message, cb) {
     return window.urb.send({
-      appl: "radio",
-      mark: "radio-command",
+      appl: "talk",
+      mark: "talk-command",
       data: {
         publish: [message]
       }
@@ -5481,8 +5481,8 @@ StationActions = require('../actions/StationActions.coffee');
 module.exports = {
   createStation: function(name, cb) {
     return window.urb.send({
-      appl: "radio",
-      mark: "radio-command",
+      appl: "talk",
+      mark: "talk-command",
       data: {
         design: {
           party: name,
@@ -5500,8 +5500,8 @@ module.exports = {
   },
   removeStation: function(name, cb) {
     return window.urb.send({
-      appl: "radio",
-      mark: "radio-command",
+      appl: "talk",
+      mark: "talk-command",
       data: {
         design: {
           party: name,
@@ -5513,8 +5513,8 @@ module.exports = {
   setSources: function(station, ship, sources) {
     var send;
     send = {
-      appl: "radio",
-      mark: "radio-command",
+      appl: "talk",
+      mark: "talk-command",
       data: {
         design: {
           party: station,
@@ -5536,7 +5536,7 @@ module.exports = {
   },
   members: function() {
     return window.urb.subscribe({
-      appl: "radio",
+      appl: "talk",
       path: "/a/court"
     }, function(err, res) {
       var ref, ref1;
@@ -5549,7 +5549,7 @@ module.exports = {
   },
   listen: function() {
     return window.urb.subscribe({
-      appl: "radio",
+      appl: "talk",
       path: "/"
     }, function(err, res) {
       console.log('house updates');
@@ -5561,9 +5561,10 @@ module.exports = {
   },
   listenStation: function(station) {
     return window.urb.subscribe({
-      appl: "radio",
+      appl: "talk",
       path: "/ax/" + station
     }, function(err, res) {
+      var ref;
       console.log('station subscription updates');
       console.log(res.data);
       if (res.data.ok === true) {
@@ -5573,8 +5574,8 @@ module.exports = {
         res.data.group.global[window.util.mainStationPath(window.urb.user)] = res.data.group.local;
         StationActions.loadMembers(res.data.group.global);
       }
-      if (res.data.config) {
-        return StationActions.loadConfig(station, res.data.config);
+      if ((ref = res.data.cabal) != null ? ref.loc : void 0) {
+        return StationActions.loadConfig(station, res.data.cabal.loc);
       }
     });
   }
