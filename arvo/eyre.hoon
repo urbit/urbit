@@ -862,6 +862,7 @@
       ::
           %mess
         =+  cay=[%json !>(`json`r.hem)]
+        =.  him  him:for-view         ::  authenticated user
         :+  %&  %|
         ?:  ?=(%json q.hem)
           [~ [%g %mess [- + ~]:p.hem him cay]]
