@@ -951,9 +951,9 @@
           ?:  =(let.dom 0)
             ~
           q:(aeon-to-yaki let.dom)
-      =+  bol=(~(get by hat) pax)
+      =+  lol=(~(get by hat) pax)
       |-  ^-  silk
-      ?:  =([~ lob] bol)
+      ?:  =([~ lob] lol)
         =+  (need (need (read-x let.dom pax)))
         ?>  ?=(%& -<)
         [%done ~ p.-]

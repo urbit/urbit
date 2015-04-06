@@ -24,10 +24,12 @@
     |=  tyt=wain
     ^-  (urge cord)
     (lusk txt tyt (loss txt tyt))
+  ::
   ++  pact
     |=  dif=(urge cord)
     ^-  wain
     (lurk txt dif)
+  ::
   ++  join
     |=  [ali=(urge cord) bob=(urge cord)]
     ^-  (unit (urge cord))
