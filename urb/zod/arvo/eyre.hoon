@@ -146,7 +146,7 @@
       [%bugs p=?(%as %to) ~]
       [%beam p=beam]
       [%deps p=?(%put %delt) q=@uvH]
-      [%mess p=hasp q=mark r=json]
+      [%mess p=hasp q=mark r=wire s=json]
       [%poll p=@uvH]
       [%spur p=spur]
       [%subs p=?(%put %delt) q=[p=hasp %json q=path]]
@@ -780,7 +780,8 @@
           [~ (rash q.i.quy dem)]
         ::
             %to
-          =-  [%mess [- +<]:dir +>.dir (need-body (ot:jo xyro/some ~))]
+          ?>  =('/' (need-body (ot wire/so ~):jo))  ::  XX custom
+          =-  [%mess [- +<]:dir +>.dir / (need-body (ot:jo xyro/some ~))]
           ^=  dir
           =+  ful=(read but %p %tas %tas ~)
           ?^  ful  u.ful
@@ -860,11 +861,10 @@
         ==
       ::
           %mess
-        =+  [him=him:for-view cay=[%json !>(`json`r.hem)]]
-        =+  wir=/                     ::  XX custom
+        =+  [him=him:for-view cay=[%json !>(`json`s.hem)]]
         ?:  ?=(%json q.hem)
-          [%| ((teba new-mess:for-view) p.hem wir cay)]
-        :^  %&  %|  [%to need-ixor (scot %p p.p.hem) q.p.hem wir]
+          [%| ((teba new-mess:for-view) p.hem r.hem cay)]
+        :^  %&  %|  [%to need-ixor (scot %p p.p.hem) q.p.hem r.hem]
         (ford-req [%cast q.hem %done ~ cay])
       ::
           %poll
