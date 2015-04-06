@@ -404,7 +404,7 @@
       =.  p.p.pul  |(p.p.pul ?=(hoke r.p.pul))
       =+  her=(host-to-ship r.p.pul)
       ?:  |(?=(~ her) =(our u.her))
-        (handle pul [anon q.+.kyz] [p.heq maf s.heq])
+        (handle pul q.+.kyz [p.heq maf s.heq])
       =+  han=(sham hen)
       =.  pox  (~(put by pox) han hen)
       (ames-gram u.her [%get ~] han +.kyz)
@@ -621,7 +621,7 @@
   ::
   ++  handle
     |=  $:  [hat=hart pok=pork quy=quay]                ::  purl, parsed url
-            [him=ship cip=clip]                         ::  client ip
+            cip=clip                                    ::  client ip
             [mef=meth maf=math bod=(unit octs)]         ::  method/headers/body
         ==
     =<  apex
@@ -861,8 +861,7 @@
         ==
       ::
           %mess
-        =+  cay=[%json !>(`json`r.hem)]
-        =.  him  him:for-view         ::  authenticated user
+        =+  [him=him:for-view cay=[%json !>(`json`r.hem)]]
         :+  %&  %|
         ?:  ?=(%json q.hem)
           [~ [%g %mess [- + ~]:p.hem him cay]]
@@ -921,7 +920,6 @@
         ?:  |(=(anon him.ham) (~(has in aut.yac) him.ham))
           %_  process
             pok   rem.ham
-            him   him.ham
             ..ya  abet.yac(him him.ham)
           ==
         ?.  =(our him.ham)
