@@ -601,6 +601,9 @@ module.exports = recl({
     };
     s.audi = _.without(s.audi, window.util.mainStationPath(window.urb.user));
     s.ludi = _.without(s.ludi, window.util.mainStationPath(window.urb.user));
+    console.log('set');
+    console.log(s.audi);
+    console.log(s.ludi);
     return s;
   },
   getInitialState: function() {
@@ -778,6 +781,8 @@ module.exports = recl({
     name = iden ? iden.name : "";
     audi = this.state.audi.length === 0 ? this.state.ludi : this.state.audi;
     audi = window.util.clipAudi(audi);
+    console.log('audi');
+    console.log(audi);
     k = "writing";
     return div({
       className: k
@@ -861,25 +866,24 @@ $(function() {
       }
     },
     clipAudi: function(audi) {
-      var j, len, ref, regx, v;
+      var ms, regx;
       audi = audi.join(" ");
-      ref = window.util.mainStations;
-      for (j = 0, len = ref.length; j < len; j++) {
-        v = ref[j];
-        regx = new RegExp("/" + v, "g");
-        audi = audi.replace(regx, "");
-      }
+      ms = window.util.mainStationPath(window.urb.user);
+      regx = new RegExp("/" + ms, "g");
+      audi = audi.replace(regx, "");
       return audi.split(" ");
     },
     expandAudi: function(audi) {
-      var k, v;
-      for (k in audi) {
-        v = audi[k];
-        if (v.indexOf("/") === -1) {
-          audi[k] = v + "/" + (window.util.mainStation(v.slice(1)));
+      var ms;
+      audi = audi.join(" ");
+      ms = window.util.mainStationPath(window.urb.user);
+      if (audi.indexOf(ms) === -1) {
+        if (audi.length > 0) {
+          audi += " ";
         }
+        audi += "" + ms;
       }
-      return audi;
+      return audi.split(" ");
     },
     create: function(name) {
       return window.chat.StationPersistence.createStation(name, function(err, res) {});

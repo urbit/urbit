@@ -24,16 +24,19 @@ $(() ->
 
     clipAudi: (audi) ->
       audi = audi.join " "
-      for v in window.util.mainStations
-        regx = new RegExp "/#{v}","g"
-        audi = audi.replace regx,""
+      ms = window.util.mainStationPath window.urb.user
+      regx = new RegExp "/#{ms}","g"
+      audi = audi.replace regx,""
       audi.split " "
 
     expandAudi: (audi) ->
-      for k,v of audi
-        if v.indexOf("/") is -1
-          audi[k] = "#{v}/#{window.util.mainStation(v.slice(1))}"
-      audi
+      audi = audi.join " "
+      ms = window.util.mainStationPath window.urb.user
+      if audi.indexOf(ms) is -1 
+        if audi.length > 0
+          audi += " "
+        audi += "#{ms}"
+      audi.split " "
 
     create: (name) ->
       window.chat.StationPersistence.createStation name, (err,res) ->
