@@ -3,7 +3,7 @@ MessageActions = require '../actions/MessageActions.coffee'
 module.exports =
   listenStation: (station,since) ->
     window.urb.subscribe {
-      appl:"radio"
+      appl:"talk"
       path:"/f/#{station}/#{since}"
      }, (err,res) ->
         console.log('m subscription updates')
@@ -15,7 +15,7 @@ module.exports =
 
   get: (station,start,end) ->
     window.urb.subscribe {
-      appl:"radio"
+      appl:"talk"
       path:"/f/#{station}/#{end}/#{start}"
     }, (err,res) ->
       console.log 'get'
@@ -23,7 +23,7 @@ module.exports =
       if res.data?.grams?.tele
         MessageActions.loadMessages res.data.grams,true
         window.urb.unsubscribe {
-          appl:"radio"
+          appl:"talk"
           path:"/f/#{station}/#{end}/#{start}"
         }, (err,res) ->
           console.log 'done'
@@ -31,8 +31,8 @@ module.exports =
 
   sendMessage: (message,cb) ->
     window.urb.send {
-      appl:"radio"
-      mark:"radio-command"
+      appl:"talk"
+      mark:"talk-command"
       data:
         publish: [
           message
