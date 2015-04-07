@@ -103,7 +103,7 @@ window.urb.poll = function(params) {
         return document.location.reload()  // XX check autoreload
           case "rush":
           case "mean":
-        if(res.data.type) == "mean"
+        if(res.data.type == "mean")
           err = res.data.data
         var fn = $this.gsig(res.data.from)
         if($this.cabs[fn])
