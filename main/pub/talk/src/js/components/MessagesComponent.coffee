@@ -1,13 +1,13 @@
 moment = require 'moment-timezone'
 
 recl = React.createClass
-[div,input,textarea] = [React.DOM.div,React.DOM.input,React.DOM.textarea]
+[div,br,input,textarea] = [React.DOM.div,React.DOM.br,React.DOM.input,React.DOM.textarea]
 
-MessageStore = require '../stores/MessageStore.coffee'
-StationStore = require '../stores/StationStore.coffee'
 MessageActions  = require '../actions/MessageActions.coffee'
+MessageStore    = require '../stores/MessageStore.coffee'
 StationActions  = require '../actions/StationActions.coffee'
-Member = require './MemberComponent.coffee'
+StationStore    = require '../stores/StationStore.coffee'
+Member          = require './MemberComponent.coffee'
 
 Message = recl
   lz: (n) -> if n<10 then "0#{n}" else "#{n}"
@@ -19,24 +19,31 @@ Message = recl
     s = @lz d.getSeconds()
     "~#{h}.#{m}.#{s}"
 
+  _handleAudi: (e) ->
+    audi = _.map $(e.target).closest('.audi').find('div'), (div) -> return $(div).text()
+    @props._handleAudi audi
+
+  _handlePm: (e) ->
+    return if not @props._handlePm
+    user = $(e.target).closest('.iden').text().slice(1)
+    @props._handlePm user
+
   render: ->
     # pendingClass = if @props.pending isnt "received" then "pending" else ""
     delivery = _.uniq _.pluck @props.thought.audience, "delivery"
-    pendingClass = if delivery.indexOf("received") isnt -1 then "received" else "pending"
-
-    if pendingClass is "pending"
-      console.log @props.thought
-      console.log delivery
+    klass = if delivery.indexOf("received") isnt -1 then " received" else " pending"
+    if @props.thought.statement.speech.lin.say is false then klass += " say"
 
     name = if @props.name then @props.name else ""
-    audi = _.remove _.keys(@props.thought.audience), (stat) => 
-      stat isnt "~"+window.urb.ship+"/"+@props.station
-    audi = audi.join " "
+    audi = _.keys @props.thought.audience
+    audi = _.without audi,window.util.mainStationPath window.urb.user
+    audi = window.util.clipAudi audi
+    audi = audi.map (_audi) -> (div {}, _audi)
 
-    div {className:"message "+pendingClass}, [
+    div {className:"message #{klass}"}, [
         (div {className:"attr"}, [
-          (Member {ship:@props.ship}, "")
-          div {className:"audi"}, "#{audi}"
+          div {onClick:@_handleAudi,className:"audi"}, audi
+          (div {onClick:@_handlePm}, (React.createElement Member,{ship:@props.ship}))
           div {className:"time"}, @convTime @props.thought.statement.date
         ])
         div {className:"mess"}, @props.thought.statement.speech.lin.txt
@@ -51,7 +58,7 @@ module.exports = recl
     last:MessageStore.getLast()
     fetching:MessageStore.getFetching()
     listening:MessageStore.getListening()
-    station:StationStore.getStation()
+    station:window.util.mainStation()
     stations:StationStore.getStations()
     configs:StationStore.getConfigs()
     typing:MessageStore.getTyping()
@@ -78,7 +85,8 @@ module.exports = recl
   componentDidMount: ->
     MessageStore.addChangeListener @_onChangeStore
     StationStore.addChangeListener @_onChangeStore
-    if @state.station and @state.listening.indexOf(@state.station) is -1
+    if @state.station and
+    @state.listening.indexOf(@state.station) is -1
       MessageActions.listenStation @state.station
     checkMore = @checkMore
     $(window).on 'scroll', checkMore
@@ -87,9 +95,8 @@ module.exports = recl
   componentDidUpdate: ->
     $window = $(window)
     if @lastLength
-      h = $('.message').height() * (@length-@lastLength)
-      st = $window.scrollTop()
-      $window.scrollTop st+h
+      st = $window.height()
+      $window.scrollTop st
       @lastLength = null
     else
       if $('#writing-container').length > 0
@@ -101,14 +108,22 @@ module.exports = recl
 
   _onChangeStore: -> @setState @stateFromStore()
 
+  _handlePm: (user) ->
+    audi = [
+      window.util.mainStationPath(user)
+      window.util.mainStationPath(window.urb.user)
+    ]
+    if user is window.urb.user then audi.pop()
+    StationActions.setAudience audi
+
+  _handleAudi: (audi) -> StationActions.setAudience audi
+
   render: ->
     station = @state.station
     _station = "~"+window.urb.ship+"/"+station
     sources = _.clone @state.configs[@state.station]?.sources ? []
     sources.push _station
-    _messages = _.filter @state.messages, (_message) ->
-      audience = _.keys(_message.thought.audience)
-      _.intersection(sources,audience).length > 0
+    _messages = @state.messages
     _messages = _.sortBy _messages, (_message) -> 
       _message.pending = _message.thought.audience[station]
       _message.thought.statement.time
@@ -122,5 +137,7 @@ module.exports = recl
 
     messages = _messages.map (_message) => 
       _message.station = @state.station
-      Message _message, ""
+      _message._handlePm = @_handlePm
+      _message._handleAudi = @_handleAudi
+      React.createElement Message,_message
     div {id: "messages"}, messages

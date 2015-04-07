@@ -34,7 +34,7 @@ under the corresponding paths. You will need four files:
 
 When everything is in place, try it:
 
-    http://localhost:8080/gen/main/pub/lead/
+    http://localhost:8080/main/pub/lead/
 
 That URL should render a page and be self explanatory. Try adding names
 to the leaderboard and incrementing their scores. It's also fun to open
@@ -63,7 +63,7 @@ Our application-specific resources are stored in `/main/pub/lead/src/`.
 `/main/pub/lead/src/main.js` updates the page and sends data.
 
 We also use two utility scripts: `/gop/hart.js` and
-`/gen/main/lib/urb.js`. These are the standard libraries for handling
+`/main/lib/urb.js`. These are the standard libraries for handling
 data transfer from a browser to Urbit, and are very frequently used.
 `hart.js` handles the page heartbeat, making regular AJAX requests so we
 can keep track of subscribers, and `urb.js` offers a more complete set

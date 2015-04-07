@@ -508,8 +508,7 @@
 ::
 ++  moon                                                ::  mime type to text
   |=  myn=mite
-  %+  rap
-    3
+  %-  crip
   |-  ^-  tape
   ?~  myn  ~
   ?:  =(~ t.myn)  (trip i.myn)
@@ -631,7 +630,7 @@
 ::
 ++  poxo                                                ::  node to tape
   =<  |=(a=manx `tape`(apex a ~))
-  |_  unq=_`?`|
+  |_  _[unq=`?`| cot=`?`|]                              ::  self-close all tags
   ++  apex                                              ::  top level
     |=  [mex=manx rez=tape]
     ^-  tape
@@ -645,8 +644,8 @@
     %+  welp  tam
     =-  ?~(att rez [' ' (attr att rez)])
     ^-  rez=tape
-    ::?~  c.mex
-    ::  [' ' '/' '>' rez]
+    ?:  &(?=(~ c.mex) |(cot (clot man)))
+      [' ' '/' '>' rez]
     :-  '>'
     (many c.mex :(weld "</" tam ">" rez))
   ::  ::
@@ -680,16 +679,23 @@
            ==
     ==
   ::
-  ++  name                                              ::  name to tape
-    |=  man=mane  ^-  tape
-    ?@  man  (trip man)
-    (weld (trip -.man) `tape`[':' (trip +.man)])
-  ::
   ++  many                                              ::  nodelist to tape
     |=  [lix=(list manx) rez=tape]
     |-  ^-  tape
     ?~  lix  rez
     (apex i.lix $(lix t.lix))
+  ::
+  ++  name                                              ::  name to tape
+    |=  man=mane  ^-  tape
+    ?@  man  (trip man)
+    (weld (trip -.man) `tape`[':' (trip +.man)])
+  ::
+  ++  clot  ~+                                          ::  self-closing tags
+    %~  has  in
+    %-  sa  ^-  (list term)  :~
+      %area  %base  %br  %col  %command  %embed  %hr  %img  %input  %keygen
+      %link  %meta  %param     %source   %track  %wbr 
+    ==
   --
 ::
 ++  poxa                                                ::  xml parser
@@ -2065,14 +2071,15 @@
   ?~  rax
     [~ ~]
   ?^  t.rax
-    [p.pok [i.rax q.pok]]:[pok=$(rax t.rax) .]
+    [p.pok [ire q.pok]]:[pok=$(rax t.rax) ire=i.rax]
   =+  ^-  raf=(like tape)
       %.  [1^1 (flop (trip i.rax))]
-      ;~(sfix (plus ;~(less dot next)) dot)
+      ;~(sfix (star ;~(less dot next)) dot)
   ?~  q.raf
     [~ [i.rax ~]]
   =+  `[ext=tape [@ @] fyl=tape]`u.q.raf
-  [[~ (crip (flop ext))] [(crip (flop fyl)) ~]]
+  :-  ?:(=(~ ext) ~ [~ (crip (flop ext))])
+  ?:(=(~ fyl) ~ [(crip (flop fyl)) ~])
 ::
 ++  fuel                                                ::  parse fcgi
   |=  [bem=beam but=path]
@@ -2081,17 +2088,11 @@
   =+  dyb=(slay i.t.but)
   ?>  ?&  ?=([~ %many *] dyb)
           ?=([* * *] p.u.dyb)
-          ::  ?=([%$ %tas *] i.p.u.dyb)
-          ?=([%many *] i.p.u.dyb)
+          ?=([%$ %ta *] i.p.u.dyb)
           ?=([%blob *] i.t.p.u.dyb)
       ==
   =+  ced=((hard cred) p.i.t.p.u.dyb)
   ::  =+  nep=q.p.i.p.u.dyb
-  =+  ^=  nyp  ^-  path
-      %+  turn  p.i.p.u.dyb
-      |=  a=coin  ^-  @ta
-      ?>  ?=([%$ %ta @] a)
-      ?>(((sane %ta) q.p.a) q.p.a)
   =+  ^=  gut  ^-  (list ,@t)
       %+  turn  t.t.p.u.dyb
       |=  a=coin  ^-  @t
@@ -2106,7 +2107,6 @@
       ced
       bem
       t.t.but
-      nyp
   ==
 ::
 ++  sifo                                                ::  64-bit encode
@@ -2122,7 +2122,57 @@
         ~
       =+  d=(end 0 6 pad)
       [(cut 3 [d 1] cha) $(pad (rsh 0 6 pad))]
-  (weld (flop (slag poc sif)) (trip (fil 3 poc '=')))
+  (weld (flop (slag poc sif)) (reap poc '='))
+::
+++  ofis  ::  XX broken
+  =-  |=(a=cord (rash a fel))
+  =-  fel=;~(sfix (boss 64 (plus siw)) (stun 0^2 tis))
+  ^=  siw
+  ;~  pose
+     dit
+     (cook |=(a=@ (sub a (sub 'A' 10))) (shim 'A' 'Z'))
+     (cook |=(a=@ (sub a (sub 'a' 36))) (shim 'a' 'z'))
+     (cold 62 (just '+'))
+     (cold 63 (just '/'))
+   ==
+::
+::  .=  ~[p=~.ack q=~.~sarnel r=~..y]
+::  (dray ~[p=%tas q=%p r=%f] %ack ~sarnel &)
+++  dray                                                ::  load tuple into path
+  =-  |*  [a=[@tas (pole ,@tas)] b=*]  ^-  (paf a)
+      =>  .(b `(tup a)`b)
+      ?~  +.a  [(scot -.a b) ~]
+      [(scot -.a -.b) `(paf +.a)`(..$ +.a +.b)]
+  :-  paf=|*(a=(pole) ?~(a ,~ ,[(odo:raid -.a(. %ta)) (..$ +.a)]))
+  tup=|*([a=@tas b=(pole ,@tas)] =+(c=(odo:raid a) ?~(b c ,[c (..$ b)])))
+::
+::  .=  [p=%ack q=~sarnel r=&]
+::  (raid /ack/~sarnel/.y p=%tas q=%p r=%f ~)
+++  raid                                                ::  demand path odors
+  =-  |*  [a=path b=[@tas (pole ,@tas)]]
+      ?~  +.b  `(odo -.b)`(slav -.b -.a)
+      [`(odo -.b)`(slav -.b -.a) (..$ +.a +.b)]
+  ^=  odo
+  |*  a=@tas
+  |=  b=*
+  =<  a(. (. b))                  ::  preserve face
+  ?+  a   ,@
+    %c  ,@c  %da  ,@da  %dr  ,@dr  %f   ,@f   %if  ,@if  %is  ,@is  %p   ,@p
+    %u  ,@u  %uc  ,@uc  %ub  ,@ub  %ui  ,@ui  %ux  ,@ux  %uv  ,@uv  %uw  ,@uw
+    %s  ,@s  %t   ,@t   %ta  ,@ta  %tas  ,@tas
+  ==
+::
+++  read                                                ::  parse odored path
+  =<  |*([a=path b=[@tas (pole ,@tas)]] ((+> b) a))
+  |*  b=[@tas (pole ,@tas)]
+  |=  a=path
+  ?~  a  ~
+  =+  hed=(slaw -.b i.a)
+  ?~  +.b
+    ^-  (unit (odo:raid -.b))
+    ?^(+.a ~ hed)
+  ^-  (unit ,[(odo:raid -.b) _(need *(..^$ +.b))])
+  (both hed ((..^$ +.b) +.a))
 ::
 ++  urle                                                ::  URL encode
   |=  tep=tape
@@ -2162,9 +2212,14 @@
   pul(q.q [(rsh 3 1 (scot %p who)) q.q.pul])
 ::
 ++  earn                                                ::  purl to tape
-  |^  |=  pul=purl
-      ^-  tape
-      :(weld (head p.pul) "/" (body q.pul) (tail r.pul))
+  =<  |=(pul=purl `tape`(apex ~ pul))
+  |%
+  ++  apex
+    |=  qur=quri
+    ?-  -.qur
+      %&  (weld (head p.p.qur) `tape`['/' $(qur [%| +.p.qur])])
+      %|  (weld (body p.qur) (tail q.qur))
+    ==
   ::
   ++  body
     |=  pok=pork  ^-  tape
@@ -2198,16 +2253,14 @@
     :-  '?'
     |-  ^-  tape
     ?~  kay  ~
-    ;:  weld
+    ;:  welp
       (urle (trip p.i.kay))
-      "="
-      (urle (trip q.i.kay))
+      ?~(q.i.kay ~ ['=' (urle (trip q.i.kay))])
       ?~(t.kay ~ `tape`['&' $(kay t.kay)])
     ==
   --
 ::
-++  epur                                                ::  url/header parser
-  =<  |=(a=cord `(unit purl)`(rush a auri))
+++  urlp                                                ::  url/header parser
   |%
   ++  apat                                              ::  2396 abs_path
     %+  cook  deft
@@ -2243,7 +2296,7 @@
   ++  pesc  ;~(pfix cen mes)                            ::  2396 escaped
   ++  pold  (cold ' ' (just '+'))                       ::  old space code
   ++  pque  ;~(pose pcar fas wut)                       ::  3986 query char
-  ++  pquo  ;~(pose pure pesc pold)                     ::  normal query char
+  ++  pquo  ;~(pose pure pesc pold fas wut)             ::  normal query char
   ++  pure  ;~(pose aln hep dot cab sig)                ::  2396 unreserved
   ++  psub  ;~  pose                                    ::  3986 sub-delims
               zap  buc  pam  soq  pel  per
@@ -2306,6 +2359,8 @@
       (stag %| ;~(plug apat yque))
     ==
   --
+++  epur                                                ::  url/header parser
+  =>(urlp |=(a=cord `(unit purl)`(rush a auri)))
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bH, names etc                ::
@@ -2611,22 +2666,22 @@
   ?~  two  one
   ?:((lth u.one u.two) one two)
 ::
-++  mojo                                                ::  compiling load
-  |=  [pax=path src=*]
-  ^-  (each twig (list tank))
-  ?.  ?=(@ src)
-    [%| ~[[leaf/"musk: malformed: {<pax>}"]]]
-  =+  ^=  mud
-      %-  mule  |.
-      ((full vest) [1 1] (trip src))
-  ?:  ?=(| -.mud)  mud
-  ?~  q.p.mud
-    :~  %|
-        leaf/"musk: syntax error: {<pax>}"
-        leaf/"musk: line {<p.p.p.mud>}, column {<q.p.p.mud>}"
-    ==
-  [%& p.u.q.p.mud]
-::
+:: ++  mojo                                                ::  compiling load
+::   |=  [pax=path src=*]
+::   ^-  (each twig (list tank))
+::   ?.  ?=(@ src)
+::     [%| ~[[leaf/"musk: malformed: {<pax>}"]]]
+::   =+  ^=  mud
+::       %-  mule  |.
+::       ((full vest) [1 1] (trip src))
+::   ?:  ?=(| -.mud)  mud
+::   ?~  q.p.mud
+::     :~  %|
+::         leaf/"musk: syntax error: {<pax>}"
+::         leaf/"musk: line {<p.p.p.mud>}, column {<q.p.p.mud>}"
+::     ==
+::   [%& p.u.q.p.mud]
+:: ::
 ++  mole                                                ::  new to old sky
   |=  ska=$+(* (unit (unit)))
   |=  a=*
@@ -2635,21 +2690,21 @@
   ?~  b  ~
   ?~  u.b  ~
   [~ u.u.b]
-::
-++  much                                                ::  constructing load
-  |=  [pax=path src=*]
-  ^-  gank
-   =+  moj=(mojo pax src)
-  ?:  ?=(| -.moj)  moj
-  (mule |.((slap !>(+>.$) `twig`p.moj)))
-::
-++  musk                                                ::  compiling apply
-  |=  [pax=path src=* sam=vase]
-  ^-  gank
-  =+  mud=(much pax src)
-  ?:  ?=(| -.mud)  mud
-  (mule |.((slam p.mud sam)))
-::
+:: ::
+:: ++  much                                                ::  constructing load
+::   |=  [pax=path src=*]
+::   ^-  gank
+::    =+  moj=(mojo pax src)
+::   ?:  ?=(| -.moj)  moj
+::   (mule |.((slap !>(+>.$) `twig`p.moj)))
+:: ::
+:: ++  musk                                                ::  compiling apply
+::   |=  [pax=path src=* sam=vase]
+::   ^-  gank
+::   =+  mud=(much pax src)
+::   ?:  ?=(| -.mud)  mud
+::   (mule |.((slam p.mud sam)))
+:: ::
 ++  pack                                                ::  light path encoding
   |=  [a=term b=path]  ^-  span
   %+  rap  3  :-  (wack a)
@@ -2824,7 +2879,6 @@
               ced=cred                                  ::  client credentials
               bem=beam                                  ::  original path
               but=path                                  ::  ending
-              nyp=path                                  ::  request model
           ==                                            ::
 ++  flap  ,@uvH                                         ::  network packet id
 ++  flow                                                ::  packet connection
@@ -3033,7 +3087,7 @@
           $%  [& q=soba]                                ::  delta
               [| p=@tas]                                ::  label
           ==                                            ::
-++  octs  ,[p=@ud q=@]                                  ::  octet-stream
+++  octs  ,[p=@ud q=@t]                                 ::  octet-stream
 ++  oryx  ,@t                                           ::  CSRF secret
 ++  pact  path                                          ::  routed path
 ++  pail  ?(%none %warm %cold)                          ::  connection status

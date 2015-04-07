@@ -15,7 +15,7 @@ module.exports = recl
   stateFromStore: -> {
     audi:StationStore.getAudience()
     members:StationStore.getMembers()
-    station:StationStore.getStation()
+    station:window.util.mainStation()
     stations:StationStore.getStations()
     configs:StationStore.getConfigs()
     typing:StationStore.getTyping()
@@ -35,13 +35,14 @@ module.exports = recl
   componentWillUnmount: ->
     StationStore.removeChangeListener @_onChangeStore
 
-  _toggleAudi: (e) ->
-    $e = $(e.target).closest('.station')
-    station = $e.find('.path').text()
-    StationActions.toggleAudience station
 
   _onChangeStore: -> 
     @setState @stateFromStore()
+
+  _toggleOpen: (e) ->
+    if $(e.target).closest('.sour-ctrl').length > 0
+      return
+    $("#station-container").toggleClass 'open'
 
   _keyUp: (e) ->
     if e.keyCode is 13
@@ -51,51 +52,50 @@ module.exports = recl
         _sources.push v
         StationActions.setSources @state.station,_sources
         @$input.val('')
+        @$input.blur()
 
   _remove: (e) ->
     e.stopPropagation()
     e.preventDefault()
     _station = $(e.target).attr "data-station"
     _sources = _.clone @state.configs[@state.station].sources
-    _sources.slice _sources.indexOf(_station),1
+    _sources.splice _sources.indexOf(_station),1
     StationActions.setSources @state.station,_sources
 
   render: ->
     parts = []
     members = []
 
-    if @state.station and @state.members[@state.station]
-      members = _.map @state.members[@state.station], (state,member) -> 
-          Member {ship:member,presence:state.presence}
+    if @state.station and @state.members
+      members = _.map @state.members, (stations,member) -> 
+          audi = _.map stations,(presence,station) -> (div {className:"audi"}, station)
+          (div {}, [audi,(React.createElement Member, {ship:member})])
     else
       members = ""
 
     sourceInput = [(input {className:"join",onKeyUp:@_keyUp,placeholder:"+"}, "")]
-    sourceCtrl = div {className:"sour-ctrl"}, sourceInput
+    sourceCtrl = div {className:"sour-ctrl"},sourceInput
 
     sources = []
     if @state.station and @state.configs[@state.station]
       _remove = @_remove
       _sources = _.clone @state.configs[@state.station].sources
-      _sources.push "twitter/hoontap"
       sources = _.map _sources,(source) =>
-        toggleClass = "toggle "
-        if @state.audi.indexOf(source) isnt -1 then toggleClass += "active"
-        (div {className:"station",onClick:@_toggleAudi}, [
-          (div {className:toggleClass})
-          (div {className:"path"}, source),
-          (div {className:"remove",onClick:_remove,"data-station":source},"×")
+        (div {className:"station"}, [
+          (div {className:"remove",onClick:_remove,"data-station":source},"×"),
+          (div {className:"path"}, source)
         ])
-        
     else
-      sources = ""
+      sources = "" 
 
-    station = []
-    station.push (a {className:"up",href:"\#/"}, [(div {className:"arow-up"}, "")])
-    station.push (h1 {},@state.station)
-    station.push (div {id:"members"},members)
+    head = (div {id:"head"}, 
+        [(div {id:"where"},["/talk",(div {className:"caret"},"")]),
+         (div {id:"who"},[(div {className:"circle"},""),"~#{window.urb.user}"])
+        ]
+      )
 
-    parts.push (div {id:"station-container"}, (div {id:"station-meta"},station))
-    parts.push (div {id:"sources-container"}, [(div {class:"sources-list"},sources),sourceCtrl])
+    parts.push head
+    parts.push (div {id:"stations"}, [(h1 {}, "Listening to"),(div {},sources),sourceCtrl])
+    parts.push (div {id:"audience"}, (div {},[(h1 {}, "Talking to"),(div {id:"members"},members)]))
 
-    div {id:"station"},parts
+    div {id:"station",onClick:@_toggleOpen},parts

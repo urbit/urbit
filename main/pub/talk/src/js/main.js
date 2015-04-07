@@ -36,15 +36,11 @@ module.exports = {
     });
     return window.chat.MessagePersistence.get(station, start, end);
   },
-  sendMessage: function(station, message, audience) {
-    var k, serial, v, _audi, _message;
+  sendMessage: function(message, audience) {
+    var _audi, _message, k, serial, v;
     serial = window.util.uuid32();
-    if (station[0] !== "~") {
-      station = "~" + window.urb.ship + "/" + station;
-    }
-    if (audience.length === 0) {
-      audience.push(station);
-    }
+    audience.push(window.util.mainStationPath(window.urb.user));
+    audience = _.uniq(audience);
     _audi = {};
     for (k in audience) {
       v = audience[k];
@@ -65,7 +61,7 @@ module.exports = {
           bouquet: [],
           speech: {
             lin: {
-              say: false,
+              say: true,
               txt: message
             }
           },
@@ -73,6 +69,10 @@ module.exports = {
         }
       }
     };
+    if (message[0] === "@") {
+      _message.thought.statement.speech.lin.txt = _message.thought.statement.speech.lin.txt.slice(1).trim();
+      _message.thought.statement.speech.lin.say = false;
+    }
     MessageDispatcher.handleViewAction({
       type: "message-send",
       message: _message
@@ -106,6 +106,12 @@ module.exports = {
     return StationDispatcher.handleViewAction({
       type: "station-set-audience",
       audience: audience
+    });
+  },
+  setValidAudience: function(valid) {
+    return StationDispatcher.handleViewAction({
+      type: "station-set-valid-audience",
+      valid: valid
     });
   },
   toggleAudience: function(station) {
@@ -148,11 +154,10 @@ module.exports = {
       stations: stations
     });
   },
-  loadMembers: function(station, members) {
+  loadMembers: function(members) {
     return StationDispatcher.handleServerAction({
       type: "members-load",
-      members: members,
-      station: station
+      members: members
     });
   },
   createStation: function(station) {
@@ -167,11 +172,11 @@ module.exports = {
 
 
 },{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/dispatcher/Dispatcher.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MemberComponent.coffee":[function(require,module,exports){
-var div, input, recl, textarea, _ref;
+var div, input, recl, ref, textarea;
 
 recl = React.createClass;
 
-_ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = _ref[0], input = _ref[1], textarea = _ref[2];
+ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = ref[0], input = ref[1], textarea = ref[2];
 
 module.exports = recl({
   render: function() {
@@ -196,21 +201,21 @@ module.exports = recl({
 
 
 },{}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MessagesComponent.coffee":[function(require,module,exports){
-var Member, Message, MessageActions, MessageStore, StationActions, StationStore, div, input, moment, recl, textarea, _ref;
+var Member, Message, MessageActions, MessageStore, StationActions, StationStore, br, div, input, moment, recl, ref, textarea;
 
 moment = require('moment-timezone');
 
 recl = React.createClass;
 
-_ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = _ref[0], input = _ref[1], textarea = _ref[2];
-
-MessageStore = require('../stores/MessageStore.coffee');
-
-StationStore = require('../stores/StationStore.coffee');
+ref = [React.DOM.div, React.DOM.br, React.DOM.input, React.DOM.textarea], div = ref[0], br = ref[1], input = ref[2], textarea = ref[3];
 
 MessageActions = require('../actions/MessageActions.coffee');
 
+MessageStore = require('../stores/MessageStore.coffee');
+
 StationActions = require('../actions/StationActions.coffee');
+
+StationStore = require('../stores/StationStore.coffee');
 
 Member = require('./MemberComponent.coffee');
 
@@ -230,32 +235,49 @@ Message = recl({
     s = this.lz(d.getSeconds());
     return "~" + h + "." + m + "." + s;
   },
+  _handleAudi: function(e) {
+    var audi;
+    audi = _.map($(e.target).closest('.audi').find('div'), function(div) {
+      return $(div).text();
+    });
+    return this.props._handleAudi(audi);
+  },
+  _handlePm: function(e) {
+    var user;
+    if (!this.props._handlePm) {
+      return;
+    }
+    user = $(e.target).closest('.iden').text().slice(1);
+    return this.props._handlePm(user);
+  },
   render: function() {
-    var audi, delivery, name, pendingClass;
+    var audi, delivery, klass, name;
     delivery = _.uniq(_.pluck(this.props.thought.audience, "delivery"));
-    pendingClass = delivery.indexOf("received") !== -1 ? "received" : "pending";
-    if (pendingClass === "pending") {
-      console.log(this.props.thought);
-      console.log(delivery);
+    klass = delivery.indexOf("received") !== -1 ? " received" : " pending";
+    if (this.props.thought.statement.speech.lin.say === false) {
+      klass += " say";
     }
     name = this.props.name ? this.props.name : "";
-    audi = _.remove(_.keys(this.props.thought.audience), (function(_this) {
-      return function(stat) {
-        return stat !== "~" + window.urb.ship + "/" + _this.props.station;
-      };
-    })(this));
-    audi = audi.join(" ");
+    audi = _.keys(this.props.thought.audience);
+    audi = _.without(audi, window.util.mainStationPath(window.urb.user));
+    audi = window.util.clipAudi(audi);
+    audi = audi.map(function(_audi) {
+      return div({}, _audi);
+    });
     return div({
-      className: "message " + pendingClass
+      className: "message " + klass
     }, [
       div({
         className: "attr"
       }, [
-        Member({
-          ship: this.props.ship
-        }, ""), div({
+        div({
+          onClick: this._handleAudi,
           className: "audi"
-        }, "" + audi), div({
+        }, audi), div({
+          onClick: this._handlePm
+        }, React.createElement(Member, {
+          ship: this.props.ship
+        })), div({
           className: "time"
         }, this.convTime(this.props.thought.statement.date))
       ]), div({
@@ -274,7 +296,7 @@ module.exports = recl({
       last: MessageStore.getLast(),
       fetching: MessageStore.getFetching(),
       listening: MessageStore.getListening(),
-      station: StationStore.getStation(),
+      station: window.util.mainStation(),
       stations: StationStore.getStations(),
       configs: StationStore.getConfigs(),
       typing: MessageStore.getTyping()
@@ -314,12 +336,11 @@ module.exports = recl({
     return window.util.setScroll();
   },
   componentDidUpdate: function() {
-    var $window, h, st;
+    var $window, st;
     $window = $(window);
     if (this.lastLength) {
-      h = $('.message').height() * (this.length - this.lastLength);
-      st = $window.scrollTop();
-      $window.scrollTop(st + h);
+      st = $window.height();
+      $window.scrollTop(st);
       return this.lastLength = null;
     } else {
       if ($('#writing-container').length > 0) {
@@ -334,17 +355,24 @@ module.exports = recl({
   _onChangeStore: function() {
     return this.setState(this.stateFromStore());
   },
+  _handlePm: function(user) {
+    var audi;
+    audi = [window.util.mainStationPath(user), window.util.mainStationPath(window.urb.user)];
+    if (user === window.urb.user) {
+      audi.pop();
+    }
+    return StationActions.setAudience(audi);
+  },
+  _handleAudi: function(audi) {
+    return StationActions.setAudience(audi);
+  },
   render: function() {
-    var messages, sources, station, _messages, _ref1, _ref2, _station;
+    var _messages, _station, messages, ref1, ref2, sources, station;
     station = this.state.station;
     _station = "~" + window.urb.ship + "/" + station;
-    sources = _.clone((_ref1 = (_ref2 = this.state.configs[this.state.station]) != null ? _ref2.sources : void 0) != null ? _ref1 : []);
+    sources = _.clone((ref1 = (ref2 = this.state.configs[this.state.station]) != null ? ref2.sources : void 0) != null ? ref1 : []);
     sources.push(_station);
-    _messages = _.filter(this.state.messages, function(_message) {
-      var audience;
-      audience = _.keys(_message.thought.audience);
-      return _.intersection(sources, audience).length > 0;
-    });
+    _messages = this.state.messages;
     _messages = _.sortBy(_messages, function(_message) {
       _message.pending = _message.thought.audience[station];
       return _message.thought.statement.time;
@@ -361,7 +389,9 @@ module.exports = recl({
     messages = _messages.map((function(_this) {
       return function(_message) {
         _message.station = _this.state.station;
-        return Message(_message, "");
+        _message._handlePm = _this._handlePm;
+        _message._handleAudi = _this._handleAudi;
+        return React.createElement(Message, _message);
       };
     })(this));
     return div({
@@ -373,11 +403,11 @@ module.exports = recl({
 
 
 },{"../actions/MessageActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/MessageActions.coffee","../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","../stores/MessageStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MemberComponent.coffee","moment-timezone":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/moment-timezone/index.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/StationComponent.coffee":[function(require,module,exports){
-var Member, StationActions, StationStore, a, div, h1, input, recl, textarea, _ref;
+var Member, StationActions, StationStore, a, div, h1, input, recl, ref, textarea;
 
 recl = React.createClass;
 
-_ref = [React.DOM.div, React.DOM.input, React.DOM.textarea, React.DOM.h1, React.DOM.a], div = _ref[0], input = _ref[1], textarea = _ref[2], h1 = _ref[3], a = _ref[4];
+ref = [React.DOM.div, React.DOM.input, React.DOM.textarea, React.DOM.h1, React.DOM.a], div = ref[0], input = ref[1], textarea = ref[2], h1 = ref[3], a = ref[4];
 
 StationStore = require('../stores/StationStore.coffee');
 
@@ -390,7 +420,7 @@ module.exports = recl({
     return {
       audi: StationStore.getAudience(),
       members: StationStore.getMembers(),
-      station: StationStore.getStation(),
+      station: window.util.mainStation(),
       stations: StationStore.getStations(),
       configs: StationStore.getConfigs(),
       typing: StationStore.getTyping(),
@@ -411,24 +441,25 @@ module.exports = recl({
   componentWillUnmount: function() {
     return StationStore.removeChangeListener(this._onChangeStore);
   },
-  _toggleAudi: function(e) {
-    var $e, station;
-    $e = $(e.target).closest('.station');
-    station = $e.find('.path').text();
-    return StationActions.toggleAudience(station);
-  },
   _onChangeStore: function() {
     return this.setState(this.stateFromStore());
   },
+  _toggleOpen: function(e) {
+    if ($(e.target).closest('.sour-ctrl').length > 0) {
+      return;
+    }
+    return $("#station-container").toggleClass('open');
+  },
   _keyUp: function(e) {
-    var v, _sources;
+    var _sources, v;
     if (e.keyCode === 13) {
       v = this.$input.val();
       if (this.state.configs[this.state.station].sources.indexOf(v) === -1) {
         _sources = _.clone(this.state.configs[this.state.station].sources);
         _sources.push(v);
         StationActions.setSources(this.state.station, _sources);
-        return this.$input.val('');
+        this.$input.val('');
+        return this.$input.blur();
       }
     }
   },
@@ -438,19 +469,26 @@ module.exports = recl({
     e.preventDefault();
     _station = $(e.target).attr("data-station");
     _sources = _.clone(this.state.configs[this.state.station].sources);
-    _sources.slice(_sources.indexOf(_station), 1);
+    _sources.splice(_sources.indexOf(_station), 1);
     return StationActions.setSources(this.state.station, _sources);
   },
   render: function() {
-    var members, parts, sourceCtrl, sourceInput, sources, station, _remove, _sources;
+    var _remove, _sources, head, members, parts, sourceCtrl, sourceInput, sources;
     parts = [];
     members = [];
-    if (this.state.station && this.state.members[this.state.station]) {
-      members = _.map(this.state.members[this.state.station], function(state, member) {
-        return Member({
-          ship: member,
-          presence: state.presence
+    if (this.state.station && this.state.members) {
+      members = _.map(this.state.members, function(stations, member) {
+        var audi;
+        audi = _.map(stations, function(presence, station) {
+          return div({
+            className: "audi"
+          }, station);
         });
+        return div({}, [
+          audi, React.createElement(Member, {
+            ship: member
+          })
+        ]);
       });
     } else {
       members = "";
@@ -469,176 +507,71 @@ module.exports = recl({
     if (this.state.station && this.state.configs[this.state.station]) {
       _remove = this._remove;
       _sources = _.clone(this.state.configs[this.state.station].sources);
-      _sources.push("twitter/hoontap");
       sources = _.map(_sources, (function(_this) {
         return function(source) {
-          var toggleClass;
-          toggleClass = "toggle ";
-          if (_this.state.audi.indexOf(source) !== -1) {
-            toggleClass += "active";
-          }
           return div({
-            className: "station",
-            onClick: _this._toggleAudi
+            className: "station"
           }, [
             div({
-              className: toggleClass
-            }), div({
-              className: "path"
-            }, source), div({
               className: "remove",
               onClick: _remove,
               "data-station": source
-            }, "×")
+            }, "×"), div({
+              className: "path"
+            }, source)
           ]);
         };
       })(this));
     } else {
       sources = "";
     }
-    station = [];
-    station.push(a({
-      className: "up",
-      href: "\#/"
+    head = div({
+      id: "head"
     }, [
       div({
-        className: "arow-up"
-      }, "")
-    ]));
-    station.push(h1({}, this.state.station));
-    station.push(div({
-      id: "members"
-    }, members));
+        id: "where"
+      }, [
+        "/talk", div({
+          className: "caret"
+        }, "")
+      ]), div({
+        id: "who"
+      }, [
+        div({
+          className: "circle"
+        }, ""), "~" + window.urb.user
+      ])
+    ]);
+    parts.push(head);
     parts.push(div({
-      id: "station-container"
-    }, div({
-      id: "station-meta"
-    }, station)));
+      id: "stations"
+    }, [h1({}, "Listening to"), div({}, sources), sourceCtrl]));
     parts.push(div({
-      id: "sources-container"
-    }, [
-      div({
-        "class": "sources-list"
-      }, sources), sourceCtrl
-    ]));
+      id: "audience"
+    }, div({}, [
+      h1({}, "Talking to"), div({
+        id: "members"
+      }, members)
+    ])));
     return div({
-      id: "station"
+      id: "station",
+      onClick: this._toggleOpen
     }, parts);
   }
 });
 
 
 
-},{"../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/StationsComponent.coffee":[function(require,module,exports){
-var StationActions, StationStore, div, input, recl, _ref;
+},{"../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/WritingComponent.coffee":[function(require,module,exports){
+var Member, MessageActions, MessageStore, StationActions, StationStore, br, div, input, recl, ref, textarea;
 
 recl = React.createClass;
 
-_ref = [React.DOM.div, React.DOM.input], div = _ref[0], input = _ref[1];
-
-StationStore = require('../stores/StationStore.coffee');
-
-StationActions = require('../actions/StationActions.coffee');
-
-module.exports = recl({
-  stateFromStore: function() {
-    return {
-      stations: StationStore.getStations(),
-      station: StationStore.getStation()
-    };
-  },
-  getInitialState: function() {
-    return this.stateFromStore();
-  },
-  componentDidMount: function() {
-    this.$el = $(this.getDOMNode());
-    this.$add = $('#stations .add');
-    this.$input = this.$el.find('input');
-    return StationStore.addChangeListener(this._onChangeStore);
-  },
-  componentWillUnmount: function() {
-    return StationStore.removeChangeListener(this._onChangeStore);
-  },
-  _onChangeStore: function() {
-    return this.setState(this.stateFromStore());
-  },
-  _click: function(e) {
-    var s;
-    s = $(e.target).closest('.station').find('.name').text();
-    return window.location.hash = "/" + (s.toLowerCase());
-  },
-  _keyUp: function(e) {
-    var v;
-    if (e.keyCode === 13) {
-      v = this.$input.val().toLowerCase();
-      if (this.state.stations.indexOf(v) === -1) {
-        StationActions.createStation(v);
-        this.$input.val('');
-        return this.$input.blur();
-      }
-    }
-  },
-  _remove: function(e) {
-    var _station, _stations;
-    _station = $(e.target).parent().find('.name').text();
-    _stations = _.without(this.state.stations, _station);
-    StationActions.removeStation(_station, _stations);
-    e.stopPropagation();
-    return e.preventDefault();
-  },
-  render: function() {
-    var station, stations, _click, _remove;
-    station = this.state.station;
-    _click = this._click;
-    _remove = this._remove;
-    stations = this.state.stations.map(function(_station) {
-      var k, parts;
-      k = "station";
-      parts = [
-        div({
-          className: "name"
-        }, _station.name)
-      ];
-      if (_station.name !== window.util.mainStation()) {
-        parts.push(div({
-          className: "remove",
-          onClick: _remove,
-          dataStation: _station.name
-        }, "×"));
-      }
-      return div({
-        className: k,
-        onClick: _click
-      }, parts);
-    });
-    return div({
-      id: "stations"
-    }, [
-      div({
-        className: "stations"
-      }, stations), div({
-        className: "join-ctrl"
-      }, [
-        input({
-          className: "join",
-          onKeyUp: this._keyUp,
-          placeholder: "+"
-        }, "")
-      ])
-    ]);
-  }
-});
-
-
-
-},{"../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/WritingComponent.coffee":[function(require,module,exports){
-var Member, MessageActions, StationActions, StationStore, div, input, recl, textarea, _ref;
-
-recl = React.createClass;
-
-_ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = _ref[0], input = _ref[1], textarea = _ref[2];
+ref = [React.DOM.div, React.DOM.br, React.DOM.input, React.DOM.textarea], div = ref[0], br = ref[1], input = ref[2], textarea = ref[3];
 
 MessageActions = require('../actions/MessageActions.coffee');
+
+MessageStore = require('../stores/MessageStore.coffee');
 
 StationActions = require('../actions/StationActions.coffee');
 
@@ -658,12 +591,17 @@ module.exports = recl({
     }
   },
   stateFromStore: function() {
-    return {
+    var s;
+    s = {
       audi: StationStore.getAudience(),
+      ludi: MessageStore.getLastAudience(),
       members: StationStore.getMembers(),
       typing: StationStore.getTyping(),
-      station: StationStore.getStation()
+      valid: StationStore.getValidAudience()
     };
+    s.audi = _.without(s.audi, window.util.mainStationPath(window.urb.user));
+    s.ludi = _.without(s.ludi, window.util.mainStationPath(window.urb.user));
+    return s;
   },
   getInitialState: function() {
     return this.stateFromStore();
@@ -682,46 +620,113 @@ module.exports = recl({
     return this.typing(true);
   },
   sendMessage: function() {
-    MessageActions.sendMessage(this.state.station, this.$writing.text(), this.state.audi);
+    var audi;
+    if (this._validateAudi() === false) {
+      $('#audi').focus();
+      return;
+    }
+    if (this.state.audi.length === 0 && $('#audi').text().trim().length > 0) {
+      audi = this.state.ludi;
+      this._setAudi();
+    } else {
+      audi = this.state.audi;
+    }
+    audi = window.util.expandAudi(audi);
+    MessageActions.sendMessage(this.$writing.text().trim(), audi);
     this.$length.text("0/69");
     this.$writing.text('');
     this.set();
     return this.typing(false);
   },
-  _keyDown: function(e) {
+  _audiKeyDown: function(e) {
     if (e.keyCode === 13) {
       e.preventDefault();
-      this.sendMessage();
+      setTimeout(function() {
+        return $('#writing').focus();
+      }, 0);
+      return false;
+    }
+  },
+  _writingKeyUp: function(e) {
+    var txt;
+    txt = this.$writing.text();
+    return this.$length.toggleClass('valid-false', txt.length > 62);
+  },
+  _writingKeyDown: function(e) {
+    var txt;
+    if (e.keyCode === 13) {
+      txt = this.$writing.text();
+      e.preventDefault();
+      if (txt.length > 0 && txt.length < 63) {
+        this.sendMessage();
+      }
       return false;
     }
     this._input();
     return this.set();
   },
   _input: function(e) {
-    var geturl, length, text, url, urls, _i, _len;
+    var geturl, i, len, length, text, url, urls;
     text = this.$writing.text();
     length = text.length;
     geturl = new RegExp("(^|[ \t\r\n])((ftp|http|https|gopher|mailto|news|nntp|telnet|wais|file|prospero|aim|webcal):(([A-Za-z0-9$_.+!*(),;/?:@&~=-])|%[A-Fa-f0-9]{2}){2,}(#([a-zA-Z0-9][a-zA-Z0-9$_.+!*(),;/?:@&~=%-]*))?([A-Za-z0-9$_+!*();/?:~-]))", "g");
     urls = text.match(geturl);
     if (urls !== null && urls.length > 0) {
-      for (_i = 0, _len = urls.length; _i < _len; _i++) {
-        url = urls[_i];
+      for (i = 0, len = urls.length; i < len; i++) {
+        url = urls[i];
         length -= url.length;
         length += 10;
       }
     }
-    this.$length.text(length + "/69");
-    if (length >= 69) {
-      this.$writing.text(this.$writing.text().substr(0, 69));
-      this.cursorAtEnd();
-      if (e) {
-        e.preventDefault();
-      }
-      return false;
-    }
+    return this.$length.text(length + "/62");
   },
   _setFocus: function() {
     return this.$writing.focus();
+  },
+  _validateAudiPart: function(a) {
+    var _a, ship;
+    if (a[0] !== "~") {
+      return false;
+    }
+    if (a.indexOf("/") !== -1) {
+      _a = a.split("/");
+      if (_a[1].length === 0) {
+        return false;
+      }
+      ship = _a[0];
+    } else {
+      ship = a;
+    }
+    if (ship.length < 3) {
+      return false;
+    }
+    return true;
+  },
+  _validateAudi: function() {
+    var a, i, len, v, valid;
+    v = $('#audi').text();
+    v = v.trim();
+    if (v.length === 0) {
+      return true;
+    }
+    v = v.split(" ");
+    for (i = 0, len = v.length; i < len; i++) {
+      a = v[i];
+      a = a.trim();
+      valid = this._validateAudiPart(a);
+    }
+    return valid;
+  },
+  _setAudi: function() {
+    var v, valid;
+    valid = this._validateAudi();
+    StationActions.setValidAudience(valid);
+    if (valid === true) {
+      v = $('#audi').text();
+      v = v.split(" ");
+      v = window.util.expandAudi(v);
+      return StationActions.setAudience(v);
+    }
   },
   getTime: function() {
     var d, seconds;
@@ -744,6 +749,7 @@ module.exports = recl({
   componentDidMount: function() {
     window.util.sendMessage = this.sendMessage;
     StationStore.addChangeListener(this._onChangeStore);
+    MessageStore.addChangeListener(this._onChangeStore);
     this.$el = $(this.getDOMNode());
     this.$length = $('#length');
     this.$writing = $('#writing');
@@ -766,23 +772,27 @@ module.exports = recl({
     return this.setState(this.stateFromStore());
   },
   render: function() {
-    var iden, k, name, ship, user, _ref1;
+    var audi, iden, k, name, ship, user;
     user = "~" + window.urb.user;
     iden = StationStore.getMember(user);
     ship = iden ? iden.ship : user;
     name = iden ? iden.name : "";
+    audi = this.state.audi.length === 0 ? this.state.ludi : this.state.audi;
+    audi = window.util.clipAudi(audi);
     k = "writing";
-    if (!((_ref1 = this.state) != null ? _ref1.station : void 0)) {
-      k += " hidden";
-    }
     return div({
-      className: k,
-      onClick: this._setFocus
+      className: k
     }, [
       div({
         className: "attr"
       }, [
-        Member(iden, ""), div({
+        div({
+          id: "audi",
+          className: "audi valid-" + this.state.valid,
+          contentEditable: true,
+          onKeyDown: this._audiKeyDown,
+          onBlur: this._setAudi
+        }, audi.join(" ")), React.createElement(Member, iden), div({
           className: "time"
         }, this.getTime())
       ]), div({
@@ -792,7 +802,8 @@ module.exports = recl({
         onBlur: this._blur,
         onInput: this._input,
         onPaste: this._input,
-        onKeyDown: this._keyDown,
+        onKeyDown: this._writingKeyDown,
+        onKeyUp: this._writingKeyUp,
         onFocus: this.cursorAtEnd
       }, ""), div({
         id: "length"
@@ -803,7 +814,7 @@ module.exports = recl({
 
 
 
-},{"../actions/MessageActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/MessageActions.coffee","../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
+},{"../actions/MessageActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/MessageActions.coffee","../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","../stores/MessageStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -827,22 +838,49 @@ module.exports = _.merge(new Dispatcher(), {
 
 },{"flux":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/flux/index.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/main.coffee":[function(require,module,exports){
 $(function() {
-  var $c, MessagesComponent, StationActions, StationComponent, StationsComponent, WritingComponent, clean, rend, router, routes;
+  var $c, MessagesComponent, StationActions, StationComponent, WritingComponent, clean, ldy, rend, setSo, so;
   StationActions = require('./actions/StationActions.coffee');
   rend = React.render;
   window.chat = {};
   window.chat.MessagePersistence = require('./persistence/MessagePersistence.coffee');
   window.chat.StationPersistence = require('./persistence/StationPersistence.coffee');
   window.util = {
-    mainStation: function() {
-      switch (window.urb.user.length) {
+    mainStations: ["court", "floor", "porch"],
+    mainStationPath: function(user) {
+      return "~" + user + "/" + (window.util.mainStation(user));
+    },
+    mainStation: function(user) {
+      if (!user) {
+        user = window.urb.user;
+      }
+      switch (user.length) {
         case 3:
           return "court";
-        case 5:
+        case 6:
           return "floor";
         case 13:
           return "porch";
       }
+    },
+    clipAudi: function(audi) {
+      var ms, regx;
+      audi = audi.join(" ");
+      ms = window.util.mainStationPath(window.urb.user);
+      regx = new RegExp("/" + ms, "g");
+      audi = audi.replace(regx, "");
+      return audi.split(" ");
+    },
+    expandAudi: function(audi) {
+      var ms;
+      audi = audi.join(" ");
+      ms = window.util.mainStationPath(window.urb.user);
+      if (audi.indexOf(ms) === -1) {
+        if (audi.length > 0) {
+          audi += " ";
+        }
+        audi += "" + ms;
+      }
+      return audi.split(" ");
     },
     create: function(name) {
       return window.chat.StationPersistence.createStation(name, function(err, res) {});
@@ -851,10 +889,10 @@ $(function() {
       return window.chat.StationPersistence.addSource("main", window.urb.ship, ["~zod/" + name]);
     },
     uuid32: function() {
-      var i, str, _i, _str;
+      var _str, i, j, str;
       str = "0v";
       str += Math.ceil(Math.random() * 8) + ".";
-      for (i = _i = 0; _i <= 5; i = ++_i) {
+      for (i = j = 0; j <= 5; i = ++j) {
         _str = Math.ceil(Math.random() * 10000000).toString(32);
         _str = ("00000" + _str).substr(-5, 5);
         str += _str + ".";
@@ -890,11 +928,11 @@ $(function() {
       return send();
     },
     getScroll: function() {
-      return this.writingPosition = $('#messaging-container').outerHeight(true) + $('#messaging-container').offset().top - $(window).height();
+      return this.writingPosition = $('#c').outerHeight(true) + $('#c').offset().top - $(window).height();
     },
     setScroll: function() {
       window.util.getScroll();
-      return $(window).scrollTop(window.util.writingPosition);
+      return $(window).scrollTop($("#c").height());
     },
     checkScroll: function() {
       if (!window.util.writingPosition) {
@@ -907,51 +945,112 @@ $(function() {
       }
     }
   };
+  so = {};
+  so.ls = $(window).scrollTop();
+  so.cs = $(window).scrollTop();
+  so.w = null;
+  so.$d = $('#nav > div');
+  setSo = function() {
+    so.$n = $('#station-container');
+    so.w = $(window).width();
+    so.h = $(window).height();
+    so.dh = $("#c").height();
+    return so.nh = so.$n.outerHeight(true);
+  };
+  setSo();
+  setInterval(setSo, 200);
+  $(window).on('resize', function(e) {
+    if (so.w > 1170) {
+      return so.$n.removeClass('m-up m-down m-fixed');
+    }
+  });
+  ldy = 0;
+  $(window).on('scroll', function(e) {
+    var dy, sto, top;
+    so.cs = $(window).scrollTop();
+    if (so.w > 1170) {
+      so.$n.removeClass('m-up m-down m-fixed');
+    }
+    if (so.w < 1170) {
+      dy = so.ls - so.cs;
+      if (so.cs <= 0) {
+        so.$n.removeClass('m-up');
+        so.$n.addClass('m-down m-fixed');
+        return;
+      }
+      if (so.cs + so.h > so.dh) {
+        return;
+      }
+      if (so.$n.hasClass('m-fixed' && so.w < 1024)) {
+        so.$n.css({
+          left: -1 * $(window).scrollLeft()
+        });
+      }
+      if (dy > 0 && ldy > 0) {
+        if (!so.$n.hasClass('m-down')) {
+          so.$n.removeClass('m-up').addClass('m-down');
+          top = so.cs - so.nh;
+          if (top < 0) {
+            top = 0;
+          }
+          so.$n.offset({
+            top: top
+          });
+        }
+        if (so.$n.hasClass('m-down') && !so.$n.hasClass('m-fixed') && so.$n.offset().top >= so.cs) {
+          so.$n.addClass('m-fixed');
+          so.$n.attr({
+            style: ''
+          });
+        }
+      }
+      if (dy < 0 && ldy < 0) {
+        if (!so.$n.hasClass('m-up')) {
+          so.$n.removeClass('open');
+          so.$n.removeClass('m-down m-fixed').addClass('m-up');
+          so.$n.attr({
+            style: ''
+          });
+          top = so.cs;
+          sto = so.$n.offset().top;
+          if (top < 0) {
+            top = 0;
+          }
+          if (top > sto && top < sto + so.nh) {
+            top = sto;
+          }
+          so.$n.offset({
+            top: top
+          });
+        }
+      }
+    }
+    ldy = dy;
+    return so.ls = so.cs;
+  });
   $(window).on('scroll', window.util.checkScroll);
   window.chat.StationPersistence.listen();
   StationComponent = require('./components/StationComponent.coffee');
-  StationsComponent = require('./components/StationsComponent.coffee');
   MessagesComponent = require('./components/MessagesComponent.coffee');
   WritingComponent = require('./components/WritingComponent.coffee');
   $c = $('#c');
   clean = function() {
-    React.unmountComponentAtNode($('#stations-container')[0]);
-    React.unmountComponentAtNode($('#station-parts-container')[0]);
-    React.unmountComponentAtNode($('#writing-container')[0]);
-    return React.unmountComponentAtNode($('#messages-container')[0]);
+    React.unmountComponentAtNode($('#station-container')[0]);
+    React.unmountComponentAtNode($('#messages-container')[0]);
+    return React.unmountComponentAtNode($('#writing-container')[0]);
   };
-  routes = {
-    '': function() {
-      clean();
-      $c.html("<div id='stations-container'></div>");
-      return rend(StationsComponent({}, ""), $('#stations-container')[0]);
-    },
-    '/:station': function(station) {
-      var $d;
-      clean();
-      StationActions.switchStation(station);
-      $c.html("");
-      $c.append("<div id='messaging-container'></div>");
-      $d = $('#messaging-container');
-      $d.append("<div id='messages-container'></div>");
-      $d.append("<div id='writing-container'></div>");
-      $d.append("<div id='station-parts-container'></div>");
-      $c.append("<div id='scrolling'>BOTTOM</div>");
-      rend(StationComponent({}, ""), $('#station-parts-container')[0]);
-      rend(MessagesComponent({}, ""), $('#messages-container')[0]);
-      return rend(WritingComponent({}, ""), $('#writing-container')[0]);
-    }
-  };
-  router = Router(routes);
-  if (!window.location.hash) {
-    window.location.hash = "/";
-  }
-  return router.init();
+  $c.append("<div id='station-container'></div>");
+  $c.append("<div id='messages-container'></div>");
+  $c.append("<div id='writing-container'></div>");
+  $c.append("<div id='scrolling'>BOTTOM</div>");
+  rend(React.createElement(StationComponent, {}), $('#station-container')[0]);
+  rend(React.createElement(MessagesComponent, {}), $('#messages-container')[0]);
+  return rend(React.createElement(WritingComponent, {}), $('#writing-container')[0]);
 });
 
 
 
-},{"./actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","./components/MessagesComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MessagesComponent.coffee","./components/StationComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/StationComponent.coffee","./components/StationsComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/StationsComponent.coffee","./components/WritingComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/WritingComponent.coffee","./persistence/MessagePersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/persistence/MessagePersistence.coffee","./persistence/StationPersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/persistence/StationPersistence.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/flux/index.js":[function(require,module,exports){
+},{"./actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","./components/MessagesComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MessagesComponent.coffee","./components/StationComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/StationComponent.coffee","./components/WritingComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/WritingComponent.coffee","./persistence/MessagePersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/persistence/MessagePersistence.coffee","./persistence/StationPersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/persistence/StationPersistence.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/flux/index.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -5321,33 +5420,49 @@ MessageActions = require('../actions/MessageActions.coffee');
 
 module.exports = {
   listenStation: function(station, since) {
+    var $this;
+    $this = this;
+    console.log('listen station');
+    console.log(arguments);
     return window.urb.subscribe({
-      appl: "rodeo",
+      appl: "talk",
       path: "/f/" + station + "/" + since
     }, function(err, res) {
-      var _ref, _ref1;
-      console.log('m subscription updates');
+      var ref, ref1;
+      if (err || !res.data) {
+        console.log('/f/ err!');
+        console.log(err);
+        console.log(res);
+        $this.listenStation(station, since);
+        return;
+      }
+      console.log('/f/');
       console.log(res.data);
       if (res.data.ok === true) {
         MessageActions.listeningStation(station);
       }
-      if ((_ref = res.data) != null ? (_ref1 = _ref.grams) != null ? _ref1.tele : void 0 : void 0) {
+      if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
         return MessageActions.loadMessages(res.data.grams);
       }
     });
   },
   get: function(station, start, end) {
     return window.urb.subscribe({
-      appl: "rodeo",
+      appl: "talk",
       path: "/f/" + station + "/" + end + "/" + start
     }, function(err, res) {
-      var _ref, _ref1;
-      console.log('get');
+      var ref, ref1;
+      if (err || !res.data) {
+        console.log('/f/ /e/s err');
+        console.log(err);
+        return;
+      }
+      console.log('/f/ /e/s');
       console.log(res);
-      if ((_ref = res.data) != null ? (_ref1 = _ref.grams) != null ? _ref1.tele : void 0 : void 0) {
+      if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
         MessageActions.loadMessages(res.data.grams, true);
         return window.urb.unsubscribe({
-          appl: "rodeo",
+          appl: "talk",
           path: "/f/" + station + "/" + end + "/" + start
         }, function(err, res) {
           console.log('done');
@@ -5358,8 +5473,8 @@ module.exports = {
   },
   sendMessage: function(message, cb) {
     return window.urb.send({
-      appl: "rodeo",
-      mark: "rodeo-command",
+      appl: "talk",
+      mark: "talk-command",
       data: {
         publish: [message]
       }
@@ -5383,8 +5498,8 @@ StationActions = require('../actions/StationActions.coffee');
 module.exports = {
   createStation: function(name, cb) {
     return window.urb.send({
-      appl: "rodeo",
-      mark: "rodeo-command",
+      appl: "talk",
+      mark: "talk-command",
       data: {
         design: {
           party: name,
@@ -5402,8 +5517,8 @@ module.exports = {
   },
   removeStation: function(name, cb) {
     return window.urb.send({
-      appl: "rodeo",
-      mark: "rodeo-command",
+      appl: "talk",
+      mark: "talk-command",
       data: {
         design: {
           party: name,
@@ -5415,8 +5530,8 @@ module.exports = {
   setSources: function(station, ship, sources) {
     var send;
     send = {
-      appl: "rodeo",
-      mark: "rodeo-command",
+      appl: "talk",
+      mark: "talk-command",
       data: {
         design: {
           party: station,
@@ -5432,29 +5547,39 @@ module.exports = {
       }
     };
     return window.urb.send(send, function(err, res) {
-      console.log('add source updates');
+      console.log('talk-command');
       return console.log(arguments);
     });
   },
   members: function() {
     return window.urb.subscribe({
-      appl: "rodeo",
+      appl: "talk",
       path: "/a/court"
     }, function(err, res) {
-      var _ref, _ref1;
-      console.log('membership updates');
+      var ref, ref1;
+      if (err || !res) {
+        console.log('/a/ err');
+        console.log(err);
+        return;
+      }
+      console.log('/a/');
       console.log(res.data);
-      if ((_ref = res.data) != null ? (_ref1 = _ref.group) != null ? _ref1.global : void 0 : void 0) {
+      if ((ref = res.data) != null ? (ref1 = ref.group) != null ? ref1.global : void 0 : void 0) {
         return StationActions.loadMembers(res.data.group.global);
       }
     });
   },
   listen: function() {
     return window.urb.subscribe({
-      appl: "rodeo",
+      appl: "talk",
       path: "/"
     }, function(err, res) {
-      console.log('house updates');
+      if (err || !res.data) {
+        console.log('/ err');
+        console.log(err);
+        return;
+      }
+      console.log('/');
       console.log(res.data);
       if (res.data.house) {
         return StationActions.loadStations(res.data.house);
@@ -5463,20 +5588,26 @@ module.exports = {
   },
   listenStation: function(station) {
     return window.urb.subscribe({
-      appl: "rodeo",
+      appl: "talk",
       path: "/ax/" + station
     }, function(err, res) {
-      var _ref;
-      console.log('station subscription updates');
+      var ref;
+      if (err || !res) {
+        console.log('/ax/ err');
+        console.log(err);
+        return;
+      }
+      console.log('/ax/');
       console.log(res.data);
       if (res.data.ok === true) {
         StationActions.listeningStation(station);
       }
-      if ((_ref = res.data.group) != null ? _ref.local : void 0) {
-        StationActions.loadMembers(station, res.data.group.local);
+      if (res.data.group) {
+        res.data.group.global[window.util.mainStationPath(window.urb.user)] = res.data.group.local;
+        StationActions.loadMembers(res.data.group.global);
       }
-      if (res.data.config) {
-        return StationActions.loadConfig(station, res.data.config);
+      if ((ref = res.data.cabal) != null ? ref.loc : void 0) {
+        return StationActions.loadConfig(station, res.data.cabal.loc);
       }
     });
   }
@@ -5485,7 +5616,7 @@ module.exports = {
 
 
 },{"../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/MessageStore.coffee":[function(require,module,exports){
-var EventEmitter, MessageDispatcher, MessageStore, moment, _fetching, _last, _listening, _messages, _station, _typing;
+var EventEmitter, MessageDispatcher, MessageStore, _fetching, _last, _listening, _messages, _station, _typing, moment;
 
 moment = require('moment-timezone');
 
@@ -5536,6 +5667,16 @@ MessageStore = _.merge(new EventEmitter, {
   },
   getTyping: function() {
     return _typing;
+  },
+  getLastAudience: function() {
+    var messages;
+    if (_.keys(_messages).length === 0) {
+      return [];
+    }
+    messages = _.sortBy(_messages, function(_message) {
+      return _message.thought.statement.time;
+    });
+    return _.keys(messages[messages.length - 1].thought.audience);
   },
   setTyping: function(state) {
     return _typing = state;
@@ -5621,7 +5762,7 @@ module.exports = MessageStore;
 
 
 },{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js","moment-timezone":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/moment-timezone/index.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee":[function(require,module,exports){
-var EventEmitter, StationDispatcher, StationStore, _audience, _config, _listening, _members, _station, _stations, _typing;
+var EventEmitter, StationDispatcher, StationStore, _audience, _config, _listening, _members, _station, _stations, _typing, _validAudience;
 
 EventEmitter = require('events').EventEmitter;
 
@@ -5641,6 +5782,8 @@ _config = {};
 
 _typing = {};
 
+_validAudience = true;
+
 StationStore = _.merge(new EventEmitter, {
   removeChangeListener: function(cb) {
     return this.removeListener("change", cb);
@@ -5656,6 +5799,12 @@ StationStore = _.merge(new EventEmitter, {
   },
   setAudience: function(audience) {
     return _audience = audience;
+  },
+  getValidAudience: function() {
+    return _validAudience;
+  },
+  setValidAudience: function(valid) {
+    return _validAudience = valid;
   },
   toggleAudience: function(station) {
     if (_audience.indexOf(station) !== -1) {
@@ -5678,21 +5827,26 @@ StationStore = _.merge(new EventEmitter, {
       ship: ship
     };
   },
-  changeMember: function(dir, name, ship) {
-    if (dir === "out") {
-      _members = _.filter(_members, function(_member) {
-        return _member.ship !== ship;
-      });
+  loadMembers: function(members) {
+    var list, member, presence, results, station;
+    _members = {};
+    results = [];
+    for (station in members) {
+      list = members[station];
+      results.push((function() {
+        var results1;
+        results1 = [];
+        for (member in list) {
+          presence = list[member];
+          if (!_members[member]) {
+            _members[member] = {};
+          }
+          results1.push(_members[member][station] = presence);
+        }
+        return results1;
+      })());
     }
-    if (dir === "in") {
-      return _members.push({
-        name: name,
-        ship: ship
-      });
-    }
-  },
-  loadMembers: function(station, members) {
-    return _members[station] = members;
+    return results;
   },
   getMembers: function() {
     return _members;
@@ -5730,8 +5884,8 @@ StationStore = _.merge(new EventEmitter, {
     return _station;
   },
   joinStation: function(station) {
-    var _ref;
-    if (((_ref = _config.court) != null ? _ref.sources.indexOf(station) : void 0) === -1) {
+    var ref;
+    if (((ref = _config.court) != null ? ref.sources.indexOf(station) : void 0) === -1) {
       return _config.court.sources.push(station);
     }
   },
@@ -5762,6 +5916,10 @@ StationStore.dispatchToken = StationDispatcher.register(function(payload) {
       StationStore.setAudience(action.audience);
       StationStore.emitChange();
       break;
+    case 'station-set-valid-audience':
+      StationStore.setValidAudience(action.valid);
+      StationStore.emitChange();
+      break;
     case 'station-switch':
       StationStore.setAudience([]);
       StationStore.setStation(action.station);
@@ -5789,7 +5947,7 @@ StationStore.dispatchToken = StationDispatcher.register(function(payload) {
       StationStore.emitChange();
       break;
     case "members-load":
-      StationStore.loadMembers(action.station, action.members);
+      StationStore.loadMembers(action.members);
       StationStore.emitChange();
       break;
     case "typing-set":
