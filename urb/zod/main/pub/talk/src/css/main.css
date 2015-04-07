@@ -70,10 +70,25 @@
   font-weight: 500;
   font-style: normal;
 }
+@font-face {
+  font-family: "scp";
+  src: url("http://storage.googleapis.com/urbit-extra/scp-bold.woff");
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: "scp";
+  src: url("http://storage.googleapis.com/urbit-extra/scp-black.woff");
+  font-weight: 700;
+  font-style: normal;
+}
 .iden,
 .audi,
 .time,
-#length {
+#length,
+#where,
+#who,
+.station {
   font-family: "scp";
 }
 .join-ctrl input {
@@ -92,13 +107,21 @@ body {
 .time {
   font-size: 0.6rem;
   letter-spacing: 0;
+}
+.time {
   font-weight: 200;
+}
+#length {
+  font-weight: 500;
 }
 input.join,
 .iden,
 .audi,
 #station {
   font-size: 0.7rem;
+}
+.iden {
+  font-weight: 600;
 }
 html,
 body {
@@ -113,124 +136,148 @@ body {
   display: none;
 }
 #c {
-  top: 0;
-  background-color: #fff;
-}
-#stations-container {
   position: absolute;
-  top: 1rem;
+  top: 0rem;
   left: 50%;
-  width: 24rem;
-  margin-left: -12rem;
-  font-size: 4rem;
+  width: 58rem;
+  margin-left: -29rem;
+  margin-bottom: 12rem;
 }
 #station-container {
   position: fixed;
-  top: 0;
-  left: 50%;
-  width: 28rem;
-  max-height: 2.6rem;
+  width: 58rem;
+  max-height: 2.7rem;
+  background-color: #fff;
+  border-bottom: 0.3rem solid #000;
+  padding-bottom: 1rem;
   overflow: hidden;
-  margin-left: -14rem;
+  z-index: 10;
+  -webkit-transition: max-height 0.2s;
+}
+#station #station-container {
   padding-top: 1rem;
-  background-color: #f5f5f5;
-  border-bottom: 3px solid #ededed;
-  transition: max-height 0.15s ease-out;
+  min-width: 30rem;
+  text-align: right;
 }
-#station-container:hover {
-  max-height: 12rem;
-  transition: max-height 0.25s ease-in;
-}
-#stations-container,
-#messages-container {
-  vertical-align: top;
-}
-#messaging-container {
-  position: absolute;
-  top: 4rem;
-  left: 50%;
-  width: 24rem;
-  margin-left: -12rem;
-  margin-bottom: 4rem;
-}
-#station > div {
-  display: inline-block;
-}
-#station-meta {
-  margin-right: 1rem;
+#writing-container {
+  bottom: 4rem;
   margin-bottom: 1rem;
 }
-#sources-container {
-  width: 6rem;
-  float: right;
-  margin: 1rem -6rem 0 0;
+#messages-container {
+  vertical-align: top;
+  margin-top: 4rem;
 }
-#members {
-  margin-left: 2rem;
-}
-#station .iden {
-  display: block;
-}
-.station {
+.caret,
+.circle {
   display: inline-block;
-  width: 9rem;
-  margin-bottom: 0.3rem;
-  cursor: pointer;
-  font-weight: 200;
 }
-#stations .station {
-  display: block;
-  width: 24rem;
-}
-.station .name {
-  padding: 0.3rem;
+.caret {
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-right: 6px solid transparent;
   border-bottom: 6px solid transparent;
+  border-left: 6px solid #000;
+  margin-top: 2px;
 }
-.station .name:hover {
-  background-color: #f5f5f5;
-  border-bottom: 6px solid #ededed;
+.circle {
+  width: 6px;
+  height: 6px;
+  border: 3px solid #000;
+  border-radius: 6px;
+  margin-top: 2px;
 }
-.station > div {
+#station-container #where .caret {
+  -webkit-transform: rotate(0deg);
+  -webkit-transform-origin: 0 50%;
+  -webkit-transition: -webkit-transform 0.2s;
+}
+#head {
+  width: 100%;
+  height: 4rem;
+}
+#station-container h1 {
+  font-weight: 500;
+  font-size: 0.6rem;
+  letter-spacing: 0.06rem;
   display: inline-block;
+  line-height: 1.2rem;
 }
-.toggle {
-  width: 0.4rem;
-  height: 0.4rem;
-  border: 2px solid #000;
-  margin-right: 0.6rem;
+#audience,
+#who {
+  width: 34.6rem;
 }
-.toggle.active {
-  background-color: #000;
+#stations,
+#where {
+  width: 17.3rem;
+}
+#stations,
+#audience,
+#head > div {
+  display: inline-block;
+  text-align: right;
+  vertical-align: top;
+}
+#head > div {
+  height: 2rem;
+  margin-top: 1.5rem;
+}
+#where .caret {
+  border-left-color: #f00;
+  margin-left: 1rem;
+}
+#where > span,
+#who > span {
+  vertical-align: top;
+}
+#who > span {
+  margin-left: 1rem;
+}
+#members > div {
+  display: block;
+}
+#members > div div {
+  display: inline-block;
+  vertical-align: bottom;
+}
+#members .audi {
+  margin-right: 0.3rem;
+}
+#members .iden {
+  min-width: 10rem;
+}
+.station div {
+  display: inline-block;
 }
 .station .remove {
-  display: none;
-  float: right;
-  margin-left: 1rem;
+  opacity: 0;
+  cursor: pointer;
+  width: 0.6rem;
+  margin-right: 0.6rem;
   font-weight: 600;
   color: #f00;
 }
 .station:hover .remove {
-  display: inline;
+  opacity: 1;
 }
-#sources-container .station {
-  font-family: "scp";
-  font-weight: 500;
-  text-transform: lowercase;
-}
-.sour-ctrl {
-  margin-bottom: 0.16rem;
-}
-.join-ctrl input,
 .sour-ctrl input {
+  font-family: "scp";
   border: none;
   font-weight: 400;
+  text-align: right;
+  line-height: 1rem;
+  outline: none;
+  cursor: pointer;
 }
 .sour-ctrl input::-webkit-input-placeholder {
-  font-family: "bau";
+  font-family: "scp";
   font-size: 1rem;
-  font-weight: 200;
+  font-weight: 600;
   margin-left: 0.6rem;
-  color: #0003ff;
+  color: #000;
+}
+.sour-ctrl input:focus::-webkit-input-placeholder {
+  color: #fff;
 }
 .message {
   padding-top: 0.3rem;
@@ -245,8 +292,9 @@ body {
 #messages .message:hover .time {
   opacity: 1;
 }
-.time {
-  margin-right: 0.6rem;
+#messages .message .ship,
+#messages .message .audi > div {
+  cursor: pointer;
 }
 .member {
   width: 12rem;
@@ -255,55 +303,82 @@ body {
 #messages {
   height: auto;
 }
+.message.pending {
+  color: #ccc;
+}
+.message.say .mess {
+  font-style: italic;
+}
 .mess,
 .iden,
-.attr > div,
 #station .member div,
 #writing {
   display: inline-block;
-}
-.iden > div {
-  display: inline;
 }
 .mess,
 #writing,
 #length {
   vertical-align: top;
 }
+.attr > div {
+  max-width: 16rem;
+}
 .attr {
-  color: #d7d7d7;
+  text-align: right;
+  display: inline-block;
+  margin-right: 0.3rem;
+  min-width: 16rem;
 }
 .attr .iden {
-  color: #000;
+  margin-left: 0.3rem;
 }
-.attr > div {
+.audi {
+  white-space: nowrap;
+}
+.audi > div {
   margin-right: 0.3rem;
+  max-width: 8rem;
+}
+.iden > div {
+  max-width: 10rem;
+}
+.iden > div,
+.audi > div {
+  display: inline-block;
+  background-color: #fff;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  -webkit-transition: max-width 0.2s;
+}
+.audi > div:last-child {
+  margin-right: 0;
+}
+.iden > div:hover,
+.audi > div:hover {
+  position: relative;
+  max-width: 30rem;
+  -webkit-transition: max-width 0.2s;
 }
 .mess {
   font-size: 0.9rem;
-  line-height: 1.6rem;
   letter-spacing: 0.03rem;
   word-wrap: break-word;
-  max-width: 31rem;
+  max-width: 30rem;
+  margin-left: 0.3rem;
 }
-.ship {
-  font-weight: 600;
+#writing {
+  font-size: 0.9rem;
+  min-height: 1.6rem;
+  min-width: 1.3rem;
+  outline: none;
+  background-color: #eee;
+  padding: 0.3rem 0.1rem;
+  margin-left: 0.2rem;
+  margin-top: -0.3rem;
 }
-.ship.talk:before {
-  content: "...";
-  margin-left: -1.3rem;
-  margin-right: 0.3rem;
-  width: 1rem;
-  margin-top: -0.4rem;
-  vertical-align: middle;
-  display: inline-block;
-  line-height: 0.2rem;
-  letter-spacing: -0.1rem;
-}
-#writing-container {
-  bottom: 4rem;
-  margin-bottom: 1rem;
-  float: left;
+#writing:focus {
+  background-color: #fff;
 }
 .writing {
   padding-top: 0.3rem;
@@ -313,60 +388,25 @@ body {
   margin-left: 1rem;
   margin-top: 1.2rem;
 }
-#writing {
-  font-size: 0.9rem;
-  min-height: 1.6rem;
-  line-height: 1.6rem;
-  min-width: 1.3rem;
-  padding: 0;
-  outline: none;
+.writing .iden {
+  display: block;
+  text-align: right;
+  width: 100%;
+}
+.writing .iden .ship {
+  margin-right: 0.3rem;
+}
+#audi {
+  display: inline-block;
   background-color: #eee;
-}
-#writing:focus {
-  background-color: #fff;
-}
-#station h1 {
-  display: inline-block;
-  margin: 0;
-  font-weight: 200;
-  font-size: 2rem;
-  text-transform: lowercase;
-}
-input.join {
-  font-size: 4rem;
-  background-color: #fff;
+  padding: 0.3rem 0.1rem;
+  margin-top: -0.3rem;
+  margin-right: -0.2rem;
   outline: none;
-  width: 24rem;
+  overflow: hidden;
 }
-#station input.join {
-  font-family: "scp";
-  font-size: 0.7rem;
-  line-height: 1rem;
-  width: 12rem;
-}
-input.join::-webkit-input-placeholder {
-  color: #0003ff;
-}
-input.join:focus::-webkit-input-placeholder {
-  color: #fff;
-}
-.pending {
-  color: #ccc;
-}
-a.up {
-  height: 2rem;
-  margin-top: 0.6rem;
-  vertical-align: middle;
-  display: inline-block;
-}
-.arow-up {
-  display: inline-block;
-  margin: 0 0.5rem 0 0.5rem;
-  width: 0;
-  height: 0;
-  border-left: 9px solid transparent;
-  border-right: 9px solid transparent;
-  border-bottom: 9px solid #000;
+.valid-false {
+  color: #ff2f2f;
 }
 #scrolling {
   display: none;
@@ -383,67 +423,92 @@ a.up {
   font-size: 0.8rem;
   text-transform: uppercase;
 }
-@media (max-width: 40rem) {
-  #c {
+@media only screen and (min-width: 1024px) {
+  #station-container:hover {
+    max-height: 30rem;
+    height: auto;
+    -webkit-transition: max-height 0.2s;
+  }
+  #station-container:hover #where .caret {
+    transform: rotate(90deg);
+    transform-origin: 0 50%;
+    -webkit-transform: rotate(90deg);
+    -webkit-transition: -webkit-transform 0.2s;
+  }
+}
+@media only screen and (max-width: 1170px) {
+  #station-container.open {
+    max-height: 30rem;
+    height: auto;
+    -webkit-transition: max-height 0.2s;
+  }
+  #station-container.open #where .caret {
+    transform: rotate(90deg);
+    transform-origin: 0 50%;
+    -webkit-transform: rotate(90deg);
+    -webkit-transition: -webkit-transform 0.2s;
+  }
+  #c,
+  #station-container {
+    width: 96%;
     left: 0;
-    margin-left: 0;
-    width: 24rem;
+    margin-left: 2%;
+    margin-right: 2%;
   }
-  #messages-container,
-  #writing-container {
-    margin-left: 1rem;
+  .mess,
+  #writing {
+    max-width: 40%;
+    line-height: 1.2rem;
   }
-  #stations-container,
-  #station-container {
-    position: relative;
-    float: left;
+  .attr,
+  #stations,
+  #where {
+    width: 20%;
+    min-width: 20%;
   }
-  #stations-container {
-    width: 8rem;
-  }
-  #station-container {
-    left: auto;
-  }
-  .station {
-    width: 5rem;
-  }
-  .attr {
-    display: block;
-    text-align: left;
-    width: 2rem;
-    margin-right: 1rem;
-  }
-  .message {
-    height: 1.6rem;
-  }
-  .stations,
-  .iden,
-  #station {
-    font-size: 0.5rem;
-  }
-  .station .remove {
-    display: inline;
-    font-size: 0.6rem;
-    line-height: 0.6rem;
-  }
-  .ship.talk:before {
-    margin-left: -0.3rem;
-    margin-right: 0;
-  }
-  .attr {
-    width: 4rem;
-  }
-  .iden > div {
-    display: block;
-  }
-  .attr > .time {
-    display: none;
-  }
-  .mess {
-    max-width: 12rem;
-    margin-bottom: 1rem;
+  #audience,
+  #who {
+    width: 60%;
   }
   #writing {
-    max-width: 12rem;
+    padding: 0.1rem;
+  }
+  #station-container.m-down,
+  #station-container.m-up {
+    position: absolute;
+  }
+  #station-container.m-down.m-fixed {
+    position: fixed;
+    top: 0;
+  }
+}
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  .mess,
+  #writing {
+    max-width: 70%;
+    line-height: 1.2rem;
+  }
+  #stations,
+  #audience {
+    width: 96%;
+  }
+  #stations,
+  #audience,
+  .sour-ctrl input {
+    text-align: left;
+  }
+  #station {
+    cursor: pointer;
+  }
+  #station-container.open {
+    max-height: 30rem;
+    height: auto;
+    -webkit-transition: max-height 0.2s;
+  }
+  #station-container.open #where .caret {
+    transform: rotate(90deg);
+    transform-origin: 0 50%;
+    -webkit-transform: rotate(90deg);
+    -webkit-transition: -webkit-transform 0.2s;
   }
 }

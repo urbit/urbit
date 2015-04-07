@@ -1989,7 +1989,7 @@ try to get the aeon referred to by the starting case. If it doesn't
 exist yet, then we can't do anything interesting with this subscription,
 so we move on to the next one.
 
-Otherwise, we try to get the aeon referrred to by the ending case. If it
+Otherwise, we try to get the aeon referred to by the ending case. If it
 doesn't exist yet, then we produce all the information we can. We call
 `++lobes-at-path` at the given aeon and path to see if the requested
 path has actually changed. If it hasn't, then we don't produce anything;

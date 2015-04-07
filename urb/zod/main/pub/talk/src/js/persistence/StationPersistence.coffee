@@ -3,8 +3,8 @@ StationActions = require '../actions/StationActions.coffee'
 module.exports =
   createStation: (name,cb) ->
     window.urb.send {
-      appl:"rodeo"
-      mark:"rodeo-command"
+      appl:"talk"
+      mark:"talk-command"
       data:
         design: 
           party:name
@@ -16,8 +16,8 @@ module.exports =
 
   removeStation: (name,cb) ->
     window.urb.send {
-      appl:"rodeo"
-      mark:"rodeo-command"
+      appl:"talk"
+      mark:"talk-command"
       data:
         design: 
           party:name
@@ -26,8 +26,8 @@ module.exports =
 
   setSources: (station,ship,sources) ->
     send = 
-      appl:"rodeo"
-      mark:"rodeo-command"
+      appl:"talk"
+      mark:"talk-command"
       data:
         design:
           party:station
@@ -36,39 +36,52 @@ module.exports =
             caption:""
             cordon:{posture:"white", list:[]}
     window.urb.send send, (err,res) ->
-      console.log 'add source updates'
+      console.log 'talk-command'
       console.log arguments
 
   members: ->
     window.urb.subscribe {
-      appl:"rodeo"
+      appl:"talk"
       path:"/a/court"
     }, (err,res) ->
-      console.log 'membership updates'
+      if err or not res
+        console.log '/a/ err'
+        console.log err
+        return
+      console.log '/a/'
       console.log res.data
       if res.data?.group?.global
         StationActions.loadMembers res.data.group.global
 
   listen: ->
     window.urb.subscribe {
-      appl:"rodeo"
+      appl:"talk"
       path:"/"
      }, (err,res) ->
-        console.log 'house updates'
+        if err or not res.data
+          console.log '/ err'
+          console.log err
+          return
+        console.log '/'
         console.log res.data
         if res.data.house
           StationActions.loadStations res.data.house
 
   listenStation: (station) ->
     window.urb.subscribe {
-      appl:"rodeo"
+      appl:"talk"
       path:"/ax/#{station}"
      }, (err,res) ->
-        console.log('station subscription updates')
+        if err or not res
+          console.log '/ax/ err'
+          console.log err
+          return
+        console.log('/ax/')
         console.log(res.data)
         if res.data.ok is true
           StationActions.listeningStation station
-        if res.data.group?.local
-          StationActions.loadMembers station,res.data.group.local
-        if res.data.config
-          StationActions.loadConfig station,res.data.config
+        if res.data.group
+          res.data.group.global[window.util.mainStationPath(window.urb.user)] = res.data.group.local
+          StationActions.loadMembers res.data.group.global
+        if res.data.cabal?.loc
+          StationActions.loadConfig station,res.data.cabal.loc

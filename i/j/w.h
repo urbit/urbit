@@ -106,6 +106,7 @@
     u3_noun u3wea_en(u3_noun);
 
     u3_noun u3we_shax(u3_noun);
+    u3_noun u3we_shay(u3_noun);
     u3_noun u3we_shas(u3_noun);
     u3_noun u3we_shal(u3_noun);
 
