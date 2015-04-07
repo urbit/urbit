@@ -601,9 +601,6 @@ module.exports = recl({
     };
     s.audi = _.without(s.audi, window.util.mainStationPath(window.urb.user));
     s.ludi = _.without(s.ludi, window.util.mainStationPath(window.urb.user));
-    console.log('set');
-    console.log(s.audi);
-    console.log(s.ludi);
     return s;
   },
   getInitialState: function() {
@@ -781,8 +778,6 @@ module.exports = recl({
     name = iden ? iden.name : "";
     audi = this.state.audi.length === 0 ? this.state.ludi : this.state.audi;
     audi = window.util.clipAudi(audi);
-    console.log('audi');
-    console.log(audi);
     k = "writing";
     return div({
       className: k
@@ -5423,12 +5418,23 @@ MessageActions = require('../actions/MessageActions.coffee');
 
 module.exports = {
   listenStation: function(station, since) {
+    var $this;
+    $this = this;
+    console.log('listen station');
+    console.log(arguments);
     return window.urb.subscribe({
       appl: "talk",
       path: "/f/" + station + "/" + since
     }, function(err, res) {
       var ref, ref1;
-      console.log('m subscription updates');
+      if (err || !res.data) {
+        console.log('/f/ err!');
+        console.log(err);
+        console.log(res);
+        $this.listenStation(station, since);
+        return;
+      }
+      console.log('/f/');
       console.log(res.data);
       if (res.data.ok === true) {
         MessageActions.listeningStation(station);
@@ -5444,7 +5450,12 @@ module.exports = {
       path: "/f/" + station + "/" + end + "/" + start
     }, function(err, res) {
       var ref, ref1;
-      console.log('get');
+      if (err || !res.data) {
+        console.log('/f/ /e/s err');
+        console.log(err);
+        return;
+      }
+      console.log('/f/ /e/s');
       console.log(res);
       if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
         MessageActions.loadMessages(res.data.grams, true);
@@ -5534,7 +5545,7 @@ module.exports = {
       }
     };
     return window.urb.send(send, function(err, res) {
-      console.log('add source updates');
+      console.log('talk-command');
       return console.log(arguments);
     });
   },
@@ -5544,7 +5555,12 @@ module.exports = {
       path: "/a/court"
     }, function(err, res) {
       var ref, ref1;
-      console.log('membership updates');
+      if (err || !res) {
+        console.log('/a/ err');
+        console.log(err);
+        return;
+      }
+      console.log('/a/');
       console.log(res.data);
       if ((ref = res.data) != null ? (ref1 = ref.group) != null ? ref1.global : void 0 : void 0) {
         return StationActions.loadMembers(res.data.group.global);
@@ -5556,7 +5572,12 @@ module.exports = {
       appl: "talk",
       path: "/"
     }, function(err, res) {
-      console.log('house updates');
+      if (err || !res.data) {
+        console.log('/ err');
+        console.log(err);
+        return;
+      }
+      console.log('/');
       console.log(res.data);
       if (res.data.house) {
         return StationActions.loadStations(res.data.house);
@@ -5569,7 +5590,12 @@ module.exports = {
       path: "/ax/" + station
     }, function(err, res) {
       var ref;
-      console.log('station subscription updates');
+      if (err || !res) {
+        console.log('/ax/ err');
+        console.log(err);
+        return;
+      }
+      console.log('/ax/');
       console.log(res.data);
       if (res.data.ok === true) {
         StationActions.listeningStation(station);
