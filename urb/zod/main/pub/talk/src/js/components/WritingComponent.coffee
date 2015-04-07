@@ -23,11 +23,6 @@ module.exports = recl
       valid:StationStore.getValidAudience()
     s.audi = _.without s.audi, window.util.mainStationPath window.urb.user
     s.ludi = _.without s.ludi, window.util.mainStationPath window.urb.user
-
-    console.log 'set'
-    console.log s.audi
-    console.log s.ludi
-
     s
 
   getInitialState: -> @stateFromStore()
@@ -172,9 +167,6 @@ module.exports = recl
 
     audi = if @state.audi.length is 0 then @state.ludi else @state.audi
     audi = window.util.clipAudi audi
-
-    console.log 'audi'
-    console.log audi
 
     k = "writing"
 
