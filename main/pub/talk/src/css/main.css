@@ -107,7 +107,12 @@ body {
 .time {
   font-size: 0.6rem;
   letter-spacing: 0;
+}
+.time {
   font-weight: 200;
+}
+#length {
+  font-weight: 500;
 }
 input.join,
 .iden,
@@ -400,7 +405,7 @@ body {
   outline: none;
   overflow: hidden;
 }
-#audi.valid-false {
+.valid-false {
   color: #ff2f2f;
 }
 #scrolling {
@@ -432,6 +437,17 @@ body {
   }
 }
 @media only screen and (max-width: 1170px) {
+  #station-container.open {
+    max-height: 30rem;
+    height: auto;
+    -webkit-transition: max-height 0.2s;
+  }
+  #station-container.open #where .caret {
+    transform: rotate(90deg);
+    transform-origin: 0 50%;
+    -webkit-transform: rotate(90deg);
+    -webkit-transition: -webkit-transform 0.2s;
+  }
   #c,
   #station-container {
     width: 96%;
