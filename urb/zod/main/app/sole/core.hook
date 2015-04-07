@@ -356,7 +356,7 @@
       (ta-hom(pos.inp pre) %del pre)
     ::
     ++  ta-ctl                                          ::  hear control
-      |=  key=@ud
+      |=  key=@c
       ^+  +>
       ?+    key  ta-bel
           %a  +>(pos.inp 0)
@@ -477,7 +477,7 @@
       +>
     ::
     ++  ta-met                                          ::  meta key
-      |=  key=@ud
+      |=  key=@c
       ~&  [%ta-met key]
       +>
     ::
