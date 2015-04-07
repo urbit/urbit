@@ -37,10 +37,10 @@
   $%  [%twitter p=@t]                                   ::  twitter
   ==                                                    ::
 ++  posture                                             ::  security posture
-  $?  %black                                            ::  public
-      %white                                            ::  private
-      %green                                            ::  readonly 
-      %brown                                            ::  writeonly
+  $?  %black                                            ::  channel
+      %white                                            ::  village
+      %green                                            ::  journal
+      %brown                                            ::  mailbox
   ==                                                    ::
 ++  presence   ?(%gone %hear %talk)                     ::  status type
 ++  register  (pair atlas (map partner atlas))          ::  ping me, ping srcs
