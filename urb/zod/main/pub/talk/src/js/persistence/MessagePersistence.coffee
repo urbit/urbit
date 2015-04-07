@@ -2,11 +2,20 @@ MessageActions = require '../actions/MessageActions.coffee'
 
 module.exports =
   listenStation: (station,since) ->
+    $this = this
+    console.log 'listen station'
+    console.log arguments
     window.urb.subscribe {
       appl:"talk"
       path:"/f/#{station}/#{since}"
      }, (err,res) ->
-        console.log('m subscription updates')
+        if err or not res.data
+          console.log '/f/ err!'
+          console.log err
+          console.log res
+          $this.listenStation station,since
+          return
+        console.log('/f/')
         console.log(res.data)
         if res.data.ok is true
           MessageActions.listeningStation station
@@ -18,8 +27,12 @@ module.exports =
       appl:"talk"
       path:"/f/#{station}/#{end}/#{start}"
     }, (err,res) ->
-      console.log 'get'
-      console.log res
+      if err or not res.data
+        console.log '/f/ /e/s err'
+        console.log err
+        return
+      console.log '/f/ /e/s'
+      console.log res        
       if res.data?.grams?.tele
         MessageActions.loadMessages res.data.grams,true
         window.urb.unsubscribe {
