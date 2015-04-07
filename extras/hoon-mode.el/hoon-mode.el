@@ -1,9 +1,14 @@
 ;;; hoon-mode.el --- Major mode for editing hoon files for urbit
 
-;; Copyright (C) 2001  Free Software Foundation, Inc.
+;; Copyright (C) 20014 -2015  Free Software Foundation, Inc.
 
-;; Author: Adam Bliss <abliss@gmail.com>
-;; Keywords: extensions
+;; Author: 
+;;    * Adam Bliss     https://github.com/abliss          <abliss@gmail.com>
+;; Contributors: 
+;;    * N Gvrnd        https://github.com/ngvrnd
+;;    * TJamesCorcoran https://github.com/TJamesCorcoran <jamescorcoran@gmail.com>
+;;
+;; Keywords: extensions, hoon, nock, urbit, neoreaction, Mars
 
 ;; This file is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -25,6 +30,7 @@
 ;; This is my first Major Mode, so don't expect much. It's heavily based on
 ;; SampleMode from the emacs wiki.
 
+
 ;;; Code:
 
 (defvar hoon-mode-hook nil)
@@ -37,6 +43,7 @@
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.hoon$" . hoon-mode))
+(add-to-list 'auto-mode-alist '("\\.hook$" . hoon-mode))
 
 (defvar hoon-mode-syntax-table
   (let ((st (make-syntax-table lisp-mode-syntax-table)))
@@ -93,6 +100,79 @@
 (defun hoon-calculate-indentation ()
   "Return the column to which the current line should be indented."
   0) ;;TODO
+
+
+
+;;----------
+;; hack the mode line
+;;----------
+
+;  In the urbit webserver a directory is basically a resource fork,
+;  and contains a single file, always named "hymn.hook". Emacs'
+;  default buffer-naming will, of course, name this hymn.hook.
+;
+;  But if you are visitng two files, 5/hymn.hook and 6/hymn.hook, they
+;  will both appear the same on the mode line.
+;
+;  This sucks, and we'd rather have them appear as "5/hymn.hook" and "6/hymn.hook".
+;
+;  Trivial, right? No.
+
+; The mode line is an interesting beast.
+;   1) it's defined in two variables:
+;        * mode-line-format, which includes in turn the variable...
+;        * mode-line-buffer-identification
+;   2) both of these include "magic" string components which
+;      constitute a micro-DSL (domain specific language), which includes tags like
+;      '%b', indicating that the buffer-name should be substituted in
+;      (see emacs variable docs for 'mode-line-format')
+;   3) this magic DSL is evaluated by lisp funcs that are written in C
+;      and thus which can not be monkey-patched
+;        https://www.gnu.org/software/emacs/manual/html_node/elisp/Primitive-Function-Type.html
+;      translation: "do not sharpen chainsaw while it is running"
+;   4) the commands that are executed when the DSL is interpreted are likewise written in C
+;
+; The upshot is... 
+;
+; WAIT. A better way exists. Instead of hacking the mode-line format,
+; just invoke 'rename-buffer, which also lives down in the C
+; underbelly. Everything falls out nicely.
+
+(defvar hoon-buffer-string "")
+(make-variable-buffer-local 'hoon-buffer-string)
+
+(defun hoon-mode-hack-the-modeline ()
+  ;; (setq mode-line-format
+  ;; 		'("%e" 
+  ;; 		  mode-line-front-space
+  ;; 		  mode-line-mule-info
+  ;; 		  mode-line-client
+  ;; 		  mode-line-modified
+  ;; 		  mode-line-remote
+  ;; 		  mode-line-frame-identification
+  ;; 		  hoon-buffer-string
+  ;; 		  "   "
+  ;; 		  mode-line-position
+  ;; 		  (vc-mode vc-mode)
+  ;; 		  "  "
+  ;; 		  mode-line-modes
+  ;; 		  mode-line-misc-info
+  ;; 		  mode-line-end-spaces))
+  ;; (setq hoon-buffer-string 
+  ;; 		(concat
+  ;; 		 (nth 1 (reverse (split-string (file-name-directory (buffer-file-name)) "/")))
+  ;; 		 "/"
+  ;; 		 (file-name-nondirectory (buffer-file-name))))
+
+  (rename-buffer
+		(concat
+		 (nth 1 (reverse (split-string (file-name-directory (buffer-file-name)) "/")))
+		 "/"
+		 (file-name-nondirectory (buffer-file-name))))
+)
+
+(add-hook 'hoon-mode-hook 'hoon-mode-hack-the-modeline)
+
 
 
 (provide 'hoon-mode)
