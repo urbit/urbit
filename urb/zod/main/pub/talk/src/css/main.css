@@ -107,7 +107,12 @@ body {
 .time {
   font-size: 0.6rem;
   letter-spacing: 0;
+}
+.time {
   font-weight: 200;
+}
+#length {
+  font-weight: 500;
 }
 input.join,
 .iden,
@@ -400,7 +405,7 @@ body {
   outline: none;
   overflow: hidden;
 }
-#audi.valid-false {
+.valid-false {
   color: #ff2f2f;
 }
 #scrolling {
