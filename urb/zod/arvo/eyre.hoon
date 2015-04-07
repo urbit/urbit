@@ -483,9 +483,11 @@
       (get-rush:(ire-ix p.tee) q.tee ((hard json) q.sih))
     ::
         ?(%nice %mean)
+      ~&  [tee `@tas`&2.sih]
       ?+  tee  !!
-        ~        ?-(&2.sih %nice (nice-json), %mean (mean-json 500 p.sih))
-        [%of @ ^]  (get-ack:(ire-ix p.tee) +.sih)
+        ~   ~&  empty-ack/&2.sih
+            ?-(&2.sih %nice (nice-json), %mean (mean-json 500 p.sih))
+        [%of @ ^]  (get-ack:(ire-ix p.tee) q.tee +.sih)
       ==
     ::
         %wake
@@ -876,7 +878,6 @@
           %subs
         ?>  =((spud q.q.hem) (trip (need-body (ot wire/so ~):jo)))
           ::  XX custom wire
-        ~&  sub/(gsig [p q]:q.hem)
         ?-  p.hem
           %put   [%| ((teba add-subs:for-view) q.hem)]
           %delt  [%| ((teba del-subs:for-view) q.hem)]
@@ -1047,6 +1048,7 @@
       =.  vew  (~(put in vew) orx)
       =+  [ire=(oryx-to-ixor orx) sem=*stem]
       =.  wix  (~(put by wix) ire sem(him him, era now, p.eve 1))
+      ~&  stat-ire/`@t`ire
       :_  abet
       %-  jobe  :~
         oryx/s/orx
@@ -1066,8 +1068,12 @@
     ++  teba  |*(a=$+(* ..ix) |*(b=* %_(done ..ix (a b))))
     ++  give-json  (teba ^give-json)
     ++  hurl-note 
-      |=  [a=$|(~ whir-of) b=note]  ^+  ..ix
-      (pass-note:abet [%of ire a] b)
+      |=  [a=[hasp path] b=note]  ^+  ..ix
+      =:  med  (~(put to med) hen)
+          hen  `~
+        ==
+      ~&  >  hurl/[&2.b ire a]
+      (pass-note:abet [%of ire (gsig a)] b)
     ::
     ++  add-even
       |=  a=even  ^+  eve
@@ -1075,41 +1081,35 @@
     ::
     ++  new-mess
       |=  [a=hasp b=wire c=cage]  ^+  ..ix
-      =:  med  (~(put to med) hen)
-          hen  `~
-        ==
-      (hurl-note (gsig a b) [%g %mess [- + ~]:a him c])
+      (hurl-note [a b] [%g %mess [- + ~]:a him c])
     ::
     ++  add-subs
       |=  [a=hasp %json b=path]  ^+  ..ix
-      =:  med  (~(put to med) hen)
-          hen  `~
-        ==
-      (hurl-note (gsig a b) [%g %show [- + ~]:a him b])
+      (hurl-note [a b] [%g %show [- + ~]:a him b])
     ::
     ++  del-subs
       |=  [a=hasp %json b=path]  ^+  ..ix
-      (hurl-note(hen `~) (gsig a b) [%g %nuke [- + ~]:a him])
+      (hurl-note [a b] [%g %nuke [- + ~]:a him])
     ::
     ++  get-rush
       |=  [a=whir-of b=json]  ^+  ..ix
       (get-even [%rush [[(slav %p p.a) q.a] r.a] (joba %json b)])
     ::
     ++  get-ack
-      |=  a=$&([%nice ~] [%mean p=ares])  ^+  ..ix
-      ?-  -.a
+      |=  [a=whir-of b=$&([%nice ~] [%mean p=ares])]  ^+  ..ix
+      ?-  -.b
           %mean
+        ?~  p.b                       ::  XX  actually a yawn-told-full
+          (get-even %mean [[(slav %p p.a) q.a] r.a] p.b)
         =^  ned  med  ~(get to med)
-        (mean-json:abet(hen ned) 500 p.a)
+        (mean-json:abet(hen ned) 500 p.b)
       ::
           %nice
+        ?:  =(~ med)  ~&  resp-lost/ire  ..ix
         =^  ned  med  ~(get to med)
         (nice-json:abet(hen ned))
       ==
     ::
-    ++  get-mean  
-      |=  [a=whir-of b=ares]  ^+  ..ix
-      (get-even [%mean [[(slav %p p.a) q.a] r.a] b])
     ++  get-even
       |=  ven=even  ^+  ..ix
       =+  num=p.eve
@@ -1135,14 +1135,14 @@
     ::
     ++  pass-took
       |=  a=[p=hasp wire]
-      (hurl-note(hen `~) (gsig a) [%g %took [- + ~]:p.a him])
+      (pass-note(hen `~) [%of ire (gsig a)] [%g %took [- + ~]:p.a him])
     ::
     ++  poll
       |=  a=@u  ^+  ..ix
       ?:  =(a p.eve)
         ?^  ude  ~&(e/ix/wait/%replaced abet(u.ude [hen &]))
         =.  era  (add ~s30 now)
-        (hurl-note(ude [~ hen &]) / [%t %wait era])
+        (pass-note:abet(ude [~ hen &]) of//[ire] [%t %wait era])
       ?:  (gth a p.eve)  ~|(seq-high/cur=p.eve !!)
       =+  ven=~|(seq-low/cur=p.eve (~(got by q.eve) a))
       abet:(give-even & a ven)
