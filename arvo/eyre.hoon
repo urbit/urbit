@@ -468,7 +468,10 @@
     =.  our  ?~(hov our u.hov)  ::  XX
     ?-    &2.sih
         %crud  +>.$(mow [[hen %slip %d %flog +.sih] mow])
-        %dumb  (emule |.(~|(%gall-stub !!)))
+        %dumb  
+      =.  +>  ?+(tee +> [%of ^] pop-duct:(ire-ix p.tee))
+      (emule |.(~|(gall-dumb/tee !!)))
+    ::
         %went  +>.$
         %thou
       ?>  ?=([%ay ^] tee)
@@ -1102,13 +1105,11 @@
           %mean
         ?~  p.b                       ::  XX  actually a yawn-told-full
           (get-even %mean [[(slav %p p.a) q.a] r.a] p.b)
-        =^  ned  med  ~(get to med)
-        (mean-json:abet(hen ned) 500 p.b)
+        (mean-json:pop-duct 500 p.b)
       ::
           %nice
         ?:  =(~ med)  ~&  resp-lost/ire  ..ix
-        =^  ned  med  ~(get to med)
-        (nice-json:abet(hen ned))
+        (nice-json:pop-duct)
       ==
     ::
     ++  get-even
@@ -1138,6 +1139,7 @@
       |=  a=[p=hasp wire]
       (pass-note(hen `~) [%of ire (gsig a)] [%g %took [- + ~]:p.a him])
     ::
+    ++  pop-duct  =^(ned med ~(get to med) abet(hen ned))
     ++  poll
       |=  a=@u  ^+  ..ix
       ?:  =(a p.eve)
