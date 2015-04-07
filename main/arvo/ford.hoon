@@ -71,6 +71,7 @@
               [%done p=(set beam) q=gage]               ::  literal
               [%dude p=tank q=silk]                     ::  error wrap
               [%dune p=(set beam) q=(unit gage)]        ::  unit literal
+              [%file p=beam]                            ::  from clay
               [%join p=mark q=silk r=silk]              ::  merge
               [%mash p=mark q=silk r=silk]              ::  merge
               [%mute p=silk q=(list (pair wing silk))]  ::  mutant
@@ -854,6 +855,16 @@
       |=  [cof=cafe arc=arch]
       (fine cof (lark wox arc))
     ::
+    ++  lear                                            ::  load vase
+      |=  [cof=cafe bem=beam]
+      ^-  (bolt cage)
+      =+  von=(ska ~ %cx bem)
+      ?~  von
+        [p=*cafe q=[%1 [[%x bem ~] ~ ~]]]
+      ?~  u.von
+        (flaw cof leaf/"lear: file unavailable" (smyt (tope bem)) ~)
+      (fine cof u.u.von)
+    ::
     ++  lend                                            ::  load arch
       |=  [cof=cafe bem=beam]
       ^-  (bolt arch)
@@ -868,7 +879,7 @@
       ?~  von
         [p=*cafe q=[%1 [[%x bem ~] ~ ~]]]
       ?~  u.von
-        (flaw cof leaf/"file unavailable" (smyt (tope bem)) ~)
+        (flaw cof leaf/"liar: file unavailable" (smyt (tope bem)) ~)
       (fine cof q.u.u.von)
     ::
     ++  lily                                            ::  translation targets
@@ -1089,6 +1100,10 @@
           %dune
         ?~  q.kas  [cof [%2 [%leaf "no data"]~]]
         $(kas [%done p.kas u.q.kas])
+      ::
+          %file
+        %+  cool  |.(leaf/"ford: file {<p.kas>}")
+        (lear cof p.kas)
       ::
           %join
         %+  cool
