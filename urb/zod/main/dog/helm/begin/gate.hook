@@ -25,10 +25,12 @@
   [%& %helm-entropy "some entropy: "]
 %+  sole-go  (boss 256 (more gon qit))
 |=  yen=@t
+=+  ney=(shax yen)
+%+  sole-yo  `tank`[%leaf "entropy check: {(scow %p `@p`(mug ney))}"]
 %+  sole-so  %helm-begin
 :*  his
     tic
-    yen
+    ney
 ::
     ^-  gens
     :-  %en
