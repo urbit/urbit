@@ -739,8 +739,8 @@
         (fix inx '?' lit)
       ?:  &((gte i.buf 'A') (lte i.buf 'Z'))
         (fix inx (add 32 i.buf) lit)
-      ?:  &(=('/' i.buf) ?=([47 *] t.buf))
-        (fix inx '\\' lit)
+      ::  ?:  &(=('/' i.buf) ?=([47 *] t.buf))
+      ::  (fix inx '\\' lit)
       lit
     ::
     ++  sh-sane-rule                                    ::  sanitize by rule
