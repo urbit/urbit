@@ -36,6 +36,7 @@
           [%di p=dojo-model]                            ::  dialog
           [%dv p=path]                                  ::  gate from source
           [%fi p=dojo-filter q=dojo-source]             ::  filter
+          [%ge p=dojo-model]                            ::  generator
           [%sc p=dojo-model]                            ::  script
           [%tu p=(list dojo-source)]                    ::  tuple
           [%va p=term]                                  ::  dojo variable
@@ -157,13 +158,13 @@
       %+  knee  *dojo-command  |.  ~+
       ;~  pose
         %+  stag  %poke
-        ;~  pfix  bar
+        ;~  pfix  col
           %+  cook
             |=  [a=goal b=(each dojo-source (pair path dojo-config))]
             ^-  (pair goal dojo-source)
             ?-  -.b
               %&  [a p.b]
-              %|  [a [0 %di [0 [%gun q.a p.p.b]] q.p.b]]
+              %|  [a [0 %di [0 [%dog q.a p.p.b]] q.p.b]]
             ==
           ;~  plug
             dp-goal
@@ -185,7 +186,7 @@
         ==
       ::
         %+  stag  %pill
-        ;~  pfix  lus
+        ;~  pfix  dot
           ;~(plug (most fas sym) ;~(pfix ace dp-source))
         ==
       ::
@@ -195,7 +196,8 @@
     ++  dp-build                                        ::  ++dojo-build
       %+  knee  *dojo-build  |.  ~+
       ;~  pose
-        ;~(pfix wut (stag %di dp-model-gun))
+        ;~(pfix lus (stag %ge dp-model-cat))
+        ;~(pfix wut (stag %di dp-model-dog))
         ;~(pfix pam (stag %sc dp-model-sic))
         ;~(pfix buc (stag %va sym))
         (stag %ex dp-twig)
@@ -211,9 +213,11 @@
         ==
         (cook |=(a=term `goal`[our.hid a]) sym)
       ==
-    ++  dp-model-gun  ;~(plug dp-server-gun dp-config)  ::  ++dojo-model
+    ++  dp-model-cat  ;~(plug dp-server-cat dp-config)  ::  ++dojo-model
+    ++  dp-model-dog  ;~(plug dp-server-dog dp-config)  ::  ++dojo-model
     ++  dp-model-sic  ;~(plug dp-server-sic dp-config)  ::  ++dojo-model
-    ++  dp-server-gun   (stag 0 (stag %gun dp-device))  ::  ++dojo-server
+    ++  dp-server-cat   (stag 0 (stag %cat dp-device))  ::  ++dojo-server
+    ++  dp-server-dog   (stag 0 (stag %dog dp-device))  ::  ++dojo-server
     ++  dp-server-sic   (stag 0 (stag %sic dp-device))  ::  ++dojo-server
     ++  dp-twig         wide:(vang & ~)                 ::  ++twig
     ++  dp-device       (most fas sym)                  ::  ++dojo-device
@@ -309,6 +313,7 @@
         %di  =^(mod +>.$ (dy-init-model p.bul) [[%di mod] +>.$])
         %dv  [bul +>.$]
         %fi  !!
+        %ge  =^(mod +>.$ (dy-init-model p.bul) [[%ge mod] +>.$])
         %sc  !!
         %tu  =^  dof  +>.$
                  |-  ^+  [p.bul +>.^$]
@@ -462,7 +467,7 @@
           ?~(b !>([~ ~]) (dy-vase p.u.b))
       ==
     ::
-    ++  dy-silk-init-dial                               ::  init and config
+    ++  dy-silk-init-modo                               ::  init and config
       |=  [cag=cage cig=dojo-config]
       ^-  silk
       (dy-silk-config cag cig)
@@ -494,13 +499,18 @@
         [%pro pom(cad [':' ' ' cad.pom])]
       ==
     ::
+    ++  dy-made-gent                                    ::  generator product
+      |=  cag=cage
+      (dy-meal q.cag)
+    ::
     ++  dy-make                                         ::  build step
       ^+  +>
       ?>  ?=(^ cud)
       %-  dy-ford
       ^-  (pair path silk)
       ?+  -.q.u.cud  !!
-        %di  [/dial (dy-silk-init-dial (dy-cage p.p.p.q.u.cud) q.p.q.u.cud)]
+        %di  [/dial (dy-silk-init-modo (dy-cage p.p.p.q.u.cud) q.p.q.u.cud)]
+        %ge  [/gent (dy-silk-init-modo (dy-cage p.p.p.q.u.cud) q.p.q.u.cud)]
         %dv  [/hand (dy-silk-device p.q.u.cud)]
         %ex  [/hand [%ride p.q.u.cud [%reef ~]]]
         %tu  :-  /hand
@@ -593,6 +603,7 @@
           ?+  pax  !!
             [%hand ~]  dy-hand:dye
             [%dial ~]  dy-made-dial:dye
+            [%gent ~]  dy-made-gent:dye
             [%edit ~]  dy-made-edit:dye
           ==
       %|  ~&  [%he-made-fail pax]

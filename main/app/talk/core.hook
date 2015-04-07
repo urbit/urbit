@@ -1085,7 +1085,6 @@
   ++  ra-cancel                                         ::  drop a bone
     ^+  .
     =+  hep=(~(get by sup.hid) ost)
-    ~&  [%ra-cancel hep]
     ?~  hep  +
     ?.  ?=([@ @ *] q.u.hep)
       +(general (~(del in general) ost))
@@ -1142,8 +1141,27 @@
     ?~  tiz  +>
     $(tiz t.tiz, +> (ra-consume pub her i.tiz))
   ::
+  ++  ra-normal                                         ::  normalize
+    |=  tip=thought
+    ^-  thought
+    ?.  ?=([%lin *] r.r.tip)  tip
+    %_    tip
+        q.r.r
+      %-  crip
+      %+  scag  62
+      %-  tufa
+      %+  turn  (tuba (trip q.r.r.tip))
+      |=  a=@c
+      ?:  &((gte a 'A') (lte a 'Z'))
+        (add a 32)
+      ?:  |((lth a 32) (gth a 126))
+        `@`'?'
+      a
+    ==
+  ::
   ++  ra-consume                                        ::  consume thought
     |=  [pub=? her=ship tip=thought]
+    =.  tip  (ra-normal tip)
     =+  aud=(~(tap by q.tip) ~)
     |-  ^+  +>.^$
     ?~  aud  +>.^$
