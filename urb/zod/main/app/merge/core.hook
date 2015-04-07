@@ -1,13 +1,15 @@
 ::  Desk sync
-::  
+::
 ::::  /hook/core/sync/app
   ::
 |%
+++  bead  ,[p=(set beam) q=gage]
 ++  merge-state
   $:  auto=?
       gem=germ
       her=@p
       sud=@tas
+      cas=case
   ==
 ++  gift
   $%  [%mean p=ares]
@@ -17,7 +19,11 @@
 ++  move  ,[p=bone q=(mold note gift)]
 ++  note
   $%  $:  %c
-  $%  [%merg p=@p q=@tas r=@p s=@tas t=germ]
+  $%  [%info p=@p q=@tas r=nori]
+      [%merg p=@p q=@tas r=@p s=@tas t=germ]
+  ==  ==
+      $:  %f
+  $%  [%exec p=@p q=beak r=(unit silk)]
   ==  ==
       $:  %g
   $%  [%cide span]
@@ -27,10 +33,36 @@
   $%  $:  %c
   $%  [%mere are=(each (set path) (pair term (list tank)))]
   ==  ==
+      $:  %f
+  $%  [%made p=(each bead (list tank))]
+  ==  ==
       $:  %g
   $%  [%mean p=ares]
       [%nice ~]
   ==  ==  ==
+++  silk
+  $&  [p=silk q=silk]                                   ::  cons
+  $%  [%bake p=mark q=beam r=path]                      ::  local synthesis
+      [%boil p=mark q=beam r=path]                      ::  general synthesis
+      [%bunt p=mark]                                    ::  example of mark
+      [%call p=silk q=silk]                             ::  slam
+      [%cast p=mark q=silk]                             ::  translate
+      [%diff p=silk q=silk]                             ::  diff
+      [%done p=(set beam) q=gage]                       ::  literal
+      [%dude p=tank q=silk]                             ::  error wrap
+      [%dune p=(set beam) q=(unit gage)]                ::  unit literal
+      [%file p=beam]                                    ::  from clay
+      [%join p=mark q=silk r=silk]                      ::  merge
+      [%mash p=mark q=silk r=silk]                      ::  merge
+      [%mute p=silk q=(list (pair wing silk))]          ::  mutant
+      [%pact p=silk q=silk]                             ::  patch
+      [%reef ~]                                         ::  kernel reef
+      [%ride p=twig q=silk]                             ::  silk thru twig
+      [%tabl p=(list (pair silk silk))]                 ::  list
+      [%vale p=mark q=ship r=*]                         ::  validate [our his]
+      [%volt p=(set beam) q=(cask ,*)]                  ::  unsafe add type
+  ==
+++  tage  ,[[%tabl p=(list (pair marc marc))] q=vase]   ::  %tabl gage
 --
 !:
 ::::
@@ -38,11 +70,14 @@
 |_  [hid=hide merges=(map desk merge-state)]
 ++  me
   |=  [ost=bone syd=desk]
-  =+  `merge-state`(fall (~(get by merges) syd) *merge-state)
+  =+  ^-  merge-state
+      %+  fall  (~(get by merges) syd)
+      =+  *merge-state
+      %_(- cas [%da lat.hid])
   =|  mow=(list move)
   |%
   ++  abet
-    [(flop mow) ..me(merges (~(put by merges) syd auto gem her sud))]
+    [(flop mow) ..me(merges (~(put by merges) syd auto gem her sud cas))]
   ::
   ++  blab
     |=  new=(list move)
@@ -52,6 +87,23 @@
   ++  end   ?.(?=([* ~ ~] merges) . (blab [0 %pass / %g %cide %$] ~))
   ++  win   end:(blab [ost %give %nice ~] ~)
   ++  lose  end:(blab [ost %give %mean ~] ~)
+  ::
+  ++  bead-to-tage
+    |=  res=bead
+    ^-  tage
+    ?@  p.q.res
+      ~|(%bad-marc !!)
+    q.res
+  ::
+  ++  tage-to-cages
+    |=  tab=tage
+    ^-  (list (pair cage cage))
+    ?~  p.tab
+      ~
+    :_  $(p.tab t.p.tab, q.tab (slot 3 q.tab))
+    ~|  %strange-gage
+    :-  [?^(p.i.p.tab !! p.i.p.tab) (slot 4 q.tab)]
+    [?^(q.i.p.tab !! q.i.p.tab) (slot 5 q.tab)]
   ::
   ++  merge
     ^+  .
@@ -77,12 +129,22 @@
     =>  $(gim %fine)
     .(auto &)
   ::
+::        =+  (trip (cat 3 syd '-scratch'))
+::        =+  ^-  (list tape)
+::            :~  "done setting up scratch space in %{-}"
+::                "please resolve conflicts in the following files and run"
+::                ":merge %{(trip syd)} our %{-}"
+::                ""
+::                "conflicts in:"
+::            ==
+::        win:(spam (welp (turn - (cury same %leaf)) [>p.are.sih< ~]))
   ++  work
     |=  sih=sign
     ^+  +>
     ~|  [%working auto=auto gem=gem syd=syd her=her sud=sud]
     ?:  ?=(%meld gem)
-      ?:  ?=(%g -.sih)
+      ?-    -.sih
+          %g
         ?:  ?=(%nice +<.sih)
           =>  (spam leaf/"%melding %{(trip sud)} into scratch space" ~)
           %-  blab  :_  ~
@@ -92,22 +154,86 @@
         =+  :-  "failed to set up conflict resolution scratch space"
             "I'm out of ideas"
         lose:(spam leaf/-< leaf/-> ~)
-      ?>  ?=(%c -.sih)
-      ?:  ?=(%& -.are.sih)
-        ?.  auto
-          =+  "successfully merged with strategy {<gem>}"
-          win:(spam leaf/- ?~(p.are.sih ~ [>`(set path)`p.are.sih< ~]))
+      ::
+          %c
+        ?:  ?=(%& -.are.sih)
+          ?.  auto
+            =+  "successfully merged with strategy {<gem>}"
+            win:(spam leaf/- ?~(p.are.sih ~ [>`(set path)`p.are.sih< ~]))
+          =+  "mashing conflicts"
+          =>  .(+>.$ (spam leaf/- ~))
+          =+  tic=(cat 3 syd '-scratch')
+          %-  blab  :_  ~
+          :*  ost  %pass  /[syd]
+              %f  %exec  our.hid  [our.hid tic %da lat.hid]  ~  %tabl
+              ^-  (list (pair silk silk))
+              %+  turn  (~(tap in p.are.sih))
+              |=  pax=path
+              ^-  (pair silk silk)
+              :-  [%done ~ %path -:!>(*path) pax]
+              =+  base=[%file [our.hid tic %da lat.hid] (flop pax)]
+              =+  alis=[%file [her sud cas] (flop pax)]
+              =+  bobs=[%file [our.hid syd %da lat.hid] (flop pax)]
+              =+  ^-  for=mark
+                  =+  (slag (dec (lent pax)) pax)
+                  ?~(- %$ i.-)
+              [%mash for [%diff base alis] [%diff base bobs]]
+          ==
+        =+  "failed to merge with strategy {<p.p.are.sih>}"
+        lose:(spam leaf/- q.p.are.sih)
+      ::
+          %f
+        ?:  ?=(%| -.p.sih)
+          =+  "failed to mash"
+          lose:(spam leaf/- p.p.sih)
+        =+  ^-  can=(list (pair path (unit miso)))
+            %+  turn  (tage-to-cages (bead-to-tage p.p.sih))
+            |=  [pax=cage dif=cage]
+            ^-  (pair path (unit miso))
+            ?.  ?=(%path p.pax)
+              ~|  "strange path mark: {<p.pax>}"
+              !!
+            [((hard path) q.q.pax) ?:(?=(%null p.dif) ~ `[%dif dif])]
+        =+  notated=(skid can |=([path a=(unit miso)] ?=(^ a)))
+        =+  annotated=`(list path)`(turn `(list (pair path ,*))`-.notated head)
+        =+  unnotated=`(list path)`(turn `(list (pair path ,*))`+.notated head)
         =+  (trip (cat 3 syd '-scratch'))
-        =+  ^-  (list tape)
-            :~  "done setting up scratch space in %{-}"
-                "please resolve conflicts in the following files and run"
-                ":merge %{(trip syd)} {<our.hid>} %{-}"
-                ""
-                "conflicts in:"
+        =+  ^-  tan=(list tank)
+            %-  zing
+            ^-  (list (list tank))
+            :~  :~  leaf/"done setting up scratch space in %{-}"
+                    leaf/"please resolve conflicts in the following files and run"
+                    leaf/":merge %{(trip syd)} our %{-}"
+                ==
+                ?~  annotated
+                  ~
+                :~  leaf/""
+                    leaf/"annotated conflicts in:"
+                    >annotated<
+                ==
+                ?~  unnotated
+                  ~
+                :~  leaf/""
+                    leaf/"some conflicts could not be annontated."
+                    leaf/"for these, the scratch space contains"
+                    leaf/"the most recent common ancestor of the"
+                    leaf/"conflicting content."
+                    leaf/""
+                    leaf/"unannotated conflicts in:"
+                    >unnotated<
+                ==
             ==
-        win:(spam (welp (turn - (cury same %leaf)) [>p.are.sih< ~]))
-      =+  "failed to merge with strategy {<p.p.are.sih>}"
-      lose:(spam leaf/- q.p.are.sih)
+        =<  win
+        %-  blab:(spam tan)
+        :_  ~
+        :*  ost  %pass  /[syd]  %c  %info
+            our.hid  (cat 3 syd '-scratch')
+            %&  *cart
+            %+  murn  can
+            |=  [p=path q=(unit miso)]
+            `(unit (pair path miso))`?~(q ~ `[p u.q])
+        ==
+      ==
     ?>  ?=(%c -.sih)
     ?:  ?=(%& -.are.sih)
       =+  "successfully merged with strategy {<gem>}"

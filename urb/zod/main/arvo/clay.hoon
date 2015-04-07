@@ -382,6 +382,7 @@
         |=  [a=path b=miso]
         ^-  ?
         ?|  ?=(%del -.b)
+            ?=(%dif -.b)
             ?&  ?=(%ins -.b)
                 ?=(%mime p.p.b)
                 =+  (slag (dec (lent a)) a)
@@ -415,8 +416,9 @@
   ++  silkify
     |=  [wen=@da pax=path mis=miso]
     ^-  [duct path note]
+    ~|  [%silkifying pax -.mis]
     :-  hen
-    ?+    -.mis  !!
+    ?+    -.mis   !!
         %mut
       :-  [%diffing (scot %p who) syd (scot %da wen) pax]
       :^  %f  %exec  who  :+  [who syd %da wen]  ~
@@ -1660,7 +1662,7 @@
                 ?~  -
                   ~|  %meet-strange-diff-no-base
                   !!
-                (make-delta [(lobe-to-mark u.-) u.-] cay)
+                (make-delta [(lobe-to-mark u.-) u.-] [p q.q]:cay)
             [(~(put by hat) pax p.bol) (~(put by lat) p.bol bol)]
           =.  hat
             %-  ~(uni by old)
@@ -2243,8 +2245,10 @@
       ?:  ?=(%& -.p.+.q.hin)
         ~&  ['merge succeeded' p.p.+.q.hin]
         [[- ~] ..^$]
-      ~&  :+  'merge failed'
-            p.p.p.+.q.hin
+      ~&  :^    "merge failed"
+              "please manually merge the desks with"
+            ":merge %{(trip syd)} {<her>} %{(trip sud)}"
+          :-  p.p.p.+.q.hin
           (turn q.p.p.+.q.hin |=(tank ~(ram re +<)))
       [[- ~] ..^$]
     ::
