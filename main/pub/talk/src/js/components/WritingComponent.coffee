@@ -63,10 +63,16 @@ module.exports = recl
         ,0
       return false
 
+  _writingKeyUp: (e) ->
+    txt = @$writing.text()
+    @$length.toggleClass('valid-false',(txt.length > 62))
+
   _writingKeyDown: (e) ->
     if e.keyCode is 13
+      txt = @$writing.text()
       e.preventDefault()
-      @sendMessage()
+      if txt.length > 0 and txt.length < 63
+        @sendMessage()
       return false
     @_input()
     @set()
@@ -80,12 +86,7 @@ module.exports = recl
       for url in urls
         length -= url.length
         length += 10
-    @$length.text "#{length}/69"
-    if length >= 69
-      @$writing.text(@$writing.text().substr(0,69))
-      @cursorAtEnd()
-      e.preventDefault() if e
-      return false
+    @$length.text "#{length}/62"
 
   _setFocus: -> @$writing.focus()
 
@@ -190,6 +191,7 @@ module.exports = recl
           onInput: @_input
           onPaste: @_input
           onKeyDown: @_writingKeyDown
+          onKeyUp: @_writingKeyUp
           onFocus: @cursorAtEnd
         }, "")
       div {id:"length"}, "0/69"

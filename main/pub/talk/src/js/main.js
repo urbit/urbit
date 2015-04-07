@@ -647,10 +647,19 @@ module.exports = recl({
       return false;
     }
   },
+  _writingKeyUp: function(e) {
+    var txt;
+    txt = this.$writing.text();
+    return this.$length.toggleClass('valid-false', txt.length > 62);
+  },
   _writingKeyDown: function(e) {
+    var txt;
     if (e.keyCode === 13) {
+      txt = this.$writing.text();
       e.preventDefault();
-      this.sendMessage();
+      if (txt.length > 0 && txt.length < 63) {
+        this.sendMessage();
+      }
       return false;
     }
     this._input();
@@ -669,15 +678,7 @@ module.exports = recl({
         length += 10;
       }
     }
-    this.$length.text(length + "/69");
-    if (length >= 69) {
-      this.$writing.text(this.$writing.text().substr(0, 69));
-      this.cursorAtEnd();
-      if (e) {
-        e.preventDefault();
-      }
-      return false;
-    }
+    return this.$length.text(length + "/62");
   },
   _setFocus: function() {
     return this.$writing.focus();
@@ -802,6 +803,7 @@ module.exports = recl({
         onInput: this._input,
         onPaste: this._input,
         onKeyDown: this._writingKeyDown,
+        onKeyUp: this._writingKeyUp,
         onFocus: this.cursorAtEnd
       }, ""), div({
         id: "length"
