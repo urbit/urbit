@@ -149,7 +149,7 @@
       [%mess p=hasp q=mark r=wire s=json]
       [%poll p=@uvH]
       [%spur p=spur]
-      [%subs p=?(%put %delt) q=[p=hasp %json q=path]]
+      [%subs p=?(%put %delt) q=[hasp %json wire path]]
       [%view p=ixor q=[~ u=@ud]]
   ==
 ::
@@ -783,7 +783,8 @@
         ::
             %to
           ?>  =('/' (need-body (ot wire/so ~):jo))  ::  XX custom
-          =-  [%mess [- +<]:dir +>.dir / (need-body (ot:jo xyro/some ~))]
+          =-  :^  %mess  [- +<]:dir  +>.dir 
+              (need-body (ot wire/(cu stab so) xyro/some ~):jo)
           ^=  dir
           =+  ful=(read but %p %tas %tas ~)
           ?^  ful  u.ful
@@ -805,7 +806,9 @@
           ?:  ((sane %tas) i.but)
             $(but [(scot %p our) but])
           ?>  ?=(?(%delt %put) mef)
-          [%subs mef [(slav %p i.but) (slav %tas -.t.but)] u.p.pok +.t.but]
+          =+  :-  hap=[(slav %p i.but) (slav %tas -.t.but)]
+              wir=(need-body (ot wire/(cu stab so) ~):jo)
+          [%subs mef hap u.p.pok wir +.t.but]
         ::
             %auth
           :-  %auth
@@ -876,8 +879,6 @@
         [%& %js (add-json (joba %poll (jape polling-url)) poll:js)]
       ::
           %subs
-        ?>  =((spud q.q.hem) (trip (need-body (ot wire/so ~):jo)))
-          ::  XX custom wire
         ?-  p.hem
           %put   [%| ((teba add-subs:for-view) q.hem)]
           %delt  [%| ((teba del-subs:for-view) q.hem)]
@@ -1084,11 +1085,11 @@
       (hurl-note [a b] [%g %mess [- + ~]:a him c])
     ::
     ++  add-subs
-      |=  [a=hasp %json b=path]  ^+  ..ix
-      (hurl-note [a b] [%g %show [- + ~]:a him b])
+      |=  [a=hasp %json b=wire c=path]  ^+  ..ix
+      (hurl-note [a b] [%g %show [- + ~]:a him c])
     ::
-    ++  del-subs
-      |=  [a=hasp %json b=path]  ^+  ..ix
+    ++  del-subs                      ::  XX per path?
+      |=  [a=hasp %json b=wire c=path]  ^+  ..ix
       (hurl-note [a b] [%g %nuke [- + ~]:a him])
     ::
     ++  get-rush
