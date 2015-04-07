@@ -483,7 +483,7 @@
       (get-rush:(ire-ix p.tee) q.tee ((hard json) q.sih))
     ::
         ?(%nice %mean)
-      ~&  [tee `@tas`&2.sih]
+      ::  ~&  [tee `@tas`&2.sih]
       ?+  tee  !!
         ~   ~&  empty-ack/&2.sih
             ?-(&2.sih %nice (nice-json), %mean (mean-json 500 p.sih))
@@ -1048,7 +1048,7 @@
       =.  vew  (~(put in vew) orx)
       =+  [ire=(oryx-to-ixor orx) sem=*stem]
       =.  wix  (~(put by wix) ire sem(him him, era now, p.eve 1))
-      ~&  stat-ire/`@t`ire
+      ::  ~&  stat-ire/`@t`ire
       :_  abet
       %-  jobe  :~
         oryx/s/orx
@@ -1072,7 +1072,7 @@
       =:  med  (~(put to med) hen)
           hen  `~
         ==
-      ~&  >  hurl/[&2.b ire a]
+      :: ~&  >  hurl/[&2.b ire a]
       (pass-note:abet [%of ire (gsig a)] b)
     ::
     ++  add-even
