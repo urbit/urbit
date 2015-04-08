@@ -26,7 +26,8 @@
       $%  [%reload p=(list term)]                       ::  reload vanes
       ==                                                ::
     ++  dill-flog                                       ::  sent to %dill
-      $%  [%veer p=@ta q=path r=@t]                     ::  install vane
+      $%  [%crud p=%hax-init [%leaf p=tape] ~]          ::  initialize ship
+          [%veer p=@ta q=path r=@t]                     ::  install vane
           [%vega p=path]                                ::  reboot by path
           [%verb ~]                                     ::  verbose mode
       ==                                                ::
@@ -122,6 +123,13 @@
       :_  moz
       [ost %pass /verb %d %flog %verb ~]
     ==
+  ++  he-wish-init
+    |=  him=ship
+    %_    +>.$
+        moz
+      :_  moz
+      [ost %pass /init %d %flog %crud %hax-init leaf/(scow %p him) ~]
+    ==
   --
 ::
 ++  hake                                                ::  poke core
@@ -138,6 +146,11 @@
   |=  [ost=bone her=ship ~]
   ~&  %poke-helm-verb
   he-abet:he-wish-verb:(hake ost her)
+::
+++  poke-helm-init
+  |=  [ost=bone her=ship him=ship]
+  ~&  %poke-helm-init
+  he-abet:(he-wish-init:(hake ost her) him)
 ::
 ++  poke-helm-reload
   |=  [ost=bone her=ship all=(list term)]

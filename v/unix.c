@@ -213,7 +213,7 @@ _unix_fs_event_cb(uv_fs_event_t* was_u,
                   c3_i           evt_i,
                   c3_i           sas_i)
 {
-  
+
   // note that we're doing something tricky and weird here.
   //
   // * libuv passes around a pointer to a uv_fs_event_t
