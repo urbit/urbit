@@ -135,6 +135,7 @@
     |_  $:  coz=(list command)                          ::  talk actions
             she=shell
         ==
+    ++  sh-purl  (ifix [gay gay] auri:urlp)             ::  url with spaces
     ++  sh-scad                                         ::  command parser
       =+  vag=(vang | [&1:% &2:% '0' |3:%])
       =<  work
@@ -739,8 +740,8 @@
         (fix inx '?' lit)
       ?:  &((gte i.buf 'A') (lte i.buf 'Z'))
         (fix inx (add 32 i.buf) lit)
-      ::  ?:  &(=('/' i.buf) ?=([47 *] t.buf))
-      ::  (fix inx '\\' lit)
+      ?:  &(=('/' i.buf) ?=([47 *] t.buf))
+       (fix inx '\\' lit)
       lit
     ::
     ++  sh-sane-rule                                    ::  sanitize by rule
@@ -754,10 +755,13 @@
       |=  [inv=sole-edit buf=(list ,@c)]
       ^-  (list sole-edit)
       ?~  buf  ~
-      ?:  =(';' i.buf)
-        ((sh-sane-rule sh-scad) inv (tufa t.buf))
+      =+  txt=(tufa buf)
+      ?:  =(';' -.txt)
+        ((sh-sane-rule sh-scad) inv +.txt)
       ?:  =('@' i.buf)
         (sh-sane-chat +.buf)
+      =+  ryv=(rose txt sh-purl)
+      ?:  -.ryv  ~
       (sh-sane-chat buf)
     ::
     ++  sh-slug                                         ::  edit to sanity
@@ -780,10 +784,13 @@
     ++  sh-pork                                         ::  parse work
       ^-  (unit work)
       ?~  buf.say.she  ~
-      ?:  =(';' -.buf.say.she)
-        (rust (tufa +.buf.say.she) sh-scad)
+      =+  txt=(tufa buf.say.she)
+      ?:  =(';' -.txt)
+        (rust +.txt sh-scad)
       ?:  =('@' -.buf.say.she)
         `[%say %lin | (crip (tufa +.buf.say.she))]
+      =+  rul=(rust txt sh-purl)
+      ?^  rul  `[%say %url u.rul]
       `[%say %lin & (crip (tufa buf.say.she))]
     ::
     ++  sh-lame                                         ::  send error
@@ -821,7 +828,8 @@
       ++  activate                                      ::  from %number
         |=  gam=telegram
         ^+  +>+>+>
-        ~&  [%activate gam]
+        =.  +>+>+>  ?.  ?=(%url -.r.r.q.gam)  +>+>+>
+          (sh-fact %txt (earn p.r.r.q.gam))
         sh-prod(active.she `~(tr-pals tr man.she gam))
       ::
       ++  join                                          ::  %join
@@ -1729,6 +1737,7 @@
     |=  oug=?
     ^-  tape
     ?+    -.sep  ""
+        %url  (weld ": " (scag 62 (earn p.sep)))
         %lin
       =+  txt=(trip q.sep)
       ?:  p.sep
