@@ -324,10 +324,10 @@
       |=  num=@ud
       ^+  +>
       =+  bun=(scow %ud num)
-      =+  pad=(sub 36 (lent bun))
-      =+  now=`@da`(dis lat.hid 0xffff.ffff.ffff.ffff.0000.0000.0000.0000)
+      ::  =+  pad=(sub 36 (lent bun))
+      ::  =+  now=`@da`(dis lat.hid 0xffff.ffff.ffff.ffff.0000.0000.0000.0000)
       %+  sh-fact  %txt
-      "----------------|  [{bun}] {(runt [pad ' '] (scow %da now))}"
+      (runt [(sub 15 (lent bun)) '-'] "[{bun}]")
     ::
     ++  sh-repo-house-diff
       |=  [one=shelf two=shelf]
