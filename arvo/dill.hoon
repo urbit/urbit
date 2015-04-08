@@ -142,6 +142,7 @@
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
   $%  [%crud p=@tas q=(list tank)]                      ::
+      [%init p=ship]                                    ::
       [%text p=tape]                                    ::
       [%veer p=@ta q=path r=@t]                         ::  install vane
       [%vega p=path]                                    ::  reboot by path
@@ -155,7 +156,7 @@
   ==                                                    ::
 ++  note                                                ::
   $%  [%a note-ames]                                    ::  out request $->
-      [%c note-clay]
+      [%c note-clay]                                    ::
       [%d note-dill]                                    ::
       [%g note-gall]                                    ::
   ==                                                    ::
@@ -375,11 +376,14 @@
     :_(..^$ [hen %pass ~ (note %a p.q.hic)]~)
   ?:  ?=(%flog -.q.hic)
     ::  ~&  [%dill-flog +.q.hic]
+    ?:  ?=([%crud %hax-init [%leaf *] ~] p.q.hic)
+      =+  him=(slav %p (crip p.i.q.p.q.hic))
+      :_(..^$ ?~(hey.all ~ [u.hey.all %give %init him]~))
     :_(..^$ ?~(hey.all ~ [u.hey.all %slip %d p.q.hic]~))
   =.  hey.all  ?^(hey.all hey.all `hen)
   ?:  ?=(%init -.q.hic)
     ?:  =(ore.all `p.q.hic)
-      [~ ..^$]
+      [[hen %give q.hic]~ ..^$]
     =:  ore.all  `p.q.hic
         dug.all   ~
       ==
