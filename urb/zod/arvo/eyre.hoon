@@ -250,9 +250,10 @@
   ;html
     ;head
       ;meta(charset "utf-8");
+      ;link(rel "stylesheet", href "/main/lib/base.css");
       ;title: server error
     ==
-    ;body:pre:code:"{(wush 160 tan)}"
+    ;body:div#c.err:pre:code:"{(wush 80 tan)}"
   ==
 ::
 ++  js                                                  ::  static javascript
