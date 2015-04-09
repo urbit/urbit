@@ -316,7 +316,7 @@
       })
     }
     urb.away = function(){req("/~/auth.json?DELETE", {}, 
-      function(){document.write("success!")}
+      function(){document.getElementById("c").innerHTML = "<p>Goodbye.</p>" }
     )}
     '''
   --
@@ -324,19 +324,25 @@
   |%
   ++  login-page
     %+  titl  'Log in'
-    ;=  ;p: Identify yourself, ~;{span#ship(contenteditable "")}?
-        ;style:'#ship {background: lightgray} #ship br {display: none}'
-        ;input#pass(onchange "urb.submit()");
-        ;pre:code#err;
-        ;script@"/~/at/~/auth.js";
+    ;=  ;div#c
+          ;p: Please log in.
+          ;p.mono: ~;{span#ship(contenteditable "")}
+          ;input#pass(onchange "urb.submit()");
+          ;pre:code#err;
+          ;script@"/~/at/~/auth.js";
+        ==
+        ;link(rel "stylesheet", href "/main/lib/base.css");
     ==
   ::
   ++  logout-page
     %+  titl  'Log out'
-    ;=  ;p: Goodbye ~;{span#ship}.
-        ;button#act(onclick "urb.away()"): Log out
-        ;pre:code#err;
-        ;script@"/~/at/~/auth.js";
+    ;=  ;div#c
+          ;p: Goodbye ~;{span#ship}.
+          ;button#act(onclick "urb.away()"): Log out
+          ;pre:code#err;
+          ;script@"/~/at/~/auth.js";
+        ==
+        ;link(rel "stylesheet", href "/main/lib/base.css");
     ==
   ::
   ++  poke-test
