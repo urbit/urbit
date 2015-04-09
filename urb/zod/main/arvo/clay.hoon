@@ -198,14 +198,17 @@
   ++  aver                                            ::  read
     |=  mun=mood
     ^-  (unit (unit (each cage silk)))
+    ~?  =(for ~zod)  [%avering mun]
     ?:  &(=(p.mun %u) !=(p.q.mun now))                ::  prevent bad things
       ~&  [%clay-fail p.q.mun %now now]
       !!
     =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
     ?^  ezy
       `(bind u.ezy (cury same %&))
+    ~?  =(for ~zod)  [%case-to-aeoning mun]
     =+  nao=(case-to-aeon:ze q.mun)
     ::  ~&  [%aver-mun nao [%from syd lim q.mun]]
+    ~?  =(for ~zod)  [%reading-at-aeon mun]
     ?~(nao ~ (read-at-aeon:ze u.nao mun))
   ::
   ++  made-to-tage
@@ -953,7 +956,7 @@
           ?:  =(let.dom 0)
             ~
           q:(aeon-to-yaki let.dom)
-      =+  lol=(~(get by hat) pax)
+      =+  lol=`(unit lobe)`?.(=(~ ref) `0vsen.tinel (~(get by hat) pax))
       |-  ^-  silk
       ?:  =([~ lob] lol)
         =+  (need (need (read-x let.dom pax)))
@@ -1252,17 +1255,20 @@
     ++  read-x
       |=  [yon=aeon pax=path]
       ^-  (unit (unit (each cage silk)))
+      ~?  =(for ~zod)  [%reading-x yon pax]
       =+  tak=(~(get by hit.dom) yon)
       ?~  tak
         ~
       ?:  &(?=(~ ref) =(yon let.dom))
         `(bind q.ank:(descend-path:(zu ank.dom) pax) (corl (cury same %&) tail))
+      ~?  =(for ~zod)  [%coming-along yon pax]
       =+  yak=(tako-to-yaki u.tak)
       =+  lob=(~(get by q.yak) pax)
       ?~  lob
         [~ ~]
       =+  mar=(lobe-to-mark u.lob)
       ?.  ?=(?(%hoon %hook) mar)
+        ~?  =(for ~zod)  [%not-hooning yon pax]
         [~ ~ %| (lobe-to-silk pax u.lob)]
       :^  ~  ~  %&
       :+  mar  [%atom %t]
@@ -2197,6 +2203,7 @@
 ++  scry                                              ::  inspect
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit cage))
+  ~?  =(his ~zod)  [%scrying ren syd lot tyl]
   =+  got=(~(has by fat.ruf) his)
   =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
   ?~  luk  [~ ~]
@@ -2247,7 +2254,7 @@
         [[- ~] ..^$]
       ~&  :^    "merge failed"
               "please manually merge the desks with"
-            ":merge %{(trip syd)} {<her>} %{(trip sud)}"
+            ":merge %{(trip syd)} {(scow %p her)} %{(trip sud)}"
           :-  p.p.p.+.q.hin
           (turn q.p.p.+.q.hin |=(tank ~(ram re +<)))
       [[- ~] ..^$]

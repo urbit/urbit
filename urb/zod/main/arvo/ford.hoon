@@ -712,6 +712,7 @@
     ++  mash
       |=  [cof=cafe for=mark kas=silk kos=silk]
       ^-  (bolt gage)
+      ~&  >  [%lets-see-if-we-cannae-be-mashing for]
       %.  [cof kas kos]
       ;~  cope
         ;~  coax
@@ -858,7 +859,14 @@
     ++  lear                                            ::  load vase
       |=  [cof=cafe bem=beam]
       ^-  (bolt cage)
+      ~&  >  [%a-bit-leary bem]
+      =+  ral=(~(get by keg) %cx bem)
+      ?^  ral
+        ~&  >  %already-done
+        (fine cof u.ral)
+      ~&  >  %not-already-done
       =+  von=(ska ~ %cx bem)
+      ~&  >  [%at-least-cx-worked bem]
       ?~  von
         [p=*cafe q=[%1 [[%x bem ~] ~ ~]]]
       ?~  u.von
@@ -1102,6 +1110,7 @@
         $(kas [%done p.kas u.q.kas])
       ::
           %file
+
         %+  cool  |.(leaf/"ford: file {<p.kas>}")
         (lear cof p.kas)
       ::
