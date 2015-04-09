@@ -107,13 +107,13 @@
   ::
   ++  merge
     ^+  .
-    (blab [ost %pass /[syd] %c %merg our.hid syd her sud gem] ~)
+    (blab [ost %pass /[syd]/merge %c %merg our.hid syd her sud gem] ~)
   ::
   ++  fancy-merge                                       ::  recurse
     |=  [syd=desk her=@p sud=desk gem=$|(%auto germ)]
     ^+  +>
     %-  blab  :_  ~
-    :*  ost  %pass  /[^syd]  %g  %mess  [our.hid imp.hid]  our.hid
+    :*  ost  %pass  /[^syd]/fancy  %g  %mess  [our.hid imp.hid]  our.hid
         %merge-args  !>([syd her sud gem ~])
     ==
   ::
@@ -141,14 +141,14 @@
   ++  work
     |=  sih=sign
     ^+  +>
-    ~|  [%working auto=auto gem=gem syd=syd her=her sud=sud]
+    ~&  >  [%working auto=auto gem=gem syd=syd her=her sud=sud]
     ?:  ?=(%meld gem)
       ?-    -.sih
           %g
         ?:  ?=(%nice +<.sih)
           =>  (spam leaf/"%melding %{(trip sud)} into scratch space" ~)
           %-  blab  :_  ~
-          :*  ost  %pass  /[syd]  %c  %merg  our.hid
+          :*  ost  %pass  /[syd]/scratch  %c  %merg  our.hid
               (cat 3 syd '-scratch')  her  sud  gem
           ==
         =+  :-  "failed to set up conflict resolution scratch space"
@@ -164,7 +164,7 @@
           =>  .(+>.$ (spam leaf/- ~))
           =+  tic=(cat 3 syd '-scratch')
           %-  blab  :_  ~
-          :*  ost  %pass  /[syd]
+          :*  ost  %pass  /[syd]/mash
               %f  %exec  our.hid  [our.hid tic %da lat.hid]  ~  %tabl
               ^-  (list (pair silk silk))
               %+  turn  (~(tap in p.are.sih))
@@ -226,7 +226,7 @@
         =<  win
         %-  blab:(spam tan)
         :_  ~
-        :*  ost  %pass  /[syd]  %c  %info
+        :*  ost  %pass  /[syd]/dash  %c  %info
             our.hid  (cat 3 syd '-scratch')
             %&  *cart
             %+  murn  can
