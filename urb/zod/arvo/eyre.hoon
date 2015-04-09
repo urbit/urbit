@@ -525,9 +525,12 @@
           [?(%on %ay) *]  ~|(e/ford/lost/-.tee !!)
           [%of ^]
         ?~  q.tee  ~|(e/ford/lost/tee !!)
+        ?:  ?=(%| -.q.sih)
+          (print-tang p.q.sih)
         %+  get-rush:(ire-ix p.tee)  q.tee
-        ?>  ?=([%& %json ^] q.sih)                    ::  XX others
-        ((hard json) |3.q.sih)
+        =*  cay  p.q.sih
+        ?>  ?=(%json p.cay)                    ::  XX others
+        ((hard json) q.q.cay)
       ::
           [%to ^]
         ?:  ?=(%| -.q.sih)
@@ -565,6 +568,12 @@
     (fail 500 0v0 >%exit< p.mul)
   ::
   ++  ire-ix  |=(ire=ixor ~(. ix ire (~(got by wix) ire)))
+  ++  print-tang
+    |=  a=tang  ^+  +>
+    ?~  a  +>
+    ~>  %slog.`i.a
+    $(a t.a)
+  ::
   ++  ses-authed 
     |=  ses=hole
     =+  sap=(~(get by sop) ses)
