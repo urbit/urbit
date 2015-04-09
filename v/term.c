@@ -832,9 +832,11 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
     else if ( 13 == cay_y ) {
       _term_io_belt(uty_u, u3nc(c3__ret, u3_nul));
     }
+#if 0
     else if ( 6 == cay_y ) {
       _term_io_flow(uty_u);   // XX hack
     }
+#endif
     else if ( cay_y <= 26 ) {
       _term_io_belt(uty_u, u3nc(c3__ctl, ('a' + (cay_y - 1))));
     }
