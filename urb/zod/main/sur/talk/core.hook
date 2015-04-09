@@ -59,7 +59,7 @@
       [%ext p=@tas q=*]                                 ::  extended action
       [%fat p=torso q=speech]                           ::  attachment
       ::  [%inv p=station]                              ::  invite to station
-      ::  [%url p=purl]
+      [%url p=purl]                                     ::  parsed url
       [%ire p=serial q=speech]                          ::  in-reply-to
       [%lin p=? q=@t]                                   ::  no=@, text line
       [%mor p=(list speech)]                            ::  multiplex
