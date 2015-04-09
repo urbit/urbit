@@ -31,6 +31,10 @@
     =+  mod=(~(del in p.kev) %shift)
     ?^  mod
       ?^  q.kev  !!                   ::  only accept strings
+      =.  q.kev
+        ?.  (~(has in p.kev) %ctrl)
+          q.kev
+        (con 96 q.kev)                ::  ctrl key decoding
       =+  cha=(tuba (trip q.kev))
       ?>  ?=([@ ~] cha)               ::  of a single character
       ?+  mod  !!                     ::  modified by one buckykey
