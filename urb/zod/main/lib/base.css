@@ -103,11 +103,6 @@ code,
   font-family:"scp";
 }
 
-.err {
-  color: #fff;
-  background-color: #000;
-}
-
 #c {
   width: 24rem;
   position: absolute;
