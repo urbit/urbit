@@ -104,7 +104,7 @@
     ^-  [sole-edit sole-share]
     ?>  &(=(his.ler his.ven) (lte own.ler own.ven))
     ?>  &(=(his.ler his.ven) (lte own.ler own.ven))
-    ?>  |(!=(own.ler own.ven) =(haw (sham buf)))
+    ?>  |(!=(own.ler own.ven) =(haw (sham buf)) =(haw 0)) :: trust the clock
     =.  leg  (scag (sub own.ven own.ler) leg)
     ::  ~?  !=(own.ler own.ven)  [%miss-leg leg]
     =+  dat=(transmute [%mor leg] ted)

@@ -439,10 +439,6 @@
         ==
       fun
     ::
-    ++  coze                                            ::  pass dependencies
-      |*  [hoc=(bolt) fon=$+((set beam) (burg))]
-      ?+(-.q.hoc hoc %0 (cope hoc (fon p.q.hoc)))
-    ::
     ++  dash                                            ::  process cache
       |=  cof=cafe
       ^+  +>
@@ -505,7 +501,7 @@
       (fine cof p.u.q.vex)
     ::
     ++  fang                                            ::  protocol door
-      |=  [cof=cafe dep=(set beam) for=mark bek=beak]
+      |=  [cof=cafe for=mark bek=beak]
       ^-  (bolt vase)
       =+  pax=/door/[for]/mar
       =+  ^=  bem  ^-  beam
@@ -516,9 +512,7 @@
           ?:  ?=([~ ~ *] (ska %cy (tope [oak pax])))
             oak
           bek
-      =^  deh  r.cof  (daze(deh.bay r.cof) dep)         ::  XX sanity
-      =+  arg=`spur`[%dep (scot %uv deh) ~]
-      (cope (fade cof %hook bem) abut:(meow bem arg))
+      (cope (fade cof %hook bem) abut:(meow bem ~))
     ::
     ++  fair                                            ::  hood parsing rule
       |=  bem=beam
@@ -729,7 +723,7 @@
       ?:  ?=(?(%gate %core %door %hoon %hook) for)
         ::  ~&  [%lake-easy for bek]
         (fine cof sam)
-      %+  cope  (fang cof ~ for bek)
+      %+  cope  (fang cof for bek)
       |=  [cof=cafe tux=vase]
       =+  bob=(slot 6 tux)
       ?:  (~(nest ut p.bob) | p.sam)
@@ -792,7 +786,7 @@
     ++  lily                                            ::  translation targets
       |=  [cof=cafe for=mark bek=beak]
       ^-  (bolt (list ,@tas))
-      =+  raf=(fang cof ~ for bek)
+      =+  raf=(fang cof for bek)
       ?:  =(%2 -.q.raf)  (fine p.raf ~)
       %+  cope  raf
       |=  [cof=cafe vax=vase]
@@ -821,9 +815,9 @@
       %+  cope  (lion cof for -.bem haz)
       |=  [cof=cafe wuy=(list ,@tas)]
       ?~  wuy  (flue cof)
-      %+  coze  (make cof %bake i.wuy bem arg)
-      |=  dep=(set beam)  |=  [cof=cafe hoc=cage]
-      %+  cope  (lope cof dep i.wuy t.wuy -.bem q.hoc)
+      %+  cope  (make cof %bake i.wuy bem arg)
+      |=  [cof=cafe hoc=cage]
+      %+  cope  (lope cof i.wuy t.wuy -.bem q.hoc)
       |=  [cof=cafe vax=vase]
       ((fest bem) cof vax)
     ::
@@ -839,18 +833,18 @@
       ^$(s.mob t.s.mob, mer [i.s.mob mer])
     ::
     ++  link                                            ::  translate
-      |=  [cof=cafe dep=(set beam) too=mark for=mark bek=beak vax=vase]
+      |=  [cof=cafe too=mark for=mark bek=beak vax=vase]
       ^-  (bolt vase)
       ?:  =(too for)  (fine cof vax)
       ?:  |(=(%noun for) =(%$ for))
         ((lake too bek) cof vax)
-      %+  cope  (fang cof dep for bek)
+      %+  cope  (fang cof for bek)
       |=  [cof=cafe pro=vase]
       ?:  &((slob %grow p.pro) (slob too p:(slap pro [%cnzy %grow])))
         %+  cope  (keel cof pro [[%& 6]~ vax]~)
         |=  [cof=cafe pox=vase]
         (maim cof pox [%tsgr [%cnzy %grow] [%cnzy too]])
-      %+  cope  (fang cof dep too bek)
+      %+  cope  (fang cof too bek)
       |=  [cof=cafe pro=vase]
       =+  ^=  zat  ^-  (unit vase)
           ?.  (slob %grab p.pro)  ~
@@ -895,10 +889,10 @@
       --
     ::
     ++  lope                                            ::  translation pipe
-      |=  [cof=cafe dep=(set beam) for=mark yaw=(list mark) bek=beak vax=vase]
+      |=  [cof=cafe for=mark yaw=(list mark) bek=beak vax=vase]
       ^-  (bolt vase)
       ?~  yaw  (fine cof vax)
-      %+  cope  (link cof dep i.yaw for bek vax)
+      %+  cope  (link cof i.yaw for bek vax)
       |=  [cof=cafe yed=vase]
       ^$(cof cof, for i.yaw, yaw t.yaw, vax yed)
     ::
@@ -973,18 +967,18 @@
       ::
           %cast
         %+  cool  |.(leaf/"ford: cast {<p.kas>}")
-        %+  coze  $(kas q.kas)
-        |=  dep=(set beam)  |=  [cof=cafe cay=cage]
+        %+  cope  $(kas q.kas)
+        |=  [cof=cafe cay=cage]
         =+  bek=[our %main %da now]   ::  XX
         ::  VV  ::
-        %+  cope  (link cof dep p.kas p.cay bek q.cay)
+        %+  cope  (link cof p.kas p.cay bek q.cay)
         |=  [cof=cafe vax=vase]
         (fine cof [p.kas vax])
         ::
-        :: %+  coze  (lion cof p.kas bek [p.cay]~)
-        :: |=  dep=(set beam)  |=  [cof=cafe wuy=(list ,@tas)]
+        :: %+  cope  (lion cof p.kas bek [p.cay]~)
+        :: |=  [cof=cafe wuy=(list ,@tas)]
         :: ?~  wuy  (flaw cof [%leaf "ford: no path: {<[p.cay p.kas]>}"]~)
-        :: %+  cope  (lope cof dep i.wuy t.wuy bek q.cay)
+        :: %+  cope  (lope cof i.wuy t.wuy bek q.cay)
         :: |=  [cof=cafe vax=vase]
         :: (fine cof [p.kas vax])
       ::
