@@ -64,14 +64,14 @@ module.exports = recl
       return false
 
   _writingKeyUp: (e) ->
-    txt = @$writing.text()
-    @$length.toggleClass('valid-false',(txt.length > 62))
+    if not window.urb.util.isURL @$writing.text()
+      @$length.toggleClass('valid-false',(@$writing.text().length > 62))
 
   _writingKeyDown: (e) ->
     if e.keyCode is 13
       txt = @$writing.text()
       e.preventDefault()
-      if txt.length > 0 and txt.length < 63
+      if (txt.length > 0 and txt.length < 63) or window.urb.util.isURL @$writing.text()
         @sendMessage()
       return false
     @_input()
@@ -80,12 +80,12 @@ module.exports = recl
   _input: (e) ->
     text   = @$writing.text()
     length = text.length
-    geturl = new RegExp "(^|[ \t\r\n])((ftp|http|https|gopher|mailto|news|nntp|telnet|wais|file|prospero|aim|webcal):(([A-Za-z0-9$_.+!*(),;/?:@&~=-])|%[A-Fa-f0-9]{2}){2,}(#([a-zA-Z0-9][a-zA-Z0-9$_.+!*(),;/?:@&~=%-]*))?([A-Za-z0-9$_+!*();/?:~-]))", "g"
-    urls = text.match(geturl)
-    if urls isnt null and urls.length > 0
-      for url in urls
-        length -= url.length
-        length += 10
+    # geturl = new RegExp "(^|[ \t\r\n])((ftp|http|https|gopher|mailto|news|nntp|telnet|wais|file|prospero|aim|webcal):(([A-Za-z0-9$_.+!*(),;/?:@&~=-])|%[A-Fa-f0-9]{2}){2,}(#([a-zA-Z0-9][a-zA-Z0-9$_.+!*(),;/?:@&~=%-]*))?([A-Za-z0-9$_+!*();/?:~-]))", "g"
+    # urls = text.match(geturl)
+    # if urls isnt null and urls.length > 0
+    #   for url in urls
+    #     length -= url.length
+    #     length += 10
     @$length.text "#{length}/62"
 
   _setFocus: -> @$writing.focus()
@@ -194,5 +194,5 @@ module.exports = recl
           onKeyUp: @_writingKeyUp
           onFocus: @cursorAtEnd
         }, "")
-      div {id:"length"}, "0/69"
+      div {id:"length"}, "0/62"
       ]

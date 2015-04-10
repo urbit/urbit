@@ -254,6 +254,10 @@ window.urb.unsubscribe = function(params,cb) {
 }
 
 window.urb.util = {
+  isURL: function(s) {
+     r = new RegExp('^(?!mailto:)(?:(?:http|https|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?$', 'i');
+     return s.length < 2083 && r.test(s);
+  },
   numDot: function(n) {
     _n = String(n)
     fun = function(s){
@@ -261,7 +265,7 @@ window.urb.util = {
         return s
       return fun(s.slice(0,-3))+"."+s.slice(-3)
     }
-    fun((_n))
+    return fun((_n))
   },
   toDate: function (dat){
     var mils = Math.floor((0x10000 * dat.getUTCMilliseconds()) / 1000).toString(16)
