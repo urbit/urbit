@@ -246,7 +246,7 @@ window.urb.unsubscribe = function(params,cb) {
   if(!params.appl) throw new Error("You must specify an appl for urb.unsubscribe.")
   if(!cb) throw new Error("You must supply a callback to urb.unsubscribe.")
   
-  url = "/~/is/"+this.gsig(params)+"/"
+  url = "/~/is/"+this.gsig(params)+".json"
   method = "delete"
   this.req("delete",url,params,true,function(err,res) {
     cb(err,res)
