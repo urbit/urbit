@@ -216,7 +216,6 @@ window.urb.bind = function(path, cb){ // or bind(path, params, cb, nicecb?)
     throw new Error("You must specify a string path for urb.bind.")
   if(!params.appl) throw new Error("You must specify an appl for urb.bind.")
   if(!cb) throw new Error("You must supply a callback to urb.bind.")
-
   
   var method, perm, url, $this
 
@@ -243,11 +242,9 @@ window.urb.unsubscribe = function(params,cb) {
   params.appl = params.appl ? params.appl : this.appl
   params.wire = params.wire ? params.wire : params.path
 
-  
   if(!params.path) throw new Error("You must specify a path for urb.unsubscribe.")
   if(!params.appl) throw new Error("You must specify an appl for urb.unsubscribe.")
   if(!cb) throw new Error("You must supply a callback to urb.unsubscribe.")
-
   
   url = "/~/is/"+this.gsig(params)+"/"
   method = "delete"
@@ -257,6 +254,15 @@ window.urb.unsubscribe = function(params,cb) {
 }
 
 window.urb.util = {
+  numDot: function(n) {
+    _n = String(n)
+    fun = function(s){
+      if(s.length <= 3)
+        return s
+      return fun(s.slice(0,-3))+"."+s.slice(-3)
+    }
+    fun((_n))
+  },
   toDate: function (dat){
     var mils = Math.floor((0x10000 * dat.getUTCMilliseconds()) / 1000).toString(16)
     function pad(num, str){
