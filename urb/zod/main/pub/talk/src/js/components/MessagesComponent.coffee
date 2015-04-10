@@ -132,7 +132,7 @@ module.exports = recl
     _messages = @state.messages
     _messages = _.sortBy _messages, (_message) -> 
       _message.pending = _message.thought.audience[station]
-      _message.thought.statement.time
+      _message.thought.statement.date
 
     @last = _messages[_messages.length-1]
     @length = _messages.length

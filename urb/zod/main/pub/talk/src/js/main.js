@@ -393,7 +393,7 @@ module.exports = recl({
     _messages = this.state.messages;
     _messages = _.sortBy(_messages, function(_message) {
       _message.pending = _message.thought.audience[station];
-      return _message.thought.statement.time;
+      return _message.thought.statement.date;
     });
     this.last = _messages[_messages.length - 1];
     this.length = _messages.length;
