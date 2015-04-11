@@ -309,6 +309,10 @@ body {
 .message.say .mess {
   font-style: italic;
 }
+a {
+  text-decoration: underline;
+  color: inherit;
+}
 .mess,
 .iden,
 #station .member div,
@@ -357,15 +361,19 @@ body {
 .iden > div:hover,
 .audi > div:hover {
   position: relative;
-  max-width: 30rem;
   -webkit-transition: max-width 0.2s;
 }
 .mess {
   font-size: 0.9rem;
   letter-spacing: 0.03rem;
   word-wrap: break-word;
-  max-width: 30rem;
   margin-left: 0.3rem;
+}
+.mess,
+#writing,
+.iden > div:hover,
+.audi > div:hover {
+  max-width: 30rem;
 }
 #writing {
   font-size: 0.9rem;

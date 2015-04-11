@@ -24,6 +24,7 @@
               %verb                                     ::  verbose mode
           ==                                            ::
       $%  [%reload p=(list term)]                       ::  reload vanes
+          [%sync p=@tas q=@p r=@tas ~]                  ::
       ==                                                ::
     ++  dill-flog                                       ::  sent to %dill
       $%  [%crud p=%hax-init [%leaf p=tape] ~]          ::  initialize ship
@@ -47,8 +48,12 @@
     ++  note-dill                                       ::  system command
       $%  [%flog p=dill-flog]                           ::
       ==                                                ::
+    ++  note-clay                                       ::  filesystem command
+      $%  [%font p=@p q=@tas r=@p s=@tas]               ::
+      ==                                                ::
     ++  note                                            ::  out request $->
-      $%  [%d note-dill]                                ::
+      $%  [%c note-clay]                                ::
+          [%d note-dill]                                ::
           [%g note-gall]                                ::
       ==                                                ::
     --                                                  ::
@@ -89,7 +94,7 @@
     =+  txt=((hard ,@) .^(%cx (welp pax /hoon)))
     [ost %pass /reset %d %flog %veer p pax txt]
   ::
-  ++  he-wish-reload 
+  ++  he-wish-reload
     |=  all=(list term)
     %_    +>.$
         moz
@@ -115,6 +120,14 @@
           %flog
           [%veer ?:(=('z' tip) %$ tip) pax (,@ .^(%cx pax))]
       ==
+    ==
+  ::
+  ++  he-wish-sync
+    |=  [syd=@tas her=@p sud=@tas ~]
+    %_    .
+        moz
+      :_  moz
+      [ost %pass /sync %c %font our.hid syd her sud]
     ==
   ::
   ++  he-wish-verb
@@ -156,6 +169,11 @@
   |=  [ost=bone her=ship all=(list term)]
   ~&  %poke-helm-reload
   he-abet:(he-wish-reload:(hake ost her) all)
+::
+++  poke-helm-sync
+  |=  [ost=bone her=ship all=[@tas @p @tas ~]]
+  ~&  %poke-helm-sync
+  he-abet:(he-wish-sync:(hake ost her) all)
 ::
 ++  poke-helm-begin
   |=  [ost=bone you=ship begs]

@@ -1,7 +1,7 @@
 moment = require 'moment-timezone'
 
 recl = React.createClass
-[div,br,input,textarea] = [React.DOM.div,React.DOM.br,React.DOM.input,React.DOM.textarea]
+[div,br,input,textarea,a] = [React.DOM.div,React.DOM.br,React.DOM.input,React.DOM.textarea,React.DOM.a]
 
 MessageActions  = require '../actions/MessageActions.coffee'
 MessageStore    = require '../stores/MessageStore.coffee'
@@ -32,7 +32,8 @@ Message = recl
     # pendingClass = if @props.pending isnt "received" then "pending" else ""
     delivery = _.uniq _.pluck @props.thought.audience, "delivery"
     klass = if delivery.indexOf("received") isnt -1 then " received" else " pending"
-    if @props.thought.statement.speech.lin.say is false then klass += " say"
+    if @props.thought.statement.speech?.lin?.say is false then klass += " say"
+    if @props.thought.statement.speech?.url then klass += " url"
 
     name = if @props.name then @props.name else ""
     audi = _.keys @props.thought.audience
@@ -40,13 +41,18 @@ Message = recl
     audi = window.util.clipAudi audi
     audi = audi.map (_audi) -> (div {}, _audi)
 
+    if @props.thought.statement.speech?.lin?.txt then txt = @props.thought.statement.speech.lin.txt
+    if @props.thought.statement.speech?.url 
+      url = @props.thought.statement.speech.url.url
+      txt = (a {href:url,target:"_blank"}, url)
+
     div {className:"message #{klass}"}, [
         (div {className:"attr"}, [
           div {onClick:@_handleAudi,className:"audi"}, audi
           (div {onClick:@_handlePm}, (React.createElement Member,{ship:@props.ship}))
           div {className:"time"}, @convTime @props.thought.statement.date
         ])
-        div {className:"mess"}, @props.thought.statement.speech.lin.txt
+        div {className:"mess"}, txt
       ]
 
 module.exports = recl
@@ -126,7 +132,7 @@ module.exports = recl
     _messages = @state.messages
     _messages = _.sortBy _messages, (_message) -> 
       _message.pending = _message.thought.audience[station]
-      _message.thought.statement.time
+      _message.thought.statement.date
 
     @last = _messages[_messages.length-1]
     @length = _messages.length

@@ -93,9 +93,9 @@
   $%  [%aro p=?(%d %l %r %u)]                           ::  arrow key
       [%bac ~]                                          ::  true backspace
       [%cru p=@tas q=(list tank)]                       ::  echo error
-      [%ctl p=@ud]                                      ::  control-key
+      [%ctl p=@]                                       ::  control-key
       [%del ~]                                          ::  true delete
-      [%met p=@ud]                                      ::  meta-key
+      [%met p=@]                                       ::  meta-key
       [%ret ~]                                          ::  return
       [%rez p=@ud q=@ud]                                ::  resize, cols, rows
       [%txt p=(list ,@c)]                               ::  utf32 text

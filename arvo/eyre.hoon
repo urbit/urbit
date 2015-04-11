@@ -226,8 +226,9 @@
 ++  add-poll                                            ::  inject dependency
   |=  [dep=@uvH max=[[%html ~] [[%head ~] hed=marl] [[%body ~] manx marl] ~]]
   ^-  manx
+  =.  hed.max  :_(hed.max ;meta(charset "utf-8", urb_injected "");)
   ?~  dep  max
-  max(hed :_(hed.max ;script@"/~/on/{<dep>}.js";))
+  max(hed :_(hed.max ;script@"/~/on/{<dep>}.js"(urb_injected "");))
 ::
 ++  add-json                                            ::  inject window.urb
   |=  [urb=json jaz=cord]  ^-  cord
@@ -250,9 +251,10 @@
   ;html
     ;head
       ;meta(charset "utf-8");
+      ;link(rel "stylesheet", href "/main/lib/base.css");
       ;title: server error
     ==
-    ;body:pre:code:"{(wush 160 tan)}"
+    ;body:div#c.err:pre:code:"{(wush 80 tan)}"
   ==
 ::
 ++  js                                                  ::  static javascript
@@ -524,9 +526,12 @@
           [?(%on %ay) *]  ~|(e/ford/lost/-.tee !!)
           [%of ^]
         ?~  q.tee  ~|(e/ford/lost/tee !!)
+        ?:  ?=(%| -.q.sih)
+          (print-tang p.q.sih)
         %+  get-rush:(ire-ix p.tee)  q.tee
-        ?>  ?=([%& %json ^] q.sih)                    ::  XX others
-        ((hard json) |3.q.sih)
+        =*  cay  p.q.sih
+        ?>  ?=(%json p.cay)                    ::  XX others
+        ((hard json) q.q.cay)
       ::
           [%to ^]
         ?:  ?=(%| -.q.sih)
@@ -550,7 +555,11 @@
           (fail 404 p.sih p.q.sih)
         =*  cay  p.q.sih
         ?.  ?=(%mime p.cay)
-          (back tee p.sih %mime cay)
+          =-  (back tee p.sih %mime cay(q.q -))
+          ?+  p.cay  q.q.cay          :: inject dependency long-poll
+            %urb  =|  urb=[[%html ~] [[%head ~] marl] [[%body ~] manx marl] ~]
+                  .*(.(urb q.q.cay) !=((add-poll p.sih urb)))
+          ==
         ~|  q.q.cay
         =+  ((hard ,[mit=mite rez=octs]) q.q.cay)
         (give-thou 200 [content-type/(moon mit)]~ ~ rez)
@@ -564,6 +573,12 @@
     (fail 500 0v0 >%exit< p.mul)
   ::
   ++  ire-ix  |=(ire=ixor ~(. ix ire (~(got by wix) ire)))
+  ++  print-tang
+    |=  a=tang  ^+  +>
+    ?~  a  +>
+    ~>  %slog.`i.a
+    $(a t.a)
+  ::
   ++  ses-authed 
     |=  ses=hole
     =+  sap=(~(get by sop) ses)

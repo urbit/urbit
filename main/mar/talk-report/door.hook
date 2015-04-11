@@ -88,6 +88,7 @@
       %+  joba  -.a
       ?+  -.a  !!
         %lin  (jobe say/[%b p.a] txt/[%s q.a] ~)
+        %url  (jobe url/[%s (crip (earn p.a))] ~)
         %exp  (jobe code/[%s p.a] ~)
         ::  %inv  (jobe ship/(jope p.a) party/[%s q.a] ~)
       ==

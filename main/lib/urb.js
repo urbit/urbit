@@ -103,11 +103,12 @@ window.urb.poll = function(params) {
         return document.location.reload()  // XX check autoreload
           case "rush":
           case "mean":
+        var err2 = err
         if(res.data.type == "mean")
-          err = res.data.data
+          err2 = res.data.data
         var fn = $this.gsig(res.data.from)
         if($this.cabs[fn])
-          $this.cabs[fn].call(this,err,
+          $this.cabs[fn].call(this,err2,
             {status: res.status, data: res.data.data.json}) // XX non-json
         break;
           default:
@@ -215,7 +216,6 @@ window.urb.bind = function(path, cb){ // or bind(path, params, cb, nicecb?)
     throw new Error("You must specify a string path for urb.bind.")
   if(!params.appl) throw new Error("You must specify an appl for urb.bind.")
   if(!cb) throw new Error("You must supply a callback to urb.bind.")
-
   
   var method, perm, url, $this
 
@@ -242,13 +242,11 @@ window.urb.unsubscribe = function(params,cb) {
   params.appl = params.appl ? params.appl : this.appl
   params.wire = params.wire ? params.wire : params.path
 
-  
   if(!params.path) throw new Error("You must specify a path for urb.unsubscribe.")
   if(!params.appl) throw new Error("You must specify an appl for urb.unsubscribe.")
   if(!cb) throw new Error("You must supply a callback to urb.unsubscribe.")
-
   
-  url = "/~/is/"+this.gsig(params)+"/"
+  url = "/~/is/"+this.gsig(params)+".json"
   method = "delete"
   this.req("delete",url,params,true,function(err,res) {
     cb(err,res)
@@ -256,6 +254,19 @@ window.urb.unsubscribe = function(params,cb) {
 }
 
 window.urb.util = {
+  isURL: function(s) {
+     r = new RegExp('^(?!mailto:)(?:(?:http|https|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?$', 'i');
+     return s.length < 2083 && r.test(s);
+  },
+  numDot: function(n) {
+    _n = String(n)
+    fun = function(s){
+      if(s.length <= 3)
+        return s
+      return fun(s.slice(0,-3))+"."+s.slice(-3)
+    }
+    return fun((_n))
+  },
   toDate: function (dat){
     var mils = Math.floor((0x10000 * dat.getUTCMilliseconds()) / 1000).toString(16)
     function pad(num, str){

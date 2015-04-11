@@ -37,9 +37,9 @@
   $%  [%aro p=?(%d %l %r %u)]                           ::  arrow key
       [%bac ~]                                          ::  true backspace
       [%cru p=@tas q=(list tank)]                       ::  echo error
-      [%ctl p=@ud]                                      ::  control-key
+      [%ctl p=@c]                                       ::  control-key
       [%del ~]                                          ::  true delete
-      [%met p=@ud]                                      ::  meta-key
+      [%met p=@c]                                       ::  meta-key
       [%ret ~]                                          ::  return
       [%rez p=@ud q=@ud]                                ::  resize, cols, rows
       [%txt p=(list ,@c)]                               ::  utf32 text
@@ -78,9 +78,9 @@
 ++  belt                                                ::  raw console input
   $%  [%aro p=?(%d %l %r %u)]                           ::  arrow key
       [%bac ~]                                          ::  true backspace
-      [%ctl p=@ud]                                      ::  control-key
+      [%ctl p=@c]                                       ::  control-key
       [%del ~]                                          ::  true delete
-      [%met p=@ud]                                      ::  meta-key
+      [%met p=@c]                                       ::  meta-key
       [%ret ~]                                          ::  return
       [%txt p=(list ,@c)]                               ::  utf32 text
   ==                                                    ::

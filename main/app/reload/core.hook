@@ -11,7 +11,7 @@
 ++  poke--args
   %^  add-output  .
     rush/tang/[leaf/"done"]~
-  %+  args-into-resp  . 
+  %+  args-into-resp  .
   |=  all=(list ,@tas)
   %+  turn  all
   =+  ark=(arch .^(%cy /(scot %p our.hid)/arvo/(scot %da lat.hid)))
