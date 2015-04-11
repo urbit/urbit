@@ -84,6 +84,12 @@
 }
 
 html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+html,
 input,
 button,
 body {
@@ -106,6 +112,11 @@ code,
 
 #c pre {
   font-size: .6rem;
+}
+
+#c.err {
+  width: 32rem;
+  margin-left: -16rem;
 }
 
 #pass {

@@ -248,6 +248,10 @@ body
 .message.say .mess
   font-style italic
 
+a
+  text-decoration underline
+  color inherit
+
 .mess
 .iden
 #station .member div
@@ -296,15 +300,19 @@ body
 .iden > div:hover
 .audi > div:hover
   position relative
-  max-width 30rem
   -webkit-transition max-width .2s
 
 .mess
   font-size .9rem
   letter-spacing .03rem
   word-wrap break-word
-  max-width 30rem
   margin-left .3rem
+
+.mess
+#writing
+.iden > div:hover
+.audi > div:hover
+  max-width 30rem
 
 //
 // writing
@@ -319,6 +327,7 @@ body
   padding .3rem .1rem
   margin-left .2rem
   margin-top -.3rem
+  
 
 #writing:focus
   background-color #fff

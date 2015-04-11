@@ -58,6 +58,9 @@ module.exports =
       _message.thought.statement.speech.lin.txt = _message.thought.statement.speech.lin.txt.slice(1).trim()
       _message.thought.statement.speech.lin.say = false
 
+    if window.urb.util.isURL(message)
+      _message.thought.statement.speech = {url: message}
+
     MessageDispatcher.handleViewAction
       type:"message-send"
       message:_message

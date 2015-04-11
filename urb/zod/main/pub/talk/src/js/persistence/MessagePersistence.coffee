@@ -2,9 +2,9 @@ MessageActions = require '../actions/MessageActions.coffee'
 
 module.exports =
   listenStation: (station,since) ->
-    $this = this
     console.log 'listen station'
     console.log arguments
+    $this = this
     window.urb.subscribe {
       appl:"talk"
       path:"/f/#{station}/#{since}"
@@ -23,6 +23,8 @@ module.exports =
           MessageActions.loadMessages res.data.grams
 
   get: (station,start,end) ->
+    end   = window.urb.util.numDot end
+    start = window.urb.util.numDot start
     window.urb.subscribe {
       appl:"talk"
       path:"/f/#{station}/#{end}/#{start}"
