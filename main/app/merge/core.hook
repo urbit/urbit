@@ -16,6 +16,7 @@
       [%nice ~]
       [%rush %tang (list tank)]
   ==
+++  milk  (trel ship desk silk)
 ++  move  ,[p=bone q=(mold note gift)]
 ++  note
   $%  $:  %c
@@ -53,7 +54,7 @@
       [%dune p=(set beam) q=(unit gage)]                ::  unit literal
       [%file p=beam]                                    ::  from clay
       [%join p=mark q=silk r=silk]                      ::  merge
-      [%mash p=mark q=silk r=silk]                      ::  merge
+      [%mash p=mark q=milk r=milk]                      ::  merge
       [%mute p=silk q=(list (pair wing silk))]          ::  mutant
       [%pact p=silk q=silk]                             ::  patch
       [%reef ~]                                         ::  kernel reef
@@ -141,7 +142,7 @@
   ++  work
     |=  sih=sign
     ^+  +>
-    ~&  >  [%working auto=auto gem=gem syd=syd her=her sud=sud]
+    ~|  [%working auto=auto gem=gem syd=syd her=her sud=sud]
     ?:  ?=(%meld gem)
       ?-    -.sih
           %g
@@ -174,10 +175,12 @@
               =+  base=[%file [our.hid tic %da lat.hid] (flop pax)]
               =+  alis=[%file [her sud cas] (flop pax)]
               =+  bobs=[%file [our.hid syd %da lat.hid] (flop pax)]
+              =+  dali=[%diff base alis]
+              =+  dbob=[%diff base bobs]
               =+  ^-  for=mark
                   =+  (slag (dec (lent pax)) pax)
                   ?~(- %$ i.-)
-              [%mash for [%diff base alis] [%diff base bobs]]
+              [%mash for [her sud dali] [our.hid syd dbob]]
           ==
         =+  "failed to merge with strategy {<p.p.are.sih>}"
         lose:(spam leaf/- q.p.are.sih)
@@ -201,7 +204,8 @@
         =+  ^-  tan=(list tank)
             %-  zing
             ^-  (list (list tank))
-            :~  :~  leaf/"done setting up scratch space in %{-}"
+            :~  :~  leaf/""
+                    leaf/"done setting up scratch space in %{-}"
                     leaf/"please resolve conflicts in the following files and run"
                     leaf/":merge %{(trip syd)} our %{-}"
                 ==
@@ -209,18 +213,19 @@
                   ~
                 :~  leaf/""
                     leaf/"annotated conflicts in:"
-                    >annotated<
+                    >`(list path)`annotated<
                 ==
                 ?~  unnotated
                   ~
                 :~  leaf/""
-                    leaf/"some conflicts could not be annontated."
+                    leaf/"some conflicts could not be annotated."
                     leaf/"for these, the scratch space contains"
                     leaf/"the most recent common ancestor of the"
                     leaf/"conflicting content."
                     leaf/""
+
                     leaf/"unannotated conflicts in:"
-                    >unnotated<
+                    >`(list path)`unnotated<
                 ==
             ==
         =<  win

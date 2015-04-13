@@ -198,17 +198,14 @@
   ++  aver                                            ::  read
     |=  mun=mood
     ^-  (unit (unit (each cage silk)))
-    ~?  =(for ~zod)  [%avering mun]
     ?:  &(=(p.mun %u) !=(p.q.mun now))                ::  prevent bad things
       ~&  [%clay-fail p.q.mun %now now]
       !!
     =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
     ?^  ezy
       `(bind u.ezy (cury same %&))
-    ~?  =(for ~zod)  [%case-to-aeoning mun]
     =+  nao=(case-to-aeon:ze q.mun)
     ::  ~&  [%aver-mun nao [%from syd lim q.mun]]
-    ~?  =(for ~zod)  [%reading-at-aeon mun]
     ?~(nao ~ (read-at-aeon:ze u.nao mun))
   ::
   ++  made-to-tage
@@ -519,19 +516,19 @@
   ++  take-patch
     |=  res=(each bead (list tank))
     ^+  +>
-    ~&  >  %taking-patch
+    ::  ~&  %taking-patch
     ?:  ?=(%| -.res)
       %_    +>.$
           dok  ~
           yel
         [[hen %note '!' %rose [" " "" ""] leaf/"clay patch failed" p.res] yel]
       ==
-    ~&  >  %editing
+    ::  ~&  %editing
     =^  hat  +>.$
       (edit:ze now %& *cart ?~(dok ~|(%no-changes !!) sot.u.dok))
-    ~&  >  %edited
+    ::  ~&  %edited
     =.  +>.$  wake
-    ~&  >  %woked
+    ::  ~&  %woked
     ?~  dok  ~&  %no-dok  +>.$
     ?^  lon.u.dok  ~&  %not-done-diffing  !!
     =>
@@ -547,7 +544,7 @@
     ?^  lon.u.dok  ~&  %not-done-diffing  !!
     =+  cay=q.p.res
     ?@  p.cay  ~|  %patch-bad-marc  !!
-    ~&  >  %canning
+    ::  ~&  %canning
     =+  ^=  can
         |-  ^-  (list ,[path cage])
         ?~  p.p.cay
@@ -565,10 +562,10 @@
           !!
         :-  ((hard path) -.q.coy)
         [q.i.p.p.cay (slot 3 coy)]
-    ~&  >  %canned
-    ~&  >  %checking-out
+    ::  ~&  %canned
+    ::  ~&  %checking-out
     =.  ank.dom  (checkout-ankh:ze (mo can))
-    ~&  >  %checked-out
+    ::  ~&  %checked-out
     ?~  hez  +>.$(dok ~)
     =+  ^=  ceq
         |=  a=miso
@@ -576,8 +573,8 @@
             &(?=(%ins -.a) ?=(%mime -.+.a))
             &(?=(%mut -.a) ?=(%mime -.+>.a))
         ==
-    ~&  >  %forming-ergo
-    =-  ~&  >  %formed-ergo  -
+    ::  ~&  %forming-ergo
+    ::  =-  ~&  %formed-ergo  -
     %_    +>.$
         dok  ~
         tag  ::  ?~(hez reg :_(reg [u.hez [%ergo who syd let.dom]]))
@@ -904,9 +901,9 @@
         ==
       =+  nao=(case-to-aeon:ze q.p.q.i.xiq)
       ?~  nao  $(xiq t.xiq, xaq [i.xiq xaq])
-      ~&  >  %reading-at-aeon
+      ::  ~&  %reading-at-aeon
       =+  vid=(read-at-aeon:ze u.nao p.q.i.xiq)
-      ~&  >  %red-at-aeon
+      ::  ~&  %red-at-aeon
       ?~  vid  ~&  [%oh-well mood=p.q.i.xiq]  $(xiq t.xiq, xaq [i.xiq xaq])
       $(xiq t.xiq, ..wake (balk p.i.xiq u.vid p.q.i.xiq))
     ::
@@ -1255,20 +1252,17 @@
     ++  read-x
       |=  [yon=aeon pax=path]
       ^-  (unit (unit (each cage silk)))
-      ~?  =(for ~zod)  [%reading-x yon pax]
       =+  tak=(~(get by hit.dom) yon)
       ?~  tak
         ~
       ?:  &(?=(~ ref) =(yon let.dom))
         `(bind q.ank:(descend-path:(zu ank.dom) pax) (corl (cury same %&) tail))
-      ~?  =(for ~zod)  [%coming-along yon pax]
       =+  yak=(tako-to-yaki u.tak)
       =+  lob=(~(get by q.yak) pax)
       ?~  lob
         [~ ~]
       =+  mar=(lobe-to-mark u.lob)
       ?.  ?=(?(%hoon %hook) mar)
-        ~?  =(for ~zod)  [%not-hooning yon pax]
         [~ ~ %| (lobe-to-silk pax u.lob)]
       :^  ~  ~  %&
       :+  mar  [%atom %t]
@@ -1448,15 +1442,15 @@
         ::
             %fine
           ?:  =(r.ali.dat r.bob.dat)
-            ~&  >  [%fine-trivial ali=<ali> bob=<bob> r.ali.dat r.bob.dat]
+            ~&  [%fine-trivial ali=<ali> bob=<bob> r.ali.dat r.bob.dat]
             (done:he ~)
           ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
-            ~&  >  [%fine-mostly-trivial ali=<ali> bob=<bob>]
+            ~&  [%fine-mostly-trivial ali=<ali> bob=<bob>]
             (done:he ~)
           ?.  (~(has in (reachable-takos r.ali.dat)) r.bob.dat)
-            ~&  >  [%fine-not-so-trivial ali=<ali> bob=<bob>]
+            ~&  [%fine-not-so-trivial ali=<ali> bob=<bob>]
             (error:he %bad-fine-merge ~)
-          ~&  >  [%fine-lets-go ali=<ali> bob=<bob>]
+          ~&  [%fine-lets-go ali=<ali> bob=<bob>]
           =.  new.dat  ali.dat
           =.  erg.dat
             %-  mo  ^-  (list ,[path ?])
@@ -2203,7 +2197,6 @@
 ++  scry                                              ::  inspect
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit cage))
-  ~?  =(his ~zod)  [%scrying ren syd lot tyl]
   =+  got=(~(has by fat.ruf) his)
   =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
   ?~  luk  [~ ~]

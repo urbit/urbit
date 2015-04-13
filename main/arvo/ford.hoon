@@ -50,6 +50,7 @@
 ++  kiss                                                ::  in request ->$
           $%  [%exec p=@p q=beak r=(unit silk)]         ::  make / kill
           ==                                            ::
+++  milk  (trel ship desk silk)                         ::  sourced silk
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
           $%  $:  %c                                    ::  to %clay
@@ -73,7 +74,7 @@
               [%dune p=(set beam) q=(unit gage)]        ::  unit literal
               [%file p=beam]                            ::  from clay
               [%join p=mark q=silk r=silk]              ::  merge
-              [%mash p=mark q=silk r=silk]              ::  merge
+              [%mash p=mark q=milk r=milk]              ::  annotate
               [%mute p=silk q=(list (pair wing silk))]  ::  mutant
               [%pact p=silk q=silk]                     ::  patch
               [%plan p=beam q=spur r=hood]              ::  structured assembly
@@ -710,10 +711,9 @@
       ==
     ::
     ++  mash
-      |=  [cof=cafe for=mark kas=silk kos=silk]
+      |=  [cof=cafe for=mark mas=milk mos=milk]
       ^-  (bolt gage)
-      ~&  >  [%lets-see-if-we-cannae-be-mashing for]
-      %.  [cof kas kos]
+      %.  [cof r.mas r.mos]
       ;~  cope
         ;~  coax
           |=([cof=cafe p=silk q=silk] (make cof p))
@@ -733,7 +733,8 @@
           =+  too=((soft ,@tas) q:(slap gar [%cnzy %sted]))
           ?~  too
             (flaw cof leaf/"bad ++sted:grad" ~)
-          (make cof %mash u.too [%done ~ cay] [%done ~ coy])
+          %+  make  cof
+          [%mash u.too [p.mas q.mas [%done ~ cay]] [p.mos q.mos [%done ~ coy]]]
         =+  fom=((soft ,@tas) q:(slap gar [%cnzy %form]))
         ?~  fom
           (flaw cof leaf/"bad ++form:grad" ~)
@@ -748,7 +749,12 @@
         %+  cope
           %^  maul  cof
             (slap (slap pro [%cnzy %grad]) [%cnzy %mash])
-          (slop q.cay q.coy)
+          ;:  slop
+              (slop [[%atom %p] p.mas] [[%atom %tas] q.mas])
+              (slop [[%atom %p] p.mos] [[%atom %tas] q.mos])
+              q.cay
+              q.coy
+          ==
         |=  [cof=cafe dif=vase]
         (fine cof u.fom dif)
       ==
@@ -834,7 +840,7 @@
       |=  [cof=cafe bem=beam]
       ^-  (bolt beam)
       ?:  ?=(%ud -.r.bem)  (fine cof bem)
-      =+  von=(ska ~ %cw bem(s ~))
+      =+  von=(save ~ %cw bem(s ~))
       ?~  von  [p=cof q=[%1 [%w bem ~] ~ ~]]
       (fine cof bem(r [%ud ((hard ,@) +.+:(need u.von))]))
     ::
@@ -859,14 +865,7 @@
     ++  lear                                            ::  load vase
       |=  [cof=cafe bem=beam]
       ^-  (bolt cage)
-      ~&  >  [%a-bit-leary bem]
-      =+  ral=(~(get by keg) %cx bem)
-      ?^  ral
-        ~&  >  %already-done
-        (fine cof u.ral)
-      ~&  >  %not-already-done
-      =+  von=(ska ~ %cx bem)
-      ~&  >  [%at-least-cx-worked bem]
+      =+  von=(save ~ %cx bem)
       ?~  von
         [p=*cafe q=[%1 [[%x bem ~] ~ ~]]]
       ?~  u.von
@@ -876,14 +875,14 @@
     ++  lend                                            ::  load arch
       |=  [cof=cafe bem=beam]
       ^-  (bolt arch)
-      =+  von=(ska ~ %cy bem)
+      =+  von=(save ~ %cy bem)
       ?~  von  [p=cof q=[%1 [%y bem ~] ~ ~]]
       (fine cof ((hard arch) q.q:(need u.von)))
     ::
     ++  liar                                            ::  load vase
       |=  [cof=cafe bem=beam]
       ^-  (bolt vase)
-      =+  von=(ska ~ %cx bem)
+      =+  von=(save ~ %cx bem)
       ?~  von
         [p=*cafe q=[%1 [[%x bem ~] ~ ~]]]
       ?~  u.von
@@ -1020,7 +1019,7 @@
       ^-  (bolt vase)
       %+  cope  (mail cof p.vax gen)
       |=  [cof=cafe typ=type fol=nock]
-      %+  (coup cof)  (mock [q.vax fol] (mole (slod (save ska))))
+      %+  (coup cof)  (mock [q.vax fol] (mole (slod save)))
       |=(val=* `vase`[typ val])
     ::
     ++  make                                            ::  reduce silk
@@ -1189,7 +1188,7 @@
       ^-  (bolt vase)
       %+  cope  (malt cof p.gat p.sam)
       |=  [cof=cafe typ=type]
-      %+  (coup cof)  (mong [q.gat q.sam] (mole (slod (save ska))))
+      %+  (coup cof)  (mong [q.gat q.sam] (mole (slod save)))
       |=(val=* `vase`[typ val])
     ::
     ++  meow                                            ::  assemble
@@ -1557,14 +1556,13 @@
       exec(q.kig (~(del by q.kig) tik), keg (~(put by keg) [- bem] r.u.rot))
     ::
     ++  save
-      |=  sky=sled
       ^-  sled
       |=  [(unit (set monk)) tem=term bem=beam]
       ^-  (unit (unit cage))
       =+  (~(get by keg) tem bem)
       ?^  -
         ``u.-
-      (sky +<.$)
+      (ska +<.$)
     --
   --
 ::
