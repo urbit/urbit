@@ -32,8 +32,8 @@
   ::  for any sole state +>, obeys
   ::
   ::      =+  [x=(transmute a b) y=(transmute b a)]
-  ::      .=  (apply:(apply b) x) 
-  ::          (apply:(apply a) y)
+  ::      .=  (apply:(apply a) x) 
+  ::          (apply:(apply b) y)
   ::
   ++  transmute                                         ::  dex as after sin
     |=  [sin=sole-edit dex=sole-edit]
@@ -102,7 +102,6 @@
   ++  receive                                           ::  naturalize event
     |=  sole-change
     ^-  [sole-edit sole-share]
-    ?>  &(=(his.ler his.ven) (lte own.ler own.ven))
     ?>  &(=(his.ler his.ven) (lte own.ler own.ven))
     ?>  |(!=(own.ler own.ven) =(haw (sham buf)) =(haw 0)) :: trust the clock
     =.  leg  (scag (sub own.ven own.ler) leg)

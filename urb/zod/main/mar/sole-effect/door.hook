@@ -20,7 +20,7 @@
         %mor  [%a (turn p.ted ..$)]
         %del  (joba %del (jone p.ted))
         %set  (joba %set (jape (tufa p.ted)))
-        %ins  (joba %ins (jobe at/(jone p.ted) new/s/(tuft q.ted) ~))
+        %ins  (joba %ins (jobe at/(jone p.ted) cha/s/(tuft q.ted) ~))
       ==
     --  
   --
@@ -47,8 +47,8 @@
       %err  (joba %hop (jone p.sef))
       %txt  (joba %txt (jape p.sef))
       %tan  (joba %tan (jape (wush 160 p.sef)))
-      %det  json:~(grow mar-sole-change +.sef)
-      %pro  (jobe vis/b/vis.sef tag/s/tag.sef cad/(jape cad.sef) ~)
+      %det  (joba %det json:~(grow mar-sole-change +.sef))
+      %pro  (joba %pro (jobe vis/b/vis.sef tag/s/tag.sef cad/(jape cad.sef) ~))
       ?(%bel %clr %nex)  (joba %act %s -.sef)
     ==
   --

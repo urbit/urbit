@@ -14,8 +14,7 @@
     |=  jon=^json  ^-  sole-action
     %-  need  %.  jon
     =>  [jo ..sole-action]
-    |^  =-  ~!  (-)  -
-        (fo %ret (of det/change ~))
+    |^  (fo %ret (of det/change ~))
     ++  fo
       |*  [a=term b=fist]
       |=(c=json ?.(=([%s a] c) (b c) (some [a ~])))
@@ -30,7 +29,7 @@
     ++  edit
       %+  fo  %nop
       %+  ra  mor/|=(json (edit +<))
-      (of del/ni set/(cu tuba sa) ins/(ot at/ni new/char ~) ~)
+      (of del/ni set/(cu tuba sa) ins/(ot at/ni cha/char ~) ~)
     --
   ::
   ++  noun  sole-action                                   ::  clam from %noun
