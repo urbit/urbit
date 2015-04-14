@@ -36,14 +36,18 @@
     ;script(type "text/coffeescript")  ;-  %-  trip
       '''
       [DOM,recl,rend] = [React.DOM, React.createClass, React.renderComponent]
-      [div, pre] = [DOM.div, DOM.pre]
+      [div, pre, span] = [DOM.div, DOM.pre, DOM.span]
       str = JSON.stringify
+      
+      Prompt = recl render: ->
+        [pro,cur,buf] = [@props.prompt, @props.cursor, @props.input + " "]
+        pre {}, pro,
+          span {style: background: 'lightgray'}, buf.slice(0,cur), "\u0332", buf.slice(cur)
+        
       Matr = recl render: ->
-        [pro,cur] = [@props.prompt + " ", @props.cursor + 1]
-        prompt = "#{pro.slice(0,cur)}\u0332#{pro.slice(cur)}"
-        lines = [prompt, @props.rows...]
-        div {}, lines.slice().reverse().map (lin)->
-          pre {}, lin
+        lines = @props.rows.slice().reverse().map (lin)-> pre {}, lin, " "
+        lines.push Prompt {prompt:@props.prompt, input:@props.input, cursor:@props.cursor}
+        div {}, lines
       
       $ ->
         termRev = 0
@@ -73,21 +77,25 @@
         flash = ($el, background)->
           $el.css {background}
           if background
-            setTimeout (()-> flash $el,''), 50
+            setTimeout (-> flash $el,''), 50
             
-        matr = rend (Matr rows:[], prompt:"", input:"", history:[], cursor:1), term
+        matr = rend (Matr rows:[], prompt:"", input:"", history:[], cursor:0), term
         update = (a) -> matr.setProps a
         buffer = new Share ""
-        
+        window.buffer = buffer
+        sync = (ted)-> 
+          update input: buffer.buf, cursor: buffer.transpose ted, matr.props.cursor
         
         peer = (ruh) ->
-          switch
-            when ruh.map then ruh.map peer
-            when ruh.hop then update cursor: buffer.transpose ruh.hop
-            when ruh.pro then update prompt: ruh.pro.cad
-            when ruh.txt then update rows: [ruh.txt, matr.props.rows...]
-            when ruh.blk then console.log "Stub #{str ruh}"
-            when ruh.act then switch ruh.act
+          if ruh.map then return ruh.map peer
+          switch Object.keys(ruh)[0]
+            when 'txt' then update rows: [ruh.txt, matr.props.rows...]
+            when 'tan' then ruh.tan.split("\n").reverse().map (txt)-> peer {txt}
+            when 'hop' then update cursor: buffer.transpose ruh.hop #; peer act:'bel'
+            when 'pro' then update prompt: ruh.pro.cad
+            when 'blk' then console.log "Stub #{str ruh}"
+            when 'det' then buffer.receive ruh.det; sync ruh.det.ted
+            when 'act' then switch ruh.act
               when 'clr' then update rows:[]
               when 'bel' then flash ($ 'body'), 'black'
               when 'nex' then update
@@ -98,11 +106,18 @@
             else v = Object.keys(ruh); console.log v, ruh[v[0]]
         
         urb.bind "/sole", {wire:"/"}, (err,d)->
-          if d.data then peer d.data
+          if err then console.log err
+          else if d.data then peer d.data
 
         sendAction = (data)->
-          urb.send {mark: 'sole-action', data}, (n,err)->
-            if err.data then $('#err')[0].innerText = err.data.mess
+          urb.send {mark: 'sole-action', data}, (e,res)->
+            if res.status isnt 200 then $('#err')[0].innerText = err.data.mess
+        
+        doEdit = (ted)->
+          det = buffer.transmit ted
+          sync ted
+          sendAction {det}
+        
         #later = (data)->
         #  if data
         #    pressed.push data
@@ -133,10 +148,19 @@
               act: 'uncap'
           if key
             e.preventDefault()
+            curs = matr.props.cursor
             if key.str
-              det = buffer.transmit ins: cha: str, at: matr.props.cursor
-              sendAction {det}
-            
+              doEdit ins: cha: key.str, at: curs
+              update cursor: curs+1
+            switch key.act
+              when 'entr' then sendAction 'ret'
+              when 'left' then if curs > 0 
+                update cursor: curs-1
+              when 'right' then if curs < buffer.buf.length
+                update cursor: curs+1
+              when 'baxp' then doEdit del: curs-1
+              else (if key.act then console.log key.act)
+                
             # amod = (arr)->
             #   for i in arr
             #     unless mod.indexOf(i) < 0

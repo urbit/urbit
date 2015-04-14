@@ -102,6 +102,7 @@
   ++  receive                                           ::  naturalize event
     |=  sole-change
     ^-  [sole-edit sole-share]
+    ~|  [ler ven]
     ?>  &(=(his.ler his.ven) (lte own.ler own.ven))
     ?>  |(!=(own.ler own.ven) =(haw (sham buf)) =(haw 0)) :: trust the clock
     =.  leg  (scag (sub own.ven own.ler) leg)
