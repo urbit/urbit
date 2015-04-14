@@ -100,7 +100,7 @@
               when 'bel' then flash ($ 'body'), 'black'
               when 'nex' then update
                 input: ""
-                cursor: 1
+                cursor: 0
                 history: [matr.props.input, matr.props.history...]
             #   else throw "Unknown "+(JSON.stringify ruh)
             else v = Object.keys(ruh); console.log v, ruh[v[0]]
@@ -111,7 +111,7 @@
 
         sendAction = (data)->
           urb.send {mark: 'sole-action', data}, (e,res)->
-            if res.status isnt 200 then $('#err')[0].innerText = err.data.mess
+            if res.status isnt 200 then $('#err')[0].innerText = res.data.mess
         
         doEdit = (ted)->
           det = buffer.transmit ted
@@ -158,8 +158,9 @@
                 update cursor: curs-1
               when 'right' then if curs < buffer.buf.length
                 update cursor: curs+1
-              when 'baxp' then doEdit del: curs-1
-              else (if key.act then console.log key.act)
+              when 'baxp' then if curs > 0
+                doEdit del: curs-1
+              #else (if key.act then console.log key.act)
                 
             # amod = (arr)->
             #   for i in arr
