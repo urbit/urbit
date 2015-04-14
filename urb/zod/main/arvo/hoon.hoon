@@ -1767,6 +1767,7 @@
 ++  same  |*(* +<)                                      ::  identity
 ++  head  |*(^ +<-)                                     ::  get head
 ++  tail  |*(^ +<+)                                     ::  get head
+++  test  |=(^ =(+<- +<+))                              ::  equality
 ++  cork  |*([a=_,* b=gate] (corl b a))                 ::  compose forward
 ++  corl                                                ::  compose backwards
   |*  [a=gate b=_,*]
