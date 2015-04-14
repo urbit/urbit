@@ -1,9 +1,10 @@
 # See /hook/core/sole/lib
 str = JSON.stringify
+clog = (a)-> console.log a
 class window.Share
   constructor: (@buf = "", @ven = [0, 0], @leg = []) ->
   #
-  abet: ()-> buf:@buf, leg:@leg.slice(), ven:@ven.slice()
+  abet: -> buf:@buf, leg:@leg.slice(), ven:@ven.slice()
   apply: (ted)->
     if 'nop' == ted then return
     if ted.map then ted.map @apply
@@ -47,7 +48,6 @@ class window.Share
     @ven[0]++
     @leg.push ted
     @apply ted
-    return @abet()
   #
   inverse: (ted)->
     switch true
@@ -66,14 +66,17 @@ class window.Share
     dat = @transmute @leg, ted
     @ven[1]++; @apply dat; dat
   #
-  remit: ()-> throw 'stub'
+  remit: -> throw 'stub'
   transmit: (ted)->
+    act = {ted, ler:[@ven[1], @ven[0]]}
     @commit ted
-    {ted, ler:[@ven[1], @ven[0]]}
+    return act
   #
   transceive: ({ler,ted})->
     old = new Share @buf
     dat = @receive {ler, ted}
     old.inverse dat
   #
-  transpose: (pos)-> (@transmute @leg, ins: at: pos).ins.at
+  transpose: (ted,pos)->
+    if pos == undefined then @transpose @leg, ted
+    else ((@transmute ted, ins: at: pos).ins ? at:0).at

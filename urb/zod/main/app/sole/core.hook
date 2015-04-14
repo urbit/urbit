@@ -556,6 +556,7 @@
       ^+  +>
       ?^  ris
         (ta-ser txt)
+      :: ~&  ven.say.inp
       %-  ta-hom(pos.inp (add (lent txt) pos.inp))
       :-  %mor
       |-  ^-  (list sole-edit)

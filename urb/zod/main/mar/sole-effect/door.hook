@@ -14,20 +14,20 @@
       ^-  ^json
       =+  cha
       =<  (jobe ted/(. ted) ler/a/~[(jone own.ler) (jone his.ler)] ~)
-      |=  ted=sole-edit
-      ?-  -.ted
+      |=  det=sole-edit
+      ?-  -.det
         %nop  [%s 'nop']
-        %mor  [%a (turn p.ted ..$)]
-        %del  (joba %del (jone p.ted))
-        %set  (joba %set (jape (tufa p.ted)))
-        %ins  (joba %ins (jobe at/(jone p.ted) cha/s/(tuft q.ted) ~))
+        %mor  [%a (turn p.det ..$)]
+        %del  (joba %del (jone p.det))
+        %set  (joba %set (jape (tufa p.det)))
+        %ins  (joba %ins (jobe at/(jone p.det) cha/s/(tuft q.det) ~))
       ==
     --  
   --
 ++  wush
   |=  [wid=@u tan=tang]
   ^-  tape
-  =+  rolt=|=(a=wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
+  =+  rolt=|=(a=wall `tape`?~(a ~ ?~(t.a i.a :(weld i.a "\0a" $(a t.a)))))
   (rolt (turn tan |=(a=tank (rolt (wash 0^wid a)))))
 ::
 --
