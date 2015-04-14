@@ -102,10 +102,11 @@
 --                                                      ::
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
-  $:  %0                                                ::  version
+  $:  %1                                                ::  version
       gub=@t                                            ::  random identity
       hov=(unit ship)                                   ::  master for remote
       ged=duct                                          ::  client interface
+      ded=(set duct)                                    ::  killed requests
       pox=(map ,@uvH duct)                              ::  proxied sessions
       ask=[p=@ud q=(map ,@ud ,[p=duct q=hiss])]         ::  outgoing by number
       kes=(map duct ,@ud)                               ::  outgoing by duct
@@ -443,7 +444,7 @@
     ::
         %thud                                           ::  cancel request
       ::  ford-kill  ::  XX discriminate
-      +>.$
+      +>.$(ded (~(put in ded) hen))
     ::
         %wart                                           ::  remote request
       =+  mez=((soft gram) r.kyz)
@@ -621,6 +622,8 @@
   ::
   ++  give-thou                                       ::  done request
     |=  hit=httr
+    ?:  (~(has in ded) hen)                           ::  request closed
+      +>(ded (~(del in ded) hen))
     +>(mow :_(mow [hen %give %thou hit]))
   ::
   ++  mean-json  |=([sas=@uG err=ares] (give-json sas ~ (ares-to-json err)))
@@ -1218,10 +1221,15 @@
   ^-  (unit ,@da)
   ~
 ::
-++  load                                                ::  clam previous state
-  |=  old=bolo ::_[.(wix **)]:*bolo
+++  load                                                ::  take previous state
+  =+  bol0=*bolo
+  =>  .(-.bol0 %0, |4.bol0 |5.bol0)   ::  missing ded
+  |=  old=?(bolo _bol0)
   ^+  ..^$
-  ..^$(+>- old) ::(wix ~))
+  ?-  -.old
+    %1  ..^$(+>- old)
+    %0  $(-.old %1, |4.old [*(set duct) |4.old])
+  ==
 ::
 ++  scry
   |=  [our=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
