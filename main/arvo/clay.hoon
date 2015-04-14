@@ -152,9 +152,10 @@
           ==                                            ::
 ++  tage  ,[[%tabl p=(list (pair marc marc))] q=vase]   ::  %tabl gage
 ++  dork                                                ::  diff work
-          $:  sot=(list ,[p=path q=misu])               ::
-              lon=(list path)                           ::
-              mim=(map path mime)                       ::
+          $:  del=(list path)                           ::  deletes
+              ins=(unit (map path cage))                ::  inserts
+              dif=(unit (map path (pair lobe cage)))    ::  changes
+              mut=(unit (map path (pair lobe cage)))    ::  mutations
           ==                                            ::
 --  =>
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -171,7 +172,7 @@
   =|  byn=(list ,[p=duct q=riot])
   =|  reg=(list ,[p=duct q=gift])
   =|  say=(list ,[p=duct q=path r=ship s=[p=@ud q=riff]])
-  =|  tag=(list ,[p=duct q=path r=note])
+  =|  tag=(list move)
   |%
   ++  abet
     ^-  [(list move) rede]
@@ -191,8 +192,7 @@
       :-  a
       [%pass b %a %want [who c] [%q %re p.q.d (scot %ud p.d) ~] q.d]
     ::
-      %+  turn  (flop tag)
-      |=([a=duct b=path c=note] [a %pass b c])
+      tag
     ==
   ::
   ++  aver                                            ::  read
@@ -237,11 +237,11 @@
   ::
   ++  bait
     |=  [hen=duct tym=@da]
-    %_(+> tag :_(tag [hen /tyme %t %wait tym]))
+    %_(+> tag :_(tag [hen %pass /tyme %t %wait tym]))
   ::
   ++  best
     |=  [hen=duct tym=@da]
-    %_(+> tag :_(tag [hen /tyme %t %rest tym]))
+    %_(+> tag :_(tag [hen %pass /tyme %t %rest tym]))
   ::
   ++  blab                                            ::  ship result
     |=  [hen=duct mun=mood dat=(each cage silk)]
@@ -249,7 +249,7 @@
     ?:  ?=(%& -.dat)
       +>.$(byn [[hen ~ [p.mun q.mun syd] r.mun p.dat] byn])
     =-  +>.$(tag [- tag])
-    :*  hen  [%blab p.mun (scot q.mun) syd r.mun]
+    :*  hen  %pass  [%blab p.mun (scot q.mun) syd r.mun]
         %f  %exec  who  [who syd q.mun]  ~  p.dat
     ==
   ::
@@ -378,6 +378,45 @@
       (echo:(checkout-ankh u.hat) wen ~ lem)
     ?.  =(~ dok)
       ~&  %already-applying-changes  +>
+    =+  del=(skim q.p.lem (corl (cury test %del) head tail))
+    =+  ins=(skim q.p.lem (corl (cury test %ins) head tail))
+    =+  dif=(skim q.p.lem (corl (cury test %dif) head tail))
+    =+  mut=(skim q.p.lem (corl (cury test %mut) head tail))
+    =-  %_(+>.$ tag (welp - tag), dok `[(turn del head)]) ::  XX  hoo{k,n}
+    ^-  (list move)
+    :~  :*  hen  %pass
+            [%inserting (scot %p who) syd (scot %da wen)]
+            %f  %exec  who  [who syd %da wen]  ~  %tabl
+            ^-  (list (pair silk silk))
+            %+  turn  ins
+            |=  [pax=path mis=miso]
+            ?>  ?=(%ins -.mis)
+            =+  =>((flop pax) ?~(. %$ i))
+            :-  [%done ~ -:!>(*path) pax]
+            [%cast - [%done ~ p.mis]]
+        ==
+        :*  hen  %pass
+            [%diffing (scot %p who) syd (scot %da wen)]
+            %f  %exec  who  [who syd %da wen]  ~  %tabl
+            ^-  (list (pair silk silk))
+            %+  turn  dif
+            |=  [pax=path mis=miso]
+            ?>  ?=(%dif -.mis)
+            =+  (need (need (read-x let.dom pax)))
+            ?>  ?=(%& -<)
+            [%pact p.- p.mis]
+        ==
+        :*  hen  %pass
+            [%mutating (scot %p who) syd (scot %da wen)]
+            %f  %exec  who  [who syd %da wen]  ~  %tabl
+            ^-  (list (pair silk silk))
+            %+  turn  mut
+            |=  [pax=path mis=miso]
+            ?>  ?=(%mut -.mis)
+            [%diff [%done ~ p.mis] [%cast p.p.mis [%done ~ q.mis]]]
+        ==
+    ==
+
     =+  ^=  sop
         |=  [a=path b=miso]
         ^-  ?
@@ -579,21 +618,20 @@
         dok  ~
         tag  ::  ?~(hez reg :_(reg [u.hez [%ergo who syd let.dom]]))
       :_  tag
-      :^    hen
-          [%ergoing (scot %p who) syd ~]
-        %f
-      :^  %exec  who  [who syd %da now]  :+  ~  %tabl
-      ^-  (list (pair silk silk))
-      %+  turn  sot.u.dok
-      |=  [a=path b=misu]
-      ^-  (pair silk silk)
-      :-  [%done ~ %path !>(a)]
-      ?:  ?=(%del -.b)
-        [%done ~ %null !>(~)]
-      =+  (~(get by mim.u.dok) a)
-      ?^  -  [%done ~ %mime !>(u.-)]
-      :^  %cast  %mime  %done  :-  ~
-      (need (read:ze %x [%ud let.dom] a))
+      :*  hen  [%ergoing (scot %p who) syd ~]  %f
+          %exec  who  [who syd %da now]  ~  %tabl
+          ^-  (list (pair silk silk))
+          %+  turn  sot.u.dok
+          |=  [a=path b=misu]
+          ^-  (pair silk silk)
+          :-  [%done ~ %path !>(a)]
+          ?:  ?=(%del -.b)
+            [%done ~ %null !>(~)]
+          =+  (~(get by mim.u.dok) a)
+          ?^  -  [%done ~ %mime !>(u.-)]
+          :^  %cast  %mime  %done  :-  ~
+          (need (read:ze %x [%ud let.dom] a))
+      ==
     ==
   ::
   ++  take-ergo
@@ -638,16 +676,15 @@
     %_    +>.$
         tag
       :_  tag
-      :^    hen
-          [%patching (scot %p who) syd ~]
-        %f
-      :^  %exec  who  [who syd %da now]  :+  ~  %tabl
-      ^-  (list (pair silk silk))
-      %+  turn  (~(tap by hat))
-      |=  [a=path b=lobe]
-      ^-  (pair silk silk)
-      :-  [%done ~ %path !>(a)]
-      (lobe-to-silk:ze a b)
+      :*  hen  %pass  [%patching (scot %p who) syd ~]  %f
+          %exec  who  [who syd %da now]  :+  ~  %tabl
+          ^-  (list (pair silk silk))
+          %+  turn  (~(tap by hat))
+          |=  [a=path b=lobe]
+          ^-  (pair silk silk)
+          :-  [%done ~ %path !>(a)]
+          (lobe-to-silk:ze a b)
+      ==
     ==
   ::
   ++  apply-foreign-update                              ::  apply subscription
@@ -798,7 +835,7 @@
     |=  [cas=case pop=(set plop)]
     ^+  +>
     =-  %_(+>.$ tag [- tag])
-    :*  hen
+    :*  hen  %pass
         [%foreign-plops (scot %p who) (scot %p for) syd ~]
         %f  %exec  who  [for syd cas]  ~  %tabl
         ^-  (list (pair silk silk))
@@ -972,13 +1009,9 @@
       [%direct (shax (jam p)) p]
     ::
     ++  make-delta                                      ::  make blob delta
-      |=  [p=[p=mark q=lobe] q=page]
+      |=  [p=lobe q=[p=mark q=lobe] r=page r=lobe]
       ^-  blob
-      =+  t=[%delta 0 p q]
-      =+  ^=  has
-          %^  cat  7  (sham [%blob q.q])
-          (sham [%lobe p])
-      [%delta has p q]
+      [%delta p q r]
     ::
     ++  make-yaki                                       ::  make yaki
       |=  [p=(list tako) q=(map path lobe) t=@da]
@@ -1031,10 +1064,10 @@
           =+  har=(~(get by hat) pax)
           ?~  har  !!
           %+  ~(put by bar)  pax
-          (make-delta [(lobe-to-mark u.har) u.har] [p q.q]:p.mys)
+          (make-delta [(lobe-to-mark u.har) u.har] [p q.q]:q.mys p.mys)
                                                         :: XX check vase !evil
         %+  ~(put by bar)  pax
-        (make-delta [(lobe-to-mark p.u.ber) p.u.ber] [p q.q]:p.mys)
+        (make-delta [(lobe-to-mark p.u.ber) p.u.ber] [p q.q]:q.mys p.mys)
                                                         :: XX check vase !evil
       ==
     ::
@@ -1407,7 +1440,8 @@
       ++  fetch-ali
         ^+  .
         =-  %_(+ tag [- tag])
-        :*  hen  [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ali ~]
+        :*  hen  %pass
+            [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ali ~]
             %c  %warp  [p.bob p.ali]  q.ali
             `[%sing %v cas.dat /]
         ==
@@ -1514,7 +1548,7 @@
         |=  [nam=term yak=yaki oth=(pair ship desk)]
         ^+  +>
         =-  %_(+>.$ tag [- tag])
-        :*  hen
+        :*  hen  %pass
             =+  (cat 3 %diff- nam)
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali - ~]
             %f  %exec  p.bob  [p.oth q.oth cas.dat]  ~  %tabl
@@ -1690,7 +1724,7 @@
           ?~  bof
             $(gem.dat %meet)
           =-  %_(+.$ tag [- tag])
-          :*  hen
+          :*  hen  %pass
               [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %merge ~]
               %f  %exec  p.bob  [p.bob q.bob cas.dat]  ~  %tabl
               ^-  (list (pair silk silk))
@@ -1823,7 +1857,7 @@
         ^+  .
         =-  %_(+ tag [- tag])
         =+  val=?:(?=(%init gem.dat) ali bob)
-        :*  hen
+        :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout ~]
             %f  %exec  p.bob  [p.val q.val cas.dat]  ~  %tabl
             ^-  (list (pair silk silk))
@@ -1877,7 +1911,7 @@
         =-  %_(+ tag [- tag])
         =+  zez=ze(ank.dom ank.dat)
         =+  val=?:(?=(%init gem.dat) ali bob)
-        :*  hen
+        :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ergo ~]
             %f  %exec  p.bob  [p.val q.val cas.dat]  ~  %tabl
             ^-  (list (pair silk silk))

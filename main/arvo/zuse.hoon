@@ -2042,7 +2042,7 @@
 ++  misu                                                ::  computed delta
           $%  [%del p=cage]                             ::  delete
               [%ins p=cage]                             ::  insert
-              [%dif p=cage]                             ::  mutate from diff
+              [%dif p=lobe q=cage]                      ::  mutate from diff
           ==                                            ::
 ++  mizu  ,[p=@u q=(map ,@ud tako) r=rang]              ::  new state
 ++  moar  ,[p=@ud q=@ud]                                ::  normal change range
