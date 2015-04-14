@@ -32,21 +32,23 @@
   ;body
     ;div#err;
     ;div#term:""
+    ;script@"src/share.coffee"(type "text/coffeescript");
     ;script(type "text/coffeescript")  ;-  %-  trip
       '''
       [DOM,recl,rend] = [React.DOM, React.createClass, React.renderComponent]
       [div, pre] = [DOM.div, DOM.pre]
+      str = JSON.stringify
       Matr = recl render: ->
         [pro,cur] = [@props.prompt + " ", @props.cursor + 1]
         prompt = "#{pro.slice(0,cur)}\u0332#{pro.slice(cur)}"
         lines = [prompt, @props.rows...]
         div {}, lines.slice().reverse().map (lin)->
           pre {}, lin
-          
+      
       $ ->
         termRev = 0
         pressed = []
-        deltim = null 
+        deltim = null
 
         met = $('<pre>').text('m').css(display: 'none').appendTo(term).width()
         subs = ""
@@ -56,7 +58,7 @@
         #   if path is subs
         #     return
         #   if subs
-        #     urb.unsubscribe {path:subs}
+        #     urb.unsubscribe path: subs
         #   subs = path
         #   urb.subscribe {path}, (err,dat)->
         #       if err or dat.data.ok
@@ -68,28 +70,39 @@
         #         document.title = "Matrix"  # XX  debug
         # $(window).resize()
 
-        matr = rend (Matr rows:[], prompt:"", cursor:1), term
         flash = ($el, background)->
           $el.css {background}
           if background
             setTimeout (()-> flash $el,''), 50
+            
+        matr = rend (Matr rows:[], prompt:"", input:"", history:[], cursor:1), term
+        update = (a) -> matr.setProps a
+        buffer = new Share ""
+        
         
         peer = (ruh) ->
-          switch false
-            when !ruh.map then ruh.map peer
-            # when !ruh.pro then matr.setProps prompt: ruh.pro
-            # when !ruh.hop then matr.setProps cursor: ruh.hop
-            # when !ruh.out 
-            #   matr.setProps rows: [ruh.out, matr.props.rows...]
-            # when !ruh.act then switch ruh.act
-            #   when 'clr' then matr.setProps rows:[]
-            #   when 'bel' then flash ($ 'body'), 'black'
+          switch
+            when ruh.map then ruh.map peer
+            when ruh.hop then update cursor: buffer.transpose ruh.hop
+            when ruh.pro then update prompt: ruh.pro.cad
+            when ruh.txt then update rows: [ruh.txt, matr.props.rows...]
+            when ruh.blk then console.log "Stub #{str ruh}"
+            when ruh.act then switch ruh.act
+              when 'clr' then update rows:[]
+              when 'bel' then flash ($ 'body'), 'black'
+              when 'nex' then update
+                input: ""
+                cursor: 1
+                history: [matr.props.input, matr.props.history...]
             #   else throw "Unknown "+(JSON.stringify ruh)
-            else console.log ruh
+            else v = Object.keys(ruh); console.log v, ruh[v[0]]
         
         urb.bind "/sole", {wire:"/"}, (err,d)->
           if d.data then peer d.data
 
+        sendAction = (data)->
+          urb.send {mark: 'sole-action', data}, (n,err)->
+            if err.data then $('#err')[0].innerText = err.data.mess
         #later = (data)->
         #  if data
         #    pressed.push data
@@ -120,7 +133,9 @@
               act: 'uncap'
           if key
             e.preventDefault()
-            urb.send mark: 'dill-belt', data: {mod,key}
+            if key.str
+              det = buffer.transmit ins: cha: str, at: matr.props.cursor
+              sendAction {det}
             
             # amod = (arr)->
             #   for i in arr
