@@ -152,10 +152,13 @@
           ==                                            ::
 ++  tage  ,[[%tabl p=(list (pair marc marc))] q=vase]   ::  %tabl gage
 ++  dork                                                ::  diff work
-          $:  del=(list path)                           ::  deletes
-              ins=(unit (map path cage))                ::  inserts
-              dif=(unit (map path (pair lobe cage)))    ::  changes
-              mut=(unit (map path (pair lobe cage)))    ::  mutations
+          $:  del=(list (pair path cage))               ::  deletes
+              ink=(list (pair path cage))               ::  hoo{n,k}
+              ins=(unit (list (pair path cage)))        ::  inserts
+              dig=(map path cage)                       ::  store diffs
+              dif=(unit (list (trel path lobe cage)))   ::  changes
+              muh=(map path lobe)                       ::  store hashes
+              mut=(unit (list (trel path lobe cage)))   ::  mutations
           ==                                            ::
 --  =>
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -348,7 +351,7 @@
         ::  yel  [[hen %note '=' %leaf ~] yel]     ::  XX do better
     ==
   ::
-  ++  echo                                            ::  announce changes
+  ++  echo                                              ::  announce changes
     |=  [wen=@da mim=(map path mime) lem=nori]
     ^+  +>
     %_    +>.$
@@ -367,7 +370,7 @@
       ==
     ==
   ::
-  ++  edit                                            ::  apply changes
+  ++  edit                                              ::  apply changes
     |=  [wen=@da lem=nori]
     ^+  +>
     ?:  ?=(%| -.lem)
@@ -378,11 +381,36 @@
       (echo:(checkout-ankh u.hat) wen ~ lem)
     ?.  =(~ dok)
       ~&  %already-applying-changes  +>
-    =+  del=(skim q.p.lem (corl (cury test %del) head tail))
-    =+  ins=(skim q.p.lem (corl (cury test %ins) head tail))
-    =+  dif=(skim q.p.lem (corl (cury test %dif) head tail))
-    =+  mut=(skim q.p.lem (corl (cury test %mut) head tail))
-    =-  %_(+>.$ tag (welp - tag), dok `[(turn del head)]) ::  XX  hoo{k,n}
+    =+  del=(skim q.p.lem :(corl (cury test %del) head tail))
+    =+  ins=(skim q.p.lem :(corl (cury test %ins) head tail))
+    =+  dif=(skim q.p.lem :(corl (cury test %dif) head tail))
+    =+  mut=(skim q.p.lem :(corl (cury test %mut) head tail))
+    =+  inn=(skim ins :(corl (cury test %hoon) head tail tail))  ::  XX  wrong
+    =+  ink=(skim ins :(corl (cury test %ins) head tail tail))
+    =-  %_    +>.$                                      ::  XX  hoo{k,n}
+            tag  (welp - tag)
+            dok
+          :-  ~
+          :*  %+  turn  del
+              |=  [pax=path mis=miso]
+              ?>  ?=(%del -.mis)
+              [pax p.mis]
+              %+  murn  
+              ~
+              %-  mo
+              %+  turn  dif
+              |=  [pax=path mis=miso]
+              ?>  ?=(%dif -.mis]
+              [pax p.mis]
+              ~
+              %-  mo
+              %+  turn  mut
+              |=  [pax=path mis=miso]
+              ?>  ?=(%mut -.mis)
+              [pax (page-to-lobe:ze p.mis q.q.mis)]
+              ~
+          ==
+        ==
     ^-  (list move)
     :~  :*  hen  %pass
             [%inserting (scot %p who) syd (scot %da wen)]
@@ -416,41 +444,40 @@
             [%diff [%done ~ p.mis] [%cast p.p.mis [%done ~ q.mis]]]
         ==
     ==
-
-    =+  ^=  sop
-        |=  [a=path b=miso]
-        ^-  ?
-        ?|  ?=(%del -.b)
-            ?=(%dif -.b)
-            ?&  ?=(%ins -.b)
-                ?=(%mime p.p.b)
-                =+  (slag (dec (lent a)) a)
-                ?|  =([%hook ~] -)
-                    =([%hoon ~] -)
-        ==  ==  ==
-    =+  ^-  lon=(list path)
-        (murn q.p.lem |=([a=path b=miso] ?:((sop a b) ~ (some a))))
-    =+  ^-  sot=(list ,[p=path q=misu])
-        %+  murn  q.p.lem
-        |=([a=path b=miso] ?.((sop a b) ~ (some [a ?<(?=(%mut -.b) b)])))
-    =+  ^-  mim=(map path mime)
-        %-  mo
-        ^-  (list ,[path mime])
-        %+  murn  q.p.lem
-        |=  [a=path b=miso]
-        ?-  -.b
-          %del  ~
-          %ins  ?.(?=(%mime p.p.b) ~ (some a ((hard mime) q.q.p.b)))
-          %dif  ~
-          %mut  ?.(?=(%mime p.q.b) ~ (some a ((hard mime) q.q.q.b)))
-        ==
-    =.  dok  `[sot lon mim]
-    ?~  lon
-      (apply-edit wen)
-    =+  ^-  los=(list ,[duct path note])
-        %+  murn  q.p.lem
-        |=([a=path b=miso] ?:((sop a b) ~ (some (silkify wen a b))))
-    %_(+>.$ tag (welp los tag))
+    ::  =+  ^=  sop
+    ::      |=  [a=path b=miso]
+    ::      ^-  ?
+    ::      ?|  ?=(%del -.b)
+    ::          ?=(%dif -.b)
+    ::          ?&  ?=(%ins -.b)
+    ::              ?=(%mime p.p.b)
+    ::              =+  (slag (dec (lent a)) a)
+    ::              ?|  =([%hook ~] -)
+    ::                  =([%hoon ~] -)
+    ::      ==  ==  ==
+    ::  =+  ^-  lon=(list path)
+    ::      (murn q.p.lem |=([a=path b=miso] ?:((sop a b) ~ (some a))))
+    ::  =+  ^-  sot=(list ,[p=path q=misu])
+    ::      %+  murn  q.p.lem
+    ::      |=([a=path b=miso] ?.((sop a b) ~ (some [a ?<(?=(%mut -.b) b)])))
+    ::  =+  ^-  mim=(map path mime)
+    ::      %-  mo
+    ::      ^-  (list ,[path mime])
+    ::      %+  murn  q.p.lem
+    ::      |=  [a=path b=miso]
+    ::      ?-  -.b
+    ::        %del  ~
+    ::        %ins  ?.(?=(%mime p.p.b) ~ (some a ((hard mime) q.q.p.b)))
+    ::        %dif  ~
+    ::        %mut  ?.(?=(%mime p.q.b) ~ (some a ((hard mime) q.q.q.b)))
+    ::      ==
+    ::  =.  dok  `[sot lon mim]
+    ::  ?~  lon
+    ::    (apply-edit wen)
+    ::  =+  ^-  los=(list ,[duct path note])
+    ::      %+  murn  q.p.lem
+    ::      |=([a=path b=miso] ?:((sop a b) ~ (some (silkify wen a b))))
+    ::  %_(+>.$ tag (welp los tag))
   ::
   ++  silkify
     |=  [wen=@da pax=path mis=miso]
@@ -480,77 +507,127 @@
     |=  wen=@da
     ^+  +>
     =+  ^=  hat
-        (edit:ze wen %& *cart ?~(dok ~|(%no-changes !!) sot.u.dok))
+        %^  edit:ze  wen  %&  :-  *cart
+        ?~  dok
+          ~|(%no-changes !!)
+        ?>  ?=(^ ins.u.dok)
+        ?>  ?=(^ dif.u.dok)
+        ?>  ?=(^ mut.u.dok)
+        ;:  welp
+          ^-  (list (pair path misu))
+          (turn del.u.dok |=([pax=path cay=cage] [pax %del cay]))
+        ::
+          ^-  (list (pair path misu))
+          (turn u.ins.u.dok |=([pax=path cay=cage] [pax %ins cay]))
+        ::
+          ^-  (list (pair path misu))
+          (turn u.dif.u.dok |=([pax=path cal=[lobe cage]] [pax %dif cal]))
+        ::
+          ^-  (list (pair path misu))
+          (turn u.mut.u.dok |=([pax=path cal=[lobe cage]] [pax %dif cal]))
+        ==
     ?~  dok  ~&  %no-changes  !!
     ?^  lon.u.dok  ~&  %not-done-diffing  !!
     ?~  -.hat
       ([echo(dok ~)]:.(+>.$ +.hat) wen mim.u.dok %& *cart sot.u.dok)
     (checkout-ankh(lat.ran lat.ran.+.hat) u.-.hat)
   ::
-  ++  take-cast
-    |=  [wen=@da pax=path res=(each bead (list tank))]
+  ++  take-inserting
+    |=  [wen=@da res=(each bead (list tank))]
     ^+  +>
     ?~  dok
-      ~&  %clay-unexpected-made  +>.$
-    ?.  (lien lon.u.dok |=(path =(+< pax)))
-      ~&  %clay-strange-made  +>.$
-    ?:  ?=(%| -.res)
-      %_    +>.$
-          dok  ~
-        ::  XX should be here
-        ::    tag
-        ::  %-  welp  :_  tag
-        ::  ^-  (list ,[duct path note])
-        ::  %+  murn  lon.u.dok
-        ::  |=  a=path
-        ::  ^-  (unit ,[duct path note])
-        ::  ?:  =(pax a)  ~
-        ::  `[hen [%diffing (scot %p who) syd (scot %da wen) a] %f %exec who ~]
-      ::
-          yel
-        [[hen %note '!' %rose [" " "" ""] leaf/"clay diff failed" p.res] yel]
-      ==
-    ?.  ?=(@ p.q.p.res)  ~|  %bad-marc  !!
-    =:  lon.u.dok  (skip lon.u.dok |=(path =(+< pax)))
-        sot.u.dok  [[pax %ins q.p.res] sot.u.dok]
-    ==
-    ?~  lon.u.dok
-      (apply-edit wen)
-    +>.$
+      ~&  %clay-take-inserting-unexpected-made  +>.$
+    ?.  =(~ ins.u.dok)
+      ~&  %clay-take-inserting-redundant-made  +>.$
+    =-  =.  ins.u.dok  `-
+        ?:  ?&  ?=(^ dif.u.dok)
+                ?=(^ mut.u.dok)
+            ==
+          (apply-edit wen)
+        +>.$
+    ^-  (list (pair path cage))
+    %+  turn  (tage-to-cages (made-to-tage res))
+    |=  [pax=cage cay=cage]
+    ?.  ?=(%path p.pax)
+      ~|(%clay-take-inserting-strange-path-mark !!)
+    [((hard path) q.q.pax) cay]
   ::
-  ++  take-diff
-    |=  [wen=@da pax=path res=(each bead (list tank))]
+  ++  take-diffing
+    |=  [wen=@da res=(each bead (list tank))]
     ^+  +>
     ?~  dok
-      ~&  %clay-unexpected-made  +>.$
-    ?.  (lien lon.u.dok |=(path =(+< pax)))
-      ~&  %clay-strange-made  +>.$
-    ?:  ?=(%| -.res)
-      %_    +>.$
-          dok  ~
-        ::    tag
-        ::  %-  welp  :_  tag
-
-        ::  ^-  (list ,[duct path note])
-        ::  %+  murn  lon.u.dok
-        ::  |=  a=path
-        ::  ^-  (unit ,[duct path note])
-        ::  ?:  =(pax a)  ~
-        ::  `[hen [%diffing (scot %p who) syd (scot %da wen) a] %f %exec who ~]
-      ::
-          yel
-        :_  yel
-        [hen %note '!' %rose [" " "" ""] leaf/"clay diff failed" >pax< p.res]
-      ==
-    ?.  ?=(@ p.q.p.res)  ~|  %bad-marc  !!
-    =:  lon.u.dok  (skip lon.u.dok |=(path =(+< pax)))
-        sot.u.dok  ?:  =(%null p.q.p.res)
-                     sot.u.dok
-                   [[pax %dif q.p.res] sot.u.dok]
-    ==
-    ?~  lon.u.dok
-      (apply-edit wen)
-    +>.$
+      ~&  %clay-take-diffing-unexpected-made  +>.$
+    ?.  =(~ ins.u.dok)
+      ~&  %clay-take-diffing-redundant-made  +>.$
+    =-  =.  dif.u.dok  `-
+        ?:  ?&  ?=(^ ins.u.dok)
+                ?=(^ mut.u.dok)
+            ==
+          (apply-edit wen)
+        +>.$
+    ^-  (list (trel path lobe cage))
+    %+  murn  (tage-to-cages (made-to-tage res))
+    |=  [pax=cage cay=cage]
+    ^-  (unit (pair path (pair lobe cage)))
+    ?.  ?=(%path p.pax)
+      ~|(%clay-take-diffing-strange-path-mark !!)
+    =+  paf=((hard path) q.q.pax)
+    [paf (page-to-lobe:ze [p q.q]:cay) (~(got by dig.u.dok) paf)]
+  ::
+  ++  take-mutating
+    |=  [wen=@da res=(each bead (list tank))]
+    ^+  +>
+    ?~  dok
+      ~&  %clay-take-mutating-unexpected-made  +>.$
+    ?.  =(~ ins.u.dng)
+      ~&  %clay-take-mutating-redundant-made  +>.$
+    =-  =.  mut.u.dok  `-
+        ?:  ?&  ?=(^ ins.u.dok)
+                ?=(^ dif.u.dok)
+            ==
+          (apply-edit wen)
+        +>.$
+    ^-  (list (trel path lobe cage))
+    %+  murn  (tage-to-cages (made-to-tage res))
+    |=  [pax=cage cay=cage]
+    ^-  (unit (pair path (pair lobe cage)))
+    ?.  ?=(%path p.pax)
+      ~|(%clay-take-mutating-strange-path-mark !!)
+    ?:  ?=(%null p.cay)
+      ~
+    =+  paf=((hard path) q.q.pax)
+    [paf (~(got by muh.u.dok) paf) cay]
+    ::  |=  [wen=@da pax=path res=(each bead (list tank))]
+    ::  ^+  +>
+    ::  ?~  dok
+    ::    ~&  %clay-unexpected-made  +>.$
+    ::  ?.  (lien lon.u.dok |=(path =(+< pax)))
+    ::    ~&  %clay-strange-made  +>.$
+    ::  ?:  ?=(%| -.res)
+    ::    %_    +>.$
+    ::        dok  ~
+    ::      ::    tag
+    ::      ::  %-  welp  :_  tag
+    ::      ::  ^-  (list ,[duct path note])
+    ::      ::  %+  murn  lon.u.dok
+    ::      ::  |=  a=path
+    ::      ::  ^-  (unit ,[duct path note])
+    ::      ::  ?:  =(pax a)  ~
+    ::      ::  `[hen [%diffing (scot %p who) syd (scot %da wen) a] %f %exec who ~]
+    ::    ::
+    ::        yel
+    ::      :_  yel
+    ::      [hen %note '!' %rose [" " "" ""] leaf/"clay diff failed" >pax< p.res]
+    ::    ==
+    ::  ?.  ?=(@ p.q.p.res)  ~|  %bad-marc  !!
+    ::  =:  lon.u.dok  (skip lon.u.dok |=(path =(+< pax)))
+    ::      sot.u.dok  ?:  =(%null p.q.p.res)
+    ::                   sot.u.dok
+    ::                 [[pax %dif q.p.res] sot.u.dok]
+    ::  ==
+    ::  ?~  lon.u.dok
+    ::    (apply-edit wen)
+    ::  +>.$
   ::
   ++  take-patch
     |=  res=(each bead (list tank))
@@ -1003,10 +1080,11 @@
         %delta      [%pact $(lob q.q.bol) [%volt ~ r.bol]]
       ==
     ::
+    ++  page-to-lobe  (corl shax jam)
     ++  make-direct                                     ::  make blob
       |=  p=page
       ^-  blob
-      [%direct (shax (jam p)) p]
+      [%direct (page-to-lobe p) p]
     ::
     ++  make-delta                                      ::  make blob delta
       |=  [p=lobe q=[p=mark q=lobe] r=page r=lobe]
@@ -1185,7 +1263,7 @@
           ?~  par  ~
           ~[u.par]
       =+  gar=(update-lat (apply-changes q.lem) lat.ran)
-      :-  %^  make-yaki  per  +.gar  wen                ::  from existing diff
+      :-  (make-yaki per +.gar wen)                     ::  from existing diff
       -.gar                                             ::  fix lat
     ::
     ++  lobes-at-path                                   ::    lobes-at-path:ze
@@ -2310,28 +2388,41 @@
       %made
     ?~  tea  !!
     ?+    -.tea  !!
-        %casting
-      ?>  ?=([@ @ @ *] t.tea)
+        %inserting
+      ?>  ?=([@ @ @ ~] t.tea)
       =+  who=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
       =+  wen=(slav %da i.t.t.t.tea)
       =^  mos  ruf
         =+  une=(un who now hen ruf)
         =+  ^=  zat
-            (take-cast:(di:wake:une syd) wen t.t.t.t.tea p.q.hin)
+            (take-inserting:(di:wake:une syd) wen p.q.hin)
         =+  zot=abet.zat
         [-.zot abet:(pish:une syd +.zot ran.zat)]
       [mos ..^$]
     ::
         %diffing
-      ?>  ?=([@ @ @ *] t.tea)
+      ?>  ?=([@ @ @ ~] t.tea)
       =+  who=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
       =+  wen=(slav %da i.t.t.t.tea)
       =^  mos  ruf
         =+  une=(un who now hen ruf)
         =+  ^=  zat
-            (take-diff:(di:wake:une syd) wen t.t.t.t.tea p.q.hin)
+            (take-diffing:(di:wake:une syd) wen p.q.hin)
+        =+  zot=abet.zat
+        [-.zot abet:(pish:une syd +.zot ran.zat)]
+      [mos ..^$]
+    ::
+        %mutating
+      ?>  ?=([@ @ @ ~] t.tea)
+      =+  who=(slav %p i.t.tea)
+      =+  syd=(slav %tas i.t.t.tea)
+      =+  wen=(slav %da i.t.t.t.tea)
+      =^  mos  ruf
+        =+  une=(un who now hen ruf)
+        =+  ^=  zat
+            (take-mutating:(di:wake:une syd) wen p.q.hin)
         =+  zot=abet.zat
         [-.zot abet:(pish:une syd +.zot ran.zat)]
       [mos ..^$]
