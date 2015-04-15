@@ -19,7 +19,7 @@
             "react/0.11.0/react.js"
         ==
     ;script(src "/~/at/main/lib/urb.js");
-    ;script: urb.appl = 'dojo'
+    ;script: urb.appl = 'talk'
     ;style:'''
            #term {
              width: 100%;
