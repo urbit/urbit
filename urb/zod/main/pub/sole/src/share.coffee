@@ -6,23 +6,23 @@ class window.Share
   #
   abet: -> buf:@buf, leg:@leg.slice(), ven:@ven.slice()
   apply: (ted)->
-    if 'nop' == ted then return
-    if ted.map then ted.map @apply
-    switch Object.keys(ted)[0]
-      when 'set' then @buf = ted.set
-      when 'del' then @buf = @buf.slice(0,ted.del) + @buf.slice(ted.del + 1)
-      when 'ins'
-        {at,cha} = ted.ins
-        @buf = @buf.slice(0,at) + cha + @buf.slice(at)
-      else throw "%sole-edit -lost.#{str ted}"
+    switch
+      when 'nop' == ted then return
+      when ted.map then ted.map @apply, @
+      else switch Object.keys(ted)[0]
+        when 'set' then @buf = ted.set
+        when 'del' then @buf = @buf.slice(0,ted.del) + @buf.slice(ted.del + 1)
+        when 'ins'
+          {at,cha} = ted.ins
+          @buf = @buf.slice(0,at) + cha + @buf.slice(at)
+        else throw "%sole-edit -lost.#{str ted}"
   #
   transmute: (sin,dex)->
-    $this = `this`
     switch
       when sin == 'nop' or dex == 'nop' then dex
       when sin.reduce
-        sin.reduce ((dex,syn) -> $this.transmute(syn,dex)), dex
-      when dex.map then dex.map (dax) -> $this.transmute(sin,dax)
+        sin.reduce ((dex,syn) => @transmute(syn,dex)), dex
+      when dex.map then dex.map (dax) => @transmute(sin,dax)
       when dex.set != undefined then dex
       else switch Object.keys(sin)[0]
         when 'set' then 'nop'
@@ -39,7 +39,7 @@ class window.Share
           switch Object.keys(dex)[0]
             when 'del' then if at < dex.del then dex.del++
             when 'ins' then if at < dex.ins.at or
-                              (at == dex.ins.at and cha < dex.ins.cha)
+                              (at == dex.ins.at and !(cha <= dex.ins.cha))
                 dex.ins.at++
           return dex
         else throw "%sole-edit -lost.#{str sin}"
@@ -50,19 +50,20 @@ class window.Share
     @apply ted
   #
   inverse: (ted)->
-    switch true
+    switch
       when 'nop' == ted then ted
-      when undefined != ted.map
-        ted.map( (tad)-> res=@inverse(tad); @apply(tad); res).reverse()
-      when undefined != ted.set then set: @buf
-      when undefined != ted.ins then del: ted.ins
-      when undefined != ted.del then ins: at: ted.del, cha: @buf[ted.del]
-      else throw 'bad sole-edit'
+      when ted.map
+        ted.map( (tad)=> res=@inverse tad; @apply tad; res).reverse()
+      else switch Object.keys(ted)[0]
+        when 'set' then set: @buf
+        when 'ins' then del: ted.ins
+        when 'del' then ins: at: ted.del, cha: @buf[ted.del]
+        else throw "%sole-edit -lost.#{str ted}"
   #
   receive: ({ler,ted})->
     if !(ler[1] is @ven[1]) 
       throw "-out-of-sync.[#{str ler} #{str @ven}]"
-    @leg = @leg[0 ... (@ven[0] - ler[0])]
+    @leg = @leg.slice @leg.length + ler[0] - @ven[0] 
     dat = @transmute @leg, ted
     @ven[1]++; @apply dat; dat
   #

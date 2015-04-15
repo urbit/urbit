@@ -65,7 +65,7 @@
       ?-  -.dex
         %del  ?:((lte p.sin p.dex) dex(p +(p.dex)) dex)
         %ins  ?:  =(p.sin p.dex)     
-                ?:((gth q.sin q.dex) dex dex(p +(p.dex)))
+                ?:((lth q.sin q.dex) dex dex(p +(p.dex)))
               ?:((lte p.sin p.dex) dex(p +(p.dex)) dex)
       ==
     ==   
@@ -85,7 +85,8 @@
   ++  inverse                                           ::  relative inverse
     |=  ted=sole-edit
     ^-  sole-edit
-    =.  ted  ?.(?=([%mor * ~] ted) ted i.p.ted)
+    :: =.  ted  ?.(?=([%mor * ~] ted) ted i.p.ted) :: XX why?
+    ~|  [ted abet]
     ?-  -.ted
       %del  [%ins p.ted (snag p.ted buf)]
       %ins  [%del p.ted]
@@ -107,8 +108,9 @@
     ?>  |(!=(own.ler own.ven) =(haw (sham buf)) =(haw 0)) :: trust the clock
     =.  leg  (scag (sub own.ven own.ler) leg)
     ::  ~?  !=(own.ler own.ven)  [%miss-leg leg]
-    =+  dat=(transmute [%mor leg] ted)
+    =+  dat=(transmute [%mor (flop leg)] ted)
     ::  ~?  !=(~ leg)  [%transmute from/ted to/dat ~]
+    :: =-  ~&  (tufa buf)  -
     [dat abet:(apply(his.ven +(his.ven)) dat)]
   ::
   ++  remit                                             ::  conditional accept
@@ -124,6 +126,7 @@
   ++  transmit                                          ::  outgoing change
     |=  ted=sole-edit
     ^-  [sole-change sole-share]
+    :: =-  ~&  (tufa buf)  -
     [[[his.ven own.ven] (sham buf) ted] (commit ted)]
   ::
   ++  transceive                                        ::  receive and invert
