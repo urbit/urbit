@@ -50,9 +50,6 @@
         div {}, lines
       
       $ ->
-        termRev = 0
-        pressed = []
-        deltim = null
 
         met = $('<pre>').text('m').css(display: 'none').appendTo(term).width()
         subs = ""
@@ -108,16 +105,10 @@
         urb.bind "/sole", {wire:"/"}, (err,d)->
           if err then console.log err
           else if d.data then peer d.data
-
-        sendAction = (data)->
-          urb.send {mark: 'sole-action', data}, (e,res)->
-            if res.status isnt 200 then $('#err')[0].innerText = res.data.mess
+          
         
-        doEdit = (ted)->
-          det = buffer.transmit ted
-          sync ted
-          sendAction {det}
-        
+        pressed = []
+        deltim = null
         #later = (data)->
         #  if data
         #    pressed.push data
@@ -129,6 +120,16 @@
         #    pressed = []
         #  ), 500
 
+        sendAction = (data)->
+          urb.send {mark: 'sole-action', data}, (e,res)->
+            if res.status isnt 200 then $('#err')[0].innerText = res.data.mess
+        
+        doEdit = (ted)->
+          det = buffer.transmit ted
+          sync ted
+          sendAction {det}
+        
+        
         Mousetrap.handleKey = (char, mod, e)->
           norm = {
             capslock:  'caps'
