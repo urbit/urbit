@@ -159,6 +159,7 @@
               dif=(unit (list (trel path lobe cage)))   ::  changes
               muh=(map path lobe)                       ::  store hashes
               mut=(unit (list (trel path lobe cage)))   ::  mutations
+              mim=(map path mime)                       ::  mime cache
           ==                                            ::
 --  =>
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -198,10 +199,10 @@
       tag
     ==
   ::
-  ++  aver                                            ::  read
+  ++  aver                                              ::  read
     |=  mun=mood
     ^-  (unit (unit (each cage silk)))
-    ?:  &(=(p.mun %u) !=(p.q.mun now))                ::  prevent bad things
+    ?:  &(=(p.mun %u) !=(p.q.mun now))                  ::  prevent bad things
       ~&  [%clay-fail p.q.mun %now now]
       !!
     =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
@@ -352,7 +353,7 @@
     ==
   ::
   ++  echo                                              ::  announce changes
-    |=  [wen=@da mim=(map path mime) lem=nori]
+    |=  [wen=@da lem=nuri]
     ^+  +>
     %_    +>.$
         yel
@@ -365,7 +366,7 @@
            :_  $(q.p.lem t.q.p.lem)
            :-  hen
            :+  %note
-             ?-(-.q.i.q.p.lem %del '-', %ins '+', %mut ';', %dif ':')
+             ?-(-.q.i.q.p.lem %del '-', %ins '+', %dif ':')
            [%leaf (spud (weld pre p.i.q.p.lem))]
       ==
     ==
@@ -373,21 +374,29 @@
   ++  edit                                              ::  apply changes
     |=  [wen=@da lem=nori]
     ^+  +>
+    ~&  >>  [%editing-at wen let.dom]
     ?:  ?=(%| -.lem)
       =^  hat  +>.$
         (edit:ze wen lem)
       ?~  hat
         +>.$
-      (echo:(checkout-ankh u.hat) wen ~ lem)
+      (echo:(checkout-ankh u.hat) wen lem)
     ?.  =(~ dok)
       ~&  %already-applying-changes  +>
     =+  del=(skim q.p.lem :(corl (cury test %del) head tail))
     =+  ins=(skim q.p.lem :(corl (cury test %ins) head tail))
     =+  dif=(skim q.p.lem :(corl (cury test %dif) head tail))
     =+  mut=(skim q.p.lem :(corl (cury test %mut) head tail))
-    =+  inn=(skim ins :(corl (cury test %hoon) head tail tail))  ::  XX  wrong
-    =+  ink=(skim ins :(corl (cury test %ins) head tail tail))
-    =-  %_    +>.$                                      ::  XX  hoo{k,n}
+    =^  ink  ins
+      ^-  [(list (pair path miso)) (list (pair path miso))]
+      %+  skid  `(list (pair path miso))`ins
+      |=  [pax=path mis=miso]
+      ?>  ?=(%ins -.mis)
+      =-  ~&  >  [%nyay pax p.p.mis -]  -
+      ?&  ?=([?(%hoon %hook) *] (flop pax))
+          ?=(%mime p.p.mis)
+      ==
+    =-  %_    +>.$
             tag  (welp - tag)
             dok
           :-  ~
@@ -395,52 +404,99 @@
               |=  [pax=path mis=miso]
               ?>  ?=(%del -.mis)
               [pax p.mis]
-              %+  murn  
+          ::
+              %+  turn  ink
+              |=  [pax=path mis=miso]
+              ^-  (pair path cage)
+              ?>  ?=(%ins -.mis)
+              =+  =>((flop pax) ?~(. %$ i))
+              [pax - [%atom %t] ((hard ,@t) +>.q.q.p.mis)]
+          ::
               ~
+          ::
               %-  mo
               %+  turn  dif
               |=  [pax=path mis=miso]
-              ?>  ?=(%dif -.mis]
+              ?>  ?=(%dif -.mis)
               [pax p.mis]
+          ::
               ~
+          ::
               %-  mo
               %+  turn  mut
               |=  [pax=path mis=miso]
               ?>  ?=(%mut -.mis)
               [pax (page-to-lobe:ze p.mis q.q.mis)]
+          ::
               ~
+          ::
+              %-  mo  ^-  (list (pair path mime))
+              ;:  welp
+                ^-  (list (pair path mime))
+                %+  murn  ins
+                |=  [pax=path mis=miso]
+                ^-  (unit (pair path mime))
+                ?>  ?=(%ins -.mis)
+                ?.  ?=(%mime p.p.mis)
+                  ~&  >  [%nuh-uh pax p.p.mis]
+                  ~
+                ~&  >  [%well-okay pax p.p.mis]
+                `[pax ((hard mime) q.q.p.mis)]
+              ::
+                ^-  (list (pair path mime))
+                %+  murn  ink
+                |=  [pax=path mis=miso]
+                ^-  (unit (pair path mime))
+                ?>  ?=(%ins -.mis)
+                ?>  ?=(%mime p.p.mis)
+                ~&  >  [%gotcha pax p.p.mis]
+                `[pax ((hard mime) q.q.p.mis)]
+              ::
+                ^-  (list (pair path mime))
+                %+  murn  mut
+                |=  [pax=path mis=miso]
+                ^-  (unit (pair path mime))
+                ?>  ?=(%mut -.mis)
+                ?.  ?=(%mime p.q.mis)
+                  ~&  >  [%bad-idea pax p.q.mis]
+                  ~
+                ~&  >  [%good-idea pax p.q.mis]
+                `[pax ((hard mime) q.q.q.mis)]
+              ==
           ==
         ==
     ^-  (list move)
     :~  :*  hen  %pass
-            [%inserting (scot %p who) syd (scot %da wen)]
+            [%inserting (scot %p who) syd (scot %da wen) ~]
             %f  %exec  who  [who syd %da wen]  ~  %tabl
             ^-  (list (pair silk silk))
             %+  turn  ins
             |=  [pax=path mis=miso]
             ?>  ?=(%ins -.mis)
+            :-  [%done ~ %path -:!>(*path) pax]
             =+  =>((flop pax) ?~(. %$ i))
-            :-  [%done ~ -:!>(*path) pax]
             [%cast - [%done ~ p.mis]]
         ==
         :*  hen  %pass
-            [%diffing (scot %p who) syd (scot %da wen)]
+            [%diffing (scot %p who) syd (scot %da wen) ~]
             %f  %exec  who  [who syd %da wen]  ~  %tabl
             ^-  (list (pair silk silk))
             %+  turn  dif
             |=  [pax=path mis=miso]
             ?>  ?=(%dif -.mis)
-            =+  (need (need (read-x let.dom pax)))
+            =+  (need (need (read-x:ze let.dom pax)))
             ?>  ?=(%& -<)
-            [%pact p.- p.mis]
+            :-  [%done ~ %path -:!>(*path) pax]
+            [%pact [%done ~ p.-] [%done ~ p.mis]]
         ==
         :*  hen  %pass
-            [%mutating (scot %p who) syd (scot %da wen)]
+            [%mutating (scot %p who) syd (scot %da wen) ~]
             %f  %exec  who  [who syd %da wen]  ~  %tabl
             ^-  (list (pair silk silk))
             %+  turn  mut
             |=  [pax=path mis=miso]
             ?>  ?=(%mut -.mis)
+            :-  [%done ~ %path -:!>(*path) pax]
             [%diff [%done ~ p.mis] [%cast p.p.mis [%done ~ q.mis]]]
         ==
     ==
@@ -506,8 +562,7 @@
   ++  apply-edit
     |=  wen=@da
     ^+  +>
-    =+  ^=  hat
-        %^  edit:ze  wen  %&  :-  *cart
+    =+  ^-  sim=(list (pair path misu))
         ?~  dok
           ~|(%no-changes !!)
         ?>  ?=(^ ins.u.dok)
@@ -518,6 +573,9 @@
           (turn del.u.dok |=([pax=path cay=cage] [pax %del cay]))
         ::
           ^-  (list (pair path misu))
+          (turn ink.u.dok |=([pax=path cay=cage] [pax %ins cay]))
+        ::
+          ^-  (list (pair path misu))
           (turn u.ins.u.dok |=([pax=path cay=cage] [pax %ins cay]))
         ::
           ^-  (list (pair path misu))
@@ -526,10 +584,10 @@
           ^-  (list (pair path misu))
           (turn u.mut.u.dok |=([pax=path cal=[lobe cage]] [pax %dif cal]))
         ==
+    =+  hat=(edit:ze wen %& *cart sim)
     ?~  dok  ~&  %no-changes  !!
-    ?^  lon.u.dok  ~&  %not-done-diffing  !!
     ?~  -.hat
-      ([echo(dok ~)]:.(+>.$ +.hat) wen mim.u.dok %& *cart sot.u.dok)
+      ([echo(dok ~)]:.(+>.$ +.hat) wen %& *cart sim)
     (checkout-ankh(lat.ran lat.ran.+.hat) u.-.hat)
   ::
   ++  take-inserting
@@ -557,7 +615,7 @@
     ^+  +>
     ?~  dok
       ~&  %clay-take-diffing-unexpected-made  +>.$
-    ?.  =(~ ins.u.dok)
+    ?.  =(~ dif.u.dok)
       ~&  %clay-take-diffing-redundant-made  +>.$
     =-  =.  dif.u.dok  `-
         ?:  ?&  ?=(^ ins.u.dok)
@@ -566,9 +624,9 @@
           (apply-edit wen)
         +>.$
     ^-  (list (trel path lobe cage))
-    %+  murn  (tage-to-cages (made-to-tage res))
+    %+  turn  (tage-to-cages (made-to-tage res))
     |=  [pax=cage cay=cage]
-    ^-  (unit (pair path (pair lobe cage)))
+    ^-  (pair path (pair lobe cage))
     ?.  ?=(%path p.pax)
       ~|(%clay-take-diffing-strange-path-mark !!)
     =+  paf=((hard path) q.q.pax)
@@ -579,7 +637,7 @@
     ^+  +>
     ?~  dok
       ~&  %clay-take-mutating-unexpected-made  +>.$
-    ?.  =(~ ins.u.dng)
+    ?.  =(~ mut.u.dok)
       ~&  %clay-take-mutating-redundant-made  +>.$
     =-  =.  mut.u.dok  `-
         ?:  ?&  ?=(^ ins.u.dok)
@@ -596,7 +654,7 @@
     ?:  ?=(%null p.cay)
       ~
     =+  paf=((hard path) q.q.pax)
-    [paf (~(got by muh.u.dok) paf) cay]
+    `[paf (~(got by muh.u.dok) paf) cay]
     ::  |=  [wen=@da pax=path res=(each bead (list tank))]
     ::  ^+  +>
     ::  ?~  dok
@@ -640,24 +698,40 @@
         [[hen %note '!' %rose [" " "" ""] leaf/"clay patch failed" p.res] yel]
       ==
     ::  ~&  %editing
-    =^  hat  +>.$
-      (edit:ze now %& *cart ?~(dok ~|(%no-changes !!) sot.u.dok))
+    =+  ^-  sim=(list (pair path misu))
+        ?~  dok
+          ~|(%no-changes !!)
+        ?>  ?=(^ ins.u.dok)
+        ?>  ?=(^ dif.u.dok)
+        ?>  ?=(^ mut.u.dok)
+        ;:  welp
+          ^-  (list (pair path misu))
+          (turn del.u.dok |=([pax=path cay=cage] [pax %del cay]))
+        ::
+          ^-  (list (pair path misu))
+          (turn ink.u.dok |=([pax=path cay=cage] [pax %ins cay]))
+        ::
+          ^-  (list (pair path misu))
+          (turn u.ins.u.dok |=([pax=path cay=cage] [pax %ins cay]))
+        ::
+          ^-  (list (pair path misu))
+          (turn u.dif.u.dok |=([pax=path cal=[lobe cage]] [pax %dif cal]))
+        ::
+          ^-  (list (pair path misu))
+          (turn u.mut.u.dok |=([pax=path cal=[lobe cage]] [pax %dif cal]))
+        ==
+    =^  hat  +>.$  (edit:ze now %& *cart sim)  ::  XX  we do same thing in ++apply-edit
     ::  ~&  %edited
     =.  +>.$  wake
     ::  ~&  %woked
     ?~  dok  ~&  %no-dok  +>.$
-    ?^  lon.u.dok  ~&  %not-done-diffing  !!
     =>
       %=    .
           +>.$
-        ?<  ?=(~ hat)
-        %^    echo ::  :(checkout-ankh u.hat)
-            now
-          mim.u.dok
-        [%& *cart sot.u.dok]
+        ?<  ?=(~ hat)                                   ::  XX  whut?
+        (echo now %& *cart sim)
       ==
     ?~  dok  ~&  %no-dok  +>.$
-    ?^  lon.u.dok  ~&  %not-done-diffing  !!
     =+  cay=q.p.res
     ?@  p.cay  ~|  %patch-bad-marc  !!
     ::  ~&  %canning
@@ -691,21 +765,24 @@
         ==
     ::  ~&  %forming-ergo
     ::  =-  ~&  %formed-ergo  -
+    ~&  >>  [%already-dones (lent (~(tap by mim.u.dok)))]
     %_    +>.$
         dok  ~
         tag  ::  ?~(hez reg :_(reg [u.hez [%ergo who syd let.dom]]))
       :_  tag
-      :*  hen  [%ergoing (scot %p who) syd ~]  %f
+      :*  hen  %pass  [%ergoing (scot %p who) syd ~]  %f
           %exec  who  [who syd %da now]  ~  %tabl
           ^-  (list (pair silk silk))
-          %+  turn  sot.u.dok
+          %+  turn  sim
           |=  [a=path b=misu]
           ^-  (pair silk silk)
           :-  [%done ~ %path !>(a)]
           ?:  ?=(%del -.b)
             [%done ~ %null !>(~)]
           =+  (~(get by mim.u.dok) a)
-          ?^  -  [%done ~ %mime !>(u.-)]
+          ~&  >  [%maybe a]
+          ?^  -  ~&  >  %whew  [%done ~ %mime !>(u.-)]
+          ~&  >  %uh-oh
           :^  %cast  %mime  %done  :-  ~
           (need (read:ze %x [%ud let.dom] a))
       ==
@@ -1080,16 +1157,20 @@
         %delta      [%pact $(lob q.q.bol) [%volt ~ r.bol]]
       ==
     ::
-    ++  page-to-lobe  (corl shax jam)
+    ++  page-to-lobe  |=(* (shax (jam +<)))
     ++  make-direct                                     ::  make blob
       |=  p=page
       ^-  blob
       [%direct (page-to-lobe p) p]
     ::
     ++  make-delta                                      ::  make blob delta
-      |=  [p=lobe q=[p=mark q=lobe] r=page r=lobe]
+      |=  [p=[p=mark q=lobe] q=page]
       ^-  blob
-      [%delta p q r]
+      =+  t=[%delta 0 p q]
+      =+  ^=  has
+          %^  cat  7  (sham [%blob q.q])
+          (sham [%lobe p])
+      [%delta has p q]
     ::
     ++  make-yaki                                       ::  make yaki
       |=  [p=(list tako) q=(map path lobe) t=@da]
@@ -1142,10 +1223,10 @@
           =+  har=(~(get by hat) pax)
           ?~  har  !!
           %+  ~(put by bar)  pax
-          (make-delta [(lobe-to-mark u.har) u.har] [p q.q]:q.mys p.mys)
+          (make-delta [(lobe-to-mark u.har) u.har] [p q.q]:q.mys)
                                                         :: XX check vase !evil
         %+  ~(put by bar)  pax
-        (make-delta [(lobe-to-mark p.u.ber) p.u.ber] [p q.q]:q.mys p.mys)
+        (make-delta [(lobe-to-mark p.u.ber) p.u.ber] [p q.q]:q.mys)
                                                         :: XX check vase !evil
       ==
     ::
