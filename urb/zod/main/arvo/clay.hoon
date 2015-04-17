@@ -374,7 +374,6 @@
   ++  edit                                              ::  apply changes
     |=  [wen=@da lem=nori]
     ^+  +>
-    ~&  >>  [%editing-at wen let.dom]
     ?:  ?=(%| -.lem)
       =^  hat  +>.$
         (edit:ze wen lem)
@@ -392,7 +391,6 @@
       %+  skid  `(list (pair path miso))`ins
       |=  [pax=path mis=miso]
       ?>  ?=(%ins -.mis)
-      =-  ~&  >  [%nyay pax p.p.mis -]  -
       ?&  ?=([?(%hoon %hook) *] (flop pax))
           ?=(%mime p.p.mis)
       ==
@@ -438,9 +436,7 @@
                 ^-  (unit (pair path mime))
                 ?>  ?=(%ins -.mis)
                 ?.  ?=(%mime p.p.mis)
-                  ~&  >  [%nuh-uh pax p.p.mis]
                   ~
-                ~&  >  [%well-okay pax p.p.mis]
                 `[pax ((hard mime) q.q.p.mis)]
               ::
                 ^-  (list (pair path mime))
@@ -449,7 +445,6 @@
                 ^-  (unit (pair path mime))
                 ?>  ?=(%ins -.mis)
                 ?>  ?=(%mime p.p.mis)
-                ~&  >  [%gotcha pax p.p.mis]
                 `[pax ((hard mime) q.q.p.mis)]
               ::
                 ^-  (list (pair path mime))
@@ -458,9 +453,7 @@
                 ^-  (unit (pair path mime))
                 ?>  ?=(%mut -.mis)
                 ?.  ?=(%mime p.q.mis)
-                  ~&  >  [%bad-idea pax p.q.mis]
                   ~
-                ~&  >  [%good-idea pax p.q.mis]
                 `[pax ((hard mime) q.q.q.mis)]
               ==
           ==
@@ -765,7 +758,6 @@
         ==
     ::  ~&  %forming-ergo
     ::  =-  ~&  %formed-ergo  -
-    ~&  >>  [%already-dones (lent (~(tap by mim.u.dok)))]
     %_    +>.$
         dok  ~
         tag  ::  ?~(hez reg :_(reg [u.hez [%ergo who syd let.dom]]))
@@ -780,9 +772,7 @@
           ?:  ?=(%del -.b)
             [%done ~ %null !>(~)]
           =+  (~(get by mim.u.dok) a)
-          ~&  >  [%maybe a]
-          ?^  -  ~&  >  %whew  [%done ~ %mime !>(u.-)]
-          ~&  >  %uh-oh
+          ?^  -  [%done ~ %mime !>(u.-)]
           :^  %cast  %mime  %done  :-  ~
           (need (read:ze %x [%ud let.dom] a))
       ==

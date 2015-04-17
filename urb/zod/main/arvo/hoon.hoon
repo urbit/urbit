@@ -10213,7 +10213,6 @@
         eny=@                                           ::  entropy
         niz=(pair worm (list ,[p=@tas q=vase]))         ::  modules
     ==                                                  ::
-=.  lac  %|
 =<  |%
     ++  come  |=  [@ (list ovum) pone]                  ::  11
               ^-  [(list ovum) _+>]
