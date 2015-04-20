@@ -185,14 +185,16 @@
                     return
                   [input, history[offset]] = [history[offset], mapr.input]
                   offset++
-                  update {offset, history, input, cursor: input.length}
+                  doEdit set: input
+                  update {offset, history, cursor: input.length}
                 when 'down'
                   history = mapr.history.slice(); offset = mapr.offset
                   offset--
                   if history[offset] == undefined
                     return
                   [input, history[offset]] = [history[offset], mapr.input]
-                  update {offset, history, input, cursor: input.length}
+                  doEdit set: input
+                  update {offset, history, cursor: input.length}
                 when 'left' then if mapr.cursor > 0 
                   update cursor: mapr.cursor-1
                 when 'right' then if mapr.cursor < buffer.buf.length
