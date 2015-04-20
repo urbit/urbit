@@ -1142,8 +1142,9 @@
       =.  eve  (add-even ven)
       =<  abet
       ?~  ude  done
-      :: ~&  got-even/ude
-      (give-even(hen p.u.ude, ude ~) q.u.ude num ven)
+      =.  hen  p.u.ude
+      =.  ..ix  (pass-note of//[ire] [%t %rest era])
+      (give-even(ude ~) q.u.ude num ven)
     ::
     ++  give-even
       |=  [pol=? num=@u ven=even]  ^+  done
@@ -1167,7 +1168,7 @@
     ++  poll
       |=  a=@u  ^+  ..ix
       ?:  =(a p.eve)
-        ?^  ude  ~&(e/ix/wait/%replaced abet(u.ude [hen &]))
+        ?^  ude  ~&(e/ix/wait/replaced=p.u.ude abet(u.ude [hen &]))
         =.  era  (add ~s30 now)
         (pass-note:abet(ude [~ hen &]) of//[ire] [%t %wait era])
       ?:  (gth a p.eve)  ~|(seq-high/cur=p.eve !!)
