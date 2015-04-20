@@ -1853,7 +1853,7 @@
     |-  ^-  (unit ,@)
     ?~  a  ~
     ?:  =(b n.a)  [~ u=(peg c 2)]
-    ?:  (gor b n.a)
+    ?:  (hor b n.a)
       $(a l.a, c (peg c 6))
     $(a r.a, c (peg c 7))
   ::
