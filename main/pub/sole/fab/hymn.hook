@@ -45,7 +45,7 @@
           span {style: background: 'lightgray'}, buf.slice(0,cur), "\u0332", buf.slice(cur)
         
       Matr = recl render: ->
-        lines = @props.rows.slice().reverse().map (lin)-> pre {}, lin, " "
+        lines = @props.rows.map (lin)-> pre {}, lin, " "
         lines.push Prompt {prompt:@props.prompt, input:@props.input, cursor:@props.cursor}
         div {}, lines
       
@@ -76,7 +76,14 @@
           if background
             setTimeout (-> flash $el,''), 50
             
-        matr = rend (Matr rows:[], prompt:"", input:"", history:[], cursor:0), term
+        matr = rend (Matr
+          rows:[]
+          prompt:""
+          input:""
+          cursor:0
+          history:[]
+          offset:0  ), term
+        window.matr = matr
         update = (a) -> matr.setProps a
         buffer = new Share ""
         window.buffer = buffer
@@ -85,8 +92,9 @@
         
         peer = (ruh) ->
           if ruh.map then return ruh.map peer
+          mapr = matr.props
           switch Object.keys(ruh)[0]
-            when 'txt' then update rows: [ruh.txt, matr.props.rows...]
+            when 'txt' then update rows: [mapr.rows..., ruh.txt]
             when 'tan' then ruh.tan.split("\n").reverse().map (txt)-> peer {txt}
             when 'hop' then update cursor: buffer.transpose ruh.hop #; peer act:'bel'
             when 'pro' then update prompt: ruh.pro.cad
@@ -98,7 +106,10 @@
               when 'nex' then update
                 input: ""
                 cursor: 0
-                history: [matr.props.input, matr.props.history...]
+                history: 
+                  if !mapr.input then mapr.history
+                  else [mapr.input, mapr.history...]
+                offset: 0
             #   else throw "Unknown "+(JSON.stringify ruh)
             else v = Object.keys(ruh); console.log v, ruh[v[0]]
         
@@ -138,66 +149,102 @@
             backspace: 'baxp'
             enter:     'entr'
           }
-          key = 
-            if char.length is 1
+          
+          key = switch
+            when char.length is 1
               if e.type is 'keypress'
+                chac = char.charCodeAt(0)
+                if chac < 32          # normalize ctrl keys
+                  char = String.fromCharCode chac | 96
                 str: char
-            else if e.type is 'keydown'
+            when e.type is 'keydown'
               if char isnt 'space'
                 act: norm[char] ? char
-            else if e.type is 'keyup' and norm[key] is 'caps'
+            when e.type is 'keyup' and norm[key] is 'caps'
               act: 'uncap'
-          if key
-            e.preventDefault()
-            curs = matr.props.cursor
-            if key.str
-              doEdit ins: cha: key.str, at: curs
-              update cursor: curs+1
-            switch key.act
-              when 'entr' then sendAction 'ret'
-              when 'left' then if curs > 0 
-                update cursor: curs-1
-              when 'right' then if curs < buffer.buf.length
-                update cursor: curs+1
-              when 'baxp' then if curs > 0
-                doEdit del: curs-1
-              #else (if key.act then console.log key.act)
-                
-            # amod = (arr)->
-            #   for i in arr
-            #     unless mod.indexOf(i) < 0
-            #       return yes
-            #   no
-            # if key.str or key.act is 'baxp' or key.act is 'entr'
-            #   termRev++
-            #   [bot, rest...] = old = matr.props.rows
-            #   matr.setProps rows:(
-            #     switch  key.act 
-            #       when 'baxp'
-            #         if amod ['ctrl', 'meta']
-            #           ['', rest...]
-            #         else if amod ['alt']
-            #           [(bot.replace /\ *[^ ]*$/, ''), rest...]
-            #         else if bot and bot.length 
-            #           [bot.slice(0, -1), rest...]
-            #         else if rest[0] and rest[0].length
-            #           res = rest.slice()
-            #           res[0] = res[0].slice(0, -1)
-            #           res
-            #         else rest
-            #       when 'entr'
-            #         ['', old...]
-            #       when undefined
-            #         if mod.length > 1 or (mod.length and !amod ['shift'])
-            #           old
-            #         else unless old and bot isnt null
-            #           [key.str]
-            #         #else if bot.length is termWif
-            #         #  [key.str, old...]
-            #         else [bot + key.str, rest...]
-            #   )
-            #   document.title = "Matri"  # XX  debug
-            # later {mod, key}
+          if !key then return
+          if key.act and key.act in mod
+            return
+          e.preventDefault()
+          mapr = matr.props
+          #[fore, aft] = (
+          #  [sli,cur] = [mapr.input.slice, mapr.cursor]
+          #  [sli(0, cur), sli(cur)]
+          #)
+
+          switch mod.sort().join '-'
+            when '', 'shift'
+              if key.str
+                doEdit ins: cha: key.str, at: mapr.cursor
+                update cursor: mapr.cursor+1
+              switch key.act
+                when 'entr' then sendAction 'ret'
+                when 'up'
+                  history = mapr.history.slice(); offset = mapr.offset
+                  if history[offset] == undefined
+                    return
+                  [input, history[offset]] = [history[offset], mapr.input]
+                  offset++
+                  update {offset, history, input, cursor: input.length}
+                when 'down'
+                  history = mapr.history.slice(); offset = mapr.offset
+                  offset--
+                  if history[offset] == undefined
+                    return
+                  [input, history[offset]] = [history[offset], mapr.input]
+                  update {offset, history, input, cursor: input.length}
+                when 'left' then if mapr.cursor > 0 
+                  update cursor: mapr.cursor-1
+                when 'right' then if mapr.cursor < buffer.buf.length
+                  update cursor: mapr.cursor+1
+                when 'baxp' then if mapr.cursor > 0
+                  doEdit del: mapr.cursor-1
+                #else (if key.act then console.log key.act)
+            when 'ctrl'
+              switch key.str
+                when 'a' then update cursor: 0
+                when 'e' then update cursor: mapr.input.length
+                else switch key.act
+                  when 'entr' then peer act: 'bel'
+                  else console.log mod, str key
+            else console.log mod, str key
+
+          
+          #amod = (arr)->
+          #  for i in arr
+          #    unless mod.indexOf(i) < 0
+          #      return yes
+          #  no
+          # if key.str or key.act is 'baxp' or key.act is 'entr'
+          #   termRev++
+          #   [bot, rest...] = old = matr.props.rows
+          #   matr.setProps rows:(
+          #     switch  key.act 
+          #       when 'baxp'
+          #         if amod ['ctrl', 'meta']
+          #           ['', rest...]
+          #         else if amod ['alt']
+          #           [(bot.replace /\ *[^ ]*$/, ''), rest...]
+          #         else if bot and bot.length 
+          #           [bot.slice(0, -1), rest...]
+          #         else if rest[0] and rest[0].length
+          #           res = rest.slice()
+          #           res[0] = res[0].slice(0, -1)
+          #           res
+          #         else rest
+          #       when 'entr'
+          #         ['', old...]
+          #       when undefined
+          #         if mod.length > 1 or (mod.length and !amod ['shift'])
+          #           old
+          #         else unless old and bot isnt null
+          #           [key.str]
+          #         #else if bot.length is termWif
+          #         #  [key.str, old...]
+          #         else [bot + key.str, rest...]
+          #   )
+          #   document.title = "Matri"  # XX  debug
+          # later {mod, key}
 
 
       '''

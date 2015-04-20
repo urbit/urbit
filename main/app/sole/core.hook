@@ -574,18 +574,10 @@
       =-  [(add pos.inp (lent p.vew)) (weld (tuba p.vew) q.vew)]
       ^=  vew  ^-  (pair tape (list ,@c))
       ?:  vis.pom  [cad.pom buf.say.inp]
-      :-  ;:  welp
-            cad.pom
-            ?~  buf.say.inp  ~
-            ;:  welp
-              "<"
-              (scow %p (end 4 1 (sham buf.say.inp)))
-              "> "
-            ==
-          ==
-      =+  len=(lent buf.say.inp) 
-      |-  ^-  (list ,@c) 
-      ?:(=(0 len) ~ [`@c`'*' $(len (dec len))])
+      :-  %+  welp  cad.pom
+          ?~  buf.say.inp  ~
+          "<{(scow %p (end 4 1 (sham buf.say.inp)))}> "
+      (turn buf.say.inp ,_`@c`'*')
     --
   --
 ++  peer
