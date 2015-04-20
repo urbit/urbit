@@ -1691,7 +1691,7 @@
             =+  (lent (~(tap in `(set yaki)`r)))
             (error:he %merge-criss-cross >[-]< ~)
           =.  bas.dat  n.r
-          ?:  ?=(?(%meet %meld) gem.dat)
+          ?:  ?=(?(%mate %meld) gem.dat)
             diff-ali
           =.  new.dal.dat
             %-  mo
@@ -1700,7 +1700,7 @@
             (~(has by q.bas.dat) pax)
           =.  cal.dal.dat
             %-  mo
-            %+  skip  `(list (pair path lobe))`(~(tap by q.ali.dat))
+            %+  skip  (~(tap by q.ali.dat))
             |=  [pax=path lob=lobe]
             =+  (~(get by q.bas.dat) pax)
             |(=(~ -) =([~ lob] -))
@@ -1737,14 +1737,19 @@
             `[pax ~]
           =+  ^=  bof
               %-  %~  int  by
-                  %-  ~(uni by `(map path ,*)`new.dal.dat)
-                  %-  ~(uni by `(map path ,*)`cal.dal.dat)
-                  %-  ~(uni by `(map path ,*)`can.dal.dat)
+                  =-  ~&  >  [%first -]  -
+                  %-  ~(uni by =-(~&(> [%uno -] -) `(map path ,*)`new.dal.dat))
+                  %-  ~(uni by =-(~&(> [%dos -] -) `(map path ,*)`cal.dal.dat))
+                  %-  ~(uni by =-(~&(> [%tres -] -) `(map path ,*)`can.dal.dat))
+                  =-  ~&  >  [%quatro -]  -
                   `(map path ,*)`old.dal.dat
-              %-  ~(uni by `(map path ,*)`new.dob.dat)
-              %-  ~(uni by `(map path ,*)`cal.dob.dat)
-              %-  ~(uni by `(map path ,*)`can.dob.dat)
+              =-  ~&  >  [%second -]  -
+              %-  ~(uni by =-(~&(> [%adin -] -) `(map path ,*)`new.dob.dat))
+              %-  ~(uni by =-(~&(> [%dva -] -) `(map path ,*)`cal.dob.dat))
+              %-  ~(uni by =-(~&(> [%tri -] -) `(map path ,*)`can.dob.dat))
+              =-  ~&  >  [%chteri -]  -
               `(map path ,*)`old.dob.dat
+          ~&  bof
           ?^  bof
             (error:he %meet-conflict >(~(run by `(map path ,*)`bof) ,_~)< ~)
           =+  ^-  old=(map path lobe)
@@ -1769,7 +1774,7 @@
         ==
       ::
       ++  diff-bas
-        |=  [nam=term yak=yaki oth=(pair ship desk)]
+        |=  [nam=term yak=yaki oth=(pair ship desk) yuk=yaki]
         ^+  +>
         =-  %_(+>.$ tag [- tag])
         :*  hen  %pass
@@ -1780,19 +1785,24 @@
             %+  murn  (~(tap by q.bas.dat))
             |=  [pax=path lob=lobe]
             ^-  (unit (pair silk silk))
-            =+  (~(get by q.yak) pax)
+            =+  a=(~(get by q.yak) pax)
+            ?~  a
+              ~
+            ?:  =(lob u.a)
+              ~
+            =+  (~(get by q.yuk) pax)
             ?~  -
               ~
-            ?:  =(lob u.-)
+            ?:  =(u.a u.-)
               ~
             :-  ~
             :-  [%done ~ %path !>(pax)]
-            [%diff (lobe-to-silk pax lob) (lobe-to-silk pax u.-)]
+            [%diff (lobe-to-silk pax lob) (lobe-to-silk pax u.a)]
         ==
       ::
       ++  diff-ali
         ^+  .
-        (diff-bas %ali ali.dat ali)
+        (diff-bas %ali ali.dat ali bob.dat)
       ::
       ++  diffed-ali
         |=  res=(each bead (list tank))
@@ -1830,6 +1840,16 @@
           %+  skip  (~(tap by q.ali.dat))
           |=  [pax=path lob=lobe]
           (~(has by q.bas.dat) pax)
+        =.  cal.dal.dat
+          %-  mo
+          %+  skim  (~(tap by q.bas.dat))
+          |=  [pax=path lob=lobe]
+          =+  a=(~(get by q.ali.dat) pax)
+          =+  b=(~(get by q.bob.dat) pax)
+          ?&  ?=(^ a)
+              !=([~ lob] a)
+              =([~ lob] b)
+          ==
         =.  can.dal.dat  can
         =.  old.dal.dat
           %-  mo  ^-  (list ,[path ~])
@@ -1842,7 +1862,7 @@
       ::
       ++  diff-bob
         ^+  .
-        (diff-bas %bob bob.dat bob)
+        (diff-bas %bob bob.dat bob ali.dat)
       ::
       ++  diffed-bob
         |=  res=(each bead (list tank))
@@ -1880,6 +1900,16 @@
           %+  skip  (~(tap by q.bob.dat))
           |=  [pax=path lob=lobe]
           (~(has by q.bas.dat) pax)
+        =.  cal.dob.dat
+          %-  mo
+          %+  skim  (~(tap by q.bas.dat))
+          |=  [pax=path lob=lobe]
+          =+  a=(~(get by q.ali.dat) pax)
+          =+  b=(~(get by q.bob.dat) pax)
+          ?&  ?=(^ b)
+              !=([~ lob] b)
+              =([~ lob] a)
+          ==
         =.  can.dob.dat  can
         =.  old.dob.dat
           %-  mo  ^-  (list ,[path ~])
@@ -1893,49 +1923,7 @@
       ++  merge
         ^+  .
         |-  ^+  +.$
-        ?+    gem.dat  ~|  %merge-weird-gem  !!
-          ::    %meet
-          ::  =+  ^=  bof
-          ::      %-  %~  int  by
-          ::          %-  ~(uni by `(map path ,*)`new.dal.dat)
-          ::          %-  ~(uni by `(map path ,*)`can.dal.dat)
-          ::          `(map path ,*)`old.dal.dat
-          ::      %-  ~(uni by `(map path ,*)`new.dob.dat)
-          ::      %-  ~(uni by `(map path ,*)`can.dob.dat)
-          ::      `(map path ,*)`old.dob.dat
-          ::  ?^  bof
-          ::    (error:he %meet-conflict >(~(run by `(map path ,*)`bof) ,_~)< ~)
-          ::  =+  ^-  old=(map path lobe)
-          ::      %+  roll  (~(tap by (~(uni by old.dal.dat) old.dob.dat)))
-          ::      =<  .(old q.bas.dat)
-          ::      |=  [[pax=path ~] old=(map path lobe)]
-          ::      (~(del by old) pax)
-          ::  =^  hat  lat.ran
-          ::    ^-  [(map path lobe) (map lobe blob)]
-          ::    %+  roll  (~(tap by (~(uni by can.dal.dat) can.dob.dat)))
-          ::    =<  .(lat lat.ran)
-          ::    |=  [[pax=path cay=cage] hat=(map path lobe) lat=(map lobe blob)]
-          ::    =+  ^=  bol
-          ::        =+  (~(get by q.bas.dat) pax)
-          ::        ?~  -
-          ::          ~|  %meet-strange-diff-no-base
-          ::          !!
-          ::        (make-delta [(lobe-to-mark u.-) u.-] [p q.q]:cay)
-          ::    [(~(put by hat) pax p.bol) (~(put by lat) p.bol bol)]
-          ::  =.  hat
-          ::    %-  ~(uni by old)
-          ::    %-  ~(uni by new.dal.dat)
-          ::    %-  ~(uni by new.dob.dat)
-          ::    hat
-          ::  =+  ^-  del=(map path ,?)
-          ::      (~(run by (~(uni by old.dal.dat) old.dob.dat)) |=(~ %|))
-          ::  =.  new.dat
-          ::    (make-yaki [r.ali.dat r.bob.dat ~] hat now)
-          ::  =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
-          ::  =.  erg.dat  %-  ~(uni by del)                ::  XX  totes wrong
-          ::               `(map path ,?)`(~(run by hat) |=(lobe %&))
-          ::  checkout
-        ::
+        ?+    gem.dat  ~|  [%merge-weird-gem gem.dat]  !!
             ?(%mate %meld)
           =+  ^=  bof
               %-  %~  int  by
@@ -2065,6 +2053,8 @@
           %-  ~(uni by old)
           %-  ~(uni by new.dal.dat)
           %-  ~(uni by new.dob.dat)
+          %-  ~(uni by cal.dal.dat)
+          %-  ~(uni by cal.dob.dat)
           %-  ~(uni by hat)
           cas
         =+  ^-  del=(map path ,?)
