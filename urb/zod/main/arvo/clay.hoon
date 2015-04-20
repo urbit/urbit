@@ -47,6 +47,7 @@
               bas=yaki                                  ::  mergebase
               dal=cane                                  ::  diff(bas,ali)
               dob=cane                                  ::  diff(bas,bob)
+              bof=(map path (unit cage))                ::  conflicts
               new=yaki                                  ::  merge(dal,dob)
               ank=ankh                                  ::  new state
               erg=(map path ,?)                         ::  ergoable changes
@@ -1564,6 +1565,7 @@
           %diff-ali   %-  diffed-ali   ?>  ?=(%| -.res)  p.res
           %diff-bob   %-  diffed-bob   ?>  ?=(%| -.res)  p.res
           %merge      %-  merged       ?>  ?=(%| -.res)  p.res
+          %built      %-  built        ?>  ?=(%| -.res)  p.res
           %checkout   %-  checked-out  ?>  ?=(%| -.res)  p.res
           %ergo       %-  ergoed       ?>  ?=(%| -.res)  p.res
         ==
@@ -1925,16 +1927,6 @@
         |-  ^+  +.$
         ?+    gem.dat  ~|  [%merge-weird-gem gem.dat]  !!
             ?(%mate %meld)
-          =+  ^=  bof
-              %-  %~  int  by
-                  %-  ~(uni by `(map path ,*)`new.dal.dat)
-                  %-  ~(uni by `(map path ,*)`can.dal.dat)
-                  `(map path ,*)`old.dal.dat
-              %-  ~(uni by `(map path ,*)`new.dob.dat)
-              %-  ~(uni by `(map path ,*)`can.dob.dat)
-              `(map path ,*)`old.dob.dat
-          ?~  bof
-            $(gem.dat %meet)
           =-  %_(+.$ tag [- tag])
           :*  hen  %pass
               [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %merge ~]
@@ -1955,7 +1947,6 @@
       ::
       ++  merged
         |=  res=(each bead (list tank))
-        ^+  +>
         ?:  ?=(%| -.res)
           (error:he %merge-bad-made leaf/"merging failed" p.res)
         =+  cay=q.p.res
@@ -1976,6 +1967,61 @@
           =+  coy=(slot 2 q.cay)
           ?@  q.coy
             +.$(+>.$ (error:he %merge-strange-coy ~))
+          %_    +.$
+              bof
+            %+  ~(put by bof:tal)
+              ((hard path) -.q.coy)
+            ?:  ?=(%null q.i.p.p.cay)
+              ~
+            `[q.i.p.p.cay (slot 3 coy)]
+          ==
+        ?:  ?=(%| -.gon.dat)
+          +>.$
+        =.  bof.dat  bof
+        build
+      ::
+      ++  build
+        ^+  .
+        =-  %_(+ tag [- tag])
+        :*  hen  %pass
+            [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout ~]
+            %f  %exec  p.bob  [p.bob q.bob cas.dat]  ~  %tabl
+            ^-  (list (pair silk silk))
+            %+  turn  (~(tap by bof.dat))
+            |=  [a=path b=(unit cage)]
+            ^-  (pair silk silk)
+            :-  [%done ~ %path !>(a)]
+            =+  (~(get by q.bas.dat) pax)
+            ?~  -
+              ~|  %mate-strange-diff-no-base
+              !!
+            [%pact (lobe-to-silk a u.-) [%volt ~ b]]
+        ==
+
+      ::
+      ++  built
+        |=  res=(each bead (list tank))
+        ^+  +>
+        ?:  ?=(%| -.res)
+          (error:he %build-bad-made leaf/"delta building failed" p.res)
+        =+  cay=q.p.res
+        ?@  p.cay
+          (error:he %build-bad-marc >p.cay< ~)
+        =|  bof=(map path (unit cage))
+        =>
+          |-  ^+  +
+          ?~  p.p.cay
+            +.$(bof ~)
+          =+  tal=%_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
+          ?:  ?=(%| -.gon.dat.tal)
+            tal
+          ?.  ?=(%path p.i.p.p.cay)
+            +.$(+>.$ (error:he %build-strange-marc-a >p.i.p.p.cay< ~))
+          ?.  ?=(@ q.i.p.p.cay)
+            +.$(+>.$ (error:he %build-strange-marc-b >q.i.p.p.cay< ~))
+          =+  coy=(slot 2 q.cay)
+          ?@  q.coy
+            +.$(+>.$ (error:he %build-strange-coy ~))
           %_    +.$
               bof
             %+  ~(put by bof:tal)
@@ -2027,8 +2073,6 @@
             |=  [[pax=path ~] old=(map path lobe)]
             (~(del by old) pax)
         =+  ^-  can=(map path cage)                     ::  content changes
-            %-  ~(uni by can.dal.dat)
-            %-  ~(uni by can.dob.dat)
             %-  mo
             ^-  (list (pair path cage))
             %+  murn  (~(tap by bof))
