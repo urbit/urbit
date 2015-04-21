@@ -197,18 +197,26 @@
                   update {offset, history, cursor: input.length}
                 when 'left' then if mapr.cursor > 0 
                   update cursor: mapr.cursor-1
-                when 'right' then if mapr.cursor < buffer.buf.length
+                when 'right' then if mapr.cursor < mapr.input.length
                   update cursor: mapr.cursor+1
                 when 'baxp' then if mapr.cursor > 0
                   doEdit del: mapr.cursor-1
                 #else (if key.act then console.log key.act)
-            when 'ctrl'
-              switch key.str
-                when 'a' then update cursor: 0
-                when 'e' then update cursor: mapr.input.length
-                else switch key.act
-                  when 'entr' then peer act: 'bel'
-                  else console.log mod, str key
+            when 'ctrl' then switch key.str || key.act
+              when 'a','left'  then update cursor: 0
+              when 'e','right' then update cursor: mapr.input.length
+              when 'entr' then peer act: 'bel'
+              else console.log mod, str key
+            when 'alt' then switch key.str || key.act
+              when 'f','right'
+                rest = mapr.input.slice(mapr.cursor)
+                rest = rest.match(/[^a-z0-9]*[a-z0-9]*/)[0]
+                update cursor: mapr.cursor + rest.length
+              when 'b','left'
+                prev = mapr.input.slice(0,mapr.cursor)
+                prev = prev.split('').reverse().join('')  # XX
+                prev = prev.match(/[^a-z0-9]*[a-z0-9]*/)[0]
+                update cursor: mapr.cursor - prev.length
             else console.log mod, str key
 
           
