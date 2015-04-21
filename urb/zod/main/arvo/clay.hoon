@@ -47,7 +47,8 @@
               bas=yaki                                  ::  mergebase
               dal=cane                                  ::  diff(bas,ali)
               dob=cane                                  ::  diff(bas,bob)
-              bof=(map path (unit cage))                ::  conflicts
+              bof=(map path (unit cage))                ::  conflict diffs
+              bop=(map path cage)                       ::  conflict patches
               new=yaki                                  ::  merge(dal,dob)
               ank=ankh                                  ::  new state
               erg=(map path ,?)                         ::  ergoable changes
@@ -1156,13 +1157,9 @@
       [%direct (page-to-lobe p) p]
     ::
     ++  make-delta                                      ::  make blob delta
-      |=  [p=[p=mark q=lobe] q=page]
+      |=  [p=lobe q=[p=mark q=lobe] r=page]
       ^-  blob
-      =+  t=[%delta 0 p q]
-      =+  ^=  has
-          %^  cat  7  (sham [%blob q.q])
-          (sham [%lobe p])
-      [%delta has p q]
+      [%delta p q r]
     ::
     ++  make-yaki                                       ::  make yaki
       |=  [p=(list tako) q=(map path lobe) t=@da]
@@ -1215,10 +1212,10 @@
           =+  har=(~(get by hat) pax)
           ?~  har  !!
           %+  ~(put by bar)  pax
-          (make-delta [(lobe-to-mark u.har) u.har] [p q.q]:q.mys)
+          (make-delta p.mys [(lobe-to-mark u.har) u.har] [p q.q]:q.mys)
                                                         :: XX check vase !evil
         %+  ~(put by bar)  pax
-        (make-delta [(lobe-to-mark p.u.ber) p.u.ber] [p q.q]:q.mys)
+        (make-delta p.mys [(lobe-to-mark p.u.ber) p.u.ber] [p q.q]:q.mys)
                                                         :: XX check vase !evil
       ==
     ::
@@ -1565,7 +1562,7 @@
           %diff-ali   %-  diffed-ali   ?>  ?=(%| -.res)  p.res
           %diff-bob   %-  diffed-bob   ?>  ?=(%| -.res)  p.res
           %merge      %-  merged       ?>  ?=(%| -.res)  p.res
-          %built      %-  built        ?>  ?=(%| -.res)  p.res
+          %build      %-  built        ?>  ?=(%| -.res)  p.res
           %checkout   %-  checked-out  ?>  ?=(%| -.res)  p.res
           %ergo       %-  ergoed       ?>  ?=(%| -.res)  p.res
         ==
@@ -1739,19 +1736,14 @@
             `[pax ~]
           =+  ^=  bof
               %-  %~  int  by
-                  =-  ~&  >  [%first -]  -
-                  %-  ~(uni by =-(~&(> [%uno -] -) `(map path ,*)`new.dal.dat))
-                  %-  ~(uni by =-(~&(> [%dos -] -) `(map path ,*)`cal.dal.dat))
-                  %-  ~(uni by =-(~&(> [%tres -] -) `(map path ,*)`can.dal.dat))
-                  =-  ~&  >  [%quatro -]  -
+                  %-  ~(uni by `(map path ,*)`new.dal.dat)
+                  %-  ~(uni by `(map path ,*)`cal.dal.dat)
+                  %-  ~(uni by `(map path ,*)`can.dal.dat)
                   `(map path ,*)`old.dal.dat
-              =-  ~&  >  [%second -]  -
-              %-  ~(uni by =-(~&(> [%adin -] -) `(map path ,*)`new.dob.dat))
-              %-  ~(uni by =-(~&(> [%dva -] -) `(map path ,*)`cal.dob.dat))
-              %-  ~(uni by =-(~&(> [%tri -] -) `(map path ,*)`can.dob.dat))
-              =-  ~&  >  [%chteri -]  -
+              %-  ~(uni by `(map path ,*)`new.dob.dat)
+              %-  ~(uni by `(map path ,*)`cal.dob.dat)
+              %-  ~(uni by `(map path ,*)`can.dob.dat)
               `(map path ,*)`old.dob.dat
-          ~&  bof
           ?^  bof
             (error:he %meet-conflict >(~(run by `(map path ,*)`bof) ,_~)< ~)
           =+  ^-  old=(map path lobe)
@@ -1984,18 +1976,21 @@
         ^+  .
         =-  %_(+ tag [- tag])
         :*  hen  %pass
-            [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout ~]
+            [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %build ~]
             %f  %exec  p.bob  [p.bob q.bob cas.dat]  ~  %tabl
             ^-  (list (pair silk silk))
-            %+  turn  (~(tap by bof.dat))
-            |=  [a=path b=(unit cage)]
-            ^-  (pair silk silk)
-            :-  [%done ~ %path !>(a)]
+            %+  murn  (~(tap by bof.dat))
+            |=  [pax=path cay=(unit cage)]
+            ^-  (unit (pair silk silk))
+            ?~  cay
+              ~
+            :-  ~
+            :-  [%done ~ %path !>(pax)]
             =+  (~(get by q.bas.dat) pax)
             ?~  -
               ~|  %mate-strange-diff-no-base
               !!
-            [%pact (lobe-to-silk a u.-) [%volt ~ b]]
+            [%pact (lobe-to-silk pax u.-) [%done ~ u.cay]]
         ==
 
       ::
@@ -2007,11 +2002,11 @@
         =+  cay=q.p.res
         ?@  p.cay
           (error:he %build-bad-marc >p.cay< ~)
-        =|  bof=(map path (unit cage))
+        =|  bop=(map path cage)
         =>
           |-  ^+  +
           ?~  p.p.cay
-            +.$(bof ~)
+            +.$(bop ~)
           =+  tal=%_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
           ?:  ?=(%| -.gon.dat.tal)
             tal
@@ -2023,18 +2018,17 @@
           ?@  q.coy
             +.$(+>.$ (error:he %build-strange-coy ~))
           %_    +.$
-              bof
-            %+  ~(put by bof:tal)
+              bop
+            %+  ~(put by bop:tal)
               ((hard path) -.q.coy)
-            ?:  ?=(%null q.i.p.p.cay)
-              ~
-            `[q.i.p.p.cay (slot 3 coy)]
+            [q.i.p.p.cay (slot 3 coy)]
           ==
         ?:  ?=(%| -.gon.dat)
           +>.$
+        =.  bop.dat  bop
         =+  ^-  con=(map path ,*)                       ::  2-change conflict
             %-  mo
-            %+  skim  (~(tap by bof))
+            %+  skim  (~(tap by bof.dat))
             |=([pax=path cay=(unit cage)] ?=(~ cay))
         =+  ^-  cas=(map path lobe)                     ::  conflict base
             %-  ~(urn by con)
@@ -2075,7 +2069,7 @@
         =+  ^-  can=(map path cage)                     ::  content changes
             %-  mo
             ^-  (list (pair path cage))
-            %+  murn  (~(tap by bof))
+            %+  murn  (~(tap by bof.dat))
             |=  [pax=path cay=(unit cage)]
             ^-  (unit (pair path cage))
             ?~  cay
@@ -2091,7 +2085,10 @@
               ?~  -
                 ~|  %mate-strange-diff-no-base
                 !!
-              (make-delta [(lobe-to-mark u.-) u.-] [p q.q]:cay)
+              %^    make-delta
+                  (page-to-lobe [p q.q]:(~(got by bop.dat) pax))
+                [(lobe-to-mark u.-) u.-]
+              [p q.q]:cay
           [(~(put by hat) pax p.bol) (~(put by lat) p.bol bol)]
         =.  hat                                         ::  all the content
           %-  ~(uni by old)
@@ -2119,10 +2116,12 @@
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout ~]
             %f  %exec  p.bob  [p.val q.val cas.dat]  ~  %tabl
             ^-  (list (pair silk silk))
-            %+  turn  (~(tap by q.new.dat))
-            |=  [a=path b=lobe]
-            ^-  (pair silk silk)
-            [[%done ~ %path !>(a)] (lobe-to-silk a b)]
+            %+  murn  (~(tap by q.new.dat))
+            |=  [pax=path lob=lobe]
+            ^-  (unit (pair silk silk))
+            ?:  (~(has by bop.dat) pax)
+              ~
+            `[[%done ~ %path !>(pax)] (lobe-to-silk pax lob)]
         ==
       ::
       ++  checked-out
@@ -2158,7 +2157,7 @@
           +>.$
         =.  let.dom  +(let.dom)
         =.  hit.dom  (~(put by hit.dom) let.dom r.new.dat)
-        =.  ank.dat  (checkout-ankh:ze (mo can))
+        =.  ank.dat  (checkout-ankh:ze (~(uni by bop.dat) (mo can)))
         =.  ank.dom  ank.dat
         ?~  hez
           (done:he ~)
