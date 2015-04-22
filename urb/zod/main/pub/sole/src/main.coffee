@@ -38,6 +38,7 @@ $ ->
     $el.css {background}
     if background
       setTimeout (-> flash $el,''), 50
+  bell = -> flash ($ 'body'), 'black'
 
   matr = rend (Matr
     rows:[]
@@ -59,13 +60,13 @@ $ ->
     switch Object.keys(ruh)[0]
       when 'txt' then update rows: [mapr.rows..., ruh.txt]
       when 'tan' then ruh.tan.split("\n").reverse().map (txt)-> peer {txt}
-      when 'hop' then update cursor: buffer.transpose ruh.hop #; peer act:'bel'
+      when 'hop' then update cursor: ruh.hop; bell() # XX buffer.transpose?
       when 'pro' then update prompt: ruh.pro.cad
       when 'blk' then console.log "Stub #{str ruh}"
       when 'det' then buffer.receive ruh.det; sync ruh.det.ted
       when 'act' then switch ruh.act
         when 'clr' then update rows:[]
-        when 'bel' then flash ($ 'body'), 'black'
+        when 'bel' then bell()
         when 'nex' then update
           input: ""
           cursor: 0
@@ -103,38 +104,9 @@ $ ->
     sync ted
     sendAction {det}
 
-
-  Mousetrap.handleKey = (char, mod, e)->
-    norm = {
-      capslock:  'caps'
-      pageup:    'pgup'
-      pagedown:  'pgdn'
-      backspace: 'baxp'
-      enter:     'entr'
-    }
-
-    key = switch
-      when char.length is 1
-        if e.type is 'keypress'
-          chac = char.charCodeAt(0)
-          if chac < 32          # normalize ctrl keys
-            char = String.fromCharCode chac | 96
-          str: char
-      when e.type is 'keydown'
-        if char isnt 'space'
-          act: norm[char] ? char
-      when e.type is 'keyup' and norm[key] is 'caps'
-        act: 'uncap'
-    if !key then return
-    if key.act and key.act in mod
-      return
-    e.preventDefault()
+  yank = ''
+  eatKyev= (mod, key)->
     mapr = matr.props
-    #[fore, aft] = (
-    #  [sli,cur] = [mapr.input.slice, mapr.cursor]
-    #  [sli(0, cur), sli(cur)]
-    #)
-
     switch mod.sort().join '-'
       when '', 'shift'
         if key.str
@@ -168,20 +140,79 @@ $ ->
       when 'ctrl' then switch key.str || key.act
         when 'a','left'  then update cursor: 0
         when 'e','right' then update cursor: mapr.input.length
+        when 'l' then update rows: []
         when 'entr' then peer act: 'bel'
+        when 'w' then eatKyev ['alt'], act:'baxp'
+        when 'p' then eatKyev [], act: 'up'
+        when 'n' then eatKyev [], act: 'down'
+        when 'b' then eatKyev [], act: 'left'
+        when 'f' then eatKyev [], act: 'right'
+        when 'g' then bell()
+        when 't'
+          if mapr.cursor is 0 or mapr.input.length < 2
+            return bell()
+          cursor = mapr.cursor
+          if cursor < mapr.input.length
+            cursor++
+          doEdit [{del:cursor-1},ins:{at:cursor-2,cha:mapr.input[cursor-1]}]
+          update {cursor}
+        when 'u' 
+          yank = mapr.input.slice(0,mapr.cursor)
+          doEdit (del:mapr.cursor - n for n in [1..mapr.cursor])
+        when 'k'
+          yank = mapr.input.slice(mapr.cursor)
+          doEdit (del:mapr.cursor for _ in [mapr.cursor...mapr.input.length])
+        when 'y'
+          doEdit (ins: {cha, at: mapr.cursor + n} for cha,n in yank)
         else console.log mod, str key
       when 'alt' then switch key.str || key.act
         when 'f','right'
           rest = mapr.input.slice(mapr.cursor)
-          rest = rest.match(/[^a-z0-9]*[a-z0-9]*/)[0]
+          rest = rest.match(/\W*\w*/)[0] # XX unicode
           update cursor: mapr.cursor + rest.length
         when 'b','left'
           prev = mapr.input.slice(0,mapr.cursor)
           prev = prev.split('').reverse().join('')  # XX
-          prev = prev.match(/[^a-z0-9]*[a-z0-9]*/)[0]
+          prev = prev.match(/\W*\w*/)[0] # XX unicode
           update cursor: mapr.cursor - prev.length
+        when 'baxp'
+          prev = mapr.input.slice(0,mapr.cursor)
+          prev = prev.split('').reverse().join('')  # XX
+          prev = prev.match(/\W*\w*/)[0] # XX unicode
+          yank = prev
+          doEdit (del: mapr.cursor-1 - n for _,n in prev)
       else console.log mod, str key
 
+  Mousetrap.handleKey = (char, mod, e)->
+    norm = {
+      capslock:  'caps'
+      pageup:    'pgup'
+      pagedown:  'pgdn'
+      backspace: 'baxp'
+      enter:     'entr'
+    }
+
+    key = switch
+      when char.length is 1
+        if e.type is 'keypress'
+          chac = char.charCodeAt(0)
+          if chac < 32          # normalize ctrl keys
+            char = String.fromCharCode chac | 96
+          str: char
+      when e.type is 'keydown'
+        if char isnt 'space'
+          act: norm[char] ? char
+      when e.type is 'keyup' and norm[key] is 'caps'
+        act: 'uncap'
+    if !key then return
+    if key.act and key.act in mod
+      return
+    e.preventDefault()
+    #[fore, aft] = (
+    #  [sli,cur] = [mapr.input.slice, mapr.cursor]
+    #  [sli(0, cur), sli(cur)]
+    #)
+    eatKyev mod, key
 
     #amod = (arr)->
     #  for i in arr
@@ -218,3 +249,4 @@ $ ->
     #   )
     #   document.title = "Matri"  # XX  debug
     # later {mod, key}
+
