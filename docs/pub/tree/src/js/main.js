@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/actions/TreeActions.coffee":[function(require,module,exports){
 var TreeDispatcher, TreePersistence;
 
 TreeDispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -72,7 +72,7 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":7,"../persistence/TreePersistence.coffee":12}],2:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/dispatcher/Dispatcher.coffee","../persistence/TreePersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/AnchorComponent.coffee":[function(require,module,exports){
 var TreeActions, TreeStore, a, div, recl, ref;
 
 TreeStore = require('../stores/TreeStore.coffee');
@@ -293,7 +293,7 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":13}],3:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/stores/TreeStore.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/BodyComponent.coffee":[function(require,module,exports){
 var TreeActions, TreeStore, div, input, load, recl, ref, textarea;
 
 TreeStore = require('../stores/TreeStore.coffee');
@@ -358,7 +358,7 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":13,"./LoadComponent.coffee":6}],4:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/LoadComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/KidsComponent.coffee":[function(require,module,exports){
 var TreeActions, TreeStore, a, div, hr, li, recl, ref, ul;
 
 TreeStore = require('../stores/TreeStore.coffee');
@@ -425,7 +425,7 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":13}],5:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/stores/TreeStore.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/ListComponent.coffee":[function(require,module,exports){
 var TreeActions, TreeStore, a, div, h1, li, load, recl, ref, ul;
 
 TreeStore = require('../stores/TreeStore.coffee');
@@ -493,7 +493,11 @@ module.exports = recl({
           _path = _this.state.path + "/" + v;
           if (_this.props.dataPreview != null) {
             c = "preview";
-            prev = _this.state.snip[_path];
+            if (_this.props.titlesOnly) {
+              prev = _this.state.snip[_path].head;
+            } else {
+              prev = _this.state.snip[_path];
+            }
           } else {
             c = "";
             prev = h1({}, v);
@@ -516,7 +520,7 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":13,"./LoadComponent.coffee":6}],6:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/LoadComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/LoadComponent.coffee":[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -554,7 +558,7 @@ module.exports = recl({
 
 
 
-},{}],7:[function(require,module,exports){
+},{}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -576,7 +580,7 @@ module.exports = _.extend(new Dispatcher(), {
 
 
 
-},{"flux":9}],8:[function(require,module,exports){
+},{"flux":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/node_modules/flux/index.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/main.coffee":[function(require,module,exports){
 var rend;
 
 rend = React.render;
@@ -734,7 +738,7 @@ $(function() {
 
 
 
-},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":3,"./components/KidsComponent.coffee":4,"./components/ListComponent.coffee":5,"./persistence/TreePersistence.coffee":12}],9:[function(require,module,exports){
+},{"./actions/TreeActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/actions/TreeActions.coffee","./components/AnchorComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/AnchorComponent.coffee","./components/BodyComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/BodyComponent.coffee","./components/KidsComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/KidsComponent.coffee","./components/ListComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/ListComponent.coffee","./persistence/TreePersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/node_modules/flux/index.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -746,7 +750,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":10}],10:[function(require,module,exports){
+},{"./lib/Dispatcher":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js":[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -998,7 +1002,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":11}],11:[function(require,module,exports){
+},{"./invariant":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/node_modules/flux/lib/invariant.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/node_modules/flux/lib/invariant.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1053,7 +1057,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],12:[function(require,module,exports){
+},{}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/persistence/TreePersistence.coffee":[function(require,module,exports){
 var TreeActions;
 
 TreeActions = require('../actions/TreeActions.coffee');
@@ -1075,7 +1079,7 @@ module.exports = {
 
 
 
-},{"../actions/TreeActions.coffee":1}],13:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/actions/TreeActions.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/stores/TreeStore.coffee":[function(require,module,exports){
 var EventEmitter, MessageDispatcher, TreeStore, _cont, _curr, _load, _snip, _tree;
 
 EventEmitter = require('events').EventEmitter;
@@ -1163,7 +1167,10 @@ TreeStore = _.extend(EventEmitter.prototype, {
     results = [];
     for (k in snip) {
       v = snip[k];
-      results.push(_snip[path + "/" + v.name] = window.tree.reactify(v.body));
+      results.push(_snip[path + "/" + v.name] = {
+        head: window.tree.reactify(v.body.head),
+        body: window.tree.reactify(v.body.body)
+      });
     }
     return results;
   },
@@ -1286,7 +1293,7 @@ module.exports = TreeStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":7,"events":14}],14:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js"}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1346,8 +1353,10 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
+      } else {
+        throw TypeError('Uncaught, unspecified "error" event.');
       }
-      throw TypeError('Uncaught, unspecified "error" event.');
+      return false;
     }
   }
 
@@ -1589,4 +1598,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[8]);
+},{}]},{},["/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/main.coffee"]);
