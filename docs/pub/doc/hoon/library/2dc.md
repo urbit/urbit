@@ -1,7 +1,7 @@
 section 2dC, queues
 ===================
 
-### ++to
+<h3 id="++to"><code>++to</code></h3>
 
 Queue engine
 
@@ -13,7 +13,7 @@ Container arm for queue operation arms. The contained arms inherit its
 
 `a` is a queue, [++qeu]().
 
-### +-bal:to
+<h3 id="+-bal:to"><code>+-bal:to</code></h3>
 
 Balance
 
@@ -42,7 +42,7 @@ Vertically rebalances queue `a`.
 
 ------------------------------------------------------------------------
 
-### +-dep:to
+<h3 id="+-dep:to"><code>+-dep:to</code></h3>
 
 Maximum Depth
 
@@ -72,7 +72,7 @@ Produces the maximum depth of leaves (r.a and l.a) in queue `a`.
 
 ------------------------------------------------------------------------
 
-### +-gas
+<h3 id="+-gas"><code>+-gas</code></h3>
 
 Push list
 
@@ -97,7 +97,7 @@ Push all elements of list `b` into the queue.
 
 ------------------------------------------------------------------------
 
-### +-get:to
+<h3 id="+-get:to"><code>+-get:to</code></h3>
 
 Pop
 
@@ -126,7 +126,7 @@ Produces the head and tail queue of `a`.
 
 ------------------------------------------------------------------------
 
-### +-nap:to
+<h3 id="+-nap:to"><code>+-nap:to</code></h3>
 
 Remove last in
 
@@ -154,7 +154,7 @@ Removes the head of queue `a`, producing the resulting queue.
 
 ------------------------------------------------------------------------
 
-### +-put:to
+<h3 id="+-put:to"><code>+-put:to</code></h3>
 
 Insert
 
@@ -179,7 +179,7 @@ resulting queue.
 
 ------------------------------------------------------------------------
 
-### +-tap:to
+<h3 id="+-tap:to"><code>+-tap:to</code></h3>
 
 Queue to list
 
@@ -203,7 +203,7 @@ Produces queue `a` as a list from front to back.
 
 ------------------------------------------------------------------------
 
-### +-top:to
+<h3 id="+-top:to"><code>+-top:to</code></h3>
 
       +-  top                                               ::  produces head
         |-  ^-  (unit ,_?>(?=(^ a) n.a))

@@ -1,7 +1,7 @@
 section 2dD, casual containers
 ==============================
 
-### ++mo
+<h3 id="++mo"><code>++mo</code></h3>
 
 Map from list
 
@@ -23,7 +23,7 @@ Produces a map of key-value pairs from the left-right cell pairs of list
 
 ------------------------------------------------------------------------
 
-### ++sa
+<h3 id="++sa"><code>++sa</code></h3>
 
 Set from list
 
@@ -45,7 +45,7 @@ Produces a set of the elements in list `a`.
 
 ------------------------------------------------------------------------
 
-### ++qu
+<h3 id="++qu"><code>++qu</code></h3>
 
 Queue from list
 
