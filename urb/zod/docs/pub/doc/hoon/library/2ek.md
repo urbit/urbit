@@ -1,7 +1,7 @@
 section 2eK, formatting (layout)
 ================================
 
-### ++re
+<h3 id="++re"><code>++re</code></h3>
 
 Pretty-printing engine
 
@@ -15,7 +15,7 @@ Pretty-printing engine.
     /~zod/try=> ~(. re leaf/"ham")
     <2.ghl [[%leaf ""] <414.gly 100.xkc 1.ypj %164>]>
 
-### ++ram
+<h3 id="++ram"><code>++ram</code></h3>
 
 Flatten to tape
 
@@ -42,7 +42,7 @@ Flatten tank out into a tape.
     /~zod/try=> ~(ram re rose/["." "(" ")"]^~[leaf/"bar" leaf/"baz" leaf/"bam"])
     "(bar.baz.bam)"
 
-### ++win
+<h3 id="++win"><code>++win</code></h3>
 
 Render at indent
 
@@ -99,13 +99,13 @@ Render at indent level `tab` and width `edg`.
     /~zod/try=> (~(win re rose/["--" "[" "]"]^~[leaf/"1423" leaf/"2316"]) 0 10)
     <<"[ 1423" "  2316" "]">>
 
-### ++din
+<h3 id="++din"><code>++din</code></h3>
 
         ++  din  (mod (add 2 tab) (mul 2 (div edg 3)))
 
 XX document
 
-### ++fit
+<h3 id="++fit"><code>++fit</code></h3>
 
 Fit on one line test
 
@@ -113,7 +113,7 @@ Fit on one line test
 
 Determine whether `tac` fits on one line. Internal to `++win`
 
-### ++rig
+<h3 id="++rig"><code>++rig</code></h3>
 
 Wrap in `\/`
 
@@ -139,7 +139,7 @@ Wrap in `\/`
 Wrap tape in `\/` if it doesn't fit at current indentation. Internal to
 `++win`
 
-### ++wig
+<h3 id="++wig"><code>++wig</code></h3>
 
 `++win` render tape
 

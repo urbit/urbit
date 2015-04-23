@@ -1,7 +1,7 @@
 section 2eN, pseudo-cryptography
 ================================
 
-### ++un
+<h3 id="++un"><code>++un</code></h3>
 
 Reversible scrambling core
 
@@ -13,7 +13,7 @@ Used in the `@p` phonetic base.
 
 ------------------------------------------------------------------------
 
-### ++wren
+<h3 id="++wren"><code>++wren</code></h3>
 
 Conceal structure
 
@@ -50,7 +50,7 @@ on the result, pushing it forward. Produces an atom.
 
 ------------------------------------------------------------------------
 
-### ++wred
+<h3 id="++wred"><code>++wred</code></h3>
 
 Restore structure
 
@@ -87,7 +87,7 @@ on the result, pushing it forward. Produces an atom.
 
 ------------------------------------------------------------------------
 
-### ++xafo
+<h3 id="++xafo"><code>++xafo</code></h3>
 
 Add modulo 255
 
@@ -102,7 +102,7 @@ Produces the sum of two atoms modulo 255, encoded as a nonzero byte.
 
 ------------------------------------------------------------------------
 
-### ++xaro
+<h3 id="++xaro"><code>++xaro</code></h3>
 
 Subtract modulo 255
 
@@ -118,7 +118,7 @@ nonzero byte.
 
 ------------------------------------------------------------------------
 
-### ++zaft
+<h3 id="++zaft"><code>++zaft</code></h3>
 
 Look up in 255 sub box
 
@@ -154,7 +154,7 @@ box with 255 values, producing a unique nonzero byte.
 
 ------------------------------------------------------------------------
 
-### ++zart
+<h3 id="++zart"><code>++zart</code></h3>
 
 Reverse look up in 255 sub box
 
@@ -187,7 +187,7 @@ the substitution box with 255 values, producing a unique nonzero byte.
 
 ------------------------------------------------------------------------
 
-### ++zyft
+<h3 id="++zyft"><code>++zyft</code></h3>
 
 Lookup byte in 256 sub box
 
@@ -223,7 +223,7 @@ with 256 values, producing a byte.
 
 ------------------------------------------------------------------------
 
-### ++zyrt
+<h3 id="++zyrt"><code>++zyrt</code></h3>
 
 Reverse lookup byte in 256 sub box
 
