@@ -1855,7 +1855,7 @@ Parse span to path
       |=  zep=@ta  ^-  path
       (rash zep ;~(pfix fas ;~(sfix (more fas urs:ab) fas)))
 
-Parsing rule. Parses a span `zep` to a static [`++path`]().
+Parsing rule. Parses a span `zep` to a static [`++path`](/doc/hoon/library/1#++path).
 
     ~zod/try=> (stab '/as/lek/tor')
     /as/lek/tor

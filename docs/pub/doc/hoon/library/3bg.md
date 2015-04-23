@@ -386,7 +386,7 @@ Top-level URL parser
 
 Toplevel URL parser.
 
-`a` is a [`++cord`]().
+`a` is a [`++cord`](/doc/hoon/library/1#++cord).
 
     ~zod/main=> (epur 'http://127.0.0.1/')
     [~ [p=[p=%.n q=~ r=[%.n p=.127.0.0.1]] q=[p=~ q=<||>] r=~]]
