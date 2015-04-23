@@ -459,10 +459,10 @@ _sist_bask(c3_c* pop_c, u3_noun may)
 }
 #endif
 
-/* _sist_rand(): fill a 256-bit (8-word) buffer.
+/* u3_sist_rand(): fill a 256-bit (8-word) buffer.
 */
-static void
-_sist_rand(c3_w* rad_w)
+void
+u3_sist_rand(c3_w* rad_w)
 {
   c3_i fid_i = open(DEVRANDOM, O_RDONLY);
 
@@ -604,7 +604,7 @@ _sist_zest()
   {
     c3_w rad_w[8];
 
-    _sist_rand(rad_w);
+    c3_rand(rad_w);
     sal_l = (0x7fffffff & rad_w[0]);
   }
 
@@ -614,7 +614,7 @@ _sist_zest()
     c3_w rad_w[8];
     u3_noun pas;
 
-    _sist_rand(rad_w);
+    c3_rand(rad_w);
     pas = u3i_words(2, rad_w);
 
     u3A->key = _sist_fatt(sal_l, u3k(pas));
@@ -1216,7 +1216,7 @@ _sist_zen()
 {
   c3_w rad_w[8];
 
-  _sist_rand(rad_w);
+  c3_rand(rad_w);
   return u3i_words(8, rad_w);
 }
 

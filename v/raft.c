@@ -1581,7 +1581,7 @@ _raft_punk(u3_noun ovo)
   timersub(&f2, &b4, &d0);
   ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
   clr_w = ms_w > 1000 ? 1 : ms_w < 100 ? 2 : 3; //  red, green, yellow
-  if(!(c3__belt == u3h(u3t(ovo)) && clr_w == 2)){
+  if(c3__belt != u3h(u3t(ovo)) || clr_w != 2){
     uL(fprintf(uH, "\x1b[3%dm%%punk %s %4d.%02dms\x1b[0m\n",
                        clr_w, txt_c, ms_w, (int) (d0.tv_usec % 1000) / 10));
   }
