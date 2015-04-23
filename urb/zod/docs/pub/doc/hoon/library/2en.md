@@ -139,7 +139,7 @@ Look up in 255 sub box
         (cut 3 [(dec a) 1] b)
       ::
 
-The inverse of [`++zaft](). Looks up a nonzero byte`a\` in a substiution
+The inverse of [`++zart`](). Looks up a nonzero byte`a\` in a substiution
 box with 255 values, producing a unique nonzero byte.
 
 `a` is an [atom]() of one byte in length.

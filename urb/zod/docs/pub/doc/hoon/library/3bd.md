@@ -438,9 +438,9 @@ Weld two tapes
 
 Concatenates two tapes, `a` and `b`, producing a `++tape`.
 
-`a` is a [++tape]().
+`a` is a [`++tape`]().
 
-`b` is a [++tape]().
+`b` is a [`++tape`]().
 
     ~zod/try=> (twel "sam" "hok"):poja
     ~[~~s ~~a ~~m ~~h ~~o ~~k]
@@ -510,7 +510,7 @@ Print JSON
       ==
     ::
 
-Renders a `++json` `val` as a [++tape]().
+Renders a `++json` `val` as a [`++tape`]().
 
 `val` is a [`json`]().
 
@@ -566,7 +566,7 @@ Inner XML printer
         ?~(att rez [' ' (attr att rez)])
       ::  
 
-Renders a `++manx` as a [`++tape](), appending a suffix`rez\`.
+Renders a `++manx` as a [`++tape`](), appending a suffix `rez\`.
 
 `rez` is a [`++tape`]().
 
@@ -1456,7 +1456,7 @@ Pole of nonempty units
 Determines if `pod` contains no empty units, producing a loobean. Used
 internally.
 
-`pod` is a [`++pole`]() of [`++units`]().
+`pod` is a [`++pole`]() of [`++unit`]().
 
     ~zod/try=> (za:jo ~[`1 `2 `3])
     %.y
@@ -1650,7 +1650,7 @@ Escape JSON character
 
 Produces a `++tape` of an escaped [`++json`]() character `a`.
 
-`a` is an [`++atom`]()
+`a` is an atom
 
     ~zod/try=> (jesc 'a')
     "a"
