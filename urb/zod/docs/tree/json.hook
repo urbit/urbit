@@ -8,9 +8,9 @@
              /_    /react-js/
 ::
 /=    sal    /:    /=docs=/pub
-             /;    |=  a=(map ,@ta cord)  a
+             /;    |=  a=(map ,@ta json)  a
              /%    2
-             /_    /react-snip-js/
+             /_    /react-snip-json/
 ::
 ::::
   ::
@@ -23,6 +23,7 @@
   ::
 ^-  json
 =+  ~(. util gas)
+::  .json?kids
 ?:  (~(has by qix.gas) %kids)
   %+  joba  %kids
   =.  pal  (~(del by pal) %md)                                     :: XX haxor
@@ -32,15 +33,17 @@
     name/s/a
     body/s/b
   ==
+::  .json?snip
 ?:  (~(has by qix.gas) %snip)
   %+  joba  %snip
   =.  sal  (~(del by sal) %md)                                   :: XX haxor
   =-  [%a (turn (~(tap by sal)) -)]
-  |=  [a=span b=cord] 
+  |=  [a=span b=json]
   %-  jobe  :~
     name/s/a
-    body/s/b
+    body/b
   ==
+::  .json
 %-  jobe  :~
   kids/[%a (turn get-kids |=(a=span s/a))]
   body/[%s ral]

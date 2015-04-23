@@ -55,7 +55,9 @@ TreeStore = _.extend EventEmitter.prototype, {
   loadSnip: (path,snip) ->
     @mergePathToTree path,_.pluck(snip,"name")
     for k,v of snip
-      _snip[path+"/"+v.name] = window.tree.reactify v.body
+      _snip[path+"/"+v.name] = 
+        head: window.tree.reactify v.body.head
+        body: window.tree.reactify v.body.body
 
   loadKids: (path,kids) ->
     @mergePathToTree path,_.pluck(kids,"name")

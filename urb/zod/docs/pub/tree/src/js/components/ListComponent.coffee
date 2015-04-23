@@ -45,7 +45,10 @@ module.exports = recl
         _path = @state.path+"/"+v
         if @props.dataPreview?
           c = "preview"
-          prev = @state.snip[_path]
+          if @props.titlesOnly
+            prev = @state.snip[_path].head
+          else
+            prev = @state.snip[_path]
         else
           c = ""
           prev = (h1 {},v)
