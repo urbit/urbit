@@ -1,7 +1,7 @@
 section 2eC, parsing (custom rules)
 ===================================
 
-### ++cold
+<h3 id="++cold"><code>++cold</code></h3>
 
 Replace with constant
 
