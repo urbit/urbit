@@ -1648,7 +1648,7 @@ Escape JSON character
       ==
     ::
 
-Produces a `++tape` of an escaped [`++json`]() character `a`.
+Produces a `++tape` of an escaped [`++json`](/doc/hoon/library/3bi#++json) character `a`.
 
 `a` is an atom
 

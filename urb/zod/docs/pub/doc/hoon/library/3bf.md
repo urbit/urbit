@@ -257,7 +257,7 @@ Parse beam to path
       ^-  path
       [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
 
-Parses a [`++beam`]() to a [`++path`]().
+Parses a [`++beam`]() to a [`++path`](/doc/hoon/library/1#++path).
 
     ~zod/try=/zop> (tope [~zod %main ud/1] /hook/down/sur)
     /~zod/main/1/sur/down/hook

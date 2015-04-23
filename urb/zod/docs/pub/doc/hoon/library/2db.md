@@ -57,7 +57,7 @@ Grab value by key
 
 Produces a list retrieved from jar `a` using the key `b`.
 
-`a` is a [`++jar`]().
+`a` is a [`++jar`](/doc/hoon/library/1#++jar).
 
 `b` is a key of the same type as the keys in `a`.
 

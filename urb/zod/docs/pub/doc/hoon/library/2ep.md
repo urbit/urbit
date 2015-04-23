@@ -194,7 +194,7 @@ Find common
       ?:((gth p.lef p.rig) lef rig)
     ::
 
-Finds a subsequence of repeated elements within two [`++list`]()s,
+Finds a subsequence of repeated elements within two [`++list`](/doc/hoon/library/1#++list)s,
 producing a [\`++tape]().
 
     ~zod/try=> (locz "samukot" "semelkot")

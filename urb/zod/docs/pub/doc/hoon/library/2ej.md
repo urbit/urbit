@@ -88,7 +88,7 @@ Escape special chars
       [i.vib $(vib t.vib)]
     ::
 
-Escape special characters, used in [`++show`]()
+Escape special characters, used in [`++show`](/doc/hoon/library/2ez#++show)
 
 `vib` is a [tape]().
 

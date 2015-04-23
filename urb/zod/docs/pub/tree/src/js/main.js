@@ -124,16 +124,18 @@ module.exports = recl({
     if (hist !== false) {
       history.pushState({}, "", window.tree.basepath(href));
     }
-    return TreeActions.setCurr(href);
+    return TreeActions.setCurr(href.split("#")[0]);
   },
   goTo: function(path) {
+    var frag;
     this.toggleFocus(false);
     $("html,body").animate({
       scrollTop: 0
     });
+    frag = path.split("#")[0];
     this.setPath(path);
-    if (!this.checkPath(path)) {
-      return TreeActions.getPath(path);
+    if (!this.checkPath(frag)) {
+      return TreeActions.getPath(frag);
     }
   },
   checkURL: function() {

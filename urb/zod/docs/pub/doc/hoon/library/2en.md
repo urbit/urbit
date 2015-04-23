@@ -244,7 +244,7 @@ Reverse lookup byte in 256 sub box
               df4d.225e.2d56.7fd6.1395.a3f8.c582
         (cut 3 [a 1] b)
 
-The inverse of [`++zyft`](). Looks up a byte `a` in a substituion box
+The inverse of [`++zyft`](/doc/hoon/library/2en#++zyft). Looks up a byte `a` in a substituion box
 with 256 values, producing a byte.
 
 `a` is an [atom]() of one byte in length.

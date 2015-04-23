@@ -46,7 +46,7 @@ Parse backslash
     ++  bas  (just '\\')
 
 Parses ASCII character 92, the backslash. Note the extra `\` in the slam
-of `bas` with [`++just`]() is to escape the escape character, `\`.
+of `bas` with [`++just`](/doc/hoon/library/2ec#++just) is to escape the escape character, `\`.
 
     ~zod/try=> (scan "\\" bas)
     ~~~5c.

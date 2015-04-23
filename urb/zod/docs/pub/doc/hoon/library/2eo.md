@@ -433,7 +433,7 @@ Kicks a `++trap`, producing its result as a noun or the tanks of any
 error that occurs. Similar to [`++mule`](), but preserves no type
 information.
 
-`taq` is a [`++trap`]().
+`taq` is a [`++trap`](/doc/hoon/library/1#++trap).
 
     ~zod/try=>  (mute |.(leaf/"hello"))
     [%.y p=[1.717.658.988 104 101 108 108 111 0]]

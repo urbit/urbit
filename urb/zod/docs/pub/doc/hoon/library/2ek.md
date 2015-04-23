@@ -10,7 +10,7 @@ Pretty-printing engine
 
 Pretty-printing engine.
 
-`tac` is a [`++tank`]().
+`tac` is a [`++tank`](/doc/hoon/library/1#++tank).
 
     /~zod/try=> ~(. re leaf/"ham")
     <2.ghl [[%leaf ""] <414.gly 100.xkc 1.ypj %164>]>

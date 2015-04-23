@@ -346,7 +346,7 @@ Back-shifted leap second dates
     ::
 
 Produces a list of absolute dates ([`@da`]()) that represent the Urbit
-Galactc Time equivalents of the UTC leap second dates in [`++les`]().
+Galactc Time equivalents of the UTC leap second dates in [`++les`](/doc/hoon/library/3bc#++les).
 
     ~zod/try=/hom> lef:yu
     ~[
