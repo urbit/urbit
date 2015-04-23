@@ -3,7 +3,6 @@
 ::
 |=  pit=vase
 =>  |%
-++  bead  ,[p=(set beam) q=gage]                        ::  ford result
 ++  cane                                                ::  change set
           $:  new=(map path lobe)                       ::  new files
               cal=(map path lobe)                       ::  old diffs
@@ -91,7 +90,7 @@
               [%writ p=riot]                            ::
           ==  ==                                        ::
               $:  %f                                    ::
-          $%  [%made p=(each bead (list tank))]         ::
+          $%  [%made p=@uvH q=(each gage (list tank))]  ::
           ==  ==                                        ::
               $:  %t                                    ::
           $%  [%wake ~]                                 ::  timer activate
@@ -216,15 +215,15 @@
     ?~(nao ~ (read-at-aeon:ze u.nao mun))
   ::
   ++  made-to-tage
-    |=  res=(each bead (list tank))
+    |=  res=(each gage tang)
     ^-  tage
     ?:  ?=(%| -.res)  
       ~|  %ford-fail
       ~>  %mean.|.(p.res)             ::  interpolate ford fail into stack trace
       !!
-    ?@  p.q.p.res
+    ?@  p.p.res
       ~|(%bad-marc !!)
-    q.p.res
+    p.res
   ::
   ++  tage-to-cages
     |=  tab=tage
@@ -587,7 +586,7 @@
     (checkout-ankh(lat.ran lat.ran.+.hat) u.-.hat)
   ::
   ++  take-inserting
-    |=  [wen=@da res=(each bead (list tank))]
+    |=  [wen=@da res=(each gage tang)]
     ^+  +>
     ?~  dok
       ~&  %clay-take-inserting-unexpected-made  +>.$
@@ -607,7 +606,7 @@
     [((hard path) q.q.pax) cay]
   ::
   ++  take-diffing
-    |=  [wen=@da res=(each bead (list tank))]
+    |=  [wen=@da res=(each gage tang)]
     ^+  +>
     ?~  dok
       ~&  %clay-take-diffing-unexpected-made  +>.$
@@ -629,7 +628,7 @@
     [paf (page-to-lobe:ze [p q.q]:cay) (~(got by dig.u.dok) paf)]
   ::
   ++  take-mutating
-    |=  [wen=@da res=(each bead (list tank))]
+    |=  [wen=@da res=(each gage tang)]
     ^+  +>
     ?~  dok
       ~&  %clay-take-mutating-unexpected-made  +>.$
@@ -651,40 +650,9 @@
       ~
     =+  paf=((hard path) q.q.pax)
     `[paf (~(got by muh.u.dok) paf) cay]
-    ::  |=  [wen=@da pax=path res=(each bead (list tank))]
-    ::  ^+  +>
-    ::  ?~  dok
-    ::    ~&  %clay-unexpected-made  +>.$
-    ::  ?.  (lien lon.u.dok |=(path =(+< pax)))
-    ::    ~&  %clay-strange-made  +>.$
-    ::  ?:  ?=(%| -.res)
-    ::    %_    +>.$
-    ::        dok  ~
-    ::      ::    tag
-    ::      ::  %-  welp  :_  tag
-    ::      ::  ^-  (list ,[duct path note])
-    ::      ::  %+  murn  lon.u.dok
-    ::      ::  |=  a=path
-    ::      ::  ^-  (unit ,[duct path note])
-    ::      ::  ?:  =(pax a)  ~
-    ::      ::  `[hen [%diffing (scot %p who) syd (scot %da wen) a] %f %exec who ~]
-    ::    ::
-    ::        yel
-    ::      :_  yel
-    ::      [hen %note '!' %rose [" " "" ""] leaf/"clay diff failed" >pax< p.res]
-    ::    ==
-    ::  ?.  ?=(@ p.q.p.res)  ~|  %bad-marc  !!
-    ::  =:  lon.u.dok  (skip lon.u.dok |=(path =(+< pax)))
-    ::      sot.u.dok  ?:  =(%null p.q.p.res)
-    ::                   sot.u.dok
-    ::                 [[pax %dif q.p.res] sot.u.dok]
-    ::  ==
-    ::  ?~  lon.u.dok
-    ::    (apply-edit wen)
-    ::  +>.$
   ::
   ++  take-patch
-    |=  res=(each bead (list tank))
+    |=  res=(each gage tang)
     ^+  +>
     ::  ~&  %taking-patch
     ?:  ?=(%| -.res)
@@ -728,7 +696,7 @@
         (echo now %& *cart sim)
       ==
     ?~  dok  ~&  %no-dok  +>.$
-    =+  cay=q.p.res
+    =+  cay=p.res
     ?@  p.cay  ~|  %patch-bad-marc  !!
     ::  ~&  %canning
     =+  ^=  can
@@ -782,7 +750,7 @@
     ==
   ::
   ++  take-ergo
-    |=  res=(each bead (list tank))
+    |=  res=(each gage tang)
     ^+  +>
     ?:  ?=(%| -.res)
       %_    +>.$
@@ -790,7 +758,7 @@
         [[hen %note '!' %rose [" " "" ""] leaf/"clay ergo failed" p.res] yel]
       ==
     ?~  hez  ~&  %no-sync-duct  !!
-    =+  cay=q.p.res
+    =+  cay=p.res
     ?@  p.cay  ~|  %patch-bad-marc  !!
     %=    +>.$
         reg
@@ -1002,7 +970,7 @@
     ==
   ::
   ++  take-foreign-plops
-    |=  res=(each bead (list tank))
+    |=  res=(each gage tang)
     ^+  +>
     ?>  ?=(^ ref)
     ?>  ?=(^ nak.u.ref)
@@ -1010,7 +978,7 @@
       ~|  "validate foreign plops failed"
       ~|  [%plop-fail (turn p.res |=(tank ~(ram re +<)))]
       !!
-    =+  cay=q.p.res
+    =+  cay=p.res
     ?@  p.cay  ~|  %plop-bad-marc  !!
     =+  |-  ^-  lat=(list blob)
         ?~  p.p.cay
@@ -1088,7 +1056,7 @@
       ::  ~&  %reading-at-aeon
       =+  vid=(read-at-aeon:ze u.nao p.q.i.xiq)
       ::  ~&  %red-at-aeon
-      ?~  vid  ~&  [%oh-well mood=p.q.i.xiq]  $(xiq t.xiq, xaq [i.xiq xaq])
+      ?~  vid  ~&  [%oh-well mood=p.q.i.xiq aeon=nao]  $(xiq t.xiq, xaq [i.xiq xaq])
       $(xiq t.xiq, ..wake (balk p.i.xiq u.vid p.q.i.xiq))
     ::
         %many
@@ -1472,7 +1440,7 @@
       :-  -:!>(*arch)
       ^-  arch
       :+  *@uvI
-        ?.((~(has by q.yak) pax) ~ `0vfak.ehash)
+        ?.((~(has by q.yak) pax) ~ `0vfak.ehash)        ::  XX  hash of lobes
       ^-  (map span ,~)
       %-  mo  ^-  (list (pair span ,~))
       %+  turn
@@ -1555,7 +1523,7 @@
         ..me(mer (~(del by mer) ali), reg :_(reg [hen %mere gon.dat]))
       ::
       ++  route
-        |=  [sat=term res=(each riot (each bead (list tank)))]
+        |=  [sat=term res=(each riot (each gage tang))]
         ^+  +>.$
         ?+  sat  ~|((crip <[%bad-stage sat]>) !!)
           %ali        %-  fetched-ali  ?>  ?=(%& -.res)  p.res
@@ -1799,11 +1767,11 @@
         (diff-bas %ali ali.dat ali bob.dat)
       ::
       ++  diffed-ali
-        |=  res=(each bead (list tank))
+        |=  res=(each gage tang)
         ^+  +>
         ?:  ?=(%| -.res)
           (error:he %diff-ali-bad-made leaf/"merge diff ali failed" p.res)
-        =+  cay=q.p.res
+        =+  cay=p.res
         ?@  p.cay
           (error:he %diff-ali-bad-marc >p.cay< ~)
         =|  can=(map path cage)
@@ -1859,11 +1827,11 @@
         (diff-bas %bob bob.dat bob ali.dat)
       ::
       ++  diffed-bob
-        |=  res=(each bead (list tank))
+        |=  res=(each gage tang)
         ^+  +>
         ?:  ?=(%| -.res)
           (error:he %diff-bob-bad-made leaf/"merge diff bob failed" p.res)
-        =+  cay=q.p.res
+        =+  cay=p.res
         ?@  p.cay
           (error:he %diff-bob-bad-marc >p.cay< ~)
         =|  can=(map path cage)
@@ -1938,10 +1906,10 @@
         ==
       ::
       ++  merged
-        |=  res=(each bead (list tank))
+        |=  res=(each gage tang)
         ?:  ?=(%| -.res)
           (error:he %merge-bad-made leaf/"merging failed" p.res)
-        =+  cay=q.p.res
+        =+  cay=p.res
         ?@  p.cay
           (error:he %merge-bad-marc >p.cay< ~)
         =|  bof=(map path (unit cage))
@@ -1995,11 +1963,11 @@
 
       ::
       ++  built
-        |=  res=(each bead (list tank))
+        |=  res=(each gage tang)
         ^+  +>
         ?:  ?=(%| -.res)
           (error:he %build-bad-made leaf/"delta building failed" p.res)
-        =+  cay=q.p.res
+        =+  cay=p.res
         ?@  p.cay
           (error:he %build-bad-marc >p.cay< ~)
         =|  bop=(map path cage)
@@ -2125,11 +2093,11 @@
         ==
       ::
       ++  checked-out
-        |=  res=(each bead (list tank))
+        |=  res=(each gage tang)
         ^+  +>
         ?:  ?=(%| -.res)
           (error:he %checkout-bad-made leaf/"merge checkout failed" p.res)
-        =+  cay=q.p.res
+        =+  cay=p.res
         ?@  p.cay
           (error:he %patch-bad-marc >p.cay< ~)
         =|  can=(list ,[path cage])
@@ -2183,11 +2151,11 @@
         ==
       ::
       ++  ergoed
-        |=  res=(each bead (list tank))
+        |=  res=(each gage tang)
         ^+  +>
         ?:  ?=(%| -.res)
           (error:he %ergo-bad-made leaf/"merge ergo failed" p.res)
-        =+  cay=q.p.res
+        =+  cay=p.res
         ?@  p.cay  ~|  %patch-bad-marc  !!
         =|  can=(list ,[path (unit mime)])
         =>
@@ -2519,7 +2487,7 @@
     =+  une=(un our now hen ruf)
     =+  wak=wake:une
     =+  wex=(di:wak syd)
-    =+  dat=?-(+<.q.hin %writ [%& p.q.hin], %made [%| p.q.hin])
+    =+  dat=?-(+<.q.hin %writ [%& p.q.hin], %made [%| q.q.hin])
     =+  wao=abet:(route:(me:ze:wex her sud) sat dat)
     =+  woo=abet:wao
     [(weld -.wak -.woo) ..^$(ruf abet:(pish:une syd +.woo ran.wao))]
@@ -2549,16 +2517,16 @@
     ==
   ?:  ?=([%blab care @ @ *] tea)
     ?>  ?=(%made +<.q.hin)
-    ?:  ?=(%| -.p.q.hin)  
+    ?:  ?=(%| -.q.q.hin)  
       ~|  %blab-fail
-      ~>  %mean.|.(p.p.q.hin)         ::  interpolate ford fail into stack trace
+      ~>  %mean.|.(p.q.q.hin)         ::  interpolate ford fail into stack trace
       !!
-    ?^  p.q.p.p.q.hin
+    ?^  p.p.q.q.hin
       ~|(%bad-marc !!)
     :_  ..^$  :_  ~
     :*  hen  %give  %writ  ~
         `[care case @tas]`[i.t.tea ((hard case) +>:(slay i.t.t.tea)) i.t.t.t.tea]
-        `path`t.t.t.t.tea  `cage`q.p.p.q.hin
+        `path`t.t.t.t.tea  `cage`p.q.q.hin
     ==
   ?-    -.+.q.hin
       %crud
@@ -2575,7 +2543,7 @@
       =^  mos  ruf
         =+  une=(un who now hen ruf)
         =+  ^=  zat
-            (take-inserting:(di:wake:une syd) wen p.q.hin)
+            (take-inserting:(di:wake:une syd) wen q.q.hin)
         =+  zot=abet.zat
         [-.zot abet:(pish:une syd +.zot ran.zat)]
       [mos ..^$]
@@ -2588,7 +2556,7 @@
       =^  mos  ruf
         =+  une=(un who now hen ruf)
         =+  ^=  zat
-            (take-diffing:(di:wake:une syd) wen p.q.hin)
+            (take-diffing:(di:wake:une syd) wen q.q.hin)
         =+  zot=abet.zat
         [-.zot abet:(pish:une syd +.zot ran.zat)]
       [mos ..^$]
@@ -2601,7 +2569,7 @@
       =^  mos  ruf
         =+  une=(un who now hen ruf)
         =+  ^=  zat
-            (take-mutating:(di:wake:une syd) wen p.q.hin)
+            (take-mutating:(di:wake:une syd) wen q.q.hin)
         =+  zot=abet.zat
         [-.zot abet:(pish:une syd +.zot ran.zat)]
       [mos ..^$]
@@ -2613,11 +2581,11 @@
       =^  mos  ruf
         ?:  (~(has by fat.ruf) who)
           =+  une=(un who now hen ruf)
-          =+  zat=(take-patch:(di:wake:une syd) p.q.hin)
+          =+  zat=(take-patch:(di:wake:une syd) q.q.hin)
           =+  zot=abet.zat
           [-.zot abet:(pish:une syd +.zot ran.zat)]
         =+  zax=(do now hen [who who] syd ruf)
-        =+  zat=(take-patch:zax p.q.hin)
+        =+  zat=(take-patch:zax q.q.hin)
         =+  zot=abet.zat
         [-.zot (posh who syd +.zot ruf)]
       [mos ..^$]
@@ -2629,7 +2597,7 @@
       =^  mos  ruf
         =+  une=(un who now hen ruf)
         =+  ^=  zat
-            (take-ergo:(di:wake:une syd) p.q.hin)
+            (take-ergo:(di:wake:une syd) q.q.hin)
         =+  zot=abet.zat
         [-.zot abet:(pish:une syd +.zot ran.zat)]
       [mos ..^$]
@@ -2640,7 +2608,7 @@
       =+  her=(slav %p i.t.t.tea)
       =*  syd  i.t.t.t.tea
       =+  zax=(do now hen [our her] syd ruf)
-      =+  zat=(take-foreign-plops:zax p.q.hin)
+      =+  zat=(take-foreign-plops:zax q.q.hin)
       =^  mos  ruf
         =+  zot=abet.zat
         [-.zot (posh her syd +.zot ruf)]

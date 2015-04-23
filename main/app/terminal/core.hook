@@ -285,7 +285,7 @@
 ++  pour
   |=  [ost=bone pax=path sih=*]
   ^-  [(list move) _+>]
-  =+  sih=((hard sign) sih)
+  =+  sih=~|([%term-pour (,[term term ~] sih)] ((hard sign) sih))
   ?:  ?=(?(%sage %init %logo %verb %veer %vega) &2.sih) ::  vomit
     [[ost %give +.sih]~ +>.$]
   ?~  pax  !!

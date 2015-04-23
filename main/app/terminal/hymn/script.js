@@ -1,3 +1,8 @@
+urb.appl = urb.appl ||
+  window.location.pathname.match(/.*?app\/([a-z0-9-]+)/)[1]
+urb.term = urb.term || 
+  {pax: location.pathname.replace(new RegExp(".*?app/"+urb.appl),'') || '/'}
+
 function jpok(a,b){
   var dat = {pax:urb.term.pax, act:{}}
   dat.act[a] = b

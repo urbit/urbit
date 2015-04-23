@@ -4,10 +4,10 @@
   ::
 /?    314
 /-    term-line, kyev
-/=    pit  /~  !>(.)                                    ::  kernel vase
+/=    pit  /~  !>(+)                                    ::  kernel vase
 ::
 ::::  structures
-  ::
+  !:
 |%                                                      ::
 ++  axle                                                ::
   $:  %1                                                ::  version
@@ -83,9 +83,9 @@
       [%vega p=path]                                    ::
   ==  ==  ==                                            ::
 --
-!:
+::
 ::::  parsers
-  ::
+  !:
 |%
 ++  maybe  |*(fel=_rule (cook |*(a=(unit) (fall a ~)) (opts fel)))
 ++  opts                                                ::  parse unit
@@ -129,9 +129,9 @@
     ==
   ::
   ++  expg  (rais ;~(pfix ace expr(tol %1)) ;~(pfix gap expr))
-  ++  expr  (rais [wide tall]:(vang & pax))
-  ++  loca  %+  sear  ;~(biff plex:(vang & pax) vabe)   ::  path in %clay
-            [;~(pose rood ;~(simu cen scat))]:(vang & pax)
+  ++  expr  (rais [wide tall]:(vang | pax))
+  ++  loca  %+  sear  ;~(biff plex:(vang | pax) vabe)   ::  path in %clay
+            [;~(pose rood ;~(simu cen scat))]:(vang | pax)
   ++  vabe  |=(a=path ?~((tome a) ~ (some a)))          ::  check valid beam
   ++  args                                              ::  task arguments
     %^  rail
@@ -143,9 +143,9 @@
   ::
   --
 --
-!:
+::
 ::::  per event
-  ::
+  !:
 |%
 ++  ve
   |=  [hid=hide ost=bone axle]
@@ -240,13 +240,18 @@
     |=  [paf=path gen=(unit twig)]
     ^+  +>
     =+  fel=(file paf)  
-    ?~  fel
-      (chew-file paf '! none')
-    ?^  gen 
+    ?^  fel
+      ?~  gen
+        (blab (stray (crip ": {(spud paf)} {<(,@t u.fel)>}"))) 
       %+  with  u.gen  |=  new=vase
       =+  for=((hard mark) -:(flop paf))
       (chew-file paf (foal paf for new))
-    (blab (stray (crip ": {(spud paf)} {<(,@t u.fel)>}"))) 
+    =+  ark=;;(arch .^(%cy paf))
+    ?-  r.ark
+      ~        (chew-file paf '! none')
+      [^ ~ ~]  $(paf (welp paf /[p.n.r.ark]))
+      *        (chew-file paf '! many')
+    ==
   ::
   ++  eat-help
     |=  app=term
@@ -505,9 +510,9 @@
     !>([%rush %term-line `term-line`[pro(r a) ~ ~]])
   --
 --
-!:
+::
 ::::  formal interface
-  ::
+  !:
 |_  [hid=hide vat=axle]
 ::
 ++  peer                                                ::  handle subscription
