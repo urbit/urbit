@@ -1737,7 +1737,13 @@
     |=  oug=?
     ^-  tape
     ?+    -.sep  ""
-        %url  (weld ": " (scag 62 (earn p.sep)))
+        %url  
+      =+  txt=(earn p.sep)
+      %+  weld  "/ "
+      ?:  (gte 62 (lent txt))
+        txt
+      (weld (scag 61 (earn p.sep)) "…")
+    ::
         %lin
       =+  txt=(trip q.sep)
       ?:  p.sep
