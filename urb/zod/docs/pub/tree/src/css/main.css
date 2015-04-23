@@ -132,7 +132,8 @@ pre {
   margin-left: -0.3rem;
 }
 code {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  line-height: 1.2rem;
   background-color: #f4f4f4;
   margin-top: -0.05rem;
   padding: 0.2rem;
