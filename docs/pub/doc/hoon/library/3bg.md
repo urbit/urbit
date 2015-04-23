@@ -50,7 +50,7 @@ Restructure path
     ::
 
 Splits a concrete
-[`++spur]() out of a full`++path`, producing a location [`++beam`]() and a remainder [`++path\`]().
+[`++spur`]() out of a full `++path`, producing a location [`++beam`]() and a remainder [`++path`]().
 
 `hom` is a [`++path`]()
 

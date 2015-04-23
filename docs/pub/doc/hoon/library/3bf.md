@@ -209,7 +209,7 @@ Parse kite path
     ::
 
 Parses a clay [.\^]()
-[`++path]()to request details. Produces the [`++unit`]() of a [`++kite\`]().
+[`++path` ]()to request details. Produces the [`++unit`]() of a [`++kite`]().
 
 `hap` is a [`++path`]().
 
