@@ -221,12 +221,12 @@
       ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs".
         "/jquery/2.1.1/jquery.min.js");
       ;script:'try{Typekit.load();}catch(e){}'
-      ;link(rel "stylesheet", type "text/css", href "/gen/main/pub/src/chat/main.css");
+      ;link(rel "stylesheet", type "text/css", href "/main/pub/src/chat/main.css");
     ==
     ;body
       ;div#c;
-      ;script(type "text/javascript", src "/gen/main/lib/urb.js");
-      ;script(type "text/javascript", src "/gen/main/pub/src/chat/main.js");
+      ;script(type "text/javascript", src "/main/lib/urb.js");
+      ;script(type "text/javascript", src "/main/pub/src/chat/main.js");
     ==
   ==
 ::

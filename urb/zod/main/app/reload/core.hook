@@ -11,7 +11,7 @@
 ++  poke--args
   %^  add-output  .
     rush/tang/[leaf/"done"]~
-  %+  args-into-resp  . 
+  %+  args-into-resp  .
   |=  all=(list ,@tas)
   %+  turn  all
   =+  ark=(arch .^(%cy /(scot %p our.hid)/main/(scot %da lat.hid)/arvo))
@@ -25,6 +25,6 @@
     ?>  ?=([[@ ~] ~] zaz)
     `term`p.i.zaz
   =+  tip=(end 3 1 nam)
-  =+  pax=[(scot %p our.hid) %main (scot %da lat.hid) %arvo nam %hoon ~]
-  [%veer ?:(=('z' tip) %$ tip) pax (,@ .^(%cx pax))]
+  =+  pax=[(scot %p our.hid) %main (scot %da lat.hid) %arvo nam ~]
+  [%veer ?:(=('z' tip) %$ tip) pax (,@ .^(%cx (welp pax /hoon)))]
 --

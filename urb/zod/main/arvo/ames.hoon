@@ -35,31 +35,31 @@
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
           $?  $:  %d                                    ::  to %dill
-                  $%  [%flog p=flog]                    ::
-              ==  ==                                    ::
+          $%  [%flog p=flog]                            ::
+          ==  ==                                        ::
               $:  %a                                    ::  to %ames
-                  $%  [%kick p=@da]                     ::
-              ==  ==                                    ::
+          $%  [%kick p=@da]                             ::
+          ==  ==                                        ::
               $:  %g                                    ::  to %gall
-                  $%  [%rote p=sack q=path r=*]         ::
-                      [%roth p=sack q=path r=*]         ::
-                      [%mess p=[@p %ye ~] q=@p r=cage]  ::
-              ==  ==                                    ::
+          $%  [%rote p=sack q=path r=*]                 ::
+              [%roth p=sack q=path r=*]                 ::
+              [%mess p=[@p %ye ~] q=@p r=cage]          ::
+          ==  ==                                        ::
               $:  @tas                                  ::  to any
-                  $%  [%init p=@p]                      ::
-                      [%want p=sock q=path r=*]         ::
-                      [%wart p=sock q=@tas r=path s=*]  ::
+          $%  [%init p=@p]                              ::
+              [%want p=sock q=path r=*]                 ::
+              [%wart p=sock q=@tas r=path s=*]          ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  from %ames
-                  $%  [%went p=ship q=cape]             ::
-              ==  ==                                    ::
+          $%  [%went p=ship q=cape]                     ::
+          ==  ==                                        ::
               $:  %g                                    ::  from %gall
-                  $%  [%mean p=ares]                    ::
-                      [%nice ~]                         ::
-              ==  ==                                    ::
+          $%  [%mean p=ares]                            ::
+              [%nice ~]                                 ::
+          ==  ==                                        ::
               $:  @tas                                  ::
-                  $%  [%crud p=@tas q=(list tank)]      ::  by any
+          $%  [%crud p=@tas q=(list tank)]              ::  by any
           ==  ==  ==                                    ::
 --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -227,7 +227,7 @@
         0w0                           ::   55, ~tep, Curtis Yarvin (sator)
         0w0                           ::   56, ~bes, Curtis Yarvin (sator)
         0w0                           ::   57, ~dex, Jared Hance (aestas) 
-        0w0                           ::   58, ~sef, Curtis Yarvin (sator)
+        0w0                           ::   58, ~sef, Owen Rescher (lex)
         0w0                           ::   59, ~wyc, Curtis Yarvin (sator)
         0w0                           ::   60, ~bur, Curtis Yarvin (sator)
         0w0                           ::   61, ~der, Curtis Yarvin (sator)
@@ -370,7 +370,7 @@
         0w0                           ::  198, ~len, Tlon (gleba)
         0w0                           ::  199, ~ner, Tlon (gleba)
         0wv.aixe9.7gG2w.7cJiy.i3Mg8   ::  200, ~lex, Michael Hartl (donum)
-        0w0                           ::  201, ~rup, Tlon (gleba)
+        0w0                           ::  201, ~rup, Owen Rescher (lex)
         0w0                           ::  202, ~ned, Tlon (gleba)
         0w0                           ::  203, ~lec, Tlon (gleba)
         0w0                           ::  204, ~ryd, Tlon (gleba)
@@ -631,12 +631,12 @@
             =^  gim  ..weft  wisp
             :_  +>.$
             ^-  (list rock)
-            =+  wit=(met ?:(fak.ton 18 13) q.gim)
+            =+  wit=(met ?:(fak.ton 16 13) q.gim)
             ?<  =(0 wit)
             ?:  =(1 wit)
               =+  yup=(spit [our her] p.gim q.gim)
               [yup ~]
-            =+  ruv=(rip ?:(fak.ton 18 13) q.gim)
+            =+  ruv=(rip ?:(fak.ton 16 13) q.gim)
             =+  gom=(shaf %thug q.gim)
             =+  inx=0
             |-  ^-  (list rock)
@@ -1409,7 +1409,7 @@
             =+  [nix=0 rax=*(list ,@)]
             |-  ^-  @
             ?:  =(p.duv nix)
-              (can ?:(fak.ton.fox 18 13) (turn (flop rax) |=(a=@ [1 a])))
+              (can ?:(fak.ton.fox 16 13) (turn (flop rax) |=(a=@ [1 a])))
             $(nix +(nix), rax [(need (~(get by q.duv) nix)) rax])
           --                                            ::  --la:ho:um:am
         ::
@@ -1662,7 +1662,6 @@
     ?-    -.bon
         %beer
       :_  fox(zac (~(put by zac.fox) p.bon `corn`[hen ~ ~ ~]))
-      ::  ~&  [%ames-clop p.bon hen]
       :*  [hen [%slip %c %init p.bon]]
           [hen [%give %init p.bon]]
           [hen [%slip %a %kick now]]
@@ -1688,6 +1687,8 @@
         %milk
       ::  ~&  [%rx p.bon q.bon]
       ?>  ?=([@ *] q.q.bon)
+      ?:  ?=(%e i.q.q.bon)
+        :_(fox [hen [%slip %e %wart p.bon %$ t.q.q.bon r.bon]]~)
       ?:  ?=(%r i.q.q.bon)
         ?:  ?=([%ta *] t.q.q.bon)
           =+  wil=((hard (unit will)) r.bon)
@@ -1696,7 +1697,7 @@
               :+  (scot %p p.p.bon)
                 (scot %p q.p.bon)
               q.q.bon
-          [hen %pass pax %g %rote p.bon /began 0 %m %will wil]~
+          [hen %pass pax %g %rote p.bon /helm 0 %m %will wil]~
         ?>  ?=([@ @ *] t.q.q.bon)
         :_  fox
         =+  [cak=i.t.q.q.bon ven=i.t.t.q.q.bon]

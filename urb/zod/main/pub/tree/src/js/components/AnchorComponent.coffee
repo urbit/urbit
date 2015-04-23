@@ -35,7 +35,7 @@ module.exports = recl
     dt = @ts - Number Date.now()
 
   setPath: (href,hist) ->
-    if hist isnt false then history.pushState {}, "", "/gen/docs/tree"+href
+    if hist isnt false then history.pushState {}, "", window.tree.basepath href
     TreeActions.setCurr href
 
   goTo: (path) ->
@@ -47,7 +47,7 @@ module.exports = recl
 
   checkURL: ->
     if @state.url isnt window.location.pathname
-      @setPath window.location.pathname.replace("/gen/docs/tree",""),false
+      @setPath (window.tree.fragpath window.location.pathname),false
 
   setTitle: ->
     title = $('#cont h1').first().text()
@@ -86,7 +86,7 @@ module.exports = recl
         @goTo @state.next
 
     $('body').on 'click', 'a', (e) =>
-      href = $(e.target).closest('a').attr 'href'
+      href = $(e.target).closest('a').attr('href')
       if href[0] is "/"
         e.preventDefault()
         e.stopPropagation()
@@ -103,14 +103,15 @@ module.exports = recl
   render: ->
     parts = []
     if @state.pare
-      parts.push (div {id:"up"},(a {key:"arow-up",href:@state.pare,className:"arow-up"},""))      
+      href = window.tree.basepath @state.pare
+      parts.push (div {id:"up"},(a {key:"arow-up",href:href,className:"arow-up"},""))
       if @state.prev or @state.next
         _parts = []
         if @state.prev 
-          href = window.tree.basepath @state.prev
+          href = window.tree.basepath window.tree.basepath @state.prev
           _parts.push (a {key:"arow-prev",href:href,className:"arow-prev"},"")
         if @state.next 
-          href = window.tree.basepath @state.next
+          href = window.tree.basepath window.tree.basepath @state.next
           _parts.push (a {key:"arow-next",href:href,className:"arow-next"},"")
         parts.push (div {id:"sides"}, _parts)
 
@@ -128,7 +129,8 @@ module.exports = recl
           c = "active"
           ci = k
         k++
-        (div {className:c}, (a {key:i+"-a",href:up+"/"+i,onClick:@_click}, i))
+        href = window.tree.basepath up+"/"+i
+        (div {className:c}, (a {key:i+"-a",href:href,onClick:@_click}, i))
       offset = 0
       if ci > 0 then offset = 0
       s = {marginTop:((ci*-24)-offset)+"px"}

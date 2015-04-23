@@ -33,6 +33,11 @@ MessageStore = _.merge new EventEmitter,{
 
   getTyping: -> _typing
 
+  getLastAudience: ->
+    if _.keys(_messages).length is 0 then return []
+    messages = _.sortBy _messages, (_message) -> _message.thought.statement.time
+    _.keys messages[messages.length-1].thought.audience
+
   setTyping: (state) -> _typing = state
 
   setListening: (station) -> 

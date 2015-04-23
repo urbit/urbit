@@ -47,12 +47,12 @@ machine directly.
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/1/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/1/
 
 #### What did you just do?
 
 The code you just wrote is urbit's native programming langauge, hoon.
-Generating HTML with hoon is similar to writing [jade](link) or other
+Generating HTML with hoon is similar to writing [jade]() or other
 similar HTML shorthand. In hoon, this shorthand is called [`++sail`]()
 and it's a native part of the hoon language.
 
@@ -62,7 +62,7 @@ our `;h1:` above, and are closed implicitly with a new line. Nodes with
 no content are closed with another `;`, such as `;br;`.
 
 You can find more information about `++sail` in our [rune library
-documentation](link).
+documentation]().
 
 <hr>
 </hr>
@@ -90,7 +90,7 @@ documentation](link).
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/2/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/2/
 
 ### What's going on there?
 
@@ -98,7 +98,7 @@ Clearly, the code `(add 2 2)` is generating `4`, and it's not too hard
 to see why. `add` is one of the library functions that are a part of
 `hoon.hoon`. Try replacing `(add 2 2)` with `(sub 2 (add 2 2))`. You can
 find documentation for the full hoon library in the [library
-reference](link).
+reference]().
 
 Since the product of `(add 2 2)` is a number, we need a few extra things
 to have it print properly. In `++sail` we use `{` and `}` to do string
@@ -140,7 +140,7 @@ we need to explicitly convert our types.
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/3/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/3/
 
 #### How does that work?
 
@@ -148,9 +148,9 @@ The first thing you should notice in this example is the `=+` at the top
 of our file. `=+` is a rune. hoon is a programming with no reserved
 words. We don't use `if` `this` or `function` at all. Instead, runes
 have their own pronunciation. `=+` is pronounced 'tislus'. You can find
-the table of pronunciation [here](link). In hoon you construct your
+the table of pronunciation [here](). In hoon you construct your
 programs using runes, which are two character ascii pairs. You can see
-the whole set of runes in the [rune index](link).
+the whole set of runes in the [rune index]().
 
 `=+` pushes an expression on to our subject. The subject in hoon is
 similar to `this` in other languages. hoon being a functional language
@@ -168,7 +168,7 @@ Looking at the rendered page it's clear that we're assigning `a` to be
 we're doing this in two different ways. Runes in hoon can have irregular
 forms, and `^=` is one of them. The first two lines of our example are
 doing the same thing, where `a=2` is simply the irregular form of
-`^=  a  2`. You can see the full list of irregular forms [here](link).
+`^=  a  2`. You can see the full list of irregular forms [here]().
 
 Looking at the simple computation on the page, you can try changing the
 values of `a` and `b` to any integers to produce similar results.
@@ -212,7 +212,7 @@ values of `a` and `b` to any integers to produce similar results.
 
 (and be sure to put two spaces between `++` and arm names)
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/4/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/4/
 
 ### What's happening?
 
@@ -229,7 +229,7 @@ core. Gates only have one arm and are quite similar to a function in
 other languages. We use `|=` to construct our gate. Runes in hoon are
 generally categorized by their first character. `|` indicates a rune
 having to do with cores. You can find all of the `|` runes in the [rune
-library](link).
+library]().
 
 Our `++length` [gate]() takes two arguments, `s` and `e`. In hoon we
 call the data passed in to a gate the 'sample'. Every `|=` has two
@@ -241,7 +241,7 @@ computes the difference between `e` and `s`.
 
 `@ud` is an odor. Odors aren't quite types, but they're similar. You'll
 learn the difference by example as we progress, and you can always refer
-to the [odor index](link).
+to the [odor index]().
 
 You probably also noticed our indentation. In general hoon has both tall
 and wide forms. In tall form, hoon uses two spaces for indentation and
@@ -282,7 +282,7 @@ margin. In wide form we use parenthesis just like almost everyone else.
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/5/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/5/
 
 #### What's the difference?
 
@@ -301,7 +301,7 @@ At a high level you can think of hoon as being composed of two things,
 tiles and twigs. Twigs are the actual AST structures that get consumed
 by the compiler. Tiles reduce to twigs and provide major affordances for
 the programmer. If you're interested in learning about tiles more deeply
-you can find an in-depth explanation in the [tile overview](link).
+you can find an in-depth explanation in the [tile overview]().
 
 It should suffice, for now, to say that we create tiles in the same way
 that you would think of creating type definitions in another language.
@@ -325,7 +325,7 @@ you're usually familiar with. We still separate our addressing with `.`,
 but do it from the inside out. Given a tuple such as
 `[a=1 b=[c=[d=2 e=3]]]` we can address the value of `e` with `e.c.b`.
 You can read more about how faces work in the commentary on `++type`
-[here](link).
+[here]().
 
 <hr>
 </hr>
@@ -362,11 +362,11 @@ You can read more about how faces work in the commentary on `++type`
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/6/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/6/
 
 #### What is that doing?
 
-We're printing a few members of the [fibonacci sequence](link) by
+We're printing a few members of the [fibonacci sequence]() by
 calling our arm `++fib` with a few values. The fibonacci sequence is a
 fairly straight forward algorithm: `F(n-1) + F(n-2)` where `F(1) = 1`
 and `F(2) = 1`. As is obvious from the formula, generating the fibonacci
@@ -375,10 +375,10 @@ the code.
 
 Our example here should look similar to the previous one. We build a
 core with `|%` and add the arm `++fib`. `++fib` is a gate which takes
-one argument `x`, an atom. Using [`?:`](link) we test if `x` is less
-than `2` with the library function [`lte`](link) to handle our seed
+one argument `x`, an atom. Using [`?:`]() we test if `x` is less
+than `2` with the library function [`lte`]() to handle our seed
 values of `F(1) = 1` and `F(2) = 1`. `?:` is a member of the [`?`
-runes](link), related to true / false values, or loobeans. In hoon true
+runes](), related to true / false values, or loobeans. In hoon true
 and false are `0` and `1` respectively and take the odor `@f`. We tend
 to say 'yes' and 'no' instead of 'true' and 'false' to keep track of the
 switch. Our built-in function `lte` produces a loobean, so we evaluate
@@ -389,7 +389,7 @@ We mentioned previously that a gate is a special kind of core with only
 one arm, called `$`. Here we're using `$` to mimic the behavior of a
 loop. You can read the expression `$(x (dec x))` as 'call the gate again
 with `x` replaced by `(dec x)`. For more on how this works, check out
-the documentation of [`%=`](link) and [`%-`](link). With that in mind it
+the documentation of [`%=`]() and [`%-`](). With that in mind it
 should be clear how the last line of `++fib` produces the member of the
 sequence at a given value `x`.
 
@@ -431,7 +431,7 @@ sequence at a given value `x`.
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/7/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/7/
     http://ship-name.urbit.org/gin/del/main/pub/fab/guide/exercise/7/
 
 Here we're putting our publishing framework, `%ford` to work a little
@@ -447,19 +447,19 @@ They belong at the top of the file.
 
 `/?` simply checks for compatibility. In this case the line means 'need
 urbit 314 or below', or in hoon: `(lte zuse 314)`. `314` is the number
-in the kelvin versioning system, which you can read about [here](link).
+in the kelvin versioning system, which you can read about [here]().
 
 `/=` is similar to the combination of `=+  =^`, or assignment. `/$`
-calls a parsing function, which we specify as [`++fuel`](link) with the
-[`++beam`](link) and [`++path`](link) of our current file.
+calls a parsing function, which we specify as [`++fuel`]() with the
+[`++beam`]() and [`++path`]() of our current file.
 `/=    gas  /$  fuel` is a common way to open your page, since the
 product of `++fuel` is useful when writing pages to the web. The use of
 `++fuel` is not enforced — you can also write your own parser.
 
 Our page is made up of two generated parts: who requested the page, the
 location of the page and its revision. Both are parsed out of the `gas`
-variable using some straightforward library functions, [`++ju`](link),
-[`++spud`](link) and [`++scow`](link). You can follow those links to the
+variable using some straightforward library functions, [`++ju`](),
+[`++spud`]() and [`++scow`](). You can follow those links to the
 library reference to learn more about them. You'll also notice our
 addressing moving in the opposite direction as you may be used to.
 `aut.ced.gas` pulls `aut` from inside `ced` from inside `gas`.
@@ -468,13 +468,13 @@ Inside of the `;code` tag we also print (for our own reference) the
 entire `gas`, so you can take a look at the contents. This can be a
 helpful trick when debugging. To fully understand what gets put in
 `gas`, we can take a look at `++fuel` and note that it produces a
-[`++epic`](link), which also contains a [`++cred`](link). You can follow
+[`++epic`](), which also contains a [`++cred`](). You can follow
 those links to learn more about them.
 
-When we try changing the url from `gen/main` to `gin/del/main` we're
+When we try changing the url from `main` to `gin/del/main` we're
 using some of the access methods from `%eyre` (the urbit webserver) to
 pretend to be the urbit `~del`. You can find documentation on those
-access methods in the `%eyre` commentary, [here](link).
+access methods in the `%eyre` commentary, [here]().
 
 Path and identity are useful, but there are some other parameters worth
 checking out as well.
@@ -510,8 +510,8 @@ checking out as well.
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/8/
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/8/?code=yes-i-do
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/8/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/8/?code=yes-i-do
 
 This is a simple example, showing off another use of
 `/=    gas  /$  fuel`. In this case we're just pulling out the value of
@@ -519,10 +519,10 @@ the `code` query string parameter. You should be able to change that
 value to any url-safe string and see it appear on the page.
 
 We're using a few simple library functions to actually pull the value
-out, [`++fall`](link) and [`get:by`](link). Query string parameters are
+out, [`++fall`]() and [`get:by`](). Query string parameters are
 stored in `qix.gas` as a `++map`, one of the main container constructs
 used in hoon. We'll encounter a lot of maps along the way, and you can
-learn more about them in the [map section](link) of the library doc.
+learn more about them in the [map section]() of the library doc.
 
 <hr>
 </hr>
@@ -569,7 +569,7 @@ learn more about them in the [map section](link) of the library doc.
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/9/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/9/
 
 #### How are they getting combined?
 
@@ -597,8 +597,9 @@ generating html, it's a `.hook`, and our source file is just a `.hoon`.
 In order to find our file one level up we need two `%%` to get to
 `/pub/fab/guide/exercise/9/`. Adding `lib` resolve to our neighboring
 file. You can read more about how `%clay` paths are parsed in the
-[`%clay` overview](link). It's also pretty easy to try them out using
-`:cd` and `:ls` in your `%arvo` terminal.
+[`%clay` overview](link). It's also pretty easy to try them out using 
+`/=main=`, `/=try`, `/try/a/b/c/d`, etc.
+and `:ls` in your `%arvo` terminal.
 
 <hr>
 </hr>
@@ -652,9 +653,9 @@ file. You can read more about how `%clay` paths are parsed in the
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/10/
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/10/?number=7
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/10/?number=12
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/10/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/10/?number=7
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/10/?number=12
 
 As you can see by changing the URL, we're now passing our query string
 parameter to our `++fib` script and printing the output. It's common to
@@ -670,21 +671,21 @@ remaining computation. In short, you can read the code that produces
 runes to write this in tall form. `%` runes are used for calling gates
 or evaluating changes. `%+` 'slams' or calls a gate with two arguments,
 and `%-` 'slams' or calls a gate with one argument. As usual, you can
-find more about the `%` runes in the [`%` section](link) of the rune
+find more about the `%` runes in the [`%` section]() of the rune
 library.
 
 To get a value out of our map of query string parameters `qix.gas` we
-use a method from the [maps library](link) that produces a `++unit`.
+use a method from the [maps library]() that produces a `++unit`.
 `++unit`s are a common type in hoon used for optional values. A
-[`++unit`](link) is either `~` or `[~ p=value]`. Since we need to
+[`++unit`]() is either `~` or `[~ p=value]`. Since we need to
 specify a value for `(fib arg)` even when someone doesn't enter the
-query string we use [`++fall`](link), which produces either the value of
+query string we use [`++fall`](), which produces either the value of
 the unit, or the second argument if the `++unit` is null. Since our
 `qix.gas` has string values in it we specify a string in our second
 argument, `'0'`. As an aside, `'0'` is different from `"0"` in hoon. You
-can read about the difference in [`++cord`](link) and [`++tape`](link).
+can read about the difference in [`++cord`]() and [`++tape`]().
 
-Our outermost call, to [`++slav`](link), casts our string to a `@ud` —
+Our outermost call, to [`++slav`](), casts our string to a `@ud` —
 which is the type expected by `++fib`. `++slav` takes the name of an
 odor and a value, and tries to cast the value to that odor.
 
@@ -742,9 +743,9 @@ odor and a value, and tries to cast the value to that odor.
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/11/
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/11/lib/1/
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/exercise/11/lib/2/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/11/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/11/lib/1/
+    http://ship-name.urbit.org/main/pub/fab/guide/exercise/11/lib/2/
 
 #### Experiment with it
 
@@ -764,7 +765,7 @@ If we take the next few lines and write them as pseudo code in wide form
 they might look something like this, `(/; [gate] (/@ /psal/))`. That
 being the case, let's start at the bottom and move upwards since that's
 how our data flows. In depth documentation on individual `++horn` runes
-can be found in the [horn section of the rune library](link).
+can be found in the [horn section of the rune library]().
 
 `/psal/` loads our `psal` mark. Marks are like content types, and we
 keep them in `/main/mar/`. You can open `/main/mar/psal/door.hook` to
@@ -776,16 +777,16 @@ where `mark` exists in the `/main/mar/` directory. A `psal` is a partial
 `/@` loads a list of files in numerical order from the previously
 specified `++beam` using our mark, `psal`. `/@` has a few close
 relatives. `/&`, for example, reads files by `@da` or absolute date. You
-can see the rest in the [horn section of the library](link).
+can see the rest in the [horn section of the library]().
 
 `/;` takes the output from `/@` and `/psal/` and passes it to a twig. In
-this case, a gate. Our `/@` actually produces a [`++list`](link) of
+this case, a gate. Our `/@` actually produces a [`++list`]() of
 pairs of `[@ manx]` where the `@` is the filename, and the `manx` is the
-converted contents. We use [`++turn`](link), one of our `++list`
+converted contents. We use [`++turn`](), one of our `++list`
 operator functions, to iterate through the list and produce only a list
 of `++manx`. This is the output assigned to `posts`.
 
-Then, further down, we use [`;*`](link) to write the list to the page.
+Then, further down, we use [`;*`]() to write the list to the page.
 
 <hr>
 </hr>
@@ -800,7 +801,7 @@ Then, further down, we use [`;*`](link) to write the list to the page.
 
 #### Try it
 
-    http://ship-name.urbit.org/gen/main/pub/fab/guide/
+    http://ship-name.urbit.org/main/pub/fab/guide/
 
 #### Bring it all together
 

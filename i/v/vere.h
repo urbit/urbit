@@ -1098,6 +1098,11 @@
         void
         u3_sist_get(const c3_c* key_c, c3_y* val_y);
 
+      /* u3_sist_rand(): fill 8 words (32 bytes) with high-quality entropy.
+      */
+        void
+        u3_sist_rand(c3_w* rad_w);
+
     /**  New timer system.
     **/
       /* u3_temp_io_init(): initialize time timer.

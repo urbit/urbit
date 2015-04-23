@@ -104,7 +104,7 @@ _reck_kick_term(u3_noun pox, c3_l tid_l, u3_noun fav)
 
       u3_unix_ef_init(u3k(p_fav));
 
-      // uL(fprintf(uH, "kick: init: %d\n", p_fav));
+      uL(fprintf(uH, "kick: init: %d\n", p_fav));
       u3z(pox); u3z(fav); return c3y;
     } break;
   }
