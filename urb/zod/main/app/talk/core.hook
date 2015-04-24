@@ -105,7 +105,7 @@
     ::                                                  ::
     ++  work                                            ::  interface action
       $%  [%number p=? q=@ud]                           ::  activate by number
-          [%join p=(set partner)]                     ::  
+          [%join p=(set partner)]                       ::  
           [%say p=speech]                               ::
           [%invite p=span q=(list partner)]             ::
           [%banish p=span q=(list partner)]             ::
@@ -1751,6 +1751,9 @@
       ?:  oug
         (weld "@ " txt)
       (weld " " txt)
+    ::
+        %app
+      [' ' (trip p.sep)]
     ==
   -- 
 ::
