@@ -63,6 +63,7 @@
       [%ire p=serial q=speech]                          ::  in-reply-to
       [%lin p=? q=@t]                                   ::  no=@, text line
       [%mor p=(list speech)]                            ::  multiplex
+      [%app p=@t]                                       ::  app message
   ==                                                    ::
 ++  serial     ,@uvH                                    ::  unique identity
 ++  partner    (each station passport)                  ::  interlocutor

@@ -2,7 +2,7 @@
 ::::  /hook/core/helm/app                               ::  ::
   ::                                                    ::  ::
 /?  314                                                 ::  zuse version
-/-  *sole                                               ::  structures
+/-  *sole, *talk                                        ::  structures
 /+  sole                                                ::  libraries
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -228,8 +228,24 @@
     ::
     ++  spam
       |=  mes=(list tank)
-      =+  (turn mes |=(tank ~&(~(ram re +<) .)))
-      +>.$
+      %-  blab  :_  ~
+      :*  ost  %pass  /merge/[syd]/spam  %g  %mess
+          [our.hid /talk]  our.hid  %talk-command  -:!>(*command)
+          %publish
+          %-  flop
+          =<  acc
+          %+  roll  mes
+          =<  .(eny eny.hid)
+          |=  [tan=tank acc=(list thought) eny=@uvI]
+          ^-  [acc=(list thought) eny=@uvI]
+          =+  (sham eny mes)
+          :_  -
+          :_  acc
+          ^-  thought
+          :+  -
+            `(map partner (pair envelope delivery))`[[`partner`[%& our.hid %porch] [*envelope %pending]] ~ ~]
+          `statement`[lat.hid *bouquet [%app (crip ~(ram re tan))]]
+      ==
     ++  start
       |=  [her=@p sud=@tas gim=?(%auto germ)]
       ^+  +>
@@ -309,8 +325,8 @@
               ^-  (list (list tank))
               :~  :~  leaf/""
                       leaf/"done setting up scratch space in %{-}"
-                      leaf/"please resolve the following conflicts nd run"
-                      leaf/":helm+merge %{(trip syd)} %{<our.hid>} %{-}"
+                      leaf/"please resolve the following conflicts and run"
+                      leaf/":helm+merge %{(trip syd)} {<our.hid>} %{-}"
                   ==
                   ?~  annotated
                     ~
@@ -452,6 +468,8 @@
   |=  [ost=bone pax=path sih=sign]
   ?+    pax  ~|  %helm-strange-path  !!
       [%merge @tas @ ~]
+    ?:  ?=(%spam i.t.t.pax)
+      [~ +>.$]
     he-abet:merge-abet:(work:(he-wish-merge:(hoke ost our.hid) i.t.pax) sih)
   ==
 --

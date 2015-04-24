@@ -1593,15 +1593,15 @@
         ::
             %fine
           ?:  =(r.ali.dat r.bob.dat)
-            ~&  [%fine-trivial ali=<ali> bob=<bob> r.ali.dat r.bob.dat]
+            ::  ~&  [%fine-trivial ali=<ali> bob=<bob> r.ali.dat r.bob.dat]
             (done:he ~)
           ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
-            ~&  [%fine-mostly-trivial ali=<ali> bob=<bob>]
+            ::  ~&  [%fine-mostly-trivial ali=<ali> bob=<bob>]
             (done:he ~)
           ?.  (~(has in (reachable-takos r.ali.dat)) r.bob.dat)
-            ~&  [%fine-not-so-trivial ali=<ali> bob=<bob>]
+            ::  ~&  [%fine-not-so-trivial ali=<ali> bob=<bob>]
             (error:he %bad-fine-merge ~)
-          ~&  [%fine-lets-go ali=<ali> bob=<bob>]
+          ::  ~&  [%fine-lets-go ali=<ali> bob=<bob>]
           =.  new.dat  ali.dat
           =.  erg.dat
             %-  mo  ^-  (list ,[path ?])
