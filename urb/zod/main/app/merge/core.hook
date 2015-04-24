@@ -27,8 +27,7 @@
   $%  [%exec p=@p q=beak r=(unit silk)]
   ==  ==
       $:  %g
-  $%  [%cide span]
-      [%mess p=[ship path] q=ship r=cage]
+  $%  [%mess p=[ship path] q=ship r=cage]
   ==  ==  ==
 ++  sign
   $%  $:  %c
@@ -85,9 +84,8 @@
     ^+  +>
     +>.$(mow (welp new mow))
   ::
-  ++  end   ?.(?=([* ~ ~] merges) . (blab [0 %pass / %g %cide %$] ~))
-  ++  win   end:(blab [ost %give %nice ~] ~)
-  ++  lose  end:(blab [ost %give %mean ~] ~)
+  ++  win   (blab [ost %give %nice ~] ~)
+  ++  lose  (blab [ost %give %mean ~] ~)
   ::
   ++  bead-to-tage
     |=  res=bead
@@ -282,7 +280,7 @@
   --
 ++  peer  ,_`.
 ++  poke--args
-  |=  [ost=bone you=ship syd=@tas her=@p sud=@tas gim=?([$|(%auto germ) ~] ~)]
+  |=  [ost=bone you=ship syd=@tas her=@p sud=@tas gim=$?(%auto germ)]
   ^-  [(list move) _+>.$]
   ?~  gim
     $(gim [%auto ~])

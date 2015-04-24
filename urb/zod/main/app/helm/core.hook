@@ -12,10 +12,18 @@
       $:  %0                                            ::  state version
           bur=(unit (pair ship mace))                   ::  requesting ticket
           hoc=(map bone helm-session)                   ::  consoles
+          rem=(map desk merge-state)                    ::  active merges
       ==                                                ::
     ++  helm-session                                    ::
       $:  say=sole-share                                ::
           mud=(unit (sole-dialog ,@ud))                 ::
+      ==                                                ::
+    ++  merge-state                                     ::  merge data
+      $:  auto=?                                        ::  escalate on failure
+          gem=germ                                      ::  strategy
+          her=@p                                        ::  from ship
+          sud=@tas                                      ::  from desk
+          cas=case                                      ::  at case
       ==                                                ::
     ++  funk  (pair ,@ ,@)                              ::
     ++  begs  ,[his=@p tic=@p eny=@t ges=gens]          ::  begin data
@@ -38,23 +46,55 @@
           [%nice ~]                                     ::  acknowledge
           [%rush %sole-effect sole-effect]              ::  effect 
       ==                                                ::
-    ++  hapt  ,[p=ship q=path]                          ::  
+    ++  hapt  ,[p=ship q=path]                          ::
+    ++  milk  (trel ship desk silk)                     ::
+    ++  silk                                            ::
+      $&  [p=silk q=silk]                               ::  cons
+      $%  [%diff p=silk q=silk]                         ::  diff
+          [%done p=(set beam) q=gage]                   ::  literal
+          [%file p=beam]                                ::  from clay
+          [%mash p=mark q=milk r=milk]                  ::  merge
+          [%tabl p=(list (pair silk silk))]             ::  list
+      ==                                                ::
+    ++  tage                                            ::  %tabl gage
+      ,[[%tabl p=(list (pair marc marc))] q=vase]       ::
     ++  move  ,[p=bone q=(mold note gift)]              ::
+    ++  note-clay                                       ::  filesystem command
+      $%  [%font p=@p q=@tas r=@p s=@tas]               ::
+          [%info p=@p q=@tas r=nori]                    ::
+          [%merg p=@p q=@tas r=@p s=@tas t=germ]        ::
+      ==                                                ::
+    ++  note-dill                                       ::  system command
+      $%  [%flog p=dill-flog]                           ::
+      ==                                                ::
+    ++  note-ford                                       ::
+      $%  [%exec p=@p q=beak r=(unit silk)]             ::
+      ==                                                ::
     ++  note-gall                                       ::  note to %gall
       $%  [%mess p=[p=ship q=path] q=ship r=cage]       ::
           [%show p=[p=ship q=path] q=ship r=path]       ::
           [%took p=[p=ship q=path] q=ship]              ::
       ==                                                ::
-    ++  note-dill                                       ::  system command
-      $%  [%flog p=dill-flog]                           ::
-      ==                                                ::
-    ++  note-clay                                       ::  filesystem command
-      $%  [%font p=@p q=@tas r=@p s=@tas]               ::
-      ==                                                ::
     ++  note                                            ::  out request $->
       $%  [%c note-clay]                                ::
           [%d note-dill]                                ::
+          [%f note-ford]                                ::
           [%g note-gall]                                ::
+      ==                                                ::
+    ++  sign-clay                                       ::
+      $%  [%mere are=(each (set path) (pair term tang))]::
+      ==                                                ::
+    ++  sign-ford                                       ::
+      $%  [%made p=@uvH q=(each gage tang)]             ::
+      ==                                                ::
+    ++  sign-gall                                       ::
+      $%  [%mean p=ares]                                ::
+          [%nice ~]                                     ::
+      ==                                                ::
+    ++  sign                                            ::
+      $%  [%c sign-clay]                                ::
+          [%f sign-ford]                                ::
+          [%g sign-gall]                                ::
       ==                                                ::
     --                                                  ::
 ::                                                      ::
@@ -136,6 +176,7 @@
       :_  moz
       [ost %pass /verb %d %flog %verb ~]
     ==
+  ::
   ++  he-wish-init
     |=  him=ship
     %_    +>.$
@@ -143,12 +184,221 @@
       :_  moz
       [ost %pass /init %d %flog %crud %hax-init leaf/(scow %p him) ~]
     ==
+  ::
+  ++  he-wish-merge
+    |=  syd=desk
+    =+  ^-  merge-state
+        %+  fall  (~(get by rem) syd)
+        =+  *merge-state
+        %_(- cas [%da lat.hid])
+    |%
+    ++  merge-abet
+      ..he-wish-merge(rem (~(put by rem) syd auto gem her sud cas))
+    ::
+    ++  blab
+      |=  new=(list move)
+      ^+  +>
+      +>.$(moz (welp new moz))
+    ::
+    ++  win   (blab [ost %give %nice ~] ~)
+    ++  lose  (blab [ost %give %mean ~] ~)
+    ::
+    ++  gage-to-tage
+      |=  res=gage
+      ^-  tage
+      ?@  p.res
+        ~|(%bad-marc !!)
+      res
+    ::
+    ++  tage-to-cages
+      |=  tab=tage
+      ^-  (list (pair cage cage))
+      ?~  p.tab
+        ~
+      :_  $(p.tab t.p.tab, q.tab (slot 3 q.tab))
+      ~|  %strange-gage
+      :-  [?^(p.i.p.tab !! p.i.p.tab) (slot 4 q.tab)]
+      [?^(q.i.p.tab !! q.i.p.tab) (slot 5 q.tab)]
+    ::
+    ++  merge
+      ^+  .
+      (blab [ost %pass /merge/[syd]/merge %c %merg our.hid syd her sud gem] ~)
+    ::
+    ++  fancy-merge                                   ::  recurse
+      |=  [syd=desk her=@p sud=desk gem=?(%auto germ)]
+      ^+  +>
+      %-  blab  :_  ~
+      :*  ost  %pass  /merge/[^syd]/fancy  %g  %mess  [our.hid imp.hid]
+          our.hid  %helm-merge  !>([syd her sud gem])
+      ==
+    ::
+    ++  spam
+      |=  mes=(list tank)
+      =+  (turn mes |=(tank ~&(~(ram re +<) .)))
+      +>.$
+    ++  start
+      |=  [her=@p sud=@tas gim=?(%auto germ)]
+      ^+  +>
+      =.  cas  [%da lat.hid]
+      ?.  ?=(%auto gim)
+        merge(auto |, gem gim, her her, sud sud)
+      ?:  =(0 .^(%cw /(scot %p our.hid)/[syd]/(scot %da lat.hid)))
+        =>  $(gim %init)
+        .(auto &)
+      =>  $(gim %fine)
+      .(auto &)
+    ::
+    ++  work
+      |=  sih=sign
+      ^+  +>
+      ~|  [%working auto=auto gem=gem syd=syd her=her sud=sud]
+      ?:  ?=(%meld gem)
+        ?-    -.sih
+            %g
+          ?:  ?=(%nice +<.sih)
+            =>  (spam leaf/"%melding %{(trip sud)} into scratch space" ~)
+            %-  blab  :_  ~
+            :*  ost  %pass  /merge/[syd]/scratch  %c  %merg  our.hid
+                (cat 3 syd '-scratch')  her  sud  gem
+            ==
+          =+  :-  "failed to set up conflict resolution scratch space"
+              "I'm out of ideas"
+          lose:(spam leaf/-< leaf/-> ~)
+        ::
+            %c
+          ?:  ?=(%& -.are.sih)
+            ?.  auto
+              =+  "successfully merged with strategy {<gem>}"
+              win:(spam leaf/- ?~(p.are.sih ~ [>`(set path)`p.are.sih< ~]))
+            =+  "mashing conflicts"
+            =>  .(+>.$ (spam leaf/- ~))
+            =+  tic=(cat 3 syd '-scratch')
+            %-  blab  :_  ~
+            :*  ost  %pass  /merge/[syd]/mash
+                %f  %exec  our.hid  [our.hid tic %da lat.hid]  ~  %tabl
+                ^-  (list (pair silk silk))
+                %+  turn  (~(tap in p.are.sih))
+                |=  pax=path
+                ^-  (pair silk silk)
+                :-  [%done ~ %path -:!>(*path) pax]
+                =+  base=[%file [our.hid tic %da lat.hid] (flop pax)]
+                =+  alis=[%file [her sud cas] (flop pax)]
+                =+  bobs=[%file [our.hid syd %da lat.hid] (flop pax)]
+                =+  dali=[%diff base alis]
+                =+  dbob=[%diff base bobs]
+                =+  ^-  for=mark
+                    =+  (slag (dec (lent pax)) pax)
+                    ?~(- %$ i.-)
+                [%mash for [her sud dali] [our.hid syd dbob]]
+            ==
+          =+  "failed to merge with strategy {<p.p.are.sih>}"
+          lose:(spam leaf/- q.p.are.sih)
+        ::
+            %f
+          ?:  ?=(%| -.q.sih)
+            =+  "failed to mash"
+            lose:(spam leaf/- p.q.sih)
+          =+  ^-  can=(list (pair path (unit miso)))
+              %+  turn  (tage-to-cages (gage-to-tage p.q.sih))
+              |=  [pax=cage dif=cage]
+              ^-  (pair path (unit miso))
+              ?.  ?=(%path p.pax)
+                ~|  "strange path mark: {<p.pax>}"
+                !!
+              [((hard path) q.q.pax) ?:(?=(%null p.dif) ~ `[%dif dif])]
+          =+  notated=(skid can |=([path a=(unit miso)] ?=(^ a)))
+          =+  annotated=(turn `(list (pair path ,*))`-.notated head)
+          =+  unnotated=(turn `(list (pair path ,*))`+.notated head)
+          =+  (trip (cat 3 syd '-scratch'))
+          =+  ^-  tan=(list tank)
+              %-  zing
+              ^-  (list (list tank))
+              :~  :~  leaf/""
+                      leaf/"done setting up scratch space in %{-}"
+                      leaf/"please resolve the following conflicts nd run"
+                      leaf/":helm+merge %{(trip syd)} %{<our.hid>} %{-}"
+                  ==
+                  ?~  annotated
+                    ~
+                  :~  leaf/""
+                      leaf/"annotated conflicts in:"
+                      >`(list path)`annotated<
+                  ==
+                  ?~  unnotated
+                    ~
+                  :~  leaf/""
+                      leaf/"some conflicts could not be annotated."
+                      leaf/"for these, the scratch space contains"
+                      leaf/"the most recent common ancestor of the"
+                      leaf/"conflicting content."
+                      leaf/""
+                      leaf/"unannotated conflicts in:"
+                      >`(list path)`unnotated<
+                  ==
+              ==
+          =<  win
+          %-  blab:(spam tan)
+          :_  ~
+          :*  ost  %pass  /merge/[syd]/dash  %c  %info
+              our.hid  (cat 3 syd '-scratch')
+              %&  *cart
+              %+  murn  can
+              |=  [p=path q=(unit miso)]
+              `(unit (pair path miso))`?~(q ~ `[p u.q])
+          ==
+        ==
+      ?>  ?=(%c -.sih)
+      ?:  ?=(%& -.are.sih)
+        =+  "successfully merged with strategy {<gem>}"
+        win:(spam leaf/- ?~(p.are.sih ~ [>`(set path)`p.are.sih< ~]))
+      ?.  auto
+        =+  "failed to merge with strategy {<p.p.are.sih>}"
+        lose:(spam leaf/- q.p.are.sih)
+      ?+    gem
+        (spam leaf/"strange auto" >gem< ~)
+      ::
+          %init
+        =+  :-  "auto merge failed on strategy %init"
+            "I'm out of ideas"
+        lose:(spam leaf/-< leaf/-> [>p.p.are.sih< q.p.are.sih])
+      ::
+          %fine
+        ?.  ?=(%bad-fine-merge p.p.are.sih)
+          =+  "auto merge failed on strategy %fine"
+          lose:(spam leaf/- >p.p.are.sih< q.p.are.sih)
+        =>  (spam leaf/"%fine merge failed, trying %meet" ~)
+        merge(gem %meet)
+      ::
+          %meet
+        ?.  ?=(%meet-conflict p.p.are.sih)
+          =+  "auto merge failed on strategy %meet"
+          lose:(spam leaf/- >p.p.are.sih< q.p.are.sih)
+        =>  (spam leaf/"%meet merge failed, trying %mate" ~)
+        merge(gem %mate)
+      ::
+          %mate
+        ?.  ?=(%mate-conflict p.p.are.sih)
+          =+  "auto merge failed on strategy %mate"
+          lose:(spam leaf/- >p.p.are.sih< q.p.are.sih)
+        =>  .(gem %meld)
+        =+  tic=(cat 3 syd '-scratch')
+        =>  =+  :-  "%mate merge failed with conflicts,"
+                "setting up scratch space at %{(trip tic)}"
+            [tic=tic (spam leaf/-< leaf/-> ~)]
+        (fancy-merge tic our.hid syd %auto)
+      ==
+    --
   --
 ::
 ++  hake                                                ::  poke core
   |=  [ost=bone her=ship]
   ?>  =(her our.hid)
   ~(. he [ost [ost %give %nice ~]~] (fall (~(get by hoc) ost) *helm-session))
+::
+++  hoke                                                ::  poke sans ack
+  |=  [ost=bone her=ship]
+  ?>  =(her our.hid)
+  ~(. he [ost ~] (fall (~(get by hoc) ost) *helm-session))
 ::
 ++  poke-helm-reset
   |=  [ost=bone her=ship ~]
@@ -169,6 +419,11 @@
   |=  [ost=bone her=ship all=(list term)]
   ~&  %poke-helm-reload
   he-abet:(he-wish-reload:(hake ost her) all)
+::
+++  poke-helm-merge
+  |=  [ost=bone her=ship syd=@tas ali=@p sud=@tas gem=?(%auto germ)]
+  ~&  %poke-helm-merge
+  he-abet:merge-abet:(start:(he-wish-merge:(hoke ost her) syd) ali sud gem)
 ::
 ++  poke-helm-sync
   |=  [ost=bone her=ship all=[@tas @p @tas ~]]
@@ -197,5 +452,12 @@
   :~  [ost %pass / %a %cash p.u.bur q.u.bur u.wil]
       [ost %pass / %c %plug our.hid %main (sein our.hid) %main]
       [ost %give %nice ~]
+  ==
+::
+++  pour
+  |=  [ost=bone pax=path sih=sign]
+  ?+    pax  ~|  %helm-strange-path  !!
+      [%merge @tas @ ~]
+    he-abet:merge-abet:(work:(he-wish-merge:(hoke ost our.hid) i.t.pax) sih)
   ==
 --
