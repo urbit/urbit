@@ -159,6 +159,7 @@
               ins=(unit (list (pair path cage)))        ::  inserts
               dig=(map path cage)                       ::  store diffs
               dif=(unit (list (trel path lobe cage)))   ::  changes
+              muc=(map path (pair cage cage))           ::  store miso
               muh=(map path lobe)                       ::  store hashes
               mut=(unit (list (trel path lobe cage)))   ::  mutations
               mim=(map path mime)                       ::  mime cache
@@ -426,7 +427,9 @@
               %+  turn  mut
               |=  [pax=path mis=miso]
               ?>  ?=(%mut -.mis)
-              [pax (page-to-lobe:ze [p q.q]:q.mis)]
+              [pax p.mis q.mis]
+          ::
+              ~
           ::
               ~
           ::
@@ -485,14 +488,14 @@
             [%pact [%done ~ p.-] [%done ~ p.mis]]
         ==
         :*  hen  %pass
-            [%mutating (scot %p who) syd (scot %da wen) ~]
+            [%castifying (scot %p who) syd (scot %da wen) ~]
             %f  %exec  who  [who syd %da wen]  ~  %tabl
             ^-  (list (pair silk silk))
             %+  turn  mut
             |=  [pax=path mis=miso]
             ?>  ?=(%mut -.mis)
             :-  [%done ~ %path -:!>(*path) pax]
-            [%diff [%done ~ p.mis] [%cast p.p.mis [%done ~ q.mis]]]
+            [%cast p.p.mis [%done ~ q.mis]]
         ==
     ==
   ::
@@ -592,6 +595,36 @@
       ~|(%clay-take-diffing-strange-path-mark !!)
     =+  paf=((hard path) q.q.pax)
     [paf (page-to-lobe:ze [p q.q]:cay) (~(got by dig.u.dok) paf)]
+  ::
+  ++  take-castify
+    |=  [wen=@da res=(each gage tang)]
+    ^+  +>
+    ?~  dok
+      ~&  %clay-take-castifying-unexpected-made  +>.$
+    ?.  =(~ muh.u.dok)
+      ~&  %clay-take-castifying-redundant-made  +>.$
+    =+  ^-  cat=(list (pair path cage))
+        %+  turn  (tage-to-cages (made-to-tage res))
+        |=  [pax=cage cay=cage]
+        ?.  ?=(%path p.pax)
+          ~|(%castify-bad-path-mark !!)
+        [((hard path) q.q.pax) cay]
+    =.  muh.u.dok
+          %-  mo
+          %+  turn  cat
+          |=  [pax=path cay=cage]
+          [pax (page-to-lobe:ze [p q.q]:cay)]
+    =-  %_(+>.$ tag [- tag])
+    ^-  move
+    :*  hen  %pass
+        [%mutating (scot %p who) syd (scot %da wen) ~]
+        %f  %exec  who  [who syd %da wen]  ~  %tabl
+        ^-  (list (pair silk silk))
+        %+  turn  cat
+        |=  [pax=path cay=cage]
+        :-  [%done ~ %path -:!>(*path) pax]
+        [%diff [%done ~ p:(~(got by muc.u.dok) pax)] [%done ~ cay]]
+    ==
   ::
   ++  take-mutating
     |=  [wen=@da res=(each gage tang)]
@@ -1696,8 +1729,10 @@
           =.  new.dat
             (make-yaki [r.ali.dat r.bob.dat ~] hat now)
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
-          =.  erg.dat  %-  ~(uni by del)                ::  XX  totes wrong
-                       `(map path ,?)`(~(run by hat) |=(lobe %&))
+          =.  erg.dat  %-  ~(uni by del)
+                       ^-  (map path ,?)
+                       %.  |=(lobe %&)
+                       ~(run by (~(uni by new.dal.dat) cal.dal.dat))
           checkout
         ==
       ::
@@ -2523,6 +2558,19 @@
         =+  une=(un who now hen ruf)
         =+  ^=  zat
             (take-diffing:(di:wake:une syd) wen q.q.hin)
+        =+  zot=abet.zat
+        [-.zot abet:(pish:une syd +.zot ran.zat)]
+      [mos ..^$]
+    ::
+        %castifying
+      ?>  ?=([@ @ @ ~] t.tea)
+      =+  who=(slav %p i.t.tea)
+      =+  syd=(slav %tas i.t.t.tea)
+      =+  wen=(slav %da i.t.t.t.tea)
+      =^  mos  ruf
+        =+  une=(un who now hen ruf)
+        =+  ^=  zat
+            (take-castify:(di:wake:une syd) wen q.q.hin)
         =+  zot=abet.zat
         [-.zot abet:(pish:une syd +.zot ran.zat)]
       [mos ..^$]
