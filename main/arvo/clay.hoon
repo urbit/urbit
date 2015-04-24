@@ -2506,7 +2506,7 @@
         [[- ~] ..^$]
       ~&  :^    "merge failed"
               "please manually merge the desks with"
-            ":merge %{(trip syd)} {(scow %p her)} %{(trip sud)}"
+            ":helm+merge %{(trip syd)} {(scow %p her)} %{(trip sud)}"
           :-  p.p.p.+.q.hin
           (turn q.p.p.+.q.hin |=(tank ~(ram re +<)))
       [[- ~] ..^$]
