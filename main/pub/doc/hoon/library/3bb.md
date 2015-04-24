@@ -1,7 +1,7 @@
 section 3bB, cryptosuites
 =========================
 
-### ++crua
+<h3 id="++crua"><code>++crua</code></h3>
 
     ++  crua  !:                                            ::  cryptosuite A (RSA)
       ^-  acru
@@ -10,13 +10,13 @@ section 3bB, cryptosuites
 
 XX document
 
-### ++mx
+<h3 id="++mx"><code>++mx</code></h3>
 
           ++  mx  (dec (met 0 mos))                         ::  bit length
 
 XX document
 
-### ++dap
+<h3 id="++dap"><code>++dap</code></h3>
 
           ++  dap                                           ::  OEAP decode
             |=  [wid=@ xar=@ dog=@]  ^-  [p=@ q=@]
@@ -28,7 +28,7 @@ XX document
 
 XX document
 
-### ++pad
+<h3 id="++pad"><code>++pad</code></h3>
 
           ++  pad                                           ::  OEAP encode
             |=  [wid=@ rax=[p=@ q=@] meg=@]  ^-  @
@@ -42,19 +42,19 @@ XX document
 
 XX document
 
-### ++pull
+<h3 id="++pull"><code>++pull</code></h3>
 
           ++  pull  |=(a=@ (~(exp fo mos) 3 a))
 
 XX document
 
-### ++push
+<h3 id="++push"><code>++push</code></h3>
 
           ++  push  |=(a=@ (~(exp fo mos) 5 a))
 
 XX document
 
-### ++pump
+<h3 id="++pump"><code>++pump</code></h3>
 
           ++  pump
             |=  a=@  ^-  @
@@ -64,7 +64,7 @@ XX document
 
 XX document
 
-### ++punt
+<h3 id="++punt"><code>++punt</code></h3>
 
           ++  punt
             |=  a=@  ^-  @
@@ -74,14 +74,14 @@ XX document
 
 XX document
 
-### ++as
+<h3 id="++as"><code>++as</code></h3>
 
       ++  as
         =>  |%
 
 XX document
 
-### ++haul
+<h3 id="++haul"><code>++haul</code></h3>
 
             ++  haul                                        ::  revealing haul
               |=  a=pass
@@ -94,7 +94,7 @@ XX document
 
 XX document
 
-### ++seal
+<h3 id="++seal"><code>++seal</code></h3>
 
 
     XX document
@@ -177,26 +177,26 @@ XX document
 
 XX document
 
-### ++pac
+<h3 id="++pac"><code>++pac</code></h3>
 
             ++  pac  ^-  @uvG  (end 6 1 (shaf %acod sec))
 
 XX document
 
-### ++pub
+<h3 id="++pub"><code>++pub</code></h3>
 
             ++  pub  ^-  pass  (cat 3 'b' puc)
 
 XX document
 
-### ++sec
+<h3 id="++sec"><code>++sec</code></h3>
 
             ++  sec  ^-  ring  sed
       ::
 
 XX document
 
-### ++nu
+<h3 id="++nu"><code>++nu</code></h3>
 
       ++  nu
         ^?
@@ -208,7 +208,7 @@ XX document
 
 XX document
 
-### ++elcm
+<h3 id="++elcm"><code>++elcm</code></h3>
 
             ++  elcm
               |=  [a=@ b=@]
@@ -217,7 +217,7 @@ XX document
 
 XX document
 
-### ++eldm
+<h3 id="++eldm"><code>++eldm</code></h3>
 
             ++  eldm
               |=  [a=@ b=@ c=@]
@@ -226,7 +226,7 @@ XX document
 
 XX document
 
-### ++ersa
+<h3 id="++ersa"><code>++ersa</code></h3>
 
             ++  ersa
               |=  [a=@ b=@]
@@ -240,7 +240,7 @@ XX document
 
 XX document
 
-### ++com
+<h3 id="++com"><code>++com</code></h3>
 
 
     XX document
@@ -401,7 +401,7 @@ XX document
 
 XX document
 
-### ++sign
+<h3 id="++sign"><code>++sign</code></h3>
 
             ++  sign
               |=  [a=@ b=@]  ^-  @
@@ -409,7 +409,7 @@ XX document
 
 XX document
 
-### ++sure
+<h3 id="++sure"><code>++sure</code></h3>
 
             ++  sure
               |=  [a=@ b=@]
@@ -418,7 +418,7 @@ XX document
 
 XX document
 
-### ++tear
+<h3 id="++tear"><code>++tear</code></h3>
 
             ++  tear
               |=  [a=pass b=@]
@@ -428,7 +428,7 @@ XX document
 
 XX document
 
-### ++de
+<h3 id="++de"><code>++de</code></h3>
 
       ++  de
         |+  [key=@ cep=@]  ^-  (unit ,@)
@@ -437,7 +437,7 @@ XX document
 
 XX document
 
-### ++dy
+<h3 id="++dy"><code>++dy</code></h3>
 
       ++  dy
         |+  [a=@ b=@]  ^-  @
@@ -445,7 +445,7 @@ XX document
 
 XX document
 
-### ++en
+<h3 id="++en"><code>++en</code></h3>
 
       ++  en
         |+  [key=@ msg=@]  ^-  @ux
@@ -454,14 +454,14 @@ XX document
 
 XX document
 
-### ++ex
+<h3 id="++ex"><code>++ex</code></h3>
 
       ++  ex  ^?
         |%  ++  fig  ^-  @uvH  (shaf %bfig puc)
 
 XX document
 
-### ++fig
+<h3 id="++fig"><code>++fig</code></h3>
 
 
     XX document
@@ -509,7 +509,7 @@ XX document
 
 XX document
 
-### ++pit
+<h3 id="++pit"><code>++pit</code></h3>
 
             ++  pit
               |=  [a=@ b=@]
@@ -519,7 +519,7 @@ XX document
 
 XX document
 
-### ++nol
+<h3 id="++nol"><code>++nol</code></h3>
 
             ++  nol
               |=  a=@
@@ -528,7 +528,7 @@ XX document
 
 XX document
 
-### ++brew
+<h3 id="++brew"><code>++brew</code></h3>
 
     ++  brew                                                ::  create keypair
       |=  [a=@ b=@]                                         ::  width seed
@@ -538,7 +538,7 @@ XX document
 
 XX document
 
-### ++hail
+<h3 id="++hail"><code>++hail</code></h3>
 
     ++  hail                                                ::  activate public key
       |=  a=pass
@@ -550,7 +550,7 @@ XX document
 
 XX document
 
-### ++wear
+<h3 id="++wear"><code>++wear</code></h3>
 
     ++  wear                                                ::  activate secret key
       |=  a=ring
@@ -562,7 +562,7 @@ XX document
 
 XX document
 
-### ++trub
+<h3 id="++trub"><code>++trub</code></h3>
 
     ++  trub                                                ::  test ed
       |=  msg=@tas
@@ -583,7 +583,7 @@ XX document
 
 XX document
 
-### ++hmac
+<h3 id="++hmac"><code>++hmac</code></h3>
 
     ++  hmac                                                ::  HMAC-SHA1
       |=  [key=@ mes=@]

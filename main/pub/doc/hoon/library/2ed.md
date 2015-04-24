@@ -1,7 +1,7 @@
 section 2eD
 ===========
 
-### ++bend
+<h3 id="++bend"><code>++bend</code></h3>
 
 Conditional composer
 
@@ -50,7 +50,7 @@ group of rules to a specified output.
 
 ------------------------------------------------------------------------
 
-### ++comp
+<h3 id="++comp"><code>++comp</code></h3>
 
 Arbitrary compose
 
@@ -87,7 +87,7 @@ produces a cell of two nouns.
 
 ------------------------------------------------------------------------
 
-### ++glue
+<h3 id="++glue"><code>++glue</code></h3>
 
 Skip delimiter
 
@@ -120,7 +120,7 @@ result.
 
 ------------------------------------------------------------------------
 
-### ++less
+<h3 id="++less"><code>++less</code></h3>
 
 Parse unless
 
@@ -150,7 +150,7 @@ connect `vex` with the following rule.
 
 ------------------------------------------------------------------------
 
-### ++pfix
+<h3 id="++pfix"><code>++pfix</code></h3>
 
 Discard first rule
 
@@ -171,7 +171,7 @@ ignoring the result of the first and producing the result of the second.
 
 ------------------------------------------------------------------------
 
-### ++plug
+<h3 id="++plug"><code>++plug</code></h3>
 
 Parse to tuple
 
@@ -204,7 +204,7 @@ more detailed explanation.
 
 ------------------------------------------------------------------------
 
-### ++pose
+<h3 id="++pose"><code>++pose</code></h3>
 
 Parse options
 
@@ -235,7 +235,7 @@ following rule `sab`. See also: the monad applicator [;\~]()
 
 ------------------------------------------------------------------------
 
-### ++simu
+<h3 id="++simu"><code>++simu</code></h3>
 
 First and second
 
@@ -266,7 +266,7 @@ connect `vex` with the following rule.
 
 ------------------------------------------------------------------------
 
-### ++sfix
+<h3 id="++sfix"><code>++sfix</code></h3>
 
 Discard second rule
 

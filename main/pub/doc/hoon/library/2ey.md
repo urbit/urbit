@@ -1,13 +1,13 @@
 section 2eY, SHA-256
 ====================
 
-### ++shad
+<h3 id="++shad"><code>++shad</code></h3>
 
     ++  shad  |=(ruz=@ (shax (shax ruz)))                   ::  double sha-256
 
 XX document
 
-### ++shaf
+<h3 id="++shaf"><code>++shaf</code></h3>
 
     ++  shaf                                                ::  half sha-256
       |=  [sal=@ ruz=@]
@@ -17,7 +17,7 @@ XX document
 
 XX document
 
-### ++shak
+<h3 id="++shak"><code>++shak</code></h3>
 
     ++  shak                                                ::  XX shd be PBKDF
       |=  [who=@p wud=@]
@@ -26,7 +26,7 @@ XX document
 
 XX document
 
-### ++sham
+<h3 id="++sham"><code>++sham</code></h3>
 
     ++  sham                                                ::  noun hash
       |=  yux=*  ^-  @uvH  ^-  @
@@ -37,7 +37,7 @@ XX document
 
 XX document
 
-### ++shas
+<h3 id="++shas"><code>++shas</code></h3>
 
     ++  shas                                                ::  salted hash
       |=  [sal=@ ruz=@]
@@ -46,7 +46,7 @@ XX document
 
 XX document
 
-### ++shax
+<h3 id="++shax"><code>++shax</code></h3>
 
     ++  shax                                                ::  sha-256
       ~/  %shax
@@ -137,7 +137,7 @@ XX document
 
 XX document
 
-### ++shaw
+<h3 id="++shaw"><code>++shaw</code></h3>
 
     ++  shaw                                                ::  hash to nbits
       |=  [sal=@ len=@ ruz=@]
@@ -146,7 +146,7 @@ XX document
 
 XX document
 
-### ++og
+<h3 id="++og"><code>++og</code></h3>
 
     ++  og                                                  ::  shax-powered rng
       ~/  %og
@@ -154,7 +154,7 @@ XX document
 
 XX document
 
-### ++rad
+<h3 id="++rad"><code>++rad</code></h3>
 
       ++  rad                                               ::  random in range
         |=  b=@  ^-  @
@@ -164,7 +164,7 @@ XX document
 
 XX document
 
-### ++rads
+<h3 id="++rads"><code>++rads</code></h3>
 
       ++  rads                                              ::  random continuation
         |=  b=@
@@ -173,7 +173,7 @@ XX document
 
 XX document
 
-### ++raw
+<h3 id="++raw"><code>++raw</code></h3>
 
       ++  raw                                               ::  random bits
         ~/  %raw
@@ -191,7 +191,7 @@ XX document
 
 XX document
 
-### ++raws
+<h3 id="++raws"><code>++raws</code></h3>
 
       ++  raws                                              ::  random bits continuation
         |=  b=@
@@ -201,7 +201,7 @@ XX document
 
 XX document
 
-### ++shaz
+<h3 id="++shaz"><code>++shaz</code></h3>
 
     ++  shaz                                                ::  sha-512
       |=  ruz=@  ^-  @
@@ -209,7 +209,7 @@ XX document
 
 XX document
 
-### ++shal
+<h3 id="++shal"><code>++shal</code></h3>
 
     ++  shal                                                ::  sha-512 with length
       ~/  %shal
@@ -326,7 +326,7 @@ XX document
 
 XX document
 
-### ++shan
+<h3 id="++shan"><code>++shan</code></h3>
 
     ++  shan                                                ::  sha-1 (deprecated)
       |=  ruz=@

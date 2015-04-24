@@ -36,14 +36,15 @@ module.exports = recl
 
   setPath: (href,hist) ->
     if hist isnt false then history.pushState {}, "", window.tree.basepath href
-    TreeActions.setCurr href
+    TreeActions.setCurr href.split("#")[0]
 
   goTo: (path) ->
     @toggleFocus false
     $("html,body").animate {scrollTop:0}
+    frag = path.split("#")[0]
     @setPath path
-    if not @checkPath path
-      TreeActions.getPath path
+    if not @checkPath frag
+      TreeActions.getPath frag
 
   checkURL: ->
     if @state.url isnt window.location.pathname

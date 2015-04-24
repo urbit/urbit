@@ -1,7 +1,7 @@
 section 2eA, packing
 ====================
 
-### ++cue
+<h3 id="++cue"><code>++cue</code></h3>
 
 Unpack atom to noun
 
@@ -41,7 +41,7 @@ Produces a noun unpacked from atom `a`. The inverse of jam.
 
 ------------------------------------------------------------------------
 
-### ++jam
+<h3 id="++jam"><code>++jam</code></h3>
 
     ++  jam                                                 ::  pack
       ~/  %jam
@@ -83,7 +83,7 @@ Produces an atom unpacked from noun `a`. The inverse of cue.
 
 ------------------------------------------------------------------------
 
-### ++mat
+<h3 id="++mat"><code>++mat</code></h3>
 
 Length-encode
 
@@ -123,7 +123,7 @@ is the length of `q` in bits.
 
 ------------------------------------------------------------------------
 
-### ++rub
+<h3 id="++rub"><code>++rub</code></h3>
 
 Length-decode
 

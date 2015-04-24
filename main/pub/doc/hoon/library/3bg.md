@@ -1,7 +1,7 @@
 section 3bG, URL handling
 =========================
 
-### ++deft
+<h3 id="++deft"><code>++deft</code></h3>
 
 Import URL path
 
@@ -34,7 +34,7 @@ either by a `.` or a `/`.
     ~zod/try=> (deft /foo/bar/baz)
     [p=~ q=<|foo bar baz|>]
 
-### ++fain
+<h3 id="++fain"><code>++fain</code></h3>
 
 Restructure path
 
@@ -50,7 +50,7 @@ Restructure path
     ::
 
 Splits a concrete
-[`++spur]() out of a full`++path`, producing a location [`++beam`]() and a remainder [`++path\`]().
+[`++spur`]() out of a full `++path`, producing a location [`++beam`]() and a remainder [`++path`]().
 
 `hom` is a [`++path`]()
 
@@ -73,7 +73,7 @@ Splits a concrete
       q=/._req_1234__
     ]
 
-### ++fuel
+<h3 id="++fuel"><code>++fuel</code></h3>
 
 Parse fcgi
 
@@ -135,7 +135,7 @@ Retrieieves the %eyre FCGI, producing a [`++epic`](). Used primarily in
       nyp=/gen
     ]
 
-### ++sifo
+<h3 id="++sifo"><code>++sifo</code></h3>
 
 64-bit encode
 
@@ -164,7 +164,7 @@ Encodes an atom to MIME base64, producing a [`++tape`]().
     ~zod/main=> (sifo (shax %hi))
     "j0NDRmSPa5bfid2pAcUXaxCm2Dlh3TwayItZstwyeqQ="
 
-### ++urle
+<h3 id="++urle"><code>++urle</code></h3>
 
 Encode URL
 
@@ -198,7 +198,7 @@ escape sequences.
     ~zod/main=> (urle "hello-my?=me  !")
     "hello-my%3F%3Dme%20%20%21"
 
-### ++urld
+<h3 id="++urld"><code>++urld</code></h3>
 
 Decode URL
 
@@ -231,7 +231,7 @@ The inverse of [`++urle`](). Parses a URL escaped tape to the
     ~zod/main=> (urld "hello-my%3F%3Dme%20%2%21")
     ~
 
-### ++earl
+<h3 id="++earl"><code>++earl</code></h3>
 
 Localize purl
 
@@ -256,7 +256,7 @@ Prepends a ship name to the spur of a [`++purl`]().
     ~zod/main=> (earn (earl ~pittyp (need (epur 'http://123.1.1.1/me.ham'))))
     "http://123.1.1.1/pittyp/me"
 
-### ++earn
+<h3 id="++earn"><code>++earn</code></h3>
 
 Purl to tape
 
@@ -287,7 +287,7 @@ Parses a `++purl` `pul` to a [`++tape`]().
     ~zod/main=> (earn [& ~ `/com/google/www] [~ /search] [%q 'urbit escaping?'] ~)
     "https://www.google.com/search?q=urbit%20escaping%3F"
 
-### ++body
+<h3 id="++body"><code>++body</code></h3>
 
 Render URL path
 
@@ -311,7 +311,7 @@ Renders URL path `pok` as a [`++tape`]().
     ~zod/main=> (body:earn `%htm /)
     ""
 
-### ++head
+<h3 id="++head"><code>++head</code></h3>
 
 Render URL beginning
 
@@ -344,7 +344,7 @@ of a traditional URL.
     ~zod/main=> (head:earn & [~ 8.080] %& /com/google/www)
     "https://www.google.com:8080"
 
-### ++tail
+<h3 id="++tail"><code>++tail</code></h3>
 
 Render query string
 
@@ -376,7 +376,7 @@ traditional query string.
     ~zod/main=> (tail:earn [%ask 'bid'] [%make 'well'] ~)
     "?ask=bid&make=well"
 
-### ++epur
+<h3 id="++epur"><code>++epur</code></h3>
 
 Top-level URL parser
 
@@ -386,7 +386,7 @@ Top-level URL parser
 
 Toplevel URL parser.
 
-`a` is a [`++cord`]().
+`a` is a [`++cord`](/doc/hoon/library/1#++cord).
 
     ~zod/main=> (epur 'http://127.0.0.1/')
     [~ [p=[p=%.n q=~ r=[%.n p=.127.0.0.1]] q=[p=~ q=<||>] r=~]]
@@ -428,7 +428,7 @@ Toplevel URL parser.
       ]
     ]
 
-### ++apat
+<h3 id="++apat"><code>++apat</code></h3>
 
       ++  apat                                              ::  2396 abs_path
         %+  cook  deft
@@ -441,7 +441,7 @@ URL path as ++pork
     ~zod/try=> (scan "/foo/mol/lok.htm" apat:epur)
     [p=[~ ~.htm] q=<|foo mol lok|>]
 
-### ++auri
+<h3 id="++auri"><code>++auri</code></h3>
 
       ++  auri
         %+  cook
@@ -546,7 +546,7 @@ URL parsing rule
       ]
     ]
 
-### ++cock
+<h3 id="++cock"><code>++cock</code></h3>
 
       ++  cock                                              ::  cookie
         (most ;~(plug sem ace) ;~(plug toke ;~(pfix tis tosk)))
@@ -561,7 +561,7 @@ HTTP cookies, results in associative list of cord to cord.
     ! {1 34}
     ! exit
 
-### ++dlab
+<h3 id="++dlab"><code>++dlab</code></h3>
 
       ++  dlab                                              ::  2396 domainlabel
         %+  sear
@@ -583,7 +583,7 @@ Domain label: alphanumeric, with `-` allowed in middle.
     ! {1 8}
     ! exit
 
-### ++fque
+<h3 id="++fque"><code>++fque</code></h3>
 
       ++  fque  (cook crip (plus pquo))                     ::  normal query field
 
@@ -601,7 +601,7 @@ One or more query string characters
     ! {1 1}
     ! exit
 
-### ++fquu
+<h3 id="++fquu"><code>++fquu</code></h3>
 
       ++  fquu  (cook crip (star pquo))                     ::  optional field
 
@@ -618,7 +618,7 @@ Zero or more query string characters
     ~zod/try=> (scan "" fquu:epur)
     ''
 
-### ++pcar
+<h3 id="++pcar"><code>++pcar</code></h3>
 
       ++  pcar  ;~(pose pure pesc psub col pat)             ::  2396 path char
 
@@ -639,7 +639,7 @@ or `@`
     ~zod/try=> (scan "!" pcar:epur)
     ~~~21.
 
-### ++pcok
+<h3 id="++pcok"><code>++pcok</code></h3>
 
       ++  pcok  ;~(less bas sem com doq prn)                ::  cookie char
 
@@ -656,7 +656,7 @@ Cookie character
     ! {1 2}
     ! exit
 
-### ++pesc
+<h3 id="++pesc"><code>++pesc</code></h3>
 
       ++  pesc  ;~(pfix cen mes)                            ::  2396 escaped
 
@@ -667,7 +667,7 @@ URL `%` escape, by two hex characters.
     ~zod/try=> `@t`(scan "%20" pesc:epur)
     ' '
 
-### ++pold
+<h3 id="++pold"><code>++pold</code></h3>
 
       ++  pold  (cold ' ' (just '+'))                       ::  old space code
 
@@ -679,7 +679,7 @@ Old URL `' '` escape
     ! {1 1}
     ! exit
 
-### ++pque
+<h3 id="++pque"><code>++pque</code></h3>
 
       ++  pque  ;~(pose pcar fas wut)                       ::  3986 query char
 
@@ -694,7 +694,7 @@ Irregular query string character.
     ~zod/try=> `@t`(scan "+" pque:epur)
     '+'
 
-### ++pquo
+<h3 id="++pquo"><code>++pquo</code></h3>
 
       ++  pquo  ;~(pose pure pesc pold)                     ::  normal query char
 
@@ -712,7 +712,7 @@ Character in query string key/value
     ~zod/try=> (scan "+" pquo:epur)
     ' '
 
-### ++pure
+<h3 id="++pure"><code>++pure</code></h3>
 
       ++  pure  ;~(pose aln hep dot cab sig)                ::  2396 unreserved
 
@@ -728,7 +728,7 @@ URL-safe character
     ~zod/try=> (scan "-" pure:epur)
     ~~-
 
-### ++psub
+<h3 id="++psub"><code>++psub</code></h3>
 
       ++  psub  ;~  pose                                    ::  3986 sub-delims
                   zap  buc  pam  soq  pel  per
@@ -747,7 +747,7 @@ URL path subdelimeter
     ! {1 1}
     ! exit
 
-### ++ptok
+<h3 id="++ptok"><code>++ptok</code></h3>
 
       ++  ptok  ;~  pose                                    ::  2616 token
                   aln  zap  hax  buc  cen  pam  soq  tar  lus
@@ -761,7 +761,7 @@ Character valid in HTTP token
     ~zod/try=> `tape`(skim =+(a=' ' |-(`tape`?:(=(0x7f a) ~ [a $(a +(a))]))) |=(a=char ?=(~ (rush a ptok:epur))))
     " "(),/:;<=>?@[\]{}"
 
-### ++scem
+<h3 id="++scem"><code>++scem</code></h3>
 
       ++  scem                                              ::  2396 scheme
         %+  cook  cass
@@ -778,7 +778,7 @@ alphanumeric, `+` `-` or `.`
     ~zod/try=> `@t`(scan "chrome-extension" scem:epur)
     'chrome-extension'
 
-### ++smeg
+<h3 id="++smeg"><code>++smeg</code></h3>
 
       ++  smeg  (cook crip (plus pcar))                     ::  2396 segment
 
@@ -789,7 +789,7 @@ URL path segment
     ~zod/try=> (scan "bar%20baz-bam" smeg:epur)
     'bar baz-bam'
 
-### ++tock
+<h3 id="++tock"><code>++tock</code></h3>
 
       ++  tock  (cook crip (plus pcok))                     ::  6265 cookie-value
 
@@ -804,7 +804,7 @@ HTTP cookie value
     ~zod/try=> (rush '"zemug"' tock:epur)
     ~
 
-### ++tosk
+<h3 id="++tosk"><code>++tosk</code></h3>
 
       ++  tosk  ;~(pose tock (ifix [doq doq] tock))         ::  6265 cookie-value
 
@@ -819,7 +819,7 @@ Possibly quoted HTTP cookie value
     ~zod/try=> (rush '"zemug"' tosk:epur)
     [~ 'zemug']
 
-### ++toke
+<h3 id="++toke"><code>++toke</code></h3>
 
       ++  toke  (cook crip (plus ptok))                     ::  2616 token
 
@@ -834,7 +834,7 @@ HTTP cookie name
     ~zod/try=> (rush '"zemug"' toke:epur)
     ~
 
-### ++thor
+<h3 id="++thor"><code>++thor</code></h3>
 
       ++  thor                                              ::  2396 host/port
         %+  cook  |*(a=[* *] [+.a -.a])
@@ -854,7 +854,7 @@ Parse ++host and unit `@ui` port.
     ~zod/try=> (scan "www.google.com" thor:epur)
     [~ [%.y i='com' t=~['google' 'www']]]
 
-### ++thos
+<h3 id="++thos"><code>++thos</code></h3>
 
       ++  thos                                              ::  2396 host, no local
         ;~  plug
@@ -887,7 +887,7 @@ URI host: dot-separated segments, or IP address.
     ~zod/try=> (scan "www.google.com" thos:epur)
     [%.y i='com' t=~['google' 'www']]
 
-### ++yque
+<h3 id="++yque"><code>++yque</code></h3>
 
       ++  yque                                              ::  query ending
         ;~  pose
@@ -904,7 +904,7 @@ Parses query string, or lack thereof. Result type ++quay
     ~zod/try=> (scan "" yque:epur)
     ~
 
-### ++yquy
+<h3 id="++yquy"><code>++yquy</code></h3>
 
       ++  yquy                                              ::  query
         ;~  pose                                            ::  proper query
@@ -926,7 +926,7 @@ Parse query string after `?`
     ~zod/try=> (scan "" yquy:epur)
     ~
 
-### ++zest
+<h3 id="++zest"><code>++zest</code></h3>
 
       ++  zest                                              ::  2616 request-uri
         ;~  pose

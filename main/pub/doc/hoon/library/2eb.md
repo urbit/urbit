@@ -1,7 +1,7 @@
 section 2eB, parsing (tracing)
 ==============================
 
-### ++last
+<h3 id="++last"><code>++last</code></h3>
 
 Farther trace
 
@@ -30,7 +30,7 @@ Compares two line-column pairs, `zyc` and `naz`, and produces whichever
 
 ------------------------------------------------------------------------
 
-### ++lust
+<h3 id="++lust"><code>++lust</code></h3>
 
 Detect newline
 

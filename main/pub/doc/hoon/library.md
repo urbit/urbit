@@ -1,4 +1,4 @@
 Library
-=======
+========
 
-<list dataPreview="true"></list>
+<list dataPreview="true" titlesOnly="true"></list>
