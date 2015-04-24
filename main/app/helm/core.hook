@@ -3,7 +3,7 @@
   ::                                                    ::  ::
 /?  314                                                 ::  zuse version
 /-  *sole, *talk                                        ::  structures
-/+  sole                                                ::  libraries
+/+  sole, talk                                          ::  libraries
 ::                                                      ::  ::
 ::::                                                    ::  ::
   !:                                                    ::  ::
@@ -243,8 +243,8 @@
           :_  acc
           ^-  thought
           :+  -
-            `(map partner (pair envelope delivery))`[[`partner`[%& our.hid %porch] [*envelope %pending]] ~ ~]
-          `statement`[lat.hid *bouquet [%app (crip ~(ram re tan))]]
+            [[[%& our.hid (main our.hid)] [*envelope %pending]] ~ ~]
+          [lat.hid *bouquet [%app (crip ~(ram re tan))]]
       ==
     ++  start
       |=  [her=@p sud=@tas gim=?(%auto germ)]

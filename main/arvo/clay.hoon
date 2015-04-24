@@ -426,7 +426,7 @@
               %+  turn  mut
               |=  [pax=path mis=miso]
               ?>  ?=(%mut -.mis)
-              [pax (page-to-lobe:ze p.mis q.q.mis)]
+              [pax (page-to-lobe:ze [p q.q]:q.mis)]
           ::
               ~
           ::
@@ -495,40 +495,6 @@
             [%diff [%done ~ p.mis] [%cast p.p.mis [%done ~ q.mis]]]
         ==
     ==
-    ::  =+  ^=  sop
-    ::      |=  [a=path b=miso]
-    ::      ^-  ?
-    ::      ?|  ?=(%del -.b)
-    ::          ?=(%dif -.b)
-    ::          ?&  ?=(%ins -.b)
-    ::              ?=(%mime p.p.b)
-    ::              =+  (slag (dec (lent a)) a)
-    ::              ?|  =([%hook ~] -)
-    ::                  =([%hoon ~] -)
-    ::      ==  ==  ==
-    ::  =+  ^-  lon=(list path)
-    ::      (murn q.p.lem |=([a=path b=miso] ?:((sop a b) ~ (some a))))
-    ::  =+  ^-  sot=(list ,[p=path q=misu])
-    ::      %+  murn  q.p.lem
-    ::      |=([a=path b=miso] ?.((sop a b) ~ (some [a ?<(?=(%mut -.b) b)])))
-    ::  =+  ^-  mim=(map path mime)
-    ::      %-  mo
-    ::      ^-  (list ,[path mime])
-    ::      %+  murn  q.p.lem
-    ::      |=  [a=path b=miso]
-    ::      ?-  -.b
-    ::        %del  ~
-    ::        %ins  ?.(?=(%mime p.p.b) ~ (some a ((hard mime) q.q.p.b)))
-    ::        %dif  ~
-    ::        %mut  ?.(?=(%mime p.q.b) ~ (some a ((hard mime) q.q.q.b)))
-    ::      ==
-    ::  =.  dok  `[sot lon mim]
-    ::  ?~  lon
-    ::    (apply-edit wen)
-    ::  =+  ^-  los=(list ,[duct path note])
-    ::      %+  murn  q.p.lem
-    ::      |=([a=path b=miso] ?:((sop a b) ~ (some (silkify wen a b))))
-    ::  %_(+>.$ tag (welp los tag))
   ::
   ++  silkify
     |=  [wen=@da pax=path mis=miso]
@@ -1118,7 +1084,7 @@
         %delta      [%pact $(lob q.q.bol) [%volt ~ r.bol]]
       ==
     ::
-    ++  page-to-lobe  |=(* (shax (jam +<)))
+    ++  page-to-lobe  |=(page (shax (jam +<)))
     ++  make-direct                                     ::  make blob
       |=  p=page
       ^-  blob
