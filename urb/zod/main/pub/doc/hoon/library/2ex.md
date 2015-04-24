@@ -3,7 +3,7 @@ section 2eX, jetted crypto
 
 ------------------------------------------------------------------------
 
-### ++aesc
+<h3 id="++aesc"><code>++aesc</code></h3>
 
     ++  aesc                                                ::  AES-256
       ~%  %aesc  +  ~
@@ -11,7 +11,7 @@ section 2eX, jetted crypto
 
 XX document
 
-### ++en
+<h3 id="++en"><code>++en</code></h3>
 
       ++  en                                                ::  ECB enc
         ~/  %en
@@ -21,7 +21,7 @@ XX document
 
 XX document
 
-### ++de
+<h3 id="++de"><code>++de</code></h3>
 
       ++  de                                                ::  ECB dec
         ~/  %de
@@ -32,7 +32,7 @@ XX document
 
 XX document
 
-### ++ahem
+<h3 id="++ahem"><code>++ahem</code></h3>
 
     ++  ahem                                                ::  AES helpers
     ::  XX should be in aesc, isn't for performance reasons
@@ -44,20 +44,20 @@ XX document
 
 XX document
 
-### ++cipa
+<h3 id="++cipa"><code>++cipa</code></h3>
 
             ++  cipa                                        ::  AES params
               $_  ^?  |%
 
 XX document
 
-### ++co
+<h3 id="++co"><code>++co</code></h3>
 
           ++  co  [0xe 0xb 0xd 0x9]
 
 XX document
 
-### ++ix
+<h3 id="++ix"><code>++ix</code></h3>
 
       ++  ix                                                ::  key expand, inv
         |=  a=@  ^-  @
@@ -82,13 +82,13 @@ XX document
 
 XX document
 
-### ++ro
+<h3 id="++ro"><code>++ro</code></h3>
 
           ++  ro  [0 3 2 1]
 
 XX document
 
-### ++su
+<h3 id="++su"><code>++su</code></h3>
 
           ++  su  0x7d0c.2155.6314.69e1.26d6.77ba.7e04.2b17.
                     6199.5383.3cbb.ebc8.b0f5.2aae.4d3b.e0a0.
@@ -111,7 +111,7 @@ XX document
 
 XX document
 
-### ++pen
+<h3 id="++pen"><code>++pen</code></h3>
 
         ++  pen                                             ::  encrypt
           ^-  cipa
@@ -119,13 +119,13 @@ XX document
 
 XX document
 
-### ++co
+<h3 id="++co"><code>++co</code></h3>
 
           ++  co  [0xe 0xb 0xd 0x9]
 
 XX document
 
-### ++ix
+<h3 id="++ix"><code>++ix</code></h3>
 
       ++  ix                                                ::  key expand, inv
         |=  a=@  ^-  @
@@ -150,13 +150,13 @@ XX document
 
 XX document
 
-### ++ro
+<h3 id="++ro"><code>++ro</code></h3>
 
           ++  ro  [0 3 2 1]
 
 XX document
 
-### ++su
+<h3 id="++su"><code>++su</code></h3>
 
           ++  su  0x7d0c.2155.6314.69e1.26d6.77ba.7e04.2b17.
                     6199.5383.3cbb.ebc8.b0f5.2aae.4d3b.e0a0.
@@ -179,7 +179,7 @@ XX document
 
 XX document
 
-### ++pin
+<h3 id="++pin"><code>++pin</code></h3>
 
         ++  pin                                             :: decrypt
           ^-  cipa
@@ -187,13 +187,13 @@ XX document
 
 XX document
 
-### ++co
+<h3 id="++co"><code>++co</code></h3>
 
           ++  co  [0xe 0xb 0xd 0x9]
 
 XX document
 
-### ++ix
+<h3 id="++ix"><code>++ix</code></h3>
 
       ++  ix                                                ::  key expand, inv
         |=  a=@  ^-  @
@@ -218,13 +218,13 @@ XX document
 
 XX document
 
-### ++ro
+<h3 id="++ro"><code>++ro</code></h3>
 
           ++  ro  [0 3 2 1]
 
 XX document
 
-### ++su
+<h3 id="++su"><code>++su</code></h3>
 
           ++  su  0x7d0c.2155.6314.69e1.26d6.77ba.7e04.2b17.
                     6199.5383.3cbb.ebc8.b0f5.2aae.4d3b.e0a0.
@@ -247,7 +247,7 @@ XX document
 
 XX document
 
-### ++mcol
+<h3 id="++mcol"><code>++mcol</code></h3>
 
         ++  mcol
           |=  [a=(list ,@) b=[p=@ q=@ r=@ s=@]]  ^-  (list ,@)
@@ -273,7 +273,7 @@ XX document
 
 XX document
 
-### ++pode
+<h3 id="++pode"><code>++pode</code></h3>
 
         ++  pode                                            ::  explode to block
           |=  [a=bloq b=@ c=@]  ^-  (list ,@)
@@ -286,7 +286,7 @@ XX document
 
 XX document
 
-### ++sube
+<h3 id="++sube"><code>++sube</code></h3>
 
         ++  sube                                            ::  s-box word
           |=  [a=@ b=@]  ^-  @
@@ -296,7 +296,7 @@ XX document
 
 XX document
 
-### ++be
+<h3 id="++be"><code>++be</code></h3>
 
       ++  be                                                ::  block cipher
         |=  [a=? b=@ c=@H]  ^-  @uxH
@@ -308,7 +308,7 @@ XX document
 
 XX document
 
-### ++ankh
+<h3 id="++ankh"><code>++ankh</code></h3>
 
               ++  ankh
                 |=  [a=cipa b=@ c=@]
@@ -316,7 +316,7 @@ XX document
 
 XX document
 
-### ++sark
+<h3 id="++sark"><code>++sark</code></h3>
 
               ++  sark
                 |=  [c=(list ,@) d=(list ,@)]  ^-  (list ,@)
@@ -326,7 +326,7 @@ XX document
 
 XX document
 
-### ++srow
+<h3 id="++srow"><code>++srow</code></h3>
 
               ++  srow
                 |=  [a=cipa b=(list ,@)]  ^-  (list ,@)
@@ -343,7 +343,7 @@ XX document
 
 XX document
 
-### ++subs
+<h3 id="++subs"><code>++subs</code></h3>
 
               ++  subs
                 |=  [a=cipa b=(list ,@)]  ^-  (list ,@)
@@ -367,7 +367,7 @@ XX document
 
 XX document
 
-### ++ex
+<h3 id="++ex"><code>++ex</code></h3>
 
       ++  ex                                                ::  key expand
         |=  a=@I  ^-  @
@@ -389,7 +389,7 @@ XX document
 
 XX document
 
-### ++ix
+<h3 id="++ix"><code>++ix</code></h3>
 
       ++  ix                                                ::  key expand, inv
         |=  a=@  ^-  @
@@ -414,7 +414,7 @@ XX document
 
 XX document
 
-### ++curt
+<h3 id="++curt"><code>++curt</code></h3>
 
     ++  curt                                                ::  curve25519
       |=  [a=@ b=@]
@@ -428,7 +428,7 @@ XX document
 
 XX document
 
-### ++cla
+<h3 id="++cla"><code>++cla</code></h3>
 
             ++  cla
               |=  raw=@
@@ -439,19 +439,19 @@ XX document
 
 XX document
 
-### ++sqr
+<h3 id="++sqr"><code>++sqr</code></h3>
 
             ++  sqr  |=(a=@ (mul a a))
 
 XX document
 
-### ++inv
+<h3 id="++inv"><code>++inv</code></h3>
 
             ++  inv  |=(a=@ (~(exp fo q) (sub q 2) a))
 
 XX document
 
-### ++cad
+<h3 id="++cad"><code>++cad</code></h3>
 
             ++  cad
               |=  [n=[x=@ z=@] m=[x=@ z=@] d=[x=@ z=@]]
@@ -473,7 +473,7 @@ XX document
 
 XX document
 
-### ++cub
+<h3 id="++cub"><code>++cub</code></h3>
 
             ++  cub
               |=  [x=@ z=@]
@@ -505,7 +505,7 @@ XX document
 
 XX document
 
-### ++ed
+<h3 id="++ed"><code>++ed</code></h3>
 
     ++  ed                                                  ::  ed25519
       =>
@@ -521,14 +521,14 @@ XX document
         ~%  %coed  +>  ~
         |%
 
-### ++norm
+<h3 id="++norm"><code>++norm</code></h3>
 
         ++  norm  |=(x=@ ?:(=(0 (mod x 2)) x (sub q x)))
         ::
 
 XX document
 
-### ++xrec
+<h3 id="++xrec"><code>++xrec</code></h3>
 
         ++  xrec                                            ::  recover x-coord
           |=  y=@  ^-  @
@@ -543,7 +543,7 @@ XX document
 
 XX document
 
-### ++ward
+<h3 id="++ward"><code>++ward</code></h3>
 
         ++  ward                                            ::  edwards multiply
           |=  [pp=[@ @] qq=[@ @]]  ^-  [@ @]
@@ -565,7 +565,7 @@ XX document
 
 XX document
 
-### ++scam
+<h3 id="++scam"><code>++scam</code></h3>
 
         ++  scam                                            ::  scalar multiply
           |=  [pp=[@ @] e=@]  ^-  [@ @]
@@ -580,7 +580,7 @@ XX document
 
 XX document
 
-### ++etch
+<h3 id="++etch"><code>++etch</code></h3>
 
         ++  etch                                            ::  encode point
           |=  pp=[@ @]  ^-  @
@@ -589,7 +589,7 @@ XX document
 
 XX document
 
-### ++curv
+<h3 id="++curv"><code>++curv</code></h3>
 
         ++  curv                                            ::  point on curve?
           |=  [x=@ y=@]  ^-  ?
@@ -603,7 +603,7 @@ XX document
 
 XX document
 
-### ++deco
+<h3 id="++deco"><code>++deco</code></h3>
 
         ++  deco                                            ::  decode point
           |=  s=@  ^-  (unit ,[@ @])
@@ -619,7 +619,7 @@ XX document
 
 XX document
 
-### ++bb
+<h3 id="++bb"><code>++bb</code></h3>
 
         ++  bb
           =+  bby=(pro.fq 4 (inv.fq 5))
@@ -631,7 +631,7 @@ XX document
 
 XX document
 
-### ++puck
+<h3 id="++puck"><code>++puck</code></h3>
 
       ++  puck                                                ::  public key
         ~/  %puck
@@ -647,7 +647,7 @@ XX document
 
 XX document
 
-### ++suck
+<h3 id="++suck"><code>++suck</code></h3>
 
       ++  suck                                                ::  keypair from seed
         |=  se=@I  ^-  @uJ
@@ -657,7 +657,7 @@ XX document
 
 XX document
 
-### ++sign
+<h3 id="++sign"><code>++sign</code></h3>
 
       ++  sign                                                ::  certify
         ~/  %sign
@@ -692,7 +692,7 @@ XX document
 
 XX document
 
-### ++veri
+<h3 id="++veri"><code>++veri</code></h3>
 
       ++  veri                                                ::  validate
         ~/  %veri

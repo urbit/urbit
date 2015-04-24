@@ -1,5 +1,5 @@
 !:::::
-::  ::  %ford, new execution control     
+::  ::  %ford, new execution control
 !?  164
 ::::
 |=  pit=vase   
@@ -10,7 +10,7 @@
 ++  bead  ,[p=(set beam) q=gage]                        ::  computed result
 ++  gift                                                ::  out result <-$
           $%  [%made p=@uvH q=(each gage tang)]         ::  computed result
-              [%news ~]                                 ::  fresh depends                                 
+              [%news ~]                                 ::  fresh depends
           ==                                            ::
 ++  heel  path                                          ::  functional ending
 ++  hock                                                ::  standard label

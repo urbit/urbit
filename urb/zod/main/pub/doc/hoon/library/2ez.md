@@ -1,9 +1,7 @@
 section 2eZ, OLD rendering
---------------------------
+==========================
 
-------------------------------------------------------------------------
-
-### ++show
+<h3 id="++show"><code>++show</code></h3>
 
     ++  show                            ::  XX deprecated, use type
       |=  vem=*
@@ -65,7 +63,7 @@ section 2eZ, OLD rendering
 
 XX document
 
-### ++shep
+<h3 id="++shep"><code>++shep</code></h3>
 
       ++  shep
         |=  [fom=@ gar=*]
@@ -87,7 +85,7 @@ XX document
 
 XX document
 
-### ++shop
+<h3 id="++shop"><code>++shop</code></h3>
 
       ++  shop
         |=  [aug=* vel=$+(a=@ tape)]
@@ -105,14 +103,14 @@ XX document
 
 XX document
 
-### ++at
+<h3 id="++at"><code>++at</code></h3>
 
     ++  at
       |_  a=@
 
 XX document
 
-### ++r
+<h3 id="++r"><code>++r</code></h3>
 
       ++  r
         ?:  ?&  (gte (met 3 a) 2)
@@ -132,49 +130,49 @@ XX document
 
 XX document
 
-### ++rf
+<h3 id="++rf"><code>++rf</code></h3>
 
       ++  rf    `tape`[?-(a & '&', | '|', * !!) ~]
 
 XX document
 
-### ++rn
+<h3 id="++rn"><code>++rn</code></h3>
 
       ++  rn    `tape`[?>(=(0 a) '~') ~]
 
 XX document
 
-### ++rt
+<h3 id="++rt"><code>++rt</code></h3>
 
       ++  rt    `tape`['\'' (weld (mesc (trip a)) `tape`['\'' ~])]
 
 XX document
 
-### ++rta
+<h3 id="++rta"><code>++rta</code></h3>
 
       ++  rta   rt
 
 XX document
 
-### ++rtam
+<h3 id="++rtam"><code>++rtam</code></h3>
 
       ++  rtam  `tape`['%' (trip a)]
 
 XX document
 
-### ++rub
+<h3 id="++rub"><code>++rub</code></h3>
 
       ++  rub   `tape`['0' 'b' (rum 2 ~ |=(b=@ (add '0' b)))]
 
 XX document
 
-### ++rud
+<h3 id="++rud"><code>++rud</code></h3>
 
       ++  rud   (rum 10 ~ |=(b=@ (add '0' b)))
 
 XX document
 
-### ++rum
+<h3 id="++rum"><code>++rum</code></h3>
 
       ++  rum
         |=  [b=@ c=tape d=$+(@ @)]
@@ -195,7 +193,7 @@ XX document
 
 XX document
 
-### ++rup
+<h3 id="++rup"><code>++rup</code></h3>
 
       ++  rup
         =+  b=(met 3 a)
@@ -222,7 +220,7 @@ XX document
 
 XX document
 
-### ++ruv
+<h3 id="++ruv"><code>++ruv</code></h3>
 
       ++  ruv
         ^-  tape
@@ -241,7 +239,7 @@ XX document
 
 XX document
 
-### ++rux
+<h3 id="++rux"><code>++rux</code></h3>
 
       ++  rux  `tape`['0' 'x' (rum 16 ~ |=(b=@ (add b ?:((lth b 10) 48 87))))]
       --

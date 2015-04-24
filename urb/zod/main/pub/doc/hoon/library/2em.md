@@ -1,7 +1,7 @@
 section 2eM, regular-expressions
 ================================
 
-### ++pars
+<h3 id="++pars"><code>++pars</code></h3>
 
     ++  pars
       |=  [a=tape]                                          ::  parse tape to rege
@@ -66,44 +66,44 @@ Parse regular expression
     ~zod/try=> (pars "a\{1,20}")
     [~ [%betw p=[%lite p=~~a] q=1 r=20]]
 
-### ++rags
+<h3 id="++rags"><code>++rags</code></h3>
 
     ++  rags                                                ::  rege parsers
       =>  |%
 
 Regex parser arms
 
-### ++nor
+<h3 id="++nor"><code>++nor</code></h3>
 
           ++  nor  ;~(less (mask "^$()|*?+.[\\") (shim 1 127)) :: non-control char
 
 XX document
 
-### ++les
+<h3 id="++les"><code>++les</code></h3>
 
           ++  les  ;~(less bas asp)                         ::  not backslash
 
 XX document
 
-### ++lep
+<h3 id="++lep"><code>++lep</code></h3>
 
           ++  lep  ;~(less (mask "^[]\\") asp)              ::  charset non-control
 
 XX document
 
-### ++asp
+<h3 id="++asp"><code>++asp</code></h3>
 
           ++  asp  (shim 32 126)                            ::  printable ascii
 
 XX document
 
-### ++alb
+<h3 id="++alb"><code>++alb</code></h3>
 
           ++  alb  ;~(less ser asp)                         ::  charset literal char
 
 XX document
 
-### ++mis
+<h3 id="++mis"><code>++mis</code></h3>
 
           ++  mis  ;~(less aln asp)                         ::  non alphanumeric
           --
@@ -111,7 +111,7 @@ XX document
 
 XX document
 
-### ++apex
+<h3 id="++apex"><code>++apex</code></h3>
 
       ++  apex                                              ::  top level
         %+  knee  *rege  |.  ~+
@@ -124,7 +124,7 @@ XX document
 
 XX document
 
-### ++mall
+<h3 id="++mall"><code>++mall</code></h3>
 
       ++  mall
         %+  knee  *rege  |.  ~+
@@ -133,7 +133,7 @@ XX document
 
 XX document
 
-### ++bets
+<h3 id="++bets"><code>++bets</code></h3>
 
       ++  bets
         %+  knee  *rege  |.  ~+
@@ -162,7 +162,7 @@ XX document
 
 XX document
 
-### ++ranc
+<h3 id="++ranc"><code>++ranc</code></h3>
 
       ++  ranc
         |=  [a=@ b=@]
@@ -172,14 +172,14 @@ XX document
 
 XX document
 
-### ++flap
+<h3 id="++flap"><code>++flap</code></h3>
 
       ++  flap  |=(a=@ (mix a (dec (bex 256))))
       ::
 
 XX document
 
-### ++rang
+<h3 id="++rang"><code>++rang</code></h3>
 
       ++  rang
         %+  sear  |=([a=@ b=@] ?:((lte a b) (some [a b]) ~))
@@ -188,7 +188,7 @@ XX document
 
 XX document
 
-### ++chun
+<h3 id="++chun"><code>++chun</code></h3>
 
       ++  chun
         %+  knee  *rege  |.  ~+
@@ -212,7 +212,7 @@ XX document
 
 XX document
 
-### ++seac
+<h3 id="++seac"><code>++seac</code></h3>
 
       ++  seac
         |=  tub=nail
@@ -225,7 +225,7 @@ XX document
 
 XX document
 
-### ++sead
+<h3 id="++sead"><code>++sead</code></h3>
 
       ++  sead
         %+  knee  *@  |.  ~+
@@ -264,7 +264,7 @@ XX document
 
 XX document
 
-### ++sade
+<h3 id="++sade"><code>++sade</code></h3>
 
       ++  sade
         %+  knee  *@  |.  ~+
@@ -277,7 +277,7 @@ XX document
 
 XX document
 
-### ++seap
+<h3 id="++seap"><code>++seap</code></h3>
 
       ++  seap
         %+  knee  *@  |.  ~+
@@ -305,7 +305,7 @@ XX document
 
 XX document
 
-### ++cape
+<h3 id="++cape"><code>++cape</code></h3>
 
       ++  cape
         %+  knee  *tape  |.  ~+
@@ -318,7 +318,7 @@ XX document
 
 XX document
 
-### ++chas
+<h3 id="++chas"><code>++chas</code></h3>
 
       ++  chas                                              ::  ascii character set
         =-  (sear ~(get by -) sym)
@@ -350,37 +350,37 @@ XX document
 
 XX document
 
-### ++cntrl
+<h3 id="++cntrl"><code>++cntrl</code></h3>
 
       ++  cntrl  :(con (ranc 0 31) (bex 127))
 
 XX document
 
-### ++digit
+<h3 id="++digit"><code>++digit</code></h3>
 
       ++  digit  (ranc '0' '9')
 
 XX document
 
-### ++graph
+<h3 id="++graph"><code>++graph</code></h3>
 
       ++  graph  (ranc 33 126)
 
 XX document
 
-### ++lower
+<h3 id="++lower"><code>++lower</code></h3>
 
       ++  lower  (ranc 'a' 'z')
 
 XX document
 
-### ++print
+<h3 id="++print"><code>++print</code></h3>
 
       ++  print  (ranc 32 126)
 
 XX document
 
-### ++punct
+<h3 id="++punct"><code>++punct</code></h3>
 
       ++  punct  ;:  con
                    (ranc '!' '/')
@@ -391,38 +391,38 @@ XX document
 
 XX document
 
-### ++space
+<h3 id="++space"><code>++space</code></h3>
 
       ++  space  :(con (ranc 9 13) (bex ' '))
 
 XX document
 
-### ++upper
+<h3 id="++upper"><code>++upper</code></h3>
 
       ++  upper  (ranc 'A' 'Z')
 
 XX document
 
-### ++white
+<h3 id="++white"><code>++white</code></h3>
 
       ++  white  :(con (bex ' ') (ranc 9 10) (ranc 12 13))
 
 XX document
 
-### ++wordc
+<h3 id="++wordc"><code>++wordc</code></h3>
 
       ++  wordc  :(con digit lower upper (bex '_'))
 
 XX document
 
-### ++xdigit
+<h3 id="++xdigit"><code>++xdigit</code></h3>
 
       ++  xdigit  :(con (ranc 'a' 'f') (ranc 'A' 'F') digit)
       ::
 
 XX document
 
-### ++chad
+<h3 id="++chad"><code>++chad</code></h3>
 
       ++  chad
         %+  knee  *rege  |.  ~+
@@ -431,7 +431,7 @@ XX document
 
 XX document
 
-### ++escd
+<h3 id="++escd"><code>++escd</code></h3>
 
       ++  escd
         %+  knee  *@  |.  ~+
@@ -452,7 +452,7 @@ XX document
 
 XX document
 
-### ++escp
+<h3 id="++escp"><code>++escp</code></h3>
 
       ++  escp
         %+  knee  *rege  |.  ~+
@@ -481,7 +481,7 @@ XX document
 
 XX document
 
-### ++unid
+<h3 id="++unid"><code>++unid</code></h3>
 
       ++  unid
         %+  knee  *@  |.  ~+
@@ -498,14 +498,14 @@ XX document
 
 XX document
 
-### ++ra
+<h3 id="++ra"><code>++ra</code></h3>
 
     ++  ra                                                  ::  regex engine
       |_  a=rege
 
 XX document
 
-### ++proc
+<h3 id="++proc"><code>++proc</code></h3>
 
       ++  proc                                              ::  capture numbering
         |=  b=@
@@ -544,7 +544,7 @@ XX document
 
 XX document
 
-### ++cont
+<h3 id="++cont"><code>++cont</code></h3>
 
       ++  cont
         |=  [a=(map ,@u tape) b=(map ,@u tape)]
@@ -553,7 +553,7 @@ XX document
 
 XX document
 
-### ++abor
+<h3 id="++abor"><code>++abor</code></h3>
 
       ++  abor
         |=  [a=char b=(unit ,[tape (map ,@u tape)])]
@@ -565,7 +565,7 @@ XX document
 
 XX document
 
-### ++matc
+<h3 id="++matc"><code>++matc</code></h3>
 
       ++  matc
         |=  [b=tape c=tape]
@@ -576,7 +576,7 @@ XX document
 
 XX document
 
-### ++chet
+<h3 id="++chet"><code>++chet</code></h3>
 
       ++  chet
         |=  [b=(unit ,[tape (map ,@u tape)]) c=tape d=tape]
@@ -592,19 +592,19 @@ XX document
 
 XX document
 
-### ++blak
+<h3 id="++blak"><code>++blak</code></h3>
 
       ++  blak  (some ["" _(map ,@u tape)])
 
 XX document
 
-### ++word
+<h3 id="++word"><code>++word</code></h3>
 
       ++  word  |=(a=char =((dis wordc:rags (bex a)) 0))
 
 XX document
 
-### ++deep
+<h3 id="++deep"><code>++deep</code></h3>
 
       ++  deep
         |=  [b=tape c=rege d=tape]
@@ -704,7 +704,7 @@ XX document
 
 XX document
 
-### ++rexp
+<h3 id="++rexp"><code>++rexp</code></h3>
 
     ++  rexp                                                :: Regex match
       ~/  %rexp
@@ -733,7 +733,7 @@ XX document
 
 XX document
 
-### ++repg
+<h3 id="++repg"><code>++repg</code></h3>
 
     ++  repg                                                :: Global regex replace
       ~/  %repg

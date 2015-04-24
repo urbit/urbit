@@ -1,7 +1,7 @@
 section 3bF, filesystem interface
 =================================
 
-### ++feel
+<h3 id="++feel"><code>++feel</code></h3>
 
 Generate file diff
 
@@ -33,7 +33,7 @@ Generates a diff between a file located at `pax` and an input value
     ~zod/try=> `@t`272.335.332.724
     'tesh?'
 
-### ++file
+<h3 id="++file"><code>++file</code></h3>
 
 Simple file load
 
@@ -62,7 +62,7 @@ Reads the value of a file located at `pax` and renders it as a
     ~zod/try=/zak> (file /==2%/mop)
     ~
 
-### ++foal
+<h3 id="++foal"><code>++foal</code></h3>
 
 Write high-level change
 
@@ -90,7 +90,7 @@ at `pax`. Handled by `%clay`.
     ~zod/try=> (feel %/mek 'b')
     [%mut p=[p=%a q=[%a p=97 q=98]]]
 
-### ++fray
+<h3 id="++fray"><code>++fray</code></h3>
 
 High-level delete
 
@@ -113,7 +113,7 @@ Handled by `%clay`.
     ~zod/try=> `@t`97
     'a'
 
-### ++furl
+<h3 id="++furl"><code>++furl</code></h3>
 
 Unify changes
 
@@ -148,7 +148,7 @@ and pointed at the same [`++path`]().
       ]
     ]
 
-### ++meat
+<h3 id="++meat"><code>++meat</code></h3>
 
 Kite to .\^ path
 
@@ -181,7 +181,7 @@ Converts a type request name to a [`++path`]().
 
     '''
 
-### ++tame
+<h3 id="++tame"><code>++tame</code></h3>
 
 Parse kite path
 
@@ -209,7 +209,7 @@ Parse kite path
     ::
 
 Parses a clay [.\^]()
-[`++path]()to request details. Produces the [`++unit`]() of a [`++kite\`]().
+[`++path` ]()to request details. Produces the [`++unit`]() of a [`++kite`]().
 
 `hap` is a [`++path`]().
 
@@ -220,7 +220,7 @@ Parses a clay [.\^]()
     ~zod/try=/zop> (tame /~zod/main/0x12/sur/down/gate/hook)
     ~
 
-### ++tome
+<h3 id="++tome"><code>++tome</code></h3>
 
 Parse path to beam
 
@@ -249,7 +249,7 @@ Parses a [`++path`]() `pax` to a [\`++beam](), a well-typed location.
     ~zod/try=/zop> (tome /~zod/main/0x12)
     ~
 
-### ++tope :: beam to path
+<h3 id="++tope :: beam to path"><code>++tope :: beam to path</code></h3>
 
 Parse beam to path
 
@@ -257,7 +257,7 @@ Parse beam to path
       ^-  path
       [(scot %p p.bem) q.bem (scot r.bem) (flop s.bem)]
 
-Parses a [`++beam`]() to a [`++path`]().
+Parses a [`++beam`]() to a [`++path`](/doc/hoon/library/1#++path).
 
     ~zod/try=/zop> (tope [~zod %main ud/1] /hook/down/sur)
     /~zod/main/1/sur/down/hook

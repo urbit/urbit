@@ -1,7 +1,7 @@
 section 2dB, maps
 =================
 
-### ++ept
+<h3 id="++ept"><code>++ept</code></h3>
 
 Map invariant.
 
@@ -29,7 +29,7 @@ Computes whether `a` is a [map](), producing a loobean.
 
 ------------------------------------------------------------------------
 
-### ++ja
+<h3 id="++ja"><code>++ja</code></h3>
 
 Jar engine
 
@@ -46,7 +46,7 @@ A container arm for `++jar` operation arms. A `++jar` is a `++map` of
 
 ------------------------------------------------------------------------
 
-### +-get:ja
+<h3 id="+-get:ja"><code>+-get:ja</code></h3>
 
 Grab value by key
 
@@ -57,7 +57,7 @@ Grab value by key
 
 Produces a list retrieved from jar `a` using the key `b`.
 
-`a` is a [`++jar`]().
+`a` is a [`++jar`](/doc/hoon/library/1#++jar).
 
 `b` is a key of the same type as the keys in `a`.
 
@@ -73,7 +73,7 @@ Produces a list retrieved from jar `a` using the key `b`.
 
 ------------------------------------------------------------------------
 
-### +-add:ja
+<h3 id="+-add:ja"><code>+-add:ja</code></h3>
 
 Prepend to list
 
@@ -106,7 +106,7 @@ Produces jar `a` with value `c` prepended to the list located at key
 
 ------------------------------------------------------------------------
 
-### ++ju
+<h3 id="++ju"><code>++ju</code></h3>
 
 Jug operations
 
@@ -121,7 +121,7 @@ Container arm for jug operation arms. A `++jug` is a `++map` of
     ~zod/try=> ~(. ju (mo (limo a/(sa "ho") b/(sa "he") ~)))
     <2.dgz [nlr([p={%a %b} q={nlr(^$1{@tD $1}) nlr(^$3{@tD $3})}]) <414.fvk 101.jzo 1.ypj %164>]>
 
-### +-del:ju
+<h3 id="+-del:ju"><code>+-del:ju</code></h3>
 
 Remove
 
@@ -152,7 +152,7 @@ removed.
 
 ------------------------------------------------------------------------
 
-### +-get:ju
+<h3 id="+-get:ju"><code>+-get:ju</code></h3>
 
 Retrieve set
 
@@ -178,7 +178,7 @@ Produces a set retrieved from jar `a` using key `b`.
 
 ------------------------------------------------------------------------
 
-### +-has:ju
+<h3 id="+-has:ju"><code>+-has:ju</code></h3>
 
 Check contents
 
@@ -213,7 +213,7 @@ with jar `a`. Produces a loobean.
 
 ------------------------------------------------------------------------
 
-### +-put:ju
+<h3 id="+-put:ju"><code>+-put:ju</code></h3>
 
 Add key-set pair
 
@@ -242,7 +242,7 @@ Produces jar `a` with `c` added to the set value located at key `b`.
 
 ------------------------------------------------------------------------
 
-### ++by
+<h3 id="++by"><code>++by</code></h3>
 
 Map operations
 
@@ -260,7 +260,7 @@ pairs. The contained arms inherit it's [sample]() [map](), `a`.
 
 ------------------------------------------------------------------------
 
-### +-all:by
+<h3 id="+-all:by"><code>+-all:by</code></h3>
 
 Logical AND
 
@@ -290,7 +290,7 @@ Computes the logical AND on the results of slamming every element in map
 
 ------------------------------------------------------------------------
 
-### +-any:by
+<h3 id="+-any:by"><code>+-any:by</code></h3>
 
 Logical OR
 
@@ -318,7 +318,7 @@ gate `b`. Produces a loobean.
 
 ------------------------------------------------------------------------
 
-### +-del:by
+<h3 id="+-del:by"><code>+-del:by</code></h3>
 
 Delete
 
@@ -351,7 +351,7 @@ Produces map `a` with the element located at key `b` removed.
 
 ------------------------------------------------------------------------
 
-### +-dig:by
+<h3 id="+-dig:by"><code>+-dig:by</code></h3>
 
 Axis of key
 
@@ -377,7 +377,7 @@ Produce the axis of key `b` within map `a`.
 
 ------------------------------------------------------------------------
 
-### +-gas:by
+<h3 id="+-gas:by"><code>+-gas:by</code></h3>
 
 Concatenate
 
@@ -403,7 +403,7 @@ Insert a list of key-value pairs `b` into map `a`.
 
 ------------------------------------------------------------------------
 
-### +-get:by
+<h3 id="+-get:by"><code>+-get:by</code></h3>
 
 Grab unit value
 
@@ -431,7 +431,7 @@ Produce the unit value of the value located at key `b` within map `a`.
 
 ------------------------------------------------------------------------
 
-### +-got:by
+<h3 id="+-got:by"><code>+-got:by</code></h3>
 
 Assert
 
@@ -459,7 +459,7 @@ does not exist.
 
 ------------------------------------------------------------------------
 
-### +-has:by
+<h3 id="+-has:by"><code>+-has:by</code></h3>
 
 Key existence check
 
@@ -483,7 +483,7 @@ loobean.
 
 ------------------------------------------------------------------------
 
-### +-int:by
+<h3 id="+-int:by"><code>+-int:by</code></h3>
 
 Intersection
 
@@ -539,7 +539,7 @@ different values, the element from map `b` is used.
 
 ------------------------------------------------------------------------
 
-### +-mar:by
+<h3 id="+-mar:by"><code>+-mar:by</code></h3>
 
 Assert and Add
 
@@ -575,7 +575,7 @@ XX This arm is broken, asana task 15186618346453
 
 ------------------------------------------------------------------------
 
-### +-put:by
+<h3 id="+-put:by"><code>+-put:by</code></h3>
 
 Add key-value pair
 
@@ -621,7 +621,7 @@ Produces `a` with the addition of the key-value pair of `b` and `c`.
 
 ------------------------------------------------------------------------
 
-### +-rep:by
+<h3 id="+-rep:by"><code>+-rep:by</code></h3>
 
       +-  rep                                               ::  replace by product
         |*  [b=* c=_,*]
@@ -635,7 +635,7 @@ XX interface changing.
 
 ------------------------------------------------------------------------
 
-### +-rib:by
+<h3 id="+-rib:by"><code>+-rib:by</code></h3>
 
       +-  rib                                               ::  transform + product
         |*  [b=* c=_,*]
@@ -653,7 +653,7 @@ XX interface changing, possibly disappearing
 
 ------------------------------------------------------------------------
 
-### +-run:by
+<h3 id="+-run:by"><code>+-run:by</code></h3>
 
 Transform values
 
@@ -678,7 +678,7 @@ Iterates over every value in set `a` using gate `b`. Produces a map.
 
 ------------------------------------------------------------------------
 
-### +-tap:by
+<h3 id="+-tap:by"><code>+-tap:by</code></h3>
 
 Listify pairs
 
@@ -707,7 +707,7 @@ Produces the list of all elements in map `a` that is prepended to list
 
 ------------------------------------------------------------------------
 
-### +-uni:by
+<h3 id="+-uni:by"><code>+-uni:by</code></h3>
 
 Union
 
@@ -758,7 +758,7 @@ shares a key with `a`, the tuple from `a` is preserved.
 
 ------------------------------------------------------------------------
 
-### +-urn:by
+<h3 id="+-urn:by"><code>+-urn:by</code></h3>
 
 Turn (with key)
 
@@ -787,7 +787,7 @@ produces a noun (the new value).
 
 ------------------------------------------------------------------------
 
-### +-wyt:by
+<h3 id="+-wyt:by"><code>+-wyt:by</code></h3>
 
 Depth
 

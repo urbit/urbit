@@ -114,8 +114,8 @@
   ::
   ++  he-wish-reset
     ^+  .
-    =-  %_(+ moz (weld zum moz))
-    ^=  zum  %-  flop  ^-  (list move)
+    =-  %_(+ moz (weld (flop zum) moz))
+    ^-  zum=(list move)
     =+  top=`path`/(scot %p our.hid)/main/(scot %da lat.hid)/arvo
     :-  [ost %pass /reset %d %flog %vega (weld top `path`/hoon)]
     %+  turn
@@ -136,31 +136,25 @@
   ::
   ++  he-wish-reload
     |=  all=(list term)
-    %_    +>.$
-        moz
-      %-  weld
-      :_  moz
-      %+  turn  all
-      =+  ark=(arch .^(%cy /(scot %p our.hid)/main/(scot %da lat.hid)/arvo))
-      =+  van=(~(tap by r.ark))
-      |=  nam=@tas
-      =.  nam
-        ?.  =(1 (met 3 nam))
-          nam
-        =+  ^-  zaz=(list ,[p=span ~])
-            (skim van |=([a=term ~] =(nam (end 3 1 a))))
-        ?>  ?=([[@ ~] ~] zaz)
-        `term`p.i.zaz
-      =+  tip=(end 3 1 nam)
-      =+  pax=[(scot %p our.hid) %main (scot %da lat.hid) %arvo nam %hoon ~]
-      :*  ost
-          %pass
-          /reload
-          %d
-          %flog
-          [%veer ?:(=('z' tip) %$ tip) pax (,@ .^(%cx pax))]
-      ==
-    ==
+    =-  %_(+ moz (weld (flop zum) moz))
+    ^-  zum=(list move)
+    =+  top=`path`/(scot %p our.hid)/main/(scot %da lat.hid)/arvo
+    %+  turn  all
+    =+  ark=(arch .^(%cy /(scot %p our.hid)/main/(scot %da lat.hid)/arvo))
+    =+  van=(~(tap by r.ark))
+    |=  nam=@tas
+    =.  nam
+      ?.  =(1 (met 3 nam))
+        nam
+      =+  ^-  zaz=(list ,[p=span ~])
+          (skim van |=([a=term ~] =(nam (end 3 1 a))))
+      ?>  ?=([[@ ~] ~] zaz)
+      `term`p.i.zaz
+    =+  tip=(end 3 1 nam)
+    =.  tip  ?:(=('z' tip) %$ tip)
+    =+  pax=`path`(welp top /[nam])
+    =+  txt=((hard ,@) .^(%cx (welp pax /hoon)))
+    [ost %pass /reload %d %flog %veer tip pax txt]
   ::
   ++  he-wish-sync
     |=  [syd=@tas her=@p sud=@tas ~]

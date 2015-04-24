@@ -1,7 +1,7 @@
 section 2eO, virtualization
 ===========================
 
-### ++mack
+<h3 id="++mack"><code>++mack</code></h3>
 
 Nock subject to unit
 
@@ -33,7 +33,7 @@ producing a `~`.
 
 ------------------------------------------------------------------------
 
-### ++mink
+<h3 id="++mink"><code>++mink</code></h3>
 
 Mock interpreter
 
@@ -143,7 +143,7 @@ result becomes a `%1` `++tone`, indicating a block.
 
 ------------------------------------------------------------------------
 
-### ++mock
+<h3 id="++mock"><code>++mock</code></h3>
 
 Compute formula on subject with hint
 
@@ -180,7 +180,7 @@ indicating a block.
 
 ------------------------------------------------------------------------
 
-### ++mook
+<h3 id="++mook"><code>++mook</code></h3>
 
 Intelligently render crash annotation
 
@@ -250,7 +250,7 @@ Each may be a tank, cord, [`++spot`](), or trapped tank. Produces a
 
 ------------------------------------------------------------------------
 
-### ++mang
+<h3 id="++mang"><code>++mang</code></h3>
 
 Unit: Slam gate with sample
 
@@ -292,7 +292,7 @@ Similar to [`++mong`]().
 
 ------------------------------------------------------------------------
 
-### ++mong
+<h3 id="++mong"><code>++mong</code></h3>
 
 Slam gate with sample
 
@@ -334,7 +334,7 @@ Produces a [`++toon`]() computation result from slamming `gat` with
 
 ------------------------------------------------------------------------
 
-### ++mung
+<h3 id="++mung"><code>++mung</code></h3>
 
 Virtualize slamming gate
 
@@ -376,7 +376,7 @@ Produces a [`++tone`]() computation result from slamming `gat` with
 
 ------------------------------------------------------------------------
 
-### ++mule
+<h3 id="++mule"><code>++mule</code></h3>
 
 Typed virtual
 
@@ -415,7 +415,7 @@ the way. Used to lazily compute stack traces.
 
 ------------------------------------------------------------------------
 
-### ++mute
+<h3 id="++mute"><code>++mute</code></h3>
 
 Untyped virtual
 
@@ -433,7 +433,7 @@ Kicks a `++trap`, producing its result as a noun or the tanks of any
 error that occurs. Similar to [`++mule`](), but preserves no type
 information.
 
-`taq` is a [`++trap`]().
+`taq` is a [`++trap`](/doc/hoon/library/1#++trap).
 
     ~zod/try=>  (mute |.(leaf/"hello"))
     [%.y p=[1.717.658.988 104 101 108 108 111 0]]
