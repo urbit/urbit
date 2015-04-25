@@ -1,0 +1,128 @@
+::  digital ocean fleet management
+::
+::::
+  ::
+/?  310
+::
+::
+::::  sivtyv-barnel
+  ::
+  ::id=@ud name=@t memory=@ud vcpu=@ud disk=@ud locked=@f created=@t status=@t backup-ids=json snapshot-ids=json features=json region=json image=json size=json size-slug=@t networks=json kernel=json next-backup-window=@t])
+             
+!:
+|%
+++  droplet  ,~
+++  axle  ,[ke=keys toke=tokens drops=(list droplet)]
+++  keys  ,[authc=(unit ,@t) client-secret=(unit ,@t)]
+++  tokens  ,[access=@t refresh=@t]
+++  droplet  (unit ,@)            
+++  move  ,[bone (mold note gift)]
+++  note
+$:  %e
+  %them
+(unit hiss)
+==
+++  gift
+$%  [%nice ~]
+    [%rush %json json]
+==
+++  sign
+$:  %e
+$%  [%thou p=httr]
+==  ==
+
+
+--
+!:
+|_  [hid=hide vat=axle]
+++  auth-queries  
+    :~  'grant_type'^'authorization_code'
+        'code'^(need authc.ke.vat)
+        :-  'client_id'
+        'd8f46b95af38c1ab3d78ad34c2157a6959c23eb0eb5d8e393f650f08e6a75c6f'
+        'redirect_uri'^'http://localhost:8443/main/pub/do/fab'
+    ==
+++  httpreq
+    |=  $:    ost=bone  pour-path=wire
+            domain=(list cord)  end-point=path
+          req-type=$?(%get %post)  headers=math
+        queries=quay
+        ==
+    ^-  move
+    =+  ^-  parsed-url=purl
+        :+  ^=  host-port                               ::  ++hart
+            :+  security=%.y
+              port=~
+            host=[%.y [path=[%com domain]]]
+          endpoint=[extensions=~ point=end-point]       ::  ++pork,
+        q-strings=queries                               ::  ++quay
+    =+  ^-  request=hiss                                ::  cast to hiss
+        :-  parsed-url
+        [req-type headers ~]                            ::  post
+    :^  ost  %pass  pour-path
+    :+  %e  %them
+    `(unit hiss)`[~ request]
+++  prep  ,_`.                        ::  wipe state when app code is changed
+::
+++  peer
+  |=  [ost=bone you=ship pax=path]
+  ^-  [(list move) _+>.$]
+  :_  +>.$
+  [ost %give %rush %json ~]~
+::
+++  poke-oauth2-code
+  |=  [ost=bone you=ship code=cord]
+  ^-  [(list move) _+>.$]
+  =.  authc.ke.vat
+    [~ code]
+  =+  ath=(need authc.ke.vat)
+  :_  +>.$
+  [ost %give %nice ~]~
+::
+++  poke-client-secret
+  |=  [ost=bone you=ship secret=cord]
+  ^-  [(list move) _+>.$]
+  ~&  'pokeclientsecret'
+  =.  client-secret.ke.vat
+    [~ secret]
+  ~&  client-secret.ke.vat
+  :_  +>.$
+  :_  [ost %give %nice ~]~
+  %^  httpreq  ost  /auth
+  :^    ~[%digitalocean %cloud]  `path`/v1/oauth/token
+      %post
+  :-  ~  `quay`['client_secret'^(need client-secret.ke.vat) auth-queries]
+::
+++  pour
+  |=  [ost=bone pour-path=path resp=sign]
+  ^-  [(list move) _+>.$]
+  ?+    -.pour-path  !!
+      %auth
+    =+  body=(rash q:(need r.p.+.resp) apex:poja)
+    =+  [ac re]=(need ((ot 'access_token'^so 'refresh_token'^so ~):jo body))
+    =:  access.toke.vat   ac
+        refresh.toke.vat  re
+      == 
+    ~&  toke.vat
+    :_  +>.$
+    :-  [ost %give %nice ~]
+    [(list-droplets ost)]~
+  ::
+      %list
+    :_  +>.$
+    =+  parsed=(rash q:(need r.p.+.resp) apex:poja)
+    =+  dar=((ot droplets/(ar some) ~):jo parsed)
+    ~&  [dar/dar]
+    [ost %give %nice ~]~
+  ==
+++  list-droplets
+  |=  os=bone
+  =+  ^=  lis  :*
+      os                     /list
+      ~[%digitalocean %api]  /v2/droplets
+      %get
+      (mo ['Content-Type' 'application/json' ~] ['Authorization' (cat 3 'Bearer ' access.toke.vat) ~] ~)
+      ~
+      ==
+  (httpreq lis)
+--
