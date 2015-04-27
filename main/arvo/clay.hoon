@@ -1510,7 +1510,7 @@
       --
     ::
     ++  me                                              ::  merge ali into bob
-      |=  ali=(pair ship desk)                          ::  from
+      |=  [ali=(pair ship desk) alh=(unit ankh)]        ::  from
       =+  bob=`(pair ship desk)`[who syd]               ::  to
       =+  dat=(fall (~(get by mer) ali) *mery)          ::  merge data
       =|  don=?                                         ::  keep going
@@ -2090,7 +2090,7 @@
             ^-  (unit (pair silk silk))
             ?:  (~(has by bop.dat) pax)
               ~
-            `[[%done ~ %path !>(pax)] (lobe-to-silk pax lob)]
+            `[[%done ~ %path !>(pax)] (merge-lobe-to-silk:he pax lob)]
         ==
       ::
       ++  checked-out
@@ -2214,6 +2214,31 @@
             (~(put in s) (tako-to-yaki t))              ::  found
           (~(uni in s) ^$(q (tako-to-yaki t)))          ::  traverse
         ::
+        ++  merge-lobe-to-silk
+          |=  [pax=path lob=lobe]
+          ^-  silk
+          =+  hat=q.ali.dat
+          =+  hot=q.bob.dat
+          =+  ^=  lal
+              %+  biff  alh
+              |=  hal=ankh
+              (~(get by hat) pax)
+          =+  lol=(~(get by hot) pax)
+          |-  ^-  silk
+          ?:  =([~ lob] lol)
+            =+  (need (need (read-x let.dom pax)))
+            ?>  ?=(%& -<)
+            [%done ~ p.-]
+          ?:  =([~ lob] lal)
+            :+  %done  ~
+            (need (bind q.ank:(descend-path:(zu (need alh)) pax) tail))
+          =+  bol=(~(got by lat.ran) lob)
+          ?-  -.bol
+            %direct     [%volt ~ q.bol]
+            %indirect   [%volt ~ q.bol]
+            %delta      [%pact $(lob q.q.bol) [%volt ~ r.bol]]
+          ==
+        ::
         ++  reduce-merge-points
           |=  unk=(set yaki)                            ::  maybe need jet
           =|  gud=(set yaki)
@@ -2229,16 +2254,6 @@
           ?:  %+  levy  (~(tap by (~(uni in gud) bun)) ~)
               |=  yak=yaki
               !(~(has in (~(got by zar) r.yak)) r.n.unk)
-          ::  I'm pretty sure this is just wrong, but given
-          ::  the relative intelligence levels of me and Jared,
-          ::  I'm going to keep it here for a little bit
-          ::  ?:  %+  roll  (~(tap by (~(uni in gud) bun)) ~)
-          ::      |=  [tak=yaki god=?]                  ::  only good + unknown
-          ::      ^-  ?
-          ::      ?.  god  god
-          ::      (~(has in (~(got by zar) r.tak)) n.unk)
-          ::  Also, I'd be curious how often this actually
-          ::  elminates merge points
             $(gud (~(put in gud) n.unk), unk bun)
           $(unk bun)
         --
@@ -2396,7 +2411,7 @@
     =^  mos  ruf
       =+  une=(un p.q.hic now hen ruf)
       =+  ^=  zat
-          abet:(start:(me:ze:(di:wake:une q.q.hic) r.q.hic s.q.hic) t.q.hic)
+          abet:(start:(me:ze:(di:wake:une q.q.hic) [r.q.hic s.q.hic] ~) t.q.hic)
       =+  zot=abet.zat
       :-  -.zot
       =.  une  (pish:une q.q.hic +.zot ran.zat)
@@ -2489,7 +2504,13 @@
     =+  wak=wake:une
     =+  wex=(di:wak syd)
     =+  dat=?-(+<.q.hin %writ [%& p.q.hin], %made [%| q.q.hin])
-    =+  wao=abet:(route:(me:ze:wex her sud) sat dat)
+    =+  ^-  kan=(unit ankh)
+        %+  biff  (~(get by fat.ruf) her)
+        |=  room
+        %+  bind  (~(get by dos) sud)
+        |=  dojo
+        ank.dom
+    =+  wao=abet:(route:(me:ze:wex [her sud] kan) sat dat)
     =+  woo=abet:wao
     [(weld -.wak -.woo) ..^$(ruf abet:(pish:une syd +.woo ran.wao))]
   ?:  ?=([%auto @ @ @ @ ~] tea)
