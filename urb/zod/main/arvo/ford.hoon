@@ -269,6 +269,8 @@
   ++  awap                                              ::  get next revision
     ~%  %ford-w  ..is  ~
     |=  dep=@uvH
+    ?~  dep
+      ~&(dep-empty/hen +>.$)
     %_    +>.$
         mow
       %-  welp  :_  mow
