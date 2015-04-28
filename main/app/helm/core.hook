@@ -460,7 +460,7 @@
   ?~  wil
     [ost %give %mean ~ %rejected ~]~
   :~  [ost %pass / %a %cash p.u.bur q.u.bur u.wil]
-      [ost %pass / %c %plug our.hid %main (sein our.hid) %main]
+      [ost %pass / %c %plug our.hid %main (sein our.hid) %main-away]
       [ost %give %nice ~]
   ==
 ::
