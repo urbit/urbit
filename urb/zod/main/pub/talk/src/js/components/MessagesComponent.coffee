@@ -34,6 +34,7 @@ Message = recl
     klass = if delivery.indexOf("received") isnt -1 then " received" else " pending"
     if @props.thought.statement.speech?.lin?.say is false then klass += " say"
     if @props.thought.statement.speech?.url then klass += " url"
+    if @props.unseen is true then klass += " new"
 
     name = if @props.name then @props.name else ""
     audi = _.keys @props.thought.audience
@@ -46,7 +47,7 @@ Message = recl
       url = @props.thought.statement.speech.url.url
       txt = (a {href:url,target:"_blank"}, url)
 
-    div {className:"message #{klass}"}, [
+    div {className:"message#{klass}"}, [
         (div {className:"attr"}, [
           div {onClick:@_handleAudi,className:"audi"}, audi
           (div {onClick:@_handlePm}, (React.createElement Member,{ship:@props.ship}))
@@ -72,6 +73,16 @@ module.exports = recl
 
   getInitialState: -> @stateFromStore()
 
+  _blur: ->
+    @focussed = false
+    @lastSeen = @last
+
+  _focus: ->
+    @focussed = true
+    @lastSeen = null
+    $('.message.new').removeClass 'new'
+    document.title = document.title.replace /\ \([0-9]*\)/, ""
+
   checkMore: ->
     if $(window).scrollTop() < @paddingTop &&
     @state.fetching is false &&
@@ -88,6 +99,11 @@ module.exports = recl
     _.difference(_.keys(@last.thought.audience),@state.audi).length is 0
       StationActions.setAudience _.keys(@last.thought.audience)
 
+  sortedMessages: (messages) ->
+    _.sortBy messages, (_message) -> 
+          _message.pending = _message.thought.audience[station]
+          _message.thought.statement.date
+
   componentDidMount: ->
     MessageStore.addChangeListener @_onChangeStore
     StationStore.addChangeListener @_onChangeStore
@@ -96,6 +112,9 @@ module.exports = recl
       MessageActions.listenStation @state.station
     checkMore = @checkMore
     $(window).on 'scroll', checkMore
+    @focussed = true
+    $(window).on 'blur', @_blur
+    $(window).on 'focus', @_focus
     window.util.setScroll()
 
   componentDidUpdate: ->
@@ -105,8 +124,17 @@ module.exports = recl
       $window.scrollTop st
       @lastLength = null
     else
-      if $('#writing-container').length > 0
+      if not window.util.isScrolling()
         window.util.setScroll()
+
+    if @focussed is false and @last isnt @lastSeen
+      _messages = @sortedMessages @state.messages
+      d = _messages.length-_messages.indexOf(@lastSeen)-1
+      t = document.title
+      if document.title.match(/\([0-9]*\)/)
+        document.title = document.title.replace /\([0-9]*\)/, "(#{d})"
+      else
+        document.title = document.title + " (#{d})" 
       
   componentWillUnmount: ->
     MessageStore.removeChangeListener @_onChangeStore
@@ -129,10 +157,7 @@ module.exports = recl
     _station = "~"+window.urb.ship+"/"+station
     sources = _.clone @state.configs[@state.station]?.sources ? []
     sources.push _station
-    _messages = @state.messages
-    _messages = _.sortBy _messages, (_message) -> 
-      _message.pending = _message.thought.audience[station]
-      _message.thought.statement.date
+    _messages = @sortedMessages @state.messages
 
     @last = _messages[_messages.length-1]
     @length = _messages.length
@@ -141,7 +166,11 @@ module.exports = recl
         @checkMore() if length < @pageSize
       , 1
 
-    messages = _messages.map (_message) => 
+    lastIndex = if @lastSeen then _messages.indexOf(@lastSeen) else null
+
+    messages = _messages.map (_message,k) => 
+      if lastIndex and lastIndex is k
+        _message.unseen = true
       _message.station = @state.station
       _message._handlePm = @_handlePm
       _message._handleAudi = @_handleAudi
