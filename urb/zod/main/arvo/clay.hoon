@@ -220,8 +220,10 @@
     ^-  tage
     ?:  ?=(%| -.res)  
       ~|  %ford-fail
-      ~>  %mean.|.(p.res)             ::  interpolate ford fail into stack trace
-      !!
+      |-
+      ?~  p.res  !!
+      ~>  %mean.|.(i.p.res)           ::  interpolate ford fail into stack trace
+      $(p.res t.p.res) 
     ?@  p.p.res
       ~|(%bad-marc !!)
     p.res
@@ -236,7 +238,7 @@
     :-  [?^(p.i.p.tab !! p.i.p.tab) (slot 4 q.tab)]
     [?^(q.i.p.tab !! q.i.p.tab) (slot 5 q.tab)]
   ::
-  ++  balk                                          ::  read and send
+  ++  balk                                              ::  read and send
     |=  [hen=duct cay=(unit (each cage silk)) mun=mood]
     ^+  +>
     ?~  cay  (blub hen)
@@ -250,7 +252,7 @@
     |=  [hen=duct tym=@da]
     %_(+> tag :_(tag [hen %pass /tyme %t %rest tym]))
   ::
-  ++  blab                                            ::  ship result
+  ++  blab                                              ::  ship result
     |=  [hen=duct mun=mood dat=(each cage silk)]
     ^+  +>
     ?:  ?=(%& -.dat)
@@ -260,7 +262,7 @@
         %f  %exec  who  [who syd q.mun]  ~  p.dat
     ==
   ::
-  ++  bleb                                            ::  ship sequence
+  ++  bleb                                              ::  ship sequence
     |=  [hen=duct ins=@ud hip=(unit (pair aeon aeon))]
     ^+  +>
     %^  blab  hen  [%w [%ud ins] ~]
@@ -269,17 +271,17 @@
       [%null [%atom %n] ~]
     [%nako !>((make-nako:ze u.hip))]
   ::
-  ++  blub                                            ::  ship stop
+  ++  blub                                              ::  ship stop
     |=  hen=duct
     %_(+> byn [[hen ~] byn])
   ::
-  ++  duce                                            ::  produce request
+  ++  duce                                              ::  produce request
     |=  rov=rove
     ^+  +>
     =.  qyx  (~(put by qyx) hen rov)
     ?~  ref
       (mabe rov (cury bait hen))
-    |-  ^+  +>+.$                                     ::  XX  why?
+    |-  ^+  +>+.$                                       ::  XX  why?
     =+  rav=(reve rov)
     =+  ^=  vaw  ^-  rave
       ?.  ?=([%sing %v *] rav)  rav
@@ -294,7 +296,7 @@
       fod.u.ref  (~(put by fod.u.ref) hen inx)
     ==
   ::
-  ++  ease                                            ::  release request
+  ++  ease                                              ::  release request
     ^+  .
     ?~  ref
       =+  rov=(~(got by qyx) hen)
@@ -310,7 +312,7 @@
       bom.u.ref  (~(del by bom.u.ref) u.nux)
     ==
   ::
-  ++  eave                                            ::  subscribe
+  ++  eave                                              ::  subscribe
     |=  rav=rave
     ^+  +>
     ?-    -.rav
@@ -346,7 +348,7 @@
       (duce `rove`[%many p.rav ptr q.q.rav r.q.rav ear])
     ==
   ::
-  ++  echa                                            ::  announce raw
+  ++  echa                                              ::  announce raw
     |=  [wen=@da mer=mizu]
     ^+  +>
     %=    +>
