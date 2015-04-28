@@ -62,6 +62,7 @@
     ++  note-clay                                       ::  filesystem command
       $%  [%font p=@p q=@tas r=@p s=@tas]               ::
           [%info p=@p q=@tas r=nori]                    ::
+          [%lynx p=@p q=@tas r=(unit ,?)]               ::
           [%merg p=@p q=@tas r=@p s=@tas t=germ]        ::
       ==                                                ::
     ++  note-dill                                       ::  system command
@@ -157,11 +158,19 @@
     [ost %pass /reload %d %flog %veer tip pax txt]
   ::
   ++  he-wish-sync
-    |=  [syd=@tas her=@p sud=@tas ~]
+    |=  [syd=desk her=ship sud=desk ~]
     %_    .
         moz
       :_  moz
       [ost %pass /sync %c %font our.hid syd her sud]
+    ==
+  ::
+  ++  he-wish-unix
+    |=  [syd=desk syn=(unit ,?)]
+    %_    .
+        moz
+      :_  moz
+      [ost %pass /unix %c %lynx our.hid syd syn]
     ==
   ::
   ++  he-wish-verb
@@ -436,9 +445,14 @@
   he-abet:merge-abet:(start:(he-wish-merge:(hoke ost her) syd) ali sud gem)
 ::
 ++  poke-helm-sync
-  |=  [ost=bone her=ship all=[@tas @p @tas ~]]
+  |=  [ost=bone her=ship all=[desk ship desk ~]]
   ~&  %poke-helm-sync
   he-abet:(he-wish-sync:(hake ost her) all)
+::
+++  poke-helm-unix
+  |=  [ost=bone her=ship all=[desk (unit ,?)]]
+  ~&  %poke-helm-unix
+  he-abet:(he-wish-unix:(hake ost her) all)
 ::
 ++  poke-helm-begin
   |=  [ost=bone you=ship begs]

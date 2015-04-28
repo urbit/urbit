@@ -333,7 +333,6 @@
         :^    %pass
             [(scot %p our) (scot %ud num) (scot %ud p.kig) (tope bek ~)]
           %c
-        ~&  >>  [%camping bem]
         [%warp [our p.bem] q.bem [~ %sing ren r.bem (flop s.bem)]]
       ==
     ::
