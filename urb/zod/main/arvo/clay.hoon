@@ -1539,12 +1539,12 @@
         ^+  +>
         ?:  (~(has by mer) ali)
           (error:he %already-merging ~)
-        ?:  &(=(0 let.dom) !?=(%init gem))
+        ?:  &(=(0 let.dom) !?=(?(%init %auto) gem))
           (error:he %no-bob-desk ~)
         =.  gem.dat  gem
         =.  cas.dat  [%da now]
-        ?:  ?=(%init gem.dat)
-          fetch-ali
+        ?:  =(0 let.dom)
+          fetch-ali(gem.dat %init)
         =+  (~(get by hit.dom) let.dom)
         ?~  -
           (error:he %no-bob--version ~)
@@ -2362,7 +2362,7 @@
     ^-  (list move)
     %+  turn  (limo ~[%main])
     |=  syd=@tas
-    [hen %pass / %c %font p.q.hic syd bos syd]
+    [hen %pass / %c %font p.q.hic syd bos (cat 3 syd '-away')]
   ::
       %info
     ?:  =(%$ q.q.hic)
