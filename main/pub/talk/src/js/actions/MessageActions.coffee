@@ -10,7 +10,7 @@ module.exports =
 
   listenStation: (station,date) ->
     if not date then date = window.urb.util.toDate(new Date())
-    window.chat.MessagePersistence.listenStation station,date
+    window.talk.MessagePersistence.listenStation station,date
 
   listeningStation: (station) ->
     MessageDispatcher.handleViewAction
@@ -25,7 +25,7 @@ module.exports =
   getMore: (station,start,end) ->
     MessageDispatcher.handleViewAction
       type:"messages-fetch"
-    window.chat.MessagePersistence.get station,start,end
+    window.talk.MessagePersistence.get station,start,end
 
   sendMessage: (message,audience) ->
     serial = window.util.uuid32()
@@ -64,4 +64,4 @@ module.exports =
     MessageDispatcher.handleViewAction
       type:"message-send"
       message:_message
-    window.chat.MessagePersistence.sendMessage _message.thought
+    window.talk.MessagePersistence.sendMessage _message.thought

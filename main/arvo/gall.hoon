@@ -58,11 +58,9 @@
           $?  $:  %a                                    ::  to %ames
           $%  [%wont p=sock q=path r=*]                 ::
           ==  ==                                        ::
-              $:  %c                                    ::  to %clay
-          $%  [%warp p=sock q=riff]                     ::
-          ==  ==                                        ::
               $:  %f                                    ::  to %ford
           $%  [%exec p=@p q=beak r=(unit silk)]         ::
+              [%wasp p=@p q=@uvH]                       ::
           ==  ==                                        ::
               $:  %g                                    ::  to %gall
           $%  [%show p=hapt q=ship r=path]              ::
@@ -116,7 +114,7 @@
                   peq=(map bone ,@uvI)                  ::  peekers
                   qel=(map bone ,@ud)                   ::  rush queue length
               ==                                        ::
-              ped=(set (pair ship desk))                ::  active depends
+              ped=@uvH                                  ::  active depends
               zam=scar                                  ::  opaque ducts
           ==                                            ::
 ++  silk                                                ::  see %ford
@@ -156,6 +154,7 @@
           ==  ==                                        ::
               $:  %f                                    ::  by %ford
           $%  [%made p=@uvH q=(each gage tang)]         ::
+              [%news ~]                                 ::
           ==  ==  ==                                    ::
 ++  toil  (pair duct knob)                              ::  work in progress
 --  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -404,6 +403,8 @@
     [hen %give %mean u.q.sih]
   ::
       %f
+    ?.  ?=(%made +<.sih)
+      ~&  [%gall-bad-gasp +<.sih]  `..^$
     :_  ..^$
     :_  ~
     :-  hen
@@ -438,6 +439,7 @@
                 [%pass [%r pax] %g %took [our imp] you]
         ::
             %f
+          ?<  ?=(%news -.+.sih)
           :_  ~  :-  hen
           ?-  -.q.+.sih
             %|  [%give %mean ~ %ford-fail p.q.+.sih]
@@ -694,44 +696,16 @@
         ::  ~&  [%deff imp cub.sat]
         [hon r.q.caq]
       ::
-      ++  drug                                          ::  set dependencies
-        |=  pen=(set (pair ship desk))
-        :: ~&  [%drug ped=ped.sat]
-        :: ~&  [%drug pen=pen]
-        ^+  +>
-        =+  ^=  new  ^-  (list move)
-            %+  turn
-              %+  skip  (~(tap in pen) ~)
-              |=(a=(pair ship desk) (~(has in ped.sat) a))
-            |=  a=(pair ship desk)
-            :*  hun.mat  %pass  (away %w %drug (scot %p p.a) q.a ~)  %c
-                %warp  [our p.a]  q.a  ~
-                %many  %&  [%da +(now)]  [%da (add now ~d1000)]  /
-            ==
-        =+  ^=  old  ^-  (list move)
-            %+  turn
-              %+  skip  (~(tap in ped.sat) ~)
-              |=(a=(pair ship desk) (~(has in pen) a))
-            |=  a=(pair ship desk)
-            :-  hun.mat
-            :^  %pass  (away %w %drug (scot %p p.a) q.a ~)  %c
-            ::  ~&  [%sync-unsubscribe our p.a q.a]
-            [%warp [our p.a] q.a ~]
-        %_(+>.$ ped.sat pen, mow :(weld new old mow))
-      ::
-      ++  drum                                          ::  raw dependencies
+      ++  drum                                          ::  set dependencies
         |=  dep=@uvH
         ^+  +>
-        ?>  ?=(^ orm.sat)
-        %-  drug
-        =+  ped=`(set (pair ship desk))`[[our %main] ~ ~]
-        ped
-        ::=+  mav=(~(tap by dep) ~)
-        ::|-  ^+  ped
-        ::?~  mav  ped
-        ::?:  =(r.i.mav [%da u.orm.sat])
-        ::  $(mav t.mav, ped (~(put in ped) p.i.mav q.i.mav))
-        ::$(mav t.mav)
+        ?~  dep  ~&(%drum-none +>.$)
+        ?:  =(dep ped.sat)  +>.$
+        =+  pax=(away %w %drum (scot %uv dep) ~)
+        %_  +>.$
+          ped.sat  dep
+          mow  :_(mow [hun.mat %pass pax %f %wasp our dep])  ::  XX cancel old
+        ==
       ::
       ++  ford                                          ::  exec to ford
         |=  [pax=path kas=silk]
@@ -774,7 +748,7 @@
       ::
       ++  mack                                          ::  apply standard
         |=  sih=sign
-        ?>  ?=(%f -.sih)
+        ?>  ?=([%f %made *] sih)
         ^-  [(unit (list tank)) _+>]
         ?-  -.q.+.sih
           &  :-  ~
@@ -786,7 +760,7 @@
       ++  meek                                          ::  apply peek
         |=  sih=sign
         ^-  [(unit cage) _+>]
-        ?>  ?=(%f -.sih)
+        ?>  ?=([%f %made *] sih)
         ?-  -.q.+.sih
           &  =+  vax=`vase`q.p.q.+.sih
              ?.  &(?=(^ q.vax) ?=(@ -.q.vax))
@@ -799,9 +773,9 @@
       ::
       ++  mick                                          ::  apply w/depends
         |=  sih=sign
-        ?>  ?=(%f -.sih)
-        ^-  [[p=? q=@uvH] _+>]
-        :-  [-.q.+.sih p.+.sih]
+        ?>  ?=([%f %made *] sih)
+        ^-  [? _+>]
+        :-  -.q.+.sih
         ?-  -.q.+.sih
           &  %-  obey:(morn (slot 3 q.p.q.+.sih))
              (slot 2 q.p.q.+.sih)
@@ -811,7 +785,7 @@
       ++  muck                                          ::  apply part
         |=  sih=sign
         ^-  [(unit (list tank)) _+>]
-        ?>  ?=(%f -.sih)
+        ?>  ?=([%f %made *] sih)
         ?-  -.q.+.sih
           &  [~ (obey q.p.q.+.sih)]
           |  [`p.q.+.sih (give %crud %muck-made p.q.+.sih)]
@@ -819,12 +793,12 @@
       ::
       ++  murk                                          ::  apply park
         |=  sih=sign
-        ^-  [(unit cage) _+>]
-        ?>  ?=(%f -.sih)
+        ^-  [[p=@uvH q=(unit cage)] _+>]
+        ?>  ?=([%f %made *] sih)
         ?-  -.q.+.sih
           &  ?.  ?=(@ p.p.q.+.sih)  ~|  %bad-marc  !!
-             [`p.q.+.sih +>.$]
-          |  [~ (give %crud %murk-made p.q.+.sih)]
+             [[p.+.sih `p.q.+.sih] +>.$]
+          |  [[p.+.sih ~] (give %crud %murk-made p.q.+.sih)]
         ==
       ::
       ++  more                                          ::  domestic take
@@ -851,9 +825,9 @@
           ::
               %park
             =^  gyd  +>.$  (murk q.hin)
-            ?~  gyd
-              +>.$
-            (quen %load u.gyd)
+            ?~  q.gyd  (drum p.gyd)
+            =.  +>.$  (drum p.gyd)
+            (quen %load u.q.gyd)
           ::
               %part
             =^  gud  +>.$  (muck q.hin)
@@ -906,8 +880,8 @@
           ::
               %prep
             =^  gad  +>.$  (mick q.hin)
-            ?.  p.gad  (drum q.gad)
-            deal:(drum q.gad)
+            ?.  gad  +>.$
+            deal
           ::
               %pull
             =^  gud  +>.$  (mack q.hin)
@@ -922,15 +896,15 @@
           ==
         ::
             %w                                          ::  autoboot
-          ?>  ?=([%drug @ @ ~] t.pax)
-          =+  :*  sin=((hard ,[%c %writ p=(unit)]) q.hin)
-                  our=(need (slaw %p i.t.t.pax))
-                  syd=(need ((sand %tas) i.t.t.t.pax))
-              ==
-          ::~&  [%sync-notified `@p`our `@ta`syd]
-          =.  ped.sat  (~(del by ped.sat) [our syd])
-          ?~  p.+.sin
-            +>.$
+          ?>  ?=([%drum @ ~] t.pax)
+          ?>  ?=([%f %news ~] q.hin)
+          :: ?>  ?=([%drug @ @ ~] t.pax)
+          :: =+  :-  sin=((hard ,[%c %writ p=(unit)]) q.hin)
+          ::     [our syd]=(raid t.t.pax %p %tas ~)
+          :: ::~&  [%sync-notified `@p`our `@ta`syd]
+          :: =.  ped.sat  (~(del by ped.sat) [our syd])
+          :: ?~  p.+.sin
+          ::   +>.$
           +>.$(vey.sat (~(put to vey.sat) hen %boot ~))
         ==
       ::

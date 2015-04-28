@@ -1,7 +1,7 @@
 arvo
 ====
 
-arvo is our operating system.
+Our operating system.
 
 arvo is composed of modules called vanes:
 

@@ -3,7 +3,7 @@
 `%dill`
 =======
 
-`%dill` is our terminal driver.
+Our terminal driver.
 
 Unix sends keyboard events to `%dill` from either the console or telnet,
 and `%dill` produces terminal output. The only app that should directly

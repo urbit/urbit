@@ -1832,6 +1832,7 @@
 ++  prep
   |=  old=(unit (unit house-any))
   ^-  [(list move) _+>]
+  ~&  %talk-prep
   ?>  ?=(^ old)
   =|  moz=(list move)
   |-

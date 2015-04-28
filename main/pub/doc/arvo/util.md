@@ -3,7 +3,7 @@
 CLI Apps
 ========
 
-These are our simple command-line applications.
+Our simple command-line applications.
 
 You can find them in `/main/app`.
 

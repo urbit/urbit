@@ -28,16 +28,16 @@ module.exports =
       station:station    
 
   removeStation: (station) ->
-    window.chat.StationPersistence.removeStation station
+    window.talk.StationPersistence.removeStation station
 
   setSources: (station,sources) ->
-    window.chat.StationPersistence.setSources station,window.urb.ship,sources
+    window.talk.StationPersistence.setSources station,window.urb.ship,sources
 
   createStation: (name) ->
-    window.chat.StationPersistence.createStation name
+    window.talk.StationPersistence.createStation name
 
   listenStation: (station) ->
-    window.chat.StationPersistence.listenStation station
+    window.talk.StationPersistence.listenStation station
 
   listeningStation: (station) ->
     StationDispatcher.handleViewAction
@@ -51,7 +51,7 @@ module.exports =
       state:state
 
   ping: (_ping) ->
-    window.chat.StationPersistence.ping _ping
+    window.talk.StationPersistence.ping _ping
 
   loadStations: (stations) ->
     StationDispatcher.handleServerAction
@@ -67,4 +67,4 @@ module.exports =
     StationDispatcher.handleViewAction
       type: "station-create"
       station: station
-    window.chat.StationPersistence.createStation station
+    window.talk.StationPersistence.createStation station

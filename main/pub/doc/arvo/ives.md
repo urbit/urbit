@@ -3,6 +3,6 @@
 `%ives`
 =======
 
-`%ives` isn't finished yet.
+Isn't finished yet.
 
 </div>
