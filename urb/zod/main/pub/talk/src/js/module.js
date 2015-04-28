@@ -265,9 +265,6 @@ Message = recl({
     if ((ref3 = this.props.thought.statement.speech) != null ? ref3.url : void 0) {
       klass += " url";
     }
-    if (this.props.unseen === true) {
-      klass += " new";
-    }
     name = this.props.name ? this.props.name : "";
     audi = _.keys(this.props.thought.audience);
     audi = _.without(audi, window.util.mainStationPath(window.urb.user));
@@ -286,7 +283,7 @@ Message = recl({
       }, url);
     }
     return div({
-      className: "message" + klass
+      className: "message " + klass
     }, [
       div({
         className: "attr"
@@ -326,16 +323,6 @@ module.exports = recl({
   getInitialState: function() {
     return this.stateFromStore();
   },
-  _blur: function() {
-    this.focussed = false;
-    return this.lastSeen = this.last;
-  },
-  _focus: function() {
-    this.focussed = true;
-    this.lastSeen = null;
-    $('.message.new').removeClass('new');
-    return document.title = document.title.replace(/\ \([0-9]*\)/, "");
-  },
   checkMore: function() {
     var end;
     if ($(window).scrollTop() < this.paddingTop && this.state.fetching === false && this.state.last && this.state.last > 0) {
@@ -355,12 +342,6 @@ module.exports = recl({
       return StationActions.setAudience(_.keys(this.last.thought.audience));
     }
   },
-  sortedMessages: function(messages) {
-    return _.sortBy(messages, function(_message) {
-      _message.pending = _message.thought.audience[station];
-      return _message.thought.statement.date;
-    });
-  },
   componentDidMount: function() {
     var checkMore;
     MessageStore.addChangeListener(this._onChangeStore);
@@ -370,31 +351,18 @@ module.exports = recl({
     }
     checkMore = this.checkMore;
     $(window).on('scroll', checkMore);
-    this.focussed = true;
-    $(window).on('blur', this._blur);
-    $(window).on('focus', this._focus);
     return window.util.setScroll();
   },
   componentDidUpdate: function() {
-    var $window, _messages, d, st, t;
+    var $window, st;
     $window = $(window);
     if (this.lastLength) {
       st = $window.height();
       $window.scrollTop(st);
-      this.lastLength = null;
+      return this.lastLength = null;
     } else {
-      if (!window.util.isScrolling()) {
-        window.util.setScroll();
-      }
-    }
-    if (this.focussed === false && this.last !== this.lastSeen) {
-      _messages = this.sortedMessages(this.state.messages);
-      d = _messages.length - _messages.indexOf(this.lastSeen) - 1;
-      t = document.title;
-      if (document.title.match(/\([0-9]*\)/)) {
-        return document.title = document.title.replace(/\([0-9]*\)/, "(" + d + ")");
-      } else {
-        return document.title = document.title + (" (" + d + ")");
+      if ($('#writing-container').length > 0) {
+        return window.util.setScroll();
       }
     }
   },
@@ -417,12 +385,16 @@ module.exports = recl({
     return StationActions.setAudience(audi);
   },
   render: function() {
-    var _messages, _station, lastIndex, messages, ref1, ref2, sources, station;
+    var _messages, _station, messages, ref1, ref2, sources, station;
     station = this.state.station;
     _station = "~" + window.urb.ship + "/" + station;
     sources = _.clone((ref1 = (ref2 = this.state.configs[this.state.station]) != null ? ref2.sources : void 0) != null ? ref1 : []);
     sources.push(_station);
-    _messages = this.sortedMessages(this.state.messages);
+    _messages = this.state.messages;
+    _messages = _.sortBy(_messages, function(_message) {
+      _message.pending = _message.thought.audience[station];
+      return _message.thought.statement.date;
+    });
     this.last = _messages[_messages.length - 1];
     this.length = _messages.length;
     setTimeout((function(_this) {
@@ -432,12 +404,8 @@ module.exports = recl({
         }
       };
     })(this), 1);
-    lastIndex = this.lastSeen ? _messages.indexOf(this.lastSeen) : null;
     messages = _messages.map((function(_this) {
-      return function(_message, k) {
-        if (lastIndex && lastIndex === k) {
-          _message.unseen = true;
-        }
+      return function(_message) {
         _message.station = _this.state.station;
         _message._handlePm = _this._handlePm;
         _message._handleAudi = _this._handleAudi;
@@ -612,7 +580,38 @@ module.exports = recl({
 
 
 
-},{"../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/WritingComponent.coffee":[function(require,module,exports){
+},{"../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/TalkComponent.coffee":[function(require,module,exports){
+var MessagesComponent, StationComponent, WritingComponent, div, recf, recl;
+
+recl = React.createClass;
+
+recf = React.createFactory;
+
+div = [React.DOM.div][0];
+
+StationComponent = recf(require('./StationComponent.coffee'));
+
+MessagesComponent = recf(require('./MessagesComponent.coffee'));
+
+WritingComponent = recf(require('./WritingComponent.coffee'));
+
+module.exports = recl({
+  render: function() {
+    return div({}, [
+      div({
+        id: "station-container"
+      }, StationComponent({})), div({
+        id: "messages-container"
+      }, MessagesComponent({})), div({
+        id: "writing-container"
+      }, WritingComponent({}))
+    ]);
+  }
+});
+
+
+
+},{"./MessagesComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MessagesComponent.coffee","./StationComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/StationComponent.coffee","./WritingComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/WritingComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/WritingComponent.coffee":[function(require,module,exports){
 var Member, MessageActions, MessageStore, StationActions, StationStore, br, div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -877,38 +876,23 @@ module.exports = _.merge(new Dispatcher(), {
 
 
 
-},{"flux":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/flux/index.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/main.coffee":[function(require,module,exports){
-$(function() {
-  var $c, MessagesComponent, StationActions, StationComponent, WritingComponent, clean, rend;
-  StationActions = require('./actions/StationActions.coffee');
-  rend = React.render;
-  window.talk = {};
-  window.talk.MessagePersistence = require('./persistence/MessagePersistence.coffee');
-  window.talk.StationPersistence = require('./persistence/StationPersistence.coffee');
-  require('./util.coffee');
-  require('./move.coffee');
-  window.talk.StationPersistence.listen();
-  StationComponent = require('./components/StationComponent.coffee');
-  MessagesComponent = require('./components/MessagesComponent.coffee');
-  WritingComponent = require('./components/WritingComponent.coffee');
-  $c = $('#c');
-  clean = function() {
-    React.unmountComponentAtNode($('#station-container')[0]);
-    React.unmountComponentAtNode($('#messages-container')[0]);
-    return React.unmountComponentAtNode($('#writing-container')[0]);
-  };
-  $c.append("<div id='station-container'></div>");
-  $c.append("<div id='messages-container'></div>");
-  $c.append("<div id='writing-container'></div>");
-  $c.append("<div id='scrolling'>BOTTOM</div>");
-  rend(React.createElement(StationComponent, {}), $('#station-container')[0]);
-  rend(React.createElement(MessagesComponent, {}), $('#messages-container')[0]);
-  return rend(React.createElement(WritingComponent, {}), $('#writing-container')[0]);
-});
+},{"flux":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/flux/index.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/module.coffee":[function(require,module,exports){
+require('./util.coffee');
+
+require('./move.coffee');
+
+window.talk = {
+  Component: require('./components/TalkComponent.coffee'),
+  MessagePersistence: require('./persistence/MessagePersistence.coffee'),
+  StationPersistence: require('./persistence/StationPersistence.coffee'),
+  init: function(el) {
+    return this.StationPersistence.listen();
+  }
+};
 
 
 
-},{"./actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/actions/StationActions.coffee","./components/MessagesComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/MessagesComponent.coffee","./components/StationComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/StationComponent.coffee","./components/WritingComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/WritingComponent.coffee","./move.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/move.coffee","./persistence/MessagePersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/persistence/MessagePersistence.coffee","./persistence/StationPersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/persistence/StationPersistence.coffee","./util.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/util.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/move.coffee":[function(require,module,exports){
+},{"./components/TalkComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/components/TalkComponent.coffee","./move.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/move.coffee","./persistence/MessagePersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/persistence/MessagePersistence.coffee","./persistence/StationPersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/persistence/StationPersistence.coffee","./util.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/util.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/move.coffee":[function(require,module,exports){
 var ldy, setSo, so;
 
 so = {};
@@ -1011,7 +995,7 @@ $(window).on('scroll', window.util.checkScroll);
 
 },{}],"/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/node_modules/flux/index.js":[function(require,module,exports){
 /**
- * Copyright (c) 2014-2015, Facebook, Inc.
+ * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
@@ -6054,14 +6038,11 @@ _.merge(window.util, {
     window.util.getScroll();
     return $(window).scrollTop($("#c").height());
   },
-  isScrolling: function() {
+  checkScroll: function() {
     if (!window.util.writingPosition) {
       window.util.getScroll();
     }
-    return $(window).scrollTop() < window.util.writingPosition;
-  },
-  checkScroll: function() {
-    if (this.isScrolling()) {
+    if ($(window).scrollTop() < window.util.writingPosition) {
       return $('body').addClass('scrolling');
     } else {
       return $('body').removeClass('scrolling');
@@ -6376,4 +6357,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},["/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/main.coffee"]);
+},{}]},{},["/Users/galen/Documents/src/urbit-test/urb/zod/main/pub/talk/src/js/module.coffee"]);
