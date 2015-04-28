@@ -3,7 +3,7 @@
 `%eyre`
 =======
 
-`%eyre` is our http server.
+Our http server.
 
 Unix sends http messages to `%eyre`, and `%eyre` produces http messages
 in response. In general, apps and vanes do not call `%eyre`; rather,
