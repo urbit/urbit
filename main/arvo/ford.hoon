@@ -1184,7 +1184,7 @@
           |=  [cof=cafe key=gage]
           %+  cope  (make cof q.i.p.kas)
           |=  [cof=cafe val=gage]
-          %+  cope  ^^$(p.kas t.p.kas)
+          %+  cope  ^^$(p.kas t.p.kas, cof cof)
           |=  [cof=cafe rex=(list (pair marc marc)) rey=vase]
           (fine cof [[p.key p.val] rex] (slop (slop q.key q.val) rey))
         |=  [cof=cafe rex=(list (pair marc marc)) rey=vase]
