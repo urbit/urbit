@@ -269,12 +269,10 @@
       ?~  p.sih  +>.$ 
       =+  ark=;;(arch |2.r.u.p.sih)
       =+  [dap=(~(got by deh.bay) dep) bem=`beam`[bek sup] new=p.ark]
-      ~&  got-writ/[dep (tope bem) ark u.p.sih(r ~) -.dap]
       =-  ?~(dop con con(deh.bay (~(put by deh.bay) dep dop)))
       ^-  [dop=$|(~ _dap) con=_+>.$]
       ?-    -.dap
-          %done
-        ~&(%writ-redundant `+>.$)
+          %done  `+>.$                ::  writ redundant
           %init  ~|(never-subscribed/dep !!)
           %sent
         =+  old=(~(got by q.dap) bem)
@@ -282,7 +280,6 @@
           :-  dap(q (~(put by q.dap) bem `new))
           =.  r.bem  q.p.u.p.sih
           ?>  ?=(%ud -.r.bem)
-          ~&  hey/[(tope bem(p.r +(p.r.bem))) hen]
           =-  +>.$(mow :_(mow [hen %pass tea noe]))
           ^-  noe=note
           [%c [%warp [our p.bem] q.bem ~ [%sing %y ud/+(p.r.bem) (flop s.bem)]]]
@@ -292,7 +289,6 @@
         =.  q.dap  (~(del by q.dap) bem)
         %+  turn  (~(tap by q.dap))                     ::  cancel outstanding
         |=  [bem=beam *]
-        ~&  bye/[(tope bem) hen]
         =.  tea  [(scot %p our) (scot %uv dep) (tope bem)]
         [hen %pass tea %c %warp [our p.bem] q.bem ~]
       ==
@@ -311,14 +307,13 @@
         +>.$(deh.bay (~(put by deh.bay) dep dap))
       %init
         %_    +>.$
-            deh.bay
+            deh.bay 
           =+  (turn (~(tap in p.dap)) |=(a=beam [a ~]))
           (~(put by deh.bay) dep [%sent [hen ~ ~] (mo `(list ,[beam ~])`-)])
         ::
             mow
           =<  (welp :_(mow (turn (~(tap in p.dap)) .)))
           |=  bem=beam 
-          ~&  hi/[(tope bem) hen]
           :^  hen  %pass  [(scot %p our) (scot %uv dep) (tope bem)]
           =-  [%c [%warp [our p.bem] q.bem ~ [%sing %y ud/- (flop s.bem)]]]
           ?.  ?=(%ud -.r.bem)
@@ -329,7 +324,7 @@
     ==  ==
   ::
   ++  zo
-    ~%    %ford-z 
+    ~%    %ford-z
         ..is
       ==
         %fade  fade
