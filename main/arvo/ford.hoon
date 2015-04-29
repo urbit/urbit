@@ -262,14 +262,14 @@
     ==
   ::
   ++  axun                                              ::  take rev update
-    |=  [tea=wire dep=@uvH sih=sign]
+    |=  [tea=wire dep=@uvH sup=spur sih=sign]
     ^+  +>
     ?-    -.+.sih
         %writ
       ?~  p.sih  +>.$ 
       =+  ark=;;(arch |2.r.u.p.sih)
-      =+  [dap=(~(got by deh.bay) dep) bem=`beam`[bek q.u.p.sih] new=p.ark]
-      ~&  got-writ/[(tope bem) ark u.p.sih(r ~) dap]
+      =+  [dap=(~(got by deh.bay) dep) bem=`beam`[bek sup] new=p.ark]
+      ~&  got-writ/[dep (tope bem) ark u.p.sih(r ~) -.dap]
       =-  ?~(dop con con(deh.bay (~(put by deh.bay) dep dop)))
       ^-  [dop=$|(~ _dap) con=_+>.$]
       ?-    -.dap
@@ -282,14 +282,17 @@
           :-  dap(q (~(put by q.dap) bem `new))
           =.  r.bem  q.p.u.p.sih
           ?>  ?=(%ud -.r.bem)
+          ~&  hey/[(tope bem(p.r +(p.r.bem))) hen]
           =-  +>.$(mow :_(mow [hen %pass tea noe]))
           ^-  noe=note
-          [%c [%warp [our p.bem] q.bem ~ [%sing %y ud/+(p.r.bem) s.bem]]]
+          [%c [%warp [our p.bem] q.bem ~ [%sing %y ud/+(p.r.bem) (flop s.bem)]]]
         =-  [[%done ~] +>.$(mow (weld - mow))]
         ^-  (list move)
         %+  weld  (turn (~(tap in p.dap)) |=(hen=duct [hen %give %news ~]))
+        =.  q.dap  (~(del by q.dap) bem)
         %+  turn  (~(tap by q.dap))                     ::  cancel outstanding
-        |=  [bem=beam @]
+        |=  [bem=beam *]
+        ~&  bye/[(tope bem) hen]
         =.  tea  [(scot %p our) (scot %uv dep) (tope bem)]
         [hen %pass tea %c %warp [our p.bem] q.bem ~]
       ==
@@ -315,8 +318,9 @@
             mow
           =<  (welp :_(mow (turn (~(tap in p.dap)) .)))
           |=  bem=beam 
+          ~&  hi/[(tope bem) hen]
           :^  hen  %pass  [(scot %p our) (scot %uv dep) (tope bem)]
-          =-  [%c [%warp [our p.bem] q.bem ~ [%sing %y ud/- s.bem]]]
+          =-  [%c [%warp [our p.bem] q.bem ~ [%sing %y ud/- (flop s.bem)]]]
           ?.  ?=(%ud -.r.bem)
             ;;(@ q.q:(need (need (ska ~ %cw -.bem /))))
           ?:  =(0 p.r.bem)
@@ -1716,8 +1720,8 @@
   =^  mos  bay
     =+  dep=(slaw %uv i.t.tea)
     ?^  dep
-      =+  bek=-:(need (tome t.t.tea))
-      abet:(~(axun za [[our bek hen] [now eny ski] ~] bay) [tea u.dep q.hin])
+      =+  [bek sup]=(need (tome t.t.tea))
+      abet:(~(axun za [[our bek hen] [now eny ski] ~] bay) tea u.dep sup q.hin)
     ?>  ?=([@ @ @ @ ~] t.t.tea)
     =+  :*  num=(slav %ud i.t.tea)
             tik=(slav %ud i.t.t.tea)
