@@ -3,7 +3,7 @@
 `%gall`
 =======
 
-`%gall` manages our userspace applications.
+Our application server manager.
 
 It allows applications and vanes to send messages to applications and
 subscribe to data streams. This requires `%gall` to be a sort of a

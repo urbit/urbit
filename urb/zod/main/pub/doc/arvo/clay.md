@@ -3,7 +3,7 @@
 `%clay`
 =======
 
-`%clay` is our filesystem.
+Our filesystem.
 
 `%clay` is version-controlled, referentially-transparent, and global.
 While this filesystem is stored in `%clay`, it is mirrored to Unix for

@@ -131,7 +131,7 @@
   ==                                                    ::
 ++  deps                                                ::  depend state
   $%  [%init p=(set beam)]                              ::  given out
-      [%sent p=(set duct) q=(map beam $?(~ @uv))]       ::  listener exists
+      [%sent p=(set duct) q=(map beam (unit ,@uv))]    ::  listener exists
       [%done ~]                                         ::  change seen
   ==                                                    ::
 ++  task                                                ::  problem in progress
@@ -231,7 +231,7 @@
   ++  abet                                              ::  resolve
     ^-  [(list move) baby]
     [(flop mow) bay]
-  ::x
+  ::
   ++  apex                                              ::  call
     |=  kus=(unit silk)
     ^+  +>
@@ -269,7 +269,7 @@
       ?~  p.sih  +>.$ 
       =+  ark=;;(arch |2.r.u.p.sih)
       =+  [dap=(~(got by deh.bay) dep) bem=`beam`[bek q.u.p.sih] new=p.ark]
-      ~&  got-writ/[new bem dap]
+      ~&  got-writ/[(tope bem) ark u.p.sih(r ~) dap]
       =-  ?~(dop con con(deh.bay (~(put by deh.bay) dep dop)))
       ^-  [dop=$|(~ _dap) con=_+>.$]
       ?-    -.dap
@@ -278,8 +278,8 @@
           %init  ~|(never-subscribed/dep !!)
           %sent
         =+  old=(~(got by q.dap) bem)
-        ?:  |(=(old new) =(old ~))
-          :-  dap(q (~(put by q.dap) bem new))
+        ?:  |(=(old ~) =(old [~ new]))
+          :-  dap(q (~(put by q.dap) bem `new))
           =.  r.bem  q.p.u.p.sih
           ?>  ?=(%ud -.r.bem)
           =-  +>.$(mow :_(mow [hen %pass tea noe]))
@@ -316,7 +316,7 @@
           =<  (welp :_(mow (turn (~(tap in p.dap)) .)))
           |=  bem=beam 
           :^  hen  %pass  [(scot %p our) (scot %uv dep) (tope bem)]
-          =-  [%c [%warp [our p.bem] q.bem ~ [%sing %y ud/- s.bem]]] 
+          =-  [%c [%warp [our p.bem] q.bem ~ [%sing %y ud/- s.bem]]]
           ?.  ?=(%ud -.r.bem)
             ;;(@ q.q:(need (need (ska ~ %cw -.bem /))))
           ?:  =(0 p.r.bem)
