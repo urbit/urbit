@@ -332,7 +332,7 @@
     --
 |%                                                      ::  inner core
 ::
-++  leak  |=(our=ship `beak`[our %main %da now])        ::  default beak
+++  leak  |=(our=ship `beak`[our %home %da now])        ::  default beak
 ++  best                                                ::  cage to gift
   |=  [sem=?(%rush %rust) cay=cage]
   ^-  gift
@@ -730,8 +730,8 @@
       ::
       ++  home                                          ::  load application
         ^-  silk
-        =+  let=((hard ,@) q.q:(need (need (ska ~ %cw [our %main %da now] /))))
-        [%boil %core [[our %main %ud ?:(=(let 0) 1 let)] app.sat %app ~] ~]
+        =+  let=((hard ,@) q.q:(need (need (ska ~ %cw [our %home %da now] /))))
+        [%boil %core [[our %home %ud ?:(=(let 0) 1 let)] app.sat %app ~] ~]
       ::
       ++  leav
         %_  .
@@ -1165,7 +1165,7 @@
                   |=  [a=term b=(list term)]
                   [(cat 3 'pock-' a) (cat 3 'poke-' a) b]
               =+  ofs=(met 3 app.sat)
-              ?.  .=  (cat 3 app.sat '-')   ::  XX temporary, until /=main=/bin
+              ?.  .=  (cat 3 app.sat '-')   ::  XX temporary, until /=home=/bin
                   (end 3 +(ofs) p.q.kon)
                 (goc p.q.kon /pock)
               :(goc p.q.kon (rsh 3 ofs p.q.kon) /pock)

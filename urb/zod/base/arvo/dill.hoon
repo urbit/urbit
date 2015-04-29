@@ -137,8 +137,9 @@
   $%  [%make p=(unit ,@t) q=@ud r=@ s=?]                ::
       [%sith p=@p q=@uw r=?]                            ::
   ==                                                    ::
-++  note-clay                                           ::  wait for clay, hack
-  $%  [%warp p=sock q=riff]                             ::
+++  note-clay                                           ::
+  $%  [%font p=@p q=@tas r=@p s=@tas]                   ::
+      [%warp p=sock q=riff]                             ::  wait for clay, hack
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
   $%  [%crud p=@tas q=(list tank)]                      ::
@@ -166,7 +167,8 @@
       [%init p=ship]                                    ::
   ==                                                    ::
 ++  sign-clay                                           ::
-  $%  [%note p=@tD q=tank]                              ::
+  $%  [%mere p=(each (set path) (pair term tang))]      ::
+      [%note p=@tD q=tank]                              ::
       [%writ p=riot]                                    ::
   ==                                                    ::
 ++  sign-dill                                           ::
@@ -262,7 +264,8 @@
         ~&  [%dill-init our]
         =+  myt=(flop (need tem))
         =.  tem  ~
-        =.  moz  :_(moz [hen %pass ~ %g %show [our [ram ~]] our ~])
+        =.  moz  :_(moz [hen %pass / %c %font our %home our %base])
+        =.  moz  :_(moz [hen %pass / %g %show [our [ram ~]] our ~])
         |-  ^+  +>
         ?~  myt  +>
         $(myt t.myt, +> (send i.myt))
@@ -274,10 +277,10 @@
             moz
           :_  moz
           :*  hen
-              %pass 
-              / 
-              %c 
-              [%warp [our our] %main `[%sing %y [%ud 1] /]]
+              %pass
+              /
+              %c
+              [%warp [our our] %base `[%sing %y [%ud 1] /]]
           ==
         ==
       ::
@@ -307,6 +310,16 @@
         ::
             [%a %init *]
           +>(moz :_(moz [hen %give +.sih]))
+        ::
+            [%c %mere *]
+          ?:  ?=(%& -.p.sih)
+            +>.$
+          ~|  %dill-mere-fail
+          ~|  p.p.p.sih
+          |-
+          ?~  q.p.p.sih  !!
+          ~>  %mean.|.(i.q.p.p.sih)     ::  interpolate ford fail into stack trace
+          $(q.p.p.sih t.q.p.p.sih) 
         ::
             [%c %note *]
           (from %out (tuba ~(ram re q.+.sih)))

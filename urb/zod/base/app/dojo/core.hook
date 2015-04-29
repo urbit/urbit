@@ -270,13 +270,13 @@
       |=  [pax=path kas=silk]
       ^+  +>+>
       ?>  ?=(~ pux)
-      =+  bek=[our.hid %main %da lat.hid]
+      =+  bek=[our.hid %home %da lat.hid]
       (he-pass(poy `+>+<.$(pux `pax)) pax %f %exec our.hid bek `kas)
     ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
       ?~  pux  +>
-      =+  bek=[our.hid %main %da lat.hid]
+      =+  bek=[our.hid %home %da lat.hid]
       (he-pass(poy ~) u.pux %f %exec our.hid bek ~)
     ::
     ++  dy-slam                                         ::  call by ford
@@ -702,7 +702,7 @@
   :-  [ost ~]
   ^-  session
   :*  *sole-share  ::  say=sole-share
-      %main           ::  syd=desk
+      %home           ::  syd=desk
       ~               ::  luc=(unit case)
       ~               ::  poy=(unit dojo-project)
       ~               ::  var=(map term cage)

@@ -88,7 +88,8 @@
               [%went p=ship q=cape]                     ::
           ==  ==                                        ::
               $:  %c                                    ::  by %clay
-          $%  [%mere p=(each (set path) (pair term (list tank)))]
+          $%  [%note p=@tD q=tank]                      ::
+              [%mere p=(each (set path) (pair term tang))]
               [%writ p=riot]                            ::
           ==  ==                                        ::
               $:  %f                                    ::
@@ -1561,7 +1562,7 @@
         ^+  +>
         ?:  (~(has by mer) ali)
           (error:he %already-merging ~)
-        ?:  &(=(0 let.dom) !?=(?(%init %auto) gem))
+        ?:  &(=(0 let.dom) !?=(?(%init %that) gem))
           (error:he %no-bob-desk ~)
         =.  gem.dat  gem
         =.  cas.dat  [%da now]
@@ -2372,7 +2373,6 @@
       %font
     ?:  (~(has by sor.ruf) +.q.hic)  `..^$
     :_  ..^$(sor.ruf (~(put by sor.ruf) +.q.hic [0 hen]))
-    ::  XX  pass %merg and handle response
     :~  ^-  move
         :*  hen  %pass
             /auto/(scot %p p.q.hic)/[q.q.hic]/(scot %p r.q.hic)/[s.q.hic]
@@ -2385,10 +2385,7 @@
     =+  bos=(sein p.q.hic)
     ~&  [%bos bos p.q.hic]
     ?:  =(bos p.q.hic)  ~
-    ^-  (list move)
-    %+  turn  (limo ~[%main])
-    |=  syd=@tas
-    [hen %pass / %c %font p.q.hic syd bos (cat 3 syd '-away')]
+    [hen %pass / %c %font p.q.hic %base bos %kids]~
   ::
       %info
     ?:  =(%$ q.q.hic)
@@ -2401,6 +2398,21 @@
       :-  -.zot
       =.  une  (pish:une q.q.hic +.zot ran.zat)
       abet:une
+    ::  ~&  :+  %infoed
+    ::        len=(lent mos)
+    ::      %+  turn  mos 
+    ::      |=  move
+    ::      ^-  [duct (unit path) term term]
+    ::      :-  p
+    ::      ^-  [(unit path) term term]
+    ::      ?+  -.q  [~ *term *term]
+    ::        %pass  
+    ::              ^-  [(unit path) term term]
+    ::              [`p.q [- +<]:q.q]
+    ::        %give  
+    ::              ^-  [(unit path) term term]
+    ::              [~ %give -.p.q]
+    ::      ==
     [mos ..^$]
   ::
       %into
@@ -2414,7 +2426,7 @@
       ?:  =(ank.dom.u.dos q.q.hic)
         ~
       :_  ~
-      :*  hen  %slip  %c  %info  p.q.hic  q.q.hic  %&
+      :*  hen  %pass  /  %c  %info  p.q.hic  q.q.hic  %&
           (khan-to-soba `ank.dom.u.dos `r.q.hic)
       ==
     =+  cos=(khan-to-soba ~ `r.q.hic)
@@ -2427,8 +2439,8 @@
             ?|  =([%hook ~] -)
                 =([%hoon ~] -)
         ==  ==
-    :~  [hen %slip %c %info p.q.hic q.q.hic %& p.cos one]
-        [hen %slip %c %info p.q.hic q.q.hic %& p.cos two]
+    :~  [hen %pass /one %c %info p.q.hic q.q.hic %& p.cos one]
+        [hen %pass /two %c %info p.q.hic q.q.hic %& p.cos two]
     ==
   ::
       %lynx
@@ -2690,6 +2702,7 @@
     ==
   ::
       %mere  !!
+      %note  [[hen %give +.q.hin]~ ..^$]
       %waft
     ?>  ?=([@ @ ~] tea)
     =+  syd=(slav %tas i.tea)
