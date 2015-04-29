@@ -306,10 +306,9 @@
   ::
   ++  ease                                              ::  release request
     ^+  .
-    ~&  ease/hen
     ?~  ref
       =+  rov=(~(get by qyx) hen)
-      ?~  rov  ~&(ease-lost/(~(run by qyx) ,~) +)
+      ?~  rov  +                                        ::  XX handle?
       =.  qyx  (~(del by qyx) hen)
       (mabe u.rov (cury best hen))
     =.  qyx  (~(del by qyx) hen)
