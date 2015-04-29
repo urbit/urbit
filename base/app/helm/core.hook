@@ -117,7 +117,7 @@
     ^+  .
     =-  %_(+ moz (weld (flop zum) moz))
     ^-  zum=(list move)
-    =+  top=`path`/(scot %p our.hid)/main/(scot %da lat.hid)/arvo
+    =+  top=`path`/(scot %p our.hid)/home/(scot %da lat.hid)/arvo
     :-  [ost %pass /reset %d %flog %vega (weld top `path`/hoon)]
     %+  turn
       ^-  (list ,[p=@tas q=@tas])
@@ -139,9 +139,9 @@
     |=  all=(list term)
     =-  %_(+ moz (weld (flop zum) moz))
     ^-  zum=(list move)
-    =+  top=`path`/(scot %p our.hid)/main/(scot %da lat.hid)/arvo
+    =+  top=`path`/(scot %p our.hid)/home/(scot %da lat.hid)/arvo
     %+  turn  all
-    =+  ark=(arch .^(%cy /(scot %p our.hid)/main/(scot %da lat.hid)/arvo))
+    =+  ark=(arch .^(%cy /(scot %p our.hid)/home/(scot %da lat.hid)/arvo))
     =+  van=(~(tap by r.ark))
     |=  nam=@tas
     =.  nam
@@ -474,16 +474,19 @@
   ?~  wil
     [ost %give %mean ~ %rejected ~]~
   :~  [ost %pass / %a %cash p.u.bur q.u.bur u.wil]
-      [ost %pass / %c %plug our.hid %main (sein our.hid) %main-away]
+      [ost %pass / %c %plug our.hid %home (sein our.hid) %kids]
       [ost %give %nice ~]
   ==
 ::
 ++  pour
-  |=  [ost=bone pax=path sih=sign]
-  ?+    pax  ~|  %helm-strange-path  !!
+  |=  [ost=bone pax=path sih=*]
+  ^-  [(list move) _+>]
+  =+  sih=((soft sign) sih)
+  ?~  sih  [~ +>.$]
+  ?+    pax  [~ +>.$]
       [%merge @tas @ ~]
     ?:  ?=(%spam i.t.t.pax)
       [~ +>.$]
-    he-abet:merge-abet:(work:(he-wish-merge:(hoke ost our.hid) i.t.pax) sih)
+    he-abet:merge-abet:(work:(he-wish-merge:(hoke ost our.hid) i.t.pax) u.sih)
   ==
 --

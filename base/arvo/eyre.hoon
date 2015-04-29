@@ -252,7 +252,7 @@
   ;html
     ;head
       ;meta(charset "utf-8");
-      ;link(rel "stylesheet", href "/main/lib/base.css");
+      ;link(rel "stylesheet", href "/home/lib/base.css");
       ;title: server error
     ==
     ;body:div#c.err:pre:code:"{(wush 80 tan)}"
@@ -334,7 +334,7 @@
           ;pre:code#err;
           ;script@"/~/at/~/auth.js";
         ==
-        ;link(rel "stylesheet", href "/main/lib/base.css");
+        ;link(rel "stylesheet", href "/home/lib/base.css");
     ==
   ::
   ++  logout-page
@@ -345,7 +345,7 @@
           ;pre:code#err;
           ;script@"/~/at/~/auth.js";
         ==
-        ;link(rel "stylesheet", href "/main/lib/base.css");
+        ;link(rel "stylesheet", href "/home/lib/base.css");
     ==
   ::
   ++  poke-test
@@ -568,7 +568,7 @@
       ==
     ==
   ::
-  ++  root-beak  `beak`[our %main da/now]               ::  XX
+  ++  root-beak  `beak`[our %home da/now]               ::  XX
   ++  emule
     |=  a=_|?(..emule)  ^+  ..emule
     =+  mul=(mule a)

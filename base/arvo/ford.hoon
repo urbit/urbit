@@ -1456,7 +1456,7 @@
         ^-  beam
         ?~  q.huf
           how(s ~[for p.huf way])
-        [[q.u.q.huf %main p.u.q.huf] ~[for p.huf way]]
+        [[q.u.q.huf q.how p.u.q.huf] ~[for p.huf way]]
       ::
       ++  neck                                          ::  consume libraries
         |=  [cof=cafe bir=(list hoof)]
