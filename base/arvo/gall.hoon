@@ -699,7 +699,7 @@
       ++  drum                                          ::  set dependencies
         |=  dep=@uvH
         ^+  +>
-        ?~  dep  ~&(%drum-none +>.$)
+        ?~  dep  ~&(%drum-none +>.$) 
         ?:  =(dep ped.sat)  +>.$
         =+  pax=(away %w %drum (scot %uv dep) ~)
         %_  +>.$

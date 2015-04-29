@@ -9837,15 +9837,6 @@
     =|  ova=(list ovum)
     |-  ^-  [p=(list ovum) q=(pair worm (list ,[p=@tas q=vase]))]
     ?~  mor  [(flop ova) niz]
-    ~?  &(!lac =(%c p.i.mor))
-      :+  q.i.mor  -.r.i.mor
-      ^-  (unit (pair path term))
-      ?+  -.r.i.mor  ~
-        %pass
-              `[p p.q]:r.i.mor
-        %give
-              ~
-      ==
     =^  nyx  niz  (jack lac i.mor)
     $(ova (weld p.nyx ova), mor (weld q.nyx t.mor))
   --

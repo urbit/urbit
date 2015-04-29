@@ -308,9 +308,10 @@
   ++  ease                                              ::  release request
     ^+  .
     ?~  ref
-      =+  rov=(~(got by qyx) hen)
+      =+  rov=(~(get by qyx) hen)
+      ?~  rov  +                                        ::  XX handle?
       =.  qyx  (~(del by qyx) hen)
-      (mabe rov (cury best hen))
+      (mabe u.rov (cury best hen))
     =.  qyx  (~(del by qyx) hen)
     |-  ^+  +.$
     =+  nux=(~(get by fod.u.ref) hen)

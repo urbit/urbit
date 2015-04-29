@@ -95,7 +95,7 @@
 ++  baby                                                ::  state by ship
   $:  tad=[p=@ud q=(map ,@ud task)]                     ::  tasks by number
       dym=(map duct ,@ud)                               ::  duct to task number
-      deh=deps                                          ::  depends by hash
+      deh=(map ,@uvH deps)                              ::  depends by hash
       jav=(map ,* calx)                                 ::  cache
   ==                                                    ::
 ++  bolt                                                ::  gonadic edge
@@ -115,7 +115,6 @@
 ++  cafe                                                ::  live cache
   $:  p=(set calx)                                      ::  used
       q=(map ,* calx)                                   ::  cache
-      r=deps                                            ::  dependencies
   ==                                                    ::
 ::                                                      ::
 ++  calm                                                ::  cache metadata
@@ -130,7 +129,11 @@
       [%slap p=calm q=[p=vase q=twig] r=vase]           ::  compute
       [%slam p=calm q=[p=vase q=vase] r=vase]           ::  compute
   ==                                                    ::
-++  deps  (map ,@uvH (set beam))                        ::  hashed depends
+++  deps                                                ::  depend state
+  $%  [%init p=(set beam)]                              ::  given out
+      [%sent p=(set duct) q=(map beam (unit ,@uv))]    ::  listener exists
+      [%done ~]                                         ::  change seen
+  ==                                                    ::
 ++  task                                                ::  problem in progress
   $:  nah=duct                                          ::  cause
       kas=silk                                          ::  problem
@@ -167,9 +170,9 @@
 ++  chub                                                ::  cache merge
   |=  [a=cafe b=cafe]                                   ::
   ^-  cafe                                              ::
-  [(grom p.a p.b) (grum q.a q.b) (grum r.a r.b)]        ::
+  [(grom p.a p.b) (grum q.a q.b)]                       ::
 ::                                                      ::
-++  faun  |=([a=cafe b=vase] (fine a `gage`noun/b))     ::  vase to cage
+++  faun  |=([a=cafe b=vase] (fine a `gage`[%noun b]))  ::  vase to cage
 ++  feel  |=([a=cafe b=gage] (fine a q.b))              ::  cage to vase
 ++  fest                                                ::  bolt to success
   |=  a=beam                                            ::
@@ -259,11 +262,36 @@
     ==
   ::
   ++  axun                                              ::  take rev update
-    |=  [dep=@uvH sih=sign]
+    |=  [tea=wire dep=@uvH sup=spur sih=sign]
     ^+  +>
     ?-    -.+.sih
         %writ
-      +>.$(mow :_(mow [hen %give %news ~]))
+      ?~  p.sih  +>.$ 
+      =+  ark=;;(arch |2.r.u.p.sih)
+      =+  [dap=(~(got by deh.bay) dep) bem=`beam`[bek sup] new=p.ark]
+      =-  ?~(dop con con(deh.bay (~(put by deh.bay) dep dop)))
+      ^-  [dop=$|(~ _dap) con=_+>.$]
+      ?-    -.dap
+          %done  `+>.$                ::  writ redundant
+          %init  ~|(never-subscribed/dep !!)
+          %sent
+        =+  old=(~(got by q.dap) bem)
+        ?:  |(=(old ~) =(old [~ new]))
+          :-  dap(q (~(put by q.dap) bem `new))
+          =.  r.bem  q.p.u.p.sih
+          ?>  ?=(%ud -.r.bem)
+          =-  +>.$(mow :_(mow [hen %pass tea noe]))
+          ^-  noe=note
+          [%c [%warp [our p.bem] q.bem ~ [%sing %y ud/+(p.r.bem) (flop s.bem)]]]
+        =-  [[%done ~] +>.$(mow (weld - mow))]
+        ^-  (list move)
+        %+  weld  (turn (~(tap in p.dap)) |=(hen=duct [hen %give %news ~]))
+        =.  q.dap  (~(del by q.dap) bem)
+        %+  turn  (~(tap by q.dap))                     ::  cancel outstanding
+        |=  [bem=beam *]
+        =.  tea  [(scot %p our) (scot %uv dep) (tope bem)]
+        [hen %pass tea %c %warp [our p.bem] q.bem ~]
+      ==
     ==
   ::
   ++  awap                                              ::  get next revision
@@ -271,22 +299,32 @@
     |=  dep=@uvH
     ?~  dep
       ~&(dep-empty/hen +>.$)
-    %_    +>.$
-        mow
-      %-  welp  :_  mow
-      %+  turn  ~|(dep-missed/dep (~(tap in (~(got by deh.bay) dep))))
-      |=  a=beam 
-      :^  hen  %pass  [(scot %p our) (scot %uv dep) ~]
-      =-  [%c [%warp [our p.a] q.a ~ [%sing %y ud/+(`@ud`-) s.a]]]
-      ?.  ?=(%ud -.r.a)
-        ;;(@ q.q:(need (need (ska ~ %cw -.a /))))
-      ?:  =(0 p.r.a)
-        ;;(@ q.q:(need (need (ska ~ %cw -.a(r da/now) /))))
-      p.r.a
-    ==
+    =+  dap=~|(dep-missed/dep (~(got by deh.bay) dep))
+    ?-  -.dap
+      %done  +>.$(mow :_(mow [hen %give %news ~]))
+      %sent
+        =.  p.dap  (~(put in p.dap) hen)
+        +>.$(deh.bay (~(put by deh.bay) dep dap))
+      %init
+        %_    +>.$
+            deh.bay 
+          =+  (turn (~(tap in p.dap)) |=(a=beam [a ~]))
+          (~(put by deh.bay) dep [%sent [hen ~ ~] (mo `(list ,[beam ~])`-)])
+        ::
+            mow
+          =<  (welp :_(mow (turn (~(tap in p.dap)) .)))
+          |=  bem=beam 
+          :^  hen  %pass  [(scot %p our) (scot %uv dep) (tope bem)]
+          =-  [%c [%warp [our p.bem] q.bem ~ [%sing %y ud/- (flop s.bem)]]]
+          ?.  ?=(%ud -.r.bem)
+            ;;(@ q.q:(need (need (ska ~ %cw -.bem /))))
+          ?:  =(0 p.r.bem)
+            ;;(@ q.q:(need (need (ska ~ %cw -.bem(r da/now) /))))
+          p.r.bem
+    ==  ==
   ::
   ++  zo
-    ~%    %ford-z 
+    ~%    %ford-z
         ..is
       ==
         %fade  fade
@@ -333,6 +371,7 @@
         :^    %pass
             [(scot %p our) (scot %ud num) (scot %ud p.kig) (tope bek ~)]
           %c
+        ~&  >>  [%camping bem]
         [%warp [our p.bem] q.bem [~ %sing ren r.bem (flop s.bem)]]
       ==
     ::
@@ -448,7 +487,7 @@
     ++  dash                                            ::  process cache
       |=  cof=cafe
       ^+  +>
-      %_(+> jav.bay q.cof, deh.bay r.cof)
+      %_(+> jav.bay q.cof)
     ::
     ++  diff                                            ::  diff
       |=  [cof=cafe kas=silk kos=silk]
@@ -501,12 +540,14 @@
       ^+  [*@uvH deh.bay]
       ?~  dep  [0v0 deh.bay]
       =+  hap=(sham dep)
-      [hap (~(put by deh.bay) hap dep)]
+      ?:  (~(has by deh.bay) hap)
+        [hap deh.bay]
+      [hap (~(put by deh.bay) hap [%init dep])]
     ::
     ++  exec                                            ::  execute app
       ^+  ..zo
       ?:  !=(~ q.kig)  ..zo
-      =+  bot=(make [~ jav.bay deh.bay] kas)
+      =+  bot=(make [~ jav.bay] kas)
       =.  ..exec  (dash p.bot)
       ?-  -.q.bot
         %0  =^  dep  deh.bay  (daze p.q.bot)
@@ -1184,7 +1225,7 @@
           |=  [cof=cafe key=gage]
           %+  cope  (make cof q.i.p.kas)
           |=  [cof=cafe val=gage]
-          %+  cope  ^^$(p.kas t.p.kas, cof cof)
+          %+  cope  ^^$(p.kas t.p.kas)
           |=  [cof=cafe rex=(list (pair marc marc)) rey=vase]
           (fine cof [[p.key p.val] rex] (slop (slop q.key q.val) rey))
         |=  [cof=cafe rex=(list (pair marc marc)) rey=vase]
@@ -1669,15 +1710,17 @@
   |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [p=(list move) q=_..^$]
   ?>  ?=([@ @ *] tea)
-  =+  our=(need (slaw %p i.tea))
+  =+  our=(slav %p i.tea)
   =+  bay=(~(got by pol.lex) our)
   =^  mos  bay
-    ?~  t.t.tea
-      abet:(~(axun za [[our *beak hen] [now eny ski] ~] bay) (slav %uv i.t.tea) q.hin)
+    =+  dep=(slaw %uv i.t.tea)
+    ?^  dep
+      =+  [bek sup]=(need (tome t.t.tea))
+      abet:(~(axun za [[our bek hen] [now eny ski] ~] bay) tea u.dep sup q.hin)
     ?>  ?=([@ @ @ @ ~] t.t.tea)
-    =+  :*  num=(need (slaw %ud i.t.tea))
-            tik=(need (slaw %ud i.t.t.tea))
-            bek=-:(need (tome t.t.t.tea))
+    =+  :*  num=(slav %ud i.t.tea)
+            tik=(slav %ud i.t.t.tea)
+            bek=-:(need (tome t.t.t.tea)) 
         ==
     abet:(~(axon za [[our bek hen] [now eny ski] ~] bay) num tik q.hin)
   [mos ..^$(pol (~(put by pol) our bay))]
