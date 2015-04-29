@@ -7,15 +7,26 @@
 ::
 ::::  sivtyv-barnel
   ::
-  ::id=@ud name=@t memory=@ud vcpu=@ud disk=@ud locked=@f created=@t status=@t backup-ids=json snapshot-ids=json features=json region=json image=json size=json size-slug=@t networks=json kernel=json next-backup-window=@t])
              
 !:
 |%
-++  droplet  ,~
-++  axle  ,[ke=keys toke=tokens drops=(list droplet)]
+++  droplet    
+$:  id=@  name=@t  memory=@ud  vcpus=@ud  disk=@ud  locked=?
+    created=@t  status=@t  backup-ids=(list ,@t)  snapshot-ids=(list ,@t)
+    features=(list ,@t)  region=[name=@t slug=@t sizes=(list ,@t)]  image=img  size=json
+    size-slug=@t  networks=ntwrks  kernel=json  next-backup-window=json
+==
+++  kern  ,~
+++  img
+$:  id=@ud  name=@t  distribution=@t  slug=@t  public=?  regions=(list ,@t)
+    created-at=@t  type=@t  min-disk-size=@ud
+==
+++  ntwrks  ,[v4=v v6=v]
+++  v  ,[ip-address=@t netmask=@t gateway=@t type=@t]
+++  regn  ,~
+++  axle  ,[ke=keys toke=tokens drops=droplet]
 ++  keys  ,[authc=(unit ,@t) client-secret=(unit ,@t)]
 ++  tokens  ,[access=@t refresh=@t]
-++  droplet  (unit ,@)            
 ++  move  ,[bone (mold note gift)]
 ++  note
 $:  %e
@@ -30,11 +41,44 @@ $%  [%nice ~]
 $:  %e
 $%  [%thou p=httr]
 ==  ==
+--
 
-
+|%  
+++  parse-id
+  =>  jo
+  %-  ot  :~  id/ni  name/so  distribution/so  slug/so  public/bo
+  regions/(ar so)  created-at/so  type/so  min-disk-size/ni
+  ==
+++  parse-ntwrks
+  =>  jo
+  %-  ot  
+  :+  v4/(ot ip-address/so netmask/so gateway/so type/so ~)
+    v6/(ot ip-address/so netmask/so gateway/so type/so ~)
+  ~
 --
 !:
 |_  [hid=hide vat=axle]
+::
+++  receive-list
+  |=  [ost=bone pour-path=path resp=sign]
+  ~&  resp
+  =+  parsed=(rash q:(need r.p.+.resp) apex:poja)
+  =+  dar=(need ((ot droplets/(ar some) ~):jo parsed))
+  =+  ^-  drop=droplet
+      ~|  'bad json'
+      %-  need
+      %.  `json`-.dar  =+  jo
+      %^  ot  id/ni  name/so  
+      :^  memory/ni  vcpus/ni  disk/ni
+      :^  locked/bo  'created_at'^so  status/so
+      :^  'backup_ids'^(ar so)  'snapshot_ids'^(ar so)  features/(ar so)
+      :^  region/(ot name/so slug/so sizes/(ar so) ~)  image/parse-id  size/some
+      :^  'size_slug'^so  networks/parse-ntwrks  kernel/some  ::(ot id/ni name/so version/so ~)
+      :-  'next_backup_window'^some  ~
+  ~&  drop
+  :_  +>.$
+  [ost %give %nice ~]~
+::
 ++  auth-queries  
     :~  'grant_type'^'authorization_code'
         'code'^(need authc.ke.vat)
@@ -82,7 +126,6 @@ $%  [%thou p=httr]
 ++  poke-client-secret
   |=  [ost=bone you=ship secret=cord]
   ^-  [(list move) _+>.$]
-  ~&  'pokeclientsecret'
   =.  client-secret.ke.vat
     [~ secret]
   ~&  client-secret.ke.vat
@@ -93,28 +136,32 @@ $%  [%thou p=httr]
       %post
   :-  ~  `quay`['client_secret'^(need client-secret.ke.vat) auth-queries]
 ::
-++  pour
+++  receive-auth
   |=  [ost=bone pour-path=path resp=sign]
-  ^-  [(list move) _+>.$]
-  ?+    -.pour-path  !!
-      %auth
-    =+  body=(rash q:(need r.p.+.resp) apex:poja)
-    =+  [ac re]=(need ((ot 'access_token'^so 'refresh_token'^so ~):jo body))
-    =:  access.toke.vat   ac
-        refresh.toke.vat  re
-      == 
-    ~&  toke.vat
-    :_  +>.$
-    :-  [ost %give %nice ~]
-    [(list-droplets ost)]~
-  ::
-      %list
-    :_  +>.$
-    =+  parsed=(rash q:(need r.p.+.resp) apex:poja)
-    =+  dar=((ot droplets/(ar some) ~):jo parsed)
-    ~&  [dar/dar]
-    [ost %give %nice ~]~
+  =+  body=(rash q:(need r.p.+.resp) apex:poja)
+  ~&  body
+  =+  [ac re]=(need ((ot 'access_token'^so 'refresh_token'^so ~):jo body))
+  =:  access.toke.vat   ac
+      refresh.toke.vat  re
+    == 
+  ~&  toke.vat
+  :_  +>.$
+  [ost %give %nice ~]~
+::
+++  poke-json
+  |=  [ost=bone you=ship act=json]
+  =+  do=(need (so:jo act))
+  ?+  do  !!
+  %list
+  :_  +>.$
+  :+  [(list-droplets ost)]
+    [ost %give %nice ~]
+  ~
+  %suth-else
+  :_  +>.$
+  [ost %give %nice ~]~
   ==
+::
 ++  list-droplets
   |=  os=bone
   =+  ^=  lis  :*
@@ -125,4 +172,15 @@ $%  [%thou p=httr]
       ~
       ==
   (httpreq lis)
+::
+++  pour
+  |=  [ost=bone pour-path=path resp=sign]
+  ^-  [(list move) _+>.$]
+  ?+    -.pour-path  !!
+      %auth
+    (receive-auth ost pour-path resp)
+  ::
+      %list
+    (receive-list ost pour-path resp)
+  ==
 --

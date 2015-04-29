@@ -23,6 +23,12 @@ Page = recl({
     }
   },
 
+  getList: function(){
+    urb.send({appl: "do",
+              data: "list",
+              mark: "json"})
+  },
+
   render: function(){
     href = "https://cloud.digitalocean.com/v1/oauth/authorize?client_id=d8f46b95af38c1ab3d78ad34c2157a6959c23eb0eb5d8e393f650f08e6a75c6f&redirect_uri=http%3A%2F%2Flocalhost%3A8443%2Fmain%2Fpub%2Fdo%2Ffab&response_type=code&redirect_uri=http://localhost:8443/main/pub/do/fab&scope=read+write"
     return (div({}, [
@@ -35,7 +41,8 @@ Page = recl({
         div({}, [
           input({id:"appsecret"}, 
           b({onClick:this.sendSecret}, "Send Secret"))
-        ])
+        ]),
+        b({onClick:this.getList}, "Get List")
       ])
     )
   }
