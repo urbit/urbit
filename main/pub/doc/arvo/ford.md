@@ -3,7 +3,7 @@
 `%ford`
 =======
 
-`%ford` is our typed and marked computation engine.
+Our typed and marked computation engine.
 
 A variety of different services are provided by `%ford`, but they mostly
 involve compiling hook files, slapping/slammming code with marked data,

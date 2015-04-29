@@ -3,7 +3,7 @@
 `%time`
 =======
 
-`%time` is a simple timer.
+Our simple timer.
 
 It allows vanes and applications to set and timer events, which are
 managed in a simple priority queue. `%time` produces effects to start
