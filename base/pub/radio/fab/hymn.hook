@@ -1,0 +1,26 @@
+::
+::
+::::  /hook/hymn/fab/chat/pub/
+  ::
+^-  manx
+;html
+  ;head
+    ;meta(charset "utf-8");
+    ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js");
+    ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js");
+    ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/react/0.12.1/react.min.js");
+    ;meta(name "viewport", content "width=432, initial-scale=1");
+    ;script(type "text/javascript", src "//use.typekit.net/fkv0sjk.js");
+    ;script:'''
+            try{Typekit.load();}catch(e){}
+            '''
+    ;link(type "text/css", rel "stylesheet", href "/base/pub/radio/src/main.css");
+    ;script(type "text/javascript", src "/gop/hart.js");
+    ;title: Radio
+  ==
+  ;body
+    ;div#c;
+    ;script(type "text/javascript", src "/base/lib/urb.js");
+    ;script(type "text/javascript", src "/base/pub/radio/src/main.js");
+  ==
+==
