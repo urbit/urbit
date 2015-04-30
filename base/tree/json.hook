@@ -1,13 +1,13 @@
 ::
 /?    314
 /=    gas    /$    fuel
-/=    ral    /:    /=main=/pub    /%  /react-js/
-/=    pal    /:    /=main=/pub
+/=    ral    /:    /=base=/pub    /%  /react-js/
+/=    pal    /:    /=base=/pub
              /;    |=  a=(map ,@ta cord)  a
              /%    2
              /_    /react-js/
 ::
-/=    sal    /:    /=main=/pub
+/=    sal    /:    /=base=/pub
              /;    |=  a=(map ,@ta json)  a
              /%    2
              /_    /react-snip-json/
