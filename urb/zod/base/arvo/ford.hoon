@@ -131,7 +131,7 @@
   ==                                                    ::
 ++  deps                                                ::  depend state
   $%  [%init p=(set beam)]                              ::  given out
-      [%sent p=(set duct) q=(map beam (unit ,@uv))]    ::  listener exists
+      [%sent p=(set duct) q=(set beam)]                 ::  listener exists
       [%done ~]                                         ::  change seen
   ==                                                    ::
 ++  task                                                ::  problem in progress
@@ -267,28 +267,19 @@
     ?-    -.+.sih
         %writ
       ?~  p.sih  +>.$ 
-      =+  ark=;;(arch |2.r.u.p.sih)
-      =+  [dap=(~(got by deh.bay) dep) bem=`beam`[bek sup] new=p.ark]
+      =+  [dap=(~(got by deh.bay) dep) bem=`beam`[bek sup]]
       =-  ?~(dop con con(deh.bay (~(put by deh.bay) dep dop)))
       ^-  [dop=$|(~ _dap) con=_+>.$]
       ?-    -.dap
           %done  `+>.$                ::  writ redundant
           %init  ~|(never-subscribed/dep !!)
           %sent
-        =+  old=(~(got by q.dap) bem)
-        ?:  |(=(old ~) =(old [~ new]))
-          :-  dap(q (~(put by q.dap) bem `new))
-          =.  r.bem  q.p.u.p.sih
-          ?>  ?=(%ud -.r.bem)
-          =-  +>.$(mow :_(mow [hen %pass tea noe]))
-          ^-  noe=note
-          [%c [%warp [our p.bem] q.bem ~ [%sing %y ud/+(p.r.bem) (flop s.bem)]]]
         =-  [[%done ~] +>.$(mow (weld - mow))]
         ^-  (list move)
         %+  weld  (turn (~(tap in p.dap)) |=(hen=duct [hen %give %news ~]))
-        =.  q.dap  (~(del by q.dap) bem)
-        %+  turn  (~(tap by q.dap))                     ::  cancel outstanding
-        |=  [bem=beam *]
+        =.  q.dap  (~(del in q.dap) bem)
+        %+  turn  (~(tap in q.dap))                     ::  cancel outstanding
+        |=  bem=beam
         =.  tea  [(scot %p our) (scot %uv dep) (tope bem)]
         [hen %pass tea %c %warp [our p.bem] q.bem ~]
       ==
@@ -308,19 +299,13 @@
       %init
         %_    +>.$
             deh.bay 
-          =+  (turn (~(tap in p.dap)) |=(a=beam [a ~]))
-          (~(put by deh.bay) dep [%sent [hen ~ ~] (mo `(list ,[beam ~])`-)])
+          (~(put by deh.bay) dep [%sent [hen ~ ~] p.dap])
         ::
             mow
           =<  (welp :_(mow (turn (~(tap in p.dap)) .)))
           |=  bem=beam 
           :^  hen  %pass  [(scot %p our) (scot %uv dep) (tope bem)]
-          =-  [%c [%warp [our p.bem] q.bem ~ [%sing %y ud/- (flop s.bem)]]]
-          ?.  ?=(%ud -.r.bem)
-            ;;(@ q.q:(need (need (ska ~ %cw -.bem /))))
-          ?:  =(0 p.r.bem)
-            ;;(@ q.q:(need (need (ska ~ %cw -.bem(r da/now) /))))
-          p.r.bem
+          [%c [%warp [our p.bem] q.bem ~ [%next %y r.bem (flop s.bem)]]]
     ==  ==
   ::
   ++  zo
