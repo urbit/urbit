@@ -461,6 +461,8 @@ u3_lo_shut(c3_o inn)
   //
   if ( c3y == inn ) {
     u3_unix_ef_look();
+    u3_raft_work();
+    _lo_time();
   }
 
   // u3_lo_grab("lo_shut d", u3_none);
