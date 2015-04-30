@@ -13,17 +13,21 @@
 ++  droplet    
 $:  id=@  name=@t  memory=@ud  vcpus=@ud  disk=@ud  locked=?
     created=@t  status=@t  backup-ids=(list ,@t)  snapshot-ids=(list ,@t)
-    features=(list ,@t)  region=[name=@t slug=@t sizes=(list ,@t)]  image=img  size=json
-    size-slug=@t  networks=ntwrks  kernel=json  next-backup-window=json
+    features=(list ,@t)  region=[name=@t slug=@t sizes=(list ,@t)]  image=img
+    size=json  size-slug=@t  networks=ntwrks  kernel=kern
+    next-backup-window=json
 ==
-++  kern  ,~
+++  kern  ,[id=@ud name=@t version=@t]
 ++  img
 $:  id=@ud  name=@t  distribution=@t  slug=@t  public=?  regions=(list ,@t)
     created-at=@t  type=@t  min-disk-size=@ud
 ==
-++  ntwrks  ,[v4=v v6=v]
+++  ntwrks  ,[v4=(list v) v6=(list v)]
 ++  v  ,[ip-address=@t netmask=@t gateway=@t type=@t]
-++  regn  ,~
+++  size
+$:  memory=@ud  price-monthly=@ud  price-hourly=@ud  disk=@ud  vcpus=@ud
+    slug=@t  transfer=@ud  available=?  regions=(list ,@t)
+==
 ++  axle  ,[ke=keys toke=tokens drops=droplet]
 ++  keys  ,[authc=(unit ,@t) client-secret=(unit ,@t)]
 ++  tokens  ,[access=@t refresh=@t]
@@ -44,42 +48,38 @@ $%  [%thou p=httr]
 --
 
 |%  
-++  parse-id
+++  parse-img
   =>  jo
-  %-  ot  :~  id/ni  name/so  distribution/so  slug/so  public/bo
-  regions/(ar so)  created-at/so  type/so  min-disk-size/ni
+  %-  ot
+  :~  id/ni  name/so  distribution/so  slug/so  public/bo
+  regions/(ar so)  'created_at'^so  type/so  'min_disk_size'^ni
   ==
 ++  parse-ntwrks
   =>  jo
   %-  ot  
-  :+  v4/(ot ip-address/so netmask/so gateway/so type/so ~)
-    v6/(ot ip-address/so netmask/so gateway/so type/so ~)
+  :+  v4/(ar (ot 'ip_address'^so netmask/so gateway/so type/so ~))
+    v6/(ar (ot 'ip_address'^so netmask/so gateway/so type/so ~))
   ~
+++  parse-size
+  =>  jo
+  %-  ot
+  :~  memory/ni  'price_monthly'^ni  'price_hourly'^ni  disk/ni
+  slug/so  transfer/ni  available/bo  regions/(ar so)
+  ==
+++  create-body
+  |=  $:  name=@t  region=@t  size=@t  image=@t :: ssh-keys=(list json)
+      ::backups=?  ipv6=?  user-data=@t  private-networking=?
+  ==
+  %-  jobe
+  :~  name/s/name  region/s/region  size/s/size  image/s/image
+     :: 'ssh_keys'^a/ssh-keys  backups/b/backups  ipv6/b/ipv6
+     :: 'user_data'^s/user-data  'private_networking'^b/private-networking
+  ==
 --
 !:
 |_  [hid=hide vat=axle]
 ::
-++  receive-list
-  |=  [ost=bone pour-path=path resp=sign]
-  ~&  resp
-  =+  parsed=(rash q:(need r.p.+.resp) apex:poja)
-  =+  dar=(need ((ot droplets/(ar some) ~):jo parsed))
-  =+  ^-  drop=droplet
-      ~|  'bad json'
-      %-  need
-      %.  `json`-.dar  =+  jo
-      %^  ot  id/ni  name/so  
-      :^  memory/ni  vcpus/ni  disk/ni
-      :^  locked/bo  'created_at'^so  status/so
-      :^  'backup_ids'^(ar so)  'snapshot_ids'^(ar so)  features/(ar so)
-      :^  region/(ot name/so slug/so sizes/(ar so) ~)  image/parse-id  size/some
-      :^  'size_slug'^so  networks/parse-ntwrks  kernel/some  ::(ot id/ni name/so version/so ~)
-      :-  'next_backup_window'^some  ~
-  ~&  drop
-  :_  +>.$
-  [ost %give %nice ~]~
-::
-++  auth-queries  
+++  auth-queries
     :~  'grant_type'^'authorization_code'
         'code'^(need authc.ke.vat)
         :-  'client_id'
@@ -89,7 +89,7 @@ $%  [%thou p=httr]
 ++  httpreq
     |=  $:    ost=bone  pour-path=wire
             domain=(list cord)  end-point=path
-          req-type=$?(%get %post)  headers=math
+          req-type=$?(%get [%post json])  headers=math
         queries=quay
         ==
     ^-  move
@@ -102,7 +102,9 @@ $%  [%thou p=httr]
         q-strings=queries                               ::  ++quay
     =+  ^-  request=hiss                                ::  cast to hiss
         :-  parsed-url
-        [req-type headers ~]                            ::  post
+        ?@  req-type
+          [%get headers ~]
+        [%post headers ~ (tact (pojo +.req-type))]
     :^  ost  %pass  pour-path
     :+  %e  %them
     `(unit hiss)`[~ request]
@@ -133,7 +135,7 @@ $%  [%thou p=httr]
   :_  [ost %give %nice ~]~
   %^  httpreq  ost  /auth
   :^    ~[%digitalocean %cloud]  `path`/v1/oauth/token
-      %post
+      [%post ~]
   :-  ~  `quay`['client_secret'^(need client-secret.ke.vat) auth-queries]
 ::
 ++  receive-auth
@@ -150,16 +152,27 @@ $%  [%thou p=httr]
 ::
 ++  poke-json
   |=  [ost=bone you=ship act=json]
-  =+  do=(need (so:jo act))
+  =+  do=(need ((ot action/so ~):jo act))
   ?+  do  !!
   %list
   :_  +>.$
   :+  [(list-droplets ost)]
     [ost %give %nice ~]
   ~
-  %suth-else
+  %create
   :_  +>.$
-  [ost %give %nice ~]~
+  =+  ^=  deets
+      %-  need
+      %.  act
+      =>  jo
+      %-  ot
+      :~  name/so  region/so  size/so  image/so  ssh/(ar so)  backups/(mu bo)
+      'ipv6'^(mu bo)  'priv_networking'^(mu bo)  'user_data'^(mu so)
+      ==
+  ~&  deets
+  :::+  [(create-droplet ost)]
+    [ost %give %nice ~]~
+  ::~
   ==
 ::
 ++  list-droplets
@@ -173,6 +186,42 @@ $%  [%thou p=httr]
       ==
   (httpreq lis)
 ::
+++  receive-list
+  |=  [ost=bone pour-path=path resp=sign]
+  ~&  resp
+  =+  parsed=(rash q:(need r.p.+.resp) apex:poja)
+  =+  dar=(need ((ot droplets/(ar some) ~):jo parsed))
+  =+  ^-  drop=droplet
+      ~|  bad-json/-.dar
+      %-  need
+      %.  `json`-.dar  =+  jo
+      %-  ot
+      :~  id/ni  name/so  
+         memory/ni  vcpus/ni  disk/ni
+         locked/bo  'created_at'^so  status/so
+         'backup_ids'^(ar so)  'snapshot_ids'^(ar so)  features/(ar so)
+         region/(ot name/so slug/so sizes/(ar so) ~)  image/parse-img  size/some
+         'size_slug'^so  networks/parse-ntwrks  kernel/(ot id/ni name/so version/so ~)
+         'next_backup_window'^some
+      ==
+  ~&  drop
+  :_  +>.$
+  [ost %give %nice ~]~
+::
+++  create-droplet
+  |=  os=bone
+  ~&  'reached'
+  =+  ^=  create  :*
+      os                     /create
+      ~[%digitalocean %api]  /v2/droplets
+      :-  %post
+      (create-body 'test2' 'nyc3' '512mb' 'ubuntu-14-04-x64')
+      %^  mo  ['Content-Type' 'application/json' ~]
+      ['Authorization' (cat 3 'Bearer ' access.toke.vat) ~]  ~
+      ~
+      ==
+  (httpreq create)
+:: 
 ++  pour
   |=  [ost=bone pour-path=path resp=sign]
   ^-  [(list move) _+>.$]
@@ -182,5 +231,9 @@ $%  [%thou p=httr]
   ::
       %list
     (receive-list ost pour-path resp)
+      %create
+      ~&  created/resp
+      :_  +>.$
+      [ost %give %nice ~]~
   ==
 --

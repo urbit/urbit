@@ -25,7 +25,24 @@ Page = recl({
 
   getList: function(){
     urb.send({appl: "do",
-              data: "list",
+              data: {action:"list"},
+              mark: "json"})
+  },
+
+  createDroplet: function(){
+    urb.send({appl: "do",
+              data: {
+                    action:'create',
+                    name:$('#name').val(),
+                    region:$('#region').val(),
+                    size:$('#size').val(),
+                    image:$('#image').val(),
+                    ssh:[$('#ssh').val()],
+                    backups:null,//$('#backups').val(),
+                    ipv6:null,//$('#ipv6').val(),
+                    priv_networking:null,//$('#priv-networking').val(),
+                    user_data:null//$('#user-data').val()
+                    },
               mark: "json"})
   },
 
@@ -42,7 +59,19 @@ Page = recl({
           input({id:"appsecret"}, 
           b({onClick:this.sendSecret}, "Send Secret"))
         ]),
-        b({onClick:this.getList}, "Get List")
+        b({onClick:this.getList}, "Get List"),
+        div({}, [
+          b({onClick:this.createDroplet}, "Create Droplet"),
+          input({id:"name",placeholder:"Name of droplet"}), 
+          input({id:"region",placeholder:"Region"}),
+          input({id:"size",placeholder:"Size (str ending in mb"}),
+          input({id:"image",placeholder:"Image"}),
+          input({id:"ssh",placeholder:"ssh keys (optional)"}),
+          input({id:"backups",placeholder:"backups (optional)"}),
+          input({id:"ipv6",placeholder:"ipv6 (boolean, optional)"}),
+          input({id:"user-data",placeholder:" user-data string (optional)"}),
+          input({id:"priv-networking",placeholder:"Private Networking (boolean, optional)"})
+        ])
       ])
     )
   }
