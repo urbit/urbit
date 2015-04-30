@@ -2171,6 +2171,7 @@
           ==                                            ::
 ++  rave                                                ::  general request
           $%  [%sing p=mood]                            ::  single request
+              [%next p=mood]                            ::  next version
               [%many p=? q=moat]                        ::  change range
           ==                                            ::
 ++  rill                                                ::  outbound stream

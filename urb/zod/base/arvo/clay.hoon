@@ -152,6 +152,7 @@
           ==                                            ::
 ++  rove                                                ::  stored request
           $%  [%sing p=mood]                            ::  single request
+              [%next p=mood]                            ::  next version
               [%many p=? q=moot]                        ::  change range
           ==                                            ::
 ++  rung  $:  rus=(map desk rede)                       ::  neighbor desks
@@ -208,10 +209,7 @@
   ::
   ++  aver                                              ::  read
     |=  mun=mood
-    ^-  (unit (unit (each cage silk)))
-    ?:  &(=(p.mun %u) !=(p.q.mun now))                  ::  prevent bad things
-      ~&  [%clay-fail p.q.mun %now now]
-      !!
+    ^-  (unit (unit (each cage lobe)))
     =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
     ?^  ezy
       `(bind u.ezy (cury same %&))
@@ -243,7 +241,7 @@
     [?^(q.i.p.tab !! q.i.p.tab) (slot 5 q.tab)]
   ::
   ++  balk                                              ::  read and send
-    |=  [hen=duct cay=(unit (each cage silk)) mun=mood]
+    |=  [hen=duct cay=(unit (each cage lobe)) mun=mood]
     ^+  +>
     ?~  cay  (blub hen)
     (blab hen mun u.cay)
@@ -257,13 +255,13 @@
     %_(+> tag :_(tag [hen %pass /tyme %t %rest tym]))
   ::
   ++  blab                                              ::  ship result
-    |=  [hen=duct mun=mood dat=(each cage silk)]
+    |=  [hen=duct mun=mood dat=(each cage lobe)]
     ^+  +>
     ?:  ?=(%& -.dat)
       +>.$(byn [[hen ~ [p.mun q.mun syd] r.mun p.dat] byn])
     =-  +>.$(tag [- tag])
     :*  hen  %pass  [%blab p.mun (scot q.mun) syd r.mun]
-        %f  %exec  who  [who syd q.mun]  ~  p.dat
+        %f  %exec  who  [who syd q.mun]  ~  (lobe-to-silk:ze r.mun p.dat)
     ==
   ::
   ++  bleb                                              ::  ship sequence
@@ -327,15 +325,32 @@
     ^+  +>
     ?-    -.rav
         %sing
-      ?:  &(=(p.p.rav %u) !=(p.q.p.rav now))
-        ~&  [%clay-fail p.q.p.rav %now now]
-        !!
       =+  ver=(aver p.rav)
       ?~  ver
         (duce rav)
       ?~  u.ver
         (blub hen)
       (blab hen p.rav u.u.ver)
+    ::
+        %next
+      =+  ver=(aver p.rav)
+      ?~  ver
+        (duce rav)
+      ?~  u.ver
+        (blub hen)
+      =+  yon=+((need (case-to-aeon:ze q.p.rav)))
+      |-  ^+  +>.^$
+      ?:  (gth yon let.dom)
+        (duce rav)
+      =+  var=(aver p.rav(q [%ud yon]))
+      ?~  var
+        ~&  [%oh-no rave=rav aeon=yon letdom=let.dom]
+        +>.^$
+      ?~  u.var
+        (blab hen p.rav %& %null [%atom %n] ~)          ::  only for %x
+      ?:  (equivalent-data:ze u.u.ver u.u.var)
+        $(yon +(yon))
+      (blab hen p.rav u.u.var)
     ::
         %many
       =+  nab=(case-to-aeon:ze p.q.rav)
@@ -1028,6 +1043,8 @@
         %sing
       ?.  ?=(%da -.q.p.rov)  ~
       `p.q.p.rov
+    ::
+        %next  ~
         %many
       =*  mot  q.rov
       %+  hunt
@@ -1040,7 +1057,7 @@
   ++  reve
     |=  rov=rove
     ^-  rave
-    ?:  ?=(%sing -.rov)  rov
+    ?.  ?=(%many -.rov)  rov
     [%many p.rov p.q.rov q.q.rov r.q.rov]
   ::
   ++  rive
@@ -1069,8 +1086,27 @@
       ::  ~&  %reading-at-aeon
       =+  vid=(read-at-aeon:ze u.nao p.q.i.xiq)
       ::  ~&  %red-at-aeon
-      ?~  vid  ~&  [%oh-well mood=p.q.i.xiq aeon=nao]  $(xiq t.xiq, xaq [i.xiq xaq])
+      ?~  vid
+        ~&  [%oh-well mood=p.q.i.xiq aeon=nao]
+        $(xiq t.xiq, xaq [i.xiq xaq])
       $(xiq t.xiq, ..wake (balk p.i.xiq u.vid p.q.i.xiq))
+    ::
+        %next
+      =*  mun  p.q.i.xiq
+      =+  ver=(aver mun)
+      ?~  ver
+        $(xiq t.xiq, xaq [i.xiq xaq])
+      ?~  u.ver
+        $(xiq t.xiq, ..wake (blub p.i.xiq))
+      =+  var=(aver mun(q [%ud let.dom]))
+      ?~  var
+        ~&  [%oh-noes mood=mun letdom=let.dom]
+        $(xiq t.xiq)
+      ?~  u.var
+        $(xiq t.xiq, ..wake (blab p.i.xiq mun %& %null [%atom %n] ~))
+      ?:  (equivalent-data:ze u.u.ver u.u.var)
+        $(xiq t.xiq, xaq [i.xiq xaq])
+      $(xiq t.xiq, ..wake (blab p.i.xiq mun u.u.var))
     ::
         %many
       =+  mot=`moot`q.q.i.xiq
@@ -1111,7 +1147,7 @@
         %direct     p.q
         %indirect   p.q
       ==
-    ++  lobe-to-silk
+    ++  lobe-to-silk                  ::  XX  maybe move hoo{n,k} stuff here
       |=  [pax=path lob=lobe]
       ^-  silk
       =+  ^-  hat=(map path lobe)
@@ -1132,6 +1168,17 @@
       ==
     ::
     ++  page-to-lobe  |=(page (shax (jam +<)))
+    ++  equivalent-data
+      |=  [one=(each cage lobe) two=(each cage lobe)]
+      ^-  ?
+      ?:  ?=(%& -.one)
+        ?:  ?=(%& -.two)
+          =([p q.q]:p.one [p q.q]:p.two)
+        =(p.two (page-to-lobe [p q.q]:p.one))
+      ?:  ?=(%& -.two)
+        =(p.one (page-to-lobe [p q.q]:p.two))
+      =(p.one p.two)
+    ::
     ++  make-direct                                     ::  make blob
       |=  p=page
       ^-  blob
@@ -1346,10 +1393,10 @@
       |=  ren=?(%u %v %x %y %z)                         ::  endpoint query
       ^-  (unit cage)
       ?-  ren
-        %u  [~ %rang !>(ran)]
+        %u  !!  ::  [~ %null [%atom %n] ~]
         %v  [~ %dome !>(dom)]
-        %x  ?~(q.ank.dom ~ [~ q.u.q.ank.dom])
-        %y  [~ %arch !>(as-arch)]
+        %x  !!  ::  ?~(q.ank.dom ~ [~ q.u.q.ank.dom])
+        %y  !!  ::  [~ %arch !>(as-arch)]
         %z  [~ %ankh !>(ank.dom)]
       ==
     ::
@@ -1411,9 +1458,17 @@
         ?^(r.mun ~ [~ %w !>([t.yak (forge-nori yak)])])
       (query(ank.dom ank:(descend-path:(zu ank.dom) r.mun)) p.mun)
     ::
+    ++  read-u
+      |=  [yon=aeon pax=path]
+      ^-  (unit (unit (each ,[%null (hypo ,~)] lobe)))
+      =+  tak=(~(get by hit.dom) yon)
+      ?~  tak
+        ~
+      ```[%null [%atom %n] ~]
+    ::
     ++  read-x
       |=  [yon=aeon pax=path]
-      ^-  (unit (unit (each cage silk)))
+      ^-  (unit (unit (each cage lobe)))
       =+  tak=(~(get by hit.dom) yon)
       ?~  tak
         ~
@@ -1425,7 +1480,7 @@
         [~ ~]
       =+  mar=(lobe-to-mark u.lob)
       ?.  ?=(?(%hoon %hook) mar)
-        [~ ~ %| (lobe-to-silk pax u.lob)]
+        [~ ~ %| u.lob]
       :^  ~  ~  %&
       :+  mar  [%atom %t]
       |-  ^-  @t                      ::  (urge cord) would be faster
@@ -1443,7 +1498,7 @@
     ::
     ++  read-y
       |=  [yon=aeon pax=path]
-      ^-  (unit (unit (cask (hypo arch))))
+      ^-  (unit (unit ,[%arch (hypo arch)]))
       =+  tak=(~(get by hit.dom) yon)
       ?~  tak
         ~
@@ -1475,9 +1530,11 @@
     ::
     ++  read-at-aeon                                    ::    read-at-aeon:ze
       |=  [yon=aeon mun=mood]                           ::  seek and read
-      ^-  (unit (unit (each cage silk)))
+      ^-  (unit (unit (each cage lobe)))
       ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))              ::  NB only for speed
         ?^(r.mun [~ ~] [~ ~ %& %aeon !>(yon)])
+      ?:  ?=(%u p.mun)
+        (read-u yon r.mun)
       ?:  ?=(%x p.mun)
         (read-x yon r.mun)
       ?:  ?=(%y p.mun)
@@ -1485,10 +1542,10 @@
       %+  bind
         (rewind yon)
       |=  a=(unit ,_+>.$)
-      ^-  (unit (each cage silk))
+      ^-  (unit (each cage lobe))
       ?~  a 
         ~
-      `(unit (each cage silk))`(bind (read:u.a mun) (cury same %&))
+      `(unit (each cage lobe))`(bind (read:u.a mun) (cury same %&))
     ::
     ++  rewind                                          ::    rewind:ze
       |=  yon=aeon                                      ::  rewind to aeon
