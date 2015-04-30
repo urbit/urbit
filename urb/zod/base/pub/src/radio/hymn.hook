@@ -5,7 +5,7 @@
     ;script(type "text/javascript", src "/gep/hart.js");
   ==
   ;body
-    ;script(type "text/javascript", src "/main/lib/urb.js");
-    ;script(type "text/javascript", src "/main/pub/src/radio/main.js");
+    ;script(type "text/javascript", src "/base/lib/urb.js");
+    ;script(type "text/javascript", src "/base/pub/src/radio/main.js");
   ==
 ==
