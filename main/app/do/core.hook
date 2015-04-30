@@ -13,10 +13,11 @@
 ++  droplet    
 $:  id=@  name=@t  memory=@ud  vcpus=@ud  disk=@ud  locked=?
     created=@t  status=@t  backup-ids=(list ,@t)  snapshot-ids=(list ,@t)
-    features=(list ,@t)  region=[name=@t slug=@t sizes=(list ,@t)]  image=img
-    size=json  size-slug=@t  networks=ntwrks  kernel=kern
+    features=(list ,@t)  region=regi  image=img
+    size=syze  size-slug=@t  networks=ntwrks  kernel=kern
     next-backup-window=json
 ==
+++  regi  ,[name=@t slug=@t sizes=(list ,@t)]
 ++  kern  ,[id=@ud name=@t version=@t]
 ++  img
 $:  id=@ud  name=@t  distribution=@t  slug=@t  public=?  regions=(list ,@t)
@@ -24,11 +25,16 @@ $:  id=@ud  name=@t  distribution=@t  slug=@t  public=?  regions=(list ,@t)
 ==
 ++  ntwrks  ,[v4=(list v) v6=(list v)]
 ++  v  ,[ip-address=@t netmask=@t gateway=@t type=@t]
-++  size
-$:  memory=@ud  price-monthly=@ud  price-hourly=@ud  disk=@ud  vcpus=@ud
-    slug=@t  transfer=@ud  available=?  regions=(list ,@t)
+++  syze
+$:  memory=@ud  price-monthly=@t  price-hourly=@t  disk=@ud  vcpus=@ud
+    slug=@t  transfer=@t  available=?  regions=(list ,@t)
 ==
-++  axle  ,[ke=keys toke=tokens drops=droplet]
+++  reqbody
+$:
+name=@t  region=@t  size=@t  image=@t  ssh=(list cord)
+backups=(unit ,?)  ipv6=(unit ,?)  private-networking=(unit ,?)  user-data=(unit ,@t)
+==
+++  axle  ,[ke=keys toke=tokens drops=(list droplet)]
 ++  keys  ,[authc=(unit ,@t) client-secret=(unit ,@t)]
 ++  tokens  ,[access=@t refresh=@t]
 ++  move  ,[bone (mold note gift)]
@@ -46,7 +52,7 @@ $:  %e
 $%  [%thou p=httr]
 ==  ==
 --
-
+!:
 |%  
 ++  parse-img
   =>  jo
@@ -63,17 +69,20 @@ $%  [%thou p=httr]
 ++  parse-size
   =>  jo
   %-  ot
-  :~  memory/ni  'price_monthly'^ni  'price_hourly'^ni  disk/ni
-  slug/so  transfer/ni  available/bo  regions/(ar so)
+  :~  memory/ni  'price_monthly'^no  'price_hourly'^no  disk/ni
+  vcpus/ni  slug/so  transfer/no  available/bo  regions/(ar so)
   ==
+++  parse-region
+  =>  jo
+  (ot name/so slug/so sizes/(ar so) ~)
 ++  create-body
-  |=  $:  name=@t  region=@t  size=@t  image=@t :: ssh-keys=(list json)
-      ::backups=?  ipv6=?  user-data=@t  private-networking=?
+  |=  $:  name=@t  region=@t  size=@t  image=@t  ssh-keys=(list cord)
+      backups=(unit ,?)  ipv6=(unit ,?)  private-networking=(unit ,?)  user-data=(unit ,@t)  
   ==
   %-  jobe
   :~  name/s/name  region/s/region  size/s/size  image/s/image
-     :: 'ssh_keys'^a/ssh-keys  backups/b/backups  ipv6/b/ipv6
-     :: 'user_data'^s/user-data  'private_networking'^b/private-networking
+      'ssh_keys'^a/(turn ssh-keys |=(cord s/+<))  backups/?~(backups ~ b/u.backups)  ipv6/?~(ipv6 ~ b/u.ipv6)
+      'user_data'^?~(user-data ~ s/u.user-data)  'private_networking'^?~(private-networking ~ b/u.private-networking)
   ==
 --
 !:
@@ -161,7 +170,7 @@ $%  [%thou p=httr]
   ~
   %create
   :_  +>.$
-  =+  ^=  deets
+  =+  ^-  deets=reqbody
       %-  need
       %.  act
       =>  jo
@@ -169,10 +178,9 @@ $%  [%thou p=httr]
       :~  name/so  region/so  size/so  image/so  ssh/(ar so)  backups/(mu bo)
       'ipv6'^(mu bo)  'priv_networking'^(mu bo)  'user_data'^(mu so)
       ==
-  ~&  deets
-  :::+  [(create-droplet ost)]
-    [ost %give %nice ~]~
-  ::~
+  :+  [(create-droplet ost deets)]
+    [ost %give %nice ~]
+  ~
   ==
 ::
 ++  list-droplets
@@ -188,34 +196,40 @@ $%  [%thou p=httr]
 ::
 ++  receive-list
   |=  [ost=bone pour-path=path resp=sign]
-  ~&  resp
   =+  parsed=(rash q:(need r.p.+.resp) apex:poja)
   =+  dar=(need ((ot droplets/(ar some) ~):jo parsed))
-  =+  ^-  drop=droplet
+  =+  ^-  dropz=(list droplet)
       ~|  bad-json/-.dar
+      %+  turn  dar
+      |=  drp=json
       %-  need
-      %.  `json`-.dar  =+  jo
+      %.  drp  =+  jo
       %-  ot
       :~  id/ni  name/so  
          memory/ni  vcpus/ni  disk/ni
          locked/bo  'created_at'^so  status/so
          'backup_ids'^(ar so)  'snapshot_ids'^(ar so)  features/(ar so)
-         region/(ot name/so slug/so sizes/(ar so) ~)  image/parse-img  size/some
+         region/parse-region  image/parse-img  size/parse-size
          'size_slug'^so  networks/parse-ntwrks  kernel/(ot id/ni name/so version/so ~)
          'next_backup_window'^some
       ==
-  ~&  drop
+  =.  drops.vat
+  dropz 
+  ~&  drops/drops.vat
   :_  +>.$
   [ost %give %nice ~]~
 ::
 ++  create-droplet
-  |=  os=bone
+  |=  [os=bone reqbody]
   ~&  'reached'
   =+  ^=  create  :*
       os                     /create
       ~[%digitalocean %api]  /v2/droplets
       :-  %post
-      (create-body 'test2' 'nyc3' '512mb' 'ubuntu-14-04-x64')
+      %-  create-body
+      :*  name  region  size  image  ssh  backups
+      ipv6  private-networking  user-data
+      ==
       %^  mo  ['Content-Type' 'application/json' ~]
       ['Authorization' (cat 3 'Bearer ' access.toke.vat) ~]  ~
       ~
@@ -231,6 +245,7 @@ $%  [%thou p=httr]
   ::
       %list
     (receive-list ost pour-path resp)
+  ::
       %create
       ~&  created/resp
       :_  +>.$
