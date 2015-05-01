@@ -2,7 +2,41 @@ recl = React.createClass
 div = React.DOM.div
 a = React.DOM.a
 b = React.DOM.button
+hr = React.DOM.hr
+table = React.DOM.table
+th = React.DOM.th
+tr = React.DOM.tr
+td = React.DOM.td
 input = React.DOM.input
+
+Droplet = React.createClass({
+  deleteDroplet: function() {
+    urb.send({
+      appl: "do",
+      data: {action: 'delete',
+            id: this.props.id}})
+  },
+
+  rebootDroplet: function() {
+    urb.send({
+      appl: "do",
+      data: {action: 'reboot',
+            id: this.props.id}})
+  },
+
+  render: function() {
+    $this = this
+    kay = Object.keys(this.props)
+    kay = kay.filter(function(b){return b!="children"}) //  XX individually adress props
+  return div({},
+    b({id:this.props.id}, "delete"),
+    b({id:this.props.id,onClick:this.rebootDroplet}, "reboot"),
+    table({},
+      tr({},kay.map(function(k){return th({},k)})),
+      tr({},kay.map(function(k){return td({},JSON.stringify($this.props[k]))}))),
+    hr())
+  }
+})
 
 Page = recl({
   handleClick: function(){
@@ -71,12 +105,18 @@ Page = recl({
           input({id:"ipv6",placeholder:"ipv6 (boolean, optional)"}),
           input({id:"user-data",placeholder:" user-data string (optional)"}),
           input({id:"priv-networking",placeholder:"Private Networking (boolean, optional)"})
-        ])
+        ]),
+        div({},
+          this.props.droplets.map(Droplet)
+        )
       ])
     )
   }
 })
 
-mounted = React.render(Page({}), $("#container")[0])
+
+mounted = React.render(Page({droplets:[]}), $("#container")[0])
 urb.bind("/", function(err,d) {
+
+  mounted.setProps({droplets:d.data})
 return}) 
