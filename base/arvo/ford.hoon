@@ -214,6 +214,17 @@
   |=  [cog=@tas typ=type]
   (~(has in (sa (sloe typ))) cog)
 ::
+++  norm                                                ::  normalize beam rev
+  |=  [ska=sled bem=beam]
+  %_  bem
+    r  ?:  ?=(%ud -.r.bem)  r.bem
+       =+  num=(ska ~ %cw bem(s ~))
+       ?.  ?=([~ ~ * * @u] num)
+         ~&  norm-lost/(tope bem(s ~))
+         r.bem  ::  XX
+       [%ud q.q.u.u.num]
+  ==
+::
 ++  za                                                  ::  per event
   =|  $:  $:  $:  our=ship                              ::  computation owner
                   bek=beak                              ::  desk context
@@ -356,7 +367,7 @@
         :^    %pass
             [(scot %p our) (scot %ud num) (scot %ud p.kig) (tope bek ~)]
           %c
-        ::  ~&  >>  [%camping bem]
+        ~&  >>  [%camping bem]
         [%warp [our p.bem] q.bem [~ %sing ren r.bem (flop s.bem)]]
       ==
     ::
@@ -861,12 +872,12 @@
       %+  cope  (lend cof bem)
       |=  [cof=cafe arc=arch]
       ?^  q.arc
-        (cope (cope (liar cof bem) (lake for)) (fest (norm bem)))
+        (cope (cope (liar cof bem) (lake for)) (fest (norm ska bem)))
       ?:  (~(has by r.arc) %hook)
         %+  cope  (fade cof %hook bem)
         |=  [cof=cafe hyd=hood]
         %+  cope  (cope (abut:(meow bem arg) cof hyd) (lake for))
-        (fest (norm bem))
+        (fest (norm ska bem))
       (flue cof)
     ::
     ++  lake                                            ::  check/coerce
@@ -999,7 +1010,7 @@
       ?^  vux  (fine cof u.vux)
       ?~  s.mob
         %+  flag
-          (norm mob)
+          (norm ska mob)
         (flaw cof leaf/"beam unavailable" (smyt (tope bem)) ~)
       ^$(s.mob t.s.mob, mer [i.s.mob mer])
     ::
@@ -1089,7 +1100,7 @@
     ++  make                                            ::  reduce silk
       |=  [cof=cafe kas=silk]
       ^-  (bolt gage)
-      ::  ~&  [%make (,@tas -.kas)]
+      :: ~&  [%make (,@tas -.kas)]
       ?-    -.kas
           ^
         %.  [cof p.kas q.kas]
@@ -1104,7 +1115,7 @@
         ==
       ::
           %bake
-        ::  ~&  >  (tope q.kas)
+        :: ~&  >  (tope q.kas)
         %+  cool  |.(leaf/"ford: bake {<p.kas>} {<(tope q.kas)>}")
         %+  cope  (lima cof p.kas q.kas r.kas)
         |=  [cof=cafe vux=(unit vase)]
@@ -1548,15 +1559,6 @@
         ==
       --
     ::
-    ++  norm                                            ::  normalize beam rev
-      |=  bem=beam
-      %_  bem
-        r  ?:  ?=(%ud -.r.bem)  r.bem
-           =+  num=(ska ~ %cw bem(s ~))
-           ?.  ?=([~ ~ * * @u] num)  r.bem  ::  XX
-           [%ud q.q.u.u.num]
-      ==
-    ::
     ++  pact                                            ::  patch
       |=  [cof=cafe kas=silk kos=silk]
       ^-  (bolt gage)
@@ -1657,7 +1659,7 @@
   =^  mos  bay
     ?:  ?=(%wasp -.q.hic)
       abet:(~(awap za [[our *beak hen] [now eny ski] ~] bay) q.q.hic)
-    =*  bek  q.q.hic
+    =+  bek=-:(norm ski q.q.hic ~)
     abet:(~(apex za [[our bek hen] [now eny ski] ~] bay) r.q.hic)
   [mos ..^$(pol (~(put by pol) our bay))]
 ::
@@ -1667,7 +1669,8 @@
   ~
 ::
 ++  load                                                ::  highly forgiving
-  |=  old=*
+  |=  old=axle
+  ..^$(+>- old)
   ::=.  old  
   ::    ?.  ?=([%0 *] old)  old                           ::  remove at 1
   ::    :-  %1 
@@ -1676,12 +1679,12 @@
   ::    ?>  ?=([n=[p=* q=[tad=* dym=* deh=* jav=*]] l=* r=*] +.old)
   ::    :-  [p.n.+.old [tad.q.n.+.old dym.q.n.+.old deh.q.n.+.old ~]]
   ::    [$(+.old l.+.old) $(+.old r.+.old)]
-  =+  lox=((soft axle) old)
-  ^+  ..^$
-  ?~  lox
-    ~&  %ford-reset
-    ..^$
-  ..^$(+>- u.lox)
+::   =+  lox=((soft axle) old)
+::   ^+  ..^$
+::   ?~  lox
+::     ~&  %ford-reset
+::     ..^$
+::   ..^$(+>- u.lox)
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]

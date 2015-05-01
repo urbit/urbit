@@ -322,7 +322,7 @@
           $(q.p.p.sih t.q.p.p.sih) 
         ::
             [%c %note *]
-          (from %out (tuba ~(ram re q.+.sih)))
+          (from %out (tuba p.sih ' ' ~(ram re q.sih)))
         ::
             [%c %writ *]
           init
