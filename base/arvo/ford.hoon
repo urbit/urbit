@@ -301,19 +301,20 @@
     |=  dep=@uvH
     ?~  dep
       ~&(dep-empty/hen +>.$)
-    =+  dap=~|(dep-missed/dep (~(got by deh.bay) dep))
-    ?-  -.dap
+    =+  dap=(~(get by deh.bay) dep)
+    ?~  dap  ~&(dep-missed/dep +>.$)  ::  XX  ~|  !!
+    ?-  -.u.dap
       %done  +>.$(mow :_(mow [hen %give %news ~]))
       %sent
-        =.  p.dap  (~(put in p.dap) hen)
-        +>.$(deh.bay (~(put by deh.bay) dep dap))
+        =.  p.u.dap  (~(put in p.u.dap) hen)
+        +>.$(deh.bay (~(put by deh.bay) dep u.dap))
       %init
         %_    +>.$
             deh.bay 
-          (~(put by deh.bay) dep [%sent [hen ~ ~] p.dap])
+          (~(put by deh.bay) dep [%sent [hen ~ ~] p.u.dap])
         ::
             mow
-          =<  (welp :_(mow (turn (~(tap in p.dap)) .)))
+          =<  (welp :_(mow (turn (~(tap in p.u.dap)) .)))
           |=  bem=beam 
           :^  hen  %pass  [(scot %p our) (scot %uv dep) (tope bem)]
           [%c [%warp [our p.bem] q.bem ~ [%next %y r.bem (flop s.bem)]]]
