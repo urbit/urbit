@@ -53,7 +53,7 @@ $%  [%thou p=httr]
 ==  ==
 --
 !:
-|%  
+|% ::: 
 ++  parse-img
   =>  jo
   %-  ot
@@ -213,6 +213,7 @@ $%  [%thou p=httr]
 ::
 ++  poke-json
   |=  [ost=bone you=ship act=json]
+  ^-  [(list move) _+>.$]
   =+  do=(need ((ot action/so ~):jo act))
   ?+  do  !!
   %list
@@ -234,26 +235,32 @@ $%  [%thou p=httr]
       [ost %give %nice ~]
     ~
   %reboot
+    :_  +>.$
     =+  id=(need ((ot id/ni ~):jo act))
     ~&  id
-    :+  (reboot-droplet ost id)
-      [%ost %give %nice ~]
+    ^-  (list move)
+    :+  `move`(reboot-droplet ost id)
+      [ost %give %nice ~]
     ~
   ==
-::
+
 ++  reboot-droplet
-  |=  [ost=bone id=@ud]
-  =+  ^=  reboot  
-      :~  ost                 /reboot
-      ~[%digitalocean %api]   /v2/droplets/(scot %ud id)/actions
-      :-  %post
-      (jobe type/s/'reboot' ~)
-      (mo ['Content-Type' 'application/json' ~] ['Authorization' (cat 3 'Bearer ' access.toke.vat) ~] ~)
-      ==
-      (httpreq reboot)
-::
+  |=  [os=bone id=@ud]
+  %-  httpreq  :*
+    os
+    /reboot
+    ~[%digitalocean %api]
+    =+  path=`path`/v2/droplets/'5073686'/actions
+    ~&  path
+    path
+    [%post `json`(jobe type/s/'reboot' ~)]
+    (mo ['Content-Type' 'application/json' ~] ['Authorization' (cat 3 'Bearer ' access.toke.vat) ~] ~)
+    *quay
+   ==
+
 ++  list-droplets
   |=  os=bone
+  ~&  'poked'
   =+  ^=  lis
       :~  os                 /list
       ~[%digitalocean %api]  /v2/droplets
