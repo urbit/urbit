@@ -148,7 +148,7 @@
       [%beam p=beam]
       [%deps p=?(%put %delt) q=@uvH]
       [%mess p=hasp q=mark r=wire s=json]
-      [%poll p=@uvH]
+      [%poll p=[i=@uvH t=(list ,@uvH)]]
       [%spur p=spur]
       [%subs p=?(%put %delt) q=[hasp %json wire path]]
       [%view p=ixor q=[~ u=@ud]]
@@ -264,25 +264,33 @@
     '''
     urb.tries = 0
     urb.call = function() {
-      xhr = new XMLHttpRequest()
-      xhr.open('GET', urb.poll, true)
-      xhr.addEventListener('load', function() {
+      urb.wreq = new XMLHttpRequest()
+      urb.wreq.open('GET', urb.poll, true)
+      urb.wreq.addEventListener('load', function() {
         // if(~~(this.status / 100) == 4)
-        //   return document.write(xhr.responseText)
+        //   return document.write(this.responseText)
         if(this.status !== 205) {
           return urb.keep()
         }
         document.location.reload()
       })
-      xhr.addEventListener('error', urb.keep)
-      xhr.addEventListener('abort', urb.keep)
-      xhr.send()
+      urb.wreq.addEventListener('error', urb.keep)
+      urb.wreq.addEventListener('abort', urb.keep)
+      urb.wreq.send()
     }
     urb.keep = function() {
       setTimeout(urb.call,1000*urb.tries)
       urb.tries++
     }
     urb.call()
+    urb.wasp = function(deh){
+      var old = /[^/]*$/.exec(urb.poll)[0]
+      var deps = old.replace(/^on.json\?|.json$/,'').split('&')
+      if (deps.indexOf(deh) !== -1) return;
+      deps.push(deh)
+      urb.poll = "/~/on.json?"+deps.join('&')
+      urb.wreq.abort() // trigger keep
+    }
     '''
   ::
   ++  auth-redir
@@ -564,7 +572,8 @@
           ==
         ~|  q.q.cay
         =+  ((hard ,[mit=mite rez=octs]) q.q.cay)
-        (give-thou 200 [content-type/(moon mit)]~ ~ rez)
+        =+  dep=(crip (pojo %s (scot %uv p.sih)))
+        (give-thou 200 ~[etag/dep content-type/(moon mit)] ~ rez)
       ==
     ==
   ::
@@ -803,7 +812,13 @@
             %own   our
           ==
         ::
-            %on  [%poll (raid but %uv ~)]
+            %on
+          :-  %poll
+          ?^  but  [(raid but %uv ~)]~
+          =+  dep=((hard (list ,[@ ~])) quy)
+          =<  ?~(. !! .)
+          (turn dep |=([a=@tas ~] (slav %uv a)))
+        ::
             %of
           :+  %view  ?>(?=([@ ~] but) i.but)
           ?>  ?=([[%poll @] ~] quy)     ::  XX eventsource
@@ -901,10 +916,13 @@
         (ford-req root-beak [%cast q.hem %done ~ cay])
       ::
           %poll
-        ?.  ?=([~ %js] p.pok)  ::  XX treat non-json cases?
-          [%| (new-dependency p.hem %& hen)]
-        =+  polling-url=['/' (apex:earn %| pok(u.p %json) quy)]
-        [%& %js (add-json (joba %poll (jape polling-url)) poll:js)]
+        ?:  ?=([~ %js] p.pok)  ::  XX treat non-json cases?
+          =+  polling-url=['/' (apex:earn %| pok(u.p %json) quy)]
+          [%& %js (add-json (joba %poll (jape polling-url)) poll:js)]
+        |-
+          =.  done  (new-dependency i.p.hem %& hen)
+          ?~  t.p.hem  [%| done]
+          $(p.hem t.p.hem)
       ::
           %subs
         ?-  p.hem
