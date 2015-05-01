@@ -10,6 +10,7 @@
   ::
 |%
 ++  main                                                ::  main story
+
   |=  our=ship  ^-  cord
   =+  can=(clan our)
   ?+  can  %porch
