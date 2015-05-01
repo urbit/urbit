@@ -65,7 +65,7 @@ MDEFINES=-DU3_OS_$(OS) -DU3_OS_ENDIAN_$(ENDIAN) -D U3_LIB=\"$(LIB)\"
 
 # NOTFORCHECKIN - restore -O3
 # 	-DGHETTO
-CFLAGS= $(COSFLAGS) -g -msse3 -ffast-math \
+CFLAGS= $(COSFLAGS) -O3 -msse3 -ffast-math \
 	-funsigned-char \
 	-I/usr/local/include \
 	-I/opt/local/include \
