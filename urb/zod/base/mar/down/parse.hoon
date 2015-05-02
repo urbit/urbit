@@ -45,7 +45,7 @@
 ::
 ::::
   ::
-!:  |%
+::  |%
 ++  nal  (just `@`10)
 ++  end  (full (easy ~))
 ++  eol  ;~(pose (cold ~ nal) end)
@@ -446,7 +446,7 @@
 ::
 ::::
   ::
-!:  |%
+::  |%
 ++  nesting  $%  [%bloq *]                              ::  Used for fishing
                  [%item *]
                  [%list [%item ~]]
