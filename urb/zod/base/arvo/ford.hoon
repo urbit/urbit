@@ -585,7 +585,9 @@
       |=  [cof=cafe for=mark]
       ^-  (bolt vase)
       =+  pax=/door/[for]/mar
-      (cope (fade cof %hook [bek pax]) abut:(meow [bek pax] ~))
+      %+  cope
+        (fade cof %hook [bek pax])
+      abut:(meow [bek pax] ~)
     ::
     ++  fair                                            ::  hood parsing rule
       |=  bem=beam
@@ -1115,7 +1117,7 @@
         ==
       ::
           %bake
-        :: ~&  >  (tope q.kas)
+        ::  ~&  [%bake-start (tope q.kas)]
         %+  cool  |.(leaf/"ford: bake {<p.kas>} {<(tope q.kas)>}")
         %+  cope  (lima cof p.kas q.kas r.kas)
         |=  [cof=cafe vux=(unit vase)]
