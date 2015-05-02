@@ -569,11 +569,11 @@
       %+  cool  |.(leaf/"ford: fade {<[(tope bem)]>}")
       %+  cope  (make cof [%bake for bem ~])
       |=  [cof=cafe cay=gage]
-      %+  (clef %hood)  (fine cof bem cay)
+      %+  (clef %hood)  (fine cof bem(r [%ud 0]) cay)
       ^-  (burg (pair beam gage) hood)
       |=  [cof=cafe bum=beam cay=gage]
       ::  ~&  fade/clef-miss/bem
-      =+  rul=(fair bem)
+      =+  rul=(fair bum)
       ?.  ?=(@ q.q.cay)
         (flaw cof ~)
       =+  vex=((full rul) [[1 1] (trip q.q.cay)])
@@ -589,9 +589,8 @@
     ::
     ++  fair                                            ::  hood parsing rule
       |=  bem=beam
-      =+  :*  vez=(vang | (tope bem(r [%ud 0])))
-              voz=(vang | (tope bem))
-          ==
+      ?>  ?=([%ud 0] r.bem)           ::  XX sentinel
+      =+  vez=(vang | (tope bem))
       =<  hood
       |%  
       ++  case
@@ -601,7 +600,7 @@
         ?.  ?=([%$ ?(%da %ud %tas) *] a)  ~
         [~ u=(^case a)]
       ::
-      ++  hath  (sear plex:voz (stag %clsg poor:voz))   ::  hood path
+      ++  hath  (sear plex:vez (stag %clsg poor:vez))   ::  hood path
       ++  have  (sear tome ;~(pfix fas hath))           ::  hood beam
       ++  hood
         %+  ifix  [gay gay]
@@ -1442,7 +1441,9 @@
         ::
             %now  (chad cof bax %da p.hon)
             %nap  (chai cof bax p.hon)
-            %see  $(hon q.hon, how p.hon)
+            %see
+          =.  r.p.hon  ?:(?=([%ud 0] r.p.hon) r.how r.p.hon)
+          $(hon q.hon, how p.hon)
             %saw  
           %+  cope  $(hon q.hon)
           |=  [cof=cafe sam=vase]
@@ -1527,6 +1528,7 @@
         ?-    -.hop
             %&  (fine cof ..wilt(boy [p.hop boy]))
             %| 
+          =.  r.p.hop  ?:(?=([%ud 0] r.p.hop) r.how r.p.hop)
           %+  cool  |.(leaf/"ford: wilt {<[(tope p.hop)]>}")
           %+  cope  (lend cof p.hop)
           |=  [cof=cafe arc=arch]
