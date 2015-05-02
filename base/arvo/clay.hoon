@@ -2445,7 +2445,8 @@
     :~  ^-  move
         :*  hen  %pass
             /auto/(scot %p p.q.hic)/[q.q.hic]/(scot %p r.q.hic)/[s.q.hic]
-            %c  %merg  [p q r s %init]:q.hic
+            %c  %warp  [p.q.hic r.q.hic]  s.q.hic  ~  %sing
+            %w  [%da now]  /
         ==
     ==
   ::
@@ -2592,7 +2593,8 @@
 ++  scry                                              ::  inspect
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit cage))
-  :: ~&  scry/[ren =-(~!(- `path`-) [(scot %p his) syd ~(rent co lot) tyl])]
+  ::  ~&  scry/[ren `path`[(scot %p his) syd ~(rent co lot) tyl]]
+  ::  =-  ~&  %scry-done  -
   =+  got=(~(has by fat.ruf) his)
   =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
   ?~  luk  [~ ~]
@@ -2655,8 +2657,29 @@
       [[- ~] ..^$]
     ::
         %writ
+      ?~  p.q.hin
+        ~&  "bad %writ response on autosync"
+        [~ ..^$]
+      =.  sor.ruf
+        ?.  ?=(%w p.p.u.p.q.hin)
+          sor.ruf
+        %+  ~(put by sor.ruf)
+          [our syd her sud]
+        [((hard ,@ud) q.q.r.u.p.q.hin) hen]
       =+  nex=let:(~(got by sor.ruf) our syd her sud)
-      [[hen %pass tea %c %merg our syd her sud %mate]~ ..^$]
+      =+  (~(get by fat.ruf) our)
+      ?~  -
+        ~&  [%autsync-no-local-ship our]
+        [~ ..^$]
+      =+  (~(get by dos.u.-) syd)
+      =+  ^=  sar
+          ?~  -
+            %init
+          ?:  =(0 let.dom.u.-)
+            %init
+          %mate
+      [[hen %pass tea %c %merg our syd her sud sar]~ ..^$]
+      ::  %c  %merg  [p q r s %init]:q.hic
     ==
   ?:  ?=([%blab care @ @ *] tea)
     ?>  ?=(%made +<.q.hin)
