@@ -79,7 +79,7 @@ _.merge window.util,
     return ($(window).scrollTop() < window.util.writingPosition)
 
   checkScroll: ->
-    if @isScrolling()
+    if window.util.isScrolling()
       $('body').addClass 'scrolling'
     else
       $('body').removeClass 'scrolling'
