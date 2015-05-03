@@ -231,6 +231,18 @@ static u3j_core _mood__hoon__coed_d[] =
     {}
   };
 
+static u3j_harm _mood__hoon__scr_hsh_a[] = {{".2", u3wes_hsh}, {}};
+static u3j_harm _mood__hoon__scr_hsl_a[] = {{".2", u3wes_hsl}, {}};
+static u3j_harm _mood__hoon__scr_pbk_a[] = {{".2", u3wes_pbk}, {}};
+static u3j_harm _mood__hoon__scr_pbl_a[] = {{".2", u3wes_pbl}, {}};
+static u3j_core _mood__hoon__scr_d[] =
+  {  { "hsh", _mood__hoon__scr_hsh_a },
+     { "hsl", _mood__hoon__scr_hsl_a },
+     { "pbk", _mood__hoon__scr_pbk_a },
+     { "pbl", _mood__hoon__scr_pbl_a },
+     {}
+  };
+
 static u3j_harm _mood__hoon_pfix_a[] = {{".2", u3we_pfix}, {}};
 static u3j_harm _mood__hoon_plug_a[] = {{".2", u3we_plug}, {}};
 static u3j_harm _mood__hoon_pose_a[] = {{".2", u3we_pose}, {}};
@@ -448,6 +460,8 @@ static u3j_core _mood__hoon_d[] =
     { "og", 0, _mood__hoon__og_d },
     { "rd", 0, _mood__hoon__rd_d },
     { "coed", 0, _mood__hoon__coed_d },
+
+    { "scr", 0, _mood__hoon__scr_d },
 
     { "pfix", _mood__hoon_pfix_a },
     { "plug", _mood__hoon_plug_a },
