@@ -39,7 +39,7 @@ RM=rm -f
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ -g -L/usr/local/lib -L/opt/local/lib
+CLD=g++ -L/usr/local/lib -L/opt/local/lib
 
 ifeq ($(OS),osx)
   COSFLAGS=-fno-diagnostics-fixit-info
@@ -78,6 +78,7 @@ CFLAGS= $(COSFLAGS) -O3 -msse3 -ffast-math \
 	-Ioutside/ed25519/src \
 	-Ioutside/commonmark/src \
 	-Ioutside/commonmark/build/src \
+	-Ioutside/scrypt \
 	$(DEFINES) \
 	$(MDEFINES)
 
@@ -201,6 +202,7 @@ J_E_OFILES=\
        j/e/repg.o \
        j/e/rexp.o \
        j/e/rub.o \
+       j/e/scr.o \
        j/e/shax.o \
        j/e/lore.o \
        j/e/loss.o \
@@ -350,6 +352,8 @@ LIBANACHRONISM=outside/anachronism/build/libanachronism.a
 
 LIBCOMMONMARK=outside/commonmark/build/src/libcmark.a
 
+LIBSCRYPT=outside/scrypt/scrypt.a
+
 all: vere
 
 .MAKEFILE-VERSION: Makefile .make.conf
@@ -380,25 +384,28 @@ $(LIBANACHRONISM):
 $(LIBCOMMONMARK):
 	$(MAKE) -C outside/commonmark
 
+$(LIBSCRYPT):
+	$(MAKE) -C outside/scrypt MDEFINES="$(MDEFINES)"
+
 $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBRE2)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(V_OFILES): i/v/vere.h
 
 ifdef NO_SILENT_RULES
-$(BIN)/vere: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM)
+$(BIN)/vere: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT)
 else
-$(BIN)/vere: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM)
+$(BIN)/vere: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT)
 	@echo "    CCLD  $(BIN)/vere"
 	@mkdir -p $(BIN)
-	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK)
+	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT)
 endif
 
-$(BIN)/meme: $(LIBCRE) $(LIBCOMMONMARK) $(MEME_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM)
+$(BIN)/meme: $(LIBCRE) $(LIBCOMMONMARK) $(MEME_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/meme $(MEME_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/meme $(MEME_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT)
 
 tags:
 	ctags -R -f .tags --exclude=root
@@ -433,5 +440,6 @@ distclean: clean $(LIBUV_MAKEFILE)
 	$(MAKE) -C outside/re2 clean
 	$(MAKE) -C outside/ed25519 clean
 	$(MAKE) -C outside/anachronism clean
+	$(MAKE) -C outside/scrypt clean
 
 .PHONY: clean debbuild debinstalldistclean etags osxpackage tags
