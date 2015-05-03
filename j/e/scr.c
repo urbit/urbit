@@ -17,11 +17,14 @@ int _crypto_scrypt(const uint8_t *, size_t, const uint8_t *, size_t,
   u3qes_hsl(u3_atom p, u3_atom pl, u3_atom s, u3_atom sl, u3_atom n,
             u3_atom r, u3_atom  z, u3_atom d)
   {
-    c3_assert(_(u3a_is_atom(p)) && _(u3a_is_atom(s)) &&
-              _(u3a_is_cat(pl)) && _(u3a_is_cat(sl)) &&
-              _(u3a_is_cat(n))  && _(u3a_is_cat(r))  &&
-              _(u3a_is_cat(z))  && _(u3a_is_cat(d))  &&
-               (r * z) < 1073741824);
+    // asserting that n is power of 2 in _crypto_scrypt
+    if (!(_(u3a_is_atom(p)) && _(u3a_is_atom(s)) &&
+          _(u3a_is_cat(pl)) && _(u3a_is_cat(sl)) &&
+          _(u3a_is_cat(n))  && _(u3a_is_cat(r))  &&
+          _(u3a_is_cat(z))  && _(u3a_is_cat(d))  &&
+           (r != 0)         &&  (z != 0)         &&
+           (((c3_d)r * 128 * ((c3_d)n + z - 1)) <= (1 << 30))))
+        return u3m_bail(c3__exit);
 
     c3_y* b_p = u3a_malloc(pl + 1); c3_y* b_s= u3a_malloc(sl + 1);    
     u3r_bytes(0, pl, b_p, p);       u3r_bytes(0, sl, b_s, s);
@@ -52,10 +55,13 @@ int _crypto_scrypt(const uint8_t *, size_t, const uint8_t *, size_t,
   u3_noun
   u3qes_hsh(u3_atom p, u3_atom s, u3_atom n, u3_atom r, u3_atom  z, u3_atom d)
   {
-    c3_assert(_(u3a_is_atom(p)) && _(u3a_is_atom(s)) &&
-              _(u3a_is_cat(n))  && _(u3a_is_cat(r))  &&
-              _(u3a_is_cat(z))  && _(u3a_is_cat(d))  &&
-               (r * z) < 1073741824);
+    // asserting that n is power of 2 in _crypto_scrypt
+    if (!(_(u3a_is_atom(p)) && _(u3a_is_atom(s)) &&
+          _(u3a_is_cat(n))  && _(u3a_is_cat(r))  &&
+          _(u3a_is_cat(z))  && _(u3a_is_cat(d))  &&
+           (r != 0)         &&  (z != 0)         &&
+           (((c3_d)r * 128 * ((c3_d)n + z - 1)) <= (1 << 30))))
+        return u3m_bail(c3__exit);
 
     c3_w   pl = u3r_met(3, p);      c3_w   sl = u3r_met(3, s);
     c3_y* b_p = u3a_malloc(pl + 1); c3_y* b_s= u3a_malloc(sl + 1);    
@@ -88,9 +94,12 @@ int _crypto_scrypt(const uint8_t *, size_t, const uint8_t *, size_t,
   u3qes_pbl(u3_atom p, u3_atom pl, u3_atom s, u3_atom sl,
             u3_atom c, u3_atom d)
   {
-    c3_assert(_(u3a_is_atom(p)) && _(u3a_is_atom(s)) &&
-              _(u3a_is_cat(pl)) && _(u3a_is_cat(sl)) &&
-              _(u3a_is_cat(c))  && _(u3a_is_cat(d)));
+    if (!(_(u3a_is_atom(p)) && _(u3a_is_atom(s)) &&
+          _(u3a_is_cat(pl)) && _(u3a_is_cat(sl)) &&
+          _(u3a_is_cat(c))  && _(u3a_is_cat(d))  &&
+           (d <= (1 << 30)) &&  (c <= (1 << 28)) &&
+           (c != 0)))
+        return u3m_bail(c3__exit);
 
     c3_y* b_p = u3a_malloc(pl + 1); c3_y* b_s= u3a_malloc(pl + 1);    
     u3r_bytes(0, pl, b_p, p);       u3r_bytes(0, sl, b_s, s);
@@ -120,8 +129,11 @@ int _crypto_scrypt(const uint8_t *, size_t, const uint8_t *, size_t,
   u3_noun
   u3qes_pbk(u3_atom p, u3_atom s, u3_atom c, u3_atom d)
   {
-    c3_assert(_(u3a_is_atom(p)) && _(u3a_is_atom(s)) &&
-              _(u3a_is_cat(c))  && _(u3a_is_cat(d)));
+    if (!(_(u3a_is_atom(p)) && _(u3a_is_atom(s)) &&
+          _(u3a_is_cat(c))  && _(u3a_is_cat(d))  &&
+           (d <= (1 << 30)) &&  (c <= (1 << 28)) &&
+           (c != 0)))
+        return u3m_bail(c3__exit);
 
     c3_w   pl = u3r_met(3, p);      c3_w   sl = u3r_met(3, s);
     c3_y* b_p = u3a_malloc(pl + 1); c3_y* b_s= u3a_malloc(pl + 1);    
@@ -147,6 +159,34 @@ int _crypto_scrypt(const uint8_t *, size_t, const uint8_t *, size_t,
     return u3qes_pbk(p, s, c, d);
   }
 
+/*-
+ * Copyright 2009 Colin Percival
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ * This file was originally written by Colin Percival as part of the Tarsnap
+ * online backup system.
+ */
 
 /**
  * crypto_scrypt(passwd, passwdlen, salt, saltlen, N, r, p, buf, buflen):
