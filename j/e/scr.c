@@ -28,7 +28,8 @@ int _crypto_scrypt(const uint8_t *, size_t, const uint8_t *, size_t,
     b_p[pl] = 0; b_s[sl]=0;
     c3_y* buf = u3a_malloc(d);
 
-    _crypto_scrypt(b_p, pl, b_s, sl, n, r, z, buf, d);
+    if (_crypto_scrypt(b_p, pl, b_s, sl, n, r, z, buf, d) != 0)
+        return u3m_bail(c3__exit);
 
     u3_noun res = u3i_bytes(d, buf);
     u3a_free(b_p); u3a_free(b_s); u3a_free(buf);
@@ -62,7 +63,8 @@ int _crypto_scrypt(const uint8_t *, size_t, const uint8_t *, size_t,
     b_p[pl] = 0; b_s[sl]=0;
     c3_y* buf = u3a_malloc(d);
 
-    _crypto_scrypt(b_p, pl, b_s, sl, n, r, z, buf, d);
+    if (_crypto_scrypt(b_p, pl, b_s, sl, n, r, z, buf, d) != 0)
+        return u3m_bail(c3__exit);
 
     u3_noun res = u3i_bytes(d, buf);
     u3a_free(b_p); u3a_free(b_s); u3a_free(buf);
@@ -165,6 +167,9 @@ _crypto_scrypt(const uint8_t * passwd, size_t passwdlen,
 	uint32_t * V;
 	uint32_t * XY;
 	uint32_t i;
+
+	if (((N & (N-1)) != 0) || N == 0)
+		goto err0;
 
 	/* Sanity-check parameters. */
 #if SIZE_MAX > UINT32_MAX
