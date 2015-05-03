@@ -5070,7 +5070,10 @@
            |=  [p=@ pl=@ s=@ sl=@ c=@ d=@]
            =.  p  (end 3 pl p)  =.  s  (end 3 sl s)
            =+  h=32
-           ?>  (lte d (mul h (dec (bex 32))))
+           ?>  ?&  (lte d (bex 30))                     :: max key length 1GB
+                   (lte c (bex 28))                     :: max iterations 2^28
+                   !=(c 0)
+               ==
            =+  ^=  l  ?~  (mod d h)
              (div d h)
            +((div d h))
@@ -5095,7 +5098,14 @@
            =|  v=(list (list ,@))
            =.  p  (end 3 pl p)  =.  s  (end 3 sl s)
            =+  u=(mul (mul 128 r) z)
-           ?>  =(n (bex (dec (xeb n))))                 ::  n is power of 2
+           ?>  ?&  =(n (bex (dec (xeb n))))             ::  n is power of 2
+                   !=(r 0)  !=(z 0)
+                   %+  lte                              ::  max 1GB memory
+                       (mul (mul 128 r) (dec (add n z)))
+                     (bex 30)
+                   (lth pl (bex 31))
+                   (lth sl (bex 31))
+               ==
            =+  ^=  b  =+  %^  rpp  3  u
              (pbl p pl s sl 1 u)
              %+  turn  (bls (mul 128 r) -)
