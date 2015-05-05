@@ -832,6 +832,7 @@ _http_request_to_noun(u3_hreq* req_u)
     default: fprintf(stderr, "strange request\r\n"); return u3_none;
     case u3_hmet_put: { med = c3__put; break; }
     case u3_hmet_get: { med = c3__get; break; }
+    case u3_hmet_head: { med = c3__head; break; }
     case u3_hmet_post: { med = c3__post; break; }
   }
   url = u3i_string(req_u->url_c);
