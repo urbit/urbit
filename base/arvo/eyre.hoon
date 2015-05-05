@@ -94,6 +94,7 @@
 ++  whir  $|  ~                                         ::  wire subset
           $%  [%at p=hole q=whir]                       ::  authenticated
               [%ay p=span:ship q=span:,@uvH ~]          ::  remote duct
+              [%he p=whir]                              ::  HEAD request
               [%of p=ixor q=$|(~ whir-of)]              ::  associated view
               [%on p=span:,@uvH ~]                      ::  dependency
               [%to p=ixor q=span:ship r=term s=wire]    ::  associated app
@@ -534,6 +535,16 @@
       |-  ^+  ..axon
       ?-    tee
           [?(%on %ay) *]  ~|(e/ford/lost/-.tee !!)
+          [%he *]                     ::  XX hack
+        =.  ..axon  $(tee p.tee)
+        %_  ..axon
+          mow  %+  turn  mow
+               |=  a=move
+               ?+  q.a  a
+                 [%give %thou *]  a(r.p.p.q ~)
+                 [%pass ^]        ?.(=(p.tee p.q.a) a a(p.q tee))
+        ==     ==
+      ::
           [%of ^]
         ?~  q.tee  ~|(e/ford/lost/tee !!)
         ?:  ?=(%| -.q.sih)
@@ -898,7 +909,8 @@
           ?(%beam %spur)
         =+  ext=(fall p.pok %urb)
         =+  bem=?-(-.hem %beam p.hem, %spur [root-beak p.hem])
-        [%& %| ~ (ford-get-beam bem ext)]
+        =+  wir=?+(mef !! %get ~, %head [%he ~])
+        [%& %| wir (ford-get-beam bem ext)]
       ::
           %bugs  
         ?-  p.hem
@@ -1258,11 +1270,11 @@
   |=  old=bolo
   ^+  ..^$
   =+  mej=|=(a=* (met 3 (jam a)))
-::   ~&  :*  gub=(mej gub.old)  hov=(mej hov.old)  ged=(mej ged.old)  ded=(mej ded.old)
-::           pox=(mej pox.old)  ask=(mej ask.old)  kes=(mej kes.old)  ney=(mej ney.old)
-::           dop=(mej dop.old)  liz=(mej liz.old)  wup=(mej wup.old)  sop=(mej sop.old)
-::           wix=(mej wix.old)
-::       ==
+  ~&  :*  gub=(mej gub.old)  hov=(mej hov.old)  ged=(mej ged.old)  ded=(mej ded.old)
+          pox=(mej pox.old)  ask=(mej ask.old)  kes=(mej kes.old)  ney=(mej ney.old)
+          dop=(mej dop.old)  liz=(mej liz.old)  wup=(mej wup.old)  sop=(mej sop.old)
+          wix=(mej wix.old)
+      ==
   ..^$(+>- old)
 ::
 ++  scry
