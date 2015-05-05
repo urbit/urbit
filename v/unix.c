@@ -607,6 +607,8 @@ _unix_dir_update(u3_udir* dir_u, DIR* rid_u)
             if ( ( NULL == strrchr(out_u->d_name, '.')) ||
                  ( '~' == out_u->d_name[strlen(out_u->d_name) - 1] )
                ) {
+              free(pax_c);
+              free(pot_c);
               continue;
             }
 
@@ -839,7 +841,7 @@ _unix_file_name(u3_ufil* fil_u)
 /* _unix_dir_khan_file(): process a file for khan.
 */
 static u3_noun
-_unix_dir_khan_file(u3_noun pam, u3_noun wib, u3_noun baw, u3_noun woz)
+_unix_dir_khan_file(u3_noun pam, u3_noun wib, u3_noun woz)
 {
   u3_weak ole;
   if ( c3n == u3du(wib) ) {
@@ -912,9 +914,8 @@ _unix_dir_khan(u3_udir* dir_u)
     if ( u3_nul != u3h(kan) || u3_nul != u3t(kan) ) {
       pam = u3kdb_put(pam, pre, kan);
     }
-    else
-    {
-      u3z(kan);
+    else {
+      u3z(kan); u3z(pre);
     }
   }
 
@@ -925,13 +926,12 @@ _unix_dir_khan(u3_udir* dir_u)
       if ( u3_none == wib ) continue;
       u3_noun dur = _unix_dir_name(dir_u);
       if ( c3n == u3r_sing(dur, u3h(wib)) ) {         //  wrong desk
-        u3z(wib); u3z(dur);
+        u3z(dur); u3z(wib);
         continue;
       }
-      u3_noun baw = _unix_file_load(fil_u);
-      u3_noun woz = u3nt(u3_nul, u3_nul, baw);
+      u3_noun woz = u3nt(u3_nul, u3_nul, _unix_file_load(fil_u));
+      pam = _unix_dir_khan_file(pam, u3k(u3t(wib)), woz);
       u3z(dur);
-      pam = _unix_dir_khan_file(pam, u3k(u3t(wib)), baw, woz);
       u3z(wib);
     }
   }
@@ -942,7 +942,7 @@ _unix_dir_khan(u3_udir* dir_u)
     u3_noun wol = (c3__none == baw ? u3nc(u3_nul, u3_nul) :
                    u3_nul == baw   ? u3_nul :
                                      u3nt(u3_nul, u3_nul, baw));
-    pam = _unix_dir_khan_file(pam, wib, baw, wol);
+    pam = _unix_dir_khan_file(pam, wib, wol);
   }
   return u3nc(u3_nul, pam);
 }
@@ -1085,6 +1085,8 @@ _unix_desk_sync_into(u3_noun  who,
   fav = u3nq(c3__into, who, syd, xun);
 
   u3v_plan(pax, fav);
+
+  u3z(hox);
 }
 
 /* _unix_ship_update(): update top level ship.
@@ -1207,6 +1209,8 @@ _unix_pdir(u3_udir* par_u, u3_noun tet)
   c3_c*     tet_c = u3r_string(tet);
   c3_w      pax_w = strlen(par_u->pax_c);
   u3_udir** dir_u;
+
+  u3z(tet);
 
   dir_u = &(par_u->dis_u);
   while ( 1 ) {
@@ -1340,7 +1344,7 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
 #endif
 
     _unix_save(pax_c, u3k(u3t(mim)));
-    _unix_save(pat_c, u3t(mim));
+    _unix_save(pat_c, u3k(u3t(mim)));
 
     if ( *fil_u ) {
       (*fil_u)->dot_c = (pax_c + ((*fil_u)->dot_c - (*fil_u)->pax_c));
@@ -1370,12 +1374,12 @@ _unix_desk_sync_tako(u3_udir* dir_u, u3_noun pax, u3_noun mim)
   if ( (c3n == u3du(pax)) ) {
     c3_assert(!"tack");
   }
-  else if ( c3n == u3du(u3t(pax)) ) {                //  at toplevel
+  else if ( c3n == u3du(u3t(pax)) ) {                   //  at toplevel
     u3_noun i_pax = u3h(pax);
     u3_noun t_pax = u3t(pax);
     c3_c* par_u = strrchr(dir_u->pax_c, '/') + 1;
     u3_noun pem = u3i_string(par_u);
-    c3_assert( u3_nul == t_pax );                      //  XX ugly, wrong
+    c3_assert( u3_nul == t_pax );                       //  XX ugly, wrong
 
     _unix_desk_sync_tofu(dir_u->par_u, pem, u3k(i_pax), mim);
   }
@@ -1402,15 +1406,18 @@ _unix_desk_sync_tako(u3_udir* dir_u, u3_noun pax, u3_noun mim)
   u3z(pax);
 }
 
-/* _unix_desk_sync_soba(): sync computed changes.
+/* _unix_desk_sync_list(): sync computed changes.
 */
 static void
 _unix_desk_sync_list(u3_udir* dir_u, u3_noun can)
 {
-  while ( u3_nul != can ) {
-    _unix_desk_sync_tako(dir_u, u3k(u3h(u3h(can))), u3k(u3t(u3h(can))));
-    can = u3t(can);
+  u3_noun nac = can;
+
+  while ( u3_nul != nac ) {
+    _unix_desk_sync_tako(dir_u, u3k(u3h(u3h(nac))), u3k(u3t(u3h(nac))));
+    nac = u3t(nac);
   }
+
   u3z(can);
 }
 
@@ -1423,6 +1430,10 @@ _unix_desk_sync_ergo(u3_noun  hox,
                      u3_noun  can,
                      u3_uhot* hot_u)
 {
+#if 0
+  u3z(hox); u3z(syd); u3z(lok); u3z(can);
+#else
+
   u3_udir** dir_u = _unix_pdir(&(hot_u->dir_u), syd);
 
 #if 0
@@ -1438,6 +1449,9 @@ _unix_desk_sync_ergo(u3_noun  hox,
   }
 
   _unix_desk_sync_list(*dir_u, can);
+  u3z(lok); u3z(syd); u3z(hox);
+
+#endif
 }
 
 /* u3_unix_ef_init(): update filesystem for new acquisition.
@@ -1466,9 +1480,14 @@ u3_unix_ef_ergo(u3_noun who,
   u3_uhot* hot_u;
 
   hot_u = _unix_home(who);
+  u3z(who);
 
   if ( 0 != hot_u ) {
     _unix_desk_sync_ergo(hox, syd, lok, can, hot_u);
+  }
+  else
+  {
+    u3z(syd); u3z(syd); u3z(rel); u3z(can);
   }
 }
 
