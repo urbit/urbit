@@ -543,10 +543,10 @@ u3a_malloc(size_t len_i)
   c3_w*   out_w = u3a_into(ptr_p + pad_w + 1);
 
 #if 0
-  if ( u3a_botox(out_w) == (u3a_box*)(void *)0x202320b88) {
-    static int xuc_i;
+  if ( u3a_botox(out_w) == (u3a_box*)(void *)0x3bdd1c80) {
+    static int xuc_i = 0;
 
-    printf("xuc_i %d\r\n", xuc_i);
+    fprintf(stderr,"xuc_i %d\r\n", xuc_i);
     // if ( 1 == xuc_i ) { abort(); }
     xuc_i++;
   }
@@ -561,6 +561,9 @@ u3a_malloc(size_t len_i)
 c3_w*
 u3a_celloc(void)
 {
+#ifdef U3_MEMORY_DEBUG
+  return u3a_walloc(c3_wiseof(u3a_cell));
+#else
   u3p(u3a_fbox) cel_p;
 
   if ( (u3R == &(u3H->rod_u)) || !(cel_p = u3R->all.cel_p) ) {
@@ -574,6 +577,7 @@ u3a_celloc(void)
 
     return u3a_boxto(box_u);
   }
+#endif
 }
 
 /* u3a_cfree(): free a cell.
@@ -581,6 +585,9 @@ u3a_celloc(void)
 void
 u3a_cfree(c3_w* cel_w)
 {
+#ifdef U3_MEMORY_DEBUG
+  return u3a_wfree(cel_w);
+#else
   if ( u3R == &(u3H->rod_u) ) {
     return u3a_wfree(cel_w);
   } 
@@ -591,6 +598,7 @@ u3a_cfree(c3_w* cel_w)
     u3to(u3a_fbox, fre_p)->nex_p = u3R->all.cel_p;
     u3R->all.cel_p = fre_p;
   }
+#endif
 }
 
 /* u3a_realloc(): aligned realloc in bytes.
