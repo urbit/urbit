@@ -5,6 +5,6 @@
 ::
 ::::
   !:
-|=  [^ [arg=cord ~] ~]
-:-  %oauth2-code
+|=  [^ [arg=(list cord) ~]]
+:-  %keys 
 arg

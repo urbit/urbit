@@ -1761,7 +1761,6 @@
 ++  poke-talk-command
   |=  [ost=bone her=ship cod=command]
   ^-  [(list move) _+>]
-  ::  ~&  [%talk-poke-command her cod]
   ra-abet:(~(ra-apply ra ost ~) her cod)
 ::
 ++  poke-sole-action
