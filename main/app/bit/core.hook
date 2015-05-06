@@ -1,0 +1,182 @@
+::
+::
+::::
+  :: 
+/?  314
+/-  *talk
+/+  talk, sole, http
+!:
+::::  sivtyv-barnel
+  ::  be sure to have oauth2-code mark
+|%
+++  axle  cred
+++  cred
+$:  client-id=(unit ,@t)   app-secret=(unit ,@t)
+    oauth-code=(unit ,@t)  auth-token=(unit ,@t)   
+    refr-token=(unit ,@t)  contacts=(map ,@t ,@t)
+==
+++  move  (mold note gift)
+++  sign
+  $%  $:  %e
+  $%  [%thou p=httr]
+  ==  ==
+  [%g %nice ~]
+  ==
+--
+!:
+|%
+++  auth-url  "https://sandbox.coinbase.com/oauth/authorize?". 
+    "response_type=code".
+    "&client_id=c911e4cb6d0b2ce4da92a75ae5acefe61a9b494332dd37844043ce820030d088".
+    "&redirect_uri={(urle "http://localhost:8443/main/pub/bit/fab")}".
+    "&scope=user+balance+buy+sell+send+transactions".
+    "&{(urle "meta[send_limit_amount]")}=1&{(urle "meta[send_limit_curency]")}".
+    "=BTC&{(urle "meta[send_limit_period]")}=day"
+--
+::
+!:
+|_  [hid=hide vat=axle]
+::++  prep  ,_`.
+++  poke-auth
+  |=  [ost=bone you=ship arg=[secr=cord id=cord]]
+  =:  app-secret.vat  [~ secr.arg]
+      client-id.vat   [~ id.arg]
+    ==
+  =+  prl=`purl`(need (epur (crip auth-url)))
+  :_  +>.$  
+  :^    %-  publish
+        :^  ost  you  %court
+        [%lin & 'secret and client id saved successfully']
+      (publish ost you %court [%url prl])
+    [ost %give %nice ~]
+  ~
+::
+++  poke-oauth2-code
+  |=  [ost=bone you=ship code=cord]
+  ~&  'oauth poked'
+  =.  oauth-code.vat
+  [~ code]
+  ?<  |(?=(~ client-id.vat) ?=(~ oauth-code.vat))
+  =+  ^=  queries
+  :~  ['grant_type' 'authorization_code']
+      ['code' (need oauth-code.vat)]
+      ['redirect_uri' 'http://localhost:8443/main/pub/bit/fab']
+      ['client_id' (need client-id.vat)]
+      ['client_secret' (need app-secret.vat)]
+  ==
+  :_  +>.$
+  :+  [ost %give %nice ~]
+    (httpreq ost /auth-token /com/coinbase/sandbox /oauth/token [%post ~] ~ queries)
+  ~
+++  poke-buy
+  |=  [ost=bone you=ship arg=[amount=@t currency=@t]]
+  ~&  'buy boked'
+  ?<  =(~ amount.arg)
+  =+  query=['access_token' (need auth-token.vat)]~
+  =+  ^=  pst
+      ?:  =(~ currency.arg)
+        (jobe qty/s/amount.arg ~)
+     (jobe qty/s/amount.arg currency/s/currency.arg ~)
+      :_  +>.$
+      :+  [ost %give %nice ~]
+      (httpreq ost /buy /com/coinbase/sandbox/api /v1/buys [%post pst] ~ query)
+      ~
+::
+++  poke-bit-contact
+  |=  [ost=bone you=ship arg=[name=@t address=@t]]
+  =.  contacts.vat  (~(put by contacts.vat) arg) 
+  ~&  saved/contacts.vat
+  :_  +>.$
+  [ost %give %nice ~]~
+::
+++  poke-bit-list
+  |=  [ost=bone you=ship arg=~]
+  =+  query=['access_token' (need auth-token.vat)]~
+  :_  +>.$
+  :+  [ost %give %nice ~]
+    (httpreq ost /list /com/coinbase/sandbox/api /v1/accounts %get ~ query)
+  ~
+::
+++  poke-sell
+  |=  [ost=bone you=ship arg=[amount=@t currency=@t]] 
+  ?<  =(amount.arg ~)
+  ~&  'haven\'t crashed'
+  =+  query=['access_token' (need auth-token.vat)]~
+  =+  ^=  pst
+      ?:  =(~ currency.arg)
+        (jobe qty/s/amount.arg currency/s/currency.arg ~)
+      (jobe qty/s/amount.arg ~)
+      :_  +>.$
+      :+  [ost %give %nice ~]~
+        (httpreq ost /buy /com/coinbase/sandbox/api /v1/sells [%post pst] ~ query)
+      ~
+::
+++  poke-bit-send
+  |=  $:  ost=bone  you=ship
+      arg=[to=@t amone=(unit ,@t) cur=(unit ,@t) amtwo=(unit ,@t) nt=(unit ,@t)]
+      ==
+  =+  adr=?~((~(get by contacts.vat) to.arg) to ~&('contact-exists' (~(get by contacts.vat) to.arg))) 
+  =+  query=['access_token' (need auth-token.vat)]~
+  =+  ^=  info
+      ?~  cur.arg  
+        [to/s/to.arg amount/s/(need amone.arg) ~]
+      ?~  nt.arg
+        [to/s/to.arg 'amount_currency_iso'^s/(need cur.arg) 'amount_string'^s/(need amtwo.arg) ~]
+      [to/s/to.arg amount/s/(need amtwo.arg) 'amount_string'^s/(need amtwo.arg) ~]
+  =+  ^=  pst
+      (jobe transaction/(jobe info) ~)  
+  :_  +>.$
+  :+  [ost %give %nice ~]
+    (httpreq ost /send /com/coinbase/sandbox/api /v1/transactions/'send_money' [%post pst] ~ query)
+  ~
+++  pour
+  |=  [ost=bone pax=path res=sign]
+  ?+  -.pax  !!
+    %auth-token
+      ?>  ?=(%e -.res)
+      ~|  'must receive a 200'
+      ?>  =(200 p.p.res)
+      =+  resp=(rash q:(need r.p.res) apex:poja)
+      =+  parsed=(need ((ot 'refresh_token'^so 'access_token'^so ~):jo resp))
+      ~&  parsed
+      =:  auth-token.vat  [~ +.parsed]
+          refr-token.vat  [~ -.parsed]
+        ==
+      ~&  [auth-token.vat refr-token.vat]
+      :_  +>.$  [ost %give %nice ~]~
+    %auth
+      :_  +>.$
+      [ost %give %nice ~]~
+    %send
+      ~&  res
+      :_  +>.$
+      [ost %give %nice ~]~
+    %buy
+      ~&  res
+      :_  +>.$
+      [ost %give %nice ~]~
+    %list
+      ~&  res
+      :_  +>.$
+      [ost %give %nice ~]~
+    %sell
+      ~&  res
+      :_  +>.$
+      [ost %give %nice ~]~
+  ==
+::
+++  publish
+  |=  [ost=bone you=ship dest=?(%porch %court) act=speech]
+  =+  ^-  thot=thought
+      :+  *serial
+        ^-  audience
+        :+  :-  `partner`[%& our.hid %court]
+            ^-  (pair envelope delivery)
+            [`envelope`[& ~] %pending]
+          ~
+        ~
+      `statement`[lat.hid ~ act]
+  =.  p.thot  `@`(sham eny.hid +.thot)
+  =+  cag=`cage`[%talk-command !>([%publish `(list thought)`[thot ~]])]
+  [ost %pass /auth %g %mess [our.hid /talk] you cag]
+--
