@@ -1,4 +1,4 @@
-/* g/t.c
+/* g/t.c  -
 **
 ** This file is in the public domain.
 */
@@ -44,7 +44,7 @@ void
 u3t_slog(u3_noun hod)
 {
 #ifdef GHETTO
-  static int old; 
+  static int old;
   static struct timeval b4, f2, d0;
   c3_w ms_w;
           
@@ -52,15 +52,18 @@ u3t_slog(u3_noun hod)
     gettimeofday(&f2, 0); 
     timersub(&f2, &b4, &d0);
     ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
-    if(ms_w > 10 || 1){
-      printf("%3d.%02dms ", ms_w, (d0.tv_usec % 1000) / 10);
+    if (ms_w > 10) {
+      printf("%6d.%02dms ", ms_w, (int) (d0.tv_usec % 1000) / 10);
       gettimeofday(&b4, 0);
+    }
+    else {
+      printf("            ");
     }
   }
   else gettimeofday(&b4, 0);
   old = 1;
-#endif
 
+#endif
   if ( c3y == u3du(hod) ) {
     u3_noun pri = u3h(hod);
 

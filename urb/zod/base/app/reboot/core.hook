@@ -1,0 +1,37 @@
+::  Reboot %zuse and all kernel vanes
+::
+::::  /hook/core/reboot/app
+  ::
+/+    sh-utils
+!:
+::::
+  ::
+|_  [hid=hide ~]
+++  peer  ,_`.
+++  poke--args
+  %^  add-output  .
+    rush/tang/[leaf/"done"]~
+  %+  args-into-resp  .
+  |=  arg=~
+  %-  turn   
+  :_  |=  [tip=@tasD nam=@tas]
+      =+  pax=[(scot %p our.hid) %arvo (scot %da lat.hid) nam %hoon ~]
+      [%veer tip pax (,@ +:.^(%cx pax))]
+  ^-  (list ,[p=@tas q=@tas])
+  :~  [%$ %zuse]
+      [%a %ames]
+      [%c %clay]
+      [%d %dill]
+      [%e %eyre]
+      [%f %ford]
+      [%g %gall]
+      [%t %time]
+  ==
+++  pour
+  %+  gate-bang
+    =+  pax=/(scot %p our.hid)/=/(scot %da lat.hid)/==count/txt
+    =+  nuf=(file pax)
+    =+  num=?~(nuf 0 +((fall (slaw %ud (,@t u.nuf)) 0)))
+    ,_[%c %info our.hid (foal pax num)]                 ::  touch clay to reload apps
+  ,_`.
+--

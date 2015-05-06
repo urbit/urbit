@@ -1,0 +1,20 @@
+::
+::::  /hook/core/talk/lib
+  ::  
+  ::  This file is in the public domain.
+  ::
+/?    314
+/-    *talk
+::
+::::
+  ::
+|%
+++  main                                                ::  main story
+
+  |=  our=ship  ^-  cord
+  =+  can=(clan our)
+  ?+  can  %porch
+    %czar  %court
+    %king  %floor
+  == 
+--

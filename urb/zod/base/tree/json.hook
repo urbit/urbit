@@ -1,0 +1,50 @@
+::
+/?    314
+/=    gas    /$    fuel
+/=    ral    /:    /=home=/pub    /%  /react-js/
+/=    pal    /:    /=home=/pub
+             /;    |=  a=(map ,@ta cord)  a
+             /%    2
+             /_    /react-js/
+::
+/=    sal    /:    /=home=/pub
+             /;    |=  a=(map ,@ta json)  a
+             /%    2
+             /_    /react-snip-json/
+::
+::::
+  ::
+//    /%%/util
+::
+[util=. +>]
+::
+!:
+::::
+  ::
+^-  json
+=+  ~(. util gas)
+::  .json?kids
+?:  (~(has by qix.gas) %kids)
+  %+  joba  %kids
+  =.  pal  (~(del by pal) %md)                                     :: XX haxor
+  =-  [%a (turn (~(tap by pal)) -)]
+  |=  [a=span b=cord] 
+  %-  jobe  :~
+    name/s/a
+    body/s/b
+  ==
+::  .json?snip
+?:  (~(has by qix.gas) %snip)
+  %+  joba  %snip
+  =.  sal  (~(del by sal) %md)                                   :: XX haxor
+  =-  [%a (turn (~(tap by sal)) -)]
+  |=  [a=span b=json]
+  %-  jobe  :~
+    name/s/a
+    body/b
+  ==
+::  .json
+%-  jobe  :~
+  kids/[%a (turn get-kids |=(a=span s/a))]
+  body/[%s ral]
+==

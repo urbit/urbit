@@ -1,0 +1,50 @@
+::  Hi, send optional message to a ship
+::
+::::  /hook/core/hi/bin
+  ::
+/+    sh-utils
+::
+::::
+  ::
+|%
+++  sign                                                ::
+  $%  $:  %g                                            ::
+  $%  [%nice ~]                                         ::
+      [%mean p=ares]                                    ::
+  ==  ==  ==
+++  flog                                                ::  sent to %dill
+          $%  [%crud p=@tas q=(list tank)]              ::
+              [%text p=tape]                            ::
+          ==                                            ::
+--
+!:
+::::
+  ::
+|_  [hid=hide ~]
+++  peer  
+  |=  [ost=bone ^]
+  ~&  per=ost
+  `+>
+++  poke--args
+  |=  [bone you=ship her=ship mes=?(~ [tex=tape ~])]
+  %.  +<
+  %+  add-resp
+    =+  mez=[%txt !>(?~(mes '' (crip tex.mes)))]
+    [%pass /hi/(scot %p her) %g %mess [her /hi] you mez]  
+  (add-nice ,_`+>.$)
+::
+++  poke-txt
+  %-  add-nice
+  |=  [ost=bone him=ship cor=@t]
+  ~&  from=ost
+  :_  +>.$
+  [ost %pass /di %d %flog %text "< {<him>}: {(trip cor)}"]~
+::
+++  pour
+  |=  [ost=bone pax=path sih=sign]
+  ?>  ?=([%hi @t ~] pax)
+  %.  +<
+  =+  ack=?+(+<.sih "unsuccesful" %nice "succesful")
+  (add-exit (print +>.$ "hi {(trip i.t.pax)} {ack}"))
+::
+--
