@@ -1,0 +1,388 @@
+//
+// fonts first
+//
+
+@import 'fonts'
+
+.iden
+.audi
+.time
+#length
+#where
+#who
+.station
+  font-family "scp"
+
+.join-ctrl input
+  font-family "bau"
+  
+input
+  -webkit-appearance none
+  border-radius 0
+
+html
+body
+  height 100%
+  font-family "bau"
+
+#length
+.time
+  font-size .6rem
+  letter-spacing 0
+
+.time
+  font-weight 200
+
+#length
+  font-weight 500
+
+input.join
+.iden
+.audi
+#station
+  font-size .7rem
+
+.iden
+  font-weight 600
+
+html
+body
+  font-size 18px
+
+//
+// containers
+//
+
+body
+  background-color #fefefe
+  padding 0
+  margin 0
+
+.hidden
+  display none
+
+#c
+  position absolute
+  top 0rem
+  left 50%
+  width 58rem
+  margin-left -29rem
+  margin-bottom 12rem
+
+#station-container
+  position fixed
+  width 58rem
+  max-height 2.7rem
+  background-color white
+  border-bottom .3rem solid black
+  padding-bottom 1rem
+  overflow hidden
+  z-index 10
+  -webkit-transition max-height .2s
+  
+#station #station-container
+  padding-top 1rem
+  min-width 30rem
+  text-align right
+
+#writing-container
+  bottom 4rem
+  margin-bottom 1rem
+
+#messages-container
+  vertical-align top
+  margin-top 4rem
+
+//
+// components
+//
+
+.caret
+.circle
+  display inline-block
+
+.caret
+  width 0
+  height 0
+  border-top 6px solid transparent
+  border-right 6px solid transparent
+  border-bottom 6px solid transparent
+  border-left 6px solid #000
+  margin-top 2px
+
+.circle
+  width 6px
+  height 6px
+  border 3px solid black
+  border-radius 6px
+  margin-top 2px
+
+//
+// station
+//
+
+#station-container #where .caret
+  -webkit-transform rotate(0deg)
+  -webkit-transform-origin 0 50%
+  -webkit-transition -webkit-transform .2s
+
+#head
+  width 100%
+  height 4rem
+
+#station-container h1
+  font-weight 500
+  font-size .6rem
+  letter-spacing .06rem
+  display inline-block
+  line-height 1.2rem
+
+#audience
+#who
+  width 34.6rem
+  
+#stations
+#where
+  width 17.3rem
+  
+#stations
+#audience
+#head > div
+  display inline-block
+  text-align right
+  vertical-align top
+
+#head > div
+  height 2rem
+  margin-top 1.5rem
+
+#where .caret
+  border-left-color red
+  margin-left 1rem
+
+#where > span
+#who > span
+  vertical-align top
+
+#who > span
+  margin-left 1rem
+
+#members > div
+  display block
+
+#members > div div
+  display inline-block
+  vertical-align bottom
+
+#members .audi
+  margin-right .3rem
+
+#members .iden
+  min-width 10rem
+
+.station div
+  display inline-block
+
+.station .remove
+  opacity 0
+  cursor pointer
+  width .6rem
+  margin-right .6rem
+  font-weight 600
+  color #ff0000
+
+.station:hover .remove
+  opacity 1
+
+// add source
+.sour-ctrl input
+  font-family "scp"
+  border none
+  font-weight 400
+  text-align right
+  line-height 1rem
+  outline none
+  cursor pointer
+  
+.sour-ctrl input::-webkit-input-placeholder
+  font-family "scp"
+  font-size 1rem
+  font-weight 600
+  margin-left .6rem
+  color #000
+
+.sour-ctrl input:focus::-webkit-input-placeholder
+  color white
+
+//
+// messages
+//
+
+.message
+  padding-top .3rem
+
+#messages .message:last-child
+  margin-bottom 1rem
+
+#messages .message .time
+  opacity 0
+
+#messages .message:last-child .time
+#messages .message:hover .time
+  opacity 1
+
+#messages .message .ship
+#messages .message .audi > div
+  cursor pointer
+
+#messages .message.new
+  border-top 1px solid #e5e5e5
+
+.member
+  width 12rem
+  margin .3rem .6rem .3rem 0
+
+#messages
+  height auto
+
+.message.pending
+  color #ccc
+
+.message.say .mess
+  font-style italic
+
+a
+  text-decoration underline
+  color inherit
+
+.mess
+.iden
+#station .member div
+#writing
+  display inline-block
+
+.mess
+#writing
+#length
+  vertical-align top
+
+.attr > div
+  max-width 16rem
+
+.attr
+  text-align right
+  display inline-block
+  margin-right .3rem
+  min-width 16rem
+
+.attr .iden
+  margin-left .3rem
+
+.audi
+  white-space nowrap
+  overflow hidden
+  background-color #fff
+
+.audi > div
+  margin-right .3rem
+  max-width 8rem
+
+.iden > div
+  max-width 10rem
+
+.iden > div
+.audi > div
+  display inline-block
+  background-color white
+  overflow hidden
+  white-space nowrap
+  text-overflow ellipsis
+  -webkit-transition max-width .2s
+
+.audi > div:last-child
+  margin-right 0
+
+.iden > div:hover
+.audi > div:hover
+  position relative
+  -webkit-transition max-width .2s
+
+.mess
+  font-size .9rem
+  letter-spacing .03rem
+  word-wrap break-word
+  margin-left .3rem
+
+.mess
+#writing
+.iden > div:hover
+.audi > div:hover
+  max-width 30rem
+
+//
+// writing
+//
+
+#writing
+  font-size .9rem
+  min-height 1.6rem
+  min-width 1.3rem
+  outline none
+  background-color #eee
+  padding .3rem .1rem
+  margin-left .2rem
+  margin-top -.3rem
+  
+
+#writing:focus
+  background-color #fff
+
+.writing
+  padding-top .3rem
+
+.writing #length
+  display inline
+  margin-left 1rem
+  margin-top 1.2rem
+
+.writing .iden
+  display block
+  text-align right
+  width 100%
+
+.writing .iden .ship
+  margin-right .3rem
+
+#audi
+  display inline-block
+  background-color #eee
+  padding .3rem .1rem
+  margin-top -.3rem
+  margin-right -.2rem
+  outline none
+  overflow hidden
+  max-width 9rem
+
+.valid-false
+  color #ff2f2f
+
+//
+// scrolling
+//
+
+#scrolling
+  display none
+
+.scrolling #scrolling
+  position fixed
+  bottom 3rem
+  left 2rem
+  height 1rem
+  padding 1rem
+  height 2rem
+  background-color #f9f9f9
+  font-weight 500
+  font-size .8rem
+  text-transform uppercase
+
+@import 'mobile'
