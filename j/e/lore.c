@@ -19,7 +19,7 @@
       } else {
         meg_w = 0;
 
-	c3_y byt_y;
+        c3_y byt_y;
         while ( 1 ) {
           byt_y = u3r_byte(pos_w + meg_w, lub);
 
@@ -29,8 +29,8 @@
         }
 
         if ((byt_y == 0) && ((pos_w + meg_w + 1) < len_w)) {
-	  return u3m_bail(c3__exit);
-	}
+          return u3m_bail(c3__exit);
+        }
 
         {
           c3_y* byts_y = alloca(meg_w);

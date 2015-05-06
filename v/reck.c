@@ -103,9 +103,12 @@ _reck_kick_term(u3_noun pox, c3_l tid_l, u3_noun fav)
       u3A->own = u3nc(u3k(p_fav), u3A->own);
 
       u3_unix_ef_init(u3k(p_fav));
-
-      uL(fprintf(uH, "kick: init: %d\n", p_fav));
-      u3z(pox); u3z(fav); return c3y;
+    
+      u3_noun hox =  u3dc("scot", 'p', u3k(p_fav));
+      c3_c* nam_c = u3r_string(hox);
+      
+      uL(fprintf(uH, "kick: init: %s\n", nam_c));
+      free(nam_c); u3z(pox); u3z(hox); u3z(fav); return c3y;
     } break;
   }
   c3_assert(!"not reached"); return 0;
@@ -156,9 +159,10 @@ _reck_kick_sync(u3_noun pox, u3_noun fav)
     case c3__ergo: {
       u3_noun who = u3k(u3h(u3t(fav)));
       u3_noun syd = u3k(u3h(u3t(u3t(fav))));
-      u3_noun rel = u3k(u3t(u3t(u3t(fav))));
+      u3_noun rel = u3k(u3h(u3t(u3t(u3t(fav)))));
+      u3_noun can = u3k(u3t(u3t(u3t(u3t(fav)))));
 
-      u3_unix_ef_ergo(who, syd, rel);
+      u3_unix_ef_ergo(who, syd, rel, can);
       u3z(pox); u3z(fav); return c3y;
     } break;
   }

@@ -1,5 +1,7 @@
 /* j/4/by_uni.c
-**
+** XXX THIS IS DISABLED
+** specifically, s/hor/gor/g (already done?)
+** and eliminate memory leaks
 */
 #include "all.h"
 
@@ -47,7 +49,7 @@
                               u3qdb_uni(
                                 u3k(r_a), u3k(r_b)));
         }
-        else if ( c3y == u3qc_hor(p_n_b, p_n_a) ) {
+        else if ( c3y == u3qc_gor(p_n_b, p_n_a) ) {
           return u3qdb_uni(
 
             u3nt(
@@ -83,7 +85,7 @@
           u3qdb_uni(u3k(r_b), u3k(r_a)),
           u3qdb_uni(u3k(l_b), u3k(l_a)));
       }
-      else if ( c3y == u3qc_hor(p_n_a, p_n_b) ) {
+      else if ( c3y == u3qc_gor(p_n_a, p_n_b) ) {
         return u3qdb_uni(
 
           u3k(r_a),
