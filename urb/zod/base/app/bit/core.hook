@@ -38,7 +38,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
 |_  [hid=hide vat=axle]
 ++  prep  ,_`.
 ++  redirect-uri  (crip (weld hostname "/~~/home/pub/bit/fab"))
-++  hostname  "http://104.236.139.191:{?+((clan our.hid) !! %czar "8444", %duke "8443")}"::{+:<our.hid>}.urbit.org
+++  hostname  "http://104.236.139.191:{?+(our.hid !! %~zod "8443", %~reg "8444")}"::{+:<our.hid>}.urbit.org
 ++  auth-url
   %+  weld  "https://www.coinbase.com/oauth/authorize"
   %-  tail:earn  :~
@@ -64,8 +64,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
     ==
   =+  prl=`purl`(need (epur (crip auth-url)))
   :_  +>.$  
-  :+    %-  publish  
-        :^  ost  you  ?+((clan our.hid) !! %czar %court, %duke %porch)
+  :+    %^  publish  ost  you
         :~  [%lin & 'secret and client id saved successfully']
             [%lin & 'please click on the url below to continue authentication']
             [%url prl] 
@@ -193,11 +192,11 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   |=  [ost=bone you=ship arg=json]
       ~&  arg
       :_  +>.$
-      =+  [adr amo]=(need %.(arg (ot address/sa amount/no ~):jo))
+      =+  [adr amo]=(need %.(arg (ot address/so amount/no ~):jo))
       =+  frm=(~(get by incoming.vat) adr)
       :_  [ost %give %nice ~]~
       ~!  frm
-      (publish ost our.hid %porch [%lin & (crip "just received {(trip amo)} BTC from {<frm>}")]~)
+      (publish ost our.hid [%lin & (crip "just received {(trip amo)} BTC from {<frm>}")]~)
       ::(api-call ost /get-id /transactions/[transaction-id] %get)
 ++  pour-get-id             ::  display transaction info
   |=  [ost=bone pax=path rez=json]
@@ -239,14 +238,14 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   ==
 ::
 ++  publish
-  |=  [ost=bone you=ship dest=?(%porch %court) act=(list speech)]
+  |=  [ost=bone you=ship act=(list speech)]
   ^-  move
   =+  ^=  spchz
       %+  turn  act
       |=  sp=speech
       =+  ^=  tail
       :-  ^-  audience
-          :+  :-  `partner`[%& our.hid dest]
+          :+  :-  `partner`[%& our.hid ?+((clan our.hid) !! %czar %court, %duke %porch)]
               ^-  (pair envelope delivery)
               [`envelope`[& ~] %pending]
             ~
