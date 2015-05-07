@@ -61,6 +61,7 @@
               [%many p=(list coin)]                     ::
           ==                                            ::
 ++  cord  ,@t                                           ::  text atom (UTF-8)
+++  dock  (pair ,@p term)                              ::  message target
 ++  date  ,[[a=? y=@ud] m=@ud t=tarp]                   ::  parsed date
 ++  dime  ,[p=@ta q=@]                                  ::
 ++  each  |*([a=$+(* *) b=$+(* *)] $%([& p=a] [| p=b])) ::  either a or b
@@ -101,6 +102,8 @@
 ++  nail  ,[p=hair q=tape]                              ::  parsing input
 ++  numb  ,@                                            ::  just a number
 ++  pair  |*([a=$+(* *) b=$+(* *)] ,[p=a q=b])          ::  just a pair
+++  quid  |*([a=$+(* *) b=*] ,[a _b])                   ::  for =^
+++  quip  |*([a=$+(* *) b=*] ,[(list a) _b])            ::  for =^
 ++  wand  |*  a=(pole $+(* *))                          ::  hetero list
           |=  b=*                                       ::
           ?~  a  ~                                      ::
@@ -5969,6 +5972,14 @@
   |=  [cog=@tas typ=type]
   !=(~ q:(~(fino ut typ) 0 %free cog))
 ::
+++  slob                                                ::  superficial arm
+  |=  [cog=@tas typ=type]
+  ^-  ?
+  ?+  typ  |
+    [%hold *]  $(typ ~(repo ut typ))
+    [%core *]  (~(has by q.r.q.typ) cog)
+  ==
+::
 ++  sloe                                                ::  get arms in core
   |=  typ=type
   ^-  (list term)
@@ -9204,7 +9215,7 @@
     ++  expv  |.(;~(gunk lobe wisp))                    ::  tile, core tail
     ++  expw  |.(;~(gunk lobe teak))                    ::  tile and tiki
     ++  expx  |.((butt ;~(gunk teak race)))             ::  tiki, [tile twig]s
-    ++  expy  |.((butt ;~(gunk teak loaf race)))        :: tiki twig [tile twig]s
+    ++  expy  |.((butt ;~(gunk teak loaf race)))        ::  tk twig [tile twig]s
     ++  expz  |.(loaf(bug &))                           ::  twig with tracing
     ::    Hint syntaces  (nock 10)
     ++  hinb  |.(;~(gunk bont loaf))                    ::  hint and twig
@@ -9585,12 +9596,13 @@
 ++  cage  (cask vase)                                   ::  global metadata
 ++  cask  |*(a=_,* (pair mark a))                       ::  global data
 ++  cuff                                                ::  permissions
-          $:  p=kirk                                    ::  readers
-              q=(set monk)                              ::  authors
+          $:  p=(unit (set monk))                       ::  can be read by
+              q=(set monk)                              ::  caused or created by
           ==                                            ::
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
 ++  gage  (pair marc vase)                              ::  structured cage
+++  from  ,[ost=bone src=ship]                          ::  forward problem
 ++  hide                                                ::  standard app state
         $:  $:  our=ship                                ::  owner/operator
                 app=term                                ::  app identity
@@ -9625,6 +9637,7 @@
   $%  [%tabl p=(list (pair marc marc))]                 ::  map
   ==                                                    ::
 ++  mark  ,@tas                                         ::  content type
+++  mass  (each noun (list (pair cord ,mass)))          ::  memory usage
 ++  mill  (each vase milt)                              ::  vase/metavase
 ++  milt  ,[p=* q=*]                                    ::  metavase
 ++  monk  (each ship khan)                              ::  general identity
@@ -9646,6 +9659,7 @@
 ++  slad  $+  [(unit (set monk)) term beam]             ::  undertyped
           (unit (unit (cask)))                          ::
 ++  slut  $+(* (unit (unit)))                           ::  old namespace
+++  then  ,[ost=bone src=ship way=wire]                 ::  backward problem
 ++  vile                                                ::  reflexive constants
           $:  typ=type                                  ::  -:!>(*type)
               duc=type                                  ::  -:!>(*duct)
@@ -9989,6 +10003,7 @@
     |=  [lac=? gum=muse]
     ^-  [[p=(list ovum) q=(list muse)] _niz]
     ::  =.  lac  |(lac ?=(?(%g %f) p.gum))
+    ::  =.  lac  &(lac !?=(%b p.gum))
     %+  fire
       p.gum 
     ?-    -.r.gum
@@ -10070,6 +10085,20 @@
                 $(ova t.ova, +>+.^$ (veer now q.i.ova))
               ?:  ?=(%vega -.q.i.ova)
                 (vega now t.ova (path +.q.i.ova))
+              ?:  ?=(%mass -.q.i.ova)
+                =+  avo=$(ova t.ova)
+                :_  +.avo
+                :_  -.avo
+                %=    i.ova
+                    q.q
+                  :-  %|
+                  :~  [%hoon `pit]
+                      [%zuse `bud]
+                      [%hoon-cache `p.niz]
+                      [%vanes q.q.i.ova]
+                      [%dot `.]
+                  ==
+                ==
               =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
     ++  wish  |=(* (^wish ((hard ,@ta) +<)))            ::  20
     --
