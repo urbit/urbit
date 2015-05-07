@@ -134,7 +134,7 @@ module.exports = recl
       v = v.split " "
       v = window.util.expandAudi v
       for k,_v of v
-        v[k] = "~#{_v}"
+        if _v[0] isnt "~" then v[k] = "~#{_v}"
       StationActions.setAudience v
 
   getTime: ->
