@@ -13,9 +13,19 @@
 ++  cred
 $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
     oauth-code=(unit ,@t)  auth-token=(unit ,@t)   
-    refr-token=(unit ,@t)  cont-to-adr=(map ,@t ,@t)
+    refr-token=(unit ,@t)  contacts=(map ,@t ,@t)
+    outgoing=(map ship ,@t)
 ==
-::++  move  (mold note gift)
+++  move  ,[bone (mold note gift)]
+++  hapt  ,[ship path]
+++  note
+  $%  [%g %mess hapt ship cage]
+      [%e %them (unit hiss)]
+  ==
+++  gift
+  $%  [%nice ~]
+      [%mean ares]
+  ==
 ++  sign
   $%  $:  %e
   $%  [%thou p=httr]
@@ -23,20 +33,30 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   [%g %nice ~]
   ==
 --
-!:
-|%
-++  auth-url  "https://www.coinbase.com/oauth/authorize?". 
-    "response_type=code".
-    "&client_id=c911e4cb6d0b2ce4da92a75ae5acefe61a9b494332dd37844043ce820030d088".
-    "&redirect_uri={(urle "http://localhost:8443/home/pub/bit/fab")}".
-    "&scope=user+balance+buy+sell+send+transactions".
-    "&{(urle "meta[send_limit_amount]")}=1&{(urle "meta[send_limit_curency]")}".
-    "=BTC&{(urle "meta[send_limit_period]")}=day"
---
 ::
 !:
 |_  [hid=hide vat=axle]
 ::++  prep  ,_`.
+++  redirect-uri  (crip (weld hostname "/~~/home/pub/bit/fab"))
+++  hostname  "http://{+:<our.hid>}.urbit.org"
+++  auth-url
+  %+  weld  "https://www.coinbase.com/oauth/authorize"
+  %-  tail:earn  :~
+    'response_type'^%code
+    'client_id'^(need client-id.vat)
+    'redirect_uri'^redirect-uri
+    'scope'^'user balance buy sell send transactions addresses'
+    'meta[send_limit_amount]'^'1'
+    'meta[send_limit_curency]'^'BTC'
+    'meta[send_limit_period]'^'day'
+  ==
+++  api-call
+  |=  [ost=bone pour-path=wire end-point=path req=$|(%get [%post p=json])]
+  ^-  move
+  %^  httpreq  ost  pour-path 
+  [/com/coinbase/api v1/end-point req ~ ['access_token' (need auth-token.vat)]~]
+::
+++  callback-uri  (weld hostname "/~/to/{(trip app.hid)}/json.json?anon&wire=/")
 ++  poke-auth
   |=  [ost=bone you=ship arg=[secr=cord id=cord]]
   =:  app-secret.vat  [~ secr.arg]
@@ -44,8 +64,8 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
     ==
   =+  prl=`purl`(need (epur (crip auth-url)))
   :_  +>.$  
-  :+    %-  publish
-        :^  ost  you  %court
+  :+    %-  publish  
+        :^  ost  you  ?+((clan our.hid) !! %czar %court, %duke %porch)
         :~  [%lin & 'secret and client id saved successfully']
             [%lin & 'please click on the url below to continue authentication']
             [%url prl] 
@@ -53,16 +73,56 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
     [ost %give %nice ~]
   ~
 ::
+++  send-message                      ::  inter-app interface
+  |=  [ost=bone his=ship mez=$%([%bit-addr-request ~] [%bit-addr-made @t])]
+  ^-  move
+  =+  vax=(spec !>(mez))
+  [ost %pass /message `note`[%g %mess [his /[app.hid]] our.hid `cage`[-.mez (slot 3 vax)]]]
+::
+++  poke--send                        ::  send to ship
+  |=  [ost=bone @ to=ship amount=@t]
+  =.  outgoing.vat  (~(put by outgoing.vat) to amount)
+  :_  +>.$
+  :_  [ost %give %nice ~]~
+  (send-message ost to %bit-addr-request ~)
+++  poke-bit-addr-request             ::  give your address to receive bit
+  |=  [ost=bone his=ship req=~]           ::  gen new address with callback
+  :_  +>.$
+  :_  [ost %give %nice ~]~
+  %^  api-call  ost  /addr-request/(scot %p his) 
+  :+  /addresses  %post
+  %+  joba  %address
+  %-  jobe  :~
+    label/(jape "address for {<his>}")
+    'callback_url'^(jape callback-uri)
+  ==
+  ::
+++  pour-addr-request             ::  send new address to sender
+  |=  [ost=bone pax=path rez=json]
+  :_  +>.$
+  :_  ~
+  =+  adr=(need ((ot address/so ~):jo rez))
+  (send-message ost (slav %p +<.pax) %bit-addr-made adr)
+::
+++  poke-bit-addr-made             ::  receive address for sending
+  |=  [ost=bone his=ship addr=@t]
+  :_  +>.$
+  :_  [ost %give %nice ~]~
+  =+  amount=(~(got by outgoing.vat) his)             ::  get amount to send
+  =+  info=[to/s/addr amount/s/amount ~]
+  =+  jon=(joba %transaction (jobe info))
+  (api-call ost /send /transactions/'send_money' %post jon)
+  ::
 ++  poke-oauth2-code
   |=  [ost=bone you=ship code=cord]
   ~&  'oauth poked'
   =.  oauth-code.vat
-  [~ code]
+    [~ code]
   ?<  |(?=(~ client-id.vat) ?=(~ oauth-code.vat))
   =+  ^=  queries
   :~  ['grant_type' 'authorization_code']
       ['code' (need oauth-code.vat)]
-      ['redirect_uri' 'http://localhost:8443/base/pub/bit/fab']
+      ['redirect_uri' redirect-uri]
       ['client_id' (need client-id.vat)]
       ['client_secret' (need app-secret.vat)]
   ==
@@ -113,7 +173,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
         (httpreq ost /buy /com/coinbase/api /v1/sells [%post pst] ~ query)
       ~
 ::
-++  poke-send
+++  poke-send-raw
   |=  $:  ost=bone  you=ship
       arg=[to=@t amone=(unit ,@t) cur=(unit ,@t) amtwo=(unit ,@t) nt=(unit ,@t)]
       ==
@@ -135,21 +195,24 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
 ++  poke-json
   |=  [ost=bone you=ship arg=json]
       ~&  arg
-      =+  queries=['access_token' (need auth-token.vat)]~
-      =+  transaction-id='554b029661a032acbb000024' ::  XX pars
       :_  +>.$
+      =+  [adr amo]=(need %.(arg (ot address/sa amount/no ~):jo))
       :_  [ost %give %nice ~]~
-      %-  httpreq
-      :*  ost  /get-id  /com/coinbase/api
-	  /v1/transactions/[transaction-id]  %get
-          ~  queries  
-      ==
+      (publish ost our.hid %porch [%lin & (crip "got {(trip amo)} BTC from {adr}")]~)
+      ::(api-call ost /get-id /transactions/[transaction-id] %get)
+++  pour-get-id             ::  display transaction info
+  |=  [ost=bone pax=path rez=json]
+  :_  +>.$
+  :_  ~
+  !! 
+::
 ++  pour
   |=  [ost=bone pax=path res=sign]
   ?+  -.pax  !!
     %auth-token
       ?>  ?=(%e -.res)
-      ~|  'must receive a 200'
+      ~|  'must receive a 200'^oauth-code.vat
+      ~|  res
       ?>  =(200 p.p.res)
       =+  resp=(rash q:(need r.p.res) apex:poja)
       =+  parsed=(need ((ot 'refresh_token'^so 'access_token'^so ~):jo resp))
@@ -159,39 +222,32 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
         ==
       ~&  [auth-token.vat refr-token.vat]
       :_  +>.$  [ost %give %nice ~]~
+    %message  `+>.$
+    ?(%addr-request %get-id)
+      ?>  ?=(%e -.res)
+      ~|  'must receive a 200'
+      ~|  res
+      ?>  =(200 p.p.res)
+      %-  ?-(-.pax %addr-request pour-addr-request, %get-id pour-get-id)
+      [ost pax (rash q:(need r.p.res) apex:poja)]
     %auth
       :_  +>.$
       [ost %give %nice ~]~
-    %get-id
-      ~&  get-id/res
-      :_  +>.$
-      [ost %give %nice ~]~
-    %send
-      ~&  res
-      :_  +>.$
-      [ost %give %nice ~]~
-    %buy
-      ~&  res
-      :_  +>.$
-      [ost %give %nice ~]~
-    %list
-      ~&  res
-      :_  +>.$
-      [ost %give %nice ~]~
-    %sell
-      ~&  res
+    ?(%get-id %send %buy %list %sell)
+      ~&  [`@tas`-.pax res]
       :_  +>.$
       [ost %give %nice ~]~
   ==
 ::
 ++  publish
   |=  [ost=bone you=ship dest=?(%porch %court) act=(list speech)]
+  ^-  move
   =+  ^=  spchz
       %+  turn  act
       |=  sp=speech
       =+  ^=  tail
       :-  ^-  audience
-          :+  :-  `partner`[%& our.hid %court]
+          :+  :-  `partner`[%& our.hid dest]
               ^-  (pair envelope delivery)
               [`envelope`[& ~] %pending]
             ~
