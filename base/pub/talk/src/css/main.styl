@@ -257,7 +257,7 @@ body
 
 .message
   padding-top .3rem
-  margin-bottom 1rem
+  margin-bottom .6rem
 
 #messages .message .time
 #messages .message .audi
@@ -295,6 +295,10 @@ body
 #messages .message:hover .mess
 #messages .message:hover .attr
   color #555
+
+#messages .message.attr
+  max-height 2rem
+  -webkit-transition max-height 2s, color .1s linear
 
 #messages .message:hover .attr
   max-height 6rem
@@ -367,10 +371,10 @@ a
 .attr
   text-align left
   display inline-block
+  max-height 1.2rem
   margin-right .3rem
   min-width 16rem
   background-color white
-  -webkit-transition max-height .2s, color .1s linear
 
 .attr .iden
   margin-left .3rem
