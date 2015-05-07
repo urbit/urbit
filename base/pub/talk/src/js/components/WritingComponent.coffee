@@ -50,7 +50,7 @@ module.exports = recl
       audi = @state.audi
     audi = window.util.expandAudi audi
     MessageActions.sendMessage @$writing.text().trim(),audi
-    @$length.text "0/69"
+    @$length.text "0/62"
     @$writing.text('')
     @set()
     @typing false
@@ -173,6 +173,7 @@ module.exports = recl
 
     div {className:k}, [
       (div {className:"attr"}, [
+        (React.createElement Member, iden)
         (div {
           id:"audi"
           className:"audi valid-#{@state.valid}"
@@ -180,7 +181,6 @@ module.exports = recl
           onKeyDown: @_audiKeyDown
           onBlur:@_setAudi
           }, audi.join(" "))
-        (React.createElement Member, iden)
         (div {className:"time"}, @getTime())        
       ])
       (div {

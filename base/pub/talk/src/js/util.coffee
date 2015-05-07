@@ -76,7 +76,7 @@ _.merge window.util,
   isScrolling: ->
     if not window.util.writingPosition
       window.util.getScroll()
-    return ($(window).scrollTop() < window.util.writingPosition)
+    return ($(window).scrollTop()+$('#writing').outerHeight() < window.util.writingPosition)
 
   checkScroll: ->
     if window.util.isScrolling()
