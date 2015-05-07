@@ -6,16 +6,17 @@
 /-  *talk
 /+  talk, sole, http
 !:
-::::  sivtyv-barnel
+::::  sivtyv-barnelhsjdf
   ::  be sure to have oauth2-code mark
 |%
 ++  axle  cred
 ++  cred
 $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
     oauth-code=(unit ,@t)  auth-token=(unit ,@t)   
-    refr-token=(unit ,@t)  contacts=(map ,@t ,@t)
+    refr-token=(unit ,@t)  cont-to-adr=(map ,@t ,@t)
+    adr-to-cont=(unit ,@t)
 ==
-++  move  (mold note gift)
+::++  move  (mold note gift)
 ++  sign
   $%  $:  %e
   $%  [%thou p=httr]
@@ -28,7 +29,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
 ++  auth-url  "https://sandbox.coinbase.com/oauth/authorize?". 
     "response_type=code".
     "&client_id=c911e4cb6d0b2ce4da92a75ae5acefe61a9b494332dd37844043ce820030d088".
-    "&redirect_uri={(urle "http://localhost:8443/main/pub/bit/fab")}".
+    "&redirect_uri={(urle "http://localhost:8443/home/pub/bit/fab")}".
     "&scope=user+balance+buy+sell+send+transactions".
     "&{(urle "meta[send_limit_amount]")}=1&{(urle "meta[send_limit_curency]")}".
     "=BTC&{(urle "meta[send_limit_period]")}=day"
@@ -44,10 +45,12 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
     ==
   =+  prl=`purl`(need (epur (crip auth-url)))
   :_  +>.$  
-  :^    %-  publish
+  :+    %-  publish
         :^  ost  you  %court
-        [%lin & 'secret and client id saved successfully']
-      (publish ost you %court [%url prl])
+        :~  [%lin & 'secret and client id saved successfully']
+            [%lin & 'please click on the url below to continue authentication']
+            [%url prl] 
+        ==
     [ost %give %nice ~]
   ~
 ::
@@ -60,7 +63,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   =+  ^=  queries
   :~  ['grant_type' 'authorization_code']
       ['code' (need oauth-code.vat)]
-      ['redirect_uri' 'http://localhost:8443/main/pub/bit/fab']
+      ['redirect_uri' 'http://localhost:8443/base/pub/bit/fab']
       ['client_id' (need client-id.vat)]
       ['client_secret' (need app-secret.vat)]
   ==
@@ -68,7 +71,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   :+  [ost %give %nice ~]
     (httpreq ost /auth-token /com/coinbase/sandbox /oauth/token [%post ~] ~ queries)
   ~
-++  poke-buy
+++  poke-bit-buy
   |=  [ost=bone you=ship arg=[amount=@t currency=@t]]
   ~&  'buy boked'
   ?<  =(~ amount.arg)
@@ -97,7 +100,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
     (httpreq ost /list /com/coinbase/sandbox/api /v1/accounts %get ~ query)
   ~
 ::
-++  poke-sell
+++  poke-bit-sell
   |=  [ost=bone you=ship arg=[amount=@t currency=@t]] 
   ?<  =(amount.arg ~)
   ~&  'haven\'t crashed'
@@ -129,6 +132,11 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   :+  [ost %give %nice ~]
     (httpreq ost /send /com/coinbase/sandbox/api /v1/transactions/'send_money' [%post pst] ~ query)
   ~
+::
+++  poke-json
+  |=  [ost=bone you=ship arg=json]
+      ~&  arg
+      :_  +>.$  [ost %give %nice ~]~
 ++  pour
   |=  [ost=bone pax=path res=sign]
   ?+  -.pax  !!
@@ -166,17 +174,21 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   ==
 ::
 ++  publish
-  |=  [ost=bone you=ship dest=?(%porch %court) act=speech]
-  =+  ^-  thot=thought
-      :+  *serial
-        ^-  audience
-        :+  :-  `partner`[%& our.hid %court]
-            ^-  (pair envelope delivery)
-            [`envelope`[& ~] %pending]
+  |=  [ost=bone you=ship dest=?(%porch %court) act=(list speech)]
+  =+  ^=  spchz
+      %+  turn  act
+      |=  sp=speech
+      =+  ^=  tail
+      :-  ^-  audience
+          :+  :-  `partner`[%& our.hid %court]
+              ^-  (pair envelope delivery)
+              [`envelope`[& ~] %pending]
+            ~
           ~
-        ~
-      `statement`[lat.hid ~ act]
-  =.  p.thot  `@`(sham eny.hid +.thot)
-  =+  cag=`cage`[%talk-command !>([%publish `(list thought)`[thot ~]])]
+      `statement`[lat.hid ~ sp]
+      ^-  thought
+      :-  `@`(sham eny.hid tail)
+      tail
+  =+  cag=`cage`[%talk-command !>([%publish `(list thought)`spchz])]
   [ost %pass /auth %g %mess [our.hid /talk] you cag]
 --
