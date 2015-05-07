@@ -15,7 +15,7 @@ You can find them in `/main/app`.
 
 `~zod/try=> :begin [~ship-name [~valid-ticket-for-ship]]`
 
-Start a ship. `:begin` collects all of the necesarry information to
+Start a ship. `:begin` collects all of the necessary information to
 start an Urbit ship. Takes an option `[~ship-name]` or
 `[~ship-name [~valid-ticket-for-ship]]` pair.
 
