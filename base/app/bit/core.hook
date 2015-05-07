@@ -148,13 +148,6 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
       (httpreq ost /buy /com/coinbase/api /v1/buys [%post pst] ~ query)
       ~
 ::
-++  poke-contact
-  |=  [ost=bone you=ship arg=[name=@t address=@t]]
-  =.  contacts.vat  (~(put by contacts.vat) arg) 
-  ~&  saved/contacts.vat
-  :_  +>.$
-  [ost %give %nice ~]~
-::
 ++  poke-list
   |=  [ost=bone you=ship arg=~]
   =+  query=['access_token' (need auth-token.vat)]~
