@@ -7,7 +7,7 @@
 /+  talk, sole, http
 !:
 ::::  sivtyv-barnel
-  ::  be sure to have oauth2-code mark
+  ::  be sure to have oauth2-code markk
 |%
 ++  axle  cred
 ++  cred
@@ -77,17 +77,17 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   ~
 ::
 ++  send-message                      ::  inter-app interface
-  |=  [ost=bone his=ship mez=$%([%bit-addr-request ~] [%bit-addr-made @t])]
+  |=  [ost=bone pax=path his=ship mez=$%([%bit-addr-request ~] [%bit-addr-made @t])]
   ^-  move
   =+  vax=(spec !>(mez))
-  [ost %pass /message `note`[%g %mess [his /[app.hid]] our.hid `cage`[-.mez (slot 3 vax)]]]
+  [ost %pass pax `note`[%g %mess [his /[app.hid]] our.hid `cage`[-.mez (slot 3 vax)]]]
 ::
 ++  poke--send                        ::  send to ship
   |=  [ost=bone @ to=ship amount=@t]
   =.  outgoing.vat  (~(put by outgoing.vat) to amount)
   :_  +>.$
   :_  [ost %give %nice ~]~
-  (send-message ost to %bit-addr-request ~)
+  (send-message ost /sent to %bit-addr-request ~)
 ++  poke-bit-addr-request             ::  give your address to receive bit
   |=  [ost=bone his=ship req=~]           ::  gen new address with callback
   :_  +>.$
@@ -109,7 +109,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
     (~(put by incoming.vat) adr his) 
   :_  +>.$
   :_  ~
-  (send-message ost his %bit-addr-made adr)
+  (send-message ost [%message ~] his %bit-addr-made adr)
 ::
 ++  poke-bit-addr-made             ::  receive address for sending
   |=  [ost=bone his=ship addr=@t]
@@ -239,6 +239,14 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
       ~&  [`@tas`-.pax res]
       :_  +>.$
       [ost %give %nice ~]~
+    %sent
+      =+  resp=(rash q:(need r.p.res) apex:poja)
+      =+  suc=((ot success/so ~):jo resp)
+      :_  +>.$
+      :_  [ost %give %nice ~]~
+      ?~  suc  
+        (publish ost our.hid [%lin & (crip "something went wrong")]~)
+      (publish ost our.hid [%lin & (crip "success!")]~)
   ==
 ::
 ++  publish
