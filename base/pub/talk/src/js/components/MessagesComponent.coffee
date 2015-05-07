@@ -20,12 +20,13 @@ Message = recl
     "~#{h}.#{m}.#{s}"
 
   _handleAudi: (e) ->
-    audi = _.map $(e.target).closest('.audi').find('div'), (div) -> return $(div).text()
+    audi = _.map $(e.target).closest('.audi').find('div'), (div) -> return "~"+$(div).text()
     @props._handleAudi audi
 
   _handlePm: (e) ->
     return if not @props._handlePm
-    user = $(e.target).closest('.iden').text().slice(1)
+    user = $(e.target).closest('.iden').text()
+    return if user.toLowerCase() is 'system'
     @props._handlePm user
 
   render: ->
@@ -39,7 +40,7 @@ Message = recl
 
     name = if @props.name then @props.name else ""
     aude = _.keys @props.thought.audience
-    audi = window.util.clipAudi(aude).map (_audi) -> (div {}, _audi)
+    audi = window.util.clipAudi(aude).map (_audi) -> (div {}, _audi.slice(1))
 
     type = ['private','public']
     type = type[Number(aude.indexOf(window.util.mainStationPath(window.urb.user)) is -1)]
@@ -48,6 +49,9 @@ Message = recl
     if @props.thought.statement.speech?.url 
       url = @props.thought.statement.speech.url.url
       txt = (a {href:url,target:"_blank"}, url)
+    if @props.thought.statement.speech?.app
+      txt = @props.thought.statement.speech.app.txt
+      klass += " say"
 
     div {className:"message#{klass}"}, [
         (div {className:"attr"}, [
@@ -148,10 +152,7 @@ module.exports = recl
   _onChangeStore: -> @setState @stateFromStore()
 
   _handlePm: (user) ->
-    audi = [
-      window.util.mainStationPath(user)
-      window.util.mainStationPath(window.urb.user)
-    ]
+    audi = [window.util.mainStationPath(user)]
     if user is window.urb.user then audi.pop()
     StationActions.setAudience audi
 
@@ -176,6 +177,8 @@ module.exports = recl
 
     messages = _messages.map (_message,k) => 
       if lastIndex and lastIndex is k then _message.unseen = true
+      if _message.thought.statement.speech?.app
+        _message.ship = "system"
       _message.sameAs = lastSaid is _message.ship
       _message.station = @state.station
       _message._handlePm = @_handlePm

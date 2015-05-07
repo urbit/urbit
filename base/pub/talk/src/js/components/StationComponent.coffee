@@ -68,7 +68,7 @@ module.exports = recl
 
     if @state.station and @state.members
       members = _.map @state.members, (stations,member) -> 
-          audi = _.map stations,(presence,station) -> (div {className:"audi"}, station)
+          audi = _.map stations,(presence,station) -> (div {className:"audi"}, station.slice(1))
           (div {}, [audi,(React.createElement Member, {ship:member})])
     else
       members = ""
@@ -82,7 +82,7 @@ module.exports = recl
       _sources = _.clone @state.configs[@state.station].sources
       sources = _.map _sources,(source) =>
         (div {className:"station"}, [
-          (div {className:"path"}, source)
+          (div {className:"path"}, source.slice(1))
           (div {className:"remove",onClick:_remove,"data-station":source},"×"),
         ])
     else
