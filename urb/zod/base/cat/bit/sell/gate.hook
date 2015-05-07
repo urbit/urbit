@@ -6,6 +6,6 @@
 :::::::
   !:
 |=  [^ [amount=@t currency=@t ~] ~]
-:-  %buy
+:-  %sell
 [amount currency]
 
