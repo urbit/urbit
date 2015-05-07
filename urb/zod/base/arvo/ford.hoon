@@ -10,6 +10,7 @@
 ++  bead  ,[p=(set beam) q=gage]                        ::  computed result
 ++  gift                                                ::  out result <-$
           $%  [%made p=@uvH q=(each gage tang)]         ::  computed result
+              [%mass p=mass]                            ::  memory usage
               [%news ~]                                 ::  fresh depends
           ==                                            ::
 ++  heel  path                                          ::  functional ending
@@ -51,6 +52,7 @@
 ++  kiss                                                ::  in request ->$
           $%  [%exec p=@p q=beak r=(unit silk)]         ::  make / kill
               [%wasp p=@p q=@uvH]                       ::  depends query
+              [%wegh ~]                                 ::  report memory
           ==                                            ::
 ++  milk  (trel ship desk silk)                         ::  sourced silk
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
@@ -209,10 +211,6 @@
   =.  rac  $(r.arc l.r.arc, rac $(r.arc r.r.arc))
   =+  gib=(wox p.n.r.arc)
   ?~(gib rac [[u.gib p.n.r.arc] rac])
-::
-++  slob                                                ::  XX  belongs in h/h
-  |=  [cog=@tas typ=type]
-  (~(has in (sa (sloe typ))) cog)
 ::
 ++  norm                                                ::  normalize beam rev
   |=  [ska=sled bem=beam]
@@ -1653,6 +1651,13 @@
   |=  [hen=duct hic=(hypo (hobo kiss))]
   ^-  [p=(list move) q=_..^$]
   =>  .(q.hic ?.(?=(%soft -.q.hic) q.hic ((hard kiss) p.q.hic)))
+  ?:  ?=(%wegh -.q.hic)
+    :_  ..^$  :_  ~
+    :^  hen  %give  %mass
+    :-  %|
+    :~  lex/`lex
+        ::  cor/`..^$
+    ==
   =+  ^=  our  ^-  @p
       ?-  -.q.hic
         %exec  p.q.hic

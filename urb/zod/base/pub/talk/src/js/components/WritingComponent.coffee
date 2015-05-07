@@ -80,7 +80,13 @@ module.exports = recl
   _input: (e) ->
     text   = @$writing.text()
     length = text.length
-    # geturl = new RegExp "(^|[ \t\r\n])((ftp|http|https|gopher|mailto|news|nntp|telnet|wais|file|prospero|aim|webcal):(([A-Za-z0-9$_.+!*(),;/?:@&~=-])|%[A-Fa-f0-9]{2}){2,}(#([a-zA-Z0-9][a-zA-Z0-9$_.+!*(),;/?:@&~=%-]*))?([A-Za-z0-9$_+!*();/?:~-]))", "g"
+    # geturl = new RegExp [
+    #  '(^|[ \t\r\n])((ftp|http|https|gopher|mailto|'
+    #     'news|nntp|telnet|wais|file|prospero|aim|webcal'
+    #  '):(([A-Za-z0-9$_.+!*(),;/?:@&~=-])|%[A-Fa-f0-9]{2}){2,}'
+    #  '(#([a-zA-Z0-9][a-zA-Z0-9$_.+!*(),;/?:@&~=%-]*))?'
+    #  '([A-Za-z0-9$_+!*();/?:~-]))'
+    #                      ].join() , "g"
     # urls = text.match(geturl)
     # if urls isnt null and urls.length > 0
     #   for url in urls

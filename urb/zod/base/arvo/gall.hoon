@@ -10,11 +10,26 @@
           ==                                            ::
 ++  bead  ,[p=(set beam) q=gage]                        ::  computed result
 ++  bone  ,@ud                                          ::  opaque duct
+++  club                                                ::  agent action
+  $%  [%peer p=path]                                    ::  subscribe
+      [%poke p=cage]                                    ::  apply
+      [%pull ~]                                         ::  unsubscribe
+      [%pump ~]                                         ::  pump yes/no
+  ==                                                    ::
+++  cuft                                                ::  internal gift
+  $%  [%coup p=(unit tang)]                             ::  poke result
+      [%diff p=cage]                                    ::  subscription output
+      [%quit ~]                                         ::  close subscription
+      [%reap p=(unit tang)]                             ::  peer result
+  ==                                                    ::
+++  cuss  (pair term club)                              ::  internal kiss
+++  suss  (trel term ,@tas ,@da)                        ::  config report
 ++  gift                                                ::  out result <-$
           $%  [%back p=?]                               ::  %mess ack good/bad
               [%crud p=@tas q=(list tank)]              ::  physical error
               [%dumb ~]                                 ::  close duct
               [%gone p=hapt]                            ::  app death
+              [%mass p=mass]                            ::  memory usage
               [%mean p=ares]                            ::  message failure
               [%meta p=vase]                            ::  meta-gift
               [%nice ~]                                 ::  message success
@@ -31,6 +46,7 @@
               [%rote p=sack q=path r=*]                 ::  remote request
               [%roth p=sack q=path r=*]                 ::  remote response
               [%took p=hapt q=ship]                     ::  remote acknowledge
+              [%wegh ~]                                 ::  report memory
               [%wipe p=hapt]                            ::  forget app
           ==                                            ::
 ++  knob                                                ::  pending action
@@ -57,6 +73,12 @@
 ++  note                                                ::  out request $->
           $?  $:  %a                                    ::  to %ames
           $%  [%wont p=sock q=path r=*]                 ::
+          ==  ==                                        ::
+              $:  %b                                    ::  to %behn
+          $%  [%deal p=sock q=cuss]                     ::  full transmission
+          ==  ==                                        ::
+              $:  %c                                    ::  to %clay
+          $%  [%warp p=sock q=riff]                     ::
           ==  ==                                        ::
               $:  %f                                    ::  to %ford
           $%  [%exec p=@p q=beak r=(unit silk)]         ::
@@ -137,6 +159,10 @@
               [%woot p=ship q=coop]                     ::
               [%went p=ship q=cape]                     ::  only for apps
           ==  ==                                        ::
+              $:  %b                                    ::  by %behn
+          $%  [%onto p=(each suss tang)]                ::
+              [%unto p=cuft]                            ::
+          ==  ==                                        ::
               $:  %g                                    ::  by %gall
           $%  [%init p=@p]                              ::
               [%crud p=@tas q=(list tank)]              ::
@@ -213,6 +239,7 @@
     |%                                                  ::  vane interface
     ++  call                                            ::  handle request
       |=  [hen=duct hic=(hypo (hobo kiss))]
+      ^-  [p=(list move) q=_..^$]
       =>  .(q.hic ?.(?=(%soft -.q.hic) q.hic ((hard kiss) p.q.hic)))
       ?-    -.q.hic
           %init
@@ -223,6 +250,14 @@
       ::
           %roth
         (gawd hen p.q.hic q.q.hic ((hard ,[@ud roon]) r.q.hic))
+      ::
+          %wegh
+        :_  ..^$  :_  ~
+        :^  hen  %give  %mass
+        :-  %|
+        :~  all/`all
+            ::  cor/`..^$
+        ==
       ::
           %wipe
         =+  mat=(~(got by pol.all) p.p.q.hic)
