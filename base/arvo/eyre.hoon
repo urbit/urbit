@@ -5,7 +5,8 @@
 =>  =~
 |%                                                      ::  interfaces
 ++  gift                                                ::  out result <-$
-          $%  [%thou p=httr]                            ::  raw http response
+          $%  [%mass p=mass]                            ::  memory usage
+              [%thou p=httr]                            ::  raw http response
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
               [%veer p=@ta q=path r=@t]                 ::  drop-through
               [%vega p=path]                            ::  drop-through
@@ -28,6 +29,7 @@
               [%this p=? q=clip r=httq]                 ::  inbound request
               [%thud ~]                                 ::  inbound cancel
               [%wart p=sack q=@tas r=_`[path *]`*gram]  ::  urbit message
+              [%wegh ~]                                 ::  report memory
           ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
@@ -94,6 +96,7 @@
 ++  whir  $|  ~                                         ::  wire subset
           $%  [%at p=hole q=whir]                       ::  authenticated
               [%ay p=span:ship q=span:,@uvH ~]          ::  remote duct
+              [%he p=whir]                              ::  HEAD request
               [%of p=ixor q=$|(~ whir-of)]              ::  associated view
               [%on p=span:,@uvH ~]                      ::  dependency
               [%to p=ixor q=span:ship r=term s=wire]    ::  associated app
@@ -148,7 +151,7 @@
       [%beam p=beam]
       [%deps p=?(%put %delt) q=@uvH]
       [%mess p=hasp q=mark r=wire s=json]
-      [%poll p=@uvH]
+      [%poll p=[i=@uvH t=(list ,@uvH)]]
       [%spur p=spur]
       [%subs p=?(%put %delt) q=[hasp %json wire path]]
       [%view p=ixor q=[~ u=@ud]]
@@ -233,7 +236,12 @@
 ::
 ++  add-json                                            ::  inject window.urb
   |=  [urb=json jaz=cord]  ^-  cord
-  (cat 3 (crip "window.urb = {(pojo urb)}\0a") jaz)
+  =-  (cat 3 (crip -) jaz)
+  """
+  var _urb = {(pojo urb)}
+  window.urb = window.urb || \{}; for(k in _urb) window.urb[k] = _urb[k]
+  
+  """
 ::
 ++  ares-to-json
   |=  err=ares  ^-  json
@@ -264,25 +272,33 @@
     '''
     urb.tries = 0
     urb.call = function() {
-      xhr = new XMLHttpRequest()
-      xhr.open('GET', urb.poll, true)
-      xhr.addEventListener('load', function() {
+      urb.wreq = new XMLHttpRequest()
+      urb.wreq.open('GET', urb.wurl, true)
+      urb.wreq.addEventListener('load', function() {
         // if(~~(this.status / 100) == 4)
-        //   return document.write(xhr.responseText)
+        //   return document.write(this.responseText)
         if(this.status !== 205) {
           return urb.keep()
         }
         document.location.reload()
       })
-      xhr.addEventListener('error', urb.keep)
-      xhr.addEventListener('abort', urb.keep)
-      xhr.send()
+      urb.wreq.addEventListener('error', urb.keep)
+      urb.wreq.addEventListener('abort', urb.keep)
+      urb.wreq.send()
     }
     urb.keep = function() {
       setTimeout(urb.call,1000*urb.tries)
       urb.tries++
     }
     urb.call()
+    urb.wasp = function(deh){
+      var old = /[^/]*$/.exec(urb.wurl)[0]
+      var deps = old.replace(/^on.json\?|.json$/,'').split('&')
+      if (deps.indexOf(deh) !== -1) return;
+      deps.push(deh)
+      urb.wurl = "/~/on.json?"+deps.join('&')
+      urb.wreq.abort() // trigger keep 
+    }
     '''
   ::
   ++  auth-redir
@@ -413,7 +429,7 @@
       =.  p.p.pul  |(p.p.pul ?=(hoke r.p.pul))
       =+  her=(host-to-ship r.p.pul)
       ?:  |(?=(~ her) =(our u.her))
-        (handle pul q.+.kyz [p.heq maf s.heq])
+        (handle pul [q.+.kyz anon] [p.heq maf s.heq])
       =+  han=(sham hen)
       =.  pox  (~(put by pox) han hen)
       (ames-gram u.her [%get ~] han +.kyz)
@@ -468,6 +484,8 @@
           =.  sop  (~(put by sop) p.u.mez q.p.kyz |)
           (ames-gram q.p.kyz hat/~ p.u.mez our-host)
       ==
+    ::
+      %wegh  !!
     ==
   ::
   ++  axon                                              ::  accept response
@@ -526,6 +544,16 @@
       |-  ^+  ..axon
       ?-    tee
           [?(%on %ay) *]  ~|(e/ford/lost/-.tee !!)
+          [%he *]                     ::  XX hack
+        =.  ..axon  $(tee p.tee)
+        %_  ..axon
+          mow  %+  turn  mow
+               |=  a=move
+               ?+  q.a  a
+                 [%give %thou *]  a(r.p.p.q ~)
+                 [%pass ^]        ?.(=(p.tee p.q.a) a a(p.q tee))
+        ==     ==
+      ::
           [%of ^]
         ?~  q.tee  ~|(e/ford/lost/tee !!)
         ?:  ?=(%| -.q.sih)
@@ -564,7 +592,8 @@
           ==
         ~|  q.q.cay
         =+  ((hard ,[mit=mite rez=octs]) q.q.cay)
-        (give-thou 200 [content-type/(moon mit)]~ ~ rez)
+        =+  dep=(crip (pojo %s (scot %uv p.sih)))
+        (give-thou 200 ~[etag/dep content-type/(moon mit)] ~ rez)
       ==
     ==
   ::
@@ -651,7 +680,7 @@
   ::
   ++  handle
     |=  $:  [hat=hart pok=pork quy=quay]                ::  purl, parsed url
-            cip=clip                                    ::  client ip
+            [cip=clip him=ship]                         ::  client ip, ship
             [mef=meth maf=math bod=(unit octs)]         ::  method/headers/body
         ==
     =<  apex
@@ -703,23 +732,27 @@
       ==
     ::
     ::
+    ++  is-anon  =([~ ''] (~(get by (mo quy)) 'anon'))
     ++  check-oryx                    ::  | if json with bad oryx
       ^-  ?
-      ?.  &(?=([~ %json] p.pok) ?=(%post mef) ?=(^ bod))  &
-      =+  oxe=(grab-body to-oryx)
+      ?.  &(?=([~ %json] p.pok) ?=(%post mef) ?=(^ bod) !is-anon)  &
+      =+  oxe=grab-oryx
       ?~  oxe  |
       ?:  (~(has in vew.cyz:for-client) u.oxe)
         &
       ~&(bad-oryx/[u.oxe vew.cyz:for-client] &)         ::  XX security
     ::
-    ++  grab-body
-      |*  a=fist:jo  ^+  *a
-      ?.  &(?=(^ bod) ?=(?(%post %put %delt) mef))
+    ++  grab-json
+      ?.  ?=(?(%post %put %delt) mef)
         ~
-      %.(q.u.bod ;~(biff poja a))
+      ?~(bod ~ (poja q.u.bod))
     ::
-    ++  need-body  |*(a=fist:jo (need (grab-body a)))
-    ++  to-oryx  (ot oryx/so ~):jo
+    ++  need-body  |*(a=fist:jo (need (biff grab-json a)))
+    ++  grab-oryx
+      ^-  (unit oryx)
+      =+  oxe=(biff grab-json (ot oryx/so ~):jo)
+      ?^  oxe  oxe
+      (~(get by (mo quy)) %oryx)
     ::
     ::
     ++  new-dependency
@@ -737,7 +770,7 @@
           =+  bem=as-beam
           ?^  bem  [%& %beam u.bem]
           ?.  check-oryx
-            ~|(%bad-oryx ~|([(grab-body to-oryx) vew.cyz:for-client] !!))
+            ~|(%bad-oryx ~|([grab-oryx vew.cyz:for-client] !!))
           =+  hem=as-aux-request
           ?^  hem  [%& u.hem]
           ~|(strange-path/q.pok !!)
@@ -776,7 +809,8 @@
         ^-  (unit perk)
         =.  mef
           ?.  ?=(%post mef)  mef
-          ?+  quy  ~|(bad-quy/[req='"?PUT" or "?DELETE"' quy] !!)
+          ?+    (skim quy |=([a=@t b=@t] &(=('' b) =(a (cuss (trip a))))))
+              ~|(bad-quy/[req='"?PUT" or "?DELETE"' quy] !!)
             ~   mef
             [[%'DELETE' ~] ~]  %delt
             [[%'PUT' ~] ~]     %put
@@ -803,21 +837,29 @@
             %own   our
           ==
         ::
-            %on  [%poll (raid but %uv ~)]
+            %on
+          :-  %poll
+          ?^  but  [(raid but %uv ~)]~
+          =+  dep=((hard (list ,[@ ~])) quy)
+          =<  ?~(. !! .)
+          (turn dep |=([a=@tas ~] (slav %uv a)))
+        ::
             %of
           :+  %view  ?>(?=([@ ~] but) i.but)
           ?>  ?=([[%poll @] ~] quy)     ::  XX eventsource
           [~ (rash q.i.quy dem)]
         ::
             %to
-          ?>  =('/' (need-body (ot wire/so ~):jo))  ::  XX custom
-          =-  :^  %mess  [- +<]:dir  +>.dir 
-              (need-body (ot wire/(cu stab so) xyro/some ~):jo)
-          ^=  dir
-          =+  ful=(read but %p %tas %tas ~)
-          ?^  ful  u.ful
-          ~|  bad-mess/but
-          [our (raid but %tas %tas ~)]
+          =+  ^-  dir=[p=ship q=term r=mark]
+              ~|  bad-mess/but
+              ?+  but  !!
+                [@ @ ~]    [our (raid but %tas %tas ~)]
+                [@ @ @ ~]  (raid but %p %tas %tas ~)
+              ==
+          :^  %mess  [p q]:dir  r.dir
+          =+  wir=(~(get by (mo quy)) 'wire')
+          ?^  wir  [(stab u.wir) (need grab-json)]         ::  XX distinguish
+          (need-body (ot wire/(cu stab so) xyro/some ~):jo)
         ::
             %in
           ~|  expect/[%post 'application/json' /'@uv' '?PUT/DELETE']
@@ -876,7 +918,8 @@
           ?(%beam %spur)
         =+  ext=(fall p.pok %urb)
         =+  bem=?-(-.hem %beam p.hem, %spur [root-beak p.hem])
-        [%& %| ~ (ford-get-beam bem ext)]
+        =+  wir=?+(mef !! %get ~, %head [%he ~])
+        [%& %| wir (ford-get-beam bem ext)]
       ::
           %bugs  
         ?-  p.hem
@@ -885,7 +928,7 @@
         ==
       ::
           %deps
-        =+  ire=(oryx-to-ixor (need-body to-oryx))
+        =+  ire=need-ixor
         ?>  (~(has by wix) ire)  ::  XX made redundant by oryx checking
         =<  [%| (nice-json)]
         ?-  p.hem
@@ -894,17 +937,21 @@
         ==
       ::
           %mess
-        =+  [him=him:for-view cay=[%json !>(`json`s.hem)]]
-        ?:  ?=(%json q.hem)
-          [%| ((teba new-mess:for-view) p.hem r.hem cay)]
-        :^  %&  %|  [%to need-ixor (scot %p p.p.hem) q.p.hem r.hem]
+        :-  %|
+        =^  orx  ..ya   ?:(is-anon new-view:for-client [(need grab-oryx) ..ya])
+        =+  [vew=(ire-ix (oryx-to-ixor orx)) cay=[%json !>(`json`s.hem)]]
+        ?:  ?=(%json q.hem)  ((teba new-mess.vew) p.hem r.hem cay)
+        %+  pass-note  [%to (oryx-to-ixor orx) (scot %p p.p.hem) q.p.hem r.hem]
         (ford-req root-beak [%cast q.hem %done ~ cay])
       ::
           %poll
-        ?.  ?=([~ %js] p.pok)  ::  XX treat non-json cases?
-          [%| (new-dependency p.hem %& hen)]
-        =+  polling-url=['/' (apex:earn %| pok(u.p %json) quy)]
-        [%& %js (add-json (joba %poll (jape polling-url)) poll:js)]
+        ?:  ?=([~ %js] p.pok)  ::  XX treat non-json cases?
+          =+  polling-url=['/' (apex:earn %| pok(u.p %json) quy)]
+          [%& %js (add-json (joba %wurl (jape polling-url)) poll:js)]
+        |-
+          =.  done  (new-dependency i.p.hem %& hen)
+          ?~  t.p.hem  [%| done]
+          $(p.hem t.p.hem)
       ::
           %subs
         ?-  p.hem
@@ -950,13 +997,12 @@
           %get
         ~|  aute/ham
         ?:  |(=(anon him.ham) (~(has in aut.yac) him.ham))
-          process(pok rem.ham, ..ya abet.yac(him him.ham))
+          process(him him.ham, pok rem.ham)
         ?.  =(our him.ham)
           [%| ((teba foreign-auth.yac) him.ham hat rem.ham quy)]
         (show-login-page ~)
       ::
           %try
-        ~&  ses-try/ses.yac
         :-  %|
         ?.  =(our him.ham)
           ~|(stub-foreign/him.ham !!)
@@ -979,7 +1025,7 @@
       [%| (give-html 401 cug.yac login-page:xml)]
     ::
     ++  cookie-prefix  (rsh 3 1 (scot %p our))
-    ++  need-ixor  (oryx-to-ixor (need-body to-oryx))
+    ++  need-ixor  (oryx-to-ixor (need grab-oryx))
     ++  for-view  ^+(ix (ire-ix need-ixor))
     ::
     ++  for-client                        ::  stateful per-session engine
@@ -990,7 +1036,7 @@
         (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
       ~|  bad-cookie/u.lig
       =+  cyz=(~(got by wup) u.lig)
-      ~(. ya u.lig cyz(cug ~))
+      ~(. ya u.lig cyz(him him, cug ~))
     ::
     ++  new-ya  |=(ses=hole ~(. ya ses (new-cyst ses)))
     ++  new-cyst
@@ -1070,18 +1116,23 @@
       ?~  aut  abut
       abet(him ?.(=(her him) him n.aut))
     ::
+    ++  new-view
+      ^+  [*oryx ..ya]
+      =+  orx=`@t`(rsh 3 1 (scot %p (shaf %orx eny)))
+      =.  vew  (~(put in vew) orx)
+      =+  [ire=(oryx-to-ixor orx) sem=%*(. *stem him him, era now, p.eve 1)]
+      =.  wix  (~(put by wix) ire sem)
+      ::  ~&  stat-ire/`@t`ire
+      [orx abet]
+    ::
     ++  fcgi-cred  %_(ced aut (~(put ju aut.ced) %$ (scot %p him)))
     ++  stat-json
       ^+  [*json ..ya]
-      =+  orx=`@t`(rsh 3 1 (scot %p (shaf %orx eny)))
-      =.  vew  (~(put in vew) orx)
-      =+  [ire=(oryx-to-ixor orx) sem=*stem]
-      =.  wix  (~(put by wix) ire sem(him him, era now, p.eve 1))
-      ::  ~&  stat-ire/`@t`ire
-      :_  abet
+      =^  orx  ..ya  new-view
+      :_  ..ya
       %-  jobe  :~
         oryx/s/orx
-        ixor/s/ire
+        ixor/s/(oryx-to-ixor orx)
         ship/(jape +:<our>)
         user/(jape +:<him>)
         auth/a/(turn (~(tap in aut)) |=(a=@p (jape +:<a>)))
@@ -1208,6 +1259,13 @@
         ((hard kiss) q.hic)
       ==
   ^-  [p=(list move) q=_..^$]
+  ?:  ?=(%wegh -.q.hic)
+    :_  ..^$  :_  ~
+    :^  hen  %give  %mass
+    :-  %|
+    :~  bol/`bol
+        ::  cor/`..^$
+    ==
   =+  our=`@p`0x100  ::  XX  sentinel
   =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
@@ -1224,14 +1282,15 @@
   ~
 ::
 ++  load                                                ::  take previous state
-  =+  bol0=*bolo
-  =>  .(-.bol0 %0, |4.bol0 |5.bol0)   ::  missing ded
-  |=  old=?(bolo _bol0)
+  |=  old=bolo
   ^+  ..^$
-  ?-  -.old
-    %1  ..^$(+>- old)
-    %0  $(-.old %1, |4.old [*(set duct) |4.old])
-  ==
+  =+  mej=|=(a=* (met 3 (jam a)))
+  ~&  :*  gub=(mej gub.old)  hov=(mej hov.old)  ged=(mej ged.old)  ded=(mej ded.old)
+          pox=(mej pox.old)  ask=(mej ask.old)  kes=(mej kes.old)  ney=(mej ney.old)
+          dop=(mej dop.old)  liz=(mej liz.old)  wup=(mej wup.old)  sop=(mej sop.old)
+          wix=(mej wix.old)
+      ==
+  ..^$(+>- old)
 ::
 ++  scry
   |=  [our=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]

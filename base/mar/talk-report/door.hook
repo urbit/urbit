@@ -86,10 +86,12 @@
     ++  spec
       |=  a=speech
       %+  joba  -.a
+      ~|  stub/-.a
       ?+  -.a  !!
         %lin  (jobe say/[%b p.a] txt/[%s q.a] ~)
         %url  (jobe url/[%s (crip (earn p.a))] ~)
         %exp  (jobe code/[%s p.a] ~)
+        %app  (jobe txt/[%s p.a] ~)
         ::  %inv  (jobe ship/(jope p.a) party/[%s q.a] ~)
       ==
     ::

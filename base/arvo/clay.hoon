@@ -20,8 +20,8 @@
 ++  gift                                                ::  out result <-$
           $%  [%ergo p=@p q=@tas r=@ud s=(list ,[path (unit mime)])]
                                                         ::  version update
-              [%mere p=(each (set path) (pair term (list tank)))]
-                                                        ::  merge result
+              [%mass p=mass]                            ::  memory usage
+              [%mere p=(each (set path) (pair term tang))]  ::  merge result
               [%note p=@tD q=tank]                      ::  debug message
               [%writ p=riot]                            ::  response
           ==                                            ::
@@ -39,6 +39,7 @@
               [%plug p=@p q=@tas r=@p s=@tas]           ::  unset upstream
               [%wart p=sock q=@tas r=path s=*]          ::  network request
               [%warp p=sock q=riff]                     ::  file request
+              [%wegh ~]                                 ::  report memory
           ==                                            ::
 ++  mery                                                ::
           $:  gem=germ                                  ::  strategy
@@ -152,7 +153,7 @@
           ==                                            ::
 ++  rove                                                ::  stored request
           $%  [%sing p=mood]                            ::  single request
-              [%next p=mood]                            ::  next version
+              [%next p=mood q=(unit (each cage lobe))]  ::  next version
               [%many p=? q=moot]                        ::  change range
           ==                                            ::
 ++  rung  $:  rus=(map desk rede)                       ::  neighbor desks
@@ -335,13 +336,13 @@
         %next
       =+  ver=(aver p.rav)
       ?~  ver
-        (duce rav)
+        (duce [- p ~]:rav)
       ?~  u.ver
         (blub hen)
       =+  yon=+((need (case-to-aeon:ze q.p.rav)))
       |-  ^+  +>.^$
       ?:  (gth yon let.dom)
-        (duce rav)
+        (duce -.rav p.rav u.ver)
       =+  var=(aver p.rav(q [%ud yon]))
       ?~  var
         ~&  [%oh-no rave=rav aeon=yon letdom=let.dom]
@@ -409,7 +410,7 @@
         (edit:ze wen lem)
       ?~  hat
         +>.$
-      (echo:(checkout-ankh u.hat) wen lem)
+      wake:(echo:(checkout-ankh u.hat) wen lem)
     ?.  =(~ dok)
       ~&  %already-applying-changes  +>
     =+  del=(skim q.p.lem :(corl (cury test %del) head tail))
@@ -711,9 +712,6 @@
           (turn u.mut.u.dok |=([pax=path cal=[lobe cage]] [pax %dif cal]))
         ==
     =^  hat  +>.$  (edit:ze now %& *cart sim)  ::  XX  we do same thing in ++apply-edit
-    ::  ~&  %edited
-    =.  +>.$  wake
-    ::  ~&  %woked
     ?~  dok  ~&  %no-dok  +>.$
     =>
       %=    .
@@ -745,6 +743,7 @@
     ::  ~&  %canned
     ::  ~&  %checking-out
     =.  ank.dom  (checkout-ankh:ze (mo can))
+    =.  +>.$  =>(wake ?>(?=(^ dok) .))
     ::  ~&  %checked-out
     ?~  hez  +>.$(dok ~)
     ?.  syn  +>.$(dok ~)
@@ -855,7 +854,7 @@
   ++  exec                                            ::  change and update
     |=  [wen=@da lem=nori]
     ^+  +>
-    wake:(edit wen lem)
+    (edit wen lem)
   ::
   ++  exem                                            ::  execute merge
     |=  [wen=@da her=@p sud=@tas gem=germ]            ::  aka direct change
@@ -1057,8 +1056,11 @@
   ++  reve
     |=  rov=rove
     ^-  rave
-    ?.  ?=(%many -.rov)  rov
-    [%many p.rov p.q.rov q.q.rov r.q.rov]
+    ?-  -.rov
+      %sing  rov
+      %next  [- p]:rov
+      %many  [%many p.rov p.q.rov q.q.rov r.q.rov]
+    ==
   ::
   ++  rive
     |=  rav=[%many p=? q=moat]
@@ -1087,24 +1089,30 @@
       =+  vid=(read-at-aeon:ze u.nao p.q.i.xiq)
       ::  ~&  %red-at-aeon
       ?~  vid
-        ~&  [%oh-well mood=p.q.i.xiq aeon=nao]
+        ?~  u.nao
+          ~&  [%oh-poor `path`[syd '0' r.p.q.i.xiq]]
+          $(xiq t.xiq) 
+        ~&  [%oh-well desk=syd mood=p.q.i.xiq aeon=u.nao]
         $(xiq t.xiq, xaq [i.xiq xaq])
       $(xiq t.xiq, ..wake (balk p.i.xiq u.vid p.q.i.xiq))
     ::
         %next
       =*  mun  p.q.i.xiq
-      =+  ver=(aver mun)
-      ?~  ver
-        $(xiq t.xiq, xaq [i.xiq xaq])
-      ?~  u.ver
-        $(xiq t.xiq, ..wake (blub p.i.xiq))
+      =*  dat  q.q.i.xiq
+      ?~  dat
+        =+  ver=(aver mun)
+        ?~  ver
+          $(xiq t.xiq, xaq [i.xiq xaq])
+        ?~  u.ver
+          $(xiq t.xiq, ..wake (blub p.i.xiq))
+        $(xiq t.xiq, xaq [i.xiq(q.q u.ver) xaq])
       =+  var=(aver mun(q [%ud let.dom]))
       ?~  var
         ~&  [%oh-noes mood=mun letdom=let.dom]
         $(xiq t.xiq)
       ?~  u.var
         $(xiq t.xiq, ..wake (blab p.i.xiq mun %& %null [%atom %n] ~))
-      ?:  (equivalent-data:ze u.u.ver u.u.var)
+      ?:  (equivalent-data:ze u.dat u.u.var)
         $(xiq t.xiq, xaq [i.xiq xaq])
       $(xiq t.xiq, ..wake (blab p.i.xiq mun u.u.var))
     ::
@@ -1508,7 +1516,11 @@
       :-  -:!>(*arch)
       ^-  arch
       =+  ^-  descendants=(list (pair path lobe))
+          ::  ~&  >  %turning
+          ::  =-  ~&  >  %turned  -
           %+  turn
+            ::  ~&  >  %skimming
+            ::  =-  ~&  >  %skimmed  -
             %+  skim  (~(tap by (~(del by q.yak) pax)))
             |=  [paf=path lob=lobe]
             =(pax (scag len paf))
@@ -2434,7 +2446,8 @@
     :~  ^-  move
         :*  hen  %pass
             /auto/(scot %p p.q.hic)/[q.q.hic]/(scot %p r.q.hic)/[s.q.hic]
-            %c  %merg  [p q r s %init]:q.hic
+            %c  %warp  [p.q.hic r.q.hic]  s.q.hic  ~  %sing
+            %w  [%da now]  /
         ==
     ==
   ::
@@ -2451,7 +2464,7 @@
     =^  mos  ruf
       =+  une=(un p.q.hic now hen ruf)
       =+  ^=  zat
-          (exec:(di:wake:une q.q.hic) now r.q.hic)
+          (exec:(di:une q.q.hic) now r.q.hic)
       =+  zot=abet.zat
       :-  -.zot
       =.  une  (pish:une q.q.hic +.zot ran.zat)
@@ -2566,6 +2579,14 @@
           %c
         [%warp [p.p.q.hic p.p.q.hic] ryf]
     ==
+  ::
+      %wegh
+    :_  ..^$  :_  ~
+    :^  hen  %give  %mass
+    :-  %|
+    :~  ruf/`ruf
+        ::  cor/`..^$
+    ==
   ==
 ::
 ++  doze
@@ -2581,6 +2602,8 @@
 ++  scry                                              ::  inspect
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit cage))
+  ::  ~&  scry/[ren `path`[(scot %p his) syd ~(rent co lot) tyl]]
+  ::  =-  ~&  %scry-done  -
   =+  got=(~(has by fat.ruf) his)
   =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
   ?~  luk  [~ ~]
@@ -2643,8 +2666,29 @@
       [[- ~] ..^$]
     ::
         %writ
+      ?~  p.q.hin
+        ~&  "bad %writ response on autosync"
+        [~ ..^$]
+      =.  sor.ruf
+        ?.  ?=(%w p.p.u.p.q.hin)
+          sor.ruf
+        %+  ~(put by sor.ruf)
+          [our syd her sud]
+        [((hard ,@ud) q.q.r.u.p.q.hin) hen]
       =+  nex=let:(~(got by sor.ruf) our syd her sud)
-      [[hen %pass tea %c %merg our syd her sud %mate]~ ..^$]
+      =+  (~(get by fat.ruf) our)
+      ?~  -
+        ~&  [%autsync-no-local-ship our]
+        [~ ..^$]
+      =+  (~(get by dos.u.-) syd)
+      =+  ^=  sar
+          ?~  -
+            %init
+          ?:  =(0 let.dom.u.-)
+            %init
+          %mate
+      [[hen %pass tea %c %merg our syd her sud sar]~ ..^$]
+      ::  %c  %merg  [p q r s %init]:q.hic
     ==
   ?:  ?=([%blab care @ @ *] tea)
     ?>  ?=(%made +<.q.hin)
@@ -2674,7 +2718,7 @@
       =^  mos  ruf
         =+  une=(un who now hen ruf)
         =+  ^=  zat
-            (take-inserting:(di:wake:une syd) wen q.q.hin)
+            (take-inserting:(di:une syd) wen q.q.hin)
         =+  zot=abet.zat
         [-.zot abet:(pish:une syd +.zot ran.zat)]
       [mos ..^$]
@@ -2687,7 +2731,7 @@
       =^  mos  ruf
         =+  une=(un who now hen ruf)
         =+  ^=  zat
-            (take-diffing:(di:wake:une syd) wen q.q.hin)
+            (take-diffing:(di:une syd) wen q.q.hin)
         =+  zot=abet.zat
         [-.zot abet:(pish:une syd +.zot ran.zat)]
       [mos ..^$]
@@ -2700,7 +2744,7 @@
       =^  mos  ruf
         =+  une=(un who now hen ruf)
         =+  ^=  zat
-            (take-castify:(di:wake:une syd) wen q.q.hin)
+            (take-castify:(di:une syd) wen q.q.hin)
         =+  zot=abet.zat
         [-.zot abet:(pish:une syd +.zot ran.zat)]
       [mos ..^$]
@@ -2713,7 +2757,7 @@
       =^  mos  ruf
         =+  une=(un who now hen ruf)
         =+  ^=  zat
-            (take-mutating:(di:wake:une syd) wen q.q.hin)
+            (take-mutating:(di:une syd) wen q.q.hin)
         =+  zot=abet.zat
         [-.zot abet:(pish:une syd +.zot ran.zat)]
       [mos ..^$]
@@ -2725,7 +2769,7 @@
       =^  mos  ruf
         ?:  (~(has by fat.ruf) who)
           =+  une=(un who now hen ruf)
-          =+  zat=(take-patch:(di:wake:une syd) q.q.hin)
+          =+  zat=(take-patch:(di:une syd) q.q.hin)
           =+  zot=abet.zat
           [-.zot abet:(pish:une syd +.zot ran.zat)]
         =+  zax=(do now hen [who who] syd ruf)
@@ -2741,7 +2785,7 @@
       =^  mos  ruf
         =+  une=(un who now hen ruf)
         =+  ^=  zat
-            (take-ergo:(di:wake:une syd) q.q.hin)
+            (take-ergo:(di:une syd) q.q.hin)
         =+  zot=abet.zat
         [-.zot abet:(pish:une syd +.zot ran.zat)]
       [mos ..^$]

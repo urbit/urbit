@@ -10,6 +10,7 @@
 ++  bead  ,[p=(set beam) q=gage]                        ::  computed result
 ++  gift                                                ::  out result <-$
           $%  [%made p=@uvH q=(each gage tang)]         ::  computed result
+              [%mass p=mass]                            ::  memory usage
               [%news ~]                                 ::  fresh depends
           ==                                            ::
 ++  heel  path                                          ::  functional ending
@@ -51,6 +52,7 @@
 ++  kiss                                                ::  in request ->$
           $%  [%exec p=@p q=beak r=(unit silk)]         ::  make / kill
               [%wasp p=@p q=@uvH]                       ::  depends query
+              [%wegh ~]                                 ::  report memory
           ==                                            ::
 ++  milk  (trel ship desk silk)                         ::  sourced silk
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
@@ -210,9 +212,16 @@
   =+  gib=(wox p.n.r.arc)
   ?~(gib rac [[u.gib p.n.r.arc] rac])
 ::
-++  slob                                                ::  XX  belongs in h/h
-  |=  [cog=@tas typ=type]
-  (~(has in (sa (sloe typ))) cog)
+++  norm                                                ::  normalize beam rev
+  |=  [ska=sled bem=beam]
+  %_  bem
+    r  ?:  ?=(%ud -.r.bem)  r.bem
+       =+  num=(ska ~ %cw bem(s ~))
+       ?.  ?=([~ ~ * * @u] num)
+         ~&  norm-lost/(tope bem(s ~))
+         r.bem  ::  XX
+       [%ud q.q.u.u.num]
+  ==
 ::
 ++  za                                                  ::  per event
   =|  $:  $:  $:  our=ship                              ::  computation owner
@@ -290,19 +299,20 @@
     |=  dep=@uvH
     ?~  dep
       ~&(dep-empty/hen +>.$)
-    =+  dap=~|(dep-missed/dep (~(got by deh.bay) dep))
-    ?-  -.dap
+    =+  dap=(~(get by deh.bay) dep)
+    ?~  dap  ~&(dep-missed/dep +>.$)  ::  XX  ~|  !!
+    ?-  -.u.dap
       %done  +>.$(mow :_(mow [hen %give %news ~]))
       %sent
-        =.  p.dap  (~(put in p.dap) hen)
-        +>.$(deh.bay (~(put by deh.bay) dep dap))
+        =.  p.u.dap  (~(put in p.u.dap) hen)
+        +>.$(deh.bay (~(put by deh.bay) dep u.dap))
       %init
         %_    +>.$
             deh.bay 
-          (~(put by deh.bay) dep [%sent [hen ~ ~] p.dap])
+          (~(put by deh.bay) dep [%sent [hen ~ ~] p.u.dap])
         ::
             mow
-          =<  (welp :_(mow (turn (~(tap in p.dap)) .)))
+          =<  (welp :_(mow (turn (~(tap in p.u.dap)) .)))
           |=  bem=beam 
           :^  hen  %pass  [(scot %p our) (scot %uv dep) (tope bem)]
           [%c [%warp [our p.bem] q.bem ~ [%next %y r.bem (flop s.bem)]]]
@@ -356,7 +366,7 @@
         :^    %pass
             [(scot %p our) (scot %ud num) (scot %ud p.kig) (tope bek ~)]
           %c
-        ::  ~&  >>  [%camping bem]
+        ~&  >>  [%camping bem]
         [%warp [our p.bem] q.bem [~ %sing ren r.bem (flop s.bem)]]
       ==
     ::
@@ -557,11 +567,11 @@
       %+  cool  |.(leaf/"ford: fade {<[(tope bem)]>}")
       %+  cope  (make cof [%bake for bem ~])
       |=  [cof=cafe cay=gage]
-      %+  (clef %hood)  (fine cof bem cay)
+      %+  (clef %hood)  (fine cof bem(r [%ud 0]) cay)
       ^-  (burg (pair beam gage) hood)
       |=  [cof=cafe bum=beam cay=gage]
       ::  ~&  fade/clef-miss/bem
-      =+  rul=(fair bem)
+      =+  rul=(fair bum)
       ?.  ?=(@ q.q.cay)
         (flaw cof ~)
       =+  vex=((full rul) [[1 1] (trip q.q.cay)])
@@ -573,13 +583,14 @@
       |=  [cof=cafe for=mark]
       ^-  (bolt vase)
       =+  pax=/door/[for]/mar
-      (cope (fade cof %hook [bek pax]) abut:(meow [bek pax] ~))
+      %+  cope
+        (fade cof %hook [bek pax])
+      abut:(meow [bek pax] ~)
     ::
     ++  fair                                            ::  hood parsing rule
       |=  bem=beam
-      =+  :*  vez=(vang | (tope bem(r [%ud 0])))
-              voz=(vang | (tope bem))
-          ==
+      ?>  ?=([%ud 0] r.bem)           ::  XX sentinel
+      =+  vez=(vang | (tope bem))
       =<  hood
       |%  
       ++  case
@@ -589,7 +600,7 @@
         ?.  ?=([%$ ?(%da %ud %tas) *] a)  ~
         [~ u=(^case a)]
       ::
-      ++  hath  (sear plex:voz (stag %clsg poor:voz))   ::  hood path
+      ++  hath  (sear plex:vez (stag %clsg poor:vez))   ::  hood path
       ++  have  (sear tome ;~(pfix fas hath))           ::  hood beam
       ++  hood
         %+  ifix  [gay gay]
@@ -861,12 +872,12 @@
       %+  cope  (lend cof bem)
       |=  [cof=cafe arc=arch]
       ?^  q.arc
-        (cope (cope (liar cof bem) (lake for)) (fest (norm bem)))
+        (cope (cope (liar cof bem) (lake for)) (fest (norm ska bem)))
       ?:  (~(has by r.arc) %hook)
         %+  cope  (fade cof %hook bem)
         |=  [cof=cafe hyd=hood]
         %+  cope  (cope (abut:(meow bem arg) cof hyd) (lake for))
-        (fest (norm bem))
+        (fest (norm ska bem))
       (flue cof)
     ::
     ++  lake                                            ::  check/coerce
@@ -999,7 +1010,7 @@
       ?^  vux  (fine cof u.vux)
       ?~  s.mob
         %+  flag
-          (norm mob)
+          (norm ska mob)
         (flaw cof leaf/"beam unavailable" (smyt (tope bem)) ~)
       ^$(s.mob t.s.mob, mer [i.s.mob mer])
     ::
@@ -1089,7 +1100,7 @@
     ++  make                                            ::  reduce silk
       |=  [cof=cafe kas=silk]
       ^-  (bolt gage)
-      ::  ~&  [%make (,@tas -.kas)]
+      :: ~&  [%make (,@tas -.kas)]
       ?-    -.kas
           ^
         %.  [cof p.kas q.kas]
@@ -1104,7 +1115,7 @@
         ==
       ::
           %bake
-        ::  ~&  >  (tope q.kas)
+        ::  ~&  [%bake-start (tope q.kas)]
         %+  cool  |.(leaf/"ford: bake {<p.kas>} {<(tope q.kas)>}")
         %+  cope  (lima cof p.kas q.kas r.kas)
         |=  [cof=cafe vux=(unit vase)]
@@ -1430,7 +1441,9 @@
         ::
             %now  (chad cof bax %da p.hon)
             %nap  (chai cof bax p.hon)
-            %see  $(hon q.hon, how p.hon)
+            %see
+          =.  r.p.hon  ?:(?=([%ud 0] r.p.hon) r.how r.p.hon)
+          $(hon q.hon, how p.hon)
             %saw  
           %+  cope  $(hon q.hon)
           |=  [cof=cafe sam=vase]
@@ -1515,6 +1528,7 @@
         ?-    -.hop
             %&  (fine cof ..wilt(boy [p.hop boy]))
             %| 
+          =.  r.p.hop  ?:(?=([%ud 0] r.p.hop) r.how r.p.hop)
           %+  cool  |.(leaf/"ford: wilt {<[(tope p.hop)]>}")
           %+  cope  (lend cof p.hop)
           |=  [cof=cafe arc=arch]
@@ -1547,15 +1561,6 @@
           (fine cof sel(boy [[%brcn mav] boy]))
         ==
       --
-    ::
-    ++  norm                                            ::  normalize beam rev
-      |=  bem=beam
-      %_  bem
-        r  ?:  ?=(%ud -.r.bem)  r.bem
-           =+  num=(ska ~ %cw bem(s ~))
-           ?.  ?=([~ ~ * * @u] num)  r.bem  ::  XX
-           [%ud q.q.u.u.num]
-      ==
     ::
     ++  pact                                            ::  patch
       |=  [cof=cafe kas=silk kos=silk]
@@ -1646,6 +1651,13 @@
   |=  [hen=duct hic=(hypo (hobo kiss))]
   ^-  [p=(list move) q=_..^$]
   =>  .(q.hic ?.(?=(%soft -.q.hic) q.hic ((hard kiss) p.q.hic)))
+  ?:  ?=(%wegh -.q.hic)
+    :_  ..^$  :_  ~
+    :^  hen  %give  %mass
+    :-  %|
+    :~  lex/`lex
+        ::  cor/`..^$
+    ==
   =+  ^=  our  ^-  @p
       ?-  -.q.hic
         %exec  p.q.hic
@@ -1657,7 +1669,7 @@
   =^  mos  bay
     ?:  ?=(%wasp -.q.hic)
       abet:(~(awap za [[our *beak hen] [now eny ski] ~] bay) q.q.hic)
-    =*  bek  q.q.hic
+    =+  bek=-:(norm ski q.q.hic ~)
     abet:(~(apex za [[our bek hen] [now eny ski] ~] bay) r.q.hic)
   [mos ..^$(pol (~(put by pol) our bay))]
 ::
@@ -1667,7 +1679,8 @@
   ~
 ::
 ++  load                                                ::  highly forgiving
-  |=  old=*
+  |=  old=axle
+  ..^$(+>- old)
   ::=.  old  
   ::    ?.  ?=([%0 *] old)  old                           ::  remove at 1
   ::    :-  %1 
@@ -1676,12 +1689,12 @@
   ::    ?>  ?=([n=[p=* q=[tad=* dym=* deh=* jav=*]] l=* r=*] +.old)
   ::    :-  [p.n.+.old [tad.q.n.+.old dym.q.n.+.old deh.q.n.+.old ~]]
   ::    [$(+.old l.+.old) $(+.old r.+.old)]
-  =+  lox=((soft axle) old)
-  ^+  ..^$
-  ?~  lox
-    ~&  %ford-reset
-    ..^$
-  ..^$(+>- u.lox)
+::   =+  lox=((soft axle) old)
+::   ^+  ..^$
+::   ?~  lox
+::     ~&  %ford-reset
+::     ..^$
+::   ..^$(+>- u.lox)
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
