@@ -1894,10 +1894,6 @@
               cip=(each ,@if ,@is)                      ::  client IP
               cum=(map ,@tas ,*)                        ::  custom dirt
           ==                                            ::
-++  cuff                                                ::  permissions
-          $:  p=(unit (set monk))                       ::  readers
-              q=(set monk)                              ::  authors
-          ==                                            ::
 ++  deed  ,[p=@ q=step r=?]                             ::  sig, stage, fake?
 ++  dome                                                ::  project state
           $:  ank=ankh                                  ::  state
