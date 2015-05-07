@@ -18,6 +18,7 @@ module.exports = recl
     s =
       audi:StationStore.getAudience()
       ludi:MessageStore.getLastAudience()
+      config:StationStore.getConfigs()
       members:StationStore.getMembers()
       typing:StationStore.getTyping()
       valid:StationStore.getValidAudience()
@@ -39,6 +40,16 @@ module.exports = recl
     MessageActions.setTyping true
     @typing true
 
+  addCC: (audi) ->
+    listening = @state.config[window.util.mainStation(window.urb.user)].sources
+    cc = false
+    for s in listening
+      if audi.indexOf(s) is -1
+        cc = true
+    if cc is true
+      audi.push window.util.mainStationPath(window.urb.user)
+    audi
+
   sendMessage: ->
     if @_validateAudi() is false
       $('#audi').focus()
@@ -47,8 +58,8 @@ module.exports = recl
       audi = @state.ludi
       @_setAudi()
     else
-      audi = @state.audi
-    audi = window.util.expandAudi audi
+      audi = @state.audi    
+    audi = @addCC audi
     MessageActions.sendMessage @$writing.text().trim(),audi
     @$length.text "0/62"
     @$writing.text('')
@@ -91,8 +102,8 @@ module.exports = recl
   _setFocus: -> @$writing.focus()
 
   _validateAudiPart: (a) ->
-    if a[0] isnt "~"
-      return false
+    # if a[0] isnt "~"
+    #   return false
     if a.indexOf("/") isnt -1
       _a = a.split("/")
       if _a[1].length is 0
@@ -122,6 +133,8 @@ module.exports = recl
       v = $('#audi').text()
       v = v.split " "
       v = window.util.expandAudi v
+      for k,_v of v
+        v[k] = "~#{_v}"
       StationActions.setAudience v
 
   getTime: ->
@@ -168,6 +181,8 @@ module.exports = recl
 
     audi = if @state.audi.length is 0 then @state.ludi else @state.audi
     audi = window.util.clipAudi audi
+    for k,v of audi
+      audi[k] = v.slice(1)
 
     k = "writing"
 
