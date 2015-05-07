@@ -169,5 +169,5 @@
 
     /* u3v_mark(): mark arvo kernel.
     */
-      void
+      c3_w
       u3v_mark(void);

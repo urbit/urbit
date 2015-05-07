@@ -490,37 +490,45 @@ u3v_louse(c3_m how_m)
 
 /* _cv_mark_ova(): mark ova queue.
 */
-static void
+c3_w
 _cv_mark_ova(u3p(u3v_cart) egg_p)
 {
+  c3_w tot_w = 0;
+
   while ( egg_p ) {
     u3v_cart* egg_u = u3to(u3v_cart, egg_p);
 
-    u3a_mark_mptr(egg_u);
-    u3a_mark_noun(egg_u->vir);
+    tot_w += u3a_mark_mptr(egg_u);
+    tot_w += u3a_mark_noun(egg_u->vir);
 
     egg_p = egg_u->nex_p;
   }
+
+  return tot_w;
 }
 
 /* u3v_mark(): mark arvo kernel.
 */
-void
+c3_w
 u3v_mark(void)
 {
+  c3_w tot_w = 0;
+
   u3v_arvo* arv_u = &(u3H->arv_u);
 
-  u3a_mark_noun(arv_u->yot);
-  u3a_mark_noun(arv_u->now);
-  u3a_mark_noun(arv_u->wen);
-  u3a_mark_noun(arv_u->sen);
-  u3a_mark_noun(arv_u->own);
+  tot_w += u3a_mark_noun(arv_u->yot);
+  tot_w += u3a_mark_noun(arv_u->now);
+  tot_w += u3a_mark_noun(arv_u->wen);
+  tot_w += u3a_mark_noun(arv_u->sen);
+  tot_w += u3a_mark_noun(arv_u->own);
 
-  u3a_mark_noun(arv_u->roe);
-  u3a_mark_noun(arv_u->key);
+  tot_w += u3a_mark_noun(arv_u->roe);
+  tot_w += u3a_mark_noun(arv_u->key);
 
-  u3a_mark_noun(arv_u->ken);
-  u3a_mark_noun(arv_u->roc);
+  tot_w += u3a_mark_noun(arv_u->ken);
+  tot_w += u3a_mark_noun(arv_u->roc);
 
-  _cv_mark_ova(arv_u->ova.egg_p);
+  tot_w += _cv_mark_ova(arv_u->ova.egg_p);
+
+  return tot_w;
 }

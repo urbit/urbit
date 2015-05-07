@@ -1415,7 +1415,7 @@ u3a_print_memory(c3_c* cap_c, c3_w wor_w)
 
 /* u3a_sweep(): sweep a fully marked road.
 */
-void
+c3_w
 u3a_sweep(void)
 {
   c3_w neg_w, pos_w, leq_w, weq_w;
@@ -1471,7 +1471,7 @@ u3a_sweep(void)
                     (u3_noun)u3a_to_pom(u3a_outa(u3a_boxto(box_w))),
                     ((u3a_noun *)(u3a_boxto(box_w)))->mug_w,
                     box_u->use_w, box_u->eus_w);
-            u3m_p("weak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
+            // u3m_p("weak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
           }
           weq_w += box_u->siz_w;
         }
@@ -1483,7 +1483,7 @@ u3a_sweep(void)
                     ? ((u3a_noun *)(u3a_boxto(box_w)))->mug_w
                     : u3r_mug(u3a_to_pom(u3a_outa(u3a_boxto(box_w)))),
                   box_u->use_w);
-          u3m_p("leak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
+          // u3m_p("leak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
           leq_w += box_u->siz_w;
         }
         if ( box_u->cod_w ) {
@@ -1534,6 +1534,8 @@ u3a_sweep(void)
   c3_assert((pos_w + leq_w + weq_w) == neg_w);
 
   if ( 0 != leq_w || (0 != weq_w) ) { c3_assert(0); }
+
+  return neg_w;
 }
 
 /* u3a_slab(): create a length-bounded proto-atom.

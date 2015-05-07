@@ -6,7 +6,7 @@
   **/
     /* U3_MEMORY_DEBUG: add debugging information to heap.  Breaks image.
     */
-#     undef U3_MEMORY_DEBUG
+#     define U3_MEMORY_DEBUG
 
 
   /**  Constants.
@@ -264,6 +264,10 @@
       c3_global c3_w u3_Code;
 #endif
 
+    /* u3_Prof: memory profile.
+    */
+      c3_global u3_weak u3_Prof;
+
 #   define u3_Loom      ((c3_w *)(void *)U3_OS_LoomBase)
 
   /**  Functions.
@@ -378,7 +382,7 @@
 
         /* u3a_sweep(): sweep a fully marked road.
         */
-          void
+          c3_w
           u3a_sweep(void);
 
         /* u3a_sane(): check allocator sanity.
