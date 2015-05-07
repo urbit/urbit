@@ -186,8 +186,8 @@ ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = ref[0], input 
 module.exports = recl({
   render: function() {
     var k;
-    if (this.props.ship[0] !== "~") {
-      this.props.ship = "~" + this.props.ship;
+    if (this.props.ship[0] === "~") {
+      this.props.ship = this.props.ship.slice(1);
     }
     k = "ship";
     if (this.props.presence) {
@@ -256,7 +256,7 @@ Message = recl({
     return this.props._handlePm(user);
   },
   render: function() {
-    var audi, delivery, klass, name, ref1, ref2, ref3, ref4, ref5, ref6, txt, url;
+    var aude, audi, delivery, klass, name, ref1, ref2, ref3, ref4, ref5, ref6, txt, type, url;
     delivery = _.uniq(_.pluck(this.props.thought.audience, "delivery"));
     klass = delivery.indexOf("received") !== -1 ? " received" : " pending";
     if (((ref1 = this.props.thought.statement.speech) != null ? (ref2 = ref1.lin) != null ? ref2.say : void 0 : void 0) === false) {
@@ -268,13 +268,18 @@ Message = recl({
     if (this.props.unseen === true) {
       klass += " new";
     }
+    if (this.props.sameAs === true) {
+      klass += " same";
+    } else {
+      klass += " first";
+    }
     name = this.props.name ? this.props.name : "";
-    audi = _.keys(this.props.thought.audience);
-    audi = _.without(audi, window.util.mainStationPath(window.urb.user));
-    audi = window.util.clipAudi(audi);
-    audi = audi.map(function(_audi) {
+    aude = _.keys(this.props.thought.audience);
+    audi = window.util.clipAudi(aude).map(function(_audi) {
       return div({}, _audi);
     });
+    type = ['private', 'public'];
+    type = type[Number(aude.indexOf(window.util.mainStationPath(window.urb.user)) === -1)];
     if ((ref4 = this.props.thought.statement.speech) != null ? (ref5 = ref4.lin) != null ? ref5.txt : void 0 : void 0) {
       txt = this.props.thought.statement.speech.lin.txt;
     }
@@ -292,13 +297,15 @@ Message = recl({
         className: "attr"
       }, [
         div({
-          onClick: this._handleAudi,
-          className: "audi"
-        }, audi), div({
+          className: "type " + type
+        }, ""), div({
           onClick: this._handlePm
         }, React.createElement(Member, {
           ship: this.props.ship
         })), div({
+          onClick: this._handleAudi,
+          className: "audi"
+        }, audi), div({
           className: "time"
         }, this.convTime(this.props.thought.statement.date))
       ]), div({
@@ -385,6 +392,8 @@ module.exports = recl({
     } else {
       if (!window.util.isScrolling()) {
         window.util.setScroll();
+      } else {
+        console.log('scrolling');
       }
     }
     if (this.focussed === false && this.last !== this.lastSeen) {
@@ -417,7 +426,7 @@ module.exports = recl({
     return StationActions.setAudience(audi);
   },
   render: function() {
-    var _messages, _station, lastIndex, messages, ref1, ref2, sources, station;
+    var _messages, _station, lastIndex, lastSaid, messages, ref1, ref2, sources, station;
     station = this.state.station;
     _station = "~" + window.urb.ship + "/" + station;
     sources = _.clone((ref1 = (ref2 = this.state.configs[this.state.station]) != null ? ref2.sources : void 0) != null ? ref1 : []);
@@ -433,14 +442,17 @@ module.exports = recl({
       };
     })(this), 1);
     lastIndex = this.lastSeen ? _messages.indexOf(this.lastSeen) : null;
+    lastSaid = null;
     messages = _messages.map((function(_this) {
       return function(_message, k) {
         if (lastIndex && lastIndex === k) {
           _message.unseen = true;
         }
+        _message.sameAs = lastSaid === _message.ship;
         _message.station = _this.state.station;
         _message._handlePm = _this._handlePm;
         _message._handleAudi = _this._handleAudi;
+        lastSaid = _message.ship;
         return React.createElement(Message, _message);
       };
     })(this));
@@ -563,12 +575,12 @@ module.exports = recl({
             className: "station"
           }, [
             div({
+              className: "path"
+            }, source), div({
               className: "remove",
               onClick: _remove,
               "data-station": source
-            }, "×"), div({
-              className: "path"
-            }, source)
+            }, "×")
           ]);
         };
       })(this));
@@ -579,17 +591,23 @@ module.exports = recl({
       id: "head"
     }, [
       div({
-        id: "where"
-      }, [
-        "/talk", div({
-          className: "caret"
-        }, "")
-      ]), div({
         id: "who"
       }, [
         div({
-          className: "circle"
-        }, ""), "~" + window.urb.user
+          className: "sig"
+        }, ""), div({
+          className: "ship"
+        }, "" + window.urb.user)
+      ]), div({
+        id: "where"
+      }, [
+        div({
+          className: "slat"
+        }, "talk"), div({
+          className: "path"
+        }, window.util.mainStation(window.urb.user)), div({
+          className: "caret"
+        }, "")
       ])
     ]);
     parts.push(head);
@@ -683,7 +701,7 @@ module.exports = recl({
     }
     audi = window.util.expandAudi(audi);
     MessageActions.sendMessage(this.$writing.text().trim(), audi);
-    this.$length.text("0/69");
+    this.$length.text("0/62");
     this.$writing.text('');
     this.set();
     return this.typing(false);
@@ -827,13 +845,13 @@ module.exports = recl({
       div({
         className: "attr"
       }, [
-        div({
+        React.createElement(Member, iden), div({
           id: "audi",
           className: "audi valid-" + this.state.valid,
           contentEditable: true,
           onKeyDown: this._audiKeyDown,
           onBlur: this._setAudi
-        }, audi.join(" ")), React.createElement(Member, iden), div({
+        }, audi.join(" ")), div({
           className: "time"
         }, this.getTime())
       ]), div({
@@ -6058,7 +6076,7 @@ _.merge(window.util, {
     if (!window.util.writingPosition) {
       window.util.getScroll();
     }
-    return $(window).scrollTop() < window.util.writingPosition;
+    return $(window).scrollTop() + $('#writing').outerHeight() < window.util.writingPosition;
   },
   checkScroll: function() {
     if (window.util.isScrolling()) {
