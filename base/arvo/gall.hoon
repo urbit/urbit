@@ -15,6 +15,7 @@
               [%crud p=@tas q=(list tank)]              ::  physical error
               [%dumb ~]                                 ::  close duct
               [%gone p=hapt]                            ::  app death
+              [%mass p=mass]                            ::  memory usage
               [%mean p=ares]                            ::  message failure
               [%meta p=vase]                            ::  meta-gift
               [%nice ~]                                 ::  message success
@@ -31,6 +32,7 @@
               [%rote p=sack q=path r=*]                 ::  remote request
               [%roth p=sack q=path r=*]                 ::  remote response
               [%took p=hapt q=ship]                     ::  remote acknowledge
+              [%wegh ~]                                 ::  report memory
               [%wipe p=hapt]                            ::  forget app
           ==                                            ::
 ++  knob                                                ::  pending action
@@ -213,6 +215,7 @@
     |%                                                  ::  vane interface
     ++  call                                            ::  handle request
       |=  [hen=duct hic=(hypo (hobo kiss))]
+      ^-  [p=(list move) q=_..^$]
       =>  .(q.hic ?.(?=(%soft -.q.hic) q.hic ((hard kiss) p.q.hic)))
       ?-    -.q.hic
           %init
@@ -223,6 +226,14 @@
       ::
           %roth
         (gawd hen p.q.hic q.q.hic ((hard ,[@ud roon]) r.q.hic))
+      ::
+          %wegh
+        :_  ..^$  :_  ~
+        :^  hen  %give  %mass
+        :-  %|
+        :~  all/`all
+            ::  cor/`..^$
+        ==
       ::
           %wipe
         =+  mat=(~(got by pol.all) p.p.q.hic)

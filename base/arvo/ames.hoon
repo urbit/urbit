@@ -11,6 +11,7 @@
 ++  gift                                                ::  out result <-$
           $%  [%hear p=lane q=@]                        ::  receive packet
               [%init p=@p]                              ::  report install
+              [%mass p=mass]                            ::  memory usage
               [%send p=lane q=@]                        ::  transmit packet
               [%waft p=sock q=*]                        ::  response message
               [%wart p=sock q=@tas r=path s=*]          ::  network request
@@ -30,6 +31,7 @@
               [%sith p=@p q=@uw r=?]                    ::  imperial generator
               [%wake ~]                                 ::  timer activate
               [%want p=sock q=path r=*]                 ::  send message
+              [%wegh ~]                                 ::  report memory
               [%wont p=sock q=path r=*]                 ::  e2e send message
           ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
@@ -1842,8 +1844,11 @@
   ++  knob
     |=  [hen=duct kyz=kiss]
     ^-  [(list move) _+>]
-    ?:  ?=([%crud *] kyz)
+    ?:  ?=(%crud -.kyz)
       [[[hen [%slip %d %flog kyz]] ~] +>]
+    ?:  ?=(%wegh -.kyz)
+      ~&  %ames-weighing
+      [[hen %give %mass wegh]~ +>]
     =+  ^=  fuy  
         ^-  [p=(list boon) q=fort]
         ?-    -.kyz
@@ -1945,4 +1950,11 @@
       [~ `@ud`p.p.q.i.lew.wod.u.fod]
     ?~  val.saf.u.gys  ~
     [~ `@ud`p.i.val.saf.u.gys]
+  ::
+  ++  wegh
+    ^-  mass
+    :-  %|
+    :~  fox/`fox
+        ::  cor/`.
+    ==
   --

@@ -20,8 +20,8 @@
 ++  gift                                                ::  out result <-$
           $%  [%ergo p=@p q=@tas r=@ud s=(list ,[path (unit mime)])]
                                                         ::  version update
-              [%mere p=(each (set path) (pair term (list tank)))]
-                                                        ::  merge result
+              [%mass p=mass]                            ::  memory usage
+              [%mere p=(each (set path) (pair term tang))]  ::  merge result
               [%note p=@tD q=tank]                      ::  debug message
               [%writ p=riot]                            ::  response
           ==                                            ::
@@ -39,6 +39,7 @@
               [%plug p=@p q=@tas r=@p s=@tas]           ::  unset upstream
               [%wart p=sock q=@tas r=path s=*]          ::  network request
               [%warp p=sock q=riff]                     ::  file request
+              [%wegh ~]                                 ::  report memory
           ==                                            ::
 ++  mery                                                ::
           $:  gem=germ                                  ::  strategy
@@ -2577,6 +2578,14 @@
         :^  %pass  [(scot %p p.p.q.hic) (scot %p q.p.q.hic) r.q.hic]
           %c
         [%warp [p.p.q.hic p.p.q.hic] ryf]
+    ==
+  ::
+      %wegh
+    :_  ..^$  :_  ~
+    :^  hen  %give  %mass
+    :-  %|
+    :~  ruf/`ruf
+        ::  cor/`..^$
     ==
   ==
 ::

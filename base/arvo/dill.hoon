@@ -65,7 +65,6 @@
       hey=(unit duct)                                   ::  default duct
       dug=(map duct axon)                               ::  conversations
   ==                                                    ::  
-++  mass  (each noun (list (pair cord mass)))           ::  XX del after reset
 ++  axle                                                ::  all dill state
   $:  %3                                                ::
       ore=(unit ship)                                   ::  identity once set
@@ -175,11 +174,12 @@
       [%took p=[p=ship q=path] q=ship]                  ::
   ==                                                    ::
 ++  note                                                ::
+  $?  [?(%a %c %e %f %g %t) %wegh ~]                    ::
   $%  [%a note-ames]                                    ::  out request $->
       [%c note-clay]                                    ::
       [%d note-dill]                                    ::
       [%g note-gall]                                    ::
-  ==                                                    ::
+  ==  ==                                                ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  sign-ames                                           ::
   $%  [%nice ~]                                         ::
@@ -285,6 +285,11 @@
         %_    .
             moz
           :*  [hen %pass /heft/ames %a %wegh ~]
+              [hen %pass /heft/clay %c %wegh ~]
+              [hen %pass /heft/eyre %e %wegh ~]
+              [hen %pass /heft/ford %f %wegh ~]
+              [hen %pass /heft/gall %g %wegh ~]
+              [hen %pass /heft/time %t %wegh ~]
               moz
           ==
         ==
@@ -335,6 +340,7 @@
         :~  ore/`ore.all
             hey/`hey.all
             dug/`dug.all
+            ::  cor/`..as
         ==
       ::
       ++  wegt
@@ -342,12 +348,12 @@
         ^+  +>
         =.  hef.all
           ?-  lal
-            %a  ?~(a.hef.all hef.all(a `mas) ~|(%double-mass-a !!))
-            %c  ?~(c.hef.all hef.all(c `mas) ~|(%double-mass-c !!))
-            %e  ?~(e.hef.all hef.all(e `mas) ~|(%double-mass-e !!))
-            %f  ?~(f.hef.all hef.all(f `mas) ~|(%double-mass-f !!))
-            %g  ?~(g.hef.all hef.all(g `mas) ~|(%double-mass-g !!))
-            %t  ?~(t.hef.all hef.all(t `mas) ~|(%double-mass-t !!))
+            %a  ~?(?=(^ a.hef.all) %double-mass-a hef.all(a `mas))
+            %c  ~?(?=(^ c.hef.all) %double-mass-c hef.all(c `mas))
+            %e  ~?(?=(^ e.hef.all) %double-mass-e hef.all(e `mas))
+            %f  ~?(?=(^ f.hef.all) %double-mass-f hef.all(f `mas))
+            %g  ~?(?=(^ g.hef.all) %double-mass-g hef.all(g `mas))
+            %t  ~?(?=(^ t.hef.all) %double-mass-t hef.all(t `mas))
           ==
         ?.  ?&  ?=(^ a.hef.all)
                 ?=(^ c.hef.all)
@@ -356,14 +362,14 @@
                 ?=(^ g.hef.all)
                 ?=(^ t.hef.all)
             ==
-          .
+          +>.$
         %+  done(hef.all [~ ~ ~ ~ ~ ~])
           %mass
         =>  [hef.all d=wegh]
         :-  %|
         :~  ames/u.a
             clay/u.c
-            dill/u.d
+            dill/d
             eyre/u.e
             ford/u.f
             gall/u.g
@@ -500,7 +506,7 @@
 ++  load                                                ::  trivial
   |=  old=?(old-axle axle)
   ?:  ?=(%2 -.old)
-    $(old [%3 ore hey dug ~ ~ ~ ~ ~ ~])
+    $(old [%3 ore hey dug ~ ~ ~ ~ ~ ~]:old)
   ..^$(all old)
   ::  |=  old=*   ::  diable
   ::  ..^$(ore.all `~zod)
