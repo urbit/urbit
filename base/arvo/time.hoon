@@ -12,8 +12,11 @@
           ==                                            ::
 ++  broq  |*  [a=_,* b=_,*]                             ::  brodal skew qeu
           (list (sqeu a b))                             ::
+++  weight
+          (each noun (list (pair tape weight)))
 ++  gift                                                ::  out result <-$
           $%  [%wake ~]                                 ::  wakey-wakey
+              [%wegh weight]                            ::
           ==                                            ::
 ++  kiss                                                ::  in request ->$
           $%  [%rest p=@da]                             ::  cancel alarm
@@ -185,6 +188,9 @@
       [[`move`[q.nex %give %wake ~] mof] tym]
     ==
   [mof ..^$]
+::
+++  foo
+  %bar
 ::
 ++  doze
   |=  [now=@da hen=duct]
