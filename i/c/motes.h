@@ -652,6 +652,7 @@
 #   define c3__map    c3_s3('m','a','p')
 #   define c3__marg   c3_s4('m','a','r','g')
 #   define c3__mark   c3_s4('m','a','r','k')
+#   define c3__mass   c3_s4('m','a','s','s')
 #   define c3__marn   c3_s4('m','a','r','n')
 #   define c3__mash   c3_s4('m','a','s','h')
 #   define c3__mast   c3_s4('m','a','s','t')
