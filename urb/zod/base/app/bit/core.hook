@@ -6,7 +6,7 @@
 /-  *talk
 /+  talk, sole, http
 !:
-::::  sivtyv-barnel
+::::  sivtyv-barnelhsjdf
   ::  be sure to have oauth2-code mark
 |%
 ++  axle  cred
@@ -28,7 +28,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
 ++  auth-url  "https://sandbox.coinbase.com/oauth/authorize?". 
     "response_type=code".
     "&client_id=c911e4cb6d0b2ce4da92a75ae5acefe61a9b494332dd37844043ce820030d088".
-    "&redirect_uri={(urle "http://localhost:8443/main/pub/bit/fab")}".
+    "&redirect_uri={(urle "http://localhost:8443/home/pub/bit/fab")}".
     "&scope=user+balance+buy+sell+send+transactions".
     "&{(urle "meta[send_limit_amount]")}=1&{(urle "meta[send_limit_curency]")}".
     "=BTC&{(urle "meta[send_limit_period]")}=day"
@@ -60,7 +60,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   =+  ^=  queries
   :~  ['grant_type' 'authorization_code']
       ['code' (need oauth-code.vat)]
-      ['redirect_uri' 'http://localhost:8443/main/pub/bit/fab']
+      ['redirect_uri' 'http://localhost:8443/base/pub/bit/fab']
       ['client_id' (need client-id.vat)]
       ['client_secret' (need app-secret.vat)]
   ==
