@@ -666,9 +666,9 @@ _unix_dir_update(u3_udir* dir_u, DIR* rid_u)
 
 /* unix_load(): load a file as a cage
  *
- * return value of c3__none means delete, u3_nul means no change
+ * return value of u3_none means delete, u3_nul means no change
 */
-static u3_noun
+static u3_weak
 _unix_load(u3_ufil* fil_u)
 {
   struct stat buf_u;
@@ -684,7 +684,7 @@ _unix_load(u3_ufil* fil_u)
     if ( ENOENT != errno ) {
       uL(fprintf(uH, "error loading %s: %s\n", fil_u->pax_c, strerror(errno)));
     }
-    return c3__none;
+    return u3_none;
   }
   fln_w = buf_u.st_size;
   pad_y = c3_malloc(fln_w);
@@ -779,7 +779,7 @@ _unix_save(c3_c* pax_c, u3_atom oat)
 
 /* _unix_file_load(): load a file by watcher.
 */
-static u3_noun
+static u3_weak
 _unix_file_load(u3_ufil* fil_u)
 {
   return _unix_load(fil_u);
@@ -938,8 +938,8 @@ _unix_dir_khan(u3_udir* dir_u)
 
   for ( fil_u = dir_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
     u3_noun wib = _unix_file_name(fil_u);
-    u3_noun baw = _unix_file_load(fil_u);
-    u3_noun wol = (c3__none == baw ? u3nc(u3_nul, u3_nul) :
+    u3_weak baw = _unix_file_load(fil_u);
+    u3_noun wol = (u3_none == baw ? u3nc(u3_nul, u3_nul) :
                    u3_nul == baw   ? u3_nul :
                                      u3nt(u3_nul, u3_nul, baw));
     pam = _unix_dir_khan_file(pam, wib, wol);

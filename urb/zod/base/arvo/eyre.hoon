@@ -5,7 +5,8 @@
 =>  =~
 |%                                                      ::  interfaces
 ++  gift                                                ::  out result <-$
-          $%  [%thou p=httr]                            ::  raw http response
+          $%  [%mass p=mass]                            ::  memory usage
+              [%thou p=httr]                            ::  raw http response
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
               [%veer p=@ta q=path r=@t]                 ::  drop-through
               [%vega p=path]                            ::  drop-through
@@ -28,6 +29,7 @@
               [%this p=? q=clip r=httq]                 ::  inbound request
               [%thud ~]                                 ::  inbound cancel
               [%wart p=sack q=@tas r=_`[path *]`*gram]  ::  urbit message
+              [%wegh ~]                                 ::  report memory
           ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
@@ -477,6 +479,8 @@
           =.  sop  (~(put by sop) p.u.mez q.p.kyz |)
           (ames-gram q.p.kyz hat/~ p.u.mez our-host)
       ==
+    ::
+      %wegh  !!
     ==
   ::
   ++  axon                                              ::  accept response
@@ -1251,6 +1255,13 @@
         ((hard kiss) q.hic)
       ==
   ^-  [p=(list move) q=_..^$]
+  ?:  ?=(%wegh -.q.hic)
+    :_  ..^$  :_  ~
+    :^  hen  %give  %mass
+    :-  %|
+    :~  bol/`bol
+        ::  cor/`..^$
+    ==
   =+  our=`@p`0x100  ::  XX  sentinel
   =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
