@@ -234,7 +234,12 @@
 ::
 ++  add-json                                            ::  inject window.urb
   |=  [urb=json jaz=cord]  ^-  cord
-  (cat 3 (crip "window.urb = {(pojo urb)}\0a") jaz)
+  =-  (cat 3 (crip -) jaz)
+  """
+  var _urb = {(pojo urb)}
+  window.urb = window.urb || \{}; for(k in _urb) window.urb[k] = _urb[k]
+  
+  """
 ::
 ++  ares-to-json
   |=  err=ares  ^-  json
@@ -266,7 +271,7 @@
     urb.tries = 0
     urb.call = function() {
       urb.wreq = new XMLHttpRequest()
-      urb.wreq.open('GET', urb.poll, true)
+      urb.wreq.open('GET', urb.wurl, true)
       urb.wreq.addEventListener('load', function() {
         // if(~~(this.status / 100) == 4)
         //   return document.write(this.responseText)
@@ -285,11 +290,11 @@
     }
     urb.call()
     urb.wasp = function(deh){
-      var old = /[^/]*$/.exec(urb.poll)[0]
+      var old = /[^/]*$/.exec(urb.wurl)[0]
       var deps = old.replace(/^on.json\?|.json$/,'').split('&')
       if (deps.indexOf(deh) !== -1) return;
       deps.push(deh)
-      urb.poll = "/~/on.json?"+deps.join('&')
+      urb.wurl = "/~/on.json?"+deps.join('&')
       urb.wreq.abort() // trigger keep 
     }
     '''
@@ -938,7 +943,7 @@
           %poll
         ?:  ?=([~ %js] p.pok)  ::  XX treat non-json cases?
           =+  polling-url=['/' (apex:earn %| pok(u.p %json) quy)]
-          [%& %js (add-json (joba %poll (jape polling-url)) poll:js)]
+          [%& %js (add-json (joba %wurl (jape polling-url)) poll:js)]
         |-
           =.  done  (new-dependency i.p.hem %& hen)
           ?~  t.p.hem  [%| done]
