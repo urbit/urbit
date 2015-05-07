@@ -66,6 +66,120 @@ _reck_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
   }
 }
 
+/* _reck_spac(): print n spaces.
+*/
+void _reck_spac(c3_w n)
+{
+  for (; n > 0; n--)
+    uL(fprintf(uH," "));
+}
+
+/* _reck_print_memory: print memory amount. cf u3a_print_memory().
+*/
+void
+_reck_print_memory(c3_w wor_w)
+{
+  c3_w byt_w = (wor_w * 4);
+  c3_w gib_w = (byt_w / 1000000000);
+  c3_w mib_w = (byt_w % 1000000000) / 1000000;
+  c3_w kib_w = (byt_w % 1000000) / 1000;
+  c3_w bib_w = (byt_w % 1000);
+
+  if ( gib_w ) {
+    uL(fprintf(uH, "GB/%d.%03d.%03d.%03d\r\n", 
+        gib_w, mib_w, kib_w, bib_w));
+  }
+  else if ( mib_w ) {
+    uL(fprintf(uH, "MB/%d.%03d.%03d\r\n", mib_w, kib_w, bib_w));
+  }
+  else if ( kib_w ) {
+    uL(fprintf(uH, "KB/%d.%03d\r\n", kib_w, bib_w));
+  }
+  else {
+    uL(fprintf(uH, "B/%d\r\n", bib_w));
+  }
+}
+
+/*  _reck_meme_noun(): get memory usage, in words, of noun. RETAIN.
+*/
+c3_w
+_reck_meme_noun(u3p(u3h_root) hax, u3_noun non, c3_t dud)
+{
+  u3_weak got = u3h_git(hax, dud ? non & 0x7fffffff : non);
+
+  if (u3_none != got) {
+    return 0;                                           //  I think? maybe 1
+  }
+  else {
+    c3_w res;
+
+    if (!(non & 0x80000000)) {
+      res = 1;
+    }
+    if (_(u3ud(non))) {
+      res = 2 + u3r_met(5, non);
+    }
+    else {
+      res = 1
+            + _reck_meme_noun(hax, u3h(non), dud)
+            + _reck_meme_noun(hax, u3t(non), dud);
+    }
+
+    u3h_put(hax, dud ? non & 0x7fffffff : non, res);
+
+    return res;
+  }
+}
+
+/* _reck_meme_prof(): print memory profile. RETAIN.
+*/
+void
+_reck_meme_prof(u3p(u3h_root) hax, c3_w den, u3_noun mas)
+{
+  u3_noun h_mas, t_mas;
+
+  if (c3n == u3r_cell(mas, &h_mas, &t_mas)) {
+    _reck_spac(den);
+    uL(fprintf(uH, "mistyped mass\r\n"));
+    return;
+  }
+  if (c3y == h_mas) {
+    _reck_spac(den);
+    _reck_print_memory(_reck_meme_noun(hax, t_mas, false));
+    _reck_spac(den);
+    _reck_print_memory(_reck_meme_noun(hax, t_mas, true));
+  }
+  else if (c3n == h_mas) {
+    u3_noun it_mas, tt_mas, pit_mas, qit_mas;
+    while (u3_nul != t_mas)
+    {
+      _reck_spac(den);
+      if (c3n == u3r_cell(t_mas, &it_mas, &tt_mas)) {
+        uL(fprintf(uH, "mistyped mass list\r\n"));
+        return;
+      }
+      else if (c3n == u3r_cell(it_mas, &pit_mas, &qit_mas)) {
+        uL(fprintf(uH, "mistyped mass list element\r\n"));
+        return;
+      }
+      else {
+        c3_c* pit_c = u3m_pretty(pit_mas);
+        uL(fprintf(uH, "%s\r\n", pit_c));
+        free(pit_c);
+
+        _reck_meme_prof(hax, den+2, qit_mas);
+
+        t_mas = tt_mas;
+      }
+    }
+  }
+  else {
+    _reck_spac(den);
+    uL(fprintf(uH, "mistyped mass head\r\n"));
+    return;
+  }
+}
+
 /* _reck_kick_term(): apply terminal outputs.
 */
 static u3_noun
@@ -109,6 +223,19 @@ _reck_kick_term(u3_noun pox, c3_l tid_l, u3_noun fav)
       
       uL(fprintf(uH, "kick: init: %s\n", nam_c));
       free(nam_c); u3z(pox); u3z(hox); u3z(fav); return c3y;
+    } break;
+
+    case c3__mass: p_fav = u3t(fav);
+    {
+      uL(fprintf(uH, "memory profile:\r\n"));
+
+      u3p(u3h_root) hax = u3h_new();
+
+      _reck_meme_prof(hax, 0, p_fav);
+
+      u3h_free(hax);
+
+      u3z(pox); u3z(fav); return c3y;
     } break;
   }
   c3_assert(!"not reached"); return 0;
