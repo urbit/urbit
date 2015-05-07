@@ -5,8 +5,7 @@
 ::
 :::::::
   !:
-|=  [^ arg=[to=@t amount=(unit ,@t) currency=(unit ,@t) astring=(unit ,@t) notes=(unit ,@t) ~] ~]
-:-  %send
-[to.arg amount.arg currency.arg astring.arg notes.arg]
+|=  [^ [to=ship amo=@t ~] ~]
+[%bit-send to amo]
 
 
