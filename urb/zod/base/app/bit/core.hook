@@ -38,7 +38,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
 |_  [hid=hide vat=axle]
 ++  prep  ,_`.
 ++  redirect-uri  (crip (weld hostname "/~~/home/pub/bit/fab"))
-++  hostname  "http://107.170.240.117:8443"::{+:<our.hid>}.urbit.org
+++  hostname  "http://104.236.139.191:{?+((clan our.hid) !! %czar "8444", %duke "8443")}"::{+:<our.hid>}.urbit.org
 ++  auth-url
   %+  weld  "https://www.coinbase.com/oauth/authorize"
   %-  tail:earn  :~
