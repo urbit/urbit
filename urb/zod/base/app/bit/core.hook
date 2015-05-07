@@ -6,7 +6,7 @@
 /-  *talk
 /+  talk, sole, http
 !:
-::::  sivtyv-barnelhsjdf
+::::  sivtyv-barnel
   ::  be sure to have oauth2-code mark
 |%
 ++  axle  cred
@@ -14,7 +14,7 @@
 $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
     oauth-code=(unit ,@t)  auth-token=(unit ,@t)   
     refr-token=(unit ,@t)  contacts=(map ,@t ,@t)
-    outgoing=(map ship ,@t)
+    outgoing=(map ship ,@t)  incoming=(map ,@t ship)
 ==
 ++  move  ,[bone (mold note gift)]
 ++  hapt  ,[ship path]
@@ -36,9 +36,9 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
 ::
 !:
 |_  [hid=hide vat=axle]
-::++  prep  ,_`.
+++  prep  ,_`.
 ++  redirect-uri  (crip (weld hostname "/~~/home/pub/bit/fab"))
-++  hostname  "http://{+:<our.hid>}.urbit.org"
+++  hostname  "http://107.170.240.117:8443"::{+:<our.hid>}.urbit.org
 ++  auth-url
   %+  weld  "https://www.coinbase.com/oauth/authorize"
   %-  tail:earn  :~
@@ -99,10 +99,14 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   ::
 ++  pour-addr-request             ::  send new address to sender
   |=  [ost=bone pax=path rez=json]
+  =+  adr=(need ((ot address/so ~):jo rez))
+  =+  his=(slav %p +<.pax)
+  ~!  incoming.vat
+  =.  incoming.vat
+    (~(put by incoming.vat) adr his) 
   :_  +>.$
   :_  ~
-  =+  adr=(need ((ot address/so ~):jo rez))
-  (send-message ost (slav %p +<.pax) %bit-addr-made adr)
+  (send-message ost his %bit-addr-made adr)
 ::
 ++  poke-bit-addr-made             ::  receive address for sending
   |=  [ost=bone his=ship addr=@t]
@@ -197,8 +201,10 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
       ~&  arg
       :_  +>.$
       =+  [adr amo]=(need %.(arg (ot address/sa amount/no ~):jo))
+      =+  frm=(~(get by incoming.vat) adr)
       :_  [ost %give %nice ~]~
-      (publish ost our.hid %porch [%lin & (crip "got {(trip amo)} BTC from {adr}")]~)
+      ~!  frm
+      (publish ost our.hid %porch [%lin & (crip "just received {(trip amo)} BTC from {<frm>}")]~)
       ::(api-call ost /get-id /transactions/[transaction-id] %get)
 ++  pour-get-id             ::  display transaction info
   |=  [ost=bone pax=path rez=json]
