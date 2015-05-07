@@ -809,7 +809,9 @@ module.exports = recl({
       v = window.util.expandAudi(v);
       for (k in v) {
         _v = v[k];
-        v[k] = "~" + _v;
+        if (_v[0] !== "~") {
+          v[k] = "~" + _v;
+        }
       }
       return StationActions.setAudience(v);
     }
