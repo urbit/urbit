@@ -1,6 +1,6 @@
 ::  ::  %time, just a timer
 !?  164
-::::
+!:::
 |=  pit=vase
 =>  =~
 |%
@@ -15,13 +15,14 @@
 ++  weight
           (each noun (list (pair tape weight)))
 ++  gift                                                ::  out result <-$
-          $%  [%wake ~]                                 ::  wakey-wakey
-              [%wegh weight]                            ::
+          $%  [%mass p=mass]                            ::  memory usage
+              [%wake ~]                                 ::  wakey-wakey
           ==                                            ::
 ++  kiss                                                ::  in request ->$
           $%  [%rest p=@da]                             ::  cancel alarm
               [%wait p=@da]                             ::  set alarm
               [%wake ~]                                 ::  timer activate
+              [%wegh ~]                                 ::  report memory
           ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note  ,~                                            ::  out request $->
@@ -172,12 +173,16 @@
       ==
   =^  mof  tym
     ?-    -.q.hic
-        %rest  =.  q.tym  (~(put up q.tym) p.q.hic hen)
-               =.  tym  (raze tym)
-               [~ tym]
-        %wait  =.  p.tym  (~(put up p.tym) p.q.hic hen)
-               =.  tym  (raze tym)
-               [~ tym]
+        %rest
+      =.  q.tym  (~(put up q.tym) p.q.hic hen)
+      =.  tym  (raze tym)
+      [~ tym]
+    ::
+        %wait
+      =.  p.tym  (~(put up p.tym) p.q.hic hen)
+      =.  tym  (raze tym)
+      [~ tym]
+    ::
         %wake
       |-  ^+  [*(list move) tym]
       =.  tym  (raze tym)
@@ -186,6 +191,14 @@
       ?:  (lte now p.nex)  [~ tym]
       =^  mof  tym  $(p.tym ~(pop up p.tym))
       [[`move`[q.nex %give %wake ~] mof] tym]
+    ::
+        %wegh
+      :_  tym  :_  ~
+      :^  hen  %give  %mass
+      :-  %|
+      :~  tym/`tym
+          ::  cor/`..^$
+      ==
     ==
   [mof ..^$]
 ::

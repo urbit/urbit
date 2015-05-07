@@ -36,6 +36,7 @@
       ==                                                ::
     ++  dill-flog                                       ::  sent to %dill
       $%  [%crud p=%hax-init [%leaf p=tape] ~]          ::  initialize ship
+          [%heft ~]                                     ::  weigh memory
           [%veer p=@ta q=path r=@t]                     ::  install vane
           [%vega p=path]                                ::  reboot by path
           [%verb ~]                                     ::  verbose mode
@@ -178,6 +179,13 @@
         moz
       :_  moz
       [ost %pass /verb %d %flog %verb ~]
+    ==
+  ::
+  ++  he-wish-mass
+    %_    .
+        moz
+      :_  moz
+      [ost %pass /heft %d %flog %heft ~]
     ==
   ::
   ++  he-wish-init
@@ -428,6 +436,11 @@
   |=  [ost=bone her=ship ~]
   ~&  %poke-helm-verb
   he-abet:he-wish-verb:(hake ost her)
+::
+++  poke-helm-mass
+  |=  [ost=bone her=ship ~]
+  ~&  %poke-helm-mass
+  he-abet:he-wish-mass:(hake ost her)
 ::
 ++  poke-helm-init
   |=  [ost=bone her=ship him=ship]

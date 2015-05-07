@@ -59,11 +59,25 @@
 ++  gill  (pair ship term)                              ::  general contact
 --                                                      ::
 =>  |%                                                  ::  console protocol
-++  axle                                                ::  all dill state
+++  old-axle                                            ::  all dill state
   $:  %2                                                ::
       ore=(unit ship)                                   ::  identity once set
       hey=(unit duct)                                   ::  default duct
       dug=(map duct axon)                               ::  conversations
+  ==                                                    ::  
+++  axle                                                ::  all dill state
+  $:  %3                                                ::
+      ore=(unit ship)                                   ::  identity once set
+      hey=(unit duct)                                   ::  default duct
+      dug=(map duct axon)                               ::  conversations
+      $=  hef                                           ::  other weights
+      $:  a=(unit mass)                                 ::
+          c=(unit mass)                                 ::
+          e=(unit mass)                                 ::
+          f=(unit mass)                                 ::
+          g=(unit mass)                                 ::
+          t=(unit mass)                                 ::
+      ==                                                ::
   ==                                                    ::  
 ++  axon                                                ::  dill per duct
   $:  ram=term                                          ::  console program
@@ -94,8 +108,9 @@
       [%sav p=path q=@]                                 ::  save to file
   ==                                                    ::
 ++  flog                                                ::  sent to %dill
-  $%  [%crud p=@tas q=(list tank)]                      ::
-      [%text p=tape]                                    ::
+  $%  [%crud p=@tas q=(list tank)]                      ::  error with trace
+      [%heft ~]                                         ::  system memory
+      [%text p=tape]                                    ::  print text
       [%veer p=@ta q=path r=@t]                         ::  install vane
       [%vega p=path]                                    ::  reboot by path
       [%verb ~]                                         ::  verbose mode
@@ -105,6 +120,7 @@
       [%blit p=(list blit)]                             ::  terminal output
       [%init p=@p]                                      ::  set owner
       [%logo ~]                                         ::  logout
+      [%mass p=mass]                                    ::  memory usage
       [%veer p=@ta q=path r=@t]                         ::  install vane
       [%vega p=path]                                    ::  reboot by path
       [%verb ~]                                         ::  verbose mode
@@ -117,6 +133,7 @@
       [%flog p=flog]                                    ::  wrapped error
       [%flow p=@tas q=(list gill)]                      ::  terminal config
       [%hail ~]                                         ::  terminal refresh
+      [%heft ~]                                         ::  system memory
       [%hook ~]                                         ::  this term hung up
       [%harm ~]                                         ::  all terms hung up
       [%init p=ship]                                    ::  after gall ready
@@ -143,6 +160,7 @@
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
   $%  [%crud p=@tas q=(list tank)]                      ::
+      [%heft ~]                                         ::
       [%init p=ship]                                    ::
       [%text p=tape]                                    ::
       [%veer p=@ta q=path r=@t]                         ::  install vane
@@ -156,11 +174,12 @@
       [%took p=[p=ship q=path] q=ship]                  ::
   ==                                                    ::
 ++  note                                                ::
+  $?  [?(%a %c %e %f %g %t) %wegh ~]                    ::
   $%  [%a note-ames]                                    ::  out request $->
       [%c note-clay]                                    ::
       [%d note-dill]                                    ::
       [%g note-gall]                                    ::
-  ==                                                    ::
+  ==  ==                                                ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  sign-ames                                           ::
   $%  [%nice ~]                                         ::
@@ -184,12 +203,13 @@
   $%  [%wake ~]                                         ::
   ==                                                    ::
 ++  sign                                                ::  in result $<-
+  $?  [?(%a %c %e %f %g %t) %mass p=mass]               ::
   $%  [%a sign-ames]                                    ::
       [%c sign-clay]                                    ::
       [%d sign-dill]                                    ::  
       [%g sign-gall]                                    ::
       [%t sign-time]                                    ::
-  ==                                                    ::
+  ==  ==                                                ::
 ::::::::                                                ::  dill tiles
 --
 =|  all=axle
@@ -215,6 +235,7 @@
           %crud  ::  (send `dill-belt`[%cru p.kyz q.kyz])
                  (crud p.kyz q.kyz)
           %blew  (send %rez p.p.kyz q.p.kyz)
+          %heft  heft
           %veer  (dump kyz)
           %vega  (dump kyz)
           %verb  (dump kyz)
@@ -260,6 +281,19 @@
           (dump %logo ~)
         (done %blit [bit ~])
       ::
+      ++  heft
+        %_    .
+            moz
+          :*  [hen %pass /heft/ames %a %wegh ~]
+              [hen %pass /heft/clay %c %wegh ~]
+              [hen %pass /heft/eyre %e %wegh ~]
+              [hen %pass /heft/ford %f %wegh ~]
+              [hen %pass /heft/gall %g %wegh ~]
+              [hen %pass /heft/time %t %wegh ~]
+              moz
+          ==
+        ==
+      ::
       ++  init                                          ::  initialize
         ~&  [%dill-init our]
         =+  myt=(flop (need tem))
@@ -300,10 +334,55 @@
           :_(moz [hen %pass ~ %g %took [our [ram ~]] our])
         ==
       ::
+      ++  wegh
+        ^-  mass
+        :-  %|
+        :~  ore/`ore.all
+            hey/`hey.all
+            dug/`dug.all
+            ::  cor/`..as
+        ==
+      ::
+      ++  wegt
+        |=  [lal=?(%a %c %e %f %g %t) mas=mass]
+        ^+  +>
+        =.  hef.all
+          ?-  lal
+            %a  ~?(?=(^ a.hef.all) %double-mass-a hef.all(a `mas))
+            %c  ~?(?=(^ c.hef.all) %double-mass-c hef.all(c `mas))
+            %e  ~?(?=(^ e.hef.all) %double-mass-e hef.all(e `mas))
+            %f  ~?(?=(^ f.hef.all) %double-mass-f hef.all(f `mas))
+            %g  ~?(?=(^ g.hef.all) %double-mass-g hef.all(g `mas))
+            %t  ~?(?=(^ t.hef.all) %double-mass-t hef.all(t `mas))
+          ==
+        ?.  ?&  ?=(^ a.hef.all)
+                ?=(^ c.hef.all)
+                ?=(^ e.hef.all)
+                ?=(^ f.hef.all)
+                ?=(^ g.hef.all)
+                ?=(^ t.hef.all)
+            ==
+          +>.$
+        %+  done(hef.all [~ ~ ~ ~ ~ ~])
+          %mass
+        =>  [hef.all d=wegh]
+        :-  %|
+        :~  ames/u.a
+            clay/u.c
+            dill/d
+            eyre/u.e
+            ford/u.f
+            gall/u.g
+            time/u.t
+        ==
+      ::
       ++  take                                          ::  receive
-        |=  sih=sign
+        |=  [tea=wire sih=sign]
         ^+  +>
         ?-    sih
+            [?(%a %c %e %f %g %t) %mass *]
+          (wegt -.sih p.sih)
+        ::
             [%a %nice *]
           ::  ~&  [%take-nice-ames sih]
           +>
@@ -311,14 +390,14 @@
             [%a %init *]
           +>(moz :_(moz [hen %give +.sih]))
         ::
-            [%c %mere *]
+            [%c %mere *]              ::  i don't think we get these anymore
           ?:  ?=(%& -.p.sih)
             +>.$
           ~|  %dill-mere-fail
           ~|  p.p.p.sih
           |-
           ?~  q.p.p.sih  !!
-          ~>  %mean.|.(i.q.p.p.sih)     ::  interpolate ford fail into stack trace
+          ~>  %mean.|.(i.q.p.p.sih)   ::  interpolate ford fail into stack trace
           $(q.p.p.sih t.q.p.p.sih) 
         ::
             [%c %note *]
@@ -425,7 +504,9 @@
   ~
 ::
 ++  load                                                ::  trivial
-  |=  old=axle
+  |=  old=?(old-axle axle)
+  ?:  ?=(%2 -.old)
+    $(old [%3 ore hey dug ~ ~ ~ ~ ~ ~]:old)
   ..^$(all old)
   ::  |=  old=*   ::  diable
   ::  ..^$(ore.all `~zod)
@@ -454,6 +535,6 @@
     [~ ..^$]
   =+  our=?>(?=(^ ore.all) u.ore.all)
   =^  moz  all  
-    abet:(~(take as [~ hen our] (~(got by dug.all) hen)) q.hin)
+    abet:(~(take as [~ hen our] (~(got by dug.all) hen)) tea q.hin)
   [moz ..^$]
 --
