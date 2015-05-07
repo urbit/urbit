@@ -73,15 +73,17 @@ body
   left 50%
   width 58rem
   margin-left -29rem
-  margin-bottom 12rem
+  margin-bottom 6rem
 
 #station-container
   position fixed
+  width 58rem
   max-height 4rem
   background-color #ccc
   color white
   overflow hidden
   z-index 10
+  border-bottom 1px solid #ddd
   -webkit-transition max-height .2s
   
 #station #station-container
@@ -136,11 +138,14 @@ body
   border-right 9px solid transparent
   border-bottom 9px solid transparent
   border-left 9px solid white
+  -webkit-transition border-left-color .2s
 
 #head
   width 100%
   height 4rem
-  background-color #555
+  background-color white
+  color #333
+  border-bottom 1px solid #ddd
 
 #station-container h1
   display none
@@ -159,16 +164,28 @@ body
 #station-container .iden > div
   background-color transparent
   
-
 #who
   width 16rem
 
 #stations
   width 15rem
-  padding 0 0 1rem 1rem
+  padding-bottom 1rem
+  border-left 16rem solid transparent
 
 #station-container #head .ship
   font-weight 400
+
+#station-container:hover #where
+  color white
+  -webkit-transition color .2s
+
+#station-container:hover #where
+  color rgb(240,73,65)
+  -webkit-transition color .2s
+
+#station-container:hover #where .caret
+  border-left-color rgb(240,73,65)
+  -webkit-transition border-left-color .2s
   
 #stations
 #audience
@@ -178,12 +195,17 @@ body
   vertical-align top
 
 #where > div
-  margin-right 1.6rem
+  margin-right 1rem
   text-transform capitalize
-  font-size 2rem
+  letter-spacing .05rem
+  font-size 1.6rem
 
 #where .slat
   font-weight 500
+
+#where .slat:after
+  margin-left 1rem
+  content "—"
 
 #head > div
   height 2rem
@@ -235,16 +257,17 @@ body
   color white
   background-color transparent
   border none
-  font-size 2rem
+  font-size .8rem
   line-height 2rem
   margin-top .6rem
-  font-weight 400
+  font-weight 300
   text-align left
   outline none
   cursor pointer
   
 .sour-ctrl input::-webkit-input-placeholder
   font-weight 500
+  font-size 1.6rem
   margin-left .6rem
   color white
 
@@ -273,15 +296,14 @@ body
   overflow hidden
   max-height 1.6rem
 
-#writing-container
-#messages .message.first
-  border-top 1px solid #ededed
+// #writing-container
+// #messages .message.first
+//   border-top 1px solid #ededed
 
 #writing-container
   padding-top .3rem
 
 #messages .message.first
-  margin-top -1px
 
 #messages .message.same .audi
   margin-top 0
@@ -295,6 +317,9 @@ body
 #messages .message:hover .mess
 #messages .message:hover .attr
   color #555
+
+#messages .message:hover .type
+  color rgb(240,73,65)
 
 #messages .message.attr
   max-height 2rem
