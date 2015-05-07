@@ -1,0 +1,122 @@
+::                                                      ::  ::
+::::  /hook/core/acto/ape                               ::  ::
+  ::                                                    ::  ::
+/-  *sole                                               ::  structures
+/+  sole                                                ::  libraries
+::                                                      ::
+::::                                                    ::
+  !:                                                    ::
+=>  |%                                                  ::  board logic
+    ++  board  ,@                                       ::  one-player bitfield
+    ++  point  ,[x=@ y=@]                               ::  coordinate
+    ++  bo                                              ::  board core
+      |_  bud=board                                     ::  state
+      ++  off  |=(point (add x (mul 3 y)))              ::  bitfield address
+      ++  get  |=(point =(1 (cut 0 [(off +<) 1] bud)))  ::  get point
+      ++  set  |=(point (con bud (bex (off +<))))       ::  set point
+      ++  win  %-  lien  :_  |=(a=@ =(a (dis a bud)))   ::  test for win
+               (rip 4 0wl04h0.4A0Aw.4A00s.0e070)        ::  with bitmasks
+      --                                                ::
+    --                                                  ::
+=>  |%                                                  ::  game logic
+    ++  game  ,[tun=? box=board boo=board]              ::  game state
+    ++  go                                              ::  game core
+      |_  game                                          ::
+      ++  pro  ": {?:(tun "X" "O")} to move (x/y): "    ::  prompt
+      ++  say  |=  point                                ::  point value
+        ?:  (~(get bo box) +<)  'X'
+        ?:  (~(get bo boo) +<)  'O'  '.'
+      ::
+      ++  mov                                           ::  move at
+        |=  point  
+        ^-  [bean game]
+        ?:  |((~(get bo box) +<) (~(get bo boo) +<))
+          [| +>+<]
+        :-  &  ?:  tun 
+                 +>+<(tun |, box (~(set bo box) +<))
+               +>+<(tun &, boo (~(set bo boo) +<))
+      ::
+      ++  res  ^-  (unit tape)                          ::  result
+        ?:  ~(win bo box)  `"X wins!"
+        ?:  ~(win bo boo)  `"O wins!"
+        ?:  =(511 (con boo box))  `"X and O tied."  ~
+      ::
+      ++  ray                                           ::  render row
+        |=  y=@  ^-  tape
+        :~  (add y '1')
+            ' '  (say y 0)
+            ' '  (say y 1)
+            ' '  (say y 2)
+        ==
+      ++  red  ~["+ 1 2 3" (ray 0) (ray 1) (ray 2)]     ::  render board
+      --
+    --
+=>  |%                                                  ::  arvo tools
+    ++  card  ,[%diff %sole-effect sole-effect]         ::   
+    ++  move  (pair bone card)              
+    ++  room  (pair sole-share game)
+    --
+|_  $:  hid=hide                                        ::  system state
+        hoc=(map bone room)
+    ==
+++  yo
+  |_  [[ost=bone moz=(list move)] rom=room]
+  ++  abet                                              ::  resolve
+    ^-  (quip move +>)
+    [(flop moz) +>(hoc (~(put by hoc) ost rom))]
+  ::
+  ++  emit                                              ::  produce move
+    |=  fec=sole-effect
+    ^+  +>
+    +>(moz [[ost %diff %sole-effect fec] moz])
+  ::
+  ++  emil                                              ::  emit multiple
+    |=  fex=(list sole-effect)
+    ?~(fex +> $(fex t.fex, +> (emit i.fex)))
+  ::
+  ++  show                                              ::  update ui
+    %+  emil  [%pro & %toe ~(pro go q.rom)]
+    (turn ~(red go q.rom) |=(a=tape [%txt a]))
+  ::
+  ++  wipe                                              ::  clear input line
+    =^  cal  p.rom  (~(transmit cs p.rom) [%set ~])
+    (emit %det cal)
+  ::
+  ++  numb  (cook |=(a=@ (sub a '1')) (shim '1' '3'))   ::  row/column
+  ++  come  ;~(plug numb ;~(pfix fas numb))             ::  command
+  ++  good  |=(a=(list ,@c) -:(rose (tufa a) come))     ::  validate
+  ++  work                                              ::
+    |=  act=sole-action
+    ^+  +>
+    ?-    -.act
+        %det  
+      =^  cul  p.rom  (~(remit cs p.rom) +.act good)
+      ?~(cul +>.$ (emit ~[%mor bel/~ det/u.cul]))
+    ::
+        %ret  
+      =+  dur=(rust (tufa buf.p.rom) come)
+      ?~  dur  (emit %bel ~)
+      =^  dud  q.rom  (~(mov go q.rom) u.dur)
+      ?.  dud  (emit %bel ~)
+      =+  rus=~(res go q.rom) 
+      =<  show
+      ?~  rus  wipe
+      wipe:(emit(q.rom *game) %txt u.rus)
+    ==
+  --
+++  peer-sole                                           ::  console-subscribe
+  |=  [from pax=path]
+  ^-  (quip move +>)
+  ?>  =(src our.hid)
+  abet:~(show yo [ost ~] *room) 
+::
+++  poke-sole-action                                    ::  console command
+  |=  [from act=sole-action]
+  ^-  (quip move +>)
+  ?>  =(src our.hid)
+  abet:(~(work yo [ost ~] (~(got by hoc) ost)) act)
+::
+++  pull                                                ::  stop subscription
+  |=  then
+  [~ +>(hoc (~(del by hoc) ost))]
+--
