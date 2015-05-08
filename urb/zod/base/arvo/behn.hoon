@@ -268,8 +268,8 @@
         pup  pup
         hav  hav
         p.zam  1
-        q.zam  [[~ 0] ~ ~]
-        r.zam  [[0 ~] ~ ~]
+        q.zam  [[[~ ~] 0] ~ ~]
+        r.zam  [[0 [~ ~]] ~ ~]
       ==
     ==
   ::
@@ -577,20 +577,16 @@
         $(ded t.ded, +>.^$ ap-kill(ost i.ded))
       ?.  ?=([%give %diff *] q.i.pyz)
         $(pyz t.pyz)
-      =^  vad  +>  ap-fill
+      =^  vad  +>  ap-fill(ost p.i.pyz)
       $(pyz t.pyz, ful ?:(vad ful (~(put in ful) p.i.pyz)))
     ::
     ++  ap-aver                                         ::  cute to move
       |=  cov=cute
       ^-  move 
-      =+  fuk=(~(get by r.zam) p.cov)
-      ?~  fuk 
-        ~&  [%ap-aver-fuk p.cov]
-        !!
       :-  (~(got by r.zam) p.cov)
       ?-    -.q.cov
           ?(%slip %sick)  !!
-          %give  [%give %unto p.q.cov]
+          %give  ?<(=(0 p.cov) [%give %unto p.q.cov])
           %pass
         :+  %pass  `path`[%use dap p.q.cov]
         ?-  -.q.q.cov
@@ -673,10 +669,10 @@
     ++  ap-fill                                         ::  add to queue
       ^-  [? _.]
       =+  suy=(fall (~(get by qel.ged) ost) 0)
-      ?:  =(10 suy)  
+      ?:  =(8 suy)
         ~&  [%ap-fill-full [our dap] q.q.pry ost]
         [%| +]
-      ::  ~?  !=(10 suy)  [%ap-fill-add [[our dap] q.q.pry ost] +(suy)]
+      ::  ~?  !=(8 suy)  [%ap-fill-add [[our dap] q.q.pry ost] +(suy)]
       [%& +(qel.ged (~(put by qel.ged) ost +(suy)))]
     ::
     ++  ap-find                                         ::  general arm
