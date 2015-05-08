@@ -661,10 +661,11 @@
 ::
 ++  onto
   |=  [then saw=(each suss tang)]
-  :_  +>  :_  ~
+  :_  +>
   ?-  -.saw
-    %|  [ost %flog ~ %crud `@tas`-.way `tang`p.saw]
-    %&  [ost %flog ~ %text "<{<p.saw>}>"]
+    %|  [[ost %flog ~ %crud `@tas`-.way `tang`p.saw] ~]
+    %&  ::  [ost %flog ~ %text "<{<p.saw>}>"]
+        ~
   ==
 ::
 ++  pull
