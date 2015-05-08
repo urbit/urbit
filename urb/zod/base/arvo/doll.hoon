@@ -333,7 +333,7 @@
           ~|  p.p.p.sih
           |-
           ?~  q.p.p.sih  !!
-          ~>  %mean.|.(i.q.p.p.sih)     ::  interpolate ford fail into stack trace
+          ~>  %mean.|.(i.q.p.p.sih) ::  interpolate ford fail into stack trace
           $(q.p.p.sih t.q.p.p.sih) 
         ::
             [%b %onto *]

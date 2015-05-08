@@ -117,7 +117,7 @@
       dop=(map host ship)                               ::  host aliasing
       liz=(jug ,@uvH (each duct ixor))                  ::  ford depsets
       wup=(map hole cyst)                               ::  secure sessions
-      sop=(map hole ,[ship ?])                          ::  foreign session names
+      sop=(map hole ,[ship ?])                          ::  foreign sess names
       wix=(map ixor stem)                               ::  open views
   ==                                                    ::
 ::

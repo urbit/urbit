@@ -1717,12 +1717,12 @@
   =^  moz  +>.$  ra-abet:ra-ever:~(ra-cancel ra ost ~)
   [moz +>.$(shells (~(del by shells) ost))]
 ::
-++  poke-bit
-  |=  [from ~]
-  ^-  (quip move +>)
-  :_  +>.$
-  =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/talk/backlog/jam
-  [ost %info /jamfile our.hid (foal paf (jam +<+.+>.$))]~
+::++  poke-bit
+::  |=  [from ~]
+::  ^-  (quip move +>)
+::  :_  +>.$
+::  =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/talk/backlog/jam
+::  [ost %info /jamfile our.hid (foal paf (jam +<+.+>.$))]~
 ::
 ++  prep
   |=  [from old=(unit house)]
