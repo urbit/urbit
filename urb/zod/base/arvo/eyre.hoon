@@ -1198,18 +1198,18 @@
     ::
     ++  new-mess
       |=  [a=hasp b=wire c=cage]  ^+  ..ix
-      (hurl-note [a b] [%g %mess [- + ~]:a him c])
-      ::  (hurl-note [a b] [%b %deal [him -.a] +.a %poke c])
+      ::  (hurl-note [a b] [%g %mess [- + ~]:a him c])
+      (hurl-note [a b] [%b %deal [him -.a] +.a %poke c])
     ::
     ++  add-subs
       |=  [a=hasp %json b=wire c=path]  ^+  ..ix
-      (hurl-note [a b] [%g %show [- + ~]:a him c])
-      ::  (hurl-note [a b] [%b %deal [him -.a] +.a %peer c])
+      ::  (hurl-note [a b] [%g %show [- + ~]:a him c])
+      (hurl-note [a b] [%b %deal [him -.a] +.a %peer c])
     ::
     ++  del-subs                      ::  XX per path?
       |=  [a=hasp %json b=wire c=path]  ^+  ..ix
-      (hurl-note [a b] [%g %nuke [- + ~]:a him])
-      ::  (hurl-note [a b] [%b %deal [him -.a] +.a %pull ~])
+      ::  (hurl-note [a b] [%g %nuke [- + ~]:a him])
+      (hurl-note [a b] [%b %deal [him -.a] +.a %pull ~])
     ::
     ++  get-rush
       |=  [a=whir-of b=json]  ^+  ..ix
@@ -1254,7 +1254,9 @@
     ::
     ++  pass-took
       |=  a=[p=hasp wire]
-      (pass-note(hen `~) [%of ire (gsig a)] [%g %took [- + ~]:p.a him])
+      %+  pass-note(hen `~)
+        [%of ire (gsig a)] 
+      [%b %deal [him -.p.a] +.p.a %pump ~]
     ::
     ++  pop-duct  =^(ned med ~(get to med) abet(hen ned))
     ++  poll
