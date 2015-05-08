@@ -274,16 +274,13 @@
         (done %blit [bit ~])
       ::
       ++  init                                          ::  initialize
-        ~&  [%dill-init our]
+        ~&  [%doll-init our]
         =+  myt=(flop (need tem))
         =.  tem  ~
-<<<<<<< HEAD:urb/zod/base/arvo/dill.hoon
         =.  moz  :_(moz [hen %pass / %c %font our %home our %base])
-        =.  moz  :_(moz [hen %pass / %g %show [our [ram ~]] our ~])
-=======
-        =.  moz  :_(moz [hen %pass ~ %b %conf [[our ram] %load our %main]])
+        ::  =.  moz  :_(moz [hen %pass / %g %show [our [ram ~]] our ~])
+        =.  moz  :_(moz [hen %pass ~ %b %conf [[our ram] %load our %base]])
         =.  moz  :_(moz [hen %pass ~ %b %deal [our our] ram %peer ~])
->>>>>>> newgall^:urb/zod/arvo/dill.hoon
         |-  ^+  +>
         ?~  myt  +>
         $(myt t.myt, +> (send i.myt))
