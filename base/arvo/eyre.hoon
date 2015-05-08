@@ -10,7 +10,7 @@
       [%pull ~]                                         ::  unsubscribe
       [%pump ~]                                         ::  subscription ack
   ==                                                    ::
-++  cuss  (pair term club)                              ::  internal kiss
+++  cush  (pair term club)                              ::  internal kiss
 ++  cuft                                                ::  internal gift
   $%  [%coup p=(unit tang)]                             ::  poke result
       [%diff p=cage]                                    ::  subscription output
@@ -50,7 +50,7 @@
           $%  [%want p=sock q=[path *]]                 ::
           ==  ==                                        ::
               $:  %b                                    ::  to %behn
-          $%  [%deal p=sock q=cuss]                     ::  full transmission
+          $%  [%deal p=sock q=cush]                     ::  full transmission
           ==  ==                                        ::
               $:  %d                                    ::  to %dill
           $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::
