@@ -4,6 +4,19 @@
 |=  pit=vase
 =>  =~
 |%                                                      ::  interfaces
+++  club                                                ::  agent action
+  $%  [%peer p=path]                                    ::  subscribe
+      [%poke p=cage]                                    ::  apply
+      [%pull ~]                                         ::  unsubscribe
+      [%pump ~]                                         ::  subscription ack
+  ==                                                    ::
+++  cuss  (pair term club)                              ::  internal kiss
+++  cuft                                                ::  internal gift
+  $%  [%coup p=(unit tang)]                             ::  poke result
+      [%diff p=cage]                                    ::  subscription output
+      [%quit ~]                                         ::  close subscription
+      [%reap p=(unit tang)]                             ::  peer result
+  ==                                                    ::
 ++  gift                                                ::  out result <-$
           $%  [%mass p=mass]                            ::  memory usage
               [%thou p=httr]                            ::  raw http response
@@ -35,6 +48,9 @@
 ++  note                                                ::  out request $->
           $%  $:  %a                                    ::  to %ames
           $%  [%want p=sock q=[path *]]                 ::
+          ==  ==                                        ::
+              $:  %b                                    ::  to %behn
+          $%  [%deal p=sock q=cuss]                     ::  full transmission
           ==  ==                                        ::
               $:  %d                                    ::  to %dill
           $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::
@@ -71,6 +87,9 @@
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
           $%  [%went p=ship q=cape]                     ::
+          ==  ==                                        ::
+              $:  %b                                    ::  by %behn
+          $%  [%unto p=cuft]                            ::  within agent
           ==  ==                                        ::
               $:  %e                                    ::  by self
           $%  [%thou p=httr]                            ::  response for proxy
@@ -503,6 +522,24 @@
         %thou
       ?>  ?=([%ay ^] tee)
       (ames-gram (slav %p p.tee) got/~ (slav %uv q.tee) |2.sih)
+    ::
+        %unto                                           ::  XX horrible
+      =+  cuf=`cuft`+>.sih
+      ?-    -.cuf
+          %coup 
+        ?~  p.cuf  $(sih [%g %nice ~])
+        $(sih [%g %mean `[%coup u.p.cuf]])
+      ::
+          %reap
+        ?~  p.cuf  $(sih [%g %nice ~])
+        $(sih [%g %mean `[%reap u.p.cuf]])
+      ::
+          %diff
+        $(sih [%g %rush p.p.cuf q.q.p.cuf])
+      ::
+          %quit
+        $(sih [%g %mean ~])
+      ==
     ::
         ?(%rush %rust)
       ?>  ?=([%of @ ^] tee)
@@ -1162,14 +1199,17 @@
     ++  new-mess
       |=  [a=hasp b=wire c=cage]  ^+  ..ix
       (hurl-note [a b] [%g %mess [- + ~]:a him c])
+      ::  (hurl-note [a b] [%b %deal [him -.a] +.a %poke c])
     ::
     ++  add-subs
       |=  [a=hasp %json b=wire c=path]  ^+  ..ix
       (hurl-note [a b] [%g %show [- + ~]:a him c])
+      ::  (hurl-note [a b] [%b %deal [him -.a] +.a %peer c])
     ::
     ++  del-subs                      ::  XX per path?
       |=  [a=hasp %json b=wire c=path]  ^+  ..ix
       (hurl-note [a b] [%g %nuke [- + ~]:a him])
+      ::  (hurl-note [a b] [%b %deal [him -.a] +.a %pull ~])
     ::
     ++  get-rush
       |=  [a=whir-of b=json]  ^+  ..ix
