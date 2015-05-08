@@ -122,7 +122,6 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   ::
 ++  poke-oauth2-code
   |=  [ost=bone you=ship code=cord]
-  ~&  'oauth poked'
   =.  oauth-code.vat
     [~ code]
   ?<  |(?=(~ client-id.vat) ?=(~ oauth-code.vat))
@@ -139,7 +138,6 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   ~
 ++  poke-buy
   |=  [ost=bone you=ship arg=[amount=@t currency=@t]]
-  ~&  'buy boked'
   ?<  =(~ amount.arg)
   =+  query=['access_token' (need auth-token.vat)]~
   =+  ^=  pst
@@ -162,7 +160,6 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
 ++  poke-sell
   |=  [ost=bone you=ship arg=[amount=@t currency=@t]] 
   ?<  =(amount.arg ~)
-  ~&  'haven\'t crashed'
   =+  query=['access_token' (need auth-token.vat)]~
   =+  ^=  pst
       ?:  =(~ currency.arg)
@@ -222,8 +219,9 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
       =:  auth-token.vat  [~ +.parsed]
           refr-token.vat  [~ -.parsed]
         ==
-      ~&  [auth-token.vat refr-token.vat]
-      :_  +>.$  [ost %give %nice ~]~
+      :_  +>.$ 
+      :_  [ost %give %nice ~]~
+      (publish ost our.hid [%lin & 'authenticated.']~)
     %message  `+>.$
     ?(%addr-request %get-id)
       ?>  ?=(%e -.res)
