@@ -30,7 +30,7 @@ module.exports =
   sendMessage: (message,audience) ->
     serial = window.util.uuid32()
 
-    audience.push window.util.mainStationPath window.urb.user
+    # audience.push window.util.mainStationPath window.urb.user
     audience = _.uniq audience
 
     _audi = {}
