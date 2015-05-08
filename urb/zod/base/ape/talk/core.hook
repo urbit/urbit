@@ -1674,7 +1674,7 @@
 ::
 ++  diff-talk-report                                    ::
   |=  [then rad=report]
-  %+  etch-friend   [%friend way]  |=  [man=span cuz=station]
+  %+  etch-friend  way  |=  [man=span cuz=station]
   ra-abet:(~(ra-diff-talk-report ra ost ~) man cuz rad)
 ::
 ++  coup-repeat                                         ::
