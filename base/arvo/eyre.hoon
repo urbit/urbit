@@ -1071,9 +1071,11 @@
       =+  lig=(session-from-cookies pef maf)
       ?~  lig
         (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
-      ~|  bad-cookie/u.lig
-      =+  cyz=(~(got by wup) u.lig)
-      ~(. ya u.lig cyz(him him, cug ~))
+      =+  cyz=(~(get by wup) u.lig)
+      ?~  cyz
+        ~&  bad-cookie/u.lig
+        (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
+      ~(. ya u.lig u.cyz(him him, cug ~))
     ::
     ++  new-ya  |=(ses=hole ~(. ya ses (new-cyst ses)))
     ++  new-cyst
