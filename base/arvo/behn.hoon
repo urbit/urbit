@@ -513,8 +513,9 @@
   ++  mo-beak                                           ::  build beak
     |=  dap=dude
     ^-  beak
-    =+  pup=pup:(~(got by bum) dap)
-    [p.pup q.pup [%da now]]   ::  XX this is wrong; save the build case
+    ::  =+  pup=pup:(~(got by bum) dap)
+    ::  [p.pup q.pup [%da now]]   ::  XX this is wrong; save the build case
+    [our %base %da now]           ::  XX really wrong
   ::
   ++  mo-club                                           ::  local action
     |=  [dap=dude pry=prey cub=club]
@@ -992,7 +993,7 @@
       ^+  +>
       =+  cug=(ap-find cog pax)
       ?~  cug
-        ~&  [%ap-punk-none pax]
+        ~&  [%ap-punk-none cog pax]
         +>.$
       =^  cam  +>.$  
         %+  ap-call  q.u.cug
