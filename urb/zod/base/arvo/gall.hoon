@@ -226,7 +226,7 @@
     ~&  [%lump-path-bad pax]
     !!
   :-  :-  (slav %p i.pax)
-      (need (pick i.t.pax))
+      (need (puck i.t.pax))
   t.t.pax
 --
 .  ==                                                   ::  end preface
