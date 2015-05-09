@@ -6,7 +6,7 @@
   **/
     /* U3_MEMORY_DEBUG: add debugging information to heap.  Breaks image.
     */
-#     define U3_MEMORY_DEBUG
+#     undef U3_MEMORY_DEBUG
 
 
   /**  Constants.
@@ -263,10 +263,6 @@
 #ifdef U3_MEMORY_DEBUG
       c3_global c3_w u3_Code;
 #endif
-
-    /* u3_Prof: memory profile.
-    */
-      c3_global u3_weak u3_Prof;
 
 #   define u3_Loom      ((c3_w *)(void *)U3_OS_LoomBase)
 
