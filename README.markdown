@@ -96,33 +96,50 @@ or _ships_.  When you run `bin/vere -c`, it automatically creates a 128-bit ship
 
 First you'll see a string of messages like:
 
-    vere: urbit home is /Users/cyarvin/Documents/src/u3/urb
-    loom: mapped 1024MB
-    time: ~2013.9.1..03.57.11..4935
-    ames: on localhost, UDP 63908.
+    vere: urbit home is mypier
+    vere: hostname is cyarvin
+    loom: mapped 2048MB
+    boot: installed 190 jets
+    boot: loading /home/cyarvin/urbit/urb/urbit.pill
+    cv_make: loaded pill /home/cyarvin/urbit/urb/urbit.pill, as 8ddffb8
+    cv_make: kernel 12e1ffdf, core 23b73cd
+    cv_jack: activating kernel 12e1ffdf
+    %post-start
+    cv_jack: activated
+    cv_start: time: ~2015.5.9..18.03.32..ba77
+
+Next vere will generate a 2048 RSA key that will be used as your identity:
+
     generating 2048-bit RSA pair...
 
 and then it'll pause a little, 'cause this is slow, and then
 
-    saving passcode in /Users/cyarvin/.urbit/~magsut-hopful.txt
+    saving passcode in sub/.urb/code.~malmel-ridnep
     (for real security, write it down and delete the file...)
 
 and, then, if the network gods are happy, your submarine will start pulling
 down Arvo files:
 
-     + /~machec-binnev-dordeb-sogduc--dosmul-sarrum-faplec-nidted/main/1/bin/ticket/hoon
-     + /~machec-binnev-dordeb-sogduc--dosmul-sarrum-faplec-nidted/main/1/bin/reset/hoon
-     + /~machec-binnev-dordeb-sogduc--dosmul-sarrum-faplec-nidted/main/1/bin/ye/hoon
-     + /~machec-binnev-dordeb-sogduc--dosmul-sarrum-faplec-nidted/main/1/bin/ls/hoon
+    [%bos ~zod ~hinfet-rovler-labheb-laddev--ladner-pillur-divmun-tamfur]
+    [%behn-init ~hinfet-rovler-labheb-laddev--ladner-pillur-divmun-tamfur]
+    ames: czar zod.urbit.org: ip .192.241.195.84
+    kick: init: ~hinfet-rovler-labheb-laddev--ladner-pillur-divmun-tamfur
+    ames: on localhost, UDP 55659.
+    http: live (insecure) on 8081
+    http: live ("secure") on 8444
+    term: live on 10024
+    ; ~zod |Tianming| is your neighbor
+    ; ~zod |Tianming| is your neighbor
+    <sole>
 
-and the like.  You'll see a couple pages of this stuff.  Don't worry too much
-about the details right now.  Finally, you'll get the Arvo shell prompt (which
-is also a Hoon REPL):
+You will probably be stuck here for a while as your local submarine copies all of its files from the master carrier, `~zod`. This is normal.
 
-    ~machec-binnev-dordeb-sogduc--dosmul-sarrum-faplec-nidted/try=>
+Once that is finished, you will be dropped into the main application, the `+dojo` shell (which is coincidentally also a Hoon REPL):
+
+    ~hinfet-rovler-labheb-laddev--ladner-pillur-divmun-tamfur:dojo>
 
 If you would like to safely bring this ship back into port (End the Unix process),
-just enter Control-D.  
+just enter Control-V to switch to the task manager, then Control-D.  
 
 To re-launch your pier after creation run `bin/vere mypier` (exclude the `-c`)
 
@@ -151,19 +168,18 @@ Let's say one of your ships is `~waclux-tomwyc` and its ticket is
 rendered in Hoon's syllabic base, `@p`.)
 
 A new life awaits you on the off-world colonies!  To begin, just
-type at the submarine prompt:
+type at the `+dojo` prompt:
 
-    :begin ~waclux-tomwyc
+    :helm?begin
 
-and follow the directions.  When the script completes, hit return
-and you'll be the `~waclux-tomwyc` you wanted to be.  Now, when other user's see you in chat or look at your 
-Urbit social profile (a fasplan), they can learn whatever information you gave the :begin process.
+and enter your ship name and ticket when prompted.  When the script completes, hit return
+and you'll begin re-cloning the files from `~zod` needed to boot the destroyer, after which you will become the `~waclux-tomwyc` you wanted to be.
 
 ###5. Play with Arvo
 
 If all went well, you now have a nice short prompt:
 
-    ~waclux-tomwyc/try=>
+    ~waclux-tomwyc:dojo>
 
 If all did not go well (send us another email), or you're just
 too impatient to wait for your destroyer, you have a big long
@@ -175,29 +191,30 @@ exercises will still work.
 Let's try a few quick things to stretch your fingers.  Type these
 command lines and you should see the matching results:
 
-    ~waclux-tomwyc/try=> "hello, world"
+    ~waclux-tomwyc:dojo> "hello, world"
     "hello, world"
-
-    ~waclux-tomwyc/try=> (add 2 2)
+    
+    ~waclux-tomwyc:dojo> (add 2 2)
     4
 
-    ~waclux-tomwyc/try=> :hello %world
-    "hello, world."
+    ~waclux-tomwyc:dojo> +hello %world
+    'hello, dlrow'
 
-    ~waclux-tomwyc/try=> :cat /=main=/bin/hello/hoon
+    ~waclux-tomwyc/try=> :cat /=home=/cat/hello/gate/hook  :: XX make this work
     ::
-    ::  /=main=/bin/hello/hoon
+    ::::  /hook/gate/hello/cat
+      ::
+    /?  314
     ::
-    |=  *
-    |=  [planet=@ta ~]
-    ^-  bowl
-    :_  ~  :_  ~
-    :-  %%
-    !>("hello, {(trip planet)}.")
+    ::::
+      !:
+    |=  [* [[txt=@tas ~] ~]]
+    :-  %noun
+    (crip (weld "hello, " (flop (trip txt))))
 
 What did you just do?
 
-One, you used Arvo as a Hoon REPL to print the constant `"hello,
+One, you used the Hoon REPL to print the constant `"hello,
 world"`, which is a fancy way to write the Nock noun
 
     [104 101 108 108 111 44 32 119 111 114 108 100 0]
@@ -205,7 +222,7 @@ world"`, which is a fancy way to write the Nock noun
 Two, you called the Hoon `add` function to see that two plus two
 is four.  Math seems to work the same on the off-world colonies.
 
-Three, you ran the Arvo application `:hello` with the argument
+Three, you ran the `+dojo` application `+hello` with the argument
 `%world`, which is just a fancy way to write the atom
 `431.316.168.567` (or, for non-Germans, `431,316,168,567`).  You
 might recognize it better as `0x64.6c72.6f77` - the ASCII
@@ -214,18 +231,19 @@ characters in LSB first order.
 (Is Urbit German?  Sadly, no.  But all our noun print formats are
 URL-safe, which dot is and comma isn't.)
 
-And you (4) used the Arvo application :cat to print the Hoon file
+And you (4) used the `+dojo` application `+cat` to print the Hoon file
 
-    /=main=/bin/hello/hoon
+    /=home=/cat/hello/gate/hook
 
 which, supposing your current date is
 
     ~2013.9.1..04.38.31..f259
+    ~2015.5.9..18.03.32..ba77
 
-(ie, September 1, 2013 at 4:38:31 GMT/LS25 plus 0xf259/65536
-seconds), is equivalent to the global path
+(ie, May 9, 2015 at 18:03:32 GMT/LS25 plus 0xba77/47735 seconds), is
+equivalent to the global path
 
-    /~waclux-tomwyc/main/~2013.8.23..04.38.31..f259/bin/hello/hoon
+    /~waclux-tomwyc/home/~2015.5.9..18.03.32..ba77/cat/hello/gate/hook
 
 which anyone in Urbit can, see and even use - but we're getting
 ahead of ourselves.
@@ -261,18 +279,17 @@ control.
 
 First, we'll quit out of an infinite loop with `^C`:
 
-    ~waclux-tomwyc/try=> :infinite
+    ~waclux-tomwyc/try=> |-($)
 
 When you hit return at the end of this line, Arvo will appear to
 hang.  Do not be alarmed!  This is not a bug - it means that
 we've started running our infinite loop before printing the next
 console prompt.  Simply hit `^C`, and you'll see
 
-    ! intr
+    recover: dig: intr
+    intr
+    [various stack traces]
     ~waclux-tomwyc/try=> :infinite
-
-(There may be some stacktrace stuff before the `! intr`, depending
-on whether your kernel was compiled with debugging.)
 
 Hit `^U` to delete the line and escape from infinity.  Arvo is a
 deterministic OS; you interrupted it while processing an event
@@ -296,21 +313,22 @@ current character - as in Unix.
 
 Try this by running
 
-    ~waclux-tomwyc/try=> :begin
+    ~waclux-tomwyc:dojo> +helm?begin
 
-    Do you have a ship and a ticket? yes
+    ~waclux-tomwyc:dojo: your ship: ~
 
-Then hit `^D` and you'll be back to the command prompt (which,
-unlike in Unix, is not a task itself, but part of the OS).
+Then hit `^D` and you'll be back to the command prompt (which is just
+another program under Arvo)
 
 We don't always want to kill the prompting task.  We often want
 to switch between tasks, or between tasks and the command line.
 Sort of like switching between windows, except in a command line.
-We do this with `^X`.  Try
+We do this with `^X`. Try
+    :: XX this is wrong, only between apps(+dojo or +talk) now
 
-    ~waclux-tomwyc/try=> :begin
+    ~waclux-tomwyc:dojo> +helm?begin
 
-    Do you have a ship and a ticket? yes
+    ~waclux-tomwyc:dojo: your ship: ~
 
 But hit `^X` instead of `^D`.  You'll get a prompt again.  Use
 it:
@@ -331,35 +349,58 @@ Hit `^X` again:
 
 And finally, hit `^C` to kill the task.
 
+Arvo has a simple task manager interface, allowing you see the
+running commands, along with being able to spawn or kill programs.
+Hitting `^V` will bring you to this interface, and running `-prog`
+will kill that program while `+prog` will spawn a new one.
+If you ever end up with a broken program that is spouting errors
+and wish to restart it, do it from this interface. Even our shell
+and REPL `+dojo` is just another program in this list!
+This is the base view from Arvo as well. If you kill all your running
+programs with `^D`, it will drop you into this interface.
+Pressing `^D` from this view will also shutdown your ship gracefully,
+instead of having to kill all programs first.
+
 Lastly, Arvo is a single-level store.  Since it's not the '70s
 anymore and disk is cheap, everything you do is saved for ever.
 (In fact, it's saved in two ways - as a memory image and an event
 log - so you, or the government if they haz your filez, can
 repeat every computation you've ever performed.)
 
-If the current prompt is just the shell prompt, `^D` on an empty
+If the current prompt is the task manager, `^D` on an empty
 line will log out - as in Unix:
 
-    ~waclux-tomwyc/try=>
-    oxford:~/urbit; pwd
-    /Users/cyarvin/urbit
-    oxford:~/urbit; echo "hello, world"
+    ~waclux-tomwyc#
+    cyarvin:~/urbit; pwd
+    /home/cyarvin/urbit
+    cyarvin:~/urbit; echo "hello, world"
     hello, world
-    oxford:~/urbit;
+    cyarvin:~/urbit;
 
 Then you can restart and be right back where you were - just
 run `bin/vere` without `-c`:
 
-    oxford:~/urbit; bin/vere mypier
-    vere: urbit home is /Users/cyarvin/urb
-    loom: loaded 9MB
-    time: ~2013.9.1..17.23.05..0cc1
-    ames: on localhost, UDP 60342.
-    http: live on 8080
-    rest: checkpoint to event 383
-    rest: old 0v1c.gkr1o, new 0v10.m4gdu
+    cyarvin:~/urbit; bin/vere mypier
+    vere: urbit home is mypier
+    vere: hostname is cyarvin
+    loom: mapped 2048MB
+    protected loom
+    live: loaded: MB/172.933.120
+    boot: installed 190 jets
+    cv_start: time: ~2015.5.9..19.03.45..a758
+    raft: single-instance mode
+    raft:      -> lead
+    sist: booting
+    rest: checkpoint to event 23.630
+    rest: old 0vt.3iqg5, new 0v1j.moa0t
+    loaded passcode from mypier/.urb/code.~lacsep-bonnyr
+    
     ---------------- playback complete----------------
-    waclux-tomwyc/try=>
+    ames: on localhost, UDP 46404.
+    http: live (insecure) on 8080
+    http: live ("secure") on 8443
+    term: live on 10023
+    ~waclux-tomwyc:dojo, talk# 
 
 Use your arrow keys and you'll see your history is still there.
 Arvo is indestructible and can be shut down however you like
@@ -370,7 +411,7 @@ But don't try to operate the same ship on two Unix hosts at the
 same time.  This will confuse everyone, including yourself.
 
 ####System administration
-
+:: XX FIX ME
 Sometimes we make changes to Hoon or Arvo (we never make changes
 to Nock) and you need to update your ship.
 
@@ -410,17 +451,19 @@ every so often to get the latest Urbit source code. You'll need to run:
 before executing `bin/vere pier` again.
 
 
-###6. Chat
+###6. Talk
 
 Okay, fine.  You're a long way from being an Arvo ninja.  But -
 you're ready for the two most important uses of Urbit right now.
 One, coding.  Two, chatting.
 
-To start chatting, simply type
+To start chatting, simply press `^X` to switch to the `:talk` app
+(If you accidently killed it, no worries: start a new one by typing
+`+talk` from the `^V` menu)
 
-    ~waclux-tomwyc/try=> :chat
+    ~waclux-tomwyc:talk()
 
-and type `?` for the list of commands once `:chat` is running. 
+and type `;join /urbit-meta` to join our main chat room.
 
-Most of us are hanging out on `:chat` regularly. We can answer any questions you might have and help you get oriented in this new environment.
+Most of us are hanging out on `:talk` regularly. We can answer any questions you might have and help you get oriented in this new environment.
 
