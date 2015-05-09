@@ -49,9 +49,6 @@
           $%  $:  %a                                    ::  to %ames
           $%  [%want p=sock q=[path *]]                 ::
           ==  ==                                        ::
-              $:  %b                                    ::  to %behn
-          $%  [%deal p=sock q=cush]                     ::  full transmission
-          ==  ==                                        ::
               $:  %d                                    ::  to %dill
           $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::
           ==  ==                                        ::
@@ -63,10 +60,7 @@
               [%wasp p=@p q=@uvH]                       ::
           ==  ==                                        ::
               $:  %g                                    ::  to %gall
-          $%  [%mess p=hapt q=ship r=cage]              ::
-              [%nuke p=hapt q=ship]                     ::
-              [%show p=hapt q=ship r=path]              ::
-              [%took p=hapt q=ship]                     ::  
+          $%  [%deal p=sock q=cush]                     ::  full transmission
           ==  ==                                        ::
               $:  %t                                    ::  to  %temp
           $%  [%wait p=@da]                             ::
@@ -78,17 +72,11 @@
               [%cast p=mark q=silk]                     :: 
               [%done p=(set beam) q=cage]               ::
           ==                                            ::
-++  sine                                                ::
-          $?  sign                                      ::
-              $:  %g                                    ::
-          $%  [%veer p=@ta q=path r=@t]                 ::
-              [%vega p=path]                            ::
-          ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
           $%  [%went p=ship q=cape]                     ::
           ==  ==                                        ::
-              $:  %b                                    ::  by %behn
+              $:  %g                                    ::  by %gall
           $%  [%unto p=cuft]                            ::  within agent
           ==  ==                                        ::
               $:  %e                                    ::  by self
@@ -98,13 +86,6 @@
           $%  [%made p=@uvH q=(each gage tang)]         ::
               [%news ~]                                 ::
           ==  ==                                        ::
-              $:  %g                                    ::  by %gall
-          $%  [%dumb ~]                                 ::
-              [%mean p=ares]                            ::
-              [%nice ~]                                 ::
-              [%rush p=mark q=*]                        ::
-              [%rust p=mark q=*]                        ::
-          ==  ==                                        ::           
               $:  %t                                    ::  by %time
           $%  [%wake ~]                                 ::  timer activate
           ==  ==                                        ::
@@ -156,7 +137,7 @@
       eve=[p=@u q=(map ,@u even)]                       ::  queued events
       med=(qeu duct)                                    ::  waiting /~/to/
   ==
-::
+++  honk  $%([%nice ~] [%mean p=ares])                  ::  old gall result
 ++  even                                                ::  client event
   $%  [%mean p=[hasp path] q=ares]
       [%news p=@uv]
@@ -177,7 +158,7 @@
   ==
 ::
 ++  perk-auth                                           ::  parsed auth
-  $%  [%at p=pork]                               ::  inject auth
+  $%  [%at p=pork]                                      ::  inject auth
       [%del p=(unit ship)]
       [%get him=ship rem=pork]
       [%js ~]
@@ -195,7 +176,7 @@
       [%js p=@t]                                        ::  script
       [%json p=json]                                    ::  data
       [%html p=manx]                                    ::  successful page
-      [%htme p=manx]                                    ::  authentication failure
+      [%htme p=manx]                                    ::  authentication fail 
   ==
 --                                                      ::
 |%
@@ -507,16 +488,22 @@
       %wegh  !!
     ==
   ::
+  ++  axom                                              ::  old response
+    |=  [tee=whir hon=honk]
+    ^+  +>
+    ?+  tee  !!
+      ~          ?-(-.hon %nice (nice-json), %mean (mean-json 500 p.hon))
+      [%of @ ^]  (get-ack:(ire-ix p.tee) q.tee hon)
+    ==
   ++  axon                                              ::  accept response
     |=  [tee=whir typ=type sih=sign]
     ^+  +>
-    :: %-  emule  |.  ^+  ..axon
     =.  our  ?~(hov our u.hov)  ::  XX
     ?-    &2.sih
         %crud  +>.$(mow [[hen %slip %d %flog +.sih] mow])
-        %dumb  
-      =.  +>  ?+(tee +> [%of ^] pop-duct:(ire-ix p.tee))
-      (emule |.(~|(gall-dumb/tee !!)))
+    ::  %dumb  
+    ::    =.  +>  ?+(tee +> [%of ^] pop-duct:(ire-ix p.tee))
+    ::    (emule |.(~|(gall-dumb/tee !!)))
     ::
         %went  +>.$
         %thou
@@ -526,35 +513,16 @@
         %unto                                           ::  XX horrible
       =+  cuf=`cuft`+>.sih
       ?-    -.cuf
-          %coup 
-        ?~  p.cuf  $(sih [%g %nice ~])
-        $(sih [%g %mean `[%coup u.p.cuf]])
-      ::
-          %reap
-        ?~  p.cuf  $(sih [%g %nice ~])
-        $(sih [%g %mean `[%reap u.p.cuf]])
+          ?(%coup %reap)
+        (axom tee ?~(p.cuf [%nice ~] [%mean `[-.cuf u.p.cuf]]))
       ::
           %diff
-        $(sih [%g %rush p.p.cuf q.q.p.cuf])
+        ?>  ?=([%of @ ^] tee)
+        ?.  ?=(%json p.p.cuf)
+          (back tee 0v0 %json p.cuf)
+        (get-rush:(ire-ix p.tee) q.tee ((hard json) q.q.p.cuf))
       ::
-          %quit
-        $(sih [%g %mean ~])
-      ==
-    ::
-        ?(%rush %rust)
-      ?>  ?=([%of @ ^] tee)
-      ?.  ?=(%json p.sih)
-        =-  (back tee 0v0 %json -)
-        `cage`[p.sih (slot 3 (spec (slot 3 [typ +.sih])))]
-      ~!  [q.tee *whir-of]
-      (get-rush:(ire-ix p.tee) q.tee ((hard json) q.sih))
-    ::
-        ?(%nice %mean)
-      ::  ~&  [tee `@tas`&2.sih]
-      ?+  tee  !!
-        ~   ~&  empty-ack/&2.sih
-            ?-(&2.sih %nice (nice-json), %mean (mean-json 500 p.sih))
-        [%of @ ^]  (get-ack:(ire-ix p.tee) q.tee +.sih)
+          %quit  (axom tee [%mean ~])
       ==
     ::
         %wake
@@ -1200,22 +1168,22 @@
     ::
     ++  new-mess
       |=  [a=hasp b=wire c=cage]  ^+  ..ix
-      (hurl-note [a b] [%b %deal [him -.a] +.a %poke c])
+      (hurl-note [a b] [%g %deal [him -.a] +.a %poke c])
     ::
     ++  add-subs
       |=  [a=hasp %json b=wire c=path]  ^+  ..ix
-      (hurl-note [a b] [%b %deal [him -.a] +.a %peer c])
+      (hurl-note [a b] [%g %deal [him -.a] +.a %peer c])
     ::
     ++  del-subs                      ::  XX per path?
       |=  [a=hasp %json b=wire c=path]  ^+  ..ix
-      (hurl-note [a b] [%b %deal [him -.a] +.a %pull ~])
+      (hurl-note [a b] [%g %deal [him -.a] +.a %pull ~])
     ::
     ++  get-rush
       |=  [a=whir-of b=json]  ^+  ..ix
       (get-even [%rush [[(slav %p p.a) q.a] r.a] (joba %json b)])
     ::
     ++  get-ack
-      |=  [a=whir-of b=$&([%nice ~] [%mean p=ares])]  ^+  ..ix
+      |=  [a=whir-of b=honk]  ^+  ..ix
       ?-  -.b
           %mean
         ?~  p.b                       ::  XX  actually a yawn-told-full
@@ -1255,7 +1223,7 @@
       |=  a=[p=hasp wire]
       %+  pass-note(hen `~)
         [%of ire (gsig a)] 
-      [%b %deal [him -.p.a] +.p.a %pump ~]
+      [%g %deal [him -.p.a] +.p.a %pump ~]
     ::
     ++  pop-duct  =^(ned med ~(get to med) abet(hen ned))
     ++  poll
@@ -1326,9 +1294,10 @@
   |=  old=bolo
   ^+  ..^$
   =+  mej=|=(a=* (met 3 (jam a)))
-  ~&  :*  gub=(mej gub.old)  hov=(mej hov.old)  ged=(mej ged.old)  ded=(mej ded.old)
-          pox=(mej pox.old)  ask=(mej ask.old)  kes=(mej kes.old)  ney=(mej ney.old)
-          dop=(mej dop.old)  liz=(mej liz.old)  wup=(mej wup.old)  sop=(mej sop.old)
+  ~&  :*  gub=(mej gub.old)  hov=(mej hov.old)  ged=(mej ged.old)  
+          ded=(mej ded.old)  pox=(mej pox.old)  ask=(mej ask.old)  
+          kes=(mej kes.old)  ney=(mej ney.old)  dop=(mej dop.old)  
+          liz=(mej liz.old)  wup=(mej wup.old)  sop=(mej sop.old)
           wix=(mej wix.old)
       ==
   ..^$(+>- old)
@@ -1340,12 +1309,8 @@
 ::
 ++  stay  `bolo`+>-.$
 ++  take                                                ::  accept response
-  |=  [tea=wire hen=duct hin=(hypo sine)]
+  |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [p=(list move) q=_..^$]
-  ?:  ?=(%veer +<.q.hin)                                ::  vomit
-    [[hen %give +.q.hin]~ ..^$]
-  ?:  ?=(%vega +<.q.hin)                                ::  vomit
-    [[hen %give +.q.hin]~ ..^$]
   =+  our=`@p`0x100  ::  XX  sentinel
   =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))

@@ -1767,7 +1767,7 @@
     %pawn  `@p`0
   ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 3bI, Arvo models              ::
+::                section 3bI, Arvo structures          ::
 ::
 ++  acru                                                ::  asym cryptosuite
           $_  ^?  |%                                    ::  opaque object
