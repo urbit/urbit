@@ -163,22 +163,22 @@
       [%vega p=path]                                    ::  reboot by path
       [%verb ~]                                         ::  verbose mode
   ==                                                    ::
-++  note-behn                                           ::
+++  note-gall                                           ::
   $%  [%conf dock %load ship desk]                      ::
       [%deal p=sock q=cuss]                             ::
   ==                                                    ::
 ++  note                                                ::  out request $->
   $%  [%a note-ames]                                    ::
-      [%b note-behn]                                    ::
       [%c note-clay]                                    ::
       [%d note-dill]                                    ::
+      [%g note-gall]                                    ::
   ==                                                    ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  sign-ames                                           ::
   $%  [%nice ~]                                         ::
       [%init p=ship]                                    ::
   ==                                                    ::
-++  sign-behn                                           ::  see %behn
+++  sign-gall                                           ::  see %gall
   $%  [%onto p=(unit tang)]                             ::
   ==                                                    ::
 ++  sign-clay                                           ::
@@ -189,7 +189,7 @@
 ++  sign-dill                                           ::
   $%  [%blit p=(list blit)]                             ::
   ==                                                    ::
-++  sign-behn                                           ::
+++  sign-gall                                           ::
   $%  [%onto p=(each suss tang)]                        ::
       [%unto p=cuft]                                    ::
   ==                                                    ::
@@ -198,9 +198,9 @@
   ==                                                    ::
 ++  sign                                                ::  in result $<-
   $%  [%a sign-ames]                                    ::
-      [%b sign-behn]                                    ::
       [%c sign-clay]                                    ::
       [%d sign-dill]                                    ::  
+      [%g sign-gall]                                    ::
       [%t sign-time]                                    ::
   ==                                                    ::
 ::::::::                                                ::  dill tiles
@@ -278,9 +278,8 @@
         =+  myt=(flop (need tem))
         =.  tem  ~
         =.  moz  :_(moz [hen %pass / %c %font our %home our %base])
-        ::  =.  moz  :_(moz [hen %pass / %g %show [our [ram ~]] our ~])
-        =.  moz  :_(moz [hen %pass ~ %b %conf [[our ram] %load our %base]])
-        =.  moz  :_(moz [hen %pass ~ %b %deal [our our] ram %peer ~])
+        =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %base]])
+        =.  moz  :_(moz [hen %pass ~ %g %deal [our our] ram %peer ~])
         |-  ^+  +>
         ?~  myt  +>
         $(myt t.myt, +> (send i.myt))
@@ -306,13 +305,13 @@
         %_    +>
             moz
           :_  moz
-          [hen %pass ~ %b %deal [our our] ram %poke [%dill-belt -:!>(bet) bet]]
+          [hen %pass ~ %g %deal [our our] ram %poke [%dill-belt -:!>(bet) bet]]
         ==
       ::
       ++  pump                                          ::  send diff ack
         %_    .
             moz 
-          :_(moz [hen %pass ~ %b %deal [our our] ram %pump ~])
+          :_(moz [hen %pass ~ %g %deal [our our] ram %pump ~])
         ==
       ::
       ++  take                                          ::  receive
@@ -333,18 +332,18 @@
           ~|  p.p.p.sih
           |-
           ?~  q.p.p.sih  !!
-          ~>  %mean.|.(i.q.p.p.sih)     ::  interpolate ford fail into stack trace
+          ~>  %mean.|.(i.q.p.p.sih)     ::  pull ford fail into stack trace
           $(q.p.p.sih t.q.p.p.sih) 
         ::
-            [%b %onto *]
-          ::  ~&  [%take-behn-onto +>.sih]
+            [%g %onto *]
+          ::  ~&  [%take-gall-onto +>.sih]
           ?-  -.+>.sih
             %|  (crud %onto p.p.+>.sih)
             %&  (done %blit [%lin (tuba "{<p.p.sih>}")]~)
           ==
         ::
-            [%b %unto *]
-          ::  ~&  [%take-behn-unto +>.sih]
+            [%g %unto *]
+          ::  ~&  [%take-gall-unto +>.sih]
           ?-  -.+>.sih
             %coup  ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
             %quit  !! :: ??

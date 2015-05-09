@@ -48,15 +48,9 @@
               $:  %a                                    ::  to %ames
           $%  [%kick p=@da]                             ::
           ==  ==                                        ::
-              $:  %b                                    ::  to %behn
-          $%  [%rote p=sack q=path r=*]                 ::
-              [%roth p=sack q=path r=*]                 ::
-              [%mess p=[@p %ye ~] q=@p r=cage]          ::
-          ==  ==                                        ::
               $:  %g                                    ::  to %gall
           $%  [%rote p=sack q=path r=*]                 ::
               [%roth p=sack q=path r=*]                 ::
-              [%mess p=[@p %ye ~] q=@p r=cage]          ::
           ==  ==                                        ::
               $:  @tas                                  ::  to any
           $%  [%init p=@p]                              ::
@@ -1778,7 +1772,7 @@
         %+  turn  paz
         |=  him=ship
         :-  hen
-        [%pass /ye %g %mess [him ye/~] p.p.bon [%txt !>(((hard ,@t) r.bon))]]
+        [%pass /ye %g %rote `sack`p.bon /ye 0 %m %helm-ye ((hard ,@t) r.bon)]
       ==
     ::
         %mulk
@@ -1792,26 +1786,6 @@
             [%sick %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
         ==
       ::
-          %be                                         ::  %behn request
-        =*  imp  t.t.q.q.bon
-        ?>  (levy imp (sane %ta))
-        =+  ^=  pax
-            :+  (scot %p p.p.bon)
-              (scot %p q.p.bon)
-            q.q.bon
-        ::  ~&  [%ames-behn-request p.bon imp pax]
-        :_  fox  [hen %pass pax %b %rote p.bon imp r.bon]~
-      ::
-          %bh                                         ::  %behn response
-        =*  imp  t.t.q.q.bon
-        ?>  (levy imp (sane %ta))
-        =+  ^=  pax
-            :+  (scot %p p.p.bon)
-              (scot %p q.p.bon)
-            q.q.bon
-        ::  ~&  [%ames-behn-response p.bon imp pax]
-        :_  fox  [hen %pass pax %b %roth p.bon imp r.bon]~
-      ::
           %ge                                         ::  %gall request
         =*  imp  t.t.q.q.bon
         ?>  (levy imp (sane %ta))
@@ -1819,6 +1793,7 @@
             :+  (scot %p p.p.bon)
               (scot %p q.p.bon)
             q.q.bon
+        ::  ~&  [%ames-gall-request p.bon imp pax]
         :_  fox  [hen %pass pax %g %rote p.bon imp r.bon]~
       ::
           %gh                                         ::  %gall response
@@ -1828,6 +1803,7 @@
             :+  (scot %p p.p.bon)
               (scot %p q.p.bon)
             q.q.bon
+        ::  ~&  [%ames-gall-response p.bon imp pax]
         :_  fox  [hen %pass pax %g %roth p.bon imp r.bon]~
       ==
     ::
