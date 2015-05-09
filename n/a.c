@@ -561,9 +561,12 @@ u3a_malloc(size_t len_i)
 c3_w*
 u3a_celloc(void)
 {
-#ifdef U3_MEMORY_DEBUG
-  return u3a_walloc(c3_wiseof(u3a_cell));
-#else
+#ifdef U3_CELLOC_TOGGLE
+  if ( u3C.wag_w & u3o_debug_ram ) {
+    return u3a_walloc(c3_wiseof(u3a_cell));
+  }
+#endif
+
   u3p(u3a_fbox) cel_p;
 
   if ( (u3R == &(u3H->rod_u)) || !(cel_p = u3R->all.cel_p) ) {
@@ -577,7 +580,6 @@ u3a_celloc(void)
 
     return u3a_boxto(box_u);
   }
-#endif
 }
 
 /* u3a_cfree(): free a cell.
@@ -585,9 +587,12 @@ u3a_celloc(void)
 void
 u3a_cfree(c3_w* cel_w)
 {
-#ifdef U3_MEMORY_DEBUG
-  return u3a_wfree(cel_w);
-#else
+#ifdef U3_CELLOC_TOGGLE
+  if ( u3C.wag_w & u3o_debug_ram ) {
+    return u3a_wfree(cel_w);
+  }
+#endif
+
   if ( u3R == &(u3H->rod_u) ) {
     return u3a_wfree(cel_w);
   } 
@@ -598,7 +603,6 @@ u3a_cfree(c3_w* cel_w)
     u3to(u3a_fbox, fre_p)->nex_p = u3R->all.cel_p;
     u3R->all.cel_p = fre_p;
   }
-#endif
 }
 
 /* u3a_realloc(): aligned realloc in bytes.
@@ -1335,10 +1339,10 @@ u3a_mark_ptr(void* ptr_v)
         use_ws -= 1;
         siz_w = 0;
       } 
-      // else if ( 0x80000000 == (c3_w)use_ws ) {    // see _raft_prof()
-      //   use_ws = -1;
-      //   siz_w = 0xffffffff;
-      // }
+      else if ( 0x80000000 == (c3_w)use_ws ) {    // see _raft_prof()
+        use_ws = -1;
+        siz_w = 0xffffffff;
+      }
       else {
         use_ws = -1;
         siz_w = box_u->siz_w;
@@ -1479,10 +1483,7 @@ u3a_sweep(void)
                     (u3_noun)u3a_to_pom(u3a_outa(u3a_boxto(box_w))),
                     ((u3a_noun *)(u3a_boxto(box_w)))->mug_w,
                     box_u->use_w, box_u->eus_w);
-            //static int xuc_i = 0;
-            //if ( 2 != ++xuc_i && 3 != xuc_i ) {
-            //  u3m_p("weak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
-            //}
+            // u3m_p("weak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
           }
           weq_w += box_u->siz_w;
         }

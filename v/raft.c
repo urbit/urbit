@@ -1847,6 +1847,10 @@ static void
 _raft_grab(u3_noun ova)
 {
   if ( u3_nul != u3A->sac ) {
+    if ( !(u3C.wag_w & u3o_debug_ram) ) {
+      fprintf(stderr, "massing doesn't work without the -g flag\r\n");
+      goto _raft_grab_end;
+    }
     c3_w usr_w = 0, ova_w = 0, sac_w = 0, utv_w = 0, utm_w = 0, wep_w = 0;
 
     usr_w = _raft_prof(u3_nul, 0, u3A->sac);
@@ -1876,10 +1880,9 @@ _raft_grab(u3_noun ova)
     fprintf(stderr, "sweep: ");
     _raft_print_memory(wep_w);
 
+_raft_grab_end:
     u3z(u3A->sac);
     u3A->sac = u3_nul;
-  } else {
-    // u3m_grab(ova, u3_none);
   }
 }
 
