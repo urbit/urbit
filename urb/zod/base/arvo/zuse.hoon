@@ -2263,4 +2263,24 @@
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action
 ++  will  (list deed)                                   ::  certificate
 ++  zuse  %310                                          ::  hoon/zuse kelvin
+::          ::
+::::        ::::  this will become `%york`, separating out structures
+  ::          ::  related to arvo in 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 --

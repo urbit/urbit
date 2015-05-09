@@ -17,7 +17,7 @@
       ++  off  |=(point (add x (mul 3 y)))              ::  bitfield address
       ++  set  |=(point (con bud (bex (off +<))))       ::  set point
       ++  win  %-  lien  :_  |=(a=@ =(a (dis a bud)))   ::  test for win
-               (rip 4 0wl04h0.4A0Aw.4A00s.0e070)        ::  with bitmasks
+               (rip 4 0wl04h0.4A0Aw.4A00s.0e070)        ::
       --                                                ::
     ++  go                                              ::  per game
       |_  game                                          ::
@@ -47,10 +47,10 @@
 ::::                                                    ::  ::       ::  agent
   ::                                                    :::::::::::::::
 =>  |%                                                  ::  arvo structures
-    ++  axle  ,[%0 eye=face but=tube gam=game]          ::  agent state
+    ++  axle  ,[%0 eye=face gam=game]                   ::  agent state
     ++  card  ,[%diff lime]                             ::  update
     ++  face  (pair (list ,@c) (map bone sole-share))   ::  interface
-    ++  lime  ,[%sole-effect sole-effect]               ::  :sole update
+    ++  lime  ,[%sole-effect sole-effect]               ::  console update
     ++  move  (pair bone card)                          ::  cause and action
     --                                                  ::
 =>  |%                                                  ::  parsers
@@ -99,9 +99,8 @@
 ++  fret  |=(from ~(. et +< *sole-share))               ::  in new client
 ++  pals  %+  turn  (pale hid (prix /sole))  |=  sink   ::  per console 
           [[p=p.+< q=q.+<] r=(~(got by q.eye) p.+<)]    ::
-++  park  |=  [lev=?(%0 %1 %2) mus=(unit tape)]         ::  update all
-          =+  pals                                      ::
-          |-  ^+  +>.^$  ?~  +<  +>.^$                  ::
+++  park  |=  [lev=?(%0 %1 %2) mus=(unit tape)]         ::  general update
+          =+  pals  |-  ^+  +>.^$  ?~  +<  +>.^$        ::
           $(+< t.+<, +>.^$ (~(plow et i.+<) lev mus))   ::
 ::                                                      :::::::::::::::
 ::::                                                    ::  ::       ::  hooks
