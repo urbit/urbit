@@ -301,6 +301,7 @@
       ~&(dep-empty/hen +>.$)
     =+  dap=(~(get by deh.bay) dep)
     ?~  dap  ~&(dep-missed/dep +>.$)  ::  XX  ~|  !!
+    :: ~&  awap/[dep u.dap]
     ?-  -.u.dap
       %done  +>.$(mow :_(mow [hen %give %news ~]))
       %sent
@@ -379,7 +380,7 @@
           %0
         =^  cux  p.hoc  ((calk p.hoc) sem q.q.hoc)
         ?^  cux
-          [p=p.hoc q=[%0 p=p.q.hoc q=((calf sem) u.cux)]]
+          [p=p.hoc q=[%0 p=dep.p.u.cux q=((calf sem) u.cux)]]
         =+  nuf=(cope hoc fun)
         ?-    -.q.nuf
             %2  nuf
@@ -1124,6 +1125,7 @@
         (fine cof [p.kas u.vux])
       ::
           %boil
+        ^-  (bolt gage)
         %+  cool  |.(leaf/"ford: boil {<p.kas>} {<(tope q.kas)>} {<r.kas>}")
         %+  cope  (lamp cof q.kas)
         |=  [cof=cafe bem=beam]
