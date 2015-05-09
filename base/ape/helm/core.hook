@@ -13,11 +13,13 @@
           bur=(unit (pair ship mace))                   ::  requesting ticket
           hoc=(map bone helm-session)                   ::  consoles
       ==                                                ::
+    ++  helm-house  ,[%1 (list helm-room)]
+    ++   
+      
     ++  helm-session                                    ::
       $:  say=sole-share                                ::
           mud=(unit (sole-dialog ,@ud))                 ::
       ==                                                ::
-    ++  funk  (pair ,@ ,@)                              ::
     ++  begs  ,[his=@p tic=@p eny=@t ges=gens]          ::  begin data
     ++  suss  ,[term @tas @da]                          ::  config report
     ++  helm-wish                                       ::
@@ -54,8 +56,8 @@
     [(flop moz) %_(+> hoc (~(put by hoc) ost +<+))]     ::
   ::                                                    ::
   ++  he-wish-start
-    |=  dap=term
-    %_(+> moz :_(moz [ost %conf /start [our.hid dap] %load our.hid %main]))
+    |=  [who=ship dap=term]
+    %_(+> moz :_(moz [ost %conf /start [our.hid dap] %load who %base]))
   ::
   ++  he-wish-reset
     ^+  .
@@ -146,8 +148,8 @@
   he-abet:(he-wish-reload:(hake ost src) all)
 ::
 ++  poke-helm-start
-  |=  [from dap=term]
-  he-abet:(he-wish-start:(hake ost src) dap)
+  |=  [from who=ship dap=term]
+  he-abet:(he-wish-start:(hake ost src) who dap)
 ::
 ++  poke-helm-begin
   |=  [from begs]
@@ -175,9 +177,10 @@
 ::
 ++  onto
   |=  [then saw=(each suss tang)]
+  ^-  (quip move +>)
   :_  +>  :_  ~
   ?-  -.saw
-    %|  [ost %pass ~ %flog %crud `@tas`-.way `tang`p.saw]
-    %&  [ost %pass ~ %flog %text "<{<p.saw>}>"]
+    %|  [ost %flog ~ %crud `@tas`-.way `tang`p.saw]
+    %&  [ost %flog ~ %text "<{<p.saw>}>"]
   ==
 --

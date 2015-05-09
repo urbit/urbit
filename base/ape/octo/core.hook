@@ -10,7 +10,7 @@
     ++  board  ,@                                       ::  one-player bitfield
     ++  point  ,[x=@ y=@]                               ::  coordinate
     ++  game   ,[who=? box=board boo=board]             ::  game state
-    ++  icon   |=(? ?:(+< 'X' 'O'))                     ::  display at
+    ++  icon   |=(? ?:(+< 'Q' 'O'))                     ::  display at
     ++  bo                                              ::  per board
       |_  bud=board                                     ::
       ++  get  |=(point =(1 (cut 0 [(off +<) 1] bud)))  ::  get point
