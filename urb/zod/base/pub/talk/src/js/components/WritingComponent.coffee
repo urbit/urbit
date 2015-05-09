@@ -55,8 +55,7 @@ module.exports = recl
       $('#audi').focus()
       return
     if @state.audi.length is 0 and $('#audi').text().trim().length > 0
-      audi = @state.ludi
-      @_setAudi()
+      audi = if @_setAudi() then @_setAudi() else @state.ludi
     else
       audi = @state.audi    
     audi = @addCC audi
@@ -138,10 +137,13 @@ module.exports = recl
     if valid is true
       v = $('#audi').text()
       v = v.split " "
-      v = window.util.expandAudi v
       for k,_v of v
         if _v[0] isnt "~" then v[k] = "~#{_v}"
+      v = window.util.expandAudi v
       StationActions.setAudience v
+      v
+    else
+      false
 
   getTime: ->
     d = new Date()

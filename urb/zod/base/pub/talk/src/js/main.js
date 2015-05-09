@@ -720,8 +720,7 @@ module.exports = recl({
       return;
     }
     if (this.state.audi.length === 0 && $('#audi').text().trim().length > 0) {
-      audi = this.state.ludi;
-      this._setAudi();
+      audi = this._setAudi() ? this._setAudi() : this.state.ludi;
     } else {
       audi = this.state.audi;
     }
@@ -806,14 +805,17 @@ module.exports = recl({
     if (valid === true) {
       v = $('#audi').text();
       v = v.split(" ");
-      v = window.util.expandAudi(v);
       for (k in v) {
         _v = v[k];
         if (_v[0] !== "~") {
           v[k] = "~" + _v;
         }
       }
-      return StationActions.setAudience(v);
+      v = window.util.expandAudi(v);
+      StationActions.setAudience(v);
+      return v;
+    } else {
+      return false;
     }
   },
   getTime: function() {
