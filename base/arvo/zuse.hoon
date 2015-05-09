@@ -1746,7 +1746,7 @@
   %+  rap  3  :-  (wack a)
   (turn b |=(c=span (cat 3 '_' (wack c))))
 ::
-++  pick                                                ::  light path decoding
+++  puck                                                ::  light path decoding
   =+  fel=(most cab (sear wick urt:ab))
   |=(a=span `(unit ,[p=term q=path])`(rush a fel))
 ::
