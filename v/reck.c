@@ -66,138 +66,6 @@ _reck_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
   }
 }
 
-/* _reck_spac(): print n spaces.
-*/
-void _reck_spac(c3_w n)
-{
-  for (; n > 0; n--)
-    (fprintf(stderr," "));
-}
-
-/* _reck_print_memory: print memory amount. cf u3a_print_memory().
-*/
-void
-_reck_print_memory(c3_w wor_w)
-{
-  c3_w byt_w = (wor_w * 4);
-  c3_w gib_w = (byt_w / 1000000000);
-  c3_w mib_w = (byt_w % 1000000000) / 1000000;
-  c3_w kib_w = (byt_w % 1000000) / 1000;
-  c3_w bib_w = (byt_w % 1000);
-
-  if ( gib_w ) {
-    (fprintf(stderr, "GB/%d.%03d.%03d.%03d\r\n", 
-        gib_w, mib_w, kib_w, bib_w));
-  }
-  else if ( mib_w ) {
-    (fprintf(stderr, "MB/%d.%03d.%03d\r\n", mib_w, kib_w, bib_w));
-  }
-  else if ( kib_w ) {
-    (fprintf(stderr, "KB/%d.%03d\r\n", kib_w, bib_w));
-  }
-  else {
-    (fprintf(stderr, "B/%d\r\n", bib_w));
-  }
-}
-
-/*  _reck_meme_noun(): get memory usage, in words, of noun. RETAIN.
-*/
-c3_w
-_reck_meme_noun(u3p(u3h_root) hax, u3_noun non, c3_t dud)
-{
-  return 0;
-  /*
-  u3_weak got = u3h_git(hax, dud ? non & 0x7fffffff : non);
-
-  if (u3_none != got) {
-    return 1;
-  }
-  else {
-    c3_w res;
-
-    if (!(non & 0x80000000)) {
-      res = 1;
-    }
-    if (_(u3ud(non))) {
-      res = 3 + 3 + u3r_met(5, non);
-    }
-    else {
-      res = 3 + 2
-            + _reck_meme_noun(hax, u3h(non), dud)
-            + _reck_meme_noun(hax, u3t(non), dud);
-    }
-
-    u3h_put(hax, dud ? non & 0x7fffffff : non, res);
-
-    return res;
-  }
-  */
-}
-
-/*  _reck_noun_grab(): get memory usage, in words, of noun from GC. RETAIN.
- *  XXX what about unmarking stuff?  what's a GC cycle?
-*/
-c3_w
-_reck_noun_grab(u3_noun non)
-{
-  return u3a_mark_noun(non);
-}
-
-/* _reck_meme_prof(): print memory profile. RETAIN.
-*/
-c3_w
-_reck_meme_prof(u3p(u3h_root) hax, c3_w den, u3_noun mas)
-{
-  c3_w tot_w = 0;
-  u3_noun h_mas, t_mas;
-
-  if (c3n == u3r_cell(mas, &h_mas, &t_mas)) {
-    _reck_spac(den);
-    (fprintf(stderr, "mistyped mass\r\n"));
-    return tot_w;
-  }
-  if (c3y == h_mas) {
-    _reck_spac(den);
-    _reck_print_memory(_reck_meme_noun(hax, t_mas, false));
-    _reck_spac(den);
-    _reck_print_memory(_reck_meme_noun(hax, t_mas, true));
-    _reck_spac(den);
-    tot_w += _reck_noun_grab(t_mas);
-    _reck_print_memory(tot_w);
-    return tot_w;
-  }
-  else if (c3n == h_mas) {
-    u3_noun it_mas, tt_mas, pit_mas, qit_mas;
-    while (u3_nul != t_mas)
-    {
-      _reck_spac(den);
-      if (c3n == u3r_cell(t_mas, &it_mas, &tt_mas)) {
-        (fprintf(stderr, "mistyped mass list\r\n"));
-        return tot_w;
-      }
-      else if (c3n == u3r_cell(it_mas, &pit_mas, &qit_mas)) {
-        (fprintf(stderr, "mistyped mass list element\r\n"));
-        return tot_w;
-      }
-      else {
-        c3_c* pit_c = u3m_pretty(pit_mas);
-        (fprintf(stderr, "%s\r\n", pit_c));
-        free(pit_c);
-
-        tot_w += _reck_meme_prof(hax, den+2, qit_mas);
-
-        t_mas = tt_mas;
-      }
-    }
-    return tot_w;
-  }
-  else {
-    _reck_spac(den);
-    (fprintf(stderr, "mistyped mass head\r\n"));
-    return tot_w;
-  }
-}
-
 /* _reck_kick_term(): apply terminal outputs.
 */
 static u3_noun
@@ -245,36 +113,7 @@ _reck_kick_term(u3_noun pox, c3_l tid_l, u3_noun fav)
 
     case c3__mass: p_fav = u3t(fav);
     {
-      u3_Prof = u3k(p_fav);
-      //c3_w usr_w, utm_w, utv_w, ext_w, wep_w;
-      //uL(fprintf(uH, "memory profile:\r\n"));
-
-      //// u3p(u3h_root) hax = u3h_new();
-
-      //usr_w = _reck_meme_prof(u3_nul, 0, p_fav);
-      //(fprintf(stderr, "total userspace: "));
-      //_reck_print_memory(usr_w);
-
-      //utm_w = u3m_mark();
-      //(fprintf(stderr, "u3m stuff: "));
-      //_reck_print_memory(utm_w);
-
-      //utv_w = u3v_mark();
-      //(fprintf(stderr, "u3v stuff: "));
-      //_reck_print_memory(utv_w);
-
-      //ext_w = u3a_mark_noun(pox) + u3a_mark_noun(fav);
-      //(fprintf(stderr, "extra stuff: "));
-      //_reck_print_memory(ext_w);
-
-      //(fprintf(stderr, "total memory: "));
-      //_reck_print_memory(usr_w + utm_w + utv_w + ext_w);
-
-      //wep_w = u3a_sweep();
-      //(fprintf(stderr, "sweep memory: "));
-      //_reck_print_memory(wep_w);
-
-      //// u3h_free(hax);
+      u3A->sac = u3k(p_fav);
 
       u3z(pox); u3z(fav); return c3y;
     } break;
@@ -400,7 +239,7 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
       u3z(pox); u3z(fav); return c3n;
     }
     else switch ( it_pox ) {
-      default: return c3n;
+      default: u3z(pox); u3z(fav); return c3n;
 
       case c3__http: {
         u3_noun pud = tt_pox;

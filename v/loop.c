@@ -420,7 +420,6 @@ u3_lo_open(void)
     //
     //  Assumption: there are no noun roots outside u3A.
     //
-    u3_Prof = u3_none;
     u3m_grab(u3_none);
   }
 #if 0

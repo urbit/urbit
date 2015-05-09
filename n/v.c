@@ -79,6 +79,7 @@ u3v_start(u3_noun now)
 {
   u3v_time(now);
   u3v_numb();
+  u3A->sac = u3_nul;
 
   {
     c3_c* wen_c = u3r_string(u3A->wen);

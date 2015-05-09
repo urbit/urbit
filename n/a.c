@@ -1310,9 +1310,13 @@ u3a_mark_ptr(void* ptr_v)
     c3_w       siz_w;
 
 #ifdef U3_MEMORY_DEBUG
-    if ( box_u->eus_w == 0 ) {
+    if ( 0 == box_u->eus_w ) {
       siz_w = box_u->siz_w;
-    } 
+    }
+    else if ( 0xffffffff == box_u->eus_w ) {      // see _raft_prof()
+      siz_w = 0xffffffff;
+      box_u->eus_w = 0;
+    }
     else {
       siz_w = 0;
     }
@@ -1331,6 +1335,10 @@ u3a_mark_ptr(void* ptr_v)
         use_ws -= 1;
         siz_w = 0;
       } 
+      // else if ( 0x80000000 == (c3_w)use_ws ) {    // see _raft_prof()
+      //   use_ws = -1;
+      //   siz_w = 0xffffffff;
+      // }
       else {
         use_ws = -1;
         siz_w = box_u->siz_w;
@@ -1370,7 +1378,7 @@ u3a_mark_noun(u3_noun som)
       c3_w* dog_w = u3a_to_ptr(som);
       c3_w  new_w = u3a_mark_ptr(dog_w);
 
-      if ( 0 == new_w ) {
+      if ( 0 == new_w || 0xffffffff == new_w ) {      //  see u3a_mark_ptr()
         return siz_w;
       }
       else {
@@ -1471,7 +1479,10 @@ u3a_sweep(void)
                     (u3_noun)u3a_to_pom(u3a_outa(u3a_boxto(box_w))),
                     ((u3a_noun *)(u3a_boxto(box_w)))->mug_w,
                     box_u->use_w, box_u->eus_w);
-            // u3m_p("weak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
+            //static int xuc_i = 0;
+            //if ( 2 != ++xuc_i && 3 != xuc_i ) {
+            //  u3m_p("weak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
+            //}
           }
           weq_w += box_u->siz_w;
         }

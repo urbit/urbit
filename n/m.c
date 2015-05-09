@@ -869,11 +869,6 @@ u3m_soft_top(c3_w    sec_w,                     //  timer seconds
     /* Make sure the inner routine did not create garbage.
     */
     if ( u3C.wag_w & u3o_debug_ram ) {
-      if ( u3_none != u3_Prof ) {
-        fprintf(stderr,"should be checking!\r\n");
-        u3z(u3_Prof);
-        u3_Prof = u3_none;
-      }
       u3m_grab(pro, u3_none);
     }
  

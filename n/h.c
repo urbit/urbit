@@ -634,7 +634,7 @@ u3h_walk(u3p(u3h_root) har_p, void (*fun_f)(u3_noun))
 c3_w
 _ch_mark_buck(u3h_buck* hab_u)
 {
-  c3_w tot_w = 0; 
+  c3_w tot_w = 0;
   c3_w i_w;
 
   for ( i_w = 0; i_w < hab_u->len_w; i_w++ ) {
