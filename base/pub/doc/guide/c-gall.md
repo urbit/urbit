@@ -3,7 +3,7 @@ vane. To show off how we store and distribute data in Urbit we're going
 to examine a simple webapp. Some of the material here expects that you
 have looked over the [`%ford` guide](). If you haven't, it's a good idea
 to start there. There's also more information in the [`%gall`
-overview]() and [`%gall` commentary]() but it's not necesarry that you
+overview]() and [`%gall` commentary]() but it's not necessary that you
 read those before going forward.
 
 One important thing to keep in mind is that `%gall` services aren't
