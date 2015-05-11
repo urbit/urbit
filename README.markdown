@@ -12,7 +12,8 @@ Urbit is a new programming and execution environment designed from scratch. Any
 resemblance to existing languages or operating systems is coincidental,
 cosmetic, or inevitable.
 
-All of the source code is entirely in the public domain.
+All of the source code is distributed under the MIT license, but is for all
+intents and purposes in the public domain.
 
 Install
 -------------------
@@ -92,7 +93,7 @@ Run `bin/vere -c mypier` in the urbit directory, where `mypier` is a directory t
 A _pier_ is an Urbit virtual machine that hosts one or more Urbit identities,
 or _ships_.  When you run `bin/vere -c`, it automatically creates a 128-bit ship, or `submarine`.  Your name (a hash of a randomly-generated public key) will look something like:
 
-    ~machec-binnev-dordeb-sogduc--dosmul-sarrum-faplec-nidted
+    ~hinfet-rovler-labheb-laddev--ladner-pillur-divmun-tamfur
 
 First you'll see a string of messages like:
 
@@ -114,7 +115,7 @@ Next vere will generate a 2048 RSA key that will be used as your identity:
 
 and then it'll pause a little, 'cause this is slow, and then
 
-    saving passcode in sub/.urb/code.~malmel-ridnep
+    saving passcode in mypier/.urb/code.~malmel-ridnep
     (for real security, write it down and delete the file...)
 
 and, then, if the network gods are happy, your submarine will start pulling
@@ -134,7 +135,7 @@ down Arvo files:
 
 You will probably be stuck here for a while as your local submarine copies all of its files from the master carrier, `~zod`. This is normal.
 
-Once that is finished, you will be dropped into the main application, the `+dojo` shell (which is coincidentally also a Hoon REPL):
+Once that is finished, you will be dropped into the main application, the `:dojo` shell (which is coincidentally also a Hoon REPL):
 
     ~hinfet-rovler-labheb-laddev--ladner-pillur-divmun-tamfur:dojo>
 
@@ -168,7 +169,7 @@ Let's say one of your ships is `~waclux-tomwyc` and its ticket is
 rendered in Hoon's syllabic base, `@p`.)
 
 A new life awaits you on the off-world colonies!  To begin, just
-type at the `+dojo` prompt:
+type at the `:dojo` prompt:
 
     :helm?begin
 
@@ -200,7 +201,7 @@ command lines and you should see the matching results:
     ~waclux-tomwyc:dojo> +hello %world
     'hello, dlrow'
 
-    ~waclux-tomwyc/try=> :cat /=home=/cat/hello/gate/hook  :: XX make this work
+    ~waclux-tomwyc:dojo> :cat /=home=/cat/hello/gate/hook  :: XX make this work
     ::
     ::::  /hook/gate/hello/cat
       ::
@@ -222,7 +223,7 @@ world"`, which is a fancy way to write the Nock noun
 Two, you called the Hoon `add` function to see that two plus two
 is four.  Math seems to work the same on the off-world colonies.
 
-Three, you ran the `+dojo` application `+hello` with the argument
+Three, you ran the `:dojo` application `+hello` with the argument
 `%world`, which is just a fancy way to write the atom
 `431.316.168.567` (or, for non-Germans, `431,316,168,567`).  You
 might recognize it better as `0x64.6c72.6f77` - the ASCII
@@ -231,13 +232,12 @@ characters in LSB first order.
 (Is Urbit German?  Sadly, no.  But all our noun print formats are
 URL-safe, which dot is and comma isn't.)
 
-And you (4) used the `+dojo` application `+cat` to print the Hoon file
+And you (4) used the `:dojo` application `+cat` to print the Hoon file
 
     /=home=/cat/hello/gate/hook
 
 which, supposing your current date is
 
-    ~2013.9.1..04.38.31..f259
     ~2015.5.9..18.03.32..ba77
 
 (ie, May 9, 2015 at 18:03:32 GMT/LS25 plus 0xba77/47735 seconds), is
@@ -279,7 +279,7 @@ control.
 
 First, we'll quit out of an infinite loop with `^C`:
 
-    ~waclux-tomwyc/try=> |-($)
+    ~waclux-tomwyc:dojo> |-($)
 
 When you hit return at the end of this line, Arvo will appear to
 hang.  Do not be alarmed!  This is not a bug - it means that
@@ -289,7 +289,7 @@ console prompt.  Simply hit `^C`, and you'll see
     recover: dig: intr
     intr
     [various stack traces]
-    ~waclux-tomwyc/try=> :infinite
+    ~waclux-tomwyc:dojo> |-($)
 
 Hit `^U` to delete the line and escape from infinity.  Arvo is a
 deterministic OS; you interrupted it while processing an event
@@ -317,37 +317,39 @@ Try this by running
 
     ~waclux-tomwyc:dojo: your ship: ~
 
-Then hit `^D` and you'll be back to the command prompt (which is just
+Then hit `^D` and you'll kill the current task, the command prompt (which is just
 another program under Arvo)
 
 We don't always want to kill the prompting task.  We often want
 to switch between tasks, or between tasks and the command line.
 Sort of like switching between windows, except in a command line.
-We do this with `^X`. Try
-    :: XX this is wrong, only between apps(+dojo or +talk) now
+We do this with `^X`.
 
-    ~waclux-tomwyc:dojo> +helm?begin
+Let's try an example: First, make sure you
+have two apps running, like `:dojo` and `:talk`. Then, try:
+    :: XX this is wrong, only between apps(+dojo or +talk) now
+    :: this entire example is kinda lackluster now...
+    :: killing the current task kills dojo now, and you
+    :: cant have multiple dojo instances!
+
+    ~waclux-tomwyc:dojo> :helm?begin
 
     ~waclux-tomwyc:dojo: your ship: ~
 
-But hit `^X` instead of `^D`.  You'll get a prompt again.  Use
+But hit `^X` instead of `^D`.  You'll get switched to the next app in line, in this case `:talk`.  Use
 it:
 
-    ~waclux-tomwyc/try=> :begin
+    ~waclux-tomwyc:dojo> :helm?begin
 
-    ~waclux-tomwyc/try=> :hello %world
-    "hello, world."
-    ~waclux-tomwyc/try=>
+    ~waclux-tomwyc:talk(/urbit-meta) hello, world!
 
 Hit `^X` again:
 
-    ~waclux-tomwyc/try=> :begin
+    ~waclux-tomwyc:dojo> :helm?begin
 
-    ~waclux-tomwyc/try=> :hello %world
-    "hello, world."
-    Do you have a ship and a ticket? yes
+    ~waclux-tomwyc:dojo: your ship: ~
 
-And finally, hit `^C` to kill the task.
+And finally, hit `^D` to kill the task.
 
 Arvo has a simple task manager interface, allowing you see the
 running commands, along with being able to spawn or kill programs.
@@ -355,11 +357,10 @@ Hitting `^V` will bring you to this interface, and running `-prog`
 will kill that program while `+prog` will spawn a new one.
 If you ever end up with a broken program that is spouting errors
 and wish to restart it, do it from this interface. Even our shell
-and REPL `+dojo` is just another program in this list!
+and REPL `:dojo` is just another program in this list!
+
 This is the base view from Arvo as well. If you kill all your running
 programs with `^D`, it will drop you into this interface.
-Pressing `^D` from this view will also shutdown your ship gracefully,
-instead of having to kill all programs first.
 
 Lastly, Arvo is a single-level store.  Since it's not the '70s
 anymore and disk is cheap, everything you do is saved for ever.
@@ -370,7 +371,7 @@ repeat every computation you've ever performed.)
 If the current prompt is the task manager, `^D` on an empty
 line will log out - as in Unix:
 
-    ~waclux-tomwyc#
+    ~waclux-tomwyc:dojo, talk#
     cyarvin:~/urbit; pwd
     /home/cyarvin/urbit
     cyarvin:~/urbit; echo "hello, world"
@@ -411,34 +412,18 @@ But don't try to operate the same ship on two Unix hosts at the
 same time.  This will confuse everyone, including yourself.
 
 ####System administration
-:: XX FIX ME
 Sometimes we make changes to Hoon or Arvo (we never make changes
 to Nock) and you need to update your ship.
 
-There are two steps to updating.  You need to get the new files,
-and you need to install them.  To get them:
+Luckily, Arvo has some special sauce that allows it the same carriers
+you initially pulled your files from to push kernel update over-the-air.
+You may notice this happening from time to time through mysterious messages
+such as:
 
-    ~waclux-tomwyc/try=> :update
-    : /~waclux-tomwyc/arvo/2/hoon/hoon
-    : /~waclux-tomwyc/arvo/2/dill/hoon
-    : /~waclux-tomwyc/arvo/2/batz/hoon
+    [%merge-fine blah] :: XX make this an actual %merge-fine example
 
-To install them (the simplest, slowest, most general way):
-
-    ~waclux-tomwyc/try=> :reset
-
-    %reset-start
-    %reset-parsed
-    %reset-compiled
-    %hoon-load
-    [%tang /~waclux-tomwyc/arvo/~2013.11.26..20.29.15..090f/zuse ~tirnux-latwex]
-    [%vane %a /~waclux-tomwyc/arvo/~2013.11.26..20.29.15..090f/ames ~tolryn-watret]
-    [%vane %b /~waclux-tomwyc/arvo/~2013.11.26..20.29.15..090f/batz ~donfex-ladsem]
-    [%vane %c /~waclux-tomwyc/arvo/~2013.11.26..20.29.15..090f/clay ~picsug-mitref]
-    [%vane %d /~waclux-tomwyc/arvo/~2013.11.26..20.29.15..090f/dill ~dilpex-laptug]
-    [%vane %e /~waclux-tomwyc/arvo/~2013.11.26..20.29.15..090f/eyre ~forbur-disben]
-
-All of your state, including running tasks, will be unchanged.
+These updates can be applied without having to restart Arvo or any of its
+`%vanes`. All of your state, including running tasks, will be unchanged.
 
 Sometimes the interpreter, called `vere` gets updated. In your urbit directory, back in Unixland, run:
 
@@ -448,7 +433,7 @@ every so often to get the latest Urbit source code. You'll need to run:
 
     make clean; make
 
-before executing `bin/vere pier` again.
+before executing `bin/vere mypier` again.
 
 
 ###6. Talk
