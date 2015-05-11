@@ -52,7 +52,7 @@
 
   /**  Structures.
   **/
-    /* u3_atom, u3_cell: logical atom and cell structures.
+    /* u3a_atom, u3a_cell: logical atom and cell structures.
     */
       typedef struct {
         c3_w mug_w;

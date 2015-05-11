@@ -1797,11 +1797,11 @@ _raft_prof(u3p(u3h_root) hax, c3_w den, u3_noun mas)
         box_u->eus_w -= 1;
       }
 #else
-      if ( -1 == (c3_w)box_u->siz_w ) {
-        box_u->siz_w = 0x80000000;
+      if ( -1 == (c3_w)box_u->use_w ) {
+        box_u->use_w = 0x80000000;
       }
       else {
-        box_u->siz_w -= 1;
+        box_u->use_w -= 1;
       }
 #endif
     }
