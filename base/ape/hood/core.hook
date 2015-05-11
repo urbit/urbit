@@ -1,0 +1,99 @@
+::                                                      ::  ::
+::::  /hook/core/hood/ape                               ::  ::
+  ::                                                    ::  ::
+/?  314                                                 ::  zuse version
+/-  *sole                                               ::  structures
+/+  sole, helm                                          ::  libraries
+::                                                      ::  ::
+::::                                                    ::  ::
+  !:                                                    ::  ::
+=>  |%                                                  ::  gall boilerplate
+    ++  suss  ,[term @tas @da]                          ::  config report
+    ++  dill                                            ::  sent to %dill
+      $%  [%crud p=term q=tang]                         ::  fat report
+          [%text p=tape]                                ::  thin report
+          [%veer p=@ta q=path r=@t]                     ::  install vane
+          [%vega p=path]                                ::  reboot by path
+          [%verb ~]                                     ::  verbose mode
+      ==                                                ::
+    ++  card                                            ::
+      $%  [%cash wire p=@p q=buck]                      ::
+          [%conf wire dock %load ship term]             ::
+          [%flog wire dill]                             ::
+          [%plug wire @p @tas @p @tas]                  ::
+          [%want wire sock path *]                      ::  send message
+      ==                                                ::
+    ++  move  (pair bone card)                          ::  user-level move
+    --
+=>  |%                                                  ::  module boilerplate
+    ++  hood-good                                       ::
+      |*  hed=hood-head                                 ::
+      |=  paw=hood-part                                 ::
+      ?-  hed                                           ::
+        %helm  ?>(?=(%helm -.paw) `helm-part`paw)                ::
+      ==                                                ::
+    ++  hood-head  ,_-:*hood-part                       ::
+    ++  hood-mold                                       ::
+      |=  hed=hood-head                                 ::
+      ?-  hed                                           ::
+        %helm  helm-part                                ::
+      ==                                                ::
+    ++  hood-part                                       ::
+      $?  helm-part                                     ::
+      ==                                                ::
+    --                                                  ::
+::                                                      ::  ::
+::::                                                    ::  ::
+  ::                                                    ::  ::
+|_  $:  hid=hide                                        ::  system state
+        moz=(list move)                                 ::  transient moves
+        lac=(map ,@tas hood-part)                       ::  part system
+    ==                                                  ::
+++  abet  [(flop moz) .(moz ~)]                         ::  resolve core
+++  able                                                ::  find/make part
+  |*  hed=hood-head
+  =+  rep=(~(get by lac) hed)
+  ((hood-good hed) ?^(rep u.rep `hood-part`*(hood-mold hed)))
+::
+++  ably                                                ::  save part
+  |=  [moz=(list move) rep=hood-part]
+  %_  +> 
+    moz  (weld moz ^moz) 
+    lac  (~(put by lac) -.rep rep)
+  ==
+::                                                      ::  ::
+::::                                                    ::  ::
+  ::                                                    ::  ::
+++  poke-helm-begin                                     ::
+  |=  [from helm-begin]
+  abet:(ably (poke-begin:(helm-work [hid +<-] (able %helm)) +<+))
+::
+++  poke-helm-init                                      ::
+  |=  [from helm-init]
+  abet:(ably (poke-init:(helm-work [hid +<-] (able %helm)) +<+))
+::
+++  poke-helm-reload                                    ::
+  |=  [from helm-reload]
+  abet:(ably (poke-reload:(helm-work [hid +<-] (able %helm)) +<+))
+::
+++  poke-helm-reset                                     ::
+  |=  [from ~]
+  abet:(ably (poke-reset:(helm-work [hid +<-] (able %helm)) +<+))
+::
+++  poke-helm-verb                                      ::
+  |=  [from ~]
+  abet:(ably (poke-verb:(helm-work [hid +<-] (able %helm)) +<+))
+::
+++  poke-helm-start                                     ::
+  |=  [from helm-start]
+  abet:(ably (poke-start:(helm-work [hid +<-] (able %helm)) +<+))
+::
+++  poke-will                                           ::
+  |=  [from (unit will)]
+  abet:(ably (poke-will:(helm-work [hid +<-] (able %helm)) +<+))
+::
+++  onto-helm                                           ::
+  |=  [then saw=(each suss tang)]
+  ^-  (quip move +>)
+  abet:(ably (take-onto:(helm-work [hid ost src] (able %helm)) +<+))
+--
