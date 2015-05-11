@@ -1335,14 +1335,14 @@ u3a_mark_ptr(void* ptr_v)
     else {
       c3_assert(use_ws != 0);
 
-      if ( use_ws < 0 ) {
-        use_ws -= 1;
-        siz_w = 0;
-      } 
-      else if ( 0x80000000 == (c3_w)use_ws ) {    // see _raft_prof()
+      if ( 0x80000000 == (c3_w)use_ws ) {    // see _raft_prof()
         use_ws = -1;
         siz_w = 0xffffffff;
       }
+      else if ( use_ws < 0 ) {
+        use_ws -= 1;
+        siz_w = 0;
+      } 
       else {
         use_ws = -1;
         siz_w = box_u->siz_w;
@@ -1472,6 +1472,13 @@ u3a_sweep(void)
       u3a_box* box_u = (void *)box_w;
 
 #ifdef U3_MEMORY_DEBUG
+      /* I suspect these printfs fail hilariously in the case
+       * of non-direct atoms. We shouldn't unconditionally run
+       * u3a_to_pom(). In general, the condition
+       * box_u->siz_w > u3a_mimimum is sufficient, but not necessary,
+       * for the box to represent an atom.  The atoms between
+       * 2^31 and 2^32 are the exceptions.
+      */
       if ( box_u->use_w != box_u->eus_w ) {
         if ( box_u->eus_w != 0 ) {
           if ( box_u->use_w == 0 ) {
@@ -1483,6 +1490,7 @@ u3a_sweep(void)
                     (u3_noun)u3a_to_pom(u3a_outa(u3a_boxto(box_w))),
                     ((u3a_noun *)(u3a_boxto(box_w)))->mug_w,
                     box_u->use_w, box_u->eus_w);
+            u3a_print_memory("weak (minimum)", box_u->siz_w);
             // u3m_p("weak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
           }
           weq_w += box_u->siz_w;
@@ -1495,6 +1503,7 @@ u3a_sweep(void)
                     ? ((u3a_noun *)(u3a_boxto(box_w)))->mug_w
                     : u3r_mug(u3a_to_pom(u3a_outa(u3a_boxto(box_w)))),
                   box_u->use_w);
+          u3a_print_memory("leak (minimum)", box_u->siz_w);
           // u3m_p("leak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
           leq_w += box_u->siz_w;
         }
@@ -1513,7 +1522,26 @@ u3a_sweep(void)
       c3_ws use_ws = (c3_ws)box_u->use_w;
 
       if ( use_ws > 0 ) {
-        printf("leak %p\r\n", box_u);
+        printf("leak %p %x\r\n",
+                box_u,
+                ((u3a_noun *)(u3a_boxto(box_w)))->mug_w
+                  ? ((u3a_noun *)(u3a_boxto(box_w)))->mug_w
+                  : u3r_mug(u3a_to_pom(u3a_outa(u3a_boxto(box_w)))));
+        u3a_print_memory("leak (minimum)", box_u->siz_w);
+
+#if 0
+        /*  For those times when you've really just got to crack open
+         *  the box and see what's inside
+        */
+        {
+          int i;
+          for ( i = 0; i < box_u->siz_w; i++ ) {
+            printf("%08x ", (unsigned int)(((c3_w*)box_u)[i]));
+          }
+          printf("\r\n");
+        }
+#endif
+
         leq_w += box_u->siz_w;
         box_u->use_w = 0;
 
