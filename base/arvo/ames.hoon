@@ -61,12 +61,10 @@
           $?  $:  %a                                    ::  from %ames
           $%  [%went p=ship q=cape]                     ::
           ==  ==                                        ::
-              $:  %b                                    ::  from %gall
+              $:  %g                                    ::  from %gall
           $%  [%unto p=cuft]                            ::
               [%mack p=(unit tang)]                     ::  message ack
-          ==  ==                                        ::
-              $:  %g                                    ::  from %gall
-          $%  [%mean p=ares]                            ::
+              [%mean p=ares]                            ::  XX old, clean up
               [%nice ~]                                 ::
           ==  ==                                        ::
               $:  @tas                                  ::
@@ -1679,7 +1677,6 @@
           [hen [%slip %a %kick now]]
           [hen [%slip %e %init p.bon]]
           [hen [%slip %g %init p.bon]]
-          [hen [%slip %b %init p.bon]]                  ::  temporary %behn
           [hen [%slip %d %init p.bon]]                  ::  must be after gall
           ~
       ==
@@ -1834,10 +1831,10 @@
     ?-  +<.sih
         %crud  [[[hen [%slip %d %flog +.sih]] ~] +>]
         %went  [~ +>]
-        %mack  ?~  +>.sih  $(sih [%g %nice ~])
+        %mack  ?~  +>.sih  $(sih [%g %nice ~])          ::  XX using old code
                $(sih [%g %mean `[%mack +>+.sih]])
         %unto  ~|([%ames-unto tea hen +>-.sih] !!)
-        ?(%mean %nice)
+        ?(%mean %nice)                                  ::  XX obsolete
       ?:  ?=([%ye ~] tea)
         [~ +>.$]
       ?>  ?=([@ @ @ *] tea)
