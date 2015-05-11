@@ -19,13 +19,13 @@
       ==                                                ::
     ++  funk  (pair ,@ ,@)                              ::
     ++  begs  ,[his=@p tic=@p eny=@t ges=gens]          ::  begin data
-    ++  suss  ,[term @tas @da]                          ::  config report
     ++  helm-wish                                       ::
       $|  $?  %reset                                    ::  reset kernel
               %verb                                     ::  verbose mode
           ==                                            ::
       $%  [%reload p=(list term)]                       ::  reload vanes
       ==                                                ::
+    ++  suss  ,[term @tas @da]                          ::  config report
     ++  dill                                            ::  sent to %dill
       $%  [%crud p=term q=(list tank)]                  ::  fat report
           [%text p=tape]                                ::  thin report
