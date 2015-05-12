@@ -7,7 +7,7 @@
 /+  talk, sole, http
 !:
 ::::  sivtyv-barnel
-  ::  be sure to have oauth2-code markk
+  ::  be sure to have oauth2-code mark
 |%
 ++  axle  cred
 ++  cred
@@ -40,7 +40,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
 ++  redirect-uri  (crip (weld hostname "/~~/home/pub/bit/fab"))
 ++  hostname  
   ?+  (clan our.hid)  !!
-     %czar  "http://104.236.139.191:{?+(our.hid !! %~zod "8443", %~reg "8444")}"
+     %czar  "http://localhost:{?+(our.hid !! %~zod "8443", %~reg "8444")}"
      %duke  "http://{+:<our.hid>}.urbit.org"
   ==
 ++  auth-url
@@ -238,6 +238,11 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
       :_  +>.$
       [ost %give %nice ~]~
     %sent
+      ~&  resp/res
+      ?>  ?=(%e -.res)
+      ~|  'must receive a 200'
+      ~|  res
+      ?>  =(200 p.p.res)
       =+  resp=(rash q:(need r.p.res) apex:poja)
       =+  suc=((ot success/so ~):jo resp)
       :_  +>.$
