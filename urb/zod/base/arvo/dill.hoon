@@ -3,59 +3,6 @@
 ::
 |=  pit=vase
 =>  |%                                                  ::  interface tiles
-++  console-action                                      ::  console to app
-  $%  [%det console-change]                             ::  edit prompt line
-      [%inn ~]                                          ::  enter session
-      [%out ~]                                          ::  exit session
-      [%ret ~]                                          ::  submit and clear
-  ==                                                    :: 
-++  console-buffer  (list ,@c)                          ::  command state
-++  console-change                                      ::  network change
-  $:  ler=console-clock                                 ::  destination clock
-      haw=@uvH                                          ::  source hash
-      ted=console-edit                                  ::  state change
-  ==                                                    ::
-++  console-clock  ,[own=@ud his=@ud]                   ::  vector clock
-++  console-edit                                        ::  shared state change
-  $%  [%del p=@ud]                                      ::  delete one at
-      [%ins p=@ud q=@c]                                 ::  insert at
-      [%mor p=(list console-edit)]                      ::  combination
-      [%nop ~]                                          ::  no-op
-      [%set p=console-buffer]                           ::  discontinuity
-  ==                                                    ::
-++  console-effect                                      ::  app to console
-  $%  [%bel ~]                                          ::  beep
-      [%blk p=@ud q=@c]                                 ::  blink/match char at
-      [%clr ~]                                          ::  clear screen
-      [%det console-change]                             ::  edit input
-      [%nex ~]                                          ::  save and clear input
-      [%tan p=(list tank)]                              ::  classic tank
-  ::  [%taq p=tanq]                                     ::  modern tank
-      [%txt p=tape]                                     ::  text line
-  ==                                                    ::
-++  dill-belt                                           ::  console input
-  $%  [%aro p=?(%d %l %r %u)]                           ::  arrow key
-      [%bac ~]                                          ::  true backspace
-      [%cru p=@tas q=(list tank)]                       ::  echo error
-      [%ctl p=@c]                                       ::  control-key
-      [%del ~]                                          ::  true delete
-      [%met p=@c]                                       ::  meta-key
-      [%ret ~]                                          ::  return
-      [%rez p=@ud q=@ud]                                ::  resize, cols, rows
-      [%txt p=(list ,@c)]                               ::  utf32 text
-      [%yow p=gill]                                     ::  connect to app
-  ==                                                    ::
-++  dill-blit                                           ::  console output
-  $%  [%bel ~]                                          ::  make a noise
-      [%clr ~]                                          ::  clear the screen
-      [%hop p=@ud]                                      ::  set cursor position
-      [%mor p=(list dill-blit)]                         ::  multiple blits
-      [%pro p=(list ,@c)]                               ::  show as cursor/line
-      [%qit ~]                                          ::  close console
-      [%out p=(list ,@c)]                               ::  send output line
-      [%sag p=path q=*]                                 ::  save to jamfile
-      [%sav p=path q=@]                                 ::  save to file
-  ==                                                    ::
 ++  gill  (pair ship term)                              ::  general contact
 --                                                      ::
 =>  |%                                                  ::  console protocol
@@ -74,41 +21,7 @@
   ==                                                    ::
 --  =>                                                  ::
 |%                                                      ::  protocol below
-++  blew  ,[p=@ud q=@ud]                                ::  columns rows
-++  belt                                                ::  raw console input
-  $%  [%aro p=?(%d %l %r %u)]                           ::  arrow key
-      [%bac ~]                                          ::  true backspace
-      [%ctl p=@c]                                       ::  control-key
-      [%del ~]                                          ::  true delete
-      [%met p=@c]                                       ::  meta-key
-      [%ret ~]                                          ::  return
-      [%txt p=(list ,@c)]                               ::  utf32 text
-  ==                                                    ::
-++  blit                                                ::  raw console output
-  $%  [%bel ~]                                          ::  make a noise
-      [%clr ~]                                          ::  clear the screen
-      [%hop p=@ud]                                      ::  set cursor position
-      [%lin p=(list ,@c)]                               ::  set current line
-      [%mor ~]                                          ::  newline
-      [%sag p=path q=*]                                 ::  save to jamfile
-      [%sav p=path q=@]                                 ::  save to file
-  ==                                                    ::
-++  flog                                                ::  sent to %dill
-  $%  [%crud p=@tas q=(list tank)]                      ::
-      [%text p=tape]                                    ::
-      [%veer p=@ta q=path r=@t]                         ::  install vane
-      [%vega p=path]                                    ::  reboot by path
-      [%verb ~]                                         ::  verbose mode
-  ==                                                    ::
-++  gift                                                ::  out result <-$
-  $%  [%bbye ~]                                         ::  reset prompt
-      [%blit p=(list blit)]                             ::  terminal output
-      [%init p=@p]                                      ::  set owner
-      [%logo ~]                                         ::  logout
-      [%veer p=@ta q=path r=@t]                         ::  install vane
-      [%vega p=path]                                    ::  reboot by path
-      [%verb ~]                                         ::  verbose mode
-  ==                                                    ::
+++  gift  gift-dill                                     ::  out result <-$
 ++  kiss                                                ::  in request ->$
   $%  [%belt p=belt]                                    ::  terminal input
       [%blew p=blew]                                    ::  terminal config
@@ -132,19 +45,12 @@
 ++  mess                                                ::
   $%  [%dill-belt p=(hypo dill-belt)]                   ::
   ==                                                    ::
-++  club                                                ::  agent action
-  $%  [%peer p=path]                                    ::  subscribe
-      [%poke p=cage]                                    ::  apply
-      [%pull ~]                                         ::  unsubscribe
-      [%pump ~]                                         ::  pump yes/no
-  ==                                                    ::
 ++  cuft                                                ::  internal gift
   $%  [%coup p=(unit tang)]                             ::  poke result
       [%quit ~]                                         ::  close subscription
       [%reap p=(unit tang)]                             ::  peer result
       [%diff p=cage]                                    ::  subscription output
   ==                                                    ::
-++  cuss  (pair term club)                              ::  internal kiss
 ++  suss  (trel term ,@tas ,@da)                        ::  config report
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note-ames                                           ::  weird ames move
@@ -165,7 +71,7 @@
   ==                                                    ::
 ++  note-gall                                           ::
   $%  [%conf dock %load ship desk]                      ::
-      [%deal p=sock q=cuss]                             ::
+      [%deal p=sock q=cush]                             ::
   ==                                                    ::
 ++  note                                                ::  out request $->
   $%  [%a note-ames]                                    ::

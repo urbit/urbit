@@ -32,7 +32,6 @@
       [[%got ~] p=@uvH q=httr]                          ::  remote response
   ==                                                    ::
 ++  hasp  ,[p=ship q=term]                              ::  don't see %gall
-++  hapt  ,[p=ship q=path]                              ::  do see %gall
 ++  kiss                                                ::  in request ->$
           $%  [%born ~]                                 ::  new unix process
               [%crud p=@tas q=(list tank)]              ::  XX rethink

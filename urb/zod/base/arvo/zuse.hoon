@@ -1887,7 +1887,7 @@
               wab=(map ship bath)                       ::  relationship
           ==                                            ::
 ++  cred                                                ::  credential
-          $:  hut=hoot                                  ::  client host
+          $:  hut=hart                                  ::  client host
               aut=(jug ,@tas ,@t)                       ::  client identities
               orx=oryx                                  ::  CSRF secret
               acl=(unit ,@t)                            ::  accept-language
@@ -2001,7 +2001,6 @@
 ++  hiss  ,[p=purl q=moth]                              ::  outbound request
 ++  hist  ,[p=@ud q=(list ,@t)]                         ::  depth texts
 ++  hole  ,@t                                           ::  session identity
-++  hoot  ,[p=? q=(unit ,@ud) r=host]                   ::  secure/port/host
 ++  hort  ,[p=(unit ,@ud) q=host]                       ::  http port/host
 ++  host  $%([& p=(list ,@t)] [| p=@if])                ::  http host
 ++  hoke  %+  each   ,[%localhost ~]                    ::  local host
@@ -2264,23 +2263,329 @@
 ++  will  (list deed)                                   ::  certificate
 ++  zuse  %310                                          ::  hoon/zuse kelvin
 ::          ::
-::::        ::::  this will become `%york`, separating out structures
-  ::          ::  related to arvo in 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+::::        ::::  this will become `%york`, vane structures.
+  ::          ::
+++  gift-ames                                           ::  out result <-$
+          $%  [%hear p=lane q=@]                        ::  receive packet
+              [%init p=@p]                              ::  report install
+              [%mass p=mass]                            ::  memory usage
+              [%send p=lane q=@]                        ::  transmit packet
+              [%waft p=sock q=*]                        ::  response message
+              [%wart p=sock q=@tas r=path s=*]          ::  network request
+              [%went p=ship q=cape]                     ::  reaction message
+              [%woot p=ship q=coop]                     ::  e2e reaction message
+          ==                                            ::
+++  kiss-ames                                           ::  in request ->$
+          $%  [%barn ~]                                 ::  new unix process
+              [%crud p=@tas q=(list tank)]              ::  error with trace
+              [%cash p=@p q=buck]                       ::  civil license
+              [%hear p=lane q=@]                        ::  receive packet
+              [%hole p=lane q=@]                        ::  packet failed
+              [%junk p=@]                               ::  entropy
+              [%kick p=@da]                             ::  wake up
+              [%make p=(unit ,@t) q=@ud r=@ s=?]        ::  wild license
+              [%sith p=@p q=@uw r=?]                    ::  imperial generator
+              [%wake ~]                                 ::  timer activate
+              [%want p=sock q=path r=*]                 ::  send message
+              [%wegh ~]                                 ::  report memory
+              [%wont p=sock q=path r=*]                 ::  e2e send message
+          ==                                            ::
+::
+::::    %clay
+  ::
+++  khan                                                ::
+          $:  fil=(unit (unit cage))                    ::  XX see khan-to-soba
+              dir=(map ,@ta khan)                       ::
+          ==                                            ::
+++  mick  (list ,[path (unit mime)])
+++  riff  ,[p=desk q=(unit rave)]                       ::  request/desist
+::::                                                    ::
+++  gift-clay                                           ::  out result <-$
+          $%  [%ergo p=@p q=@tas r=@ud s=mick]          ::  version update
+              [%mass p=mass]                            ::  memory usage
+              [%mere p=(each (set path) (pair term tang))]  ::  merge result
+              [%note p=@tD q=tank]                      ::  debug message
+              [%writ p=riot]                            ::  response
+          ==                                            ::
+++  kiss-clay                                           ::  in request ->$
+          $%  [%font p=@p q=@tas r=@p s=@tas]           ::  set upstream
+              [%info p=@p q=@tas r=nori]                ::  internal edit
+              [%init p=@p]                              ::  report install
+              [%into p=@p q=@tas r=khan]                ::  external edit
+              [%lynx p=@p q=@tas r=(unit ,?)]           ::  sync to unix
+              [%merg p=@p q=@tas r=@p s=@tas t=germ]    ::  merge desks
+              [%plug p=@p q=@tas r=@p s=@tas]           ::  unset upstream
+              [%wart p=sock q=@tas r=path s=*]          ::  network request
+              [%warp p=sock q=riff]                     ::  file request
+              [%wegh ~]                                 ::  report memory
+          ==                                            ::
+::
+::::
+  ::
+++  blew  ,[p=@ud q=@ud]                                ::  columns rows
+++  belt                                                ::  old belt
+  $%  [%aro p=?(%d %l %r %u)]                           ::  arrow key
+      [%bac ~]                                          ::  true backspace
+      [%ctl p=@c]                                       ::  control-key
+      [%del ~]                                          ::  true delete
+      [%met p=@c]                                       ::  meta-key
+      [%ret ~]                                          ::  return
+      [%txt p=(list ,@c)]                               ::  utf32 text
+  ==                                                    ::
+++  blit                                                ::  old blit
+  $%  [%bel ~]                                          ::  make a noise
+      [%clr ~]                                          ::  clear the screen
+      [%hop p=@ud]                                      ::  set cursor position
+      [%lin p=(list ,@c)]                               ::  set current line
+      [%mor ~]                                          ::  newline
+      [%sag p=path q=*]                                 ::  save to jamfile
+      [%sav p=path q=@]                                 ::  save to file
+  ==                                                    ::
+++  dill-belt                                           ::  new belt
+  $%  [%aro p=?(%d %l %r %u)]                           ::  arrow key
+      [%bac ~]                                          ::  true backspace
+      [%cru p=@tas q=(list tank)]                       ::  echo error
+      [%ctl p=@]                                        ::  control-key
+      [%del ~]                                          ::  true delete
+      [%met p=@]                                        ::  meta-key
+      [%ret ~]                                          ::  return
+      [%rez p=@ud q=@ud]                                ::  resize, cols, rows
+      [%txt p=(list ,@c)]                               ::  utf32 text
+      [%yow p=gill]                                     ::  connect to app
+  ==                                                    ::
+++  dill-blit                                           ::  new blit
+  $%  [%bel ~]                                          ::  make a noise
+      [%clr ~]                                          ::  clear the screen
+      [%hop p=@ud]                                      ::  set cursor position
+      [%mor p=(list dill-blit)]                         ::  multiple blits
+      [%pro p=(list ,@c)]                               ::  show as cursor/line
+      [%qit ~]                                          ::  close console
+      [%out p=(list ,@c)]                               ::  send output line
+      [%sag p=path q=*]                                 ::  save to jamfile
+      [%sav p=path q=@]                                 ::  save to file
+  ==                                                    ::
+++  flog                                                ::  sent to %dill
+  $%  [%crud p=@tas q=(list tank)]                      ::
+      [%text p=tape]                                    ::
+      [%veer p=@ta q=path r=@t]                         ::  install vane
+      [%vega p=path]                                    ::  reboot by path
+      [%verb ~]                                         ::  verbose mode
+  ==                                                    ::
+++  gill  (pair ship term)                              ::  general contact
+::::
+++  gift-dill                                           ::  out result <-$
+  $%  [%bbye ~]                                         ::  reset prompt
+      [%blit p=(list blit)]                             ::  terminal output
+      [%init p=@p]                                      ::  set owner
+      [%logo ~]                                         ::  logout
+      [%veer p=@ta q=path r=@t]                         ::  install vane
+      [%vega p=path]                                    ::  reboot by path
+      [%verb ~]                                         ::  verbose mode
+  ==                                                    ::
+++  kiss-dill                                           ::  in request ->$
+  $%  [%belt p=belt]                                    ::  terminal input
+      [%blew p=blew]                                    ::  terminal config
+      [%boot p=*]                                       ::  weird %dill boot
+      [%crud p=@tas q=(list tank)]                      ::  error with trace
+      [%flog p=flog]                                    ::  wrapped error
+      [%flow p=@tas q=(list gill)]                      ::  terminal config
+      [%hail ~]                                         ::  terminal refresh
+      [%hook ~]                                         ::  this term hung up
+      [%harm ~]                                         ::  all terms hung up
+      [%init p=ship]                                    ::  after gall ready
+      [%noop ~]                                         ::  no operation
+      [%talk p=tank]                                    ::
+      [%text p=tape]                                    ::
+      [%veer p=@ta q=path r=@t]                         ::  install vane
+      [%vega p=path]                                    ::  reboot by path
+      [%verb ~]                                         ::  verbose mode
+  ==                                                    ::
+::
+::::    %eyre
+  ::
+++  gram                                                ::  inter-ship message
+  $?  [[%lon ~] p=hole]                                 ::  login request
+      [[%aut ~] p=hole]                                 ::  login reply
+      [[%hat ~] p=hole q=hart]                          ::  login redirect
+      [[%get ~] p=@uvH q=[? clip httq]]                 ::  remote request
+      [[%got ~] p=@uvH q=httr]                          ::  remote response
+  ==                                                    ::
+::::                                                    ::
+++  kiss-eyre                                           ::  in request ->$
+          $%  [%born ~]                                 ::  new unix process
+              [%crud p=@tas q=(list tank)]              ::  XX rethink
+              [%init p=@p]                              ::  report install
+              [%them p=(unit hiss)]                     ::  outbound request
+              [%they p=@ud q=httr]                      ::  inbound response
+              [%this p=? q=clip r=httq]                 ::  inbound request
+              [%thud ~]                                 ::  inbound cancel
+              [%wart p=sack q=@tas r=_`[path *]`*gram]  ::  urbit message
+              [%wegh ~]                                 ::  report memory
+          ==                                            ::
+++  gift-eyre                                           ::  out result <-$
+          $%  [%mass p=mass]                            ::  memory usage
+              [%thou p=httr]                            ::  raw http response
+              [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
+              [%veer p=@ta q=path r=@t]                 ::  drop-through
+              [%vega p=path]                            ::  drop-through
+          ==                                            ::
+::
+::::    %ford
+  ::
+++  hood                                                ::  assembly plan
+  $:  zus=@ud                                           ::  zuse kelvin
+      sur=(list hoot)                                   ::  structures
+      lib=(list hoof)                                   ::  libraries
+      fan=(list horn)                                   ::  resources
+      src=(list hoop)                                   ::  program
+  ==                                                    ::
+++  hoof  (pair term (unit (pair case ship)))           ::  resource reference
+++  hoot  (pair bean hoof)                              ::  structure gate/core
+++  hoop                                                ::  source in hood
+  $%  [%& p=twig]                                       ::  direct twig
+      [%| p=beam]                                       ::  resource location   
+  ==                                                    ::
+++  horn                                                ::  resource tree
+  $%  [%ape p=twig]                                     ::  /~  twig by hand
+      [%arg p=twig]                                     ::  /$  argument
+      [%day p=horn]                                     ::  /|  list by @dr
+      [%dub p=term q=horn]                              ::  /=  apply face
+      [%fan p=(list horn)]                              ::  /.  list
+      [%for p=path q=horn]                              ::  /,  descend
+      [%hel p=@ud q=horn]                               ::  /%  propagate heel
+      [%hub p=horn]                                     ::  /@  list by @ud
+      [%man p=(map span horn)]                          ::  /*  hetero map
+      [%nap p=horn]                                     ::  /_  homo map
+      [%now p=horn]                                     ::  /&  list by @da
+      [%saw p=twig q=horn]                              ::  /;  operate on
+      [%see p=beam q=horn]                              ::  /:  relative to
+      [%sic p=tile q=horn]                              ::  /^  cast
+      [%toy p=mark]                                     ::  /mark/  static
+  ==                                                    ::
+++  milk  (trel ship desk silk)                         ::  sourced silk
+++  silk                                                ::  construction layer
+  $&  [p=silk q=silk]                                   ::  cons
+  $%  [%bake p=mark q=beam r=path]                      ::  local synthesis
+      [%boil p=mark q=beam r=path]                      ::  general synthesis
+      [%bunt p=mark]                                    ::  example of mark
+      [%call p=silk q=silk]                             ::  slam
+      [%cast p=mark q=silk]                             ::  translate
+      [%diff p=silk q=silk]                             ::  diff
+      [%done p=(set beam) q=gage]                       ::  literal
+      [%dude p=tank q=silk]                             ::  error wrap
+      [%dune p=(set beam) q=(unit gage)]                ::  unit literal
+      [%file p=beam]                                    ::  from clay
+      [%join p=mark q=silk r=silk]                      ::  merge
+      [%mash p=mark q=milk r=milk]                      ::  annotate
+      [%mute p=silk q=(list (pair wing silk))]          ::  mutant
+      [%pact p=silk q=silk]                             ::  patch
+      [%plan p=beam q=spur r=hood]                      ::  structured assembly
+      [%reef ~]                                         ::  kernel reef
+      [%ride p=twig q=silk]                             ::  silk thru twig
+      [%tabl p=(list (pair silk silk))]                 ::  list
+      [%vale p=mark q=ship r=*]                         ::  validate [our his]
+      [%volt p=(set beam) q=(cask ,*)]                  ::  unsafe add type
+  ==                                                    ::
+::::
+++  gift-ford                                           ::  out result <-$
+          $%  [%made p=@uvH q=(each gage tang)]         ::  computed result
+              [%mass p=mass]                            ::  memory usage
+              [%news ~]                                 ::  fresh depends
+          ==                                            ::
+++  kiss-ford                                           ::  in request ->$
+          $%  [%exec p=@p q=beak r=(unit silk)]         ::  make / kill
+              [%wasp p=@p q=@uvH]                       ::  depends query
+              [%wegh ~]                                 ::  report memory
+          ==                                            ::
+::
+::::    %gall
+  ::
+++  club                                                ::  agent action
+  $%  [%peer p=path]                                    ::  subscribe
+      [%poke p=cage]                                    ::  apply
+      [%pull ~]                                         ::  unsubscribe
+      [%pump ~]                                         ::  pump yes/no
+  ==                                                    ::
+++  cuft                                                ::  internal gift
+  $%  [%coup p=(unit tang)]                             ::  poke result
+      [%diff p=cage]                                    ::  subscription output
+      [%quit ~]                                         ::  close subscription
+      [%reap p=(unit tang)]                             ::  peer result
+  ==                                                    ::
+++  culm                                                ::  config action
+  $%  [%load p=scup]                                    ::  load/reload
+  ::  [%kick ~]                                         ::  restart everything
+  ::  [%stop ~]                                         ::  toggle suspend
+  ::  [%wipe ~]                                         ::  destroy all state
+  ==                                                    ::
+++  cush  (pair term club)                              ::  internal kiss
+++  dude  term                                          ::  server identity
+++  scup  (pair ship desk)                              ::  autoupdate
+++  suss  (trel dude ,@tas ,@da)                        ::  config report
+::::                                                    ::
+++  kiss-gall                                           ::  incoming request
+  $%  [%conf p=dock q=culm]                             ::  configure app
+      [%init p=ship]                                    ::  set owner
+      [%deal p=sock q=cush]                             ::  full transmission
+      [%rote p=sack q=path r=*]                         ::  remote request
+      [%roth p=sack q=path r=*]                         ::  remote response
+  ==                                                    ::
+++  gift-gall                                           ::  outgoing result
+  $%  [%onto p=(each suss tang)]                        ::  about agent
+      [%unto p=cuft]                                    ::  within agent
+      [%mack p=(unit tang)]                             ::  message ack
+  ==                                                    ::
+::
+::::    %time
+  ::
+++  gift-time                                           ::  out result <-$
+          $%  [%mass p=mass]                            ::  memory usage
+              [%wake ~]                                 ::  wakey-wakey
+          ==                                            ::
+++  kiss-time                                           ::  in request ->$
+          $%  [%rest p=@da]                             ::  cancel alarm
+              [%wait p=@da]                             ::  set alarm
+              [%wake ~]                                 ::  timer activate
+              [%wegh ~]                                 ::  report memory
+          ==                                            ::
+::
+::::    %arvo
+  ::
+++  gift-arvo                                           ::  out result <-$
+  $?  gift-ames
+      gift-clay
+      gift-dill
+      gift-eyre
+      gift-ford
+      gift-gall
+      gift-time
+  ==
+++  kiss-arvo                                           ::  in request ->$
+  $?  kiss-ames
+      kiss-clay
+      kiss-dill
+      kiss-eyre
+      kiss-ford
+      kiss-gall
+      kiss-time
+  ==
+++  note-arvo                                           ::  out request $->
+  $?  [@tas %meta vase]
+  $%  [%a kiss-ames]
+      [%c kiss-clay]
+      [%d kiss-dill]
+      [%e kiss-eyre]
+      [%f kiss-ford]
+      [%g kiss-gall]
+      [%t kiss-time]
+  ==  ==
+++  sign-arvo                                           ::  in result $<-
+  $%  [%a gift-ames]
+      [%c gift-clay]
+      [%d gift-dill]
+      [%e gift-eyre]
+      [%f gift-ford]
+      [%g gift-gall]
+      [%t gift-time]
+  ==
 --
