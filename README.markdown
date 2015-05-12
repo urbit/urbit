@@ -1,8 +1,6 @@
 Urbit
 =====
 
-[![Build Status](https://travis-ci.org/urbit/urbit.png?branch=master)](https://travis-ci.org/urbit/urbit)
-
 > Tlön is surely a labyrinth, but it is 
 > a labyrinth devised  by men, a labyrinth 
 > destined to be deciphered by men.  
@@ -201,7 +199,7 @@ command lines and you should see the matching results:
     ~waclux-tomwyc:dojo> +hello %world
     'hello, dlrow'
 
-    ~waclux-tomwyc:dojo> :cat /=home=/cat/hello/gate/hook  :: XX make this work
+    ~waclux-tomwyc:dojo> +cat /=home=/cat/hello/gate/hook  :: XX make this work
     ::
     ::::  /hook/gate/hello/cat
       ::
@@ -277,7 +275,19 @@ There are also some special control keys specific to Arvo.  It's
 a good idea to learn these first so that you feel in, um,
 control.
 
-First, we'll quit out of an infinite loop with `^C`:
+First off, Arvo has a simple task manager interface, allowing you see the
+running commands, along with being able to spawn or kill programs.
+
+Hitting `^V` will bring you to this interface, and running `-prog`
+will kill that program while `+prog` will spawn a new one.
+If you ever end up with a broken program that is spouting errors
+and wish to restart it, do it from this interface. Even our shell
+and REPL `:dojo` is just another program in this list!
+
+This is the base view from Arvo as well. If you kill all your running
+programs, it will drop you into this interface.
+
+Next, we'll show you how we can quit out of an infinite loop with `^C`:
 
     ~waclux-tomwyc:dojo> |-($)
 
@@ -317,8 +327,7 @@ Try this by running
 
     ~waclux-tomwyc:dojo: your ship: ~
 
-Then hit `^D` and you'll kill the current task, the command prompt (which is just
-another program under Arvo)
+Then hit `^D` and you'll kill the current task, the command prompt `:dojo`.
 
 We don't always want to kill the prompting task.  We often want
 to switch between tasks, or between tasks and the command line.
@@ -327,10 +336,6 @@ We do this with `^X`.
 
 Let's try an example: First, make sure you
 have two apps running, like `:dojo` and `:talk`. Then, try:
-    :: XX this is wrong, only between apps(+dojo or +talk) now
-    :: this entire example is kinda lackluster now...
-    :: killing the current task kills dojo now, and you
-    :: cant have multiple dojo instances!
 
     ~waclux-tomwyc:dojo> :helm?begin
 
@@ -341,7 +346,7 @@ it:
 
     ~waclux-tomwyc:dojo> :helm?begin
 
-    ~waclux-tomwyc:talk(/urbit-meta) hello, world!
+    ~waclux-tomwyc:talk() hello, world!
 
 Hit `^X` again:
 
@@ -350,17 +355,6 @@ Hit `^X` again:
     ~waclux-tomwyc:dojo: your ship: ~
 
 And finally, hit `^D` to kill the task.
-
-Arvo has a simple task manager interface, allowing you see the
-running commands, along with being able to spawn or kill programs.
-Hitting `^V` will bring you to this interface, and running `-prog`
-will kill that program while `+prog` will spawn a new one.
-If you ever end up with a broken program that is spouting errors
-and wish to restart it, do it from this interface. Even our shell
-and REPL `:dojo` is just another program in this list!
-
-This is the base view from Arvo as well. If you kill all your running
-programs with `^D`, it will drop you into this interface.
 
 Lastly, Arvo is a single-level store.  Since it's not the '70s
 anymore and disk is cheap, everything you do is saved for ever.
@@ -420,7 +414,7 @@ you initially pulled your files from to push kernel update over-the-air.
 You may notice this happening from time to time through mysterious messages
 such as:
 
-    [%merge-fine blah] :: XX make this an actual %merge-fine example
+    ['merge succeeded' {}]
 
 These updates can be applied without having to restart Arvo or any of its
 `%vanes`. All of your state, including running tasks, will be unchanged.
