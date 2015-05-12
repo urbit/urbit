@@ -409,14 +409,14 @@ same time.  This will confuse everyone, including yourself.
 Sometimes we make changes to Hoon or Arvo (we never make changes
 to Nock) and you need to update your ship.
 
-Luckily, Arvo has some special sauce that allows it the same carriers
+Luckily, Arvo has some special sauce that allows the same carrier
 you initially pulled your files from to push kernel update over-the-air.
-You may notice this happening from time to time through mysterious messages
+You may notice this happening automatically from time to time through mysterious messages
 such as:
 
     ['merge succeeded' {}]
 
-These updates can be applied without having to restart Arvo or any of its
+These updates will be applied without having to restart Arvo or any of its
 `%vanes`. All of your state, including running tasks, will be unchanged.
 
 Sometimes the interpreter, called `vere` gets updated. In your urbit directory, back in Unixland, run:
