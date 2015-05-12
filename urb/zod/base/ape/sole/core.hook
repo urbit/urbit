@@ -1,0 +1,679 @@
+::                                                      ::  ::
+::::  /hook/core/sole/app                               ::  ::
+  ::                                                    ::  ::
+/?  314                                                 ::  zuse version
+/-  *sole                                               ::  console structures
+/+  sole                                                ::  console library
+::                                                      ::  ::
+::::                                                    ::  ::
+  !:                                                    ::  ::
+=>  |%                                                  ::  data structures
+    ++  house                                           ::  all state
+      $:  bin=(map bone source)                         ::  input devices
+      ==                                                ::
+    ++  source                                          ::  input device
+      $:  edg=_79                                       ::  terminal columns
+          off=@ud                                       ::  window offset
+          kil=(unit (list ,@c))                         ::  kill buffer
+          apt=(list gill)                               ::  application ring
+          maz=master                                    ::  master window
+          feg=(map gill target)                         ::  live applications
+          mir=(pair ,@ud (list ,@c))                    ::  mirrored terminal
+      ==                                                ::
+    ++  master                                          ::  master buffer
+      $:  liv=?                                         ::  master is live
+          tar=target                                    ::  master target
+      ==                                                ::
+    ++  history                                         ::  past input
+      $:  pos=@ud                                       ::  input position
+          num=@ud                                       ::  number of entries
+          lay=(map ,@ud (list ,@c))                     ::  editing overlay
+          old=(list (list ,@c))                         ::  entries proper
+      ==                                                ::
+    ++  search                                          ::  reverse-i-search
+      $:  pos=@ud                                       ::  search position
+          str=(list ,@c)                                ::  search string
+      ==                                                ::
+    ++  target                                          ::  application target
+      $:  ris=(unit search)                             ::  reverse-i-search
+          hit=history                                   ::  all past input
+          pom=sole-prompt                               ::  static prompt
+          inp=sole-command                              ::  input state
+      ==                                                ::
+    ++  ukase                                           ::  master command
+      $%  [%add p=(list gill)]                          ::  add agents
+          [%del p=(list gill)]                          ::  delete agents
+      ==                                                ::
+    ++  suss  ,[term @tas @da]                          ::  config report
+    ++  dill                                            ::  *forward* to %dill
+      $%  [%crud p=term q=(list tank)]                  ::  fat report
+          [%text p=tape]                                ::  thin report
+          [%veer p=@ta q=path r=@t]                     ::  install vane
+          [%vega p=path]                                ::  reboot by path
+          [%verb ~]                                     ::  verbose mode
+      ==                                                ::
+    ++  pear                                            ::  request
+      $%  [%sole-action p=sole-action]                  ::
+      ==                                                ::
+    ++  lime                                            ::  update
+      $%  [%dill-blit dill-blit]                        ::
+      ==                                                ::
+    ++  card                                            ::  general card
+      $%  [%conf wire dock %load ship term]             ::
+          [%diff lime]                                  ::
+          [%flog wire dill]                             ::
+          [%peer wire dock path]                        ::
+          [%poke wire dock pear]                        ::
+          [%pull wire dock ~]                           ::
+          [%pass wire note]                             ::
+      ==                                                ::
+    ++  move  (pair bone card)                          ::  user-level move
+    --                                                  ::
+|_  $:  hid=hide                                        ::  system state
+        house                                           ::  program state
+    ==                                                  ::
+++  sp
+  |%  ++  sp-ukase
+        %+  knee  *ukase  |.  ~+
+        ;~  pose
+          (stag %add ;~(pfix lus sp-gills))
+          (stag %del ;~(pfix hep sp-gills))
+        ==
+      ::
+      ++  sp-gills
+        ;~  pose
+          (most ;~(plug com ace) sp-gill)
+          %+  cook
+            |=  a=ship
+            [[a %dojo] [a %talk] ~]
+          ;~(pfix sig fed:ag)
+        ==
+      ::
+      ++  sp-gill
+        ;~  pose
+          (stag our.hid sym)
+          ;~  plug
+            ;~(pfix sig fed:ag)
+            ;~(pfix fas sym)
+          ==
+        ==
+  --
+++  se                                                  ::  per source
+  |_  $:  [moz=(list move) biz=(list dill-blit)]
+          [src=ship ost=bone] 
+          source
+      ==
+  ++  se-abet                                           ::  resolve
+    :_  %_(+> bin (~(put by bin) ost +<+>))
+    %+  welp  (flop moz) 
+    ^-  (list move)
+    ?~  biz  ~
+    [ost %diff %dill-blit ?~(t.biz i.biz [%mor (flop biz)])]~
+  ::
+  ++  se-belt                                           ::  handle input
+    |=  bet=dill-belt
+    ^+  +>
+    ?:  ?=(%rez -.bet)
+      +>(edg (dec p.bet))
+    ?:  ?=(%yow -.bet)
+      (se-link p.bet)
+    =+  gyl=?^(apt i.apt [~zod %$])
+    =+  taz=~(. ta [& liv.maz gyl] ?:(liv.maz tar.maz (~(got by feg) gyl)))
+    =<  ta-abet
+    ?-  -.bet
+      %aro  (ta-aro:taz p.bet)
+      %bac  ta-bac:taz
+      %cru  (ta-cru:taz p.bet q.bet)
+      %ctl  (ta-ctl:taz p.bet)
+      %del  ta-del:taz
+      %met  (ta-met:taz p.bet)
+      %ret  ta-ret:taz
+      %txt  (ta-txt:taz p.bet)
+    ==
+  ::
+  ++  se-drop                                           ::  passive drop
+    |=  gyl=gill
+    ^+  +>
+    =<  se-prom
+    ?>  (~(has by feg) gyl)
+    %_  +>
+      feg      (~(del by feg) gyl)
+      apt      (skip apt |=(a=gill =(gyl a)))
+      liv.maz  ?~(apt & liv.maz)
+    ==
+  ::
+  ++  se-join                                           ::  add connection
+    |=  gyl=gill
+    ^+  +>
+    =<  se-prom
+    ?:  (~(has by feg) gyl)
+      (se-blit %bel ~)
+    +>(liv.maz |, apt [gyl apt], feg (~(put by feg) gyl *target))
+  ::
+  ++  se-nuke                                           ::  active drop
+    |=  gyl=gill
+    ^+  +>
+    (se-drop:(se-pull(liv.maz |) gyl) gyl)
+  ::
+  ++  se-like                                           ::  act in master
+    |=  kus=ukase
+    ?-    -.kus
+        %add  
+      |-  ^+  +>.^$
+      ?~  p.kus  +>.^$
+      $(p.kus t.p.kus, +>.^$ (se-link i.p.kus))
+    ::
+        %del
+      |-  ^+  +>.^$
+      ?~  p.kus  +>.^$
+      $(p.kus t.p.kus, +>.^$ (se-nuke i.p.kus))
+    ==
+  ::
+  ++  se-prom                                           ::  set master prompt
+    ^+  .
+    %_    .
+        cad.pom.tar.maz
+      ^-  tape
+      %+  welp 
+        (scow %p our.hid)
+      =+  ^=  mux  
+          |-  ^-  tape
+          ?~  apt  ~
+          =+  ^=  mor  ^-  tape
+              ?~  t.apt  ~
+              [',' ' ' $(apt t.apt)]
+          %+  welp
+            ^-  tape
+            =+  txt=(trip q.i.apt)
+            ?:  =(our.hid p.i.apt)
+              txt
+            :(welp "~" (scow %p p.i.apt) "/" txt)
+          mor
+      ?~  mux
+        "# "
+      :(welp ":" mux "# ")
+    ==
+  ::
+  ++  se-link                                           ::  connect to app
+    |=  gyl=gill
+    ^+  +>
+    =.  +>  ?.  =(p.gyl src)  +>
+        (se-emit ost %conf (se-path gyl) gyl %load src %main)
+    (se-join:(se-peer gyl /sole) gyl)
+  ::
+  ++  se-blit                                           ::  give output
+    |=  bil=dill-blit
+    +>(biz [bil biz])
+  ::
+  ++  se-show                                           ::  show buffer, raw
+    |=  lin=(pair ,@ud (list ,@c))
+    ^+  +>
+    ?:  =(mir lin)  +>
+    =.  +>  ?:(=(q.mir q.lin) +> (se-blit %pro q.lin))
+    =.  +>  ?:(=(p.mir p.lin) +> (se-blit %hop p.lin))
+    +>(mir lin)
+  ::
+  ++  se-just                                           ::  adjusted buffer 
+    |=  lin=(pair ,@ud (list ,@c))
+    ^+  +>
+    =.  off  ?:((lth p.lin edg) 0 (sub p.lin edg))
+    (se-show (sub p.lin off) (scag edg (slag off q.lin)))
+  ::
+  ++  se-view                                           ::  flush buffer
+    ?:  liv.maz
+      (se-just ~(ta-vew ta [& & ~zod %$] tar.maz))
+    ?~  apt  
+      se-view(liv.maz &)
+    %-  se-just
+    ~(ta-vew ta [& | i.apt] (~(got by feg) i.apt))
+  ::
+  ++  se-kill                                           ::  kill a source
+    =+  tup=apt
+    |-  ^+  +>
+    ?~  tup  +>(apt ~)
+    $(tup +.tup, +> (se-nuke i.tup))
+  ::
+  ++  se-emit                                           ::  emit move
+    |=  mov=move
+    %_(+> moz [mov moz])
+  ::
+  ++  se-path                                           ::  standard path
+    |=  gyl=gill
+    [(scot %p src) (scot %p p.gyl) q.gyl ~]
+  ::
+  ++  se-poke                                           ::  send a poke
+    |=  [gyl=gill par=pear]
+    (se-emit ost %poke (se-path gyl) gyl par)
+  ::
+  ++  se-peer
+    |=  [gyl=gill pax=path]
+    (se-emit ost %peer (se-path gyl) gyl pax)
+  ::
+  ++  se-pull
+    |=  gyl=gill
+    (se-emit ost %pull (se-path gyl) gyl ~)
+  ::
+  ++  se-pass                                           ::  pass an action
+    |=  [gyl=gill noh=note]
+    (se-emit ost %pass (se-path gyl) noh)
+  ::
+  ++  se-tame
+    |=  gyl=gill
+    ^+  ta
+    ~(. ta [& %| gyl] (~(got by feg) gyl))
+  ::
+  ++  se-diff                                           ::  receive results
+    |=  [gyl=gill fec=sole-effect]
+    ^+  +>
+    ta-abet:(ta-fec:(se-tame gyl) fec)
+  ::
+  ++  ta                                                ::  per target
+    |_  $:  $:  liv=?                                   ::  don't delete
+                mav=?                                   ::  showing master
+                gyl=gill                                ::  target app
+            ==                                          ::
+            target                                      ::  target state
+        ==                                              ::
+    ++  ta-abet                                         ::  resolve
+      ^+  ..ta
+      =.  liv.maz  mav
+      ?:  mav
+        ?.  liv
+          (se-blit `dill-blit`[%qit ~])
+        +>(tar.maz +<+)
+      ?.  liv  
+        =.  ..ta  (se-nuke gyl) 
+        ..ta(liv.maz =(~ apt))
+      %_(+> feg (~(put by feg) gyl +<+))
+    ::
+    ++  ta-ant                                          ::  toggle master
+      ^+  .
+      ?:  mav
+        ?~  apt  ta-bel
+        %_  .
+          mav      |
+          +<+      (~(got by feg) gyl)
+          tar.maz  +<+
+        ==
+      %_  .
+        mav  &
+        +<+  tar.maz
+        feg  (~(put by feg) gyl +<+) 
+      ==
+    ::
+    ++  ta-act                                          ::  send action
+      |=  act=sole-action
+      ^+  +>
+      ?:  mav  
+        +>.$
+      +>.$(+> (se-poke gyl %sole-action act))
+    ::
+    ++  ta-aro                                          ::  hear arrow
+      |=  key=?(%d %l %r %u)
+      ^+  +>
+      ?-  key
+        %d  =.  ris  ~
+            ?.  =(num.hit pos.hit) 
+              (ta-mov +(pos.hit))
+            ?:  =(0 (lent buf.say.inp))
+              ta-bel
+            (ta-hom:ta-nex %set ~)
+        %l  ?^  ris  ta-bel
+            ?:  =(0 pos.inp)  ta-bel 
+            +>(pos.inp (dec pos.inp))
+        %r  ?^  ris  ta-bel
+            ?:  =((lent buf.say.inp) pos.inp) 
+              ta-bel
+            +>(pos.inp +(pos.inp))
+        %u  =.  ris  ~
+            ?:(=(0 pos.hit) ta-bel (ta-mov (dec pos.hit)))
+      ==
+    ::
+    ++  ta-bel  .(+> (se-blit %bel ~))                  ::  beep
+    ++  ta-cat                                          ::  mass insert
+      |=  [pos=@ud txt=(list ,@c)]
+      ^-  sole-edit
+      :-  %mor
+      |-  ^-  (list sole-edit)
+      ?~  txt  ~
+      [[%ins pos i.txt] $(pos +(pos), txt t.txt)]
+    ::
+    ++  ta-cut                                          ::  mass delete
+      |=  [pos=@ud num=@ud]
+      ^-  sole-edit
+      :-  %mor
+      |-(?:(=(0 num) ~ [[%del pos] $(num (dec num))]))
+    ::
+    ++  ta-det                                          ::  send edit
+      |=  ted=sole-edit
+      ^+  +>
+      (ta-act %det [[his.ven.say.inp own.ven.say.inp] (sham buf.say.inp) ted])
+    ::
+    ++  ta-bac                                          ::  hear backspace
+      ^+  .
+      ?^  ris
+        ?:  =(~ str.u.ris)
+          ta-bel
+        .(str.u.ris (scag (dec (lent str.u.ris)) str.u.ris))
+      ?:  =(0 pos.inp)
+        .(+> (se-blit %bel ~))
+      =+  pre=(dec pos.inp)
+      (ta-hom(pos.inp pre) %del pre)
+    ::
+    ++  ta-ctl                                          ::  hear control
+      |=  key=@ud
+      ^+  +>
+      ?+    key  ta-bel
+          %a  +>(pos.inp 0)
+          %b  (ta-aro %l)
+          %c  ta-bel(ris ~)
+          %d  ?:  &(=(0 pos.inp) =(0 (lent buf.say.inp)))
+                +>(liv |)
+              ta-del
+          %e  +>(pos.inp (lent buf.say.inp))
+          %f  (ta-aro %r)
+          %g  ta-bel(ris ~)
+          %k  =+  len=(lent buf.say.inp)
+              ?:  =(pos.inp len)
+                ta-bel 
+              %-  ta-hom(kil `(slag pos.inp buf.say.inp))
+              (ta-cut pos.inp (sub len pos.inp))
+          %l  +>(+> (se-blit %clr ~))
+          %n  (ta-aro %d)
+          %p  (ta-aro %u)
+          %r  ?~  ris 
+                +>(ris `[pos.hit ~]) 
+              ?:  =(0 pos.u.ris)
+                ta-bel
+              (ta-ser ~)
+          %t  =+  len=(lent buf.say.inp)
+              ?:  |(=(0 pos.inp) (lth len 2))
+                ta-bel
+              =+  sop=?:(=(len pos.inp) (dec pos.inp) pos.inp) 
+              =.  pos.inp  +(sop)
+              %-  ta-hom
+              :~  %mor
+                  [%del sop]
+                  [%ins (dec sop) (snag sop buf.say.inp)]
+              ==
+          %u  ?:  =(0 pos.inp)
+                ta-bel
+              %-  ta-hom(pos.inp 0, kil `(scag pos.inp buf.say.inp))
+              (ta-cut 0 pos.inp)
+          %v  ta-ant
+          %x  ?:  =(~ apt)  ta-bel
+              ?:  mav  ta-bel
+              +>(apt (welp (slag 1 apt) [(snag 0 apt) ~]))
+          %y  ?~  kil  ta-bel 
+              %-  ta-hom(pos.inp (add pos.inp (lent u.kil)))
+              (ta-cat pos.inp u.kil)
+      ==
+    ::
+    ++  ta-cru                                          ::  hear crud
+      |=  [lab=@tas tac=(list tank)]
+      =.  +>+>  (se-blit %out (tuba (trip lab)))
+      (ta-tan tac)
+    ::
+    ++  ta-del                                          ::  hear delete
+      ^+  .
+      ?:  =((lent buf.say.inp) pos.inp)
+        .(+> (se-blit %bel ~))
+      (ta-hom %del pos.inp)
+    ::
+    ++  ta-erl                                          ::  hear local error
+      |=  pos=@ud 
+      ta-bel(pos.inp (min pos (lent buf.say.inp)))
+    ::
+    ++  ta-err                                          ::  hear remote error
+      |=  pos=@ud 
+      (ta-erl (~(transpose cs say.inp) pos))
+    ::
+    ++  ta-fec                                          ::  apply effect
+      |=  fec=sole-effect
+      ^+  +>
+      ?-    -.fec
+        %bel  ta-bel
+        %blk  +>
+        %clr  +>(+> (se-blit fec))
+        %det  (ta-got +.fec)
+        %err  (ta-err +.fec)
+        %mor  |-  ^+  +>.^$
+              ?~  p.fec  +>.^$
+              $(p.fec t.p.fec, +>.^$ ^$(fec i.p.fec))
+        %nex  ta-nex
+        %pro  (ta-pro +.fec)
+        %tan  (ta-tan p.fec)
+        %sag  +>(+> (se-blit fec))
+        %sav  +>(+> (se-blit fec))
+        %txt  $(fec [%tan [%leaf p.fec]~])
+      ==
+    ::
+    ++  ta-dog                                          ::  change cursor
+      |=  ted=sole-edit
+      %_    +>
+          pos.inp
+        =+  len=(lent buf.say.inp)
+        %+  min  len
+        |-  ^-  @ud
+        ?-  -.ted
+          %del  ?:((gth pos.inp p.ted) (dec pos.inp) pos.inp)
+          %ins  ?:((lte pos.inp p.ted) +(pos.inp) pos.inp)
+          %mor  |-  ^-  @ud
+                ?~  p.ted  pos.inp
+                $(p.ted t.p.ted, pos.inp ^$(ted i.p.ted))
+          %nop  pos.inp
+          %set  len
+        ==
+      ==
+    ::
+    ++  ta-got                                          ::  apply change
+      |=  cal=sole-change
+      =^  ted  say.inp  (~(receive cs say.inp) cal)
+      (ta-dog ted)
+    ::
+    ++  ta-hom                                          ::  local edit
+      |=  ted=sole-edit
+      ^+  +>
+      =.  +>  (ta-det ted)
+      =.  +>  (ta-dog(say.inp (~(commit cs say.inp) ted)) ted)
+      +>
+    ::
+    ++  ta-met                                          ::  meta key
+      |=  key=@ud
+      ~&  [%ta-met key]
+      +>
+    ::
+    ++  ta-mov                                          ::  move in history
+      |=  sop=@ud
+      ^+  +>
+      ?:  =(sop pos.hit)  +>
+      %+  %=  ta-hom
+            pos.hit  sop
+            lay.hit  %+  ~(put by lay.hit)  
+                       pos.hit 
+                     buf.say.inp
+          ==
+        %set
+      %-  (bond |.((snag (sub num.hit +(sop)) old.hit)))
+      (~(get by lay.hit) sop)
+    ::
+    ++  ta-nex                                          ::  advance history
+      %_  .
+        num.hit  +(num.hit)
+        pos.hit  +(num.hit)
+        ris  ~
+        lay.hit  ~
+        old.hit  [buf.say.inp old.hit]
+      ==
+    ::
+    ++  ta-pro                                          ::  set prompt
+      |=  pom=sole-prompt
+      +>(pom pom(cad :(welp (scow %p p.gyl) ":" (trip q.gyl) cad.pom)))
+    ::
+    ++  ta-ret                                          ::  hear return
+      ?.  mav
+        (ta-act %ret ~)
+      =+  txt=(tufa buf.say.inp)
+      =+  fey=(rose txt sp-ukase:sp)
+      ?-  -.fey
+        %|  (ta-erl (lent (tuba (scag p.fey txt))))
+        %&  ?~  p.fey 
+              (ta-erl (lent buf.say.inp))
+            =.  +>+>  (se-like u.p.fey)
+            =.  pom  pom.tar.maz
+            (ta-hom:ta-nex %set ~)
+      ==
+    ::
+    ++  ta-ser                                          ::  reverse search
+      |=  ext=(list ,@c)
+      ^+  +>
+      ?:  |(?=(~ ris) =(0 pos.u.ris))  ta-bel
+      =+  tot=(weld str.u.ris ext)
+      =+  dol=(slag (sub num.hit pos.u.ris) old.hit)
+      =+  sop=pos.u.ris
+      =+  ^=  ser
+          =+  ^=  beg
+              |=  [a=(list ,@c) b=(list ,@c)]  ^-  ?
+              ?~(a & ?~(b | &(=(i.a i.b) $(a t.a, b t.b))))
+          |=  [a=(list ,@c) b=(list ,@c)]  ^-  ?
+          ?~(a & ?~(b | |((beg a b) $(b t.b))))
+      =+  ^=  sup  
+          |-  ^-  (unit ,@ud)
+          ?~  dol  ~
+          ?:  (ser tot i.dol)
+            `sop
+          $(sop (dec sop), dol t.dol)
+      ?~  sup  ta-bel
+      (ta-mov(str.u.ris tot, pos.u.ris (dec u.sup)) (dec u.sup))
+    ::
+    ++  ta-tan                                          ::  print tanks
+      |=  tac=(list tank)
+      =+  wol=`wall`(zing (turn tac |=(a=tank (~(win re a) [0 edg]))))
+      |-  ^+  +>.^$
+      ?~  wol  +>.^$
+      $(wol t.wol, +>+>.^$ (se-blit %out (tuba i.wol)))
+    ::
+    ++  ta-txt                                          ::  hear text
+      |=  txt=(list ,@c)
+      ^+  +>
+      ?^  ris
+        (ta-ser txt)
+      %-  ta-hom(pos.inp (add (lent txt) pos.inp))
+      :-  %mor
+      |-  ^-  (list sole-edit)
+      ?~  txt  ~
+      [[%ins pos.inp i.txt] $(pos.inp +(pos.inp), txt t.txt)]
+    ::
+    ++  ta-vew                                          ::  computed prompt
+      |-  ^-  (pair ,@ud (list ,@c))
+      ?^  ris
+        %=    $
+            ris  ~
+            cad.pom 
+          :(welp "(reverse-i-search)'" (tufa str.u.ris) "': ")
+        ==
+      =-  [(add pos.inp (lent p.vew)) (weld (tuba p.vew) q.vew)]
+      ^=  vew  ^-  (pair tape (list ,@c))
+      ?:  vis.pom  [cad.pom buf.say.inp]
+      :-  ;:  welp
+            cad.pom
+            ?~  buf.say.inp  ~
+            ;:  welp
+              "<"
+              (scow %p (end 4 1 (sham buf.say.inp)))
+              "> "
+            ==
+          ==
+      =+  len=(lent buf.say.inp) 
+      |-  ^-  (list ,@c) 
+      ?:(=(0 len) ~ [`@c`'*' $(len (dec len))])
+    --
+  --
+++  peer
+  |=  [from pax=path]
+  ^-  (quip move +>)
+  ::  ~&  [%sole-peer ost src pax]
+  ?<  (~(has by bin) ost)
+  :-  [ost %diff %dill-blit %pro [`@c`0x23 `@c`0x20 ~]]~
+  %=    +>
+      bin
+    %+  ~(put by bin)  ost
+    ^-  source
+    :*  80
+        0
+        ~
+        ~
+        :*  %&
+            *(unit search)
+            *history
+            `sole-prompt`[%& %sole "{(scow %p our.hid)}# "]
+            *sole-command
+        ==
+        ~
+        [0 ~]
+    ==
+  ==
+::
+++  poke-dill-belt
+  |=  [from bet=dill-belt]
+  ^-  (quip move +>)
+  ::  ~&  [%sole-poke ost src bet]
+  =+  yog=(~(get by bin) ost)
+  ?~  yog
+    ~&  [%sole-poke-stale ost]
+    [~ +>.$]
+  =<  se-abet
+  =<  se-view
+  (~(se-belt se [~ ~] [src ost] u.yog) bet)
+::
+++  diff-sole-effect
+  |=  [then fec=sole-effect]
+  ^-  (quip move +>)
+  ::  ~&  [%diff-sole-effect way]
+  =+  yog=(~(get by bin) ost)
+  ?~  yog
+    ~&  [%sole-diff-stale ost way]
+    [~ +>.$]
+  ?>  ?=([@ @ @ ~] way)
+  =<  se-abet
+  =<  se-view
+  =+  gyl=[(slav %p i.t.way) i.t.t.way]
+  (~(se-diff se [~ ~] [(slav %p i.way) ost] u.yog) gyl fec)
+::
+++  coup
+  |=  [then saw=(unit tang)]
+  ^-  (quip move +>)
+  ?~  saw  [~ +>]
+  :_  +>  :_  ~
+  [ost %flog ~ %crud %coup u.saw]
+::
+++  reap
+  |=  [then saw=(unit tang)]
+  ^-  (quip move +>)
+  ?~  saw  [~ +>]
+  :_  +>  :_  ~
+  `move`[ost %flog ~ %crud %reap u.saw]
+::
+++  quit
+  |=  then
+  ^-  (quip move +>)
+  [~ +>]
+::
+++  onto
+  |=  [then saw=(each suss tang)]
+  :_  +>  :_  ~
+  ?-  -.saw
+    %|  [ost %flog ~ %crud `@tas`-.way `tang`p.saw]
+    %&  [ost %flog ~ %text "<{<p.saw>}>"]
+  ==
+::
+++  pull
+  |=  from
+  ^-  (quip move +>)
+  ::  ~&  [%sole-pull ost]
+  =^  moz  +>  
+    =<  se-abet
+    =<  se-view
+    ~(se-kill se [~ ~] [our.hid ost] (~(got by bin) ost))
+  [moz +>.$(bin (~(del by bin) ost))]
+--

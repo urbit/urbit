@@ -10,6 +10,20 @@
           ==                                            ::
 ++  bead  ,[p=(set beam) q=gage]                        ::  computed result
 ++  bone  ,@ud                                          ::  opaque duct
+++  club                                                ::  agent action
+  $%  [%peer p=path]                                    ::  subscribe
+      [%poke p=cage]                                    ::  apply
+      [%pull ~]                                         ::  unsubscribe
+      [%pump ~]                                         ::  pump yes/no
+  ==                                                    ::
+++  cuft                                                ::  internal gift
+  $%  [%coup p=(unit tang)]                             ::  poke result
+      [%diff p=cage]                                    ::  subscription output
+      [%quit ~]                                         ::  close subscription
+      [%reap p=(unit tang)]                             ::  peer result
+  ==                                                    ::
+++  cuss  (pair term club)                              ::  internal kiss
+++  suss  (trel term ,@tas ,@da)                        ::  config report
 ++  gift                                                ::  out result <-$
           $%  [%back p=?]                               ::  %mess ack good/bad
               [%crud p=@tas q=(list tank)]              ::  physical error
@@ -59,6 +73,12 @@
 ++  note                                                ::  out request $->
           $?  $:  %a                                    ::  to %ames
           $%  [%wont p=sock q=path r=*]                 ::
+          ==  ==                                        ::
+              $:  %b                                    ::  to %behn
+          $%  [%deal p=sock q=cuss]                     ::  full transmission
+          ==  ==                                        ::
+              $:  %c                                    ::  to %clay
+          $%  [%warp p=sock q=riff]                     ::
           ==  ==                                        ::
               $:  %f                                    ::  to %ford
           $%  [%exec p=@p q=beak r=(unit silk)]         ::
@@ -138,6 +158,10 @@
           $%  [%init p=@p]                              ::  only for :begin
               [%woot p=ship q=coop]                     ::
               [%went p=ship q=cape]                     ::  only for apps
+          ==  ==                                        ::
+              $:  %b                                    ::  by %behn
+          $%  [%onto p=(each suss tang)]                ::
+              [%unto p=cuft]                            ::
           ==  ==                                        ::
               $:  %g                                    ::  by %gall
           $%  [%init p=@p]                              ::
