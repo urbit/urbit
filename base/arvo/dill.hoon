@@ -274,7 +274,7 @@
         (done %blit [bit ~])
       ::
       ++  init                                          ::  initialize
-        ~&  [%doll-init our]
+        ~&  [%dill-init our]
         =+  myt=(flop (need tem))
         =.  tem  ~
         =.  moz  :_(moz [hen %pass / %c %font our %home our %base])
