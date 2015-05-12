@@ -1072,10 +1072,10 @@
         %deal  `%g
         %exec  `%f
         %flog  `%d
-        %mess  `%g
-        %nuke  `%g
-        %show  `%g
-        %took  `%g
+        %font  `%c
+        %info  `%c
+        %lynx  `%c
+        %merg  `%c
         %plug  `%c
         %want  `%a
       ==
