@@ -12,6 +12,8 @@
           ==                                            ::
 ++  broq  |*  [a=_,* b=_,*]                             ::  brodal skew qeu
           (list (sqeu a b))                             ::
+++  weight
+          (each noun (list (pair tape weight)))
 ++  gift                                                ::  out result <-$
           $%  [%mass p=mass]                            ::  memory usage
               [%wake ~]                                 ::  wakey-wakey
@@ -199,6 +201,9 @@
       ==
     ==
   [mof ..^$]
+::
+++  foo
+  %bar
 ::
 ++  doze
   |=  [now=@da hen=duct]

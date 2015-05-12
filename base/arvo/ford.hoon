@@ -212,10 +212,6 @@
   =+  gib=(wox p.n.r.arc)
   ?~(gib rac [[u.gib p.n.r.arc] rac])
 ::
-++  slob                                                ::  XX  belongs in h/h
-  |=  [cog=@tas typ=type]
-  (~(has in (sa (sloe typ))) cog)
-::
 ++  norm                                                ::  normalize beam rev
   |=  [ska=sled bem=beam]
   %_  bem

@@ -236,7 +236,12 @@
 ::
 ++  add-json                                            ::  inject window.urb
   |=  [urb=json jaz=cord]  ^-  cord
-  (cat 3 (crip "window.urb = {(pojo urb)}\0a") jaz)
+  =-  (cat 3 (crip -) jaz)
+  """
+  var _urb = {(pojo urb)}
+  window.urb = window.urb || \{}; for(k in _urb) window.urb[k] = _urb[k]
+  
+  """
 ::
 ++  ares-to-json
   |=  err=ares  ^-  json
@@ -268,7 +273,7 @@
     urb.tries = 0
     urb.call = function() {
       urb.wreq = new XMLHttpRequest()
-      urb.wreq.open('GET', urb.poll, true)
+      urb.wreq.open('GET', urb.wurl, true)
       urb.wreq.addEventListener('load', function() {
         // if(~~(this.status / 100) == 4)
         //   return document.write(this.responseText)
@@ -287,11 +292,11 @@
     }
     urb.call()
     urb.wasp = function(deh){
-      var old = /[^/]*$/.exec(urb.poll)[0]
+      var old = /[^/]*$/.exec(urb.wurl)[0]
       var deps = old.replace(/^on.json\?|.json$/,'').split('&')
       if (deps.indexOf(deh) !== -1) return;
       deps.push(deh)
-      urb.poll = "/~/on.json?"+deps.join('&')
+      urb.wurl = "/~/on.json?"+deps.join('&')
       urb.wreq.abort() // trigger keep 
     }
     '''
@@ -424,7 +429,7 @@
       =.  p.p.pul  |(p.p.pul ?=(hoke r.p.pul))
       =+  her=(host-to-ship r.p.pul)
       ?:  |(?=(~ her) =(our u.her))
-        (handle pul q.+.kyz [p.heq maf s.heq])
+        (handle pul [q.+.kyz anon] [p.heq maf s.heq])
       =+  han=(sham hen)
       =.  pox  (~(put by pox) han hen)
       (ames-gram u.her [%get ~] han +.kyz)
@@ -675,7 +680,7 @@
   ::
   ++  handle
     |=  $:  [hat=hart pok=pork quy=quay]                ::  purl, parsed url
-            cip=clip                                    ::  client ip
+            [cip=clip him=ship]                         ::  client ip, ship
             [mef=meth maf=math bod=(unit octs)]         ::  method/headers/body
         ==
     =<  apex
@@ -934,8 +939,7 @@
           %mess
         :-  %|
         =^  orx  ..ya   ?:(is-anon new-view:for-client [(need grab-oryx) ..ya])
-        =+  vew=(ire-ix (oryx-to-ixor orx))
-        =+  [him=him.vew cay=[%json !>(`json`s.hem)]]
+        =+  [vew=(ire-ix (oryx-to-ixor orx)) cay=[%json !>(`json`s.hem)]]
         ?:  ?=(%json q.hem)  ((teba new-mess.vew) p.hem r.hem cay)
         %+  pass-note  [%to (oryx-to-ixor orx) (scot %p p.p.hem) q.p.hem r.hem]
         (ford-req root-beak [%cast q.hem %done ~ cay])
@@ -943,7 +947,7 @@
           %poll
         ?:  ?=([~ %js] p.pok)  ::  XX treat non-json cases?
           =+  polling-url=['/' (apex:earn %| pok(u.p %json) quy)]
-          [%& %js (add-json (joba %poll (jape polling-url)) poll:js)]
+          [%& %js (add-json (joba %wurl (jape polling-url)) poll:js)]
         |-
           =.  done  (new-dependency i.p.hem %& hen)
           ?~  t.p.hem  [%| done]
@@ -993,7 +997,7 @@
           %get
         ~|  aute/ham
         ?:  |(=(anon him.ham) (~(has in aut.yac) him.ham))
-          process(pok rem.ham, ..ya abet.yac(him him.ham))
+          process(him him.ham, pok rem.ham)
         ?.  =(our him.ham)
           [%| ((teba foreign-auth.yac) him.ham hat rem.ham quy)]
         (show-login-page ~)
@@ -1032,7 +1036,7 @@
         (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
       ~|  bad-cookie/u.lig
       =+  cyz=(~(got by wup) u.lig)
-      ~(. ya u.lig cyz(cug ~))
+      ~(. ya u.lig cyz(him him, cug ~))
     ::
     ++  new-ya  |=(ses=hole ~(. ya ses (new-cyst ses)))
     ++  new-cyst
