@@ -106,7 +106,7 @@
       ?>  ?=([[@ ~] ~] zaz)
       `term`p.i.zaz
     =+  tip=(end 3 1 nam)
-    =+  way=[(scot %p our) %base (scot %da lat) %arvo nam %hoon ~]
+    =+  way=[(scot %p our) %home (scot %da lat) %arvo nam %hoon ~]
     =+  fil=(,@ .^(%cx way))
     :*  %flog
         /reload
