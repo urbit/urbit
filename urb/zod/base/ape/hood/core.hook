@@ -15,11 +15,11 @@
         %kiln  ?>(?=(%kiln -.paw) `kiln-part`paw)       ::
       ==                                                ::
     ++  hood-head  ,_-:*hood-part                       ::
-    ++  hood-mold                                       ::
-      |=  hed=hood-head                                 ::
+    ++  hood-make                                       ::
+      |*  hed=hood-head                                 ::
       ?-  hed                                           ::
-        %helm  helm-part                                ::
-        %kiln  kiln-part                                ::
+        %helm  *helm-part                               ::
+        %kiln  *kiln-part                               ::
       ==                                                ::
     ++  hood-part                                       ::
       $?  helm-part                                     ::
@@ -35,7 +35,8 @@
 ++  able                                                ::  find/make part
   |*  hed=hood-head
   =+  rep=(~(get by lac) hed)
-  ((hood-good hed) ?^(rep u.rep `hood-part`*(hood-mold hed)))
+  =+  par=?^(rep u.rep `hood-part`(hood-make hed))
+  ((hood-good hed) par)
 ::
 ++  ably                                                ::  save part
   |*  [moz=(list) rep=hood-part]
