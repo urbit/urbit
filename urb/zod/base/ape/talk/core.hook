@@ -1649,6 +1649,9 @@
       ?:  oug
         (weld "@ " txt)
       (weld " " txt)
+    ::
+        %app
+      [' ' (trip p.sep)]
     ==
   -- 
 ::
