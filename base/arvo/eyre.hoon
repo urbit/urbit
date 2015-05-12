@@ -519,6 +519,7 @@
           %diff
         ?>  ?=([%of @ ^] tee)
         ?.  ?=(%json p.p.cuf)
+          ::~>  %slog.`rose/[" " "[" "]"]^~[>%backing< >p.p.cuf< (sell q.p.cuf)]
           (back tee 0v0 %json p.cuf)
         (get-rush:(ire-ix p.tee) q.tee ((hard json) q.q.p.cuf))
       ::
@@ -632,7 +633,7 @@
     |=([him=ship gam=gram] (pass-note ~ %a %want [our him] [%e -.gam] +.gam))
   ::
   ++  back                                              ::  %ford bounce
-    |=  [tea=whir dep=@uvH mar=mark cay=cage]                
+    |=  [tea=whir dep=@uvH mar=mark cay=cage]
     (pass-note tea (ford-req root-beak [%cast mar %done ~ cay])) ::  XX deps
   ::
   ++  ford-kill  (pass-note ~ %f [%exec our *beak ~])        :: XX unused
