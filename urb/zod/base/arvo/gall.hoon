@@ -765,7 +765,7 @@
       ^-  (each cute tang)
       ?.  &(?=(^ q.vax) ?=(@ -.q.vax) ((sane %tas) -.q.vax))
         [%| (ap-suck "move: improper diff")]
-      [%& sto %give %diff `cage`[-.q.vax (slot 3 vax)]]
+      [%& sto %give %diff `cage`[-.q.vax (slot 3 (spec vax))]]
     ::
     ++  ap-move-mess                                    ::  extract path, target
       |=  vax=vase
