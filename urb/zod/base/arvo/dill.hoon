@@ -59,12 +59,6 @@
 ++  gill  (pair ship term)                              ::  general contact
 --                                                      ::
 =>  |%                                                  ::  console protocol
-++  old-axle                                            ::  all dill state
-  $:  %2                                                ::
-      ore=(unit ship)                                   ::  identity once set
-      hey=(unit duct)                                   ::  default duct
-      dug=(map duct axon)                               ::  conversations
-  ==                                                    ::  
 ++  axle                                                ::  all dill state
   $:  %3                                                ::
       ore=(unit ship)                                   ::  identity once set
@@ -336,11 +330,9 @@
       ::
       ++  wegh
         ^-  mass
+        :-  %dill
         :-  %|
-        :~  ore/`ore.all
-            hey/`hey.all
-            dug/`dug.all
-            ::  cor/`..as
+        :~  all/`[ore hey dug]:all
         ==
       ::
       ++  wegt
@@ -366,15 +358,7 @@
         %+  done(hef.all [~ ~ ~ ~ ~ ~])
           %mass
         =>  [hef.all d=wegh]
-        :-  %|
-        :~  ames/u.a
-            clay/u.c
-            dill/d
-            eyre/u.e
-            ford/u.f
-            gall/u.g
-            time/u.t
-        ==
+        [%vanes %| ~[u.a u.c d u.e u.f u.g u.t]]
       ::
       ++  take                                          ::  receive
         |=  [tea=wire sih=sign]
@@ -504,9 +488,7 @@
   ~
 ::
 ++  load                                                ::  trivial
-  |=  old=?(old-axle axle)
-  ?:  ?=(%2 -.old)
-    $(old [%3 ore hey dug ~ ~ ~ ~ ~ ~]:old)
+  |=  old=axle
   ..^$(all old)
   ::  |=  old=*   ::  diable
   ::  ..^$(ore.all `~zod)

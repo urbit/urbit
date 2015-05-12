@@ -1478,6 +1478,10 @@ u3a_sweep(void)
        * box_u->siz_w > u3a_mimimum is sufficient, but not necessary,
        * for the box to represent an atom.  The atoms between
        * 2^31 and 2^32 are the exceptions.
+       *
+       * Update: so, apparently u3.md is incorrect, and a pug is just
+       * an indirect atom.  This code should be altered to handle
+       * that.
       */
       if ( box_u->use_w != box_u->eus_w ) {
         if ( box_u->eus_w != 0 ) {
@@ -1529,7 +1533,7 @@ u3a_sweep(void)
                   : u3r_mug(u3a_to_pom(u3a_outa(u3a_boxto(box_w)))));
         u3a_print_memory("leak (minimum)", box_u->siz_w);
 
-#if 0
+#if 1
         /*  For those times when you've really just got to crack open
          *  the box and see what's inside
         */

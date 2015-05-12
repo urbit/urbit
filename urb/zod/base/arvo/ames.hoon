@@ -1953,8 +1953,8 @@
   ::
   ++  wegh
     ^-  mass
+    :-  %ames
     :-  %|
     :~  fox/`fox
-        ::  cor/`.
     ==
   --

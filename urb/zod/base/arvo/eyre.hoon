@@ -1258,9 +1258,9 @@
   ?:  ?=(%wegh -.q.hic)
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
+    :-  %eyre
     :-  %|
     :~  bol/`bol
-        ::  cor/`..^$
     ==
   =+  our=`@p`0x100  ::  XX  sentinel
   =+  ska=(slod ski)

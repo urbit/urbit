@@ -1725,6 +1725,7 @@ _raft_print_memory(c3_w wor_w)
   }
 }
 
+#if 0
 /*  _raft_prof_noun(): get memory usage, in words, of noun. RETAIN.
 */
 c3_w
@@ -1758,6 +1759,7 @@ _raft_prof_noun(u3p(u3h_root) hax, u3_noun non, c3_t dud)
   }
   */
 }
+#endif
 
 /* _raft_prof(): print memory profile. RETAIN.
 */
@@ -1767,77 +1769,83 @@ _raft_prof(u3p(u3h_root) hax, c3_w den, u3_noun mas)
   c3_w tot_w = 0;
   u3_noun h_mas, t_mas;
 
-  if (c3n == u3r_cell(mas, &h_mas, &t_mas)) {
+  if ( c3n == u3r_cell(mas, &h_mas, &t_mas) ) {
     _raft_spac(den);
     (fprintf(stderr, "mistyped mass\r\n"));
     return tot_w;
   }
-  if (c3y == h_mas) {
+  else if ( _(u3du(h_mas)) ) {
     _raft_spac(den);
-    _raft_print_memory(_raft_prof_noun(hax, t_mas, 0));
-    _raft_spac(den);
-    _raft_print_memory(_raft_prof_noun(hax, t_mas, 1));
-    _raft_spac(den);
-    tot_w += u3a_mark_noun(t_mas);
-    _raft_print_memory(tot_w);
-
-    /* The basic issue here is that t_mas is included in
-     * u3A->sac, so they can't both be roots in the normal
-     * sense. When we mark u3A->sac later on, we want t_mas
-     * to appear to appear unmarked, but its children should
-     * be already marked.
-    */
-    if ( _(u3a_is_dog(t_mas)) ) {
-      u3a_box* box_u = u3a_botox(u3a_to_ptr(t_mas));
-#ifdef U3_MEMORY_DEBUG
-      if ( 1 == box_u->eus_w ) {
-        box_u->eus_w = 0xffffffff;
-      }
-      else {
-        box_u->eus_w -= 1;
-      }
-#else
-      if ( -1 == (c3_w)box_u->use_w ) {
-        box_u->use_w = 0x80000000;
-      }
-      else {
-        box_u->use_w -= 1;
-      }
-#endif
-    }
-
-    return tot_w;
-  }
-  else if (c3n == h_mas) {
-    u3_noun it_mas, tt_mas, pit_mas, qit_mas;
-    while (u3_nul != t_mas)
-    {
-      _raft_spac(den);
-      if (c3n == u3r_cell(t_mas, &it_mas, &tt_mas)) {
-        (fprintf(stderr, "mistyped mass list\r\n"));
-        return tot_w;
-      }
-      else if (c3n == u3r_cell(it_mas, &pit_mas, &qit_mas)) {
-        (fprintf(stderr, "mistyped mass list element\r\n"));
-        return tot_w;
-      }
-      else {
-        c3_c* pit_c = u3m_pretty(pit_mas);
-        (fprintf(stderr, "%s\r\n", pit_c));
-        free(pit_c);
-
-        tot_w += _raft_prof(hax, den+2, qit_mas);
-
-        t_mas = tt_mas;
-      }
-    }
+    (fprintf(stderr, "mistyped mass head\r\n"));
+    u3m_p("h_mas", h_mas);
     return tot_w;
   }
   else {
     _raft_spac(den);
-    (fprintf(stderr, "mistyped mass head\r\n"));
-    u3m_p("mas",h_mas);
-    return tot_w;
+
+    c3_c* lab_c = u3m_pretty(h_mas);
+    (fprintf(stderr, "%s: ", lab_c));
+    free(lab_c);
+
+    u3_noun it_mas, tt_mas;
+
+    if ( c3n == u3r_cell(t_mas, &it_mas, &tt_mas) ) {
+      (fprintf(stderr, "mistyped mass tail\r\n"));
+      return tot_w;
+    }
+    else if ( c3y == it_mas ) {
+      tot_w += u3a_mark_noun(tt_mas);
+      _raft_print_memory(tot_w);
+
+#if 1
+      /* The basic issue here is that tt_mas is included in
+       * u3A->sac, so they can't both be roots in the normal
+       * sense. When we mark u3A->sac later on, we want tt_mas
+       * to appear unmarked, but its children should be already
+       * marked.
+      */
+      if ( _(u3a_is_dog(tt_mas)) ) {
+        u3a_box* box_u = u3a_botox(u3a_to_ptr(tt_mas));
+#ifdef U3_MEMORY_DEBUG
+        if ( 1 == box_u->eus_w ) {
+          box_u->eus_w = 0xffffffff;
+        }
+        else {
+          box_u->eus_w -= 1;
+        }
+#else
+        if ( -1 == (c3_w)box_u->use_w ) {
+          box_u->use_w = 0x80000000;
+        }
+        else {
+          box_u->use_w += 1;
+        }
+#endif
+      }
+#endif
+
+      return tot_w;
+    }
+    else if ( c3n == it_mas ) {
+      (fprintf(stderr, "\r\n"));
+
+      while ( _(u3du(tt_mas)) ) {
+        tot_w += _raft_prof(hax, den+2, u3h(tt_mas));
+        tt_mas = u3t(tt_mas);
+      }
+
+      _raft_spac(den);
+      (fprintf(stderr, "--"));
+      _raft_print_memory(tot_w);
+
+      return tot_w;
+
+    }
+    else {
+      _raft_spac(den);
+      (fprintf(stderr, "mistyped (strange) mass tail\r\n"));
+      return tot_w;
+    }
   }
 }
 
@@ -1847,12 +1855,9 @@ static void
 _raft_grab(u3_noun ova)
 {
   if ( u3_nul != u3A->sac ) {
-    if ( !(u3C.wag_w & u3o_debug_ram) ) {
-      fprintf(stderr, "massing doesn't work without the -g flag\r\n");
-      goto _raft_grab_end;
-    }
     c3_w usr_w = 0, ova_w = 0, sac_w = 0, utv_w = 0, utm_w = 0, wep_w = 0;
 
+    fprintf(stderr, "\r\n");
     usr_w = _raft_prof(u3_nul, 0, u3A->sac);
     fprintf(stderr, "total userspace: ");
     _raft_print_memory(usr_w);
@@ -1880,7 +1885,6 @@ _raft_grab(u3_noun ova)
     fprintf(stderr, "sweep: ");
     _raft_print_memory(wep_w);
 
-_raft_grab_end:
     u3z(u3A->sac);
     u3A->sac = u3_nul;
   }

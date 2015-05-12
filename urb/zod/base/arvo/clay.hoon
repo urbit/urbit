@@ -2583,9 +2583,15 @@
       %wegh
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
+    :-  %clay
     :-  %|
-    :~  ruf/`ruf
-        ::  cor/`..^$
+    :~  domestic/`fat.ruf
+        foreign/`hoy.ruf
+        :-  %object-store  :-  %|
+        :~  commits/`hut.ran.ruf
+            blobs/`lat.ran.ruf
+        ==
+        autosync/`sor.ruf
     ==
   ==
 ::

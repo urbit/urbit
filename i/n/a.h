@@ -13,7 +13,7 @@
      *  it's on.  Note that toggling -g breaks the image.  If
      *  U3_MEMORY_DEBUG is on, this should generally be on as well.
     */
-#     define U3_CELLOC_TOGGLE
+#     undef U3_CELLOC_TOGGLE
 
   /**  Constants.
   **/
