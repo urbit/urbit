@@ -4,45 +4,8 @@
 |=  pit=vase
 =>  =~
 |%                                                      ::  interfaces
-++  club                                                ::  agent action
-  $%  [%peer p=path]                                    ::  subscribe
-      [%poke p=cage]                                    ::  apply
-      [%pull ~]                                         ::  unsubscribe
-      [%pump ~]                                         ::  subscription ack
-  ==                                                    ::
-++  cush  (pair term club)                              ::  internal kiss
-++  cuft                                                ::  internal gift
-  $%  [%coup p=(unit tang)]                             ::  poke result
-      [%diff p=cage]                                    ::  subscription output
-      [%quit ~]                                         ::  close subscription
-      [%reap p=(unit tang)]                             ::  peer result
-  ==                                                    ::
-++  gift                                                ::  out result <-$
-          $%  [%mass p=mass]                            ::  memory usage
-              [%thou p=httr]                            ::  raw http response
-              [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
-              [%veer p=@ta q=path r=@t]                 ::  drop-through
-              [%vega p=path]                            ::  drop-through
-          ==                                            ::
-++  gram                                                ::  inter-ship message
-  $?  [[%lon ~] p=hole]                                 ::  login request
-      [[%aut ~] p=hole]                                 ::  login reply
-      [[%hat ~] p=hole q=hart]                          ::  login redirect
-      [[%get ~] p=@uvH q=[? clip httq]]                 ::  remote request
-      [[%got ~] p=@uvH q=httr]                          ::  remote response
-  ==                                                    ::
-++  hasp  ,[p=ship q=term]                              ::  don't see %gall
-++  kiss                                                ::  in request ->$
-          $%  [%born ~]                                 ::  new unix process
-              [%crud p=@tas q=(list tank)]              ::  XX rethink
-              [%init p=@p]                              ::  report install
-              [%them p=(unit hiss)]                     ::  outbound request
-              [%they p=@ud q=httr]                      ::  inbound response
-              [%this p=? q=clip r=httq]                 ::  inbound request
-              [%thud ~]                                 ::  inbound cancel
-              [%wart p=sack q=@tas r=_`[path *]`*gram]  ::  urbit message
-              [%wegh ~]                                 ::  report memory
-          ==                                            ::
+++  gift  gift-eyre                                     ::  out result <-$
+++  kiss  kiss-eyre                                     ::  in request ->$
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
           $%  $:  %a                                    ::  to %ames
@@ -65,12 +28,6 @@
           $%  [%wait p=@da]                             ::
               [%rest p=@da]                             ::
           ==  ==  ==                                    ::
-++  silk                                                ::  see %ford
-          $&  [p=silk q=silk]                           ::
-          $%  [%boil p=mark q=beam r=path]              ::
-              [%cast p=mark q=silk]                     :: 
-              [%done p=(set beam) q=cage]               ::
-          ==                                            ::
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
           $%  [%went p=ship q=cape]                     ::
@@ -100,7 +57,7 @@
               [%on p=span:,@uvH ~]                      ::  dependency
               [%to p=ixor q=span:ship r=term s=wire]    ::  associated app
           ==                                            ::
-++  whir-of  ,[p=span:ship q=term r=wire]               ::  path in hasp
+++  whir-of  ,[p=span:ship q=term r=wire]               ::  path in dock
 --                                                      ::
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
@@ -138,9 +95,9 @@
   ==
 ++  honk  $%([%nice ~] [%mean p=ares])                  ::  old gall result
 ++  even                                                ::  client event
-  $%  [%mean p=[hasp path] q=ares]
+  $%  [%mean p=[dock path] q=ares]
       [%news p=@uv]
-      [%rush p=[hasp path] q=json]
+      [%rush p=[dock path] q=json]
   ==
 ::
 ++  perk                                                ::  parsed request
@@ -149,10 +106,10 @@
       [%bugs p=?(%as %to) ~]
       [%beam p=beam]
       [%deps p=?(%put %delt) q=@uvH]
-      [%mess p=hasp q=mark r=wire s=json]
+      [%mess p=dock q=mark r=wire s=json]
       [%poll p=[i=@uvH t=(list ,@uvH)]]
       [%spur p=spur]
-      [%subs p=?(%put %delt) q=[hasp %json wire path]]
+      [%subs p=?(%put %delt) q=[dock %json wire path]]
       [%view p=ixor q=[~ u=@ud]]
   ==
 ::
@@ -196,7 +153,7 @@
       [[%$ %t p.i.quy] [%$ %t q.i.quy] $(quy t.quy)]
   ==
 ::
-++  gsig  |=([a=hasp b=path] [(scot %p p.a) q.a b])
+++  gsig  |=([a=dock b=path] [(scot %p p.a) q.a b])
 ++  session-from-cookies
   |=  [nam=@t maf=math]
   ^-  (unit hole)
@@ -518,6 +475,7 @@
           %diff
         ?>  ?=([%of @ ^] tee)
         ?.  ?=(%json p.p.cuf)
+          ::~>  %slog.`rose/[" " "[" "]"]^~[>%backing< >p.p.cuf< (sell q.p.cuf)]
           (back tee 0v0 %json p.cuf)
         (get-rush:(ire-ix p.tee) q.tee ((hard json) q.q.p.cuf))
       ::
@@ -631,7 +589,7 @@
     |=([him=ship gam=gram] (pass-note ~ %a %want [our him] [%e -.gam] +.gam))
   ::
   ++  back                                              ::  %ford bounce
-    |=  [tea=whir dep=@uvH mar=mark cay=cage]                
+    |=  [tea=whir dep=@uvH mar=mark cay=cage]
     (pass-note tea (ford-req root-beak [%cast mar %done ~ cay])) ::  XX deps
   ::
   ++  ford-kill  (pass-note ~ %f [%exec our *beak ~])        :: XX unused
@@ -1154,7 +1112,7 @@
     ++  teba  |*(a=$+(* ..ix) |*(b=* %_(done ..ix (a b))))
     ++  give-json  (teba ^give-json)
     ++  hurl-note 
-      |=  [a=[hasp path] b=note]  ^+  ..ix
+      |=  [a=[dock path] b=note]  ^+  ..ix
       =:  med  (~(put to med) hen)
           hen  `~
         ==
@@ -1166,15 +1124,15 @@
       [+(p.eve) (~(put by q.eve) p.eve a)]
     ::
     ++  new-mess
-      |=  [a=hasp b=wire c=cage]  ^+  ..ix
+      |=  [a=dock b=wire c=cage]  ^+  ..ix
       (hurl-note [a b] [%g %deal [him -.a] +.a %poke c])
     ::
     ++  add-subs
-      |=  [a=hasp %json b=wire c=path]  ^+  ..ix
+      |=  [a=dock %json b=wire c=path]  ^+  ..ix
       (hurl-note [a b] [%g %deal [him -.a] +.a %peer c])
     ::
     ++  del-subs                      ::  XX per path?
-      |=  [a=hasp %json b=wire c=path]  ^+  ..ix
+      |=  [a=dock %json b=wire c=path]  ^+  ..ix
       (hurl-note [a b] [%g %deal [him -.a] +.a %pull ~])
     ::
     ++  get-rush
@@ -1219,7 +1177,7 @@
       ==
     ::
     ++  pass-took
-      |=  a=[p=hasp wire]
+      |=  a=[p=dock wire]
       %+  pass-note(hen `~)
         [%of ire (gsig a)] 
       [%g %deal [him -.p.a] +.p.a %pump ~]
@@ -1236,7 +1194,7 @@
       abet:(give-even & a ven)
     ::
     ++  subs-to-json
-      |=  [a=hasp b=path]
+      |=  [a=dock b=path]
       %-  jobe  :~
         ship/[%s (rsh 3 1 (scot %p p.a))]
         appl/[%s q.a] 
@@ -1244,7 +1202,7 @@
       ==
     ++  wake  ^+(..ix abet(ude ~))  ::  XX other effects?
     ::  XX unused
-    ++  print-subs  |=([a=hasp b=path] "{<p.a>}/{(trip q.a)}{(spud b)}")
+    ++  print-subs  |=([a=dock b=path] "{<p.a>}/{(trip q.a)}{(spud b)}")
 --  --
 --
 .   ==

@@ -1,5 +1,5 @@
 ::                                                      ::::::::::::::: 
-::::  /hook/core/acto/ape                               ::  ::       ::  build
+::::  /hook/core/octo/ape                               ::  ::       ::  build
   ::                                                    :::::::::::::::
 /-  *sole                                               ::  structures
 /+  sole                                                ::  libraries
@@ -10,7 +10,7 @@
     ++  board  ,@                                       ::  one-player bitfield
     ++  point  ,[x=@ y=@]                               ::  coordinate
     ++  game   ,[who=? box=board boo=board]             ::  game state
-    ++  icon   |=(? ?:(+< 'Q' 'O'))                     ::  display at
+    ++  icon   |=(? ?:(+< 'X' 'O'))                     ::  display at
     ++  bo                                              ::  per board
       |_  bud=board                                     ::
       ++  get  |=(point =(1 (cut 0 [(off +<) 1] bud)))  ::  get point
@@ -56,7 +56,7 @@
               ==                                        ::
     ++  face  (pair (list ,@c) (map bone sole-share))   ::  interface
     ++  lime  $%  [%sole-effect sole-effect]            ::  :sole update
-                  [%acto-game game]                     ::  :acto update
+                  [%octo-game game]                     ::  :octo update
               ==                                        ::
     ++  move  (pair bone card)                          ::  cause and action
     ++  mote  (pair ship ,?)                            ::  remote binding
@@ -100,7 +100,7 @@
             ?-(lev %0 +>, %1 line, %2 line:show:prom)   ::
   ++  plow  |=  [lev=?(%0 %1 %2) mus=(unit tape)]       ::  complete print
             abet:(mean:(play lev) mus)                  ::
-  ++  prom  %^  emit  %pro  %&  :-  %acto               ::  update prompt
+  ++  prom  %^  emit  %pro  %&  :-  %octo               ::  update prompt
             ?:  wait  "(xir turn) "                     ::
             ": {~[(icon who.gam)]} to move (row/col): " ::  
   ++  plan  |=  mut=(unit mote)                         ::  peer command
@@ -118,9 +118,9 @@
 ++  dish  |=(cad=card (dump 0 cad))                     ::  forward move
 ++  flet  |=(from ~(. et +< (~(got by q.eye) ost)))     ::  in old client
 ++  fret  |=(from ~(. et +< *sole-share))               ::  in new client
-++  like  |=(xir=ship |*(* [/acto [xir %octo] +<]))     ::  to friend
+++  like  |=(xir=ship |*(* [/octo [xir %octo] +<]))     ::  to friend
 ++  link  |=  mot=mote  %-  dish(but `[| mot])          ::  subscribe to friend
-          peer/((like p.mot) /acto/[?:(q.mot %x %o)])   ::  
+          peer/((like p.mot) /octo/[?:(q.mot %x %o)])   ::  
 ++  pals  %+  turn  (pale hid (prix /sole))  |=  sink   ::  per console 
           [[p=p.+< q=q.+<] r=(~(got by q.eye) p.+<)]    ::
 ++  park  |=  [lev=?(%0 %1 %2) mus=(unit tape)]         ::  update all
@@ -128,19 +128,19 @@
           =+  pals                                      ::
           |-  ^+  +>.^$  ?~  +<  +>.^$                  ::
           $(+< t.+<, +>.^$ (~(plow et i.+<) lev mus))   ::
-++  push  =+  pey=(pale hid (prix /acto))  |-  ^+  +>   ::  update friends
+++  push  =+  pey=(pale hid (prix /octo))  |-  ^+  +>   ::  update friends
           ?~(pey +> $(pey t.pey, +> (sell p.i.pey)))    ::
-++  sell  |=(ost=bone (dump ost %diff %acto-game gam))  ::  update friend
+++  sell  |=(ost=bone (dump ost %diff %octo-game gam))  ::  update friend
 ++  stop  (dish(but ~) pull/((like +>-.but) ~))         ::  cancel subscribe
 ::                                                      :::::::::::::::
 ::::                                                    ::  ::       ::  hooks
   ::                                                    :::::::::::::::
-++  diff-acto-game                                      ::  friend update
+++  diff-octo-game                                      ::  friend update
           |=  [then gam=game]  =<  abet                 ::
           ?.  &(?=([~ %& *] but) =(src p.q.u.but))  +>  ::
           ?:  =(^gam gam)  +>                           ::
           (park(gam gam) %2 ~)                          ::
-++  peer-acto                                           ::  linked by friend
+++  peer-octo                                           ::  linked by friend
           |=  [from pax=path]  =<  abet                 ::
           =+  who==(%x -.pax)                           ::
           ?^  but  (park %2 ~)                          :: [~ %& !who src]
@@ -151,6 +151,12 @@
 ++  poke-sole-action                                    ::  console input
           |=  [from act=sole-action]  =<  abet          ::
           (work:(flet +<-) act)                         ::
+++  poke-octo-move
+          |=  [from wha=point]  =<  abet
+          =^  dud  gam  ~(m ~(at go gam) wha)
+          ?>  dud
+          =+  mus=~(res go gam)   ::
+          (park(gam ?^(mus *game gam)) %2 mus)
 ++  prep  |=  [from old=(unit ,[(list move) axon])]     ::  initialize
           =<  abet  ?~  old  +>                         ::
           =<  (park %2 ~)                               ::
@@ -158,15 +164,15 @@
             %1  +>(+<+ u.old)                           ::
             %0  +>(eye.+< eye.+>.old, gam.+< gam.+>.old)::
           ==                                            ::
-++  pull-acto                                           ::
+++  pull-octo                                           ::
           |=  [from ~]  =<  abet                        ::
           (park(but ~) %0 `"dropped")                   ::
 ++  pull-sole                                           ::  disconnect console
           |=  [from *]  =<  abet                        ::
           amok:(flet +<-)                               ::
-++  quit-acto                                           ::  unlinked by friend
+++  quit-octo                                           ::  unlinked by friend
           |=([then ~] abet:(park(but ~) %0 `"removed")) ::
-++  reap-acto                                           ::  linked to friend
+++  reap-octo                                           ::  linked to friend
           |=  [then saw=(unit tang)]  =<  abet          ::
           ?>  ?=([~ %| *] but)                          ::
           ?^  saw  (park:stop %0 `"fail to {<src>}")    ::
