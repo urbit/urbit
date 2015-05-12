@@ -274,7 +274,7 @@
         (done %blit [bit ~])
       ::
       ++  init                                          ::  initialize
-        ~&  [%doll-init our]
+        ~&  [%dill-init our]
         =+  myt=(flop (need tem))
         =.  tem  ~
         =.  moz  :_(moz [hen %pass / %c %font our %home our %base])
@@ -422,8 +422,8 @@
           [[p.q.hic %dojo] ~]
         ?:  =(%earl myr)
           =+  fap=(sein p.q.hic)
-          [[fap %dojo] [fap %talk] [fap %helm] ~]
-        [[p.q.hic %dojo] [p.q.hic %talk] [p.q.hic %helm] ~]
+          [[fap %dojo] [fap %talk] [fap %hood] ~]
+        [[p.q.hic %dojo] [p.q.hic %talk] [p.q.hic %hood] ~]
     =^  moz  all  abet:(need (ax (need hey.all) [%flow %sole flo]))
     ?:  |((lth p.q.hic 256) (gte p.q.hic (bex 64)))  [moz ..^$] ::  XX HORRIBLE
     [:_(moz [(need hey.all) %give %init p.q.hic]) ..^$]

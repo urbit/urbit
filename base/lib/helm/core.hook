@@ -19,24 +19,24 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-++  helm-begin                                          ::  begin command
+++  hood-begin                                          ::  begin command
   $:  his=@p                                            ::  identity
       tic=@p                                            ::  ticket
       eny=@t                                            ::  entropy
       ges=gens                                          ::  description
   ==                                                    ::
-++  helm-init                                           ::  report init
+++  hood-init                                           ::  report init
   $:  him=ship                                          ::
   ==                                                    ::
-++  helm-start                                          ::  start (local) server
+++  hood-start                                          ::  start (local) server
   $:  syd=desk                                          ::  desk
       dap=term                                          ::  program
   ==                                                    ::
-++  helm-reset                                          ::  reset command
+++  hood-reset                                          ::  reset command
   ,~                                                    ::
 ++  helm-verb                                           ::  reset command
   ,~                                                    ::
-++  helm-reload                                         ::  reload command
+++  hood-reload                                         ::  reload command
   (list term)                                           ::
 --                                                      ::
 ::                                                      ::  ::
@@ -76,7 +76,7 @@
     ?~(+< +> $(+< t.+<, +> (emit i.+<)))
   ::
   ++  poke-begin                                        ::  make/send keypair
-    |=  helm-begin  =<  abet
+    |=  hood-begin  =<  abet
     ?>  ?=(~ bur)
     =+  buz=(shax :(mix (jam ges) eny))
     =+  loy=(bruw 2.048 buz)
@@ -88,7 +88,7 @@
     (emit %flog /helm %crud %hax-init leaf/(scow %p him) ~)
   ::
   ++  poke-start                                        ::  start a server
-    |=  helm-start  =<  abet
+    |=  hood-start  =<  abet
     (emit %conf /helm [our dap] %load our syd)
   ::
   ++  poke-reload                                       ::  reload vanes
@@ -114,7 +114,7 @@
     ==
   ::
   ++  poke-reset                                        ::  reset system
-    |=  helm-reset  =<  abet
+    |=  hood-reset  =<  abet
     %-  emil
     =+  top=`path`/(scot %p our)/base/arvo/(scot %da lat)
     :-  [%flog /reset %vega (weld top `path`/hoon)]
