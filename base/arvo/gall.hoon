@@ -961,6 +961,7 @@
         %lynx  `%c
         %merg  `%c
         %plug  `%c
+        %them  `%e
         %want  `%a
       ==
     --
