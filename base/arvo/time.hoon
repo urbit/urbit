@@ -193,9 +193,9 @@
         %wegh
       :_  tym  :_  ~
       :^  hen  %give  %mass
+      :-  %time
       :-  %|
       :~  tym/`tym
-          ::  cor/`..^$
       ==
     ==
   [mof ..^$]

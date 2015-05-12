@@ -230,9 +230,9 @@
           %wegh
         :_  ..^$  :_  ~
         :^  hen  %give  %mass
+        :-  %gall
         :-  %|
         :~  all/`all
-            ::  cor/`..^$
         ==
       ::
           %wipe
