@@ -235,7 +235,7 @@
           ;~(pfix fas sym)
         ==
         (cook |=(a=term `goal`[our.hid a]) sym)
-        (easy [our.hid %helm])
+        (easy [our.hid %hood])
       ==
     ++  dp-model-cat  ;~(plug dp-server-cat dp-config)  ::  ++dojo-model
     ++  dp-model-dog  ;~(plug dp-server-dog dp-config)  ::  ++dojo-model
