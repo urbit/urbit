@@ -35,6 +35,7 @@
   ::
   ++  transmute                                         ::  dex as after sin
     |=  [sin=sole-edit dex=sole-edit]
+    ~|  [%transmute sin dex]
     ^-  sole-edit
     ?:  ?=(%mor -.sin)
       |-  ^-  sole-edit
@@ -56,7 +57,7 @@
       ?-  -.dex
         %del  ?:  =(p.sin p.dex)  [%nop ~]
               ?:((lth p.sin p.dex) dex(p (dec p.dex)) dex)
-        %ins  ?:((lte p.sin p.dex) dex(p (dec p.dex)) dex)
+        %ins  ?:((lth p.sin p.dex) dex(p (dec p.dex)) dex)
       ==
     ::  
         %ins
