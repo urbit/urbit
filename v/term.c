@@ -668,20 +668,6 @@ _term_it_save(u3_noun pax, u3_noun pad)
   free(pax_c);
 }
 
-/* _term_io_flow(): send flow.
-*/
-static void
-_term_io_flow(u3_utty* uty_u)
-{
-  u3_noun tid = u3dc("scot", c3__ud, uty_u->tid_l);
-  u3_noun pax = u3nq(u3_blip, c3__term, tid, u3_nul);
-
-  u3v_plan(pax, u3nq(c3__flow, c3__seat, c3__talk, u3_nul));
-  // u3v_plan(pax, u3nt(c3__flow, c3__seat, u3_nul));
-  // u3v_plan(pax, u3nq(c3__flow, c3__seat, c3__dojo, u3_nul));
-  // u3v_plan(pax, u3nq(c3__flow, c3__seat, c3__helm, u3_nul));
-}
-
 /* _term_io_belt(): send belt.
 */
 static void
@@ -832,9 +818,11 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
     else if ( 13 == cay_y ) {
       _term_io_belt(uty_u, u3nc(c3__ret, u3_nul));
     }
+#if 0
     else if ( 6 == cay_y ) {
       _term_io_flow(uty_u);   // XX hack
     }
+#endif
     else if ( cay_y <= 26 ) {
       _term_io_belt(uty_u, u3nc(c3__ctl, ('a' + (cay_y - 1))));
     }
