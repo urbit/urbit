@@ -81,6 +81,11 @@
         u3_noun
         u3m_soft_esc(u3_noun sam);
 
+      /* u3m_mark(): mark all nouns in the road.
+      */
+        c3_w
+        u3m_mark(void);
+
       /* u3m_grab(): garbage-collect the world, plus extra roots.
       */
         void

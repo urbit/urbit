@@ -30,11 +30,6 @@
         void
         u3m_dump(void);
 
-      /* u3m_mark(): mark all nouns in the road.
-      */
-        void
-        u3m_mark(void);
-
       /* u3m_fall(): return to parent road.
       */
         void
@@ -462,17 +457,19 @@ _pave_parts(void)
 
 /* u3m_mark(): mark all nouns in the road.
 */
-void
+c3_w
 u3m_mark(void)
 {
-  u3h_mark(u3R->jed.har_p);
-  u3a_mark_noun(u3R->jed.das);
-  u3a_mark_noun(u3R->ski.flu);
-  u3a_mark_noun(u3R->bug.tax);
-  u3a_mark_noun(u3R->bug.mer);
-  u3a_mark_noun(u3R->pro.don);
-  u3a_mark_noun(u3R->pro.day);
-  u3h_mark(u3R->cax.har_p);
+  c3_w tot_w = 0;
+  tot_w += u3h_mark(u3R->jed.har_p);
+  tot_w += u3a_mark_noun(u3R->jed.das);
+  tot_w += u3a_mark_noun(u3R->ski.flu);
+  tot_w += u3a_mark_noun(u3R->bug.tax);
+  tot_w += u3a_mark_noun(u3R->bug.mer);
+  tot_w += u3a_mark_noun(u3R->pro.don);
+  tot_w += u3a_mark_noun(u3R->pro.day);
+  tot_w += u3h_mark(u3R->cax.har_p);
+  return tot_w;
 }
 
 /* _cm_pave(): instantiate or activate image.
