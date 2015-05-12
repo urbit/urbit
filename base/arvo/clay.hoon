@@ -17,30 +17,8 @@
               mer=(map (pair ship desk) mery)           ::  outstanding merges
               syn=?                                     ::  sync to unix
           ==                                            ::
-++  gift                                                ::  out result <-$
-          $%  [%ergo p=@p q=@tas r=@ud s=(list ,[path (unit mime)])]
-                                                        ::  version update
-              [%mass p=mass]                            ::  memory usage
-              [%mere p=(each (set path) (pair term tang))]  ::  merge result
-              [%note p=@tD q=tank]                      ::  debug message
-              [%writ p=riot]                            ::  response
-          ==                                            ::
-++  khan                                                ::
-          $:  fil=(unit (unit cage))                    ::  XX see khan-to-soba
-              dir=(map ,@ta khan)                       ::
-          ==                                            ::
-++  kiss                                                ::  in request ->$
-          $%  [%font p=@p q=@tas r=@p s=@tas]           ::  set upstream
-              [%info p=@p q=@tas r=nori]                ::  internal edit
-              [%init p=@p]                              ::  report install
-              [%into p=@p q=@tas r=khan]                ::  external edit
-              [%lynx p=@p q=@tas r=(unit ,?)]           ::  sync to unix
-              [%merg p=@p q=@tas r=@p s=@tas t=germ]    ::  merge desks
-              [%plug p=@p q=@tas r=@p s=@tas]           ::  unset upstream
-              [%wart p=sock q=@tas r=path s=*]          ::  network request
-              [%warp p=sock q=riff]                     ::  file request
-              [%wegh ~]                                 ::  report memory
-          ==                                            ::
+++  gift  gift-clay                                     ::  out result <-$
+++  kiss  kiss-clay                                     ::  in request ->$
 ++  mery                                                ::
           $:  gem=germ                                  ::  strategy
               cas=case                                  ::  ali's case
@@ -102,26 +80,6 @@
               $:  @tas                                  ::  by any
           $%  [%crud p=@tas q=(list tank)]              ::
           ==  ==  ==                                    ::
-++  silk                                                ::  construction layer
-          $&  [p=silk q=silk]                           ::  cons
-          $%  [%bake p=mark q=beam r=path]              ::  local synthesis
-              [%boil p=mark q=beam r=path]              ::  general synthesis
-              [%bunt p=mark]                            ::  example of mark
-              [%call p=silk q=silk]                     ::  slam
-              [%cast p=mark q=silk]                     ::  translate
-              [%diff p=silk q=silk]                     ::  diff
-              [%done p=(set beam) q=gage]               ::  literal
-              [%dude p=tank q=silk]                     ::  error wrap
-              [%dune p=(set beam) q=(unit gage)]        ::  unit literal
-              [%join p=mark q=silk r=silk]              ::  merge
-              [%mute p=silk q=(list (pair wing silk))]  ::  mutant
-              [%pact p=silk q=silk]                     ::  patch
-              [%reef ~]                                 ::  kernel reef
-              [%ride p=twig q=silk]                     ::  silk thru twig
-              [%tabl p=(list (pair silk silk))]         ::  list
-              [%vale p=mark q=ship r=*]                 ::  validate [our his]
-              [%volt p=(set beam) q=(cask ,*)]          ::  unsafe add type
-          ==                                            ::
 ++  raft                                                ::  filesystem
           $:  fat=(map ship room)                       ::  domestic
               hoy=(map ship rung)                       ::  foreign
@@ -138,7 +96,6 @@
               mer=(map (pair ship desk) mery)           ::  outstanding merges
               syn=?                                     ::  sync to unix
           ==                                            ::
-++  riff  ,[p=desk q=(unit rave)]                       ::  request/desist
 ++  rind                                                ::  request manager
           $:  nix=@ud                                   ::  request index
               bom=(map ,@ud ,[p=duct q=rave])           ::  outstanding
