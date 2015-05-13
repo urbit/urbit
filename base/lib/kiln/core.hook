@@ -42,7 +42,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   !:                                                    ::  ::
-|%                                                      ::  helm library
+|%                                                      ::  kiln library
 ++  kiln-work                                           ::  work in kiln
   |=  [[hide from] kiln-part]
   ?>  =(src our)
@@ -296,7 +296,7 @@
           :~  :~  leaf/""
                   leaf/"done setting up scratch space in %{-}"
                   leaf/"please resolve the following conflicts and run"
-                  leaf/":helm+merge %{(trip syd)} {<our>} %{-}"
+                  leaf/":+merge %{(trip syd)} {<our>} %{-}"
               ==
               ?~  annotated
                 ~

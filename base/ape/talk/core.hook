@@ -1714,7 +1714,7 @@
   ra-abet:(~(ra-quit ra ost ~) man cuz)
 ::
 ++  pull                                                ::
-  |=  [from ~]
+  |=  [from *]
   ^-  [(list move) _+>]
   ::  ~&  [%talk-pull `*`ost]
   =^  moz  +>.$  ra-abet:ra-ever:~(ra-cancel ra ost ~)
