@@ -788,7 +788,7 @@
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
         [%| (ap-suck "move: malformed path")]
       =+  huj=(ap-vain wut)
-      ?~  huj  [%| (ap-suck "move: unknown note {(trip wut)}")]
+      ?~  huj  [%| (ap-suck "move: unknown note {<`@tas`wut>}")]
       :^  %&  sto  %pass
       :-  [(scot %p q.q.pry) %inn u.pux]
       [%meta u.huj (slop (ap-term %tas wut) (slot 3 vax))]
