@@ -75,6 +75,7 @@ html {
   font-family: "bau", "Helvetica Neue", helvetica, arial, sans-serif;
 }
 code,
+pre,
 li:before,
 .spin,
 #bred a {
@@ -126,13 +127,16 @@ h3 code {
   font-size: inherit;
   padding: 0.3rem;
 }
+pre,
+code {
+  font-size: 0.8rem;
+}
 pre {
   background-color: #f5f5f5;
   padding: 0.3rem;
   margin-left: -0.3rem;
 }
 code {
-  font-size: 0.8rem;
   line-height: 1.2rem;
   background-color: #f4f4f4;
   margin-top: -0.05rem;

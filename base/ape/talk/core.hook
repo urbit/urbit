@@ -1649,6 +1649,9 @@
       ?:  oug
         (weld "@ " txt)
       (weld " " txt)
+    ::
+        %app
+      [' ' (trip p.sep)]
     ==
   -- 
 ::
@@ -1679,7 +1682,7 @@
 ::
 ++  coup-repeat                                         ::
   |=  [then saw=(unit tang)]
-  %+  etch-repeat  way  |=  [num=@ud src=@p man=span]
+  %+  etch-repeat  [%repeat way]  |=  [num=@ud src=@p man=span]
   ra-abet:(~(ra-coup-repeat ra ost ~) [num src man] saw)
 ::
 ++  etch                                                ::  parse wire
@@ -1707,7 +1710,7 @@
 ::
 ++  quit-friend                                         ::
   |=  then
-  %+  etch-friend  way  |=  [man=span cuz=station]
+  %+  etch-friend  [%friend way]  |=  [man=span cuz=station]
   ra-abet:(~(ra-quit ra ost ~) man cuz)
 ::
 ++  pull                                                ::
@@ -1717,12 +1720,12 @@
   =^  moz  +>.$  ra-abet:ra-ever:~(ra-cancel ra ost ~)
   [moz +>.$(shells (~(del by shells) ost))]
 ::
-++  poke-bit
-  |=  [from ~]
-  ^-  (quip move +>)
-  :_  +>.$
-  =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/talk/backlog/jam
-  [ost %info /jamfile our.hid (foal paf (jam +<+.+>.$))]~
+::++  poke-bit
+::  |=  [from ~]
+::  ^-  (quip move +>)
+::  :_  +>.$
+::  =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/talk/backlog/jam
+::  [ost %info /jamfile our.hid (foal paf (jam +<+.+>.$))]~
 ::
 ++  prep
   |=  [from old=(unit house)]

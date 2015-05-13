@@ -1746,7 +1746,7 @@
   %+  rap  3  :-  (wack a)
   (turn b |=(c=span (cat 3 '_' (wack c))))
 ::
-++  pick                                                ::  light path decoding
+++  puck                                                ::  light path decoding
   =+  fel=(most cab (sear wick urt:ab))
   |=(a=span `(unit ,[p=term q=path])`(rush a fel))
 ::
@@ -1767,7 +1767,7 @@
     %pawn  `@p`0
   ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 3bI, Arvo models              ::
+::                section 3bI, Arvo structures          ::
 ::
 ++  acru                                                ::  asym cryptosuite
           $_  ^?  |%                                    ::  opaque object
@@ -2263,4 +2263,24 @@
 ++  wund  (list ,[p=life q=ring r=acru])                ::  mace in action
 ++  will  (list deed)                                   ::  certificate
 ++  zuse  %310                                          ::  hoon/zuse kelvin
+::          ::
+::::        ::::  this will become `%york`, separating out structures
+  ::          ::  related to arvo in 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 --

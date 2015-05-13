@@ -4,6 +4,19 @@
 |=  pit=vase
 =>  =~
 |%                                                      ::  interfaces
+++  club                                                ::  agent action
+  $%  [%peer p=path]                                    ::  subscribe
+      [%poke p=cage]                                    ::  apply
+      [%pull ~]                                         ::  unsubscribe
+      [%pump ~]                                         ::  subscription ack
+  ==                                                    ::
+++  cush  (pair term club)                              ::  internal kiss
+++  cuft                                                ::  internal gift
+  $%  [%coup p=(unit tang)]                             ::  poke result
+      [%diff p=cage]                                    ::  subscription output
+      [%quit ~]                                         ::  close subscription
+      [%reap p=(unit tang)]                             ::  peer result
+  ==                                                    ::
 ++  gift                                                ::  out result <-$
           $%  [%mass p=mass]                            ::  memory usage
               [%thou p=httr]                            ::  raw http response
@@ -47,10 +60,7 @@
               [%wasp p=@p q=@uvH]                       ::
           ==  ==                                        ::
               $:  %g                                    ::  to %gall
-          $%  [%mess p=hapt q=ship r=cage]              ::
-              [%nuke p=hapt q=ship]                     ::
-              [%show p=hapt q=ship r=path]              ::
-              [%took p=hapt q=ship]                     ::  
+          $%  [%deal p=sock q=cush]                     ::  full transmission
           ==  ==                                        ::
               $:  %t                                    ::  to  %temp
           $%  [%wait p=@da]                             ::
@@ -62,15 +72,12 @@
               [%cast p=mark q=silk]                     :: 
               [%done p=(set beam) q=cage]               ::
           ==                                            ::
-++  sine                                                ::
-          $?  sign                                      ::
-              $:  %g                                    ::
-          $%  [%veer p=@ta q=path r=@t]                 ::
-              [%vega p=path]                            ::
-          ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
           $%  [%went p=ship q=cape]                     ::
+          ==  ==                                        ::
+              $:  %g                                    ::  by %gall
+          $%  [%unto p=cuft]                            ::  within agent
           ==  ==                                        ::
               $:  %e                                    ::  by self
           $%  [%thou p=httr]                            ::  response for proxy
@@ -79,13 +86,6 @@
           $%  [%made p=@uvH q=(each gage tang)]         ::
               [%news ~]                                 ::
           ==  ==                                        ::
-              $:  %g                                    ::  by %gall
-          $%  [%dumb ~]                                 ::
-              [%mean p=ares]                            ::
-              [%nice ~]                                 ::
-              [%rush p=mark q=*]                        ::
-              [%rust p=mark q=*]                        ::
-          ==  ==                                        ::           
               $:  %t                                    ::  by %time
           $%  [%wake ~]                                 ::  timer activate
           ==  ==                                        ::
@@ -117,7 +117,7 @@
       dop=(map host ship)                               ::  host aliasing
       liz=(jug ,@uvH (each duct ixor))                  ::  ford depsets
       wup=(map hole cyst)                               ::  secure sessions
-      sop=(map hole ,[ship ?])                          ::  foreign session names
+      sop=(map hole ,[ship ?])                          ::  foreign sess names
       wix=(map ixor stem)                               ::  open views
   ==                                                    ::
 ::
@@ -137,7 +137,7 @@
       eve=[p=@u q=(map ,@u even)]                       ::  queued events
       med=(qeu duct)                                    ::  waiting /~/to/
   ==
-::
+++  honk  $%([%nice ~] [%mean p=ares])                  ::  old gall result
 ++  even                                                ::  client event
   $%  [%mean p=[hasp path] q=ares]
       [%news p=@uv]
@@ -158,7 +158,7 @@
   ==
 ::
 ++  perk-auth                                           ::  parsed auth
-  $%  [%at p=pork]                               ::  inject auth
+  $%  [%at p=pork]                                      ::  inject auth
       [%del p=(unit ship)]
       [%get him=ship rem=pork]
       [%js ~]
@@ -176,7 +176,7 @@
       [%js p=@t]                                        ::  script
       [%json p=json]                                    ::  data
       [%html p=manx]                                    ::  successful page
-      [%htme p=manx]                                    ::  authentication failure
+      [%htme p=manx]                                    ::  authentication fail 
   ==
 --                                                      ::
 |%
@@ -488,36 +488,42 @@
       %wegh  !!
     ==
   ::
+  ++  axom                                              ::  old response
+    |=  [tee=whir hon=honk]
+    ^+  +>
+    ?+  tee  !!
+      ~          ?-(-.hon %nice (nice-json), %mean (mean-json 500 p.hon))
+      [%of @ ^]  (get-ack:(ire-ix p.tee) q.tee hon)
+    ==
   ++  axon                                              ::  accept response
     |=  [tee=whir typ=type sih=sign]
     ^+  +>
-    :: %-  emule  |.  ^+  ..axon
     =.  our  ?~(hov our u.hov)  ::  XX
     ?-    &2.sih
         %crud  +>.$(mow [[hen %slip %d %flog +.sih] mow])
-        %dumb  
-      =.  +>  ?+(tee +> [%of ^] pop-duct:(ire-ix p.tee))
-      (emule |.(~|(gall-dumb/tee !!)))
+    ::  %dumb  
+    ::    =.  +>  ?+(tee +> [%of ^] pop-duct:(ire-ix p.tee))
+    ::    (emule |.(~|(gall-dumb/tee !!)))
     ::
         %went  +>.$
         %thou
       ?>  ?=([%ay ^] tee)
       (ames-gram (slav %p p.tee) got/~ (slav %uv q.tee) |2.sih)
     ::
-        ?(%rush %rust)
-      ?>  ?=([%of @ ^] tee)
-      ?.  ?=(%json p.sih)
-        =-  (back tee 0v0 %json -)
-        `cage`[p.sih (slot 3 (spec (slot 3 [typ +.sih])))]
-      ~!  [q.tee *whir-of]
-      (get-rush:(ire-ix p.tee) q.tee ((hard json) q.sih))
-    ::
-        ?(%nice %mean)
-      ::  ~&  [tee `@tas`&2.sih]
-      ?+  tee  !!
-        ~   ~&  empty-ack/&2.sih
-            ?-(&2.sih %nice (nice-json), %mean (mean-json 500 p.sih))
-        [%of @ ^]  (get-ack:(ire-ix p.tee) q.tee +.sih)
+        %unto                                           ::  XX horrible
+      =+  cuf=`cuft`+>.sih
+      ?-    -.cuf
+          ?(%coup %reap)
+        (axom tee ?~(p.cuf [%nice ~] [%mean `[-.cuf u.p.cuf]]))
+      ::
+          %diff
+        ?>  ?=([%of @ ^] tee)
+        ?.  ?=(%json p.p.cuf)
+          ::~>  %slog.`rose/[" " "[" "]"]^~[>%backing< >p.p.cuf< (sell q.p.cuf)]
+          (back tee 0v0 %json p.cuf)
+        (get-rush:(ire-ix p.tee) q.tee ((hard json) q.q.p.cuf))
+      ::
+          %quit  (axom tee [%mean ~])
       ==
     ::
         %wake
@@ -627,7 +633,7 @@
     |=([him=ship gam=gram] (pass-note ~ %a %want [our him] [%e -.gam] +.gam))
   ::
   ++  back                                              ::  %ford bounce
-    |=  [tea=whir dep=@uvH mar=mark cay=cage]                
+    |=  [tea=whir dep=@uvH mar=mark cay=cage]
     (pass-note tea (ford-req root-beak [%cast mar %done ~ cay])) ::  XX deps
   ::
   ++  ford-kill  (pass-note ~ %f [%exec our *beak ~])        :: XX unused
@@ -1034,9 +1040,11 @@
       =+  lig=(session-from-cookies pef maf)
       ?~  lig
         (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
-      ~|  bad-cookie/u.lig
-      =+  cyz=(~(got by wup) u.lig)
-      ~(. ya u.lig cyz(him him, cug ~))
+      =+  cyz=(~(get by wup) u.lig)
+      ?~  cyz
+        ~&  bad-cookie/u.lig
+        (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
+      ~(. ya u.lig u.cyz(him him, cug ~))
     ::
     ++  new-ya  |=(ses=hole ~(. ya ses (new-cyst ses)))
     ++  new-cyst
@@ -1161,22 +1169,22 @@
     ::
     ++  new-mess
       |=  [a=hasp b=wire c=cage]  ^+  ..ix
-      (hurl-note [a b] [%g %mess [- + ~]:a him c])
+      (hurl-note [a b] [%g %deal [him -.a] +.a %poke c])
     ::
     ++  add-subs
       |=  [a=hasp %json b=wire c=path]  ^+  ..ix
-      (hurl-note [a b] [%g %show [- + ~]:a him c])
+      (hurl-note [a b] [%g %deal [him -.a] +.a %peer c])
     ::
     ++  del-subs                      ::  XX per path?
       |=  [a=hasp %json b=wire c=path]  ^+  ..ix
-      (hurl-note [a b] [%g %nuke [- + ~]:a him])
+      (hurl-note [a b] [%g %deal [him -.a] +.a %pull ~])
     ::
     ++  get-rush
       |=  [a=whir-of b=json]  ^+  ..ix
       (get-even [%rush [[(slav %p p.a) q.a] r.a] (joba %json b)])
     ::
     ++  get-ack
-      |=  [a=whir-of b=$&([%nice ~] [%mean p=ares])]  ^+  ..ix
+      |=  [a=whir-of b=honk]  ^+  ..ix
       ?-  -.b
           %mean
         ?~  p.b                       ::  XX  actually a yawn-told-full
@@ -1214,7 +1222,9 @@
     ::
     ++  pass-took
       |=  a=[p=hasp wire]
-      (pass-note(hen `~) [%of ire (gsig a)] [%g %took [- + ~]:p.a him])
+      %+  pass-note(hen `~)
+        [%of ire (gsig a)] 
+      [%g %deal [him -.p.a] +.p.a %pump ~]
     ::
     ++  pop-duct  =^(ned med ~(get to med) abet(hen ned))
     ++  poll
@@ -1262,9 +1272,9 @@
   ?:  ?=(%wegh -.q.hic)
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
-    :-  %eyre
     :-  %|
     :~  bol/`bol
+        ::  cor/`..^$
     ==
   =+  our=`@p`0x100  ::  XX  sentinel
   =+  ska=(slod ski)
@@ -1285,9 +1295,10 @@
   |=  old=bolo
   ^+  ..^$
   =+  mej=|=(a=* (met 3 (jam a)))
-  ~&  :*  gub=(mej gub.old)  hov=(mej hov.old)  ged=(mej ged.old)  ded=(mej ded.old)
-          pox=(mej pox.old)  ask=(mej ask.old)  kes=(mej kes.old)  ney=(mej ney.old)
-          dop=(mej dop.old)  liz=(mej liz.old)  wup=(mej wup.old)  sop=(mej sop.old)
+  ~&  :*  gub=(mej gub.old)  hov=(mej hov.old)  ged=(mej ged.old)  
+          ded=(mej ded.old)  pox=(mej pox.old)  ask=(mej ask.old)  
+          kes=(mej kes.old)  ney=(mej ney.old)  dop=(mej dop.old)  
+          liz=(mej liz.old)  wup=(mej wup.old)  sop=(mej sop.old)
           wix=(mej wix.old)
       ==
   ..^$(+>- old)
@@ -1299,12 +1310,8 @@
 ::
 ++  stay  `bolo`+>-.$
 ++  take                                                ::  accept response
-  |=  [tea=wire hen=duct hin=(hypo sine)]
+  |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [p=(list move) q=_..^$]
-  ?:  ?=(%veer +<.q.hin)                                ::  vomit
-    [[hen %give +.q.hin]~ ..^$]
-  ?:  ?=(%vega +<.q.hin)                                ::  vomit
-    [[hen %give +.q.hin]~ ..^$]
   =+  our=`@p`0x100  ::  XX  sentinel
   =+  ska=(slod ski)
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
