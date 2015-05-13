@@ -80,7 +80,7 @@ Page = recl({
                     region:$('#region').val(),
                     size:$('#size').val(),
                     image:$('#image').val(),
-                    ssh:[$('#ssh').val()],
+                    ssh:[] // $('#ssh').val()],
                     backups:null,//$('#backups').val(),
                     ipv6:null,//$('#ipv6').val(),
                     priv_networking:null,//$('#priv-networking').val(),
