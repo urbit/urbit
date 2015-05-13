@@ -485,8 +485,6 @@ u3_reck_kick(u3_noun ovo)
   if ( (c3n == _reck_kick_spec(u3k(u3h(ovo)), u3k(u3t(ovo)))) &&
        (c3n == _reck_kick_norm(u3k(u3h(ovo)), u3k(u3t(ovo)))) )
   {
-    u3_noun tox = u3do("spat", u3k(u3h(ovo)));
-
 #if 0
     if ( (c3__warn != u3h(u3t(ovo))) &&
          (c3__text != u3h(u3t(ovo))) &&
@@ -504,9 +502,11 @@ u3_reck_kick(u3_noun ovo)
                  u3nc(c3__flog, u3k(u3t(ovo))));
     }
     else {
+      u3_noun tox = u3do("spat", u3k(u3h(ovo)));
       uL(fprintf(uH, "kick: lost %%%s on %s\n",
                      u3r_string(u3h(u3t(ovo))),
                      u3r_string(tox)));
+      u3z(tox);
 #if 0
       if ( c3__hear == u3h(u3t(ovo)) ) {
         c3_assert(0);
@@ -514,7 +514,6 @@ u3_reck_kick(u3_noun ovo)
 #endif
     }
 #endif
-    u3z(tox);
   }
   u3z(ovo);
 }
