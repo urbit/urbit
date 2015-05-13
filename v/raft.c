@@ -1859,6 +1859,8 @@ _raft_grab(u3_noun ova)
          har_w = 0, das_w = 0, flu_w = 0, tax_w = 0, mer_w = 0, don_w = 0,
          day_w = 0, car_w = 0;
 
+    c3_assert( u3R == &(u3H->rod_u) );
+
     fprintf(stderr, "\r\n");
     usr_w = _raft_prof(u3_nul, 0, u3A->sac);
     fprintf(stderr, "total userspace: ");
@@ -1918,6 +1920,9 @@ _raft_grab(u3_noun ova)
     wep_w = u3a_sweep();
     fprintf(stderr, "sweep: ");
     _raft_print_memory(wep_w);
+
+    u3h_free(u3R->cax.har_p);
+    u3R->cax.har_p = u3h_new();
 
     u3z(u3A->sac);
     u3A->sac = u3_nul;
