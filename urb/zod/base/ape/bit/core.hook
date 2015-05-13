@@ -79,11 +79,11 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   ~
 ::
 ++  send-friend                      ::  inter-app interface
-  |=  [ost=bone pax=path his=ship mez=$%([%bit-addr-request ~] [%bit-addr-made @t])]
+  |=  [ost=bone way=wire his=ship mez=$%([%bit-addr-request ~] [%bit-addr-made @t])]
   ^-  move
-  [ost %send pax [his app.hid] %poke mez]
+  [ost %send way [his app.hid] %poke mez]
 ::
-++  poke--send                        ::  send to ship
+++  poke-bit-send                        ::  send to ship
   |=  [[ost=bone @] to=ship amount=@t]
   =.  outgoing.vat  (~(put by outgoing.vat) to amount)
   :_  +>.$
@@ -202,15 +202,14 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   :_  ~
   !! 
 ::
-++  pour
-  |=  [ost=bone pax=path res=sign]
-  ?+  -.pax  !!
+++  thou
+  |=  [[ost=bone @ way=wire] res=httr]
+  ?+  -.way  !!
     %auth-token
-      ?>  ?=(%thou -.res)
       ~|  'must receive a 200'^oauth-code.vat
       ~|  res
-      ?>  =(200 p.p.res)
-      =+  resp=(rash q:(need r.p.res) apex:poja)
+      ?>  =(200 p.res)
+      =+  resp=(rash q:(need r.res) apex:poja)
       =+  parsed=(need ((ot 'refresh_token'^so 'access_token'^so ~):jo resp))
       ~&  parsed
       =:  auth-token.vat  [~ +.parsed]
@@ -221,25 +220,23 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
       (publish ost our.hid [%lin & 'authenticated.']~)
     %message  `+>.$
     ?(%addr-request %get-id)
-      ?>  ?=(%thou -.res)
       ~|  'must receive a 200'
       ~|  res
-      ?>  =(200 p.p.res)
-      %-  ?-(-.pax %addr-request pour-addr-request, %get-id pour-get-id)
-      [ost pax (rash q:(need r.p.res) apex:poja)]
+      ?>  =(200 p.res)
+      %-  ?-(-.way %addr-request pour-addr-request, %get-id pour-get-id)
+      [ost way (rash q:(need r.res) apex:poja)]
     %auth
       :_  +>.$
       ~
     ?(%get-id %send %buy %list %sell)
-      ~&  [`@tas`-.pax res]
+      ~&  [`@tas`-.way res]
       :_  +>.$
       ~
     %sent
-      ?>  ?=(%thou -.res)
       ~|  'must receive a 200'
       ~|  res
-      ?>  =(200 p.p.res)
-      =+  resp=(rash q:(need r.p.res) apex:poja)
+      ?>  =(200 p.res)
+      =+  resp=(rash q:(need r.res) apex:poja)
       =+  suc=((ot success/so ~):jo resp)
       :_  +>.$
       :_  ~
