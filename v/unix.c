@@ -21,6 +21,9 @@
 #include "all.h"
 #include "v/vere.h"
 
+/* undef this to turn off syncing out to unix */
+#define ERGO_SYNC
+
 /* _unix_ship_in(): c3_w[4] to ship.
 */
 static u3_noun
@@ -82,42 +85,6 @@ _unix_mkdir(c3_c* pax_c)
   }
 }
 
-/* _unix_mkpath(): mkdir -p, asserting
- *
- * adapted from
- * http://niallohiggins.com/2009/01/08/mkpath-mkdir-p-alike-in-c-for-unix/
- */
-static void
-_unix_mkpath(const char *s)
-{
-  char *q, *r = NULL, *path = NULL, *up = NULL;
-
-  if (strcmp(s, ".") == 0 || strcmp(s, "/") == 0)
-    return;
-
-  if ((path = strdup(s)) == NULL)
-    c3_assert(0);
-
-  if ((q = strdup(s)) == NULL)
-    c3_assert(0);
-
-  if ((r = dirname(q)) == NULL)
-    goto out;
-
-  if ((up = strdup(r)) == NULL)
-    exit(1);
-
-  _unix_mkpath(up);
-
-  _unix_mkdir(path);
-
-out:
-  if (up != NULL)
-    free(up);
-  free(q);
-  free(path);
-}
-
 /* _unix_opendir(): opendir, recreating if nonexistent.
 */
 static DIR*
@@ -135,17 +102,6 @@ _unix_opendir(c3_c* pax_c)
     }
   }
   return rid_u;
-}
-
-/* _unix_unlink(): unlink, asserting.
-*/
-static void
-_unix_unlink(c3_c* pax_c)
-{
-  if ( 0 != unlink(pax_c) && ENOENT != errno ) {
-    uL(fprintf(uH, "error unlinking %s: %s\n", pax_c, strerror(errno)));
-    c3_assert(0);
-  }
 }
 
 /* u3_unix_acquire(): acquire a lockfile, killing anything that holds it.
@@ -332,38 +288,6 @@ _unix_file_watch(u3_ufil* fil_u,
 
 }
 
-/* _unix_file_form(): form a filename path downward.
-*/
-static c3_c*
-_unix_file_form(c3_c* pax_c,
-                u3_noun  pre,
-                u3_noun  ket,
-                u3_noun  ext)
-{
-  c3_c* pre_c = u3r_string(pre);
-  c3_c* ext_c = u3r_string(ext);
-  c3_w  pax_w = strlen(pax_c);
-  c3_w  pre_w = strlen(pre_c);
-  c3_w  ext_w = strlen(ext_c);
-  c3_w  ket_w = (c3y == ket) ? 1 : 0;
-  c3_c* pox_c = c3_malloc(pax_w + 1 + pre_w + 1 + ket_w + ext_w + 1);
-
-  strncpy(pox_c, pax_c, pax_w);
-  pox_c[pax_w] = '/';
-  strncpy(pox_c + pax_w + 1, pre_c, pre_w);
-  pox_c[pax_w + 1 + pre_w] = '.';
-  if ( c3y == ket ) {
-    pox_c[pax_w + 1 + pre_w + 1] = '^';
-  }
-  strncpy(pox_c + pax_w + 1 + pre_w + 1 + ket_w, ext_c, ext_w);
-  pox_c[pax_w + 1 + pre_w + 1 + ket_w + ext_w] = '\0';
-
-  free(pre_c); free(ext_c);
-  u3z(pre); u3z(ext);
-
-  return pox_c;
-}
-
 /* _unix_dir_watch(): instantiate directory tracker.
 */
 static void
@@ -400,35 +324,6 @@ _unix_dir_watch(u3_udir* dir_u, u3_udir* par_u, c3_c* pax_c, c3_c* pot_c)
     c3_assert(0);
   }
 
-}
-
-/* _unix_dir_forge: instantiate directory tracker (and make directory).
-*/
-static void
-_unix_dir_forge(u3_udir* dir_u, u3_udir* par_u, u3_noun tet)
-{
-  c3_c* tet_c = u3r_string(tet);
-  c3_w  pax_w = strlen(par_u->pax_c);
-  c3_w  tet_w = strlen(tet_c);
-  c3_c* pax_c = c3_malloc(pax_w + 1 + tet_w + 1);
-  c3_c* pot_c = c3_malloc(pax_w + 1 + 1 + tet_w + 1);
-
-  strncpy(pax_c, par_u->pax_c, pax_w + 1);
-  pax_c[pax_w] = '/';
-  strncpy(pax_c + pax_w + 1, tet_c, tet_w + 1);
-  pax_c[pax_w + tet_w + 1] = '\0';
-
-  strncpy(pot_c, par_u->pot_c, pax_w + 1 + 1);
-  pot_c[pax_w + 1] = '/';
-  strncpy(pot_c + pax_w + 1 + 1, tet_c, tet_w + 1);
-  pot_c[pax_w + 1 + tet_w + 1] = '\0';
-
-  free(tet_c);
-  u3z(tet);
-
-  _unix_mkdir(pax_c);
-  _unix_mkdir(pot_c);
-  _unix_dir_watch(dir_u, par_u, pax_c, pot_c);
 }
 
 /* _unix_file_done(): finish freeing file.
@@ -739,42 +634,6 @@ _unix_load(u3_ufil* fil_u)
 
     return cay;
   }
-}
-
-/* unix_save(): save a file.
-*/
-static void
-_unix_save(c3_c* pax_c, u3_atom oat)
-{
-  c3_c* dir = strdup(pax_c);
-  _unix_mkpath(dirname(dir));
-  free(dir);
-
-  c3_i  fid_i = open(pax_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-  c3_w  fln_w, rit_w, siz_w;
-  c3_y* oat_y;
-
-  if ( fid_i < 0 ) {
-    uL(fprintf(uH, "error opening %s: %s\n", pax_c, strerror(errno)));
-    u3m_bail(c3__fail);
-  }
-
-  siz_w = u3h(u3t(oat));
-  fln_w = u3r_met(3, u3t(u3t(oat)));
-  oat_y = c3_malloc(siz_w);
-  memset(oat_y, 0, siz_w);
-
-  u3r_bytes(0, fln_w, oat_y, u3t(u3t(oat)));
-  u3z(oat);
-
-  rit_w = write(fid_i, oat_y, siz_w);
-  if ( rit_w != siz_w ) {
-    uL(fprintf(uH, "error writing %s: %s\n", pax_c, strerror(errno)));
-    c3_assert(0);
-  }
-
-  close(fid_i);
-  free(oat_y);
 }
 
 /* _unix_file_load(): load a file by watcher.
@@ -1201,6 +1060,134 @@ _unix_hot_lose(u3_uhot* hot_u)
   _unix_dir_free(&(hot_u->dir_u));
 }
 
+/* _unix_home(): find home directory from identity.
+*/
+static u3_uhot*
+_unix_home(u3_noun who)
+{
+  u3_unix* unx_u = &u3_Host.unx_u;
+  u3_uhot* hot_u;
+  c3_w     who_w[4];
+
+  _unix_ship_out(who, who_w);
+  for ( hot_u = unx_u->hot_u;
+        hot_u && !_(_unix_ship_sing(who_w, hot_u->who_w));
+        hot_u = hot_u->nex_u )
+  {
+    // uL(fprintf(uH, "uh: %p, %s\n", hot_u, hot_u->dir_u.pax_c));
+  }
+  return hot_u;
+}
+
+#ifdef ERGO_SYNC
+/* _unix_mkpath(): mkdir -p, asserting
+ *
+ * adapted from
+ * http://niallohiggins.com/2009/01/08/mkpath-mkdir-p-alike-in-c-for-unix/
+ */
+static void
+_unix_mkpath(const char *s)
+{
+  char *q, *r = NULL, *path = NULL, *up = NULL;
+
+  if (strcmp(s, ".") == 0 || strcmp(s, "/") == 0)
+    return;
+
+  if ((path = strdup(s)) == NULL)
+    c3_assert(0);
+
+  if ((q = strdup(s)) == NULL)
+    c3_assert(0);
+
+  if ((r = dirname(q)) == NULL)
+    goto out;
+
+  if ((up = strdup(r)) == NULL)
+    exit(1);
+
+  _unix_mkpath(up);
+
+  _unix_mkdir(path);
+
+out:
+  if (up != NULL)
+    free(up);
+  free(q);
+  free(path);
+}
+
+/* _unix_dir_forge: instantiate directory tracker (and make directory).
+*/
+static void
+_unix_dir_forge(u3_udir* dir_u, u3_udir* par_u, u3_noun tet)
+{
+  c3_c* tet_c = u3r_string(tet);
+  c3_w  pax_w = strlen(par_u->pax_c);
+  c3_w  tet_w = strlen(tet_c);
+  c3_c* pax_c = c3_malloc(pax_w + 1 + tet_w + 1);
+  c3_c* pot_c = c3_malloc(pax_w + 1 + 1 + tet_w + 1);
+
+  strncpy(pax_c, par_u->pax_c, pax_w + 1);
+  pax_c[pax_w] = '/';
+  strncpy(pax_c + pax_w + 1, tet_c, tet_w + 1);
+  pax_c[pax_w + tet_w + 1] = '\0';
+
+  strncpy(pot_c, par_u->pot_c, pax_w + 1 + 1);
+  pot_c[pax_w + 1] = '/';
+  strncpy(pot_c + pax_w + 1 + 1, tet_c, tet_w + 1);
+  pot_c[pax_w + 1 + tet_w + 1] = '\0';
+
+  free(tet_c);
+  u3z(tet);
+
+  _unix_mkdir(pax_c);
+  _unix_mkdir(pot_c);
+  _unix_dir_watch(dir_u, par_u, pax_c, pot_c);
+}
+
+/* _unix_file_form(): form a filename path downward.
+*/
+static c3_c*
+_unix_file_form(c3_c* pax_c,
+                u3_noun  pre,
+                u3_noun  ket,
+                u3_noun  ext)
+{
+  c3_c* pre_c = u3r_string(pre);
+  c3_c* ext_c = u3r_string(ext);
+  c3_w  pax_w = strlen(pax_c);
+  c3_w  pre_w = strlen(pre_c);
+  c3_w  ext_w = strlen(ext_c);
+  c3_w  ket_w = (c3y == ket) ? 1 : 0;
+  c3_c* pox_c = c3_malloc(pax_w + 1 + pre_w + 1 + ket_w + ext_w + 1);
+
+  strncpy(pox_c, pax_c, pax_w);
+  pox_c[pax_w] = '/';
+  strncpy(pox_c + pax_w + 1, pre_c, pre_w);
+  pox_c[pax_w + 1 + pre_w] = '.';
+  if ( c3y == ket ) {
+    pox_c[pax_w + 1 + pre_w + 1] = '^';
+  }
+  strncpy(pox_c + pax_w + 1 + pre_w + 1 + ket_w, ext_c, ext_w);
+  pox_c[pax_w + 1 + pre_w + 1 + ket_w + ext_w] = '\0';
+
+  free(pre_c); free(ext_c);
+  u3z(pre); u3z(ext);
+
+  return pox_c;
+}
+
+/* _unix_unlink(): unlink, asserting.
+*/
+static void
+_unix_unlink(c3_c* pax_c)
+{
+  if ( 0 != unlink(pax_c) && ENOENT != errno ) {
+    uL(fprintf(uH, "error unlinking %s: %s\n", pax_c, strerror(errno)));
+    c3_assert(0);
+  }
+}
+
 /* _unix_pdir(): find directory reference from text.
 */
 static u3_udir**
@@ -1221,34 +1208,41 @@ _unix_pdir(u3_udir* par_u, u3_noun tet)
   }
 }
 
-/* _unix_home(): find home directory from identity.
+/* unix_save(): save a file.
 */
-static u3_uhot*
-_unix_home(u3_noun who)
+static void
+_unix_save(c3_c* pax_c, u3_atom oat)
 {
-  u3_unix* unx_u = &u3_Host.unx_u;
-  u3_uhot* hot_u;
-  c3_w     who_w[4];
+  c3_c* dir = strdup(pax_c);
+  _unix_mkpath(dirname(dir));
+  free(dir);
 
-  _unix_ship_out(who, who_w);
-  for ( hot_u = unx_u->hot_u;
-        hot_u && !_(_unix_ship_sing(who_w, hot_u->who_w));
-        hot_u = hot_u->nex_u )
-  {
-    // uL(fprintf(uH, "uh: %p, %s\n", hot_u, hot_u->dir_u.pax_c));
+  c3_i  fid_i = open(pax_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+  c3_w  fln_w, rit_w, siz_w;
+  c3_y* oat_y;
+
+  if ( fid_i < 0 ) {
+    uL(fprintf(uH, "error opening %s: %s\n", pax_c, strerror(errno)));
+    u3m_bail(c3__fail);
   }
-  return hot_u;
-}
 
-#if 0
-/* _unix_desk_sync_udon(): apply udon to existing value.
-*/
-static u3_noun
-_unix_desk_sync_udon(u3_noun don, u3_noun old)
-{
-  return u3dc("lump", don, old);
+  siz_w = u3h(u3t(oat));
+  fln_w = u3r_met(3, u3t(u3t(oat)));
+  oat_y = c3_malloc(siz_w);
+  memset(oat_y, 0, siz_w);
+
+  u3r_bytes(0, fln_w, oat_y, u3t(u3t(oat)));
+  u3z(oat);
+
+  rit_w = write(fid_i, oat_y, siz_w);
+  if ( rit_w != siz_w ) {
+    uL(fprintf(uH, "error writing %s: %s\n", pax_c, strerror(errno)));
+    c3_assert(0);
+  }
+
+  close(fid_i);
+  free(oat_y);
 }
-#endif
 
 /* _unix_desk_sync_tofu(): sync out file install.
 */
@@ -1420,6 +1414,7 @@ _unix_desk_sync_list(u3_udir* dir_u, u3_noun can)
 
   u3z(can);
 }
+#endif
 
 /* _unix_desk_sync_ergo(): sync desk changes to unix.
 */
@@ -1430,11 +1425,11 @@ _unix_desk_sync_ergo(u3_noun  hox,
                      u3_noun  can,
                      u3_uhot* hot_u)
 {
-#if 0
+#ifndef ERGO_SYNC
   u3z(hox); u3z(syd); u3z(lok); u3z(can);
 #else
 
-  u3_udir** dir_u = _unix_pdir(&(hot_u->dir_u), syd);
+  u3_udir** dir_u = _unix_pdir(&(hot_u->dir_u), u3k(syd));
 
 #if 0
   uL(fprintf(uH, "ergo %s %s %s\n", u3r_string(hox),

@@ -45,23 +45,14 @@
 |%                                                      ::  helm library
 ++  helm-work                                           ::  work in helm
   |=  [[hide from] helm-part]
-  ?>  =(src our)
   =+  sez=(fall (~(get by hoc) ost) *helm-session)
   =>  |%                                                ::  arvo structures
       ++  card                                          ::
         $%  [%cash wire p=@p q=buck]                    ::
             [%conf wire dock %load ship term]           ::
-            [%flog wire dill]                           ::
+            [%flog wire flog]                           ::
             [%plug wire @p @tas @p @tas]                ::
             [%want wire sock path *]                    ::  send message
-        ==                                              ::
-      ++  suss  ,[term @tas @da]                        ::  config report
-      ++  dill                                          ::  sent to %dill
-        $%  [%crud p=term q=(list tank)]                ::  fat report
-            [%text p=tape]                              ::  thin report
-            [%veer p=@ta q=path r=@t]                   ::  install vane
-            [%vega p=path]                              ::  reboot by path
-            [%verb ~]                                   ::  verbose mode
         ==                                              ::
       ++  move  (pair bone card)                        ::  user-level move
       --
@@ -81,7 +72,7 @@
     =+  buz=(shax :(mix (jam ges) eny))
     =+  loy=(bruw 2.048 buz)
     %-  emit(bur `[his [0 sec:ex:loy]~])
-    [%want /ticketing [our (sein his)] /q/ta his tic ges pub:ex:loy]
+    [%want /helm/ticket [our (sein his)] /q/ta his tic ges pub:ex:loy]
   ::
   ++  poke-init                                         ::  initialize
     |=  him=ship  =<  abet
@@ -135,26 +126,31 @@
     [%flog /reset %veer p way txt]
   ::
   ++  poke-will                                         ::  hear certificate
-    |=  wil=(unit will)  =<  abet
+    |=  wil=(unit will)
     ?>  ?=(^ bur)
-    ?>  ?=(^ wil)
+    ?>  ?=(^ wil)  
+    =<  abet
     %-  emil(bur ~)
+    ~&  [%poke-will wil]
     :~  [%cash /helm p.u.bur q.u.bur u.wil]
-        [%plug /helm our %main (sein our) %main]
-        [%plug /helm our %arvo (sein our) %arvo]
-        [%plug /helm our %try (sein our) %try]
+        [%plug /helm our %home (sein our) %kids]
     ==
   ::
-  ++  poke-verb
+  ++  poke-verb                                         ::  toggle verbose
     |=  ~  =<  abet
     (emit %flog /helm %verb ~)
   ::
   ++  take-onto                                         ::  result of %conf
     |=  saw=(each suss tang)  =<  abet
+    ~&  [%take-onto saw]
     %-  emit
     ?-   -.saw
       %|  [%flog ~ %crud %onto `tang`p.saw]
       %&  [%flog ~ %text "<{<p.saw>}>"]
     ==
+  ::
+  ++  take-went                                         ::  result of %want
+    |=  [way=path her=ship kay=cape]  =<  abet
+    (emit %flog ~ %text "went: {<[way kay]>}")
   --
 --

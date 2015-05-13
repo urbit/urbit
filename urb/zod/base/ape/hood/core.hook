@@ -76,11 +76,11 @@
   |=  [from hood-merge]
   (ably (poke-merge:(kiln-work [hid +<-] (able %kiln)) +<+))
 ::
-++  poke-hood-sync                                     ::
+++  poke-hood-sync                                      ::
   |=  [from hood-sync]
   (ably (poke-sync:(kiln-work [hid +<-] (able %kiln)) +<+))
 ::
-++  poke-hood-unix                                     ::
+++  poke-hood-unix                                      ::
   |=  [from hood-unix]
   (ably (poke-unix:(kiln-work [hid +<-] (able %kiln)) +<+))
 ::
@@ -100,8 +100,12 @@
   |=  [then saw=(unit tang)]
   (ably (take-coup-fancy:(kiln-work [hid ost src] (able %kiln)) way +<+))
 ::
-++  coup-kiln-spam
+++  coup-kiln-spam                                      ::
   |=  [then saw=(unit tang)]
   ~?  ?=(^ saw)  [%kiln-spam-lame u.saw]
   [~ +>] 
+::
+++  went-helm                                           ::
+  |=  [then her=ship kay=cape]
+  (ably (take-went:(helm-work [hid ost src] (able %helm)) way +<+))
 --
