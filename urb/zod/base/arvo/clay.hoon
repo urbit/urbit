@@ -727,8 +727,11 @@
             [%done ~ %null !>(~)]
           =+  (~(get by mim.u.dok) a)
           ?^  -  [%done ~ %mime !>(u.-)]
-          :^  %cast  %mime  %done  :-  ~
-          (need (read:ze %x [%ud let.dom] a))
+          :+  %cast  %mime
+          =+  (need (need (read-x:ze let.dom a)))
+          ?:  ?=(%& -<)
+            [%done ~ p.-]
+          (lobe-to-silk:ze a p.-)
       ==
     ==
   ::
