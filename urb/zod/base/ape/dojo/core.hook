@@ -640,8 +640,7 @@
             [%gent ~]  dy-made-gent:dye
             [%edit ~]  dy-made-edit:dye
           ==
-      %|  ~&  [%he-made-fail way]
-          (he-diff(poy ~) %tan p.reg)
+      %|  (he-diff(poy ~) %tan p.reg)
     ==
   ::
   ++  he-unto                                           ::  result from behn
