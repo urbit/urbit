@@ -4,43 +4,7 @@
   =>  =~
 ::  structures
 |%
-++  flog                                                ::  error wrapper
-          $%  [%crud p=@tas q=(list tank)]              ::
-              [%text p=tape]                            ::
-          ==                                            ::
-++  cuft                                                ::  internal gift
-          $%  [%coup p=(unit tang)]                     ::  poke result
-              [%diff p=cage]                            ::  subscription output
-              [%quit ~]                                 ::  close subscription
-              [%reap p=(unit tang)]                     ::  peer result
-          ==                                            ::
-++  gift                                                ::  out result <-$
-          $%  [%hear p=lane q=@]                        ::  receive packet
-              [%init p=@p]                              ::  report install
-              [%mass p=mass]                            ::  memory usage
-              [%send p=lane q=@]                        ::  transmit packet
-              [%waft p=sock q=*]                        ::  response message
-              [%wart p=sock q=@tas r=path s=*]          ::  network request
-              [%went p=ship q=cape]                     ::  reaction message
-              [%woot p=ship q=coop]                     ::  e2e reaction message
-          ==                                            ::
-++  hasp  ,[p=ship q=term]                              ::  see %gall
-++  kiss                                                ::  in request ->$
-          $%  [%barn ~]                                 ::  new unix process
-              [%crud p=@tas q=(list tank)]              ::  error with trace
-              [%cash p=@p q=buck]                       ::  civil license
-              [%hear p=lane q=@]                        ::  receive packet
-              [%hole p=lane q=@]                        ::  packet failed
-              [%junk p=@]                               ::  entropy
-              [%kick p=@da]                             ::  wake up
-              [%make p=(unit ,@t) q=@ud r=@ s=?]        ::  wild license
-              [%sith p=@p q=@uw r=?]                    ::  imperial generator
-              [%wake ~]                                 ::  timer activate
-              [%want p=sock q=path r=*]                 ::  send message
-              [%wegh ~]                                 ::  report memory
-              [%wont p=sock q=path r=*]                 ::  e2e send message
-          ==                                            ::
-++  move  ,[p=duct q=(mold note gift)]                  ::  local move
+++  move  ,[p=duct q=(mold note gift-ames)]             ::  local move
 ++  note                                                ::  out request $->
           $?  $:  %d                                    ::  to %dill
           $%  [%flog p=flog]                            ::
@@ -490,7 +454,9 @@
         ^-  [(unit will) _+>]
         ?.  =(our (sein her))  [~ +>.$]
         =+  nes=sen
-        ?.  =(tic (end 6 1 (shaf %tick (mix her (shax sec:ex:q.nes)))))
+        =+  ryt=(end 6 1 (shaf %tick (mix her (shax sec:ex:q.nes))))
+        ?.  =(tic ryt)
+          ~&  [%ames-wrong-ticket `@p`ryt]
           [~ +>.$]
         =+  rad=(~(get by hoc.saf) her)
         ?^  rad
@@ -1596,16 +1562,16 @@
     |%                                                  ::  vane interface
     ++  call                                            ::  handle request
       |=  $:  hen=duct
-              hic=(hypo (hobo kiss))
+              hic=(hypo (hobo kiss-ames))
           ==
       =>  %=    .                                       ::  XX temporary
               q.hic
-            ^-  kiss
+            ^-  kiss-ames
             ?:  ?=(%soft -.q.hic)
-              ((hard kiss) p.q.hic)
-            ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
+              ((hard kiss-ames) p.q.hic)
+            ?:  (~(nest ut -:!>(*kiss-ames)) | p.hic)  q.hic
             ~&  [%ames-call-flub (,@tas `*`-.q.hic)]
-            ((hard kiss) q.hic)
+            ((hard kiss-ames) q.hic)
           ==
       ^-  [p=(list move) q=_..^$]
       =^  duy  ..knob
@@ -1707,7 +1673,7 @@
               :+  (scot %p p.p.bon)
                 (scot %p q.p.bon)
               q.q.bon
-          [hen %pass pax %g %rote p.bon /helm 0 %m %will wil]~
+          [hen %pass pax %g %rote p.bon /hood 0 %m %will wil]~
         ?>  ?=([@ @ *] t.q.q.bon)
         :_  fox
         =+  [cak=i.t.q.q.bon ven=i.t.t.q.q.bon]
@@ -1760,7 +1726,7 @@
         ==
       ::
           %ye                                           ::    %ye
-        ::  ~&  [%ye bon]
+        ::  ~&    [%ye bon]
         ?>  =(p.p.bon (sein q.p.bon))
         =+  ^=  paz  ^-  (list ,@p)
             %+  skim  pals:(~(um am [now fox]) p.p.bon)
@@ -1855,7 +1821,7 @@
     ==
   ::
   ++  knob
-    |=  [hen=duct kyz=kiss]
+    |=  [hen=duct kyz=kiss-ames]
     ^-  [(list move) _+>]
     ?:  ?=(%crud -.kyz)
       [[[hen [%slip %d %flog kyz]] ~] +>]

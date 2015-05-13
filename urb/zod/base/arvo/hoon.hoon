@@ -9634,7 +9634,6 @@
               a                                         ::
           ==                                            ::
 ++  kirk  (unit (set monk))                             ::  audience
-++  khan  ,[p=@tas q=@ta]                               ::  foreign identity
 ++  lens                                                ::  observation core
   $_  ^?                                                ::
   |%  ++  u  *(unit (unit ,~))                          ::  existence
@@ -9652,7 +9651,7 @@
 ++  mass  (each noun (list (pair cord ,mass)))          ::  memory usage
 ++  mill  (each vase milt)                              ::  vase/metavase
 ++  milt  ,[p=* q=*]                                    ::  metavase
-++  monk  (each ship khan)                              ::  general identity
+++  monk  (each ship ,[p=@tas q=@ta])                   ::  general identity
 ++  mold                                                ::  new kernel action
           |*  [a=$+(* *) b=$+(* *)]                     ::  forward/reverse
           $%  [%pass p=path q=a]                        ::  advance
