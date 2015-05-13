@@ -989,7 +989,7 @@
     [~ ..^$(pol.all (~(put by pol.all) p.q.hic [hen ~ ~ ~]))]
   ::
       %rote
-    ::  ~&  [%gall-rote p.q.hic]
+    ~&  [%gall-rote p.q.hic]
     ?.  (~(has by pol.all) p.p.q.hic)
       ~&  [%gall-not-ours p.q.hic]
       [~ ..^$]
