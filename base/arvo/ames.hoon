@@ -1648,7 +1648,7 @@
       ==
     ::
         %cake
-      ::  ~&  [%cake p.bon q.bon r.bon]
+      ~&  [%cake p.bon q.bon r.bon]
       :_  fox
       :~  [s.bon %give %woot q.p.bon r.bon]
       ==

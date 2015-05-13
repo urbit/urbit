@@ -428,7 +428,8 @@
         [%sys %rep (scot %p him) dap (scot %ud num) ~]
       [%f %exec our (mo-beak dap) ~ %vale p.ron our q.ron]
     ::
-        %x  (mo-give(hen (mo-ball him num)) %unto %quit ~)
+        %x  =.  +>  (mo-give %mack ~)                  ::  XX should crash
+            (mo-give(hen (mo-ball him num)) %unto %quit ~)
     ==
   ::
   ++  ap                                                ::  agent engine
@@ -548,6 +549,7 @@
     ::
     ++  ap-fall                                         ::  drop from queue
       ^+  .
+      ?.  (~(has by sup.ged) ost)  .
       =+  soy=(~(get by qel.ged) ost)
       ?:  |(?=(~ soy) =(0 u.soy))  
         ~&  [%ap-fill-under [our dap] q.q.pry ost]
@@ -778,7 +780,7 @@
       ^+  +>
       =+  cug=(ap-find %poke p.cag ~)
       ?~  cug
-        (ap-give %coup `(ap-suck "no poke arm"))
+        (ap-give %coup `(ap-suck "no poke arm for {(trip p.cag)}"))
       ::  ~&  [%ap-poke dap p.cag cug]
       =^  tur  +>.$
           %+  ap-call  q.u.cug
@@ -989,7 +991,7 @@
     [~ ..^$(pol.all (~(put by pol.all) p.q.hic [hen ~ ~ ~]))]
   ::
       %rote
-    ~&  [%gall-rote p.q.hic]
+    ::  ~&  [%gall-rote p.q.hic]
     ?.  (~(has by pol.all) p.p.q.hic)
       ~&  [%gall-not-ours p.q.hic]
       [~ ..^$]
