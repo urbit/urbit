@@ -793,7 +793,7 @@
       ^+  +>
       =+  cug=(ap-find /lame)
       ?~  cug
-        ~&  [%ap-lame wut why]
+        ~>  %slog.[0 rose/[" " "[" "]"]^[>%ap-lame< >wut< why]]
         +>.$
       =^  cam  +>.$
         %+  ap-call  q.u.cug
