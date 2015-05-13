@@ -715,13 +715,13 @@
     ==
   --
 ::
-++  peer
+++  peer-sole
   |=  [from pax=path]
   ^-  (quip move +>)
   ~?  !=(src our.hid)  [%dojo-peer-stranger ost src pax]
   ::  ?>  =(src our.hid)
   ?<  (~(has by hoc) ost)
-  ?>  =(/sole pax)
+  ?>  =(~ pax)
   =<  he-abet
   %~  he-peer  he
   :-  [ost ~]
