@@ -23,7 +23,6 @@
         ?@  req-type
           [%get headers ~]
         [%post headers ~ (tact (pojo +.req-type))]
-    :^  ost  %pass  pour-path
-    :+  %e  %them
+    :^  ost  %them  pour-path
     `(unit hiss)`[~ request]
 --
