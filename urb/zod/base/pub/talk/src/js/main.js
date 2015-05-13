@@ -39,7 +39,6 @@ module.exports = {
   sendMessage: function(message, audience) {
     var _audi, _message, k, serial, v;
     serial = window.util.uuid32();
-    audience.push(window.util.mainStationPath(window.urb.user));
     audience = _.uniq(audience);
     _audi = {};
     for (k in audience) {
@@ -186,8 +185,8 @@ ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = ref[0], input 
 module.exports = recl({
   render: function() {
     var k;
-    if (this.props.ship[0] !== "~") {
-      this.props.ship = "~" + this.props.ship;
+    if (this.props.ship[0] === "~") {
+      this.props.ship = this.props.ship.slice(1);
     }
     k = "ship";
     if (this.props.presence) {
@@ -243,7 +242,7 @@ Message = recl({
   _handleAudi: function(e) {
     var audi;
     audi = _.map($(e.target).closest('.audi').find('div'), function(div) {
-      return $(div).text();
+      return "~" + $(div).text();
     });
     return this.props._handleAudi(audi);
   },
@@ -252,11 +251,14 @@ Message = recl({
     if (!this.props._handlePm) {
       return;
     }
-    user = $(e.target).closest('.iden').text().slice(1);
+    user = $(e.target).closest('.iden').text();
+    if (user.toLowerCase() === 'system') {
+      return;
+    }
     return this.props._handlePm(user);
   },
   render: function() {
-    var audi, delivery, klass, name, ref1, ref2, ref3, ref4, ref5, ref6, txt, url;
+    var aude, audi, delivery, klass, name, ref1, ref2, ref3, ref4, ref5, ref6, ref7, txt, type, url;
     delivery = _.uniq(_.pluck(this.props.thought.audience, "delivery"));
     klass = delivery.indexOf("received") !== -1 ? " received" : " pending";
     if (((ref1 = this.props.thought.statement.speech) != null ? (ref2 = ref1.lin) != null ? ref2.say : void 0 : void 0) === false) {
@@ -268,13 +270,18 @@ Message = recl({
     if (this.props.unseen === true) {
       klass += " new";
     }
+    if (this.props.sameAs === true) {
+      klass += " same";
+    } else {
+      klass += " first";
+    }
     name = this.props.name ? this.props.name : "";
-    audi = _.keys(this.props.thought.audience);
-    audi = _.without(audi, window.util.mainStationPath(window.urb.user));
-    audi = window.util.clipAudi(audi);
-    audi = audi.map(function(_audi) {
-      return div({}, _audi);
+    aude = _.keys(this.props.thought.audience);
+    audi = window.util.clipAudi(aude).map(function(_audi) {
+      return div({}, _audi.slice(1));
     });
+    type = ['private', 'public'];
+    type = type[Number(aude.indexOf(window.util.mainStationPath(window.urb.user)) === -1)];
     if ((ref4 = this.props.thought.statement.speech) != null ? (ref5 = ref4.lin) != null ? ref5.txt : void 0 : void 0) {
       txt = this.props.thought.statement.speech.lin.txt;
     }
@@ -285,6 +292,10 @@ Message = recl({
         target: "_blank"
       }, url);
     }
+    if ((ref7 = this.props.thought.statement.speech) != null ? ref7.app : void 0) {
+      txt = this.props.thought.statement.speech.app.txt;
+      klass += " say";
+    }
     return div({
       className: "message" + klass
     }, [
@@ -292,13 +303,15 @@ Message = recl({
         className: "attr"
       }, [
         div({
-          onClick: this._handleAudi,
-          className: "audi"
-        }, audi), div({
+          className: "type " + type
+        }, ""), div({
           onClick: this._handlePm
         }, React.createElement(Member, {
           ship: this.props.ship
         })), div({
+          onClick: this._handleAudi,
+          className: "audi"
+        }, audi), div({
           className: "time"
         }, this.convTime(this.props.thought.statement.date))
       ]), div({
@@ -385,6 +398,8 @@ module.exports = recl({
     } else {
       if (!window.util.isScrolling()) {
         window.util.setScroll();
+      } else {
+        console.log('scrolling');
       }
     }
     if (this.focussed === false && this.last !== this.lastSeen) {
@@ -407,7 +422,7 @@ module.exports = recl({
   },
   _handlePm: function(user) {
     var audi;
-    audi = [window.util.mainStationPath(user), window.util.mainStationPath(window.urb.user)];
+    audi = [window.util.mainStationPath(user)];
     if (user === window.urb.user) {
       audi.pop();
     }
@@ -417,7 +432,7 @@ module.exports = recl({
     return StationActions.setAudience(audi);
   },
   render: function() {
-    var _messages, _station, lastIndex, messages, ref1, ref2, sources, station;
+    var _messages, _station, lastIndex, lastSaid, messages, ref1, ref2, sources, station;
     station = this.state.station;
     _station = "~" + window.urb.ship + "/" + station;
     sources = _.clone((ref1 = (ref2 = this.state.configs[this.state.station]) != null ? ref2.sources : void 0) != null ? ref1 : []);
@@ -433,14 +448,21 @@ module.exports = recl({
       };
     })(this), 1);
     lastIndex = this.lastSeen ? _messages.indexOf(this.lastSeen) : null;
+    lastSaid = null;
     messages = _messages.map((function(_this) {
       return function(_message, k) {
+        var ref3;
         if (lastIndex && lastIndex === k) {
           _message.unseen = true;
         }
+        if ((ref3 = _message.thought.statement.speech) != null ? ref3.app : void 0) {
+          _message.ship = "system";
+        }
+        _message.sameAs = lastSaid === _message.ship;
         _message.station = _this.state.station;
         _message._handlePm = _this._handlePm;
         _message._handleAudi = _this._handleAudi;
+        lastSaid = _message.ship;
         return React.createElement(Message, _message);
       };
     })(this));
@@ -532,7 +554,7 @@ module.exports = recl({
         audi = _.map(stations, function(presence, station) {
           return div({
             className: "audi"
-          }, station);
+          }, station.slice(1));
         });
         return div({}, [
           audi, React.createElement(Member, {
@@ -563,12 +585,12 @@ module.exports = recl({
             className: "station"
           }, [
             div({
+              className: "path"
+            }, source.slice(1)), div({
               className: "remove",
               onClick: _remove,
               "data-station": source
-            }, "×"), div({
-              className: "path"
-            }, source)
+            }, "×")
           ]);
         };
       })(this));
@@ -579,17 +601,23 @@ module.exports = recl({
       id: "head"
     }, [
       div({
-        id: "where"
-      }, [
-        "/talk", div({
-          className: "caret"
-        }, "")
-      ]), div({
         id: "who"
       }, [
         div({
-          className: "circle"
-        }, ""), "~" + window.urb.user
+          className: "sig"
+        }, ""), div({
+          className: "ship"
+        }, "" + window.urb.user)
+      ]), div({
+        id: "where"
+      }, [
+        div({
+          className: "slat"
+        }, "talk"), div({
+          className: "path"
+        }, window.util.mainStation(window.urb.user)), div({
+          className: "caret"
+        }, "")
       ])
     ]);
     parts.push(head);
@@ -645,6 +673,7 @@ module.exports = recl({
     s = {
       audi: StationStore.getAudience(),
       ludi: MessageStore.getLastAudience(),
+      config: StationStore.getConfigs(),
       members: StationStore.getMembers(),
       typing: StationStore.getTyping(),
       valid: StationStore.getValidAudience()
@@ -669,6 +698,21 @@ module.exports = recl({
     MessageActions.setTyping(true);
     return this.typing(true);
   },
+  addCC: function(audi) {
+    var cc, i, len, listening, s;
+    listening = this.state.config[window.util.mainStation(window.urb.user)].sources;
+    cc = false;
+    for (i = 0, len = listening.length; i < len; i++) {
+      s = listening[i];
+      if (audi.indexOf(s) === -1) {
+        cc = true;
+      }
+    }
+    if (cc === true) {
+      audi.push(window.util.mainStationPath(window.urb.user));
+    }
+    return audi;
+  },
   sendMessage: function() {
     var audi;
     if (this._validateAudi() === false) {
@@ -676,14 +720,13 @@ module.exports = recl({
       return;
     }
     if (this.state.audi.length === 0 && $('#audi').text().trim().length > 0) {
-      audi = this.state.ludi;
-      this._setAudi();
+      audi = this._setAudi() ? this._setAudi() : this.state.ludi;
     } else {
       audi = this.state.audi;
     }
-    audi = window.util.expandAudi(audi);
+    audi = this.addCC(audi);
     MessageActions.sendMessage(this.$writing.text().trim(), audi);
-    this.$length.text("0/69");
+    this.$length.text("0/62");
     this.$writing.text('');
     this.set();
     return this.typing(false);
@@ -726,9 +769,6 @@ module.exports = recl({
   },
   _validateAudiPart: function(a) {
     var _a, ship;
-    if (a[0] !== "~") {
-      return false;
-    }
     if (a.indexOf("/") !== -1) {
       _a = a.split("/");
       if (_a[1].length === 0) {
@@ -759,14 +799,23 @@ module.exports = recl({
     return valid;
   },
   _setAudi: function() {
-    var v, valid;
+    var _v, k, v, valid;
     valid = this._validateAudi();
     StationActions.setValidAudience(valid);
     if (valid === true) {
       v = $('#audi').text();
       v = v.split(" ");
+      for (k in v) {
+        _v = v[k];
+        if (_v[0] !== "~") {
+          v[k] = "~" + _v;
+        }
+      }
       v = window.util.expandAudi(v);
-      return StationActions.setAudience(v);
+      StationActions.setAudience(v);
+      return v;
+    } else {
+      return false;
     }
   },
   getTime: function() {
@@ -813,13 +862,17 @@ module.exports = recl({
     return this.setState(this.stateFromStore());
   },
   render: function() {
-    var audi, iden, k, name, ship, user;
+    var audi, iden, k, name, ship, user, v;
     user = "~" + window.urb.user;
     iden = StationStore.getMember(user);
     ship = iden ? iden.ship : user;
     name = iden ? iden.name : "";
     audi = this.state.audi.length === 0 ? this.state.ludi : this.state.audi;
     audi = window.util.clipAudi(audi);
+    for (k in audi) {
+      v = audi[k];
+      audi[k] = v.slice(1);
+    }
     k = "writing";
     return div({
       className: k
@@ -827,13 +880,13 @@ module.exports = recl({
       div({
         className: "attr"
       }, [
-        div({
+        React.createElement(Member, iden), div({
           id: "audi",
           className: "audi valid-" + this.state.valid,
           contentEditable: true,
           onKeyDown: this._audiKeyDown,
           onBlur: this._setAudi
-        }, audi.join(" ")), React.createElement(Member, iden), div({
+        }, audi.join(" ")), div({
           className: "time"
         }, this.getTime())
       ]), div({
@@ -6058,7 +6111,7 @@ _.merge(window.util, {
     if (!window.util.writingPosition) {
       window.util.getScroll();
     }
-    return $(window).scrollTop() < window.util.writingPosition;
+    return $(window).scrollTop() + $('#writing').outerHeight() < window.util.writingPosition;
   },
   checkScroll: function() {
     if (window.util.isScrolling()) {

@@ -711,7 +711,7 @@
           ^-  (list (pair path misu))
           (turn u.mut.u.dok |=([pax=path cal=[lobe cage]] [pax %dif cal]))
         ==
-    =^  hat  +>.$  (edit:ze now %& *cart sim)  ::  XX  we do same thing in ++apply-edit
+    =^  hat  +>.$  (edit:ze now %& *cart sim)  ::  XX  do same in ++apply-edit
     ?~  dok  ~&  %no-dok  +>.$
     =>
       %=    .
@@ -2584,15 +2584,9 @@
       %wegh
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
-    :-  %clay
     :-  %|
-    :~  domestic/`fat.ruf
-        foreign/`hoy.ruf
-        :-  %object-store  :-  %|
-        :~  commits/`hut.ran.ruf
-            blobs/`lat.ran.ruf
-        ==
-        autosync/`sor.ruf
+    :~  ruf/`ruf
+        ::  cor/`..^$
     ==
   ==
 ::

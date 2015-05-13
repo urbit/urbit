@@ -48,15 +48,9 @@
               $:  %a                                    ::  to %ames
           $%  [%kick p=@da]                             ::
           ==  ==                                        ::
-              $:  %b                                    ::  to %behn
-          $%  [%rote p=sack q=path r=*]                 ::
-              [%roth p=sack q=path r=*]                 ::
-              [%mess p=[@p %ye ~] q=@p r=cage]          ::
-          ==  ==                                        ::
               $:  %g                                    ::  to %gall
           $%  [%rote p=sack q=path r=*]                 ::
               [%roth p=sack q=path r=*]                 ::
-              [%mess p=[@p %ye ~] q=@p r=cage]          ::
           ==  ==                                        ::
               $:  @tas                                  ::  to any
           $%  [%init p=@p]                              ::
@@ -67,12 +61,10 @@
           $?  $:  %a                                    ::  from %ames
           $%  [%went p=ship q=cape]                     ::
           ==  ==                                        ::
-              $:  %b                                    ::  from %gall
+              $:  %g                                    ::  from %gall
           $%  [%unto p=cuft]                            ::
               [%mack p=(unit tang)]                     ::  message ack
-          ==  ==                                        ::
-              $:  %g                                    ::  from %gall
-          $%  [%mean p=ares]                            ::
+              [%mean p=ares]                            ::  XX old, clean up
               [%nice ~]                                 ::
           ==  ==                                        ::
               $:  @tas                                  ::
@@ -457,7 +449,7 @@
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
-    ?>  =(6 vez)
+    ?>  =(5 vez)
     ?>  =(chk (end 0 20 (mug bod)))
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
@@ -477,7 +469,7 @@
     =+  tay=(ksin q.kec)
     %+  mix
       %+  can  0
-      :~  [3 6]
+      :~  [3 5]
           [20 (mug bod)]
           [2 yax]
           [2 qax]
@@ -1060,7 +1052,7 @@
     ++  gnaw                                            ::    gnaw:am
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
-      ?.  =(6 (end 0 3 pac))  [~ fox]
+      ?.  =(5 (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
       ?:  (goop p.p.kec)  [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
@@ -1685,7 +1677,6 @@
           [hen [%slip %a %kick now]]
           [hen [%slip %e %init p.bon]]
           [hen [%slip %g %init p.bon]]
-          [hen [%slip %b %init p.bon]]                  ::  temporary %behn
           [hen [%slip %d %init p.bon]]                  ::  must be after gall
           ~
       ==
@@ -1778,7 +1769,7 @@
         %+  turn  paz
         |=  him=ship
         :-  hen
-        [%pass /ye %g %mess [him ye/~] p.p.bon [%txt !>(((hard ,@t) r.bon))]]
+        [%pass /ye %g %rote `sack`p.bon /ye 0 %m %helm-ye ((hard ,@t) r.bon)]
       ==
     ::
         %mulk
@@ -1792,26 +1783,6 @@
             [%sick %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
         ==
       ::
-          %be                                         ::  %behn request
-        =*  imp  t.t.q.q.bon
-        ?>  (levy imp (sane %ta))
-        =+  ^=  pax
-            :+  (scot %p p.p.bon)
-              (scot %p q.p.bon)
-            q.q.bon
-        ::  ~&  [%ames-behn-request p.bon imp pax]
-        :_  fox  [hen %pass pax %b %rote p.bon imp r.bon]~
-      ::
-          %bh                                         ::  %behn response
-        =*  imp  t.t.q.q.bon
-        ?>  (levy imp (sane %ta))
-        =+  ^=  pax
-            :+  (scot %p p.p.bon)
-              (scot %p q.p.bon)
-            q.q.bon
-        ::  ~&  [%ames-behn-response p.bon imp pax]
-        :_  fox  [hen %pass pax %b %roth p.bon imp r.bon]~
-      ::
           %ge                                         ::  %gall request
         =*  imp  t.t.q.q.bon
         ?>  (levy imp (sane %ta))
@@ -1819,6 +1790,7 @@
             :+  (scot %p p.p.bon)
               (scot %p q.p.bon)
             q.q.bon
+        ::  ~&  [%ames-gall-request p.bon imp pax]
         :_  fox  [hen %pass pax %g %rote p.bon imp r.bon]~
       ::
           %gh                                         ::  %gall response
@@ -1828,6 +1800,7 @@
             :+  (scot %p p.p.bon)
               (scot %p q.p.bon)
             q.q.bon
+        ::  ~&  [%ames-gall-response p.bon imp pax]
         :_  fox  [hen %pass pax %g %roth p.bon imp r.bon]~
       ==
     ::
@@ -1858,10 +1831,10 @@
     ?-  +<.sih
         %crud  [[[hen [%slip %d %flog +.sih]] ~] +>]
         %went  [~ +>]
-        %mack  ?~  +>.sih  $(sih [%g %nice ~])
+        %mack  ?~  +>.sih  $(sih [%g %nice ~])          ::  XX using old code
                $(sih [%g %mean `[%mack +>+.sih]])
         %unto  ~|([%ames-unto tea hen +>-.sih] !!)
-        ?(%mean %nice)
+        ?(%mean %nice)                                  ::  XX obsolete
       ?:  ?=([%ye ~] tea)
         [~ +>.$]
       ?>  ?=([@ @ @ *] tea)
@@ -1993,8 +1966,8 @@
   ::
   ++  wegh
     ^-  mass
-    :-  %ames
     :-  %|
     :~  fox/`fox
+        ::  cor/`.
     ==
   --
