@@ -708,6 +708,9 @@ module.exports = recl({
         cc = true;
       }
     }
+    if (listening.length === 0) {
+      cc = true;
+    }
     if (cc === true) {
       audi.push(window.util.mainStationPath(window.urb.user));
     }

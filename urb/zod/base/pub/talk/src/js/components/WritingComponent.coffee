@@ -46,6 +46,8 @@ module.exports = recl
     for s in listening
       if audi.indexOf(s) is -1
         cc = true
+    if listening.length is 0
+      cc = true
     if cc is true
       audi.push window.util.mainStationPath(window.urb.user)
     audi
