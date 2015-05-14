@@ -398,7 +398,7 @@
     ^-  beak
     ::  =+  pup=pup:(~(got by bum) dap)
     ::  [p.pup q.pup [%da now]]   ::  XX this is wrong; save the build case
-    [our %base %da now]           ::  XX really wrong
+    [our %home %da now]           ::  XX really wrong
   ::
   ++  mo-club                                           ::  local action
     |=  [dap=dude pry=prey cub=club]

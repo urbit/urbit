@@ -165,7 +165,7 @@
             %0  +>(eye.+< eye.+>.old, gam.+< gam.+>.old)::
           ==                                            ::
 ++  pull-octo                                           ::
-          |=  [from ~]  =<  abet                        ::
+          |=  [from *]  =<  abet                        ::
           (park(but ~) %0 `"dropped")                   ::
 ++  pull-sole                                           ::  disconnect console
           |=  [from *]  =<  abet                        ::

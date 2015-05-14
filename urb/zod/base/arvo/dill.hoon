@@ -184,7 +184,7 @@
         =+  myt=(flop (need tem))
         =.  tem  ~
         =.  moz  :_(moz [hen %pass / %c %font our %home our %base])
-        =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %base]])
+        =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
         =.  moz  :_(moz [hen %pass ~ %g %deal [our our] ram %peer ~])
         |-  ^+  +>
         ?~  myt  +>
@@ -200,7 +200,7 @@
               %pass
               /
               %c
-              [%warp [our our] %base `[%sing %y [%ud 1] /]]
+              [%warp [our our] %home `[%sing %y [%ud 1] /]]
           ==
         ==
       ::
