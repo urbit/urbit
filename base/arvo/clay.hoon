@@ -247,8 +247,6 @@
       ?.  ?=([%sing %v *] rav)  rav
       [%many %| [%ud let.dom] `case`q.p.rav r.p.rav]
     =+  inx=nix.u.ref
-    ~?  ?=([%sing %x *] vaw)
-      [%remote-x-ing vaw hen]
     %=  +>+.$
       say        [[hen [(scot %ud inx) ~] for [inx syd ~ vaw]] say]
       nix.u.ref  +(nix.u.ref)
