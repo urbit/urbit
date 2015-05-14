@@ -1593,7 +1593,7 @@
         ^+  ..me
         ?:  don
           ..me(mer (~(put by mer) ali dat))
-        ze:wake(mer (~(del by mer) ali), reg :_(reg [hen %mere gon.dat]))
+        ..me(mer (~(del by mer) ali), reg :_(reg [hen %mere gon.dat]))
       ::
       ++  route
         |=  [sat=term res=(each riot (each gage tang))]
@@ -2153,8 +2153,8 @@
                      %~  run  by
                      %-  ~(uni by new.dal.dat)
                      %-  ~(uni by cal.dal.dat)
+                     %-  ~(uni by cas)
                      hot
-        ~&  [%mate-erg erg.dat]
         checkout
       ::
       ++  checkout
@@ -2621,7 +2621,8 @@
     =*  sud  i.t.t.t.t.tea
     =*  sat  i.t.t.t.t.t.tea
     =+  une=(un our now hen ruf)
-    =+  wex=(di:une syd)
+    =+  wak=une
+    =+  wex=(di:wak syd)
     =+  dat=?-(+<.q.hin %writ [%& p.q.hin], %made [%| q.q.hin])
     =+  ^-  kan=(unit ankh)
         %+  biff  (~(get by fat.ruf) her)
@@ -2631,7 +2632,8 @@
         ank.dom
     =+  wao=abet:(route:(me:ze:wex [her sud] kan) sat dat)
     =+  woo=abet:wao
-    [-.woo ..^$(ruf abet:(pish:une syd +.woo ran.wao))]
+    =+  sip=wake:(pish:une syd +.woo ran.wao)
+    [(weld -.sip -.woo) ..^$(ruf abet:[+.sip])]
   ?:  ?=([%auto @ @ @ @ ~] tea)
     =+  our=(slav %p i.t.tea)
     =*  syd  i.t.t.tea
