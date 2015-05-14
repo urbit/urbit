@@ -758,15 +758,15 @@
     ++  ap-peer                                         ::  apply %peer
       |=  pax=path
       ^+  +>
+      =.  +>  (ap-peon pax)
       =+  cug=(ap-find %peer pax)
-      ?~  cug
-        (ap-peon pax)
+      ?~  cug  +>.$
       =^  cam  +>.$ 
           %+  ap-call  q.u.cug
           !>([[`@ud`ost `@p`q.q.pry] `path`(slag p.u.cug pax)])
       ?^  cam
-        (ap-give %reap cam)
-      (ap-give:(ap-peon pax) %reap ~)
+        (ap-give:ap-pule %reap cam)
+      (ap-give %reap ~)
     ::
     ++  ap-peon                                         ::  add subscriber
       |=  pax=path
@@ -855,7 +855,16 @@
           ?~(vux !>(~) (slop !>(~) (slot 13 u.vux)))
       ?~(tur `+>.$ :_(+>.$ `u.tur))
     ::
-    ++  ap-pull                                         ::  pull inbound
+    ++  ap-pule                                         ::  silent delete
+      =+  wim=(~(get by sup.ged) ost)
+      ?~  wim  +
+      %_  +
+        sup.ged  (~(del by sup.ged) ost)
+        pus.ged  (~(del ju pus.ged) q.u.wim ost)
+        qel.ged  (~(del by qel.ged) ost)
+      ==
+    ::
+    ++  ap-pull                                         ::  load delete
       =+  wim=(~(get by sup.ged) ost)
       ?~  wim  ~&(%ap-pull-none +)
       =:  sup.ged  (~(del by sup.ged) ost)
