@@ -3,8 +3,8 @@
 str = JSON.stringify
 
 Prompt = recl render: ->
-  [pro,cur,buf] = [@props.appl+@props.prompt[@props.appl], @props.cursor, @props.input + " "]
-  pre {}, pro,
+  [pro,cur,buf] = [@props.prompt[@props.appl] ? "X", @props.cursor, @props.input + " "]
+  pre {}, @props.appl+pro,
     span {style: background: 'lightgray'}, buf.slice(0,cur), "\u0332", buf.slice(cur)
 
 Matr = recl render: ->
@@ -54,17 +54,28 @@ $ ->
     offset:0  ), term
   window.matr = matr
   update = (a) -> matr.setProps a
-  buffer = new Share ""
+  buffer = "": new Share ""
   window.buffer = buffer
-  choose = (appl)-> urb.appl = appl; update {appl}
+  choose = (appl)->
+    urb.appl = appl
+    buffer[appl] ?= new Share ""
+    updPrompt '', null
+    update {appl, cursor: 0, input: buffer[appl].buf}
   print = (txt)-> update rows: [matr.props.rows..., txt]
-  sync = (ted)-> 
-    update input: buffer.buf, cursor: buffer.transpose ted, matr.props.cursor
+  sync = (ted,app)->
+    app ?= matr.props.appl
+    if app isnt matr.props.appl then return
+    b = buffer[app]
+    update input: b.buf, cursor: b.transpose ted, matr.props.cursor
   updPrompt = (app,pro) ->
     prompt = $.extend {}, matr.props.prompt
     if pro? then prompt[app] = pro else delete prompt[app]
     update {prompt}
-  
+  sysStatus = ()-> updPrompt '', (
+    [app,pro] = [matr.props.appl, (k for k,v of matr.props.prompt when k isnt '')]
+    if app is '' then (pro.join ', ')+'# ' else null
+  )
+ 
   peer = (ruh,app) ->
     app ?= urb.appl
     if ruh.map then return ruh.map (rul)-> peer rul, app
@@ -75,7 +86,7 @@ $ ->
       when 'pro' then updPrompt app, ruh.pro.cad
       when 'hop' then update cursor: ruh.hop; bell() # XX buffer.transpose?
       when 'blk' then console.log "Stub #{str ruh}"
-      when 'det' then buffer.receive ruh.det; sync ruh.det.ted
+      when 'det' then buffer[app].receive ruh.det; sync ruh.det.ted, app
       when 'act' then switch ruh.act
         when 'clr' then update rows:[]
         when 'bel' then bell()
@@ -93,19 +104,21 @@ $ ->
     if matr.props.prompt[app]?
       return print '# already-joined: '+app
     choose app
-    updPrompt "", null
     urb.bind "/sole", {wire:"/"}, (err,d)->
       if err then console.log err
       else if d.data then peer d.data, app
   cycle = ()->
     apps = Object.keys matr.props.prompt
-    update appl: apps[1 + apps.indexOf matr.props.appl] ? apps[0]
+    if apps.length < 2 then return
+    choose apps[1 + apps.indexOf urb.appl] ? apps[0]
   part = (appl)->
-    unless matr.props.prompt[app]?
-      return print '# not-joined: '+app
+    mapr = matr.props
+    unless mapr.prompt[appl]?
+      return print '# not-joined: '+appl
     urb.unsubscribe {appl, path: "/sole", wire: "/"}
-    if appl is matr.props.appl then cycle()
+    if appl is mapr.appl then cycle()
     updPrompt appl, null
+    sysStatus()
   join urb.appl
   window.join = join; window.part = part
   
@@ -123,19 +136,19 @@ $ ->
   #  ), 500
 
   sendAction = (data)->
-    if urb.appl then urb.send {mark: 'sole-action', data}, (e,res)->
+    if matr.props.appl then urb.send {mark: 'sole-action', data}, (e,res)->
       if res.status isnt 200 then $('#err')[0].innerText = res.data.mess
     else if data is 'ret'
-      app = /^[a-z-]+$/.exec(buffer.buf.slice(1))
-      unless app?
+      app = /^[a-z-]+$/.exec(buffer[""].buf.slice(1))
+      unless app? and app[0]?
         return bell()
-      else switch buffer.buf[0]
-        when '+' then join app
-        when '-' then part app
+      else switch buffer[""].buf[0]
+        when '+' then doEdit set: ""; join app[0]
+        when '-' then doEdit set: ""; part app[0]
         else bell()
   
   doEdit = (ted)->
-    det = buffer.transmit ted
+    det = buffer[matr.props.appl].transmit ted
     sync ted
     sendAction {det}
 
@@ -185,12 +198,9 @@ $ ->
         when 'g' then bell()
         when 'x' then cycle()
         when 'v'
-          if mapr.appl = ""
-            updPrompt "", null
-            cycle()
-          apps = Object.keys mapr.prompt
-          updPrompt "", (apps.join ", ")+'# '
-          choose ''
+          appl = if mapr.appl isnt '' then '' else urb.appl
+          update {appl, cursor:0, input:buffer[appl].buf}
+          sysStatus()
         when 't'
           if mapr.cursor is 0 or mapr.input.length < 2
             return bell()
