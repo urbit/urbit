@@ -1133,6 +1133,7 @@
     ::
     ++  del-subs                      ::  XX per path?
       |=  [a=dock %json b=wire c=path]  ^+  ..ix
+      ~&  [%eyre-del-subs +< hen]
       =.  ..ix  (hurl-note [a b] [%g %deal [him -.a] +.a %pull ~])
       (nice-json:pop-duct:(ire-ix ire))            ::  XX gall ack
     ::
