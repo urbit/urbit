@@ -95,7 +95,7 @@ module.exports = recl
           ])
           (div {id:"where"},[
             (div {className:"slat"},"talk")
-            (div {className:"path"},window.util.mainStation(window.urb.user))
+            (div {className:"path"},"") #window.util.mainStation(window.urb.user))
             (div {className:"caret"},"")
           ])
         ]
