@@ -278,7 +278,7 @@
     ++  dy-amok  +>(poy ~)                              ::  terminate
     ++  dy-beak                                         ::  XX rethink
       ^-  beak
-      [our.hid %base [%da lat.hid]]
+      [our.hid %home [%da lat.hid]]
     ::
     ++  dy-ford                                         ::  send work to ford
       |=  [way=wire kas=silk]
@@ -726,7 +726,7 @@
   :-  [ost ~]
   ^-  session
   :*  *sole-share  ::  say=sole-share
-      %base           ::  syd=desk
+      %home           ::  syd=desk
       ~               ::  luc=(unit case)
       ~               ::  poy=(unit dojo-project)
       ~               ::  var=(map term cage)

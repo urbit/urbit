@@ -199,7 +199,7 @@
     |=  gyl=gill
     ^+  +>
     =.  +>  ?.  =(p.gyl src)  +>
-        (se-emit ost %conf (se-path gyl) gyl %load src %base)
+        (se-emit ost %conf (se-path gyl) gyl %load src %home)
     (se-join:(se-peer gyl /sole) gyl)
   ::
   ++  se-blit                                           ::  give output
