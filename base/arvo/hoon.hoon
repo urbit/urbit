@@ -3689,13 +3689,13 @@
       royl
     ==
   --
-++  scot  |=(mol=dime ~(rent co %$ mol))
+++  scot  ~/  %scot  |=(mol=dime ~(rent co %$ mol))
 ++  scow  |=(mol=dime ~(rend co %$ mol))
 ++  slat  |=(mod=@tas |=(txt=@ta (slaw mod txt)))
 ++  slav  |=([mod=@tas txt=@ta] (need (slaw mod txt)))
 ++  slaw
-  |=  [mod=@tas txt=@ta]
   ~/  %slaw
+  |=  [mod=@tas txt=@ta]
   ^-  (unit ,@)
   =+  con=(slay txt)
   ?.(&(?=([~ %$ @ @] con) =(p.p.u.con mod)) ~ [~ q.p.u.con])
