@@ -1549,7 +1549,7 @@
       ==
     ==
   ++  ta-best                                           ::  most relevant 
-    |=(two=partner ?:((ta-beat two) one two))
+    |=(two=partner ?:((ta-beat two) two one))
   ::
   ++  ta-full  (ta-show ~)                              ::  render full width
   ++  ta-show                                           ::  render partner
@@ -1609,6 +1609,7 @@
     ==
   ::
   ++  te-whom                                           ::  render sender
+    ~&  [%te-whom man lix te-best te-maud]
     (~(ta-show ta man (need te-best)) ~ te-maud)
   --
 ::
@@ -1658,6 +1659,7 @@
 ++  peer                                                ::  accept subscription
   |=  [from pax=path]
   ^-  [(list move) _+>]
+  ::  ~&   [%talk-peer src ost pax]
   ?:  ?=([%sole *] pax)
     ?>  =(our.hid src)
     ?<  (~(has by shells) ost)
@@ -1714,9 +1716,9 @@
   ra-abet:(~(ra-quit ra ost ~) man cuz)
 ::
 ++  pull                                                ::
-  |=  [from *]
+  |=  [from pax=path]
   ^-  [(list move) _+>]
-  ::  ~&  [%talk-pull `*`ost]
+  ::  ~&  [%talk-pull src ost pax]
   =^  moz  +>.$  ra-abet:ra-ever:~(ra-cancel ra ost ~)
   [moz +>.$(shells (~(del by shells) ost))]
 ::
