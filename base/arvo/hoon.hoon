@@ -3695,6 +3695,7 @@
 ++  slav  |=([mod=@tas txt=@ta] (need (slaw mod txt)))
 ++  slaw
   |=  [mod=@tas txt=@ta]
+  ~/  %slaw
   ^-  (unit ,@)
   =+  con=(slay txt)
   ?.(&(?=([~ %$ @ @] con) =(p.p.u.con mod)) ~ [~ q.p.u.con])
