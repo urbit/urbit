@@ -2521,6 +2521,7 @@
 ++  cush  (pair term club)                              ::  internal kiss
 ++  dude  term                                          ::  server identity
 ++  scup  (pair ship desk)                              ::  autoupdate
+++  well  (pair desk term)
 ++  suss  (trel dude ,@tas ,@da)                        ::  config report
 ::::                                                    ::
 ++  kiss-gall                                           ::  incoming request
