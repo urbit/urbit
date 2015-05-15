@@ -1609,7 +1609,6 @@
     ==
   ::
   ++  te-whom                                           ::  render sender
-    ~&  [%te-whom man lix te-best te-maud]
     (~(ta-show ta man (need te-best)) ~ te-maud)
   --
 ::
