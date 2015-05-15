@@ -64,7 +64,7 @@
       ?-  -.dex
         %del  ?:((lte p.sin p.dex) dex(p +(p.dex)) dex)
         %ins  ?:  =(p.sin p.dex)     
-                ?:((gth q.sin q.dex) dex dex(p +(p.dex)))
+                ?:((lth q.sin q.dex) dex dex(p +(p.dex)))
               ?:((lte p.sin p.dex) dex(p +(p.dex)) dex)
       ==
     ==   

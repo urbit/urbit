@@ -398,7 +398,7 @@
     ^-  beak
     ::  =+  pup=pup:(~(got by bum) dap)
     ::  [p.pup q.pup [%da now]]   ::  XX this is wrong; save the build case
-    [our %base %da now]           ::  XX really wrong
+    [our %home %da now]           ::  XX really wrong
   ::
   ++  mo-club                                           ::  local action
     |=  [dap=dude pry=prey cub=club]
@@ -575,10 +575,10 @@
     ++  ap-fill                                         ::  add to queue
       ^-  [? _.]
       =+  suy=(fall (~(get by qel.ged) ost) 0)
-      ?:  =(8 suy)
+      ?:  =(20 suy)
         ~&  [%ap-fill-full [our dap] q.q.pry ost]
         [%| +]
-      ::  ~?  !=(8 suy)  [%ap-fill-add [[our dap] q.q.pry ost] +(suy)]
+      ::  ~?  !=(20 suy)  [%ap-fill-add [[our dap] q.q.pry ost] +(suy)]
       [%& +(qel.ged (~(put by qel.ged) ost +(suy)))]
     ::
     ++  ap-find                                         ::  general arm

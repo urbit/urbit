@@ -247,8 +247,6 @@
       ?.  ?=([%sing %v *] rav)  rav
       [%many %| [%ud let.dom] `case`q.p.rav r.p.rav]
     =+  inx=nix.u.ref
-    ~?  ?=([%sing %x *] vaw)
-      [%remote-x-ing vaw hen]
     %=  +>+.$
       say        [[hen [(scot %ud inx) ~] for [inx syd ~ vaw]] say]
       nix.u.ref  +(nix.u.ref)
@@ -865,8 +863,8 @@
       !!
     ::
         %x
-      =<  ?>  ?=(^ ref)  .
-      (rand-to-rant u.rut)
+      =<  ?>(?=(^ ref) .)
+      (validate-x p.p.u.rut q.p.u.rut q.u.rut r.u.rut)
     ::
         %w
       =.  haw.u.ref
@@ -932,6 +930,27 @@
     ::          %indirect  ~|  %foreign-indirect-not-implemented  !!
     ::      ==
     ::  ==
+  ::
+  ++  validate-x
+    |=  [car=care cas=case pax=path peg=page]
+    ^+  +>
+    =-  %_(+>.$ tag [- tag])
+    :*  hen  %pass
+        [%foreign-x (scot %p who) (scot %p for) syd car (scot cas) pax]
+        %f  %exec  who  [for syd cas]  ~
+        %vale  p.peg  for  q.peg
+    ==
+  ::
+  ++  take-foreign-x
+    |=  [car=care cas=case pax=path res=(each gage tang)]
+    ^+  +>
+    ?>  ?=(^ ref)
+    ?:  ?=(%| -.res)
+      ~|  "validate foreign plops failed"
+      ~|  [%plop-fail (turn p.res |=(tank ~(ram re +<)))]
+      !!
+    ?>  ?=(@ p.p.res)
+    wake(haw.u.ref (~(put by haw.u.ref) [car cas pax] `p.res))
   ::
   ++  validate-plops
     |=  [cas=case pop=(set plop)]
@@ -2097,7 +2116,7 @@
             ?~  cay
               ~
             `[pax u.cay]
-        =^  hat  lat.ran                                ::  new content
+        =^  hot  lat.ran                                ::  new content
           ^-  [(map path lobe) (map lobe blob)]
           %+  roll  (~(tap by can))
           =<  .(lat lat.ran)
@@ -2112,13 +2131,13 @@
                 [(lobe-to-mark u.-) u.-]
               [p q.q]:cay
           [(~(put by hat) pax p.bol) (~(put by lat) p.bol bol)]
-        =.  hat                                         ::  all the content
+        =+  ^-  hat=(map path lobe)                     ::  all the content
           %-  ~(uni by old)
           %-  ~(uni by new.dal.dat)
           %-  ~(uni by new.dob.dat)
           %-  ~(uni by cal.dal.dat)
           %-  ~(uni by cal.dob.dat)
-          %-  ~(uni by hat)
+          %-  ~(uni by hot)
           cas
         =+  ^-  del=(map path ,?)
             (~(run by (~(uni by old.dal.dat) old.dob.dat)) |=(~ %|))
@@ -2127,7 +2146,13 @@
           (make-yaki [r.ali.dat r.bob.dat ~] hat now)
         =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
         =.  erg.dat  %-  ~(uni by del)
-                     `(map path ,?)`(~(run by hat) |=(lobe %&))
+                     ^-  (map path ,?)
+                     %.  |=(lobe %&)
+                     %~  run  by
+                     %-  ~(uni by new.dal.dat)
+                     %-  ~(uni by cal.dal.dat)
+                     %-  ~(uni by cas)
+                     hot
         checkout
       ::
       ++  checkout
@@ -2594,7 +2619,7 @@
     =*  sud  i.t.t.t.t.tea
     =*  sat  i.t.t.t.t.t.tea
     =+  une=(un our now hen ruf)
-    =+  wak=wake:une
+    =+  wak=une
     =+  wex=(di:wak syd)
     =+  dat=?-(+<.q.hin %writ [%& p.q.hin], %made [%| q.q.hin])
     =+  ^-  kan=(unit ankh)
@@ -2605,7 +2630,8 @@
         ank.dom
     =+  wao=abet:(route:(me:ze:wex [her sud] kan) sat dat)
     =+  woo=abet:wao
-    [(weld -.wak -.woo) ..^$(ruf abet:(pish:une syd +.woo ran.wao))]
+    =+  sip=wake:(pish:une syd +.woo ran.wao)
+    [(weld -.sip -.woo) ..^$(ruf abet:[+.sip])]
   ?:  ?=([%auto @ @ @ @ ~] tea)
     =+  our=(slav %p i.t.tea)
     =*  syd  i.t.t.tea
@@ -2760,6 +2786,24 @@
       =*  syd  i.t.t.t.tea
       =+  zax=(do now hen [our her] syd ruf)
       =+  zat=(take-foreign-plops:zax q.q.hin)
+      =^  mos  ruf
+        =+  zot=abet.zat
+        [-.zot (posh her syd +.zot ruf)]
+      [mos ..^$(ran.ruf ran.zat)]
+    ::
+        %foreign-x
+      ?>  ?=([@ @ @ @ @ *] t.tea)
+      =+  our=(slav %p i.t.tea)
+      =+  her=(slav %p i.t.t.tea)
+      =+  syd=(slav %tas i.t.t.t.tea)
+      =+  car=((hard care) i.t.t.t.t.tea)
+      =+  ^-  cas=case
+          =+  (slay i.t.t.t.t.t.tea)
+          ?>  ?=([~ %$ case] -)
+          ->+
+      =*  pax  t.t.t.t.t.t.tea
+      =+  zax=(do now hen [our her] syd ruf)
+      =+  zat=(take-foreign-x:zax car cas pax q.q.hin)
       =^  mos  ruf
         =+  zot=abet.zat
         [-.zot (posh her syd +.zot ruf)]
