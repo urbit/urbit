@@ -48,7 +48,7 @@
   |=  [from hood-begin]
   (ably (poke-begin:(helm-work [hid +<-] (able %helm)) +<+))
 ::
-++  poke-hood-init                                      ::
+++  poke-helm-init                                      ::
   |=  [from hood-init]
   (ably (poke-init:(helm-work [hid +<-] (able %helm)) +<+))
 ::
