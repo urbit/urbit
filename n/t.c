@@ -207,10 +207,14 @@ u3t_samp(void)
 {
   u3C.wag_w &= ~u3o_debug_cpu;
 
+  static int home = 0;
+  static int away = 0;
+
   //  Profile sampling, because it allocates on the home road,
   //  only works on when we're not at home.
   //
   if ( &(u3H->rod_u) != u3R ) {
+    home++;
     c3_l      mot_l;
     u3a_road* rod_u;
   
@@ -249,6 +253,10 @@ u3t_samp(void)
       u3R->pro.day = u3dt("pi-noon", mot_l, lab, u3R->pro.day);
     }
     u3R = rod_u;
+  }
+  else {
+    away++;
+    // fprintf(stderr,"home: %06d away: %06d\r\n", home, away);
   }
   u3C.wag_w |= u3o_debug_cpu;
 }

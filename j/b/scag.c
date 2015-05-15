@@ -15,7 +15,7 @@
       return u3m_bail(c3__fail);
     }
     else {
-      u3_noun acc = u3_blip;
+      u3_noun acc = u3_nul;
       c3_w i_w = a;
 
       if ( !i_w )
@@ -23,9 +23,9 @@
 
       while ( i_w ) {
         if ( c3n == u3du(b) ) {
-          return u3_nul;
+          return u3kb_flop(acc);
         }
-        acc = u3i_cell( u3h(b), acc );
+        acc = u3nc(u3k(u3h(b)), acc);
         b = u3t(b);
         i_w--;
       }
