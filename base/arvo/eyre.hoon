@@ -653,8 +653,8 @@
   ++  host-to-ship                                              ::  host to ship
     |=  hot=host
     ^-  (unit ship)
-    =+  gow=(~(get by dop) hot)
-    ?^  gow  gow
+    :: =+  gow=(~(get by dop) hot)    ::  XX trust
+    :: ?^  gow  gow
     ?.  ?=(& -.hot)  ~
     =+  dom=(flop p.hot)                                ::  domain name
     ?~  dom  ~
@@ -989,8 +989,10 @@
           %get
         ~|  aute/ham
         ?:  |(=(anon him.ham) (~(has in aut.yac) him.ham))
-          =.  aut  & 
-          process(pok rem.ham, ..ya abet.yac(him him.ham))
+          =.  ..ya  abet.yac(him him.ham)
+          =+  pez=process(pok rem.ham, aut &)
+          ?:  ?=(%| -.pez)  pez
+          [%| (resolve ~ p.pez)]
         ?.  =(our him.ham)
           [%| ((teba foreign-auth.yac) him.ham hat rem.ham quy)]
         (show-login-page ~)
