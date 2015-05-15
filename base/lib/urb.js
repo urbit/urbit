@@ -52,6 +52,17 @@ window.urb.req = function(method,url,params,json,cb) {
   xhr.send(JSON.stringify(_data))
 }
 
+// window.urb.getJSON = function(url,cb){ window.urb.reqJSON("GET",url, null, cb)}
+// window.urb.reqJSON = function(method, url, data, cb){
+//   var xhr = new XMLHttpRequest()
+//   xhr.open(method, url)
+//   xhr.onload = function(){
+//     urb.fetchTag.call(xhr)
+//     if(cb) cb(JSON.parse(xhr.responseText))
+//   }
+//   xhr.send(data === null ? null : JSON.stringify(data))
+// }
+
 window.urb.reqq = []
 window.urb.qreq = function(method,url,params,json,cb) {
   walk = function() {
