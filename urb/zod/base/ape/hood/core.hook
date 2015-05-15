@@ -96,6 +96,10 @@
   |=  [then @uvH (each gage tang)]
   (ably (take-made:(kiln-work [hid ost src] (able %kiln)) way +<+))
 ::
+++  note-helm                                           ::  
+  |=  [then (pair ,@tD tank)]
+  (ably (take-note:(helm-work [hid ost src] (able %helm)) way +<+))
+::
 ++  coup-kiln-fancy                                     ::
   |=  [then saw=(unit tang)]
   (ably (take-coup-fancy:(kiln-work [hid ost src] (able %kiln)) way +<+))
