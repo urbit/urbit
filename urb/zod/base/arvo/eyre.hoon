@@ -409,7 +409,7 @@
       =.  p.p.pul  |(p.p.pul ?=(hoke r.p.pul))
       =+  her=(host-to-ship r.p.pul)
       ?:  |(?=(~ her) =(our u.her))
-        (handle pul [q.+.kyz anon] [p.heq maf s.heq])
+        (handle pul [q.+.kyz |] [p.heq maf s.heq])
       =+  han=(sham hen)
       =.  pox  (~(put by pox) han hen)
       (ames-gram u.her [%get ~] han +.kyz)
@@ -667,7 +667,7 @@
   ::
   ++  handle
     |=  $:  [hat=hart pok=pork quy=quay]                ::  purl, parsed url
-            [cip=clip him=ship]                         ::  client ip, ship
+            [cip=clip aut=?]                            ::  client ip, nonymous?
             [mef=meth maf=math bod=(unit octs)]         ::  method/headers/body
         ==
     =<  apex
@@ -683,7 +683,9 @@
     ::
     ++  ford-get-beam
       |=  [bem=beam ext=term]
-      =:  s.bem  [%web ~(rent co (fcgi quy fcgi-cred:for-client)) s.bem]
+      =+  yac=for-client
+      =.  him.yac  ?.(aut anon him.yac)
+      =:  s.bem  [%web ~(rent co (fcgi quy fcgi-cred.yac)) s.bem]
           r.bem  ?+(r.bem r.bem [%ud %0] da/now)
         ==
       (ford-req -.bem [%boil ext bem ~])
@@ -906,7 +908,8 @@
         =+  ext=(fall p.pok %urb)
         =+  bem=?-(-.hem %beam p.hem, %spur [root-beak p.hem])
         =+  wir=?+(mef !! %get ~, %head [%he ~])
-        [%& %| wir (ford-get-beam bem ext)]
+        =-  ?.(aut [%& %| -] [%| (pass-note -)])  ::  XX properly
+        [wir (ford-get-beam bem ext)]
       ::
           %bugs  
         ?-  p.hem
@@ -984,7 +987,8 @@
           %get
         ~|  aute/ham
         ?:  |(=(anon him.ham) (~(has in aut.yac) him.ham))
-          process(him him.ham, pok rem.ham)
+          =.  aut  & 
+          process(pok rem.ham, ..ya abet.yac(him him.ham))
         ?.  =(our him.ham)
           [%| ((teba foreign-auth.yac) him.ham hat rem.ham quy)]
         (show-login-page ~)
@@ -1025,7 +1029,7 @@
       ?~  cyz
         ~&  bad-cookie/u.lig
         (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
-      ~(. ya u.lig u.cyz(him him, cug ~))
+      ~(. ya u.lig u.cyz(cug ~)) 
     ::
     ++  new-ya  |=(ses=hole ~(. ya ses (new-cyst ses)))
     ++  new-cyst
@@ -1158,7 +1162,6 @@
     ::
     ++  del-subs                      ::  XX per path?
       |=  [a=dock %json b=wire c=path]  ^+  ..ix
-      ~&  [%eyre-del-subs +< hen]
       =.  ..ix  (hurl-note [a b] [%g %deal [him -.a] +.a %pull ~])
       (nice-json:pop-duct:(ire-ix ire))            ::  XX gall ack
     ::
