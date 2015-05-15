@@ -323,25 +323,19 @@
   |%
   ++  login-page
     %+  titl  'Log in'
-    ;=  ;div#c
-          ;p: Please log in.
-          ;p.mono: ~;{span#ship(contenteditable "")}
-          ;input#pass(onchange "urb.submit()");
-          ;pre:code#err;
-          ;script@"/~/at/~/auth.js";
-        ==
-        ;link(rel "stylesheet", href "/home/lib/base.css");
+    ;=  ;p: Please log in.
+        ;p.mono: ~;{span#ship(contenteditable "")}
+        ;input#pass(onchange "urb.submit()");
+        ;pre:code#err;
+        ;script@"/~/at/~/auth.js";
     ==
   ::
   ++  logout-page
     %+  titl  'Log out'
-    ;=  ;div#c
-          ;p: Goodbye ~;{span#ship}.
-          ;button#act(onclick "urb.away()"): Log out
-          ;pre:code#err;
-          ;script@"/~/at/~/auth.js";
-        ==
-        ;link(rel "stylesheet", href "/home/lib/base.css");
+    ;=  ;p: Goodbye ~;{span#ship}.
+        ;button#act(onclick "urb.away()"): Log out
+        ;pre:code#err;
+        ;script@"/~/at/~/auth.js";
     ==
   ::
   ++  poke-test
@@ -357,7 +351,15 @@
                 }
                 '''
     ==
-  ++  titl  |=([a=cord b=marl] ;html:(head:title:"{(trip a)}" body:"*{b}"))
+  ++  titl  
+    |=  [a=cord b=marl] 
+    ;html
+      ;head
+        ;title:"{(trip a)}" 
+        ;link(rel "stylesheet", href "/home/lib/base.css");
+      ==
+      ;body:div#c:"*{b}"
+    ==
   --
 --
 |%                                                      ::  functions
