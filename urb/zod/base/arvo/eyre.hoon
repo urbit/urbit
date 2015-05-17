@@ -184,9 +184,11 @@
   hit(q (weld cuh q.hit))
 ::
 ++  add-poll                                            ::  inject dependency
-  |=  [dep=@uvH max=[[%html ~] [[%head ~] hed=marl] [[%body ~] manx marl] ~]]
+  |=  [dep=@uvH max=[[%html ~] [[%head ~] hed=marl] [[%body ~] tal=marl] ~]]
   ^-  manx
-  =.  hed.max  :_(hed.max ;meta(charset "utf-8", urb_injected "");)
+  =:  hed.max  :_(hed.max ;meta(charset "utf-8", urb_injected "");)
+      tal.max  (welp tal.max ;script(urb_injected ""):"{(trip etag:js)}" ~)
+    ==
   ?~  dep  max
   max(hed :_(hed.max ;script@"/~/on/{<dep>}.js"(urb_injected "");))
 ::
@@ -292,6 +294,28 @@
     urb.away = function(){req("/~/auth.json?DELETE", {}, 
       function(){document.getElementById("c").innerHTML = "<p>Goodbye.</p>" }
     )}
+    '''
+  ++  etag
+    '''
+    if(!window.urb) window.urb = {}
+    urb.fetchTag = function(){
+      var tag = JSON.parse(this.getResponseHeader("etag"))
+      if(tag) urb.wasp(tag)
+    }
+    urb.headReq = function(url){
+      var xhr = new XMLHttpRequest()
+      xhr.open("HEAD", url)
+      xhr.onload = urb.fetchTag
+      xhr.send()
+    }
+    Array.prototype.map.call(document.querySelectorAll('script'), function(ele){
+      if((new URL(ele.src)).host == document.location.host)
+        urb.headReq(ele.src)
+    })
+    Array.prototype.map.call(document.querySelectorAll('link'), function(ele){
+      if((new URL(ele.href)).host == document.location.host)
+        urb.headReq(ele.href)
+    })
     '''
   --
 ++  xml
@@ -418,7 +442,7 @@
       =.  p.p.pul  |(p.p.pul ?=(hoke r.p.pul))
       =+  her=(host-to-ship r.p.pul)
       ?:  |(?=(~ her) =(our u.her))
-        (handle pul [q.+.kyz anon] [p.heq maf s.heq])
+        (handle pul [q.+.kyz |] [p.heq maf s.heq])
       =+  han=(sham hen)
       =.  pox  (~(put by pox) han hen)
       (ames-gram u.her [%get ~] han +.kyz)
@@ -615,7 +639,7 @@
     (~(has in aut.u.cyz) our)
   ::
   ++  ses-ya  |=(ses=hole ~(. ya ses (~(got by wup) ses)))
-  ++  our-host  `hart`[& ~ `/com/urbit/(rsh 3 1 (scot %p our))]
+  ++  our-host  `hart`[& ~ `/org/urbit/(rsh 3 1 (scot %p our))]
   ::                  [| [~ 8.445] `/localhost]       :: XX testing
   ::
   ++  ames-gram
@@ -623,7 +647,8 @@
   ::
   ++  back                                              ::  %ford bounce
     |=  [tea=whir dep=@uvH mar=mark cay=cage]
-    (pass-note tea (ford-req root-beak [%cast mar %done ~ cay])) ::  XX deps
+    =+  sil=`silk`[%cast mar %flag dep %done ~ cay]
+    (pass-note tea (ford-req root-beak sil))
   ::
   ++  ford-kill  (pass-note ~ %f [%exec our *beak ~])        :: XX unused
   ++  ford-req  |=([bek=beak kas=silk] [%f [%exec our bek `kas]])
@@ -659,8 +684,8 @@
   ++  host-to-ship                                              ::  host to ship
     |=  hot=host
     ^-  (unit ship)
-    =+  gow=(~(get by dop) hot)
-    ?^  gow  gow
+    :: =+  gow=(~(get by dop) hot)    ::  XX trust
+    :: ?^  gow  gow
     ?.  ?=(& -.hot)  ~
     =+  dom=(flop p.hot)                                ::  domain name
     ?~  dom  ~
@@ -675,7 +700,7 @@
   ::
   ++  handle
     |=  $:  [hat=hart pok=pork quy=quay]                ::  purl, parsed url
-            [cip=clip him=ship]                         ::  client ip, ship
+            [cip=clip aut=?]                            ::  client ip, nonymous?
             [mef=meth maf=math bod=(unit octs)]         ::  method/headers/body
         ==
     =<  apex
@@ -691,7 +716,9 @@
     ::
     ++  ford-get-beam
       |=  [bem=beam ext=term]
-      =:  s.bem  [%web ~(rent co (fcgi quy fcgi-cred:for-client)) s.bem]
+      =+  yac=for-client
+      =.  him.yac  ?.(aut anon him.yac)
+      =:  s.bem  [%web ~(rent co (fcgi quy fcgi-cred.yac)) s.bem]
           r.bem  ?+(r.bem r.bem [%ud %0] da/now)
         ==
       (ford-req -.bem [%boil ext bem ~])
@@ -914,7 +941,8 @@
         =+  ext=(fall p.pok %urb)
         =+  bem=?-(-.hem %beam p.hem, %spur [root-beak p.hem])
         =+  wir=?+(mef !! %get ~, %head [%he ~])
-        [%& %| wir (ford-get-beam bem ext)]
+        =-  ?.(aut [%& %| -] [%| (pass-note -)])  ::  XX properly
+        [wir (ford-get-beam bem ext)]
       ::
           %bugs  
         ?-  p.hem
@@ -992,7 +1020,10 @@
           %get
         ~|  aute/ham
         ?:  |(=(anon him.ham) (~(has in aut.yac) him.ham))
-          process(him him.ham, pok rem.ham)
+          =.  ..ya  abet.yac(him him.ham)
+          =+  pez=process(pok rem.ham, aut &)
+          ?:  ?=(%| -.pez)  pez
+          [%| (resolve ~ p.pez)]
         ?.  =(our him.ham)
           [%| ((teba foreign-auth.yac) him.ham hat rem.ham quy)]
         (show-login-page ~)
@@ -1033,7 +1064,7 @@
       ?~  cyz
         ~&  bad-cookie/u.lig
         (new-ya (rsh 3 1 (scot %p (end 6 1 ney))))
-      ~(. ya u.lig u.cyz(him him, cug ~))
+      ~(. ya u.lig u.cyz(cug ~)) 
     ::
     ++  new-ya  |=(ses=hole ~(. ya ses (new-cyst ses)))
     ++  new-cyst
@@ -1166,7 +1197,6 @@
     ::
     ++  del-subs                      ::  XX per path?
       |=  [a=dock %json b=wire c=path]  ^+  ..ix
-      ~&  [%eyre-del-subs +< hen]
       =.  ..ix  (hurl-note [a b] [%g %deal [him -.a] +.a %pull ~])
       (nice-json:pop-duct:(ire-ix ire))            ::  XX gall ack
     ::
