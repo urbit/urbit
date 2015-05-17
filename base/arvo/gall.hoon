@@ -23,8 +23,7 @@
   $%  [%meta p=@tas q=vase]                             ::  
       [%send p=ship q=cush]                             ::  
   ==                                                    ::
-++  cove  (pair duct (mold cote cuft))                  ::  internal move 
-++  cute  (pair bone (mold cote cuft))                  ::  internal move
+++  cove  (pair bone (mold cote cuft))                  ::  internal move
 ++  move  ,[p=duct q=(mold note-arvo gift-arvo)]        ::  typed move
 --                                                      ::
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    %gall state
@@ -153,6 +152,11 @@
   ++  mo-born                                           ::  new seat
     |=  [dap=dude pup=scup hav=vase]
     =+  sat=*seat
+    =+  typ=p:(slot 13 hav)
+    ~?  =(%hood dap)  [%mo-born dap `@p`(mug typ)] 
+    =.  .  ?.  =(%hood dap)  .
+        ~>  %slog.[0 ~(duck ut typ)]
+        .
     %_    +>.$
         bum
       %+  ~(put by bum)  dap
@@ -436,7 +440,7 @@
     |_  $:  $:  dap=dude
                 pry=prey
                 ost=bone
-                zip=(list cute)
+                zip=(list cove)
                 dub=(list (each suss tang))
             ==
             seat
@@ -485,8 +489,8 @@
       =^  vad  +>  ap-fill(ost p.i.pyz)
       $(pyz t.pyz, ful ?:(vad ful (~(put in ful) p.i.pyz)))
     ::
-    ++  ap-aver                                         ::  cute to move
-      |=  cov=cute
+    ++  ap-aver                                         ::  cove to move
+      |=  cov=cove
       ^-  move 
       :-  (~(got by r.zam) p.cov)
       ?-    -.q.cov
@@ -528,12 +532,13 @@
       =.  q.cag  (spec q.cag)
       =+  cug=(ap-find [%diff p.cag pax])
       ?~  cug
-        (ap-pump:(ap-lame %diff (ap-suck "pour: no diff")) | her pax)
+        %.  [| her pax]
+        ap-pump:(ap-lame %diff (ap-suck "diff: no {<`path`[p.cag pax]>}"))
       =+  ^=  arg  ^-  vase
           %-  slop
           ?:  =(0 p.u.cug)
-            [!>([`@ud`ost `@p`q.q.pry `path`+.pax]) !>(cag)]
-          [!>([`@ud`ost `@p`q.q.pry (slag (dec p.u.cug) `path`+.pax)]) q.cag]
+            [!>([`@ud`ost `@p`q.q.pry `path`pax]) !>(cag)]
+          [!>([`@ud`ost `@p`q.q.pry (slag (dec p.u.cug) `path`pax)]) q.cag]
       =^  cam  +>.$  (ap-call q.u.cug arg)
       ?^  cam   
         (ap-pump:(ap-lame q.u.cug u.cam) | her pax)
@@ -621,7 +626,7 @@
     ::
     ++  ap-move                                         ::  process each move
       |=  vax=vase
-      ^-  (each cute tang)
+      ^-  (each cove tang)
       ?@  q.vax    [%| (ap-suck "move: invalid move (atom)")]
       ?^  -.q.vax  [%| (ap-suck "move: invalid move (bone)")]
       ?@  +.q.vax  [%| (ap-suck "move: invalid move (card)")]
@@ -641,14 +646,14 @@
     ::
     ++  ap-move-quit                                    ::  give quit move
       |=  [sto=bone vax=vase]
-      ^-  (each cute tang)
+      ^-  (each cove tang)
       ?^  q.vax  [%| (ap-suck "move: improper quit")]
-      [%& `cute`[sto %give `cuft`[%quit ~]]]
+      [%& `cove`[sto %give `cuft`[%quit ~]]]
     ::
     ++  ap-move-diff                                    ::  give diff move
       |=  [sto=bone vax=vase]
       =.  vax  (spec vax)
-      ^-  (each cute tang)
+      ^-  (each cove tang)
       ?.  &(?=(^ q.vax) ?=(@ -.q.vax) ((sane %tas) -.q.vax))
         [%| (ap-suck "move: improper diff")]
       [%& sto %give %diff `cage`[-.q.vax (slot 3 (spec vax))]]
@@ -667,7 +672,7 @@
     ::
     ++  ap-move-pass                                    ::  pass general move 
       |=  [sto=bone wut=* vax=vase]
-      ^-  (each cute tang)
+      ^-  (each cove tang)
       ?.  &(?=(@ wut) ((sane %tas) wut))
         [%| (ap-suck "move: malformed card")]
       =+  pux=((soft path) -.q.vax)
@@ -681,7 +686,7 @@
     ::
     ++  ap-move-poke                                    ::  pass %poke
       |=  [sto=bone vax=vase]
-      ^-  (each cute tang)
+      ^-  (each cove tang)
       =+  yep=(ap-move-mess vax)
       ?:  ?=(%| -.yep)  yep
       =+  gaw=(slot 7 vax)
@@ -693,19 +698,20 @@
     ::
     ++  ap-move-peer                                    ::  pass %peer
       |=  [sto=bone vax=vase]
-      ^-  (each cute tang)
+      ^-  (each cove tang)
       =+  yep=(ap-move-mess vax)
       ?:  ?=(%| -.yep)  yep
       =+  pux=((soft path) +>.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
         [%| (ap-suck "peer: malformed path")]
+      ~&  [%ap-move-peer-wire p.p.yep]
       :^  %&  sto  %pass
       :-  p.p.yep
       [%send q.p.yep r.p.yep %peer u.pux]
     ::
     ++  ap-move-pull                                    ::  pass %pull
       |=  [sto=bone vax=vase]
-      ^-  (each cute tang)
+      ^-  (each cove tang)
       =+  yep=(ap-move-mess vax)
       ?:  ?=(%| -.yep)  yep
       ?.  =(~ +>.q.vax)
@@ -716,7 +722,7 @@
     ::
     ++  ap-move-send                                    ::  pass gall action
       |=  [sto=bone vax=vase]
-      ^-  (each cute tang)
+      ^-  (each cove tang)
       ?.  ?&  ?=([p=* [q=@ r=@] [s=@ t=*]] q.vax)
               (gte 1 (met 7 q.q.vax))
               ((sane %tas) r.q.vax)
@@ -761,12 +767,13 @@
       =.  +>  (ap-peon pax)
       =+  cug=(ap-find %peer pax)
       ?~  cug  +>.$
+      =+  old=zip
+      =.  zip  ~
       =^  cam  +>.$ 
           %+  ap-call  q.u.cug
           !>([[`@ud`ost `@p`q.q.pry] `path`(slag p.u.cug pax)])
-      ?^  cam
-        (ap-give:ap-pule %reap cam)
-      (ap-give %reap ~)
+      =.  zip  (weld zip `(list cove)`[[ost %give %reap cam] old])
+      ?^(cam ap-pule +>.$)
     ::
     ++  ap-peon                                         ::  add subscriber
       |=  pax=path
@@ -825,7 +832,7 @@
       ^+  +>
       ?-  -.cuf
         %coup  (ap-punk q.q.pry %coup +.pax `!>(p.cuf))
-        %diff  (ap-diff q.q.pry pax p.cuf)
+        %diff  (ap-diff q.q.pry +.pax p.cuf)
         %quit  (ap-punk q.q.pry %quit +.pax ~)
         %reap  (ap-punk q.q.pry %reap +.pax `!>(p.cuf))
       ==
@@ -845,8 +852,12 @@
       ?.  (ap-fond %prep) 
         ?~  vux
           `+>.$
+        =+  [new=p:(slot 13 hav) old=p:(slot 13 u.vux)]
+        ~&  [%ap-prop-nest `@p`(mug new) `@p`(mug old)]
         ?.  (~(nest ut p:(slot 13 hav)) %| p:(slot 13 u.vux))
+          ~&  %nested-bad
           :_(+>.$ `(ap-suck "prep mismatch"))
+        ~&  %nested-good
         `+>.$(+13.q.hav +13.q.u.vux)
       =^  tur  +>.$
           %+  ap-call  %prep
@@ -899,7 +910,7 @@
     ::
     ++  ap-safe                                         ::  process move list
       |=  vax=vase
-      ^-  (each (list cute) tang)
+      ^-  (each (list cove) tang)
       ?~  q.vax  [%& ~]
       ?@  q.vax  [%| (ap-suck "move: malformed list")]
       =+  sud=(ap-move (slot 2 vax))
