@@ -102,6 +102,8 @@ input {
 }
 .time {
   font-weight: 200;
+  letter-spacing: 0.1rem;
+  color: #555;
 }
 #length,
 .audi,
@@ -233,6 +235,7 @@ body {
   border-left: 16rem solid transparent;
 }
 #station-container #head .ship {
+  font-size: 0.9rem;
   font-weight: 400;
 }
 #station-container:hover #where {
@@ -370,10 +373,6 @@ body {
 #messages .message.same .iden {
   display: none;
 }
-#messages .message:hover .mess,
-#messages .message:hover .attr {
-  color: #555;
-}
 #messages .message:hover .type {
   color: #f04941;
 }
@@ -428,8 +427,9 @@ a {
   content: "~";
 }
 .type.private:before {
-  content: "╿";
-  font-size: 0.8rem;
+  content: "•";
+  font-size: 1rem;
+  line-height: 0.7rem;
 }
 .type.public:before {
   content: "▒";
