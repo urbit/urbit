@@ -24,6 +24,8 @@ input
 
 .time
   font-weight 200
+  letter-spacing .1rem
+  color #555
 
 #length
 .audi
@@ -173,6 +175,7 @@ body
   border-left 16rem solid transparent
 
 #station-container #head .ship
+  font-size .9rem
   font-weight 400
 
 #station-container:hover #where
@@ -319,10 +322,6 @@ body
   
 #messages .message.same .iden
   display none
-  
-#messages .message:hover .mess
-#messages .message:hover .attr
-  color #555
 
 #messages .message:hover .type
   color rgb(240,73,65)
@@ -378,8 +377,9 @@ a
   content "~"
 
 .type.private:before
-  content "╿"
-  font-size .8rem
+  content "•"
+  font-size 1rem
+  line-height .7rem
 
 .type.public:before
   content "▒"
