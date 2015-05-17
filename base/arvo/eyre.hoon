@@ -277,12 +277,11 @@
       })
     }
     
-    if(window.ship) ship.innerText = urb.ship
     urb.foreign = /^\/~\/am/.test(window.location.pathname)
     urb.submit = function(){
       req(
         "/~/auth.json?PUT", 
-        {ship: ship.innerText, code: pass.value},
+        {ship:ship.innerText.toLowerCase(), code:pass.value},
         function(){
           if(urb.foreign) document.location = 
             document.location.hash.match(/#[^?]+/)[0].slice(1) +
@@ -323,17 +322,47 @@
 ++  xml
   |%
   ++  login-page
-    %+  titl  'Log in'
-    ;=  ;p: Please log in.
-        ;p.mono: ~;{span#ship}
-        ;input#pass(onchange "urb.submit()");
+    %+  titl  'Log in :urbit'
+    ;=  ;h1: Please log in
+        ;p.ship 
+          ;div.sig: ~
+          ;span#ship;
+        ==
+        ;input#pass(type "password");
+        ;script:'''
+                $(function() {
+                  $ship = $('#ship')
+                  $pass = $('#pass')
+                  $ship.on('keydown', function(e) { 
+                    if(e.keyCode === 13 || e.keyCode === 9) {
+                      $pass.show()
+                      $pass.focus()
+                      e.preventDefault()
+                    }
+                  })
+                  $ship.on('focus', function(e) { 
+                    $pass.hide()
+                  })
+                  $pass.on('keydown', function(e) { 
+                    if(e.keyCode === 13) {
+                      urb.submit()
+                    }
+                  })
+                  if(window.ship) {
+                    $ship.text(urb.ship)
+                    $pass.focus()
+                  } else {
+                    $pass.hide()
+                  }
+                })
+                '''
         ;pre:code#err;
         ;script@"/~/at/~/auth.js";
     ==
   ::
   ++  logout-page
     %+  titl  'Log out'
-    ;=  ;p: Goodbye ~;{span#ship}.
+    ;=  ;h1: Goodbye ~;{span#ship}.
         ;button#act(onclick "urb.away()"): Log out
         ;pre:code#err;
         ;script@"/~/at/~/auth.js";
@@ -356,7 +385,9 @@
     |=  [a=cord b=marl] 
     ;html
       ;head
+        ;meta(charset "utf-8");
         ;title:"{(trip a)}" 
+        ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js");
         ;link(rel "stylesheet", href "/home/lib/base.css");
       ==
       ;body:div#c:"*{b}"
