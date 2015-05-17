@@ -55,7 +55,7 @@
       [%del p=(list gill)]                              ::  delete agents 
   ==                                                    ::
 --                                                      ::
-!:                                                      ::  ::
+::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%                                                      ::  helm library
@@ -178,7 +178,6 @@
   ++  peer                                              ::
     |=   pax=path  =<  se-abet
     ^+  +>
-    ~&  [%drum-peer ost src pax]
     ?.  ?|  =(our src)                                  ::  ourself
             &(=(%duke (clan our)) =(our (sein src)))    ::  or our own yacht
         ==                                              ::
