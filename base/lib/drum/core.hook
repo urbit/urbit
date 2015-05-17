@@ -51,8 +51,9 @@
       inp=sole-command                                  ::  input state
   ==                                                    ::
 ++  ukase                                               ::  master command
-  $%  [%add p=(list gill)]                              ::  add agents
-      [%del p=(list gill)]                              ::  delete agents 
+  $%  [%add p=(list gill)]                              ::  attach to
+      [%del p=(list gill)]                              ::  detach from
+      [%new p=(list well)]                              ::  create
   ==                                                    ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -145,6 +146,7 @@
               ;~  pose
                 (stag %add ;~(pfix lus sp-gills))
                 (stag %del ;~(pfix hep sp-gills))
+                (stag %new ;~(pfix tar sp-wells))
               ==
             ::
             ++  sp-gills
@@ -164,6 +166,12 @@
                   ;~(pfix fas sym)
                 ==
               ==
+            ++  sp-well
+              ;~  pose
+                (stag %home sym)
+                ;~(plug sym ;~(pfix fas sym))
+              ==
+            ++  sp-wells  (most ;~(plug com ace) sp-well)
         --
       --
   |_  [moz=(list move) biz=(list dill-blit)]
@@ -321,6 +329,13 @@
       %txt  (ta-txt:taz p.bet)
     ==
   ::
+  ++  se-born                                           ::  new server
+    |=  wel=well
+    ^+  +>
+    ?:  (~(has in ray) wel)
+      (se-text "[already running {<p.wel>}/{<q.wel>}]")
+    +>(ray (~(put in ray) wel))
+  ::
   ++  se-diss                                           ::  with prejudice
     |=  gyl=gill
     (se-drop(eel (~(del in eel) gyl)) gyl)
@@ -352,6 +367,7 @@
   ++  se-join                                           ::  confirm connection
     |=  gyl=gill
     ^+  +>
+    =.  +>  (se-text "[connected to {<gyl>}]")
     ?>  =(~ (~(got by fug) gyl))
     (se-alas:se-prom(liv.maz |, fug (~(put by fug) gyl `*target)) gyl)
   ::
@@ -375,6 +391,11 @@
       |-  ^+  +>.^$
       ?~  p.kus  +>.^$
       $(p.kus t.p.kus, +>.^$ (se-nuke i.p.kus))
+    ::
+        %new
+      |-  ^+  +>.^$
+      ?~  p.kus  +>.^$
+      $(p.kus t.p.kus, +>.^$ (se-born i.p.kus))
     ==
   ::
   ++  se-plot                                           ::  status line
