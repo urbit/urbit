@@ -108,7 +108,6 @@
 ::
 ++  onto-drum                                           ::
   |=  [then saw=(each ,[term @tas @da] tang)]
-  ~&  [%onto-drum +<]
   (ably (take-onto:(drum-work [hid ost src] (able %drum)) way +<+))
 ::
 ++  mere-kiln                                           ::

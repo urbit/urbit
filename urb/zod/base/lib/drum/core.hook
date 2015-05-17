@@ -250,7 +250,6 @@
     |-  ^+  +>
     ?~  yar  +>
     ?:  (~(has by fur) q.i.yar)  $(yar t.yar)
-    ~&  [%adit-conf i.yar]
     %=    $
         yar  t.yar
         +>
@@ -263,7 +262,6 @@
     |-  ^+  +>
     ?~  lee  +>
     ?:  (~(has by fug) i.lee)  $(lee t.lee)
-    ~&  [%adze-peer i.lee]
     $(lee t.lee, +> (se-peer i.lee))
   ::
   ++  se-aint                                           ::  ignore result
@@ -352,7 +350,6 @@
   ++  se-join                                           ::  confirm connection
     |=  gyl=gill
     ^+  +>
-    ~&  [%drum-join gyl]
     ?>  =(~ (~(got by fug) gyl))
     se-prom(liv.maz |, fug (~(put by fug) gyl `*target))
   ::

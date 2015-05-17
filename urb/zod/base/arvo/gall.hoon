@@ -152,11 +152,6 @@
   ++  mo-born                                           ::  new seat
     |=  [dap=dude pup=scup hav=vase]
     =+  sat=*seat
-    =+  typ=p:(slot 13 hav)
-    ~?  =(%hood dap)  [%mo-born dap `@p`(mug typ)] 
-    =.  .  ?.  =(%hood dap)  .
-        ~>  %slog.[0 ~(duck ut typ)]
-        .
     %_    +>.$
         bum
       %+  ~(put by bum)  dap
@@ -704,7 +699,6 @@
       =+  pux=((soft path) +>.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
         [%| (ap-suck "peer: malformed path")]
-      ~&  [%ap-move-peer-wire p.p.yep]
       :^  %&  sto  %pass
       :-  p.p.yep
       [%send q.p.yep r.p.yep %peer u.pux]
@@ -853,11 +847,8 @@
         ?~  vux
           `+>.$
         =+  [new=p:(slot 13 hav) old=p:(slot 13 u.vux)]
-        ~&  [%ap-prop-nest `@p`(mug new) `@p`(mug old)]
         ?.  (~(nest ut p:(slot 13 hav)) %| p:(slot 13 u.vux))
-          ~&  %nested-bad
           :_(+>.$ `(ap-suck "prep mismatch"))
-        ~&  %nested-good
         `+>.$(+13.q.hav +13.q.u.vux)
       =^  tur  +>.$
           %+  ap-call  %prep
