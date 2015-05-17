@@ -54,11 +54,9 @@
   $%  [%add p=(list gill)]                              ::  add agents
       [%del p=(list gill)]                              ::  delete agents 
   ==                                                    ::
---                                                      ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|%                                                      ::  helm library
 ++  deft-apes                                           ::  default servers
   |=  our=ship
   %-  ~(gas in *(set well))
@@ -199,7 +197,6 @@
     |=  [way=wire saw=(unit tang)]  
     =<  se-abet  =<  se-view
     =+  gyl=(drum-phat way)
-    ~&  [%drum-reap gyl saw]
     ?~  saw
       (se-join gyl)
     (se-dump:(se-diss gyl) u.saw)
@@ -283,15 +280,12 @@
   ::
   ++  se-amor                                           ::  live targets
     ^-  (list gill)
-    =+  wag=(~(tap in eel))
-    |-  ^+  wag
-    ?~  wag  ~
-    =+  mor=$(wag t.wag)
-    ?:(=(~ (~(get by fug) i.wag)) mor [i.wag mor])
+    (skim (~(tap in eel)) |=(gill ?=([~ ~ *] (~(get by fug) +<))))
   ::
   ++  se-anon                                           ::  rotate index
     =+  wag=se-amor
     ?~  wag  +
+    ::  ~&  [%se-anon inx/inx wag/wag nex/(mod +(inx) (lent se-amor))]
     +(inx (mod +(inx) (lent se-amor)))
   ::
   ++  se-agon                                           ::  current gill
@@ -347,16 +341,27 @@
     =.  +>  (se-text "[detached from {<gyl>}]")
     se-prom(liv.maz ?~(fug & liv.maz))
   ::
+  ++  se-joke                                           ::  prepare connection
+    |=  gyl=gill
+    ^+  +>
+    =+  lag=se-agon
+    ?~  lag  +>.$
+    ?:  =(~ fug)  +>.$
+    (se-alas(fug (~(put by fug) gyl ~)) u.lag)
+  ::
   ++  se-join                                           ::  confirm connection
     |=  gyl=gill
     ^+  +>
     ?>  =(~ (~(got by fug) gyl))
-    se-prom(liv.maz |, fug (~(put by fug) gyl `*target))
+    (se-alas:se-prom(liv.maz |, fug (~(put by fug) gyl `*target)) gyl)
   ::
   ++  se-nuke                                           ::  teardown
     |=  gyl=gill
     ^+  +>
-    (se-diss:(se-pull(liv.maz |) gyl) gyl)
+    =+  lag=se-agon
+    =.  +>.$  (se-diss:(se-pull(liv.maz |) gyl) gyl)
+    ?.  &(?=(^ lag) !=(gyl u.lag))  +>.$
+    (se-alas u.lag)
   ::
   ++  se-like                                           ::  act in master
     |=  kus=ukase
@@ -374,19 +379,23 @@
   ::
   ++  se-plot                                           ::  status line
     ^-  tape
+    =+  lag=se-agon
     =+  ^=  pry
-        |=  gill 
+        |=  gill  ^-  tape
         =+((trip q.+<) ?:(=(our p.+>-) - :(welp (scow %p p.+>-) "/" -)))
+    =+  ^=  yey
+        |=  gill  ^-  tape
+        =+((pry +<) ?:(=(lag `+>-) ['*' -] -))
     =+  ^=  yal  ^-  (list tape)
         %+  weld
           ^-  (list tape)
           %+  turn  (~(tap by fug))
           |=  [a=gill b=(unit target)]
-          =+  c=(pry a)
+          =+  c=(yey a)
           ?~(b ['?' c] c)
         ^-  (list tape)
-        %+  turn  (skip (~(tap by eel)) |=(gill (~(has by fug) +<)))
-        |=(a=gill ['>' (pry a)])
+        %+  turn  (skip (~(tap by fur)) |=([term *] (~(has by fug) [our +<-])))
+        |=([term *] ['-' (pry our +<-)])
     |-  ^-  tape
     ?~  yal  ~
     ?~  t.yal  i.yal
@@ -447,7 +456,7 @@
   ::
   ++  se-peer                                           ::  send a peer
     |=  gyl=gill
-    (se-emit(fug (~(put in fug) gyl ~)) ost %peer (drum-path gyl) gyl /sole)
+    (se-emit(fug (~(put by fug) gyl ~)) ost %peer (drum-path gyl) gyl /sole)
   ::
   ++  se-pull                                           ::  cancel subscription
     |=  gyl=gill
@@ -476,11 +485,11 @@
       ?:  mav
         ?.  liv
           (se-blit `dill-blit`[%qit ~])
-        +>(tar.maz +<+)
+        se-prom:+>(tar.maz +<+)
       ?.  liv  
         =.  ..ta  (se-nuke gyl) 
         ..ta(liv.maz =(~ fug))
-      (se-alas(fug (~(put by fug) gyl ``target`+<+)) gyl)
+      ..ta(fug (~(put by fug) gyl ``target`+<+))
     ::
     ++  ta-ant                                          ::  toggle master
       ^+  .
@@ -597,8 +606,7 @@
               %-  ta-hom(pos.inp 0, kil `(scag pos.inp buf.say.inp))
               (ta-cut 0 pos.inp)
           %v  ta-ant
-          %x  ?:  mav  ta-bel
-              +>(+> se-anon)
+          %x  +>(+> se-anon)
           %y  ?~  kil  ta-bel 
               %-  ta-hom(pos.inp (add pos.inp (lent u.kil)))
               (ta-cat pos.inp u.kil)
