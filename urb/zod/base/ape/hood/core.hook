@@ -98,17 +98,17 @@
   |=  [from ~]
   (ably (poke-verb:(helm-work [hid +<-] (able %helm)) +<+))
 ::
+++  poke-hood-start                                     ::
+  |=  [from drum-start]
+  (ably (poke-start:(drum-work [hid +<-] (able %drum)) +<+))
+::
+++  poke-dill-belt
+  |=  [from dill-belt]
+  (ably (poke-dill-belt:(drum-work [hid +<-] (able %drum)) +<+))
+::
 ++  poke-will                                           ::
   |=  [from (unit will)]
   (ably (poke-will:(helm-work [hid +<-] (able %helm)) +<+))
-::
-++  reap-drum
-  |=  [then saw=(unit tang)]
-  (ably (reap:(drum-work [hid ost src] (able %drum)) way +<+))
-::
-++  onto-drum                                           ::
-  |=  [then saw=(each ,[term @tas @da] tang)]
-  (ably (take-onto:(drum-work [hid ost src] (able %drum)) way +<+))
 ::
 ++  mere-kiln                                           ::
   |=  [then are=(each (set path) (pair term tang))]
@@ -122,23 +122,23 @@
   |=  [then (pair ,@tD tank)]
   (ably (take-note:(helm-work [hid ost src] (able %helm)) way +<+))
 ::
-++  went-helm                                           ::
-  |=  [then her=ship kay=cape]
-  (ably (take-went:(helm-work [hid ost src] (able %helm)) way +<+))
+++  reap-drum
+  |=  [then saw=(unit tang)]
+  (ably (reap:(drum-work [hid ost src] (able %drum)) way +<+))
+::
+++  onto-drum                                           ::
+  |=  [then saw=(each ,[term @tas @da] tang)]
+  (ably (take-onto:(drum-work [hid ost src] (able %drum)) way +<+))
 ::
 ++  peer-drum
   |=  [from pax=path]
   (ably (peer:(drum-work [hid +<-] (able %drum)) +<+))
 ::
-++  poke-hood-start                                     ::
-  |=  [from drum-start]
-  (ably (poke-start:(drum-work [hid +<-] (able %drum)) +<+))
-::
-++  poke-dill-belt
-  |=  [from dill-belt]
-  (ably (poke-dill-belt:(drum-work [hid +<-] (able %drum)) +<+))
-::
 ++  quit-drum
   |=  then
   (ably (quit:(drum-work [hid ost src] (able %drum)) way))
+::
+++  went-helm                                           ::
+  |=  [then her=ship kay=cape]
+  (ably (take-went:(helm-work [hid ost src] (able %helm)) way +<+))
 --

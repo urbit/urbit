@@ -525,24 +525,23 @@
     ++  ap-diff                                         ::  pour a diff
       |=  [her=ship pax=path cag=cage]
       =.  q.cag  (spec q.cag)
-      =+  cug=(ap-find [%diff p.cag pax])
+      =+  cug=(ap-find [%diff p.cag +.pax])
       ?~  cug
-        %.  [| her pax]
+        %.  [| her +.pax]
         ap-pump:(ap-lame %diff (ap-suck "diff: no {<`path`[p.cag pax]>}"))
       =+  ^=  arg  ^-  vase
           %-  slop
           ?:  =(0 p.u.cug)
-            [!>([`@ud`ost `@p`q.q.pry `path`pax]) !>(cag)]
-          [!>([`@ud`ost `@p`q.q.pry (slag (dec p.u.cug) `path`pax)]) q.cag]
+            [!>([`@ud`ost `@p`q.q.pry `path`+.pax]) !>(cag)]
+          [!>([`@ud`ost `@p`q.q.pry (slag (dec p.u.cug) `path`+.pax)]) q.cag]
       =^  cam  +>.$  (ap-call q.u.cug arg)
       ?^  cam   
         (ap-pump:(ap-lame q.u.cug u.cam) | her pax)
       (ap-pump & her pax)
     ::
-    ++  ap-pump                                         ::  break subscription
+    ++  ap-pump                                         ::  update subscription
       |=  [oak=? her=ship pax=path]
       =+  way=[(scot %p her) %out pax]
-      ::  ~&  [%ap-pump-path oak pax]
       ?:  oak
         (ap-pass way %send her -.pax %pump ~)
       (ap-pass:(ap-give %quit ~) way %send her -.pax %pull ~)
@@ -699,6 +698,7 @@
       =+  pux=((soft path) +>.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
         [%| (ap-suck "peer: malformed path")]
+      ~&  [%ap-move-peer-path p.p.yep]
       :^  %&  sto  %pass
       :-  p.p.yep
       [%send q.p.yep r.p.yep %peer u.pux]
@@ -826,7 +826,7 @@
       ^+  +>
       ?-  -.cuf
         %coup  (ap-punk q.q.pry %coup +.pax `!>(p.cuf))
-        %diff  (ap-diff q.q.pry +.pax p.cuf)
+        %diff  (ap-diff q.q.pry pax p.cuf)
         %quit  (ap-punk q.q.pry %quit +.pax ~)
         %reap  (ap-punk q.q.pry %reap +.pax `!>(p.cuf))
       ==
