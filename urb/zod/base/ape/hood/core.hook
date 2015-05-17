@@ -7,6 +7,8 @@
 ::::                                                    ::  ::
   !:                                                    ::  ::
 =>  |%                                                  ::  module boilerplate
+    ++  hood-0                                          :: 
+      ,[%0 lac=(map ,@tas hood-part)]                   ::
     ++  hood-good                                       ::
       |*  hed=hood-head                                 ::
       |=  paw=hood-part                                 ::
@@ -17,33 +19,33 @@
       ==                                                ::
     ++  hood-head  ,_-:*hood-part                       ::
     ++  hood-make                                       ::
-      |*  hed=hood-head                                 ::
+      |*  [our=@p hed=hood-head]                        ::
       ?-  hed                                           ::
-        %drum  *drum-part                               ::
+        %drum  (drum-port our)                          ::
         %helm  *helm-part                               ::
         %kiln  *kiln-part                               ::
       ==                                                ::
     ++  hood-part                                       ::
-      $?  drum-part                                     ::
-          helm-part                                     ::
-          kiln-part                                     ::
+      $%  [%drum %0 drum-pith]                          ::
+          [%helm %0 helm-pith]                          ::
+          [%kiln %0 kiln-pith]                          ::
       ==                                                ::
     --                                                  ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |_  $:  hid=hide                                        ::  system state
-        [%0 lac=(map ,@tas hood-part)]                  ::  part system
+        hood-0                                          ::  server state
     ==                                                  ::
 ++  able                                                ::  find/make part
   |*  hed=hood-head
   =+  rep=(~(get by lac) hed)
-  =+  par=?^(rep u.rep `hood-part`(hood-make hed))
+  =+  par=?^(rep u.rep `hood-part`(hood-make our.hid hed))
   ((hood-good hed) par)
 ::
 ++  ably                                                ::  save part
   |*  [moz=(list) rep=hood-part]
-  [(flop moz) +>(lac (~(put by lac) -.rep rep))]
+  [(flop moz) %_(+> lac (~(put by lac) -.rep rep))]
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -59,6 +61,10 @@
 ++  coup-drum                                           ::
   |=  [then saw=(unit tang)]
   (ably (take-coup:(drum-work [hid ost src] (able %drum)) way +<+))
+::
+++  diff-sole-effect-drum
+  |=  [then sole-effect]
+  (ably (diff-sole-effect:(drum-work [hid ost src] (able %drum)) way +<+))
 ::
 ++  poke-hood-begin                                     ::
   |=  [from hood-begin]
@@ -102,6 +108,7 @@
 ::
 ++  onto-drum                                           ::
   |=  [then saw=(each ,[term @tas @da] tang)]
+  ~&  [%onto-drum +<]
   (ably (take-onto:(drum-work [hid ost src] (able %drum)) way +<+))
 ::
 ++  mere-kiln                                           ::
@@ -131,10 +138,6 @@
 ++  poke-dill-belt
   |=  [from dill-belt]
   (ably (poke-dill-belt:(drum-work [hid +<-] (able %drum)) +<+))
-::
-++  diff-sole-effect-drum
-  |=  [then sole-effect]
-  (ably (diff-sole-effect:(drum-work [hid ost src] (able %drum)) way +<+))
 ::
 ++  quit-drum
   |=  then

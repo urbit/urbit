@@ -252,7 +252,8 @@
           ::  ~&  [%take-gall-unto +>.sih]
           ?-  -.+>.sih
             %coup  ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
-            %quit  !! :: ??
+            %quit  ~&  %dill-console-quit
+                   (dump %logo ~)
             %reap  ?~(p.p.+>.sih +>.$ (crud %reap u.p.p.+>.sih))
             %diff  pump:(from ((hard dill-blit) q:`vase`+>+>.sih))
           ==
@@ -287,7 +288,7 @@
           [~ ~]
           80
           0
-          (tuba "<{(trip p.kyz)}>")
+          (tuba "<%dill: awaiting {(trip p.kyz)}>")
       ==
     --
 |%                                                      ::  poke/peek pattern
@@ -325,12 +326,12 @@
     =+  ^=  flo  ^-  (list (pair ship term))
         =+  myr=(clan p.q.hic)
         ?:  =(%pawn myr)
-          [[p.q.hic %dojo] [p.q.hic %hood] ~]
+          [[p.q.hic %dojo] ~]
         ?:  =(%earl myr)
           =+  fap=(sein p.q.hic)
-          [[fap %dojo] [fap %talk] [fap %hood] ~]
-        [[p.q.hic %dojo] [p.q.hic %talk] [p.q.hic %hood] ~]
-    =^  moz  all  abet:(need (ax (need hey.all) [%flow %sole flo]))
+          [[fap %dojo] [fap %talk] ~]
+        [[p.q.hic %dojo] [p.q.hic %talk] ~]
+    =^  moz  all  abet:(need (ax (need hey.all) [%flow %hood flo]))
     ?:  |((lth p.q.hic 256) (gte p.q.hic (bex 64)))  [moz ..^$] ::  XX HORRIBLE
     [:_(moz [(need hey.all) %give %init p.q.hic]) ..^$]
   =+  nus=(ax hen q.hic)
