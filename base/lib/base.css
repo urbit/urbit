@@ -104,23 +104,29 @@ code,
 }
 
 #c {
-  width: 24rem;
+  width: 32rem;
+  margin-left: -16rem;
   position: absolute;
   left: 50%;
-  margin-left: -12rem;
+}
+
+h1 {
+  font-size: 1.6rem;
+  font-weight: 500;
+}
+
+h1:after {
+  content: "\2014";
+  margin-left: 1rem;
 }
 
 #c pre {
   font-size: .6rem;
-}
-
-#c.err {
-  width: 32rem;
-  margin-left: -16rem;
+  margin-top: 2rem;
 }
 
 #pass {
-  width: 24rem;
+  width: 32rem;
 }
 
 button {
@@ -131,17 +137,32 @@ button {
   font-weight: 500;
 }
 
-#ship,
-input {
-  font-family: "scp";
+.sig {
+  font-weight: 400;
+  font-size: 2rem;
   display: inline;
-  border: none;
-  background-color: #f5f5f5;
-  padding: .3rem;
-  outline: none;
+  vertical-align: middle;
 }
 
-#ship:focus,
-input:focus {
-  background-color: #eee;
+#ship {
+  font-family: 'bau';
+  font-weight: 400;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: .1rem;
+  display: inline-block;
+  min-width: 1rem;
+}
+
+input {
+  font-family: 'scp';
+  display: inline;
+}
+
+#ship,
+input {
+  border: none;
+  padding: .3rem;
+  outline: none;
+  border-bottom: 3px solid #555;
 }

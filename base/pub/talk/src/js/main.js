@@ -522,16 +522,37 @@ module.exports = recl({
     }
     return $("#station-container").toggleClass('open');
   },
+  validateSource: function(s) {
+    if (this.state.configs[this.state.station].sources.indexOf(s) !== -1) {
+      return false;
+    }
+    if (s.length < 5) {
+      return false;
+    }
+    if (s[0] !== "~") {
+      return false;
+    }
+    if (s.indexOf("/") === -1) {
+      return false;
+    }
+    return true;
+  },
   _keyUp: function(e) {
     var _sources, v;
+    $('.sour-ctrl .join').removeClass('valid-false');
     if (e.keyCode === 13) {
-      v = this.$input.val();
-      if (this.state.configs[this.state.station].sources.indexOf(v) === -1) {
+      v = this.$input.val().toLowerCase();
+      if (v[0] !== "~") {
+        v = "~" + v;
+      }
+      if (this.validateSource(v)) {
         _sources = _.clone(this.state.configs[this.state.station].sources);
         _sources.push(v);
         StationActions.setSources(this.state.station, _sources);
         this.$input.val('');
         return this.$input.blur();
+      } else {
+        return $('.sour-ctrl .join').addClass('valid-false');
       }
     }
   },
@@ -793,6 +814,9 @@ module.exports = recl({
     if (v.length === 0) {
       return true;
     }
+    if (v.length < 5) {
+      return false;
+    }
     v = v.split(" ");
     for (i = 0, len = v.length; i < len; i++) {
       a = v[i];
@@ -807,6 +831,9 @@ module.exports = recl({
     StationActions.setValidAudience(valid);
     if (valid === true) {
       v = $('#audi').text();
+      if (v.length === 0) {
+        v = window.util.mainStationPath(window.urb.user);
+      }
       v = v.split(" ");
       for (k in v) {
         _v = v[k];
@@ -814,7 +841,6 @@ module.exports = recl({
           v[k] = "~" + _v;
         }
       }
-      v = window.util.expandAudi(v);
       StationActions.setAudience(v);
       return v;
     } else {
