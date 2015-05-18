@@ -2475,6 +2475,7 @@
       [%dude p=tank q=silk]                             ::  error wrap
       [%dune p=(set beam) q=(unit gage)]                ::  unit literal
       [%file p=beam]                                    ::  from clay
+      [%flag p=@uvH q=silk]                             ::  re-apply user deps
       [%join p=mark q=silk r=silk]                      ::  merge
       [%mash p=mark q=milk r=milk]                      ::  annotate
       [%mute p=silk q=(list (pair wing silk))]          ::  mutant
