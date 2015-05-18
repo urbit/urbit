@@ -39,7 +39,7 @@ RM=rm -f
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ -g -L/usr/local/lib -L/opt/local/lib
+CLD=g++ -O3 -L/usr/local/lib -L/opt/local/lib
 
 ifeq ($(OS),osx)
   COSFLAGS=-fno-diagnostics-fixit-info
