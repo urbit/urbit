@@ -254,7 +254,8 @@
     =+  yar=(~(tap by ray))
     |-  ^+  +>
     ?~  yar  +>
-    ?:  (~(has by fur) q.i.yar)  $(yar t.yar)
+    =+  hig=(~(get by fur) q.i.yar) 
+    ?:  &(?=(^ hig) ?=(^ u.hig) =(p.i.yar syd.u.u.hig))  $(yar t.yar)
     %=    $
         yar  t.yar
         +>
