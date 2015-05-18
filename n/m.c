@@ -149,7 +149,7 @@ _cm_signal_handle_term(int x)
 {
   //  Ignore if we are using base memory from work memory, very rare.
   //
-  if ( (0 != u3H->rod_u.kid_u) && (&(u3H->rod_u) == u3R) ) {
+  if ( (0 != u3H->rod_u.kid_p) && (&(u3H->rod_u) == u3R) ) {
     _cm_emergency("ignored", c3__term);
   }
   else {
@@ -184,7 +184,7 @@ _cm_signal_reset(void)
   u3R = &u3H->rod_u;
   u3R->cap_p = u3R->mat_p;
   u3R->ear_p = 0;
-  u3R->kid_u = 0;
+  u3R->kid_p = 0;
 }
 
 /* _cm_stack_recover(): recover stack trace, with lacunae.
@@ -276,13 +276,13 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
       u3R = &(u3H->rod_u);
       rod_u = u3R;
  
-      while ( rod_u->kid_u ) {
+      while ( rod_u->kid_p ) {
 #if 0
         fprintf(stderr, "collecting %d frames\r\n", 
-              u3kb_lent(rod_u->kid_u->bug.tax));
+              u3kb_lent((u3to(u3_road, rod_u->kid_p)->bug.tax));
 #endif
-        tax = u3kb_weld(_cm_stack_recover(rod_u->kid_u), tax);    
-        rod_u = rod_u->kid_u;
+        tax = u3kb_weld(_cm_stack_recover(u3to(u3_road, rod_u->kid_p)), tax);
+        rod_u = u3to(u3_road, rod_u->kid_p);
       }
     }
 
@@ -712,9 +712,9 @@ u3m_leap(c3_w pad_w)
   /* Attach the new road to its parents.
   */
   {
-    c3_assert(0 == u3R->kid_u);
-    rod_u->par_u = u3R;
-    u3R->kid_u = rod_u;
+    c3_assert(0 == u3R->kid_p);
+    rod_u->par_p = u3of(u3_road, u3R);
+    u3R->kid_p = u3of(u3_road, rod_u);
   }
 
   /* Set up the new road.
@@ -730,26 +730,26 @@ u3m_leap(c3_w pad_w)
 void
 u3m_fall()
 {
-  c3_assert(0 != u3R->par_u);
+  c3_assert(0 != u3R->par_p);
 
 #if 0
   fprintf(stderr, "fall: from %s %p, to %s %p (cap %p, was %p)\r\n",
           _(u3a_is_north(u3R)) ? "north" : "south",
           u3R,
           _(u3a_is_north(u3R)) ? "north" : "south",
-          u3R->par_u,
+          u3to(u3_road, u3R->par_p),
           u3R->hat_w,
           u3R->rut_w);
 #endif
 
   /* The new cap is the old hat - it's as simple as that.
   */
-  u3R->par_u->cap_p = u3R->hat_p;
+  u3to(u3_road, u3R->par_p)->cap_p = u3R->hat_p;
 
   /* And, we're back home.
   */
-  u3R = u3R->par_u;
-  u3R->kid_u = 0;
+  u3R = u3to(u3_road, u3R->par_p);
+  u3R->kid_p = 0;
 }
 
 /* u3m_hate(): new, integrated leap mechanism (enter).
@@ -951,8 +951,8 @@ u3m_soft_run(u3_noun fly,
   /* Configure the new road.
   */
   {
-    u3R->ski.flu = u3nc(fly, u3R->par_u->ski.flu);
-    u3R->pro.don = u3R->par_u->pro.don;
+    u3R->ski.flu = u3nc(fly, u3to(u3_road, u3R->par_p)->ski.flu);
+    u3R->pro.don = u3to(u3_road, u3R->par_p)->pro.don;
     u3R->bug.tax = 0;
   }
   u3t_on(coy_o);
@@ -1039,8 +1039,8 @@ u3m_soft_esc(u3_noun sam)
   /* Configure the new road.
   */
   {
-    u3R->ski.flu = u3t(u3R->par_u->ski.flu);
-    u3R->pro.don = u3R->par_u->pro.don;
+    u3R->ski.flu = u3t(u3to(u3_road, u3R->par_p)->ski.flu);
+    u3R->pro.don = u3to(u3_road, u3R->par_p)->pro.don;
     u3R->bug.tax = 0;
   }
 
