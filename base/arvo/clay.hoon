@@ -2445,8 +2445,9 @@
         ?:  =(bos p.q.hic)  ~
         [hen %pass / %c %font p.q.hic %base bos %kids]~
     ::
-        ?.  ?=(?(%king %czar) can)  ~
-        [hen %pass / %c %font p.q.hic %kids p.q.hic %base]~
+        ~
+    ::  ?.  ?=(?(%king %czar) can)  ~
+    ::  [hen %pass / %c %font p.q.hic %kids p.q.hic %base]~
     ==
   ::
       %info
