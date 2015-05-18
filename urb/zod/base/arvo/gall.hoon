@@ -133,7 +133,10 @@
     |=  [dap=dude pup=scup dep=@uvH gux=(each gage tang)]
     ^+  +>
     ?-    -.gux
-        %|  (mo-give %onto %| p.gux)
+        %|  
+      =.  +>  (mo-bold dap dep)
+      =.  +>  (mo-give %onto %| p.gux)
+      +>
         %&
       ?>  ?=(@ p.p.gux)
       ?.  (mo-okay q.p.gux)
