@@ -2439,10 +2439,15 @@
   ::
       %init
     :_  ..^$(fat.ruf (~(put by fat.ruf) p.q.hic [hen ~ ~]))
-    =+  bos=(sein p.q.hic)
-    ~&  [%bos bos p.q.hic]
-    ?:  =(bos p.q.hic)  ~
-    [hen %pass / %c %font p.q.hic %base bos %kids]~
+    =+  [bos=(sein p.q.hic) can=(clan p.q.hic)]
+    %-  zing  ^-  (list (list move))
+    :~  ~&  [%bos bos p.q.hic]
+        ?:  =(bos p.q.hic)  ~
+        [hen %pass / %c %font p.q.hic %base bos %kids]~
+    ::
+        ?.  ?=(?(%king %czar) can)  ~
+        [hen %pass / %c %font p.q.hic %kids p.q.hic %base]~
+    ==
   ::
       %info
     ?:  =(%$ q.q.hic)
