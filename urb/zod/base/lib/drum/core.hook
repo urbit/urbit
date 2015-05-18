@@ -207,7 +207,7 @@
     =+  gyl=(drum-phat way)
     ?~  saw
       (se-join gyl)
-    (se-dump:(se-diss gyl) u.saw)
+    (se-dump:(se-drop & gyl) u.saw)
   ::
   ++  take-coup                                         ::
     |=  [way=wire saw=(unit tang)]  
@@ -216,7 +216,7 @@
     =+  gyl=(drum-phat way)
     ?:  (se-aint gyl)  +>.$
     ~&  [%drum-coup-fail src ost gyl u.saw]
-    (se-dump:(se-diss gyl) u.saw)
+    (se-dump:(se-drop & gyl) u.saw)
   ::
   ++  take-onto                                         ::
     |=  [way=wire saw=(each suss tang)]  
@@ -236,7 +236,7 @@
     =<  se-abet  =<  se-view
     =+  gyl=(drum-phat way)
     ~&  [%drum-quit src ost gyl]
-    (se-drop gyl)
+    (se-drop %| gyl)
   ::                                                    ::  ::
   ::::                                                  ::  ::
     ::                                                  ::  ::
@@ -336,10 +336,6 @@
       (se-text "[already running {<p.wel>}/{<q.wel>}]")
     +>(ray (~(put in ray) wel))
   ::
-  ++  se-diss                                           ::  with prejudice
-    |=  gyl=gill
-    (se-drop(eel (~(del in eel) gyl)) gyl)
-  ::
   ++  se-dump                                           ::  print tanks
     |=  tac=(list tank)
     ^+  +>
@@ -349,11 +345,16 @@
     $(wol t.wol, +>.^$ (se-blit %out (tuba i.wol)))
   ::
   ++  se-drop                                           ::  disconnect
-    |=  gyl=gill
+    |=  [pej=? gyl=gill]
     ^+  +>
-    ?.  (~(has by fug) gyl)  +>
+    =+  lag=se-agon
+    ?.  (~(has by fug) gyl)  +>.$
     =.  fug  (~(del by fug) gyl)
-    =.  +>  (se-text "[detached from {<gyl>}]")
+    =.  eel  ?.(pej eel (~(del in eel) gyl))
+    =.  +>.$  ?.  &(?=(^ lag) !=(gyl u.lag))  
+                +>.$(inx 0)
+              (se-alas u.lag)
+    =.  +>.$  (se-text "[detached from {<gyl>}]")
     se-prom(liv.maz ?~(fug & liv.maz))
   ::
   ++  se-joke                                           ::  prepare connection
@@ -374,10 +375,7 @@
   ++  se-nuke                                           ::  teardown
     |=  gyl=gill
     ^+  +>
-    =+  lag=se-agon
-    =.  +>.$  (se-diss:(se-pull(liv.maz |) gyl) gyl)
-    ?.  &(?=(^ lag) !=(gyl u.lag))  +>.$
-    (se-alas u.lag)
+    (se-drop:(se-pull(liv.maz |) gyl) & gyl)
   ::
   ++  se-like                                           ::  act in master
     |=  kus=ukase

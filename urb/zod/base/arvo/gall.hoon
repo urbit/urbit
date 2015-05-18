@@ -236,8 +236,7 @@
     ?-  why
       %peer  (mo-give %unto %reap tug)
       %poke  (mo-give %unto %coup tug)
-      %pull  ~&  [%pull-fail tug]
-             +>.$
+      %pull  +>.$
     ==
   ::
   ++  mo-bale                                           ::  assign outbone
@@ -410,6 +409,7 @@
   ::
   ++  mo-gawk                                           ::  ames forward
     |=  [him=@p dap=dude num=@ud rok=rook]
+    =.  +>  ?.(?=(%u -.rok) +> (mo-give %mack ~))
     %+  mo-pass  
       [%sys %req (scot %p him) dap (scot %ud num) ~]
     ^-  note-arvo
@@ -478,7 +478,14 @@
         =+  ded=(~(tap in ful) ~)
         |-  ^+  +>.^$
         ?~  ded  +>.^$
-        $(ded t.ded, +>.^$ ap-kill(ost i.ded))
+        %=    $
+            ded   t.ded
+            +>.^$
+          %=  ap-kill
+            ost      i.ded
+            q.q.pry  p:(~(got by sup.ged) i.ded)
+          ==
+        ==
       ?.  ?=([%give %diff *] q.i.pyz)
         $(pyz t.pyz)
       =^  vad  +>  ap-fill(ost p.i.pyz)
@@ -698,7 +705,6 @@
       =+  pux=((soft path) +>.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
         [%| (ap-suck "peer: malformed path")]
-      ~&  [%ap-move-peer-path p.p.yep]
       :^  %&  sto  %pass
       :-  p.p.yep
       [%send q.p.yep r.p.yep %peer u.pux]
