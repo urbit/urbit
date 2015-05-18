@@ -957,13 +957,10 @@
     |=  mov=move
     %_(+> moves [mov moves])
   ::
-  ++  ra-ever                                           ::  emit success
-    .
-  ::
   ++  ra-evil                                           ::  emit error
     |=  msg=cord
-    ~&  [%ra-evil msg]
-    +>
+    ~|  [%ra-evil msg]
+    !!
   ::
   ++  ra-house                                          ::  emit partners
     |=  ost=bone
@@ -999,13 +996,11 @@
       ?~  q.cod
         ?.  (~(has by stories) p.cod)
           (ra-evil %talk-no-story)
-        =.  +>.$  (ra-config p.cod *config)
-        ra-ever(stories (~(del by stories) p.cod))
-      =.  +>.$  (ra-config p.cod u.q.cod)
-      ra-ever
+        (ra-config(stories (~(del by stories) p.cod)) p.cod *config)
+      (ra-config p.cod u.q.cod)
     ::
-        %review   ra-ever:(ra-think | her +.cod)
-        %publish  ra-ever:(ra-think & her +.cod)
+        %review   (ra-think | her +.cod)
+        %publish  (ra-think & her +.cod)
     ==
   ::
   ++  ra-config                                         ::  configure story
@@ -1036,6 +1031,11 @@
     %-  (ra-know man)  |=  par=_pa  =<  pa-abet
     (pa-quit:par %& cuz)
   ::
+  ++  ra-retry                                          ::  subscription resend
+    |=  [man=span cuz=station]
+    %-  (ra-know man)  |=  par=_pa  =<  pa-abet
+    (pa-acquire:par [%& cuz]~)
+  ::
   ++  ra-coup-repeat                                    ::
     |=  [[num=@ud her=@p man=span] saw=(unit tang)]
     (ra-repeat num [%& her man] saw)
@@ -1055,13 +1055,12 @@
     (ra-think | our.hid u.oot ~)
   ::
   ++  ra-cancel                                         ::  drop a bone
-    ^+  .
-    =+  hep=(~(get by sup.hid) ost)
-    ?~  hep  +
-    ?.  ?=([@ @ *] q.u.hep)
-      +(general (~(del in general) ost))
-    %-  (ra-know i.t.q.u.hep)  |=  par=_pa  =<  pa-abet
-    (pa-notify:pa-cancel:par p.u.hep %gone *human)
+    |=  [src=ship pax=path]
+    ^+  +>
+    ?.  ?=([@ @ *] pax)
+      +>(general (~(del in general) ost))
+    %-  (ra-know i.t.pax)  |=  par=_pa  =<  pa-abet
+    (pa-notify:pa-cancel:par src %gone *human)
   ::
   ++  ra-human                                          ::  look up person
     |=  her=ship
@@ -1238,6 +1237,9 @@
     ++  pa-diff-talk-report                             ::  subscribed update
       |=  [cuz=station rad=report]
       ^+  +>
+      ?.  (~(has in sources.shape) [%& cuz])
+        ~&  [%pa-diff-unexpected cuz rad]
+        +>
       ?+  -.rad  ~|([%talk-odd-friend rad] !!)
         %cabal  (pa-cabal cuz +.rad)
         %group  (pa-remind [%& cuz] +.rad)
@@ -1307,7 +1309,7 @@
       pa-monitor
     ::
     ++  pa-cancel                                       ::  unsubscribe from
-      ::  ~&  [%pa-cancel ost]
+      ~&  [%pa-cancel ost]
       %_  .
         guests  (~(del by guests) ost)
         viewers  (~(del in viewers) ost)
@@ -1549,7 +1551,7 @@
       ==
     ==
   ++  ta-best                                           ::  most relevant 
-    |=(two=partner ?:((ta-beat two) one two))
+    |=(two=partner ?:((ta-beat two) two one))
   ::
   ++  ta-full  (ta-show ~)                              ::  render full width
   ++  ta-show                                           ::  render partner
@@ -1649,12 +1651,16 @@
       ?:  oug
         (weld "@ " txt)
       (weld " " txt)
+    ::
+        %app
+      [' ' (trip p.sep)]
     ==
   -- 
 ::
 ++  peer                                                ::  accept subscription
   |=  [from pax=path]
   ^-  [(list move) _+>]
+  ::  ~&   [%talk-peer src ost pax]
   ?:  ?=([%sole *] pax)
     ?>  =(our.hid src)
     ?<  (~(has by shells) ost)
@@ -1679,7 +1685,7 @@
 ::
 ++  coup-repeat                                         ::
   |=  [then saw=(unit tang)]
-  %+  etch-repeat  way  |=  [num=@ud src=@p man=span]
+  %+  etch-repeat  [%repeat way]  |=  [num=@ud src=@p man=span]
   ra-abet:(~(ra-coup-repeat ra ost ~) [num src man] saw)
 ::
 ++  etch                                                ::  parse wire
@@ -1705,24 +1711,32 @@
   =+  wer=(etch way)
   ?>(?=(%repeat -.wer) (fun p.wer q.wer r.wer))
 ::
-++  quit-friend                                         ::
-  |=  then
-  %+  etch-friend  way  |=  [man=span cuz=station]
+++  reap-friend                                         ::
+  |=  [then saw=(unit tang)]
+  ^-  (quip move +>)
+  ?~  saw  [~ +>]
+  %+  etch-friend  [%friend way]  |=  [man=span cuz=station]
+  ~&  [%reap-friend-fail man cuz u.saw]
   ra-abet:(~(ra-quit ra ost ~) man cuz)
 ::
+++  quit-friend                                         ::
+  |=  then
+  %+  etch-friend  [%friend way]  |=  [man=span cuz=station]
+  ra-abet:(~(ra-retry ra ost ~) man cuz)
+::
 ++  pull                                                ::
-  |=  [from ~]
+  |=  [from pax=path]
   ^-  [(list move) _+>]
-  ::  ~&  [%talk-pull `*`ost]
-  =^  moz  +>.$  ra-abet:ra-ever:~(ra-cancel ra ost ~)
+  ~&  [%talk-pull src ost pax]
+  =^  moz  +>.$  ra-abet:(~(ra-cancel ra ost ~) src pax)
   [moz +>.$(shells (~(del by shells) ost))]
 ::
-++  poke-bit
-  |=  [from ~]
-  ^-  (quip move +>)
-  :_  +>.$
-  =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/talk/backlog/jam
-  [ost %info /jamfile our.hid (foal paf (jam +<+.+>.$))]~
+::++  poke-bit
+::  |=  [from ~]
+::  ^-  (quip move +>)
+::  :_  +>.$
+::  =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/talk/backlog/jam
+::  [ost %info /jamfile our.hid (foal paf (jam +<+.+>.$))]~
 ::
 ++  prep
   |=  [from old=(unit house)]

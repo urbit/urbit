@@ -52,6 +52,17 @@ window.urb.req = function(method,url,params,json,cb) {
   xhr.send(JSON.stringify(_data))
 }
 
+// window.urb.getJSON = function(url,cb){ window.urb.reqJSON("GET",url, null, cb)}
+// window.urb.reqJSON = function(method, url, data, cb){
+//   var xhr = new XMLHttpRequest()
+//   xhr.open(method, url)
+//   xhr.onload = function(){
+//     urb.fetchTag.call(xhr)
+//     if(cb) cb(JSON.parse(xhr.responseText))
+//   }
+//   xhr.send(data === null ? null : JSON.stringify(data))
+// }
+
 window.urb.reqq = []
 window.urb.qreq = function(method,url,params,json,cb) {
   walk = function() {
@@ -244,12 +255,11 @@ window.urb.unsubscribe = function(params,cb) {
 
   if(!params.path) throw new Error("You must specify a path for urb.unsubscribe.")
   if(!params.appl) throw new Error("You must specify an appl for urb.unsubscribe.")
-  if(!cb) throw new Error("You must supply a callback to urb.unsubscribe.")
   
   url = "/~/is/"+this.gsig(params)+".json"
   method = "delete"
   this.req("delete",url,params,true,function(err,res) {
-    cb(err,res)
+    if(cb) cb(err,res)
   })
 }
 

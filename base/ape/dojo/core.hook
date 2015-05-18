@@ -70,10 +70,6 @@
       ==                                                ::
     ++  bead  ,[p=(set beam) q=cage]                    ::  computed result
     ++  goal  ,[p=ship q=term]                          ::  flat application
-    ++  note                                            ::  general note
-      $%  [%exec @p (unit silk)]                        ::
-          [%deal sock term club]                        ::
-      ==                                                ::
     ++  clap                                            ::  action, user
       $%  [%peer p=path]                                ::  subscribe
           [%poke p=term q=*]                            ::  apply
@@ -87,7 +83,7 @@
     ++  card                                            ::  general card
       $%  [%diff %sole-effect sole-effect]              ::
           [%send wire [ship term] clap]                 ::
-          [%exec wire @p (unit silk)]                   ::
+          [%exec wire @p beak (unit silk)]              ::
           [%deal wire sock term club]                   ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
@@ -128,23 +124,32 @@
           [%sic p=tile q=horn]                          ::  /^  cast
           [%toy p=mark]                                 ::  /mark/  static
       ==                                                ::
+    ++  milk  (trel ship desk silk)                     ::  sourced silk
     ++  silk                                            ::  construction layer
       $&  [p=silk q=silk]                               ::  cons
       $%  [%bake p=mark q=beam r=path]                  ::  local synthesis
           [%boil p=mark q=beam r=path]                  ::  general synthesis
+          [%bunt p=mark]                                ::  example of mark
           [%call p=silk q=silk]                         ::  slam
           [%cast p=mark q=silk]                         ::  translate
-          [%done p=(set beam) q=cage]                   ::  literal
+          [%diff p=silk q=silk]                         ::  diff
+          [%done p=(set beam) q=gage]                   ::  literal
           [%dude p=tank q=silk]                         ::  error wrap
-          [%dune p=(set beam) q=(unit cage)]            ::  unit literal
+          [%dune p=(set beam) q=(unit gage)]            ::  unit literal
+          [%file p=beam]                                ::  from clay
+          [%join p=mark q=silk r=silk]                  ::  merge
+          [%mash p=mark q=milk r=milk]                  ::  annotate
           [%mute p=silk q=(list (pair wing silk))]      ::  mutant
+          [%pact p=silk q=silk]                         ::  patch
           [%plan p=beam q=spur r=hood]                  ::  structured assembly
           [%reef ~]                                     ::  kernel reef
           [%ride p=twig q=silk]                         ::  silk thru twig
+          [%tabl p=(list (pair silk silk))]             ::  list
           [%vale p=mark q=ship r=*]                     ::  validate [our his]
+          [%volt p=(set beam) q=(cask ,*)]              ::  unsafe add type
       ==                                                ::
     ++  sign                                            ::
-      $%  [%made p=@uvH q=(each cage tang)]             ::
+      $%  [%made p=@uvH q=(each gage tang)]             ::
           [%unto p=cuft]                                ::  
       ==                                                ::
     --                                                  ::
@@ -230,7 +235,7 @@
           ;~(pfix fas sym)
         ==
         (cook |=(a=term `goal`[our.hid a]) sym)
-        (easy [our.hid %helm])
+        (easy [our.hid %hood])
       ==
     ++  dp-model-cat  ;~(plug dp-server-cat dp-config)  ::  ++dojo-model
     ++  dp-model-dog  ;~(plug dp-server-dog dp-config)  ::  ++dojo-model
@@ -271,16 +276,20 @@
     |_  dojo-project                                    ::
     ++  dy-abet  +>(poy `+<)                            ::  resolve
     ++  dy-amok  +>(poy ~)                              ::  terminate
+    ++  dy-beak                                         ::  XX rethink
+      ^-  beak
+      [our.hid %home [%da lat.hid]]
+    ::
     ++  dy-ford                                         ::  send work to ford
       |=  [way=wire kas=silk]
       ^+  +>+>
       ?>  ?=(~ pux)
-      (he-card(poy `+>+<(pux `way)) %exec way our.hid `kas)
+      (he-card(poy `+>+<(pux `way)) %exec way our.hid dy-beak `kas)
     ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
       ?~  pux  +>
-      (he-card(poy ~) %exec u.pux our.hid ~)
+      (he-card(poy ~) %exec u.pux our.hid dy-beak ~)
     ::
     ++  dy-slam                                         ::  call by ford
       |=  [way=wire gat=vase sam=vase]
@@ -496,6 +505,10 @@
       ^-  silk
       [%boil %gate [he-beak (flop way)] ~]
     ::
+    ++  dy-twig-head                                    ::  dynamic state
+      ^-  vase
+      :(slop !>(`our=@p`our.hid) !>(`tym=@da`lat.hid) !>(`eny=@uvI`eny.hid))
+    ::
     ++  dy-made-dial                                    ::  dialog product
       |=  cag=cage
       ^+  +>+>
@@ -531,7 +544,7 @@
         %di  [/dial (dy-silk-init-modo (dy-cage p.p.p.q.u.cud) q.p.q.u.cud)]
         %ge  [/gent (dy-silk-init-modo (dy-cage p.p.p.q.u.cud) q.p.q.u.cud)]
         %dv  [/hand (dy-silk-device p.q.u.cud)]
-        %ex  [/hand [%ride p.q.u.cud [%reef ~]]]
+        %ex  [/hand [%ride p.q.u.cud [[%done ~ %$ dy-twig-head] [%reef ~]]]]
         %tu  :-  /hand
              :+  %done  ~
              :-  %noun
@@ -613,12 +626,13 @@
     [& %$ "> "]
   ::
   ++  he-made                                           ::  result from ford
-    |=  [way=wire dep=@uvH rey=(each cage tang)]
+    |=  [way=wire dep=@uvH reg=(each gage tang)]
     ^+  +>
     ?>  ?=(^ poy)
     =<  he-pine
-    ?-  -.rey
-      %&  %.  p.rey
+    ?-  -.reg
+      %&  ?>  ?=(@ p.p.reg)
+          %.  p.reg
           =+  dye=~(. dy u.poy(pux ~))
           ?+  way  !!
             [%hand ~]  dy-hand:dye
@@ -626,8 +640,7 @@
             [%gent ~]  dy-made-gent:dye
             [%edit ~]  dy-made-edit:dye
           ==
-      %|  ~&  [%he-made-fail way]
-          (he-diff(poy ~) %tan p.rey)
+      %|  (he-diff(poy ~) %tan p.reg)
     ==
   ::
   ++  he-unto                                           ::  result from behn
@@ -701,19 +714,19 @@
     ==
   --
 ::
-++  peer
+++  peer-sole
   |=  [from pax=path]
   ^-  (quip move +>)
   ~?  !=(src our.hid)  [%dojo-peer-stranger ost src pax]
   ::  ?>  =(src our.hid)
   ?<  (~(has by hoc) ost)
-  ?>  =(/sole pax)
+  ?>  =(~ pax)
   =<  he-abet
   %~  he-peer  he
   :-  [ost ~]
   ^-  session
   :*  *sole-share  ::  say=sole-share
-      %main           ::  syd=desk
+      %home           ::  syd=desk
       ~               ::  luc=(unit case)
       ~               ::  poy=(unit dojo-project)
       ~               ::  var=(map term cage)
@@ -728,8 +741,8 @@
   he-abet:(~(he-type he [ost ~] (~(got by hoc) ost)) act)
 ::
 ++  made
-  |=  [then dep=@uvH rey=(each cage tang)]
-  he-abet:(~(he-made he [[ost ~] (~(got by hoc) ost)]) way dep rey)
+  |=  [then dep=@uvH reg=(each gage tang)]
+  he-abet:(~(he-made he [[ost ~] (~(got by hoc) ost)]) way dep reg)
 ::
 ++  unto
   |=  [then cit=cuft] 

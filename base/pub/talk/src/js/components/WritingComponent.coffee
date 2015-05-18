@@ -18,6 +18,7 @@ module.exports = recl
     s =
       audi:StationStore.getAudience()
       ludi:MessageStore.getLastAudience()
+      config:StationStore.getConfigs()
       members:StationStore.getMembers()
       typing:StationStore.getTyping()
       valid:StationStore.getValidAudience()
@@ -39,18 +40,29 @@ module.exports = recl
     MessageActions.setTyping true
     @typing true
 
+  addCC: (audi) ->
+    listening = @state.config[window.util.mainStation(window.urb.user)].sources
+    cc = false
+    for s in listening
+      if audi.indexOf(s) is -1
+        cc = true
+    if listening.length is 0
+      cc = true
+    if cc is true
+      audi.push window.util.mainStationPath(window.urb.user)
+    audi
+
   sendMessage: ->
     if @_validateAudi() is false
       $('#audi').focus()
       return
     if @state.audi.length is 0 and $('#audi').text().trim().length > 0
-      audi = @state.ludi
-      @_setAudi()
+      audi = if @_setAudi() then @_setAudi() else @state.ludi
     else
-      audi = @state.audi
-    audi = window.util.expandAudi audi
+      audi = @state.audi    
+    audi = @addCC audi
     MessageActions.sendMessage @$writing.text().trim(),audi
-    @$length.text "0/69"
+    @$length.text "0/62"
     @$writing.text('')
     @set()
     @typing false
@@ -97,8 +109,8 @@ module.exports = recl
   _setFocus: -> @$writing.focus()
 
   _validateAudiPart: (a) ->
-    if a[0] isnt "~"
-      return false
+    # if a[0] isnt "~"
+    #   return false
     if a.indexOf("/") isnt -1
       _a = a.split("/")
       if _a[1].length is 0
@@ -127,8 +139,13 @@ module.exports = recl
     if valid is true
       v = $('#audi').text()
       v = v.split " "
+      for k,_v of v
+        if _v[0] isnt "~" then v[k] = "~#{_v}"
       v = window.util.expandAudi v
       StationActions.setAudience v
+      v
+    else
+      false
 
   getTime: ->
     d = new Date()
@@ -174,11 +191,14 @@ module.exports = recl
 
     audi = if @state.audi.length is 0 then @state.ludi else @state.audi
     audi = window.util.clipAudi audi
+    for k,v of audi
+      audi[k] = v.slice(1)
 
     k = "writing"
 
     div {className:k}, [
       (div {className:"attr"}, [
+        (React.createElement Member, iden)
         (div {
           id:"audi"
           className:"audi valid-#{@state.valid}"
@@ -186,7 +206,6 @@ module.exports = recl
           onKeyDown: @_audiKeyDown
           onBlur:@_setAudi
           }, audi.join(" "))
-        (React.createElement Member, iden)
         (div {className:"time"}, @getTime())        
       ])
       (div {

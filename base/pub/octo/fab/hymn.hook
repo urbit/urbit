@@ -1,0 +1,19 @@
+::
+::
+::::  /hook/hymn/fab/octo/pub/
+  ::
+^-  manx
+;html
+  ;head
+    ;meta(charset "utf-8");
+    ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js");
+    ;script(type "text/javascript", src "/~~/~/at/base/lib/urb.js");
+    ;link(type "text/css", rel "stylesheet", href "/home/pub/octo/src/main.css");
+    ;title: urbit cit cat eot
+  ==
+  ;body
+    ;div#bord;
+    ;div#whom;
+    ;script(type "text/javascript", src "/home/pub/octo/src/main.js");
+  ==
+==
