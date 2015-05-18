@@ -2648,7 +2648,7 @@
       =.  sor.ruf  (~(put by sor.ruf) [our syd her sud] [nex hen])
       =+  `move`[hen %pass tea %c %warp [our her] sud ~ %sing %y [%ud nex] /]
       ?:  ?=(%& -.p.+.q.hin)
-        ~&  ['merge succeeded' p.p.+.q.hin]
+        ::  ~&  ['merge succeeded' p.p.+.q.hin]
         [[- ~] ..^$]
       ~&  :^    "merge failed"
               "please manually merge the desks with"

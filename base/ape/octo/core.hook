@@ -151,7 +151,7 @@
 ++  poke-sole-action                                    ::  console input
           |=  [from act=sole-action]  =<  abet          ::
           (work:(flet +<-) act)                         ::
-++  poke-octo-move
+++  poke-octo-move                                      
           |=  [from wha=point]  =<  abet
           =^  dud  gam  ~(m ~(at go gam) wha)
           ?>  dud
