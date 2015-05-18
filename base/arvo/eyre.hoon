@@ -967,7 +967,7 @@
       ::
           %at
         =.  ..ya  abet.yac
-        =+  pez=process(pok p.ham)
+        =+  pez=process(pok p.ham, aut |)
         ?.  ?=(%& -.pez)  ~|(no-inject/p.ham !!)
         ?~  p.pez  pez
         ?+    -.p.pez  ~&(bad-inject/p.pez !!)
