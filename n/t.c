@@ -113,8 +113,8 @@ _t_jet_label(u3a_road* rod_u, u3_noun bat)
       return u3h(u3t(u3t(u3h(cax))));
     }
 
-    if ( rod_u->par_u ) {
-      rod_u = rod_u->par_u;
+    if ( rod_u->par_p ) {
+      rod_u = u3to(u3_road, rod_u->par_p);
     }
     else return u3_none;
   }
@@ -175,7 +175,7 @@ _t_samp_process(u3_road* rod_u)
       }
       don = u3t(don);
     }
-    rod_u = rod_u->par_u;
+    rod_u = u3tn(u3_road, rod_u->par_p);
   }
   u3z(muf);
   
