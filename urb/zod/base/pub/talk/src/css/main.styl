@@ -4,46 +4,52 @@
 
 @import 'fonts'
 
-.iden
-.audi
-.time
-#length
-#where
-#who
-.station
-  font-family "scp"
-
-.join-ctrl input
-  font-family "bau"
-  
-input
-  -webkit-appearance none
-  border-radius 0
-
 html
 body
   height 100%
   font-family "bau"
 
+.type
+  font-family "scp"
+
+input
+  font-size 1rem
+  -webkit-appearance none
+  border-radius 0
+  font-family "bau"
+
 #length
 .time
-  font-size .6rem
   letter-spacing 0
 
 .time
   font-weight 200
 
 #length
+.audi
+.time
+.station
+#audience .iden
+  font-size .8rem
+  line-height 1rem
+
+#length
+  letter-spacing .1rem
   font-weight 500
 
-input.join
-.iden
-.audi
-#station
-  font-size .7rem
+#writing-container:focus #length
+  display inline
 
-.iden
-  font-weight 600
+// input.join
+// .iden
+// .audi
+// #station
+//   font-size .7rem
+
+.ship
+  font-weight 500
+  text-transform uppercase
+  letter-spacing .05rem
 
 html
 body
@@ -67,17 +73,17 @@ body
   left 50%
   width 58rem
   margin-left -29rem
-  margin-bottom 12rem
+  margin-bottom 6rem
 
 #station-container
   position fixed
   width 58rem
-  max-height 2.7rem
-  background-color white
-  border-bottom .3rem solid black
-  padding-bottom 1rem
+  max-height 4rem
+  background-color #ccc
+  color white
   overflow hidden
   z-index 10
+  border-bottom 1px solid #ddd
   -webkit-transition max-height .2s
   
 #station #station-container
@@ -86,7 +92,7 @@ body
   text-align right
 
 #writing-container
-  bottom 4rem
+  margin-top 2rem
   margin-bottom 1rem
 
 #messages-container
@@ -126,46 +132,91 @@ body
   -webkit-transform-origin 0 50%
   -webkit-transition -webkit-transform .2s
 
+#station-container #where .caret
+  margin-top 9px
+  border-top 9px solid transparent
+  border-right 9px solid transparent
+  border-bottom 9px solid transparent
+  border-left 9px solid white
+  -webkit-transition border-left-color .2s
+
 #head
   width 100%
   height 4rem
+  background-color white
+  color #333
+  border-bottom 1px solid #ddd
 
 #station-container h1
-  font-weight 500
-  font-size .6rem
+  display none
+  color white
+  font-weight 400
+  font-size 1rem
   letter-spacing .06rem
   display inline-block
   line-height 1.2rem
 
-#audience
-#who
-  width 34.6rem
+#station-container h1:after
+  content "—"
+  margin-left .6rem
+
+#station-container .audi
+#station-container .iden > div
+  background-color transparent
   
+#who
+  width 16rem
+
 #stations
-#where
-  width 17.3rem
+  width 15rem
+  padding-bottom 1rem
+  border-left 16rem solid transparent
+
+#station-container #head .ship
+  font-weight 400
+
+#station-container:hover #where
+  color white
+  -webkit-transition color .2s
+
+#station-container:hover #where
+  color rgb(240,73,65)
+  -webkit-transition color .2s
+
+#station-container:hover #where .caret
+  border-left-color rgb(240,73,65)
+  -webkit-transition border-left-color .2s
   
 #stations
 #audience
 #head > div
+#where > div
   display inline-block
-  text-align right
   vertical-align top
+
+#where > div
+  margin-right 1rem
+  text-transform capitalize
+  letter-spacing .05rem
+  font-size 1.6rem
+
+#where .slat
+  font-weight 500
+
+#where .slat:after
+  margin-left 1rem
+  content "—"
 
 #head > div
   height 2rem
-  margin-top 1.5rem
+  line-height 2rem
+  margin-top 1rem
 
 #where .caret
-  border-left-color red
-  margin-left 1rem
+  border-left-color white
 
-#where > span
-#who > span
-  vertical-align top
-
-#who > span
-  margin-left 1rem
+#who > div
+  vertical-align middle
 
 #members > div
   display block
@@ -176,6 +227,7 @@ body
 
 #members .audi
   margin-right .3rem
+  margin-top 0
 
 #members .iden
   min-width 10rem
@@ -183,36 +235,44 @@ body
 .station div
   display inline-block
 
+.station .path
+  text-transform uppercase
+
 .station .remove
   opacity 0
   cursor pointer
   width .6rem
-  margin-right .6rem
-  font-weight 600
+  margin-left .6rem
+  line-height 1rem
+  font-size 1.2rem
+  font-weight 500
   color #ff0000
+  vertical-align top
 
 .station:hover .remove
   opacity 1
 
 // add source
 .sour-ctrl input
-  font-family "scp"
+  color white
+  background-color transparent
   border none
-  font-weight 400
-  text-align right
-  line-height 1rem
+  font-size .8rem
+  line-height 2rem
+  margin-top .6rem
+  font-weight 300
+  text-align left
   outline none
   cursor pointer
   
 .sour-ctrl input::-webkit-input-placeholder
-  font-family "scp"
-  font-size 1rem
-  font-weight 600
+  font-weight 500
+  font-size 1.6rem
   margin-left .6rem
-  color #000
+  color white
 
 .sour-ctrl input:focus::-webkit-input-placeholder
-  color white
+  color transparent
 
 //
 // messages
@@ -220,16 +280,56 @@ body
 
 .message
   padding-top .3rem
-
-#messages .message:last-child
-  margin-bottom 1rem
+  margin-bottom .6rem
 
 #messages .message .time
+#messages .message .audi
   opacity 0
+  margin-left 2rem
 
-#messages .message:last-child .time
 #messages .message:hover .time
+#messages .message:hover .audi
   opacity 1
+
+#messages .message .attr
+  position absolute
+  overflow hidden
+  max-height 1.6rem
+
+// #writing-container
+// #messages .message.first
+//   border-top 1px solid #ededed
+
+#writing-container
+  padding-top .3rem
+
+#messages .message.first
+
+#messages .message.same .audi
+  margin-top 0
+
+#messages .message.same .type
+  opacity 0
+  
+#messages .message.same .iden
+  display none
+  
+#messages .message:hover .mess
+#messages .message:hover .attr
+  color #555
+
+#messages .message:hover .type
+  color rgb(240,73,65)
+
+#messages .message.attr
+  max-height 2rem
+  -webkit-transition max-height 2s, color .1s linear
+
+#messages .message:hover .attr
+  max-height 6rem
+  padding-bottom 1rem
+  z-index 3
+  -webkit-transition max-height .2s, color .1s linear
 
 #messages .message .ship
 #messages .message .audi > div
@@ -255,6 +355,30 @@ a
   text-decoration underline
   color inherit
 
+.sig
+.type
+  margin-left 1rem
+  float left
+  width 1rem
+
+.type
+  height 2rem
+
+.sig
+  font-size 2rem
+  margin-right .3rem
+
+.sig:before
+  content "~"
+
+.type.private:before
+  content "╿"
+  font-size .8rem
+
+.type.public:before
+  content "▒"
+  line-height .8rem
+
 .mess
 .iden
 #station .member div
@@ -270,29 +394,38 @@ a
   max-width 16rem
 
 .attr
-  text-align right
+  text-align left
   display inline-block
+  max-height 1.2rem
   margin-right .3rem
   min-width 16rem
+  background-color white
 
 .attr .iden
   margin-left .3rem
 
 .audi
+.station .path
   white-space nowrap
   overflow hidden
+  text-transform uppercase
+  letter-spacing .05rem
+
+.audi
+  margin-top 1rem
   background-color #fff
 
 .audi > div
   margin-right .3rem
-  max-width 8rem
+  max-width 16rem
+  display block
 
 .iden > div
-  max-width 10rem
+  max-width 11rem
+  display inline-block
 
 .iden > div
 .audi > div
-  display inline-block
   background-color white
   overflow hidden
   white-space nowrap
@@ -308,29 +441,30 @@ a
   -webkit-transition max-width .2s
 
 .mess
-  font-size .9rem
   letter-spacing .03rem
   word-wrap break-word
-  margin-left .3rem
+  margin-left 16.3rem
 
 .mess
 #writing
 .iden > div:hover
 .audi > div:hover
-  max-width 30rem
+  max-width 42rem
+
+.mess
+#writing
+  font-size 1.2rem
 
 //
 // writing
 //
 
 #writing
-  font-size .9rem
   min-height 1.6rem
   min-width 1.3rem
   outline none
   background-color #eee
   padding .3rem .1rem
-  margin-left .2rem
   margin-top -.3rem
   
 
@@ -345,23 +479,28 @@ a
   margin-left 1rem
   margin-top 1.2rem
 
+.writing .attr
+  line-height 1.6rem
+  vertical-align top
+  margin-left 2rem
+  min-width 14rem
+
 .writing .iden
   display block
-  text-align right
   width 100%
 
 .writing .iden .ship
   margin-right .3rem
+  letter-spacing 0
 
 #audi
   display inline-block
   background-color #eee
-  padding .3rem .1rem
-  margin-top -.3rem
   margin-right -.2rem
   outline none
   overflow hidden
   max-width 9rem
+  padding .3rem .1rem .1rem 0
 
 .valid-false
   color #ff2f2f

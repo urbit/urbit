@@ -20,12 +20,13 @@ Message = recl
     "~#{h}.#{m}.#{s}"
 
   _handleAudi: (e) ->
-    audi = _.map $(e.target).closest('.audi').find('div'), (div) -> return $(div).text()
+    audi = _.map $(e.target).closest('.audi').find('div'), (div) -> return "~"+$(div).text()
     @props._handleAudi audi
 
   _handlePm: (e) ->
     return if not @props._handlePm
-    user = $(e.target).closest('.iden').text().slice(1)
+    user = $(e.target).closest('.iden').text()
+    return if user.toLowerCase() is 'system'
     @props._handlePm user
 
   render: ->
@@ -35,22 +36,28 @@ Message = recl
     if @props.thought.statement.speech?.lin?.say is false then klass += " say"
     if @props.thought.statement.speech?.url then klass += " url"
     if @props.unseen is true then klass += " new"
+    if @props.sameAs is true then klass += " same" else klass += " first"
 
     name = if @props.name then @props.name else ""
-    audi = _.keys @props.thought.audience
-    audi = _.without audi,window.util.mainStationPath window.urb.user
-    audi = window.util.clipAudi audi
-    audi = audi.map (_audi) -> (div {}, _audi)
+    aude = _.keys @props.thought.audience
+    audi = window.util.clipAudi(aude).map (_audi) -> (div {}, _audi.slice(1))
+
+    type = ['private','public']
+    type = type[Number(aude.indexOf(window.util.mainStationPath(window.urb.user)) is -1)]
 
     if @props.thought.statement.speech?.lin?.txt then txt = @props.thought.statement.speech.lin.txt
     if @props.thought.statement.speech?.url 
       url = @props.thought.statement.speech.url.url
       txt = (a {href:url,target:"_blank"}, url)
+    if @props.thought.statement.speech?.app
+      txt = @props.thought.statement.speech.app.txt
+      klass += " say"
 
     div {className:"message#{klass}"}, [
         (div {className:"attr"}, [
-          div {onClick:@_handleAudi,className:"audi"}, audi
+          div {className:"type #{type}"}, ""
           (div {onClick:@_handlePm}, (React.createElement Member,{ship:@props.ship}))
+          div {onClick:@_handleAudi,className:"audi"}, audi
           div {className:"time"}, @convTime @props.thought.statement.date
         ])
         div {className:"mess"}, txt
@@ -126,6 +133,8 @@ module.exports = recl
     else
       if not window.util.isScrolling()
         window.util.setScroll()
+      else
+        console.log 'scrolling'
 
     if @focussed is false and @last isnt @lastSeen
       _messages = @sortedMessages @state.messages
@@ -143,10 +152,7 @@ module.exports = recl
   _onChangeStore: -> @setState @stateFromStore()
 
   _handlePm: (user) ->
-    audi = [
-      window.util.mainStationPath(user)
-      window.util.mainStationPath(window.urb.user)
-    ]
+    audi = [window.util.mainStationPath(user)]
     if user is window.urb.user then audi.pop()
     StationActions.setAudience audi
 
@@ -167,12 +173,16 @@ module.exports = recl
       , 1
 
     lastIndex = if @lastSeen then _messages.indexOf(@lastSeen) else null
+    lastSaid = null
 
     messages = _messages.map (_message,k) => 
-      if lastIndex and lastIndex is k
-        _message.unseen = true
+      if lastIndex and lastIndex is k then _message.unseen = true
+      if _message.thought.statement.speech?.app
+        _message.ship = "system"
+      _message.sameAs = lastSaid is _message.ship
       _message.station = @state.station
       _message._handlePm = @_handlePm
       _message._handleAudi = @_handleAudi
+      lastSaid = _message.ship
       React.createElement Message,_message
     div {id: "messages"}, messages

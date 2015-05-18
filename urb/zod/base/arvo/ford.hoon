@@ -7,87 +7,18 @@
 ::  structures
 |%
 ::
-++  bead  ,[p=(set beam) q=gage]                        ::  computed result
-++  gift                                                ::  out result <-$
-          $%  [%made p=@uvH q=(each gage tang)]         ::  computed result
-              [%mass p=mass]                            ::  memory usage
-              [%news ~]                                 ::  fresh depends
-          ==                                            ::
+++  gift  gift-ford                                     ::  out result <-$
 ++  heel  path                                          ::  functional ending
-++  hock                                                ::  standard label
-          $:  [%c p=@ud]                                ::  celsius version
-              [%k p=@ud]                                ::  kelvin version
-              [%s p=@ud q=@ud r=@ud]                    ::  semantic version
-          ==                                            ::
-++  hood                                                ::  assembly plan
-          $:  zus=@ud                                   ::  zuse kelvin
-              sur=(list hoot)                           ::  structures
-              lib=(list hoof)                           ::  libraries
-              fan=(list horn)                           ::  resources
-              src=(list hoop)                           ::  program
-          ==                                            ::
-++  hoof  (pair term (unit (pair case ship)))           ::  resource reference
-++  hoot  (pair bean hoof)                              ::  structure gate/core
-++  hoop                                                ::  source in hood
-          $%  [%& p=twig]                               ::  direct twig
-              [%| p=beam]                               ::  resource location   
-          ==                                            ::
-++  horn                                                ::  resource tree
-          $%  [%ape p=twig]                             ::  /~  twig by hand
-              [%arg p=twig]                             ::  /$  argument
-              [%day p=horn]                             ::  /|  list by @dr
-              [%dub p=term q=horn]                      ::  /=  apply face
-              [%fan p=(list horn)]                      ::  /.  list
-              [%for p=path q=horn]                      ::  /,  descend
-              [%hel p=@ud q=horn]                       ::  /%  propagate heel
-              [%hub p=horn]                             ::  /@  list by @ud
-              [%man p=(map span horn)]                  ::  /*  hetero map
-              [%nap p=horn]                             ::  /_  homo map
-              [%now p=horn]                             ::  /&  list by @da
-              [%saw p=twig q=horn]                      ::  /;  operate on
-              [%see p=beam q=horn]                      ::  /:  relative to
-              [%sic p=tile q=horn]                      ::  /^  cast
-              [%toy p=mark]                             ::  /mark/  static
-          ==                                            ::
-++  kiss                                                ::  in request ->$
-          $%  [%exec p=@p q=beak r=(unit silk)]         ::  make / kill
-              [%wasp p=@p q=@uvH]                       ::  depends query
-              [%wegh ~]                                 ::  report memory
-          ==                                            ::
-++  milk  (trel ship desk silk)                         ::  sourced silk
+++  kiss  kiss-ford                                     ::  in request ->$
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
           $%  $:  %c                                    ::  to %clay
           $%  [%warp p=sock q=riff]                     ::
           ==  ==  ==                                    ::
-++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  sign                                                ::  in result $<-
           $%  $:  %c                                    ::  by %clay
           $%  [%writ p=riot]                            ::
           ==  ==  ==                                    ::
-++  silk                                                ::  construction layer
-          $&  [p=silk q=silk]                           ::  cons
-          $%  [%bake p=mark q=beam r=path]              ::  local synthesis
-              [%boil p=mark q=beam r=path]              ::  general synthesis
-              [%bunt p=mark]                            ::  example of mark
-              [%call p=silk q=silk]                     ::  slam
-              [%cast p=mark q=silk]                     ::  translate
-              [%diff p=silk q=silk]                     ::  diff
-              [%done p=(set beam) q=gage]               ::  literal
-              [%dude p=tank q=silk]                     ::  error wrap
-              [%dune p=(set beam) q=(unit gage)]        ::  unit literal
-              [%file p=beam]                            ::  from clay
-              [%join p=mark q=silk r=silk]              ::  merge
-              [%mash p=mark q=milk r=milk]              ::  annotate
-              [%mute p=silk q=(list (pair wing silk))]  ::  mutant
-              [%pact p=silk q=silk]                     ::  patch
-              [%plan p=beam q=spur r=hood]              ::  structured assembly
-              [%reef ~]                                 ::  kernel reef
-              [%ride p=twig q=silk]                     ::  silk thru twig
-              [%tabl p=(list (pair silk silk))]         ::  list
-              [%vale p=mark q=ship r=*]                 ::  validate [our his]
-              [%volt p=(set beam) q=(cask ,*)]          ::  unsafe add type
-          ==                                            ::
 --                                                      ::
 |%                                                      ::  structures
 ++  axle                                                ::  all %ford state
@@ -301,6 +232,7 @@
       ~&(dep-empty/hen +>.$)
     =+  dap=(~(get by deh.bay) dep)
     ?~  dap  ~&(dep-missed/dep +>.$)  ::  XX  ~|  !!
+    :: ~&  awap/[dep u.dap]
     ?-  -.u.dap
       %done  +>.$(mow :_(mow [hen %give %news ~]))
       %sent
@@ -379,7 +311,7 @@
           %0
         =^  cux  p.hoc  ((calk p.hoc) sem q.q.hoc)
         ?^  cux
-          [p=p.hoc q=[%0 p=p.q.hoc q=((calf sem) u.cux)]]
+          [p=p.hoc q=[%0 p=dep.p.u.cux q=((calf sem) u.cux)]]
         =+  nuf=(cope hoc fun)
         ?-    -.q.nuf
             %2  nuf
@@ -1124,6 +1056,7 @@
         (fine cof [p.kas u.vux])
       ::
           %boil
+        ^-  (bolt gage)
         %+  cool  |.(leaf/"ford: boil {<p.kas>} {<(tope q.kas)>} {<r.kas>}")
         %+  cope  (lamp cof q.kas)
         |=  [cof=cafe bem=beam]
@@ -1178,9 +1111,17 @@
         $(kas [%done p.kas u.q.kas])
       ::
           %file
-
         %+  cool  |.(leaf/"ford: file {<p.kas>}")
         (lear cof p.kas)
+      ::
+          %flag
+        ?~  p.kas  $(kas q.kas)
+        =+  dap=(~(get by deh.bay) p.kas)
+        ?~  dap    ~&(flag-missed/p.kas $(kas q.kas))
+        =+  dep=?-(-.u.dap %init p.u.dap, %sent q.u.dap, %done [[bek ~] ~ ~])
+        =+  rez=$(kas q.kas)          ::  XX revisit ^ during dependency review
+        ?:  ?=(%1 -.q.rez)  rez
+        rez(p.q (~(uni in p.q.rez) `(set beam)`dep))
       ::
           %join
         %+  cool

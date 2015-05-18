@@ -17,30 +17,8 @@
               mer=(map (pair ship desk) mery)           ::  outstanding merges
               syn=?                                     ::  sync to unix
           ==                                            ::
-++  gift                                                ::  out result <-$
-          $%  [%ergo p=@p q=@tas r=@ud s=(list ,[path (unit mime)])]
-                                                        ::  version update
-              [%mass p=mass]                            ::  memory usage
-              [%mere p=(each (set path) (pair term tang))]  ::  merge result
-              [%note p=@tD q=tank]                      ::  debug message
-              [%writ p=riot]                            ::  response
-          ==                                            ::
-++  khan                                                ::
-          $:  fil=(unit (unit cage))                    ::  XX see khan-to-soba
-              dir=(map ,@ta khan)                       ::
-          ==                                            ::
-++  kiss                                                ::  in request ->$
-          $%  [%font p=@p q=@tas r=@p s=@tas]           ::  set upstream
-              [%info p=@p q=@tas r=nori]                ::  internal edit
-              [%init p=@p]                              ::  report install
-              [%into p=@p q=@tas r=khan]                ::  external edit
-              [%lynx p=@p q=@tas r=(unit ,?)]           ::  sync to unix
-              [%merg p=@p q=@tas r=@p s=@tas t=germ]    ::  merge desks
-              [%plug p=@p q=@tas r=@p s=@tas]           ::  unset upstream
-              [%wart p=sock q=@tas r=path s=*]          ::  network request
-              [%warp p=sock q=riff]                     ::  file request
-              [%wegh ~]                                 ::  report memory
-          ==                                            ::
+++  gift  gift-clay                                     ::  out result <-$
+++  kiss  kiss-clay                                     ::  in request ->$
 ++  mery                                                ::
           $:  gem=germ                                  ::  strategy
               cas=case                                  ::  ali's case
@@ -102,26 +80,6 @@
               $:  @tas                                  ::  by any
           $%  [%crud p=@tas q=(list tank)]              ::
           ==  ==  ==                                    ::
-++  silk                                                ::  construction layer
-          $&  [p=silk q=silk]                           ::  cons
-          $%  [%bake p=mark q=beam r=path]              ::  local synthesis
-              [%boil p=mark q=beam r=path]              ::  general synthesis
-              [%bunt p=mark]                            ::  example of mark
-              [%call p=silk q=silk]                     ::  slam
-              [%cast p=mark q=silk]                     ::  translate
-              [%diff p=silk q=silk]                     ::  diff
-              [%done p=(set beam) q=gage]               ::  literal
-              [%dude p=tank q=silk]                     ::  error wrap
-              [%dune p=(set beam) q=(unit gage)]        ::  unit literal
-              [%join p=mark q=silk r=silk]              ::  merge
-              [%mute p=silk q=(list (pair wing silk))]  ::  mutant
-              [%pact p=silk q=silk]                     ::  patch
-              [%reef ~]                                 ::  kernel reef
-              [%ride p=twig q=silk]                     ::  silk thru twig
-              [%tabl p=(list (pair silk silk))]         ::  list
-              [%vale p=mark q=ship r=*]                 ::  validate [our his]
-              [%volt p=(set beam) q=(cask ,*)]          ::  unsafe add type
-          ==                                            ::
 ++  raft                                                ::  filesystem
           $:  fat=(map ship room)                       ::  domestic
               hoy=(map ship rung)                       ::  foreign
@@ -138,7 +96,6 @@
               mer=(map (pair ship desk) mery)           ::  outstanding merges
               syn=?                                     ::  sync to unix
           ==                                            ::
-++  riff  ,[p=desk q=(unit rave)]                       ::  request/desist
 ++  rind                                                ::  request manager
           $:  nix=@ud                                   ::  request index
               bom=(map ,@ud ,[p=duct q=rave])           ::  outstanding
@@ -290,8 +247,6 @@
       ?.  ?=([%sing %v *] rav)  rav
       [%many %| [%ud let.dom] `case`q.p.rav r.p.rav]
     =+  inx=nix.u.ref
-    ~?  ?=([%sing %x *] vaw)
-      [%remote-x-ing vaw hen]
     %=  +>+.$
       say        [[hen [(scot %ud inx) ~] for [inx syd ~ vaw]] say]
       nix.u.ref  +(nix.u.ref)
@@ -711,7 +666,7 @@
           ^-  (list (pair path misu))
           (turn u.mut.u.dok |=([pax=path cal=[lobe cage]] [pax %dif cal]))
         ==
-    =^  hat  +>.$  (edit:ze now %& *cart sim)  ::  XX  we do same thing in ++apply-edit
+    =^  hat  +>.$  (edit:ze now %& *cart sim)  ::  XX  do same in ++apply-edit
     ?~  dok  ~&  %no-dok  +>.$
     =>
       %=    .
@@ -770,8 +725,11 @@
             [%done ~ %null !>(~)]
           =+  (~(get by mim.u.dok) a)
           ?^  -  [%done ~ %mime !>(u.-)]
-          :^  %cast  %mime  %done  :-  ~
-          (need (read:ze %x [%ud let.dom] a))
+          :+  %cast  %mime
+          =+  (need (need (read-x:ze let.dom a)))
+          ?:  ?=(%& -<)
+            [%done ~ p.-]
+          (lobe-to-silk:ze a p.-)
       ==
     ==
   ::
@@ -905,8 +863,8 @@
       !!
     ::
         %x
-      =<  ?>  ?=(^ ref)  .
-      (rand-to-rant u.rut)
+      =<  ?>(?=(^ ref) .)
+      (validate-x p.p.u.rut q.p.u.rut q.u.rut r.u.rut)
     ::
         %w
       =.  haw.u.ref
@@ -972,6 +930,27 @@
     ::          %indirect  ~|  %foreign-indirect-not-implemented  !!
     ::      ==
     ::  ==
+  ::
+  ++  validate-x
+    |=  [car=care cas=case pax=path peg=page]
+    ^+  +>
+    =-  %_(+>.$ tag [- tag])
+    :*  hen  %pass
+        [%foreign-x (scot %p who) (scot %p for) syd car (scot cas) pax]
+        %f  %exec  who  [for syd cas]  ~
+        %vale  p.peg  for  q.peg
+    ==
+  ::
+  ++  take-foreign-x
+    |=  [car=care cas=case pax=path res=(each gage tang)]
+    ^+  +>
+    ?>  ?=(^ ref)
+    ?:  ?=(%| -.res)
+      ~|  "validate foreign plops failed"
+      ~|  [%plop-fail (turn p.res |=(tank ~(ram re +<)))]
+      !!
+    ?>  ?=(@ p.p.res)
+    wake(haw.u.ref (~(put by haw.u.ref) [car cas pax] `p.res))
   ::
   ++  validate-plops
     |=  [cas=case pop=(set plop)]
@@ -2137,7 +2116,7 @@
             ?~  cay
               ~
             `[pax u.cay]
-        =^  hat  lat.ran                                ::  new content
+        =^  hot  lat.ran                                ::  new content
           ^-  [(map path lobe) (map lobe blob)]
           %+  roll  (~(tap by can))
           =<  .(lat lat.ran)
@@ -2152,13 +2131,13 @@
                 [(lobe-to-mark u.-) u.-]
               [p q.q]:cay
           [(~(put by hat) pax p.bol) (~(put by lat) p.bol bol)]
-        =.  hat                                         ::  all the content
+        =+  ^-  hat=(map path lobe)                     ::  all the content
           %-  ~(uni by old)
           %-  ~(uni by new.dal.dat)
           %-  ~(uni by new.dob.dat)
           %-  ~(uni by cal.dal.dat)
           %-  ~(uni by cal.dob.dat)
-          %-  ~(uni by hat)
+          %-  ~(uni by hot)
           cas
         =+  ^-  del=(map path ,?)
             (~(run by (~(uni by old.dal.dat) old.dob.dat)) |=(~ %|))
@@ -2167,7 +2146,13 @@
           (make-yaki [r.ali.dat r.bob.dat ~] hat now)
         =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
         =.  erg.dat  %-  ~(uni by del)
-                     `(map path ,?)`(~(run by hat) |=(lobe %&))
+                     ^-  (map path ,?)
+                     %.  |=(lobe %&)
+                     %~  run  by
+                     %-  ~(uni by new.dal.dat)
+                     %-  ~(uni by cal.dal.dat)
+                     %-  ~(uni by cas)
+                     hot
         checkout
       ::
       ++  checkout
@@ -2454,10 +2439,16 @@
   ::
       %init
     :_  ..^$(fat.ruf (~(put by fat.ruf) p.q.hic [hen ~ ~]))
-    =+  bos=(sein p.q.hic)
-    ~&  [%bos bos p.q.hic]
-    ?:  =(bos p.q.hic)  ~
-    [hen %pass / %c %font p.q.hic %base bos %kids]~
+    =+  [bos=(sein p.q.hic) can=(clan p.q.hic)]
+    %-  zing  ^-  (list (list move))
+    :~  ~&  [%bos bos p.q.hic]
+        ?:  =(bos p.q.hic)  ~
+        [hen %pass / %c %font p.q.hic %base bos %kids]~
+    ::
+        ~
+    ::  ?.  ?=(?(%king %czar) can)  ~
+    ::  [hen %pass / %c %font p.q.hic %kids p.q.hic %base]~
+    ==
   ::
       %info
     ?:  =(%$ q.q.hic)
@@ -2640,7 +2631,7 @@
     =*  sud  i.t.t.t.t.tea
     =*  sat  i.t.t.t.t.t.tea
     =+  une=(un our now hen ruf)
-    =+  wak=wake:une
+    =+  wak=une
     =+  wex=(di:wak syd)
     =+  dat=?-(+<.q.hin %writ [%& p.q.hin], %made [%| q.q.hin])
     =+  ^-  kan=(unit ankh)
@@ -2651,7 +2642,8 @@
         ank.dom
     =+  wao=abet:(route:(me:ze:wex [her sud] kan) sat dat)
     =+  woo=abet:wao
-    [(weld -.wak -.woo) ..^$(ruf abet:(pish:une syd +.woo ran.wao))]
+    =+  sip=wake:(pish:une syd +.woo ran.wao)
+    [(weld -.sip -.woo) ..^$(ruf abet:[+.sip])]
   ?:  ?=([%auto @ @ @ @ ~] tea)
     =+  our=(slav %p i.t.tea)
     =*  syd  i.t.t.tea
@@ -2663,7 +2655,7 @@
       =.  sor.ruf  (~(put by sor.ruf) [our syd her sud] [nex hen])
       =+  `move`[hen %pass tea %c %warp [our her] sud ~ %sing %y [%ud nex] /]
       ?:  ?=(%& -.p.+.q.hin)
-        ~&  ['merge succeeded' p.p.+.q.hin]
+        ::  ~&  ['merge succeeded' p.p.+.q.hin]
         [[- ~] ..^$]
       ~&  :^    "merge failed"
               "please manually merge the desks with"
@@ -2806,6 +2798,24 @@
       =*  syd  i.t.t.t.tea
       =+  zax=(do now hen [our her] syd ruf)
       =+  zat=(take-foreign-plops:zax q.q.hin)
+      =^  mos  ruf
+        =+  zot=abet.zat
+        [-.zot (posh her syd +.zot ruf)]
+      [mos ..^$(ran.ruf ran.zat)]
+    ::
+        %foreign-x
+      ?>  ?=([@ @ @ @ @ *] t.tea)
+      =+  our=(slav %p i.t.tea)
+      =+  her=(slav %p i.t.t.tea)
+      =+  syd=(slav %tas i.t.t.t.tea)
+      =+  car=((hard care) i.t.t.t.t.tea)
+      =+  ^-  cas=case
+          =+  (slay i.t.t.t.t.t.tea)
+          ?>  ?=([~ %$ case] -)
+          ->+
+      =*  pax  t.t.t.t.t.t.tea
+      =+  zax=(do now hen [our her] syd ruf)
+      =+  zat=(take-foreign-x:zax car cas pax q.q.hin)
       =^  mos  ruf
         =+  zot=abet.zat
         [-.zot (posh her syd +.zot ruf)]

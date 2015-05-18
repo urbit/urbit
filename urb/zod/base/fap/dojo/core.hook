@@ -493,6 +493,10 @@
       ^-  silk
       [%boil %gate [he-beak (flop pax)] ~]
     ::
+    ++  dy-twig-head                                    ::  dynamic state
+      ^-  vase
+      :(slop !>(`our=@p`our.hid) !>(`tym=@da`lat.hid) !>(`eny=@uvI`eny.hid))
+    ::
     ++  dy-made-dial                                    ::  dialog product
       |=  cag=cage
       ^+  +>+>
@@ -528,7 +532,7 @@
         %di  [/dial (dy-silk-init-modo (dy-cage p.p.p.q.u.cud) q.p.q.u.cud)]
         %ge  [/gent (dy-silk-init-modo (dy-cage p.p.p.q.u.cud) q.p.q.u.cud)]
         %dv  [/hand (dy-silk-device p.q.u.cud)]
-        %ex  [/hand [%ride p.q.u.cud [%reef ~]]]
+        %ex  [/hand [%ride p.q.u.cud [[%done ~ %$ dy-twig-head] [%reef ~]]]]
         %tu  :-  /hand
              :+  %done  ~
              :-  %noun
