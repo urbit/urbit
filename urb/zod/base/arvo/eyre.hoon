@@ -116,7 +116,7 @@
 ++  perk-auth                                           ::  parsed auth
   $%  [%at p=pork]                                      ::  inject auth
       [%del p=(unit ship)]
-      [%get him=ship rem=pork]
+      [%get him=(unit ship) rem=pork]
       [%js ~]
       [%json ~]
       [%try him=ship cod=cord]
@@ -157,18 +157,19 @@
 ++  session-from-cookies
   |=  [nam=@t maf=math]
   ^-  (unit hole)
-  =+  ^=  cok  ^-  (list ,@t)
-      =+  cok=(~(get by maf) 'cookie')
-      ?~(cok ~ u.cok)
-  |-  ^-  (unit hole)
+  (from-cookies maf |=([k=@t v=@] &(=(nam k) !=('~' v))))
+::
+++  ship-from-cookies
+  |=  maf=math  ^-  (unit ship)
+  (biff (from-cookies maf |=([k=@ @] =(%ship k))) (slat %p))
+::
+++  from-cookies
+  |=  [maf=math fil=$+([@t @t] ?)]
+  =+  `cot=(list ,@t)`(~(get ju maf) 'cookie')
+  =+  `cok=quay`(zing `(list quay)`(murn cot (curr rush cock:epur)))
+  |-  ^-  (unit cord)
   ?~  cok  ~
-  =+  mar=`(unit (list ,[p=@t q=@t]))`(rush i.cok cock:epur)
-  ?~  mar  $(cok t.cok)
-  |-  ^-  (unit hole)
-  ?~  u.mar  ^$(cok t.cok)
-  ?:  &(=(nam p.i.u.mar) !=('~' q.i.u.mar))
-    [~ q.i.u.mar]
-  $(u.mar t.u.mar)
+  ?:((fil i.cok) [~ q.i.cok] $(cok t.cok))
 ::
 ++  wush
   |=  [wid=@u tan=tang]
@@ -276,11 +277,12 @@
       })
     }
     
+    if(window.ship) ship.innerText = urb.ship
     urb.foreign = /^\/~\/am/.test(window.location.pathname)
     urb.submit = function(){
       req(
         "/~/auth.json?PUT", 
-        {ship:ship.innerText.toLowerCase(), code:pass.value},
+        {ship: ship.innerText, code: pass.value},
         function(){
           if(urb.foreign) document.location = 
             document.location.hash.match(/#[^?]+/)[0].slice(1) +
@@ -321,47 +323,17 @@
 ++  xml
   |%
   ++  login-page
-    %+  titl  'Log in :urbit'
-    ;=  ;h1: Please log in
-        ;p.ship 
-          ;div.sig: ~
-          ;span#ship(contenteditable "");
-        ==
-        ;input#pass(type "password");
-        ;script:'''
-                $(function() {
-                  $ship = $('#ship')
-                  $pass = $('#pass')
-                  $ship.on('keydown', function(e) { 
-                    if(e.keyCode === 13 || e.keyCode === 9) {
-                      $pass.show()
-                      $pass.focus()
-                      e.preventDefault()
-                    }
-                  })
-                  $ship.on('focus', function(e) { 
-                    $pass.hide()
-                  })
-                  $pass.on('keydown', function(e) { 
-                    if(e.keyCode === 13) {
-                      urb.submit()
-                    }
-                  })
-                  if(window.ship) {
-                    $ship.text(urb.ship)
-                    $pass.focus()
-                  } else {
-                    $pass.hide()
-                  }
-                })
-                '''
+    %+  titl  'Log in'
+    ;=  ;p: Please log in.
+        ;p.mono: ~;{span#ship}
+        ;input#pass(onchange "urb.submit()");
         ;pre:code#err;
         ;script@"/~/at/~/auth.js";
     ==
   ::
   ++  logout-page
     %+  titl  'Log out'
-    ;=  ;h1: Goodbye ~;{span#ship}.
+    ;=  ;p: Goodbye ~;{span#ship}.
         ;button#act(onclick "urb.away()"): Log out
         ;pre:code#err;
         ;script@"/~/at/~/auth.js";
@@ -384,9 +356,7 @@
     |=  [a=cord b=marl] 
     ;html
       ;head
-        ;meta(charset "utf-8");
         ;title:"{(trip a)}" 
-        ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js");
         ;link(rel "stylesheet", href "/home/lib/base.css");
       ==
       ;body:div#c:"*{b}"
@@ -838,8 +808,10 @@
             [[%'PUT' ~] ~]     %put
           ==
         |-
-        ?:  ?=([%'~~' *] q.pok)                            ::  auth shortcut
+        ?:  ?=([%'~~' *] q.pok)                            ::  auth shortcuts
           $(q.pok ['~' %as %own t.q.pok])
+        ?:  ?=([%'_' *] q.pok)
+          $(q.pok ['~' %as %any t.q.pok])
         ?.  ?=([%'~' @ *] q.pok)  ~
         :-  ~  ^-  perk
         =*  pef  i.t.q.pok
@@ -854,9 +826,10 @@
           ~|  bad-ship/?~(but ~ i.but)
           ?~  but  !!
           :_  pok(q t.but)
-          ?+  i.but  (slav %p i.but)
-            %anon  anon
-            %own   our
+          ?+  i.but  `(slav %p i.but)
+            %anon  `anon
+            %own   `our
+            %any   ~
           ==
         ::
             %on
@@ -1014,18 +987,24 @@
       ::
           %del  
         =.  ..ya  (logoff:yac p.ham)
-        =+  cug=[(cat 3 cookie-prefix '=~; Path=/')]~
+        =+  cug=[(set-cookie cookie-prefix '~')]~
         [%| (give-json 200 cug (joba %ok %b &))]
       ::
           %get
+        |-
         ~|  aute/ham
-        ?:  |(=(anon him.ham) (~(has in aut.yac) him.ham))
-          =.  ..ya  abet.yac(him him.ham)
+        ?~  him.ham
+          =+  him=(ship-from-cookies maf)
+          ?^  him  $(him.ham him)
+          (show-ship-selection)
+        =*  him  u.him.ham
+        ?:  |(=(anon him) (~(has in aut.yac) him))
+          =.  ..ya  abet.yac(him him)
           =+  pez=process(pok rem.ham, aut &)
           ?:  ?=(%| -.pez)  pez
           [%| (resolve ~ p.pez)]
-        ?.  =(our him.ham)
-          [%| ((teba foreign-auth.yac) him.ham hat rem.ham quy)]
+        ?.  =(our him)
+          [%| ((teba foreign-auth.yac) him hat rem.ham quy)]
         (show-login-page ~)
       ::
           %try
@@ -1035,6 +1014,7 @@
         ?.  =(load-secret cod.ham)
           ~|(try/`@t`load-secret !!)  ::  XX security
         =^  jon  ..ya  stat-json:(logon:yac him.ham)
+        =.  cug.yac  :_(cug.yac (set-cookie %ship (scot %p him.ham)))
         (give-json 200 cug.yac jon)
       ==
     ::
@@ -1050,7 +1030,31 @@
       =.  ..ya  abet.yac
       [%| (give-html 401 cug.yac login-page:xml)]
     ::
+    ++  show-ship-selection
+      |=  ~
+      ~|  %ship-selection-unimplemented
+      !!
+    ::
     ++  cookie-prefix  (rsh 3 1 (scot %p our))
+    ++  cookie-domain
+      ^-  cord
+      ?-  r.hat 
+        [%| @]  (cat 3 '; Domain=' (rsh 3 1 (scot %if p.r.hat)))
+        [%& %org %urbit *]  '; Domain=.urbit.org'
+        [%& @ @ *]  =+  dom=p.r.hat 
+                    =-  (rap 3 i.dom '.' i.t.dom -)
+                    |-(?~(t.t.dom ~ ['.' i.t.t.dom $(dom t.dom)]))
+        [%& *]  ''  ::  XX security?
+      ==
+    ::
+    ++  set-cookie
+      |=  [key=@t val=@t]
+      %+  rap  3  :~
+        key  '='  val
+        ::  '; HttpOnly'  ?.(sec '' '; Secure')  ::  XX security
+        cookie-domain
+        '; Path=/; HttpOnly'
+      ==
     ++  need-ixor  (oryx-to-ixor (need grab-oryx))
     ++  for-view  ^+(ix (ire-ix need-ixor))
     ::
@@ -1070,7 +1074,6 @@
     ++  new-cyst
       |=  ses=hole
       =*  sec  p.hat
-      =+  pef=cookie-prefix
       ^-  cyst
       :*  ^-  cred
           :*  hat(p sec)
@@ -1085,11 +1088,7 @@
           ==
           [anon ~]
       ::
-          :_  ~
-          %^  cat  3
-            (cat 3 (cat 3 pef '=') ses)
-          ::  (cat 3 '; HttpOnly' ?.(sec '' '; Secure'))
-          '; Path=/; HttpOnly'
+          [(set-cookie cookie-prefix ses)]~
       ::
           now
           ~
