@@ -209,8 +209,8 @@ u3j_find(u3_noun bat)
       return jaw;
     }
 
-    if ( rod_u->par_u ) {
-      rod_u = rod_u->par_u;
+    if ( rod_u->par_p ) {
+      rod_u = u3to(u3_road, rod_u->par_p);
     }
     else return u3_none;
   }
