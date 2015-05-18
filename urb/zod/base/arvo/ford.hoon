@@ -230,6 +230,7 @@
     |=  dep=@uvH
     ?~  dep
       ~&(dep-empty/hen +>.$)
+    ?:  =(dep 0vtest)  :_(mow [hen %give %news ~])      ::  upstream testing
     =+  dap=(~(get by deh.bay) dep)
     ?~  dap  ~&(dep-missed/dep +>.$)  ::  XX  ~|  !!
     :: ~&  awap/[dep u.dap]
