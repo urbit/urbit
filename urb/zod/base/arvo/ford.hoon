@@ -1111,9 +1111,17 @@
         $(kas [%done p.kas u.q.kas])
       ::
           %file
-
         %+  cool  |.(leaf/"ford: file {<p.kas>}")
         (lear cof p.kas)
+      ::
+          %flag
+        ?~  p.kas  $(kas q.kas)
+        =+  dap=(~(get by deh.bay) p.kas)
+        ?~  dap    ~&(flag-missed/p.kas $(kas q.kas))
+        =+  dep=?-(-.u.dap %init p.u.dap, %sent q.u.dap, %done [[bek ~] ~ ~])
+        =+  rez=$(kas q.kas)          ::  XX revisit ^ during dependency review
+        ?:  ?=(%1 -.q.rez)  rez
+        rez(p.q (~(uni in p.q.rez) `(set beam)`dep))
       ::
           %join
         %+  cool
