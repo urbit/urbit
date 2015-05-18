@@ -1595,9 +1595,9 @@
   ?:  ?=(%wegh -.q.hic)
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
+    :-  %ford
     :-  %|
     :~  lex/`lex
-        ::  cor/`..^$
     ==
   =+  ^=  our  ^-  @p
       ?-  -.q.hic
