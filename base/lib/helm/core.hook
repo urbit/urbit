@@ -77,6 +77,10 @@
     |=  him=ship  =<  abet
     (emit %flog /helm %crud %hax-init leaf/(scow %p him) ~)
   ::
+  ++  poke-mass
+    =<  abet
+    (emit %flog /heft %crud %hax-heft ~)
+  ::
   ++  poke-start                                        ::  start a server
     |=  hood-start  =<  abet
     (emit %conf /helm [our dap] %load our syd)
@@ -84,6 +88,7 @@
   ++  poke-reload                                       ::  reload vanes
     |=  all=(list term)  =<  abet
     %-  emil
+    %-  flop
     %+  turn  all
     =+  ark=(arch .^(%cy /(scot %p our)/base/(scot %da lat)/arvo))
     =+  van=(~(tap by r.ark))

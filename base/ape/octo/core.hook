@@ -1,11 +1,11 @@
-::                                                      ::::::::::::::: 
-::::  /hook/core/octo/ape                               ::  ::       ::  build
-  ::                                                    :::::::::::::::
+::                                                      ::  ::
+::::  /hook/core/acto/ape                               ::  ::  dependencies
+  ::                                                    ::  ::
 /-  *sole                                               ::  structures
 /+  sole                                                ::  libraries
-::                                                      :::::::::::::::  
-::::                                                    ::  ::       ::  logic
-  !:                                                    :::::::::::::::
+::                                                      ::  ::
+::::                                                    ::  ::  structures
+  !:                                                    ::  ::
 =>  |%                                                  ::  board logic
     ++  board  ,@                                       ::  one-player bitfield
     ++  point  ,[x=@ y=@]                               ::  coordinate
@@ -43,9 +43,9 @@
       ++  tab  ~["+ 1 2 3" (row 0) (row 1) (row 2)]     ::  print table
       --                                                ::
     --                                                  ::
-::                                                      :::::::::::::::
-::::                                                    ::  ::       ::  agent
-  ::                                                    :::::::::::::::
+::                                                      ::  ::
+::::                                                    ::  ::  server
+  ::                                                    ::  ::
 =>  |%                                                  ::  arvo structures
     ++  axle  ,[%1 eye=face but=tube gam=game]          ::  agent state
     ++  axon  $?(axle [%0 eye=face gam=game])           ::  historical state
@@ -146,17 +146,16 @@
           ?^  but  (park %2 ~)                          :: [~ %& !who src]
           (park:(link src !who) %2 `"link by {<src>}")  ::
 ++  peer-sole                                           ::  console subscribe
-          |=  [from *]  =<  abet                        ::
+          |=  [from pax=path]  =<  abet                 ::
           (plow:(fret +<-) %2 ~)                        ::
 ++  poke-sole-action                                    ::  console input
           |=  [from act=sole-action]  =<  abet          ::
           (work:(flet +<-) act)                         ::
-++  poke-octo-move                                      
-          |=  [from wha=point]  =<  abet
-          =^  dud  gam  ~(m ~(at go gam) wha)
-          ?>  dud
-          =+  mus=~(res go gam)   ::
-          (park(gam ?^(mus *game gam)) %2 mus)
+++  poke-octo-move                                      ::
+          |=  [from wha=point]  =<  abet                ::
+          =^  dud  gam  ~(m ~(at go gam) wha)           ::
+          ?>  dud  =+  mus=~(res go gam)                ::
+          (park(gam ?^(mus *game gam)) %2 mus)          ::
 ++  prep  |=  [from old=(unit ,[(list move) axon])]     ::  initialize
           =<  abet  ?~  old  +>                         ::
           =<  (park %2 ~)                               ::
