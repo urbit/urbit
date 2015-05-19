@@ -199,7 +199,7 @@
   ++  poke-start                                        ::
     |=  wel=well  
     =<  se-abet  =<  se-view
-    +>(ray (~(put in ray) wel))
+    (se-born wel)
   ::
   ++  reap                                              ::
     |=  [way=wire saw=(unit tang)]  
@@ -255,7 +255,7 @@
     |-  ^+  +>
     ?~  yar  +>
     =+  hig=(~(get by fur) q.i.yar) 
-    ?:  &(?=(^ hig) ?=(^ u.hig) =(p.i.yar syd.u.u.hig))  $(yar t.yar)
+    ?:  &(?=(^ hig) |(?=(~ u.hig) =(p.i.yar syd.u.u.hig)))  $(yar t.yar)
     %=    $
         yar  t.yar
         +>
@@ -335,7 +335,7 @@
     ^+  +>
     ?:  (~(has in ray) wel)
       (se-text "[already running {<p.wel>}/{<q.wel>}]")
-    +>(ray (~(put in ray) wel))
+    +>(ray (~(put in ray) wel), eel (~(put in eel) [our q.wel]))
   ::
   ++  se-dump                                           ::  print tanks
     |=  tac=(list tank)

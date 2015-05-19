@@ -1035,6 +1035,14 @@
     =+  mes=((hard ,[@ud roon]) r.q.hic)
     =<  mo-abet
     (mo-gawd:(mo-abed:mo our hen) him dap mes)
+  ::
+      %wegh
+    :_  ..^$  :_  ~
+    :^  hen  %give  %mass
+    :-  %gall
+    :-  %|
+    :~  all/`all
+    ==
   ==
 ::
 ++  doze                                                ::  sleep until

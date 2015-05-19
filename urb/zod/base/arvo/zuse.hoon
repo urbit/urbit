@@ -2366,6 +2366,7 @@
   ==                                                    ::
 ++  flog                                                ::  sent to %dill
   $%  [%crud p=@tas q=(list tank)]                      ::
+      [%heft ~]                                         ::
       [%text p=tape]                                    ::
       [%veer p=@ta q=path r=@t]                         ::  install vane
       [%vega p=path]                                    ::  reboot by path
@@ -2378,6 +2379,7 @@
       [%blit p=(list blit)]                             ::  terminal output
       [%init p=@p]                                      ::  set owner
       [%logo ~]                                         ::  logout
+      [%mass p=mass]                                    ::  memory usage
       [%veer p=@ta q=path r=@t]                         ::  install vane
       [%vega p=path]                                    ::  reboot by path
       [%verb ~]                                         ::  verbose mode
@@ -2390,6 +2392,7 @@
       [%flog p=flog]                                    ::  wrapped error
       [%flow p=@tas q=(list gill)]                      ::  terminal config
       [%hail ~]                                         ::  terminal refresh
+      [%heft ~]                                         ::  memory report
       [%hook ~]                                         ::  this term hung up
       [%harm ~]                                         ::  all terms hung up
       [%init p=ship]                                    ::  after gall ready
@@ -2522,7 +2525,7 @@
 ++  cush  (pair term club)                              ::  internal kiss
 ++  dude  term                                          ::  server identity
 ++  scup  (pair ship desk)                              ::  autoupdate
-++  well  (pair desk term)
+++  well  (pair desk term)                              ::
 ++  suss  (trel dude ,@tas ,@da)                        ::  config report
 ::::                                                    ::
 ++  kiss-gall                                           ::  incoming request
@@ -2531,9 +2534,11 @@
       [%deal p=sock q=cush]                             ::  full transmission
       [%rote p=sack q=path r=*]                         ::  remote request
       [%roth p=sack q=path r=*]                         ::  remote response
+      [%wegh ~]                                         ::  report memory
   ==                                                    ::
 ++  gift-gall                                           ::  outgoing result
-  $%  [%onto p=(each suss tang)]                        ::  about agent
+  $%  [%mass p=mass]                                    ::  memory usage
+      [%onto p=(each suss tang)]                        ::  about agent
       [%unto p=cuft]                                    ::  within agent
       [%mack p=(unit tang)]                             ::  message ack
   ==                                                    ::
