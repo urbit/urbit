@@ -278,8 +278,10 @@
     }
     
     urb.foreign = /^\/~\/am/.test(window.location.pathname)
-    urb.redir = function(){
-      document.location = 
+    urb.redir = function(ship){
+      if(ship) document.location.pathname =
+        document.location.pathname.replace(/^\/_|\/~\/as\/any/,'/~/as/~'+ship)
+      else document.location = 
         document.location.hash.match(/#[^?]+/)[0].slice(1) +
         document.location.pathname.replace(
           /^\/~\/am\/[^/]+/,
@@ -289,7 +291,7 @@
     if(urb.foreign && urb.auth.indexOf(urb.ship) !== -1){
       req("/~/auth.json?PUT",
           {ship:urb.ship,code:null},
-          urb.redir)
+          function(){urb.redir()})
     }
     urb.submit = function(){
       req(
@@ -376,6 +378,13 @@
         ;script@"/~/at/~/auth.js";
     ==
   ::
+  ++  logside-page
+    %+  titl  'Verify identify'
+    ;=  ;h1: You are ~;{span#ship(contenteditable "")}
+        ;button#act(onclick "urb.redir(ship.innerHTML)"): Go
+        ;pre:code#err;
+        ;script@"/~/at/~/auth.js";
+    ==
   ++  poke-test
     %+  titl  'Poke'
     ;=  ;button(onclick "urb.testPoke('/~/to/hi/txt.json')"): Hi anonymous
@@ -1077,7 +1086,7 @@
     ++  show-ship-selection
       |=  ~
       ~|  %ship-selection-unimplemented
-      !!
+      [%& %htme logside-page:xml]
     ::
     ++  cookie-prefix  (rsh 3 1 (scot %p our))
     ++  cookie-domain
