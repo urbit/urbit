@@ -125,8 +125,10 @@ module.exports = recl
   _validateAudi: ->
     v = $('#audi').text()
     v = v.trim()
-    if v.length is 0
+    if v.length is 0 
       return true
+    if v.length < 5 # zod/a is shortest
+      return false
     v = v.split " "
     for a in v
       a = a.trim()
@@ -138,10 +140,10 @@ module.exports = recl
     StationActions.setValidAudience valid
     if valid is true
       v = $('#audi').text()
+      if v.length is 0 then v = window.util.mainStationPath window.urb.user
       v = v.split " "
       for k,_v of v
         if _v[0] isnt "~" then v[k] = "~#{_v}"
-      v = window.util.expandAudi v
       StationActions.setAudience v
       v
     else
