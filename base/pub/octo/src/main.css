@@ -1,3 +1,4 @@
+#what,
 #bord,
 #whom {
   width: 600px;
@@ -7,16 +8,40 @@
   margin-left: -300px;
 }
 
+#what {
+  height: 36px;
+}
+
 #bord {
-  width: 600px;
   height: 600px;
   position: absolute;
-  top: 18px;
+  top: 72px;
 }
 
 #whom {
   color: red;
   top: 636px;
+}
+
+#what {
+  font-family: "bau";
+}
+
+#what div {
+  display: inline-block;
+}
+
+#what .ship {
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+#vs {
+  margin: 0 1rem;
+  padding: .3rem;
+  color: #fff;
+  background-color: #ccc;
 }
 
 #whom,

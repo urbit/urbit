@@ -42,4 +42,7 @@ $(function() {
       function(i) { return Number(i); })
     urb.send({mark:'octo-move',data:data})
   })
+
+  $('#ship .ship').text(window.urb.ship)
+  $('#user .ship').text(window.urb.user)
 })
