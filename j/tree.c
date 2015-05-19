@@ -395,7 +395,7 @@ static u3j_core _mood__hoon_d[] =
     { "roll", _mood__hoon_roll_a },
     { "skim", _mood__hoon_skim_a },
     { "skip", _mood__hoon_skip_a },
-    { "scag", _mood__hoon_scag_a },  // this jet is actually broken
+    { "scag", _mood__hoon_scag_a },
     { "slag", _mood__hoon_slag_a },
     { "snag", _mood__hoon_snag_a },
 //  { "sort", _mood__hoon_sort_a },
