@@ -27,6 +27,8 @@
         u3_noun sen;                      //  instance string
         u3_noun own;                      //  owner list
 
+        u3_noun sac;                      //  space profiling
+
         u3_noun roe;                      //  temporary unsaved events
         u3_noun key;                      //  log key, or 0
 
@@ -169,5 +171,5 @@
 
     /* u3v_mark(): mark arvo kernel.
     */
-      void
+      c3_w
       u3v_mark(void);

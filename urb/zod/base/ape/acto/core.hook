@@ -57,7 +57,7 @@
     ++  colm  (cook |=(a=@ (sub a '1')) (shim '1' '3')) ::  row or column
     ++  come  ;~(plug colm ;~(pfix fas colm))           ::  coordinate
     --                                                  ::
-|_  [hid=hide moz=(list move) axle]                     ::  per agent
+|_  [hid=hide moz=(list move) axle]                     ::  per server
 ++  et                                                  ::
   |_  [from say=sole-share]                             ::  per console client
   ++  abet  +>(q.eye (~(put by q.eye) ost say))         ::  continue

@@ -1,11 +1,11 @@
-::                                                      ::::::::::::::: 
-::::  /hook/core/acto/ape                               ::  ::       ::  build
-  ::                                                    :::::::::::::::
-/-  *sole                                               ::  structures
-/+  sole                                                ::  libraries
-::                                                      :::::::::::::::  
-::::                                                    ::  ::       ::  logic
-  !:                                                    :::::::::::::::
+::                                                      ::  ::
+::::  /hook/core/acto/ape                               ::  ::  dependencies
+  ::                                                    ::  ::
+/-  *sole                                               ::  structure
+/+  sole                                                ::  library
+::                                                      ::  ::
+::::                                                    ::  ::  structures
+  !:                                                    ::  ::
 =>  |%                                                  ::  board logic
     ++  board  ,@                                       ::  one-player bitfield
     ++  point  ,[x=@ y=@]                               ::  coordinate
@@ -19,6 +19,9 @@
       ++  win  %-  lien  :_  |=(a=@ =(a (dis a bud)))   ::  test for win
                (rip 4 0wl04h0.4A0Aw.4A00s.0e070)        ::
       --                                                ::
+    ::                                                  ::  ::
+    ::::                                                ::  ::  semantics
+      ::                                                ::  ::
     ++  go                                              ::  per game
       |_  game                                          ::
       ++  at  |_  point                                 ::  per point
@@ -43,9 +46,9 @@
       ++  tab  ~["+ 1 2 3" (row 0) (row 1) (row 2)]     ::  print table
       --                                                ::
     --                                                  ::
-::                                                      :::::::::::::::
-::::                                                    ::  ::       ::  agent
-  ::                                                    :::::::::::::::
+::                                                      ::  ::
+::::                                                    ::  ::  server
+  ::                                                    ::  ::
 =>  |%                                                  ::  arvo structures
     ++  axle  ,[%0 eye=face gam=game]                   ::  agent state
     ++  card  ,[%diff lime]                             ::  update
@@ -59,7 +62,7 @@
     --                                                  ::
 |_  [hid=hide moz=(list move) axle]                     ::  per agent
 ++  et                                                  ::
-  |_  [from say=sole-share]                             ::  per console client
+  |_  [from say=sole-share]                             ::  per console
   ++  abet  +>(q.eye (~(put by q.eye) ost say))         ::  continue
   ++  amok  +>(q.eye (~(del by q.eye) ost))             ::  discontinue
   ++  beep  (emit %bel ~)                               ::  bad user
@@ -102,9 +105,9 @@
 ++  park  |=  [lev=?(%0 %1 %2) mus=(unit tape)]         ::  general update
           =+  pals  |-  ^+  +>.^$  ?~  +<  +>.^$        ::
           $(+< t.+<, +>.^$ (~(plow et i.+<) lev mus))   ::
-::                                                      :::::::::::::::
-::::                                                    ::  ::       ::  hooks
-  ::                                                    :::::::::::::::
+::                                                      ::  ::
+::::                                                    ::  ::  events
+  ::                                                    ::  ::
 ++  peer-sole                                           ::  console subscribe
           |=  [from *]  =<  abet                        ::
           (plow:(fret +<-) %2 ~)                        ::

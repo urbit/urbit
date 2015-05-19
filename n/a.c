@@ -561,9 +561,12 @@ u3a_malloc(size_t len_i)
 c3_w*
 u3a_celloc(void)
 {
-#ifdef U3_MEMORY_DEBUG
-  return u3a_walloc(c3_wiseof(u3a_cell));
-#else
+#ifdef U3_CELLOC_TOGGLE
+  if ( u3C.wag_w & u3o_debug_ram ) {
+    return u3a_walloc(c3_wiseof(u3a_cell));
+  }
+#endif
+
   u3p(u3a_fbox) cel_p;
 
   if ( (u3R == &(u3H->rod_u)) || !(cel_p = u3R->all.cel_p) ) {
@@ -577,7 +580,6 @@ u3a_celloc(void)
 
     return u3a_boxto(box_u);
   }
-#endif
 }
 
 /* u3a_cfree(): free a cell.
@@ -585,9 +587,12 @@ u3a_celloc(void)
 void
 u3a_cfree(c3_w* cel_w)
 {
-#ifdef U3_MEMORY_DEBUG
-  return u3a_wfree(cel_w);
-#else
+#ifdef U3_CELLOC_TOGGLE
+  if ( u3C.wag_w & u3o_debug_ram ) {
+    return u3a_wfree(cel_w);
+  }
+#endif
+
   if ( u3R == &(u3H->rod_u) ) {
     return u3a_wfree(cel_w);
   } 
@@ -598,7 +603,6 @@ u3a_cfree(c3_w* cel_w)
     u3to(u3a_fbox, fre_p)->nex_p = u3R->all.cel_p;
     u3R->all.cel_p = fre_p;
   }
-#endif
 }
 
 /* u3a_realloc(): aligned realloc in bytes.
@@ -963,11 +967,11 @@ _me_copy_south(u3_noun dog)
         u3a_cell* new_u = (u3a_cell*)(void *)new_w;
 
         // printf("south: cell %p to %p\r\n", old_u, new_u);
-
+#if 0
         if ( old_u->mug_w == 0x730e66cc ) {
           fprintf(stderr, "BAD: take %p\r\n", new_u);
         }
-
+#endif
         new_u->mug_w = old_u->mug_w;
         // new_u->mug_w = 0;
         new_u->hed = _me_copy_south_in(old_u->hed);
@@ -1310,9 +1314,13 @@ u3a_mark_ptr(void* ptr_v)
     c3_w       siz_w;
 
 #ifdef U3_MEMORY_DEBUG
-    if ( box_u->eus_w == 0 ) {
+    if ( 0 == box_u->eus_w ) {
       siz_w = box_u->siz_w;
-    } 
+    }
+    else if ( 0xffffffff == box_u->eus_w ) {      // see _raft_prof()
+      siz_w = 0xffffffff;
+      box_u->eus_w = 0;
+    }
     else {
       siz_w = 0;
     }
@@ -1327,7 +1335,11 @@ u3a_mark_ptr(void* ptr_v)
     else {
       c3_assert(use_ws != 0);
 
-      if ( use_ws < 0 ) {
+      if ( 0x80000000 == (c3_w)use_ws ) {    // see _raft_prof()
+        use_ws = -1;
+        siz_w = 0xffffffff;
+      }
+      else if ( use_ws < 0 ) {
         use_ws -= 1;
         siz_w = 0;
       } 
@@ -1370,7 +1382,7 @@ u3a_mark_noun(u3_noun som)
       c3_w* dog_w = u3a_to_ptr(som);
       c3_w  new_w = u3a_mark_ptr(dog_w);
 
-      if ( 0 == new_w ) {
+      if ( 0 == new_w || 0xffffffff == new_w ) {      //  see u3a_mark_ptr()
         return siz_w;
       }
       else {
@@ -1415,7 +1427,7 @@ u3a_print_memory(c3_c* cap_c, c3_w wor_w)
 
 /* u3a_sweep(): sweep a fully marked road.
 */
-void
+c3_w
 u3a_sweep(void)
 {
   c3_w neg_w, pos_w, leq_w, weq_w;
@@ -1460,6 +1472,17 @@ u3a_sweep(void)
       u3a_box* box_u = (void *)box_w;
 
 #ifdef U3_MEMORY_DEBUG
+      /* I suspect these printfs fail hilariously in the case
+       * of non-direct atoms. We shouldn't unconditionally run
+       * u3a_to_pom(). In general, the condition
+       * box_u->siz_w > u3a_mimimum is sufficient, but not necessary,
+       * for the box to represent an atom.  The atoms between
+       * 2^31 and 2^32 are the exceptions.
+       *
+       * Update: so, apparently u3.md is incorrect, and a pug is just
+       * an indirect atom.  This code should be altered to handle
+       * that.
+      */
       if ( box_u->use_w != box_u->eus_w ) {
         if ( box_u->eus_w != 0 ) {
           if ( box_u->use_w == 0 ) {
@@ -1471,7 +1494,8 @@ u3a_sweep(void)
                     (u3_noun)u3a_to_pom(u3a_outa(u3a_boxto(box_w))),
                     ((u3a_noun *)(u3a_boxto(box_w)))->mug_w,
                     box_u->use_w, box_u->eus_w);
-            u3m_p("weak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
+            u3a_print_memory("weak (minimum)", box_u->siz_w);
+            // u3m_p("weak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
           }
           weq_w += box_u->siz_w;
         }
@@ -1483,7 +1507,8 @@ u3a_sweep(void)
                     ? ((u3a_noun *)(u3a_boxto(box_w)))->mug_w
                     : u3r_mug(u3a_to_pom(u3a_outa(u3a_boxto(box_w)))),
                   box_u->use_w);
-          u3m_p("leak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
+          u3a_print_memory("leak (minimum)", box_u->siz_w);
+          // u3m_p("leak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
           leq_w += box_u->siz_w;
         }
         if ( box_u->cod_w ) {
@@ -1501,7 +1526,26 @@ u3a_sweep(void)
       c3_ws use_ws = (c3_ws)box_u->use_w;
 
       if ( use_ws > 0 ) {
-        printf("leak %p\r\n", box_u);
+        printf("leak %p %x\r\n",
+                box_u,
+                ((u3a_noun *)(u3a_boxto(box_w)))->mug_w
+                  ? ((u3a_noun *)(u3a_boxto(box_w)))->mug_w
+                  : u3r_mug(u3a_to_pom(u3a_outa(u3a_boxto(box_w)))));
+        u3a_print_memory("leak (minimum)", box_u->siz_w);
+
+#if 1
+        /*  For those times when you've really just got to crack open
+         *  the box and see what's inside
+        */
+        {
+          int i;
+          for ( i = 0; i < box_u->siz_w; i++ ) {
+            printf("%08x ", (unsigned int)(((c3_w*)box_u)[i]));
+          }
+          printf("\r\n");
+        }
+#endif
+
         leq_w += box_u->siz_w;
         box_u->use_w = 0;
 
@@ -1534,6 +1578,8 @@ u3a_sweep(void)
   c3_assert((pos_w + leq_w + weq_w) == neg_w);
 
   if ( 0 != leq_w || (0 != weq_w) ) { c3_assert(0); }
+
+  return neg_w;
 }
 
 /* u3a_slab(): create a length-bounded proto-atom.

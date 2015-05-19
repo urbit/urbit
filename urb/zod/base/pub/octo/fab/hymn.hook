@@ -8,10 +8,24 @@
     ;meta(charset "utf-8");
     ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js");
     ;script(type "text/javascript", src "/~/at/base/lib/urb.js");
+    ;link(type "text/css", rel "stylesheet", href "/home/lib/base.css");
     ;link(type "text/css", rel "stylesheet", href "/home/pub/octo/src/main.css");
-    ;title: urbit cit cat eot
+    ;title: :octo
   ==
   ;body
+    ;div#what
+      ;div#ship
+        ;div.sig: ~
+        ;div.ship;
+        ;div.as;
+      ==
+      ;div#vs: vs
+      ;div#user
+        ;div.sig: ~
+        ;div.ship;
+        ;div.as;
+      ==
+    ==
     ;div#bord;
     ;div#whom;
     ;script(type "text/javascript", src "/home/pub/octo/src/main.js");
