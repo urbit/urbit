@@ -74,6 +74,10 @@
   |=  [from hood-init]
   (ably (poke-init:(helm-work [hid +<-] (able %helm)) +<+))
 ::
+++  poke-hood-mass                                      ::
+  |=  [from ~]
+  (ably poke-mass:(helm-work [hid +<-] (able %helm)))
+::
 ++  poke-hood-merge                                     ::
   |=  [from hood-merge]
   (ably (poke-merge:(kiln-work [hid +<-] (able %kiln)) +<+))
