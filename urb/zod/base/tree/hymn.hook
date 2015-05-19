@@ -15,7 +15,7 @@
 =+  ~(. util gas)
 ;html
   ;head
-    ;title: urbit Tree
+    ;title: Tree
     ;meta(name "viewport", content "width=device-width, initial-scale=1");
     ;link(type "text/css", rel "stylesheet", href "/home/pub/tree/src/css/main.css");
     ::;link(type "text/css", rel "stylesheet", href "http://localhost:8000/docs/pub/tree/src/css/main.css");
