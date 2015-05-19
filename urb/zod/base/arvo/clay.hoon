@@ -1699,8 +1699,6 @@
             %that
           ?:  =(r.ali.dat r.bob.dat)
             (done:he ~)
-          ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
-            (done:he ~)
           =.  new.dat  (make-yaki [r.ali.dat r.bob.dat ~] q.ali.dat now)
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
           =.  erg.dat
