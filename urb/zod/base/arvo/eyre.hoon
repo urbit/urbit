@@ -1075,11 +1075,6 @@
       =.  yac  ?.(lon yac (logon.yac our))
       [%| (give-html(..ya abet.yac) 401 cug.yac login-page:xml)]
     ::
-    ++  show-ship-selection
-      |=  ~
-      ~|  %ship-selection-unimplemented
-      [%& %htme logside-page:xml]
-    ::
     ++  cookie-prefix  (rsh 3 1 (scot %p our))
     ++  cookie-domain
       ^-  cord
