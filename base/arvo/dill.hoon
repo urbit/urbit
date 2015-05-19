@@ -225,7 +225,7 @@
         =.  moz  ?.  ?=(?(%king %czar) can)  moz
                  :_(moz [hen %pass / %c %font our %kids our %base])
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
-        =.  moz  :_(moz [hen %pass ~ %g %deal [our our] ram %peer /drum])
+        =.  +>  peer
         |-  ^+  +>+
         ?~  myt  +>+
         $(myt t.myt, +>+ (send i.myt))
@@ -252,6 +252,11 @@
             moz
           :_  moz
           [hen %pass ~ %g %deal [our our] ram %poke [%dill-belt -:!>(bet) bet]]
+        ==
+      ++  peer
+        %_    .
+            moz 
+          :_(moz [hen %pass ~ %g %deal [our our] ram %peer /drum]) 
         ==
       ::
       ++  pump                                          ::  send diff ack
@@ -295,9 +300,10 @@
           ::  ~&  [%take-gall-unto +>.sih]
           ?-  -.+>.sih
             %coup  ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
-            %quit  ~&  %dill-console-quit
-                   (dump %logo ~)
-            %reap  ?~(p.p.+>.sih +>.$ (crud %reap u.p.p.+>.sih))
+            %quit  peer
+            %reap  ?~  p.p.+>.sih 
+                     +>.$ 
+                   (dump:(crud %reap u.p.p.+>.sih) %logo ~)
             %diff  pump:(from ((hard dill-blit) q:`vase`+>+>.sih))
           ==
         ::

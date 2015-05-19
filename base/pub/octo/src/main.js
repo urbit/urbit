@@ -26,7 +26,7 @@ $(function() {
 
 
   urb.appl = 'octo'
-  urb.bind('/octo/o', function(err,res) {
+  urb.bind('/web', function(err,res) {
     draw(res.data)
   })
 
