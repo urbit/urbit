@@ -298,7 +298,7 @@
         "/~/auth.json?PUT", 
         {ship:ship.innerText.toLowerCase(), code:pass.value},
         function(){
-          if(!urb.foreign) urb.redir()
+          if(urb.foreign) urb.redir()
           else document.location.reload()
       })
     }
