@@ -521,6 +521,8 @@
         c3_c*   imp_c;                      //  -I, czar name
         c3_c*   nam_c;                      //  -n, unix hostname
         c3_c*   raf_c;                      //  -r, raft flotilla
+        c3_c*   who_c;                      //  -T, begin with ticket
+        c3_c*   tic_c;                      //  -T, ticket value
         c3_w    kno_w;                      //  -k, kernel version
         c3_w    fuz_w;                      //  -f, fuzz testing
         c3_s    por_s;                      //  -p, ames port
@@ -536,7 +538,7 @@
         c3_o    pro;                        //  -P, profile
         c3_o    veb;                        //  -v, verbose (inverse of -q)
         c3_o    nuu;                        //  -c, new pier
-        c3_o    vno;                        //  -V
+        c3_o    vno;                        //  -V, turn on +verb
         c3_o    mem;                        //  -M, memory madness
       } u3_opts;
 
@@ -790,6 +792,16 @@
       */
         void
         u3_term_ef_boil();
+
+      /* u3_term_ef_ticket(): initial effects for new ticket.
+      */
+        void
+        u3_term_ef_ticket(c3_c* who_c, c3_c* tic_c);
+
+      /* u3_term_ef_verb(): initial effects for verbose events.
+      */
+        void
+        u3_term_ef_verb(void);
 
       /* u3_term_ef_winc(): window change.
       */
