@@ -84,7 +84,7 @@ module.exports = recl
     if @state.station and @state.members
       members = _.map @state.members, (stations,member) -> 
           audi = _.map stations,(presence,station) -> (div {className:"audi"}, station.slice(1))
-          (div {}, [audi,(React.createElement Member, {ship:member})])
+          (div {}, [(React.createElement Member, {ship:member}),audi])
     else
       members = ""
 
