@@ -171,7 +171,7 @@
           ==                                            ::
 ++  pull-octo                                           ::
           |=  [from *]  =<  abet                        ::
-          (park(but ~) %0 `"dropped")                   ::
+          (park(but ~) %2 `"dropped")                   ::
 ++  pull-sole                                           ::  disconnect console
           |=  [from *]  =<  abet                        ::
           amok:(flet +<-)                               ::
@@ -181,5 +181,5 @@
           |=  [then saw=(unit tang)]  =<  abet          ::
           ?>  ?=([~ %| *] but)                          ::
           ?^  saw  (park:stop %0 `"fail to {<src>}")    ::
-          (park(p.u.but %&) %2 `"link to {<src>}")      ::
+          (park(p.u.but %&) %0 `"link to {<src>}")      ::
 --
