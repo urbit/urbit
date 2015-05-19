@@ -8,6 +8,12 @@
     */
 #     undef U3_MEMORY_DEBUG
 
+    /*  U3_CELLOC_TOGGLE: enable toggling of the custum cell allocator
+     *  via -g.  This slightly slows down the cell allocator even when
+     *  it's on.  Note that toggling -g breaks the image.  If
+     *  U3_MEMORY_DEBUG is on, this should generally be on as well.
+    */
+#     undef U3_CELLOC_TOGGLE
 
   /**  Constants.
   **/
@@ -46,7 +52,7 @@
 
   /**  Structures.
   **/
-    /* u3_atom, u3_cell: logical atom and cell structures.
+    /* u3a_atom, u3a_cell: logical atom and cell structures.
     */
       typedef struct {
         c3_w mug_w;
@@ -98,11 +104,9 @@
     /* u3a_road: contiguous allocation and execution context.
     */
       typedef struct _u3a_road {
-        struct _u3a_road* par_u;              //  parent road
-
-        struct _u3a_road* kid_u;              //  child road list
-        struct _u3a_road* nex_u;              //  sibling road
-        struct _u3a_road* now_u;              //  current road pointer
+        u3p(struct _u3a_road) par_p;          //  parent road
+        u3p(struct _u3a_road) kid_p;          //  child road list
+        u3p(struct _u3a_road) nex_p;          //  sibling road
 
         u3p(c3_w) cap_p;                      //  top of transient region
         u3p(c3_w) hat_p;                      //  top of durable region
@@ -378,7 +382,7 @@
 
         /* u3a_sweep(): sweep a fully marked road.
         */
-          void
+          c3_w
           u3a_sweep(void);
 
         /* u3a_sane(): check allocator sanity.

@@ -1691,6 +1691,244 @@ _raft_kick_all(u3_noun vir)
   }
 }
 
+/* _raft_spac(): print n spaces.
+*/
+void _raft_spac(c3_w n)
+{
+  for (; n > 0; n--)
+    (fprintf(stderr," "));
+}
+
+/* _raft_print_memory: print memory amount. cf u3a_print_memory().
+*/
+void
+_raft_print_memory(c3_w wor_w)
+{
+  c3_w byt_w = (wor_w * 4);
+  c3_w gib_w = (byt_w / 1000000000);
+  c3_w mib_w = (byt_w % 1000000000) / 1000000;
+  c3_w kib_w = (byt_w % 1000000) / 1000;
+  c3_w bib_w = (byt_w % 1000);
+
+  if ( gib_w ) {
+    (fprintf(stderr, "GB/%d.%03d.%03d.%03d\r\n", 
+        gib_w, mib_w, kib_w, bib_w));
+  }
+  else if ( mib_w ) {
+    (fprintf(stderr, "MB/%d.%03d.%03d\r\n", mib_w, kib_w, bib_w));
+  }
+  else if ( kib_w ) {
+    (fprintf(stderr, "KB/%d.%03d\r\n", kib_w, bib_w));
+  }
+  else {
+    (fprintf(stderr, "B/%d\r\n", bib_w));
+  }
+}
+
+#if 0
+/*  _raft_prof_noun(): get memory usage, in words, of noun. RETAIN.
+*/
+c3_w
+_raft_prof_noun(u3p(u3h_root) hax, u3_noun non, c3_t dud)
+{
+  return 0;
+  /*
+  u3_weak got = u3h_git(hax, dud ? non & 0x7fffffff : non);
+
+  if (u3_none != got) {
+    return 1;
+  }
+  else {
+    c3_w res;
+
+    if (!(non & 0x80000000)) {
+      res = 1;
+    }
+    if (_(u3ud(non))) {
+      res = 3 + 3 + u3r_met(5, non);
+    }
+    else {
+      res = 3 + 2
+            + _raft_prof_noun(hax, u3h(non), dud)
+            + _raft_prof_noun(hax, u3t(non), dud);
+    }
+
+    u3h_put(hax, dud ? non & 0x7fffffff : non, res);
+
+    return res;
+  }
+  */
+}
+#endif
+
+/* _raft_prof(): print memory profile. RETAIN.
+*/
+c3_w
+_raft_prof(u3p(u3h_root) hax, c3_w den, u3_noun mas)
+{
+  c3_w tot_w = 0;
+  u3_noun h_mas, t_mas;
+
+  if ( c3n == u3r_cell(mas, &h_mas, &t_mas) ) {
+    _raft_spac(den);
+    (fprintf(stderr, "mistyped mass\r\n"));
+    return tot_w;
+  }
+  else if ( _(u3du(h_mas)) ) {
+    _raft_spac(den);
+    (fprintf(stderr, "mistyped mass head\r\n"));
+    u3m_p("h_mas", h_mas);
+    return tot_w;
+  }
+  else {
+    _raft_spac(den);
+
+    c3_c* lab_c = u3m_pretty(h_mas);
+    (fprintf(stderr, "%s: ", lab_c));
+    free(lab_c);
+
+    u3_noun it_mas, tt_mas;
+
+    if ( c3n == u3r_cell(t_mas, &it_mas, &tt_mas) ) {
+      (fprintf(stderr, "mistyped mass tail\r\n"));
+      return tot_w;
+    }
+    else if ( c3y == it_mas ) {
+      tot_w += u3a_mark_noun(tt_mas);
+      _raft_print_memory(tot_w);
+
+#if 1
+      /* The basic issue here is that tt_mas is included in
+       * u3A->sac, so they can't both be roots in the normal
+       * sense. When we mark u3A->sac later on, we want tt_mas
+       * to appear unmarked, but its children should be already
+       * marked.
+      */
+      if ( _(u3a_is_dog(tt_mas)) ) {
+        u3a_box* box_u = u3a_botox(u3a_to_ptr(tt_mas));
+#ifdef U3_MEMORY_DEBUG
+        if ( 1 == box_u->eus_w ) {
+          box_u->eus_w = 0xffffffff;
+        }
+        else {
+          box_u->eus_w -= 1;
+        }
+#else
+        if ( -1 == (c3_w)box_u->use_w ) {
+          box_u->use_w = 0x80000000;
+        }
+        else {
+          box_u->use_w += 1;
+        }
+#endif
+      }
+#endif
+
+      return tot_w;
+    }
+    else if ( c3n == it_mas ) {
+      (fprintf(stderr, "\r\n"));
+
+      while ( _(u3du(tt_mas)) ) {
+        tot_w += _raft_prof(hax, den+2, u3h(tt_mas));
+        tt_mas = u3t(tt_mas);
+      }
+
+      _raft_spac(den);
+      (fprintf(stderr, "--"));
+      _raft_print_memory(tot_w);
+
+      return tot_w;
+
+    }
+    else {
+      _raft_spac(den);
+      (fprintf(stderr, "mistyped (strange) mass tail\r\n"));
+      return tot_w;
+    }
+  }
+}
+
+/* _raft_grab(): garbage collect, checking for profiling. RETAIN.
+*/
+static void
+_raft_grab(u3_noun ova)
+{
+  if ( u3_nul != u3A->sac ) {
+    c3_w usr_w = 0, ova_w = 0, sac_w = 0, utv_w = 0, utm_w = 0, wep_w = 0,
+         har_w = 0, das_w = 0, flu_w = 0, tax_w = 0, mer_w = 0, don_w = 0,
+         day_w = 0, car_w = 0;
+
+    c3_assert( u3R == &(u3H->rod_u) );
+
+    fprintf(stderr, "\r\n");
+    usr_w = _raft_prof(u3_nul, 0, u3A->sac);
+    fprintf(stderr, "total userspace: ");
+    _raft_print_memory(usr_w);
+
+    ova_w = u3a_mark_noun(ova);
+    fprintf(stderr, "effects list: ");
+    _raft_print_memory(ova_w);
+
+    sac_w = u3a_mark_noun(u3A->sac);
+    fprintf(stderr, "space profile: ");
+    _raft_print_memory(sac_w);
+
+    utv_w = u3v_mark();
+    fprintf(stderr, "arvo stuff: ");
+    _raft_print_memory(utv_w);
+
+    har_w = u3h_mark(u3R->jed.har_p);
+    fprintf(stderr, "  warm jet state: ");
+    _raft_print_memory(har_w);
+
+    das_w = u3a_mark_noun(u3R->jed.das);
+    fprintf(stderr, "  cold jet state: ");
+    _raft_print_memory(das_w);
+
+    flu_w = u3a_mark_noun(u3R->ski.flu);
+    fprintf(stderr, "  namespace: ");
+    _raft_print_memory(flu_w);
+
+    tax_w = u3a_mark_noun(u3R->bug.tax);
+    fprintf(stderr, "  trace stack list: ");
+    _raft_print_memory(tax_w);
+     
+    mer_w = u3a_mark_noun(u3R->bug.mer);
+    fprintf(stderr, "  trace stack buffer: ");
+    _raft_print_memory(mer_w);
+     
+    don_w = u3a_mark_noun(u3R->pro.don);
+    fprintf(stderr, "  profile battery list: ");
+    _raft_print_memory(don_w);
+     
+    day_w = u3a_mark_noun(u3R->pro.day);
+    fprintf(stderr, "  profile doss: ");
+    _raft_print_memory(day_w);
+     
+    car_w = u3h_mark(u3R->cax.har_p);
+    fprintf(stderr, "  memoization: ");
+    _raft_print_memory(car_w);
+     
+    utm_w = har_w + das_w + flu_w + tax_w + mer_w + don_w + day_w + car_w;
+    fprintf(stderr, "total road stuff: ");
+    _raft_print_memory(utm_w);
+
+    fprintf(stderr, "total marked: ");
+    _raft_print_memory(usr_w + ova_w + sac_w + utv_w + utm_w);
+
+    wep_w = u3a_sweep();
+    fprintf(stderr, "sweep: ");
+    _raft_print_memory(wep_w);
+
+    u3h_free(u3R->cax.har_p);
+    u3R->cax.har_p = u3h_new();
+
+    u3z(u3A->sac);
+    u3A->sac = u3_nul;
+  }
+}
+
 int FOO;
 
 /* u3_raft_work(): work.
@@ -1803,6 +2041,8 @@ u3_raft_work(void)
           _raft_kick_all(vir);
           egg_u->did = c3y;
           egg_u->vir = 0;
+
+          _raft_grab(ova);
         }
       }
     }

@@ -39,7 +39,7 @@ RM=rm -f
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ -g -L/usr/local/lib -L/opt/local/lib
+CLD=g++ -O3 -L/usr/local/lib -L/opt/local/lib
 
 ifeq ($(OS),osx)
   COSFLAGS=-fno-diagnostics-fixit-info
@@ -354,7 +354,7 @@ LIBCOMMONMARK=outside/commonmark/build/src/libcmark.a
 
 LIBSCRYPT=outside/scrypt/scrypt.a
 
-all: vere
+all: urbit
 
 .MAKEFILE-VERSION: Makefile .make.conf
 	@echo "Makefile update."
@@ -363,7 +363,7 @@ all: vere
 .make.conf:
 	@echo "# Set custom configuration here, please!" > ".make.conf"
 
-vere: $(BIN)/vere
+urbit: $(BIN)/urbit
 meme: $(BIN)/meme
 
 $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2):
@@ -393,14 +393,14 @@ $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBR
 $(V_OFILES): i/v/vere.h
 
 ifdef NO_SILENT_RULES
-$(BIN)/vere: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT)
+$(BIN)/urbit: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT)
 else
-$(BIN)/vere: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT)
-	@echo "    CCLD  $(BIN)/vere"
+$(BIN)/urbit: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT)
+	@echo "    CCLD  $(BIN)/urbit"
 	@mkdir -p $(BIN)
-	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/vere $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT)
+	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT)
 endif
 
 $(BIN)/meme: $(LIBCRE) $(LIBCOMMONMARK) $(MEME_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT)
@@ -416,24 +416,24 @@ etags:
 osxpackage:
 	$(RM) -r inst
 	$(MAKE) distclean
-	$(MAKE) $(BIN)/vere LIB=/usr/local/lib/urb STATIC=yes
+	$(MAKE) $(BIN)/urbit LIB=/usr/local/lib/urb STATIC=yes
 	mkdir -p inst/usr/local/lib/urb inst/usr/local/bin
-	cp $(BIN)/vere inst/usr/local/bin
+	cp $(BIN)/urbit inst/usr/local/bin
 	cp urb/urbit.pill inst/usr/local/lib/urb
 	cp -R urb/zod inst/usr/local/lib/urb
-	pkgbuild --root inst --identifier org.urbit.vere --version 0.2 vere.pkg
+	pkgbuild --root inst --identifier org.urbit.urbit --version 0.2 urbit.pkg
 
 debbuild:
-	$(MAKE) $(BIN)/vere LIB=/usr/share/urb
+	$(MAKE) $(BIN)/urbit LIB=/usr/share/urb
 
 debinstall:
 	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/share/urb
-	install -m755 $(BIN)/vere $(DESTDIR)/usr/bin
+	install -m755 $(BIN)/urbit $(DESTDIR)/usr/bin
 	cp urb/urbit.pill $(DESTDIR)/usr/share/urb
 	cp -R urb/zod $(DESTDIR)/usr/share/urb
 
 clean: 
-	$(RM) $(VERE_OFILES) $(BIN)/vere vere.pkg $(VERE_DFILES)
+	$(RM) $(VERE_OFILES) $(BIN)/urbit urbit.pkg $(VERE_DFILES)
 
 distclean: clean $(LIBUV_MAKEFILE)
 	$(MAKE) -C outside/libuv_0.11 distclean

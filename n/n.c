@@ -86,7 +86,10 @@ _n_hint(u3_noun zep,
         }
         pro = _n_nock_on(u3k(bus), u3k(nex));
 
-        u3z_save_2(c3__nock, bus, nex, pro);
+        if ( u3R != &(u3H->rod_u) ) {
+          u3z_save_2(c3__nock, bus, nex, pro);
+        }
+
         u3z(bus); u3z(nex);
 
         return pro;
