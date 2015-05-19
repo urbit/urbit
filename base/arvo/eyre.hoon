@@ -300,7 +300,7 @@
         "/~/auth.json?PUT", 
         {ship:ship.innerText.toLowerCase(), code:pass.value},
         function(){
-          if(!urb.foreign) urb.redir()
+          if(urb.foreign) urb.redir()
           else document.location.reload()
       })
     }
@@ -1333,9 +1333,9 @@
   ?:  ?=(%wegh -.q.hic)
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
+    :-  %eyre
     :-  %|
     :~  bol/`bol
-        ::  cor/`..^$
     ==
   =+  our=`@p`0x100  ::  XX  sentinel
   =+  ska=(slod ski)
