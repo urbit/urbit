@@ -136,6 +136,28 @@
                  (crud p.kyz q.kyz)
           %blew  (send %rez p.p.kyz q.p.kyz)
           %heft  heft
+          %tick  =+  ^=  ges  ^-  gens
+                     ^-  gens
+                     :-  %en
+                     =+  can=(clan p.kyz)
+                     ?-  can
+                       %czar  [%czar ~]
+                       %duke  [%duke %anon ~]
+                       %earl  [%earl (scot %p p.kyz)]
+                       %king  :-  %king 
+                              ?:  =(~doznec p.kyz)      ::  so old tickets work
+                                'Urban Republic' 
+                              (scot %p p.kyz)
+                       %pawn  [%pawn ~]
+                     ==
+                 =+  yen=(scot %p (shax :(mix %ticket eny now)))
+                 =+  ^=  beg  ^-  [his=@p tic=@p yen=@t ges=gens]
+                     [p.kyz q.kyz yen ges]
+                 =+  cag=`cage`[%hood-begin !>(beg)]
+                 %=    +>.$
+                     moz 
+                   :_(moz [hen %pass ~ %g %deal [our our] %hood %poke cag])
+                 ==
           %veer  (dump kyz)
           %vega  (dump kyz)
           %verb  (dump kyz)
