@@ -521,6 +521,8 @@
         c3_c*   imp_c;                      //  -I, czar name
         c3_c*   nam_c;                      //  -n, unix hostname
         c3_c*   raf_c;                      //  -r, raft flotilla
+        c3_c*   who_c;                      //  -T, begin with ticket
+        c3_c*   tic_c;                      //  -T, ticket value
         c3_w    kno_w;                      //  -k, kernel version
         c3_w    fuz_w;                      //  -f, fuzz testing
         c3_s    por_s;                      //  -p, ames port
@@ -790,6 +792,11 @@
       */
         void
         u3_term_ef_boil();
+
+      /* u3_term_ef_ticket(): initial effects for new ticket.
+      */
+        void
+        u3_term_ef_ticket(c3_c* who_c, c3_c* tic_c);
 
       /* u3_term_ef_winc(): window change.
       */

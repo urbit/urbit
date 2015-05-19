@@ -40,6 +40,22 @@ _main_readw(const c3_c* str_c, c3_w max_w, c3_w* out_w)
 
 static c3_c hostbuf[2048];  // kill me
 
+/* _main_presig(): prefix optional sig.
+*/
+c3_c* 
+_main_presig(c3_c* txt_c)
+{
+  c3_c* new_c = malloc(2 + strlen(txt_c));
+
+  if ( '~' == *txt_c ) {
+    strcpy(new_c, txt_c);
+  } else {
+    new_c[0] = '~';
+    strcpy(new_c + 1, txt_c);
+  }
+  return new_c;
+}
+
 /* _main_getopt(): extract option map from command line.
 */
 static u3_noun
@@ -62,7 +78,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.mem = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i = getopt(argc, argv, "I:X:f:k:l:n:p:r:LabcdgqvFMPD")) != -1 ) {
+  while ( (ch_i = getopt(argc, argv, "I:T:X:f:k:l:n:p:r:LabcdgqvFMPD")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
@@ -70,6 +86,11 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'I': {
         u3_Host.ops_u.imp_c = strdup(optarg);
+        break;
+      }
+      case 'T': {
+        u3_Host.ops_u.who_c = _main_presig(optarg);
+        u3_Host.ops_u.tic_c = _main_presig(getpass("your ticket: ~"));
         break;
       }
       case 'X': {
@@ -363,6 +384,7 @@ main(c3_i   argc,
   }
 
   // u3e_grab("main", u3_none);
+  //
   u3_lo_loop();
 
   return 0;
