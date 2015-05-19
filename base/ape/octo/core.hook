@@ -119,8 +119,8 @@
 ++  flet  |=(from ~(. et +< (~(got by q.eye) ost)))     ::  in old client
 ++  fret  |=(from ~(. et +< *sole-share))               ::  in new client
 ++  like  |=(xir=ship |*(* [/octo [xir %octo] +<]))     ::  to friend
-++  link  |=  mot=mote  %-  dish(but `[| mot])          ::  subscribe to friend
-          peer/((like p.mot) /octo/[?:(q.mot %x %o)])   ::  
+++  link  |=  mot=mote  %+  dish(but `[| mot])  %peer   ::  subscribe to friend
+          ((like p.mot) /octo/net/[?:(q.mot %x %o)])    ::  
 ++  pals  %+  turn  (pale hid (prix /sole))  |=  sink   ::  per console 
           [[p=p.+< q=q.+<] r=(~(got by q.eye) p.+<)]    ::
 ++  park  |=  [lev=?(%0 %1 %2) mus=(unit tape)]         ::  update all
@@ -140,12 +140,12 @@
           ?.  &(?=([~ %& *] but) =(src p.q.u.but))  +>  ::
           ?:  =(^gam gam)  +>                           ::
           (park(gam gam) %2 ~)                          ::
-++  peer-octo                                           ::  urbit peer
+++  peer-octo-net                                       ::  urbit peer
           |=  [from pax=path]  =<  abet                 ::
           =+  who==(%x -.pax)                           ::
           ?^  but  (park %2 ~)                          ::
           (park:(link src !who) %2 `"net from {<src>}") ::
-++  peer-web                                            ::  web peer
+++  peer-octo-web                                       ::  web peer
           |=  [from pax=path]  =<  abet                 ::
           ~&  [%peer-web +<]                            ::
           ?^  but  (park %2 ~)                          ::
