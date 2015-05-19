@@ -10,7 +10,7 @@
     ;script(type "text/javascript", src "/~/at/base/lib/urb.js");
     ;link(type "text/css", rel "stylesheet", href "/home/lib/base.css");
     ;link(type "text/css", rel "stylesheet", href "/home/pub/octo/src/main.css");
-    ;title: octo :urbit
+    ;title: :octo
   ==
   ;body
     ;div#what
