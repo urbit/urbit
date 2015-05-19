@@ -102,6 +102,8 @@ input {
 }
 .time {
   font-weight: 200;
+  letter-spacing: 0.1rem;
+  color: #555;
 }
 #length,
 .audi,
@@ -233,6 +235,7 @@ body {
   border-left: 16rem solid transparent;
 }
 #station-container #head .ship {
+  font-size: 0.9rem;
   font-weight: 400;
 }
 #station-container:hover #where {
@@ -317,16 +320,22 @@ body {
   background-color: transparent;
   border: none;
   font-size: 0.8rem;
-  line-height: 2rem;
+  line-height: 1.2rem;
+  letter-spacing: 0.05rem;
   margin-top: 0.6rem;
   font-weight: 300;
   text-align: left;
   outline: none;
   cursor: pointer;
+  text-transform: uppercase;
+  border-bottom: 2px solid transparent;
+}
+.sour-ctrl input:focus {
+  border-bottom: 2px solid #fff;
 }
 .sour-ctrl input::-webkit-input-placeholder {
-  font-weight: 500;
-  font-size: 1.6rem;
+  font-weight: 400;
+  font-size: 1.2rem;
   margin-left: 0.6rem;
   color: #fff;
 }
@@ -363,10 +372,6 @@ body {
 }
 #messages .message.same .iden {
   display: none;
-}
-#messages .message:hover .mess,
-#messages .message:hover .attr {
-  color: #555;
 }
 #messages .message:hover .type {
   color: #f04941;
@@ -422,8 +427,9 @@ a {
   content: "~";
 }
 .type.private:before {
-  content: "╿";
-  font-size: 0.8rem;
+  content: "•";
+  font-size: 1rem;
+  line-height: 0.7rem;
 }
 .type.public:before {
   content: "▒";
@@ -509,12 +515,9 @@ a {
   min-height: 1.6rem;
   min-width: 1.3rem;
   outline: none;
-  background-color: #eee;
   padding: 0.3rem 0.1rem;
   margin-top: -0.3rem;
-}
-#writing:focus {
-  background-color: #fff;
+  border-bottom: 3px solid #555;
 }
 .writing {
   padding-top: 0.3rem;
@@ -540,15 +543,17 @@ a {
 }
 #audi {
   display: inline-block;
-  background-color: #eee;
   margin-right: -0.2rem;
+  margin-bottom: 0.3rem;
   outline: none;
   overflow: hidden;
   max-width: 9rem;
+  min-width: 1rem;
   padding: 0.3rem 0.1rem 0.1rem 0;
+  border-bottom: 2px solid #555;
 }
 .valid-false {
-  color: #ff2f2f;
+  color: #ff2f2f !important;
 }
 #scrolling {
   display: none;
