@@ -119,7 +119,7 @@
       [%get him=(unit ship) rem=pork]
       [%js ~]
       [%json ~]
-      [%try him=ship cod=cord]
+      [%try him=ship paz=(unit cord)]
       [%xen ses=hole rem=pork]
   ==
 ::
@@ -278,17 +278,25 @@
     }
     
     urb.foreign = /^\/~\/am/.test(window.location.pathname)
+    urb.redir = function(){
+      document.location = 
+        document.location.hash.match(/#[^?]+/)[0].slice(1) +
+        document.location.pathname.replace(
+          /^\/~\/am\/[^/]+/,
+          '/~/as/~' + urb.ship) +
+        document.location.search
+    }
+    if(urb.foreign && urb.auth.indexOf(urb.ship) !== -1){
+      req("/~/auth.json?PUT",
+          {ship:urb.ship,code:null},
+          urb.redir)
+    }
     urb.submit = function(){
       req(
         "/~/auth.json?PUT", 
         {ship:ship.innerText.toLowerCase(), code:pass.value},
         function(){
-          if(urb.foreign) document.location = 
-            document.location.hash.match(/#[^?]+/)[0].slice(1) +
-            document.location.pathname.replace(
-              /^\/~\/am\/[^/]+/,
-              '/~/as/~' + urb.ship) +
-            document.location.search
+          if(!urb.foreign) urb.redir()
           else document.location.reload()
       })
     }
@@ -387,7 +395,8 @@
       ;head
         ;meta(charset "utf-8");
         ;title:"{(trip a)}" 
-        ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js");
+        ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/".
+          "libs/jquery/2.1.1/jquery.min.js");
         ;link(rel "stylesheet", href "/home/lib/base.css");
       ==
       ;body:div#c:"*{b}"
@@ -917,7 +926,7 @@
                 %get   [%json ~]
                 %put
               ~|  parsing/bod
-              [%try (need-body (ot ship/(su fed:ag) code/so ~):jo)]
+              [%try (need-body (ot ship/(su fed:ag) code/(mu so) ~):jo)]
             ::
                 %delt
               ~|  parsing/bod
@@ -1042,7 +1051,9 @@
         :-  %|
         ?.  =(our him.ham)
           ~|(stub-foreign/him.ham !!)
-        ?.  =(load-secret cod.ham)
+        ?.  ?|  (~(has in aut.yac) him.ham) 
+                ?~(paz.ham | =(u.paz.ham load-secret))
+            ==
           ~|(try/`@t`load-secret !!)  ::  XX security
         =^  jon  ..ya  stat-json:(logon:yac him.ham)
         =.  cug.yac  :_(cug.yac (set-cookie %ship (scot %p him.ham)))
@@ -1058,8 +1069,10 @@
       ?:  (~(has by wup) u.ses)
         [%& %htme login-page:xml]
       =+  yac=(new-ya u.ses)
-      =.  ..ya  abet.yac
-      [%| (give-html 401 cug.yac login-page:xml)]
+      =+  =-  lon=(~(has in aut:(fall - *cyst)) our)
+          (biff (session-from-cookies cookie-prefix maf) ~(get by wup))
+      =.  yac  ?.(lon yac (logon.yac our))
+      [%| (give-html(..ya abet.yac) 401 cug.yac login-page:xml)]
     ::
     ++  show-ship-selection
       |=  ~
@@ -1109,7 +1122,8 @@
       :*  ^-  cred
           :*  hat(p sec)
               ~
-              'not-yet-implemented' ::(rsh 3 1 (scot %p (end 6 1 (shaf %oryx ses))))
+              'not-yet-implemented' 
+              ::(rsh 3 1 (scot %p (end 6 1 (shaf %oryx ses))))
           ::
               =+  lag=(~(get by maf) %accept-language)
               ?~(lag ~ ?~(u.lag ~ [~ i.u.lag]))
@@ -1152,7 +1166,7 @@
       %-  give-thou:abet
       (add-cookies cug [307 [location/(crip url)]~ ~])
     ::
-    ++  logon     
+    ++  logon
       |=  her=ship
       %_  +>
         him   her
