@@ -21,7 +21,6 @@
 =+  all=.*(0 ken)
 =+  ^=  vay  ^-  (list ,[p=@tas q=@tas])
     :~  [%$ %zuse]
-        [%b %behn]
         [%g %gall]
         [%f %ford]
         [%a %ames]

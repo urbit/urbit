@@ -65,7 +65,6 @@
           [%peer wire dock path]                        ::
           [%poke wire dock pear]                        ::
           [%pull wire dock ~]                           ::
-          [%pass wire note]                             ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     --                                                  ::
@@ -134,8 +133,9 @@
   ++  se-drop                                           ::  passive drop
     |=  gyl=gill
     ^+  +>
+    ?.  (~(has by feg) gyl)  +>
+    =.  +>  (se-blit %out (tuba "[disconnected from {<gyl>}]"))
     =<  se-prom
-    ?>  (~(has by feg) gyl)
     %_  +>
       feg      (~(del by feg) gyl)
       apt      (skip apt |=(a=gill =(gyl a)))
@@ -198,7 +198,7 @@
     |=  gyl=gill
     ^+  +>
     =.  +>  ?.  =(p.gyl src)  +>
-        (se-emit ost %conf (se-path gyl) gyl %load src %main)
+        (se-emit ost %conf (se-path gyl) gyl %load src %home)
     (se-join:(se-peer gyl /sole) gyl)
   ::
   ++  se-blit                                           ::  give output
@@ -252,10 +252,6 @@
   ++  se-pull
     |=  gyl=gill
     (se-emit ost %pull (se-path gyl) gyl ~)
-  ::
-  ++  se-pass                                           ::  pass an action
-    |=  [gyl=gill noh=note]
-    (se-emit ost %pass (se-path gyl) noh)
   ::
   ++  se-tame
     |=  gyl=gill
@@ -614,6 +610,10 @@
     ==
   ==
 ::
+++  gull
+  |=  way=wire  ^-  (pair ship gill)
+  ?>(?=([@ @ @ ~] way) [(slav %p i.way) (slav %p i.t.way) i.t.t.way])
+::
 ++  poke-dill-belt
   |=  [from bet=dill-belt]
   ^-  (quip move +>)
@@ -634,18 +634,23 @@
   ?~  yog
     ~&  [%sole-diff-stale ost way]
     [~ +>.$]
-  ?>  ?=([@ @ @ ~] way)
   =<  se-abet
   =<  se-view
-  =+  gyl=[(slav %p i.t.way) i.t.t.way]
-  (~(se-diff se [~ ~] [(slav %p i.way) ost] u.yog) gyl fec)
+  =+  yaw=(gull way)
+  (~(se-diff se [~ ~] [p.yaw ost] u.yog) q.yaw fec)
 ::
 ++  coup
   |=  [then saw=(unit tang)]
   ^-  (quip move +>)
   ?~  saw  [~ +>]
-  :_  +>  :_  ~
-  [ost %flog ~ %crud %coup u.saw]
+  =+  yog=(~(get by bin) ost)
+  ?~  yog
+    ~&  [%sole-coup-stale ost way]
+    [~ +>.$]
+  =<  se-abet
+  =<  se-view
+  =+  yaw=(gull way)
+  (~(se-drop se [[ost %flog ~ %crud %coup u.saw]~ ~] [p.yaw ost] u.yog) q.yaw)
 ::
 ++  reap
   |=  [then saw=(unit tang)]
@@ -657,18 +662,26 @@
 ++  quit
   |=  then
   ^-  (quip move +>)
-  [~ +>]
+  =+  yog=(~(get by bin) ost)
+  ?~  yog
+    ~&  [%sole-quit-stale ost way]
+    [~ +>.$]
+  =<  se-abet
+  =<  se-view
+  =+  yaw=(gull way)
+  (~(se-drop se [~ ~] [p.yaw ost] u.yog) q.yaw)
 ::
 ++  onto
   |=  [then saw=(each suss tang)]
-  :_  +>  :_  ~
+  :_  +>
   ?-  -.saw
-    %|  [ost %flog ~ %crud `@tas`-.way `tang`p.saw]
-    %&  [ost %flog ~ %text "<{<p.saw>}>"]
+    %|  [[ost %flog ~ %crud `@tas`-.way `tang`p.saw] ~]
+    %&  ::  [ost %flog ~ %text "<{<p.saw>}>"]
+        ~
   ==
 ::
 ++  pull
-  |=  from
+  |=  [from pax=path]
   ^-  (quip move +>)
   ::  ~&  [%sole-pull ost]
   =^  moz  +>  

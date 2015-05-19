@@ -12,12 +12,7 @@
           ==                                            ::
 ++  broq  |*  [a=_,* b=_,*]                             ::  brodal skew qeu
           (list (sqeu a b))                             ::
-++  weight
-          (each noun (list (pair tape weight)))
-++  gift                                                ::  out result <-$
-          $%  [%mass p=mass]                            ::  memory usage
-              [%wake ~]                                 ::  wakey-wakey
-          ==                                            ::
+++  gift  gift-time                                     ::  out result <-$
 ++  kiss                                                ::  in request ->$
           $%  [%rest p=@da]                             ::  cancel alarm
               [%wait p=@da]                             ::  set alarm

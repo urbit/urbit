@@ -1,8 +1,6 @@
 ::
 ::::  /hook/core/sole/lib
   ::  
-  ::  This file is in the public domain.
-  ::
 /?    310
 /-    *sole
 !:
@@ -37,6 +35,7 @@
   ::
   ++  transmute                                         ::  dex as after sin
     |=  [sin=sole-edit dex=sole-edit]
+    ~|  [%transmute sin dex]
     ^-  sole-edit
     ?:  ?=(%mor -.sin)
       |-  ^-  sole-edit
@@ -58,14 +57,14 @@
       ?-  -.dex
         %del  ?:  =(p.sin p.dex)  [%nop ~]
               ?:((lth p.sin p.dex) dex(p (dec p.dex)) dex)
-        %ins  ?:((lte p.sin p.dex) dex(p (dec p.dex)) dex)
+        %ins  ?:((lth p.sin p.dex) dex(p (dec p.dex)) dex)
       ==
     ::  
         %ins
       ?-  -.dex
         %del  ?:((lte p.sin p.dex) dex(p +(p.dex)) dex)
         %ins  ?:  =(p.sin p.dex)     
-                ?:((gth q.sin q.dex) dex dex(p +(p.dex)))
+                ?:((lth q.sin q.dex) dex dex(p +(p.dex)))
               ?:((lte p.sin p.dex) dex(p +(p.dex)) dex)
       ==
     ==   
@@ -102,7 +101,9 @@
   ++  receive                                           ::  naturalize event
     |=  sole-change
     ^-  [sole-edit sole-share]
-    ?>  &(=(his.ler his.ven) (lte own.ler own.ven))
+    ?.  &(=(his.ler his.ven) (lte own.ler own.ven))
+      ~&  [%receive-sync his/[his.ler his.ven] own/[own.ler own.ven]]
+      !!
     ?>  &(=(his.ler his.ven) (lte own.ler own.ven))
     ?>  |(!=(own.ler own.ven) =(0 haw) =(haw (sham buf)))
     =.  leg  (scag (sub own.ven own.ler) leg)
