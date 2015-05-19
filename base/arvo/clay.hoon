@@ -2439,10 +2439,16 @@
   ::
       %init
     :_  ..^$(fat.ruf (~(put by fat.ruf) p.q.hic [hen ~ ~]))
-    =+  bos=(sein p.q.hic)
-    ~&  [%bos bos p.q.hic]
-    ?:  =(bos p.q.hic)  ~
-    [hen %pass / %c %font p.q.hic %base bos %kids]~
+    =+  [bos=(sein p.q.hic) can=(clan p.q.hic)]
+    %-  zing  ^-  (list (list move))
+    :~  ~&  [%bos bos p.q.hic]
+        ?:  =(bos p.q.hic)  ~
+        [hen %pass / %c %font p.q.hic %base bos %kids]~
+    ::
+        ~
+    ::  ?.  ?=(?(%king %czar) can)  ~
+    ::  [hen %pass / %c %font p.q.hic %kids p.q.hic %base]~
+    ==
   ::
       %info
     ?:  =(%$ q.q.hic)
@@ -2569,9 +2575,15 @@
       %wegh
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
+    :-  %clay
     :-  %|
-    :~  ruf/`ruf
-        ::  cor/`..^$
+    :~  domestic/`fat.ruf
+        foreign/`hoy.ruf
+        :-  %object-store  :-  %|
+        :~  commits/`hut.ran.ruf
+            blobs/`lat.ran.ruf
+        ==
+        autosync/`sor.ruf
     ==
   ==
 ::
@@ -2643,7 +2655,7 @@
       =.  sor.ruf  (~(put by sor.ruf) [our syd her sud] [nex hen])
       =+  `move`[hen %pass tea %c %warp [our her] sud ~ %sing %y [%ud nex] /]
       ?:  ?=(%& -.p.+.q.hin)
-        ~&  ['merge succeeded' p.p.+.q.hin]
+        ::  ~&  ['merge succeeded' p.p.+.q.hin]
         [[- ~] ..^$]
       ~&  :^    "merge failed"
               "please manually merge the desks with"

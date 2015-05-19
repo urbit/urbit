@@ -180,15 +180,18 @@
         (done %blit [bit ~])
       ::
       ++  init                                          ::  initialize
-        ~&  [%dill-init our]
+        ~&  [%dill-init our ram]
         =+  myt=(flop (need tem))
+        =+  can=(clan our)
         =.  tem  ~
         =.  moz  :_(moz [hen %pass / %c %font our %home our %base])
+        =.  moz  ?.  ?=(?(%king %czar) can)  moz
+                 :_(moz [hen %pass / %c %font our %kids our %base])
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
-        =.  moz  :_(moz [hen %pass ~ %g %deal [our our] ram %peer ~])
-        |-  ^+  +>
-        ?~  myt  +>
-        $(myt t.myt, +> (send i.myt))
+        =.  moz  :_(moz [hen %pass ~ %g %deal [our our] ram %peer /drum])
+        |-  ^+  +>+
+        ?~  myt  +>+
+        $(myt t.myt, +>+ (send i.myt))
       ::
       ++  into                                          ::  preinitialize
         |=  gyl=(list gill)
@@ -252,7 +255,8 @@
           ::  ~&  [%take-gall-unto +>.sih]
           ?-  -.+>.sih
             %coup  ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
-            %quit  !! :: ??
+            %quit  ~&  %dill-console-quit
+                   (dump %logo ~)
             %reap  ?~(p.p.+>.sih +>.$ (crud %reap u.p.p.+>.sih))
             %diff  pump:(from ((hard dill-blit) q:`vase`+>+>.sih))
           ==
@@ -287,7 +291,7 @@
           [~ ~]
           80
           0
-          (tuba "<{(trip p.kyz)}>")
+          (tuba "<awaiting {(trip p.kyz)}>")
       ==
     --
 |%                                                      ::  poke/peek pattern
@@ -322,15 +326,7 @@
     =:  ore.all  `p.q.hic
         dug.all   ~
       ==
-    =+  ^=  flo  ^-  (list (pair ship term))
-        =+  myr=(clan p.q.hic)
-        ?:  =(%pawn myr)
-          [[p.q.hic %dojo] [p.q.hic %hood] ~]
-        ?:  =(%earl myr)
-          =+  fap=(sein p.q.hic)
-          [[fap %dojo] [fap %talk] [fap %hood] ~]
-        [[p.q.hic %dojo] [p.q.hic %talk] [p.q.hic %hood] ~]
-    =^  moz  all  abet:(need (ax (need hey.all) [%flow %sole flo]))
+    =^  moz  all  abet:(need (ax (need hey.all) [%flow %hood ~]))
     ?:  |((lth p.q.hic 256) (gte p.q.hic (bex 64)))  [moz ..^$] ::  XX HORRIBLE
     [:_(moz [(need hey.all) %give %init p.q.hic]) ..^$]
   =+  nus=(ax hen q.hic)

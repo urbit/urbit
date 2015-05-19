@@ -65,7 +65,6 @@
           [%peer wire dock path]                        ::
           [%poke wire dock pear]                        ::
           [%pull wire dock ~]                           ::
-          [%pass wire note]                             ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     --                                                  ::
@@ -253,10 +252,6 @@
   ++  se-pull
     |=  gyl=gill
     (se-emit ost %pull (se-path gyl) gyl ~)
-  ::
-  ++  se-pass                                           ::  pass an action
-    |=  [gyl=gill noh=note]
-    (se-emit ost %pass (se-path gyl) noh)
   ::
   ++  se-tame
     |=  gyl=gill

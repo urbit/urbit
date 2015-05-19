@@ -6,10 +6,9 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%                                                      ::  ::
-++  helm-part                                           ::  helm state
-  $:  %helm                                             ::  doubletag
-      %0                                                ::  state version
-      bur=(unit (pair ship mace))                       ::  requesting ticket
+++  helm-part  ,[%helm %0 helm-pith]                     ::  helm state
+++  helm-pith                                           ::  helm content
+  $:  bur=(unit (pair ship mace))                       ::  requesting ticket
       hoc=(map bone helm-session)                       ::  consoles
   ==                                                    ::  
 ++  helm-session                                        ::
@@ -131,7 +130,6 @@
     ?>  ?=(^ wil)  
     =<  abet
     %-  emil(bur ~)
-    ~&  [%poke-will wil]
     :~  [%cash /helm p.u.bur q.u.bur u.wil]
         [%plug /helm our %home (sein our) %kids]
     ==
