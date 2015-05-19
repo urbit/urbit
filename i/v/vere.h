@@ -538,7 +538,7 @@
         c3_o    pro;                        //  -P, profile
         c3_o    veb;                        //  -v, verbose (inverse of -q)
         c3_o    nuu;                        //  -c, new pier
-        c3_o    vno;                        //  -V
+        c3_o    vno;                        //  -V, turn on +verb
         c3_o    mem;                        //  -M, memory madness
       } u3_opts;
 
