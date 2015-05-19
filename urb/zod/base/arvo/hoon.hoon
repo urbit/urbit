@@ -9648,7 +9648,7 @@
   $%  [%tabl p=(list (pair marc marc))]                 ::  map
   ==                                                    ::
 ++  mark  ,@tas                                         ::  content type
-++  mass  (each noun (list (pair cord ,mass)))          ::  memory usage
+++  mass  (pair cord (each noun (list ,mass)))           ::  memory usage
 ++  mill  (each vase milt)                              ::  vase/metavase
 ++  milt  ,[p=* q=*]                                    ::  metavase
 ++  monk  (each ship ,[p=@tas q=@ta])                   ::  general identity
@@ -10108,12 +10108,13 @@
                 :_  -.avo
                 %=    i.ova
                     q.q
+                  :-  %userspace
                   :-  %|
-                  :~  [%hoon `pit]
-                      [%zuse `bud]
-                      [%hoon-cache `p.niz]
-                      [%vanes q.q.i.ova]
-                      [%dot `.]
+                  :~  hoon/`pit
+                      zuse/`bud
+                      hoon-cache/`p.niz
+                      q.q.i.ova
+                      dot/`.
                   ==
                 ==
               =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
