@@ -26,7 +26,7 @@ static u3j_harm _mood__hoon_reel_a[] = {{".2", u3wb_reel, c3y}, {}};
 static u3j_harm _mood__hoon_roll_a[] = {{".2", u3wb_roll, c3y}, {}};
 static u3j_harm _mood__hoon_skim_a[] = {{".2", u3wb_skim, c3y}, {}};
 static u3j_harm _mood__hoon_skip_a[] = {{".2", u3wb_skip, c3y}, {}};
-// static u3j_harm _mood__hoon_scag_a[] = {{".2", u3wb_scag, c3y}, {}};
+static u3j_harm _mood__hoon_scag_a[] = {{".2", u3wb_scag, c3y}, {}};
 static u3j_harm _mood__hoon_slag_a[] = {{".2", u3wb_slag, c3y}, {}};
 static u3j_harm _mood__hoon_snag_a[] = {{".2", u3wb_snag, c3y}, {}};
 // static u3j_harm _mood__hoon_sort_a[] = {{".2", u3wb_sort, c3y}, {}};
@@ -395,7 +395,7 @@ static u3j_core _mood__hoon_d[] =
     { "roll", _mood__hoon_roll_a },
     { "skim", _mood__hoon_skim_a },
     { "skip", _mood__hoon_skip_a },
-//  { "scag", _mood__hoon_scag_a },  // this jet is actually broken
+    { "scag", _mood__hoon_scag_a },  // this jet is actually broken
     { "slag", _mood__hoon_slag_a },
     { "snag", _mood__hoon_snag_a },
 //  { "sort", _mood__hoon_sort_a },
