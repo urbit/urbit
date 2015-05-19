@@ -9,12 +9,13 @@
 
 #what {
   height: 36px;
+  top: 18px;
 }
 
 #bord {
   height: 600px;
   position: absolute;
-  top: 72px;
+  top: 111px;
   opacity: .6;
 }
 
@@ -36,13 +37,19 @@
   text-transform: uppercase;
 }
 
-#what #ship,
+.turn #what #ship,
 #what #user {
   border: 2px solid #fff;
 }
 
+#what #ship,
 .turn #what #user {
   border: 2px solid red;
+}
+
+#what #ship,
+#what #user {
+  padding: .6rem;
 }
 
 #what .as {

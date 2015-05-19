@@ -21,9 +21,9 @@
       ==
       ;div#vs: vs
       ;div#user
-        ;div.as;
         ;div.sig: ~
         ;div.ship;
+        ;div.as;
       ==
     ==
     ;div#bord;
