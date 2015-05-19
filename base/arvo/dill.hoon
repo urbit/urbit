@@ -225,7 +225,7 @@
         =.  moz  ?.  ?=(?(%king %czar) can)  moz
                  :_(moz [hen %pass / %c %font our %kids our %base])
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
-        =.  +>.$  peer
+        =.  +>  peer
         |-  ^+  +>+
         ?~  myt  +>+
         $(myt t.myt, +>+ (send i.myt))
