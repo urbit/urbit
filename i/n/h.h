@@ -118,7 +118,7 @@
 
       /* u3h_mark(): mark hashtable for gc.
       */
-        void
+        c3_w
         u3h_mark(u3p(u3h_root) har_p);
 
       /* u3h_walk(): traverse hashtable with key, value fn; RETAINS.
