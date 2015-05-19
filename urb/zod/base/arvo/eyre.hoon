@@ -504,6 +504,9 @@
         %hat  (foreign-hat:(ses-ya p.u.mez) q.p.kyz q.u.mez)
         %get  (pass-note ay/(dray p/uv/~ q.p.kyz p.u.mez) [%e %this q.u.mez])
         %got
+          ?.  (~(has by pox) p.u.mez)
+            ~&  lost-gram-thou/p.u.mez
+            +>.$
           =:  hen  (~(got by pox) p.u.mez)
               pox  (~(del by pox) p.u.mez)
             ==
