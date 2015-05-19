@@ -2396,6 +2396,7 @@
       [%hook ~]                                         ::  this term hung up
       [%harm ~]                                         ::  all terms hung up
       [%init p=ship]                                    ::  after gall ready
+      [%tick p=@p q=@p]                                 ::  initial ticket
       [%noop ~]                                         ::  no operation
       [%talk p=tank]                                    ::
       [%text p=tape]                                    ::

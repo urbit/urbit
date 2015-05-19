@@ -1,6 +1,6 @@
-::
-::::  /hook/core/talk/app
-  ::
+::                                                      ::  ::
+::::  /hook/core/talk/app                               ::  ::
+  ::                                                    ::  ::
 /?  314
 /-  *talk, *sole
 /+  talk, sole
@@ -237,8 +237,8 @@
       ^-  tape
       =+  ^=  rew  ^-  (pair (pair ,@t ,@t) (set partner))
           ?~  active.she
-            [[')' '('] passive.she]
-          [[']' '['] u.active.she]
+            [['(' ')'] passive.she]
+          [['[' ']'] u.active.she]
       =+  por=~(te-prom te man.she q.rew)
       (weld `tape`[p.p.rew por] `tape`[q.p.rew ' ' ~])
     ::
