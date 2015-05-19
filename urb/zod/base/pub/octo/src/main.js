@@ -36,6 +36,7 @@ $(function() {
   })
 
   $bord.on('click', function(e) {
+    if(!$('body').hasClass('turn')) { return false }
     $t = $(e.target).closest('.spac')
     data = $.map(
       $t.attr('data-index').split('-'), 

@@ -21,13 +21,12 @@
       ==
       ;div#vs: vs
       ;div#user
+        ;div.as;
         ;div.sig: ~
         ;div.ship;
-        ;div.as;
       ==
     ==
     ;div#bord;
-    ;div#whom;
     ;script(type "text/javascript", src "/home/pub/octo/src/main.js");
   ==
 ==
