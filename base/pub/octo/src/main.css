@@ -1,3 +1,4 @@
+#what,
 #bord,
 #whom {
   width: 600px;
@@ -7,16 +8,40 @@
   margin-left: -300px;
 }
 
+#what {
+  height: 36px;
+}
+
 #bord {
-  width: 600px;
   height: 600px;
   position: absolute;
-  top: 18px;
+  top: 72px;
 }
 
 #whom {
   color: red;
   top: 636px;
+}
+
+#what {
+  font-family: "bau";
+}
+
+#what div {
+  display: inline-block;
+}
+
+#what .ship {
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+#vs {
+  margin: 0 1rem;
+  padding: .3rem;
+  color: #fff;
+  background-color: #ccc;
 }
 
 #whom,
@@ -37,23 +62,23 @@
 .spac[data-index="0-0"],
 .spac[data-index="1-0"],
 .spac[data-index="2-0"] {
-  border-top: 0;
+  border-left: 0;
 }
 
 .spac[data-index="0-0"],
 .spac[data-index="0-1"],
 .spac[data-index="0-2"] {
-  border-left: 0;
+  border-top: 0;
 }
 
 .spac[data-index="2-0"],
 .spac[data-index="2-1"],
 .spac[data-index="2-2"] {
-  border-right: 0;
+  border-bottom: 0;
 }
 
 .spac[data-index="0-2"],
 .spac[data-index="1-2"],
 .spac[data-index="2-2"] {
-  border-bottom: 0;
+  border-right: 0;
 }

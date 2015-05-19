@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/actions/MessageActions.coffee":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/actions/MessageActions.coffee":[function(require,module,exports){
 var MessageDispatcher;
 
 MessageDispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -87,7 +87,7 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee":[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee"}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee":[function(require,module,exports){
 var StationDispatcher;
 
 StationDispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -175,7 +175,7 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/components/MemberComponent.coffee":[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee"}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/components/MemberComponent.coffee":[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -204,7 +204,7 @@ module.exports = recl({
 
 
 
-},{}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/components/MessagesComponent.coffee":[function(require,module,exports){
+},{}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/components/MessagesComponent.coffee":[function(require,module,exports){
 var Member, Message, MessageActions, MessageStore, StationActions, StationStore, a, br, div, input, moment, recl, ref, textarea;
 
 moment = require('moment-timezone');
@@ -474,7 +474,7 @@ module.exports = recl({
 
 
 
-},{"../actions/MessageActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/actions/MessageActions.coffee","../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee","../stores/MessageStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/components/MemberComponent.coffee","moment-timezone":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/index.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/components/StationComponent.coffee":[function(require,module,exports){
+},{"../actions/MessageActions.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/actions/MessageActions.coffee","../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee","../stores/MessageStore.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/components/MemberComponent.coffee","moment-timezone":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/index.js"}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/components/StationComponent.coffee":[function(require,module,exports){
 var Member, StationActions, StationStore, a, div, h1, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -522,16 +522,37 @@ module.exports = recl({
     }
     return $("#station-container").toggleClass('open');
   },
+  validateSource: function(s) {
+    if (this.state.configs[this.state.station].sources.indexOf(s) !== -1) {
+      return false;
+    }
+    if (s.length < 5) {
+      return false;
+    }
+    if (s[0] !== "~") {
+      return false;
+    }
+    if (s.indexOf("/") === -1) {
+      return false;
+    }
+    return true;
+  },
   _keyUp: function(e) {
     var _sources, v;
+    $('.sour-ctrl .join').removeClass('valid-false');
     if (e.keyCode === 13) {
-      v = this.$input.val();
-      if (this.state.configs[this.state.station].sources.indexOf(v) === -1) {
+      v = this.$input.val().toLowerCase();
+      if (v[0] !== "~") {
+        v = "~" + v;
+      }
+      if (this.validateSource(v)) {
         _sources = _.clone(this.state.configs[this.state.station].sources);
         _sources.push(v);
         StationActions.setSources(this.state.station, _sources);
         this.$input.val('');
         return this.$input.blur();
+      } else {
+        return $('.sour-ctrl .join').addClass('valid-false');
       }
     }
   },
@@ -557,9 +578,9 @@ module.exports = recl({
           }, station.slice(1));
         });
         return div({}, [
-          audi, React.createElement(Member, {
+          React.createElement(Member, {
             ship: member
-          })
+          }), audi
         ]);
       });
     } else {
@@ -640,7 +661,7 @@ module.exports = recl({
 
 
 
-},{"../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/components/WritingComponent.coffee":[function(require,module,exports){
+},{"../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/components/WritingComponent.coffee":[function(require,module,exports){
 var Member, MessageActions, MessageStore, StationActions, StationStore, br, div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -702,9 +723,9 @@ module.exports = recl({
     var cc, i, len, listening, s;
     listening = this.state.config[window.util.mainStation(window.urb.user)].sources;
     cc = false;
-    for (i = 0, len = listening.length; i < len; i++) {
-      s = listening[i];
-      if (audi.indexOf(s) === -1) {
+    for (i = 0, len = audi.length; i < len; i++) {
+      s = audi[i];
+      if (listening.indexOf(s) === -1) {
         cc = true;
       }
     }
@@ -793,6 +814,9 @@ module.exports = recl({
     if (v.length === 0) {
       return true;
     }
+    if (v.length < 5) {
+      return false;
+    }
     v = v.split(" ");
     for (i = 0, len = v.length; i < len; i++) {
       a = v[i];
@@ -807,6 +831,9 @@ module.exports = recl({
     StationActions.setValidAudience(valid);
     if (valid === true) {
       v = $('#audi').text();
+      if (v.length === 0) {
+        v = window.util.mainStationPath(window.urb.user);
+      }
       v = v.split(" ");
       for (k in v) {
         _v = v[k];
@@ -814,7 +841,6 @@ module.exports = recl({
           v[k] = "~" + _v;
         }
       }
-      v = window.util.expandAudi(v);
       StationActions.setAudience(v);
       return v;
     } else {
@@ -911,7 +937,7 @@ module.exports = recl({
 
 
 
-},{"../actions/MessageActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/actions/MessageActions.coffee","../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee","../stores/MessageStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
+},{"../actions/MessageActions.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/actions/MessageActions.coffee","../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee","../stores/MessageStore.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -933,7 +959,7 @@ module.exports = _.merge(new Dispatcher(), {
 
 
 
-},{"flux":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/node_modules/flux/index.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/main.coffee":[function(require,module,exports){
+},{"flux":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/node_modules/flux/index.js"}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/main.coffee":[function(require,module,exports){
 $(function() {
   var $c, MessagesComponent, StationActions, StationComponent, WritingComponent, clean, rend;
   StationActions = require('./actions/StationActions.coffee');
@@ -964,7 +990,7 @@ $(function() {
 
 
 
-},{"./actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee","./components/MessagesComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/components/MessagesComponent.coffee","./components/StationComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/components/StationComponent.coffee","./components/WritingComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/components/WritingComponent.coffee","./move.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/move.coffee","./persistence/MessagePersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/persistence/MessagePersistence.coffee","./persistence/StationPersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/persistence/StationPersistence.coffee","./util.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/util.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/move.coffee":[function(require,module,exports){
+},{"./actions/StationActions.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee","./components/MessagesComponent.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/components/MessagesComponent.coffee","./components/StationComponent.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/components/StationComponent.coffee","./components/WritingComponent.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/components/WritingComponent.coffee","./move.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/move.coffee","./persistence/MessagePersistence.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/persistence/MessagePersistence.coffee","./persistence/StationPersistence.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/persistence/StationPersistence.coffee","./util.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/util.coffee"}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/move.coffee":[function(require,module,exports){
 var ldy, setSo, so;
 
 so = {};
@@ -1065,7 +1091,7 @@ $(window).on('scroll', window.util.checkScroll);
 
 
 
-},{}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/node_modules/flux/index.js":[function(require,module,exports){
+},{}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/node_modules/flux/index.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -1077,7 +1103,7 @@ $(window).on('scroll', window.util.checkScroll);
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/node_modules/flux/lib/Dispatcher.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/node_modules/flux/lib/Dispatcher.js":[function(require,module,exports){
+},{"./lib/Dispatcher":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/node_modules/flux/lib/Dispatcher.js"}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/node_modules/flux/lib/Dispatcher.js":[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1329,7 +1355,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/node_modules/flux/lib/invariant.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/node_modules/flux/lib/invariant.js":[function(require,module,exports){
+},{"./invariant":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/node_modules/flux/lib/invariant.js"}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/node_modules/flux/lib/invariant.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1384,7 +1410,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/data/packed/latest.json":[function(require,module,exports){
+},{}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/data/packed/latest.json":[function(require,module,exports){
 module.exports={
 	"version": "2014j",
 	"zones": [
@@ -1974,11 +2000,11 @@ module.exports={
 		"Pacific/Pohnpei|Pacific/Ponape"
 	]
 }
-},{}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/index.js":[function(require,module,exports){
+},{}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/index.js":[function(require,module,exports){
 var moment = module.exports = require("./moment-timezone");
 moment.tz.load(require('./data/packed/latest.json'));
 
-},{"./data/packed/latest.json":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/data/packed/latest.json","./moment-timezone":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/moment-timezone.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/moment-timezone.js":[function(require,module,exports){
+},{"./data/packed/latest.json":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/data/packed/latest.json","./moment-timezone":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/moment-timezone.js"}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/moment-timezone.js":[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.2.5
 //! author : Tim Wood
@@ -2381,7 +2407,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 	return moment;
 }));
 
-},{"moment":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/node_modules/moment/moment.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/node_modules/moment/moment.js":[function(require,module,exports){
+},{"moment":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/node_modules/moment/moment.js"}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/node_modules/moment/moment.js":[function(require,module,exports){
 //! moment.js
 //! version : 2.10.3
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -5493,7 +5519,7 @@ moment.tz.load(require('./data/packed/latest.json'));
     return _moment;
 
 }));
-},{}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/persistence/MessagePersistence.coffee":[function(require,module,exports){
+},{}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/persistence/MessagePersistence.coffee":[function(require,module,exports){
 var MessageActions;
 
 MessageActions = require('../actions/MessageActions.coffee');
@@ -5572,7 +5598,7 @@ module.exports = {
 
 
 
-},{"../actions/MessageActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/actions/MessageActions.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/persistence/StationPersistence.coffee":[function(require,module,exports){
+},{"../actions/MessageActions.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/actions/MessageActions.coffee"}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/persistence/StationPersistence.coffee":[function(require,module,exports){
 var StationActions;
 
 StationActions = require('../actions/StationActions.coffee');
@@ -5697,7 +5723,7 @@ module.exports = {
 
 
 
-},{"../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/stores/MessageStore.coffee":[function(require,module,exports){
+},{"../actions/StationActions.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee"}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/stores/MessageStore.coffee":[function(require,module,exports){
 var EventEmitter, MessageDispatcher, MessageStore, _fetching, _last, _listening, _messages, _station, _typing, moment;
 
 moment = require('moment-timezone');
@@ -5843,7 +5869,7 @@ module.exports = MessageStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js","moment-timezone":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/index.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/stores/StationStore.coffee":[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js","moment-timezone":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/index.js"}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/stores/StationStore.coffee":[function(require,module,exports){
 var EventEmitter, StationDispatcher, StationStore, _audience, _config, _listening, _members, _station, _stations, _typing, _validAudience;
 
 EventEmitter = require('events').EventEmitter;
@@ -6043,7 +6069,7 @@ module.exports = StationStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/util.coffee":[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js"}],"/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/util.coffee":[function(require,module,exports){
 if (!window.util) {
   window.util = {};
 }
@@ -6460,4 +6486,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},["/Users/galen/Documents/src/urbit-test/urb/zod/base/pub/talk/src/js/main.coffee"]);
+},{}]},{},["/Users/galen/Documents/src/urbit/urb/zod/base/pub/talk/src/js/main.coffee"]);

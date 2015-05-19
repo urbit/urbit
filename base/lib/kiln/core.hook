@@ -2,17 +2,14 @@
 ::::  /hook/core/kiln/lib                               ::  ::
   ::                                                    ::  ::
 /?  310                                                 ::  version
-/-  *talk                                               ::  structures
-/+  talk                                                ::  libraries 
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%                                                      ::  ::
-++  kiln-part                                           ::  kiln state
-    $:  %kiln                                           ::  doubletag
-        %0                                              ::  state version
-        rem=(map desk kiln-desk)                        ::
-    ==                                                  ::
+++  kiln-part  ,[%kiln %0 kiln-pith]                    ::  kiln state
+++  kiln-pith                                           ::
+    $:  rem=(map desk kiln-desk)                        ::
+    ==
 ++  kiln-desk                                           ::  per-desk state
     $:  auto=?                                          ::  escalate on failure
         gem=germ                                        ::  strategy
@@ -59,16 +56,6 @@
       ++  pear                                          ::  poke fruit
         $%  [%talk-command command:talk]                ::
             [%hood-merge hood-merge]                    ::
-        ==                                              ::
-      ++  suss  ,[term @tas @da]                        ::  config report
-      ++  milk  (trel ship desk silk)                   ::
-      ++  silk                                          ::
-        $&  [p=silk q=silk]                             ::  cons
-        $%  [%diff p=silk q=silk]                       ::  diff
-            [%done p=(set beam) q=gage]                 ::  literal
-            [%file p=beam]                              ::  from clay
-            [%mash p=mark q=milk r=milk]                ::  merge
-            [%tabl p=(list (pair silk silk))]           ::  list
         ==                                              ::
       ++  tage                                          ::  %tabl gage
         ,[[%tabl p=(list (pair marc marc))] q=vase]     ::
@@ -127,7 +114,7 @@
     ++  win   .                                         ::  successful poke
     ++  lose
       ^+  .
-      ~|  %kiln-work-failed
+      ~|  %kiln-work-fail
       !!
     ::
     ++  gage-to-tage                                    ::

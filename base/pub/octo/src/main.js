@@ -4,15 +4,16 @@ $(function() {
 
   symb = [" ","✕","◯"]
   draw = function(state) {
-    space = function(_state,x,y) { 
-      return "<div class='spac' data-index='"+x+"-"+y+
+    space = function(_state,y,x) { 
+      return "<div class='spac' data-index='"+y+"-"+x+
              "'>"+symb[_state]+"</div>" 
       }
     s = ""
     x = 0
     y = 0
     for(i=0;i<9;i++) {
-      s += space((state.box[i] ? 1 : 0)+(state.boo[i] ? 2 : 0),x,y)
+      j = [0,3,6,1,4,7,2,5,8][i]  // XX math 
+      s += space((state.box[j] ? 1 : 0)+(state.boo[j] ? 2 : 0),y,x)
       x++
       if((i+1)%3 == 0) {
         y++
@@ -41,4 +42,7 @@ $(function() {
       function(i) { return Number(i); })
     urb.send({mark:'octo-move',data:data})
   })
+
+  $('#ship .ship').text(window.urb.ship)
+  $('#user .ship').text(window.urb.user)
 })

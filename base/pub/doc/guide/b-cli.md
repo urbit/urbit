@@ -1,14 +1,19 @@
+XX The CLI is under heavy development with, with pieces being folded
+into the "window manager" `sole` and the new cli `dojo`. Don't expect
+any of the following to work as described.
+
 This guide is intended to get you oriented in the Arvo command prompt
 and give you a tour of some basic utilities. The command prompt comes in
 two flavors, in a web browser and in a terminal. For the most part
 they're the same, except that in a browser you can evaluate tall-form
-Hoon expressions but you can't run readline apps, such as `:chat`.
+Hoon expressions but you can't run readline apps, such as `:talk`.
 
 Every Arvo command prompt is also a Hoon REPL. The command line is a
 great place to test out your hoon knowledge. In this guide we're just
 going to talk about some basic system utilities and get comfortable
 moving around in `%clay`. If you'd just like to see a list of
-command-line utilities, you can find the Arvo man pages [here]().
+command-line utilities, you can find the Arvo man pages
+[here](../arvo/util.md).
 
 This rudimentary tour should work well in both places.
 
@@ -96,37 +101,54 @@ Here you can see that our files are synced back to unix as they are
 changed in urbit, and vice-versa. As you change files in unix you'll see
 those changes appear in `%clay`.
 
-    my-pier/talsur-todres/$ ls main/app/
-    bang        grep        poke        solid       unsync
-    began       hi          radio       sync        verb
-    begin       into        reload      talk        ye
-    cat         label       reset       terminal
-    chat        ls          rm          test
-    cp          mv          shell       ticket
-    my-pier/talsur-todres/$ cat main/app/ls/core.hook 
+    my-pier/talsur-todres/$ ls base/app/
+    bang	grep    peek	solid	 tweet
+    began	helm	poke	sync	 twit
+    begin	hi	pope	talk	 twitter-auth
+    cat		into	reboot  tease	 twitter-feed
+    code	label	reload	terminal type
+    cp		ls	reset	test	 unsync
+    curl	matrix	rm	ticket	 verb
+    dojo	mv	shell 	time	 wipe
+    gnab	nop	sole	tree	 ye
+    my-pier/talsur-todres/$ cat base/app/ls/core.hook 
+    ::  ConCATenate file listings
+    ::
+    ::::  /hook/core/cat/app
+      ::
+    /+    sh-utils
+    //  /%%%/ls/subdir
     !:
+    ::::
+      ::
     |_  [hid=hide ~]
-    ++  poke-ls-args
-      |=  [ost=bone you=ship arg=path ~]
-      =+  lon=((hard arch) .^(%cy arg))
-      :_  +>.$
-      :*  [ost %pass / %g %cide %$]
-          [ost %give %nice ~]
-          %+  turn  (~(tap by sup.hid))
-          |=  [ost=bone *]
-          :^  ost  %give  %rush
-          :-  %tang
-          :_  ~  
-          :+  %rose  [" " ~ ~]
-          (turn (~(tap by r.lon) ~) |=([a=@ta b=*] leaf/(trip a)))
+    ++  peer  ,_`.
+    ++  poke--args
+      %+  args-into-gate  .
+      |=  [arg=(list path)]
+      =-  tang/(zing -)
+      %+  turn  arg
+      |=  pax=path
+      ^-  tang
+      =+  ark=;;(arch .^(%cy pax))
+      ?^  q.ark
+	:-  leaf/(spud pax)
+	%+  turn  (lore ;;(@t .^(%cx pax)))
+	|=(a=cord leaf/(trip a))
+      ?-     r.ark                                          ::  handle ambiguity
+	  ~
+	[rose/[" " `~]^~[leaf/"~" (smyt pax)]]~
+	  [[@t ~] ~ ~]
+	$(pax (welp pax /[p.n.r.ark]))
+	  *
+	=-  [palm/[": " ``~]^-]~
+	:~  rose/[" " `~]^~[leaf/"*" (smyt pax)]
+	    `tank`(subdir pax r.ark)
+	==
       ==
-    ++  peer
-      |=
-        *
-      `+>
     --
 
-Here you can see that `/main/app` is the main location where our apps
+Here you can see that `/base/app` is the main location where our apps
 are stored, and the contents of the `:ls` app. urbit applications are of
 course written in hoon, our naitive programming language. Don't worry
 about the contents of the file for now. Since changes in unix are synced
