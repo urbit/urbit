@@ -101,7 +101,7 @@
   ++  plow  |=  [lev=?(%0 %1 %2) mus=(unit tape)]       ::  complete print
             abet:(mean:(play lev) mus)                  ::
   ++  prom  %^  emit  %pro  %&  :-  %octo               ::  update prompt
-            ?:  wait  "(xir turn) "                     ::
+            ?:  wait  "(their turn) "                   ::
             ": {~[(icon who.gam)]} to move (row/col): " ::  
   ++  plan  |=  mut=(unit mote)                         ::  peer command
             ?~  mut  ?~(but abet:beep stop:abet)        ::
@@ -140,11 +140,17 @@
           ?.  &(?=([~ %& *] but) =(src p.q.u.but))  +>  ::
           ?:  =(^gam gam)  +>                           ::
           (park(gam gam) %2 ~)                          ::
-++  peer-octo                                           ::  linked by friend
+++  peer-octo                                           ::  urbit peer
           |=  [from pax=path]  =<  abet                 ::
           =+  who==(%x -.pax)                           ::
-          ?^  but  (park %2 ~)                          :: [~ %& !who src]
-          (park:(link src !who) %2 `"link by {<src>}")  ::
+          ?^  but  (park %2 ~)                          ::
+          (park:(link src !who) %2 `"net from {<src>}") ::
+++  peer-web                                            ::  web peer
+          |=  [from pax=path]  =<  abet                 ::
+          ~&  [%peer-web +<]                            ::
+          ?^  but  (park %2 ~)                          ::
+          %+  park(but `[%& src !who.gam])  %2          ::
+          `"web from {<src>}"                           ::
 ++  peer-sole                                           ::  console subscribe
           |=  [from pax=path]  =<  abet                 ::
           (plow:(fret +<-) %2 ~)                        ::
@@ -175,5 +181,5 @@
           |=  [then saw=(unit tang)]  =<  abet          ::
           ?>  ?=([~ %| *] but)                          ::
           ?^  saw  (park:stop %0 `"fail to {<src>}")    ::
-          (park(p.u.but %&) %0 `"link to {<src>}")      ::
+          (park(p.u.but %&) %2 `"link to {<src>}")      ::
 --

@@ -222,9 +222,13 @@ _sist_suck(u3_noun ovo, u3_noun gon)
 
   u3_lo_punt(2, u3kb_flop(u3k(u3t(gon))));
   // u3_loom_exit();
+#if 1
   u3_lo_exit();
 
   exit(1);
+#else
+  u3z(ovo); u3z(gon);
+#endif
 }
 
 /* _sist_sing(): replay ovum from the past, time already set.
