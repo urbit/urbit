@@ -104,5 +104,6 @@
     /* u3to(), u3of(): offset/pointer conversion.
     */
 #     define  u3to(type, x) ((type *) u3a_into(x))
+#     define  u3tn(type, x) (x == 0) ? (void *)0 :  ((type *) u3a_into(x))
 #     define  u3of(type, x) (u3a_outa((type *)x))
 

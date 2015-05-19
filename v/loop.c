@@ -691,7 +691,14 @@ u3_lo_lead(void)
 #endif
 
   if ( c3y == u3_Host.ops_u.nuu ) {
+    if ( u3_Host.ops_u.who_c ) {
+      u3_term_ef_ticket(u3_Host.ops_u.who_c, u3_Host.ops_u.tic_c);
+    }
     u3_term_ef_boil(1);
+  }
+
+  if ( c3y == u3_Host.ops_u.veb ) {
+    u3_term_ef_verb();
   }
 
 #if 1

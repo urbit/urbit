@@ -104,11 +104,9 @@
     /* u3a_road: contiguous allocation and execution context.
     */
       typedef struct _u3a_road {
-        struct _u3a_road* par_u;              //  parent road
-
-        struct _u3a_road* kid_u;              //  child road list
-        struct _u3a_road* nex_u;              //  sibling road
-        struct _u3a_road* now_u;              //  current road pointer
+        u3p(struct _u3a_road) par_p;          //  parent road
+        u3p(struct _u3a_road) kid_p;          //  child road list
+        u3p(struct _u3a_road) nex_p;          //  sibling road
 
         u3p(c3_w) cap_p;                      //  top of transient region
         u3p(c3_w) hat_p;                      //  top of durable region

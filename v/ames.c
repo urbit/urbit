@@ -67,6 +67,7 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
 
       snprintf(dns_c, 64, "%s.urbit.org", nam_c + 1);
       // uL(fprintf(uH, "czar %s, dns %s\n", nam_c, dns_c));
+
       free(nam_c);
       u3z(nam);
 
