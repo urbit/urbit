@@ -144,7 +144,7 @@ button {
   vertical-align: middle;
 }
 
-#ship {
+span#ship {
   font-family: 'bau';
   font-weight: 400;
   font-size: 1.2rem;
@@ -159,7 +159,7 @@ input {
   display: inline;
 }
 
-#ship,
+span#ship,
 input {
   border: none;
   padding: .3rem;
