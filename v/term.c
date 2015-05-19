@@ -1012,6 +1012,16 @@ u3_term_ef_boil(void)
   }
 }
 
+/* u3_term_ef_verb(): initial effects for verbose events
+*/
+void
+u3_term_ef_verb(void)
+{
+  u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
+
+  u3v_plan(pax, u3nc(c3__verb, u3_nul));
+}
+
 /* u3_term_ef_ticket(): initial effects for new ticket.
 */
 void

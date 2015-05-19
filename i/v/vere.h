@@ -798,6 +798,11 @@
         void
         u3_term_ef_ticket(c3_c* who_c, c3_c* tic_c);
 
+      /* u3_term_ef_verb(): initial effects for verbose events.
+      */
+        void
+        u3_term_ef_verb(void);
+
       /* u3_term_ef_winc(): window change.
       */
         void
