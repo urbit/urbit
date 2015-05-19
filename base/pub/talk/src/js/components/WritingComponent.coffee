@@ -43,11 +43,10 @@ module.exports = recl
   addCC: (audi) ->
     listening = @state.config[window.util.mainStation(window.urb.user)].sources
     cc = false
-    for s in listening
-      if audi.indexOf(s) is -1
+    for s in audi
+      if listening.indexOf(s) is -1
         cc = true
-    if listening.length is 0
-      cc = true
+    if listening.length is 0 then cc = true
     if cc is true
       audi.push window.util.mainStationPath(window.urb.user)
     audi
