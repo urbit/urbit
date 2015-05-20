@@ -74,6 +74,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.pro = c3n;
   u3_Host.ops_u.dry = c3n;
   u3_Host.ops_u.veb = c3n;
+  u3_Host.ops_u.qui = c3n;
   u3_Host.ops_u.nuu = c3n;
   u3_Host.ops_u.mem = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
@@ -144,7 +145,7 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'g': { u3_Host.ops_u.gab = c3y; break; }
       case 'P': { u3_Host.ops_u.pro = c3y; break; }
       case 'D': { u3_Host.ops_u.dry = c3y; break; }
-      case 'q': { u3_Host.ops_u.veb = c3n; break; }
+      case 'q': { u3_Host.ops_u.qui = c3y; break; }
       case 'v': { u3_Host.ops_u.veb = c3y; break; }
       case '?': default: {
         return c3n;
@@ -349,6 +350,12 @@ main(c3_i   argc,
       */
       if ( _(u3_Host.ops_u.veb) ) {
         u3C.wag_w |= u3o_verbose;
+      }
+
+      /*  Set quiet flag.
+      */
+      if ( _(u3_Host.ops_u.qui) ) {
+        u3C.wag_w |= u3o_quiet;
       }
       
       /*  Set dry-run flag.
