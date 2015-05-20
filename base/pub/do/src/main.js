@@ -91,6 +91,7 @@ Page = recl({
 
   render: function(){
     href = "https://cloud.digitalocean.com/v1/oauth/authorize?client_id=d8f46b95af38c1ab3d78ad34c2157a6959c23eb0eb5d8e393f650f08e6a75c6f&redirect_uri=http%3A%2F%2Flocalhost%3A8443%2Fhome%2Fpub%2Fdo%2Ffab&response_type=code&scope=read+write"
+    ghref = "https://accounts.google.com/o/oauth2/auth?response_type=token&scope=https://www.googleapis.com/auth/compute&state=someinfo&redirect_uri=http://localhost:8443/home/pub/do/fab&client_id=720541965785-jr3c6ijo8abonu9qj77qre1itsdra52r.apps.googleusercontent.com"
       return (div({}, [
         div({},
           a({href:href},[
@@ -103,6 +104,16 @@ Page = recl({
           b({onClick:this.sendSecret}, "Send Secret"))
         ]),
         b({onClick:this.getList}, "Get List"),
+        div({},
+          a({href:ghref},[
+            "Get Google Authcode"
+          ]),
+          b({onClick:this.handleClick}, "Send Google Authcode")
+        ),
+        div({}, [
+          input({id:"gappsecret"}, 
+          b({onClick:this.sendSecret}, "Send Google Secret"))
+        ]),
         div({}, [
           b({onClick:this.createDroplet}, "Create Droplet"),
           input({id:"name",placeholder:"Name of droplet"}), 
