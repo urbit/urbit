@@ -4,43 +4,7 @@
   =>  =~
 ::  structures
 |%
-++  flog                                                ::  error wrapper
-          $%  [%crud p=@tas q=(list tank)]              ::
-              [%text p=tape]                            ::
-          ==                                            ::
-++  cuft                                                ::  internal gift
-          $%  [%coup p=(unit tang)]                     ::  poke result
-              [%diff p=cage]                            ::  subscription output
-              [%quit ~]                                 ::  close subscription
-              [%reap p=(unit tang)]                     ::  peer result
-          ==                                            ::
-++  gift                                                ::  out result <-$
-          $%  [%hear p=lane q=@]                        ::  receive packet
-              [%init p=@p]                              ::  report install
-              [%mass p=mass]                            ::  memory usage
-              [%send p=lane q=@]                        ::  transmit packet
-              [%waft p=sock q=*]                        ::  response message
-              [%wart p=sock q=@tas r=path s=*]          ::  network request
-              [%went p=ship q=cape]                     ::  reaction message
-              [%woot p=ship q=coop]                     ::  e2e reaction message
-          ==                                            ::
-++  hasp  ,[p=ship q=term]                              ::  see %gall
-++  kiss                                                ::  in request ->$
-          $%  [%barn ~]                                 ::  new unix process
-              [%crud p=@tas q=(list tank)]              ::  error with trace
-              [%cash p=@p q=buck]                       ::  civil license
-              [%hear p=lane q=@]                        ::  receive packet
-              [%hole p=lane q=@]                        ::  packet failed
-              [%junk p=@]                               ::  entropy
-              [%kick p=@da]                             ::  wake up
-              [%make p=(unit ,@t) q=@ud r=@ s=?]        ::  wild license
-              [%sith p=@p q=@uw r=?]                    ::  imperial generator
-              [%wake ~]                                 ::  timer activate
-              [%want p=sock q=path r=*]                 ::  send message
-              [%wegh ~]                                 ::  report memory
-              [%wont p=sock q=path r=*]                 ::  e2e send message
-          ==                                            ::
-++  move  ,[p=duct q=(mold note gift)]                  ::  local move
+++  move  ,[p=duct q=(mold note gift-ames)]             ::  local move
 ++  note                                                ::  out request $->
           $?  $:  %d                                    ::  to %dill
           $%  [%flog p=flog]                            ::
@@ -48,15 +12,9 @@
               $:  %a                                    ::  to %ames
           $%  [%kick p=@da]                             ::
           ==  ==                                        ::
-              $:  %b                                    ::  to %behn
-          $%  [%rote p=sack q=path r=*]                 ::
-              [%roth p=sack q=path r=*]                 ::
-              [%mess p=[@p %ye ~] q=@p r=cage]          ::
-          ==  ==                                        ::
               $:  %g                                    ::  to %gall
           $%  [%rote p=sack q=path r=*]                 ::
               [%roth p=sack q=path r=*]                 ::
-              [%mess p=[@p %ye ~] q=@p r=cage]          ::
           ==  ==                                        ::
               $:  @tas                                  ::  to any
           $%  [%init p=@p]                              ::
@@ -67,12 +25,10 @@
           $?  $:  %a                                    ::  from %ames
           $%  [%went p=ship q=cape]                     ::
           ==  ==                                        ::
-              $:  %b                                    ::  from %gall
+              $:  %g                                    ::  from %gall
           $%  [%unto p=cuft]                            ::
               [%mack p=(unit tang)]                     ::  message ack
-          ==  ==                                        ::
-              $:  %g                                    ::  from %gall
-          $%  [%mean p=ares]                            ::
+              [%mean p=ares]                            ::  XX old, clean up
               [%nice ~]                                 ::
           ==  ==                                        ::
               $:  @tas                                  ::
@@ -457,7 +413,7 @@
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
-    ?>  =(6 vez)
+    ?>  =(7 vez)
     ?>  =(chk (end 0 20 (mug bod)))
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
@@ -477,7 +433,7 @@
     =+  tay=(ksin q.kec)
     %+  mix
       %+  can  0
-      :~  [3 6]
+      :~  [3 7]
           [20 (mug bod)]
           [2 yax]
           [2 qax]
@@ -498,7 +454,9 @@
         ^-  [(unit will) _+>]
         ?.  =(our (sein her))  [~ +>.$]
         =+  nes=sen
-        ?.  =(tic (end 6 1 (shaf %tick (mix her (shax sec:ex:q.nes)))))
+        =+  ryt=(end 6 1 (shaf %tick (mix her (shax sec:ex:q.nes))))
+        ?.  =(tic ryt)
+          ~&  [%ames-wrong-ticket `@p`ryt]
           [~ +>.$]
         =+  rad=(~(get by hoc.saf) her)
         ?^  rad
@@ -1060,7 +1018,7 @@
     ++  gnaw                                            ::    gnaw:am
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
-      ?.  =(6 (end 0 3 pac))  [~ fox]
+      ?.  =(7 (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
       ?:  (goop p.p.kec)  [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
@@ -1604,16 +1562,16 @@
     |%                                                  ::  vane interface
     ++  call                                            ::  handle request
       |=  $:  hen=duct
-              hic=(hypo (hobo kiss))
+              hic=(hypo (hobo kiss-ames))
           ==
       =>  %=    .                                       ::  XX temporary
               q.hic
-            ^-  kiss
+            ^-  kiss-ames
             ?:  ?=(%soft -.q.hic)
-              ((hard kiss) p.q.hic)
-            ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
+              ((hard kiss-ames) p.q.hic)
+            ?:  (~(nest ut -:!>(*kiss-ames)) | p.hic)  q.hic
             ~&  [%ames-call-flub (,@tas `*`-.q.hic)]
-            ((hard kiss) q.hic)
+            ((hard kiss-ames) q.hic)
           ==
       ^-  [p=(list move) q=_..^$]
       =^  duy  ..knob
@@ -1685,13 +1643,11 @@
           [hen [%slip %a %kick now]]
           [hen [%slip %e %init p.bon]]
           [hen [%slip %g %init p.bon]]
-          [hen [%slip %b %init p.bon]]                  ::  temporary %behn
           [hen [%slip %d %init p.bon]]                  ::  must be after gall
           ~
       ==
     ::
         %cake
-      ::  ~&  [%cake p.bon q.bon r.bon]
       :_  fox
       :~  [s.bon %give %woot q.p.bon r.bon]
       ==
@@ -1716,7 +1672,7 @@
               :+  (scot %p p.p.bon)
                 (scot %p q.p.bon)
               q.q.bon
-          [hen %pass pax %g %rote p.bon /helm 0 %m %will wil]~
+          [hen %pass pax %g %rote p.bon /hood 0 %m %will wil]~
         ?>  ?=([@ @ *] t.q.q.bon)
         :_  fox
         =+  [cak=i.t.q.q.bon ven=i.t.t.q.q.bon]
@@ -1769,7 +1725,7 @@
         ==
       ::
           %ye                                           ::    %ye
-        ::  ~&  [%ye bon]
+        ::  ~&    [%ye bon]
         ?>  =(p.p.bon (sein q.p.bon))
         =+  ^=  paz  ^-  (list ,@p)
             %+  skim  pals:(~(um am [now fox]) p.p.bon)
@@ -1778,7 +1734,7 @@
         %+  turn  paz
         |=  him=ship
         :-  hen
-        [%pass /ye %g %mess [him ye/~] p.p.bon [%txt !>(((hard ,@t) r.bon))]]
+        [%pass /ye %g %rote `sack`p.bon /ye 0 %m %helm-ye ((hard ,@t) r.bon)]
       ==
     ::
         %mulk
@@ -1792,26 +1748,6 @@
             [%sick %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
         ==
       ::
-          %be                                         ::  %behn request
-        =*  imp  t.t.q.q.bon
-        ?>  (levy imp (sane %ta))
-        =+  ^=  pax
-            :+  (scot %p p.p.bon)
-              (scot %p q.p.bon)
-            q.q.bon
-        ::  ~&  [%ames-behn-request p.bon imp pax]
-        :_  fox  [hen %pass pax %b %rote p.bon imp r.bon]~
-      ::
-          %bh                                         ::  %behn response
-        =*  imp  t.t.q.q.bon
-        ?>  (levy imp (sane %ta))
-        =+  ^=  pax
-            :+  (scot %p p.p.bon)
-              (scot %p q.p.bon)
-            q.q.bon
-        ::  ~&  [%ames-behn-response p.bon imp pax]
-        :_  fox  [hen %pass pax %b %roth p.bon imp r.bon]~
-      ::
           %ge                                         ::  %gall request
         =*  imp  t.t.q.q.bon
         ?>  (levy imp (sane %ta))
@@ -1819,6 +1755,7 @@
             :+  (scot %p p.p.bon)
               (scot %p q.p.bon)
             q.q.bon
+        ::  ~&  [%ames-gall-request p.bon imp pax]
         :_  fox  [hen %pass pax %g %rote p.bon imp r.bon]~
       ::
           %gh                                         ::  %gall response
@@ -1828,6 +1765,7 @@
             :+  (scot %p p.p.bon)
               (scot %p q.p.bon)
             q.q.bon
+        ::  ~&  [%ames-gall-response p.bon imp pax]
         :_  fox  [hen %pass pax %g %roth p.bon imp r.bon]~
       ==
     ::
@@ -1858,10 +1796,10 @@
     ?-  +<.sih
         %crud  [[[hen [%slip %d %flog +.sih]] ~] +>]
         %went  [~ +>]
-        %mack  ?~  +>.sih  $(sih [%g %nice ~])
+        %mack  ?~  +>.sih  $(sih [%g %nice ~])          ::  XX using old code
                $(sih [%g %mean `[%mack +>+.sih]])
         %unto  ~|([%ames-unto tea hen +>-.sih] !!)
-        ?(%mean %nice)
+        ?(%mean %nice)                                  ::  XX obsolete
       ?:  ?=([%ye ~] tea)
         [~ +>.$]
       ?>  ?=([@ @ @ *] tea)
@@ -1882,7 +1820,7 @@
     ==
   ::
   ++  knob
-    |=  [hen=duct kyz=kiss]
+    |=  [hen=duct kyz=kiss-ames]
     ^-  [(list move) _+>]
     ?:  ?=(%crud -.kyz)
       [[[hen [%slip %d %flog kyz]] ~] +>]

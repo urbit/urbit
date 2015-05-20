@@ -3,13 +3,17 @@
 str = JSON.stringify
 
 Prompt = recl render: ->
-  [pro,cur,buf] = [@props.prompt, @props.cursor, @props.input + " "]
-  pre {}, pro,
+  [pro,cur,buf] = [@props.prompt[@props.appl] ? "X", @props.cursor, @props.input + " "]
+  pre {}, @props.appl+pro,
     span {style: background: 'lightgray'}, buf.slice(0,cur), "\u0332", buf.slice(cur)
 
 Matr = recl render: ->
   lines = @props.rows.map (lin)-> pre {}, lin, " "
-  lines.push Prompt {prompt:@props.prompt, input:@props.input, cursor:@props.cursor}
+  lines.push Prompt
+    appl:   @props.appl, 
+    prompt: @props.prompt, 
+    input:  @props.input, 
+    cursor: @props.cursor
   div {}, lines
 
 $ ->
@@ -42,28 +46,47 @@ $ ->
 
   matr = rend (Matr
     rows:[]
-    prompt:""
+    appl:""
+    prompt:{"": "# "}
     input:""
     cursor:0
     history:[]
     offset:0  ), term
   window.matr = matr
   update = (a) -> matr.setProps a
-  buffer = new Share ""
+  buffer = "": new Share ""
   window.buffer = buffer
-  sync = (ted)-> 
-    update input: buffer.buf, cursor: buffer.transpose ted, matr.props.cursor
-
-  peer = (ruh) ->
-    if ruh.map then return ruh.map peer
+  choose = (appl)->
+    urb.appl = appl
+    buffer[appl] ?= new Share ""
+    updPrompt '', null
+    update {appl, cursor: 0, input: buffer[appl].buf}
+  print = (txt)-> update rows: [matr.props.rows..., txt]
+  sync = (ted,app)->
+    app ?= matr.props.appl
+    if app isnt matr.props.appl then return
+    b = buffer[app]
+    update input: b.buf, cursor: b.transpose ted, matr.props.cursor
+  updPrompt = (app,pro) ->
+    prompt = $.extend {}, matr.props.prompt
+    if pro? then prompt[app] = pro else delete prompt[app]
+    update {prompt}
+  sysStatus = ()-> updPrompt '', (
+    [app,pro] = [matr.props.appl, (k for k,v of matr.props.prompt when k isnt '')]
+    if app is '' then (pro.join ', ')+'# ' else null
+  )
+ 
+  peer = (ruh,app) ->
+    app ?= urb.appl
+    if ruh.map then return ruh.map (rul)-> peer rul, app
     mapr = matr.props
     switch Object.keys(ruh)[0]
-      when 'txt' then update rows: [mapr.rows..., ruh.txt]
-      when 'tan' then ruh.tan.split("\n").reverse().map (txt)-> peer {txt}
+      when 'txt' then print ruh.txt
+      when 'tan' then ruh.tan.split("\n").reverse().map print
+      when 'pro' then updPrompt app, ruh.pro.cad
       when 'hop' then update cursor: ruh.hop; bell() # XX buffer.transpose?
-      when 'pro' then update prompt: ruh.pro.cad
       when 'blk' then console.log "Stub #{str ruh}"
-      when 'det' then buffer.receive ruh.det; sync ruh.det.ted
+      when 'det' then buffer[app].receive ruh.det; sync ruh.det.ted, app
       when 'act' then switch ruh.act
         when 'clr' then update rows:[]
         when 'bel' then bell()
@@ -77,11 +100,28 @@ $ ->
       #   else throw "Unknown "+(JSON.stringify ruh)
       else v = Object.keys(ruh); console.log v, ruh[v[0]]
 
-  urb.bind "/sole", {wire:"/"}, (err,d)->
-    if err then console.log err
-    else if d.data then peer d.data
-
-
+  join = (app)->
+    if matr.props.prompt[app]?
+      return print '# already-joined: '+app
+    choose app
+    urb.bind "/sole", {wire:"/"}, (err,d)->
+      if err then console.log err
+      else if d.data then peer d.data, app
+  cycle = ()->
+    apps = Object.keys matr.props.prompt
+    if apps.length < 2 then return
+    choose apps[1 + apps.indexOf urb.appl] ? apps[0]
+  part = (appl)->
+    mapr = matr.props
+    unless mapr.prompt[appl]?
+      return print '# not-joined: '+appl
+    urb.unsubscribe {appl, path: "/sole", wire: "/"}
+    if appl is mapr.appl then cycle()
+    updPrompt appl, null
+    sysStatus()
+  join urb.appl
+  window.join = join; window.part = part
+  
   pressed = []
   deltim = null
   #later = (data)->
@@ -96,11 +136,19 @@ $ ->
   #  ), 500
 
   sendAction = (data)->
-    urb.send {mark: 'sole-action', data}, (e,res)->
+    if matr.props.appl then urb.send {mark: 'sole-action', data}, (e,res)->
       if res.status isnt 200 then $('#err')[0].innerText = res.data.mess
-
+    else if data is 'ret'
+      app = /^[a-z-]+$/.exec(buffer[""].buf.slice(1))
+      unless app? and app[0]?
+        return bell()
+      else switch buffer[""].buf[0]
+        when '+' then doEdit set: ""; join app[0]
+        when '-' then doEdit set: ""; part app[0]
+        else bell()
+  
   doEdit = (ted)->
-    det = buffer.transmit ted
+    det = buffer[matr.props.appl].transmit ted
     sync ted
     sendAction {det}
 
@@ -141,13 +189,18 @@ $ ->
         when 'a','left'  then update cursor: 0
         when 'e','right' then update cursor: mapr.input.length
         when 'l' then update rows: []
-        when 'entr' then peer act: 'bel'
+        when 'entr' then bell()
         when 'w' then eatKyev ['alt'], act:'baxp'
         when 'p' then eatKyev [], act: 'up'
         when 'n' then eatKyev [], act: 'down'
         when 'b' then eatKyev [], act: 'left'
         when 'f' then eatKyev [], act: 'right'
         when 'g' then bell()
+        when 'x' then cycle()
+        when 'v'
+          appl = if mapr.appl isnt '' then '' else urb.appl
+          update {appl, cursor:0, input:buffer[appl].buf}
+          sysStatus()
         when 't'
           if mapr.cursor is 0 or mapr.input.length < 2
             return bell()
