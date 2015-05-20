@@ -2733,6 +2733,10 @@
     =|([p=@ q=@] |.((add p (mul wuc q))))
   tyd
 ::
+++  flag
+  |=  [sic=@t non=@t]
+  ;~(pose (cold %& (jest sic)) (cold %| (jest non)))
+::
 ++  ifix
   |*  [fel=[p=_rule q=_rule] hof=_rule]
   ;~(pfix p.fel ;~(sfix hof q.fel))
@@ -2745,7 +2749,15 @@
   |*  [bus=_rule fel=_rule]
   ;~(plug fel (star ;~(pfix bus fel)))
 ::
+++  pick
+  |*  [a=_rule b=_rule]
+  ;~  pose
+    (stag %& a)
+    (stag %| b)
+  ==
+::
 ++  plus  |*(fel=_rule ;~(plug fel (star fel)))
+++  punt  |*([a=_rule] ;~(pose (stag ~ a) (easy ~)))
 ++  slug
   |*  raq=_|*([a=* b=*] [a b])
   |*  [bus=_rule fel=_rule]
@@ -9622,7 +9634,6 @@
               a                                         ::
           ==                                            ::
 ++  kirk  (unit (set monk))                             ::  audience
-++  khan  ,[p=@tas q=@ta]                               ::  foreign identity
 ++  lens                                                ::  observation core
   $_  ^?                                                ::
   |%  ++  u  *(unit (unit ,~))                          ::  existence
@@ -9640,7 +9651,7 @@
 ++  mass  (pair cord (each noun (list ,mass)))           ::  memory usage
 ++  mill  (each vase milt)                              ::  vase/metavase
 ++  milt  ,[p=* q=*]                                    ::  metavase
-++  monk  (each ship khan)                              ::  general identity
+++  monk  (each ship ,[p=@tas q=@ta])                   ::  general identity
 ++  mold                                                ::  new kernel action
           |*  [a=$+(* *) b=$+(* *)]                     ::  forward/reverse
           $%  [%pass p=path q=a]                        ::  advance
@@ -9654,6 +9665,7 @@
 ++  pane  (list ,[p=@tas q=vase])                       ::  kernel modules
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
 ++  ship  ,@p                                           ::  network identity
+++  sink  (trel bone ship path)                         ::  subscription
 ++  sled  $+  [(unit (set monk)) term beam]             ::  namespace function
           (unit (unit cage))                            ::
 ++  slad  $+  [(unit (set monk)) term beam]             ::  undertyped
@@ -9667,7 +9679,12 @@
               mev=type                                  ::  -:!>([%meta *vase])
           ==                                            ::
 ++  wire  path                                          ::  event pretext
-::::: hacks
+::::: hacks and tools
+++  pale  |=  [hid=hide fun=$+(sink ?)]                 ::  filter peers
+          (skim (~(tap by sup.hid)) fun)
+++  prix  |=  pax=path  |=  sink  ^-  ?                 ::  filter gate
+          ?~  pax  &  ?~  r.+<  |                       ::
+          &(=(i.pax i.r.+<) $(pax t.pax, r.+< t.r.+<))  ::
 ++  slod  
   |=  sed=slad
   ^-  slut

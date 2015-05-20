@@ -1,0 +1,162 @@
+For dialogue: start with dialogue ad-libbed by whoever is
+doing the production.  Later, copy it into a script and
+edit that script.
+
+For operation details, see commands.txt.  Fill in the script
+with literal operations *only once you have tested them
+yourself*.
+
+  A: build and boot A
+    
+    ...
+    ""
+
+  A: private-message B
+
+    ...
+    ""
+
+  B: create demo desk
+
+    ...
+    ""
+  
+  B: vim in application version 1, just typing, very fast
+
+    ...
+    ""
+
+  A: sync A's demo desk to B
+    
+    ...
+    ""
+
+  B: log in to A's tictactoe (intentionally reversed)
+    
+    ...
+    ""
+
+  A: start tictactoe on A
+
+  A/B: play ONE full game of tictactoe, moves interleaved with
+  these subdemos:
+
+    B changes X to Z in the source, then changes it back
+
+      ...
+      ""
+
+    A or B enters an invalid move, beep sound is heard
+
+      ...
+      ""
+
+    A kills and restarts the vere process:
+
+      ...
+      ""
+
+    A kills the vere process, deletes the checkpoint, restarts:
+
+      ...
+      ""
+
+    A or B enters an invalid move, beep sound is heard:
+
+      ...
+      ""
+
+    A and B tussle humorously over weird shared command line
+
+      ...
+      ""
+
+    B edits version 1 into version 2, automagically upgrading A
+
+      ...
+      ""
+
+    B logs out of A's tictactoe
+
+      ...
+      ""
+
+    B starts local tictactoe
+
+      ...
+      ""
+
+    B connects local tictactoe to A's server
+
+      ...
+      ""
+
+    B edits in version 3 ape, with web support
+
+      ...
+      ""
+    
+    A: watch editing of application
+   
+      ...
+      ""
+
+    B edits in mar, pub (very fast)
+
+      ...
+      ""
+
+    A: logs in to game url
+
+      ...
+      ""
+
+    A: brings up web talk
+
+      ...
+      ""
+
+    B: creates a local channel to talk about TTT
+
+      ...
+      ""
+
+    A: subscribes from the web UI to B's channel
+
+      ...
+      ""
+
+    C, D, and E: join the channel and give humorous advice
+
+      ...
+      ""
+
+    A: loses the game
+
+      ...
+      ""
+
+    B: sends bitcoin payment to A
+
+      ...
+      ""
+
+    A: points browser at blockchain.info, shows real payment
+
+      ...
+      ""
+
+close: 
+  credit screen 1:
+
+    *everyone who has ever worked/for at Tlon, in alphabetical 
+    order*,  
+ 
+  credit screen 2: 
+
+    *every non Tlon github uid that has contributed to our repository*
+
+  credit screen 3:
+
+    ~, huge
+

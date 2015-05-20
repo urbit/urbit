@@ -44,15 +44,30 @@ module.exports = recl
       return
     $("#station-container").toggleClass 'open'
 
+  validateSource: (s) ->
+    if @state.configs[@state.station].sources.indexOf(s) isnt -1
+      return false
+    if s.length < 5
+      return false
+    if s[0] isnt "~"
+      return false
+    if s.indexOf("/") is -1
+      return false
+    return true
+
   _keyUp: (e) ->
+    $('.sour-ctrl .join').removeClass 'valid-false'
     if e.keyCode is 13
-      v = @$input.val()
-      if @state.configs[@state.station].sources.indexOf(v) is -1
+      v = @$input.val().toLowerCase()
+      if v[0] isnt "~" then v = "~#{v}"
+      if @validateSource v
         _sources = _.clone @state.configs[@state.station].sources
         _sources.push v
         StationActions.setSources @state.station,_sources
         @$input.val('')
         @$input.blur()
+      else
+        $('.sour-ctrl .join').addClass 'valid-false'
 
   _remove: (e) ->
     e.stopPropagation()
@@ -68,8 +83,8 @@ module.exports = recl
 
     if @state.station and @state.members
       members = _.map @state.members, (stations,member) -> 
-          audi = _.map stations,(presence,station) -> (div {className:"audi"}, station)
-          (div {}, [audi,(React.createElement Member, {ship:member})])
+          audi = _.map stations,(presence,station) -> (div {className:"audi"}, station.slice(1))
+          (div {}, [(React.createElement Member, {ship:member}),audi])
     else
       members = ""
 
@@ -82,15 +97,22 @@ module.exports = recl
       _sources = _.clone @state.configs[@state.station].sources
       sources = _.map _sources,(source) =>
         (div {className:"station"}, [
+          (div {className:"path"}, source.slice(1))
           (div {className:"remove",onClick:_remove,"data-station":source},"×"),
-          (div {className:"path"}, source)
         ])
     else
       sources = "" 
 
     head = (div {id:"head"}, 
-        [(div {id:"where"},["/talk",(div {className:"caret"},"")]),
-         (div {id:"who"},[(div {className:"circle"},""),"~#{window.urb.user}"])
+        [ (div {id:"who"},[
+            (div {className:"sig"},"")
+            (div {className:"ship"},"#{window.urb.user}")
+          ])
+          (div {id:"where"},[
+            (div {className:"slat"},"talk")
+            (div {className:"path"},"") #window.util.mainStation(window.urb.user))
+            (div {className:"caret"},"")
+          ])
         ]
       )
 

@@ -1,0 +1,152 @@
+::                                                      ::  ::
+::::  /hook/core/hood/ape                               ::  ::
+  ::                                                    ::  ::
+/?  314                                                 ::  zuse version
+/+  sole, talk, helm, kiln, drum                        ::  libraries
+::                                                      ::  ::
+::::                                                    ::  ::
+  !:                                                    ::  ::
+=>  |%                                                  ::  module boilerplate
+    ++  hood-0                                          :: 
+      ,[%0 lac=(map ,@tas hood-part)]                   ::
+    ++  hood-good                                       ::
+      |*  hed=hood-head                                 ::
+      |=  paw=hood-part                                 ::
+      ?-  hed                                           ::
+        %drum  ?>(?=(%drum -.paw) `drum-part`paw)       ::
+        %helm  ?>(?=(%helm -.paw) `helm-part`paw)       ::
+        %kiln  ?>(?=(%kiln -.paw) `kiln-part`paw)       ::
+      ==                                                ::
+    ++  hood-head  ,_-:*hood-part                       ::
+    ++  hood-make                                       ::
+      |*  [our=@p hed=hood-head]                        ::
+      ?-  hed                                           ::
+        %drum  (drum-port our)                          ::
+        %helm  *helm-part                               ::
+        %kiln  *kiln-part                               ::
+      ==                                                ::
+    ++  hood-part                                       ::
+      $%  [%drum %0 drum-pith]                          ::
+          [%helm %0 helm-pith]                          ::
+          [%kiln %0 kiln-pith]                          ::
+      ==                                                ::
+    --                                                  ::
+::                                                      ::  ::
+::::                                                    ::  ::
+  ::                                                    ::  ::
+|_  $:  hid=hide                                        ::  system state
+        hood-0                                          ::  server state
+    ==                                                  ::
+++  able                                                ::  find/make part
+  |*  hed=hood-head
+  =+  rep=(~(get by lac) hed)
+  =+  par=?^(rep u.rep `hood-part`(hood-make our.hid hed))
+  ((hood-good hed) par)
+::
+++  ably                                                ::  save part
+  |*  [moz=(list) rep=hood-part]
+  [(flop moz) %_(+> lac (~(put by lac) -.rep rep))]
+::                                                      ::  ::
+::::                                                    ::  ::
+  ::                                                    ::  ::
+++  coup-kiln-fancy                                     ::
+  |=  [then saw=(unit tang)]
+  (ably (take-coup-fancy:(kiln-work [hid ost src] (able %kiln)) way +<+))
+::
+++  coup-kiln-spam                                      ::
+  |=  [then saw=(unit tang)]
+  ~?  ?=(^ saw)  [%kiln-spam-lame u.saw]
+  [~ +>] 
+::
+++  coup-drum                                           ::
+  |=  [then saw=(unit tang)]
+  (ably (take-coup:(drum-work [hid ost src] (able %drum)) way +<+))
+::
+++  diff-sole-effect-drum
+  |=  [then sole-effect]
+  (ably (diff-sole-effect:(drum-work [hid ost src] (able %drum)) way +<+))
+::
+++  poke-hood-begin                                     ::
+  |=  [from hood-begin]
+  (ably (poke-begin:(helm-work [hid +<-] (able %helm)) +<+))
+::
+++  poke-helm-init                                      ::
+  |=  [from hood-init]
+  (ably (poke-init:(helm-work [hid +<-] (able %helm)) +<+))
+::
+++  poke-hood-mass                                      ::
+  |=  [from ~]
+  (ably poke-mass:(helm-work [hid +<-] (able %helm)))
+::
+++  poke-hood-merge                                     ::
+  |=  [from hood-merge]
+  (ably (poke-merge:(kiln-work [hid +<-] (able %kiln)) +<+))
+::
+++  poke-hood-reload                                    ::
+  |=  [from hood-reload]
+  (ably (poke-reload:(helm-work [hid +<-] (able %helm)) +<+))
+::
+++  poke-hood-reset                                     ::
+  |=  [from ~]
+  (ably (poke-reset:(helm-work [hid +<-] (able %helm)) +<+))
+::
+++  poke-hood-sync                                      ::
+  |=  [from hood-sync]
+  (ably (poke-sync:(kiln-work [hid +<-] (able %kiln)) +<+))
+::
+++  poke-hood-unix                                      ::
+  |=  [from hood-unix]
+  (ably (poke-unix:(kiln-work [hid +<-] (able %kiln)) +<+))
+::
+++  poke-hood-verb                                      ::
+  |=  [from ~]
+  (ably (poke-verb:(helm-work [hid +<-] (able %helm)) +<+))
+::
+++  poke-hood-start                                     ::
+  |=  [from drum-start]
+  (ably (poke-start:(drum-work [hid +<-] (able %drum)) +<+))
+::
+++  poke-dill-belt
+  |=  [from dill-belt]
+  (ably (poke-dill-belt:(drum-work [hid +<-] (able %drum)) +<+))
+::
+++  poke-will                                           ::
+  |=  [from (unit will)]
+  (ably (poke-will:(helm-work [hid +<-] (able %helm)) +<+))
+::
+++  mere-kiln                                           ::
+  |=  [then are=(each (set path) (pair term tang))]
+  (ably (take-mere:(kiln-work [hid ost src] (able %kiln)) way +<+))
+::
+++  made-kiln                                           ::
+  |=  [then @uvH (each gage tang)]
+  (ably (take-made:(kiln-work [hid ost src] (able %kiln)) way +<+))
+::
+++  init-helm                                           ::
+  |=  [then *]
+  [~ +>]
+::
+++  note-helm                                           ::  
+  |=  [then (pair ,@tD tank)]
+  (ably (take-note:(helm-work [hid ost src] (able %helm)) way +<+))
+::
+++  reap-drum
+  |=  [then saw=(unit tang)]
+  (ably (reap:(drum-work [hid ost src] (able %drum)) way +<+))
+::
+++  onto-drum                                           ::
+  |=  [then saw=(each ,[term @tas @da] tang)]
+  (ably (take-onto:(drum-work [hid ost src] (able %drum)) way +<+))
+::
+++  peer-drum
+  |=  [from pax=path]
+  (ably (peer:(drum-work [hid +<-] (able %drum)) +<+))
+::
+++  quit-drum
+  |=  then
+  (ably (quit:(drum-work [hid ost src] (able %drum)) way))
+::
+++  went-helm                                           ::
+  |=  [then her=ship kay=cape]
+  (ably (take-went:(helm-work [hid ost src] (able %helm)) way +<+))
+--
