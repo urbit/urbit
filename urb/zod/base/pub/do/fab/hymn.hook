@@ -8,8 +8,9 @@
   ::
   !:
 ^-  manx
+=+  do=(~(get by qix.gas) %'code')
+=+  g=(~(get by qix.gas) %'access_token')
 
-=+  authcode=(~(get by qix.gas) %'code')
 ;html
   ;head
     ;script@"/~/at/home/lib/urb.js";
@@ -20,9 +21,10 @@
     ;title: DO Instance Tracker
   ==
   ;body
-   ;*  ?~  authcode  ~ 
+   ;*  =+  d=?~(do ~ (trip u.do))
+       =+  g=?~(g ~ (trip u.g))
         :_  ~  
-        ;script: authcode='{(trip u.authcode)}'; console.log(authcode)
+        ;script: authcode='{?~(d g d)}'; console.log(authcode)
     ;div#container;
     ;script@"/home/pub/do/src/main.js";
   ==

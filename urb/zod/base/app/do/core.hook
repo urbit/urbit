@@ -194,6 +194,7 @@ $%
 ++  poke-oauth2-code
   |=  [ost=bone you=ship code=cord]
   ^-  [(list move) _+>.$]
+  ~&  code
   =.  authc.ke.vat
     [~ code]
   =+  ath=(need authc.ke.vat)
@@ -305,7 +306,7 @@ $%
       %-  need
       %.  drp  =+  jo
       %-  ot
-      :~  id/ni  name/so  
+      :~  id/ni  name/so
          memory/ni  vcpus/ni  disk/ni
          locked/bo  'created_at'^so  status/so
          'backup_ids'^(ar so)  'snapshot_ids'^(ar ni)  features/(ar so)
