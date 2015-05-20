@@ -982,8 +982,8 @@ that, we handle the `/q/ge` and `/q/gh` cases for gall requests and
 responses, respectively.
 
 In both cases, we require the next term in the path to be the name of
-the intended recipient `%gall` app. Thus, a message to `/q/ge/chat` for
-example, will send a message to the chat app.
+the intended recipient `%gall` app. Thus, a message to `/q/ge/talk` for
+example, will send a message to the talk app.
 
 We then send a message to the app itself. The message is either a
 `%rote` or a `%roth` for a request and a response, respectively. The

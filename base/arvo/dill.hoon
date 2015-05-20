@@ -6,11 +6,26 @@
 ++  gill  (pair ship term)                              ::  general contact
 --                                                      ::
 =>  |%                                                  ::  console protocol
-++  axle                                                ::  all dill state
+++  all-axle  ?(old-axle axle)                          ::
+++  old-axle                                            ::  all dill state
   $:  %2                                                ::
       ore=(unit ship)                                   ::  identity once set
       hey=(unit duct)                                   ::  default duct
       dug=(map duct axon)                               ::  conversations
+  ==                                                    ::
+++  axle                                                ::
+  $:  %3                                                ::
+      ore=(unit ship)                                   ::  identity once set
+      hey=(unit duct)                                   ::  default duct
+      dug=(map duct axon)                               ::  conversations
+      $=  hef                                           ::  other weights
+      $:  a=(unit mass)                                 ::
+          c=(unit mass)                                 ::
+          e=(unit mass)                                 ::
+          f=(unit mass)                                 ::
+          g=(unit mass)                                 ::
+          t=(unit mass)                                 ::
+      ==                                                ::
   ==                                                    ::  
 ++  axon                                                ::  dill per duct
   $:  ram=term                                          ::  console program
@@ -22,24 +37,7 @@
 --  =>                                                  ::
 |%                                                      ::  protocol below
 ++  gift  gift-dill                                     ::  out result <-$
-++  kiss                                                ::  in request ->$
-  $%  [%belt p=belt]                                    ::  terminal input
-      [%blew p=blew]                                    ::  terminal config
-      [%boot p=*]                                       ::  weird %dill boot
-      [%crud p=@tas q=(list tank)]                      ::  error with trace
-      [%flog p=flog]                                    ::  wrapped error
-      [%flow p=@tas q=(list gill)]                      ::  terminal config
-      [%hail ~]                                         ::  terminal refresh
-      [%hook ~]                                         ::  this term hung up
-      [%harm ~]                                         ::  all terms hung up
-      [%init p=ship]                                    ::  after gall ready
-      [%noop ~]                                         ::  no operation
-      [%talk p=tank]                                    ::
-      [%text p=tape]                                    ::
-      [%veer p=@ta q=path r=@t]                         ::  install vane
-      [%vega p=path]                                    ::  reboot by path
-      [%verb ~]                                         ::  verbose mode
-  ==                                                    ::
+++  kiss  kiss-dill                                     ::  in request ->$
 --  =>                                                  ::
 |%                                                      ::  protocol outward
 ++  mess                                                ::
@@ -63,6 +61,7 @@
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
   $%  [%crud p=@tas q=(list tank)]                      ::
+      [%heft ~]                                         ::
       [%init p=ship]                                    ::
       [%text p=tape]                                    ::
       [%veer p=@ta q=path r=@t]                         ::  install vane
@@ -74,11 +73,12 @@
       [%deal p=sock q=cush]                             ::
   ==                                                    ::
 ++  note                                                ::  out request $->
+  $?  [?(%a %c %e %f %g %t) %wegh ~]                    ::
   $%  [%a note-ames]                                    ::
       [%c note-clay]                                    ::
       [%d note-dill]                                    ::
       [%g note-gall]                                    ::
-  ==                                                    ::
+  ==  ==                                                ::
 ++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  sign-ames                                           ::
   $%  [%nice ~]                                         ::
@@ -103,12 +103,13 @@
   $%  [%wake ~]                                         ::
   ==                                                    ::
 ++  sign                                                ::  in result $<-
+  $?  [?(%a %c %e %f %g %t) %mass p=mass]               ::
   $%  [%a sign-ames]                                    ::
       [%c sign-clay]                                    ::
       [%d sign-dill]                                    ::  
       [%g sign-gall]                                    ::
       [%t sign-time]                                    ::
-  ==                                                    ::
+  ==  ==                                                ::
 ::::::::                                                ::  dill tiles
 --
 =|  all=axle
@@ -134,6 +135,29 @@
           %crud  ::  (send `dill-belt`[%cru p.kyz q.kyz])
                  (crud p.kyz q.kyz)
           %blew  (send %rez p.p.kyz q.p.kyz)
+          %heft  heft
+          %tick  =+  ^=  ges  ^-  gens
+                     ^-  gens
+                     :-  %en
+                     =+  can=(clan p.kyz)
+                     ?-  can
+                       %czar  [%czar ~]
+                       %duke  [%duke %anon ~]
+                       %earl  [%earl (scot %p p.kyz)]
+                       %king  :-  %king 
+                              ?:  =(~doznec p.kyz)      ::  so old tickets work
+                                'Urban Republic' 
+                              (scot %p p.kyz)
+                       %pawn  [%pawn ~]
+                     ==
+                 =+  yen=(scot %p (shax :(mix %ticket eny now)))
+                 =+  ^=  beg  ^-  [his=@p tic=@p yen=@t ges=gens]
+                     [p.kyz q.kyz yen ges]
+                 =+  cag=`cage`[%hood-begin !>(beg)]
+                 %=    +>.$
+                     moz 
+                   :_(moz [hen %pass ~ %g %deal [our our] %hood %poke cag])
+                 ==
           %veer  (dump kyz)
           %vega  (dump kyz)
           %verb  (dump kyz)
@@ -179,16 +203,32 @@
           (dump %logo ~)
         (done %blit [bit ~])
       ::
+      ++  heft
+        %_    .
+            moz
+          :*  [hen %pass /heft/ames %a %wegh ~]
+              [hen %pass /heft/clay %c %wegh ~]
+              [hen %pass /heft/eyre %e %wegh ~]
+              [hen %pass /heft/ford %f %wegh ~]
+              [hen %pass /heft/gall %g %wegh ~]
+              [hen %pass /heft/time %t %wegh ~]
+              moz
+          ==
+        ==
+      ::
       ++  init                                          ::  initialize
-        ~&  [%dill-init our]
+        ~&  [%dill-init our ram]
         =+  myt=(flop (need tem))
+        =+  can=(clan our)
         =.  tem  ~
         =.  moz  :_(moz [hen %pass / %c %font our %home our %base])
-        =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %base]])
-        =.  moz  :_(moz [hen %pass ~ %g %deal [our our] ram %peer ~])
-        |-  ^+  +>
-        ?~  myt  +>
-        $(myt t.myt, +> (send i.myt))
+        =.  moz  ?.  ?=(?(%king %czar) can)  moz
+                 :_(moz [hen %pass / %c %font our %kids our %base])
+        =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
+        =.  +>  peer
+        |-  ^+  +>+
+        ?~  myt  +>+
+        $(myt t.myt, +>+ (send i.myt))
       ::
       ++  into                                          ::  preinitialize
         |=  gyl=(list gill)
@@ -213,6 +253,11 @@
           :_  moz
           [hen %pass ~ %g %deal [our our] ram %poke [%dill-belt -:!>(bet) bet]]
         ==
+      ++  peer
+        %_    .
+            moz 
+          :_(moz [hen %pass ~ %g %deal [our our] ram %peer /drum]) 
+        ==
       ::
       ++  pump                                          ::  send diff ack
         %_    .
@@ -224,6 +269,9 @@
         |=  sih=sign
         ^+  +>
         ?-    sih
+            [?(%a %c %e %f %g %t) %mass *]
+          (wegt -.sih p.sih)
+        ::
             [%a %nice *]
           ::  ~&  [%take-nice-ames sih]
           +>
@@ -252,8 +300,10 @@
           ::  ~&  [%take-gall-unto +>.sih]
           ?-  -.+>.sih
             %coup  ?~(p.p.+>.sih +>.$ (crud %coup u.p.p.+>.sih))
-            %quit  !! :: ??
-            %reap  ?~(p.p.+>.sih +>.$ (crud %reap u.p.p.+>.sih))
+            %quit  peer
+            %reap  ?~  p.p.+>.sih 
+                     +>.$ 
+                   (dump:(crud %reap u.p.p.+>.sih) %logo ~)
             %diff  pump:(from ((hard dill-blit) q:`vase`+>+>.sih))
           ==
         ::
@@ -270,6 +320,38 @@
           ::  ~&  %dill-wake 
           +>
         ==
+      ::
+      ++  wegh
+        ^-  mass
+        :-  %dill
+        :-  %|
+        :~  all/`[ore hey dug]:all
+        ==
+      ::
+      ++  wegt
+        |=  [lal=?(%a %c %e %f %g %t) mas=mass]
+        ^+  +>
+        =.  hef.all
+          ?-  lal
+            %a  ~?(?=(^ a.hef.all) %double-mass-a hef.all(a `mas))
+            %c  ~?(?=(^ c.hef.all) %double-mass-c hef.all(c `mas))
+            %e  ~?(?=(^ e.hef.all) %double-mass-e hef.all(e `mas))
+            %f  ~?(?=(^ f.hef.all) %double-mass-f hef.all(f `mas))
+            %g  ~?(?=(^ g.hef.all) %double-mass-g hef.all(g `mas))
+            %t  ~?(?=(^ t.hef.all) %double-mass-t hef.all(t `mas))
+          ==
+        ?.  ?&  ?=(^ a.hef.all)
+                ?=(^ c.hef.all)
+                ?=(^ e.hef.all)
+                ?=(^ f.hef.all)
+                ?=(^ g.hef.all)
+                ?=(^ t.hef.all)
+            ==
+          +>.$
+        %+  done(hef.all [~ ~ ~ ~ ~ ~])
+          %mass
+        =>  [hef.all d=wegh]
+        [%vanes %| ~[u.a u.c d u.e u.f u.g u.t]]
       --
     ::
     ++  ax                                              ::  make ++as
@@ -287,7 +369,7 @@
           [~ ~]
           80
           0
-          (tuba "<{(trip p.kyz)}>")
+          (tuba "<awaiting {(trip p.kyz)}>")
       ==
     --
 |%                                                      ::  poke/peek pattern
@@ -313,6 +395,8 @@
     ?:  ?=([%crud %hax-init [%leaf *] ~] p.q.hic)
       =+  him=(slav %p (crip p.i.q.p.q.hic))
       :_(..^$ ?~(hey.all ~ [u.hey.all %give %init him]~))
+    ?:  ?=([%crud %hax-heft ~] p.q.hic)
+      :_(..^$ ?~(hey.all ~ [u.hey.all %slip %d %heft ~]~))
     :_(..^$ ?~(hey.all ~ [u.hey.all %slip %d p.q.hic]~))
   =.  hey.all  ?^(hey.all hey.all `hen)
   ?:  ?=(%init -.q.hic)
@@ -322,15 +406,7 @@
     =:  ore.all  `p.q.hic
         dug.all   ~
       ==
-    =+  ^=  flo  ^-  (list (pair ship term))
-        =+  myr=(clan p.q.hic)
-        ?:  =(%pawn myr)
-          [[p.q.hic %dojo] [p.q.hic %hood] ~]
-        ?:  =(%earl myr)
-          =+  fap=(sein p.q.hic)
-          [[fap %dojo] [fap %talk] [fap %hood] ~]
-        [[p.q.hic %dojo] [p.q.hic %talk] [p.q.hic %hood] ~]
-    =^  moz  all  abet:(need (ax (need hey.all) [%flow %sole flo]))
+    =^  moz  all  abet:(need (ax (need hey.all) [%flow %hood ~]))
     ?:  |((lth p.q.hic 256) (gte p.q.hic (bex 64)))  [moz ..^$] ::  XX HORRIBLE
     [:_(moz [(need hey.all) %give %init p.q.hic]) ..^$]
   =+  nus=(ax hen q.hic)
@@ -346,7 +422,9 @@
   ~
 ::
 ++  load                                                ::  trivial
-  |=  old=axle
+  |=  old=all-axle
+  ?:  ?=(%2 -.old)
+    $(old [%3 ore hey dug ~ ~ ~ ~ ~ ~]:old)
   ..^$(all old)
   ::  |=  old=*   ::  diable
   ::  ..^$(ore.all `~zod)
@@ -379,4 +457,3 @@
   [moz ..^$]
 --
 
-::  good test

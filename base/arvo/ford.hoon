@@ -230,6 +230,8 @@
     |=  dep=@uvH
     ?~  dep
       ~&(dep-empty/hen +>.$)
+    ?:  =(dep 0vtest)                 ::  upstream testing
+      +>.$(mow :_(mow [hen %give %news ~]))
     =+  dap=(~(get by deh.bay) dep)
     ?~  dap  ~&(dep-missed/dep +>.$)  ::  XX  ~|  !!
     :: ~&  awap/[dep u.dap]
@@ -1111,9 +1113,17 @@
         $(kas [%done p.kas u.q.kas])
       ::
           %file
-
         %+  cool  |.(leaf/"ford: file {<p.kas>}")
         (lear cof p.kas)
+      ::
+          %flag
+        ?~  p.kas  $(kas q.kas)
+        =+  dap=(~(get by deh.bay) p.kas)
+        ?~  dap    ~&(flag-missed/p.kas $(kas q.kas))
+        =+  dep=?-(-.u.dap %init p.u.dap, %sent q.u.dap, %done [[bek ~] ~ ~])
+        =+  rez=$(kas q.kas)          ::  XX revisit ^ during dependency review
+        ?:  ?=(%1 -.q.rez)  rez
+        rez(p.q (~(uni in p.q.rez) `(set beam)`dep))
       ::
           %join
         %+  cool
@@ -1587,9 +1597,9 @@
   ?:  ?=(%wegh -.q.hic)
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
+    :-  %ford
     :-  %|
     :~  lex/`lex
-        ::  cor/`..^$
     ==
   =+  ^=  our  ^-  @p
       ?-  -.q.hic
