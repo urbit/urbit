@@ -58,8 +58,25 @@ Commands
 
       :+sync %demo ~B %demo
 
-  *** - put bitcoin instructions here
+[to send bitcoin]
+  Start the dæmon(from sole):
+      *bit
+ 
+  Auth in (from dojo):
+      :bit+auth '2c4fcf5349a5710efa66e7398703b02c306942048296ea649352c4ac985d0a8a'  'f771f6dc08910095b2476b033dca62ddcb302b6617e6a7d4d66e194a2a9bd605'
 
+  In webtalk, click on the link and auth in. The password for coinbase account anton.dyudin@tlon.io has been communicated privately.
+
+  Click authorize and then return to the command line.
+
+  To send:
+
+      :bit+send 0c[bitcoin-address] '[qty-of-bitcoin]'
+
+  I recommend sending about .0001 bitcoin (2¢) because it's just over their minimum and it's an account with limited funds.
+  With this protocol, the recipient will obviously have to provide their btc address over chat.
+
+  Lastly, on https://blockchain.info/ there is a search bar that allows you to search by address, assuming you wish to display the address
 
 [files in script, clay and unix]
 
