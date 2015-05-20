@@ -1,3 +1,5 @@
+*.swo
+*.swp
 *.o
 .DS_Store
 /bin/vere
