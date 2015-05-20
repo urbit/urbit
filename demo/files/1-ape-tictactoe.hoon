@@ -89,7 +89,7 @@
             ?-(lev %0 +>, %1 line, %2 line:show:prom)   ::
   ++  plow  |=  [lev=?(%0 %1 %2) mus=(unit tape)]       ::  complete print
             abet:(mean:(play lev) mus)                  ::
-  ++  prom  %^  emit  %pro  %&  :-  %acto               ::  update prompt
+  ++  prom  %^  emit  %pro  %&  :-  %tictactoe          ::  update prompt
             ": {~[(icon who.gam)]} to move (row/col): " ::  
   ++  rend  (turn `wall`~(tab go gam) |=(tape txt/+<))  ::  table print
   ++  show  (emit %mor rend)                            ::  update board

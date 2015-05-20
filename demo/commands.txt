@@ -79,37 +79,37 @@ Commands
 
   Helper files needed for version 2:
   
-    The %tictactoe-game mark, for game update diffs:
+    The %octo-game mark, for game update diffs:
 
-        /=demo=/mar/tictactoe-game/door/hook
-        urbit/$X/$X/in/$DEMO/mar/tictactoe-game/door.hook
-        $DEMO/files/mar-tictactoe-game.hoon 
+        /=demo=/mar/octo-game/door/hook
+        urbit/$X/$X/in/$DEMO/mar/octo-game/door.hook
+        $DEMO/files/mar-octo-game.hoon 
    
   Helper files needed for version 3:
 
-    The %tictactoe-move mark, for moves from the web:
+    The %octo-move mark, for moves from the web:
 
-        /=demo=/mar/tictactoe-move/door/hook
-        urbit/$X/$X/in/$DEMO/mar/tictactoe-move/door.hook
-        $DEMO/files/mar-tictactoe-move.hoon 
+        /=demo=/mar/octo-move/door/hook
+        urbit/$X/$X/in/$DEMO/mar/octo-move/door.hook
+        $DEMO/files/mar-octo-move.hoon 
  
     The HTML generator:
     
-        /=demo=/pub/tictactoe/fab/hymn/hook
-        urbit/$X/$X/in/$DEMO/pub/tictactoe/fab/hymn.hook
-        $DEMO/files/pub-tictactoe-hymn.hoon
+        /=demo=/pub/octo/fab/hymn/hook
+        urbit/$X/$X/in/$DEMO/pub/octo/fab/hymn.hook
+        $DEMO/files/pub-octo-hymn.hoon
 
     The CSS:
 
-        /=demo=/pub/tictactoe/src/main/css
-        urbit/$X/$X/in/$DEMO/pub/tictactoe/src/main.css
-        $DEMO/files/pub-tictactoe-main.css
+        /=demo=/pub/octo/src/main/css
+        urbit/$X/$X/in/$DEMO/pub/octo/src/main.css
+        $DEMO/files/pub-octo-main.css
 
     The JS:
 
-        /=demo=/pub/tictactoe/src/main/js
-        urbit/$X/$X/in/$DEMO/pub/tictactoe/src/main.js
-        $DEMO/files/pub-tictactoe-main.js
+        /=demo=/pub/octo/src/main/js
+        urbit/$X/$X/in/$DEMO/pub/octo/src/main.js
+        $DEMO/files/pub-octo-main.js
 
 [from tictactoe]
   
