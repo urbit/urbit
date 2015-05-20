@@ -1,0 +1,147 @@
+A == ~tasfyn-partyv
+B == ~talsur-todres
+
+      A and B, on unix terminals on different machines, clone and
+      build urbit from scratch, cutting over the build.
+
+      Each screen is divided into two logical columns.  A's
+      screen is filled with two shells.  B's screen has a shell
+      on the left and is empty on the right.
+
+      At the unix prompt, both run
+
+        urbit -c myship
+
+      type in an invisible ticket, and begin their ships.  All
+      diagnostic messages are suppressed.  Both users land
+      initially in :talk.
+
+A: is this thing on?
+
+B: who am i?  why am i here?
+
+A: would you like to play a game of global thermonuclear war?
+
+B: wouldn't you prefer tic-tac-toe?
+
+A: sure, but i'll have to write it.  hang on...
+
+      A switches to :dojo and runs
+
+        :+merge %tic-tac-a ~tasfyn-partyv %home
+
+      In the other window, A runs vim and edits, occasionally
+      hitting :w to save the file:
+      
+      demo/file1.txt -> A/in/base/ape/tictactoe/core.hook
+
+      After ++bo,
+
+A: the board state is a bitfield
+
+A: btw, you can watch me code at <URL>.
+
+      B opens a browser and points it at <URL>, showing the 
+      tree with live update every time A saves.
+
+      After ++go:
+
+A: game semantics are not that complex...
+
+      After ++move:
+
+A: basic console io, kinda boilerplaty
+
+      After ++come:
+ 
+A: if you can infer the type of the product
+A: of a combinator parser, you are probably
+A: a typed functional language even if you
+A: leave category theory to the real math nerds... 
+
+      After ++park:
+
+A: a fairly vanilla console server.  probably some
+A: of this should be sucked out into a library - 
+A: you can never completely beat the boilerplate.
+A: also note that this is a two-way console with
+A: operational transformation that cancels syntax
+A: errors as you type, just like how :talk violates
+A: your human rights by lowercasing your capitals.
+A: finally, while the style is perfectly readable
+A: for a hoon programmer, we don't normally go in
+A: for this kind of mildly contrived topiary.
+ 
+      After ++pull-sole:
+
+A: those were the event hooks where arvo calls us,
+A: expecting a new state and a list of actions.
+A: anyway, this should work - let's try it.
+A: do this: 
+
+      :+sync %tic-tac-a ~tasfyn-partyv %tic-tac-a
+      :+start %tic-tac-a %tictactoe
+
+      B does this.  it puts him straight into TTT.
+
+A: now hang on, I'll join you.
+
+      A uses ^V to pop the hood and types +~B/
+
+A: bear in mind, this is a very crude shared space.
+A: your server is just exporting a console interface
+A: which we both can access.  so essentially i'm
+A: ssh-ed into your game world.
+
+      They play a couple of moves.
+
+A: it's important to note that your urbit is also
+A: in a sense, a database.  try this from unix:
+
+      killall -9 urbit
+      urbit myship
+
+      B does this, comes back and plays a move.
+
+B: we don't seem to have lost any data.
+A: we didn't even come close to losing data,
+A: so let's come a little closer:
+
+      killall -9 vere
+      rm -rf $checkpoint
+      urbit myship
+
+      B does this, comes back and plays a move.
+
+B: whoa, that was heavy.
+A: yeah, your life flashed before your eyes.  or at least,
+A: your event history.  this system of checkpoint
+A: and transaction log is actually how normal dbs work,
+A: though urbit is designed as a personal computer and
+A: hardly up for a normal db workload.
+
+B: it's a little odd that either of us could play X or O.
+A: or even have an edit war in the command line.
+
+      They have an edit war in the command line.
+
+B: it might be right for some things.  not tictactoe.
+A: then we'll have to change it!  often when someone
+A: installs your software, later you find out it's not
+A: perfect and sometimes actually needs to be changed.
+B: i've had that experience a number of times.
+A: but it's always tricky to operate on a beating heart,
+A: so let's try it in a small way first...
+
+      A edits the source file and changes X to Z, or
+      maybe to a Unicode symbol.  When he saves, the
+      change propagates to both consoles and also the
+      tree view on B's screen, even to the prompt UI.
+
+B: i've seen that sort of thing before.
+A: really?  in any case, let's do it for real.  the next
+A: version is a genuine distributed tictactoe with
+A: its own peer-to-peer move protocol.  surely this
+A: is some fancy technology...
+
+      A edits the source file into 
