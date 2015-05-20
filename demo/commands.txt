@@ -28,7 +28,7 @@ Commands
 [from talk]
   For A, to private-message B (who defaults to talking back):
 
-      ;~HER
+      ;~B
 
   To create a channel '%foobar':
 
@@ -39,6 +39,14 @@ Commands
   For A or B, to start tictactoe:
 
       *demo/tictactoe
+
+  For A or B, to log in to X's tictactoe:
+
+      +~X/tictactoe
+
+  To log out:
+
+      -~X/tictactoe
 
 [from dojo]
 
