@@ -1300,7 +1300,7 @@ _unix_desk_sync_tofu(u3_udir* dir_u,
     free(put_c);
   }
   else if (u3_nul == mim) {
-    uL(fprintf(uH, "file already gone: %s\n", pox_c));  //  fires too often
+    // uL(fprintf(uH, "file already gone: %s\n", pox_c));  //  fires too often
 
     free(pox_c);
     free(pot_c);
