@@ -1,0 +1,27 @@
+script:
+  ~tasfyn-partyv and ~talsur-todres decide to build a tic-tac-toe game
+
+tasfyn-partyv: would you like to play a game of thermonuclear war?
+
+talsur-todres: no.  how about some tic-tac-toe?
+
+tasfyn-partyv: sure.  but wait, do we have a server?
+
+talsur-todres: 
+features of the game:
+  (0) we build one-computer two-player TTT 
+  (1) we build console tic-tac-toe 
+  (2) we install it over the network
+
+     + 1 2 3
+     1   X X
+     2 O   O
+     3 X O X
+
+     ? 1/3
+
+  (3) we update it to change the characters
+
+  (4) maybe cheating with some pretyped assets, we make a web view
+       
+  (5) 

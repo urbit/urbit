@@ -118,7 +118,7 @@
 ++  dish  |=(cad=card (dump 0 cad))                     ::  forward move
 ++  flet  |=(from ~(. et +< (~(got by q.eye) ost)))     ::  in old client
 ++  fret  |=(from ~(. et +< *sole-share))               ::  in new client
-++  like  |=(xir=ship |*(* [/octo [xir %octo] +<]))     ::  to friend
+++  like  |=(a=ship |*(* [/octo [a %tictactoe] +<]))    ::  to friend
 ++  link  |=  mot=mote  %+  dish(but `[| mot])  %peer   ::  subscribe to friend
           ((like p.mot) /octo/net/[?:(q.mot %x %o)])    ::  
 ++  pals  %+  turn  (pale hid (prix /sole))  |=  sink   ::  per console 
@@ -145,23 +145,12 @@
           =+  who==(%x -.pax)                           ::
           ?^  but  (park %2 ~)                          ::
           (park:(link src !who) %2 `"net from {<src>}") ::
-++  peer-octo-web                                       ::  web peer
-          |=  [from pax=path]  =<  abet                 ::
-          ~&  [%peer-web +<]                            ::
-          ?^  but  (park %2 ~)                          ::
-          %+  park(but `[%& src !who.gam])  %2          ::
-          `"web from {<src>}"                           ::
 ++  peer-sole                                           ::  console subscribe
           |=  [from pax=path]  =<  abet                 ::
           (plow:(fret +<-) %2 ~)                        ::
 ++  poke-sole-action                                    ::  console input
           |=  [from act=sole-action]  =<  abet          ::
           (work:(flet +<-) act)                         ::
-++  poke-octo-move                                      ::
-          |=  [from wha=point]  =<  abet                ::
-          =^  dud  gam  ~(m ~(at go gam) wha)           ::
-          ?>  dud  =+  mus=~(res go gam)                ::
-          (park(gam ?^(mus *game gam)) %2 mus)          ::
 ++  prep  |=  [from old=(unit ,[(list move) axon])]     ::  initialize
           =<  abet  ?~  old  +>                         ::
           =<  (park %2 ~)                               ::
