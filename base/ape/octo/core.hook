@@ -65,7 +65,7 @@
 =>  |%                                                  ::  parsers
     ++  colm  (cook |=(a=@ (sub a '1')) (shim '1' '3')) ::  row or column
     ++  come  ;~(plug colm ;~(pfix fas colm))           ::  coordinate
-    ++  comb  (pick come (punt ;~(pfix sig comp)))      ::  all command input
+    ++  comb  (pick come ;~(pfix sig (punt comp)))      ::  all command input
     ++  comp  ;~(plug fed:ag ;~(pfix ace (flag %x %o))) ::  login command
     ++  cope  |=(? ?:(+< (stag %| (cold ~ sig)) comb))  ::  with wait mode
     --                                                  ::
