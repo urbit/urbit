@@ -1,0 +1,135 @@
+
+Commands 
+
+[from URL bar]
+  ***TBD - Galen/Anton please fill in
+
+[from unix]
+  For A, to build and boot:
+      git clone https://github.com/urbit/urbit
+      cd urbit
+      make
+      bin/urbit -T $A -c $A
+
+  For A, to kill and restart from checkpoint:
+      [in new terminal] killall -9 urbit
+      [in old terminal] urbit $A
+
+  For A, to kill, delete checkpoint, and rerun events:
+      [in new terminal] killall -9 urbit; rm -rf $A/.urb/chk
+      [in old terminal] urbit $A
+
+  For B, to edit /foo/bar/hoon:
+      *** Philip/anyone, add directions to install vim style
+
+      vim urbit/$B/$B/in/$DEMO/foo/bar.hoon
+
+
+[from talk]
+  For A, to private-message B (who defaults to talking back):
+
+      ;~B
+
+  To create a channel '%foobar':
+
+      ;create channel %foobar 'channel description'
+
+[from hood, #]
+
+  For A or B, to start tictactoe:
+
+      *demo/tictactoe
+
+  For A or B, to log in to X's tictactoe:
+
+      +~X/tictactoe
+
+  To log out:
+
+      -~X/tictactoe
+
+[from dojo]
+
+  For B, to create a %demo desk for this project:
+
+      :+merge %demo ~B %home
+
+  For A, to sync and follow B's demo desk:
+
+      :+sync %demo ~B %demo
+
+  *** - put bitcoin instructions here
+
+
+[files in script, clay and unix]
+
+    The tictactoe app, all three versions:
+
+        /=demo=/ape/tictactoe/core/hook
+        urbit/$X/$X/in/$DEMO/ape/tictactoe/core/hook
+        
+        version 1 (centralized):
+          $DEMO/files/1-ape-tictactoe.hoon
+        
+        version 2 (distributed):
+          $DEMO/files/2-ape-tictactoe.hoon
+
+        version 3 (webified)
+          $DEMO/files/3-ape-tictactoe.hoon
+
+  Helper files needed for version 2:
+  
+    The %tictactoe-game mark, for game update diffs:
+
+        /=demo=/mar/tictactoe-game/door/hook
+        urbit/$X/$X/in/$DEMO/mar/tictactoe-game/door.hook
+        $DEMO/files/mar-tictactoe-game.hoon 
+   
+  Helper files needed for version 3:
+
+    The %tictactoe-move mark, for moves from the web:
+
+        /=demo=/mar/tictactoe-move/door/hook
+        urbit/$X/$X/in/$DEMO/mar/tictactoe-move/door.hook
+        $DEMO/files/mar-tictactoe-move.hoon 
+ 
+    The HTML generator:
+    
+        /=demo=/pub/tictactoe/fab/hymn/hook
+        urbit/$X/$X/in/$DEMO/pub/tictactoe/fab/hymn.hook
+        $DEMO/files/pub-tictactoe-hymn.hoon
+
+    The CSS:
+
+        /=demo=/pub/tictactoe/src/main/css
+        urbit/$X/$X/in/$DEMO/pub/tictactoe/src/main.css
+        $DEMO/files/pub-tictactoe-main.css
+
+    The JS:
+
+        /=demo=/pub/tictactoe/src/main/js
+        urbit/$X/$X/in/$DEMO/pub/tictactoe/src/main.js
+        $DEMO/files/pub-tictactoe-main.js
+
+[from tictactoe]
+  
+  To move: 
+  
+      X/Y where X is row, Y is column.
+
+  To connect to a remote server (in versions 2 and 3),
+  specifying the side you will play:
+
+      ~X x
+      ~X o
+ 
+  To disconnect from a remote server (versions 2 and 3)
+
+      ~   *** - not well tested
+
+[scripts, to run from branch root directory]
+
+    $DEMO/install1.sh - copy in all version 1 (centralized) files
+    $DEMO/install2.sh - copy in all version 2 (distributed) files
+    $DEMO/install3.sh - copy in all version 3 (webby) files
+
