@@ -46,9 +46,11 @@ _n_hint(u3_noun zep,
     }
 
     case c3__slog: {
-      u3t_off(noc_o);
-      u3t_slog(hod);
-      u3t_on(noc_o);
+      if ( !(u3C.wag_w & u3o_quiet) ) {
+        u3t_off(noc_o);
+        u3t_slog(hod);
+        u3t_on(noc_o);
+      }
       return _n_nock_on(bus, nex);
     }
 
@@ -86,7 +88,10 @@ _n_hint(u3_noun zep,
         }
         pro = _n_nock_on(u3k(bus), u3k(nex));
 
-        u3z_save_2(c3__nock, bus, nex, pro);
+        if ( u3R != &(u3H->rod_u) ) {
+          u3z_save_2(c3__nock, bus, nex, pro);
+        }
+
         u3z(bus); u3z(nex);
 
         return pro;

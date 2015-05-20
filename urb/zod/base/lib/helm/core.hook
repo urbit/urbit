@@ -6,10 +6,9 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%                                                      ::  ::
-++  helm-part                                           ::  helm state
-  $:  %helm                                             ::  doubletag
-      %0                                                ::  state version
-      bur=(unit (pair ship mace))                       ::  requesting ticket
+++  helm-part  ,[%helm %0 helm-pith]                     ::  helm state
+++  helm-pith                                           ::  helm content
+  $:  bur=(unit (pair ship mace))                       ::  requesting ticket
       hoc=(map bone helm-session)                       ::  consoles
   ==                                                    ::  
 ++  helm-session                                        ::
@@ -78,6 +77,10 @@
     |=  him=ship  =<  abet
     (emit %flog /helm %crud %hax-init leaf/(scow %p him) ~)
   ::
+  ++  poke-mass
+    =<  abet
+    (emit %flog /heft %crud %hax-heft ~)
+  ::
   ++  poke-start                                        ::  start a server
     |=  hood-start  =<  abet
     (emit %conf /helm [our dap] %load our syd)
@@ -85,6 +88,7 @@
   ++  poke-reload                                       ::  reload vanes
     |=  all=(list term)  =<  abet
     %-  emil
+    %-  flop
     %+  turn  all
     =+  ark=(arch .^(%cy /(scot %p our)/base/(scot %da lat)/arvo))
     =+  van=(~(tap by r.ark))
@@ -131,7 +135,6 @@
     ?>  ?=(^ wil)  
     =<  abet
     %-  emil(bur ~)
-    ~&  [%poke-will wil]
     :~  [%cash /helm p.u.bur q.u.bur u.wil]
         [%plug /helm our %home (sein our) %kids]
     ==
@@ -148,6 +151,10 @@
       %|  [%flog ~ %crud %onto `tang`p.saw]
       %&  [%flog ~ %text "<{<p.saw>}>"]
     ==
+  ::
+  ++  take-note                                         ::  result of %init
+    |=  [way=wire chr=@tD tan=tank]  =<  abet
+    (emit %flog ~ %text chr ' ' ~(ram re tan))
   ::
   ++  take-went                                         ::  result of %want
     |=  [way=path her=ship kay=cape]  =<  abet

@@ -967,11 +967,11 @@ _me_copy_south(u3_noun dog)
         u3a_cell* new_u = (u3a_cell*)(void *)new_w;
 
         // printf("south: cell %p to %p\r\n", old_u, new_u);
-
+#if 0
         if ( old_u->mug_w == 0x730e66cc ) {
           fprintf(stderr, "BAD: take %p\r\n", new_u);
         }
-
+#endif
         new_u->mug_w = old_u->mug_w;
         // new_u->mug_w = 0;
         new_u->hed = _me_copy_south_in(old_u->hed);
