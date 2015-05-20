@@ -176,7 +176,8 @@
       --
   |_  [moz=(list move) biz=(list dill-blit)]
   ++  diff-sole-effect                                  ::
-    |=  [way=wire fec=sole-effect]  =<  se-abet
+    |=  [way=wire fec=sole-effect]  
+    =<  se-abet  =<  se-view
     =+  gyl=(drum-phat way)
     ?:  (se-aint gyl)  +>.$
     (se-diff gyl fec)
@@ -227,7 +228,7 @@
     ?-  -.saw
       %|  (se-dump p.saw)
       %&  ?>  =(q.wel p.p.saw)
-          =.  +>.$  (se-text "[{<p.saw>}]")
+          ::  =.  +>.$  (se-text "[{<p.saw>}]")
           +>.$(fur (~(put by fur) q.wel `[p.wel %da r.p.saw]))  
     == 
   ::

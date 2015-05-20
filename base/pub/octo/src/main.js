@@ -2,6 +2,7 @@ $(function() {
   $bord = $('#bord')
   $whom = $('#whom')
 
+  lett = ["x","o"]
   symb = [" ","✕","◯"]
   draw = function(state) {
     space = function(_state,y,x) { 
@@ -21,21 +22,34 @@ $(function() {
       }
     }
     $bord.html(s)
-    $whom.html((state.who == 'x' ? symb[1] : symb[2]))
+   turn(state.who)
   }
 
+  which = null
+  turn = function(who) {
+    $('body').toggleClass('turn',(who == which))
+  }
+
+  assign = function(who) {
+    which = who
+    turn(who)
+    $('#ship .as').text(symb[Number(!lett.indexOf(who))+1])
+    $('#user .as').text(symb[lett.indexOf(who)+1])
+  }
 
   urb.appl = 'octo'
-  urb.bind('/octo/o', function(err,res) {
+  urb.bind('/octo/web', function(err,res) {
+    if(which == null) { assign(res.data.who) }
     draw(res.data)
   })
 
-  draw({
-    box:[false,false,false,false,false,false,false,false,false],
-    boo:[false,false,false,false,false,false,false,false,false]
-  })
+  // draw({
+  //   box:[false,false,false,false,false,false,false,false,false],
+  //   boo:[false,false,false,false,false,false,false,false,false]
+  // })
 
   $bord.on('click', function(e) {
+    if(!$('body').hasClass('turn')) { return false }
     $t = $(e.target).closest('.spac')
     data = $.map(
       $t.attr('data-index').split('-'), 

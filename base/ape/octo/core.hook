@@ -65,7 +65,7 @@
 =>  |%                                                  ::  parsers
     ++  colm  (cook |=(a=@ (sub a '1')) (shim '1' '3')) ::  row or column
     ++  come  ;~(plug colm ;~(pfix fas colm))           ::  coordinate
-    ++  comb  (pick come (punt ;~(pfix sig comp)))      ::  all command input
+    ++  comb  (pick come ;~(pfix sig (punt comp)))      ::  all command input
     ++  comp  ;~(plug fed:ag ;~(pfix ace (flag %x %o))) ::  login command
     ++  cope  |=(? ?:(+< (stag %| (cold ~ sig)) comb))  ::  with wait mode
     --                                                  ::
@@ -101,7 +101,7 @@
   ++  plow  |=  [lev=?(%0 %1 %2) mus=(unit tape)]       ::  complete print
             abet:(mean:(play lev) mus)                  ::
   ++  prom  %^  emit  %pro  %&  :-  %octo               ::  update prompt
-            ?:  wait  "(xir turn) "                     ::
+            ?:  wait  "(their turn) "                   ::
             ": {~[(icon who.gam)]} to move (row/col): " ::  
   ++  plan  |=  mut=(unit mote)                         ::  peer command
             ?~  mut  ?~(but abet:beep stop:abet)        ::
@@ -119,8 +119,8 @@
 ++  flet  |=(from ~(. et +< (~(got by q.eye) ost)))     ::  in old client
 ++  fret  |=(from ~(. et +< *sole-share))               ::  in new client
 ++  like  |=(xir=ship |*(* [/octo [xir %octo] +<]))     ::  to friend
-++  link  |=  mot=mote  %-  dish(but `[| mot])          ::  subscribe to friend
-          peer/((like p.mot) /octo/[?:(q.mot %x %o)])   ::  
+++  link  |=  mot=mote  %+  dish(but `[| mot])  %peer   ::  subscribe to friend
+          ((like p.mot) /octo/net/[?:(q.mot %x %o)])    ::  
 ++  pals  %+  turn  (pale hid (prix /sole))  |=  sink   ::  per console 
           [[p=p.+< q=q.+<] r=(~(got by q.eye) p.+<)]    ::
 ++  park  |=  [lev=?(%0 %1 %2) mus=(unit tape)]         ::  update all
@@ -140,11 +140,17 @@
           ?.  &(?=([~ %& *] but) =(src p.q.u.but))  +>  ::
           ?:  =(^gam gam)  +>                           ::
           (park(gam gam) %2 ~)                          ::
-++  peer-octo                                           ::  linked by friend
+++  peer-octo-net                                       ::  urbit peer
           |=  [from pax=path]  =<  abet                 ::
           =+  who==(%x -.pax)                           ::
-          ?^  but  (park %2 ~)                          :: [~ %& !who src]
-          (park:(link src !who) %2 `"link by {<src>}")  ::
+          ?^  but  (park %2 ~)                          ::
+          (park:(link src !who) %2 `"net from {<src>}") ::
+++  peer-octo-web                                       ::  web peer
+          |=  [from pax=path]  =<  abet                 ::
+          ~&  [%peer-web +<]                            ::
+          ?^  but  (park %2 ~)                          ::
+          %+  park(but `[%& src !who.gam])  %2          ::
+          `"web from {<src>}"                           ::
 ++  peer-sole                                           ::  console subscribe
           |=  [from pax=path]  =<  abet                 ::
           (plow:(fret +<-) %2 ~)                        ::
@@ -165,7 +171,7 @@
           ==                                            ::
 ++  pull-octo                                           ::
           |=  [from *]  =<  abet                        ::
-          (park(but ~) %0 `"dropped")                   ::
+          (park(but ~) %2 `"dropped")                   ::
 ++  pull-sole                                           ::  disconnect console
           |=  [from *]  =<  abet                        ::
           amok:(flet +<-)                               ::
