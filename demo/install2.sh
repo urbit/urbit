@@ -8,5 +8,5 @@ DESK=urbit/$X/$X/in/$DEMO
 echo "cp -f $COLD/2-ape-tictactoe.hoon $DESK/ape/tictactoe/core/hook"
 cp -f $COLD/1-ape-tictactoe.hoon $DESK/ape/tictactoe/core/hook
 
-echo "cp -f $COLD/mar-tictactoe-game.hoon $DESK/mar/tictactoe-game/door.hook"
-cp -f $COLD/mar-tictactoe-game.hoon $DESK/mar/tictactoe-game/door.hook
+echo "cp -f $COLD/mar-octo-game.hoon $DESK/mar/octo-game/door.hook"
+cp -f $COLD/mar-octo-game.hoon $DESK/mar/octo-game/door.hook
