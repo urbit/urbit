@@ -83,7 +83,15 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   ^-  move
   [ost %send way [his app.hid] %poke mez]
 ::
-++  poke-bit-send                        ::  send to ship
+++  poke-bit-send                        ::  send to address
+  |=  [[ost=bone @] addr=@uc amount=@t]
+  :_  +>.$
+  :_  ~
+  =+  info=[to/s/(rsh 3 2 (scot %uc addr)) amount/s/amount ~]
+  =+  jon=(joba %transaction (jobe info))
+  (api-call ost /send /transactions/'send_money' %post jon)
+::
+++  poke-bit-ship-send                        ::  send to ship
   |=  [[ost=bone @] to=ship amount=@t]
   =.  outgoing.vat  (~(put by outgoing.vat) to amount)
   :_  +>.$
