@@ -63,7 +63,7 @@ Commands
       *bit
  
   Auth in (from dojo):
-      :bit+auth '2c4fcf5349a5710efa66e7398703b02c306942048296ea649352c4ac985d0a8a'  'f771f6dc08910095b2476b033dca62ddcb302b6617e6a7d4d66e194a2a9bd605'
+      :bit+auth [reacted-see-asana] 'f771f6dc08910095b2476b033dca62ddcb302b6617e6a7d4d66e194a2a9bd605'
 
   In webtalk, click on the link and auth in. The password for coinbase account anton.dyudin@tlon.io has been communicated privately.
 
