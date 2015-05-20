@@ -9,4 +9,4 @@
         [arg=[syd=@tas her=@p sud=@tas ~] ~]
     ==
 :-  %hood-sync
-arg
+[syd her sud]:arg
