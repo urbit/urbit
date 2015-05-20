@@ -1,0 +1,302 @@
+::
+::
+::::
+  :: 
+/?  314
+/-  *talk
+/+  talk, sole
+!:
+::::  sivtyv-barnel
+  ::  be sure to have oauth2-code mark
+|%
+++  redirect-uri  (crip (urle "http://localhost:8444/gen/main/pub/fab/coin"))
+++  client-id  '2e688dde3f7655e7c261313a286e69e7c61ec5502459408b7818c4c74c77bf45'
+++  auth-url  "https://www.coinbase.com/oauth/authorize?". 
+    "response_type=code".
+    "&client_id=2e688dde3f7655e7c261313a286e69e7c61ec5502459408b7818c4c74c77bf45".
+    "&redirect_uri={(urle "http://localhost:8443/gen/main/pub/fab/coin")}".
+    "&scope=user+balance+buy+sell+send+transactions".
+    "&{(urle "meta[send_limit_amount]")}=1&{(urle "meta[send_limit_curency]")}=BTC&{(urle "meta[send_limit_period]")}=day"
+
+++  axle
+  $:
+     key=[atok=@t secr=@t refr=@t]
+     ::outbox=[p=@u q=(map ,@u hiss)]
+     account-info=(unit ,[bitbal=@t usdval=@t lasttrans=@t])
+  ==
+++  move  ,[bone (mold note gift)]
+++  note
+  $%  $:  %e
+  $%  [%them p=(unit hiss)]
+      [%nice ~]
+  ==  ==
+  [%g %mess [ship path] ship cage]
+  ==
+++  coin-args                       ::  passed as hoon type from shell
+  $%
+    [%buy qty=@u currency=@tas ~]
+    [%view-balance ~]
+    [%refresh-manually ~]
+    [%get-updates ~]
+    [%sell qty=@u currency=@tas ~]
+    [%send to=@t qty=@u currency=@tas ~]
+  ==
+++  gift
+  $%  [%nice ~]
+      [%rush %json json] 
+  ==
+++  sign
+  $%  $:  %e
+  $%  [%thou p=httr]
+      [%nice ~]
+  ==  ==
+      $:  %g
+  $%  [%mean p=ares]
+      [%nice ~]
+  ==  ==  ==
+::
+--
+::
+!:
+|_  [hid=hide vat=axle]
+++  peer  ,_`.
+++  poke-keys::oauth2-code
+  |=  [ost=bone his=ship arg=(list cord)]
+  =:  secr.key.vat  -.arg
+      atok.key.vat  &2.arg
+    ==
+    ~&  key.vat
+  =+  ^-  thot=thought
+      :+   `serial``@uv`eny.hid
+          `audience`[[`partner`[%& our.hid %court] `(pair envelope delivery)`[`envelope`[& ~] `delivery`%pending]] ~ ~]
+          `statement`[lat.hid ~ [%lin & 'keys stored']]
+::  =+  prl=`purl`(need (epur (crip auth-url)))
+:: =+  ^-  url=thought
+::     :+   `serial``@uv`eny.hid
+::         `audience`[[`partner`[%& our.hid %court] `(pair envelope delivery)`[`envelope`[& ~] `delivery`%pending]] ~ ~]
+::         `statement`[lat.hid ~ [%url prl]]
+  =+  cag=`cage`[%talk-command !>([%publish `(list thought)`[thot ~]])]
+  :_  +>.$
+  :-  [ost %pass /test %g %mess [our.hid /talk] his cag]
+  (get-token ost)
+++  prep  ,_`.
+++  hisser
+  |=  [ost=bone move-data=wire endpoint=path reqtype=$|(%get [%post p=json]) args=quay]
+  ^-  [(list move) _+>.$]
+  =+  ^=  prl
+      :+  hrt=[security=%.y port=~ host=[%.y path=/com/coinbase]]
+        prk=[extension=~ path=endpoint]
+      quy=args
+  =+  ^-  hiz=hiss
+    :-  prl
+    ?@  reqtype
+      `moth`[reqtype ~ ~]
+    `moth`[-.reqtype ~ `(tact (pojo p.reqtype))]
+  :-  :_  ~ 
+      :^  ost  %pass
+        =-  ~&  hiss/-  -
+        [(scot %ud p.outbox.vat) move-data]
+      :^  %e  %them  ~
+      hiz
+  +>.$
+   :: p.outbox.vat  +(p.outbox.vat)
+    ::q.outbox.vat  [(~(put by q.outbox.vat) p.outbox.vat hiz)]
+++  spam
+    |=  newtranz=(list ,@t)
+    ^-  (list move)
+    %+  turn  (~(tap by sup.hid))   ::  listify subscribers
+    |=  [ost=bone *]
+    ^-  move
+    :^  ost  %give  %rush  
+    :+  %json  %a
+    %+  turn  newtranz
+    |=(a=cord [%s a])
+
+++  get-token
+  |=  os=bone
+  ^+  [*(list move) +>]
+  =+  ^=  queries
+      :~  ['grant_type' 'authorization_code']
+          ['code' atok.key.vat]
+          ['redirect_uri' redirect-uri]
+          ['client_id' client-id]
+          ['client_secret' secr.key.vat] 
+      ==
+  =^  hiz  +>.$ ::  =+ hiz as head of hisser, change +>.$ to tail of hisser to reflect outbox changes
+    (hisser os /code /oauth/token [%post ~] queries) 
+  [[[ost %give %nice ~] hiz] +>.$]
+::
+++  poke-coin-args
+  |=  [ost=bone you=ship arg=coin-args]
+  ^+  [*(list move) +>]
+  ::  send to parent app, as :coin args spawns an ephemeral app. ask me if this confuses you.
+  ?.  =(/coin imp.hid)                    ::?= makes imp.hid too specific a type for +>.$
+    =+  cag=`cage`[%coin-args !>(arg)]   
+    ~&  instance/arg
+    :_(+>.$ [ost %pass /foreign %g %mess [our.hid /coin] you cag]~)  ::sending to parent app
+  ?-  -.arg
+    %buy
+      =+  quy=['access_token' atok.key.vat]~
+      =+  jon=(jobe qty/(jone qty.arg) currency/s/(cuss (trip currency.arg)) ~) 
+      [(hisser ost /bought /api/v1/buys [%post p=jon] quy)]
+    %sell
+      =+  quy=['access_token' atok.key.vat]~
+      =+  jon=(jobe qty/(jone qty.arg) currency/s/(cuss (trip currency.arg)) ~)
+      [(hisser ost /sold /api/v1/sells [%post p=jon] quy)]
+    %send
+      =+  quy=['access_token' atok.key.vat]~
+      =+  jon=(joba transaction/(jobe to/[%s to.arg] 'amount_currency_iso'^[%s (cuss (trip currency.arg))] 'amount_string'^(jone qty.arg) ~))
+      =+  quy=['access_token' atok.key.vat]~
+      ~&  sending/(crip (pojo jon))
+      (hisser ost /view /api/v1/transactions/'send_money' [%post jon] quy)
+    %view-balance
+      =+  quy=['access_token' atok.key.vat]~
+      (hisser ost /view /api/v1/accounts %get quy)
+    %refresh-manually
+    ~&  %trying-to-r-m
+      =+  ^=  queries
+          :~  ['grant_type' 'refresh_token']
+              ['redirect_uri' redirect-uri]
+              ['client_id' client-id]
+              ['client_secret' secr.key.vat] 
+              ['refresh_token' refr.key.vat]
+          ==
+      (hisser ost /refresh /oauth/token [%post ~] queries) :: refresh
+    %get-updates
+      (auto-updates ost)
+  ==
+
+::  
+++  return  |=(a=(list move) [a +>.$])
+++  parse-error                     ::  parses the various error messages we receive
+  |=  [ost=bone pax=path jon=json]
+  ^-  (unit ,[(list move) _+>.$])
+  =+  misc-error=%.(jon =>(jo (ot errors/(ar so) ~)))
+  ?^  misc-error
+    %-  some                          ::  HAVE TO SOME BECAUSE RESULT IS UNIT
+    ~&  miscellaneous-error/u.misc-error
+    (return)                          ::  
+  =+  token-error=%.(jon =>(jo (ot 'invalid_grant'^so 'error_description'^so ~)))
+  ?^  token-error                                   
+    %-  some
+    ~&  token-err/jon 
+      ?:  ?=([%refresh ~] pax)                   ::  if refresh failure, stop
+        ~&  coin/oauth/%refresh-loop
+        [~ +>.$]
+      =+  ^=  queries
+          :~  ['grant_type' 'refresh_token']
+              ['redirect_uri' redirect-uri]
+              ['client_id' client-id]
+              ['client_secret' secr.key.vat] 
+              ['refresh_token' refr.key.vat]
+          ==
+      [(hisser ost /refresh /oauth/token [%post ~] queries)] :: refresh
+  ~  ::  no error parsed
+::
+++  peer                            ::  call when someone subscribes to you
+  |=  [ost=bone *]                  ::  need ost to send confirmation back
+  :_  +>.$ 
+  :-  [ost %give %nice ~]
+  ?~  account-info.vat  ~ 
+  [ost %give %rush %json [%a [%s lasttrans.u.account-info.vat]~]]~ ::  have to send arr of str
+
+++  pour
+  |=  [ost=bone pax=path sih=sign]
+  ^+  [*(list move) +>]
+  ~&  pour-pax/pax
+  ?-  &2.sih
+    %nice                           ::  receive positive acknowledgement
+      ~&  %nice
+      [[ost %give %nice ~]~ +>.$]
+    %mean                           ::  receive negative acknowledgement
+      ~&  mean/p.sih
+      [~ +>.$]
+    %thou                           ::  receive response
+      ?:  =(401 p.p.sih)            ::  handle 401, then try to reauth using %refresh-token
+        =+  ^=  queries
+            :~  ['grant_type' 'refresh_token']
+                ['redirect_uri' redirect-uri]
+                ['client_id' client-id]
+                ['client_secret' secr.key.vat] 
+                ['refresh_token' refr.key.vat]
+            ==
+      [(hisser ost /refresh /oauth/token [%post ~] queries)]  ::  send refresh token
+    ?:  =(5 (div p.p.sih 100))                      :: catch http 5xx
+      ~&  [%server-error pax=pax]                   :: print error
+      ::  XX  resend
+      [~ +>.$]                                      :: return state and no moves
+    =+  ~|  parse-error/[pax p.sih]                 :: parse error
+        respbody=(rash q:(need r.p.sih) apex:poja)  :: rash unwraps unit; octs is [p q]
+    =+  error=(parse-error ost pax respbody)
+    ?^  error
+      u.error                                       ::  If parse-error succeeds, return move, context
+    ?~  pax  [[ost %give %nice ~]~ +>.$] :: ~|(%nil-path !!)
+    ::=.  q.outbox.vat  ~|  pax  (~(del by q.outbox.vat) (slav %ud i.pax))
+    =>  .(pax t.pax)
+    ?+  pax  ~|(unhandled-path/pax !!) ::  switch on path of your initial request
+        [%bought ~]
+      ~&  successful-buy-request/respbody
+      `+>.$
+    ::
+        [%sold ~]
+      ~&  successful-sell-request/respbody
+      `+>.$
+        [%view ~]
+        ~&  %viewed
+        ~&  respbody 
+        ~&  %.  respbody
+            =>  jo
+            =+  bal=`$+(json (unit ,[num=@t in=@t]))`(ot amount/so currency/so ~)
+            (ot accounts/(ar (ot name/so balance/bal 'native_balance'^bal ~)) ~)
+        :_(+>.$ ~)
+    ::
+        [?(%code %refresh) ~]
+      |-
+      =+  state=`[atoken=@t secr=@t]`(need ((ot 'access_token'^so 'refresh_token'^so ~):jo respbody))
+      =:  atok.key.vat  atoken.state
+          secr.key.vat  secr.state
+        ==
+      ~&  [%authorized i.pax]
+      [[ost %give %nice ~]~ +>.^$]  ::  ^$ because $ contains other =+'s that would change type of state
+        [%update ~]
+      =+  ^=  updatez
+          ^+  =<  *(unit .) ::
+              $:  [@ btc=@t]
+                  [@ usd=@t]
+                  transhistory=(list ,id=@t)
+              ==
+          ~&  respbody
+          %.  respbody
+          =>  jo
+          %-  ot  :~
+                    %balance^(ot currency/so amount/so ~)
+            'native_balance'^(ot currency/so amount/so ~)
+            'account_changes'^(ar (ot id/so ~))
+          ==
+      ~&  bal/updatez
+      =+  old-lasttrans=`(unit ,@t)`?~(account-info.vat ~ `lasttrans.u.account-info.vat)::  for recursing down to last trans
+      =.  account-info.vat                                  ::  doesn't change type, although it does assert that the new type fits
+        ?~  updatez 
+          ~&  update-unparsable/respbody
+          account-info.vat                                 
+        `[btc.u.updatez usd.u.updatez -.transhistory.u.updatez] :: end =. ; if bal is empty do nothing by returning old state
+      ::
+      =+  ^=  newtrans  ^-  (list ,@t)    ::  LIST NEW TRANSACTIONS
+          ?~  updatez   ~         ::  allow us to address updatez later
+          =+  b=u.updatez
+          ?~  old-lasttrans  transhistory.b
+          |-(?~(transhistory.b ~ ?:(=(i.transhistory.b u.old-lasttrans) ~ [i.transhistory.b $(transhistory.b t.transhistory.b)])))
+      ~&  :-  %new-transactions-received  newtrans
+      :_  +>.$
+      ?~  newtrans
+        ~
+      (spam newtrans)
+    ==
+  ==
+++  auto-updates
+  |=  ost=bone
+  =+  ^=  query
+      ['access_token' atok.key.vat]~
+  (hisser ost /update /api/v1/'account_changes' %get query)
+--
+

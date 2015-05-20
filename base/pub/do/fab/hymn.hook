@@ -1,0 +1,29 @@
+::
+::::
+  :::
+/?    310
+/=    gas    /$    fuel
+::
+::::
+  ::
+  !:
+^-  manx
+
+=+  authcode=(~(get by qix.gas) %'code')
+;html
+  ;head
+    ;script@"/~/at/main/lib/urb.js";
+    ;script: urb.appl = 'do'
+    ;script@"https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js";
+    ;script@"https://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.js";
+    ::;link/"/main/pub/do/src/main.css"(rel "stylesheet");
+    ;title: DO Instance Tracker
+  ==
+  ;body
+   ;*  ?~  authcode  ~ 
+        :_  ~  
+        ;script: authcode='{(trip u.authcode)}'; console.log(authcode)
+    ;div#container;
+    ;script@"/main/pub/do/src/main.js";
+  ==
+==

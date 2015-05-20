@@ -1,0 +1,334 @@
+::  digital ocean fleet management
+::
+::::
+  ::
+/?  310
+::
+::
+::::  sivtyv-barnel
+  ::
+             
+!:
+|%
+++  droplet    
+$:  id=@ud  name=@t  memory=@ud  vcpus=@ud  disk=@ud  locked=?
+    created=@t  status=@t  backup-ids=(list ,@t)  snapshot-ids=(list ,@t)
+    features=(list ,@t)  region=regi  image=img
+    size=syze  size-slug=@t  networks=ntwrks  kernel=kern
+    next-backup-window=json
+==
+++  regi  ,[name=@t slug=@t sizes=(list ,@t)]
+++  kern  ,[id=@ud name=@t version=@t]
+++  img
+$:  id=@ud  name=@t  distribution=@t  slug=@t  public=?  regions=(list ,@t)
+    created-at=@t  type=@t  min-disk-size=@ud
+==
+++  ntwrks  ,[v4=(list v) v6=(list v)]
+++  v  ,[ip-address=@t netmask=@t gateway=@t type=@t]
+++  syze
+$:  memory=@ud  price-monthly=@t  price-hourly=@t  disk=@ud  vcpus=@ud
+    slug=@t  transfer=@t  available=?  regions=(list ,@t)
+==
+++  reqbody
+$:
+name=@t  region=@t  size=@t  image=@t  ssh=(list cord)
+backups=(unit ,?)  ipv6=(unit ,?)  private-networking=(unit ,?)  user-data=(unit ,@t)
+==
+++  axle  ,[ke=keys toke=tokens drops=(list droplet)]
+++  keys  ,[authc=(unit ,@t) client-secret=(unit ,@t)]
+++  tokens  ,[access=@t refresh=@t]
+++  move  ,[bone (mold note gift)]
+++  note
+$:  %e
+  %them
+(unit hiss)
+==
+++  gift
+$%  [%nice ~]
+    [%rush %json json]
+==
+++  sign
+$:  %e
+$%  [%thou p=httr]
+==  ==
+--
+!:
+|% ::: 
+++  parse-img
+  =>  jo
+  %-  ot
+  :~  id/ni  name/so  distribution/so  slug/so  public/bo
+  regions/(ar so)  'created_at'^so  type/so  'min_disk_size'^ni
+  ==
+++  parse-ntwrks
+  =>  jo
+  %-  ot  
+  :+  v4/(ar (ot 'ip_address'^so netmask/so gateway/so type/so ~))
+    v6/(ar (ot 'ip_address'^so netmask/so gateway/so type/so ~))
+  ~
+++  parse-size
+  =>  jo
+  %-  ot
+  :~  memory/ni  'price_monthly'^no  'price_hourly'^no  disk/ni
+  vcpus/ni  slug/so  transfer/no  available/bo  regions/(ar so)
+  ==
+++  parse-region
+  =>  jo
+  (ot name/so slug/so sizes/(ar so) ~)
+++  create-body
+  |=  $:  name=@t  region=@t  size=@t  image=@t  ssh-keys=(list cord)
+      backups=(unit ,?)  ipv6=(unit ,?)  private-networking=(unit ,?)  user-data=(unit ,@t)  
+  ==
+  %-  jobe
+  :~  name/s/name  region/s/region  size/s/size  image/s/image
+      'ssh_keys'^a/(turn ssh-keys |=(cord s/+<))  backups/?~(backups ~ b/u.backups)  ipv6/?~(ipv6 ~ b/u.ipv6)
+      'user_data'^?~(user-data ~ s/u.user-data)  'private_networking'^?~(private-networking ~ b/u.private-networking)
+  ==
+++  state-to-json
+  |=  a=(list droplet)
+  :-  %a
+  %+  turn  a
+  |=  droplet
+  ^-  json
+  %-  jobe
+  :~  id/`json`(jone id)
+      name/`json`s/name
+      vcpus/`json`(jone vcpus)
+      disk/`json`(jone disk)
+      locked/b/locked
+      created/s/created
+      status/s/status
+      backup-ids/a/(turn backup-ids |=(el=cord s/el))
+      snapshot-ids/a/(turn snapshot-ids |=(el=cord s/el))
+      features/a/(turn features |=(el=cord s/el))
+      =+  ^=  reg  
+      :~  name/s/name.region  slug/s/slug.region
+          sizes/a/(turn sizes.region |=(el=cord s/el))
+      ==
+      region/(jobe reg)
+      =+  ^=  im
+      :~  id/(jone id.image)  name/s/name.image  distribution/s/distribution.image
+          slug/s/slug.image  public/b/public.image
+          regions/a/(turn regions.image |=(el=cord s/el))
+          created-at/s/created-at.image  type/s/type.image
+          min-disk-size/(jone min-disk-size.image)
+      ==
+      image/(jobe im)
+      =+  ^=  sz
+      :~  memory/(jone memory.size)  price-monthly/s/price-monthly.size
+          price-hourly/s/price-hourly.size  disk/(jone disk.size)  vcpus/(jone vcpus.size)
+          slug/s/slug.size  transfer/s/transfer.size  available/b/available.size
+          regions/a/(turn regions.size |=(el=cord s/el))
+      ==
+      size/(jobe sz)
+      size-slug/s/size-slug
+      =+  ^=  nt
+          =+  ^=  vobj
+              |=  v
+              %-  jobe  :~
+                ip-address/s/ip-address  netmask/s/netmask
+                gateway/s/gateway        type/s/type
+              ==
+          :~  v4/[%a (turn v4.networks vobj)]
+              v6/[%a (turn v4.networks vobj)]
+          ==
+      networks/(jobe nt)
+      kernel/s/'kernel'
+      next-backup-window/s/'valid'
+  ==
+--
+!:
+|_  [hid=hide vat=axle]
+::
+++  auth-queries
+    :~  'grant_type'^'authorization_code'
+        'code'^(need authc.ke.vat)
+        :-  'client_id'
+        'd8f46b95af38c1ab3d78ad34c2157a6959c23eb0eb5d8e393f650f08e6a75c6f'
+        'redirect_uri'^'http://localhost:8443/main/pub/do/fab'
+    ==
+++  httpreq
+    |=  $:    ost=bone  pour-path=wire
+            domain=(list cord)  end-point=path
+          req-type=$?(%get [%post json])  headers=math
+        queries=quay
+        ==
+    ^-  move
+    =+  ^-  parsed-url=purl
+        :+  ^=  host-port                               ::  ++hart
+            :+  security=%.y
+              port=~
+            host=[%.y [path=[%com domain]]]
+          endpoint=[extensions=~ point=end-point]       ::  ++pork,
+        q-strings=queries                               ::  ++quay
+    =+  ^-  request=hiss                                ::  cast to hiss
+        :-  parsed-url
+        ?@  req-type
+          [%get headers ~]
+        [%post headers ~ (tact (pojo +.req-type))]
+    :^  ost  %pass  pour-path
+    :+  %e  %them
+    `(unit hiss)`[~ request]
+::++  prep  ,_`.                        ::  wipe state when app code is changed
+::
+++  peer
+  |=  [ost=bone you=ship pax=path]
+  ^-  [(list move) _+>.$]
+  :_  +>.$
+  [ost %give %rush %json (state-to-json drops.vat)]~
+::
+++  poke-oauth2-code
+  |=  [ost=bone you=ship code=cord]
+  ^-  [(list move) _+>.$]
+  =.  authc.ke.vat
+    [~ code]
+  =+  ath=(need authc.ke.vat)
+  :_  +>.$
+  [ost %give %nice ~]~
+::
+++  poke-client-secret
+  |=  [ost=bone you=ship secret=cord]
+  ^-  [(list move) _+>.$]
+  =.  client-secret.ke.vat
+    [~ secret]
+  ~&  client-secret.ke.vat
+  :_  +>.$
+  :_  [ost %give %nice ~]~
+  %^  httpreq  ost  /auth
+  :^    ~[%digitalocean %cloud]  `path`/v1/oauth/token
+      [%post ~]
+  :-  ~  `quay`['client_secret'^(need client-secret.ke.vat) auth-queries]
+::
+++  receive-auth
+  |=  [ost=bone pour-path=path resp=sign]
+  =+  body=(rash q:(need r.p.+.resp) apex:poja)
+  ~&  body
+  =+  [ac re]=(need ((ot 'access_token'^so 'refresh_token'^so ~):jo body))
+  =:  access.toke.vat   ac
+      refresh.toke.vat  re
+    == 
+  ~&  toke.vat
+  :_  +>.$
+  [ost %give %nice ~]~
+::
+++  poke-json
+  |=  [ost=bone you=ship act=json]
+  ^-  [(list move) _+>.$]
+  =+  do=(need ((ot action/so ~):jo act))
+  ?+  do  !!
+  %list
+    :_  +>.$
+    :+  [(list-droplets ost)]
+      [ost %give %nice ~]
+    ~
+  %create
+    :_  +>.$
+    =+  ^-  deets=reqbody
+        %-  need
+        %.  act
+        =>  jo
+        %-  ot
+        :~  name/so  region/so  size/so  image/so  ssh/(ar so)  backups/(mu bo)
+        'ipv6'^(mu bo)  'priv_networking'^(mu bo)  'user_data'^(mu so)
+        ==
+    :+  [(create-droplet ost deets)]
+      [ost %give %nice ~]
+    ~
+  %reboot
+    :_  +>.$
+    =+  id=(need ((ot id/ni ~):jo act))
+    ~&  id
+    ^-  (list move)
+    :+  `move`(reboot-droplet ost id)
+      [ost %give %nice ~]
+    ~
+  ==
+
+++  reboot-droplet
+  |=  [os=bone id=@ud]
+  %-  httpreq  :*
+    os
+    /reboot
+    ~[%digitalocean %api]
+    =+  path=`path`/v2/droplets/'5073686'/actions
+    ~&  path
+    path
+    [%post `json`(jobe type/s/'reboot' ~)]
+    (mo ['Content-Type' 'application/json' ~] ['Authorization' (cat 3 'Bearer ' access.toke.vat) ~] ~)
+    *quay
+   ==
+
+++  list-droplets
+  |=  os=bone
+  ~&  'poked'
+  =+  ^=  lis
+      :~  os                 /list
+      ~[%digitalocean %api]  /v2/droplets
+      %get
+      (mo ['Content-Type' 'application/json' ~] ['Authorization' (cat 3 'Bearer ' access.toke.vat) ~] ~)
+      ==
+  (httpreq lis)
+::
+++  receive-list
+  |=  [ost=bone pour-path=path resp=sign]
+  =+  parsed=(rash q:(need r.p.+.resp) apex:poja)
+  =+  dar=(need ((ot droplets/(ar some) ~):jo parsed))
+  =+  ^-  dropz=(list droplet)
+      ~|  bad-json/-.dar
+      %+  turn  dar
+      |=  drp=json
+      %-  need
+      %.  drp  =+  jo
+      %-  ot
+      :~  id/ni  name/so  
+         memory/ni  vcpus/ni  disk/ni
+         locked/bo  'created_at'^so  status/so
+         'backup_ids'^(ar so)  'snapshot_ids'^(ar so)  features/(ar so)
+         region/parse-region  image/parse-img  size/parse-size
+         'size_slug'^so  networks/parse-ntwrks  kernel/(ot id/ni name/so version/so ~)
+         'next_backup_window'^some
+      ==
+  =.  drops.vat
+  dropz 
+  ~&  drops/drops.vat
+  :_  +>.$
+  [ost %give %nice ~]~
+::
+++  create-droplet
+  |=  [os=bone reqbody]
+  ~&  'reached'
+  =+  ^=  create  :*
+      os                     /create
+      ~[%digitalocean %api]  /v2/droplets
+      :-  %post
+      %-  create-body
+      :*  name  region  size  image  ssh  backups
+      ipv6  private-networking  user-data
+      ==
+      %^  mo  ['Content-Type' 'application/json' ~]
+      ['Authorization' (cat 3 'Bearer ' access.toke.vat) ~]  ~
+      ~
+      ==
+  (httpreq create)
+:: 
+++  pour
+  |=  [ost=bone pour-path=path resp=sign]
+  ^-  [(list move) _+>.$]
+  ?+    -.pour-path  !!
+      %auth
+    (receive-auth ost pour-path resp)
+  ::
+      %list
+    (receive-list ost pour-path resp)
+  ::
+      %create
+      ~&  created/resp
+      :_  +>.$
+      [ost %give %nice ~]~
+  ::
+      %reboot
+    ~&  resp
+    :_  +>.$
+    [ost %give %nice ~]~
+  ==
+--
