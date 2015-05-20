@@ -37,7 +37,7 @@ $(function() {
     $('#user .as').text(symb[lett.indexOf(who)+1])
   }
 
-  urb.appl = 'octo'
+  urb.appl = 'tictactoe'
   urb.bind('/octo/web', function(err,res) {
     if(which == null) { assign(res.data.who) }
     draw(res.data)

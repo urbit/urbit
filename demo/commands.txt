@@ -42,7 +42,7 @@ Commands
 
   For A or B, to log in to X's tictactoe:
 
-      +~X/tictactoe
+      +~X/
 
   To log out:
 
