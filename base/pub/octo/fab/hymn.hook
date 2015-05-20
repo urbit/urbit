@@ -27,7 +27,6 @@
       ==
     ==
     ;div#bord;
-    ;div#whom;
     ;script(type "text/javascript", src "/home/pub/octo/src/main.js");
   ==
 ==
