@@ -1,6 +1,5 @@
 #what,
-#bord,
-#whom {
+#bord {
   width: 600px;
   text-align: center;
   position: absolute;
@@ -10,17 +9,18 @@
 
 #what {
   height: 36px;
+  top: 18px;
 }
 
 #bord {
   height: 600px;
   position: absolute;
-  top: 72px;
+  top: 111px;
+  opacity: .6;
 }
 
-#whom {
-  color: red;
-  top: 636px;
+.turn #bord {
+  opacity: 1;
 }
 
 #what {
@@ -37,14 +37,32 @@
   text-transform: uppercase;
 }
 
+.turn #what #ship,
+#what #user {
+  border: 2px solid #fff;
+}
+
+#what #ship,
+.turn #what #user {
+  border: 2px solid red;
+}
+
+#what #ship,
+#what #user {
+  padding: .6rem;
+}
+
+#what .as {
+  width: 1.6rem;
+}
+
 #vs {
   margin: 0 1rem;
   padding: .3rem;
   color: #fff;
-  background-color: #ccc;
+  background-color: #000;
 }
 
-#whom,
 .spac {
   font-size: 100px;
   line-height: 200px;
