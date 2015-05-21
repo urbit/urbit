@@ -2874,40 +2874,57 @@
   ^-  soba
   :-  *cart
   =|  pax=path
+  ::  =-  ~&  [%khan (turn - |=((pair path miso) [p -.q]))]  -
   |-  ^-  (list ,[p=path q=miso])
   ?~  ank
     ?~  kan
+      ::  ~&  >>  [pax %ank-kan-sig]
       ~
+    ::  ~&  >>  [pax %ank-sig]
     =+  =+  (~(tap by dir.u.kan))
-        |-(?~(+< ~ (weld ^$(pax [p.i pax], kan `q.i) $(+< t))))
+        ::  ~&  [%dirukan pax=pax (~(run by dir.u.kan) (cury test ~))]
+        |-  ^-  (list (pair path miso))
+        ?~  +<  ~
+        ?~  q.i  $(+< t)
+        (weld ^$(pax [p.i pax], kan `u.q.i) $(+< t))
     ?~  fil.u.kan
       -
     ?~  u.fil.u.kan
       -
+    ::  ~&  >>  [pax %ins-1]
     [[(flop pax) %ins u.u.fil.u.kan] -]
   ?~  kan
+    ::  ~&  >>  [pax %kan-sig]
     =+  =+  (~(tap by r.u.ank))
         |-(?~(+< ~ (weld ^$(pax [p.i pax], ank `q.i) $(+< t))))
     ?~  q.u.ank
       -
     [[(flop pax) %del q.u.q.u.ank] -]
+  ::  ~&  >>  [pax %neither-sig]
   =+  %+  weld
         =+  (~(tap by r.u.ank))
         |-  ^-  (list ,[p=path q=miso])
         ?~  +<  ~
+        =+  (~(get by dir.u.kan) p.i)
+        ?:  ?=([~ ~] -)  $(+< t)
         %-  weld  :_  $(+< t)
-        ^$(pax [p.i pax], ank `q.i, kan (~(get by dir.u.kan) p.i))
+        ::  ~&  >>  [pax %ankhing p.i ?=(~ -)]
+        ^$(pax [p.i pax], ank `q.i, kan ?~(- ~ `u.u.-))
       =+  (~(tap by dir.u.kan))
+      ::  ~&  >  [%sdirukan pax=pax (~(run by dir.u.kan) (cury test ~))]
       |-  ^-  (list ,[p=path q=miso])
       ?~  +<  ~
+      ?~  q.i  $(+< t)
       ?:  (~(has by r.u.ank) p.i)  $(+< t)
+      ::  ~&  >>  [pax %khaning p.i]
       %-  weld  :_  $(+< t)
-      ^$(pax [p.i pax], kan `q.i, ank ~)
+      ^$(pax [p.i pax], kan `u.q.i, ank ~)
   ?~  q.u.ank
     ?~  fil.u.kan
       -
     ?~  u.fil.u.kan
       -
+    ::  ~&  %ins-2
     [[(flop pax) %ins u.u.fil.u.kan] -]
   ?~  fil.u.kan
     -
