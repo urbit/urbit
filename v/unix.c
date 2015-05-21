@@ -948,16 +948,16 @@ _unix_desk_sync_into(u3_noun  who,
   xun = _unix_dir_khan(dir_u);
 
   if ( _(u3ud(xun)) ) {
-    u3z(who); u3z(hox); u3z(syd);
+    u3z(who); u3z(hox); u3z(syd); u3z(xun);
     return;
   }
   else {
     pax = u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul);
-    fav = u3nq(c3__into, who, syd, u3t(xun));
+    fav = u3nq(c3__into, who, syd, u3k(u3t(xun)));
 
     u3v_plan(pax, fav);
 
-    u3z(hox);
+    u3z(hox); u3z(xun);
     return;
   }
 }
