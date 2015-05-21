@@ -552,7 +552,6 @@ _ce_patch_compose(void)
   }
 
   if ( !pgs_w ) {
-    fprintf(stderr, "no dirty pages\r\n");
     return 0;
   }
   else {
