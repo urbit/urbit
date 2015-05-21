@@ -118,7 +118,7 @@
 ++  dish  |=(cad=card (dump 0 cad))                     ::  forward move
 ++  flet  |=(from ~(. et +< (~(got by q.eye) ost)))     ::  in old client
 ++  fret  |=(from ~(. et +< *sole-share))               ::  in new client
-++  like  |=(xir=ship |*(* [/octo [xir %octo] +<]))     ::  to friend
+++  like  |=(a=ship |*(* [/octo [a %tictactoe] +<]))    ::  to friend
 ++  link  |=  mot=mote  %+  dish(but `[| mot])  %peer   ::  subscribe to friend
           ((like p.mot) /octo/net/[?:(q.mot %x %o)])    ::  
 ++  pals  %+  turn  (pale hid (prix /sole))  |=  sink   ::  per console 
