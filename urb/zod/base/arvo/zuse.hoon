@@ -2295,7 +2295,7 @@
   ::
 ++  khan                                                ::
           $:  fil=(unit (unit cage))                    ::  XX see khan-to-soba
-              dir=(map ,@ta khan)                       ::
+              dir=(map ,@ta (unit khan))                ::
           ==                                            ::
 ++  mick  (list ,[path (unit mime)])
 ++  riff  ,[p=desk q=(unit rave)]                       ::  request/desist
