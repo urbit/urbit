@@ -585,7 +585,7 @@ _unix_load(u3_ufil* fil_u)
   pad_y = c3_malloc(fln_w);
 
   red_w = read(fid_i, pad_y, fln_w);
-  close(fid_i);
+  close(fid_i);     //  should probably check the return value
 
   if ( fln_w != red_w ) {
     free(pad_y);
@@ -706,12 +706,13 @@ _unix_dir_khan_file(u3_noun pam, u3_noun wib, u3_noun woz)
   if ( c3n == u3du(wib) ) {
     ole = u3kdb_get(u3k(pam), u3k(wib));
 
-    if ( u3_none == ole ) {
-      ole = u3nc(woz, u3_nul);
+    if ( u3_none == ole ||
+         u3_nul == ole ) {
+      ole = u3nt(u3_nul, woz, u3_nul);
     } else {
       u3_noun elo;
 
-      elo = u3nc(woz, u3k(u3t(ole)));
+      elo = u3nt(u3_nul, woz, u3k(u3t(u3t(ole))));
       u3z(ole);
 
       ole = elo;
@@ -724,29 +725,31 @@ _unix_dir_khan_file(u3_noun pam, u3_noun wib, u3_noun woz)
 
     ole = u3kdb_get(u3k(pam), u3k(fid));
 
-    if ( u3_none == ole ) {
-      ole = u3nc(u3_nul,
+    if ( u3_none == ole ||
+         u3_nul == ole ) {
+      ole = u3nt(u3_nul,
+                 u3_nul,
                  u3kdb_put(u3_nul,
                            u3k(har),
-                           u3nc(woz, u3_nul)));
+                           u3nt(u3_nul, woz, u3_nul)));
     }
     else {
-      u3_noun roo = u3t(ole);
-      u3_weak tup = u3kdb_get(u3k(roo), u3k(har));
       u3_noun oor, elo;
+      u3_noun roo = u3t(u3t(ole));
+      u3_weak tup = u3kdb_get(u3k(roo), u3k(har));
 
       if ( u3_none == tup ) {
-        tup = u3nc(woz, u3_nul);
+        tup = u3nt(u3_nul, woz, u3_nul);
       } else {
         u3_noun upt;
 
-        upt = u3nc(woz, u3k(u3t(tup)));
+        upt = u3nt(u3_nul, woz, u3k(u3t(tup)));
         u3z(tup);
 
         tup = upt;
       }
       oor = u3kdb_put(u3k(roo), u3k(har), tup);
-      elo = u3nc(u3k(u3h(ole)), oor);
+      elo = u3nt(u3_nul, u3k(u3h(u3t(ole))), oor);
 
       u3z(ole); ole = elo;
     }
@@ -761,6 +764,10 @@ _unix_dir_khan_file(u3_noun pam, u3_noun wib, u3_noun woz)
 static u3_noun
 _unix_dir_khan(u3_udir* dir_u)
 {
+  if ( c3y == dir_u->dry ) {
+    return u3_nul;
+  }
+
   u3_udir* dis_u;
   u3_ufil* fil_u;
   u3_noun pam = u3_nul;
@@ -770,7 +777,7 @@ _unix_dir_khan(u3_udir* dir_u)
     u3_noun kan = _unix_dir_khan(dis_u);
 
     // uL(fprintf(uH, "dir %s\n", u3r_string(pre)));
-    if ( u3_nul != u3h(kan) || u3_nul != u3t(kan) ) {
+    if ( u3_nul == kan || u3_nul != u3h(u3t(kan)) || u3_nul != u3t(u3t(kan)) ) {
       pam = u3kdb_put(pam, pre, kan);
     }
     else {
@@ -803,7 +810,7 @@ _unix_dir_khan(u3_udir* dir_u)
                                      u3nt(u3_nul, u3_nul, baw));
     pam = _unix_dir_khan_file(pam, wib, wol);
   }
-  return u3nc(u3_nul, pam);
+  return u3nt(u3_nul, u3_nul, pam);
 }
 
 /* _find_mug(): find a noun with a given mug.  retain. DELETEME
@@ -940,12 +947,19 @@ _unix_desk_sync_into(u3_noun  who,
 
   xun = _unix_dir_khan(dir_u);
 
-  pax = u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul);
-  fav = u3nq(c3__into, who, syd, xun);
+  if ( _(u3ud(xun)) ) {
+    u3z(who); u3z(hox); u3z(syd);
+    return;
+  }
+  else {
+    pax = u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul);
+    fav = u3nq(c3__into, who, syd, u3t(xun));
 
-  u3v_plan(pax, fav);
+    u3v_plan(pax, fav);
 
-  u3z(hox);
+    u3z(hox);
+    return;
+  }
 }
 
 /* _unix_ship_update(): update top level ship.
