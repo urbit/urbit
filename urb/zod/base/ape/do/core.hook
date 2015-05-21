@@ -8,7 +8,7 @@
 
 ::
 ::
-::::  sivtyv-barnels
+::::  sivtyv-barnel
   ::
              
 !:
@@ -23,7 +23,7 @@ $:  id=@ud  name=@t  memory=@ud  vcpus=@ud  disk=@ud  locked=?
 ++  regi  ,[name=@t slug=@t sizes=(list ,@t)]
 ++  kern  ,[id=@ud name=@t version=@t]
 ++  img
-$:  id=@ud  name=@t  distribution=@t  slug=@t  public=?  regions=(list ,@t)
+$:  id=@ud  name=@t  distribution=@t  slug=(unit ,@t)  public=?  regions=(list ,@t)
     created-at=@t  type=@t  min-disk-size=@ud
 ==
 ++  ntwrks  ,[v4=(list v) v6=(list v)]
@@ -37,26 +37,15 @@ $:
 name=@t  region=@t  size=@t  image=@ud  ssh=(list cord)
 backups=(unit ,?)  ipv6=(unit ,?)  private-networking=(unit ,?)  user-data=(unit ,@t)
 ==
-++  axle  ,[ke=keys toke=tokens drops=(list droplet)]
+++  axle  ,[auth=[do=keys gcp=keys] toke=tokens drops=(list droplet)]
 ++  keys  ,[authc=(unit ,@t) client-secret=(unit ,@t)]
 ++  tokens  ,[access=@t refresh=@t]
-++  hapt  ,[ship path]
-++  move  ,[bone (mold note gift)]
-++  note
-$%
-[%t %wait @da]
-[%g %mess hapt ship cage]
-[%e %them (unit hiss)]
-==    
-++  gift
-$%  [%nice ~]
-    [%rush %json json]
-==  
-++  sign
-$%
-[%t %wake ~]
-[%g %nice ~]
-[%e %thou p=httr]
+++  move  ,[bone card]
+++  card
+$%  [%diff %json json]
+    [%wait wire @da]
+    [%send wire [ship term] %poke %talk-command command]
+    [%them wire (unit hiss)]
 ==
 --
 !:
@@ -64,7 +53,7 @@ $%
 ++  parse-img
   =>  jo
   %-  ot
-  :~  id/ni  name/so  distribution/so  slug/so  public/bo
+  :~  id/ni  name/so  distribution/so  slug/(mu so)  public/bo
   regions/(ar so)  'created_at'^so  type/so  'min_disk_size'^ni
   ==
 ++  parse-ntwrks
@@ -115,7 +104,7 @@ $%
       region/(jobe reg)
       =+  ^=  im
       :~  id/(jone id.image)  name/s/name.image  distribution/s/distribution.image
-          slug/s/slug.image  public/b/public.image
+          slug/?~(slug.image ~ s/u.slug.image)  public/b/public.image
           regions/a/(turn regions.image |=(el=cord s/el))
           created-at/s/created-at.image  type/s/type.image
           min-disk-size/(jone min-disk-size.image)
@@ -154,10 +143,11 @@ $%
   %+  turn  (~(tap by sup.hid))
   |=  [sub=bone @ pax=path]
   ^-  move
-  [sub %give %rush %json jon]
+  [sub %diff %json jon]
 ++  auth-queries  
+    |=  code=cord
     :~  'grant_type'^'authorization_code'
-        'code'^(need authc.ke.vat)
+        'code'^code
         :-  'client_id'
         'd8f46b95af38c1ab3d78ad34c2157a6959c23eb0eb5d8e393f650f08e6a75c6f'
         'redirect_uri'^'http://localhost:8443/home/pub/do/fab'
@@ -181,46 +171,62 @@ $%
         ?@  req-type
           [%get headers ~]
         [%post headers ~ (tact (pojo +.req-type))]
-    :^  ost  %pass  pour-path
-    :+  %e  %them
+    :^  ost  %them  pour-path
     `(unit hiss)`[~ request]
 ::
 ++  peer
-  |=  [ost=bone you=ship pax=path]
+  |=  [[ost=bone you=ship] pax=path]
   ^-  [(list move) _+>.$]
   :_  +>.$
-  [ost %give %rush %json (state-to-json drops.vat)]~
+  [ost %diff %json (state-to-json drops.vat)]~
 ::
-++  poke-oauth2-code
-  |=  [ost=bone you=ship code=cord]
+++  poke-do-auth
+  |=  [[ost=bone you=ship] [cde=cord typ=cord]]
   ^-  [(list move) _+>.$]
-  ~&  code
-  =.  authc.ke.vat
-    [~ code]
-  =+  ath=(need authc.ke.vat)
+  ~&  [cde typ]
+  ?:  =(%do typ) 
+      =.  authc.do.auth.vat
+      [~ cde]
+    :_  +>.$
+    ~
+  =.  authc.gcp.auth.vat
+    [~ cde]
   :_  +>.$
-  [ost %give %nice ~]~
+  ~
 ::
-++  poke-client-secret
-  |=  [ost=bone you=ship secret=cord]
+++  poke-do-secret
+  |=  [[ost=bone you=ship] secret=cord typ=cord]
+  ~&  +<+
   ^-  [(list move) _+>.$]
-  =.  client-secret.ke.vat
-    [~ secret]
-  ~&  [secret=client-secret.ke.vat code=authc.ke.vat]
-  :_  +>.$
-  :_  [ost %give %nice ~]~
-  %^  httpreq  ost  /auth
-  :^    ~[%digitalocean %cloud]  `path`/v1/oauth/token
-      [%post ~]
-  :-  ~  `quay`['client_secret'^(need client-secret.ke.vat) auth-queries]
+  ::=+  [newvat code path]=[vat(auth auth.vat) ...]
+  ::=.  vat  newvat
+  ?+    typ  ~|(missing-platform=typ !!)
+      %do
+    =.  client-secret.do.auth.vat
+      [~ secret]
+    :_  +>.$
+    :_  ~
+    %^  httpreq  ost  /auth
+    :^    ~[%digitalocean %cloud]  `path`/v1/oauth/token
+        [%post ~]
+    :-  ~  `quay`['client_secret'^secret (auth-queries (need authc.do.auth.vat))]
+      %gce
+    =.  client-secret.gcp.auth.vat
+      [~ secret]
+    :_  +>.$
+    :_  ~
+    %^  httpreq  ost  /auth
+    :^    ~[%google %cloud]  `path`/v1/oauth/token
+        [%post ~]
+    :-  ~  `quay`['client_secret'^secret (auth-queries (need authc.gcp.auth.vat))]
+  ==
 ::
 ++  receive-auth
-  |=  [ost=bone pour-path=path resp=sign]
+  |=  [ost=bone pour-path=path resp=httr]
   ^-  [(list move) _+>.$]
-  ?>  ?=(%thou +<.resp)
   ~|  resp
-  =+  body=(rash q:(need r.p.+.resp) apex:poja)
-  ~|  recieve-auth/resp(r.p.+ body)
+  =+  body=(rash q:(need r.resp) apex:poja)
+  ~|  recieve-auth/resp(r body)
   =+  [ac re]=(need ((ot 'access_token'^so 'refresh_token'^so ~):jo body))
   =:  access.toke.vat   ac
       refresh.toke.vat  re
@@ -231,14 +237,14 @@ $%
   ==
 ::
 ++  poke-json
-  |=  [ost=bone you=ship act=json]
+  |=  [[ost=bone you=ship] act=json]
   ^-  [(list move) _+>.$]
   =+  do=(need ((ot action/so ~):jo act))
   ?+  do  !!
       %list
     :_  +>.$
     :-  (list-droplets ost)
-    [ost %give %nice ~]~
+    ~
   ::
       %create
     :_  +>.$
@@ -251,7 +257,7 @@ $%
         'ipv6'^(mu bo)  'priv_networking'^(mu bo)  'user_data'^(mu so)
         ==
     :-  (create-droplet ost deets)
-    [ost %give %nice ~]~
+    ~
   ::
       $?  %reboot  %'power_cycle'  %shutdown  %'power_off'  %'power_on'
           %'password_reset'  %'enable_ipv6'  %'enable_private_networking'
@@ -271,7 +277,7 @@ $%
       ::  restore, resize, rebuild, change_kernelm, retrieve droplet action
   :_  +>.$
   ^-  (list move)
-  :_  [os %give %nice ~]~
+  :_  ~
   =+  ^=  req
   %-  httpreq  :*
     os  /reboot
@@ -293,10 +299,9 @@ $%
     (httpreq lis)
 ::
 ++  receive-list
-  |=  [ost=bone pour-path=path resp=sign]
+  |=  [ost=bone pour-path=path resp=httr]
   ^-  [(list move) _+>.$]
-  ?>  ?=(%thou +<.resp)
-  =+  parsed=(rash q:(need r.p.+.resp) apex:poja)
+  =+  parsed=(rash q:(need r.resp) apex:poja)
   ~|  recieve-list/parsed
   =+  dar=(need ((ot droplets/(ar some) ~):jo parsed))
   =+  ^-  dropz=(list droplet)
@@ -319,31 +324,39 @@ $%
   =+  buf=`@da`(add ~s10 lat.hid)
   :_  +>.$
   :_  (spam (state-to-json drops.vat))
-  [ost %pass /refresh %t [%wait p=buf]]
+  [ost %wait /refresh buf]
 ::
 ++  create-droplet
   |=  [os=bone reqbody]
-  =+  ^=  create  :*
-      os                     /create
-      ~[%digitalocean %api]  /v2/droplets
-      :-  %post
-      %-  create-body
-      :*  name  region  size  image  ssh  backups
-      ipv6  private-networking  user-data
+  =-  ~&  -  -
+  =+  ^-  body=json
+      %-  create-body  :*
+        name  region  size  image  ssh  backups
+        ipv6  private-networking  user-data
       ==
-      %^  mo  ['Content-Type' 'application/json' ~]
-      ['Authorization' (cat 3 'Bearer ' access.toke.vat) ~]  ~
-      ~
-      ==
-  ~&  (httpreq create)
-      (httpreq create)
+  %-  httpreq  :*
+    os                     /create
+    ~[%digitalocean %api]  /v2/droplets
+    [%post body]
+    %^  mo  ['Content-Type' 'application/json' ~]
+      ['Authorization' (cat 3 'Bearer ' access.toke.vat) ~]
+    ~
+    ~
+  ==
 :: 
-++  pour
-  |=  [ost=bone pour-path=path resp=sign]
+++  wake
+  |=  [[ost=bone him=ship pour-path=path] ~]
+  ?+    -.pour-path  !!
+    %refresh
+    :_  +>.$
+    [(list-droplets ost)]~
+  ==
+++  thou
+  |=  [[ost=bone him=ship pour-path=path] resp=httr]
   ^-  [(list move) _+>.$]
   ?+    -.pour-path  !!
       %auth
-    (receive-auth `bone`ost `path`pour-path `sign`resp)
+    (receive-auth `bone`ost `path`pour-path resp)
   ::
       %list
     (receive-list ost pour-path resp)
@@ -360,9 +373,6 @@ $%
       %pub
     :_  +>.$  ~
   ::
-    %refresh
-    :_  +>.$
-    [(list-droplets ost)]~
   ==
 ++  publish
   |=  [ost=bone you=ship act=(list speech)]
@@ -381,6 +391,6 @@ $%
       ^-  thought
       :-  `@`(sham eny.hid tail)
       tail
-  =+  cag=`cage`[%talk-command !>([%publish `(list thought)`spchz])]
-  [ost %pass /pub %g %mess [our.hid /talk] you cag]
+  =+  mez=[%talk-command [%publish `(list thought)`spchz]]
+  [ost %send /pub [our.hid %talk] %poke mez]
 --

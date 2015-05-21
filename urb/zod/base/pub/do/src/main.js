@@ -47,22 +47,29 @@ Droplet = React.createClass({
 })
 
 Page = recl({
-  handleClick: function(){
-    if(window.authcode.length !== ''){
-      console.log(window.authcode);
-      urb.send({
-        appl: "do",
-        data: window.authcode,
-        mark: "oauth2-code"})
-    } else { console.log("nocode") }
+  handleClick: function(platform){
+  return  function(){
+      console.log(platform);
+      if(window.authcode.length !== ''){
+        urb.send({
+          appl: "do",
+          data: {authcode:window.authcode,
+                platform:platform},
+          mark: "do-auth"})
+      } else { console.log("nocode") }
+    }
   },
 
-  sendSecret: function(){
-    if($('#appsecret').val()) {
-      urb.send({appl: "do",
-                data: $('#appsecret').val(),
-                mark: "client-secret" 
-      })
+  sendSecret: function(platform,codeid){
+    return function(){
+    console.log(platform,codeid)
+        secret= $(codeid).val()
+        if(secret !== '') {
+          urb.send({appl: "do",
+                    data: {secret:secret,
+                          platform:platform},
+                    mark: "do-secret"})
+        }
     }
   },
 
@@ -80,7 +87,7 @@ Page = recl({
                     region:$('#region').val(),
                     size:$('#size').val(),
                     image:$('#image').val(),
-                    ssh:[] // $('#ssh').val()],
+                    ssh:[], // $('#ssh').val()]
                     backups:null,//$('#backups').val(),
                     ipv6:null,//$('#ipv6').val(),
                     priv_networking:null,//$('#priv-networking').val(),
@@ -97,22 +104,22 @@ Page = recl({
           a({href:href},[
             "get authcode"
           ]),
-          b({onClick:this.handleClick}, "Send Authcode")
+          b({onClick:this.handleClick('do')}, "Send Authcode")
         ),
         div({}, [
           input({id:"appsecret"}, 
-          b({onClick:this.sendSecret}, "Send Secret"))
+          b({onClick:this.sendSecret('do','#appsecret')}, "Send Secret"))
         ]),
         b({onClick:this.getList}, "Get List"),
         div({},
           a({href:ghref},[
             "Get Google Authcode"
           ]),
-          b({onClick:this.handleClick}, "Send Google Authcode")
+          b({onClick:this.handleClick('gce','#gappsecret')}, "Send Google Authcode")
         ),
         div({}, [
           input({id:"gappsecret"}, 
-          b({onClick:this.sendSecret}, "Send Google Secret"))
+          b({onClick:this.sendSecret('gce')}, "Send Google Secret"))
         ]),
         div({}, [
           b({onClick:this.createDroplet}, "Create Droplet"),
