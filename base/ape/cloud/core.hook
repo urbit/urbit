@@ -150,7 +150,7 @@ $%  [%diff %json json]
         'code'^code
         :-  'client_id'
         'd8f46b95af38c1ab3d78ad34c2157a6959c23eb0eb5d8e393f650f08e6a75c6f'
-        'redirect_uri'^'http://localhost:8443/home/pub/do/fab'
+        'redirect_uri'^'http://localhost:8443/home/pub/cloud/fab'
     ==
 ++  httpreq
     |=  $:    ost=bone  pour-path=wire
@@ -180,7 +180,7 @@ $%  [%diff %json json]
   :_  +>.$
   [ost %diff %json (state-to-json drops.vat)]~
 ::
-++  poke-do-auth
+++  poke-cloud-auth
   |=  [[ost=bone you=ship] [cde=cord typ=cord]]
   ^-  [(list move) _+>.$]
   ~&  [cde typ]
@@ -194,9 +194,8 @@ $%  [%diff %json json]
   :_  +>.$
   ~
 ::
-++  poke-do-secret
+++  poke-cloud-secret
   |=  [[ost=bone you=ship] secret=cord typ=cord]
-  ~&  +<+
   ^-  [(list move) _+>.$]
   ::=+  [newvat code path]=[vat(auth auth.vat) ...]
   ::=.  vat  newvat
@@ -253,7 +252,8 @@ $%  [%diff %json json]
         %.  act
         =>  jo
         %-  ot
-        :~  name/so  region/so  size/so  image/(su dem)  ssh/(ar so)  backups/(mu bo)
+        :~  name/so  region/so  size/so  image/(su dem) ::  id key:img object
+        ssh/(ar so)  backups/(mu bo)
         'ipv6'^(mu bo)  'priv_networking'^(mu bo)  'user_data'^(mu so)
         ==
     :-  (create-droplet ost deets)
