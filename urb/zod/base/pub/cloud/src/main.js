@@ -12,14 +12,14 @@ input = React.DOM.input
 Droplet = React.createClass({
   dropletAction:function(id, action){
     urb.send({
-      appl:"do",
+      appl:"cloud",
       data: {action: action,
             id: id}})
   },
 
   rebootDroplet: function() {
     urb.send({
-      appl: "do",
+      appl: "cloud",
       data: {action: 'reboot',
             id: this.props.id}})
   },
@@ -52,10 +52,10 @@ Page = recl({
       console.log(platform);
       if(window.authcode.length !== ''){
         urb.send({
-          appl: "do",
+          appl: "cloud",
           data: {authcode:window.authcode,
                 platform:platform},
-          mark: "do-auth"})
+          mark: "cloud-auth"})
       } else { console.log("nocode") }
     }
   },
@@ -65,22 +65,22 @@ Page = recl({
     console.log(platform,codeid)
         secret= $(codeid).val()
         if(secret !== '') {
-          urb.send({appl: "do",
+          urb.send({appl: "cloud",
                     data: {secret:secret,
                           platform:platform},
-                    mark: "do-secret"})
+                    mark: "cloud-secret"})
         }
     }
   },
 
   getList: function(){
-    urb.send({appl: "do",
+    urb.send({appl: "cloud",
               data: {action:"list"},
               mark: "json"})
   },
 
   createDroplet: function(){
-    urb.send({appl: "do",
+    urb.send({appl: "cloud",
               data: {
                     action:'create',
                     name:$('#name').val(),
@@ -97,8 +97,8 @@ Page = recl({
   },
 
   render: function(){
-    href = "https://cloud.digitalocean.com/v1/oauth/authorize?client_id=d8f46b95af38c1ab3d78ad34c2157a6959c23eb0eb5d8e393f650f08e6a75c6f&redirect_uri=http%3A%2F%2Flocalhost%3A8443%2Fhome%2Fpub%2Fdo%2Ffab&response_type=code&scope=read+write"
-    ghref = "https://accounts.google.com/o/oauth2/auth?response_type=token&scope=https://www.googleapis.com/auth/compute&state=someinfo&redirect_uri=http://localhost:8443/home/pub/do/fab&client_id=720541965785-jr3c6ijo8abonu9qj77qre1itsdra52r.apps.googleusercontent.com"
+    href = "https://cloud.digitalocean.com/v1/oauth/authorize?client_id=d8f46b95af38c1ab3d78ad34c2157a6959c23eb0eb5d8e393f650f08e6a75c6f&redirect_uri=http%3A%2F%2Flocalhost%3A8443%2Fhome%2Fpub%2Fcloud%2Ffab&response_type=code&scope=read+write"
+    ghref = "https://accounts.google.com/o/oauth2/auth?response_type=token&scope=https://www.googleapis.com/auth/compute&state=someinfo&redirect_uri=http://localhost:8443/home/pub/cloud/fab&client_id=720541965785-jr3c6ijo8abonu9qj77qre1itsdra52r.apps.googleusercontent.com"
       return (div({}, [
         div({},
           a({href:href},[
