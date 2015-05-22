@@ -1822,6 +1822,9 @@
   |*  b=_+<+.a
   (a b c)
 ::
+++  gulf                                                ::  range list
+  |=([a=@ b=@] `(list ,@)`?:(=(a b) ~ [a $(a +(a))]))
+::
 ++  hard                                                ::  force coerce to type
   |*  han=$+(* *)
   |=  fud=*  ^-  han
@@ -8729,7 +8732,7 @@
       ==
     --
   ::
-  ++  scat
+  ++  scat  !:
     %+  knee  *twig  |.  ~+
     %-  stew
     ^.  stet  ^.  limo
@@ -8760,6 +8763,7 @@
         ;~  pose
           (cook |=(a=wing [%cnts a ~]) rope)
           (stag %wtpm ;~(pfix pam (ifix [pel per] (most ace wide))))
+          ;~(plug (stag %dtzz (stag %f (cold & pam))) ;~(pfix fas wide))
           (stag %dtzy (stag %f (cold & pam)))
         ==
       :-  '\''
@@ -8839,6 +8843,7 @@
         ;~  pose
           (cook |=(a=wing [%cnts a ~]) rope)
           (stag %wtbr ;~(pfix bar (ifix [pel per] (most ace wide))))
+          ;~(plug (stag %dtzz (stag %f (cold | bar))) ;~(pfix fas wide))
           (stag %dtzy (stag %f (cold | bar)))
         ==
       :-  '~'
@@ -9590,7 +9595,6 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-!:
 ~%  %arvo  +  ~
 |%
 ++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  fundamental node
