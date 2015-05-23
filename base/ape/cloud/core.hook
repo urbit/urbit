@@ -385,7 +385,9 @@ $%  [%diff %json json]
       `(list cord)`~['googleapis' 'www']  `path`/v1/[project]/zones/[zone]/'instances'
       ~&  'here'
       [%post `json`body]
+      ~&  'here'
       `math`%^(mo ['Authorization' (cat 3 'Bearer ' access.gcp.toke.vat) ~] ~ ~)
+      ~&  'no'
       `quay`~
   ==
   ~&  req  req
