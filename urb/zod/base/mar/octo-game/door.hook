@@ -1,26 +1,28 @@
-::
-::::  /hook/door/octo-game/mar
-  ::
-/?    310
-!:
-|%
-++  rip9
-  =+  b=0
-  |=  a=@  ^-  (list ,@A)
-  ?:  =(b 9)  ~
-  [(cut 0 [b 1] a) $(b +(b))]
---
-!:
-|_  cod=[who=? box=@ boo=@]                             ::  game state
-::
+::                                                      ::  ::
+::::  /hook/door/octo-game/mar                          ::  ::  dependencies
+  ::                                                    ::  ::
+/?    310                                               ::  arvo
+/-    *octo                                             ::  structures
+/+    octo                                              ::  libraries
+!:                                                      ::  ::
+::::                                                    ::  ::  protocol
+  ::                                                    ::  ::
+|_  game                                                ::  game 
 ++  grab                                                ::  convert from
   |%
-  ++  noun  ,[who=? box=@ boo=@]                        ::  clam from %noun
+  ++  noun  game                                        ::  from %noun
   --
-++  grow
+++  grow                                                ::  convert to %json
   |%
-  ++  json  ^-  ^json
-    =>  |=(bor=@ `^json`a/(turn (rip9 bor) |=(a=@A [%b =(1 a)])))
-    (jobe who/s/?:(who.cod %x %o) box/(. box.cod) boo/(. boo.cod) ~)
+  ++  json  ^-  ^json                                   ::  to %json  
+    =+  she=|=(ship s/(scot %p +<))
+    %-  jobe
+    :~  who/s/?:(who %x %o) 
+        plx/?~(p.sag ~ (she u.p.sag))
+        plo/?~(q.sag ~ (she u.q.sag))
+        aud/a/(turn (~(tap by aud)) she)
+        box/~(jon bo box)
+        boo/~(jon bo boo)
+    ==
   --
 --
