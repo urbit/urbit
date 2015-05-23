@@ -67,7 +67,7 @@
             abet:(mean:(play lev) mus)                  ::
   ++  prom  (emit %pro %& %octo stat)                   ::  update prompt
   ++  plan  |=  wid=(unit ship)                         ::  subscribe to peer
-            ?~  wid  (park:stop:abet(gam *game) %2)     ::
+            ?~  wid  (park:stop:abet(gam *game) %2 ~)     ::
             ?^(rem abet:beep (link:abet u.wid))         ::
   ++  rend  (turn `wall`tab:here |=(tape txt/+<))       ::  table print
   ++  send  |=  point  =.  +>+>  %-  dish               ::  upload move
