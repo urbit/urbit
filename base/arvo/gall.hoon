@@ -134,14 +134,14 @@
     ^+  +>
     ?-    -.gux
         %|  
-      =.  +>  (mo-bold dap dep)
+      =.  +>  (mo-bold pup dap dep)
       =.  +>  (mo-give %onto %| p.gux)
       +>
         %&
       ?>  ?=(@ p.p.gux)
       ?.  (mo-okay q.p.gux)
         (mo-give %onto %| [%leaf "{<dap>}: bogus core"]~)
-      =.  +>  (mo-bold dap dep)
+      =.  +>  (mo-bold pup dap dep)
       =.  +>  (mo-born dap pup q.p.gux)
       =+  old=+>.$
       =+  wag=(ap-prop:(ap-abed:ap dap [%high [~ our]]) ~)
@@ -174,7 +174,7 @@
     ?.  (~(has by bum) dap)  
       ~&  [%gall-old-boon dap]
       +>
-    =.  +>  (mo-bold dap dep)
+    =.  +>  (mo-bold pup dap dep)
     ?-  -.gux
       %|  (mo-give %onto %| p.gux)
       %&  ?>  ?=(@ p.p.gux)
@@ -182,9 +182,9 @@
     ==
   ::
   ++  mo-bold                                           ::  wait for dep
-    |=  [dap=dude dep=@uvH]
+    |=  [pup=scup dap=dude dep=@uvH]
     ^+  +>
-    %+  mo-pass  [%sys %dep dap ~] 
+    %+  mo-pass  [%sys %dep (scot %p p.pup) q.pup dap ~] 
     [%f %wasp our dep]
   ::
   ++  mo-boot                                           ::  create ship
@@ -282,12 +282,16 @@
     ?+    -.pax  !!
         %dep                                            ::  update
       ?>  ?=([%f %news *] sih)
-      ?>  ?=([@ ~] t.pax)
-      =+  sot=(~(get by bum) i.t.pax)
-      ?~  sot
-        ~&  [%mo-cyst-none i.t.pax]
-        +>.$
-      (mo-boot i.t.pax %old pup.u.sot)
+      ?.  ?=([@ @ @ ~] t.pax)                           ::  XX while old piers
+        ?>  ?=([@ ~] t.pax)                             ::  may retain state
+        =+  sot=(~(get by bum) i.t.pax)                 ::  then delete
+        ?~  sot
+          ~&  [%mo-cyst-none i.t.pax]
+          +>.$
+        (mo-boot i.t.pax %old pup.u.sot)
+      %^  mo-boot  i.t.t.t.pax
+        ?:((~(has by bum) i.t.t.t.pax) %old %new)
+      [(slav %p i.t.pax) i.t.t.pax]
     ::
         %new
       ?>  ?=([%f %made *] sih)
