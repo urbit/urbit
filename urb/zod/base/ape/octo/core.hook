@@ -17,7 +17,7 @@
               ==                                        ::
     ++  face  (pair (list ,@c) (map bone sole-share))   ::  interface
     ++  lime  $%  [%sole-effect sole-effect]            ::  :sole update
-                  [%octo-update game]                   ::  :octo update
+                  [%octo-game game]                    ::  :octo update
               ==                                        ::
     ++  move  (pair bone card)                          ::  cause and action
     ++  pear  ,[%octo-move point]                       ::  outgoing move
@@ -67,7 +67,7 @@
             abet:(mean:(play lev) mus)                  ::
   ++  prom  (emit %pro %& %octo stat)                   ::  update prompt
   ++  plan  |=  wid=(unit ship)                         ::  subscribe to peer
-            ?~  wid  (park:stop:abet(gam *game) %2 ~)     ::
+            ?~  wid  (park:stop:abet(gam *game) %2 ~)   ::
             ?^(rem abet:beep (link:abet u.wid))         ::
   ++  rend  (turn `wall`tab:here |=(tape txt/+<))       ::  table print
   ++  send  |=  point  =.  +>+>  %-  dish               ::  upload move
@@ -103,7 +103,7 @@
           $(+< t.+<, +>.^$ (~(plow et i.+<) lev mus))   ::
 ++  push  =+  pey=(pale hid (prix /octo))  |-  ^+  +>   ::  update friends
           ?~(pey +> $(pey t.pey, +> (sell p.i.pey)))    ::
-++  sell  |=(bone (dump +< %diff %octo-update gam))     ::  update friend
+++  sell  |=(bone (dump +< %diff %octo-game gam))       ::  update friend
 ++  stop  ?~(rem . (dish pull/((like +.rem) ~)))        :: 
 ::                                                      ::  ::
 ::::                                                    ::  ::  handlers
