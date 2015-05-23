@@ -13,7 +13,7 @@ DOControls = React.createClass({
   createDroplet: function(){
     urb.send({appl: "cloud",
               data: {
-                    action:'create',
+                    action:'create-do',
                     name:$('#name').val(),
                     region:$('#region').val(),
                     size:$('#size').val(),
@@ -59,36 +59,39 @@ DOControls = React.createClass({
 
 GCEControls = React.createClass({
   createDroplet: function(){
-    urb.send({
-            
-            })
-          }
+  urb.send({
+    appl: 'cloud',
+    data: {action:'create-gce',
+          project:$('#project').val(),
+          zone:$('#zone').val(),
+          name:$('#gname').val(),
+          machine_type:$('#machine_type').val()
+          },
+    mark: 'json'})
+  },
+
   render: function(){
-    ghref = "https://accounts.google.com/o/oauth2/auth?response_type=token&scope=https://www.googleapis.com/auth/compute&state=someinfo&redirect_uri=http://localhost:8443/home/pub/cloud/fab&client_id=720541965785-jr3c6ijo8abonu9qj77qre1itsdra52r.apps.googleusercontent.com"
+    ghref = "https://accounts.google.com/o/oauth2/auth?response_type=token&scope=https://www.googleapis.com/auth/compute&redirect_uri=http://localhost:8443/home/pub/cloud/fab&client_id=719712694742-6htfj2t9s1j2jid92rc4dfq9psrr9qpo.apps.googleusercontent.com"
     return(
       div({}, [
         div({}, [
           a({href:ghref},"Get Google Authcode"),
-          b({onClick:this.props.handleClick('gce','#gappsecret')}, "Send Google Authcode")
+          b({onClick:this.props.handleClick('gce')}, "Send Google Authcode")
         ]),
         div({}, [
           input({id:"gappsecret"}, 
-          b({onClick:this.props.sendSecret('gce')}, "Send Google Secret"))
+          b({onClick:this.props.sendSecret('gce','#gappsecret')}, "Send Google Secret"))
         ]),
         div({}, [
           b({onClick:this.createDroplet}, "Create Droplet"),
           input({id:"project",placeholder:"project"}),
           input({id:"zone",placeholder:"zone"}),
-          input({id:"name",placeholder:"Name of droplet"}), 
-          input({id:"size",placeholder:"Size (str ending in mb"}),
-          input({id:"image",placeholder:"Image"}),
-          input({id:"ssh",placeholder:"ssh keys (optional)"}),
-          input({id:"backups",placeholder:"backups (optional)"}),
-          input({id:"ipv6",placeholder:"ipv6 (boolean, optional)"}),
-          input({id:"user-data",placeholder:" user-data string (optional)"}),
-          input({id:"priv-networking",placeholder:"Private Networking (boolean, optional)"})
+          input({id:"gname",placeholder:"Name of droplet"}), 
+          input({id:"machine_type",placeholder:"Machine Type"}),
+          //input({id:"image",placeholder:"Image"}),
       ])
-  )}
+    ]))
+  }
 })
 
 Droplet = React.createClass({
