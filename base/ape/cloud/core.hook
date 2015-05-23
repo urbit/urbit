@@ -386,8 +386,9 @@ $%  [%diff %json json]
       ~&  'here'
       [%post `json`body]
       ~&  'here'
-      `math`%^(mo ['Authorization' (cat 3 'Bearer ' access.gcp.toke.vat) ~] ~ ~)
-      ~&  'no'
+     %^  mo  ['Content-Type' 'application/json' ~]
+      ['Authorization' (cat 3 'Bearer ' access.do.toke.vat) ~]
+    ~
       `quay`~
   ==
   ~&  req  req
