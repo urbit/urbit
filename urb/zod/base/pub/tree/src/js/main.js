@@ -376,7 +376,8 @@ module.exports = recl({
   },
   componentDidMount: function() {
     return CodeMirror.fromTextArea(this.refs.ed.getDOMNode(), {
-      readOnly: true
+      readOnly: true,
+      lineNumbers: true
     });
   }
 });
