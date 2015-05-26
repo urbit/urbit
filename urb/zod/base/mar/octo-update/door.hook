@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hook/door/octo-game/mar                          ::  ::  dependencies
+::::  /hook/door/octo-update/mar                        ::  ::  dependencies
   ::                                                    ::  ::
 /?    310                                               ::  arvo
 /-    *octo                                             ::  structures
@@ -7,22 +7,26 @@
 !:                                                      ::  ::
 ::::                                                    ::  ::  protocol
   ::                                                    ::  ::
-|_  game                                                ::  game 
+|_  (each game tape)                                    ::  game 
 ++  grab                                                ::  convert from
   |%
-  ++  noun  game                                        ::  from %noun
+  ++  noun  (each game tape)                            ::  from %noun
   --
 ++  grow                                                ::  convert to %json
   |%
   ++  json  ^-  ^json                                   ::  to %json  
-    =+  she=|=(ship s/(scot %p +<))
-    %-  jobe
-    :~  who/s/?:(who %x %o) 
-        plx/?~(p.sag ~ (she u.p.sag))
-        plo/?~(q.sag ~ (she u.q.sag))
-        aud/a/(turn (~(tap by aud)) she)
-        box/~(jon bo box)
-        boo/~(jon bo boo)
+    ?-    +>-<
+        |  s/(crip +>->)
+        &
+      =+  she=|=(ship s/(scot %p +<))
+      %-  jobe
+      :~  who/s/?:(who %x %o) 
+          plx/?~(p.sag ~ (she u.p.sag))
+          plo/?~(q.sag ~ (she u.q.sag))
+          aud/a/(turn (~(tap by aud)) she)
+          box/~(jon bo box)
+          boo/~(jon bo boo)
+      ==
     ==
   --
 --
