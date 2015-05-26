@@ -114,6 +114,10 @@
   |=  [from (unit will)]
   (ably (poke-will:(helm-work [hid +<-] (able %helm)) +<+))
 ::
+++  mere-kiln-sync
+  |=  [then (each (set path) (pair term tang))]
+  (ably (take-mere-sync:(kiln-work [hid ost src] (able %kiln)) way +<+))
+::
 ++  mere-kiln                                           ::
   |=  [then are=(each (set path) (pair term tang))]
   (ably (take-mere:(kiln-work [hid ost src] (able %kiln)) way +<+))
@@ -149,4 +153,8 @@
 ++  went-helm                                           ::
   |=  [then her=ship kay=cape]
   (ably (take-went:(helm-work [hid ost src] (able %helm)) way +<+))
+::
+++  writ-kiln-sync
+  |=  [then riot]
+  (ably (take-writ:(kiln-work [hid ost src] (able %kiln)) way +<+))
 --
