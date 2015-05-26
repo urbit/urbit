@@ -6,3 +6,4 @@ module.exports = recl
   componentDidMount: ->
     CodeMirror.fromTextArea @refs.ed.getDOMNode(),
       readOnly:true
+      lineNumbers:true
