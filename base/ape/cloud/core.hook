@@ -40,7 +40,7 @@ private-networking=(unit ,?)  user-data=(unit ,@t)
 ==
 ++  create-req-gce  ,[project=@t zone=@t name=@t machine-type=@t]
 ++  axle
-$:  auth=[do=keys gcp=keys]  toke=[do=tokens gcp=tokens]
+$:  auth=[do=keys gce=keys]  toke=[do=tokens gce=tokens]
     drops=(list droplet)
 ==
 ++  keys  ,[authc=(unit ,@t) client-secret=(unit ,@t)]
@@ -141,7 +141,7 @@ $%  [%diff %json json]
 !:
 |_  [hid=hide vat=axle]
 ::
-::++  prep  ,_`.
+++  prep  ,_`.
 :::
 ++  spam
   |=  jon=json
@@ -194,9 +194,10 @@ $%  [%diff %json json]
       [~ cde]
     :_  +>.$
     ~
-  =.  access.gcp.toke.vat
+  =.  access.gce.toke.vat
   cde
   :_  +>.$
+  :-  (list-droplets-gce ost)
   ~
 ::
 ++  poke-cloud-secret
@@ -216,7 +217,7 @@ $%  [%diff %json json]
         [%post ~]
     :-  ~  `quay`['client_secret'^secret (auth-queries (need authc.do.auth.vat))]
       %gce
-    =.  client-secret.gcp.auth.vat
+    =.  client-secret.gce.auth.vat
       [~ secret]
     :_  +>.$
     :_  ~
@@ -224,7 +225,7 @@ $%  [%diff %json json]
     :^    ~[%google %cloud]  `path`/v1/oauth/token
         [%post ~]
     :-  (mo ['Content-Type' 'application/json' ~] ['Authorization' (cat 3 'Bearer ' access.do.toke.vat) ~] ~)
-    `quay`['client_secret'^secret %'access_token'^(need authc.gcp.auth.vat) ~] ::(auth-queries (need authc.gcp.auth.vat))]
+    `quay`['client_secret'^secret %'access_token'^(need authc.gce.auth.vat) ~] ::(auth-queries (need authc.gcp.auth.vat))]
   ==
 ::
 ++  receive-auth
@@ -240,7 +241,7 @@ $%  [%diff %json json]
       refresh.do.toke.vat  re
     == 
   :_  +>.$
-  :~  (list-droplets ost)
+  :~  (list-droplets-do ost)
       (publish ost our.hid [%lin & 'successfully authenticated']~)
   ==
     %auth-gce
@@ -257,7 +258,7 @@ $%  [%diff %json json]
   ?+  do  !!
       %list
     :_  +>.$
-    :-  (list-droplets ost)
+    :-  (list-droplets-do ost)
     ~
   ::
       %create-do
@@ -274,8 +275,15 @@ $%  [%diff %json json]
     :-  (create-do ost deets)
     ~
   ::
+      %create-gce-disk
+    =+  name=(need ((ot name/so ~):jo act))
+    =+  snap=(need ((ot snap/so ~):jo act))
+    :_  +>.$
+    :-  (create-gce-disk ost name snap)
+    ~
+    
+  ::
       %create-gce
-      ~&  'chamado'
     :_  +>.$
     =+  ^-  deets=create-req-gce
         %-  need
@@ -284,7 +292,6 @@ $%  [%diff %json json]
         %-  ot
         :~  project/so  zone/so  name/so  %'machine_type'^so
         ==
-      ~&  'dois'
     :-  (create-gce ost deets)
     ~
   ::
@@ -317,10 +324,21 @@ $%  [%diff %json json]
    ==
    req
 
-++  list-droplets
+++  list-droplets-gce
   |=  os=bone
   =+  ^=  lis
-      :~  os                 /list
+      :*  os                  /list-gce
+      ~[%googleapis %www]     /compute/v1/projects/urbcloud/zones/['us-central1-a']/'instances'
+      %get                    ~
+      ^-  quay
+      [%'access_token' access.gce.toke.vat]~
+      ==
+  (httpreq lis)
+
+++  list-droplets-do
+  |=  os=bone
+  =+  ^=  lis
+      :~  os                 /list-do
       ~[%digitalocean %api]  /v2/droplets
       %get
       (mo ['Content-Type' 'application/json' ~] ['Authorization' (cat 3 'Bearer ' access.do.toke.vat) ~] ~)
@@ -353,7 +371,7 @@ $%  [%diff %json json]
   =+  buf=`@da`(add ~s10 lat.hid)
   :_  +>.$
   :_  (spam (state-to-json drops.vat))
-  [ost %wait /refresh buf]
+  [ost %wait /refresh-do buf]
 ::
 ++  create-do
   |=  [os=bone create-req-do]
@@ -367,51 +385,111 @@ $%  [%diff %json json]
     os                     /create-do
     ~[%digitalocean %api]  /v2/droplets
     [%post body]
-    %^  mo  ['Content-Type' 'application/json' ~]
+    %^  mo  ['Content-Type' 'application/json; charset=utf-8' ~]
       ['Authorization' (cat 3 'Bearer ' access.do.toke.vat) ~]
     ~
     ~
   ==
+::++  batch-request
+::|=  [os=bone name=@t number=@ud snap=@t]   
+::(list httr)  ^-  httr
+  
+++  create-gce-disk
+  |=  [os=bone name=@t snap=@t] :: num=(unit ,@u)
+  ::  =.  name  ?~(num name ...
+  =+  ^-  body=json
+      (jobe name/s/name %'sourceSnapshot'^s/'compute/v1/projects/urbcloud/global/snapshots/snapshot-1' ~)  ::^so/snap ~)
+  %-  httpreq
+  :*  os    /create-gce-disk
+      ~['googleapis' 'www']    /compute/v1/projects/urbcloud/zones/us-central1-b/disks
+      [%post body]
+     %^  mo  ['Content-Type' 'application/json' ~]
+       ['Authorization' (cat 3 'Bearer ' access.gce.toke.vat) ~]
+      ~
+      ~
+  ==
+
+::++  receive-gce-disk
+::  |=  [os=bone resp=httr]
+::  ~&  insert/resp
+::  =+  hcode=p.resp
+::  ?:  =('200' hcode)
+::    ~|  'did not receive 200'  !!
+::  =+  parsed=(rash q:(need r.resp) apex:poja)
+::  =+  link=(need ((ot 'targetLink'^(su auri:epur) ~):jo parsed))
+::  :_  +>.$
+::  :_(~ (ask-disk-status os link))
+
+++  ask-disk-status
+  |=  [os=bone pax=path]  ^-  move
+  =+  safe=(slav %uv ?~(pax !! -.pax))
+  =+  link=(need (epur ?~(pax !! safe)))
+  =.  r.link  ['access_token'^access.gce.toke.vat r.link]
+  :^  os  %them  `wire`/disk-status
+  `(unit hiss)`[~ [link [%get ~ ~]]]
+
+++  disk-status                       ::receive
+  |=  [ost=bone resp=httr]
+  ^-  [(list move) _+>.$]
+  ~&  resp
+  =+  parsed=(rash q:(need r.resp) apex:poja)
+::  =+  =<  [status link]=.
+::     %-  need
+      =+  jo
+      =+  :-  status=(need ((ot status/so ~) parsed))
+      link=(scot %uv (need ((ot 'selfLink'^so ~) parsed)))
+  ::  ?=(%running....)
+  ~&  status/status
+  :_  +>.$
+  [ost %wait `path`[%check-status link ~] `@da`(add ~s3 lat.hid)]~       ::  refresh every 10 sec
+
 ++  create-gce
   |=  [os=bone create-req-gce]
-  ~&  'called'
+  =+  src='compute/v1/projects/urbcloud/zones/us-central1-b/disks/disk-1'
   =+  ^-  body=json
       %-  jobe
-      ~[name/s/name %'machine-type'^s/machine-type]
-  ~&    body
-  =+  ^=  req
+      :~  name/s/'name-provided'  'machineType'^s/'zones/us-central1-b/machineTypes/n1-standard-1'
+      :-  %disks  :-  %a  :_  ~
+      (jobe boot/b/%.y type/s/'persistent' source/s/src ~)
+      :-  'networkInterfaces'  :-  %a  :_  ~
+      (joba 'network' `json`[%s 'global/networks/default'])
+      ==
   %-  httpreq
   :*  `bone`os  `path`/create-gce
-      `(list cord)`~['googleapis' 'www']  `path`/v1/[project]/zones/[zone]/'instances'
-      ~&  'here'
+      `(list cord)`~['googleapis' 'www']  `path`/compute/v1/projects/urbcloud/zones/us-central1-b/'instances'
       [%post `json`body]
-      ~&  'here'
      %^  mo  ['Content-Type' 'application/json' ~]
-      ['Authorization' (cat 3 'Bearer ' access.do.toke.vat) ~]
+       ['Authorization' (cat 3 'Bearer ' access.gce.toke.vat) ~]
     ~
-      `quay`~
+      `quay`[%key access.gce.toke.vat]~
   ==
-  ~&  req  req
  
 ++  wake
   |=  [[ost=bone him=ship pour-path=path] ~]
   ?+    -.pour-path  !!
-    %refresh
+      %refresh-do
     :_  +>.$
-    [(list-droplets ost)]~
+    [(list-droplets-do ost)]~
+      %check-status
+    :_  +>.$
+    [(ask-disk-status ost +.pour-path)]~
   ==
 ++  thou
   |=  [[ost=bone him=ship pour-path=path] resp=httr]
   ^-  [(list move) _+>.$]
-  ?+    -.pour-path  !!
+  ?+    -.pour-path  ~&  pour-path  !!
       %auth-do
     (receive-auth ost -.pour-path resp)
   ::
       %auth-gce
     (receive-auth ost -.pour-path resp)
   ::
-      %list
+      %list-do
     (receive-list ost -.pour-path resp)
+      %list-gce
+    ~&  resp
+    :_  +>.$
+    ~
   ::
       $?
       %delete  %reboot  %'power_cycle'  %shutdown  %'power_off'
@@ -421,6 +499,12 @@ $%  [%diff %json json]
       ==
       ~&  resp
       :_  +>.$  ~
+  ::
+      ?(%create-gce-disk %disk-status)
+    (disk-status ost resp)
+  ::
+      %check-status
+    :_  +>.$  ~[(ask-disk-status ost +.pour-path)]
   ::
       %pub
     :_  +>.$  ~

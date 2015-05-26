@@ -70,10 +70,26 @@ GCEControls = React.createClass({
     mark: 'json'})
   },
 
+  createDisk: function(){
+      urb.send({
+        appl: 'cloud',
+        data: {action:'create-gce-disk',
+               snap:$('#gsnap').val(),
+               number:$('#number').val(),
+               name:$('#gcpName').val()},
+        mark: 'json'})
+  },
+
   render: function(){
     ghref = "https://accounts.google.com/o/oauth2/auth?response_type=token&scope=https://www.googleapis.com/auth/compute&redirect_uri=http://localhost:8443/home/pub/cloud/fab&client_id=719712694742-6htfj2t9s1j2jid92rc4dfq9psrr9qpo.apps.googleusercontent.com"
     return(
       div({}, [
+        div({}, [
+          b({onClick:this.createDisk}, 'Create Disk From Image'),
+          input({id:'gcpName',placeholder:'Name for GCE Disk and Instance'}),
+          input({id:'number',placeholder:'Number of instances'}),
+          input({id:'gsnap',placeholder:'Snapshot'})
+        ]),
         div({}, [
           a({href:ghref},"Get Google Authcode"),
           b({onClick:this.props.handleClick('gce')}, "Send Google Authcode")
