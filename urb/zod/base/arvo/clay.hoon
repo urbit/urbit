@@ -212,6 +212,16 @@
                ?+(- [[p.p p.q]:hed -] [@ *] -)
     ==       ==
   ::
+  ++  cages-to-map
+    |=  tay=(list (pair cage cage))
+    =|  can=(map path cage)
+    |-  ^-  (each (map path cage) tang)
+    ?~  tay   [%& can]
+    =*  pax  p.i.tay
+    ?.  ?=(%path p.pax)
+      (mule |.(`~`~|([%expected-path got=p.pax] !!)))
+    $(tay t.tay, can (~(put by can) ((hard path) q.q.pax) q.i.tay))
+    
   ++  balk                                              ::  read and send
     |=  [hen=duct cay=(unit (each cage lobe)) mun=mood]
     ^+  +>
@@ -931,12 +941,13 @@
     ==
   ::
   ++  take-foreign-x
-    |=  [car=care cas=case pax=path res=(each gage tang)]
+    |=  [car=care cas=case pax=path res=gage]
     ^+  +>
     ?>  ?=(^ ref)
-    ?:  ?=(%| -.res)
+    ?.  ?=(%& -.res)
       ~|  "validate foreign plops failed"
-      ~|  [%plop-fail (turn p.res |=(tank ~(ram re +<)))]
+      =+  tan=?-(-.res %| p.res, %tabl ~[>%bad-marc<])
+      ~>  %mean.|.(rose/[" " "[" "]"]^[>%plop-fail< tan])
       !!
     ?>  ?=(@ p.p.res)
     wake(haw.u.ref (~(put by haw.u.ref) [car cas pax] `p.res))
@@ -965,34 +976,24 @@
     ==
   ::
   ++  take-foreign-plops
-    |=  res=(each gage tang)
+    |=  res=gage
     ^+  +>
     ?>  ?=(^ ref)
     ?>  ?=(^ nak.u.ref)
-    ?:  ?=(%| -.res)
+    ?.  ?=(%| -.res)
       ~|  "validate foreign plops failed"
-      ~|  [%plop-fail (turn p.res |=(tank ~(ram re +<)))]
+      ~>  %mean.|.(rose/[" " "[" "]"]^[>%plop-fail< p.res])
       !!
-    =+  cay=p.res
-    ?@  p.cay  ~|  %plop-bad-marc  !!
-    =+  |-  ^-  lat=(list blob)
-        ?~  p.p.cay
-          ~
-        :_  %_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
-        ?.  ?=(%blob p.i.p.p.cay)
-          ~|  %plop-strange-marc-a
+    =+  ^-  lat=(list blob)
+        %+  turn  (gage-to-cages res)
+        |=  [bob=cage cay=cage]
+        ?.  ?=(%blob p.bob)
+          ~|  %plop-not-blob
           !!
-        ?.  ?=(@ q.i.p.p.cay)
-          ~|  %plop-strange-marc-b
-          !!
-        =+  coy=(slot 2 q.cay)
-        ?@  q.coy
-          ~|  %plop-strange-coy
-          !!
-        =+  bol=((hard blob) -.q.coy)
+        =+  bol=((hard blob) q.bob)
         ?-  -.bol
-          %delta      [-.bol p.bol q.bol q.i.p.p.cay +.q.coy]
-          %direct     [-.bol p.bol q.i.p.p.cay +.q.coy]
+          %delta      [-.bol p.bol q.bol p.cay q.q.cay]
+          %direct     [-.bol p.bol p.cay q.q.cay]
           %indirect   ~|  %plop-indirect-not-implemented  !!
         ==
     %^    apply-foreign-update
@@ -1583,16 +1584,16 @@
         ..me(mer (~(del by mer) ali), reg :_(reg [hen %mere gon.dat]))
       ::
       ++  route
-        |=  [sat=term res=(each riot (each gage tang))]
+        |=  [sat=term res=(each riot gage)]
         ^+  +>.$
-        ?+  sat  ~|((crip <[%bad-stage sat]>) !!)
-          %ali        %-  fetched-ali  ?>  ?=(%& -.res)  p.res
-          %diff-ali   %-  diffed-ali   ?>  ?=(%| -.res)  p.res
-          %diff-bob   %-  diffed-bob   ?>  ?=(%| -.res)  p.res
-          %merge      %-  merged       ?>  ?=(%| -.res)  p.res
-          %build      %-  built        ?>  ?=(%| -.res)  p.res
-          %checkout   %-  checked-out  ?>  ?=(%| -.res)  p.res
-          %ergo       %-  ergoed       ?>  ?=(%| -.res)  p.res
+        ?+  +<  ~|((crip <[%bad-stage sat ?~(-.res %riot %gage)]>) !!)
+          [%ali %& *]       %.(p.res fetched-ali)
+          [%diff-ali %| *]  %.(p.res diffed-ali)
+          [%diff-bob %| *]  %.(p.res diffed-bob)
+          [%merge %| *]     %.(p.res merged)
+          [%build %| *]     %.(p.res built)
+          [%checkout %| *]  %.(p.res checked-out)
+          [%ergo %| *]      %.(p.res ergoed)
         ==
       ::
       ++  start
@@ -1827,34 +1828,14 @@
         (diff-bas %ali ali.dat ali bob.dat)
       ::
       ++  diffed-ali
-        |=  res=(each gage tang)
+        |=  res=gage
         ^+  +>
-        ?:  ?=(%| -.res)
-          (error:he %diff-ali-bad-made leaf/"merge diff ali failed" p.res)
-        =+  cay=p.res
-        ?@  p.cay
-          (error:he %diff-ali-bad-marc >p.cay< ~)
-        =|  can=(map path cage)
-        =>
-          |-  ^+  +
-          ?~  p.p.cay
-            +.$(can ~)
-          =+  tal=%_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
-          ?:  ?=(%| -.gon.dat.tal)
-            tal
-          ?.  ?=(%path p.i.p.p.cay)
-            +.$(+>.$ (error:he %diff-ali-strange-marc-a >p.i.p.p.cay< ~))
-          ?.  ?=(@ q.i.p.p.cay)
-            +.$(+>.$ (error:he %diff-ali-strange-marc-b >q.i.p.p.cay< ~))
-          =+  coy=(slot 2 q.cay)
-          ?@  q.coy
-            +.$(+>.$ (error:he %diff-ali-strange-coy ~))
-          %_    +.$
-              can
-            %+  ~(put by can:tal)
-              ((hard path) -.q.coy)
-            [q.i.p.p.cay (slot 3 coy)]
-          ==
+        =+  tay=(gage-to-tage res)
+        ?:  ?=(%| -.tay)
+          (error:he %diff-ali-bad-made leaf/"merge diff ali failed" p.tay)
+        =+  can=(cages-to-map p.tay)
+        ?:  ?=(%| -.can)
+          (error:he %diff-ali p.can)
         ?:  ?=(%| -.gon.dat)
           +>.$
         =.  new.dal.dat
@@ -1872,7 +1853,7 @@
               !=([~ lob] a)
               =([~ lob] b)
           ==
-        =.  can.dal.dat  can
+        =.  can.dal.dat  p.can
         =.  old.dal.dat
           %-  mo  ^-  (list ,[path ~])
           %+  murn  (~(tap by q.bas.dat))
@@ -1887,34 +1868,14 @@
         (diff-bas %bob bob.dat bob ali.dat)
       ::
       ++  diffed-bob
-        |=  res=(each tage tang)
+        |=  res=gage
         ^+  +>
-        ?:  ?=(%| -.res)
-          (error:he %diff-bob-bad-made leaf/"merge diff bob failed" p.res)
-        =+  cay=p.res
-        ?@  p.cay
-          (error:he %diff-bob-bad-marc >p.cay< ~)
-        =|  can=(map path cage)
-        =>
-          |-  ^+  +
-          ?~  p.p.cay
-            +.$(can ~)
-          =+  tal=%_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
-          ?:  ?=(%| -.gon.dat.tal)
-            tal
-          ?.  ?=(%path p.i.p.p.cay)
-            +.$(+>.$ (error:he %diff-bob-strange-marc-a >p.i.p.p.cay< ~))
-          ?.  ?=(@ q.i.p.p.cay)
-            +.$(+>.$ (error:he %diff-bob-strange-marc-b >q.i.p.p.cay< ~))
-          =+  coy=(slot 2 q.cay)
-          ?@  q.coy
-            +.$(+>.$ (error:he %diff-bob-strange-coy ~))
-          %_    +.$
-              can
-            %+  ~(put by can:tal)
-              ((hard path) -.q.coy)
-            [q.i.p.p.cay (slot 3 coy)]
-          ==
+        =+  tay=(gage-to-tage res)
+        ?:  ?=(%| -.tay)
+          (error:he %diff-bob-bad-made leaf/"merge diff bob failed" p.tay)
+        =+  can=(cages-to-map p.tay)
+        ?:  ?=(%| -.can)
+          (error:he %diff-bob p.can)
         ?:  ?=(%| -.gon.dat)
           +>.$
         =.  new.dob.dat
@@ -1932,7 +1893,7 @@
               !=([~ lob] b)
               =([~ lob] a)
           ==
-        =.  can.dob.dat  can
+        =.  can.dob.dat  p.can
         =.  old.dob.dat
           %-  mo  ^-  (list ,[path ~])
           %+  murn  (~(tap by q.bas.dat))
@@ -1966,35 +1927,14 @@
         ==
       ::
       ++  merged
-        |=  res=(each tage tang)
-        ?:  ?=(%| -.res)
-          (error:he %merge-bad-made leaf/"merging failed" p.res)
-        =+  cay=p.res
-        ?@  p.cay
-          (error:he %merge-bad-marc >p.cay< ~)
-        =|  bof=(map path (unit cage))
-        =>
-          |-  ^+  +
-          ?~  p.p.cay
-            +.$(bof ~)
-          =+  tal=%_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
-          ?:  ?=(%| -.gon.dat.tal)
-            tal
-          ?.  ?=(%path p.i.p.p.cay)
-            +.$(+>.$ (error:he %merge-strange-marc-a >p.i.p.p.cay< ~))
-          ?.  ?=(@ q.i.p.p.cay)
-            +.$(+>.$ (error:he %merge-strange-marc-b >q.i.p.p.cay< ~))
-          =+  coy=(slot 2 q.cay)
-          ?@  q.coy
-            +.$(+>.$ (error:he %merge-strange-coy ~))
-          %_    +.$
-              bof
-            %+  ~(put by bof:tal)
-              ((hard path) -.q.coy)
-            ?:  ?=(%null q.i.p.p.cay)
-              ~
-            `[q.i.p.p.cay (slot 3 coy)]
-          ==
+        |=  res=gage
+        =+  tay=(gage-to-tage res)
+        ?:  ?=(%| -.tay)
+          (error:he %merge-bad-made leaf/"merging failed" p.tay)
+        =+  can=(cages-to-map p.tay)
+        ?:  ?=(%| -.can)
+          (error:he %merge p.can)
+        =+  bof=(~(run by p.can) (flit |=([a=mark ^] !?=(%null a))))
         ?:  ?=(%| -.gon.dat)
           +>.$
         =.  bof.dat  bof
@@ -2023,37 +1963,17 @@
 
       ::
       ++  built
-        |=  res=(each tage tang)
+        |=  res=gage
         ^+  +>
-        ?:  ?=(%| -.res)
-          (error:he %build-bad-made leaf/"delta building failed" p.res)
-        =+  cay=p.res
-        ?@  p.cay
-          (error:he %build-bad-marc >p.cay< ~)
-        =|  bop=(map path cage)
-        =>
-          |-  ^+  +
-          ?~  p.p.cay
-            +.$(bop ~)
-          =+  tal=%_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
-          ?:  ?=(%| -.gon.dat.tal)
-            tal
-          ?.  ?=(%path p.i.p.p.cay)
-            +.$(+>.$ (error:he %build-strange-marc-a >p.i.p.p.cay< ~))
-          ?.  ?=(@ q.i.p.p.cay)
-            +.$(+>.$ (error:he %build-strange-marc-b >q.i.p.p.cay< ~))
-          =+  coy=(slot 2 q.cay)
-          ?@  q.coy
-            +.$(+>.$ (error:he %build-strange-coy ~))
-          %_    +.$
-              bop
-            %+  ~(put by bop:tal)
-              ((hard path) -.q.coy)
-            [q.i.p.p.cay (slot 3 coy)]
-          ==
+        =+  tay=(gage-to-tage res)
+        ?:  ?=(%| -.tay)
+          (error:he %build-bad-made leaf/"delta building failed" p.tay)
+        =+  bop=(cages-to-map p.tay)
+        ?:  ?=(%| -.bop)
+          (error:he %built p.bop)
         ?:  ?=(%| -.gon.dat)
           +>.$
-        =.  bop.dat  bop
+        =.  bop.dat  p.bop
         =+  ^-  con=(map path ,*)                       ::  2-change conflict
             %-  mo
             %+  skim  (~(tap by bof.dat))
@@ -2159,39 +2079,19 @@
         ==
       ::
       ++  checked-out
-        |=  res=(each tage tang)
+        |=  res=gage
         ^+  +>
-        ?:  ?=(%| -.res)
-          (error:he %checkout-bad-made leaf/"merge checkout failed" p.res)
-        =+  cay=p.res
-        ?@  p.cay
-          (error:he %patch-bad-marc >p.cay< ~)
-        =|  can=(list ,[path cage])
-        =>
-          |-  ^+  +
-          ?~  p.p.cay
-            +.$(can ~)
-          =+  tal=%_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
-          ?:  ?=(%| -.gon.dat.tal)
-            tal
-          ?.  ?=(%path p.i.p.p.cay)
-            +.$(+>.$ (error:he %patch-strange-marc-a >p.i.p.p.cay< ~))
-          ?.  ?=(@ q.i.p.p.cay)
-            +.$(+>.$ (error:he %patch-strange-marc-b >q.i.p.p.cay< ~))
-          =+  coy=(slot 2 q.cay)
-          ?@  q.coy
-            +.$(+>.$ (error:he %patch-strange-coy ~))
-          %_    +.$
-              can
-            :_  can:tal
-            :-  ((hard path) -.q.coy)
-            [q.i.p.p.cay (slot 3 coy)]
-          ==
+        =+  tay=(gage-to-tage res)
+        ?:  ?=(%| -.tay)
+          (error:he %checkout-bad-made leaf/"merge checkout failed" p.tay)
+        =+  can=(cages-to-map p.tay)
+        ?:  ?=(%| -.can)
+          (error:he %checkout p.can)
         ?:  ?=(%| -.gon.dat)
           +>.$
         =.  let.dom  +(let.dom)
         =.  hit.dom  (~(put by hit.dom) let.dom r.new.dat)
-        =.  ank.dat  (checkout-ankh:ze (~(uni by bop.dat) (mo can)))
+        =.  ank.dat  (checkout-ankh:ze (~(uni by bop.dat) p.can))
         =.  ank.dom  ank.dat
         ?~  hez
           (done:he ~)
@@ -2219,44 +2119,30 @@
         ==
       ::
       ++  ergoed
-        |=  res=(each tage tang)
-        ^+  +
-        ?:  ?=(%| -.res)
-          (error:he %ergo-bad-made leaf/"merge ergo failed" p.res)
-        =+  cay=p.res
-        ?@  p.cay  ~|  %patch-bad-marc  !!
-        =|  can=(list ,[path (unit mime)])
-        =>
-          |-  ^+  +
-          ?~  p.p.cay
-            +.$(can ~)
-          =+  tal=%_($ cay [[%tabl t.p.p.cay] (slot 3 q.cay)])
-          ?:  ?=(%| -.gon.dat.tal)
-            tal
-          ?.  ?=(%path p.i.p.p.cay)
-            +.$(+>.$ (error:he %patch-strange-marc-a >p.i.p.p.cay< ~))
-          ?.  ?=(@ q.i.p.p.cay)
-            +.$(+>.$ (error:he %patch-strange-marc-b >p.i.p.p.cay< ~))
-          =+  coy=(slot 2 q.cay)
-          ?@  q.coy
-            +.$(+>.$ (error:he %patch-strange-coy ~))
-          %_    +.$
-              can
-            :_  can:tal
-            :-  ((hard path) -.q.coy)
-            ?.  ?=(%mime q.i.p.p.cay)
-              ~
-            `((hard mime) q:(slot 3 coy))
-          ==
+        |=  res=gage
+        ^+  +>
+        =+  tay=(gage-to-tage res)
+        ?:  ?=(%| -.tay)
+          (error:he %ergo-bad-made leaf/"merge ergo failed" p.tay)
+        =+  =|  can=mick
+            |-  ^-  tan=$&(mick [p=term q=tang])
+            ?~  p.tay   can
+            =*  pax  p.i.p.tay
+            ?.  ?=(%path p.pax)
+              [%ergo >[%expected-path got=p.pax]< ~]
+            =*  mim  q.i.p.tay
+            =+  mit=?.(?=(%mime p.mim) ~ `((hard mime) q.q.mim))
+            $(p.tay t.p.tay, can :_(can [((hard path) q.q.pax) mit]))
+        ?:  ?=([@ *] tan)  (error:he tan)
         ?~  hez
           (error:he %ergo-no-hez ~)
         ?.  syn
           (error:he %ergo-sync-off ~)
         ?:  ?=(%| -.gon.dat)
           +>.$
-        %=    +>.$
+        %_    +>.$
             don  %|
-            reg  [[u.hez %ergo who syd let.dom can] reg]
+            reg  [[u.hez %ergo who syd let.dom tan] reg]
         ==
       ::
       ++  he
@@ -2680,12 +2566,10 @@
     ==
   ?:  ?=([%blab care @ @ *] tea)
     ?>  ?=(%made +<.q.hin)
-    ?:  ?=(%| -.q.q.hin)  
+    ?.  ?=(%& -.q.q.hin)  
       ~|  %blab-fail
-      ~>  %mean.|.(p.q.q.hin)         ::  interpolate ford fail into stack trace
-      !!
-    ?^  p.p.q.q.hin
-      ~|(%bad-marc !!)
+      ~>  %mean.|.(?+(-.q.q.hin -.q.q.hin %| p.q.q.hin))
+      !!                              ::  interpolate ford fail into stack trace
     :_  ..^$  :_  ~
     :*  hen  %give  %writ  ~
         `[care case @tas]`[i.t.tea ((hard case) +>:(slay i.t.t.tea)) i.t.t.t.tea]
