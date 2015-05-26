@@ -23,6 +23,7 @@
   ;body
    ;*  =+  d=?~(do ~ (trip u.do))
        =+  g=?~(g ~ (trip u.g))
+       ~&  d
         :_  ~  
         ;script: authcode='{?~(d g d)}'; console.log(authcode)
     ;div#container;
