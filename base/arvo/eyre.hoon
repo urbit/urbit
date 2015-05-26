@@ -1204,6 +1204,7 @@
     ++  foreign-auth
       |=  [him=ship pul=purl]  ^+  ..ya
       =.  way  (~(put by way) him pul hen)
+      ~&  asking-foreign/him
       (ames-gram:abet him [lon/~ ses])
     ::
     ++  foreign-hat
