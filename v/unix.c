@@ -272,7 +272,7 @@ _unix_file_watch(u3_ufil* fil_u,
                                 &fil_u->was_u // uv_fs_event_t
                                 );
   if (0 != ret_w){
-    uL(fprintf(uH, "event init: %s\n", strerror(ret_w)));
+    uL(fprintf(uH, "event init: %s\n", uv_strerror(ret_w)));
     c3_assert(0);
   }
 
@@ -281,8 +281,8 @@ _unix_file_watch(u3_ufil* fil_u,
                             _unix_fs_event_cb, // callback
                             pax_c,             // dir as strings
                             0);                // flags
-  if (0 != ret_w){
-    uL(fprintf(uH, "event start: %s\n", strerror(ret_w)));
+  if ( 0 != ret_w ){
+    uL(fprintf(uH, "event start: %s\n", uv_strerror(ret_w)));
     c3_assert(0);
   }
 
