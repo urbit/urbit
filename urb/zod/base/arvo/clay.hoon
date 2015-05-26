@@ -765,7 +765,7 @@
           :-  ((hard path) q.q.pax)
           ?.  ?=(%mime p.mim)
             ~
-          `((hard mime) q:(slot 3 q.mim))
+          `((hard mime) q.q.mim)
       ==
     ==
   ::
