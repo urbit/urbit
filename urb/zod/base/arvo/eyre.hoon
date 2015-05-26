@@ -39,7 +39,7 @@
           $%  [%thou p=httr]                            ::  response for proxy
           ==  ==                                        ::
               $:  %f                                    ::  by %ford
-          $%  [%made p=@uvH q=(each gage tang)]         ::
+          $%  [%made p=@uvH q=gage]                     ::
               [%news ~]                                 ::
           ==  ==                                        ::
               $:  %t                                    ::  by %time
@@ -577,7 +577,7 @@
       ==
     ::
         %made
-      ?>  ?=(?([%| *] [%& @ *]) q.sih)
+      ?<  ?=(%tabl -.q.sih)
       =.  our  (need hov)                             ::  XX
       |-  ^+  ..axon
       ?-    tee

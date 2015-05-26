@@ -130,9 +130,10 @@
     (~(nest ut -:!>(*hide)) %| p:(slot 12 vax))
   ::
   ++  mo-boom                                           ::  complete new boot
-    |=  [dap=dude pup=scup dep=@uvH gux=(each gage tang)]
+    |=  [dap=dude pup=scup dep=@uvH gux=gage]
     ^+  +>
     ?-    -.gux
+        %tabl  ~|(%made-tabl !!)
         %|  
       =.  +>  (mo-bold dap dep)
       =.  +>  (mo-give %onto %| p.gux)
@@ -169,13 +170,14 @@
     ==
   ::
   ++  mo-boon                                           ::  complete old boot
-    |=  [dap=dude pup=scup dep=@uvH gux=(each gage tang)]
+    |=  [dap=dude pup=scup dep=@uvH gux=gage]
     ^+  +>
     ?.  (~(has by bum) dap)  
       ~&  [%gall-old-boon dap]
       +>
     =.  +>  (mo-bold dap dep)
     ?-  -.gux
+      %tabl  ~|(%made-tabl !!)
       %|  (mo-give %onto %| p.gux)
       %&  ?>  ?=(@ p.p.gux)
           ap-abet:(ap-peep:(ap-abed:ap dap [%high [~ our]]) q.p.gux)
@@ -321,9 +323,9 @@
               num=(slav %ud i.t.t.t.pax)
           ==
       ?-  -.q.+>.sih
+        %tabl  ~|(%made-tabl !!)
         %|  (mo-give %mack `p.q.+>.sih)                  ::  XX should crash
-        %&  ?>  ?=(@ p.p.q.+>.sih)
-            =.  +>.$  (mo-give %mack ~)             ::  XX pump should ack
+        %&  =.  +>.$  (mo-give %mack ~)             ::  XX pump should ack
             (mo-give(hen (mo-ball him num)) %unto %diff `cage`p.q.+>.sih)
       ==
     ::
@@ -335,9 +337,9 @@
           ==
       ?:  ?=([%f %made *] sih)
         ?-  -.q.+>.sih
+          %tabl  ~|(%made-tabl !!)
           %|  (mo-give %mack `p.q.+>.sih)         ::  XX should crash
-          %&  ?>  ?=(@ p.p.q.+>.sih)
-              (mo-pass [%sys pax] %g %deal [him our] i.t.t.pax %poke p.q.+>.sih)
+          %&  (mo-pass [%sys pax] %g %deal [him our] i.t.t.pax %poke p.q.+>.sih)
         ==
       ?:  ?=([%a %woot *] sih)  +>.$                    ::  quit ack, boring
       ?>  ?=([%g %unto *] sih)
@@ -805,9 +807,7 @@
       ^+  +>
       =+  cug=(ap-find /lame)
       ?~  cug
-        ~>  %slog.
-            :-  ~
-            rose/[" " "[" "]"]^[>%ap-lame< >wut< why]
+        ~&  [%ap-lame wut why]
         +>.$
       =^  cam  +>.$
         %+  ap-call  q.u.cug
@@ -986,7 +986,6 @@
         %merg  `%c
         %plug  `%c
         %them  `%e
-        %wait  `%t
         %want  `%a
       ==
     --
