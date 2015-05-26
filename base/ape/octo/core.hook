@@ -15,9 +15,9 @@
                   [%poke wire dock pear]                ::  send move
                   [%pull wire dock ~]                   ::  unsubscribe
               ==                                        ::
-    ++  face  (pair (list ,@c) (map bone sole-share))   ::  interface
+    ++  face  (map bone sole-share)                     ::  console state
     ++  lime  $%  [%sole-effect sole-effect]            ::  :sole update
-                  [%octo-game game]                    ::  :octo update
+                  [%octo-update (each game tape)]       ::  :octo update
               ==                                        ::
     ++  move  (pair bone card)                          ::  cause and action
     ++  pear  ,[%octo-move point]                       ::  outgoing move
@@ -34,118 +34,172 @@
     ++  cope  |=(? ?:(+< (stag %| (cold ~ sig)) comb))  ::  with wait mode
     --                                                  ::
 |_  [hid=hide moz=(list move) %1 axle]                  ::  per agent
-++  et                                                  ::
-  |_  [from say=sole-share]                             ::  per console client
-  ++  abet  +>(q.eye (~(put by q.eye) ost say))         ::  continue
-  ++  amok  +>(q.eye (~(del by q.eye) ost))             ::  discontinue
-  ++  beep  (emit %bel ~)                               ::  bad user
-  ++  cusp  (cope !ept:here)                            ::  parsing rule
-  ++  delt  |=  cal=sole-change                         ::  input line change
-            =^  cul  say  (remit:sole cal good)         ::
-            ?~  cul  (park:abet(p.eye buf.say) | ~)     ::
-            abet:beep:(emit det/u.cul)                  ::
-  ++  emit  |=  fec=sole-effect  ^+  +>                 ::  send effect
-            +>(moz [[ost %diff %sole-effect fec] moz])  ::  
-  ++  good  |=((list ,@c) -:(rose (tufa +<) cusp))      ::  valid input
+++  ce                                                  ::  per client
+  |_  from                                              ::
+  ::                                                    ::  ::
+  ::::                                                  ::  ::  boilerplate
+    ::                                                  ::  ::
+  ++  abet  [(flop moz) +>(moz ~)]                      ::  resolve core
+  ++  dish  |=(cad=card %_(+> moz [[ost cad] moz]))     ::  send move
+  ++  emit  |=(lime (dish %diff +<))                    ::  send update
+  ++  flay  |=  [pre=path fun=$+(_. _+>)]               ::  broadcast
+            ^+  +>
+            =+  [all=(pale hid (prix pre)) los=+>+<]    ::
+            |-  ^+  +>.^$  ?~  all  +>.^$(+< los)       ::
+            =>  .(ost p.i.all, src p.q.i.all)           ::
+            $(all t.all, +>.^$ (fun +>.^$))             ::
+  ::                                                    ::  ::
+  ::::                                                  ::  ::  state machine
+    ::                                                  ::  ::
+  ++  fail  ?:(soul (fect %bel ~) ~|(%invalid-move !!)) ::  user error
+  ++  fect  |=(sole-effect (emit %sole-effect +<))      ::  send to console
+  ++  fact  |=((each game tape) (emit %octo-update +<)) ::  send to network
+  ++  flap  |=  [net=$+(_. _+>) con=$+(_. _+>)]         ::  update all
+            =.  +>  (flay /sole con)  (flay /octo net)  ::
+  ++  flet  ~(. et (~(got by eye) ost))                 ::  existing console
+  ++  fret  ~(. et *sole-share)                         ::  new console
   ++  here  ~(. go src gam)                             ::  game core
-  ++  kick  |=  a=point  =^  dud  gam  ~(m at:here a)   ::  apply move
-            ?.(dud abet:beep (kind res:here a))         ::
-  ++  kind  |=  [(unit tape) point]                     ::  successful move
-            =.  +>  ?~(rem +> (send +<+))               ::
-            (park:abet(gam ?^(+<- *game gam)) %2 +<-)   ::
-  ++  line  =^  cal  say  (transmit:sole set/p.eye)     ::  update command
-            (emit %det cal)                             ::
-  ++  make  =+  dur=(rust (tufa p.eye) (punt comb))     ::  apply command
-            ?~  dur  abet:beep                          ::
-            ?~  u.dur  abet:(play %2)                   ::
-            =.  +  line(p.eye ~)  ?-  +>-.dur           ::
-            &  (kick +>+.dur)  |  (plan +>+.dur)  ==    ::
-  ++  mean  |=((unit tape) ?~(+< +> (emit txt/+<+)))    ::  optional message
-  ++  play  |=  lev=?(%0 %1 %2)                         ::  update by level
-            ?-(lev %0 +>, %1 line, %2 line:show:prom)   ::
-  ++  plow  |=  [lev=?(%0 %1 %2) mus=(unit tape)]       ::  complete print
-            abet:(mean:(play lev) mus)                  ::
-  ++  prom  (emit %pro %& %octo stat)                   ::  update prompt
-  ++  plan  |=  wid=(unit ship)                         ::  subscribe to peer
-            ?~  wid  (park:stop:abet(gam *game) %2 ~)   ::
-            ?^(rem abet:beep (link:abet u.wid))         ::
-  ++  rend  (turn `wall`tab:here |=(tape txt/+<))       ::  table print
-  ++  send  |=  point  =.  +>+>  %-  dish               ::  upload move
-            poke/((like +.rem) %octo-move +<)  +>       ::
-  ++  show  (emit %mor rend)                            ::  update board
-  ++  sole  ~(. cs say)                                 ::  console core
-  ++  stat  ^-  tape  =+  ike=~[(icon who.gam)]         ::  status line
-            %-  zing  :~                                ::
-              ?~(rem "" "@{(scow %p u.rem)}")           ::
-              ?~(aud.gam "" vew:here)                   ::
-              ?:  !ept:here  " ({ike}'s turn) "         ::
-              ": {ike} (row/col): "                     ::  
-            ==                                          ::
-  ++  work  |=  act=sole-action                         ::  console input
-            ?:(?=(%det -.act) (delt +.act) make)        ::
+  ++  kick  |=  a=point                                 ::  try move
+            =^  dud  gam  ~(m at:here a)                ::
+            ?.(dud fail ?~(rem kind (send a)))          ::
+  ++  kind  =+  res:here                                ::  move result
+            ?~(- wild (word:wild(gam new:here) ->))     ::
+  ++  plan  |=  (unit ship)                             ::  link/unlink
+            ?~  +<  wild:stop(gam *game)                ::
+            ?^(rem fail (link u.+<))                    ::
+  ++  plot  |=  (each point (unit ship))                ::  apply command
+            ?-(+<- & (kick +<+), | (plan +<+))          ::
+  ++  send  |=  a=point                                 ::
+            (dish poke/((like +.rem) %octo-move +<))    ::
+  ++  soul  =(%sole -:q:(~(got by sup.hid) ost))        ::  is console
+  ++  like  |=(ship |*(* [/octo [+>+< %octo] +<]))      ::  message to friend
+  ++  link  |=  ship                                    ::  subscribe to friend
+            ^+  +>
+            (dish(rem `+<) peer/((like +<) /octo))      ::  
+  ++  lose  ?^(rem . tame(gam out:here))                ::  lost subscriber
+  ++  meet  ?^(rem . tame(gam inn:here))                ::  gained subscriber
+  ++  stop  ?~(rem . (dish pull/((like +.rem) ~)))      :: 
+  ++  tame  %+  flap  |=(_. (fact:+< &/gam))            ::  light update
+            |=(_. abet:prom:flet:+<)                    ::
+  ++  wild  %+  flap  |=(_. (fact:+< &/gam))            ::  heavy update
+            |=(_. abet:prom:show:flet:+<)               ::  
+  ++  word  |=  txt=tape  %+  flap                      ::  game message
+            |=(_+> (fact:+< |/txt))                     ::
+            |=(_+> (fect:+< txt/txt))                   ::
+  ::                                                    ::  ::
+  ::::                                                  ::  ::  console logic
+    ::                                                  ::  ::
+  ++  et                                                ::
+    |_  say=sole-share                                  ::  per console client
+    ++  abet  +>(eye (~(put by eye) ost say))           ::  continue
+    ++  amok  +>(eye (~(del by eye) ost))               ::  discontinue
+    ++  apex  =+(+> |.(+>(+> +<)))                      ::  in context
+    ++  beep  (emit %bel ~)                             ::  user error
+    ++  emit  |=(sole-effect (apex (fect +<)))          ::  local emit
+    ++  cusp  (cope !ept:here)                          ::  parsing rule
+    ++  delt  |=  cal=sole-change                       ::  input line change
+              ^+  +>+>                                  ::
+              =^  cul  say  (remit:sole cal good)       ::
+              ?~  cul  abet                             ::
+              abet:beep:(emit det/u.cul)                ::
+    ++  good  |=((list ,@c) -:(rose (tufa +<) cusp))    ::  valid input
+    ++  make  ^+  +>
+              =+  (rust (tufa buf.say) (punt comb))     ::  apply command
+              ?~  -  abet:beep                          ::
+              ?~  ->  abet:show                         ::
+              (plot:abet:wipe ->+)                      ::
+    ++  prom  (emit %pro %& %octo stat)                 ::  update prompt
+    ++  rend  (turn `wall`tab:here |=(tape txt/+<))     ::  table print
+    ++  show  (emit %mor rend)                          ::  update board
+    ++  sole  ~(. cs say)                               ::  console core
+    ++  work  |=  act=sole-action                       ::  console input
+              ^+  +>+>
+              ?:(?=(%det -.act) (delt +.act) make)      ::
+    ++  stat  ^-  tape  =+  ike=~[(icon who.gam)]       ::  status line
+              %-  zing  :~                              ::
+                ?~(rem "" "@{(scow %p u.rem)}")         ::
+                ?~(aud.gam "" vew:here)                 ::
+                ?:  !ept:here  " ({ike}'s turn) "       ::
+                ": {ike} (row/col): "                   ::  
+              ==                                        ::
+    ++  wipe  =^  cal  say  (transmit:sole set/~)       ::  clear line
+              (emit %det cal)                           ::
+    --                                                  ::
+  ::                                                    ::  ::
+  ::::                                                  ::  ::  handlers
+    ::                                                  ::  ::
+  ++  reap-octo                                         ::  linked to friend
+            |=  [pax=path saw=(unit tang)]              ::
+            ?~  saw  (word "linked to {<src>}")         ::
+            (word(rem ~) "blocked by {<src>}")          ::
+  ++  coup-octo                                         ::  move acknowledge
+            |=  [way=wire saw=(unit tang)]              ::
+            ?~(saw +> (word "move failed"))             ::
+  ++  diff-octo-game                                    ::  friend update
+            |=  [way=wire gam=game]                     ::
+            ?:  =(^gam gam)  +>                         ::
+            wild(gam gam)                               ::
+  ++  peer-octo-net                                     ::  urbit peer
+            |=  pax=path                                ::
+            tame:meet                                   ::
+  ++  peer-sole                                         ::  console subscribe
+            |=  pax=path                                ::
+            tame:meet:abet:show:fret                    ::
+  ++  poke-sole-action                                  ::  console input
+            |=  act=sole-action                         ::
+            (work:flet act)                             ::
+  ++  poke-octo-move                                    ::
+            |=  point                                   ::
+            (kick +<)                                   ::
+  ++  prep  |=  [old=(unit ,[(list move) axon])]        ::  initialize
+                    
+            +>
+  ++  pull-octo                                         ::  unsubscribe
+            |=  pax=path                                ::
+            ^+  +>
+            lose                                        ::
+  ++  pull-sole                                         ::  disconnect console
+            |=   pax=path                               ::
+            ^+  +>
+            amok:flet:lose                              ::
+  ++  quit-octo                                         ::  unlinked by friend
+            |=  way=wire 
+            ^+  +>
+            ?~(rem +> (link +.rem))                     ::
   --                                                    ::
-++  abet  [(flop moz) .(moz ~)]                         ::  resolve core
-++  dump  |=(mov=move %_(+> moz [mov moz]))             ::  send move
-++  dish  |=(cad=card (dump 0 cad))                     ::  forward move
-++  flet  |=(from ~(. et +< (~(got by q.eye) ost)))     ::  in old client
-++  fret  |=(from ~(. et +< *sole-share))               ::  in new client
-++  like  |=(a=ship |*(* [/octo [a %octo] +<]))         ::  message to friend
-++  link  |=  a=ship                                    ::  subscribe to friend
-          (dish(rem `a) %peer ((like a) /octo/net))     ::  
-++  lose  |=(from ?^(rem +> +>(gam ~(out go src gam)))) ::
-++  meet  |=(from ?^(rem +> +>(gam ~(inn go src gam)))) ::
-++  pals  %+  turn  (pale hid (prix /sole))  |=  sink   ::  per console 
-          [[p=p.+< q=q.+<] r=(~(got by q.eye) p.+<)]    ::
-++  park  |=  [lev=?(%0 %1 %2) mus=(unit tape)]         ::  update all
-          =.  +>  ?:(=(%2 lev) push +>)                 ::  
-          =+  pals                                      ::
-          |-  ^+  +>.^$  ?~  +<  +>.^$                  ::
-          $(+< t.+<, +>.^$ (~(plow et i.+<) lev mus))   ::
-++  push  =+  pey=(pale hid (prix /octo))  |-  ^+  +>   ::  update friends
-          ?~(pey +> $(pey t.pey, +> (sell p.i.pey)))    ::
-++  sell  |=(bone (dump +< %diff %octo-game gam))       ::  update friend
-++  stop  ?~(rem . (dish pull/((like +.rem) ~)))        :: 
 ::                                                      ::  ::
 ::::                                                    ::  ::  handlers
   ::                                                    ::  ::
 ++  coup-octo                                           ::  move acknowledge
-          |=  [then saw=(unit tang)]  =<  abet          ::
-          ?~(saw +> (park %0 `"move failed"))           ::
+          |=  [then saw=(unit tang)]                    ::
+          abet:(~(coup-octo ce ost src) way saw)        :: 
 ++  diff-octo-game                                      ::  friend update
-          |=  [then gam=game]  =<  abet                 ::
-          ?:  =(^gam gam)  +>                           ::
-          (park(gam gam) %2 ~)                          ::
+          |=  [then gam=game]                           ::
+          abet:(~(diff-octo-game ce ost src) way gam)   ::
 ++  peer-octo-net                                       ::  urbit peer
-          |=  [from path]  =<  abet                     ::
-          (park:(meet +<-) %2 `"net from {<src>}")      ::
+          |=  [from path]                               ::
+          abet:(~(peer-octo-net ce +<-) +<+)            ::
 ++  peer-sole                                           ::  console subscribe
-          |=  [from pax=path]  =<  abet                 ::
-          (plow:(fret:(meet +<-) +<-) %2 ~)             ::
+          |=  [from path]                               ::
+          abet:(~(peer-sole ce +<-) +<+)                ::
 ++  poke-sole-action                                    ::  console input
-          |=  [from act=sole-action]  =<  abet          ::
-          (work:(flet +<-) act)                         ::
+          |=  [from sole-action]                        ::
+          abet:(~(poke-sole-action ce +<-) +<+)         ::
 ++  poke-octo-move                                      ::
-          |=  [from wha=point]  =<  abet                ::
-          =^  dud  gam  ~(m ~(at go src gam) wha)       ::
-          ?>  dud  =+  mus=~(res go src gam)            ::
-          (park(gam ?^(mus *game gam)) %2 mus)          ::
-++  prep  |=  [from old=(unit ,[(list move) axon])]     ::  initialize
-          =<  abet  ?~  old  +>                         ::
-          =<  (park %2 ~)                               ::
-          ?-  -.+>.old                                  ::
-            %1  +>(+<+ u.old)                           ::
-            %0  !!                                      ::
-          ==                                            ::
+          |=  [from point]                              ::
+          abet:(~(poke-octo-move ce +<-) +<+)           ::
+++  prep  |=  [from (unit ,[(list move) axon])]         ::  initialize
+          abet:(~(prep ce +<-) +<+)                     ::
 ++  pull-octo                                           ::  unsubscribe
-          |=  [from *]  =<  abet                        ::
-          (lose +<-)                                    ::
+          |=  [from path]                               ::
+          abet:(~(pull-octo ce +<-) +<+)                ::
 ++  pull-sole                                           ::  disconnect console
-          |=  [from *]  =<  abet                        ::
-          amok:(flet:(lose +<-) +<-)                    ::
+          |=  [from path]                               ::
+          abet:(~(pull-sole ce +<-) +<+)                ::
 ++  quit-octo                                           ::  unlinked by friend
-          |=(then abet:(park(rem ~) %0 `"removed"))     ::
+          |=  then                                      ::
+          abet:(~(quit-octo ce ost src) way)            ::
 ++  reap-octo                                           ::  linked to friend
-          |=  [then saw=(unit tang)]  =<  abet          ::
-          ?~  saw  (park %0 `"linked to {<src>}")       ::
-          (park(rem ~) %0 `"blocked by {<src>}")        ::
+          |=  [then saw=(unit tang)]                    ::
+          abet:(~(reap-octo ce ost src) way saw)        ::
 --
