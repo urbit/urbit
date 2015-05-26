@@ -9,7 +9,8 @@
 ++  kiln-part  ,[%kiln %0 kiln-pith]                    ::  kiln state
 ++  kiln-pith                                           ::
     $:  rem=(map desk kiln-desk)                        ::
-    ==
+        syn=(map hood-sync ,[let=@ud ust=bone])         ::
+    ==                                                  ::
 ++  kiln-desk                                           ::  per-desk state
     $:  auto=?                                          ::  escalate on failure
         gem=germ                                        ::  strategy
@@ -52,6 +53,7 @@
             [%merg wire @p @tas @p @tas germ]           ::
             [%plug wire @p @tas @p @tas]                ::
             [%poke wire dock pear]                      ::
+            [%warp wire sock riff]                      ::
         ==                                              ::
       ++  pear                                          ::  poke fruit
         $%  [%talk-command command:talk]                ::
@@ -76,8 +78,9 @@
     abet:(emit %lynx /kiln our syd syn)
   ::
   ++  poke-sync                                         ::
-    |=  hood-sync 
-    abet:(emit %font /kiln our syd her sud)
+    |=  hos=hood-sync
+    abet:abet:start:(auto hos)
+    :: abet:(emit %font /kiln our syd her sud)
   ::
   ++  poke-merge                                        ::
     |=  hood-merge
@@ -96,6 +99,103 @@
     |=  [way=wire saw=(unit tang)]
     abet:abet:(coup-fancy:(take way) saw)
   ::
+  ++  take-mere-sync                                    ::
+    |=  [way=wire mes=(each (set path) (pair term tang))]
+    ?>  ?=([@ @ @ ~] way)
+    =+  ^-  hos=hood-sync
+        :*  syd=(slav %tas i.way)
+            her=(slav %p i.t.way)
+            sud=(slav %tas i.t.t.way)
+        ==
+    abet:abet:(mere:(auto hos) mes)
+  ::
+  ++  take-writ                                         ::
+    |=  [way=wire rot=riot]
+    ?>  ?=([@ @ @ ~] way)
+    =+  ^-  hos=hood-sync
+        :*  syd=(slav %tas i.way)
+            her=(slav %p i.t.way)
+            sud=(slav %tas i.t.t.way)
+        ==
+    abet:abet:(writ:(auto hos) rot)
+  ::
+  ++  spam
+    |=  mes=(list tank)
+    %-  emit
+    :*  %poke  /kiln/spam
+        [our %talk]  %talk-command
+        ^-  command:talk
+        :-  %publish
+        %-  flop
+        =<  acc
+        %+  roll  mes
+        =<  .(eny eny)
+        |=  [tan=tank acc=(list thought:talk) eny=@uvI]
+        ^-  [acc=(list thought:talk) eny=@uvI]
+        =+  (sham eny mes)
+        :_  -
+        :_  acc
+        ^-  thought:talk
+        :+  -
+          [[[%& our (main our)] [*envelope:talk %pending]] ~ ~]
+        [lat *bouquet:talk [%app (crip ~(ram re tan))]]
+    ==
+  ::
+  ++  auto
+    |=  hood-sync
+    =+  (fall (~(get by syn) syd her sud) [let=*@ud ust=ost])
+    |%
+    ++  abet
+      ..auto(syn (~(put by syn) [syd her sud] let ust))
+    ::
+    ++  blab
+      |=  new=(list move)
+      ^+  +>
+      +>.$(moz (welp new moz))
+    ::
+    ++  spam  |*(* %_(+> ..auto (^spam +<)))
+    ++  start
+      %-  blab  :_  ~
+      :*  ost  %warp
+          /kiln/sync/[syd]/(scot %p her)/[sud]
+          [our her]  sud  ~  %sing  %w  [%da lat]  /
+      ==
+    ::
+    ++  writ
+      |=  rot=riot
+      ?~  rot
+        %^    spam
+            leaf/"bad %writ response on autosync"
+          leaf/"from {<sud>} on {<her>} to {<syd>}"
+        ~
+      =.  let  ?.  ?=(%w p.p.u.rot)  let  ((hard ,@ud) q.q.r.u.rot)
+      %-  blab  :_  ~
+      :*  ost  %merg
+          /kiln/sync/[syd]/(scot %p her)/[sud]
+          our  syd  her  sud  %mate
+      ==
+    ::
+    ++  mere
+      |=  mes=(each (set path) (pair term tang))
+      =.  let  +(let)
+      =.  +>.$
+        %-  spam
+        ?:  ?=(%& -.mes)
+          [leaf/"autosync succeeded from {<sud>} on {<her>} to {<syd>}" ~]
+        :*  leaf/"autsync faild from {<sud>} on {<her>} to {<syd>}"
+            leaf/"please manually merge the desks with"
+            leaf/":helm+merge %{(trip syd)} {(scow %p her)} %{(trip sud)}"
+            leaf/""
+            leaf/"error code: {<p.p.mes>}"
+            q.p.mes
+        ==
+      %-  blab  :_  ~
+      :*  ost  %warp
+          /kiln/sync/[syd]/(scot %p her)/[sud]
+          [our her]  sud  ~  %sing  %y  [%ud let]  /
+      ==
+    --
+  ::
   ++  work                                              ::  state machine
     |=  syd=desk
     =+  ^-  kiln-desk
@@ -106,7 +206,7 @@
     ++  abet                                            ::  resolve
       ..work(rem (~(put by rem) syd auto gem her sud cas))
     ::
-    ++  blab                                            ::  emit, XX remove
+    ++  blab
       |=  new=(list move)
       ^+  +>
       +>.$(moz (welp new moz))
@@ -144,28 +244,7 @@
       %-  blab  :_  ~
       [ost %poke /kiln/fancy/[^syd] [our %hood] %hood-merge [syd her sud gem]]
     ::
-    ++  spam
-      |=  mes=(list tank)
-      %-  blab  :_  ~
-      :*  ost  %poke  /kiln/spam/[syd]
-          [our %talk]  %talk-command
-          ^-  command:talk
-          :-  %publish
-          %-  flop
-          =<  acc
-          %+  roll  mes
-          =<  .(eny eny)
-          |=  [tan=tank acc=(list thought:talk) eny=@uvI]
-          ^-  [acc=(list thought:talk) eny=@uvI]
-          =+  (sham eny mes)
-          :_  -
-          :_  acc
-          ^-  thought:talk
-          :+  -
-            [[[%& our (main our)] [*envelope:talk %pending]] ~ ~]
-          [lat *bouquet:talk [%app (crip ~(ram re tan))]]
-      ==
-    ::
+    ++  spam  |*(* +>(..work (^spam +<)))
     ++  merge
       |=  [her=@p sud=@tas gim=?(%auto germ)]
       ^+  +>
@@ -306,7 +385,7 @@
       =<  win
       %-  blab:(spam tan)
       :_  ~
-      :*  ost  %info  /kiln/[syd]/dash
+      :*  ost  %info  /kiln/[syd]
           our  (cat 3 syd '-scratch')
           %&  *cart
           %+  murn  can
