@@ -133,9 +133,9 @@
           [%call p=silk q=silk]                         ::  slam
           [%cast p=mark q=silk]                         ::  translate
           [%diff p=silk q=silk]                         ::  diff
-          [%done p=(set beam) q=gage]                   ::  literal
+          [%done p=(set beam) q=cage]                   ::  literal
           [%dude p=tank q=silk]                         ::  error wrap
-          [%dune p=(set beam) q=(unit gage)]            ::  unit literal
+          [%dune p=(set beam) q=(unit cage)]            ::  unit literal
           [%file p=beam]                                ::  from clay
           [%join p=mark q=silk r=silk]                  ::  merge
           [%mash p=mark q=milk r=milk]                  ::  annotate
