@@ -141,7 +141,7 @@ $%  [%diff %json json]
 !:
 |_  [hid=hide vat=axle]
 ::
-++  prep  ,_`.
+::++  prep  ,_`.
 :::
 ++  spam
   |=  jon=json
@@ -413,8 +413,6 @@ $%  [%diff %json json]
 ::  |=  [os=bone resp=httr]
 ::  ~&  insert/resp
 ::  =+  hcode=p.resp
-::  ?:  =('200' hcode)
-::    ~|  'did not receive 200'  !!
 ::  =+  parsed=(rash q:(need r.resp) apex:poja)
 ::  =+  link=(need ((ot 'targetLink'^(su auri:epur) ~):jo parsed))
 ::  :_  +>.$
@@ -431,21 +429,28 @@ $%  [%diff %json json]
 ++  disk-status                       ::receive
   |=  [ost=bone resp=httr]
   ^-  [(list move) _+>.$]
-  ~&  resp
-  =+  parsed=(rash q:(need r.resp) apex:poja)
-::  =+  =<  [status link]=.
-::     %-  need
-      =+  jo
-      =+  :-  status=(need ((ot status/so ~) parsed))
-      link=(scot %uv (need ((ot 'selfLink'^so ~) parsed)))
-  ::  ?=(%running....)
-  ~&  status/status
+  =+  hcode=p.resp
+  ?:  =('200' hcode)
+    ~|  'did not receive 200'  !!
+  =+  :-(parsed=(rash q:(need r.resp) apex:poja) jo)
+  =+  :-  status=(need ((ot status/so ~) parsed))
+  lin=(need ((ot 'selfLink'^so ~) parsed))
+  =+  link=(scot %uv lin)
+  ~&  lin
+  ?:  =('DONE' status)
+    ~&  resp
+    ~&  'boot disk now running, now starting instance'
+      =+  target=(need ((ot 'targetLink'^so ~):jo parsed))
+      =+  nam=-:(flop q.q:(need (epur target)))
+      ~&  nam
+    ::(create-gce-disk ost nam 'tbd')
+    :-  ~  +>.$
   :_  +>.$
   [ost %wait `path`[%check-status link ~] `@da`(add ~s3 lat.hid)]~       ::  refresh every 10 sec
 
 ++  create-gce
   |=  [os=bone create-req-gce]
-  =+  src='compute/v1/projects/urbcloud/zones/us-central1-b/disks/disk-1'
+  =+  src=(cat 3 'compute/v1/projects/urbcloud/zones/us-central1-b/disks/' name)
   =+  ^-  body=json
       %-  jobe
       :~  name/s/'name-provided'  'machineType'^s/'zones/us-central1-b/machineTypes/n1-standard-1'
