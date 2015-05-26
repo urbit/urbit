@@ -22,7 +22,9 @@
   ~(has in react-elems)
 ++  react-to-tape
   |=  src=manx  ^-  tape
-  ::  ?:  =(%script n.g.src)
+  ?:  (~(has by (mo a.g.src)) [%urb %codemirror])
+    ?>  ?=([[%pre *] _:/(**) ~] src)
+    $(src ;codemirror(value "{v.i.a.g.i.c.src}");)
   ;:  weld
     "React.createElement("
     =*  tan  n.g.src

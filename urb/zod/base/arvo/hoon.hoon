@@ -8426,30 +8426,34 @@
       $(i.ruw t.i.ruw, cah [i.i.ruw cah])
     $(i.ruw t.i.ruw, cah ~, yun [p.i.i.ruw (wod cah yun)])
   ::
-  ++  posh
+  ++  posh  !: 
     |=  [pre=(unit tyke) pof=(unit ,[p=@ud q=tyke])]
-    ^-  (list twig)
-    ~|  %posh-fail
+    ^-  (unit (list twig))
+    =-  ?^(- - ~&(%posh-fail -))
     =+  wom=(poof wer)
-    =+  ^=  yez
-        ?~  pre  wom
-        =+  moz=(poon wom u.pre)
-        ?~(pof moz (weld moz (slag (lent u.pre) wom)))
-    ?~  pof  yez
+    %+  biff
+      ?~  pre  `u=wom
+      %+  bind  (poon wom u.pre)
+      |=  moz=(list twig)
+      ?~(pof moz (weld moz (slag (lent u.pre) wom)))
+    |=  yez=(list twig)
+    ?~  pof  `yez
     =+  zey=(flop yez)
     =+  [moz=(scag p.u.pof zey) gul=(slag p.u.pof zey)]
-    (weld (flop gul) (poon (flop moz) q.u.pof))
+    =+  zom=(poon (flop moz) q.u.pof)
+    ?~(zom ~ `(weld (flop gul) u.zom))
   ::
   ++  poof  |=(pax=path ^-(tusk (turn pax |=(a=@ta [%dtzy %ta a]))))
   ++  poon
     |=  [pag=tusk goo=tyke]
-    ^-  tusk
-    ?~  goo  ~
-    :-  ?^(i.goo u.i.goo ?>(?=(^ pag) i.pag))
+    ^-  (unit tusk)
+    ?~  goo  `~
+    %+  both
+      ?^(i.goo i.goo ?~(pag ~ `u=i.pag)) 
     $(goo t.goo, pag ?~(pag ~ t.pag))
   ::
   ++  poor
-    %+  cook  posh
+    %+  sear  posh
     ;~  plug
       (stag ~ gash)
       ;~(pose (stag ~ ;~(pfix cen porc)) (easy ~))
@@ -8747,13 +8751,13 @@
       :-  '%'
         ;~  pfix  cen
           ;~  pose
-            (cook |=([a=@ud b=tyke] [%clsg (posh ~ ~ a b)]) porc)
+            (stag %clsg (sear |=([a=@ud b=tyke] (posh ~ ~ a b)) porc))
             (stag %dtzz (stag %tas (cold %$ buc)))
             (stag %dtzz (stag %f (cold & pam)))
             (stag %dtzz (stag %f (cold | bar)))
             (stag %dtzz (stag %t qut))
             (cook (jock &) nuck:so)
-            (cook |=(a=(list) [%clsg (posh ~ ~ (lent a) ~)]) (star cen))
+            (stag %clsg (sear |=(a=(list) (posh ~ ~ (lent a) ~)) (star cen)))
             ::  (easy [%clsg (poof wer)])
           ==
         ==

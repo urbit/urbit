@@ -5,6 +5,7 @@ $ ->
 
   React.initializeTouchEvents(true)
 
+  codemirror        = React.createFactory require './components/CodeMirror.coffee'
   head              = React.createFactory require './components/AnchorComponent.coffee'
   body              = React.createFactory require './components/BodyComponent.coffee'
   list              = React.createFactory require './components/ListComponent.coffee'
@@ -21,7 +22,7 @@ $ ->
     if path[0] isnt "/" then path = "/"+path
     window.tree._basepath + path
   window.tree.fragpath = (path) -> path.replace window.tree._basepath,""
-  window.tree.init({kids:kids,list:list,lost:lost})
+  window.tree.init({kids:kids,list:list,lost:lost, codemirror:codemirror})
   window.tree.reactify = (str) -> eval str
 
   TreeActions       = require './actions/TreeActions.coffee'
