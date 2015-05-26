@@ -28,6 +28,7 @@
 ++  ache  |*([a=$+(* *) b=$+(* *)] $%([| p=b] [& p=a])) ::  each, b default
 ++  axis  ,@                                            ::  tree address
 ++  also  ,[p=term q=wing r=type]                       ::  alias
+++  bank  (list ,@cF)                                   ::  UTF-32 string
 ++  base  ?([%atom p=odor] %noun %cell %bean %null)     ::  axils, @ * ^ ? ~
 ++  bean  ,?                                            ::  0=&=yes, 1=|=no
 ++  beer  $|(@ [~ p=twig])                              ::  simple embed
