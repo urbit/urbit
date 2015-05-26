@@ -1014,6 +1014,8 @@
         =+  ext=(fall p.pok %urb)
         =+  bem=?-(-.hem %beam p.hem, %spur [root-beak p.hem])
         =+  wir=?+(mef !! %get ~, %head [%he ~])
+        ~|  bad-beam/q.bem
+        ?<  =([~ 0] (sky %cw (tope bem(+ ~, r [%da now]))))
         =-  ?.(aut [%& %| -] [%| (pass-note -)])  ::  XX properly
         [wir (ford-get-beam bem ext)]
       ::
@@ -1202,6 +1204,7 @@
     ++  foreign-auth
       |=  [him=ship pul=purl]  ^+  ..ya
       =.  way  (~(put by way) him pul hen)
+      ~&  asking-foreign/him
       (ames-gram:abet him [lon/~ ses])
     ::
     ++  foreign-hat

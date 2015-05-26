@@ -240,10 +240,11 @@
     ++  dp-model-cat  ;~(plug dp-server-cat dp-config)  ::  ++dojo-model
     ++  dp-model-dog  ;~(plug dp-server-dog dp-config)  ::  ++dojo-model
     ++  dp-model-pig  ;~(plug dp-server-pig dp-config)  ::  ++dojo-model
+    ++  dp-path       `path`/(scot %p our.hid)/home/(scot %da lat.hid)
     ++  dp-server-cat   (stag 0 (stag %cat dp-device))  ::  ++dojo-server
     ++  dp-server-dog   (stag 0 (stag %dog dp-device))  ::  ++dojo-server
     ++  dp-server-pig   (stag 0 (stag %pig dp-device))  ::  ++dojo-server
-    ++  dp-twig         wide:(vang & ~)                 ::  ++twig
+    ++  dp-twig         wide:(vang & dp-path)           ::  ++twig
     ++  dp-device       (most fas sym)                  ::  ++dojo-device
     ++  dp-value                                        ::  ++dojo-source
       %+  cook  |=(a=dojo-source a)
