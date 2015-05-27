@@ -1068,9 +1068,9 @@
       =+  vid=(read-at-aeon:ze u.nao p.q.i.xiq)
       ::  ~&  %red-at-aeon
       ?~  vid
-        ?~  u.nao
+        ?:  =(0 u.nao)
           ~&  [%oh-poor `path`[syd '0' r.p.q.i.xiq]]
-          $(xiq t.xiq) 
+          $(xiq t.xiq)
         ~&  [%oh-well desk=syd mood=p.q.i.xiq aeon=u.nao]
         $(xiq t.xiq, xaq [i.xiq xaq])
       $(xiq t.xiq, ..wake (balk p.i.xiq u.vid p.q.i.xiq))
