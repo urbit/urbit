@@ -79,8 +79,10 @@
   ::
   ++  poke-sync                                         ::
     |=  hos=hood-sync
+    ?:  (~(has by syn) hos)
+      =+  "already syncing from {<sud.hos>} on {<her.hos>} to {<syd.hos>}"
+      abet:(spam leaf/- ~)
     abet:abet:start:(auto hos)
-    :: abet:(emit %font /kiln our syd her sud)
   ::
   ++  poke-merge                                        ::
     |=  hood-merge
