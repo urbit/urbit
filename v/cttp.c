@@ -971,7 +971,10 @@ _cttp_ccon_kick_write_cb(uv_write_t* wri_u, c3_i sas_i)
 static void
 _cttp_ccon_kick_write_cryp(u3_ccon* coc_u)
 {
-  if (!SSL_is_init_finished(coc_u->ssl.ssl_u)) {
+  if ( NULL == coc_u->ssl.ssl_u ) {
+    c3_assert(!"ssl_u is null\r\n");
+  }
+  if ( !SSL_is_init_finished(coc_u->ssl.ssl_u)) {
     return;
   }
 
@@ -1076,6 +1079,7 @@ _cttp_ccon_cryp_hurr(u3_ccon* coc_u, int rev)
 
   switch ( err ) {
     default:
+      fprintf(stderr, "cttp: wasted: %p\r\n", coc_u->ssl.ssl_u);
       _cttp_ccon_waste(coc_u, "ssl lost");
       break;
     case SSL_ERROR_NONE:
@@ -1085,6 +1089,27 @@ _cttp_ccon_cryp_hurr(u3_ccon* coc_u, int rev)
       break;
     case SSL_ERROR_WANT_READ:
       _cttp_ccon_cryp_rout(coc_u);
+      break;
+    case SSL_ERROR_WANT_CONNECT:
+      fprintf(stderr, "cttp: want connect: %p\r\n", coc_u->ssl.ssl_u);
+      break;
+    case SSL_ERROR_WANT_ACCEPT:
+      fprintf(stderr, "cttp: want accept: %p\r\n", coc_u->ssl.ssl_u);
+      break;
+    case SSL_ERROR_WANT_X509_LOOKUP:
+      fprintf(stderr, "cttp: want x509 lookup: %p\r\n", coc_u->ssl.ssl_u);
+      break;
+    case SSL_ERROR_SYSCALL:
+      fprintf(stderr, "cttp: syscall: %p\r\n", coc_u->ssl.ssl_u);
+      break;
+    case SSL_ERROR_SSL:
+      fprintf(stderr, "cttp: error_ssl: %p\r\n", coc_u->ssl.ssl_u);
+      c3_i err;
+      while ( 0 != (err = ERR_get_error()) ) {
+        c3_c ero[500];
+        ERR_error_string_n(err, ero, 500);
+        fprintf(stderr, "error code: %x\r\n%s\r\n", err, ero);
+      }
       break;
   }
 }
@@ -1133,6 +1158,7 @@ _cttp_ccon_cryp_pull(u3_ccon* coc_u)
   }
   else {
     //  not connected
+    ERR_clear_error();
     c3_i r = SSL_connect(coc_u->ssl.ssl_u);
     if ( 0 > r ) {
       _cttp_ccon_cryp_hurr(coc_u, r);
@@ -1180,6 +1206,7 @@ _cttp_ccon_kick_read_cryp_cb(uv_stream_t* tcp_u,
       }
       else {
         BIO_write(coc_u->ssl.rio_u, (c3_c*)buf_u->base, siz_w);
+
         _cttp_ccon_cryp_pull(coc_u);
       }
     }
@@ -1270,7 +1297,14 @@ _cttp_ccon_kick_handshake(u3_ccon* coc_u)
               coc_u->ssl.wio_u);
 
   SSL_set_connect_state(coc_u->ssl.ssl_u);
-  SSL_do_handshake(coc_u->ssl.ssl_u);
+  c3_i r = SSL_do_handshake(coc_u->ssl.ssl_u);
+  if ( 0 > r ) {
+    _cttp_ccon_cryp_hurr(coc_u, r);
+  }
+  else {
+   coc_u->sat_e = u3_csat_cryp;
+    _cttp_ccon_kick(coc_u);
+  }
 
   coc_u->sat_e = u3_csat_sing;
   _cttp_ccon_kick(coc_u);
@@ -1603,6 +1637,13 @@ u3_cttp_io_init()
   SSL_CTX_set_options(u3S, SSL_OP_NO_SSLv2);
   SSL_CTX_set_verify(u3S, SSL_VERIFY_PEER, NULL);
   SSL_CTX_set_default_verify_paths(u3S);
+  // if ( 0 == SSL_CTX_load_verify_locations(u3S,
+  //             "/etc/ssl/certs/ca-certificates.crt", NULL) ) {
+  //   fprintf(stderr, "\tload-error\r\n");
+  // } else {
+  //   fprintf(stderr, "\tload-good\r\n");
+  // }
+
   SSL_CTX_set_session_cache_mode(u3S, SSL_SESS_CACHE_OFF);
   SSL_CTX_set_cipher_list(u3S, "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:"
                           "ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:"

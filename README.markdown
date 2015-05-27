@@ -86,10 +86,10 @@ Sometimes things are just easy.
 
 ###3. Run
 
-Run `bin/vere -c mypier` in the urbit directory, where `mypier` is a directory that doesn't yet exist. All your state (an append-only log and a memory checkpoint) will live in this directory.  The name of your pier doesn't matter and is not visible internally.
+Run `bin/urbit -c mypier` in the urbit directory, where `mypier` is a directory that doesn't yet exist. All your state (an append-only log and a memory checkpoint) will live in this directory.  The name of your pier doesn't matter and is not visible internally.
 
 A _pier_ is an Urbit virtual machine that hosts one or more Urbit identities,
-or _ships_.  When you run `bin/vere -c`, it automatically creates a 128-bit ship, or `submarine`.  Your name (a hash of a randomly-generated public key) will look something like:
+or _ships_.  When you run `bin/urbit -c`, it automatically creates a 128-bit ship, or `submarine`.  Your name (a hash of a randomly-generated public key) will look something like:
 
     ~hinfet-rovler-labheb-laddev--ladner-pillur-divmun-tamfur
 
@@ -140,7 +140,7 @@ Once that is finished, you will be dropped into the main application, the `:dojo
 If you would like to safely bring this ship back into port (End the Unix process),
 just enter Control-V to switch to the task manager, then Control-D.  
 
-To re-launch your pier after creation run `bin/vere mypier` (exclude the `-c`)
+To re-launch your pier after creation run `bin/urbit mypier` (exclude the `-c`)
 
 ###4. Registration
 
@@ -373,9 +373,9 @@ line will log out - as in Unix:
     cyarvin:~/urbit;
 
 Then you can restart and be right back where you were - just
-run `bin/vere` without `-c`:
+run `bin/urbit` without `-c`:
 
-    cyarvin:~/urbit; bin/vere mypier
+    cyarvin:~/urbit; bin/urbit mypier
     vere: urbit home is mypier
     vere: hostname is cyarvin
     loom: mapped 2048MB
@@ -427,7 +427,7 @@ every so often to get the latest Urbit source code. You'll need to run:
 
     make clean; make
 
-before executing `bin/vere mypier` again.
+before executing `bin/urbit mypier` again.
 
 
 ###6. Talk

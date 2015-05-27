@@ -9618,7 +9618,6 @@
           ==                                            ::
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
-++  gage  (pair marc vase)                              ::  structured cage
 ++  from  ,[ost=bone src=ship]                          ::  forward problem
 ++  hide                                                ::  standard app state
         $:  $:  our=ship                                ::  owner/operator
