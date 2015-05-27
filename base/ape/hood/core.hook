@@ -119,7 +119,7 @@
   (ably (take-mere:(kiln-work [hid ost src] (able %kiln)) way +<+))
 ::
 ++  made-kiln                                           ::
-  |=  [then @uvH (each gage tang)]
+  |=  [then @uvH gage]
   (ably (take-made:(kiln-work [hid ost src] (able %kiln)) way +<+))
 ::
 ++  init-helm                                           ::

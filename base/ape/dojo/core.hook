@@ -133,9 +133,9 @@
           [%call p=silk q=silk]                         ::  slam
           [%cast p=mark q=silk]                         ::  translate
           [%diff p=silk q=silk]                         ::  diff
-          [%done p=(set beam) q=gage]                   ::  literal
+          [%done p=(set beam) q=cage]                   ::  literal
           [%dude p=tank q=silk]                         ::  error wrap
-          [%dune p=(set beam) q=(unit gage)]            ::  unit literal
+          [%dune p=(set beam) q=(unit cage)]            ::  unit literal
           [%file p=beam]                                ::  from clay
           [%join p=mark q=silk r=silk]                  ::  merge
           [%mash p=mark q=milk r=milk]                  ::  annotate
@@ -149,7 +149,7 @@
           [%volt p=(set beam) q=(cask ,*)]              ::  unsafe add type
       ==                                                ::
     ++  sign                                            ::
-      $%  [%made p=@uvH q=(each gage tang)]             ::
+      $%  [%made p=@uvH q=gage]             ::
           [%unto p=cuft]                                ::  
       ==                                                ::
     --                                                  ::
@@ -227,7 +227,7 @@
         (ifix [sel ser] (stag %tu (most ace dp-source)))
       ==
     :: 
-    ++  dp-goal                                         ::  ++goal
+    ++  dp-goal                                          ::  ++goal
       %+  cook  |=(a=goal a)
       ;~  pose
         ;~  plug
@@ -627,13 +627,12 @@
     [& %$ "> "]
   ::
   ++  he-made                                           ::  result from ford
-    |=  [way=wire dep=@uvH reg=(each gage tang)]
+    |=  [way=wire dep=@uvH reg=gage]
     ^+  +>
     ?>  ?=(^ poy)
     =<  he-pine
     ?-  -.reg
-      %&  ?>  ?=(@ p.p.reg)
-          %.  p.reg
+      %&  %.  p.reg
           =+  dye=~(. dy u.poy(pux ~))
           ?+  way  !!
             [%hand ~]  dy-hand:dye
@@ -642,6 +641,7 @@
             [%edit ~]  dy-made-edit:dye
           ==
       %|  (he-diff(poy ~) %tan p.reg)
+      %tabl  !!
     ==
   ::
   ++  he-unto                                           ::  result from behn
@@ -742,7 +742,7 @@
   he-abet:(~(he-type he [ost ~] (~(got by hoc) ost)) act)
 ::
 ++  made
-  |=  [then dep=@uvH reg=(each gage tang)]
+  |=  [then dep=@uvH reg=gage]
   he-abet:(~(he-made he [[ost ~] (~(got by hoc) ost)]) way dep reg)
 ::
 ++  unto
