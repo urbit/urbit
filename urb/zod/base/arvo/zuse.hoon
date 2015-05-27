@@ -2418,6 +2418,7 @@
 ++  kiss-eyre                                           ::  in request ->$
           $%  [%born ~]                                 ::  new unix process
               [%crud p=@tas q=(list tank)]              ::  XX rethink
+              [%hiss p=mark q=cage]                     ::  outbound user req
               [%init p=@p]                              ::  report install
               [%them p=(unit hiss)]                     ::  outbound request
               [%they p=@ud q=httr]                      ::  inbound response
@@ -2428,6 +2429,7 @@
           ==                                            ::
 ++  gift-eyre                                           ::  out result <-$
           $%  [%mass p=mass]                            ::  memory usage
+              [%sigh p=cage]                            ::  marked http response
               [%thou p=httr]                            ::  raw http response
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
               [%veer p=@ta q=path r=@t]                 ::  drop-through

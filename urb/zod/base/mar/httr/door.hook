@@ -1,0 +1,16 @@
+::
+::::  /hook/door/httr/mar
+  ::
+/?  314
+|_  hit=httr
+::
+++  grow  |%  ++  wall  (turn wain trip)
+              ++  wain  ~|  hit
+                        ?>  =(2 (div p.hit 100))
+                        (lore q:(need r.hit))
+          --
+++  grab                                                ::  convert from
+  |%
+  ++  noun  httr                                        ::  clam from %noun
+  --
+--
