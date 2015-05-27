@@ -129,7 +129,7 @@
         %-  flop
         =<  acc
         %+  roll  mes
-        =<  .(eny eny)
+        =<  .(eny ^eny)
         |=  [tan=tank acc=(list thought:talk) eny=@uvI]
         ^-  [acc=(list thought:talk) eny=@uvI]
         =+  (sham eny mes)
@@ -172,7 +172,10 @@
       %-  blab  :_  ~
       :*  ost  %merg
           /kiln/sync/[syd]/(scot %p her)/[sud]
-          our  syd  her  sud  %mate
+          our  syd  her  sud
+          ?:  =(0 .^(%cw /(scot %p our)/[syd]/(scot %da lat)))
+            %init
+          %mate
       ==
     ::
     ++  mere
@@ -182,9 +185,9 @@
         %-  spam
         ?:  ?=(%& -.mes)
           [leaf/"autosync succeeded from {<sud>} on {<her>} to {<syd>}" ~]
-        :*  leaf/"autsync faild from {<sud>} on {<her>} to {<syd>}"
+        :*  leaf/"autosync failed from {<sud>} on {<her>} to {<syd>}"
             leaf/"please manually merge the desks with"
-            leaf/":helm+merge %{(trip syd)} {(scow %p her)} %{(trip sud)}"
+            leaf/":+merge %{(trip syd)} {(scow %p her)} %{(trip sud)}"
             leaf/""
             leaf/"error code: {<p.p.mes>}"
             q.p.mes
@@ -215,7 +218,7 @@
     ++  lose
       ^+  .
       ~|  %kiln-work-fail
-      !!
+      .
     ::
     ++  gage-to-tage                                    ::
       |=  res=gage
