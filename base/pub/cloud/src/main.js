@@ -120,8 +120,7 @@ Droplet = React.createClass({
 
   render: function() {
     var $this = this    //local var, else it always points at second
-    var acts = ["reboot","power_cycle","shutdown","power_off","power_on","password_reset",
-                "enable_ipv6","enable_private_networking","snapshot","upgrade"]
+    var acts = ["start","stop","reboot","delete"]
     var buttons = [];
     var buttons = acts.map(function(act){
       console.log($this.props.id)
@@ -177,9 +176,9 @@ Page = recl({
   render: function(){
       return (div({},
         DOControls({handleClick:this.handleClick,sendSecret:this.sendSecret}), 
-        GCEControls({handleClick:this.handleClick,sendSecret:this.sendSecret})
+        GCEControls({handleClick:this.handleClick,sendSecret:this.sendSecret}),
+        this.props.droplets.map(Droplet)
       ))
-        //this.props.droplets.map(Droplet)
   }
 })
 
