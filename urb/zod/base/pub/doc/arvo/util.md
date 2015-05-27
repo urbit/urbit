@@ -109,7 +109,7 @@ reloaded, vanes depending on the changes must be reloaded as well. For
 example `:reload %zuse %ford` is necessary to make use of changes in
 application code or the REPL.
 
-Possible values for %vane-name see [Overview](overview.md "overview"):
+Possible values for %vane-name see [Overview](overview "overview"):
 
 ------------------------------------------------------------------------
 
