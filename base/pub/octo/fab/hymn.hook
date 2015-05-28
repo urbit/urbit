@@ -7,26 +7,25 @@
   ;head
     ;meta(charset "utf-8");
     ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js");
-    ;script(type "text/javascript", src "/~/at/base/lib/urb.js");
+    ;script(type "text/javascript", src "/~~/~/at/base/lib/urb.js");
     ;link(type "text/css", rel "stylesheet", href "/home/lib/base.css");
     ;link(type "text/css", rel "stylesheet", href "/home/pub/octo/src/main.css");
     ;title: :octo
   ==
   ;body
     ;div#what
-      ;div#ship
-        ;div.sig: ~
+      ;div#x
         ;div.ship;
-        ;div.as;
+        ;div.as: ✕
       ==
       ;div#vs: vs
-      ;div#user
-        ;div.sig: ~
+      ;div#o
         ;div.ship;
-        ;div.as;
+        ;div.as: ◯
       ==
     ==
     ;div#bord;
+    ;div#audi;
     ;script(type "text/javascript", src "/home/pub/octo/src/main.js");
   ==
 ==

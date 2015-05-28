@@ -177,6 +177,7 @@
           abet:(~(diff-octo-update ce ost.hid src.hid) way mex) ::
 ++  peer-octo                                           ::  urbit peer
           |=  path                                      ::
+          ~&  [%peer path]
           abet:(~(peer-octo ce ost.hid src.hid) +<)             ::
 ++  peer-sole                                           ::  console subscribe
           |=  path                                      ::

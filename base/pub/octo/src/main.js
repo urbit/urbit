@@ -1,10 +1,11 @@
 $(function() {
   $bord = $('#bord')
+  $audi = $('#audi')
   $whom = $('#whom')
 
   lett = ["x","o"]
   symb = [" ","✕","◯"]
-  draw = function(state) {
+  drab = function(state) {
     space = function(_state,y,x) { 
       return "<div class='spac' data-index='"+y+"-"+x+
              "'>"+symb[_state]+"</div>" 
@@ -22,31 +23,57 @@ $(function() {
       }
     }
     $bord.html(s)
-   turn(state.who)
   }
 
-  which = null
-  turn = function(who) {
-    $('body').toggleClass('turn',(who == which))
+  audi = function(state) {
+    a = "<h1>audience</h1>"
+    for(i=0;i<state.aud.length;i++) {
+      a += "<div class='ship'>"+state.aud[i].slice(1)+"</div>"
+    }
+    $audi.html(a)
   }
 
-  assign = function(who) {
-    which = who
-    turn(who)
-    $('#ship .as').text(symb[Number(!lett.indexOf(who))+1])
-    $('#user .as').text(symb[lett.indexOf(who)+1])
+  who = null
+  turn = function(state) {
+    if(state.plx.slice(1) == window.urb.user)
+      who = "x"
+    if(state.plo.slice(1) == window.urb.user)
+      who = "o"
+    if(who == null && (state.plx == "" || state.plo == ""))
+      wurn = true
+    else
+      wurn = (state.who == who)
+    $('body').toggleClass('turn',wurn)
+    $('body').toggleClass('x',(state.who == 'x'))
+    $('body').toggleClass('o',(state.who == 'o'))
+  }
+
+  assign = function(state) {
+    if(!state.plo) 
+      state.plo = "" 
+    if(!state.plx) 
+      state.plx = "" 
+    $('#o .ship').toggleClass('waiting', (state.plo=="")).text(state.plo.slice(1))
+    $('#x .ship').toggleClass('waiting', (state.plx=="")).text(state.plx.slice(1))
+  }
+
+  message = function(mess) {
+    mess = mess.split('"')[1]
+    mess = mess.split("=")
+    mess = "<div class='ship'>"+mess[0].slice(1)+"</div> ["+symb[lett.indexOf(mess[1].toLowerCase())+1]+"] WINS"
+    $('body').append('<div id="message">'+mess+'</div>')
+    setTimeout(function() { $('#message').fadeOut().remove(); }, 2000)
   }
 
   urb.appl = 'octo'
-  urb.bind('/octo/web', function(err,res) {
-    if(which == null) { assign(res.data.who) }
-    draw(res.data)
+  urb.bind('/octo', function(err,res) {
+    if(typeof(res.data) == 'string')
+      return message(res.data)
+    assign(res.data)
+    drab(res.data)
+    audi(res.data)
+    turn(res.data)
   })
-
-  // draw({
-  //   box:[false,false,false,false,false,false,false,false,false],
-  //   boo:[false,false,false,false,false,false,false,false,false]
-  // })
 
   $bord.on('click', function(e) {
     if(!$('body').hasClass('turn')) { return false }
@@ -56,7 +83,4 @@ $(function() {
       function(i) { return Number(i); })
     urb.send({mark:'octo-move',data:data})
   })
-
-  $('#ship .ship').text(window.urb.ship)
-  $('#user .ship').text(window.urb.user)
 })
