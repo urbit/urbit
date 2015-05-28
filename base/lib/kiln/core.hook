@@ -2,10 +2,17 @@
 ::::  /hook/core/kiln/lib                               ::  ::
   ::                                                    ::  ::
 /?  310                                                 ::  version
+::  /+  mean  XX
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%                                                      ::  ::
+++  mean
+  |=  a=tang 
+  ?~  a  !!
+  ~>  %mean.|.(i.a)
+  $(a t.a)
+::
 ++  kiln-part  ,[%kiln %0 kiln-pith]                    ::  kiln state
 ++  kiln-pith                                           ::
     $:  rem=(map desk kiln-desk)                        ::
@@ -35,6 +42,8 @@
         sud=desk                                        ::
         gim=?(%auto germ)                               ::
     ==                                                  ::
+++  hood-cp  [input=path output=path]          ::
+++  hood-mv  [input=path output=path]
 --                                                      ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -81,6 +90,25 @@
     |=  hood-merge
     abet:abet:(merge:(work syd) ali sud gim)
   ::
+  ++  do-info
+    |=  [mez=tape pax=path tor=toro]
+    =+  syd=q:(need (tome pax))
+    =-  abet:abet:(spam:(work syd) leaf/mez ~)
+    (emit %info /kiln our tor)
+  ++  poke-rm  |=(a=path (do-info "removed" a (fray a)))
+  ++  poke-cp
+    |=  [input=path output=path]
+    %^  do-info  "copied"  input
+    ?>  =(-:(flop input) -:(flop output))
+    (foal output -:(flop input) %noun .^(%cx input))    ::  XX type
+  ::
+  ++  poke-mv
+    |=  [input=path output=path] 
+    %^  do-info  "moved"  input
+    ?>  =(-:(flop input) -:(flop output))
+    %+  furl  (fray output)
+    (foal output -:(flop input) %noun .^(%cx input))
+  ::
   ++  take  |=(way=wire ?>(?=([@ ~] way) (work i.way))) ::  general handler
   ++  take-mere                                         ::
     |=  [way=wire are=(each (set path) (pair term tang))]
@@ -116,12 +144,8 @@
       !!
     ::
     ++  ford-fail
-      |=  tan=tang  
-      ~|  %ford-fail
-      |-
-      ?~  tan  !!
-      ~>  %mean.|.(i.tan)           ::  interpolate into stack trace
-      $(tan t.tan) 
+      |=(tan=tang ~|(%ford-fail (mean tan)))
+      
     ::
     ++  unwrap-tang
       |*  res=(each ,* tang)
