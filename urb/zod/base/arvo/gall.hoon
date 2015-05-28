@@ -542,7 +542,7 @@
       =+  cug=(ap-find [%diff p.cag +.pax])
       ?~  cug
         %.  [| her +.pax]
-        ap-pump:(ap-lame %diff (ap-suck "diff: no {<`path`[p.cag pax]>}"))
+        ap-pump:(ap-lame %diff (ap-suck "diff: no {<`path`[p.cag +.pax]>}"))
       =+  ^=  arg  ^-  vase
           %-  slop
           ?:  =(0 p.u.cug)
@@ -613,6 +613,25 @@
       |=  cit=cuft
       ^+  +>
       +>(zip :_(zip [ost %give cit]))
+    ::
+    ++  ap-bowl                                         ::  set up bowl
+      %_    .
+          +12.q.hav
+        ^-   bowl
+        :*  :*  our                               ::  host
+                q.q.pry                           ::  guest
+                dap                               ::  agent
+            ==                                    ::
+            :*  wex=~                             ::  outgoing
+                sup=sup.ged                       ::  incoming
+            ==                                    ::
+            :*  ost=ost                           ::  cause
+                act=act.tyc                       ::  tick
+                eny=eny.tyc                       ::  nonce
+                now=lat.tyc                       ::  time
+                byk=[p.pup q.pup [%da lat.tyc]]   ::  source
+        ==  ==                                    ::
+      ==
     ::
     ++  ap-hide                                         ::  set up hide
       %_    .

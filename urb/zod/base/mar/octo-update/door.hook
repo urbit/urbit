@@ -16,16 +16,16 @@
   |%
   ++  json  ^-  ^json                                   ::  to %json  
     ?-    +>-<
-        |  s/(crip +>->)
+        |  s/(crip p)
         &
       =+  she=|=(ship s/(scot %p +<))
       %-  jobe
-      :~  who/s/?:(who %x %o) 
-          plx/?~(p.sag ~ (she u.p.sag))
-          plo/?~(q.sag ~ (she u.q.sag))
-          aud/a/(turn (~(tap by aud)) she)
-          box/~(jon bo box)
-          boo/~(jon bo boo)
+      :~  who/s/?:(who.p %x %o) 
+          plx/?~(p.sag.p ~ (she u.p.sag.p))
+          plo/?~(q.sag.p ~ (she u.q.sag.p))
+          aud/a/(turn (~(tap by aud.p)) she)
+          box/~(jon bo box.p)
+          boo/~(jon bo boo.p)
       ==
     ==
   --
