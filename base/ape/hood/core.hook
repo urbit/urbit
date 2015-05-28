@@ -113,9 +113,9 @@
 ++  from-kiln
   =-  [wrap=- *kiln-work]
   |*  fun=_=>(*kiln-work |=(* abet))
-  |=  [from _+<.fun]
-  =.  +>.fun  (kiln-work [hid +<-] (able %kiln))
-  (ably (fun +<+))
+  |=  _+<.fun
+  =.  +>.fun  (kiln-work hid (able %kiln))
+  (ably (fun +<))
 ::
 ++  poke-kiln-cp  (wrap poke-cp):from-kiln
 ++  poke-kiln-rm  (wrap poke-rm):from-kiln
