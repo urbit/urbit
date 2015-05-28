@@ -9620,18 +9620,6 @@
 ++  duct  (list wire)                                   ::  causal history
 ++  gage  (pair marc vase)                              ::  structured cage
 ++  from  ,[ost=bone src=ship]                          ::  forward problem
-++  hide                                                ::  standard app state
-        $:  $:  our=ship                                ::  owner/operator
-                app=term                                ::  app identity
-                imp=path                                ::  app instance
-            ==                                          ::  
-            cub=(map span term)                         ::  offspring
-            sup=(map bone (pair ship path))             ::  subscription set
-            pus=(jug path bone)                         ::  noitpircsbus set
-            $:  act=@ud                                 ::  change number
-                eny=@uvI                                ::  entropy
-                lat=@da                                 ::  date of last tick
-        ==  ==                                          ::
 ++  hypo  |*(a=$+(* *) (pair type a))                   ::  type associated
 ++  hobo  |*  a=$+(* *)                                 ::  kiss wrapper
           $?  $%  [%soft p=*]                           ::
@@ -9685,11 +9673,6 @@
           ==                                            ::
 ++  wire  path                                          ::  event pretext
 ::::: hacks and tools
-++  pale  |=  [hid=hide fun=$+(sink ?)]                 ::  filter peers
-          (skim (~(tap by sup.hid)) fun)
-++  prix  |=  pax=path  |=  sink  ^-  ?                 ::  filter gate
-          ?~  pax  &  ?~  r.+<  |                       ::
-          &(=(i.pax i.r.+<) $(pax t.pax, r.+< t.r.+<))  ::
 ++  slod  
   |=  sed=slad
   ^-  slut

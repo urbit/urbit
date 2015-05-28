@@ -97,7 +97,7 @@
         (runt [(sub len lez) '-'] nez)
       :(welp pre (scag (dec len) nez) "+")  
     --
-|_  [hid=hide house]
+|_  [hid=bowl house]
 ++  ra                                                  ::  per transaction
   |_  [ost=bone moves=(list move)]
   ++  sh                                                ::  per console

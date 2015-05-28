@@ -1694,6 +1694,14 @@
       ?:(=(%lord -.p.gos) ~['[' nad ']'] ~['(' nad ')'])
     ==
   ==
+++  pale                                                ::  filter peers
+  |=  [hid=bowl fun=$+(sink ?)]
+  (skim (~(tap by sup.hid)) fun)
+::
+++  prix                                                ::  filter gate
+  |=  pax=path  |=  sink  ^-  ?
+  ?~  pax  &  ?~  r.+<  | 
+  &(=(i.pax i.r.+<) $(pax t.pax, r.+< t.r.+<))
 ::
 ++  hunt                                                ::  first of unit dates
   |=  [one=(unit ,@da) two=(unit ,@da)]
@@ -1846,7 +1854,7 @@
             $:  ost=bone                                ::  opaque cause
                 act=@ud                                 ::  change number
                 eny=@uvI                                ::  entropy
-                now=@da                                 ::  current time
+                lat=@da                                 ::  current time
                 byk=beak                                ::  load source
         ==  ==                                          ::
 ++  bray  ,[p=life q=(unit life) r=ship s=@da]          ::  our parent us now

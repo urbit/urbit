@@ -127,7 +127,7 @@
   ++  mo-okay                                           ::  valid agent core
     |=  vax=vase
     ^-  ?
-    (~(nest ut -:!>(*hide)) %| p:(slot 12 vax))
+    (~(nest ut -:!>(*bowl)) %| p:(slot 12 vax))
   ::
   ++  mo-boom                                           ::  complete new boot
     |=  [dap=dude pup=scup dep=@uvH gux=(each gage tang)]
@@ -519,7 +519,7 @@
     ++  ap-call                                         ::  call into server
       |=  [cog=term arg=vase]
       ^-  [(unit tang) _+>]
-      =.  +>  ap-hide
+      =.  +>  ap-bowl
       =+  arm=(ap-farm cog)
       ?:  ?=(%| -.arm)  [`p.arm +>.$]
       =+  zem=(ap-slam cog p.arm arg)
@@ -631,21 +631,6 @@
                 now=lat.tyc                       ::  time
                 byk=[p.pup q.pup [%da lat.tyc]]   ::  source
         ==  ==                                    ::
-      ==
-    ::
-    ++  ap-hide                                         ::  set up hide
-      %_    .
-          +12.q.hav
-        ^-  hide
-        :*  :*  our
-                dap
-                ~
-            ==
-            ~
-            sup.ged
-            pus.ged
-            tyc
-        ==
       ==
     ::
     ++  ap-hype                                         ::  hyphenate

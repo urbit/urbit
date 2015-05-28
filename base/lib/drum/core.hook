@@ -122,7 +122,7 @@
   ?>(?=([@ @ ~] way) [(slav %p i.way) i.t.way])
 ::
 ++  drum-work                                           ::  work in drum
-  |=  [[hide from] drum-part]
+  |=  [[bowl from] drum-part]
   =+  (fall (~(get by bin) ost) (deft-pipe our))
   =>  |%                                                ::  arvo structures
       ++  pear                                          ::  request
