@@ -149,17 +149,10 @@
   ::                                                    ::
   ++  prep                                              ::
     |=  [old=(unit ,[(list move) axon])]                ::  initialize
-    ?-  
-          =<  abet  ?~  old  +>                         ::
-          =<  (park %2 ~)                               ::
-          ?-  -.+>.old                                  ::
-            %1  +>(+<+ u.old)                           ::
-            %0  !!                                      ::
-          ==                                            ::
-    +>                                                  ::
-  ::
+    +>
+  ::                                                    ::
   ++  pull-octo                                         ::  unsubscribe
-    |=  pax=path                                ::
+    |=  pax=path                                        ::
     ^+  +>
     lose                                        ::
   ::
@@ -178,34 +171,34 @@
   ::                                                    ::  ::
 ++  coup-octo                                           ::  move acknowledge
           |=  [way=wire saw=(unit tang)]                ::
-          abet:(~(coup-octo ce ost src) way saw)        :: 
+          abet:(~(coup-octo ce ost.hid src.hid) way saw)        :: 
 ++  diff-octo-update                                    ::  friend update
           |=  [way=wire mex=(each game tape)]           ::
-          abet:(~(diff-octo-update ce ost src) way mex) ::
+          abet:(~(diff-octo-update ce ost.hid src.hid) way mex) ::
 ++  peer-octo                                           ::  urbit peer
           |=  path                                      ::
-          abet:(~(peer-octo ce ost src) +<)             ::
+          abet:(~(peer-octo ce ost.hid src.hid) +<)             ::
 ++  peer-sole                                           ::  console subscribe
           |=  path                                      ::
-          abet:(~(peer-sole ce ost src) +<)             ::
+          abet:(~(peer-sole ce ost.hid src.hid) +<)             ::
 ++  poke-sole-action                                    ::  console input
           |=  sole-action                               ::
-          abet:(~(poke-sole-action ce ost src) +<)      ::
+          abet:(~(poke-sole-action ce ost.hid src.hid) +<)      ::
 ++  poke-octo-move                                      ::
           |=  point                                     ::
-          abet:(~(poke-octo-move ce ost src) +<)        ::
+          abet:(~(poke-octo-move ce ost.hid src.hid) +<)        ::
 ++  prep  |=  (unit ,[(list move) axon])                ::  initialize
-          abet:(~(prep ce ost src) +<)                  ::
+          abet:(~(prep ce ost.hid src.hid) +<)                  ::
 ++  pull-octo                                           ::  unsubscribe
           |=  path                                      ::
-          abet:(~(pull-octo ce ost src) +<)             ::
+          abet:(~(pull-octo ce ost.hid src.hid) +<)             ::
 ++  pull-sole                                           ::  disconnect console
           |=  path                                      ::
-          abet:(~(pull-sole ce ost src) +<)             ::
+          abet:(~(pull-sole ce ost.hid src.hid) +<)             ::
 ++  quit-octo                                           ::  unlinked by friend
           |=  way=wire                                  ::
-          abet:(~(quit-octo ce ost src) way)            ::
+          abet:(~(quit-octo ce ost.hid src.hid) way)            ::
 ++  reap-octo                                           ::  linked to friend
           |=  [way=wire saw=(unit tang)]                ::
-          abet:(~(reap-octo ce ost src) way saw)        ::
+          abet:(~(reap-octo ce ost.hid src.hid) way saw)        ::
 --
