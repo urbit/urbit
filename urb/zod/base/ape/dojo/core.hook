@@ -741,11 +741,11 @@
   he-abet:(~(he-type he [ost.hid ~] (~(got by hoc) ost.hid)) act)
 ::
 ++  made
-  |=  [then dep=@uvH reg=(each gage tang)]
+  |=  [way=wire dep=@uvH reg=(each gage tang)]
   he-abet:(~(he-made he [[ost.hid ~] (~(got by hoc) ost.hid)]) way dep reg)
 ::
 ++  unto
-  |=  [then cit=cuft] 
+  |=  [way=wire cit=cuft] 
   he-abet:(~(he-unto he [[ost.hid ~] (~(got by hoc) ost.hid)]) cit)
 ::
 ++  pull

@@ -97,7 +97,7 @@
   ::                                                    ::  ::
   ::::                                                  ::  ::  console UI
     ::                                                  ::  ::
-  ++  work                                              ::  conslle action
+  ++  work                                              ::  console action
     |=  act=sole-action                                 ::
     =+  say=(~(got by eye) ost)                         ::
     |^  ?:(?=(%det -.act) (delt +.act) dive)            ::
@@ -177,10 +177,10 @@
 ::::                                                    ::  ::  handlers
   ::                                                    ::  ::
 ++  coup-octo                                           ::  move acknowledge
-          |=  [then saw=(unit tang)]                    ::
+          |=  [way=wire saw=(unit tang)]                ::
           abet:(~(coup-octo ce ost src) way saw)        :: 
 ++  diff-octo-update                                    ::  friend update
-          |=  [then mex=(each game tape)]               ::
+          |=  [way=wire mex=(each game tape)]           ::
           abet:(~(diff-octo-update ce ost src) way mex) ::
 ++  peer-octo                                           ::  urbit peer
           |=  path                                      ::
@@ -201,11 +201,11 @@
           abet:(~(pull-octo ce ost src) +<)             ::
 ++  pull-sole                                           ::  disconnect console
           |=  path                                      ::
-          abet:(~(pull-sole ce ost src) +<)            ::
+          abet:(~(pull-sole ce ost src) +<)             ::
 ++  quit-octo                                           ::  unlinked by friend
-          |=  then                                      ::
+          |=  way=wire                                  ::
           abet:(~(quit-octo ce ost src) way)            ::
 ++  reap-octo                                           ::  linked to friend
-          |=  [then saw=(unit tang)]                    ::
+          |=  [way=wire saw=(unit tang)]                ::
           abet:(~(reap-octo ce ost src) way saw)        ::
 --
