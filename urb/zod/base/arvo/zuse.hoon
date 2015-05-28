@@ -1694,6 +1694,14 @@
       ?:(=(%lord -.p.gos) ~['[' nad ']'] ~['(' nad ')'])
     ==
   ==
+++  pale                                                ::  filter peers
+  |=  [hid=bowl fun=$+(sink ?)]
+  (skim (~(tap by sup.hid)) fun)
+::
+++  prix                                                ::  filter gate
+  |=  pax=path  |=  sink  ^-  ?
+  ?~  pax  &  ?~  r.+<  | 
+  &(=(i.pax i.r.+<) $(pax t.pax, r.+< t.r.+<))
 ::
 ++  hunt                                                ::  first of unit dates
   |=  [one=(unit ,@da) two=(unit ,@da)]
@@ -1818,12 +1826,13 @@
               lys=@da                                   ::  last sent
               pac=rock                                  ::  packet data
           ==                                            ::
+++  bitt  (map bone (pair ship path))                   ::  incoming subs
 ++  blob                                                ::  fs blob
           $%  [%delta p=lobe q=[p=mark q=lobe] r=page]  ::  delta on q
               [%direct p=lobe q=page]                   ::  immediate
               [%indirect p=lobe q=page r=lobe s=page]   ::  both
           ==                                            ::
-++  boat  ,[(list slip) tart]                           ::  user stage
+++  boat  (map (pair bone wire) (trel bean ship path))  ::  outgoing subs
 ++  boon                                                ::  fort output
           $%  [%beer p=ship q=@uvG]                     ::  gained ownership
               [%cake p=sock q=soap r=coop s=duct]       ::  e2e message result
@@ -1834,7 +1843,20 @@
               [%ouzo p=lane q=rock]                     ::  transmit packet
               [%wine p=sock q=tape]                     ::  notify user
           ==                                            ::
-++  bowl  ,[p=(list gift) q=(unit boat)]                ::  app product
+++  bowl                                                ::  standard app state
+        $:  $:  our=ship                                ::  host
+                src=ship                                ::  guest
+                dap=term                                ::  agent
+            ==                                          ::  
+            $:  wex=boat                                ::  outgoing subs
+                sup=bitt                                ::  incoming subs
+            ==                                          ::
+            $:  ost=bone                                ::  opaque cause
+                act=@ud                                 ::  change number
+                eny=@uvI                                ::  entropy
+                now=@da                                 ::  current time
+                byk=beak                                ::  load source
+        ==  ==                                          ::
 ++  bray  ,[p=life q=(unit life) r=ship s=@da]          ::  our parent us now
 ++  brow  ,[p=@da q=@tas]                               ::  browser version
 ++  buck  ,[p=mace q=will]                              ::  all security data
@@ -2236,7 +2258,6 @@
 ++  step  ,[p=bray q=gens r=pass]                       ::  identity stage
 ++  suba  ,[p=cart q=(list ,[p=path q=misu])]           ::  delta
 ++  tako  ,@                                            ::  yaki ref
-++  tart  $+([@da path note] bowl)                      ::  process core
 ++  tick  ,@ud                                          ::  process id
 ++  toro  ,[p=@ta q=nori]                               ::  general change
 ++  town                                                ::  all security state

@@ -34,8 +34,8 @@
       pol=(map ship mast)                               ::  apps by ship
   ==                                                    ::
 ++  gest                                                ::  subscriber data
-  $:  sup=(map bone (pair ship path))                   ::  subscribers
-      pus=(jug path bone)                               ::  srebircsbus
+  $:  sup=bitt                                          ::  incoming subscribers
+      neb=boat                                          ::  outgoing subscribers
       qel=(map bone ,@ud)                               ::  queue meter
   ==                                                    ::
 ++  mast                                                ::  ship state
@@ -128,7 +128,7 @@
   ++  mo-okay                                           ::  valid agent core
     |=  vax=vase
     ^-  ?
-    (~(nest ut -:!>(*hide)) %| p:(slot 12 vax))
+    (~(nest ut -:!>(*bowl)) %| p:(slot 12 vax))
   ::
   ++  mo-boom                                           ::  complete new boot
     |=  [dap=dude pup=scup dep=@uvH gux=gage]
@@ -136,14 +136,14 @@
     ?-    -.gux
         %tabl  ~|(%made-tabl !!)
         %|  
-      =.  +>  (mo-bold dap dep)
+      =.  +>  (mo-bold pup dap dep)
       =.  +>  (mo-give %onto %| p.gux)
       +>
         %&
       ?>  ?=(@ p.p.gux)
       ?.  (mo-okay q.p.gux)
         (mo-give %onto %| [%leaf "{<dap>}: bogus core"]~)
-      =.  +>  (mo-bold dap dep)
+      =.  +>  (mo-bold pup dap dep)
       =.  +>  (mo-born dap pup q.p.gux)
       =+  old=+>.$
       =+  wag=(ap-prop:(ap-abed:ap dap [%high [~ our]]) ~)
@@ -176,7 +176,7 @@
     ?.  (~(has by bum) dap)  
       ~&  [%gall-old-boon dap]
       +>
-    =.  +>  (mo-bold dap dep)
+    =.  +>  (mo-bold pup dap dep)
     ?-  -.gux
       %tabl  ~|(%made-tabl !!)
       %|  (mo-give %onto %| p.gux)
@@ -185,9 +185,9 @@
     ==
   ::
   ++  mo-bold                                           ::  wait for dep
-    |=  [dap=dude dep=@uvH]
+    |=  [pup=scup dap=dude dep=@uvH]
     ^+  +>
-    %+  mo-pass  [%sys %dep dap ~] 
+    %+  mo-pass  [%sys %dep (scot %p p.pup) q.pup dap ~] 
     [%f %wasp our dep]
   ::
   ++  mo-boot                                           ::  create ship
@@ -285,12 +285,16 @@
     ?+    -.pax  !!
         %dep                                            ::  update
       ?>  ?=([%f %news *] sih)
-      ?>  ?=([@ ~] t.pax)
-      =+  sot=(~(get by bum) i.t.pax)
-      ?~  sot
-        ~&  [%mo-cyst-none i.t.pax]
-        +>.$
-      (mo-boot i.t.pax %old pup.u.sot)
+      ?.  ?=([@ @ @ ~] t.pax)                           ::  XX while old piers
+        ?>  ?=([@ ~] t.pax)                             ::  may retain state
+        =+  sot=(~(get by bum) i.t.pax)                 ::  then delete
+        ?~  sot
+          ~&  [%mo-cyst-none i.t.pax]
+          +>.$
+        (mo-boot i.t.pax %old pup.u.sot)
+      %^  mo-boot  i.t.t.t.pax
+        ?:((~(has by bum) i.t.t.t.pax) %old %new)
+      [(slav %p i.t.pax) i.t.t.pax]
     ::
         %new
       ?>  ?=([%f %made *] sih)
@@ -525,7 +529,7 @@
     ++  ap-call                                         ::  call into server
       |=  [cog=term arg=vase]
       ^-  [(unit tang) _+>]
-      =.  +>  ap-hide
+      =.  +>  ap-bowl
       =+  arm=(ap-farm cog)
       ?:  ?=(%| -.arm)  [`p.arm +>.$]
       =+  zem=(ap-slam cog p.arm arg)
@@ -548,12 +552,12 @@
       =+  cug=(ap-find [%diff p.cag +.pax])
       ?~  cug
         %.  [| her +.pax]
-        ap-pump:(ap-lame %diff (ap-suck "diff: no {<`path`[p.cag pax]>}"))
+        ap-pump:(ap-lame %diff (ap-suck "diff: no {<`path`[p.cag +.pax]>}"))
       =+  ^=  arg  ^-  vase
           %-  slop
           ?:  =(0 p.u.cug)
-            [!>([`@ud`ost `@p`q.q.pry `path`+.pax]) !>(cag)]
-          [!>([`@ud`ost `@p`q.q.pry (slag (dec p.u.cug) `path`+.pax)]) q.cag]
+            [!>(`path`+.pax) !>(cag)]
+          [!>((slag (dec p.u.cug) `path`+.pax)) q.cag]
       =^  cam  +>.$  (ap-call q.u.cug arg)
       ?^  cam   
         (ap-pump:(ap-lame q.u.cug u.cam) | her pax)
@@ -620,19 +624,23 @@
       ^+  +>
       +>(zip :_(zip [ost %give cit]))
     ::
-    ++  ap-hide                                         ::  set up hide
+    ++  ap-bowl                                         ::  set up bowl
       %_    .
           +12.q.hav
-        ^-  hide
-        :*  :*  our
-                dap
-                ~
-            ==
-            ~
-            sup.ged
-            pus.ged
-            tyc
-        ==
+        ^-   bowl
+        :*  :*  our                               ::  host
+                q.q.pry                           ::  guest
+                dap                               ::  agent
+            ==                                    ::
+            :*  wex=~                             ::  outgoing
+                sup=sup.ged                       ::  incoming
+            ==                                    ::
+            :*  ost=ost                           ::  cause
+                act=act.tyc                       ::  tick
+                eny=eny.tyc                       ::  nonce
+                now=lat.tyc                       ::  time
+                byk=[p.pup q.pup [%da lat.tyc]]   ::  source
+        ==  ==                                    ::
       ==
     ::
     ++  ap-hype                                         ::  hyphenate
@@ -800,7 +808,7 @@
       =.  zip  ~
       =^  cam  +>.$ 
           %+  ap-call  q.u.cug
-          !>([[`@ud`ost `@p`q.q.pry] `path`(slag p.u.cug pax)])
+          !>(`path`(slag p.u.cug pax))
       =.  zip  (weld zip `(list cove)`[[ost %give %reap cam] old])
       ?^(cam ap-pule +>.$)
     ::
@@ -808,7 +816,6 @@
       |=  pax=path
       %_  +>.$
         sup.ged  (~(put by sup.ged) ost [q.q.pry pax])
-        pus.ged  (~(put ju pus.ged) pax ost)
       ==
     ::
     ++  ap-poke                                         ::  apply %poke
@@ -820,8 +827,6 @@
       ::  ~&  [%ap-poke dap p.cag cug]
       =^  tur  +>.$
           %+  ap-call  q.u.cug
-          %+  slop
-            !>([`@ud`ost `@p`q.q.pry])
           ?.  =(0 p.u.cug)  q.cag
           (slop (ap-term %tas p.cag) q.cag)
       (ap-give %coup tur)
@@ -836,7 +841,7 @@
         +>.$
       =^  cam  +>.$
         %+  ap-call  q.u.cug
-        !>([[`@ud`ost `@p`q.q.pry] wut why])
+        !>([wut why])
       ?^  cam
         ~&([%ap-lame-lame u.cam] +>.$)
       +>.$
@@ -852,7 +857,7 @@
       =^  cam  +>.$
           %+  ap-call  q.u.cug
           %+  slop
-            !>([`@ud`ost `@p`q.q.pry `path`(slag p.u.cug pax)])
+            !>(`path`(slag p.u.cug pax))
           (slot 3 vax)
       ?^  cam  (ap-lame -.q.vax u.cam)
       +>.$
@@ -904,8 +909,6 @@
         `+>.$(+13.q.hav +13.q.u.vux)
       =^  tur  +>.$
           %+  ap-call  %prep
-          %+  slop
-            !>([`@ud`ost `@p`q.q.pry])
           ?~(vux !>(~) (slop !>(~) (slot 13 u.vux)))
       ?~(tur `+>.$ :_(+>.$ `u.tur))
     ::
@@ -914,7 +917,6 @@
       ?~  wim  +
       %_  +
         sup.ged  (~(del by sup.ged) ost)
-        pus.ged  (~(del ju pus.ged) q.u.wim ost)
         qel.ged  (~(del by qel.ged) ost)
       ==
     ::
@@ -922,14 +924,13 @@
       =+  wim=(~(get by sup.ged) ost)
       ?~  wim  ~&(%ap-pull-none +)
       =:  sup.ged  (~(del by sup.ged) ost)
-          pus.ged  (~(del ju pus.ged) q.u.wim ost)
           qel.ged  (~(del by qel.ged) ost)
         ==
       =+  cug=(ap-find %pull q.u.wim)
       ?~  cug  +>
       =^  cam  +> 
         %+  ap-call  q.u.cug
-        !>([[`@ud`ost `@p`q.q.pry] (slag p.u.cug q.u.wim)])
+        !>((slag p.u.cug q.u.wim))
       ?^  cam  (ap-lame q.u.cug u.cam)
       +>+
     ::
@@ -946,7 +947,7 @@
         +>.$
       =^  cam  +>.$  
         %+  ap-call  q.u.cug
-        =+  den=!>([`@ud`ost `@p`q.q.pry (slag p.u.cug pax)])
+        =+  den=!>((slag p.u.cug pax))
         ?~(vux den (slop den u.vux))
       ?^  cam  (ap-lame q.u.cug u.cam)
       +>.$
