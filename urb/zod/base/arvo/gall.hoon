@@ -546,8 +546,8 @@
       =+  ^=  arg  ^-  vase
           %-  slop
           ?:  =(0 p.u.cug)
-            [!>([`@ud`ost `@p`q.q.pry `path`+.pax]) !>(cag)]
-          [!>([`@ud`ost `@p`q.q.pry (slag (dec p.u.cug) `path`+.pax)]) q.cag]
+            [!>(`path`+.pax) !>(cag)]
+          [!>((slag (dec p.u.cug) `path`+.pax)) q.cag]
       =^  cam  +>.$  (ap-call q.u.cug arg)
       ?^  cam   
         (ap-pump:(ap-lame q.u.cug u.cam) | her pax)
@@ -782,7 +782,7 @@
       =.  zip  ~
       =^  cam  +>.$ 
           %+  ap-call  q.u.cug
-          !>([[`@ud`ost `@p`q.q.pry] `path`(slag p.u.cug pax)])
+          !>(`path`(slag p.u.cug pax))
       =.  zip  (weld zip `(list cove)`[[ost %give %reap cam] old])
       ?^(cam ap-pule +>.$)
     ::
@@ -802,8 +802,6 @@
       ::  ~&  [%ap-poke dap p.cag cug]
       =^  tur  +>.$
           %+  ap-call  q.u.cug
-          %+  slop
-            !>([`@ud`ost `@p`q.q.pry])
           ?.  =(0 p.u.cug)  q.cag
           (slop (ap-term %tas p.cag) q.cag)
       (ap-give %coup tur)
@@ -817,7 +815,7 @@
         +>.$
       =^  cam  +>.$
         %+  ap-call  q.u.cug
-        !>([[`@ud`ost `@p`q.q.pry] wut why])
+        !>([wut why])
       ?^  cam
         ~&([%ap-lame-lame u.cam] +>.$)
       +>.$
@@ -833,7 +831,7 @@
       =^  cam  +>.$
           %+  ap-call  q.u.cug
           %+  slop
-            !>([`@ud`ost `@p`q.q.pry `path`(slag p.u.cug pax)])
+            !>(`path`(slag p.u.cug pax))
           (slot 3 vax)
       ?^  cam  (ap-lame -.q.vax u.cam)
       +>.$
@@ -869,8 +867,6 @@
         `+>.$(+13.q.hav +13.q.u.vux)
       =^  tur  +>.$
           %+  ap-call  %prep
-          %+  slop
-            !>([`@ud`ost `@p`q.q.pry])
           ?~(vux !>(~) (slop !>(~) (slot 13 u.vux)))
       ?~(tur `+>.$ :_(+>.$ `u.tur))
     ::
@@ -894,7 +890,7 @@
       ?~  cug  +>
       =^  cam  +> 
         %+  ap-call  q.u.cug
-        !>([[`@ud`ost `@p`q.q.pry] (slag p.u.cug q.u.wim)])
+        !>((slag p.u.cug q.u.wim))
       ?^  cam  (ap-lame q.u.cug u.cam)
       +>+
     ::
@@ -911,7 +907,7 @@
         +>.$
       =^  cam  +>.$  
         %+  ap-call  q.u.cug
-        =+  den=!>([`@ud`ost `@p`q.q.pry (slag p.u.cug pax)])
+        =+  den=!>((slag p.u.cug pax))
         ?~(vux den (slop den u.vux))
       ?^  cam  (ap-lame q.u.cug u.cam)
       +>.$
