@@ -37,7 +37,7 @@
 ++  ce                                                  ::  per client
   |_  from                                              ::
   ::                                                    ::  ::
-  ::::                                                  ::  ::  boilerplate
+  ::::                                                  ::  ::  common logic
     ::                                                  ::  ::
   ++  abet  [(flop moz) +>(moz ~)]                      ::  resolve core
   ++  dish  |=(cad=card %_(+> moz [[ost cad] moz]))     ::  request
@@ -48,7 +48,7 @@
             $(all t.all, +>.^$ (fun +>.^$))             ::
   ++  emit  |=(lime (dish %diff +<))                    ::  publish
   ::                                                    ::  ::
-  ::::                                                  ::  ::  server logic
+  ::::                                                  ::  ::  custom logic
     ::                                                  ::  ::
   ++  fail  ?:(soul (fect %bel ~) ~|(%invalid-move !!)) ::  user error
   ++  fect  |=(sole-effect (emit %sole-effect +<))      ::  update console
@@ -105,7 +105,7 @@
     ++  cusp  (cope !ept:here)                          ::  parsing rule
     ++  delt  |=  cal=sole-change                       ::  edit command line
               =^  cul  say  (~(remit cs say) cal good)  ::
-              ?~(cul abet fail:(fect det/u.cul))        ::
+              ?~(cul abet fail:(fect:abet det/u.cul))   ::
     ++  dive  =+  (rust (tufa buf.say) (punt comb))     ::  apply command line
               ?~(- fail ?~(-> show (plot:wipe ->+)))    ::
     ++  good  |=((list ,@c) -:(rose (tufa +<) cusp))    ::  validate input
@@ -124,12 +124,14 @@
     |=  [* saw=(unit)]                                  ::
     ?~(saw +> (word "move failed"))                     ::
   ::                                                    ::
-  ++  diff-octo-game                                    ::  friend update
-    |=  [way=wire gam=game]                             ::
-    ?:  =(^gam gam)  +>                                 ::
-    wild(gam gam)                                       ::
+  ++  diff-octo-update                                  ::  friend update
+    |=  [way=wire mex=(each game tape)]                 ::
+    ?-  -.mex                                           ::
+      |  (word p.mex)                                   ::
+      &  ?:(=(gam p.mex) +> wild(gam p.mex))            ::
+    ==                                                  ::
   ::                                                    ::
-  ++  peer-octo-net                                     ::  urbit peer
+  ++  peer-octo                                         ::  urbit peer
     |=  pax=path                                        ::
     tame:meet                                           ::
   ::                                                    ::
@@ -143,11 +145,18 @@
   ::                                                    ::
   ++  poke-octo-move                                    ::
     |=  point                                           ::
-    (kick +<)                                           ::
+    wild:(kick +<)                                      ::
   ::                                                    ::
   ++  prep                                              ::
     |=  [old=(unit ,[(list move) axon])]                ::  initialize
-    +>
+    ?-  
+          =<  abet  ?~  old  +>                         ::
+          =<  (park %2 ~)                               ::
+          ?-  -.+>.old                                  ::
+            %1  +>(+<+ u.old)                           ::
+            %0  !!                                      ::
+          ==                                            ::
+    +>                                                  ::
   ::
   ++  pull-octo                                         ::  unsubscribe
     |=  pax=path                                ::
@@ -170,12 +179,12 @@
 ++  coup-octo                                           ::  move acknowledge
           |=  [then saw=(unit tang)]                    ::
           abet:(~(coup-octo ce ost src) way saw)        :: 
-++  diff-octo-game                                      ::  friend update
-          |=  [then gam=game]                           ::
-          abet:(~(diff-octo-game ce ost src) way gam)   ::
-++  peer-octo-net                                       ::  urbit peer
+++  diff-octo-update                                    ::  friend update
+          |=  [then mex=(each game tape)]               ::
+          abet:(~(diff-octo-update ce ost src) way mex) ::
+++  peer-octo                                           ::  urbit peer
           |=  [from path]                               ::
-          abet:(~(peer-octo-net ce +<-) +<+)            ::
+          abet:(~(peer-octo ce +<-) +<+)                ::
 ++  peer-sole                                           ::  console subscribe
           |=  [from path]                               ::
           abet:(~(peer-sole ce +<-) +<+)                ::
