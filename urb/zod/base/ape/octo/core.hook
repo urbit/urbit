@@ -33,7 +33,7 @@
     ++  comb  (pick come ;~(pfix sig (punt fed:ag)))    ::  all command input
     ++  cope  |=(? ?:(+< (stag %| (cold ~ sig)) comb))  ::  with wait mode
     --                                                  ::
-|_  [hid=hide moz=(list move) %1 axle]                  ::  per agent
+|_  [hid=bowl moz=(list move) %1 axle]                  ::  per agent
 ++  ce                                                  ::  per client
   |_  from                                              ::
   ::                                                    ::  ::

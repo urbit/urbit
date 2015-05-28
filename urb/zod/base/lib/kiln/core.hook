@@ -41,7 +41,7 @@
   !:                                                    ::  ::
 |%                                                      ::  kiln library
 ++  kiln-work                                           ::  work in kiln
-  |=  [[hide from] kiln-part]
+  |=  [[bowl from] kiln-part]
   ?>  =(src our)
   =>  |%                                                ::  arvo structures
       ++  card                                          ::

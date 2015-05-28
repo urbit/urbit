@@ -138,7 +138,7 @@ $%  [%thou p=httr]
   ==
 --
 !:
-|_  [hid=hide vat=axle]
+|_  [hid=bowl vat=axle]
 ::
 ++  auth-queries
     :~  'grant_type'^'authorization_code'
