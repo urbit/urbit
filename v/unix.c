@@ -764,9 +764,9 @@ _unix_dir_khan_file(u3_noun pam, u3_noun wib, u3_noun woz)
 static u3_noun
 _unix_dir_khan(u3_udir* dir_u)
 {
-  if ( c3y == dir_u->dry ) {
-    return u3_nul;
-  }
+  //if ( c3y == dir_u->dry ) {
+  //  return u3_nul;
+  //}
 
   u3_udir* dis_u;
   u3_ufil* fil_u;

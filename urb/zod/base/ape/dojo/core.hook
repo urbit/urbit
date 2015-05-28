@@ -450,7 +450,8 @@
         dy-amok(var (~(put by var) p.mad (~(got by rez) p.q.mad)))
       ::
           %show
-        (dy-rash %tan (sell q:(~(got by rez) p.p.mad)) ~)
+        =+  cay=(~(got by rez) p.p.mad)
+        (dy-rash %tan ?+(p.cay [(sell q.cay)]~ %tang ;;(tang q.q.cay)))
       ==
     ::
     ++  dy-edit                                         ::  handle edit
