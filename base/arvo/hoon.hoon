@@ -9663,7 +9663,6 @@
 ++  slad  $+  [(unit (set monk)) term beam]             ::  undertyped
           (unit (unit (cask)))                          ::
 ++  slut  $+(* (unit (unit)))                           ::  old namespace
-++  then  ,[way=wire]                                   ::  backward problem
 ++  vile                                                ::  reflexive constants
           $:  typ=type                                  ::  -:!>(*type)
               duc=type                                  ::  -:!>(*duct)

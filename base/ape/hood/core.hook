@@ -50,20 +50,20 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 ++  coup-kiln-fancy                                     ::
-  |=  [then saw=(unit tang)]
+  |=  [way=wire saw=(unit tang)]
   (ably (take-coup-fancy:(kiln-work hid (able %kiln)) way +<+))
 ::
 ++  coup-kiln-spam                                      ::
-  |=  [then saw=(unit tang)]
+  |=  [way=wire saw=(unit tang)]
   ~?  ?=(^ saw)  [%kiln-spam-lame u.saw]
   [~ +>] 
 ::
 ++  coup-drum                                           ::
-  |=  [then saw=(unit tang)]
+  |=  [way=wire saw=(unit tang)]
   (ably (take-coup:(drum-work hid (able %drum)) way +<+))
 ::
 ++  diff-sole-effect-drum
-  |=  [then sole-effect]
+  |=  [way=wire sole-effect]
   (ably (diff-sole-effect:(drum-work hid (able %drum)) way +<+))
 ::
 ++  poke-hood-begin                                     ::
@@ -115,27 +115,27 @@
   (ably (poke-will:(helm-work hid (able %helm)) +<))
 ::
 ++  mere-kiln                                           ::
-  |=  [then are=(each (set path) (pair term tang))]
+  |=  [way=wire are=(each (set path) (pair term tang))]
   (ably (take-mere:(kiln-work hid (able %kiln)) way +<+))
 ::
 ++  made-kiln                                           ::
-  |=  [then @uvH (each gage tang)]
+  |=  [way=wire @uvH (each gage tang)]
   (ably (take-made:(kiln-work hid (able %kiln)) way +<+))
 ::
 ++  init-helm                                           ::
-  |=  [then *]
+  |=  [way=wire *]
   [~ +>]
 ::
 ++  note-helm                                           ::  
-  |=  [then (pair ,@tD tank)]
+  |=  [way=wire (pair ,@tD tank)]
   (ably (take-note:(helm-work hid (able %helm)) way +<+))
 ::
 ++  reap-drum
-  |=  [then saw=(unit tang)]
+  |=  [way=wire saw=(unit tang)]
   (ably (reap:(drum-work hid (able %drum)) way +<+))
 ::
 ++  onto-drum                                           ::
-  |=  [then saw=(each ,[term @tas @da] tang)]
+  |=  [way=wire saw=(each ,[term @tas @da] tang)]
   (ably (take-onto:(drum-work hid (able %drum)) way +<+))
 ::
 ++  peer-drum
@@ -143,10 +143,10 @@
   (ably (peer:(drum-work hid (able %drum)) +<))
 ::
 ++  quit-drum
-  |=  then
+  |=  way=wire
   (ably (quit:(drum-work hid (able %drum)) way))
 ::
 ++  went-helm                                           ::
-  |=  [then her=ship kay=cape]
+  |=  [way=wire her=ship kay=cape]
   (ably (take-went:(helm-work hid (able %helm)) way +<+))
 --

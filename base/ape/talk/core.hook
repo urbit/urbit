@@ -1679,12 +1679,12 @@
   ra-abet:(~(ra-sole ra ost.hid ~) act)
 ::
 ++  diff-talk-report                                    ::
-  |=  [then rad=report]
+  |=  [way=wire rad=report]
   %+  etch-friend  way  |=  [man=span cuz=station]
   ra-abet:(~(ra-diff-talk-report ra ost.hid ~) man cuz rad)
 ::
 ++  coup-repeat                                         ::
-  |=  [then saw=(unit tang)]
+  |=  [way=wire saw=(unit tang)]
   %+  etch-repeat  [%repeat way]  |=  [num=@ud src=@p man=span]
   ra-abet:(~(ra-coup-repeat ra ost.hid ~) [num src man] saw)
 ::
@@ -1712,7 +1712,7 @@
   ?>(?=(%repeat -.wer) (fun p.wer q.wer r.wer))
 ::
 ++  reap-friend                                         ::
-  |=  [then saw=(unit tang)]
+  |=  [way=wire saw=(unit tang)]
   ^-  (quip move +>)
   ?~  saw  [~ +>]
   %+  etch-friend  [%friend way]  |=  [man=span cuz=station]
@@ -1720,7 +1720,7 @@
   ra-abet:(~(ra-quit ra ost.hid ~) man cuz)
 ::
 ++  quit-friend                                         ::
-  |=  then
+  |=  way=wire
   %+  etch-friend  [%friend way]  |=  [man=span cuz=station]
   ra-abet:(~(ra-retry ra ost.hid ~) man cuz)
 ::

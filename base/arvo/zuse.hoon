@@ -1826,7 +1826,7 @@
               lys=@da                                   ::  last sent
               pac=rock                                  ::  packet data
           ==                                            ::
-++  bitt  (map bone (pair ship path))                   ::  outgoing subs
+++  bitt  (map bone (pair ship path))                   ::  incoming subs
 ++  blob                                                ::  fs blob
           $%  [%delta p=lobe q=[p=mark q=lobe] r=page]  ::  delta on q
               [%direct p=lobe q=page]                   ::  immediate

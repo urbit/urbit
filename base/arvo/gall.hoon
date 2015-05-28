@@ -33,8 +33,8 @@
       pol=(map ship mast)                               ::  apps by ship
   ==                                                    ::
 ++  gest                                                ::  subscriber data
-  $:  sup=(map bone (pair ship path))                   ::  subscribers
-      pus=(jug path bone)                               ::  srebircsbus
+  $:  sup=bitt                                          ::  incoming subscribers
+      neb=boat                                          ::  outgoing subscribers
       qel=(map bone ,@ud)                               ::  queue meter
   ==                                                    ::
 ++  mast                                                ::  ship state
@@ -790,7 +790,6 @@
       |=  pax=path
       %_  +>.$
         sup.ged  (~(put by sup.ged) ost [q.q.pry pax])
-        pus.ged  (~(put ju pus.ged) pax ost)
       ==
     ::
     ++  ap-poke                                         ::  apply %poke
@@ -875,7 +874,6 @@
       ?~  wim  +
       %_  +
         sup.ged  (~(del by sup.ged) ost)
-        pus.ged  (~(del ju pus.ged) q.u.wim ost)
         qel.ged  (~(del by qel.ged) ost)
       ==
     ::
@@ -883,7 +881,6 @@
       =+  wim=(~(get by sup.ged) ost)
       ?~  wim  ~&(%ap-pull-none +)
       =:  sup.ged  (~(del by sup.ged) ost)
-          pus.ged  (~(del ju pus.ged) q.u.wim ost)
           qel.ged  (~(del by qel.ged) ost)
         ==
       =+  cug=(ap-find %pull q.u.wim)
