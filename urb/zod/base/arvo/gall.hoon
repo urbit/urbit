@@ -22,6 +22,7 @@
 ++  cote                                                ::  ++ap note
   $%  [%meta p=@tas q=vase]                             ::  
       [%send p=ship q=cush]                             ::  
+      [%hiss p=mark q=cage]
   ==                                                    ::
 ++  cove  (pair bone (mold cote cuft))                  ::  internal move
 ++  move  ,[p=duct q=(mold note-arvo gift-arvo)]        ::  typed move
@@ -130,9 +131,10 @@
     (~(nest ut -:!>(*bowl)) %| p:(slot 12 vax))
   ::
   ++  mo-boom                                           ::  complete new boot
-    |=  [dap=dude pup=scup dep=@uvH gux=(each gage tang)]
+    |=  [dap=dude pup=scup dep=@uvH gux=gage]
     ^+  +>
     ?-    -.gux
+        %tabl  ~|(%made-tabl !!)
         %|  
       =.  +>  (mo-bold pup dap dep)
       =.  +>  (mo-give %onto %| p.gux)
@@ -169,13 +171,14 @@
     ==
   ::
   ++  mo-boon                                           ::  complete old boot
-    |=  [dap=dude pup=scup dep=@uvH gux=(each gage tang)]
+    |=  [dap=dude pup=scup dep=@uvH gux=gage]
     ^+  +>
     ?.  (~(has by bum) dap)  
       ~&  [%gall-old-boon dap]
       +>
     =.  +>  (mo-bold pup dap dep)
     ?-  -.gux
+      %tabl  ~|(%made-tabl !!)
       %|  (mo-give %onto %| p.gux)
       %&  ?>  ?=(@ p.p.gux)
           ap-abet:(ap-peep:(ap-abed:ap dap [%high [~ our]]) q.p.gux)
@@ -325,9 +328,9 @@
               num=(slav %ud i.t.t.t.pax)
           ==
       ?-  -.q.+>.sih
+        %tabl  ~|(%made-tabl !!)
         %|  (mo-give %mack `p.q.+>.sih)                  ::  XX should crash
-        %&  ?>  ?=(@ p.p.q.+>.sih)
-            =.  +>.$  (mo-give %mack ~)             ::  XX pump should ack
+        %&  =.  +>.$  (mo-give %mack ~)             ::  XX pump should ack
             (mo-give(hen (mo-ball him num)) %unto %diff `cage`p.q.+>.sih)
       ==
     ::
@@ -339,9 +342,9 @@
           ==
       ?:  ?=([%f %made *] sih)
         ?-  -.q.+>.sih
+          %tabl  ~|(%made-tabl !!)
           %|  (mo-give %mack `p.q.+>.sih)         ::  XX should crash
-          %&  ?>  ?=(@ p.p.q.+>.sih)
-              (mo-pass [%sys pax] %g %deal [him our] i.t.t.pax %poke p.q.+>.sih)
+          %&  (mo-pass [%sys pax] %g %deal [him our] i.t.t.pax %poke p.q.+>.sih)
         ==
       ?:  ?=([%a %woot *] sih)  +>.$                    ::  quit ack, boring
       ?>  ?=([%g %unto *] sih)
@@ -368,7 +371,7 @@
   ++  mo-cook                                           ::  take in /use
     |=  [pax=path hin=(hypo sign-arvo)]
     ^+  +>
-    ?.  ?=([@ @ ?(%inn %out) *] pax)
+    ?.  ?=([@ @ ?(%inn %out %enn) *] pax)
       ~&  [%mo-cook-bad-pax pax]
       !!
     =+  dap=`@tas`i.pax
@@ -376,7 +379,13 @@
     =+  pap=(ap-abed:ap dap pry) 
     =+  vax=(slot 3 `vase`hin)
     ?-  i.t.t.pax
-      %inn  ap-abet:(ap-pour:pap t.t.t.pax (slot 3 `vase`hin))
+      %inn  ap-abet:(ap-pour:pap t.t.t.pax (slot 3 `vase`hin))      
+      %enn  ?.  ?=([%e %sigh *] q.hin)
+              ~&  [%mo-cook-weird q.hin]
+              ~&  [%mo-cook-weird-path pax]
+              +>.$
+            ap-abet:(ap-sigh:pap t.t.t.pax +>.q.hin)
+    ::
       %out  ?.  ?=([%g %unto *] q.hin)
               ~&  [%mo-cook-weird q.hin]
               ~&  [%mo-cook-weird-path pax]
@@ -508,6 +517,7 @@
           %pass
         :+  %pass  `path`[%use dap p.q.cov]
         ?-  -.q.q.cov
+          %hiss  `note-arvo`[%e %hiss p.q.q.cov q.q.q.cov]
           %send  `note-arvo`[%g %deal [our p.q.q.cov] q.q.q.cov]
           %meta  `note-arvo`[`@tas`p.q.q.cov %meta `vase`q.q.q.cov]
         ==
@@ -649,6 +659,7 @@
       ?+  +<.q.vax  
                (ap-move-pass -.q.vax +<.q.vax cav)
         %diff  (ap-move-diff -.q.vax cav)
+        %hiss  (ap-move-hiss -.q.vax cav)
         %peer  (ap-move-peer -.q.vax cav)
         %pull  (ap-move-pull -.q.vax cav)
         %poke  (ap-move-poke -.q.vax cav)
@@ -669,6 +680,21 @@
       ?.  &(?=(^ q.vax) ?=(@ -.q.vax) ((sane %tas) -.q.vax))
         [%| (ap-suck "move: improper diff")]
       [%& sto %give %diff `cage`[-.q.vax (slot 3 (spec vax))]]
+    ::
+    ++  ap-move-hiss                                    ::  pass %hiss
+      |=  [sto=bone vax=vase]
+      ^-  (each cove tang)
+      ?.  &(?=([p=* q=@ q=^] q.vax) ((sane %tas) q.q.vax))
+        [%| (ap-suck "move: malformed hiss ask.[%hiss path mark cage]")]
+      =+  gaw=(slot 7 vax)
+      ?.  &(?=([p=@ q=^] q.gaw) ((sane %tas) p.q.gaw))
+        [%| (ap-suck "move: malformed cage")]
+      =+  pux=((soft path) p.q.vax)
+      ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
+        [%| (ap-suck "move: malformed path")]
+      :^  %&  sto  %pass
+      :-  [(scot %p q.q.pry) %enn u.pux]
+      [%hiss q.q.vax [p.q.gaw (slot 3 (spec gaw))]]
     ::
     ++  ap-move-mess                                    ::  extract path, target
       |=  vax=vase
@@ -810,7 +836,8 @@
       ^+  +>
       =+  cug=(ap-find /lame)
       ?~  cug
-        ~&  [%ap-lame wut why]
+        =.  why  (turn why |=(a=tank rose/[~ "! " ~]^[a]~))
+        ~>  %slog.`rose/[" " "[" "]"]^[>%ap-lame< >wut< why]
         +>.$
       =^  cam  +>.$
         %+  ap-call  q.u.cug
@@ -833,6 +860,22 @@
             !>(`path`(slag p.u.cug pax))
           (slot 3 vax)
       ?^  cam  (ap-lame -.q.vax u.cam)
+      +>.$
+    ::
+    ++  ap-sigh                                         ::  http response
+      |=  [pax=path cag=cage]
+      ^+  +>
+      =.  q.cag  (spec q.cag)
+      =+  cug=(ap-find [%sigh p.cag pax])
+      ?~  cug
+        (ap-lame %sigh (ap-suck "sigh: no {<`path`[p.cag pax]>}"))
+      =+  ^=  arg  ^-  vase
+          %-  slop
+          ?:  =(0 p.u.cug)
+            [!>([`@ud`ost `@p`q.q.pry `path`pax]) !>(cag)]
+          [!>([`@ud`ost `@p`q.q.pry (slag (dec p.u.cug) `path`pax)]) q.cag]
+      =^  cam  +>.$  (ap-call q.u.cug arg)
+      ?^  cam   (ap-lame q.u.cug u.cam)
       +>.$
     ::
     ++  ap-pout                                         ::  specific take
@@ -985,6 +1028,7 @@
         %merg  `%c
         %plug  `%c
         %them  `%e
+        %hiss  `%e
         %want  `%a
       ==
     --

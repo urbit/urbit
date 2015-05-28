@@ -10,7 +10,7 @@
 
     /*  U3_CELLOC_TOGGLE: enable toggling of the custum cell allocator
      *  via -g.  This slightly slows down the cell allocator even when
-     *  it's on.  Note that toggling -g breaks the image.  If
+     *  it's on.  Note that toggling -g breaks (maybe?) the image.  If
      *  U3_MEMORY_DEBUG is on, this should generally be on as well.
     */
 #     undef U3_CELLOC_TOGGLE

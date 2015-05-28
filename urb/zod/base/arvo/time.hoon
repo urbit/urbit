@@ -29,6 +29,7 @@
 ++  raze
   |=  tym=[p=clok q=clok]
   ^+  tym
+  ?~  p.tym  tym
   ?~  q.tym  tym
   ?:  (gth p:~(get up p.tym) p:~(get up q.tym))         ::  killed nonexisting
     ~&  [%snooze-lost del=p:~(get up q.tym) top=p:~(get up p.tym)]
@@ -182,6 +183,8 @@
       |-  ^+  [*(list move) tym]
       =.  tym  (raze tym)
       ?:  =([~ ~] tym)  [~ tym]                         ::  XX  TMI
+      ?:  =(~ p.tym)
+        ~&  %weird-wake  [~ tym]
       =+  nex=~(get up p.tym)
       ?:  (lte now p.nex)  [~ tym]
       =^  mof  tym  $(p.tym ~(pop up p.tym))

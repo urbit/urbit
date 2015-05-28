@@ -168,8 +168,8 @@
               ==
             ++  sp-well
               ;~  pose
-                (stag %home sym)
                 ;~(plug sym ;~(pfix fas sym))
+                (stag %home sym)
               ==
             ++  sp-wells  (most ;~(plug com ace) sp-well)
         --

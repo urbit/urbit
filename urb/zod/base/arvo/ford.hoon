@@ -55,7 +55,7 @@
       dep=(set beam)                                    ::  dependencies
   ==                                                    ::
 ++  calx                                                ::  concrete cache line
-  $%  [%hood p=calm q=(pair beam gage) r=hood]          ::  compile
+  $%  [%hood p=calm q=(pair beam cage) r=hood]          ::  compile
       [%bake p=calm q=(trel mark beam heel) r=(unit vase)]::  load
       [%slit p=calm q=[p=type q=type] r=type]           ::  slam type
       [%slim p=calm q=[p=type q=twig] r=(pair type nock)]::  mint
@@ -105,8 +105,21 @@
   ^-  cafe                                              ::
   [(grom p.a p.b) (grum q.a q.b)]                       ::
 ::                                                      ::
-++  faun  |=([a=cafe b=vase] (fine a `gage`[%noun b]))  ::  vase to cage
-++  feel  |=([a=cafe b=gage] (fine a q.b))              ::  cage to vase
+++  faun  |=([a=cafe b=vase] (fine a [%& %noun b]))     ::  vase to gage
+++  feel  |=([a=cafe b=cage] (fine a q.b))              ::  cage to vase
+++  furl                                                ::  unwrap gage to cage
+  |=  [a=cafe b=gage]  ^-  (bolt cage)
+  ?-  -.b
+    %tabl  (flaw a >%bad-marc< ~)
+    %|  (flaw a p.b)
+    %&  (fine a p.b)
+  ==
+::
+++  fret                                                ::  lift error
+  |=  a=(bolt gage)  ^-  (bolt gage)
+  ?.  ?=(%2 -.q.a)  a
+  [p.a [%0 p.q.a `gage`[%| q.q.a]]]
+::
 ++  fest                                                ::  bolt to success
   |=  a=beam                                            ::
   |*([b=cafe c=*] (flag a (fine b [~ u=c])))            ::
@@ -413,6 +426,23 @@
         ==
       fun
     ::
+    ++  tabl-run                                        ::  apply to all elems
+      |=  fun=(burg cage gage)
+      |=  [cof=cafe gag=gage]
+      ^-  (bolt gage)
+      ?.  ?=(%tabl -.gag)
+        (cope (furl cof gag) fun)
+      %+  cope
+        |-  ^-  (bolt (list (pair gage gage)))
+        ?~  p.gag  (fine cof ~)
+        %+  cope  (fret ^$(gag q.i.p.gag))
+        |=  [cof=cafe val=gage]
+        %+  cope  ^$(p.gag t.p.gag)
+        |=  [cof=cafe rex=(list (pair gage gage))]
+        (fine cof [[p.i.p.gag val] rex])
+      |=  [cof=cafe rex=(list (pair gage gage))]
+      (fine cof %tabl rex)
+    ::
     ++  dash                                            ::  process cache
       |=  cof=cafe
       ^+  +>
@@ -424,17 +454,15 @@
       %.  [cof kas kos]
       ;~  cope
         ;~  coax
-          |=([cof=cafe p=silk q=silk] (make cof p))
-          |=([cof=cafe p=silk q=silk] (make cof q))
+          |=([cof=cafe p=silk q=silk] (cope (make cof p) furl))
+          |=([cof=cafe p=silk q=silk] (cope (make cof q) furl))
         ==
-        |=  [cof=cafe cay=gage coy=gage]
-        ?.  &(?=(@ p.cay) ?=(@ p.coy))
-          (flaw cof leaf/"bad diff marc" ~)
+        |=  [cof=cafe cay=cage coy=cage]
         ?.  =(p.cay p.coy)
           %+  flaw  cof  :_  ~
           leaf/"diff on data of different marks: {(trip p.cay)} {(trip p.coy)}"
         ?:  =(q.q.cay q.q.coy)
-          (fine cof %null [%atom %n] ~)
+          (fine cof %& %null [%atom %n] ~)
         %+  cope  (fang cof p.cay)
         |=  [cof=cafe pro=vase]
         ?.  (slab %grad p.pro)
@@ -461,7 +489,7 @@
         =+  for=((soft ,@tas) q:(slap gar [%cnzy %form]))
         ?~  for
           (flaw cof leaf/"bad ++form:grad" ~)
-        (fine cof u.for dif)
+        (fine cof %& u.for dif)
       ==
     ::
     ++  daze                                            ::  remember depends
@@ -480,7 +508,7 @@
       =.  ..exec  (dash p.bot)
       ?-  -.q.bot
         %0  =^  dep  deh.bay  (daze p.q.bot)
-            amok:(expo [%made dep %& q.q.bot])
+            amok:(expo [%made dep q.q.bot])
         %2  =^  dep  deh.bay  (daze p.q.bot)
             amok:(expo [%made dep %| q.q.bot])
         %1  =+  zuk=(~(tap by p.q.bot) ~)
@@ -499,11 +527,11 @@
       |=  [cof=cafe for=mark bem=beam]
       ^-  (bolt hood)
       %+  cool  |.(leaf/"ford: fade {<[(tope bem)]>}")
-      %+  cope  (make cof [%bake for bem ~])
-      |=  [cof=cafe cay=gage]
+      %+  cope  (cope (make cof [%bake for bem ~]) furl)
+      |=  [cof=cafe cay=cage]
       %+  (clef %hood)  (fine cof bem(r [%ud 0]) cay)
-      ^-  (burg (pair beam gage) hood)
-      |=  [cof=cafe bum=beam cay=gage]
+      ^-  (burg (pair beam cage) hood)
+      |=  [cof=cafe bum=beam cay=cage]
       ::  ~&  fade/clef-miss/bem
       =+  rul=(fair bum)
       ?.  ?=(@ q.q.cay)
@@ -678,12 +706,10 @@
       %.  [cof kas kos]
       ;~  cope
         ;~  coax
-          |=([cof=cafe p=silk q=silk] (make cof p))
-          |=([cof=cafe p=silk q=silk] (make cof q))
+          |=([cof=cafe p=silk q=silk] (cope (make cof p) furl))
+          |=([cof=cafe p=silk q=silk] (cope (make cof q) furl))
         ==
-        |=  [cof=cafe cay=gage coy=gage]
-        ?.  &(?=(@ p.cay) ?=(@ p.coy))
-          (flaw cof leaf/"bad join marc: {<p.cay>} {<p.coy>}" ~)
+        |=  [cof=cafe cay=cage coy=cage]
         %+  cope  (fang cof for)
         |=  [cof=cafe pro=vase]
         ?.  (slab %grad p.pro)
@@ -704,7 +730,7 @@
             leaf/"join on data of bad marks: {(trip p.cay)} {(trip p.coy)}"
           leaf/"expected mark {(trip u.fom)}"
         ?:  =(q.q.cay q.q.coy)
-          (fine cof cay)
+          (fine cof %& cay)
         ?.  (slab %join p.gar)
           (flaw cof leaf/"no ++join:grad" ~)
         %+  cope
@@ -713,8 +739,8 @@
           (slop q.cay q.coy)
         |=  [cof=cafe dif=vase]
         ?@  q.dif
-          (fine cof %null dif)
-        (fine cof u.fom (slot 3 dif))
+          (fine cof %& %null dif)
+        (fine cof %& u.fom (slot 3 dif))
       ==
     ::
     ++  mash
@@ -723,12 +749,10 @@
       %.  [cof r.mas r.mos]
       ;~  cope
         ;~  coax
-          |=([cof=cafe p=silk q=silk] (make cof p))
-          |=([cof=cafe p=silk q=silk] (make cof q))
+          |=([cof=cafe p=silk q=silk] (cope (make cof p) furl))
+          |=([cof=cafe p=silk q=silk] (cope (make cof q) furl))
         ==
-        |=  [cof=cafe cay=gage coy=gage]
-        ?.  &(?=(@ p.cay) ?=(@ p.coy))
-          (flaw cof leaf/"bad mash marc: {<p.cay>} {<p.coy>}" ~)
+        |=  [cof=cafe cay=cage coy=cage]
         %+  cope  (fang cof for)
         |=  [cof=cafe pro=vase]
         ?.  (slab %grad p.pro)
@@ -750,9 +774,9 @@
             leaf/"mash on data of bad marks: {(trip p.cay)} {(trip p.coy)}"
           leaf/"expected mark {(trip u.fom)}"
         ?:  =(q.q.cay q.q.coy)
-          (fine cof cay)
+          (fine cof %& cay)
         ?.  (slab %mash p.gar)
-          (fine cof %null [%atom %n] ~)
+          (fine cof %& %null [%atom %n] ~)
         %+  cope
           %^  maul  cof
             (slap (slap pro [%cnzy %grad]) [%cnzy %mash])
@@ -763,7 +787,7 @@
               q.coy
           ==
         |=  [cof=cafe dif=vase]
-        (fine cof u.fom dif)
+        (fine cof %& u.fom dif)
       ==
     ::
     ++  kale                                            ::  mutate
@@ -772,17 +796,18 @@
       %+  cope
         |-  ^-  (bolt (list (pair wing vase)))
         ?~  muy  (flue cof)
-        %+  cope  (make cof q.i.muy)
-        |=  [cof=cafe cay=gage]
+        %+  cope  (cope (make cof q.i.muy) furl)
+        |=  [cof=cafe cay=cage]
         %+  cope  ^$(muy t.muy)
         |=  [cof=cafe rex=(list (pair wing vase))]
         (fine cof [[p.i.muy q.cay] rex])
       |=  [cof=cafe yom=(list (pair wing vase))]
       %+  cope  (make cof kas)
-      |=  [cof=cafe cay=gage]
+      %-  tabl-run
+      |=  [cof=cafe cay=cage]
       %+  cope  (keel cof q.cay yom)
       |=  [cof=cafe vax=vase]
-      (fine cof p.cay vax)
+      (fine cof %& p.cay vax)
     ::
     ++  keel                                            ::  apply mutations
       |=  [cof=cafe suh=vase yom=(list (pair wing vase))]
@@ -872,13 +897,13 @@
     ::
     ++  lear                                            ::  load vase
       |=  [cof=cafe bem=beam]
-      ^-  (bolt cage)
+      ^-  (bolt gage)
       =+  von=(save ~ %cx bem)
       ?~  von
         [p=*cafe q=[%1 [[%x bem ~] ~ ~]]]
       ?~  u.von
         (flaw cof leaf/"lear: file unavailable" (smyt (tope bem)) ~)
-      (fine cof u.u.von)
+      (fine cof %& u.u.von)
     ::
     ++  lend                                            ::  load arch
       |=  [cof=cafe bem=beam]
@@ -929,8 +954,8 @@
       %+  cope  (lion cof for haz)
       |=  [cof=cafe wuy=(list ,@tas)]
       ?~  wuy  (flue cof)
-      %+  cope  (make cof %bake i.wuy bem arg)
-      |=  [cof=cafe hoc=gage]
+      %+  cope  (cope (make cof %bake i.wuy bem arg) furl)
+      |=  [cof=cafe hoc=cage]
       %+  cope  (lope cof i.wuy t.wuy q.hoc)
       |=  [cof=cafe vax=vase]
       ((fest bem) cof vax)
@@ -1040,12 +1065,12 @@
         %.  [cof p.kas q.kas]
         ;~  cope
           ;~  coax
-            |=([cof=cafe p=silk q=silk] ^$(cof cof, kas p.kas))
-            |=([cof=cafe p=silk q=silk] ^$(cof cof, kas q.kas))
-          ==
+            |=([cof=cafe p=silk q=silk] (cope ^$(cof cof, kas p.kas) furl))
+            |=([cof=cafe p=silk q=silk] (cope ^$(cof cof, kas q.kas) furl))
+          ==                          ::  XX merge %tabl
         ::
-          |=  [cof=cafe bor=gage heg=gage]  ^-  (bolt gage)
-          [p=cof q=[%0 ~ [%$ (slop q.bor q.heg)]]]
+          |=  [cof=cafe bor=cage heg=cage]  ^-  (bolt gage)
+          (faun cof (slop q.bor q.heg))
         ==
       ::
           %bake
@@ -1055,7 +1080,7 @@
         |=  [cof=cafe vux=(unit vase)]
         ?~  vux
           (flaw cof leaf/"bake failed" (smyt (tope q.kas)) ~)
-        (fine cof [p.kas u.vux])
+        (fine cof [%& p.kas u.vux])
       ::
           %boil
         ^-  (bolt gage)
@@ -1064,49 +1089,48 @@
         |=  [cof=cafe bem=beam]
         %+  cope  (lime cof p.kas bem r.kas)
         |=  [cof=cafe vax=vase]
-        (fine cof `gage`[p.kas vax])
+        (fine cof `gage`[%& p.kas vax])
       ::
           %bunt
         %+  cool  |.(leaf/"ford: bunt {<p.kas>}")
         ?:  ?=(?(%hoon %hook) p.kas)
-          (fine cof p.kas [%atom %t] '')
+          (fine cof %& p.kas [%atom %t] '')
         %+  cope  (fang cof p.kas)
         |=  [cof=cafe tux=vase]
-        (fine cof [p.kas (slot 6 tux)])
+        (fine cof [%& p.kas (slot 6 tux)])
       ::
           %call
         ::  %+  cool  |.(leaf/"ford: call {<`@p`(mug kas)>}")
         %.  [cof p.kas q.kas]
         ;~  cope
           ;~  coax
-            |=([cof=cafe p=silk q=silk] ^$(cof cof, kas p))
+            |=([cof=cafe p=silk q=silk] (cope ^$(cof cof, kas p) furl))
             |=([cof=cafe p=silk q=silk] ^$(cof cof, kas q))
           ==
         ::
-          |=  [cof=cafe gat=gage sam=gage]
-          (maul cof q.gat q.sam)
-        ::
-          |=  [cof=cafe vax=vase]
-          (fine cof %noun vax)
+          |=  [cof=cafe gat=cage sam=gage]
+          %.  [cof sam]
+          %-  tabl-run
+          |=  [cof=cafe sam=cage]
+          (cope (maul cof q.gat q.sam) faun)
         ==
       ::
           %cast
         %+  cool  |.(leaf/"ford: cast {<p.kas>}")
         %+  cope  $(kas q.kas)
-        |=  [cof=cafe cay=gage]
+        %-  tabl-run
+        |=  [cof=cafe cay=cage]
         ^-  (bolt gage)
         %+  cool  |.(leaf/"ford: casting {<p.cay>} to {<p.kas>}")
-        ?.  ?=(@ p.cay)
-          (flaw cof leaf/"bad cast marc" ~)
         %+  cope  (link cof p.kas p.cay q.cay)
         |=  [cof=cafe vax=vase]
-        (fine cof [p.kas vax])
+        (fine cof [%& p.kas vax])
       ::
           %diff
         %+  cool  |.(leaf/"ford: diff {<`@p`(mug p.kas)>} {<`@p`(mug q.kas)>}")
         (diff cof p.kas q.kas)
       ::
-          %done  [cof %0 p.kas q.kas]
+          %done  [cof %0 p.kas %& q.kas]
           %dude  (cool |.(p.kas) $(kas q.kas))
           %dune
         ?~  q.kas  [cof [%2 p.kas [%leaf "no data"]~]]
@@ -1142,46 +1166,44 @@
         %+  cool  |.(leaf/"ford: pact {<`@p`(mug p.kas)>} {<`@p`(mug q.kas)>}")
         (pact cof p.kas q.kas)
       ::
-          %plan  
-        %+  cope  (abut:(meow p.kas q.kas) cof r.kas)
-        |=  [cof=cafe vax=vase]
-        (fine cof %noun vax)
-      ::
-          %reef  (fine cof %noun pit)
+          %plan  (cope (abut:(meow p.kas q.kas) cof r.kas) faun)
+          %reef  (faun cof pit)
           %ride
         %+  cool  |.(leaf/"ford: ride {<`@p`(mug kas)>}")
         %+  cope  $(kas q.kas)
-        |=  [cof=cafe cay=gage]
+        %-  tabl-run
+        |=  [cof=cafe cay=cage]
         %+  cope  (maim cof q.cay p.kas)
         |=  [cof=cafe vax=vase]
-        (fine cof %noun vax)
+        (faun cof vax)
       ::
           %tabl
         %+  cope
-          |-  ^-  (bolt (pair (list (pair marc marc)) vase))
-          ?~  p.kas  (fine cof ~ *vase)
+          |-  ^-  (bolt (list (pair gage gage)))
+          ?~  p.kas  (fine cof ~)
           %+  cope  (make cof p.i.p.kas)
           |=  [cof=cafe key=gage]
           %+  cope  (make cof q.i.p.kas)
           |=  [cof=cafe val=gage]
           %+  cope  ^^$(p.kas t.p.kas)
-          |=  [cof=cafe rex=(list (pair marc marc)) rey=vase]
-          (fine cof [[p.key p.val] rex] (slop (slop q.key q.val) rey))
-        |=  [cof=cafe rex=(list (pair marc marc)) rey=vase]
-        (fine cof [%tabl rex] rey)
+          |=  [cof=cafe rex=(list (pair gage gage))]
+          (fine cof [[key val] rex])
+        |=  [cof=cafe rex=(list (pair gage gage))]
+        (fine cof [%tabl rex])
       ::
           %vale  
         %+  cool  |.(leaf/"ford: vale {<p.kas>} {<q.kas>} {<`@p`(mug r.kas)>}")
         %+  cope  (lave cof p.kas q.kas r.kas)
         |=  [cof=cafe vax=vase]
-        (fine cof `cage`[p.kas vax])
+        (fine cof `gage`[%& p.kas vax])
       ::
           %volt
         %+  cool  |.(leaf/"ford: volt {<p.q.kas>}")
         %+  cope  $(kas [%bunt p.q.kas])
-        |=  [cof=cafe cay=gage]
+        %-  tabl-run
+        |=  [cof=cafe cay=cage]
         ^-  (bolt gage)
-        [cof %0 p.kas p.q.kas p.q.cay q.q.kas]
+        [cof %0 p.kas %& p.q.kas p.q.cay q.q.kas]
       ==
     ::
     ++  malt                                            ::  cached slit
@@ -1403,7 +1425,7 @@
             (flaw cof [%leaf "type error: {<p.hon>} {<q.hon>}"]~)
           (fine cof [p.tug q.vax])
         ::
-            %toy  (cope (make cof %boil p.hon how ~) feel)
+            %toy  (cope (cope (make cof %boil p.hon how ~) furl) feel)
         ==
       ::
       ++  head                                          ::  consume structures
@@ -1511,12 +1533,10 @@
       %.  [cof kas kos]
       ;~  cope
         ;~  coax
-          |=([cof=cafe p=silk q=silk] (make cof p))
-          |=([cof=cafe p=silk q=silk] (make cof q))
+          |=([cof=cafe p=silk q=silk] (cope (make cof p) furl))
+          |=([cof=cafe p=silk q=silk] (cope (make cof q) furl))
         ==
-        |=  [cof=cafe cay=gage coy=gage]
-        ?.  &(?=(@ p.cay) ?=(@ p.coy))
-          (flaw cof leaf/"bad pact marc" ~)
+        |=  [cof=cafe cay=cage coy=cage]  ^-  (bolt gage)
         ?:  ?=(?(%hoon %hook) p.cay)
           ?.  ?=(%txt-diff p.coy)
             (flaw cof leaf/"{<p.cay>} mark with bad diff type: {<p.coy>}" ~)
@@ -1528,7 +1548,7 @@
             =-  (flaw cof leaf/"{<p.cay>} data with bad diff" -)
             [>type=p.q.coy< >shouldbe=-:!>(*(urge cord))< ~]
           =+  pac=(role (lurk (lore (cat 3 u.txt '\0a')) u.dif))
-          (fine cof p.cay [%atom %t] (end 3 (dec (met 3 pac)) pac))
+          (fine cof %& p.cay [%atom %t] (end 3 (dec (met 3 pac)) pac))
         %+  cope  (fang cof p.cay)
         |=  [cof=cafe pro=vase]
         ?.  (slab %grad p.pro)
@@ -1557,7 +1577,7 @@
             (slap (slap pox [%cnzy %grad]) [%cnzy %pact])
           q.coy
         |=  [cof=cafe pat=vase]
-        (fine cof p.cay pat)
+        (fine cof %& p.cay pat)
       ==
     ::
     ++  resp
@@ -1622,8 +1642,8 @@
   ~
 ::
 ++  load                                                ::  highly forgiving
-  |=  old=axle
-  ..^$(+>- old)
+::   |=  old=axle
+::   ..^$(+>- old)
   ::=.  old  
   ::    ?.  ?=([%0 *] old)  old                           ::  remove at 1
   ::    :-  %1 
@@ -1632,12 +1652,13 @@
   ::    ?>  ?=([n=[p=* q=[tad=* dym=* deh=* jav=*]] l=* r=*] +.old)
   ::    :-  [p.n.+.old [tad.q.n.+.old dym.q.n.+.old deh.q.n.+.old ~]]
   ::    [$(+.old l.+.old) $(+.old r.+.old)]
-::   =+  lox=((soft axle) old)
-::   ^+  ..^$
-::   ?~  lox
-::     ~&  %ford-reset
-::     ..^$
-::   ..^$(+>- u.lox)
+  |=  old=*
+  =+  lox=((soft axle) old)
+  ^+  ..^$
+  ?~  lox
+    ~&  %ford-reset
+    ..^$
+  ..^$(+>- u.lox)
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]

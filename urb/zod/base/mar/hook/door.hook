@@ -9,7 +9,7 @@
   |%
   ++  mime  [/text/hoon (taco own)]                     ::  convert to %mime
   ++  psal                                              ::  convert to %html
-    ;div:(pre:"{(trip own)}")
+    ;div:pre(urb_codemirror ""):"{(trip own)}"
     :: =+  gen-id="src-{<`@ui`(mug own)>}"
     :: ;div
     ::   ;textarea(id "{gen-id}"):"{(trip own)}"
