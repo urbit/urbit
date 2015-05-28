@@ -28,6 +28,7 @@
 ++  ache  |*([a=$+(* *) b=$+(* *)] $%([| p=b] [& p=a])) ::  each, b default
 ++  axis  ,@                                            ::  tree address
 ++  also  ,[p=term q=wing r=type]                       ::  alias
+++  bank  (list ,@cF)                                   ::  UTF-32 string
 ++  base  ?([%atom p=odor] %noun %cell %bean %null)     ::  axils, @ * ^ ? ~
 ++  bean  ,?                                            ::  0=&=yes, 1=|=no
 ++  beer  $|(@ [~ p=twig])                              ::  simple embed
@@ -1821,6 +1822,9 @@
   |*  [a=_|=(^ **) c=*]
   |*  b=_+<+.a
   (a b c)
+::
+++  gulf                                                ::  range list
+  |=([a=@ b=@] `(list ,@)`?:(=(a b) ~ [a $(a +(a))]))
 ::
 ++  hard                                                ::  force coerce to type
   |*  han=$+(* *)
@@ -8734,7 +8738,7 @@
       ==
     --
   ::
-  ++  scat
+  ++  scat  !:
     %+  knee  *twig  |.  ~+
     %-  stew
     ^.  stet  ^.  limo
@@ -8765,6 +8769,7 @@
         ;~  pose
           (cook |=(a=wing [%cnts a ~]) rope)
           (stag %wtpm ;~(pfix pam (ifix [pel per] (most ace wide))))
+          ;~(plug (stag %dtzz (stag %f (cold & pam))) ;~(pfix fas wide))
           (stag %dtzy (stag %f (cold & pam)))
         ==
       :-  '\''
@@ -8844,6 +8849,7 @@
         ;~  pose
           (cook |=(a=wing [%cnts a ~]) rope)
           (stag %wtbr ;~(pfix bar (ifix [pel per] (most ace wide))))
+          ;~(plug (stag %dtzz (stag %f (cold | bar))) ;~(pfix fas wide))
           (stag %dtzy (stag %f (cold | bar)))
         ==
       :-  '~'
@@ -9595,7 +9601,6 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-!:
 ~%  %arvo  +  ~
 |%
 ++  arch  ,[p=@uvI q=(unit ,@uvI) r=(map ,@ta ,~)]      ::  fundamental node
@@ -9618,19 +9623,6 @@
           ==                                            ::
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
-++  from  ,[ost=bone src=ship]                          ::  forward problem
-++  hide                                                ::  standard app state
-        $:  $:  our=ship                                ::  owner/operator
-                app=term                                ::  app identity
-                imp=path                                ::  app instance
-            ==                                          ::  
-            cub=(map span term)                         ::  offspring
-            sup=(map bone (pair ship path))             ::  subscription set
-            pus=(jug path bone)                         ::  noitpircsbus set
-            $:  act=@ud                                 ::  change number
-                eny=@uvI                                ::  entropy
-                lat=@da                                 ::  date of last tick
-        ==  ==                                          ::
 ++  hypo  |*(a=$+(* *) (pair type a))                   ::  type associated
 ++  hobo  |*  a=$+(* *)                                 ::  kiss wrapper
           $?  $%  [%soft p=*]                           ::
@@ -9675,7 +9667,6 @@
 ++  slad  $+  [(unit (set monk)) term beam]             ::  undertyped
           (unit (unit (cask)))                          ::
 ++  slut  $+(* (unit (unit)))                           ::  old namespace
-++  then  ,[ost=bone src=ship way=wire]                 ::  backward problem
 ++  vile                                                ::  reflexive constants
           $:  typ=type                                  ::  -:!>(*type)
               duc=type                                  ::  -:!>(*duct)
@@ -9684,11 +9675,6 @@
           ==                                            ::
 ++  wire  path                                          ::  event pretext
 ::::: hacks and tools
-++  pale  |=  [hid=hide fun=$+(sink ?)]                 ::  filter peers
-          (skim (~(tap by sup.hid)) fun)
-++  prix  |=  pax=path  |=  sink  ^-  ?                 ::  filter gate
-          ?~  pax  &  ?~  r.+<  |                       ::
-          &(=(i.pax i.r.+<) $(pax t.pax, r.+< t.r.+<))  ::
 ++  slod  
   |=  sed=slad
   ^-  slut

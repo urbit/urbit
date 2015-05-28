@@ -50,7 +50,7 @@
   !:                                                    ::  ::
 |%                                                      ::  kiln library
 ++  kiln-work                                           ::  work in kiln
-  |=  [[hide from] kiln-part]
+  |=  [bowl kiln-part]
   ?>  =(src our)
   =>  |%                                                ::  arvo structures
       ++  card                                          ::
@@ -127,7 +127,7 @@
     =+  ^-  kiln-desk
         %+  fall  (~(get by rem) syd)
         =+  *kiln-desk
-        %_(- cas [%da lat])
+        %_(- cas [%da now])
     |%
     ++  abet                                            ::  resolve
       ..work(rem (~(put by rem) syd auto gem her sud cas))
@@ -205,16 +205,16 @@
           ^-  thought:talk
           :+  -
             [[[%& our (main our)] [*envelope:talk %pending]] ~ ~]
-          [lat *bouquet:talk [%app (crip ~(ram re tan))]]
+          [now *bouquet:talk [%app (crip ~(ram re tan))]]
       ==
     ::
     ++  merge
       |=  [her=@p sud=@tas gim=?(%auto germ)]
       ^+  +>
-      =.  cas  [%da lat]
+      =.  cas  [%da now]
       ?.  ?=(%auto gim)
         perform(auto |, gem gim, her her, sud sud)
-      ?:  =(0 .^(%cw /(scot %p our)/[syd]/(scot %da lat)))
+      ?:  =(0 .^(%cw /(scot %p our)/[syd]/(scot %da now)))
         =>  $(gim %init)
         .(auto &)
       =>  $(gim %fine)
@@ -243,15 +243,15 @@
           =+  tic=(cat 3 syd '-scratch')
           %-  blab  :_  ~
           :*  ost  %exec  /kiln/[syd]
-              our  [our tic %da lat]  ~  %tabl
+              our  [our tic %da now]  ~  %tabl
               ^-  (list (pair silk silk))
               %+  turn  (~(tap in p.are))
               |=  pax=path
               ^-  (pair silk silk)
               :-  [%done ~ %path -:!>(*path) pax]
-              =+  base=[%file [our tic %da lat] (flop pax)]
+              =+  base=[%file [our tic %da now] (flop pax)]
               =+  alis=[%file [her sud cas] (flop pax)]
-              =+  bobs=[%file [our syd %da lat] (flop pax)]
+              =+  bobs=[%file [our syd %da now] (flop pax)]
               =+  dali=[%diff base alis]
               =+  dbob=[%diff base bobs]
               =+  ^-  for=mark
