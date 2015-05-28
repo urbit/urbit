@@ -294,7 +294,7 @@
       ^+  +>
       =+  bun=(scow %ud num)
       ::  =+  pad=(sub 36 (lent bun))
-      ::  =+  now=`@da`(dis lat.hid 0xffff.ffff.ffff.ffff.0000.0000.0000.0000)
+      ::  =+  now=`@da`(dis now.hid 0xffff.ffff.ffff.ffff.0000.0000.0000.0000)
       %+  sh-fact  %txt
       (runt [(sub 15 (lent bun)) '-'] "[{bun}]")
     ::
@@ -860,7 +860,7 @@
         =^  sir  +>+>+>  sh-uniq
         %=    +>+>+>.$
             coz  :_  coz
-          [%publish [[sir sh-whom [lat.hid ~ sep]] ~]]
+          [%publish [[sir sh-whom [now.hid ~ sep]] ~]]
         ==
       --
     ::
@@ -1322,7 +1322,7 @@
       =+  ^=  nol
           ?:  =(%gone p.saz) 
             (~(del by locals) her)
-          (~(put by locals) her lat.hid saz)
+          (~(put by locals) her now.hid saz)
       ?:  =(nol locals)  +>.$
       (pa-display(locals nol) viewers)
     ::
@@ -1735,7 +1735,7 @@
 ::  |=  [from ~]
 ::  ^-  (quip move +>)
 ::  :_  +>.$
-::  =+  paf=/(scot %p our.hid)/try/(scot %da lat.hid)/talk/backlog/jam
+::  =+  paf=/(scot %p our.hid)/try/(scot %da now.hid)/talk/backlog/jam
 ::  [ost %info /jamfile our.hid (foal paf (jam +<+.+>.$))]~
 ::
 ++  prep

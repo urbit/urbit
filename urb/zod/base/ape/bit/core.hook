@@ -266,7 +266,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
               [`envelope`[& ~] %pending]
             ~
           ~
-      `statement`[lat.hid ~ sp]
+      `statement`[now.hid ~ sp]
       :-  `@`(sham eny.hid tail)
       tail
   [ost %send /auth [our.hid %talk] %poke [%talk-command %publish thotz]]

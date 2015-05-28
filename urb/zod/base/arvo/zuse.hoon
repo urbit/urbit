@@ -1854,7 +1854,7 @@
             $:  ost=bone                                ::  opaque cause
                 act=@ud                                 ::  change number
                 eny=@uvI                                ::  entropy
-                lat=@da                                 ::  current time
+                now=@da                                 ::  current time
                 byk=beak                                ::  load source
         ==  ==                                          ::
 ++  bray  ,[p=life q=(unit life) r=ship s=@da]          ::  our parent us now
