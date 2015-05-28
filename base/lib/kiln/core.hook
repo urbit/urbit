@@ -57,8 +57,6 @@
         $%  [%talk-command command:talk]                ::
             [%hood-merge hood-merge]                    ::
         ==                                              ::
-      ++  tage                                          ::  %tabl gage
-        ,[[%tabl p=(list (pair marc marc))] q=vase]     ::
       ++  move  (pair bone card)                        ::  user-level move
       --
   |_  moz=(list move)
@@ -89,7 +87,7 @@
     abet:abet:(mere:(take way) are)
   ::
   ++  take-made                                         ::
-    |=  [way=wire dep=@uvH reg=(each gage tang)]
+    |=  [way=wire dep=@uvH reg=gage]
     abet:abet:(made:(take way) dep reg) 
   ::
   ++  take-coup-fancy                                   ::
@@ -117,22 +115,42 @@
       ~|  %kiln-work-fail
       !!
     ::
-    ++  gage-to-tage                                    ::
-      |=  res=gage
-      ^-  tage
-      ?@  p.res
-        ~|(%bad-marc !!)
-      res
+    ++  ford-fail
+      |=  tan=tang  
+      ~|  %ford-fail
+      |-
+      ?~  tan  !!
+      ~>  %mean.|.(i.tan)           ::  interpolate into stack trace
+      $(tan t.tan) 
     ::
-    ++  tage-to-cages                                   ::
-      |=  tab=tage
-      ^-  (list (pair cage cage))
-      ?~  p.tab
-        ~
-      :_  $(p.tab t.p.tab, q.tab (slot 3 q.tab))
-      ~|  %strange-gage
-      :-  [?^(p.i.p.tab !! p.i.p.tab) (slot 4 q.tab)]
-      [?^(q.i.p.tab !! q.i.p.tab) (slot 5 q.tab)]
+    ++  unwrap-tang
+      |*  res=(each ,* tang)
+      ?:  ?=(%& -.res)
+        p.res
+      (ford-fail p.res)
+    ::
+    ++  gage-to-cages
+      |=  gag=gage  ^-  (list (pair cage cage))
+      (unwrap-tang (gage-to-tage gag))
+    ::
+    ++  gage-to-tage
+      |=  gag=gage
+      ^-  (each (list (pair cage cage)) tang)
+      ?.  ?=(%tabl -.gag)
+        (mule |.(`~`(ford-fail >%strange-gage< ~)))
+      =<  ?+(. [%& .] [@ *] .)
+      |-  ^-  ?((list ,[cage cage]) (each ,~ tang))
+      ?~  p.gag  ~
+      =*  hed  i.p.gag
+      ?-  -.p.hed
+        %tabl  (mule |.(`~`(ford-fail >%strange-gage< ~)))
+        %|     (mule |.(`~`(ford-fail p.p.hed)))
+        %&     ?-  -.q.hed
+          %tabl  (mule |.(`~`(ford-fail >%strange-gage< ~)))
+          %|     (mule |.(`~`(ford-fail p.q.hed)))
+          %&     =+  $(p.gag t.p.gag)
+                 ?+(- [[p.p p.q]:hed -] [@ *] -)
+      ==       ==
     ::
     ++  perform                                         ::  
       ^+  .
@@ -260,13 +278,13 @@
       ==
     ::
     ++  made
-      |=  [dep=@uvH reg=(each gage tang)]
+      |=  [dep=@uvH reg=gage]
       ^+  +>
       ?:  ?=(%| -.reg)
         =+  "failed to mash"
         lose:(spam leaf/- p.reg)
       =+  ^-  can=(list (pair path (unit miso)))
-          %+  turn  (tage-to-cages (gage-to-tage p.reg))
+          %+  turn  (gage-to-cages reg)
           |=  [pax=cage dif=cage]
           ^-  (pair path (unit miso))
           ?.  ?=(%path p.pax)

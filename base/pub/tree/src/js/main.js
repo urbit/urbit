@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/actions/TreeActions.coffee":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var TreeDispatcher, TreePersistence;
 
 TreeDispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -72,7 +72,7 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/dispatcher/Dispatcher.coffee","../persistence/TreePersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/AnchorComponent.coffee":[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":8,"../persistence/TreePersistence.coffee":13}],2:[function(require,module,exports){
 var TreeActions, TreeStore, a, div, recl, ref;
 
 TreeStore = require('../stores/TreeStore.coffee');
@@ -295,7 +295,7 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/stores/TreeStore.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/BodyComponent.coffee":[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14}],3:[function(require,module,exports){
 var TreeActions, TreeStore, div, input, load, recl, ref, textarea;
 
 TreeStore = require('../stores/TreeStore.coffee');
@@ -360,7 +360,31 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/LoadComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/KidsComponent.coffee":[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14,"./LoadComponent.coffee":7}],4:[function(require,module,exports){
+var div, recl, ref, textarea;
+
+recl = React.createClass;
+
+ref = [React.DOM.div, React.DOM.textarea], div = ref[0], textarea = ref[1];
+
+module.exports = recl({
+  render: function() {
+    return div({}, textarea({
+      ref: 'ed',
+      value: this.props.value
+    }));
+  },
+  componentDidMount: function() {
+    return CodeMirror.fromTextArea(this.refs.ed.getDOMNode(), {
+      readOnly: true,
+      lineNumbers: true
+    });
+  }
+});
+
+
+
+},{}],5:[function(require,module,exports){
 var TreeActions, TreeStore, a, div, hr, li, recl, ref, ul;
 
 TreeStore = require('../stores/TreeStore.coffee');
@@ -427,7 +451,7 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/stores/TreeStore.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/ListComponent.coffee":[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14}],6:[function(require,module,exports){
 var TreeActions, TreeStore, a, div, h1, li, load, recl, ref, ul;
 
 TreeStore = require('../stores/TreeStore.coffee');
@@ -522,7 +546,7 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/LoadComponent.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/LoadComponent.coffee":[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14,"./LoadComponent.coffee":7}],7:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -560,7 +584,7 @@ module.exports = recl({
 
 
 
-},{}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -582,15 +606,16 @@ module.exports = _.extend(new Dispatcher(), {
 
 
 
-},{"flux":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/node_modules/flux/index.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/main.coffee":[function(require,module,exports){
+},{"flux":10}],9:[function(require,module,exports){
 var rend;
 
 rend = React.render;
 
 $(function() {
-  var $body, TreeActions, TreePersistence, body, checkMove, checkScroll, frag, head, kids, list, lost, po, setSo, so;
+  var $body, TreeActions, TreePersistence, body, checkMove, checkScroll, codemirror, frag, head, kids, list, lost, po, setSo, so;
   $body = $('body');
   React.initializeTouchEvents(true);
+  codemirror = React.createFactory(require('./components/CodeMirror.coffee'));
   head = React.createFactory(require('./components/AnchorComponent.coffee'));
   body = React.createFactory(require('./components/BodyComponent.coffee'));
   list = React.createFactory(require('./components/ListComponent.coffee'));
@@ -616,7 +641,8 @@ $(function() {
   window.tree.init({
     kids: kids,
     list: list,
-    lost: lost
+    lost: lost,
+    codemirror: codemirror
   });
   window.tree.reactify = function(str) {
     return eval(str);
@@ -740,9 +766,9 @@ $(function() {
 
 
 
-},{"./actions/TreeActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/actions/TreeActions.coffee","./components/AnchorComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/AnchorComponent.coffee","./components/BodyComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/BodyComponent.coffee","./components/KidsComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/KidsComponent.coffee","./components/ListComponent.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/components/ListComponent.coffee","./persistence/TreePersistence.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/node_modules/flux/index.js":[function(require,module,exports){
+},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":3,"./components/CodeMirror.coffee":4,"./components/KidsComponent.coffee":5,"./components/ListComponent.coffee":6,"./persistence/TreePersistence.coffee":13}],10:[function(require,module,exports){
 /**
- * Copyright (c) 2014, Facebook, Inc.
+ * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
@@ -752,7 +778,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js":[function(require,module,exports){
+},{"./lib/Dispatcher":11}],11:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1004,7 +1030,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/node_modules/flux/lib/invariant.js"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/node_modules/flux/lib/invariant.js":[function(require,module,exports){
+},{"./invariant":12}],12:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1059,7 +1085,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/persistence/TreePersistence.coffee":[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var TreeActions;
 
 TreeActions = require('../actions/TreeActions.coffee');
@@ -1081,7 +1107,7 @@ module.exports = {
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/actions/TreeActions.coffee"}],"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/stores/TreeStore.coffee":[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1}],14:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, TreeStore, _cont, _curr, _load, _snip, _tree;
 
 EventEmitter = require('events').EventEmitter;
@@ -1295,7 +1321,7 @@ module.exports = TreeStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js"}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":8,"events":15}],15:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1355,10 +1381,8 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
-      } else {
-        throw TypeError('Uncaught, unspecified "error" event.');
       }
-      return false;
+      throw TypeError('Uncaught, unspecified "error" event.');
     }
   }
 
@@ -1600,4 +1624,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},["/Users/galen/Documents/src/urbit-test/urb/zod/docs/pub/tree/src/js/main.coffee"]);
+},{}]},{},[9]);

@@ -1644,6 +1644,9 @@
     |=  oug=?
     ^-  tape
     ?+    -.sep  ""
+        %url
+      (earn p.sep)
+    ::
         %lin
       =+  txt=(trip q.sep)
       ?:  p.sep

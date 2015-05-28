@@ -16,6 +16,7 @@
           ==  ==                                        ::
               $:  %e                                    ::  to self
           $%  [%this p=? q=clip r=httq]                 ::  proxied request
+              [%meta vase:,[%them (unit httr)]]         ::  type check
           ==  ==                                        ::
               $:  %f                                    ::  to %ford
           $%  [%exec p=@p q=beak r=(unit silk)]         ::
@@ -39,7 +40,7 @@
           $%  [%thou p=httr]                            ::  response for proxy
           ==  ==                                        ::
               $:  %f                                    ::  by %ford
-          $%  [%made p=@uvH q=(each gage tang)]         ::
+          $%  [%made p=@uvH q=gage]                     ::
               [%news ~]                                 ::
           ==  ==                                        ::
               $:  %t                                    ::  by %time
@@ -53,6 +54,8 @@
           $%  [%at p=hole q=whir]                       ::  authenticated
               [%ay p=span:ship q=span:,@uvH ~]          ::  remote duct
               [%he p=whir]                              ::  HEAD request
+              [%hi p=mark ~]                            ::  outbound HTTP
+              [%si ~]                                   ::  response done
               [%of p=ixor q=$|(~ whir-of)]              ::  associated view
               [%on p=span:,@uvH ~]                      ::  dependency
               [%to p=ixor q=span:ship r=term s=wire]    ::  associated app
@@ -479,6 +482,20 @@
         kes    (~(put by kes) hen p.ask)
       ==
     ::
+        %hiss                                           ::  outbound cage 
+      ::?~  p.kyz                                       ::  XX cancel
+      ::  =+  sud=(need (~(get by kes) hen))
+      ::  %=  +>.$
+      ::    mow    :_(mow [ged [%give %thus sud ~]])
+      ::    q.ask  (~(del by q.ask) sud)
+      ::    kes    (~(del by kes) hen)
+      ::  ==
+      ::  ~&  eyre-them/(earn p.u.p.kyz)
+      %+  pass-note  hi//[p.kyz]
+      ?:  ?=(%hiss p.q.kyz)
+        [%e %meta :(slop !>(%them) !>(~) q.q.kyz)]
+      (ford-req root-beak [%cast %hiss %done ~ q.kyz])
+    ::
         %they                                           ::  inbound response
       =+  kas=(need (~(get by q.ask) p.kyz))
       ::  ~&  >  eyre-they/[p.q.kyz (earn p.q.kas)]
@@ -539,8 +556,12 @@
     ::
         %went  +>.$
         %thou
-      ?>  ?=([%ay ^] tee)
-      (ames-gram (slav %p p.tee) got/~ (slav %uv q.tee) |2.sih)
+      ?+    -.tee  !!
+        %ay  (ames-gram (slav %p p.tee) got/~ (slav %uv q.tee) |2.sih)
+        %hi  =+  cay=[%httr !>(`httr`p.sih)]
+             ?:  ?=(%httr p.tee)  (give-sigh ~ cay)
+             (pass-note si/~ (ford-req root-beak [%cast p.tee %done `cay]))
+      ==
     ::
         %unto                                           ::  XX horrible
       =+  cuf=`cuft`+>.sih
@@ -577,11 +598,18 @@
       ==
     ::
         %made
-      ?>  ?=(?([%| *] [%& @ *]) q.sih)
+      ?<  ?=(%tabl -.q.sih)
       =.  our  (need hov)                             ::  XX
       |-  ^+  ..axon
       ?-    tee
           [?(%on %ay) *]  ~|(e/ford/lost/-.tee !!)
+          [%si ~]  (give-sigh q.sih)
+          [%hi ^]
+        ?:  ?=(%| -.q.sih)
+          (give-sigh q.sih)  ::  XX crash?
+        =*  cay  p.q.sih
+        ?>  ?=(%hiss p.cay)
+        (pass-note tee [%e %meta :(slop !>(%them) !>(~) q.cay)])
           [%he *]                     ::  XX hack
         =.  ..axon  $(tee p.tee)
         %_  ..axon
@@ -695,6 +723,12 @@
     ?:  (~(has in ded) hen)                           ::  request closed
       +>(ded (~(del in ded) hen))
     +>(mow :_(mow [hen %give %thou hit]))
+  ::
+  ++  give-sigh                                       ::  userspace done
+    |=  res=(each cage tang)
+    =-  +>.$(mow :_(mow [hen %give %sigh `cage`-]))
+    ?.  ?=(%| -.res)  p.res
+    [%tang !>(p.res)]
   ::
   ++  mean-json  |=([sas=@uG err=ares] (give-json sas ~ (ares-to-json err)))
   ++  nice-json  |=(* (give-json 200 ~ (joba %ok %b &)))
@@ -1014,6 +1048,8 @@
         =+  ext=(fall p.pok %urb)
         =+  bem=?-(-.hem %beam p.hem, %spur [root-beak p.hem])
         =+  wir=?+(mef !! %get ~, %head [%he ~])
+        ~|  bad-beam/q.bem
+        ?<  =([~ 0] (sky %cw (tope bem(+ ~, r [%da now]))))
         =-  ?.(aut [%& %| -] [%| (pass-note -)])  ::  XX properly
         [wir (ford-get-beam bem ext)]
       ::
@@ -1202,6 +1238,7 @@
     ++  foreign-auth
       |=  [him=ship pul=purl]  ^+  ..ya
       =.  way  (~(put by way) him pul hen)
+      ~&  asking-foreign/him
       (ames-gram:abet him [lon/~ ses])
     ::
     ++  foreign-hat
