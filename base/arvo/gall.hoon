@@ -371,7 +371,7 @@
   ++  mo-cook                                           ::  take in /use
     |=  [pax=path hin=(hypo sign-arvo)]
     ^+  +>
-    ?.  ?=([@ @ ?(%inn %out %enn) *] pax)
+    ?.  ?=([@ @ ?(%inn %out %cay) *] pax)
       ~&  [%mo-cook-bad-pax pax]
       !!
     =+  dap=`@tas`i.pax
@@ -380,11 +380,11 @@
     =+  vax=(slot 3 `vase`hin)
     ?-  i.t.t.pax
       %inn  ap-abet:(ap-pour:pap t.t.t.pax (slot 3 `vase`hin))      
-      %enn  ?.  ?=([%e %sigh *] q.hin)
+      %cay  ?.  ?=([%e %sigh *] q.hin)
               ~&  [%mo-cook-weird q.hin]
               ~&  [%mo-cook-weird-path pax]
               +>.$
-            ap-abet:(ap-sigh:pap t.t.t.pax +>.q.hin)
+            ap-abet:(ap-purr:pap +<.q.hin t.t.t.pax +>.q.hin)
     ::
       %out  ?.  ?=([%g %unto *] q.hin)
               ~&  [%mo-cook-weird q.hin]
@@ -693,7 +693,7 @@
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
         [%| (ap-suck "move: malformed path")]
       :^  %&  sto  %pass
-      :-  [(scot %p q.q.pry) %enn u.pux]
+      :-  [(scot %p q.q.pry) %cay u.pux]
       [%hiss q.q.vax [p.q.gaw (slot 3 (spec gaw))]]
     ::
     ++  ap-move-mess                                    ::  extract path, target
@@ -862,13 +862,13 @@
       ?^  cam  (ap-lame -.q.vax u.cam)
       +>.$
     ::
-    ++  ap-sigh                                         ::  http response
-      |=  [pax=path cag=cage]
+    ++  ap-purr                                         ::  unwrap take
+      |=  [wha=term pax=path cag=cage]
       ^+  +>
       =.  q.cag  (spec q.cag)
-      =+  cug=(ap-find [%sigh p.cag pax])
+      =+  cug=(ap-find [wha p.cag pax])
       ?~  cug
-        (ap-lame %sigh (ap-suck "sigh: no {<`path`[p.cag pax]>}"))
+        (ap-lame wha (ap-suck "{(trip wha)}: no {<`path`[p.cag pax]>}"))
       =+  ^=  arg  ^-  vase
           %-  slop
           ?:  =(0 p.u.cug)
@@ -1028,7 +1028,6 @@
         %merg  `%c
         %plug  `%c
         %them  `%e
-        %hiss  `%e
         %want  `%a
       ==
     --
