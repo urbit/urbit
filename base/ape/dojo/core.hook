@@ -715,15 +715,15 @@
   --
 ::
 ++  peer-sole
-  |=  [from pax=path]
+  |=  [pax=path]
   ^-  (quip move +>)
-  ~?  !=(src our.hid)  [%dojo-peer-stranger ost src pax]
-  ::  ?>  =(src our.hid)
-  ?<  (~(has by hoc) ost)
+  ~?  !=(src.hid our.hid)  [%dojo-peer-stranger ost.hid src.hid pax]
+  ::  ?>  =(src.hid our.hid)
+  ?<  (~(has by hoc) ost.hid)
   ?>  =(~ pax)
   =<  he-abet
   %~  he-peer  he
-  :-  [ost ~]
+  :-  [ost.hid ~]
   ^-  session
   :*  *sole-share  ::  say=sole-share
       %home           ::  syd=desk
@@ -734,24 +734,24 @@
   ==
 ::
 ++  poke-sole-action
-  |=  [from act=sole-action]
+  |=  [act=sole-action]
   ^-  (quip move +>)
-  ::  ~&  [%dojo-poke ost src act]
-  ::  ~?  !=(src our.hid)  [%dojo-poke ost src]
-  he-abet:(~(he-type he [ost ~] (~(got by hoc) ost)) act)
+  ::  ~&  [%dojo-poke ost.hid src.hid act]
+  ::  ~?  !=(src.hid our.hid)  [%dojo-poke ost.hid src.hid]
+  he-abet:(~(he-type he [ost.hid ~] (~(got by hoc) ost.hid)) act)
 ::
 ++  made
   |=  [then dep=@uvH reg=(each gage tang)]
-  he-abet:(~(he-made he [[ost ~] (~(got by hoc) ost)]) way dep reg)
+  he-abet:(~(he-made he [[ost.hid ~] (~(got by hoc) ost.hid)]) way dep reg)
 ::
 ++  unto
   |=  [then cit=cuft] 
-  he-abet:(~(he-unto he [[ost ~] (~(got by hoc) ost)]) cit)
+  he-abet:(~(he-unto he [[ost.hid ~] (~(got by hoc) ost.hid)]) cit)
 ::
 ++  pull
-  |=  [from pax=path]
+  |=  [pax=path]
   ^-  (quip move +>)
   =^  moz  +>
-    he-abet:~(he-stop he [[ost ~] (~(got by hoc) ost)])
-  [moz +>.$(hoc (~(del by hoc) ost))]
+    he-abet:~(he-stop he [[ost.hid ~] (~(got by hoc) ost.hid)])
+  [moz +>.$(hoc (~(del by hoc) ost.hid))]
 --

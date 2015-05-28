@@ -9619,7 +9619,6 @@
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
 ++  gage  (pair marc vase)                              ::  structured cage
-++  from  ,[ost=bone src=ship]                          ::  forward problem
 ++  hypo  |*(a=$+(* *) (pair type a))                   ::  type associated
 ++  hobo  |*  a=$+(* *)                                 ::  kiss wrapper
           $?  $%  [%soft p=*]                           ::
@@ -9664,7 +9663,7 @@
 ++  slad  $+  [(unit (set monk)) term beam]             ::  undertyped
           (unit (unit (cask)))                          ::
 ++  slut  $+(* (unit (unit)))                           ::  old namespace
-++  then  ,[ost=bone src=ship way=wire]                 ::  backward problem
+++  then  ,[way=wire]                                   ::  backward problem
 ++  vile                                                ::  reflexive constants
           $:  typ=type                                  ::  -:!>(*type)
               duc=type                                  ::  -:!>(*duct)

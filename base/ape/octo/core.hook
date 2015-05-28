@@ -35,7 +35,7 @@
     --                                                  ::
 |_  [hid=bowl moz=(list move) %1 axle]                  ::  per agent
 ++  ce                                                  ::  per client
-  |_  from                                              ::
+  |_  [ost=bone src=ship]                               ::
   ::                                                    ::  ::
   ::::                                                  ::  ::  common logic
     ::                                                  ::  ::
@@ -183,25 +183,25 @@
           |=  [then mex=(each game tape)]               ::
           abet:(~(diff-octo-update ce ost src) way mex) ::
 ++  peer-octo                                           ::  urbit peer
-          |=  [from path]                               ::
-          abet:(~(peer-octo ce +<-) +<+)                ::
+          |=  path                                      ::
+          abet:(~(peer-octo ce ost src) +<)             ::
 ++  peer-sole                                           ::  console subscribe
-          |=  [from path]                               ::
-          abet:(~(peer-sole ce +<-) +<+)                ::
+          |=  path                                      ::
+          abet:(~(peer-sole ce ost src) +<)             ::
 ++  poke-sole-action                                    ::  console input
-          |=  [from sole-action]                        ::
-          abet:(~(poke-sole-action ce +<-) +<+)         ::
+          |=  sole-action                               ::
+          abet:(~(poke-sole-action ce ost src) +<)      ::
 ++  poke-octo-move                                      ::
-          |=  [from point]                              ::
-          abet:(~(poke-octo-move ce +<-) +<+)           ::
-++  prep  |=  [from (unit ,[(list move) axon])]         ::  initialize
-          abet:(~(prep ce +<-) +<+)                     ::
+          |=  point                                     ::
+          abet:(~(poke-octo-move ce ost src) +<)        ::
+++  prep  |=  (unit ,[(list move) axon])                ::  initialize
+          abet:(~(prep ce ost src) +<)                  ::
 ++  pull-octo                                           ::  unsubscribe
-          |=  [from path]                               ::
-          abet:(~(pull-octo ce +<-) +<+)                ::
+          |=  path                                      ::
+          abet:(~(pull-octo ce ost src) +<)             ::
 ++  pull-sole                                           ::  disconnect console
-          |=  [from path]                               ::
-          abet:(~(pull-sole ce +<-) +<+)                ::
+          |=  path                                      ::
+          abet:(~(pull-sole ce ost src) +<)            ::
 ++  quit-octo                                           ::  unlinked by friend
           |=  then                                      ::
           abet:(~(quit-octo ce ost src) way)            ::

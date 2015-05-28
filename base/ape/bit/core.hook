@@ -65,7 +65,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
 ::
 ++  callback-uri  (weld hostname "/~/to/{(trip app.hid)}/json.json?anon&wire=/")
 ++  poke-auth
-  |=  [[ost=bone you=ship] arg=[secr=cord id=cord]]
+  |=  [arg=[secr=cord id=cord]]
   =:  app-secret.vat  [~ secr.arg]
       client-id.vat   [~ id.arg]
     ==
@@ -84,7 +84,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   [ost %send way [his app.hid] %poke mez]
 ::
 ++  poke-bit-send                        ::  send to address
-  |=  [[ost=bone @] addr=@uc amount=@t]
+  |=  [addr=@uc amount=@t]
   :_  +>.$
   :_  ~
   =+  info=[to/s/(rsh 3 2 (scot %uc addr)) amount/s/amount ~]
@@ -92,13 +92,13 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   (api-call ost /send /transactions/'send_money' %post jon)
 ::
 ++  poke-bit-ship-send                        ::  send to ship
-  |=  [[ost=bone @] to=ship amount=@t]
+  |=  [to=ship amount=@t]
   =.  outgoing.vat  (~(put by outgoing.vat) to amount)
   :_  +>.$
   :_  ~
   (send-friend ost /sent to %bit-addr-request ~)
 ++  poke-bit-addr-request             ::  give your address to receive bit
-  |=  [[ost=bone his=ship] req=~]           ::  gen new address with callback
+  |=  [req=~]           ::  gen new address with callback
   :_  +>.$
   :_  ~
   %^  api-call  ost  /addr-request/(scot %p his) 
@@ -121,7 +121,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   (send-friend ost [%message ~] his %bit-addr-made adr)
 ::
 ++  poke-bit-addr-made             ::  receive address for sending
-  |=  [[ost=bone his=ship] addr=@t]
+  |=  [addr=@t]
   :_  +>.$
   :_  ~
   =+  amount=(~(got by outgoing.vat) his)             ::  get amount to send
@@ -130,7 +130,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   (api-call ost /send /transactions/'send_money' %post jon)
   ::
 ++  poke-oauth2-code
-  |=  [[ost=bone you=ship] code=cord]
+  |=  [code=cord]
   =.  oauth-code.vat
     [~ code]
   ?<  |(?=(~ client-id.vat) ?=(~ oauth-code.vat))
@@ -145,7 +145,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   :-  (httpreq ost /auth-token /com/coinbase /oauth/token [%post ~] ~ queries)
   ~
 ++  poke-buy
-  |=  [[ost=bone you=ship] arg=[amount=@t currency=@t]]
+  |=  [arg=[amount=@t currency=@t]]
   ?<  =(~ amount.arg)
   =+  query=['access_token' (need auth-token.vat)]~
   =+  ^=  pst
@@ -157,14 +157,14 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
       ~
 ::
 ++  poke-list
-  |=  [[ost=bone you=ship] arg=~]
+  |=  [arg=~]
   =+  query=['access_token' (need auth-token.vat)]~
   :_  +>.$
   :-  (httpreq ost /list /com/coinbase/api /v1/accounts %get ~ query)
   ~
 ::
 ++  poke-sell
-  |=  [[ost=bone you=ship] arg=[amount=@t currency=@t]] 
+  |=  [arg=[amount=@t currency=@t]] 
   ?<  =(amount.arg ~)
   =+  query=['access_token' (need auth-token.vat)]~
   =+  ^=  pst
@@ -177,9 +177,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
       ~
 ::
 ++  poke-send-raw
-  |=  $:  [ost=bone you=ship]
-      arg=[to=@t amone=(unit ,@t) cur=(unit ,@t) amtwo=(unit ,@t) nt=(unit ,@t)]
-      ==
+  |=  arg=[to=@t amone=(unit ,@t) cur=(unit ,@t) amtwo=(unit ,@t) nt=(unit ,@t)]
   =+  adr=?~((~(get by contacts.vat) to.arg) to ~&('contact-exists' (~(get by contacts.vat) to.arg))) 
   =+  query=['access_token' (need auth-token.vat)]~
   =+  ^=  info
@@ -195,7 +193,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   ~
 ::
 ++  poke-json
-  |=  [[ost=bone you=ship] arg=json]
+  |=  [arg=json]
       ~&  arg
       :_  +>.$
       =+  [adr amo]=(need %.(arg (ot address/so amount/no ~):jo))
@@ -211,7 +209,7 @@ $:  client-id=(unit ,@t)   app-secret=(unit ,@t)
   !! 
 ::
 ++  thou
-  |=  [[ost=bone @ way=wire] res=httr]
+  |=  [way=wire res=httr]
   ?+  -.way  !!
     %auth-token
       ~|  'must receive a 200'^oauth-code.vat

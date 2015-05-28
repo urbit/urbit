@@ -1658,35 +1658,35 @@
   -- 
 ::
 ++  peer                                                ::  accept subscription
-  |=  [from pax=path]
+  |=  [pax=path]
   ^-  [(list move) _+>]
-  ::  ~&   [%talk-peer src ost pax]
+  ::  ~&   [%talk-peer src.hid ost.hid pax]
   ?:  ?=([%sole *] pax)
-    ?>  =(our.hid src)
-    ?<  (~(has by shells) ost)
-    ra-abet:(~(ra-console ra ost ~) src t.pax)
-  ::  ~&  [%talk-peer-data ost src pax]
-  ra-abet:(~(ra-subscribe ra ost ~) src pax)
+    ?>  =(our.hid src.hid)
+    ?<  (~(has by shells) ost.hid)
+    ra-abet:(~(ra-console ra ost.hid ~) src.hid t.pax)
+  ::  ~&  [%talk-peer-data ost.hid src.hid pax]
+  ra-abet:(~(ra-subscribe ra ost.hid ~) src.hid pax)
 ::
 ++  poke-talk-command                                   ::  accept command
-  |=  [from cod=command]
+  |=  [cod=command]
   ^-  [(list move) _+>]
-  ::  ~&  [%talk-poke-command src cod]
-  ra-abet:(~(ra-apply ra ost ~) src cod)
+  ::  ~&  [%talk-poke-command src.hid cod]
+  ra-abet:(~(ra-apply ra ost.hid ~) src.hid cod)
 ::
 ++  poke-sole-action                                    ::  accept console
-  |=  [from act=sole-action]
-  ra-abet:(~(ra-sole ra ost ~) act)
+  |=  [act=sole-action]
+  ra-abet:(~(ra-sole ra ost.hid ~) act)
 ::
 ++  diff-talk-report                                    ::
   |=  [then rad=report]
   %+  etch-friend  way  |=  [man=span cuz=station]
-  ra-abet:(~(ra-diff-talk-report ra ost ~) man cuz rad)
+  ra-abet:(~(ra-diff-talk-report ra ost.hid ~) man cuz rad)
 ::
 ++  coup-repeat                                         ::
   |=  [then saw=(unit tang)]
   %+  etch-repeat  [%repeat way]  |=  [num=@ud src=@p man=span]
-  ra-abet:(~(ra-coup-repeat ra ost ~) [num src man] saw)
+  ra-abet:(~(ra-coup-repeat ra ost.hid ~) [num src man] saw)
 ::
 ++  etch                                                ::  parse wire
   |=  way=wire
@@ -1717,29 +1717,29 @@
   ?~  saw  [~ +>]
   %+  etch-friend  [%friend way]  |=  [man=span cuz=station]
   ~&  [%reap-friend-fail man cuz u.saw]
-  ra-abet:(~(ra-quit ra ost ~) man cuz)
+  ra-abet:(~(ra-quit ra ost.hid ~) man cuz)
 ::
 ++  quit-friend                                         ::
   |=  then
   %+  etch-friend  [%friend way]  |=  [man=span cuz=station]
-  ra-abet:(~(ra-retry ra ost ~) man cuz)
+  ra-abet:(~(ra-retry ra ost.hid ~) man cuz)
 ::
 ++  pull                                                ::
-  |=  [from pax=path]
+  |=  [pax=path]
   ^-  [(list move) _+>]
-  ~&  [%talk-pull src ost pax]
-  =^  moz  +>.$  ra-abet:(~(ra-cancel ra ost ~) src pax)
-  [moz +>.$(shells (~(del by shells) ost))]
+  ~&  [%talk-pull src.hid ost.hid pax]
+  =^  moz  +>.$  ra-abet:(~(ra-cancel ra ost.hid ~) src.hid pax)
+  [moz +>.$(shells (~(del by shells) ost.hid))]
 ::
 ::++  poke-bit
-::  |=  [from ~]
+::  |=  [~]
 ::  ^-  (quip move +>)
 ::  :_  +>.$
 ::  =+  paf=/(scot %p our.hid)/try/(scot %da now.hid)/talk/backlog/jam
-::  [ost %info /jamfile our.hid (foal paf (jam +<+.+>.$))]~
+::  [ost.hid %info /jamfile our.hid (foal paf (jam +<+.+>.$))]~
 ::
 ++  prep
-  |=  [from old=(unit house)]
+  |=  [old=(unit house)]
   ^-  (quip move +>)
   ?~  old
     ra-abet:~(ra-init ra 0 ~)

@@ -43,7 +43,7 @@
   !:                                                    ::  ::
 |%                                                      ::  helm library
 ++  helm-work                                           ::  work in helm
-  |=  [[bowl from] helm-part]
+  |=  [bowl helm-part]
   =+  sez=(fall (~(get by hoc) ost) *helm-session)
   =>  |%                                                ::  arvo structures
       ++  card                                          ::
