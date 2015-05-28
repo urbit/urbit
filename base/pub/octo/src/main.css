@@ -1,5 +1,6 @@
 #what,
-#bord {
+#bord,
+#audi {
   width: 600px;
   text-align: center;
   position: absolute;
@@ -16,11 +17,29 @@
   height: 600px;
   position: absolute;
   top: 111px;
-  opacity: .6;
+  opacity: .3;
+}
+
+#audi {
+  top: 760px;
 }
 
 .turn #bord {
   opacity: 1;
+}
+
+#message {
+  position:absolute;
+  left: 0; top: 0;
+  width: 100%; height: 90px;
+  line-height: 90px;
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+}
+
+#message .ship {
+  display: inline;
 }
 
 #what {
@@ -31,19 +50,32 @@
   display: inline-block;
 }
 
-#what .ship {
+.ship {
+  padding: .3rem;
   font-weight: 400;
   letter-spacing: 1px;
   text-transform: uppercase;
+  line-height:2rem;
 }
 
-.turn #what #ship,
-#what #user {
+.ship:before {
+  content: "~";
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.waiting.ship:before {
+  content: "Waiting";
+  color: #ccc;
+}
+
+#what #x,
+#what #o {
   border: 2px solid #fff;
 }
 
-#what #ship,
-.turn #what #user {
+.x #what #x,
+.o #what #o {
   border: 2px solid red;
 }
 
@@ -56,11 +88,28 @@
   width: 1.6rem;
 }
 
+#audi h1,
 #vs {
   margin: 0 1rem;
   padding: .3rem;
   color: #fff;
   background-color: #000;
+}
+
+#audi h1 {
+  font-size: .9rem;
+  text-transform: uppercase;
+  display: inline-block;
+  background-color: #ccc;
+}
+
+#audi h1:after {
+  content: "";
+  margin: 0;
+}
+
+#audi .ship {
+  color: #ccc;
 }
 
 .spac {
