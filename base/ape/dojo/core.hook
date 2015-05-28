@@ -278,7 +278,7 @@
     ++  dy-amok  +>(poy ~)                              ::  terminate
     ++  dy-beak                                         ::  XX rethink
       ^-  beak
-      [our.hid %home [%da lat.hid]]
+      [our.hid %home [%da now.hid]]
     ::
     ++  dy-ford                                         ::  send work to ford
       |=  [way=wire kas=silk]
@@ -479,7 +479,7 @@
       :+  %mute  [%done ~ cag]
       ^-  (list (pair wing silk))
       :*  :-  [[~ 12] ~]
-          (dy-silk-vase !>([now=lat.hid eny=eny.hid bec=he-beak]))
+          (dy-silk-vase !>([now=now.hid eny=eny.hid bec=he-beak]))
       ::
           :-  [[~ 26] ~]
           %-  dy-silk-vase
@@ -507,7 +507,7 @@
     ::
     ++  dy-twig-head                                    ::  dynamic state
       ^-  vase
-      :(slop !>(`our=@p`our.hid) !>(`tym=@da`lat.hid) !>(`eny=@uvI`eny.hid))
+      :(slop !>(`our=@p`our.hid) !>(`tym=@da`now.hid) !>(`eny=@uvI`eny.hid))
     ::
     ++  dy-made-dial                                    ::  dialog product
       |=  cag=cage
@@ -586,7 +586,7 @@
   ::
   ++  he-beak                                           ::  logical beam
     ^-  beak
-    [our.hid syd ?^(luc u.luc [%da lat.hid])]
+    [our.hid syd ?^(luc u.luc [%da now.hid])]
   ::
   ++  he-card                                           ::  emit gift
     |=  cad=card
