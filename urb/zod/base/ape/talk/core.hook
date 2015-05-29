@@ -1489,23 +1489,6 @@
   ++  sn-curt                                           ::  render name in 14
     |=  mup=?
     ^-  tape
-    =+  ^=  syl
-        |=  [len=@ud sez=(list cord)]
-        ?>  !=(0 len)
-        |-  ^-  tape
-        ?~  sez  ~
-        =+  nez=(trip i.sez)
-        =+  nel=(lent nez)
-        ?:  (gte nel len)
-          (welp (scag (dec len) nez) ">")
-        (welp nez $(sez t.sez))
-    ::
-    ?:  =(p.one our.hid)
-      ?:  =(q.one man)
-        (sigh 14 ?:(mup "*=" "=") %$)
-      (sigh 14 ?:(mup "*%" "%") q.one)
-    ?:  =(p.one (sein our.hid))
-      (sigh 14 ?:(mup "*/" "/") q.one)
     =+  rac=(clan p.one) 
     =+  raw=(scow %p p.one)
     =.  raw  ?.(mup raw ['*' (slag 2 raw)])
@@ -1630,8 +1613,8 @@
     =+  eck=?:((~(has by aud) [%& our.hid man]) '*' '-')
     =+  heb=?:(oug '>' '<')
     =+  ^=  baw
-        ?:  oug 
-          ~(te-whom te man tr-pals)
+        ::  ?:  oug 
+        ::  ~(te-whom te man tr-pals)
         (~(sn-curt sn man [who (main who)]) |)
     [heb eck (weld baw txt)]
   ::

@@ -55,6 +55,6 @@
            ?~  dow  ~  =+  mor=$(dow t.dow)             ::
            :(weld nam(src p.i.dow) ?~(mor "" ", ") mor)   ::
   ++  voy   =+  ~[(icon who)]  %+  weld  vew            ::  print prompt
-            ?:(ept " ({-}'s turn) " ": {-} (row/col): ")::
+            ?.(ept " ({-}'s turn) " ": {-} (row/col): ")::
   --
 --
