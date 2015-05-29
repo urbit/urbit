@@ -872,8 +872,8 @@
       =+  ^=  arg  ^-  vase
           %-  slop
           ?:  =(0 p.u.cug)
-            [!>([`@ud`ost `@p`q.q.pry `path`pax]) !>(cag)]
-          [!>([`@ud`ost `@p`q.q.pry (slag (dec p.u.cug) `path`pax)]) q.cag]
+            [!>(`path`pax) !>(cag)]
+          [!>((slag (dec p.u.cug) `path`pax)) q.cag]
       =^  cam  +>.$  (ap-call q.u.cug arg)
       ?^  cam   (ap-lame q.u.cug u.cam)
       +>.$

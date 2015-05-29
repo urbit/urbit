@@ -23,6 +23,7 @@
         queries=quay
         ==
     ^-  hiss                                ::  cast to hiss
+    =-  ~&  hiss=-  -
     :-  ^-  parsed-url=purl
         :+  :+  security=%.y
               port=~
