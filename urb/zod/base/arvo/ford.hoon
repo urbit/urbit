@@ -1344,7 +1344,10 @@
           |=  [cof=cafe lef=(map ,@ vase)]
           %+  cope  `(bolt (map ,@ vase))`^$(cof cof, r.arc r.r.arc)
           |=  [cof=cafe rig=(map ,@ vase)]
-          %+  cope  (chap(s.how [p.n.r.arc s.how]) cof bax hon)
+          =+  nod=(chap(s.how [p.n.r.arc s.how]) cof bax hon)
+          ::?:  ?=(%2 -.q.nod)
+          ::  (fine cof (~(uni by lef) rig))
+          %+  cope  nod
           |=  [cof=cafe nod=vase]
           (fine cof [[p.n.r.arc nod] lef rig])
         |=  [cof=cafe doy=(map ,@ vase)]
