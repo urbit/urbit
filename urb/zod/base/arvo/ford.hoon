@@ -1122,7 +1122,11 @@
         |=  [cof=cafe cay=cage]
         ^-  (bolt gage)
         %+  cool  |.(leaf/"ford: casting {<p.cay>} to {<p.kas>}")
-        %+  cope  (link cof p.kas p.cay q.cay)
+        %+  cope  (lion cof p.kas p.cay ~)
+        |=  [cof=cafe wuy=(list ,@tas)]
+        %+  cope
+                  ?~  wuy  (link cof p.kas p.cay q.cay)
+    (lope cof i.wuy t.wuy q.cay)
         |=  [cof=cafe vax=vase]
         (fine cof [%& p.kas vax])
       ::

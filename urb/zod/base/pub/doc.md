@@ -7,7 +7,7 @@ is a general-purpose computing stack designed to live in the cloud.
 
 `arvo` is event driven and modular. `arvo` modules are called 'vanes'.
 
-<list dataPath="/doc/arvo" dataPreview="true"></list>
+<list dataPath="/pub/doc/arvo" dataPreview="true"></list>
 
 ------------------------------------------------------------------------
 
