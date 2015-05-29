@@ -1,9 +1,9 @@
 ::                                                      ::  ::
-::::  /hook/door/octo-update/mar                        ::::::  dependencies
+::::  /hook/door/oct3-update/mar                        ::::::  dependencies
   ::                                                    ::  ::
 /?    310                                               ::  arvo
-/-    *octo                                             ::  structures
-/+    octo                                              ::  libraries
+/-    *oct3                                             ::  structures
+/+    oct3                                              ::  libraries
 !:                                                      ::  ::
 ::::                                                    ::  ::  protocol
   ::                                                    ::  ::

@@ -1,9 +1,9 @@
 ::                                                      ::  ::
-::::  /hook/core/acto/ape                               ::::::  dependencies
+::::  /hook/core/oct3/ape                               ::::::  dependencies
   ::                                                    ::  ::
 /?  310                                                 ::  arvo version
-/-  *sole, *octo                                        ::  structures
-/+  sole, octo                                          ::  libraries
+/-  *sole, *oct3                                        ::  structures
+/+  sole, oct3                                          ::  libraries
 ::                                                      ::  ::
 ::::                                                    ::::::  interfaces
   !:                                                    ::  ::
@@ -17,10 +17,10 @@
               ==                                        ::
     ++  face  (map bone sole-share)                     ::  console state
     ++  lime  $%  [%sole-effect sole-effect]            ::  :sole update
-                  [%octo-update play]                   ::  :octo update
+                  [%oct3-update play]                   ::  :oct3 update
               ==                                        ::
     ++  move  (pair bone card)                          ::  cause and action
-    ++  pear  ,[%octo-move point]                       ::  outgoing move
+    ++  pear  ,[%oct3-move point]                       ::  outgoing move
     --                                                  ::
 ::                                                      ::  ::
 ::::                                                    ::::::  past state
@@ -61,7 +61,7 @@
           =>  .(ost p.i.all, src q.i.all)               ::
           $(all t.all, +>.^$ (fun +>.^$))               ::
 ++  eels  (~(tap by sup))                               ::  all clients
-++  elfs  (prey /octo +<-)                              ::  network clients
+++  elfs  (prey /oct3 +<-)                              ::  network clients
 ++  elks  (prey /sole +<-)                              ::  console clients
 ++  emit  |=(lime (dish %diff +<))                      ::  publish
 ++  flap  |=  [net=bike con=bike]                       ::  update all clients
@@ -72,7 +72,7 @@
   ::                                                    ::  ::
 ++  fail  ?:(soul (fect %bel ~) ~|(%invalid-move !!))   ::  user error
 ++  fect  |=(sole-effect (emit %sole-effect +<))        ::  update console
-++  fact  |=(play (emit %octo-update +<))               ::  update partner
+++  fact  |=(play (emit %oct3-update +<))               ::  update partner
 ++  harp  |=(game ?:(=(gam +<) +> wild(gam +<)))        ::  update game
 ++  heal  |=  old=axon  =.  +>+<+>  (wake old)          ::  complete update
           =-  +>.$(gam -)  ?.  !=(1 +<-)  gam           ::
@@ -85,15 +85,15 @@
           ?^(rem fail link(rem +<))                     ::
 ++  plot  |=  (each point (unit ship))                  ::  apply command
           ?-(+<- & (kick +<+), | (plan +<+))            ::
-++  like  |*(* [/octo [+.rem dap] +<])                  ::  friend message
-++  link  (dish peer/(like /octo))                      ::  subscribe to friend
+++  like  |*(* [/oct3 [+.rem dap] +<])                  ::  friend message
+++  link  (dish peer/(like /oct3))                      ::  subscribe to friend
 ++  lose  ?^(rem . tame(gam out:here))                  ::  lost subscriber
 ++  meet  ?^(rem . tame(gam inn:here))                  ::  gained subscriber
-++  prom  (fect %pro %& %octo stat)                     ::  update prompt
+++  prom  (fect %pro %& %oct3 stat)                     ::  update prompt
 ++  rend  (turn `wall`tab:here |=(tape txt/+<))         ::  table print
 ++  sawn  lose(eye (~(del by eye) ost))                 ::  console unsubscribe
 ++  seen  meet(eye (~(put by eye) ost *sole-share))     ::  console subscribe
-++  send  |=(point (dish poke/(like %octo-move +<)))    ::  send move
+++  send  |=(point (dish poke/(like %oct3-move +<)))    ::  send move
 ++  show  prom:(fect %mor rend)                         ::  update console
 ++  soul  =(%sole -:q:(~(got by sup) ost))              ::  is console
 ++  stat  (weld ?~(rem ~ "@{(scow p/u.rem)}") voy:here) ::  prompt line
@@ -125,15 +125,15 @@
 ::                                                      ::  ::
 ::::                                                    ::::::  arvo handlers
   ::                                                    ::  ::
-++  reap-octo  |=([* (unit)] abet:(with =(~ +<+)))      ::  linked to friend
-++  coup-octo  |=([* (unit)] abet:?~(+<+ +> fail))      ::  move acknowledge
-++  diff-octo-update  |=([* play] abet:(hear +<+))      ::  network update
-++  peer-octo  |=(* abet:tame:meet)                     ::  urbit subscribe
+++  reap-oct3  |=([* (unit)] abet:(with =(~ +<+)))      ::  linked to friend
+++  coup-oct3  |=([* (unit)] abet:?~(+<+ +> fail))      ::  move acknowledge
+++  diff-oct3-update  |=([* play] abet:(hear +<+))      ::  network update
+++  peer-oct3  |=(* abet:tame:meet)                     ::  urbit subscribe
 ++  peer-sole  |=(* abet:show:seen)                     ::  console subscribe
 ++  poke-sole-action  |=(sole-action abet:(work +<))    ::  console input
-++  poke-octo-move  |=(point abet:wild:(kick +<))       ::  urbit move
+++  poke-oct3-move  |=(point abet:wild:(kick +<))       ::  urbit move
 ++  prep  |=(agon abet:?~(+< +> (heal +<+>)))           ::  load state
-++  pull-octo  |=(* abet:lose)                          ::  urbit unsubscribe
+++  pull-oct3  |=(* abet:lose)                          ::  urbit unsubscribe
 ++  pull-sole  |=(* abet:sawn)                          ::  console unsubscribe
-++  quit-octo  |=(* abet:?~(rem +> wild(rem ~)))        ::  unlinked by friend
+++  quit-oct3  |=(* abet:?~(rem +> wild(rem ~)))        ::  unlinked by friend
 --
