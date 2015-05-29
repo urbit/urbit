@@ -1265,6 +1265,17 @@
   ++  sum  |=([b=@ c=@] (sit (add b c)))                ::  wrapping add
   ++  sit  |=(b=@ (end a 1 b))                          ::  enforce modulo
   --
+::
+++  stat                                                ::  positive counter
+  !:
+  |*  a=$+(* *)
+  |=  (trel ,? a (map a ,@ud))
+  ^+  r
+  =+  (~(get by r) q)
+  ?:  p  
+    (~(put by r) q ?~(- 1 +(u.-)))
+  ?>  ?=(^ -) 
+  ?:(=(0 u.-) (~(del by r) q) (~(put by r) q (dec u.-)))
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cG, floating point           ::
 ::
