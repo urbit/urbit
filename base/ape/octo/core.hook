@@ -55,10 +55,10 @@
 ++  abet  [(flop moz) .(moz ~)]                         ::  resolve
 ++  bike  $+(_. _+>)                                    ::  self-transformer
 ++  dish  |=(cad=card %_(+> moz [[ost cad] moz]))       ::  request
-++  echo  |=  [all=(list sink) fun=bike]  =+  +>+<-     ::  publish to all
-          |-  ^+  +>.^$  ?~  all  +>.^$(+<- +<)  %=  $  ::
-          all  t.all  ost  p.i.all  src  q.i.all        ::
-          +>.^$  (fun +>.^$)  ==                        ::
+++  echo  |=  [all=(list sink) fun=bike]  =+  old=+>+<- ::  publish to all
+          |-  ^+  +>.^$  ?~  all  +>.^$(+<- old)        ::
+          =>  .(ost p.i.all, src q.i.all)               ::
+          $(all t.all, +>.^$ (fun +>.^$))               ::
 ++  eels  (~(tap by sup))                               ::  all clients
 ++  elfs  (prey /octo +<-)                              ::  network clients
 ++  elks  (prey /sole +<-)                              ::  console clients
