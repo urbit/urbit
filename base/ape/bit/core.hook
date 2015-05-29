@@ -84,7 +84,7 @@ $:  cred=(unit ,[app-secret=@t client-id=@t])
       ==
   ~
 ::
-++  sigh-tang  |=([^ err=tang] (mean err))
+++  sigh-tang  |=([* err=tang] (mean err))
 ++  send-friend                      ::  inter-app interface
   |=  [way=wire his=ship mez=$%([%bit-addr-request ~] [%bit-addr-made @t])]
   ^-  move
@@ -144,9 +144,9 @@ $:  cred=(unit ,[app-secret=@t client-id=@t])
   |=(arg=[amount=@t currency=@t] ?<(=(amount.arg ~) (api-call %json %buy arg)))
 ++  poke-sell
   |=(arg=[amount=@t currency=@t] ?<(=(amount.arg ~) (api-call %json %sell arg)))
-++  sigh-json  |=([^ a=json] ~&(a return))
+++  sigh-json  |=([* a=json] ~&(a return))
 ++  poke-list  |=(~ (api-call %bit-accounts %list ~))
-++  sigh-bit-accounts  |=([^ acc=bit-accounts] ~&(accounts=acc return))
+++  sigh-bit-accounts  |=([* acc=bit-accounts] ~&(accounts=acc return))
 ++  poke-send-raw
   |=  arg=[to=@t amone=(unit ,@t) cur=(unit ,@t) amtwo=(unit ,@t) nt=(unit ,@t)]
   =+  adr=?~((~(get by contacts.vat) to.arg) to ~&('contact-exists' (~(get by contacts.vat) to.arg)))
