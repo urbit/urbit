@@ -1849,7 +1849,19 @@
   |=  fud=*  ^-  (unit han)
   =+  gol=(han fud)
   ?.(=(gol fud) ~ [~ gol])
-
+::
+++  slog                                                ::  deify printf
+  |=  [a=?(~ @u) b=tang]  ^+  same                      ::  .=  ~&(%a 1)
+  ?~(b same ~>(%slog.[a i.b] $(b t.b)))                 ::  ((slog `~[>%a<]) 1)
+::
+++  mean  |=(a=tang (fear a |.(!!)))                    ::  deify stack trace
+++  fear                                                ::  insert user mean
+  |*  [a=tang _|?(**)]
+  ^+  (+<+)
+  =>  .(a `tang`a)
+  ?~  a  (+<+)
+  ~>  %mean.|.(i.a)
+  $(a t.a)
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::
 ::::              chapter 2d, containers                ::::
 ::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::

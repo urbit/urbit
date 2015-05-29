@@ -175,19 +175,10 @@
     ::  ~&  [%aver-mun nao [%from syd lim q.mun]]
     ?~(nao ~ (read-at-aeon:ze u.nao mun))
   ::
-  ++  ford-fail
-    |=  tan=tang  
-    ~|  %ford-fail
-    |-
-    ?~  tan  !!
-    ~>  %mean.|.(i.tan)           ::  interpolate into stack trace
-    $(tan t.tan) 
-  ::
+  ++  ford-fail  |=(tan=tang ~|(%ford-fail (mean tan)))
   ++  unwrap-tang
     |*  res=(each ,* tang)
-    ?:  ?=(%& -.res)
-      p.res
-    (ford-fail p.res)
+    ?:(?=(%& -.res) p.res (mean p.res))
   ::
   ++  gage-to-cages
     |=  gag=gage  ^-  (list (pair cage cage))
@@ -196,8 +187,9 @@
   ++  gage-to-tage
     |=  gag=gage
     ^-  (each (list (pair cage cage)) tang)
+    ?:  ?=(%| -.gag)  (mule |.(`~`(ford-fail p.gag)))
     ?.  ?=(%tabl -.gag)
-      (mule |.(`~`(ford-fail >%strange-gage< ~)))
+      (mule |.(`~`(ford-fail >%strange-gage p.p.gag< ~)))
     =<  ?+(. [%& .] [@ *] .)
     |-  ^-  ?((list ,[cage cage]) (each ,~ tang))
     ?~  p.gag  ~
@@ -1481,7 +1473,8 @@
         ~
       =+  yak=(tako-to-yaki u.tak)
       =+  len=(lent pax)
-      :^  ~  ~  %arch 
+      :^  ~  ~  %arch
+      ::  ~&  cy/pax
       :-  -:!>(*arch)
       ^-  arch
       =+  ^-  descendants=(list (pair path lobe))
