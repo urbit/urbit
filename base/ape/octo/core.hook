@@ -55,6 +55,7 @@
 ++  abet  [(flop moz) .(moz ~)]                         ::  resolve
 ++  bike  $+(_. _+>)                                    ::  self-transformer
 ++  dish  |=(cad=card %_(+> moz [[ost cad] moz]))       ::  request
+++  done  (echo eels |=(_. (dish:+< %quit ~)))          ::  cancel everyone
 ++  echo  |=  [all=(list sink) fun=bike]  =+  old=+>+<- ::  publish to all
           |-  ^+  +>.^$  ?~  all  +>.^$(+<- old)        ::
           =>  .(ost p.i.all, src q.i.all)               ::
@@ -80,7 +81,7 @@
 ++  kick  |=  point  =^  dud  gam  ~(m at:here +<)      ::
           ?.(dud fail wild:?~(rem kind (send +>-)))     ::
 ++  kind  =+(res:here ?~(- + (word(gam new:here) ->)))  ::  move result
-++  plan  |=  (unit ship)  ?~  +<  wild:stop(gam *game) ::  link/unlink
+++  plan  |=  (unit ship)  ?~  +<  stop(gam new:here)   ::  link/unlink
           ?^(rem fail link(rem +<))                     ::
 ++  plot  |=  (each point (unit ship))                  ::  apply command
           ?-(+<- & (kick +<+), | (plan +<+))            ::
@@ -96,7 +97,7 @@
 ++  show  prom:(fect %mor rend)                         ::  update console
 ++  soul  =(%sole -:q:(~(got by sup) ost))              ::  is console
 ++  stat  (weld ?~(rem ~ "@{(scow p/u.rem)}") voy:here) ::  prompt line
-++  stop  ?~(rem . (dish pull/(like ~)))                ::  unsubscribe
+++  stop  ?~(rem done wild:(dish pull/(like ~)))        ::  unsubscribe
 ++  tame  (flap |=(_. (fact:+< &/gam)) |=(_. prom:+<))  ::  light update
 ++  wild  (flap |=(_. (fact:+< &/gam)) |=(_. show:+<))  ::  full update
 ++  with  |=(? (word(rem ?:(+< rem ~)) "{<[+< src]>}")) ::  
@@ -134,5 +135,5 @@
 ++  prep  |=(agon abet:?~(+< +> (heal +<+>)))           ::  load state
 ++  pull-octo  |=(* abet:lose)                          ::  urbit unsubscribe
 ++  pull-sole  |=(* abet:sawn)                          ::  console unsubscribe
-++  quit-octo  |=(* abet:?~(rem +> link))               ::  unlinked by friend
+++  quit-octo  |=(* abet:?~(rem +> wild(rem ~)))        ::  unlinked by friend
 --
