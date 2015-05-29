@@ -1,11 +1,10 @@
-/+  mean
 !:
 ::::
   ::
-|_  [^ ~]
-++  poke  |*([[a=@ @] b=[mark *]] :_(+> [a %hiss / %wain b]~))
-::++  poke-purl  |=([[a=@ @] b=purl] :_(+> [a %hiss / %wain %purl b]~))
-++  poke-noun  |=([a=from b=tape] (poke a %purl (scan b auri:epur)))
-++  sigh-wain  |=([^ a=wain] ~&(a `+>)) 
-++  sigh-tang  |=([^ a=tang] `_+>`(mean a))
+|_  [[^ ^ ost=@ ^] ~]
+++  poke  |*(a=[mark *] :_(+> [ost %hiss / %wain a]~))
+::++  poke-purl  |=(a=purl :_(+> [ost %hiss / %wain %purl a]~))
+++  poke-noun  |=(a=tape (poke %purl (scan a auri:epur)))
+++  sigh-wain  |=([* a=wain] ~&(a `+>))
+++  sigh-tang  |=([* a=tang] `_!!`(mean a))
 --
