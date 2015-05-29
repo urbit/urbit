@@ -128,7 +128,9 @@
   ++  mo-okay                                           ::  valid agent core
     |=  vax=vase
     ^-  ?
-    (~(nest ut -:!>(*bowl)) %| p:(slot 12 vax))
+    =+  bol=(slew 12 vax)
+    ?~  bol  |
+    (~(nest ut p.u.bol) %| -:!>(*bowl))
   ::
   ++  mo-boom                                           ::  complete new boot
     |=  [dap=dude pup=scup dep=@uvH gux=gage]
@@ -837,7 +839,7 @@
       =+  cug=(ap-find /lame)
       ?~  cug
         =.  why  (turn why |=(a=tank rose/[~ "! " ~]^[a]~))
-        ~>  %slog.`rose/[" " "[" "]"]^[>%ap-lame< >wut< why]
+        ~>  %slog.`%*(. >[%ap-lame wut %why]< |2.+> why)
         +>.$
       =^  cam  +>.$
         %+  ap-call  q.u.cug
@@ -989,10 +991,9 @@
       |=  [cog=term gat=vase arg=vase]
       ^-  (each vase tang)
       =+  wiz=(mule |.((slit p.gat p.arg)))
-      ?:  ?=(%| -.wiz)  
-        ~&  %ap-slam-mismatch 
-        ~>  %slog.[0 ~(duck ut p.arg)]
-        ~>  %slog.[0 ~(duck ut (~(peek ut p.gat) %free 6))]
+      ?:  ?=(%| -.wiz)
+        %-  =+  sam=(~(peek ut p.gat) %free 6)
+            (slog 0 >%ap-slam-mismatch< ~(duck ut p.arg) ~(duck ut sam) ~)
         [%| (ap-suck "call: {<cog>}: type mismatch")]
       =+  ton=(mong [q.gat q.arg] ap-sled)
       ?-  -.ton
