@@ -8,7 +8,7 @@
 ::
 ++  grow  
   |%  ++  httpreq
-    =-  [/com/coinbase /oauth/token [%post ~] ~ `quay`-]
+    =-  [/com/coinbase/sandbox /oauth/token [%post ~] ~ `quay`-]
     :~  ['grant_type' 'authorization_code']
         ['code' oat.req]
         ['redirect_uri' (crip (earn red.req))]
