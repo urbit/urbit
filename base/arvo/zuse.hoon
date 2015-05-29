@@ -1703,6 +1703,7 @@
   ?~  pax  &  ?~  r.+<  | 
   &(=(i.pax i.r.+<) $(pax t.pax, r.+< t.r.+<))
 ::
+++  prey  |=([pax=path hid=bowl] (pale hid (prix pax))) ::  prefix 
 ++  hunt                                                ::  first of unit dates
   |=  [one=(unit ,@da) two=(unit ,@da)]
   ^-  (unit ,@da)
