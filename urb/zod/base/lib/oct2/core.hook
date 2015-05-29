@@ -1,8 +1,8 @@
 ::                                                      ::  ::
-::::  /hook/core/octo/lib                               ::  ::  dependencies
+::::  /hook/core/oct2/lib                               ::  ::  dependencies
   ::                                                    ::  ::
 /?    310                                               ::  arvo version
-/-    *octo                                             ::  structures
+/-    *oct2                                             ::  structures
 ::                                                      ::  ::
 ::::                                                    ::  ::  semantics
   !:                                                    ::  ::
@@ -53,7 +53,7 @@
   ++  vew  =-  ?:  =(~ -)  ~  :(weld "[" - "]")         ::  print watchers
            =+  dow=(~(tap by aud))  |-  ^-  tape        ::
            ?~  dow  ~  =+  mor=$(dow t.dow)             ::
-           :(weld nam(src p.i.dow) ?~(mor "" ", ") mor)   ::
+           :(weld nam(src p.i.dow) ?~(mor "" ", ") mor) ::
   ++  voy   =+  ~[(icon who)]  %+  weld  vew            ::  print prompt
             ?.(ept " ({-}'s turn) " ": {-} (row/col): ")::
   --
