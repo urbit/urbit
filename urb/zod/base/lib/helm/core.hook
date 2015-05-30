@@ -78,19 +78,20 @@
     (emit %flog /helm %crud %hax-init leaf/(scow %p him) ~)
   ::
   ++  poke-mass
-    =<  abet
+    |=  ~  =<  abet
     (emit %flog /heft %crud %hax-heft ~)
   ::
   ++  poke-start                                        ::  start a server
     |=  hood-start  =<  abet
     (emit %conf /helm [our dap] %load our syd)
   ::
-  ++  poke-reload                                       ::  reload vanes
-    |=  all=(list term)  =<  abet
+  ++  poke-reload  |=(all=(list term) (poke-reload-desk %home all))
+  ++  poke-reload-desk                                 ::  reload vanes
+    |=  [syd=desk all=(list term)]  =<  abet
     %-  emil
     %-  flop
     %+  turn  all
-    =+  ark=(arch .^(%cy /(scot %p our)/base/(scot %da now)/arvo))
+    =+  ark=(arch .^(%cy /(scot %p our)/[syd]/(scot %da now)/arvo))
     =+  van=(~(tap by r.ark))
     |=  nam=@tas
     =.  nam
@@ -111,7 +112,8 @@
   ++  poke-reset                                        ::  reset system
     |=  hood-reset  =<  abet
     %-  emil
-    =+  top=`path`/(scot %p our)/base/arvo/(scot %da now)
+    %-  flop  ^-  (list card) 
+    =+  top=`path`/(scot %p our)/home/(scot %da now)/arvo
     :-  [%flog /reset %vega (weld top `path`/hoon)]
     %+  turn
       ^-  (list ,[p=@tas q=@tas])

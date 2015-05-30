@@ -49,66 +49,27 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-++  coup-kiln-fancy                                     ::
-  |=  [way=wire saw=(unit tang)]
-  (ably (take-coup-fancy:(kiln-work hid (able %kiln)) way +<+))
-::
+++  coup-kiln-fancy  (wrap take-coup-fancy):from-kiln
 ++  coup-kiln-spam                                      ::
   |=  [way=wire saw=(unit tang)]
   ~?  ?=(^ saw)  [%kiln-spam-lame u.saw]
   [~ +>] 
 ::
-++  coup-drum                                           ::
-  |=  [way=wire saw=(unit tang)]
-  (ably (take-coup:(drum-work hid (able %drum)) way +<+))
+++  coup-drum  (wrap take-coup):from-drum
+++  diff-sole-effect-drum  (wrap diff-sole-effect):from-drum
+++  from-helm
+  =-  [wrap=- *helm-work]
+  |*  fun=_=>(*helm-work |=(* abet))
+  |=  _+<.fun
+  =.  +>.fun  (helm-work hid (able %helm))
+  (ably (fun +<))
 ::
-++  diff-sole-effect-drum
-  |=  [way=wire sole-effect]
-  (ably (diff-sole-effect:(drum-work hid (able %drum)) way +<+))
-::
-++  poke-hood-begin                                     ::
-  |=  hood-begin
-  (ably (poke-begin:(helm-work hid (able %helm)) +<))
-::
-++  poke-helm-init                                      ::
-  |=  hood-init
-  (ably (poke-init:(helm-work hid (able %helm)) +<))
-::
-++  poke-hood-mass                                      ::
-  |=  ~
-  (ably poke-mass:(helm-work hid (able %helm)))
-::
-++  poke-hood-merge                                     ::
-  |=  hood-merge
-  (ably (poke-merge:(kiln-work hid (able %kiln)) +<))
-::
-++  poke-hood-reload                                    ::
-  |=  hood-reload
-  (ably (poke-reload:(helm-work hid (able %helm)) +<))
-::
-++  poke-hood-reset                                     ::
-  |=  ~
-  (ably (poke-reset:(helm-work hid (able %helm)) +<))
-::
-++  poke-hood-sync                                      ::
-  |=  hood-sync
-  (ably (poke-sync:(kiln-work hid (able %kiln)) +<))
-::
-++  poke-hood-unix                                      ::
-  |=  hood-unix
-  (ably (poke-unix:(kiln-work hid (able %kiln)) +<))
-::
-++  poke-hood-verb                                      ::
-  |=  ~
-  (ably (poke-verb:(helm-work hid (able %helm)) +<))
-::
-++  poke-hood-start                                     ::
-  |=  drum-start
-  (ably (poke-start:(drum-work hid (able %drum)) +<))
-::
-++  poke-dill-belt
-  |=  dill-belt
-  (ably (poke-dill-belt:(drum-work hid (able %drum)) +<))
+++  from-drum
+  =-  [wrap=- *drum-work]
+  |*  fun=_=>(*drum-work |=(* se-abet))
+  |=  _+<.fun
+  =.  +>.fun  (drum-work hid (able %drum))
+  (ably (fun +<))
 ::
 ++  from-kiln
   =-  [wrap=- *kiln-work]
@@ -117,47 +78,29 @@
   =.  +>.fun  (kiln-work hid (able %kiln))
   (ably (fun +<))
 ::
+++  poke-dill-belt  (wrap poke-dill-belt):from-drum
+++  poke-helm-init  (wrap poke-init):from-helm
+++  poke-hood-mass  (wrap poke-mass):from-helm
+++  poke-hood-sync  (wrap poke-sync):from-kiln
+++  poke-hood-unix  (wrap poke-unix):from-kiln
+++  poke-hood-verb  (wrap poke-verb):from-helm
+++  poke-hood-begin   (wrap poke-begin):from-helm
+++  poke-hood-merge   (wrap poke-merge):from-kiln
+++  poke-hood-reload  (wrap poke-reload):from-helm
+++  poke-hood-reset   (wrap poke-reset):from-helm
+++  poke-hood-start   (wrap poke-start):from-drum
+++  poke-hood-reload-desk  (wrap poke-reload-desk):from-helm
 ++  poke-kiln-cp  (wrap poke-cp):from-kiln
 ++  poke-kiln-rm  (wrap poke-rm):from-kiln
-++  poke-kiln-mv  (wrap poke-mv):from-kiln 
-::
-++  poke-will                                           ::
-  |=  (unit will)
-  (ably (poke-will:(helm-work hid (able %helm)) +<))
-::
-++  mere-kiln                                           ::
-  |=  [way=wire are=(each (set path) (pair term tang))]
-  (ably (take-mere:(kiln-work hid (able %kiln)) way +<+))
-::
-++  made-kiln                                           ::
-  |=  [way=wire @uvH gage]
-  (ably (take-made:(kiln-work hid (able %kiln)) way +<+))
-::
-++  init-helm                                           ::
-  |=  [way=wire *]
-  [~ +>]
-::
-++  note-helm                                           ::  
-  |=  [way=wire (pair ,@tD tank)]
-  (ably (take-note:(helm-work hid (able %helm)) way +<+))
-::
-++  reap-drum
-  |=  [way=wire saw=(unit tang)]
-  (ably (reap:(drum-work hid (able %drum)) way +<+))
-::
-++  onto-drum                                           ::
-  |=  [way=wire saw=(each ,[term @tas @da] tang)]
-  (ably (take-onto:(drum-work hid (able %drum)) way +<+))
-::
-++  peer-drum
-  |=  pax=path
-  (ably (peer:(drum-work hid (able %drum)) +<))
-::
-++  quit-drum
-  |=  way=wire
-  (ably (quit:(drum-work hid (able %drum)) way))
-::
-++  went-helm                                           ::
-  |=  [way=wire her=ship kay=cape]
-  (ably (take-went:(helm-work hid (able %helm)) way +<+))
+++  poke-kiln-mv  (wrap poke-mv):from-kiln
+++  poke-will  (wrap poke-will):from-helm
+++  mere-kiln  (wrap take-mere):from-kiln
+++  made-kiln  (wrap take-made):from-kiln
+++  init-helm  |=([way=wire *] [~ +>])
+++  note-helm  (wrap take-note):from-helm
+++  reap-drum  (wrap reap):from-drum
+++  onto-drum  (wrap take-onto):from-drum
+++  peer-drum  (wrap peer):from-drum
+++  quit-drum  (wrap quit):from-drum
+++  went-helm  (wrap take-went):from-helm
 --
