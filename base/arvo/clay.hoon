@@ -939,7 +939,7 @@
     ?.  ?=(%& -.res)
       ~|  "validate foreign plops failed"
       =+  why=?-(-.res %| p.res, %tabl ~[>%bad-marc<])
-      ~>  %mean.|.(%.(. >[%plop-fail %why]< |1.+> why))
+      ~>  %mean.|.(%*(. >[%plop-fail %why]< |1.+> why))
       !!
     ?>  ?=(@ p.p.res)
     wake(haw.u.ref (~(put by haw.u.ref) [car cas pax] `p.res))
@@ -2524,7 +2524,7 @@
         ::  ~&  ['merge succeeded' p.p.+.q.hin]
         [[- ~] ..^$]
       ~>  %slog.
-          :+  0  %rose  [" " "[" "]"]
+          :^  0  %rose  [" " "[" "]"]
           :^    leaf/"merge failed"
               leaf/"please manually merge the desks with"
             leaf/":helm+merge %{(trip syd)} {(scow %p her)} %{(trip sud)}"
