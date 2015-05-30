@@ -9,7 +9,6 @@
   !:
 ^-  manx
 =+  do=(~(get by qix.gas) %'code')
-=+  g=(~(get by qix.gas) %'access_token')
 
 ;html
   ;head
@@ -21,10 +20,10 @@
     ;title: DO & GCE Manager
   ==
   ;body
-   ;*  =+  d=?~(do ~ (trip u.do))
-       =+  g=?~(g ~ (trip u.g))
-        :_  ~  
-        ;script: authcode='{?~(d g d)}'; console.log(authcode)
+  ;script:"""
+          var authcode = \{}
+          authcode.do='{?~(do ~ (trip u.do))}'
+          """
     ;div#container;
     ;script@"/home/pub/cloud/src/main.js";
   ==
