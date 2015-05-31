@@ -48,12 +48,10 @@
 ++  abet  [(flop moz) .(moz ~)]                         ::  resolve
 ++  bike  $+(_. _+>)                                    ::  self-transformer
 ++  dish  |=(cad=card %_(+> moz [[ost cad] moz]))       ::  request
-++  done  (echo eels |=(_. (dish:+< %quit ~)))          ::  cancel everyone
 ++  echo  |=  [all=(list sink) fun=bike]  =+  old=+>+<- ::  publish to all
           |-  ^+  +>.^$  ?~  all  +>.^$(+<- old)        ::
           =>  .(ost p.i.all, src q.i.all)               ::
           $(all t.all, +>.^$ (fun +>.^$))               ::
-++  eels  (~(tap by sup))                               ::  all clients
 ++  flap  |=(con=bike (echo (~(tap by sup)) con))       ::  update all clients
 ++  here  ~(. go src gam)                               ::  game core
 ::                                                      ::  ::
@@ -63,13 +61,11 @@
 ++  fect  |=(sole-effect (dish %diff %sole-effect +<))  ::  update console
 ++  heal  |=  old=axon  =.  +>+<+>  (wake old)          ::  complete update
           =-  +>.$(gam -)  ?.  !=(1 +<-)  gam           ::
-          (muy:here (turn eels |=(sink q)))             ::
+          (muy:here (turn (~(tap by sup)) |=(sink q)))  ::
 ++  kick  |=  point  =^  dud  gam  ~(m at:here +<)      ::
           ?.(dud fail wild:kind)                        ::
 ++  kind  =+(res:here ?~(- + (word(gam new:here) ->)))  ::  move result
 ++  hail  |=(? tame(gam (hey:here +<)))                 ::  toggle subscriber
-++  plot  |=  (each point null)                         ::  apply command
-          ?-(+<- & (kick +<+), | done(gam new:here))    ::
 ++  prom  (fect %pro %& %oct2 voy:here)                 ::  update prompt
 ++  rend  (turn `wall`tab:here |=(tape txt/+<))         ::  table print
 ++  sawn  (hail(eye (~(del by eye) ost)) |)             ::  console unsubscribe
