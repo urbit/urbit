@@ -2278,7 +2278,7 @@
     ?~(b a $(b t.b, a (put(+< a) i.b)))
   ::
   +-  get                                               ::  head-tail pair
-    |-  ^+  [p=?>(?=(^ a) n.a) q=a]
+    |-  ^+  ?>(?=(^ a) [p=n.a q=*(qeu ,_n.a)])
     ?~  a
       !!
     ?~  r.a
