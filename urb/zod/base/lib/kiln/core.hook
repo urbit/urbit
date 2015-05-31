@@ -2,17 +2,10 @@
 ::::  /hook/core/kiln/lib                               ::  ::
   ::                                                    ::  ::
 /?  310                                                 ::  version
-::  /+  mean  XX
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%                                                      ::  ::
-++  mean
-  |=  a=tang 
-  ?~  a  !!
-  ~>  %mean.|.(i.a)
-  $(a t.a)
-::
 ++  kiln-part  ,[%kiln %0 kiln-pith]                    ::  kiln state
 ++  kiln-pith                                           ::
     $:  rem=(map desk kiln-desk)                        ::
