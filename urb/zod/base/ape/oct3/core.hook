@@ -56,8 +56,9 @@
 ++  bike  $+(_. _+>)                                    ::  self-transformer
 ++  dish  |=(cad=card %_(+> moz [[ost cad] moz]))       ::  request
 ++  done  (echo eels |=(_. (dish:+< %quit ~)))          ::  cancel everyone
-++  echo  |=  [all=(list sink) fun=bike]  =+  old=+>+<- ::  publish to all
-          |-  ^+  +>.^$  ?~  all  +>.^$(+<- old)        ::
+++  echo  |=  [all=(list sink) fun=bike]                ::
+          =+  old=+>+<-                                 ::
+          |-  ^+  +>.^$  ?~  all  +>.^$(+<- +<)         ::
           =>  .(ost p.i.all, src q.i.all)               ::
           $(all t.all, +>.^$ (fun +>.^$))               ::
 ++  eels  (~(tap by sup))                               ::  all clients
