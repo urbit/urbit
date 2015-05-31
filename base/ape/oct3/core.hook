@@ -27,7 +27,7 @@
     ++  axle-0  ,[eye=face gam=game-0]                  ::  old axle
     ++  game-0  ,[who=? box=board boo=board]            ::  old game
     ++  wake    |=  axon  :-  %1  ?-  +<-  %1  +<+      ::  coarse upgrade
-                %0  [eye ~ [who ~^~ ~ box boo]:gam]:+<+ ::
+                %0  [eye [who ~^~ ~ box boo]:gam]:+<+   ::
     ==  --                                              ::
 ::                                                      ::  ::
 ::::                                                    ::::::  parsers
@@ -50,7 +50,6 @@
 ++  abet  [(flop moz) .(moz ~)]                         ::  resolve
 ++  bike  $+(_. _+>)                                    ::  self-transformer
 ++  dish  |=(cad=card %_(+> moz [[ost cad] moz]))       ::  request
-++  done  (echo eels |=(_. (dish:+< %quit ~)))          ::  cancel everyone
 ++  echo  |=  [all=(list sink) fun=bike]  =+  old=+>+<- ::  publish to all
           |-  ^+  +>.^$  ?~  all  +>.^$(+<- old)        ::
           =>  .(ost p.i.all, src q.i.all)               ::
@@ -66,7 +65,7 @@
   ::                                                    ::  ::
 ++  fail  ?:(soul (fect %bel ~) ~|(%invalid-move !!))   ::  user error
 ++  fect  |=(sole-effect (dish %diff %sole-effect +<))  ::  update console
-++  fact  |=(play (diff %diff %oct3-update +<))         ::  update partner
+++  fact  |=(play (dish %diff %oct3-update +<))         ::  update partner
 ++  hail  |=(? tame(gam (hey:here +<)))                 ::  toggle subscriber
 ++  heal  |=  old=axon  =.  +>+<+>  (wake old)          ::  complete update
           =-  +>.$(gam -)  ?.  !=(1 +<-)  gam           ::
@@ -74,8 +73,6 @@
 ++  kick  |=  point  =^  dud  gam  ~(m at:here +<)      ::
           ?.(dud fail wild:kind)                        ::
 ++  kind  =+(res:here ?~(- + (word(gam new:here) ->)))  ::  move result
-++  plot  |=  (each point null)                         ::  apply command
-          ?-(+<- & (kick +<+), | done(gam new:here))    ::
 ++  prom  (fect %pro %& %oct3 voy:here)                 ::  update prompt
 ++  rend  (turn `wall`tab:here |=(tape txt/+<))         ::  table print
 ++  sawn  (hail(eye (~(del by eye) ost)) |)             ::  console unsubscribe
@@ -99,8 +96,8 @@
   ++  delt  |=  cal=sole-change                         ::  edit command line
             =^  cul  say  (~(remit cs say) cal good)    ::
             ?~(cul abet fail:(fect:abet det/u.cul))     ::
-  ++  dive  =+  (rust (tufa buf.say) (punt comb))       ::  apply command line
-            ?~(- fail ?~(-> show (plot:wipe ->+)))      ::
+  ++  dive  =+  (rust (tufa buf.say) (punt come))       ::  apply command line
+            ?~(- fail ?~(-> show (kick:wipe ->+)))      ::
   ++  good  |=((list ,@c) -:(rose (tufa +<) cusp))      ::  validate input
   ++  wipe  =^  cal  say  (~(transmit cs say) set/~)    ::  clear line
             (fect:abet %det cal)                        ::
@@ -108,7 +105,7 @@
 ::                                                      ::  ::
 ::::                                                    ::::::  arvo handlers
   ::                                                    ::  ::
-++  peer-oct3  |=(* abet:tame:meet)                     ::  urbit subscribe
+++  peer-oct3  |=(* abet:tame:(hail &))                 ::  urbit subscribe
 ++  peer-sole  |=(* abet:show:seen)                     ::  console subscribe
 ++  poke-sole-action  |=(sole-action abet:(work +<))    ::  console input
 ++  poke-oct3-move  |=(point abet:wild:(kick +<))       ::  urbit move
