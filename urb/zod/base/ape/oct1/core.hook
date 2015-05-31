@@ -33,11 +33,12 @@
 ++  abet  [(flop moz) .(moz ~)]                         ::  resolve
 ++  bike  $+(_. _+>)                                    ::  self-transformer
 ++  dish  |=(cad=card %_(+> moz [[ost cad] moz]))       ::  request
+++  eels  (~(tap by sup))                               ::  all clients
 ++  echo  |=  [all=(list sink) fun=bike]  =+  old=+>+<- ::
           |-  ^+  +>.^$  ?~  all  +>.^$(+<- old)        ::
           =.  ost  p.i.all                              ::
           $(all t.all, +>.^$ (fun +>.^$))               ::
-++  flap  |=(con=bike (echo (~(tap by sup)) con))       ::  update all clients
+++  flap  |=(con=bike (echo eels con))                  ::  update all clients
 ++  here  ~(. go gam)                                   ::  game core
 ::                                                      ::  ::
 ::::                                                    ::::::  server logic
