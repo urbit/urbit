@@ -1,22 +1,26 @@
 ::                                                      ::  ::
-::::  /hook/core/oct3/ape                               ::::::  dependencies
+::::  /hook/core/oct4/ape                               ::::::  dependencies
   ::                                                    ::  ::
 /?  310                                                 ::  arvo version
-/-  *sole, *oct3                                        ::  structures
-/+  sole, oct3                                          ::  libraries
+/-  *sole, *oct4                                        ::  structures
+/+  sole, oct4                                          ::  libraries
 ::                                                      ::  ::
 ::::                                                    ::::::  interfaces
   !:                                                    ::  ::
 =>  |%                                                  ::
-    ++  axle  ,[eye=face gam=game]                      ::  agent state
+    ++  axle  ,[eye=face rem=(unit ship) gam=game]      ::  agent state
     ++  card  $%  [%diff lime]                          ::  update
                   [%quit ~]                             ::  cancel
+                  [%peer wire dock path]                ::  subscribe
+                  [%poke wire dock pear]                ::  send move
+                  [%pull wire dock ~]                   ::  unsubscribe
               ==                                        ::
     ++  face  (map bone sole-share)                     ::  console state
     ++  lime  $%  [%sole-effect sole-effect]            ::  :sole update
-                  [%oct3-update play]                   ::  :oct3 update
+                  [%oct4-update play]                   ::  :oct4 update
               ==                                        ::
     ++  move  (pair bone card)                          ::  cause and action
+    ++  pear  ,[%oct4-move point]                       ::  outgoing move
     --                                                  ::
 ::                                                      ::  ::
 ::::                                                    ::::::  past state
@@ -35,12 +39,13 @@
 =>  |%                                                  ::
     ++  colm  (cook |=(a=@ (sub a '1')) (shim '1' '3')) ::  row or column
     ++  come  ;~(plug colm ;~(pfix fas colm))           ::  coordinate
-    ++  cope  |=(? ?:(+< (stag %| (cold ~ sig)) come))  ::  with wait mode
+    ++  comb  (pick come ;~(pfix sig (punt fed:ag)))    ::  all command input
+    ++  cope  |=(? ?:(+< (stag %| (cold ~ sig)) comb))  ::  with wait mode
     --                                                  ::
 ::                                                      ::  ::
 ::::                                                    ::::::  process core
   ::                                                    ::  ::
-|_  $:  bowl                                            ::
+|_  $:  bowl 
         moz=(list move)                                 ::  pending actions
         [%1 axle]                                       ::  process state, v1
     ==                                                  ::
@@ -56,8 +61,9 @@
           =>  .(ost p.i.all, src q.i.all)               ::
           $(all t.all, +>.^$ (fun +>.^$))               ::
 ++  eels  (~(tap by sup))                               ::  all clients
-++  elfs  (prey /oct3 +<-)                              ::  network clients
+++  elfs  (prey /oct4 +<-)                              ::  network clients
 ++  elks  (prey /sole +<-)                              ::  console clients
+++  emit  |=(lime (dish %diff +<))                      ::  publish
 ++  flap  |=  [net=bike con=bike]                       ::  update all clients
           (echo:(echo elks con) elfs net)               ::
 ++  here  ~(. go src gam)                               ::  game core
@@ -65,25 +71,35 @@
 ::::                                                    ::::::  server logic
   ::                                                    ::  ::
 ++  fail  ?:(soul (fect %bel ~) ~|(%invalid-move !!))   ::  user error
-++  fect  |=(sole-effect (dish %diff %sole-effect +<))  ::  update console
-++  fact  |=(play (diff %diff %oct3-update +<))         ::  update partner
-++  hail  |=(? tame(gam (hey:here +<)))                 ::  toggle subscriber
+++  fect  |=(sole-effect (emit %sole-effect +<))        ::  update console
+++  fact  |=(play (emit %oct4-update +<))               ::  update partner
+++  hail  |=(? ?^(rem . tame(gam (hey:here +<))))       ::  toggle subscriber
+++  harp  |=(game ?:(=(gam +<) +> wild(gam +<)))        ::  update game
 ++  heal  |=  old=axon  =.  +>+<+>  (wake old)          ::  complete update
           =-  +>.$(gam -)  ?.  !=(1 +<-)  gam           ::
           (muy:here (turn eels |=(sink q)))             ::
+++  hear  |=(play ?-(+<- | (word +<+), & (harp +<+)))   ::  network update
 ++  kick  |=  point  =^  dud  gam  ~(m at:here +<)      ::
-          ?.(dud fail wild:kind)                        ::
+          ?.(dud fail wild:?~(rem kind (send +>-)))     ::
 ++  kind  =+(res:here ?~(- + (word(gam new:here) ->)))  ::  move result
-++  plot  |=  (each point null)                         ::  apply command
-          ?-(+<- & (kick +<+), | done(gam new:here))    ::
-++  prom  (fect %pro %& %oct3 voy:here)                 ::  update prompt
+++  plan  |=  (unit ship)  ?~  +<  stop(gam new:here)   ::  link/unlink
+          ?^(rem fail link(rem +<))                     ::
+++  plot  |=  (each point (unit ship))                  ::  apply command
+          ?-(+<- & (kick +<+), | (plan +<+))            ::
+++  like  |*(* [/oct4 [+.rem dap] +<])                  ::  friend message
+++  link  (dish peer/(like /oct4))                      ::  subscribe to friend
+++  prom  (fect %pro %& %oct4 stat)                     ::  update prompt
 ++  rend  (turn `wall`tab:here |=(tape txt/+<))         ::  table print
 ++  sawn  (hail(eye (~(del by eye) ost)) |)             ::  console unsubscribe
 ++  seen  (hail(eye (~(put by eye) ost *sole-share)) &) ::  console subscribe
+++  send  |=(point (dish poke/(like %oct4-move +<)))    ::  send move
 ++  show  prom:(fect %mor rend)                         ::  update console
 ++  soul  =(%sole -:q:(~(got by sup) ost))              ::  is console
+++  stat  (weld ?~(rem ~ "@{(scow p/u.rem)}") voy:here) ::  prompt line
+++  stop  ?~(rem done wild:(dish pull/(like ~)))        ::  unsubscribe
 ++  tame  (flap |=(_. (fact:+< &/gam)) |=(_. prom:+<))  ::  light update
 ++  wild  (flap |=(_. (fact:+< &/gam)) |=(_. show:+<))  ::  full update
+++  with  |=(? (word(rem ?:(+< rem ~)) "{<[+< src]>}")) ::  
 ++  word  |=  txt=tape  %+  flap                        ::  game message
           |=(_+> (fact:+< |/txt))                       ::
           |=(_+> (fect:+< txt/txt))                     ::
@@ -108,11 +124,15 @@
 ::                                                      ::  ::
 ::::                                                    ::::::  arvo handlers
   ::                                                    ::  ::
-++  peer-oct3  |=(* abet:tame:meet)                     ::  urbit subscribe
+++  reap-oct4  |=([* (unit)] abet:(with =(~ +<+)))      ::  linked to friend
+++  coup-oct4  |=([* (unit)] abet:?~(+<+ +> fail))      ::  move acknowledge
+++  diff-oct4-update  |=([* play] abet:(hear +<+))      ::  network update
+++  peer-oct4  |=(* abet:tame:meet)                     ::  urbit subscribe
 ++  peer-sole  |=(* abet:show:seen)                     ::  console subscribe
 ++  poke-sole-action  |=(sole-action abet:(work +<))    ::  console input
-++  poke-oct3-move  |=(point abet:wild:(kick +<))       ::  urbit move
+++  poke-oct4-move  |=(point abet:wild:(kick +<))       ::  urbit move
 ++  prep  |=(agon abet:?~(+< +> (heal +<+>)))           ::  load state
-++  pull-oct3  |=(* abet:(hail |))                      ::  urbit unsubscribe
+++  pull-oct4  |=(* abet:lose)                          ::  urbit unsubscribe
 ++  pull-sole  |=(* abet:sawn)                          ::  console unsubscribe
+++  quit-oct4  |=(* abet:?~(rem +> wild(rem ~)))        ::  unlinked by friend
 --
