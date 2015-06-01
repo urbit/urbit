@@ -36,8 +36,8 @@
         sud=desk                                        ::
         gim=?(%auto germ)                               ::
     ==                                                  ::
-++  hood-cp  [input=path output=path]          ::
-++  hood-mv  [input=path output=path]
+++  hood-cp  [input=path output=path]                   ::
+++  hood-mv  [input=path output=path]                   ::
 --                                                      ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
