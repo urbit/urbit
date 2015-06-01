@@ -73,7 +73,7 @@
 ++  fail  ?:(soul (fect %bel ~) ~|(%invalid-move !!))   ::  user error
 ++  fect  |=(sole-effect (emit %sole-effect +<))        ::  update console
 ++  fact  |=(play (emit %oct4-update +<))               ::  update partner
-++  hail  |=(? ?^(rem . tame(gam (hey:here +<))))       ::  toggle subscriber
+++  hail  |=(? ?^(rem +> tame(gam (hey:here +<))))      ::  toggle subscriber
 ++  harp  |=(game ?:(=(gam +<) +> wild(gam +<)))        ::  update game
 ++  heal  |=  old=axon  =.  +>+<+>  (wake old)          ::  complete update
           =-  +>.$(gam -)  ?.  !=(1 +<-)  gam           ::
@@ -127,12 +127,12 @@
 ++  reap-oct4  |=([* (unit)] abet:(with =(~ +<+)))      ::  linked to friend
 ++  coup-oct4  |=([* (unit)] abet:?~(+<+ +> fail))      ::  move acknowledge
 ++  diff-oct4-update  |=([* play] abet:(hear +<+))      ::  network update
-++  peer-oct4  |=(* abet:tame:meet)                     ::  urbit subscribe
+++  peer-oct4  |=(* abet:tame:(hail &))                 ::  urbit subscribe
 ++  peer-sole  |=(* abet:show:seen)                     ::  console subscribe
 ++  poke-sole-action  |=(sole-action abet:(work +<))    ::  console input
 ++  poke-oct4-move  |=(point abet:wild:(kick +<))       ::  urbit move
 ++  prep  |=(agon abet:?~(+< +> (heal +<+>)))           ::  load state
-++  pull-oct4  |=(* abet:lose)                          ::  urbit unsubscribe
+++  pull-oct4  |=(* abet:(hail |))                      ::  urbit unsubscribe
 ++  pull-sole  |=(* abet:sawn)                          ::  console unsubscribe
 ++  quit-oct4  |=(* abet:?~(rem +> wild(rem ~)))        ::  unlinked by friend
 --
