@@ -114,7 +114,7 @@
     ==
   ::
   ++  poke-invite                                       ::  send invite; fake
-    |=  [who=@p myl=@t]
+    |=  [who=@p myl=@t]  =<  abet
     %^  emit  %poke  /helm/invite
     :-  [our %talk]
     (said our %helm now eny [%leaf "sent invite: {<who>} at {(trip myl)}"]~)
