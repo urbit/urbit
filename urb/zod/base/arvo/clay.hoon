@@ -1434,6 +1434,8 @@
     ++  read-x
       |=  [yon=aeon pax=path]
       ^-  (unit (unit (each cage lobe)))
+      ?:  =(0 yon)
+        [~ ~]
       =+  tak=(~(get by hit.dom) yon)
       ?~  tak
         ~
@@ -1464,6 +1466,8 @@
     ++  read-y
       |=  [yon=aeon pax=path]
       ^-  (unit (unit ,[%arch (hypo arch)]))
+      ?:  =(0 yon)
+        ``[%arch -:!>(*arch) *arch]
       =+  tak=(~(get by hit.dom) yon)
       ?~  tak
         ~
