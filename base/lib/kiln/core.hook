@@ -36,8 +36,8 @@
         sud=desk                                        ::
         gim=?(%auto germ)                               ::
     ==                                                  ::
-++  hood-cp  [input=path output=path]          ::
-++  hood-mv  [input=path output=path]
+++  hood-cp  [input=path output=path]                   ::
+++  hood-mv  [input=path output=path]                   ::
 --                                                      ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -189,12 +189,19 @@
         %-  spam
         ?:  ?=(%& -.mes)
           [leaf/"autosync succeeded from {<sud>} on {<her>} to {<syd>}" ~]
-        :*  leaf/"autosync failed from {<sud>} on {<her>} to {<syd>}"
-            leaf/"please manually merge the desks with"
-            leaf/":+merge %{(trip syd)} {(scow %p her)} %{(trip sud)}"
-            leaf/""
-            leaf/"error code: {<p.p.mes>}"
-            q.p.mes
+        ?+  p.p.mes
+          :*  leaf/"autosync failed from {<sud>} on {<her>} to {<syd>}"
+              leaf/"please manually merge the desks with"
+              leaf/":+merge %{(trip syd)} {(scow %p her)} %{(trip sud)}"
+              leaf/""
+              leaf/"error code: {<p.p.mes>}"
+              q.p.mes
+          ==
+        ::
+            %no-ali-desk
+          :~  leaf/"{<sud>} on {<her>} does not exist, so the sync"
+              leaf/"into {<syd>} will begin automatically when it does"
+          ==
         ==
       %-  blab  :_  ~
       :*  ost  %warp
