@@ -937,7 +937,7 @@
     ^+  +>
     ?>  ?=(^ ref)
     ?.  ?=(%& -.res)
-      ~|  "validate foreign plops failed"
+      ~|  "validate foreign x failed"
       =+  why=?-(-.res %| p.res, %tabl ~[>%bad-marc<])
       ~>  %mean.|.(%*(. >[%plop-fail %why]< |1.+> why))
       !!
@@ -972,17 +972,13 @@
     ^+  +>
     ?>  ?=(^ ref)
     ?>  ?=(^ nak.u.ref)
-    ?.  ?=(%| -.res)
-      ~|  "validate foreign plops failed"
-      ~>  %mean.|.(rose/[" " "[" "]"]^[>%plop-fail< p.res])
-      !!
     =+  ^-  lat=(list blob)
-        %+  turn  (gage-to-cages res)
+        %+  turn  ~|("validate foreign plops failed" (gage-to-cages res))
         |=  [bob=cage cay=cage]
         ?.  ?=(%blob p.bob)
           ~|  %plop-not-blob
           !!
-        =+  bol=((hard blob) q.bob)
+        =+  bol=((hard blob) q.q.bob)
         ?-  -.bol
           %delta      [-.bol p.bol q.bol p.cay q.q.cay]
           %direct     [-.bol p.bol p.cay q.q.cay]
@@ -1050,10 +1046,10 @@
       =+  vid=(read-at-aeon:ze u.nao p.q.i.xiq)
       ::  ~&  %red-at-aeon
       ?~  vid
-        ?:  =(0 u.nao)
-          ~&  [%oh-poor `path`[syd '0' r.p.q.i.xiq]]
-          $(xiq t.xiq)
-        ~&  [%oh-well desk=syd mood=p.q.i.xiq aeon=u.nao]
+        ::  ?:  =(0 u.nao)
+        ::    ~&  [%oh-poor `path`[syd '0' r.p.q.i.xiq]]
+        ::    $(xiq t.xiq)
+        ::  ~&  [%oh-well desk=syd mood=p.q.i.xiq aeon=u.nao]
         $(xiq t.xiq, xaq [i.xiq xaq])
       $(xiq t.xiq, ..wake (balk p.i.xiq u.vid p.q.i.xiq))
     ::
