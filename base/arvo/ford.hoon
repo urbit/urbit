@@ -275,6 +275,8 @@
         %lime  lime
         %lima  lima
         %link  link
+        %lion  lion
+        %lily  lily
         %lope  lope
         %make  make
         %meow  meow
@@ -1174,9 +1176,9 @@
         %+  cope
           |-  ^-  (bolt (list (pair gage gage)))
           ?~  p.kas  (fine cof ~)
-          %+  cope  (make cof p.i.p.kas)
+          %+  cope  (fret (make cof p.i.p.kas))
           |=  [cof=cafe key=gage]
-          %+  cope  (make cof q.i.p.kas)
+          %+  cope  (fret (make cof q.i.p.kas))
           |=  [cof=cafe val=gage]
           %+  cope  ^^$(cof cof, p.kas t.p.kas)
           |=  [cof=cafe rex=(list (pair gage gage))]
