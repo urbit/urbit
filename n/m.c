@@ -1371,7 +1371,8 @@ _cm_limits(void)
   {
     ret_i = getrlimit(RLIMIT_NOFILE, &rlm);
     c3_assert(0 == ret_i);
-    rlm.rlim_cur = 4096;
+    rlm.rlim_cur = 10240; // default OSX max, not in rlim_max irritatingly
+    printf("files: %llu\n", rlm.rlim_cur);
     if ( 0 != setrlimit(RLIMIT_NOFILE, &rlm) ) {
       perror("file limit");
       //  no exit, not a critical limit
