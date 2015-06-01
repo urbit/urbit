@@ -143,24 +143,7 @@
   ++  spam
     |=  mes=(list tank)
     %-  emit
-    :*  %poke  /kiln/spam
-        [our %talk]  %talk-command
-        ^-  command:talk
-        :-  %publish
-        %-  flop
-        =<  acc
-        %+  roll  mes
-        =<  .(eny ^eny)
-        |=  [tan=tank acc=(list thought:talk) eny=@uvI]
-        ^-  [acc=(list thought:talk) eny=@uvI]
-        =+  (sham eny mes)
-        :_  -
-        :_  acc
-        ^-  thought:talk
-        :+  -
-          [[[%& our (main our)] [*envelope:talk %pending]] ~ ~]
-        [now *bouquet:talk [%app (crip ~(ram re tan))]]
-    ==
+    [%poke /kiln/spam [our %talk] (said our %kiln now eny mes)]
   ::
   ++  auto
     |=  hood-sync

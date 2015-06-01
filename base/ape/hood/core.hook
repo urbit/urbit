@@ -85,6 +85,7 @@
 ++  poke-hood-unix  (wrap poke-unix):from-kiln
 ++  poke-hood-verb  (wrap poke-verb):from-helm
 ++  poke-hood-begin   (wrap poke-begin):from-helm
+++  poke-hood-invite  (wrap poke-invite):from-helm
 ++  poke-hood-merge   (wrap poke-merge):from-kiln
 ++  poke-hood-reload  (wrap poke-reload):from-helm
 ++  poke-hood-reset   (wrap poke-reset):from-helm
