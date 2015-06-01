@@ -51,9 +51,13 @@
             [%conf wire dock %load ship term]           ::
             [%flog wire flog]                           ::
             [%plug wire @p @tas @p @tas]                ::
+            [%poke wire dock pear]                      ::
             [%want wire sock path *]                    ::  send message
         ==                                              ::
       ++  move  (pair bone card)                        ::  user-level move
+      ++  pear                                          ::  poke fruit
+        $%  [%talk-command command:talk]                ::
+        ==
       --
   |_  moz=(list move)
   ++  abet                                              ::  resolve
@@ -108,6 +112,12 @@
         /reload
         [%veer ?:(=('z' tip) %$ tip) way (,@ .^(%cx way))]
     ==
+  ::
+  ++  poke-invite                                       ::  send invite; fake
+    |=  [who=@p myl=@t]
+    %^  emit  %poke  /helm/invite
+    :-  [our %talk]
+    (said our %helm now eny [%leaf "sent invite: {<who>} at {(trip myl)}"]~)
   ::
   ++  poke-reset                                        ::  reset system
     |=  hood-reset  =<  abet
