@@ -32,7 +32,7 @@
           ++  y  .(box (~(set bo box) +<), p.sag `src)  ::  play at x
           --                                            ::
   ++  ept  =+(own |(&(=(~ -) !=(oth `src)) =(`src -)))  ::  we can play
-  ++  inn  +<+(aud ((stat ship) & src aud))             ::  source in audience
+  ++  hey  |=(? +>+<+(aud ((stat ship) +< src aud)))    ::  enter/leave
   ++  muy  |=  (list ship)  ?~  +<  +>+<+               ::  many in audience
            $(+< t.+<, aud ((stat ship) & i.+< aud))     ::
   ++  nam  =+  ?:  =(p.sag `src)  ['=' (icon &) ~]      ::  print name
@@ -40,7 +40,6 @@
            ""  (welp (scow %p src) `tape`-)             ::
   ++  new  +<+(boo 0, box 0, who &, sag [~ ~])          ::  reset game
   ++  oth  own(who !who)                                ::  who owns other turn
-  ++  out  +<+(aud ((stat ship) | src aud))             ::  source quit audience
   ++  own  ?:(who p.sag q.sag)                          ::  who owns this turn
   ++  res  ?.  |(~(win bo box) ~(win bo boo))           ::  possible result
            ?:  =(511 (con boo box))                     ::
@@ -53,7 +52,7 @@
   ++  vew  =-  ?:  =(~ -)  ~  :(weld "[" - "]")         ::  print watchers
            =+  dow=(~(tap by aud))  |-  ^-  tape        ::
            ?~  dow  ~  =+  mor=$(dow t.dow)             ::
-           :(weld nam(src p.i.dow) ?~(mor "" ", ") mor)   ::
+           :(weld nam(src p.i.dow) ?~(mor "" ", ") mor) ::
   ++  voy   =+  ~[(icon who)]  %+  weld  vew            ::  print prompt
             ?.(ept " ({-}'s turn) " ": {-} (row/col): ")::
   --
