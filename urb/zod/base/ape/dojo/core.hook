@@ -166,8 +166,16 @@
     ++  dp-command                                      ::  ++dojo-command
       %+  knee  *dojo-command  |.  ~+
       ;~  pose
-        %+  stag  %poke
+        ;~  pfix  bar
+          %+  cook
+            |=  [a=path b=dojo-config]
+            ^-  dojo-command
+            [%poke [our.hid %hood] [0 %ge [0 [%cat %hood a]] b]]
+          ;~(plug (most fas sym) dp-config)
+        ==
+      ::
         ;~  pfix  col
+          %+  stag  %poke
           %+  cook
             |=  [a=goal b=(each dojo-source (trel term path dojo-config))]
             ^-  (pair goal dojo-source)
@@ -256,7 +264,6 @@
       ==
     ::
     ++  dp-config                                       ::  ++dojo-config
-      %+  cook  |=(a=dojo-config a)
       ;~  plug
         (star ;~(pfix ace dp-value))
         %+  cook
