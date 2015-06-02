@@ -723,9 +723,11 @@
       |=  [inv=sole-edit buf=(list ,@c)]
       ^-  (list sole-edit)
       ?~  buf  ~
-      ?:  =(';' i.buf)
-        ((sh-sane-rule sh-scad) inv (tufa t.buf))
-      ?:  =('@' i.buf)
+      =+  txt=(tufa buf)
+      ?:  =(& -:(rose txt aurf:urlp))  ~
+      ?:  =(';' -.txt)
+        ((sh-sane-rule sh-scad) inv +.txt) 
+      ?:  =('@' -.txt)
         (sh-sane-chat +.buf)
       (sh-sane-chat buf)
     ::
@@ -749,11 +751,14 @@
     ++  sh-pork                                         ::  parse work
       ^-  (unit work)
       ?~  buf.say.she  ~
-      ?:  =(';' -.buf.say.she)
-        (rust (tufa +.buf.say.she) sh-scad)
-      ?:  =('@' -.buf.say.she)
-        `[%say %lin | (crip (tufa +.buf.say.she))]
-      `[%say %lin & (crip (tufa buf.say.she))]
+      =+  txt=(tufa buf.say.she)
+      =+  rou=(rust txt aurf:urlp)
+      ?^  rou  `[%say %url u.rou]
+      ?:  =(';' -.txt)
+        (rust +.txt sh-scad)
+      ?:  =('@' -.txt)
+        `[%say %lin | (crip +.txt)]
+      `[%say %lin & (crip txt)]
     ::
     ++  sh-lame                                         ::  send error
       |=  txt=tape
@@ -1628,7 +1633,7 @@
     ^-  tape
     ?+    -.sep  ""
         %url
-      (earn p.sep)
+      [':' ' ' (earf p.sep)]
     ::
         %lin
       =+  txt=(trip q.sep)
@@ -1639,7 +1644,7 @@
       (weld " " txt)
     ::
         %app
-      [' ' (trip p.sep)]
+      "[:{(trip p.sep)}]: {(trip q.sep)}"
     ==
   -- 
 ::

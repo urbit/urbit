@@ -77,6 +77,8 @@
 ::::                                                    ::::::  arvo handlers
   ::                                                    ::  ::
 ++  peer-sole  |=(* abet:show:seen)                     ::  console subscribe
+++  prep  |=((unit ,[* * axle])                         ::
+          abet:?~(+< +> wild(+<+ +<+)))                 ::  app update
 ++  poke-sole-action  |=(sole-action abet:(work +<))    ::  console input
 ++  pull-sole  |=(* abet:sawn)                          ::  console unsubscribe
 --

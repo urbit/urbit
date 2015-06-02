@@ -32,7 +32,8 @@
           q=dojo-build                                  ::  general build
       ==                                                ::
     ++  dojo-build                                      ::  one ford step
-      $%  [%ex p=twig]                                  ::  hoon expression
+      $%  [%ec p=mark q=twig]                           ::  caged expression
+          [%ex p=twig]                                  ::  hoon expression
           [%di p=dojo-model]                            ::  dialog
           [%dv p=path]                                  ::  gate from source
           [%fi p=dojo-filter q=dojo-source]             ::  filter
@@ -229,9 +230,9 @@
       ;~  pose
         ;~(pfix lus (stag %ge dp-model-cat))
         ;~(pfix wut (stag %di dp-model-dog))
-        ;~(pfix pam (stag %sc dp-model-pig))
         ;~(pfix buc (stag %va sym))
         (stag %ex dp-twig)
+        ;~(pfix pam (stag %ec ;~(plug sym ;~(pfix dot dp-twig))))
         (ifix [sel ser] (stag %tu (most ace dp-source)))
       ==
     :: 
@@ -345,6 +346,7 @@
       |=  bul=dojo-build
       ^+  [bul +>]
       ?-    -.bul
+        %ec  [bul +>.$]
         %ex  [bul +>.$]
         %di  =^(mod +>.$ (dy-init-model p.bul) [[%di mod] +>.$])
         %dv  [bul +>.$]
@@ -553,7 +555,8 @@
         %di  [/dial (dy-silk-init-modo (dy-cage p.p.p.q.u.cud) q.p.q.u.cud)]
         %ge  [/gent (dy-silk-init-modo (dy-cage p.p.p.q.u.cud) q.p.q.u.cud)]
         %dv  [/hand (dy-silk-device p.q.u.cud)]
-        %ex  [/hand [%ride p.q.u.cud [[%done ~ %$ dy-twig-head] [%reef ~]]]]
+        %ec  [/hand [%cast p.q.u.cud (dy-mare q.q.u.cud)]]
+        %ex  [/hand (dy-mare p.q.u.cud)]
         %tu  :-  /hand
              :+  %done  ~
              :-  %noun
@@ -563,6 +566,11 @@
              ?~  t.p.q.u.cud  hed
              (slop hed $(p.q.u.cud t.p.q.u.cud))
       ==
+    ::
+    ++  dy-mare                                         ::  build expression
+      |=  gen=twig
+      ^-  silk
+      [%ride gen [[%done ~ %$ dy-twig-head] [%reef ~]]]
     ::
     ++  dy-step                                         ::  advance project
       |=  nex=@ud

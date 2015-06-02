@@ -202,6 +202,11 @@
     =<  se-abet  =<  se-view
     (se-born wel)
   ::
+  ++  poke-link                                         ::
+    |=  gyl=gill
+    =<  se-abet  =<  se-view
+    (se-link gyl)
+  ::
   ++  reap                                              ::
     |=  [way=wire saw=(unit tang)]  
     =<  se-abet  =<  se-view

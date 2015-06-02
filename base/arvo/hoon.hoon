@@ -62,7 +62,7 @@
               [%many p=(list coin)]                     ::
           ==                                            ::
 ++  cord  ,@t                                           ::  text atom (UTF-8)
-++  dock  (pair ,@p term)                              ::  message target
+++  dock  (pair ,@p term)                               ::  message target
 ++  date  ,[[a=? y=@ud] m=@ud t=tarp]                   ::  parsed date
 ++  dime  ,[p=@ta q=@]                                  ::
 ++  each  |*([a=$+(* *) b=$+(* *)] $%([& p=a] [| p=b])) ::  either a or b
