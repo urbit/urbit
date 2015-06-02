@@ -97,6 +97,6 @@
 ++  peer-sole  |=(* abet:show:seen)                     ::  console subscribe
 ++  poke-sole-action  |=(sole-action abet:(work +<))    ::  console input
 ++  prep  |=  (unit (pair (list move) axon))            ::  update self
-          abet:?~(+< +> (heal +<+>)))                   ::
+          abet:?~(+< +> wild:(heal +<+>))               ::
 ++  pull-sole  |=(* abet:sawn)                          ::  console unsubscribe
 --

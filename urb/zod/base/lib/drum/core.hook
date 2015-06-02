@@ -200,7 +200,6 @@
   ::
   ++  poke-start                                        ::
     |=  wel=well  
-    ~&  [%poke-well wel]
     =<  se-abet  =<  se-view
     (se-born wel)
   ::
@@ -211,7 +210,6 @@
   ::
   ++  reap-phat                                         ::
     |=  [way=wire saw=(unit tang)]  
-    ~&  [%reap-phat way saw]
     =<  se-abet  =<  se-view
     =+  gyl=(drum-phat way)
     ?~  saw
@@ -272,7 +270,7 @@
     %=    $
         yar  t.yar
         +>
-      =.  +>.$  (se-text "with {(trip p.i.yar)}/{(trip q.i.yar)}")
+      =.  +>.$  (se-text "activated app {(trip p.i.yar)}/{(trip q.i.yar)}")
       %-  se-emit(fur (~(put by fur) q.i.yar ~))
       [ost %conf [%drum p.i.yar q.i.yar ~] [our q.i.yar] %load our p.i.yar]
     ==
