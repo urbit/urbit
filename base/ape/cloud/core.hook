@@ -260,6 +260,13 @@ $%  [%diff %json json]
       $=  action  $?  
       %start  %stop  %reboot  %delete
       ==  ==
+  =+  d=(~(got by insts.vat) id)
+  ~|  'can\'t find id'
+  =+  typ=?~(d !! -.d)
+  ~&  typ
+  ~!  typ
+  ?-  typ
+    %do
   =+  meth=?:(?=(%delete action) %delt [%post (jobe type/s/(convert-do action) ~)])
   ^-  move
   ~&  'do i get here?'
@@ -274,6 +281,9 @@ $%  [%diff %json json]
     *quay
    ==
    req
+    %gce
+    !!
+    ==
 ::
 ++  create-do
   |=  [os=bone act=json]
@@ -408,7 +418,6 @@ $%  [%diff %json json]
       ~|  'bad-json'^items
       %+  turn  items
       |=  in=json
-      =-  ~!  want=*[@t instance]  ~!  have=-  -
       =<  [id .]
       ^-  instance
       :-  %gce
