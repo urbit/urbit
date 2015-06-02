@@ -9,6 +9,18 @@ tr = React.DOM.tr
 td = React.DOM.td
 input = React.DOM.input
 
+function HashToJSON() {            
+    var pairs = window.location.hash.slice(1).split('&');
+    var result = {};
+    pairs.forEach(function(pair) {
+        pair = pair.split('=');
+        result[pair[0]] = decodeURIComponent(pair[1] || '');
+    });
+
+    return JSON.parse(JSON.stringify(result));
+}
+
+
 DOControls = React.createClass({
   createDroplet: function(){
     urb.send({appl: "cloud",
@@ -114,8 +126,8 @@ Droplet = React.createClass({
   dropletAction:function(id, action){
     urb.send({
       appl:"cloud",
-      data: {action: action,
-            id: id}})
+      data: {action:action,
+            id:id}})
   },
 
   render: function() {
@@ -143,10 +155,11 @@ Page = recl({
   handleClick: function(platform){
   return  function(){
       console.log(platform);
+      console.log(window.authcode.platform)
       if(window.authcode.length !== ''){
         urb.send({
           appl: "cloud",
-          data: {authcode:window.authcode,
+          data: {authcode:authcode[platform],
                 platform:platform},
           mark: "cloud-auth"})
       } else { console.log("nocode") }
@@ -182,6 +195,8 @@ Page = recl({
   }
 })
 
+var hash = HashToJSON()     //pull out hash of query string for gce authcode
+authcode.gce = hash.access_token
 
 mounted = React.render(Page({droplets:[]}), $("#container")[0])
 urb.bind("/", function(err,d) {
