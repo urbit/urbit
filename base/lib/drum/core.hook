@@ -236,7 +236,7 @@
     ?-  -.saw
       %|  (se-dump p.saw)
       %&  ?>  =(q.wel p.p.saw)
-          ::  =.  +>.$  (se-text "[{<p.saw>}]")
+          ::  =.  +>.$  (se-text "live {<p.saw>}")
           +>.$(fur (~(put by fur) q.wel `[p.wel %da r.p.saw]))  
     == 
   ::
@@ -272,6 +272,7 @@
     %=    $
         yar  t.yar
         +>
+      =.  +>.$  (se-text "with {(trip p.i.yar)}/{(trip q.i.yar)}")
       %-  se-emit(fur (~(put by fur) q.i.yar ~))
       [ost %conf [%drum p.i.yar q.i.yar ~] [our q.i.yar] %load our p.i.yar]
     ==
@@ -360,7 +361,7 @@
     =.  +>.$  ?.  &(?=(^ lag) !=(gyl u.lag))  
                 +>.$(inx 0)
               (se-alas u.lag)
-    =.  +>.$  (se-text "[detached from {<gyl>}]")
+    =.  +>.$  (se-text "[unlinked from {<gyl>}]")
     se-prom(liv.maz ?~(fug & liv.maz))
   ::
   ++  se-dump                                           ::  print tanks
@@ -383,7 +384,7 @@
   ++  se-join                                           ::  confirm connection
     |=  gyl=gill
     ^+  +>
-    =.  +>  (se-text "[connected to {<gyl>}]")
+    =.  +>  (se-text "[linked to {<gyl>}]")
     ?>  =(~ (~(got by fug) gyl))
     (se-alas:se-prom(liv.maz |, fug (~(put by fug) gyl `*target)) gyl)
   ::
