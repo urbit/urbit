@@ -1644,7 +1644,7 @@
       (weld " " txt)
     ::
         %app
-      ":{(trip p.sep)}: {(trip q.sep)}"
+      "[{(trip p.sep)}] {(trip q.sep)}"
     ==
   -- 
 ::
