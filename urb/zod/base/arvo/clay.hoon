@@ -184,6 +184,23 @@
     |=  gag=gage  ^-  (list (pair cage cage))
     (unwrap-tang (gage-to-tage gag))
   ::
+  ++  gage-to-success-cages
+    |=  gag=gage
+    ^-  (list (pair cage cage))
+    ?.  ?=(%tabl -.gag)
+      (ford-fail ?-(-.gag %| p.gag, %& [>%strange-gage p.p.gag<]~))
+    %+  murn  p.gag
+    |=  [key=gage val=gage]  ^-  (unit ,[cage cage])
+    ?.  ?=(%& -.key)
+      (ford-fail ?-(-.key %| p.key, %tabl [>%strange-gage<]~))
+    ?-  -.val
+      %tabl  (ford-fail >%strange-gage< ~)
+      %&  (some [p.key p.val])
+      %|  =.  p.val  [(sell q.p.key) p.val]
+          ~>  %slog.[0 %*(. >%ford-fail syd %for %why< |2.+> p.val)]
+          ~
+    ==
+  ::
   ++  gage-to-tage
     |=  gag=gage
     ^-  (each (list (pair cage cage)) tang)
@@ -567,7 +584,7 @@
           (apply-edit wen)
         +>.$
     ^-  (list (pair path cage))
-    %+  turn  (gage-to-cages res)
+    %+  turn  (gage-to-success-cages res)
     |=  [pax=cage cay=cage]
     ?.  ?=(%path p.pax)
       ~|(%clay-take-inserting-strange-path-mark !!)

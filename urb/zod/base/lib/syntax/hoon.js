@@ -110,7 +110,7 @@ CodeMirror.defineMode("hoon", function() {
     }
 
     if(stream.eat('`')){
-      state.space = false
+      state.space = true
       return 'operator'
     }
     if(stream.sol() && stream.eatWhile(glyph)){
@@ -131,8 +131,10 @@ CodeMirror.defineMode("hoon", function() {
           return 'builtin'
         return 'operator'
       }
-      if(stream.eat(/[=:.^]/))
+      if(stream.eat(/[=:.^]/)){
+        state.space = true
         return 'operator'
+      }
       stream.next()
       return 'builtin'
     }
@@ -154,4 +156,5 @@ CodeMirror.defineMode("hoon", function() {
   return res
 });
 
+CodeMirror.registerHelper("wordChars", "hoon", /[-\\w]/);
 CodeMirror.defineMIME("text/x-hoon", "hoon");

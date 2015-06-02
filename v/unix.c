@@ -1125,7 +1125,6 @@ _unix_mkpath(const char *s)
 
   _unix_mkdir(path);
 
-  free(r);
   free(up);
 out:
   free(q);
@@ -1137,6 +1136,7 @@ out:
 static void
 _unix_dir_forge(u3_udir* dir_u, u3_udir* par_u, u3_noun tet)
 {
+  
   c3_c* tet_c = u3r_string(tet);
   c3_w  pax_w = strlen(par_u->pax_c);
   c3_w  tet_w = strlen(tet_c);
