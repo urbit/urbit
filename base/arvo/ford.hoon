@@ -970,7 +970,7 @@
       ?~  s.mob
         %+  flag
           (norm ska mob)
-        (flaw cof leaf/"beam unavailable" (smyt (tope bem)) ~)
+        (flaw cof leaf/"blank path" (smyt (tope bem)) ~)
       ^$(s.mob t.s.mob, mer [i.s.mob mer])
     ::
     ++  link                                            ::  translate
