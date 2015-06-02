@@ -714,7 +714,7 @@ _unix_dir_khan_file(u3_noun pam, u3_noun wib, u3_noun woz)
     } else {
       u3_noun elo;
 
-      elo = u3nt(u3_nul, woz, u3k(u3t(u3t(ole))));
+      elo = u3nq(u3_nul, woz, u3_nul, u3k(u3t(u3t(ole))));
       u3z(ole);
 
       ole = elo;
@@ -729,7 +729,8 @@ _unix_dir_khan_file(u3_noun pam, u3_noun wib, u3_noun woz)
 
     if ( u3_none == ole ||
          u3_nul == ole ) {
-      ole = u3nt(u3_nul,
+      ole = u3nq(u3_nul,
+                 u3_nul,
                  u3_nul,
                  u3kdb_put(u3_nul,
                            u3k(har),
@@ -737,7 +738,7 @@ _unix_dir_khan_file(u3_noun pam, u3_noun wib, u3_noun woz)
     }
     else {
       u3_noun oor, elo;
-      u3_noun roo = u3t(u3t(ole));
+      u3_noun roo = u3t(u3t(u3t(ole)));
       u3_weak tup = u3kdb_get(u3k(roo), u3k(har));
 
       if ( u3_none == tup ) {
@@ -745,13 +746,13 @@ _unix_dir_khan_file(u3_noun pam, u3_noun wib, u3_noun woz)
       } else {
         u3_noun upt;
 
-        upt = u3nt(u3_nul, woz, u3k(u3t(tup)));
+        upt = u3nq(u3_nul, woz, u3_nul, u3k(u3t(tup)));
         u3z(tup);
 
         tup = upt;
       }
       oor = u3kdb_put(u3k(roo), u3k(har), tup);
-      elo = u3nt(u3_nul, u3k(u3h(u3t(ole))), oor);
+      elo = u3nq(u3_nul, u3k(u3h(u3t(ole))), u3_nul, oor);
 
       u3z(ole); ole = elo;
     }
@@ -812,7 +813,7 @@ _unix_dir_khan(u3_udir* dir_u)
                                      u3nt(u3_nul, u3_nul, baw));
     pam = _unix_dir_khan_file(pam, wib, wol);
   }
-  return u3nt(u3_nul, u3_nul, pam);
+  return u3nq(u3_nul, u3_nul, u3_nul, pam);
 }
 
 /* _find_mug(): find a noun with a given mug.  retain. DELETEME
