@@ -115,7 +115,7 @@
 ::
 ++  drum-path                                           ::  encode path
   |=  gyl=gill
-  [%drum (scot %p p.gyl) q.gyl ~]
+  [%drum %phat (scot %p p.gyl) q.gyl ~]
 ::
 ++  drum-phat                                           ::  decode path
   |=  way=wire  ^-  gill
@@ -127,6 +127,7 @@
   =>  |%                                                ::  arvo structures
       ++  pear                                          ::  request
         $%  [%sole-action p=sole-action]                ::
+            [%talk-command command:talk]                ::
         ==                                              ::
       ++  lime                                          ::  update
         $%  [%dill-blit dill-blit]                      ::
@@ -175,7 +176,7 @@
         --
       --
   |_  [moz=(list move) biz=(list dill-blit)]
-  ++  diff-sole-effect                                  ::
+  ++  diff-sole-effect-phat                             ::
     |=  [way=wire fec=sole-effect]  
     =<  se-abet  =<  se-view
     =+  gyl=(drum-phat way)
@@ -199,6 +200,7 @@
   ::
   ++  poke-start                                        ::
     |=  wel=well  
+    ~&  [%poke-well wel]
     =<  se-abet  =<  se-view
     (se-born wel)
   ::
@@ -207,15 +209,16 @@
     =<  se-abet  =<  se-view
     (se-link gyl)
   ::
-  ++  reap                                              ::
+  ++  reap-phat                                         ::
     |=  [way=wire saw=(unit tang)]  
+    ~&  [%reap-phat way saw]
     =<  se-abet  =<  se-view
     =+  gyl=(drum-phat way)
     ?~  saw
       (se-join gyl)
     (se-dump:(se-drop & gyl) u.saw)
   ::
-  ++  take-coup                                         ::
+  ++  take-coup-phat                                    ::
     |=  [way=wire saw=(unit tang)]  
     =<  se-abet  =<  se-view
     ?~  saw  +>
@@ -237,7 +240,7 @@
           +>.$(fur (~(put by fur) q.wel `[p.wel %da r.p.saw]))  
     == 
   ::
-  ++  quit
+  ++  quit-phat                                         ::
     |=  way=wire  
     =<  se-abet  =<  se-view
     =+  gyl=(drum-phat way)
@@ -248,6 +251,9 @@
     ::                                                  ::  ::
   ++  se-abet                                           ::  resolve
     ^-  (quip move *drum-part)
+    ?.  se-ably
+      =.  .  se-adit
+      [(flop moz) +>+>+<+]
     =.  .  se-adze:se-adit
     :_  %_(+>+>+<+ bin (~(put by bin) ost `source`+>+<))
     ^-  (list move)
@@ -256,6 +262,7 @@
     ?~  biz  ~
     [ost %diff %dill-blit ?~(t.biz i.biz [%mor (flop biz)])]~
   ::
+  ++  se-ably  (~(has by sup) ost)                      ::  caused by console
   ++  se-adit                                           ::  update servers
     =+  yar=(~(tap by ray))
     |-  ^+  +>
@@ -343,14 +350,6 @@
       (se-text "[already running {<p.wel>}/{<q.wel>}]")
     +>(ray (~(put in ray) wel), eel (~(put in eel) [our q.wel]))
   ::
-  ++  se-dump                                           ::  print tanks
-    |=  tac=(list tank)
-    ^+  +>
-    =+  wol=`wall`(zing (turn tac |=(a=tank (~(win re a) [0 edg]))))
-    |-  ^+  +>.^$
-    ?~  wol  +>.^$
-    $(wol t.wol, +>.^$ (se-blit %out (tuba i.wol)))
-  ::
   ++  se-drop                                           ::  disconnect
     |=  [pej=? gyl=gill]
     ^+  +>
@@ -363,6 +362,15 @@
               (se-alas u.lag)
     =.  +>.$  (se-text "[detached from {<gyl>}]")
     se-prom(liv.maz ?~(fug & liv.maz))
+  ::
+  ++  se-dump                                           ::  print tanks
+    |=  tac=(list tank)
+    ^+  +>
+    ?.  se-ably  (se-talk tac)
+    =+  wol=`wall`(zing (turn tac |=(a=tank (~(win re a) [0 edg]))))
+    |-  ^+  +>.^$
+    ?~  wol  +>.^$
+    $(wol t.wol, +>.^$ (se-blit %out (tuba i.wol)))
   ::
   ++  se-joke                                           ::  prepare connection
     |=  gyl=gill
@@ -472,8 +480,15 @@
     |=  mov=move
     %_(+> moz [mov moz])
   ::
+  ++  se-talk  
+    |=  tac=(list tank) 
+    ^+  +>
+    (se-emit 0 %poke /drum/talk [our %talk] (said our %drum now eny tac))
+  ::
   ++  se-text                                           ::  return text
     |=  txt=tape
+    ^+  +>
+    ?.  se-ably  (se-talk [%leaf txt]~)
     (se-blit %out (tuba txt))
   ::
   ++  se-poke                                           ::  send a poke

@@ -150,7 +150,7 @@
           [%volt p=(set beam) q=(cask ,*)]              ::  unsafe add type
       ==                                                ::
     ++  sign                                            ::
-      $%  [%made p=@uvH q=gage]             ::
+      $%  [%made p=@uvH q=gage]                         ::
           [%unto p=cuft]                                ::  
       ==                                                ::
     --                                                  ::
@@ -663,7 +663,9 @@
   ++  he-unto                                           ::  result from behn
     |=  cit=cuft
     ^+  +>
-    ?>  ?=(%coup -.cit)
+    ?.  ?=(%coup -.cit)
+      ~&  [%strange-unto cit]
+      +>
     ?~  p.cit  
       (he-diff %txt ">=")
     (he-diff %tan u.p.cit)
