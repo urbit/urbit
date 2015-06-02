@@ -334,6 +334,7 @@ _unix_file_done(uv_handle_t* was_u)
   u3_ufil* fil_u = (void*) was_u;
 
   // uL(fprintf(uH, "file: dun: %s\n", fil_u->pax_c));
+  free(fil_u->pot_c);
   free(fil_u->pax_c);
   free(fil_u);
 }
@@ -393,6 +394,7 @@ _unix_dir_done(uv_handle_t* was_u)
     dir_u->fil_u = nex_u;
   }
 
+  free(dir_u->pot_c);
   free(dir_u->pax_c);
   free(dir_u);
 }
@@ -1117,15 +1119,15 @@ _unix_mkpath(const char *s)
     goto out;
 
   if ((up = strdup(r)) == NULL)
-    exit(1);
+    c3_assert(0);
 
   _unix_mkpath(up);
 
   _unix_mkdir(path);
 
+  free(r);
+  free(up);
 out:
-  if (up != NULL)
-    free(up);
   free(q);
   free(path);
 }
