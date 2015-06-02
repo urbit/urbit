@@ -7,7 +7,7 @@
 ::::                                                    ::  ::  semantics
   !:                                                    ::  ::
 |%
-++  icon   |=(? ?:(+< 'Z' 'O'))                         ::  display at
+++  icon   |=(? ?:(+< 'X' 'O'))                         ::  display at
 ++  bo                                                  ::  per board
   |_  bud=board                                         ::
   ++  bit  |=(@ =(1 (cut 0 [+< 1] bud)))                ::  moved at address
