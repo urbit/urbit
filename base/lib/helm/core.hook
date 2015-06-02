@@ -27,10 +27,6 @@
 ++  hood-init                                           ::  report init
   $:  him=ship                                          ::
   ==                                                    ::
-++  hood-start                                          ::  start (local) server
-  $:  syd=desk                                          ::  desk
-      dap=term                                          ::  program
-  ==                                                    ::
 ++  hood-reset                                          ::  reset command
   ,~                                                    ::
 ++  helm-verb                                           ::  reset command
@@ -85,10 +81,6 @@
     |=  ~  =<  abet
     (emit %flog /heft %crud %hax-heft ~)
   ::
-  ++  poke-start                                        ::  start a server
-    |=  hood-start  =<  abet
-    (emit %conf /helm [our dap] %load our syd)
-  ::
   ++  poke-reload  |=(all=(list term) (poke-reload-desk %home all))
   ++  poke-reload-desk                                 ::  reload vanes
     |=  [syd=desk all=(list term)]  =<  abet
@@ -117,7 +109,7 @@
     |=  [who=@p myl=@t]  =<  abet
     %^  emit  %poke  /helm/invite
     :-  [our %talk]
-    (said our %helm now eny [%leaf "sent invite: {<who>} at {(trip myl)}"]~)
+    (said our %helm now eny [%leaf "invited: {<who>} at {(trip myl)}"]~)
   ::
   ++  poke-reset                                        ::  reset system
     |=  hood-reset  =<  abet
@@ -157,7 +149,6 @@
   ::
   ++  take-onto                                         ::  result of %conf
     |=  saw=(each suss tang)  =<  abet
-    ~&  [%take-onto saw]
     %-  emit
     ?-   -.saw
       %|  [%flog ~ %crud %onto `tang`p.saw]

@@ -55,8 +55,8 @@
   ~?  ?=(^ saw)  [%kiln-spam-lame u.saw]
   [~ +>] 
 ::
-++  coup-drum  (wrap take-coup):from-drum
-++  diff-sole-effect-drum  (wrap diff-sole-effect):from-drum
+++  coup-drum-phat  (wrap take-coup-phat):from-drum
+++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
 ++  from-helm
   =-  [wrap=- *helm-work]
   |*  fun=_=>(*helm-work |=(* abet))
@@ -101,10 +101,10 @@
 ++  made-kiln  (wrap take-made):from-kiln
 ++  init-helm  |=([way=wire *] [~ +>])
 ++  note-helm  (wrap take-note):from-helm
-++  reap-drum  (wrap reap):from-drum
+++  reap-drum-phat  (wrap reap-phat):from-drum
 ++  onto-drum  (wrap take-onto):from-drum
 ++  peer-drum  (wrap peer):from-drum
-++  quit-drum  (wrap quit):from-drum
+++  quit-drum-phat  (wrap quit-phat):from-drum
 ++  went-helm  (wrap take-went):from-helm
 ++  writ-kiln-sync  (wrap take-writ):from-kiln
 --
