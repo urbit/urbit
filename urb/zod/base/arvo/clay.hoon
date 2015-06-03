@@ -2766,8 +2766,10 @@
       ::  ~&  >>  [pax %ank-kan-sig]
       ~
     ::  ~&  >>  [pax %ank-sig]
-    =+  =+  (~(tap by dir.u.kan))
-        ::  ~&  [%dirukan pax=pax (~(run by dir.u.kan) (cury test ~))]
+    =+  ?~  dir.u.kan
+          ~
+        =+  (~(tap by u.dir.u.kan))
+        ::  ~&  [%dirukan pax=pax (~(run by u.dir.u.kan) (cury test ~))]
         |-  ^-  (list (pair path miso))
         ?~  +<  ~
         ?~  q.i  $(+< t)
@@ -2786,16 +2788,18 @@
       -
     [[(flop pax) %del q.u.q.u.ank] -]
   ::  ~&  >>  [pax %neither-sig]
-  =+  %+  weld
+  =+  ?~  dir.u.kan
+        ~
+      %+  weld
         =+  (~(tap by r.u.ank))
         |-  ^-  (list ,[p=path q=miso])
         ?~  +<  ~
-        =+  (~(get by dir.u.kan) p.i)
+        =+  (~(get by u.dir.u.kan) p.i)
         ?:  ?=([~ ~] -)  $(+< t)
         %-  weld  :_  $(+< t)
         ::  ~&  >>  [pax %ankhing p.i ?=(~ -)]
         ^$(pax [p.i pax], ank `q.i, kan ?~(- ~ `u.u.-))
-      =+  (~(tap by dir.u.kan))
+      =+  (~(tap by u.dir.u.kan))
       ::  ~&  >  [%sdirukan pax=pax (~(run by dir.u.kan) (cury test ~))]
       |-  ^-  (list ,[p=path q=miso])
       ?~  +<  ~

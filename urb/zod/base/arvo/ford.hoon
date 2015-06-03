@@ -963,7 +963,7 @@
       %+  weld
         ^-  (list ,[mark mark])
         ?.  (slob %grab p.vax)  ~
-        =+  gab=(slap vax [%cnzy %grab]) 
+        =+  gab=(slap vax [%cnzy %grab])
         :: =+  opt=(skip (sloe p.gap) |=(fro=mark =(fro %noun)))
         (turn (sloe p.gab) |=(fro=mark [fro for]))
       ?.  (slob %grow p.vax)  ~
@@ -1038,6 +1038,7 @@
           `(slap gab [%cnzy for])
       ?~  zat
         (flaw cof [%leaf "ford: no link: {<[for too]>}"]~)
+      ~|  [%link-maul for too] 
       (maul cof u.zat vax)
     ::
     ++  lion                                            ::  translation search
