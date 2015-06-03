@@ -22,7 +22,6 @@
 ::::                                                    ::::::  past state
   ::                                                    ::  ::
 =>  |%                                                  ::  
-    ++  agon    (unit ,[(list move) axon])              ::  boot argument
     ++  axon     $%([%1 axle] [%0 axle-0])              ::  all states
     ++  axle-0  ,[eye=face gam=game-0]                  ::  old axle
     ++  game-0  ,[who=? box=board boo=board]            ::  old game
@@ -109,7 +108,8 @@
 ++  peer-sole  |=(* abet:show:seen)                     ::  console subscribe
 ++  poke-sole-action  |=(sole-action abet:(work +<))    ::  console input
 ++  poke-oct3-move  |=(point abet:wild:(kick +<))       ::  urbit move
-++  prep  |=(agon abet:?~(+< +> (heal +<+>)))           ::  load state
+++  prep  |=  (unit (pair (list move) axon))            ::  update self
+          abet:?~(+< +> (heal +<+>)))                   ::
 ++  pull-oct3  |=(* abet:(hail |))                      ::  urbit unsubscribe
 ++  pull-sole  |=(* abet:sawn)                          ::  console unsubscribe
 --
