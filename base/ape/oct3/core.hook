@@ -109,7 +109,7 @@
 ++  poke-sole-action  |=(sole-action abet:(work +<))    ::  console input
 ++  poke-oct3-move  |=(point abet:wild:(kick +<))       ::  urbit move
 ++  prep  |=  (unit (pair (list move) axon))            ::  update self
-          abet:?~(+< +> (heal +<+>)))                   ::
+          abet:?~(+< +> wild:(heal +<+>))               ::
 ++  pull-oct3  |=(* abet:(hail |))                      ::  urbit unsubscribe
 ++  pull-sole  |=(* abet:sawn)                          ::  console unsubscribe
 --
