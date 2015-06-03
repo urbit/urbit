@@ -172,7 +172,6 @@
     ::
     ++  spam  |*(* %_(+> ..auto (^spam +<)))
     ++  stop
-      ~&  [%stopping our syd her sud]
       =>  (spam leaf/"ended autosync from {<sud>} on {<her>} to {<syd>}" ~)
       %-  blab  :_  ~
       :*  ust  %warp
