@@ -8,7 +8,7 @@
 ::::                                                    ::::::  interfaces
   !:                                                    ::  ::
 =>  |%                                                  ::
-    ++  axle  ,[eye=face gam=game]                      ::  agent state
+    ++  axon  ,[%0 eye=face gam=game]                   ::  agent state
     ++  card  ,[%diff %sole-effect sole-effect]         ::  update
     ++  face  (map bone sole-share)                     ::  console state
     ++  move  (pair bone card)                          ::  cause and action
@@ -25,7 +25,7 @@
   ::                                                    ::  ::
 |_  $:  bowl                                            ::  system state
         moz=(list move)                                 ::  pending actions
-        [%0 axle]                                       ::  server state, v0
+        axon                                            ::  server state, v0
     ==                                                  ::
 ::                                                      ::  ::
 ::::                                                    ::::::  process tools
@@ -41,7 +41,7 @@
 ++  flap  |=(con=bike (echo eels con))                  ::  update all clients
 ++  here  ~(. go gam)                                   ::  game core
 ::                                                      ::  ::
-::::                                                    ::::::  server logic
+::::                                                    ::::::  process logic
   ::                                                    ::  ::
 ++  fail  (fect %bel ~)                                 ::  user error
 ++  fect  |=(sole-effect (dish %diff %sole-effect +<))  ::  update console
@@ -57,7 +57,7 @@
 ++  wild  (flap |=(_. show:+<))                         ::  full update
 ++  word  |=(tape (flap |=(_+> (fect:+< txt/+>+<))))    ::
 ::                                                      ::  ::
-::::                                                    ::::::  console UI
+::::                                                    ::::::  process UI
   ::                                                    ::  ::
 ++  work                                                ::  console action
   |=  act=sole-action                                   ::  
@@ -77,6 +77,8 @@
 ::::                                                    ::::::  arvo handlers
   ::                                                    ::  ::
 ++  peer-sole  |=(* abet:show:seen)                     ::  console subscribe
+++  prep  |=  (unit (pair (list move) axon))            ::  update self
+          abet:?~(+< +> wild(+<+ +<+))                  ::
 ++  poke-sole-action  |=(sole-action abet:(work +<))    ::  console input
 ++  pull-sole  |=(* abet:sawn)                          ::  console unsubscribe
 --

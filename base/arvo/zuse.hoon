@@ -1242,6 +1242,10 @@
   =+  nex=$(tep t.tep)
   ?~(nex ~ [~ i.tep u.nex])
 ::
+++  earf                                                ::  purf to tape
+  |=  purf
+  (weld (earn p) ?~(q "" `tape`['#' (trip u.q)]))
+::
 ++  earl                                                ::  localize purl
   |=  [who=@p pul=purl]
   ^-  purl
@@ -1301,6 +1305,8 @@
   ++  apat                                              ::  2396 abs_path
     %+  cook  deft
     (ifix [fas ;~(pose fas (easy ~))] (more fas smeg))
+  ++  aurf                                              ::  2396 with fragment
+    ;~(plug auri (punt ;~(pfix hax (cook crip (star pque)))))
   ++  auri                                              ::  2396 URL
     %+  cook
       |=  a=purl
@@ -2152,6 +2158,7 @@
 ++  pred  ,[p=@ta q=@tas r=@ta ~]                       ::  proto-path
 ++  prod  ,[p=prom q=tape r=tape]                       ::  prompt
 ++  prom  ?(%text %pass %none)                          ::  format type
+++  purf  (pair purl (unit ,@t))                        ::  url with fragment
 ++  purl  ,[p=hart q=pork r=quay]                       ::  parsed url
 ++  putt                                                ::  outgoing message
           $:  ski=snow                                  ::  sequence acked/sent
