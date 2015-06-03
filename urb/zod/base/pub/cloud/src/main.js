@@ -74,10 +74,10 @@ GCEControls = React.createClass({
   urb.send({
     appl: 'cloud',
     data: {action:'create-gce',
-          project:$('#project').val(),
-          zone:$('#zone').val(),
-          name:$('#gname').val(),
-          machine_type:$('#machine_type').val()
+//          project:$('#project').val(),
+//          zone:$('#zone').val(),
+//          name:$('#gname').val(),
+//          machine_type:$('#machine_type').val() /
           },
     mark: 'json'})
   },
@@ -85,10 +85,11 @@ GCEControls = React.createClass({
   createDisk: function(){
       urb.send({
         appl: 'cloud',
-        data: {action:'create-gce-disk',
+        data: {action:'create-gce',
                snap:$('#gsnap').val(),
                number:$('#number').val(),
-               name:$('#gcpName').val()},
+               name:$('#gcpName').val(),
+               instance_img:$('#instance_image').val()},
         mark: 'json'})
   },
 
@@ -100,7 +101,8 @@ GCEControls = React.createClass({
           b({onClick:this.createDisk}, 'Create Disk From Image'),
           input({id:'gcpName',placeholder:'Name for GCE Disk and Instance'}),
           input({id:'number',placeholder:'Number of instances'}),
-          input({id:'gsnap',placeholder:'Snapshot'})
+          input({id:'gsnap',placeholder:'Snapshot'}),
+          input({id:'instance_image',placeholder:'Instance Image'})
         ]),
         div({}, [
           a({href:ghref},"Get Google Authcode"),
@@ -109,16 +111,9 @@ GCEControls = React.createClass({
         div({}, [
           input({id:"gappsecret"}, 
           b({onClick:this.props.sendSecret('gce','#gappsecret')}, "Send Google Secret"))
-        ]),
-        div({}, [
-          b({onClick:this.createDroplet}, "Create Droplet"),
-          input({id:"project",placeholder:"project"}),
-          input({id:"zone",placeholder:"zone"}),
-          input({id:"gname",placeholder:"Name of droplet"}), 
-          input({id:"machine_type",placeholder:"Machine Type"}),
-          //input({id:"image",placeholder:"Image"}),
+        ])
       ])
-    ]))
+    )
   }
 })
 

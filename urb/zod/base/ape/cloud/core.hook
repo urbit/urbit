@@ -124,12 +124,12 @@ $%  [%diff %json json]
   ==
 --
 !:
-|_  [hid=hide vat=axle]
+|_  [bowl vat=axle]
 ::
 ::++  prep  ,_`.
 ::
 ++  peer
-  |=  [[ost=bone you=ship] pax=path]
+  |=  pax=path
   ^-  [(list move) _+>.$]
   :_  +>.$
   =+  lis=(~(tap by insts.vat))
@@ -137,12 +137,12 @@ $%  [%diff %json json]
 ::
 ++  spam
   |=  jon=json
-  %+  turn  (~(tap by sup.hid))
+  %+  turn  (~(tap by sup))
   |=  [sub=bone @ pax=path]
   ^-  move
   [sub %diff %json jon]
 ++  httpreq
-    |=  $:    ost=bone  pour-path=wire
+    |=  $:  pour-path=wire
             domain=(list cord)  end-point=path
           req-type=$?(%get %delt [%post json])  headers=math
         queries=quay
@@ -173,7 +173,7 @@ $%  [%diff %json json]
     ==
 ::
 ++  poke-cloud-auth
-  |=  [[ost=bone you=ship] [cde=cord typ=cord]]
+  |=  [cde=cord typ=cord]
   ^-  [(list move) _+>.$]
   ?:  =(%do typ) 
       =.  authc.do.auth.vat
@@ -182,11 +182,11 @@ $%  [%diff %json json]
   =.  access.gce.toke.vat
   cde
   :_  +>.$
-  :-  (list-instances-gce ost)
-  ~
+  :-  list-instances-gce 
+  ~[(publish [%lin & 'successfully authenticated to gce']~)]
 ::
 ++  poke-cloud-secret
-  |=  [[ost=bone you=ship] secret=cord typ=cord]
+  |=  [secret=cord typ=cord]
   ^-  [(list move) _+>.$]
   ?+    typ  ~|(missing-platform=typ !!)
       %do
@@ -194,24 +194,14 @@ $%  [%diff %json json]
       [~ secret]
     :_  +>.$
     :_  ~
-    %^  httpreq  ost  /auth-do
+    %+  httpreq  /auth-do
     :^    ~[%digitalocean %cloud]  `path`/v1/oauth/token
         [%post ~]
     :-  ~  `quay`['client_secret'^secret (auth-queries (need authc.do.auth.vat))]
-      %gce
-    =.  client-secret.gce.auth.vat
-      [~ secret]
-    :_  +>.$
-    :_  ~
-    %^  httpreq  ost  /auth-gce
-    :^    ~[%google %cloud]  `path`/v1/oauth/token
-        [%post ~]
-    :-  (mo ['Content-Type' 'application/json' ~] ['Authorization' (cat 3 'Bearer ' access.do.toke.vat) ~] ~)
-    `quay`['client_secret'^secret %'access_token'^(need authc.gce.auth.vat) ~] ::(auth-queries (need authc.gcp.auth.vat))]
   ==
 ::
 ++  receive-auth
-  |=  [ost=bone pour-path=cord resp=httr]
+  |=  [pour-path=cord resp=httr]
   ^-  [(list move) _+>.$]
   ~|  resp
   =+  body=(rash q:(need r.resp) apex:poja)
@@ -223,48 +213,40 @@ $%  [%diff %json json]
       refresh.do.toke.vat  re
     == 
   :_  +>.$
-  :~  (list-instances-do ost)
-      (publish ost our.hid [%lin & 'successfully authenticated']~)
+  :~  list-instances-do
+      (publish [%lin & 'successfully authenticated']~)
   ==
-    %auth-gce
-  :_  +>.$
-  ~
   ==
 ::
 ++  poke-json
-  |=  [[ost=bone you=ship] act=json]
+  |=  act=json
   ^-  [(list move) _+>.$]
   =+  do=(need ((ot action/so ~):jo act))
   :_  +>.$
   :_  ~
   ?+  do  !!
       %list
-    (list-instances-do ost)
+    list-instances-do
   ::
       %create-do
-    (create-do ost act)
-  ::
-      %create-gce-disk
-    (create-gce-disk ost act)
+    (create-do act)
   ::
       %create-gce
-    (create-gce ost act)
+    (create-gce-disk act)
   ::
     ?(%start %stop %reboot %delete)
     =+  id=(need ((ot id/so ~):jo act))
-    (instance-action ost id do)
+    (instance-action id do)
   ==
 ::
 ++  instance-action
-  |=  $:  os=bone  id=@t
+  |=  $:  id=@t
       $=  action  $?  
       %start  %stop  %reboot  %delete
       ==  ==
   =+  d=(~(got by insts.vat) id)
   ~|  'can\'t find id'
   =+  typ=?~(d !! -.d)
-  ~&  typ
-  ~!  typ
   ?-  typ
     %do
   =+  meth=?:(?=(%delete action) %delt [%post (jobe type/s/(convert-do action) ~)])
@@ -272,7 +254,7 @@ $%  [%diff %json json]
   ~&  'do i get here?'
   =+  ^=  req
   %-  httpreq  :*
-    os  /action-test
+     /action-test
     ~[%digitalocean %api]  
     ?:(?=(%delt meth) /v2/droplets/[id] /v2/droplets/[id]/actions)
     meth
@@ -282,11 +264,20 @@ $%  [%diff %json json]
    ==
    req
     %gce
-    !!
+      ?-  action
+        %start
+        !!
+        %stop
+        !!
+        %reboot
+        !!
+        %delete
+        !!
     ==
+  ==
 ::
 ++  create-do
-  |=  [os=bone act=json]
+  |=  act=json
   =+  ^-  deets=create-req-do
       %-  need
       %.  act
@@ -302,7 +293,7 @@ $%  [%diff %json json]
         ipv6.deets  private-networking.deets  user-data.deets 
       ==
   %-  httpreq  :*
-    os                     /create-do
+    /create-do
     ~[%digitalocean %api]  /v2/droplets
     [%post body]
     %^  mo  ['Content-Type' 'application/json; charset=utf-8' ~]
@@ -312,70 +303,69 @@ $%  [%diff %json json]
   ==
 ::
 ++  create-gce-disk
-  |=  [os=bone act=json] :: num=(unit ,@u)
-  ::  =.  name  ?~(num name ...
+  |=  act=json :: num=(unit ,@u)
+  =+  :-  name=(need ((ot name/so ~):jo act))
+      snapshot=(need ((ot 'instance_image'^so ~):jo act))
   =+  :-  name=(need ((ot name/so ~):jo act))
   snap=(need ((ot snap/so ~):jo act))
   =+  ^-  body=json
       (jobe name/s/name %'sourceSnapshot'^s/'compute/v1/projects/urbcloud/global/snapshots/snapshot-1' ~)  ::^so/snap ~)
   %-  httpreq
-  :*  os    /create-gce-disk
+  :*  /create-gce-disk/snapshot/name
       ~['googleapis' 'www']    /compute/v1/projects/urbcloud/zones/us-central1-b/disks
       [%post body]
      %^  mo  ['Content-Type' 'application/json' ~]
        ['Authorization' (cat 3 'Bearer ' access.gce.toke.vat) ~]
       ~
-      ~
+      ~ 
   ==
+::
 ++  ask-disk-status
-  |=  [os=bone pax=path]  ^-  move
-  =+  safe=(slav %uv ?~(pax !! -.pax))
+  |=  pax=path  ^-  move
+  ~&  'ask disk status'
+  =+  :-  safe=(slav %uv ?~(pax !! -.pax))
+      snap=?.(?=([* ^] pax) !! i.t.pax)
   =+  link=(need (epur ?~(pax !! safe)))
   =.  r.link  ['access_token'^access.gce.toke.vat r.link]
-  :^  os  %them  `wire`/disk-status
+  :^  ost  %them  `wire`/disk-status/snap
   `(unit hiss)`[~ [link [%get ~ ~]]]
 ::
 ++  disk-status                       ::receive
-  |=  [ost=bone resp=httr]
+  |=  [ins-img=@t resp=httr]
   ^-  [(list move) _+>.$]
+  ~&  'disk status called'
   =+  hcode=p.resp
   ?:  =('200' hcode)
     ~|  'did not receive 200'  !!
   =+  :-(parsed=(rash q:(need r.resp) apex:poja) jo)
+  ~&  parsed
   =+  :-  status=(need ((ot status/so ~) parsed))
   lin=(need ((ot 'selfLink'^so ~) parsed))
   =+  link=(scot %uv lin)
   ?:  =('DONE' status)
     ~&  resp
     ~&  'boot disk now running, now starting instance'
-      =+  target=(need ((ot 'targetLink'^so ~):jo parsed))
-      =+  nam=-:(flop q.q:(need (epur target)))
-      ~&  nam
-    ::(create-gce-disk ost nam 'tbd')
-    :-  ~  +>.$
+    =+  target=(need ((ot 'targetLink'^so ~):jo parsed))
+    =+  nam=-:(flop q.q:(need (epur target)))
+    ~&  nam
+    :_   +>.$  ~[(create-gce nam ins-img)]
   :_  +>.$
-  [ost %wait `path`[%check-status link ~] `@da`(add ~s3 lat.hid)]~       ::  refesh every 10 sec
+  [ost %wait `path`[%check-status link ins-img ~] `@da`(add ~s3 now)]~       ::  refesh every 10 sec
 ::
 ++  create-gce
-  |=  [os=bone act=json]
-  =+  ^-  deets=create-req-gce
-      %-  need
-      %.  act
-      =>  jo
-      %-  ot
-      :~  project/so  zone/so  name/so  %'machine_type'^so
-      ==
-  =+  src=(cat 3 'compute/v1/projects/urbcloud/zones/us-central1-b/disks/' name.deets)
+  |=  [name=@t snap=@t]
+  ~&  create-gce-received/snap
+  =+  src=(cat 3 'compute/v1/projects/urbcloud/zones/us-central1-b/disks/' name)
   =+  ^-  body=json
       %-  jobe
-      :~  name/s/'name-provided'  'machineType'^s/'zones/us-central1-b/machineTypes/n1-standard-1'
+      :~  name/s/name  'machineType'^s/'zones/us-central1-b/machineTypes/n1-standard-1'
       :-  %disks  :-  %a  :_  ~
       (jobe boot/b/%.y type/s/'persistent' source/s/src ~)
       :-  'networkInterfaces'  :-  %a  :_  ~
       (joba 'network' `json`[%s 'global/networks/default'])
       ==
   %-  httpreq
-  :*  `bone`os  `path`/create-gce
+  :*  `path`/create-gce
       `(list cord)`~['googleapis' 'www']  `path`/compute/v1/projects/urbcloud/zones/us-central1-b/'instances'
       [%post `json`body]
      %^  mo  ['Content-Type' 'application/json' ~]
@@ -385,24 +375,24 @@ $%  [%diff %json json]
   ==
 :: 
 ++  wake
-  |=  [[ost=bone him=ship pour-path=path] ~]
+  |=  [pour-path=path ~]
   ?+    -.pour-path  !!
       %refresh-do
     :_  +>.$
-    [(list-instances-do ost)]~
+    [list-instances-do]~
       %refresh-gce
     :_  +>.$
-    [(list-instances-gce ost)]~
+    [list-instances-gce]~
       %check-status
     :_  +>.$
-    [(ask-disk-status ost +.pour-path)]~
+    [(ask-disk-status +.pour-path)]~
   ==
 ::
 ++  list-instances-gce
-  |=  os=bone
   =+  ^=  lis
-      :*  os                  /list-gce
-      ~[%googleapis %www]     /compute/v1/projects/urbcloud/zones/['us-central1-a']/'instances'
+      :*
+      /list-gce
+      ~[%googleapis %www]  /compute/v1/projects/urbcloud/zones/['us-central1-a']/'instances'
       %get                    ~
       ^-  quay
       [%'access_token' access.gce.toke.vat]~
@@ -410,7 +400,7 @@ $%  [%diff %json json]
   (httpreq lis)
 ::
 ++  receive-list-gce
-  |=  [os=bone resp=httr]
+  |=  resp=httr
   ^-  [(list move) _+>.$]
   =+  parsed=(rash q:(need r.resp) apex:poja)           ::  body httr to json
   =+  items=(need ((ot items/(ar some) ~):jo parsed))
@@ -433,16 +423,15 @@ $%  [%diff %json json]
       |=(a=[@t instance] (~(has by insts.vat) id.a))
   =.  insts.vat
   (~(gas by insts.vat) new)
-  =+  buf=`@da`(add ~s10 lat.hid)
+  =+  buf=`@da`(add ~s10 now)
   :_  +>.$
   =+  lis=(~(tap by insts.vat))
   :_  (spam (state-to-json (turn lis |=(a=[@t instance] +.a))))
-  [os %wait /refresh-gce buf]
+  [ost %wait /refresh-gce buf]
 ::
 ++  list-instances-do
-  |=  os=bone
   =+  ^=  lis
-      :~  os                 /list-do
+      :~  /list-do
       ~[%digitalocean %api]  /v2/droplets
       %get
       (mo ['Content-Type' 'application/json' ~] ['Authorization' (cat 3 'Bearer ' access.do.toke.vat) ~] ~)
@@ -450,7 +439,7 @@ $%  [%diff %json json]
     (httpreq lis)
 ::
 ++  receive-list-do
-  |=  [ost=bone resp=httr]
+  |=  resp=httr
   ^-  [(list move) _+>.$]
   =+  parsed=(rash q:(need r.resp) apex:poja)           ::  parse httr to json
   ~|  recieve-list/parsed
@@ -473,28 +462,26 @@ $%  [%diff %json json]
           image/(ot name/so ~)  ::disk/ni  
           networks/parse-ip-do
       ==
-  =+  buf=`@da`(add ~s10 lat.hid)
+  =+  buf=`@da`(add ~s10 now)
   :_  +>.$
   =+  lis=(~(tap by insts.vat) *(list ,[@t instance]))
   :_  (spam (state-to-json (turn lis |=(a=[@t instance] +.a))))
   [ost %wait /refresh-do buf]
 
 ++  thou
-  |=  [[ost=bone him=ship pour-path=path] resp=httr]
+  |=  [pour-path=path resp=httr]
   ^-  [(list move) _+>.$]
   ?+    -.pour-path  ~&  pour-path  !!
       %auth-do
-    (receive-auth ost -.pour-path resp)
+    (receive-auth -.pour-path resp)
   ::
       %auth-gce
-    (receive-auth ost -.pour-path resp)
+    (receive-auth -.pour-path resp)
   ::
       %list-do
-    (receive-list-do ost resp)
+    (receive-list-do resp)
       %list-gce
-    (receive-list-gce ost resp)
-::    :_  +>.$
-::   ~
+    (receive-list-gce resp)
   ::
       $?
       %delete  %reboot  %'power_cycle'  %shutdown  %'power_off'
@@ -506,32 +493,34 @@ $%  [%diff %json json]
       :_  +>.$  ~
   ::
       ?(%create-gce-disk %disk-status)
-    (disk-status ost resp)
+      =+  snap=?~(t.pour-path !! i.t.pour-path)
+      ~&  snap/snap
+    (disk-status snap resp)
   ::
       %check-status
-    :_  +>.$  ~[(ask-disk-status ost +.pour-path)]
+    :_  +>.$  ~[(ask-disk-status +.pour-path)]
   ::
       %pub
     :_  +>.$  ~
   ::
   ==
 ++  publish
-  |=  [ost=bone you=ship act=(list speech)]
+  |=  [act=(list speech)]
   ^-  move
   =+  ^=  spchz
       %+  turn  act
       |=  sp=speech
       =+  ^=  tail
       :-  ^-  audience
-          :+  :-  `partner`[%& our.hid ?+((clan our.hid) !! %czar %court, %duke %porch)]
+          :+  :-  `partner`[%& our ?+((clan our) !! %czar %court, %duke %porch)]
               ^-  (pair envelope delivery)
               [`envelope`[& ~] %pending]
             ~
           ~
-      `statement`[lat.hid ~ sp]
+      `statement`[now ~ sp]
       ^-  thought
-      :-  `@`(sham eny.hid tail)
+      :-  `@`(sham eny tail)
       tail
   =+  mez=[%talk-command [%publish `(list thought)`spchz]]
-  [ost %send /pub [our.hid %talk] %poke mez]
+  [ost %send /pub [our %talk] %poke mez]
 --
