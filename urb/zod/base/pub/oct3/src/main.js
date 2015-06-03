@@ -53,20 +53,23 @@ $(function() {
       state.plo = "" 
     if(!state.plx) 
       state.plx = "" 
-    $('#o .ship').toggleClass('waiting', (state.plo=="")).text(state.plo.slice(1))
-    $('#x .ship').toggleClass('waiting', (state.plx=="")).text(state.plx.slice(1))
+    $('#o .ship').toggleClass('waiting', (state.plo=="")).
+      text(state.plo.slice(1))
+    $('#x .ship').toggleClass('waiting', (state.plx=="")).
+      text(state.plx.slice(1))
   }
 
   message = function(mess) {
     mess = mess.split('"')[1]
     mess = mess.split("=")
-    mess = "<div class='ship'>"+mess[0].slice(1)+"</div> ["+symb[lett.indexOf(mess[1].toLowerCase())+1]+"] WINS"
+    mess = "<div class='ship'>"+mess[0].slice(1) + 
+           "</div> ["+symb[lett.indexOf(mess[1].toLowerCase())+1]+"] WINS"
     $('body').append('<div id="message">'+mess+'</div>')
     setTimeout(function() { $('#message').fadeOut().remove(); }, 2000)
   }
 
-  urb.appl = 'octo'
-  urb.bind('/octo', function(err,res) {
+  urb.appl = 'oct3'
+  urb.bind('/oct3', function(err,res) {
     if(typeof(res.data) == 'string')
       return message(res.data)
     assign(res.data)
@@ -81,6 +84,6 @@ $(function() {
     data = $.map(
       $t.attr('data-index').split('-'), 
       function(i) { return Number(i); })
-    urb.send({mark:'octo-move',data:data})
+    urb.send({mark:'oct3-move',data:data})
   })
 })
