@@ -27,10 +27,6 @@
 ++  hood-init                                           ::  report init
   $:  him=ship                                          ::
   ==                                                    ::
-++  hood-start                                          ::  start (local) server
-  $:  syd=desk                                          ::  desk
-      dap=term                                          ::  program
-  ==                                                    ::
 ++  hood-reset                                          ::  reset command
   ,~                                                    ::
 ++  helm-verb                                           ::  reset command
@@ -51,9 +47,13 @@
             [%conf wire dock %load ship term]           ::
             [%flog wire flog]                           ::
             [%plug wire @p @tas @p @tas]                ::
+            [%poke wire dock pear]                      ::
             [%want wire sock path *]                    ::  send message
         ==                                              ::
       ++  move  (pair bone card)                        ::  user-level move
+      ++  pear                                          ::  poke fruit
+        $%  [%talk-command command:talk]                ::
+        ==
       --
   |_  moz=(list move)
   ++  abet                                              ::  resolve
@@ -81,10 +81,6 @@
     |=  ~  =<  abet
     (emit %flog /heft %crud %hax-heft ~)
   ::
-  ++  poke-start                                        ::  start a server
-    |=  hood-start  =<  abet
-    (emit %conf /helm [our dap] %load our syd)
-  ::
   ++  poke-reload  |=(all=(list term) (poke-reload-desk %home all))
   ++  poke-reload-desk                                 ::  reload vanes
     |=  [syd=desk all=(list term)]  =<  abet
@@ -106,6 +102,12 @@
     =+  way=(welp top /[nam])
     =+  fil=(,@ .^(%cx (welp way /hoon)))
     [%flog /reload [%veer ?:(=('z' tip) %$ tip) way fil]]
+  ::
+  ++  poke-invite                                       ::  send invite; fake
+    |=  [who=@p myl=@t]  =<  abet
+    %^  emit  %poke  /helm/invite
+    :-  [our %talk]
+    (said our %helm now eny [%leaf "invited: {<who>} at {(trip myl)}"]~)
   ::
   ++  poke-reset                                        ::  reset system
     |=  hood-reset  =<  abet
@@ -145,7 +147,6 @@
   ::
   ++  take-onto                                         ::  result of %conf
     |=  saw=(each suss tang)  =<  abet
-    ~&  [%take-onto saw]
     %-  emit
     ?-   -.saw
       %|  [%flog ~ %crud %onto `tang`p.saw]

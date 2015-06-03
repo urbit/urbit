@@ -1118,7 +1118,7 @@
       ::
           %boil
         ^-  (bolt gage)
-        %+  cool  |.(leaf/"ford: boil {<p.kas>} {<(tope q.kas)>} {<r.kas>}")
+        ::  %+  cool  |.(leaf/"ford: boil {<p.kas>} {<(tope q.kas)>} {<r.kas>}")
         %+  cope  (lamp cof q.kas)
         |=  [cof=cafe bem=beam]
         %+  cope  (lime cof p.kas bem r.kas)
