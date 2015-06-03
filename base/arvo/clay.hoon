@@ -184,6 +184,23 @@
     |=  gag=gage  ^-  (list (pair cage cage))
     (unwrap-tang (gage-to-tage gag))
   ::
+  ++  gage-to-success-cages
+    |=  gag=gage
+    ^-  (list (pair cage cage))
+    ?.  ?=(%tabl -.gag)
+      (ford-fail ?-(-.gag %| p.gag, %& [>%strange-gage p.p.gag<]~))
+    %+  murn  p.gag
+    |=  [key=gage val=gage]  ^-  (unit ,[cage cage])
+    ?.  ?=(%& -.key)
+      (ford-fail ?-(-.key %| p.key, %tabl [>%strange-gage<]~))
+    ?-  -.val
+      %tabl  (ford-fail >%strange-gage< ~)
+      %&  (some [p.key p.val])
+      %|  =.  p.val  [(sell q.p.key) p.val]
+          ~>  %slog.[0 %*(. >%ford-fail syd %for %why< |2.+> p.val)]
+          ~
+    ==
+  ::
   ++  gage-to-tage
     |=  gag=gage
     ^-  (each (list (pair cage cage)) tang)
@@ -567,7 +584,7 @@
           (apply-edit wen)
         +>.$
     ^-  (list (pair path cage))
-    %+  turn  (gage-to-cages res)
+    %+  turn  (gage-to-success-cages res)
     |=  [pax=cage cay=cage]
     ?.  ?=(%path p.pax)
       ~|(%clay-take-inserting-strange-path-mark !!)
@@ -2749,8 +2766,10 @@
       ::  ~&  >>  [pax %ank-kan-sig]
       ~
     ::  ~&  >>  [pax %ank-sig]
-    =+  =+  (~(tap by dir.u.kan))
-        ::  ~&  [%dirukan pax=pax (~(run by dir.u.kan) (cury test ~))]
+    =+  ?~  dir.u.kan
+          ~
+        =+  (~(tap by u.dir.u.kan))
+        ::  ~&  [%dirukan pax=pax (~(run by u.dir.u.kan) (cury test ~))]
         |-  ^-  (list (pair path miso))
         ?~  +<  ~
         ?~  q.i  $(+< t)
@@ -2769,16 +2788,18 @@
       -
     [[(flop pax) %del q.u.q.u.ank] -]
   ::  ~&  >>  [pax %neither-sig]
-  =+  %+  weld
+  =+  ?~  dir.u.kan
+        ~
+      %+  weld
         =+  (~(tap by r.u.ank))
         |-  ^-  (list ,[p=path q=miso])
         ?~  +<  ~
-        =+  (~(get by dir.u.kan) p.i)
+        =+  (~(get by u.dir.u.kan) p.i)
         ?:  ?=([~ ~] -)  $(+< t)
         %-  weld  :_  $(+< t)
         ::  ~&  >>  [pax %ankhing p.i ?=(~ -)]
         ^$(pax [p.i pax], ank `q.i, kan ?~(- ~ `u.u.-))
-      =+  (~(tap by dir.u.kan))
+      =+  (~(tap by u.dir.u.kan))
       ::  ~&  >  [%sdirukan pax=pax (~(run by dir.u.kan) (cury test ~))]
       |-  ^-  (list ,[p=path q=miso])
       ?~  +<  ~
