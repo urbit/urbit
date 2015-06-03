@@ -30,6 +30,11 @@
         her=ship                                        ::
         sud=desk                                        ::
     ==                                                  ::
+++  hood-unsync                                         ::
+    $:  syd=desk                                        ::
+        her=ship                                        ::
+        sud=desk                                        ::
+    ==                                                  ::
 ++  hood-merge                                          ::
     $:  syd=desk                                        ::
         ali=ship                                        ::
@@ -49,11 +54,9 @@
   =>  |%                                                ::  arvo structures
       ++  card                                          ::
         $%  [%exec wire @p beak (unit silk)]            ::
-            [%font wire @p @tas @p @tas]                ::
             [%info wire @p @tas nori]                   ::
             [%lynx wire @p @tas (unit ,?)]              ::
             [%merg wire @p @tas @p @tas germ]           ::
-            [%plug wire @p @tas @p @tas]                ::
             [%poke wire dock pear]                      ::
             [%warp wire sock riff]                      ::
         ==                                              ::
@@ -84,6 +87,15 @@
       abet:(spam leaf/- ~)
     abet:abet:start:(auto hos)
   ::
+  ++  poke-unsync                                         ::
+    |=  hus=hood-unsync
+    ?.  (~(has by syn) hus)
+      =+  "not syncing from {<sud.hus>} on {<her.hus>} to {<syd.hus>}"
+      abet:(spam leaf/- ~)
+    %*  .  abet:abet:stop:(auto hus)
+      syn  (~(del by syn) hus)
+    ==
+  ::
   ++  poke-merge                                        ::
     |=  hood-merge
     abet:abet:(merge:(work syd) ali sud gim)
@@ -93,6 +105,7 @@
     =+  syd=q:(need (tome pax))
     =-  abet:abet:(spam:(work syd) leaf/mez ~)
     (emit %info /kiln our tor)
+  ::
   ++  poke-rm  |=(a=path (do-info "removed" a (fray a)))
   ++  poke-cp
     |=  [input=path output=path]
@@ -175,6 +188,15 @@
       +>.$(moz (welp new moz))
     ::
     ++  spam  |*(* %_(+> ..auto (^spam +<)))
+    ++  stop
+      ~&  [%stopping our syd her sud]
+      =>  (spam leaf/"ended autosync from {<sud>} on {<her>} to {<syd>}" ~)
+      %-  blab  :_  ~
+      :*  ust  %warp
+          /kiln/sync/[syd]/(scot %p her)/[sud]
+          [our her]  sud  ~
+      ==
+    ::
     ++  start
       %-  blab  :_  ~
       :*  ost  %warp
