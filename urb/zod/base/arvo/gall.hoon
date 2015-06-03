@@ -1023,11 +1023,9 @@
         %deal  `%g
         %exec  `%f
         %flog  `%d
-        %font  `%c
         %info  `%c
         %lynx  `%c
         %merg  `%c
-        %plug  `%c
         %them  `%e
         %want  `%a
         %warp  `%c

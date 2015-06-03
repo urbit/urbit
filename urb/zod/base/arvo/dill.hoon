@@ -56,8 +56,7 @@
       [%sith p=@p q=@uw r=?]                            ::
   ==                                                    ::
 ++  note-clay                                           ::
-  $%  [%font p=@p q=@tas r=@p s=@tas]                   ::
-      [%merg p=@p q=@tas r=@p s=@tas t=germ]            ::  merge desks
+  $%  [%merg p=@p q=@tas r=@p s=@tas t=germ]            ::  merge desks
       [%warp p=sock q=riff]                             ::  wait for clay, hack
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd

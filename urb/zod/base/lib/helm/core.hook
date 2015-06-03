@@ -50,8 +50,11 @@
         $%  [%cash wire p=@p q=buck]                    ::
             [%conf wire dock %load ship term]           ::
             [%flog wire flog]                           ::
-            [%plug wire @p @tas @p @tas]                ::
+            [%poke wire dock pear]                      ::
             [%want wire sock path *]                    ::  send message
+        ==                                              ::
+      ++  pear                                          ::  poke fruit
+        $%  [%hood-unsync desk ship desk]               ::
         ==                                              ::
       ++  move  (pair bone card)                        ::  user-level move
       --
@@ -138,7 +141,8 @@
     =<  abet
     %-  emil(bur ~)
     :~  [%cash /helm p.u.bur q.u.bur u.wil]
-        [%plug /helm our %home (sein our) %kids]
+        ~&  [%unsyncing our %base (sein our) %kids]
+        [%poke /helm [our %hood] %hood-unsync %base (sein our) %kids]
     ==
   ::
   ++  poke-verb                                         ::  toggle verbose

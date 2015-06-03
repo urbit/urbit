@@ -2330,13 +2330,11 @@
               [%writ p=riot]                            ::  response
           ==                                            ::
 ++  kiss-clay                                           ::  in request ->$
-          $%  [%font p=@p q=@tas r=@p s=@tas]           ::  set upstream
-              [%info p=@p q=@tas r=nori]                ::  internal edit
+          $%  [%info p=@p q=@tas r=nori]                ::  internal edit
               [%init p=@p]                              ::  report install
               [%into p=@p q=@tas r=khan]                ::  external edit
               [%lynx p=@p q=@tas r=(unit ,?)]           ::  sync to unix
               [%merg p=@p q=@tas r=@p s=@tas t=germ]    ::  merge desks
-              [%plug p=@p q=@tas r=@p s=@tas]           ::  unset upstream
               [%wart p=sock q=@tas r=path s=*]          ::  network request
               [%warp p=sock q=riff]                     ::  file request
               [%wegh ~]                                 ::  report memory
