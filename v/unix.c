@@ -334,7 +334,7 @@ _unix_file_done(uv_handle_t* was_u)
   u3_ufil* fil_u = (void*) was_u;
 
   // uL(fprintf(uH, "file: dun: %s\n", fil_u->pax_c));
-  free(fil_u->pot_c);
+  // free(fil_u->pot_c);  XXX
   free(fil_u->pax_c);
   free(fil_u);
 }
@@ -394,7 +394,7 @@ _unix_dir_done(uv_handle_t* was_u)
     dir_u->fil_u = nex_u;
   }
 
-  free(dir_u->pot_c);
+  // free(dir_u->pot_c);  XXX
   free(dir_u->pax_c);
   free(dir_u);
 }
@@ -708,10 +708,13 @@ _unix_dir_khan_file(u3_noun pam, u3_noun wib, u3_noun woz)
   if ( c3n == u3du(wib) ) {
     ole = u3kdb_get(u3k(pam), u3k(wib));
 
-    if ( u3_none == ole ||
-         u3_nul == ole ) {
+    if ( u3_none == ole ) {
+      ole = u3nq(u3_nul, woz, u3_nul, u3_nul);
+    }
+    else if ( u3_nul == ole ) {
       ole = u3nt(u3_nul, woz, u3_nul);
-    } else {
+    }
+    else {
       u3_noun elo;
 
       elo = u3nt(u3_nul, woz, u3k(u3t(u3t(ole))));
@@ -727,17 +730,20 @@ _unix_dir_khan_file(u3_noun pam, u3_noun wib, u3_noun woz)
 
     ole = u3kdb_get(u3k(pam), u3k(fid));
 
-    if ( u3_none == ole ||
-         u3_nul == ole ) {
-      ole = u3nt(u3_nul,
+    if ( u3_none == ole ) {
+      ole = u3nq(u3_nul,
+                 u3_nul,
                  u3_nul,
                  u3kdb_put(u3_nul,
                            u3k(har),
-                           u3nt(u3_nul, woz, u3_nul)));
+                           u3nq(u3_nul, woz, u3_nul, u3_nul)));
+    }
+    else if ( u3_nul == ole ) {
+      c3_assert(!"impossible because of the strncmp check in _unix_dir_khan");
     }
     else {
       u3_noun oor, elo;
-      u3_noun roo = u3t(u3t(ole));
+      u3_noun roo = u3t(u3t(u3t(ole)));
       u3_weak tup = u3kdb_get(u3k(roo), u3k(har));
 
       if ( u3_none == tup ) {
@@ -745,13 +751,13 @@ _unix_dir_khan_file(u3_noun pam, u3_noun wib, u3_noun woz)
       } else {
         u3_noun upt;
 
-        upt = u3nt(u3_nul, woz, u3k(u3t(tup)));
+        upt = u3nq(u3_nul, woz, u3_nul, u3k(u3t(tup)));
         u3z(tup);
 
         tup = upt;
       }
       oor = u3kdb_put(u3k(roo), u3k(har), tup);
-      elo = u3nt(u3_nul, u3k(u3h(u3t(ole))), oor);
+      elo = u3nq(u3_nul, u3k(u3h(u3t(ole))), u3_nul, oor);
 
       u3z(ole); ole = elo;
     }
@@ -766,15 +772,21 @@ _unix_dir_khan_file(u3_noun pam, u3_noun wib, u3_noun woz)
 static u3_noun
 _unix_dir_khan(u3_udir* dir_u)
 {
-  //if ( c3y == dir_u->dry ) {
-  //  return u3_nul;
-  //}
+  if ( c3y == dir_u->dry ) {
+    return u3_nul;
+  }
 
   u3_udir* dis_u;
   u3_ufil* fil_u;
   u3_noun pam = u3_nul;
 
   for ( dis_u = dir_u->dis_u; dis_u; dis_u = dis_u->nex_u ) {
+    for ( fil_u = dir_u->fil_u; fil_u; fil_u = fil_u->nex_u ) {
+      if ( 0 == strncmp(dis_u->pax_c, fil_u->pax_c, strlen(dis_u->pax_c)) ) {
+        dis_u->dry = c3n;
+        break;
+      }
+    }
     u3_noun pre = _unix_dir_name(dis_u);
     u3_noun kan = _unix_dir_khan(dis_u);
 
@@ -812,7 +824,7 @@ _unix_dir_khan(u3_udir* dir_u)
                                      u3nt(u3_nul, u3_nul, baw));
     pam = _unix_dir_khan_file(pam, wib, wol);
   }
-  return u3nt(u3_nul, u3_nul, pam);
+  return u3nq(u3_nul, u3_nul, u3_nul, pam);
 }
 
 /* _find_mug(): find a noun with a given mug.  retain. DELETEME
