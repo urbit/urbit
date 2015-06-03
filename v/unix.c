@@ -739,7 +739,7 @@ _unix_dir_khan_file(u3_noun pam, u3_noun wib, u3_noun woz)
                            u3nq(u3_nul, woz, u3_nul, u3_nul)));
     }
     else if ( u3_nul == ole ) {
-      // XX
+      c3_assert(!"impossible because of the strncmp check in _unix_dir_khan");
     }
     else {
       u3_noun oor, elo;
