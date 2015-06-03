@@ -6,13 +6,8 @@
 /-  *talk, *bit-api
 /+  talk, sole, http, mean
 !:
-
-
 ::::  sivtyv-barnel
   ::  be sure to have oauth2-code markk
-
-
-
 |%
 ++  axle  
 
@@ -86,7 +81,7 @@ $:  cred=(unit ,[app-secret=@t client-id=@t])
   :-  %-  publish
       :~  [%lin & 'secret and client id saved successfully']
           [%lin & 'please click on the url below to continue authentication']
-          [%url prl] 
+          [%url prl ~] 
       ==
   ~
 ::
