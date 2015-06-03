@@ -57,6 +57,7 @@
   ==                                                    ::
 ++  note-clay                                           ::
   $%  [%font p=@p q=@tas r=@p s=@tas]                   ::
+      [%merg p=@p q=@tas r=@p s=@tas t=germ]            ::  merge desks
       [%warp p=sock q=riff]                             ::  wait for clay, hack
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
@@ -221,10 +222,13 @@
         =+  myt=(flop (need tem))
         =+  can=(clan our)
         =.  tem  ~
-        =.  moz  :_(moz [hen %pass / %c %font our %home our %base])
-        =.  moz  ?.  ?=(?(%king %czar) can)  moz
-                 :_(moz [hen %pass / %c %font our %kids our %base])
+        =.  moz  :_(moz [hen %pass / %c %merg our %home our %base %init])
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
+        =.  +>  ?:  ?=(%czar can)  +>
+                (sync %base (sein our) %kids)
+        =.  +>  (sync %home our %base)
+        =.  +>  ?.  ?=(?(%king %czar) can)  +>
+                (sync %kids our %base)
         =.  +>  peer
         |-  ^+  +>+
         ?~  myt  +>+
@@ -257,6 +261,14 @@
         %_    .
             moz 
           :_(moz [hen %pass ~ %g %deal [our our] ram %peer /drum]) 
+        ==
+      ::
+      ++  sync
+        |=  syn=[desk ship desk]
+        %_    +>.$
+            moz
+          :_  moz
+          [hen %pass ~ %g %deal [our our] ram %poke %hood-sync -:!>(syn) syn]
         ==
       ::
       ++  pump                                          ::  send diff ack

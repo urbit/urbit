@@ -2326,7 +2326,7 @@
     %-  zing  ^-  (list (list move))
     :~  ~&  [%bos bos p.q.hic]
         ?:  =(bos p.q.hic)  ~
-        [hen %pass / %c %font p.q.hic %base bos %kids]~
+        [hen %pass / %c %merg p.q.hic %base bos %kids %init]~
     ::
         ~
     ::  ?.  ?=(?(%king %czar) can)  ~
