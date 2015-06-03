@@ -79,7 +79,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.mem = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i = getopt(argc, argv, "I:T:X:f:k:l:n:p:r:LabcdgqvFMPD")) != -1 ) {
+  while ( (ch_i = getopt(argc, argv, "I:w:t:X:f:k:l:n:p:r:LabcdgqvFMPD")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
@@ -89,9 +89,12 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.imp_c = strdup(optarg);
         break;
       }
-      case 'T': {
+      case 'w': {
         u3_Host.ops_u.who_c = _main_presig(optarg);
-        u3_Host.ops_u.tic_c = _main_presig(getpass("your ticket: ~"));
+        break;
+      }
+      case 't': {
+        u3_Host.ops_u.tic_c = _main_presig(optarg);
         break;
       }
       case 'X': {

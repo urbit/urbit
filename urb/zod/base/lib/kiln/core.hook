@@ -156,24 +156,7 @@
   ++  spam
     |=  mes=(list tank)
     %-  emit
-    :*  %poke  /kiln/spam
-        [our %talk]  %talk-command
-        ^-  command:talk
-        :-  %publish
-        %-  flop
-        =<  acc
-        %+  roll  mes
-        =<  .(eny ^eny)
-        |=  [tan=tank acc=(list thought:talk) eny=@uvI]
-        ^-  [acc=(list thought:talk) eny=@uvI]
-        =+  (sham eny mes)
-        :_  -
-        :_  acc
-        ^-  thought:talk
-        :+  -
-          [[[%& our (main our)] [*envelope:talk %pending]] ~ ~]
-        [now *bouquet:talk [%app (crip ~(ram re tan))]]
-    ==
+    [%poke /kiln/spam [our %talk] (said our %kiln now eny mes)]
   ::
   ++  auto
     |=  hood-sync
@@ -198,6 +181,8 @@
       ==
     ::
     ++  start
+      =.  .  %-  spam
+             [leaf/"activated sync from {<sud>} on {<her>} to {<syd>}" ~]
       %-  blab  :_  ~
       :*  ost  %warp
           /kiln/sync/[syd]/(scot %p her)/[sud]
@@ -208,7 +193,7 @@
       |=  rot=riot
       ?~  rot
         %^    spam
-            leaf/"bad %writ response on autosync"
+            leaf/"bad %writ response on sync"
           leaf/"from {<sud>} on {<her>} to {<syd>}"
         ~
       =.  let  ?.  ?=(%w p.p.u.rot)  let  ((hard ,@ud) q.q.r.u.rot)
@@ -227,9 +212,10 @@
       =.  +>.$
         %-  spam
         ?:  ?=(%& -.mes)
-          [leaf/"autosync succeeded from {<sud>} on {<her>} to {<syd>}" ~]
+          ~
+          ::  [leaf/"sync succeeded from {<sud>} on {<her>} to {<syd>}" ~]
         ?+  p.p.mes
-          :*  leaf/"autosync failed from {<sud>} on {<her>} to {<syd>}"
+          :*  leaf/"sync failed from {<sud>} on {<her>} to {<syd>}"
               leaf/"please manually merge the desks with"
               leaf/":+merge %{(trip syd)} {(scow %p her)} %{(trip sud)}"
               leaf/""
@@ -238,8 +224,8 @@
           ==
         ::
             %no-ali-desk
-          :~  leaf/"{<sud>} on {<her>} does not exist, so the sync"
-              leaf/"into {<syd>} will begin automatically when it does"
+          :~  leaf/"sync activated from {<sud>} on {<her>} to {<syd>}"  
+              leaf/"note: {<sud>} on {<her>} is a blank desk"
           ==
         ==
       %-  blab  :_  ~
@@ -342,7 +328,7 @@
       ?:  =(%meld gem)
         ?:  ?=(%& -.are)
           ?.  auto
-            =+  "successfully merged with strategy {<gem>}"
+            =+  "merged with strategy {<gem>}"
             win:(spam leaf/- ?~(p.are ~ [>`(set path)`p.are< ~]))
           =+  "mashing conflicts"
           =>  .(+>.$ (spam leaf/- ~))
@@ -368,7 +354,7 @@
         =+  "failed to merge with strategy {<p.p.are>}"
         lose:(spam leaf/- q.p.are)
       ?:  ?=(%& -.are)
-        =+  "successfully merged with strategy {<gem>}"
+        =+  "merged with strategy {<gem>}"
         win:(spam leaf/- ?~(p.are ~ [>`(set path)`p.are< ~]))
       ?.  auto
         =+  "failed to merge with strategy {<p.p.are>}"

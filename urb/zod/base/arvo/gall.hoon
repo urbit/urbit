@@ -1027,6 +1027,7 @@
         %lynx  `%c
         %merg  `%c
         %them  `%e
+        %wait  `%t
         %want  `%a
         %warp  `%c
       ==

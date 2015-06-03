@@ -53,6 +53,7 @@
 ++  whir  $|  ~                                         ::  wire subset
           $%  [%at p=hole q=whir]                       ::  authenticated
               [%ay p=span:ship q=span:,@uvH ~]          ::  remote duct
+              [%ha p=path:beak]                         ::  GET request
               [%he p=whir]                              ::  HEAD request
               [%hi p=mark ~]                            ::  outbound HTTP
               [%si ~]                                   ::  response done
@@ -605,10 +606,10 @@
       ::    kes    (~(del by kes) hen)
       ::  ==
       ::  ~&  eyre-them/(earn p.u.p.kyz)
-      %+  pass-note  hi//[p.kyz]
+      =+  wir=hi//[p.kyz]
       ?:  ?=(%hiss p.q.kyz)
-        [%e %meta :(slop !>(%them) !>(~) q.q.kyz)]
-      (ford-req root-beak [%cast %hiss %done ~ q.kyz])
+        (pass-note wir [%e %meta :(slop !>(%them) !>(~) q.q.kyz)])
+      (back wir %hiss q.kyz)
     ::
         %they                                           ::  inbound response
       =+  kas=(need (~(get by q.ask) p.kyz))
@@ -673,8 +674,8 @@
       ?+    -.tee  !!
         %ay  (ames-gram (slav %p p.tee) got/~ (slav %uv q.tee) |2.sih)
         %hi  =+  cay=[%httr !>(`httr`p.sih)]
-             ?:  ?=(%httr p.tee)  (give-sigh ~ cay)
-             (pass-note si/~ (ford-req root-beak [%cast p.tee %done `cay]))
+             ?:  ?=(%httr p.tee)  (give-sigh %& cay)
+             (back si/~ p.tee cay)
       ==
     ::
         %unto                                           ::  XX horrible
@@ -686,8 +687,8 @@
           %diff
         ?>  ?=([%of @ ^] tee)
         ?.  ?=(%json p.p.cuf)
-          ::~>  %slog.`rose/[" " "[" "]"]^~[>%backing< >p.p.cuf< (sell q.p.cuf)]
-          (back tee 0v0 %json p.cuf)
+          ::~>  %slog.`%*(. >[%backing p.p.cuf %q-p-cuf]< &3.+> (sell q.p.cuf))
+          (back tee %json p.cuf)
         (get-rush:(ire-ix p.tee) q.tee ((hard json) q.q.p.cuf))
       ::
           %quit  (axom tee [%mean ~])
@@ -716,7 +717,7 @@
       =.  our  (need hov)                             ::  XX
       |-  ^+  ..axon
       ?-    tee
-          [?(%on %ay) *]  ~|(e/ford/lost/-.tee !!)
+          $|(~ [?(%on %ay) *])  ~|(e/ford/lost/tee !!)
           [%si ~]  (give-sigh q.sih)
           [%hi ^]
         ?:  ?=(%| -.q.sih)
@@ -759,13 +760,15 @@
         =^  jon  ..ya  ~(stat-json ya p.tee cyz)
         $(tee q.tee, q.q.p.q.sih (add-json jon q.q.cay))
       ::
-          ~      
+          [%ha *]
         :: ~&  e/ford/hen
         ?.  ?=(%& -.q.sih)
           (fail 404 p.sih p.q.sih)
         =*  cay  p.q.sih
         ?.  ?=(%mime p.cay)
-          =-  (back tee p.sih %mime cay(q.q -))
+          =+  bek=-:(need (tome p.tee))
+          =-  (pass-note tee (ford-req bek [%flag p.sih -]))
+          =-  `silk`[%cast %mime %done ~ cay(q.q -)]
           ?+  p.cay  q.q.cay          :: inject dependency long-poll
             %urb  =|  urb=[[%html ~] [[%head ~] marl] [[%body ~] manx marl] ~]
                   .*(.(urb q.q.cay) !=((add-poll p.sih urb)))
@@ -802,9 +805,8 @@
     |=([him=ship gam=gram] (pass-note ~ %a %want [our him] [%e -.gam] +.gam))
   ::
   ++  back                                              ::  %ford bounce
-    |=  [tea=whir dep=@uvH mar=mark cay=cage]
-    =+  sil=`silk`[%cast mar %flag dep %done ~ cay]
-    (pass-note tea (ford-req root-beak sil))
+    |=  [tea=whir mar=mark cay=cage]
+    (pass-note tea (ford-req root-beak [%cast mar %done ~ cay]))
   ::
   ++  ford-kill  (pass-note ~ %f [%exec our *beak ~])        :: XX unused
   ++  ford-req  |=([bek=beak kas=silk] [%f [%exec our bek `kas]])
@@ -812,7 +814,7 @@
   ++  fail
     |=  [sas=@ud dep=@uvH mez=tang]
     ^+  +>
-    ::  (back ~ dep %tang !>(mez))  ::  tang->urb chain may be source of failure
+    :: (back ha/~ dep %tang !>(mez))  ::tang->urb chain may be source of failure
     (give-html sas ~ (add-poll dep (render-tang mez)))
   ::
   ++  give-html
@@ -870,6 +872,7 @@
     ++  abet  ..handle
     ++  done  .
     ++  teba  |*(a=$+(* ..handle) |*(b=* %_(done ..handle (a b))))
+    ++  back  (teba ^back)
     ++  give-html  (teba ^give-html)
     ++  give-thou  (teba ^give-thou)
     ++  give-json  (teba ^give-json)
@@ -1098,7 +1101,8 @@
           ?(%beam %spur)
         =+  ext=(fall p.pok %urb)
         =+  bem=?-(-.hem %beam p.hem, %spur [root-beak p.hem])
-        =+  wir=?+(mef !! %get ~, %head [%he ~])
+        =+  wir=`whir`[%ha (tope -.bem ~)]
+        =.  wir  ?+(mef !! %get wir, %head [%he wir])
         ~|  bad-beam/q.bem
         ?<  =([~ 0] (sky %cw (tope bem(+ ~, r [%da now]))))
         =-  ?.(aut [%& %| -] [%| (pass-note -)])  ::  XX properly
@@ -1124,8 +1128,8 @@
         =^  orx  ..ya   ?:(is-anon new-view:for-client [(need grab-oryx) ..ya])
         =+  [vew=(ire-ix (oryx-to-ixor orx)) cay=[%json !>(`json`s.hem)]]
         ?:  ?=(%json q.hem)  ((teba new-mess.vew) p.hem r.hem cay)
-        %+  pass-note  [%to (oryx-to-ixor orx) (scot %p p.p.hem) q.p.hem r.hem]
-        (ford-req root-beak [%cast q.hem %done ~ cay])
+        %+  back  to/[(oryx-to-ixor orx) (scot %p p.p.hem) q.p.hem r.hem]
+        [q.hem cay]
       ::
           %poll
         ?:  ?=([~ %js] p.pok)  ::  XX treat non-json cases?

@@ -62,7 +62,7 @@
               [%many p=(list coin)]                     ::
           ==                                            ::
 ++  cord  ,@t                                           ::  text atom (UTF-8)
-++  dock  (pair ,@p term)                              ::  message target
+++  dock  (pair ,@p term)                               ::  message target
 ++  date  ,[[a=? y=@ud] m=@ud t=tarp]                   ::  parsed date
 ++  dime  ,[p=@ta q=@]                                  ::
 ++  each  |*([a=$+(* *) b=$+(* *)] $%([& p=a] [| p=b])) ::  either a or b
@@ -2050,6 +2050,14 @@
     ?~  e
       (~(del by a) b)
     (~(put by a) b e)
+  ::
+  +-  gas                                               ::  concatenate
+    |*  b=(list ,[p=* q=*])
+    =>  .(b `(list ,_?>(?=([[* ^] ^] a) [p=p q=n.q]:n.a))`b)
+    |-  ^+  a
+    ?~  b
+      a
+    $(b t.b, a (put(+< a) p.i.b q.i.b))
   ::
   +-  get                                               ::  gets set by key
     |*  b=*
