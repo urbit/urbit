@@ -954,8 +954,10 @@
       |=  [cof=cafe lil=(jug mark mark)]
       =*  for  p.i.all
       =+  raf=(fang cof for)
-      ?:  =(%2 -.q.raf)  (fine cof lil)
-      %+  cope  raf
+      ?:  ?=(%2 -.q.raf)
+        %-  (slog 0 leaf/"! {<`mark`for>} build failed, ignoring:" q.q.raf)
+        (fine cof lil)
+      %+  cope  `(bolt vase)`raf
       |=  [cof=cafe vax=vase]
       %+  fine  cof
       %-  ~(gas ju lil) 
