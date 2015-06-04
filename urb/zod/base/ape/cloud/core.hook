@@ -126,7 +126,7 @@ $%  [%diff %json json]
 !:
 |_  [bowl vat=axle]
 ::
-::++  prep  ,_`.
+++  prep  ,_`.
 ::
 ++  peer
   |=  pax=path
@@ -304,15 +304,16 @@ $%  [%diff %json json]
 ::
 ++  create-gce-disk
   |=  act=json :: num=(unit ,@u)
+  ~&  act
   =+  :-  name=(need ((ot name/so ~):jo act))
-      snapshot=(need ((ot 'instance_image'^so ~):jo act))
+      snapshot=(need ((ot 'instance_img'^so ~):jo act))
   =+  :-  name=(need ((ot name/so ~):jo act))
   snap=(need ((ot snap/so ~):jo act))
   =+  ^-  body=json
       (jobe name/s/name %'sourceSnapshot'^s/'compute/v1/projects/urbcloud/global/snapshots/snapshot-1' ~)  ::^so/snap ~)
   %-  httpreq
   :*  /create-gce-disk/snapshot/name
-      ~['googleapis' 'www']    /compute/v1/projects/urbcloud/zones/us-central1-b/disks
+      ~['googleapis' 'www']    /compute/v1/projects/urbcloud/zones/us-central1-a/disks
       [%post body]
      %^  mo  ['Content-Type' 'application/json' ~]
        ['Authorization' (cat 3 'Bearer ' access.gce.toke.vat) ~]
@@ -355,10 +356,10 @@ $%  [%diff %json json]
 ++  create-gce
   |=  [name=@t snap=@t]
   ~&  create-gce-received/snap
-  =+  src=(cat 3 'compute/v1/projects/urbcloud/zones/us-central1-b/disks/' name)
+  =+  src=(cat 3 'compute/v1/projects/urbcloud/zones/us-central1-a/disks/' name)
   =+  ^-  body=json
       %-  jobe
-      :~  name/s/name  'machineType'^s/'zones/us-central1-b/machineTypes/n1-standard-1'
+      :~  name/s/name  'machineType'^s/'zones/us-central1-a/machineTypes/n1-standard-1'
       :-  %disks  :-  %a  :_  ~
       (jobe boot/b/%.y type/s/'persistent' source/s/src ~)
       :-  'networkInterfaces'  :-  %a  :_  ~
@@ -366,7 +367,7 @@ $%  [%diff %json json]
       ==
   %-  httpreq
   :*  `path`/create-gce
-      `(list cord)`~['googleapis' 'www']  `path`/compute/v1/projects/urbcloud/zones/us-central1-b/'instances'
+      `(list cord)`~['googleapis' 'www']  `path`/compute/v1/projects/urbcloud/zones/us-central1-a/'instances'
       [%post `json`body]
      %^  mo  ['Content-Type' 'application/json' ~]
        ['Authorization' (cat 3 'Bearer ' access.gce.toke.vat) ~]
@@ -404,30 +405,33 @@ $%  [%diff %json json]
   ^-  [(list move) _+>.$]
   =+  parsed=(rash q:(need r.resp) apex:poja)           ::  body httr to json
   =+  items=(need ((ot items/(ar some) ~):jo parsed))
-  =+  ^-  ins=(list ,[@t instance])
+  ~&  why-no-work/resp
+  =+  ^=  ins  ::^-  ins=(list ,[@t instance])
       ~|  'bad-json'^items
       %+  turn  items
       |=  in=json
-      =<  [id .]
-      ^-  instance
+      ::=<  [id .]
+      ::^-  instance
       :-  %gce
       %-  need
       %.  in  =+  jo
       %-  ot
       :~  name/so  id/so  status/so  'creationTimestamp'^(su parse-iso8601)  ::zone/so
           'machineType'^(cu tail-url so)
-          'networkInterfaces'^parse-ip-gce
+::          'networkInterfaces'^parse-ip-gce
       ==
-  =+  ^=  new 
-      %+  skip  ins
-      |=(a=[@t instance] (~(has by insts.vat) id.a))
-  =.  insts.vat
-  (~(gas by insts.vat) new)
-  =+  buf=`@da`(add ~s10 now)
-  :_  +>.$
-  =+  lis=(~(tap by insts.vat))
-  :_  (spam (state-to-json (turn lis |=(a=[@t instance] +.a))))
-  [ost %wait /refresh-gce buf]
+      ~&  ins
+      :_  +>.$  ~
+::  =+  ^=  new 
+::      %+  skip  ins
+::      |=(a=[@t instance] (~(has by insts.vat) id.a))
+::  =.  insts.vat
+::  (~(gas by insts.vat) new)
+::  =+  buf=`@da`(add ~s10 now)
+::  :_  +>.$
+::  =+  lis=(~(tap by insts.vat))
+::  :_  (spam (state-to-json (turn lis |=(a=[@t instance] +.a))))
+::  [ost %wait /refresh-gce buf]
 ::
 ++  list-instances-do
   =+  ^=  lis
