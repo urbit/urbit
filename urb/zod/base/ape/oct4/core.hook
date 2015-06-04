@@ -94,7 +94,7 @@
 ++  seen  (hail(eye (~(put by eye) ost *sole-share)) &) ::  console subscribe
 ++  send  |=(point (dish poke/(like %oct4-move +<)))    ::  send move
 ++  show  prom:(fect %mor rend)                         ::  update console
-++  soul  =(%sole -:q:(~(got by sup) ost))              ::  is console
+++  soul  =+((~(get by sup) ost) ?=([~ * %sole *] -))   ::  is console
 ++  stat  (weld ?~(rem ~ "@{(scow p/u.rem)}") voy:here) ::  prompt line
 ++  stop  ?~(rem done wild:(dish pull/(like ~)))        ::  unsubscribe
 ++  tame  (flap |=(_. (fact:+< &/gam)) |=(_. prom:+<))  ::  light update

@@ -1399,7 +1399,7 @@
                   ==
               ==
             +>.$
-          (wool [/a hen] /q/pi ~ |)
+          (wool [/a/ping hen] /q/pi ~ |)
         ::
         ++  thaw                                        ::    thaw:ho:um:am
           ^+  .                                         ::  wakeup bomb
@@ -1717,7 +1717,7 @@
         =.  ton.fox  (~(su go ton.fox) gus)
         :_  fox
         :~  :-  hen
-            [%pass ~ %a %want p.bon [%r %ta t.t.q.q.bon] `(unit will)`wyl]
+            [%pass /ta/beginning %a %want p.bon [%r %ta t.t.q.q.bon] `(unit will)`wyl]
         ==
           %re                                           ::    %re
         :_  fox

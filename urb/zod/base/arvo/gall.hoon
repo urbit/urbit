@@ -1029,6 +1029,7 @@
         %merg  `%c
         %plug  `%c
         %them  `%e
+        %wait  `%t
         %want  `%a
         %warp  `%c
       ==
