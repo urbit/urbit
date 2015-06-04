@@ -46,11 +46,11 @@ $:  cred=(unit ,[app-secret=@t client-id=@t])
 ++  redirect-uri  [hostname `/~~/home/pub/bit/fab ~]
 ++  hostname  ^-  hart
   ?+  (clan our.hid)  !!
-     %czar  [| ?+(our.hid !! %~zod `8.443, %~fyr `8.444) `/localhost]
+     %czar  [| ?+(our.hid `8.443 %~fyr `8.444) `/localhost]
      %duke  [| ~ `/org/urbit/(crip +:<our.hid>)]
   ==
 ++  auth-url
-  %+  weld  "https://www.coinbase.com/oauth/authorize"
+  %+  weld  "https://sandbox.coinbase.com/oauth/authorize"
   %-  tail:earn  :~
     'response_type'^%code
     'client_id'^client-id:(need cred.vat)
