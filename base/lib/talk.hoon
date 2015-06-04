@@ -5,7 +5,7 @@
   ::
 /?    314
 /-    *talk
-::
+!:
 ::::
   ::
 |%
@@ -22,17 +22,11 @@
   :-  %talk-command
   ^-  command
   :-  %publish
-  %-  flop
-  =<  acc
-  %+  roll  mes
-  =<  .(eny ^eny)
-  |=  [tan=tank acc=(list thought) eny=@uvI]
-  ^-  [acc=(list thought) eny=@uvI]
-  =+  (sham eny mes)
-  :_  -
-  :_  acc
+  |-  ^-  (list thought)
+  ?~  mes  ~
+  :_  $(mes t.mes, eny (sham eny mes))
   ^-  thought
-  :+  -
+  :+  (shaf %thot eny)
     [[[%& our (main our)] [*envelope %pending]] ~ ~]
-  [now *bouquet [%app dap (crip ~(ram re tan))]]
+  [now *bouquet [%app dap (crip ~(ram re i.mes))]]
 --

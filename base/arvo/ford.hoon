@@ -853,9 +853,6 @@
       |=  [cof=cafe sam=vase]
       ^-  (bolt vase)
       %+  cool  |.(leaf/"ford: check {<[for bek `@p`(mug q.sam)]>}")
-      ?:  ?=(?(%gate %core %door) for)
-        ::  ~&  [%lake-easy for bek]
-        (fine cof sam)
       ?:  ?=(?(%hoon %hook) for)
         =+  mas=((soft ,@t) q.sam)
         ?~  mas
