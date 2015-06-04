@@ -1399,7 +1399,7 @@
                   ==
               ==
             +>.$
-          (wool [/a hen] /q/pi ~ |)
+          (wool [/a/ping hen] /q/pi ~ |)
         ::
         ++  thaw                                        ::    thaw:ho:um:am
           ^+  .                                         ::  wakeup bomb

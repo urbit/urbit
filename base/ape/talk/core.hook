@@ -1043,6 +1043,7 @@
   ::
   ++  ra-coup-repeat                                    ::
     |=  [[num=@ud her=@p man=span] saw=(unit tang)]
+    ~&  [%ra-coup-repeat +<]
     (ra-repeat num [%& her man] saw)
   ::
   ++  ra-repeat                                         ::  remove from outbox 
@@ -1662,7 +1663,7 @@
 ++  poke-talk-command                                   ::  accept command
   |=  [cod=command]
   ^-  [(list move) _+>]
-  ::  ~&  [%talk-poke-command src.hid cod]
+  ~&  [%talk-poke-command src.hid cod]
   ra-abet:(~(ra-apply ra ost.hid ~) src.hid cod)
 ::
 ++  poke-sole-action                                    ::  accept console
@@ -1676,6 +1677,7 @@
 ::
 ++  coup-repeat                                         ::
   |=  [way=wire saw=(unit tang)]
+  ~&  [%coup-repeat way saw]
   %+  etch-repeat  [%repeat way]  |=  [num=@ud src=@p man=span]
   ra-abet:(~(ra-coup-repeat ra ost.hid ~) [num src man] saw)
 ::
