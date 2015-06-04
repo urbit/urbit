@@ -199,7 +199,7 @@
     %+  mo-pass  [%sys how dap (scot %p p.pup) q.pup ~]
     =+  bek=[p.pup q.pup [%da now]]
     ^-  note-arvo
-    [%f %exec our bek `[%boil %core [bek [dap %ape ~]] ~]]
+    [%f %exec our bek `[%core [bek [dap %ape ~]]]]
   ::
   ++  mo-away                                           ::  foreign request
     |=  [him=ship caz=cush]                             ::  
