@@ -6,6 +6,10 @@
 ::::
   !:
 |=  $:  [now=@da eny=@uvI bec=beak]
-        [[syd=desk dap=term ~] ~]
+        [arg=[@ $|(~ [@ ~])] ~]
     ==
-[%hood-start syd dap]
+:-  %hood-start
+?>  ((sane %tas) -.arg)
+?@  +.arg  [%home -.arg]
+?>  ((sane %tas) +<.arg)
+[-.arg +<.arg]

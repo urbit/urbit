@@ -2051,6 +2051,14 @@
       (~(del by a) b)
     (~(put by a) b e)
   ::
+  +-  gas                                               ::  concatenate
+    |*  b=(list ,[p=* q=*])
+    =>  .(b `(list ,_?>(?=([[* ^] ^] a) [p=p q=n.q]:n.a))`b)
+    |-  ^+  a
+    ?~  b
+      a
+    $(b t.b, a (put(+< a) p.i.b q.i.b))
+  ::
   +-  get                                               ::  gets set by key
     |*  b=*
     =+  c=(~(get by a) b)
