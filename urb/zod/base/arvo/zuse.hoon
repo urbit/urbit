@@ -2503,6 +2503,7 @@
       [%bunt p=mark]                                    ::  example of mark
       [%call p=silk q=silk]                             ::  slam
       [%cast p=mark q=silk]                             ::  translate
+      [%core p=beam]                                    ::  build program
       [%diff p=silk q=silk]                             ::  diff
       [%done p=(set beam) q=cage]                       ::  literal
       [%dude p=tank q=silk]                             ::  error wrap
