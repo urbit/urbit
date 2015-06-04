@@ -51,10 +51,6 @@ struct telnet_parser {
 
 #line 53 "src/parser.c"
 static const int telnet_parser_start = 7;
-static const int telnet_parser_first_final = 7;
-static const int telnet_parser_error = -1;
-
-static const int telnet_parser_en_main = 7;
 
 
 #line 130 "src/parser.rl"
