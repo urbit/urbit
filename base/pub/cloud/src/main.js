@@ -130,7 +130,6 @@ Droplet = React.createClass({
     var acts = ["start","stop","reboot","delete"]
     var buttons = [];
     var buttons = acts.map(function(act){
-      console.log($this.props.id)
       return b({onClick:function(){
         $this.dropletAction($this.props.id, act)
       }}, act)
