@@ -780,7 +780,7 @@
       ==
     ==
   ::
-  ++  root-beak  `beak`[our %demo da/now]               ::  XX
+  ++  root-beak  `beak`[our %home da/now]               ::  XX
   ++  emule
     |=  a=_|?(..emule)  ^+  ..emule
     =+  mul=(mule a)
