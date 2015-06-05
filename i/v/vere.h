@@ -293,7 +293,7 @@
         c3_d len_d;                         //  length in words
       } u3_ulog;
 
-      struct _u3_uhot;
+      struct _u3_umon;
       struct _u3_udir;
       struct _u3_ufil;
 
@@ -352,8 +352,8 @@
         c3_o              dir;              //  c3y if dir, c3n if file
         c3_o              dry;              //  ie, unmodified
         c3_c*             pax_c;            //  absolute path
-        struct _u3_unod*  nex_u;            //  internal list
         struct _u3_unod*  par_u;            //  parent
+        struct _u3_unod*  nex_u;            //  internal list
       } u3_unod;
       
       typedef struct _u3_ufil {
@@ -361,9 +361,10 @@
         c3_o              dir;              //  c3y if dir, c3n if file
         c3_o              dry;              //  ie, unmodified
         c3_c*             pax_c;            //  absolute path
+        struct _u3_unod*  par_u;            //  parent
         struct _u3_unod*  nex_u;            //  internal list
-        c3_w              sum_w;            //  md5sum of last %into
-        c3_w              mus_w;            //  md5sum of last %ergo
+        c3_w              mug_w[4];         //  mug of last %into
+        c3_w              gum_w[4];         //  mug of last %ergo
       } u3_ufil;
       
       typedef struct _u3_udir {
@@ -371,8 +372,9 @@
         c3_o              dir;              //  c3y if dir, c3n if file
         c3_o              dry;              //  ie, unmodified
         c3_c*             pax_c;            //  absolute path
+        struct _u3_unod*  par_u;            //  parent
         struct _u3_unod*  nex_u;            //  internal list
-        u3_unod*          kid_u;            // subnodes
+        u3_unod*          kid_u;            //  subnodes
       } u3_udir;
 
       typedef struct _u3_umon {
@@ -585,7 +587,7 @@
     */
       typedef struct _u3_host {
         c3_w       kno_w;                   //  current executing stage
-        c3_c*      dir_c;                   //  pier path
+        c3_c*      dir_c;                   //  pier path (no trailing /)
         c3_d       now_d;                   //  event tick
         uv_loop_t* lup_u;                   //  libuv event loop
         u3_http*   htp_u;                   //  http servers
