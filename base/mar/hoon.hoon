@@ -8,8 +8,8 @@
 ++  grow                                                ::  convert to
   |%
   ++  mime  `^mime`[/text/hoon (taco own)]              ::  convert to %mime
-  ++  psal  ;div:(pre:"{(trip own)}")                   ::  convert to %html
-  ++  hymn  ;html:(head:title:"Source" "+{psal}")
+  ++  elem  ;div:(pre:"{(trip own)}")                   ::  convert to %html
+  ++  hymn  ;html:(head:title:"Source" "+{elem}")
   ++  txt
     (lore (cat 3 own '\0a'))
   --

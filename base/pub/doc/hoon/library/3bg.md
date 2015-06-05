@@ -120,7 +120,7 @@ Retrieieves the %eyre FCGI, producing a [`++epic`](). Used primarily in
 
 `but` is a [`++path`]().
 
-    ~zod/main=> (fuel [[p=~zod q=%try r=[%ud p=2]] s=/psal] /web/'._.~-~~~~.gen~-~-_~~05vg0001v09f0n30fbh7dn6ab2jakmmspdq04nef5h70qbd5lh6atr4c5j2qrbldpp62q1df1in0sr1ding0c3qgt7kclj74qb65lm6atrkc5k2qpr5e1mmispdchin4p3fegmiqrjpdlo62p1dchsn4p39comn8pbcehgmsbbef5p7crrifr3o035dhgfrk2b5__')
+    ~zod/main=> (fuel [[p=~zod q=%try r=[%ud p=2]] s=/elem] /web/'._.~-~~~~.gen~-~-_~~05vg0001v09f0n30fbh7dn6ab2jakmmspdq04nef5h70qbd5lh6atr4c5j2qrbldpp62q1df1in0sr1ding0c3qgt7kclj74qb65lm6atrkc5k2qpr5e1mmispdchin4p3fegmiqrjpdlo62p1dchsn4p39comn8pbcehgmsbbef5p7crrifr3o035dhgfrk2b5__')
     [ qix={}
         ced
       [ hut=[p=%.y q=[~ 8.445] r=[%.n p=.0.0.0.0]]
@@ -130,7 +130,7 @@ Retrieieves the %eyre FCGI, producing a [`++epic`](). Used primarily in
         cip=[%.y p=.127.0.0.1]
         cum={}
       ]
-      bem=[[p=~zod q=%try r=[%ud p=2]] s=/psal]
+      bem=[[p=~zod q=%try r=[%ud p=2]] s=/elem]
       but=/
       nyp=/gen
     ]
