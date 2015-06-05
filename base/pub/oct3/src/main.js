@@ -53,9 +53,9 @@ $(function() {
       state.plo = "" 
     if(!state.plx) 
       state.plx = "" 
-    $('#o .ship').toggleClass('waiting', (state.plo=="")).
+    $('#o .ship').toggleClass('anyone', (state.plo=="")).
       text(state.plo.slice(1))
-    $('#x .ship').toggleClass('waiting', (state.plx=="")).
+    $('#x .ship').toggleClass('anyone', (state.plx=="")).
       text(state.plx.slice(1))
   }
 

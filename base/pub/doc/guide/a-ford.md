@@ -707,7 +707,7 @@ odor and a value, and tries to cast the value to that odor.
                         |=  [* b=manx]
                           b
                  /@
-                 /psal/
+                 /elem/
     ::
     ^-  manx
     ;html
@@ -762,24 +762,24 @@ the computation below it. You can think of it sort of like setting an
 environment variable. Everything below uses our `++beam` `/%%/lib`.
 
 If we take the next few lines and write them as pseudo code in wide form
-they might look something like this, `(/; [gate] (/@ /psal/))`. That
+they might look something like this, `(/; [gate] (/@ /elem/))`. That
 being the case, let's start at the bottom and move upwards since that's
 how our data flows. In depth documentation on individual `++horn` runes
 can be found in the [horn section of the rune library]().
 
-`/psal/` loads our `psal` mark. Marks are like content types, and we
-keep them in `/main/mar/`. You can open `/main/mar/psal/door.hook` to
+`/elem/` loads our `elem` mark. Marks are like content types, and we
+keep them in `/main/mar/`. You can open `/main/mar/elem/door.hook` to
 see that we specify the ways in which a particular mark can be converted
 to produced well typed output. The general form of this is [`/mark/`]()
-where `mark` exists in the `/main/mar/` directory. A `psal` is a partial
+where `mark` exists in the `/main/mar/` directory. A `elem` is a partial
 `hymn`, where `hymn` is the hoon structure for `html`.
 
 `/@` loads a list of files in numerical order from the previously
-specified `++beam` using our mark, `psal`. `/@` has a few close
+specified `++beam` using our mark, `elem`. `/@` has a few close
 relatives. `/&`, for example, reads files by `@da` or absolute date. You
 can see the rest in the [horn section of the library]().
 
-`/;` takes the output from `/@` and `/psal/` and passes it to a twig. In
+`/;` takes the output from `/@` and `/elem/` and passes it to a twig. In
 this case, a gate. Our `/@` actually produces a [`++list`]() of
 pairs of `[@ manx]` where the `@` is the filename, and the `manx` is the
 converted contents. We use [`++turn`](), one of our `++list`
