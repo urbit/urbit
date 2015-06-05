@@ -297,6 +297,7 @@
       struct _u3_udir;
       struct _u3_ufil;
 
+#ifdef DELETEME
     /* u3_unod: in-file or in-directory.
     */
       typedef struct _u3_unod {
@@ -344,6 +345,43 @@
         struct _u3_uhot* nex_u;             //  internal list
       } u3_uhot;
 
+#endif
+
+      typedef struct _u3_unod {
+        uv_fs_event_t     was_u;            //  stat watcher
+        c3_o              dir;              //  c3y if dir, c3n if file
+        c3_o              dry;              //  ie, unmodified
+        c3_c*             pax_c;            //  absolute path
+        struct _u3_unod*  nex_u;            //  internal list
+        struct _u3_unod*  par_u;            //  parent
+      } u3_unod;
+      
+      typedef struct _u3_ufil {
+        uv_fs_event_t     was_u;            //  stat watcher
+        c3_o              dir;              //  c3y if dir, c3n if file
+        c3_o              dry;              //  ie, unmodified
+        c3_c*             pax_c;            //  absolute path
+        struct _u3_unod*  nex_u;            //  internal list
+        c3_w              sum_w;            //  md5sum of last %into
+        c3_w              mus_w;            //  md5sum of last %ergo
+      } u3_ufil;
+      
+      typedef struct _u3_udir {
+        uv_fs_event_t     was_u;            //  stat watcher
+        c3_o              dir;              //  c3y if dir, c3n if file
+        c3_o              dry;              //  ie, unmodified
+        c3_c*             pax_c;            //  absolute path
+        struct _u3_unod*  nex_u;            //  internal list
+        u3_unod*          kid_u;            // subnodes
+      } u3_udir;
+
+      typedef struct _u3_umon {
+        u3_udir   dir_u;                    //  root directory
+        c3_c*     nam_c;                    //  mount point name
+        u3_umon*  nex_u;                    //  internal list
+      } u3_umon;
+
+
     /* u3_usig: receive signals.
     */
       typedef struct _u3_usig {
@@ -356,7 +394,7 @@
     */
       typedef struct _u3_unix {
         uv_check_t   syn_u;                 //  fs sync check
-        u3_uhot*     hot_u;                 //  host state
+        u3_umon*     mon_u;                 //  mount points
         u3_usig*     sig_u;                 //  signal list
 #ifdef SYNCLOG
         c3_w         lot_w;                 //  sync-slot
@@ -935,17 +973,10 @@
         void
         u3_unix_ef_look(void);
 
-      /* u3_unix_ef_init(): update filesystem for new acquisition.
+      /* u3_unix_ef_ergo(): update filesystem from urbit
       */
         void
-        u3_unix_ef_init(u3_noun who);
-
-      /* u3_unix_ef_ergo(): update filesystem, outbound.
-      */
-        void
-        u3_unix_ef_ergo(u3_noun who,
-                        u3_noun syd,
-                        u3_noun rel,
+        u3_unix_ef_ergo(u3_noun mon,
                         u3_noun can);
 
       /* u3_unix_io_init(): initialize storage.
