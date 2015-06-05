@@ -14,11 +14,10 @@
   |%
   ++  md                                                ::  convert from %md
     =<  |=(src=@t (mark src))
-    ~%  %utyl  ..is  ~
-    ::~%  %utyl  +>+>+>+>  ~
+    ~%  %down  ..is  ~
     |%
     ++  mark
-      ~/  %dawn
+      ~/  %mark
       |=  p=@t
       (normalize (rash p parse))
     --
