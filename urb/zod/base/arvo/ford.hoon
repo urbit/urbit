@@ -530,7 +530,7 @@
     ++  fade                                            ::  compile to hood
       |=  [cof=cafe for=mark bem=beam]
       ^-  (bolt hood)
-      %+  cool  |.(leaf/"ford: fade {<[(tope bem)]>}")
+      ::  %+  cool  |.(leaf/"ford: fade {<[(tope bem)]>}")
       %+  cope  (cope (make cof [%bake for bem ~]) furl)
       |=  [cof=cafe cay=cage]
       %+  (clef %hood)  (fine cof bem(r [%ud 0]) cay)
@@ -912,7 +912,7 @@
       ?~  von
         [p=*cafe q=[%1 [[%x bem ~] ~ ~]]]
       ?~  u.von
-        (flaw cof leaf/"lear: file unavailable" (smyt (tope bem)) ~)
+        (flaw cof leaf/"file unavailable" (smyt (tope bem)) ~)
       (fine cof %& u.u.von)
     ::
     ++  lend                                            ::  load arch
@@ -930,7 +930,7 @@
       ?~  von
         [p=*cafe q=[%1 [[%x bem ~] ~ ~]]]
       ?~  u.von
-        (flaw cof leaf/"liar: file unavailable" (smyt (tope bem)) ~)
+        (flaw cof leaf/"file not found" (smyt (tope bem)) ~)
       (fine cof q.u.u.von)
     ::
     ++  lily                                            ::  translation targets
@@ -1108,12 +1108,12 @@
         ==
       ::
           %bake
-        :: ~&  >  [p.kas (tope q.kas)]
-        %+  cool  |.(leaf/"ford: bake {<p.kas>} {<(tope q.kas)>}")
+        ::  ~&  >  [p.kas (tope q.kas)]
+        ::  %+  cool  |.(leaf/"ford: bake {<p.kas>} {<(tope q.kas)>}")
         %+  cope  (lima cof p.kas q.kas r.kas)
         |=  [cof=cafe vux=(unit vase)]
         ?~  vux
-          (flaw cof leaf/"bake failed" (smyt (tope q.kas)) ~)
+          (flaw cof leaf/"file not found" (smyt (tope q.kas)) ~)
         (fine cof [%& p.kas u.vux])
       ::
           %boil

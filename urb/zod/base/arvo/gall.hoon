@@ -216,9 +216,11 @@
     =^  num  +>.$  (mo-bale him)
     =+  ^=  roc  ^-  rook
         ?-  -.q.caz
+          %peel  !!
           %poke  [%m p.p.q.caz q.q.p.q.caz]
           %pull  [%u ~]
           %puff  !!
+          %punk  !!
           %peer  [%s p.q.caz]
         ==
     %+  mo-pass  
@@ -307,6 +309,25 @@
       ?>  ?=([%f %made *] sih)
       ?>  ?=([@ @ @ @ ~] t.pax)
       (mo-boon i.t.pax (mo-chew t.t.pax) +>.sih)
+    ::
+        %pel                                            ::  translated peer
+      ?>  ?=([@ @ ~] t.pax)
+      =+  :*  mar=i.t.pax
+              dap=i.t.t.pax
+          ==
+      ?:  ?=([%f %made *] sih)
+        ?-  -.q.+.sih
+          %tabl  ~|(%made-tabl !!)
+          %|     ~&  [%mo-cyst-fail p.q.+>.sih]         ::  XX better errors pls
+                 (mo-give %unto %quit ~)                ::  
+          %&     (mo-give %unto %diff p.q.+>.sih)
+        ==
+      ?>  ?=([%g %unto *] sih)
+      ?.  ?=(%diff -.+>.sih)
+        (mo-give %unto +>.sih)
+      %+  mo-pass
+        [%sys pax]
+      [%f %exec our (mo-beak dap) ~ %cast mar %done ~ `cage`+>+.sih]
     ::
         %red                                            ::  diff ack
       ?>  ?=([@ @ @ ~] t.pax)
@@ -454,6 +475,14 @@
       %+  mo-pass
         [%sys %val (scot %p q.q.pry) dap ~]
       [%f %exec our (mo-beak dap) ~ %vale p.cub our q.cub]
+    ?:  ?=(%punk -.cub)
+      %+  mo-pass
+        [%sys %val (scot %p q.q.pry) dap ~]
+      [%f %exec our (mo-beak dap) ~ %cast p.cub %done ~ q.cub]
+    ?:  ?=(%peel -.cub)
+      %+  mo-pass
+        [%sys %pel p.cub dap ~]
+      [%g %deal [q.q.pry our] dap %peer q.cub]
     ap-abet:(ap-club:(ap-abed:ap dap pry) cub)
   ::
   ++  mo-club                                           ::  local action
@@ -580,9 +609,11 @@
       |=  cub=club
       ^+  +>
       ?-  -.cub
+        %peel   !!
         %poke   (ap-poke +.cub)
         %peer   (ap-peer +.cub)
         %puff   !!
+        %punk   !!
         %pull   ap-pull
         %pump   ap-fall
       ==
@@ -924,11 +955,11 @@
       |=  [pax=path cuf=cuft]
       ^+  +>
       ?-  -.cuf
-        %coup  (ap-punk q.q.pry %coup +.pax `!>(p.cuf))
+        %coup  (ap-take q.q.pry %coup +.pax `!>(p.cuf))
         %diff  (ap-diff q.q.pry pax p.cuf)
         %doff  !!
-        %quit  (ap-punk q.q.pry %quit +.pax ~)
-        %reap  (ap-punk q.q.pry %reap +.pax `!>(p.cuf))
+        %quit  (ap-take q.q.pry %quit +.pax ~)
+        %reap  (ap-take q.q.pry %reap +.pax `!>(p.cuf))
       ==
     ::
     ++  ap-prep                                         ::  install
@@ -981,12 +1012,12 @@
       ~&  [%ap-kill dap ost]
       (ap-give:ap-pull %quit ~)
     ::
-    ++  ap-punk                                         ::  non-diff gall take
+    ++  ap-take                                         ::  non-diff gall take
       |=  [her=ship cog=term pax=path vux=(unit vase)]
       ^+  +>
       =+  cug=(ap-find cog pax)
       ?~  cug
-        ~&  [%ap-punk-none cog pax]
+        ~&  [%ap-take-none cog pax]
         +>.$
       =^  cam  +>.$  
         %+  ap-call  q.u.cug
@@ -1095,7 +1126,7 @@
     (mo-come:(mo-abed:mo q.p.q.hic hen) p.p.q.hic q.q.hic)
   ::
       %init 
-    ~&  [%gall-init p.q.hic]
+    ::  ~&  [%gall-init p.q.hic]
     [~ ..^$(pol.all (~(put by pol.all) p.q.hic [hen ~ ~ ~]))]
   ::
       %rote

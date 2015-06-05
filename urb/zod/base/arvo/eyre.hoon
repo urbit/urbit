@@ -59,7 +59,6 @@
               [%si ~]                                   ::  response done
               [%of p=ixor q=$|(~ whir-of)]              ::  associated view
               [%on p=span:,@uvH ~]                      ::  dependency
-              [%to p=ixor q=span:ship r=term s=wire]    ::  associated app
           ==                                            ::
 ++  whir-of  ,[p=span:ship q=term r=wire]               ::  path in dock
 --                                                      ::
@@ -745,12 +744,6 @@
         ?>  ?=(%json p.cay)                    ::  XX others
         ((hard json) q.q.cay)
       ::
-          [%to ^]
-        ?:  ?=(%| -.q.sih)
-          (mean-json 500 ~ %cast-fail p.q.sih)
-        ~|  tee
-        (new-mess:(ire-ix p.tee) [(slav %p q.tee) r.tee] s.tee p.q.sih)
-      ::
           [%at ^]
         ?.  ?=([%& %js ^] q.sih)
           ~&  e/at-lost/p.tee
@@ -1127,10 +1120,8 @@
           %mess
         :-  %|
         =^  orx  ..ya   ?:(is-anon new-view:for-client [(need grab-oryx) ..ya])
-        =+  [vew=(ire-ix (oryx-to-ixor orx)) cay=[%json !>(`json`s.hem)]]
-        ?:  ?=(%json q.hem)  ((teba new-mess.vew) p.hem r.hem cay)
-        %+  back  to/[(oryx-to-ixor orx) (scot %p p.p.hem) q.p.hem r.hem]
-        [q.hem cay]
+        =+  vew=(ire-ix (oryx-to-ixor orx))
+        ((teba new-mess.vew) p.hem r.hem q.hem %json !>(`json`s.hem))
       ::
           %poll
         ?:  ?=([~ %js] p.pok)  ::  XX treat non-json cases?
@@ -1375,12 +1366,12 @@
       [+(p.eve) (~(put by q.eve) p.eve a)]
     ::
     ++  new-mess
-      |=  [a=dock b=wire c=cage]  ^+  ..ix
-      (hurl-note [a b] [%g %deal [him -.a] +.a %poke c])
+      |=  [a=dock b=wire c=mark d=cage]  ^+  ..ix
+      (hurl-note [a b] [%g %deal [him -.a] +.a %punk c d])
     ::
     ++  add-subs
       |=  [a=dock %json b=wire c=path]  ^+  ..ix
-      (hurl-note [a b] [%g %deal [him -.a] +.a %peer c])
+      (hurl-note [a b] [%g %deal [him -.a] +.a %peel %json c])
     ::
     ++  del-subs                      ::  XX per path?
       |=  [a=dock %json b=wire c=path]  ^+  ..ix

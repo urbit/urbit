@@ -107,7 +107,7 @@ _reck_kick_term(u3_noun pox, c3_l tid_l, u3_noun fav)
       u3_noun hox =  u3dc("scot", 'p', u3k(p_fav));
       c3_c* nam_c = u3r_string(hox);
       
-      uL(fprintf(uH, "kick: init: %s\n", nam_c));
+      // uL(fprintf(uH, "kick: init: %s\n", nam_c));
       free(nam_c); u3z(pox); u3z(hox); u3z(fav); return c3y;
     } break;
 
