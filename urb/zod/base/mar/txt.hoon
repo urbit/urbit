@@ -15,7 +15,7 @@
   =>  v=.
   |%
   ++  mime  =>  v  [/text/plain (taco (role txt))]
-  ++  psal  =>  v  ;div: {(trip (role txt))}
+  ++  elem  =>  v  ;div: {(trip (role txt))}
   --
 ++  grad
   |%

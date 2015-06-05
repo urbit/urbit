@@ -34,10 +34,10 @@
           ;*  (sing don)
         ==
       ==
-  ++  psal                                          ::  convert to %psal
+  ++  elem                                          ::  convert to %elem
     ;div
       ;*  (sing don)
     ==
-  ::  ++  react  psal
+  ::  ++  react  elem
   --
 --

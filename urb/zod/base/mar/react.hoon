@@ -17,5 +17,5 @@
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  manx                                ::  clam from %noun
-          ++  psal  |=  a=manx  a
+          ++  elem  |=  a=manx  a
 --        --
