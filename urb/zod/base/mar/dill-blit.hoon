@@ -1,5 +1,5 @@
 ::
-::::  /hook/door/dill-blit/mar
+::::  /hoon/dill-blit/mar
   ::
 /?    314
 /-    *sole

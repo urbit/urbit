@@ -1,5 +1,5 @@
 ::
-::::  /hook/door/talk-command/mar
+::::  /hoon/talk-command/mar
   ::
 /?    314
 /-    *talk

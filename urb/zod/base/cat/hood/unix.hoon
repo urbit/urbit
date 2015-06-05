@@ -1,5 +1,5 @@
 ::
-::::  /hook/gate/unix/hood/cat
+::::  /hoon/unix/hood/cat
   ::
 /?  314
 ::

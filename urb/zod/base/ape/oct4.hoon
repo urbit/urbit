@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hook/core/oct4/ape                               ::::::  dependencies
+::::  /hoon/oct4/ape                               ::::::  dependencies
   ::                                                    ::  ::
 /?  310                                                 ::  arvo version
 /-  *sole, *oct4                                        ::  structures

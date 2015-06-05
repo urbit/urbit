@@ -1,6 +1,6 @@
 ::    this mark is used to receive incoming oauth2 tokens that we use to poke our %gall server
 ::
-::::  /hook/door/do-auth/mar
+::::  /hoon/do-auth/mar
   ::
 /?  310
 !:

@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hook/core/talk/app                               ::  ::
+::::  /hoon/talk/app                               ::  ::
   ::                                                    ::  ::
 /?  314
 /-  *talk, *sole

@@ -1,5 +1,5 @@
 ::
-::::  /hook/door/purl/mar
+::::  /hoon/purl/mar
   ::
 /?  314
 |_  url=purl

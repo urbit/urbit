@@ -1,5 +1,5 @@
 ::
-::::  /hook/door/sole-action/mar
+::::  /hoon/sole-action/mar
   ::
 /?    314
 /-    *sole

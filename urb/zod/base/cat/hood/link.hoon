@@ -1,5 +1,5 @@
 ::
-::::  /hook/gate/link/hood/cat
+::::  /hoon/link/hood/cat
   ::
 /?  314
 ::

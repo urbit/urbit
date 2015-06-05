@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hook/core/oct2/sur                               ::::::  dependencies
+::::  /hoon/oct2/sur                               ::::::  dependencies
   ::                                                    ::  ::
 /?    310                                               ::
 ::                                                      ::  ::

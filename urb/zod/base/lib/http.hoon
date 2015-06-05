@@ -1,5 +1,5 @@
 ::
-::::  /hook/core/http/lib
+::::  /hoon/http/lib
   ::
   ::
   ::

@@ -1,5 +1,5 @@
 ::
-::::  /hook/gate/invite/hood/cat
+::::  /hoon/invite/hood/cat
   ::
 /?  314
 ::

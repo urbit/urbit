@@ -1,5 +1,5 @@
 ::
-::::  /hook/gate/begin/helm/gun
+::::  /hoon/begin/helm/gun
   ::
 /?  314
 /-  *sole

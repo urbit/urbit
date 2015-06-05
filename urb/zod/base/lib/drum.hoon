@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hook/core/drum/lib                               ::  ::
+::::  /hoon/drum/lib                               ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
 !:                                                      ::  ::

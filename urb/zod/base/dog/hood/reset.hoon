@@ -1,5 +1,5 @@
 ::
-::::  /hook/gate/reset/hood/gun
+::::  /hoon/reset/hood/gun
   ::
 /?  314
 /-  *sole

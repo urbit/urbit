@@ -1,5 +1,5 @@
 ::
-::::  /hook/gate/ticket/cat
+::::  /hoon/ticket/cat
   ::
 /?  314
 ::

@@ -1,5 +1,5 @@
 ::
-::::  /hook/door/bit-get-token/mar
+::::  /hoon/bit-get-token/mar
   ::
 /?    314
 /-    *bit-api

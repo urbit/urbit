@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hook/door/oct4-update/mar                        ::::::  dependencies
+::::  /hoon/oct4-update/mar                        ::::::  dependencies
   ::                                                    ::  ::
 /?    310                                               ::  arvo
 /-    *oct4                                             ::  structures

@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hook/core/oct3/lib                               ::  ::  dependencies
+::::  /hoon/oct3/lib                               ::  ::  dependencies
   ::                                                    ::  ::
 /?    310                                               ::  arvo version
 /-    *oct3                                             ::  structures

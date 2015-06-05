@@ -1,6 +1,6 @@
 ::    A Twitter API library.
 ::
-::::  /hook/core/twitter/lib
+::::  /hoon/twitter/lib
   ::
 /?    314
 /-   *twitter

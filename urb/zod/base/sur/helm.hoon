@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hook/core/helm/sur                               ::  ::
+::::  /hoon/helm/sur                               ::  ::
   ::                                                    ::  ::
 /?  310                                                 ::  arvo version
 /-  *sole                                               ::  structures

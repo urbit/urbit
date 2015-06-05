@@ -1,5 +1,5 @@
 ::
-::::  /hook/gate/unix/helm/cat
+::::  /hoon/unix/helm/cat
   ::
 /?  314
 ::

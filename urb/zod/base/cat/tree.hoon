@@ -1,6 +1,6 @@
 ::  Tree view recursive directory contents
 ::  
-::::  /hook/gate/tree/cat
+::::  /hoon/tree/cat
   ::
 !:
 ::::

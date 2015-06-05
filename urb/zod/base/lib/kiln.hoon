@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hook/core/kiln/lib                               ::  ::
+::::  /hoon/kiln/lib                               ::  ::
   ::                                                    ::  ::
 /?  310                                                 ::  version
 ::                                                      ::  ::

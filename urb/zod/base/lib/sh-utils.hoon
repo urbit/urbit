@@ -1,6 +1,6 @@
 ::  App  construction utilities
 ::
-::::  /hook/core/sh-utils/lib
+::::  /hoon/sh-utils/lib
   ::
 |%
 ++  append
