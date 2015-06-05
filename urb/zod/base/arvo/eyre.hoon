@@ -684,6 +684,7 @@
           ?(%coup %reap)
         (axom tee ?~(p.cuf [%nice ~] [%mean `[-.cuf u.p.cuf]]))
       ::
+          %doff  !!
           %diff
         ?>  ?=([%of @ ^] tee)
         ?.  ?=(%json p.p.cuf)

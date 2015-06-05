@@ -9,6 +9,18 @@ tr = React.DOM.tr
 td = React.DOM.td
 input = React.DOM.input
 
+function HashToJSON() {            
+    var pairs = window.location.hash.slice(1).split('&');
+    var result = {};
+    pairs.forEach(function(pair) {
+        pair = pair.split('=');
+        result[pair[0]] = decodeURIComponent(pair[1] || '');
+    });
+
+    return JSON.parse(JSON.stringify(result));
+}
+
+
 DOControls = React.createClass({
   createDroplet: function(){
     urb.send({appl: "cloud",
@@ -62,10 +74,10 @@ GCEControls = React.createClass({
   urb.send({
     appl: 'cloud',
     data: {action:'create-gce',
-          project:$('#project').val(),
-          zone:$('#zone').val(),
-          name:$('#gname').val(),
-          machine_type:$('#machine_type').val()
+//          project:$('#project').val(),
+//          zone:$('#zone').val(),
+//          name:$('#gname').val(),
+//          machine_type:$('#machine_type').val() /
           },
     mark: 'json'})
   },
@@ -73,10 +85,11 @@ GCEControls = React.createClass({
   createDisk: function(){
       urb.send({
         appl: 'cloud',
-        data: {action:'create-gce-disk',
+        data: {action:'create-gce',
                snap:$('#gsnap').val(),
                number:$('#number').val(),
-               name:$('#gcpName').val()},
+               name:$('#gcpName').val(),
+               instance_img:$('#instance_image').val()},
         mark: 'json'})
   },
 
@@ -88,7 +101,8 @@ GCEControls = React.createClass({
           b({onClick:this.createDisk}, 'Create Disk From Image'),
           input({id:'gcpName',placeholder:'Name for GCE Disk and Instance'}),
           input({id:'number',placeholder:'Number of instances'}),
-          input({id:'gsnap',placeholder:'Snapshot'})
+          input({id:'gsnap',placeholder:'Snapshot'}),
+          input({id:'instance_image',placeholder:'Instance Image'})
         ]),
         div({}, [
           a({href:ghref},"Get Google Authcode"),
@@ -97,16 +111,9 @@ GCEControls = React.createClass({
         div({}, [
           input({id:"gappsecret"}, 
           b({onClick:this.props.sendSecret('gce','#gappsecret')}, "Send Google Secret"))
-        ]),
-        div({}, [
-          b({onClick:this.createDroplet}, "Create Droplet"),
-          input({id:"project",placeholder:"project"}),
-          input({id:"zone",placeholder:"zone"}),
-          input({id:"gname",placeholder:"Name of droplet"}), 
-          input({id:"machine_type",placeholder:"Machine Type"}),
-          //input({id:"image",placeholder:"Image"}),
+        ])
       ])
-    ]))
+    )
   }
 })
 
@@ -114,8 +121,8 @@ Droplet = React.createClass({
   dropletAction:function(id, action){
     urb.send({
       appl:"cloud",
-      data: {action: action,
-            id: id}})
+      data: {action:action,
+            id:id}})
   },
 
   render: function() {
@@ -142,10 +149,11 @@ Page = recl({
   handleClick: function(platform){
   return  function(){
       console.log(platform);
+      console.log(window.authcode.platform)
       if(window.authcode.length !== ''){
         urb.send({
           appl: "cloud",
-          data: {authcode:window.authcode,
+          data: {authcode:authcode[platform],
                 platform:platform},
           mark: "cloud-auth"})
       } else { console.log("nocode") }
@@ -181,6 +189,8 @@ Page = recl({
   }
 })
 
+var hash = HashToJSON()     //pull out hash of query string for gce authcode
+authcode.gce = hash.access_token
 
 mounted = React.render(Page({droplets:[]}), $("#container")[0])
 urb.bind("/", function(err,d) {

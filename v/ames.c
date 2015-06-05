@@ -65,7 +65,14 @@ _ames_czar(c3_y imp_y, c3_s* por_s)
       c3_c*   nam_c = u3r_string(nam);
       c3_c    dns_c[64];
 
-      snprintf(dns_c, 64, "%s.urbit.org", nam_c + 1);
+      // test network
+      if ( 0 == imp_y ) {
+        strcpy(dns_c,"104.236.149.223");
+      }
+      else {
+        snprintf(dns_c, 64, "%s.urbit.org", nam_c + 1);
+      }
+      // snprintf(dns_c, 64, "%s.urbit.org", nam_c + 1);
       // uL(fprintf(uH, "czar %s, dns %s\n", nam_c, dns_c));
 
       free(nam_c);

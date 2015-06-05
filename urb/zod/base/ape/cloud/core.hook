@@ -15,7 +15,7 @@
 |%
 ++  instance
 $:  plat=?(%do %gce)  name=@t  id=@t  status=@t  created=@da  snapshot=name=@t  ::disk=@u  region=@t  
-ip=(list ,@if)
+::ip=(list ,@if)
 ==
 ++  create-req-do
 $:
@@ -120,7 +120,7 @@ $%  [%diff %json json]
       ::region/s/region
       snapshot/s/snapshot
   ::    disk/`json`(jone disk)
-      ip/a/(turn ip |=(a=@if s/(rsh 3 1 (scot %if a))))
+      ::ip/a/(turn ip |=(a=@if s/(rsh 3 1 (scot %if a))))
   ==
 --
 !:
@@ -251,7 +251,6 @@ $%  [%diff %json json]
     %do
   =+  meth=?:(?=(%delete action) %delt [%post (jobe type/s/(convert-do action) ~)])
   ^-  move
-  ~&  'do i get here?'
   =+  ^=  req
   %-  httpreq  :*
      /action-test
@@ -405,13 +404,12 @@ $%  [%diff %json json]
   ^-  [(list move) _+>.$]
   =+  parsed=(rash q:(need r.resp) apex:poja)           ::  body httr to json
   =+  items=(need ((ot items/(ar some) ~):jo parsed))
-  ~&  why-no-work/resp
-  =+  ^=  ins  ::^-  ins=(list ,[@t instance])
+  =+  ^-  ins=(list ,[@t instance])
       ~|  'bad-json'^items
       %+  turn  items
       |=  in=json
-      ::=<  [id .]
-      ::^-  instance
+      =<  [id .]
+      ^-  instance
       :-  %gce
       %-  need
       %.  in  =+  jo
@@ -420,19 +418,17 @@ $%  [%diff %json json]
           'machineType'^(cu tail-url so)
 ::          'networkInterfaces'^parse-ip-gce
       ==
-      ~&  ins
-      :_  +>.$  ~
-::  =+  ^=  new 
-::      %+  skip  ins
-::      |=(a=[@t instance] (~(has by insts.vat) id.a))
-::  =.  insts.vat
-::  (~(gas by insts.vat) new)
-::  =+  buf=`@da`(add ~s10 now)
-::  :_  +>.$
-::  =+  lis=(~(tap by insts.vat))
-::  :_  (spam (state-to-json (turn lis |=(a=[@t instance] +.a))))
-::  [ost %wait /refresh-gce buf]
-::
+  =+  ^=  new 
+      %+  skip  ins
+      |=(a=[@t instance] (~(has by insts.vat) id.a))
+  =.  insts.vat
+  (~(gas by insts.vat) new)
+  =+  buf=`@da`(add ~s10 now)
+  :_  +>.$
+  =+  lis=(~(tap by insts.vat))
+  :_  (spam (state-to-json (turn lis |=(a=[@t instance] +.a))))
+  [ost %wait /refresh-gce buf]
+
 ++  list-instances-do
   =+  ^=  lis
       :~  /list-do
@@ -464,7 +460,7 @@ $%  [%diff %json json]
       %-  ot
       :~  name/so  id/parse-id-text  status/so  'created_at'^(su parse-iso8601)  ::region/parse-region
           image/(ot name/so ~)  ::disk/ni  
-          networks/parse-ip-do
+::          networks/parse-ip-do
       ==
   =+  buf=`@da`(add ~s10 now)
   :_  +>.$
@@ -493,12 +489,10 @@ $%  [%diff %json json]
       %snapshot  %upgrade             ::  add retrieve droplet action
       %create-do  %create-gce  %action-test
       ==
-      ~&  resp
       :_  +>.$  ~
   ::
       ?(%create-gce-disk %disk-status)
       =+  snap=?~(t.pour-path !! i.t.pour-path)
-      ~&  snap/snap
     (disk-status snap resp)
   ::
       %check-status
