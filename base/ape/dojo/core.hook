@@ -89,12 +89,6 @@
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  hapt  ,[p=ship q=path]                          ::  
-    ++  cuft                                            ::  internal gift
-      $%  [%coup p=(unit tang)]                         ::  poke result
-          [%diff p=cage]                                ::  subscription output
-          [%quit ~]                                     ::  close subscription
-          [%reap p=(unit tang)]                         ::  peer result
-      ==                                                ::
     ++  hood                                            ::  assembly plan
       $:  zus=@ud                                       ::  zuse kelvin
           sur=(list hoot)                               ::  structures

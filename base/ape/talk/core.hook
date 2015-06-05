@@ -1663,7 +1663,7 @@
 ++  poke-talk-command                                   ::  accept command
   |=  [cod=command]
   ^-  [(list move) _+>]
-  ~&  [%talk-poke-command src.hid cod]
+  ::  ~&  [%talk-poke-command src.hid cod]
   ra-abet:(~(ra-apply ra ost.hid ~) src.hid cod)
 ::
 ++  poke-sole-action                                    ::  accept console

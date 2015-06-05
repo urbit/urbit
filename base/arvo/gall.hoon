@@ -218,6 +218,7 @@
         ?-  -.q.caz
           %poke  [%m p.p.q.caz q.q.p.q.caz]
           %pull  [%u ~]
+          %puff  !!
           %peer  [%s p.q.caz]
         ==
     %+  mo-pass  
@@ -344,7 +345,7 @@
       ?:  ?=([%f %made *] sih)
         ?-  -.q.+>.sih
           %tabl  ~|(%made-tabl !!)
-          %|  (mo-give %mack `p.q.+>.sih)         ::  XX should crash
+          %|  (mo-give %mack `p.q.+>.sih)               ::  XX should crash
           %&  (mo-pass [%sys pax] %g %deal [him our] i.t.t.pax %poke p.q.+>.sih)
         ==
       ?:  ?=([%a %woot *] sih)  +>.$                    ::  quit ack, boring
@@ -354,9 +355,20 @@
         %coup  (mo-give %mack p.cuf)
         %diff  %+  mo-pass  [%sys %red t.pax]
                [%a %wont [our him] [%q %gh dap ~] [num %d p.p.cuf q.q.p.cuf]]
+        %doff  !!
         %quit  %+  mo-pass  [%sys pax]
                [%a %wont [our him] [%q %gh dap ~] [num %x ~]]
         %reap  (mo-give %mack p.cuf)
+      ==
+    ::
+        %val                                            ::  inbound validate
+      ?>  ?=([@ @ ~] t.pax)
+      =+  [him=(slav %p i.t.pax) dap=i.t.t.pax]
+      ?>  ?=([%f %made *] sih)
+      ?-  -.q.+>.sih
+        %tabl  !!
+        %|     (mo-give %unto %coup `p.q.+>.sih)        ::  XX invalid, crash
+        %&     (mo-clip dap `prey`[%high ~ him] %poke p.q.sih)
       ==
     ::
         %way                                            ::  outbound request
@@ -387,10 +399,34 @@
               +>.$
             ap-abet:(ap-purr:pap +<.q.hin t.t.t.pax +>.q.hin)
     ::
-      %out  ?.  ?=([%g %unto *] q.hin)
+      %out  ?:  ?=([%f %made *] q.hin)
+              ?-  -.q.+>.q.hin  
+                %tabl  !!
+                %|  ~&  [%mo-cook-fail +.q.+>.q.hin]
+                    ~&  [him=q.q.pry our=our pax=pax]
+                    ::
+                    ::  here we should crash because the right thing
+                    ::  for the client to do is to upgrade so that it
+                    ::  understands the server's mark, thus allowing
+                    ::  the message to proceed.  but ames is not quite
+                    ::  ready for promiscuous crashes, so instead we
+                    ::  send a pull outward and a quit downward.
+                    ::  or not... outgoing dap (XXX) is not in the path.
+                    ::  =.  +>.$  ap-abet:(ap-pout:pap t.t.t.pax %quit ~)
+                    ::  %+  mo-pass
+                    ::    [%use pax]
+                    ::  [%g %deal [q.q.pry our] XXX %pull ~]
+                    !!
+                %&  ap-abet:(ap-pout:pap t.t.t.pax %diff +.q.+>.q.hin)
+              ==
+            ?.  ?=([%g %unto *] q.hin)
               ~&  [%mo-cook-weird q.hin]
               ~&  [%mo-cook-weird-path pax]
               +>.$
+            ?:  ?=(%doff +>-.q.hin)
+              %+  mo-pass
+                [%use pax]
+              [%f %exec our byk.pap ~ %vale p.+>+.q.hin our q.+>+.q.hin]
             ap-abet:(ap-pout:pap t.t.t.pax +>.q.hin)
     ==
   ::
@@ -405,12 +441,20 @@
     ?:  =(~ kys.u.suf)
       +>.^$(hen neh, wub (~(del by wub) dap))
     =^  lep  kys.u.suf  [p q]:~(get to kys.u.suf)
-    $(+>.^$ ap-abet:(ap-club:(ap-abed:ap(hen p.lep) dap q.lep) r.lep))
+    $(+>.^$ (mo-clip(hen p.lep) dap q.lep r.lep))
   ::
   ++  mo-beak                                           ::  build beak
     |=  dap=dude
     ^-  beak
     byk:(~(got by bum) dap)
+  ::
+  ++  mo-clip                                           ::  apply club
+    |=  [dap=dude pry=prey cub=club]
+    ?:  ?=(%puff -.cub)
+      %+  mo-pass
+        [%sys %val (scot %p q.q.pry) dap ~]
+      [%f %exec our (mo-beak dap) ~ %vale p.cub our q.cub]
+    ap-abet:(ap-club:(ap-abed:ap dap pry) cub)
   ::
   ++  mo-club                                           ::  local action
     |=  [dap=dude pry=prey cub=club]
@@ -419,7 +463,7 @@
       ::  ~&  [%mo-club-qeu dap cub]
       =+  syf=(fall (~(get by wub) dap) *sofa)
       +>.$(wub (~(put by wub) dap syf(kys (~(put to kys.syf) [hen pry cub]))))
-    ap-abet:(ap-club:(ap-abed:ap dap pry) cub)
+    (mo-clip dap pry cub)
   ::
   ++  mo-gawk                                           ::  ames forward
     |=  [him=@p dap=dude num=@ud rok=rook]
@@ -428,21 +472,19 @@
       [%sys %req (scot %p him) dap (scot %ud num) ~]
     ^-  note-arvo
     ?-  -.rok
-      %m  [%f %exec our (mo-beak dap) ~ %vale p.rok our q.rok]
+      ::  %m  [%f %exec our (mo-beak dap) ~ %vale p.rok our q.rok]
+      %m  [%g %deal [him our] dap %puff p.rok q.rok]
       %s  [%g %deal [him our] dap %peer p.rok]
       %u  [%g %deal [him our] dap %pull ~]
     ==
   ::
   ++  mo-gawd                                           ::  ames backward
     |=  [him=@p dap=dude num=@ud ron=roon]
-    ?-    -.ron
-        %d
-      %+  mo-pass  
-        [%sys %rep (scot %p him) dap (scot %ud num) ~]
-      [%f %exec our (mo-beak dap) ~ %vale p.ron our q.ron]
-    ::
-        %x  =.  +>  (mo-give %mack ~)                  ::  XX should crash
-            (mo-give(hen (mo-ball him num)) %unto %quit ~)
+    =.  +>  (mo-give %mack ~)
+    =.  hen  (mo-ball him num)
+    ?-  -.ron
+      %d  (mo-give %unto %doff p.ron q.ron)
+      %x  (mo-give %unto %quit ~)
     ==
   ::
   ++  ap                                                ::  agent engine
@@ -540,6 +582,7 @@
       ?-  -.cub
         %poke   (ap-poke +.cub)
         %peer   (ap-peer +.cub)
+        %puff   !!
         %pull   ap-pull
         %pump   ap-fall
       ==
@@ -883,6 +926,7 @@
       ?-  -.cuf
         %coup  (ap-punk q.q.pry %coup +.pax `!>(p.cuf))
         %diff  (ap-diff q.q.pry pax p.cuf)
+        %doff  !!
         %quit  (ap-punk q.q.pry %quit +.pax ~)
         %reap  (ap-punk q.q.pry %reap +.pax `!>(p.cuf))
       ==
