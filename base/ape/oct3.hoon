@@ -77,7 +77,7 @@
 ++  sawn  (hail(eye (~(del by eye) ost)) |)             ::  console unsubscribe
 ++  seen  (hail(eye (~(put by eye) ost *sole-share)) &) ::  console subscribe
 ++  show  prom:(fect %mor rend)                         ::  update console
-++  soul  =(%sole -:q:(~(got by sup) ost))              ::  is console
+++  soul  =+((~(get by sup) ost) ?=([~ * %sole *] -))   ::  is console
 ++  tame  (flap |=(_. (fact:+< &/gam)) |=(_. prom:+<))  ::  light update
 ++  wild  (flap |=(_. (fact:+< &/gam)) |=(_. show:+<))  ::  full update
 ++  word  |=  txt=tape  %+  flap                        ::  game message

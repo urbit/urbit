@@ -170,8 +170,8 @@
         ;~(pfix lus (stag %ge dp-model-cat))
         ;~(pfix wut (stag %di dp-model-dog))
         ;~(pfix buc (stag %va sym))
-        (stag %ex dp-twig)
         ;~(pfix pam (stag %ec ;~(plug sym ;~(pfix dot dp-twig))))
+        (stag %ex dp-twig)
         (ifix [sel ser] (stag %tu (most ace dp-source)))
       ==
     :: 

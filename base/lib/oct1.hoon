@@ -6,7 +6,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::  semantics
   !:                                                    ::  ::
-|%
+|%                                                      ::
 ++  icon   |=(? ?:(+< 'X' 'O'))                         ::  display at
 ++  bo                                                  ::  per board
   |_  bud=board                                         ::
