@@ -46,8 +46,7 @@
           $%  [%want p=sock q=path r=*]                 ::
           ==  ==                                        ::
               $:  %c                                    ::  to %clay
-          $%  [%font p=@p q=@tas r=@p s=@tas]           ::
-              [%info p=@p q=@tas r=nori]                ::  internal edit
+          $%  [%info p=@p q=@tas r=nori]                ::  internal edit
               [%merg p=@p q=@tas r=@p s=@tas t=germ]    ::  merge desks
               [%warp p=sock q=riff]                     ::
           ==  ==                                        ::
@@ -84,8 +83,6 @@
           $:  fat=(map ship room)                       ::  domestic
               hoy=(map ship rung)                       ::  foreign
               ran=rang                                  ::  hashes
-              $=  sor                                   ::  upstreams
-              (map ,[p=@p q=@tas r=@p s=@tas] ,[let=@ud hen=duct])
           ==                                            ::
 ++  rede                                                ::  universal project
           $:  lim=@da                                   ::  complete to
@@ -151,11 +148,11 @@
       %+  turn  (flop yel)
       |=([a=duct b=gift] [hun %give b])
     ::
-      %+  turn  (flop byn)
-      |=([a=duct b=riot] [a %give [%writ b]])
-    ::
       %+  turn  (flop reg)
       |=([a=duct b=gift] [a %give b])
+    ::
+      %+  turn  (flop byn)
+      |=([a=duct b=riot] [a %give [%writ b]])
     ::
       %+  turn  (flop say)
       |=  [a=duct b=path c=ship d=[p=@ud q=riff]]
@@ -802,19 +799,49 @@
             bar=(set blob)                              ::  new content
         ==
     ^+  +>
-    %=  +>
-      hit.dom   (~(uni by hit.dom) gar)
+    =+  ^-  nut=(map tako yaki)
+        %-  mo  ^-  (list (pair tako yaki))
+        %+  turn  (~(tap in lar))
+        |=  yak=yaki
+        [r.yak yak]
+    =+  ^-  nat=(map lobe blob)
+        %-  mo  ^-  (list (pair lobe blob))
+        %+  turn  (~(tap in bar))
+        |=  bol=blob
+        [p.bol bol]
+    ~|  :*  %bad-foreign-update
+            :*  gar=gar
+                let=let
+                nut=(~(run by nut) ,~)
+                nat=(~(run by nat) ,~)
+            ==
+            :*  hitdom=hit.dom
+                letdom=let.dom
+                hutran=(~(run by hut.ran) ,~)
+                latran=(~(run by lat.ran) ,~)
+            ==
+        ==
+    =+  hit=(~(uni by hit.dom) gar)
+    =+  let=let
+    =+  hut=(~(uni by hut.ran) nut)
+    =+  lat=(~(uni by lat.ran) nat)
+    =+  =+  yon=`aeon`1                                 ::  sanity check
+        |-
+        ~|  yon=yon
+        =+  tak=(~(got by hit) yon)
+        =+  yak=(~(got by hut) tak)
+        =+  %-  ~(urn by q.yak)
+            |=  [pax=path lob=lobe]
+            ~|  [pax=path lob=lobe]
+            (~(got by lat) lob)
+        ?:  =(let yon)
+          ~
+        $(yon +(yon))
+    %=  +>.$
+      hit.dom   hit
       let.dom   let
-      hut.ran   %-  ~(uni by hut.ran)
-                %-  mo  ^-  (list (pair tako yaki))
-                %+  turn  (~(tap in lar))
-                |=  yak=yaki
-                [r.yak yak]
-      lat.ran   %-  ~(uni by lat.ran)
-                %-  mo  ^-  (list (pair lobe blob))
-                %+  turn  (~(tap in bar))
-                |=  bol=blob
-                [p.bol bol]
+      hut.ran   hut
+      lat.ran   lat
     ==
   ::
   ++  exec                                            ::  change and update
@@ -2308,28 +2335,14 @@
       ==
   ^-  [p=(list move) q=_..^$]
   ?-    -.q.hic
-      %font
-    ?:  (~(has by sor.ruf) +.q.hic)  `..^$
-    :_  ..^$(sor.ruf (~(put by sor.ruf) +.q.hic [0 hen]))
-    :~  ^-  move
-        :*  hen  %pass
-            /auto/(scot %p p.q.hic)/[q.q.hic]/(scot %p r.q.hic)/[s.q.hic]
-            %c  %merg  [p q r s %init]:q.hic
-            ::  %c  %warp  [p.q.hic r.q.hic]  s.q.hic  ~  %sing
-            ::  %w  [%da now]  /
-        ==
-    ==
-  ::
       %init
     :_  ..^$(fat.ruf (~(put by fat.ruf) p.q.hic [hen ~ ~]))
     =+  [bos=(sein p.q.hic) can=(clan p.q.hic)]
     %-  zing  ^-  (list (list move))
     :~  ?:  =(bos p.q.hic)  ~
-        [hen %pass / %c %font p.q.hic %base bos %kids]~
+        [hen %pass / %c %merg p.q.hic %base bos %kids %init]~
     ::
         ~
-    ::  ?.  ?=(?(%king %czar) can)  ~
-    ::  [hen %pass / %c %font p.q.hic %kids p.q.hic %base]~
     ==
   ::
       %info
@@ -2414,16 +2427,6 @@
       abet:une
     [mos ..^$]
   ::
-      %plug
-    ?.  (~(has by sor.ruf) +.q.hic)  `..^$
-    :_  ..^$(sor.ruf (~(del by sor.ruf) +.q.hic))
-    =+  hyn=hen:(~(got by sor.ruf) +.q.hic)
-    :~  :*  hyn  %pass
-            /auto/(scot %p p.q.hic)/[q.q.hic]/(scot %p r.q.hic)/[s.q.hic]
-            %c  %warp  [p.q.hic r.q.hic]  s.q.hic  ~
-        ==
-    ==
-  ::
       %warp
     =^  mos  ruf
       ?:  =(p.p.q.hic q.p.q.hic)
@@ -2465,7 +2468,6 @@
         :~  commits/`hut.ran.ruf
             blobs/`lat.ran.ruf
         ==
-        autosync/`sor.ruf
     ==
   ==
 ::
@@ -2526,55 +2528,6 @@
     =+  woo=abet:wao
     =+  sip=wake:(pish:une syd +.woo ran.wao)
     [(weld -.sip -.woo) ..^$(ruf abet:[+.sip])]
-  ?:  ?=([%auto @ @ @ @ ~] tea)
-    =+  our=(slav %p i.t.tea)
-    =*  syd  i.t.t.tea
-    =+  her=(slav %p i.t.t.t.tea)
-    =*  sud  i.t.t.t.t.tea
-    ?+    +<.q.hin  ~|(%weird-auto !!)
-        %mere
-      =+  nex=+(let:(~(got by sor.ruf) our syd her sud))
-      =.  sor.ruf  (~(put by sor.ruf) [our syd her sud] [nex hen])
-      =+  `move`[hen %pass tea %c %warp [our her] sud ~ %sing %y [%ud nex] /]
-      ?:  ?=(%& -.p.+.q.hin)
-        ::  ~&  ['merge succeeded' p.p.+.q.hin]
-        [[- ~] ..^$]
-      ~>  %slog.
-          :^  0  %rose  [" " "[" "]"]
-          :^    leaf/"merge failed"
-              leaf/"please manually merge the desks with"
-            leaf/":helm+merge %{(trip syd)} {(scow %p her)} %{(trip sud)}"
-          :-  >p.p.p.+.q.hin<
-          q.p.p.+.q.hin
-      [[- ~] ..^$]
-    ::
-        %writ
-      =+  nex=let:(~(got by sor.ruf) our syd her sud)
-      [[hen %pass tea %c %merg our syd her sud %mate]~ ..^$]
-      ::  ?~  p.q.hin
-      ::    ~&  "bad %writ response on autosync"
-      ::    [~ ..^$]
-      ::  =.  sor.ruf
-      ::    ?.  ?=(%w p.p.u.p.q.hin)
-      ::      sor.ruf
-      ::    %+  ~(put by sor.ruf)
-      ::      [our syd her sud]
-      ::    [((hard ,@ud) q.q.r.u.p.q.hin) hen]
-      ::=+  nex=let:(~(got by sor.ruf) our syd her sud)
-      ::=+  (~(get by fat.ruf) our)
-      ::?~  -
-      ::  ~&  [%autsync-no-local-ship our]
-      ::  [~ ..^$]
-      ::=+  (~(get by dos.u.-) syd)
-      ::=+  ^=  sar
-      ::    ?~  -
-      ::      %init
-      ::    ?:  =(0 let.dom.u.-)
-      ::      %init
-      ::    %mate
-      ::[[hen %pass tea %c %merg our syd her sud sar]~ ..^$]
-      ::  %c  %merg  [p q r s %init]:q.hic
-    ==
   ?:  ?=([%blab care @ @ *] tea)
     ?>  ?=(%made +<.q.hin)
     ?.  ?=(%& -.q.q.hin)  
@@ -2704,7 +2657,18 @@
       [mos ..^$(ran.ruf ran.zat)]
     ==
   ::
-      %mere  !!
+      %mere
+    ?:  ?=(%& -.p.+.q.hin)
+      ~&  'inital merge succeeded'
+      [~ ..^$]
+    ~>  %slog.
+        :^  0  %rose  [" " "[" "]"]
+        :^    leaf/"initial merge failed"
+            leaf/"my most sincere apologies"
+          >p.p.p.+.q.hin<
+        q.p.p.+.q.hin
+    [~ ..^$]
+  ::
       %note  [[hen %give +.q.hin]~ ..^$]
       %waft
     ?>  ?=([@ @ ~] tea)
