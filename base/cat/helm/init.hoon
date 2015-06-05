@@ -1,5 +1,5 @@
 ::
-::::  /hook/gate/reload/helm/cat
+::::  /hoon/reload/helm/cat
   ::
 /?  314
 ::

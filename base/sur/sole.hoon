@@ -1,5 +1,5 @@
 ::
-::::  /hook/core/sole/sur
+::::  /hoon/sole/sur
   !:
 |%
 ++  sole-action                                         ::  sole to app

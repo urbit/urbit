@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hook/core/helm/lib                               ::  ::
+::::  /hoon/helm/lib                               ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
 ::                                                      ::  ::

@@ -1,6 +1,6 @@
 ::    this mark is used to receive a confirmed transaction
 ::
-::::  /hook/door/bit-transaction/mar
+::::  /hoon/bit-transaction/mar
   ::
 /?  310
 !:

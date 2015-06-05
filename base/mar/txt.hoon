@@ -1,5 +1,5 @@
 ::
-::::  /hook/door/term-line/mar
+::::  /hoon/term-line/mar
   ::
 /?  314
 !:

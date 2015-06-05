@@ -1,5 +1,5 @@
 ::
-::::  /hook/gate/sync/hood/cat
+::::  /hoon/sync/hood/cat
   ::
 /?  314
 ::

@@ -1,5 +1,5 @@
 ::
-::::  /hook/door/talk-report/mar
+::::  /hoon/talk-report/mar
   ::
 /?    314
 /-    *talk

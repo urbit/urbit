@@ -1,6 +1,6 @@
 ::  LiSt directory subnodes
 ::
-::::  /hook/gate/ls/cat
+::::  /hoon/ls/cat
   ::
 //  /%/subdir
 !:

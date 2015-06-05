@@ -1,5 +1,5 @@
 ::
-::::  /hook/door/urb/mar
+::::  /hoon/urb/mar
   ::
 /?  314
 :: /=  dep  /$  |=([^ but=path] `@uvH`?>(?=([%dep @ ~] but) (slav %uv i.t.but)))

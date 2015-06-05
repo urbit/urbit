@@ -1,5 +1,5 @@
 ::
-::::  /hook/gate/sync/helm/cat
+::::  /hoon/sync/helm/cat
   ::
 /?  314
 ::

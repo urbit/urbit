@@ -1,5 +1,5 @@
 ::
-::::  /hook/door/octo-game/mar
+::::  /hoon/octo-game/mar
   ::
 /?    310
 !:

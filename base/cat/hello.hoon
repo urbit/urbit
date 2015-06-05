@@ -1,5 +1,5 @@
 ::
-::::  /hook/gate/hello/cat
+::::  /hoon/hello/cat
   ::
 /?  314
 ::

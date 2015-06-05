@@ -1,5 +1,5 @@
 ::
-::::  /hook/core/talk/lib
+::::  /hoon/talk/lib
   ::  
   ::  This file is in the public domain.
   ::

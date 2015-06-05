@@ -1,5 +1,5 @@
 ::
-::::  /hook/door/oct3-move/mar
+::::  /hoon/oct3-move/mar
   ::
 /?    314
 !:

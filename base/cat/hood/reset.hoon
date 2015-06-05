@@ -1,5 +1,5 @@
 ::
-::::  /hook/gate/reset/hood/cat
+::::  /hoon/reset/hood/cat
   ::
 /?  314
 ::

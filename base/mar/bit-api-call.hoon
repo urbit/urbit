@@ -1,5 +1,5 @@
 ::
-::::  /hook/door/bit-api-call/mar
+::::  /hoon/bit-api-call/mar
   ::
 /?    314
 /-    *bit-api
