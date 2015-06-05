@@ -316,12 +316,12 @@ main(c3_i   argc,
   u3_ve_sysopt();
 
   printf("~\n");
-  printf("welcome.\n");
-  printf("vere: urbit home is %s\n", u3_Host.dir_c);
-  printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
+  //  printf("welcome.\n");
+  printf("urbit: home is %s\n", u3_Host.dir_c);
+  // printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 
   if ( c3y == u3_Host.ops_u.dem && c3n == u3_Host.ops_u.bat ) {
-    printf("vere: running as daemon\n");
+    printf("urbit: running as daemon\n");
   }
 
   //  Seed prng. Don't panic -- just for fuzz testing.
