@@ -432,6 +432,17 @@ u3r_mug_words(const c3_w *buf_w,
   return _mug_words(2166136261U, len_w, buf_w);
 }
 
+/* u3r_mug_bytes():
+**
+**   Compute the mug of `buf`, `len`, LSW first.
+*/
+c3_w
+u3r_mug_bytes(const c3_y *buf_w,
+                c3_w        len_w)
+{
+  return _mug_bytes(2166136261U, len_w, buf_w);
+}
+
 /* u3r_mug_string():
 **
 **   Compute the mug of `a`, LSB first.
