@@ -2542,12 +2542,12 @@
 ::::    %gall
   ::
 ++  club                                                ::  agent action
-  $%  ::  [%peel p=mark q=path]                             ::  translated peer
+  $%  [%peel p=mark q=path]                             ::  translated peer
       [%peer p=path]                                    ::  subscribe
       [%poke p=cage]                                    ::  apply
       [%puff p=mark q=noun]                             ::  unchecked poke
       [%pull ~]                                         ::  unsubscribe
-      ::  [%punk p=mark q=cage]                             ::  translated poke
+      [%punk p=mark q=cage]                             ::  translated poke
       [%pump ~]                                         ::  pump yes/no
   ==                                                    ::
 ++  cuft                                                ::  internal gift

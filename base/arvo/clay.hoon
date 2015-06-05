@@ -2324,8 +2324,7 @@
     :_  ..^$(fat.ruf (~(put by fat.ruf) p.q.hic [hen ~ ~]))
     =+  [bos=(sein p.q.hic) can=(clan p.q.hic)]
     %-  zing  ^-  (list (list move))
-    :~  ~&  [%bos bos p.q.hic]
-        ?:  =(bos p.q.hic)  ~
+    :~  ?:  =(bos p.q.hic)  ~
         [hen %pass / %c %font p.q.hic %base bos %kids]~
     ::
         ~
