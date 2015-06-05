@@ -369,9 +369,6 @@ li:before {
   padding-right: 1rem;
   margin-left: -1rem;
 }
-#body .CodeMirror-linenumber.CodeMirror-gutter-elt {
-  margin-left: -1.2rem;
-}
 @media only screen and (max-width: 1170px) {
   #nav,
   #nav > div,
