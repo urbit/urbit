@@ -2503,6 +2503,7 @@
       [%bunt p=mark]                                    ::  example of mark
       [%call p=silk q=silk]                             ::  slam
       [%cast p=mark q=silk]                             ::  translate
+      [%core p=beam]                                    ::  build program
       [%diff p=silk q=silk]                             ::  diff
       [%done p=(set beam) q=cage]                       ::  literal
       [%dude p=tank q=silk]                             ::  error wrap
@@ -2540,14 +2541,18 @@
 ::::    %gall
   ::
 ++  club                                                ::  agent action
-  $%  [%peer p=path]                                    ::  subscribe
+  $%  ::  [%peel p=mark q=path]                             ::  translated peer
+      [%peer p=path]                                    ::  subscribe
       [%poke p=cage]                                    ::  apply
+      [%puff p=mark q=noun]                             ::  unchecked poke
       [%pull ~]                                         ::  unsubscribe
+      ::  [%punk p=mark q=cage]                             ::  translated poke
       [%pump ~]                                         ::  pump yes/no
   ==                                                    ::
 ++  cuft                                                ::  internal gift
   $%  [%coup p=(unit tang)]                             ::  poke result
       [%diff p=cage]                                    ::  subscription output
+      [%doff p=mark q=noun]                             ::  untyped diff
       [%quit ~]                                         ::  close subscription
       [%reap p=(unit tang)]                             ::  peer result
   ==                                                    ::

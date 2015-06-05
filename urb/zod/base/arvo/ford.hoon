@@ -551,10 +551,8 @@
     ++  fang                                            ::  protocol door
       |=  [cof=cafe for=mark]
       ^-  (bolt vase)
-      =+  pax=/door/[for]/mar
-      %+  cope
-        (fade cof %hook [bek pax])
-      abut:(meow [bek pax] ~)
+      %+  cope  (make cof [%core bek /[for]/mar])
+      ;~(cope furl feel)
     ::
     ++  fair                                            ::  hood parsing rule
       |=  bem=beam
@@ -855,9 +853,6 @@
       |=  [cof=cafe sam=vase]
       ^-  (bolt vase)
       %+  cool  |.(leaf/"ford: check {<[for bek `@p`(mug q.sam)]>}")
-      ?:  ?=(?(%gate %core %door) for)
-        ::  ~&  [%lake-easy for bek]
-        (fine cof sam)
       ?:  ?=(?(%hoon %hook) for)
         =+  mas=((soft ,@t) q.sam)
         ?~  mas
@@ -1163,6 +1158,11 @@
             (link cof p.kas p.cay q.cay)
           (lope cof i.wuy t.wuy q.cay)
         (flux |=(vax=vase [%& p.kas vax]))
+      ::
+          %core
+        %+  cool  |.(leaf/"ford: core {<(tope p.kas)>}")
+        %+  cope  (cope (fade cof %hoon p.kas) abut:(meow p.kas ~))
+        (flux |=(cor=vase [%& %core cor]))
       ::
           %diff
         %+  cool  |.(leaf/"ford: diff {<`@p`(mug p.kas)>} {<`@p`(mug q.kas)>}")
@@ -1473,8 +1473,7 @@
           ?.  =(`hoof`q.i.bir `hoof`p.u.byf)
             (flaw cof [%leaf "structure mismatch: {<~[p.u.byf q.i.bir]>}"]~)
           $(bir t.bir)
-        =+  bem=(hone ?:(p.i.bir %gate %core) %sur q.i.bir)
-        %+  cope  (fade cof %hook bem)
+        %+  cope  (fade cof %hoon (hone %sur q.i.bir))
         |=  [cof=cafe hyd=hood]
         %+  cope  (apex(boy ~) cof hyd)
         |=  [cof=cafe sel=_..head]
@@ -1491,11 +1490,11 @@
         ^^$(cof cof, bir t.bir)
       ::
       ++  hone                                          ::  plant hoof
-        |=  [for=@tas way=@tas huf=hoof]
+        |=  [way=@tas huf=hoof]
         ^-  beam
         ?~  q.huf
-          how(s ~[for p.huf way])
-        [[q.u.q.huf q.how p.u.q.huf] ~[for p.huf way]]
+          how(s ~[p.huf way])
+        [[q.u.q.huf q.how p.u.q.huf] ~[p.huf way]]
       ::
       ++  neck                                          ::  consume libraries
         |=  [cof=cafe bir=(list hoof)]
@@ -1509,8 +1508,7 @@
           ?.  =(`hoof`i.bir `hoof`p.u.byf)
             (flaw cof [%leaf "library mismatch: {<~[p.u.byf i.bir]>}"]~)
           $(bir t.bir)
-        =+  bem=(hone %core %lib i.bir)
-        %+  cope  (fade cof %hook bem)
+        %+  cope  (fade cof %hoon (hone %lib i.bir))
         |=  [cof=cafe hyd=hood]
         %+  cope  (apex(zeg goz, boy ~) cof hyd)
         |=  [cof=cafe sel=_..neck]
