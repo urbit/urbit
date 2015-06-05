@@ -9,7 +9,6 @@
 //    /%/parse                       ::  inli donp parse
 //    /%/rend                        ::  sing sung sang flat into-inner
 ::  ~%  %utyl  +>+>+>  ~
-~&  %down-grow
 |_  don=down
 ++  grab                                                ::  convert from
   |%
