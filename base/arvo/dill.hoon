@@ -43,13 +43,6 @@
 ++  mess                                                ::
   $%  [%dill-belt p=(hypo dill-belt)]                   ::
   ==                                                    ::
-++  cuft                                                ::  internal gift
-  $%  [%coup p=(unit tang)]                             ::  poke result
-      [%quit ~]                                         ::  close subscription
-      [%reap p=(unit tang)]                             ::  peer result
-      [%diff p=cage]                                    ::  subscription output
-  ==                                                    ::
-++  suss  (trel term ,@tas ,@da)                        ::  config report
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note-ames                                           ::  weird ames move
   $%  [%make p=(unit ,@t) q=@ud r=@ s=?]                ::
@@ -79,7 +72,6 @@
       [%d note-dill]                                    ::
       [%g note-gall]                                    ::
   ==  ==                                                ::
-++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  sign-ames                                           ::
   $%  [%nice ~]                                         ::
       [%init p=ship]                                    ::
@@ -316,6 +308,7 @@
                      +>.$ 
                    (dump:(crud %reap u.p.p.+>.sih) %logo ~)
             %diff  pump:(from ((hard dill-blit) q:`vase`+>+>.sih))
+            %doff  !!
           ==
         ::
             [%c %note *]

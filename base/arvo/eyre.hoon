@@ -684,6 +684,7 @@
           ?(%coup %reap)
         (axom tee ?~(p.cuf [%nice ~] [%mean `[-.cuf u.p.cuf]]))
       ::
+          %doff  !!
           %diff
         ?>  ?=([%of @ ^] tee)
         ?.  ?=(%json p.p.cuf)
@@ -780,7 +781,7 @@
       ==
     ==
   ::
-  ++  root-beak  `beak`[our %demo da/now]               ::  XX
+  ++  root-beak  `beak`[our %home da/now]               ::  XX
   ++  emule
     |=  a=_|?(..emule)  ^+  ..emule
     =+  mul=(mule a)
