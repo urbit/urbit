@@ -442,7 +442,7 @@ To start chatting, simply press `^X` to switch to the `:talk` app
 
     ~waclux-tomwyc:talk()
 
-and type `;join /urbit-meta` to join our main chat room.
+and type `;join ~doznec/urbit-meta` to join our main chat room.
 
 Most of us are hanging out on `:talk` regularly. We can answer any questions you might have and help you get oriented in this new environment.
 
