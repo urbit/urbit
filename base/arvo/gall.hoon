@@ -393,6 +393,14 @@
       ==
     ::
         %way                                            ::  outbound request
+      ?:  ?=([%a %went *] sih)  ::  XX AWFUL
+        ~&  %way-went-bug
+        ?>  ?=([@ ~] t.pax)
+        %-  mo-awed
+        :*  p.+>.sih
+            (?(%peer %poke %pull) i.t.pax)
+            ~
+        ==
       ?>  ?=([%a %woot *] sih)
       ?>  ?=([@ ~] t.pax)
       %-  mo-awed
