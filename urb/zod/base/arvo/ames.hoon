@@ -1331,8 +1331,8 @@
               (deer q.fud r.fud ?-(kay %dead ~, %good [~ s.fud]))
             ::
                 %carp
-              =+  zol=(~(get by olz.weg) s.fud)
-              ?^  zol  cock(kay u.zol)
+              ::  =+  zol=(~(get by olz.weg) s.fud)
+              ::  ?^  zol  cock(kay u.zol)
               =^  neb  nys.weg
                   =+  neb=(~(get by nys.weg) s.fud)
                   ?^  neb  [u.neb nys.weg]
@@ -1350,7 +1350,7 @@
               ::  ~&  [%carp q.fud s.fud q.neb p.r.neb]
               ?:  =(q.neb p.r.neb)
                 =:  nys.weg  (~(del by nys.weg) s.fud)
-                    olz.weg  (~(put by olz.weg) s.fud kay)
+                ::  olz.weg  (~(put by olz.weg) s.fud kay)
                   ==
                 (golf p.neb r.neb)
               =.  +>.$  cock
