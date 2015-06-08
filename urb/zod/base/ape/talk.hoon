@@ -922,7 +922,7 @@
       moz 
     ~&  [%ra-abed-fx-mug `@p`(mug u.foc)]
     ~&  [%ra-abed-fx u.foc]
-    [[ost %diff %sole-effect u.foc] moz])
+    [[ost %diff %sole-effect u.foc] moz]
   ::
   ++  ra-abet                                           ::  complete core
     ra-abed:ra-axel
