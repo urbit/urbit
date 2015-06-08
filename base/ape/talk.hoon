@@ -1400,7 +1400,7 @@
           ?.  ?=([~ %$ ?(%ud %da) @] say)  ~
           ?.  ?=([~ %$ ?(%ud %da) @] den)  ~
           `[(point +>.say) (point +>.den)]
-      ::  ~&  [%pa-listen her pax ruv]
+      ~&  [%pa-listen her pax ruv]
       ?~  ruv
         ~&  [%pa-listen-malformed pax]
         (pa-sauce ost [%quit ~]~)
