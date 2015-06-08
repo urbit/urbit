@@ -179,7 +179,6 @@
   ++  diff-sole-effect-phat                             ::
     |=  [way=wire fec=sole-effect]  
     =<  se-abet  =<  se-view
-    ~&  [%phat +.fec]
     =+  gyl=(drum-phat way)
     ?:  (se-aint gyl)  +>.$
     (se-diff gyl fec)
@@ -689,7 +688,8 @@
         %tan  (ta-tan p.fec)
         %sag  +>(+> (se-blit fec))
         %sav  +>(+> (se-blit fec))
-        %txt  $(fec [%tan [%leaf p.fec]~])
+        %txt  ~&  [%ta-fec (tape p.fec)]
+              $(fec [%tan [%leaf p.fec]~])
       ==
     ::
     ++  ta-dog                                          ::  change cursor
