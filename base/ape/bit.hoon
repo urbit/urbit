@@ -46,7 +46,7 @@ $:  cred=(unit ,[app-secret=@t client-id=@t])
 ++  hostname  ^-  hart
   ?+  (clan our.hid)  !!
      %czar  [| ?+(our.hid `8.443 %~fyr `8.444) `/localhost]
-     %duke  [| ~ `/org/urbit/(crip +:<our.hid>)]
+     %duke  [| `8.444 `/org/urbit/(crip +:<our.hid>)]
   ==
 ++  auth-url
   %+  weld  "https://sandbox.coinbase.com/oauth/authorize"
