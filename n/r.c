@@ -485,6 +485,142 @@ u3r_mug_qual(u3_noun a,
                           u3r_mug_both(u3r_mug(c), u3r_mug(d))));
 }
 
+/* _sang_one(): unify but leak old.
+*/
+static void
+_sang_one(u3_noun* a, u3_noun* b)
+{
+  if ( *a == *b ) {
+    return;
+  } 
+  else {
+    c3_o asr_o = u3a_is_senior(u3R, *a);
+    c3_o bsr_o = u3a_is_senior(u3R, *b);
+
+    if ( _(asr_o) && _(bsr_o) ) {
+      // You shouldn't have let this happen.  We don't want to
+      // descend down to a lower road and free there, because
+      // synchronization - though this could be revisited under
+      // certain circumstances.
+      //
+      return;
+    }
+    if ( _(asr_o) && !_(bsr_o) ){
+      // u3z(*b); 
+      *b = *a;
+    }
+    if ( _(bsr_o) && !_(asr_o) ) {
+      //  u3z(*a); 
+      *a = *b;
+    }
+    if ( u3a_is_north(u3R) ) {
+      if ( *a <= *b ) {
+        u3k(*a);
+        //  u3z(*b); 
+        *b = *a;
+      } else {
+        u3k(*b);
+        //  u3z(*a); 
+        *a = *b;
+      }
+    }
+    else {
+      if ( *a >= *b ) {
+        u3k(*a);
+        // u3z(*b); 
+        *b = *a;
+      } else {
+        u3k(*b);
+        // u3z(*a); 
+        *a = *b;
+      }
+    }
+  }
+}
+
+/* _sang_x(): yes if a and b are the same noun, unifying but leaking.
+*/
+static c3_o
+_sang_x(u3_noun a, u3_noun b)
+{
+  if ( a == b ) {
+    return c3y;
+  }
+  else {
+    if ( _(u3a_is_atom(a)) ) {
+      u3a_atom* a_u = u3a_to_ptr(a);
+
+      if ( !_(u3a_is_atom(b)) ||
+           _(u3a_is_cat(a)) ||
+           _(u3a_is_cat(b)) )
+      {
+        return c3n;
+      }
+      else {
+        u3a_atom* b_u = u3a_to_ptr(b);
+
+        if ( a_u->mug_w &&
+             b_u->mug_w &&
+             (a_u->mug_w != b_u->mug_w) )
+        {
+          return c3n;
+        }
+        else {
+          c3_w w_rez = a_u->len_w;
+          c3_w w_mox = b_u->len_w;
+
+          if ( w_rez != w_mox ) {
+            return c3n;
+          }
+          else {
+            c3_w i_w;
+
+            for ( i_w = 0; i_w < w_rez; i_w++ ) {
+              if ( a_u->buf_w[i_w] != b_u->buf_w[i_w] ) {
+                return c3n;
+              }
+            }
+            return c3y;
+          }
+        }
+      }
+    }
+    else {
+      if ( _(u3a_is_atom(b)) ) {
+        return c3n;
+      }
+      else {
+        u3a_cell* a_u = u3a_to_ptr(a);
+        u3a_cell* b_u = u3a_to_ptr(b);
+
+        if ( a_u->mug_w &&
+             b_u->mug_w &&
+             (a_u->mug_w != b_u->mug_w) )
+        {
+          return c3n;
+        }
+        else {
+          if ( c3n == _sang_x(a_u->hed, b_u->hed) ) {
+            return c3n;
+          }
+          else {
+            _sang_one(&a_u->hed, &b_u->hed);
+
+            if ( c3n == _sang_x(a_u->tel, b_u->tel) ) {
+              return c3n;
+            }
+            else {
+              _sang_one(&a_u->tel, &b_u->tel);
+
+              return c3y;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 /* _sung_one(): pick a unified pointer for identical (a) and (b).
 */
 static void
@@ -702,28 +838,41 @@ _sing_x(u3_noun a,
   }
 }
 
+/* u3r_sang(): yes iff (a) and (b) are the same noun, unifying equals.
+*/
+c3_o
+u3r_sang(u3_noun a, u3_noun b)
+{
+  return _sang_x(a, b);
+}
+
 /* u3r_sing():
 **
 **   Yes iff (a) and (b) are the same noun.
 */
 c3_o
-u3r_sing(u3_noun a,
-           u3_noun b)
+u3r_sing(u3_noun a, u3_noun b)
 {
-  c3_o ret_o;
+#ifndef U3_MEMORY_DEBUG
+  if ( u3R->par_p ) {
+    return u3r_sang(a, b);
+  } 
+#endif
+  {
+    c3_o ret_o;
 
-  u3t_on(euq_o);
-  ret_o = _sing_x(a, b);
-  u3t_off(euq_o);
+    u3t_on(euq_o);
+    ret_o = _sing_x(a, b);
+    u3t_off(euq_o);
 
-  return ret_o;
+    return ret_o;
+  }
 }
 
 /* u3r_sung(): yes iff (a) and (b) are the same noun, unifying equals.
 */
 c3_o
-u3r_sung(u3_noun a,
-           u3_noun b)
+u3r_sung(u3_noun a, u3_noun b)
 {
   return _sung_x(a, b);
 }
