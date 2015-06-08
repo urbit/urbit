@@ -1,6 +1,6 @@
 ::                                                      ::  ::
 ::::  /hoon/talk/app                                    ::  ::
-  ::                                                    ::  ::   
+   ::                                                    ::  ::   
 /?  314
 /-  *talk, *sole
 /+  talk, sole
@@ -286,6 +286,7 @@
     ::
     ++  sh-rend                                         ::  print on one line
       |=  gam=telegram
+      ~&  [%sh-rend gam]
       (sh-pass:(sh-fact %txt ~(tr-line tr man.she gam)) q.q.gam) 
     ::
     ++  sh-numb                                         ::  print msg number
@@ -1389,7 +1390,7 @@
         (pa-sauce ost [%quit ~]~)
       =+  ^=  ruv  ^-  (unit river)
           ?:  ?=(~ pax)
-            `[[%ud ?:((lth count 64) 0 (sub count 64))] [%da (dec (bex 128))]]
+            Q`[[%ud ?:((lth count 64) 0 (sub count 64))] [%da (dec (bex 128))]]
           ?:  ?=([@ ~] pax)
             =+  say=(slay i.pax)
             ?.  ?=([~ %$ ?(%ud %da) @] say)  ~
