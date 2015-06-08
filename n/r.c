@@ -236,7 +236,7 @@ u3r_mug_both(c3_w lef_w, c3_w rit_w)
 }
 
 static __inline__ c3_w
-_mug_bytes_in(c3_w off_w, c3_w nby_w, c3_y* byt_y)
+_mug_bytes_in(c3_w off_w, c3_w nby_w, const c3_y* byt_y)
 {
   c3_w i_w;
 
@@ -247,7 +247,7 @@ _mug_bytes_in(c3_w off_w, c3_w nby_w, c3_y* byt_y)
 }
 
 static c3_w
-_mug_bytes(c3_w off_w, c3_w nby_w, c3_y* byt_y)
+_mug_bytes(c3_w off_w, c3_w nby_w, const c3_y* byt_y)
 {
   c3_w has_w = _mug_bytes_in(off_w, nby_w, byt_y);
   c3_w out_w = _mug_out(has_w);

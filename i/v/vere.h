@@ -352,7 +352,7 @@
         c3_o              dir;              //  c3y if dir, c3n if file
         c3_o              dry;              //  ie, unmodified
         c3_c*             pax_c;            //  absolute path
-        struct _u3_unod*  par_u;            //  parent
+        struct _u3_udir*  par_u;            //  parent
         struct _u3_unod*  nex_u;            //  internal list
       } u3_unod;
       
@@ -361,10 +361,10 @@
         c3_o              dir;              //  c3y if dir, c3n if file
         c3_o              dry;              //  ie, unmodified
         c3_c*             pax_c;            //  absolute path
-        struct _u3_unod*  par_u;            //  parent
+        struct _u3_udir*  par_u;            //  parent
         struct _u3_unod*  nex_u;            //  internal list
-        c3_w              mug_w[4];         //  mug of last %into
-        c3_w              gum_w[4];         //  mug of last %ergo
+        c3_w              mug_w;            //  mug of last %into
+        c3_w              gum_w;            //  mug of last %ergo
       } u3_ufil;
       
       typedef struct _u3_udir {
@@ -372,15 +372,15 @@
         c3_o              dir;              //  c3y if dir, c3n if file
         c3_o              dry;              //  ie, unmodified
         c3_c*             pax_c;            //  absolute path
-        struct _u3_unod*  par_u;            //  parent
+        struct _u3_udir*  par_u;            //  parent
         struct _u3_unod*  nex_u;            //  internal list
         u3_unod*          kid_u;            //  subnodes
       } u3_udir;
 
       typedef struct _u3_umon {
-        u3_udir   dir_u;                    //  root directory
-        c3_c*     nam_c;                    //  mount point name
-        u3_umon*  nex_u;                    //  internal list
+        u3_udir          dir_u;             //  root directory
+        c3_c*            nam_c;             //  mount point name
+        struct _u3_umon*  nex_u;             //  internal list
       } u3_umon;
 
 
