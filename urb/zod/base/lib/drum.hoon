@@ -179,6 +179,7 @@
   ++  diff-sole-effect-phat                             ::
     |=  [way=wire fec=sole-effect]  
     =<  se-abet  =<  se-view
+    ~&  [%diff-effect `@p`(mug fec)]
     =+  gyl=(drum-phat way)
     ?:  (se-aint gyl)  +>.$
     (se-diff gyl fec)

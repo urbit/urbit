@@ -918,7 +918,11 @@
             ?~  q.yop  ~ 
             ?~(t.q.yop `i.q.yop `[%mor (flop `(list sole-effect)`q.yop)])
         ==
-    ?~(foc moz [[ost %diff %sole-effect u.foc] moz])
+    ?~  foc 
+      moz 
+    ~&  [%ra-abed-fx-mug `@p`(mug u.foc)]
+    ~&  [%ra-abed-fx u.foc]
+    [[ost %diff %sole-effect u.foc] moz])
   ::
   ++  ra-abet                                           ::  complete core
     ra-abed:ra-axel
