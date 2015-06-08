@@ -215,6 +215,7 @@
     ++  sh-fact                                         ::  send console effect
       |=  fec=sole-effect
       ^+  +>
+      ~&  [%fact ost fec]
       +>(moves :_(moves [ost %diff %sole-effect fec]))
     ::
     ++  sh-peep                                         ::  peer to path
@@ -286,8 +287,9 @@
     ::
     ++  sh-rend                                         ::  print on one line
       |=  gam=telegram
-      ~&  [%sh-rend gam]
-      (sh-pass:(sh-fact %txt ~(tr-line tr man.she gam)) q.q.gam) 
+      =+  lin=~(tr-line man.she gam)
+      ~&  [%sh-rend ost lin q.q.gam gam]
+      (sh-pass:(sh-fact %txt lin) q.q.gam) 
     ::
     ++  sh-numb                                         ::  print msg number
       |=  num=@ud
@@ -1400,7 +1402,7 @@
           ?.  ?=([~ %$ ?(%ud %da) @] say)  ~
           ?.  ?=([~ %$ ?(%ud %da) @] den)  ~
           `[(point +>.say) (point +>.den)]
-      ~&  [%pa-listen her pax ruv]
+      ~&  [%pa-listen count her pax ruv]
       ?~  ruv
         ~&  [%pa-listen-malformed pax]
         (pa-sauce ost [%quit ~]~)
