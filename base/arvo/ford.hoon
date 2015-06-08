@@ -379,7 +379,7 @@
               %1  q.nuf
               %2  [%2 p=(grom `_p.q.nuf`p.q.hoc p.q.nuf) q=q.q.nuf]
               %0  [%0 p=(grom `_p.q.nuf`p.q.hoc p.q.nuf) q=q.q.nuf]
-      ==   ==
+      ==    ==
     ::
     ++  coup                                            ::  toon to bolt
       |=  cof=cafe

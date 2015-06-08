@@ -1,6 +1,6 @@
 ::                                                      ::  ::
-::::  /hoon/talk/app                               ::  ::
-  ::                                                    ::  ::
+::::  /hoon/talk/app                                    ::  ::
+  ::                                                    ::  ::   
 /?  314
 /-  *talk, *sole
 /+  talk, sole
@@ -268,7 +268,6 @@
       %-  ~(gas in *(set partner))
       (turn (~(tap by aud)) |=([a=partner *] a))
     ::
-    ::
     ++  sh-poss                                         ::  passive update
       |=  lix=(set partner)
       =+  sap=(sh-pare lix)
@@ -287,7 +286,6 @@
     ::
     ++  sh-rend                                         ::  print on one line
       |=  gam=telegram
-      ~&  [%sh-rend gam]
       (sh-pass:(sh-fact %txt ~(tr-line tr man.she gam)) q.q.gam) 
     ::
     ++  sh-numb                                         ::  print msg number
@@ -1044,7 +1042,6 @@
   ::
   ++  ra-coup-repeat                                    ::
     |=  [[num=@ud her=@p man=span] saw=(unit tang)]
-    ~&  [%ra-coup-repeat +<]
     (ra-repeat num [%& her man] saw)
   ::
   ++  ra-repeat                                         ::  remove from outbox 
@@ -1392,7 +1389,7 @@
         (pa-sauce ost [%quit ~]~)
       =+  ^=  ruv  ^-  (unit river)
           ?:  ?=(~ pax)
-            `[[%ud count] [%da (dec (bex 128))]]
+            `[[%ud ?:((lth count 64) 0 (sub count 64))] [%da (dec (bex 128))]]
           ?:  ?=([@ ~] pax)
             =+  say=(slay i.pax)
             ?.  ?=([~ %$ ?(%ud %da) @] say)  ~
@@ -1678,7 +1675,6 @@
 ::
 ++  coup-repeat                                         ::
   |=  [way=wire saw=(unit tang)]
-  ~&  [%coup-repeat way saw]
   %+  etch-repeat  [%repeat way]  |=  [num=@ud src=@p man=span]
   ra-abet:(~(ra-coup-repeat ra ost.hid ~) [num src man] saw)
 ::

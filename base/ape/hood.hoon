@@ -1,5 +1,5 @@
- ::                                                      ::  ::
-::::  /hoon/hood/ape                               ::  ::
+::                                                      ::  ::      
+::::  /hoon/hood/ape                                    ::  ::        
   ::                                                    ::  ::
 /?  314                                                 ::  zuse version
 /+  sole, talk, helm, kiln, drum                        ::  libraries
@@ -39,6 +39,8 @@
     ==                                                  ::
 ++  able                                                ::  find/make part
   |*  hed=hood-head
+
+
   =+  rep=(~(get by lac) hed)
   =+  par=?^(rep u.rep `hood-part`(hood-make our.hid hed))
   ((hood-good hed) par)

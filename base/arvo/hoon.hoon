@@ -4025,7 +4025,7 @@
       [10 [b=* c=*] d=*]
     =+  ben=$(fol c.fol)
     ?.  ?=(%0 -.ben)  ben
-    ?:  ?=(?(%hunk %lose %mean %spot) b.fol)
+    ?:  ?=(?(%hunk %hand %lose %mean %spot) b.fol)
       $(fol d.fol, tax [[b.fol p.ben] tax])
     $(fol d.fol)
   ::
@@ -4066,6 +4066,7 @@
   ?+    -.i.p.ton  rex
       %hunk  [(tank +.i.p.ton) rex]
       %lose  [[%leaf (rip 3 (,@ +.i.p.ton))] rex]
+      %hand  :_(rex [%leaf (scow %p (mug +.i.p.ton))])
       %mean  :_  rex
              ?@  +.i.p.ton  [%leaf (rip 3 (,@ +.i.p.ton))]
              =+  mac=(mack +.i.p.ton +<.i.p.ton)
