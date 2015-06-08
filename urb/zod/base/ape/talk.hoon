@@ -1,6 +1,6 @@
 ::                                                      ::  ::
 ::::  /hoon/talk/app                                    ::  ::
-   ::                                                    ::  ::   
+  ::                                                    ::  ::   
 /?  314
 /-  *talk, *sole
 /+  talk, sole
