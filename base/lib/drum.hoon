@@ -179,7 +179,7 @@
   ++  diff-sole-effect-phat                             ::
     |=  [way=wire fec=sole-effect]  
     =<  se-abet  =<  se-view
-    ~?  ?=(%txt -.fec)  [%phat +.fec]
+    ~&  [%phat +.fec]
     =+  gyl=(drum-phat way)
     ?:  (se-aint gyl)  +>.$
     (se-diff gyl fec)
