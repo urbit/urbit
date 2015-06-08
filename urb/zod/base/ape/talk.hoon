@@ -287,7 +287,7 @@
     ::
     ++  sh-rend                                         ::  print on one line
       |=  gam=telegram
-      =+  lin=~(tr-line man.she gam)
+      =+  lin=~(tr-line tr man.she gam)
       ~&  [%sh-rend ost lin q.q.gam gam]
       (sh-pass:(sh-fact %txt lin) q.q.gam) 
     ::
