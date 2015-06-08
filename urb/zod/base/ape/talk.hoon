@@ -1390,7 +1390,7 @@
         (pa-sauce ost [%quit ~]~)
       =+  ^=  ruv  ^-  (unit river)
           ?:  ?=(~ pax)
-            Q`[[%ud ?:((lth count 64) 0 (sub count 64))] [%da (dec (bex 128))]]
+            `[[%ud ?:((lth count 64) 0 (sub count 64))] [%da (dec (bex 128))]]
           ?:  ?=([@ ~] pax)
             =+  say=(slay i.pax)
             ?.  ?=([~ %$ ?(%ud %da) @] say)  ~
