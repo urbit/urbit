@@ -678,10 +678,10 @@
     ++  ap-fill                                         ::  add to queue
       ^-  [? _.]
       =+  suy=(fall (~(get by qel.ged) ost) 0)
-      ?:  =(20 suy)
+      ?:  =(40 suy)
         ~&  [%ap-fill-full [our dap] q.q.pry ost]
         [%| +]
-      ::  ~?  !=(20 suy)  [%ap-fill-add [[our dap] q.q.pry ost] +(suy)]
+      ::  ~?  !=(40 suy)  [%ap-fill-add [[our dap] q.q.pry ost] +(suy)]
       [%& +(qel.ged (~(put by qel.ged) ost +(suy)))]
     ::
     ++  ap-find                                         ::  general arm

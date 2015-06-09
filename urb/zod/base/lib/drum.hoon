@@ -180,6 +180,7 @@
     |=  [way=wire fec=sole-effect]  
     =<  se-abet  =<  se-view
     =+  gyl=(drum-phat way)
+    ~&  [%diff-effect way gyl (se-aint gyl) `@p`(mug fec)]
     ?:  (se-aint gyl)  +>.$
     (se-diff gyl fec)
   ::
@@ -211,6 +212,7 @@
   ++  reap-phat                                         ::
     |=  [way=wire saw=(unit tang)]  
     =<  se-abet  =<  se-view
+    ~&  [%reap-phat way]
     =+  gyl=(drum-phat way)
     ?~  saw
       (se-join gyl)
@@ -374,6 +376,7 @@
   ++  se-joke                                           ::  prepare connection
     |=  gyl=gill
     ^+  +>
+    ~&  [%se-joke gyl]
     =+  lag=se-agon
     ?~  lag  +>.$
     ?:  =(~ fug)  +>.$
@@ -382,6 +385,7 @@
   ++  se-join                                           ::  confirm connection
     |=  gyl=gill
     ^+  +>
+    ~&  [%se-join gyl]
     =.  +>  (se-text "[linked to {<gyl>}]")
     ?>  =(~ (~(got by fug) gyl))
     (se-alas:se-prom(liv.maz |, fug (~(put by fug) gyl `*target)) gyl)
@@ -688,7 +692,8 @@
         %tan  (ta-tan p.fec)
         %sag  +>(+> (se-blit fec))
         %sav  +>(+> (se-blit fec))
-        %txt  $(fec [%tan [%leaf p.fec]~])
+        %txt  ~&  [%ta-fec (tape p.fec)]
+              $(fec [%tan [%leaf p.fec]~])
       ==
     ::
     ++  ta-dog                                          ::  change cursor
