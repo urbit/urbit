@@ -1102,11 +1102,12 @@
       ~&  [%bad-subscribe-story-c i.t.pax]
       (ra-evil %talk-no-story)
     =+  soy=~(. pa i.t.pax u.pur)
+    =^  who  +>.$  (ra-human her)
     =.  soy  ?.((~(has in vab) %a) soy (pa-watch:soy her))
     =.  soy  ?.((~(has in vab) %x) soy (pa-master:soy her))
+    =.  soy  (pa-notify:soy her %hear who)
     =.  soy  ?.((~(has in vab) %f) soy (pa-listen:soy her t.t.pax))
-    =^  who  +>.$  (ra-human her)
-    pa-abet:(pa-notify:soy her %hear who)
+    pa-abet:soy
   ::
   ++  ra-think                                          ::  publish/review
     |=  [pub=? her=ship tiz=(list thought)]
