@@ -835,7 +835,9 @@
       |=  [cof=cafe arc=arch]
       ?^  q.arc
         %+  (flux some)  cof
-        |=([cof=cafe arg=heel] (cope (liar cof bem) (lake for)))
+        |=  [cof=cafe arg=heel]  ^-  (bolt vase)
+        %+  cool  |.(leaf/"ford: load {<for>} {<(tope bem)>}")
+        (cope (liar cof bem) (lake for))
       ?.  (~(has by r.arc) %hook)
         (flue cof)
       %+  cope  (lend cof bem(s [%hook s.bem]))
@@ -843,7 +845,8 @@
       ?~  q.arc
         (flue cof)
       %+  (flux some)  cof
-      |=  [cof=cafe arg=heel]
+      |=  [cof=cafe arg=heel]  ^-  (bolt vase)
+      %+  cool  |.(leaf/"ford: hook {<for>} {<(tope bem)>}")
       %+  cope  (fade cof %hook bem)
       |=  [cof=cafe hyd=hood]
       (cope (abut:(meow bem arg) cof hyd) (lake for))
@@ -917,8 +920,8 @@
       =+  von=(save ~ %cy bem)
       ?~  von  [p=cof q=[%1 [%y bem ~] ~ ~]]
       %+  flag  (norm ska bem)
-      (fine cof ((hard arch) q.q:(need u.von)))
-    ::
+      (fine cof ?>(?=([~ %arch ^] u.von) ((hard arch) q.q.u.u.von)))
+    :: 
     ++  liar                                            ::  load vase
       |=  [cof=cafe bem=beam]
       ^-  (bolt vase)
@@ -999,7 +1002,6 @@
       %+  cope  ((~(got by mal) i.wuy) cof arg)
       |=  [cof=cafe hoc=vase]
       (cope (lope cof i.wuy t.wuy hoc) (flux some))
-    ::
     ++  lime                                            ::  load beam
       |=  [cof=cafe for=mark bem=beam arg=heel]
       =+  [mob=bem mer=(flop arg)]
@@ -1113,7 +1115,7 @@
       ::
           %boil
         ^-  (bolt gage)
-        ::  %+  cool  |.(leaf/"ford: boil {<p.kas>} {<(tope q.kas)>} {<r.kas>}")
+        %+  cool  |.(leaf/"ford: boil {<p.kas>} {<(tope q.kas)>} {<r.kas>}")
         %+  cope  (lamp cof q.kas)
         |=  [cof=cafe bem=beam]
         %+  cope  (lime cof p.kas bem r.kas)

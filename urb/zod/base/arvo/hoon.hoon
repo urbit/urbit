@@ -4156,7 +4156,7 @@
   |*  [hel=(list) hev=(list)]
   |-  ^+  hev
   =+  ^=  sev
-      =+  [inx=0 sev=*(map ,@t (list ,@ud))]
+      =+  [inx=0 sev=*(map ,_i.-.hev (list ,@ud))]
       |-  ^+  sev
       ?~  hev  sev
       =+  guy=(~(get by sev) i.hev)
@@ -6444,7 +6444,7 @@
         :-  %mean
         =+  fek=~(feck ap p.gen)
         ?^  fek  [%dtzz %tas u.fek]
-        [%brdt [%cnhp [%cnzy %cain] [%zpgr p.gen] ~]]
+        [%brdt [%cnhp [%cnzy %cain] [%zpgr [%tsgr [~ 3] p.gen]] ~]]
       q.gen
     ::
         [%sgcb *]  [%sggr [%mean [%brdt p.gen]] q.gen]
