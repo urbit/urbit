@@ -51,7 +51,6 @@ _unix_down(c3_c* pax_c, c3_c* sub_c)
 */
 static u3_noun
 _unix_string_to_path_helper(c3_c* pax_c) {
-
   c3_assert(pax_c[-1] == '/');
   c3_c* end_w = strchr(pax_c, '/');
   if ( !end_w ) {
@@ -698,7 +697,7 @@ _unix_initial_update_file(c3_c* pax_c)
   red_ws = read(fid_i, dat_y, len_ws);
 
   if ( close(fid_i) < 0 ) {
-    uL(fprintf(uH, "error closing file %s: %s\r\n",
+    uL(fprintf(uH, "error closing initial file %s: %s\r\n",
                pax_c, strerror(errno)));
   }
 
@@ -715,7 +714,7 @@ _unix_initial_update_file(c3_c* pax_c)
     return u3_nul;
   }
   else {
-    u3_noun pax = _unix_string_to_path(pax_c);
+    u3_noun pax = _unix_string_to_path_helper(pax_c + strlen(U3_LIB) + 5 + 5);
     u3_noun mim = u3nt(c3__text, u3i_string("plain"), u3_nul);
     u3_noun dat = u3nt(mim, len_ws, u3i_bytes(len_ws, dat_y));
 
@@ -759,7 +758,7 @@ _unix_initial_update_dir(c3_c* pax_c)
 
       struct stat buf_u;
 
-      if ( 0 != stat(pax_c, &buf_u) ) {
+      if ( 0 != stat(pox_c, &buf_u) ) {
         uL(fprintf(uH, "initial can't stat %s: %s\r\n",
                    pox_c, strerror(errno)));
         free(pox_c);
