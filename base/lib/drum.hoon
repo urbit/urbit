@@ -178,7 +178,6 @@
   |_  [moz=(list move) biz=(list dill-blit)]
   ++  diff-sole-effect-phat                             ::
     |=  [way=wire fec=sole-effect]  
-    ~?  ?=(%txt -.fec)  [%phat +.fec]
     =<  se-abet  =<  se-view
     =+  gyl=(drum-phat way)
     ~&  [%diff-effect way gyl (se-aint gyl) `@p`(mug fec)]
