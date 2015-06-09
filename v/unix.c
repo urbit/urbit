@@ -126,27 +126,6 @@ _unix_write_file(c3_c* pax_c, u3_atom mim)
   free(dat_y);
 }
 
-#if 0
-/* _unix_opendir(): opendir, recreating if nonexistent.
-*/
-static DIR*
-_unix_opendir(c3_c* pax_c)
-{
-  DIR* rid_u = opendir(pax_c);
-
-  if ( !rid_u ) {
-    // uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
-    _unix_mkdir(pax_c);
-    rid_u = opendir(pax_c);
-    if ( !rid_u ) {
-      uL(fprintf(uH, "%s: %s\n", pax_c, strerror(errno)));
-      c3_assert(0);
-    }
-  }
-  return rid_u;
-}
-#endif
-
 /* _unix_get_mount_point(): retrieve or create mount point
 */
 static u3_umon*
@@ -259,7 +238,6 @@ _unix_free_node(u3_unod* nod_u)
   }
 }
 
-#if 0
 /* _unix_free_mount_point(): free mount point
 */
 static void
@@ -322,7 +300,6 @@ _delete_mount_point_out:
   free(nam_c);
   u3z(mon);
 }
-#endif
 
 /* _unix_fs_event_cb(): filesystem event callback.
 */
@@ -552,7 +529,6 @@ _unix_update_dir(u3_udir* dir_u)
         c3_i  fid_i = open(nod_u->pax_c, O_RDONLY, 0644);
 
         if ( (fid_i < 0) || (fstat(fid_i, &buf_u) < 0) ) {
-
           if ( ENOENT != errno ) {
             uL(fprintf(uH, "_unix_update_dir: error opening file %s: %s\r\n",
                        nod_u->pax_c, strerror(errno)));
@@ -842,12 +818,19 @@ _unix_sync_ergo(u3_umon* mon_u, u3_noun can)
 /* u3_unix_ef_ergo(): update filesystem from urbit
 */
 void
-u3_unix_ef_ergo(u3_noun mon,
-                u3_noun can)
+u3_unix_ef_ergo(u3_noun mon, u3_noun can)
 {
   u3_umon* mon_u = _unix_get_mount_point(mon);
 
   _unix_sync_ergo(mon_u, can);
+}
+
+/* u3_unix_ef_ogre(): delete mount point
+*/
+void
+u3_unix_ef_ogre(u3_noun mon)
+{
+  _unix_delete_mount_point(mon);
 }
 
 /* u3_unix_io_init(): initialize unix sync.
