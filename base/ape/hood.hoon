@@ -58,7 +58,7 @@
 ++  coup-drum-phat  (wrap take-coup-phat):from-drum
 ++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
 ++  from-lib
-  |*  _[%helm ..$ ,_abet]:*helm-work
+  |*  _[%helm ..$ ,_abet]:(helm-work)
   =>  .(+< [identity start finish]=+<)
   =-  [wrap=- *start]                 ::  usage (wrap handle-arm):from-foo
   |*  handle=_finish
@@ -66,9 +66,9 @@
   =.  +>.handle  (start hid (able identity))
   (ably (handle +<))
 ::
-++  from-drum  (from-lib %drum [..$ ,_se-abet]:*drum-work)
-++  from-helm  (from-lib %helm [..$ ,_abet]:*helm-work)
-++  from-kiln  (from-lib %kiln [..$ ,_abet]:*kiln-work)
+++  from-drum  (from-lib %drum [..$ ,_se-abet]:(drum-work))
+++  from-helm  (from-lib %helm [..$ ,_abet]:(helm-work))
+++  from-kiln  (from-lib %kiln [..$ ,_abet]:(kiln-work))
 ::
 ++  poke-dill-belt          (wrap poke-dill-belt):from-drum
 ++  poke-helm-init          (wrap poke-init):from-helm
