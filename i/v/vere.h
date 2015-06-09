@@ -970,7 +970,7 @@
         void
         u3_unix_ef_move();
 
-      /* u3_unix_ef_look(): update filesystem, inbound.
+      /* u3_unix_ef_look(): update filesystem from unix
       */
         void
         u3_unix_ef_look(void);
@@ -978,8 +978,12 @@
       /* u3_unix_ef_ergo(): update filesystem from urbit
       */
         void
-        u3_unix_ef_ergo(u3_noun mon,
-                        u3_noun can);
+        u3_unix_ef_ergo(u3_noun mon, u3_noun can);
+
+      /* u3_unix_ef_ogre(): delete mount point
+      */
+        void
+        u3_unix_ef_ogre(u3_noun mon);
 
       /* u3_unix_io_init(): initialize storage.
       */
