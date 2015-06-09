@@ -27,6 +27,6 @@
   :_  $(mes t.mes, eny (sham eny mes))
   ^-  thought
   :+  (shaf %thot eny)
-    [[[%& our (main our)] [[& ~] %pending]] ~ ~]
-  [now ~ [%app dap (crip ~(ram re i.mes))]]
+    [[[%& our (main our)] [*envelope %pending]] ~ ~]
+  [now *bouquet [%app dap (crip ~(ram re i.mes))]]
 --
