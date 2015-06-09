@@ -322,7 +322,7 @@ body {
   opacity: 1;
 }
 .sour-ctrl input {
-  color: #fff;
+  color: #555;
   background-color: transparent;
   border: none;
   font-size: 0.8rem;
@@ -343,7 +343,7 @@ body {
   font-weight: 400;
   font-size: 1.2rem;
   margin-left: 0.6rem;
-  color: #fff;
+  color: #555;
 }
 .sour-ctrl input:focus::-webkit-input-placeholder {
   color: transparent;
