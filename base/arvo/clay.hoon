@@ -120,7 +120,7 @@
               ins=(unit (list (pair path cage)))        ::  inserts
               dig=(map path cage)                       ::  store diffs
               dif=(unit (list (trel path lobe cage)))   ::  changes
-              muc=(map path (pair cage cage))           ::  store miso
+              muc=(map path cage)                       ::  store miso
               muh=(map path lobe)                       ::  store hashes
               mut=(unit (list (trel path lobe cage)))   ::  mutations
               mim=(map path mime)                       ::  mime cache
@@ -509,7 +509,7 @@
             |=  [pax=path mis=miso]
             ?>  ?=(%mut -.mis)
             :-  [%done ~ %path -:!>(*path) pax]
-            =+  (lobe-to-mark (~(got by q:(aeon-to-yaki let.dom)) pax))
+            =+  (lobe-to-mark:ze (~(got by q:(aeon-to-yaki:ze let.dom)) pax))
             [%cast - [%done ~ p.mis]]
         ==
     ==
@@ -524,11 +524,11 @@
       :-  [%diffing (scot %p who) syd (scot %da wen) pax]
       :^  %f  %exec  who  :+  [who syd %da wen]  ~
       ^-  silk
-      =+  (lobe-to-silk (~(got by q:(aeon-to-yaki let.dom)) pax))
-      :+  %diff  [%done ~ -]
+      :+  %diff
+        (lobe-to-silk:ze pax (~(got by q:(aeon-to-yaki:ze let.dom)) pax))
       =+  (slag (dec (lent pax)) pax)
       =+  ?~(- %$ i.-)
-      [%cast - [%done ~ q.mis]]
+      [%cast - [%done ~ p.mis]]
     ::
         %ins
       :-  [%casting (scot %p who) syd (scot %da wen) pax]
@@ -639,7 +639,8 @@
         %+  turn  cat
         |=  [pax=path cay=cage]
         :-  [%done ~ %path -:!>(*path) pax]
-        [%diff [%done ~ p:(~(got by muc.u.dok) pax)] [%done ~ cay]]
+        =+  (lobe-to-silk:ze pax (~(got by q:(aeon-to-yaki:ze let.dom)) pax))
+        [%diff - [%done ~ cay]]
     ==
   ::
   ++  take-mutating
@@ -762,21 +763,22 @@
       ==
     ?~  hez  ~|(%no-sync-duct !!)
     ?.  syn  ~|(%sync-off !!)
-    %=    +>.$
-        reg
-      :_  reg
-      :*  u.hez  %ergo  who  syd  let.dom
-          ^-  (list ,[path (unit mime)])
-          %+  turn  (gage-to-cages res)
-          |=  [pax=cage mim=cage]
-          ?.  ?=(%path p.pax)
-            ~|(%ergo-bad-path-mark !!)
-          :-  ((hard path) q.q.pax)
-          ?.  ?=(%mime p.mim)
-            ~
-          `((hard mime) q.q.mim)
-      ==
-    ==
+    +>.$
+    ::  %=    +>.$
+    ::      reg
+    ::    :_  reg
+    ::    :*  u.hez  %ergo  who  syd  let.dom
+    ::        ^-  (list ,[path (unit mime)])
+    ::        %+  turn  (gage-to-cages res)
+    ::        |=  [pax=cage mim=cage]
+    ::        ?.  ?=(%path p.pax)
+    ::          ~|(%ergo-bad-path-mark !!)
+    ::        :-  ((hard path) q.q.pax)
+    ::        ?.  ?=(%mime p.mim)
+    ::          ~
+    ::        `((hard mime) q.q.mim)
+    ::    ==
+    ::  ==
   ::
   ++  checkout-ankh
     |=  hat=(map path lobe)
@@ -2182,7 +2184,7 @@
           +>.$
         %_    +>.$
             don  %|
-            reg  [[u.hez %ergo who syd let.dom tan] reg]
+            ::  reg  [[u.hez %ergo who syd let.dom tan] reg]
         ==
       ::
       ++  he
@@ -2378,10 +2380,14 @@
     [mos ..^$]
   ::
       %into
+    :_  ..^$
     =+  bem=(~(get by mon.ruf) p.q.hic)
     ?:  &(?=(~ bem) !=(%$ p.q.hic))
-      ~|(%bad-mount-point-from-unix !!)
-    =+  bem=?~(bem [-.-.fat.ruf %base 1] u.bem)
+      ~|([%bad-mount-point-from-unix p.q.hic] !!)
+    =+  ^-  bem=beam
+        ?^  bem
+          u.bem
+        [[?>(?=(^ fat.ruf) p.n.fat.ruf) %base %ud 1] ~]
     =+  rom=(~(got by fat.ruf) p.bem)
     =+  dos=(~(got by dos.rom) q.bem)
     ?:  =(0 let.dom.dos)
@@ -2395,10 +2401,10 @@
               ?|  =([%hook ~] -)
                   =([%hoon ~] -)
           ==  ==
-      :~  [hen %pass /one %c %info p.q.hic q.q.hic %& p.cos one]
-          [hen %pass /two %c %info p.q.hic q.q.hic %& p.cos two]
+      :~  [hen %pass /one %c %info p.bem q.bem %& p.cos one]
+          [hen %pass /two %c %info p.bem q.bem %& p.cos two]
       ==
-    =+  yak=(~(got by hut.ran) (~(got by hit.dom) let.dom.dos))
+    =+  yak=(~(got by hut.ran.ruf) (~(got by hit.dom.dos) let.dom.dos))
     =+  cos=(mode-to-soba q.yak (flop s.bem) q.q.hic)
     [hen %pass / %c %info p.bem q.bem %& cos]~
   ::
@@ -2730,9 +2736,9 @@
     ?~  -
       ~&  [%deleting-already-gone pax pat]
       ~
-    [paf %del ~]
+    `[paf %del ~]
   =+  (~(get by hat) paf)
   ?~  -
-    [paf %ins %mime -:!>(*mime) u.mim]
-  [paf %mut %mime -:!>(*mime) u.mim]
+    `[paf %ins %mime -:!>(*mime) u.mim]
+  `[paf %mut %mime -:!>(*mime) u.mim]
 --

@@ -1029,8 +1029,7 @@
   ^-  miso
   =+  dir=((hard arch) .^(%cy pax))
   ?~  q.dir  [%ins val]
-  =+  for=((hard mark) -:(flop pax))
-  [%mut [for [%atom %$] .^(%cx pax)] val]
+  [%mut val]
 ::
 ++  file                                                ::  simple file load
   |=  pax=path
@@ -1048,7 +1047,7 @@
   |=  pax=path
   ^-  toro
   ?>  ?=([* * * *] pax)
-  [i.t.pax [%& [*cart [[t.t.t.pax [%del %$ !>(.^(%cx pax))]] ~]]]]
+  [i.t.pax [%& [*cart [[t.t.t.pax [%del ~]] ~]]]]
 ::
 ++  furl                                                ::  unify changes
   |=  [one=toro two=toro]
