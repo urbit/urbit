@@ -39,8 +39,6 @@
     ==                                                  ::
 ++  able                                                ::  find/make part
   |*  hed=hood-head
-
-
   =+  rep=(~(get by lac) hed)
   =+  par=?^(rep u.rep `hood-part`(hood-make our.hid hed))
   ((hood-good hed) par)

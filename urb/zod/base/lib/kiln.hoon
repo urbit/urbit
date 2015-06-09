@@ -180,8 +180,9 @@
       ==
     ::
     ++  start
-      =.  .  %-  spam
-             [leaf/"activated sync from {<sud>} on {<her>} to {<syd>}" ~]
+      ::  XX remove feedback for demo
+      ::  =.  .  %-  spam
+      ::         [leaf/"activated sync from {<sud>} on {<her>} to {<syd>}" ~]
       %-  blab  :_  ~
       :*  ost  %warp
           /kiln/sync/[syd]/(scot %p her)/[sud]

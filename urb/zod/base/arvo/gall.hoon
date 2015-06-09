@@ -175,10 +175,12 @@
   ++  mo-boon                                           ::  complete old boot
     |=  [dap=dude byk=beak dep=@uvH gux=gage]
     ^+  +>
-    ?.  (~(has by bum) dap)  
+    =+  sut=(~(get by bum) dap)
+    ?~  sut
       ~&  [%gall-old-boon dap]
-      +>
-    =.  +>  (mo-bold byk dap dep)
+      +>.$
+    =.  bum  (~(put by bum) dap u.sut(byk byk))
+    =.  +>.$  (mo-bold byk dap dep)
     ?-  -.gux
       %tabl  ~|(%made-tabl !!)
       %|  (mo-give %onto %| p.gux)
@@ -464,13 +466,13 @@
     ^+  +>
     ?.  (~(has by bum) dap)  +>
     =+  suf=(~(get by wub) dap)
-    =+  neh=hen
     ?~  suf  +>.$
     |-  ^+  +>.^$
     ?:  =(~ kys.u.suf)
-      +>.^$(hen neh, wub (~(del by wub) dap))
+      +>.^$(wub (~(del by wub) dap))
     =^  lep  kys.u.suf  [p q]:~(get to kys.u.suf)
-    $(+>.^$ (mo-clip(hen p.lep) dap q.lep r.lep))
+    $(moz :_(moz [p.lep %slip %g %deal [q.q.q.lep our] dap r.lep]))
+    ::  $(+>.^$ (mo-clip(hen p.lep) dap q.lep r.lep))
   ::
   ++  mo-beak                                           ::  build beak
     |=  dap=dude
