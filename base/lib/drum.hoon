@@ -179,8 +179,8 @@
   ++  diff-sole-effect-phat                             ::
     |=  [way=wire fec=sole-effect]  
     =<  se-abet  =<  se-view
-    ~&  [%diff-effect `@p`(mug fec)]
     =+  gyl=(drum-phat way)
+    ~&  [%diff-effect pax gyl (se-aint gyl) `@p`(mug fec)]
     ?:  (se-aint gyl)  +>.$
     (se-diff gyl fec)
   ::
@@ -212,6 +212,7 @@
   ++  reap-phat                                         ::
     |=  [way=wire saw=(unit tang)]  
     =<  se-abet  =<  se-view
+    ~&  [%reap-phat way]
     =+  gyl=(drum-phat way)
     ?~  saw
       (se-join gyl)
@@ -375,6 +376,7 @@
   ++  se-joke                                           ::  prepare connection
     |=  gyl=gill
     ^+  +>
+    ~&  [%se-joke gyl]
     =+  lag=se-agon
     ?~  lag  +>.$
     ?:  =(~ fug)  +>.$
@@ -383,6 +385,7 @@
   ++  se-join                                           ::  confirm connection
     |=  gyl=gill
     ^+  +>
+    ~&  [%se-join gyl]
     =.  +>  (se-text "[linked to {<gyl>}]")
     ?>  =(~ (~(got by fug) gyl))
     (se-alas:se-prom(liv.maz |, fug (~(put by fug) gyl `*target)) gyl)
