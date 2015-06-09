@@ -2659,7 +2659,7 @@
   ::
       %mere
     ?:  ?=(%& -.p.+.q.hin)
-      ~&  'inital merge succeeded'
+      ~&  'initial merge succeeded'
       [~ ..^$]
     ~>  %slog.
         :^  0  %rose  [" " "[" "]"]
