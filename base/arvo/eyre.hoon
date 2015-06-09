@@ -179,7 +179,7 @@
   |=  [wid=@u tan=tang]
   ^-  tape
   =+  rolt=|=(a=wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
-  (rolt (turn tan |=(a=tank (rolt (wash 0^wid a)))))
+  (rolt (turn (flop tan) |=(a=tank (rolt (wash 0^wid a)))))
 ::
 ::
 ++  add-cookies
@@ -188,7 +188,7 @@
   =+  cuh=(turn `(list ,@t)`cug |=(a=@t set-cookie/a))
   hit(q (weld cuh q.hit))
 ::
-++  add-poll                                            ::  inject dependency
+++  inject                                            ::  inject dependency
   |=  [dep=@uvH max=[[%html ~] [[%head ~] hed=marl] [[%body ~] tal=marl] ~]]
   ^-  manx
   =:  hed.max  :_(hed.max ;meta(charset "utf-8", urb_injected "");)
@@ -198,7 +198,7 @@
   max(hed :_(hed.max ;script@"/~/on/{<dep>}.js"(urb_injected "");))
 ::
 ++  add-json                                            ::  inject window.urb
-  |=  [urb=json jaz=cord]  ^-  cord
+  |=  [urb=json jaz=cord]  ^-  cord 
   =-  (cat 3 (crip -) jaz)
   """
   var _urb = {(pojo urb)}
@@ -222,7 +222,6 @@
   |=  tan=tang
   ;html
     ;head
-      ;meta(charset "utf-8");
       ;link(rel "stylesheet", href "/home/lib/base.css");
       ;title: server error
     ==
@@ -772,7 +771,7 @@
           =-  `silk`[%cast %mime %done ~ cay(q.q -)]
           ?+  p.cay  q.q.cay          :: inject dependency long-poll
             %urb  =|  urb=[[%html ~] [[%head ~] marl] [[%body ~] manx marl] ~]
-                  .*(.(urb q.q.cay) !=((add-poll p.sih urb)))
+                  .*(.(urb q.q.cay) !=((inject p.sih urb)))
           ==
         ~|  q.q.cay
         =+  ((hard ,[mit=mite rez=octs]) q.q.cay)
@@ -816,7 +815,7 @@
     |=  [sas=@ud dep=@uvH mez=tang]
     ^+  +>
     :: (back ha/~ dep %tang !>(mez))  ::tang->urb chain may be source of failure
-    (give-html sas ~ (add-poll dep (render-tang mez)))
+    (give-html sas ~ (inject dep (render-tang mez)))
   ::
   ++  give-html
     |=  [sas=@ud cug=(list ,@t) max=manx]
