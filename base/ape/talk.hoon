@@ -286,7 +286,7 @@
     ::
     ++  sh-rend                                         ::  print on one line
       |=  gam=telegram
-      (sh-pass:(sh-fact %txt ~(tr-line tr man.she gam)) q.q.gam) 
+      (sh-pass:(sh-fact %txt ~(tr-line tr man.she gam)) q.q.gam)
     ::
     ++  sh-numb                                         ::  print msg number
       |=  num=@ud
@@ -915,7 +915,11 @@
             ?~  q.yop  ~ 
             ?~(t.q.yop `i.q.yop `[%mor (flop `(list sole-effect)`q.yop)])
         ==
-    ?~(foc moz [[ost %diff %sole-effect u.foc] moz])
+    ?~  foc 
+      moz 
+    ~&  [%ra-abed-fx-mug `@p`(mug u.foc)]
+    ~&  [%ra-abed-fx u.foc]
+    [[ost %diff %sole-effect u.foc] moz]
   ::
   ++  ra-abet                                           ::  complete core
     ra-abed:ra-axel
@@ -1399,7 +1403,7 @@
           ?.  ?=([~ %$ ?(%ud %da) @] say)  ~
           ?.  ?=([~ %$ ?(%ud %da) @] den)  ~
           `[(point +>.say) (point +>.den)]
-      ::  ~&  [%pa-listen her pax ruv]
+      ~&  [%pa-listen count her pax ruv]
       ?~  ruv
         ~&  [%pa-listen-malformed pax]
         (pa-sauce ost [%quit ~]~)
