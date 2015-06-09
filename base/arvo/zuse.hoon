@@ -2113,13 +2113,13 @@
 ++  mime  ,[p=mite q=octs]                              ::  mimetyped data
 ++  mite  (list ,@ta)                                   ::  mime type
 ++  miso                                                ::  ankh delta
-          $%  [%del p=cage]                             ::  delete
+          $%  [%del ~]                                  ::  delete
               [%ins p=cage]                             ::  insert
               [%dif p=cage]                             ::  mutate from diff
-              [%mut p=cage q=cage]                      ::  mutate from raw
+              [%mut p=cage]                             ::  mutate from raw
           ==                                            ::
 ++  misu                                                ::  computed delta
-          $%  [%del p=cage]                             ::  delete
+          $%  [%del ~]                                  ::  delete
               [%ins p=cage]                             ::  insert
               [%dif p=lobe q=cage]                      ::  mutate from diff
           ==                                            ::
@@ -2326,11 +2326,11 @@
           $:  fil=(unit (unit cage))                    ::  XX see khan-to-soba
               dir=(unit (map ,@ta (unit khan)))         ::
           ==                                            ::
-++  mick  (list ,[path (unit mime)])
+++  mode  (list ,[path (unit mime)])
 ++  riff  ,[p=desk q=(unit rave)]                       ::  request/desist
 ::::                                                    ::
 ++  gift-clay                                           ::  out result <-$
-          $%  [%ergo p=@p q=@tas r=@ud s=mick]          ::  version update
+          $%  [%ergo p=@tas q=mode]                     ::  version update
               [%mass p=mass]                            ::  memory usage
               [%mere p=(each (set path) (pair term tang))]  ::  merge result
               [%note p=@tD q=tank]                      ::  debug message
@@ -2339,7 +2339,7 @@
 ++  kiss-clay                                           ::  in request ->$
           $%  [%info p=@p q=@tas r=nori]                ::  internal edit
               [%init p=@p]                              ::  report install
-              [%into p=@p q=@tas r=khan]                ::  external edit
+              [%into p=@tas q=mode]                     ::  external edit
               [%lynx p=@p q=@tas r=(unit ,?)]           ::  sync to unix
               [%merg p=@p q=@tas r=@p s=@tas t=germ]    ::  merge desks
               [%wart p=sock q=@tas r=path s=*]          ::  network request

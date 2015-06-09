@@ -83,6 +83,7 @@
           $:  fat=(map ship room)                       ::  domestic
               hoy=(map ship rung)                       ::  foreign
               ran=rang                                  ::  hashes
+              mon=(map term beam)                       ::  mount points
           ==                                            ::
 ++  rede                                                ::  universal project
           $:  lim=@da                                   ::  complete to
@@ -114,7 +115,7 @@
           ==                                            ::
 ++  tage  ,[[%tabl p=(list (pair marc marc))] q=vase]   ::  %tabl gage
 ++  dork                                                ::  diff work
-          $:  del=(list (pair path cage))               ::  deletes
+          $:  del=(list path)                           ::  deletes
               ink=(list (pair path cage))               ::  hoo{n,k}
               ins=(unit (list (pair path cage)))        ::  inserts
               dig=(map path cage)                       ::  store diffs
@@ -417,7 +418,7 @@
           :*  %+  turn  del
               |=  [pax=path mis=miso]
               ?>  ?=(%del -.mis)
-              [pax p.mis]
+              pax
           ::
               %+  turn  ink
               |=  [pax=path mis=miso]
@@ -440,7 +441,7 @@
               %+  turn  mut
               |=  [pax=path mis=miso]
               ?>  ?=(%mut -.mis)
-              [pax p.mis q.mis]
+              [pax p.mis]
           ::
               ~
           ::
@@ -470,9 +471,9 @@
                 |=  [pax=path mis=miso]
                 ^-  (unit (pair path mime))
                 ?>  ?=(%mut -.mis)
-                ?.  ?=(%mime p.q.mis)
+                ?.  ?=(%mime p.p.mis)
                   ~
-                `[pax ((hard mime) q.q.q.mis)]
+                `[pax ((hard mime) q.q.p.mis)]
               ==
           ==
         ==
@@ -508,7 +509,8 @@
             |=  [pax=path mis=miso]
             ?>  ?=(%mut -.mis)
             :-  [%done ~ %path -:!>(*path) pax]
-            [%cast p.p.mis [%done ~ q.mis]]
+            =+  (lobe-to-mark (~(got by q:(aeon-to-yaki let.dom)) pax))
+            [%cast - [%done ~ p.mis]]
         ==
     ==
   ::
@@ -522,10 +524,11 @@
       :-  [%diffing (scot %p who) syd (scot %da wen) pax]
       :^  %f  %exec  who  :+  [who syd %da wen]  ~
       ^-  silk
-      =+  =+  (slag (dec (lent pax)) pax)
-          =+  ?~(- %$ i.-)
-          [%cast - [%done ~ q.mis]]
-      [%diff [%done ~ p.mis] -]
+      =+  (lobe-to-silk (~(got by q:(aeon-to-yaki let.dom)) pax))
+      :+  %diff  [%done ~ -]
+      =+  (slag (dec (lent pax)) pax)
+      =+  ?~(- %$ i.-)
+      [%cast - [%done ~ q.mis]]
     ::
         %ins
       :-  [%casting (scot %p who) syd (scot %da wen) pax]
@@ -547,7 +550,7 @@
         ?>  ?=(^ mut.u.dok)
         ;:  welp
           ^-  (list (pair path misu))
-          (turn del.u.dok |=([pax=path cay=cage] [pax %del cay]))
+          (turn del.u.dok |=(pax=path [pax %del ~]))
         ::
           ^-  (list (pair path misu))
           (turn ink.u.dok |=([pax=path cay=cage] [pax %ins cay]))
@@ -682,7 +685,7 @@
         ?>  ?=(^ mut.u.dok)
         ;:  welp
           ^-  (list (pair path misu))
-          (turn del.u.dok |=([pax=path cay=cage] [pax %del cay]))
+          (turn del.u.dok |=(pax=path [pax %del ~]))
         ::
           ^-  (list (pair path misu))
           (turn ink.u.dok |=([pax=path cay=cage] [pax %ins cay]))
@@ -722,7 +725,7 @@
         |=  a=miso
         ?|  ?=(%del -.a)
             &(?=(%ins -.a) ?=(%mime -.+.a))
-            &(?=(%mut -.a) ?=(%mime -.+>.a))
+            &(?=(%mut -.a) ?=(%mime -.+.a))
         ==
     ::  ~&  %forming-ergo
     ::  =-  ~&  %formed-ergo  -
@@ -2161,8 +2164,8 @@
         =+  tay=(gage-to-tage res)
         ?:  ?=(%| -.tay)
           (error:he %ergo-bad-made leaf/"merge ergo failed" p.tay)
-        =+  =|  can=mick
-            |-  ^-  tan=$&(mick [p=term q=tang])
+        =+  =|  can=mode
+            |-  ^-  tan=$&(mode [p=term q=tang])
             ?~  p.tay   can
             =*  pax  p.i.p.tay
             ?.  ?=(%path p.pax)
@@ -2375,32 +2378,29 @@
     [mos ..^$]
   ::
       %into
-    =+  yar=(~(got by fat.ruf) p.q.hic)
-    :_  ..^$(fat.ruf (~(put by fat.ruf) p.q.hic yar(hez [~ hen])))
-    ^-  (list move)
-    ?:  =(%$ q.q.hic)
-      ~
-    =+  dos=(~(get by dos.yar) q.q.hic)
-    ?:  &(?=(^ dos) !=(0 +>-.+<.+.dos))            ::  ank.s.u.dos
-      ?:  =(ank.dom.u.dos q.q.hic)
-        ~
-      :_  ~
-      :*  hen  %pass  /  %c  %info  p.q.hic  q.q.hic  %&
-          (khan-to-soba `ank.dom.u.dos `r.q.hic)
+    =+  bem=(~(get by mon.ruf) p.q.hic)
+    ?:  &(?=(~ bem) !=(%$ p.q.hic))
+      ~|(%bad-mount-point-from-unix !!)
+    =+  bem=?~(bem [-.-.fat.ruf %base 1] u.bem)
+    =+  rom=(~(got by fat.ruf) p.bem)
+    =+  dos=(~(got by dos.rom) q.bem)
+    ?:  =(0 let.dom.dos)
+      =+  cos=(mode-to-soba ~ s.bem q.q.hic)
+      =+  ^-  [one=(list ,[path miso]) two=(list ,[path miso])]
+          %+  skid  q.cos
+          |=  [a=path b=miso]
+          ?&  ?=(%ins -.b)
+              ?=(%mime p.p.b)
+              =+  (slag (dec (lent a)) a)
+              ?|  =([%hook ~] -)
+                  =([%hoon ~] -)
+          ==  ==
+      :~  [hen %pass /one %c %info p.q.hic q.q.hic %& p.cos one]
+          [hen %pass /two %c %info p.q.hic q.q.hic %& p.cos two]
       ==
-    =+  cos=(khan-to-soba ~ `r.q.hic)
-    =+  ^-  [one=(list ,[path miso]) two=(list ,[path miso])]
-        %+  skid  q.cos
-        |=  [a=path b=miso]
-        ?&  ?=(%ins -.b)
-            ?=(%mime p.p.b)
-            =+  (slag (dec (lent a)) a)
-            ?|  =([%hook ~] -)
-                =([%hoon ~] -)
-        ==  ==
-    :~  [hen %pass /one %c %info p.q.hic q.q.hic %& p.cos one]
-        [hen %pass /two %c %info p.q.hic q.q.hic %& p.cos two]
-    ==
+    =+  yak=(~(got by hut.ran) (~(got by hit.dom) let.dom.dos))
+    =+  cos=(mode-to-soba q.yak (flop s.bem) q.q.hic)
+    [hen %pass / %c %info p.bem q.bem %& cos]~
   ::
       %lynx
     ?:  =(%$ q.q.hic)
@@ -2717,71 +2717,22 @@
   ^-  rand
   [p q [p q.q]:r]
 ::
-::  XX  perhaps fil.khan should be (unit (unit mime)) and !>
-++  khan-to-soba
-  |=  [ank=(unit ankh) kan=(unit khan)]
+++  mode-to-soba
+  |=  [hat=(map path lobe) pax=path mod=mode]
   ^-  soba
   :-  *cart
-  =|  pax=path
-  ::  =-  ~&  [%khan (turn - |=((pair path miso) [p -.q]))]  -
-  |-  ^-  (list ,[p=path q=miso])
-  ?~  ank
-    ?~  kan
-      ::  ~&  >>  [pax %ank-kan-sig]
+  %+  murn  mod
+  |=  [pat=path mim=(unit mime)]
+  ^-  (unit (pair path miso))
+  =+  paf=(weld pax pat)
+  ?~  mim
+    =+  (~(get by hat) paf)
+    ?~  -
+      ~&  [%deleting-already-gone pax pat]
       ~
-    ::  ~&  >>  [pax %ank-sig]
-    =+  ?~  dir.u.kan
-          ~
-        =+  (~(tap by u.dir.u.kan))
-        ::  ~&  [%dirukan pax=pax (~(run by u.dir.u.kan) (cury test ~))]
-        |-  ^-  (list (pair path miso))
-        ?~  +<  ~
-        ?~  q.i  $(+< t)
-        (weld ^$(pax [p.i pax], kan `u.q.i) $(+< t))
-    ?~  fil.u.kan
-      -
-    ?~  u.fil.u.kan
-      -
-    ::  ~&  >>  [pax %ins-1]
-    [[(flop pax) %ins u.u.fil.u.kan] -]
-  ?~  kan
-    ::  ~&  >>  [pax %kan-sig]
-    =+  =+  (~(tap by r.u.ank))
-        |-(?~(+< ~ (weld ^$(pax [p.i pax], ank `q.i) $(+< t))))
-    ?~  q.u.ank
-      -
-    [[(flop pax) %del q.u.q.u.ank] -]
-  ::  ~&  >>  [pax %neither-sig]
-  =+  ?~  dir.u.kan
-        ~
-      %+  weld
-        =+  (~(tap by r.u.ank))
-        |-  ^-  (list ,[p=path q=miso])
-        ?~  +<  ~
-        =+  (~(get by u.dir.u.kan) p.i)
-        ?:  ?=([~ ~] -)  $(+< t)
-        %-  weld  :_  $(+< t)
-        ::  ~&  >>  [pax %ankhing p.i ?=(~ -)]
-        ^$(pax [p.i pax], ank `q.i, kan ?~(- ~ `u.u.-))
-      =+  (~(tap by u.dir.u.kan))
-      ::  ~&  >  [%sdirukan pax=pax (~(run by dir.u.kan) (cury test ~))]
-      |-  ^-  (list ,[p=path q=miso])
-      ?~  +<  ~
-      ?~  q.i  $(+< t)
-      ?:  (~(has by r.u.ank) p.i)  $(+< t)
-      ::  ~&  >>  [pax %khaning p.i]
-      %-  weld  :_  $(+< t)
-      ^$(pax [p.i pax], kan `u.q.i, ank ~)
-  ?~  q.u.ank
-    ?~  fil.u.kan
-      -
-    ?~  u.fil.u.kan
-      -
-    ::  ~&  %ins-2
-    [[(flop pax) %ins u.u.fil.u.kan] -]
-  ?~  fil.u.kan
-    -
-  ?~  u.fil.u.kan
-    [[(flop pax) %del q.u.q.u.ank] -]
-  [[(flop pax) %mut q.u.q.u.ank u.u.fil.u.kan] -]
+    [paf %del ~]
+  =+  (~(get by hat) paf)
+  ?~  -
+    [paf %ins %mime -:!>(*mime) u.mim]
+  [paf %mut %mime -:!>(*mime) u.mim]
 --
