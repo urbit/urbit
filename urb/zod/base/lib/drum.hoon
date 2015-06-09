@@ -180,7 +180,7 @@
     |=  [way=wire fec=sole-effect]  
     =<  se-abet  =<  se-view
     =+  gyl=(drum-phat way)
-    ~&  [%diff-effect pax gyl (se-aint gyl) `@p`(mug fec)]
+    ~&  [%diff-effect way gyl (se-aint gyl) `@p`(mug fec)]
     ?:  (se-aint gyl)  +>.$
     (se-diff gyl fec)
   ::
