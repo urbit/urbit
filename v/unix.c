@@ -443,10 +443,10 @@ _unix_update_file(u3_ufil* fil_u)
 
   struct stat buf_u;
   c3_i  fid_i = open(fil_u->pax_c, O_RDONLY, 0644);
-  c3_w  len_w, red_w;
+  c3_ws  len_ws, red_ws;
   c3_y* dat_y;
 
-  if ( (fid_i < 0) || (fstat(fid_i, &buf_u) < 0) ) {
+  if ( fid_i < 0 || fstat(fid_i, &buf_u) < 0 ) {
     if ( ENOENT == errno ) {
       return u3nc(u3nc(_unix_string_to_path(fil_u->pax_c), u3_nul), u3_nul);
     }
@@ -457,23 +457,30 @@ _unix_update_file(u3_ufil* fil_u)
     }
   }
 
-  len_w = buf_u.st_size;
-  dat_y = c3_malloc(len_w);
+  len_ws = buf_u.st_size;
+  dat_y = c3_malloc(len_ws);
 
-  red_w = read(fid_i, dat_y, len_w);
+  red_ws = read(fid_i, dat_y, len_ws);
 
   if ( close(fid_i) < 0 ) {
     uL(fprintf(uH, "error closing file %s: %s\r\n",
                fil_u->pax_c, strerror(errno)));
   }
 
-  if ( len_w != red_w ) {
+  if ( len_ws != red_ws ) {
+    if ( red_ws < 0 ) {
+      uL(fprintf(uH, "error reading file %s: %s\r\n",
+                 fil_u->pax_c, strerror(errno)));
+    }
+    else {
+      uL(fprintf(uH, "wrong # of bytes read in file %s: %d %d\r\n",
+                 fil_u->pax_c, len_ws, red_ws));
+    }
     free(dat_y);
-    c3_assert(0);
     return u3_nul;
   }
   else {
-    c3_w mug_w = u3r_mug_bytes(dat_y, len_w);
+    c3_w mug_w = u3r_mug_bytes(dat_y, len_ws);
     if ( mug_w == fil_u->mug_w ) {
       fil_u->mug_w = mug_w;
 
@@ -485,7 +492,7 @@ _unix_update_file(u3_ufil* fil_u)
 
       u3_noun pax = _unix_string_to_path(fil_u->pax_c);
       u3_noun mim = u3nt(c3__text, u3i_string("plain"), u3_nul);
-      u3_noun dat = u3nt(mim, len_w, u3i_bytes(len_w, dat_y));
+      u3_noun dat = u3nt(mim, len_ws, u3i_bytes(len_ws, dat_y));
 
       free(dat_y);
       return u3nc(u3nt(pax, u3_nul, dat), u3_nul);
@@ -494,6 +501,9 @@ _unix_update_file(u3_ufil* fil_u)
 }
 
 /* _unix_update_dir(): update directory, producing list of changes
+ *
+ * when changing this, consider whether to also change
+ * _unix_initial_update_dir()
 */
 static u3_noun
 _unix_update_dir(u3_udir* dir_u)
@@ -564,7 +574,7 @@ _unix_update_dir(u3_udir* dir_u)
     c3_w err_w;
   
     if ( (err_w = readdir_r(rid_u, &ent_u, &out_u)) != 0 ) {
-      uL(fprintf(uH, "error loading directory %s: %s\n",
+      uL(fprintf(uH, "error loading directory %s: %s\r\n",
                  dir_u->pax_c, strerror(err_w)));
       c3_assert(0);
     }
@@ -580,6 +590,8 @@ _unix_update_dir(u3_udir* dir_u)
       struct stat buf_u;
 
       if ( 0 != stat(pax_c, &buf_u) ) {
+        uL(fprintf(uH, "can't stat %s: %s\r\n",
+                   pax_c, strerror(errno)));
         free(pax_c);
         continue;
       }
@@ -628,7 +640,7 @@ _unix_update_dir(u3_udir* dir_u)
 
   u3_noun can = u3_nul;
   for ( nod_u = dir_u->kid_u; nod_u; nod_u = nod_u->nex_u ) {
-    can = u3kb_weld(_unix_update_node(nod_u),can);
+    can = u3kb_weld(_unix_update_node(nod_u), can);
   }
 
   return can;
@@ -657,6 +669,115 @@ _unix_update_mount(u3_umon* mon_u)
     u3v_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
              u3nt(c3__into, u3i_string(mon_u->nam_c), can));
   }
+}
+
+/* _unix_initial_update_file(): read file, but don't watch
+*/
+static u3_noun
+_unix_initial_update_file(c3_c* pax_c)
+{
+  struct stat buf_u;
+  c3_i  fid_i = open(pax_c, O_RDONLY, 0644);
+  c3_ws len_ws, red_ws;
+  c3_y* dat_y;
+
+  if ( fid_i < 0 || fstat(fid_i, &buf_u) < 0 ) {
+    if ( ENOENT == errno ) {
+      return u3_nul;
+    }
+    else {
+      uL(fprintf(uH, "error opening initial file %s: %s\r\n",
+                 pax_c, strerror(errno)));
+      return u3_nul;
+    }
+  }
+
+  len_ws = buf_u.st_size;
+  dat_y = c3_malloc(len_ws);
+
+  red_ws = read(fid_i, dat_y, len_ws);
+
+  if ( close(fid_i) < 0 ) {
+    uL(fprintf(uH, "error closing file %s: %s\r\n",
+               pax_c, strerror(errno)));
+  }
+
+  if ( len_ws != red_ws ) {
+    if ( red_ws < 0 ) {
+      uL(fprintf(uH, "error reading initial file %s: %s\r\n",
+                 pax_c, strerror(errno)));
+    }
+    else {
+      uL(fprintf(uH, "wrong # of bytes read in initial file %s: %d %d\r\n",
+                 pax_c, len_ws, red_ws));
+    }
+    free(dat_y);
+    return u3_nul;
+  }
+  else {
+    u3_noun pax = _unix_string_to_path(pax_c);
+    u3_noun mim = u3nt(c3__text, u3i_string("plain"), u3_nul);
+    u3_noun dat = u3nt(mim, len_ws, u3i_bytes(len_ws, dat_y));
+
+    free(dat_y);
+    return u3nc(u3nt(pax, u3_nul, dat), u3_nul);
+  }
+}
+
+/* _unix_initial_update_dir(): read directory, but don't watch
+*/
+static u3_noun
+_unix_initial_update_dir(c3_c* pax_c)
+{
+  u3_noun can = u3_nul;
+
+  DIR* rid_u = opendir(pax_c);
+  if ( !rid_u ) {
+    uL(fprintf(uH, "error opening initial directory: %s: %s\r\n",
+               pax_c, strerror(errno)));
+    return u3_nul;
+  }
+
+  while ( 1 ) {
+    struct dirent  ent_u;
+    struct dirent* out_u;
+    c3_w err_w;
+
+    if ( (err_w = readdir_r(rid_u, &ent_u, &out_u)) != 0 ) {
+      uL(fprintf(uH, "error loading initial directory %s: %s\r\n",
+                 pax_c, strerror(errno)));
+      c3_assert(0);
+    }
+    else if ( !out_u ) {
+      break;
+    }
+    else if ( '.' == out_u->d_name[0] ) {
+      continue;
+    }
+    else {
+      c3_c* pox_c = _unix_down(pax_c, out_u->d_name);
+
+      struct stat buf_u;
+
+      if ( 0 != stat(pax_c, &buf_u) ) {
+        uL(fprintf(uH, "initial can't stat %s: %s\r\n",
+                   pox_c, strerror(errno)));
+        free(pox_c);
+        continue;
+      }
+      else {
+        if ( S_ISDIR(buf_u.st_mode) ) {
+          can = u3kb_weld(_unix_initial_update_dir(pox_c), can);
+        }
+        else {
+          can = u3kb_weld(_unix_initial_update_file(pox_c), can);
+        }
+        free(pox_c);
+      }
+    }
+  }
+
+  return can;
 }
 
 /* _unix_sign_cb: signal callback.
@@ -977,6 +1098,17 @@ u3_unix_ef_move(void)
   for ( sig_u = unx_u->sig_u; sig_u; sig_u = sig_u->nex_u ) {
     uv_signal_start(&sig_u->sil_u, _unix_sign_cb, sig_u->num_i);
   }
+}
+
+void
+u3_unix_ef_initial_into()
+{
+  c3_c* pax_c = _unix_down(U3_LIB, "zod");
+  u3_noun can = _unix_initial_update_dir(pax_c);
+  free(pax_c);
+
+  u3v_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
+           u3nt(c3__into, u3_nul, can));
 }
 
 /* u3_unix_ef_look(): update the root.

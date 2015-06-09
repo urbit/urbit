@@ -324,21 +324,26 @@ _sist_home()
   //  Copy zod files, if we're generating a carrier.
   //
   if ( u3_Host.ops_u.imp_c ) {
-    snprintf(ful_c, 2048, "mkdir %s/%s",
-                    u3_Host.dir_c, u3_Host.ops_u.imp_c+1);
-    printf("%s\r\n", ful_c);
-    if ( 0 != system(ful_c) ) {
-      uL(fprintf(uH, "could not %s\n", ful_c));
-      u3_lo_bail();
-    }
+    u3_unix_ef_initial_into();
 
-    snprintf(ful_c, 2048, "cp -r %s/zod %s/%s/in",
-                    U3_LIB, u3_Host.dir_c, u3_Host.ops_u.imp_c+1);
-    printf("%s\r\n", ful_c);
-    if ( 0 != system(ful_c) ) {
-      uL(fprintf(uH, "could not %s\n", ful_c));
-      u3_lo_bail();
-    }
+    //  snprintf(ful_c, 2048, "mkdir %s/%s",
+    //                  u3_Host.dir_c, u3_Host.ops_u.imp_c+1);
+    //  printf("%s\r\n", ful_c);
+    //  if ( 0 != system(ful_c) ) {
+    //    uL(fprintf(uH, "could not %s\n", ful_c));
+    //    u3_lo_bail();
+    //  }
+
+    //  snprintf(ful_c, 2048, "cp -r %s/zod %s/%s/in",
+    //                  U3_LIB, u3_Host.dir_c, u3_Host.ops_u.imp_c+1);
+    //  printf("%s\r\n", ful_c);
+    //  if ( 0 != system(ful_c) ) {
+    //    uL(fprintf(uH, "could not %s\n", ful_c));
+    //    u3_lo_bail();
+    //  }
+
+
+
     //  snprintf(ful_c, 2048, "cp -r %s/zod %s/%s/out",
     //                  U3_LIB, u3_Host.dir_c, u3_Host.ops_u.imp_c+1);
     //  printf("%s\r\n", ful_c);

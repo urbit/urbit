@@ -347,6 +347,8 @@
 
 #endif
 
+    /* u3_unod: file or directory.
+    */
       typedef struct _u3_unod {
         uv_fs_event_t     was_u;            //  stat watcher
         c3_o              dir;              //  c3y if dir, c3n if file
@@ -356,6 +358,8 @@
         struct _u3_unod*  nex_u;            //  internal list
       } u3_unod;
       
+    /* u3_ufil: synchronized file.
+    */
       typedef struct _u3_ufil {
         uv_fs_event_t     was_u;            //  stat watcher
         c3_o              dir;              //  c3y if dir, c3n if file
@@ -367,6 +371,8 @@
         c3_w              gum_w;            //  mug of last %ergo
       } u3_ufil;
       
+    /* u3_ufil: synchronized directory.
+    */
       typedef struct _u3_udir {
         uv_fs_event_t     was_u;            //  stat watcher
         c3_o              dir;              //  c3y if dir, c3n if file
@@ -377,6 +383,8 @@
         u3_unod*          kid_u;            //  subnodes
       } u3_udir;
 
+    /* u3_ufil: synchronized mount point.
+    */
       typedef struct _u3_umon {
         u3_udir          dir_u;             //  root directory
         c3_c*            nam_c;             //  mount point name
@@ -969,6 +977,11 @@
       */
         void
         u3_unix_ef_move();
+
+      /* u3_unix_initial_into(): intialize filesystem from urb/zod
+      */
+        void
+        u3_unix_ef_initial_into();
 
       /* u3_unix_ef_look(): update filesystem from unix
       */
