@@ -65,7 +65,7 @@
   ?:  =(%pawn myr)
     [[%base %dojo] ~]
   ?:  =(%earl myr)  ~
-  [[%home %dojo] [%home %talk] ~]
+  [[%home %talk] [%home %dojo] ~]
 ::
 ++  deft-fish                                           ::  default connects
   |=  our=ship
@@ -76,8 +76,8 @@
     [[our %dojo] ~]
   ?:  =(%earl myr)
     =+  dad=(sein our)
-    [[dad %dojo] [dad %talk] ~]
-  [[our %dojo] [our %talk] ~]
+    [[dad %talk] [dad %dojo] ~]
+  [[our %talk] [our %dojo] ~]
 ::
 ++  deft-mast                                           ::  default master
   |=  our=ship
@@ -155,7 +155,7 @@
                 (most ;~(plug com ace) sp-gill)
                 %+  cook
                   |=  a=ship
-                  [[a %dojo] [a %talk] ~]
+                  [[a %talk] [a %dojo] ~]
                 ;~(pfix sig fed:ag)
               ==
             ::
