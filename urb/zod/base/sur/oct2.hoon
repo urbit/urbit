@@ -1,7 +1,7 @@
 ::                                                      ::  ::
-::::  /hoon/oct2/sur                               ::::::  dependencies
+::::  /hoon/oct2/sur                                    ::::::  dependencies
   ::                                                    ::  ::
-/?    310                                               ::
+/?    310                                               ::  arvo version
 ::                                                      ::  ::
 ::::                                                    ::::::  semantics
   ::                                                    ::  ::
