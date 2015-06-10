@@ -169,7 +169,7 @@ rendered in Hoon's syllabic base, `@p`.)
 A new life awaits you on the off-world colonies!  To begin, just
 type at the `:dojo` prompt:
 
-    :helm?begin
+    :?begin
 
 and enter your ship name and ticket when prompted.  When the script completes, hit return
 and you'll begin re-cloning the files from `~zod` needed to boot the destroyer, after which you will become the `~waclux-tomwyc` you wanted to be.
@@ -323,7 +323,7 @@ current character - as in Unix.
 
 Try this by running
 
-    ~waclux-tomwyc:dojo> +helm?begin
+    ~waclux-tomwyc:dojo> :?begin
 
     ~waclux-tomwyc:dojo: your ship: ~
 
@@ -337,20 +337,20 @@ We do this with `^X`.
 Let's try an example: First, make sure you
 have two apps running, like `:dojo` and `:talk`. Then, try:
 
-    ~waclux-tomwyc:dojo> :helm?begin
+    ~waclux-tomwyc:dojo> :?begin
 
     ~waclux-tomwyc:dojo: your ship: ~
 
 But hit `^X` instead of `^D`.  You'll get switched to the next app in line, in this case `:talk`.  Use
 it:
 
-    ~waclux-tomwyc:dojo> :helm?begin
+    ~waclux-tomwyc:dojo> :?begin
 
     ~waclux-tomwyc:talk() hello, world!
 
 Hit `^X` again:
 
-    ~waclux-tomwyc:dojo> :helm?begin
+    ~waclux-tomwyc:dojo> :?begin
 
     ~waclux-tomwyc:dojo: your ship: ~
 
