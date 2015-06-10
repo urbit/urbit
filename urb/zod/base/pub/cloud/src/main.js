@@ -24,19 +24,18 @@ function HashToJSON() {
 DOControls = React.createClass({
   createDroplet: function(){
     urb.send({appl: "cloud",
-              data: {
-                    action:'create-do',
-                    name:$('#name').val(),
-                    region:$('#region').val(),
-                    size:$('#size').val(),
-                    image:$('#image').val(),
-                    ssh:[], // $('#ssh').val()]
-                    backups:null,//$('#backups').val(),
-                    ipv6:null,//$('#ipv6').val(),
-                    priv_networking:null,//$('#priv-networking').val(),
-                    user_data:null//$('#user-data').val()
-                    },
-              mark: "json"})
+              mark: "json",
+              data: {'create-do':{
+                  name:$('#name').val(),
+                  region:$('#region').val(),
+                  size:$('#size').val(),
+                  image:$('#image').val(),
+                  ssh:[], // $('#ssh').val()]
+                  backups:null,//$('#backups').val(),
+                  ipv6:null,//$('#ipv6').val(),
+                  priv_networking:null,//$('#priv-networking').val(),
+                  user_data:null//$('#user-data').val()
+                    }}})
   },
 
   render: function(){
@@ -73,24 +72,25 @@ GCEControls = React.createClass({
   createDroplet: function(){
   urb.send({
     appl: 'cloud',
-    data: {action:'create-gce',
+    mark: 'json',
+    data: {'create-gce':{
 //          project:$('#project').val(),
 //          zone:$('#zone').val(),
 //          name:$('#gname').val(),
 //          machine_type:$('#machine_type').val() /
-          },
-    mark: 'json'})
+    }}})
   },
 
   createDisk: function(){
       urb.send({
         appl: 'cloud',
-        data: {action:'create-gce',
+        mark: 'json',
+        data: {'create-gce':{
                snap:$('#gsnap').val(),
-               number:$('#number').val(),
+               number:parseInt($('#number').val()),
                name:$('#gcpName').val(),
-               instance_img:$('#instance_image').val()},
-        mark: 'json'})
+               instance_img:$('#instance_image').val()
+        }}})
   },
 
   render: function(){
@@ -118,30 +118,32 @@ GCEControls = React.createClass({
 })
 
 Droplet = React.createClass({
-  dropletAction:function(id, action){
-    urb.send({
-      appl:"cloud",
-      data: {action:action,
-            id:id}})
+  dropletAction: function(act){
+    return function(){
+      var action = {act:{}, id:this.props.id, name:this.props.name}
+      switch(act){
+          case "snapshot": 
+        action.act[act] = this.refs.snapname.getDOMNode().value
+          break; default:
+        action.act[act] = null
+      }
+      urb.send({appl: "cloud", data: {action:action}})}
   },
 
   render: function() {
     var $this = this    //local var, else it always points at second
-    var acts = ["start","stop","reboot","delete"]
+    var acts = ["start","stop","reboot","delete","snapshot"]
     var buttons = [];
-    var buttons = acts.map(function(act){
-      return b({onClick:function(){
-        $this.dropletAction($this.props.id, act)
-      }}, act)
-    })     
+    var buttons = acts.map(function(act){ return b({onClick:$this.dropletAction(act).bind($this)}, act)})
     kay = Object.keys(this.props)
     kay = kay.filter(function(b){return b!="children"}) //  XX individually adress props
-  return div({},
+  return div({},[
     buttons,
+    input({ref:'snapname',placeholder:'Name of Snapshot'}),
     table({},
       tr({},kay.map(function(k){return th({},k)})),
       tr({},kay.map(function(k){return td({},JSON.stringify($this.props[k]))}))),
-    hr())
+    hr()])
   }
 })
 
@@ -181,10 +183,16 @@ Page = recl({
 
 
   render: function(){
+      var drops = [], imgs = []
+      if(this.props.instances) drops = this.props.instances.map(Droplet)
+      if(this.props.images) imgs = this.props.images.map(
+          function(i){return div({},i.name)}
+      )
       return (div({},
         DOControls({handleClick:this.handleClick,sendSecret:this.sendSecret}), 
         GCEControls({handleClick:this.handleClick,sendSecret:this.sendSecret}),
-        this.props.droplets.map(Droplet)
+        drops,
+        imgs
       ))
   }
 })
@@ -194,6 +202,6 @@ authcode.gce = hash.access_token
 
 mounted = React.render(Page({droplets:[]}), $("#container")[0])
 urb.bind("/", function(err,d) {
-
-  mounted.setProps({droplets:d.data})
+ 
+  mounted.setProps(d.data)
 return}) 
