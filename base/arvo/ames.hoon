@@ -1188,7 +1188,7 @@
               =+  eng==(~ yed.caq.dur.diz)
               =+  bou=bust:puz
               =.  bin
-                ?.  &(oub !bou)  bin
+                ?.  &(oub !bou !=(~doznec her))  bin
                 :_(bin [%wine [our her] " is ok"])
               =.  bin
                 ?.  &(neg !eng)  bin
@@ -1407,7 +1407,8 @@
           =^  yem  puz  (wack:puz now)
           =+  bou=bust:puz
           =.  bin
-              ?.  &(bou !oub)  bin
+              ?.  &(bou !oub !=(~doznec her))
+                bin
               :_(bin [%wine [our her] " not responding still trying"])
           =.  diz  ?:((boom:puz now) (pode:diz now) diz)
           (busk xong:diz yem)
