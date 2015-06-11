@@ -95,8 +95,9 @@
 ++  parse-cloud-command
   =+  jo
   %-   of  :~
-    [%create-do some]
     [%create-gce some]
+    [%create-do some]
+    ::[%create-gce some]
     :-  %action 
     (ot id/so name/so act/parse-droplet-action ~)
   ==
@@ -345,17 +346,33 @@
     ~
   ==
 ::
-++  thou-create-do  |=([~ resp=httr] ~&(resp :_(+>.$ ~)))
+++  thou-create-do  |=([path resp=httr] ~&(resp :_(+>.$ ~)))
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::  create google instances                                                   ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+++  reserve-ip
+  |=  name=json
+  =+  nam=(need ((ot name/so ~):jo name))
+  %-  httpreq
+  :*  /reserve-ip
+      ~['googleapis' 'www']
+      /compute/v1/projects/urbcloud/regions/us-central1/addresses
+      [%post (joba name/s/nam)]
+      %^  mo  ['Content-Type' 'application/json' ~]
+              ['Authorization' (cat 3 'Bearer ' access.gce.toke.vat) ~]
+              ~
+      *quay
+  ==     
+::
+++  thou-reserve-ip  
+  |=  [path resp=httr]
+  =+  parsed=(rash q:(need r.resp) apex:poja)
+  ~&  parsed-ip/parsed
+  :_  +>.$  ~
 ++  create-gce
-  |=  name=@t ::number=@t] ::image=@t]
-  =+  :-  ^=  image  
-          "https://www.googleapis.com/compute/v1/projects/debian-cloud/global/".
-          "images/backports-debian-7-wheezy-v20150603"
-      number=3
-  ::=+  src=(cat 3 'compute/v1/projects/urbcloud/zones/us-central1-a/disks/' name)
+  |=  jon=json
+  =+  ^-  [name=@t image=@t number=@ud]
+      (need ((ot name/so 'instance_img'^so number/ni ~):jo jon))
   |-  ^-  (list move) 
   ?~  number  ~
   :_  $(number (dec number))
@@ -365,9 +382,9 @@
       :~  name/s/nam  'machineType'^s/'zones/us-central1-a/machineTypes/n1-standard-1'
       :-  %disks  :-  %a  :_  ~
       %-  jobe   
-      :+  'initializeParams'^`json`(jobe 'sourceImage'^s/(crip image) ~)  :: type/s/'persistent' source/s/src ~)
-        boot/b/%.y
-      ~
+      :+  'initializeParams'^`json`(joba 'sourceImage'^s/image)
+           boot/b/%.y
+           ~
       :-  'networkInterfaces'  :-  %a  :_  ~
       (joba 'network' `json`[%s 'global/networks/default'])
       ==
@@ -382,7 +399,7 @@
       `quay`[%key access.gce.toke.vat]~
   ==
 ::
-++  thou-create-gce  |=([~ resp=httr] ~&(resp :_(+>.$ ~)))
+++  thou-create-gce  |=([path resp=httr] ~&(resp :_(+>.$ ~)))
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::  perform actions on instances (both kinds)                                 ::
@@ -394,8 +411,9 @@
   =+  action=`cloud-command`(need (parse-cloud-command jon))
   :_  +>.$
   ?-  -.action
+    %create-gce  [(reserve-ip p.action)]~
     %create-do   [(create-do p.action)]~
-    %create-gce  [(create-gce 'name')]
+    ::%create-gce  [(create-gce p.action)]
     %action      [(instance-action [id name act]:action)]~
   ==
 ++  instance-action
@@ -532,7 +550,7 @@
   [name/so id/so ~]
   :_  +>.$  [(spam `json`(image-to-json `(list image)`(map-to-list images.vat)))]
 ::
-++  wake-refresh-gce  |=([~ ~] [list-gce +>.$])
+++  wake-refresh-gce  |=([path ~] [list-gce +>.$])
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::  list digital ocean droplets and images                                   ::
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -599,5 +617,5 @@
   |=(a=[[@t @t] image] ?=(%do ->.a))
   :_  +>.$  ~[(spam `json`(image-to-json `(list image)`(map-to-list images.vat)))]
 ::
-++  wake-refresh-do  |=([~ ~] [list-do +>.$])
+++  wake-refresh-do  |=([path ~] [list-do +>.$])
 --
