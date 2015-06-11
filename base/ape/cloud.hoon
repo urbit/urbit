@@ -354,7 +354,7 @@
   |=  name=json
   =+  nam=(need ((ot name/so ~):jo name))
   %-  httpreq
-  :*  /reserve-ip
+  :*  /reserve-ip/[nam]
       ~['googleapis' 'www']
       /compute/v1/projects/urbcloud/regions/us-central1/addresses
       [%post (joba name/s/nam)]
@@ -365,10 +365,40 @@
   ==     
 ::
 ++  thou-reserve-ip  
-  |=  [path resp=httr]
+  |=  [pax=path resp=httr]
+  ~&  resp
+  ~|  r.resp
   =+  parsed=(rash q:(need r.resp) apex:poja)
-  ~&  parsed-ip/parsed
-  :_  +>.$  ~
+  =+  ur=(need ((ot 'targetLink'^so ~):jo parsed))
+  ~&  initial-response/parsed
+  =+  name=-:(flop q.q:(need (epur ur)))
+  =+(buf=`@da`(add ~s10 now) :_(+>.$ [ost %wait `path`/check-ip-status/[name] buf]~))
+::
+++  wake-check-ip-status
+  |=  [name=path ~]
+  ~&  this-is-the-name/name
+  =+  nam=?~(name !! -.name)
+  :_  +>.$
+  :_  ~
+  %-  httpreq
+  :*  `path`/check-ip-status/[nam]
+      ~['googleapis' 'www']
+      `path`/compute/v1/projects/urbcloud/regions/us-central1/addresses/[nam]
+      %get
+       %^  mo  ['Content-Type' 'application/json' ~]
+               ['Authorization' (cat 3 'Bearer ' access.gce.toke.vat) ~]
+               ~
+      *quay
+  ==
+++  thou-check-ip-status
+  |=  [name=path resp=httr]
+  ~&  api-resp/resp
+  =+  parsed=(rash q:(need r.resp) apex:poja)
+  !!
+  ::?.  =('RESERVED' (need ((ot status/so ~):jo parsed)))
+::
+
+
 ++  create-gce
   |=  jon=json
   =+  ^-  [name=@t image=@t number=@ud]
@@ -407,7 +437,6 @@
 ++  poke-json                         ::  receive action from client
   |=  jon=json
   ^-  [(list move) _+>.$]
-  ~&  receive-act/jon
   =+  action=`cloud-command`(need (parse-cloud-command jon))
   :_  +>.$
   ?-  -.action
