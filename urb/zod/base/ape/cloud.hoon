@@ -10,52 +10,66 @@
 ::
 ::::  sivtyv-barnel
   ::
-             
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::  data structures                                                           ::             
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 !:
 |%
 ++  instance
-$:  plat=?(%do %gce)  name=@t  id=@t  status=@t  created=@da  snapshot=name=@t  ::disk=@u  region=@t  
+  $:  plat=?(%do %gce)  name=@t  id=@t  status=@t  created=@da  snapshot=name=@t  ::disk=@u  region=@t  
 ::ip=(list ,@if)
 ==
 ++  image
-$:  plat=?(%do %gce)  name=@t  id=@t
+  $:  plat=?(%do %gce)  name=@t  id=@t
 ==
 ++  create-req-do
-$:
-name=@t  ::region=@t
-size=@t  image=@t  ssh=(list cord)
-backups=(unit ,?)  ipv6=(unit ,?)
-private-networking=(unit ,?)  user-data=(unit ,@t)
-==
+  $:
+  name=@t  ::region=@t
+  size=@t  image=@t  ssh=(list cord)
+  backups=(unit ,?)  ipv6=(unit ,?)
+  private-networking=(unit ,?)  user-data=(unit ,@t)
+  ==
 ++  create-req-gce  ,[project=@t zone=@t name=@t machine-type=@t]
 ++  axle
-$:  auth=[do=keys gce=keys]  toke=[do=tokens gce=tokens]
-    insts=(map ,@t instance)  images=(map [,[@t @t] image])
-==
+  $:  auth=[do=keys gce=keys]  toke=[do=tokens gce=tokens]
+      insts=(map ,@t instance)  images=(map [,[@t @t] image])
+  ==
 ++  keys  ,[authc=(unit ,@t) client-secret=(unit ,@t)]
 ++  tokens  ,[access=@t refresh=@t]
 ++  move  ,[bone card]
 ++  card
-$%  [%diff %json json]
-    [%wait wire @da]
-    [%send wire [ship term] %poke %talk-command command]
-    [%them wire (unit hiss)]
-==
+  $%  [%diff %json json]
+      [%wait wire @da]
+      [%send wire [ship term] %poke %talk-command command]
+      [%them wire (unit hiss)]
+  ==
 ++  droplet-action
-$%  [%start ~]
-    [%stop ~]
-    [%reboot ~]
-    [%delete ~]
-    [%snapshot p=@t]
-==
+  $%  [%start ~]
+      [%stop ~]
+      [%reboot ~]
+      [%delete ~]
+      [%snapshot p=@t]
+  ==
 ++  cloud-command
-$%  [%action id=@t name=@t act=droplet-action]
-    [%create-do p=json]
-    [%create-gce p=json]
-==
+  $%  [%action id=@t name=@t act=droplet-action]
+      [%create-do p=json]
+      [%create-gce p=json]
+  ==
 --
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::  miscellaneous functions                                                   ::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 !:
-|% :::
+|%
+++  auth-queries  
+    |=  code=cord
+    :~  'grant_type'^'authorization_code'
+        'code'^code
+        :-  'client_id'
+        'd8f46b95af38c1ab3d78ad34c2157a6959c23eb0eb5d8e393f650f08e6a75c6f'
+        'redirect_uri'^'http://localhost:8443/home/pub/cloud/fab'
+    ==
+::
 ++  parse-iso8601
   =<  (cook to-time (parsf ;"{parse-day}T{parse-seconds}{parse-zone}"))
   |%
@@ -97,26 +111,33 @@ $%  [%action id=@t name=@t act=droplet-action]
   ==
 ++  key-do
   (mo [%start 'power_on'] [%stop 'shutdown'] [%reboot 'power_cycle'] ~)
+::
 ++  adapter-do
   |=  a=cord
   (~(got by key-do) a)
+::
 ++  parse-ip-do
   =>  jo
   %-  ot  
   :_  ~  v4/(ar (ot 'ip_address'^(su lip:ag) ~))
+::
 ++  parse-ip-gce
   =>  jo
   %+  cu  |=(a=(list (list ,@if)) `(list ,@if)`(zing a))
   (ar (ot 'accessConfigs'^(ar (ot 'natIP'^(su lip:ag) ~)) ~))
+::
 ++  tail-url
   |=  a=cord
   -:(flop q.q:(need (epur a)))
+::
 ++  parse-region
   =>  jo
   (ot name/so ~)
+::
 ++  parse-id-text
   |=  jon=json
   ?.(?=([?(%n %s) *] jon) ~ (some p.jon))
+::
 ++  create-do-body
   |=  $:  name=@t  ::region=@t
       size=@t  image=@t  ssh-keys=(list cord)
@@ -128,6 +149,7 @@ $%  [%action id=@t name=@t act=droplet-action]
        backups/?~(backups ~ b/u.backups)  ipv6/?~(ipv6 ~ b/u.ipv6)
       'user_data'^?~(user-data ~ s/u.user-data)  'private_networking'^?~(private-networking ~ b/u.private-networking)
   ==
+::
 ++  convert-do
   |=  a=?(%start %stop %reboot %snapshot)
   ?-  a
@@ -140,6 +162,7 @@ $%  [%action id=@t name=@t act=droplet-action]
     %snapshot
   'snapshot'
   ==
+::
 ++  instance-to-json
   |=  a=(list instance)
   ^-  json
@@ -155,7 +178,7 @@ $%  [%action id=@t name=@t act=droplet-action]
       created/s/(crip (dust (yore created)))
       ::region/s/region
       snapshot/s/snapshot
-  ::    disk/`json`(jone disk)
+      ::disk/`json`(jone disk)
       ::ip/a/(turn ip |=(a=@if s/(rsh 3 1 (scot %if a))))
   ==
 ++  map-to-list
@@ -163,6 +186,7 @@ $%  [%action id=@t name=@t act=droplet-action]
   ^-  liz=(list image)
   %+  turn  (~(tap by a) *(list ,[[@t @t] image]))
   |=(a=[[@t @t] image] `image`+.a)
+::
 ++  image-to-json
   |=  a=(list image)
   %+  joba  'images'
@@ -173,26 +197,25 @@ $%  [%action id=@t name=@t act=droplet-action]
   %-  jobe
   :~  name/s/name  id/s/id  ==
 --
+::::::::::::::::
+::  main door :: 
+::::::::::::::::
 !:
 |_  [bowl vat=axle]
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::  miscellaneous arms that have to be in main door for scope reasons       ::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 ::
 ::++  prep  ,_`.
-::
-++  peer
-  |=  pax=path
+::                                    
+++  thou
+  |=  [pour-path=path resp=?(httr *)]
   ^-  [(list move) _+>.$]
-  :_  +>.$
-  =+  lis=(~(tap by insts.vat))
-  [ost %diff %json (instance-to-json (turn lis |=(a=[@t instance] +.a)))]~
-::
-++  spam
-  |=  jon=json
-  %+  turn  (~(tap by sup))
-  |=  [sub=bone @ pax=path]
-  ^-  move
-  [sub %diff %json jon]
-++  httpreq
-    |=  $:  pour-path=wire
+  ~&  unhandled-pour-path/resp
+  :_  +>.$  ~
+++  httpreq  
+  |=  $:  pour-path=wire    ::  must be in main door because of scope
             domain=(list cord)  end-point=path
           req-type=$?(%get %delt [%post json])  headers=math
         queries=quay
@@ -212,16 +235,46 @@ $%  [%action id=@t name=@t act=droplet-action]
         [%post headers ~ (tact (pojo +.req-type))]
     :^  ost  %them  pour-path
     `(unit hiss)`[~ request]
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::  manage supscriptions and publish to talk                                ::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+++  peer
+  |=  pax=path
+  ^-  [(list move) _+>.$]
+  :_  +>.$
+  =+  lis=(~(tap by insts.vat))
+  [ost %diff %json (instance-to-json (turn lis |=(a=[@t instance] +.a)))]~
 ::
-++  auth-queries  
-    |=  code=cord
-    :~  'grant_type'^'authorization_code'
-        'code'^code
-        :-  'client_id'
-        'd8f46b95af38c1ab3d78ad34c2157a6959c23eb0eb5d8e393f650f08e6a75c6f'
-        'redirect_uri'^'http://localhost:8443/home/pub/cloud/fab'
-    ==
+++  spam
+  |=  jon=json
+  %+  turn  (~(tap by sup))
+  |=  [sub=bone @ pax=path]
+  ^-  move
+  [sub %diff %json jon]
 ::
+++  publish
+  |=  [act=(list speech)]
+  ^-  move
+  =+  ^=  spchz
+      %+  turn  act
+      |=  sp=speech
+      =+  ^=  tail
+      :-  ^-  audience
+          :+  :-  `partner`[%& our ?+((clan our) !! %czar %court, %duke %porch)]
+              ^-  (pair envelope delivery)
+              [`envelope`[& ~] %pending]
+            ~
+          ~
+      `statement`[now ~ sp]
+      ^-  thought
+      :-  `@`(sham eny tail)
+      tail
+  =+  mez=[%talk-command [%publish `(list thought)`spchz]]
+  [ost %send /pub [our %talk] %poke mez]
+++  thou-pub  |=(~ :_(+>.$ ~))
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::  authentication                                                            ::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  poke-cloud-auth
   |=  [cde=cord typ=cord]
   ^-  [(list move) _+>.$]
@@ -244,14 +297,14 @@ $%  [%action id=@t name=@t act=droplet-action]
       [~ secret]
     :_  +>.$
     :_  ~
-    %+  httpreq  /auth/do
+    %+  httpreq  /do/auth
     :^    ~[%digitalocean %cloud]  `path`/v1/oauth/token
         [%post ~]
     :-  ~  `quay`['client_secret'^secret (auth-queries (need authc.do.auth.vat))]
   ==
 ::
-++  receive-auth
-  |=  [pour-path=path resp=httr]
+++  thou-do-auth
+  |=  [~ resp=httr]
   ^-  [(list move) _+>.$]
   ~|  resp
   =+  body=(rash q:(need r.resp) apex:poja)
@@ -263,82 +316,9 @@ $%  [%action id=@t name=@t act=droplet-action]
   :_  +>.$
   :-  (publish [%lin & 'successfully authenticated']~)
   list-do
-::
-++  poke-json
-  |=  jon=json
-  ^-  [(list move) _+>.$]
-  ~&  receive-act/jon
-  =+  action=`cloud-command`(need (parse-cloud-command jon))
-  :_  +>.$
-  ?-  -.action
-      %create-do
-    [(create-do p.action)]~
-  ::
-      %create-gce
-    ::(create-gce-disks p.action)
-    ~[(create-gce 'name')]
-  ::
-      %action
-    [(instance-action [id name act]:action)]~
-  ==
-::
-++  instance-action
-  |=  [id=@t name=@t action=droplet-action]
-  =+  d=(~(got by insts.vat) id)
-  ~|  'can\'t find id'
-  =+  typ=?~(d !! -.d)
-  ?-  typ
-    %do
-        =+  ^=  meth
-            ?:  ?=(%delete -.action)  
-              %delt  
-            [%post (jobe type/s/(convert-do -.action) ?.(?=(%snapshot -.action) ~ [name/s/p.action ~]))]
-        ^-  move
-        =+  ^=  req
-        %-  httpreq  :*
-           /do/[-.action]
-          ~[%digitalocean %api]  
-          ?:(?=(%delt meth) /v2/droplets/[id] /v2/droplets/[id]/actions)
-          meth
-          %^  mo  ['Content-Type' 'application/json' ~]
-          ['Authorization' (cat 3 'Bearer ' access.do.toke.vat) ~]  ~
-          *quay
-         ==
-        req
-    %gce
-        =+  ^=  head-query
-        :-  %^  mo  ['Content-Type' 'application/json' ~]
-        ['Authorization' (cat 3 'Bearer ' access.gce.toke.vat) ~]  ~
-        *quay
-      ?-  -.action
-        ?(%start %stop %reboot %'snapshot')
-          =+  end=/compute/v1/projects/urbcloud/zones/us-central1-a/instances/[name]
-          %-  httpreq  :*
-              /gce-act/[-.action]    ~['googleapis' 'www']
-              (welp end [?:(?=(%reboot -.action) 'reset' -.action) ~])
-              [%post ~]           
-              head-query
-              ==
-        %delete
-          =+  end=/compute/v1/projects/urbcloud/zones/us-central1-a/instances/[name]
-          %-  httpreq  :*
-              /gce-act/[-.action]    ~['googleapis' 'www']
-              end
-              %delt
-              head-query
-              ==
-        ==
-    ==
-++  thou-do-snapshot
-  |=  [pax=path resp=httr]
-  ~&  'arrives'
-  ~&  response/resp
-  :_  +>.$  ~
-  ++  thou-gce-act
-  |=  [pax=path resp=httr]
-  ~&  [resp act/pax]
-  :_  +>.$  ~
-::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::  create digital ocean droplets                                             ::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  create-do
   |=  act=json
   =+  ^-  deets=create-req-do
@@ -365,74 +345,33 @@ $%  [%action id=@t name=@t act=droplet-action]
     ~
   ==
 ::
-++  create-gce-disks
-  |=  act=json :: num=(unit ,@u)
-  ~&  act
-  =+  ^-  [name=@t snapshot=@t number=@u snap=@t]
-      (need ((ot name/so 'instance_img'^so number/ni snap/so ~):jo act))
-  ::
-  |-  ^-  (list move)
-      ?~  number  ~&  'loop done'  
-        ~
-      :_  $(number (dec number))
-      =+  name=(cat 3 name (scot %ud number))
-      =.  number  (dec number)  
-      =+  ^-  body=json
-          (jobe name/s/name %'sourceSnapshot'^s/'compute/v1/projects/urbcloud/global/snapshots/snapshot-1' ~)  ::^so/snap ~)
-      %-  httpreq
-      :*  /create-gce-disk/[snap]/[name]
-          ~['googleapis' 'www']    /compute/v1/projects/urbcloud/zones/us-central1-a/disks
-          [%post body]
-         %^  mo  ['Content-Type' 'application/json' ~]
-           ['Authorization' (cat 3 'Bearer ' access.gce.toke.vat) ~]
-          ~
-      ~ 
-      ==
-::
-++  ask-disk-status
-  |=  pax=path  ^-  move
-  ~&  'ask disk status'
-  =+  :-  safe=(slav %uv ?~(pax !! -.pax))
-      snap=?.(?=([* ^] pax) !! i.t.pax)
-  =+  link=(need (epur ?~(pax !! safe)))
-  =.  r.link  ['access_token'^access.gce.toke.vat r.link]
-  :^  ost  %them  `wire`/disk-status/snap
-  `(unit hiss)`[~ [link [%get ~ ~]]]
-::
-++  disk-status                       ::receive
-  |=  [ins-img=@t resp=httr]
-  ^-  [(list move) _+>.$]
-  ~&  'disk status called'
-  =+  hcode=p.resp
-  ?:  =('200' hcode)
-    ~|  'did not receive 200'  !!
-  =+  :-(parsed=(rash q:(need r.resp) apex:poja) jo)
-  ~&  parsed
-  =+  :-  status=(need ((ot status/so ~) parsed))
-  lin=(need ((ot 'selfLink'^so ~) parsed))
-  =+  link=(scot %uv lin)
-  ?:  =('DONE' status)
-    ~&  'boot disk now running, now starting instance'
-    =+  target=(need ((ot 'targetLink'^so ~):jo parsed))
-    =+  nam=-:(flop q.q:(need (epur target)))
-    :_   +>.$  ~[(create-gce nam ins-img)]
-  :_  +>.$
-  [ost %wait `path`[%check-status link ins-img ~] `@da`(add ~s3 now)]~       ::  refesh every 10 sec
-::
+++  thou-create-do  |=([~ resp=httr] ~&(resp :_(+>.$ ~)))
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::  create google instances                                                   ::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  create-gce
-  |=  name=@t ::snap=@t]
-  =+  ^=  image  
-      "https://www.googleapis.com/compute/v1/projects/debian-cloud/global/".
-      "images/backports-debian-7-wheezy-v20150603"
-  =+  src=(cat 3 'compute/v1/projects/urbcloud/zones/us-central1-a/disks/' name)
+  |=  name=@t ::number=@t] ::image=@t]
+  =+  :-  ^=  image  
+          "https://www.googleapis.com/compute/v1/projects/debian-cloud/global/".
+          "images/backports-debian-7-wheezy-v20150603"
+      number=3
+  ::=+  src=(cat 3 'compute/v1/projects/urbcloud/zones/us-central1-a/disks/' name)
+  |-  ^-  (list move) 
+  ?~  number  ~
+  :_  $(number (dec number))
+  =+  nam=(cat 3 name (scot %ud number))
   =+  ^-  body=json
       %-  jobe
-      :~  name/s/name  'machineType'^s/'zones/us-central1-a/machineTypes/n1-standard-1'
+      :~  name/s/nam  'machineType'^s/'zones/us-central1-a/machineTypes/n1-standard-1'
       :-  %disks  :-  %a  :_  ~
-      ^-  json  (jobe 'initializeParams'^`json`(jobe 'sourceImage'^s/(crip image) ~) ~)   ::boot/b/%.y type/s/'persistent' source/s/src ~)
+      %-  jobe   
+      :+  'initializeParams'^`json`(jobe 'sourceImage'^s/(crip image) ~)  :: type/s/'persistent' source/s/src ~)
+        boot/b/%.y
+      ~
       :-  'networkInterfaces'  :-  %a  :_  ~
       (joba 'network' `json`[%s 'global/networks/default'])
       ==
+  ^-  move
   %-  httpreq
   :*  `path`/create-gce
       `(list cord)`~['googleapis' 'www']  `path`/compute/v1/projects/urbcloud/zones/us-central1-a/'instances'
@@ -442,26 +381,90 @@ $%  [%action id=@t name=@t act=droplet-action]
     ~
       `quay`[%key access.gce.toke.vat]~
   ==
-:: 
-++  wake
-  |=  [pour-path=path ~]
-  ?+    -.pour-path  !!
-      %refresh-do
-    :_  +>.$
-    list-do
-      %refresh-gce
-    :_  +>.$
-    list-gce
-      %check-status
-    :_  +>.$
-    [(ask-disk-status +.pour-path)]~
-  ==
 ::
+++  thou-create-gce  |=([~ resp=httr] ~&(resp :_(+>.$ ~)))
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::  perform actions on instances (both kinds)                                 ::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+++  poke-json                         ::  receive action from client
+  |=  jon=json
+  ^-  [(list move) _+>.$]
+  ~&  receive-act/jon
+  =+  action=`cloud-command`(need (parse-cloud-command jon))
+  :_  +>.$
+  ?-  -.action
+    %create-do   [(create-do p.action)]~
+    %create-gce  [(create-gce 'name')]
+    %action      [(instance-action [id name act]:action)]~
+  ==
+++  instance-action
+  |=  [id=@t name=@t action=droplet-action]
+  =+  d=(~(got by insts.vat) id)
+  ~|  'can\'t find id'
+  =+  typ=?~(d !! -.d)
+  ?-  typ
+      %do
+    =+  ^=  meth
+        ?:  ?=(%delete -.action)  
+          %delt  
+        [%post (jobe type/s/(convert-do -.action) ?.(?=(%snapshot -.action) ~ [name/s/p.action ~]))]
+    ^-  move
+    =+  ^=  req
+    %-  httpreq  :*
+       /do/[-.action]
+      ~[%digitalocean %api]  
+      ?:(?=(%delt meth) /v2/droplets/[id] /v2/droplets/[id]/actions)
+      meth
+      %^  mo  ['Content-Type' 'application/json' ~]
+      ['Authorization' (cat 3 'Bearer ' access.do.toke.vat) ~]  ~
+      *quay
+     ==
+    req
+  ::
+      %gce
+    =+  ^=  head-query
+    :-  %^  mo  ['Content-Type' 'application/json' ~]
+    ['Authorization' (cat 3 'Bearer ' access.gce.toke.vat) ~]  ~
+    *quay
+    ?-    -.action
+        ?(%start %stop %reboot %'snapshot')
+      =+  end=/compute/v1/projects/urbcloud/zones/us-central1-a/instances/[name]
+      %-  httpreq
+      :*  /gce-act/[-.action]    ~['googleapis' 'www']
+          (welp end [?:(?=(%reboot -.action) 'reset' -.action) ~])
+          [%post ~]           
+          head-query
+      ==
+    ::
+        %delete
+      =+  end=/compute/v1/projects/urbcloud/zones/us-central1-a/instances/[name]
+      %-  httpreq
+      :*  /gce-act/[-.action]    ~['googleapis' 'www']
+          end
+          %delt
+          head-query
+      ==
+    ==
+  ==
+++  thou-do-act
+  |=  [pax=path resp=httr]
+  ~&  [resp act/pax]
+  :_  +>.$  ~
+::
+++  thou-gce-act
+  |=  [pax=path resp=httr]
+  ~&  [resp act/pax]
+  :_  +>.$  ~
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::  retrieve google instances and images                                     ::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  list-gce  
 ^-  (list move)
 :+  (list-something-gce /zones/['us-central1-a']/instances)
     (list-something-gce /global/snapshots)
     ~
+::
 ++  list-something-gce 
   |=  endpoint=path
   =+  ^=  lis
@@ -528,6 +531,11 @@ $%  [%action id=@t name=@t act=droplet-action]
   %-  ot
   [name/so id/so ~]
   :_  +>.$  [(spam `json`(image-to-json `(list image)`(map-to-list images.vat)))]
+::
+++  wake-refresh-gce  |=([~ ~] [list-gce +>.$])
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::  list digital ocean droplets and images                                   ::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  list-do
 :+((list-something-do %droplets) (list-something-do %images) ~)
 ++  list-something-do
@@ -559,8 +567,7 @@ $%  [%action id=@t name=@t act=droplet-action]
       =+  jo
       %-  ot
       :~  name/so  id/parse-id-text  status/so  'created_at'^(su parse-iso8601)  ::region/parse-region
-          image/(ot name/so ~)  ::disk/ni  
-::          networks/parse-ip-do 
+          image/(ot name/so ~)  ::disk/ni  networks/parse-ip-do 
       ==
   =.  insts.vat
   %-  mo
@@ -590,58 +597,7 @@ $%  [%action id=@t name=@t act=droplet-action]
   %+  weld  images
   %+  skip  (~(tap by images.vat) *(list ,[[@t @t] image]))
   |=(a=[[@t @t] image] ?=(%do ->.a))
-  :_  +>.$  ~
-  ::=.  
+  :_  +>.$  ~[(spam `json`(image-to-json `(list image)`(map-to-list images.vat)))]
 ::
-++  thou-do
-  |=  [pax=path resp=httr]
-  ~&  resp
-  :_  +>.$  ~
-++  thou-create
-    |=  [pax=path resp=httr]
-    ~&  resp
-    :_  +>.$  ~
-++  thou
-  |=  [pour-path=path resp=httr]
-  ^-  [(list move) _+>.$]
-  ?+    -.pour-path  ~&  pour-path  !!
-      %auth
-    (receive-auth +.pour-path resp)
-  ::
-      $?
-      %create-do  %create-gce
-      ==
-      :_  +>.$  ~
-  ::
-      ?(%create-gce-disk %disk-status)
-      =+  snap=?~(t.pour-path !! i.t.pour-path)
-    (disk-status snap resp)
-  ::
-      %check-status
-    :_  +>.$  ~[(ask-disk-status +.pour-path)]
-  ::
-      %pub
-    :_  +>.$  ~
-  ::
-  ==
-++  publish
-  |=  [act=(list speech)]
-  ^-  move
-  =+  ^=  spchz
-      %+  turn  act
-      |=  sp=speech
-      =+  ^=  tail
-      :-  ^-  audience
-          :+  :-  `partner`[%& our ?+((clan our) !! %czar %court, %duke %porch)]
-              ^-  (pair envelope delivery)
-              [`envelope`[& ~] %pending]
-            ~
-          ~
-      `statement`[now ~ sp]
-      ^-  thought
-      :-  `@`(sham eny tail)
-      tail
-  =+  mez=[%talk-command [%publish `(list thought)`spchz]]
-  [ost %send /pub [our %talk] %poke mez]
+++  wake-refresh-do  |=([~ ~] [list-do +>.$])
 --
-
