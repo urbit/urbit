@@ -6,7 +6,6 @@
 =>  =~
 ::  structures
 |%
-::
 ++  gift  gift-ford                                     ::  out result <-$
 ++  heel  path                                          ::  functional ending
 ++  kiss  kiss-ford                                     ::  in request ->$
@@ -57,7 +56,7 @@
 ++  calx                                                ::  concrete cache line
   $%  [%hood p=calm q=(pair beam cage) r=hood]          ::  compile
       [%bake p=calm q=(trel mark beam heel) r=(unit vase)]::  load
-      [%lilt p=calm q=arch r=(jug mark mark)]           ::  translation graph
+      [%lilt p=calm q=beak r=(jug mark mark)]           ::  translation graph
       [%slit p=calm q=[p=type q=type] r=type]           ::  slam type
       [%slim p=calm q=[p=type q=twig] r=(pair type nock)]::  mint
       [%slap p=calm q=[p=vase q=twig] r=vase]           ::  compute
@@ -221,6 +220,7 @@
     ?-    -.+.sih
         %writ
       ?~  p.sih  +>.$ 
+      :: ~&  writ/tea
       =+  [dap=(~(got by deh.bay) dep) bem=`beam`[bek sup]]
       =-  ?~(dop con con(deh.bay (~(put by deh.bay) dep dop)))
       ^-  [dop=$|(~ _dap) con=_+>.$]
@@ -335,6 +335,11 @@
             %2  nuf
             %1  nuf
             %0
+          :: ~&  :-  %clef-new
+          ::     ?+  sem  `@tas`sem
+          ::       %hood  [%hood (tope &1.q.q.hoc)]
+          ::       %bake  [%bake `mark`&1.q.q.hoc (tope &2.q.q.hoc)]
+          ::     ==
           :-  p=(came p.nuf `calx`[sem `calm`[now p.q.nuf] q.q.hoc q.q.nuf])
           q=q.nuf
         ==
@@ -539,7 +544,7 @@
       %+  (clef %hood)  (fine cof bem(r [%ud 0]) cay)
       ^-  (burg (pair beam cage) hood)
       |=  [cof=cafe bum=beam cay=cage]
-      ::  ~&  fade/clef-miss/bem
+      :: ~&  fade/clef-miss/bem
       =+  rul=(fair bum)
       ?.  ?=(@ q.q.cay)
         (flaw cof ~)
@@ -551,7 +556,7 @@
     ++  fang                                            ::  protocol door
       |=  [cof=cafe for=mark]
       ^-  (bolt vase)
-      %+  cope  (make cof [%core bek /[for]/mar])
+      %+  cope  (make cof [%core (norm ska bek /[for]/mar)])
       ;~(cope furl feel)
     ::
     ++  fair                                            ::  hood parsing rule
@@ -921,7 +926,7 @@
       ?~  von  [p=cof q=[%1 [%y bem ~] ~ ~]]
       %+  flag  (norm ska bem)
       (fine cof ?>(?=([~ %arch ^] u.von) ((hard arch) q.q.u.u.von)))
-    :: 
+    ::
     ++  liar                                            ::  load vase
       |=  [cof=cafe bem=beam]
       ^-  (bolt vase)
@@ -940,13 +945,14 @@
     ::
     ++  lilt
       |=  cof=cafe  ^-  (bolt (jug mark mark))
+      %+  (clef %lilt)  (fine cof bek)
+      ^-  (burg beak (jug mark mark))
+      |=  [cof=cafe bek=beak]
+      =.  ^bek  bek
       %+  cope  (lend cof [bek /mar])
       |=  [cof=cafe arc=arch]
-      %+  (clef %lilt)  (fine cof arc)
-      |=  [cof=cafe arc=arch]
       :: =-  =+((cope - |=([cafe lil=(jug mark mark)] ~&(lil=lil (flue cof)))) +<)      
-      =+  all=(~(tap by r.arc))
-      ~!  all
+      =+  all=(~(tap by r.arc)) 
       |-  ^-  (bolt (jug mark mark))
       ?~  all  (flue cof)
       %+  cope  $(cof cof, all t.all)
@@ -1071,7 +1077,7 @@
     ++  mail                                            ::  cached mint
       |=  [cof=cafe sut=type gen=twig]
       ^-  (bolt (pair type nock))
-      %+  (clef %slim)  (fine cof sut gen) 
+      %+  (clef %slim)  (fine cof sut gen)
       |=  [cof=cafe sut=type gen=twig]
       =+  puz=(mule |.((~(mint ut sut) [%noun gen])))
       ?-  -.puz
@@ -1090,7 +1096,6 @@
     ++  make                                            ::  reduce silk
       |=  [cof=cafe kas=silk]
       ^-  (bolt gage)
-      :: ~&  [%make (,@tas -.kas)]
       ?-    -.kas
           ^
         %.  [cof p.kas q.kas]
@@ -1675,8 +1680,9 @@
   ~
 ::
 ++  load                                                ::  highly forgiving
-::   |=  old=axle
-::   ..^$(+>- old)
+  |=  old=axle
+  =.  pol.old  (~(run by pol.old) |=(baby +<(jav ~)))
+  ..^$(+>- old)
   ::=.  old  
   ::    ?.  ?=([%0 *] old)  old                           ::  remove at 1
   ::    :-  %1 
@@ -1685,13 +1691,13 @@
   ::    ?>  ?=([n=[p=* q=[tad=* dym=* deh=* jav=*]] l=* r=*] +.old)
   ::    :-  [p.n.+.old [tad.q.n.+.old dym.q.n.+.old deh.q.n.+.old ~]]
   ::    [$(+.old l.+.old) $(+.old r.+.old)]
-  |=  old=*
-  =+  lox=((soft axle) old)
-  ^+  ..^$
-  ?~  lox
-    ~&  %ford-reset
-    ..^$
-  ..^$(+>- u.lox)
+  ::|=  old=*
+  ::=+  lox=((soft axle) old)
+  ::^+  ..^$
+  ::?~  lox
+  ::  ~&  %ford-reset
+  ::  ..^$
+  ::..^$(+>- u.lox)
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]
