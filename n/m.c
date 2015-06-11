@@ -1373,7 +1373,7 @@ _cm_limits(void)
     c3_assert(0 == ret_i);
     rlm.rlim_cur = 10240; // default OSX max, not in rlim_max irritatingly
     if ( 0 != setrlimit(RLIMIT_NOFILE, &rlm) ) {
-      perror("file limit");
+      // perror("file limit");
       //  no exit, not a critical limit
     }
   }

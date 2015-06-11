@@ -1,10 +1,10 @@
 ::                                                      ::  ::
-::::  /hoon/oct1/lib                               ::  ::  dependencies
+::::  /hoon/oct1/lib                                    ::::::  dependencies
   ::                                                    ::  ::
 /?    310                                               ::  arvo version
 /-    *oct1                                             ::  structures
 ::                                                      ::  ::
-::::                                                    ::  ::  semantics
+::::                                                    ::::::  semantics
   !:                                                    ::  ::
 |%                                                      ::
 ++  icon   |=(? ?:(+< 'X' 'O'))                         ::  display at

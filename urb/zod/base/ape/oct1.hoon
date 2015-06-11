@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hoon/oct1/ape                               ::::::  dependencies
+::::  /hoon/oct1/ape                                    ::::::  dependencies
   ::                                                    ::  ::
 /?  310                                                 ::  arvo version
 /-  *sole, *oct1                                        ::  structures
