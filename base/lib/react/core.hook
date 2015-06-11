@@ -18,13 +18,38 @@
     %pattern  %polygon  %polyline  %radial-gradient  %rect  %stop  %svg
     %text  %tspan
   ==
-++  react-vale  
+++  react-vale
   ~(has in react-elems)
 ++  react-to-tape
   |=  src=manx  ^-  tape
   ?:  (~(has by (mo a.g.src)) [%urb %codemirror])
     ?>  ?=([[%pre *] _:/(**) ~] src)
     $(src ;codemirror(value "{v.i.a.g.i.c.src}");)
+  ?:  (~(has by (mo a.g.src)) [%urb %exec])           ::  runnable code attribute tag
+    ?>  ?=([[%pre *] _:/(**) ~] src)                  ::  verify its only a text node
+    =*  code  v.i.a.g.i.c.src
+    =+  ^=  result
+      (mule |.((slap !>(.) (ream (crip code)))))      ::  compile and run safely
+    ?:  ?=(%.y -.result)                              ::  it was ok
+        =+  ^=  new
+          ;div(class "rancode")
+                ;pre:"{code}"
+                ;code:"{~(ram re (sell p.result))}"
+            ==
+        $(src new)
+    =+  ^=  error
+      ;div(class "failedcode")
+        ;pre:"{code}"
+        ;pre
+          ;div:"error"
+          ;*  %+  turn
+                (scag (dec (lent p.result)) p.result) ::  hide react trace
+              |=  a=tank
+              ^-  manx
+              ;div:"{~(ram re a)}"
+        ==
+      ==
+    $(src error)
   ;:  weld
     "React.createElement("
     =*  tan  n.g.src
@@ -41,7 +66,7 @@
     ", "
     ::
     =<  ~(ram re %rose [", " "[" "]"] (turn c.src .))
-    |=  a=manx 
+    |=  a=manx
     ?:  ?=(_:/(**) a)
       leaf/(pojo (jape v.i.a.g.a))
     leaf/^$(src a)
