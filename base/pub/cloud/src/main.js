@@ -132,14 +132,14 @@ Droplet = React.createClass({
 
   render: function() {
     var $this = this    //local var, else it always points at second
-    var acts = ["start","stop","reboot","delete","snapshot"]
+    var acts = ["start","stop","reboot","delete"] //,"snapshot"]
     var buttons = [];
     var buttons = acts.map(function(act){ return b({onClick:$this.dropletAction(act).bind($this)}, act)})
     kay = Object.keys(this.props)
     kay = kay.filter(function(b){return b!="children"}) //  XX individually adress props
   return div({},[
     buttons,
-    input({ref:'snapname',placeholder:'Name of Snapshot'}),
+    //input({ref:'snapname',placeholder:'Name of Snapshot'}),
     table({},
       tr({},kay.map(function(k){return th({},k)})),
       tr({},kay.map(function(k){return td({},JSON.stringify($this.props[k]))}))),
