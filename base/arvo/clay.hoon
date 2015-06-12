@@ -226,7 +226,7 @@
     ?.  ?=(%path p.pax)
       (mule |.(`~`~|([%expected-path got=p.pax] !!)))
     $(tay t.tay, can (~(put by can) ((hard path) q.q.pax) q.i.tay))
-    
+  ::
   ++  balk                                              ::  read and send
     |=  [hen=duct cay=(unit (each cage lobe)) mun=mood]
     ^+  +>
@@ -1597,7 +1597,7 @@
         (rewind yon)
       |=  a=(unit ,_+>.$)
       ^-  (unit (each cage lobe))
-      ?~  a 
+      ?~  a
         ~
       `(unit (each cage lobe))`(bind (read:u.a mun) (cury same %&))
     ::
@@ -2033,7 +2033,6 @@
               !!
             [%pact (lobe-to-silk pax u.-) [%done ~ u.cay]]
         ==
-
       ::
       ++  built
         |=  res=gage
@@ -2274,7 +2273,7 @@
               %+  roll  (~(tap in unk))
               |=  [yak=yaki qar=(map tako (set tako))]
               (~(put by qar) r.yak (reachable-takos r.yak))
-          |-  
+          |-
           ^-  (set yaki)
           ?~  unk  gud
           =+  bun=(~(del in `(set yaki)`unk) n.unk)
@@ -2394,16 +2393,16 @@
       abet:une
     ::  ~&  :+  %infoed
     ::        len=(lent mos)
-    ::      %+  turn  mos 
+    ::      %+  turn  mos
     ::      |=  move
     ::      ^-  [duct (unit path) term term]
     ::      :-  p
     ::      ^-  [(unit path) term term]
     ::      ?+  -.q  [~ *term *term]
-    ::        %pass  
+    ::        %pass
     ::              ^-  [(unit path) term term]
     ::              [`p.q [- +<]:q.q]
-    ::        %give  
+    ::        %give
     ::              ^-  [(unit path) term term]
     ::              [~ %give -.p.q]
     ::      ==
@@ -2574,7 +2573,7 @@
     [(weld -.sip -.woo) ..^$(ruf abet:[+.sip])]
   ?:  ?=([%blab care @ @ *] tea)
     ?>  ?=(%made +<.q.hin)
-    ?.  ?=(%& -.q.q.hin)  
+    ?.  ?=(%& -.q.q.hin)
       ~|  %blab-fail
       ~>  %mean.|.(?+(-.q.q.hin -.q.q.hin %| p.q.q.hin))
       !!                              ::  interpolate ford fail into stack trace
