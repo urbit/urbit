@@ -2339,8 +2339,8 @@
           $%  [%info p=@p q=@tas r=nori]                ::  internal edit
               [%init p=@p]                              ::  report install
               [%into p=@tas q=mode]                     ::  external edit
-              [%lynx p=@p q=@tas r=(unit ,?)]           ::  sync to unix
               [%merg p=@p q=@tas r=@p s=@tas t=germ]    ::  merge desks
+              [%mont p=@tas q=@p r=@tas s=path]         ::  mount to unix
               [%wart p=sock q=@tas r=path s=*]          ::  network request
               [%warp p=sock q=riff]                     ::  file request
               [%wegh ~]                                 ::  report memory

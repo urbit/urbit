@@ -21,9 +21,9 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-++  hood-unix                                           ::
-    $:  syd=desk                                        ::
-        syn=(unit bean)                                 ::
+++  hood-mount                                          ::
+    $:  pax=path                                        ::
+        pot=term                                        ::
     ==                                                  ::
 ++  hood-sync                                           ::
     $:  syd=desk                                        ::
@@ -55,7 +55,7 @@
       ++  card                                          ::
         $%  [%exec wire @p beak (unit silk)]            ::
             [%info wire @p @tas nori]                   ::
-            [%lynx wire @p @tas (unit ,?)]              ::
+            [%mont wire @tas @p @tas path]              ::
             [%merg wire @p @tas @p @tas germ]           ::
             [%poke wire dock pear]                      ::
             [%warp wire sock riff]                      ::
@@ -76,9 +76,13 @@
     ^+  +>
     ?~(+< +> $(+< t.+<, +> (emit i.+<)))
   ::
-  ++  poke-unix                                         ::
-    |=  hood-unix
-    abet:(emit %lynx /kiln our syd syn)
+  ++  poke-mount
+    |=  hood-mount
+    =+  bem=(tome pax)
+    ?~  bem
+      =+  "can't sync bad path: {<pax>}"
+      abet:(spam leaf/- ~)
+    abet:(emit %mont /mount pot p.u.bem q.u.bem (flop s.u.bem))
   ::
   ++  poke-sync                                         ::
     |=  hos=hood-sync

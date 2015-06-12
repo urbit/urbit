@@ -15,7 +15,6 @@
               dom=dome                                  ::  desk data
               dok=(unit dork)                           ::  outstanding diffs
               mer=(map (pair ship desk) mery)           ::  outstanding merges
-              syn=?                                     ::  sync to unix
           ==                                            ::
 ++  gift  gift-clay                                     ::  out result <-$
 ++  kiss  kiss-clay                                     ::  in request ->$
@@ -84,6 +83,7 @@
               hoy=(map ship rung)                       ::  foreign
               ran=rang                                  ::  hashes
               mon=(map term beam)                       ::  mount points
+              hez=(unit duct)                           ::  sync duct
           ==                                            ::
 ++  rede                                                ::  universal project
           $:  lim=@da                                   ::  complete to
@@ -92,7 +92,6 @@
               dom=dome                                  ::  revision state
               dok=(unit dork)                           ::  outstanding diffs
               mer=(map (pair ship desk) mery)           ::  outstanding merges
-              syn=?                                     ::  sync to unix
           ==                                            ::
 ++  rind                                                ::  request manager
           $:  nix=@ud                                   ::  request index
@@ -103,7 +102,6 @@
           ==                                            ::
 ++  room                                                ::  fs per ship
           $:  hun=duct                                  ::  terminal duct
-              hez=(unit duct)                           ::  sync duct
               dos=(map desk dojo)                       ::  native desk
           ==                                            ::
 ++  rove                                                ::  stored request
@@ -134,7 +132,7 @@
 |%
 ++  de                                                  ::  per desk
   |=  [now=@da hen=duct hun=duct hez=(unit duct)]
-  |=  [[who=@p for=@p] syd=@ta rede ran=rang]
+  |=  [[who=@p for=@p] syd=@ta rede ran=rang mon=(map term beam)]
   =*  red  +<+>-
   =|  yel=(list ,[p=duct q=gift])
   =|  byn=(list ,[p=duct q=riot])
@@ -285,10 +283,44 @@
       fod.u.ref  (~(put by fod.u.ref) hen inx)
     ==
   ::
-  ++  lynx
-    |=  sun=(unit ,?)
+  ++  must-ergo
+    |=  can=(list path)
+    ^-  (map term (pair ,@ud (set path)))
+    %-  mo  ^-  (list (trel term ,@ud (set path)))
+    %+  murn  (~(tap by mon))
+    |=  [nam=term bem=beam]
+    ^-  (unit (trel term ,@ud (set path)))
+    =-  ?~(- ~ `[nam (lent s.bem) (sa -)])
+    %+  skim  can
+    |=  pax=path
+    %-  ~(any by mon)
+    |=  bem=beam
+    &(=(p.bem for) =(q.bem syd) =((flop s.bem) (scag (lent s.bem) pax)))
+  ::
+  ++  mont
+    |=  [pot=term pax=path]
     ^+  +>
-    +>.$(syn ?~(sun !syn u.sun))
+    =+  can=(turn (~(tap by q:(aeon-to-yaki:ze let.dom))) head)
+    =+  mus=(skim can |=(paf=path =(pax (scag (lent pax) paf))))
+    ?~  mus
+      +>.$
+    %_    +>.$
+        tag
+      :_  tag
+      :*  hen  %pass  [%ergoing (scot %p who) syd pot ~]  %f
+          %exec  who  [who syd %da now]  ~  %tabl
+          ^-  (list (pair silk silk))
+          %+  turn  `(list path)`mus
+          |=  a=path
+          ^-  (pair silk silk)
+          :-  [%done ~ %path !>((slag (lent pax) a))]
+          :+  %cast  %mime
+          =+  (need (need (read-x:ze let.dom a)))
+          ?:  ?=(%& -<)
+            [%done ~ p.-]
+          (lobe-to-silk:ze a p.-)
+      ==
+    ==
   ::
   ++  ease                                              ::  release request
     ^+  .
@@ -365,7 +397,6 @@
     ^+  +>
     %=    +>
         reg  ~&  %merge-announce  reg
-             ::  ?~(hez reg :_(reg [u.hez [%ergo who syd let.dom]]))
         ::  yel  [[hen %note '=' %leaf ~] yel]     ::  XX do better
     ==
   ::
@@ -721,7 +752,9 @@
     =.  +>.$  =>(wake ?>(?=(^ dok) .))
     ::  ~&  %checked-out
     ?~  hez  +>.$(dok ~)
-    ?.  syn  +>.$(dok ~)
+    =+  mus=(must-ergo (turn sim head))
+    ?:  =(~ mus)
+      +>.$(dok ~)
     =+  ^=  ceq
         |=  a=miso
         ?|  ?=(%del -.a)
@@ -732,29 +765,29 @@
     ::  =-  ~&  %formed-ergo  -
     %_    +>.$
         dok  ~
-        tag  ::  ?~(hez reg :_(reg [u.hez [%ergo who syd let.dom]]))
-      :_  tag
-      :*  hen  %pass  [%ergoing (scot %p who) syd ~]  %f
-          %exec  who  [who syd %da now]  ~  %tabl
-          ^-  (list (pair silk silk))
-          %+  turn  sim
-          |=  [a=path b=misu]
-          ^-  (pair silk silk)
-          :-  [%done ~ %path !>(a)]
-          ?:  ?=(%del -.b)
-            [%done ~ %null !>(~)]
-          =+  (~(get by mim.u.dok) a)
-          ?^  -  [%done ~ %mime !>(u.-)]
-          :+  %cast  %mime
-          =+  (need (need (read-x:ze let.dom a)))
-          ?:  ?=(%& -<)
-            [%done ~ p.-]
-          (lobe-to-silk:ze a p.-)
-      ==
+      ::    tag
+      ::  :_  tag
+      ::  :*  hen  %pass  [%ergoing (scot %p who) syd ~]  %f
+      ::      %exec  who  [who syd %da now]  ~  %tabl
+      ::      ^-  (list (pair silk silk))
+      ::      %+  turn  sim
+      ::      |=  [a=path b=misu]
+      ::      ^-  (pair silk silk)
+      ::      :-  [%done ~ %path !>(a)]
+      ::      ?:  ?=(%del -.b)
+      ::        [%done ~ %null !>(~)]
+      ::      =+  (~(get by mim.u.dok) a)
+      ::      ?^  -  [%done ~ %mime !>(u.-)]
+      ::      :+  %cast  %mime
+      ::      =+  (need (need (read-x:ze let.dom a)))
+      ::      ?:  ?=(%& -<)
+      ::        [%done ~ p.-]
+      ::      (lobe-to-silk:ze a p.-)
+      ::  ==
     ==
   ::
   ++  take-ergo
-    |=  res=gage
+    |=  [pot=term res=gage]
     ^+  +>
     ?:  ?=(%| -.res)
       %_    +>.$
@@ -762,23 +795,21 @@
         [[hen %note '!' %rose [" " "" ""] leaf/"clay ergo failed" p.res] yel]
       ==
     ?~  hez  ~|(%no-sync-duct !!)
-    ?.  syn  ~|(%sync-off !!)
-    +>.$
-    ::  %=    +>.$
-    ::      reg
-    ::    :_  reg
-    ::    :*  u.hez  %ergo  who  syd  let.dom
-    ::        ^-  (list ,[path (unit mime)])
-    ::        %+  turn  (gage-to-cages res)
-    ::        |=  [pax=cage mim=cage]
-    ::        ?.  ?=(%path p.pax)
-    ::          ~|(%ergo-bad-path-mark !!)
-    ::        :-  ((hard path) q.q.pax)
-    ::        ?.  ?=(%mime p.mim)
-    ::          ~
-    ::        `((hard mime) q.q.mim)
-    ::    ==
-    ::  ==
+    %=    +>.$
+        reg
+      :_  reg
+      :*  u.hez  %ergo  pot
+          ^-  mode
+          %+  turn  (gage-to-cages res)
+          |=  [pax=cage mim=cage]
+          ?.  ?=(%path p.pax)
+            ~|(%ergo-bad-path-mark !!)
+          :-  ((hard path) q.q.pax)
+          ?.  ?=(%mime p.mim)
+            ~
+          `((hard mime) q.q.mim)
+      ==
+    ==
   ::
   ++  checkout-ankh
     |=  hat=(map path lobe)
@@ -2137,7 +2168,8 @@
         =.  ank.dom  ank.dat
         ?~  hez
           (done:he ~)
-        ?.  syn
+        =+  mus=(must-ergo (turn (~(tap by erg.dat)) head))
+        ?:  =(~ mus)
           (done:he ~)
         ergo
       ::
@@ -2178,8 +2210,6 @@
         ?:  ?=([@ *] tan)  (error:he tan)
         ?~  hez
           (error:he %ergo-no-hez ~)
-        ?.  syn
-          (error:he %ergo-sync-off ~)
         ?:  ?=(%| -.gon.dat)
           +>.$
         %_    +>.$
@@ -2265,8 +2295,8 @@
       ?^(rug u.rug *rung)
   =+  ^=  red  ^-  rede
       =+  yit=(~(get by rus.rug) syd)
-      ?^(yit u.yit `rede`[~2000.1.1 ~ [~ *rind] *dome ~ ~ %|])
-  ((de now hen ~ ~) [who him] syd red ran.ruf)
+      ?^(yit u.yit `rede`[~2000.1.1 ~ [~ *rind] *dome ~ ~])
+  ((de now hen ~ hez.ruf) [who him] syd red ran.ruf mon.ruf)
 ::
 ++  posh
   |=  [him=ship syd=desk red=rede ruf=raft]
@@ -2288,7 +2318,7 @@
     %_  +>
         ran.ruf  run
         dos.yar
-      (~(put by dos.yar) syd [qyx.red dom.red dok.red mer.red syn.red])
+      (~(put by dos.yar) syd [qyx.red dom.red dok.red mer.red])
     ==
   ::
   ++  wake
@@ -2305,10 +2335,10 @@
     =+  ^=  saq  ^-  dojo
         =+  saq=(~(get by dos.yar) syd)
         ?~(saq *dojo u.saq)
-    %^    (de now hen hun.yar hez.yar)
+    %^    (de now hen hun.yar hez.ruf)
         [who who]
       syd
-    [[now qyx.saq ~ dom.saq dok.saq mer.saq syn.saq] ran.ruf]
+    [[now qyx.saq ~ dom.saq dok.saq mer.saq] ran.ruf mon.ruf]
   --
 --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -2341,7 +2371,7 @@
   ^-  [p=(list move) q=_..^$]
   ?-    -.q.hic
       %init
-    :_  ..^$(fat.ruf (~(put by fat.ruf) p.q.hic [hen ~ ~]))
+    :_  ..^$(fat.ruf (~(put by fat.ruf) p.q.hic [hen ~]))
     =+  [bos=(sein p.q.hic) can=(clan p.q.hic)]
     %-  zing  ^-  (list (list move))
     :~  ~&  [%bos bos p.q.hic]
@@ -2380,6 +2410,7 @@
     [mos ..^$]
   ::
       %into
+    =.  hez.ruf  `hen
     :_  ..^$
     =+  bem=(~(get by mon.ruf) p.q.hic)
     ?:  &(?=(~ bem) !=(%$ p.q.hic))
@@ -2408,19 +2439,6 @@
     =+  cos=(mode-to-soba q.yak (flop s.bem) q.q.hic)
     [hen %pass / %c %info p.bem q.bem %& cos]~
   ::
-      %lynx
-    ?:  =(%$ q.q.hic)
-      [~ ..^$]
-    =^  mos  ruf
-      =+  une=(un p.q.hic now hen ruf)
-      =+  ^=  zat
-          (lynx:(di:wake:une q.q.hic) r.q.hic)
-      =+  zot=abet.zat
-      :-  -.zot
-      =.  une  (pish:une q.q.hic +.zot ran.zat)
-      abet:une
-    [mos ..^$]
-  ::
       %merg                                               ::  direct state up
     ?:  =(%$ q.q.hic)
       [~ ..^$]
@@ -2433,6 +2451,25 @@
       =.  une  (pish:une q.q.hic +.zot ran.zat)
       abet:une
     [mos ..^$]
+  ::
+      %mont
+    =+  pot=(~(get by mon.ruf) p.q.hic)
+    ?^  pot
+      ~&  [%already-mounted pot]
+      [~ ..^$]
+    =.  mon.ruf
+      (~(put by mon.ruf) p.q.hic [q.q.hic r.q.hic %ud 0] (flop s.q.hic))
+    =+  yar=(~(get by fat.ruf) q.q.hic)
+    ?~  yar
+      [~ ..^$]
+    =+  dos=(~(get by dos.u.yar) r.q.hic)
+    ?~  dos
+      [~ ..^$]
+    =+  une=(un q.q.hic now hen ruf)
+    =+  wex=(di:une r.q.hic)
+    =+  wao=(mont:wex p.q.hic s.q.hic)
+    =+  woo=abet:wao
+    [-.woo ..^$(ruf abet:(pish:une r.q.hic +.woo ran.wao))]
   ::
       %warp
     =^  mos  ruf
@@ -2622,13 +2659,14 @@
       [mos ..^$]
     ::
         %ergoing
-      ?>  ?=([@ @ ~] t.tea)
+      ?>  ?=([@ @ @ ~] t.tea)
       =+  who=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
+      =+  pot=(slav %tas i.t.t.t.tea)
       =^  mos  ruf
         =+  une=(un who now hen ruf)
         =+  ^=  zat
-            (take-ergo:(di:une syd) q.q.hin)
+            (take-ergo:(di:une syd) pot q.q.hin)
         =+  zot=abet.zat
         [-.zot abet:(pish:une syd +.zot ran.zat)]
       [mos ..^$]
