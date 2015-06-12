@@ -1,12 +1,13 @@
 ;;; hoon-mode.el --- Major mode for editing hoon files for urbit
 
-;; Copyright (C) 2014–2015  Free Software Foundation, Inc.
+;; Copyright (C) 2014–2015 Urbit
 
 ;; Author: 
 ;;    * Adam Bliss     https://github.com/abliss          <abliss@gmail.com>
 ;; Contributors: 
 ;;    * N Gvrnd        https://github.com/ngvrnd
 ;;    * TJamesCorcoran https://github.com/TJamesCorcoran <jamescorcoran@gmail.com>
+;;    * Rastus Vernon  https://github.com/rastus-vernon  <rastus.vernon@protonmail.ch>
 ;;
 ;; Keywords: extensions, hoon, nock, urbit, neoreaction, Mars
 
