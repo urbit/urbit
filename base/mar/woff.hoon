@@ -5,17 +5,16 @@
   ::
 ::::  compute
   ::
-|_  otf=@
+|_  wof=mime
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  mime                                              ::  convert to %mime
-    [/application/font-woff (taco otf)]
+  ++  mime  wof                                         ::  convert to %mime
   --
 ++  grab
   |%
-  ++  mime  |=([p=mite q=octs] q.q)
-  ++  noun  ,@
+  ++  mime  |=([mite p=octs] [/application/font-woff p])
+  ++  noun  ^mime
   --
 ++  grad
   |%

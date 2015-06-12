@@ -1065,8 +1065,8 @@
         %exec  `%f
         %flog  `%d
         %info  `%c
-        %lynx  `%c
         %merg  `%c
+        %mont  `%c
         %them  `%e
         %wait  `%t
         %want  `%a
