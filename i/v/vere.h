@@ -388,7 +388,7 @@
       typedef struct _u3_umon {
         u3_udir          dir_u;             //  root directory
         c3_c*            nam_c;             //  mount point name
-        struct _u3_umon*  nex_u;             //  internal list
+        struct _u3_umon* nex_u;             //  internal list
       } u3_umon;
 
 
@@ -403,9 +403,12 @@
     /* u3_unix: clay support system, also
     */
       typedef struct _u3_unix {
-        uv_check_t   syn_u;                 //  fs sync check
-        u3_umon*     mon_u;                 //  mount points
-        u3_usig*     sig_u;                 //  signal list
+        uv_check_t  syn_u;                  //  fs sync check
+        uv_timer_t  tim_u;                  //  timer
+        u3_umon*    mon_u;                  //  mount points
+        u3_usig*    sig_u;                  //  signal list
+        c3_o        alm;                    //  timer set
+        c3_o        dyr;                    //  ready to update
 #ifdef SYNCLOG
         c3_w         lot_w;                 //  sync-slot
         struct _u3_sylo {
