@@ -1,6 +1,6 @@
 ;;; hoon-mode.el --- Major mode for editing hoon files for urbit
 
-;; Copyright (C) 20014 -2015  Free Software Foundation, Inc.
+;; Copyright (C) 2014–2015  Free Software Foundation, Inc.
 
 ;; Author: 
 ;;    * Adam Bliss     https://github.com/abliss          <abliss@gmail.com>
