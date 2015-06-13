@@ -307,13 +307,13 @@
     %_    +>.$
         tag
       :_  tag
-      :*  hen  %pass  [%ergoing (scot %p who) syd pot ~]  %f
+      :*  hen  %pass  [%ergoing (scot %p who) syd ~]  %f
           %exec  who  [who syd %da now]  ~  %tabl
           ^-  (list (pair silk silk))
           %+  turn  `(list path)`mus
           |=  a=path
           ^-  (pair silk silk)
-          :-  [%done ~ %path !>((slag (lent pax) a))]
+          :-  [%done ~ %path !>(a)]
           :+  %cast  %mime
           =+  (need (need (read-x:ze let.dom a)))
           ?:  ?=(%& -<)
@@ -755,39 +755,40 @@
     =+  mus=(must-ergo (turn sim head))
     ?:  =(~ mus)
       +>.$(dok ~)
-    =+  ^=  ceq
-        |=  a=miso
-        ?|  ?=(%del -.a)
-            &(?=(%ins -.a) ?=(%mime -.+.a))
-            &(?=(%mut -.a) ?=(%mime -.+.a))
-        ==
+    =+  ^-  sum=(set path)
+        =+  (turn (~(tap by mus)) (corl tail tail))
+        %+  roll  -
+        |=  [pak=(set path) acc=(set path)]
+        (~(uni in acc) pak)
+    =+  can=(mo sim)
     ::  ~&  %forming-ergo
     ::  =-  ~&  %formed-ergo  -
     %_    +>.$
         dok  ~
-      ::    tag
-      ::  :_  tag
-      ::  :*  hen  %pass  [%ergoing (scot %p who) syd ~]  %f
-      ::      %exec  who  [who syd %da now]  ~  %tabl
-      ::      ^-  (list (pair silk silk))
-      ::      %+  turn  sim
-      ::      |=  [a=path b=misu]
-      ::      ^-  (pair silk silk)
-      ::      :-  [%done ~ %path !>(a)]
-      ::      ?:  ?=(%del -.b)
-      ::        [%done ~ %null !>(~)]
-      ::      =+  (~(get by mim.u.dok) a)
-      ::      ?^  -  [%done ~ %mime !>(u.-)]
-      ::      :+  %cast  %mime
-      ::      =+  (need (need (read-x:ze let.dom a)))
-      ::      ?:  ?=(%& -<)
-      ::        [%done ~ p.-]
-      ::      (lobe-to-silk:ze a p.-)
-      ::  ==
+        tag
+      :_  tag
+      :*  hen  %pass  [%ergoing (scot %p who) syd ~]  %f
+          %exec  who  [who syd %da now]  ~  %tabl
+          ^-  (list (pair silk silk))
+          %+  turn  (~(tap in sum))
+          |=  a=path
+          ^-  (pair silk silk)
+          :-  [%done ~ %path !>(a)]
+          =+  b=(~(got by can) a)
+          ?:  ?=(%del -.b)
+            [%done ~ %null !>(~)]
+          =+  (~(get by mim.u.dok) a)
+          ?^  -  [%done ~ %mime !>(u.-)]
+          :+  %cast  %mime
+          =+  (need (need (read-x:ze let.dom a)))
+          ?:  ?=(%& -<)
+            [%done ~ p.-]
+          (lobe-to-silk:ze a p.-)
+      ==
     ==
   ::
   ++  take-ergo
-    |=  [pot=term res=gage]
+    |=  res=gage
     ^+  +>
     ?:  ?=(%| -.res)
       %_    +>.$
@@ -795,19 +796,26 @@
         [[hen %note '!' %rose [" " "" ""] leaf/"clay ergo failed" p.res] yel]
       ==
     ?~  hez  ~|(%no-sync-duct !!)
+    =+  ^-  can=(map path (unit mime))
+        %-  mo  ^-  mode
+        %+  turn  (gage-to-cages res)
+        |=  [pax=cage mim=cage]
+        ?.  ?=(%path p.pax)
+          ~|(%ergo-bad-path-mark !!)
+        :-  ((hard path) q.q.pax)
+        ?.  ?=(%mime p.mim)
+          ~
+        `((hard mime) q.q.mim)
+    =+  mus=(must-ergo (turn (~(tap by can)) head))
     %=    +>.$
         reg
-      :_  reg
+      %-  welp  :_  reg
+      %+  turn  (~(tap by mus))
+      |=  [pot=term len=@ud pak=(set path)]
       :*  u.hez  %ergo  pot
-          ^-  mode
-          %+  turn  (gage-to-cages res)
-          |=  [pax=cage mim=cage]
-          ?.  ?=(%path p.pax)
-            ~|(%ergo-bad-path-mark !!)
-          :-  ((hard path) q.q.pax)
-          ?.  ?=(%mime p.mim)
-            ~
-          `((hard mime) q.q.mim)
+          %+  turn  (~(tap in pak))
+          |=  pax=path
+          [(slag len pax) (~(got by can) pax)]
       ==
     ==
   ::
@@ -1287,6 +1295,9 @@
           %+  ~(put by bar)  pax
           (make-delta p.mys [(lobe-to-mark u.har) u.har] [p q.q]:q.mys)
                                                         :: XX check vase !evil
+        ::  XX of course that's a problem, p.u.ber isn't in rang since it
+        ::     was just cretated.  We shouldn't be sending multiple
+        ::     diffs
         %+  ~(put by bar)  pax
         (make-delta p.mys [(lobe-to-mark p.u.ber) p.u.ber] [p q.q]:q.mys)
                                                         :: XX check vase !evil
@@ -2658,14 +2669,13 @@
       [mos ..^$]
     ::
         %ergoing
-      ?>  ?=([@ @ @ ~] t.tea)
+      ?>  ?=([@ @ ~] t.tea)
       =+  who=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
-      =+  pot=(slav %tas i.t.t.t.tea)
       =^  mos  ruf
         =+  une=(un who now hen ruf)
         =+  ^=  zat
-            (take-ergo:(di:une syd) pot q.q.hin)
+            (take-ergo:(di:une syd) q.q.hin)
         =+  zot=abet.zat
         [-.zot abet:(pish:une syd +.zot ran.zat)]
       [mos ..^$]
