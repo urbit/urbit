@@ -94,11 +94,12 @@ _unix_mkdir(c3_c* pax_c)
   }
 }
 
-/* unix_write_file(): write to a file
+/* unix_write_file_hard(): write to a file, overwriting what's there
 */
 static void
-_unix_write_file(c3_c* pax_c, u3_atom mim)
+_unix_write_file_hard(c3_c* pax_c, u3_atom mim)
 {
+  // XXX check gum_w if not hard
   c3_i  fid_i = open(pax_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
   c3_w  len_w, rit_w, siz_w;
   c3_y* dat_y;
@@ -392,7 +393,7 @@ _unix_watch_file(u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c)
 
   ret_w = uv_fs_event_start(&fil_u->was_u, _unix_fs_event_cb, pax_c, 0);
   if ( 0 != ret_w ){
-    uL(fprintf(uH, "event start: %s\n", uv_strerror(ret_w)));
+    uL(fprintf(uH, "event start %s: %s\n", fil_u->pax_c, uv_strerror(ret_w)));
     c3_assert(0);
   }
 }
@@ -532,8 +533,15 @@ _unix_update_file(u3_ufil* fil_u)
   else {
     c3_w mug_w = u3r_mug_bytes(dat_y, len_ws);
     if ( mug_w == fil_u->mug_w ) {
-      uL(fprintf(uH, "mug hasn't changed: %s\r\n", fil_u->pax_c));
+      uL(fprintf(uH, "mug is mug: %s\r\n", fil_u->pax_c));
 
+      free(dat_y);
+      return u3_nul;
+    }
+    else if ( mug_w == fil_u->gum_w ) {
+      uL(fprintf(uH, "mug is gum: %s\r\n", fil_u->pax_c));
+
+      fil_u->mug_w = mug_w;
       free(dat_y);
       return u3_nul;
     }
@@ -736,7 +744,6 @@ _unix_update_mount(u3_umon* mon_u)
 {
   if ( c3n == mon_u->dir_u.dry ) {
     u3_noun can = _unix_update_dir(&mon_u->dir_u);
-    u3m_p("can",can);
     u3v_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
              u3nt(c3__into, u3i_string(mon_u->nam_c), can));
   }
@@ -934,13 +941,16 @@ _unix_sync_file(u3_udir* par_u, u3_noun nam, u3_noun ext, u3_noun mim)
     }
   }
   else {
-    _unix_write_file(pax_c, u3k(u3t(mim)));
 
     if ( !nod_u ) {
+      _unix_write_file_hard(pax_c, u3k(u3t(mim)));
       u3_ufil* fil_u = c3_malloc(sizeof(u3_ufil));
       uL(fprintf(uH, "watching file: %s %s\r\n", par_u->pax_c, pax_c));
       _unix_watch_file(fil_u, par_u, pax_c);
       goto _unix_sync_file_out;
+    }
+    else { // XXX shouldn't be hard
+      _unix_write_file_hard(pax_c, u3k(u3t(mim)));
     }
   }
 
