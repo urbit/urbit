@@ -687,6 +687,7 @@ _unix_update_dir(u3_udir* dir_u)
             }
 
             u3_ufil* fil_u = c3_malloc(sizeof(u3_ufil));
+            uL(fprintf(uH, "watch new file %s\r\n", pax_c));
             _unix_watch_file(fil_u, dir_u, pax_c);
           }
           else {
@@ -735,6 +736,7 @@ _unix_update_mount(u3_umon* mon_u)
 {
   if ( c3n == mon_u->dir_u.dry ) {
     u3_noun can = _unix_update_dir(&mon_u->dir_u);
+    u3m_p("can",can);
     u3v_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
              u3nt(c3__into, u3i_string(mon_u->nam_c), can));
   }
@@ -919,7 +921,7 @@ _unix_sync_file(u3_udir* par_u, u3_noun nam, u3_noun ext, u3_noun mim)
   u3_unod* nod_u;
   for ( nod_u = par_u->kid_u;
         ( nod_u &&
-          ( c3n == nod_u->dir ||
+          ( c3y == nod_u->dir ||
             0 != strcmp(nod_u->pax_c, pax_c) ) );
         nod_u = nod_u->nex_u )
   { }
