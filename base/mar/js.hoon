@@ -6,10 +6,10 @@
 ++  grow
   |%
   ++  mime  [/application/javascript (taco (,@t mud))]
-  ++  psal  ;script
+  ++  elem  ;script
               ;-  (trip (,@t mud))
             ==
-  ++  hymn  ;html:(head:"+{psal}" body)
+  ++  hymn  ;html:(head:"+{elem}" body)
   --
 ++  grab
   |%                                                    ::  convert from

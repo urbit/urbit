@@ -8,7 +8,7 @@
 ++  grow                                                ::  convert to
   |%
   ++  mime  [/text/hoon (taco own)]                     ::  convert to %mime
-  ++  psal                                              ::  convert to %html
+  ++  elem                                              ::  convert to %html
     ;div:pre(urb_codemirror ""):"{(trip own)}"
     :: =+  gen-id="src-{<`@ui`(mug own)>}"
     :: ;div
@@ -21,7 +21,7 @@
     ::           """
     :: ==
   ++  hymn
-    :: ;html:(head:title:"Source" "+{psal}")
+    :: ;html:(head:title:"Source" "+{elem}")
     ;html
       ;head
         ;title:"Source"

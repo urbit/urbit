@@ -1,5 +1,5 @@
-::                                                      ::  ::      
-::::  /hoon/hood/ape                                    ::  ::        
+::                                                      ::  ::
+::::  /hoon/hood/ape                                    ::  ::
   ::                                                    ::  ::
 /?  314                                                 ::  zuse version
 /+  sole, talk, helm, kiln, drum                        ::  libraries
@@ -53,7 +53,7 @@
 ++  coup-kiln-spam                                      ::
   |=  [way=wire saw=(unit tang)]
   ~?  ?=(^ saw)  [%kiln-spam-lame u.saw]
-  [~ +>] 
+  [~ +>]
 ::
 ++  coup-drum-phat  (wrap take-coup-phat):from-drum
 ++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
