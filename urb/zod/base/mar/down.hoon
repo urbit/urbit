@@ -14,11 +14,10 @@
   |%
   ++  md                                                ::  convert from %md
     =<  |=(src=@t (mark src))
-    ~%  %utyl  ..is  ~
-    ::~%  %utyl  +>+>+>+>  ~
+    ~%  %down  ..is  ~
     |%
     ++  mark
-      ~/  %dawn
+      ~/  %mark
       |=  p=@t
       (normalize (rash p parse))
     --
@@ -34,10 +33,10 @@
           ;*  (sing don)
         ==
       ==
-  ++  psal                                          ::  convert to %psal
+  ++  elem                                          ::  convert to %elem
     ;div
       ;*  (sing don)
     ==
-  ::  ++  react  psal
+  ::  ++  react  elem
   --
 --

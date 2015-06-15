@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/psal/mar
+::::  /hoon/core/elem/mar
   ::
 /?  314
 !:
@@ -53,8 +53,8 @@
   ++  mime
     =<  mime
     |%
-    ++  psal  own
-    ++  hymn  ;html:(head:title:"snip" body:"+{psal}")           ::  convert to %hymn
+    ++  elem  own
+    ++  hymn  ;html:(head:title:"snip" body:"+{elem}")           ::  convert to %hymn
     ++  html  (crip (poxo hymn))                                 ::  convert to %html
     ++  mime  [/text/html (taco html)]                           ::  convert to %mime
     --
@@ -62,7 +62,7 @@
 ++  garb  [%react-snip ~]
 ++  grab  |%                                                     ::  convert from
           ++  noun  manx                                         ::  clam from %noun
-          ++  psal  
+          ++  elem  
             |=  a=manx
             =+  (hedtal +.a)
             ;div:(h1:"*{hed}" div:"*{tal}")

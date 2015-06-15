@@ -672,7 +672,7 @@
   ^-  (quip move +>)
   ~?  !=(src.hid our.hid)  [%dojo-peer-stranger ost.hid src.hid pax]
   ::  ?>  =(src.hid our.hid)
-  ?<  (~(has by hoc) ost.hid)
+  ~?  (~(has by hoc) ost.hid)  [%dojo-peer-replaced ost.hid pax]
   ?>  =(~ pax)
   =<  he-abet
   %~  he-peer  he
