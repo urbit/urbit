@@ -1,4 +1,4 @@
-/* j/g/dawn.c
+/* j/g/down.c
 **
 */
 #include "all.h"
@@ -198,7 +198,7 @@ u3_noun node_to_noun(cmark_node * nod)
 /* functions
 */
   u3_noun
-  u3qg_dawn(u3_atom a)
+  u3qg_down(u3_atom a)
   {
     c3_c *tex = u3r_string(a);
 
@@ -212,7 +212,7 @@ u3_noun node_to_noun(cmark_node * nod)
     return res;
   }
   u3_noun
-  u3wg_dawn(u3_noun cor)
+  u3wg_down(u3_noun cor)
   {
     u3_noun a;
 
@@ -221,6 +221,6 @@ u3_noun node_to_noun(cmark_node * nod)
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3qg_dawn(a);
+      return u3qg_down(a);
     }
   }
