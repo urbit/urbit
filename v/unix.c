@@ -94,27 +94,30 @@ _unix_mkdir(c3_c* pax_c)
   }
 }
 
-/* unix_write_file_hard(): write to a file, overwriting what's there
+/* _unix_write_file_hard(): write to a file, overwriting what's there
 */
-static void
-_unix_write_file_hard(c3_c* pax_c, u3_atom mim)
+static c3_w
+_unix_write_file_hard(c3_c* pax_c, u3_noun mim)
 {
-  // XXX check gum_w if not hard
   c3_i  fid_i = open(pax_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-  c3_w  len_w, rit_w, siz_w;
+  c3_w  len_w, rit_w, siz_w, mug_w = 0;
   c3_y* dat_y;
+
+  u3_noun dat = u3t(u3t(mim));
 
   if ( fid_i < 0 ) {
     uL(fprintf(uH, "error opening %s for writing: %s\r\n",
                pax_c, strerror(errno)));
+    u3z(mim);
+    return 0;
   }
 
   siz_w = u3h(u3t(mim));
-  len_w = u3r_met(3, u3t(u3t(mim)));
+  len_w = u3r_met(3, dat);
   dat_y = c3_malloc(siz_w);
   memset(dat_y, 0, siz_w);
 
-  u3r_bytes(0, len_w, dat_y, u3t(u3t(mim)));
+  u3r_bytes(0, len_w, dat_y, dat);
   u3z(mim);
 
   rit_w = write(fid_i, dat_y, siz_w);
@@ -122,10 +125,77 @@ _unix_write_file_hard(c3_c* pax_c, u3_atom mim)
   if ( rit_w != siz_w ) {
     uL(fprintf(uH, "error writing %s: %s\r\n",
                pax_c, strerror(errno)));
+    mug_w = 0;
+  }
+  else {
+    mug_w = u3r_mug_bytes(dat_y, len_w);
   }
 
   close(fid_i);
   free(dat_y);
+
+  return mug_w;
+}
+
+/* _unix_write_file_soft(): write to a file, not overwriting if it's changed
+*/
+static void
+_unix_write_file_soft(u3_ufil* fil_u, u3_noun mim)
+{
+  struct stat buf_u;
+  c3_i  fid_i = open(fil_u->pax_c, O_RDONLY, 0644);
+  c3_ws len_ws, red_ws;
+  c3_w  old_w;
+  c3_y* old_y;
+
+  if ( fid_i < 0 || fstat(fid_i, &buf_u) < 0 ) {
+    if ( ENOENT == errno ) {
+      goto _unix_write_file_soft_go;
+    }
+    else {
+      uL(fprintf(uH, "error opening file (soft) %s: %s\r\n",
+                 fil_u->pax_c, strerror(errno)));
+      return;
+    }
+  }
+
+  len_ws = buf_u.st_size;
+  old_y = c3_malloc(len_ws);
+
+  red_ws = read(fid_i, old_y, len_ws);
+
+  if ( close(fid_i) < 0 ) {
+    uL(fprintf(uH, "error closing file (soft) %s: %s\r\n",
+               fil_u->pax_c, strerror(errno)));
+  }
+
+  if ( len_ws != red_ws ) {
+    if ( red_ws < 0 ) {
+      uL(fprintf(uH, "error reading file (soft) %s: %s\r\n",
+                 fil_u->pax_c, strerror(errno)));
+    }
+    else {
+      uL(fprintf(uH, "wrong # of bytes read in file %s: %d %d\r\n",
+                 fil_u->pax_c, len_ws, red_ws));
+    }
+    free(old_y);
+    return;
+  }
+
+  old_w = u3r_mug_bytes(old_y, len_ws);
+
+  if ( old_w != fil_u->gum_w ) {
+    uL(fprintf(uH,"old_w != gum_w %s\r\n", fil_u->pax_c));
+    fil_u->gum_w = u3r_mug(u3t(u3t(mim)));
+    free(old_y);
+    return;
+  }
+  uL(fprintf(uH,"old_w == gum_w %s\r\n", fil_u->pax_c));
+
+  free(old_y);
+
+_unix_write_file_soft_go:
+  fil_u->gum_w = _unix_write_file_hard(fil_u->pax_c, mim);
 }
 
 static void
@@ -494,11 +564,12 @@ _unix_update_file(u3_ufil* fil_u)
 
   struct stat buf_u;
   c3_i  fid_i = open(fil_u->pax_c, O_RDONLY, 0644);
-  c3_ws  len_ws, red_ws;
+  c3_ws len_ws, red_ws;
   c3_y* dat_y;
 
   if ( fid_i < 0 || fstat(fid_i, &buf_u) < 0 ) {
     if ( ENOENT == errno ) {
+      uL(fprintf(uH, "no existe %s\r\n", fil_u->pax_c));
       return u3nc(u3nc(_unix_string_to_path(fil_u->pax_c), u3_nul), u3_nul);
     }
     else {
@@ -533,21 +604,23 @@ _unix_update_file(u3_ufil* fil_u)
   else {
     c3_w mug_w = u3r_mug_bytes(dat_y, len_ws);
     if ( mug_w == fil_u->mug_w ) {
-      uL(fprintf(uH, "mug is mug: %s\r\n", fil_u->pax_c));
+      uL(fprintf(uH, "mug is mug: %s %x\r\n", fil_u->pax_c, fil_u->mug_w));
 
       free(dat_y);
       return u3_nul;
     }
     else if ( mug_w == fil_u->gum_w ) {
-      uL(fprintf(uH, "mug is gum: %s\r\n", fil_u->pax_c));
+      uL(fprintf(uH, "mug is gum: %s %x %x %x\r\n", fil_u->pax_c,
+                 mug_w, fil_u->mug_w, fil_u->gum_w));
 
       fil_u->mug_w = mug_w;
       free(dat_y);
       return u3_nul;
     }
     else {
+      uL(fprintf(uH, "mug has changed: %s %x %x %x\r\n", fil_u->pax_c,
+                 mug_w, fil_u->mug_w, fil_u->gum_w));
       fil_u->mug_w = mug_w;
-      uL(fprintf(uH, "mug has changed: %s\r\n", fil_u->pax_c));
 
       u3_noun pax = _unix_string_to_path(fil_u->pax_c);
       u3_noun mim = u3nt(c3__text, u3i_string("plain"), u3_nul);
@@ -943,14 +1016,15 @@ _unix_sync_file(u3_udir* par_u, u3_noun nam, u3_noun ext, u3_noun mim)
   else {
 
     if ( !nod_u ) {
-      _unix_write_file_hard(pax_c, u3k(u3t(mim)));
+      c3_w gum_w = _unix_write_file_hard(pax_c, u3k(u3t(mim)));
       u3_ufil* fil_u = c3_malloc(sizeof(u3_ufil));
       uL(fprintf(uH, "watching file: %s %s\r\n", par_u->pax_c, pax_c));
       _unix_watch_file(fil_u, par_u, pax_c);
+      fil_u->gum_w = gum_w;
       goto _unix_sync_file_out;
     }
-    else { // XXX shouldn't be hard
-      _unix_write_file_hard(pax_c, u3k(u3t(mim)));
+    else {
+      _unix_write_file_soft((u3_ufil*) nod_u, u3k(u3t(mim)));
     }
   }
 
