@@ -646,7 +646,7 @@ int c3_cooked() { return u3m_bail(c3__oops); }
 c3_i
 u3m_error(c3_c* str_c)
 {
-  fprintf(stderr, "error: %s\r\n", str_c);   // rong
+  u3t_mean(u3i_string(str_c));
   return u3m_bail(c3__exit);
 }
 
