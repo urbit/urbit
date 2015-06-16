@@ -155,7 +155,7 @@
 ++  rule  |=(tub=nail `edge`[p.tub ~ ~ tub])            ::  parsing rule
 ++  span  ,@ta                                          ::  text-atom (ASCII)
 ++  spot  ,[p=path q=pint]                              ::  range in file
-++  tang  (list tank)                                   ::  general error
+++  tang  (list tank)                                   ::  bottom-first error
 ++  tank  $%  [%leaf p=tape]                            ::  printing formats
               $:  %palm                                 ::  backstep list
                   p=[p=tape q=tape r=tape s=tape]       ::  
@@ -1854,7 +1854,7 @@
   |=  [a=?(~ @u) b=tang]  ^+  same                      ::  .=  ~&(%a 1)
   ?~(b same ~>(%slog.[a i.b] $(b t.b)))                 ::  ((slog `~[>%a<]) 1)
 ::
-++  mean  |=(a=tang (fear a |.(!!)))                    ::  deify stack trace
+++  mean  |=(a=tang (fear (flop a) |.(!!)))             ::  deify stack trace
 ++  fear                                                ::  insert user mean
   |*  [a=tang _|?(**)]
   ^+  (+<+)

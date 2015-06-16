@@ -222,7 +222,7 @@
     ?~  saw  +>
     =+  gyl=(drum-phat way)
     ?:  (se-aint gyl)  +>.$
-    ~&  [%drum-coup-fail src ost gyl u.saw]
+    =.  u.saw  :_(u.saw >[%drum-coup-fail src ost gyl]<)
     (se-dump:(se-drop & gyl) u.saw)
   ::
   ++  take-onto                                         ::
@@ -366,7 +366,7 @@
     |=  tac=(list tank)
     ^+  +>
     ?.  se-ably  (se-talk tac)
-    =+  wol=`wall`(zing (turn tac |=(a=tank (~(win re a) [0 edg]))))
+    =+  wol=`wall`(zing (turn (flop tac) |=(a=tank (~(win re a) [0 edg]))))
     |-  ^+  +>.^$
     ?~  wol  +>.^$
     $(wol t.wol, +>.^$ (se-blit %out (tuba i.wol)))
@@ -791,7 +791,7 @@
     ::
     ++  ta-tan                                          ::  print tanks
       |=  tac=(list tank)
-      =+  wol=`wall`(zing (turn tac |=(a=tank (~(win re a) [0 edg]))))
+      =+  wol=`wall`(zing (turn (flop tac) |=(a=tank (~(win re a) [0 edg]))))
       |-  ^+  +>.^$
       ?~  wol  +>.^$
       $(wol t.wol, +>+>.^$ (se-text i.wol))
