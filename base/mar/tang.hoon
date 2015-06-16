@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/elem/mar
+::::  /hoon/core/tang/mar
   ::
 /?  314
 !:
@@ -10,7 +10,7 @@
   ++  elem
     =-  ;pre:code:"{(trip (role (turn - crip)))}"       ::  XX
     ^-  wall  %-  zing  ^-  (list wall)
-    (turn tan |=(a=tank (wash 0^160 a)))
+    (turn (flop tan) |=(a=tank (wash 0^160 a)))
   --
 ++  grab                                                ::  convert from
   |%

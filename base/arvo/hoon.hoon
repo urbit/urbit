@@ -155,7 +155,7 @@
 ++  rule  |=(tub=nail `edge`[p.tub ~ ~ tub])            ::  parsing rule
 ++  span  ,@ta                                          ::  text-atom (ASCII)
 ++  spot  ,[p=path q=pint]                              ::  range in file
-++  tang  (list tank)                                   ::  general error
+++  tang  (list tank)                                   ::  bottom-first error
 ++  tank  $%  [%leaf p=tape]                            ::  printing formats
               $:  %palm                                 ::  backstep list
                   p=[p=tape q=tape r=tape s=tape]       ::
@@ -1852,7 +1852,7 @@
   |=  [a=?(~ @u) b=tang]  ^+  same                      ::  .=  ~&(%a 1)
   ?~(b same ~>(%slog.[a i.b] $(b t.b)))                 ::  ((slog `~[>%a<]) 1)
 ::
-++  mean  |=(a=tang (fear a |.(!!)))                    ::  deify stack trace
+++  mean  |=(a=tang (fear (flop a) |.(!!)))             ::  deify stack trace
 ++  fear                                                ::  insert user mean
   |*  [a=tang _|?(**)]
   ^+  (+<+)
@@ -4023,7 +4023,7 @@
       [10 [b=* c=*] d=*]
     =+  ben=$(fol c.fol)
     ?.  ?=(%0 -.ben)  ben
-    ?:  ?=(?(%hunk %lose %mean %spot) b.fol)
+    ?:  ?=(?(%hunk %hand %lose %mean %spot) b.fol)
       $(fol d.fol, tax [[b.fol p.ben] tax])
     $(fol d.fol)
   ::
@@ -4064,6 +4064,7 @@
   ?+    -.i.p.ton  rex
       %hunk  [(tank +.i.p.ton) rex]
       %lose  [[%leaf (rip 3 (,@ +.i.p.ton))] rex]
+      %hand  :_(rex [%leaf (scow %p (mug +.i.p.ton))])
       %mean  :_  rex
              ?@  +.i.p.ton  [%leaf (rip 3 (,@ +.i.p.ton))]
              =+  mac=(mack +.i.p.ton +<.i.p.ton)
@@ -4154,7 +4155,7 @@
   |*  [hel=(list) hev=(list)]
   |-  ^+  hev
   =+  ^=  sev
-      =+  [inx=0 sev=*(map ,@t (list ,@ud))]
+      =+  [inx=0 sev=*(map ,_i.-.hev (list ,@ud))]
       |-  ^+  sev
       ?~  hev  sev
       =+  guy=(~(get by sev) i.hev)
@@ -6442,7 +6443,7 @@
         :-  %mean
         =+  fek=~(feck ap p.gen)
         ?^  fek  [%dtzz %tas u.fek]
-        [%brdt [%cnhp [%cnzy %cain] [%zpgr p.gen] ~]]
+        [%brdt [%cnhp [%cnzy %cain] [%zpgr [%tsgr [~ 3] p.gen]] ~]]
       q.gen
     ::
         [%sgcb *]  [%sggr [%mean [%brdt p.gen]] q.gen]
@@ -10083,7 +10084,6 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Postface                              ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-~&  %post-start
 =+  pit=`vase`!>(.)                                     ::
 =+  bud=pit                                             ::  becomes tang
 =+  vil=(viol p.bud)                                    ::  cached reflexives

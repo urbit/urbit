@@ -106,9 +106,7 @@
   ::
   ++  do-info
     |=  [mez=tape pax=path tor=toro]
-    =+  syd=q:(need (tome pax))
-    =-  abet:abet:(spam:(work syd) leaf/mez ~)
-    (emit %info /kiln our tor)
+    abet:(emit:(spam leaf/mez ~) %info /kiln our tor)
   ::
   ++  poke-rm  |=(a=path (do-info "removed" a (fray a)))
   ++  poke-cp
@@ -184,8 +182,9 @@
       ==
     ::
     ++  start
-      =.  .  %-  spam
-             [leaf/"activated sync from {<sud>} on {<her>} to {<syd>}" ~]
+      ::  XX remove feedback for demo
+      ::  =.  .  %-  spam
+      ::         [leaf/"activated sync from {<sud>} on {<her>} to {<syd>}" ~]
       %-  blab  :_  ~
       :*  ost  %warp
           /kiln/sync/[syd]/(scot %p her)/[sud]

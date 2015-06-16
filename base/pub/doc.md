@@ -1,7 +1,7 @@
 urbit
 =====
 
-is a general-purpose computing stack designed to live in the cloud.
+is a general-purpose computing stack designed to live in the cloud. 
 
 <list dataPreview="true"></list>
 

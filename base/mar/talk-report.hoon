@@ -91,7 +91,7 @@
         %lin  (jobe say/[%b p.a] txt/[%s q.a] ~)
         %url  (jobe url/[%s (crip (earf p.a))] ~)
         %exp  (jobe code/[%s p.a] ~)
-        %app  (jobe txt/[%s p.a] ~)
+        %app  (jobe app/[%s p.a] txt/[%s q.a] ~)
         ::  %inv  (jobe ship/(jope p.a) party/[%s q.a] ~)
       ==
     ::

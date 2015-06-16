@@ -1,9 +1,12 @@
 ::                                                      ::  ::
-::::  /hoon/talk/app                               ::  ::
-  ::                                                    ::  ::
-/?  314
-/-  *talk, *sole
-/+  talk, sole
+::::  /hoon/talk/app                                    ::  ::
+  ::                                                    ::  ::   
+/?    314
+/-    *talk, *sole
+/+    talk, sole
+/=    talk-doc    
+      /;  |=(a=wain (turn a |=(b=cord [%txt "? {(trip b)}"])))
+      /:  /===/pub/doc/talk/help  /txt/
 ::
 ::::
   ::
@@ -74,6 +77,7 @@
     ::                                                  ::
     ++  work                                            ::  interface action
       $%  [%number p=? q=@ud]                           ::  activate by number
+          [%help ~]                                     ::  print usage info
           [%join p=(set partner)]                       ::  
           [%say p=speech]                               ::
           [%invite p=span q=(list partner)]             ::
@@ -175,18 +179,14 @@
       ++  work
         %+  knee  *^work  |.  ~+
         ;~  pose
-          %+  stag  %create
-          ;~  pfix  (jest %create)
-            ;~  plug
-              ;~(pfix ace pore)
-              ;~(pfix ;~(plug ace cen) sym)
-              ;~(pfix ace qut)
-            ==
+          ;~  (glue ace)  (perk %create ~)
+            pore
+            ;~(pfix cen sym)
+            qut
           ==
         ::
-          %+  stag  %join
-          ;~(pfix (jest %join) ;~(pfix ace parq))
-        ::
+          ;~((glue ace) (perk %join ~) parq)
+          ;~(plug (perk %help ~) (easy ~))
           (stag %number nump)
           (stag %target parz)
         ==
@@ -268,7 +268,6 @@
       %-  ~(gas in *(set partner))
       (turn (~(tap by aud)) |=([a=partner *] a))
     ::
-    ::
     ++  sh-poss                                         ::  passive update
       |=  lix=(set partner)
       =+  sap=(sh-pare lix)
@@ -287,7 +286,8 @@
     ::
     ++  sh-rend                                         ::  print on one line
       |=  gam=telegram
-      (sh-pass:(sh-fact %txt ~(tr-line tr man.she gam)) q.q.gam) 
+      =+  lin=~(tr-line tr man.she gam)
+      (sh-pass:(sh-fact %txt lin) q.q.gam) 
     ::
     ++  sh-numb                                         ::  print msg number
       |=  num=@ud
@@ -789,18 +789,20 @@
           %create  (create +.job)
           %target  (target +.job)
           %probe   (probe +.job)
+          %help    (help)
           %say     (say +.job)
         ==
       ::
       ++  activate                                      ::  from %number
         |=  gam=telegram
-        ^+  +>+>+>
+        ^+  ..sh-work
         ~&  [%activate gam]
         sh-prod(active.she `~(tr-pals tr man.she gam))
       ::
+      ++  help  |=(~ (sh-fact %mor talk-doc))           ::  %help
       ++  join                                          ::  %join
         |=  lix=(set partner)
-        ^+  +>+>+>
+        ^+  ..sh-work
         =+  loc=loc.system.she
         %^  sh-tell  %design  man.she
         :-  ~
@@ -816,20 +818,20 @@
       ::
       ++  invite                                        ::  %invite
         |=  [nom=span tal=(list partner)]
-        ^+  +>+>+>
+        ^+  ..sh-work
         !!
       ::
       ++  banish                                        ::  %banish
         |=  [nom=span tal=(list partner)]
-        ^+  +>+>+>
+        ^+  ..sh-work
         !!
       ::
       ++  create                                        ::  %create
         |=  [por=posture nom=span txt=cord]
-        ^+  +>+>+>
+        ^+  ..sh-work
         ?:  (~(has in stories) nom) 
           (sh-lame "{(trip nom)}: already exists")
-        =.  +>+>+>
+        =.  ..sh-work
             %^  sh-tell  %design  nom
             :-  ~
             :+  *(set partner)
@@ -843,7 +845,7 @@
       ::
       ++  number                                        ::  %number
         |=  [rel=? num=@ud]
-        ^+  +>+>+>
+        ^+  ..sh-work
         =+  roy=(~(got by stories) man.she)
         =.  num
             ?.  rel  num
@@ -855,15 +857,15 @@
       ::
       ++  probe                                         ::  inquire
         |=  cuz=station
-        ^+  +>+>+>
+        ^+  ..sh-work
         ~&  [%probe cuz]
-        +>+>+>
+        ..sh-work
       ::
       ++  say                                           ::  publish
         |=  sep=speech
-        ^+  +>+>+>
-        =^  sir  +>+>+>  sh-uniq
-        %=    +>+>+>.$
+        ^+  ..sh-work
+        =^  sir  ..sh-work  sh-uniq
+        %=    ..sh-work
             coz  :_  coz
           [%publish [[sir sh-whom [now.hid ~ sep]] ~]]
         ==
@@ -1043,7 +1045,6 @@
   ::
   ++  ra-coup-repeat                                    ::
     |=  [[num=@ud her=@p man=span] saw=(unit tang)]
-    ~&  [%ra-coup-repeat +<]
     (ra-repeat num [%& her man] saw)
   ::
   ++  ra-repeat                                         ::  remove from outbox 
@@ -1104,11 +1105,12 @@
       ~&  [%bad-subscribe-story-c i.t.pax]
       (ra-evil %talk-no-story)
     =+  soy=~(. pa i.t.pax u.pur)
+    =^  who  +>.$  (ra-human her)
     =.  soy  ?.((~(has in vab) %a) soy (pa-watch:soy her))
     =.  soy  ?.((~(has in vab) %x) soy (pa-master:soy her))
+    =.  soy  (pa-notify:soy her %hear who)
     =.  soy  ?.((~(has in vab) %f) soy (pa-listen:soy her t.t.pax))
-    =^  who  +>.$  (ra-human her)
-    pa-abet:(pa-notify:soy her %hear who)
+    pa-abet:soy
   ::
   ++  ra-think                                          ::  publish/review
     |=  [pub=? her=ship tiz=(list thought)]
@@ -1391,7 +1393,7 @@
         (pa-sauce ost [%quit ~]~)
       =+  ^=  ruv  ^-  (unit river)
           ?:  ?=(~ pax)
-            `[[%ud count] [%da (dec (bex 128))]]
+            `[[%ud ?:((lth count 64) 0 (sub count 64))] [%da (dec (bex 128))]]
           ?:  ?=([@ ~] pax)
             =+  say=(slay i.pax)
             ?.  ?=([~ %$ ?(%ud %da) @] say)  ~
@@ -1677,7 +1679,6 @@
 ::
 ++  coup-repeat                                         ::
   |=  [way=wire saw=(unit tang)]
-  ~&  [%coup-repeat way saw]
   %+  etch-repeat  [%repeat way]  |=  [num=@ud src=@p man=span]
   ra-abet:(~(ra-coup-repeat ra ost.hid ~) [num src man] saw)
 ::

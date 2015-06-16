@@ -159,7 +159,7 @@
         |=  [err=@tas tac=(list tank)]
         =+  ^=  wol  ^-  wall
             :-  (trip err)
-            (zing (turn tac |=(a=tank (~(win re a) [0 wid]))))
+            (zing (turn (flop tac) |=(a=tank (~(win re a) [0 wid]))))
         |-  ^+  +>.^$
         ?~  wol  +>.^$
         $(wol t.wol, +>.^$ (from %out (tuba i.wol)))
@@ -285,12 +285,7 @@
             [%c %mere *]
           ?:  ?=(%& -.p.sih)
             +>.$
-          ~|  %dill-mere-fail
-          ~|  p.p.p.sih
-          |-
-          ?~  q.p.p.sih  !!
-          ~>  %mean.|.(i.q.p.p.sih)     ::  pull ford fail into stack trace
-          $(q.p.p.sih t.q.p.p.sih) 
+          (mean >%dill-mere-fail< >p.p.p.sih< q.p.p.sih)
         ::
             [%g %onto *]
           ::  ~&  [%take-gall-onto +>.sih]

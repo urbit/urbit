@@ -1,0 +1,32 @@
+!! actual helptext
+<-~michep-banlur: hello urbiters
+<-~michep-banlur: is there a list of ; commands for that chat somewhere?
+<-~michep-banlur: eh, i mean for this new chat. things changed a lot
+----------[5.990]
+<-~hidduc-posmeg: i'm not aware of a list
+<-~hidduc-posmeg: but i know of ;join
+<-~hidduc-posmeg: and ;create
+<-~michep-banlur: right, thanks
+<-~wictuc-folrex: welcome back, ~michep-banlur
+----------[5.995]
+<-~wictuc-folrex: there's four types of ; commands
+<-~wictuc-folrex:  ;join ;create ;<number> and ;<target>
+<-~wictuc-folrex: where ;<number> "activates" a previous message
+<-~wictuc-folrex: and ;<target> sets where you send the message
+<-~wictuc-folrex: for example, ;~sampel-sipnym
+----------[6.000]
+<-~wictuc-folrex: would start private messaging ~sampel-sipnym
+<-~michep-banlur: ahh, that is th new bare ~ship-name
+<-~wictuc-folrex: yeah, although a target can also be a channel
+<-~wictuc-folrex: like ;/urbit-meta
+<-~wictuc-folrex: which means urbit-meta on ~doznec
+----------[6.005]
+<-~wictuc-folrex: you can also do ;~sampel-sipnym/channel-name
+<-~michep-banlur: right
+<-~wictuc-folrex: and, of course, just ;
+----------------| for /urbit-meta
+----------------| --bye ~modnut-migryd
+<-~wictuc-folrex: makes it "autotarget"
+<-~wictuc-folrex: which means, roughly, send to whatever channel the last
+----------[6.010]
+<-~wictuc-folrex: message was from
