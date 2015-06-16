@@ -3,7 +3,9 @@
 //     a directory when we try to delete it?
 // XXX maybe it's not a bad idea to have clay handle the placing of the dots?
 // XXX probably should allow out-only mount points
-// XXX check gum_w
+// XXX merges need to ergo
+// XXX fix naked file -- currently just does file.root
+// XXX check for memory leaks
 /* v/unix.c
 **
 **  This file is in the public domain.
