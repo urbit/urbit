@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hoon/drum/lib                               ::  ::
+::::  /hoon/drum/lib                                    ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
 !:                                                      ::  ::
@@ -65,7 +65,7 @@
   ?:  =(%pawn myr)
     [[%base %dojo] ~]
   ?:  =(%earl myr)  ~
-  [[%home %dojo] [%home %talk] ~]
+  [[%home %talk] [%home %dojo] ~]
 ::
 ++  deft-fish                                           ::  default connects
   |=  our=ship
@@ -76,8 +76,8 @@
     [[our %dojo] ~]
   ?:  =(%earl myr)
     =+  dad=(sein our)
-    [[dad %dojo] [dad %talk] ~]
-  [[our %dojo] [our %talk] ~]
+    [[dad %talk] [dad %dojo] ~]
+  [[our %talk] [our %dojo] ~]
 ::
 ++  deft-mast                                           ::  default master
   |=  our=ship
@@ -155,7 +155,7 @@
                 (most ;~(plug com ace) sp-gill)
                 %+  cook
                   |=  a=ship
-                  [[a %dojo] [a %talk] ~]
+                  [[a %talk] [a %dojo] ~]
                 ;~(pfix sig fed:ag)
               ==
             ::
@@ -222,7 +222,7 @@
     ?~  saw  +>
     =+  gyl=(drum-phat way)
     ?:  (se-aint gyl)  +>.$
-    ~&  [%drum-coup-fail src ost gyl u.saw]
+    =.  u.saw  :_(u.saw >[%drum-coup-fail src ost gyl]<)
     (se-dump:(se-drop & gyl) u.saw)
   ::
   ++  take-onto                                         ::
@@ -366,7 +366,7 @@
     |=  tac=(list tank)
     ^+  +>
     ?.  se-ably  (se-talk tac)
-    =+  wol=`wall`(zing (turn tac |=(a=tank (~(win re a) [0 edg]))))
+    =+  wol=`wall`(zing (turn (flop tac) |=(a=tank (~(win re a) [0 edg]))))
     |-  ^+  +>.^$
     ?~  wol  +>.^$
     $(wol t.wol, +>.^$ (se-blit %out (tuba i.wol)))
@@ -791,7 +791,7 @@
     ::
     ++  ta-tan                                          ::  print tanks
       |=  tac=(list tank)
-      =+  wol=`wall`(zing (turn tac |=(a=tank (~(win re a) [0 edg]))))
+      =+  wol=`wall`(zing (turn (flop tac) |=(a=tank (~(win re a) [0 edg]))))
       |-  ^+  +>.^$
       ?~  wol  +>.^$
       $(wol t.wol, +>+>.^$ (se-text i.wol))

@@ -59,7 +59,6 @@
               [%si ~]                                   ::  response done
               [%of p=ixor q=$|(~ whir-of)]              ::  associated view
               [%on p=span:,@uvH ~]                      ::  dependency
-              [%to p=ixor q=span:ship r=term s=wire]    ::  associated app
           ==                                            ::
 ++  whir-of  ,[p=span:ship q=term r=wire]               ::  path in dock
 --                                                      ::
@@ -179,7 +178,7 @@
   |=  [wid=@u tan=tang]
   ^-  tape
   =+  rolt=|=(a=wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
-  (rolt (turn tan |=(a=tank (rolt (wash 0^wid a)))))
+  (rolt (turn (flop tan) |=(a=tank (rolt (wash 0^wid a)))))
 ::
 ::
 ++  add-cookies
@@ -188,7 +187,7 @@
   =+  cuh=(turn `(list ,@t)`cug |=(a=@t set-cookie/a))
   hit(q (weld cuh q.hit))
 ::
-++  add-poll                                            ::  inject dependency
+++  inject                                            ::  inject dependency
   |=  [dep=@uvH max=[[%html ~] [[%head ~] hed=marl] [[%body ~] tal=marl] ~]]
   ^-  manx
   =:  hed.max  :_(hed.max ;meta(charset "utf-8", urb_injected "");)
@@ -198,7 +197,7 @@
   max(hed :_(hed.max ;script@"/~/on/{<dep>}.js"(urb_injected "");))
 ::
 ++  add-json                                            ::  inject window.urb
-  |=  [urb=json jaz=cord]  ^-  cord
+  |=  [urb=json jaz=cord]  ^-  cord 
   =-  (cat 3 (crip -) jaz)
   """
   var _urb = {(pojo urb)}
@@ -222,7 +221,6 @@
   |=  tan=tang
   ;html
     ;head
-      ;meta(charset "utf-8");
       ;link(rel "stylesheet", href "/home/lib/base.css");
       ;title: server error
     ==
@@ -688,7 +686,7 @@
           %diff
         ?>  ?=([%of @ ^] tee)
         ?.  ?=(%json p.p.cuf)
-          ::~>  %slog.`%*(. >[%backing p.p.cuf %q-p-cuf]< &3.+> (sell q.p.cuf))
+          ~>  %slog.`%*(. >[%backing p.p.cuf %q-p-cuf]< &3.+> (sell q.p.cuf))
           (back tee %json p.cuf)
         (get-rush:(ire-ix p.tee) q.tee ((hard json) q.q.p.cuf))
       ::
@@ -745,12 +743,6 @@
         ?>  ?=(%json p.cay)                    ::  XX others
         ((hard json) q.q.cay)
       ::
-          [%to ^]
-        ?:  ?=(%| -.q.sih)
-          (mean-json 500 ~ %cast-fail p.q.sih)
-        ~|  tee
-        (new-mess:(ire-ix p.tee) [(slav %p q.tee) r.tee] s.tee p.q.sih)
-      ::
           [%at ^]
         ?.  ?=([%& %js ^] q.sih)
           ~&  e/at-lost/p.tee
@@ -772,7 +764,7 @@
           =-  `silk`[%cast %mime %done ~ cay(q.q -)]
           ?+  p.cay  q.q.cay          :: inject dependency long-poll
             %urb  =|  urb=[[%html ~] [[%head ~] marl] [[%body ~] manx marl] ~]
-                  .*(.(urb q.q.cay) !=((add-poll p.sih urb)))
+                  .*(.(urb q.q.cay) !=((inject p.sih urb)))
           ==
         ~|  q.q.cay
         =+  ((hard ,[mit=mite rez=octs]) q.q.cay)
@@ -816,7 +808,7 @@
     |=  [sas=@ud dep=@uvH mez=tang]
     ^+  +>
     :: (back ha/~ dep %tang !>(mez))  ::tang->urb chain may be source of failure
-    (give-html sas ~ (add-poll dep (render-tang mez)))
+    (give-html sas ~ (inject dep (render-tang mez)))
   ::
   ++  give-html
     |=  [sas=@ud cug=(list ,@t) max=manx]
@@ -1127,10 +1119,8 @@
           %mess
         :-  %|
         =^  orx  ..ya   ?:(is-anon new-view:for-client [(need grab-oryx) ..ya])
-        =+  [vew=(ire-ix (oryx-to-ixor orx)) cay=[%json !>(`json`s.hem)]]
-        ?:  ?=(%json q.hem)  ((teba new-mess.vew) p.hem r.hem cay)
-        %+  back  to/[(oryx-to-ixor orx) (scot %p p.p.hem) q.p.hem r.hem]
-        [q.hem cay]
+        =+  vew=(ire-ix (oryx-to-ixor orx))
+        ((teba new-mess.vew) p.hem r.hem q.hem %json !>(`json`s.hem))
       ::
           %poll
         ?:  ?=([~ %js] p.pok)  ::  XX treat non-json cases?
@@ -1375,12 +1365,12 @@
       [+(p.eve) (~(put by q.eve) p.eve a)]
     ::
     ++  new-mess
-      |=  [a=dock b=wire c=cage]  ^+  ..ix
-      (hurl-note [a b] [%g %deal [him -.a] +.a %poke c])
+      |=  [a=dock b=wire c=mark d=cage]  ^+  ..ix
+      (hurl-note [a b] [%g %deal [him -.a] +.a %punk c d])
     ::
     ++  add-subs
       |=  [a=dock %json b=wire c=path]  ^+  ..ix
-      (hurl-note [a b] [%g %deal [him -.a] +.a %peer c])
+      (hurl-note [a b] [%g %deal [him -.a] +.a %peel %json c])
     ::
     ++  del-subs                      ::  XX per path?
       |=  [a=dock %json b=wire c=path]  ^+  ..ix

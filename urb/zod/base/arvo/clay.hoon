@@ -836,7 +836,8 @@
     ==
   ::
   ++  apply-foreign-update                              ::  apply subscription
-    |=  $:  gar=(map aeon tako)                         ::  new ids
+    |=  $:  lem=(unit ,@da)                             ::  complete up to
+            gar=(map aeon tako)                         ::  new ids
             let=aeon                                    ::  next id
             lar=(set yaki)                              ::  new commits
             bar=(set blob)                              ::  new content
@@ -881,6 +882,7 @@
           ~
         $(yon +(yon))
     %=  +>.$
+      lim       (max (fall lem lim) lim)
       hit.dom   hit
       let.dom   let
       hut.ran   hut
@@ -956,6 +958,8 @@
           %nako  !>(~|([%harding [&1 &2 &3]:q.r.u.rut] ((hard nako) q.r.u.rut)))
         ==
       ?.  ?=(%nako p.r.u.rut)  +>+.$
+      =+  rav=`rave`q.u.ruv
+      ?>  ?=(%many -.rav)
       |-  ^+  +>+.^$
       =+  nez=[%w [%ud let.dom] ~]
       =+  nex=(~(get by haw.u.ref) nez)
@@ -964,10 +968,15 @@
       =.  nak.u.ref  `((hard nako) q.q.u.u.nex)
       =.  +>+.^$
         ?:  =(0 let.dom)
-          =>  (apply-foreign-update (need nak.u.ref))
-          ?>(?=(^ ref) .)
-        =>  (validate-plops [%ud let.dom] bar:(need nak.u.ref))
-        ?>(?=(^ ref) .)
+          =<  ?>(?=(^ ref) .)
+          %+  apply-foreign-update
+            ?.(?=(%da -.q.q.rav) ~ `p.q.q.rav)
+          (need nak.u.ref)
+        =<  ?>(?=(^ ref) .)
+        %^    validate-plops
+            [%ud let.dom]
+          ?.(?=(%da -.q.q.rav) ~ `p.q.q.rav)
+        bar:(need nak.u.ref)
       %=  $
         haw.u.ref  (~(del by haw.u.ref) nez)
       ==
@@ -1032,11 +1041,12 @@
     wake(haw.u.ref (~(put by haw.u.ref) [car cas pax] `p.res))
   ::
   ++  validate-plops
-    |=  [cas=case pop=(set plop)]
+    |=  [cas=case lem=(unit ,@da) pop=(set plop)]
     ^+  +>
     =-  %_(+>.$ tag [- tag])
+    =+  lum=(scot %da (fall lem *@da))
     :*  hen  %pass
-        [%foreign-plops (scot %p who) (scot %p for) syd ~]
+        [%foreign-plops (scot %p who) (scot %p for) syd lum ~]
         %f  %exec  who  [for syd cas]  ~  %tabl
         ^-  (list (pair silk silk))
         %+  turn  (~(tap in pop))
@@ -1055,7 +1065,7 @@
     ==
   ::
   ++  take-foreign-plops
-    |=  res=gage
+    |=  [lem=(unit ,@da) res=gage]
     ^+  +>
     ?>  ?=(^ ref)
     ?>  ?=(^ nak.u.ref)
@@ -1072,9 +1082,11 @@
           %indirect   ~|  %plop-indirect-not-implemented  !!
         ==
     %^    apply-foreign-update
-        gar.u.nak.u.ref
-      let.u.nak.u.ref
-    [lar.u.nak.u.ref (sa lat)]
+        lem
+      gar.u.nak.u.ref
+    :+  let.u.nak.u.ref
+      lar.u.nak.u.ref
+    (sa lat)
   ::
   ++  mabe                                            ::  maybe fire function
     |*  [rov=rove fun=$+(@da _+>.^$)]
@@ -1568,11 +1580,11 @@
       :-  -:!>(*arch)
       ^-  arch
       =+  ^-  descendants=(list (pair path lobe))
-          ::  ~&  >  %turning
-          ::  =-  ~&  >  %turned  -
+          ::  ~&  %turning
+          ::  =-  ~&  %turned  -
           %+  turn
-            ::  ~&  >  %skimming
-            ::  =-  ~&  >  %skimmed  -
+            ::  ~&  %skimming
+            ::  =-  ~&  %skimmed  -
             %+  skim  (~(tap by (~(del by q.yak) pax)))
             |=  [paf=path lob=lobe]
             =(pax (scag len paf))
@@ -2400,8 +2412,7 @@
     :_  ..^$(fat.ruf (~(put by fat.ruf) p.q.hic [hen ~]))
     =+  [bos=(sein p.q.hic) can=(clan p.q.hic)]
     %-  zing  ^-  (list (list move))
-    :~  ~&  [%bos bos p.q.hic]
-        ?:  =(bos p.q.hic)  ~
+    :~  ?:  =(bos p.q.hic)  ~
         [hen %pass / %c %merg p.q.hic %base bos %kids %init]~
     ::
         ~
@@ -2697,12 +2708,13 @@
       [mos ..^$]
     ::
         %foreign-plops
-      ?>  ?=([@ @ @ ~] t.tea)
+      ?>  ?=([@ @ @ @ ~] t.tea)
       =+  our=(slav %p i.t.tea)
       =+  her=(slav %p i.t.t.tea)
       =*  syd  i.t.t.t.tea
+      =+  lem=(slav %da i.t.t.t.t.tea)
       =+  zax=(do now hen [our her] syd ruf)
-      =+  zat=(take-foreign-plops:zax q.q.hin)
+      =+  zat=(take-foreign-plops:zax ?~(lem ~ `lem) q.q.hin)
       =^  mos  ruf
         =+  zot=abet.zat
         [-.zot (posh her syd +.zot ruf)]
@@ -2729,7 +2741,7 @@
   ::
       %mere
     ?:  ?=(%& -.p.+.q.hin)
-      ~&  'inital merge succeeded'
+      ~&  'initial merge succeeded'
       [~ ..^$]
     ~>  %slog.
         :^  0  %rose  [" " "[" "]"]

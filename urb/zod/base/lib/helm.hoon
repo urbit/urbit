@@ -138,7 +138,6 @@
     =<  abet
     %-  emil(bur ~)
     :~  [%cash /helm p.u.bur q.u.bur u.wil]
-        ~&  [%unsyncing our %base (sein our) %kids]
         [%poke /helm [our %hood] %hood-unsync %base (sein our) %kids]
     ==
   ::

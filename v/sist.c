@@ -1234,7 +1234,7 @@ _sist_zen()
 void
 u3_sist_boot(void)
 {
-  uL(fprintf(uH, "sist: booting\n"));
+  // uL(fprintf(uH, "sist: booting\n"));
 
   if ( c3y == u3_Host.ops_u.nuu ) {
     u3_noun pig = u3_none;

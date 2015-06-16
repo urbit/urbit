@@ -91,6 +91,8 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'w': {
         u3_Host.ops_u.who_c = _main_presig(optarg);
+        u3_Host.ops_u.nuu = c3y;
+        u3_Host.dir_c = strdup(1 + u3_Host.ops_u.who_c);
         break;
       }
       case 't': {
@@ -181,7 +183,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   }
 
   if ( argc != (optind + 1) ) {
-    return c3n;
+    return u3_Host.dir_c ? c3y : c3n;
   } else {
     {
       c3_c* ash_c;
@@ -316,12 +318,12 @@ main(c3_i   argc,
   u3_ve_sysopt();
 
   printf("~\n");
-  printf("welcome.\n");
-  printf("vere: urbit home is %s\n", u3_Host.dir_c);
-  printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
+  //  printf("welcome.\n");
+  printf("urbit: home is %s\n", u3_Host.dir_c);
+  // printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 
   if ( c3y == u3_Host.ops_u.dem && c3n == u3_Host.ops_u.bat ) {
-    printf("vere: running as daemon\n");
+    printf("urbit: running as daemon\n");
   }
 
   //  Seed prng. Don't panic -- just for fuzz testing.
