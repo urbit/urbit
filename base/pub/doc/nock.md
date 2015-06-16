@@ -25,7 +25,7 @@ stack made of thin layers, which is much easier to learn a layer at a
 time.
 
 And unlike most fundamental theories of computing, there's really
-nothing smart or interesting about nock. Of course, in a strictly formal
+nothing smart or interesting about  nock. Of course, in a strictly formal
 sense, all of computing is math. But that doesn't mean it needs to feel
 like math. nock is a simple mechanical device and it's meant to feel
 that way.
