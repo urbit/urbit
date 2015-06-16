@@ -293,8 +293,6 @@
     =-  ?~(- ~ `[nam (lent s.bem) (sa -)])
     %+  skim  can
     |=  pax=path
-    %-  ~(any by mon)
-    |=  bem=beam
     &(=(p.bem for) =(q.bem syd) =((flop s.bem) (scag (lent s.bem) pax)))
   ::
   ++  mont
@@ -807,6 +805,7 @@
           ~
         `((hard mime) q.q.mim)
     =+  mus=(must-ergo (turn (~(tap by can)) head))
+    ~&  [%mus mus]
     %=    +>.$
         reg
       %-  welp  :_  reg
@@ -2186,16 +2185,23 @@
       ++  ergo
         ^+  .
         =-  %_(+ tag [- tag])
+        =+  ^-  sum=(set path)
+            =+  (must-ergo (turn (~(tap by erg.dat)) head))
+            =+  (turn (~(tap by -)) (corl tail tail))
+            %+  roll  -
+            |=  [pak=(set path) acc=(set path)]
+            (~(uni in acc) pak)
         =+  zez=ze(ank.dom ank.dat)
         =+  val=?:(?=(%init gem.dat) ali bob)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ergo ~]
             %f  %exec  p.bob  [p.val q.val cas.dat]  ~  %tabl
             ^-  (list (pair silk silk))
-            %+  turn  (~(tap by erg.dat))
-            |=  [a=path b=?]
+            %+  turn  (~(tap in sum))
+            |=  a=path
             ^-  (pair silk silk)
             :-  [%done ~ %path !>(a)]
+            =+  b=(~(got by erg.dat) a)
             ?.  b
               [%done ~ %null !>(~)]
             :+  %cast  %mime
@@ -2208,23 +2214,33 @@
         =+  tay=(gage-to-tage res)
         ?:  ?=(%| -.tay)
           (error:he %ergo-bad-made leaf/"merge ergo failed" p.tay)
-        =+  =|  can=mode
+        =+  =|  nac=mode
             |-  ^-  tan=$&(mode [p=term q=tang])
-            ?~  p.tay   can
+            ?~  p.tay  nac
             =*  pax  p.i.p.tay
             ?.  ?=(%path p.pax)
               [%ergo >[%expected-path got=p.pax]< ~]
             =*  mim  q.i.p.tay
             =+  mit=?.(?=(%mime p.mim) ~ `((hard mime) q.q.mim))
-            $(p.tay t.p.tay, can :_(can [((hard path) q.q.pax) mit]))
+            $(p.tay t.p.tay, nac :_(nac [((hard path) q.q.pax) mit]))
         ?:  ?=([@ *] tan)  (error:he tan)
+        =+  `can=(map path (unit mime))`(mo tan)
         ?~  hez
           (error:he %ergo-no-hez ~)
         ?:  ?=(%| -.gon.dat)
           +>.$
         %_    +>.$
             don  %|
-            ::  reg  [[u.hez %ergo who syd let.dom tan] reg]
+            reg
+          =+  mus=(must-ergo (turn (~(tap by erg.dat)) head))
+          %-  welp  :_  reg
+          %+  turn  (~(tap by mus))
+          |=  [pot=term len=@ud pak=(set path)]
+          :*  u.hez  %ergo  pot
+              %+  turn  (~(tap in pak))
+              |=  pax=path
+              [(slag len pax) (~(got by can) pax)]
+          ==
         ==
       ::
       ++  he
