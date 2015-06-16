@@ -1531,9 +1531,9 @@ u3a_sweep(void)
                 ((u3a_noun *)(u3a_boxto(box_w)))->mug_w
                   ? ((u3a_noun *)(u3a_boxto(box_w)))->mug_w
                   : u3r_mug(u3a_to_pom(u3a_outa(u3a_boxto(box_w)))));
-        u3a_print_memory("leak (minimum)", box_u->siz_w);
+        // u3a_print_memory("leak (minimum)", box_u->siz_w);
 
-#if 1
+#if 0
         /*  For those times when you've really just got to crack open
          *  the box and see what's inside
         */

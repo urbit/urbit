@@ -3,7 +3,6 @@
 //     a directory when we try to delete it?
 // XXX maybe it's not a bad idea to have clay handle the placing of the dots?
 // XXX probably should allow out-only mount points
-// XXX merges need to ergo
 // XXX fix naked file -- currently just does file.root
 // XXX check for memory leaks
 /* v/unix.c
@@ -157,6 +156,7 @@ _unix_write_file_soft(u3_ufil* fil_u, u3_noun mim)
     else {
       uL(fprintf(uH, "error opening file (soft) %s: %s\r\n",
                  fil_u->pax_c, strerror(errno)));
+      u3z(mim);
       return;
     }
   }
@@ -181,6 +181,7 @@ _unix_write_file_soft(u3_ufil* fil_u, u3_noun mim)
                  fil_u->pax_c, len_ws, red_ws));
     }
     free(old_y);
+    u3z(mim);
     return;
   }
 
@@ -190,6 +191,7 @@ _unix_write_file_soft(u3_ufil* fil_u, u3_noun mim)
     uL(fprintf(uH,"old_w != gum_w %s\r\n", fil_u->pax_c));
     fil_u->gum_w = u3r_mug(u3t(u3t(mim)));
     free(old_y);
+    u3z(mim);
     return;
   }
   uL(fprintf(uH,"old_w == gum_w %s\r\n", fil_u->pax_c));
