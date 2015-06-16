@@ -71,7 +71,6 @@ module.exports = {
 };
 
 
-
 },{"../dispatcher/Dispatcher.coffee":8,"../persistence/TreePersistence.coffee":13}],2:[function(require,module,exports){
 var TreeActions, TreeStore, a, div, recl, ref;
 
@@ -219,7 +218,7 @@ module.exports = recl({
       if (this.state.prev || this.state.next) {
         _parts = [];
         if (this.state.prev) {
-          href = window.tree.basepath(window.tree.basepath(this.state.prev));
+          href = window.tree.basepath(this.state.prev);
           _parts.push(a({
             key: "arow-prev",
             href: href,
@@ -227,7 +226,7 @@ module.exports = recl({
           }, ""));
         }
         if (this.state.next) {
-          href = window.tree.basepath(window.tree.basepath(this.state.next));
+          href = window.tree.basepath(this.state.next);
           _parts.push(a({
             key: "arow-next",
             href: href,
@@ -294,7 +293,6 @@ module.exports = recl({
 });
 
 
-
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14}],3:[function(require,module,exports){
 var TreeActions, TreeStore, div, input, load, recl, ref, textarea;
 
@@ -359,7 +357,6 @@ module.exports = recl({
 });
 
 
-
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14,"./LoadComponent.coffee":7}],4:[function(require,module,exports){
 var div, recl, ref, textarea;
 
@@ -381,7 +378,6 @@ module.exports = recl({
     });
   }
 });
-
 
 
 },{}],5:[function(require,module,exports){
@@ -448,7 +444,6 @@ module.exports = recl({
     }, _list);
   }
 });
-
 
 
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14}],6:[function(require,module,exports){
@@ -545,7 +540,6 @@ module.exports = recl({
 });
 
 
-
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14,"./LoadComponent.coffee":7}],7:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
@@ -583,7 +577,6 @@ module.exports = recl({
 });
 
 
-
 },{}],8:[function(require,module,exports){
 var Dispatcher;
 
@@ -603,7 +596,6 @@ module.exports = _.extend(new Dispatcher(), {
     });
   }
 });
-
 
 
 },{"flux":10}],9:[function(require,module,exports){
@@ -763,7 +755,6 @@ $(function() {
     return so.ls = so.cs;
   });
 });
-
 
 
 },{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":3,"./components/CodeMirror.coffee":4,"./components/KidsComponent.coffee":5,"./components/ListComponent.coffee":6,"./persistence/TreePersistence.coffee":13}],10:[function(require,module,exports){
@@ -1106,7 +1097,6 @@ module.exports = {
 };
 
 
-
 },{"../actions/TreeActions.coffee":1}],14:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, TreeStore, _cont, _curr, _load, _snip, _tree;
 
@@ -1318,7 +1308,6 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
 });
 
 module.exports = TreeStore;
-
 
 
 },{"../dispatcher/Dispatcher.coffee":8,"events":15}],15:[function(require,module,exports){

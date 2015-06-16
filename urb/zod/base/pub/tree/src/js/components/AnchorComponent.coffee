@@ -1,3 +1,5 @@
+# comment
+
 TreeStore   = require '../stores/TreeStore.coffee'
 TreeActions = require '../actions/TreeActions.coffee'
 
@@ -109,10 +111,10 @@ module.exports = recl
       if @state.prev or @state.next
         _parts = []
         if @state.prev 
-          href = window.tree.basepath window.tree.basepath @state.prev
+          href = window.tree.basepath @state.prev
           _parts.push (a {key:"arow-prev",href:href,className:"arow-prev"},"")
         if @state.next 
-          href = window.tree.basepath window.tree.basepath @state.next
+          href = window.tree.basepath @state.next
           _parts.push (a {key:"arow-next",href:href,className:"arow-next"},"")
         parts.push (div {id:"sides"}, _parts)
 
