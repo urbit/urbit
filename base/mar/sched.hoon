@@ -6,7 +6,7 @@
   |%  ++  mime  [/text/x-sched (tact tape)]
       ++  tape  
         (zing `wall`(turn sorted-list |=([a=@da b=cord] "{<a>} {(trip b)}\0a")))
-      ++  elem  =<  ;list: *{(turn sorted-list .)}
+      ++  elem  =<  ;ul: *{(turn sorted-list .)}
                 |=  [tym=@da ite=cord]  ^-  manx
                 ;li: ;{b "{<tym>}"}: {(trip ite)}
       ++  sorted-list
