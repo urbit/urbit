@@ -12,4 +12,5 @@
 /vere.pkg
 /.MAKEFILE-VERSION
 /make.conf
+/.make.conf
 node_modules/
