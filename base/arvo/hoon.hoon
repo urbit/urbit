@@ -9988,6 +9988,7 @@
     |=  hap=path  ^-  @tas
     ?+  hap  !!
       [@ %ames *]  %a
+      [@ %boat *]  %c
       [@ %newt *]  %a
       [@ %sync *]  %c
       [@ %term *]  %d
