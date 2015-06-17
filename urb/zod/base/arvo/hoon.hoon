@@ -1150,20 +1150,20 @@
       /remlysfynwerrycsugnysnyllyndyndemluxfedsedbecmun\
       /lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes'
   |%
-  ++  ind  ~/  %ind                                     ::  parse prefix
-           |=  a=@tas
-           =+  b=0
-           |-  ^-  (unit ,@)
-           ?:(=(256 b) ~ ?:(=(a (tod b)) [~ b] $(b +(b))))
-  ++  ins  ~/  %ins                                     ::  parse suffix
+  ++  ins  ~/  %ins                                     ::  parse prefix
            |=  a=@tas
            =+  b=0
            |-  ^-  (unit ,@)
            ?:(=(256 b) ~ ?:(=(a (tos b)) [~ b] $(b +(b))))
-  ++  tod  ~/  %tod                                     ::  fetch prefix
-           |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] dex)))
-  ++  tos  ~/  %tos                                     ::  fetch suffix
+  ++  ind  ~/  %ind                                     ::  parse suffix
+           |=  a=@tas
+           =+  b=0
+           |-  ^-  (unit ,@)
+           ?:(=(256 b) ~ ?:(=(a (tod b)) [~ b] $(b +(b))))
+  ++  tos  ~/  %tos                                     ::  fetch prefix
            |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] sis)))
+  ++  tod  ~/  %tod                                     ::  fetch suffix
+           |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] dex)))
   --
 ::
 ++  fa                                                  ::  base58check
