@@ -49,7 +49,7 @@ urbit depends on:
 
 #### OS X - Homebrew
 
-    brew install git gmp libsigsegv openssl libtool autoconf automake cmake` 
+    brew install git gmp libsigsegv openssl libtool autoconf automake cmake
 
 #### OS X - Macports
 
