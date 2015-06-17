@@ -103,8 +103,12 @@ Basics
 `^v` will switch between the task manager and the focussed process. `^x`
 will switch between processes.
 
-To start a process that is not yet started run `*proc` from the task
+To start a process that is not yet started, run `*proc` from the task
 manager.
+
+To connect your console to a process that has already been started, run `+proc`
+from the task manager. Note that the process must be one that supports console
+access, such as dojo and talk.
 
 `^d` will exit the pier from the task manager. No matter how you shut
 your urbit down you'll be returned to exactly the same state as when you
