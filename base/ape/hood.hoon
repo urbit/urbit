@@ -75,6 +75,7 @@
 ++  poke-hood-link          (wrap poke-link):from-drum
 ++  poke-hood-mass          (wrap poke-mass):from-helm
 ++  poke-hood-mount         (wrap poke-mount):from-kiln
+++  poke-hood-unmount       (wrap poke-unmount):from-kiln
 ++  poke-hood-sync          (wrap poke-sync):from-kiln
 ++  poke-hood-unsync        (wrap poke-unsync):from-kiln
 ++  poke-hood-verb          (wrap poke-verb):from-helm

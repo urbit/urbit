@@ -25,6 +25,8 @@
     $:  pax=path                                        ::
         pot=term                                        ::
     ==                                                  ::
+++  hood-unmount                                        ::
+    $|(term [span path])                                ::
 ++  hood-sync                                           ::
     $:  syd=desk                                        ::
         her=ship                                        ::
@@ -56,6 +58,7 @@
         $%  [%exec wire @p beak (unit silk)]            ::
             [%info wire @p @tas nori]                   ::
             [%mont wire @tas @p @tas path]              ::
+            [%ogre wire $|(@tas beam)]                  ::
             [%merg wire @p @tas @p @tas germ]           ::
             [%poke wire dock pear]                      ::
             [%warp wire sock riff]                      ::
@@ -80,9 +83,19 @@
     |=  hood-mount
     =+  bem=(tome pax)
     ?~  bem
-      =+  "can't sync bad path: {<pax>}"
+      =+  "can't mount bad path: {<pax>}"
       abet:(spam leaf/- ~)
     abet:(emit %mont /mount pot p.u.bem q.u.bem (flop s.u.bem))
+  ::
+  ++  poke-unmount
+    |=  mon=hood-unmount
+    ?^  mon
+      =+  bem=(tome mon)
+      ?~  bem
+        =+  "can't unmount bad path: {<mon>}"
+        abet:(spam leaf/- ~)
+      abet:(emit %ogre /unmount-beam [[p q %ud 0] s]:u.bem)
+    abet:(emit %ogre /unmount-point mon)
   ::
   ++  poke-sync                                         ::
     |=  hos=hood-sync
