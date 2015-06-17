@@ -72,12 +72,12 @@
 ::
 ++  poke-dill-belt          (wrap poke-dill-belt):from-drum
 ++  poke-helm-init          (wrap poke-init):from-helm
+++  poke-helm-verb          (wrap poke-verb):from-helm
 ++  poke-hood-link          (wrap poke-link):from-drum
 ++  poke-hood-mass          (wrap poke-mass):from-helm
 ++  poke-hood-sync          (wrap poke-sync):from-kiln
 ++  poke-hood-unsync        (wrap poke-unsync):from-kiln
 ++  poke-hood-unix          (wrap poke-unix):from-kiln
-++  poke-hood-verb          (wrap poke-verb):from-helm
 ++  poke-hood-begin         (wrap poke-begin):from-helm
 ++  poke-hood-invite        (wrap poke-invite):from-helm
 ++  poke-hood-merge         (wrap poke-merge):from-kiln
