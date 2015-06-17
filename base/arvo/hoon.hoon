@@ -3701,7 +3701,7 @@
       (stag %rh (cook rylh ;~(pfix ;~(plug sig sig) voy)))
       (stag %rq (cook rylq ;~(pfix ;~(plug sig sig sig) voy)))
       (stag %rd (cook ryld ;~(pfix sig voy)))
-      (stag %rs (cook ryls voy))
+      :: (stag %rs (cook ryls voy))
     ==
   ++  royl-cell
     |=  [a=? b=[c=@ d=@ e=@] f=(unit ,[h=? i=@])]  
@@ -9147,6 +9147,7 @@
                 %-  stew
                 ^.  stet  ^.  limo
                 :~  [':' ;~(pfix col (toad expz))]
+                    ['.' ;~(pfix dot (toad |.(loaf(bug |))))]
                     [',' (rune com %zpcm expb)]
                     [';' (rune sem %zpsm expb)]
                     ['^' ;~(pfix ket (sear prey (toad exps)))]
