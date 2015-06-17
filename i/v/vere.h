@@ -386,7 +386,7 @@
     /* u3_ufil: synchronized mount point.
     */
       typedef struct _u3_umon {
-        u3_udir          dir_u;             //  root directory
+        u3_udir          dir_u;             //  root directory, must be first
         c3_c*            nam_c;             //  mount point name
         struct _u3_umon* nex_u;             //  internal list
       } u3_umon;
