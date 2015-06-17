@@ -284,6 +284,10 @@ Conceal structure, v2
 
 Randomly permutes atoms that fit into 17 to 32 bits into one another. If the atom fits into 33 to 64 bits, does the same permutation on the low 32 bits only. Otherwise, passes the atom through unchanged.
 
+------------------------------------------------------------------------
+
+<h3 id="++fend"><code>++fend</code></h3>
+
     ++  fend                                              ::  restore structure v2
       |=  cry=@  ^-  @
       ?:  &((gte cry 0x1.0000) (lte cry 0xffff.ffff))
@@ -297,6 +301,10 @@ Randomly permutes atoms that fit into 17 to 32 bits into one another. If the ato
 
 Randomly permutes atoms that fit into 17 to 32 bits into one another, and randomly permutes the low 32 bits of atoms that fit into 33 to 64 bits; otherwise, passes the atom through unchanged. The permutation is the inverse of the one applied by [`++feen`]().
 
+------------------------------------------------------------------------
+
+<h3 id="++fice"><code>++fice</code></h3>
+
     ++  fice                                              ::  adapted from
       |=  nor=@                                           ::  black and rogaway
       ^-  @                                               ::  "ciphers with
@@ -308,6 +316,10 @@ Randomly permutes atoms that fit into 17 to 32 bits into one another, and random
       (add (mul 65.535 -.sel) +.sel)
 
 Applies a 3-round Feistel-like cipher to randomly permute atoms in the range `0` to `2^32 - 2^16`. The construction given in Black and Rogaway is ideal for a domain with a size of that form, and as with a conventionel Feistel cipher, three rounds suffice to make the permutation pseudorandom.
+
+------------------------------------------------------------------------
+
+<h3 id="++teil"><code>++teil</code></h3>
 
     ++  teil                                              ::  reverse ++fice
       |=  vip=@
@@ -321,6 +333,10 @@ Applies a 3-round Feistel-like cipher to randomly permute atoms in the range `0`
 
 Applies the reverse of the Feistel-like cipher applied by [`++fice`](). Unlike a conventional Feistel cipher that is its own inverse if keys are used in reverse order, this Feistel-like cipher uses two moduli that must be swapped when applying the reverse transformation.
 
+------------------------------------------------------------------------
+
+<h3 id="++rynd"><code>++rynd</code></h3>
+
     ++  rynd                                              ::  feistel round
       |=  [n=@ l=@ r=@]
       ^-  [@ @]
@@ -331,6 +347,10 @@ Applies the reverse of the Feistel-like cipher applied by [`++fice`](). Unlike a
 
 A single round of the Feistel-like cipher [`++fice`](). AES ([`++aesc`]()) is used as the round function.
 
+------------------------------------------------------------------------
+
+<h3 id="++rund"><code>++rund</code></h3>
+
     ++  rund                                              ::  reverse round
       |=  [n=@ l=@ r=@]
       ^-  [@ @]
@@ -340,6 +360,10 @@ A single round of the Feistel-like cipher [`++fice`](). AES ([`++aesc`]()) is us
       (~(dif fo 65.536) l (en:aesc (snag n raku) r))
 
 A single round of the Feistel-like reverse cipher [`++teil`]().
+
+------------------------------------------------------------------------
+
+<h3 id="++raku"><code>++raku</code></h3>
 
     ++  raku
       ^-  (list ,@ux)
