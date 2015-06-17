@@ -1284,18 +1284,18 @@
           =+  s=(sea:rd red)
           =+  negexp==(1 (mod e.s 2))
           [s=(sig:rd red) h=(hol:rd red) f=(fac:rd red) e=(err:rd red) n=negexp]
-++  rlyh  |=(reh=@rh ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
-++  rlyq  |=(req=@rq ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
-++  rlys  |=(res=@rs ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
+++  rlyh  |=(reh=@rh ~|(%realh-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
+++  rlyq  |=(req=@rq ~|(%realq-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
+++  rlys  |=(res=@rs ~|(%reals-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
 ++  ryld  |=  v=[syn=? hol=@ zer=@ fac=@ exp=(unit ,@)]  ^-  @rd
           ?:  &(=(hol.v 0) =(zer.v 0) =(fac.v 0))
             (bit:rd (szer:vl:fl 1.023 52 syn.v))
           ?~  exp.v
             (bit:rd (cof:fl 52 1.023 v))
           (ipow:rd u.exp.v (bit:rd (cof:fl 52 1.023 v)))
-++  rylh  |=([syn=? hol=@ zer=@ fac=@ exp=(unit ,@)] ~|(%real-nyet ^-(@rh !!)))
-++  rylq  |=([syn=? hol=@ zer=@ fac=@ exp=(unit ,@)] ~|(%real-nyet ^-(@rq !!)))
-++  ryls  |=([syn=? hol=@ zer=@ fac=@ exp=(unit ,@)] ~|(%real-nyet ^-(@rs !!)))
+++  rylh  |=([syn=? hol=@ zer=@ fac=@ exp=(unit ,@)] ~|(%realh-nyet ^-(@rh !!)))
+++  rylq  |=([syn=? hol=@ zer=@ fac=@ exp=(unit ,@)] ~|(%realq-nyet ^-(@rq !!)))
+++  ryls  |=([syn=? hol=@ zer=@ fac=@ exp=(unit ,@)] ~|(%reals-nyet ^-(@rs !!)))
 
 ::  Floating point operations for general floating points.
 ::  [s=sign, e=unbiased exponent, f=fraction a=ari]
