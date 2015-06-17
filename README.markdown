@@ -87,8 +87,8 @@ All your state (an append-only log and a memory checkpoint) will live in
 this directory. The name of your pier doesn't matter and is not visible
 internally.
 
-Register
---------
+Begin
+-----
 
 To begin a 32-bit planet use
 
