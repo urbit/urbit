@@ -1,10 +1,9 @@
 // XXX maybe make sure empty directories disappear on update?
 // XXX i suspect maybe a problem if there's untrackable files in
 //     a directory when we try to delete it?
-// XXX maybe it's not a bad idea to have clay handle the placing of the dots?
 // XXX probably should allow out-only mount points
 // XXX fix naked file -- currently just does file.root
-// XXX check for memory leaks
+// XXX maybe get rid of mim.u.dok cache?
 /* v/unix.c
 **
 **  This file is in the public domain.
@@ -1133,6 +1132,19 @@ u3_unix_ef_ogre(u3_noun mon)
   _unix_delete_mount_point(mon);
 }
 
+/* u3_unix_ef_hill(): enumerate mount points
+*/
+void
+u3_unix_ef_hill(u3_noun hil)
+{
+  u3_noun mon;
+  for ( mon = hil; c3y == u3du(mon); mon = u3t(hil) ) {
+    _unix_get_mount_point(u3h(mon));
+  }
+  u3_Host.unx_u.dyr = c3y;
+  u3_unix_ef_look();
+}
+
 /* u3_unix_io_init(): initialize unix sync.
 */
 void
@@ -1178,6 +1190,11 @@ u3_unix_io_init(void)
   uv_timer_init(u3L, &unx_u->tim_u);
   unx_u->alm = c3n;
   unx_u->dyr = c3n;
+
+  if ( c3n == u3_Host.ops_u.nuu ) {
+    u3v_plan(u3nt(u3_blip, c3__boat, u3_nul),
+             u3nc(c3__boat, u3_nul));
+  }
 }
 
 /* u3_unix_acquire(): acquire a lockfile, killing anything that holds it.
@@ -1300,7 +1317,7 @@ void
 u3_unix_ef_look(void)
 {
   if ( c3y == u3_Host.unx_u.dyr ) {
-    u3_Host.unx_u.dyr = c3y;
+    u3_Host.unx_u.dyr = c3n;
     u3_umon* mon_u;
   
     for ( mon_u = u3_Host.unx_u.mon_u; mon_u; mon_u = mon_u->nex_u ) {

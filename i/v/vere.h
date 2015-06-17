@@ -1001,6 +1001,11 @@
         void
         u3_unix_ef_ogre(u3_noun mon);
 
+      /* u3_unix_ef_ogre(): delete mount point
+      */
+        void
+        u3_unix_ef_hill(u3_noun hil);
+
       /* u3_unix_io_init(): initialize storage.
       */
         void

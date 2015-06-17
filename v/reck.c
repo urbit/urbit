@@ -176,6 +176,10 @@ _reck_kick_sync(u3_noun pox, u3_noun fav)
       u3_unix_ef_ogre(u3k(u3t(fav)));
       u3z(pox); u3z(fav); return c3y;
     }
+    case c3__hill: {
+      u3_unix_ef_hill(u3k(u3t(fav)));
+      u3z(pox); u3z(fav); return c3y;
+    }
   }
 
   //  XX obviously not right!
@@ -283,6 +287,7 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
       } break;
 
       case c3__clay:
+      case c3__boat:
       case c3__sync: {
         return _reck_kick_sync(pox, fav);
       } break;

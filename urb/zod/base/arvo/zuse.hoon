@@ -2330,13 +2330,15 @@
 ::::                                                    ::
 ++  gift-clay                                           ::  out result <-$
           $%  [%ergo p=@tas q=mode]                     ::  version update
+              [%hill p=(list term)]                     ::  mount points
               [%mass p=mass]                            ::  memory usage
               [%mere p=(each (set path) (pair term tang))]  ::  merge result
               [%note p=@tD q=tank]                      ::  debug message
               [%writ p=riot]                            ::  response
           ==                                            ::
 ++  kiss-clay                                           ::  in request ->$
-          $%  [%info p=@p q=@tas r=nori]                ::  internal edit
+          $%  [%boat ~]                                 ::  pier rebooted
+              [%info p=@p q=@tas r=nori]                ::  internal edit
               [%init p=@p]                              ::  report install
               [%into p=@tas q=mode]                     ::  external edit
               [%merg p=@p q=@tas r=@p s=@tas t=germ]    ::  merge desks

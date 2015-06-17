@@ -2408,6 +2408,10 @@
       ==
   ^-  [p=(list move) q=_..^$]
   ?-    -.q.hic
+      %boat
+    :_  ..^$
+    [hen %give %hill (turn (~(tap by mon.ruf)) head)]~
+  ::
       %init
     :_  ..^$(fat.ruf (~(put by fat.ruf) p.q.hic [hen ~]))
     =+  [bos=(sein p.q.hic) can=(clan p.q.hic)]
