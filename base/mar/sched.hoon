@@ -3,7 +3,7 @@
   ::
 |_  dat=(map ,@da cord)
 ++  grow                                                ::  convert to
-  |%  ++  mime  `^mime`[/text/x-sched (tact tape)]
+  |%  ++  mime  [/text/x-sched (tact tape)]
       ++  tape  
         (zing `wall`(turn sorted-list |=([a=@da b=cord] "{<a>} {(trip b)}\0a")))
       ++  elem  =<  ;list: *{(turn sorted-list .)}

@@ -820,6 +820,8 @@
     ++  keel                                            ::  apply mutations
       |=  [cof=cafe suh=vase yom=(list (pair wing vase))]
       ^-  (bolt vase)
+      %+  cool  =>  |=([a=wing b=type *] [a b])
+                |.(leaf/"ford: keel {<p.suh>} {<(turn yom +)>}")  
       %^  maim  cof 
         %+  slop  suh
         |-  ^-  vase
@@ -960,8 +962,8 @@
       =*  for  p.i.all
       =+  raf=(fang cof for)
       ?:  ?=(%2 -.q.raf)
-        %-  (slog 0 leaf/"! {<`mark`for>} build failed, ignoring:" q.q.raf)
-        (fine cof lil)
+        =.  q.q.raf  :_(q.q.raf leaf/"! {<`mark`for>} build failed, ignoring.")
+        ((slog 0 (flop q.q.raf)) (fine cof lil))
       %+  cope  `(bolt vase)`raf
       |=  [cof=cafe vax=vase]
       %+  fine  cof
@@ -1023,11 +1025,12 @@
     ++  link                                            ::  translate
       |=  [cof=cafe too=mark for=mark vax=vase]
       ^-  (bolt vase)
+      :: %+  cool   |.(leaf/"ford: link {<too>} {<for>} {<p.vax>}")
       ?:  =(too for)  (fine cof vax)
       ?:  |(=(%noun for) =(%$ for))
         ((lake too) cof vax)
       %+  cope  (fang cof for)
-      |=  [cof=cafe pro=vase]
+      |=  [cof=cafe pro=vase]  ^-  (bolt vase)
       ?:  &((slob %grow p.pro) (slob too p:(slap pro [%cnzy %grow])))
         %+  cope  (keel cof pro [[%& 6]~ vax]~)
         |=  [cof=cafe pox=vase]

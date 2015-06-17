@@ -88,6 +88,7 @@
 ++  poke-kiln-cp            (wrap poke-cp):from-kiln
 ++  poke-kiln-rm            (wrap poke-rm):from-kiln
 ++  poke-kiln-mv            (wrap poke-mv):from-kiln
+++  poke-kiln-schedule      (wrap poke-schedule):from-kiln
 ++  poke-will               (wrap poke-will):from-helm
 ++  mere-kiln               (wrap take-mere):from-kiln
 ++  mere-kiln-sync          (wrap take-mere-sync):from-kiln

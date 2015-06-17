@@ -1030,7 +1030,8 @@
   =+  dir=((hard arch) .^(%cy pax))
   ?~  q.dir  [%ins val]
   =+  for=((hard mark) -:(flop pax))
-  [%mut [for [%atom %$] .^(%cx pax)] val]
+  ?>  =(for p.val)
+  [%mut [for p.q.val .^(%cx pax)] val]
 ::
 ++  file                                                ::  simple file load
   |=  pax=path
