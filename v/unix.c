@@ -4,10 +4,16 @@
 // XXX probably should allow out-only mount points
 // XXX fix naked file -- currently just does file.root
 // XXX maybe get rid of mim.u.dok cache?
+// XXX what happens if we delete a directory?
+// XXX shouldn't "all.h" be defined first so that _GNU_SOURCE
+//     is defined everywhere?
 /* v/unix.c
 **
 **  This file is in the public domain.
 */
+
+#include "all.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -23,8 +29,8 @@
 #include <term.h>
 #include <errno.h>
 #include <libgen.h>
+#include <ftw.h>
 
-#include "all.h"
 #include "v/vere.h"
 
 /* undef this to turn off syncing out to unix */
@@ -80,6 +86,62 @@ _unix_string_to_path(c3_c* pax_c) {
   }
   else {
     return _unix_string_to_path_helper(pax_c + 1);
+  }
+}
+
+/* _unix_rm_r_cb(): callback to delete individiual files/directories
+*/
+static c3_i
+_unix_rm_r_cb(const c3_c* pax_c,
+              const struct stat* buf_u,
+              c3_i typeflag,
+              struct FTW* ftw_u)
+{
+  switch ( typeflag ) {
+    default:
+      uL(fprintf(uH, "bad file type in rm_r: %s\r\n", pax_c));
+      break;
+    case FTW_F:
+      if ( 0 != unlink(pax_c) && ENOENT != errno ) {
+        uL(fprintf(uH, "error unlinking (in rm_r) %s: %s\n",
+                   pax_c, strerror(errno)));
+        c3_assert(0);
+      }
+      break;
+    case FTW_D:
+      uL(fprintf(uH, "shouldn't have gotten pure directory: %s\r\n", pax_c));
+      break;
+    case FTW_DNR:
+      uL(fprintf(uH, "couldn't read directory: %s\r\n", pax_c));
+      break;
+    case FTW_NS:
+      uL(fprintf(uH, "couldn't stat path: %s\r\n", pax_c));
+      break;
+    case FTW_DP:
+      if ( 0 != rmdir(pax_c) && ENOENT != errno ) {
+        uL(fprintf(uH, "error rmdiring %s: %s\n", pax_c, strerror(errno)));
+        c3_assert(0);
+      }
+      break;
+    case FTW_SL:
+      uL(fprintf(uH, "got symbolic link: %s\r\n", pax_c));
+      break;
+    case FTW_SLN:
+      uL(fprintf(uH, "got nonexistent symbolic link: %s\r\n", pax_c));
+      break;
+  }
+
+  return 0;
+}
+
+/* _unix_rm_r(): rm -r directory
+*/
+static void
+_unix_rm_r(c3_c* pax_c)
+{
+  if ( 0 > nftw(pax_c, _unix_rm_r_cb, 100, FTW_DEPTH | FTW_PHYS )
+       && ENOENT != errno) {
+    uL(fprintf(uH, "rm_r error on %s: %s\r\n", pax_c, strerror(errno)));
   }
 }
 
@@ -268,20 +330,11 @@ _unix_free_dir(uv_handle_t* was_u)
 {
   u3_udir* dir_u = (void*) was_u;
 
-  u3_unod* nod_u = dir_u->kid_u;
-  while ( nod_u ) {
-    u3_unod* nex_u = nod_u->nex_u;
-    _unix_free_node(nod_u);
-    nod_u = nex_u;
-  }
-
-  if ( 0 != rmdir(dir_u->pax_c) && ENOENT != errno ) {
-    uL(fprintf(uH, "error rmdiring %s: %s\n", dir_u->pax_c, strerror(errno)));
-    c3_assert(0);
-  }
+  _unix_rm_r(dir_u->pax_c);
 
   free(dir_u->pax_c);
-  free(dir_u);
+  free(dir_u); // XXX this might be too early, how do we
+               //     know we've freed all the children?
 }
 
 /* _unix_free_node(): free node, deleting everything within
@@ -309,11 +362,41 @@ _unix_free_node(u3_unod* nod_u)
   }
 
   if ( c3y == nod_u->dir ) {
+    u3_unod* nud_u = ((u3_udir*) nod_u)->kid_u;
+    while ( nud_u ) {
+      u3_unod* nex_u = nud_u->nex_u;
+      _unix_free_node(nud_u);
+      nud_u = nex_u;
+    }
+
     uv_close((uv_handle_t*)&nod_u->was_u, _unix_free_dir);
   }
   else {
     uv_close((uv_handle_t*)&nod_u->was_u, _unix_free_file);
   }
+}
+
+/* _unix_free_mount_point_cb(): free mount point callback
+ *
+ * this process needs to happen in exactly the order it's done.
+ * in particular, we must recurse before we get to the callback, so
+ * that libuv does all the child directories XXX doesn't actually work
+*/
+static void
+_unix_free_mount_point_cb(uv_handle_t* was_u)
+{
+  // this is similar to the trickiness in _unix_fs_event_cb, but one
+  // layer deeper.  this works because (1) was_u is the first field in
+  // u3_udir, and (2) dir_u is the first field in u3_umon.
+  //
+  // tread carefully
+  u3_umon* mon_u = (void*) was_u;
+
+  _unix_rm_r(mon_u->dir_u.pax_c);
+
+  free(mon_u->dir_u.pax_c);
+  free(mon_u->nam_c);
+  free(mon_u);
 }
 
 /* _unix_free_mount_point(): free mount point
@@ -328,9 +411,7 @@ _unix_free_mount_point(u3_umon* mon_u)
     nod_u = nex_u;
   }
 
-  free(mon_u->dir_u.pax_c);
-  free(mon_u->nam_c);
-  free(mon_u);
+  uv_close((uv_handle_t*)&mon_u->dir_u.was_u, _unix_free_mount_point_cb);
 }
 
 /* _unix_delete_mount_point(): remove mount point from list and free
@@ -413,6 +494,7 @@ _unix_fs_event_cb(uv_fs_event_t* was_u,
   uL(fprintf(uH, "fs event at %s\r\n", nod_u->pax_c));
 
   while ( nod_u ) {
+    uL(fprintf(uH, "nod_u: %p\r\n", nod_u));
     nod_u->dry = c3n;
     nod_u = (u3_unod*) nod_u->par_u;
   }
@@ -948,7 +1030,6 @@ _unix_sign_cb(uv_signal_t* sil_u, c3_i num_i)
   {
     switch ( num_i ) {
       default: fprintf(stderr, "\r\nmysterious signal %d\r\n", num_i); break;
-
       case SIGTERM:
         fprintf(stderr, "\r\ncaught signal %d\r\n", num_i);
         u3_Host.liv = c3n;

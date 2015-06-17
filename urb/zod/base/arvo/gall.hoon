@@ -1108,6 +1108,7 @@
         %info  `%c
         %merg  `%c
         %mont  `%c
+        %ogre  `%c
         %them  `%e
         %wait  `%t
         %want  `%a

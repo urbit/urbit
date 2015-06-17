@@ -2512,6 +2512,27 @@
     =+  woo=abet:wao
     [-.woo ..^$(ruf abet:(pish:une r.q.hic +.woo ran.wao))]
   ::
+      %ogre
+    ?~  hez.ruf
+      ~&  %no-sync-duct
+      [~ ..^$]
+    ?@  p.q.hic
+      ?.  (~(has by mon.ruf) p.q.hic)
+        ~&  [%not-mounted p.q.hic]
+        [~ ..^$]
+      :_  ..^$(mon.ruf (~(del by mon.ruf) p.q.hic))
+      [u.hez.ruf %give %ogre p.q.hic]~
+    :_  %_    ..^$
+            mon.ruf
+          %-  mo
+          %+  skip  (~(tap by mon.ruf))
+          (corl (cury test p.q.hic) tail)
+        ==
+    %+  turn
+      (skim (~(tap by mon.ruf)) (corl (cury test p.q.hic) tail))
+    |=  [pot=term bem=beam]
+    [u.hez.ruf %give %ogre pot]
+  ::
       %warp
     =^  mos  ruf
       ?:  =(p.p.q.hic q.p.q.hic)

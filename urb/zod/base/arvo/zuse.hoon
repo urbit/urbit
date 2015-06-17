@@ -2330,10 +2330,11 @@
 ::::                                                    ::
 ++  gift-clay                                           ::  out result <-$
           $%  [%ergo p=@tas q=mode]                     ::  version update
-              [%hill p=(list term)]                     ::  mount points
+              [%hill p=(list ,@tas)]                    ::  mount points
               [%mass p=mass]                            ::  memory usage
               [%mere p=(each (set path) (pair term tang))]  ::  merge result
               [%note p=@tD q=tank]                      ::  debug message
+              [%ogre p=@tas]                            ::  delete mount point
               [%writ p=riot]                            ::  response
           ==                                            ::
 ++  kiss-clay                                           ::  in request ->$
@@ -2343,6 +2344,7 @@
               [%into p=@tas q=mode]                     ::  external edit
               [%merg p=@p q=@tas r=@p s=@tas t=germ]    ::  merge desks
               [%mont p=@tas q=@p r=@tas s=path]         ::  mount to unix
+              [%ogre p=$|(@tas beam)]                   ::  delete mount point
               [%wart p=sock q=@tas r=path s=*]          ::  network request
               [%warp p=sock q=riff]                     ::  file request
               [%wegh ~]                                 ::  report memory
