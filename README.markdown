@@ -42,7 +42,7 @@ urbit depends on:
 *note: http requests are not supported on either debian wheezy or jessie due to an ssl issue*
 #### Fedora
 
-    sudo yum install gcc gcc-c++ git gmp-devel openssl-devel openssl ncurses-devel libsigsegv-devel ctags automake autoconf libtool cmake re2c
+    sudo dnf install gcc gcc-c++ git gmp-devel openssl-devel openssl ncurses-devel libsigsegv-devel ctags automake autoconf libtool ragel cmake re2c
 
 #### AWS
 
