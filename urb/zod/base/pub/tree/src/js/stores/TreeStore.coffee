@@ -61,7 +61,7 @@ TreeStore = _.extend EventEmitter.prototype, {
           body: window.tree.reactify v.body.body
     else
       _cont[path] = window.tree.reactify "React.createElement ('div', {}, [
-                                           React.createElement('h1', {}, 'Error: Empty path'),
+                                           React.createElement('h1', {className:'error'}, 'Error: Empty path'),
                                            React.createElement('div', {}, [
                                             React.createElement('pre', {}, '#{@getCurr()}'),
                                             React.createElement('span', {}, 'is either empty or does not exist.')
