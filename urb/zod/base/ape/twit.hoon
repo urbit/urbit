@@ -3,7 +3,7 @@
 ::::  /hook/core/twit/app
   ::
 /-    *twitter
-/+    twitter
+/+    twitter, talk
 ::
 ::::  ~fyr
   ::
@@ -36,6 +36,7 @@
 ++  card                                                ::  arvo request
   $?  gift
   $%  [%them path ~ u=hiss]                             ::  HTTP request
+      [%poke wire dock %talk-command command:talk]      ::
       [%wait path p=@da]                                ::  timeout
   ==  ==
 ::
@@ -88,8 +89,8 @@
   ^+  [*(list move) +>]
   ?-    -.q.act
       %auth
-     ~&  twit-auth/p.act
-    done(kes (~(put by kes) p.act p.q.act))             ::  XX verify key
+    :-  [(print "authed @{(trip p.act)}")]~
+    +>.$(kes (~(put by kes) p.act p.q.act))             ::  XX verify key
       %post
     =:  out  (~(put by out) p.q.act %& p.act q.q.act)
         ran  (~(del by ran) /peer/home)
@@ -132,6 +133,8 @@
           (need %.(jon stat:twir))
       =.  out  (~(put by out) (slav %uv i.t.pax) %| rep)
       :_  +>.$
+      =+  pax=/[who.rep]/status/(rsh 3 2 (scot %ui id.rep))
+      :-  (print (earn [& ~ `/com/twitter] `pax ~))
       (spam pax (tweet-good rep))
         [%peer *]                                     ::  feed data
       =+  ^=  rep
@@ -209,4 +212,7 @@
   |=  [ost=bone @ pax=path]
   ?.  =(pax a)  ~
   (turn b |=(c=gift [ost c]))
+::
+++  print
+  |=(mes=tape [ost %poke / [our %talk] (said our %twit now eny leaf/mes ~)])
 --
