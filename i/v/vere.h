@@ -989,7 +989,7 @@
       /* u3_unix_ef_look(): update filesystem from unix
       */
         void
-        u3_unix_ef_look(void);
+        u3_unix_ef_look(u3_noun all);
 
       /* u3_unix_ef_ergo(): update filesystem from urbit
       */
