@@ -56,4 +56,6 @@ module.exports = recl
           prev = (h1 {},v)
         href = window.tree.basepath _path
         (li {}, (a {href:href,className:c,key:"list-a-"+_path}, prev))
-    (ul {className:"list",key:"list-"+@state.path}, _list)
+    k = "list"
+    if @props['data-source'] is 'default' then k += " default"
+    (ul {className:k,key:"list-"+@state.path}, _list)

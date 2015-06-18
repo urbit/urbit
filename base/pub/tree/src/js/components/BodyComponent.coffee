@@ -16,13 +16,17 @@ module.exports = recl
   componentDidMount: -> 
     TreeStore.addChangeListener @_onChangeStore
 
+  componentWillUnmount: ->
+    TreeStore.removeChangeListener @_onChangeStore
+
   componentDidUpdate: (_props,_state) -> 
     if _state.curr isnt @state.curr
       setTimeout (=> @getPath _state.curr), 0
 
   getInitialState: -> @stateFromStore()
 
-  _onChangeStore: ->  @setState @stateFromStore()
+  _onChangeStore: ->  
+    @setState @stateFromStore()
 
   getPath: (path) -> 
     if not @state.cont[path]? 
