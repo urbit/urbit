@@ -2463,7 +2463,7 @@
     =+  rom=(~(got by fat.ruf) p.bem)
     =+  dos=(~(got by dos.rom) q.bem)
     ?:  =(0 let.dom.dos)
-      =+  cos=(mode-to-soba ~ s.bem q.q.hic)
+      =+  cos=(mode-to-soba ~ s.bem q.q.hic r.q.hic)
       =+  ^-  [one=(list ,[path miso]) two=(list ,[path miso])]
           %+  skid  q.cos
           |=  [a=path b=miso]
@@ -2477,7 +2477,7 @@
           [hen %pass /two %c %info p.bem q.bem %& p.cos two]
       ==
     =+  yak=(~(got by hut.ran.ruf) (~(got by hit.dom.dos) let.dom.dos))
-    =+  cos=(mode-to-soba q.yak (flop s.bem) q.q.hic)
+    =+  cos=(mode-to-soba q.yak (flop s.bem) q.q.hic r.q.hic)
     [hen %pass / %c %info p.bem q.bem %& cos]~
   ::
       %merg                                               ::  direct state up
@@ -2824,9 +2824,30 @@
   [p q [p q.q]:r]
 ::
 ++  mode-to-soba
-  |=  [hat=(map path lobe) pax=path mod=mode]
+  |=  [hat=(map path lobe) pax=path all=? mod=mode]
   ^-  soba
   :-  *cart
+  %+  welp
+    ^-  (list (pair path miso))
+    ?.  all
+      ~
+    =+  mad=(mo mod)
+    =+  len=(lent pax)
+    =+  ^-  descendants=(list path)
+        %+  turn
+          %+  skim  (~(tap by hat))
+          |=  [paf=path lob=lobe]
+          =(pax (scag len paf))
+        |=  [paf=path lob=lobe]
+        (slag len paf)
+    %+  murn
+      descendants
+    |=  pat=path
+    ^-  (unit (pair path ,[%del ~]))
+    ?:  (~(has by mad) pat)
+      ~
+    `[(weld pax pat) %del ~]
+  ^-  (list (pair path miso))
   %+  murn  mod
   |=  [pat=path mim=(unit mime)]
   ^-  (unit (pair path miso))
