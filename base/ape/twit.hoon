@@ -141,7 +141,7 @@
       =+  ren=(cull t.pax rep)                       ::  new messages
       ?~  ren
         (wait pax ~)                              ::  pump polling
-      ~&  spam-feed/ren
+      :: ~&  spam-feed/ren
       =:  ran  (~(del by ran) pax)                    ::  clear poll delay
           fed  (~(put by fed) t.pax rep)              ::  saw last message
         ==
