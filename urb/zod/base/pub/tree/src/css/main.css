@@ -127,6 +127,24 @@ h3 code {
   font-size: inherit;
   padding: 0.3rem;
 }
+#body > div > h1 {
+  height: 3rem;
+}
+#body > div > h1 span {
+  background-color: #000;
+  padding: 1rem;
+  margin-left: -1rem;
+  color: #fff;
+}
+#body > div > h2 {
+  height: 2.2rem;
+}
+#body > div > h2 span {
+  background-color: #c6c6c6;
+  padding: 0.6rem;
+  margin-left: -0.6rem;
+  color: #fff;
+}
 pre,
 code {
   font-size: 0.8rem;
@@ -357,6 +375,11 @@ li:before {
 .list h1 {
   font-size: 0.7rem;
 }
+.list.default > li > a,
+.list.default > li > a > h1,
+.list.default li:before {
+  font-size: 1rem;
+}
 #body .CodeMirror {
   font-size: 0.8rem;
   line-height: 1rem;
@@ -368,6 +391,9 @@ li:before {
   background-color: #fff;
   padding-right: 1rem;
   margin-left: -1rem;
+}
+.error {
+  color: #f91733;
 }
 @media only screen and (max-width: 1170px) {
   #nav,

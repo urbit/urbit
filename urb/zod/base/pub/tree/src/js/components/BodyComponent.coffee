@@ -22,7 +22,10 @@ module.exports = recl
 
   getInitialState: -> @stateFromStore()
 
-  _onChangeStore: ->  @setState @stateFromStore()
+  _onChangeStore: ->  
+    if TreeStore.getCurr() isnt @state.curr
+      React.unmountComponentAtNode @getDOMNode()
+    @setState @stateFromStore()
 
   getPath: (path) -> 
     if not @state.cont[path]? 
