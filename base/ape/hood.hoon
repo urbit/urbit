@@ -56,6 +56,7 @@
   [~ +>]
 ::
 ++  coup-drum-phat  (wrap take-coup-phat):from-drum
+++  coup-helm-hi    (wrap coup-hi):from-helm
 ++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
 ++  from-lib
   |*  _[%helm ..$ ,_abet]:(helm-work)
@@ -73,6 +74,8 @@
 ++  poke-dill-belt          (wrap poke-dill-belt):from-drum
 ++  poke-helm-init          (wrap poke-init):from-helm
 ++  poke-helm-verb          (wrap poke-verb):from-helm
+++  poke-helm-send-hi       (wrap poke-send-hi):from-helm
+++  poke-helm-hi            (wrap poke-hi):from-helm
 ++  poke-hood-link          (wrap poke-link):from-drum
 ++  poke-hood-mass          (wrap poke-mass):from-helm
 ++  poke-hood-sync          (wrap poke-sync):from-kiln
