@@ -16,6 +16,9 @@ module.exports = recl
   componentDidMount: -> 
     TreeStore.addChangeListener @_onChangeStore
 
+  componentWillUnmount: ->
+    TreeStore.removeChangeListener @_onChangeStore
+
   componentDidUpdate: (_props,_state) -> 
     if _state.curr isnt @state.curr
       setTimeout (=> @getPath _state.curr), 0
@@ -23,8 +26,6 @@ module.exports = recl
   getInitialState: -> @stateFromStore()
 
   _onChangeStore: ->  
-    if TreeStore.getCurr() isnt @state.curr
-      React.unmountComponentAtNode @getDOMNode()
     @setState @stateFromStore()
 
   getPath: (path) -> 
