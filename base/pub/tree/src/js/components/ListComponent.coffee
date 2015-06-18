@@ -15,12 +15,13 @@ module.exports = recl
       path:path
     }
 
-  componentDidMount: -> 
-    TreeStore.addChangeListener @_onChangeStore
+  _onChangeStore: ->
+    @setState @stateFromStore()
+
+  componentWillUnmount: ->
+    TreeStore.removeChangeListener @_onChangeStore
 
   getInitialState: -> @stateFromStore()
-
-  _onChangeStore: ->  @setState @stateFromStore()
 
   getCont: ->
     cont = true
@@ -32,6 +33,7 @@ module.exports = recl
 
   componentDidMount: ->
     cont = @getCont()
+    TreeStore.addChangeListener @_onChangeStore
     if not @state.tree or _.keys(@state.tree).length is 0 or not cont
       TreeActions.getPath @state.path,"snip"
 
