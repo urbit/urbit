@@ -1,13 +1,8 @@
-// XXX maybe make sure empty directories disappear on update?
-// XXX i suspect maybe a problem if there's untrackable files in
-//     a directory when we try to delete it?
 // XXX probably should allow out-only mount points
 // XXX maybe get rid of mim.u.dok cache?
-// XXX what happens if we delete a directory?
 // XXX shouldn't "all.h" be defined first so that _GNU_SOURCE
 //     is defined everywhere?
 // XXX fix naked file -- currently just does file.root
-// XXX deleted files while the pier is down doesn't propogate
 /* v/unix.c
 **
 **  This file is in the public domain.
@@ -33,9 +28,6 @@
 #include <ftw.h>
 
 #include "v/vere.h"
-
-/* undef this to turn off syncing out to unix */
-#define ERGO_SYNC
 
 /* _unix_down(): descend path.
 */
@@ -251,8 +243,8 @@ _unix_write_file_soft(u3_ufil* fil_u, u3_noun mim)
 
   if ( old_w != fil_u->gum_w ) {
     uL(fprintf(uH,"old_w != gum_w %s\r\n", fil_u->pax_c));
-    fil_u->gum_w = u3r_mug(u3t(u3t(mim)));
-    free(old_y);
+    fil_u->gum_w = u3r_mug(u3t(u3t(mim))); // XXX this might fail with
+    free(old_y);                           //     trailing zeros
     u3z(mim);
     return;
   }
@@ -306,7 +298,7 @@ _unix_get_mount_point(u3_noun mon)
   return mon_u;
 }
 
-static void _unix_free_node(u3_unod* nod_u);
+static u3_noun _unix_free_node(u3_unod* nod_u);
 
 /* _unix_free_file(): free file, unlinking it
 */
@@ -342,9 +334,10 @@ _unix_free_dir(uv_handle_t* was_u)
  *
  * also deletes from parent list if in it
 */
-static void
+static u3_noun
 _unix_free_node(u3_unod* nod_u)
 {
+  u3_noun can;
   if ( nod_u->par_u ) {
     u3_unod* don_u = nod_u->par_u->kid_u;
   
@@ -363,18 +356,23 @@ _unix_free_node(u3_unod* nod_u)
   }
 
   if ( c3y == nod_u->dir ) {
+    can = u3_nul;
     u3_unod* nud_u = ((u3_udir*) nod_u)->kid_u;
     while ( nud_u ) {
       u3_unod* nex_u = nud_u->nex_u;
-      _unix_free_node(nud_u);
+      can = u3kb_weld(_unix_free_node(nud_u), can);
       nud_u = nex_u;
     }
 
     uv_close((uv_handle_t*)&nod_u->was_u, _unix_free_dir);
   }
   else {
+    can = u3nc(u3nc(_unix_string_to_path(nod_u->pax_c), u3_nul),
+               u3_nul);
     uv_close((uv_handle_t*)&nod_u->was_u, _unix_free_file);
   }
+
+  return can;
 }
 
 /* _unix_free_mount_point_cb(): free mount point callback
@@ -409,7 +407,7 @@ _unix_free_mount_point(u3_umon* mon_u)
   u3_unod* nod_u;
   for ( nod_u = mon_u->dir_u.kid_u; nod_u; ) {
     u3_unod* nex_u = nod_u->nex_u;
-    _unix_free_node(nod_u);
+    u3z(_unix_free_node(nod_u));
     nod_u = nex_u;
   }
 
@@ -753,7 +751,7 @@ _unix_update_dir(u3_udir* dir_u)
 
           if ( 0 == red_u ) {
             u3_unod* nex_u = nod_u->nex_u;
-            _unix_free_node(nod_u);
+            can = u3kb_weld(_unix_free_node(nod_u), can);
             nod_u = nex_u;
           }
           else {
@@ -771,10 +769,8 @@ _unix_update_dir(u3_udir* dir_u)
                          nod_u->pax_c, strerror(errno)));
             }
 
-            can = u3nc(u3nc(_unix_string_to_path(nod_u->pax_c), u3_nul),
-                       can);
             u3_unod* nex_u = nod_u->nex_u;
-            _unix_free_node(nod_u);
+            can = u3kb_weld(_unix_free_node(nod_u), can);
             nod_u = nex_u;
           }
           else {
@@ -872,6 +868,10 @@ _unix_update_dir(u3_udir* dir_u)
   if ( closedir(rid_u) < 0 ) {
     uL(fprintf(uH, "error closing directory %s: %s\r\n",
                dir_u->pax_c, strerror(errno)));
+  }
+
+  if ( !dir_u->kid_u ) {
+    return u3kb_weld(_unix_free_node((u3_unod*) dir_u), can);
   }
 
   // get change list
@@ -1097,7 +1097,7 @@ _unix_sync_file(u3_udir* par_u, u3_noun nam, u3_noun ext, u3_noun mim)
 
   if ( u3_nul == mim ) {
     if ( nod_u ) {
-      _unix_free_node(nod_u);
+      u3z(_unix_free_node(nod_u));
     }
   }
   else {
