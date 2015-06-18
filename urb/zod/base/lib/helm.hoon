@@ -53,6 +53,7 @@
       ++  pear                                          ::  poke fruit
         $%  [%hood-unsync desk ship desk]               ::
             [%talk-command command:talk]                ::
+            [%helm-hi cord]                             ::
         ==                                              ::
       --
   |_  moz=(list move)
@@ -80,6 +81,17 @@
   ++  poke-mass
     |=  ~  =<  abet
     (emit %flog /heft %crud %hax-heft ~)
+  ::
+  ++  poke-send-hi  
+    |=  [her=ship mes=(unit tape)]  =<  abet
+    %^  emit  %poke  /helm/hi/(scot %p her)
+    [[her %hood] %helm-hi ?~(mes '' (crip u.mes))]
+  ::
+  ++  poke-hi  |=(mes=@t abet:(emit %flog /di %text "< {<src>}: {(trip mes)}"))
+  ++  coup-hi
+    |=  [pax=path cop=(unit tang)]  =<  abet
+    ?>  ?=([@t ~] pax)
+    (emit %flog ~ %text "hi {(trip i.pax)} {?~(cop "" "un")}succesful")
   ::
   ++  poke-reload  |=(all=(list term) (poke-reload-desk %home all))
   ++  poke-reload-desk                                 ::  reload vanes
