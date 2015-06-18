@@ -7,6 +7,7 @@
 // XXX what happens if we delete a directory?
 // XXX shouldn't "all.h" be defined first so that _GNU_SOURCE
 //     is defined everywhere?
+// XXX deleted files while the pier is down doesn't propogate
 /* v/unix.c
 **
 **  This file is in the public domain.
@@ -378,9 +379,10 @@ _unix_free_node(u3_unod* nod_u)
 
 /* _unix_free_mount_point_cb(): free mount point callback
  *
- * this process needs to happen in exactly the order it's done.
- * in particular, we must recurse before we get to the callback, so
- * that libuv does all the child directories XXX doesn't actually work
+ * this process needs to happen in a very careful order.  in particular,
+ * we must recurse before we get to the callback, so that libuv does all
+ * the child directories before it does us.  be very careful about
+ * making changes to this code.
 */
 static void
 _unix_free_mount_point_cb(uv_handle_t* was_u)
@@ -633,20 +635,6 @@ _unix_update_file(u3_ufil* fil_u)
 
   fil_u->dry = c3y;
 
-  // So, if file gets deleted and then quickly re-added, like vim and
-  // other editors do, we lose the notification.  This is a bad thing,
-  // so we always stop and restart the notification.
-  uv_fs_event_stop(&fil_u->was_u);
-  c3_w ret_w = uv_fs_event_start(&fil_u->was_u,
-                                 _unix_fs_event_cb,
-                                 fil_u->pax_c,
-                                 0);
-  if ( 0 != ret_w ){
-    uL(fprintf(uH, "update file event start: %s\n", uv_strerror(ret_w)));
-    c3_assert(0);
-  }
-
-
   struct stat buf_u;
   c3_i  fid_i = open(fil_u->pax_c, O_RDONLY, 0644);
   c3_ws len_ws, red_ws;
@@ -662,6 +650,19 @@ _unix_update_file(u3_ufil* fil_u)
                  fil_u->pax_c, strerror(errno)));
       return u3_nul;
     }
+  }
+
+  // So, if file gets deleted and then quickly re-added, like vim and
+  // other editors do, we lose the notification.  This is a bad thing,
+  // so we always stop and restart the notification.
+  uv_fs_event_stop(&fil_u->was_u);
+  c3_w ret_w = uv_fs_event_start(&fil_u->was_u,
+                                 _unix_fs_event_cb,
+                                 fil_u->pax_c,
+                                 0);
+  if ( 0 != ret_w ){
+    uL(fprintf(uH, "update file event start: %s\n", uv_strerror(ret_w)));
+    c3_assert(0);
   }
 
   len_ws = buf_u.st_size;
@@ -1219,7 +1220,7 @@ void
 u3_unix_ef_hill(u3_noun hil)
 {
   u3_noun mon;
-  for ( mon = hil; c3y == u3du(mon); mon = u3t(hil) ) {
+  for ( mon = hil; c3y == u3du(mon); mon = u3t(mon) ) {
     _unix_get_mount_point(u3h(mon));
   }
   u3_Host.unx_u.dyr = c3y;
