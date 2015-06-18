@@ -761,21 +761,9 @@ module.exports = recl({
     }
   },
   _writingKeyUp: function(e) {
-    var r;
     if (!window.urb.util.isURL(this.$writing.text())) {
-      this.$length.toggleClass('valid-false', this.$writing.text().length > 62);
+      return this.$length.toggleClass('valid-false', this.$writing.text().length > 62);
     }
-    r = window.getSelection().getRangeAt(0).cloneRange();
-    this.$writing.text(this.$writing.text());
-    return setTimeout((function(_this) {
-      return function() {
-        var s;
-        s = window.getSelection();
-        s.removeAllRanges();
-        s.addRange(r);
-        return console.log(r);
-      };
-    })(this), 0);
   },
   _writingKeyDown: function(e) {
     var txt;
