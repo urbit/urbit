@@ -1223,8 +1223,9 @@ u3_unix_ef_hill(u3_noun hil)
 {
   u3_noun mon;
   for ( mon = hil; c3y == u3du(mon); mon = u3t(mon) ) {
-    _unix_get_mount_point(u3h(mon));
+    _unix_get_mount_point(u3k(u3h(mon)));
   }
+  u3z(hil);
   u3_Host.unx_u.dyr = c3y;
   u3_unix_ef_look(c3y);
 }
