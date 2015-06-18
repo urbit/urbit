@@ -2,11 +2,11 @@
 // XXX i suspect maybe a problem if there's untrackable files in
 //     a directory when we try to delete it?
 // XXX probably should allow out-only mount points
-// XXX fix naked file -- currently just does file.root
 // XXX maybe get rid of mim.u.dok cache?
 // XXX what happens if we delete a directory?
 // XXX shouldn't "all.h" be defined first so that _GNU_SOURCE
 //     is defined everywhere?
+// XXX fix naked file -- currently just does file.root
 // XXX deleted files while the pier is down doesn't propogate
 /* v/unix.c
 **
@@ -732,6 +732,7 @@ _unix_update_dir(u3_udir* dir_u)
   c3_assert( c3y == dir_u->dir );
 
   if ( c3y == dir_u->dry ) {
+    uL(fprintf(uH, "directory dry, why bother? %s\r\n", dir_u->pax_c));
     return u3_nul;
   }
 
@@ -798,6 +799,7 @@ _unix_update_dir(u3_udir* dir_u)
   }
 
   while ( 1 ) {
+    uL(fprintf(uH, "checking for new node in %s\r\n", dir_u->pax_c));
     struct dirent  ent_u;
     struct dirent* out_u;
     c3_w err_w;
@@ -860,7 +862,7 @@ _unix_update_dir(u3_udir* dir_u)
           else {
             u3_udir* dis_u = c3_malloc(sizeof(u3_udir));
             _unix_watch_dir(dis_u, dir_u, pax_c);
-            _unix_update_dir(dis_u);
+            can = u3kb_weld(_unix_update_dir(dis_u), can);
           }
         }
       }
@@ -899,12 +901,12 @@ _unix_update_node(u3_unod* nod_u)
 /* _unix_update_mount(): update mount point
 */
 static void
-_unix_update_mount(u3_umon* mon_u)
+_unix_update_mount(u3_umon* mon_u, u3_noun all)
 {
   if ( c3n == mon_u->dir_u.dry ) {
     u3_noun can = _unix_update_dir(&mon_u->dir_u);
     u3v_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
-             u3nt(c3__into, u3i_string(mon_u->nam_c), can));
+             u3nq(c3__into, u3i_string(mon_u->nam_c), all, can));
   }
 }
 
@@ -1224,7 +1226,7 @@ u3_unix_ef_hill(u3_noun hil)
     _unix_get_mount_point(u3h(mon));
   }
   u3_Host.unx_u.dyr = c3y;
-  u3_unix_ef_look();
+  u3_unix_ef_look(c3y);
 }
 
 /* u3_unix_io_init(): initialize unix sync.
@@ -1390,20 +1392,20 @@ u3_unix_ef_initial_into()
   free(pax_c);
 
   u3v_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
-           u3nt(c3__into, u3_nul, can));
+           u3nq(c3__into, u3_nul, c3y, can));
 }
 
 /* u3_unix_ef_look(): update the root.
 */
 void
-u3_unix_ef_look(void)
+u3_unix_ef_look(u3_noun all)
 {
   if ( c3y == u3_Host.unx_u.dyr ) {
     u3_Host.unx_u.dyr = c3n;
     u3_umon* mon_u;
   
     for ( mon_u = u3_Host.unx_u.mon_u; mon_u; mon_u = mon_u->nex_u ) {
-      _unix_update_mount(mon_u);
+      _unix_update_mount(mon_u, all);
     }
   }
 }

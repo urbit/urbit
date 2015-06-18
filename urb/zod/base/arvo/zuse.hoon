@@ -2341,7 +2341,7 @@
           $%  [%boat ~]                                 ::  pier rebooted
               [%info p=@p q=@tas r=nori]                ::  internal edit
               [%init p=@p]                              ::  report install
-              [%into p=@tas q=mode]                     ::  external edit
+              [%into p=@tas q=? r=mode]                 ::  external edit
               [%merg p=@p q=@tas r=@p s=@tas t=germ]    ::  merge desks
               [%mont p=@tas q=@p r=@tas s=path]         ::  mount to unix
               [%ogre p=$|(@tas beam)]                   ::  delete mount point
