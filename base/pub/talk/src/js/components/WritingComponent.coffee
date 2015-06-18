@@ -78,15 +78,14 @@ module.exports = recl
   _writingKeyUp: (e) ->
     if not window.urb.util.isURL @$writing.text()
       @$length.toggleClass('valid-false',(@$writing.text().length > 62))
-    r = window.getSelection().getRangeAt(0).cloneRange()
-    @$writing.text @$writing.text()
-    setTimeout => 
-        s = window.getSelection()
-        s.removeAllRanges()
-        s.addRange r
-        console.log r
-      ,0
-
+    # r = window.getSelection().getRangeAt(0).cloneRange()
+    # @$writing.text @$writing.text()
+    # setTimeout => 
+    #     s = window.getSelection()
+    #     s.removeAllRanges()
+    #     s.addRange r
+    #     console.log r
+    #   ,0
 
   _writingKeyDown: (e) ->
     if e.keyCode is 13
