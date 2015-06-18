@@ -73,7 +73,9 @@ module.exports = {
 
 
 },{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/dispatcher/Dispatcher.coffee","../persistence/TreePersistence.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/components/AnchorComponent.coffee":[function(require,module,exports){
-var TreeActions, TreeStore, a, div, recl, ref;
+var BodyComponent, TreeActions, TreeStore, a, div, recl, ref;
+
+BodyComponent = require('./BodyComponent.coffee');
 
 TreeStore = require('../stores/TreeStore.coffee');
 
@@ -121,10 +123,20 @@ module.exports = recl({
     return dt = this.ts - Number(Date.now());
   },
   setPath: function(href, hist) {
+    var next, rend;
     if (hist !== false) {
       history.pushState({}, "", window.tree.basepath(href));
     }
-    return TreeActions.setCurr(href.split("#")[0]);
+    next = href.split("#")[0];
+    rend = false;
+    if (next !== this.state.curr) {
+      React.unmountComponentAtNode($('#cont')[0]);
+      rend = true;
+    }
+    TreeActions.setCurr(next);
+    if (rend === true) {
+      return React.render(BodyComponent({}, ""), $('#cont')[0]);
+    }
   },
   goTo: function(path) {
     var frag;
@@ -295,7 +307,7 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/stores/TreeStore.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/components/BodyComponent.coffee":[function(require,module,exports){
+},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/stores/TreeStore.coffee","./BodyComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/components/BodyComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/components/BodyComponent.coffee":[function(require,module,exports){
 var TreeActions, TreeStore, div, input, load, recl, ref, textarea;
 
 TreeStore = require('../stores/TreeStore.coffee');
@@ -320,6 +332,9 @@ module.exports = recl({
   componentDidMount: function() {
     return TreeStore.addChangeListener(this._onChangeStore);
   },
+  componentWillUnmount: function() {
+    return TreeStore.removeChangeListener(this._onChangeStore);
+  },
   componentDidUpdate: function(_props, _state) {
     if (_state.curr !== this.state.curr) {
       return setTimeout(((function(_this) {
@@ -333,9 +348,6 @@ module.exports = recl({
     return this.stateFromStore();
   },
   _onChangeStore: function() {
-    if (TreeStore.getCurr() !== this.state.curr) {
-      React.unmountComponentAtNode(this.getDOMNode());
-    }
     return this.setState(this.stateFromStore());
   },
   getPath: function(path) {
