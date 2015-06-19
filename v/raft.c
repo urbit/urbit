@@ -173,7 +173,7 @@ _raft_promote(u3_raft* raf_u)
     c3_i sas_i;
 
     if ( 1 == raf_u->pop_w ) {
-      uL(fprintf(uH, "raft:      -> lead\n"));
+      //  uL(fprintf(uH, "raft:      -> lead\n"));
       raf_u->typ_e = u3_raty_lead;
       //  TODO boot in multiuser mode
       u3_sist_boot();
@@ -1418,7 +1418,7 @@ _raft_foll_init(u3_raft* raf_u)
 static void
 _raft_lone_init(u3_raft* raf_u)
 {
-  uL(fprintf(uH, "raft: single-instance mode\n"));
+  //  uL(fprintf(uH, "raft: single-instance mode\n"));
   raf_u->pop_w = 1;
   _raft_promote(raf_u);
 }

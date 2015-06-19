@@ -70,7 +70,7 @@
                      u3_noun arg);
 
 
-static jmp_buf u3_Signal;
+static sigjmp_buf u3_Signal;
 
 #ifndef SIGSTKSZ
 # define SIGSTKSZ 16384
@@ -1373,9 +1373,9 @@ _cm_limits(void)
   {
     ret_i = getrlimit(RLIMIT_NOFILE, &rlm);
     c3_assert(0 == ret_i);
-    rlm.rlim_cur = 4096;
+    rlm.rlim_cur = 10240; // default OSX max, not in rlim_max irritatingly
     if ( 0 != setrlimit(RLIMIT_NOFILE, &rlm) ) {
-      perror("file limit");
+      // perror("file limit");
       //  no exit, not a critical limit
     }
   }

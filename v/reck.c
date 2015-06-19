@@ -102,12 +102,10 @@ _reck_kick_term(u3_noun pox, c3_l tid_l, u3_noun fav)
     {
       u3A->own = u3nc(u3k(p_fav), u3A->own);
 
-      u3_unix_ef_init(u3k(p_fav));
-    
       u3_noun hox =  u3dc("scot", 'p', u3k(p_fav));
       c3_c* nam_c = u3r_string(hox);
       
-      uL(fprintf(uH, "kick: init: %s\n", nam_c));
+      // uL(fprintf(uH, "kick: init: %s\n", nam_c));
       free(nam_c); u3z(pox); u3z(hox); u3z(fav); return c3y;
     } break;
 
@@ -164,18 +162,24 @@ _reck_kick_sync(u3_noun pox, u3_noun fav)
   switch ( u3h(fav) ) {
     default: break;
     case c3__ergo: {
-      u3_noun who = u3k(u3h(u3t(fav)));
-      u3_noun syd = u3k(u3h(u3t(u3t(fav))));
-      u3_noun rel = u3k(u3h(u3t(u3t(u3t(fav)))));
-      u3_noun can = u3k(u3t(u3t(u3t(u3t(fav)))));
+      u3_noun mon = u3k(u3h(u3t(fav)));
+      u3_noun can = u3k(u3t(u3t(fav)));
 
-      u3_unix_ef_ergo(who, syd, rel, can);
+      u3_unix_ef_ergo(mon, can);
       u3z(pox); u3z(fav); return c3y;
     } break;
+    case c3__ogre: {
+      u3_unix_ef_ogre(u3k(u3t(fav)));
+      u3z(pox); u3z(fav); return c3y;
+    }
+    case c3__hill: {
+      u3_unix_ef_hill(u3k(u3t(fav)));
+      u3z(pox); u3z(fav); return c3y;
+    }
   }
 
   //  XX obviously not right!
-  //
+  //  ? looks fine to me
   u3z(pox); u3z(fav); return c3n;
 }
 
@@ -207,8 +211,6 @@ _reck_kick_ames(u3_noun pox, u3_noun fav)
     case c3__init: p_fav = u3t(fav);
     {
       u3A->own = u3nc(u3k(p_fav), u3A->own);
-
-      u3_unix_ef_init(u3k(p_fav));
 
       // uL(fprintf(uH, "kick: init: %d\n", p_fav));
       u3z(pox); u3z(fav); return c3y;
@@ -277,6 +279,7 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
       } break;
 
       case c3__clay:
+      case c3__boat:
       case c3__sync: {
         return _reck_kick_sync(pox, fav);
       } break;
@@ -297,8 +300,6 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
       case c3__init: p_fav = u3t(fav);
       {
         u3A->own = u3nc(u3k(p_fav), u3A->own);
-
-        u3_unix_ef_init(u3k(p_fav));
 
         // uL(fprintf(uH, "kick: init: %d\n", p_fav));
         u3z(pox); u3z(fav); return c3y;

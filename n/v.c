@@ -27,13 +27,9 @@ u3v_make(c3_c* pas_c)
 {
   u3_noun sys = u3ke_cue(u3m_file(pas_c));
 
-  printf("cv_make: loaded pill %s, as %x\n", pas_c, u3r_mug(sys));
-
   u3A->ken = u3k(u3h(sys));
   u3A->roc = u3k(u3t(sys));
 
-  printf("cv_make: kernel %x, core %x\n", 
-         u3r_mug(u3A->ken), u3r_mug(u3A->roc));
   u3z(sys);
 }
 
@@ -44,10 +40,7 @@ u3v_jack(void)
 {
   u3_noun cor; 
 
-  printf("cv_jack: activating kernel %x\n", u3r_mug(u3A->ken));
   cor = u3n_nock_on(0, u3k(u3A->ken));
-  printf("cv_jack: activated\n");
-
   u3z(cor);
 }
 
@@ -84,7 +77,7 @@ u3v_start(u3_noun now)
   {
     c3_c* wen_c = u3r_string(u3A->wen);
 
-    printf("cv_start: time: %s\n", wen_c);
+    printf("arvo: time: %s\n", wen_c);
     free(wen_c);
   }
 }

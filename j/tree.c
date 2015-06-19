@@ -345,29 +345,14 @@ static u3j_harm _mood__hoon__al_a[] =
   };
 #endif
 
-static u3j_harm _util_sqar_a[] = {{".2", u3wg_sqar, c3y}, {}};
-static u3j_core _util_d[] =
-  { { "sqar", _util_sqar_a },
+static u3j_harm _down_mark_a[] = {{".2", u3wg_down, c3y}, {}};
+static u3j_core _down_d[] =
+  { { "mark", _down_mark_a },
     {}
   };
-
-static u3j_harm _utyl_dawn_a[] = {{".2", u3wg_dawn, c3y}, {}};
-static u3j_core _utyl_d[] =
-  { 
-    { "dawn", _utyl_dawn_a },
-    {}
-  };
-
-#if 0
-static u3j_core _zuse_d[] =
-  { { "util", 0, _util_d },
-    {}
-  };
-#endif
 
 static u3j_core _arvo_d[] =
-  { { "util", 0, _util_d },
-    { "utyl", 0, _utyl_d },
+  { { "down", 0, _down_d },
     {}
   };
 

@@ -460,7 +460,7 @@ u3_lo_shut(c3_o inn)
   //  XX remove raty_lead guard
   //
   if ( c3y == inn ) {
-    u3_unix_ef_look();
+    u3_unix_ef_look(c3n);
     u3_raft_work();
     _lo_time();
   }
@@ -678,7 +678,7 @@ u3_lo_lead(void)
 
   _lo_talk();
   {
-    u3_unix_ef_look();
+    u3_unix_ef_look(c3n);
     u3v_plan(u3nt(u3_blip, c3__ames, u3_nul),
                u3nc(c3__kick, u3k(u3A->now)));
   }

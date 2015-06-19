@@ -1,13 +1,16 @@
 *.swo
 *.swp
 *.o
+/outside/**/*.a
 .DS_Store
-/bin/vere
+/bin/urbit
 /urb/*/
 !/urb/zod/
 /outside/re2/obj
 /inst
+/cmpil
 /vere.pkg
 /.MAKEFILE-VERSION
 /make.conf
+/.make.conf
 node_modules/
