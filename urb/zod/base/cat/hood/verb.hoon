@@ -10,4 +10,4 @@
         [~ ~]
     ==
 ~&  %hood-verb
-(sole-so %hood-verb ~)
+[%helm-verb ~]

@@ -1,3 +1,5 @@
+BodyComponent = require './BodyComponent.coffee'
+
 TreeStore   = require '../stores/TreeStore.coffee'
 TreeActions = require '../actions/TreeActions.coffee'
 
@@ -36,7 +38,14 @@ module.exports = recl
 
   setPath: (href,hist) ->
     if hist isnt false then history.pushState {}, "", window.tree.basepath href
-    TreeActions.setCurr href.split("#")[0]
+    next = href.split("#")[0]
+    rend = false
+    if next isnt @state.curr
+      React.unmountComponentAtNode $('#cont')[0]
+      rend = true
+    TreeActions.setCurr next
+    if rend is true
+      React.render (BodyComponent {}, ""),$('#cont')[0]
 
   goTo: (path) ->
     @toggleFocus false
@@ -109,10 +118,10 @@ module.exports = recl
       if @state.prev or @state.next
         _parts = []
         if @state.prev 
-          href = window.tree.basepath window.tree.basepath @state.prev
+          href = window.tree.basepath @state.prev
           _parts.push (a {key:"arow-prev",href:href,className:"arow-prev"},"")
         if @state.next 
-          href = window.tree.basepath window.tree.basepath @state.next
+          href = window.tree.basepath @state.next
           _parts.push (a {key:"arow-next",href:href,className:"arow-next"},"")
         parts.push (div {id:"sides"}, _parts)
 

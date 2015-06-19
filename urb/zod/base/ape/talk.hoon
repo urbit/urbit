@@ -4,6 +4,7 @@
 /?    314
 /-    *talk, *sole
 /+    talk, sole
+/=    seed    /~    !>(.)
 /=    talk-doc    
       /;  |=(a=wain (turn a |=(b=cord [%txt "? {(trip b)}"])))
       /:  /===/pub/doc/talk/help  /txt/
@@ -80,6 +81,7 @@
           [%help ~]                                     ::  print usage info
           [%join p=(set partner)]                       ::  
           [%say p=speech]                               ::
+          [%eval p=twig q=cord]                         ::
           [%invite p=span q=(list partner)]             ::
           [%banish p=span q=(list partner)]             ::
           [%target p=(set partner)]                     ::  set active targets
@@ -108,8 +110,9 @@
     |_  $:  coz=(list command)                          ::  talk actions
             she=shell
         ==
+    ++  sh-expr  wide:(vang & [&1:% &2:% (scot %da now.hid) |3:%])
+    ::
     ++  sh-scad                                         ::  command parser
-      =+  vag=(vang | [&1:% &2:% '0' |3:%])
       =<  work
       |%  
       ++  dare                                          ::  @dr
@@ -128,7 +131,7 @@
       ++  pasp                                          ::  passport
         ;~  pfix  pat
           ;~  pose
-            (stag %twitter ;~(pfix ;~(plug (jest 't') col) urs:ab))
+            (stag %twitter ;~(pfix (jest 't') col urs:ab))
           ==
         ==
       ::
@@ -727,6 +730,8 @@
       ?:  =(& -:(rose txt aurf:urlp))  ~
       ?:  =(';' -.txt)
         ((sh-sane-rule sh-scad) inv +.txt) 
+      ?:  =('#' -.txt)
+        ((sh-sane-rule sh-expr) inv +.txt) 
       ?:  =('@' -.txt)
         (sh-sane-chat +.buf)
       (sh-sane-chat buf)
@@ -756,6 +761,8 @@
       ?^  rou  `[%say %url u.rou]
       ?:  =(';' -.txt)
         (rust +.txt sh-scad)
+      ?:  =('#' -.txt)
+        (bind (rust +.txt sh-expr) |=(a=twig [%eval a (crip +.txt)]))
       ?:  =('@' -.txt)
         `[%say %lin | (crip +.txt)]
       `[%say %lin & (crip txt)]
@@ -774,6 +781,9 @@
       |=  cod=command
       %_(+> coz [cod coz])
     ::
+    ++  sh-twig-head  ^-  vase                          ::  eval data
+      :(slop !>(`our=@p`our.hid) !>(`tym=@da`now.hid) !>(`eny=@uvI`eny.hid))
+    ::
     ++  sh-work                                         ::  do work
       |=  job=work
       ^+  +>
@@ -784,6 +794,7 @@
         ?-  -.job
           %number  (number +.job)
           %join    (join +.job)
+          %eval    (eval +.job)
           %invite  (invite +.job)
           %banish  (banish +.job)
           %create  (create +.job)
@@ -860,6 +871,12 @@
         ^+  ..sh-work
         ~&  [%probe cuz]
         ..sh-work
+      ::
+      ++  eval                                          ::  run
+        |=  [exe=twig txt=cord]
+        %^  say  %fat
+          tank/[(sell (slap (slop sh-twig-head seed) exe))]~
+        [%exp txt]
       ::
       ++  say                                           ::  publish
         |=  sep=speech
@@ -1631,13 +1648,24 @@
     %-  ~(gas in *(set partner))
     (turn (~(tap by aud)) |=([a=partner *] a))
   ::
+  ++  trim
+    |=  [len=@u txt=tape]
+    ?:  (gth len (lent txt))  txt
+    (weld (scag (dec len) txt) "…")
+  ::
   ++  tr-text
     |=  oug=?
     ^-  tape
-    ?+    -.sep  ""
-        %url
-      [':' ' ' (earf p.sep)]
+    ?+    -.sep  ~&(tr-lost/sep "")
+        %fat
+      =+  rem=$(sep q.sep)
+      =-  "{rem}  {(trim (sub 60 (lent rem)) -)}"
+      ?+  -.p.sep  "..."
+        %tank  ~(ram re %rose [" " `~] +.p.sep)
+      ==
     ::
+        %url  ['/' ' ' (earf p.sep)]
+        %exp  ['#' ' ' (trip p.sep)]
         %lin
       =+  txt=(trip q.sep)
       ?:  p.sep

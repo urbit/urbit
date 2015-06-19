@@ -118,22 +118,29 @@
     abet:abet:(merge:(work syd) ali sud gim)
   ::
   ++  do-info
-    |=  [mez=tape pax=path tor=toro]
+    |=  [mez=tape tor=toro]
     abet:(emit:(spam leaf/mez ~) %info /kiln our tor)
   ::
-  ++  poke-rm  |=(a=path (do-info "removed" a (fray a)))
+  ++  poke-rm  |=(a=path (do-info "removed" (fray a)))
   ++  poke-cp
     |=  [input=path output=path]
-    %^  do-info  "copied"  input
+    %+  do-info  "copied"
     ?>  =(-:(flop input) -:(flop output))
     (foal output -:(flop input) %noun .^(%cx input))    ::  XX type
   ::
   ++  poke-mv
     |=  [input=path output=path] 
-    %^  do-info  "moved"  input
+    %+  do-info  "moved"
     ?>  =(-:(flop input) -:(flop output))
     %+  furl  (fray output)
     (foal output -:(flop input) %noun .^(%cx input))
+  ::
+  ++  poke-schedule
+    |=  [where=path tym=@da eve=@t]
+    =.  where  (welp where /sched)
+    %+  do-info  "scheduled"
+    =+  old=;;((map ,@da cord) (fall (file where) ~))
+    (foal where %sched !>((~(put by old) tym eve)))
   ::
   ++  take  |=(way=wire ?>(?=([@ ~] way) (work i.way))) ::  general handler
   ++  take-mere                                         ::

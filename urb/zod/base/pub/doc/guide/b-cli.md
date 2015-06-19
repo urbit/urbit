@@ -13,7 +13,7 @@ great place to test out your hoon knowledge. In this guide we're just
 going to talk about some basic system utilities and get comfortable
 moving around in `%clay`. If you'd just like to see a list of
 command-line utilities, you can find the Arvo man pages
-[here](../arvo/util.md).
+[here](../arvo/util).
 
 This rudimentary tour should work well in both places.
 

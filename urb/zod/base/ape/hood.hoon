@@ -56,6 +56,7 @@
   [~ +>]
 ::
 ++  coup-drum-phat  (wrap take-coup-phat):from-drum
+++  coup-helm-hi    (wrap coup-hi):from-helm
 ++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
 ++  from-lib
   |*  _[%helm ..$ ,_abet]:(helm-work)
@@ -72,13 +73,15 @@
 ::
 ++  poke-dill-belt          (wrap poke-dill-belt):from-drum
 ++  poke-helm-init          (wrap poke-init):from-helm
+++  poke-helm-verb          (wrap poke-verb):from-helm
+++  poke-helm-send-hi       (wrap poke-send-hi):from-helm
+++  poke-helm-hi            (wrap poke-hi):from-helm
 ++  poke-hood-link          (wrap poke-link):from-drum
 ++  poke-hood-mass          (wrap poke-mass):from-helm
 ++  poke-hood-mount         (wrap poke-mount):from-kiln
 ++  poke-hood-unmount       (wrap poke-unmount):from-kiln
 ++  poke-hood-sync          (wrap poke-sync):from-kiln
 ++  poke-hood-unsync        (wrap poke-unsync):from-kiln
-++  poke-hood-verb          (wrap poke-verb):from-helm
 ++  poke-hood-begin         (wrap poke-begin):from-helm
 ++  poke-hood-invite        (wrap poke-invite):from-helm
 ++  poke-hood-merge         (wrap poke-merge):from-kiln
@@ -89,6 +92,7 @@
 ++  poke-kiln-cp            (wrap poke-cp):from-kiln
 ++  poke-kiln-rm            (wrap poke-rm):from-kiln
 ++  poke-kiln-mv            (wrap poke-mv):from-kiln
+++  poke-kiln-schedule      (wrap poke-schedule):from-kiln
 ++  poke-will               (wrap poke-will):from-helm
 ++  mere-kiln               (wrap take-mere):from-kiln
 ++  mere-kiln-sync          (wrap take-mere-sync):from-kiln

@@ -13,7 +13,7 @@
 ++  grow
   |%
   ++  mime  [/text/json (taco (crip (pojo json)))]
-  ++  json 
+  ++  json
     =>  +
     |^  %+  joba  -.rep
         ?-  -.rep
@@ -27,7 +27,7 @@
       |=  [a=span b=posture c=cord]
       (jobe name/[%s a] posture/[%s a] caption/[%s b] ~)
     ::
-    ++  jove 
+    ++  jove
       |=  [a=envelope b=delivery]
       %-  jobe  :~
         envelope/(jobe visible/[%b p.a] sender/?~(q.a ~ s/(parn u.q.a)) ~)
@@ -36,7 +36,7 @@
     ++  jope  |=(a=ship (jape +:<a>)) ::[%s (crip +:(scow %p a))])
     ++  joke  |=(a=tank [%s (role (turn (wash 0^80 a) crip))])
     ++  jode  |=(a=time (jone (div (mul (sub a ~1970.1.1) 1.000) ~s1)))
-::     ++  jase  
+::     ++  jase
 ::       |*  a=,json
 ::       |=  b=(set ,_+<.a)  ^-  json
 ::       ~!  b
@@ -56,8 +56,8 @@
     ++  phon  |=(a=ship (scot %p a))
     ++  stas  |=(status (jobe presence/(joce p) human/(huma q) ~))
     ++  gram  |=(telegram (jobe ship/(jope p) thought/(thot q) ~))
-    ++  thot 
-      |=  thought 
+    ++  thot
+      |=  thought
       (jobe serial/(jape <p>) audience/(audi q) statement/(stam r) ~)
     ::
     ++  audi  (jome parn jove)
@@ -79,20 +79,29 @@
       |=  a=station  ^-  cord
       (crip "{<p.a>}/{(trip q.a)}")
     ::
-    ++  stam  
-      |=  statement 
+    ++  stam
+      |=  statement
       (jobe date/(jode p) bouquet/(bouq q) speech/(spec r) ~)
     ::
     ++  spec
       |=  a=speech
       %+  joba  -.a
-      ~|  stub/-.a
-      ?+  -.a  !!
+      ?+  -.a  ~|(stub/-.a !!)
         %lin  (jobe say/[%b p.a] txt/[%s q.a] ~)
         %url  (jobe url/[%s (crip (earf p.a))] ~)
         %exp  (jobe code/[%s p.a] ~)
         %app  (jobe app/[%s p.a] txt/[%s q.a] ~)
+        %fat  (jobe fat/(tors p.a) taf/$(a q.a) ~)
         ::  %inv  (jobe ship/(jope p.a) party/[%s q.a] ~)
+      ==
+    ::
+    ++  tors
+      |=  a=torso
+      %+  joba  -.a
+      ?-  -.a
+        %text  [%s (role +.a)]
+        %tank  [%a (turn +.a joke)]
+        %name  (jobe nom/s/p.a mon/$(a q.a) ~)
       ==
     ::
     ++  huma
@@ -100,8 +109,8 @@
       %^  jobe
         hand/?~(hand ~ [%s u.hand])
         :-  %true
-        ?~  true  ~ 
-        =+  u.true 
+        ?~  true  ~
+        =+  u.true
         (jobe first/[%s p] middle/?~(q ~ [%s u.q]) last/[%s r] ~)
       ~
     ::

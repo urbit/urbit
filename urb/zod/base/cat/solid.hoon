@@ -1,15 +1,14 @@
 ::
-::::  /hoon/solid/gun
+::::  /hoon/solid/cat
   ::
 /?  314
-/-  *sole
 ::
 ::::
   !:
 |=  $:  [now=@da eny=@uvI bec=beak]
         [~ ~]
     ==
-%+  sole-so  %noun
+:-  %noun
 =+  top=`path`/(scot %p p.bec)/home/(scot %da now)/arvo
 =+  pax=`path`(weld top `path`[%hoon ~])
 ~&  %solid-start
