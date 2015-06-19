@@ -1,6 +1,11 @@
 SHELL = sh
+UNAME = $(shell uname)
 
+ifneq ($(UNAME),FreeBSD)
 CC     = gcc
+else
+CC     = cc
+endif
 FLAGS  = -c -fPIC -Iinclude/
 CFLAGS = --pedantic -Wall -Wextra -march=native -std=gnu99
 INCLUDE = include/anachronism
