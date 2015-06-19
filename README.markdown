@@ -57,7 +57,7 @@ urbit depends on:
 
 #### FreeBSD
 
-    pkg install gmake gmp libsigsegv openssl automake autoconf ragel cmake re2c libtool
+    pkg install git gmake gmp libsigsegv openssl automake autoconf ragel cmake re2c libtool
 
 Although `automake`/`autoconf`/`libtool` are generally installed by
 default, some have reported needing to uninstall and reinstall those
