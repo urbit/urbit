@@ -293,56 +293,53 @@
         c3_d len_d;                         //  length in words
       } u3_ulog;
 
-      struct _u3_uhot;
+      struct _u3_umon;
       struct _u3_udir;
       struct _u3_ufil;
 
-    /* u3_unod: in-file or in-directory.
+    /* u3_unod: file or directory.
     */
       typedef struct _u3_unod {
-        uv_fs_event_t    was_u;             //  stat watcher
-        c3_o             dir;               //  always
-        c3_o             dry;               //  ie, unmodified
-        c3_c*            pax_c;             //  in absolute path
-        c3_c*            pot_c;             //  out absolute path
-        struct _u3_udir* par_u;             //  directory
+        uv_fs_event_t     was_u;            //  stat watcher
+        c3_o              dir;              //  c3y if dir, c3n if file
+        c3_o              dry;              //  ie, unmodified
+        c3_c*             pax_c;            //  absolute path
+        struct _u3_udir*  par_u;            //  parent
+        struct _u3_unod*  nex_u;            //  internal list
       } u3_unod;
-
-    /* u3_ufil: synchronized in-file.
+      
+    /* u3_ufil: synchronized file.
     */
       typedef struct _u3_ufil {
-        uv_fs_event_t    was_u;             //  stat watcher
-        c3_o             non;               //  always u3_no
-        c3_o             dry;               //  ie, unmodified
-        c3_c*            pax_c;             //  in absolute path
-        c3_c*            pot_c;             //  out absolute path
-        struct _u3_udir* par_u;             //  directory
-        c3_c*            dot_c;             //  extension point or 0
-        c3_w             mod_w[4];          //  mtime
-        struct _u3_ufil* nex_u;             //  internal list
+        uv_fs_event_t     was_u;            //  stat watcher
+        c3_o              dir;              //  c3y if dir, c3n if file
+        c3_o              dry;              //  ie, unmodified
+        c3_c*             pax_c;            //  absolute path
+        struct _u3_udir*  par_u;            //  parent
+        struct _u3_unod*  nex_u;            //  internal list
+        c3_w              mug_w;            //  mug of last %into
+        c3_w              gum_w;            //  mug of last %ergo
       } u3_ufil;
-
-    /* u3_udir: synchronized in-directory.
+      
+    /* u3_ufil: synchronized directory.
     */
       typedef struct _u3_udir {
-        uv_fs_event_t    was_u;             //  stat watcher
-        c3_o             yes;               //  always u3_yes
-        c3_o             dry;               //  ie, unmodified
-        c3_c*            pax_c;             //  in absolute path
-        c3_c*            pot_c;             //  out absolute path
-        struct _u3_udir* par_u;             //  parent directory
-        struct _u3_udir* dis_u;             //  subdirectories
-        struct _u3_ufil* fil_u;             //  files
-        struct _u3_udir* nex_u;             //  internal list
+        uv_fs_event_t     was_u;            //  stat watcher
+        c3_o              dir;              //  c3y if dir, c3n if file
+        c3_o              dry;              //  ie, unmodified
+        c3_c*             pax_c;            //  absolute path
+        struct _u3_udir*  par_u;            //  parent
+        struct _u3_unod*  nex_u;            //  internal list
+        u3_unod*          kid_u;            //  subnodes
       } u3_udir;
 
-    /* u3_uhot: synchronized host.
+    /* u3_ufil: synchronized mount point.
     */
-      typedef struct _u3_uhot {
-        u3_udir          dir_u;             //  in directory
-        c3_w             who_w[4];          //  owner as words
-        struct _u3_uhot* nex_u;             //  internal list
-      } u3_uhot;
+      typedef struct _u3_umon {
+        u3_udir          dir_u;             //  root directory, must be first
+        c3_c*            nam_c;             //  mount point name
+        struct _u3_umon* nex_u;             //  internal list
+      } u3_umon;
 
     /* u3_usig: receive signals.
     */
@@ -355,9 +352,12 @@
     /* u3_unix: clay support system, also
     */
       typedef struct _u3_unix {
-        uv_check_t   syn_u;                 //  fs sync check
-        u3_uhot*     hot_u;                 //  host state
-        u3_usig*     sig_u;                 //  signal list
+        uv_check_t  syn_u;                  //  fs sync check
+        uv_timer_t  tim_u;                  //  timer
+        u3_umon*    mon_u;                  //  mount points
+        u3_usig*    sig_u;                  //  signal list
+        c3_o        alm;                    //  timer set
+        c3_o        dyr;                    //  ready to update
 #ifdef SYNCLOG
         c3_w         lot_w;                 //  sync-slot
         struct _u3_sylo {
@@ -547,7 +547,7 @@
     */
       typedef struct _u3_host {
         c3_w       kno_w;                   //  current executing stage
-        c3_c*      dir_c;                   //  pier path
+        c3_c*      dir_c;                   //  pier path (no trailing /)
         c3_d       now_d;                   //  event tick
         uv_loop_t* lup_u;                   //  libuv event loop
         u3_http*   htp_u;                   //  http servers
@@ -930,23 +930,30 @@
         void
         u3_unix_ef_move();
 
-      /* u3_unix_ef_look(): update filesystem, inbound.
+      /* u3_unix_initial_into(): intialize filesystem from urb/zod
       */
         void
-        u3_unix_ef_look(void);
+        u3_unix_ef_initial_into();
 
-      /* u3_unix_ef_init(): update filesystem for new acquisition.
+      /* u3_unix_ef_look(): update filesystem from unix
       */
         void
-        u3_unix_ef_init(u3_noun who);
+        u3_unix_ef_look(u3_noun all);
 
-      /* u3_unix_ef_ergo(): update filesystem, outbound.
+      /* u3_unix_ef_ergo(): update filesystem from urbit
       */
         void
-        u3_unix_ef_ergo(u3_noun who,
-                        u3_noun syd,
-                        u3_noun rel,
-                        u3_noun can);
+        u3_unix_ef_ergo(u3_noun mon, u3_noun can);
+
+      /* u3_unix_ef_ogre(): delete mount point
+      */
+        void
+        u3_unix_ef_ogre(u3_noun mon);
+
+      /* u3_unix_ef_ogre(): delete mount point
+      */
+        void
+        u3_unix_ef_hill(u3_noun hil);
 
       /* u3_unix_io_init(): initialize storage.
       */

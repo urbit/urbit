@@ -202,6 +202,9 @@ window.urb.send = function(params,cb) {
   $this = this
   this.qreq('post',url,params,true,function(err,data) {
     if(err) { $this.seqn_s--; }
+    else if(data && data.data.fail && urb.wall !== false)
+      document.write("<pre>"+JSON.stringify(params.xyro)+"\n"
+                            +data.data.mess+"</pre>") // XX
     if(cb) { cb.apply(this,arguments); }
   })
 }

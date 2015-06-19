@@ -56,6 +56,10 @@ urbit depends on:
 
     sudo port install git gmp libsigsegv openssl autoconf automake cmake
 
+#### FreeBSD
+
+    pkg install git gmake gmp libsigsegv openssl automake autoconf ragel cmake re2c libtool
+
 Although `automake`/`autoconf`/`libtool` are generally installed by
 default, some have reported needing to uninstall and reinstall those
 three packages, at least with Homebrew. Your mileage may vary.
@@ -74,6 +78,8 @@ Clone the repo:
 Just run `make`:
 
     make
+
+(On FreeBSD, use `gmake` instead.)
 
 Run
 ---

@@ -36,10 +36,17 @@ BIN=bin
 LIB=$(shell pwd)/urb
 
 RM=rm -f
+ifneq ($(UNAME),FreeBSD)
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
 CLD=g++ -O3 -L/usr/local/lib -L/opt/local/lib
+else
+CC=cc
+CXX=c++
+CXXFLAGS=$(CFLAGS)
+CLD=c++ -O3 -L/usr/local/lib -L/opt/local/lib
+endif
 
 ifeq ($(OS),osx)
   COSFLAGS=-fno-diagnostics-fixit-info
@@ -264,8 +271,7 @@ J_F_OFILES_UT=\
        j/f/ut_wrap.o
 
 J_G_OFILES=\
-       j/g/dawn.o \
-       j/g/sqar.o
+       j/g/down.o
 
 J_OFILES=\
        $(J_A_OFILES) \

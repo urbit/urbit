@@ -146,10 +146,12 @@
 
 /* Sync
  */
-#      if defined(U3_OS_linux) || defined(U3_OS_bsd)
+#      if defined(U3_OS_linux)
 #        define c3_sync(fd) (fdatasync(fd))
 #      elif defined(U3_OS_osx)
 #        define c3_sync(fd) (fcntl(fd, F_FULLFSYNC, 0))
+#      elif defined(U3_OS_bsd)
+#        define c3_sync(fd) (fsync(fd))
 #      else
 #        error "port: sync"
 #      endif

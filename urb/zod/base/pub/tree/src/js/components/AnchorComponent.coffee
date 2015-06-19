@@ -1,4 +1,4 @@
-# comment
+BodyComponent = require './BodyComponent.coffee'
 
 TreeStore   = require '../stores/TreeStore.coffee'
 TreeActions = require '../actions/TreeActions.coffee'
@@ -38,7 +38,14 @@ module.exports = recl
 
   setPath: (href,hist) ->
     if hist isnt false then history.pushState {}, "", window.tree.basepath href
-    TreeActions.setCurr href.split("#")[0]
+    next = href.split("#")[0]
+    rend = false
+    if next isnt @state.curr
+      React.unmountComponentAtNode $('#cont')[0]
+      rend = true
+    TreeActions.setCurr next
+    if rend is true
+      React.render (BodyComponent {}, ""),$('#cont')[0]
 
   goTo: (path) ->
     @toggleFocus false

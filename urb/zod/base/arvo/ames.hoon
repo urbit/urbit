@@ -413,7 +413,7 @@
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
-    ?>  =(7 vez)
+    ?>  =(0 vez)
     ?>  =(chk (end 0 20 (mug bod)))
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
@@ -433,7 +433,7 @@
     =+  tay=(ksin q.kec)
     %+  mix
       %+  can  0
-      :~  [3 7]
+      :~  [3 0]
           [20 (mug bod)]
           [2 yax]
           [2 qax]
@@ -1018,7 +1018,7 @@
     ++  gnaw                                            ::    gnaw:am
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
-      ?.  =(7 (end 0 3 pac))  [~ fox]
+      ?.  =(0 (end 0 3 pac))  [~ fox]
       =+  kec=(bite pac)
       ?:  (goop p.p.kec)  [~ fox]
       ?.  (~(has by urb.ton.fox) q.p.kec)
@@ -1331,8 +1331,8 @@
               (deer q.fud r.fud ?-(kay %dead ~, %good [~ s.fud]))
             ::
                 %carp
-              =+  zol=(~(get by olz.weg) s.fud)
-              ?^  zol  cock(kay u.zol)
+              ::  =+  zol=(~(get by olz.weg) s.fud)
+              ::  ?^  zol  cock(kay u.zol)
               =^  neb  nys.weg
                   =+  neb=(~(get by nys.weg) s.fud)
                   ?^  neb  [u.neb nys.weg]
@@ -1350,7 +1350,7 @@
               ::  ~&  [%carp q.fud s.fud q.neb p.r.neb]
               ?:  =(q.neb p.r.neb)
                 =:  nys.weg  (~(del by nys.weg) s.fud)
-                    olz.weg  (~(put by olz.weg) s.fud kay)
+                ::  olz.weg  (~(put by olz.weg) s.fud kay)
                   ==
                 (golf p.neb r.neb)
               =.  +>.$  cock
@@ -1399,7 +1399,7 @@
                   ==
               ==
             +>.$
-          (wool [/a hen] /q/pi ~ |)
+          (wool [/a/ping hen] /q/pi ~ |)
         ::
         ++  thaw                                        ::    thaw:ho:um:am
           ^+  .                                         ::  wakeup bomb
@@ -1898,7 +1898,7 @@
       ?.  &(?=(^ muc) ?=(^ luw))  ~
       [~ `buck`[u.muc u.luw]]
     ?:  ?=([%code ~] tyl)
-      [~ (end 6 1 (shaf %code (shax sec:ex:q:sen:u.gys)))]
+      [~ (end 6 1 (shaf %pass (shax sec:ex:q:sen:u.gys)))]
     ?:  ?=([%will ~] tyl)
       (rick mar our law.saf.u.gys)
     ~
