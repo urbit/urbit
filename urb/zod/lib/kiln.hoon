@@ -234,8 +234,7 @@
       =.  +>.$
         %-  spam
         ?:  ?=(%& -.mes)
-          ~
-          ::  [leaf/"sync succeeded from {<sud>} on {<her>} to {<syd>}" ~]
+          [leaf/"sync succeeded from {<sud>} on {<her>} to {<syd>}" ~]
         ?+  p.p.mes
           :*  leaf/"sync failed from {<sud>} on {<her>} to {<syd>}"
               leaf/"please manually merge the desks with"
