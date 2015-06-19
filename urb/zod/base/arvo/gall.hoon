@@ -320,9 +320,10 @@
       ?:  ?=([%f %made *] sih)
         ?-  -.q.+.sih
           %tabl  ~|(%made-tabl !!)
-          %|     ~&  [%mo-cyst-fail p.q.+>.sih]         ::  XX better errors pls
-                 (mo-give %unto %quit ~)                ::  
-          %&     (mo-give %unto %diff p.q.+>.sih)
+          %&  (mo-give %unto %diff p.q.+>.sih)
+          %|  =.  p.q.+>.sih  (turn p.q.+>.sih |=(a=tank rose/[~ "! " ~]^[a]~))
+              ~>  %slog.`%*(. >[%wh %y]< +> [>%mo-cyst-fail< (flop p.q.+>.sih)])
+              (mo-give %unto %quit ~)   ::  XX better errors pls
         ==
       ?>  ?=([%g %unto *] sih)
       ?.  ?=(%diff -.+>.sih)
@@ -432,8 +433,11 @@
     ::
       %out  ?:  ?=([%f %made *] q.hin)
               ?-  -.q.+>.q.hin  
-                %tabl  !!
-                %|  ~&  [%mo-cook-fail +.q.+>.q.hin]
+                %tabl  ~|(%made-tabl !!)
+                %&  ap-abet:(ap-pout:pap t.t.t.pax %diff +.q.+>.q.hin)
+                %|  =+  why=p.q.+>.q.hin
+                    =.  why  (turn why |=(a=tank rose/[~ "! " ~]^[a]~))
+                    ~>  %slog.`%*(. >[%wh %y]< +> [>%mo-cook-fail< (flop why)])
                     ~&  [him=q.q.pry our=our pax=pax]
                     ::
                     ::  here we should crash because the right thing
@@ -448,7 +452,6 @@
                     ::    [%use pax]
                     ::  [%g %deal [q.q.pry our] XXX %pull ~]
                     !!
-                %&  ap-abet:(ap-pout:pap t.t.t.pax %diff +.q.+>.q.hin)
               ==
             ?.  ?=([%g %unto *] q.hin)
               ~&  [%mo-cook-weird q.hin]

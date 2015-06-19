@@ -68,11 +68,20 @@
       %+  sear  (soft passport)
       ;~((glue fas) sym urs:ab)                         ::  XX  [a-z0-9_]{1,15}
     ::
+    ++  eval
+      |=  a=(trel ,@da bouquet ?(speech [%eval p=@t]))  ^-  statement
+      ?.  ?=(%eval -.r.a)  a
+      =+  pax=[&1:% &2:% (scot %da p.a) |3:%]
+      =-  a(r [%fat tank/- %exp p.r.a])
+      p:(mule |.([(sell (slap !>(..zuse) (rain pax p.r.a)))]~))
+    ::
     ++  stam
       ^-  $+(json (unit statement))
+      %+  cu  eval
       =-  (ot date/di bouquet/(as (ar so)) speech/(of -) ~)
       :~  lin/(ot say/bo txt/so ~) 
           url/(su aurf:urlp)
+          eval/so
           ::  exp/(cu |=(a=cord [a ~]) so)
           ::  inv/(ot ship/(su fed:ag) party/(su urs:ab) ~)
       ==
