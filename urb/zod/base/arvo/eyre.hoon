@@ -1187,7 +1187,8 @@
         ?.  ?|  (~(has in aut.yac) him.ham) 
                 ?~(paz.ham | =(u.paz.ham load-secret))
             ==
-          ~|(try/`@t`load-secret !!)  ::  XX security
+          ~&  code=`@t`load-secret
+          ~|([%try 'code' %in %console] !!)  ::  XX security
         =^  jon  ..ya  stat-json:(logon:yac him.ham)
         =.  cug.yac  :_(cug.yac (set-cookie %ship (scot %p him.ham)))
         (give-json 200 cug.yac jon)
