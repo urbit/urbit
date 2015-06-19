@@ -91,7 +91,8 @@ module.exports = recl
     if e.keyCode is 13
       txt = @$writing.text()
       e.preventDefault()
-      if (txt.length > 0 and txt.length < 63) or window.urb.util.isURL @$writing.text()
+      if ( (txt.length > 0 and txt.length < 63) or
+           window.urb.util.isURL @$writing.text() )
         @sendMessage()
       return false
     @_input()

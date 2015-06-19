@@ -412,6 +412,9 @@ body {
 .message.say .mess {
   font-style: italic;
 }
+.message.exp .mess {
+  font-family: monospace;
+}
 a {
   text-decoration: underline;
   color: inherit;
