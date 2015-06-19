@@ -70,7 +70,7 @@
                      u3_noun arg);
 
 
-static jmp_buf u3_Signal;
+static sigjmp_buf u3_Signal;
 
 #ifndef SIGSTKSZ
 # define SIGSTKSZ 16384
