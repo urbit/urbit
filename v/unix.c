@@ -2,7 +2,6 @@
 // XXX maybe get rid of mim.u.dok cache?
 // XXX shouldn't "all.h" be defined first so that _GNU_SOURCE
 //     is defined everywhere?
-// XXX fix naked file -- currently just does file.root
 /* v/unix.c
 **
 **  This file is in the public domain.
@@ -73,12 +72,18 @@ _unix_string_to_path_helper(c3_c* pax_c) {
 static u3_noun
 _unix_string_to_path(c3_c* pax_c) {
   pax_c += strlen(u3_Host.dir_c) + 1;
-  pax_c = strchr(pax_c,'/');
-  if ( !pax_c ) {
-    return u3_nul;
+  c3_c* pox_c = strchr(pax_c, '/');
+  if ( !pox_c ) {
+    pox_c = strchr(pax_c, '.');
+    if ( !pox_c ) {
+      return u3_nul;
+    }
+    else {
+      return u3nc(u3i_string(pox_c + 1), u3_nul);
+    }
   }
   else {
-    return _unix_string_to_path_helper(pax_c + 1);
+    return _unix_string_to_path_helper(pox_c + 1);
   }
 }
 
@@ -282,9 +287,12 @@ _unix_get_mount_point(u3_noun mon)
   if ( !mon_u ) {
     mon_u = malloc(sizeof(u3_umon));
     mon_u->nam_c = nam_c;
-    c3_c* pax_c = _unix_down(u3_Host.dir_c, nam_c);
-    _unix_mkdir(pax_c);
-    _unix_watch_dir(&(mon_u->dir_u), NULL, pax_c);
+    mon_u->dir_u.dir = c3y;
+    mon_u->dir_u.dry = c3n;
+    mon_u->dir_u.pax_c = strdup(u3_Host.dir_c);
+    mon_u->dir_u.par_u = NULL;
+    mon_u->dir_u.nex_u = NULL;
+    mon_u->dir_u.kid_u = NULL;
     mon_u->nex_u = u3_Host.unx_u.mon_u;
     u3_Host.unx_u.mon_u = mon_u;
 
@@ -375,31 +383,13 @@ _unix_free_node(u3_unod* nod_u)
   return can;
 }
 
-/* _unix_free_mount_point_cb(): free mount point callback
+/* _unix_free_mount_point(): free mount point
  *
  * this process needs to happen in a very careful order.  in particular,
  * we must recurse before we get to the callback, so that libuv does all
- * the child directories before it does us.  be very careful about
- * making changes to this code.
-*/
-static void
-_unix_free_mount_point_cb(uv_handle_t* was_u)
-{
-  // this is similar to the trickiness in _unix_fs_event_cb, but one
-  // layer deeper.  this works because (1) was_u is the first field in
-  // u3_udir, and (2) dir_u is the first field in u3_umon.
-  //
-  // tread carefully
-  u3_umon* mon_u = (void*) was_u;
-
-  _unix_rm_r(mon_u->dir_u.pax_c);
-
-  free(mon_u->dir_u.pax_c);
-  free(mon_u->nam_c);
-  free(mon_u);
-}
-
-/* _unix_free_mount_point(): free mount point
+ * the child directories before it does us.
+ *
+ * tread carefully
 */
 static void
 _unix_free_mount_point(u3_umon* mon_u)
@@ -411,7 +401,9 @@ _unix_free_mount_point(u3_umon* mon_u)
     nod_u = nex_u;
   }
 
-  uv_close((uv_handle_t*)&mon_u->dir_u.was_u, _unix_free_mount_point_cb);
+  free(mon_u->dir_u.pax_c);
+  free(mon_u->nam_c);
+  free(mon_u);
 }
 
 /* _unix_delete_mount_point(): remove mount point from list and free
@@ -904,7 +896,12 @@ static void
 _unix_update_mount(u3_umon* mon_u, u3_noun all)
 {
   if ( c3n == mon_u->dir_u.dry ) {
-    u3_noun can = _unix_update_dir(&mon_u->dir_u);
+    u3_noun  can = u3_nul;
+    u3_unod* nod_u;
+    for ( nod_u = mon_u->dir_u.kid_u; nod_u; nod_u = nod_u->nex_u ) {
+      can = u3kb_weld(_unix_update_node(nod_u), can);
+    }
+
     u3v_plan(u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
              u3nq(c3__into, u3i_string(mon_u->nam_c), all, can));
   }
@@ -1130,7 +1127,7 @@ _unix_sync_change(u3_udir* dir_u, u3_noun pax, u3_noun mim)
 
   if ( c3n == u3du(pax) ) {
     if ( u3_nul == pax ) {
-      uL(fprintf(uH,"can't sync out file as top-level\r\n"));
+      uL(fprintf(uH,"can't sync out file as top-level, strange\r\n"));
     }
     else {
       uL(fprintf(uH,"sync out: bad path\r\n"));
@@ -1139,11 +1136,8 @@ _unix_sync_change(u3_udir* dir_u, u3_noun pax, u3_noun mim)
     return;
   }
   else if ( c3n == u3du(u3t(pax)) ) {
-    u3_noun i_pax = u3h(pax);
-    u3_noun t_pax = u3t(pax);
-    c3_assert( u3_nul == t_pax );
-
-    _unix_sync_file(dir_u, u3k(i_pax), c3__root, mim);
+    uL(fprintf(uH,"can't sync out file as top-level, strange\r\n"));
+    u3z(pax); u3z(mim);
   }
   else {
     u3_noun i_pax = u3h(pax);
@@ -1189,12 +1183,16 @@ static void
 _unix_sync_ergo(u3_umon* mon_u, u3_noun can)
 {
   u3_noun nac = can;
+  u3_noun nam = u3i_string(mon_u->nam_c);
 
   while ( u3_nul != nac) {
-    _unix_sync_change(&mon_u->dir_u, u3k(u3h(u3h(nac))), u3k(u3t(u3h(nac))));
+    _unix_sync_change(&mon_u->dir_u,
+                      u3nc(u3k(nam), u3k(u3h(u3h(nac)))),
+                      u3k(u3t(u3h(nac))));
     nac = u3t(nac);
   }
 
+  u3z(nam);
   u3z(can);
 }
 
