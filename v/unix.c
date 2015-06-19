@@ -1,8 +1,3 @@
-// XXX probably should allow out-only mount points
-// XXX maybe get rid of mim.u.dok cache?
-// XXX shouldn't "all.h" be defined first so that _GNU_SOURCE
-//     is defined everywhere?
-// XXX need to scan in pier for files/directory in hill handling
 /* v/unix.c
 **
 **  This file is in the public domain.
@@ -248,13 +243,11 @@ _unix_write_file_soft(u3_ufil* fil_u, u3_noun mim)
   old_w = u3r_mug_bytes(old_y, len_ws);
 
   if ( old_w != fil_u->gum_w ) {
-    uL(fprintf(uH,"old_w != gum_w %s\r\n", fil_u->pax_c));
     fil_u->gum_w = u3r_mug(u3t(u3t(mim))); // XXX this might fail with
     free(old_y);                           //     trailing zeros
     u3z(mim);
     return;
   }
-  uL(fprintf(uH,"old_w == gum_w %s\r\n", fil_u->pax_c));
 
   free(old_y);
 
@@ -324,7 +317,6 @@ _unix_scan_mount_point(u3_umon* mon_u)
   c3_w len_w = strlen(mon_u->nam_c);
 
   while ( 1 ) {
-    uL(fprintf(uH, "u nas prablyem %s\r\n", mon_u->dir_u.pax_c));
     struct dirent  ent_u;
     struct dirent* out_u;
     c3_w err_w;
@@ -341,11 +333,9 @@ _unix_scan_mount_point(u3_umon* mon_u)
       continue;
     }
     else if ( 0 != strncmp(mon_u->nam_c, out_u->d_name, len_w) ) {
-      uL(fprintf(uH, "nope! %s %s\r\n", mon_u->nam_c, out_u->d_name));
       continue;
     }
     else {
-      uL(fprintf(uH, "yup! %s %s\r\n", mon_u->nam_c, out_u->d_name));
       c3_c* pax_c = _unix_down(mon_u->dir_u.pax_c, out_u->d_name);
 
       struct stat buf_u;
@@ -358,14 +348,11 @@ _unix_scan_mount_point(u3_umon* mon_u)
       }
       if ( S_ISDIR(buf_u.st_mode) ) {
         if ( out_u->d_name[len_w] != '\0' ) {
-          uL(fprintf(uH, "whoops-a-daisy %s %c %d\r\n",
-                     out_u->d_name, out_u->d_name[len_w], len_w));
           free(pax_c);
           continue;
         }
         else {
           u3_udir* dir_u = c3_malloc(sizeof(u3_udir));
-          uL(fprintf(uH, "found mount dir %s\r\n", pax_c));
           _unix_watch_dir(dir_u, &mon_u->dir_u, pax_c);
         }
       }
@@ -373,16 +360,11 @@ _unix_scan_mount_point(u3_umon* mon_u)
         if ( '.' != out_u->d_name[len_w]
              || '\0' == out_u->d_name[len_w + 1]
              || '~' == out_u->d_name[strlen(out_u->d_name) - 1] ) {
-          uL(fprintf(uH, "whoops-e-daisy %s %c %c %c\r\n",
-                     out_u->d_name, out_u->d_name[len_w],
-                     out_u->d_name[len_w+1],
-                     out_u->d_name[strlen(out_u->d_name) - 1]));
           free(pax_c);
           continue;
         }
         else {
           u3_ufil* fil_u = c3_malloc(sizeof(u3_ufil));
-          uL(fprintf(uH, "found mount file %s\r\n", pax_c));
           _unix_watch_file(fil_u, &mon_u->dir_u, pax_c);
         }
       }
@@ -567,10 +549,7 @@ _unix_fs_event_cb(uv_fs_event_t* was_u,
   // * thus a cast is cool
   u3_unod* nod_u = (u3_unod*) was_u;
 
-  uL(fprintf(uH, "fs event at %s\r\n", nod_u->pax_c));
-
   while ( nod_u ) {
-    uL(fprintf(uH, "nod_u: %p\r\n", nod_u));
     nod_u->dry = c3n;
     nod_u = (u3_unod*) nod_u->par_u;
   }
@@ -596,7 +575,6 @@ _unix_fs_event_cb(uv_fs_event_t* was_u,
 static void
 _unix_watch_file(u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c)
 {
-  uL(fprintf(uH,"actually watching %s %s\r\n",par_u->pax_c,pax_c));
   // initialize fil_u
 
   fil_u->dir = c3n;
@@ -618,13 +596,13 @@ _unix_watch_file(u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c)
 
   c3_w ret_w = uv_fs_event_init(u3L, &fil_u->was_u);
   if (0 != ret_w){
-    uL(fprintf(uH, "event init: %s\n", uv_strerror(ret_w)));
+    uL(fprintf(uH, "file event init: %s\n", uv_strerror(ret_w)));
     c3_assert(0);
   }
 
   ret_w = uv_fs_event_start(&fil_u->was_u, _unix_fs_event_cb, pax_c, 0);
   if ( 0 != ret_w ){
-    uL(fprintf(uH, "event start %s: %s\n", fil_u->pax_c, uv_strerror(ret_w)));
+    uL(fprintf(uH, "file event start %s: %s\n", fil_u->pax_c, uv_strerror(ret_w)));
     c3_assert(0);
   }
 }
@@ -654,13 +632,13 @@ _unix_watch_dir(u3_udir* dir_u, u3_udir* par_u, c3_c* pax_c)
 
   c3_w ret_w = uv_fs_event_init(u3L, &dir_u->was_u);
   if (0 != ret_w){
-    uL(fprintf(uH, "event init: %s\n", uv_strerror(ret_w)));
+    uL(fprintf(uH, "directory event init: %s\n", uv_strerror(ret_w)));
     c3_assert(0);
   }
 
   ret_w = uv_fs_event_start(&dir_u->was_u, _unix_fs_event_cb, pax_c, 0);
   if (0 != ret_w){
-    uL(fprintf(uH, "event start: %s\n", uv_strerror(ret_w)));
+    uL(fprintf(uH, "directory event start: %s\n", uv_strerror(ret_w)));
     c3_assert(0);
   }
 }
@@ -700,7 +678,6 @@ static u3_noun _unix_update_node(u3_unod* nod_u);
 static u3_noun
 _unix_update_file(u3_ufil* fil_u)
 {
-  uL(fprintf(uH, "trying %s\r\n", fil_u->pax_c));
   c3_assert( c3n == fil_u->dir );
 
   if ( c3y == fil_u->dry ) {
@@ -716,7 +693,6 @@ _unix_update_file(u3_ufil* fil_u)
 
   if ( fid_i < 0 || fstat(fid_i, &buf_u) < 0 ) {
     if ( ENOENT == errno ) {
-      uL(fprintf(uH, "no existe %s\r\n", fil_u->pax_c));
       return u3nc(u3nc(_unix_string_to_path(fil_u->pax_c), u3_nul), u3_nul);
     }
     else {
@@ -764,22 +740,15 @@ _unix_update_file(u3_ufil* fil_u)
   else {
     c3_w mug_w = u3r_mug_bytes(dat_y, len_ws);
     if ( mug_w == fil_u->mug_w ) {
-      uL(fprintf(uH, "mug is mug: %s %x\r\n", fil_u->pax_c, fil_u->mug_w));
-
       free(dat_y);
       return u3_nul;
     }
     else if ( mug_w == fil_u->gum_w ) {
-      uL(fprintf(uH, "mug is gum: %s %x %x %x\r\n", fil_u->pax_c,
-                 mug_w, fil_u->mug_w, fil_u->gum_w));
-
       fil_u->mug_w = mug_w;
       free(dat_y);
       return u3_nul;
     }
     else {
-      uL(fprintf(uH, "mug has changed: %s %x %x %x\r\n", fil_u->pax_c,
-                 mug_w, fil_u->mug_w, fil_u->gum_w));
       fil_u->mug_w = mug_w;
 
       u3_noun pax = _unix_string_to_path(fil_u->pax_c);
@@ -800,13 +769,11 @@ _unix_update_file(u3_ufil* fil_u)
 static u3_noun
 _unix_update_dir(u3_udir* dir_u)
 {
-  uL(fprintf(uH,"looking at directory %s\r\n", dir_u->pax_c));
   u3_noun can = u3_nul;
 
   c3_assert( c3y == dir_u->dir );
 
   if ( c3y == dir_u->dry ) {
-    uL(fprintf(uH, "directory dry, why bother? %s\r\n", dir_u->pax_c));
     return u3_nul;
   }
 
@@ -871,7 +838,6 @@ _unix_update_dir(u3_udir* dir_u)
   }
 
   while ( 1 ) {
-    uL(fprintf(uH, "checking for new node in %s\r\n", dir_u->pax_c));
     struct dirent  ent_u;
     struct dirent* out_u;
     c3_w err_w;
@@ -927,7 +893,6 @@ _unix_update_dir(u3_udir* dir_u)
             }
 
             u3_ufil* fil_u = c3_malloc(sizeof(u3_ufil));
-            uL(fprintf(uH, "watch new file %s\r\n", pax_c));
             _unix_watch_file(fil_u, dir_u, pax_c);
           }
           else {
@@ -964,11 +929,9 @@ static u3_noun
 _unix_update_node(u3_unod* nod_u)
 {
   if ( c3y == nod_u->dir ) {
-    uL(fprintf(uH, "updating directory: %s\r\n", nod_u->pax_c));
     return _unix_update_dir((void*)nod_u);
   }
   else {
-    uL(fprintf(uH, "updating file: %s\r\n", nod_u->pax_c));
     return _unix_update_file((void*)nod_u);
   }
 }
@@ -1185,7 +1148,6 @@ _unix_sync_file(u3_udir* par_u, u3_noun nam, u3_noun ext, u3_noun mim)
     if ( !nod_u ) {
       c3_w gum_w = _unix_write_file_hard(pax_c, u3k(u3t(mim)));
       u3_ufil* fil_u = c3_malloc(sizeof(u3_ufil));
-      uL(fprintf(uH, "watching file: %s %s\r\n", par_u->pax_c, pax_c));
       _unix_watch_file(fil_u, par_u, pax_c);
       fil_u->gum_w = gum_w;
       goto _unix_sync_file_out;
@@ -1219,7 +1181,7 @@ _unix_sync_change(u3_udir* dir_u, u3_noun pax, u3_noun mim)
     return;
   }
   else if ( c3n == u3du(u3t(pax)) ) {
-    uL(fprintf(uH,"can't sync out file as top-level, strange\r\n"));
+    uL(fprintf(uH,"can't sync out file as top-level, strangely\r\n"));
     u3z(pax); u3z(mim);
   }
   else {
@@ -1303,9 +1265,7 @@ void
 u3_unix_ef_hill(u3_noun hil)
 {
   u3_noun mon;
-  u3m_p("hilly", hil);
   for ( mon = hil; c3y == u3du(mon); mon = u3t(mon) ) {
-    u3m_p("hilled", u3h(mon));
     u3_umon* mon_u = _unix_get_mount_point(u3k(u3h(mon)));
     _unix_scan_mount_point(mon_u);
   }

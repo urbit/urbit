@@ -805,7 +805,6 @@
           ~
         `((hard mime) q.q.mim)
     =+  mus=(must-ergo (turn (~(tap by can)) head))
-    ~&  [%mus mus]
     %=    +>.$
         reg
       %-  welp  :_  reg
