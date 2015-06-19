@@ -479,6 +479,7 @@
   ::
   ++  mo-beak                                           ::  build beak
     |=  dap=dude
+    =-  ?.(=(p our) - -(r [%da now])) ::  soft dependencies
     ^-  beak
     byk:(~(got by bum) dap)
   ::
