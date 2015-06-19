@@ -997,7 +997,7 @@ _unix_initial_update_file(c3_c* pax_c)
     return u3_nul;
   }
   else {
-    u3_noun pax = _unix_string_to_path_helper(pax_c + strlen(U3_LIB) + 5 + 5);
+    u3_noun pax = _unix_string_to_path_helper(pax_c + strlen(U3_LIB) + 5);
     u3_noun mim = u3nt(c3__text, u3i_string("plain"), u3_nul);
     u3_noun dat = u3nt(mim, len_ws, u3i_bytes(len_ws, dat_y));
 
