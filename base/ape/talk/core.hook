@@ -1663,6 +1663,7 @@
 ++  peer                                                ::  accept subscription
   |=  [from pax=path]
   ^-  [(list move) _+>]
+  ~?  !=(src our.hid)  [%peer-talk-stranger src]
   ::  ~&   [%talk-peer src ost pax]
   ?:  ?=([%sole *] pax)
     ?>  =(our.hid src)

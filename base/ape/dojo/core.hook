@@ -718,7 +718,7 @@
 ++  peer-sole
   |=  [from pax=path]
   ^-  (quip move +>)
-  ~?  !=(src our.hid)  [%dojo-peer-stranger ost src pax]
+  ~?  !=(src our.hid)  [%peer-dojo-stranger src]
   ::  ?>  =(src our.hid)
   ?<  (~(has by hoc) ost)
   ?>  =(~ pax)
