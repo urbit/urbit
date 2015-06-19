@@ -597,6 +597,7 @@ u3m_bail(u3_noun how)
     }
   }
 
+#if 0
   switch ( how ) {
     case c3__fail:
     case c3__foul:
@@ -604,6 +605,7 @@ u3m_bail(u3_noun how)
     case c3__oops:
       abort();
   }
+#endif
 
   if ( &(u3H->rod_u) == u3R ) {
     //  For top-level errors, which shouln't happen often, we have no
