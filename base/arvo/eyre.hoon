@@ -178,7 +178,7 @@
   |=  [wid=@u tan=tang]
   ^-  tape
   =+  rolt=|=(a=wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
-  (rolt (turn (flop tan) |=(a=tank (rolt (wash 0^wid a)))))
+  (rolt (turn tan |=(a=tank (rolt (wash 0^wid a)))))
 ::
 ::
 ++  add-cookies
@@ -427,24 +427,18 @@
   ++  etag
     '''
     if(!window.urb) window.urb = {}
-    urb.fetchTag = function(){
-      var tag = JSON.parse(this.getResponseHeader("etag"))
-      if(tag) urb.wasp(tag)
-    }
-    urb.headReq = function(url){
-      var xhr = new XMLHttpRequest()
-      xhr.open("HEAD", url)
-      xhr.onload = urb.fetchTag
-      xhr.send()
-    }
-    Array.prototype.map.call(document.querySelectorAll('script'), function(ele){
-      if((new URL(ele.src)).host == document.location.host)
-        urb.headReq(ele.src)
-    })
-    Array.prototype.map.call(document.querySelectorAll('link'), function(ele){
-      if((new URL(ele.href)).host == document.location.host)
-        urb.headReq(ele.href)
-    })
+    urb.waspFrom = function(sel,attr){
+      Array.prototype.map.call(document.querySelectorAll(sel), 
+        function(ele){
+          if((new URL(ele[attr])).host != document.location.host) return;
+          var xhr = new XMLHttpRequest()
+          xhr.open("HEAD", ele[attr])
+          xhr.send()
+          xhr.onload = function(){
+            var tag = JSON.parse(this.getResponseHeader("etag"))
+            if(tag) urb.wasp(tag)
+    }})}
+    if(urb.wasp){urb.waspFrom('script','src'); urb.waspFrom('link','href')}
     '''
   --
 ++  xml
@@ -760,8 +754,10 @@
         =*  cay  p.q.sih
         ?.  ?=(%mime p.cay)
           =+  bek=-:(need (tome p.tee))
-          =-  (pass-note tee (ford-req bek [%flag p.sih -]))
+          =+  bik=?+(r.bek bek [%ud %0] bek(r da/now))
+          =-  (pass-note tee (ford-req bik [%flag p.sih -]))
           =-  `silk`[%cast %mime %done ~ cay(q.q -)]
+          ?.  ?=([%ud 0] r.bek)  q.q.cay
           ?+  p.cay  q.q.cay          :: inject dependency long-poll
             %urb  =|  urb=[[%html ~] [[%head ~] marl] [[%body ~] manx marl] ~]
                   .*(.(urb q.q.cay) !=((inject p.sih urb)))
@@ -979,7 +975,7 @@
           $(q.pok /index)
         ?.  ((sane %tas) i.q.pok)
           (tome q.pok)
-        `[[our i.q.pok da/now] (flop t.q.pok)]
+        `[[our i.q.pok ud/0] (flop t.q.pok)]
       ::
       ++  as-aux-request                                ::  /~/... req parser
         ^-  (unit perk)
@@ -1191,7 +1187,8 @@
         ?.  ?|  (~(has in aut.yac) him.ham) 
                 ?~(paz.ham | =(u.paz.ham load-secret))
             ==
-          ~|(try/`@t`load-secret !!)  ::  XX security
+          ~&  code=`@t`load-secret
+          ~|([%try 'code' %in %console] !!)  ::  XX security
         =^  jon  ..ya  stat-json:(logon:yac him.ham)
         =.  cug.yac  :_(cug.yac (set-cookie %ship (scot %p him.ham)))
         (give-json 200 cug.yac jon)

@@ -1,2 +1,0 @@
-|=  [^ [arg=cord ~] ~]
-txt/arg

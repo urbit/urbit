@@ -1150,20 +1150,20 @@
       /remlysfynwerrycsugnysnyllyndyndemluxfedsedbecmun\
       /lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes'
   |%
-  ++  ind  ~/  %ind                                     ::  parse prefix
-           |=  a=@tas
-           =+  b=0
-           |-  ^-  (unit ,@)
-           ?:(=(256 b) ~ ?:(=(a (tod b)) [~ b] $(b +(b))))
-  ++  ins  ~/  %ins                                     ::  parse suffix
+  ++  ins  ~/  %ins                                     ::  parse prefix
            |=  a=@tas
            =+  b=0
            |-  ^-  (unit ,@)
            ?:(=(256 b) ~ ?:(=(a (tos b)) [~ b] $(b +(b))))
-  ++  tod  ~/  %tod                                     ::  fetch prefix
-           |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] dex)))
-  ++  tos  ~/  %tos                                     ::  fetch suffix
+  ++  ind  ~/  %ind                                     ::  parse suffix
+           |=  a=@tas
+           =+  b=0
+           |-  ^-  (unit ,@)
+           ?:(=(256 b) ~ ?:(=(a (tod b)) [~ b] $(b +(b))))
+  ++  tos  ~/  %tos                                     ::  fetch prefix
            |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] sis)))
+  ++  tod  ~/  %tod                                     ::  fetch suffix
+           |=(a=@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] dex)))
   --
 ::
 ++  fa                                                  ::  base58check
@@ -1284,18 +1284,18 @@
           =+  s=(sea:rd red)
           =+  negexp==(1 (mod e.s 2))
           [s=(sig:rd red) h=(hol:rd red) f=(fac:rd red) e=(err:rd red) n=negexp]
-++  rlyh  |=(reh=@rh ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
-++  rlyq  |=(req=@rq ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
-++  rlys  |=(res=@rs ~|(%real-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
+++  rlyh  |=(reh=@rh ~|(%realh-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
+++  rlyq  |=(req=@rq ~|(%realq-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
+++  rlys  |=(res=@rs ~|(%reals-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
 ++  ryld  |=  v=[syn=? hol=@ zer=@ fac=@ exp=(unit ,@)]  ^-  @rd
           ?:  &(=(hol.v 0) =(zer.v 0) =(fac.v 0))
             (bit:rd (szer:vl:fl 1.023 52 syn.v))
           ?~  exp.v
             (bit:rd (cof:fl 52 1.023 v))
           (ipow:rd u.exp.v (bit:rd (cof:fl 52 1.023 v)))
-++  rylh  |=([syn=? hol=@ zer=@ fac=@ exp=(unit ,@)] ~|(%real-nyet ^-(@rh !!)))
-++  rylq  |=([syn=? hol=@ zer=@ fac=@ exp=(unit ,@)] ~|(%real-nyet ^-(@rq !!)))
-++  ryls  |=([syn=? hol=@ zer=@ fac=@ exp=(unit ,@)] ~|(%real-nyet ^-(@rs !!)))
+++  rylh  |=([syn=? hol=@ zer=@ fac=@ exp=(unit ,@)] ~|(%realh-nyet ^-(@rh !!)))
+++  rylq  |=([syn=? hol=@ zer=@ fac=@ exp=(unit ,@)] ~|(%realq-nyet ^-(@rq !!)))
+++  ryls  |=([syn=? hol=@ zer=@ fac=@ exp=(unit ,@)] ~|(%reals-nyet ^-(@rs !!)))
 
 ::  Floating point operations for general floating points.
 ::  [s=sign, e=unbiased exponent, f=fraction a=ari]
@@ -3699,7 +3699,7 @@
       (stag %rh (cook rylh ;~(pfix ;~(plug sig sig) voy)))
       (stag %rq (cook rylq ;~(pfix ;~(plug sig sig sig) voy)))
       (stag %rd (cook ryld ;~(pfix sig voy)))
-      (stag %rs (cook ryls voy))
+      :: (stag %rs (cook ryls voy))
     ==
   ++  royl-cell
     |=  [a=? b=[c=@ d=@ e=@] f=(unit ,[h=? i=@])]
@@ -9145,6 +9145,7 @@
                 %-  stew
                 ^.  stet  ^.  limo
                 :~  [':' ;~(pfix col (toad expz))]
+                    ['.' ;~(pfix dot (toad |.(loaf(bug |))))]
                     [',' (rune com %zpcm expb)]
                     [';' (rune sem %zpsm expb)]
                     ['^' ;~(pfix ket (sear prey (toad exps)))]

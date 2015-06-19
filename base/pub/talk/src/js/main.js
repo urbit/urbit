@@ -37,7 +37,7 @@ module.exports = {
     return window.talk.MessagePersistence.get(station, start, end);
   },
   sendMessage: function(message, audience) {
-    var _audi, _message, k, serial, v;
+    var _audi, _message, k, serial, speech, v;
     serial = window.util.uuid32();
     audience = _.uniq(audience);
     _audi = {};
@@ -51,6 +51,24 @@ module.exports = {
         delivery: "pending"
       };
     }
+    speech = {
+      lin: {
+        say: true,
+        txt: message
+      }
+    };
+    if (message[0] === "@") {
+      speech.lin.txt = speech.lin.txt.slice(1).trim();
+      speech.lin.say = false;
+    } else if (message[0] === "#") {
+      speech = {
+        "eval": speech.lin.txt.slice(1).trim()
+      };
+    } else if (window.urb.util.isURL(message)) {
+      speech = {
+        url: message
+      };
+    }
     _message = {
       ship: window.urb.ship,
       thought: {
@@ -58,25 +76,11 @@ module.exports = {
         audience: _audi,
         statement: {
           bouquet: [],
-          speech: {
-            lin: {
-              say: true,
-              txt: message
-            }
-          },
+          speech: speech,
           date: Date.now()
         }
       }
     };
-    if (message[0] === "@") {
-      _message.thought.statement.speech.lin.txt = _message.thought.statement.speech.lin.txt.slice(1).trim();
-      _message.thought.statement.speech.lin.say = false;
-    }
-    if (window.urb.util.isURL(message)) {
-      _message.thought.statement.speech = {
-        url: message
-      };
-    }
     MessageDispatcher.handleViewAction({
       type: "message-send",
       message: _message
@@ -84,6 +88,7 @@ module.exports = {
     return window.talk.MessagePersistence.sendMessage(_message.thought);
   }
 };
+
 
 
 },{"../dispatcher/Dispatcher.coffee":7}],2:[function(require,module,exports){
@@ -173,6 +178,7 @@ module.exports = {
 };
 
 
+
 },{"../dispatcher/Dispatcher.coffee":7}],3:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
@@ -201,14 +207,15 @@ module.exports = recl({
 });
 
 
+
 },{}],4:[function(require,module,exports){
-var Member, Message, MessageActions, MessageStore, StationActions, StationStore, a, br, div, input, moment, recl, ref, textarea;
+var Member, Message, MessageActions, MessageStore, StationActions, StationStore, a, br, div, input, moment, pre, recl, ref, textarea;
 
 moment = require('moment-timezone');
 
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.br, React.DOM.input, React.DOM.textarea, React.DOM.a], div = ref[0], br = ref[1], input = ref[2], textarea = ref[3], a = ref[4];
+ref = [React.DOM.div, React.DOM.pre, React.DOM.br, React.DOM.input, React.DOM.textarea, React.DOM.a], div = ref[0], pre = ref[1], br = ref[2], input = ref[3], textarea = ref[4], a = ref[5];
 
 MessageActions = require('../actions/MessageActions.coffee');
 
@@ -255,13 +262,22 @@ Message = recl({
     return this.props._handlePm(user);
   },
   render: function() {
-    var aude, audi, delivery, klass, name, ref1, ref2, ref3, ref4, ref5, ref6, ref7, txt, type, url;
+    var attachments, aude, audi, delivery, klass, name, ref1, ref2, speech, txt, type, url;
     delivery = _.uniq(_.pluck(this.props.thought.audience, "delivery"));
     klass = delivery.indexOf("received") !== -1 ? " received" : " pending";
-    if (((ref1 = this.props.thought.statement.speech) != null ? (ref2 = ref1.lin) != null ? ref2.say : void 0 : void 0) === false) {
+    speech = this.props.thought.statement.speech;
+    attachments = [];
+    while (speech.fat != null) {
+      attachments.push(pre({}, speech.fat.fat.tank.join("\n")));
+      speech = speech.fat.taf;
+    }
+    if (speech == null) {
+      return;
+    }
+    if (((ref1 = speech.lin) != null ? ref1.say : void 0) === false) {
       klass += " say";
     }
-    if ((ref3 = this.props.thought.statement.speech) != null ? ref3.url : void 0) {
+    if (speech.url) {
       klass += " url";
     }
     if (this.props.unseen === true) {
@@ -279,19 +295,23 @@ Message = recl({
     });
     type = ['private', 'public'];
     type = type[Number(aude.indexOf(window.util.mainStationPath(window.urb.user)) === -1)];
-    if ((ref4 = this.props.thought.statement.speech) != null ? (ref5 = ref4.lin) != null ? ref5.txt : void 0 : void 0) {
-      txt = this.props.thought.statement.speech.lin.txt;
+    if ((ref2 = speech.lin) != null ? ref2.txt : void 0) {
+      txt = speech.lin.txt;
     }
-    if ((ref6 = this.props.thought.statement.speech) != null ? ref6.url : void 0) {
-      url = this.props.thought.statement.speech.url.url;
+    if (speech.url) {
+      url = speech.url.url;
       txt = a({
         href: url,
         target: "_blank"
       }, url);
     }
-    if ((ref7 = this.props.thought.statement.speech) != null ? ref7.app : void 0) {
-      txt = this.props.thought.statement.speech.app.txt;
+    if (speech.app) {
+      txt = speech.app.txt;
       klass += " say";
+    }
+    if (speech.exp) {
+      txt = speech.exp.code;
+      klass += " exp";
     }
     return div({
       className: "message" + klass
@@ -313,7 +333,9 @@ Message = recl({
         }, this.convTime(this.props.thought.statement.date))
       ]), div({
         className: "mess"
-      }, txt)
+      }, txt, attachments.length ? div({
+        className: "fat"
+      }, attachments) : void 0)
     ]);
   }
 });
@@ -468,6 +490,7 @@ module.exports = recl({
     }, messages);
   }
 });
+
 
 
 },{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":19,"../stores/StationStore.coffee":20,"./MemberComponent.coffee":3,"moment-timezone":14}],5:[function(require,module,exports){
@@ -656,6 +679,7 @@ module.exports = recl({
 });
 
 
+
 },{"../actions/StationActions.coffee":2,"../stores/StationStore.coffee":20,"./MemberComponent.coffee":3}],6:[function(require,module,exports){
 var Member, MessageActions, MessageStore, StationActions, StationStore, br, div, input, recl, ref, textarea;
 
@@ -761,21 +785,9 @@ module.exports = recl({
     }
   },
   _writingKeyUp: function(e) {
-    var r;
     if (!window.urb.util.isURL(this.$writing.text())) {
-      this.$length.toggleClass('valid-false', this.$writing.text().length > 62);
+      return this.$length.toggleClass('valid-false', this.$writing.text().length > 62);
     }
-    r = window.getSelection().getRangeAt(0).cloneRange();
-    this.$writing.text(this.$writing.text());
-    return setTimeout((function(_this) {
-      return function() {
-        var s;
-        s = window.getSelection();
-        s.removeAllRanges();
-        s.addRange(r);
-        return console.log(r);
-      };
-    })(this), 0);
   },
   _writingKeyDown: function(e) {
     var txt;
@@ -944,6 +956,7 @@ module.exports = recl({
 });
 
 
+
 },{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":19,"../stores/StationStore.coffee":20,"./MemberComponent.coffee":3}],7:[function(require,module,exports){
 var Dispatcher;
 
@@ -963,6 +976,7 @@ module.exports = _.merge(new Dispatcher(), {
     });
   }
 });
+
 
 
 },{"flux":10}],8:[function(require,module,exports){
@@ -993,6 +1007,7 @@ $(function() {
   rend(React.createElement(MessagesComponent, {}), $('#messages-container')[0]);
   return rend(React.createElement(WritingComponent, {}), $('#writing-container')[0]);
 });
+
 
 
 },{"./actions/StationActions.coffee":2,"./components/MessagesComponent.coffee":4,"./components/StationComponent.coffee":5,"./components/WritingComponent.coffee":6,"./move.coffee":9,"./persistence/MessagePersistence.coffee":17,"./persistence/StationPersistence.coffee":18,"./util.coffee":21}],9:[function(require,module,exports){
@@ -1093,6 +1108,7 @@ $(window).on('scroll', function(e) {
 });
 
 $(window).on('scroll', window.util.checkScroll);
+
 
 
 },{}],10:[function(require,module,exports){
@@ -5601,6 +5617,7 @@ module.exports = {
 };
 
 
+
 },{"../actions/MessageActions.coffee":1}],18:[function(require,module,exports){
 var StationActions;
 
@@ -5723,6 +5740,7 @@ module.exports = {
     });
   }
 };
+
 
 
 },{"../actions/StationActions.coffee":2}],19:[function(require,module,exports){
@@ -5868,6 +5886,7 @@ MessageStore.dispatchToken = MessageDispatcher.register(function(payload) {
 });
 
 module.exports = MessageStore;
+
 
 
 },{"../dispatcher/Dispatcher.coffee":7,"events":22,"moment-timezone":14}],20:[function(require,module,exports){
@@ -6069,6 +6088,7 @@ StationStore.dispatchToken = StationDispatcher.register(function(payload) {
 module.exports = StationStore;
 
 
+
 },{"../dispatcher/Dispatcher.coffee":7,"events":22}],21:[function(require,module,exports){
 if (!window.util) {
   window.util = {};
@@ -6178,6 +6198,7 @@ _.merge(window.util, {
     }
   }
 });
+
 
 
 },{}],22:[function(require,module,exports){

@@ -54,10 +54,18 @@ TreeStore = _.extend EventEmitter.prototype, {
 
   loadSnip: (path,snip) ->
     @mergePathToTree path,_.pluck(snip,"name")
-    for k,v of snip
-      _snip[path+"/"+v.name] = 
-        head: window.tree.reactify v.body.head
-        body: window.tree.reactify v.body.body
+    if snip?.length isnt 0
+      for k,v of snip
+        _snip[path+"/"+v.name] = 
+          head: window.tree.reactify v.body.head
+          body: window.tree.reactify v.body.body
+    else
+      _cont[path] = window.tree.reactify "React.createElement ('div', {}, [
+                                           React.createElement('h1', {className:'error'}, 'Error: Empty path'),
+                                           React.createElement('div', {}, [
+                                            React.createElement('pre', {}, '#{@getCurr()}'),
+                                            React.createElement('span', {}, 'is either empty or does not exist.')
+                                           ]) ])"
 
   loadKids: (path,kids) ->
     @mergePathToTree path,_.pluck(kids,"name")

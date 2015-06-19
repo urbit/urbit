@@ -41,6 +41,21 @@ module.exports =
           sender:null
         delivery:"pending"
 
+    speech = 
+      lin:
+        say:true
+        txt:message
+
+    if message[0] is "@"
+      speech.lin.txt = speech.lin.txt.slice(1).trim()
+      speech.lin.say = false
+      
+    else if message[0] is "#"
+      speech = eval: speech.lin.txt.slice(1).trim()
+
+    else if window.urb.util.isURL(message)
+      speech = url: message
+
     _message =
       ship:window.urb.ship
       thought:
@@ -48,19 +63,9 @@ module.exports =
         audience:_audi
         statement:
           bouquet:[]
-          speech:
-            lin:
-              say:true
-              txt:message
+          speech:speech
           date: Date.now()
-    
-    if message[0] is "@"
-      _message.thought.statement.speech.lin.txt = _message.thought.statement.speech.lin.txt.slice(1).trim()
-      _message.thought.statement.speech.lin.say = false
-
-    if window.urb.util.isURL(message)
-      _message.thought.statement.speech = {url: message}
-
+          
     MessageDispatcher.handleViewAction
       type:"message-send"
       message:_message
