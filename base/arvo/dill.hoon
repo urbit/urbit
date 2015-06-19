@@ -43,20 +43,13 @@
 ++  mess                                                ::
   $%  [%dill-belt p=(hypo dill-belt)]                   ::
   ==                                                    ::
-++  cuft                                                ::  internal gift
-  $%  [%coup p=(unit tang)]                             ::  poke result
-      [%quit ~]                                         ::  close subscription
-      [%reap p=(unit tang)]                             ::  peer result
-      [%diff p=cage]                                    ::  subscription output
-  ==                                                    ::
-++  suss  (trel term ,@tas ,@da)                        ::  config report
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note-ames                                           ::  weird ames move
   $%  [%make p=(unit ,@t) q=@ud r=@ s=?]                ::
       [%sith p=@p q=@uw r=?]                            ::
   ==                                                    ::
 ++  note-clay                                           ::
-  $%  [%font p=@p q=@tas r=@p s=@tas]                   ::
+  $%  [%merg p=@p q=@tas r=@p s=@tas t=germ]            ::  merge desks
       [%warp p=sock q=riff]                             ::  wait for clay, hack
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
@@ -79,7 +72,6 @@
       [%d note-dill]                                    ::
       [%g note-gall]                                    ::
   ==  ==                                                ::
-++  riff  ,[p=desk q=(unit rave)]                       ::  see %clay
 ++  sign-ames                                           ::
   $%  [%nice ~]                                         ::
       [%init p=ship]                                    ::
@@ -167,7 +159,7 @@
         |=  [err=@tas tac=(list tank)]
         =+  ^=  wol  ^-  wall
             :-  (trip err)
-            (zing (turn tac |=(a=tank (~(win re a) [0 wid]))))
+            (zing (turn (flop tac) |=(a=tank (~(win re a) [0 wid]))))
         |-  ^+  +>.^$
         ?~  wol  +>.^$
         $(wol t.wol, +>.^$ (from %out (tuba i.wol)))
@@ -221,10 +213,13 @@
         =+  myt=(flop (need tem))
         =+  can=(clan our)
         =.  tem  ~
-        =.  moz  :_(moz [hen %pass / %c %font our %home our %base])
-        =.  moz  ?.  ?=(?(%king %czar) can)  moz
-                 :_(moz [hen %pass / %c %font our %kids our %base])
+        =.  moz  :_(moz [hen %pass / %c %merg our %home our %base %init])
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
+        =.  +>  ?:  ?=(%czar can)  +>
+                (sync %base (sein our) %kids)
+        =.  +>  (sync %home our %base)
+        =.  +>  ?.  ?=(?(%king %czar) can)  +>
+                (sync %kids our %base)
         =.  +>  peer
         |-  ^+  +>+
         ?~  myt  +>+
@@ -259,6 +254,14 @@
           :_(moz [hen %pass ~ %g %deal [our our] ram %peer /drum]) 
         ==
       ::
+      ++  sync
+        |=  syn=[desk ship desk]
+        %_    +>.$
+            moz
+          :_  moz
+          [hen %pass ~ %g %deal [our our] ram %poke %hood-sync -:!>(syn) syn]
+        ==
+      ::
       ++  pump                                          ::  send diff ack
         %_    .
             moz 
@@ -282,12 +285,7 @@
             [%c %mere *]
           ?:  ?=(%& -.p.sih)
             +>.$
-          ~|  %dill-mere-fail
-          ~|  p.p.p.sih
-          |-
-          ?~  q.p.p.sih  !!
-          ~>  %mean.|.(i.q.p.p.sih)     ::  pull ford fail into stack trace
-          $(q.p.p.sih t.q.p.p.sih) 
+          (mean >%dill-mere-fail< >p.p.p.sih< q.p.p.sih)
         ::
             [%g %onto *]
           ::  ~&  [%take-gall-onto +>.sih]
@@ -305,6 +303,7 @@
                      +>.$ 
                    (dump:(crud %reap u.p.p.+>.sih) %logo ~)
             %diff  pump:(from ((hard dill-blit) q:`vase`+>+>.sih))
+            %doff  !!
           ==
         ::
             [%c %note *]

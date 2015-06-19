@@ -48,7 +48,6 @@ input
 //   font-size .7rem
 
 .ship
-  font-weight 500
   text-transform uppercase
   letter-spacing .05rem
 
@@ -80,8 +79,8 @@ body
   position fixed
   width 58rem
   max-height 4rem
-  background-color #ccc
-  color white
+  background-color rgba(255,255,255,.95)
+  color #555
   overflow hidden
   z-index 10
   border-bottom 1px solid #ddd
@@ -144,13 +143,12 @@ body
 #head
   width 100%
   height 4rem
-  background-color white
   color #333
   border-bottom 1px solid #ddd
 
 #station-container h1
   display none
-  color white
+  color #555
   font-weight 400
   font-size 1rem
   letter-spacing .06rem
@@ -225,6 +223,12 @@ body
 
 #members > div
   display block
+  max-width 24rem
+  overflow hidden
+  white-space nowrap
+
+#members > div:hover
+  white-space normal
 
 #members > div div
   display inline-block
@@ -259,7 +263,7 @@ body
 
 // add source
 .sour-ctrl input
-  color white
+  color #555
   background-color transparent
   border none
   font-size .8rem
@@ -280,7 +284,7 @@ body
   font-weight 400
   font-size 1.2rem
   margin-left .6rem
-  color white
+  color #555
 
 .sour-ctrl input:focus::-webkit-input-placeholder
   color transparent
@@ -357,6 +361,9 @@ body
 
 .message.say .mess
   font-style italic
+  
+.message.exp .mess
+  font-family monospace
 
 a
   text-decoration underline
@@ -373,6 +380,7 @@ a
 
 .sig
   font-size 2rem
+  margin-left .7rem
   margin-right .3rem
 
 .sig:before
@@ -385,7 +393,8 @@ a
 
 .type.public:before
   content "▒"
-  line-height 1.1rem
+  font-size .8rem
+  line-height 1.2rem
 
 .mess
 .iden
@@ -411,7 +420,6 @@ a
   background-color white
 
 .attr .iden
-  margin-left .3rem
   line-hieght 1.4rem
 
 .audi

@@ -57,6 +57,24 @@ h3 code
   font-size inherit
   padding .3rem
 
+#body > div > h1
+  height 3rem
+
+#body > div > h1 span
+  background-color #000
+  padding 1rem
+  margin-left -1rem
+  color #fff
+
+#body > div > h2
+  height 2.2rem
+
+#body > div > h2 span
+  background-color rgba(198,198,198,1)
+  padding .6rem
+  margin-left -.6rem
+  color #fff
+
 pre
 code
   font-size .8rem
@@ -281,5 +299,25 @@ li:before
 
 .list h1
   font-size .7rem
+
+.list.default > li > a
+.list.default > li > a > h1
+.list.default li:before
+  font-size 1rem
+
+#body .CodeMirror
+  font-size .8rem
+  line-height 1rem
+
+#body .CodeMirror .cm-header
+  font-weight 200
+
+#body .CodeMirror-gutters
+  background-color #fff
+  padding-right 1rem
+  margin-left -1rem
+
+.error
+  color rgba(249,23,51,1)
 
 @import 'mobile'

@@ -1,7 +1,7 @@
 moment = require 'moment-timezone'
 
 recl = React.createClass
-[div,br,input,textarea,a] = [React.DOM.div,React.DOM.br,React.DOM.input,React.DOM.textarea,React.DOM.a]
+[div,pre,br,input,textarea,a] = [React.DOM.div,React.DOM.pre,React.DOM.br,React.DOM.input,React.DOM.textarea,React.DOM.a]
 
 MessageActions  = require '../actions/MessageActions.coffee'
 MessageStore    = require '../stores/MessageStore.coffee'
@@ -33,8 +33,14 @@ Message = recl
     # pendingClass = if @props.pending isnt "received" then "pending" else ""
     delivery = _.uniq _.pluck @props.thought.audience, "delivery"
     klass = if delivery.indexOf("received") isnt -1 then " received" else " pending"
-    if @props.thought.statement.speech?.lin?.say is false then klass += " say"
-    if @props.thought.statement.speech?.url then klass += " url"
+    speech = @props.thought.statement.speech
+    attachments = []
+    while speech.fat?
+      attachments.push pre {}, speech.fat.fat.tank.join("\n")
+      speech = speech.fat.taf  # XX
+    if !speech? then return;
+    if speech.lin?.say is false then klass += " say"
+    if speech.url then klass += " url"
     if @props.unseen is true then klass += " new"
     if @props.sameAs is true then klass += " same" else klass += " first"
 
@@ -45,13 +51,16 @@ Message = recl
     type = ['private','public']
     type = type[Number(aude.indexOf(window.util.mainStationPath(window.urb.user)) is -1)]
 
-    if @props.thought.statement.speech?.lin?.txt then txt = @props.thought.statement.speech.lin.txt
-    if @props.thought.statement.speech?.url 
-      url = @props.thought.statement.speech.url.url
+    if speech.lin?.txt then txt = speech.lin.txt
+    if speech.url 
+      url = speech.url.url
       txt = (a {href:url,target:"_blank"}, url)
-    if @props.thought.statement.speech?.app
-      txt = @props.thought.statement.speech.app.txt
+    if speech.app
+      txt = speech.app.txt
       klass += " say"
+    if speech.exp
+      txt = speech.exp.code
+      klass += " exp"
 
     div {className:"message#{klass}"}, [
         (div {className:"attr"}, [
@@ -60,7 +69,9 @@ Message = recl
           div {onClick:@_handleAudi,className:"audi"}, audi
           div {className:"time"}, @convTime @props.thought.statement.date
         ])
-        div {className:"mess"}, txt
+        div {className:"mess"}, txt,
+          if attachments.length
+            div {className:"fat"}, attachments
       ]
 
 module.exports = recl

@@ -22,7 +22,7 @@
       "react/0.13.1/react.js"
     ==
     :: remove /~~ for anon
-    ;script(type "text/javascript", src "/~~/~/at/base/lib/urb.js");
+    ;script(type "text/javascript", src "/~~/~/at/home/lib/urb.js");
     ;meta(name "viewport", content "width=device-width, height=device-height, ".
      "initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0");
     ;link(type "text/css", rel "stylesheet", href "/home/pub/talk/src/css/main.css");

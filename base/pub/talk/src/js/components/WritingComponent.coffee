@@ -33,6 +33,7 @@ module.exports = recl
       StationActions.setTyping @state.station,state
 
   _blur: -> 
+    @$writing.text @$writing.text()
     MessageActions.setTyping false
     @typing false
 
@@ -77,12 +78,21 @@ module.exports = recl
   _writingKeyUp: (e) ->
     if not window.urb.util.isURL @$writing.text()
       @$length.toggleClass('valid-false',(@$writing.text().length > 62))
+    # r = window.getSelection().getRangeAt(0).cloneRange()
+    # @$writing.text @$writing.text()
+    # setTimeout => 
+    #     s = window.getSelection()
+    #     s.removeAllRanges()
+    #     s.addRange r
+    #     console.log r
+    #   ,0
 
   _writingKeyDown: (e) ->
     if e.keyCode is 13
       txt = @$writing.text()
       e.preventDefault()
-      if (txt.length > 0 and txt.length < 63) or window.urb.util.isURL @$writing.text()
+      if ( (txt.length > 0 and txt.length < 63) or
+           window.urb.util.isURL @$writing.text() )
         @sendMessage()
       return false
     @_input()

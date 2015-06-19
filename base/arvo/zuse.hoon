@@ -1029,8 +1029,7 @@
   ^-  miso
   =+  dir=((hard arch) .^(%cy pax))
   ?~  q.dir  [%ins val]
-  =+  for=((hard mark) -:(flop pax))
-  [%mut [for [%atom %$] .^(%cx pax)] val]
+  [%mut val]
 ::
 ++  file                                                ::  simple file load
   |=  pax=path
@@ -1048,7 +1047,7 @@
   |=  pax=path
   ^-  toro
   ?>  ?=([* * * *] pax)
-  [i.t.pax [%& [*cart [[t.t.t.pax [%del %$ !>(.^(%cx pax))]] ~]]]]
+  [i.t.pax [%& [*cart [[t.t.t.pax [%del ~]] ~]]]]
 ::
 ++  furl                                                ::  unify changes
   |=  [one=toro two=toro]
@@ -1242,6 +1241,10 @@
   =+  nex=$(tep t.tep)
   ?~(nex ~ [~ i.tep u.nex])
 ::
+++  earf                                                ::  purf to tape
+  |=  purf
+  (weld (earn p) ?~(q "" `tape`['#' (trip u.q)]))
+::
 ++  earl                                                ::  localize purl
   |=  [who=@p pul=purl]
   ^-  purl
@@ -1301,6 +1304,8 @@
   ++  apat                                              ::  2396 abs_path
     %+  cook  deft
     (ifix [fas ;~(pose fas (easy ~))] (more fas smeg))
+  ++  aurf                                              ::  2396 with fragment
+    ;~(plug auri (punt ;~(pfix hax (cook crip (star pque)))))
   ++  auri                                              ::  2396 URL
     %+  cook
       |=  a=purl
@@ -1694,7 +1699,16 @@
       ?:(=(%lord -.p.gos) ~['[' nad ']'] ~['(' nad ')'])
     ==
   ==
+++  pale                                                ::  filter peers
+  |=  [hid=bowl fun=$+(sink ?)]
+  (skim (~(tap by sup.hid)) fun)
 ::
+++  prix                                                ::  filter gate
+  |=  pax=path  |=  sink  ^-  ?
+  ?~  pax  &  ?~  r.+<  | 
+  &(=(i.pax i.r.+<) $(pax t.pax, r.+< t.r.+<))
+::
+++  prey  |=([pax=path hid=bowl] (pale hid (prix pax))) ::  prefix 
 ++  hunt                                                ::  first of unit dates
   |=  [one=(unit ,@da) two=(unit ,@da)]
   ^-  (unit ,@da)
@@ -1818,12 +1832,13 @@
               lys=@da                                   ::  last sent
               pac=rock                                  ::  packet data
           ==                                            ::
+++  bitt  (map bone (pair ship path))                   ::  incoming subs
 ++  blob                                                ::  fs blob
           $%  [%delta p=lobe q=[p=mark q=lobe] r=page]  ::  delta on q
               [%direct p=lobe q=page]                   ::  immediate
               [%indirect p=lobe q=page r=lobe s=page]   ::  both
           ==                                            ::
-++  boat  ,[(list slip) tart]                           ::  user stage
+++  boat  (map (pair bone wire) (trel bean ship path))  ::  outgoing subs
 ++  boon                                                ::  fort output
           $%  [%beer p=ship q=@uvG]                     ::  gained ownership
               [%cake p=sock q=soap r=coop s=duct]       ::  e2e message result
@@ -1834,7 +1849,20 @@
               [%ouzo p=lane q=rock]                     ::  transmit packet
               [%wine p=sock q=tape]                     ::  notify user
           ==                                            ::
-++  bowl  ,[p=(list gift) q=(unit boat)]                ::  app product
+++  bowl                                                ::  standard app state
+        $:  $:  our=ship                                ::  host
+                src=ship                                ::  guest
+                dap=term                                ::  agent
+            ==                                          ::  
+            $:  wex=boat                                ::  outgoing subs
+                sup=bitt                                ::  incoming subs
+            ==                                          ::
+            $:  ost=bone                                ::  opaque cause
+                act=@ud                                 ::  change number
+                eny=@uvI                                ::  entropy
+                now=@da                                 ::  current time
+                byk=beak                                ::  load source
+        ==  ==                                          ::
 ++  bray  ,[p=life q=(unit life) r=ship s=@da]          ::  our parent us now
 ++  brow  ,[p=@da q=@tas]                               ::  browser version
 ++  buck  ,[p=mace q=will]                              ::  all security data
@@ -2084,13 +2112,13 @@
 ++  mime  ,[p=mite q=octs]                              ::  mimetyped data
 ++  mite  (list ,@ta)                                   ::  mime type
 ++  miso                                                ::  ankh delta
-          $%  [%del p=cage]                             ::  delete
+          $%  [%del ~]                                  ::  delete
               [%ins p=cage]                             ::  insert
               [%dif p=cage]                             ::  mutate from diff
-              [%mut p=cage q=cage]                      ::  mutate from raw
+              [%mut p=cage]                             ::  mutate from raw
           ==                                            ::
 ++  misu                                                ::  computed delta
-          $%  [%del p=cage]                             ::  delete
+          $%  [%del ~]                                  ::  delete
               [%ins p=cage]                             ::  insert
               [%dif p=lobe q=cage]                      ::  mutate from diff
           ==                                            ::
@@ -2129,6 +2157,7 @@
 ++  pred  ,[p=@ta q=@tas r=@ta ~]                       ::  proto-path
 ++  prod  ,[p=prom q=tape r=tape]                       ::  prompt
 ++  prom  ?(%text %pass %none)                          ::  format type
+++  purf  (pair purl (unit ,@t))                        ::  url with fragment
 ++  purl  ,[p=hart q=pork r=quay]                       ::  parsed url
 ++  putt                                                ::  outgoing message
           $:  ski=snow                                  ::  sequence acked/sent
@@ -2236,7 +2265,6 @@
 ++  step  ,[p=bray q=gens r=pass]                       ::  identity stage
 ++  suba  ,[p=cart q=(list ,[p=path q=misu])]           ::  delta
 ++  tako  ,@                                            ::  yaki ref
-++  tart  $+([@da path note] bowl)                      ::  process core
 ++  tick  ,@ud                                          ::  process id
 ++  toro  ,[p=@ta q=nori]                               ::  general change
 ++  town                                                ::  all security state
@@ -2295,26 +2323,28 @@
   ::
 ++  khan                                                ::
           $:  fil=(unit (unit cage))                    ::  XX see khan-to-soba
-              dir=(map ,@ta (unit khan))                ::
+              dir=(unit (map ,@ta (unit khan)))         ::
           ==                                            ::
-++  mick  (list ,[path (unit mime)])
+++  mode  (list ,[path (unit mime)])
 ++  riff  ,[p=desk q=(unit rave)]                       ::  request/desist
 ::::                                                    ::
 ++  gift-clay                                           ::  out result <-$
-          $%  [%ergo p=@p q=@tas r=@ud s=mick]          ::  version update
+          $%  [%ergo p=@tas q=mode]                     ::  version update
+              [%hill p=(list ,@tas)]                    ::  mount points
               [%mass p=mass]                            ::  memory usage
               [%mere p=(each (set path) (pair term tang))]  ::  merge result
               [%note p=@tD q=tank]                      ::  debug message
+              [%ogre p=@tas]                            ::  delete mount point
               [%writ p=riot]                            ::  response
           ==                                            ::
 ++  kiss-clay                                           ::  in request ->$
-          $%  [%font p=@p q=@tas r=@p s=@tas]           ::  set upstream
+          $%  [%boat ~]                                 ::  pier rebooted
               [%info p=@p q=@tas r=nori]                ::  internal edit
               [%init p=@p]                              ::  report install
-              [%into p=@p q=@tas r=khan]                ::  external edit
-              [%lynx p=@p q=@tas r=(unit ,?)]           ::  sync to unix
+              [%into p=@tas q=? r=mode]                 ::  external edit
               [%merg p=@p q=@tas r=@p s=@tas t=germ]    ::  merge desks
-              [%plug p=@p q=@tas r=@p s=@tas]           ::  unset upstream
+              [%mont p=@tas q=@p r=@tas s=path]         ::  mount to unix
+              [%ogre p=$|(@tas beam)]                   ::  delete mount point
               [%wart p=sock q=@tas r=path s=*]          ::  network request
               [%warp p=sock q=riff]                     ::  file request
               [%wegh ~]                                 ::  report memory
@@ -2418,6 +2448,7 @@
 ++  kiss-eyre                                           ::  in request ->$
           $%  [%born ~]                                 ::  new unix process
               [%crud p=@tas q=(list tank)]              ::  XX rethink
+              [%hiss p=mark q=cage]                     ::  outbound user req
               [%init p=@p]                              ::  report install
               [%them p=(unit hiss)]                     ::  outbound request
               [%they p=@ud q=httr]                      ::  inbound response
@@ -2428,6 +2459,7 @@
           ==                                            ::
 ++  gift-eyre                                           ::  out result <-$
           $%  [%mass p=mass]                            ::  memory usage
+              [%sigh p=cage]                            ::  marked http response
               [%thou p=httr]                            ::  raw http response
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
               [%veer p=@ta q=path r=@t]                 ::  drop-through
@@ -2474,10 +2506,11 @@
       [%bunt p=mark]                                    ::  example of mark
       [%call p=silk q=silk]                             ::  slam
       [%cast p=mark q=silk]                             ::  translate
+      [%core p=beam]                                    ::  build program
       [%diff p=silk q=silk]                             ::  diff
-      [%done p=(set beam) q=gage]                       ::  literal
+      [%done p=(set beam) q=cage]                       ::  literal
       [%dude p=tank q=silk]                             ::  error wrap
-      [%dune p=(set beam) q=(unit gage)]                ::  unit literal
+      [%dune p=(set beam) q=(unit cage)]                ::  unit literal
       [%file p=beam]                                    ::  from clay
       [%flag p=@uvH q=silk]                             ::  re-apply user deps
       [%join p=mark q=silk r=silk]                      ::  merge
@@ -2492,8 +2525,13 @@
       [%volt p=(set beam) q=(cask ,*)]                  ::  unsafe add type
   ==                                                    ::
 ::::
+++  gage                                                ::  recursive cage/tang
+  $%  [%& p=cage]                                       ::  success
+      [%| p=tang]                                       ::  error
+      [%tabl p=(list (pair gage gage))]                 ::  table of results
+  ==
 ++  gift-ford                                           ::  out result <-$
-          $%  [%made p=@uvH q=(each gage tang)]         ::  computed result
+          $%  [%made p=@uvH q=gage]                     ::  computed result
               [%mass p=mass]                            ::  memory usage
               [%news ~]                                 ::  fresh depends
           ==                                            ::
@@ -2506,14 +2544,18 @@
 ::::    %gall
   ::
 ++  club                                                ::  agent action
-  $%  [%peer p=path]                                    ::  subscribe
+  $%  [%peel p=mark q=path]                             ::  translated peer
+      [%peer p=path]                                    ::  subscribe
       [%poke p=cage]                                    ::  apply
+      [%puff p=mark q=noun]                             ::  unchecked poke
       [%pull ~]                                         ::  unsubscribe
+      [%punk p=mark q=cage]                             ::  translated poke
       [%pump ~]                                         ::  pump yes/no
   ==                                                    ::
 ++  cuft                                                ::  internal gift
   $%  [%coup p=(unit tang)]                             ::  poke result
       [%diff p=cage]                                    ::  subscription output
+      [%doff p=mark q=noun]                             ::  untyped diff
       [%quit ~]                                         ::  close subscription
       [%reap p=(unit tang)]                             ::  peer result
   ==                                                    ::
