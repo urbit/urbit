@@ -2,6 +2,7 @@
 // XXX maybe get rid of mim.u.dok cache?
 // XXX shouldn't "all.h" be defined first so that _GNU_SOURCE
 //     is defined everywhere?
+// XXX need to scan in pier for files/directory in hill handling
 /* v/unix.c
 **
 **  This file is in the public domain.
@@ -263,6 +264,8 @@ _unix_write_file_soft_go:
 
 static void
 _unix_watch_dir(u3_udir* dir_u, u3_udir* par_u, c3_c* pax_c);
+static void
+_unix_watch_file(u3_ufil* fil_u, u3_udir* par_u, c3_c* pax_c);
 
 /* _unix_get_mount_point(): retrieve or create mount point
 */
@@ -304,6 +307,87 @@ _unix_get_mount_point(u3_noun mon)
   u3z(mon);
 
   return mon_u;
+}
+
+/* _unix_scan_mount_point(): scan unix for already-existing mount point
+*/
+static void
+_unix_scan_mount_point(u3_umon* mon_u)
+{
+  DIR* rid_u = opendir(mon_u->dir_u.pax_c);
+  if ( !rid_u ) {
+    uL(fprintf(uH, "error opening pier directory: %s: %s\r\n",
+               mon_u->dir_u.pax_c, strerror(errno)));
+    return;
+  }
+
+  c3_w len_w = strlen(mon_u->nam_c);
+
+  while ( 1 ) {
+    uL(fprintf(uH, "u nas prablyem %s\r\n", mon_u->dir_u.pax_c));
+    struct dirent  ent_u;
+    struct dirent* out_u;
+    c3_w err_w;
+
+    if ( 0 != (err_w = readdir_r(rid_u, &ent_u, &out_u)) ) {
+      uL(fprintf(uH, "erroring loading pier directory %s: %s\r\n",
+                 mon_u->dir_u.pax_c, strerror(errno)));
+      c3_assert(0);
+    }
+    else if ( !out_u ) {
+      break;
+    }
+    else if ( '.' == out_u->d_name[0] ) { // unnecessary, but consistency
+      continue;
+    }
+    else if ( 0 != strncmp(mon_u->nam_c, out_u->d_name, len_w) ) {
+      uL(fprintf(uH, "nope! %s %s\r\n", mon_u->nam_c, out_u->d_name));
+      continue;
+    }
+    else {
+      uL(fprintf(uH, "yup! %s %s\r\n", mon_u->nam_c, out_u->d_name));
+      c3_c* pax_c = _unix_down(mon_u->dir_u.pax_c, out_u->d_name);
+
+      struct stat buf_u;
+
+      if ( 0 != stat(pax_c, &buf_u) ) {
+        uL(fprintf(uH, "can't stat pier directory %s: %s\r\n",
+                   mon_u->dir_u.pax_c, strerror(errno)));
+        free(pax_c);
+        continue;
+      }
+      if ( S_ISDIR(buf_u.st_mode) ) {
+        if ( out_u->d_name[len_w] != '\0' ) {
+          uL(fprintf(uH, "whoops-a-daisy %s %c %d\r\n",
+                     out_u->d_name, out_u->d_name[len_w], len_w));
+          free(pax_c);
+          continue;
+        }
+        else {
+          u3_udir* dir_u = c3_malloc(sizeof(u3_udir));
+          uL(fprintf(uH, "found mount dir %s\r\n", pax_c));
+          _unix_watch_dir(dir_u, &mon_u->dir_u, pax_c);
+        }
+      }
+      else {
+        if ( '.' != out_u->d_name[len_w]
+             || '\0' == out_u->d_name[len_w + 1]
+             || '~' == out_u->d_name[strlen(out_u->d_name) - 1] ) {
+          uL(fprintf(uH, "whoops-e-daisy %s %c %c %c\r\n",
+                     out_u->d_name, out_u->d_name[len_w],
+                     out_u->d_name[len_w+1],
+                     out_u->d_name[strlen(out_u->d_name) - 1]));
+          free(pax_c);
+          continue;
+        }
+        else {
+          u3_ufil* fil_u = c3_malloc(sizeof(u3_ufil));
+          uL(fprintf(uH, "found mount file %s\r\n", pax_c));
+          _unix_watch_file(fil_u, &mon_u->dir_u, pax_c);
+        }
+      }
+    }
+  }
 }
 
 static u3_noun _unix_free_node(u3_unod* nod_u);
@@ -809,8 +893,7 @@ _unix_update_dir(u3_udir* dir_u)
       struct stat buf_u;
 
       if ( 0 != stat(pax_c, &buf_u) ) {
-        uL(fprintf(uH, "can't stat %s: %s\r\n",
-                   pax_c, strerror(errno)));
+        uL(fprintf(uH, "can't stat %s: %s\r\n", pax_c, strerror(errno)));
         free(pax_c);
         continue;
       }
@@ -850,7 +933,7 @@ _unix_update_dir(u3_udir* dir_u)
           else {
             u3_udir* dis_u = c3_malloc(sizeof(u3_udir));
             _unix_watch_dir(dis_u, dir_u, pax_c);
-            can = u3kb_weld(_unix_update_dir(dis_u), can);
+            can = u3kb_weld(_unix_update_dir(dis_u), can); // XXX unnecessary?
           }
         }
       }
@@ -979,7 +1062,7 @@ _unix_initial_update_dir(c3_c* pax_c)
     struct dirent* out_u;
     c3_w err_w;
 
-    if ( (err_w = readdir_r(rid_u, &ent_u, &out_u)) != 0 ) {
+    if ( 0 != (err_w = readdir_r(rid_u, &ent_u, &out_u)) ) {
       uL(fprintf(uH, "error loading initial directory %s: %s\r\n",
                  pax_c, strerror(errno)));
       c3_assert(0);
@@ -1220,8 +1303,11 @@ void
 u3_unix_ef_hill(u3_noun hil)
 {
   u3_noun mon;
+  u3m_p("hilly", hil);
   for ( mon = hil; c3y == u3du(mon); mon = u3t(mon) ) {
-    _unix_get_mount_point(u3k(u3h(mon)));
+    u3m_p("hilled", u3h(mon));
+    u3_umon* mon_u = _unix_get_mount_point(u3k(u3h(mon)));
+    _unix_scan_mount_point(mon_u);
   }
   u3z(hil);
   u3_Host.unx_u.dyr = c3y;
