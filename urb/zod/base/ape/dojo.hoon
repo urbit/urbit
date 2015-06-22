@@ -518,7 +518,7 @@
   ++  he-dope                                           ::  sole user of ++dp
     |=  txt=tape                                        ::
     ^-  (each (unit dojo-command) hair)                 ::  prefix/result
-    =+  vex=(dp-command:dp [1 1] txt)                   ::
+    =+  vex=((full dp-command):dp [1 1] txt)            ::
     ?.  =(+((lent txt)) q.p.vex)                        ::  fully parsed
       [%| p.p.vex (dec q.p.vex)]                        ::  syntax error
     [%& ?~(q.vex ~ `p.u.q.vex)]                         ::  prefix/complete
