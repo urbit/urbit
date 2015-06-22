@@ -2318,6 +2318,7 @@
               [%wake ~]                                 ::  timer activate
               [%want p=sock q=path r=*]                 ::  send message
               [%wegh ~]                                 ::  report memory
+              [%west p=sack q=path r=*]                 ::  network request
               [%wont p=sock q=path r=*]                 ::  e2e send message
           ==                                            ::
 ::
@@ -2346,6 +2347,7 @@
               [%wart p=sock q=@tas r=path s=*]          ::  network request
               [%warp p=sock q=riff]                     ::  file request
               [%wegh ~]                                 ::  report memory
+              [%west p=sack q=path r=*]                 ::  network request
           ==                                            ::
 ::
 ::::
@@ -2454,6 +2456,7 @@
               [%thud ~]                                 ::  inbound cancel
               [%wart p=sack q=@tas r=_`[path *]`*gram]  ::  urbit message
               [%wegh ~]                                 ::  report memory
+              [%west p=sack q=path r=*]                 ::  network request
           ==                                            ::
 ++  gift-eyre                                           ::  out result <-$
           $%  [%mass p=mass]                            ::  memory usage
@@ -2573,8 +2576,7 @@
   $%  [%conf p=dock q=culm]                             ::  configure app
       [%init p=ship]                                    ::  set owner
       [%deal p=sock q=cush]                             ::  full transmission
-      [%rote p=sack q=path r=*]                         ::  remote request
-      [%roth p=sack q=path r=*]                         ::  remote response
+      [%west p=sack q=path r=*]                         ::  network request
       [%wegh ~]                                         ::  report memory
   ==                                                    ::
 ++  gift-gall                                           ::  outgoing result
