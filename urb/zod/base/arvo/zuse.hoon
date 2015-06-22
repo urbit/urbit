@@ -2438,6 +2438,7 @@
 ::::    %eyre
   ::
 ++  gram                                                ::  inter-ship message
+  =+  fuz=,[path *]                                     ::  ames format
   $?  [[%lon ~] p=hole]                                 ::  login request
       [[%aut ~] p=hole]                                 ::  login reply
       [[%hat ~] p=hole q=hart]                          ::  login redirect
@@ -2454,12 +2455,12 @@
               [%they p=@ud q=httr]                      ::  inbound response
               [%this p=? q=clip r=httq]                 ::  inbound request
               [%thud ~]                                 ::  inbound cancel
-              [%wart p=sack q=@tas r=_`[path *]`*gram]  ::  urbit message
               [%wegh ~]                                 ::  report memory
-              [%west p=sack q=path r=*]                 ::  network request
+              [%west p=sack q=fuz:gram]                 ::  network request
           ==                                            ::
 ++  gift-eyre                                           ::  out result <-$
           $%  [%mass p=mass]                            ::  memory usage
+              [%mack p=(unit tang)]                     ::  message ack
               [%sigh p=cage]                            ::  marked http response
               [%thou p=httr]                            ::  raw http response
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
