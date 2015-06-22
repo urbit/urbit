@@ -43,7 +43,7 @@
           ==                                            ::
 ++  note                                                ::  out request $->
           $%  $:  %a                                    ::  to %ames
-          $%  [%want p=sock q=path r=*]                 ::
+          $%  [%wont p=sock q=path r=*]                 ::
           ==  ==                                        ::
               $:  %c                                    ::  to %clay
           $%  [%info p=@p q=@tas r=nori]                ::  internal edit
@@ -62,8 +62,7 @@
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
-          $%  [%waft p=sock q=*]                        ::
-              [%went p=ship q=cape]                     ::
+          $%  [%woot p=ship q=coop]                     ::
           ==  ==                                        ::
               $:  %c                                    ::  by %clay
           $%  [%note p=@tD q=tank]                      ::
@@ -157,7 +156,7 @@
       %+  turn  (flop say)
       |=  [a=duct b=path c=ship d=[p=@ud q=riff]]
       :-  a
-      [%pass b %a %want [who c] [%q %re p.q.d (scot %ud p.d) ~] q.d]
+      [%pass b %a %wont [who c] [%c %question p.q.d (scot %ud p.d) ~] q.d]
     ::
       tag
     ==
@@ -2459,15 +2458,27 @@
       [-.woo (posh q.p.q.hic p.q.q.hic +.woo ruf)]
     [mos ..^$]
   ::
-      %wart
-    ?>  ?=(%re q.q.hic)
-    =+  ryf=((hard riff) s.q.hic)
-    :_  ..^$
-    :~  :-  hen
-        :^  %pass  [(scot %p p.p.q.hic) (scot %p q.p.q.hic) r.q.hic]
-          %c
-        [%warp [p.p.q.hic p.p.q.hic] ryf]
-    ==
+      %west
+    ?:  ?=([%question *] q.q.hic)
+      =+  ryf=((hard riff) r.q.hic)
+      :_  ..^$
+      :~  [hen %give %mack ~]
+          :-  hen
+          :^  %pass  [(scot %p p.p.q.hic) (scot %p q.p.q.hic) t.q.q.hic]
+            %c
+          [%warp [p.p.q.hic p.p.q.hic] ryf]
+      ==
+    ?>  ?=([%answer @ @ ~] q.q.hic)
+    =+  syd=(slav %tas i.t.q.q.hic)
+    =+  inx=(slav %ud i.t.t.q.q.hic)
+    =+  ^=  zat
+        =<  wake
+        %-  take-foreign-update:(do now hen p.q.hic syd ruf)
+        [inx ((hard (unit rand)) r.q.hic)]
+    =^  mos  ruf
+      =+  zot=abet.zat
+      [-.zot (posh q.p.q.hic syd +.zot ruf)]
+    [[[hen %give %mack ~] mos] ..^$(ran.ruf ran.zat)]   ::  merge in new obj
   ::
       %wegh
     :_  ..^$  :_  ~
@@ -2481,8 +2492,6 @@
             blobs/`lat.ran.ruf
         ==
     ==
-  ::
-      %west  !!
   ==
 ::
 ++  doze
@@ -2685,19 +2694,6 @@
     [~ ..^$]
   ::
       %note  [[hen %give +.q.hin]~ ..^$]
-      %waft
-    ?>  ?=([@ @ ~] tea)
-    =+  syd=(slav %tas i.tea)
-    =+  inx=(slav %ud i.t.tea)
-    =+  ^=  zat
-      =<  wake
-      %-  take-foreign-update:(do now hen p.+.q.hin syd ruf)
-      [inx ((hard (unit rand)) q.+.q.hin)]
-    =^  mos  ruf
-      =+  zot=abet.zat
-      [-.zot (posh q.p.+.q.hin syd +.zot ruf)]
-    [mos ..^$(ran.ruf ran.zat)]                         ::  merge in new obj
-  ::
       %wake
     =+  dal=(turn (~(tap by fat.ruf) ~) |=([a=@p b=room] a))
     =|  mos=(list move)
@@ -2715,14 +2711,14 @@
     =+  him=(slav %p i.t.tea)
     :_  ..^$
     :~  :*  hen  %pass  ~  %a
-            %want  [our him]  [%r %re %c t.t.tea]
+            %wont  [our him]  [%c %answer t.t.tea]
             (bind p.+.q.hin rant-to-rand)
         ==
     ==
   ::
-      %went
-    ?:  =(%good q.+.q.hin)  [~ ..^$]
-    ~&  [%clay-lost p.+.q.hin tea]
+      %woot
+    ?~  q.q.hin  [~ ..^$]
+    ~&  [%clay-lost p.q.hin q.q.hin tea]
     [~ ..^$]
   ==
 ::
