@@ -24,12 +24,12 @@
           ==  ==                                        ::
               $:  %g                                    ::  from %gall
           $%  [%unto p=cuft]                            ::
-              [%mack p=(unit tang)]                     ::  message ack
               [%mean p=ares]                            ::  XX old, clean up
               [%nice ~]                                 ::
           ==  ==                                        ::
               $:  @tas                                  ::
           $%  [%crud p=@tas q=(list tank)]              ::  by any
+              [%mack p=(unit tang)]                     ::  message ack
           ==  ==  ==                                    ::
 --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
