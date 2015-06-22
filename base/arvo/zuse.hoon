@@ -2333,6 +2333,7 @@
 ::::                                                    ::
 ++  gift-clay                                           ::  out result <-$
           $%  [%ergo p=@p q=@tas r=@ud s=mick]          ::  version update
+              [%mack p=(unit tang)]                     ::  ack
               [%mass p=mass]                            ::  memory usage
               [%mere p=(each (set path) (pair term tang))]  ::  merge result
               [%note p=@tD q=tank]                      ::  debug message
@@ -2344,7 +2345,6 @@
               [%into p=@p q=@tas r=khan]                ::  external edit
               [%lynx p=@p q=@tas r=(unit ,?)]           ::  sync to unix
               [%merg p=@p q=@tas r=@p s=@tas t=germ]    ::  merge desks
-              [%wart p=sock q=@tas r=path s=*]          ::  network request
               [%warp p=sock q=riff]                     ::  file request
               [%wegh ~]                                 ::  report memory
               [%west p=sack q=path r=*]                 ::  network request
