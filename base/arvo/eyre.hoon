@@ -641,7 +641,8 @@
           (ames-gram q.p.kyz hat/~ p.u.mez our-host)
       ==
     ::
-      %wegh  !!
+      %wegh  !!                                         ::  handled elsewhere
+      %west  !!
     ==
   ::
   ++  axom                                              ::  old response
