@@ -1161,12 +1161,13 @@
 ::
 ++  ofis  ::  XX broken
   =-  |=(a=cord (rash a fel))
-  =-  fel=;~(sfix (boss 64 (plus siw)) (stun 0^2 tis))
+  =<  fel=(cook |=(a=@ `@t`(swap 3 a)) (bass 64 .))
+  =-  (cook welp ;~(plug (plus siw) (stun 0^2 (cold %0 tis))))
   ^=  siw
   ;~  pose
-     dit
-     (cook |=(a=@ (sub a (sub 'A' 10))) (shim 'A' 'Z'))
-     (cook |=(a=@ (sub a (sub 'a' 36))) (shim 'a' 'z'))
+     (cook |=(a=@ (sub a 'A')) (shim 'A' 'Z'))
+     (cook |=(a=@ (sub a 'G')) (shim 'a' 'z'))
+     (cook |=(a=@ (add a 4)) (shim '0' '9'))
      (cold 62 (just '+'))
      (cold 63 (just '/'))
    ==
