@@ -227,7 +227,7 @@
         ==
     %+  mo-pass  
       [%sys %way -.q.caz ~]
-    `note-arvo`[%a %wont [our him] [%q %ge p.caz ~] [num roc]]
+    `note-arvo`[%a %wont [our him] [%g %ge p.caz ~] [num roc]]
   ::
   ++  mo-baal                                           ::  error convert a
     |=  art=(unit ares)
@@ -344,7 +344,7 @@
         (mo-pass [%sys pax] %g %deal [him our] dap %pump ~)
       ~&  [%diff-bad-ack q.+>.sih]                      ::  should not happen
       =.  +>.$  (mo-pass [%sys pax] %g %deal [him our] dap %pull ~)
-      (mo-pass [%sys pax] %a %wont [our him] [%q %gh dap ~] [num %x ~])
+      (mo-pass [%sys pax] %a %wont [our him] [%g %gh dap ~] [num %x ~])
     ::
         %rep                                            ::  reverse request
       ?>  ?=([@ @ @ ~] t.pax)
@@ -378,10 +378,10 @@
       ?-    -.cuf
         %coup  (mo-give %mack p.cuf)
         %diff  %+  mo-pass  [%sys %red t.pax]
-               [%a %wont [our him] [%q %gh dap ~] [num %d p.p.cuf q.q.p.cuf]]
+               [%a %wont [our him] [%g %gh dap ~] [num %d p.p.cuf q.q.p.cuf]]
         %doff  !!
         %quit  %+  mo-pass  [%sys pax]
-               [%a %wont [our him] [%q %gh dap ~] [num %x ~]]
+               [%a %wont [our him] [%g %gh dap ~] [num %x ~]]
         %reap  (mo-give %mack p.cuf)
       ==
     ::
@@ -1141,28 +1141,18 @@
     ::  ~&  [%gall-init p.q.hic]
     [~ ..^$(pol.all (~(put by pol.all) p.q.hic [hen ~ ~ ~]))]
   ::
-      %rote
-    ::  ~&  [%gall-rote p.q.hic]
+      %west
     ?.  (~(has by pol.all) p.p.q.hic)
       ~&  [%gall-not-ours p.q.hic]
       [~ ..^$]
-    ?>  ?=([@ ~] q.q.hic)
-    =+  dap=i.q.q.hic
+    ?>  ?=([?(%ge %gh) @ ~] q.q.hic)
+    =+  dap=i.t.q.q.hic
     =+  our=p.p.q.hic
     =+  him=q.p.q.hic
-    =+  mes=((hard ,[@ud rook]) r.q.hic)
-    =<  mo-abet
-    (mo-gawk:(mo-abed:mo our hen) him dap mes)
-  ::
-      %roth
-    ::  ~&  [%gall-roth p.q.hic]
-    ?.  (~(has by pol.all) p.p.q.hic)
-      ~&  [%gall-not-ours p.q.hic]
-      [~ ..^$]
-    ?>  ?=([@ ~] q.q.hic)
-    =+  dap=i.q.q.hic
-    =+  our=p.p.q.hic
-    =+  him=q.p.q.hic
+    ?:  ?=(%ge i.q.q.hic)
+      =+  mes=((hard ,[@ud rook]) r.q.hic)
+      =<  mo-abet
+      (mo-gawk:(mo-abed:mo our hen) him dap mes)
     =+  mes=((hard ,[@ud roon]) r.q.hic)
     =<  mo-abet
     (mo-gawd:(mo-abed:mo our hen) him dap mes)
