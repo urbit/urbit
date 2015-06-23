@@ -12,6 +12,9 @@
               $:  %a                                    ::  to %ames
           $%  [%kick p=@da]                             ::
           ==  ==                                        ::
+              $:  %g                                    ::  to %gall
+          $%  [%deal p=sock q=cush]                     ::
+          ==  ==                                        ::
               $:  @tas                                  ::  to any
           $%  [%init p=@p]                              ::
               [%want p=sock q=path r=*]                 ::
@@ -1707,15 +1710,6 @@
         :~  [hen [%slip %e %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
         ==
       ::
-          %ta
-        =+  gox=((hard ,[p=@p q=@pG r=gens s=pass]) r.bon)
-        =+  gus=(need (~(us go ton.fox) p.p.bon))
-        =^  wyl  gus  (born:gus now gox)
-        =.  ton.fox  (~(su go ton.fox) gus)
-        :_  fox
-        :~  :-  hen
-            [%pass /ta/beginning %a %want p.bon [%r %ta t.t.q.q.bon] `(unit will)`wyl]
-        ==
           %re                                           ::    %re
         :_  fox
         :~  [hen [%slip %c %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
@@ -1758,7 +1752,7 @@
         %went  [~ +>]
         %mack  ?~  +>.sih  $(sih [%g %nice ~])          ::  XX using old code
                $(sih [%g %mean `[%mack +>+.sih]])
-        %unto  ~|([%ames-unto tea hen +>-.sih] !!)
+        %unto  [~ +>]
         ?(%mean %nice)                                  ::  XX obsolete
       ?:  ?=([%ye ~] tea)
         [~ +>.$]
@@ -1784,6 +1778,18 @@
     ^-  [(list move) _+>]
     ?:  ?=(%crud -.kyz)
       [[[hen [%slip %d %flog kyz]] ~] +>]
+    ?:  ?=(%west -.kyz)
+      ?>  ?=([%ta ~] q.kyz)
+      =+  gox=((hard ,[p=@p q=@pG r=gens s=pass]) r.kyz)
+      =+  gus=(need (~(us go ton.fox) p.p.kyz))
+      =^  wyl  gus  (born:gus now gox)
+      =.  ton.fox  (~(su go ton.fox) gus)
+      :_  +>.$
+      =+  ^=  pax
+          :+  (scot %p p.p.kyz)
+            (scot %p q.p.kyz)
+          q.kyz
+      [hen %pass pax %g %deal p.kyz %hood %poke %will !>(wyl)]~
     ?:  ?=(%wegh -.kyz)
       ~&  %ames-weighing
       [[hen %give %mass wegh]~ +>]
@@ -1822,9 +1828,6 @@
         ::
             %wont
           (~(wise am [now fox]) p.kyz hen q.kyz r.kyz &)
-        ::
-            %west
-          !!
         ==
     =>  %_(. fox q.fuy)
     =|  out=(list move)

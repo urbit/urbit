@@ -102,6 +102,6 @@
 ++  onto-drum               (wrap take-onto):from-drum
 ++  peer-drum               (wrap peer):from-drum
 ++  quit-drum-phat          (wrap quit-phat):from-drum
-++  went-helm               (wrap take-went):from-helm
+++  woot-helm               (wrap take-woot):from-helm
 ++  writ-kiln-sync          (wrap take-writ):from-kiln
 --
