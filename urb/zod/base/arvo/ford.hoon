@@ -1684,7 +1684,7 @@
 ::
 ++  load                                                ::  highly forgiving
   |=  old=axle
-  =.  pol.old  (~(run by pol.old) |=(baby +<(jav ~)))
+  ::=.  pol.old  (~(run by pol.old) |=(baby +<(jav ~)))
   ..^$(+>- old)
   ::=.  old  
   ::    ?.  ?=([%0 *] old)  old                           ::  remove at 1
