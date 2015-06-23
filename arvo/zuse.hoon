@@ -1161,12 +1161,13 @@
 ::
 ++  ofis  ::  XX broken
   =-  |=(a=cord (rash a fel))
-  =-  fel=;~(sfix (boss 64 (plus siw)) (stun 0^2 tis))
+  =<  fel=(cook |=(a=@ `@t`(swap 3 a)) (bass 64 .))
+  =-  (cook welp ;~(plug (plus siw) (stun 0^2 (cold %0 tis))))
   ^=  siw
   ;~  pose
-     dit
-     (cook |=(a=@ (sub a (sub 'A' 10))) (shim 'A' 'Z'))
-     (cook |=(a=@ (sub a (sub 'a' 36))) (shim 'a' 'z'))
+     (cook |=(a=@ (sub a 'A')) (shim 'A' 'Z'))
+     (cook |=(a=@ (sub a 'G')) (shim 'a' 'z'))
+     (cook |=(a=@ (add a 4)) (shim '0' '9'))
      (cold 62 (just '+'))
      (cold 63 (just '/'))
    ==
@@ -2316,6 +2317,7 @@
               [%wake ~]                                 ::  timer activate
               [%want p=sock q=path r=*]                 ::  send message
               [%wegh ~]                                 ::  report memory
+              [%west p=sack q=path r=*]                 ::  network request
               [%wont p=sock q=path r=*]                 ::  e2e send message
           ==                                            ::
 ::
@@ -2331,6 +2333,7 @@
 ++  gift-clay                                           ::  out result <-$
           $%  [%ergo p=@tas q=mode]                     ::  version update
               [%hill p=(list ,@tas)]                    ::  mount points
+              [%mack p=(unit tang)]                     ::  ack
               [%mass p=mass]                            ::  memory usage
               [%mere p=(each (set path) (pair term tang))]  ::  merge result
               [%note p=@tD q=tank]                      ::  debug message
@@ -2345,9 +2348,9 @@
               [%merg p=@p q=@tas r=@p s=@tas t=germ]    ::  merge desks
               [%mont p=@tas q=@p r=@tas s=path]         ::  mount to unix
               [%ogre p=$|(@tas beam)]                   ::  delete mount point
-              [%wart p=sock q=@tas r=path s=*]          ::  network request
               [%warp p=sock q=riff]                     ::  file request
               [%wegh ~]                                 ::  report memory
+              [%west p=sack q=path r=*]                 ::  network request
           ==                                            ::
 ::
 ::::
@@ -2438,6 +2441,7 @@
 ::::    %eyre
   ::
 ++  gram                                                ::  inter-ship message
+  =+  fuz=,[path *]                                     ::  ames format
   $?  [[%lon ~] p=hole]                                 ::  login request
       [[%aut ~] p=hole]                                 ::  login reply
       [[%hat ~] p=hole q=hart]                          ::  login redirect
@@ -2454,11 +2458,12 @@
               [%they p=@ud q=httr]                      ::  inbound response
               [%this p=? q=clip r=httq]                 ::  inbound request
               [%thud ~]                                 ::  inbound cancel
-              [%wart p=sack q=@tas r=_`[path *]`*gram]  ::  urbit message
               [%wegh ~]                                 ::  report memory
+              [%west p=sack q=fuz:gram]                 ::  network request
           ==                                            ::
 ++  gift-eyre                                           ::  out result <-$
           $%  [%mass p=mass]                            ::  memory usage
+              [%mack p=(unit tang)]                     ::  message ack
               [%sigh p=cage]                            ::  marked http response
               [%thou p=httr]                            ::  raw http response
               [%thus p=@ud q=(unit hiss)]               ::  http request/cancel
@@ -2575,8 +2580,7 @@
   $%  [%conf p=dock q=culm]                             ::  configure app
       [%init p=ship]                                    ::  set owner
       [%deal p=sock q=cush]                             ::  full transmission
-      [%rote p=sack q=path r=*]                         ::  remote request
-      [%roth p=sack q=path r=*]                         ::  remote response
+      [%west p=sack q=path r=*]                         ::  network request
       [%wegh ~]                                         ::  report memory
   ==                                                    ::
 ++  gift-gall                                           ::  outgoing result

@@ -4,7 +4,7 @@
   :: 
 /?  314
 /-  *talk, *bit-api
-/+  talk, sole, http, mean
+/+  talk, sole, http
 !:
 ::::  sivtyv-barnel
   ::  be sure to have oauth2-code markk

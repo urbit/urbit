@@ -9,7 +9,7 @@
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
           $%  $:  %a                                    ::  to %ames
-          $%  [%want p=sock q=[path *]]                 ::
+          $%  [%wont p=sock q=[path *]]                 ::
           ==  ==                                        ::
               $:  %d                                    ::  to %dill
           $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::
@@ -31,7 +31,7 @@
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
-          $%  [%went p=ship q=cape]                     ::
+          $%  [%woot p=ship q=coop]                     ::
           ==  ==                                        ::
               $:  %g                                    ::  by %gall
           $%  [%unto p=cuft]                            ::  within agent
@@ -615,11 +615,12 @@
       ::  ford-kill  ::  XX discriminate
       +>.$(ded (~(put in ded) hen))
     ::
-        %wart                                           ::  remote request
-      =+  mez=((soft gram) r.kyz)
+        %west                                           ::  remote request
+      =.  mow  :_(mow [hen %give %mack ~])
+      =+  mez=((soft gram) q.kyz)
       ?~  mez
-        ~&  [%strange-wart p.kyz q.kyz]
-        +>.$
+        ~&  e/[%strange-west p.kyz]
+        ~|(%strange-west !!)
       ?-  -<.u.mez
         %aut  abet:(logon:(ses-ya p.u.mez) q.p.kyz)
         %hat  (foreign-hat:(ses-ya p.u.mez) q.p.kyz q.u.mez)
@@ -641,7 +642,7 @@
           (ames-gram q.p.kyz hat/~ p.u.mez our-host)
       ==
     ::
-      %wegh  !!
+      %wegh  !!                                         ::  handled elsewhere
     ==
   ::
   ++  axom                                              ::  old response
@@ -661,7 +662,7 @@
     ::    =.  +>  ?+(tee +> [%of ^] pop-duct:(ire-ix p.tee))
     ::    (emule |.(~|(gall-dumb/tee !!)))
     ::
-        %went  +>.$
+        %woot  +>.$
         %thou
       ?+    -.tee  !!
         %ay  (ames-gram (slav %p p.tee) got/~ (slav %uv q.tee) |2.sih)
@@ -791,7 +792,7 @@
   ::                  [| [~ 8.445] `/localhost]       :: XX testing
   ::
   ++  ames-gram
-    |=([him=ship gam=gram] (pass-note ~ %a %want [our him] [%e -.gam] +.gam))
+    |=([him=ship gam=gram] (pass-note ~ %a %wont [our him] [%e -.gam] +.gam))
   ::
   ++  back                                              ::  %ford bounce
     |=  [tea=whir mar=mark cay=cage]
