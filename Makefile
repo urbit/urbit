@@ -19,7 +19,7 @@ else ifeq ($(UNAME),FreeBSD)
   OS=bsd
 else ifeq ($(UNAME),OpenBSD)
   OS=bsd
-else 
+else
   $(error unknown unix)
 endif
 
@@ -309,7 +309,7 @@ V_OFILES=\
        v/walk.o
 
 MAIN_FILE =\
-       v/main.o 
+       v/main.o
 
 MEME_FILE =\
        w/test.o
@@ -332,19 +332,19 @@ VERE_DFILES=$(VERE_OFILES:%.o=.d/%.d)
 -include $(VERE_DFILES)
 
 # This is a silly hack necessitated by the fact that libuv uses configure
-#   
-#    * Making 'all' obviously requires outside/libuv, 
+#
+#    * Making 'all' obviously requires outside/libuv,
 #      which requires the libuv Makefile to be created.
 #    * Making distclean on outside/libuv destroys the makefile.
-#    * ...so configuring outside/libuv is parodoxically required 
+#    * ...so configuring outside/libuv is parodoxically required
 #      in order to distclean it!
 #    * But what if developer types 'make distclean all' ?
-#    * first target makes libuv Makefile, then destroys it...and 
+#    * first target makes libuv Makefile, then destroys it...and
 #      second target knows that it was made.
 #    * ...so second target borks.
-#    * Solution: make libuv not only depend on its own Makefile, 
+#    * Solution: make libuv not only depend on its own Makefile,
 #      but on a side effect of creating its own makefile.
-#    
+#
 LIBUV_MAKEFILE=outside/libuv_0.11/Makefile
 LIBUV_MAKEFILE2=outside/libuv_0.11/config.log
 
@@ -375,8 +375,23 @@ meme: $(BIN)/meme
 $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2):
 	cd outside/libuv_0.11 ; sh autogen.sh ; ./configure  --disable-dtrace
 
+# [h]act II: the plot thickens
+#
+#     * Specifying two targets that each configure libuv works
+#       when the rules are executed sequentially,
+#     * but when attempting a parallel build, it is likely Make
+#       will try to configure libuv simultaneously.
+#     * We can specify a dependency between the two targets so
+#       that execution of their rule(s) is serialized.
+#     * Further, libuv does not seem to be friendly towards
+#       parallel builds either. A true fix is out of scope here
+#     * ...so we must instruct Make to only use one job when it
+#       attempts to build libuv.
+#
+$(LIBUV_MAKEFILE2): $(LIBUV_MAKEFILE)
+
 $(LIBUV): $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2)
-	$(MAKE) -C outside/libuv_0.11 all-am
+	$(MAKE) -C outside/libuv_0.11 all-am -j1
 
 $(LIBRE2):
 	$(MAKE) -C outside/re2 obj/libre2.a
@@ -438,9 +453,11 @@ debinstall:
 	cp urb/urbit.pill $(DESTDIR)/usr/share/urb
 	cp -R urb/zod $(DESTDIR)/usr/share/urb
 
-clean: 
+clean:
 	$(RM) $(VERE_OFILES) $(BIN)/urbit urbit.pkg $(VERE_DFILES)
 
+# 'make distclean all -jn' ∀ n>1 still does not work because it is possible
+# Make will attempt to build urbit while it is also cleaning urbit..
 distclean: clean $(LIBUV_MAKEFILE)
 	$(MAKE) -C outside/libuv_0.11 distclean
 	$(MAKE) -C outside/re2 clean
