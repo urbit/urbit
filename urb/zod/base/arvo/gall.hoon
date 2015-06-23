@@ -437,7 +437,7 @@
                 %&  ap-abet:(ap-pout:pap t.t.t.pax %diff +.q.+>.q.hin)
                 %|  =+  why=p.q.+>.q.hin
                     =.  why  (turn why |=(a=tank rose/[~ "! " ~]^[a]~))
-                    ~>  %slog.`%*(. >[%wh %y]< +> [>%mo-cook-fail< (flop why)])
+                    ~>  %slog.`rose/["  " "[" "]"]^[>%mo-cook-fail< (flop why)]
                     ~&  [him=q.q.pry our=our pax=pax]
                     ::
                     ::  here we should crash because the right thing
@@ -923,13 +923,15 @@
       =+  cug=(ap-find /lame)
       ?~  cug
         =.  why  [>%ap-lame dap wut< (turn why |=(a=tank rose/[~ "! " ~]^[a]~))]
-        ~>  %slog.`%*(. >[%wh %y]< +> (flop why)) 
+        ~>  %slog.`rose/["  " "[" "]"]^(flop why)
         +>.$
       =^  cam  +>.$
         %+  ap-call  q.u.cug
         !>([wut why])
       ?^  cam
-        ~&([%ap-lame-lame u.cam] +>.$)
+        =.  why  [>%ap-lame-lame< (turn u.cam |=(a=tank rose/[~ "! " ~]^[a]~))]
+        ~>  %slog.`rose/["  " "[" "]"]^(welp (flop why) leaf/"." (flop u.cam))
+        +>.$
       +>.$
     ::
     ++  ap-pour                                         ::  generic take
