@@ -156,6 +156,14 @@
   =+  gib=(wox p.n.r.arc)
   ?~(gib rac [[u.gib p.n.r.arc] rac])
 ::
+++  tack                                                ::  fold path to term
+  |=  a=[i=term t=(list term)]  ^-  term
+  (rap 3 |-([i.a ?~(t.a ~ ['-' $(a t.a)])]))
+::
+++  tear                                                ::  split term
+  =-  |=(a=term (rush a (most hep sym)))
+  sym=(cook crip ;~(plug low (star ;~(pose low nud))))
+::
 ++  norm                                                ::  normalize beam rev
   |=  [ska=sled bem=beam]
   %_  bem
@@ -368,9 +376,9 @@
       ==
     ::
     ++  cool                                            ::  error caption
-      |*  [cyt=trap hoc=(bolt)]
+      |*  [cyt=$|(term trap) hoc=(bolt)]
       ?.  ?=(%2 -.q.hoc)  hoc
-      [p.hoc [%2 p.q.hoc *cyt q.q.hoc]]
+      [p.hoc [%2 p.q.hoc ?^(cyt *cyt [>`@tas`cyt<]~) q.q.hoc]]
     ::
     ++  cope                                            ::  bolt along
       |*  [hoc=(bolt) fun=(burg)]
@@ -384,6 +392,21 @@
               %1  q.nuf
               %2  [%2 p=(grom `_p.q.nuf`p.q.hoc p.q.nuf) q=q.q.nuf]
               %0  [%0 p=(grom `_p.q.nuf`p.q.hoc p.q.nuf) q=q.q.nuf]
+      ==    ==
+    ::
+    ++  coop                                            ::  bolt alter
+      |*  [hoc=(bolt) fun=(burg)]
+      ?-  -.q.hoc
+        %1  hoc
+        %0  hoc
+        %2  =+  nuf=(fun(+<- p.hoc))
+            :-  p=p.nuf
+            ^=  q
+            ?-  -.q.nuf
+              %1  q.nuf
+              %0  [%0 p=(grom `_p.q.nuf`p.q.hoc p.q.nuf) q=q.q.nuf]
+              %2  =.  q.q.nuf  (welp q.q.nuf q.q.hoc)
+                  [%2 p=(grom `_p.q.nuf`p.q.hoc p.q.nuf) q=q.q.nuf]
       ==    ==
     ::
     ++  coup                                            ::  toon to bolt
@@ -951,23 +974,35 @@
       ^-  (burg beak (jug mark mark))
       |=  [cof=cafe bek=beak]
       =.  ^bek  bek
-      %+  cope  (lend cof [bek /mar])
-      |=  [cof=cafe arc=arch]
-      :: =-  =+((cope - |=([cafe lil=(jug mark mark)] ~&(lil=lil (flue cof)))) +<)      
-      =+  all=(~(tap by r.arc)) 
-      |-  ^-  (bolt (jug mark mark))
-      ?~  all  (flue cof)
-      %+  cope  $(cof cof, all t.all)
-      |=  [cof=cafe lil=(jug mark mark)]
-      =*  for  p.i.all
-      =+  raf=(fang cof for)
-      ?:  ?=(%2 -.q.raf)
-        =.  q.q.raf  :_(q.q.raf leaf/"! {<`mark`for>} build failed, ignoring.")
-        ((slog 0 (flop q.q.raf)) (fine cof lil))
-      %+  cope  `(bolt vase)`raf
-      |=  [cof=cafe vax=vase]
+      %+  cope
+        =|  sup=path
+        |-  ^-  (bolt (list ,[mark vase]))
+        %+  cope  (lend cof [bek (welp sup /mar)])
+        |=  [cof=cafe arc=arch]
+        =+  all=(skim (turn (~(tap by r.arc)) head) (sane %tas))
+        |-  ^-  (bolt (list ,[mark vase]))
+        ?~  all  (fine cof ~)
+        %+  cope  $(all t.all)
+        |=  [cof=cafe dep=(list ,[mark vase])]
+        %+  cope  ^^^$(cof cof, sup [i.all sup])
+        |=  [cof=cafe wid=(list ,[mark vase])]  ^-  (bolt (list ,[mark vase]))
+        =+  [res=(weld wid dep) pax=(flop sup)]
+        ?~  pax  (fine cof res)
+        ?.  (~(has by r.arc) %hoon)  (fine cof res)
+        =+  :-  sil=[%core (norm ska bek (welp sup /mar))] 
+            for=(rap 3 |-([i.pax ?~(t.pax ~ ['-' $(pax t.pax)])]))
+        =+  raf=(;~(cope make furl feel) cof sil)
+        ?:  ?=(%2 -.q.raf)
+          =-  ((slog 0 (flop `tang`-)) (fine cof res))
+          ?^  t.pax  ~              ::  error on top-level marks
+          :_(q.q.raf leaf/"! {<`mark`for>} build failed, ignoring.")
+        (cope `(bolt vase)`raf (flux |=(vax=vase [[for vax] res])))
+      |=  [cof=cafe all=(list ,[mark vase])]  ^-  (bolt (jug mark mark))
       %+  fine  cof
-      %-  ~(gas ju lil) 
+      |-  ^-  (jug mark mark)
+      ?~  all  ~
+      %-  ~(gas ju $(all t.all))
+      =+  [for vax]=i.all
       ~|  weg=(jam 3 p.vax)
       %+  weld
         ^-  (list ,[mark mark])
@@ -1171,8 +1206,19 @@
       ::
           %core
         %+  cool  |.(leaf/"ford: core {<(tope p.kas)>}")
-        %+  cope  (cope (fade cof %hoon p.kas) abut:(meow p.kas ~))
-        (flux |=(cor=vase [%& %core cor]))
+        %-  cope  :_  (flux |=(cor=vase [%& %core cor])) 
+        =+  bem=p.kas
+        ?~  s.bem  (cope (fade cof %hoon bem) abut:(meow bem ~))
+        =+  opt=`(list term)`(fall (tear i.s.bem) ~)
+        ?~  opt  (cope (fade cof %hoon bem) abut:(meow bem ~))
+        |-  ^-  (bolt vase)
+        =.  i.s.bem  (tack opt)
+        %+  coop  (cope (fade cof %hoon bem) abut:(meow bem ~))
+        |=  [cof=cafe ~]  ^-  (bolt vase)
+        ?~  t.opt  (flaw cof ~)
+        %+  coop  ^$(cof cof, opt t.opt, t.s.bem :_(t.s.bem i.opt))
+        |=  [cof=cafe ~]  ^-  (bolt vase)
+        ^$(cof cof, opt :_(t.t.opt (tack i.opt i.t.opt ~)))
       ::
           %diff
         %+  cool  |.(leaf/"ford: diff {<`@p`(mug p.kas)>} {<`@p`(mug q.kas)>}")
@@ -1454,6 +1500,7 @@
             %see
           =.  r.p.hon  ?:(?=([%ud 0] r.p.hon) r.how r.p.hon)
           $(hon q.hon, how p.hon)
+        ::
             %saw  
           %+  cope  $(hon q.hon)
           |=  [cof=cafe sam=vase]
@@ -1684,7 +1731,7 @@
 ::
 ++  load                                                ::  highly forgiving
   |=  old=axle
-  =.  pol.old  (~(run by pol.old) |=(baby +<(jav ~)))
+  ::=.  pol.old  (~(run by pol.old) |=(baby +<(jav ~)))
   ..^$(+>- old)
   ::=.  old  
   ::    ?.  ?=([%0 *] old)  old                           ::  remove at 1

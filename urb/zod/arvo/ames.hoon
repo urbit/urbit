@@ -12,14 +12,11 @@
               $:  %a                                    ::  to %ames
           $%  [%kick p=@da]                             ::
           ==  ==                                        ::
-              $:  %g                                    ::  to %gall
-          $%  [%rote p=sack q=path r=*]                 ::
-              [%roth p=sack q=path r=*]                 ::
-          ==  ==                                        ::
               $:  @tas                                  ::  to any
           $%  [%init p=@p]                              ::
               [%want p=sock q=path r=*]                 ::
               [%wart p=sock q=@tas r=path s=*]          ::
+              [%west p=sack q=path r=*]                 ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  from %ames
@@ -27,12 +24,12 @@
           ==  ==                                        ::
               $:  %g                                    ::  from %gall
           $%  [%unto p=cuft]                            ::
-              [%mack p=(unit tang)]                     ::  message ack
               [%mean p=ares]                            ::  XX old, clean up
               [%nice ~]                                 ::
           ==  ==                                        ::
               $:  @tas                                  ::
           $%  [%crud p=@tas q=(list tank)]              ::  by any
+              [%mack p=(unit tang)]                     ::  message ack
           ==  ==  ==                                    ::
 --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1672,7 +1669,7 @@
               :+  (scot %p p.p.bon)
                 (scot %p q.p.bon)
               q.q.bon
-          [hen %pass pax %g %rote p.bon /hood 0 %m %will wil]~
+          [hen %pass pax %g %west p.bon /ge/hood 0 %m %will wil]~
         ?>  ?=([@ @ *] t.q.q.bon)
         :_  fox
         =+  [cak=i.t.q.q.bon ven=i.t.t.q.q.bon]
@@ -1723,51 +1720,14 @@
         :_  fox
         :~  [hen [%slip %c %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
         ==
-      ::
-          %ye                                           ::    %ye
-        ::  ~&    [%ye bon]
-        ?>  =(p.p.bon (sein q.p.bon))
-        =+  ^=  paz  ^-  (list ,@p)
-            %+  skim  pals:(~(um am [now fox]) p.p.bon)
-            |=(a=@p =(p.p.bon (sein a)))
-        :_  fox
-        %+  turn  paz
-        |=  him=ship
-        :-  hen
-        [%pass /ye %g %rote `sack`p.bon /ye 0 %m %helm-ye ((hard ,@t) r.bon)]
       ==
     ::
         %mulk
       ::  ~&  [%mulk p.bon q.bon]
       ?>  ?=([@ @ *] q.q.bon)
-      ?>  ?=(%q i.q.q.bon)
-      ?+  i.t.q.q.bon
-        ~&  %mulk-bad
-        :_  fox
-        :~  :-  (claw p.p.bon)
-            [%sick %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
-        ==
-      ::
-          %ge                                         ::  %gall request
-        =*  imp  t.t.q.q.bon
-        ?>  (levy imp (sane %ta))
-        =+  ^=  pax
-            :+  (scot %p p.p.bon)
-              (scot %p q.p.bon)
-            q.q.bon
-        ::  ~&  [%ames-gall-request p.bon imp pax]
-        :_  fox  [hen %pass pax %g %rote p.bon imp r.bon]~
-      ::
-          %gh                                         ::  %gall response
-        =*  imp  t.t.q.q.bon
-        ?>  (levy imp (sane %ta))
-        =+  ^=  pax
-            :+  (scot %p p.p.bon)
-              (scot %p q.p.bon)
-            q.q.bon
-        ::  ~&  [%ames-gall-response p.bon imp pax]
-        :_  fox  [hen %pass pax %g %roth p.bon imp r.bon]~
-      ==
+      ?>  ?=(?(%a %c %e %g) i.q.q.bon)
+      =+  pax=[(scot %p p.p.bon) (scot %p q.p.bon) q.q.bon]
+      :_  fox  [hen %pass pax i.q.q.bon %west p.bon t.q.q.bon r.bon]~
     ::
         %ouzo
       ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))] 
@@ -1862,6 +1822,9 @@
         ::
             %wont
           (~(wise am [now fox]) p.kyz hen q.kyz r.kyz &)
+        ::
+            %west
+          !!
         ==
     =>  %_(. fox q.fuy)
     =|  out=(list move)
