@@ -14,20 +14,20 @@
     ==
 ^-  (sole-result (cask begs))
 %+  sole-lo
-  [%& %hood-begin "your ship: ~"]
+  [%& %helm-begin "your ship: ~"]
 %+  sole-go  fed:ag
 |=  his=@p
 %+  sole-lo
-  [%& %hood-ticket "your ticket: ~"]
+  [%& %helm-ticket "your ticket: ~"]
 %+  sole-go  fed:ag
 |=  tic=@p
 %+  sole-lo  
-  [%& %hood-entropy "some entropy: "]
+  [%& %helm-entropy "some entropy: "]
 %+  sole-go  (boss 256 (more gon qit))
 |=  yen=@t
 =+  ney=(shax yen)
 %+  sole-yo  `tank`[%leaf "entropy check: {(scow %p `@p`(mug ney))}"]
-%+  sole-so  %hood-begin
+%+  sole-so  %helm-begin
 :*  his
     tic
     ney

@@ -8,4 +8,4 @@
 |=  $:  [now=@da eny=@uvI bec=beak]
         [arg=~ ~]
     ==
-[%hood-mass ~]
+[%helm-mass ~]

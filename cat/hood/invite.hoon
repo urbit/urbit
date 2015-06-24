@@ -8,4 +8,4 @@
 |=  $:  [now=@da eny=@uvI bec=beak]
         [[who=@p myl=@t ~] ~]
     ==
-[%hood-invite who myl]
+[%helm-invite who myl]
