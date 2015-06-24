@@ -20,7 +20,7 @@
 #include <term.h>
 
 #include "all.h"
-#include "v/vere.h"
+#include "vere/vere.h"
 
 /* _ames_alloc(): libuv buffer allocator.
 */

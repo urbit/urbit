@@ -21,7 +21,7 @@
 #include <term.h>
 
 #include "all.h"
-#include "v/vere.h"
+#include "vere/vere.h"
 
 #if 0
 static jmp_buf Signal_buf;

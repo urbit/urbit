@@ -10,7 +10,7 @@
 #include <uv.h>
 
 #include "all.h"
-#include "v/vere.h"
+#include "vere/vere.h"
 
 #if defined(U3_OS_linux)
 #include <stdio_ext.h>

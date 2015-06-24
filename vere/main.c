@@ -21,7 +21,7 @@
 #define U3_GLOBAL
 #define C3_GLOBAL
 #include "all.h"
-#include "v/vere.h"
+#include "vere/vere.h"
 
 /* _main_readw(): parse a word from a string.
 */

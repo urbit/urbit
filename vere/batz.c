@@ -19,7 +19,7 @@
 #include <errno.h>
 
 #include "all.h"
-#include "v/vere.h"
+#include "vere/vere.h"
 
 /* u3_batz_io_init(): initialize batz timer.
 */

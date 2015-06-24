@@ -8,7 +8,7 @@
 #include <uv.h>
 
 #include "all.h"
-#include "v/vere.h"
+#include "vere/vere.h"
 
 
 /* u3_rent: Log entry wire format.

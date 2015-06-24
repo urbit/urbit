@@ -24,7 +24,7 @@
 
 #include "../outside/jhttp/http_parser.h"   // Joyent HTTP
 #include "all.h"
-#include "v/vere.h"
+#include "vere/vere.h"
 
 #ifdef U3_OS_osx
 #  pragma GCC diagnostic ignored "-Wdeprecated-declarations"

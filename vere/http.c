@@ -20,7 +20,7 @@
 
 #include "../outside/jhttp/http_parser.h"   // Joyent HTTP
 #include "all.h"
-#include "v/vere.h"
+#include "vere/vere.h"
 
 static void _http_request(u3_hreq* req_u);
 static void _http_request_dead(u3_hreq* req_u);

@@ -20,7 +20,7 @@
 #include <anachronism/common.h>
 #include <anachronism/nvt.h>
 #include "all.h"
-#include "v/vere.h"
+#include "vere/vere.h"
 
 static        void _term_read_tn_cb(uv_stream_t* tcp_u,
                                     ssize_t      siz_i,

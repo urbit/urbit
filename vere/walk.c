@@ -19,7 +19,7 @@
 #include <errno.h>
 
 #include "all.h"
-#include "v/vere.h"
+#include "vere/vere.h"
 
   /*  |%
   **  ++  arch                                        ::  fs node

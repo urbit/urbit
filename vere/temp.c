@@ -19,7 +19,7 @@
 #include <errno.h>
 
 #include "all.h"
-#include "v/vere.h"
+#include "vere/vere.h"
 
 /* u3_temp(): initialize time timer.
 */
