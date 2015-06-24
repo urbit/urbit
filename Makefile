@@ -411,7 +411,7 @@ $(LIBSCRYPT):
 $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBRE2)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(V_OFILES): i/v/vere.h
+$(V_OFILES): include/vere/vere.h
 
 ifdef NO_SILENT_RULES
 $(BIN)/urbit: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT)
