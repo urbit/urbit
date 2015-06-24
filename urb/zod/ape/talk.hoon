@@ -782,7 +782,7 @@
       %_(+> coz [cod coz])
     ::
     ++  sh-twig-head  ^-  vase                          ::  eval data
-      :(slop !>(`our=@p`our.hid) !>(`tym=@da`now.hid) !>(`eny=@uvI`eny.hid))
+      :(slop !>(`our=@p`our.hid) !>(`now=@da`now.hid) !>(`eny=@uvI`eny.hid))
     ::
     ++  sh-work                                         ::  do work
       |=  job=work

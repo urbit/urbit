@@ -2321,6 +2321,19 @@
               [%wont p=sock q=path r=*]                 ::  e2e send message
           ==                                            ::
 ::
+::::    %behn
+  ::
+++  gift-behn                                           ::  out result <-$
+          $%  [%mass p=mass]                            ::  memory usage
+              [%wake ~]                                 ::  wakey-wakey
+          ==                                            ::
+++  kiss-behn                                           ::  in request ->$
+          $%  [%rest p=@da]                             ::  cancel alarm
+              [%wait p=@da]                             ::  set alarm
+              [%wake ~]                                 ::  timer activate
+              [%wegh ~]                                 ::  report memory
+          ==                                            ::
+::
 ::::    %clay
   ::
 ++  khan                                                ::
@@ -2590,19 +2603,6 @@
       [%mack p=(unit tang)]                             ::  message ack
   ==                                                    ::
 ::
-::::    %time
-  ::
-++  gift-time                                           ::  out result <-$
-          $%  [%mass p=mass]                            ::  memory usage
-              [%wake ~]                                 ::  wakey-wakey
-          ==                                            ::
-++  kiss-time                                           ::  in request ->$
-          $%  [%rest p=@da]                             ::  cancel alarm
-              [%wait p=@da]                             ::  set alarm
-              [%wake ~]                                 ::  timer activate
-              [%wegh ~]                                 ::  report memory
-          ==                                            ::
-::
 ::::    %arvo
   ::
 ++  gift-arvo                                           ::  out result <-$
@@ -2612,7 +2612,7 @@
       gift-eyre
       gift-ford
       gift-gall
-      gift-time
+      gift-behn
   ==
 ++  kiss-arvo                                           ::  in request ->$
   $?  kiss-ames
@@ -2621,25 +2621,25 @@
       kiss-eyre
       kiss-ford
       kiss-gall
-      kiss-time
+      kiss-behn
   ==
 ++  note-arvo                                           ::  out request $->
   $?  [@tas %meta vase]
   $%  [%a kiss-ames]
+      [%b kiss-behn]
       [%c kiss-clay]
       [%d kiss-dill]
       [%e kiss-eyre]
       [%f kiss-ford]
       [%g kiss-gall]
-      [%t kiss-time]
   ==  ==
 ++  sign-arvo                                           ::  in result $<-
   $%  [%a gift-ames]
+      [%b gift-behn]
       [%c gift-clay]
       [%d gift-dill]
       [%e gift-eyre]
       [%f gift-ford]
       [%g gift-gall]
-      [%t gift-time]
   ==
 --

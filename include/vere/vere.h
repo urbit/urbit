@@ -369,13 +369,13 @@
 #endif
       } u3_unix;
 
-    /* u3_temp: just a timer for ever
+    /* u3_behn: just a timer for ever
     */
-      typedef struct _u3_temp {
-        uv_timer_t tim_u;                   //  temp timer
+      typedef struct _u3_behn {
+        uv_timer_t tim_u;                   //  behn timer
         c3_w       run_w;                   //  run of consecutive alarms
         c3_o       alm;                     //  alarm
-      } u3_temp;
+      } u3_behn;
 
     /* u2_utfo: unix terminfo strings.
     */
@@ -558,7 +558,7 @@
         u3_save    sav_u;                   //  autosave
         u3_opts    ops_u;                   //  commandline options
         u3_unix    unx_u;                   //  sync and clay
-        u3_temp    teh_u;                   //  temp timer
+        u3_behn    teh_u;                   //  behn timer
         c3_o       liv;                     //  if u3_no, shut down
         c3_i       xit_i;                   //  exit code for shutdown
         void*      ssl_u;                   //  struct SSL_CTX*
@@ -976,22 +976,22 @@
         u3_unix_io_poll(void);
 
 
-    /**  Temp, just a timer.
+    /**  behn, just a timer.
     **/
-      /* u2_temp_io_init(): initialize temp timer.
+      /* u2_behn_io_init(): initialize behn timer.
       */
         void
-        u2_temp_io_init(void);
+        u2_behn_io_init(void);
 
-      /* u2_temp_io_exit(): terminate timer.
+      /* u2_behn_io_exit(): terminate timer.
       */
         void
-        u2_temp_io_exit(void);
+        u2_behn_io_exit(void);
 
-      /* u2_temp_io_poll(): update temp IO state.
+      /* u2_behn_io_poll(): update behn IO state.
       */
         void
-        u2_temp_io_poll(void);
+        u2_behn_io_poll(void);
 
 
     /**  HTTP server.
@@ -1125,20 +1125,20 @@
 
     /**  New timer system.
     **/
-      /* u3_temp_io_init(): initialize time timer.
+      /* u3_behn_io_init(): initialize time timer.
       */
         void
-        u3_temp_io_init(void);
+        u3_behn_io_init(void);
 
-      /* u3_temp_io_exit(): terminate timer.
+      /* u3_behn_io_exit(): terminate timer.
       */
         void
-        u3_temp_io_exit(void);
+        u3_behn_io_exit(void);
 
-      /* u3_temp_io_poll(): update temp IO state.
+      /* u3_behn_io_poll(): update behn IO state.
       */
         void
-        u3_temp_io_poll(void);
+        u3_behn_io_poll(void);
 
 
     /**  HTTP client.

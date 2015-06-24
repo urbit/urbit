@@ -11,6 +11,10 @@
           $%  $:  %a                                    ::  to %ames
           $%  [%wont p=sock q=[path *]]                 ::
           ==  ==                                        ::
+              $:  %b                                    ::  to  %behn
+          $%  [%wait p=@da]                             ::
+              [%rest p=@da]                             ::
+          ==  ==                                        ::
               $:  %d                                    ::  to %dill
           $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::
           ==  ==                                        ::
@@ -24,14 +28,13 @@
           ==  ==                                        ::
               $:  %g                                    ::  to %gall
           $%  [%deal p=sock q=cush]                     ::  full transmission
-          ==  ==                                        ::
-              $:  %t                                    ::  to  %temp
-          $%  [%wait p=@da]                             ::
-              [%rest p=@da]                             ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
           $%  [%woot p=ship q=coop]                     ::
+          ==  ==                                        ::
+              $:  %b                                    ::  by %behn
+          $%  [%wake ~]                                 ::  timer activate
           ==  ==                                        ::
               $:  %g                                    ::  by %gall
           $%  [%unto p=cuft]                            ::  within agent
@@ -42,9 +45,6 @@
               $:  %f                                    ::  by %ford
           $%  [%made p=@uvH q=gage]                     ::
               [%news ~]                                 ::
-          ==  ==                                        ::
-              $:  %t                                    ::  by %time
-          $%  [%wake ~]                                 ::  timer activate
           ==  ==                                        ::
               $:  @tas                                  ::  by any
           $%  [%crud p=@tas q=(list tank)]              ::
@@ -1399,7 +1399,7 @@
       =<  abet
       ?~  ude  done
       =.  hen  p.u.ude
-      =.  ..ix  (pass-note of//[ire] [%t %rest era])
+      =.  ..ix  (pass-note of//[ire] [%b %rest era])
       (give-even(ude ~) q.u.ude num ven)
     ::
     ++  give-even
@@ -1428,7 +1428,7 @@
       ?:  =(a p.eve)
         ?^  ude  ~&(e/ix/wait/replaced=p.u.ude abet(u.ude [hen &]))
         =.  era  (add ~s30 now)
-        (pass-note:abet(ude [~ hen &]) of//[ire] [%t %wait era])
+        (pass-note:abet(ude [~ hen &]) of//[ire] [%b %wait era])
       ?:  (gth a p.eve)  ~|(seq-high/cur=p.eve !!)
       =+  ven=~|(seq-low/cur=p.eve (~(got by q.eve) a))
       abet:(give-even & a ven)

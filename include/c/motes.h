@@ -1019,7 +1019,6 @@
 #   define c3__teal   c3_s4('t','e','a','l')
 #   define c3__teck   c3_s4('t','e','c','k')
 #   define c3__tell   c3_s4('t','e','l','l')
-#   define c3__temp   c3_s4('t','e','m','p')
 #   define c3__terg   c3_s4('t','e','r','g')
 #   define c3__term   c3_s4('t','e','r','m')
 #   define c3__test   c3_s4('t','e','s','t')
