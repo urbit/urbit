@@ -1659,6 +1659,7 @@
     ?+    -.sep  ~&(tr-lost/sep "")
         %fat
       =+  rem=$(sep q.sep)
+      ?:  (gth (lent rem) 60)  (trim 62 rem)
       =-  "{rem}  {(trim (sub 60 (lent rem)) -)}"
       ?+  -.p.sep  "..."
         %tank  ~(ram re %rose [" " `~] +.p.sep)
@@ -1686,7 +1687,7 @@
   ::  ~&   [%talk-peer src ost pax]
   ?:  ?=([%sole *] pax)
     ?>  =(our.hid src.hid)
-    ?<  (~(has by shells) ost.hid)
+    ~?  (~(has by shells) ost.hid)  [%talk-peer-replaced ost.hid pax]
     ra-abet:(~(ra-console ra ost.hid ~) src.hid t.pax)
   ::  ~&  [%talk-peer-data ost.hid src.hid pax]
   ra-abet:(~(ra-subscribe ra ost.hid ~) src.hid pax)
