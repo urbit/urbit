@@ -8,5 +8,5 @@
 |=  $:  [now=@da eny=@uvI bec=beak]
         [[mon=$|(term [span path]) ~] ~]
     ==
-:-  %hood-unmount
+:-  %kiln-unmount
 mon

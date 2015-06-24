@@ -9,5 +9,5 @@
 |=  $:  [now=@da eny=@ bec=beak]
         [~ ~]
     ==
-~&  %hood-verb
+~&  %helm-verb
 [%helm-verb ~]

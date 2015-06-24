@@ -8,7 +8,7 @@
 |=  $:  [now=@da eny=@uvI bec=beak]
         [arg=[@ $|(~ [@ ~])] ~]
     ==
-:-  %hood-start
+:-  %drum-start
 ?>  ((sane %tas) -.arg)
 ?@  +.arg  [%home -.arg]
 ?>  ((sane %tas) +<.arg)
