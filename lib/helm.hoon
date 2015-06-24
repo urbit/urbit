@@ -131,12 +131,12 @@
       ^-  (list ,[p=@tas q=@tas])
       :~  [%$ %zuse]
           [%a %ames]
+          [%b %behn]
           [%c %clay]
           [%d %dill]
           [%e %eyre]
           [%f %ford]
           [%g %gall]
-          [%t %time]
       ==
     |=  [p=@tas q=@tas]
     =+  way=`path`(welp top /[q])

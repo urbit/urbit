@@ -1,4 +1,4 @@
-::  ::  %time, just a timer
+::  ::  %behn, just a timer
 !?  164
 !:::
 |=  pit=vase
@@ -12,7 +12,7 @@
           ==                                            ::
 ++  broq  |*  [a=_,* b=_,*]                             ::  brodal skew qeu
           (list (sqeu a b))                             ::
-++  gift  gift-time                                     ::  out result <-$
+++  gift  gift-behn                                     ::  out result <-$
 ++  kiss                                                ::  in request ->$
           $%  [%rest p=@da]                             ::  cancel alarm
               [%wait p=@da]                             ::  set alarm
@@ -161,10 +161,10 @@
           q.hic
         ^-  kiss
         ?:  ?=(%soft -.q.hic)
-          ::  ~&  [%time-call-soft (,@tas `*`-.p.q.hic)]
+          ::  ~&  [%behn-call-soft (,@tas `*`-.p.q.hic)]
           ((hard kiss) p.q.hic)
         ?:  (~(nest ut -:!>(*kiss)) | p.hic)  q.hic
-        ~&  [%time-call-flub (,@tas `*`-.q.hic)]
+        ~&  [%behn-call-flub (,@tas `*`-.q.hic)]
         ((hard kiss) q.hic)
       ==
   =^  mof  tym
@@ -193,7 +193,7 @@
         %wegh
       :_  tym  :_  ~
       :^  hen  %give  %mass
-      :-  %time
+      :-  %behn
       :-  %|
       :~  tym/`tym
       ==

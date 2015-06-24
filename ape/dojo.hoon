@@ -454,7 +454,7 @@
     ::
     ++  dy-twig-head                                    ::  dynamic state
       ^-  vase
-      :(slop !>(`our=@p`our.hid) !>(`tym=@da`now.hid) !>(`eny=@uvI`eny.hid))
+      :(slop !>(`our=@p`our.hid) !>(`now=@da`now.hid) !>(`eny=@uvI`eny.hid))
     ::
     ++  dy-made-dial                                    ::  dialog product
       |=  cag=cage

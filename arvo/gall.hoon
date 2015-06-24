@@ -1115,7 +1115,7 @@
         %mont  `%c
         %ogre  `%c
         %them  `%e
-        %wait  `%t
+        %wait  `%b
         %want  `%a
         %warp  `%c
       ==

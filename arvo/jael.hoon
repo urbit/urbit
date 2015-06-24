@@ -42,7 +42,7 @@
           ==                                            ::
 ++  move  ,[p=duct q=(mold note gift)]                  ::  typed move
 ++  note                                                ::  out request $->
-          $%  $:  %t                                    ::  to %time
+          $%  $:  %b                                    ::  to %behn
           $%  [%wait p=@da]                             ::
               [%rest p=@da]                             ::
           ==  ==  ==                                    ::
