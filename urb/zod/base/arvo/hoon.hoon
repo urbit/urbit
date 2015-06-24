@@ -1871,12 +1871,13 @@
   |=  a=(tree)
   ?~  a
     &
-  ?&  ?~(l.a & ?&((vor n.a n.l.a) (hor n.l.a n.a)))
-      ?~(r.a & ?&((vor n.a n.r.a) (hor n.a n.r.a)))
+  ?&  ?~(l.a & ?&((vor n.a n.l.a) (hor n.l.a n.a) $(a l.a)))
+      ?~(r.a & ?&((vor n.a n.r.a) (hor n.a n.r.a) $(a r.a)))
   ==
 ::
 ++  in                                                  ::  set engine
   ~/  %in
+  !:
   |/  a=(set)
   +-  all                                               ::  logical AND
     ~/  %all
@@ -1977,6 +1978,22 @@
       [n.a l.a c]
     [n.c [n.a l.a l.c] r.c]
   ::
+  +-  pux                                               ::  puts b in a as root
+    ~/  %pux                                            ::  nb: loses invariant
+    |*  b=*
+    |-  ^+  a
+    ?~  a
+      [b ~ ~]
+    ?:  =(b n.a)
+      a
+    ?:  (hor b n.a)
+      =+  c=$(a l.a)
+      ?>  ?=(^ c)
+      [n.c l.c [n.a r.c r.a]]
+    =+  c=$(a r.a)
+    ?>  ?=(^ c)
+    [n.c [n.a l.a l.c] r.c]
+  ::
   +-  rep                                               ::  replace by product
     |*  b=_|=([* *] +<+)
     |-
@@ -2023,8 +2040,8 @@
   |=  a=(tree ,[p=* q=*])
   ?~  a
     &
-  ?&  ?~(l.a & ?&((vor p.n.a p.n.l.a) (gor p.n.l.a p.n.a)))
-      ?~(r.a & ?&((vor p.n.a p.n.r.a) (gor p.n.a p.n.r.a)))
+  ?&  ?~(l.a & ?&((vor p.n.a p.n.l.a) (gor p.n.l.a p.n.a) $(a l.a)))
+      ?~(r.a & ?&((vor p.n.a p.n.r.a) (gor p.n.a p.n.r.a) $(a l.a)))
   ==
 ::
 ++  ja                                                  ::  jar engine
@@ -2181,6 +2198,28 @@
   ::
   +-  put                                               ::  adds key-value pair
     ~/  %put
+    |*  [b=* c=*]
+    |-  ^+  a
+    ?~  a
+      [[b c] ~ ~]
+    ?:  =(b p.n.a)
+      ?:  =(c q.n.a)
+        a
+      [[b c] l.a r.a]
+    ?:  (gor b p.n.a)
+      =+  d=$(a l.a)
+      ?>  ?=(^ d)
+      ?:  (vor p.n.a p.n.d)
+        [n.a d r.a]
+      [n.d l.d [n.a r.d r.a]]
+    =+  d=$(a r.a)
+    ?>  ?=(^ d)
+    ?:  (vor p.n.a p.n.d)
+      [n.a l.a d]
+    [n.d [n.a l.a l.d] r.d]
+  ::
+  +-  pux                                               ::  adds k-v at root
+    ~/  %pux                                            ::  nb: loses invariant
     |*  [b=* c=*]
     |-  ^+  a
     ?~  a
