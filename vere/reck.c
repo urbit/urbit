@@ -18,7 +18,7 @@
 #include <term.h>
 
 #include "all.h"
-#include "v/vere.h"
+#include "vere/vere.h"
 
 /* _reck_mole(): parse simple atomic mole.
 */

@@ -22,7 +22,7 @@
 #include <libgen.h>
 #include <ftw.h>
 
-#include "v/vere.h"
+#include "vere/vere.h"
 
 /* _unix_down(): descend path.
 */

@@ -15,7 +15,7 @@
 #include <uv.h>
 
 #include "all.h"
-#include "v/vere.h"
+#include "vere/vere.h"
 
 /* _save_time_cb(): timer callback.
 */

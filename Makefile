@@ -67,7 +67,7 @@ else
 LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(OSLIBS)
 endif
 
-INCLUDE=i
+INCLUDE=include
 MDEFINES=-DU3_OS_$(OS) -DU3_OS_ENDIAN_$(ENDIAN) -D U3_LIB=\"$(LIB)\"
 
 # NOTFORCHECKIN - restore -O3
@@ -113,165 +113,165 @@ else
 endif
 
 N_OFILES=\
-       n/a.o \
-       n/e.o \
-       n/h.o \
-       n/i.o \
-       n/j.o \
-       n/m.o \
-       n/n.o \
-       n/r.o \
-       n/t.o \
-       n/x.o \
-       n/v.o \
-       n/z.o
+       noun/allocate.o \
+       noun/events.o \
+       noun/hashtable.o \
+       noun/imprison.o \
+       noun/jets.o \
+       noun/manage.o \
+       noun/nock.o \
+       noun/retrieve.o \
+       noun/trace.o \
+       noun/xtract.o \
+       noun/vortex.o \
+       noun/zave.o
 
 J_A_OFILES=\
-       j/a/add.o \
-       j/a/dec.o \
-       j/a/div.o \
-       j/a/gte.o \
-       j/a/gth.o \
-       j/a/lte.o \
-       j/a/lth.o \
-       j/a/mod.o \
-       j/a/mul.o \
-       j/a/sub.o
+       jets/a/add.o \
+       jets/a/dec.o \
+       jets/a/div.o \
+       jets/a/gte.o \
+       jets/a/gth.o \
+       jets/a/lte.o \
+       jets/a/lth.o \
+       jets/a/mod.o \
+       jets/a/mul.o \
+       jets/a/sub.o
 
 J_B_OFILES=\
-       j/b/bind.o \
-       j/b/clap.o \
-       j/b/drop.o \
-       j/b/flop.o \
-       j/b/lent.o \
-       j/b/levy.o \
-       j/b/lien.o \
-       j/b/need.o \
-       j/b/reel.o \
-       j/b/roll.o \
-       j/b/skim.o \
-       j/b/skip.o \
-       j/b/scag.o \
-       j/b/slag.o \
-       j/b/snag.o \
-       j/b/sort.o \
-       j/b/turn.o \
-       j/b/weld.o
+       jets/b/bind.o \
+       jets/b/clap.o \
+       jets/b/drop.o \
+       jets/b/flop.o \
+       jets/b/lent.o \
+       jets/b/levy.o \
+       jets/b/lien.o \
+       jets/b/need.o \
+       jets/b/reel.o \
+       jets/b/roll.o \
+       jets/b/skim.o \
+       jets/b/skip.o \
+       jets/b/scag.o \
+       jets/b/slag.o \
+       jets/b/snag.o \
+       jets/b/sort.o \
+       jets/b/turn.o \
+       jets/b/weld.o
 
 J_C_OFILES=\
-       j/c/bex.o \
-       j/c/can.o \
-       j/c/cap.o \
-       j/c/cat.o \
-       j/c/con.o \
-       j/c/cut.o \
-       j/c/dor.o \
-       j/c/dis.o \
-       j/c/end.o \
-       j/c/gor.o \
-       j/c/hor.o \
-       j/c/lsh.o \
-       j/c/mas.o \
-       j/c/met.o \
-       j/c/mix.o \
-       j/c/mug.o \
-       j/c/peg.o \
-       j/c/po.o  \
-       j/c/rap.o \
-       j/c/rip.o \
-       j/c/rsh.o \
-       j/c/vor.o
+       jets/c/bex.o \
+       jets/c/can.o \
+       jets/c/cap.o \
+       jets/c/cat.o \
+       jets/c/con.o \
+       jets/c/cut.o \
+       jets/c/dor.o \
+       jets/c/dis.o \
+       jets/c/end.o \
+       jets/c/gor.o \
+       jets/c/hor.o \
+       jets/c/lsh.o \
+       jets/c/mas.o \
+       jets/c/met.o \
+       jets/c/mix.o \
+       jets/c/mug.o \
+       jets/c/peg.o \
+       jets/c/po.o  \
+       jets/c/rap.o \
+       jets/c/rip.o \
+       jets/c/rsh.o \
+       jets/c/vor.o
 
 J_D_OFILES=\
-       j/d/in_has.o \
-       j/d/in_int.o \
-       j/d/in_gas.o \
-       j/d/in_mer.o \
-       j/d/in_put.o \
-       j/d/in_tap.o \
-       j/d/in_uni.o \
-       j/d/by_gas.o \
-       j/d/by_get.o \
-       j/d/by_has.o \
-       j/d/by_int.o \
-       j/d/by_put.o \
-       j/d/by_uni.o
+       jets/d/in_has.o \
+       jets/d/in_int.o \
+       jets/d/in_gas.o \
+       jets/d/in_mer.o \
+       jets/d/in_put.o \
+       jets/d/in_tap.o \
+       jets/d/in_uni.o \
+       jets/d/by_gas.o \
+       jets/d/by_get.o \
+       jets/d/by_has.o \
+       jets/d/by_int.o \
+       jets/d/by_put.o \
+       jets/d/by_uni.o
 
 J_E_OFILES=\
-       j/e/aesc.o \
-       j/e/cue.o \
-       j/e/jam.o \
-       j/e/mat.o \
-       j/e/mink.o \
-       j/e/mule.o \
-       j/e/parse.o \
-       j/e/rd.o \
-       j/e/repg.o \
-       j/e/rexp.o \
-       j/e/rub.o \
-       j/e/scr.o \
-       j/e/shax.o \
-       j/e/lore.o \
-       j/e/loss.o \
-       j/e/trip.o
+       jets/e/aesc.o \
+       jets/e/cue.o \
+       jets/e/jam.o \
+       jets/e/mat.o \
+       jets/e/mink.o \
+       jets/e/mule.o \
+       jets/e/parse.o \
+       jets/e/rd.o \
+       jets/e/repg.o \
+       jets/e/rexp.o \
+       jets/e/rub.o \
+       jets/e/scr.o \
+       jets/e/shax.o \
+       jets/e/lore.o \
+       jets/e/loss.o \
+       jets/e/trip.o
 
 J_E_OFILES_ED=\
-       j/e/ed_puck.o \
-       j/e/ed_sign.o \
-       j/e/ed_veri.o
+       jets/e/ed_puck.o \
+       jets/e/ed_sign.o \
+       jets/e/ed_veri.o
 
 J_F_OFILES=\
-       j/f/al.o \
-       j/f/ap.o \
-       j/f/bull.o \
-       j/f/cell.o \
-       j/f/comb.o \
-       j/f/cons.o \
-       j/f/core.o \
-       j/f/cube.o \
-       j/f/face.o \
-       j/f/fitz.o \
-       j/f/flan.o \
-       j/f/flay.o \
-       j/f/flip.o \
-       j/f/flor.o \
-       j/f/fork.o \
-       j/f/hike.o \
-       j/f/look.o \
+       jets/f/al.o \
+       jets/f/ap.o \
+       jets/f/bull.o \
+       jets/f/cell.o \
+       jets/f/comb.o \
+       jets/f/cons.o \
+       jets/f/core.o \
+       jets/f/cube.o \
+       jets/f/face.o \
+       jets/f/fitz.o \
+       jets/f/flan.o \
+       jets/f/flay.o \
+       jets/f/flip.o \
+       jets/f/flor.o \
+       jets/f/fork.o \
+       jets/f/hike.o \
+       jets/f/look.o \
 
 J_F_OFILES_UT=\
-       j/f/ut.o \
-       j/f/ut_burn.o \
-       j/f/ut_busk.o \
-       j/f/ut_bust.o \
-       j/f/ut_conk.o \
-       j/f/ut_crop.o \
-       j/f/ut_cull.o \
-       j/f/ut_find.o \
-       j/f/ut_fink.o \
-       j/f/ut_fire.o \
-       j/f/ut_firm.o \
-       j/f/ut_fish.o \
-       j/f/ut_fuse.o \
-       j/f/ut_gain.o \
-       j/f/ut_heal.o \
-       j/f/ut_lose.o \
-       j/f/ut_mint.o \
-       j/f/ut_mull.o \
-       j/f/ut_nest.o \
-       j/f/ut_park.o \
-       j/f/ut_peek.o \
-       j/f/ut_play.o \
-       j/f/ut_repo.o \
-       j/f/ut_rest.o \
-       j/f/ut_seek.o \
-       j/f/ut_swab.o \
-       j/f/ut_tack.o \
-       j/f/ut_tock.o \
-       j/f/ut_wrap.o
+       jets/f/ut.o \
+       jets/f/ut_burn.o \
+       jets/f/ut_busk.o \
+       jets/f/ut_bust.o \
+       jets/f/ut_conk.o \
+       jets/f/ut_crop.o \
+       jets/f/ut_cull.o \
+       jets/f/ut_find.o \
+       jets/f/ut_fink.o \
+       jets/f/ut_fire.o \
+       jets/f/ut_firm.o \
+       jets/f/ut_fish.o \
+       jets/f/ut_fuse.o \
+       jets/f/ut_gain.o \
+       jets/f/ut_heal.o \
+       jets/f/ut_lose.o \
+       jets/f/ut_mint.o \
+       jets/f/ut_mull.o \
+       jets/f/ut_nest.o \
+       jets/f/ut_park.o \
+       jets/f/ut_peek.o \
+       jets/f/ut_play.o \
+       jets/f/ut_repo.o \
+       jets/f/ut_rest.o \
+       jets/f/ut_seek.o \
+       jets/f/ut_swab.o \
+       jets/f/ut_tack.o \
+       jets/f/ut_tock.o \
+       jets/f/ut_wrap.o
 
 J_G_OFILES=\
-       j/g/down.o
+       jets/g/down.o
 
 J_OFILES=\
        $(J_A_OFILES) \
@@ -283,7 +283,7 @@ J_OFILES=\
        $(J_F_OFILES) \
        $(J_F_OFILES_UT) \
        $(J_G_OFILES) \
-       j/tree.o
+       jets/tree.o
 
 BASE_OFILES=$(N_OFILES) $(J_OFILES)
 
@@ -294,25 +294,25 @@ OUT_OFILES=\
        outside/jhttp/http_parser.o
 
 V_OFILES=\
-       v/ames.o \
-       v/cttp.o \
-       v/http.o \
-       v/loop.o \
-       v/raft.o \
-       v/reck.o \
-       v/sist.o \
-       v/temp.o \
-       v/term.o \
-       v/time.o \
-       v/unix.o \
-       v/save.o \
-       v/walk.o
+       vere/ames.o \
+       vere/cttp.o \
+       vere/http.o \
+       vere/loop.o \
+       vere/raft.o \
+       vere/reck.o \
+       vere/sist.o \
+       vere/temp.o \
+       vere/term.o \
+       vere/time.o \
+       vere/unix.o \
+       vere/save.o \
+       vere/walk.o
 
 MAIN_FILE =\
-       v/main.o
+       vere/main.o
 
 MEME_FILE =\
-       w/test.o
+       tests/test.o
 
 VERE_OFILES=\
        $(CRE2_OFILES) \
