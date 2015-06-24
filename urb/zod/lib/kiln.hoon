@@ -135,6 +135,11 @@
     %+  furl  (fray output)
     (foal output -:(flop input) %noun .^(%cx input))
   ::
+  ++  poke-label
+    |=  [syd=desk lab=@tas]
+    =+  pax=/(scot %p our)/[syd]/[lab]
+    (do-info "labeled {(spud pax)}" [syd %| lab])
+  ::
   ++  poke-schedule
     |=  [where=path tym=@da eve=@t]
     =.  where  (welp where /sched)
