@@ -369,7 +369,9 @@
     ::
     ++  dy-done                                         ::  dialog submit
       |=  txt=tape
-      ?>  ?=(^ pro)
+      ?.  ?=(^ pro)
+        ~&  %dy-no-prompt
+        (dy-diff %bel ~)
       (dy-slam /dial u.pro !>(txt))
     ::
     ++  dy-over                                         ::  finish construction

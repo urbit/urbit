@@ -92,6 +92,7 @@
 ++  poke-helm-send-hi       (wrap poke-send-hi):from-helm
 ++  poke-helm-verb          (wrap poke-verb):from-helm
 ++  poke-kiln-cp            (wrap poke-cp):from-kiln
+++  poke-kiln-label         (wrap poke-label):from-kiln
 ++  poke-kiln-merge         (wrap poke-merge):from-kiln
 ++  poke-kiln-mount         (wrap poke-mount):from-kiln
 ++  poke-kiln-mv            (wrap poke-mv):from-kiln
