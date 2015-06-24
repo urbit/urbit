@@ -192,8 +192,8 @@ _lo_init()
   u3_save_io_init();
   u3a_lop(cod_l);
 
-  cod_l = u3a_lush(c3__temp);
-  u3_temp_io_init();
+  cod_l = u3a_lush(c3__behn);
+  u3_behn_io_init();
   u3a_lop(cod_l);
 }
 
@@ -252,8 +252,8 @@ u3_lo_exit(void)
   u3_save_io_exit();
   u3a_lop(cod_l);
 
-  cod_l = u3a_lush(c3__temp);
-  u3_temp_io_exit();
+  cod_l = u3a_lush(c3__behn);
+  u3_behn_io_exit();
   u3a_lop(cod_l);
 }
 
@@ -284,8 +284,8 @@ _lo_poll(void)
   u3_unix_io_poll();
   u3a_lop(cod_l);
 
-  cod_l = u3a_lush(c3__temp);
-  u3_temp_io_poll();
+  cod_l = u3a_lush(c3__behn);
+  u3_behn_io_poll();
   u3a_lop(cod_l);
 }
 
@@ -299,7 +299,7 @@ _lo_how(u3_noun how)
     default: c3_assert(0); break;
 
     case c3__ames: return "ames";
-    case c3__temp: return "temp";
+    case c3__behn: return "behn";
     case c3__term: return "cons";
     case c3__htcn: return "http-conn";
     case c3__htls: return "http-lisn";
