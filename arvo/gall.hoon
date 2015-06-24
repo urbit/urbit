@@ -29,8 +29,14 @@
 --                                                      ::
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    %gall state
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+++  axle-n  ?(axle axle-0)                              ::  upgrade path
+++  axle-0  ,[%0 pol=(map ship mast-0)]                 ::
+++  mast-0                                              ::
+  (cork mast |=(mast +<(bum (~(run by bum) seat-0))))   ::
+++  seat-0                                              ::
+  (cork seat |=(seat +<(|7 zam=(scar |7.+<))))          ::
 ++  axle                                                ::  all state
-  $:  %0                                                ::  state version
+  $:  %1                                                ::  state version
       pol=(map ship mast)                               ::  apps by ship
   ==                                                    ::
 ++  gest                                                ::  subscriber data
@@ -67,6 +73,7 @@
       ged=gest                                          ::  subscribers
       hav=vase                                          ::  running state
       byk=beak                                          ::  update control
+      pyl=(map bone mark)                               ::  req'd translations
       zam=scar                                          ::  opaque ducts
   ==                                                    ::
 ++  sofa                                                ::  queue for blocked
@@ -313,24 +320,16 @@
       (mo-boon i.t.pax (mo-chew t.t.pax) +>.sih)
     ::
         %pel                                            ::  translated peer
-      ?>  ?=([@ @ ~] t.pax)
-      =+  :*  mar=i.t.pax
-              dap=i.t.t.pax
-          ==
-      ?:  ?=([%f %made *] sih)
-        ?-  -.q.+.sih
-          %tabl  ~|(%made-tabl !!)
-          %&  (mo-give %unto %diff p.q.+>.sih)
-          %|  =.  p.q.+>.sih  (turn p.q.+>.sih |=(a=tank rose/[~ "! " ~]^[a]~))
-              ~>  %slog.`%*(. >[%wh %y]< +> [>%mo-cyst-fail< (flop p.q.+>.sih)])
-              (mo-give %unto %quit ~)   ::  XX better errors pls
-        ==
-      ?>  ?=([%g %unto *] sih)
-      ?.  ?=(%diff -.+>.sih)
-        (mo-give %unto +>.sih)
-      %+  mo-pass
-        [%sys pax]
-      [%f %exec our (mo-beak dap) ~ %cast mar %done ~ `cage`+>+.sih]
+      ?>  ?=([@ ~] t.pax)
+      =+  mar=i.t.pax
+      ?>  ?=([%f %made *] sih)
+      ?-  -.q.+.sih
+        %tabl  ~|(%made-tabl !!)
+        %&  (mo-give %unto %diff p.q.+>.sih)
+        %|  =.  p.q.+>.sih  (turn p.q.+>.sih |=(a=tank rose/[~ "! " ~]^[a]~))
+            ~>  %slog.`%*(. >[%wh %y]< +> [>%mo-cyst-fail< (flop p.q.+>.sih)])
+            (mo-give %unto %quit ~)   ::  XX better errors pls
+      ==
     ::
         %red                                            ::  diff ack
       ?>  ?=([@ @ @ ~] t.pax)
@@ -493,10 +492,6 @@
       %+  mo-pass
         [%sys %val (scot %p q.q.pry) dap ~]
       [%f %exec our (mo-beak dap) ~ %cast p.cub %done ~ q.cub]
-    ?:  ?=(%peel -.cub)
-      %+  mo-pass
-        [%sys %pel p.cub dap ~]
-      [%g %deal [q.q.pry our] dap %peer q.cub]
     ap-abet:(ap-club:(ap-abed:ap dap pry) cub)
   ::
   ++  mo-club                                           ::  local action
@@ -596,7 +591,17 @@
       :-  (~(got by r.zam) p.cov)
       ?-    -.q.cov
           ?(%slip %sick)  !!
-          %give  ?<(=(0 p.cov) [%give %unto p.q.cov])
+          %give  
+        ?<  =(0 p.cov)
+        ?.  ?=(%diff -.p.q.cov)
+          [%give %unto p.q.cov]
+        =+  cay=`cage`p.p.q.cov
+        =+  mar=(fall (~(get by pyl) p.cov) p.cay)
+        ?:  =(mar p.cay)  [%give %unto p.q.cov]
+        :+  %pass
+          [%sys %pel dap ~]
+        [%f %exec our (mo-beak dap) ~ %cast mar %done ~ cay]
+      ::
           %pass
         :+  %pass  `path`[%use dap p.q.cov]
         ?-  -.q.q.cov
@@ -612,7 +617,7 @@
     ++  ap-call                                         ::  call into server
       |=  [cog=term arg=vase]
       ^-  [(unit tang) _+>]
-      =.  +>  ap-bowl
+      =.  +>  ap-bowl 
       =+  arm=(ap-farm cog)
       ?:  ?=(%| -.arm)  [`p.arm +>.$]
       =+  zem=(ap-slam cog p.arm arg)
@@ -623,7 +628,7 @@
       |=  cub=club
       ^+  +>
       ?-  -.cub
-        %peel   !!
+        %peel   (ap-peel +.cub)
         %poke   (ap-poke +.cub)
         %peer   (ap-peer +.cub)
         %puff   !!
@@ -883,6 +888,11 @@
       |=  vax=vase
       ^+  +>
       (ap-prep(hav vax) `hav)
+    ::
+    ++  ap-peel
+      |=  [mar=mark pax=path]
+      =.  pyl  (~(put by pyl) ost mar)
+      (ap-peer pax)
     ::
     ++  ap-peer                                         ::  apply %peer
       |=  pax=path
@@ -1174,9 +1184,14 @@
   ~
 ::
 ++  load                                                ::  recreate vane
-  |=  old=axle
+  |=  old=axle-n
   ^+  ..^$
-  ..^$(all old)
+  ?:  ?=(%1 -.old)  ..^$(all old)
+  %=  $
+    old  =>  |=(seat-0 `seat`+<(zam [~ zam]))
+         =>  |=(mast-0 +<(bum (~(run by bum) +>)))
+         old(- %1, pol (~(run by pol.old) .))
+  ==
 ::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas who=ship syd=desk lot=coin tyl=path]

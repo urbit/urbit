@@ -672,6 +672,7 @@
 ++  peer-sole
   |=  [pax=path]
   ^-  (quip move +>)
+  ::  ~&  [%dojo-peer ost.hid pax]
   ~?  !=(src.hid our.hid)  [%dojo-peer-stranger ost.hid src.hid pax]
   ::  ?>  =(src.hid our.hid)
   ~?  (~(has by hoc) ost.hid)  [%dojo-peer-replaced ost.hid pax]
@@ -691,6 +692,7 @@
 ++  poke-sole-action
   |=  [act=sole-action]
   ^-  (quip move +>)
+  ~|  [%dojo-poke ost.hid -.act (~(run by hoc) ,~)]
   ::  ~&  [%dojo-poke ost.hid src.hid act]
   ::  ~?  !=(src.hid our.hid)  [%dojo-poke ost.hid src.hid]
   he-abet:(~(he-type he [ost.hid ~] (~(got by hoc) ost.hid)) act)
