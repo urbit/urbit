@@ -1877,7 +1877,6 @@
 ::
 ++  in                                                  ::  set engine
   ~/  %in
-  !:
   |/  a=(set)
   +-  all                                               ::  logical AND
     ~/  %all
@@ -1911,6 +1910,23 @@
     ?:  (vor n.l.a n.r.a)
       [n.l.a l.l.a $(l.a r.l.a)]
     [n.r.a $(r.a l.r.a) r.r.a]
+  ::
+  +-  dif                                               ::  difference
+    ~/  %dif
+    |*  b=_a
+    |-  ^+  a
+    ?~  b
+      a
+    =+  c=(pux(+< a) n.b)
+    ?>  ?=(^ c)
+    =+  d=$(a l.c, b l.b)
+    =+  e=$(a r.c, b r.b)
+    |-  ^-  ?(~ _a)
+    ?~  d  e
+    ?~  e  d
+    ?:  (vor n.d n.e)
+      [n.d l.d $(d r.d)]
+    [n.e $(e l.e) r.e]
   ::
   +-  dig                                               ::  axis of a in b
     |=  b=*
@@ -2129,6 +2145,23 @@
       [n.l.a l.l.a $(l.a r.l.a)]
     [n.r.a $(r.a l.r.a) r.r.a]
   ::
+  +-  dif                                               ::  difference
+    ~/  %dif
+    |*  b=_a
+    |-  ^+  a
+    ?~  b
+      a
+    =+  c=(pux(+< a) n.b)
+    ?>  ?=(^ c)
+    =+  d=$(a l.c, b l.b)
+    =+  e=$(a r.c, b r.b)
+    |-  ^-  ?(~ _a)
+    ?~  d  e
+    ?~  e  d
+    ?:  (vor p.n.d p.n.e)
+      [n.d l.d $(d r.d)]
+    [n.e $(e l.e) r.e]
+  ::
   +-  dig                                               ::  axis of b key
     |=  b=*
     =+  c=1
@@ -2231,13 +2264,9 @@
     ?:  (gor b p.n.a)
       =+  d=$(a l.a)
       ?>  ?=(^ d)
-      ?:  (vor p.n.a p.n.d)
-        [n.a d r.a]
       [n.d l.d [n.a r.d r.a]]
     =+  d=$(a r.a)
     ?>  ?=(^ d)
-    ?:  (vor p.n.a p.n.d)
-      [n.a l.a d]
     [n.d [n.a l.a l.d] r.d]
   ::
   +-  rep                                               ::  replace by product
