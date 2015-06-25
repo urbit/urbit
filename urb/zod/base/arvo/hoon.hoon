@@ -1994,9 +1994,11 @@
       [n.a l.a c]
     [n.c [n.a l.a l.c] r.c]
   ::
-  +-  pux                                               ::  puts b in a as root
-    ~/  %pux                                            ::  nb: loses invariant
+  +-  pux                                               ::  splits a by b
+    ~/  %pux
     |*  b=*
+    ^+  [l=a r=a]
+    =<  [+< +>]
     |-  ^+  a
     ?~  a
       [b ~ ~]
@@ -2251,9 +2253,11 @@
       [n.a l.a d]
     [n.d [n.a l.a l.d] r.d]
   ::
-  +-  pux                                               ::  adds k-v at root
-    ~/  %pux                                            ::  nb: loses invariant
+  +-  pux                                               ::  splits a by b
+    ~/  %pux
     |*  [b=* c=*]
+    ^+  [l=a r=a]
+    =<  [+< +>]
     |-  ^+  a
     ?~  a
       [[b c] ~ ~]
