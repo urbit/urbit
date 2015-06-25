@@ -3418,6 +3418,18 @@
   ++  urt  %+  cook
              |=(a=tape (rap 3 ^-((list ,@) a)))
            (star ;~(pose nud low hep dot sig))
+  ++  urx  %+  cook
+             |=(a=tape (rap 3 ^-((list ,@) a)))
+           %-  star
+           ;~  pose 
+             nud
+             low
+             hep
+             cab
+             (cold ' ' dot)
+             (cook tuft (ifix [sig dot] hex))
+             (cold '~' ;~(plug sig sig))
+           ==
   ++  voy  ;~(pfix bas ;~(pose bas soq bix))
   --
 ++  ag
@@ -3732,8 +3744,8 @@
     ::
       (stag %p fed:ag)
       ;~(pfix dot (stag %ta urs:ab))
-      ;~(pfix sig (stag %t (cook woad urs:ab)))
-      ;~(pfix hep (stag %c (cook turf (cook woad urs:ab))))
+      ;~(pfix sig (stag %t urx:ab))
+      ;~(pfix hep (stag %c (cook turf urx:ab)))
     ==
   ++  nuck
     ~/  %nuck  |=  a=nail  %.  a
