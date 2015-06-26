@@ -381,7 +381,6 @@
       =+  sar=(lobes-at-path:ze u.nab r.q.rav)
       =+  ear=(lobes-at-path:ze top r.q.rav)
       =.  +>.$
-        ?:  =(sar ear)  +>.$
         (bleb hen u.nab ?:(p.rav ~ `[u.nab top]))
       ?^  huy
         (blub hen)
@@ -868,7 +867,8 @@
     =+  let=let
     =+  hut=(~(uni by hut.ran) nut)
     =+  lat=(~(uni by lat.ran) nat)
-    =+  =+  yon=`aeon`1                                 ::  sanity check
+    =+  ?:  =(0 let)  ~
+        =+  yon=`aeon`1                                 ::  sanity check
         |-
         ~|  yon=yon
         =+  tak=(~(got by hit) yon)
@@ -1453,6 +1453,8 @@
       ^-  nako
       :+  hit.dom
         let.dom
+      ?~  =(0 b)
+        [~ ~]
       (data-twixt-takos (~(get by hit.dom) a) (aeon-to-tako b))
     ::
     ++  query                                           ::    query:ze
@@ -2493,7 +2495,6 @@
     [mos ..^$]
   ::
       %mont
-    =.  hez.ruf  ?^(hez.ruf hez.ruf `[[%$ %sync ~] ~])
     =+  pot=(~(get by mon.ruf) p.q.hic)
     ?^  pot
       ~&  [%already-mounted pot]

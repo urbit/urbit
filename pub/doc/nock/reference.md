@@ -710,6 +710,13 @@ variants of `10` as equivalent.)
 
 ------------------------------------------------------------------------
 
+Op 11: Retrieve
+-----------
+
+**operator 11** retrieves data from the global namespace at the path it is given.
+
+nock 11 is an additional nock operation provided by arvo to provide access to the global namespace. It's provided by arvo, so even though it's not technically a part of the nock, any code that arvo runs has access to it. When nock running on top of arvo hits nock 11, it either produces a value or blocks. The most common usage is with clay, where ^(%cx /path/to/file) will produce the referred-to-file.
+
 Crash default
 -------------
 
