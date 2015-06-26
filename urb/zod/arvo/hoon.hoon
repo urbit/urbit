@@ -5075,11 +5075,10 @@
   ::
   ++  srm
     |=  [r=@ b=(list ,@) n=@]                           ::  scryptROMix
-    ?>  ?&
-      =((lent b) (mul 2 r))
-      =(n (bex (dec (xeb n))))
-      (lth n (bex (mul r 16)))
-      ==
+    ?>  ?&  =((lent b) (mul 2 r))
+            =(n (bex (dec (xeb n))))
+            (lth n (bex (mul r 16)))
+        ==
     =+  [v=*(list (list ,@)) c=0]
     =.  v
       |-  ^-  (list (list ,@))
@@ -5131,7 +5130,7 @@
       ?:  (gth j l)  t
       =+  u=(add s (lsh 3 sl (rep 3 (flop (rpp 3 4 j)))))
       =+  f=0  =.  f  |-  ^-  @
-        ?:  (gth k c)  f 
+        ?:  (gth k c)  f
         =+  q=(hml p pl u ?:(=(k 1) (add sl 4) h))
         $(u q, f (mix f q), k +(k))
       $(t (add t (lsh 3 (mul (dec j) h) f)), j +(j))
