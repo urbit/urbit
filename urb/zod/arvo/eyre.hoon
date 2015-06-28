@@ -414,7 +414,7 @@
         return urb.redir($ship.text().toLowerCase())    //  XX redundant?
       req(
         "/~/auth.json?PUT", 
-        {ship:ship.innerText.toLowerCase(), code:pass.value},
+        {ship:$ship.text().toLowerCase(), code:pass.value},
         function(){
           if(urb.foreign) urb.redir()
           else document.location.reload()
