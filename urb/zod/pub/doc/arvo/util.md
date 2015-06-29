@@ -91,6 +91,18 @@ display the files at the current path).
 
 ------------------------------------------------------------------------
 
+### [`|mount`](#mount)
+
+`~zod:dojo> |mount /path/to/directory %mount-point`
+
+Your files are not synced to unix by default.
+To sync a subtree to unix, run `|mount /path/to/directory %mount-point`.
+This will sync it into <pier>/<mount-point>.
+If you want to sync your whole home desk into f0/home, for example,
+run `|mount % %home`  You can also [`|unmount`](#unmount).
+
+------------------------------------------------------------------------
+
 ### [`:mv`](#mv)
 
 `~zod/try=> :mv /path/to/source /path/to/destination`
@@ -117,7 +129,7 @@ Possible values for %vane-name see [Overview](overview "overview"):
 
 `~zod/try=> :reset`
 
-Reloads all vanes. See [`:reset`] for reloading only or a specific vane.
+Reloads all vanes. See [`:reload`](#reload) for reloading only or a specific vane.
 
 ------------------------------------------------------------------------
 
@@ -168,6 +180,17 @@ This command is not avaible since the switch from batz to `%gall`!
 Use this for the time beeing: - will:
 `~zod/try=> ((hard (unit gcos)) .^(%a /=gcos=/~ship-name))` - raw will:
 `~zod/try=> ((hard will) .^(%a /=will=/~ship-name))`
+
+------------------------------------------------------------------------
+
+### [`|unmount`](#unmount)
+
+`~zod:dojo> |unmount /path/to/directory`
+
+Your files are not synced to unix by default.
+To sync a subtree to unix, run [`|mount`](#mount).
+You can unmount with either `|unmount /path/to/directory`
+or `|unmount %mount-point`.
 
 ------------------------------------------------------------------------
 
