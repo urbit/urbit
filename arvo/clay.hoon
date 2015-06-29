@@ -2494,6 +2494,7 @@
     [mos ..^$]
   ::
       %mont
+    =.  hez.ruf  ?^(hez.ruf hez.ruf `[[%$ %sync ~] ~])
     =+  pot=(~(get by mon.ruf) p.q.hic)
     ?^  pot
       ~&  [%already-mounted pot]
