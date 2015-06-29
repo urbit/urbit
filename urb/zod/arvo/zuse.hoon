@@ -666,6 +666,7 @@
     ?:  unq
       (weld tex rez)
     =+  xet=`tape`(flop tex)
+    !.
     |-  ^-  tape
     ?~  xet  rez
     %=    $
