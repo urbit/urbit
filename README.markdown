@@ -39,9 +39,10 @@ urbit depends on:
 
     sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++ ragel cmake re2c
 
+*note: http requests are not supported on either debian wheezy or jessie due to an ssl issue*
 #### Fedora
 
-    sudo yum install gcc gcc-c++ git gmp-devel openssl-devel openssl ncurses-devel libsigsegv-devel ctags automake autoconf libtool cmake re2c
+    sudo dnf install gcc gcc-c++ git gmp-devel openssl-devel openssl ncurses-devel libsigsegv-devel ctags automake autoconf libtool ragel cmake re2c
 
 #### AWS
 
@@ -108,8 +109,12 @@ Basics
 `^v` will switch between the task manager and the focussed process. `^x`
 will switch between processes.
 
-To start a process that is not yet started run `*proc` from the task
+To start a process that is not yet started, run `*proc` from the task
 manager.
+
+To connect your console to a process that has already been started, run `+proc`
+from the task manager. Note that the process must be one that supports console
+access, such as dojo and talk.
 
 `^d` will exit the pier from the task manager. No matter how you shut
 your urbit down you'll be returned to exactly the same state as when you
