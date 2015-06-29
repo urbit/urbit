@@ -139,7 +139,7 @@ Produces a [tape]() of the date in UTC format.
 
 `yed` is a [`date`]().
 
-    ~zod/try=> (dust (yore -<-))
+    ~zod/try=> (dust (yore ->-))
     "Tue, 21 Oct 2014 21:35:12 +0000"
     ~zod/try=> (dust [[a=%.y y=2.002] m=10 t=[d=11 h=12 m=20 s=55 f=~]])
     "Fri, 11 Oct 2002 12:20:55 +0000"
