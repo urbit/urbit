@@ -135,22 +135,6 @@
 ++  qual  |*  [a=$+(* *) b=$+(* *) c=$+(* *) d=$+(* *)] ::  just a quadruple
           ,[p=a q=b r=c s=d]                            ::
                                                         ::  XX move to zuse
-++  rege  $|  ?(%dote %ende %sart %empt %boun %bout)    ::  parsed regex
-          $%  [%lite p=char]                            ::  literal
-              [%pair p=rege q=rege]                     ::  ordering
-              [%capt p=rege q=@u]                       ::  capture group
-              [%brac p=@I]                              ::  p is 256 bitmask
-              [%eith p=rege q=rege]                     ::  either
-              [%mant p=rege]                            ::  greedy 0 or more
-              [%plls p=rege]                            ::  greedy 1 or more
-              [%betw p=rege q=@u r=@u]                  ::  between q and r
-              [%bint p=rege q=@u]                       ::  min q
-              [%bant p=rege q=@u]                       ::  exactly q
-              [%manl p=rege]                            ::  lazy 0 or more
-              [%plll p=rege]                            ::  lazy 1 or more
-              [%betl p=rege q=@u r=@u]                  ::  between q and r lazy
-              [%binl p=rege q=@u]                       ::  min q lazy
-          ==                                            ::
 ++  ring  ,@                                            ::  private key
 ++  rule  |=(tub=nail `edge`[p.tub ~ ~ tub])            ::  parsing rule
 ++  span  ,@ta                                          ::  text-atom (ASCII)
