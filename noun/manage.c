@@ -1,4 +1,4 @@
-/* g/m.c
+/* n/m.c
 **
 */
 #include <errno.h>
@@ -576,6 +576,11 @@ u3m_bail(u3_noun how)
     abort();
   }
 
+  if ( c3__meme == how ) {
+    fprintf(stderr, "max %dMB\r\n", u3R->all.max_w / 256000); 
+    abort();
+  }
+
   /* Printf some metadata.
   */
   if ( c3__exit != how && (_(u3ud(how)) || 1 != u3h(how)) ) {
@@ -722,6 +727,7 @@ u3m_leap(c3_w pad_w)
     u3R = rod_u;
     _pave_parts();
   }
+  rod_u->all.fre_w = 0;
 }
 
 /* u3m_fall(): in u3R, return an inner road to its parent.
@@ -871,6 +877,9 @@ u3m_soft_top(c3_w    sec_w,                     //  timer seconds
     /* Make sure the inner routine did not create garbage.
     */
     if ( u3C.wag_w & u3o_debug_ram ) {
+      if ( u3R->all.max_w > 1000000 ) {
+        fprintf(stderr, "allocated: max %dMB\r\n", u3R->all.max_w / 256000);
+      }
       u3m_grab(pro, u3_none);
     }
  
