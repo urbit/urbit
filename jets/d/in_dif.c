@@ -51,16 +51,6 @@
     } else {
       u3_noun n_b, l_b, r_b;
       u3_noun c, l_c, r_c;
-      u3_noun z;
-
-      z = u3nc(u3_nul, u3_nul);
-      u3k(z);
-      u3k(z);
-      c3_w *y = c3_malloc(1 * 16 * 1024 * sizeof(c3_w));
-      memset(y, 1, 1 * 16 * 1024 * sizeof(c3_w));
-      u3_noun x = u3i_words(1 * 16 * 1024, y);
-      u3k(x);
-      u3k(x);
 
       if ( c3n == u3r_trel(b, &n_b, &l_b, &r_b) ) {
         return u3m_bail(c3__exit);
