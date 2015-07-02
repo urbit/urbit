@@ -67,6 +67,8 @@ static u3j_core _mood__hoon__po_d[] =
     {}
   };
 
+static u3j_harm _mood__hoon__by_bif_a[] = {{".2", u3wdb_bif, c3y}, {}};
+static u3j_harm _mood__hoon__by_dif_a[] = {{".2", u3wdb_dif, c3y}, {}};
 static u3j_harm _mood__hoon__by_gas_a[] = {{".2", u3wdb_gas, c3y}, {}};
 static u3j_harm _mood__hoon__by_get_a[] = {{".2", u3wdb_get, c3y}, {}};
 static u3j_harm _mood__hoon__by_has_a[] = {{".2", u3wdb_has, c3y}, {}};
@@ -75,7 +77,9 @@ static u3j_harm _mood__hoon__by_put_a[] = {{".2", u3wdb_put, c3y}, {}};
 static u3j_harm _mood__hoon__by_tap_a[] = {{".2", u3wdb_tap, c3y}, {}};
 // static u3j_harm _mood__hoon__by_uni_a[] = {{".2", u3wdb_uni, c3y}, {}};
 static u3j_core _mood__hoon__by_d[] =
-  { { "gas", _mood__hoon__by_gas_a },
+  { { "bif", _mood__hoon__by_bif_a },
+    { "dif", _mood__hoon__by_dif_a },
+    { "gas", _mood__hoon__by_gas_a },
     { "get", _mood__hoon__by_get_a },
     { "has", _mood__hoon__by_has_a },
     // { "int", _mood__hoon__by_int_a },
@@ -85,6 +89,8 @@ static u3j_core _mood__hoon__by_d[] =
     {}
   };
 
+static u3j_harm _mood__hoon__in_bif_a[] = {{".2", u3wdi_bif}, {}};
+static u3j_harm _mood__hoon__in_dif_a[] = {{".2", u3wdi_dif}, {}};
 static u3j_harm _mood__hoon__in_gas_a[] = {{".2", u3wdi_gas}, {}};
 static u3j_harm _mood__hoon__in_has_a[] = {{".2", u3wdi_has}, {}};
 static u3j_harm _mood__hoon__in_mer_a[] = {{".2", u3wdi_mer}, {}};
@@ -93,7 +99,9 @@ static u3j_harm _mood__hoon__in_put_a[] = {{".2", u3wdi_put}, {}};
 static u3j_harm _mood__hoon__in_tap_a[] = {{".2", u3wdi_tap}, {}};
 // static u3j_harm _mood__hoon__in_uni_a[] = {{".2", u3wdi_uni}, {}};
 static u3j_core _mood__hoon__in_d[] =
-  { { "gas", _mood__hoon__in_gas_a },
+  { { "bif", _mood__hoon__in_bif_a },
+    { "dif", _mood__hoon__in_dif_a },
+    { "gas", _mood__hoon__in_gas_a },
     { "has", _mood__hoon__in_has_a },
     { "mer", _mood__hoon__in_mer_a },
     // { "int", _mood__hoon__in_int_a },
