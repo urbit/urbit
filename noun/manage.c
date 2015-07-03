@@ -577,6 +577,7 @@ u3m_bail(u3_noun how)
   }
 
   if ( c3__meme == how ) {
+    fprintf(stderr, "u3R %p, parent %x\n", u3R, u3R->par_p);
     fprintf(stderr, "max %dMB\r\n", u3R->all.max_w / 256000); 
     abort();
   }
@@ -878,7 +879,7 @@ u3m_soft_top(c3_w    sec_w,                     //  timer seconds
     */
     if ( u3C.wag_w & u3o_debug_ram ) {
       if ( u3R->all.max_w > 1000000 ) {
-        fprintf(stderr, "allocated: max %dMB\r\n", u3R->all.max_w / 256000);
+        fprintf(stderr, "soft_top: max %dMB\r\n", u3R->all.max_w / 256000);
       }
       u3m_grab(pro, u3_none);
     }
@@ -971,6 +972,9 @@ u3m_soft_run(u3_noun fly,
     u3t_off(coy_o);
     pro = fun_f(aga, agb);
 
+    if ( u3R->all.max_w > 1000000 ) {
+      fprintf(stderr, "soft_run: max %dMB\r\n", u3R->all.max_w / 256000);
+    }
     /* Produce success, on the old road.
     */
     pro = u3nc(0, u3m_love(pro));
