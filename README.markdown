@@ -55,14 +55,14 @@ urbit depends on:
 #### OS X - Macports
 
     sudo port install git gmp libsigsegv openssl autoconf automake cmake
+    
+Although `automake`/`autoconf`/`libtool` are generally installed by
+default, some have reported needing to uninstall and reinstall those
+three packages, at least with Homebrew. Your mileage may vary.
 
 #### FreeBSD
 
     pkg install git gmake gmp libsigsegv openssl automake autoconf ragel cmake re2c libtool
-
-Although `automake`/`autoconf`/`libtool` are generally installed by
-default, some have reported needing to uninstall and reinstall those
-three packages, at least with Homebrew. Your mileage may vary.
 
 Build
 -----
