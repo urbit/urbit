@@ -178,7 +178,7 @@
               [1 p=term q=toga]                         ::  deep toga
               [2 p=toga q=toga]                         ::  cell toga
           ==                                            ::
-++  trap  ,_|.(**)                                      ::  makes perfect sense
+++  trap  |*(a=_,* ,_|?(*a))                            ::  makes perfect sense
 ++  trel  |*  [a=$+(* *) b=$+(* *) c=$+(* *)]           ::  just a triple
           ,[p=a q=b r=c]                                ::
 ++  tuna                                                ::  tagflow
@@ -593,7 +593,7 @@
   [~ u=(b u.a)]
 ::
 ++  bond                                                ::  replace
-  |*  a=trap
+  |*  a=(trap)
   |*  b=(unit)
   ?~  b  $:a
   u.b
@@ -1842,8 +1842,7 @@
   ^+  (+<+)
   =>  .(a `tang`a)
   ?~  a  (+<+)
-  ~>  %mean.|.(i.a)
-  $(a t.a)
+  ~_(i.a $(a t.a))
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::
 ::::              chapter 2d, containers                ::::
 ::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
