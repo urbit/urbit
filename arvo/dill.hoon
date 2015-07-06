@@ -20,11 +20,11 @@
       dug=(map duct axon)                               ::  conversations
       $=  hef                                           ::  other weights
       $:  a=(unit mass)                                 ::
+          b=(unit mass)                                 ::
           c=(unit mass)                                 ::
           e=(unit mass)                                 ::
           f=(unit mass)                                 ::
           g=(unit mass)                                 ::
-          t=(unit mass)                                 ::
       ==                                                ::
   ==                                                    ::  
 ++  axon                                                ::  dill per duct
@@ -66,7 +66,7 @@
       [%deal p=sock q=cush]                             ::
   ==                                                    ::
 ++  note                                                ::  out request $->
-  $?  [?(%a %c %e %f %g %t) %wegh ~]                    ::
+  $?  [?(%a %b %c %e %f %g) %wegh ~]                    ::
   $%  [%a note-ames]                                    ::
       [%c note-clay]                                    ::
       [%d note-dill]                                    ::
@@ -91,16 +91,12 @@
   $%  [%onto p=(each suss tang)]                        ::
       [%unto p=cuft]                                    ::
   ==                                                    ::
-++  sign-time                                           ::
-  $%  [%wake ~]                                         ::
-  ==                                                    ::
 ++  sign                                                ::  in result $<-
-  $?  [?(%a %c %e %f %g %t) %mass p=mass]               ::
+  $?  [?(%a %b %c %e %f %g) %mass p=mass]               ::
   $%  [%a sign-ames]                                    ::
       [%c sign-clay]                                    ::
       [%d sign-dill]                                    ::  
       [%g sign-gall]                                    ::
-      [%t sign-time]                                    ::
   ==  ==                                                ::
 ::::::::                                                ::  dill tiles
 --
@@ -199,11 +195,11 @@
         %_    .
             moz
           :*  [hen %pass /heft/ames %a %wegh ~]
+              [hen %pass /heft/behn %b %wegh ~]
               [hen %pass /heft/clay %c %wegh ~]
               [hen %pass /heft/eyre %e %wegh ~]
               [hen %pass /heft/ford %f %wegh ~]
               [hen %pass /heft/gall %g %wegh ~]
-              [hen %pass /heft/time %t %wegh ~]
               moz
           ==
         ==
@@ -272,7 +268,7 @@
         |=  sih=sign
         ^+  +>
         ?-    sih
-            [?(%a %c %e %f %g %t) %mass *]
+            [?(%a %b %c %e %f %g) %mass *]
           (wegt -.sih p.sih)
         ::
             [%a %nice *]
@@ -314,10 +310,6 @@
         ::
             [%d %blit *]
           (done +.sih)
-        ::
-            [%t %wake *]
-          ::  ~&  %dill-wake 
-          +>
         ==
       ::
       ++  wegh
@@ -328,29 +320,29 @@
         ==
       ::
       ++  wegt
-        |=  [lal=?(%a %c %e %f %g %t) mas=mass]
+        |=  [lal=?(%a %b %c %e %f %g) mas=mass]
         ^+  +>
         =.  hef.all
           ?-  lal
             %a  ~?(?=(^ a.hef.all) %double-mass-a hef.all(a `mas))
+            %b  ~?(?=(^ b.hef.all) %double-mass-b hef.all(b `mas))
             %c  ~?(?=(^ c.hef.all) %double-mass-c hef.all(c `mas))
             %e  ~?(?=(^ e.hef.all) %double-mass-e hef.all(e `mas))
             %f  ~?(?=(^ f.hef.all) %double-mass-f hef.all(f `mas))
             %g  ~?(?=(^ g.hef.all) %double-mass-g hef.all(g `mas))
-            %t  ~?(?=(^ t.hef.all) %double-mass-t hef.all(t `mas))
           ==
         ?.  ?&  ?=(^ a.hef.all)
+                ?=(^ b.hef.all)
                 ?=(^ c.hef.all)
                 ?=(^ e.hef.all)
                 ?=(^ f.hef.all)
                 ?=(^ g.hef.all)
-                ?=(^ t.hef.all)
             ==
           +>.$
         %+  done(hef.all [~ ~ ~ ~ ~ ~])
           %mass
         =>  [hef.all d=wegh]
-        [%vanes %| ~[u.a u.c d u.e u.f u.g u.t]]
+        [%vanes %| ~[u.a u.c d u.e u.f u.g u.b]]
       --
     ::
     ++  ax                                              ::  make ++as

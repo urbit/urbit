@@ -1875,6 +1875,24 @@
       |
     ?|((b n.a) $(a l.a) $(a r.a))
   ::
+  +-  bif                                               ::  splits a by b
+    ~/  %bif
+    |*  b=*
+    ^+  [l=a r=a]
+    =<  [+< +>]
+    |-  ^+  a
+    ?~  a
+      [b ~ ~]
+    ?:  =(b n.a)
+      a
+    ?:  (hor b n.a)
+      =+  c=$(a l.a)
+      ?>  ?=(^ c)
+      [n.c l.c [n.a r.c r.a]]
+    =+  c=$(a r.a)
+    ?>  ?=(^ c)
+    [n.c [n.a l.a l.c] r.c]
+  ::
   +-  del                                               ::  b without any a
     ~/  %del
     |*  b=*
@@ -1898,7 +1916,7 @@
     |-  ^+  a
     ?~  b
       a
-    =+  c=(pux(+< a) n.b)
+    =+  c=(bif(+< a) n.b)
     ?>  ?=(^ c)
     =+  d=$(a l.c, b l.b)
     =+  e=$(a r.c, b r.b)
@@ -1973,24 +1991,6 @@
     ?>  ?=(^ c)
     ?:  (vor n.a n.c)
       [n.a l.a c]
-    [n.c [n.a l.a l.c] r.c]
-  ::
-  +-  pux                                               ::  splits a by b
-    ~/  %pux
-    |*  b=*
-    ^+  [l=a r=a]
-    =<  [+< +>]
-    |-  ^+  a
-    ?~  a
-      [b ~ ~]
-    ?:  =(b n.a)
-      a
-    ?:  (hor b n.a)
-      =+  c=$(a l.a)
-      ?>  ?=(^ c)
-      [n.c l.c [n.a r.c r.a]]
-    =+  c=$(a r.a)
-    ?>  ?=(^ c)
     [n.c [n.a l.a l.c] r.c]
   ::
   +-  rep                                               ::  replace by product
@@ -2111,6 +2111,26 @@
       |
     ?|((b q.n.a) $(a l.a) $(a r.a))
   ::
+  +-  bif                                               ::  splits a by b
+    ~/  %bif
+    |*  [b=* c=*]
+    ^+  [l=a r=a]
+    =<  [+< +>]
+    |-  ^+  a
+    ?~  a
+      [[b c] ~ ~]
+    ?:  =(b p.n.a)
+      ?:  =(c q.n.a)
+        a
+      [[b c] l.a r.a]
+    ?:  (gor b p.n.a)
+      =+  d=$(a l.a)
+      ?>  ?=(^ d)
+      [n.d l.d [n.a r.d r.a]]
+    =+  d=$(a r.a)
+    ?>  ?=(^ d)
+    [n.d [n.a l.a l.d] r.d]
+  ::
   +-  del                                               ::  delete at key b
     ~/  %del
     |*  b=*
@@ -2134,7 +2154,7 @@
     |-  ^+  a
     ?~  b
       a
-    =+  c=(pux(+< a) n.b)
+    =+  c=(bif(+< a) n.b)
     ?>  ?=(^ c)
     =+  d=$(a l.c, b l.b)
     =+  e=$(a r.c, b r.b)
@@ -2232,26 +2252,6 @@
     ?>  ?=(^ d)
     ?:  (vor p.n.a p.n.d)
       [n.a l.a d]
-    [n.d [n.a l.a l.d] r.d]
-  ::
-  +-  pux                                               ::  splits a by b
-    ~/  %pux
-    |*  [b=* c=*]
-    ^+  [l=a r=a]
-    =<  [+< +>]
-    |-  ^+  a
-    ?~  a
-      [[b c] ~ ~]
-    ?:  =(b p.n.a)
-      ?:  =(c q.n.a)
-        a
-      [[b c] l.a r.a]
-    ?:  (gor b p.n.a)
-      =+  d=$(a l.a)
-      ?>  ?=(^ d)
-      [n.d l.d [n.a r.d r.a]]
-    =+  d=$(a r.a)
-    ?>  ?=(^ d)
     [n.d [n.a l.a l.d] r.d]
   ::
   +-  rep                                               ::  replace by product
@@ -3662,6 +3662,7 @@
   ~%  %so  +  ~
   |%
   ++  bisk
+    ~+
     ;~  pose
       ;~  pfix  (just '0')
         ;~  pose
@@ -3676,6 +3677,7 @@
       (stag %ud dem:ag)
     ==
   ++  crub
+    ~+
     ;~  pose
       %+  cook
         |=(det=date `dime`[%da (year det)])
@@ -3740,13 +3742,16 @@
         :-  '~'        ;~(pfix sig ;~(pose twid (easy [~ %n 0])))
     ==
   ++  nusk
+    ~+
     :(sear |=(a=@ta (rush a nuck)) wick urt:ab)
   ++  perd
+    ~+
     ;~  pose
       (stag ~ zust)
       (stag %many (ifix [cab ;~(plug cab cab)] (more cab nusk)))
     ==
   ++  royl
+    ~+
     =+  ^=  zer
         (cook lent (star (just '0')))
     =+  ^=  voy
@@ -3777,6 +3782,7 @@
       [a c.b d.b e.b [~ (mul i.u.f 2)]]
     [a c.b d.b e.b [~ (dec (mul i.u.f 2))]]
   ++  tash
+    ~+
     =+  ^=  neg
         |=  [syn=? mol=dime]  ^-  dime
         ?>  =('u' (end 3 1 p.mol))
@@ -3788,12 +3794,14 @@
       ==
     ==
   ++  twid
+    ~+
     ;~  pose
       (cook |=(a=@ [%blob (cue a)]) ;~(pfix (just '0') vum:ag))
       (stag ~ crub)
     ==
   ::
   ++  zust
+    ~+
     ;~  pose
       (stag %is bip:ag)
       (stag %if lip:ag)
