@@ -9,7 +9,7 @@
 ::
 ++  grow                                                ::  convert to
   |%                                                    ::
-  ++  mime  [/text/html (met 3 htm) htm]                ::  to %mime
+  ++  mime  [/application/xml (taco htm)]               ::  to %mime
   ++  hymn  (need (poxa htm))                           ::  to %hymn
   --                                                    ::
 ++  grab  |%                                            ::  convert from
