@@ -67,6 +67,8 @@
 
   /** Tier 4.
   **/
+    u3_noun u3wdb_bif(u3_noun);
+    u3_noun u3wdb_dif(u3_noun);
     u3_noun u3wdb_gas(u3_noun);
     u3_noun u3wdb_get(u3_noun);
     u3_noun u3wdb_has(u3_noun);
@@ -75,6 +77,8 @@
 #   define u3wdb_tap u3wdi_tap
     u3_noun u3wdb_uni(u3_noun);
 
+    u3_noun u3wdi_bif(u3_noun);
+    u3_noun u3wdi_dif(u3_noun);
     u3_noun u3wdi_gas(u3_noun);
     u3_noun u3wdi_has(u3_noun);
     u3_noun u3wdi_int(u3_noun);
