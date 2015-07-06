@@ -3679,6 +3679,7 @@
   ~%  %so  +  ~
   |%
   ++  bisk
+    ~+
     ;~  pose
       ;~  pfix  (just '0')
         ;~  pose
@@ -3693,6 +3694,7 @@
       (stag %ud dem:ag)
     ==
   ++  crub
+    ~+
     ;~  pose
       %+  cook
         |=(det=date `dime`[%da (year det)])
@@ -3757,13 +3759,16 @@
         :-  '~'        ;~(pfix sig ;~(pose twid (easy [~ %n 0])))
     ==
   ++  nusk
+    ~+
     :(sear |=(a=@ta (rush a nuck)) wick urt:ab)
   ++  perd
+    ~+
     ;~  pose
       (stag ~ zust)
       (stag %many (ifix [cab ;~(plug cab cab)] (more cab nusk)))
     ==
   ++  royl
+    ~+
     =+  ^=  zer
         (cook lent (star (just '0')))
     =+  ^=  voy
@@ -3794,6 +3799,7 @@
       [a c.b d.b e.b [~ (mul i.u.f 2)]]
     [a c.b d.b e.b [~ (dec (mul i.u.f 2))]]
   ++  tash
+    ~+
     =+  ^=  neg
         |=  [syn=? mol=dime]  ^-  dime
         ?>  =('u' (end 3 1 p.mol))
@@ -3805,12 +3811,14 @@
       ==
     ==
   ++  twid
+    ~+
     ;~  pose
       (cook |=(a=@ [%blob (cue a)]) ;~(pfix (just '0') vum:ag))
       (stag ~ crub)
     ==
   ::
   ++  zust
+    ~+
     ;~  pose
       (stag %is bip:ag)
       (stag %if lip:ag)
