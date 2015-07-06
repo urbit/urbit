@@ -62,6 +62,8 @@
 
   /** Tier 4.
   **/
+    u3_noun u3qdb_bif(u3_noun, u3_noun);
+    u3_noun u3qdb_dif(u3_noun, u3_noun);
     u3_noun u3qdb_gas(u3_noun, u3_noun);
     u3_noun u3qdb_get(u3_noun, u3_noun);
     u3_noun u3qdb_has(u3_noun, u3_noun);
@@ -70,6 +72,8 @@
 #   define u3qdb_tap u3qdi_tap
     u3_noun u3qdb_uni(u3_noun, u3_noun);
 
+    u3_noun u3qdi_bif(u3_noun, u3_noun);
+    u3_noun u3qdi_dif(u3_noun, u3_noun);
     u3_noun u3qdi_gas(u3_noun, u3_noun);
     u3_noun u3qdi_has(u3_noun, u3_noun);
     u3_noun u3qdi_int(u3_noun, u3_noun);

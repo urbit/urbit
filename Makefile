@@ -190,12 +190,16 @@ J_D_OFILES=\
        jets/d/in_put.o \
        jets/d/in_tap.o \
        jets/d/in_uni.o \
+       jets/d/in_bif.o \
+       jets/d/in_dif.o \
        jets/d/by_gas.o \
        jets/d/by_get.o \
        jets/d/by_has.o \
        jets/d/by_int.o \
        jets/d/by_put.o \
-       jets/d/by_uni.o
+       jets/d/by_uni.o \
+       jets/d/by_bif.o \
+       jets/d/by_dif.o
 
 J_E_OFILES=\
        jets/e/aesc.o \
