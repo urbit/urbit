@@ -242,7 +242,7 @@
     ++  dy-slam                                         ::  call by ford
       |=  [way=wire gat=vase sam=vase]
       ^+  +>+>
-      (dy-ford way %call [%done ~ %noun gat] [%done ~ %noun sam])
+      (dy-ford way %call [%$ %noun gat] [%$ %noun sam])
     ::
     ++  dy-diff                                         ::  send effects, abet
       |=  fec=sole-effect
@@ -423,12 +423,12 @@
     ::
     ++  dy-cage       |=(num=@ud (~(got by rez) num))   ::  known cage
     ++  dy-vase       |=(num=@ud q:(dy-cage num))       ::  known vase
-    ++  dy-silk-vase  |=(vax=vase [%done ~ %noun vax])  ::  vase to silk
+    ++  dy-silk-vase  |=(vax=vase [%$ %noun vax])  ::  vase to silk
     ++  dy-silk-config                                  ::  configure
       |=  [cag=cage cig=dojo-config]
       ^-  silk
       :+  %ride  [%cnzy %$]
-      :+  %mute  [%done ~ cag]
+      :+  %mute  [%$ cag]
       ^-  (list (pair wing silk))
       :*  :-  [[~ 12] ~]
           (dy-silk-vase !>([now=now.hid eny=eny.hid bec=he-beak]))
@@ -494,7 +494,7 @@
         %ec  [/hand [%cast p.q.u.cud (dy-mare q.q.u.cud)]]
         %ex  [/hand (dy-mare p.q.u.cud)]
         %tu  :-  /hand
-             :+  %done  ~
+             :-  %$
              :-  %noun
              |-  ^-  vase
              ?~  p.q.u.cud  !!
@@ -506,7 +506,7 @@
     ++  dy-mare                                         ::  build expression
       |=  gen=twig
       ^-  silk
-      [%ride gen [[%done ~ %$ dy-twig-head] [%reef ~]]]
+      [%ride gen [[%$ %$ dy-twig-head] [%reef ~]]]
     ::
     ++  dy-step                                         ::  advance project
       |=  nex=@ud
@@ -552,7 +552,7 @@
     (he-card %send way [him dap] cop)
   ::
   ++  he-diff                                           ::  emit update
-    |=  fec=sole-effect 
+    |=  fec=sole-effect
     ^+  +>
     (he-card %diff %sole-effect fec)
   ::

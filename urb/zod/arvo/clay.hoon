@@ -310,11 +310,11 @@
           %+  turn  `(list path)`mus
           |=  a=path
           ^-  (pair silk silk)
-          :-  [%done ~ %path !>(a)]
+          :-  [%$ %path !>(a)]
           :+  %cast  %mime
           =+  (need (need (read-x:ze let.dom a)))
           ?:  ?=(%& -<)
-            [%done ~ p.-]
+            [%$ p.-]
           (lobe-to-silk:ze a p.-)
       ==
     ==
@@ -512,9 +512,9 @@
             %+  turn  ins
             |=  [pax=path mis=miso]
             ?>  ?=(%ins -.mis)
-            :-  [%done ~ %path -:!>(*path) pax]
+            :-  [%$ %path -:!>(*path) pax]
             =+  =>((flop pax) ?~(. %$ i))
-            [%cast - [%done ~ p.mis]]
+            [%cast - [%$ p.mis]]
         ==
         :*  hen  %pass
             [%diffing (scot %p who) syd (scot %da wen) ~]
@@ -525,8 +525,8 @@
             ?>  ?=(%dif -.mis)
             =+  (need (need (read-x:ze let.dom pax)))
             ?>  ?=(%& -<)
-            :-  [%done ~ %path -:!>(*path) pax]
-            [%pact [%done ~ p.-] [%done ~ p.mis]]
+            :-  [%$ %path -:!>(*path) pax]
+            [%pact [%$ p.-] [%$ p.mis]]
         ==
         :*  hen  %pass
             [%castifying (scot %p who) syd (scot %da wen) ~]
@@ -535,9 +535,9 @@
             %+  turn  mut
             |=  [pax=path mis=miso]
             ?>  ?=(%mut -.mis)
-            :-  [%done ~ %path -:!>(*path) pax]
+            :-  [%$ %path -:!>(*path) pax]
             =+  (lobe-to-mark:ze (~(got by q:(aeon-to-yaki:ze let.dom)) pax))
-            [%cast - [%done ~ p.mis]]
+            [%cast - [%$ p.mis]]
         ==
     ==
   ::
@@ -555,7 +555,7 @@
         (lobe-to-silk:ze pax (~(got by q:(aeon-to-yaki:ze let.dom)) pax))
       =+  (slag (dec (lent pax)) pax)
       =+  ?~(- %$ i.-)
-      [%cast - [%done ~ p.mis]]
+      [%cast - [%$ p.mis]]
     ::
         %ins
       :-  [%casting (scot %p who) syd (scot %da wen) pax]
@@ -563,7 +563,7 @@
       ^-  silk
       =+  (slag (dec (lent pax)) pax)
       =+  ?~(- %$ i.-)
-      [%cast - [%done ~ p.mis]]
+      [%cast - [%$ p.mis]]
     ==
   ::
   ++  apply-edit
@@ -665,9 +665,9 @@
         ^-  (list (pair silk silk))
         %+  turn  cat
         |=  [pax=path cay=cage]
-        :-  [%done ~ %path -:!>(*path) pax]
+        :-  [%$ %path -:!>(*path) pax]
         =+  (lobe-to-silk:ze pax (~(got by q:(aeon-to-yaki:ze let.dom)) pax))
-        [%diff - [%done ~ cay]]
+        [%diff - [%$ cay]]
     ==
   ::
   ++  take-mutating
@@ -769,16 +769,16 @@
           %+  turn  (~(tap in sum))
           |=  a=path
           ^-  (pair silk silk)
-          :-  [%done ~ %path !>(a)]
+          :-  [%$ %path !>(a)]
           =+  b=(~(got by can) a)
           ?:  ?=(%del -.b)
-            [%done ~ %null !>(~)]
+            [%$ %null !>(~)]
           =+  (~(get by mim.u.dok) a)
-          ?^  -  [%done ~ %mime !>(u.-)]
+          ?^  -  [%$ %mime !>(u.-)]
           :+  %cast  %mime
           =+  (need (need (read-x:ze let.dom a)))
           ?:  ?=(%& -<)
-            [%done ~ p.-]
+            [%$ p.-]
           (lobe-to-silk:ze a p.-)
       ==
     ==
@@ -827,7 +827,7 @@
           %+  turn  (~(tap by hat))
           |=  [a=path b=lobe]
           ^-  (pair silk silk)
-          :-  [%done ~ %path !>(a)]
+          :-  [%$ %path !>(a)]
           (lobe-to-silk:ze a b)
       ==
     ==
@@ -1005,12 +1005,12 @@
     ::      |=  a=plop
     ::      ?-    -.a
     ::          %delta
-    ::        :-  [%done ~ %blob !>([%delta p.a q.a *cage])]
-    ::        [%vale p.r.a him q.r.a]
+    ::        :-  [%$ %blob !>([%delta p.a q.a *cage])]
+    ::        [%vale p.r.a q.r.a]
     ::      ::
     ::          %direct
-    ::        :-  [%done ~ %blob !>([%direct p.a *cage])]
-    ::        [%vale p.q.a him q.q.a]
+    ::        :-  [%$ %blob !>([%direct p.a *cage])]
+    ::        [%vale p.q.a q.q.a]
     ::      ::
     ::          %indirect  ~|  %foreign-indirect-not-implemented  !!
     ::      ==
@@ -1023,7 +1023,7 @@
     :*  hen  %pass
         [%foreign-x (scot %p who) (scot %p for) syd car (scot cas) pax]
         %f  %exec  who  [for syd cas]  ~
-        %vale  p.peg  for  q.peg
+        %vale  p.peg  q.peg
     ==
   ::
   ++  take-foreign-x
@@ -1051,12 +1051,12 @@
         |=  a=plop
         ?-    -.a
             %delta
-          :-  [%done ~ %blob !>([%delta p.a q.a *page])]
-          [%vale p.r.a for q.r.a]
+          :-  [%$ %blob !>([%delta p.a q.a *page])]
+          [%vale p.r.a q.r.a]
         ::
             %direct
-          :-  [%done ~ %blob !>([%direct p.a *page])]
-          [%vale p.q.a for q.q.a]
+          :-  [%$ %blob !>([%direct p.a *page])]
+          [%vale p.q.a q.q.a]
         ::
             %indirect  ~|  %foreign-indirect-not-implemented  !!
         ==
@@ -1221,12 +1221,12 @@
       ?:  =([~ lob] lol)
         =+  (need (need (read-x let.dom pax)))
         ?>  ?=(%& -<)
-        [%done ~ p.-]
+        [%$ p.-]
       =+  bol=(~(got by lat.ran) lob)
       ?-  -.bol
-        %direct     [%volt ~ q.bol]
-        %indirect   [%volt ~ q.bol]
-        %delta      [%pact $(lob q.q.bol) [%volt ~ r.bol]]
+        %direct     [%volt q.bol]
+        %indirect   [%volt q.bol]
+        %delta      [%pact $(lob q.q.bol) [%volt r.bol]]
       ==
     ::
     ++  page-to-lobe  |=(page (shax (jam +<)))
@@ -1914,7 +1914,7 @@
             ?:  =(u.a u.-)
               ~
             :-  ~
-            :-  [%done ~ %path !>(pax)]
+            :-  [%$ %path !>(pax)]
             [%diff (lobe-to-silk pax lob) (lobe-to-silk pax u.a)]
         ==
       ::
@@ -2016,8 +2016,8 @@
               =+  ^=  for
                   =+  (slag (dec (lent pax)) pax)
                   ?~(- %$ i.-)
-              :-  [%done ~ %path !>(pax)]
-              [%join for [%done ~ cal] [%done ~ cob]]
+              :-  [%$ %path !>(pax)]
+              [%join for [%$ cal] [%$ cob]]
           ==
         ==
       ::
@@ -2048,12 +2048,12 @@
             ?~  cay
               ~
             :-  ~
-            :-  [%done ~ %path !>(pax)]
+            :-  [%$ %path !>(pax)]
             =+  (~(get by q.bas.dat) pax)
             ?~  -
               ~|  %mate-strange-diff-no-base
               !!
-            [%pact (lobe-to-silk pax u.-) [%done ~ u.cay]]
+            [%pact (lobe-to-silk pax u.-) [%$ u.cay]]
         ==
       ::
       ++  built
@@ -2169,7 +2169,7 @@
             ^-  (unit (pair silk silk))
             ?:  (~(has by bop.dat) pax)
               ~
-            `[[%done ~ %path !>(pax)] (merge-lobe-to-silk:he pax lob)]
+            `[[%$ %path !>(pax)] (merge-lobe-to-silk:he pax lob)]
         ==
       ::
       ++  checked-out
@@ -2212,10 +2212,10 @@
             %+  turn  (~(tap in sum))
             |=  a=path
             ^-  (pair silk silk)
-            :-  [%done ~ %path !>(a)]
+            :-  [%$ %path !>(a)]
             =+  b=(~(got by erg.dat) a)
             ?.  b
-              [%done ~ %null !>(~)]
+              [%$ %null !>(~)]
             :+  %cast  %mime
             (lobe-to-silk:zez a (~(got by q.new.dat) a))
         ==
@@ -2293,15 +2293,14 @@
           ?:  =([~ lob] lol)
             =+  (need (need (read-x let.dom pax)))
             ?>  ?=(%& -<)
-            [%done ~ p.-]
+            [%$ p.-]
           ?:  =([~ lob] lal)
-            :+  %done  ~
-            (need (bind q.ank:(descend-path:(zu (need alh)) pax) tail))
+            [%$ +:(need q.ank:(descend-path:(zu (need alh)) pax))]
           =+  bol=(~(got by lat.ran) lob)
           ?-  -.bol
-            %direct     [%volt ~ q.bol]
-            %indirect   [%volt ~ q.bol]
-            %delta      [%pact $(lob q.q.bol) [%volt ~ r.bol]]
+            %direct     [%volt q.bol]
+            %indirect   [%volt q.bol]
+            %delta      [%pact $(lob q.q.bol) [%volt r.bol]]
           ==
         ::
         ++  reduce-merge-points
