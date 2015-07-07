@@ -10000,11 +10000,11 @@
       ::  ~&  [%swim-wyt `@ud`~(wyt in p.sew)]
       =+  ^=  pru
           ?~  pux
-            ~|  [%swim-call-vane lal]
+            ~|  [%swim-call-vane lal (,[term ~] +.p.hil)]
             =^  vax  p.sew  (~(slap wa p.sew) rig [%cnzy %call])
             %^  slur-pro  lal  vax
             (slid [%& duc.vil hen] (slix hil))
-          ~|  [%swim-take-vane lal]
+          ~|  [%swim-take-vane lal (,[term ~] +.p.hil)]
           =^  vax  p.sew  (~(slap wa p.sew) rig [%cnzy %take])
           %^  slur-pro  lal   vax
           ;:  slid
