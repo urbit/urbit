@@ -503,15 +503,14 @@
         ?.  (slab %grad p.pro)
           (flaw cof leaf/"no ++grad" ~)
         =+  gar=(slap pro [%cnzy %grad])
-        ?.  (slab %form p.gar)
-          ?.  (slab %sted p.gar)
-            (flaw cof leaf/"no ++form:grad nor ++sted:grad" ~)
-          =+  for=((soft ,@tas) q:(slap gar [%cnzy %sted]))
-          ?~  for
-            (flaw cof leaf/"bad ++sted:grad" ~)
+        ?@  q.gar
+          =+  for=((sand %tas) q.gar)
+          ?~  for  (flaw cof leaf/"bad mark ++grad" ~)
           %^  make  cof  %diff
           :-  [%cast u.for `cay]
           [%cast u.for `coy]
+        ?.  (slab %form p.gar)
+          (flaw cof leaf/"no ++form:grad" ~)
         ?.  (slab %diff p.gar)
           (flaw cof leaf/"no ++diff:grad" ~)
         %+  cope  (keel cof pro [[%& 6]~ q.cay]~)
@@ -755,13 +754,12 @@
         ?.  (slab %grad p.pro)
           (flaw cof leaf/"no ++grad" ~)
         =+  gar=(slap pro [%cnzy %grad])
-        ?.  (slab %form p.gar)
-          ?.  (slab %sted p.gar)
-            (flaw cof leaf/"no ++form:grad nor ++sted:grad" ~)
-          =+  too=((soft ,@tas) q:(slap gar [%cnzy %sted]))
-          ?~  too
-            (flaw cof leaf/"bad ++sted:grad" ~)
+        ?@  q.gar
+          =+  too=((sand %tas) q.gar)
+          ?~  too  (flaw cof leaf/"bad mark ++grad" ~)
           (make cof %join u.too `cay `coy)
+        ?.  (slab %form p.gar)
+          (flaw cof leaf/"no ++form:grad" ~)
         =+  fom=((soft ,@tas) q:(slap gar [%cnzy %form]))
         ?~  fom
           (flaw cof leaf/"bad ++form:grad" ~)
@@ -799,14 +797,13 @@
         ?.  (slab %grad p.pro)
           (flaw cof leaf/"no ++grad" ~)
         =+  gar=(slap pro [%cnzy %grad])
-        ?.  (slab %form p.gar)
-          ?.  (slab %sted p.gar)
-            (flaw cof leaf/"no ++form:grad nor ++sted:grad" ~)
-          =+  too=((soft ,@tas) q:(slap gar [%cnzy %sted]))
-          ?~  too
-            (flaw cof leaf/"bad ++sted:grad" ~)
+        ?@  q.gar
+          =+  too=((sand %tas) q.gar)
+          ?~  too  (flaw cof leaf/"bad mark ++grad" ~)
           %+  make  cof
           [%mash u.too [p.mas q.mas `cay] [p.mos q.mos `coy]]
+        ?.  (slab %form p.gar)
+          (flaw cof leaf/"no ++form:grad" ~)            
         =+  fom=((soft ,@tas) q:(slap gar [%cnzy %form]))
         ?~  fom
           (flaw cof leaf/"bad ++form:grad" ~)
@@ -1674,13 +1671,12 @@
         ?.  (slab %grad p.pro)
           (flaw cof leaf/"no ++grad" ~)
         =+  gar=(slap pro [%cnzy %grad])
-        ?.  (slab %form p.gar)
-          ?.  (slab %sted p.gar)
-            (flaw cof leaf/"no ++form:grad nor ++sted:grad" ~)
-          =+  for=((soft ,@tas) q:(slap gar [%cnzy %sted]))
-          ?~  for
-            (flaw cof leaf/"bad ++sted:grad" ~)
+        ?@  q.gar
+          =+  for=((sand %tas) q.gar)
+          ?~  for  (flaw cof leaf/"bad mark ++grad" ~)
           (make cof %cast p.cay %pact [%cast u.for `cay] `coy)
+        ?.  (slab %form p.gar)
+          (flaw cof leaf/"no ++form:grad" ~)
         =+  for=((soft ,@tas) q:(slap gar [%cnzy %form]))
         ?~  for
           (flaw cof leaf/"bad ++form:grad" ~)

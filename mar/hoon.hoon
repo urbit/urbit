@@ -49,8 +49,5 @@
     =+  (role wan)
     (end 3 (dec (met 3 -)) -)
   --
-++  grad
-  |%
-  ++  sted  %txt
-  --
+++  grad  %txt
 --
