@@ -177,6 +177,7 @@
   ==
 ::
 ++  za                                                  ::  per event
+  ::  =+  dyv=0
   =|  $:  $:  $:  our=ship                              ::  computation owner
                   bek=beak                              ::  desk context
                   hen=duct                              ::  event floor
@@ -1042,11 +1043,12 @@
             |=([cof=cafe _r.arc] ^$(cof cof, r.arc r))
             |=  [cof=cafe [for=@tas ~] ^]
             ?.  ((sane %tas) for)  (flue cof)
-            (lace cof for bem(s [for s.bem]))
+            %+  cope  (lace cof for bem(s [for s.bem]))
+            (flux (lift |*(* [for +<])))
           ==
           %-  flux
-          |=  [lam=marv ram=marv nod=(unit (burg heel vase))]
-          ?^(nod [[for u.nod] lam ram] (~(uni by lam) ram))
+          |=  [lam=marv ram=marv nod=(unit ,[mark (burg heel vase)])]
+          ?^(nod [u.nod lam ram] (~(uni by lam) ram))
         ==
       |=  [cof=cafe mal=marv]
       =+  lit=(~(get by mal) for)
@@ -1148,6 +1150,16 @@
     ::
     ++  make                                            ::  reduce silk
       |=  [cof=cafe kas=silk]
+      :: =+  ^=  pre
+      ::     ?+  -.kas  -.kas
+      ::       ^  %cell
+      ::       %boil  [-.kas p.kas (tope q.kas)]
+      ::       %bake  [-.kas p.kas (tope q.kas)]
+      ::       %core  [-.kas (tope p.kas)]
+      ::     ==
+      :: ~&  [dyv `term`(cat 3 %make (fil 3 dyv ' ')) pre]
+      :: =-  ~&  [dyv `term`(cat 3 %made (fil 3 dyv ' ')) pre]  -
+      :: =.  dyv  +(dyv)
       ^-  (bolt gage)
       ?-    -.kas
           ^
