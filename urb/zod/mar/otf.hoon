@@ -16,8 +16,5 @@
   ++  mime  |=([mite p=octs] [/font/otf p])
   ++  noun  ^mime
   --
-++  grad
-  |%
-  ++  sted  %mime
-  --
+++  grad  %mime
 --

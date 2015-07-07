@@ -20,8 +20,5 @@
   ++  numb  jone
   ++  time  jode
   --
-++  grad
-  |%
-  ++  sted  %mime
-  --
+++  grad  %mime
 --
