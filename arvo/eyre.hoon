@@ -756,8 +756,8 @@
         ?.  ?=(%mime p.cay)
           =+  bek=-:(need (tome p.tee))
           =+  bik=?+(r.bek bek [%ud %0] bek(r da/now))
-          =-  (pass-note tee (ford-req bik [%flag p.sih -]))
-          =-  `silk`[%cast %mime %done ~ cay(q.q -)]
+          =-  (pass-note tee (ford-req bik [%flag [p.sih `~] -]))
+          =-  `silk`[%cast %mime %$ cay(q.q -)]
           ?.  ?=([%ud 0] r.bek)  q.q.cay
           ?+  p.cay  q.q.cay          :: inject dependency long-poll
             %urb  =|  urb=[[%html ~] [[%head ~] marl] [[%body ~] manx marl] ~]
@@ -796,7 +796,7 @@
   ::
   ++  back                                              ::  %ford bounce
     |=  [tea=whir mar=mark cay=cage]
-    (pass-note tea (ford-req root-beak [%cast mar %done ~ cay]))
+    (pass-note tea (ford-req root-beak [%cast mar %$ cay]))
   ::
   ++  ford-kill  (pass-note ~ %f [%exec our *beak ~])        :: XX unused
   ++  ford-req  |=([bek=beak kas=silk] [%f [%exec our bek `kas]])

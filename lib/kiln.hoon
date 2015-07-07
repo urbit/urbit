@@ -366,7 +366,7 @@
               %+  turn  (~(tap in p.are))
               |=  pax=path
               ^-  (pair silk silk)
-              :-  [%done ~ %path -:!>(*path) pax]
+              :-  [%$ %path -:!>(*path) pax]
               =+  base=[%file [our tic %da now] (flop pax)]
               =+  alis=[%file [her sud cas] (flop pax)]
               =+  bobs=[%file [our syd %da now] (flop pax)]

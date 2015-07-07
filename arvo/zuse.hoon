@@ -2520,18 +2520,17 @@
 ++  milk  (trel ship desk silk)                         ::  sourced silk
 ++  silk                                                ::  construction layer
   $&  [p=silk q=silk]                                   ::  cons
-  $%  [%bake p=mark q=beam r=path]                      ::  local synthesis
+  $%  [%$ p=cage]                                       ::  literal
+      [%bake p=mark q=beam r=path]                      ::  local synthesis
       [%boil p=mark q=beam r=path]                      ::  general synthesis
       [%bunt p=mark]                                    ::  example of mark
       [%call p=silk q=silk]                             ::  slam
       [%cast p=mark q=silk]                             ::  translate
       [%core p=beam]                                    ::  build program
       [%diff p=silk q=silk]                             ::  diff
-      [%done p=(set beam) q=cage]                       ::  literal
-      [%dude p=tank q=silk]                             ::  error wrap
-      [%dune p=(set beam) q=(unit cage)]                ::  unit literal
+      [%dude p=(trap tank) q=silk]                      ::  error wrap
       [%file p=beam]                                    ::  from clay
-      [%flag p=@uvH q=silk]                             ::  re-apply user deps
+      [%flag p=(set $|(@uvH beam)) q=silk]              ::  add dependencies
       [%join p=mark q=silk r=silk]                      ::  merge
       [%mash p=mark q=milk r=milk]                      ::  annotate
       [%mute p=silk q=(list (pair wing silk))]          ::  mutant
@@ -2540,8 +2539,8 @@
       [%reef ~]                                         ::  kernel reef
       [%ride p=twig q=silk]                             ::  silk thru twig
       [%tabl p=(list (pair silk silk))]                 ::  list
-      [%vale p=mark q=ship r=*]                         ::  validate [our his]
-      [%volt p=(set beam) q=(cask ,*)]                  ::  unsafe add type
+      [%vale p=mark q=*]                                ::  validate
+      [%volt p=(cask ,*)]                               ::  unsafe add type
   ==                                                    ::
 ::::
 ++  gage                                                ::  recursive cage/tang

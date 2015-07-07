@@ -109,7 +109,7 @@
   ++  sh                                                ::  per console
     |_  $:  coz=(list command)                          ::  talk actions
             she=shell
-        ==
+        == 
     ++  sh-expr  wide:(vang & [&1:% &2:% (scot %da now.hid) |3:%])
     ::
     ++  sh-scad                                         ::  command parser
