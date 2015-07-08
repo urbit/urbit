@@ -1017,34 +1017,43 @@
       (turn (sloe p.gow) |=(too=mark [for too]))
     ::
     ++  lyle                                            ::  all mark doors
-      =|  sup=path
       |=  cof=cafe  ^-  (bolt (map mark vase))
-      %+  cope  (lend cof [bek (welp sup /mar)])
-      |=  [cof=cafe arc=arch]
-      =+  all=(skim (turn (~(tap by r.arc)) head) (sane %tas))
-      =|  res=(map mark vase)
-      |-  ^-  (bolt (map mark vase))
-      ?~  all  (fine cof ~)
-      %+  cope  $(all t.all)
-      |=  [cof=cafe dep=(map mark vase)]
-      =.  res  (~(uni by res) dep)
-      %+  cope  ^^^$(cof cof, sup [i.all sup])
-      |=  [cof=cafe wid=(map mark vase)]
-      ^-  (bolt (map mark vase))
-      =.  res  (~(uni by res) wid)
-      =+  pax=(flop sup)
-      ?~  pax  (fine cof res)
-      =+  for=(tack pax)
-      ?:  (~(has by res) for)  (fine cof res)
-      ?.  (~(has by r.arc) %hoon)  (fine cof res)
-      =+  bem=(norm ska bek (welp sup /mar))
-      =+  raf=(cope (fade cof %hoon bem) abut:(meow bem ~))
-      ?:  ?=(%2 -.q.raf)
-        =-  ((slog 0 (flop `tang`-)) (fine cof res))
+      =.  bek  -:(norm ska bek ~)
+      =|  [sup=path res=(map mark vase)]
+      |^  `(bolt (map mark vase))`wide
+      ++  here  [bek (welp sup /mar)]
+      ++  wide
+        %+  cope  (lend cof here)
+        |=  [cof=cafe arc=arch]
+        =+  all=(skim (turn (~(tap by r.arc)) head) (sane %tas))
+        =.  all  (sort all gth)                         ::  short-deepest
+        |-  ^-  (bolt (map mark vase))
+        ?~  all  (fine cof res)
+        %+  cope  $(all t.all)
+        |=  [cof=cafe res=(map mark vase)]
+        =.  ^res  res
+        =-  (cope - (tall i.all))
+        ?.  (~(has by r.arc) %hoon)  (flue cof)
+        node(cof cof)
+      ::
+      ++  tall
+        |=  for=term
+        |=  [cof=cafe new=(unit ,[mark vase])]
+        wide(cof cof, sup [for sup], res (~(gas by res) (drop new)))
+      ::
+      ++  node
+        ^-  (bolt (unit ,[mark vase]))
+        =+  pax=(flop sup)
+        ?~  pax  (flue cof)
+        =+  for=(tack pax)
+        ?:  (~(has by res) for)  (flue cof)
+        =+  raf=(lear cof here)
+        ?.  ?=(%2 -.q.raf)
+          (cope raf (flux |=(vax=vase (some [for vax]))))
+        =-  ((slog 0 (flop `tang`-)) (flue cof))
         ?^  t.pax  ~              ::  error on top-level marks
         :_(q.q.raf leaf/"! {<`mark`for>} build failed, ignoring.")
-      %+  cope  `(bolt vase)`raf
-      (flux |=(vax=vase (~(put by res) for vax)))
+      --
     ::
     ++  lima                                            ::  load at depth
       |=  [cof=cafe for=mark bem=beam arg=heel]
@@ -1255,8 +1264,7 @@
       ::
           %core
         %+  cool  |.(leaf/"ford: core {<(tope p.kas)>}")
-        %+  cope  (lear cof p.kas)
-        (flux |=(a=vase [%& %core a]))
+        (cope (lear cof p.kas) (flux |=(a=vase [%& %core a])))
       ::
           %diff
         %+  cool  |.(leaf/"ford: diff {<`@p`(mug p.kas)>} {<`@p`(mug q.kas)>}")
