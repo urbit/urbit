@@ -9,7 +9,7 @@
 ++  kiln-part  ,[%kiln %0 kiln-pith]                    ::  kiln state
 ++  kiln-pith                                           ::
     $:  rem=(map desk kiln-desk)                        ::
-        syn=(map hood-sync ,[let=@ud ust=bone])         ::
+        syn=(map kiln-sync ,[let=@ud ust=bone])         ::
     ==                                                  ::
 ++  kiln-desk                                           ::  per-desk state
     $:  auto=?                                          ::  escalate on failure
@@ -21,30 +21,30 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-++  hood-mount                                          ::
+++  kiln-mount                                          ::
     $:  pax=path                                        ::
         pot=term                                        ::
     ==                                                  ::
-++  hood-unmount                                        ::
+++  kiln-unmount                                        ::
     $|(term [span path])                                ::
-++  hood-sync                                           ::
+++  kiln-sync                                           ::
     $:  syd=desk                                        ::
         her=ship                                        ::
         sud=desk                                        ::
     ==                                                  ::
-++  hood-unsync                                         ::
+++  kiln-unsync                                         ::
     $:  syd=desk                                        ::
         her=ship                                        ::
         sud=desk                                        ::
     ==                                                  ::
-++  hood-merge                                          ::
+++  kiln-merge                                          ::
     $:  syd=desk                                        ::
         ali=ship                                        ::
         sud=desk                                        ::
         gim=?(%auto germ)                               ::
     ==                                                  ::
-++  hood-cp  [input=path output=path]                   ::
-++  hood-mv  [input=path output=path]                   ::
+++  kiln-cp  [input=path output=path]                   ::
+++  kiln-mv  [input=path output=path]                   ::
 --                                                      ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -65,7 +65,7 @@
         ==                                              ::
       ++  pear                                          ::  poke fruit
         $%  [%talk-command command:talk]                ::
-            [%hood-merge hood-merge]                    ::
+            [%kiln-merge kiln-merge]                    ::
         ==                                              ::
       ++  move  (pair bone card)                        ::  user-level move
       --
@@ -80,7 +80,7 @@
     ?~(+< +> $(+< t.+<, +> (emit i.+<)))
   ::
   ++  poke-mount
-    |=  hood-mount
+    |=  kiln-mount
     =+  bem=(tome pax)
     ?~  bem
       =+  "can't mount bad path: {<pax>}"
@@ -88,7 +88,7 @@
     abet:(emit %mont /mount pot p.u.bem q.u.bem (flop s.u.bem))
   ::
   ++  poke-unmount
-    |=  mon=hood-unmount
+    |=  mon=kiln-unmount
     ?^  mon
       =+  bem=(tome mon)
       ?~  bem
@@ -98,14 +98,14 @@
     abet:(emit %ogre /unmount-point mon)
   ::
   ++  poke-sync                                         ::
-    |=  hos=hood-sync
+    |=  hos=kiln-sync
     ?:  (~(has by syn) hos)
       =+  "already syncing from {<sud.hos>} on {<her.hos>} to {<syd.hos>}"
       abet:(spam leaf/- ~)
     abet:abet:start:(auto hos)
   ::
   ++  poke-unsync                                         ::
-    |=  hus=hood-unsync
+    |=  hus=kiln-unsync
     ?.  (~(has by syn) hus)
       =+  "not syncing from {<sud.hus>} on {<her.hus>} to {<syd.hus>}"
       abet:(spam leaf/- ~)
@@ -114,7 +114,7 @@
     ==
   ::
   ++  poke-merge                                        ::
-    |=  hood-merge
+    |=  kiln-merge
     abet:abet:(merge:(work syd) ali sud gim)
   ::
   ++  do-info
@@ -163,7 +163,7 @@
   ++  take-mere-sync                                    ::
     |=  [way=wire mes=(each (set path) (pair term tang))]
     ?>  ?=([@ @ @ ~] way)
-    =+  ^-  hos=hood-sync
+    =+  ^-  hos=kiln-sync
         :*  syd=(slav %tas i.way)
             her=(slav %p i.t.way)
             sud=(slav %tas i.t.t.way)
@@ -173,7 +173,7 @@
   ++  take-writ                                         ::
     |=  [way=wire rot=riot]
     ?>  ?=([@ @ @ ~] way)
-    =+  ^-  hos=hood-sync
+    =+  ^-  hos=kiln-sync
         :*  syd=(slav %tas i.way)
             her=(slav %p i.t.way)
             sud=(slav %tas i.t.t.way)
@@ -186,7 +186,7 @@
     [%poke /kiln/spam [our %talk] (said our %kiln now eny mes)]
   ::
   ++  auto
-    |=  hood-sync
+    |=  kiln-sync
     =+  (fall (~(get by syn) syd her sud) [let=*@ud ust=ost])
     |%
     ++  abet
@@ -210,11 +210,12 @@
       ::  XX remove feedback for demo
       ::  =.  .  %-  spam
       ::         [leaf/"activated sync from {<sud>} on {<her>} to {<syd>}" ~]
-      %-  blab  :_  ~
-      :*  ost  %warp
-          /kiln/sync/[syd]/(scot %p her)/[sud]
-          [our her]  sud  ~  %sing  %w  [%da now]  /
-      ==
+      %-  blab
+      :~  [ost %mont /mount syd our syd /]
+          :*  ost  %warp
+              /kiln/sync/[syd]/(scot %p her)/[sud]
+              [our her]  sud  ~  %sing  %w  [%da now]  /
+      ==  ==
     ::
     ++  writ
       |=  rot=riot
@@ -284,7 +285,6 @@
     ::
     ++  ford-fail
       |=(tan=tang ~|(%ford-fail (mean tan)))
-      
     ::
     ++  unwrap-tang
       |*  res=(each ,* tang)
@@ -323,9 +323,10 @@
       |=  [syd=desk her=@p sud=desk gem=?(%auto germ)]
       ^+  +>
       %-  blab  :_  ~
-      [ost %poke /kiln/fancy/[^syd] [our %hood] %hood-merge [syd her sud gem]]
+      [ost %poke /kiln/fancy/[^syd] [our %hood] %kiln-merge [syd her sud gem]]
     ::
-    ++  spam  |*(* +>(..work (^spam +<)))
+    ++  spam  ::|=(tang ((slog 0 +<) ..spam))
+              |*(* +>(..work (^spam +<)))
     ++  merge
       |=  [her=@p sud=@tas gim=?(%auto germ)]
       ^+  +>
@@ -346,7 +347,7 @@
         [ost %merg /kiln/[syd] our (cat 3 syd '-scratch') her sud gem]
       =+  :-  "failed to set up conflict resolution scratch space"
           "I'm out of ideas"
-      lose:(spam leaf/-< leaf/-> ~)
+      lose:(spam leaf/-< leaf/-> u.saw)
     ::
     ++  mere
       |=  are=(each (set path) (pair term tang)) 
@@ -356,6 +357,7 @@
           ?.  auto
             =+  "merged with strategy {<gem>}"
             win:(spam leaf/- ?~(p.are ~ [>`(set path)`p.are< ~]))
+          :: ~?  >  =(~ p.are)  [%mere-no-conflict syd]
           =+  "mashing conflicts"
           =>  .(+>.$ (spam leaf/- ~))
           =+  tic=(cat 3 syd '-scratch')
@@ -363,6 +365,7 @@
           :*  ost  %exec  /kiln/[syd]
               our  [our tic %da now]  ~  %tabl
               ^-  (list (pair silk silk))
+              :: ~&  >  kiln-mashing/[p.are syd=syd +<.abet]
               %+  turn  (~(tap in p.are))
               |=  pax=path
               ^-  (pair silk silk)
@@ -377,14 +380,14 @@
                   ?~(- %$ i.-)
               [%mash for [her sud dali] [our syd dbob]]
           ==
-        =+  "failed to merge with strategy {<p.p.are>}"
-        lose:(spam leaf/- q.p.are)
+        =+  "failed to merge with strategy meld"
+        lose:(spam leaf/- >p.p.are< q.p.are)
       ?:  ?=(%& -.are)
         =+  "merged with strategy {<gem>}"
         win:(spam leaf/- ?~(p.are ~ [>`(set path)`p.are< ~]))
       ?.  auto
-        =+  "failed to merge with strategy {<p.p.are>}"
-        lose:(spam leaf/- q.p.are)
+        =+  "failed to merge with strategy {<gem>}"
+        lose:(spam leaf/- >p.p.are< q.p.are)
       ?+    gem
         (spam leaf/"strange auto" >gem< ~)
       ::
@@ -415,8 +418,8 @@
         =+  tic=(cat 3 syd '-scratch')
         =>  =+  :-  "%mate merge failed with conflicts,"
                 "setting up scratch space at %{(trip tic)}"
-            [tic=tic (spam leaf/-< leaf/-> ~)]
-        (fancy-merge tic our syd %auto)
+            [tic=tic (spam leaf/-< leaf/-> q.p.are)]
+        (fancy-merge tic our syd %that)
       ==
     ::
     ++  made
@@ -433,6 +436,7 @@
             ~|  "strange path mark: {<p.pax>}"
             !!
           [((hard path) q.q.pax) ?:(?=(%null p.dif) ~ `[%dif dif])]
+      :: ~&  >  kiln-made/[(turn can head) syd=syd +<.abet]
       =+  notated=(skid can |=([path a=(unit miso)] ?=(^ a)))
       =+  annotated=(turn `(list (pair path ,*))`-.notated head)
       =+  unnotated=(turn `(list (pair path ,*))`+.notated head)
