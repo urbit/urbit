@@ -581,11 +581,31 @@
         (flaw cof [%leaf "syntax error: {<p.p.vex>} {<q.p.vex>}"] ~)
       (fine cof p.u.q.vex)
     ::
+    ++  fame
+      |=  [cof=cafe bem=beam]                          ::  beam with - as /
+      ^-  (bolt beam)
+      %-  cope  :_  (flux |=(a=(unit beam) (fall a bem)))
+      ?~  s.bem  (flue cof)
+      =+  opt=`(list term)`(fall (tear i.s.bem) ~)
+      ?~  opt  (flue cof)
+      |-  ^-  (bolt (unit beam))
+      =.  i.s.bem  (tack opt)
+      %+  cope  (lima cof %hoon bem ~)
+      |=  [cof=cafe vax=(unit vase)]  ^-  (bolt (unit beam))
+      ?^  vax  (fine cof `bem)
+      ?~  t.opt  (flue cof)
+      %+  cope  ^$(opt t.opt, t.s.bem :_(t.s.bem i.opt), cof cof)
+      |=  [cof=cafe bem=(unit beam)]  ^-  (bolt (unit beam))
+      ?^  bem  (fine cof bem)
+      ^$(opt :_(t.t.opt (tack i.opt i.t.opt ~)), cof cof)
+    ::
     ++  fang                                            ::  protocol door
       |=  [cof=cafe for=mark]
       ^-  (bolt vase)
-      %+  cope  (make cof [%core (norm ska bek /[for]/mar)])
-      ;~(cope furl feel)
+      %+  cope  (fame cof (norm ska bek /[for]/mar))
+      |=  [cof=cafe bem=beam]
+      %+  cope  (fade cof %hoon bem)
+      abut:(meow bem ~)
     ::
     ++  fair                                            ::  hood parsing rule
       |=  bem=beam
@@ -997,8 +1017,7 @@
         =+  [res=(weld wid dep) pax=(flop sup)]
         ?~  pax  (fine cof res)
         ?.  (~(has by r.arc) %hoon)  (fine cof res)
-        =+  :-  sil=[%core (norm ska bek (welp sup /mar))] 
-            for=(rap 3 |-([i.pax ?~(t.pax ~ ['-' $(pax t.pax)])]))
+        =+  [for=(tack pax) sil=[%core (norm ska bek (welp sup /mar))]]
         =+  raf=(;~(cope make furl feel) cof sil)
         ?:  ?=(%2 -.q.raf)
           =-  ((slog 0 (flop `tang`-)) (fine cof res))
@@ -1231,19 +1250,10 @@
       ::
           %core
         %+  cool  |.(leaf/"ford: core {<(tope p.kas)>}")
-        %-  cope  :_  (flux |=(cor=vase [%& %core cor])) 
-        =+  bem=p.kas
-        ?~  s.bem  (cope (fade cof %hoon bem) abut:(meow bem ~))
-        =+  opt=`(list term)`(fall (tear i.s.bem) ~)
-        ?~  opt  (cope (fade cof %hoon bem) abut:(meow bem ~))
-        |-  ^-  (bolt vase)
-        =.  i.s.bem  (tack opt)
-        %+  coop  (cope (fade cof %hoon bem) abut:(meow bem ~))
-        |=  [cof=cafe ~]  ^-  (bolt vase)
-        ?~  t.opt  (flaw cof ~)
-        %+  coop  ^$(cof cof, opt t.opt, t.s.bem :_(t.s.bem i.opt))
-        |=  [cof=cafe ~]  ^-  (bolt vase)
-        ^$(cof cof, opt :_(t.t.opt (tack i.opt i.t.opt ~)))
+        %+  cope  (fame cof p.kas)
+        |=  [cof=cafe bem=beam]
+        %.  [cof %hoon bem]
+        ;~(cope fade abut:(meow bem ~) (flux |=(cor=vase [%& %core cor])))
       ::
           %diff
         %+  cool  |.(leaf/"ford: diff {<`@p`(mug p.kas)>} {<`@p`(mug q.kas)>}")
@@ -1549,7 +1559,7 @@
       ::
       ++  head                                          ::  consume structures
         |=  [cof=cafe bir=(list hoot)]
-        |-  ^-  (bolt ,_..head)
+        ^-  (bolt ,_..head)
         ?~  bir  
           (fine cof ..head)
         =+  byf=(~(get by rop) p.q.i.bir)
@@ -1557,9 +1567,11 @@
           ?.  =(`hoof`q.i.bir `hoof`p.u.byf)
             (flaw cof [%leaf "structure mismatch: {<~[p.u.byf q.i.bir]>}"]~)
           $(bir t.bir)
-        %+  cope  (fade cof %hoon (hone %sur q.i.bir))
+        %+  cope  (fame cof (hone %sur q.i.bir))
+        |=  [cof=cafe bem=beam]
+        %+  cope  (fade cof %hoon bem)
         |=  [cof=cafe hyd=hood]
-        %+  cope  (apex(boy ~) cof hyd)
+        %+  cope  (apex(how bem, boy ~) cof hyd)
         |=  [cof=cafe sel=_..head]
         =.  ..head
             %=  sel
@@ -1567,11 +1579,12 @@
                      boy
                    (welp boy [[[%cnzy p.q.i.bir] [%$ 1]] ~])
               zeg  zeg
+              how  how
               rop  %+  ~(put by (~(uni by rop) rop.sel))
                       p.q.i.bir 
                    [q.i.bir [%tssg (flop boy.sel)]]
             ==
-        ^^$(cof cof, bir t.bir)
+        ^^^$(cof cof, bir t.bir)
       ::
       ++  hone                                          ::  plant hoof
         |=  [way=@tas huf=hoof]
@@ -1592,17 +1605,20 @@
           ?.  =(`hoof`i.bir `hoof`p.u.byf)
             (flaw cof [%leaf "library mismatch: {<~[p.u.byf i.bir]>}"]~)
           $(bir t.bir)
-        %+  cope  (fade cof %hoon (hone %lib i.bir))
+        %+  cope  (fame cof (hone %lib i.bir))
+        |=  [cof=cafe bem=beam]
+        %+  cope  (fade cof %hoon bem)
         |=  [cof=cafe hyd=hood]
-        %+  cope  (apex(zeg goz, boy ~) cof hyd)
+        %+  cope  (apex(zeg goz, how bem, boy ~) cof hyd)
         |=  [cof=cafe sel=_..neck]
         =.  ..neck  
             %=  sel
               zeg  zeg
+              how  how
               lot  [p.i.bir lot]
               bil  (~(put by bil) p.i.bir [i.bir [%tssg (flop boy.sel)]])
             ==
-        ^^$(cof cof, bir t.bir)
+        ^^^$(cof cof, bir t.bir)
       ::
       ++  wilt                                          ::  process body entry
         |=  [cof=cafe hop=hoop]
