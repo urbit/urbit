@@ -834,12 +834,9 @@
         %+  cope
           %^  maul  cof
             (slap (slap pro [%cnzy %grad]) [%cnzy %mash])
-          ;:  slop
-              (slop [[%atom %p] p.mas] [[%atom %tas] q.mas])
-              (slop [[%atom %p] p.mos] [[%atom %tas] q.mos])
-              q.cay
-              q.coy
-          ==
+          %+  slop
+            :(slop [[%atom %p] p.mas] [[%atom %tas] q.mas] q.cay)
+          :(slop [[%atom %p] p.mos] [[%atom %tas] q.mos] q.coy)
         (flux |=(dif=vase [%& u.fom dif]))
       ==
     ::
@@ -1352,6 +1349,8 @@
       ^-  (bolt type)
       %+  (clef %slit)  (fine cof gat sam)
       |=  [cof=cafe gat=type sam=type]
+      %+  cool  |.(>sam<)
+      %+  cool  |.(>(~(peek ut gat) %free 6)<)
       =+  top=(mule |.((slit gat sam)))
       ?-  -.top
         |  (flaw cof p.top)

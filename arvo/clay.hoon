@@ -1226,7 +1226,8 @@
       ?-  -.bol
         %direct     [%volt q.bol]
         %indirect   [%volt q.bol]
-        %delta      [%pact $(lob q.q.bol) [%volt r.bol]]
+        %delta      ~|  delta/q.q.bol
+                    [%pact $(lob q.q.bol) [%volt r.bol]]
       ==
     ::
     ++  page-to-lobe  |=(page (shax (jam +<)))
@@ -1750,10 +1751,10 @@
             %fine
           ?:  =(r.ali.dat r.bob.dat)
             ::  ~&  [%fine-trivial ali=<ali> bob=<bob> r.ali.dat r.bob.dat]
-            (done:he ~)
+            done:he
           ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
             ::  ~&  [%fine-mostly-trivial ali=<ali> bob=<bob>]
-            (done:he ~)
+            done:he
           ?.  (~(has in (reachable-takos r.ali.dat)) r.bob.dat)
             ::  ~&  [%fine-not-so-trivial ali=<ali> bob=<bob>]
             (error:he %bad-fine-merge ~)
@@ -1772,18 +1773,15 @@
           checkout
         ::
             %this
-          ?:  =(r.ali.dat r.bob.dat)
-            (done:he ~)
-          ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
-            (done:he ~)
+          ?:  =(r.ali.dat r.bob.dat)  done:he
+          ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)  done:he
           =.  new.dat  (make-yaki [r.ali.dat r.bob.dat ~] q.bob.dat now)
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
           =.  erg.dat  ~
           checkout
         ::
             %that
-          ?:  =(r.ali.dat r.bob.dat)
-            (done:he ~)
+          ?:  =(r.ali.dat r.bob.dat)  done:he
           =.  new.dat  (make-yaki [r.ali.dat r.bob.dat ~] q.ali.dat now)
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
           =.  erg.dat
@@ -1800,9 +1798,9 @@
         ::
             ?(%meet %mate %meld)
           ?:  =(r.ali.dat r.bob.dat)
-            (done:he ~)
+            done:he
           ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
-            (done:he ~)
+            done:he
           ?:  (~(has in (reachable-takos r.ali.dat)) r.bob.dat)
             $(gem.dat %fine)
           =+  r=(find-merge-points:he ali.dat bob.dat)
@@ -2142,7 +2140,7 @@
           cas
         =+  ^-  del=(map path ,?)
             (~(run by (~(uni by old.dal.dat) old.dob.dat)) |=(~ %|))
-        =.  gon.dat  [%& (sa (turn (~(tap by con)) |=([path *] +<-)))]
+        =.  gon.dat  [%& (sa (turn (~(tap by con)) head))]
         =.  new.dat
           (make-yaki [r.ali.dat r.bob.dat ~] hat now)
         =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
@@ -2187,11 +2185,9 @@
         =.  hit.dom  (~(put by hit.dom) let.dom r.new.dat)
         =.  ank.dat  (checkout-ankh:ze (~(uni by bop.dat) p.can))
         =.  ank.dom  ank.dat
-        ?~  hez
-          (done:he ~)
+        ?~  hez  done:he
         =+  mus=(must-ergo (turn (~(tap by erg.dat)) head))
-        ?:  =(~ mus)
-          (done:he ~)
+        ?:  =(~ mus)  done:he
         ergo
       ::
       ++  ergo
@@ -2241,8 +2237,7 @@
           (error:he %ergo-no-hez ~)
         ?:  ?=(%| -.gon.dat)
           +>.$
-        %_    +>.$
-            don  %|
+        %*  done  he
             reg
           =+  mus=(must-ergo (turn (~(tap by erg.dat)) head))
           %-  welp  :_  reg
@@ -2258,9 +2253,10 @@
       ++  he
         |%
         ++  done
-          |=  con=(set path)
           ^+  ..he
-          ..he(don |, gon.dat [%& con])
+          ?<  ?=(%| -.gon.dat)
+          ..he(don |)
+        ::
         ++  error
           |=  [err=term tan=(list tank)]
           ^+  ..he
