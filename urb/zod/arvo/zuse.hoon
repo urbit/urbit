@@ -2543,6 +2543,7 @@
       [%volt p=(cask ,*)]                               ::  unsafe add type
   ==                                                    ::
 ::::
+++  bilk  (pair beak silk)                              ::  sourced request
 ++  gage                                                ::  recursive cage/tang
   $%  [%& p=cage]                                       ::  success
       [%| p=tang]                                       ::  error
@@ -2554,7 +2555,7 @@
               [%news ~]                                 ::  fresh depends
           ==                                            ::
 ++  kiss-ford                                           ::  in request ->$
-          $%  [%exec p=@p q=beak r=(unit silk)]         ::  make / kill
+          $%  [%exec p=@p q=(unit bilk)]                ::  make / kill
               [%wasp p=@p q=@uvH]                       ::  depends query
               [%wegh ~]                                 ::  report memory
           ==                                            ::
