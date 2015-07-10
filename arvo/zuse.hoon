@@ -2552,7 +2552,7 @@
 ++  gift-ford                                           ::  out result <-$
           $%  [%made p=@uvH q=gage]                     ::  computed result
               [%mass p=mass]                            ::  memory usage
-              [%news ~]                                 ::  fresh depends
+              [%news p=@uvH]                            ::  fresh depends
           ==                                            ::
 ++  kiss-ford                                           ::  in request ->$
           $%  [%exec p=@p q=(unit bilk)]                ::  make / kill

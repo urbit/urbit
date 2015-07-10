@@ -70,7 +70,7 @@
   ==                                                    ::
 ++  task                                                ::  problem in progress
   $:  nah=duct                                          ::  cause
-      [bek=beak kas=silk]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ::  problem
+      [bek=beak kas=silk]                               ::  problem
       keg=(map (pair term beam) cage)                   ::  block results
       kig=[p=@ud q=(map ,@ud ,[p=care q=beam])]         ::  blocks
   ==                                                    ::
@@ -240,7 +240,7 @@
           %sent
         =-  [[%done ~] +>.$(mow (weld - mow))]
         ^-  (list move)
-        %+  weld  (turn (~(tap in p.dap)) |=(hen=duct [hen %give %news ~]))
+        %+  weld  (turn (~(tap in p.dap)) |=(hen=duct [hen %give %news dep]))
         =.  q.dap  (~(del in q.dap) bem)
         %+  turn  (~(tap in q.dap))                     ::  cancel outstanding
         |=  bem=beam
@@ -255,12 +255,12 @@
     ?~  dep
       ~&(dep-empty/hen +>.$)
     ?:  =(dep 0vtest)                 ::  upstream testing
-      +>.$(mow :_(mow [hen %give %news ~]))
+      +>.$(mow :_(mow [hen %give %news dep]))
     =+  dap=(~(get by deh.bay) dep)
     ?~  dap  ~&(dep-missed/dep +>.$)  ::  XX  ~|  !!
     :: ~&  awap/[dep u.dap]
     ?-  -.u.dap
-      %done  +>.$(mow :_(mow [hen %give %news ~]))
+      %done  +>.$(mow :_(mow [hen %give %news dep]))
       %sent
         =.  p.u.dap  (~(put in p.u.dap) hen)
         +>.$(deh.bay (~(put by deh.bay) dep u.dap))
