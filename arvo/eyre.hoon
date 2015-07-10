@@ -23,7 +23,7 @@
               [%meta vase:,[%them (unit httr)]]         ::  type check
           ==  ==                                        ::
               $:  %f                                    ::  to %ford
-          $%  [%exec p=@p q=beak r=(unit silk)]         ::
+          $%  [%exec p=@p q=(unit ,[beak silk])]        ::
               [%wasp p=@p q=@uvH]                       ::
           ==  ==                                        ::
               $:  %g                                    ::  to %gall
@@ -801,8 +801,8 @@
     |=  [tea=whir mar=mark cay=cage]
     (pass-note tea (ford-req root-beak [%cast mar `cay]))
   ::
-  ++  ford-kill  (pass-note ~ %f [%exec our *beak ~])        :: XX unused
-  ++  ford-req  |=([bek=beak kas=silk] [%f [%exec our bek `kas]])
+  ++  ford-kill  (pass-note ~ %f [%exec our ~])         :: XX unused
+  ++  ford-req  |=([bek=beak kas=silk] [%f [%exec our `[bek kas]]])
   ::
   ++  fail
     |=  [sas=@ud dep=@uvH mez=tang]

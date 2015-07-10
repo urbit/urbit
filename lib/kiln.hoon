@@ -55,7 +55,7 @@
   ?>  =(src our)
   =>  |%                                                ::  arvo structures
       ++  card                                          ::
-        $%  [%exec wire @p beak (unit silk)]            ::
+        $%  [%exec wire @p ~ [beak silk]]               ::
             [%info wire @p @tas nori]                   ::
             [%mont wire @tas @p @tas path]              ::
             [%ogre wire $|(@tas beam)]                  ::
@@ -363,7 +363,7 @@
           =+  tic=(cat 3 syd '-scratch')
           %-  blab  :_  ~
           :*  ost  %exec  /kiln/[syd]
-              our  [our tic %da now]  ~  %tabl
+              our  ~  [our tic %da now]  %tabl
               ^-  (list (pair silk silk))
               :: ~&  >  kiln-mashing/[p.are syd=syd +<.abet]
               %+  turn  (~(tap in p.are))

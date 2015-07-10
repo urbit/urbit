@@ -207,7 +207,7 @@
     ::  ~&  [%mo-boot dap how byk]
     %+  mo-pass  [%sys how dap (scot %p p.byk) q.byk (scot r.byk) ~]
     ^-  note-arvo
-    [%f %exec our byk `[%core [byk [dap %ape ~]]]]
+    [%f %exec our `[byk %core [byk [dap %ape ~]]]]
   ::
   ++  mo-away                                           ::  foreign request
     |=  [him=ship caz=cush]                             ::  
@@ -459,7 +459,7 @@
             ?:  ?=(%doff +>-.q.hin)
               %+  mo-pass
                 [%use pax]
-              [%f %exec our byk.pap ~ %vale +.p.q.hin]
+              [%f %exec our ~ byk.pap %vale +.p.q.hin]
             ap-abet:(ap-pout:pap t.t.t.pax +>.q.hin)
     ==
   ::
@@ -487,11 +487,11 @@
     ?:  ?=(%puff -.cub)
       %+  mo-pass
         [%sys %val (scot %p q.q.pry) dap ~]
-      [%f %exec our (mo-beak dap) ~ %vale +.cub]
+      [%f %exec our ~ (mo-beak dap) %vale +.cub]
     ?:  ?=(%punk -.cub)
       %+  mo-pass
         [%sys %val (scot %p q.q.pry) dap ~]
-      [%f %exec our (mo-beak dap) ~ %cast p.cub %$ q.cub]
+      [%f %exec our ~ (mo-beak dap) %cast p.cub %$ q.cub]
     ap-abet:(ap-club:(ap-abed:ap dap pry) cub)
   ::
   ++  mo-club                                           ::  local action
@@ -510,7 +510,7 @@
       [%sys %req (scot %p him) dap (scot %ud num) ~]
     ^-  note-arvo
     ?-  -.rok
-      ::  %m  [%f %exec our (mo-beak dap) ~ %vale p.rok q.rok]
+      ::  %m  [%f %exec our ~ (mo-beak dap) %vale p.rok q.rok]
       %m  [%g %deal [him our] dap %puff p.rok q.rok]
       %s  [%g %deal [him our] dap %peer p.rok]
       %u  [%g %deal [him our] dap %pull ~]
@@ -600,7 +600,7 @@
         ?:  =(mar p.cay)  [%give %unto p.q.cov]
         :+  %pass
           [%sys %pel dap ~]
-        [%f %exec our (mo-beak dap) ~ %cast mar %$ cay]
+        [%f %exec our ~ (mo-beak dap) %cast mar %$ cay]
       ::
           %pass
         :+  %pass  `path`[%use dap p.q.cov]
