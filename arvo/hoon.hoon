@@ -2270,8 +2270,9 @@
 ++  rylq  |=  a=dn  ^-  @rq  (grd:rq a)
 ::
 ++  rd
-  =+  ma==>(ff .(w 11, p 52, b --1.023, f %.n, r %n))
   |%
+  ++  ma
+    =>(ff .(w 11, p 52, b --1.023, f %.n, r %n))
   ++  sea
     |=  [a=@rd]  (sea:ma a)
   ++  bit
@@ -2313,8 +2314,9 @@
   --
 ::
 ++  rs
-  =+  ma==>(ff .(w 8, p 23, b --127, f %.n, r %n))
   |%
+  ++  ma
+    =>(ff .(w 8, p 23, b --127, f %.n, r %n))
   ++  sea
     |=  [a=@rs]  (sea:ma a)
   ++  bit
@@ -2356,8 +2358,9 @@
   --
 ::
 ++  rh
-  =+  ma==>(ff .(w 5, p 10, b --15, f %.n, r %n))
   |%
+  ++  ma
+    =>(ff .(w 5, p 10, b --15, f %.n, r %n))
   ++  sea
     |=  [a=@rh]  (sea:ma a)
   ++  bit
@@ -2399,8 +2402,9 @@
   --
 ::
 ++  rq
-  =+  ma==>(ff .(w 15, p 112, b --16.383, f %.n, r %n))
   |%
+  ++  ma
+    =>(ff .(w 15, p 112, b --16.383, f %.n, r %n))
   ++  sea
     |=  [a=@rq]  (sea:ma a)
   ++  bit
