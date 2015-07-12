@@ -2200,7 +2200,7 @@
   ++  sb  (bex (^add w p))
   ::
   ++  pa
-    =+  i=(dif:si --1 b)
+    =+  i=(dif:si (dif:si --1 b) (sun:si p))
     =+  q=fl
     q(p +(p), v i, w (^sub (bex w) 3), d ?:(f %f %d), r r)
   ::
