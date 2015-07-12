@@ -4367,9 +4367,9 @@
           [~(d ne b) c]
         =+  ^=  f
           =>(.(rex ~) (e a.a))
-        =.  e.a  (sum:si e.a (sun:si +.f))
+        =.  e.a  (sum:si e.a (sun:si (dec +.f)))
         =+  b=?:((syn:si e.a) "e" "e-")
-        =>  .(rex (weld b ((d-co 1) (abs:si e.a))))
+        =>  .(rex ?~(e.a rex (weld b ((d-co 1) (abs:si e.a)))))
         =>  .(rex (weld -.f rex))
         ?:(s.a rex ['-' rex])
       ::
@@ -4407,7 +4407,7 @@
     |=  hol=@
     ^-  [tape @]
     ?:  &(=(0 hol) =(0 min))
-      [rex (dec cou)]
+      [rex cou]
     =+  [rad=(mod hol bas) dar=(div hol bas)]
     %=  $
       min  ?:(=(0 min) 0 (dec min))
