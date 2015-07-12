@@ -1314,6 +1314,10 @@
     ?:  |(=(a.a 0) =(a.b 0))
       ?.  &(=(a.a 0) =(a.b 0))  %-  rou  ?~(a.a b a)
       [%f ?:(=(r %d) &(s.a s.b) |(s.a s.b)) zer:m]
+    %-  |=  [a=fn]
+        ?.  ?=([%f *] a)  a
+        ?.  =(a.a 0)  a
+        [%f !=(r %d) zer:m]
     ?:  =(s.a s.b)
       ?:  s.a  (add:m +>.a +>.b |)
       =.(r swr:m (fli (add:m +>.a +>.b |)))
@@ -4552,23 +4556,37 @@
       :-  (lent a)
       (scan a (bass 10 (plus sid:ab)))
     =+  ^=  voy
-        %+  cook  royl-cell
+      %+  cook  royl-cell
+      ;~  pose
         ;~  plug
-          ;~(pose (cold | hep) (easy &))
+          (easy %f)
+          ;~  pose  (cold | hep)  (easy &)  ==
           ;~  plug  dim:ag
             ;~  pose
               ;~(pfix dot (cook moo (plus (shim '0' '9'))))
               (easy [0 0])
             ==
-          ==
-          ;~  pose
-            ;~  pfix
-              (just 'e')
-              (cook some ;~(plug ;~(pose (cold | hep) (easy &)) dim:ag))
+            ;~  pose
+              ;~  pfix
+                (just 'e')
+                ;~(plug ;~(pose (cold | hep) (easy &)) dim:ag)
+              ==
+              (easy [& 0])
             ==
-            (easy ~)
           ==
         ==
+        ;~  plug
+          (easy %i)
+          ;~  sfix
+            ;~  pose  (cold | hep)  (easy &)  ==
+            (jest 'inf')
+          ==
+        ==
+        ;~  plug
+          (easy %n)
+          (cold ~ (jest 'nan'))
+        ==
+      ==
     ;~  pose
       (stag %rh (cook rylh ;~(pfix ;~(plug sig sig) voy)))
       (stag %rq (cook rylq ;~(pfix ;~(plug sig sig sig) voy)))
@@ -4577,10 +4595,14 @@
     ==
   ::
   ++  royl-cell
-    |=  [a=? b=[c=@ d=@ e=@] f=(unit ,[h=? i=@])]
+    |=  $?  [%f a=? b=[c=@ [d=@ e=@] f=? i=@]]
+            [%i a=?]
+            [%n ~]
+        ==
     ^-  dn
+    ?.  ?=([%f *] +<)  +<
     =+  ^=  h
-      (dif:si ?~(f --0 (new:si u.f)) (sun:si d.b))
+      (dif:si (new:si f.b i.b) (sun:si d.b))
     |-  ?.  =(d.b 0)
       $(c.b (mul c.b 10), d.b (dec d.b))
     [%d a h (add c.b e.b)]
