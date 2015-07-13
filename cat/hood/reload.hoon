@@ -8,5 +8,5 @@
 |=  $:  [now=@da eny=@uvI bec=beak]
         [arg=(list term) ~]
     ==
-:-  %hood-reload
+:-  %helm-reload
 arg

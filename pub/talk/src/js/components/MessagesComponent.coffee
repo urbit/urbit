@@ -177,13 +177,14 @@ module.exports = recl
     _messages = @sortedMessages @state.messages
 
     @last = _messages[_messages.length-1]
+    if @last?.ship && @last.ship is window.urb.user then @lastSeen = @last
     @length = _messages.length
 
     setTimeout => 
         @checkMore() if length < @pageSize
       , 1
 
-    lastIndex = if @lastSeen then _messages.indexOf(@lastSeen) else null
+    lastIndex = if @lastSeen then _messages.indexOf(@lastSeen)+1 else null
     lastSaid = null
 
     messages = _messages.map (_message,k) => 

@@ -14,6 +14,7 @@
   --
 ++  grab                                                ::  convert from
   |%
-  ++  noun  (list tank)                                 ::  clam from %noun
+  ++  noun  (list ^tank)                                 ::  clam from %noun
+  ++  tank  |=(a=^tank [a]~)
   --
 --

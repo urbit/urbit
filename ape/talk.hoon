@@ -109,7 +109,7 @@
   ++  sh                                                ::  per console
     |_  $:  coz=(list command)                          ::  talk actions
             she=shell
-        ==
+        == 
     ++  sh-expr  wide:(vang & [&1:% &2:% (scot %da now.hid) |3:%])
     ::
     ++  sh-scad                                         ::  command parser
@@ -782,7 +782,7 @@
       %_(+> coz [cod coz])
     ::
     ++  sh-twig-head  ^-  vase                          ::  eval data
-      :(slop !>(`our=@p`our.hid) !>(`tym=@da`now.hid) !>(`eny=@uvI`eny.hid))
+      :(slop !>(`our=@p`our.hid) !>(`now=@da`now.hid) !>(`eny=@uvI`eny.hid))
     ::
     ++  sh-work                                         ::  do work
       |=  job=work
@@ -1659,6 +1659,7 @@
     ?+    -.sep  ~&(tr-lost/sep "")
         %fat
       =+  rem=$(sep q.sep)
+      ?:  (gth (lent rem) 60)  (trim 62 rem)
       =-  "{rem}  {(trim (sub 60 (lent rem)) -)}"
       ?+  -.p.sep  "..."
         %tank  ~(ram re %rose [" " `~] +.p.sep)
@@ -1686,7 +1687,7 @@
   ::  ~&   [%talk-peer src ost pax]
   ?:  ?=([%sole *] pax)
     ?>  =(our.hid src.hid)
-    ?<  (~(has by shells) ost.hid)
+    ~?  (~(has by shells) ost.hid)  [%talk-peer-replaced ost.hid pax]
     ra-abet:(~(ra-console ra ost.hid ~) src.hid t.pax)
   ::  ~&  [%talk-peer-data ost.hid src.hid pax]
   ra-abet:(~(ra-subscribe ra ost.hid ~) src.hid pax)

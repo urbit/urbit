@@ -1,4 +1,4 @@
-!:  ::  ames (4a), networking
+::  ::  ames (4a), networking
 ::
   |=  pit=vase
   =>  =~
@@ -13,13 +13,13 @@
           $%  [%kick p=@da]                             ::
           ==  ==                                        ::
               $:  %g                                    ::  to %gall
-          $%  [%rote p=sack q=path r=*]                 ::
-              [%roth p=sack q=path r=*]                 ::
+          $%  [%deal p=sock q=cush]                     ::
           ==  ==                                        ::
               $:  @tas                                  ::  to any
           $%  [%init p=@p]                              ::
               [%want p=sock q=path r=*]                 ::
               [%wart p=sock q=@tas r=path s=*]          ::
+              [%west p=sack q=path r=*]                 ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  from %ames
@@ -27,12 +27,12 @@
           ==  ==                                        ::
               $:  %g                                    ::  from %gall
           $%  [%unto p=cuft]                            ::
-              [%mack p=(unit tang)]                     ::  message ack
               [%mean p=ares]                            ::  XX old, clean up
               [%nice ~]                                 ::
           ==  ==                                        ::
               $:  @tas                                  ::
           $%  [%crud p=@tas q=(list tank)]              ::  by any
+              [%mack p=(unit tang)]                     ::  message ack
           ==  ==  ==                                    ::
 --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1672,7 +1672,7 @@
               :+  (scot %p p.p.bon)
                 (scot %p q.p.bon)
               q.q.bon
-          [hen %pass pax %g %rote p.bon /hood 0 %m %will wil]~
+          [hen %pass pax %g %west p.bon /ge/hood 0 %m %will wil]~
         ?>  ?=([@ @ *] t.q.q.bon)
         :_  fox
         =+  [cak=i.t.q.q.bon ven=i.t.t.q.q.bon]
@@ -1710,64 +1710,18 @@
         :~  [hen [%slip %e %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
         ==
       ::
-          %ta
-        =+  gox=((hard ,[p=@p q=@pG r=gens s=pass]) r.bon)
-        =+  gus=(need (~(us go ton.fox) p.p.bon))
-        =^  wyl  gus  (born:gus now gox)
-        =.  ton.fox  (~(su go ton.fox) gus)
-        :_  fox
-        :~  :-  hen
-            [%pass /ta/beginning %a %want p.bon [%r %ta t.t.q.q.bon] `(unit will)`wyl]
-        ==
           %re                                           ::    %re
         :_  fox
         :~  [hen [%slip %c %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]]
         ==
-      ::
-          %ye                                           ::    %ye
-        ::  ~&    [%ye bon]
-        ?>  =(p.p.bon (sein q.p.bon))
-        =+  ^=  paz  ^-  (list ,@p)
-            %+  skim  pals:(~(um am [now fox]) p.p.bon)
-            |=(a=@p =(p.p.bon (sein a)))
-        :_  fox
-        %+  turn  paz
-        |=  him=ship
-        :-  hen
-        [%pass /ye %g %rote `sack`p.bon /ye 0 %m %helm-ye ((hard ,@t) r.bon)]
       ==
     ::
         %mulk
       ::  ~&  [%mulk p.bon q.bon]
       ?>  ?=([@ @ *] q.q.bon)
-      ?>  ?=(%q i.q.q.bon)
-      ?+  i.t.q.q.bon
-        ~&  %mulk-bad
-        :_  fox
-        :~  :-  (claw p.p.bon)
-            [%sick %wart p.bon i.t.q.q.bon t.t.q.q.bon r.bon]
-        ==
-      ::
-          %ge                                         ::  %gall request
-        =*  imp  t.t.q.q.bon
-        ?>  (levy imp (sane %ta))
-        =+  ^=  pax
-            :+  (scot %p p.p.bon)
-              (scot %p q.p.bon)
-            q.q.bon
-        ::  ~&  [%ames-gall-request p.bon imp pax]
-        :_  fox  [hen %pass pax %g %rote p.bon imp r.bon]~
-      ::
-          %gh                                         ::  %gall response
-        =*  imp  t.t.q.q.bon
-        ?>  (levy imp (sane %ta))
-        =+  ^=  pax
-            :+  (scot %p p.p.bon)
-              (scot %p q.p.bon)
-            q.q.bon
-        ::  ~&  [%ames-gall-response p.bon imp pax]
-        :_  fox  [hen %pass pax %g %roth p.bon imp r.bon]~
-      ==
+      ?>  ?=(?(%a %c %e %g) i.q.q.bon)
+      =+  pax=[(scot %p p.p.bon) (scot %p q.p.bon) q.q.bon]
+      :_  fox  [hen %pass pax i.q.q.bon %west p.bon t.q.q.bon r.bon]~
     ::
         %ouzo
       ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))] 
@@ -1798,7 +1752,7 @@
         %went  [~ +>]
         %mack  ?~  +>.sih  $(sih [%g %nice ~])          ::  XX using old code
                $(sih [%g %mean `[%mack +>+.sih]])
-        %unto  ~|([%ames-unto tea hen +>-.sih] !!)
+        %unto  [~ +>]
         ?(%mean %nice)                                  ::  XX obsolete
       ?:  ?=([%ye ~] tea)
         [~ +>.$]
@@ -1824,6 +1778,18 @@
     ^-  [(list move) _+>]
     ?:  ?=(%crud -.kyz)
       [[[hen [%slip %d %flog kyz]] ~] +>]
+    ?:  ?=(%west -.kyz)
+      ?>  ?=([%ta ~] q.kyz)
+      =+  gox=((hard ,[p=@p q=@pG r=gens s=pass]) r.kyz)
+      =+  gus=(need (~(us go ton.fox) p.p.kyz))
+      =^  wyl  gus  (born:gus now gox)
+      =.  ton.fox  (~(su go ton.fox) gus)
+      :_  +>.$
+      =+  ^=  pax
+          :+  (scot %p p.p.kyz)
+            (scot %p q.p.kyz)
+          q.kyz
+      [hen %pass pax %g %deal p.kyz %hood %poke %will !>(wyl)]~
     ?:  ?=(%wegh -.kyz)
       ~&  %ames-weighing
       [[hen %give %mass wegh]~ +>]

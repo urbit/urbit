@@ -310,6 +310,7 @@ body
   position absolute
   overflow hidden
   max-height 1.6rem
+  white-space nowrap
 
 // #writing-container
 // #messages .message.first
@@ -341,6 +342,9 @@ body
   padding-bottom 1rem
   z-index 3
   -webkit-transition max-height .2s, color .1s linear
+
+#messages .message:hover .attr > div
+  max-width 48rem
 
 #messages .message .ship
 #messages .message .audi > div
@@ -469,6 +473,9 @@ a
 .iden > div:hover
 .audi > div:hover
   max-width 42rem
+
+.iden > div:hover
+  padding-right 3rem
 
 .mess
 #writing

@@ -16,8 +16,5 @@
   ++  mime  |=([mite p=octs] [/application/font-woff p])
   ++  noun  ^mime
   --
-++  grad
-  |%
-  ++  sted  %mime
-  --
+++  grad  %mime
 --
