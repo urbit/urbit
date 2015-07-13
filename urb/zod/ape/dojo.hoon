@@ -84,7 +84,7 @@
     ++  card                                            ::  general card
       $%  [%diff %sole-effect sole-effect]              ::
           [%send wire [ship term] clap]                 ::
-          [%exec wire @p beak (unit silk)]              ::
+          [%exec wire @p (unit ,[beak silk])]           ::
           [%deal wire sock term club]                   ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
@@ -232,17 +232,17 @@
       |=  [way=wire kas=silk]
       ^+  +>+>
       ?>  ?=(~ pux)
-      (he-card(poy `+>+<(pux `way)) %exec way our.hid dy-beak `kas)
+      (he-card(poy `+>+<(pux `way)) %exec way our.hid `[dy-beak kas])
     ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
       ?~  pux  +>
-      (he-card(poy ~) %exec u.pux our.hid dy-beak ~)
+      (he-card(poy ~) %exec u.pux our.hid ~)
     ::
     ++  dy-slam                                         ::  call by ford
       |=  [way=wire gat=vase sam=vase]
       ^+  +>+>
-      (dy-ford way %call [%done ~ %noun gat] [%done ~ %noun sam])
+      (dy-ford way %call [%$ %noun gat] [%$ %noun sam])
     ::
     ++  dy-diff                                         ::  send effects, abet
       |=  fec=sole-effect
@@ -369,7 +369,9 @@
     ::
     ++  dy-done                                         ::  dialog submit
       |=  txt=tape
-      ?>  ?=(^ pro)
+      ?.  ?=(^ pro)
+        ~&  %dy-no-prompt
+        (dy-diff %bel ~)
       (dy-slam /dial u.pro !>(txt))
     ::
     ++  dy-over                                         ::  finish construction
@@ -421,12 +423,12 @@
     ::
     ++  dy-cage       |=(num=@ud (~(got by rez) num))   ::  known cage
     ++  dy-vase       |=(num=@ud q:(dy-cage num))       ::  known vase
-    ++  dy-silk-vase  |=(vax=vase [%done ~ %noun vax])  ::  vase to silk
+    ++  dy-silk-vase  |=(vax=vase [%$ %noun vax])  ::  vase to silk
     ++  dy-silk-config                                  ::  configure
       |=  [cag=cage cig=dojo-config]
       ^-  silk
       :+  %ride  [%cnzy %$]
-      :+  %mute  [%done ~ cag]
+      :+  %mute  [%$ cag]
       ^-  (list (pair wing silk))
       :*  :-  [[~ 12] ~]
           (dy-silk-vase !>([now=now.hid eny=eny.hid bec=he-beak]))
@@ -452,7 +454,7 @@
     ::
     ++  dy-twig-head                                    ::  dynamic state
       ^-  vase
-      :(slop !>(`our=@p`our.hid) !>(`tym=@da`now.hid) !>(`eny=@uvI`eny.hid))
+      :(slop !>(`our=@p`our.hid) !>(`now=@da`now.hid) !>(`eny=@uvI`eny.hid))
     ::
     ++  dy-made-dial                                    ::  dialog product
       |=  cag=cage
@@ -492,7 +494,7 @@
         %ec  [/hand [%cast p.q.u.cud (dy-mare q.q.u.cud)]]
         %ex  [/hand (dy-mare p.q.u.cud)]
         %tu  :-  /hand
-             :+  %done  ~
+             :-  %$
              :-  %noun
              |-  ^-  vase
              ?~  p.q.u.cud  !!
@@ -504,7 +506,7 @@
     ++  dy-mare                                         ::  build expression
       |=  gen=twig
       ^-  silk
-      [%ride gen [[%done ~ %$ dy-twig-head] [%reef ~]]]
+      [%ride gen [[%$ %$ dy-twig-head] [%reef ~]]]
     ::
     ++  dy-step                                         ::  advance project
       |=  nex=@ud
@@ -518,7 +520,7 @@
   ++  he-dope                                           ::  sole user of ++dp
     |=  txt=tape                                        ::
     ^-  (each (unit dojo-command) hair)                 ::  prefix/result
-    =+  vex=(dp-command:dp [1 1] txt)                   ::
+    =+  vex=((full dp-command):dp [1 1] txt)            ::
     ?.  =(+((lent txt)) q.p.vex)                        ::  fully parsed
       [%| p.p.vex (dec q.p.vex)]                        ::  syntax error
     [%& ?~(q.vex ~ `p.u.q.vex)]                         ::  prefix/complete
@@ -550,7 +552,7 @@
     (he-card %send way [him dap] cop)
   ::
   ++  he-diff                                           ::  emit update
-    |=  fec=sole-effect 
+    |=  fec=sole-effect
     ^+  +>
     (he-card %diff %sole-effect fec)
   ::
@@ -670,6 +672,7 @@
 ++  peer-sole
   |=  [pax=path]
   ^-  (quip move +>)
+  ::  ~&  [%dojo-peer ost.hid pax]
   ~?  !=(src.hid our.hid)  [%dojo-peer-stranger ost.hid src.hid pax]
   ::  ?>  =(src.hid our.hid)
   ~?  (~(has by hoc) ost.hid)  [%dojo-peer-replaced ost.hid pax]
@@ -689,6 +692,7 @@
 ++  poke-sole-action
   |=  [act=sole-action]
   ^-  (quip move +>)
+  ~|  [%dojo-poke ost.hid -.act (~(run by hoc) ,~)]
   ::  ~&  [%dojo-poke ost.hid src.hid act]
   ::  ~?  !=(src.hid our.hid)  [%dojo-poke ost.hid src.hid]
   he-abet:(~(he-type he [ost.hid ~] (~(got by hoc) ost.hid)) act)

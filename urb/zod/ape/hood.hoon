@@ -71,38 +71,40 @@
 ++  from-helm  (from-lib %helm [..$ ,_abet]:(helm-work))
 ++  from-kiln  (from-lib %kiln [..$ ,_abet]:(kiln-work))
 ::
-++  poke-dill-belt          (wrap poke-dill-belt):from-drum
-++  poke-helm-init          (wrap poke-init):from-helm
-++  poke-helm-verb          (wrap poke-verb):from-helm
-++  poke-helm-send-hi       (wrap poke-send-hi):from-helm
-++  poke-helm-hi            (wrap poke-hi):from-helm
-++  poke-hood-link          (wrap poke-link):from-drum
-++  poke-hood-mass          (wrap poke-mass):from-helm
-++  poke-hood-mount         (wrap poke-mount):from-kiln
-++  poke-hood-unmount       (wrap poke-unmount):from-kiln
-++  poke-hood-sync          (wrap poke-sync):from-kiln
-++  poke-hood-unsync        (wrap poke-unsync):from-kiln
-++  poke-hood-begin         (wrap poke-begin):from-helm
-++  poke-hood-invite        (wrap poke-invite):from-helm
-++  poke-hood-merge         (wrap poke-merge):from-kiln
-++  poke-hood-reload        (wrap poke-reload):from-helm
-++  poke-hood-reset         (wrap poke-reset):from-helm
-++  poke-hood-start         (wrap poke-start):from-drum
-++  poke-hood-reload-desk   (wrap poke-reload-desk):from-helm
-++  poke-kiln-cp            (wrap poke-cp):from-kiln
-++  poke-kiln-rm            (wrap poke-rm):from-kiln
-++  poke-kiln-mv            (wrap poke-mv):from-kiln
-++  poke-kiln-schedule      (wrap poke-schedule):from-kiln
-++  poke-will               (wrap poke-will):from-helm
+++  init-helm               |=([way=wire *] [~ +>])
+++  made-kiln               (wrap take-made):from-kiln
 ++  mere-kiln               (wrap take-mere):from-kiln
 ++  mere-kiln-sync          (wrap take-mere-sync):from-kiln
-++  made-kiln               (wrap take-made):from-kiln
-++  init-helm               |=([way=wire *] [~ +>])
 ++  note-helm               (wrap take-note):from-helm
-++  reap-drum-phat          (wrap reap-phat):from-drum
 ++  onto-drum               (wrap take-onto):from-drum
 ++  peer-drum               (wrap peer):from-drum
+++  poke-dill-belt          (wrap poke-dill-belt):from-drum
+++  poke-drum-link          (wrap poke-link):from-drum
+++  poke-drum-start         (wrap poke-start):from-drum
+++  poke-helm-hi            (wrap poke-hi):from-helm
+++  poke-helm-init          (wrap poke-init):from-helm
+++  poke-helm-invite        (wrap poke-invite):from-helm
+++  poke-helm-mass          (wrap poke-mass):from-helm
+++  poke-helm-reload        (wrap poke-reload):from-helm
+++  poke-helm-reload-desk   (wrap poke-reload-desk):from-helm
+++  poke-helm-reset         (wrap poke-reset):from-helm
+++  poke-helm-send-hi       (wrap poke-send-hi):from-helm
+++  poke-helm-verb          (wrap poke-verb):from-helm
+++  poke-hood-begin         (wrap poke-begin):from-helm
+++  poke-hood-sync          (wrap poke-sync):from-kiln
+++  poke-kiln-cp            (wrap poke-cp):from-kiln
+++  poke-kiln-label         (wrap poke-label):from-kiln
+++  poke-kiln-merge         (wrap poke-merge):from-kiln
+++  poke-kiln-mount         (wrap poke-mount):from-kiln
+++  poke-kiln-mv            (wrap poke-mv):from-kiln
+++  poke-kiln-rm            (wrap poke-rm):from-kiln
+++  poke-kiln-schedule      (wrap poke-schedule):from-kiln
+++  poke-kiln-sync          (wrap poke-sync):from-kiln
+++  poke-kiln-unmount       (wrap poke-unmount):from-kiln
+++  poke-kiln-unsync        (wrap poke-unsync):from-kiln
+++  poke-will               (wrap poke-will):from-helm
 ++  quit-drum-phat          (wrap quit-phat):from-drum
-++  went-helm               (wrap take-went):from-helm
+++  reap-drum-phat          (wrap reap-phat):from-drum
+++  woot-helm               (wrap take-woot):from-helm
 ++  writ-kiln-sync          (wrap take-writ):from-kiln
 --

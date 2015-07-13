@@ -9,7 +9,11 @@
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
 ++  note                                                ::  out request $->
           $%  $:  %a                                    ::  to %ames
-          $%  [%want p=sock q=[path *]]                 ::
+          $%  [%wont p=sock q=[path *]]                 ::
+          ==  ==                                        ::
+              $:  %b                                    ::  to  %behn
+          $%  [%wait p=@da]                             ::
+              [%rest p=@da]                             ::
           ==  ==                                        ::
               $:  %d                                    ::  to %dill
           $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::
@@ -19,19 +23,18 @@
               [%meta vase:,[%them (unit httr)]]         ::  type check
           ==  ==                                        ::
               $:  %f                                    ::  to %ford
-          $%  [%exec p=@p q=beak r=(unit silk)]         ::
+          $%  [%exec p=@p q=(unit ,[beak silk])]        ::
               [%wasp p=@p q=@uvH]                       ::
           ==  ==                                        ::
               $:  %g                                    ::  to %gall
           $%  [%deal p=sock q=cush]                     ::  full transmission
-          ==  ==                                        ::
-              $:  %t                                    ::  to  %temp
-          $%  [%wait p=@da]                             ::
-              [%rest p=@da]                             ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  %a                                    ::  by %ames
-          $%  [%went p=ship q=cape]                     ::
+          $%  [%woot p=ship q=coop]                     ::
+          ==  ==                                        ::
+              $:  %b                                    ::  by %behn
+          $%  [%wake ~]                                 ::  timer activate
           ==  ==                                        ::
               $:  %g                                    ::  by %gall
           $%  [%unto p=cuft]                            ::  within agent
@@ -42,9 +45,6 @@
               $:  %f                                    ::  by %ford
           $%  [%made p=@uvH q=gage]                     ::
               [%news ~]                                 ::
-          ==  ==                                        ::
-              $:  %t                                    ::  by %time
-          $%  [%wake ~]                                 ::  timer activate
           ==  ==                                        ::
               $:  @tas                                  ::  by any
           $%  [%crud p=@tas q=(list tank)]              ::
@@ -615,11 +615,12 @@
       ::  ford-kill  ::  XX discriminate
       +>.$(ded (~(put in ded) hen))
     ::
-        %wart                                           ::  remote request
-      =+  mez=((soft gram) r.kyz)
+        %west                                           ::  remote request
+      =.  mow  :_(mow [hen %give %mack ~])
+      =+  mez=((soft gram) q.kyz)
       ?~  mez
-        ~&  [%strange-wart p.kyz q.kyz]
-        +>.$
+        ~&  e/[%strange-west p.kyz]
+        ~|(%strange-west !!)
       ?-  -<.u.mez
         %aut  abet:(logon:(ses-ya p.u.mez) q.p.kyz)
         %hat  (foreign-hat:(ses-ya p.u.mez) q.p.kyz q.u.mez)
@@ -641,7 +642,7 @@
           (ames-gram q.p.kyz hat/~ p.u.mez our-host)
       ==
     ::
-      %wegh  !!
+      %wegh  !!                                         ::  handled elsewhere
     ==
   ::
   ++  axom                                              ::  old response
@@ -661,7 +662,7 @@
     ::    =.  +>  ?+(tee +> [%of ^] pop-duct:(ire-ix p.tee))
     ::    (emule |.(~|(gall-dumb/tee !!)))
     ::
-        %went  +>.$
+        %woot  +>.$
         %thou
       ?+    -.tee  !!
         %ay  (ames-gram (slav %p p.tee) got/~ (slav %uv q.tee) |2.sih)
@@ -755,12 +756,15 @@
         ?.  ?=(%mime p.cay)
           =+  bek=-:(need (tome p.tee))
           =+  bik=?+(r.bek bek [%ud %0] bek(r da/now))
-          =-  (pass-note tee (ford-req bik [%flag p.sih -]))
-          =-  `silk`[%cast %mime %done ~ cay(q.q -)]
-          ?.  ?=([%ud 0] r.bek)  q.q.cay
-          ?+  p.cay  q.q.cay          :: inject dependency long-poll
-            %urb  =|  urb=[[%html ~] [[%head ~] marl] [[%body ~] manx marl] ~]
-                  .*(.(urb q.q.cay) !=((inject p.sih urb)))
+          =-  (pass-note tee (ford-req bik [%flag [p.sih `~] -]))
+          =-  `silk`[%cast %mime `[p.cay -]]
+          ?.  ?=([%ud 0] r.bek)  q.cay
+          ?+  p.cay  q.cay          :: inject dependency long-poll
+            %urb  =<  (slam !>(.) q.cay)
+                  |=  urb=manx
+                  ~|  %malformed-urb
+                  ?>  ?=([[%html ~] [[%head ~] *] [[%body ~] ^] ~] urb)
+                  (inject p.sih urb)
           ==
         ~|  q.q.cay
         =+  ((hard ,[mit=mite rez=octs]) q.q.cay)
@@ -791,14 +795,14 @@
   ::                  [| [~ 8.445] `/localhost]       :: XX testing
   ::
   ++  ames-gram
-    |=([him=ship gam=gram] (pass-note ~ %a %want [our him] [%e -.gam] +.gam))
+    |=([him=ship gam=gram] (pass-note ~ %a %wont [our him] [%e -.gam] +.gam))
   ::
   ++  back                                              ::  %ford bounce
     |=  [tea=whir mar=mark cay=cage]
-    (pass-note tea (ford-req root-beak [%cast mar %done ~ cay]))
+    (pass-note tea (ford-req root-beak [%cast mar `cay]))
   ::
-  ++  ford-kill  (pass-note ~ %f [%exec our *beak ~])        :: XX unused
-  ++  ford-req  |=([bek=beak kas=silk] [%f [%exec our bek `kas]])
+  ++  ford-kill  (pass-note ~ %f [%exec our ~])         :: XX unused
+  ++  ford-req  |=([bek=beak kas=silk] [%f [%exec our `[bek kas]]])
   ::
   ++  fail
     |=  [sas=@ud dep=@uvH mez=tang]
@@ -1398,7 +1402,7 @@
       =<  abet
       ?~  ude  done
       =.  hen  p.u.ude
-      =.  ..ix  (pass-note of//[ire] [%t %rest era])
+      =.  ..ix  (pass-note of//[ire] [%b %rest era])
       (give-even(ude ~) q.u.ude num ven)
     ::
     ++  give-even
@@ -1427,7 +1431,7 @@
       ?:  =(a p.eve)
         ?^  ude  ~&(e/ix/wait/replaced=p.u.ude abet(u.ude [hen &]))
         =.  era  (add ~s30 now)
-        (pass-note:abet(ude [~ hen &]) of//[ire] [%t %wait era])
+        (pass-note:abet(ude [~ hen &]) of//[ire] [%b %wait era])
       ?:  (gth a p.eve)  ~|(seq-high/cur=p.eve !!)
       =+  ven=~|(seq-low/cur=p.eve (~(got by q.eve) a))
       abet:(give-even & a ven)

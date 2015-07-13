@@ -135,22 +135,6 @@
 ++  qual  |*  [a=$+(* *) b=$+(* *) c=$+(* *) d=$+(* *)] ::  just a quadruple
           ,[p=a q=b r=c s=d]                            ::
                                                         ::  XX move to zuse
-++  rege  $|  ?(%dote %ende %sart %empt %boun %bout)    ::  parsed regex
-          $%  [%lite p=char]                            ::  literal
-              [%pair p=rege q=rege]                     ::  ordering
-              [%capt p=rege q=@u]                       ::  capture group
-              [%brac p=@I]                              ::  p is 256 bitmask
-              [%eith p=rege q=rege]                     ::  either
-              [%mant p=rege]                            ::  greedy 0 or more
-              [%plls p=rege]                            ::  greedy 1 or more
-              [%betw p=rege q=@u r=@u]                  ::  between q and r
-              [%bint p=rege q=@u]                       ::  min q
-              [%bant p=rege q=@u]                       ::  exactly q
-              [%manl p=rege]                            ::  lazy 0 or more
-              [%plll p=rege]                            ::  lazy 1 or more
-              [%betl p=rege q=@u r=@u]                  ::  between q and r lazy
-              [%binl p=rege q=@u]                       ::  min q lazy
-          ==                                            ::
 ++  ring  ,@                                            ::  private key
 ++  rule  |=(tub=nail `edge`[p.tub ~ ~ tub])            ::  parsing rule
 ++  span  ,@ta                                          ::  text-atom (ASCII)
@@ -194,7 +178,7 @@
               [1 p=term q=toga]                         ::  deep toga
               [2 p=toga q=toga]                         ::  cell toga
           ==                                            ::
-++  trap  ,_|.(**)                                      ::  makes perfect sense
+++  trap  |*(a=_,* ,_|?(*a))                            ::  makes perfect sense
 ++  trel  |*  [a=$+(* *) b=$+(* *) c=$+(* *)]           ::  just a triple
           ,[p=a q=b r=c]                                ::
 ++  tuna                                                ::  tagflow
@@ -609,7 +593,7 @@
   [~ u=(b u.a)]
 ::
 ++  bond                                                ::  replace
-  |*  a=trap
+  |*  a=(trap)
   |*  b=(unit)
   ?~  b  $:a
   u.b
@@ -1858,8 +1842,7 @@
   ^+  (+<+)
   =>  .(a `tang`a)
   ?~  a  (+<+)
-  ~>  %mean.|.(i.a)
-  $(a t.a)
+  ~_(i.a $(a t.a))
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::
 ::::              chapter 2d, containers                ::::
 ::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1869,8 +1852,8 @@
   |=  a=(tree)
   ?~  a
     &
-  ?&  ?~(l.a & ?&((vor n.a n.l.a) (hor n.l.a n.a)))
-      ?~(r.a & ?&((vor n.a n.r.a) (hor n.a n.r.a)))
+  ?&  ?~(l.a & ?&((vor n.a n.l.a) (hor n.l.a n.a) $(a l.a)))
+      ?~(r.a & ?&((vor n.a n.r.a) (hor n.a n.r.a) $(a r.a)))
   ==
 ::
 ++  in                                                  ::  set engine
@@ -1892,6 +1875,24 @@
       |
     ?|((b n.a) $(a l.a) $(a r.a))
   ::
+  +-  bif                                               ::  splits a by b
+    ~/  %bif
+    |*  b=*
+    ^+  [l=a r=a]
+    =<  [+< +>]
+    |-  ^+  a
+    ?~  a
+      [b ~ ~]
+    ?:  =(b n.a)
+      a
+    ?:  (hor b n.a)
+      =+  c=$(a l.a)
+      ?>  ?=(^ c)
+      [n.c l.c [n.a r.c r.a]]
+    =+  c=$(a r.a)
+    ?>  ?=(^ c)
+    [n.c [n.a l.a l.c] r.c]
+  ::
   +-  del                                               ::  b without any a
     ~/  %del
     |*  b=*
@@ -1908,6 +1909,23 @@
     ?:  (vor n.l.a n.r.a)
       [n.l.a l.l.a $(l.a r.l.a)]
     [n.r.a $(r.a l.r.a) r.r.a]
+  ::
+  +-  dif                                               ::  difference
+    ~/  %dif
+    |*  b=_a
+    |-  ^+  a
+    ?~  b
+      a
+    =+  c=(bif(+< a) n.b)
+    ?>  ?=(^ c)
+    =+  d=$(a l.c, b l.b)
+    =+  e=$(a r.c, b r.b)
+    |-  ^-  ?(~ _a)
+    ?~  d  e
+    ?~  e  d
+    ?:  (vor n.d n.e)
+      [n.d l.d $(d r.d)]
+    [n.e $(e l.e) r.e]
   ::
   +-  dig                                               ::  axis of a in b
     |=  b=*
@@ -2021,8 +2039,8 @@
   |=  a=(tree ,[p=* q=*])
   ?~  a
     &
-  ?&  ?~(l.a & ?&((vor p.n.a p.n.l.a) (gor p.n.l.a p.n.a)))
-      ?~(r.a & ?&((vor p.n.a p.n.r.a) (gor p.n.a p.n.r.a)))
+  ?&  ?~(l.a & ?&((vor p.n.a p.n.l.a) (gor p.n.l.a p.n.a) $(a l.a)))
+      ?~(r.a & ?&((vor p.n.a p.n.r.a) (gor p.n.a p.n.r.a) $(a l.a)))
   ==
 ::
 ++  ja                                                  ::  jar engine
@@ -2093,6 +2111,26 @@
       |
     ?|((b q.n.a) $(a l.a) $(a r.a))
   ::
+  +-  bif                                               ::  splits a by b
+    ~/  %bif
+    |*  [b=* c=*]
+    ^+  [l=a r=a]
+    =<  [+< +>]
+    |-  ^+  a
+    ?~  a
+      [[b c] ~ ~]
+    ?:  =(b p.n.a)
+      ?:  =(c q.n.a)
+        a
+      [[b c] l.a r.a]
+    ?:  (gor b p.n.a)
+      =+  d=$(a l.a)
+      ?>  ?=(^ d)
+      [n.d l.d [n.a r.d r.a]]
+    =+  d=$(a r.a)
+    ?>  ?=(^ d)
+    [n.d [n.a l.a l.d] r.d]
+  ::
   +-  del                                               ::  delete at key b
     ~/  %del
     |*  b=*
@@ -2109,6 +2147,23 @@
     ?:  (vor p.n.l.a p.n.r.a)
       [n.l.a l.l.a $(l.a r.l.a)]
     [n.r.a $(r.a l.r.a) r.r.a]
+  ::
+  +-  dif                                               ::  difference
+    ~/  %dif
+    |*  b=_a
+    |-  ^+  a
+    ?~  b
+      a
+    =+  c=(bif(+< a) n.b)
+    ?>  ?=(^ c)
+    =+  d=$(a l.c, b l.b)
+    =+  e=$(a r.c, b r.b)
+    |-  ^-  ?(~ _a)
+    ?~  d  e
+    ?~  e  d
+    ?:  (vor p.n.d p.n.e)
+      [n.d l.d $(d r.d)]
+    [n.e $(e l.e) r.e]
   ::
   +-  dig                                               ::  axis of b key
     |=  b=*
@@ -3344,6 +3399,18 @@
   ++  urt  %+  cook
              |=(a=tape (rap 3 ^-((list ,@) a)))
            (star ;~(pose nud low hep dot sig))
+  ++  urx  %+  cook
+             |=(a=tape (rap 3 ^-((list ,@) a)))
+           %-  star
+           ;~  pose 
+             nud
+             low
+             hep
+             cab
+             (cold ' ' dot)
+             (cook tuft (ifix [sig dot] hex))
+             (cold '~' ;~(plug sig sig))
+           ==
   ++  voy  ;~(pfix bas ;~(pose bas soq bix))
   --
 ++  ag
@@ -3595,6 +3662,7 @@
   ~%  %so  +  ~
   |%
   ++  bisk
+    ~+
     ;~  pose
       ;~  pfix  (just '0')
         ;~  pose
@@ -3609,6 +3677,7 @@
       (stag %ud dem:ag)
     ==
   ++  crub
+    ~+
     ;~  pose
       %+  cook
         |=(det=date `dime`[%da (year det)])
@@ -3658,8 +3727,8 @@
     ::
       (stag %p fed:ag)
       ;~(pfix dot (stag %ta urs:ab))
-      ;~(pfix sig (stag %t (cook woad urs:ab)))
-      ;~(pfix hep (stag %c (cook turf (cook woad urs:ab))))
+      ;~(pfix sig (stag %t urx:ab))
+      ;~(pfix hep (stag %c (cook turf urx:ab)))
     ==
   ++  nuck
     ~/  %nuck  |=  a=nail  %.  a
@@ -3673,13 +3742,16 @@
         :-  '~'        ;~(pfix sig ;~(pose twid (easy [~ %n 0])))
     ==
   ++  nusk
+    ~+
     :(sear |=(a=@ta (rush a nuck)) wick urt:ab)
   ++  perd
+    ~+
     ;~  pose
       (stag ~ zust)
       (stag %many (ifix [cab ;~(plug cab cab)] (more cab nusk)))
     ==
   ++  royl
+    ~+
     =+  ^=  zer
         (cook lent (star (just '0')))
     =+  ^=  voy
@@ -3710,6 +3782,7 @@
       [a c.b d.b e.b [~ (mul i.u.f 2)]]
     [a c.b d.b e.b [~ (dec (mul i.u.f 2))]]
   ++  tash
+    ~+
     =+  ^=  neg
         |=  [syn=? mol=dime]  ^-  dime
         ?>  =('u' (end 3 1 p.mol))
@@ -3721,12 +3794,14 @@
       ==
     ==
   ++  twid
+    ~+
     ;~  pose
       (cook |=(a=@ [%blob (cue a)]) ;~(pfix (just '0') vum:ag))
       (stag ~ crub)
     ==
   ::
   ++  zust
+    ~+
     ;~  pose
       (stag %is bip:ag)
       (stag %if lip:ag)
@@ -9925,11 +10000,11 @@
       ::  ~&  [%swim-wyt `@ud`~(wyt in p.sew)]
       =+  ^=  pru
           ?~  pux
-            ~|  [%swim-call-vane lal]
+            ~|  [%swim-call-vane lal (,[term ~] +.p.hil)]
             =^  vax  p.sew  (~(slap wa p.sew) rig [%cnzy %call])
             %^  slur-pro  lal  vax
             (slid [%& duc.vil hen] (slix hil))
-          ~|  [%swim-take-vane lal]
+          ~|  [%swim-take-vane lal (,[term ~] +.p.hil)]
           =^  vax  p.sew  (~(slap wa p.sew) rig [%cnzy %take])
           %^  slur-pro  lal   vax
           ;:  slid

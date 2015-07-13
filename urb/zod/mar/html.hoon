@@ -14,4 +14,5 @@
   --                                                    ::
 ++  grab  |%                                            ::  convert from
           ++  noun  ,@t                                 ::  clam from %noun
+          ++  mime  |=([p=mite q=octs] q.q)             ::  retrieve form %mime
 --        --

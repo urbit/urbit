@@ -90,7 +90,9 @@
     --
   ::
   ++  mash
-    |=  [als=[ship desk] bos=[ship desk] ali=(urge cord) bob=(urge cord)]
+    |=  $:  [als=ship ald=desk ali=(urge cord)]
+            [bos=ship bod=desk bob=(urge cord)]
+        ==
     ^-  (urge cord)
     |^
     =.  ali  (clean ali)
@@ -150,9 +152,9 @@
       :-  :_  ~
           %^  cat  3  '<<<<<<<<<<<<' 
           %^  cat  3  ' '
-          %^  cat  3  `@t`(scot %p -.bos)
+          %^  cat  3  `@t`(scot %p bos)
           %^  cat  3  '/'
-          +.bos
+          bos
       :-  bob
       :-  ~['------------']
       :-  bas
@@ -161,9 +163,9 @@
       :-  :_  ~
           %^  cat  3  '>>>>>>>>>>>>' 
           %^  cat  3  ' '
-          %^  cat  3  `@t`(scot %p -.als)
+          %^  cat  3  `@t`(scot %p als)
           %^  cat  3  '/'
-          +.als
+          ald
       ~
     ::
     ++  clean                                          ::  clean

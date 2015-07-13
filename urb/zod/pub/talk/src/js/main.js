@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/MessageActions.coffee":[function(require,module,exports){
 var MessageDispatcher;
 
 MessageDispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -91,7 +91,7 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":7}],2:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee":[function(require,module,exports){
 var StationDispatcher;
 
 StationDispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -179,7 +179,7 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":7}],3:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/MemberComponent.coffee":[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -208,7 +208,7 @@ module.exports = recl({
 
 
 
-},{}],4:[function(require,module,exports){
+},{}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/MessagesComponent.coffee":[function(require,module,exports){
 var Member, Message, MessageActions, MessageStore, StationActions, StationStore, a, br, div, input, moment, pre, recl, ref, textarea;
 
 moment = require('moment-timezone');
@@ -451,13 +451,16 @@ module.exports = recl({
     return StationActions.setAudience(audi);
   },
   render: function() {
-    var _messages, _station, lastIndex, lastSaid, messages, ref1, ref2, sources, station;
+    var _messages, _station, lastIndex, lastSaid, messages, ref1, ref2, ref3, sources, station;
     station = this.state.station;
     _station = "~" + window.urb.ship + "/" + station;
     sources = _.clone((ref1 = (ref2 = this.state.configs[this.state.station]) != null ? ref2.sources : void 0) != null ? ref1 : []);
     sources.push(_station);
     _messages = this.sortedMessages(this.state.messages);
     this.last = _messages[_messages.length - 1];
+    if (((ref3 = this.last) != null ? ref3.ship : void 0) && this.last.ship === window.urb.user) {
+      this.lastSeen = this.last;
+    }
     this.length = _messages.length;
     setTimeout((function(_this) {
       return function() {
@@ -466,15 +469,15 @@ module.exports = recl({
         }
       };
     })(this), 1);
-    lastIndex = this.lastSeen ? _messages.indexOf(this.lastSeen) : null;
+    lastIndex = this.lastSeen ? _messages.indexOf(this.lastSeen) + 1 : null;
     lastSaid = null;
     messages = _messages.map((function(_this) {
       return function(_message, k) {
-        var ref3;
+        var ref4;
         if (lastIndex && lastIndex === k) {
           _message.unseen = true;
         }
-        if ((ref3 = _message.thought.statement.speech) != null ? ref3.app : void 0) {
+        if ((ref4 = _message.thought.statement.speech) != null ? ref4.app : void 0) {
           _message.ship = "system";
         }
         _message.sameAs = lastSaid === _message.ship;
@@ -493,7 +496,7 @@ module.exports = recl({
 
 
 
-},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":19,"../stores/StationStore.coffee":20,"./MemberComponent.coffee":3,"moment-timezone":14}],5:[function(require,module,exports){
+},{"../actions/MessageActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/MessageActions.coffee","../actions/StationActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee","../stores/MessageStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/MemberComponent.coffee","moment-timezone":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/index.js"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/StationComponent.coffee":[function(require,module,exports){
 var Member, StationActions, StationStore, a, div, h1, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -680,7 +683,7 @@ module.exports = recl({
 
 
 
-},{"../actions/StationActions.coffee":2,"../stores/StationStore.coffee":20,"./MemberComponent.coffee":3}],6:[function(require,module,exports){
+},{"../actions/StationActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/WritingComponent.coffee":[function(require,module,exports){
 var Member, MessageActions, MessageStore, StationActions, StationStore, br, div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -957,7 +960,7 @@ module.exports = recl({
 
 
 
-},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":19,"../stores/StationStore.coffee":20,"./MemberComponent.coffee":3}],7:[function(require,module,exports){
+},{"../actions/MessageActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/MessageActions.coffee","../actions/StationActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee","../stores/MessageStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -979,7 +982,7 @@ module.exports = _.merge(new Dispatcher(), {
 
 
 
-},{"flux":10}],8:[function(require,module,exports){
+},{"flux":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/flux/index.js"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/main.coffee":[function(require,module,exports){
 $(function() {
   var $c, MessagesComponent, StationActions, StationComponent, WritingComponent, clean, rend;
   StationActions = require('./actions/StationActions.coffee');
@@ -1010,7 +1013,7 @@ $(function() {
 
 
 
-},{"./actions/StationActions.coffee":2,"./components/MessagesComponent.coffee":4,"./components/StationComponent.coffee":5,"./components/WritingComponent.coffee":6,"./move.coffee":9,"./persistence/MessagePersistence.coffee":17,"./persistence/StationPersistence.coffee":18,"./util.coffee":21}],9:[function(require,module,exports){
+},{"./actions/StationActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee","./components/MessagesComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/MessagesComponent.coffee","./components/StationComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/StationComponent.coffee","./components/WritingComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/WritingComponent.coffee","./move.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/move.coffee","./persistence/MessagePersistence.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/persistence/MessagePersistence.coffee","./persistence/StationPersistence.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/persistence/StationPersistence.coffee","./util.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/util.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/move.coffee":[function(require,module,exports){
 var ldy, setSo, so;
 
 so = {};
@@ -1111,7 +1114,7 @@ $(window).on('scroll', window.util.checkScroll);
 
 
 
-},{}],10:[function(require,module,exports){
+},{}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/flux/index.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -1123,7 +1126,7 @@ $(window).on('scroll', window.util.checkScroll);
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":11}],11:[function(require,module,exports){
+},{"./lib/Dispatcher":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/flux/lib/Dispatcher.js"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/flux/lib/Dispatcher.js":[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1375,7 +1378,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":12}],12:[function(require,module,exports){
+},{"./invariant":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/flux/lib/invariant.js"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/flux/lib/invariant.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1430,8 +1433,8 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],13:[function(require,module,exports){
-module.exports={
+},{}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/data/packed/latest.json":[function(require,module,exports){
+module.exports=module.exports=module.exports=module.exports={
 	"version": "2014j",
 	"zones": [
 		"Africa/Abidjan|LMT GMT|g.8 0|01|-2ldXH.Q",
@@ -2020,11 +2023,11 @@ module.exports={
 		"Pacific/Pohnpei|Pacific/Ponape"
 	]
 }
-},{}],14:[function(require,module,exports){
+},{}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/index.js":[function(require,module,exports){
 var moment = module.exports = require("./moment-timezone");
 moment.tz.load(require('./data/packed/latest.json'));
 
-},{"./data/packed/latest.json":13,"./moment-timezone":15}],15:[function(require,module,exports){
+},{"./data/packed/latest.json":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/data/packed/latest.json","./moment-timezone":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/moment-timezone.js"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/moment-timezone.js":[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.2.5
 //! author : Tim Wood
@@ -2427,7 +2430,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 	return moment;
 }));
 
-},{"moment":16}],16:[function(require,module,exports){
+},{"moment":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/node_modules/moment/moment.js"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/node_modules/moment/moment.js":[function(require,module,exports){
 //! moment.js
 //! version : 2.10.3
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -5539,7 +5542,7 @@ moment.tz.load(require('./data/packed/latest.json'));
     return _moment;
 
 }));
-},{}],17:[function(require,module,exports){
+},{}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/persistence/MessagePersistence.coffee":[function(require,module,exports){
 var MessageActions;
 
 MessageActions = require('../actions/MessageActions.coffee');
@@ -5618,7 +5621,7 @@ module.exports = {
 
 
 
-},{"../actions/MessageActions.coffee":1}],18:[function(require,module,exports){
+},{"../actions/MessageActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/MessageActions.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/persistence/StationPersistence.coffee":[function(require,module,exports){
 var StationActions;
 
 StationActions = require('../actions/StationActions.coffee');
@@ -5743,7 +5746,7 @@ module.exports = {
 
 
 
-},{"../actions/StationActions.coffee":2}],19:[function(require,module,exports){
+},{"../actions/StationActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/stores/MessageStore.coffee":[function(require,module,exports){
 var EventEmitter, MessageDispatcher, MessageStore, _fetching, _last, _listening, _messages, _station, _typing, moment;
 
 moment = require('moment-timezone');
@@ -5889,7 +5892,7 @@ module.exports = MessageStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":7,"events":22,"moment-timezone":14}],20:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js","moment-timezone":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/index.js"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/stores/StationStore.coffee":[function(require,module,exports){
 var EventEmitter, StationDispatcher, StationStore, _audience, _config, _listening, _members, _station, _stations, _typing, _validAudience;
 
 EventEmitter = require('events').EventEmitter;
@@ -6089,7 +6092,7 @@ module.exports = StationStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":7,"events":22}],21:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/util.coffee":[function(require,module,exports){
 if (!window.util) {
   window.util = {};
 }
@@ -6201,7 +6204,7 @@ _.merge(window.util, {
 
 
 
-},{}],22:[function(require,module,exports){
+},{}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -6261,8 +6264,10 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
+      } else {
+        throw TypeError('Uncaught, unspecified "error" event.');
       }
-      throw TypeError('Uncaught, unspecified "error" event.');
+      return false;
     }
   }
 
@@ -6504,4 +6509,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[8]);
+},{}]},{},["/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/main.coffee"]);

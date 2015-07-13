@@ -12,8 +12,5 @@
   ++  mime  |=([p=mite q=octs] q.q)
   ++  noun  ,@t
   --
-++  grad
-  |%
-  ++  sted  %mime
-  --
+++  grad  %mime
 --

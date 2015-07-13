@@ -24,6 +24,5 @@
       (cook crip (star prn))
     ==
   --
-++  grad  |%  
-  ++  sted  %mime
---        --
+++  grad  %mime
+--

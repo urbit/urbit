@@ -8,5 +8,5 @@
 |=  $:  [now=@da eny=@uvI bec=beak]
         [arg=[syd=@tas her=@p sud=@tas ~] ~]
     ==
-:-  %hood-sync
+:-  %kiln-sync
 [syd her sud]:arg

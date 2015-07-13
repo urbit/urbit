@@ -8,5 +8,5 @@
 |=  $:  [now=@da eny=@uvI bec=beak]
         [arg=[pax=path pot=@tas ~] ~]
     ==
-:-  %hood-mount
+:-  %kiln-mount
 [pax pot]:arg
