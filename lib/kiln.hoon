@@ -207,11 +207,10 @@
       ==
     ::
     ++  start
-      ::  XX remove feedback for demo
-      ::  =.  .  %-  spam
-      ::         [leaf/"activated sync from {<sud>} on {<her>} to {<syd>}" ~]
+      =.  .  %-  spam
+             [leaf/"activated sync from {<sud>} on {<her>} to {<syd>}" ~]
       %-  blab
-      :~  [ost %mont /mount syd our syd /]
+      :~  ::  [ost %mont /mount syd our syd /]
           :*  ost  %warp
               /kiln/sync/[syd]/(scot %p her)/[sud]
               [our her]  sud  ~  %sing  %w  [%da now]  /
