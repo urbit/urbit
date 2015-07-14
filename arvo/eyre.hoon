@@ -23,7 +23,7 @@
               [%meta vase:,[%them (unit httr)]]         ::  type check
           ==  ==                                        ::
               $:  %f                                    ::  to %ford
-          $%  [%exec p=@p q=beak r=(unit silk)]         ::
+          $%  [%exec p=@p q=(unit ,[beak silk])]        ::
               [%wasp p=@p q=@uvH]                       ::
           ==  ==                                        ::
               $:  %g                                    ::  to %gall
@@ -757,11 +757,14 @@
           =+  bek=-:(need (tome p.tee))
           =+  bik=?+(r.bek bek [%ud %0] bek(r da/now))
           =-  (pass-note tee (ford-req bik [%flag [p.sih `~] -]))
-          =-  `silk`[%cast %mime `cay(q.q -)]
-          ?.  ?=([%ud 0] r.bek)  q.q.cay
-          ?+  p.cay  q.q.cay          :: inject dependency long-poll
-            %urb  =|  urb=[[%html ~] [[%head ~] marl] [[%body ~] manx marl] ~]
-                  .*(.(urb q.q.cay) !=((inject p.sih urb)))
+          =-  `silk`[%cast %mime `[p.cay -]]
+          ?.  ?=([%ud 0] r.bek)  q.cay
+          ?+  p.cay  q.cay          :: inject dependency long-poll
+            %urb  =<  (slam !>(.) q.cay)
+                  |=  urb=manx
+                  ~|  %malformed-urb
+                  ?>  ?=([[%html ~] [[%head ~] *] [[%body ~] ^] ~] urb)
+                  (inject p.sih urb)
           ==
         ~|  q.q.cay
         =+  ((hard ,[mit=mite rez=octs]) q.q.cay)
@@ -798,8 +801,8 @@
     |=  [tea=whir mar=mark cay=cage]
     (pass-note tea (ford-req root-beak [%cast mar `cay]))
   ::
-  ++  ford-kill  (pass-note ~ %f [%exec our *beak ~])        :: XX unused
-  ++  ford-req  |=([bek=beak kas=silk] [%f [%exec our bek `kas]])
+  ++  ford-kill  (pass-note ~ %f [%exec our ~])         :: XX unused
+  ++  ford-req  |=([bek=beak kas=silk] [%f [%exec our `[bek kas]]])
   ::
   ++  fail
     |=  [sas=@ud dep=@uvH mez=tang]

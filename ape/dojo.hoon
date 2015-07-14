@@ -84,7 +84,7 @@
     ++  card                                            ::  general card
       $%  [%diff %sole-effect sole-effect]              ::
           [%send wire [ship term] clap]                 ::
-          [%exec wire @p beak (unit silk)]              ::
+          [%exec wire @p (unit ,[beak silk])]           ::
           [%deal wire sock term club]                   ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
@@ -232,12 +232,12 @@
       |=  [way=wire kas=silk]
       ^+  +>+>
       ?>  ?=(~ pux)
-      (he-card(poy `+>+<(pux `way)) %exec way our.hid dy-beak `kas)
+      (he-card(poy `+>+<(pux `way)) %exec way our.hid `[dy-beak kas])
     ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
       ?~  pux  +>
-      (he-card(poy ~) %exec u.pux our.hid dy-beak ~)
+      (he-card(poy ~) %exec u.pux our.hid ~)
     ::
     ++  dy-slam                                         ::  call by ford
       |=  [way=wire gat=vase sam=vase]
