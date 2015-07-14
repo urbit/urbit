@@ -399,9 +399,17 @@ _unix_free_dir(uv_handle_t* was_u)
 
   _unix_rm_r(dir_u->pax_c);
 
+  if ( dir_u->kid_u ) {
+    fprintf(stderr, "don't kill me, i've got a family %s\r\n", dir_u->pax_c);
+  }
+  else {
+    // fprintf(stderr, "i'm a lone, lonely loner %s\r\n", dir_u->pax_c);
+  }
   free(dir_u->pax_c);
   free(dir_u); // XXX this might be too early, how do we
                //     know we've freed all the children?
+               //     i suspect we should do this only if
+               //     our kid list is empty
 }
 
 /* _unix_free_node(): free node, deleting everything within
@@ -784,14 +792,13 @@ _unix_update_dir(u3_udir* dir_u)
   u3_unod* nod_u = dir_u->kid_u;
 
   if ( nod_u ) {
-    while ( nod_u->nex_u ) {
+    while ( nod_u ) {
       if ( c3y == nod_u->dry ) {
         nod_u = nod_u->nex_u;
       }
       else {
         if ( c3y == nod_u->dir ) {
           DIR* red_u = opendir(nod_u->pax_c);
-
           if ( 0 == red_u ) {
             u3_unod* nex_u = nod_u->nex_u;
             can = u3kb_weld(_unix_free_node(nod_u), can);
@@ -835,6 +842,7 @@ _unix_update_dir(u3_udir* dir_u)
   if ( !rid_u ) {
     uL(fprintf(uH, "error opening directory %s: %s\r\n",
                dir_u->pax_c, strerror(errno)));
+    c3_assert(0);
   }
 
   while ( 1 ) {
