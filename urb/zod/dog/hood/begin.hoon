@@ -7,7 +7,7 @@
 ::::
   !:
 =>  |%
-    ++  begs  ,[his=@p tic=@p yen=@uw ges=gens]
+    ++  begs  ,[his=@p tic=@p eny=@t ges=gens]
     --
 |=  $:  [now=@da eny=@uvI bec=beak]
         [arg=$|(~ [his=@p $|(~ [tic=@p ~])]) ~]
