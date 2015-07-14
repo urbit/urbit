@@ -141,10 +141,10 @@
                  =+  yen=(scot %p (shax :(mix %ticket eny now)))
                  =+  ^=  beg  ^-  [his=@p tic=@p yen=@t ges=gens]
                      [p.kyz q.kyz yen ges]
-                 =+  cag=`cage`[%hood-begin !>(beg)]
+                 =+  cmd=[%hood %poke `cage`[%helm-begin !>(beg)]]
                  %=    +>.$
                      moz 
-                   :_(moz [hen %pass ~ %g %deal [our our] %hood %poke cag])
+                   :_(moz [hen %pass ~ %g %deal [our our] cmd])
                  ==
           %veer  (dump kyz)
           %vega  (dump kyz)
