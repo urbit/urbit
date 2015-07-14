@@ -63,7 +63,7 @@
   %-  ~(gas in *(set well))
   =+  myr=(clan our)
   ?:  =(%pawn myr)
-    [[%base %dojo] ~]
+    [[%base %talk] [%base %dojo] ~]
   ?:  =(%earl myr)  ~
   [[%home %talk] [%home %dojo] ~]
 ::
@@ -72,8 +72,8 @@
   %-  ~(gas in *(set gill))
   ^-  (list gill)
   =+  myr=(clan our)
-  ?:  =(%pawn myr)
-    [[our %dojo] ~]
+  :: ?:  =(%pawn myr)
+  ::   [[our %dojo] ~]
   ?:  =(%earl myr)
     =+  dad=(sein our)
     [[dad %talk] [dad %dojo] ~]

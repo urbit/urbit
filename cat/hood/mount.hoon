@@ -6,7 +6,10 @@
 ::::
   !:
 |=  $:  [now=@da eny=@uvI bec=beak]
-        [arg=[pax=path pot=@tas ~] ~]
+        [[pax=path pot=$|(~ [v=@tas ~])] ~]
     ==
+?~  pot
+  =+  bem=(need (tome pax))
+  $(pot ~[?^(s.bem i.s.bem q.bem)])
 :-  %kiln-mount
-[pax pot]:arg
+[pax v.pot]
