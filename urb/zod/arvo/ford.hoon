@@ -70,7 +70,7 @@
   ==                                                    ::
 ++  task                                                ::  problem in progress
   $:  nah=duct                                          ::  cause
-      kas=silk                                          ::  problem
+      [bek=beak kas=silk]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ::  problem
       keg=(map (pair term beam) cage)                   ::  block results
       kig=[p=@ud q=(map ,@ud ,[p=care q=beam])]         ::  blocks
   ==                                                    ::
@@ -178,10 +178,8 @@
 ::
 ++  za                                                  ::  per event
   ::  =+  dyv=0
-  =|  $:  $:  $:  our=ship                              ::  computation owner
-                  bek=beak                              ::  desk context
-                  hen=duct                              ::  event floor
-              ==                                        ::
+  =|  $:  $:  our=ship                                  ::  computation owner
+              hen=duct                                  ::  event floor
               $:  now=@da                               ::  event date
                   eny=@                                 ::  unique entropy
                   ska=sled                              ::  system namespace
@@ -195,22 +193,24 @@
     ^-  [(list move) baby]
     [(flop mow) bay]
   ::
-  ++  apex                                              ::  call
-    |=  kus=(unit silk)
+  ++  apax                                              ::  call
+    ^+  ..apax
+    =+  nym=(~(get by dym.bay) hen)
+    ?~  nym                                             ::  XX should never
+      ~&  [%ford-mystery hen]
+      ..apax
+    =+  tas=(need (~(get by q.tad.bay) u.nym))
+    amok:~(camo zo [u.nym tas])
+  ::
+  ++  apex
+    |=  kub=bilk
     ^+  +>
-    ?~  kus
-      =+  nym=(~(get by dym.bay) hen)
-      ?~  nym                                           ::  XX should never
-        ~&  [%ford-mystery hen]
-        +>.$
-      =+  tas=(need (~(get by q.tad.bay) u.nym))
-      amok:~(camo zo [u.nym tas])
     =+  num=p.tad.bay
     ?<  (~(has by dym.bay) hen)
     =:  p.tad.bay  +(p.tad.bay)
         dym.bay    (~(put by dym.bay) hen num)
       ==
-    ~(exec zo [num `task`[hen u.kus ~ 0 ~]])
+    ~(exec zo [num `task`[hen kub ~ 0 ~]])
   ::
   ++  axon                                              ::  take
     |=  [num=@ud tik=@ud sih=sign]
@@ -225,13 +225,13 @@
     ==
   ::
   ++  axun                                              ::  take rev update
-    |=  [tea=wire dep=@uvH sup=spur sih=sign]
+    |=  [tea=wire dep=@uvH bem=beam sih=sign]
     ^+  +>
     ?-    -.+.sih
         %writ
       ?~  p.sih  +>.$ 
       :: ~&  writ/tea
-      =+  [dap=(~(got by deh.bay) dep) bem=`beam`[bek sup]]
+      =+  dap=(~(got by deh.bay) dep)
       =-  ?~(dop con con(deh.bay (~(put by deh.bay) dep dop)))
       ^-  [dop=$|(~ _dap) con=_+>.$]
       ?-    -.dap
@@ -310,7 +310,7 @@
         :_  mow
         :-  hen
         :^    %pass
-            [(scot %p our) (scot %ud num) (scot %ud p.i.kiz) (tope bek ~)]
+            [(scot %p our) (scot %ud num) (scot %ud p.i.kiz) ~]
           %c
         [%warp [our p.q.q.i.kiz] q.q.q.i.kiz ~]
       ==
@@ -324,7 +324,7 @@
         :_  mow
         :-  hen
         :^    %pass
-            [(scot %p our) (scot %ud num) (scot %ud p.kig) (tope bek ~)]
+            [(scot %p our) (scot %ud num) (scot %ud p.kig) ~]
           %c
         ~&  >>  [%camping bem]
         [%warp [our p.bem] q.bem [~ %sing ren r.bem (flop s.bem)]]
@@ -834,12 +834,9 @@
         %+  cope
           %^  maul  cof
             (slap (slap pro [%cnzy %grad]) [%cnzy %mash])
-          ;:  slop
-              (slop [[%atom %p] p.mas] [[%atom %tas] q.mas])
-              (slop [[%atom %p] p.mos] [[%atom %tas] q.mos])
-              q.cay
-              q.coy
-          ==
+          %+  slop
+            :(slop [[%atom %p] p.mas] [[%atom %tas] q.mas] q.cay)
+          :(slop [[%atom %p] p.mos] [[%atom %tas] q.mos] q.coy)
         (flux |=(dif=vase [%& u.fom dif]))
       ==
     ::
@@ -1018,7 +1015,6 @@
     ::
     ++  lyle                                            ::  all mark doors
       |=  cof=cafe  ^-  (bolt (map mark vase))
-      =.  bek  -:(norm ska bek ~)
       =|  [sup=path res=(map mark vase)]
       |^  `(bolt (map mark vase))`wide
       ++  here  [bek (welp sup /mar)]
@@ -1352,6 +1348,8 @@
       ^-  (bolt type)
       %+  (clef %slit)  (fine cof gat sam)
       |=  [cof=cafe gat=type sam=type]
+      %+  cool  |.(>sam<)
+      %+  cool  |.(>(~(peek ut gat) %free 6)<)
       =+  top=(mule |.((slit gat sam)))
       ?-  -.top
         |  (flaw cof p.top)
@@ -1764,19 +1762,20 @@
     :-  %|
     :~  lex/`lex
     ==
-  =+  ^=  our  ^-  @p
-      ?-  -.q.hic
-        %exec  p.q.hic
-        %wasp  p.q.hic
-      ==
+  =+  our=p.q.hic
   =+  ^=  bay  ^-  baby
       =+  buy=(~(get by pol.lex) our)
       ?~(buy *baby u.buy)
   =^  mos  bay
-    ?:  ?=(%wasp -.q.hic)
-      abet:(~(awap za [[our *beak hen] [now eny ski] ~] bay) q.q.hic)
-    =+  bek=-:(norm ski q.q.hic ~)
-    abet:(~(apex za [[our bek hen] [now eny ski] ~] bay) r.q.hic)
+    ?-    -.q.hic
+        %wasp
+      abet:(~(awap za [our hen [now eny ski] ~] bay) q.q.hic)
+        %exec
+      ?~  q.q.hic
+        abet:~(apax za [our hen [now eny ski] ~] bay)
+      =.  p.u.q.q.hic  -:(norm ski p.u.q.q.hic ~)
+      abet:(~(apex za [our hen [now eny ski] ~] bay) u.q.q.hic)
+    ==
   [mos ..^$(pol (~(put by pol) our bay))]
 ::
 ++  doze
@@ -1821,13 +1820,12 @@
   =^  mos  bay
     =+  dep=(slaw %uv i.t.tea)
     ?^  dep
-      =+  [bek sup]=(need (tome t.t.tea))
-      abet:(~(axun za [[our bek hen] [now eny ski] ~] bay) tea u.dep sup q.hin)
-    ?>  ?=([@ @ @ @ ~] t.t.tea)
+      =+  bem=(need (tome t.t.tea))
+      abet:(~(axun za [our hen [now eny ski] ~] bay) tea u.dep bem q.hin)
+    ?>  ?=([@ ~] t.t.tea)
     =+  :*  num=(slav %ud i.t.tea)
             tik=(slav %ud i.t.t.tea)
-            bek=-:(need (tome t.t.t.tea)) 
         ==
-    abet:(~(axon za [[our bek hen] [now eny ski] ~] bay) num tik q.hin)
+    abet:(~(axon za [our hen [now eny ski] ~] bay) num tik q.hin)
   [mos ..^$(pol (~(put by pol) our bay))]
 --
