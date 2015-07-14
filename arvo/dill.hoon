@@ -360,7 +360,7 @@
           [~ ~]
           80
           0
-          (tuba "<awaiting {(trip p.kyz)}>")
+          (tuba "<awaiting {(trip p.kyz)}, this may take a few minutes>")
       ==
     --
 |%                                                      ::  poke/peek pattern
