@@ -33,7 +33,7 @@ window.urb.req = function(method,url,params,json,cb) {
         if(res.data.reload)
           res.reload = res.data.reload
       } catch(e) {
-        if(urb.wall !== false) document.write(this.responseText) // XX
+        // if(urb.wall !== false) document.write(this.responseText) // XX
         err = {
           message:"Failed to parse JSON",
           raw:this.responseText
