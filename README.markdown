@@ -40,7 +40,9 @@ urbit depends on:
     sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++ ragel cmake re2c
 
 *note: http requests are not supported on either debian wheezy or jessie
-due to an ssl issue* \#\#\#\# Fedora
+due to an ssl issue*
+
+#### Fedora
 
     sudo dnf install gcc gcc-c++ git gmp-devel openssl-devel openssl ncurses-devel libsigsegv-devel ctags automake autoconf libtool ragel cmake re2c
 
@@ -164,6 +166,10 @@ The syntax is as follows (from `dojo`):
     |mount <clay-path> <mount-name>
 
     |unmount <mount-name>
+
+or:
+
+    |unmount <clay-path>
 
 Sysadmin
 --------
