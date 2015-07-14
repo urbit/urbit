@@ -7,12 +7,16 @@
 ::::
   !:
 =>  |%
-    ++  begs  ,[his=@p tic=@p yen=@t ges=gens]
+    ++  begs  ,[his=@p tic=@p eny=@t ges=gens]
     --
 |=  $:  [now=@da eny=@uvI bec=beak]
-        [~ ~]
+        [arg=$|(~ [his=@p $|(~ [tic=@p ~])]) ~]
     ==
 ^-  (sole-result (cask begs))
+=-  ?~  arg  -
+    =+  (fun.q.q his.arg)
+    ?~  +.arg  -
+    (fun.q.q tic.arg)
 %+  sole-lo
   [%& %helm-begin "your ship: ~"]
 %+  sole-go  fed:ag
