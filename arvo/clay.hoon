@@ -882,7 +882,7 @@
     %=  +>.$
       lim       (max (fall lem lim) lim)
       hit.dom   hit
-      let.dom   let
+      let.dom   (max let let.dom)
       hut.ran   hut
       lat.ran   lat
     ==
@@ -1451,9 +1451,13 @@
     ++  make-nako
       |=  [a=aeon b=aeon]
       ^-  nako
-      :+  hit.dom
-        let.dom
-      ?~  =(0 b)
+      :+  ?>  (lte b let.dom)
+          |-
+          ?:  =(b let.dom)
+            hit.dom
+          $(hit.dom (~(del by hit.dom) let.dom), let.dom (dec let.dom))
+        b
+      ?:  =(0 b)
         [~ ~]
       (data-twixt-takos (~(get by hit.dom) a) (aeon-to-tako b))
     ::
@@ -1483,8 +1487,8 @@
         far
       =+  gar=(lobe-to-blob lob)
       ?-  -.gar
-        %direct  (~(put in far) lob)
-        %delta  (~(put in $(lob q.q.gar)) lob)
+        %direct    (~(put in far) lob)
+        %delta     (~(put in $(lob q.q.gar)) lob)
         %indirect  (~(put in $(lob r.gar)) lob)
       ==
     ::
@@ -1504,9 +1508,8 @@
       |=  p=tako                                        ::  XX slow
       ^-  (set tako)
       =+  y=(tako-to-yaki p)
-      =+  t=(~(put in *(set tako)) p)
       %+  roll  p.y
-      =<  .(s t)
+      =<  .(s (~(put in *(set tako)) p))
       |=  [q=tako s=(set tako)]
       ?:  (~(has in s) q)                               ::  already done
         s                                               ::  hence skip
@@ -2455,9 +2458,13 @@
         ?^  bem
           u.bem
         [[?>(?=(^ fat.ruf) p.n.fat.ruf) %base %ud 1] ~]
-    =+  rom=(~(got by fat.ruf) p.bem)
-    =+  dos=(~(got by dos.rom) q.bem)
-    ?:  =(0 let.dom.dos)
+    =+  rom=(~(get by fat.ruf) p.bem)
+    ?~  rom
+      ~
+    =+  dos=(~(get by dos.u.rom) q.bem)
+    ?~  dos
+      ~
+    ?:  =(0 let.dom.u.dos)
       =+  cos=(mode-to-soba ~ s.bem q.q.hic r.q.hic)
       =+  ^-  [one=(list ,[path miso]) two=(list ,[path miso])]
           %+  skid  q.cos
@@ -2471,7 +2478,7 @@
       :~  [hen %pass /one %c %info p.bem q.bem %& p.cos one]
           [hen %pass /two %c %info p.bem q.bem %& p.cos two]
       ==
-    =+  yak=(~(got by hut.ran.ruf) (~(got by hit.dom.dos) let.dom.dos))
+    =+  yak=(~(got by hut.ran.ruf) (~(got by hit.dom.u.dos) let.dom.u.dos))
     =+  cos=(mode-to-soba q.yak (flop s.bem) q.q.hic r.q.hic)
     [hen %pass / %c %info p.bem q.bem %& cos]~
   ::

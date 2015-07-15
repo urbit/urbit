@@ -79,6 +79,11 @@
     ^+  +>
     ?~(+< +> $(+< t.+<, +> (emit i.+<)))
   ::
+  ++  render
+    |=  [mez=tape sud=desk who=ship syd=desk]
+    :^  %palm  [" " ~ ~ ~]  leaf/mez
+    ~[leaf/"from {<sud>}" leaf/"on {<who>}" leaf/"to {<syd>}"]
+  ::
   ++  poke-mount
     |=  kiln-mount
     =+  bem=(tome pax)
@@ -100,15 +105,13 @@
   ++  poke-sync                                         ::
     |=  hos=kiln-sync
     ?:  (~(has by syn) hos)
-      =+  "already syncing from {<sud.hos>} on {<her.hos>} to {<syd.hos>}"
-      abet:(spam leaf/- ~)
+      abet:(spam (render "already syncing" [sud her syd]:hos) ~)
     abet:abet:start:(auto hos)
   ::
   ++  poke-unsync                                         ::
     |=  hus=kiln-unsync
     ?.  (~(has by syn) hus)
-      =+  "not syncing from {<sud.hus>} on {<her.hus>} to {<syd.hus>}"
-      abet:(spam leaf/- ~)
+      abet:(spam (render "not syncing" [sud her syd]:hus) ~)
     %*  .  abet:abet:stop:(auto hus)
       syn  (~(del by syn) hus)
     ==
@@ -182,8 +185,9 @@
   ::
   ++  spam
     |=  mes=(list tank)
-    %-  emit
-    [%poke /kiln/spam [our %talk] (said our %kiln now eny mes)]
+    ((slog 0 mes) ..spam)
+    :: %-  emit :: XX not displayed/immediately
+    :: [%poke /kiln/spam [our %talk] (said our %kiln now eny mes)]
   ::
   ++  auto
     |=  kiln-sync
@@ -199,7 +203,7 @@
     ::
     ++  spam  |*(* %_(+> ..auto (^spam +<)))
     ++  stop
-      =>  (spam leaf/"ended autosync from {<sud>} on {<her>} to {<syd>}" ~)
+      =>  (spam (render "ended autosync" sud her syd) ~)
       %-  blab  :_  ~
       :*  ust  %warp
           /kiln/sync/[syd]/(scot %p her)/[sud]
@@ -207,11 +211,9 @@
       ==
     ::
     ++  start
-      ::  XX remove feedback for demo
-      ::  =.  .  %-  spam
-      ::         [leaf/"activated sync from {<sud>} on {<her>} to {<syd>}" ~]
+      =>  (spam (render "activated sync" sud her syd) ~)
       %-  blab
-      :~  [ost %mont /mount syd our syd /]
+      :~  ::  [ost %mont /mount syd our syd /]
           :*  ost  %warp
               /kiln/sync/[syd]/(scot %p her)/[sud]
               [our her]  sud  ~  %sing  %w  [%da now]  /
@@ -221,8 +223,8 @@
       |=  rot=riot
       ?~  rot
         %^    spam
-            leaf/"bad %writ response on sync"
-          leaf/"from {<sud>} on {<her>} to {<syd>}"
+            leaf/"bad %writ response"
+          (render "on sync" sud her syd)
         ~
       =.  let  ?.  ?=(%w p.p.u.rot)  let  ((hard ,@ud) q.q.r.u.rot)
       %-  blab  :_  ~
@@ -240,9 +242,9 @@
       =.  +>.$
         %-  spam
         ?:  ?=(%& -.mes)
-          [leaf/"sync succeeded from {<sud>} on {<her>} to {<syd>}" ~]
+          [(render "sync succeeded" sud her syd) ~]
         ?+  p.p.mes
-          :*  leaf/"sync failed from {<sud>} on {<her>} to {<syd>}"
+          :*  (render "sync failed" sud her syd)
               leaf/"please manually merge the desks with"
               leaf/":+merge %{(trip syd)} {(scow %p her)} %{(trip sud)}"
               leaf/""
@@ -251,8 +253,8 @@
           ==
         ::
             %no-ali-desk
-          :~  leaf/"sync activated from {<sud>} on {<her>} to {<syd>}"  
-              leaf/"note: {<sud>} on {<her>} is a blank desk"
+          :~  (render "sync activated" sud her syd)  
+              leaf/"note: blank desk {<sud>} on {<her>}"
           ==
         ==
       %-  blab  :_  ~
