@@ -14,6 +14,9 @@
      *  U3_MEMORY_DEBUG is on, this should generally be on as well.
     */
 #     define U3_CELLOC_TOGGLE
+    /* U3_PRINT_WATERMARK: print watermark information for each road
+    */
+#     undef U3_PRINT_WATERMARK
 
   /**  Constants.
   **/

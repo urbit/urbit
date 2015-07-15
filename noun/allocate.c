@@ -11,7 +11,7 @@ _box_count(c3_ws siz_ws)
 {
   u3R->all.fre_w += siz_ws;
   {
-    c3_w end_w = _(u3a_is_north(u3R)) 
+    c3_w end_w = _(u3a_is_north(u3R))
                   ? (u3R->hat_p - u3R->rut_p)
                   : (u3R->rut_p - u3R->hat_p);
     c3_w all_w = (end_w - u3R->all.fre_w);
@@ -23,7 +23,7 @@ _box_count(c3_ws siz_ws)
 }
 #else
 static void
-_box_count(c3_ws siz_ws) {}
+_box_count(c3_ws siz_ws) { u3R->all.fre_w += siz_ws; }
 #endif
 
 /* _box_slot(): select the right free list to search for a block.
@@ -307,7 +307,9 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
           ** from the free list.
           */
           siz_w += pad_w;
-          _box_count(-(box_u->siz_w));
+#ifdef U3_MEMORY_DEBUG
+          _box_count(-(box_u->siz_w)); /* XX should this be ifdefed? */
+#endif
           {
             {
               c3_assert((0 == u3to(u3a_fbox, *pfr_p)->pre_p) || 
@@ -1455,7 +1457,7 @@ c3_w
 u3a_sweep(void)
 {
   c3_w neg_w, pos_w, leq_w, weq_w;
-#ifdef U3_MEMORY_DEBUG 
+#ifdef U3_MEMORY_DEBUG
   c3_w tot_w, caf_w;
 #endif
 
@@ -1480,10 +1482,12 @@ u3a_sweep(void)
         fre_p = fre_u->nex_p;
       }
     }
+#ifdef U3_PRINT_WATERMARK
     if ( fre_w != u3R->all.fre_w ) {
       fprintf(stderr, "fre discrepancy (%x): %x, %x, %x\r\n", u3R->par_p,
           fre_w, u3R->all.fre_w, (u3R->all.fre_w - fre_w));
     }
+#endif
     neg_w = (end_w - fre_w);
   }
 
@@ -1596,6 +1600,7 @@ u3a_sweep(void)
                 ? u3R->mat_p - u3R->cap_p
                 : u3R->cap_p - u3R->mat_p;
 
+#ifdef U3_PRINT_WATERMARK
   if ( (0 != u3R->par_p) && (u3R->all.max_w > 1000000) ) {
     u3a_print_memory("available", (tot_w - pos_w));
     u3a_print_memory("allocated", pos_w);
@@ -1603,6 +1608,11 @@ u3a_sweep(void)
 
     u3a_print_memory("maximum", u3R->all.max_w);
   }
+#else
+  u3a_print_memory("available", (tot_w - pos_w));
+  u3a_print_memory("allocated", pos_w);
+  u3a_print_memory("volatile", caf_w);
+#endif
 #endif
   u3a_print_memory("leaked", leq_w);
   u3a_print_memory("weaked", weq_w);
