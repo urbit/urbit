@@ -44,7 +44,7 @@
           ==  ==                                        ::
               $:  %f                                    ::  by %ford
           $%  [%made p=@uvH q=gage]                     ::
-              [%news ~]                                 ::
+              [%news p=@uvH]                            ::
           ==  ==                                        ::
               $:  @tas                                  ::  by any
           $%  [%crud p=@tas q=(list tank)]              ::
@@ -58,7 +58,7 @@
               [%hi p=mark ~]                            ::  outbound HTTP
               [%si ~]                                   ::  response done
               [%of p=ixor q=$|(~ whir-of)]              ::  associated view
-              [%on p=span:,@uvH ~]                      ::  dependency
+              [%on ~]                                   ::  dependency
           ==                                            ::
 ++  whir-of  ,[p=span:ship q=term r=wire]               ::  path in dock
 --                                                      ::
@@ -99,7 +99,7 @@
 ++  honk  $%([%nice ~] [%mean p=ares])                  ::  old gall result
 ++  even                                                ::  client event
   $%  [%mean p=[dock path] q=ares]
-      [%news p=@uv]
+      [%news p=@uvH]
       [%rush p=[dock path] q=json]
   ==
 ::
@@ -694,16 +694,15 @@
       (give-json 200 ~ (joba %beat %b &))
     ::
         %news                                         ::  dependency updated
-      ?.  ?=([%on ^] tee)
+      ?.  ?=([%on ~] tee)
         ~&(e/lost/[tee hen] +>.$)
-      =+  dep=(slav %uv p.tee)
-      %+  roll  (~(tap in (~(get ju liz) dep)))
-      =<  .(con ..axon(liz (~(del by liz) dep)))
+      %+  roll  (~(tap in (~(get ju liz) p.sih)))
+      =<  .(con ..axon(liz (~(del by liz) p.sih)))
       |=  [sus=(each duct ixor) con=_..axon]
       =.  ..axon  con
       ?-  -.sus
         %&  (give-json(hen p.sus) 205 ~ %b &) 
-        %|  (get-even:(ire-ix p.sus) [%news dep])
+        %|  (get-even:(ire-ix p.sus) +.sih)
       ==
     ::
         %made
@@ -941,7 +940,7 @@
       =+  had=(~(has by liz) a)
       =.  liz  (~(put ju liz) a b)
       ?:  had  done
-      (pass-note on//(scot %uv a) %f [%wasp our a])
+      (pass-note on/~ %f [%wasp our a])
     ::
     ++  parse
       ^-  (each perk httr)
@@ -1429,7 +1428,8 @@
     ++  poll
       |=  a=@u  ^+  ..ix
       ?:  =(a p.eve)
-        ?^  ude  ~&(e/ix/wait/replaced=p.u.ude abet(u.ude [hen &]))
+        ?^  ude  :: ~&  e/ix/wait/replaced=p.u.ude  :: XX needs %thud handling
+                 abet(u.ude [hen &])
         =.  era  (add ~s30 now)
         (pass-note:abet(ude [~ hen &]) of//[ire] [%b %wait era])
       ?:  (gth a p.eve)  ~|(seq-high/cur=p.eve !!)
