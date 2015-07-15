@@ -1,4 +1,4 @@
-/* g/m.c
+/* n/m.c
 **
 */
 #include <errno.h>
@@ -576,6 +576,14 @@ u3m_bail(u3_noun how)
     abort();
   }
 
+#ifdef U3_PRINT_WATERMARK
+  if ( c3__meme == how ) {
+    fprintf(stderr, "u3R %p, parent %x\n", u3R, u3R->par_p);
+    fprintf(stderr, "max %dMB\r\n", u3R->all.max_w / 256000);
+    abort();
+  }
+#endif
+
   /* Printf some metadata.
   */
   if ( c3__exit != how && (_(u3ud(how)) || 1 != u3h(how)) ) {
@@ -722,6 +730,9 @@ u3m_leap(c3_w pad_w)
     u3R = rod_u;
     _pave_parts();
   }
+#ifdef U3_MEMORY_DEBUG
+  rod_u->all.fre_w = 0;
+#endif
 }
 
 /* u3m_fall(): in u3R, return an inner road to its parent.
@@ -871,6 +882,11 @@ u3m_soft_top(c3_w    sec_w,                     //  timer seconds
     /* Make sure the inner routine did not create garbage.
     */
     if ( u3C.wag_w & u3o_debug_ram ) {
+#ifdef U3_PRINT_WATERMARK
+      if ( u3R->all.max_w > 1000000 ) {
+        fprintf(stderr, "soft_top: max %dMB\r\n", u3R->all.max_w / 256000);
+      }
+#endif
       u3m_grab(pro, u3_none);
     }
  
@@ -962,6 +978,11 @@ u3m_soft_run(u3_noun fly,
     u3t_off(coy_o);
     pro = fun_f(aga, agb);
 
+#ifdef U3_PRINT_WATERMARK
+    if ( u3R->all.max_w > 1000000 ) {
+      fprintf(stderr, "soft_run: max %dMB\r\n", u3R->all.max_w / 256000);
+    }
+#endif
     /* Produce success, on the old road.
     */
     pro = u3nc(0, u3m_love(pro));

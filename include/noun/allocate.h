@@ -8,12 +8,15 @@
     */
 #     undef U3_MEMORY_DEBUG
 
-    /*  U3_CELLOC_TOGGLE: enable toggling of the custum cell allocator
+    /*  U3_CELLOC_TOGGLE: enable toggling of the custom cell allocator
      *  via -g.  This slightly slows down the cell allocator even when
      *  it's on.  Note that toggling -g breaks (maybe?) the image.  If
      *  U3_MEMORY_DEBUG is on, this should generally be on as well.
     */
 #     undef U3_CELLOC_TOGGLE
+    /* U3_PRINT_WATERMARK: print watermark information for each road
+    */
+#     undef U3_PRINT_WATERMARK
 
   /**  Constants.
   **/
@@ -131,6 +134,9 @@
           u3p(u3a_fbox) fre_p[u3a_fbox_no];   //  heap by node size log
           u3p(u3a_fbox) cel_p;                //  custom cell allocator
           c3_w fre_w;                         //  number of free words
+#ifdef U3_MEMORY_DEBUG
+          c3_w max_w;                         //  maximum allocated
+#endif
         } all;
 
         struct {                              //  jet dashboard
