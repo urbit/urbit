@@ -464,3 +464,16 @@ Compute direct senior.
     ~del
     ~zod/main=> (sein ~ractul-fodsug-sibryg-modsyl--difrun-mirfun-filrec-patmet)
     ~zod
+
+Compute Phonemic base.
+
+    ~zod/main=> (saxo ~rabdec-monfer)
+    ~[~rabdec-monfer ~dalnel ~del]
+    ~zod/main=> `@rd`~rabdec-monfer
+    0x5fd25
+    [%rlyd 0x5.fd25]
+    0b1.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000.0000
+    ~zod/main=> `@p`0x5.fd25
+    ~rabdec-monfer
+
+    For `@rd` and `@p` see the [odors](../reference/odors) reference

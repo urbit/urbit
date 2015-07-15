@@ -154,7 +154,8 @@
           %^  cat  3  ' '
           %^  cat  3  `@t`(scot %p bos)
           %^  cat  3  '/'
-          bos
+          bod
+
       :-  bob
       :-  ~['------------']
       :-  bas

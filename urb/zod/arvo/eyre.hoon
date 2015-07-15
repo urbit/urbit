@@ -1428,7 +1428,8 @@
     ++  poll
       |=  a=@u  ^+  ..ix
       ?:  =(a p.eve)
-        ?^  ude  ~&(e/ix/wait/replaced=p.u.ude abet(u.ude [hen &]))
+        ?^  ude  :: ~&  e/ix/wait/replaced=p.u.ude  :: XX needs %thud handling
+                 abet(u.ude [hen &])
         =.  era  (add ~s30 now)
         (pass-note:abet(ude [~ hen &]) of//[ire] [%b %wait era])
       ?:  (gth a p.eve)  ~|(seq-high/cur=p.eve !!)

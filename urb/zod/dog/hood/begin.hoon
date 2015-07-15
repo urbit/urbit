@@ -8,11 +8,16 @@
   !:
 =>  |%
     ++  begs  ,[his=@p tic=@p yen=@t ges=gens]
+    ++  scug  |*([a=@ b=(pole)] ?~(b ~ ?~(a ~ [-.b $(b +.b, a (dec a))])))
     --
 |=  $:  [now=@da eny=@uvI bec=beak]
-        [~ ~]
+        [arg=_(scug *@ ~[his=*@p tic=*@p]) ~]
     ==
 ^-  (sole-result (cask begs))
+=-  ?~  arg  -
+    =+  (fun.q.q his.arg)
+    ?~  +.arg  -
+    (fun.q.q tic.arg)
 %+  sole-lo
   [%& %helm-begin "your ship: ~"]
 %+  sole-go  fed:ag
