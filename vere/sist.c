@@ -1163,7 +1163,7 @@ _sist_rest()
 
   //  Increment sequence numbers. New logs start at 1.
   if ( c3y == ohh ) {
-    uL(fprintf(uH, "rest: bumping ent_d, don't panic.\n"));
+    uL(fprintf(uH, "rest: bumping ent_d\n"));
     u3_ular lar_u;
     c3_d    end_d;
     c3_d    tar_d;
