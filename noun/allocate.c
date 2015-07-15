@@ -3,6 +3,29 @@
 */
 #include "all.h"
 
+/* _box_count(): adjust memory count.
+*/
+#ifdef  U3_MEMORY_DEBUG
+static void
+_box_count(c3_ws siz_ws)
+{
+  u3R->all.fre_w += siz_ws;
+  {
+    c3_w end_w = _(u3a_is_north(u3R))
+                  ? (u3R->hat_p - u3R->rut_p)
+                  : (u3R->rut_p - u3R->hat_p);
+    c3_w all_w = (end_w - u3R->all.fre_w);
+
+    if ( all_w > u3R->all.max_w ) {
+      u3R->all.max_w = all_w;
+    }
+  }
+}
+#else
+static void
+_box_count(c3_ws siz_ws) { u3R->all.fre_w += siz_ws; }
+#endif
+
 /* _box_slot(): select the right free list to search for a block.
 */
 c3_w
@@ -70,7 +93,7 @@ _box_attach(u3a_box* box_u)
   }
 #endif
 
-  u3R->all.fre_w += box_u->siz_w;
+  _box_count(box_u->siz_w);
   {
     c3_w             sel_w = _box_slot(box_u->siz_w);
     u3p(u3a_fbox)  fre_p = u3of(u3a_fbox, box_u);
@@ -95,7 +118,7 @@ _box_detach(u3a_box* box_u)
   u3p(u3a_fbox) pre_p = u3to(u3a_fbox, fre_p)->pre_p;
   u3p(u3a_fbox) nex_p = u3to(u3a_fbox, fre_p)->nex_p;
 
-  u3R->all.fre_w -= box_u->siz_w;
+  _box_count(-(box_u->siz_w));
 
   if ( nex_p ) {
     c3_assert(u3to(u3a_fbox, nex_p)->pre_p == fre_p);
@@ -284,6 +307,9 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
           ** from the free list.
           */
           siz_w += pad_w;
+#ifdef U3_MEMORY_DEBUG
+          _box_count(-(box_u->siz_w)); /* XX should this be ifdefed? */
+#endif
           {
             {
               c3_assert((0 == u3to(u3a_fbox, *pfr_p)->pre_p) || 
@@ -1431,7 +1457,7 @@ c3_w
 u3a_sweep(void)
 {
   c3_w neg_w, pos_w, leq_w, weq_w;
-#if 0
+#ifdef U3_MEMORY_DEBUG
   c3_w tot_w, caf_w;
 #endif
 
@@ -1456,6 +1482,12 @@ u3a_sweep(void)
         fre_p = fre_u->nex_p;
       }
     }
+#ifdef U3_PRINT_WATERMARK
+    if ( fre_w != u3R->all.fre_w ) {
+      fprintf(stderr, "fre discrepancy (%x): %x, %x, %x\r\n", u3R->par_p,
+          fre_w, u3R->all.fre_w, (u3R->all.fre_w - fre_w));
+    }
+#endif
     neg_w = (end_w - fre_w);
   }
 
@@ -1560,7 +1592,7 @@ u3a_sweep(void)
     }
   }
 
-#if 0
+#ifdef U3_MEMORY_DEBUG
   tot_w = _(u3a_is_north(u3R)) 
                 ? u3R->mat_p - u3R->rut_p
                 : u3R->rut_p - u3R->mat_p;
@@ -1568,9 +1600,19 @@ u3a_sweep(void)
                 ? u3R->mat_p - u3R->cap_p
                 : u3R->cap_p - u3R->mat_p;
 
+#ifdef U3_PRINT_WATERMARK
+  if ( (0 != u3R->par_p) && (u3R->all.max_w > 1000000) ) {
+    u3a_print_memory("available", (tot_w - pos_w));
+    u3a_print_memory("allocated", pos_w);
+    u3a_print_memory("volatile", caf_w);
+
+    u3a_print_memory("maximum", u3R->all.max_w);
+  }
+#else
   u3a_print_memory("available", (tot_w - pos_w));
   u3a_print_memory("allocated", pos_w);
   u3a_print_memory("volatile", caf_w);
+#endif
 #endif
   u3a_print_memory("leaked", leq_w);
   u3a_print_memory("weaked", weq_w);
