@@ -10,16 +10,17 @@
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  tape  (react-to-tape own)
-  ++  react-snip-js  (crip tape)
-  ++  react-snip-json
+  ++  tape  (pojo react-snip-json)
+  ++  react-snip-js  (crip (react-to-tape own))
+  ++  react-snips-json
     ::?>  ?=([[%div ~] [[%h1 ~] *] [[%div ~] *] ~]] own)  :: xx mystery fish-loop
     %^  jobe
-      head/(jape tape(own &2.own))
-      body/(jape tape(own &3.own))
+      head/react-snip-json(own &2.own)
+      body/react-snip-json(own &3.own)
     ~
-::   ++  js  react-snip-js                                 ::  convert to %js
-  ++  mime  [/text/javascript (taco react-snip-js)]                ::  convert to %mime
+::   ++  js  react-snip-js
+  ++  react-snip-json  (react-to-json own)
+  ++  mime  [/application/json (tact tape)]
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  manx                                ::  clam from %noun
