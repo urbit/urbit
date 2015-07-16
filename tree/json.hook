@@ -1,16 +1,16 @@
 ::
 /?    314
 /=    gas    /$    fuel
-/=    ral    /:    /===    /%  /react-js/
+/=    ral    /:    /===    /%  /react-json/
 /=    pal    /:    /===
-             /;    |=  a=(map ,@ta cord)  a
+             /;    |=  a=(map ,@ta json)  a
              /%    2
-             /_    /react-js/
+             /_    /react-json/
 ::
 /=    sal    /:    /===
              /;    |=  a=(map ,@ta json)  a
              /%    2
-             /_    /react-snip-json/
+             /_    /react-snips-json/
 ::
 ::::
   ::
@@ -28,10 +28,10 @@
   %+  joba  %kids
   =.  pal  (~(del by pal) %md)                                     :: XX haxor
   =-  [%a (turn (~(tap by pal)) -)]
-  |=  [a=span b=cord] 
+  |=  [a=span b=json] 
   %-  jobe  :~
     name/s/a
-    body/s/b
+    body/b
   ==
 ::  .json?snip
 ?:  (~(has by qix.gas) %snip)
@@ -46,5 +46,5 @@
 ::  .json
 %-  jobe  :~
   kids/[%a (turn get-kids |=(a=span s/a))]
-  body/[%s ral]
+  body/ral
 ==

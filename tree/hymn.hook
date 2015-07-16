@@ -1,7 +1,7 @@
 ::
 /?    314
 /=    gas    /$    fuel
-/=    ral    /:    /===    /%  /react-js/
+/=    ral    /:    /===    /%  /react-json/
 ::
 ::::
   ::
@@ -33,14 +33,10 @@
   ;body
     ;script(type "text/javascript"):"""
                                     window.tree = \{}
-                                    window.tree.init = function(components) \{
-                                      window.tree.up = {(pojo (parent-json get-parent))}
-                                      window.tree.kids = {(pojo (kids-json get-kids))}
-                                      window.tree.bred = {(pojo (bread-json get-bread))}
-                                      with(components) \{
-                                        window.tree.body = {(trip ral)}
-                                      }
-                                    }
+                                    window.tree.up = {(pojo (parent-json get-parent))}
+                                    window.tree.kids = {(pojo (kids-json get-kids))}
+                                    window.tree.bred = {(pojo (bread-json get-bread))}
+                                    window.tree.body = {(pojo ral)}
                                     """
     ;div#nav;
     ;div#cont;

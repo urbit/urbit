@@ -20,7 +20,44 @@
   ==
 ++  react-vale
   ~(has in react-elems)
-++  react-to-tape
+++  react-to-json
+  |=  src=manx  ^-  json
+  ?:  ?=(_:/(**) src)
+    (jape v.i.a.g.src)
+  ?:  (~(has by (mo a.g.src)) [%urb %codemirror])
+    ?>  ?=([[%pre *] _:/(**) ~] src)
+    $(src ;codemirror(value "{v.i.a.g.i.c.src}");)
+  ?:  (~(has by (mo a.g.src)) [%urb %exec])           ::  runnable code attribute tag
+    ?>  ?=([[%pre *] _:/(**) ~] src)                  ::  verify its only a text node
+    =*  code  v.i.a.g.i.c.src
+    %_    $
+        src
+      =+  =<  result=(mule .)
+          !.(|.((slap !>(.) (ream (crip code)))))     ::  compile and run safely
+      =+  claz=?:(-.result "rancode" "failedcode")
+      ;div(class "{claz}")
+        ;pre:"{code}"
+        ;+  ?:  ?=(& -.result)
+              ;code:"{~(ram re (sell p.result))}"
+            ;pre
+              ;div:"error"
+              ;*  %+  turn  p.result
+                  |=  a=tank
+                  ^-  manx
+                  ;div:"{~(ram re a)}"
+      ==    ==
+    ==
+  %-  jobe  :~
+    c/a/(turn c.src ..$)
+    gn/s/(mane-to-cord n.g.src)
+    =<  ga/(jobe (turn a.g.src .))
+    |=  [a=mane b=tape]  ^-  [cord json]
+    [?+(a (mane-to-cord a) %class 'className') (jape b)]
+  ==
+::
+++  mane-to-cord  |=(a=mane `cord`?@(a a (rap 3 -.a ':' +.a ~)))
+::  generates React javascript  XX deprecated
+++  react-to-tape                                    
   |=  src=manx  ^-  tape
   ?:  (~(has by (mo a.g.src)) [%urb %codemirror])
     ?>  ?=([[%pre *] _:/(**) ~] src)
@@ -52,25 +89,22 @@
     $(src error)
   ;:  weld
     "React.createElement("
-    =*  tan  n.g.src
-    ?^  tan  !!                                       ::  namespaces unsupported
-    ?:  (react-vale tan)
-      "'{(trip tan)}'"
-    (trip tan)
-    ::
+      =*  tan  n.g.src
+      ?^  tan  !!                                       ::  namespaces unsupported
+      ?:  (react-vale tan)
+        "'{(trip tan)}'"
+      (trip tan)
     ", "
-    =-  (pojo (jobe (turn a.g.src -)))
-    |=  [a=mane b=tape]
-    =.  a  ?+(a a %class 'className')
-    ?^(a !! [a (jape b)])
+      =-  (pojo (jobe (turn a.g.src -)))
+      |=  [a=mane b=tape]
+      =.  a  ?+(a a %class 'className')
+      ?^(a !! [a (jape b)])
     ", "
-    ::
-    =<  ~(ram re %rose [", " "[" "]"] (turn c.src .))
-    |=  a=manx
-    ?:  ?=(_:/(**) a)
-      leaf/(pojo (jape v.i.a.g.a))
-    leaf/^$(src a)
-    ::
+      =<  ~(ram re %rose [", " "[" "]"] (turn c.src .))
+      |=  a=manx
+      ?:  ?=(_:/(**) a)
+        leaf/(pojo (jape v.i.a.g.a))
+      leaf/^$(src a)
     ")"
   ==
 --

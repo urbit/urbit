@@ -60,12 +60,13 @@ TreeStore = _.extend EventEmitter.prototype, {
           head: window.tree.reactify v.body.head
           body: window.tree.reactify v.body.body
     else
-      _cont[path] = window.tree.reactify "React.createElement ('div', {}, [
-                                           React.createElement('h1', {className:'error'}, 'Error: Empty path'),
-                                           React.createElement('div', {}, [
-                                            React.createElement('pre', {}, '#{@getCurr()}'),
-                                            React.createElement('span', {}, 'is either empty or does not exist.')
-                                           ]) ])"
+      _cont[path] = window.tree.reactify
+        gn: 'div'
+        c: [ {gn:'h1',  ga:{className:'error'}, c:['Error: Empty path']}
+             {gn:'div', c:[
+               {gn:'pre',  c:[@getCurr()]}
+               {gn:'span', c:['is either empty or does not exist.']}
+           ] }]
 
   loadKids: (path,kids) ->
     @mergePathToTree path,_.pluck(kids,"name")
