@@ -664,10 +664,8 @@ $(function() {
     lost: lost,
     codemirror: codemirror
   };
-  window.tree._basepath = window.location.pathname;
-  window.tree._basepath = window.tree._basepath.split("/");
-  window.tree._basepath = window.tree._basepath.slice(0, window.tree._basepath.indexOf("tree") + 1);
-  window.tree._basepath = window.tree._basepath.join("/");
+  window.tree._basepath = window.urb.util.basepath("/");
+  window.tree._basepath += (window.location.pathname.replace(window.tree._basepath, "")).split("/")[0];
   window.tree.basepath = function(path) {
     if (path[0] !== "/") {
       path = "/" + path;

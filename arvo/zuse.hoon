@@ -1108,13 +1108,13 @@
     [~ ~]
   ?^  t.rax
     [p.pok [ire q.pok]]:[pok=$(rax t.rax) ire=i.rax]
-  =+  ^-  raf=(like tape)
-      %.  [1^1 (flop (trip i.rax))]
-      ;~(sfix (star ;~(less dot next)) dot)
+  =+  ^-  raf=(like term)
+      =>  |=(a=@ ((sand %tas) (crip (flop (trip a)))))
+      (;~(sfix (sear . sym) dot) [1^1 (flop (trip i.rax))])
   ?~  q.raf
     [~ [i.rax ~]]
-  =+  `[ext=tape [@ @] fyl=tape]`u.q.raf
-  :-  ?:(=(~ ext) ~ [~ (crip (flop ext))])
+  =+  `[ext=term [@ @] fyl=tape]`u.q.raf
+  :-  `ext
   ?:(=(~ fyl) ~ [(crip (flop fyl)) ~])
 ::
 ++  fuel                                                ::  parse fcgi
