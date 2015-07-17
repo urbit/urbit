@@ -357,6 +357,54 @@ li:before {
 .list h1 {
   font-size: 0.7rem;
 }
+.list.posts .post {
+  margin-bottom: 2rem;
+}
+.list.posts .post h1 {
+  text-transform: none;
+  font-size: 1.6rem;
+  line-height: 1.8rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+.list.posts .post h2 {
+  font-size: 0.7rem;
+  font-weight: 400;
+  line-height: 1rem;
+  margin-top: 0;
+}
+.list.posts li.post:before {
+  content: "";
+}
+div.post h1 {
+  font-size: 2.8rem;
+  line-height: 4rem;
+  display: block;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+div.post h2,
+div.post h2.sub {
+  line-height: 1rem;
+  letter-spacing: 1px;
+}
+div.post h2.sub {
+  font-size: 0.7rem;
+  font-weight: 400;
+  margin-top: 0;
+  text-transform: uppercase;
+}
+div.post h2 {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+div.post p {
+  font-size: 1.2rem;
+  line-height: 2.2rem;
+}
+div.post li p {
+  display: inline;
+}
 #body .CodeMirror {
   font-size: 0.8rem;
   line-height: 1rem;

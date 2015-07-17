@@ -59,6 +59,7 @@ TreeStore = _.extend EventEmitter.prototype, {
         _snip[path+"/"+v.name] = 
           head: window.tree.reactify v.body.head
           body: window.tree.reactify v.body.body
+          orig: v.body
     else
       _cont[path] = window.tree.reactify
         gn: 'div'
