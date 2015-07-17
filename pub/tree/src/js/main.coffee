@@ -24,6 +24,7 @@ $ ->
     window.tree._basepath + path
   window.tree.fragpath = (path) -> path.replace window.tree._basepath,""
   window.tree.reactify = (obj) -> switch
+    # manx: {fork: ["string", {gn:"string" ga:{dict:"string"} c:{list:"manx"}}]}
     when typeof obj == "string" then obj
     when obj.gn?
       React.createElement components[obj.gn] ? obj.gn,
