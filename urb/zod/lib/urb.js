@@ -127,7 +127,7 @@ window.urb.poll = function(params) {
       }
     }
 
-    dely = params.dely ? params.dely : $this.dely
+    dely = params.dely || $this.dely
 
     if(err)
       dely = dely+Math.ceil(dely*.02)
@@ -187,11 +187,11 @@ window.urb.send = function(params,cb) {
 
   var url, $this
 
-  params.ship = params.ship ? params.ship : this.ship
-  params.appl = params.appl ? params.appl : this.appl
-  params.mark = params.mark ? params.mark : "json"
-  params.xyro = params.data ? params.data : {}
-  params.wire = params.wire ? params.wire : "/"
+  params.ship = params.ship || this.ship
+  params.appl = params.appl || this.appl
+  params.mark = params.mark || "json"
+  params.xyro = params.data || {}
+  params.wire = params.wire || "/"
 
 
   url = ["to",params.appl,params.mark]
@@ -221,10 +221,10 @@ window.urb.bind = function(path, cb){ // or bind(path, params, cb, nicecb?)
     
   params.path = path
   if(params.path[0] !== "/") params.path = "/"+params.path
-  params.ship = params.ship ? params.ship : this.ship
-  params.appl = params.appl ? params.appl : this.appl
-  params.mark = params.mark ? params.mark : "json"
-  params.wire = params.wire ? params.wire : params.path
+  params.ship = params.ship || this.ship
+  params.appl = params.appl || this.appl
+  params.mark = params.mark || "json"
+  params.wire = params.wire || params.path
 
   if(typeof path != "string")
     throw new Error("You must specify a string path for urb.bind.")
@@ -252,9 +252,9 @@ window.urb.bind = function(path, cb){ // or bind(path, params, cb, nicecb?)
 window.urb.unsubscribe = function(params,cb) {
   if(!params) throw new Error("You must supply params to urb.unsubscribe.")
   
-  params.ship = params.ship ? params.ship : this.ship
-  params.appl = params.appl ? params.appl : this.appl
-  params.wire = params.wire ? params.wire : params.path
+  params.ship = params.ship || this.ship
+  params.appl = params.appl || this.appl
+  params.wire = params.wire || params.path
 
   if(!params.path) throw new Error("You must specify a path for urb.unsubscribe.")
   if(!params.appl) throw new Error("You must specify an appl for urb.unsubscribe.")
@@ -292,5 +292,31 @@ window.urb.util = {
             '.' + pad(2, dat.getUTCMinutes()) + 
             '.' + pad(2, dat.getUTCSeconds()) + 
            '..' + pad(4, mils)
+  },
+  basepath: function(spur, pathname){
+    spur = spur || ''
+    pathname = pathname || window.location.pathname
+    if(pathname[0] == '/') pathname = pathname.slice(1)
+    pathname = pathname.split("/")
+    
+    var pref, pred, prec, base = "" 
+    while(base += "/"+(pref = pathname.shift()), pathname.length>0){
+      if(pref[0] !== '~') break;
+      if(pref === "~~") continue;
+      base += "/"+(pred = pathname.shift())
+      if(/[a-z\-]+/.test(pref.slice(1))){
+        base += "/"+(prec = pathname.shift())
+        if(prec == null) throw "Bad basepath."
+        break;
+      }
+      if(pref !== "~") throw "Bad basepath /"+pref
+      if(pred === "as"){
+        base += "/"+(prec = pathname.shift())
+        if(prec == null) throw "Bad basepath."        
+        continue;
+      }
+      throw "Bad basepath /~/"+pred
+    }
+    return base+spur
   }
 }

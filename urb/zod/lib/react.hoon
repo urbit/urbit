@@ -24,10 +24,14 @@
   |=  src=manx  ^-  json
   ?:  ?=(_:/(**) src)
     (jape v.i.a.g.src)
-  ?:  (~(has by (mo a.g.src)) [%urb %codemirror])
+  =+  atr=(mo a.g.src)
+  ?:  (~(has by atr) [%urb %codemirror])
     ?>  ?=([[%pre *] _:/(**) ~] src)
     $(src ;codemirror(value "{v.i.a.g.i.c.src}");)
-  ?:  (~(has by (mo a.g.src)) [%urb %exec])           ::  runnable code attribute tag
+  ?:  (~(has by atr) [%urb %front])
+    ?>  ?=([[%meta [%value *] *] ~] src)
+    (joba %frontmatter (scan v.i.a.g.src apex:poja))
+  ?:  (~(has by atr) [%urb %exec])           ::  runnable code attribute tag
     ?>  ?=([[%pre *] _:/(**) ~] src)                  ::  verify its only a text node
     =*  code  v.i.a.g.i.c.src
     %_    $
