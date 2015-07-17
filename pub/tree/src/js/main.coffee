@@ -12,7 +12,11 @@ $ ->
   kids              = React.createFactory require './components/KidsComponent.coffee'
   lost              = React.createClass
     render: -> (React.DOM.div {}, "lost")
-  components = {kids:kids,list:list,lost:lost, codemirror:codemirror}
+  components = 
+    kids:kids
+    list:list
+    lost:lost
+    codemirror:codemirror
   
   
   window.tree._basepath = window.location.pathname
