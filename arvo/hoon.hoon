@@ -7777,6 +7777,8 @@
         [%sgzp *]  ~_(duck(sut (play p.gen)) $(gen q.gen))
         [%sggr *]
       =+  hum=$(gen q.gen)
+      :: ?:  &(huz !?=($|(@ [?(%fast %memo) ^]) p.gen))
+      ::  hum
       :-  p.hum
       :+  %10
         ?-    p.gen
@@ -8385,7 +8387,8 @@
     |=  ref=type
     ~+
     ^-  type
-    ~|(%sift-lose ?>((nest(sut ref) & -:!>(*typo)) ref))
+    !!
+    :: ~|(%sift-lose ?>((nest(sut ref) & -:!>(*typo)) ref))
   ::
   ++  snub
     ~/  %snub
