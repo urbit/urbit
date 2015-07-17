@@ -7,25 +7,26 @@
 ::
 ::::
   ::
-|_  don=down
+|_  [atr=(map cord cord) don=down]
 ++  grab                                                ::  convert from
   |%
-  ++  md  |=(src=@t (mark:down-jet src))
-  ++  noun  down                                        ::  clam from %noun
+  ++  mdy  |=([atr=_atr src=@t] [atr (mark:down-jet src)])
+  ++  noun  ,[(map cord cord) down]                     ::  clam from %noun
   --
 ::
 ++  grow                                                ::  convert into
   |%
   ++  hymn                                          ::  convert to %hymn
-      ;html
-        ;head:title:"Untitled"
-        ;body
-          ;*  (print:down-jet don)
-        ==
+    ;html
+      ;head:title:"Untitled"
+      ;body  ;*  +:elem
       ==
+    ==
   ++  elem                                          ::  convert to %elem
+    =+  jon=`json`o/(~(run by atr) |=(cord s/+<))
     ;div
-      ;*  (print:down-jet don)
+      ;*  :-  ;meta(value "{(pojo jon)}", name "frontmatter", urb_front "");
+          (print:down-jet don)
     ==
   ::  ++  react  elem
   --

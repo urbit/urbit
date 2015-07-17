@@ -6,13 +6,16 @@
 |%
   ++  words  1
   ++  hedtal
+    =|  met=marl
     |=  a=marl  ^-  [hed=marl tal=marl]
     ?~  a  [~ ~]
     ?.  ?=(%h1 n.g.i.a)
+      ?:  ?=(%meta n.g.i.a)
+        $(a t.a, met [i.a met])
       =+  had=$(a c.i.a)
       ?^  -.had  had
       $(a t.a)
-    [c.i.a (limit words t.a)]
+    [c.i.a (weld (flop met) (limit words t.a))]
   ::
   ++  extract
     |=  a=marl  ^-  tape
