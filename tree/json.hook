@@ -39,7 +39,9 @@
   =.  sal  (~(del by sal) %md)                                   :: XX haxor
   =-  [%a (turn (~(tap by sal)) -)]
   |=  [a=span b=json]
+  =+  fon=(json-front b)
   %-  jobe  :~
+    meta/fon
     name/s/a
     body/b
   ==
