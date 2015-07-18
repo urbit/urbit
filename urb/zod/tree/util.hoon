@@ -1,5 +1,25 @@
 !:
 |_  gas=epic
+++  baff  |*([a=(unit) b=(trap)] ?^(a a *b))
+++  find-in-tree
+  |*  [paz=fist:jo fun=$+(* (unit))]
+  |=  a=json  ^+  *fun
+  %+  biff  (paz a)
+  |*  [b=(list json) c=*]  ^+  *fun
+  %+  baff  (fun c)
+  |.
+  ?~  b  ~
+  (baff ^^$(a i.b) |.(^$(b t.b)))
+::
+++  json-front
+  |=  a=json  ^-  json
+  =-  (fall `(unit json)`- ~)
+  %+  biff  ((ot body/some ~):jo a)
+  %+  find-in-tree  (ot c/(ar some) gn/so ga/(om so) ~):jo
+  |=  [nom=span atr=(map span cord)]  ^-  (unit json)
+  ?.  (~(has by atr) 'urb:front')  ~
+  ?>  ?=(%meta nom)
+  (biff (~(get by atr) %value) poja)
 ::
 ++  get-path  
   ^-  path
