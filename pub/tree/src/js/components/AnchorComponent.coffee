@@ -37,8 +37,11 @@ module.exports = recl
     dt = @ts - Number Date.now()
 
   setPath: (href,hist) ->
-    if hist isnt false then history.pushState {}, "", window.tree.basepath href
-    next = href.split("#")[0]
+    href_parts = href.split("#")
+    next = href_parts[0]
+    if next.substr(-1) is "/" then next = next.slice(0,-1)
+    href_parts[0] = next
+    if hist isnt false then history.pushState {}, "", window.tree.basepath href_parts.join ""
     rend = false
     if next isnt @state.curr
       React.unmountComponentAtNode $('#cont')[0]

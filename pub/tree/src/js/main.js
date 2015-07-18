@@ -71,7 +71,6 @@ module.exports = {
 };
 
 
-
 },{"../dispatcher/Dispatcher.coffee":8,"../persistence/TreePersistence.coffee":13}],2:[function(require,module,exports){
 var BodyComponent, TreeActions, TreeStore, a, div, recl, ref;
 
@@ -123,11 +122,16 @@ module.exports = recl({
     return dt = this.ts - Number(Date.now());
   },
   setPath: function(href, hist) {
-    var next, rend;
-    if (hist !== false) {
-      history.pushState({}, "", window.tree.basepath(href));
+    var href_parts, next, rend;
+    href_parts = href.split("#");
+    next = href_parts[0];
+    if (next.substr(-1) === "/") {
+      next = next.slice(0, -1);
     }
-    next = href.split("#")[0];
+    href_parts[0] = next;
+    if (hist !== false) {
+      history.pushState({}, "", window.tree.basepath(href_parts.join("")));
+    }
     rend = false;
     if (next !== this.state.curr) {
       React.unmountComponentAtNode($('#cont')[0]);
@@ -306,7 +310,6 @@ module.exports = recl({
 });
 
 
-
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14,"./BodyComponent.coffee":3}],3:[function(require,module,exports){
 var TreeActions, TreeStore, div, input, load, recl, ref, textarea;
 
@@ -374,7 +377,6 @@ module.exports = recl({
 });
 
 
-
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14,"./LoadComponent.coffee":7}],4:[function(require,module,exports){
 var div, recl, ref, textarea;
 
@@ -396,7 +398,6 @@ module.exports = recl({
     });
   }
 });
-
 
 
 },{}],5:[function(require,module,exports){
@@ -465,7 +466,6 @@ module.exports = recl({
 });
 
 
-
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14}],6:[function(require,module,exports){
 var TreeActions, TreeStore, a, div, h1, li, load, recl, ref, ul;
 
@@ -522,16 +522,21 @@ module.exports = recl({
     }
   },
   render: function() {
-    var _list, doc, k, ref1;
+    var _keys, _list, doc, k, ref1;
     doc = (ref1 = this.state.tree) != null ? ref1 : [];
     if (!this.getCont()) {
       _list = div({
         className: "loading"
       }, load({}, ""));
     } else {
-      _list = _.map(_.keys(doc).sort(), (function(_this) {
+      _keys = _.keys(doc).sort();
+      if (this.props.dataType === 'post') {
+        _keys = _keys.reverse();
+      }
+      _list = _.map(_keys, (function(_this) {
         return function(v) {
-          var _path, c, href, prev;
+          var _k, _path, c, href, orig, prev;
+          _k = "";
           _path = _this.state.path + "/" + v;
           if (_this.props.dataPreview != null) {
             c = "preview";
@@ -540,12 +545,25 @@ module.exports = recl({
             } else {
               prev = _this.state.snip[_path];
             }
+            if (_this.props.dataType === 'post') {
+              orig = _this.state.snip[_path].orig;
+              c = orig.body.c.slice(0, 2);
+              c.unshift(orig.head);
+              prev = {
+                gn: 'div',
+                c: c
+              };
+              _k += " post";
+              prev = window.tree.reactify(prev);
+            }
           } else {
             c = "";
             prev = h1({}, v);
           }
           href = window.tree.basepath(_path);
-          return li({}, a({
+          return li({
+            className: _k
+          }, a({
             href: href,
             className: c,
             key: "list-a-" + _path
@@ -557,13 +575,15 @@ module.exports = recl({
     if (this.props['data-source'] === 'default') {
       k += " default";
     }
+    if (this.props.dataType === 'post') {
+      k += " posts";
+    }
     return ul({
       className: k,
       key: "list-" + this.state.path
     }, _list);
   }
 });
-
 
 
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14,"./LoadComponent.coffee":7}],7:[function(require,module,exports){
@@ -603,7 +623,6 @@ module.exports = recl({
 });
 
 
-
 },{}],8:[function(require,module,exports){
 var Dispatcher;
 
@@ -623,7 +642,6 @@ module.exports = _.extend(new Dispatcher(), {
     });
   }
 });
-
 
 
 },{"flux":10}],9:[function(require,module,exports){
@@ -654,10 +672,15 @@ $(function() {
   window.tree._basepath = window.urb.util.basepath("/");
   window.tree._basepath += (window.location.pathname.replace(window.tree._basepath, "")).split("/")[0];
   window.tree.basepath = function(path) {
+    var _path;
     if (path[0] !== "/") {
       path = "/" + path;
     }
-    return window.tree._basepath + path;
+    _path = window.tree._basepath + path;
+    if (_path.slice(-1) === "/") {
+      _path = _path.slice(0, -1);
+    }
+    return _path;
   };
   window.tree.fragpath = function(path) {
     return path.replace(window.tree._basepath, "");
@@ -789,7 +812,6 @@ $(function() {
     return so.ls = so.cs;
   });
 });
-
 
 
 },{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":3,"./components/CodeMirror.coffee":4,"./components/KidsComponent.coffee":5,"./components/ListComponent.coffee":6,"./persistence/TreePersistence.coffee":13}],10:[function(require,module,exports){
@@ -1132,7 +1154,6 @@ module.exports = {
 };
 
 
-
 },{"../actions/TreeActions.coffee":1}],14:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, TreeStore, _cont, _curr, _load, _snip, _tree;
 
@@ -1224,7 +1245,8 @@ TreeStore = _.extend(EventEmitter.prototype, {
         v = snip[k];
         results.push(_snip[path + "/" + v.name] = {
           head: window.tree.reactify(v.body.head),
-          body: window.tree.reactify(v.body.body)
+          body: window.tree.reactify(v.body.body),
+          orig: v.body
         });
       }
       return results;
@@ -1370,7 +1392,6 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
 });
 
 module.exports = TreeStore;
-
 
 
 },{"../dispatcher/Dispatcher.coffee":8,"events":15}],15:[function(require,module,exports){
