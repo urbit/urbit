@@ -122,11 +122,16 @@ module.exports = recl({
     return dt = this.ts - Number(Date.now());
   },
   setPath: function(href, hist) {
-    var next, rend;
-    if (hist !== false) {
-      history.pushState({}, "", window.tree.basepath(href));
+    var href_parts, next, rend;
+    href_parts = href.split("#");
+    next = href_parts[0];
+    if (next.substr(-1) === "/") {
+      next = next.slice(0, -1);
     }
-    next = href.split("#")[0];
+    href_parts[0] = next;
+    if (hist !== false) {
+      history.pushState({}, "", window.tree.basepath(href_parts.join("")));
+    }
     rend = false;
     if (next !== this.state.curr) {
       React.unmountComponentAtNode($('#cont')[0]);
@@ -667,10 +672,15 @@ $(function() {
   window.tree._basepath = window.urb.util.basepath("/");
   window.tree._basepath += (window.location.pathname.replace(window.tree._basepath, "")).split("/")[0];
   window.tree.basepath = function(path) {
+    var _path;
     if (path[0] !== "/") {
       path = "/" + path;
     }
-    return window.tree._basepath + path;
+    _path = window.tree._basepath + path;
+    if (_path.slice(-1) === "/") {
+      _path = _path.slice(0, -1);
+    }
+    return _path;
   };
   window.tree.fragpath = function(path) {
     return path.replace(window.tree._basepath, "");
