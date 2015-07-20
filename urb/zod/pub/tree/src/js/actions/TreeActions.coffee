@@ -9,11 +9,6 @@ module.exports =
       body:body
       kids:kids
 
-  setLoading: (state) ->
-    TreeDispatcher.handleViewAction
-      type:"set-load"
-      load:state
-
   loadKids: (path,kids) ->
     TreeDispatcher.handleServerAction
       type:"kids-load"
@@ -34,7 +29,7 @@ module.exports =
     
     if path.slice(-1) is "/" then path = path.slice(0,-1)
     
-    TreePersistence.get path,query,(err,res) =>
+    TreePersistence.get path,query,(err,res) => 
       switch query
         when "snip"
           @loadSnip path,res.snip
