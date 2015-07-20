@@ -9,7 +9,6 @@ recl = React.createClass
 module.exports = recl
   stateFromStore: -> 
     body:TreeStore.getBody()
-    load:TreeStore.getLoad()
     curr:TreeStore.getCurr()
     cont:TreeStore.getCont()
 
@@ -30,9 +29,7 @@ module.exports = recl
 
   getPath: (path) -> 
     if not @state.cont[path]? 
-      TreeActions.setLoading true
-      TreeActions.getPath path,=>
-        TreeActions.setLoading false
+      TreeActions.getPath path
 
   render: ->
     parts = []

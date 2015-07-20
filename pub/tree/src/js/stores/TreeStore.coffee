@@ -5,7 +5,6 @@ MessageDispatcher = require '../dispatcher/Dispatcher.coffee'
 _tree = {}
 _cont = {}
 _snip = {}
-_load = false
 _curr = ""
 
 TreeStore = _.extend EventEmitter.prototype, {
@@ -40,10 +39,6 @@ TreeStore = _.extend EventEmitter.prototype, {
   getCurr: -> _curr
 
   getCont: -> _cont
-
-  setLoad: (load) -> _load = load
-
-  getLoad: -> _load
 
   mergePathToTree: (path,kids) ->
     _obj = {}
@@ -148,9 +143,6 @@ TreeStore.dispatchToken = MessageDispatcher.register (payload) ->
       TreeStore.emitChange()
     when 'set-curr'
       TreeStore.setCurr action.path
-      TreeStore.emitChange()
-    when 'set-load'
-      TreeStore.setLoad action.load
       TreeStore.emitChange()
 
 module.exports = TreeStore
