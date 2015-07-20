@@ -2,6 +2,7 @@ recl = React.createClass
 [div,input,textarea] = [React.DOM.div,React.DOM.input,React.DOM.textarea]
 
 module.exports = recl
+  displayName: "Load"
   getInitialState: -> {anim: 0}
   
   componentDidMount: -> @interval = setInterval @setAnim, 100

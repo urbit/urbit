@@ -21,23 +21,15 @@ module.exports =
       path:path
       snip:snip
 
-  getPath: (path,cb) ->                                          # (path,[query,]cb)
-    query = null
-    if typeof(cb) is 'string'
-      query = arguments[1]
-      cb = arguments[2]
+  getPath: (path,query) ->
     
     if path.slice(-1) is "/" then path = path.slice(0,-1)
     
-    TreePersistence.get path,query,(err,res) => 
+    TreePersistence.get path,query,(err,res) =>
       switch query
-        when "snip"
-          @loadSnip path,res.snip
-        when "kids"
-          @loadKids path,res.kids
-        else
-          @loadPath path,res.body,res.kids,res.snip
-      if cb then cb err,res
+        when "snip" then @loadSnip path,res.snip
+        when "kids" then @loadKids path,res.kids
+        else @loadPath path,res.body,res.kids,res.snip
 
   setCurr: (path) ->
     TreeDispatcher.handleViewAction
