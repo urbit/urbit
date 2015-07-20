@@ -12,7 +12,11 @@ $ ->
   kids              = React.createFactory require './components/KidsComponent.coffee'
   lost              = React.createClass
     render: -> (React.DOM.div {}, "lost")
-  components = {kids:kids,list:list,lost:lost, codemirror:codemirror}
+  components = 
+    kids:kids
+    list:list
+    lost:lost
+    codemirror:codemirror
   
   
   window.tree._basepath = window.urb.util.basepath("/")
@@ -20,7 +24,9 @@ $ ->
     (window.location.pathname.replace window.tree._basepath, "").split("/")[0]
   window.tree.basepath = (path) -> 
     if path[0] isnt "/" then path = "/"+path
-    window.tree._basepath + path
+    _path = window.tree._basepath + path
+    if _path.slice(-1) is "/" then _path = _path.slice(0,-1)
+    _path
   window.tree.fragpath = (path) -> path.replace window.tree._basepath,""
   window.tree.reactify = (obj) -> switch
     # manx: {fork: ["string", {gn:"string" ga:{dict:"string"} c:{list:"manx"}}]}
