@@ -47,6 +47,6 @@
   ==
 ::  .json
 %-  jobe  :~
-  kids/[%a (turn get-kids |=(a=span s/a))]
+  kids/[%a (turn (~(tap by pal)) |=([a=span *] s/a))]
   body/ral
 ==
