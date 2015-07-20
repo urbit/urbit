@@ -376,6 +376,17 @@ li:before {
 .list.posts li.post:before {
   content: "";
 }
+div.root h1 {
+  margin-bottom: 2rem;
+}
+div.root .list .sub {
+  margin-left: 0;
+  margin-right: 0.6rem;
+}
+div.root > p {
+  width: 27rem;
+  margin-top: 2rem;
+}
 div.post h1 {
   font-size: 2.8rem;
   line-height: 4rem;
@@ -387,6 +398,9 @@ div.post h2,
 div.post h2.sub {
   line-height: 1rem;
   letter-spacing: 1px;
+}
+div.post h2 {
+  margin-top: 4rem;
 }
 div.post h2.sub {
   font-size: 0.7rem;
