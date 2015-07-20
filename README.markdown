@@ -17,9 +17,21 @@ keeping in touch or following the project you can:
 All of the source code is distributed under the MIT license, but is for
 all intents and purposes in the public domain.
 
-Install
--------
+Pacakges
+--------
 
+#### Ubuntu or Debian
+
+Third-party pacakge files are maintained at https://github.com/yebyen/urbit-deb.
+
+#### OS X - Homebrew
+
+    brew install --HEAD homebrew/head-only/urbit
+
+If this succeeds, proceed to the [Run section](#run). Otherwise, the build must be done manually:
+
+Dependencies
+------------
 urbit depends on:
 
     gcc
@@ -83,7 +95,7 @@ Just run `make`:
 
 (On FreeBSD, use `gmake` instead.)
 
-Run
+Run <a id="run"/>
 ---
 
 Inside of the `urbit` directory run
