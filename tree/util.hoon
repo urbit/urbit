@@ -21,15 +21,15 @@
   ?>  ?=(%meta nom)
   (biff (~(get by atr) %value) poja)
 ::
-++  get-path  
+++  get-path 
   ^-  path
-  (tope bem.gas(s (welp but.gas /pub)))
+  (tope bem.gas(s but.gas))
 ::
 ++  get-parent
   ^-  path
-  (tope bem.gas(s (welp (slag 1 but.gas) /pub)))
+  (tope bem.gas(s (slag 1 but.gas)))
 ::
-++  get-tree  
+++  get-tree 
   ^-  arch
   ((hard arch) .^(%cy get-path))
 ++  kids-json
