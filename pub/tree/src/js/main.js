@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var TreeDispatcher, TreePersistence;
 
 TreeDispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -12,12 +12,6 @@ module.exports = {
       path: path,
       body: body,
       kids: kids
-    });
-  },
-  setLoading: function(state) {
-    return TreeDispatcher.handleViewAction({
-      type: "set-load",
-      load: state
     });
   },
   loadKids: function(path, kids) {
@@ -34,13 +28,7 @@ module.exports = {
       snip: snip
     });
   },
-  getPath: function(path, cb) {
-    var query;
-    query = null;
-    if (typeof cb === 'string') {
-      query = arguments[1];
-      cb = arguments[2];
-    }
+  getPath: function(path, query) {
     if (path.slice(-1) === "/") {
       path = path.slice(0, -1);
     }
@@ -48,16 +36,11 @@ module.exports = {
       return function(err, res) {
         switch (query) {
           case "snip":
-            _this.loadSnip(path, res.snip);
-            break;
+            return _this.loadSnip(path, res.snip);
           case "kids":
-            _this.loadKids(path, res.kids);
-            break;
+            return _this.loadKids(path, res.kids);
           default:
-            _this.loadPath(path, res.body, res.kids, res.snip);
-        }
-        if (cb) {
-          return cb(err, res);
+            return _this.loadPath(path, res.body, res.kids, res.snip);
         }
       };
     })(this));
@@ -72,7 +55,7 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/dispatcher/Dispatcher.coffee","../persistence/TreePersistence.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/AnchorComponent.coffee":[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":8,"../persistence/TreePersistence.coffee":13}],2:[function(require,module,exports){
 var BodyComponent, TreeActions, TreeStore, a, div, recl, ref;
 
 BodyComponent = require('./BodyComponent.coffee');
@@ -86,6 +69,7 @@ recl = React.createClass;
 ref = [React.DOM.div, React.DOM.a], div = ref[0], a = ref[1];
 
 module.exports = recl({
+  displayName: "Anchor",
   stateFromStore: function() {
     return {
       crum: TreeStore.getCrumbs(),
@@ -169,10 +153,8 @@ module.exports = recl({
     return document.title = title + " - " + this.state.curr;
   },
   checkUp: function() {
-    var up;
-    up = this.state.curr.split("/");
-    up.pop();
-    up = up.join("/");
+    var ref1, up;
+    up = (ref1 = this.state.pare) != null ? ref1 : "/";
     if (up.slice(-1) === "/") {
       up = up.slice(0, -1);
     }
@@ -227,7 +209,8 @@ module.exports = recl({
     if (this.state.pare) {
       href = window.tree.basepath(this.state.pare);
       parts.push(div({
-        id: "up"
+        id: "up",
+        key: "up"
       }, a({
         key: "arow-up",
         href: href,
@@ -252,7 +235,8 @@ module.exports = recl({
           }, ""));
         }
         parts.push(div({
-          id: "sides"
+          id: "sides",
+          key: "sides"
         }, _parts));
       }
     }
@@ -312,7 +296,7 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/stores/TreeStore.coffee","./BodyComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/BodyComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/BodyComponent.coffee":[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14,"./BodyComponent.coffee":3}],3:[function(require,module,exports){
 var TreeActions, TreeStore, div, input, load, recl, ref, textarea;
 
 TreeStore = require('../stores/TreeStore.coffee');
@@ -326,10 +310,10 @@ recl = React.createClass;
 ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = ref[0], input = ref[1], textarea = ref[2];
 
 module.exports = recl({
+  displayName: "Body",
   stateFromStore: function() {
     return {
       body: TreeStore.getBody(),
-      load: TreeStore.getLoad(),
       curr: TreeStore.getCurr(),
       cont: TreeStore.getCont()
     };
@@ -357,30 +341,23 @@ module.exports = recl({
   },
   getPath: function(path) {
     if (this.state.cont[path] == null) {
-      TreeActions.setLoading(true);
-      return TreeActions.getPath(path, (function(_this) {
-        return function() {
-          return TreeActions.setLoading(false);
-        };
-      })(this));
+      return TreeActions.getPath(path);
     }
   },
   render: function() {
-    var parts, ref1;
-    parts = [];
-    parts.push(div({
+    var ref1;
+    return div({}, div({
       id: 'body',
       key: "body" + this.state.curr
     }, (ref1 = this.state.body) != null ? ref1 : div({
       className: "loading"
     }, load({}, ""))));
-    return div({}, parts);
   }
 });
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/LoadComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/CodeMirror.coffee":[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14,"./LoadComponent.coffee":7}],4:[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -404,7 +381,7 @@ module.exports = recl({
 
 
 
-},{}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/KidsComponent.coffee":[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var TreeActions, TreeStore, a, div, hr, li, recl, ref, ul;
 
 TreeStore = require('../stores/TreeStore.coffee');
@@ -416,17 +393,17 @@ recl = React.createClass;
 ref = [React.DOM.div, React.DOM.a, React.DOM.ul, React.DOM.li, React.DOM.hr], div = ref[0], a = ref[1], ul = ref[2], li = ref[3], hr = ref[4];
 
 module.exports = recl({
+  displayName: "Kids",
   stateFromStore: function() {
-    var path, ref1;
+    var path, ref1, tree;
     path = (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
+    tree = TreeStore.getTree(path.split("/"));
     return {
+      path: path,
+      tree: tree,
       cont: TreeStore.getCont(),
-      tree: TreeStore.getTree(path.split("/")),
-      path: path
+      keys: _.keys(tree)
     };
-  },
-  componentDidMount: function() {
-    return TreeStore.addChangeListener(this._onChangeStore);
   },
   getInitialState: function() {
     return this.stateFromStore();
@@ -434,34 +411,43 @@ module.exports = recl({
   _onChangeStore: function() {
     return this.setState(this.stateFromStore());
   },
-  componentDidMount: function() {
-    var cont, i, k, len, ref1;
-    cont = true;
-    ref1 = _.keys(this.state.tree);
+  gotPath: function() {
+    var i, k, len, ref1;
+    if (!(this.state.keys.length > 0)) {
+      return false;
+    }
+    ref1 = this.state.keys;
     for (i = 0, len = ref1.length; i < len; i++) {
       k = ref1[i];
-      if (!this.state.cont[this.state.path + "/" + k]) {
-        cont = false;
+      if (this.state.cont[this.state.path + "/" + k] == null) {
+        return false;
       }
     }
-    if (!this.state.tree || _.keys(this.state.tree).length === 0 || !cont) {
+    return true;
+  },
+  componentDidMount: function() {
+    TreeStore.addChangeListener(this._onChangeStore);
+    if (!this.gotPath()) {
       return TreeActions.getPath(this.state.path, "kids");
     }
   },
   render: function() {
-    var _list, doc, ref1;
-    doc = (ref1 = this.state.tree) != null ? ref1 : [];
-    _list = _.map(_.keys(doc).sort(), (function(_this) {
-      return function(v) {
-        var _path;
-        _path = _this.state.path + "/" + v;
-        return [
+    var _list, _path, v;
+    _list = (function() {
+      var i, len, ref1, results;
+      ref1 = _.keys(this.state.tree).sort();
+      results = [];
+      for (i = 0, len = ref1.length; i < len; i++) {
+        v = ref1[i];
+        _path = this.state.path + "/" + v;
+        results.push([
           div({
             key: "kid-" + v
-          }, _this.state.cont[_path]), hr({}, "")
-        ];
-      };
-    })(this));
+          }, this.state.cont[_path]), hr({}, "")
+        ]);
+      }
+      return results;
+    }).call(this);
     return div({
       key: "kids-" + this.state.path,
       className: "kids"
@@ -471,27 +457,30 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/stores/TreeStore.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/ListComponent.coffee":[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14}],6:[function(require,module,exports){
 var TreeActions, TreeStore, a, div, h1, li, load, recl, ref, ul;
 
 TreeStore = require('../stores/TreeStore.coffee');
 
 TreeActions = require('../actions/TreeActions.coffee');
 
-load = require('./LoadComponent.coffee');
+load = React.createFactory(require('./LoadComponent.coffee'));
 
 recl = React.createClass;
 
 ref = [React.DOM.div, React.DOM.a, React.DOM.ul, React.DOM.li, React.DOM.h1], div = ref[0], a = ref[1], ul = ref[2], li = ref[3], h1 = ref[4];
 
 module.exports = recl({
+  displayName: "List",
   stateFromStore: function() {
-    var path, ref1;
+    var path, ref1, tree;
     path = (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
+    tree = TreeStore.getTree(path.split("/"));
     return {
+      path: path,
+      tree: tree,
       snip: TreeStore.getSnip(),
-      tree: TreeStore.getTree(path.split("/")),
-      path: path
+      keys: _.keys(tree)
     };
   },
   _onChangeStore: function() {
@@ -503,79 +492,79 @@ module.exports = recl({
   getInitialState: function() {
     return this.stateFromStore();
   },
-  getCont: function() {
-    var cont, i, k, keys, len;
-    cont = true;
-    keys = _.keys(this.state.tree);
-    for (i = 0, len = keys.length; i < len; i++) {
-      k = keys[i];
-      if (!this.state.snip[this.state.path + "/" + k]) {
-        cont = false;
+  gotPath: function() {
+    var i, k, len, ref1;
+    if (!(this.state.keys.length > 0)) {
+      return false;
+    }
+    ref1 = this.state.keys;
+    for (i = 0, len = ref1.length; i < len; i++) {
+      k = ref1[i];
+      if (this.state.snip[this.state.path + "/" + k] == null) {
+        return false;
       }
     }
-    if (keys.length === 0) {
-      cont = false;
-    }
-    return cont;
+    return true;
   },
   componentDidMount: function() {
-    var cont;
-    cont = this.getCont();
     TreeStore.addChangeListener(this._onChangeStore);
-    if (!this.state.tree || _.keys(this.state.tree).length === 0 || !cont) {
+    if (!this.gotPath()) {
       return TreeActions.getPath(this.state.path, "snip");
     }
   },
-  render: function() {
-    var _keys, _list, doc, k, ref1;
-    doc = (ref1 = this.state.tree) != null ? ref1 : [];
-    if (!this.getCont()) {
-      _list = div({
-        className: "loading"
+  renderList: function() {
+    var _k, _keys, _path, c, href, i, len, orig, prev, results, v;
+    if (!this.gotPath()) {
+      return div({
+        className: "loading",
+        key: ""
       }, load({}, ""));
-    } else {
-      _keys = _.keys(doc).sort();
-      if (this.props.dataType === 'post') {
-        _keys = _keys.reverse();
-      }
-      _list = _.map(_keys, (function(_this) {
-        return function(v) {
-          var _k, _path, c, href, orig, prev;
-          _k = "";
-          _path = _this.state.path + "/" + v;
-          if (_this.props.dataPreview != null) {
-            c = "preview";
-            if (_this.props.titlesOnly) {
-              prev = _this.state.snip[_path].head;
-            } else {
-              prev = _this.state.snip[_path];
-            }
-            if (_this.props.dataType === 'post') {
-              orig = _this.state.snip[_path].orig;
-              c = orig.body.c.slice(0, 2);
-              c.unshift(orig.head);
-              prev = {
-                gn: 'div',
-                c: c
-              };
-              _k += " post";
-              prev = window.tree.reactify(prev);
-            }
-          } else {
-            c = "";
-            prev = h1({}, v);
-          }
-          href = window.tree.basepath(_path);
-          return li({
-            className: _k
-          }, a({
-            href: href,
-            className: c,
-            key: "list-a-" + _path
-          }, prev));
-        };
-      })(this));
     }
+    _keys = _.keys(this.state.tree).sort();
+    if (this.props.dataType === 'post') {
+      _keys = _keys.reverse();
+    }
+    results = [];
+    for (i = 0, len = _keys.length; i < len; i++) {
+      v = _keys[i];
+      _k = "";
+      _path = this.state.path + "/" + v;
+      if (this.props.dataPreview != null) {
+        c = "preview";
+        prev = this.state.snip[_path];
+        if (this.props.titlesOnly) {
+          prev = prev.head;
+        } else {
+          prev = [prev.head, prev.body];
+        }
+        if (this.props.dataType === 'post') {
+          orig = this.state.snip[_path].orig;
+          c = orig.body.c.slice(0, 2);
+          c.unshift(orig.head);
+          prev = {
+            gn: 'div',
+            c: c
+          };
+          _k += " post";
+          prev = window.tree.reactify(prev);
+        }
+      } else {
+        c = "";
+        prev = h1({}, v);
+      }
+      href = window.tree.basepath(_path);
+      results.push(li({
+        className: _k,
+        key: "list-a-" + _path
+      }, a({
+        href: href,
+        className: c
+      }, prev)));
+    }
+    return results;
+  },
+  render: function() {
+    var k;
     k = "list";
     if (this.props['data-source'] === 'default') {
       k += " default";
@@ -586,13 +575,13 @@ module.exports = recl({
     return ul({
       className: k,
       key: "list-" + this.state.path
-    }, _list);
+    }, this.renderList());
   }
 });
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/LoadComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/LoadComponent.coffee":[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14,"./LoadComponent.coffee":7}],7:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -600,6 +589,7 @@ recl = React.createClass;
 ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = ref[0], input = ref[1], textarea = ref[2];
 
 module.exports = recl({
+  displayName: "Load",
   getInitialState: function() {
     return {
       anim: 0
@@ -630,7 +620,7 @@ module.exports = recl({
 
 
 
-},{}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -652,7 +642,7 @@ module.exports = _.extend(new Dispatcher(), {
 
 
 
-},{"flux":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/index.js"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/main.coffee":[function(require,module,exports){
+},{"flux":10}],9:[function(require,module,exports){
 var rend;
 
 rend = React.render;
@@ -823,7 +813,7 @@ $(function() {
 
 
 
-},{"./actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee","./components/AnchorComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/AnchorComponent.coffee","./components/BodyComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/BodyComponent.coffee","./components/CodeMirror.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/CodeMirror.coffee","./components/KidsComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/KidsComponent.coffee","./components/ListComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/ListComponent.coffee","./persistence/TreePersistence.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/index.js":[function(require,module,exports){
+},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":3,"./components/CodeMirror.coffee":4,"./components/KidsComponent.coffee":5,"./components/ListComponent.coffee":6,"./persistence/TreePersistence.coffee":13}],10:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -835,7 +825,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js":[function(require,module,exports){
+},{"./lib/Dispatcher":11}],11:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1087,7 +1077,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/lib/invariant.js"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/lib/invariant.js":[function(require,module,exports){
+},{"./invariant":12}],12:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1142,11 +1132,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/persistence/TreePersistence.coffee":[function(require,module,exports){
-var TreeActions;
-
-TreeActions = require('../actions/TreeActions.coffee');
-
+},{}],13:[function(require,module,exports){
 module.exports = {
   get: function(path, query, cb) {
     var url;
@@ -1164,20 +1150,20 @@ module.exports = {
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/stores/TreeStore.coffee":[function(require,module,exports){
-var EventEmitter, MessageDispatcher, TreeStore, _cont, _curr, _load, _snip, _tree;
+},{}],14:[function(require,module,exports){
+var EventEmitter, MessageDispatcher, TreeStore, _cont, _curr, _snip, _tree, clog;
 
 EventEmitter = require('events').EventEmitter;
 
 MessageDispatcher = require('../dispatcher/Dispatcher.coffee');
+
+clog = console.log;
 
 _tree = {};
 
 _cont = {};
 
 _snip = {};
-
-_load = false;
 
 _curr = "";
 
@@ -1194,30 +1180,14 @@ TreeStore = _.extend(EventEmitter.prototype, {
   pathToArr: function(_path) {
     return _path.split("/");
   },
-  pathToObj: function(_path, _obj, kids) {
-    var __path, i, j, l, ref, ref1, results;
-    __path = this.pathToArr(_path);
-    for (i = j = 0, ref = __path.length - 1; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
-      _obj = _obj[__path[i]] = {};
-    }
-    if ((kids != null ? kids.length : void 0) > 0) {
-      results = [];
-      for (i = l = 0, ref1 = kids.length - 1; 0 <= ref1 ? l <= ref1 : l >= ref1; i = 0 <= ref1 ? ++l : --l) {
-        results.push(_obj[kids[i]] = {});
-      }
-      return results;
-    }
-  },
   getTree: function(_path) {
-    var i, j, ref, tree;
+    var i, len, sub, tree;
     tree = _tree;
-    if (_path.length > 0) {
-      for (i = j = 0, ref = _path.length - 1; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
-        if (tree[_path[i]]) {
-          tree = tree[_path[i]];
-        } else {
-          return null;
-        }
+    for (i = 0, len = _path.length; i < len; i++) {
+      sub = _path[i];
+      tree = tree[sub];
+      if (tree == null) {
+        return null;
       }
     }
     return tree;
@@ -1231,17 +1201,20 @@ TreeStore = _.extend(EventEmitter.prototype, {
   getCont: function() {
     return _cont;
   },
-  setLoad: function(load) {
-    return _load = load;
-  },
-  getLoad: function() {
-    return _load;
-  },
   mergePathToTree: function(path, kids) {
-    var _obj;
-    _obj = {};
-    this.pathToObj(path, _obj, kids);
-    return _.merge(_tree, _obj);
+    var i, j, len, len1, ref, ref1, ref2, sub, tree, x;
+    tree = _tree;
+    ref = this.pathToArr(path);
+    for (i = 0, len = ref.length; i < len; i++) {
+      sub = ref[i];
+      tree[sub] = (ref1 = tree[sub]) != null ? ref1 : {};
+      tree = tree[sub];
+    }
+    for (j = 0, len1 = kids.length; j < len1; j++) {
+      x = kids[j];
+      tree[x] = (ref2 = tree[x]) != null ? ref2 : {};
+    }
+    return tree;
   },
   getSnip: function() {
     return _snip;
@@ -1395,9 +1368,6 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
     case 'set-curr':
       TreeStore.setCurr(action.path);
       return TreeStore.emitChange();
-    case 'set-load':
-      TreeStore.setLoad(action.load);
-      return TreeStore.emitChange();
   }
 });
 
@@ -1405,7 +1375,7 @@ module.exports = TreeStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js"}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":8,"events":15}],15:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1465,10 +1435,8 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
-      } else {
-        throw TypeError('Uncaught, unspecified "error" event.');
       }
-      return false;
+      throw TypeError('Uncaught, unspecified "error" event.');
     }
   }
 
@@ -1710,4 +1678,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},["/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/main.coffee"]);
+},{}]},{},[9]);

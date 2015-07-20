@@ -42,8 +42,7 @@
   :-  %a
     %+  turn  kids
   |=  kid=path  [%s (spat (flop kid))]
-++  parent-json
-  |=  pare=path  [%s (spat (slag 3 pare))]
+++  parent-json  |=(pax=path [%s (spat (slag 3 pax))])
 ++  get-kids
   %-  sort  :_  aor
   ^-  (list span)
@@ -53,20 +52,6 @@
   =+  ark=;;(arch .^(%cy (welp pax /[kid])))
   ?~  r.ark  ~
   (some kid)
-++  get-link
-  |=  [pax=path mal=marl]  
-  ^-  manx
-  =+  rut=`path`[q.bem.gas (flop (slag 1 s.bem.gas))]
-  ;a/"/gen{<rut>}{<(slag 4 pax)>}":"*{mal}"
-++  get-down
-  ^-  marl
-  %+  turn  get-kids
-  |=  a=span
-  ;span:  +{(get-link (welp get-path /[a]) ;"{(trip a)}")}
-++  render-bread
-  |=  a=path
-  ^-  manx
-  ;span: /+{(get-link (tope bem.gas(s a)) ;"{(trip (snag 0 a))}")}
 ::
 ++  get-bread
   =+  [pax=`path`/pub paf=(flop but.gas)]

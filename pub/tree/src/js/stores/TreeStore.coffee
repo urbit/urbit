@@ -1,6 +1,7 @@
 EventEmitter = require('events').EventEmitter
 
 MessageDispatcher = require '../dispatcher/Dispatcher.coffee'
+clog = console.log
 
 _tree = {}
 _cont = {}
@@ -16,22 +17,11 @@ TreeStore = _.extend EventEmitter.prototype, {
 
   pathToArr: (_path) -> _path.split "/"
 
-  pathToObj:(_path,_obj,kids) ->
-    __path = @pathToArr _path
-    for i in [0..__path.length-1]
-      _obj = _obj[__path[i]] = {}
-    if kids?.length > 0
-      for i in [0..kids.length-1]
-        _obj[kids[i]] = {}
-
   getTree: (_path) ->
     tree = _tree
-    if _path.length > 0
-      for i in [0.._path.length-1]
-        if tree[_path[i]]
-          tree = tree[_path[i]]
-        else
-          return null
+    for sub in _path
+      tree = tree[sub]
+      return null unless tree?
     tree
 
   setCurr: (path) -> _curr = path
@@ -41,9 +31,13 @@ TreeStore = _.extend EventEmitter.prototype, {
   getCont: -> _cont
 
   mergePathToTree: (path,kids) ->
-    _obj = {}
-    @pathToObj path,_obj,kids
-    _.merge _tree,_obj
+    tree = _tree
+    for sub in @pathToArr path
+      tree[sub] = tree[sub] ? {}
+      tree = tree[sub]
+    for x in kids
+      tree[x] = tree[x] ? {}
+    tree
 
   getSnip: -> _snip
 

@@ -7,6 +7,7 @@ recl = React.createClass
 [div,a] = [React.DOM.div,React.DOM.a]
 
 module.exports = recl
+  displayName: "Anchor"
   stateFromStore: -> 
     crum:TreeStore.getCrumbs()
     curr:TreeStore.getCurr()
@@ -70,9 +71,7 @@ module.exports = recl
     document.title = "#{title} - #{@state.curr}"
 
   checkUp: ->
-    up = @state.curr.split "/"
-    up.pop()
-    up = up.join "/"
+    up = @state.pare ? "/"
     if up.slice(-1) is "/" then up = up.slice 0,-1
 
     if not @state.cont[up]
@@ -111,13 +110,14 @@ module.exports = recl
 
   getInitialState: -> @stateFromStore()
 
-  _onChangeStore: ->  @setState @stateFromStore()
+  _onChangeStore: -> @setState @stateFromStore()
 
   render: ->
     parts = []
     if @state.pare
       href = window.tree.basepath @state.pare
-      parts.push (div {id:"up"},(a {key:"arow-up",href:href,className:"arow-up"},""))
+      parts.push (div {id:"up",key:"up"},
+                   (a {key:"arow-up",href:href,className:"arow-up"},""))
       if @state.prev or @state.next
         _parts = []
         if @state.prev 
@@ -126,7 +126,7 @@ module.exports = recl
         if @state.next 
           href = window.tree.basepath @state.next
           _parts.push (a {key:"arow-next",href:href,className:"arow-next"},"")
-        parts.push (div {id:"sides"}, _parts)
+        parts.push (div {id:"sides",key:"sides"}, _parts)
 
     curr = @state.curr
 

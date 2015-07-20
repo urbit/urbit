@@ -7,6 +7,7 @@ recl = React.createClass
 [div,input,textarea] = [React.DOM.div,React.DOM.input,React.DOM.textarea]
 
 module.exports = recl
+  displayName: "Body"
   stateFromStore: -> 
     body:TreeStore.getBody()
     curr:TreeStore.getCurr()
@@ -26,15 +27,10 @@ module.exports = recl
 
   _onChangeStore: ->  
     @setState @stateFromStore()
-
+ 
   getPath: (path) -> 
-    if not @state.cont[path]? 
-      TreeActions.getPath path
+    TreeActions.getPath path unless @state.cont[path]?
 
-  render: ->
-    parts = []
-
-    parts.push (div {id:'body',key:"body"+@state.curr},
-      (@state.body ? (div {className:"loading"}, (load {}, ""))))
-
-    (div {}, parts)
+  render: -> (div {},
+    (div {id:'body',key:"body"+@state.curr},
+      (@state.body ? (div {className:"loading"}, (load {}, "")))))
