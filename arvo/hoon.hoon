@@ -4189,7 +4189,7 @@
              cab
              (cold ' ' dot)
              (cook tuft (ifix [sig dot] hex))
-             (cold '~' ;~(plug sig sig))
+             ;~(pfix sig ;~(pose sig dot))
            ==
   ++  voy  ;~(pfix bas ;~(pose bas soq bix))
   --
