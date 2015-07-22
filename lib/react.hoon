@@ -18,6 +18,24 @@
     %pattern  %polygon  %polyline  %radial-gradient  %rect  %stop  %svg
     %text  %tspan
   ==
+++  react-attrs
+  ~+  ^-  (map term cord)
+  %-  mo  ^-  (list ,[term cord])
+  :-  [%class 'className']
+  =-  (rash - (more next (cook |=(a=tape [(cass a) (crip a)]) (star alf))))
+  '''
+  accept acceptCharset accessKey action allowFullScreen allowTransparency alt
+  async autoComplete autoFocus autoPlay cellPadding cellSpacing charSet checked
+  classID className colSpan cols content contentEditable contextMenu controls
+  coords crossOrigin data dateTime defer dir disabled download draggable encType
+  form formAction formEncType formMethod formNoValidate formTarget frameBorder
+  headers height hidden high href hrefLang htmlFor httpEquiv icon id label lang
+  list loop low manifest marginHeight marginWidth max maxLength media mediaGroup
+  method min multiple muted name noValidate open optimum pattern placeholder
+  poster preload radioGroup readOnly rel required role rowSpan rows sandbox scope
+  scoped scrolling seamless selected shape size sizes span spellCheck src srcDoc
+  srcSet start step style tabIndex target title type useMap value width wmode
+  '''
 ++  react-vale
   ~(has in react-elems)
 ++  react-to-json
@@ -53,7 +71,9 @@
     gn/s/(mane-to-cord n.g.src)
     =<  ga/(jobe (turn a.g.src .))
     |=  [a=mane b=tape]  ^-  [cord json]
-    [?+(a (mane-to-cord a) %class 'className') (jape b)]
+    :_  (jape b)
+    ?^  a  (mane-to-cord a)
+    (fall (~(get by react-attrs) a) a)
   ==
 ::
 ++  mane-to-cord  |=(a=mane `cord`?@(a a (rap 3 -.a ':' +.a ~)))

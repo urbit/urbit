@@ -129,7 +129,7 @@
     |=  [input=path output=path]
     %+  do-info  "copied"
     ?>  =(-:(flop input) -:(flop output))
-    (foal output -:(flop input) %noun .^(%cx input))    ::  XX type
+    (foal output -:(flop input) atom/%t .^(%cx input))    ::  XX type
   ::
   ++  poke-mv
     |=  [input=path output=path] 
