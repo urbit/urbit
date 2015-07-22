@@ -140,8 +140,10 @@ module.exports = recl
         k++
         path = up+"/"+i
         href = window.tree.basepath path
-        head = @state.snip[path]?.head ? div {}, i
-        head = $(React.renderToStaticMarkup head).text()
+        snip = @state.snip[path]
+        head = snip?.meta?.title ? snip?.head ? i
+        if typeof head isnt 'string'
+          head = $(React.renderToStaticMarkup head).text()
         (div {className,key:i}, (a {href,onClick:@_click}, head))
       style = {marginTop:"#{-24*ci}px"}
       div {key:"sibs",id:"sibs",style}, _sibs

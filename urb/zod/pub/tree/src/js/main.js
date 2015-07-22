@@ -232,7 +232,7 @@ module.exports = recl({
         }, _.filter([this.state.prev ? this.renderArrow("prev", this.state.prev) : void 0, this.state.next ? this.renderArrow("next", this.state.next) : void 0])) : void 0
       ]) : void 0, _.keys(this.state.sibs).length > 0 ? ((ref1 = this.state.path.split("/"), up = 2 <= ref1.length ? slice.call(ref1, 0, j = ref1.length - 1) : (j = 0, []), curr = ref1[j++], ref1), up = up.join("/"), ci = 0, k = 0, _sibs = _(this.state.sibs).keys().sort().map((function(_this) {
         return function(i) {
-          var className, head, href, path, ref2, ref3;
+          var className, head, href, path, ref2, ref3, ref4, snip;
           if (curr === i) {
             className = "active";
             ci = k;
@@ -243,8 +243,11 @@ module.exports = recl({
           k++;
           path = up + "/" + i;
           href = window.tree.basepath(path);
-          head = (ref2 = (ref3 = _this.state.snip[path]) != null ? ref3.head : void 0) != null ? ref2 : div({}, i);
-          head = $(React.renderToStaticMarkup(head)).text();
+          snip = _this.state.snip[path];
+          head = (ref2 = (ref3 = snip != null ? (ref4 = snip.meta) != null ? ref4.title : void 0 : void 0) != null ? ref3 : snip != null ? snip.head : void 0) != null ? ref2 : i;
+          if (typeof head !== 'string') {
+            head = $(React.renderToStaticMarkup(head)).text();
+          }
           return div({
             className: className,
             key: i
@@ -485,7 +488,7 @@ module.exports = recl({
     }
   },
   renderList: function() {
-    var _keys, href, i, item, len, orig, path, ref1, results, snip;
+    var _keys, head, href, i, item, len, orig, path, ref1, ref2, results, snip;
     if (!this.gotPath()) {
       return div({
         className: "loading"
@@ -508,9 +511,12 @@ module.exports = recl({
         className: clas({
           preview: this.props.dataPreview != null
         })
-      }, this.props.dataPreview == null ? h1({}, item) : this.props.dataType === 'post' ? (orig = snip.orig, window.tree.reactify({
+      }, this.props.dataPreview == null ? h1({}, item) : this.props.dataType === 'post' ? (orig = snip.orig, head = ((ref2 = snip.meta) != null ? ref2.title : void 0) ? {
+        gn: 'h1',
+        c: [snip.meta.title]
+      } : orig.head, window.tree.reactify({
         gn: 'div',
-        c: [orig.head].concat(slice.call(orig.body.c.slice(0, 2)))
+        c: [head].concat(slice.call(orig.body.c.slice(0, 2)))
       })) : this.props.titlesOnly != null ? snip.head : [snip.head, snip.body])));
     }
     return results;
@@ -1232,7 +1238,8 @@ TreeStore = _.extend(EventEmitter.prototype, {
         results.push(_snip[path + "/" + v.name] = {
           head: window.tree.reactify(v.body.head),
           body: window.tree.reactify(v.body.body),
-          orig: v.body
+          orig: v.body,
+          meta: v.meta
         });
       }
       return results;
