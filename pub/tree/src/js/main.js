@@ -55,7 +55,7 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":8,"../persistence/TreePersistence.coffee":13}],2:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":8,"../persistence/TreePersistence.coffee":14}],2:[function(require,module,exports){
 var BodyComponent, TreeActions, TreeStore, a, div, recl, ref,
   slice = [].slice;
 
@@ -175,11 +175,11 @@ module.exports = recl({
     this.interval = setInterval(this.checkURL, 100);
     $('body').on('keyup', (function(_this) {
       return function(e) {
-        if (e.keyCode === 37) {
-          _this.goTo(_this.state.prev);
-        }
-        if (e.keyCode === 39) {
-          return _this.goTo(_this.state.next);
+        switch (e.keyCode) {
+          case 37:
+            return _this.goTo(_this.state.prev);
+          case 39:
+            return _this.goTo(_this.state.next);
         }
       };
     })(this));
@@ -276,7 +276,7 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14,"./BodyComponent.coffee":3}],3:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":15,"./BodyComponent.coffee":3}],3:[function(require,module,exports){
 var TreeActions, TreeStore, div, input, load, recl, ref, textarea;
 
 TreeStore = require('../stores/TreeStore.coffee');
@@ -337,7 +337,7 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14,"./LoadComponent.coffee":7}],4:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":15,"./LoadComponent.coffee":7}],4:[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -428,8 +428,11 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14}],6:[function(require,module,exports){
-var TreeActions, TreeStore, a, div, h1, li, load, recl, ref, ul;
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":15}],6:[function(require,module,exports){
+var TreeActions, TreeStore, a, clas, div, h1, li, load, recl, ref, ul,
+  slice = [].slice;
+
+clas = require('classnames');
 
 TreeStore = require('../stores/TreeStore.coffee');
 
@@ -477,7 +480,7 @@ module.exports = recl({
     }
   },
   renderList: function() {
-    var _k, _keys, _path, c, href, i, len, orig, prev, results, v;
+    var _keys, href, i, item, len, orig, path, ref1, results, snip;
     if (!this.gotPath()) {
       return div({
         className: "loading"
@@ -489,40 +492,21 @@ module.exports = recl({
     }
     results = [];
     for (i = 0, len = _keys.length; i < len; i++) {
-      v = _keys[i];
-      _k = "";
-      _path = this.state.path + "/" + v;
-      if (this.props.dataPreview != null) {
-        c = "preview";
-        prev = this.state.snip[_path];
-        if (this.props.titlesOnly) {
-          prev = prev.head;
-        } else {
-          prev = [prev.head, prev.body];
-        }
-        if (this.props.dataType === 'post') {
-          orig = this.state.snip[_path].orig;
-          c = orig.body.c.slice(0, 2);
-          c.unshift(orig.head);
-          prev = {
-            gn: 'div',
-            c: c
-          };
-          _k += " post";
-          prev = window.tree.reactify(prev);
-        }
-      } else {
-        c = "";
-        prev = h1({}, v);
-      }
-      href = window.tree.basepath(_path);
+      item = _keys[i];
+      path = this.state.path + "/" + item;
+      snip = this.state.snip[path];
+      href = window.tree.basepath(path);
       results.push(li({
-        className: _k,
-        key: "list-a-" + _path
+        className: (ref1 = this.props.dataType) != null ? ref1 : ""
       }, a({
         href: href,
-        className: c
-      }, prev)));
+        className: clas({
+          preview: this.props.dataPreview != null
+        })
+      }, this.props.dataPreview == null ? h1({}, item) : this.props.dataType === 'post' ? (orig = snip.orig, window.tree.reactify({
+        gn: 'div',
+        c: [orig.head].concat(slice.call(orig.body.c.slice(0, 2)))
+      })) : this.props.titlesOnly != null ? snip.head : [_snip.head, _snip.body])));
     }
     return results;
   },
@@ -544,7 +528,7 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":14,"./LoadComponent.coffee":7}],7:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":15,"./LoadComponent.coffee":7,"classnames":10}],7:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -605,7 +589,7 @@ module.exports = _.extend(new Dispatcher(), {
 
 
 
-},{"flux":10}],9:[function(require,module,exports){
+},{"flux":11}],9:[function(require,module,exports){
 var rend;
 
 rend = React.render;
@@ -776,7 +760,58 @@ $(function() {
 
 
 
-},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":3,"./components/CodeMirror.coffee":4,"./components/KidsComponent.coffee":5,"./components/ListComponent.coffee":6,"./persistence/TreePersistence.coffee":13}],10:[function(require,module,exports){
+},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":3,"./components/CodeMirror.coffee":4,"./components/KidsComponent.coffee":5,"./components/ListComponent.coffee":6,"./persistence/TreePersistence.coffee":14}],10:[function(require,module,exports){
+/*!
+  Copyright (c) 2015 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+
+(function () {
+	'use strict';
+
+	function classNames () {
+
+		var classes = '';
+
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+			if (!arg) continue;
+
+			var argType = typeof arg;
+
+			if ('string' === argType || 'number' === argType) {
+				classes += ' ' + arg;
+
+			} else if (Array.isArray(arg)) {
+				classes += ' ' + classNames.apply(null, arg);
+
+			} else if ('object' === argType) {
+				for (var key in arg) {
+					if (arg.hasOwnProperty(key) && arg[key]) {
+						classes += ' ' + key;
+					}
+				}
+			}
+		}
+
+		return classes.substr(1);
+	}
+
+	if (typeof module !== 'undefined' && module.exports) {
+		module.exports = classNames;
+	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd){
+		// AMD. Register as an anonymous module.
+		define(function () {
+			return classNames;
+		});
+	} else {
+		window.classNames = classNames;
+	}
+
+}());
+
+},{}],11:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -788,7 +823,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":11}],11:[function(require,module,exports){
+},{"./lib/Dispatcher":12}],12:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1040,7 +1075,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":12}],12:[function(require,module,exports){
+},{"./invariant":13}],13:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1095,7 +1130,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports = {
   get: function(path, query, cb) {
     var url;
@@ -1113,7 +1148,7 @@ module.exports = {
 
 
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, TreeStore, _cont, _curr, _snip, _tree, clog;
 
 EventEmitter = require('events').EventEmitter;
@@ -1338,7 +1373,7 @@ module.exports = TreeStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":8,"events":15}],15:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":8,"events":16}],16:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a

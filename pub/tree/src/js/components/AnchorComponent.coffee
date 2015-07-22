@@ -93,12 +93,9 @@ module.exports = recl
     @interval = setInterval @checkURL,100
 
     $('body').on 'keyup', (e) =>
-      # left
-      if e.keyCode is 37
-        @goTo @state.prev
-      #right 
-      if e.keyCode is 39
-        @goTo @state.next
+      switch e.keyCode
+        when 37 then @goTo @state.prev # left
+        when 39 then @goTo @state.next # right
 
     $('body').on 'click', 'a', (e) =>
       href = $(e.target).closest('a').attr('href')
@@ -141,7 +138,7 @@ module.exports = recl
         path = up+"/"+i
         href = window.tree.basepath path
         head = @state.snip[path]?.head ? div {}, i
-        head = $(React.renderToStaticMarkup(head)).text()
+        head = $(React.renderToStaticMarkup head).text()
         (div {className,key:i}, (a {href,onClick:@_click}, head))
       style = {marginTop:"#{-24*ci}px"}
       div {key:"sibs",id:"sibs",style}, _sibs

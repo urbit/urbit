@@ -1,3 +1,5 @@
+clas        = require 'classnames'
+
 TreeStore   = require '../stores/TreeStore.coffee'
 TreeActions = require '../actions/TreeActions.coffee'
 
@@ -38,32 +40,21 @@ module.exports = recl
       return (div {className:"loading"}, (load {}, ""))
     _keys = _.keys(@state.tree).sort()
     if @props.dataType is 'post' then _keys=_keys.reverse()
-    for v in _keys
-      _k = ""
-      _path = @state.path+"/"+v
-      if @props.dataPreview?
-        c = "preview"
-        prev = @state.snip[_path]
-        if @props.titlesOnly
-          prev = prev.head
-        else
-          prev = [prev.head, prev.body]
-
-        if @props.dataType is 'post'
-          orig = @state.snip[_path].orig
-          c = orig.body.c.slice(0,2)
-          c.unshift orig.head
-          prev = 
-            gn: 'div'
-            c: c
-          _k += " post"
-          prev = window.tree.reactify prev
-      else
-        c = ""
-        prev = (h1 {},v)
-      href = window.tree.basepath _path
-      (li {className:_k,key:"list-a-"+_path}, (a {href:href,className:c}, prev))
-        
+    for item in _keys
+      path = @state.path+"/"+item
+      snip = @state.snip[path]
+      href = window.tree.basepath path
+      li {className:@props.dataType ? ""},
+        a {href,className:(clas preview: @props.dataPreview?)},
+          if not @props.dataPreview? then (h1 {},item)
+          else if @props.dataType is 'post'
+            orig = snip.orig
+            window.tree.reactify
+              gn: 'div'
+              c: [orig.head, (orig.body.c.slice(0,2))...]
+          else if @props.titlesOnly? then snip.head
+          else [_snip.head, _snip.body]
+    
   render: ->
     k = "list"
     if @props['data-source'] is 'default' then k += " default"
