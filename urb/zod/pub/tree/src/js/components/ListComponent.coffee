@@ -53,7 +53,7 @@ module.exports = recl
               gn: 'div'
               c: [orig.head, (orig.body.c.slice(0,2))...]
           else if @props.titlesOnly? then snip.head
-          else [_snip.head, _snip.body]
+          else [snip.head, snip.body]
     
   render: ->
     k = "list"

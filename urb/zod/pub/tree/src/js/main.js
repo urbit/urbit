@@ -79,8 +79,6 @@ module.exports = recl({
       snip: TreeStore.getSnip(),
       next: TreeStore.getNext(),
       prev: TreeStore.getPrev(),
-      kids: TreeStore.getKids(),
-      tree: TreeStore.getTree([]),
       cont: TreeStore.getCont(),
       url: window.location.pathname
     };
@@ -160,8 +158,15 @@ module.exports = recl({
     if (up.slice(-1) === "/") {
       up = up.slice(0, -1);
     }
-    if (!this.state.cont[up]) {
-      return TreeActions.getPath(up);
+    if (this.state.cont[up] == null) {
+      TreeActions.getPath(up);
+    }
+    if (!(_(this.state.sibs).keys().every((function(_this) {
+      return function(k) {
+        return _this.state.snip[up + "/" + k] != null;
+      };
+    })(this)))) {
+      return TreeActions.getPath(up, "snip");
     }
   },
   componentDidUpdate: function() {
@@ -506,7 +511,7 @@ module.exports = recl({
       }, this.props.dataPreview == null ? h1({}, item) : this.props.dataType === 'post' ? (orig = snip.orig, window.tree.reactify({
         gn: 'div',
         c: [orig.head].concat(slice.call(orig.body.c.slice(0, 2)))
-      })) : this.props.titlesOnly != null ? snip.head : [_snip.head, _snip.body])));
+      })) : this.props.titlesOnly != null ? snip.head : [snip.head, snip.body])));
     }
     return results;
   },

@@ -16,8 +16,8 @@ module.exports = recl
       snip:TreeStore.getSnip()
       next:TreeStore.getNext()
       prev:TreeStore.getPrev()
-      kids:TreeStore.getKids()
-      tree:TreeStore.getTree([])
+      #kids:TreeStore.getKids()
+      #tree:TreeStore.getTree([])
       cont:TreeStore.getCont()
       url:window.location.pathname
     }
@@ -77,8 +77,11 @@ module.exports = recl
     up = @state.pare ? "/"
     if up.slice(-1) is "/" then up = up.slice 0,-1
 
-    if not @state.cont[up]
+    unless @state.cont[up]?
       TreeActions.getPath up
+    
+    unless (_(@state.sibs).keys().every (k) => @state.snip[up+"/"+k]?)
+      TreeActions.getPath up, "snip"
         
   componentDidUpdate: -> 
     @setTitle()
