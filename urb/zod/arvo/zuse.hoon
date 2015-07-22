@@ -716,13 +716,12 @@
   ++  attr                                              ::  attributes
     %+  knee  *mart  |.  ~+ 
     %-  star
-    ;~  pfix  (plus whit)
-      ;~  plug
-        ;~(sfix name tis)
-        ;~  pose
-          (ifix [doq doq] (star ;~(less doq escp)))
-          (ifix [soq soq] (star ;~(less soq escp)))
-        ==
+    ;~  plug  
+      ;~(pfix (plus whit) name)
+      ;~  pose
+        (ifix [;~(plug tis doq) doq] (star ;~(less doq escp)))
+        (ifix [;~(plug tis soq) soq] (star ;~(less soq escp)))
+        (easy ~)
       ==
     ==
   ::
