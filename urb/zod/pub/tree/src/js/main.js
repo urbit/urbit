@@ -56,7 +56,8 @@ module.exports = {
 
 
 },{"../dispatcher/Dispatcher.coffee":8,"../persistence/TreePersistence.coffee":13}],2:[function(require,module,exports){
-var BodyComponent, TreeActions, TreeStore, a, div, recl, ref;
+var BodyComponent, TreeActions, TreeStore, a, div, recl, ref,
+  slice = [].slice;
 
 BodyComponent = require('./BodyComponent.coffee');
 
@@ -72,10 +73,10 @@ module.exports = recl({
   displayName: "Anchor",
   stateFromStore: function() {
     return {
-      crum: TreeStore.getCrumbs(),
-      curr: TreeStore.getCurr(),
+      path: TreeStore.getCurr(),
       pare: TreeStore.getPare(),
       sibs: TreeStore.getSiblings(),
+      snip: TreeStore.getSnip(),
       next: TreeStore.getNext(),
       prev: TreeStore.getPrev(),
       kids: TreeStore.getKids(),
@@ -118,7 +119,7 @@ module.exports = recl({
       history.pushState({}, "", window.tree.basepath(href_parts.join("")));
     }
     rend = false;
-    if (next !== this.state.curr) {
+    if (next !== this.state.path) {
       React.unmountComponentAtNode($('#cont')[0]);
       rend = true;
     }
@@ -145,12 +146,13 @@ module.exports = recl({
     }
   },
   setTitle: function() {
-    var title;
+    var path, title;
     title = $('#cont h1').first().text();
     if (title.length === 0) {
-      title = this.state.curr.split("/")[this.state.curr.split("/").length - 1];
+      path = this.state.path.split("/");
+      title = path[path.length - 1];
     }
-    return document.title = title + " - " + this.state.curr;
+    return document.title = title + " - " + this.state.path;
   },
   checkUp: function() {
     var ref1, up;
@@ -203,82 +205,60 @@ module.exports = recl({
   _onChangeStore: function() {
     return this.setState(this.stateFromStore());
   },
-  render: function() {
-    var _parts, ci, curr, href, k, obj, offset, p, parts, s, sibs, up;
-    parts = [];
-    if (this.state.pare) {
-      href = window.tree.basepath(this.state.pare);
-      parts.push(div({
-        id: "up",
-        key: "up"
-      }, a({
-        key: "arow-up",
-        href: href,
-        className: "arow-up"
-      }, "")));
-      if (this.state.prev || this.state.next) {
-        _parts = [];
-        if (this.state.prev) {
-          href = window.tree.basepath(this.state.prev);
-          _parts.push(a({
-            key: "arow-prev",
-            href: href,
-            className: "arow-prev"
-          }, ""));
-        }
-        if (this.state.next) {
-          href = window.tree.basepath(this.state.next);
-          _parts.push(a({
-            key: "arow-next",
-            href: href,
-            className: "arow-next"
-          }, ""));
-        }
-        parts.push(div({
+  renderArrow: function(name, path) {
+    var href;
+    href = window.tree.basepath(path);
+    return a({
+      href: href,
+      key: "arow-" + name,
+      className: "arow-" + name
+    }, "");
+  },
+  renderParts: function() {
+    var _sibs, ci, curr, j, k, ref1, style, up;
+    return [
+      this.state.pare ? _.filter([
+        div({
+          id: "up",
+          key: "up"
+        }, this.renderArrow("up", this.state.pare)), this.state.prev || this.state.next ? div({
           id: "sides",
           key: "sides"
-        }, _parts));
-      }
-    }
-    curr = this.state.curr;
-    if (_.keys(this.state.sibs).length > 0) {
-      p = curr.split("/");
-      curr = p.pop();
-      up = p.join("/");
-      ci = 0;
-      k = 0;
-      sibs = _.map(_.keys(this.state.sibs).sort(), (function(_this) {
+        }, _.filter([this.state.prev ? this.renderArrow("prev", this.state.prev) : void 0, this.state.next ? this.renderArrow("next", this.state.next) : void 0])) : void 0
+      ]) : void 0, _.keys(this.state.sibs).length > 0 ? ((ref1 = this.state.path.split("/"), up = 2 <= ref1.length ? slice.call(ref1, 0, j = ref1.length - 1) : (j = 0, []), curr = ref1[j++], ref1), up = up.join("/"), ci = 0, k = 0, _sibs = _(this.state.sibs).keys().sort().map((function(_this) {
         return function(i) {
-          var c;
-          c = "";
+          var className, head, href, path, ref2, ref3;
           if (curr === i) {
-            c = "active";
+            className = "active";
             ci = k;
           }
+          if (className == null) {
+            className = "";
+          }
           k++;
-          href = window.tree.basepath(up + "/" + i);
+          path = up + "/" + i;
+          href = window.tree.basepath(path);
+          head = (ref2 = (ref3 = _this.state.snip[path]) != null ? ref3.head : void 0) != null ? ref2 : div({}, i);
+          head = $(React.renderToStaticMarkup(head)).text();
           return div({
-            className: c
+            className: className,
+            key: i
           }, a({
-            key: i + "-a",
             href: href,
             onClick: _this._click
-          }, i));
+          }, head));
         };
-      })(this));
-      offset = 0;
-      if (ci > 0) {
-        offset = 0;
-      }
-      s = {
-        marginTop: ((ci * -24) - offset) + "px"
-      };
-      parts.push(div({
+      })(this)), style = {
+        marginTop: (-24 * ci) + "px"
+      }, div({
         key: "sibs",
         id: "sibs",
-        style: s
-      }, sibs));
-    }
+        style: style
+      }, _sibs)) : void 0
+    ];
+  },
+  render: function() {
+    var obj;
     obj = {
       onMouseOver: this._mouseOver,
       onMouseOut: this._mouseOut,
@@ -290,7 +270,7 @@ module.exports = recl({
       delete obj.onMouseOver;
       delete obj.onMouseOut;
     }
-    return div(obj, parts);
+    return div(obj, _.filter(this.renderParts()));
   }
 });
 
@@ -395,14 +375,12 @@ ref = [React.DOM.div, React.DOM.a, React.DOM.ul, React.DOM.li, React.DOM.hr], di
 module.exports = recl({
   displayName: "Kids",
   stateFromStore: function() {
-    var path, ref1, tree;
+    var path, ref1;
     path = (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
-    tree = TreeStore.getTree(path.split("/"));
     return {
       path: path,
-      tree: tree,
       cont: TreeStore.getCont(),
-      keys: _.keys(tree)
+      tree: TreeStore.getTree(path.split("/"))
     };
   },
   getInitialState: function() {
@@ -412,18 +390,13 @@ module.exports = recl({
     return this.setState(this.stateFromStore());
   },
   gotPath: function() {
-    var i, k, len, ref1;
-    if (!(this.state.keys.length > 0)) {
-      return false;
-    }
-    ref1 = this.state.keys;
-    for (i = 0, len = ref1.length; i < len; i++) {
-      k = ref1[i];
-      if (this.state.cont[this.state.path + "/" + k] == null) {
-        return false;
-      }
-    }
-    return true;
+    var _keys;
+    _keys = _(this.state.tree).keys();
+    return (!_keys.isEmpty()) && _keys.every((function(_this) {
+      return function(k) {
+        return _this.state.cont[_this.state.path + "/" + k] != null;
+      };
+    })(this));
   },
   componentDidMount: function() {
     TreeStore.addChangeListener(this._onChangeStore);
@@ -432,26 +405,24 @@ module.exports = recl({
     }
   },
   render: function() {
-    var _list, _path, v;
-    _list = (function() {
+    var v;
+    return div({
+      key: "kids-" + this.state.path,
+      className: "kids"
+    }, (function() {
       var i, len, ref1, results;
       ref1 = _.keys(this.state.tree).sort();
       results = [];
       for (i = 0, len = ref1.length; i < len; i++) {
         v = ref1[i];
-        _path = this.state.path + "/" + v;
         results.push([
           div({
-            key: "kid-" + v
-          }, this.state.cont[_path]), hr({}, "")
+            key: v
+          }, this.state.cont[this.state.path + "/" + v]), hr({}, "")
         ]);
       }
       return results;
-    }).call(this);
-    return div({
-      key: "kids-" + this.state.path,
-      className: "kids"
-    }, _list);
+    }).call(this));
   }
 });
 
@@ -473,14 +444,12 @@ ref = [React.DOM.div, React.DOM.a, React.DOM.ul, React.DOM.li, React.DOM.h1], di
 module.exports = recl({
   displayName: "List",
   stateFromStore: function() {
-    var path, ref1, tree;
+    var path, ref1;
     path = (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
-    tree = TreeStore.getTree(path.split("/"));
     return {
       path: path,
-      tree: tree,
       snip: TreeStore.getSnip(),
-      keys: _.keys(tree)
+      tree: TreeStore.getTree(path.split("/"))
     };
   },
   _onChangeStore: function() {
@@ -493,18 +462,13 @@ module.exports = recl({
     return this.stateFromStore();
   },
   gotPath: function() {
-    var i, k, len, ref1;
-    if (!(this.state.keys.length > 0)) {
-      return false;
-    }
-    ref1 = this.state.keys;
-    for (i = 0, len = ref1.length; i < len; i++) {
-      k = ref1[i];
-      if (this.state.snip[this.state.path + "/" + k] == null) {
-        return false;
-      }
-    }
-    return true;
+    var _keys;
+    _keys = _(this.state.tree).keys();
+    return (!_keys.isEmpty()) && _keys.every((function(_this) {
+      return function(k) {
+        return _this.state.snip[_this.state.path + "/" + k] != null;
+      };
+    })(this));
   },
   componentDidMount: function() {
     TreeStore.addChangeListener(this._onChangeStore);
@@ -516,8 +480,7 @@ module.exports = recl({
     var _k, _keys, _path, c, href, i, len, orig, prev, results, v;
     if (!this.gotPath()) {
       return div({
-        className: "loading",
-        key: ""
+        className: "loading"
       }, load({}, ""));
     }
     _keys = _.keys(this.state.tree).sort();

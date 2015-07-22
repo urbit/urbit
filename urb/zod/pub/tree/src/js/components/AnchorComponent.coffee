@@ -8,17 +8,19 @@ recl = React.createClass
 
 module.exports = recl
   displayName: "Anchor"
-  stateFromStore: -> 
-    crum:TreeStore.getCrumbs()
-    curr:TreeStore.getCurr()
-    pare:TreeStore.getPare()
-    sibs:TreeStore.getSiblings()
-    next:TreeStore.getNext()
-    prev:TreeStore.getPrev()
-    kids:TreeStore.getKids()
-    tree:TreeStore.getTree([])
-    cont:TreeStore.getCont()
-    url:window.location.pathname
+  stateFromStore: ->
+    { 
+      path:TreeStore.getCurr()
+      pare:TreeStore.getPare()
+      sibs:TreeStore.getSiblings()
+      snip:TreeStore.getSnip()
+      next:TreeStore.getNext()
+      prev:TreeStore.getPrev()
+      kids:TreeStore.getKids()
+      tree:TreeStore.getTree([])
+      cont:TreeStore.getCont()
+      url:window.location.pathname
+    }
 
   checkPath: (path) -> @state.cont[path]?
 
@@ -44,7 +46,7 @@ module.exports = recl
     href_parts[0] = next
     if hist isnt false then history.pushState {}, "", window.tree.basepath href_parts.join ""
     rend = false
-    if next isnt @state.curr
+    if next isnt @state.path
       React.unmountComponentAtNode $('#cont')[0]
       rend = true
     TreeActions.setCurr next
@@ -66,9 +68,10 @@ module.exports = recl
   setTitle: ->
     title = $('#cont h1').first().text()
     if title.length is 0
-      title = @state.curr.split("/")[@state.curr.split("/").length-1]
+      path = @state.path.split("/")
+      title = path[path.length-1]
 
-    document.title = "#{title} - #{@state.curr}"
+    document.title = "#{title} - #{@state.path}"
 
   checkUp: ->
     up = @state.pare ? "/"
@@ -76,7 +79,7 @@ module.exports = recl
 
     if not @state.cont[up]
       TreeActions.getPath up
-
+        
   componentDidUpdate: -> 
     @setTitle()
     @checkUp()
@@ -112,43 +115,39 @@ module.exports = recl
 
   _onChangeStore: -> @setState @stateFromStore()
 
-  render: ->
-    parts = []
-    if @state.pare
-      href = window.tree.basepath @state.pare
-      parts.push (div {id:"up",key:"up"},
-                   (a {key:"arow-up",href:href,className:"arow-up"},""))
+  renderArrow: (name, path) ->
+    href = window.tree.basepath path
+    (a {href,key:"arow-#{name}",className:"arow-#{name}"},"")
+  
+  renderParts: -> [
+    if @state.pare then _.filter [
+      div {id:"up",key:"up"}, @renderArrow "up", @state.pare
       if @state.prev or @state.next
-        _parts = []
-        if @state.prev 
-          href = window.tree.basepath @state.prev
-          _parts.push (a {key:"arow-prev",href:href,className:"arow-prev"},"")
-        if @state.next 
-          href = window.tree.basepath @state.next
-          _parts.push (a {key:"arow-next",href:href,className:"arow-next"},"")
-        parts.push (div {id:"sides",key:"sides"}, _parts)
-
-    curr = @state.curr
-
+        div {id:"sides",key:"sides"}, _.filter [
+          if @state.prev then @renderArrow "prev", @state.prev
+          if @state.next then @renderArrow "next", @state.next
+    ] ]
     if _.keys(@state.sibs).length > 0
-      p = curr.split "/"
-      curr = p.pop()
-      up = p.join "/"
+      [up..., curr] = @state.path.split "/"
+      up = up.join "/"
       ci=0
       k=0
-      sibs = _.map _.keys(@state.sibs).sort(), (i) => 
-        c = ""
+      _sibs = _(@state.sibs).keys().sort().map (i) => 
         if curr is i
-          c = "active"
+          className = "active"
           ci = k
+        className ?= ""
         k++
-        href = window.tree.basepath up+"/"+i
-        (div {className:c}, (a {key:i+"-a",href:href,onClick:@_click}, i))
-      offset = 0
-      if ci > 0 then offset = 0
-      s = {marginTop:((ci*-24)-offset)+"px"}
-      parts.push (div {key:"sibs",id:"sibs",style:s}, sibs)
-
+        path = up+"/"+i
+        href = window.tree.basepath path
+        head = @state.snip[path]?.head ? div {}, i
+        head = $(React.renderToStaticMarkup(head)).text()
+        (div {className,key:i}, (a {href,onClick:@_click}, head))
+      style = {marginTop:"#{-24*ci}px"}
+      div {key:"sibs",id:"sibs",style}, _sibs
+    ]
+  
+  render: ->
     obj =
       onMouseOver:@_mouseOver
       onMouseOut:@_mouseOut
@@ -160,4 +159,4 @@ module.exports = recl
       delete obj.onMouseOver
       delete obj.onMouseOut
 
-    div obj, parts
+    div obj, _.filter @renderParts()
