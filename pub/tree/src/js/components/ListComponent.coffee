@@ -10,11 +10,10 @@ module.exports = recl
   displayName: "List"
   stateFromStore: -> 
     path = @props.dataPath ? TreeStore.getCurr()
-    tree = TreeStore.getTree(path.split("/"))
-    {
-      path, tree,
-      snip:TreeStore.getSnip(),
-      keys: _.keys(tree)
+    { 
+      path
+      snip:TreeStore.getSnip()
+      tree:TreeStore.getTree(path.split("/"))
     }
 
   _onChangeStore: ->
@@ -26,11 +25,9 @@ module.exports = recl
   getInitialState: -> @stateFromStore()
 
   gotPath: ->
-    return false unless @state.keys.length > 0
-    for k in @state.keys
-      unless @state.snip[@state.path+"/"+k]?
-        return false
-    true
+    _keys = _(@state.tree).keys()
+    (not _keys.isEmpty()) and _keys.every (k) =>
+      @state.snip[@state.path+"/"+k]?
 
   componentDidMount: ->
     TreeStore.addChangeListener @_onChangeStore
@@ -38,7 +35,7 @@ module.exports = recl
 
   renderList: ->
     if not @gotPath()
-      return (div {className:"loading",key:""}, (load {}, ""))
+      return (div {className:"loading"}, (load {}, ""))
     _keys = _.keys(@state.tree).sort()
     if @props.dataType is 'post' then _keys=_keys.reverse()
     for v in _keys
