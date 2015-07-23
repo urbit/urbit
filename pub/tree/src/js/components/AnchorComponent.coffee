@@ -77,11 +77,9 @@ module.exports = recl
     up = @state.pare ? "/"
     if up.slice(-1) is "/" then up = up.slice 0,-1
 
-    unless @state.cont[up]?
-      TreeActions.getPath up
+    unless @state.cont[up]? then TreeActions.getPath up
     
-    unless (_(@state.sibs).keys().every (k) => @state.snip[up+"/"+k]?)
-      TreeActions.getPath up, "snip"
+    unless TreeStore.gotSnip(up) then TreeActions.getPath up, "snip"
         
   componentDidUpdate: -> 
     @setTitle()
@@ -119,6 +117,8 @@ module.exports = recl
     href = window.tree.basepath path
     (a {href,key:"arow-#{name}",className:"arow-#{name}"},"")
   
+  toText: (elem)-> $(React.renderToStaticMarkup elem).text()
+  
   renderParts: -> [
     if @state.pare then _.filter [
       div {id:"up",key:"up"}, @renderArrow "up", @state.pare
@@ -141,9 +141,9 @@ module.exports = recl
         path = up+"/"+i
         href = window.tree.basepath path
         snip = @state.snip[path]
-        head = snip?.meta?.title ? snip?.head ? i
-        if typeof head isnt 'string'
-          head = $(React.renderToStaticMarkup head).text()
+        head = snip?.meta?.title
+        head ?= @toText snip?.head if snip?.head
+        head ||= i
         (div {className,key:i}, (a {href,onClick:@_click}, head))
       style = {marginTop:"#{-24*ci}px"}
       div {key:"sibs",id:"sibs",style}, _sibs
