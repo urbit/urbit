@@ -26,10 +26,7 @@ module.exports = recl
 
   getInitialState: -> @stateFromStore()
 
-  gotPath: ->
-    _keys = _(@state.tree).keys()
-    (not _keys.isEmpty()) and _keys.every (k) =>
-      @state.snip[@state.path+"/"+k]?
+  gotPath: -> TreeStore.gotSnip(@state.path)
 
   componentDidMount: ->
     TreeStore.addChangeListener @_onChangeStore

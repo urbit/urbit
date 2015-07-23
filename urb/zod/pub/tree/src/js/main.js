@@ -161,11 +161,7 @@ module.exports = recl({
     if (this.state.cont[up] == null) {
       TreeActions.getPath(up);
     }
-    if (!(_(this.state.sibs).keys().every((function(_this) {
-      return function(k) {
-        return _this.state.snip[up + "/" + k] != null;
-      };
-    })(this)))) {
+    if (!TreeStore.gotSnip(up)) {
       return TreeActions.getPath(up, "snip");
     }
   },
@@ -219,6 +215,9 @@ module.exports = recl({
       className: "arow-" + name
     }, "");
   },
+  toText: function(elem) {
+    return $(React.renderToStaticMarkup(elem)).text();
+  },
   renderParts: function() {
     var _sibs, ci, curr, j, k, ref1, style, up;
     return [
@@ -232,7 +231,7 @@ module.exports = recl({
         }, _.filter([this.state.prev ? this.renderArrow("prev", this.state.prev) : void 0, this.state.next ? this.renderArrow("next", this.state.next) : void 0])) : void 0
       ]) : void 0, _.keys(this.state.sibs).length > 0 ? ((ref1 = this.state.path.split("/"), up = 2 <= ref1.length ? slice.call(ref1, 0, j = ref1.length - 1) : (j = 0, []), curr = ref1[j++], ref1), up = up.join("/"), ci = 0, k = 0, _sibs = _(this.state.sibs).keys().sort().map((function(_this) {
         return function(i) {
-          var className, head, href, path, ref2, ref3, ref4, snip;
+          var className, head, href, path, ref2, snip;
           if (curr === i) {
             className = "active";
             ci = k;
@@ -244,10 +243,13 @@ module.exports = recl({
           path = up + "/" + i;
           href = window.tree.basepath(path);
           snip = _this.state.snip[path];
-          head = (ref2 = (ref3 = snip != null ? (ref4 = snip.meta) != null ? ref4.title : void 0 : void 0) != null ? ref3 : snip != null ? snip.head : void 0) != null ? ref2 : i;
-          if (typeof head !== 'string') {
-            head = $(React.renderToStaticMarkup(head)).text();
+          head = snip != null ? (ref2 = snip.meta) != null ? ref2.title : void 0 : void 0;
+          if (snip != null ? snip.head : void 0) {
+            if (head == null) {
+              head = _this.toText(snip != null ? snip.head : void 0);
+            }
           }
+          head || (head = i);
           return div({
             className: className,
             key: i
@@ -473,13 +475,7 @@ module.exports = recl({
     return this.stateFromStore();
   },
   gotPath: function() {
-    var _keys;
-    _keys = _(this.state.tree).keys();
-    return (!_keys.isEmpty()) && _keys.every((function(_this) {
-      return function(k) {
-        return _this.state.snip[_this.state.path + "/" + k] != null;
-      };
-    })(this));
+    return TreeStore.gotSnip(this.state.path);
   },
   componentDidMount: function() {
     TreeStore.addChangeListener(this._onChangeStore);
@@ -1160,7 +1156,7 @@ module.exports = {
 
 
 },{}],15:[function(require,module,exports){
-var EventEmitter, MessageDispatcher, TreeStore, _cont, _curr, _snip, _tree, clog;
+var EventEmitter, MessageDispatcher, TreeStore, _cont, _curr, _got_snip, _snip, _tree, clog;
 
 EventEmitter = require('events').EventEmitter;
 
@@ -1173,6 +1169,8 @@ _tree = {};
 _cont = {};
 
 _snip = {};
+
+_got_snip = {};
 
 _curr = "";
 
@@ -1228,23 +1226,24 @@ TreeStore = _.extend(EventEmitter.prototype, {
   getSnip: function() {
     return _snip;
   },
+  gotSnip: function(path) {
+    return !!_got_snip[path];
+  },
   loadSnip: function(path, snip) {
-    var k, results, v;
+    var k, v;
     this.mergePathToTree(path, _.pluck(snip, "name"));
     if ((snip != null ? snip.length : void 0) !== 0) {
-      results = [];
       for (k in snip) {
         v = snip[k];
-        results.push(_snip[path + "/" + v.name] = {
+        _snip[path + "/" + v.name] = {
           head: window.tree.reactify(v.body.head),
           body: window.tree.reactify(v.body.body),
           orig: v.body,
           meta: v.meta
-        });
+        };
       }
-      return results;
     } else {
-      return _cont[path] = window.tree.reactify({
+      _cont[path] = window.tree.reactify({
         gn: 'div',
         c: [
           {
@@ -1268,6 +1267,7 @@ TreeStore = _.extend(EventEmitter.prototype, {
         ]
       });
     }
+    return _got_snip[path] = true;
   },
   loadKids: function(path, kids) {
     var k, results, v;

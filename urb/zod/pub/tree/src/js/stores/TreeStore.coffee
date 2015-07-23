@@ -5,7 +5,7 @@ clog = console.log
 
 _tree = {}
 _cont = {}
-_snip = {}
+_snip = {}; _got_snip = {}
 _curr = ""
 
 TreeStore = _.extend EventEmitter.prototype, {
@@ -40,6 +40,7 @@ TreeStore = _.extend EventEmitter.prototype, {
     tree
 
   getSnip: -> _snip
+  gotSnip: (path)-> !!_got_snip[path]
 
   loadSnip: (path,snip) ->
     @mergePathToTree path,_.pluck(snip,"name")
@@ -58,6 +59,7 @@ TreeStore = _.extend EventEmitter.prototype, {
                {gn:'pre',  c:[@getCurr()]}
                {gn:'span', c:['is either empty or does not exist.']}
            ] }]
+    _got_snip[path] = true
 
   loadKids: (path,kids) ->
     @mergePathToTree path,_.pluck(kids,"name")
