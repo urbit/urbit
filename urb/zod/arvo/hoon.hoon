@@ -1833,8 +1833,9 @@
   ?.(=(gol fud) ~ [~ gol])
 ::
 ++  slog                                                ::  deify printf
-  |=  [a=?(~ @u) b=tang]  ^+  same                      ::  .=  ~&(%a 1)
-  ?~(b same ~>(%slog.[a i.b] $(b t.b)))                 ::  ((slog `~[>%a<]) 1)
+  =|  pri=@                                             ::  priority level
+  |=  a=tang  ^+  same                                  ::  .=  ~&(%a 1)
+  ?~(a same ~>(%slog.[pri i.a] $(a t.a)))               ::  ((slog ~[>%a<]) 1)
 ::
 ++  mean  |=(a=tang (fear (flop a) |.(!!)))             ::  deify stack trace
 ++  fear                                                ::  insert user mean
@@ -7175,10 +7176,13 @@
         [%pear *]
       ?.  =(lum q.q.ham)
         ~
-      ?:  ?=([%tas ~] +.q.ham)
-        [~ %leaf '%' '$' ~]
-      =+  fox=~(rend co [~ p.q.ham q.q.ham])
-      [~ %leaf ?:(=(['~' ~] fox) fox ['%' fox])]
+      =.  p.q.ham
+        (rash p.q.ham ;~(sfix (cook crip (star low)) (star hig)))
+      =+  fox=$(q.ham [%atom p.q.ham])
+      ?>  ?=([~ %leaf ^] fox)
+      ?:  ?=(?(%n %tas) p.q.ham)
+        fox
+      [~ %leaf '%' p.u.fox]
     ::
         [%stop *]
       ?:  (~(has in gil) [p.q.ham lum])  ~

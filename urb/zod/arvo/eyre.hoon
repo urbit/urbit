@@ -731,7 +731,7 @@
           [%of ^]
         ?~  q.tee  ~|(e/ford/lost/tee !!)
         ?:  ?=(%| -.q.sih)
-          ((slog 0 p.q.sih) +>.^$)             ::  XX get-even %mean
+          ((slog p.q.sih) +>.^$)             ::  XX get-even %mean
         %+  get-rush:(ire-ix p.tee)  q.tee
         =*  cay  p.q.sih
         ?>  ?=(%json p.cay)                    ::  XX others
