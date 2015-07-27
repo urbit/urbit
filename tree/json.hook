@@ -3,12 +3,12 @@
 /=    gas    /$    fuel
 /=    ral    /:    /===    /%  /react-json/
 /=    pal    /:    /===
-             /;    |=  a=(map ,@ta json)  a
+             /^    (map ,@ta json)
              /%    2
              /_    /react-json/
 ::
 /=    sal    /:    /===
-             /;    |=  a=(map ,@ta json)  a
+             /^    (map ,@ta json)
              /%    2
              /_    /react-snips-json/
 ::

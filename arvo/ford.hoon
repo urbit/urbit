@@ -1046,7 +1046,7 @@
         =+  raf=(lear cof here)
         ?.  ?=(%2 -.q.raf)
           (cope raf (flux |=(vax=vase (some [for vax]))))
-        =-  ((slog 0 (flop `tang`-)) (flue cof))
+        =-  ((slog (flop `tang`-)) (flue cof))
         ?^  t.pax  ~              ::  error on top-level marks
         :_(q.q.raf leaf/"! {<`mark`for>} build failed, ignoring.")
       --

@@ -185,9 +185,9 @@
   ::
   ++  spam
     |=  mes=(list tank)
-    ((slog 0 mes) ..spam)
-    :: %-  emit :: XX not displayed/immediately
-    :: [%poke /kiln/spam [our %talk] (said our %kiln now eny mes)]
+    ((slog mes) ..spam)
+::     %-  emit :: XX not displayed/immediately
+::     [%poke /kiln/spam [our %talk] (said our %kiln now eny mes)]
   ::
   ++  auto
     |=  kiln-sync
@@ -327,7 +327,7 @@
       %-  blab  :_  ~
       [ost %poke /kiln/fancy/[^syd] [our %hood] %kiln-merge [syd her sud gem]]
     ::
-    ++  spam  ::|=(tang ((slog 0 +<) ..spam))
+    ++  spam  ::|=(tang ((slog +<) ..spam))
               |*(* +>(..work (^spam +<)))
     ++  merge
       |=  [her=@p sud=@tas gim=?(%auto germ)]
@@ -424,6 +424,15 @@
         (fancy-merge tic our syd %that)
       ==
     ::
+    ++  tape-to-tanks
+      |=  a=tape  ^-  (list tank)
+      (scan a (more (just '\0a') (cook |=(a=tape leaf/a) (star prn))))
+    ::
+    ++  tanks-if-any
+      |=  [a=tape b=(list path) c=tape]  ^-  (list tank)
+      ?:  =(~ b)  ~
+      (welp (tape-to-tanks "\0a{c}{a}") >b< ~)
+    ::
     ++  made
       |=  [dep=@uvH reg=gage]
       ^+  +>
@@ -442,32 +451,28 @@
       =+  notated=(skid can |=([path a=(unit miso)] ?=(^ a)))
       =+  annotated=(turn `(list (pair path ,*))`-.notated head)
       =+  unnotated=(turn `(list (pair path ,*))`+.notated head)
-      =+  (trip (cat 3 syd '-scratch'))
+      =+  `desk`(cat 3 syd '-scratch')
       =+  ^-  tan=(list tank)
           %-  zing
           ^-  (list (list tank))
-          :~  :~  leaf/""
-                  leaf/"done setting up scratch space in %{-}"
-                  leaf/"please resolve the following conflicts and run"
-                  leaf/":+merge %{(trip syd)} {<our>} %{-}"
-              ==
-              ?~  annotated
-                ~
-              :~  leaf/""
-                  leaf/"annotated conflicts in:"
-                  >`(list path)`annotated<
-              ==
-              ?~  unnotated
-                ~
-              :~  leaf/""
-                  leaf/"some conflicts could not be annotated."
-                  leaf/"for these, the scratch space contains"
-                  leaf/"the most recent common ancestor of the"
-                  leaf/"conflicting content."
-                  leaf/""
-                  leaf/"unannotated conflicts in:"
-                  >`(list path)`unnotated<
-              ==
+          :~  %-  tape-to-tanks
+              """
+              done setting up scratch space in {<[-]>}
+              please resolve the following conflicts and run
+              :+merge {<syd>} our {<[-]>}
+              """
+              %^  tanks-if-any
+                "annotated conflicts in:"  annotated
+              ""
+              %^  tanks-if-any
+                "unannotated conflicts in:"  unnotated
+              """
+              some conflicts could not be annotated.
+              for these, the scratch space contains
+              the most recent common ancestor of the
+              conflicting content.
+              
+              """
           ==
       =<  win
       %-  blab:(spam tan)

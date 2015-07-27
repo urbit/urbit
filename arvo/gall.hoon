@@ -1090,7 +1090,7 @@
       =+  wiz=(mule |.((slit p.gat p.arg)))
       ?:  ?=(%| -.wiz)
         %-  =+  sam=(~(peek ut p.gat) %free 6)
-            (slog 0 >%ap-slam-mismatch< ~(duck ut p.arg) ~(duck ut sam) ~)
+            (slog >%ap-slam-mismatch< ~(duck ut p.arg) ~(duck ut sam) ~)
         [%| (ap-suck "call: {<cog>}: type mismatch")]
       =+  ton=(mong [q.gat q.arg] ap-sled)
       ?-  -.ton
