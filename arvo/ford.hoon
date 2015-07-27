@@ -1391,7 +1391,7 @@
       ++  able                                          ::  assemble preamble
         ^-  twig
         :+  %tsgr
-          ?:(=(~ rop) [%$ 1] [%brcn (~(run by rop) |=([* a=twig] [%ash a]))])
+          ?:(=(~ rop) [%$ 1] [%brcn (~(run by rop) |=([^ a=twig] [%ash a]))])
         [%tssg (turn (flop lot) |=(a=term q:(~(got by bil) a)))]
       ::
       ++  ably                                          ::  naked structure
@@ -1570,8 +1570,11 @@
       ++  head                                          ::  consume structures
         |=  [cof=cafe bir=(list hoot)]
         ^-  (bolt ,_..head)
-        ?~  bir  
+        ?~  bir
           (fine cof ..head)
+        =.  boy
+          ?:  p.i.bir  boy
+          (welp boy [[[%cnzy p.q.i.bir] [%$ 1]] ~])
         =+  byf=(~(get by rop) p.q.i.bir)
         ?^  byf
           ?.  =(`hoof`q.i.bir `hoof`p.u.byf)
@@ -1585,9 +1588,7 @@
         |=  [cof=cafe sel=_..head]
         =.  ..head
             %=  sel
-              boy  ?:  p.i.bir  
-                     boy
-                   (welp boy [[[%cnzy p.q.i.bir] [%$ 1]] ~])
+              boy  boy
               zeg  zeg
               how  how
               rop  %+  ~(put by (~(uni by rop) rop.sel))
