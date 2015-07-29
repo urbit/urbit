@@ -41,6 +41,7 @@ static u3j_harm _mood__hoon_con_a[] = {{".2", u3wc_con, c3y}, {}};
 static u3j_harm _mood__hoon_cut_a[] = {{".2", u3wc_cut, c3y}, {}};
 static u3j_harm _mood__hoon_dis_a[] = {{".2", u3wc_dis, c3y}, {}};
 static u3j_harm _mood__hoon_dor_a[] = {{".2", u3wc_dor, c3y}, {}};
+static u3j_harm _mood__hoon_dvr_a[] = {{".2", u3wc_dvr, c3y}, {}};
 static u3j_harm _mood__hoon_end_a[] = {{".2", u3wc_end, c3y}, {}};
 static u3j_harm _mood__hoon_gor_a[] = {{".2", u3wc_gor, c3y}, {}};
 static u3j_harm _mood__hoon_hor_a[] = {{".2", u3wc_hor, c3y}, {}};
@@ -50,9 +51,11 @@ static u3j_harm _mood__hoon_met_a[] = {{".2", u3wc_met, c3y}, {}};
 static u3j_harm _mood__hoon_mix_a[] = {{".2", u3wc_mix, c3y}, {}};
 static u3j_harm _mood__hoon_mug_a[] = {{".2", u3wc_mug, c3y}, {}};
 static u3j_harm _mood__hoon_peg_a[] = {{".2", u3wc_peg, c3y}, {}};
+static u3j_harm _mood__hoon_pow_a[] = {{".2", u3wc_pow, c3y}, {}};
 static u3j_harm _mood__hoon_rap_a[] = {{".2", u3wc_rap, c3y}, {}};
 static u3j_harm _mood__hoon_rip_a[] = {{".2", u3wc_rip, c3y}, {}};
 static u3j_harm _mood__hoon_rsh_a[] = {{".2", u3wc_rsh, c3y}, {}};
+static u3j_harm _mood__hoon_sqt_a[] = {{".2", u3wc_sqt, c3y}, {}};
 static u3j_harm _mood__hoon_vor_a[] = {{".2", u3wc_vor, c3y}, {}};
 
 static u3j_harm _mood__hoon__po_ind_a[] = {{".2", u3wcp_ind}, {}};
@@ -459,6 +462,7 @@ static u3j_core _mood__hoon_d[] =
     { "cut", _mood__hoon_cut_a },
     { "dis", _mood__hoon_dis_a },
     { "dor", _mood__hoon_dor_a },
+    { "dvr", _mood__hoon_dvr_a },
     { "end", _mood__hoon_end_a },
     { "gor", _mood__hoon_gor_a },
     { "hor", _mood__hoon_hor_a },
@@ -468,9 +472,11 @@ static u3j_core _mood__hoon_d[] =
     { "mix", _mood__hoon_mix_a },
     { "mug", _mood__hoon_mug_a },
     { "peg", _mood__hoon_peg_a },
+    { "pow", _mood__hoon_pow_a },
     { "rap", _mood__hoon_rap_a },
     { "rip", _mood__hoon_rip_a },
     { "rsh", _mood__hoon_rsh_a },
+    { "sqt", _mood__hoon_sqt_a },
     { "vor", _mood__hoon_vor_a },
 
     { "po", 0, _mood__hoon__po_d },

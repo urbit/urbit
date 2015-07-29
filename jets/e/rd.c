@@ -22,7 +22,7 @@
   static inline float64_t
   _nan_unify(float64_t a)
   {
-    if (_nan_test(a))
+    if ( _nan_test(a) )
     {
       *(c3_d*)(&a) = DOUBNAN;
     }

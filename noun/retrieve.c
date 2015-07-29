@@ -1423,8 +1423,8 @@ u3r_byte(c3_w    a_w,
   }
   else {
     u3a_atom* b_u   = u3a_to_ptr(b);
-    c3_y        vut_y = (a_w & 3);
-    c3_w        pix_w = (a_w >> 2);
+    c3_y      vut_y = (a_w & 3);
+    c3_w      pix_w = (a_w >> 2);
 
     if ( pix_w >= b_u->len_w ) {
       return 0;
@@ -1447,14 +1447,32 @@ u3r_bytes(c3_w    a_w,
             c3_y*   c_y,
             u3_atom d)
 {
-  c3_w i_w;
-
   c3_assert(u3_none != d);
+  c3_assert(_(u3a_is_atom(d)));
 
-  /* Efficiency: don't call u3r_byte().
-  */
-  for ( i_w = 0; i_w < b_w; i_w++ ) {
-    c_y[i_w] = u3r_byte((a_w + i_w), d);
+  if ( _(u3a_is_cat(d)) ) {
+    c3_w e_w = d >> (c3_min(a_w, 4) << 3);
+    c3_w m_w = c3_min(b_w, 4);
+    memcpy(c_y, (c3_y*)&e_w, m_w);
+    if ( b_w > 4 ) {
+      memset(c_y + 4, 0, b_w - 4);
+    }
+  }
+  else {
+    u3a_atom* d_u   = u3a_to_ptr(d);
+    c3_w n_w = d_u->len_w << 2;
+    c3_y* x_y = (c3_y*)d_u->buf_w + a_w;
+
+    if ( a_w >= n_w ) {
+      memset(c_y, 0, b_w);
+    }
+    else {
+      c3_w z_w = c3_min(b_w, n_w - a_w);
+      memcpy(c_y, x_y, z_w);
+      if ( b_w > n_w - a_w ) {
+        memset(c_y + z_w, 0, b_w + a_w - n_w);
+      } 
+    }
   }
 }
 
@@ -1546,14 +1564,34 @@ u3r_words(c3_w    a_w,
             c3_w*   c_w,
             u3_atom d)
 {
-  c3_w i_w;
-
   c3_assert(u3_none != d);
+  c3_assert(_(u3a_is_atom(d)));
 
-  /* Efficiency: don't call u3r_word().
-  */
-  for ( i_w = 0; i_w < b_w; i_w++ ) {
-    c_w[i_w] = u3r_word((a_w + i_w), d);
+  if ( b_w == 0 ) {
+    return;
+  }
+  if ( _(u3a_is_cat(d)) ) {
+    if ( a_w == 0 ) {
+      *c_w = d;
+      memset((c3_y*)(c_w + 1), 0, (b_w - 1) << 2);
+    }
+    else {
+      memset((c3_y*)c_w, 0, b_w << 2);
+    }
+  }
+  else {
+    u3a_atom* d_u = u3a_to_ptr(d);
+    if ( a_w >= d_u->len_w ) {
+      memset((c3_y*)c_w, 0, b_w << 2);
+    }
+    else {      
+      c3_w z_w = c3_min(b_w, d_u->len_w - a_w);
+      c3_w* x_w = d_u->buf_w + a_w;
+      memcpy((c3_y*)c_w, (c3_y*)x_w, z_w << 2);
+      if ( b_w > d_u->len_w - a_w ) {
+        memset((c3_y*)(c_w + z_w), 0, (b_w + a_w - d_u->len_w) << 2);
+      } 
+    }
   }
 }
 
