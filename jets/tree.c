@@ -203,23 +203,27 @@ static u3j_core _mood__hoon__og_d[] =
     {}
   };
 
-static u3j_harm _mood__hoon__rd_sun_a[] = {{".2", u3wer_sun}, {}};
-static u3j_harm _mood__hoon__rd_mul_a[] = {{".2", u3wer_mul}, {}};
-static u3j_harm _mood__hoon__rd_div_a[] = {{".2", u3wer_div}, {}};
 static u3j_harm _mood__hoon__rd_add_a[] = {{".2", u3wer_add}, {}};
 static u3j_harm _mood__hoon__rd_sub_a[] = {{".2", u3wer_sub}, {}};
-static u3j_harm _mood__hoon__rd_lte_a[] = {{".2", u3wer_lte}, {}};
+static u3j_harm _mood__hoon__rd_mul_a[] = {{".2", u3wer_mul}, {}};
+static u3j_harm _mood__hoon__rd_div_a[] = {{".2", u3wer_div}, {}};
+static u3j_harm _mood__hoon__rd_sqt_a[] = {{".2", u3wer_sqt}, {}};
+static u3j_harm _mood__hoon__rd_fma_a[] = {{".2", u3wer_fma}, {}};
 static u3j_harm _mood__hoon__rd_lth_a[] = {{".2", u3wer_lth}, {}};
+static u3j_harm _mood__hoon__rd_lte_a[] = {{".2", u3wer_lte}, {}};
+static u3j_harm _mood__hoon__rd_equ_a[] = {{".2", u3wer_equ}, {}};
 static u3j_harm _mood__hoon__rd_gte_a[] = {{".2", u3wer_gte}, {}};
 static u3j_harm _mood__hoon__rd_gth_a[] = {{".2", u3wer_gth}, {}};
 static u3j_core _mood__hoon__rd_d[] =
-  { { "sun", _mood__hoon__rd_sun_a },
+  { { "add", _mood__hoon__rd_add_a },
+    { "sub", _mood__hoon__rd_sub_a },
     { "mul", _mood__hoon__rd_mul_a },
     { "div", _mood__hoon__rd_div_a },
-    { "add", _mood__hoon__rd_add_a },
-    { "sub", _mood__hoon__rd_sub_a },
-    { "lte", _mood__hoon__rd_lte_a },
+    { "sqt", _mood__hoon__rd_sqt_a },
+    { "fma", _mood__hoon__rd_fma_a },
     { "lth", _mood__hoon__rd_lth_a },
+    { "lte", _mood__hoon__rd_lte_a },
+    { "equ", _mood__hoon__rd_equ_a },
     { "gte", _mood__hoon__rd_gte_a },
     { "gth", _mood__hoon__rd_gth_a },
     {}

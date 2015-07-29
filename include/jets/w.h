@@ -139,13 +139,15 @@
     u3_noun u3we_stew_fun(u3_noun);
     u3_noun u3we_stir_fun(u3_noun);
 
-    u3_noun u3wer_sun(u3_noun);
-    u3_noun u3wer_mul(u3_noun);
-    u3_noun u3wer_div(u3_noun);
     u3_noun u3wer_add(u3_noun);
     u3_noun u3wer_sub(u3_noun);
-    u3_noun u3wer_lte(u3_noun);
+    u3_noun u3wer_mul(u3_noun);
+    u3_noun u3wer_div(u3_noun);
+    u3_noun u3wer_sqt(u3_noun);
+    u3_noun u3wer_fma(u3_noun);
     u3_noun u3wer_lth(u3_noun);
+    u3_noun u3wer_lte(u3_noun);
+    u3_noun u3wer_equ(u3_noun);
     u3_noun u3wer_gte(u3_noun);
     u3_noun u3wer_gth(u3_noun);
 
