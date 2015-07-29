@@ -22,7 +22,7 @@
   static inline float32_t
   _nan_unify(float32_t a)
   {
-    if (_nan_test(a))
+    if ( _nan_test(a) )
     {
       *(c3_w*)(&a) = SINGNAN;
     }

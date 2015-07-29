@@ -1457,8 +1457,8 @@
     =>  .(r %n)                                         ::  always rnd nearest
     =+  q=(abs:si e.a)
     ?:  (syn:si e.a)
-      (mul [%f s.a --0 a.a] [%f & e.a (pow:m 5 q)])
-    (div [%f s.a --0 a.a] [%f & (sun:si q) (pow:m 5 q)])
+      (mul [%f s.a --0 a.a] [%f & e.a (pow 5 q)])
+    (div [%f s.a --0 a.a] [%f & (sun:si q) (pow 5 q)])
   ::
   ++  m                                                 ::  internal functions, constants
     |%                                                  ::  don't put 0s into [@s @u] args
@@ -1523,25 +1523,12 @@
       =+  v=(dif:si (sun:si ma) (sun:si +((^^add mb prc))))
       =.  a  ?:  (syn:si v)  a
       a(e (sum:si v e.a), a (lsh 0 (abs:si v) a.a))
-      =+  [j=(dif:si e.a e.b) q=(^^div a.a a.b)]
-      =+  k=(mod a.a a.b)
-      (rau [j q] =(k 0))
+      =+  [j=(dif:si e.a e.b) q=(dvr a.a a.b)]
+      (rau [j p.q] =(q.q 0))
     ::
     ++  fma
       |=  [a=[e=@s a=@u] b=[e=@s a=@u] c=[e=@s a=@u]]  ^-  fn
       (add [(sum:si e.a e.b) (^^mul a.a a.b)] c |)
-    ::
-    ::  integer square root w/sticky bit
-    ++  itr
-      |=  [a=@]  ^-  [@ ?]
-      =+  [q=(^^div (dec (xeb a)) 2) r=0]
-      =+  ^=  c
-        |-  =+  s=(^^add r (bex q))
-        =+  (^^mul s s)
-        ?:  =(q 0)
-          ?:  (^^lte - a)  [s -]  [r (^^mul r r)]
-        ?:  (^^lte - a)  $(r s, q (dec q))  $(q (dec q))
-      [-.c =(+.c a)]
     ::
     ++  frd                                             ::  a/2, rounds to -inf
       |=  [a=@s]
@@ -1558,8 +1545,8 @@
         =+  ?:  =((dis - 1) (dis (abs:si e.a) 1))  -
           (^^add - 1)                                   ::  enforce even exponent
         a(e (dif:si e.a (sun:si -)), a (lsh 0 - a.a))
-      =+  [y=(itr a.a) z=(frd e.a)]
-      (rau [z -.y] +.y)
+      =+  [y=(^^sqt a.a) z=(frd e.a)]
+      (rau [z p.y] =(q.y 0))
     ::
     ++  lth
       |=  [a=[e=@s a=@u] b=[e=@s a=@u]]  ^-  ?
@@ -1697,10 +1684,12 @@
       |-  ?:  (^gte (^^add (^^mul r 2) m) (^^mul s 2))
         $(s (^^mul s 10), k (sum:si k --1))
       =+  [u=0 o=0]
-      |-  =>  %=  .
+      |-
+      =+  v=(dvr (^^mul r 10) s)
+      =>  %=  .
           k  (dif:si k --1)
-          u  (^^div (^^mul r 10) s)
-          r  (mod (^^mul r 10) s)
+          u  p.v
+          r  q.v
           m  (^^mul m 10)
         ==
       =+  l=(^^lth (^^mul r 2) m)
@@ -1714,16 +1703,6 @@
       =.  o  (^^add (^^mul o 10) ?:(q +(u) u))
       [k o]
     ::
-    ++  pow                                             ::  a^b
-      |=  [a=@ b=@]
-      ?:  =(b 0)  1
-      |-  ?:  =(b 1)  a
-      =+  c=$(b (^^div b 2))
-      =+  d=(^^mul c c)
-      ?:  =((end 0 1 b) 1)
-        (^^mul d a)
-      d
-    ::
     ++  ned
       |=  [a=fn]  ^-  [%f s=? e=@s a=@u]
       ?:  ?=([%f *] a)  a
@@ -1736,7 +1715,6 @@
     ::
     ++  swr  ?+(r r %d %u, %u %d)
     ++  prc  ?>((^gth p 1) p)
-    ++  mxp  20.000                                     ::  max precision for some stuff
     ++  den  d
     ++  emn  v
     ++  emm  (sum:si emn (sun:si (dec prc)))
@@ -1937,6 +1915,10 @@
     |=  [a=@rh]  (sea:ma a)
   ++  bit
     |=  [a=fn]  ^-  @rh  (bit:ma a)
+  ++  tos
+    |=  [a=@rh]  (bit:rs (sea a))
+  ++  fos
+    |=  [a=@rs]  (bit (sea:rs a))
   ::
   ++  sun  |=  [a=@u]  ^-  @rh  (sun:ma a)
   ++  san  |=  [a=@s]  ^-  @rh  (san:ma a)
@@ -2125,6 +2107,36 @@
   =>  .(a `tang`a)
   ?~  a  (+<+)
   ~_(i.a $(a t.a))
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::                section 2cJ, extra math               ::
+::
+++  sqt                                                 ::  square root w/remainder
+  ~/  %sqt
+  |=  a=@  ^-  [p=@ q=@]
+  ?~  a  [0 0]
+  =+  [q=(div (dec (xeb a)) 2) r=0]
+  =-  [-.b (sub a +.b)]
+  ^=  b  |-
+  =+  s=(add r (bex q))
+  =+  t=(mul s s)
+  ?:  =(q 0)
+    ?:  (lte t a)  [s t]  [r (mul r r)]
+  ?:  (lte t a)  $(r s, q (dec q))  $(q (dec q))
+::
+++  dvr
+  ~/  %dvr
+  |=  [a=@ b=@]  ^-  [p=@ q=@]
+  ?<  =(0 b)
+  [(div a b) (mod a b)]
+::
+++  pow
+  ~/  %pow
+  |=  [a=@ b=@]
+  ?:  =(b 0)  1
+  |-  ?:  =(b 1)  a
+  =+  c=$(b (div b 2))
+  =+  d=(mul c c)
+  ?~  (dis b 1)  d  (mul d a)
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::
 ::::              chapter 2d, containers                ::::
 ::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -4793,7 +4805,7 @@
   =+  si
   =+  [c=(sun a) d=(sun b)]
   =+  [u=[c=(sun 1) d=--0] v=[c=--0 d=(sun 1)]]
-  |-  ^-  [d=@ u=@ v=@]
+  |-  ^-  [d=@ u=@s v=@s]
   ?:  =(--0 c)
     [(abs d) d.u d.v]
   ::  ?>  ?&  =(c (sum (pro (sun a) c.u) (pro (sun b) c.v)))

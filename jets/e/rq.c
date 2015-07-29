@@ -22,7 +22,7 @@
   static inline void
   _nan_unify(float128_t* a)
   {
-    if (_nan_test(a))
+    if ( _nan_test(a) )
     {
       *((c3_d*)a)     = 0;
       *(((c3_d*)a)+1) = QUADNAN;

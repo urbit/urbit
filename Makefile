@@ -167,6 +167,7 @@ J_C_OFILES=\
        jets/c/con.o \
        jets/c/cut.o \
        jets/c/dor.o \
+       jets/c/dvr.o \
        jets/c/dis.o \
        jets/c/end.o \
        jets/c/gor.o \
@@ -178,9 +179,11 @@ J_C_OFILES=\
        jets/c/mug.o \
        jets/c/peg.o \
        jets/c/po.o  \
+       jets/c/pow.o \
        jets/c/rap.o \
        jets/c/rip.o \
        jets/c/rsh.o \
+       jets/c/sqt.o \
        jets/c/vor.o
 
 J_D_OFILES=\
@@ -211,8 +214,8 @@ J_E_OFILES=\
        jets/e/mule.o \
        jets/e/parse.o \
        jets/e/rd.o \
-       jets/e/rs.o \
        jets/e/rq.o \
+       jets/e/rs.o \
        jets/e/repg.o \
        jets/e/rexp.o \
        jets/e/rub.o \

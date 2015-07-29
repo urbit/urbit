@@ -47,6 +47,7 @@
     u3_noun u3qc_cut(u3_atom, u3_atom, u3_atom, u3_atom);
     u3_noun u3qc_dis(u3_atom, u3_atom);
     u3_noun u3qc_dor(u3_atom, u3_atom);
+    u3_noun u3qc_dvr(u3_atom, u3_atom);
     u3_noun u3qc_end(u3_atom, u3_atom, u3_atom);
     u3_noun u3qc_gor(u3_atom, u3_atom);
     u3_noun u3qc_hor(u3_atom, u3_atom);
@@ -55,9 +56,11 @@
     u3_noun u3qc_met(u3_atom, u3_atom);
     u3_noun u3qc_mix(u3_atom, u3_atom);
     u3_noun u3qc_peg(u3_atom, u3_atom);
+    u3_noun u3qc_pow(u3_atom, u3_atom);
     u3_noun u3qc_rap(u3_atom, u3_noun);
     u3_noun u3qc_rip(u3_atom, u3_atom);
     u3_noun u3qc_rsh(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qc_sqt(u3_atom);
     u3_noun u3qc_vor(u3_atom, u3_atom);
 
   /** Tier 4.
