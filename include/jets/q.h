@@ -134,6 +134,17 @@
     u3_noun u3qet_gte(u3_atom, u3_atom);
     u3_noun u3qet_gth(u3_atom, u3_atom);
 
+    u3_noun u3qeq_add(u3_atom, u3_atom);
+    u3_noun u3qeq_sub(u3_atom, u3_atom);
+    u3_noun u3qeq_mul(u3_atom, u3_atom);
+    u3_noun u3qeq_div(u3_atom, u3_atom);
+    u3_noun u3qeq_sqt(u3_atom);
+    u3_noun u3qeq_fma(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qeq_lth(u3_atom, u3_atom);
+    u3_noun u3qeq_lte(u3_atom, u3_atom);
+    u3_noun u3qeq_equ(u3_atom, u3_atom);
+    u3_noun u3qeq_gte(u3_atom, u3_atom);
+    u3_noun u3qeq_gth(u3_atom, u3_atom);
 
   /** Tier 6.
   **/
