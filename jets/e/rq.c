@@ -24,7 +24,7 @@
   {
     if ( _nan_test(a) )
     {
-      *((c3_d*)a)     = 0;
+      *( (c3_d*)a)    = 0;
       *(((c3_d*)a)+1) = QUADNAN;
     }
   }
@@ -35,9 +35,9 @@
   u3qeq_add(u3_atom a, u3_atom b)
   {
     union quad c, d, e;
-    c.c = u3a_walloc(4);
-    d.c = u3a_walloc(4);
-    e.c = u3a_walloc(4);
+    c.c = alloca(16);
+    d.c = alloca(16);
+    e.c = alloca(16);
 
     u3r_words(0, 4, c.c, a);
     u3r_words(0, 4, d.c, b);
@@ -45,9 +45,6 @@
     _nan_unify(e.q);
 
     u3_atom f = u3i_words(4, e.c);
-    u3a_wfree(c.c);
-    u3a_wfree(d.c);
-    u3a_wfree(e.c);
     return f;
   }
 
@@ -73,9 +70,9 @@
   u3qeq_sub(u3_atom a, u3_atom b)
   {
     union quad c, d, e;
-    c.c = u3a_walloc(4);
-    d.c = u3a_walloc(4);
-    e.c = u3a_walloc(4);
+    c.c = alloca(16);
+    d.c = alloca(16);
+    e.c = alloca(16);
 
     u3r_words(0, 4, c.c, a);
     u3r_words(0, 4, d.c, b);
@@ -83,9 +80,6 @@
     _nan_unify(e.q);
 
     u3_atom f = u3i_words(4, e.c);
-    u3a_wfree(c.c);
-    u3a_wfree(d.c);
-    u3a_wfree(e.c);
     return f;
   }
 
@@ -111,9 +105,9 @@
   u3qeq_mul(u3_atom a, u3_atom b)
   {
     union quad c, d, e;
-    c.c = u3a_walloc(4);
-    d.c = u3a_walloc(4);
-    e.c = u3a_walloc(4);
+    c.c = alloca(16);
+    d.c = alloca(16);
+    e.c = alloca(16);
 
     u3r_words(0, 4, c.c, a);
     u3r_words(0, 4, d.c, b);
@@ -121,9 +115,6 @@
     _nan_unify(e.q);
 
     u3_atom f = u3i_words(4, e.c);
-    u3a_wfree(c.c);
-    u3a_wfree(d.c);
-    u3a_wfree(e.c);
     return f;
   }
 
@@ -149,9 +140,9 @@
   u3qeq_div(u3_atom a, u3_atom b)
   {
     union quad c, d, e;
-    c.c = u3a_walloc(4);
-    d.c = u3a_walloc(4);
-    e.c = u3a_walloc(4);
+    c.c = alloca(16);
+    d.c = alloca(16);
+    e.c = alloca(16);
 
     u3r_words(0, 4, c.c, a);
     u3r_words(0, 4, d.c, b);
@@ -159,9 +150,6 @@
     _nan_unify(e.q);
 
     u3_atom f = u3i_words(4, e.c);
-    u3a_wfree(c.c);
-    u3a_wfree(d.c);
-    u3a_wfree(e.c);
     return f;
   }
 
@@ -187,16 +175,14 @@
   u3qeq_sqt(u3_atom a)
   {
     union quad c, d;
-    c.c = u3a_walloc(4);
-    d.c = u3a_walloc(4);
+    c.c = alloca(16);
+    d.c = alloca(16);
 
     u3r_words(0, 4, c.c, a);
     f128M_sqrt(c.q, d.q);
     _nan_unify(d.q);
 
     u3_atom e = u3i_words(4, d.c);
-    u3a_wfree(c.c);
-    u3a_wfree(d.c);
     return e;
   }
 
@@ -221,10 +207,10 @@
   u3qeq_fma(u3_atom a, u3_atom b, u3_atom c)
   {
     union quad d, e, f, g;
-    d.c = u3a_walloc(4);
-    e.c = u3a_walloc(4);
-    f.c = u3a_walloc(4);
-    g.c = u3a_walloc(4);
+    d.c = alloca(16);
+    e.c = alloca(16);
+    f.c = alloca(16);
+    g.c = alloca(16);
 
     u3r_words(0, 4, d.c, a);
     u3r_words(0, 4, e.c, b);
@@ -233,10 +219,6 @@
     _nan_unify(g.q);
 
     u3_atom h = u3i_words(4, g.c);
-    u3a_wfree(d.c);
-    u3a_wfree(e.c);
-    u3a_wfree(f.c);
-    u3a_wfree(g.c);
     return h;
   }
 
@@ -263,15 +245,13 @@
   u3qeq_lth(u3_atom a, u3_atom b)
   {
     union quad c, d;
-    c.c = u3a_walloc(4);
-    d.c = u3a_walloc(4);
+    c.c = alloca(16);
+    d.c = alloca(16);
 
     u3r_words(0, 4, c.c, a);
     u3r_words(0, 4, d.c, b);
     c3_o e = __(f128M_lt(c.q, d.q));
 
-    u3a_wfree(c.c);
-    u3a_wfree(d.c);
     return e;
   }
 
@@ -297,15 +277,13 @@
   u3qeq_lte(u3_atom a, u3_atom b)
   {
     union quad c, d;
-    c.c = u3a_walloc(4);
-    d.c = u3a_walloc(4);
+    c.c = alloca(16);
+    d.c = alloca(16);
 
     u3r_words(0, 4, c.c, a);
     u3r_words(0, 4, d.c, b);
     c3_o e = __(f128M_le(c.q, d.q));
 
-    u3a_wfree(c.c);
-    u3a_wfree(d.c);
     return e;
   }
 
@@ -331,15 +309,13 @@
   u3qeq_equ(u3_atom a, u3_atom b)
   {
     union quad c, d;
-    c.c = u3a_walloc(4);
-    d.c = u3a_walloc(4);
+    c.c = alloca(16);
+    d.c = alloca(16);
 
     u3r_words(0, 4, c.c, a);
     u3r_words(0, 4, d.c, b);
     c3_o e = __(f128M_eq(c.q, d.q));
 
-    u3a_wfree(c.c);
-    u3a_wfree(d.c);
     return e;
   }
 
@@ -365,15 +341,13 @@
   u3qeq_gte(u3_atom a, u3_atom b)
   {
     union quad c, d;
-    c.c = u3a_walloc(4);
-    d.c = u3a_walloc(4);
+    c.c = alloca(16);
+    d.c = alloca(16);
 
     u3r_words(0, 4, c.c, a);
     u3r_words(0, 4, d.c, b);
     c3_o e = __(f128M_le(d.q, c.q));
 
-    u3a_wfree(c.c);
-    u3a_wfree(d.c);
     return e;
   }
 
@@ -399,15 +373,13 @@
   u3qeq_gth(u3_atom a, u3_atom b)
   {
     union quad c, d;
-    c.c = u3a_walloc(4);
-    d.c = u3a_walloc(4);
+    c.c = alloca(16);
+    d.c = alloca(16);
 
     u3r_words(0, 4, c.c, a);
     u3r_words(0, 4, d.c, b);
     c3_o e = __(f128M_lt(d.q, c.q));
 
-    u3a_wfree(c.c);
-    u3a_wfree(d.c);
     return e;
   }
 
