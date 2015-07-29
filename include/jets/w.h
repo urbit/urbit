@@ -151,6 +151,18 @@
     u3_noun u3wer_gte(u3_noun);
     u3_noun u3wer_gth(u3_noun);
 
+    u3_noun u3wet_add(u3_noun);
+    u3_noun u3wet_sub(u3_noun);
+    u3_noun u3wet_mul(u3_noun);
+    u3_noun u3wet_div(u3_noun);
+    u3_noun u3wet_sqt(u3_noun);
+    u3_noun u3wet_fma(u3_noun);
+    u3_noun u3wet_lth(u3_noun);
+    u3_noun u3wet_lte(u3_noun);
+    u3_noun u3wet_equ(u3_noun);
+    u3_noun u3wet_gte(u3_noun);
+    u3_noun u3wet_gth(u3_noun);
+
 
   /** Tier 6.
   **/

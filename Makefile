@@ -211,6 +211,7 @@ J_E_OFILES=\
        jets/e/mule.o \
        jets/e/parse.o \
        jets/e/rd.o \
+       jets/e/rs.o \
        jets/e/repg.o \
        jets/e/rexp.o \
        jets/e/rub.o \
