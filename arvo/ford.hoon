@@ -477,6 +477,25 @@
         (flux |=([v=gage t=gagl] [[p.i.p.gag v] t]))
       ==
     ::
+    ++  some-in-map
+      |*  fun=(burg span (unit))
+      =+  res=,_(need [?+(-.q !! %0 q.q)]:*fun)
+      =+  marv=(map span res)
+      |=  [cof=cafe sud=(map span ,~)]  ^-  (bolt marv)
+      ?~  sud  (flue cof)
+      %.  [cof sud]
+      ;~  cope
+        ;~  coax
+          |=([cof=cafe _sud] ^$(cof cof, sud l))
+          |=([cof=cafe _sud] ^$(cof cof, sud r))
+          |=  [cof=cafe [dir=@ta ~] ^]
+          %+  cope  (fun cof dir)
+          (flux (lift |*(* [dir +<])))
+        ==
+        %-  flux
+        |=  [lam=marv ram=marv nod=(unit ,[span res])]
+        ?^(nod [u.nod lam ram] (~(uni by lam) ram))
+      ==
     ++  dash                                            ::  process cache
       |=  cof=cafe
       ^+  +>
@@ -879,6 +898,61 @@
       :-  [p.i.yom [%$ (peg axe 2)]]
       $(yom t.yom, axe (peg axe 3))
     ::
+    ++  lads                                            ::  possible children
+      |=  [cof=cafe bem=beam arg=heel]
+      ^-  (bolt (map span ,~))
+      =|  [res=(map span ,~) new=(qeu beam)]
+      =+  all=`(set beam)`[bem `~]
+      |^  %+  with  (cope ?^(arg (flue cof) kids) return)
+          |=(_. (with (cope marks look) next))
+      ::
+      ++  done  .
+      ++  with
+        |*  [a=(bolt ,_done) b=$+(_done (bolt))]  ^+  *b
+        (cope a |=([cof=cafe c=_done] (b c(cof cof))))
+      ::
+      ++  return
+        %-  flux
+        |=(a=(map span ,~) done(res (~(uni by res) a)))
+      ::
+      ++  next
+        |=  _.  =>  +<
+        ^-  (bolt (map span ,~))
+        ?^  s.bem
+          $(s.bem t.s.bem, arg [i.s.bem arg])
+        ?:  =(~ new)  (fine cof res)
+        =^  bem  new  ~(get to new)
+        ~|  next-beam/(tope bem)
+        ?<  (gth (lent +.bem) 10)
+        $(bem bem, arg ~)
+      ::
+      ++  kids
+        %^  lash  cof  bem
+        |=  [cof=cafe dir=span]
+        %+  cope  (lend cof bem(s [dir s.bem]))
+        (flux |=(a=arch ?~(r.a ~ (some ~))))
+      ::
+      ++  marks
+        =<  (cope (laze cof bem) (flux .))
+        |=  a=(map mark ,?)  ^-  (list mark)
+        (turn :_(head (skip :_(tail (~(tap by a))))))   ::  | = %hook
+      ::
+      ++  look
+        |=  [cof=cafe hok=(list mark)]  ^-  (bolt ,_done)
+        ?~  hok  (fine cof done)
+        %+  with  $(hok t.hok)
+        |=  _done  ^-  (bolt ,_done)
+        =+  bim=bem(s [i.hok s.bem])
+        =+  hid=(fade cof %hook bim)
+        ?:  ?=(%2 -.q.hid)
+          (fine cof done)
+        =<  (cope hid (flux .))
+        |=  hyd=hood
+        =^  neu  all
+          (chop:(meow bim (flop arg)) all %fan fan.hyd)
+        done(new (~(gas to new) (~(tap in `(set beam)`neu))))
+      --
+    ::
     ++  laze                                            ::  find real or virtual
       |=  [cof=cafe bem=beam]
       %^  lash  cof  bem
@@ -960,24 +1034,8 @@
     ::
     ++  lash                                            ::  filter at beam
       |*  [cof=cafe bem=beam fun=(burg span (unit))]
-      =+  res=,_(need [?+(-.q !! %0 q.q)]:*fun)
-      =+  marv=(map span res)
       %+  cope  (lend cof bem)
-      |=  [cof=cafe arc=arch]  ^-  (bolt marv)
-      ?~  r.arc  (flue cof)
-      %.  [cof r.arc]
-      ;~  cope
-        ;~  coax
-          |=([cof=cafe _r.arc] ^$(cof cof, r.arc l))
-          |=([cof=cafe _r.arc] ^$(cof cof, r.arc r))
-          |=  [cof=cafe [dir=@ta ~] ^]
-          %+  cope  (fun cof dir)
-          (flux (lift |*(* [dir +<])))
-        ==
-        %-  flux
-        |=  [lam=marv ram=marv nod=(unit ,[span res])]
-        ?^(nod [u.nod lam ram] (~(uni by lam) ram))
-      ==
+      |=([cof=cafe arc=arch] ((some-in-map fun) cof r.arc))
     ::
     ++  lear                                            ::  load core
       |=  [cof=cafe bem=beam]  ^-  (bolt vase)
@@ -1474,7 +1532,8 @@
         |=  [cof=cafe bax=vase hon=horn]
         ^-  (bolt vase)
         %+  cope
-          %^  lash  cof  how
+          %+  cope  (lads cof how ~)
+          %-  some-in-map
           |=  [cof=cafe dir=span]
           =+  nod=(chap(s.how [dir s.how]) cof bax hon)
           ?:  ?=(%2 -.q.nod)
@@ -1561,6 +1620,36 @@
           (fine cof [p.tug q.vax])
         ::
             %toy  (cope (cope (make cof %boil p.hon how ~) furl) feel)
+        ==
+      ::
+      ++  chop                                          ::  possible subpaths
+        |=  [old=(set beam) hon=horn]
+        =+  acc=[new=*(set beam) old=old]
+        |-  ^+  acc
+        ?-    -.hon
+            ?(%ape %arg %toy)  acc
+            ?(%dub %sic %saw)  $(hon q.hon)
+            ?(%day %hub %nap %now)  acc                 ::  drop to avoid cycles
+            %for  $(hon q.hon, s.how (weld (flop p.hon) s.how))
+            %see
+          =.  r.p.hon  ?:(?=([%ud 0] r.p.hon) r.how r.p.hon)
+          $(hon q.hon, how p.hon)
+        ::
+            %hel
+          =.  s.how  (weld (slag p.hon arg) s.how)
+          ?:  (~(has in old.acc) how)  acc
+          [(~(put in new.acc) how) (~(put in old.acc) how)]
+        ::
+            %fan
+          |-  ^+  acc
+          ?~  p.hon  acc
+          ^$(hon i.p.hon, acc $(p.hon t.p.hon))
+        ::
+            %man
+          |-  ^+  acc
+          ?~  p.hon  acc
+          =.  acc  $(p.hon l.p.hon, acc $(p.hon r.p.hon))
+          ^$(hon q.n.p.hon)
         ==
       ::
       ++  head                                          ::  consume structures
