@@ -13,7 +13,4 @@
 %+  joba  %kids
 =-  [%a (turn (~(tap by dat)) -)]
 |=  [a=span b=json] 
-%-  jobe  :~
-  name/s/a
-  body/b
-==
+(jobe name/s/a body/b ~)
