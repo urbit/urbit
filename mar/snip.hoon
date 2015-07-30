@@ -49,24 +49,20 @@
 --
 ::
 !:
-|_  own=manx
+|_  [hed=marl tal=marl]
 ::
 ++  grow                                                         ::  convert to
   |%
   ++  mime
     =<  mime
     |%
-    ++  elem  own
+    ++  elem  ;div:(h1:"*{hed}" div:"*{tal}")                    ::  convert to %elem
     ++  hymn  ;html:(head:title:"snip" body:"+{elem}")           ::  convert to %hymn
     ++  html  (crip (poxo hymn))                                 ::  convert to %html
     ++  mime  [/text/html (taco html)]                           ::  convert to %mime
     --
   --
-++  garb  [%react-snip ~]
 ++  grab  |%                                                     ::  convert from
-          ++  noun  manx                                         ::  clam from %noun
-          ++  elem  
-            |=  a=manx
-            =+  (hedtal +.a)
-            ;div:(h1:"*{hed}" div:"*{tal}")
+          ++  noun  ,[marl marl]                                 ::  clam from %noun
+          ++  elem  |=(a=manx (hedtal +.a))
 --        --

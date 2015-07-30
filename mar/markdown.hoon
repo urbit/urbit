@@ -4,7 +4,6 @@
 /?  314
 ::
 |_  mud=@t
-++  garb  [%down ~]
 ++  grow
   |%
   ++  mime  [/text/x-markdown (taco mud)]
