@@ -19,6 +19,7 @@
       head/(react-to-json ;h1:"*{hed}")
       body/(react-to-json ;div:"*{tal}")
     ~
+  ++  react-head-json  [%a (turn hed react-to-json)]
 ::   ++  js  react-snip-js
   ++  react-snip-json  (react-to-json elem)
   ++  mime  [/application/json (tact tape)]

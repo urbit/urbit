@@ -38,8 +38,4 @@
 =-  [%a (turn (~(tap by dat)) -)]
 |=  [a=span b=json]
 =+  fon=(json-front b)
-%-  jobe  :~
-  meta/fon
-  name/s/a
-  body/b
-==
+(jobe meta/fon name/s/a body/b ~)
