@@ -1,0 +1,22 @@
+::
+::::  /hook/json/body/tree
+  ::
+/?    314
+/=    gas    /$    fuel
+/=    dat    /:    /===    /%  /react-json/
+::
+::::
+  ::
+//    /%%%/util
+::
+[util=. +>]
+::
+!:
+::::
+  ::
+^-  json
+=+  ~(. util gas)
+%-  jobe  :~
+  kids/[%a (turn get-kids |=(a=span s/a))]
+  body/dat
+==

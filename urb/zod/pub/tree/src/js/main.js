@@ -1139,12 +1139,15 @@ module.exports = invariant;
 
 },{}],14:[function(require,module,exports){
 module.exports = {
-  get: function(path, query, cb) {
+  get: function(path, type, cb) {
     var url;
-    url = (window.tree.basepath(path)) + ".json";
-    if (query) {
-      url += "?" + query;
+    if (type == null) {
+      type = "body";
     }
+    if (path[0] !== "/") {
+      path = "/" + path;
+    }
+    url = (window.tree.basepath(type + path)) + ".json";
     return $.get(url, {}, function(data) {
       if (cb) {
         return cb(null, data);
