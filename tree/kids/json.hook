@@ -2,23 +2,14 @@
 ::::  /hook/json/kids/tree
   ::
 /?    314
-/=    gas    /$    fuel
 /=    dat    /:    /===
              /^    (map ,@ta json)
              /%    2
              /_    /react-json/
-::
-::::
-  ::
-//    /%%%/util
-::
-[util=. +>]
-::
 !:
 ::::
   ::
 ^-  json
-=+  ~(. util gas)
 %+  joba  %kids
 =-  [%a (turn (~(tap by dat)) -)]
 |=  [a=span b=json] 
