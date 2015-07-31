@@ -142,6 +142,8 @@
     u3_noun u3we_stew_fun(u3_noun);
     u3_noun u3we_stir_fun(u3_noun);
 
+    u3_noun u3wef_drg(u3_noun);
+
     u3_noun u3wer_add(u3_noun);
     u3_noun u3wer_sub(u3_noun);
     u3_noun u3wer_mul(u3_noun);

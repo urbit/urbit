@@ -1,4 +1,4 @@
-!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject
@@ -1288,6 +1288,7 @@
   ::  d=behavior:      return denormals, flush denormals to zero,
   ::                   infinite exponent range
   =>
+    ~%  %cofl  +>  ~
     |%                                                  ::  don't put 0s into [@s @u] args
     ++  rou
       |=  [a=[e=@s a=@u]]  ^-  fn  (rau a &)
@@ -1526,7 +1527,7 @@
         ==
       ?:  &(!l !h)
         $(o (^add (^mul o 10) u))
-      =+  q=|(&(!l h) &(=(l h) (gte (^mul r 2) s)))
+      =+  q=&(h |(!l (gte (^mul r 2) s)))
       =.  o  (^add (^mul o 10) ?:(q +(u) u))
       [k o]
     ::
@@ -1556,6 +1557,7 @@
     ++  lfe  (sum:si emx (sun:si prc))                  ::  2^lfe is larger than all floats
     ++  zer  [e=--0 a=0]
     --
+  ~%  %fl  +  ~
   |%
   ++  rou
     |=  [a=fn]  ^-  fn
@@ -1708,7 +1710,7 @@
   ++  gth
     |=  [a=fn b=fn]  ^-  (unit ,?)  (lth b a)
   ::
-  ++  drg                                               ::  float to decimal
+  ++  drg  ~/  %drg                                     ::  float to decimal
     |=  [a=fn]  ^-  dn
     ?:  ?=([%n *] a)  [%n ~]
     ?:  ?=([%i *] a)  [%i s.a]
@@ -5537,8 +5539,8 @@
             !=(c 0)
         ==
     =+  ^=  l  ?~  (mod d h)
-      (div d h)
-    +((div d h))
+        (div d h)
+      +((div d h))
     =+  r=(sub d (mul h (dec l)))
     =+  [t=0 j=1 k=1]
     =.  t  |-  ^-  @
