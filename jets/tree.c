@@ -206,6 +206,16 @@ static u3j_core _mood__hoon__og_d[] =
     {}
   };
 
+static u3j_harm _mood__hoon__cofl__fl_drg_a[] = {{".2", u3wef_drg}, {}};
+static u3j_core _mood__hoon__cofl__fl_d[] =
+  { { "drg", _mood__hoon__cofl__fl_drg_a },
+    {}
+  };
+static u3j_core _mood__hoon__cofl_d[] =
+  { { "fl", 0, _mood__hoon__cofl__fl_d },
+    {}
+  };
+
 static u3j_harm _mood__hoon__rd_add_a[] = {{".2", u3wer_add}, {}};
 static u3j_harm _mood__hoon__rd_sub_a[] = {{".2", u3wer_sub}, {}};
 static u3j_harm _mood__hoon__rd_mul_a[] = {{".2", u3wer_mul}, {}};
@@ -512,6 +522,7 @@ static u3j_core _mood__hoon_d[] =
     { "stew", 0, _mood__hoon__stew_d },
     { "stir", 0, _mood__hoon__stir_d },
 
+    { "cofl", 0, _mood__hoon__cofl_d },
     { "rd", 0, _mood__hoon__rd_d },
     { "rs", 0, _mood__hoon__rs_d },
     { "rq", 0, _mood__hoon__rq_d },

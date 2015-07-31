@@ -208,6 +208,7 @@ J_D_OFILES=\
 J_E_OFILES=\
        jets/e/aesc.o \
        jets/e/cue.o \
+       jets/e/fl.o \
        jets/e/jam.o \
        jets/e/mat.o \
        jets/e/mink.o \
