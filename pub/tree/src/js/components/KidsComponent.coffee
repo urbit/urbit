@@ -23,6 +23,9 @@ module.exports = recl
     (not _keys.isEmpty()) and _keys.every (k) =>
       @state.cont[@state.path+"/"+k]?
 
+  componentWillUnmount: ->
+    TreeStore.removeChangeListener @_onChangeStore
+
   componentDidMount: ->
     TreeStore.addChangeListener @_onChangeStore
     TreeActions.getPath @state.path,"kids" unless @gotPath()
