@@ -13,11 +13,10 @@
     c3_w eMode;
   } flOptions;
 
-  typedef struct _fn {
-    c3_t s;
+  typedef struct _ea {
     mpz_t e;
     mpz_t a;
-  } fn;
+  } ea;
 
 /* functions
 */
@@ -92,31 +91,30 @@
   }
 
   static void
-  _noun_to_sea(fn* a, u3_noun b)
+  _noun_to_ea(ea* a, u3_noun b)
   {
-    u3_atom c, d, e;
-    u3x_trel(b, &c, &d, &e);
+    u3_atom c, d;
+    u3x_cell(b, &c, &d);
 
-    if ( !(_(u3a_is_cat(d))) ) {
+    if ( !(_(u3a_is_cat(c))) ) {
       u3m_bail(c3__exit);
     }
 
-    a->s = _(c);
-    _satom_to_mp(a->e, d);
-    u3r_mp(a->a, e);
+    _satom_to_mp(a->e, c);
+    u3r_mp(a->a, d);
   }
 
   static u3_noun
-  _sea_to_noun(fn* a)
+  _ea_to_noun(ea* a)
   {
     u3_atom b = _mp_to_satom(a->e);
     u3_atom c = u3i_mp(a->a);
 
-    return u3i_trel(__(a->s), u3k(b), u3k(c));
+    return u3i_cell(u3k(b), u3k(c));
   }
 
   static void
-  _xpd(fn* a, flOptions* b)
+  _xpd(ea* a, flOptions* b)
   {
     size_t z = mpz_sizeinbase(a->a, 2);
     if ( z >= b->precision ) return;
@@ -141,19 +139,189 @@
     mpz_sub_ui(a->e, a->e, c);
   }
 
-  static u3_noun
-  _dragon4(u3_noun a, u3_noun b) {
-    fn c;
+  /* a: floating point number, b: flOptions, i: rounding mode, j: sticky bit */
+  u3_noun
+  u3qef_lug(u3_noun a, u3_noun b, u3_atom i, u3_atom j)
+  {
+    mpz_t v, g, h;
+    ea c;
     flOptions d;
-    _noun_to_sea(&c, a);
+    _noun_to_ea(&c, a);
     _noun_to_flOptions(&d, b);
     if ( mpz_sgn(c.a) == 0 ) {
-      mpz_clear(c.e);
-      mpz_clear(c.a);
-      return u3nt(__(c.s), 0, 0);
+      mpz_clears(d.minExp, d.expWidth, c.a, c.e, 0);
+      return u3m_bail(c3__exit);
+    }
+    size_t m = mpz_sizeinbase(c.a, 2);
+    c3_w q = 0;
+    c3_w f = (m > d.precision) ? m - d.precision : 0;
+    mpz_init(g);
+    if ( (d.eMode != c3__i) &&
+         (mpz_cmp(c.e, d.minExp) < 0) ) {
+      mpz_sub(g, d.minExp, c.e);
+      if ( !mpz_fits_uint_p(g) ) {
+        mpz_clears(g, d.minExp, d.expWidth, c.a, c.e, 0);
+        return u3m_bail(c3__exit);
+      }
+      q = mpz_get_ui(g);
+    }
+    q = c3_max(f, q);
+    mpz_init(v);
+    mpz_tdiv_r_2exp(v, c.a, q);
+    mpz_tdiv_q_2exp(c.a, c.a, q);
+    mpz_add_ui(c.e, c.e, q);
+    mpz_init_set_ui(h, 1);
+    if ( q > 0 ) mpz_mul_2exp(h, h, q - 1);
+
+    if ( mpz_sgn(c.a) == 0 ) {
+      c3_t y;
+      switch ( i ) {
+        default:
+          mpz_clears(v, h, g, d.minExp, d.expWidth, c.a, c.e, 0);
+          return u3m_bail(c3__exit);
+        case c3__fl:
+        case c3__sm:
+          mpz_set_ui(c.a, 0);
+          mpz_set_ui(c.e, 0);
+          mpz_clears(v, h, g, 0);
+          break;
+        case c3__ce:
+        case c3__lg:
+          mpz_set_ui(c.a, 1);
+          mpz_set(c.e, d.minExp);
+          mpz_clears(v, h, g, 0);
+          break;
+        case c3__ne:
+        case c3__nt:
+        case c3__na:
+          if ( (i != c3__na) && _(j) ) {
+            y = (mpz_cmp(v, h) <= 0);
+          } else {
+            y = (mpz_cmp(v, h) < 0);
+          }
+          if ( y ) {
+            mpz_set_ui(c.a, 0);
+            mpz_set_ui(c.e, 0);
+            mpz_clears(v, h, g, 0);
+          } else {
+            mpz_set_ui(c.a, 1);
+            mpz_set(c.e, d.minExp);
+            mpz_clears(v, h, g, 0);
+          }
+          break;
+      }
+      goto end;
+    }
+    _xpd(&c, &d);
+    switch ( i ) {
+      c3_ws x;
+      default:
+        mpz_clears(v, h, g, d.minExp, d.expWidth, c.a, c.e, 0);
+        return u3m_bail(c3__exit);
+      case c3__fl:
+        break;
+      case c3__lg:
+        mpz_add_ui(c.a, c.a, 1);
+        break;
+      case c3__sm:
+        if ( (mpz_sgn(v) != 0) || !_(j) ) break;
+        if ( (mpz_cmp(c.a, d.minExp) == 0) && (d.eMode != c3__i) ) {
+          mpz_sub_ui(c.a, c.a, 1);
+          break;
+        }
+        mpz_mul_2exp(g, c.a, 1);
+        mpz_sub_ui(g, g, 1);
+        if ( mpz_sizeinbase(g, 2) <= d.precision ) {
+          mpz_sub_ui(c.e, c.e, 1);
+          mpz_set(c.a, g);
+        } else {
+          mpz_sub_ui(c.a, c.a, 1);
+        }
+        break;
+      case c3__ce:
+        if ( (mpz_sgn(v) != 0) || !_(j) ) {
+          mpz_add_ui(c.a, c.a, 1);
+        }
+        break;
+      case c3__ne:
+        if ( mpz_sgn(v) == 0 ) break;
+        x = mpz_cmp(v, h);
+        if ( (x == 0) && _(j) ) {
+          if ( mpz_odd_p(c.a) ) {
+            mpz_add_ui(c.a, c.a, 1);
+          }
+        }
+        else if ( x >= 0 ) {
+          mpz_add_ui(c.a, c.a, 1);
+        }
+        break;
+      case c3__na:
+      case c3__nt:
+        if ( mpz_sgn(v) == 0 ) break;
+        x = mpz_cmp(v, h);
+        if ( (x < 0) ) break;
+        if ( (i == c3__nt) && (x == 0) ) {
+          if (!_(j)) mpz_add_ui(c.a, c.a, 1);
+        } else {
+          mpz_add_ui(c.a, c.a, 1);
+        }
+        break;
+    }
+    if ( mpz_sizeinbase(c.a, 2) != d.precision ) {
+      mpz_tdiv_q_2exp(c.a, c.a, 1);
+      mpz_add_ui(c.e, c.e, 1);
+    }
+    if ( mpz_sgn(c.a) == 0 ) {
+      mpz_set_ui(c.e, 0);
+      mpz_clears(v, h, g, 0);
+      goto end;
+    }
+    mpz_set(g, d.minExp);
+    mpz_add(g, g, d.expWidth);
+    if ( (d.eMode != c3__i) && (mpz_cmp(g, c.e) < 0) ) {
+      mpz_clears(v, h, g, d.minExp, d.expWidth, c.a, c.e, 0);
+      return u3nc(c3__i, c3y);
+    }
+    mpz_clears(v, h, g, 0);
+
+    //  all mpz except in c, d structures cleared; c contains result
+    end:
+    if ( d.eMode == c3__f ) {
+      if ( mpz_sizeinbase(c.a, 2) != d.precision ) {
+        mpz_set_ui(c.a, 0);
+        mpz_set_ui(c.e, 0);
+      }
+    }
+    u3_noun ret = u3nq(c3__f, c3y, u3k(_mp_to_satom(c.e)), u3k(u3i_mp(c.a)));
+    mpz_clears(d.minExp, d.expWidth, 0);
+    return ret;
+  }
+
+  u3_noun
+  u3wef_lug(u3_noun cor)
+  {
+    u3_noun a, b, c, d, e;
+    a = u3x_at(u3x_sam, cor);
+    b = u3x_at(30, cor);
+    u3x_trel(a, &c, &d, &e);
+
+    return u3qef_lug(d, b, c, e);
+  }
+
+  u3_noun
+  u3qef_drg(u3_noun a, u3_noun b)
+  {
+    ea c;
+    flOptions d;
+    _noun_to_ea(&c, a);
+    _noun_to_flOptions(&d, b);
+    if ( mpz_sgn(c.a) == 0 ) {
+      mpz_clears(d.minExp, d.expWidth, c.a, c.e, 0);
+      u3m_bail(c3__exit);
     }
     _xpd(&c, &d);
     if ( !mpz_fits_sint_p(c.e) ) {
+      mpz_clears(d.minExp, d.expWidth, c.a, c.e, 0);
       u3m_bail(c3__exit);
     }
     mpz_t r, s, m, i, j, u, o;
@@ -216,33 +384,7 @@
     mpz_set(c.a, o);
     mpz_clears(r, s, m, i, j, u, o, d.minExp, d.expWidth, 0);
 
-    return _sea_to_noun(&c);
-  }
-
-  /* a: floating point number, b: flOptions */
-  u3_noun
-  u3qef_drg(u3_noun a, u3_noun b)
-  {
-    u3_noun c, d;
-    u3x_cell(a, &c, &d); 
-
-    switch ( c ) {
-      default: return u3m_bail(c3__exit);
-      case c3__i: {
-        if (_(d)) {
-          return u3nc(c3__i, c3y);
-        } else {
-          return u3nc(c3__i, c3n);
-        }
-      }
-      case c3__n: {
-        return u3nc(c3__n, u3_nul);
-      }
-      case c3__f: {
-        u3_noun q = _dragon4(d,b);
-        return u3nc(c3__d, u3k(q));
-      }
-    }
+    return _ea_to_noun(&c);
   }
 
   u3_noun
@@ -250,7 +392,7 @@
   {
     u3_noun a, b;
     a = u3x_at(u3x_sam, cor);
-    b = u3x_at(62, cor);
+    b = u3x_at(30, cor);
 
     return u3qef_drg(a, b);
   }

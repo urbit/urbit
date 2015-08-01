@@ -206,13 +206,11 @@ static u3j_core _mood__hoon__og_d[] =
     {}
   };
 
-static u3j_harm _mood__hoon__cofl__fl_drg_a[] = {{".2", u3wef_drg}, {}};
-static u3j_core _mood__hoon__cofl__fl_d[] =
-  { { "drg", _mood__hoon__cofl__fl_drg_a },
-    {}
-  };
+static u3j_harm _mood__hoon__cofl__drg_a[] = {{".2", u3wef_drg}, {}};
+static u3j_harm _mood__hoon__cofl__lug_a[] = {{".2", u3wef_lug}, {}};
 static u3j_core _mood__hoon__cofl_d[] =
-  { { "fl", 0, _mood__hoon__cofl__fl_d },
+  { { "drg", _mood__hoon__cofl__drg_a },
+    { "lug", _mood__hoon__cofl__lug_a },
     {}
   };
 
