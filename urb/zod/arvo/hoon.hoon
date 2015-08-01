@@ -1423,19 +1423,20 @@
           ==
       a
     ::
-    ::  assumes that (met 0 a.a) <= prc!!
     ++  xpd
       |=  [a=[e=@s a=@u]]
-      =+  ?:  =(den %i)  (^sub prc (met 0 a.a))
+      =+  ma=(met 0 a.a)
+      ?<  =(ma 0)
+      =+  ?:  =(den %i)  (^sub prc ma)
           =+  ^=  q
             =+  w=(dif:si e.a emn)
             ?:  (syn:si w)  (abs:si w)  0
-          (min q (^sub prc (met 0 a.a)))
+          (min q (^sub prc ma))
       a(e (dif:si e.a (sun:si -)), a (lsh 0 - a.a))
     ::
     ::  in order: floor, ceiling, nearest (even, away from 0, toward 0), larger, smaller
     ::  t=sticky bit
-    ++  lug
+    ++  lug  ~/  %lug
       |=  [t=?(%fl %ce %ne %na %nt %lg %sm) a=[e=@s a=@u] s=?]  ^-  fn
       ::
       =-                                                ::  if !den, flush denormals to zero
@@ -1468,7 +1469,7 @@
       ::
       =.  a  (xpd a)                                    ::  expand
       ::
-      =.  a  %-  unj
+      =.  a
         ?-  t
           %fl  a
           %lg  a(a +(a.a))
@@ -1491,12 +1492,14 @@
                ?:  =(b y)  ?:  s  a  a(a +(a.a))
                ?:  (^lth b y)  a  a(a +(a.a))
         ==
+      ::
+      =.  a  %-  unj  a
       ?~  a.a  [%f & zer]
       ::
       ?:  =(den %i)  [%f & a]
       ?:  =((cmp:si emx e.a) -1)  [%i &]  [%f & a]      ::  enforce max. exp
     ::
-    ++  drg                                             ::  dragon4
+    ++  drg  ~/  %drg                                   ::  dragon4
       |=  [a=[e=@s a=@u]]  ^-  [@s @u]
       =.  a  ?:  (^lth (met 0 a.a) prc)  (xpd a)  a
       =+  r=(lsh 0 ?:((syn:si e.a) (abs:si e.a) 0) a.a)
@@ -1557,7 +1560,6 @@
     ++  lfe  (sum:si emx (sun:si prc))                  ::  2^lfe is larger than all floats
     ++  zer  [e=--0 a=0]
     --
-  ~%  %fl  +  ~
   |%
   ++  rou
     |=  [a=fn]  ^-  fn
@@ -1710,7 +1712,7 @@
   ++  gth
     |=  [a=fn b=fn]  ^-  (unit ,?)  (lth b a)
   ::
-  ++  drg  ~/  %drg                                     ::  float to decimal
+  ++  drg                                               ::  float to decimal
     |=  [a=fn]  ^-  dn
     ?:  ?=([%n *] a)  [%n ~]
     ?:  ?=([%i *] a)  [%i s.a]
