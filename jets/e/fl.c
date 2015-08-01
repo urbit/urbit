@@ -6,7 +6,7 @@
 /* structures
 */
   typedef struct _flOptions {
-    mpz_t precision;
+    c3_w precision;
     mpz_t minExp;
     mpz_t expWidth;
     c3_w rMode;
@@ -65,15 +65,22 @@
     }
   }
 
-#if 0
   static void
-  _get_options(flOptions* a, u3_noun b)
+  _noun_to_flOptions(flOptions* a, u3_noun b)
   {
     u3_noun c;
     u3_atom d, e, f, g, h;
     u3x_trel(b, &c, &d, &e);
     u3x_trel(c, &f, &g, &h);
-    u3r_mp(a->precision, f);
+
+    mpz_t i;
+    u3r_mp(i, f);
+    if ( !mpz_fits_uint_p(i) ) {
+      u3m_bail(c3__exit);
+    }
+    a->precision = mpz_get_ui(i);
+    mpz_clear(i);
+
     _satom_to_mp(a->minExp, g);
     u3r_mp(a->expWidth, h);
 
@@ -83,7 +90,6 @@
     a->rMode = d;
     a->eMode = e;
   }
-#endif
 
   static void
   _noun_to_sea(fn* a, u3_noun b)
@@ -110,31 +116,47 @@
   }
 
   static void
-  _xpd(fn* a, c3_w p)
+  _xpd(fn* a, flOptions* b)
   {
-    size_t b = mpz_sizeinbase(a->a, 2);
-    if ( b >= p ) return;
-    c3_w c = p - b;
+    size_t z = mpz_sizeinbase(a->a, 2);
+    if ( z >= b->precision ) return;
+    c3_w c = b->precision - z;
+
+    if ( b->eMode != c3__i ) {
+      mpz_t i;
+      mpz_init_set(i, a->e);
+      mpz_sub(i, i, b->minExp);
+      if ( mpz_sgn(i) < 0 ) {
+        c = 0;
+      }
+      else if ( mpz_fits_uint_p(i) )
+      {
+        c3_w d = mpz_get_ui(i);
+        c = c3_min(c, d);
+      }
+      mpz_clear(i);
+    }
+
     mpz_mul_2exp(a->a, a->a, c);
-    b = mpz_sizeinbase(a->a, 2);
     mpz_sub_ui(a->e, a->e, c);
   }
 
   static u3_noun
-  _dragon4(u3_noun a, c3_w b) {
+  _dragon4(u3_noun a, u3_noun b) {
     fn c;
+    flOptions d;
     _noun_to_sea(&c, a);
+    _noun_to_flOptions(&d, b);
     if ( mpz_sgn(c.a) == 0 ) {
       mpz_clear(c.e);
       mpz_clear(c.a);
       return u3nt(__(c.s), 0, 0);
     }
-    _xpd(&c, b);
+    _xpd(&c, &d);
     if ( !mpz_fits_sint_p(c.e) ) {
       u3m_bail(c3__exit);
     }
     mpz_t r, s, m, i, j, u, o;
-    c3_ds k = 0;
     mpz_init_set(r, c.a);
     mpz_init_set_ui(s, 1);
     mpz_init_set_ui(m, 1);
@@ -149,8 +171,9 @@
       mpz_mul_2exp(s, s, mpz_get_ui(c.e));
     }
     mpz_cdiv_q_ui(i, s, 10);
+    mpz_set_ui(c.e, 0);
     while ( mpz_cmp(r, i) < 0 ) {
-      k = k - 1;
+      mpz_sub_ui(c.e, c.e, 1);
       mpz_mul_ui(r, r, 10);
       mpz_mul_ui(m, m, 10);
     }
@@ -162,12 +185,12 @@
         break;
       }
       mpz_mul_ui(s, s, 10);
-      k = k + 1;
+      mpz_add_ui(c.e, c.e, 1);
     }
     mpz_init(u);
     mpz_init_set_ui(o, 0);
     while ( 1 ) {
-      k = k - 1;
+      mpz_sub_ui(c.e, c.e, 1);
       mpz_mul_ui(r, r, 10);
       mpz_mul_ui(m, m, 10);
       mpz_tdiv_qr(u, r, r, s);
@@ -190,23 +213,18 @@
       mpz_mul_ui(o, o, 10);
       mpz_add(o, o, u);
     }
-    mpz_set_si(c.e, k);
     mpz_set(c.a, o);
-    mpz_clears(r, s, m, i, j, u, o, 0);
+    mpz_clears(r, s, m, i, j, u, o, d.minExp, d.expWidth, 0);
 
     return _sea_to_noun(&c);
   }
 
-  /* a: floating point number, b: min. precision */
+  /* a: floating point number, b: flOptions */
   u3_noun
-  u3qef_drg(u3_noun a, u3_atom b)
+  u3qef_drg(u3_noun a, u3_noun b)
   {
     u3_noun c, d;
     u3x_cell(a, &c, &d); 
-
-    if ( !(_(u3a_is_cat(c))) ) {
-      return u3m_bail(c3__exit);
-    }
 
     switch ( c ) {
       default: return u3m_bail(c3__exit);
@@ -221,9 +239,6 @@
         return u3nc(c3__n, u3_nul);
       }
       case c3__f: {
-        if ( !(_(u3a_is_cat(b))) ) {
-          return u3m_bail(c3__exit);
-        }
         u3_noun q = _dragon4(d,b);
         return u3nc(c3__d, u3k(q));
       }
@@ -235,7 +250,7 @@
   {
     u3_noun a, b;
     a = u3x_at(u3x_sam, cor);
-    b = u3x_at(248, cor);
+    b = u3x_at(62, cor);
 
     return u3qef_drg(a, b);
   }
