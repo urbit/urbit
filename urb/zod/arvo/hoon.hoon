@@ -1729,14 +1729,14 @@
   --
 ::
 ++  ff                                                  ::  ieee754 format
-  |_  [[w=@u p=@u b=@s f=?] r=?(%n %u %d %z %a)]
+  |_  [[w=@u p=@u b=@s] r=?(%n %u %d %z %a)]
   ::
   ++  sz  +((^add w p))
   ++  sb  (bex (^add w p))
+  ++  me  (dif:si (dif:si --1 b) (sun:si p))
   ::
   ++  pa
-    =+  i=(dif:si (dif:si --1 b) (sun:si p))
-    %*(. fl p +(p), v i, w (^sub (bex w) 3), d ?:(f %f %d), r r)
+    %*(. fl p +(p), v me, w (^sub (bex w) 3), d %d, r r)
   ::
   ++  sea
     |=  [a=@r]  ^-  fn
@@ -1744,10 +1744,10 @@
     =+  e=(cut 0 [p w] a)
     =+  s==(0 (cut 0 [(^add p w) 1] a))
     ?:  =(e 0)
-      ?:  =(f 0)  [%f s --0 0]  [%f s (dif:si --1 b) f]
+      ?:  =(f 0)  [%f s --0 0]  [%f s me f]
     ?:  =(e (fil 0 w 1))
       ?:  =(f 0)  [%i s]  [%n ~]
-    =+  q=(dif:si (sun:si e) (sum:si b (sun:si p)))
+    =+  q=:(sum:si (sun:si e) me -1)
     =+  r=(^add f (bex p))
     [%f s q r]
   ::
@@ -1762,10 +1762,10 @@
     ?~  a.a  ?:  s.a  `@r`0  sb
     =+  ma=(met 0 a.a)
     ?.  =(ma +(p))
-      ?>  =(e.a (dif:si --1 b))
+      ?>  =(e.a me)
       ?>  (^lth ma +(p))
       ?:  s.a  `@r`a.a  (^add a.a sb)
-    =+  q=(sum:si (sum:si e.a (sun:si p)) b)
+    =+  q=(sum:si (dif:si e.a me) --1)
     =+  r=(^add (lsh 0 p (abs:si q)) (end 0 p a.a))
     ?:  s.a  r  (^add r sb)
   ::
@@ -1807,7 +1807,7 @@
   ~%  %rd  +  ~
   |%
   ++  ma
-    %*(. ff w 11, p 52, b --1.023, f %.n)
+    %*(. ff w 11, p 52, b --1.023)
   ++  sea
     |=  [a=@rd]  (sea:ma a)
   ++  bit
@@ -1842,7 +1842,7 @@
   ~%  %rs  +  ~
   |%
   ++  ma
-    %*(. ff w 8, p 23, b --127, f %.n)
+    %*(. ff w 8, p 23, b --127)
   ++  sea
     |=  [a=@rs]  (sea:ma a)
   ++  bit
@@ -1877,7 +1877,7 @@
   ~%  %rq  +  ~
   |%
   ++  ma
-    %*(. ff w 15, p 112, b --16.383, f %.n)
+    %*(. ff w 15, p 112, b --16.383)
   ++  sea
     |=  [a=@rq]  (sea:ma a)
   ++  bit
@@ -1911,7 +1911,7 @@
 ++  rh
   |%
   ++  ma
-    %*(. ff w 5, p 10, b --15, f %.n)
+    %*(. ff w 5, p 10, b --15)
   ++  sea
     |=  [a=@rh]  (sea:ma a)
   ++  bit
