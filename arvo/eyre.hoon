@@ -30,7 +30,7 @@
           $%  [%deal p=sock q=cush]                     ::  full transmission
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
-          $?  $:  %a                                    ::  by %ames
+          $?  $:  %a                                    ::  by %aformedmes
           $%  [%woot p=ship q=coop]                     ::
           ==  ==                                        ::
               $:  %b                                    ::  by %behn
@@ -761,8 +761,8 @@
           ?+  p.cay  q.cay          :: inject dependency long-poll
             %urb  =<  (slam !>(.) q.cay)
                   |=  urb=manx
-                  ~|  %malformed-urb
-                  ?>  ?=([[%html ~] [[%head ~] *] [[%body ~] ^] ~] urb)
+                  ~|  [%malformed-urb urb]
+                  ?>  ?=([[%html ~] [[%head ~] *] [[%body ~] *] ~] urb)
                   (inject p.sih urb)
           ==
         ~|  q.q.cay
