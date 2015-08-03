@@ -1371,7 +1371,7 @@
         =+  [w=(met 0 a.a) x=(^mul +(prc) 2)]
         =+  ?:((^lth w x) (^sub x w) 0)
         =+  ?:  =((dis - 1) (dis (abs:si e.a) 1))  -
-          (^add - 1)                                    ::  enforce even exponent
+          (^add - 1)
         a(e (dif:si e.a (sun:si -)), a (lsh 0 - a.a))
       =+  [y=(^sqt a.a) z=(frd e.a)]
       (rau [z p.y] =(q.y 0))
@@ -1412,17 +1412,6 @@
       |-  ?:  =((end 0 1 a.a) 1)  a
       $(a.a (rsh 0 1 a.a), e.a (sum:si e.a --1))
     ::
-    ++  unj                                             ::  used internally by rounding
-      |=  [a=[e=@s a=@u]]
-      =+  ma=(met 0 a.a)
-      ?:  =(ma +(prc))
-        a(a (rsh 0 1 a.a), e (sum:si e.a --1))
-      ?>  ?|
-            =(ma prc)
-            &(!=(den %i) =(e.a emn) (^lth ma prc))
-          ==
-      a
-    ::
     ++  xpd
       |=  [a=[e=@s a=@u]]
       =+  ma=(met 0 a.a)
@@ -1434,12 +1423,11 @@
           (min q (^sub prc ma))
       a(e (dif:si e.a (sun:si -)), a (lsh 0 - a.a))
     ::
-    ::  in order: floor, ceiling, nearest (even, away from 0, toward 0), larger, smaller
-    ::  t=sticky bit
+    ::  in order: floor, ceiling, nearest (even, away from 0, toward 0),
+    ::            larger, smaller; t=sticky bit
     ++  lug  ~/  %lug
       |=  [t=?(%fl %ce %ne %na %nt %lg %sm) a=[e=@s a=@u] s=?]  ^-  fn
-      ::
-      =-                                                ::  if !den, flush denormals to zero
+      =-
         ?.  =(den %f)  -
         ?.  ?=([%f *] -)  -
         ?:  =((met 0 ->+>) prc)  -  [%f & zer]
@@ -1493,7 +1481,8 @@
                ?:  (^lth b y)  a  a(a +(a.a))
         ==
       ::
-      =.  a  %-  unj  a
+      =.  a  ?.  =((met 0 a.a) +(prc))  a
+        a(a (rsh 0 1 a.a), e (sum:si e.a --1))
       ?~  a.a  [%f & zer]
       ::
       ?:  =(den %i)  [%f & a]
