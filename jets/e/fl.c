@@ -75,15 +75,19 @@
     mpz_t i;
     u3r_mp(i, f);
     if ( !mpz_fits_uint_p(i) ) {
+      mpz_clear(i);
       u3m_bail(c3__exit);
     }
     a->precision = mpz_get_ui(i);
     mpz_clear(i);
 
+    if ( a->precision < 2 ) u3m_bail(c3__exit);
+
     _satom_to_mp(a->minExp, g);
     u3r_mp(a->expWidth, h);
 
     if ( !(_(u3a_is_cat(d)) && _(u3a_is_cat(e))) ) {
+      mpz_clears(a->minExp, a->expWidth, 0);
       u3m_bail(c3__exit);
     }
     a->rMode = d;
