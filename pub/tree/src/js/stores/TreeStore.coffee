@@ -47,12 +47,11 @@ TreeStore = _.extend EventEmitter.prototype, {
     if kids?.length isnt 0
       for k,v of kids
         _snip[path+"/"+v.name] = 
-          head: window.tree.reactify {gn:'h1',c:v.head}
-          body: window.tree.reactify {gn:'div',c:v.snip}
-          orig: {head:v.head,body:v.snip}
+          head: {gn:'h1',c:v.head}
+          body: {gn:'div',c:v.snip}
           meta: v.meta
     else
-      _cont[path] = window.tree.reactify
+      _cont[path] =
         gn: 'div'
         c: [ {gn:'h1',  ga:{className:'error'}, c:['Error: Empty path']}
              {gn:'div', c:[
@@ -64,11 +63,11 @@ TreeStore = _.extend EventEmitter.prototype, {
   loadKids: (path,kids) ->
     @mergePathToTree path,_.pluck(kids,"name")
     for k,v of kids
-      _cont[path+"/"+v.name] = window.tree.reactify v.body
+      _cont[path+"/"+v.name] = v.body
 
   loadPath: (path,body,kids) ->
     @mergePathToTree path,_.pluck(kids,"name")
-    _cont[path] = window.tree.reactify body
+    _cont[path] = body
 
   getKids: -> _.keys @getTree _curr.split("/")
 

@@ -1,5 +1,6 @@
 TreeStore   = require '../stores/TreeStore.coffee'
 TreeActions = require '../actions/TreeActions.coffee'
+reactify    = (manx)-> React.createElement window.tree.reactify, {manx}
 
 recl = React.createClass
 [div,a,ul,li,hr] = [React.DOM.div,React.DOM.a,React.DOM.ul,React.DOM.li,React.DOM.hr]
@@ -32,5 +33,6 @@ module.exports = recl
 
   render: ->
     div {key:"kids-"+@state.path,className:"kids"},
-      for v in _.keys(@state.tree).sort()
-        [(div {key:v}, @state.cont[@state.path+"/"+v]),(hr {},"")]
+      unless @gotPath() then (reactify null)
+      else for v in _.keys(@state.tree).sort()
+        [(div {key:v}, reactify @state.cont[@state.path+"/"+v]), (hr {},"")]

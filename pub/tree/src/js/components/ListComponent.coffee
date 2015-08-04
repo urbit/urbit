@@ -4,6 +4,7 @@ TreeStore   = require '../stores/TreeStore.coffee'
 TreeActions = require '../actions/TreeActions.coffee'
 
 load        = React.createFactory require './LoadComponent.coffee'
+reactify    = (manx)-> React.createElement window.tree.reactify, {manx}
 
 recl = React.createClass
 [div,a,ul,li,h1] = [React.DOM.div,React.DOM.a,React.DOM.ul,React.DOM.li,React.DOM.h1]
@@ -45,17 +46,16 @@ module.exports = recl
         a {href,className:(clas preview: @props.dataPreview?)},
           if not @props.dataPreview? then (h1 {},item)
           else if @props.dataType is 'post'
-            orig = snip.orig
             head = 
-              gn: 'h1'
-              c: if snip.meta?.title
-                  [snip.meta.title]
-                 else orig.head
-            window.tree.reactify
+              if snip.meta?.title
+                gn: 'h1'
+                c: [snip.meta.title]
+              else snip.head
+            reactify
               gn: 'div'
-              c: [head, (orig.body.slice 0,2)...]
-          else if @props.titlesOnly? then snip.head
-          else [snip.head, snip.body]
+              c: [head, (snip.body.c.slice 0,2)...]
+          else if @props.titlesOnly? then reactify snip.head
+          else [(reactify snip.head), (reactify snip.body)]
     
   render: ->
     k = "list"

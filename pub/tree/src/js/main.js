@@ -64,11 +64,13 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":8,"../persistence/TreePersistence.coffee":14}],2:[function(require,module,exports){
-var BodyComponent, TreeActions, TreeStore, a, div, recl, ref,
+},{"../dispatcher/Dispatcher.coffee":9,"../persistence/TreePersistence.coffee":15}],2:[function(require,module,exports){
+var BodyComponent, TreeActions, TreeStore, a, div, reactify, recl, ref,
   slice = [].slice;
 
-BodyComponent = require('./BodyComponent.coffee');
+BodyComponent = React.createFactory(require('./BodyComponent.coffee'));
+
+reactify = React.createFactory(require('./Reactify.coffee'));
 
 TreeStore = require('../stores/TreeStore.coffee');
 
@@ -225,7 +227,9 @@ module.exports = recl({
     }, "");
   },
   toText: function(elem) {
-    return $(React.renderToStaticMarkup(elem)).text();
+    return $(React.renderToStaticMarkup(reactify({
+      manx: elem
+    }))).text();
   },
   renderParts: function() {
     var _sibs, ci, curr, j, k, ref1, style, up;
@@ -295,26 +299,25 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":15,"./BodyComponent.coffee":3}],3:[function(require,module,exports){
-var TreeActions, TreeStore, div, input, load, recl, ref, textarea;
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":16,"./BodyComponent.coffee":3,"./Reactify.coffee":8}],3:[function(require,module,exports){
+var TreeActions, TreeStore, div, reactify, recl;
+
+reactify = React.createFactory(require('./Reactify.coffee'));
 
 TreeStore = require('../stores/TreeStore.coffee');
 
 TreeActions = require('../actions/TreeActions.coffee');
 
-load = require('./LoadComponent.coffee');
-
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = ref[0], input = ref[1], textarea = ref[2];
+div = React.DOM.div;
 
 module.exports = recl({
   displayName: "Body",
   stateFromStore: function() {
     return {
       body: TreeStore.getBody(),
-      curr: TreeStore.getCurr(),
-      cont: TreeStore.getCont()
+      curr: TreeStore.getCurr()
     };
   },
   componentDidMount: function() {
@@ -335,19 +338,18 @@ module.exports = recl({
     return this.setState(this.stateFromStore());
   },
   render: function() {
-    var ref1;
     return div({}, div({
       id: 'body',
       key: "body" + this.state.curr
-    }, (ref1 = this.state.body) != null ? ref1 : div({
-      className: "loading"
-    }, load({}, ""))));
+    }, reactify({
+      manx: this.state.body
+    })));
   }
 });
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":15,"./LoadComponent.coffee":7}],4:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":16,"./Reactify.coffee":8}],4:[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -372,11 +374,17 @@ module.exports = recl({
 
 
 },{}],5:[function(require,module,exports){
-var TreeActions, TreeStore, a, div, hr, li, recl, ref, ul;
+var TreeActions, TreeStore, a, div, hr, li, reactify, recl, ref, ul;
 
 TreeStore = require('../stores/TreeStore.coffee');
 
 TreeActions = require('../actions/TreeActions.coffee');
+
+reactify = function(manx) {
+  return React.createElement(window.tree.reactify, {
+    manx: manx
+  });
+};
 
 recl = React.createClass;
 
@@ -424,25 +432,29 @@ module.exports = recl({
       className: "kids"
     }, (function() {
       var i, len, ref1, results;
-      ref1 = _.keys(this.state.tree).sort();
-      results = [];
-      for (i = 0, len = ref1.length; i < len; i++) {
-        v = ref1[i];
-        results.push([
-          div({
-            key: v
-          }, this.state.cont[this.state.path + "/" + v]), hr({}, "")
-        ]);
+      if (!this.gotPath()) {
+        return reactify(null);
+      } else {
+        ref1 = _.keys(this.state.tree).sort();
+        results = [];
+        for (i = 0, len = ref1.length; i < len; i++) {
+          v = ref1[i];
+          results.push([
+            div({
+              key: v
+            }, reactify(this.state.cont[this.state.path + "/" + v])), hr({}, "")
+          ]);
+        }
+        return results;
       }
-      return results;
     }).call(this));
   }
 });
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":15}],6:[function(require,module,exports){
-var TreeActions, TreeStore, a, clas, div, h1, li, load, recl, ref, ul,
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":16}],6:[function(require,module,exports){
+var TreeActions, TreeStore, a, clas, div, h1, li, load, reactify, recl, ref, ul,
   slice = [].slice;
 
 clas = require('classnames');
@@ -452,6 +464,12 @@ TreeStore = require('../stores/TreeStore.coffee');
 TreeActions = require('../actions/TreeActions.coffee');
 
 load = React.createFactory(require('./LoadComponent.coffee'));
+
+reactify = function(manx) {
+  return React.createElement(window.tree.reactify, {
+    manx: manx
+  });
+};
 
 recl = React.createClass;
 
@@ -487,7 +505,7 @@ module.exports = recl({
     }
   },
   renderList: function() {
-    var _keys, head, href, i, item, len, orig, path, ref1, ref2, results, snip;
+    var _keys, head, href, i, item, len, path, ref1, ref2, results, snip;
     if (!this.gotPath()) {
       return div({
         className: "loading"
@@ -510,13 +528,13 @@ module.exports = recl({
         className: clas({
           preview: this.props.dataPreview != null
         })
-      }, this.props.dataPreview == null ? h1({}, item) : this.props.dataType === 'post' ? (orig = snip.orig, head = {
+      }, this.props.dataPreview == null ? h1({}, item) : this.props.dataType === 'post' ? (head = ((ref2 = snip.meta) != null ? ref2.title : void 0) ? {
         gn: 'h1',
-        c: ((ref2 = snip.meta) != null ? ref2.title : void 0) ? [snip.meta.title] : orig.head
-      }, window.tree.reactify({
+        c: [snip.meta.title]
+      } : snip.head, reactify({
         gn: 'div',
-        c: [head].concat(slice.call(orig.body.slice(0, 2)))
-      })) : this.props.titlesOnly != null ? snip.head : [snip.head, snip.body])));
+        c: [head].concat(slice.call(snip.body.c.slice(0, 2)))
+      })) : this.props.titlesOnly != null ? reactify(snip.head) : [reactify(snip.head), reactify(snip.body)])));
     }
     return results;
   },
@@ -538,7 +556,7 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":15,"./LoadComponent.coffee":7,"classnames":10}],7:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":16,"./LoadComponent.coffee":7,"classnames":11}],7:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -578,6 +596,60 @@ module.exports = recl({
 
 
 },{}],8:[function(require,module,exports){
+var codemirror, components, kids, list, load, lost, recl, span;
+
+recl = React.createClass;
+
+span = React.DOM.span;
+
+load = require('./LoadComponent.coffee');
+
+codemirror = React.createFactory(require('./CodeMirror.coffee'));
+
+list = React.createFactory(require('./ListComponent.coffee'));
+
+kids = React.createFactory(require('./KidsComponent.coffee'));
+
+lost = React.createFactory(recl({
+  render: function() {
+    return div({}, "lost");
+  }
+}));
+
+components = {
+  kids: kids,
+  list: list,
+  lost: lost,
+  codemirror: codemirror
+};
+
+module.exports = recl({
+  displayName: "Virtual",
+  render: function() {
+    return this.walk(this.props.manx);
+  },
+  walk: function(obj, key) {
+    var ref;
+    switch (false) {
+      case !(obj == null):
+        return span({
+          className: "loading"
+        }, load({}, ""));
+      case typeof obj !== "string":
+        return obj;
+      case obj.gn == null:
+        return React.createElement((ref = components[obj.gn]) != null ? ref : obj.gn, $.extend({
+          key: key
+        }, obj.ga), obj.c.map(this.walk));
+      default:
+        throw "Bad react-json " + (JSON.stringify(obj));
+    }
+  }
+});
+
+
+
+},{"./CodeMirror.coffee":4,"./KidsComponent.coffee":5,"./ListComponent.coffee":6,"./LoadComponent.coffee":7}],9:[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -599,31 +671,18 @@ module.exports = _.extend(new Dispatcher(), {
 
 
 
-},{"flux":11}],9:[function(require,module,exports){
+},{"flux":12}],10:[function(require,module,exports){
 var rend;
 
 rend = React.render;
 
 $(function() {
-  var $body, TreeActions, TreePersistence, body, checkMove, checkScroll, codemirror, components, frag, head, kids, list, lost, po, setSo, so;
+  var $body, TreeActions, TreePersistence, body, checkMove, checkScroll, frag, head, po, setSo, so;
   $body = $('body');
   React.initializeTouchEvents(true);
-  codemirror = React.createFactory(require('./components/CodeMirror.coffee'));
   head = React.createFactory(require('./components/AnchorComponent.coffee'));
   body = React.createFactory(require('./components/BodyComponent.coffee'));
-  list = React.createFactory(require('./components/ListComponent.coffee'));
-  kids = React.createFactory(require('./components/KidsComponent.coffee'));
-  lost = React.createClass({
-    render: function() {
-      return React.DOM.div({}, "lost");
-    }
-  });
-  components = {
-    kids: kids,
-    list: list,
-    lost: lost,
-    codemirror: codemirror
-  };
+  window.tree.reactify = require('./components/Reactify.coffee');
   window.tree._basepath = window.urb.util.basepath("/");
   window.tree._basepath += (window.location.pathname.replace(window.tree._basepath, "")).split("/")[0];
   window.tree.basepath = function(path) {
@@ -639,17 +698,6 @@ $(function() {
   };
   window.tree.fragpath = function(path) {
     return path.replace(window.tree._basepath, "");
-  };
-  window.tree.reactify = function(obj) {
-    var ref, ref1;
-    switch (false) {
-      case typeof obj !== "string":
-        return obj;
-      case obj.gn == null:
-        return React.createElement((ref = components[obj.gn]) != null ? ref : obj.gn, (ref1 = obj.ga) != null ? ref1 : {}, obj.c.map(window.tree.reactify));
-      default:
-        throw "Bad react-json " + (JSON.stringify(obj));
-    }
   };
   TreeActions = require('./actions/TreeActions.coffee');
   TreePersistence = require('./persistence/TreePersistence.coffee');
@@ -770,7 +818,7 @@ $(function() {
 
 
 
-},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":3,"./components/CodeMirror.coffee":4,"./components/KidsComponent.coffee":5,"./components/ListComponent.coffee":6,"./persistence/TreePersistence.coffee":14}],10:[function(require,module,exports){
+},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":3,"./components/Reactify.coffee":8,"./persistence/TreePersistence.coffee":15}],11:[function(require,module,exports){
 /*!
   Copyright (c) 2015 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -821,7 +869,7 @@ $(function() {
 
 }());
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -833,7 +881,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":12}],12:[function(require,module,exports){
+},{"./lib/Dispatcher":13}],13:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1085,7 +1133,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":13}],13:[function(require,module,exports){
+},{"./invariant":14}],14:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1140,7 +1188,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 module.exports = {
   get: function(path, query, cb) {
     var url;
@@ -1158,7 +1206,7 @@ module.exports = {
 
 
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, TreeStore, _cont, _curr, _got_snip, _snip, _tree, clog;
 
 EventEmitter = require('events').EventEmitter;
@@ -1239,23 +1287,19 @@ TreeStore = _.extend(EventEmitter.prototype, {
       for (k in kids) {
         v = kids[k];
         _snip[path + "/" + v.name] = {
-          head: window.tree.reactify({
+          head: {
             gn: 'h1',
             c: v.head
-          }),
-          body: window.tree.reactify({
+          },
+          body: {
             gn: 'div',
             c: v.snip
-          }),
-          orig: {
-            head: v.head,
-            body: v.snip
           },
           meta: v.meta
         };
       }
     } else {
-      _cont[path] = window.tree.reactify({
+      _cont[path] = {
         gn: 'div',
         c: [
           {
@@ -1277,7 +1321,7 @@ TreeStore = _.extend(EventEmitter.prototype, {
             ]
           }
         ]
-      });
+      };
     }
     return _got_snip[path] = true;
   },
@@ -1287,13 +1331,13 @@ TreeStore = _.extend(EventEmitter.prototype, {
     results = [];
     for (k in kids) {
       v = kids[k];
-      results.push(_cont[path + "/" + v.name] = window.tree.reactify(v.body));
+      results.push(_cont[path + "/" + v.name] = v.body);
     }
     return results;
   },
   loadPath: function(path, body, kids) {
     this.mergePathToTree(path, _.pluck(kids, "name"));
-    return _cont[path] = window.tree.reactify(body);
+    return _cont[path] = body;
   },
   getKids: function() {
     return _.keys(this.getTree(_curr.split("/")));
@@ -1397,7 +1441,7 @@ module.exports = TreeStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":8,"events":16}],16:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":9,"events":17}],17:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1700,4 +1744,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[9]);
+},{}]},{},[10]);
