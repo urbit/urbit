@@ -42,14 +42,14 @@ TreeStore = _.extend EventEmitter.prototype, {
   getSnip: -> _snip
   gotSnip: (path)-> !!_got_snip[path]
 
-  loadSnip: (path,snip) ->
-    @mergePathToTree path,_.pluck(snip,"name")
-    if snip?.length isnt 0
-      for k,v of snip
+  loadSnip: (path,kids) ->
+    @mergePathToTree path,_.pluck(kids,"name")
+    if kids?.length isnt 0
+      for k,v of kids
         _snip[path+"/"+v.name] = 
-          head: window.tree.reactify v.body.head
-          body: window.tree.reactify v.body.body
-          orig: v.body
+          head: window.tree.reactify {gn:'h1',c:v.head}
+          body: window.tree.reactify {gn:'div',c:v.snip}
+          orig: {head:v.head,body:v.snip}
           meta: v.meta
     else
       _cont[path] = window.tree.reactify
@@ -67,7 +67,7 @@ TreeStore = _.extend EventEmitter.prototype, {
       _cont[path+"/"+v.name] = window.tree.reactify v.body
 
   loadPath: (path,body,kids) ->
-    @mergePathToTree path,kids
+    @mergePathToTree path,_.pluck(kids,"name")
     _cont[path] = window.tree.reactify body
 
   getKids: -> _.keys @getTree _curr.split("/")
@@ -134,7 +134,7 @@ TreeStore.dispatchToken = MessageDispatcher.register (payload) ->
       TreeStore.loadPath action.path,action.body,action.kids,action.snip
       TreeStore.emitChange()
     when 'snip-load'
-      TreeStore.loadSnip action.path,action.snip
+      TreeStore.loadSnip action.path,action.kids
       TreeStore.emitChange()
     when 'kids-load'
       TreeStore.loadKids action.path,action.kids

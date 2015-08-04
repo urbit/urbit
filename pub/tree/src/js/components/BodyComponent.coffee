@@ -21,16 +21,14 @@ module.exports = recl
 
   componentDidUpdate: (_props,_state) -> 
     if _state.curr isnt @state.curr
-      setTimeout (=> @getPath _state.curr), 0
+      console.log "this wasn't happening"
+      #setTimeout (=> @getPath _state.curr), 0
 
   getInitialState: -> @stateFromStore()
 
   _onChangeStore: ->  
     @setState @stateFromStore()
  
-  getPath: (path) -> 
-    TreeActions.getPath path unless @state.cont[path]?
-
   render: -> (div {},
     (div {id:'body',key:"body"+@state.curr},
       (@state.body ? (div {className:"loading"}, (load {}, "")))))
