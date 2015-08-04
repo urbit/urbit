@@ -1,17 +1,16 @@
+reactify  = React.createFactory require './Reactify.coffee'
+
 TreeStore   = require '../stores/TreeStore.coffee'
 TreeActions = require '../actions/TreeActions.coffee'
 
-load        = require './LoadComponent.coffee'
-
 recl = React.createClass
-[div,input,textarea] = [React.DOM.div,React.DOM.input,React.DOM.textarea]
+div  = React.DOM.div
 
 module.exports = recl
   displayName: "Body"
   stateFromStore: -> 
     body:TreeStore.getBody()
     curr:TreeStore.getCurr()
-    cont:TreeStore.getCont()
 
   componentDidMount: -> 
     TreeStore.addChangeListener @_onChangeStore
@@ -30,5 +29,4 @@ module.exports = recl
     @setState @stateFromStore()
  
   render: -> (div {},
-    (div {id:'body',key:"body"+@state.curr},
-      (@state.body ? (div {className:"loading"}, (load {}, "")))))
+    (div {id:'body',key:"body"+@state.curr}, (reactify manx: @state.body)))

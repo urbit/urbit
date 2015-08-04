@@ -5,19 +5,9 @@ $ ->
 
   React.initializeTouchEvents(true)
 
-  codemirror        = React.createFactory require './components/CodeMirror.coffee'
-  head              = React.createFactory require './components/AnchorComponent.coffee'
-  body              = React.createFactory require './components/BodyComponent.coffee'
-  list              = React.createFactory require './components/ListComponent.coffee'
-  kids              = React.createFactory require './components/KidsComponent.coffee'
-  lost              = React.createClass
-    render: -> (React.DOM.div {}, "lost")
-  components = 
-    kids:kids
-    list:list
-    lost:lost
-    codemirror:codemirror
-  
+  head = React.createFactory require './components/AnchorComponent.coffee'
+  body = React.createFactory require './components/BodyComponent.coffee'
+  window.tree.reactify = require './components/Reactify.coffee' # sigh
   
   window.tree._basepath = window.urb.util.basepath("/")
   window.tree._basepath +=
@@ -28,14 +18,6 @@ $ ->
     if _path.slice(-1) is "/" then _path = _path.slice(0,-1)
     _path
   window.tree.fragpath = (path) -> path.replace window.tree._basepath,""
-  window.tree.reactify = (obj) -> switch
-    # manx: {fork: ["string", {gn:"string" ga:{dict:"string"} c:{list:"manx"}}]}
-    when typeof obj == "string" then obj
-    when obj.gn?
-      React.createElement components[obj.gn] ? obj.gn,
-                          obj.ga ? {},
-                          obj.c.map window.tree.reactify
-    else throw "Bad react-json #{JSON.stringify obj}"
 
   TreeActions       = require './actions/TreeActions.coffee'
   TreePersistence   = require './persistence/TreePersistence.coffee'

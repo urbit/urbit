@@ -1,4 +1,5 @@
-BodyComponent = require './BodyComponent.coffee'
+BodyComponent = React.createFactory require './BodyComponent.coffee'
+reactify      = React.createFactory require './Reactify.coffee'
 
 TreeStore   = require '../stores/TreeStore.coffee'
 TreeActions = require '../actions/TreeActions.coffee'
@@ -117,7 +118,7 @@ module.exports = recl
     href = window.tree.basepath path
     (a {href,key:"arow-#{name}",className:"arow-#{name}"},"")
   
-  toText: (elem)-> $(React.renderToStaticMarkup elem).text()
+  toText: (elem)-> $(React.renderToStaticMarkup reactify manx: elem).text()
   
   renderParts: -> [
     if @state.pare then _.filter [
