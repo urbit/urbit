@@ -1,52 +1,67 @@
 ::
 /?    314
+/+    tree
 /=    gas    /$    fuel
-/=    ral    /:    /===    /%  /react-json/
-/=    pal    /:    /===
-             /^    (map ,@ta json)
-             /%    2
-             /_    /react-json/
+/=    dat    /^    tree-include
+             /:    /===/tree-gen    /%
+             /tree-include/
 ::
-/=    sal    /:    /===
-             /^    (map ,@ta json)
-             /%    2
-             /_    /react-snips-json/
-::
+/=    kid    /^    (map span tree-include)
+             /:    /===/tree-gen    /%  2    /_
+             /tree-include/
+!:
 ::::
   ::
-//    /%%/util
+|%
+++  schema  (dict ,[term $|(mark schema)])
+++  dict    |*(a=_,* $&([a (dict a)] a))
+++  query
+  $%  [%kids p=(list query)]
+      [%name %t]
+      [%snip %r]
+      [%head %r]
+      [%body %r]
+      [%meta %j]
+  ==
+++  to-queries
+  |=  a=schema  ^-  (list query)
+  ?@(-.a [(to-query a) ~] [(to-query -.a) $(a +.a)])
 ::
-[util=. +>]
-::
+++  to-query
+  |=  a=[term $|(mark schema)]
+  ~|  invalid-query/a
+  ?+  -.a  ;;(query a)
+    %kids  [%kids (to-queries ?@(+.a !! +.a))]
+  ==
+++  from-type                         ::  XX holding out for noun odors
+  |=  a=$%([%t p=cord] [%r p=json] [%j p=json])
+  ?-  -.a
+    %t  [%s p.a]
+    %r  p.a
+    %j  p.a
+  ==
+++  from-queries
+  |=  [bem=beam quy=(list query)]
+  =<  (jobe (turn quy .))
+  |=  a=query
+  :-  -.a
+  ?-  -.a
+    %name  (from-type +.a ?^(s.bem i.s.bem q.bem))
+    %head  (from-type +.a head.dat)
+    %snip  (from-type +.a snip.dat)
+    %meta  (from-type +.a meta.dat)
+    %body  (from-type +.a body.dat)
+    %kids  ?<  (~(has by (mo p.a)) %kids)  ::  XX recursion? 
+           =<  a/(turn (~(tap by kid)) .)
+           |=  [dir=span dak=tree-include]
+           ^^$(quy p.a, s.bem [dir s.bem], dat dak, kid ~)
+  ==
+--
 !:
 ::::
   ::
 ^-  json
-=+  ~(. util gas)
-::  .json?kids
-?:  (~(has by qix.gas) %kids)
-  %+  joba  %kids
-  =.  pal  (~(del by pal) %md)                                     :: XX haxor
-  =-  [%a (turn (~(tap by pal)) -)]
-  |=  [a=span b=json] 
-  %-  jobe  :~
-    name/s/a
-    body/b
-  ==
-::  .json?snip
-?:  (~(has by qix.gas) %snip)
-  %+  joba  %snip
-  =.  sal  (~(del by sal) %md)                                   :: XX haxor
-  =-  [%a (turn (~(tap by sal)) -)]
-  |=  [a=span b=json]
-  =+  fon=(json-front b)
-  %-  jobe  :~
-    meta/fon
-    name/s/a
-    body/b
-  ==
-::  .json
-%-  jobe  :~
-  kids/[%a (turn get-kids |=(a=span s/a))]
-  body/ral
-==
+=+  ^=  schem
+    =+  seh=(fall (~(get by qix.gas) 'q') 'body.r')
+    ~|(bad-noun/seh ;;(schema (rash seh read-schem)))
+(from-queries bem.gas(s but.gas) (to-queries schem))

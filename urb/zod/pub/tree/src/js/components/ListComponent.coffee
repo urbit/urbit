@@ -47,13 +47,13 @@ module.exports = recl
           else if @props.dataType is 'post'
             orig = snip.orig
             head = 
-              if snip.meta?.title
-                 gn: 'h1'
-                 c: [snip.meta.title]
-               else orig.head
+              gn: 'h1'
+              c: if snip.meta?.title
+                  [snip.meta.title]
+                 else orig.head
             window.tree.reactify
               gn: 'div'
-              c: [head, (orig.body.c.slice 0,2)...]
+              c: [head, (orig.body.slice 0,2)...]
           else if @props.titlesOnly? then snip.head
           else [snip.head, snip.body]
     

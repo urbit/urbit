@@ -21,26 +21,35 @@ module.exports = {
       kids: kids
     });
   },
-  loadSnip: function(path, snip) {
+  loadSnip: function(path, kids) {
     return TreeDispatcher.handleServerAction({
       type: "snip-load",
       path: path,
-      snip: snip
+      kids: kids
     });
   },
-  getPath: function(path, query) {
+  getPath: function(path, endpoint) {
+    var query;
+    if (endpoint == null) {
+      endpoint = "";
+    }
     if (path.slice(-1) === "/") {
       path = path.slice(0, -1);
     }
+    query = {
+      "": "body.r__kids_name.t",
+      kids: "kids_name.t_body.r",
+      snip: "kids_name.t_snip.r_head.r_meta.j"
+    }[endpoint];
     return TreePersistence.get(path, query, (function(_this) {
       return function(err, res) {
-        switch (query) {
+        switch (endpoint) {
           case "snip":
-            return _this.loadSnip(path, res.snip);
+            return _this.loadSnip(path, res.kids);
           case "kids":
             return _this.loadKids(path, res.kids);
           default:
-            return _this.loadPath(path, res.body, res.kids, res.snip);
+            return _this.loadPath(path, res.body, res.kids);
         }
       };
     })(this));
@@ -316,11 +325,7 @@ module.exports = recl({
   },
   componentDidUpdate: function(_props, _state) {
     if (_state.curr !== this.state.curr) {
-      return setTimeout(((function(_this) {
-        return function() {
-          return _this.getPath(_state.curr);
-        };
-      })(this)), 0);
+      return console.log("this wasn't happening");
     }
   },
   getInitialState: function() {
@@ -328,11 +333,6 @@ module.exports = recl({
   },
   _onChangeStore: function() {
     return this.setState(this.stateFromStore());
-  },
-  getPath: function(path) {
-    if (this.state.cont[path] == null) {
-      return TreeActions.getPath(path);
-    }
   },
   render: function() {
     var ref1;
@@ -407,6 +407,9 @@ module.exports = recl({
         return _this.state.cont[_this.state.path + "/" + k] != null;
       };
     })(this));
+  },
+  componentWillUnmount: function() {
+    return TreeStore.removeChangeListener(this._onChangeStore);
   },
   componentDidMount: function() {
     TreeStore.addChangeListener(this._onChangeStore);
@@ -507,12 +510,12 @@ module.exports = recl({
         className: clas({
           preview: this.props.dataPreview != null
         })
-      }, this.props.dataPreview == null ? h1({}, item) : this.props.dataType === 'post' ? (orig = snip.orig, head = ((ref2 = snip.meta) != null ? ref2.title : void 0) ? {
+      }, this.props.dataPreview == null ? h1({}, item) : this.props.dataType === 'post' ? (orig = snip.orig, head = {
         gn: 'h1',
-        c: [snip.meta.title]
-      } : orig.head, window.tree.reactify({
+        c: ((ref2 = snip.meta) != null ? ref2.title : void 0) ? [snip.meta.title] : orig.head
+      }, window.tree.reactify({
         gn: 'div',
-        c: [head].concat(slice.call(orig.body.c.slice(0, 2)))
+        c: [head].concat(slice.call(orig.body.slice(0, 2)))
       })) : this.props.titlesOnly != null ? snip.head : [snip.head, snip.body])));
     }
     return results;
@@ -1139,15 +1142,12 @@ module.exports = invariant;
 
 },{}],14:[function(require,module,exports){
 module.exports = {
-  get: function(path, type, cb) {
+  get: function(path, query, cb) {
     var url;
-    if (type == null) {
-      type = "body";
+    if (query == null) {
+      query = "no-query";
     }
-    if (path[0] !== "/") {
-      path = "/" + path;
-    }
-    url = (window.tree.basepath(type + path)) + ".json";
+    url = (window.tree.basepath(path)) + ".json?q=" + query;
     return $.get(url, {}, function(data) {
       if (cb) {
         return cb(null, data);
@@ -1232,16 +1232,25 @@ TreeStore = _.extend(EventEmitter.prototype, {
   gotSnip: function(path) {
     return !!_got_snip[path];
   },
-  loadSnip: function(path, snip) {
+  loadSnip: function(path, kids) {
     var k, v;
-    this.mergePathToTree(path, _.pluck(snip, "name"));
-    if ((snip != null ? snip.length : void 0) !== 0) {
-      for (k in snip) {
-        v = snip[k];
+    this.mergePathToTree(path, _.pluck(kids, "name"));
+    if ((kids != null ? kids.length : void 0) !== 0) {
+      for (k in kids) {
+        v = kids[k];
         _snip[path + "/" + v.name] = {
-          head: window.tree.reactify(v.body.head),
-          body: window.tree.reactify(v.body.body),
-          orig: v.body,
+          head: window.tree.reactify({
+            gn: 'h1',
+            c: v.head
+          }),
+          body: window.tree.reactify({
+            gn: 'div',
+            c: v.snip
+          }),
+          orig: {
+            head: v.head,
+            body: v.snip
+          },
           meta: v.meta
         };
       }
@@ -1283,7 +1292,7 @@ TreeStore = _.extend(EventEmitter.prototype, {
     return results;
   },
   loadPath: function(path, body, kids) {
-    this.mergePathToTree(path, kids);
+    this.mergePathToTree(path, _.pluck(kids, "name"));
     return _cont[path] = window.tree.reactify(body);
   },
   getKids: function() {
@@ -1373,7 +1382,7 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
       TreeStore.loadPath(action.path, action.body, action.kids, action.snip);
       return TreeStore.emitChange();
     case 'snip-load':
-      TreeStore.loadSnip(action.path, action.snip);
+      TreeStore.loadSnip(action.path, action.kids);
       return TreeStore.emitChange();
     case 'kids-load':
       TreeStore.loadKids(action.path, action.kids);

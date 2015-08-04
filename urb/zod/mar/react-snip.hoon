@@ -20,8 +20,7 @@
       body/(react-to-json ;div:"*{tal}")
     ~
   ++  react-head-json  [%a (turn hed react-to-json)]
-::   ++  js  react-snip-js
-  ++  react-snip-json  (react-to-json elem)
+  ++  react-snip-json  [%a (turn tal react-to-json)]
   ++  mime  [/application/json (tact tape)]
   --
 ++  grab  |%                                            ::  convert from
