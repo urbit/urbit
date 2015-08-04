@@ -6,8 +6,6 @@
 #include <sys/stat.h>
 #include <ctype.h>
 #include <sigsegv.h>
-#include <pmmintrin.h>
-#include <xmmintrin.h>
 
 #include "all.h"
 
@@ -1346,13 +1344,6 @@ _cm_limits(void)
 {
   struct rlimit rlm;
   c3_i          ret_i;
-
-  /* Set compatible floating-point modes.
-  */
-  {
-    _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
-    _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
-  }
 
   /* Moar stack.
   */
