@@ -211,7 +211,7 @@
           break;
       }
       goto end;
-    }
+    } 
     _xpd(&c, &d);
     switch ( i ) {
       c3_ws x;
@@ -267,7 +267,7 @@
         }
         break;
     }
-    if ( mpz_sizeinbase(c.a, 2) != d.precision ) {
+    if ( mpz_sizeinbase(c.a, 2) == (d.precision + 1) ) {
       mpz_tdiv_q_2exp(c.a, c.a, 1);
       mpz_add_ui(c.e, c.e, 1);
     }
