@@ -1,4 +1,4 @@
-!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject
@@ -1425,7 +1425,8 @@
     ::
     ::  in order: floor, ceiling, nearest (even, away from 0, toward 0),
     ::            larger, smaller; t=sticky bit
-    ++  lug  ~/  %lug
+    ++  lug
+      ~/  %lug
       |=  [t=?(%fl %ce %ne %na %nt %lg %sm) a=[e=@s a=@u] s=?]  ^-  fn
       =-
         ?.  =(den %f)  -
@@ -1488,7 +1489,8 @@
       ?:  =(den %i)  [%f & a]
       ?:  =((cmp:si emx e.a) -1)  [%i &]  [%f & a]      ::  enforce max. exp
     ::
-    ++  drg  ~/  %drg                                   ::  dragon4
+    ++  drg                                             ::  dragon4
+      ~/  %drg
       |=  [a=[e=@s a=@u]]  ^-  [@s @u]
       =.  a  ?:  (^lth (met 0 a.a) prc)  (xpd a)  a
       =+  r=(lsh 0 ?:((syn:si e.a) (abs:si e.a) 0) a.a)
@@ -1724,7 +1726,7 @@
     |=  [a=dn]  ^-  fn
     ?:  ?=([%n *] a)  [%n ~]
     ?:  ?=([%i *] a)  [%i s.a]
-    =>  .(r %n)                                         ::  always rnd nearest
+    =>  .(r %n)
     =+  q=(abs:si e.a)
     ?:  (syn:si e.a)
       (mul [%f s.a --0 a.a] [%f & e.a (pow 5 q)])
@@ -1814,10 +1816,10 @@
 ++  rylq  |=  a=dn  ^-  @rq  (grd:rq a)
 ::
 ++  rd
-  ~%  %rd  +  ~
-  |%
+  ~%  %rd  +>  ~
+  |_  r=?(%n %u %d %z)
   ++  ma
-    %*(. ff w 11, p 52, b --1.023)
+    %*(. ff w 11, p 52, b --1.023, r r)
   ++  sea
     |=  [a=@rd]  (sea:ma a)
   ++  bit
@@ -1849,10 +1851,10 @@
   --
 ::
 ++  rs
-  ~%  %rs  +  ~
-  |%
+  ~%  %rs  +>  ~
+  |_  r=?(%n %u %d %z)
   ++  ma
-    %*(. ff w 8, p 23, b --127)
+    %*(. ff w 8, p 23, b --127, r r)
   ++  sea
     |=  [a=@rs]  (sea:ma a)
   ++  bit
@@ -1884,10 +1886,10 @@
   --
 ::
 ++  rq
-  ~%  %rq  +  ~
-  |%
+  ~%  %rq  +>  ~
+  |_  r=?(%n %u %d %z)
   ++  ma
-    %*(. ff w 15, p 112, b --16.383)
+    %*(. ff w 15, p 112, b --16.383, r r)
   ++  sea
     |=  [a=@rq]  (sea:ma a)
   ++  bit
@@ -1919,9 +1921,9 @@
   --
 ::
 ++  rh
-  |%
+  |_  r=?(%n %u %d %z)
   ++  ma
-    %*(. ff w 5, p 10, b --15)
+    %*(. ff w 5, p 10, b --15, r r)
   ++  sea
     |=  [a=@rh]  (sea:ma a)
   ++  bit
@@ -5536,11 +5538,13 @@
     %+  shay  (add b 32)
     (add (lsh 3 b q) (mix k (fil 3 b 0x5c)))
   ::
-  ++  pbk  ~/  %pbk                                     :: PBKDF2-HMAC-SHA256
+  ++  pbk                                               :: PBKDF2-HMAC-SHA256
+    ~/  %pbk
     |=  [p=@ s=@ c=@ d=@]
     (pbl p (met 3 p) s (met 3 s) c d)
   ::
-  ++  pbl  ~/  %pbl                                     :: w/length
+  ++  pbl                                               :: w/length
+    ~/  %pbl
     |=  [p=@ pl=@ s=@ sl=@ c=@ d=@]
     =>  .(p (end 3 pl p), s (end 3 sl s))
     =+  h=32
@@ -5563,11 +5567,13 @@
       $(t (add t (lsh 3 (mul (dec j) h) f)), j +(j))
     (end 3 d t)
   ::
-  ++  hsh  ~/  %hsh                                     ::  scrypt
+  ++  hsh                                               ::  scrypt
+    ~/  %hsh
     |=  [p=@ s=@ n=@ r=@ z=@ d=@]
     (hsl p (met 3 p) s (met 3 s) n r z d)
   ::
-  ++  hsl  ~/  %hsl                                     ::  w/length
+  ++  hsl                                               ::  w/length
+    ~/  %hsl
     |=  [p=@ pl=@ s=@ sl=@ n=@ r=@ z=@ d=@]
     =|  v=(list (list ,@))
     =>  .(p (end 3 pl p), s (end 3 sl s))
