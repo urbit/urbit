@@ -1737,7 +1737,7 @@
     ?.  ?=([%f *] a)  a
     ?~  a.a  [%f s.a zer]
     ?:  s.a  (^toi +>.a)
-    (fli =.(r swr (^toi +>.a)))
+    =.(r swr (fli (^toi +>.a)))
   --
 ::
 ++  ff                                                  ::  ieee754 format
@@ -1788,6 +1788,13 @@
   ++  exp
     |=  [a=@r]  ^-  @s
     (dif:si (sun:si (cut 0 [p w] a)) b)
+  ::
+  ++  toi
+    |=  [a=@r]  ^-  (unit ,@s)
+    =+  b=(toi:pa (sea a))
+    ?.  ?=([%f *] b)  ~  :-  ~
+    =+  c=(^mul (bex (abs:si e.b)) a.b)
+    (new:si s.b c)
   ::
   ++  add  |=  [a=@r b=@r]  (bif (add:pa (sea a) (sea b)))
   ++  sub  |=  [a=@r b=@r]  (bif (sub:pa (sea a) (sea b)))
@@ -1846,6 +1853,7 @@
   ++  gth  ~/  %gth  |=  [a=@rd b=@rd]  ~|  %rd-fail  (gth:ma a b)
   ++  sig  |=  [a=@rd]  (sig:ma a)
   ++  exp  |=  [a=@rd]  (exp:ma a)
+  ++  toi  |=  [a=@rd]  (toi:ma a)
   ++  drg  |=  [a=@rd]  (drg:ma a)
   ++  grd  |=  [a=dn]  (grd:ma a)
   --
@@ -1870,7 +1878,7 @@
   ++  fma  ~/  %fma
     |=  [a=@rs b=@rs c=@rs]  ^-  @rs  ~|  %rs-fail  (fma:ma a b c)
   ++  sqt  ~/  %sqt
-    |=  [a=@rs]  ^-  @rs  (sqt:ma a)
+    |=  [a=@rs]  ^-  @rs  ~|  %rs-fail  (sqt:ma a)
   ::
   ++  sun  |=  [a=@u]  ^-  @rs  (sun:ma a)
   ++  san  |=  [a=@s]  ^-  @rs  (san:ma a)
@@ -1881,6 +1889,7 @@
   ++  gth  ~/  %gth  |=  [a=@rs b=@rs]  ~|  %rs-fail  (gth:ma a b)
   ++  sig  |=  [a=@rs]  (sig:ma a)
   ++  exp  |=  [a=@rs]  (exp:ma a)
+  ++  toi  |=  [a=@rs]  (toi:ma a)
   ++  drg  |=  [a=@rs]  (drg:ma a)
   ++  grd  |=  [a=dn]  (grd:ma a)
   --
@@ -1916,6 +1925,7 @@
   ++  gth  ~/  %gth  |=  [a=@rq b=@rq]  ~|  %rq-fail  (gth:ma a b)
   ++  sig  |=  [a=@rq]  (sig:ma a)
   ++  exp  |=  [a=@rq]  (exp:ma a)
+  ++  toi  |=  [a=@rq]  (toi:ma a)
   ++  drg  |=  [a=@rq]  (drg:ma a)
   ++  grd  |=  [a=dn]  (grd:ma a)
   --
@@ -1942,6 +1952,7 @@
   ++  gth  |=  [a=@rh b=@rh]  ~|  %rh-fail  (gth:ma a b)
   ++  sig  |=  [a=@rh]  (sig:ma a)
   ++  exp  |=  [a=@rh]  (exp:ma a)
+  ++  toi  |=  [a=@rh]  (toi:ma a)
   ++  drg  |=  [a=@rh]  (drg:ma a)
   ++  grd  |=  [a=dn]  (grd:ma a)
   --
