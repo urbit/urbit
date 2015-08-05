@@ -7,7 +7,7 @@ load        = React.createFactory require './LoadComponent.coffee'
 reactify    = (manx)-> React.createElement window.tree.reactify, {manx}
 
 recl = React.createClass
-[div,a,ul,li,] = [React.DOM.div,React.DOM.a,React.DOM.ul,React.DOM.li,React.DOM.h1]
+{div,a,ul,li} = React.DOM
 
 module.exports = recl
   hash:null
@@ -26,7 +26,10 @@ module.exports = recl
     @setState @stateFromStore()
 
   _click: (e) ->
-    document.location.hash = $(e).
+    console.log 'click'
+    document.location.hash = @urlsafe $(e.target).text()
+
+  urlsafe: (str) -> str.toLowerCase().replace(/\ /g, "-")
 
   componentDidMount: -> 
     @int = setInterval @checkHash,100
@@ -36,7 +39,7 @@ module.exports = recl
     if document.location.hash? and document.location.hash isnt @hash
       hash = document.location.hash.slice(1)
       for k,v of @state.tocs
-        if v.t is hash
+        if hash is @urlsafe v.t
           @hash = document.location.hash
           $(window).scrollTop v.e.offset().top
           break
@@ -59,5 +62,7 @@ module.exports = recl
     c
 
   render: -> 
+    onClick = @_click
     (div {className:'toc'}, @state.tocs.map (i) ->
-      l.push (React.DOM[i.h] {onClick:@_click}, i.t))
+      (React.DOM[i.h] {onClick}, i.t)
+    )
