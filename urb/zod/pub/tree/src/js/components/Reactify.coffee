@@ -1,11 +1,12 @@
-recl = React.createClass
-span = React.DOM.span
-load = require './LoadComponent.coffee'
+recl       = React.createClass
+{div,span} = React.DOM
 
-codemirror        = React.createFactory require './CodeMirror.coffee'
-list              = React.createFactory require './ListComponent.coffee'
-kids              = React.createFactory require './KidsComponent.coffee'
-lost              = React.createFactory recl render: -> (div {}, "lost")
+load = React.createFactory require './LoadComponent.coffee'
+
+codemirror        = require './CodeMirror.coffee'
+list              = require './ListComponent.coffee'
+kids              = require './KidsComponent.coffee'
+lost              = recl render: -> (div {}, "lost")
 components = 
   kids:kids
   list:list

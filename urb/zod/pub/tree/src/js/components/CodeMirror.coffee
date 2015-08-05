@@ -1,5 +1,5 @@
 recl = React.createClass
-[div,textarea] = [React.DOM.div,React.DOM.textarea]
+{div,textarea} = React.DOM
 
 module.exports = recl
   render: -> div {}, textarea ref:'ed', value:@props.value

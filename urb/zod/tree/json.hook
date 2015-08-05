@@ -56,8 +56,8 @@
     %kids  ?<  (~(has by (mo p.a)) %kids)  ::  XX recursion? 
            =<  a/(turn (~(tap by kid)) .)
            |=  [dir=span dak=tree-include]
-           ^^$(quy p.a, s.bem [dir s.bem], dat dak, kid ~)
-  ==
+           ^^$(quy [name/%t p.a], s.bem [dir s.bem], dat dak, kid ~)
+  ==               ::  XX array
 --
 !:
 ::::

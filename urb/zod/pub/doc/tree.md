@@ -2,6 +2,13 @@
 
 `:tree` is the web filesystem interface.
 
+# Data retrieval interface
+Async provides loading by schema
+
+`{path name sein sibs next prev}` are all immediately accesible from the store
+
+a `getPath` method, if present (defaulting to current url), is used to determine the query root node.
+
 # Internals
 
 something something coffeescript

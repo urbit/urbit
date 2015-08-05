@@ -5,7 +5,7 @@ TreeStore   = require '../stores/TreeStore.coffee'
 TreeActions = require '../actions/TreeActions.coffee'
 
 recl = React.createClass
-[div,a] = [React.DOM.div,React.DOM.a]
+{div,a} = React.DOM
 
 module.exports = recl
   displayName: "Anchor"
@@ -17,13 +17,9 @@ module.exports = recl
       snip:TreeStore.getSnip()
       next:TreeStore.getNext()
       prev:TreeStore.getPrev()
-      #kids:TreeStore.getKids()
-      #tree:TreeStore.getTree([])
       cont:TreeStore.getCont()
       url:window.location.pathname
     }
-
-  checkPath: (path) -> @state.cont[path]?
 
   toggleFocus: (state) ->
     $(@getDOMNode()).toggleClass 'focus',state
@@ -45,22 +41,17 @@ module.exports = recl
     next = href_parts[0]
     if next.substr(-1) is "/" then next = next.slice(0,-1)
     href_parts[0] = next
-    if hist isnt false then history.pushState {}, "", window.tree.basepath href_parts.join ""
-    rend = false
+    if hist isnt false
+      history.pushState {}, "", window.tree.basepath href_parts.join ""
     if next isnt @state.path
       React.unmountComponentAtNode $('#cont')[0]
-      rend = true
-    TreeActions.setCurr next
-    if rend is true
+      TreeActions.setCurr next
       React.render (BodyComponent {}, ""),$('#cont')[0]
 
   goTo: (path) ->
     @toggleFocus false
     $("html,body").animate {scrollTop:0}
-    frag = path.split("#")[0]
     @setPath path
-    if not @checkPath frag
-      TreeActions.getPath frag
 
   checkURL: ->
     if @state.url isnt window.location.pathname
@@ -78,7 +69,7 @@ module.exports = recl
     up = @state.pare ? "/"
     if up.slice(-1) is "/" then up = up.slice 0,-1
 
-    unless @state.cont[up]? then TreeActions.getPath up
+    unless @state.cont[up]? then TreeActions.getPath up, "body"
     
     unless TreeStore.gotSnip(up) then TreeActions.getPath up, "snip"
         
