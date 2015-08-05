@@ -87,6 +87,7 @@ CFLAGS= $(COSFLAGS) -O3 -msse3 -ffast-math \
 	-Ioutside/commonmark/src \
 	-Ioutside/commonmark/build/src \
 	-Ioutside/scrypt \
+        -Ioutside/softfloat-3/source/include \
 	$(DEFINES) \
 	$(MDEFINES)
 
@@ -167,6 +168,7 @@ J_C_OFILES=\
        jets/c/con.o \
        jets/c/cut.o \
        jets/c/dor.o \
+       jets/c/dvr.o \
        jets/c/dis.o \
        jets/c/end.o \
        jets/c/gor.o \
@@ -178,9 +180,11 @@ J_C_OFILES=\
        jets/c/mug.o \
        jets/c/peg.o \
        jets/c/po.o  \
+       jets/c/pow.o \
        jets/c/rap.o \
        jets/c/rip.o \
        jets/c/rsh.o \
+       jets/c/sqt.o \
        jets/c/vor.o
 
 J_D_OFILES=\
@@ -205,12 +209,15 @@ J_D_OFILES=\
 J_E_OFILES=\
        jets/e/aesc.o \
        jets/e/cue.o \
+       jets/e/fl.o \
        jets/e/jam.o \
        jets/e/mat.o \
        jets/e/mink.o \
        jets/e/mule.o \
        jets/e/parse.o \
        jets/e/rd.o \
+       jets/e/rq.o \
+       jets/e/rs.o \
        jets/e/repg.o \
        jets/e/rexp.o \
        jets/e/rub.o \
@@ -365,6 +372,8 @@ LIBCOMMONMARK=outside/commonmark/build/src/libcmark.a
 
 LIBSCRYPT=outside/scrypt/scrypt.a
 
+LIBSOFTFLOAT=outside/softfloat-3/build/Linux-386-GCC/softfloat.a
+
 all: urbit
 
 .MAKEFILE-VERSION: Makefile .make.conf
@@ -413,25 +422,28 @@ $(LIBCOMMONMARK):
 $(LIBSCRYPT):
 	$(MAKE) -C outside/scrypt MDEFINES="$(MDEFINES)"
 
+$(LIBSOFTFLOAT):
+	$(MAKE) -C outside/softfloat-3/build/Linux-386-GCC
+
 $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBRE2)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(V_OFILES): include/vere/vere.h
 
 ifdef NO_SILENT_RULES
-$(BIN)/urbit: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT)
+$(BIN)/urbit: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 else
-$(BIN)/urbit: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT)
+$(BIN)/urbit: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 	@echo "    CCLD  $(BIN)/urbit"
 	@mkdir -p $(BIN)
-	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT)
+	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 endif
 
-$(BIN)/meme: $(LIBCRE) $(LIBCOMMONMARK) $(MEME_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT)
+$(BIN)/meme: $(LIBCRE) $(LIBCOMMONMARK) $(MEME_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/meme $(MEME_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/meme $(MEME_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 
 tags:
 	ctags -R -f .tags --exclude=root
@@ -469,5 +481,6 @@ distclean: clean $(LIBUV_MAKEFILE)
 	$(MAKE) -C outside/ed25519 clean
 	$(MAKE) -C outside/anachronism clean
 	$(MAKE) -C outside/scrypt clean
+	$(MAKE) -C outside/softfloat-3/build/Linux-386-GCC clean
 
 .PHONY: clean debbuild debinstalldistclean etags osxpackage tags
