@@ -63,10 +63,10 @@ module.exports = {
       return function(err, res) {
         var ref, ref1;
         switch (false) {
-          case !((ref = query.kids) != null ? ref.snip : void 0):
-            return _this.loadSnip(path, res.kids);
-          case !((ref1 = query.kids) != null ? ref1.body : void 0):
+          case !((ref = query.kids) != null ? ref.body : void 0):
             return _this.loadKids(path, res.kids);
+          case !((ref1 = query.kids) != null ? ref1.head : void 0):
+            return _this.loadSnip(path, res.kids);
           default:
             return _this.loadPath(path, res.body, res.kids);
         }
@@ -84,12 +84,13 @@ module.exports = {
 
 
 },{"../dispatcher/Dispatcher.coffee":10,"../persistence/TreePersistence.coffee":16}],2:[function(require,module,exports){
-var BodyComponent, TreeActions, TreeStore, a, div, reactify, recl, ref,
-  slice = [].slice;
+var BodyComponent, Links, TreeActions, TreeStore, a, clas, div, query, recl, ref;
+
+clas = require('classnames');
 
 BodyComponent = React.createFactory(require('./BodyComponent.coffee'));
 
-reactify = React.createFactory(require('./Reactify.coffee'));
+query = require('./Async.coffee');
 
 TreeStore = require('../stores/TreeStore.coffee');
 
@@ -99,106 +100,122 @@ recl = React.createClass;
 
 ref = React.DOM, div = ref.div, a = ref.a;
 
-module.exports = recl({
+Links = React.createFactory(query({
+  path: 't',
+  kids: {
+    name: 't',
+    head: 'r',
+    meta: 'j'
+  }
+}, recl({
+  displayName: "Links",
+  render: function() {
+    var keys, style;
+    keys = _(this.props.kids).keys().sort();
+    style = {
+      marginTop: -24 * (keys.indexOf(this.props.curr)) + "px"
+    };
+    return div({
+      id: "sibs",
+      style: style
+    }, keys.map((function(_this) {
+      return function(key) {
+        var className, data, head, href;
+        href = window.tree.basepath(_this.props.path + "/" + key);
+        data = _this.props.kids[key];
+        if (data.meta) {
+          head = data.meta.title;
+        }
+        if (head == null) {
+          head = _this.toText(data.head);
+        }
+        head || (head = key);
+        className = clas({
+          active: key === _this.props.curr
+        });
+        return div({
+          className: className,
+          key: key
+        }, a({
+          href: href,
+          onClick: _this.props.onClick
+        }, head));
+      };
+    })(this)));
+  },
+  toText: function(elem) {
+    var ref1;
+    switch (false) {
+      case !(elem == null):
+        return "";
+      case typeof elem !== "string":
+        return elem;
+      case elem.gn == null:
+        return ((ref1 = elem.c) != null ? ref1 : []).map(this.toText).join("");
+      default:
+        throw "Bad react-json " + (JSON.stringify(elem));
+    }
+  }
+}), recl({
+  displayName: "Links_loading",
+  render: function() {
+    return div({
+      id: "sibs"
+    }, div({
+      className: "active"
+    }, a({}, this.props.curr)));
+  }
+})));
+
+module.exports = query({
+  sein: 't',
+  path: 't',
+  name: 't',
+  next: 't',
+  prev: 't'
+}, recl({
   displayName: "Anchor",
-  stateFromStore: function() {
+  getInitialState: function() {
     return {
-      path: TreeStore.getCurr(),
-      pare: TreeStore.getPare(),
-      sibs: TreeStore.getSiblings(),
-      snip: TreeStore.getSnip(),
-      next: TreeStore.getNext(),
-      prev: TreeStore.getPrev(),
-      cont: TreeStore.getCont(),
       url: window.location.pathname
     };
+  },
+  onClick: function() {
+    return this.toggleFocus();
+  },
+  onMouseOver: function() {
+    return this.toggleFocus(true);
+  },
+  onMouseOut: function() {
+    return this.toggleFocus(false);
+  },
+  onTouchStart: function() {
+    return this.ts = Number(Date.now());
+  },
+  onTouchEnd: function() {
+    var dt;
+    return dt = this.ts - Number(Date.now());
   },
   toggleFocus: function(state) {
     return $(this.getDOMNode()).toggleClass('focus', state);
   },
-  _click: function() {
-    return this.toggleFocus();
-  },
-  _mouseOver: function() {
-    return this.toggleFocus(true);
-  },
-  _mouseOut: function() {
-    return this.toggleFocus(false);
-  },
-  _touchStart: function() {
-    return this.ts = Number(Date.now());
-  },
-  _touchEnd: function() {
-    var dt;
-    return dt = this.ts - Number(Date.now());
-  },
-  setPath: function(href, hist) {
-    var href_parts, next;
-    href_parts = href.split("#");
-    next = href_parts[0];
-    if (next.substr(-1) === "/") {
-      next = next.slice(0, -1);
-    }
-    href_parts[0] = next;
-    if (hist !== false) {
-      history.pushState({}, "", window.tree.basepath(href_parts.join("")));
-    }
-    if (next !== this.state.path) {
-      React.unmountComponentAtNode($('#cont')[0]);
-      TreeActions.setCurr(next);
-      return React.render(BodyComponent({}, ""), $('#cont')[0]);
-    }
-  },
-  goTo: function(path) {
-    this.toggleFocus(false);
-    $("html,body").animate({
-      scrollTop: 0
-    });
-    return this.setPath(path);
-  },
-  checkURL: function() {
-    if (this.state.url !== window.location.pathname) {
-      return this.setPath(window.tree.fragpath(window.location.pathname), false);
-    }
-  },
-  setTitle: function() {
-    var path, title;
-    title = $('#cont h1').first().text();
-    if (title.length === 0) {
-      path = this.state.path.split("/");
-      title = path[path.length - 1];
-    }
-    return document.title = title + " - " + this.state.path;
-  },
-  checkUp: function() {
-    var ref1, up;
-    up = (ref1 = this.state.pare) != null ? ref1 : "/";
-    if (up.slice(-1) === "/") {
-      up = up.slice(0, -1);
-    }
-    if (this.state.cont[up] == null) {
-      TreeActions.getPath(up, "body");
-    }
-    if (!TreeStore.gotSnip(up)) {
-      return TreeActions.getPath(up, "snip");
-    }
-  },
   componentDidUpdate: function() {
-    this.setTitle();
-    return this.checkUp();
+    return this.setTitle();
+  },
+  componentWillUnmount: function() {
+    clearInterval(this.interval);
+    return $('body').off('click', 'a');
   },
   componentDidMount: function() {
-    TreeStore.addChangeListener(this._onChangeStore);
     this.setTitle();
-    this.checkUp();
     this.interval = setInterval(this.checkURL, 100);
     $('body').on('keyup', (function(_this) {
       return function(e) {
         switch (e.keyCode) {
           case 37:
-            return _this.goTo(_this.state.prev);
+            return _this.goTo(_this.props.prev);
           case 39:
-            return _this.goTo(_this.state.next);
+            return _this.goTo(_this.props.next);
         }
       };
     })(this));
@@ -214,15 +231,42 @@ module.exports = recl({
       };
     })(this));
   },
-  componentWillUnmount: function() {
-    clearInterval(this.interval);
-    return $('body').off('click', 'a');
+  setTitle: function() {
+    var title;
+    title = $('#cont h1').first().text() || this.props.name;
+    return document.title = title + " - " + this.props.path;
   },
-  getInitialState: function() {
-    return this.stateFromStore();
+  setPath: function(href, hist) {
+    var href_parts, next;
+    href_parts = href.split("#");
+    next = href_parts[0];
+    if (next.substr(-1) === "/") {
+      next = next.slice(0, -1);
+    }
+    href_parts[0] = next;
+    if (hist !== false) {
+      history.pushState({}, "", window.tree.basepath(href_parts.join("")));
+    }
+    if (next !== this.props.path) {
+      React.unmountComponentAtNode($('#cont')[0]);
+      TreeActions.setCurr(next);
+      return React.render(BodyComponent({}, ""), $('#cont')[0]);
+    }
   },
-  _onChangeStore: function() {
-    return this.setState(this.stateFromStore());
+  goTo: function(path) {
+    this.toggleFocus(false);
+    $("html,body").animate({
+      scrollTop: 0
+    });
+    return this.setPath(path);
+  },
+  checkURL: function() {
+    if (this.state.url !== window.location.pathname) {
+      this.setPath(window.tree.fragpath(window.location.pathname), false);
+      return this.setState({
+        url: window.location.pathname
+      });
+    }
   },
   renderArrow: function(name, path) {
     var href;
@@ -233,83 +277,46 @@ module.exports = recl({
       className: "arow-" + name
     }, "");
   },
-  toText: function(elem) {
-    return $(React.renderToStaticMarkup(reactify({
-      manx: elem
-    }))).text();
-  },
-  renderParts: function() {
-    var _sibs, ci, curr, j, k, ref1, style, up;
-    return [
-      this.state.pare ? _.filter([
-        div({
-          id: "up",
-          key: "up"
-        }, this.renderArrow("up", this.state.pare)), this.state.prev || this.state.next ? div({
-          id: "sides",
-          key: "sides"
-        }, _.filter([this.state.prev ? this.renderArrow("prev", this.state.prev) : void 0, this.state.next ? this.renderArrow("next", this.state.next) : void 0])) : void 0
-      ]) : void 0, _.keys(this.state.sibs).length > 0 ? ((ref1 = this.state.path.split("/"), up = 2 <= ref1.length ? slice.call(ref1, 0, j = ref1.length - 1) : (j = 0, []), curr = ref1[j++], ref1), up = up.join("/"), ci = 0, k = 0, _sibs = _(this.state.sibs).keys().sort().map((function(_this) {
-        return function(i) {
-          var className, head, href, path, ref2, snip;
-          if (curr === i) {
-            className = "active";
-            ci = k;
-          }
-          if (className == null) {
-            className = "";
-          }
-          k++;
-          path = up + "/" + i;
-          href = window.tree.basepath(path);
-          snip = _this.state.snip[path];
-          head = snip != null ? (ref2 = snip.meta) != null ? ref2.title : void 0 : void 0;
-          if (snip != null ? snip.head : void 0) {
-            if (head == null) {
-              head = _this.toText(snip != null ? snip.head : void 0);
-            }
-          }
-          head || (head = i);
-          return div({
-            className: className,
-            key: i
-          }, a({
-            href: href,
-            onClick: _this._click
-          }, head));
-        };
-      })(this)), style = {
-        marginTop: (-24 * ci) + "px"
-      }, div({
-        key: "sibs",
-        id: "sibs",
-        style: style
-      }, _sibs)) : void 0
-    ];
-  },
   render: function() {
     var obj;
     obj = {
-      onMouseOver: this._mouseOver,
-      onMouseOut: this._mouseOut,
-      onClick: this._click,
-      onTouchStart: this._touchStart,
-      onTouchEnd: this._touchEnd
+      onMouseOver: this.onMouseOver,
+      onMouseOut: this.onMouseOut,
+      onClick: this.onClick,
+      onTouchStart: this.onTouchStart,
+      onTouchEnd: this.onTouchEnd
     };
     if (_.keys(window).indexOf("ontouchstart") !== -1) {
       delete obj.onMouseOver;
       delete obj.onMouseOut;
     }
-    return div(obj, _.filter(this.renderParts()));
+    return div(obj, _.filter([
+      this.props.sein ? _.filter([
+        div({
+          id: "up",
+          key: "up"
+        }, this.renderArrow("up", this.props.sein)), this.props.prev || this.props.next ? _.filter([
+          div({
+            id: "sides",
+            key: "sides"
+          }, this.props.prev ? this.renderArrow("prev", this.props.prev) : void 0, this.props.next ? this.renderArrow("next", this.props.next) : void 0)
+        ]) : void 0
+      ]) : void 0, Links({
+        onClick: this.onClick,
+        key: "sibs",
+        curr: this.props.name,
+        dataPath: this.props.sein
+      })
+    ]));
   }
-});
+}));
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":17,"./BodyComponent.coffee":4,"./Reactify.coffee":9}],3:[function(require,module,exports){
-var TreeActions, TreeStore, code, div, load, recl, ref, span;
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":17,"./Async.coffee":3,"./BodyComponent.coffee":4,"classnames":12}],3:[function(require,module,exports){
+var TreeActions, TreeStore, _load, code, div, recl, ref, span;
 
-load = React.createFactory(require('./LoadComponent.coffee'));
+_load = require('./LoadComponent.coffee');
 
 TreeStore = require('../stores/TreeStore.coffee');
 
@@ -319,15 +326,25 @@ recl = React.createClass;
 
 ref = React.DOM, div = ref.div, span = ref.span, code = ref.code;
 
-module.exports = function(queries, Child) {
+module.exports = function(queries, Child, load) {
+  if (load == null) {
+    load = _load;
+  }
   return recl({
     displayName: "Async",
+    getInitialState: function() {
+      return this.stateFromStore();
+    },
+    _onChangeStore: function() {
+      return this.setState(this.stateFromStore());
+    },
+    getPath: function() {
+      var ref1;
+      return (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
+    },
     stateFromStore: function() {
-      var path, ref1;
-      path = (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
       return {
-        path: path,
-        got: TreeStore.fulfill(path, queries)
+        got: TreeStore.fulfill(this.getPath(), queries)
       };
     },
     componentDidMount: function() {
@@ -338,7 +355,13 @@ module.exports = function(queries, Child) {
       return TreeStore.removeChangeListener(this._onChangeStore);
     },
     componentDidUpdate: function(_props, _state) {
+      if (_props !== this.props) {
+        this.setState(this.stateFromStore());
+      }
       return this.checkPath();
+    },
+    checkPath: function() {
+      return TreeActions.getPath(this.getPath(), this.filterQueries());
     },
     filterQueries: function() {
       return this.filterWith(this.state.got, queries);
@@ -350,7 +373,7 @@ module.exports = function(queries, Child) {
       }
       request = {};
       for (k in _queries) {
-        if (have[k] == null) {
+        if (have[k] === void 0) {
           request[k] = _queries[k];
         }
       }
@@ -373,19 +396,12 @@ module.exports = function(queries, Child) {
         return request;
       }
     },
-    checkPath: function() {
-      return TreeActions.getPath(this.state.path, this.filterQueries());
-    },
-    getInitialState: function() {
-      return this.stateFromStore();
-    },
-    _onChangeStore: function() {
-      return this.setState(this.stateFromStore());
-    },
     render: function() {
-      return div({}, this.filterQueries() != null ? div({
-        className: "loading"
-      }, load({}, "")) : React.createElement(Child, _.merge(this.props, this.state.got), this.props.children));
+      if (this.filterQueries() != null) {
+        return React.createElement(load, this.props);
+      } else {
+        return React.createElement(Child, _.merge({}, this.props, this.state.got), this.props.children);
+      }
     }
   });
 };
@@ -591,8 +607,10 @@ module.exports = recl({
   },
   render: function() {
     return div({
+      className: "loading"
+    }, div({
       className: "spin state-" + this.state.anim
-    }, "");
+    }, ""));
   }
 });
 
@@ -631,21 +649,19 @@ module.exports = recl({
   render: function() {
     return this.walk(this.props.manx);
   },
-  walk: function(obj, key) {
-    var ref1;
+  walk: function(elem, key) {
+    var ref1, ref2;
     switch (false) {
-      case !(obj == null):
-        return span({
-          className: "loading"
-        }, load({}, ""));
-      case typeof obj !== "string":
-        return obj;
-      case obj.gn == null:
-        return React.createElement((ref1 = components[obj.gn]) != null ? ref1 : obj.gn, $.extend({
+      case !(elem == null):
+        return load({}, "");
+      case typeof elem !== "string":
+        return elem;
+      case elem.gn == null:
+        return React.createElement((ref1 = components[elem.gn]) != null ? ref1 : elem.gn, $.extend({
           key: key
-        }, obj.ga), obj.c.map(this.walk));
+        }, elem.ga), (ref2 = elem.c) != null ? ref2.map(this.walk) : void 0);
       default:
-        throw "Bad react-json " + (JSON.stringify(obj));
+        throw "Bad react-json " + (JSON.stringify(elem));
     }
   }
 });
@@ -1249,7 +1265,7 @@ EventEmitter = require('events').EventEmitter;
 
 MessageDispatcher = require('../dispatcher/Dispatcher.coffee');
 
-clog = console.log;
+clog = console.log.bind(console);
 
 _tree = {};
 
@@ -1273,39 +1289,6 @@ TreeStore = _.extend(EventEmitter.prototype, {
   },
   pathToArr: function(_path) {
     return _path.split("/");
-  },
-  filterQuery: function(query) {
-    return this.filterWith(this.fulfill(_curr, query), query);
-  },
-  filterWith: function(have, query) {
-    var _query, k, kid, ref;
-    if (have == null) {
-      return query;
-    }
-    _query = {};
-    for (k in query) {
-      if (have[k] == null) {
-        _query[k] = query[k];
-      }
-    }
-    if ((query.kids != null) && (have.kids != null)) {
-      if (_.isEmpty(have.kids)) {
-        _query.kids = query.kids;
-      } else {
-        _query.kids = {};
-        ref = have.kids;
-        for (k in ref) {
-          kid = ref[k];
-          _.merge(_query.kids, this.filterWith(kid, query.kids));
-        }
-        if (_.isEmpty(_query.kids)) {
-          delete _query.kids;
-        }
-      }
-    }
-    if (!_.isEmpty(_query)) {
-      return _query;
-    }
   },
   fulfill: function(path, query) {
     var data, i, k, len, ref, ref1, ref2, ref3;

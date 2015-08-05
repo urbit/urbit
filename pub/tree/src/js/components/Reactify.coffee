@@ -17,12 +17,12 @@ components =
 module.exports = recl
   displayName: "Virtual"
   render: -> @walk @props.manx
-  walk: (obj,key) -> switch
+  walk: (elem,key) -> switch
     # manx: {fork: ["string", {gn:"string" ga:{dict:"string"} c:{list:"manx"}}]}
-    when !obj? then (span {className:"loading"}, (load {}, ""))
-    when typeof obj == "string" then obj
-    when obj.gn?
-      React.createElement components[obj.gn] ? obj.gn,
-                          $.extend {key}, obj.ga
-                          obj.c.map @walk
-    else throw "Bad react-json #{JSON.stringify obj}"
+    when !elem? then (load {}, "")
+    when typeof elem == "string" then elem
+    when elem.gn?
+      React.createElement components[elem.gn] ? elem.gn,
+                          $.extend {key}, elem.ga
+                          elem.c?.map @walk
+    else throw "Bad react-json #{JSON.stringify elem}"
