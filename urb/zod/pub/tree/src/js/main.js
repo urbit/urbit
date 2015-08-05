@@ -82,8 +82,7 @@ module.exports = {
 };
 
 
-
-},{"../dispatcher/Dispatcher.coffee":10,"../persistence/TreePersistence.coffee":16}],2:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":11,"../persistence/TreePersistence.coffee":17}],2:[function(require,module,exports){
 var BodyComponent, TreeActions, TreeStore, a, div, reactify, recl, ref,
   slice = [].slice;
 
@@ -305,8 +304,7 @@ module.exports = recl({
 });
 
 
-
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":17,"./BodyComponent.coffee":4,"./Reactify.coffee":9}],3:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":18,"./BodyComponent.coffee":4,"./Reactify.coffee":9}],3:[function(require,module,exports){
 var TreeActions, TreeStore, code, div, load, recl, ref, span;
 
 load = React.createFactory(require('./LoadComponent.coffee'));
@@ -391,8 +389,7 @@ module.exports = function(queries, Child) {
 };
 
 
-
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":17,"./LoadComponent.coffee":8}],4:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":18,"./LoadComponent.coffee":8}],4:[function(require,module,exports){
 var div, query, reactify, recl;
 
 reactify = React.createFactory(require('./Reactify.coffee'));
@@ -419,7 +416,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"./Reactify.coffee":9}],5:[function(require,module,exports){
 var div, recl, ref, textarea;
 
@@ -441,7 +437,6 @@ module.exports = recl({
     });
   }
 });
-
 
 
 },{}],6:[function(require,module,exports){
@@ -485,7 +480,6 @@ module.exports = query({
     }).call(this));
   }
 }));
-
 
 
 },{"./Async.coffee":3}],7:[function(require,module,exports){
@@ -558,8 +552,7 @@ module.exports = query({
 }));
 
 
-
-},{"./Async.coffee":3,"classnames":12}],8:[function(require,module,exports){
+},{"./Async.coffee":3,"classnames":13}],8:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -597,9 +590,8 @@ module.exports = recl({
 });
 
 
-
 },{}],9:[function(require,module,exports){
-var codemirror, components, div, kids, list, load, lost, recl, ref, span;
+var codemirror, components, div, kids, list, load, lost, recl, ref, span, toc;
 
 recl = React.createClass;
 
@@ -613,6 +605,8 @@ list = require('./ListComponent.coffee');
 
 kids = require('./KidsComponent.coffee');
 
+toc = require('./TocComponent.coffee');
+
 lost = recl({
   render: function() {
     return div({}, "lost");
@@ -623,6 +617,7 @@ components = {
   kids: kids,
   list: list,
   lost: lost,
+  toc: toc,
   codemirror: codemirror
 };
 
@@ -651,8 +646,117 @@ module.exports = recl({
 });
 
 
+},{"./CodeMirror.coffee":5,"./KidsComponent.coffee":6,"./ListComponent.coffee":7,"./LoadComponent.coffee":8,"./TocComponent.coffee":10}],10:[function(require,module,exports){
+var TreeActions, TreeStore, a, clas, div, li, load, reactify, recl, ref, ul;
 
-},{"./CodeMirror.coffee":5,"./KidsComponent.coffee":6,"./ListComponent.coffee":7,"./LoadComponent.coffee":8}],10:[function(require,module,exports){
+clas = require('classnames');
+
+TreeStore = require('../stores/TreeStore.coffee');
+
+TreeActions = require('../actions/TreeActions.coffee');
+
+load = React.createFactory(require('./LoadComponent.coffee'));
+
+reactify = function(manx) {
+  return React.createElement(window.tree.reactify, {
+    manx: manx
+  });
+};
+
+recl = React.createClass;
+
+ref = [React.DOM.div, React.DOM.a, React.DOM.ul, React.DOM.li, React.DOM.h1], div = ref[0], a = ref[1], ul = ref[2], li = ref[3];
+
+module.exports = recl({
+  hash: null,
+  displayName: "TableofContents",
+  stateFromStore: function() {
+    var path, ref1, state;
+    path = (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
+    state = {
+      path: path,
+      snip: TreeStore.getSnip(),
+      tree: TreeStore.getTree(path.split("/")),
+      tocs: this.compute()
+    };
+    return state;
+  },
+  _onChangeStore: function() {
+    return this.setState(this.stateFromStore());
+  },
+  _click: function(e) {
+    console.log('click');
+    return document.location.hash = this.urlsafe($(e.target).text());
+  },
+  urlsafe: function(str) {
+    return str.toLowerCase().replace(/\ /g, "-");
+  },
+  componentDidMount: function() {
+    this.int = setInterval(this.checkHash, 100);
+    return this.setState(this.stateFromStore());
+  },
+  checkHash: function() {
+    var hash, k, ref1, results, v;
+    if ((document.location.hash != null) && document.location.hash !== this.hash) {
+      hash = document.location.hash.slice(1);
+      ref1 = this.state.tocs;
+      results = [];
+      for (k in ref1) {
+        v = ref1[k];
+        if (hash === this.urlsafe(v.t)) {
+          this.hash = document.location.hash;
+          $(window).scrollTop(v.e.offset().top);
+          break;
+        } else {
+          results.push(void 0);
+        }
+      }
+      return results;
+    }
+  },
+  componentWillUnmount: function() {
+    TreeStore.removeChangeListener(this._onChangeStore);
+    return clearInterval(this.int);
+  },
+  getInitialState: function() {
+    return this.stateFromStore();
+  },
+  gotPath: function() {
+    return TreeStore.gotSnip(this.state.path);
+  },
+  compute: function() {
+    var $h, $headers, c, h, j, len;
+    $headers = $('#toc h1, #toc h2, #toc h3, #toc h4');
+    c = [];
+    if ($headers.length === 0) {
+      return c;
+    }
+    for (j = 0, len = $headers.length; j < len; j++) {
+      h = $headers[j];
+      $h = $(h);
+      c.push({
+        h: h.tagName.toLowerCase(),
+        t: $h.text(),
+        e: $h
+      });
+    }
+    return c;
+  },
+  render: function() {
+    var onClick;
+    onClick = this._click;
+    return div({
+      className: 'toc'
+    }, this.state.tocs.map(function(i) {
+      return React.DOM[i.h]({
+        onClick: onClick
+      }, i.t);
+    }));
+  }
+});
+
+
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":18,"./LoadComponent.coffee":8,"classnames":13}],11:[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -673,8 +777,7 @@ module.exports = _.extend(new Dispatcher(), {
 });
 
 
-
-},{"flux":13}],11:[function(require,module,exports){
+},{"flux":14}],12:[function(require,module,exports){
 var rend;
 
 rend = React.render;
@@ -820,8 +923,7 @@ $(function() {
 });
 
 
-
-},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Reactify.coffee":9,"./persistence/TreePersistence.coffee":16}],12:[function(require,module,exports){
+},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Reactify.coffee":9,"./persistence/TreePersistence.coffee":17}],13:[function(require,module,exports){
 /*!
   Copyright (c) 2015 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -872,7 +974,7 @@ $(function() {
 
 }());
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -884,7 +986,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":14}],14:[function(require,module,exports){
+},{"./lib/Dispatcher":15}],15:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1136,7 +1238,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":15}],15:[function(require,module,exports){
+},{"./invariant":16}],16:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1191,7 +1293,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = {
   get: function(path, query, cb) {
     var url;
@@ -1241,8 +1343,7 @@ module.exports = {
 };
 
 
-
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, TreeStore, _cont, _curr, _got_snip, _snip, _tree, clog;
 
 EventEmitter = require('events').EventEmitter;
@@ -1577,8 +1678,7 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
 module.exports = TreeStore;
 
 
-
-},{"../dispatcher/Dispatcher.coffee":10,"events":18}],18:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":11,"events":19}],19:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1881,4 +1981,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[11]);
+},{}]},{},[12]);

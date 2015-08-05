@@ -5,13 +5,13 @@ load = React.createFactory require './LoadComponent.coffee'
 codemirror        = require './CodeMirror.coffee'
 list              = require './ListComponent.coffee'
 kids              = require './KidsComponent.coffee'
-# toc               = require './TocComponent.coffee' XX uh, broken with a typo
+toc               = require './TocComponent.coffee'
 lost              = recl render: -> (div {}, "lost")
 components = 
   kids:kids
   list:list
   lost:lost
-  # toc:toc
+  toc:toc
   codemirror:codemirror
 
 module.exports = recl
