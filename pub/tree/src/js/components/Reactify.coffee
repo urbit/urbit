@@ -1,15 +1,18 @@
 recl = React.createClass
 span = React.DOM.span
+div  = React.DOM.span
 load = require './LoadComponent.coffee'
 
 codemirror        = React.createFactory require './CodeMirror.coffee'
 list              = React.createFactory require './ListComponent.coffee'
 kids              = React.createFactory require './KidsComponent.coffee'
+toc               = React.createFactory require './TocComponent.coffee'
 lost              = React.createFactory recl render: -> (div {}, "lost")
 components = 
   kids:kids
   list:list
   lost:lost
+  toc:toc
   codemirror:codemirror
 
 module.exports = recl
