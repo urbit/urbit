@@ -1,5 +1,5 @@
 recl = React.createClass
-[div,input,textarea] = [React.DOM.div,React.DOM.input,React.DOM.textarea]
+{div,input,textarea} = React.DOM
 
 module.exports = recl
   displayName: "Load"

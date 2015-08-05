@@ -28,25 +28,44 @@ module.exports = {
       kids: kids
     });
   },
-  getPath: function(path, endpoint) {
-    var query;
-    if (endpoint == null) {
-      endpoint = "";
+  getPath: function(path, query) {
+    if (query == null) {
+      return;
     }
     if (path.slice(-1) === "/") {
       path = path.slice(0, -1);
     }
-    query = {
-      "": "body.r__kids_name.t",
-      kids: "kids_name.t_body.r",
-      snip: "kids_name.t_snip.r_head.r_meta.j"
-    }[endpoint];
+    if (typeof query === 'string') {
+      query = {
+        body: {
+          body: 'r',
+          kids: {
+            name: 't'
+          }
+        },
+        kids: {
+          kids: {
+            name: 't',
+            body: 'r'
+          }
+        },
+        snip: {
+          kids: {
+            name: 't',
+            snip: 'r',
+            head: 'r',
+            meta: 'j'
+          }
+        }
+      }[query];
+    }
     return TreePersistence.get(path, query, (function(_this) {
       return function(err, res) {
-        switch (endpoint) {
-          case "snip":
+        var ref, ref1;
+        switch (false) {
+          case !((ref = query.kids) != null ? ref.snip : void 0):
             return _this.loadSnip(path, res.kids);
-          case "kids":
+          case !((ref1 = query.kids) != null ? ref1.body : void 0):
             return _this.loadKids(path, res.kids);
           default:
             return _this.loadPath(path, res.body, res.kids);
@@ -64,7 +83,7 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":9,"../persistence/TreePersistence.coffee":15}],2:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":10,"../persistence/TreePersistence.coffee":16}],2:[function(require,module,exports){
 var BodyComponent, TreeActions, TreeStore, a, div, reactify, recl, ref,
   slice = [].slice;
 
@@ -78,7 +97,7 @@ TreeActions = require('../actions/TreeActions.coffee');
 
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.a], div = ref[0], a = ref[1];
+ref = React.DOM, div = ref.div, a = ref.a;
 
 module.exports = recl({
   displayName: "Anchor",
@@ -93,9 +112,6 @@ module.exports = recl({
       cont: TreeStore.getCont(),
       url: window.location.pathname
     };
-  },
-  checkPath: function(path) {
-    return this.state.cont[path] != null;
   },
   toggleFocus: function(state) {
     return $(this.getDOMNode()).toggleClass('focus', state);
@@ -117,7 +133,7 @@ module.exports = recl({
     return dt = this.ts - Number(Date.now());
   },
   setPath: function(href, hist) {
-    var href_parts, next, rend;
+    var href_parts, next;
     href_parts = href.split("#");
     next = href_parts[0];
     if (next.substr(-1) === "/") {
@@ -127,27 +143,18 @@ module.exports = recl({
     if (hist !== false) {
       history.pushState({}, "", window.tree.basepath(href_parts.join("")));
     }
-    rend = false;
     if (next !== this.state.path) {
       React.unmountComponentAtNode($('#cont')[0]);
-      rend = true;
-    }
-    TreeActions.setCurr(next);
-    if (rend === true) {
+      TreeActions.setCurr(next);
       return React.render(BodyComponent({}, ""), $('#cont')[0]);
     }
   },
   goTo: function(path) {
-    var frag;
     this.toggleFocus(false);
     $("html,body").animate({
       scrollTop: 0
     });
-    frag = path.split("#")[0];
-    this.setPath(path);
-    if (!this.checkPath(frag)) {
-      return TreeActions.getPath(frag);
-    }
+    return this.setPath(path);
   },
   checkURL: function() {
     if (this.state.url !== window.location.pathname) {
@@ -170,7 +177,7 @@ module.exports = recl({
       up = up.slice(0, -1);
     }
     if (this.state.cont[up] == null) {
-      TreeActions.getPath(up);
+      TreeActions.getPath(up, "body");
     }
     if (!TreeStore.gotSnip(up)) {
       return TreeActions.getPath(up, "snip");
@@ -299,10 +306,10 @@ module.exports = recl({
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":16,"./BodyComponent.coffee":3,"./Reactify.coffee":8}],3:[function(require,module,exports){
-var TreeActions, TreeStore, div, reactify, recl;
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":17,"./BodyComponent.coffee":4,"./Reactify.coffee":9}],3:[function(require,module,exports){
+var TreeActions, TreeStore, code, div, load, recl, ref, span;
 
-reactify = React.createFactory(require('./Reactify.coffee'));
+load = React.createFactory(require('./LoadComponent.coffee'));
 
 TreeStore = require('../stores/TreeStore.coffee');
 
@@ -310,51 +317,115 @@ TreeActions = require('../actions/TreeActions.coffee');
 
 recl = React.createClass;
 
+ref = React.DOM, div = ref.div, span = ref.span, code = ref.code;
+
+module.exports = function(queries, Child) {
+  return recl({
+    displayName: "Async",
+    stateFromStore: function() {
+      var path, ref1;
+      path = (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
+      return {
+        path: path,
+        got: TreeStore.fulfill(path, queries)
+      };
+    },
+    componentDidMount: function() {
+      TreeStore.addChangeListener(this._onChangeStore);
+      return this.checkPath();
+    },
+    componentWillUnmount: function() {
+      return TreeStore.removeChangeListener(this._onChangeStore);
+    },
+    componentDidUpdate: function(_props, _state) {
+      return this.checkPath();
+    },
+    filterQueries: function() {
+      return this.filterWith(this.state.got, queries);
+    },
+    filterWith: function(have, _queries) {
+      var k, kid, ref1, request;
+      if (have == null) {
+        return _queries;
+      }
+      request = {};
+      for (k in _queries) {
+        if (have[k] == null) {
+          request[k] = _queries[k];
+        }
+      }
+      if ((_queries.kids != null) && (have.kids != null)) {
+        if (_.isEmpty(have.kids)) {
+          request.kids = _queries.kids;
+        } else {
+          request.kids = {};
+          ref1 = have.kids;
+          for (k in ref1) {
+            kid = ref1[k];
+            _.merge(request.kids, this.filterWith(kid, _queries.kids));
+          }
+          if (_.isEmpty(request.kids)) {
+            delete request.kids;
+          }
+        }
+      }
+      if (!_.isEmpty(request)) {
+        return request;
+      }
+    },
+    checkPath: function() {
+      return TreeActions.getPath(this.state.path, this.filterQueries());
+    },
+    getInitialState: function() {
+      return this.stateFromStore();
+    },
+    _onChangeStore: function() {
+      return this.setState(this.stateFromStore());
+    },
+    render: function() {
+      return div({}, this.filterQueries() != null ? div({
+        className: "loading"
+      }, load({}, "")) : React.createElement(Child, _.merge(this.props, this.state.got), this.props.children));
+    }
+  });
+};
+
+
+
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":17,"./LoadComponent.coffee":8}],4:[function(require,module,exports){
+var div, query, reactify, recl;
+
+reactify = React.createFactory(require('./Reactify.coffee'));
+
+query = require('./Async.coffee');
+
+recl = React.createClass;
+
 div = React.DOM.div;
 
-module.exports = recl({
+module.exports = query({
+  body: 'r',
+  path: 't'
+}, recl({
   displayName: "Body",
-  stateFromStore: function() {
-    return {
-      body: TreeStore.getBody(),
-      curr: TreeStore.getCurr()
-    };
-  },
-  componentDidMount: function() {
-    return TreeStore.addChangeListener(this._onChangeStore);
-  },
-  componentWillUnmount: function() {
-    return TreeStore.removeChangeListener(this._onChangeStore);
-  },
-  componentDidUpdate: function(_props, _state) {
-    if (_state.curr !== this.state.curr) {
-      return console.log("this wasn't happening");
-    }
-  },
-  getInitialState: function() {
-    return this.stateFromStore();
-  },
-  _onChangeStore: function() {
-    return this.setState(this.stateFromStore());
-  },
   render: function() {
     return div({}, div({
       id: 'body',
-      key: "body" + this.state.curr
+      key: "body" + this.props.path
     }, reactify({
-      manx: this.state.body
+      manx: this.props.body
     })));
   }
-});
+}));
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":16,"./Reactify.coffee":8}],4:[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":9}],5:[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.textarea], div = ref[0], textarea = ref[1];
+ref = React.DOM, div = ref.div, textarea = ref.textarea;
 
 module.exports = recl({
   render: function() {
@@ -373,12 +444,8 @@ module.exports = recl({
 
 
 
-},{}],5:[function(require,module,exports){
-var TreeActions, TreeStore, a, div, hr, li, reactify, recl, ref, ul;
-
-TreeStore = require('../stores/TreeStore.coffee');
-
-TreeActions = require('../actions/TreeActions.coffee');
+},{}],6:[function(require,module,exports){
+var a, div, hr, li, query, reactify, recl, ref, ul;
 
 reactify = function(manx) {
   return React.createElement(window.tree.reactify, {
@@ -386,140 +453,90 @@ reactify = function(manx) {
   });
 };
 
+query = require('./Async.coffee');
+
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.a, React.DOM.ul, React.DOM.li, React.DOM.hr], div = ref[0], a = ref[1], ul = ref[2], li = ref[3], hr = ref[4];
+ref = React.DOM, div = ref.div, a = ref.a, ul = ref.ul, li = ref.li, hr = ref.hr;
 
-module.exports = recl({
+module.exports = query({
+  kids: {
+    body: 'r'
+  }
+}, recl({
   displayName: "Kids",
-  stateFromStore: function() {
-    var path, ref1;
-    path = (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
-    return {
-      path: path,
-      cont: TreeStore.getCont(),
-      tree: TreeStore.getTree(path.split("/"))
-    };
-  },
-  getInitialState: function() {
-    return this.stateFromStore();
-  },
-  _onChangeStore: function() {
-    return this.setState(this.stateFromStore());
-  },
-  gotPath: function() {
-    var _keys;
-    _keys = _(this.state.tree).keys();
-    return (!_keys.isEmpty()) && _keys.every((function(_this) {
-      return function(k) {
-        return _this.state.cont[_this.state.path + "/" + k] != null;
-      };
-    })(this));
-  },
-  componentWillUnmount: function() {
-    return TreeStore.removeChangeListener(this._onChangeStore);
-  },
-  componentDidMount: function() {
-    TreeStore.addChangeListener(this._onChangeStore);
-    if (!this.gotPath()) {
-      return TreeActions.getPath(this.state.path, "kids");
-    }
-  },
   render: function() {
     var v;
     return div({
-      key: "kids-" + this.state.path,
       className: "kids"
     }, (function() {
       var i, len, ref1, results;
-      if (!this.gotPath()) {
-        return reactify(null);
-      } else {
-        ref1 = _.keys(this.state.tree).sort();
-        results = [];
-        for (i = 0, len = ref1.length; i < len; i++) {
-          v = ref1[i];
-          results.push([
-            div({
-              key: v
-            }, reactify(this.state.cont[this.state.path + "/" + v])), hr({}, "")
-          ]);
-        }
-        return results;
+      ref1 = _.keys(this.props.kids).sort();
+      results = [];
+      for (i = 0, len = ref1.length; i < len; i++) {
+        v = ref1[i];
+        results.push([
+          div({
+            key: v
+          }, reactify(this.props.kids[v].body)), hr({}, "")
+        ]);
       }
+      return results;
     }).call(this));
   }
-});
+}));
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":16}],6:[function(require,module,exports){
-var TreeActions, TreeStore, a, clas, div, h1, li, load, reactify, recl, ref, ul,
+},{"./Async.coffee":3}],7:[function(require,module,exports){
+var a, clas, div, h1, li, query, reactify, recl, ref, ul,
   slice = [].slice;
 
 clas = require('classnames');
 
-TreeStore = require('../stores/TreeStore.coffee');
-
-TreeActions = require('../actions/TreeActions.coffee');
-
-load = React.createFactory(require('./LoadComponent.coffee'));
-
 reactify = function(manx) {
   return React.createElement(window.tree.reactify, {
     manx: manx
   });
 };
 
+query = require('./Async.coffee');
+
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.a, React.DOM.ul, React.DOM.li, React.DOM.h1], div = ref[0], a = ref[1], ul = ref[2], li = ref[3], h1 = ref[4];
+ref = React.DOM, div = ref.div, a = ref.a, ul = ref.ul, li = ref.li, h1 = ref.h1;
 
-module.exports = recl({
+module.exports = query({
+  path: 't',
+  kids: {
+    snip: 'r',
+    head: 'r',
+    meta: 'j'
+  }
+}, recl({
   displayName: "List",
-  stateFromStore: function() {
-    var path, ref1;
-    path = (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
-    return {
-      path: path,
-      snip: TreeStore.getSnip(),
-      tree: TreeStore.getTree(path.split("/"))
-    };
-  },
-  _onChangeStore: function() {
-    return this.setState(this.stateFromStore());
-  },
-  componentWillUnmount: function() {
-    return TreeStore.removeChangeListener(this._onChangeStore);
-  },
-  getInitialState: function() {
-    return this.stateFromStore();
-  },
-  gotPath: function() {
-    return TreeStore.gotSnip(this.state.path);
-  },
-  componentDidMount: function() {
-    TreeStore.addChangeListener(this._onChangeStore);
-    if (!this.gotPath()) {
-      return TreeActions.getPath(this.state.path, "snip");
-    }
+  render: function() {
+    var k;
+    k = clas({
+      list: true,
+      posts: this.props.dataType === 'post',
+      "default": this.props['data-source'] === 'default'
+    });
+    return ul({
+      className: k
+    }, this.renderList());
   },
   renderList: function() {
-    var _keys, head, href, i, item, len, path, ref1, ref2, results, snip;
-    if (!this.gotPath()) {
-      return div({
-        className: "loading"
-      }, load({}, ""));
-    }
-    _keys = _.keys(this.state.tree).sort();
+    var _keys, elem, head, href, i, item, len, path, ref1, ref2, results;
+    _keys = _.keys(this.props.kids).sort();
     if (this.props.dataType === 'post') {
       _keys = _keys.reverse();
     }
     results = [];
     for (i = 0, len = _keys.length; i < len; i++) {
       item = _keys[i];
-      path = this.state.path + "/" + item;
-      snip = this.state.snip[path];
+      path = this.props.path + "/" + item;
+      elem = this.props.kids[item];
       href = window.tree.basepath(path);
       results.push(li({
         className: (ref1 = this.props.dataType) != null ? ref1 : ""
@@ -528,40 +545,26 @@ module.exports = recl({
         className: clas({
           preview: this.props.dataPreview != null
         })
-      }, this.props.dataPreview == null ? h1({}, item) : this.props.dataType === 'post' ? (head = ((ref2 = snip.meta) != null ? ref2.title : void 0) ? {
+      }, this.props.dataPreview == null ? h1({}, item) : this.props.dataType === 'post' ? (head = ((ref2 = elem.meta) != null ? ref2.title : void 0) ? {
         gn: 'h1',
-        c: [snip.meta.title]
-      } : snip.head, reactify({
+        c: [elem.meta.title]
+      } : elem.head, reactify({
         gn: 'div',
-        c: [head].concat(slice.call(snip.body.c.slice(0, 2)))
-      })) : this.props.titlesOnly != null ? reactify(snip.head) : [reactify(snip.head), reactify(snip.body)])));
+        c: [head].concat(slice.call(elem.snip.c.slice(0, 2)))
+      })) : this.props.titlesOnly != null ? reactify(elem.head) : [reactify(elem.head), reactify(elem.snip)])));
     }
     return results;
-  },
-  render: function() {
-    var k;
-    k = "list";
-    if (this.props['data-source'] === 'default') {
-      k += " default";
-    }
-    if (this.props.dataType === 'post') {
-      k += " posts";
-    }
-    return ul({
-      className: k,
-      key: "list-" + this.state.path
-    }, this.renderList());
   }
-});
+}));
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":16,"./LoadComponent.coffee":7,"classnames":11}],7:[function(require,module,exports){
+},{"./Async.coffee":3,"classnames":12}],8:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = ref[0], input = ref[1], textarea = ref[2];
+ref = React.DOM, div = ref.div, input = ref.input, textarea = ref.textarea;
 
 module.exports = recl({
   displayName: "Load",
@@ -595,26 +598,26 @@ module.exports = recl({
 
 
 
-},{}],8:[function(require,module,exports){
-var codemirror, components, kids, list, load, lost, recl, span;
+},{}],9:[function(require,module,exports){
+var codemirror, components, div, kids, list, load, lost, recl, ref, span;
 
 recl = React.createClass;
 
-span = React.DOM.span;
+ref = React.DOM, div = ref.div, span = ref.span;
 
-load = require('./LoadComponent.coffee');
+load = React.createFactory(require('./LoadComponent.coffee'));
 
-codemirror = React.createFactory(require('./CodeMirror.coffee'));
+codemirror = require('./CodeMirror.coffee');
 
-list = React.createFactory(require('./ListComponent.coffee'));
+list = require('./ListComponent.coffee');
 
-kids = React.createFactory(require('./KidsComponent.coffee'));
+kids = require('./KidsComponent.coffee');
 
-lost = React.createFactory(recl({
+lost = recl({
   render: function() {
     return div({}, "lost");
   }
-}));
+});
 
 components = {
   kids: kids,
@@ -629,7 +632,7 @@ module.exports = recl({
     return this.walk(this.props.manx);
   },
   walk: function(obj, key) {
-    var ref;
+    var ref1;
     switch (false) {
       case !(obj == null):
         return span({
@@ -638,7 +641,7 @@ module.exports = recl({
       case typeof obj !== "string":
         return obj;
       case obj.gn == null:
-        return React.createElement((ref = components[obj.gn]) != null ? ref : obj.gn, $.extend({
+        return React.createElement((ref1 = components[obj.gn]) != null ? ref1 : obj.gn, $.extend({
           key: key
         }, obj.ga), obj.c.map(this.walk));
       default:
@@ -649,7 +652,7 @@ module.exports = recl({
 
 
 
-},{"./CodeMirror.coffee":4,"./KidsComponent.coffee":5,"./ListComponent.coffee":6,"./LoadComponent.coffee":7}],9:[function(require,module,exports){
+},{"./CodeMirror.coffee":5,"./KidsComponent.coffee":6,"./ListComponent.coffee":7,"./LoadComponent.coffee":8}],10:[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -671,7 +674,7 @@ module.exports = _.extend(new Dispatcher(), {
 
 
 
-},{"flux":12}],10:[function(require,module,exports){
+},{"flux":13}],11:[function(require,module,exports){
 var rend;
 
 rend = React.render;
@@ -818,7 +821,7 @@ $(function() {
 
 
 
-},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":3,"./components/Reactify.coffee":8,"./persistence/TreePersistence.coffee":15}],11:[function(require,module,exports){
+},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Reactify.coffee":9,"./persistence/TreePersistence.coffee":16}],12:[function(require,module,exports){
 /*!
   Copyright (c) 2015 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -869,7 +872,7 @@ $(function() {
 
 }());
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -881,7 +884,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":13}],13:[function(require,module,exports){
+},{"./lib/Dispatcher":14}],14:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1133,7 +1136,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":14}],14:[function(require,module,exports){
+},{"./invariant":15}],15:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1188,25 +1191,58 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 module.exports = {
   get: function(path, query, cb) {
     var url;
     if (query == null) {
       query = "no-query";
     }
-    url = (window.tree.basepath(path)) + ".json?q=" + query;
+    url = (window.tree.basepath(path)) + ".json?q=" + (this.encode(query));
     return $.get(url, {}, function(data) {
       if (cb) {
         return cb(null, data);
       }
     });
+  },
+  encode: function(obj) {
+    var _encode, delim;
+    delim = function(n) {
+      return ('_'.repeat(n)) || '.';
+    };
+    _encode = function(obj) {
+      var _dep, dep, k, res, sub, v;
+      if (typeof obj !== 'object') {
+        return [0, obj];
+      }
+      dep = 0;
+      sub = (function() {
+        var ref, results;
+        results = [];
+        for (k in obj) {
+          v = obj[k];
+          ref = _encode(v), _dep = ref[0], res = ref[1];
+          if (_dep > dep) {
+            dep = _dep;
+          }
+          if (res != null) {
+            results.push(k + (delim(_dep)) + res);
+          } else {
+            results.push(void 0);
+          }
+        }
+        return results;
+      })();
+      dep++;
+      return [dep, sub.join(delim(dep))];
+    };
+    return (_encode(obj))[1];
   }
 };
 
 
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, TreeStore, _cont, _curr, _got_snip, _snip, _tree, clog;
 
 EventEmitter = require('events').EventEmitter;
@@ -1237,6 +1273,89 @@ TreeStore = _.extend(EventEmitter.prototype, {
   },
   pathToArr: function(_path) {
     return _path.split("/");
+  },
+  filterQuery: function(query) {
+    return this.filterWith(this.fulfill(_curr, query), query);
+  },
+  filterWith: function(have, query) {
+    var _query, k, kid, ref;
+    if (have == null) {
+      return query;
+    }
+    _query = {};
+    for (k in query) {
+      if (have[k] == null) {
+        _query[k] = query[k];
+      }
+    }
+    if ((query.kids != null) && (have.kids != null)) {
+      if (_.isEmpty(have.kids)) {
+        _query.kids = query.kids;
+      } else {
+        _query.kids = {};
+        ref = have.kids;
+        for (k in ref) {
+          kid = ref[k];
+          _.merge(_query.kids, this.filterWith(kid, query.kids));
+        }
+        if (_.isEmpty(_query.kids)) {
+          delete _query.kids;
+        }
+      }
+    }
+    if (!_.isEmpty(_query)) {
+      return _query;
+    }
+  },
+  fulfill: function(path, query) {
+    var data, i, k, len, ref, ref1, ref2, ref3;
+    data = this.fulfillLocal(path, query);
+    if (query.body) {
+      data.body = _cont[path];
+    }
+    if (query.head) {
+      data.head = (ref = _snip[path]) != null ? ref.head : void 0;
+    }
+    if (query.snip) {
+      data.snip = (ref1 = _snip[path]) != null ? ref1.body : void 0;
+    }
+    if (query.meta) {
+      data.meta = (ref2 = _snip[path]) != null ? ref2.meta : void 0;
+    }
+    if (query.kids) {
+      data.kids = {};
+      ref3 = this.getKids(path);
+      for (i = 0, len = ref3.length; i < len; i++) {
+        k = ref3[i];
+        data.kids[k] = this.fulfill(path + "/" + k, query.kids);
+      }
+    }
+    if (!_.isEmpty(data)) {
+      return data;
+    }
+  },
+  fulfillLocal: function(path, query) {
+    var data;
+    data = {};
+    if (query.path) {
+      data.path = path;
+    }
+    if (query.name) {
+      data.name = path.split("/").pop();
+    }
+    if (query.sein) {
+      data.sein = TreeStore.getPare(path);
+    }
+    if (query.sibs) {
+      data.sibs = TreeStore.getSiblings(path);
+    }
+    if (query.next) {
+      data.next = TreeStore.getNext(path);
+    }
+    if (query.prev) {
+      data.prev = TreeStore.getPrev(path);
+    }
+    return data;
   },
   getTree: function(_path) {
     var i, len, sub, tree;
@@ -1281,11 +1400,11 @@ TreeStore = _.extend(EventEmitter.prototype, {
     return !!_got_snip[path];
   },
   loadSnip: function(path, kids) {
-    var k, v;
+    var i, len, v;
     this.mergePathToTree(path, _.pluck(kids, "name"));
     if ((kids != null ? kids.length : void 0) !== 0) {
-      for (k in kids) {
-        v = kids[k];
+      for (i = 0, len = kids.length; i < len; i++) {
+        v = kids[i];
         _snip[path + "/" + v.name] = {
           head: {
             gn: 'h1',
@@ -1339,12 +1458,18 @@ TreeStore = _.extend(EventEmitter.prototype, {
     this.mergePathToTree(path, _.pluck(kids, "name"));
     return _cont[path] = body;
   },
-  getKids: function() {
-    return _.keys(this.getTree(_curr.split("/")));
+  getKids: function(path) {
+    if (path == null) {
+      path = _curr;
+    }
+    return _.keys(this.getTree(path.split("/")));
   },
-  getSiblings: function() {
+  getSiblings: function(path) {
     var curr;
-    curr = _curr.split("/");
+    if (path == null) {
+      path = _curr;
+    }
+    curr = path.split("/");
     curr.pop();
     if (curr.length !== 0) {
       return this.getTree(curr);
@@ -1352,9 +1477,12 @@ TreeStore = _.extend(EventEmitter.prototype, {
       return {};
     }
   },
-  getPrev: function() {
+  getPrev: function(path) {
     var ind, key, par, sibs, win;
-    sibs = _.keys(this.getSiblings()).sort();
+    if (path == null) {
+      path = _curr;
+    }
+    sibs = _.keys(this.getSiblings(path)).sort();
     if (sibs.length < 2) {
       return null;
     } else {
@@ -1366,9 +1494,12 @@ TreeStore = _.extend(EventEmitter.prototype, {
       return par.join("/");
     }
   },
-  getNext: function() {
+  getNext: function(path) {
     var ind, key, par, sibs, win;
-    sibs = _.keys(this.getSiblings()).sort();
+    if (path == null) {
+      path = _curr;
+    }
+    sibs = _.keys(this.getSiblings(path)).sort();
     if (sibs.length < 2) {
       return null;
     } else {
@@ -1380,9 +1511,12 @@ TreeStore = _.extend(EventEmitter.prototype, {
       return par.join("/");
     }
   },
-  getPare: function() {
+  getPare: function(path) {
     var _path;
-    _path = this.pathToArr(_curr);
+    if (path == null) {
+      path = _curr;
+    }
+    _path = this.pathToArr(path);
     if (_path.length > 1) {
       _path.pop();
       _path = _path.join("/");
@@ -1394,9 +1528,12 @@ TreeStore = _.extend(EventEmitter.prototype, {
       return null;
     }
   },
-  getCrumbs: function() {
+  getCrumbs: function(path) {
     var _path, crum, crums, k, v;
-    _path = this.pathToArr(_curr);
+    if (path == null) {
+      path = _curr;
+    }
+    _path = this.pathToArr(path);
     crum = "";
     crums = [];
     for (k in _path) {
@@ -1441,7 +1578,7 @@ module.exports = TreeStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":9,"events":17}],17:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":10,"events":18}],18:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1744,4 +1881,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[10]);
+},{}]},{},[11]);

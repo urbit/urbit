@@ -16,6 +16,7 @@
 ::
 ++  json-front
   |=  a=json  ^-  json
+  =<  ?~(. [%b |] .)                  :: XX overloaded nulls
   =-  (fall `(unit json)`- ~)
   %+  biff  ((ar some):jo a)
   %+  find-in-tree  (ot c/(ar some) gn/so ga/(om so) ~):jo

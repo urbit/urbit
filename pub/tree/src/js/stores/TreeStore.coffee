@@ -17,6 +17,45 @@ TreeStore = _.extend EventEmitter.prototype, {
 
   pathToArr: (_path) -> _path.split "/"
 
+  filterQuery: (query)-> @filterWith (@fulfill _curr, query), query
+  filterWith: (have,query)->
+    return query unless have?
+    _query = {}
+    for k of query
+      _query[k] = query[k] unless have[k]?
+    if query.kids? and have.kids?
+      if _.isEmpty have.kids
+        _query.kids = query.kids
+      else
+        _query.kids = {}
+        for k,kid of have.kids
+          _.merge _query.kids, @filterWith kid, query.kids
+        if _.isEmpty _query.kids
+          delete _query.kids
+    _query unless _.isEmpty _query
+    
+  fulfill: (path,query)->
+    data = @fulfillLocal path, query
+    if query.body then data.body = _cont[path]
+    if query.head then data.head = _snip[path]?.head
+    if query.snip then data.snip = _snip[path]?.body
+    if query.meta then data.meta = _snip[path]?.meta
+    if query.kids
+      data.kids = {}
+      for k in @getKids path
+        data.kids[k] = @fulfill path+"/"+k, query.kids
+    data unless _.isEmpty data
+      
+  fulfillLocal: (path, query)->
+    data = {}
+    if query.path then data.path = path
+    if query.name then data.name = path.split("/").pop()
+    if query.sein then data.sein = TreeStore.getPare path
+    if query.sibs then data.sibs = TreeStore.getSiblings path
+    if query.next then data.next = TreeStore.getNext path
+    if query.prev then data.prev = TreeStore.getPrev path
+    data
+  
   getTree: (_path) ->
     tree = _tree
     for sub in _path
@@ -45,7 +84,7 @@ TreeStore = _.extend EventEmitter.prototype, {
   loadSnip: (path,kids) ->
     @mergePathToTree path,_.pluck(kids,"name")
     if kids?.length isnt 0
-      for k,v of kids
+      for v in kids
         _snip[path+"/"+v.name] = 
           head: {gn:'h1',c:v.head}
           body: {gn:'div',c:v.snip}
@@ -69,18 +108,18 @@ TreeStore = _.extend EventEmitter.prototype, {
     @mergePathToTree path,_.pluck(kids,"name")
     _cont[path] = body
 
-  getKids: -> _.keys @getTree _curr.split("/")
+  getKids: (path=_curr)-> _.keys @getTree path.split("/")
 
-  getSiblings: ->
-    curr = _curr.split("/")
+  getSiblings: (path=_curr)->
+    curr = path.split("/")
     curr.pop()
     if curr.length isnt 0
       @getTree curr
     else
       {}
 
-  getPrev: -> 
-    sibs = _.keys(@getSiblings()).sort()
+  getPrev: (path=_curr)-> 
+    sibs = _.keys(@getSiblings path).sort()
     if sibs.length < 2
       null
     else
@@ -91,8 +130,8 @@ TreeStore = _.extend EventEmitter.prototype, {
       par.push win
       par.join "/"
 
-  getNext: -> 
-    sibs = _.keys(@getSiblings()).sort()
+  getNext: (path=_curr)-> 
+    sibs = _.keys(@getSiblings path).sort()
     if sibs.length < 2
       null
     else
@@ -103,8 +142,8 @@ TreeStore = _.extend EventEmitter.prototype, {
       par.push win
       par.join "/"
 
-  getPare: -> 
-    _path = @pathToArr _curr
+  getPare: (path=_curr)-> 
+    _path = @pathToArr path
     if _path.length > 1
       _path.pop()
       _path = _path.join "/"
@@ -113,8 +152,8 @@ TreeStore = _.extend EventEmitter.prototype, {
     else
       null
 
-  getCrumbs: ->
-    _path = @pathToArr _curr
+  getCrumbs: (path=_curr)->
+    _path = @pathToArr path
     crum = ""
     crums = []
     for k,v of _path
