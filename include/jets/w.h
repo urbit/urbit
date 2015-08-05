@@ -46,6 +46,7 @@
     u3_noun u3wc_cut(u3_noun);
     u3_noun u3wc_dis(u3_noun);
     u3_noun u3wc_dor(u3_noun);
+    u3_noun u3wc_dvr(u3_noun);
     u3_noun u3wc_end(u3_noun);
     u3_noun u3wc_gor(u3_noun);
     u3_noun u3wc_hor(u3_noun);
@@ -55,9 +56,11 @@
     u3_noun u3wc_mix(u3_noun);
     u3_noun u3wc_mug(u3_noun);
     u3_noun u3wc_peg(u3_noun);
+    u3_noun u3wc_pow(u3_noun);
     u3_noun u3wc_rap(u3_noun);
     u3_noun u3wc_rip(u3_noun);
     u3_noun u3wc_rsh(u3_noun);
+    u3_noun u3wc_sqt(u3_noun);
     u3_noun u3wc_vor(u3_noun);
 
     u3_noun u3wcp_ins(u3_noun);
@@ -139,16 +142,44 @@
     u3_noun u3we_stew_fun(u3_noun);
     u3_noun u3we_stir_fun(u3_noun);
 
-    u3_noun u3wer_sun(u3_noun);
-    u3_noun u3wer_mul(u3_noun);
-    u3_noun u3wer_div(u3_noun);
+    u3_noun u3wef_drg(u3_noun);
+    u3_noun u3wef_lug(u3_noun);
+
     u3_noun u3wer_add(u3_noun);
     u3_noun u3wer_sub(u3_noun);
-    u3_noun u3wer_lte(u3_noun);
+    u3_noun u3wer_mul(u3_noun);
+    u3_noun u3wer_div(u3_noun);
+    u3_noun u3wer_sqt(u3_noun);
+    u3_noun u3wer_fma(u3_noun);
     u3_noun u3wer_lth(u3_noun);
+    u3_noun u3wer_lte(u3_noun);
+    u3_noun u3wer_equ(u3_noun);
     u3_noun u3wer_gte(u3_noun);
     u3_noun u3wer_gth(u3_noun);
 
+    u3_noun u3wet_add(u3_noun);
+    u3_noun u3wet_sub(u3_noun);
+    u3_noun u3wet_mul(u3_noun);
+    u3_noun u3wet_div(u3_noun);
+    u3_noun u3wet_sqt(u3_noun);
+    u3_noun u3wet_fma(u3_noun);
+    u3_noun u3wet_lth(u3_noun);
+    u3_noun u3wet_lte(u3_noun);
+    u3_noun u3wet_equ(u3_noun);
+    u3_noun u3wet_gte(u3_noun);
+    u3_noun u3wet_gth(u3_noun);
+
+    u3_noun u3weq_add(u3_noun);
+    u3_noun u3weq_sub(u3_noun);
+    u3_noun u3weq_mul(u3_noun);
+    u3_noun u3weq_div(u3_noun);
+    u3_noun u3weq_sqt(u3_noun);
+    u3_noun u3weq_fma(u3_noun);
+    u3_noun u3weq_lth(u3_noun);
+    u3_noun u3weq_lte(u3_noun);
+    u3_noun u3weq_equ(u3_noun);
+    u3_noun u3weq_gte(u3_noun);
+    u3_noun u3weq_gth(u3_noun);
 
   /** Tier 6.
   **/
