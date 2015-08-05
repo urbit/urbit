@@ -4086,7 +4086,7 @@
       %+  cook  royl-cell
       ;~  pose
         ;~  plug
-          (easy %f)
+          (easy %d)
           ;~  pose  (cold | hep)  (easy &)  ==
           ;~  plug  dim:ag
             ;~  pose
@@ -4122,17 +4122,15 @@
     ==
   ::
   ++  royl-cell
-    |=  $?  [%f a=? b=[c=@ [d=@ e=@] f=? i=@]]
+    |=  $?  [%d a=? b=[c=@ [d=@ e=@] f=? i=@]]
             [%i a=?]
             [%n ~]
         ==
     ^-  dn
-    ?.  ?=([%f *] +<)  +<
+    ?.  ?=([%d *] +<)  +<
     =+  ^=  h
       (dif:si (new:si f.b i.b) (sun:si d.b))
-    |-  ?.  =(d.b 0)
-      $(c.b (mul c.b 10), d.b (dec d.b))
-    [%d a h (add c.b e.b)]
+    [%d a h (add (mul c.b (pow 10 d.b)) e.b)]
   ::
   ++  tash
     ~+
