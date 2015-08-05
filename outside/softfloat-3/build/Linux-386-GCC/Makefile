@@ -39,7 +39,7 @@ SOFTFLOAT_OPTS = -DINLINE_LEVEL=5 -DSOFTFLOAT_FAST_DIV64TO32
 DELETE = rm -f
 C_INCLUDES = -I. -I$(SOURCE_DIR)/$(SPECIALIZE_TYPE) -I$(SOURCE_DIR)/include
 COMPILE_C = \
-  gcc -c -Werror-implicit-function-declaration $(SOFTFLOAT_OPTS) \
+  $(CC) -c -std=gnu89 -Werror-implicit-function-declaration $(SOFTFLOAT_OPTS) \
     $(C_INCLUDES) -O2 -o $@
 MAKELIB = ar crs $@
 
