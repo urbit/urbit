@@ -47,6 +47,7 @@
     u3_noun u3qc_cut(u3_atom, u3_atom, u3_atom, u3_atom);
     u3_noun u3qc_dis(u3_atom, u3_atom);
     u3_noun u3qc_dor(u3_atom, u3_atom);
+    u3_noun u3qc_dvr(u3_atom, u3_atom);
     u3_noun u3qc_end(u3_atom, u3_atom, u3_atom);
     u3_noun u3qc_gor(u3_atom, u3_atom);
     u3_noun u3qc_hor(u3_atom, u3_atom);
@@ -55,9 +56,11 @@
     u3_noun u3qc_met(u3_atom, u3_atom);
     u3_noun u3qc_mix(u3_atom, u3_atom);
     u3_noun u3qc_peg(u3_atom, u3_atom);
+    u3_noun u3qc_pow(u3_atom, u3_atom);
     u3_noun u3qc_rap(u3_atom, u3_noun);
     u3_noun u3qc_rip(u3_atom, u3_atom);
     u3_noun u3qc_rsh(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qc_sqt(u3_atom);
     u3_noun u3qc_vor(u3_atom, u3_atom);
 
   /** Tier 4.
@@ -110,16 +113,44 @@
 
     u3_noun u3qeo_raw(u3_atom, u3_atom);
 
-    u3_noun u3qer_sun(u3_atom);
-    u3_noun u3qer_mul(u3_atom, u3_atom);
-    u3_noun u3qer_div(u3_atom, u3_atom);
-    u3_noun u3qer_add(u3_atom, u3_atom);
-    u3_noun u3qer_sub(u3_atom, u3_atom);
-    u3_noun u3qer_lte(u3_atom, u3_atom);
+    u3_noun u3qef_drg(u3_noun, u3_atom);
+    u3_noun u3qef_lug(u3_noun, u3_noun, u3_atom, u3_atom);
+
+    u3_noun u3qer_add(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qer_sub(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qer_mul(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qer_div(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qer_sqt(u3_atom, u3_atom);
+    u3_noun u3qer_fma(u3_atom, u3_atom, u3_atom, u3_atom);
     u3_noun u3qer_lth(u3_atom, u3_atom);
+    u3_noun u3qer_lte(u3_atom, u3_atom);
+    u3_noun u3qer_equ(u3_atom, u3_atom);
     u3_noun u3qer_gte(u3_atom, u3_atom);
     u3_noun u3qer_gth(u3_atom, u3_atom);
 
+    u3_noun u3qet_add(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qet_sub(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qet_mul(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qet_div(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qet_sqt(u3_atom, u3_atom);
+    u3_noun u3qet_fma(u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qet_lth(u3_atom, u3_atom);
+    u3_noun u3qet_lte(u3_atom, u3_atom);
+    u3_noun u3qet_equ(u3_atom, u3_atom);
+    u3_noun u3qet_gte(u3_atom, u3_atom);
+    u3_noun u3qet_gth(u3_atom, u3_atom);
+
+    u3_noun u3qeq_add(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qeq_sub(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qeq_mul(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qeq_div(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qeq_sqt(u3_atom, u3_atom);
+    u3_noun u3qeq_fma(u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qeq_lth(u3_atom, u3_atom);
+    u3_noun u3qeq_lte(u3_atom, u3_atom);
+    u3_noun u3qeq_equ(u3_atom, u3_atom);
+    u3_noun u3qeq_gte(u3_atom, u3_atom);
+    u3_noun u3qeq_gth(u3_atom, u3_atom);
 
   /** Tier 6.
   **/
