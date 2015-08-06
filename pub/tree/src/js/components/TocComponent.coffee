@@ -1,13 +1,7 @@
-clas        = require 'classnames'
-
 TreeStore   = require '../stores/TreeStore.coffee'
-TreeActions = require '../actions/TreeActions.coffee'
-
-load        = React.createFactory require './LoadComponent.coffee'
-reactify    = (manx)-> React.createElement window.tree.reactify, {manx}
 
 recl = React.createClass
-[div,a,ul,li,] = [React.DOM.div,React.DOM.a,React.DOM.ul,React.DOM.li,React.DOM.h1]
+{div} = React.DOM
 
 module.exports = recl
   hash:null
@@ -20,12 +14,15 @@ module.exports = recl
   _onChangeStore: ->
     @setState @stateFromStore()
 
+  _onChangeStore: -> @setState tocs: @compute()
   _click: (e) ->
     document.location.hash = @urlsafe $(e.target).text()
 
-  urlsafe: (str) -> str.toLowerCase().replace(/\ /g, "-")
-
-  componentDidMount: -> 
+  urlsafe: (str) ->
+    str.toLowerCase().replace(/\ /g, "-").replace(/[^a-z0-9~_.-]/g,"")
+    
+  componentDidMount: ->
+    TreeStore.addChangeListener @_onChangeStore
     @int = setInterval @checkHash,100
     @st = $(window).scrollTop()
     $(window).on 'scroll',@checkScroll
@@ -63,7 +60,7 @@ module.exports = recl
     TreeStore.removeChangeListener @_onChangeStore
     clearInterval @int
 
-  getInitialState: -> @stateFromStore()
+  getInitialState: -> tocs: @compute()
 
   gotPath: -> TreeStore.gotSnip(@state.path)
 

@@ -1,5 +1,7 @@
+clas        = require 'classnames'
+
 BodyComponent = React.createFactory require './BodyComponent.coffee'
-reactify      = React.createFactory require './Reactify.coffee'
+query       = require './Async.coffee'
 
 TreeStore   = require '../stores/TreeStore.coffee'
 TreeActions = require '../actions/TreeActions.coffee'
@@ -7,88 +9,61 @@ TreeActions = require '../actions/TreeActions.coffee'
 recl = React.createClass
 {div,a} = React.DOM
 
-module.exports = recl
+Links = React.createFactory query {
+    path:'t'
+    kids:
+      name:'t'
+      head:'r'
+      meta:'j'
+  }, (recl
+    # {curr:'t',prev:'t,next:'t',onClick:'f'}
+    displayName: "Links"
+    render: -> div {className:'links'}, @props.children, @_render()
+    _render: ->
+      keys = _(@props.kids).keys().sort()
+      style = {marginTop: -24 * (keys.indexOf @props.curr) + "px"}
+      div {id:"sibs",style}, keys.map (key) =>
+        href = window.tree.basepath @props.path+"/"+key
+        data = @props.kids[key]
+        head = data.meta.title if data.meta
+        head ?= @toText data.head
+        head ||= key
+        className = clas active: key is @props.curr
+        (div {className,key}, (a {href,onClick:@props.onClick}, head))
+
+    toText: (elem)-> switch
+      # manx: {fork: ["string", {gn:"string" ga:{dict:"string"} c:{list:"manx"}}]}
+      when !elem? then ""
+      when typeof elem == "string" then elem
+      when elem.gn? then (elem.c ? []).map(@toText).join ""
+      else throw "Bad react-json #{JSON.stringify elem}"
+  ),  recl
+    displayName: "Links_loading"
+    render: -> div {className:'links'}, @props.children, @_render()
+    _render: -> div {id:"sibs"}, div {className:"active"}, a {}, @props.curr
+
+module.exports = query {sein:'t',path:'t',name:'t',next:'t',prev:'t'},recl
   displayName: "Anchor"
-  stateFromStore: ->
-    { 
-      path:TreeStore.getCurr()
-      pare:TreeStore.getPare()
-      sibs:TreeStore.getSiblings()
-      snip:TreeStore.getSnip()
-      next:TreeStore.getNext()
-      prev:TreeStore.getPrev()
-      cont:TreeStore.getCont()
-      url:window.location.pathname
-    }
+  getInitialState: -> url: window.location.pathname
+  
+  onClick: -> @toggleFocus()
+  onMouseOver: -> @toggleFocus true
+  onMouseOut: -> @toggleFocus false
+  onTouchStart: -> @ts = Number Date.now()
+  onTouchEnd: -> dt = @ts - Number Date.now()
 
-  toggleFocus: (state) ->
-    $(@getDOMNode()).toggleClass 'focus',state
+  toggleFocus: (state) -> $(@getDOMNode()).toggleClass 'focus',state
 
-  _click: -> @toggleFocus()
-
-  _mouseOver: -> @toggleFocus true
-
-  _mouseOut: -> @toggleFocus false
-
-  _touchStart: ->
-    @ts = Number Date.now()
-
-  _touchEnd: ->
-    dt = @ts - Number Date.now()
-
-  setPath: (href,hist) ->
-    href_parts = href.split("#")
-    next = href_parts[0]
-    if next.substr(-1) is "/" then next = next.slice(0,-1)
-    href_parts[0] = next
-    if hist isnt false
-      history.pushState {}, "", window.tree.basepath href_parts.join ""
-    if next isnt @state.path
-      React.unmountComponentAtNode $('#cont')[0]
-      TreeActions.setCurr next
-      React.render (BodyComponent {}, ""),$('#cont')[0]
-
-  goTo: (path) ->
-    @toggleFocus false
-    $("html,body").animate {scrollTop:0}
-    @setPath path
-
-  checkURL: ->
-    if @state.url isnt window.location.pathname
-      @setPath (window.tree.fragpath window.location.pathname),false
-
-  setTitle: ->
-    title = $('#cont h1').first().text()
-    if title.length is 0
-      path = @state.path.split("/")
-      title = path[path.length-1]
-
-    document.title = "#{title} - #{@state.path}"
-
-  checkUp: ->
-    up = @state.pare ? "/"
-    if up.slice(-1) is "/" then up = up.slice 0,-1
-
-    unless @state.cont[up]? then TreeActions.getPath up, "body"
-    
-    unless TreeStore.gotSnip(up) then TreeActions.getPath up, "snip"
-        
-  componentDidUpdate: -> 
-    @setTitle()
-    @checkUp()
-
+  componentDidUpdate: -> @setTitle()
+  componentWillUnmount: -> clearInterval @interval; $('body').off 'click', 'a'
   componentDidMount: -> 
-    TreeStore.addChangeListener @_onChangeStore
-
     @setTitle()
-    @checkUp()
-
     @interval = setInterval @checkURL,100
 
     $('body').on 'keyup', (e) =>
       switch e.keyCode
-        when 37 then @goTo @state.prev # left
-        when 39 then @goTo @state.next # right
+        when 37 then @goTo @props.prev # left
+        when 39 then @goTo @props.next # right
 
     $('body').on 'click', 'a', (e) =>
       href = $(e.target).closest('a').attr('href')
@@ -97,60 +72,50 @@ module.exports = recl
         e.stopPropagation()
         @goTo window.tree.fragpath href
 
-  componentWillUnmount: -> 
-    clearInterval @interval
-    $('body').off 'click', 'a'
+  setTitle: ->
+    title = $('#cont h1').first().text() || @props.name
+    document.title = "#{title} - #{@props.path}"
 
-  getInitialState: -> @stateFromStore()
+  setPath: (href,hist) ->
+    href_parts = href.split("#")
+    next = href_parts[0]
+    if next.substr(-1) is "/" then next = next.slice(0,-1)
+    href_parts[0] = next
+    if hist isnt false
+      history.pushState {}, "", window.tree.basepath href_parts.join ""
+    if next isnt @props.path
+      React.unmountComponentAtNode $('#cont')[0]
+      TreeActions.setCurr next
+      React.render (BodyComponent {}, ""),$('#cont')[0]
 
-  _onChangeStore: -> @setState @stateFromStore()
+  goTo: (path) ->
+    @toggleFocus false
+    $("html,body").animate {scrollTop:0}
+    @setPath path
+  
+  checkURL: ->
+    if @state.url isnt window.location.pathname
+      @setPath (window.tree.fragpath window.location.pathname),false
+      @setState url: window.location.pathname
 
   renderArrow: (name, path) ->
     href = window.tree.basepath path
     (a {href,key:"arow-#{name}",className:"arow-#{name}"},"")
   
-  toText: (elem)-> $(React.renderToStaticMarkup reactify manx: elem).text()
-  
-  renderParts: -> [
-    if @state.pare then _.filter [
-      div {id:"up",key:"up"}, @renderArrow "up", @state.pare
-      if @state.prev or @state.next
-        div {id:"sides",key:"sides"}, _.filter [
-          if @state.prev then @renderArrow "prev", @state.prev
-          if @state.next then @renderArrow "next", @state.next
-    ] ]
-    if _.keys(@state.sibs).length > 0
-      [up..., curr] = @state.path.split "/"
-      up = up.join "/"
-      ci=0
-      k=0
-      _sibs = _(@state.sibs).keys().sort().map (i) => 
-        if curr is i
-          className = "active"
-          ci = k
-        className ?= ""
-        k++
-        path = up+"/"+i
-        href = window.tree.basepath path
-        snip = @state.snip[path]
-        head = snip?.meta?.title
-        head ?= @toText snip?.head if snip?.head
-        head ||= i
-        (div {className,key:i}, (a {href,onClick:@_click}, head))
-      style = {marginTop:"#{-24*ci}px"}
-      div {key:"sibs",id:"sibs",style}, _sibs
-    ]
-  
   render: ->
-    obj =
-      onMouseOver:@_mouseOver
-      onMouseOut:@_mouseOut
-      onClick:@_click
-      onTouchStart:@_touchStart
-      onTouchEnd:@_touchEnd
-
+    obj = {@onMouseOver,@onMouseOut,@onClick,@onTouchStart,@onTouchEnd}
     if _.keys(window).indexOf("ontouchstart") isnt -1
       delete obj.onMouseOver
       delete obj.onMouseOut
 
-    div obj, _.filter @renderParts()
+    div obj, Links {
+      @onClick
+      curr:@props.name
+      dataPath:@props.sein
+    }, if @props.sein then _.filter [
+         div {id:"up",key:"up"}, @renderArrow "up", @props.sein
+         if @props.prev or @props.next then _.filter [
+           div {id:"sides",key:"sides"},
+             if @props.prev then @renderArrow "prev", @props.prev
+             if @props.next then @renderArrow "next", @props.next
+       ] ]
