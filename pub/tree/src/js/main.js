@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee":[function(require,module,exports){
 var TreeDispatcher, TreePersistence;
 
 TreeDispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -82,7 +82,8 @@ module.exports = {
 };
 
 
-},{"../dispatcher/Dispatcher.coffee":11,"../persistence/TreePersistence.coffee":17}],2:[function(require,module,exports){
+
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/dispatcher/Dispatcher.coffee","../persistence/TreePersistence.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/AnchorComponent.coffee":[function(require,module,exports){
 var BodyComponent, TreeActions, TreeStore, a, div, reactify, recl, ref,
   slice = [].slice;
 
@@ -304,7 +305,8 @@ module.exports = recl({
 });
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":18,"./BodyComponent.coffee":4,"./Reactify.coffee":9}],3:[function(require,module,exports){
+
+},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/stores/TreeStore.coffee","./BodyComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/BodyComponent.coffee","./Reactify.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Async.coffee":[function(require,module,exports){
 var TreeActions, TreeStore, code, div, load, recl, ref, span;
 
 load = React.createFactory(require('./LoadComponent.coffee'));
@@ -389,7 +391,8 @@ module.exports = function(queries, Child) {
 };
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":18,"./LoadComponent.coffee":8}],4:[function(require,module,exports){
+
+},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/LoadComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/BodyComponent.coffee":[function(require,module,exports){
 var div, query, reactify, recl;
 
 reactify = React.createFactory(require('./Reactify.coffee'));
@@ -416,7 +419,8 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":9}],5:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/CodeMirror.coffee":[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -439,7 +443,8 @@ module.exports = recl({
 });
 
 
-},{}],6:[function(require,module,exports){
+
+},{}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/KidsComponent.coffee":[function(require,module,exports){
 var a, div, hr, li, query, reactify, recl, ref, ul;
 
 reactify = function(manx) {
@@ -482,7 +487,8 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3}],7:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Async.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/ListComponent.coffee":[function(require,module,exports){
 var a, clas, div, h1, li, query, reactify, recl, ref, ul,
   slice = [].slice;
 
@@ -552,7 +558,8 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"classnames":13}],8:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Async.coffee","classnames":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/classnames/index.js"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/LoadComponent.coffee":[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -590,7 +597,8 @@ module.exports = recl({
 });
 
 
-},{}],9:[function(require,module,exports){
+
+},{}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee":[function(require,module,exports){
 var codemirror, components, div, kids, list, load, lost, recl, ref, span, toc;
 
 recl = React.createClass;
@@ -646,7 +654,8 @@ module.exports = recl({
 });
 
 
-},{"./CodeMirror.coffee":5,"./KidsComponent.coffee":6,"./ListComponent.coffee":7,"./LoadComponent.coffee":8,"./TocComponent.coffee":10}],10:[function(require,module,exports){
+
+},{"./CodeMirror.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/CodeMirror.coffee","./KidsComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/KidsComponent.coffee","./ListComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/ListComponent.coffee","./LoadComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/LoadComponent.coffee","./TocComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/TocComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/TocComponent.coffee":[function(require,module,exports){
 var TreeActions, TreeStore, a, clas, div, li, load, reactify, recl, ref, ul;
 
 clas = require('classnames');
@@ -671,21 +680,14 @@ module.exports = recl({
   hash: null,
   displayName: "TableofContents",
   stateFromStore: function() {
-    var path, ref1, state;
-    path = (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
-    state = {
-      path: path,
-      snip: TreeStore.getSnip(),
-      tree: TreeStore.getTree(path.split("/")),
-      tocs: this.compute()
+    return {
+      body: TreeStore.getBody()
     };
-    return state;
   },
   _onChangeStore: function() {
     return this.setState(this.stateFromStore());
   },
   _click: function(e) {
-    console.log('click');
     return document.location.hash = this.urlsafe($(e.target).text());
   },
   urlsafe: function(str) {
@@ -693,19 +695,54 @@ module.exports = recl({
   },
   componentDidMount: function() {
     this.int = setInterval(this.checkHash, 100);
-    return this.setState(this.stateFromStore());
+    this.st = $(window).scrollTop();
+    $(window).on('scroll', this.checkScroll);
+    return this.$headers = $('#toc h1, #toc h2, #toc h3, #toc h4');
   },
-  checkHash: function() {
-    var hash, k, ref1, results, v;
-    if ((document.location.hash != null) && document.location.hash !== this.hash) {
-      hash = document.location.hash.slice(1);
-      ref1 = this.state.tocs;
+  checkScroll: function() {
+    var $h, hash, hst, k, ref1, results, st, v;
+    st = $(window).scrollTop();
+    if (Math.abs(this.st - st) > 10) {
+      hash = null;
+      this.st = st;
+      ref1 = this.$headers;
       results = [];
       for (k in ref1) {
         v = ref1[k];
-        if (hash === this.urlsafe(v.t)) {
+        if (v.tagName === void 0) {
+          continue;
+        }
+        $h = $(v);
+        hst = $h.offset().top - $h.outerHeight(true);
+        if (hst < st) {
+          hash = this.urlsafe($h.text());
+        }
+        if (hst > st && hash !== this.hash && hash !== null) {
+          this.hash = "#" + hash;
+          document.location.hash = hash;
+          break;
+        } else {
+          results.push(void 0);
+        }
+      }
+      return results;
+    }
+  },
+  checkHash: function() {
+    var $h, hash, k, offset, ref1, ref2, results, v;
+    if (((ref1 = document.location.hash) != null ? ref1.length : void 0) > 0 && document.location.hash !== this.hash) {
+      hash = document.location.hash.slice(1);
+      ref2 = this.$headers;
+      results = [];
+      for (k in ref2) {
+        v = ref2[k];
+        $h = $(v);
+        if (hash === this.urlsafe($h.text())) {
           this.hash = document.location.hash;
-          $(window).scrollTop(v.e.offset().top);
+          offset = $h.offset().top - $h.outerHeight(true);
+          setTimeout(function() {
+            return $(window).scrollTop(offset, 10);
+          });
           break;
         } else {
           results.push(void 0);
@@ -724,39 +761,55 @@ module.exports = recl({
   gotPath: function() {
     return TreeStore.gotSnip(this.state.path);
   },
-  compute: function() {
-    var $h, $headers, c, h, j, len;
-    $headers = $('#toc h1, #toc h2, #toc h3, #toc h4');
-    c = [];
-    if ($headers.length === 0) {
-      return c;
+  collectHeaders: function(e) {
+    var hs, k, v;
+    hs = [
+      {
+        gn: "h1",
+        ga: {
+          className: "t"
+        },
+        c: ["Table of contents"]
+      }
+    ];
+    for (k in e) {
+      v = e[k];
+      if (!v.gn) {
+        continue;
+      }
+      if (v.gn[0] === 'h' && parseInt(v.gn[1]) !== NaN) {
+        hs.push(v);
+      }
     }
-    for (j = 0, len = $headers.length; j < len; j++) {
-      h = $headers[j];
-      $h = $(h);
-      c.push({
-        h: h.tagName.toLowerCase(),
-        t: $h.text(),
-        e: $h
-      });
+    return hs;
+  },
+  parseHeaders: function() {
+    var k, ref1, ref2, v;
+    if (this.state.body.c) {
+      ref1 = this.state.body.c;
+      for (k in ref1) {
+        v = ref1[k];
+        if (v.gn === 'div' && ((ref2 = v.ga) != null ? ref2.id : void 0) === "toc") {
+          return {
+            gn: "div",
+            ga: {
+              className: "toc",
+              onClick: this._click
+            },
+            c: this.collectHeaders(v.c)
+          };
+        }
+      }
     }
-    return c;
   },
   render: function() {
-    var onClick;
-    onClick = this._click;
-    return div({
-      className: 'toc'
-    }, this.state.tocs.map(function(i) {
-      return React.DOM[i.h]({
-        onClick: onClick
-      }, i.t);
-    }));
+    return reactify(this.parseHeaders());
   }
 });
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":18,"./LoadComponent.coffee":8,"classnames":13}],11:[function(require,module,exports){
+
+},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/LoadComponent.coffee","classnames":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/classnames/index.js"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -777,7 +830,8 @@ module.exports = _.extend(new Dispatcher(), {
 });
 
 
-},{"flux":14}],12:[function(require,module,exports){
+
+},{"flux":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/index.js"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/main.coffee":[function(require,module,exports){
 var rend;
 
 rend = React.render;
@@ -923,7 +977,8 @@ $(function() {
 });
 
 
-},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Reactify.coffee":9,"./persistence/TreePersistence.coffee":17}],13:[function(require,module,exports){
+
+},{"./actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee","./components/AnchorComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/AnchorComponent.coffee","./components/BodyComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/BodyComponent.coffee","./components/Reactify.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee","./persistence/TreePersistence.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/classnames/index.js":[function(require,module,exports){
 /*!
   Copyright (c) 2015 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -974,7 +1029,7 @@ $(function() {
 
 }());
 
-},{}],14:[function(require,module,exports){
+},{}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/index.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -986,7 +1041,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":15}],15:[function(require,module,exports){
+},{"./lib/Dispatcher":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js":[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1238,7 +1293,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":16}],16:[function(require,module,exports){
+},{"./invariant":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/lib/invariant.js"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/lib/invariant.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1293,7 +1348,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],17:[function(require,module,exports){
+},{}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/persistence/TreePersistence.coffee":[function(require,module,exports){
 module.exports = {
   get: function(path, query, cb) {
     var url;
@@ -1343,7 +1398,8 @@ module.exports = {
 };
 
 
-},{}],18:[function(require,module,exports){
+
+},{}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/stores/TreeStore.coffee":[function(require,module,exports){
 var EventEmitter, MessageDispatcher, TreeStore, _cont, _curr, _got_snip, _snip, _tree, clog;
 
 EventEmitter = require('events').EventEmitter;
@@ -1678,7 +1734,8 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
 module.exports = TreeStore;
 
 
-},{"../dispatcher/Dispatcher.coffee":11,"events":19}],19:[function(require,module,exports){
+
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js"}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1738,8 +1795,10 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
+      } else {
+        throw TypeError('Uncaught, unspecified "error" event.');
       }
-      throw TypeError('Uncaught, unspecified "error" event.');
+      return false;
     }
   }
 
@@ -1981,4 +2040,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[12]);
+},{}]},{},["/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/main.coffee"]);

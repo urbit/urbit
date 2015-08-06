@@ -12,36 +12,51 @@ recl = React.createClass
 module.exports = recl
   hash:null
   displayName: "TableofContents"
-  stateFromStore: -> 
-    path = @props.dataPath ? TreeStore.getCurr()
-    state = { 
-      path
-      snip:TreeStore.getSnip()
-      tree:TreeStore.getTree(path.split("/"))
-      tocs:@compute()
+  stateFromStore: ->
+    { 
+      body:TreeStore.getBody()
     }
-    state
 
   _onChangeStore: ->
     @setState @stateFromStore()
 
   _click: (e) ->
-    console.log 'click'
     document.location.hash = @urlsafe $(e.target).text()
 
   urlsafe: (str) -> str.toLowerCase().replace(/\ /g, "-")
 
   componentDidMount: -> 
     @int = setInterval @checkHash,100
-    @setState @stateFromStore()
+    @st = $(window).scrollTop()
+    $(window).on 'scroll',@checkScroll
+    @$headers = $('#toc h1, #toc h2, #toc h3, #toc h4')
+
+  checkScroll: ->
+    st = $(window).scrollTop()
+    if Math.abs(@st-st) > 10
+      hash = null
+      @st = st
+      for k,v of @$headers
+        continue if v.tagName is undefined
+        $h = $ v
+        hst = $h.offset().top-$h.outerHeight(true)
+        if hst < st
+          hash = @urlsafe $h.text()
+        if hst > st and hash isnt @hash and hash isnt null
+          @hash = "#"+hash
+          document.location.hash = hash
+          break
 
   checkHash: ->
-    if document.location.hash? and document.location.hash isnt @hash
+    if document.location.hash?.length > 0 and document.location.hash isnt @hash
       hash = document.location.hash.slice(1)
-      for k,v of @state.tocs
-        if hash is @urlsafe v.t
+      for k,v of @$headers
+        $h = $ v
+        if hash is @urlsafe $h.text()
           @hash = document.location.hash
-          $(window).scrollTop v.e.offset().top
+          offset = $h.offset().top - $h.outerHeight(true)
+          setTimeout -> $(window).scrollTop offset
+            , 10
           break
 
   componentWillUnmount: ->
@@ -52,17 +67,18 @@ module.exports = recl
 
   gotPath: -> TreeStore.gotSnip(@state.path)
 
-  compute: ->
-    $headers = $('#toc h1, #toc h2, #toc h3, #toc h4')
-    c = []
-    if $headers.length is 0 then return c
-    for h in $headers
-      $h = $(h)
-      c.push {h:h.tagName.toLowerCase(),t:$h.text(),e:$h}
-    c
+  collectHeaders: (e) ->
+    hs = [{gn:"h1", ga:{className:"t"}, c:["Table of contents"]}]
+    for k,v of e
+      if not v.gn then continue
+      if v.gn[0] is 'h' and parseInt(v.gn[1]) isnt NaN
+        hs.push v
+    return hs
 
-  render: -> 
-    onClick = @_click
-    (div {className:'toc'}, @state.tocs.map (i) ->
-      (React.DOM[i.h] {onClick}, i.t)
-    )
+  parseHeaders: ->
+    if @state.body.c
+      for k,v of @state.body.c
+        if v.gn is 'div' and v.ga?.id is "toc"
+          return {gn:"div", ga:{className:"toc",onClick:@_click}, c:@collectHeaders(v.c)}
+
+  render: -> reactify @parseHeaders()
