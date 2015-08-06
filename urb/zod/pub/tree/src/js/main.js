@@ -68,8 +68,20 @@ Links = React.createFactory(query({
     }, this.props.children, this._render());
   },
   _render: function() {
-    var keys, style;
-    keys = _(this.props.kids).keys().sort();
+    var k, keys, ref1, ref2, ref3, sorted, style, v;
+    sorted = true;
+    keys = [];
+    ref1 = this.props.kids;
+    for (k in ref1) {
+      v = ref1[k];
+      if (((ref2 = v.meta) != null ? ref2.sort : void 0) == null) {
+        sorted = false;
+      }
+      keys[Number((ref3 = v.meta) != null ? ref3.sort : void 0)] = k;
+    }
+    if (sorted !== true) {
+      keys = _(this.props.kids).keys().sort();
+    }
     style = {
       marginTop: -24 * (keys.indexOf(this.props.curr)) + "px"
     };
@@ -461,8 +473,7 @@ module.exports = query({
 
 
 },{"./Async.coffee":3}],7:[function(require,module,exports){
-var a, clas, div, h1, li, query, reactify, recl, ref, ul,
-  slice = [].slice;
+var a, clas, div, h1, li, query, reactify, recl, ref, ul;
 
 clas = require('classnames');
 
@@ -499,8 +510,20 @@ module.exports = query({
     }, this.renderList());
   },
   renderList: function() {
-    var _keys, elem, head, href, i, item, len, path, ref1, ref2, results;
-    _keys = _.keys(this.props.kids).sort();
+    var _keys, elem, href, i, item, k, len, parts, path, ref1, ref2, ref3, ref4, ref5, results, sorted, title, v;
+    sorted = true;
+    _keys = [];
+    ref1 = this.props.kids;
+    for (k in ref1) {
+      v = ref1[k];
+      if (((ref2 = v.meta) != null ? ref2.sort : void 0) == null) {
+        sorted = false;
+      }
+      _keys[Number((ref3 = v.meta) != null ? ref3.sort : void 0)] = k;
+    }
+    if (sorted !== true) {
+      _keys = _.keys(this.props.kids).sort();
+    }
     if (this.props.dataType === 'post') {
       _keys = _keys.reverse();
     }
@@ -510,21 +533,38 @@ module.exports = query({
       path = this.props.path + "/" + item;
       elem = this.props.kids[item];
       href = window.tree.basepath(path);
+      parts = [];
+      if ((ref4 = elem.meta) != null ? ref4.title : void 0) {
+        title = {
+          gn: 'h1',
+          c: [elem.meta.title]
+        };
+      } else {
+        title = elem.head;
+      }
+      parts.push(title);
+      if (this.props.dataPreview) {
+        if (this.props.dataType === 'post') {
+          parts.push.apply(parts, elem.snip.c.slice(0, 2));
+        } else {
+          parts.push(elem.snip);
+        }
+      }
+      if (this.props.titlesOnly) {
+        parts = elem.head;
+      }
       results.push(li({
         key: item,
-        className: (ref1 = this.props.dataType) != null ? ref1 : ""
+        className: (ref5 = this.props.dataType) != null ? ref5 : ""
       }, a({
         href: href,
         className: clas({
           preview: this.props.dataPreview != null
         })
-      }, this.props.dataPreview == null ? h1({}, item) : this.props.dataType === 'post' ? (head = ((ref2 = elem.meta) != null ? ref2.title : void 0) ? {
-        gn: 'h1',
-        c: [elem.meta.title]
-      } : elem.head, reactify({
+      }, reactify({
         gn: 'div',
-        c: [head].concat(slice.call(elem.snip.c.slice(0, 2)))
-      })) : this.props.titlesOnly != null ? reactify(elem.head) : div({}, reactify(elem.head), reactify(elem.snip)))));
+        c: parts
+      }))));
     }
     return results;
   }
@@ -629,47 +669,81 @@ module.exports = recl({
 
 
 },{"./CodeMirror.coffee":5,"./KidsComponent.coffee":6,"./ListComponent.coffee":7,"./LoadComponent.coffee":8,"./TocComponent.coffee":10}],10:[function(require,module,exports){
-var TreeStore, div, recl;
+var div, query, reactify, recl;
 
-TreeStore = require('../stores/TreeStore.coffee');
+query = require('./Async.coffee');
 
 recl = React.createClass;
 
 div = React.DOM.div;
 
-module.exports = recl({
+reactify = function(manx) {
+  return React.createElement(window.tree.reactify, {
+    manx: manx
+  });
+};
+
+module.exports = query({
+  body: 't'
+}, recl({
   hash: null,
   displayName: "TableOfContents",
-  _onChangeStore: function() {
-    return this.setState({
-      tocs: this.compute()
-    });
-  },
   _click: function(e) {
-    console.log('click');
     return document.location.hash = this.urlsafe($(e.target).text());
   },
   urlsafe: function(str) {
     return str.toLowerCase().replace(/\ /g, "-").replace(/[^a-z0-9~_.-]/g, "");
   },
   componentDidMount: function() {
-    TreeStore.addChangeListener(this._onChangeStore);
     this.int = setInterval(this.checkHash, 100);
-    return this.setState({
-      tocs: this.compute()
-    });
+    this.st = $(window).scrollTop();
+    $(window).on('scroll', this.checkScroll);
+    return this.$headers = $('#toc h1, #toc h2, #toc h3, #toc h4');
   },
-  checkHash: function() {
-    var hash, k, ref, results, v;
-    if ((document.location.hash != null) && document.location.hash !== this.hash) {
-      hash = document.location.hash.slice(1);
-      ref = this.state.tocs;
+  checkScroll: function() {
+    var $h, hash, hst, k, ref, results, st, v;
+    st = $(window).scrollTop();
+    if (Math.abs(this.st - st) > 10) {
+      hash = null;
+      this.st = st;
+      ref = this.$headers;
       results = [];
       for (k in ref) {
         v = ref[k];
-        if (hash === this.urlsafe(v.t)) {
+        if (v.tagName === void 0) {
+          continue;
+        }
+        $h = $(v);
+        hst = $h.offset().top - $h.outerHeight(true) + 10;
+        if (hst < st) {
+          hash = this.urlsafe($h.text());
+        }
+        if (hst > st && hash !== this.hash && hash !== null) {
+          this.hash = "#" + hash;
+          document.location.hash = hash;
+          break;
+        } else {
+          results.push(void 0);
+        }
+      }
+      return results;
+    }
+  },
+  checkHash: function() {
+    var $h, hash, k, offset, ref, ref1, results, v;
+    if (((ref = document.location.hash) != null ? ref.length : void 0) > 0 && document.location.hash !== this.hash) {
+      hash = document.location.hash.slice(1);
+      ref1 = this.$headers;
+      results = [];
+      for (k in ref1) {
+        v = ref1[k];
+        $h = $(v);
+        if (hash === this.urlsafe($h.text())) {
           this.hash = document.location.hash;
-          $(window).scrollTop(v.e.offset().top);
+          offset = $h.offset().top - $h.outerHeight(true);
+          setTimeout(function() {
+            return $(window).scrollTop(offset, 10);
+          });
           break;
         } else {
           results.push(void 0);
@@ -679,48 +753,57 @@ module.exports = recl({
     }
   },
   componentWillUnmount: function() {
-    TreeStore.removeChangeListener(this._onChangeStore);
     return clearInterval(this.int);
   },
-  getInitialState: function() {
-    return {
-      tocs: this.compute()
-    };
-  },
-  compute: function() {
-    var $h, $headers, h, i, len, results;
-    $headers = $('#toc h1, #toc h2, #toc h3, #toc h4');
-    results = [];
-    for (i = 0, len = $headers.length; i < len; i++) {
-      h = $headers[i];
-      $h = $(h);
-      results.push({
-        h: h.tagName.toLowerCase(),
-        t: $h.text(),
-        e: $h
-      });
+  collectHeaders: function(e) {
+    var hs, k, v;
+    hs = [
+      {
+        gn: "h1",
+        ga: {
+          className: "t"
+        },
+        c: ["Table of contents"]
+      }
+    ];
+    for (k in e) {
+      v = e[k];
+      if (!v.gn) {
+        continue;
+      }
+      if (v.gn[0] === 'h' && parseInt(v.gn[1]) !== NaN) {
+        hs.push(v);
+      }
     }
-    return results;
+    return hs;
+  },
+  parseHeaders: function() {
+    var k, ref, ref1, v;
+    if (this.props.body.c) {
+      ref = this.props.body.c;
+      for (k in ref) {
+        v = ref[k];
+        if (v.gn === 'div' && ((ref1 = v.ga) != null ? ref1.id : void 0) === "toc") {
+          return {
+            gn: "div",
+            ga: {
+              className: "toc",
+              onClick: this._click
+            },
+            c: this.collectHeaders(v.c)
+          };
+        }
+      }
+    }
   },
   render: function() {
-    var onClick;
-    onClick = this._click;
-    return div({
-      className: 'toc'
-    }, this.state.tocs.map(function(arg, key) {
-      var h, t;
-      h = arg.h, t = arg.t;
-      return React.DOM[h]({
-        onClick: onClick,
-        key: key
-      }, t);
-    }));
+    return reactify(this.parseHeaders());
   }
-});
+}));
 
 
 
-},{"../stores/TreeStore.coffee":18}],11:[function(require,module,exports){
+},{"./Async.coffee":3}],11:[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
