@@ -1,7 +1,7 @@
 EventEmitter = require('events').EventEmitter
 
 MessageDispatcher = require '../dispatcher/Dispatcher.coffee'
-clog = console.log
+clog = console.log.bind(console)
 
 _tree = {}
 _cont = {}
@@ -16,23 +16,6 @@ TreeStore = _.extend EventEmitter.prototype, {
   emitChange: -> @emit 'change'
 
   pathToArr: (_path) -> _path.split "/"
-
-  filterQuery: (query)-> @filterWith (@fulfill _curr, query), query
-  filterWith: (have,query)->
-    return query unless have?
-    _query = {}
-    for k of query
-      _query[k] = query[k] unless have[k]?
-    if query.kids? and have.kids?
-      if _.isEmpty have.kids
-        _query.kids = query.kids
-      else
-        _query.kids = {}
-        for k,kid of have.kids
-          _.merge _query.kids, @filterWith kid, query.kids
-        if _.isEmpty _query.kids
-          delete _query.kids
-    _query unless _.isEmpty _query
     
   fulfill: (path,query)->
     data = @fulfillLocal path, query
@@ -96,6 +79,7 @@ TreeStore = _.extend EventEmitter.prototype, {
              {gn:'div', c:[
                {gn:'pre',  c:[@getCurr()]}
                {gn:'span', c:['is either empty or does not exist.']}
+               # {gn:'list'}  XX handle empty snip
            ] }]
     _got_snip[path] = true
 
