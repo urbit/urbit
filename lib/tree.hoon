@@ -17,7 +17,7 @@
 ++  json-front
   |=  a=json  ^-  json
   =-  (fall `(unit json)`- ~)
-  %+  biff  ((ar some):jo a)
+  %+  biff  ((ot c/(ar some) ~):jo a)
   %+  find-in-tree  (ot c/(ar some) gn/so ga/(om so) ~):jo
   |=  [nom=span atr=(map span cord)]  ^-  (unit json)
   ?.  (~(has by atr) 'urb:front')  ~

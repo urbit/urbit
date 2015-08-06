@@ -35,7 +35,6 @@ module.exports = {
 };
 
 
-
 },{"../dispatcher/Dispatcher.coffee":11,"../persistence/TreePersistence.coffee":17}],2:[function(require,module,exports){
 var BodyComponent, Links, TreeActions, TreeStore, a, clas, div, query, recl, ref;
 
@@ -284,7 +283,6 @@ module.exports = query({
 }));
 
 
-
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":18,"./Async.coffee":3,"./BodyComponent.coffee":4,"classnames":13}],3:[function(require,module,exports){
 var TreeActions, TreeStore, _load, code, div, recl, ref, span;
 
@@ -375,7 +373,6 @@ module.exports = function(queries, Child, load) {
 };
 
 
-
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":18,"./LoadComponent.coffee":8}],4:[function(require,module,exports){
 var div, query, reactify, recl;
 
@@ -403,7 +400,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"./Reactify.coffee":9}],5:[function(require,module,exports){
 var div, recl, ref, textarea;
 
@@ -425,7 +421,6 @@ module.exports = recl({
     });
   }
 });
-
 
 
 },{}],6:[function(require,module,exports){
@@ -469,7 +464,6 @@ module.exports = query({
     }).call(this));
   }
 }));
-
 
 
 },{"./Async.coffee":3}],7:[function(require,module,exports){
@@ -571,7 +565,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"classnames":13}],8:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
@@ -610,7 +603,6 @@ module.exports = recl({
     }, ""));
   }
 });
-
 
 
 },{}],9:[function(require,module,exports){
@@ -665,7 +657,6 @@ module.exports = recl({
     }
   }
 });
-
 
 
 },{"./CodeMirror.coffee":5,"./KidsComponent.coffee":6,"./ListComponent.coffee":7,"./LoadComponent.coffee":8,"./TocComponent.coffee":10}],10:[function(require,module,exports){
@@ -802,7 +793,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3}],11:[function(require,module,exports){
 var Dispatcher;
 
@@ -822,7 +812,6 @@ module.exports = _.extend(new Dispatcher(), {
     });
   }
 });
-
 
 
 },{"flux":14}],12:[function(require,module,exports){
@@ -969,7 +958,6 @@ $(function() {
     return so.ls = so.cs;
   });
 });
-
 
 
 },{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Reactify.coffee":9,"./persistence/TreePersistence.coffee":17}],13:[function(require,module,exports){
@@ -1392,7 +1380,6 @@ module.exports = {
 };
 
 
-
 },{}],18:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, TreeStore, _curr, _data, _tree, clog;
 
@@ -1617,7 +1604,6 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
 });
 
 module.exports = TreeStore;
-
 
 
 },{"../dispatcher/Dispatcher.coffee":11,"events":19}],19:[function(require,module,exports){
