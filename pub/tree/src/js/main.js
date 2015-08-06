@@ -652,62 +652,44 @@ module.exports = recl({
 
 
 },{"./CodeMirror.coffee":5,"./KidsComponent.coffee":6,"./ListComponent.coffee":7,"./LoadComponent.coffee":8,"./TocComponent.coffee":10}],10:[function(require,module,exports){
-var TreeActions, TreeStore, a, clas, div, li, load, reactify, recl, ref, ul;
-
-clas = require('classnames');
+var TreeStore, div, recl;
 
 TreeStore = require('../stores/TreeStore.coffee');
 
-TreeActions = require('../actions/TreeActions.coffee');
-
-load = React.createFactory(require('./LoadComponent.coffee'));
-
-reactify = function(manx) {
-  return React.createElement(window.tree.reactify, {
-    manx: manx
-  });
-};
-
 recl = React.createClass;
 
-ref = React.DOM, div = ref.div, a = ref.a, ul = ref.ul, li = ref.li;
+div = React.DOM.div;
 
 module.exports = recl({
   hash: null,
   displayName: "TableofContents",
-  stateFromStore: function() {
-    var path, ref1, state;
-    path = (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
-    state = {
-      path: path,
-      snip: TreeStore.getSnip(),
-      tree: TreeStore.getTree(path.split("/")),
-      tocs: this.compute()
-    };
-    return state;
-  },
   _onChangeStore: function() {
-    return this.setState(this.stateFromStore());
+    return this.setState({
+      tocs: this.compute()
+    });
   },
   _click: function(e) {
     console.log('click');
     return document.location.hash = this.urlsafe($(e.target).text());
   },
   urlsafe: function(str) {
-    return str.toLowerCase().replace(/\ /g, "-");
+    return str.toLowerCase().replace(/\ /g, "-").replace(/[^a-z0-9~_.-]/g, "");
   },
   componentDidMount: function() {
+    TreeStore.addChangeListener(this._onChangeStore);
     this.int = setInterval(this.checkHash, 100);
-    return this.setState(this.stateFromStore());
+    return this.setState({
+      tocs: this.compute()
+    });
   },
   checkHash: function() {
-    var hash, k, ref1, results, v;
+    var hash, k, ref, results, v;
     if ((document.location.hash != null) && document.location.hash !== this.hash) {
       hash = document.location.hash.slice(1);
-      ref1 = this.state.tocs;
+      ref = this.state.tocs;
       results = [];
-      for (k in ref1) {
-        v = ref1[k];
+      for (k in ref) {
+        v = ref[k];
         if (hash === this.urlsafe(v.t)) {
           this.hash = document.location.hash;
           $(window).scrollTop(v.e.offset().top);
@@ -724,45 +706,46 @@ module.exports = recl({
     return clearInterval(this.int);
   },
   getInitialState: function() {
-    return this.stateFromStore();
+    return {
+      tocs: this.compute()
+    };
   },
   gotPath: function() {
     return TreeStore.gotSnip(this.state.path);
   },
   compute: function() {
-    var $h, $headers, c, h, j, len;
+    var $h, $headers, h, i, len, results;
     $headers = $('#toc h1, #toc h2, #toc h3, #toc h4');
-    c = [];
-    if ($headers.length === 0) {
-      return c;
-    }
-    for (j = 0, len = $headers.length; j < len; j++) {
-      h = $headers[j];
+    results = [];
+    for (i = 0, len = $headers.length; i < len; i++) {
+      h = $headers[i];
       $h = $(h);
-      c.push({
+      results.push({
         h: h.tagName.toLowerCase(),
         t: $h.text(),
         e: $h
       });
     }
-    return c;
+    return results;
   },
   render: function() {
     var onClick;
     onClick = this._click;
     return div({
       className: 'toc'
-    }, this.state.tocs.map(function(i) {
-      return React.DOM[i.h]({
+    }, this.state.tocs.map(function(arg) {
+      var h, t;
+      h = arg.h, t = arg.t;
+      return React.DOM[h]({
         onClick: onClick
-      }, i.t);
+      }, t);
     }));
   }
 });
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":18,"./LoadComponent.coffee":8,"classnames":13}],11:[function(require,module,exports){
+},{"../stores/TreeStore.coffee":18}],11:[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
