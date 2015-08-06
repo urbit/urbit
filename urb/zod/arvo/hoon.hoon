@@ -1278,7 +1278,7 @@
             [%n ~]
         ==
 ::
-++  fl                                                  ::  arbitrary precision floating point
+++  fl                                                  ::  arb. precision fp
   =+  ^-  [[p=@u v=@s w=@u] r=?(%n %u %d %z %a) d=?(%d %f %i)]
     [[113 -16.494 32.765] %n %d]
   ::  p=precision:     number of bits in arithmetic form; must be at least 2
@@ -1306,14 +1306,14 @@
     ++  add                                             ::  add; exact if e
       |=  [a=[e=@s a=@u] b=[e=@s a=@u] e=?]  ^-  fn
       =+  q=(dif:si e.a e.b)
-      |-  ?.  (syn:si q)  $(b a, a b, q +(q))           ::  a has larger exponent
+      |-  ?.  (syn:si q)  $(b a, a b, q +(q))           ::  a has larger exp
       ?:  e
         [%f & e.b (^add (lsh 0 (abs:si q) a.a) a.b)]
       =+  [ma=(met 0 a.a) mb=(met 0 a.b)]
-      =+  ^=  w  %+  dif:si  e.a  %-  sun:si            ::  expanded exponent of a
+      =+  ^=  w  %+  dif:si  e.a  %-  sun:si            ::  expanded exp of a
         ?:  (gth prc ma)  (^sub prc ma)  0
-      =+  ^=  x  %+  sum:si  e.b  (sun:si mb)           ::  highest exponent that b reaches
-      ?:  =((cmp:si w x) --1)                           ::  don't actually need to add
+      =+  ^=  x  %+  sum:si  e.b  (sun:si mb)           ::  highest exp for b
+      ?:  =((cmp:si w x) --1)                           ::  don't need to add
         ?-  r
           %z  (lug %fl a &)  %d  (lug %fl a &)
           %a  (lug %lg a &)  %u  (lug %lg a &)
@@ -1425,7 +1425,7 @@
       |=  [t=?(%fl %ce %sm %lg %ne %na %nt) a=[e=@s a=@u] s=?]  ^-  fn
       ?<  =(a.a 0)
       =-
-        ?.  =(den %f)  -                                ::  if %f, flush denormals
+        ?.  =(den %f)  -                                ::  flush denormals
         ?.  ?=([%f *] -)  -
         ?:  =((met 0 ->+>) prc)  -  [%f & zer]
       ::
@@ -1466,7 +1466,7 @@
           %ce  ?:  &(=(b 0) s)  a  a(a +(a.a))
           %ne  ?~  b  a
                =+  y=(bex (dec q))
-               ?:  &(=(b y) s)                          ::  halfway rounds to even
+               ?:  &(=(b y) s)                          ::  round halfs to even
                  ?~  (dis a.a 1)  a  a(a +(a.a))
                ?:  (^lth b y)  a  a(a +(a.a))
           %na  ?~  b  a
@@ -1485,8 +1485,8 @@
       ?:  =(den %i)  [%f & a]
       ?:  =((cmp:si emx e.a) -1)  [%i &]  [%f & a]      ::  enforce max. exp
     ::
-    ++  drg                                             ::  dragon4; convert to decimal
-      ~/  %drg
+    ++  drg                                             ::  dragon4;
+      ~/  %drg                                          ::  convert to decimal
       |=  [a=[e=@s a=@u]]  ^-  [@s @u]
       ?<  =(a.a 0)
       =.  a  ?:  (^lth (met 0 a.a) prc)  (xpd a)  a
@@ -1548,15 +1548,15 @@
       |=  [a=fn]  ^-  fn
       ?-(-.a %f a(s !s.a), %i a(s !s.a), %n a)
     ::
-    ++  swr  ?+(r r %d %u, %u %d)                       ::  flipped rounding mode
-    ++  prc  ?>((gth p 1) p)                            ::  enforce precision at least 2
-    ++  den  d                                          ::  denorms/flush/inf exponent range
+    ++  swr  ?+(r r %d %u, %u %d)                       ::  flipped rounding
+    ++  prc  ?>((gth p 1) p)                            ::  force >= 2 precision
+    ++  den  d                                          ::  denorm/flush/inf exp
     ++  emn  v                                          ::  minimum exponent
     ++  emx  (sum:si emn (sun:si w))                    ::  maximum exponent
     ++  spd  [e=emn a=1]                                ::  smallest denormal
     ++  spn  [e=emn a=(bex (dec prc))]                  ::  smallest normal
     ++  lfn  [e=emx a=(fil 0 prc 1)]                    ::  largest
-    ++  lfe  (sum:si emx (sun:si prc))                  ::  2^lfe is larger than all floats
+    ++  lfe  (sum:si emx (sun:si prc))                  ::  2^lfe is > than all
     ++  zer  [e=--0 a=0]
     --
   |%
@@ -1668,11 +1668,11 @@
     |=  [a=fn]  ^-  fn
     (div [%f & --0 1] a)
   ::
-  ++  sun                                               ::  unsigned integer to float
+  ++  sun                                               ::  uns integer to float
     |=  [a=@u]  ^-  fn
     (rou [%f & --0 a])
   ::
-  ++  san                                               ::  signed integer to float
+  ++  san                                               ::  sgn integer to float
     |=  [a=@s]  ^-  fn
     =+  b=(old:si a)
     (rou [%f -.b --0 +.b])
@@ -1748,7 +1748,7 @@
     =.(r swr (fli (^toj +>.a)))
   --
 ::
-++  ff                                                  ::  ieee 754 format floating point
+++  ff                                                  ::  ieee 754 format fp
   |_  [[w=@u p=@u b=@s] r=?(%n %u %d %z %a)]
   ::  this core has no use outside of the functionality
   ::  provided to ++rd, ++rs, ++rq, and ++rh
@@ -1776,9 +1776,9 @@
     =+  r=(^add f (bex p))
     [%f s q r]
   ::
-  ++  bit  |=  [a=fn]  (bif (rou:pa a))                 ::  fn to @r with rounding
+  ++  bit  |=  [a=fn]  (bif (rou:pa a))                 ::  fn to @r w/ rounding
   ::
-  ++  bif                                               ::  fn to @r without rounding
+  ++  bif                                               ::  fn to @r no rounding
     |=  [a=fn]  ^-  @r
     ?:  ?=([%i *] a)
       =+  q=(lsh 0 p (fil 0 w 1))
@@ -1836,7 +1836,7 @@
     |=  [a=@r b=@r]  (fall (gte:pa (sea a) (sea b)) |)
   ++  gth                                               ::  greater-than
     |=  [a=@r b=@r]  (fall (gth:pa (sea a) (sea b)) |)
-  ++  sun                                               ::  unsigned integer to @r
+  ++  sun                                               ::  uns integer to @r
     |=  [a=@u]  (bit [%f & --0 a])
   ++  san                                               ::  signed integer to @r
     |=  [a=@s]  (bit [%f (syn:si a) --0 (abs:si a)])
@@ -1848,16 +1848,16 @@
     |=  [a=dn]  (bif (grd:pa a))
   --
 ::
-++  rlyd  |=  a=@rd  ^-  dn  (drg:rd a)                 ::  prepare @rd for printing
-++  rlys  |=  a=@rs  ^-  dn  (drg:rs a)                 ::  prepare @rs for printing
-++  rlyh  |=  a=@rh  ^-  dn  (drg:rh a)                 ::  prepare @rh for printing
-++  rlyq  |=  a=@rq  ^-  dn  (drg:rq a)                 ::  prepare @rq for printing
-++  ryld  |=  a=dn  ^-  @rd  (grd:rd a)                 ::  finish parsing of @rd
-++  ryls  |=  a=dn  ^-  @rs  (grd:rs a)                 ::  finish parsing of @rs
-++  rylh  |=  a=dn  ^-  @rh  (grd:rh a)                 ::  finish parsing of @rh
-++  rylq  |=  a=dn  ^-  @rq  (grd:rq a)                 ::  finish parsing of @rq
+++  rlyd  |=  a=@rd  ^-  dn  (drg:rd a)                 ::  prep @rd for print
+++  rlys  |=  a=@rs  ^-  dn  (drg:rs a)                 ::  prep @rs for print
+++  rlyh  |=  a=@rh  ^-  dn  (drg:rh a)                 ::  prep @rh for print
+++  rlyq  |=  a=@rq  ^-  dn  (drg:rq a)                 ::  prep @rq for print
+++  ryld  |=  a=dn  ^-  @rd  (grd:rd a)                 ::  finish parsing @rd
+++  ryls  |=  a=dn  ^-  @rs  (grd:rs a)                 ::  finish parsing @rs
+++  rylh  |=  a=dn  ^-  @rh  (grd:rh a)                 ::  finish parsing @rh
+++  rylq  |=  a=dn  ^-  @rq  (grd:rq a)                 ::  finish parsing @rq
 ::
-++  rd                                                  ::  double precision floating point
+++  rd                                                  ::  double precision fp
   ~%  %rd  +>  ~
   |_  r=?(%n %u %d %z)
   ::  round to nearest, round up, round down, round to zero
@@ -1906,8 +1906,8 @@
   ++  gth  ~/  %gth                                     ::  greater-than
     |=  [a=@rd b=@rd]  ~|  %rd-fail  (gth:ma a b)
   ::
-  ++  sun  |=  [a=@u]  ^-  @rd  (sun:ma a)              ::  unsigned integer to @rd
-  ++  san  |=  [a=@s]  ^-  @rd  (san:ma a)              ::  signed integer to @rd
+  ++  sun  |=  [a=@u]  ^-  @rd  (sun:ma a)              ::  uns integer to @rd
+  ++  san  |=  [a=@s]  ^-  @rd  (san:ma a)              ::  sgn integer to @rd
   ++  sig  |=  [a=@rd]  ^-  ?  (sig:ma a)               ::  get sign
   ++  exp  |=  [a=@rd]  ^-  @s  (exp:ma a)              ::  get exponent
   ++  toi  |=  [a=@rd]  ^-  (unit ,@s)  (toi:ma a)      ::  round to integer
@@ -1915,7 +1915,7 @@
   ++  grd  |=  [a=dn]  ^-  @rd  (grd:ma a)              ::  decimal float to @rd
   --
 ::
-++  rs                                                  ::  single precision floating point
+++  rs                                                  ::  single precision fp
   ~%  %rs  +>  ~
   |_  r=?(%n %u %d %z)
   ::  round to nearest, round up, round down, round to zero
@@ -1964,8 +1964,8 @@
   ++  gth  ~/  %gth                                     ::  greater-than
     |=  [a=@rs b=@rs]  ~|  %rs-fail  (gth:ma a b)
   ::
-  ++  sun  |=  [a=@u]  ^-  @rs  (sun:ma a)              ::  unsigned integer to @rs
-  ++  san  |=  [a=@s]  ^-  @rs  (san:ma a)              ::  signed integer to @rs
+  ++  sun  |=  [a=@u]  ^-  @rs  (sun:ma a)              ::  uns integer to @rs
+  ++  san  |=  [a=@s]  ^-  @rs  (san:ma a)              ::  sgn integer to @rs
   ++  sig  |=  [a=@rs]  ^-  ?  (sig:ma a)               ::  get sign
   ++  exp  |=  [a=@rs]  ^-  @s  (exp:ma a)              ::  get exponent
   ++  toi  |=  [a=@rs]  ^-  (unit ,@s)  (toi:ma a)      ::  round to integer
@@ -1973,7 +1973,7 @@
   ++  grd  |=  [a=dn]  ^-  @rs  (grd:ma a)              ::  decimal float to @rs
   --
 ::
-++  rq                                                  ::  quadruple precision floating point
+++  rq                                                  ::  quad precision fp
   ~%  %rq  +>  ~
   |_  r=?(%n %u %d %z)
   ::  round to nearest, round up, round down, round to zero
@@ -2022,8 +2022,8 @@
   ++  gth  ~/  %gth                                     ::  greater-than
     |=  [a=@rq b=@rq]  ~|  %rq-fail  (gth:ma a b)
   ::
-  ++  sun  |=  [a=@u]  ^-  @rq  (sun:ma a)              ::  unsigned integer to @rq
-  ++  san  |=  [a=@s]  ^-  @rq  (san:ma a)              ::  signed integer to @rq
+  ++  sun  |=  [a=@u]  ^-  @rq  (sun:ma a)              ::  uns integer to @rq
+  ++  san  |=  [a=@s]  ^-  @rq  (san:ma a)              ::  sgn integer to @rq
   ++  sig  |=  [a=@rq]  ^-  ?  (sig:ma a)               ::  get sign
   ++  exp  |=  [a=@rq]  ^-  @s  (exp:ma a)              ::  get exponent
   ++  toi  |=  [a=@rq]  ^-  (unit ,@s)  (toi:ma a)      ::  round to integer
@@ -2031,7 +2031,7 @@
   ++  grd  |=  [a=dn]  ^-  @rq  (grd:ma a)              ::  decimal float to @rq
   --
 ::
-++  rh                                                  ::  half precision floating point
+++  rh                                                  ::  half precision fp
   |_  r=?(%n %u %d %z)
   ::  round to nearest, round up, round down, round to zero
   ::
@@ -2061,8 +2061,8 @@
   ++  gth  ~/  %gth                                     ::  greater-than
     |=  [a=@rh b=@rh]  ~|  %rh-fail  (gth:ma a b)
   ::
-  ++  sun  |=  [a=@u]  ^-  @rh  (sun:ma a)              ::  unsigned integer to @rh
-  ++  san  |=  [a=@s]  ^-  @rh  (san:ma a)              ::  signed integer to @rh
+  ++  sun  |=  [a=@u]  ^-  @rh  (sun:ma a)              ::  uns integer to @rh
+  ++  san  |=  [a=@s]  ^-  @rh  (san:ma a)              ::  sgn integer to @rh
   ++  sig  |=  [a=@rh]  ^-  ?  (sig:ma a)               ::  get sign
   ++  exp  |=  [a=@rh]  ^-  @s  (exp:ma a)              ::  get exponent
   ++  toi  |=  [a=@rh]  ^-  (unit ,@s)  (toi:ma a)      ::  round to integer
@@ -2248,7 +2248,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cJ, extra math               ::
 ::
-++  sqt                                                 ::  square root w/remainder
+++  sqt                                                 ::  sqrt w/remainder
   ~/  %sqt
   |=  a=@  ^-  [p=@ q=@]
   ?~  a  [0 0]
@@ -5864,8 +5864,8 @@
     ?:  (lth b 256)
       [[b (end 0 b d)] ~]
     [[256 d] $(c d, b (sub b 256))]
-  ++  raws                                              ::  random bits continuation
-    |=  b=@
+  ++  raws                                              ::  random bits
+    |=  b=@                                             ::  continuation
     =+  r=(raw b)
     [r +>.$(a (shas %og-s r))]
   --
