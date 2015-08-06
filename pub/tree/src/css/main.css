@@ -234,8 +234,9 @@ li:before {
   vertical-align: top;
 }
 #nav #sibs {
-  width: 9rem;
+  width: 8rem;
   transition: margin-top 0.3s ease-in-out;
+  overflow: hidden;
 }
 #nav #sibs > div {
   height: 20px;
@@ -251,6 +252,7 @@ li:before {
   font-size: 0.7rem;
   font-weight: 200;
   letter-spacing: 1px;
+  white-space: nowrap;
 }
 .list > li > a {
   border-bottom: none;
@@ -419,6 +421,33 @@ div.post p {
 div.post li p {
   display: inline;
 }
+div.toc {
+  margin-top: 6rem;
+  margin-bottom: 6rem;
+}
+div.toc h1,
+div.toc h2,
+div.toc h3,
+div.toc h4 {
+  font-weight: 400;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 1.2rem;
+}
+div.toc h2 {
+  margin-left: 1rem;
+}
+div.toc h3 {
+  margin-left: 2rem;
+}
+div.toc h4 {
+  margin-left: 3rem;
+}
+div.toc h1.t {
+  font-weight: 500;
+  font-size: 2rem;
+  text-decoration: none;
+}
 #body .CodeMirror {
   font-size: 0.8rem;
   line-height: 1rem;
@@ -497,6 +526,9 @@ div.post li p {
   }
   #nav > div {
     padding-top: 0.6rem;
+  }
+  #nav #sibs {
+    width: 18rem;
   }
   #nav #sibs > div {
     height: 20px;
