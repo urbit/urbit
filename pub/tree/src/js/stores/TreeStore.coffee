@@ -4,8 +4,7 @@ MessageDispatcher = require '../dispatcher/Dispatcher.coffee'
 clog = console.log.bind(console)
 
 _tree = {}
-_cont = {}
-_snip = {}; _got_snip = {}
+_data = {}
 _curr = ""
 
 TreeStore = _.extend EventEmitter.prototype, {
@@ -17,63 +16,42 @@ TreeStore = _.extend EventEmitter.prototype, {
 
   pathToArr: (_path) -> _path.split "/"
     
-  fulfill: (path,query)->
+  fulfill: (path,query) -> @fulfillAt (@getTree path.split '/'),path,query
+  fulfillAt: (tree,path,query)->
     data = @fulfillLocal path, query
-    if query.body then data.body = _cont[path]
-    if query.head then data.head = _snip[path]?.head
-    if query.snip then data.snip = _snip[path]?.body
-    if query.meta then data.meta = _snip[path]?.meta
+    for k in ["body", "head" ,"snip" ,"meta"]
+      data[k] = _data[path]?[k] if query[k]
     if query.kids
       data.kids = {}
-      for k in @getKids path
-        data.kids[k] = @fulfill path+"/"+k, query.kids
+      for k,sub of tree
+        data.kids[k] = @fulfillAt sub, path+"/"+k, query.kids
     data unless _.isEmpty data
       
   fulfillLocal: (path, query)->
     data = {}
     if query.path then data.path = path
     if query.name then data.name = path.split("/").pop()
-    if query.sein then data.sein = TreeStore.getPare path
-    if query.sibs then data.sibs = TreeStore.getSiblings path
-    if query.next then data.next = TreeStore.getNext path
-    if query.prev then data.prev = TreeStore.getPrev path
+    if query.sein then data.sein = @getPare path
+    if query.next then data.next = @getNext path
+    if query.prev then data.prev = @getPrev path
     data
-  
-  getTree: (_path) ->
-    tree = _tree
-    for sub in _path
-      tree = tree[sub]
-      return null unless tree?
-    tree
 
   setCurr: (path) -> _curr = path
-
   getCurr: -> _curr
 
-  getCont: -> _cont
-
-  mergePathToTree: (path,kids) ->
-    tree = _tree
-    for sub in @pathToArr path
-      tree[sub] = tree[sub] ? {}
-      tree = tree[sub]
-    for x in kids
-      tree[x] = tree[x] ? {}
-    tree
-
-  getSnip: -> _snip
-  gotSnip: (path)-> !!_got_snip[path]
-
-  loadSnip: (path,kids) ->
-    @mergePathToTree path,_.pluck(kids,"name")
-    if kids?.length isnt 0
-      for v in kids
-        _snip[path+"/"+v.name] = 
-          head: {gn:'h1',c:v.head}
-          body: {gn:'div',c:v.snip}
-          meta: v.meta
-    else
-      _cont[path] =
+  loadPath: (path,data) ->
+    @loadValues (@getTree (path.split '/'),true), path, data
+  loadValues: (tree,path,data) ->
+    old = _data[path] ? {}
+    for k in ["body", "head" ,"snip" ,"meta"]
+      old[k] = data[k] if data[k] isnt undefined
+    
+    for k,v of data.kids
+      tree[k] ?= {}
+      @loadValues tree[k], path+"/"+k, v
+      
+    if data.kids && _.isEmpty data.kids
+      old.body =
         gn: 'div'
         c: [ {gn:'h1',  ga:{className:'error'}, c:['Error: Empty path']}
              {gn:'div', c:[
@@ -81,18 +59,8 @@ TreeStore = _.extend EventEmitter.prototype, {
                {gn:'span', c:['is either empty or does not exist.']}
                # {gn:'list'}  XX handle empty snip
            ] }]
-    _got_snip[path] = true
-
-  loadKids: (path,kids) ->
-    @mergePathToTree path,_.pluck(kids,"name")
-    for k,v of kids
-      _cont[path+"/"+v.name] = v.body
-
-  loadPath: (path,body,kids) ->
-    @mergePathToTree path,_.pluck(kids,"name")
-    _cont[path] = body
-
-  getKids: (path=_curr)-> _.keys @getTree path.split("/")
+        
+    _data[path] = old
 
   getSiblings: (path=_curr)->
     curr = path.split("/")
@@ -101,13 +69,22 @@ TreeStore = _.extend EventEmitter.prototype, {
       @getTree curr
     else
       {}
-
+  
+  getTree: (_path,make=false) ->
+    tree = _tree
+    for sub in _path
+      if not tree[sub]?
+        if not make then return null
+        tree[sub] = {}
+      tree = tree[sub]
+    tree
+      
   getPrev: (path=_curr)-> 
     sibs = _.keys(@getSiblings path).sort()
     if sibs.length < 2
       null
     else
-      par = _curr.split "/"
+      par = path.split "/"
       key = par.pop()
       ind = sibs.indexOf key
       win = if ind-1 >= 0 then sibs[ind-1] else sibs[sibs.length-1]
@@ -119,7 +96,7 @@ TreeStore = _.extend EventEmitter.prototype, {
     if sibs.length < 2
       null
     else
-      par = _curr.split "/"
+      par = path.split "/"
       key = par.pop()
       ind = sibs.indexOf key
       win = if ind+1 < sibs.length then sibs[ind+1] else sibs[0]
@@ -135,17 +112,6 @@ TreeStore = _.extend EventEmitter.prototype, {
       _path
     else
       null
-
-  getCrumbs: (path=_curr)->
-    _path = @pathToArr path
-    crum = ""
-    crums = []
-    for k,v of _path
-      crum += "/"+v
-      crums.push {name:v,path:crum}
-    crums
-
-  getBody: -> if _cont[_curr] then _cont[_curr] else null
 }
 
 TreeStore.dispatchToken = MessageDispatcher.register (payload) ->
@@ -153,13 +119,7 @@ TreeStore.dispatchToken = MessageDispatcher.register (payload) ->
 
   switch action.type
     when 'path-load'
-      TreeStore.loadPath action.path,action.body,action.kids,action.snip
-      TreeStore.emitChange()
-    when 'snip-load'
-      TreeStore.loadSnip action.path,action.kids
-      TreeStore.emitChange()
-    when 'kids-load'
-      TreeStore.loadKids action.path,action.kids
+      TreeStore.loadPath action.path,action.data
       TreeStore.emitChange()
     when 'set-curr'
       TreeStore.setCurr action.path

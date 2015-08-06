@@ -25,7 +25,7 @@ which is normalized and type-checked(request types are `%t` text, `%r` html-deri
 -  `[%name %t]`, the node name
 -  `[%path %t]`, the current path
 -  `[%snip %r]`, a snippet, extracted via `react-snip-json`
--  `[%head %r]`, the first header, extracted via `react-head-json`
+-  `[%head %r]`, the first `<h1/>`, extracted via `react-head-json`
 -  `[%body %r]`, the `react-json` body
 -  `[%meta %j]`, json frontmatter per the `mdy` mark definition
 

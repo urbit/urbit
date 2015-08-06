@@ -5,7 +5,7 @@ recl = React.createClass
 
 module.exports = recl
   hash:null
-  displayName: "TableofContents"
+  displayName: "TableOfContents"
 
   _onChangeStore: -> @setState tocs: @compute()
   _click: (e) ->
@@ -35,8 +35,6 @@ module.exports = recl
 
   getInitialState: -> tocs: @compute()
 
-  gotPath: -> TreeStore.gotSnip(@state.path)
-
   compute: ->
     $headers = $('#toc h1, #toc h2, #toc h3, #toc h4')
     for h in $headers
@@ -45,6 +43,6 @@ module.exports = recl
 
   render: -> 
     onClick = @_click
-    (div {className:'toc'}, @state.tocs.map ({h,t}) ->
-      (React.DOM[h] {onClick}, t)
+    (div {className:'toc'}, @state.tocs.map ({h,t},key) ->
+      (React.DOM[h] {onClick,key}, t)
     )
