@@ -91,8 +91,20 @@ Links = React.createFactory(query({
     }, this.props.children, this._render());
   },
   _render: function() {
-    var keys, style;
-    keys = _(this.props.kids).keys().sort();
+    var k, keys, ref1, sorted, style, v;
+    sorted = true;
+    keys = [];
+    ref1 = this.props.kids;
+    for (k in ref1) {
+      v = ref1[k];
+      if (!v.meta.sort) {
+        sorted = false;
+      }
+      keys[Number(v.meta.sort)] = k;
+    }
+    if (sorted !== true) {
+      keys = _(this.props.kids).keys().sort();
+    }
     style = {
       marginTop: -24 * (keys.indexOf(this.props.curr)) + "px"
     };
