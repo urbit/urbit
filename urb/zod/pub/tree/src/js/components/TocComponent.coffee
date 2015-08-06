@@ -1,39 +1,24 @@
-clas        = require 'classnames'
-
 TreeStore   = require '../stores/TreeStore.coffee'
-TreeActions = require '../actions/TreeActions.coffee'
-
-load        = React.createFactory require './LoadComponent.coffee'
-reactify    = (manx)-> React.createElement window.tree.reactify, {manx}
 
 recl = React.createClass
-{div,a,ul,li} = React.DOM
+{div} = React.DOM
 
 module.exports = recl
   hash:null
   displayName: "TableofContents"
-  stateFromStore: -> 
-    path = @props.dataPath ? TreeStore.getCurr()
-    state = { 
-      path
-      snip:TreeStore.getSnip()
-      tree:TreeStore.getTree(path.split("/"))
-      tocs:@compute()
-    }
-    state
 
-  _onChangeStore: ->
-    @setState @stateFromStore()
-
+  _onChangeStore: -> @setState tocs: @compute()
   _click: (e) ->
     console.log 'click'
     document.location.hash = @urlsafe $(e.target).text()
 
-  urlsafe: (str) -> str.toLowerCase().replace(/\ /g, "-")
-
-  componentDidMount: -> 
+  urlsafe: (str) ->
+    str.toLowerCase().replace(/\ /g, "-").replace(/[^a-z0-9~_.-]/g,"")
+    
+  componentDidMount: ->
+    TreeStore.addChangeListener @_onChangeStore
     @int = setInterval @checkHash,100
-    @setState @stateFromStore()
+    @setState tocs: @compute()
 
   checkHash: ->
     if document.location.hash? and document.location.hash isnt @hash
@@ -48,21 +33,18 @@ module.exports = recl
     TreeStore.removeChangeListener @_onChangeStore
     clearInterval @int
 
-  getInitialState: -> @stateFromStore()
+  getInitialState: -> tocs: @compute()
 
   gotPath: -> TreeStore.gotSnip(@state.path)
 
   compute: ->
     $headers = $('#toc h1, #toc h2, #toc h3, #toc h4')
-    c = []
-    if $headers.length is 0 then return c
     for h in $headers
       $h = $(h)
-      c.push {h:h.tagName.toLowerCase(),t:$h.text(),e:$h}
-    c
+      {h:h.tagName.toLowerCase(),t:$h.text(),e:$h}
 
   render: -> 
     onClick = @_click
-    (div {className:'toc'}, @state.tocs.map (i) ->
-      (React.DOM[i.h] {onClick}, i.t)
+    (div {className:'toc'}, @state.tocs.map ({h,t}) ->
+      (React.DOM[h] {onClick}, t)
     )
