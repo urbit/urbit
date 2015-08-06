@@ -484,8 +484,7 @@ module.exports = query({
 
 
 },{"./Async.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Async.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/ListComponent.coffee":[function(require,module,exports){
-var a, clas, div, h1, li, query, reactify, recl, ref, ul,
-  slice = [].slice;
+var a, clas, div, h1, li, query, reactify, recl, ref, ul;
 
 clas = require('classnames');
 
@@ -522,8 +521,20 @@ module.exports = query({
     }, this.renderList());
   },
   renderList: function() {
-    var _keys, elem, head, href, i, item, len, path, ref1, ref2, results;
-    _keys = _.keys(this.props.kids).sort();
+    var _keys, elem, href, i, item, k, len, parts, path, ref1, ref2, ref3, results, sorted, title, v;
+    sorted = true;
+    _keys = [];
+    ref1 = this.props.kids;
+    for (k in ref1) {
+      v = ref1[k];
+      if (!v.meta.sort) {
+        sorted = false;
+      }
+      _keys[Number(v.meta.sort)] = k;
+    }
+    if (sorted !== true) {
+      _keys = _.keys(this.props.kids).sort();
+    }
     if (this.props.dataType === 'post') {
       _keys = _keys.reverse();
     }
@@ -533,21 +544,38 @@ module.exports = query({
       path = this.props.path + "/" + item;
       elem = this.props.kids[item];
       href = window.tree.basepath(path);
+      parts = [];
+      if ((ref2 = elem.meta) != null ? ref2.title : void 0) {
+        title = {
+          gn: 'h1',
+          c: [elem.meta.title]
+        };
+      } else {
+        title = elem.head;
+      }
+      parts.push(title);
+      if (this.props.dataPreview) {
+        if (this.props.dataType === 'post') {
+          parts.push.apply(parts, elem.snip.c.slice(0, 2));
+        } else {
+          parts.push(elem.snip);
+        }
+      }
+      if (this.props.titlesOnly) {
+        parts = elem.head;
+      }
       results.push(li({
         key: item,
-        className: (ref1 = this.props.dataType) != null ? ref1 : ""
+        className: (ref3 = this.props.dataType) != null ? ref3 : ""
       }, a({
         href: href,
         className: clas({
           preview: this.props.dataPreview != null
         })
-      }, this.props.dataPreview == null ? h1({}, item) : this.props.dataType === 'post' ? (head = ((ref2 = elem.meta) != null ? ref2.title : void 0) ? {
-        gn: 'h1',
-        c: [elem.meta.title]
-      } : elem.head, reactify({
+      }, reactify({
         gn: 'div',
-        c: [head].concat(slice.call(elem.snip.c.slice(0, 2)))
-      })) : this.props.titlesOnly != null ? reactify(elem.head) : div({}, reactify(elem.head), reactify(elem.snip)))));
+        c: parts
+      }))));
     }
     return results;
   }
@@ -652,13 +680,19 @@ module.exports = recl({
 
 
 },{"./CodeMirror.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/CodeMirror.coffee","./KidsComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/KidsComponent.coffee","./ListComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/ListComponent.coffee","./LoadComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/LoadComponent.coffee","./TocComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/TocComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/TocComponent.coffee":[function(require,module,exports){
-var TreeStore, div, recl;
+var TreeStore, div, reactify, recl;
 
 TreeStore = require('../stores/TreeStore.coffee');
 
 recl = React.createClass;
 
 div = React.DOM.div;
+
+reactify = function(manx) {
+  return React.createElement(window.tree.reactify, {
+    manx: manx
+  });
+};
 
 module.exports = recl({
   hash: null,
@@ -672,9 +706,7 @@ module.exports = recl({
     return this.setState(this.stateFromStore());
   },
   _onChangeStore: function() {
-    return this.setState({
-      tocs: this.compute()
-    });
+    return this.setState(this.stateFromStore());
   },
   _click: function(e) {
     return document.location.hash = this.urlsafe($(e.target).text());
@@ -703,7 +735,7 @@ module.exports = recl({
           continue;
         }
         $h = $(v);
-        hst = $h.offset().top - $h.outerHeight(true);
+        hst = $h.offset().top - $h.outerHeight(true) + 10;
         if (hst < st) {
           hash = this.urlsafe($h.text());
         }
@@ -746,9 +778,7 @@ module.exports = recl({
     return clearInterval(this.int);
   },
   getInitialState: function() {
-    return {
-      tocs: this.compute()
-    };
+    return this.stateFromStore();
   },
   gotPath: function() {
     return TreeStore.gotSnip(this.state.path);
