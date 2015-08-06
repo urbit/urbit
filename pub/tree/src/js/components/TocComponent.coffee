@@ -3,6 +3,8 @@ TreeStore   = require '../stores/TreeStore.coffee'
 recl = React.createClass
 {div} = React.DOM
 
+reactify    = (manx)-> React.createElement window.tree.reactify, {manx}
+
 module.exports = recl
   hash:null
   displayName: "TableofContents"
@@ -14,7 +16,8 @@ module.exports = recl
   _onChangeStore: ->
     @setState @stateFromStore()
 
-  _onChangeStore: -> @setState tocs: @compute()
+  _onChangeStore: -> @setState @stateFromStore()
+
   _click: (e) ->
     document.location.hash = @urlsafe $(e.target).text()
 
@@ -36,7 +39,7 @@ module.exports = recl
       for k,v of @$headers
         continue if v.tagName is undefined
         $h = $ v
-        hst = $h.offset().top-$h.outerHeight(true)
+        hst = $h.offset().top-$h.outerHeight(true)+10
         if hst < st
           hash = @urlsafe $h.text()
         if hst > st and hash isnt @hash and hash isnt null
@@ -60,7 +63,7 @@ module.exports = recl
     TreeStore.removeChangeListener @_onChangeStore
     clearInterval @int
 
-  getInitialState: -> tocs: @compute()
+  getInitialState: -> @stateFromStore()
 
   gotPath: -> TreeStore.gotSnip(@state.path)
 
