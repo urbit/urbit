@@ -20,7 +20,13 @@ Links = React.createFactory query {
     displayName: "Links"
     render: -> div {className:'links'}, @props.children, @_render()
     _render: ->
-      keys = _(@props.kids).keys().sort()
+      sorted = true
+      keys = []
+      for k,v of @props.kids
+        if not v.meta.sort then sorted = false
+        keys[Number(v.meta.sort)] = k
+      if sorted isnt true
+        keys = _(@props.kids).keys().sort()
       style = {marginTop: -24 * (keys.indexOf @props.curr) + "px"}
       div {id:"sibs",style}, keys.map (key) =>
         href = window.tree.basepath @props.path+"/"+key
