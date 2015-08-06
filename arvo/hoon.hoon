@@ -1278,7 +1278,7 @@
             [%n ~]
         ==
 ::
-++  fl
+++  fl                                                  ::  arbitrary precision floating point
   =+  ^-  [[p=@u v=@s w=@u] r=?(%n %u %d %z %a) d=?(%d %f %i)]
     [[113 -16.494 32.765] %n %d]
   ::  p=precision:     number of bits in arithmetic form; must be at least 2
@@ -1289,7 +1289,9 @@
   ::                   infinite exponent range
   =>
     ~%  %cofl  +>  ~
-    |%                                                  ::  don't put 0s into [@s @u] args
+    ::  internal functions; mostly operating on [e=@s a=@u], in other words
+    ::  positive numbers. many of these have undefined behavior if a=0.
+    |%
     ++  rou
       |=  [a=[e=@s a=@u]]  ^-  fn  (rau a &)
     ::
@@ -1301,7 +1303,7 @@
         %n  (lug %ne a t)
       ==
     ::
-    ++  add
+    ++  add                                             ::  add; exact if e
       |=  [a=[e=@s a=@u] b=[e=@s a=@u] e=?]  ^-  fn
       =+  q=(dif:si e.a e.b)
       |-  ?.  (syn:si q)  $(b a, a b, q +(q))           ::  a has larger exponent
@@ -1319,7 +1321,7 @@
         ==
       (rou [e.b (^add (lsh 0 (abs:si q) a.a) a.b)])
     ::
-    ++  sub
+    ++  sub                                             ::  subtract; exact if e
       |=  [a=[e=@s a=@u] b=[e=@s a=@u] e=?]  ^-  fn
       =+  q=(dif:si e.a e.b)
       |-  ?.  (syn:si q)
@@ -1341,11 +1343,11 @@
       ?~  i  [%f & zer]
       ?:  e  [%f & e.b i]  (rou [e.b i])
     ::
-    ++  mul
+    ++  mul                                             ::  multiply
       |=  [a=[e=@s a=@u] b=[e=@s a=@u]]  ^-  fn
       (rou (sum:si e.a e.b) (^mul a.a a.b))
     ::
-    ++  div
+    ++  div                                             ::  divide
       |=  [a=[e=@s a=@u] b=[e=@s a=@u]]  ^-  fn
       =+  [ma=(met 0 a.a) mb=(met 0 a.b)]
       =+  v=(dif:si (sun:si ma) (sun:si +((^add mb prc))))
@@ -1354,18 +1356,7 @@
       =+  [j=(dif:si e.a e.b) q=(dvr a.a a.b)]
       (rau [j p.q] =(q.q 0))
     ::
-    ++  fma
-      |=  [a=[e=@s a=@u] b=[e=@s a=@u] c=[e=@s a=@u]]  ^-  fn
-      (add [(sum:si e.a e.b) (^mul a.a a.b)] c |)
-    ::
-    ++  frd                                             ::  a/2, rounds to -inf
-      |=  [a=@s]
-      =+  b=(old:si a)
-      ?:  |(-.b =((end 0 1 +.b) 0))
-        (new:si -.b (rsh 0 1 +.b))
-      (new:si -.b +((rsh 0 1 +.b)))
-    ::
-    ++  sqt
+    ++  sqt                                             ::  square root
       |=  [a=[e=@s a=@u]]  ^-  fn
       =.  a
         =+  [w=(met 0 a.a) x=(^mul +(prc) 2)]
@@ -1373,10 +1364,10 @@
         =+  ?:  =((dis - 1) (dis (abs:si e.a) 1))  -
           (^add - 1)
         a(e (dif:si e.a (sun:si -)), a (lsh 0 - a.a))
-      =+  [y=(^sqt a.a) z=(frd e.a)]
+      =+  [y=(^sqt a.a) z=(fra:si e.a --2)]
       (rau [z p.y] =(q.y 0))
     ::
-    ++  lth
+    ++  lth                                             ::  less-than
       |=  [a=[e=@s a=@u] b=[e=@s a=@u]]  ^-  ?
       ?:  =(e.a e.b)  (^lth a.a a.b)
       =+  c=(cmp:si (ibl a) (ibl b))
@@ -1385,7 +1376,7 @@
         (^lth (rsh 0 (abs:si (dif:si e.a e.b)) a.a) a.b)
       (^lth (lsh 0 (abs:si (dif:si e.a e.b)) a.a) a.b)
     ::
-    ++  lte
+    ++  lte                                             ::  less-equals
       |=  [a=[e=@s a=@u] b=[e=@s a=@u]]  ^-  ?
       ?:  =(e.a e.b)  (^lte a.a a.b)
       =+  c=(cmp:si (ibl a) (ibl b))
@@ -1394,7 +1385,7 @@
         (^lte a.a (lsh 0 (abs:si (dif:si e.a e.b)) a.b))
       (^lte (lsh 0 (abs:si (dif:si e.a e.b)) a.a) a.b)
     ::
-    ++  equ
+    ++  equ                                             ::  equals
       |=  [a=[e=@s a=@u] b=[e=@s a=@u]]  ^-  ?
       ?.  =((ibl a) (ibl b))  |
       ?:  =((cmp:si e.a e.b) -1)
@@ -1406,16 +1397,18 @@
       |=  [a=[e=@s a=@u]]  ^-  @s
       (sum:si (sun:si (dec (met 0 a.a))) e.a)
     ::
+    ::  change to a representation where a.a is odd
+    ::  every fn has a unique representation of this kind
     ++  uni
       |=  [a=[e=@s a=@u]]
-      ?<  =(a.a 0)
       |-  ?:  =((end 0 1 a.a) 1)  a
       $(a.a (rsh 0 1 a.a), e.a (sum:si e.a --1))
     ::
+    ::  expands to either full precision or to denormalized
+    ::  assumes (met 0 a.a) <= precision
     ++  xpd
       |=  [a=[e=@s a=@u]]
       =+  ma=(met 0 a.a)
-      ?<  =(ma 0)
       =+  ?:  =(den %i)  (^sub prc ma)
           =+  ^=  q
             =+  w=(dif:si e.a emn)
@@ -1423,13 +1416,16 @@
           (min q (^sub prc ma))
       a(e (dif:si e.a (sun:si -)), a (lsh 0 - a.a))
     ::
-    ::  in order: floor, ceiling, nearest (even, away from 0, toward 0),
-    ::            larger, smaller; t=sticky bit
+    ::  central rounding mechanism
+    ::  can perform: floor, ceiling, smaller, larger,
+    ::               nearest (round ties to: even, away from 0, toward 0)
+    ::  s is sticky bit: represents a value less than ulp(a) = 2^(e:(xpd a))
     ++  lug
       ~/  %lug
-      |=  [t=?(%fl %ce %ne %na %nt %lg %sm) a=[e=@s a=@u] s=?]  ^-  fn
+      |=  [t=?(%fl %ce %sm %lg %ne %na %nt) a=[e=@s a=@u] s=?]  ^-  fn
+      ?<  =(a.a 0)
       =-
-        ?.  =(den %f)  -
+        ?.  =(den %f)  -                                ::  if %f, flush denormals
         ?.  ?=([%f *] -)  -
         ?:  =((met 0 ->+>) prc)  -  [%f & zer]
       ::
@@ -1456,7 +1452,7 @@
           %na  [%f & ?:((^lth b (bex (dec q))) zer spd)]
         ==
       ::
-      =.  a  (xpd a)                                    ::  expand
+      =.  a  (xpd a)
       ::
       =.  a
         ?-  t
@@ -1489,9 +1485,10 @@
       ?:  =(den %i)  [%f & a]
       ?:  =((cmp:si emx e.a) -1)  [%i &]  [%f & a]      ::  enforce max. exp
     ::
-    ++  drg                                             ::  dragon4
+    ++  drg                                             ::  dragon4; convert to decimal
       ~/  %drg
       |=  [a=[e=@s a=@u]]  ^-  [@s @u]
+      ?<  =(a.a 0)
       =.  a  ?:  (^lth (met 0 a.a) prc)  (xpd a)  a
       =+  r=(lsh 0 ?:((syn:si e.a) (abs:si e.a) 0) a.a)
       =+  s=(lsh 0 ?.((syn:si e.a) (abs:si e.a) 0) 1)
@@ -1525,7 +1522,7 @@
       =.  o  (^add (^mul o 10) ?:(q +(u) u))
       [k o]
     ::
-    ++  toi
+    ++  toj                                             ::  round to integer
       |=  [a=[e=@s a=@u]]  ^-  fn
       ?.  =((cmp:si e.a --0) -1)  [%f & a]
       =+  x=(abs:si e.a)
@@ -1537,50 +1534,49 @@
       ?:  &(=(z i) =((dis y 1) 0))  [%f & --0 y]
       ?:  (^lth z i)  [%f & --0 y]  [%f & --0 +(y)]
     ::
-    ++  ned
+    ++  ned                                             ::  require ?=([%f *] a)
       |=  [a=fn]  ^-  [%f s=? e=@s a=@u]
       ?:  ?=([%f *] a)  a
       ~|  %need-float  !!
     ::
-    ++  shf
+    ++  shf                                             ::  a * 2^b; no rounding
       |=  [a=fn b=@s]
       ?:  |(?=([%n *] a) ?=([%i *] a))  a
       a(e (sum:si e.a b))
     ::
-    ++  fli
+    ++  fli                                             ::  flip sign
       |=  [a=fn]  ^-  fn
       ?-(-.a %f a(s !s.a), %i a(s !s.a), %n a)
     ::
-    ++  swr  ?+(r r %d %u, %u %d)
-    ++  prc  ?>((gth p 1) p)
-    ++  den  d
-    ++  emn  v
-    ++  emm  (sum:si emn (sun:si (dec prc)))
-    ++  emx  (sum:si emn (sun:si w))
-    ++  spd  [e=emn a=1]                                ::  smallest "denormal"
-    ++  spn  [e=emn a=(bex (dec prc))]                  ::  smallest "normal"
+    ++  swr  ?+(r r %d %u, %u %d)                       ::  flipped rounding mode
+    ++  prc  ?>((gth p 1) p)                            ::  enforce precision at least 2
+    ++  den  d                                          ::  denorms/flush/inf exponent range
+    ++  emn  v                                          ::  minimum exponent
+    ++  emx  (sum:si emn (sun:si w))                    ::  maximum exponent
+    ++  spd  [e=emn a=1]                                ::  smallest denormal
+    ++  spn  [e=emn a=(bex (dec prc))]                  ::  smallest normal
     ++  lfn  [e=emx a=(fil 0 prc 1)]                    ::  largest
     ++  lfe  (sum:si emx (sun:si prc))                  ::  2^lfe is larger than all floats
     ++  zer  [e=--0 a=0]
     --
   |%
-  ++  rou
+  ++  rou                                               ::  round
     |=  [a=fn]  ^-  fn
     ?.  ?=([%f *] a)  a
     ?~  a.a  [%f s.a zer]
     ?:  s.a  (^rou +>.a)
     =.(r swr (fli (^rou +>.a)))
   ::
-  ++  syn
+  ++  syn                                               ::  get sign
     |=  [a=fn]  ^-  ?
     ?-(-.a %f s.a, %i s.a, %n &)
   ::
-  ++  abs
+  ++  abs                                               ::  absolute value
     |=  [a=fn]  ^-  fn
     ?:  ?=([%f *] a)  [%f & e.a a.a]
     ?:  ?=([%i *] a)  [%i &]  [%n ~]
   ::
-  ++  add
+  ++  add                                               ::  add
     |=  [a=fn b=fn]  ^-  fn
     ?:  |(?=([%n *] a) ?=([%n *] b))  [%n ~]
     ?:  |(?=([%i *] a) ?=([%i *] b))
@@ -1610,16 +1606,20 @@
     ?:  |(=(a.a 0) =(a.b 0))
       ?.  &(=(a.a 0) =(a.b 0))  ?~(a.a b a)
       [%f ?:(=(r %d) &(s.a s.b) |(s.a s.b)) zer]
+    %-  |=  [a=fn]
+        ?.  ?=([%f *] a)  a
+        ?.  =(a.a 0)  a
+        [%f !=(r %d) zer]
     ?:  =(s.a s.b)
       ?:  s.a  (^add +>.a +>.b &)
       (fli (^add +>.a +>.b &))
     ?:  s.a  (^sub +>.a +>.b &)
     (^sub +>.b +>.a &)
   ::
-  ++  sub
+  ++  sub                                               ::  subtract
     |=  [a=fn b=fn]  ^-  fn  (add a (fli b))
   ::
-  ++  mul
+  ++  mul                                               ::  multiply
     |=  [a=fn b=fn]  ^-  fn
     ?:  |(?=([%n *] a) ?=([%n *] b))  [%n ~]
     ?:  ?=([%i *] a)
@@ -1642,7 +1642,7 @@
     ?:  |(=(a.a 0) =(a.b 0))  [%f =(s.a s.b) zer]
     [%f =(s.a s.b) (sum:si e.a e.b) (^^mul a.a a.b)]
   ::
-  ++  div
+  ++  div                                               ::  divide
     |=  [a=fn b=fn]  ^-  fn
     ?:  |(?=([%n *] a) ?=([%n *] b))  [%n ~]
     ?:  ?=([%i *] a)
@@ -1653,8 +1653,8 @@
     ?:  =(s.a s.b)  (^div +>.a +>.b)
     =.(r swr (fli (^div +>.a +>.b)))
   ::
-  ++  fma                                               ::  a * b + c
-    |=  [a=fn b=fn c=fn]  ^-  fn
+  ++  fma                                               ::  fused multiply-add
+    |=  [a=fn b=fn c=fn]  ^-  fn                        ::  (a * b) + c
     (add (emu a b) c)
   ::
   ++  sqt                                               ::  square root
@@ -1664,20 +1664,21 @@
     ?~  a.a  [%f s.a zer]
     ?:  s.a  (^sqt +>.a)  [%n ~]
   ::
-  ++  inv
+  ++  inv                                               ::  inverse
     |=  [a=fn]  ^-  fn
     (div [%f & --0 1] a)
   ::
-  ++  sun
+  ++  sun                                               ::  unsigned integer to float
     |=  [a=@u]  ^-  fn
     (rou [%f & --0 a])
   ::
-  ++  san
+  ++  san                                               ::  signed integer to float
     |=  [a=@s]  ^-  fn
     =+  b=(old:si a)
     (rou [%f -.b --0 +.b])
   ::
-  ++  lth
+  ::  comparisons return ~ in the event of a NaN
+  ++  lth                                               ::  less-than
     |=  [a=fn b=fn]  ^-  (unit ,?)
     ?:  |(?=([%n *] a) ?=([%n *] b))  ~  :-  ~
     ?:  =(a b)  |
@@ -1688,7 +1689,7 @@
     ?:  !=(s.a s.b)  s.b
     ?:  s.a  (^lth +>.a +>.b)  (^lth +>.b +>.a)
   ::
-  ++  lte
+  ++  lte                                               ::  less-equal
     |=  [a=fn b=fn]  ^-  (unit ,?)
     ?:  |(?=([%n *] a) ?=([%n *] b))  ~  :-  ~
     ?:  =(a b)  &
@@ -1699,7 +1700,7 @@
     ?:  !=(s.a s.b)  s.b
     ?:  s.a  (^lte +>.a +>.b)  (^lte +>.b +>.a)
   ::
-  ++  equ
+  ++  equ                                               ::  equal
     |=  [a=fn b=fn]  ^-  (unit ,?)
     ?:  |(?=([%n *] a) ?=([%n *] b))  ~  :-  ~
     ?:  =(a b)  &
@@ -1709,10 +1710,10 @@
     ?:  |(=(e.a e.b) !=(s.a s.b))  |
     (^equ +>.a +>.b)
   ::
-  ++  gte
+  ++  gte                                               ::  greater-equal
     |=  [a=fn b=fn]  ^-  (unit ,?)  (lte b a)
   ::
-  ++  gth
+  ++  gth                                               ::  greater-than
     |=  [a=fn b=fn]  ^-  (unit ,?)  (lth b a)
   ::
   ++  drg                                               ::  float to decimal
@@ -1732,29 +1733,41 @@
       (mul [%f s.a --0 a.a] [%f & e.a (pow 5 q)])
     (div [%f s.a --0 a.a] [%f & (sun:si q) (pow 5 q)])
   ::
-  ++  toi                                               ::  round to integer
+  ++  toi                                               ::  round to integer @s
+    |=  [a=fn]  ^-  (unit ,@s)
+    =+  b=(toj a)
+    ?.  ?=([%f *] b)  ~  :-  ~
+    =+  c=(^^mul (bex (abs:si e.b)) a.b)
+    (new:si s.b c)
+  ::
+  ++  toj                                               ::  round to integer fn
     |=  [a=fn]  ^-  fn
     ?.  ?=([%f *] a)  a
     ?~  a.a  [%f s.a zer]
-    ?:  s.a  (^toi +>.a)
-    =.(r swr (fli (^toi +>.a)))
+    ?:  s.a  (^toj +>.a)
+    =.(r swr (fli (^toj +>.a)))
   --
 ::
-++  ff                                                  ::  ieee754 format
+++  ff                                                  ::  ieee 754 format floating point
   |_  [[w=@u p=@u b=@s] r=?(%n %u %d %z %a)]
+  ::  this core has no use outside of the functionality
+  ::  provided to ++rd, ++rs, ++rq, and ++rh
   ::
-  ++  sz  +((^add w p))
-  ++  sb  (bex (^add w p))
-  ++  me  (dif:si (dif:si --1 b) (sun:si p))
+  ::  w=width:         bits in exponent field
+  ::  p=precision:     bits in fraction field
+  ::  w=bias:          added to exponent when storing
+  ::  r=rounding mode: same as in ++fl
+  ::
+  ++  sb  (bex (^add w p))                              ::  sign bit
+  ++  me  (dif:si (dif:si --1 b) (sun:si p))            ::  minimum exponent
   ::
   ++  pa
     %*(. fl p +(p), v me, w (^sub (bex w) 3), d %d, r r)
   ::
-  ++  sea
+  ++  sea                                               ::  @r to fn
     |=  [a=@r]  ^-  fn
-    =+  f=(cut 0 [0 p] a)
-    =+  e=(cut 0 [p w] a)
-    =+  s==(0 (cut 0 [(^add p w) 1] a))
+    =+  [f=(cut 0 [0 p] a) e=(cut 0 [p w] a)]
+    =+  s=(sig a)
     ?:  =(e 0)
       ?:  =(f 0)  [%f s --0 0]  [%f s me f]
     ?:  =(e (fil 0 w 1))
@@ -1763,9 +1776,9 @@
     =+  r=(^add f (bex p))
     [%f s q r]
   ::
-  ++  bit  |=  [a=fn]  (bif (rou:pa a))
+  ++  bit  |=  [a=fn]  (bif (rou:pa a))                 ::  fn to @r with rounding
   ::
-  ++  bif
+  ++  bif                                               ::  fn to @r without rounding
     |=  [a=fn]  ^-  @r
     ?:  ?=([%i *] a)
       =+  q=(lsh 0 p (fil 0 w 1))
@@ -1781,180 +1794,280 @@
     =+  r=(^add (lsh 0 p (abs:si q)) (end 0 p a.a))
     ?:  s.a  r  (^add r sb)
   ::
-  ++  sig
+  ++  sig                                               ::  get sign
     |=  [a=@r]  ^-  ?
     =(0 (cut 0 [(^add p w) 1] a))
   ::
-  ++  exp
+  ++  exp                                               ::  get exponent
     |=  [a=@r]  ^-  @s
     (dif:si (sun:si (cut 0 [p w] a)) b)
   ::
-  ++  toi
-    |=  [a=@r]  ^-  (unit ,@s)
-    =+  b=(toi:pa (sea a))
-    ?.  ?=([%f *] b)  ~  :-  ~
-    =+  c=(^mul (bex (abs:si e.b)) a.b)
-    (new:si s.b c)
+  ++  add                                               ::  add
+    |=  [a=@r b=@r]
+    (bif (add:pa (sea a) (sea b)))
   ::
-  ++  add  |=  [a=@r b=@r]  (bif (add:pa (sea a) (sea b)))
-  ++  sub  |=  [a=@r b=@r]  (bif (sub:pa (sea a) (sea b)))
-  ++  mul  |=  [a=@r b=@r]  (bif (mul:pa (sea a) (sea b)))
-  ++  div  |=  [a=@r b=@r]  (bif (div:pa (sea a) (sea b)))
-  ++  fma  |=  [a=@r b=@r c=@r]  (bif (fma:pa (sea a) (sea b) (sea c)))
-  ++  sqt  |=  [a=@r]  (bif (sqt:pa (sea a)))
-  ++  sun  |=  [a=@u]  (bit [%f & --0 a])
-  ++  san  |=  [a=@s]  (bit [%f (syn:si a) --0 (abs:si a)])
-  ++  lth  |=  [a=@r b=@r]  (fall (lth:pa (sea a) (sea b)) |)
-  ++  lte  |=  [a=@r b=@r]  (fall (lte:pa (sea a) (sea b)) |)
-  ++  equ  |=  [a=@r b=@r]  (fall (equ:pa (sea a) (sea b)) |)
-  ++  gte  |=  [a=@r b=@r]  (fall (gte:pa (sea a) (sea b)) |)
-  ++  gth  |=  [a=@r b=@r]  (fall (gth:pa (sea a) (sea b)) |)
-  ++  drg  |=  [a=@r]  (drg:pa (sea a))
-  ++  grd  |=  [a=dn]  (bif (grd:pa a))
+  ++  sub                                               ::  subtract
+    |=  [a=@r b=@r]
+    (bif (sub:pa (sea a) (sea b)))
+  ::
+  ++  mul                                               ::  multiply
+    |=  [a=@r b=@r]
+    (bif (mul:pa (sea a) (sea b)))
+  ::
+  ++  div                                               ::  divide
+    |=  [a=@r b=@r]
+    (bif (div:pa (sea a) (sea b)))
+  ::
+  ++  fma                                               ::  fused multiply-add
+    |=  [a=@r b=@r c=@r]
+    (bif (fma:pa (sea a) (sea b) (sea c)))
+  ::
+  ++  sqt                                               ::  square root
+    |=  [a=@r]
+    (bif (sqt:pa (sea a)))
+  ::
+  ++  lth                                               ::  less-than
+    |=  [a=@r b=@r]  (fall (lth:pa (sea a) (sea b)) |)
+  ++  lte                                               ::  less-equals
+    |=  [a=@r b=@r]  (fall (lte:pa (sea a) (sea b)) |)
+  ++  equ                                               ::  equals
+    |=  [a=@r b=@r]  (fall (equ:pa (sea a) (sea b)) |)
+  ++  gte                                               ::  greater-equals
+    |=  [a=@r b=@r]  (fall (gte:pa (sea a) (sea b)) |)
+  ++  gth                                               ::  greater-than
+    |=  [a=@r b=@r]  (fall (gth:pa (sea a) (sea b)) |)
+  ++  sun                                               ::  unsigned integer to @r
+    |=  [a=@u]  (bit [%f & --0 a])
+  ++  san                                               ::  signed integer to @r
+    |=  [a=@s]  (bit [%f (syn:si a) --0 (abs:si a)])
+  ++  toi                                               ::  round to integer
+    |=  [a=@r]  (toi:pa (sea a))
+  ++  drg                                               ::  @r to decimal float
+    |=  [a=@r]  (drg:pa (sea a))
+  ++  grd                                               ::  decimal float to @r
+    |=  [a=dn]  (bif (grd:pa a))
   --
 ::
-++  rlyd  |=  a=@rd  ^-  dn  (drg:rd a)
-++  rlys  |=  a=@rs  ^-  dn  (drg:rs a)
-++  rlyh  |=  a=@rh  ^-  dn  (drg:rh a)
-++  rlyq  |=  a=@rq  ^-  dn  (drg:rq a)
-++  ryld  |=  a=dn  ^-  @rd  (grd:rd a)
-++  ryls  |=  a=dn  ^-  @rs  (grd:rs a)
-++  rylh  |=  a=dn  ^-  @rh  (grd:rh a)
-++  rylq  |=  a=dn  ^-  @rq  (grd:rq a)
+++  rlyd  |=  a=@rd  ^-  dn  (drg:rd a)                 ::  prepare @rd for printing
+++  rlys  |=  a=@rs  ^-  dn  (drg:rs a)                 ::  prepare @rs for printing
+++  rlyh  |=  a=@rh  ^-  dn  (drg:rh a)                 ::  prepare @rh for printing
+++  rlyq  |=  a=@rq  ^-  dn  (drg:rq a)                 ::  prepare @rq for printing
+++  ryld  |=  a=dn  ^-  @rd  (grd:rd a)                 ::  finish parsing of @rd
+++  ryls  |=  a=dn  ^-  @rs  (grd:rs a)                 ::  finish parsing of @rs
+++  rylh  |=  a=dn  ^-  @rh  (grd:rh a)                 ::  finish parsing of @rh
+++  rylq  |=  a=dn  ^-  @rq  (grd:rq a)                 ::  finish parsing of @rq
 ::
-++  rd
+++  rd                                                  ::  double precision floating point
   ~%  %rd  +>  ~
   |_  r=?(%n %u %d %z)
+  ::  round to nearest, round up, round down, round to zero
+  ::
   ++  ma
     %*(. ff w 11, p 52, b --1.023, r r)
-  ++  sea
-    |=  [a=@rd]  (sea:ma a)
-  ++  bit
-    |=  [a=fn]  ^-  @rd  (bit:ma a)
-  ++  add  ~/  %add
-    |=  [a=@rd b=@rd]  ^-  @rd  ~|  %rd-fail  (add:ma a b)
-  ++  sub  ~/  %sub
-    |=  [a=@rd b=@rd]  ^-  @rd  ~|  %rd-fail  (sub:ma a b)
-  ++  mul  ~/  %mul
-    |=  [a=@rd b=@rd]  ^-  @rd  ~|  %rd-fail  (mul:ma a b)
-  ++  div  ~/  %div
-    |=  [a=@rd b=@rd]  ^-  @rd  ~|  %rd-fail  (div:ma a b)
-  ++  fma  ~/  %fma
-    |=  [a=@rd b=@rd c=@rd]  ^-  @rd  ~|  %rd-fail  (fma:ma a b c)
-  ++  sqt  ~/  %sqt
-    |=  [a=@rd]  ^-  @rd  ~|  %rd-fail  (sqt:ma a)
   ::
-  ++  sun  |=  [a=@u]  ^-  @rd  (sun:ma a)
-  ++  san  |=  [a=@s]  ^-  @rd  (san:ma a)
-  ++  lth  ~/  %lth  |=  [a=@rd b=@rd]  ~|  %rd-fail  (lth:ma a b)
-  ++  lte  ~/  %lte  |=  [a=@rd b=@rd]  ~|  %rd-fail  (lte:ma a b)
-  ++  equ  ~/  %equ  |=  [a=@rd b=@rd]  ~|  %rd-fail  (equ:ma a b)
-  ++  gte  ~/  %gte  |=  [a=@rd b=@rd]  ~|  %rd-fail  (gte:ma a b)
-  ++  gth  ~/  %gth  |=  [a=@rd b=@rd]  ~|  %rd-fail  (gth:ma a b)
-  ++  sig  |=  [a=@rd]  (sig:ma a)
-  ++  exp  |=  [a=@rd]  (exp:ma a)
-  ++  toi  |=  [a=@rd]  (toi:ma a)
-  ++  drg  |=  [a=@rd]  (drg:ma a)
-  ++  grd  |=  [a=dn]  (grd:ma a)
+  ++  sea                                               ::  @rd to fn
+    |=  [a=@rd]  (sea:ma a)
+  ::
+  ++  bit                                               ::  fn to @rd
+    |=  [a=fn]  ^-  @rd  (bit:ma a)
+  ::
+  ++  add  ~/  %add                                     ::  add
+    |=  [a=@rd b=@rd]  ^-  @rd  ~|  %rd-fail
+    (add:ma a b)
+  ::
+  ++  sub  ~/  %sub                                     ::  subtract
+    |=  [a=@rd b=@rd]  ^-  @rd  ~|  %rd-fail
+    (sub:ma a b)
+  ::
+  ++  mul  ~/  %mul                                     ::  multiply
+    |=  [a=@rd b=@rd]  ^-  @rd  ~|  %rd-fail
+    (mul:ma a b)
+  ::
+  ++  div  ~/  %div                                     ::  divide
+    |=  [a=@rd b=@rd]  ^-  @rd  ~|  %rd-fail
+    (div:ma a b)
+  ::
+  ++  fma  ~/  %fma                                     ::  fused multiply-add
+    |=  [a=@rd b=@rd c=@rd]  ^-  @rd  ~|  %rd-fail
+    (fma:ma a b c)
+  ::
+  ++  sqt  ~/  %sqt                                     ::  square root
+    |=  [a=@rd]  ^-  @rd  ~|  %rd-fail
+    (sqt:ma a)
+  ::
+  ++  lth  ~/  %lth                                     ::  less-than
+    |=  [a=@rd b=@rd]  ~|  %rd-fail  (lth:ma a b)
+  ++  lte  ~/  %lte                                     ::  less-equals
+    |=  [a=@rd b=@rd]  ~|  %rd-fail  (lte:ma a b)
+  ++  equ  ~/  %equ                                     ::  equals
+    |=  [a=@rd b=@rd]  ~|  %rd-fail  (equ:ma a b)
+  ++  gte  ~/  %gte                                     ::  greater-equals
+    |=  [a=@rd b=@rd]  ~|  %rd-fail  (gte:ma a b)
+  ++  gth  ~/  %gth                                     ::  greater-than
+    |=  [a=@rd b=@rd]  ~|  %rd-fail  (gth:ma a b)
+  ::
+  ++  sun  |=  [a=@u]  ^-  @rd  (sun:ma a)              ::  unsigned integer to @rd
+  ++  san  |=  [a=@s]  ^-  @rd  (san:ma a)              ::  signed integer to @rd
+  ++  sig  |=  [a=@rd]  ^-  ?  (sig:ma a)               ::  get sign
+  ++  exp  |=  [a=@rd]  ^-  @s  (exp:ma a)              ::  get exponent
+  ++  toi  |=  [a=@rd]  ^-  (unit ,@s)  (toi:ma a)      ::  round to integer
+  ++  drg  |=  [a=@rd]  ^-  dn  (drg:ma a)              ::  @rd to decimal float
+  ++  grd  |=  [a=dn]  ^-  @rd  (grd:ma a)              ::  decimal float to @rd
   --
 ::
-++  rs
+++  rs                                                  ::  single precision floating point
   ~%  %rs  +>  ~
   |_  r=?(%n %u %d %z)
-  ++  ma
-    %*(. ff w 8, p 23, b --127, r r)
-  ++  sea
-    |=  [a=@rs]  (sea:ma a)
-  ++  bit
-    |=  [a=fn]  ^-  @rs  (bit:ma a)
-  ++  add  ~/  %add
-    |=  [a=@rs b=@rs]  ^-  @rs  ~|  %rs-fail  (add:ma a b)
-  ++  sub  ~/  %sub
-    |=  [a=@rs b=@rs]  ^-  @rs  ~|  %rs-fail  (sub:ma a b)
-  ++  mul  ~/  %mul
-    |=  [a=@rs b=@rs]  ^-  @rs  ~|  %rs-fail  (mul:ma a b)
-  ++  div  ~/  %div
-    |=  [a=@rs b=@rs]  ^-  @rs  ~|  %rs-fail  (div:ma a b)
-  ++  fma  ~/  %fma
-    |=  [a=@rs b=@rs c=@rs]  ^-  @rs  ~|  %rs-fail  (fma:ma a b c)
-  ++  sqt  ~/  %sqt
-    |=  [a=@rs]  ^-  @rs  ~|  %rs-fail  (sqt:ma a)
+  ::  round to nearest, round up, round down, round to zero
   ::
-  ++  sun  |=  [a=@u]  ^-  @rs  (sun:ma a)
-  ++  san  |=  [a=@s]  ^-  @rs  (san:ma a)
-  ++  lth  ~/  %lth  |=  [a=@rs b=@rs]  ~|  %rs-fail  (lth:ma a b)
-  ++  lte  ~/  %lte  |=  [a=@rs b=@rs]  ~|  %rs-fail  (lte:ma a b)
-  ++  equ  ~/  %equ  |=  [a=@rs b=@rs]  ~|  %rs-fail  (equ:ma a b)
-  ++  gte  ~/  %gte  |=  [a=@rs b=@rs]  ~|  %rs-fail  (gte:ma a b)
-  ++  gth  ~/  %gth  |=  [a=@rs b=@rs]  ~|  %rs-fail  (gth:ma a b)
-  ++  sig  |=  [a=@rs]  (sig:ma a)
-  ++  exp  |=  [a=@rs]  (exp:ma a)
-  ++  toi  |=  [a=@rs]  (toi:ma a)
-  ++  drg  |=  [a=@rs]  (drg:ma a)
-  ++  grd  |=  [a=dn]  (grd:ma a)
+  ++  ma
+    %*(. ff w 11, p 52, b --1.023, r r)
+  ::
+  ++  sea                                               ::  @rs to fn
+    |=  [a=@rs]  (sea:ma a)
+  ::
+  ++  bit                                               ::  fn to @rs
+    |=  [a=fn]  ^-  @rs  (bit:ma a)
+  ::
+  ++  add  ~/  %add                                     ::  add
+    |=  [a=@rs b=@rs]  ^-  @rs  ~|  %rs-fail
+    (add:ma a b)
+  ::
+  ++  sub  ~/  %sub                                     ::  subtract
+    |=  [a=@rs b=@rs]  ^-  @rs  ~|  %rs-fail
+    (sub:ma a b)
+  ::
+  ++  mul  ~/  %mul                                     ::  multiply
+    |=  [a=@rs b=@rs]  ^-  @rs  ~|  %rs-fail
+    (mul:ma a b)
+  ::
+  ++  div  ~/  %div                                     ::  divide
+    |=  [a=@rs b=@rs]  ^-  @rs  ~|  %rs-fail
+    (div:ma a b)
+  ::
+  ++  fma  ~/  %fma                                     ::  fused multiply-add
+    |=  [a=@rs b=@rs c=@rs]  ^-  @rs  ~|  %rs-fail
+    (fma:ma a b c)
+  ::
+  ++  sqt  ~/  %sqt                                     ::  square root
+    |=  [a=@rs]  ^-  @rs  ~|  %rs-fail
+    (sqt:ma a)
+  ::
+  ++  lth  ~/  %lth                                     ::  less-than
+    |=  [a=@rs b=@rs]  ~|  %rs-fail  (lth:ma a b)
+  ++  lte  ~/  %lte                                     ::  less-equals
+    |=  [a=@rs b=@rs]  ~|  %rs-fail  (lte:ma a b)
+  ++  equ  ~/  %equ                                     ::  equals
+    |=  [a=@rs b=@rs]  ~|  %rs-fail  (equ:ma a b)
+  ++  gte  ~/  %gte                                     ::  greater-equals
+    |=  [a=@rs b=@rs]  ~|  %rs-fail  (gte:ma a b)
+  ++  gth  ~/  %gth                                     ::  greater-than
+    |=  [a=@rs b=@rs]  ~|  %rs-fail  (gth:ma a b)
+  ::
+  ++  sun  |=  [a=@u]  ^-  @rs  (sun:ma a)              ::  unsigned integer to @rs
+  ++  san  |=  [a=@s]  ^-  @rs  (san:ma a)              ::  signed integer to @rs
+  ++  sig  |=  [a=@rs]  ^-  ?  (sig:ma a)               ::  get sign
+  ++  exp  |=  [a=@rs]  ^-  @s  (exp:ma a)              ::  get exponent
+  ++  toi  |=  [a=@rs]  ^-  (unit ,@s)  (toi:ma a)      ::  round to integer
+  ++  drg  |=  [a=@rs]  ^-  dn  (drg:ma a)              ::  @rs to decimal float
+  ++  grd  |=  [a=dn]  ^-  @rs  (grd:ma a)              ::  decimal float to @rs
   --
 ::
-++  rq
+++  rq                                                  ::  quadruple precision floating point
   ~%  %rq  +>  ~
   |_  r=?(%n %u %d %z)
-  ++  ma
-    %*(. ff w 15, p 112, b --16.383, r r)
-  ++  sea
-    |=  [a=@rq]  (sea:ma a)
-  ++  bit
-    |=  [a=fn]  ^-  @rq  (bit:ma a)
-  ++  add  ~/  %add
-    |=  [a=@rq b=@rq]  ^-  @rq  ~|  %rq-fail  (add:ma a b)
-  ++  sub  ~/  %sub
-    |=  [a=@rq b=@rq]  ^-  @rq  ~|  %rq-fail  (sub:ma a b)
-  ++  mul  ~/  %mul
-    |=  [a=@rq b=@rq]  ^-  @rq  ~|  %rq-fail  (mul:ma a b)
-  ++  div  ~/  %div
-    |=  [a=@rq b=@rq]  ^-  @rq  ~|  %rq-fail  (div:ma a b)
-  ++  fma  ~/  %fma
-    |=  [a=@rq b=@rq c=@rq]  ^-  @rq  ~|  %rq-fail  (fma:ma a b c)
-  ++  sqt  ~/  %sqt
-    |=  [a=@rq]  ^-  @rq  ~|  %rq-fail  (sqt:ma a)
+  ::  round to nearest, round up, round down, round to zero
   ::
-  ++  sun  |=  [a=@u]  ^-  @rq  (sun:ma a)
-  ++  san  |=  [a=@s]  ^-  @rq  (san:ma a)
-  ++  lth  ~/  %lth  |=  [a=@rq b=@rq]  ~|  %rq-fail  (lth:ma a b)
-  ++  lte  ~/  %lte  |=  [a=@rq b=@rq]  ~|  %rq-fail  (lte:ma a b)
-  ++  equ  ~/  %equ  |=  [a=@rq b=@rq]  ~|  %rq-fail  (equ:ma a b)
-  ++  gte  ~/  %gte  |=  [a=@rq b=@rq]  ~|  %rq-fail  (gte:ma a b)
-  ++  gth  ~/  %gth  |=  [a=@rq b=@rq]  ~|  %rq-fail  (gth:ma a b)
-  ++  sig  |=  [a=@rq]  (sig:ma a)
-  ++  exp  |=  [a=@rq]  (exp:ma a)
-  ++  toi  |=  [a=@rq]  (toi:ma a)
-  ++  drg  |=  [a=@rq]  (drg:ma a)
-  ++  grd  |=  [a=dn]  (grd:ma a)
+  ++  ma
+    %*(. ff w 11, p 52, b --1.023, r r)
+  ::
+  ++  sea                                               ::  @rq to fn
+    |=  [a=@rq]  (sea:ma a)
+  ::
+  ++  bit                                               ::  fn to @rq
+    |=  [a=fn]  ^-  @rq  (bit:ma a)
+  ::
+  ++  add  ~/  %add                                     ::  add
+    |=  [a=@rq b=@rq]  ^-  @rq  ~|  %rq-fail
+    (add:ma a b)
+  ::
+  ++  sub  ~/  %sub                                     ::  subtract
+    |=  [a=@rq b=@rq]  ^-  @rq  ~|  %rq-fail
+    (sub:ma a b)
+  ::
+  ++  mul  ~/  %mul                                     ::  multiply
+    |=  [a=@rq b=@rq]  ^-  @rq  ~|  %rq-fail
+    (mul:ma a b)
+  ::
+  ++  div  ~/  %div                                     ::  divide
+    |=  [a=@rq b=@rq]  ^-  @rq  ~|  %rq-fail
+    (div:ma a b)
+  ::
+  ++  fma  ~/  %fma                                     ::  fused multiply-add
+    |=  [a=@rq b=@rq c=@rq]  ^-  @rq  ~|  %rq-fail
+    (fma:ma a b c)
+  ::
+  ++  sqt  ~/  %sqt                                     ::  square root
+    |=  [a=@rq]  ^-  @rq  ~|  %rq-fail
+    (sqt:ma a)
+  ::
+  ++  lth  ~/  %lth                                     ::  less-than
+    |=  [a=@rq b=@rq]  ~|  %rq-fail  (lth:ma a b)
+  ++  lte  ~/  %lte                                     ::  less-equals
+    |=  [a=@rq b=@rq]  ~|  %rq-fail  (lte:ma a b)
+  ++  equ  ~/  %equ                                     ::  equals
+    |=  [a=@rq b=@rq]  ~|  %rq-fail  (equ:ma a b)
+  ++  gte  ~/  %gte                                     ::  greater-equals
+    |=  [a=@rq b=@rq]  ~|  %rq-fail  (gte:ma a b)
+  ++  gth  ~/  %gth                                     ::  greater-than
+    |=  [a=@rq b=@rq]  ~|  %rq-fail  (gth:ma a b)
+  ::
+  ++  sun  |=  [a=@u]  ^-  @rq  (sun:ma a)              ::  unsigned integer to @rq
+  ++  san  |=  [a=@s]  ^-  @rq  (san:ma a)              ::  signed integer to @rq
+  ++  sig  |=  [a=@rq]  ^-  ?  (sig:ma a)               ::  get sign
+  ++  exp  |=  [a=@rq]  ^-  @s  (exp:ma a)              ::  get exponent
+  ++  toi  |=  [a=@rq]  ^-  (unit ,@s)  (toi:ma a)      ::  round to integer
+  ++  drg  |=  [a=@rq]  ^-  dn  (drg:ma a)              ::  @rq to decimal float
+  ++  grd  |=  [a=dn]  ^-  @rq  (grd:ma a)              ::  decimal float to @rq
   --
 ::
-++  rh
+++  rh                                                  ::  half precision floating point
   |_  r=?(%n %u %d %z)
+  ::  round to nearest, round up, round down, round to zero
+  ::
   ++  ma
     %*(. ff w 5, p 10, b --15, r r)
-  ++  sea
+  ::
+  ++  sea                                               ::  @rh to fn
     |=  [a=@rh]  (sea:ma a)
-  ++  bit
+  ::
+  ++  bit                                               ::  fn to @rh
     |=  [a=fn]  ^-  @rh  (bit:ma a)
-  ++  tos
+  ::
+  ++  tos                                               ::  @rh to @rs
     |=  [a=@rh]  (bit:rs (sea a))
-  ++  fos
+  ::
+  ++  fos                                               ::  @rs to @rh
     |=  [a=@rs]  (bit (sea:rs a))
   ::
-  ++  sun  |=  [a=@u]  ^-  @rh  (sun:ma a)
-  ++  san  |=  [a=@s]  ^-  @rh  (san:ma a)
-  ++  lth  |=  [a=@rh b=@rh]  ~|  %rh-fail  (lth:ma a b)
-  ++  lte  |=  [a=@rh b=@rh]  ~|  %rh-fail  (lte:ma a b)
-  ++  equ  |=  [a=@rh b=@rh]  ~|  %rh-fail  (equ:ma a b)
-  ++  gte  |=  [a=@rh b=@rh]  ~|  %rh-fail  (gte:ma a b)
-  ++  gth  |=  [a=@rh b=@rh]  ~|  %rh-fail  (gth:ma a b)
-  ++  sig  |=  [a=@rh]  (sig:ma a)
-  ++  exp  |=  [a=@rh]  (exp:ma a)
-  ++  toi  |=  [a=@rh]  (toi:ma a)
-  ++  drg  |=  [a=@rh]  (drg:ma a)
-  ++  grd  |=  [a=dn]  (grd:ma a)
+  ++  lth  ~/  %lth                                     ::  less-than
+    |=  [a=@rh b=@rh]  ~|  %rh-fail  (lth:ma a b)
+  ++  lte  ~/  %lte                                     ::  less-equals
+    |=  [a=@rh b=@rh]  ~|  %rh-fail  (lte:ma a b)
+  ++  equ  ~/  %equ                                     ::  equals
+    |=  [a=@rh b=@rh]  ~|  %rh-fail  (equ:ma a b)
+  ++  gte  ~/  %gte                                     ::  greater-equals
+    |=  [a=@rh b=@rh]  ~|  %rh-fail  (gte:ma a b)
+  ++  gth  ~/  %gth                                     ::  greater-than
+    |=  [a=@rh b=@rh]  ~|  %rh-fail  (gth:ma a b)
+  ::
+  ++  sun  |=  [a=@u]  ^-  @rh  (sun:ma a)              ::  unsigned integer to @rh
+  ++  san  |=  [a=@s]  ^-  @rh  (san:ma a)              ::  signed integer to @rh
+  ++  sig  |=  [a=@rh]  ^-  ?  (sig:ma a)               ::  get sign
+  ++  exp  |=  [a=@rh]  ^-  @s  (exp:ma a)              ::  get exponent
+  ++  toi  |=  [a=@rh]  ^-  (unit ,@s)  (toi:ma a)      ::  round to integer
+  ++  drg  |=  [a=@rh]  ^-  dn  (drg:ma a)              ::  @rh to decimal float
+  ++  grd  |=  [a=dn]  ^-  @rh  (grd:ma a)              ::  decimal float to @rh
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cH, urbit time               ::
