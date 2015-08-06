@@ -6,26 +6,11 @@ TreeDispatcher = require('../dispatcher/Dispatcher.coffee');
 TreePersistence = require('../persistence/TreePersistence.coffee');
 
 module.exports = {
-  loadPath: function(path, body, kids) {
+  loadPath: function(path, data) {
     return TreeDispatcher.handleServerAction({
-      type: "path-load",
       path: path,
-      body: body,
-      kids: kids
-    });
-  },
-  loadKids: function(path, kids) {
-    return TreeDispatcher.handleServerAction({
-      type: "kids-load",
-      path: path,
-      kids: kids
-    });
-  },
-  loadSnip: function(path, kids) {
-    return TreeDispatcher.handleServerAction({
-      type: "snip-load",
-      path: path,
-      kids: kids
+      data: data,
+      type: "path-load"
     });
   },
   sendQuery: function(path, query) {
@@ -37,15 +22,7 @@ module.exports = {
     }
     return TreePersistence.get(path, query, (function(_this) {
       return function(err, res) {
-        var ref, ref1;
-        switch (false) {
-          case !((ref = query.kids) != null ? ref.body : void 0):
-            return _this.loadKids(path, res.kids);
-          case !((ref1 = query.kids) != null ? ref1.head : void 0):
-            return _this.loadSnip(path, res.kids);
-          default:
-            return _this.loadPath(path, res.body, res.kids);
-        }
+        return _this.loadPath(path, res);
       };
     })(this));
   },
@@ -662,7 +639,7 @@ div = React.DOM.div;
 
 module.exports = recl({
   hash: null,
-  displayName: "TableofContents",
+  displayName: "TableOfContents",
   _onChangeStore: function() {
     return this.setState({
       tocs: this.compute()
@@ -710,9 +687,6 @@ module.exports = recl({
       tocs: this.compute()
     };
   },
-  gotPath: function() {
-    return TreeStore.gotSnip(this.state.path);
-  },
   compute: function() {
     var $h, $headers, h, i, len, results;
     $headers = $('#toc h1, #toc h2, #toc h3, #toc h4');
@@ -733,11 +707,12 @@ module.exports = recl({
     onClick = this._click;
     return div({
       className: 'toc'
-    }, this.state.tocs.map(function(arg) {
+    }, this.state.tocs.map(function(arg, key) {
       var h, t;
       h = arg.h, t = arg.t;
       return React.DOM[h]({
-        onClick: onClick
+        onClick: onClick,
+        key: key
       }, t);
     }));
   }
@@ -1336,7 +1311,7 @@ module.exports = {
 
 
 },{}],18:[function(require,module,exports){
-var EventEmitter, MessageDispatcher, TreeStore, _cont, _curr, _got_snip, _snip, _tree, clog;
+var EventEmitter, MessageDispatcher, TreeStore, _curr, _data, _tree, clog;
 
 EventEmitter = require('events').EventEmitter;
 
@@ -1346,11 +1321,7 @@ clog = console.log.bind(console);
 
 _tree = {};
 
-_cont = {};
-
-_snip = {};
-
-_got_snip = {};
+_data = {};
 
 _curr = "";
 
@@ -1368,26 +1339,23 @@ TreeStore = _.extend(EventEmitter.prototype, {
     return _path.split("/");
   },
   fulfill: function(path, query) {
-    var data, i, k, len, ref, ref1, ref2, ref3;
+    return this.fulfillAt(this.getTree(path.split('/')), path, query);
+  },
+  fulfillAt: function(tree, path, query) {
+    var data, i, k, len, ref, ref1, sub;
     data = this.fulfillLocal(path, query);
-    if (query.body) {
-      data.body = _cont[path];
-    }
-    if (query.head) {
-      data.head = (ref = _snip[path]) != null ? ref.head : void 0;
-    }
-    if (query.snip) {
-      data.snip = (ref1 = _snip[path]) != null ? ref1.body : void 0;
-    }
-    if (query.meta) {
-      data.meta = (ref2 = _snip[path]) != null ? ref2.meta : void 0;
+    ref = ["body", "head", "snip", "meta"];
+    for (i = 0, len = ref.length; i < len; i++) {
+      k = ref[i];
+      if (query[k]) {
+        data[k] = (ref1 = _data[path]) != null ? ref1[k] : void 0;
+      }
     }
     if (query.kids) {
       data.kids = {};
-      ref3 = this.getKids(path);
-      for (i = 0, len = ref3.length; i < len; i++) {
-        k = ref3[i];
-        data.kids[k] = this.fulfill(path + "/" + k, query.kids);
+      for (k in tree) {
+        sub = tree[k];
+        data.kids[k] = this.fulfillAt(sub, path + "/" + k, query.kids);
       }
     }
     if (!_.isEmpty(data)) {
@@ -1404,30 +1372,15 @@ TreeStore = _.extend(EventEmitter.prototype, {
       data.name = path.split("/").pop();
     }
     if (query.sein) {
-      data.sein = TreeStore.getPare(path);
-    }
-    if (query.sibs) {
-      data.sibs = TreeStore.getSiblings(path);
+      data.sein = this.getPare(path);
     }
     if (query.next) {
-      data.next = TreeStore.getNext(path);
+      data.next = this.getNext(path);
     }
     if (query.prev) {
-      data.prev = TreeStore.getPrev(path);
+      data.prev = this.getPrev(path);
     }
     return data;
-  },
-  getTree: function(_path) {
-    var i, len, sub, tree;
-    tree = _tree;
-    for (i = 0, len = _path.length; i < len; i++) {
-      sub = _path[i];
-      tree = tree[sub];
-      if (tree == null) {
-        return null;
-      }
-    }
-    return tree;
   },
   setCurr: function(path) {
     return _curr = path;
@@ -1435,50 +1388,29 @@ TreeStore = _.extend(EventEmitter.prototype, {
   getCurr: function() {
     return _curr;
   },
-  getCont: function() {
-    return _cont;
+  loadPath: function(path, data) {
+    return this.loadValues(this.getTree(path.split('/'), true), path, data);
   },
-  mergePathToTree: function(path, kids) {
-    var i, j, len, len1, ref, ref1, ref2, sub, tree, x;
-    tree = _tree;
-    ref = this.pathToArr(path);
-    for (i = 0, len = ref.length; i < len; i++) {
-      sub = ref[i];
-      tree[sub] = (ref1 = tree[sub]) != null ? ref1 : {};
-      tree = tree[sub];
-    }
-    for (j = 0, len1 = kids.length; j < len1; j++) {
-      x = kids[j];
-      tree[x] = (ref2 = tree[x]) != null ? ref2 : {};
-    }
-    return tree;
-  },
-  getSnip: function() {
-    return _snip;
-  },
-  gotSnip: function(path) {
-    return !!_got_snip[path];
-  },
-  loadSnip: function(path, kids) {
-    var i, len, v;
-    this.mergePathToTree(path, _.pluck(kids, "name"));
-    if ((kids != null ? kids.length : void 0) !== 0) {
-      for (i = 0, len = kids.length; i < len; i++) {
-        v = kids[i];
-        _snip[path + "/" + v.name] = {
-          head: {
-            gn: 'h1',
-            c: v.head
-          },
-          body: {
-            gn: 'div',
-            c: v.snip
-          },
-          meta: v.meta
-        };
+  loadValues: function(tree, path, data) {
+    var i, k, len, old, ref, ref1, ref2, v;
+    old = (ref = _data[path]) != null ? ref : {};
+    ref1 = ["body", "head", "snip", "meta"];
+    for (i = 0, len = ref1.length; i < len; i++) {
+      k = ref1[i];
+      if (data[k] !== void 0) {
+        old[k] = data[k];
       }
-    } else {
-      _cont[path] = {
+    }
+    ref2 = data.kids;
+    for (k in ref2) {
+      v = ref2[k];
+      if (tree[k] == null) {
+        tree[k] = {};
+      }
+      this.loadValues(tree[k], path + "/" + k, v);
+    }
+    if (data.kids && _.isEmpty(data.kids)) {
+      old.body = {
         gn: 'div',
         c: [
           {
@@ -1502,27 +1434,7 @@ TreeStore = _.extend(EventEmitter.prototype, {
         ]
       };
     }
-    return _got_snip[path] = true;
-  },
-  loadKids: function(path, kids) {
-    var k, results, v;
-    this.mergePathToTree(path, _.pluck(kids, "name"));
-    results = [];
-    for (k in kids) {
-      v = kids[k];
-      results.push(_cont[path + "/" + v.name] = v.body);
-    }
-    return results;
-  },
-  loadPath: function(path, body, kids) {
-    this.mergePathToTree(path, _.pluck(kids, "name"));
-    return _cont[path] = body;
-  },
-  getKids: function(path) {
-    if (path == null) {
-      path = _curr;
-    }
-    return _.keys(this.getTree(path.split("/")));
+    return _data[path] = old;
   },
   getSiblings: function(path) {
     var curr;
@@ -1537,6 +1449,24 @@ TreeStore = _.extend(EventEmitter.prototype, {
       return {};
     }
   },
+  getTree: function(_path, make) {
+    var i, len, sub, tree;
+    if (make == null) {
+      make = false;
+    }
+    tree = _tree;
+    for (i = 0, len = _path.length; i < len; i++) {
+      sub = _path[i];
+      if (tree[sub] == null) {
+        if (!make) {
+          return null;
+        }
+        tree[sub] = {};
+      }
+      tree = tree[sub];
+    }
+    return tree;
+  },
   getPrev: function(path) {
     var ind, key, par, sibs, win;
     if (path == null) {
@@ -1546,7 +1476,7 @@ TreeStore = _.extend(EventEmitter.prototype, {
     if (sibs.length < 2) {
       return null;
     } else {
-      par = _curr.split("/");
+      par = path.split("/");
       key = par.pop();
       ind = sibs.indexOf(key);
       win = ind - 1 >= 0 ? sibs[ind - 1] : sibs[sibs.length - 1];
@@ -1563,7 +1493,7 @@ TreeStore = _.extend(EventEmitter.prototype, {
     if (sibs.length < 2) {
       return null;
     } else {
-      par = _curr.split("/");
+      par = path.split("/");
       key = par.pop();
       ind = sibs.indexOf(key);
       win = ind + 1 < sibs.length ? sibs[ind + 1] : sibs[0];
@@ -1587,31 +1517,6 @@ TreeStore = _.extend(EventEmitter.prototype, {
     } else {
       return null;
     }
-  },
-  getCrumbs: function(path) {
-    var _path, crum, crums, k, v;
-    if (path == null) {
-      path = _curr;
-    }
-    _path = this.pathToArr(path);
-    crum = "";
-    crums = [];
-    for (k in _path) {
-      v = _path[k];
-      crum += "/" + v;
-      crums.push({
-        name: v,
-        path: crum
-      });
-    }
-    return crums;
-  },
-  getBody: function() {
-    if (_cont[_curr]) {
-      return _cont[_curr];
-    } else {
-      return null;
-    }
   }
 });
 
@@ -1620,13 +1525,7 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
   action = payload.action;
   switch (action.type) {
     case 'path-load':
-      TreeStore.loadPath(action.path, action.body, action.kids, action.snip);
-      return TreeStore.emitChange();
-    case 'snip-load':
-      TreeStore.loadSnip(action.path, action.kids);
-      return TreeStore.emitChange();
-    case 'kids-load':
-      TreeStore.loadKids(action.path, action.kids);
+      TreeStore.loadPath(action.path, action.data);
       return TreeStore.emitChange();
     case 'set-curr':
       TreeStore.setCurr(action.path);

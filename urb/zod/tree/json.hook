@@ -56,10 +56,10 @@
     %meta  (from-type +.a meta.dat)
     %body  (from-type +.a body.dat)
     %kids  ?<  (~(has by (mo p.a)) %kids)  ::  XX recursion? 
-           =<  a/(turn (~(tap by kid)) .)
+           =<  o/(~(urn by kid) .)
            |=  [dir=span dak=tree-include]
-           ^^$(quy [name/%t p.a], s.bem [dir s.bem], dat dak, kid ~)
-  ==               ::  XX array
+           ^^$(quy p.a, s.bem [dir s.bem], dat dak, kid ~)
+  == 
 --
 !:
 ::::
