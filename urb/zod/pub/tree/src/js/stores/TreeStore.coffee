@@ -7,6 +7,8 @@ _tree = {}
 _data = {}
 _curr = ""
 
+QUERIES = {body:'r', head:'r', snip:'r', sect:'r', meta:'j'}
+
 TreeStore = _.extend EventEmitter.prototype, {
   addChangeListener: (cb) -> @on 'change', cb
 
@@ -19,8 +21,9 @@ TreeStore = _.extend EventEmitter.prototype, {
   fulfill: (path,query) -> @fulfillAt (@getTree path.split '/'),path,query
   fulfillAt: (tree,path,query)->
     data = @fulfillLocal path, query
-    for k in ["body", "head" ,"snip" ,"meta"]
-      data[k] = _data[path]?[k] if query[k]
+    for k,t of query when QUERIES[k]
+      if t isnt QUERIES[k] then throw TypeError "Wrong query type: #{k}, '#{t}'"
+      data[k] = _data[path]?[k]
     if query.kids
       data.kids = {}
       for k,sub of tree
@@ -43,8 +46,8 @@ TreeStore = _.extend EventEmitter.prototype, {
     @loadValues (@getTree (path.split '/'),true), path, data
   loadValues: (tree,path,data) ->
     old = _data[path] ? {}
-    for k in ["body", "head" ,"snip" ,"meta"]
-      old[k] = data[k] if data[k] isnt undefined
+    for k of data when QUERIES[k]
+      old[k] = data[k]
     
     for k,v of data.kids
       tree[k] ?= {}

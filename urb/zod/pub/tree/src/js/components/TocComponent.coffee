@@ -1,11 +1,11 @@
 query       = require './Async.coffee'
+reactify    = require './Reactify.coffee'
 
 recl = React.createClass
 {div} = React.DOM
 
-reactify    = (manx)-> React.createElement window.tree.reactify, {manx}
 
-module.exports = query {body:'t'}, recl
+module.exports = query {body:'r'}, recl
   hash:null
   displayName: "TableOfContents"
 

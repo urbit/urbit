@@ -2,6 +2,7 @@
 /=    body    /:  /===    /%    /react-json/
 /=    head    /:  /===    /%    /react-head-json/
 /=    snip    /:  /===    /%    /react-snip-json/
+/=    sect    /:  /===    /%    /react-headers-json/
 /=    meta    /:  /===    /%    /;  json-front  /react-snip-json/
 ^-    tree-include
-[body head snip meta]
+[body head snip meta sect]
