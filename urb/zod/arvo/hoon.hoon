@@ -3852,7 +3852,8 @@
   ++  dem  (ape (bass 1.000 ;~(plug ted:ab (star ;~(pfix dog tid:ab)))))
   ++  dim  (ape (bass 10 ;~(plug sed:ab (star sid:ab))))
   ++  dum  (bass 10 (plus sid:ab))
-  ++  fed  ;~  pose
+  ++  fed  %+  cook  fend:ob
+           ;~  pose
              tiq:ab
              %+  bass  0x1.0000.0000.0000.0000
                ;~  plug
@@ -3933,20 +3934,21 @@
           ==
         ::
             %p
-          =+  dyx=(met 3 q.p.lot)
+          =+  sxz=(feen:ob q.p.lot)
+          =+  dyx=(met 3 sxz)
           :-  '~'
           ?:  (lte dyx 1)
-            (weld (trip (tod:po q.p.lot)) rex)
-          =+  dyy=(met 4 q.p.lot)
+            (weld (trip (tod:po sxz)) rex)
+          =+  dyy=(met 4 sxz)
           =+  imp=*@
           |-  ^-  tape
           ?:  =(imp dyy)
             rex
           %=  $
-            q.p.lot  (rsh 4 1 q.p.lot)
+            sxz  (rsh 4 1 sxz)
             imp      +(imp)
             rex
-              =+  log=(end 4 1 q.p.lot)
+              =+  log=(end 4 1 sxz)
               ;:  weld
                 (trip (tos:po (rsh 3 1 log)))
                 (trip (tod:po (end 3 1 log)))
