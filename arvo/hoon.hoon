@@ -1105,7 +1105,7 @@
       /holpaslacrovlivdalsatlibtabhanticpidtorbolfosdot\
       /losdilforpilramtirwintadbicdifrocwidbisdasmidlop\
       /rilnardapmolsanlocnovsitnidtipsicropwitnatpanmin\
-      /ritpodmottamtolsavposnapnopsomfinfonbanporworsip\
+      /ritpodmottamtolsavposnapnopsomfinfonbandorworsip\
       /ronnorbotwicsocwatdolmagpicdavbidbaltimtasmallig\
       /sivtagpadsaldivdactansidfabtarmonranniswolmispal\
       /lasdismaprabtobrollatlonnodnavfignomnibpagsopral\
@@ -1115,7 +1115,7 @@
       /tomdigfilfasmithobharmighinradmashalraglagfadtop\
       /mophabnilnosmilfopfamdatnoldinhatnacrisfotribhoc\
       /nimlarfitwalrapsarnalmoslandondanladdovrivbacpol\
-      /laptalpitnambonrostonfodponsovnocsorlavmatmipfap'
+      /laptalpitnambonrostonfodponsovnocsorlavmatmipfip'
       ^=  dex                                           ::  suffix syllables
       'zodnecbudwessevpersutletfulpensytdurwepserwylsun\
       /rypsyxdyrnuphebpeglupdepdysputlughecryttyvsydnex\
