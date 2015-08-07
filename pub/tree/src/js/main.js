@@ -36,7 +36,7 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":12,"../persistence/TreePersistence.coffee":18}],2:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":13,"../persistence/TreePersistence.coffee":19}],2:[function(require,module,exports){
 var BodyComponent, Links, TreeActions, TreeStore, a, clas, div, query, reactify, recl, ref;
 
 clas = require('classnames');
@@ -285,7 +285,7 @@ module.exports = query({
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":19,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":10,"classnames":14}],3:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":20,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":10,"classnames":15}],3:[function(require,module,exports){
 var TreeActions, TreeStore, _load, code, div, recl, ref, span;
 
 _load = require('./LoadComponent.coffee');
@@ -376,7 +376,7 @@ module.exports = function(queries, Child, load) {
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":19,"./LoadComponent.coffee":9}],4:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":20,"./LoadComponent.coffee":9}],4:[function(require,module,exports){
 var div, query, reactify, recl;
 
 query = require('./Async.coffee');
@@ -433,6 +433,7 @@ recl = React.createClass;
 
 module.exports = {
   codemirror: require('./CodeMirror.coffee'),
+  search: require('./SearchComponent.coffee'),
   list: require('./ListComponent.coffee'),
   kids: require('./KidsComponent.coffee'),
   toc: require('./TocComponent.coffee'),
@@ -445,7 +446,7 @@ module.exports = {
 
 
 
-},{"./CodeMirror.coffee":5,"./KidsComponent.coffee":7,"./ListComponent.coffee":8,"./TocComponent.coffee":11}],7:[function(require,module,exports){
+},{"./CodeMirror.coffee":5,"./KidsComponent.coffee":7,"./ListComponent.coffee":8,"./SearchComponent.coffee":11,"./TocComponent.coffee":12}],7:[function(require,module,exports){
 var a, div, hr, li, query, reactify, recl, ref, ul;
 
 reactify = require('./Reactify.coffee');
@@ -581,7 +582,7 @@ module.exports = query({
 
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":10,"classnames":14}],9:[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":10,"classnames":15}],9:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -645,7 +646,7 @@ walk = function(root, _nil, _str, _comp) {
       case elem.gn == null:
         gn = elem.gn, ga = elem.ga, c = elem.c;
         c = c != null ? c.map(_walk != null ? _walk : []) : void 0;
-        return _comp({
+        return _comp.call(elem, {
           gn: gn,
           ga: ga,
           c: c
@@ -676,9 +677,10 @@ Virtual = recl({
   }
 });
 
-reactify = function(manx) {
+reactify = function(manx, key) {
   return rele(Virtual, {
-    manx: manx
+    manx: manx,
+    key: key
   });
 };
 
@@ -690,6 +692,105 @@ module.exports = _.extend(reactify, {
 
 
 },{"./LoadComponent.coffee":9}],11:[function(require,module,exports){
+var div, input, query, reactify, recl, ref,
+  slice = [].slice;
+
+query = require('./Async.coffee');
+
+reactify = require('./Reactify.coffee');
+
+recl = React.createClass;
+
+ref = React.DOM, div = ref.div, input = ref.input;
+
+module.exports = query({
+  kids: {
+    sect: 'r'
+  }
+}, recl({
+  hash: null,
+  displayName: "Search",
+  getInitialState: function() {
+    return {
+      search: 'dva'
+    };
+  },
+  onKeyUp: function(e) {
+    return this.setState({
+      search: e.target.value
+    });
+  },
+  render: function() {
+    var c, x;
+    return div({}, input({
+      onKeyUp: this.onKeyUp,
+      ref: 'inp',
+      defaultValue: 'dva'
+    }), _((function() {
+      var ref1, results;
+      ref1 = this.props.kids;
+      results = [];
+      for (x in ref1) {
+        c = ref1[x].sect.c;
+        results.push(c);
+      }
+      return results;
+    }).call(this)).flatten().map(this.highlight).filter().map(reactify).value());
+  },
+  highlight: function(e) {
+    var got, res;
+    if (!this.state.search) {
+      return e;
+    }
+    got = false;
+    res = reactify.walk(e, function() {
+      return null;
+    }, (function(_this) {
+      return function(s) {
+        var lit, m;
+        m = s.split(_this.state.search);
+        if (m[1] == null) {
+          return [s];
+        }
+        lit = {
+          gn: 'span',
+          c: [_this.state.search],
+          ga: {
+            style: {
+              background: '#ff6'
+            }
+          }
+        };
+        got = true;
+        return [m[0]].concat(slice.call(_.flatten((function() {
+            var i, len, ref1, results;
+            ref1 = m.slice(1);
+            results = [];
+            for (i = 0, len = ref1.length; i < len; i++) {
+              s = ref1[i];
+              results.push([lit, s]);
+            }
+            return results;
+          })())));
+      };
+    })(this), function(arg) {
+      var c, ga, gn;
+      gn = arg.gn, ga = arg.ga, c = arg.c;
+      return {
+        gn: gn,
+        ga: ga,
+        c: _.flatten(c)
+      };
+    });
+    if (got) {
+      return res;
+    }
+  }
+}));
+
+
+
+},{"./Async.coffee":3,"./Reactify.coffee":10}],12:[function(require,module,exports){
 var div, query, reactify, recl;
 
 query = require('./Async.coffee');
@@ -820,7 +921,7 @@ module.exports = query({
 
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":10}],12:[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":10}],13:[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -842,7 +943,7 @@ module.exports = _.extend(new Dispatcher(), {
 
 
 
-},{"flux":15}],13:[function(require,module,exports){
+},{"flux":16}],14:[function(require,module,exports){
 var rend;
 
 rend = React.render;
@@ -989,7 +1090,7 @@ $(function() {
 
 
 
-},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./persistence/TreePersistence.coffee":18}],14:[function(require,module,exports){
+},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./persistence/TreePersistence.coffee":19}],15:[function(require,module,exports){
 /*!
   Copyright (c) 2015 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -1040,7 +1141,7 @@ $(function() {
 
 }());
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -1052,7 +1153,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":16}],16:[function(require,module,exports){
+},{"./lib/Dispatcher":17}],17:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1304,7 +1405,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":17}],17:[function(require,module,exports){
+},{"./invariant":18}],18:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1359,7 +1460,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 module.exports = {
   get: function(path, query, cb) {
     var url;
@@ -1410,7 +1511,7 @@ module.exports = {
 
 
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, QUERIES, TreeStore, _curr, _data, _tree, clog;
 
 EventEmitter = require('events').EventEmitter;
@@ -1646,7 +1747,7 @@ module.exports = TreeStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":12,"events":20}],20:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":13,"events":21}],21:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1949,4 +2050,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[13]);
+},{}]},{},[14]);

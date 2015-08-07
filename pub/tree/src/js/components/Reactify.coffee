@@ -11,7 +11,7 @@ walk = (root,_nil,_str,_comp)->
     when elem.gn?
       {gn,ga,c} = elem
       c = c?.map _walk ? []
-      _comp {gn,ga,c}, key
+      _comp.call elem, {gn,ga,c}, key
     else throw "Bad react-json #{JSON.stringify elem}"
   _walk root
   
@@ -26,5 +26,5 @@ Virtual = recl
                              (_.extend {key}, ga),
                              c
 
-reactify = (manx)-> rele Virtual, {manx}
+reactify = (manx,key)-> rele Virtual, {manx,key}
 module.exports = _.extend reactify, {walk,Virtual}
