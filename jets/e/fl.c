@@ -157,6 +157,10 @@
       return u3m_bail(c3__exit);
     }
     size_t m = mpz_sizeinbase(c.a, 2);
+    if ( !_(j) && (m <= d.precision) ) {
+      mpz_clears(d.minExp, d.expWidth, c.a, c.e, 0);
+      return u3m_bail(c3__exit);
+    }
     c3_w q = 0;
     c3_w f = (m > d.precision) ? m - d.precision : 0;
     mpz_init(g);
