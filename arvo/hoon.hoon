@@ -1408,7 +1408,7 @@
     ++  xpd
       |=  [a=[e=@s a=@u]]
       =+  ma=(met 0 a.a)
-      ?:  (gte prc ma)  a
+      ?:  (gte ma prc)  a
       =+  ?:  =(den %i)  (^sub prc ma)
           =+  ^=  q
             =+  w=(dif:si e.a emn)
