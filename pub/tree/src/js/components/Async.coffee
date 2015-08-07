@@ -51,5 +51,5 @@ module.exports = (queries, Child, load=_load)-> recl
     if @filterQueries()?
       React.createElement load, @props
     else React.createElement Child,
-      (_.merge {}, @props, @state.got),
+      (_.extend {}, @props, @state.got),
       @props.children

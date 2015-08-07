@@ -1,4 +1,4 @@
-reactify    = (manx)-> React.createElement window.tree.reactify, {manx}
+reactify    = require './Reactify.coffee'
 query       = require './Async.coffee'
 
 recl = React.createClass

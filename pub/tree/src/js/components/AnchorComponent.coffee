@@ -2,6 +2,7 @@ clas        = require 'classnames'
 
 BodyComponent = React.createFactory require './BodyComponent.coffee'
 query       = require './Async.coffee'
+reactify    = require './Reactify.coffee'
 
 TreeStore   = require '../stores/TreeStore.coffee'
 TreeActions = require '../actions/TreeActions.coffee'
@@ -37,12 +38,10 @@ Links = React.createFactory query {
         className = clas active: key is @props.curr
         (div {className,key}, (a {href,onClick:@props.onClick}, head))
 
-    toText: (elem)-> switch
-      # manx: {fork: ["string", {gn:"string" ga:{dict:"string"} c:{list:"manx"}}]}
-      when !elem? then ""
-      when typeof elem == "string" then elem
-      when elem.gn? then (elem.c ? []).map(@toText).join ""
-      else throw "Bad react-json #{JSON.stringify elem}"
+    toText: (elem)-> reactify.walk elem,
+                                 ()->''
+                                 (s)->s
+                                 ({c})->(c ? []).join ''
   ),  recl
     displayName: "Links_loading"
     render: -> div {className:'links'}, @props.children, @_render()
@@ -60,8 +59,8 @@ module.exports = query {sein:'t',path:'t',name:'t',next:'t',prev:'t'},recl
 
   toggleFocus: (state) -> $(@getDOMNode()).toggleClass 'focus',state
 
-  componentDidUpdate: -> @setTitle()
   componentWillUnmount: -> clearInterval @interval; $('body').off 'click', 'a'
+  componentDidUpdate: -> @setTitle()
   componentDidMount: -> 
     @setTitle()
     @interval = setInterval @checkURL,100
