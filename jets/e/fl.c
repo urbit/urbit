@@ -233,7 +233,7 @@
         break;
       case c3__sm:
         if ( (mpz_sgn(v) != 0) || !_(j) ) break;
-        if ( (mpz_cmp(c.a, d.minExp) == 0) && (d.eMode != c3__i) ) {
+        if ( (mpz_cmp(c.e, d.minExp) == 0) && (d.eMode != c3__i) ) {
           mpz_sub_ui(c.a, c.a, 1);
           break;
         }
