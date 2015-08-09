@@ -78,7 +78,8 @@ code,
 pre,
 li:before,
 .spin,
-#bred a {
+#bred a,
+h3.time {
   font-family: "scp", "Courier New", courier, monospace;
 }
 body,
@@ -228,6 +229,15 @@ li:before {
   opacity: 1;
   transition: opacity 1s ease-in-out;
   z-index: 4;
+}
+img.logo {
+  height: 2rem;
+  width: 2rem;
+}
+h3.time {
+  margin-top: 0.3rem;
+  font-size: 0.7rem;
+  font-weight: 200;
 }
 #nav .links > div {
   display: inline-block;
@@ -389,6 +399,14 @@ div.root > p {
   width: 27rem;
   margin-top: 2rem;
 }
+h2.sub {
+  font-size: 0.7rem;
+  font-weight: 400;
+  line-height: 1rem;
+  letter-spacing: 1px;
+  margin-top: 0;
+  text-transform: uppercase;
+}
 div.post h1 {
   font-size: 2.8rem;
   line-height: 4rem;
@@ -396,19 +414,12 @@ div.post h1 {
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
-div.post h2,
-div.post h2.sub {
+div.post h2 {
   line-height: 1rem;
   letter-spacing: 1px;
 }
 div.post h2 {
   margin-top: 4rem;
-}
-div.post h2.sub {
-  font-size: 0.7rem;
-  font-weight: 400;
-  margin-top: 0;
-  text-transform: uppercase;
 }
 div.post h2 {
   font-size: 1.2rem;
