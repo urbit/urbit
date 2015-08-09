@@ -7,7 +7,7 @@ $ ->
 
   head = React.createFactory require './components/AnchorComponent.coffee'
   body = React.createFactory require './components/BodyComponent.coffee'
-  window.tree.reactify = require './components/Reactify.coffee' # sigh
+  window.tree.components = require './components/Components.coffee' # sigh
   
   window.tree._basepath = window.urb.util.basepath("/")
   window.tree._basepath +=
