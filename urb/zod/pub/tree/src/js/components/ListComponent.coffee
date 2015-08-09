@@ -1,6 +1,6 @@
 clas        = require 'classnames'
 
-reactify    = (manx)-> React.createElement window.tree.reactify, {manx}
+reactify    = require './Reactify.coffee'
 query       = require './Async.coffee'
 
 recl = React.createClass
@@ -49,7 +49,7 @@ module.exports = query {
         else
           parts.push elem.snip
       if @props.titlesOnly
-        parts = elem.head
+        parts = [elem.head]
       li {key:item,className:@props.dataType ? ""},
         a {href,className:(clas preview: @props.dataPreview?)},            
           reactify

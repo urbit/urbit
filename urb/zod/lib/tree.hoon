@@ -4,7 +4,8 @@
 ++  baff  |*([a=(unit) b=(trap)] ?^(a a *b))
 ++  find-in-tree
   |*  [paz=fist:jo fun=$+(* (unit))]
-  |=  a=(list json)
+  |=  jon=json
+  =+  a=`(list json)`~[jon]
   |^  (try)
   ++  try
     |.  ^+  *fun
@@ -17,7 +18,7 @@
 ++  json-front
   |=  a=json  ^-  json
   =-  (fall `(unit json)`- ~)
-  %+  biff  ((ot c/(ar some) ~):jo a)
+  %.  a
   %+  find-in-tree  (ot c/(ar some) gn/so ga/(om so) ~):jo
   |=  [nom=span atr=(map span cord)]  ^-  (unit json)
   ?.  (~(has by atr) 'urb:front')  ~
