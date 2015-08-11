@@ -10,11 +10,11 @@ walk = (root,_nil,_str,_comp)->
     when typeof elem == "string" then _str elem
     when elem.gn?
       {gn,ga,c} = elem
-      c = c?.map _walk ? []
+      c = (c?.map _walk) ? []
       _comp.call elem, {gn,ga,c}, key
     else throw "Bad react-json #{JSON.stringify elem}"
   _walk root
-  
+
 Virtual = recl
   displayName: "Virtual"
   render: ->

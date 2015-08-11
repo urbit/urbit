@@ -1,5 +1,5 @@
 ::    ++down rendering arms
-::
+!:
 ::::
   ::
 |%
@@ -25,6 +25,11 @@
       %alt  [~ b]
     ==
   ==
+++  sanitize
+ |=  a=marl  ^-  tape
+ =-  (zing `wall`(scan (flat a) fel))
+ =<  fel=;~(sfix (star ;~(plug (cold '-' -) (plus +))) (star next)) 
+ [(star ;~(less aln prn)) ;~(pose nud low (cook |=(a=@ (add a ' ')) hig))]
 ::
 ++  sang                                                ::  tight item children
   |=  a=(list elem)
@@ -113,7 +118,10 @@
     ?-  -.a  ::  :/("unimplemented {<p.a>}")
       %html  !!                       ::  handled earlier   XX do type stuff
       %para  [/p (sung p.a)]
-      %head  [/(add %h0 (lsh 3 1 p.a)) (sung q.a)]
+      %head  
+        =+  [hed=(add %h0 (lsh 3 1 p.a)) kid=(sung q.a)]
+        [[hed id/(sanitize kid) ~] kid]
+    ::
       %hrul  ;hr;
   ::     %html  
              ::=+  tex=(role (turn p.a crip))

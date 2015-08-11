@@ -17,14 +17,6 @@
       $(a t.a)
     [c.i.a (weld (flop met) (limit words t.a))]
   ::
-  ++  extract
-    |=  a=marl  ^-  tape
-    ?~  a  ~
-    %-  weld  :_  $(a t.a)
-    ?.  ?=(_:/(**) i.a)
-      $(a c.i.a)
-    v.i.a.g.i.a
-  ::
   ++  limit
     |=  [lim=@u mal=marl]
     =<  res
