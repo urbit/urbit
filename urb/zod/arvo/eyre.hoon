@@ -430,7 +430,7 @@
     urb.waspFrom = function(sel,attr){
       Array.prototype.map.call(document.querySelectorAll(sel), 
         function(ele){
-          if((new URL(ele[attr])).host != document.location.host) return;
+          if(!ele[attr] || (new URL(ele[attr])).host != document.location.host) return;
           var xhr = new XMLHttpRequest()
           xhr.open("HEAD", ele[attr])
           xhr.send()
