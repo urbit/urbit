@@ -1,7 +1,7 @@
 section 3bE, tree sync
 ======================
 
-<h3 id="++invert-miso"><code>++invert-miso</code></h3>
+### `++invert-miso`
 
     ++  invert-miso                                         ::  invert miso
       |=  mis=miso
@@ -14,7 +14,7 @@ section 3bE, tree sync
 
 XX document
 
-<h3 id="++cosh"><code>++cosh</code></h3>
+### `++cosh`
 
     ++  cosh                                                ::  locally rehash
       |=  ank=ankh                                          ::  NB v/unix.c
@@ -23,7 +23,7 @@ XX document
 
 XX document
 
-<h3 id="++cost"><code>++cost</code></h3>
+### `++cost`
 
     ++  cost                                                ::  new external patch
       |=  [bus=ankh ank=ankh]                               ::  NB v/unix.c
@@ -35,7 +35,7 @@ XX document
 
 XX document
 
-<h3 id="++loth"><code>++loth</code></h3>
+### `++loth`
 
     ++  loth
       |=  pat=(map path ,*)
@@ -47,7 +47,7 @@ XX document
 
 XX document
 
-<h3 id="++luth"><code>++luth</code></h3>
+### `++luth`
 
     ++  luth
       |=  [p=(map path ,*) q=(map path ,*)]                 ::  merge keysets
@@ -57,7 +57,7 @@ XX document
 
 XX document
 
-<h3 id="++blob-to-lobe"><code>++blob-to-lobe</code></h3>
+### `++blob-to-lobe`
 
     ++  blob-to-lobe                                        ::  p.blob
       |=  p=blob
@@ -71,20 +71,20 @@ XX document
 
 XX document
 
-<h3 id="++ze"><code>++ze</code></h3>
+### `++ze`
 
     ++  ze
       |_  [lim=@da dome rang]
 
 XX document
 
-<h3 id="++aeon-to-tako"><code>++aeon-to-tako</code></h3>
+### `++aeon-to-tako`
 
       ++  aeon-to-tako  ~(got by hit)
 
 XX document
 
-<h3 id="++make-yaki"><code>++make-yaki</code></h3>
+### `++make-yaki`
 
       ++  make-yaki                                         ::  make yaki
         |=  [p=(list tako) q=(map path lobe) t=@da]
@@ -97,19 +97,19 @@ XX document
 
 XX document
 
-<h3 id="++tako-to-yaki"><code>++tako-to-yaki</code></h3>
+### `++tako-to-yaki`
 
       ++  tako-to-yaki  ~(got by hut)                       ::  grab yaki
 
 XX document
 
-<h3 id="++lobe-to-blob"><code>++lobe-to-blob</code></h3>
+### `++lobe-to-blob`
 
       ++  lobe-to-blob  ~(got by lat)                       ::  grab blob
 
 XX document
 
-<h3 id="++lobe-to-noun"><code>++lobe-to-noun</code></h3>
+### `++lobe-to-noun`
 
       ++  lobe-to-noun                                      ::  grab blob
         |=  p=lobe                                          ::  ^-  *
@@ -119,7 +119,7 @@ XX document
 
 XX document
 
-<h3 id="++make-direct"><code>++make-direct</code></h3>
+### `++make-direct`
 
       ++  make-direct                                       ::  make blob
         |=  [p=* q=umph]
@@ -129,7 +129,7 @@ XX document
 
 XX document
 
-<h3 id="++make-delta"><code>++make-delta</code></h3>
+### `++make-delta`
 
       ++  make-delta                                        ::  make blob delta
         |=  [p=lobe q=udon]
@@ -144,7 +144,7 @@ XX document
 
 XX document
 
-<h3 id="++blob-to-umph"><code>++blob-to-umph</code></h3>
+### `++blob-to-umph`
 
       ++  blob-to-umph                                      ::  blob umph [prep]
         |=  p=blob                                          ::  used in merge
@@ -158,7 +158,7 @@ XX document
 
 XX document
 
-<h3 id="++blob-to-noun"><code>++blob-to-noun</code></h3>
+### `++blob-to-noun`
 
       ++  blob-to-noun                                      ::  grab blob
         |=  p=blob
@@ -173,7 +173,7 @@ XX document
 
 XX document
 
-<h3 id="++diff-yakis"><code>++diff-yakis</code></h3>
+### `++diff-yakis`
 
       ++  diff-yakis                                        ::  fundamental diff
         |=  [p=yaki q=yaki]
@@ -198,7 +198,7 @@ XX document
 
 XX document
 
-<h3 id="++lobes-at-path"><code>++lobes-at-path</code></h3>
+### `++lobes-at-path`
 
       ++  lobes-at-path                                     ::    lobes-at-path:ze
         |=  [oan=aeon pax=path]                             ::  data at path
@@ -222,7 +222,7 @@ XX document
 
 XX document
 
-<h3 id="++case-to-aeon"><code>++case-to-aeon</code></h3>
+### `++case-to-aeon`
 
       ++  case-to-aeon                                      ::    case-to-aeon:ze
         |=  lok=case                                        ::  act count through
@@ -247,7 +247,7 @@ XX document
 
 XX document
 
-<h3 id="++as-arch"><code>++as-arch</code></h3>
+### `++as-arch`
 
       ++  as-arch                                           ::    as-arch:ze
         ^-  arch                                            ::  arch report
@@ -260,7 +260,7 @@ XX document
 
 XX document
 
-<h3 id="++reachable-takos"><code>++reachable-takos</code></h3>
+### `++reachable-takos`
 
       ++  reachable-takos                                   ::  reachable
         |=  p=tako                                          ::  XX slow
@@ -276,7 +276,7 @@ XX document
 
 XX document
 
-<h3 id="++new-lobes"><code>++new-lobes</code></h3>
+### `++new-lobes`
 
       ++  new-lobes                                         ::  object hash set
         |=  [b=(set lobe) a=(set tako)]                     ::  that aren't in b
@@ -300,7 +300,7 @@ XX document
 
 XX document
 
-<h3 id="++new-lobes-takos"><code>++new-lobes-takos</code></h3>
+### `++new-lobes-takos`
 
       ++  new-lobes-takos                                   ::  garg & repack
         |=  [b=(set lobe) a=(set tako)]
@@ -310,7 +310,7 @@ XX document
 
 XX document
 
-<h3 id="++reachable-between-takos"><code>++reachable-between-takos</code></h3>
+### `++reachable-between-takos`
 
       ++  reachable-between-takos
         |=  [a=(unit tako) b=tako]                          ::  pack a through b
@@ -337,7 +337,7 @@ XX document
 
 XX document
 
-<h3 id="++takos-to-yakis"><code>++takos-to-yakis</code></h3>
+### `++takos-to-yakis`
 
       ++  takos-to-yakis                                    ::  trivial
         |=  a=(set tako)
@@ -347,7 +347,7 @@ XX document
 
 XX document
 
-<h3 id="++lobes-to-blobs"><code>++lobes-to-blobs</code></h3>
+### `++lobes-to-blobs`
 
       ++  lobes-to-blobs                                    ::  trivial
         |=  a=(set lobe)
@@ -357,7 +357,7 @@ XX document
 
 XX document
 
-<h3 id="++make-nako"><code>++make-nako</code></h3>
+### `++make-nako`
 
       ++  make-nako                                         ::  gack a through b
         |=  [a=aeon b=aeon]
@@ -376,7 +376,7 @@ XX document
 
 XX document
 
-<h3 id="++query"><code>++query</code></h3>
+### `++query`
 
       ++  query                                             ::    query:ze
         |=  ren=?(%u %v %x %y %z)                           ::  endpoint query
@@ -392,7 +392,7 @@ XX document
 
 XX document
 
-<h3 id="++rewind"><code>++rewind</code></h3>
+### `++rewind`
 
       ++  rewind                                            ::    rewind:ze
         |=  oan=aeon                                        ::  rewind to aeon
@@ -405,7 +405,7 @@ XX document
 
 XX document
 
-<h3 id="++update-lat"><code>++update-lat</code></h3>
+### `++update-lat`
 
       ++  update-lat                                        ::   update-lat:ze
         |=  [lag=(map path blob) sta=(map lobe blob)]       ::  fix lat
@@ -420,7 +420,7 @@ XX document
 
 XX document
 
-<h3 id="++apply-changes"><code>++apply-changes</code></h3>
+### `++apply-changes`
 
       ++  apply-changes                                     ::   apply-changes:ze
         |=  lar=(list ,[p=path q=miso])                     ::  store changes
@@ -463,7 +463,7 @@ XX document
 
 XX document
 
-<h3 id="++checkout-ankh"><code>++checkout-ankh</code></h3>
+### `++checkout-ankh`
 
       ++  checkout-ankh                                     ::    checkout-ankh:ze
         |=  hat=(map path lobe)                             ::  checkout commit
@@ -485,7 +485,7 @@ XX document
 
 XX document
 
-<h3 id="++forge-yaki"><code>++forge-yaki</code></h3>
+### `++forge-yaki`
 
       ++  forge-yaki                                        ::    forge-yaki:ze
         |=  [wen=@da par=(unit tako) lem=soba]              ::  forge yaki
@@ -499,7 +499,7 @@ XX document
 
 XX document
 
-<h3 id="++forge-nori"><code>++forge-nori</code></h3>
+### `++forge-nori`
 
       ++  forge-nori                                        ::    forge-nori:ze
         |=  yak=yaki                                        ::  forge nori (ugly op)
@@ -513,7 +513,7 @@ XX document
 
 XX document
 
-<h3 id="++reduce-merge-points"><code>++reduce-merge-points</code></h3>
+### `++reduce-merge-points`
 
       ++  reduce-merge-points                             ::  reduce merge points
         |=  unk=(set yaki)                                ::  maybe need jet
@@ -539,7 +539,7 @@ XX document
 
 XX document
 
-<h3 id="++future-find-merge-points"><code>++future-find-merge-points</code></h3>
+### `++future-find-merge-points`
 
       ++  future-find-merge-points                        ::  merge points fast
         |=  [p=yaki q=yaki]                               ::  (future zeal)
@@ -566,7 +566,7 @@ XX document
 
 XX document
 
-<h3 id="++add-parents"><code>++add-parents</code></h3>
+### `++add-parents`
 
       ++  add-parents                                     ::  expand set
         |=  qez=(set tako)
@@ -579,7 +579,7 @@ XX document
 
 XX document
 
-<h3 id="++find-merge-points"><code>++find-merge-points</code></h3>
+### `++find-merge-points`
 
       ++  find-merge-points                               ::  merge points
         |=  [p=yaki q=yaki]                               ::  maybe need jet
@@ -599,7 +599,7 @@ XX document
 
 XX document
 
-<h3 id="++clean"><code>++clean</code></h3>
+### `++clean`
 
       ++  clean                                          ::  clean
         |=  wig=(urge)
@@ -617,7 +617,7 @@ XX document
 
 XX document
 
-<h3 id="++match-conflict"><code>++match-conflict</code></h3>
+### `++match-conflict`
 
       ++  match-conflict                                ::  match conflict
         |=  [us=[ship desk] th=[ship desk] p=(urge) q=(urge) r=(list)]
@@ -634,7 +634,7 @@ XX document
 
 XX document
 
-<h3 id="++annotate"><code>++annotate</code></h3>
+### `++annotate`
 
       ++  annotate                                      ::  annotate conflict
         |=  [us=[ship desk] th=[ship desk] p=(list ,@t) q=(list ,@t) r=(list ,@t)]
@@ -665,7 +665,7 @@ XX document
 
 XX document
 
-<h3 id="++match-merge"><code>++match-merge</code></h3>
+### `++match-merge`
 
       ++  match-merge                                   ::  match merge
         |=  [p=(urge ,@t) q=(urge ,@t) r=(list ,@t)]    ::  resolve conflict
@@ -734,7 +734,7 @@ XX document
 
 XX document
 
-<h3 id="++qeal"><code>++qeal</code></h3>
+### `++qeal`
 
       ++  qeal                                          ::  merge p,q
         |*  [us=[ship desk] th=[ship desk] pat=path p=miso q=miso r=(list) con=?]
@@ -798,7 +798,7 @@ XX document
 
 XX document
 
-<h3 id="++quil"><code>++quil</code></h3>
+### `++quil`
 
       ++  quil                                          ::  merge p,q
         |=  $:  us=[ship desk]
@@ -836,7 +836,7 @@ XX document
 
 XX document
 
-<h3 id="++meld"><code>++meld</code></h3>
+### `++meld`
 
       ++  meld                                          ::  merge p,q from r
         |=  [p=yaki q=yaki r=yaki con=? us=[ship desk] th=[ship desk]]
@@ -887,7 +887,7 @@ XX document
 
 XX document
 
-<h3 id="++mate"><code>++mate</code></h3>
+### `++mate`
 
       ++  mate                                          ::  merge p,q
         |=  con=?                                       ::  %mate, %meld
@@ -903,7 +903,7 @@ XX document
 
 XX document
 
-<h3 id="++keep"><code>++keep</code></h3>
+### `++keep`
 
       ++  keep                                          ::  %this
         |=  [p=yaki q=yaki [ship desk] [ship desk]]
@@ -916,7 +916,7 @@ XX document
 
 XX document
 
-<h3 id="++drop"><code>++drop</code></h3>
+### `++drop`
 
       ++  drop                                          ::  %that
         |=  [p=yaki q=yaki r=[ship desk] s=[ship desk]]
@@ -926,7 +926,7 @@ XX document
 
 XX document
 
-<h3 id="++forge"><code>++forge</code></h3>
+### `++forge`
 
       ++  forge                                         ::  %forge
         |=  [p=yaki q=yaki s=[ship desk] t=[ship desk]]
@@ -960,7 +960,7 @@ XX document
 
 XX document
 
-<h3 id="++merge"><code>++merge</code></h3>
+### `++merge`
 
       ++  merge
         |=  [us=[ship desk] th=[ship desk]]
@@ -978,7 +978,7 @@ XX document
 
 XX document
 
-<h3 id="++strategy"><code>++strategy</code></h3>
+### `++strategy`
 
       ++  strategy                                          ::  merge strategy
         |=  gem=?(%meld %mate %that %this)
@@ -992,7 +992,7 @@ XX document
 
 XX document
 
-<h3 id="++construct-merge"><code>++construct-merge</code></h3>
+### `++construct-merge`
 
       ++  construct-merge                                   ::    construct-merge:ze
         |=  [gem=germ who=ship des=desk sab=saba now=@da]   ::  construct merge
@@ -1040,7 +1040,7 @@ XX document
 
 XX document
 
-<h3 id="++read"><code>++read</code></h3>
+### `++read`
 
       ++  read                                              ::    read:ze
         |=  mun=mood                                        ::  read at point
@@ -1061,7 +1061,7 @@ XX document
 
 XX document
 
-<h3 id="++read-at-aeon"><code>++read-at-aeon</code></h3>
+### `++read-at-aeon`
 
       ++  read-at-aeon                                      ::    read-at-aeon:ze
         |=  [oan=aeon mun=mood]                             ::  seek and read
@@ -1073,7 +1073,7 @@ XX document
 
 XX document
 
-<h3 id="++equiv"><code>++equiv</code></h3>
+### `++equiv`
 
       ++  equiv                                             ::  test paths
         |=  [p=(map path lobe) q=(map path lobe)]
@@ -1096,7 +1096,7 @@ XX document
 
 XX document
 
-<h3 id="++edit"><code>++edit</code></h3>
+### `++edit`
 
       ++  edit                                              ::    edit:ze
         |=  [wen=@da lem=nori]                              ::  edit
@@ -1126,7 +1126,7 @@ XX document
 
 XX document
 
-<h3 id="++zu"><code>++zu</code></h3>
+### `++zu`
 
     ++  zu                                                  ::  filesystem
       |=  ank=ankh                                          ::  filesystem state
@@ -1136,7 +1136,7 @@ XX document
 
 XX document
 
-<h3 id="++rehash"><code>++rehash</code></h3>
+### `++rehash`
 
       ++  rehash                                            ::  local rehash
         ^-  cash
@@ -1153,13 +1153,13 @@ XX document
 
 XX document
 
-<h3 id="++update-hash"><code>++update-hash</code></h3>
+### `++update-hash`
 
       ++  update-hash  %_(. p.ank rehash)                   ::  rehash and save
 
 XX document
 
-<h3 id="++ascend"><code>++ascend</code></h3>
+### `++ascend`
 
       ++  ascend                                            ::  ascend
         |=  [lol=@ta kan=ankh]
@@ -1177,7 +1177,7 @@ XX document
 
 XX document
 
-<h3 id="++push-change"><code>++push-change</code></h3>
+### `++push-change`
 
       ++  push-change                                       ::  add change
         |=  mis=miso
@@ -1187,7 +1187,7 @@ XX document
 
 XX document
 
-<h3 id="++descend"><code>++descend</code></h3>
+### `++descend`
 
       ++  descend                                           ::  descend
         |=  lol=@ta
@@ -1198,7 +1198,7 @@ XX document
 
 XX document
 
-<h3 id="++descend-path"><code>++descend-path</code></h3>
+### `++descend-path`
 
       ++  descend-path                                      ::  descend recursively
         |=  way=path
@@ -1208,7 +1208,7 @@ XX document
 
 XX document
 
-<h3 id="++overwrite"><code>++overwrite</code></h3>
+### `++overwrite`
 
       ++  overwrite                                         ::  write over
         |=  [pum=umph val=(unit ,[p=cash q=*])]
@@ -1224,7 +1224,7 @@ XX document
 
 XX document
 
-<h3 id="++change-tree"><code>++change-tree</code></h3>
+### `++change-tree`
 
       ++  change-tree                                       ::  modify tree
         |=  [pum=umph bus=ankh]
@@ -1243,7 +1243,7 @@ XX document
 
 XX document
 
-<h3 id="++rm-r"><code>++rm-r</code></h3>
+### `++rm-r`
 
       ++  rm-r                                              ::  rm -r
         |-  ^+  +
@@ -1257,7 +1257,7 @@ XX document
 
 XX document
 
-<h3 id="++drum"><code>++drum</code></h3>
+### `++drum`
 
       ++  drum                                              ::  apply effect
         |=  [pax=path mis=miso]                             ::  XX unused (++dune)
@@ -1285,7 +1285,7 @@ XX document
 
 XX document
 
-<h3 id="++dune"><code>++dune</code></h3>
+### `++dune`
 
       ++  dune                                              ::  apply
         |-  ^+  +                                           ::  XX unused (++durn)
@@ -1296,7 +1296,7 @@ XX document
 
 XX document
 
-<h3 id="++durn"><code>++durn</code></h3>
+### `++durn`
 
       ++  durn                                              ::  apply forward
         |=  nyp=soba                                        ::  XX unused

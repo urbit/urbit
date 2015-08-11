@@ -1,7 +1,7 @@
 section 2eF, parsing (ascii)
 ============================
 
-<h3 id="++ace"><code>++ace</code></h3>
+### `++ace`
 
 Parse space
 
@@ -20,7 +20,7 @@ Parses ASCII character 32, space.
 
 ------------------------------------------------------------------------
 
-<h3 id="++bar"><code>++bar</code></h3>
+### `++bar`
 
 Parse vertical bar
 
@@ -39,7 +39,7 @@ Parses ASCII character 124, the vertical bar.
 
 ------------------------------------------------------------------------
 
-<h3 id="++bas"><code>++bas</code></h3>
+### `++bas`
 
 Parse backslash
 
@@ -61,7 +61,7 @@ of `bas` with [`++just`](/doc/hoon/library/2ec#++just) is to escape the escape c
 
 ------------------------------------------------------------------------
 
-<h3 id="++buc"><code>++buc</code></h3>
+### `++buc`
 
 Parse dollar sign
 
@@ -80,7 +80,7 @@ Parses ASCII character 36, the dollar sign.
 
 ------------------------------------------------------------------------
 
-<h3 id="++cab"><code>++cab</code></h3>
+### `++cab`
 
 Parse underscore
 
@@ -99,7 +99,7 @@ Parses ASCII character 95, the underscore.
 
 ------------------------------------------------------------------------
 
-<h3 id="++cen"><code>++cen</code></h3>
+### `++cen`
 
 Parses percent sign
 
@@ -118,7 +118,7 @@ Parses ASCII character 37, the percent sign.
 
 ------------------------------------------------------------------------
 
-<h3 id="++col"><code>++col</code></h3>
+### `++col`
 
 Parse colon
 
@@ -137,7 +137,7 @@ Parses ASCII character 58, the colon
 
 ------------------------------------------------------------------------
 
-<h3 id="++com"><code>++com</code></h3>
+### `++com`
 
 Parse comma
 
@@ -156,7 +156,7 @@ Parses ASCII character 44, the comma.
 
 ------------------------------------------------------------------------
 
-<h3 id="++doq"><code>++doq</code></h3>
+### `++doq`
 
 Parse double quote
 
@@ -179,7 +179,7 @@ Parses ASCII character 34, the double quote.
 
 ------------------------------------------------------------------------
 
-<h3 id="++dot"><code>++dot</code></h3>
+### `++dot`
 
 Parse period
 
@@ -198,7 +198,7 @@ Parses ASCII character 46, the period.
 
 ------------------------------------------------------------------------
 
-<h3 id="++fas"><code>++fas</code></h3>
+### `++fas`
 
 Parse forward slash
 
@@ -217,7 +217,7 @@ Parses ASCII character 47, the forward slash.
 
 ------------------------------------------------------------------------
 
-<h3 id="++gal"><code>++gal</code></h3>
+### `++gal`
 
 Parse less-than sign
 
@@ -238,7 +238,7 @@ Parses ASCII character 60, the less-than sign.
 
 ------------------------------------------------------------------------
 
-<h3 id="++gar"><code>++gar</code></h3>
+### `++gar`
 
 Parse greater-than sign
 
@@ -257,7 +257,7 @@ Parses ASCII character 62, the greater-than sign.
 
 ------------------------------------------------------------------------
 
-<h3 id="++hax"><code>++hax</code></h3>
+### `++hax`
 
 Parse number sign
 
@@ -276,7 +276,7 @@ Parses ASCII character 35, the number sign.
 
 ------------------------------------------------------------------------
 
-<h3 id="++kel"><code>++kel</code></h3>
+### `++kel`
 
 Parse left curley bracket
 
@@ -297,7 +297,7 @@ interpolation. To parse either of them, they must be escaped.
 
 ------------------------------------------------------------------------
 
-<h3 id="++ker"><code>++ker</code></h3>
+### `++ker`
 
 Parse right curley bracket
 
@@ -318,7 +318,7 @@ interpolation. To parse either of them, they must be escaped.
 
 ------------------------------------------------------------------------
 
-<h3 id="++ket"><code>++ket</code></h3>
+### `++ket`
 
 Parse caret
 
@@ -337,7 +337,7 @@ Parses ASCII character 94, the caret.
 
 ------------------------------------------------------------------------
 
-<h3 id="++lus"><code>++lus</code></h3>
+### `++lus`
 
 Parse plus sign
 
@@ -356,7 +356,7 @@ Parses ASCII character 43, the plus sign.
 
 ------------------------------------------------------------------------
 
-<h3 id="++hep"><code>++hep</code></h3>
+### `++hep`
 
 Parse hyphen
 
@@ -375,7 +375,7 @@ Parses ASCII character 45, the hyphen.
 
 ------------------------------------------------------------------------
 
-<h3 id="++pel"><code>++pel</code></h3>
+### `++pel`
 
 Parse left parenthesis
 
@@ -394,7 +394,7 @@ Parses ASCII character 40, the left parenthesis.
 
 ------------------------------------------------------------------------
 
-<h3 id="++pam"><code>++pam</code></h3>
+### `++pam`
 
 Parse ampersand
 
@@ -413,7 +413,7 @@ Parses ASCII character 38, the ampersand.
 
 ------------------------------------------------------------------------
 
-<h3 id="++per"><code>++per</code></h3>
+### `++per`
 
 Parse right parenthesis
 
@@ -432,7 +432,7 @@ Parses ASCII character 41, the right parenthesis.
 
 ------------------------------------------------------------------------
 
-<h3 id="++pat"><code>++pat</code></h3>
+### `++pat`
 
 Parse "at" sign
 
@@ -451,7 +451,7 @@ Parses ASCII character 64, the "at" sign.
 
 ------------------------------------------------------------------------
 
-<h3 id="++sel"><code>++sel</code></h3>
+### `++sel`
 
 Parse left square bracket
 
@@ -472,7 +472,7 @@ Parses ASCII character 91, the left square bracket.
 
 ------------------------------------------------------------------------
 
-<h3 id="++sem"><code>++sem</code></h3>
+### `++sem`
 
 Parse semicolon
 
@@ -480,7 +480,7 @@ Parse semicolon
 
 Parses ASCII character 59, the semicolon.
 
-<h3 id="Examples"><code>Examples</code></h3>
+### `Examples`
 
     ~zod/try=> (scan ";" sem)
     ~~~3b.
@@ -493,7 +493,7 @@ Parses ASCII character 59, the semicolon.
 
 ------------------------------------------------------------------------
 
-<h3 id="++ser"><code>++ser</code></h3>
+### `++ser`
 
 Parse right square bracket
 
@@ -512,7 +512,7 @@ Parses ASCII character 93, the right square bracket.
 
 ------------------------------------------------------------------------
 
-<h3 id="++sig"><code>++sig</code></h3>
+### `++sig`
 
 Parse tilde
 
@@ -531,7 +531,7 @@ Parses ASCII character 126, the tilde.
 
 ------------------------------------------------------------------------
 
-<h3 id="++soq"><code>++soq</code></h3>
+### `++soq`
 
 Parse single quote
 
@@ -551,7 +551,7 @@ Parses ASCII character 39, soq. Note the extra '' is to escape the first
 
 ------------------------------------------------------------------------
 
-<h3 id="++tar"><code>++tar</code></h3>
+### `++tar`
 
 Parse asterisk
 
@@ -570,7 +570,7 @@ Parses ASCII character 42, the asterisk.
 
 ------------------------------------------------------------------------
 
-<h3 id="++tec"><code>++tec</code></h3>
+### `++tec`
 
 Parse backtick
 
@@ -590,7 +590,7 @@ accent".
 
 ------------------------------------------------------------------------
 
-<h3 id="++tis"><code>++tis</code></h3>
+### `++tis`
 
 Parse equals sign
 
@@ -609,7 +609,7 @@ Parses ASCII character 61, the equals sign.
 
 ------------------------------------------------------------------------
 
-<h3 id="++wut"><code>++wut</code></h3>
+### `++wut`
 
 Parses question mark
 
@@ -628,7 +628,7 @@ Parses ASCII character 63, wut.
 
 ------------------------------------------------------------------------
 
-<h3 id="++zap"><code>++zap</code></h3>
+### `++zap`
 
 Exclamation point
 

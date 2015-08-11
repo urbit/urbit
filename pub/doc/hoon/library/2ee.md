@@ -1,7 +1,7 @@
 section 2eE, parsing (composers)
 ================================
 
-<h3 id="++bass"><code>++bass</code></h3>
+### `++bass`
 
     ++  bass
       |*  [wuc=@ tyd=_rule]
@@ -30,7 +30,7 @@ as atom of a base.
 
 ------------------------------------------------------------------------
 
-<h3 id="++boss"><code>++boss</code></h3>
+### `++boss`
 
     ++  boss
       |*  [wuc=@ tyd=_rule]
@@ -59,7 +59,7 @@ as atom of a base.
 
 ------------------------------------------------------------------------
 
-<h3 id="++ifix"><code>++ifix</code></h3>
+### `++ifix`
 
     ++  ifix
       |*  [fel=[p=_rule q=_rule] hof=_rule]
@@ -80,7 +80,7 @@ discarded.
 
 ------------------------------------------------------------------------
 
-<h3 id="++more"><code>++more</code></h3>
+### `++more`
 
     ++  more
       |*  [bus=_rule fel=_rule]
@@ -102,7 +102,7 @@ Parser modifier: using a delimiter rule, parse a list of matches.
 
 ------------------------------------------------------------------------
 
-<h3 id="++most"><code>++most</code></h3>
+### `++most`
 
     ++  most
       |*  [bus=_rule fel=_rule]
@@ -126,7 +126,7 @@ match.
 
 ------------------------------------------------------------------------
 
-<h3 id="++plus"><code>++plus</code></h3>
+### `++plus`
 
     ++  plus  |*(fel=_rule ;~(plug fel (star fel)))
 
@@ -145,7 +145,7 @@ Parser modifier: parse list of at least one match
 
 ------------------------------------------------------------------------
 
-<h3 id="++slug"><code>++slug</code></h3>
+### `++slug`
 
     ++  slug
       |*  raq=_|*([a=* b=*] [a b])
@@ -167,7 +167,7 @@ matches.
 
 ------------------------------------------------------------------------
 
-<h3 id="++star"><code>++star</code></h3>
+### `++star`
 
     ++  star                                                ::  0 or more times
       |*  fel=_rule

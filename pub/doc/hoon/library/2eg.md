@@ -1,7 +1,7 @@
 section 2eG, parsing (whitespace)
 =================================
 
-<h3 id="++dog"><code>++dog</code></h3>
+### `++dog`
 
 `.` optional gap
 
@@ -17,7 +17,7 @@ Dot followed by an optional gap, used in numbers.
 
 ------------------------------------------------------------------------
 
-<h3 id="++doh"><code>++doh</code></h3>
+### `++doh`
 
 `@p` separator
 
@@ -37,7 +37,7 @@ Phonetic base phrase separator
 
 ------------------------------------------------------------------------
 
-<h3 id="++dun"><code>++dun</code></h3>
+### `++dun`
 
 `--` to `~`
 
@@ -52,7 +52,7 @@ Parse phep, `--`, to null, `~`.
 
 ------------------------------------------------------------------------
 
-<h3 id="++duz"><code>++duz</code></h3>
+### `++duz`
 
 `==` to `~`
 
@@ -67,7 +67,7 @@ Parse stet, `==`, to null `~`.
 
 ------------------------------------------------------------------------
 
-<h3 id="++gah"><code>++gah</code></h3>
+### `++gah`
 
 Newline or ' '
 
@@ -96,7 +96,7 @@ Whitespace component, either newline or space.
 
 ------------------------------------------------------------------------
 
-<h3 id="++gap"><code>++gap</code></h3>
+### `++gap`
 
 Plural whitespace
 
@@ -106,7 +106,7 @@ Separates tall runes
 
 ------------------------------------------------------------------------
 
-<h3 id="++gaq"><code>++gaq</code></h3>
+### `++gaq`
 
 End of line
 
@@ -120,7 +120,7 @@ Two spaces, a newline, or comment.
 
 ------------------------------------------------------------------------
 
-<h3 id="++gaw"><code>++gaw</code></h3>
+### `++gaw`
 
 Classic whitespace
 
@@ -130,7 +130,7 @@ Terran whitespace
 
 ------------------------------------------------------------------------
 
-<h3 id="++gay"><code>++gay</code></h3>
+### `++gay`
 
 Optional gap.
 
@@ -140,7 +140,7 @@ Optional gap.
 
 ------------------------------------------------------------------------
 
-<h3 id="++vul"><code>++vul</code></h3>
+### `++vul`
 
     ++  vul  %-  cold  :-  ~                                ::  comments
              ;~  plug  col  col

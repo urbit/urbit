@@ -1,7 +1,7 @@
 section 2eC, parsing (custom rules)
 ===================================
 
-<h3 id="++cold"><code>++cold</code></h3>
+### `++cold`
 
 Replace with constant
 
@@ -30,7 +30,7 @@ produces a constant `cus`, if `sef` is successful.
 
 ------------------------------------------------------------------------
 
-<h3 id="++cook"><code>++cook</code></h3>
+### `++cook`
 
 Apply gate
 
@@ -63,7 +63,7 @@ rule `sef` and slams it through `poq`.
 
 ------------------------------------------------------------------------
 
-<h3 id="++easy"><code>++easy</code></h3>
+### `++easy`
 
 Always parse
 
@@ -88,7 +88,7 @@ without consuming any text.
 
 ------------------------------------------------------------------------
 
-<h3 id="++fail"><code>++fail</code></h3>
+### `++fail`
 
 Never parse
 
@@ -106,7 +106,7 @@ result (`q=~`).
 
 ------------------------------------------------------------------------
 
-<h3 id="++full"><code>++full</code></h3>
+### `++full`
 
 Parse to end
 
@@ -131,7 +131,7 @@ when a `tub` success consumes the remainder of the [tape]().
 
 ------------------------------------------------------------------------
 
-<h3 id="++funk"><code>++funk</code></h3>
+### `++funk`
 
 Add to tape
 
@@ -154,7 +154,7 @@ Parser modifier: prepend text to tape before applying parser.
 
 ------------------------------------------------------------------------
 
-<h3 id="++here"><code>++here</code></h3>
+### `++here`
 
 Place-based apply
 
@@ -186,7 +186,7 @@ Parser modifier. Similar to [`++cook`](), produces a parser that takes a
 
 ------------------------------------------------------------------------
 
-<h3 id="++inde"><code>++inde</code></h3>
+### `++inde`
 
 Indentation block
 
@@ -231,7 +231,7 @@ the leading whitespace.
 
 ------------------------------------------------------------------------
 
-<h3 id="++jest"><code>++jest</code></h3>
+### `++jest`
 
 Match a cord
 
@@ -266,7 +266,7 @@ Match and consume a cord.
 
 ------------------------------------------------------------------------
 
-<h3 id="++just"><code>++just</code></h3>
+### `++just`
 
 Match a char
 
@@ -300,7 +300,7 @@ Match and consume a single character.
 
 ------------------------------------------------------------------------
 
-<h3 id="++knee"><code>++knee</code></h3>
+### `++knee`
 
 Recursive parsers
 
@@ -341,7 +341,7 @@ compiled.
 
 ------------------------------------------------------------------------
 
-<h3 id="++mask"><code>++mask</code></h3>
+### `++mask`
 
 Match char
 
@@ -374,7 +374,7 @@ characters.
 
 ------------------------------------------------------------------------
 
-<h3 id="++next"><code>++next</code></h3>
+### `++next`
 
 Consume char
 
@@ -398,7 +398,7 @@ Consume any character, producing it as a result.
 
 ------------------------------------------------------------------------
 
-<h3 id="++sear"><code>++sear</code></h3>
+### `++sear`
 
 Conditional `++cook`
 
@@ -426,7 +426,7 @@ a unit; if that unit is empty, fail.
 
 ------------------------------------------------------------------------
 
-<h3 id="++shim"><code>++shim</code></h3>
+### `++shim`
 
 Char in range
 
@@ -456,7 +456,7 @@ Match characters within a range.
 
 ------------------------------------------------------------------------
 
-<h3 id="++stag"><code>++stag</code></h3>
+### `++stag`
 
 Add label
 
@@ -486,7 +486,7 @@ Add a label to an edge parsed by a rule.
 
 ------------------------------------------------------------------------
 
-<h3 id="++stet"><code>++stet</code></h3>
+### `++stet`
 
 Add faces
 
@@ -523,7 +523,7 @@ Add `[p q]` faces to range-parser pairs in a list.
 
 ------------------------------------------------------------------------
 
-<h3 id="++stew"><code>++stew</code></h3>
+### `++stew`
 
 Switch by first
 
@@ -578,7 +578,7 @@ associated with a range the tape's first character falls in.
 
 ------------------------------------------------------------------------
 
-<h3 id="++stir"><code>++stir</code></h3>
+### `++stir`
 
 Parse repeatedly
 
@@ -612,7 +612,7 @@ binary gate.
 
 ------------------------------------------------------------------------
 
-<h3 id="++stun"><code>++stun</code></h3>
+### `++stun`
 
 Parse several times
 

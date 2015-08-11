@@ -1,7 +1,7 @@
 section 2dA, sets
 =================
 
-<h3 id="++apt"><code>++apt</code></h3>
+### `++apt`
 
 Set verification
 
@@ -29,7 +29,7 @@ Produces a loobean indicating whether `a` is a set or not.
 
 ------------------------------------------------------------------------
 
-<h3 id="++in"><code>++in</code></h3>
+### `++in`
 
 Set operations
 
@@ -44,7 +44,7 @@ Input arm.
 
 `a` is a [set]()
 
-<h3 id="+-all:in"><code>+-all:in</code></h3>
+### `+-all:in`
 
 Logical AND
 
@@ -73,7 +73,7 @@ producing a loobean.
 
 ------------------------------------------------------------------------
 
-<h3 id="+-any:in"><code>+-any:in</code></h3>
+### `+-any:in`
 
 Logical OR
 
@@ -101,7 +101,7 @@ Computes the logical OR on every element of `a` slammed with `b`.
 
 ------------------------------------------------------------------------
 
-<h3 id="+-del:in"><code>+-del:in</code></h3>
+### `+-del:in`
 
 Remove noun
 
@@ -140,7 +140,7 @@ Removes `b` from the set `a`.
 
 ------------------------------------------------------------------------
 
-<h3 id="+-dig:in"><code>+-dig:in</code></h3>
+### `+-dig:in`
 
 Axis a in b
 
@@ -175,7 +175,7 @@ Produce the axis of `b` within `a`.
 
 ------------------------------------------------------------------------
 
-<h3 id="+-gas:in"><code>+-gas:in</code></h3>
+### `+-gas:in`
 
 Concatenate
 
@@ -203,7 +203,7 @@ Insert the elements of a list `b` into a set `a`.
 
 ------------------------------------------------------------------------
 
-<h3 id="+-has:in"><code>+-has:in</code></h3>
+### `+-has:in`
 
 b in a?
 
@@ -234,7 +234,7 @@ Checks if `b` is an element of `a`, producing a loobean.
 
 ------------------------------------------------------------------------
 
-<h3 id="+-int:in"><code>+-int:in</code></h3>
+### `+-int:in`
 
 Intersection
 
@@ -272,7 +272,7 @@ Produces a set of the intersection between two sets of the same type,
 
 ------------------------------------------------------------------------
 
-<h3 id="+-put:in"><code>+-put:in</code></h3>
+### `+-put:in`
 
 Put b in a
 
@@ -312,7 +312,7 @@ Add an element `b` to the set `a`.
 
 ------------------------------------------------------------------------
 
-<h3 id="+-rep:in"><code>+-rep:in</code></h3>
+### `+-rep:in`
 
 Accumulate
 
@@ -339,7 +339,7 @@ Accumulate the elements of `a` using a gate `c` and an accumulator `b`.
 
 ------------------------------------------------------------------------
 
-<h3 id="+-tap:in"><code>+-tap:in</code></h3>
+### `+-tap:in`
 
 Set to list
 
@@ -372,7 +372,7 @@ Flatten the set `a` into a list.
 
 ------------------------------------------------------------------------
 
-<h3 id="+-uni:in"><code>+-uni:in</code></h3>
+### `+-uni:in`
 
 Union
 
@@ -414,7 +414,7 @@ Produces a set of the union between two sets of the same type, `a` and
 
 ------------------------------------------------------------------------
 
-<h3 id="+-wyt:in"><code>+-wyt:in</code></h3>
+### `+-wyt:in`
 
 Set size
 

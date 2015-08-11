@@ -1,7 +1,7 @@
 section 3bH, names etc
 ======================
 
-<h3 id="++clan"><code>++clan</code></h3>
+### `++clan`
 
     ++  clan                                                ::  ship to rank
       |=  who=ship  ^-  rank
@@ -24,7 +24,7 @@ Ship class
     ~zod/main=> (clan ~tasfyn-partyv)
     %duke
 
-<h3 id="++glam"><code>++glam</code></h3>
+### `++glam`
 
     ++  glam
       |=  zar=@pD  ^-  tape
@@ -94,7 +94,7 @@ Retrieve carrier name.
     ~zod/main=> (glam ~fyr)
     "Bolivar"
 
-<h3 id="++glon"><code>++glon</code></h3>
+### `++glon`
 
     ++  glon
       |=  lag=lang
@@ -296,7 +296,7 @@ ISO language code
     ~zod/main=> (glon %mz)
     ~
 
-<h3 id="++gnom"><code>++gnom</code></h3>
+### `++gnom`
 
     ++  gnom                                                ::  ship display name
       |=  [[our=@p now=@da] him=@p]  ^-  @t
@@ -316,7 +316,7 @@ Fetch display name from %ames
     ~zod/main=> (gnom [->-< -<-] ~tug)
     '~tug |Go-Daigo|'
 
-<h3 id="++gnow"><code>++gnow</code></h3>
+### `++gnow`
 
     ++  gnow
       |=  [who=@p gos=gcos]  ^-  @t
@@ -348,7 +348,7 @@ Fetch display name from %ames
 
 XX Document
 
-<h3 id="++hunt"><code>++hunt</code></h3>
+### `++hunt`
 
     ++  hunt                                                ::  first of unit dates
       |=  [one=(unit ,@da) two=(unit ,@da)]
@@ -360,7 +360,7 @@ XX Document
 
 XX Document
 
-<h3 id="++mojo"><code>++mojo</code></h3>
+### `++mojo`
 
     ++  mojo                                                ::  compiling load
       |=  [pax=path src=*]
@@ -381,7 +381,7 @@ XX Document
 
 XX Document
 
-<h3 id="++mole"><code>++mole</code></h3>
+### `++mole`
 
     ++  mole                                                ::  new to old sky
       |=  ska=$+(* (unit (unit)))
@@ -395,7 +395,7 @@ XX Document
 
 XX Document
 
-<h3 id="++much"><code>++much</code></h3>
+### `++much`
 
     ++  much                                                ::  constructing load
       |=  [pax=path src=*]
@@ -407,7 +407,7 @@ XX Document
 
 XX Document
 
-<h3 id="++musk"><code>++musk</code></h3>
+### `++musk`
 
     ++  musk                                                ::  compiling apply
       |=  [pax=path src=* sam=vase]
@@ -419,7 +419,7 @@ XX Document
 
 XX Document
 
-<h3 id="++saxo"><code>++saxo</code></h3>
+### `++saxo`
 
     ++  saxo                                                ::  autocanon
       |=  who=ship
@@ -437,7 +437,7 @@ Compute list of ancestors
     ~zod/main=> (saxo ~ractul-fodsug-sibryg-modsyl--difrun-mirfun-filrec-patmet)
     ~[~ractul-fodsug-sibryg-modsyl--difrun-mirfun-filrec-patmet ~zod]
 
-<h3 id="++sein"><code>++sein</code></h3>
+### `++sein`
 
     ++  sein                                                ::  autoboss
       |=  who=ship  ^-  ship
