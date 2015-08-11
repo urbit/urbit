@@ -1,6 +1,20 @@
 /-  tree-include
 !:
 |%
+++  extract
+  |=  a=marl  ^-  tape
+  ?~  a  ~
+  %-  weld  :_  $(a t.a)
+  ?.  ?=(_:/(**) i.a)
+    $(a c.i.a)
+  v.i.a.g.i.a
+::
+++  getall
+  |=  tag=(list mane)
+  |=  ele=manx  ^-  marl
+  ?:  (lien tag |=(a=mane =(a n.g.ele)))
+    ~[ele]
+  (zing (turn c.ele ..$))
 ++  baff  |*([a=(unit) b=(trap)] ?^(a a *b))
 ++  find-in-tree
   |*  [paz=fist:jo fun=$+(* (unit))]
@@ -15,6 +29,12 @@
     (baff (baff (fun c) try(a b)) try(a t.a))
   --
 ::
+++  map-to-json
+  |*  [a=$+(* cord) b=$+(* json)]
+  |*  c=(map)  ^-  json
+  ~!  c
+  (jobe (turn (~(tap by c)) |*([k=* v=*] [(a k) (b v)])))
+:: 
 ++  json-front
   |=  a=json  ^-  json
   =-  (fall `(unit json)`- ~)

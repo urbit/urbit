@@ -12,6 +12,7 @@
 ++  atr-key  ;~(sfix (star ;~(less col prn)) col ace)
 ++  grow
   |%
+  ++  front  atr
   ++  mime  [/text/x-markdown (taco (role txt))]
   ++  txt   ['---' (welp atr-lines '---' (lore mud))]  :: omit if empty?
   ++  md  mud

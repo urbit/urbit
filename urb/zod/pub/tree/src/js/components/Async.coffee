@@ -46,10 +46,18 @@ module.exports = (queries, Child, load=_load)-> recl
         if _.isEmpty request.kids
           delete request.kids
     request unless _.isEmpty request
- 
+  
+  scrollHash: -> @getHashElement()?.scrollIntoView()
+  getHashElement: ->
+    {hash} = document.location
+    if hash then document.getElementById hash[1..]
+
   render: -> div {},
     if @filterQueries()?
       React.createElement load, @props
-    else React.createElement Child,
-      (_.extend {}, @props, @state.got),
-      @props.children
+    else
+      if not @getHashElement()        # onmount?
+        setTimeout @scrollHash,0
+      React.createElement Child,
+        (_.extend {}, @props, @state.got),
+        @props.children

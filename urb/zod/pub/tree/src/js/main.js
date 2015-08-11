@@ -368,8 +368,19 @@ module.exports = function(queries, Child, load) {
         return request;
       }
     },
+    scrollHash: function() {
+      var ref1;
+      return (ref1 = this.getHashElement()) != null ? ref1.scrollIntoView() : void 0;
+    },
+    getHashElement: function() {
+      var hash;
+      hash = document.location.hash;
+      if (hash) {
+        return document.getElementById(hash.slice(1));
+      }
+    },
     render: function() {
-      return div({}, this.filterQueries() != null ? React.createElement(load, this.props) : React.createElement(Child, _.extend({}, this.props, this.state.got), this.props.children));
+      return div({}, this.filterQueries() != null ? React.createElement(load, this.props) : (!this.getHashElement() ? setTimeout(this.scrollHash, 0) : void 0, React.createElement(Child, _.extend({}, this.props, this.state.got), this.props.children)));
     }
   });
 };
@@ -552,16 +563,16 @@ module.exports = query({
       } else {
         title = elem.head;
       }
+      title || (title = h1({}, item));
       parts.push(title);
-      if (this.props.dataPreview) {
-        if (this.props.dataType === 'post') {
-          parts.push.apply(parts, elem.snip.c.slice(0, 2));
-        } else {
-          parts.push(elem.snip);
+      if (!this.props.titlesOnly) {
+        if (this.props.dataPreview) {
+          if (this.props.dataType === 'post') {
+            parts.push.apply(parts, elem.snip.c.slice(0, 2));
+          } else {
+            parts.push(elem.snip);
+          }
         }
-      }
-      if (this.props.titlesOnly) {
-        parts = [elem.head];
       }
       results.push(li({
         key: item,
@@ -637,7 +648,7 @@ load = React.createFactory(require('./LoadComponent.coffee'));
 walk = function(root, _nil, _str, _comp) {
   var _walk;
   _walk = function(elem, key) {
-    var c, ga, gn;
+    var c, ga, gn, ref1;
     switch (false) {
       case !(elem == null):
         return _nil();
@@ -645,7 +656,7 @@ walk = function(root, _nil, _str, _comp) {
         return _str(elem);
       case elem.gn == null:
         gn = elem.gn, ga = elem.ga, c = elem.c;
-        c = c != null ? c.map(_walk != null ? _walk : []) : void 0;
+        c = (ref1 = c != null ? c.map(_walk) : void 0) != null ? ref1 : [];
         return _comp.call(elem, {
           gn: gn,
           ga: ga,
@@ -692,7 +703,7 @@ module.exports = _.extend(reactify, {
 
 
 },{"./LoadComponent.coffee":9}],11:[function(require,module,exports){
-var div, input, query, reactify, recl, ref,
+var a, div, input, query, reactify, recl, ref,
   slice = [].slice;
 
 query = require('./Async.coffee');
@@ -701,18 +712,19 @@ reactify = require('./Reactify.coffee');
 
 recl = React.createClass;
 
-ref = React.DOM, div = ref.div, input = ref.input;
+ref = React.DOM, a = ref.a, div = ref.div, input = ref.input;
 
 module.exports = query({
+  name: 't',
   kids: {
-    sect: 'r'
+    sect: 'j'
   }
 }, recl({
   hash: null,
   displayName: "Search",
   getInitialState: function() {
     return {
-      search: 'dva'
+      search: 'wut'
     };
   },
   onKeyUp: function(e) {
@@ -720,22 +732,61 @@ module.exports = query({
       search: e.target.value
     });
   },
+  wrap: function(elem, dir, path) {
+    var c, ga, gn, href, ref1;
+    if (path.slice(-1) === "/") {
+      path = path.slice(0, -1);
+    }
+    href = this.props.name + "/" + dir + path;
+    if (elem != null ? (ref1 = elem.ga) != null ? ref1.id : void 0 : void 0) {
+      gn = elem.gn, ga = elem.ga, c = elem.c;
+      ga = _.clone(ga);
+      href += "#" + ga.id;
+      delete ga.id;
+      elem = {
+        gn: gn,
+        ga: ga,
+        c: c
+      };
+    }
+    return {
+      gn: 'div',
+      c: [
+        {
+          gn: 'a',
+          ga: {
+            href: href
+          },
+          c: [elem]
+        }
+      ]
+    };
+  },
   render: function() {
-    var c, x;
     return div({}, input({
       onKeyUp: this.onKeyUp,
       ref: 'inp',
-      defaultValue: 'dva'
-    }), _((function() {
-      var ref1, results;
-      ref1 = this.props.kids;
-      results = [];
-      for (x in ref1) {
-        c = ref1[x].sect.c;
-        results.push(c);
-      }
-      return results;
-    }).call(this)).flatten().map(this.highlight).filter().map(reactify).value());
+      defaultValue: 'wut'
+    }), _(this.props.kids).map((function(_this) {
+      return function(arg, dir) {
+        var h, heds, path, results, sect;
+        sect = arg.sect;
+        results = [];
+        for (path in sect) {
+          heds = sect[path];
+          results.push((function() {
+            var i, len, results1;
+            results1 = [];
+            for (i = 0, len = heds.length; i < len; i++) {
+              h = heds[i];
+              results1.push(this.wrap(h, dir, path));
+            }
+            return results1;
+          }).call(_this));
+        }
+        return results;
+      };
+    })(this)).flatten().flatten().map(this.highlight).filter().map(reactify).value());
   },
   highlight: function(e) {
     var got, res;
@@ -1530,7 +1581,7 @@ QUERIES = {
   body: 'r',
   head: 'r',
   snip: 'r',
-  sect: 'r',
+  sect: 'j',
   meta: 'j'
 };
 

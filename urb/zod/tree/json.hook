@@ -21,7 +21,7 @@
   $%  [%kids p=(list query)]
       [%name %t]
       [%path %t]
-      [%sect %r]
+      [%sect %j]
       [%snip %r]
       [%head %r]
       [%body %r]

@@ -2,17 +2,30 @@ query       = require './Async.coffee'
 reactify    = require './Reactify.coffee'
 
 recl = React.createClass
-{div,input} = React.DOM
+{a,div,input} = React.DOM
 
 
-module.exports = query {kids: sect:'r'}, recl
+module.exports = query {name:'t', kids: sect:'j'}, recl
   hash:null
   displayName: "Search"
-  getInitialState: -> search: 'dva'
+  getInitialState: -> search: 'wut'
   onKeyUp: (e)-> @setState search: e.target.value
+  wrap: (elem,dir,path)->
+    path = path[...-1] if path[-1...] is "/"
+    href = @props.name+"/"+dir+path
+    if elem?.ga?.id
+      {gn,ga,c} = elem
+      ga = _.clone ga
+      href += "#"+ga.id
+      delete ga.id
+      elem = {gn,ga,c}
+    {gn:'div', c:[{gn:'a', ga:{href}, c:[elem]}]}
+    
   render: -> div {},
-    input {@onKeyUp,ref:'inp',defaultValue:'dva'}
-    _(c for x,{sect:{c}} of @props.kids)
+    input {@onKeyUp,ref:'inp',defaultValue:'wut'}
+    _(@props.kids)
+      .map(({sect},dir)=> @wrap h,dir,path for h in heds for path,heds of sect)
+      .flatten()
       .flatten()
       .map(@highlight)
       .filter()

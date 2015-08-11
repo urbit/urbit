@@ -1,8 +1,11 @@
-/+    tree
-/=    body    /:  /===    /%    /react-json/
-/=    head    /:  /===    /%    /react-head-json/
-/=    snip    /:  /===    /%    /react-snip-json/
-/=    sect    /:  /===    /%    /react-headers-json/
-/=    meta    /:  /===    /%    /;  json-front  /react-snip-json/
+/+    tree, react
+/=    body    /:  /===    /%    /elem/
+/=    snip    /:  /===    /%    /snip/
+/=    meta    /:  /===    /%    /front/
+/=    sect    /:  /===    /%    /index/
+!:
 ^-    tree-include
-[body head snip meta sect]
+=+  rj=react-to-json
+=+  fj=|=(atr=(map span span) [%o (~(run by atr) |=(a=span s/a))])
+=+  ij=(map-to-json |=(a=path (crip (spud a))) |=(a=marl [%a (turn a rj)]))
+[(rj body) (rj /h1 hed.snip) (rj /div tal.snip) (fj meta) (ij sect)]

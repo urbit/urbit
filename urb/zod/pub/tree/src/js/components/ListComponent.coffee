@@ -42,14 +42,14 @@ module.exports = query {
           gn: 'h1'
           c: [elem.meta.title]
       else title = elem.head
+      title ||= (h1 {},item)
       parts.push title
-      if @props.dataPreview 
-        if @props.dataType is 'post'
-          parts.push (elem.snip.c.slice 0,2)...
-        else
-          parts.push elem.snip
-      if @props.titlesOnly
-        parts = [elem.head]
+      unless @props.titlesOnly        # redundant? this seems familiar
+        if @props.dataPreview 
+          if @props.dataType is 'post'
+            parts.push (elem.snip.c.slice 0,2)...
+          else
+            parts.push elem.snip
       li {key:item,className:@props.dataType ? ""},
         a {href,className:(clas preview: @props.dataPreview?)},            
           reactify

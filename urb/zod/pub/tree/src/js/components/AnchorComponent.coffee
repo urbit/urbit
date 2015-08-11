@@ -1,4 +1,4 @@
-clas        = require 'classnames'
+clas        = require 'classnames' 
 
 BodyComponent = React.createFactory require './BodyComponent.coffee'
 query       = require './Async.coffee'
