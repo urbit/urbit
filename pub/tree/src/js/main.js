@@ -37,7 +37,7 @@ module.exports = {
 
 
 },{"../dispatcher/Dispatcher.coffee":13,"../persistence/TreePersistence.coffee":19}],2:[function(require,module,exports){
-var BodyComponent, Links, TreeActions, TreeStore, a, clas, div, query, reactify, recl, ref;
+var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, query, reactify, recl, ref;
 
 clas = require('classnames');
 
@@ -142,6 +142,8 @@ Links = React.createFactory(query({
   }
 })));
 
+CLICK = 'a,h1,h2,h3,h4,h5,h6';
+
 module.exports = query({
   sein: 't',
   path: 't',
@@ -176,12 +178,13 @@ module.exports = query({
   },
   componentWillUnmount: function() {
     clearInterval(this.interval);
-    return $('body').off('click', 'a');
+    return $('body').off('click', CLICK);
   },
   componentDidUpdate: function() {
     return this.setTitle();
   },
   componentDidMount: function() {
+    var _this;
     this.setTitle();
     this.interval = setInterval(this.checkURL, 100);
     $('body').on('keyup', (function(_this) {
@@ -194,17 +197,19 @@ module.exports = query({
         }
       };
     })(this));
-    return $('body').on('click', 'a', (function(_this) {
-      return function(e) {
-        var href;
-        href = $(e.target).closest('a').attr('href');
-        if (href[0] === "/") {
-          e.preventDefault();
-          e.stopPropagation();
-          return _this.goTo(window.tree.fragpath(href));
-        }
-      };
-    })(this));
+    _this = this;
+    return $('body').on('click', CLICK, function(e) {
+      var href, id;
+      href = $(this).attr('href');
+      id = $(this).attr('id');
+      if ((href != null ? href[0] : void 0) === "/") {
+        e.preventDefault();
+        e.stopPropagation();
+        return _this.goTo(window.tree.fragpath(href));
+      } else if (id) {
+        return window.location.hash = id;
+      }
+    });
   },
   setTitle: function() {
     var title;

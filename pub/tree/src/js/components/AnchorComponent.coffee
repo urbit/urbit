@@ -1,4 +1,4 @@
-clas        = require 'classnames' 
+clas        = require 'classnames'
 
 BodyComponent = React.createFactory require './BodyComponent.coffee'
 query       = require './Async.coffee'
@@ -47,6 +47,7 @@ Links = React.createFactory query {
     render: -> div {className:'links'}, @props.children, @_render()
     _render: -> div {id:"sibs"}, div {className:"active"}, a {}, @props.curr
 
+CLICK = 'a,h1,h2,h3,h4,h5,h6'
 module.exports = query {sein:'t',path:'t',name:'t',next:'t',prev:'t'},recl
   displayName: "Anchor"
   getInitialState: -> url: window.location.pathname
@@ -59,7 +60,7 @@ module.exports = query {sein:'t',path:'t',name:'t',next:'t',prev:'t'},recl
 
   toggleFocus: (state) -> $(@getDOMNode()).toggleClass 'focus',state
 
-  componentWillUnmount: -> clearInterval @interval; $('body').off 'click', 'a'
+  componentWillUnmount: -> clearInterval @interval; $('body').off 'click', CLICK
   componentDidUpdate: -> @setTitle()
   componentDidMount: -> 
     @setTitle()
@@ -69,13 +70,17 @@ module.exports = query {sein:'t',path:'t',name:'t',next:'t',prev:'t'},recl
       switch e.keyCode
         when 37 then @goTo @props.prev # left
         when 39 then @goTo @props.next # right
-
-    $('body').on 'click', 'a', (e) =>
-      href = $(e.target).closest('a').attr('href')
-      if href[0] is "/"
+        
+    _this = @
+    $('body').on 'click', CLICK, (e) ->
+      href = $(@).attr('href')
+      id   = $(@).attr('id')
+      if href?[0] is "/"
         e.preventDefault()
         e.stopPropagation()
-        @goTo window.tree.fragpath href
+        _this.goTo window.tree.fragpath href
+      else if id
+        window.location.hash = id
 
   setTitle: ->
     title = $('#cont h1').first().text() || @props.name
