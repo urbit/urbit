@@ -474,7 +474,7 @@
 ::
 ++  div                                                 ::  divide
   ~/  %div
-  |=  [a=@ b=@]
+  |=  [a=_`@`1 b=_`@`1]
   ^-  @
   ~|  'div'
   ?<  =(0 b)
@@ -545,14 +545,14 @@
 ::
 ++  mod                                                 ::  remainder
   ~/  %mod
-  |=  [a=@ b=@]
+  |=  [a=_`@`1 b=_`@`1]
   ^-  @
   ?<  =(0 b)
   (sub a (mul b (div a b)))
 ::
 ++  mul                                                 ::  multiply
   ~/  %mul
-  |=  [a=@ b=@]
+  |=  [a=_`@`1 b=_`@`1]
   ^-  @
   =+  c=0
   |-
@@ -1405,10 +1405,10 @@
       $(a.a (rsh 0 1 a.a), e.a (sum:si e.a --1))
     ::
     ::  expands to either full precision or to denormalized
-    ::  assumes (met 0 a.a) <= precision
     ++  xpd
       |=  [a=[e=@s a=@u]]
       =+  ma=(met 0 a.a)
+      ?:  (gte ma prc)  a
       =+  ?:  =(den %i)  (^sub prc ma)
           =+  ^=  q
             =+  w=(dif:si e.a emn)
@@ -1419,7 +1419,7 @@
     ::  central rounding mechanism
     ::  can perform: floor, ceiling, smaller, larger,
     ::               nearest (round ties to: even, away from 0, toward 0)
-    ::  s is sticky bit: represents a value less than ulp(a) = 2^(e:(xpd a))
+    ::  s is sticky bit: represents a value less than ulp(a) = 2^(e.a)
     ++  lug
       ~/  %lug
       |=  [t=?(%fl %ce %sm %lg %ne %na %nt) a=[e=@s a=@u] s=?]  ^-  fn
@@ -1430,6 +1430,7 @@
         ?:  =((met 0 ->+>) prc)  -  [%f & zer]
       ::
       =+  m=(met 0 a.a)
+      ?>  |(s (gth m prc))                              ::  require precision
       =+  ^=  q
         =+  ^=  f                                       ::  reduce precision
           ?:  (gth m prc)  (^sub m prc)  0
@@ -1489,7 +1490,7 @@
       ~/  %drg                                          ::  convert to decimal
       |=  [a=[e=@s a=@u]]  ^-  [@s @u]
       ?<  =(a.a 0)
-      =.  a  ?:  (^lth (met 0 a.a) prc)  (xpd a)  a
+      =.  a  (xpd a)
       =+  r=(lsh 0 ?:((syn:si e.a) (abs:si e.a) 0) a.a)
       =+  s=(lsh 0 ?.((syn:si e.a) (abs:si e.a) 0) 1)
       =+  m=(lsh 0 ?:((syn:si e.a) (abs:si e.a) 0) 1)
@@ -1921,7 +1922,7 @@
   ::  round to nearest, round up, round down, round to zero
   ::
   ++  ma
-    %*(. ff w 11, p 52, b --1.023, r r)
+    %*(. ff w 8, p 23, b --127, r r)
   ::
   ++  sea                                               ::  @rs to fn
     |=  [a=@rs]  (sea:ma a)
@@ -1979,7 +1980,7 @@
   ::  round to nearest, round up, round down, round to zero
   ::
   ++  ma
-    %*(. ff w 11, p 52, b --1.023, r r)
+    %*(. ff w 15, p 112, b --16.383, r r)
   ::
   ++  sea                                               ::  @rq to fn
     |=  [a=@rq]  (sea:ma a)
