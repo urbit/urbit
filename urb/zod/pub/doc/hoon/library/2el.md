@@ -1,7 +1,7 @@
 section 2eL, formatting (path)
 ==============================
 
-<h3 id="++ab"><code>++ab</code></h3>
+### `++ab`
 
 Primitive parser engine
 
@@ -15,7 +15,7 @@ A core containing numeric parser primitives.
 
 ------------------------------------------------------------------------
 
-<h3 id="++bix"><code>++bix</code></h3>
+### `++bix`
 
 Parse hex pair
 
@@ -32,7 +32,7 @@ Parsing rule. Parses a pair of base-16 digits. Used in escapes.
 
 ------------------------------------------------------------------------
 
-<h3 id="++hif"><code>++hif</code></h3>
+### `++hif`
 
 Parse phonetic pair
 
@@ -48,7 +48,7 @@ encoded phonetically.
 
 ------------------------------------------------------------------------
 
-<h3 id="++huf"><code>++huf</code></h3>
+### `++huf`
 
 Parse two phonetic pairs
 
@@ -68,7 +68,7 @@ of two two-byte pairs that are encoded (and scrambled) phonetically.
 
 ------------------------------------------------------------------------
 
-<h3 id="++hyf"><code>++hyf</code></h3>
+### `++hyf`
 
 Parse 8 phonetic bytes
 
@@ -84,7 +84,7 @@ phonetic bytes.
 
 ------------------------------------------------------------------------
 
-<h3 id="++pev"><code>++pev</code></h3>
+### `++pev`
 
 Parse \<= 5 base-32
 
@@ -104,7 +104,7 @@ Parsing rule. Parses up to five base-32 digits without a leading zero.
 
 ------------------------------------------------------------------------
 
-<h3 id="++pew"><code>++pew</code></h3>
+### `++pew`
 
 Parse \<= 5 base-64
 
@@ -127,7 +127,7 @@ Parsing rule. Parses up to five base-64 digits without a leading zero.
 
 ------------------------------------------------------------------------
 
-<h3 id="++piv"><code>++piv</code></h3>
+### `++piv`
 
 Parse 5 base-32
 
@@ -143,7 +143,7 @@ Parsing rule. Parses exactly five base-32 digits.
 
 ------------------------------------------------------------------------
 
-<h3 id="++piw"><code>++piw</code></h3>
+### `++piw`
 
 Parse 5 base-64
 
@@ -159,7 +159,7 @@ Parsing rule. Parses exactly five base-64 digits.
 
 ------------------------------------------------------------------------
 
-<h3 id="++qeb"><code>++qeb</code></h3>
+### `++qeb`
 
 Parse \<= 4 binary
 
@@ -183,7 +183,7 @@ a leading zero.
 
 ------------------------------------------------------------------------
 
-<h3 id="++qex"><code>++qex</code></h3>
+### `++qex`
 
 Parse \<= 4 hex
 
@@ -205,7 +205,7 @@ without a leading zero.
 
 ------------------------------------------------------------------------
 
-<h3 id="++qib"><code>++qib</code></h3>
+### `++qib`
 
 Parse 4 binary
 
@@ -223,7 +223,7 @@ Parsing rule. Parses exactly four binary digits.
 
 ------------------------------------------------------------------------
 
-<h3 id="++qix"><code>++qix</code></h3>
+### `++qix`
 
 Parse 4 hex
 
@@ -241,7 +241,7 @@ Parsing rule. Parses exactly four hexadecimal digits.
 
 ------------------------------------------------------------------------
 
-<h3 id="++seb"><code>++seb</code></h3>
+### `++seb`
 
 Parse 1
 
@@ -260,7 +260,7 @@ Parsing rule. Parses the number 1.
 
 ------------------------------------------------------------------------
 
-<h3 id="++sed"><code>++sed</code></h3>
+### `++sed`
 
 Parse decimal
 
@@ -276,7 +276,7 @@ Parsing rule. Parses a nonzero decimal digit.
 
 ------------------------------------------------------------------------
 
-<h3 id="++sev"><code>++sev</code></h3>
+### `++sev`
 
 Parse base-32
 
@@ -292,7 +292,7 @@ Parsing rule. Parses a nonzero base-32 digit
 
 ------------------------------------------------------------------------
 
-<h3 id="++sew"><code>++sew</code></h3>
+### `++sew`
 
 Parse base-64
 
@@ -308,7 +308,7 @@ Parsing rule. Parses a nonzero base-64 digit
 
 ------------------------------------------------------------------------
 
-<h3 id="++sex"><code>++sex</code></h3>
+### `++sex`
 
 Parse hex
 
@@ -324,7 +324,7 @@ Parsing rule. Parses a nonzero hexadecimal digit.
 
 ------------------------------------------------------------------------
 
-<h3 id="++sib"><code>++sib</code></h3>
+### `++sib`
 
 Parse binary
 
@@ -339,7 +339,7 @@ Parsing rule. Parses a binary digit.
 
 ------------------------------------------------------------------------
 
-<h3 id="++sid"><code>++sid</code></h3>
+### `++sid`
 
 Parse decimal
 
@@ -352,7 +352,7 @@ Parsing rule. Parses a decimal digit.
 
 ------------------------------------------------------------------------
 
-<h3 id="++siv"><code>++siv</code></h3>
+### `++siv`
 
 Parse base-32
 
@@ -365,7 +365,7 @@ Parsing rule. Parses a base-32 digit.
 
 ------------------------------------------------------------------------
 
-<h3 id="++siw"><code>++siw</code></h3>
+### `++siw`
 
 Parse base-64
 
@@ -378,7 +378,7 @@ Parsing rule. Parses a base-64 digit.
 
 ------------------------------------------------------------------------
 
-<h3 id="++six"><code>++six</code></h3>
+### `++six`
 
 Parse hex
 
@@ -391,7 +391,7 @@ Parsing rule. Parses a hexadecimal digit.
 
 ------------------------------------------------------------------------
 
-<h3 id="++sov"><code>++sov</code></h3>
+### `++sov`
 
 Parse base-32
 
@@ -404,7 +404,7 @@ Parsing rule. Parses a base-32 letter.
 
 ------------------------------------------------------------------------
 
-<h3 id="++sow"><code>++sow</code></h3>
+### `++sow`
 
 Parse base-64
 
@@ -422,7 +422,7 @@ Parsing rule. Parses a base-64 letter/symbol.
 
 ------------------------------------------------------------------------
 
-<h3 id="++sox"><code>++sox</code></h3>
+### `++sox`
 
 Parse hex letter
 
@@ -435,7 +435,7 @@ Parsing rule. Parses a hexadecimal letter.
 
 ------------------------------------------------------------------------
 
-<h3 id="++ted"><code>++ted</code></h3>
+### `++ted`
 
 Parse \<= 3 decimal
 
@@ -456,7 +456,7 @@ leading zero.
 
 ------------------------------------------------------------------------
 
-<h3 id="++tip"><code>++tip</code></h3>
+### `++tip`
 
 Leading phonetic byte
 
@@ -472,7 +472,7 @@ syllable.
 
 ------------------------------------------------------------------------
 
-<h3 id="++tiq"><code>++tiq</code></h3>
+### `++tiq`
 
 Trailing phonetic syllable
 
@@ -488,7 +488,7 @@ syllable.
 
 ------------------------------------------------------------------------
 
-<h3 id="++tid"><code>++tid</code></h3>
+### `++tid`
 
 Parse 3 decimal digits
 
@@ -504,7 +504,7 @@ Parsing rule. Parses exactly three decimal digits.
 
 ------------------------------------------------------------------------
 
-<h3 id="++til"><code>++til</code></h3>
+### `++til`
 
 Parse 3 lowercase
 
@@ -522,7 +522,7 @@ Parsing rule. Parses exactly three lowercase letters.
 
 ------------------------------------------------------------------------
 
-<h3 id="++urs"><code>++urs</code></h3>
+### `++urs`
 
 Parse span characters
 
@@ -539,7 +539,7 @@ Parsing rule. Parses characters from an atom of the span odor [`@ta`]().
 
 ------------------------------------------------------------------------
 
-<h3 id="++urt"><code>++urt</code></h3>
+### `++urt`
 
 Parse non-`_` span
 
@@ -555,7 +555,7 @@ for cab, `_`.
 
 ------------------------------------------------------------------------
 
-<h3 id="++voy"><code>++voy</code></h3>
+### `++voy`
 
 Parse bas, soq, or bix
 
@@ -571,7 +571,7 @@ byte.
 
 ------------------------------------------------------------------------
 
-<h3 id="++ag"><code>++ag</code></h3>
+### `++ag`
 
 Top-level atom parser engine
 
@@ -585,7 +585,7 @@ A core containing top-level atom parsers.
 
 ------------------------------------------------------------------------
 
-<h3 id="++ape"><code>++ape</code></h3>
+### `++ape`
 
 Parse 0 or rule
 
@@ -600,7 +600,7 @@ Parser modifier. Parses 0 or the sample rule `fel`.
 
 ------------------------------------------------------------------------
 
-<h3 id="++bay"><code>++bay</code></h3>
+### `++bay`
 
 Parses binary number
 
@@ -613,7 +613,7 @@ Parsing rule. Parses a binary number without a leading zero.
 
 ------------------------------------------------------------------------
 
-<h3 id="++bip"><code>++bip</code></h3>
+### `++bip`
 
 Parse IPv6
 
@@ -629,7 +629,7 @@ Parsing rule. Parses a [`@is`](), an IPv6 address.
 
 ------------------------------------------------------------------------
 
-<h3 id="++dem"><code>++dem</code></h3>
+### `++dem`
 
 Parse decimal with dots
 
@@ -644,7 +644,7 @@ Parsing rule. Parses a decimal number that includes dot separators.
 
 ------------------------------------------------------------------------
 
-<h3 id="++dim"><code>++dim</code></h3>
+### `++dim`
 
 Parse decimal number
 
@@ -660,7 +660,7 @@ Parsing rule. Parses a decimal number without a leading zero.
 
 ------------------------------------------------------------------------
 
-<h3 id="++dum"><code>++dum</code></h3>
+### `++dum`
 
 Parse decimal with leading `0`
 
@@ -677,7 +677,7 @@ Parsing rule. Parses a decmial number with leading zeroes.
 
 ------------------------------------------------------------------------
 
-<h3 id="++fed"><code>++fed</code></h3>
+### `++fed`
 
 Parse phonetic base
 
@@ -707,7 +707,7 @@ Parsing rule. Parses an atom of odor [`@p`](), the phonetic base.
 
 ------------------------------------------------------------------------
 
-<h3 id="++hex"><code>++hex</code></h3>
+### `++hex`
 
 Parse hex
 
@@ -726,7 +726,7 @@ Parsing rule. Parses a hexadecimal number
 
 ------------------------------------------------------------------------
 
-<h3 id="++lip"><code>++lip</code></h3>
+### `++lip`
 
 Parse IPv4 address
 
@@ -744,7 +744,7 @@ Parsing rule. Parses an IPv4 address.
 
 ------------------------------------------------------------------------
 
-<h3 id="++viz"><code>++viz</code></h3>
+### `++viz`
 
 Parse Base-32 with dots
 
@@ -757,7 +757,7 @@ Parsing rule. Parses a Base-32 number with dot separators.
 
 ------------------------------------------------------------------------
 
-<h3 id="++vum"><code>++vum</code></h3>
+### `++vum`
 
 Parse base-32 string
 
@@ -770,7 +770,7 @@ Parsing rule. Parses a raw base-32 string.
 
 ------------------------------------------------------------------------
 
-<h3 id="++wiz"><code>++wiz</code></h3>
+### `++wiz`
 
 Parse base-64
 
@@ -785,7 +785,7 @@ Parsing rule. Parses a base-64 number.
 
 ------------------------------------------------------------------------
 
-<h3 id="++co"><code>++co</code></h3>
+### `++co`
 
 Literal rendering engine
 
@@ -809,7 +809,7 @@ A [door]() that contains arms that operate on the sample coin `lot`.
 
 ------------------------------------------------------------------------
 
-<h3 id="++rear"><code>++rear</code></h3>
+### `++rear`
 
 Prepend & render as tape
 
@@ -826,7 +826,7 @@ Renders a coin `lot` as a [tape]() prepended to the sample tape `rom`.
 
 ------------------------------------------------------------------------
 
-<h3 id="++rent"><code>++rent</code></h3>
+### `++rent`
 
 Render as span
 
@@ -843,7 +843,7 @@ Renders a coin `lot` as a span.
 
 ------------------------------------------------------------------------
 
-<h3 id="++rend"><code>++rend</code></h3>
+### `++rend`
 
 Render as tape
 
@@ -1073,7 +1073,7 @@ Renders a coin `lot` as a tape.
 
 ------------------------------------------------------------------------
 
-<h3 id="++ne"><code>++ne</code></h3>
+### `++ne`
 
 Digit rendering engine
 
@@ -1090,7 +1090,7 @@ A [door]() containing arms that render digits at bases 10, 16, 32, and
 
 ------------------------------------------------------------------------
 
-<h3 id="++d"><code>++d</code></h3>
+### `++d`
 
 Render decimal
 
@@ -1105,7 +1105,7 @@ Renders a decimal digit as an atom of an ACII byte value.
 
 ------------------------------------------------------------------------
 
-<h3 id="++x"><code>++x</code></h3>
+### `++x`
 
 Render hex
 
@@ -1122,7 +1122,7 @@ Renders a hexadecimal digit as an atom of an ASCII byte value.
 
 ------------------------------------------------------------------------
 
-<h3 id="++v"><code>++v</code></h3>
+### `++v`
 
 Render base-32
 
@@ -1139,7 +1139,7 @@ Renders a base-32 digit as an atom of an ASCII byte value.
 
 ------------------------------------------------------------------------
 
-<h3 id="++w"><code>++w</code></h3>
+### `++w`
 
 Render base-64
 
@@ -1168,7 +1168,7 @@ Renders a base-64 digit as an atom of an ASCII byte value.
 
 ------------------------------------------------------------------------
 
-<h3 id="++mu"><code>++mu</code></h3>
+### `++mu`
 
 Core used to scramble 16-bit atoms
 
@@ -1188,7 +1188,7 @@ relationship between a destroyer and its cruiser.
 
 ------------------------------------------------------------------------
 
-<h3 id="++zag"><code>++zag</code></h3>
+### `++zag`
 
 Add bottom into top
 
@@ -1207,7 +1207,7 @@ destroyer.
 
 ------------------------------------------------------------------------
 
-<h3 id="++zig"><code>++zig</code></h3>
+### `++zig`
 
 Subtract bottom from top
 
@@ -1227,7 +1227,7 @@ destroyer.
 
 ------------------------------------------------------------------------
 
-<h3 id="++zug"><code>++zug</code></h3>
+### `++zug`
 
 Concatenate into atom
 
@@ -1245,7 +1245,7 @@ destroyer name.
 
 ------------------------------------------------------------------------
 
-<h3 id="++so"><code>++so</code></h3>
+### `++so`
 
 Coin parser engine
 
@@ -1259,7 +1259,7 @@ Core containing arms that parse [`++coin`]s.
 
 ------------------------------------------------------------------------
 
-<h3 id="++bisk"><code>++bisk</code></h3>
+### `++bisk`
 
 Parse odor-atom pair
 
@@ -1287,7 +1287,7 @@ producing a [`++dime`]().
 
 ------------------------------------------------------------------------
 
-<h3 id="++crub"><code>++crub</code></h3>
+### `++crub`
 
 Parse `@da`, `@dr`, `@p`, `@t`
 
@@ -1364,7 +1364,7 @@ and [`@t`](), producing a [`++dime`]().
 
 ------------------------------------------------------------------------
 
-<h3 id="++nuck"><code>++nuck</code></h3>
+### `++nuck`
 
 Top-level coin parser
 
@@ -1406,7 +1406,7 @@ corresponding [`++coin`]() parser.
 
 ------------------------------------------------------------------------
 
-<h3 id="++nusk"><code>++nusk</code></h3>
+### `++nusk`
 
 Parse coin literal with escapes
 
@@ -1427,7 +1427,7 @@ formatting).
 
 ------------------------------------------------------------------------
 
-<h3 id="++perd"><code>++perd</code></h3>
+### `++perd`
 
 Parsing rule.
 
@@ -1451,7 +1451,7 @@ prefixes.
 
 ------------------------------------------------------------------------
 
-<h3 id="++royl"><code>++royl</code></h3>
+### `++royl`
 
 Parse dime float
 
@@ -1487,7 +1487,7 @@ Parsing rule. Parses a number into a [`++dime`]() float.
 
 ------------------------------------------------------------------------
 
-<h3 id="++royl-cell"><code>++royl-cell</code></h3>
+### `++royl-cell`
 
 XX still not fully functional
 
@@ -1504,7 +1504,7 @@ Intermediate parsed float convereter
 
 ------------------------------------------------------------------------
 
-<h3 id="++tash"><code>++tash</code></h3>
+### `++tash`
 
 Parse signed dime
 
@@ -1533,7 +1533,7 @@ Parsing rule. Parses a signed number into a [`++dime`]().
 
 ------------------------------------------------------------------------
 
-<h3 id="++twid"><code>++twid</code></h3>
+### `++twid`
 
 Parse coins without `~` prefix
 
@@ -1559,7 +1559,7 @@ Parsing rule. Parses coins after a leading sig, `~`.
 
 ------------------------------------------------------------------------
 
-<h3 id="++zust"><code>++zust</code></h3>
+### `++zust`
 
 Parse prefixed dimes from `@if`, `@f`, `@rd`
 
@@ -1590,7 +1590,7 @@ Parsing rule. Parses an atom of either [`@if`]() (IP address), [`@f`]()
 
 ------------------------------------------------------------------------
 
-<h3 id="++scot"><code>++scot</code></h3>
+### `++scot`
 
 Render dime as cord
 
@@ -1619,7 +1619,7 @@ Renders a dime `mol` as a cord.
 
 ------------------------------------------------------------------------
 
-<h3 id="++scow"><code>++scow</code></h3>
+### `++scow`
 
 Render dime as tape
 
@@ -1640,7 +1640,7 @@ Renders `mol` as a tape.
 
 ------------------------------------------------------------------------
 
-<h3 id="++slat"><code>++slat</code></h3>
+### `++slat`
 
 Curried slaw
 
@@ -1664,7 +1664,7 @@ odor specified by `mod`.
 
 ------------------------------------------------------------------------
 
-<h3 id="++slav"><code>++slav</code></h3>
+### `++slav`
 
 Demand: parse span with input odor
 
@@ -1696,7 +1696,7 @@ if it failes to parse.
 
 ------------------------------------------------------------------------
 
-<h3 id="++slaw"><code>++slaw</code></h3>
+### `++slaw`
 
 Parse span to input odor
 
@@ -1732,7 +1732,7 @@ Parses a span `txt` to an atom of the odor specified by `mod`.
 
 ------------------------------------------------------------------------
 
-<h3 id="++slay"><code>++slay</code></h3>
+### `++slay`
 
 Parse span to coin
 
@@ -1777,7 +1777,7 @@ Parses a span `txt` to the unit of a [`++coin`]().
 
 ------------------------------------------------------------------------
 
-<h3 id="++smyt"><code>++smyt</code></h3>
+### `++smyt`
 
 Render path as tank
 
@@ -1809,7 +1809,7 @@ pretty-printing.
 
 ------------------------------------------------------------------------
 
-<h3 id="++spat"><code>++spat</code></h3>
+### `++spat`
 
 Render path as cord
 
@@ -1828,7 +1828,7 @@ Renders a path `pax` as cord.
 
 ------------------------------------------------------------------------
 
-<h3 id="++spud"><code>++spud</code></h3>
+### `++spud`
 
 Render path as tape
 
@@ -1847,7 +1847,7 @@ Renders a path `pax` as [tape]().
 
 ------------------------------------------------------------------------
 
-<h3 id="++stab"><code>++stab</code></h3>
+### `++stab`
 
 Parse span to path
 

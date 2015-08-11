@@ -1,7 +1,7 @@
 section 2eI, parsing (external)
 ===============================
 
-<h3 id="++rash"><code>++rash</code></h3>
+### `++rash`
 
 Parse or crash
 
@@ -29,7 +29,7 @@ parsed.
 
 ------------------------------------------------------------------------
 
-<h3 id="++rush"><code>++rush</code></h3>
+### `++rush`
 
 Parse or null
 
@@ -55,7 +55,7 @@ entirely parsed.
 
 ------------------------------------------------------------------------
 
-<h3 id="++rust"><code>++rust</code></h3>
+### `++rust`
 
 Parse tape or null
 
@@ -79,7 +79,7 @@ entirely parsed.
 
 ------------------------------------------------------------------------
 
-<h3 id="++scan"><code>++scan</code></h3>
+### `++scan`
 
 Parse tape or crash
 

@@ -1,7 +1,7 @@
 section 2eN, pseudo-cryptography
 ================================
 
-<h3 id="++un"><code>++un</code></h3>
+### `++un`
 
 Reversible scrambling core
 
@@ -13,7 +13,7 @@ Used in the `@p` phonetic base.
 
 ------------------------------------------------------------------------
 
-<h3 id="++wren"><code>++wren</code></h3>
+### `++wren`
 
 Conceal structure
 
@@ -50,7 +50,7 @@ on the result, pushing it forward. Produces an atom.
 
 ------------------------------------------------------------------------
 
-<h3 id="++wred"><code>++wred</code></h3>
+### `++wred`
 
 Restore structure
 
@@ -87,7 +87,7 @@ on the result, pushing it forward. Produces an atom.
 
 ------------------------------------------------------------------------
 
-<h3 id="++xafo"><code>++xafo</code></h3>
+### `++xafo`
 
 Add modulo 255
 
@@ -102,7 +102,7 @@ Produces the sum of two atoms modulo 255, encoded as a nonzero byte.
 
 ------------------------------------------------------------------------
 
-<h3 id="++xaro"><code>++xaro</code></h3>
+### `++xaro`
 
 Subtract modulo 255
 
@@ -118,7 +118,7 @@ nonzero byte.
 
 ------------------------------------------------------------------------
 
-<h3 id="++zaft"><code>++zaft</code></h3>
+### `++zaft`
 
 Look up in 255 sub box
 
@@ -154,7 +154,7 @@ box with 255 values, producing a unique nonzero byte.
 
 ------------------------------------------------------------------------
 
-<h3 id="++zart"><code>++zart</code></h3>
+### `++zart`
 
 Reverse look up in 255 sub box
 
@@ -187,7 +187,7 @@ the substitution box with 255 values, producing a unique nonzero byte.
 
 ------------------------------------------------------------------------
 
-<h3 id="++zyft"><code>++zyft</code></h3>
+### `++zyft`
 
 Lookup byte in 256 sub box
 
@@ -223,7 +223,7 @@ with 256 values, producing a byte.
 
 ------------------------------------------------------------------------
 
-<h3 id="++zyrt"><code>++zyrt</code></h3>
+### `++zyrt`
 
 Reverse lookup byte in 256 sub box
 
@@ -256,7 +256,7 @@ with 256 values, producing a byte.
     ~zod/try=> `@ux`(zyrt:un 187)
     0xff
 
-<h3 id="++ob"><code>++ob</code></h3>
+### `++ob`
 
 Reversible scrambling core, v2
 
@@ -267,7 +267,7 @@ A core for performing reversible scrambling operations for the `@p` phonetic bas
 
 ------------------------------------------------------------------------
 
-<h3 id="++feen"><code>++feen</code></h3>
+### `++feen`
 
 Conceal structure, v2
 
@@ -286,7 +286,7 @@ Randomly permutes atoms that fit into 17 to 32 bits into one another. If the ato
 
 ------------------------------------------------------------------------
 
-<h3 id="++fend"><code>++fend</code></h3>
+### `++fend`
 
     ++  fend                                              ::  restore structure v2
       |=  cry=@  ^-  @
@@ -303,7 +303,7 @@ Randomly permutes atoms that fit into 17 to 32 bits into one another, and random
 
 ------------------------------------------------------------------------
 
-<h3 id="++fice"><code>++fice</code></h3>
+### `++fice`
 
     ++  fice                                              ::  adapted from
       |=  nor=@                                           ::  black and rogaway
@@ -319,7 +319,7 @@ Applies a 3-round Feistel-like cipher to randomly permute atoms in the range `0`
 
 ------------------------------------------------------------------------
 
-<h3 id="++teil"><code>++teil</code></h3>
+### `++teil`
 
     ++  teil                                              ::  reverse ++fice
       |=  vip=@
@@ -335,7 +335,7 @@ Applies the reverse of the Feistel-like cipher applied by [`++fice`](). Unlike a
 
 ------------------------------------------------------------------------
 
-<h3 id="++rynd"><code>++rynd</code></h3>
+### `++rynd`
 
     ++  rynd                                              ::  feistel round
       |=  [n=@ l=@ r=@]
@@ -349,7 +349,7 @@ A single round of the Feistel-like cipher [`++fice`](). AES ([`++aesc`]()) is us
 
 ------------------------------------------------------------------------
 
-<h3 id="++rund"><code>++rund</code></h3>
+### `++rund`
 
     ++  rund                                              ::  reverse round
       |=  [n=@ l=@ r=@]
@@ -363,7 +363,7 @@ A single round of the Feistel-like reverse cipher [`++teil`]().
 
 ------------------------------------------------------------------------
 
-<h3 id="++raku"><code>++raku</code></h3>
+### `++raku`
 
     ++  raku
       ^-  (list ,@ux)

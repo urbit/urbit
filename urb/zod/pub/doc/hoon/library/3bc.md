@@ -1,7 +1,7 @@
 section 3bC, Gregorian UTC
 ==========================
 
-<h3 id="++dawn"><code>++dawn</code></h3>
+### `++dawn`
 
 Weekday of Jan 1
 
@@ -27,7 +27,7 @@ producing an atom. Weeks are zero-indexed beginning on Sunday.
 
 ------------------------------------------------------------------------
 
-<h3 id="++daws"><code>++daws</code></h3>
+### `++daws`
 
 Weekday of date
 
@@ -51,7 +51,7 @@ zero-indexed beginning on Sunday.
 
 ------------------------------------------------------------------------
 
-<h3 id="++deal"><code>++deal</code></h3>
+### `++deal`
 
 Add leap seconds
 
@@ -82,7 +82,7 @@ Produces a [`date`]() with the 25 leap seconds added.
 
 ------------------------------------------------------------------------
 
-<h3 id="++lead"><code>++lead</code></h3>
+### `++lead`
 
 Subtract leap seconds
 
@@ -117,7 +117,7 @@ subtracted.
 
 ------------------------------------------------------------------------
 
-<h3 id="++dust"><code>++dust</code></h3>
+### `++dust`
 
 Print UTC format
 
@@ -146,7 +146,7 @@ Produces a [tape]() of the date in UTC format.
 
 ------------------------------------------------------------------------
 
-<h3 id="++stud"><code>++stud</code></h3>
+### `++stud`
 
 Parse UTC format
 
@@ -189,7 +189,7 @@ Accepts a [tape]() containing a date in UTC format and produces the
 
 ------------------------------------------------------------------------
 
-<h3 id="++unt"><code>++unt</code></h3>
+### `++unt`
 
 UGT to UTC time
 
@@ -211,7 +211,7 @@ Transforms Urbit Galactic Time to UTC time, producing an atom.
 
 ------------------------------------------------------------------------
 
-<h3 id="++yu"><code>++yu</code></h3>
+### `++yu`
 
 UTC format constants
 
@@ -223,7 +223,7 @@ UTC format constants
 
 ------------------------------------------------------------------------
 
-<h3 id="++mon"><code>++mon</code></h3>
+### `++mon`
 
 Months
 
@@ -255,7 +255,7 @@ Produces a list of [tapes]() containing the 12 months of the year.
 
 ------------------------------------------------------------------------
 
-<h3 id="++wik"><code>++wik</code></h3>
+### `++wik`
 
 Weeks
 
@@ -277,7 +277,7 @@ beginning with Sunday.
 
 ------------------------------------------------------------------------
 
-<h3 id="++les"><code>++les</code></h3>
+### `++les`
 
 Leap second dates
 
@@ -325,7 +325,7 @@ Produces a list of the (absolute) dates ([`@da`]) of the 25 leap seconds
 
 ------------------------------------------------------------------------
 
-<h3 id="++lef"><code>++lef</code></h3>
+### `++lef`
 
 Back-shifted leap second dates
 

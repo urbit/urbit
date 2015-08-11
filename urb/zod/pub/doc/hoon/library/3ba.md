@@ -1,7 +1,7 @@
 section 3bA, lite number theory
 ===============================
 
-<h3 id="++fu"><code>++fu</code></h3>
+### `++fu`
 
     ++  fu                                                  ::  modulo (mul p q)
       |=  a=[p=@ q=@]
@@ -10,7 +10,7 @@ section 3bA, lite number theory
 
 XX document
 
-<h3 id="++dif"><code>++dif</code></h3>
+### `++dif`
 
       ++  dif
         |=  [c=[@ @] d=[@ @]]
@@ -19,7 +19,7 @@ XX document
 
 XX document
 
-<h3 id="++exp"><code>++exp</code></h3>
+### `++exp`
 
       ++  exp
         |=  [c=@ d=[@ @]]
@@ -29,7 +29,7 @@ XX document
 
 XX document
 
-<h3 id="++out"><code>++out</code></h3>
+### `++out`
 
       ++  out                                               ::  garner's formula
         |=  c=[@ @]
@@ -40,7 +40,7 @@ XX document
 
 XX document
 
-<h3 id="++pro"><code>++pro</code></h3>
+### `++pro`
 
       ++  pro
         |=  [c=[@ @] d=[@ @]]
@@ -49,7 +49,7 @@ XX document
 
 XX document
 
-<h3 id="++sum"><code>++sum</code></h3>
+### `++sum`
 
       ++  sum
         |=  [c=[@ @] d=[@ @]]
@@ -58,7 +58,7 @@ XX document
 
 XX document
 
-<h3 id="++sit"><code>++sit</code></h3>
+### `++sit`
 
       ++  sit
         |=  c=@
