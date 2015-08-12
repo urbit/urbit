@@ -29,6 +29,7 @@ module.exports = query {name:'t', kids: sect:'j'}, recl
       .flatten()
       .map(@highlight)
       .filter()
+      .take(50)
       .map(reactify)
       .value()
     

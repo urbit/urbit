@@ -791,7 +791,7 @@ module.exports = query({
         }
         return results;
       };
-    })(this)).flatten().flatten().map(this.highlight).filter().map(reactify).value());
+    })(this)).flatten().flatten().map(this.highlight).filter().take(50).map(reactify).value());
   },
   highlight: function(e) {
     var got, res;
