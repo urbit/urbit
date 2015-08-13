@@ -443,9 +443,11 @@ module.exports = recl({
 
 
 },{}],6:[function(require,module,exports){
-var recl;
+var div, recl;
 
 recl = React.createClass;
+
+div = React.DOM.div;
 
 module.exports = {
   codemirror: require('./CodeMirror.coffee'),
@@ -455,7 +457,7 @@ module.exports = {
   toc: require('./TocComponent.coffee'),
   lost: recl({
     render: function() {
-      return div({}, "lost");
+      return div({}, "<lost(", this.props.children, ")>");
     }
   })
 };
