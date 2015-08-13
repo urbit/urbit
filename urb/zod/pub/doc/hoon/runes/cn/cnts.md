@@ -1,4 +1,4 @@
-[centis, `%=`, %cnts](#cnts)
+centis, `%=`, %cnts
 ============================
 
 Evaluate with changes

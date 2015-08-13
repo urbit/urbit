@@ -1,4 +1,4 @@
-[kethep, `^-`, %kthp](#kthp)
+kethep, `^-`, %kthp
 ============================
 
 Cast to bunt
@@ -9,7 +9,7 @@ of `p`.
 See also
 --------
 
-[ketlus, `^+`, %ktls](#ktls)
+ketlus, `^+`, %ktls
 ============================
 
 Produces

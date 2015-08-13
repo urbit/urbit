@@ -1,4 +1,4 @@
-[bartar, `|*`, %brtr](#brtr)
+bartar, `|*`, %brtr
 ============================
 
 Wet gate
@@ -14,7 +14,7 @@ checked to be the same as the input type, rather than the sample tile.
 See also
 --------
 
-[bartis, `|=`, %brts](#brts)
+bartis, `|=`, %brts
 ============================
 
 Produces

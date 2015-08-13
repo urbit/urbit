@@ -1,4 +1,4 @@
-[barlus, `|+`, %brls](#brls)
+barlus, `|+`, %brls
 ============================
 
 `%iron` gate
@@ -11,7 +11,7 @@ similar to a private function.
 See also
 --------
 
-[bartis, `|=`, %brts](#brts)
+bartis, `|=`, %brts
 
 Produces
 --------

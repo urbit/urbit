@@ -1,4 +1,4 @@
-[bucket `$^` %bckt](#bckt)
+bucket `$^` %bckt
 ==========================
 
 Normalizing gate, `%herb`

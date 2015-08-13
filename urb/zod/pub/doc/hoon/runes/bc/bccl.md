@@ -1,4 +1,4 @@
-[buccol `$:` %bccl](#bccl)
+buccol `$:` %bccl
 ==========================
 
 Tile autocons

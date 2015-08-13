@@ -1,4 +1,4 @@
-[sigbar, `~|`, %sgbr](#sgbr)
+sigbar, `~|`, %sgbr
 ============================
 
 Add to stacktrace

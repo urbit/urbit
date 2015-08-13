@@ -1,4 +1,4 @@
-[tisbar, `=|`, %tsbr](#tsbr)
+tisbar, `=|`, %tsbr
 ============================
 
 Bunt to subject

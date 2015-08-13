@@ -1,4 +1,4 @@
-[zapwut, `!?`, %zpwt](#zpwt)
+zapwut, `!?`, %zpwt
 ============================
 
 Restrict version

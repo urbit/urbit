@@ -1,4 +1,4 @@
-[wutlus, `?+`, %wtls](#wtls)
+wutlus, `?+`, %wtls
 ============================
 
 Switch with default
@@ -10,7 +10,7 @@ of `p` with a default case, `q`. The labels in `r` must have the same
 See also
 --------
 
-[wuthep, `?-`, %wthp](#wthp)
+wuthep, `?-`, %wthp
 ============================
 
 Produces

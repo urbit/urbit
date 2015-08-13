@@ -1,4 +1,4 @@
-[cenzaz, %cnzz](#cnzz)
+cenzaz, %cnzz
 ======================
 
 Pull wing `p`

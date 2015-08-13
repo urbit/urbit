@@ -1,4 +1,4 @@
-[barfas, `|/`, %brfs](#brfs)
+barfas, `|/`, %brfs
 ============================
 
 Door with tile

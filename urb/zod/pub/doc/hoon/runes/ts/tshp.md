@@ -1,4 +1,4 @@
-[tishep, `=-`, %tshp](#tshp)
+tishep, `=-`, %tshp
 ============================
 
 Push on, inverse
@@ -10,7 +10,7 @@ lengthier and `=-` makes for more readable code.
 See also
 --------
 
-[tislus, `=+`, %tsls](#tsls)
+tislus, `=+`, %tsls
 ============================
 
 Produces

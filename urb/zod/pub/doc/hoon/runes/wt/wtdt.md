@@ -1,4 +1,4 @@
-[wutdot, `?.`, %wtdt](#wtdt)
+wutdot, `?.`, %wtdt
 ============================
 
 If, else
@@ -10,7 +10,7 @@ second expression if the loobean is true. `?.` is the inverse of `?:`.
 See also
 --------
 
-[wutcol, `?:`, %wtcl](#wtcl)
+wutcol, `?:`, %wtcl
 ============================
 
 Produces

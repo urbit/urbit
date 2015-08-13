@@ -1,4 +1,4 @@
-[zapcom, `!,`, %zpcm](#zpcm)
+zapcom, `!,`, %zpcm
 ============================
 
 Insert as constant

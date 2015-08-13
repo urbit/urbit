@@ -1,4 +1,4 @@
-[wutzap, `?!`, %wtzp](#wtzp)
+wutzap, `?!`, %wtzp
 ============================
 
 NOT

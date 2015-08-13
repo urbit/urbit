@@ -1,4 +1,4 @@
-[sigtis, `~=`, %sgts](#sgts)
+sigtis, `~=`, %sgts
 ============================
 
 Equality hint

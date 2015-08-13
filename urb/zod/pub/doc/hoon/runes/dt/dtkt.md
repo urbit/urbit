@@ -1,4 +1,4 @@
-[dotket, `.^`, %dtkt](#dtkt)
+dotket, `.^`, %dtkt
 ============================
 
 Load from `%clay`

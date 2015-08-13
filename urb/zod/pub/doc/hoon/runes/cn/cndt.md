@@ -1,4 +1,4 @@
-[cendot, `%.`, %cndt](#cndt)
+cendot, `%.`, %cndt
 ============================
 
 Slam, reverse order

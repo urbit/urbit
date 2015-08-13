@@ -1,4 +1,4 @@
-[zaptis, `!=`, %zpts](#zpts)
+zaptis, `!=`, %zpts
 ============================
 
 Show nock

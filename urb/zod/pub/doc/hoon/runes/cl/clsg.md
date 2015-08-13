@@ -1,4 +1,4 @@
-[colsig, `:~`, %clsg](#clsg)
+colsig, `:~`, %clsg
 ============================
 
 Null-terminated tuple

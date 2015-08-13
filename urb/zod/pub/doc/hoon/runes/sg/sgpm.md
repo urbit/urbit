@@ -1,4 +1,4 @@
-[sigpam, `~&`, %sgpm](#sgpm)
+sigpam, `~&`, %sgpm
 ============================
 
 printf

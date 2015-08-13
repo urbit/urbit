@@ -1,4 +1,4 @@
-[sigbuc, `~$`, %sgbc](#sgbc)
+sigbuc, `~$`, %sgbc
 ============================
 
 Label for profiling

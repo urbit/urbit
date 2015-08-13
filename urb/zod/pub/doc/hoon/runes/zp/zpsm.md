@@ -1,4 +1,4 @@
-[zapsem, `!;`, %zpsm](#zpsm)
+zapsem, `!;`, %zpsm
 ============================
 
 `[type noun]` pair

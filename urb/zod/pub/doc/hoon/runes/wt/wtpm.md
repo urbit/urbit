@@ -1,4 +1,4 @@
-[wutpam, `?&`, %wtpm](#wtpm)
+wutpam, `?&`, %wtpm
 ============================
 
 AND

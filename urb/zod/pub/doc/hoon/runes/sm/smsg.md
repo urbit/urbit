@@ -1,4 +1,4 @@
-[semsig, `;~`, %smsg](#smsg)
+semsig, `;~`, %smsg
 ============================
 
 Monad composer

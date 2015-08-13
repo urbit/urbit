@@ -1,4 +1,4 @@
-[bucpam `$&` %bcpm](#bcpm)
+bucpam `$&` %bcpm
 ==========================
 
 Pair / tag

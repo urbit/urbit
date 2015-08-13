@@ -1,4 +1,4 @@
-[dotzaz, %dtzz](#dtzz)
+dotzaz, %dtzz
 ======================
 
 Cube

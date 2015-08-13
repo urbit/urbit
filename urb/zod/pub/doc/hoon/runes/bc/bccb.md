@@ -1,4 +1,4 @@
-[buccab `$_` %bccb](#bccb)
+buccab `$_` %bccb
 ==========================
 
 Default value

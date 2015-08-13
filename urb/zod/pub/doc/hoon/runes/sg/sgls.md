@@ -1,4 +1,4 @@
-[siglus, `~+`, %sgls](#sgls)
+siglus, `~+`, %sgls
 ============================
 
 Memoize

@@ -1,4 +1,4 @@
-[tisdot, `=.`, %tsdt](#tsdt)
+tisdot, `=.`, %tsdt
 ============================
 
 Single change subject

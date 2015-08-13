@@ -1,4 +1,4 @@
-[sigzap, `~!`, %sgzp](#sgzp)
+sigzap, `~!`, %sgzp
 ============================
 
 [Short description]

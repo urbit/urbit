@@ -1,4 +1,4 @@
-[wutgal, `?<`, %wtgl](#wtgl)
+wutgal, `?<`, %wtgl
 ============================
 
 Assert no
@@ -9,7 +9,7 @@ Assert no
 See also
 --------
 
-[wutgar, `?>`, %wtgr](#wtgr)
+wutgar, `?>`, %wtgr
 ============================
 
 Produces

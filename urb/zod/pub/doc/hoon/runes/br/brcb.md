@@ -1,4 +1,4 @@
-[barcab, `|_`, %brcb](#brcb)
+barcab, `|_`, %brcb
 ============================
 
 Door: core with sample

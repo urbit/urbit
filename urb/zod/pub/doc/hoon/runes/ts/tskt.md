@@ -1,4 +1,4 @@
-[tisket, `=^`, %tskt](#tskt)
+tisket, `=^`, %tskt
 ============================
 
 [Short description]

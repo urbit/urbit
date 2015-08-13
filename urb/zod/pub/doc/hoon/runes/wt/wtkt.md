@@ -1,4 +1,4 @@
-[wutket, `?^`, %wtkt](#wtkt)
+wutket, `?^`, %wtkt
 ============================
 
 Is bunt, inverse
