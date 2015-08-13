@@ -1,4 +1,4 @@
-[barhep, `|-`, %brhp](#brhp)
+barhep, `|-`, %brhp
 ============================
 
 Kicked trap
@@ -14,7 +14,7 @@ commonly used for loops or recursion.
 See also
 --------
 
-[bardot, `|.`, %brdt](#brdt)
+bardot, `|.`, %brdt
 
 Produces
 --------

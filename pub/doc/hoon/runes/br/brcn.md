@@ -1,4 +1,4 @@
-[barcen, `|%`, %brcn](#brcn)
+barcen, `|%`, %brcn
 ============================
 
 Build Core

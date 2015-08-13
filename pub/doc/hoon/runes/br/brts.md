@@ -1,4 +1,4 @@
-[bartis, `|=`, %brts](#brts)
+bartis, `|=`, %brts
 ============================
 
 Dry gate
@@ -15,7 +15,7 @@ sample tile.
 See also
 --------
 
-[bartar, `|*`, %brtr](#brtr)
+bartar, `|*`, %brtr
 ============================
 
 Produces

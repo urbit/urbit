@@ -1,4 +1,4 @@
-[ketsig, `^~`, %ktsg](#ktsg)
+ketsig, `^~`, %ktsg
 ============================
 
 Compile statically

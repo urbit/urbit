@@ -1,4 +1,4 @@
-[semcen, `;%`](#smcn)
+semcen, `;%`
 =====================
 
 `++sail` list

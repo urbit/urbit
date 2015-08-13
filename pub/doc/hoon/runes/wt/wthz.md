@@ -1,4 +1,4 @@
-[wuthaz, %wthz](#wthz)
+wuthaz, %wthz
 ======================
 
 [Short description]

@@ -1,4 +1,4 @@
-[tissig, `=~`, %tssg](#tssg)
+tissig, `=~`, %tssg
 ============================
 
 Compose list

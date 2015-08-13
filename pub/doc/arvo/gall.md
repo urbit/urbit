@@ -30,7 +30,7 @@ Cards
 `%gall` accepts the following cards. The first three are the most
 commonly used, while the others are primarily used internally.
 
-[`%mess`](#mess)
+`%mess`
 ================
 
 Sends a message to an app. This will result in a call to the app's
@@ -39,7 +39,7 @@ succeeded or a `%mean` if not.
 
 ------------------------------------------------------------------------
 
-[`%show`](#show)
+`%show`
 ================
 
 Subscribes to a stream from an app. This will result in a call to the
@@ -53,7 +53,7 @@ more responses will be received along this stream.
 
 ------------------------------------------------------------------------
 
-[`%nuke`](#nuke)
+`%nuke`
 ================
 
 Unsubscribes the current duct from its stream. This receives a response
@@ -62,7 +62,7 @@ not imply that the current duct was in fact subscribed to any stream.
 
 ------------------------------------------------------------------------
 
-[`%init`](#init)
+`%init`
 ================
 
 Initializes a ship's apps. This should be called exactly once for each
@@ -70,7 +70,7 @@ ship on the pier. This produces no moves in response.
 
 ------------------------------------------------------------------------
 
-[`%sire`](#sire)
+`%sire`
 ================
 
 Instantiates a child app. The app will be at path `[p parent-path]`, and
@@ -79,7 +79,7 @@ when the child dies.
 
 ------------------------------------------------------------------------
 
-[`%rote`](#rote)
+`%rote`
 ================
 
 Signifies a remote request from ames. `r` should be of type `rook`. This
@@ -92,7 +92,7 @@ ack. A logical response comes by passing a `%roth` card.
 
 ------------------------------------------------------------------------
 
-[`%roth`](#roth)
+`%roth`
 ================
 
 Gives the response received from a remote request. `r` should be of type
@@ -104,7 +104,7 @@ one-way messages.
 
 ------------------------------------------------------------------------
 
-[`%wipe`](#wipe)
+`%wipe`
 ================
 
 Wipes the given app from memory. This is generally considered a hack,
@@ -115,7 +115,7 @@ an app. This gives no response.
 
 ------------------------------------------------------------------------
 
-[`%cide`](#cide)
+`%cide`
 ================
 
 Kills an app and all its children. Even though it's not technically a

@@ -1,4 +1,4 @@
-[tisgar, `=>`, %tsgr](#tsgr)
+tisgar, `=>`, %tsgr
 ============================
 
 Product as subject
@@ -10,7 +10,7 @@ and `=>` makes for more readable code.
 See also
 --------
 
-[tisgal, `=<`, %tsgl](#tsgl)
+tisgal, `=<`, %tsgl
 ============================
 
 Produces

@@ -1,4 +1,4 @@
-[haxgar, `#>`, %hxgr](#hxgr)
+haxgar, `#>`, %hxgr
 ============================
 
 Prettyprint `++tank`

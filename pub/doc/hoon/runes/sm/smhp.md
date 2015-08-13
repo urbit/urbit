@@ -1,4 +1,4 @@
-[semhep, `;-`](#smhp)
+semhep, `;-`
 =====================
 
 `++sail` tape

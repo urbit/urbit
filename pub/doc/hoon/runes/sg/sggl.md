@@ -1,4 +1,4 @@
-[siggal, `~<`, %sggl](#sggl)
+siggal, `~<`, %sggl
 ============================
 
 Hint to product

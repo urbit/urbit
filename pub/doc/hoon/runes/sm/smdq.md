@@ -1,4 +1,4 @@
-[semdoq, %smdq](#smdq)
+semdoq, %smdq
 ======================
 
 String

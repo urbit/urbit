@@ -176,7 +176,7 @@
     ?^  had
       =.  lim  [ele lim]
       (lose "unclosed {<u.had>}")
-    (lose "close {<u.tal>}")
+    (lose "unopened {<u.tal>}")
   ::
   ++  lose  |=(a=tape [[;lost:"{a}"]~ lim])
   ++  chomp
@@ -218,11 +218,13 @@
         :: ;img@"{p.p.b}";
       ?~  q.p.b  res
       res(a.g (welp a.g.res title/u.q.p.b ~))
-    %+  into-inner  (sung q.b)
+    =+  kid=(sung q.b)
+    %+  into-inner  kid
     ?-  p.b
       [%emph ?]  ?.(p.p.b ;em; ;strong;)
       [%delt ~]  ;del;
       [%link ^]  =+  url=(urly p.p.b)
+                 =.  url  ?^(url url "#{(sanitize kid)}")
                  ?~  q.p.b  ;a/"{url}";
                  ;a/"{url}"(title u.q.p.b);
     ==

@@ -1,4 +1,4 @@
-[colfas, `:/`, %clfs](#clfs)
+colfas, `:/`, %clfs
 ============================
 
 Internal interpolation
@@ -9,7 +9,7 @@ i.e., `[0 [0 p 0] 0]`.
 See also
 --------
 
-[`++manx`]() \#[semdoq, %smdq](#smdq)
+[`++manx`]() [`%smdq`](#smdq)
 
 Produces
 --------

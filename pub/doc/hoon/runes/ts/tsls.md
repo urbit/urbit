@@ -1,4 +1,4 @@
-[tislus, `=+`, %tsls](#tsls)
+tislus, `=+`, %tsls
 ============================
 
 Push on
@@ -10,7 +10,7 @@ and `=+` makes for more readable code.
 See also
 --------
 
-[tishep, `=-`, %tshp](#tshp)
+tishep, `=-`, %tshp
 ============================
 
 Produces

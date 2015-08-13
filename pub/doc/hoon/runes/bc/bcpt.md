@@ -1,4 +1,4 @@
-[bucpat `$@` %bcpt](#bcpt)
+bucpat `$@` %bcpt
 ==========================
 
 Wing to tile

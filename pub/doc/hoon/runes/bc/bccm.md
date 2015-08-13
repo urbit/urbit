@@ -1,4 +1,4 @@
-[buccom `$,` %bccm](#bccm)
+buccom `$,` %bccm
 ==========================
 
 Normalizing gate, `%clam`

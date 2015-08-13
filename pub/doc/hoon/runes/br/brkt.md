@@ -1,4 +1,4 @@
-[barket, `|^`, %brkt](#brkt)
+barket, `|^`, %brkt
 ============================
 
 Kicked book
@@ -13,7 +13,7 @@ arms.
 See also
 --------
 
-[barhep, `|-`, %brhp](#brhp) [barcab, `|_`, %brcb](#brcb)
+barhep, `|-`, %brhp](#brhp) [barcab, `|_`, %brcb
 
 Produces
 --------

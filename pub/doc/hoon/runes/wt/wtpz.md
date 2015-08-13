@@ -1,4 +1,4 @@
-[wutpaz, %wtpz](#wtpz)
+wutpaz, %wtpz
 ======================
 
 [`++tiki`]() version of [`%wtpt`]()

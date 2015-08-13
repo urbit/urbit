@@ -1,4 +1,4 @@
-[semlus, `;+`](#smls)
+semlus, `;+`
 =====================
 
 `++sail` manx

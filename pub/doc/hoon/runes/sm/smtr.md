@@ -1,4 +1,4 @@
-[semtar, `;*`](#smtr)
+semtar, `;*`
 =====================
 
 `++sail` list `++manx`

@@ -1,4 +1,4 @@
-[zapfas, `!/`, %zpfs](#zpfs)
+zapfas, `!/`, %zpfs
 ============================
 
 Report as error

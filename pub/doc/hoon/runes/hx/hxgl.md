@@ -1,4 +1,4 @@
-[haxgal, `#<`, %hxgl](#hxgl)
+haxgal, `#<`, %hxgl
 ============================
 
 Prettyprint `++tape`

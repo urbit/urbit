@@ -1,4 +1,4 @@
-[colket, `:^`, %clkt](#clkt)
+colket, `:^`, %clkt
 ============================
 
 Tuple of four

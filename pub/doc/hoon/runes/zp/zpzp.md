@@ -1,4 +1,4 @@
-[zapzap, `!!`, %zpzp](#zpzp)
+zapzap, `!!`, %zpzp
 ============================
 
 Crash

@@ -1,4 +1,4 @@
-[wutpat, `?@`, %wtpt](#wtpt)
+wutpat, `?@`, %wtpt
 ============================
 
 If atom

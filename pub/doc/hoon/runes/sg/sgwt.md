@@ -1,4 +1,4 @@
-[sigwut, `~?`, %sgwt](#sgwt)
+sigwut, `~?`, %sgwt
 ============================
 
 Conditional printf

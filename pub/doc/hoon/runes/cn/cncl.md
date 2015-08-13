@@ -1,4 +1,4 @@
-[cencol, `%:`, %cncl](#cncl)
+cencol, `%:`, %cncl
 ============================
 
 Slam, one argument

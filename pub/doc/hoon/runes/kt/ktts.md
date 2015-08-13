@@ -1,4 +1,4 @@
-[kettis, `^=`, %ktts](#ktts)
+kettis, `^=`, %ktts
 ============================
 
 Wrap

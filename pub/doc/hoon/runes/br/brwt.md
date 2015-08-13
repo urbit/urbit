@@ -1,4 +1,4 @@
-[barwut, `|?`, %brwt](#brwt)
+barwut, `|?`, %brwt
 ============================
 
 `%lead` trap

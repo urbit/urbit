@@ -1,4 +1,4 @@
-[wutkaz, %wtkz](#wtkz)
+wutkaz, %wtkz
 ======================
 
 [`++tiki`]() version of [`%wtkt`]()

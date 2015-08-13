@@ -1,4 +1,4 @@
-[zapgar, `!>`, %zpgr](#zpgr)
+zapgar, `!>`, %zpgr
 ============================
 
 `++vase` with value

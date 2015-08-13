@@ -1,4 +1,4 @@
-[ketdot, `^.`, %ktdt](#ktdt)
+ketdot, `^.`, %ktdt
 ============================
 
 Cast to product type

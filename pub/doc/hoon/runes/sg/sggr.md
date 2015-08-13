@@ -1,4 +1,4 @@
-[siggar, `~>`, %sggr](#sggr)
+siggar, `~>`, %sggr
 ============================
 
 Hint

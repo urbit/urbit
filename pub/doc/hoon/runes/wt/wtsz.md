@@ -1,4 +1,4 @@
-[wutsaz, %wtsz](#wtsz)
+wutsaz, %wtsz
 ======================
 
 [`++tiki`]() version of [`%wtsg`]()

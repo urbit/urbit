@@ -1,4 +1,4 @@
-[buczap `$!` %bczp](#bczp)
+buczap `$!` %bczp
 ==========================
 
 Axil bunt

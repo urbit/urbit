@@ -1,4 +1,4 @@
-[ketpam, `^&`, %ktpm](#ktpm)
+ketpam, `^&`, %ktpm
 ============================
 
 Convert `%gold` to `%zinc`
@@ -9,7 +9,7 @@ At present, `%zinc` cores are not commonly used.
 See also
 --------
 
-[ketbar, `^|`, %ktbr](#ktbr)
+ketbar, `^|`, %ktbr
 ============================
 
 Produces

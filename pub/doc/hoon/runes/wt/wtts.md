@@ -1,4 +1,4 @@
-[wuttis, `?=`, %wtts](#wtts)
+wuttis, `?=`, %wtts
 ============================
 
 Is in tile

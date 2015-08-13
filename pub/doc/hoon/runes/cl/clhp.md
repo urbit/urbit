@@ -1,4 +1,4 @@
-[colhep, `:-`, %clhp](#clhp)
+colhep, `:-`, %clhp
 ============================
 
 Cell

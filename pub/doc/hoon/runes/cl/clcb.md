@@ -1,4 +1,4 @@
-[colcab, `:_`, %clcb](#clcb)
+colcab, `:_`, %clcb
 ============================
 
 Cell, backwards
