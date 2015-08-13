@@ -12,6 +12,8 @@ find documentation on each individual category, follow these links:
 
 <list></list>
 
+<search/>
+
 </div>
 
 ------------------------------------------------------------------------
