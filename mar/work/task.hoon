@@ -69,6 +69,7 @@
 ++  grow
   |%
   ++  elem  ;pre: {(zing `wall`(turn (wash 0^120 >taz<) |=(a=tape ['\0a' a])))}
+  ++  mime  [/text/x-task (taco (role txt))]
   ++  txt
     =+  taz
     =+  due=?~(due-date ~ ~[' ' da/u.due-date])
