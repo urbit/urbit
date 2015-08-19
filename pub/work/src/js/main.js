@@ -117,21 +117,21 @@ module.exports = recl({
           contentEditable: true,
           onFocus: this._focus,
           onKeyDown: this._keyDown,
-          className: 'input'
+          className: 'input ib'
         }, this.props.item.title)
       ]), div({
         className: 'date ib top'
       }, [
         div({
           contentEditable: true,
-          className: 'input'
+          className: 'input ib'
         }, this.formatDate(this.props.item['date-created']))
       ]), div({
         className: 'tags ib top'
       }, [
         div({
           contentEditable: true,
-          className: 'input'
+          className: 'input ib'
         }, this.props.item.tags.join(" "))
       ]), div({
         className: 'expand ib',
@@ -150,7 +150,7 @@ module.exports = recl({
         className: "description"
       }, [
         textarea({
-          className: 'input'
+          className: 'input ib'
         }, this.props.item.description)
       ]), div({
         className: "hr"
@@ -159,14 +159,38 @@ module.exports = recl({
       }, [
         div({
           className: "comments"
-        }, this.props.item.discussion.map(function(slug) {
-          return div({
-            className: 'slug'
-          }, slug);
-        })), div({
-          contentEditable: true,
-          className: 'input comment'
-        }, "")
+        }, this.props.item.discussion.map((function(_this) {
+          return function(slug) {
+            return div({
+              className: 'comment'
+            }, [
+              div({
+                className: 'hr2'
+              }, ""), div({
+                className: 'ship ib'
+              }, slug.ship), div({
+                className: 'date ib'
+              }, _this.formatDate(slug.date)), div({
+                className: 'body'
+              }, slug.body)
+            ]);
+          };
+        })(this))), div({
+          className: 'new comment'
+        }, [
+          div({
+            className: 'hr2'
+          }, ""), div({
+            className: 'ship ib'
+          }, "TALSUR-TODRES"), div({
+            className: 'date ib'
+          }, this.formatDate(new Date())), div({
+            contentEditable: true,
+            className: 'input'
+          }, ""), div({
+            className: 'submit'
+          }, 'Post')
+        ])
       ])
     ]);
   }
@@ -408,7 +432,7 @@ $(function() {
 
 },{"./components/WorkComponent.coffee":4}],7:[function(require,module,exports){
 /**
- * Copyright (c) 2014, Facebook, Inc.
+ * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
@@ -786,7 +810,13 @@ _upcoming = [
     tags: ['food', 'office'],
     title: 'get groceries',
     description: 'first go out the door, \n then walk down the block.',
-    discussion: []
+    discussion: [
+      {
+        date: new Date('2015-8-18'),
+        ship: "wictuc-folrex",
+        body: "Seems like a great idea."
+      }
+    ]
   }, {
     id: 1,
     sort: 1,

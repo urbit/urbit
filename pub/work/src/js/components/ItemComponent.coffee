@@ -58,19 +58,19 @@ module.exports = recl
             contentEditable:true
             onFocus:@_focus
             onKeyDown:@_keyDown
-            className:'input'
+            className:'input ib'
           },@props.item.title)
         ])
         (div {className:'date ib top'}, [
           (div {
             contentEditable:true
-            className:'input'
+            className:'input ib'
             },@formatDate(@props.item['date-created']))
         ])
         (div {className:'tags ib top'},[
           (div {
             contentEditable:true
-            className:'input'
+            className:'input ib'
             },@props.item.tags.join(" "))
         ])
         (div {
@@ -82,17 +82,27 @@ module.exports = recl
         ])
         (div {className:"description"},[
           (textarea {
-            className:'input'
+            className:'input ib'
             },@props.item.description)
         ])
         (div {className:"hr"},"")
         (div {className:"discussion"},[
-          (div {className:"comments"}, @props.item.discussion.map (slug) ->
-            (div {className:'slug'}, slug)
+          (div {className:"comments"}, @props.item.discussion.map (slug) =>
+              (div {className:'comment'}, [
+                (div {className:'hr2'},"")
+                (div {className:'ship ib'}, slug.ship)
+                (div {className:'date ib'}, @formatDate(slug.date))
+                (div {className:'body'}, slug.body)
+              ])
           ),
-          (div {
-            contentEditable:true
-            className:'input comment'
-            },"")
+          (div {className:'new comment'},[
+              (div {className:'hr2'},"")
+              (div {className:'ship ib'}, "TALSUR-TODRES")
+              (div {className:'date ib'}, @formatDate(new Date()))
+              (div {
+                contentEditable:true,
+                className:'input'},"")
+              (div {className:'submit'},'Post')
+          ])
         ])
     ])
