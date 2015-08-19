@@ -1,0 +1,158 @@
+//
+// fonts first
+//
+
+@import 'fonts'
+
+html
+body
+  font-family "bau"
+  font-size 18px
+
+#c
+  position absolute
+  top 0rem
+  left 50%
+  width 34rem
+  margin-left -17rem
+  margin-bottom 12rem
+
+h1
+  font-weight 500
+  
+.items
+  margin-top 4rem
+
+.item
+  display block
+  max-height 3rem
+  margin-bottom 1.5rem
+  width 36rem
+  overflow hidden
+  background-color #fff
+  transition max-height 200ms linear
+
+.item .comments
+  height 0
+
+.item.expand
+  max-height 16rem
+  transition max-height 200ms linear
+
+.item .expand
+  margin-left 2rem
+  cursor pointer
+  transform-origin 3px 12px
+  transition transform 200ms linear
+
+.item.expand .expand
+  transform rotate(90deg)
+  transition transform 200ms linear
+
+.item .sort
+.item .title
+.item .date
+.item .tags
+.item .comment
+  line-height 2rem
+
+.item .sort
+.item .date
+  font-family 'scp'
+
+.item .audience
+.item .date
+  font-size .7rem
+
+.item .audience
+.item .sort
+  color #ccc
+
+.item .audience
+  text-transform uppercase
+  height 1rem
+  letter-spacing .07rem
+  margin-left 2.2rem
+
+.item .done
+  width .7rem
+  height .7rem
+  margin-top .5rem
+  border .2rem solid #ccc
+
+.item .sort
+  font-size .6rem
+  width 2rem
+  text-align center
+
+.item .title
+  min-width 16rem
+  margin-left .5rem
+
+.item .date
+  min-width 6rem
+
+.item .tags
+  min-width 6rem
+
+.item .description
+.item .discussion
+  line-height 2rem
+  margin .5rem 0 .5rem 2.3rem
+  
+.item .description textarea
+  min-width 20rem
+  min-height 6rem
+
+.item .hr
+  height .2rem
+  width 6rem
+  
+
+.item .comp
+  width 3rem
+  opacity 0
+
+.item .comp .a
+  display block
+  font-size .7rem
+  font-weight 500
+  line-height .9rem
+
+.item:hover .comp
+  opacity 1
+
+/* global */
+
+.top
+  vertical-align top
+  
+.ib
+  display inline-block
+
+.hidden
+  display none
+
+.a
+  display inline
+  cursor pointer
+  text-decoration underline
+
+.input
+  outline none
+  display inline-block
+  padding 0 .3rem
+  background-color #f9f9f9
+  border 0
+  font inherit
+  resize none
+  
+.input:focus
+  background-color #e6e6e6
+
+.caret.left
+  border-left 6px solid #000
+  border-top 6px solid transparent
+  border-right 6px solid transparent
+  border-bottom 6px solid transparent
+  margin-top .4rem

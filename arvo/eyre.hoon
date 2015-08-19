@@ -494,14 +494,14 @@
   ::
   ++  poke-test
     %+  titl  'Poke'
-    ;=  ;button(onclick "urb.testPoke('/~/to/hi/txt.json')"): Hi anonymous
-        ;button(onclick "urb.testPoke('/~/as/own/~/to/hi/txt.json')"): Hi
+    ;=  ;button(onclick "urb.testPoke('/~/to/hood/helm-hi.json')"): Hi anonymous
+        ;button(onclick "urb.testPoke('/~/as/own/~/to/hood/helm-hi.json')"): Hi
         ;pre:code#err;
         ;script@"/~/at/~/auth.js";
         ;script:'''
                 show = function(t){err.innerText = ":) " + Date.now() + "\n" + t}
                 urb.testPoke = function(url){
-                  req(url,{xyro:{test:true}}, show)
+                  req(url,{wire:"/",xyro:'test'}, show)
                 }
                 '''
     ==
@@ -748,7 +748,7 @@
         $(tee q.tee, q.q.p.q.sih (add-json jon q.q.cay))
       ::
           [%ha *]
-        :: ~&  e/ford/hen
+        %-  emule  |.  ^+  ..apex
         ?.  ?=(%& -.q.sih)
           (fail 404 p.sih p.q.sih)
         =*  cay  p.q.sih
