@@ -47,7 +47,7 @@
 ++  grab
   |%  ++  txt
     |=  a=wain  ^+  taz
-    =+  ~[id=%uw "_" date-created=%da " " version=%ud date-modified=%da]
+    =+  ~[id=%uv "_" date-created=%da " " version=%ud date-modified=%da]
     =^  b  a  (advance a ;~(plug (parse -) (punt (parse " " %da ~))))
     =+  [-.b `due-date=(unit ,@da)`+.b]
     =^  tags   a  (undent a ~(gas in *(set cord)))
@@ -73,7 +73,7 @@
   ++  txt
     =+  taz
     =+  due=?~(due-date ~ ~[' ' da/u.due-date])
-    :-  (rend uw/id '_' da/date-created ' ' ud/version da/date-modified due)
+    :-  (rend uv/id '_' da/date-created ' ' ud/version da/date-modified due)
     %+  welp  (indent (sort (~(tap in tags)) aor))
     :-  title
     :-  (rend p/owner '.' tas/status ~)
