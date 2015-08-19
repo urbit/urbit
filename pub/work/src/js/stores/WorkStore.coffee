@@ -74,6 +74,7 @@ WorkStore = assign {},EventEmitter.prototype,{
       owner:"~talsur-todres"
       status:null
       tags:[]
+      audience:[]
       title:''
       description:''
       discussion:[]
