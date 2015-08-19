@@ -14,7 +14,13 @@ _upcoming   = [
     tags:['food','office']
     title:'get groceries'
     description:'first go out the door, \n then walk down the block.'
-    discussion:[]
+    discussion:[
+      {
+        date:new Date('2015-8-18')
+        ship:"wictuc-folrex"
+        body:"Seems like a great idea."
+      }
+    ]
   ,
     id:1
     sort:1
