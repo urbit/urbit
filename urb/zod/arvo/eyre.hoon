@@ -748,7 +748,7 @@
         $(tee q.tee, q.q.p.q.sih (add-json jon q.q.cay))
       ::
           [%ha *]
-        :: ~&  e/ford/hen
+        %-  emule  |.  ^+  ..apex
         ?.  ?=(%& -.q.sih)
           (fail 404 p.sih p.q.sih)
         =*  cay  p.q.sih
