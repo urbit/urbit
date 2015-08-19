@@ -1,11 +1,12 @@
+/-    talk
 |%
 ++  client
-  $:  tasks=(map @uwH client-task)
-      sort=(list @uwH)
+  $:  tasks=(map ,@uwH client-task)
+      sort=(list ,@uwH)
   ==
 ++  client-task
   $:  task=task
-      audience=(set station)
+      audience=(set station:talk)
   ==
 ++  task
   $:  id=@uwH
@@ -14,8 +15,8 @@
       date-modified=@da
       owner=@p
       status=status
-      tags=(set @t)
-      due-date=@da
+      tags=(set ,@t)
+      due-date=(unit ,@da)
       title=@t
       description=@t
       discussion=(list comment)

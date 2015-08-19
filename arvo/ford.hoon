@@ -1047,7 +1047,10 @@
         ?.  ?=(%2 -.q.raf)
           (cope raf (flux |=(vax=vase (some [for vax]))))
         =-  ((slog 0 (flop `tang`-)) (flue cof))
-        ?^  t.pax  ~              ::  error on top-level marks
+        =+  (lent t.pax)
+        ?:  ?~  -  |                      ::  error if level above built
+            (~(has by res) (tack i.pax (scag (dec -) t.pax)))
+          ~
         :_(q.q.raf leaf/"! {<`mark`for>} build failed, ignoring.")
       --
     ::
