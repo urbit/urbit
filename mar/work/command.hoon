@@ -17,7 +17,7 @@
       |*  a=fist 
       %-  cu  :_  (ar a)
       ~(gas in *(set ,_(need *a)))
-    ++  id  (ci (slat %uw) so)
+    ++  id  (ci (slat %uv) so)
     ++  ship  (su fed:ag)
     ++  coma  (of new/task old/(ot id/id dif/uppd ~) sort/(ar id) ~)
     ++  task
@@ -50,7 +50,7 @@
   --
 --
 :: {new: {
-::   id:'0waoF.6Df9U.2-gc3.dXDP1',
+::   id:'0vaof.6df9u.2agc3.d0dp1',
 ::   date-created:1440011611215,
 ::   version:1,
 ::   date-modified:1440011611215,
