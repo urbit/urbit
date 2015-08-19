@@ -27,4 +27,26 @@
       body=@t
   ==
 ++  status  ?(%took %gave %left)
+++  command  
+  $%  [%new task]
+      [%old id=@uwH dif=update]
+      [%sort p=(list ,@uwH)]
+  ==
+++  update
+  $%  $:  %set
+  $%  [%due-date p=@da]
+      [%title p=@t]
+      [%description p=@t]
+      [%tags p=(set ,@t)]
+      [%done p=(unit ,@da)]
+      [%audience p=(set station:talk)]
+  ==  ==
+      $:  %add
+  $%  [%comment [@da @t]]
+  ==  ==
+      $:  %own
+  $%  [%announce ~]
+      [%claim ~]
+  ==  ==
+  ==
 --
