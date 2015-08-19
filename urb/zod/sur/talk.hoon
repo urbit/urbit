@@ -64,6 +64,7 @@
       [%lin p=? q=@t]                                   ::  no=@, text line
       [%mor p=(list speech)]                            ::  multiplex
       [%app p=@tas q=@t]                                ::  app message
+      [%tax p=duty]                                     ::
   ==                                                    ::
 ++  serial     ,@uvH                                    ::  unique identity
 ++  partner    (each station passport)                  ::  interlocutor
@@ -77,6 +78,45 @@
       [%text (list ,@t)]                                ::  text lines
       [%tank (list tank)]                               ::  tank list
   ==                                                    ::
+::  work stuff                                          ::
+++  duty                                                ::
+  $%  [%proclaim p=task]                                ::  create new task
+      $:  %update                                       ::  operate on task
+          id=@uvH                                       ::  which task
+          version=@u                                    ::  version
+          $=  meat                                      ::
+          $%  [%announce ~]                             ::  make available
+              [%release p=ship]                         ::  pass to new owner
+              [%accept ~]                               ::  accept pass
+              [%delete ~]                               ::  delete task
+              [%set-due-date p=@da]                     ::  set due date
+              [%set-tags p=(set ,@t)]                   ::  set tags
+              [%set-title p=@t]                         ::  set title
+              [%set-description p=@t]                   ::  set description
+              [%set-complete ~]                         ::  set complete
+              [%add-comment p=@t]                       ::  add comment
+          ==                                            ::
+      ==                                                ::
+  ==                                                    ::
+++  task                                                ::
+  $:  id=@uvH                                           ::
+      date-created=@da                                  ::
+      version=@u                                        ::
+      date-modified=@da                                 ::
+      owner=@p                                          ::
+      status=status                                     ::
+      tags=(set @t)                                     ::
+      date-due=@da                                      ::
+      title=@t                                          ::
+      description=@t                                    ::
+      discussion=(list comment)                         ::
+  ==                                                    ::
+++  comment                                             ::
+  $:  date=@da                                          ::
+      ship=@p                                           ::
+      body=@t                                           ::
+  ==                                                    ::
+++  status  ?(%announced %released %accepted)           ::
   ::  markdown
   ::  image
   ::  mime object

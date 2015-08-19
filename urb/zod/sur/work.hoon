@@ -26,7 +26,7 @@
       ship=@p
       body=@t
   ==
-++  status  ?(%took %gave %left)
+++  status  ?(%announced %released %accepted)
 ++  command  
   $%  [%new task]
       [%old id=@uvH dif=update]
