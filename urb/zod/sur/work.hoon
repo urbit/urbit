@@ -1,15 +1,15 @@
 /-    talk
 |%
 ++  client
-  $:  tasks=(map ,@uwH client-task)
-      sort=(list ,@uwH)
+  $:  tasks=(map ,@uvH client-task)
+      sort=(list ,@uvH)
   ==
 ++  client-task
   $:  task=task
       audience=(set station:talk)
   ==
 ++  task
-  $:  id=@uwH
+  $:  id=@uvH
       date-created=@da
       version=@u
       date-modified=@da
@@ -29,8 +29,8 @@
 ++  status  ?(%took %gave %left)
 ++  command  
   $%  [%new task]
-      [%old id=@uwH dif=update]
-      [%sort p=(list ,@uwH)]
+      [%old id=@uvH dif=update]
+      [%sort p=(list ,@uvH)]
   ==
 ++  update
   $%  $:  %set
