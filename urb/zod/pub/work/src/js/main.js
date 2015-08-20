@@ -123,6 +123,9 @@ module.exports = recl({
       txt = null;
     } else {
       switch (key) {
+        case 'owner':
+          txt = "~" + txt;
+          break;
         case 'audience':
           txt = txt.split(" ");
           break;
