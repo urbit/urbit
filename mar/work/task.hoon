@@ -49,15 +49,15 @@
     |=  a=wain  ^+  taz
     =+  ~[id=%uv "_" date-created=%da " " version=%ud date-modified=%da]
     =^  b  a  (advance a ;~(plug (parse -) (punt (parse " " %da ~))))
-    =+  [-.b `due-date=(unit ,@da)`+.b]
+    =+  [-.b `date-due=(unit ,@da)`+.b]
     =^  tags   a  (undent a ~(gas in *(set cord)))
     =^  title  a  ?~(a !! a)
     =^  b  a  (advance a (parse owner=%p "." status=%tas ~))
     ?>  ?=(status.task status.b)
     =+  b
     =^  description  a  (undent a role)
-    :*  id     date-created  version   date-modified
-        owner  status  tags  due-date  title  description
+    :*  id  date-created  version   date-modified  owner
+        status      tags  date-due  ~       title  description  ::  XX done
         |-  ^-  (list comment)
         ?:  =(~ a)  ~
         =^  b  a  (advance a (parse ship=%p " " date=%da ~))
@@ -72,7 +72,7 @@
   ++  mime  [/text/x-task (taco (role txt))]
   ++  txt
     =+  taz
-    =+  due=?~(due-date ~ ~[' ' da/u.due-date])
+    =+  due=?~(date-due ~ ~[' ' da/u.date-due])
     :-  (rend uv/id '_' da/date-created ' ' ud/version da/date-modified due)
     %+  welp  (indent (sort (~(tap in tags)) aor))
     :-  title
@@ -95,12 +95,13 @@
          description/[%s description]
       =<  discussion/[%a (turn discussion .)]
       |=(comment (jobe date/(jode date) ship/(jape <ship>) body/[%s body] ~))
-            due-date/?~(due-date ~ (jode u.due-date))
+            date-due/?~(date-due ~ (jode u.date-due))
+                done/?~(done ~ (jode u.done))
     ==
   --
 ++  grad  %txt
 --
-::  {id}_{date-created} {version}{date-modified}{|(" {due-date}" ~)}
+::  {id}_{date-created} {version}{date-modified}{|(" {date-due}" ~)}
 ::    {tag1}
 ::    {tag2}
 ::    ...
