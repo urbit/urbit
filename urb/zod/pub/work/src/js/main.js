@@ -136,7 +136,7 @@ module.exports = recl({
     {
       filter: 'owned',
       key: 'owner',
-      title: 'Owned by:'
+      title: 'Owner:'
     }, {
       filter: 'tag',
       key: 'tags',
@@ -307,14 +307,22 @@ module.exports = recl({
     id = $(e.target).closest('.item').attr('data-id');
     return WorkActions.changeItem(id, 'done', true);
   },
+  _claim: function(e) {},
+  _release: function(e) {},
   formatDate: function(d) {
     if (d === null) {
       return "";
     }
     return "~" + (d.getFullYear()) + "." + (d.getMonth() + 1) + "." + (d.getDate());
   },
+  formatOwner: function(o) {
+    if (o === null) {
+      return "";
+    }
+    return o.replace(/\~/g, "");
+  },
   formatAudience: function(a) {
-    return a.join(" ").replace(/\~/g, "");
+    return this.formatOwner(a.join(" "));
   },
   getInitialState: function() {
     return {
@@ -322,11 +330,29 @@ module.exports = recl({
     };
   },
   render: function() {
-    var itemClass;
+    var itemClass, k, owner, ref1;
     itemClass = 'item';
     if (this.state.expand) {
       itemClass += ' expand';
     }
+    owner = [];
+    if (((ref1 = this.props.item.owner) != null ? ref1.slice(1) : void 0) === window.urb.ship) {
+      k = 'mine';
+      owner.push(div({
+        className: 'release a',
+        onClick: this._release
+      }, 'Release'));
+    }
+    if (this.props.item.owner === null) {
+      k = 'open';
+      owner.push(div({
+        className: 'claim a',
+        onClick: this._claim
+      }, "Claim"));
+    }
+    owner.unshift(div({
+      className: k
+    }, this.formatOwner(this.props.item.owner)));
     return div({
       className: itemClass,
       draggable: true,
@@ -336,13 +362,15 @@ module.exports = recl({
       onDragEnd: this._dragEnd
     }, [
       div({
-        className: 'audience field',
+        className: 'owner ib',
+        'data-key': 'owner'
+      }, owner), div({
+        className: 'audience field ib',
         'data-key': 'audience'
       }, [
         div({
           contentEditable: true,
-          className: 'input ib',
-          onKeyUp: this._keyUp
+          className: 'input ib'
         }, this.formatAudience(this.props.item.audience))
       ]), div({
         className: 'sort ib top'
@@ -721,20 +749,22 @@ module.exports = recl({
 
 
 },{}],7:[function(require,module,exports){
-var ListComponent, div, input, rece, recl, ref, textarea;
+var ListComponent, div, h1, rece, recl, ref;
 
 recl = React.createClass;
 
 rece = React.createElement;
 
-ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = ref[0], input = ref[1], textarea = ref[2];
+ref = [React.DOM.div, React.DOM.h1], div = ref[0], h1 = ref[1];
 
 ListComponent = require('./ListComponent.coffee');
 
 module.exports = recl({
   render: function() {
     return div({}, [
-      rece(ListComponent, {
+      h1({
+        className: 'leader'
+      }, "Work"), rece(ListComponent, {
         list: 'upcoming'
       })
     ]);
@@ -1170,7 +1200,7 @@ _list = [
     "date-created": new Date('2015-8-18'),
     "date-modified": new Date('2015-8-18'),
     "date-due": new Date('2015-8-18'),
-    owner: "~talsur-todres",
+    owner: "~zod",
     audience: ["~doznec/urbit-meta", "~doznec/tlon"],
     status: "working",
     tags: ['food', 'office'],
@@ -1189,7 +1219,7 @@ _list = [
     "date-created": new Date('2015-8-18'),
     "date-modified": new Date('2015-8-18'),
     "date-due": null,
-    owner: "~talsur-todres",
+    owner: null,
     audience: ["~doznec/tlon"],
     status: "working",
     tags: ['home', 'office'],

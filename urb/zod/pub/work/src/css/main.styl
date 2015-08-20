@@ -23,11 +23,18 @@ button
 h1
   font-weight 500
 
+h1.leader:after
+  content "—"
+  margin-left .6rem
+
 .ctrl
   margin-top 2rem
   
   h1
     font-size 1rem
+  
+  .sorts
+    margin-left -9px
     
   .sort label
   .filter label
@@ -56,6 +63,7 @@ h1
   
 .items
   margin-top 2rem
+  margin-left -2rem
 
 .item
   display block
@@ -91,15 +99,16 @@ h1
   .date
     font-family 'scp'
 
+  .owner
   .audience
   .date
   .ship
     font-size .7rem
 
-  .audience
   .sort
     color #ccc
 
+  .owner
   .audience
   .date
   .ship
@@ -107,8 +116,26 @@ h1
     height 1rem
     letter-spacing .07rem
   
+  .owner
+    width 7rem
+    margin-left 2rem
+  
+
+  .release
+    display none
+  
+  &:hover .release
+    display inline-block
+    
+  &:hover .mine
+    display none
+
   .audience
     margin-left 2.2rem
+    width 24rem
+  
+  .audience .input
+    background-color transparent
 
   .done
     width .7rem

@@ -8,7 +8,7 @@ _list   = [
     "date-created":new Date('2015-8-18')
     "date-modified":new Date('2015-8-18')
     "date-due":new Date('2015-8-18')
-    owner:"~talsur-todres"
+    owner:"~zod"
     audience:["~doznec/urbit-meta","~doznec/tlon"]
     status:"working"
     tags:['food','office']
@@ -27,7 +27,7 @@ _list   = [
     "date-created":new Date('2015-8-18')
     "date-modified":new Date('2015-8-18')
     "date-due":null
-    owner:"~talsur-todres"
+    owner:null
     audience:["~doznec/tlon"]
     status:"working"
     tags:['home','office']

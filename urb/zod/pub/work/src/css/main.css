@@ -101,11 +101,18 @@ button {
 h1 {
   font-weight: 500;
 }
+h1.leader:after {
+  content: "—";
+  margin-left: 0.6rem;
+}
 .ctrl {
   margin-top: 2rem;
 }
 .ctrl h1 {
   font-size: 1rem;
+}
+.ctrl .sorts {
+  margin-left: -9px;
 }
 .ctrl .sort label,
 .ctrl .filter label {
@@ -133,6 +140,7 @@ h1 {
 }
 .items {
   margin-top: 2rem;
+  margin-left: -2rem;
 }
 .item {
   display: block;
@@ -168,15 +176,16 @@ h1 {
 .item .date {
   font-family: 'scp';
 }
+.item .owner,
 .item .audience,
 .item .date,
 .item .ship {
   font-size: 0.7rem;
 }
-.item .audience,
 .item .sort {
   color: #ccc;
 }
+.item .owner,
 .item .audience,
 .item .date,
 .item .ship {
@@ -184,8 +193,25 @@ h1 {
   height: 1rem;
   letter-spacing: 0.07rem;
 }
+.item .owner {
+  width: 7rem;
+  margin-left: 2rem;
+}
+.item .release {
+  display: none;
+}
+.item:hover .release {
+  display: inline-block;
+}
+.item:hover .mine {
+  display: none;
+}
 .item .audience {
   margin-left: 2.2rem;
+  width: 24rem;
+}
+.item .audience .input {
+  background-color: transparent;
 }
 .item .done {
   width: 0.7rem;
