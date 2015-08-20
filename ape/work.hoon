@@ -1,4 +1,4 @@
-::  not implemented:  set audience, delete
+::  not implemented:  set audience
 ::
 ::::
   ::
@@ -86,7 +86,6 @@
   ++  send-update       |*(* (send %update id +<))
   ++  release           |=([vers=@u her=@p] (send-update vers %release her))
   ++  accept            |=(vers=@u (send-update vers %accept ~))
-  ++  delete            |=(vers=@u (send-update vers %delete ~))  ::  XX  unused
   ++  process-update
     |=  [vers=@u up=update]
     ^+  +>
@@ -206,7 +205,6 @@
         %announce         task.u.tax(status %announced)
         %release          task.u.tax(owner her.meat.action, status %released)
         %accept           task.u.tax(status %accepted)
-        %delete           ~|(%not-implemented !!)
         %set-date-due     task.u.tax(date-due wen.meat.action)
         %set-tags         task.u.tax(tags tag.meat.action)
         %set-title        task.u.tax(title til.meat.action)
