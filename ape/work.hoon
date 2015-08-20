@@ -84,36 +84,28 @@
   ::
   ++  create            %+  send  %create
                         tax(date-created now, version 0, date-modified now)
-  ++  send-update       |*(* (send %update id +(version) +<))
-  ++  announce          (send-update %announce ~)
-  ++  release           (cury send-update %release)
-  ++  accept            (send-update %accept ~)
-  ++  delete            (send-update %delete ~)
-  ++  set-date-due      (cury send-update %set-date-due)
-  ++  set-tags          (cury send-update %set-tags)
-  ++  set-title         (cury send-update %set-title)
-  ++  set-description   (cury send-update %set-description)
-  ++  set-done          (cury send-update %set-done)
-  ++  add-comment       (cury send-update %add-comment)
-  ++  set-audience      ~|(%not-implemented !!)
+  ++  send-update       |*(* (send %update id +<))
+  ++  release           |=([vers=@u her=@p] (send-update vers %release her))
+  ++  accept            |=(vers=@u (send-update vers %accept ~))
+  ++  delete            |=(vers=@u (send-update vers %delete ~))  ::  XX  unused
   ++  process-update
-    |=  up=update
+    |=  [vers=@u up=update]
     ^+  +>
     ?-    -.up
-        %add  ?>(?=(%comment +<.up) (add-comment +>.up))
+        %add  ?>(?=(%comment +<.up) (send-update vers %add-comment +>.up))
         %own
       ?-  +<.up
-        %announce  announce
+        %announce  (send-update vers %announce ~)
         %claim     claim
       ==
         %set
       ?-  +<.up
-        %date-due     (set-date-due +>.up)
-        %title        (set-title +>.up)
-        %description  (set-description +>.up)
-        %tags         (set-tags +>.up)
-        %done         (set-done +>.up)
-        %audience     ~|(%not-implemented !!) ::(set-audience +>.up)
+        %date-due     (send-update vers %set-date-due +>.up)
+        %title        (send-update vers %set-title +>.up)
+        %description  (send-update vers %set-description +>.up)
+        %tags         (send-update vers %set-tags +>.up)
+        %done         (send-update vers %set-done +>.up)
+        %audience     ~|(%not-implemented !!)
       ==
     ==
   --
@@ -149,6 +141,14 @@
               existing-task=existing-task
           ==
       [~ +>.$]
+    ?.  =(0 version.tax.action)
+      ~&  :*  %new-task-version-not-zero
+              her=her
+              from=from
+              new-task=tax.action
+              existing-task=existing-task
+          ==
+      [~ +>.$]
     =.  tasks
       %^  ~(put by tasks)  id.tax.action  |  
       :_  tax.action
@@ -166,7 +166,7 @@
               task=tax
           ==
       [~ +>.$]
-    abet:(release:(at (~(got by tasks) id.action)) her)
+    abet:(release:(at (~(got by tasks) id.action)) +(version.task.tax) her)
   ::
       %update
     =+  tax=(~(get by tasks) id.action)
@@ -201,6 +201,7 @@
                 tax=tax
             ==
         task.u.tax
+      =.  version.task.u.tax        version.action
       =.  date-modified.task.u.tax  when
       ?-    -.meat.action
         %announce         task.u.tax(status %announced)
@@ -220,7 +221,7 @@
     ?:  ?&  =([%release our] meat.action)
             claiming.u.tax
         ==
-      abet:accept:(at (~(got by tasks) id.action))
+      abet:(accept:(at (~(got by tasks) id.action)) +(+(version.task.u.tax)))
     [~ +>.$]
   ==
 ::
@@ -256,7 +257,8 @@
   =^  mof  +>.$
     ?-  -.cod
       %new    abut:create:(at [| - +]:+.cod)
-      %old    abet:(process-update:(at (~(got by tasks) id.cod)) dif.cod)
+      %old    =+  (at (~(got by tasks) id.cod))
+              abet:(process-update:- version.cod dif.cod)
       %sort   ~|(%not-implemented !!)
     ==
   [(welp mos mof) +>.$]
