@@ -40,7 +40,7 @@
       :_  ~
       ^-  move
       :*  ost  %poke
-          /sending/(scot %uv id)/(scot %ud version)
+          /sending/(scot %uw id)/(scot %ud version)
           [our %talk]
           %talk-command
           ^-  command:talk
@@ -61,7 +61,7 @@
       :_  ~
       ^-  move
       :*  ost  %poke
-          /claiming/(scot %uv id)
+          /claiming/(scot %uw id)
           [our %talk]
           %talk-command
           ^-  command:talk
@@ -121,40 +121,24 @@
   ^-  [mos=(list move) con=_+>.$]
   ?-    -.action
       %create                         ::  XX  should verify ownership
-    =+  existing-task=(~(get by tasks) id.tax.action)
+    =+  existing-task=(~(get by tasks) id.p.action)
     ~?  ?&  ?=(^ existing-task)
-            !=(tax.action task.u.existing-task)
+            !=(p.action task.u.existing-task)
         ==
       :*  %new-task-with-old-id
           her=her
           from=from
-          new-task=tax.action
+          new-task=p.action
           existing-task=u.existing-task
       ==
-    ?.  |(=(her owner.tax.action) =(%released status.tax.action))
-      ~&  :*  %created-with-bad-owner
-              her=her
-              from=from
-              new-task=tax.action
-              existing-task=u.existing-task
-          ==
-      [~ +>.$]
     =.  tasks
-      %^  ~(put by tasks)  id.tax.action  tax.action
+      %^  ~(put by tasks)  id.p.action  p.action
       ?~  existing-task  from
       (~(uni in audience.u.existing-task) from)
-    =.  sort  ?~(existing-task sort [id.action sort])
+    =.  sort  ?~(existing-task sort [id.p.action sort])
     [~ +>.$]
   ::
       %claim
-    =+  tax=(~(got by tasks) id.action)
-    ?.  &(=(our owner.tax) =(%announced status.tax))
-      ~&  :*  %bad-claim
-              her=her
-              from=from
-              task=tax
-          ==
-      [~ +>.$]
     abet:(release:(at (~(got by tasks) id.action)) her)
   ::
       %update
