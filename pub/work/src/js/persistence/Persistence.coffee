@@ -1,4 +1,4 @@
-urb.appl = 'hood' # XX
+urb.appl = 'work'
 module.exports =
   put: (update,cb) -> urb.send(update,{mark:'work-command'},cb)
   get: (id,cb) ->

@@ -17,22 +17,50 @@
       |*  a=fist 
       %-  cu  :_  (ar a)
       ~(gas in *(set ,_(need *a)))
+    ++  ot
+      |*  a=(pole ,[@tas fist])
+      |=  b=json
+      %.  ((^ot a) b)
+      %+  slog  0
+      ?+  b  ~
+          [%o *] 
+        %+  murn  `(list ,[@tas fist])`a
+        |=  [c=term d=fist]  ^-  (unit tank)
+        =+  (~(get by p.b) c)
+        ?~  -  (some >[c (turn (~(tap by p.b)) head)]<)
+        =+  (d u)
+        ?~  -  (some >[c u]<)
+        ~
+      ==
+    ++  of
+      |*  a=(pole ,[@tas fist])
+      |=  b=json
+      %.  ((of:jo a) b)
+      %+  slog  0
+      ?+  b  ~
+          [%o *] 
+        %+  murn  `(list ,[@tas fist])`a
+        |=  [c=term d=fist]  ^-  (unit tank)
+        =+  (~(get by p.b) c)
+        ?~  -  ~
+        =+  (d u)
+        ?~  -  (some >[c u]<)
+        ~
+      ==
     ++  id  (ci (slat %uv) so)
     ++  ship  (su fed:ag)
-    ++  coma  (of new/task old/(ot id/id dif/uppd ~) sort/(ar id) ~)
+    ++  coma  (of new/new old/(ot id/id dif/uppd ~) sort/(ar id) ~)
+    ++  new  (ot task/task audience/audi ~)
     ++  task
-      %^    ot
-          :-  %task
-          %-  ot  :~
-            id/id           date-created/di
-            version/ni      date-modified/di
-            owner/ship      status/(ci (soft status) so)
-            tags/(as so)    date-due/(mu di)
-            done/(mu di)    title/so
-            description/so  discussion/(ar (ot date/di ship/ship body/so ~))
-          ==
-        audience/(as (ot ship/ship span/so ~))
-      ~
+      %-  ot  :~
+        id/id           date-created/di
+        version/ni      date-modified/di
+        owner/ship      status/(ci (soft status) so)
+        tags/(as so)    date-due/(mu di)
+        done/(mu di)    title/so
+        description/so  discussion/(ar (ot date/di ship/ship body/so ~))
+      ==
+    ++  audi  (as (ot ship/ship span/so ~))
     ++  uppd
       %-  of  :~
         own/(of announce/ul claim/ul ~)
@@ -44,7 +72,7 @@
           description/so
           tags/(as so)
           done/bo
-          audience/(as (ot ship/ship span/so ~))
+          audience/audi
         ==
       ==
     --
@@ -63,7 +91,7 @@
 ::   status:'gave',
 ::   tags:['tag'],
 ::   date-due:null,
-::   done:XX
+::   done:false,
 ::   title:'Test task',
 ::   description:'The converter owrks right?',
 ::   discussion:[{date:1440011611215,ship:'sondel',body:'hi'}]
