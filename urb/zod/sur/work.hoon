@@ -5,9 +5,9 @@
       sort=(list ,@uvH)
   ==
 ++  client-task
-  $:  task=task
+  $:  claiming=_|
       audience=(set station:talk)
-      claiming=_|
+      task=task
   ==
 ++  task
   $:  id=@uvH

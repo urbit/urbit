@@ -24,13 +24,13 @@
   ::
 |_  [bowl client connected=_|]
 ++  at
-  |=  [task audience=(set station:talk) claiming=?]
-  =*  tax  +<-
+  |=  [claiming=? audience=(set station:talk) task]
+  =*  tax  +<+>
   =|  moves=(list move)
   |%
   ++  abet
     ^-  [(list move) _+>.$]
-    [(flop moves) +>.$(tasks (~(put by tasks) id tax audience claiming))]
+    [(flop moves) +>.$(tasks (~(put by tasks) id +<.$))]
   ::
   ++  abut
     ^-  [(list move) _+>.$]
@@ -148,8 +148,8 @@
           ==
       [~ +>.$]
     =.  tasks
-      %^  ~(put by tasks)  id.tax.action  tax.action
-      :_  |
+      %^  ~(put by tasks)  id.tax.action  |  
+      :_  tax.action
       ?~  existing-task  from
       (~(uni in audience.u.existing-task) from)
     =.  sort  ?^(existing-task sort [id.tax.action sort])
@@ -185,35 +185,35 @@
       [~ +>.$]
     =.  tasks
       %^  ~(put by tasks)  id.action
-        ?:  ?&  ?=(?(%announce %release %accept) -.meat.action)
-                !=(her owner.task.u.tax)
-            ==
-          ~&  :*  %not-owner
-                  her=her
-                  from=from
-                  action=action
-                  tax=tax
-              ==
-          task.u.tax
-        ?-    -.meat.action
-          %announce         task.u.tax(status %announced)
-          %release          task.u.tax(owner her.meat.action, status %released)
-          %accept           task.u.tax(status %accepted)
-          %delete           ~|(%not-implemented !!)
-          %set-date-due     task.u.tax(date-due wen.meat.action)
-          %set-tags         task.u.tax(tags tag.meat.action)
-          %set-title        task.u.tax(title til.meat.action)
-          %set-description  task.u.tax(description des.meat.action)
-          %set-done         task.u.tax(done ?.(don.meat.action ~ `when))
-          %add-comment
-            %=  task.u.tax
-              discussion  [[when her com.meat.action] discussion.task.u.tax]
-            ==
-        ==
+        ?:  ?=(%release -.meat.action)
+          |
+        claiming.u.tax
       :-  (~(uni in audience.u.tax) from)
-      ?:  ?=(%release -.meat.action)
-        |
-      claiming.u.tax
+      ?:  ?&  ?=(?(%announce %release %accept) -.meat.action)
+              !=(her owner.task.u.tax)
+          ==
+        ~&  :*  %not-owner
+                her=her
+                from=from
+                action=action
+                tax=tax
+            ==
+        task.u.tax
+      ?-    -.meat.action
+        %announce         task.u.tax(status %announced)
+        %release          task.u.tax(owner her.meat.action, status %released)
+        %accept           task.u.tax(status %accepted)
+        %delete           ~|(%not-implemented !!)
+        %set-date-due     task.u.tax(date-due wen.meat.action)
+        %set-tags         task.u.tax(tags tag.meat.action)
+        %set-title        task.u.tax(title til.meat.action)
+        %set-description  task.u.tax(description des.meat.action)
+        %set-done         task.u.tax(done ?.(don.meat.action ~ `when))
+        %add-comment
+          %=  task.u.tax
+            discussion  [[when her com.meat.action] discussion.task.u.tax]
+          ==
+      ==
     ?:  ?&  =([%release our] meat.action)
             claiming.u.tax
         ==
@@ -252,7 +252,7 @@
     initialize
   =^  mof  +>.$
     ?-  -.cod
-      %new    abut:create:(at [+ - |]:+.cod)
+      %new    abut:create:(at [| - +]:+.cod)
       %old    abet:(process-update:(at (~(got by tasks) id.cod)) dif.cod)
       %sort   ~|(%not-implemented !!)
     ==
