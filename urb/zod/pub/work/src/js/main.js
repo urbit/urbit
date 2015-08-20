@@ -9,7 +9,7 @@ Persistence.get('test', console.log.bind(console));
 
 module.exports = {
   newItem: function(index, list) {
-    var item;
+    var item, station;
     item = {
       id: window.util.uuid32(),
       version: 0,
@@ -24,10 +24,11 @@ module.exports = {
       description: '',
       discussion: []
     };
+    station = window.util.talk.mainStationPath(window.urb.ship);
     Persistence.put({
       "new": {
         task: item,
-        audience: []
+        audience: [station]
       }
     });
     return Dispatcher.handleViewAction({
@@ -63,7 +64,7 @@ module.exports = {
         id: id,
         dif: {
           set: {
-            done: Date.now()
+            done: true
           }
         }
       }
@@ -1065,8 +1066,8 @@ _list = [
     "date-created": new Date('2015-8-18'),
     "date-modified": new Date('2015-8-18'),
     "date-due": null,
-    owner: "~talsur-todres",
-    audience: ["doznec/urbit-meta", "doznec/tlon"],
+    owner: "talsur-todres",
+    audience: ["~doznec/urbit-meta", "~doznec/tlon"],
     status: "working",
     tags: ['food', 'office'],
     title: 'get groceries',
@@ -1084,8 +1085,8 @@ _list = [
     "date-created": new Date('2015-8-18'),
     "date-modified": new Date('2015-8-18'),
     "date-due": null,
-    owner: "~talsur-todres",
-    audience: ["doznec/tlon"],
+    owner: "talsur-todres",
+    audience: ["~doznec/tlon"],
     status: "working",
     tags: ['home', 'office'],
     title: 'eat',
@@ -1097,8 +1098,8 @@ _list = [
     "date-created": new Date('2015-8-18'),
     "date-modified": new Date('2015-8-18'),
     "date-due": null,
-    owner: "~talsur-todres",
-    audience: ["doznec/tlon"],
+    owner: "talsur-todres",
+    audience: ["~doznec/tlon"],
     status: "working",
     tags: ['home'],
     title: 'sleep',
@@ -1268,6 +1269,25 @@ module.exports = {
       return $('body').addClass('scrolling');
     } else {
       return $('body').removeClass('scrolling');
+    }
+  },
+  talk: {
+    mainStations: ["court", "floor", "porch"],
+    mainStationPath: function(user) {
+      return "~" + user + "/" + (window.util.talk.mainStation(user));
+    },
+    mainStation: function(user) {
+      if (!user) {
+        user = window.urb.user;
+      }
+      switch (user.length) {
+        case 3:
+          return "court";
+        case 6:
+          return "floor";
+        case 13:
+          return "porch";
+      }
     }
   }
 };
