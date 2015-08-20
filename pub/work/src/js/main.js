@@ -1,14 +1,36 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var Dispatcher;
+var Dispatcher, Persistence;
 
 Dispatcher = require('../dispatcher/Dispatcher.coffee');
 
+Persistence = require('../persistence/Persistence.coffee');
+
+Persistence.get('test', console.log.bind(console));
+
 module.exports = {
   newItem: function(index, list) {
+    var item;
+    item = {
+      id: window.util.uuid32(),
+      version: 0,
+      "date-created": Date.now(),
+      "date-modifed": Date.now(),
+      "due-date": null,
+      owner: window.urb.ship,
+      status: 'gave',
+      tags: [],
+      title: '',
+      description: '',
+      discussion: []
+    };
+    Persistence.put({
+      "new": item
+    });
     return Dispatcher.handleViewAction({
       type: 'newItem',
+      list: list,
       index: index,
-      list: list
+      item: item
     });
   },
   swapItems: function(to, from, list) {
@@ -19,7 +41,17 @@ module.exports = {
       to: to
     });
   },
-  removeItem: function(index, list) {
+  removeItem: function(index, list, id) {
+    Persistence.put({
+      old: {
+        id: id,
+        dif: {
+          set: {
+            done: Date.now()
+          }
+        }
+      }
+    });
     return Dispatcher.handleViewAction({
       type: 'removeItem',
       index: index,
@@ -38,7 +70,7 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":5}],2:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":5,"../persistence/Persistence.coffee":11}],2:[function(require,module,exports){
 var WorkActions, div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -275,7 +307,7 @@ module.exports = recl({
               select: "end"
             });
           }
-          WorkActions.removeItem(this.state.selected, this.props.list);
+          WorkActions.removeItem(this.state.selected, this.props.list, this.state.list[this.state.selected].id);
           e.preventDefault();
         }
         break;
@@ -356,7 +388,7 @@ module.exports = recl({
 
 
 
-},{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":11,"./ItemComponent.coffee":2}],4:[function(require,module,exports){
+},{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":12,"./ItemComponent.coffee":2}],4:[function(require,module,exports){
 var ListComponent, div, input, rece, recl, ref, textarea;
 
 recl = React.createClass;
@@ -406,13 +438,15 @@ var WorkComponent;
 
 WorkComponent = require('./components/WorkComponent.coffee');
 
+window.util = _.extend(window.util || {}, require('./util.coffee'));
+
 $(function() {
   return React.render(React.createElement(WorkComponent), $('#c')[0]);
 });
 
 
 
-},{"./components/WorkComponent.coffee":4}],7:[function(require,module,exports){
+},{"./components/WorkComponent.coffee":4,"./util.coffee":13}],7:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -771,6 +805,28 @@ module.exports = Object.assign || function (target, source) {
 };
 
 },{}],11:[function(require,module,exports){
+urb.appl = 'hood';
+
+module.exports = {
+  put: function(update, cb) {
+    return urb.send(update, {
+      mark: 'work-command'
+    }, cb);
+  },
+  get: function(id, cb) {
+    var url;
+    url = (urb.util.basepath("/pub/work/")) + id + ".json";
+    return $.get(url, {}, function(data) {
+      if (cb) {
+        return cb(null, data);
+      }
+    });
+  }
+};
+
+
+
+},{}],12:[function(require,module,exports){
 var Dispatcher, EventEmitter, WorkStore, _following, _incoming, _upcoming, assign, lists;
 
 EventEmitter = require('events').EventEmitter;
@@ -781,7 +837,7 @@ Dispatcher = require('../dispatcher/Dispatcher.coffee');
 
 _upcoming = [
   {
-    id: 0,
+    id: "0v0",
     sort: 0,
     "date-created": new Date('2015-8-18'),
     "date-modifed": new Date('2015-8-18'),
@@ -794,7 +850,7 @@ _upcoming = [
     description: 'first go out the door, \n then walk down the block.',
     discussion: []
   }, {
-    id: 1,
+    id: "0v1",
     sort: 1,
     "date-created": new Date('2015-8-18'),
     "date-modifed": new Date('2015-8-18'),
@@ -807,7 +863,7 @@ _upcoming = [
     description: 'dont forget about lunch.',
     discussion: []
   }, {
-    id: 2,
+    id: "0v2",
     sort: 2,
     "date-created": new Date('2015-8-18'),
     "date-modifed": new Date('2015-8-18'),
@@ -846,24 +902,13 @@ WorkStore = assign({}, EventEmitter.prototype, {
     return lists[key];
   },
   newItem: function(arg) {
-    var index, item, list;
-    index = arg.index, list = arg.list;
-    list = lists[list];
-    item = {
-      id: index,
+    var _item, index, item, list;
+    index = arg.index, list = arg.list, item = arg.item;
+    _item = _.extend({
       sort: index,
-      "date-created": new Date(),
-      "date-modifed": new Date(),
-      "date-due": null,
-      owner: "~talsur-todres",
-      status: null,
-      tags: [],
-      audience: [],
-      title: '',
-      description: '',
-      discussion: []
-    };
-    return list.splice(index, 0, item);
+      audience: []
+    }, item);
+    return lists[list].splice(index, 0, _item);
   },
   swapItem: function(arg) {
     var from, list, to;
@@ -894,7 +939,47 @@ module.exports = WorkStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":5,"events":12,"object-assign":10}],12:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":5,"events":14,"object-assign":10}],13:[function(require,module,exports){
+module.exports = {
+  uuid32: function() {
+    var i, str, vals;
+    vals = (function() {
+      var j, results;
+      results = [];
+      for (i = j = 0; j <= 5; i = ++j) {
+        str = Math.ceil(Math.random() * 10000000).toString(32);
+        results.push(("00000" + str).substr(-5, 5));
+      }
+      return results;
+    })();
+    vals.unshift(Math.ceil(Math.random() * 8));
+    return "0v" + vals.join('.');
+  },
+  getScroll: function() {
+    return this.writingPosition = $('#c').outerHeight(true) + $('#c').offset().top - $(window).height();
+  },
+  setScroll: function() {
+    window.util.getScroll();
+    return $(window).scrollTop($("#c").height());
+  },
+  isScrolling: function() {
+    if (!window.util.writingPosition) {
+      window.util.getScroll();
+    }
+    return $(window).scrollTop() + $('#writing').outerHeight() < window.util.writingPosition;
+  },
+  checkScroll: function() {
+    if (window.util.isScrolling()) {
+      return $('body').addClass('scrolling');
+    } else {
+      return $('body').removeClass('scrolling');
+    }
+  }
+};
+
+
+
+},{}],14:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a

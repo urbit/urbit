@@ -64,7 +64,7 @@ module.exports = recl
         e.target.innerText.length is 0
           if @state.selected isnt 0
             @setState {selected:@state.selected-1,select:"end"}
-          WorkActions.removeItem @state.selected,@props.list
+          WorkActions.removeItem @state.selected,@props.list,@state.list[@state.selected].id
           e.preventDefault()
       # up
       when 38
