@@ -4,32 +4,42 @@ var Dispatcher;
 Dispatcher = require('../dispatcher/Dispatcher.coffee');
 
 module.exports = {
-  newItem: function(index, list) {
+  setFilter: function(key, val) {
     return Dispatcher.handleViewAction({
-      type: 'newItem',
-      index: index,
-      list: list
+      type: 'setFilter',
+      key: key,
+      val: val
     });
   },
-  swapItems: function(to, from, list) {
+  setSort: function(key, val) {
+    return Dispatcher.handleViewAction({
+      type: 'setSort',
+      key: key,
+      val: val
+    });
+  },
+  newItem: function(index) {
+    return Dispatcher.handleViewAction({
+      type: 'newItem',
+      index: index
+    });
+  },
+  swapItems: function(to, from) {
     return Dispatcher.handleViewAction({
       type: 'swapItem',
       from: from,
-      list: list,
       to: to
     });
   },
-  removeItem: function(index, list) {
+  removeItem: function(index) {
     return Dispatcher.handleViewAction({
       type: 'removeItem',
-      index: index,
-      list: list
+      index: index
     });
   },
-  addItem: function(index, item, list) {
+  addItem: function(index, item) {
     return Dispatcher.handleViewAction({
       type: 'addItem',
-      list: list,
       index: index,
       item: item
     });
@@ -38,19 +48,74 @@ module.exports = {
 
 
 },{"../dispatcher/Dispatcher.coffee":8}],2:[function(require,module,exports){
-var div, h1, input, rece, recl, ref, textarea;
+var div, h1, label, rece, recl, ref;
 
 recl = React.createClass;
 
 rece = React.createElement;
 
-ref = [React.DOM.div, React.DOM.h1, React.DOM.input, React.DOM.textarea], div = ref[0], h1 = ref[1], input = ref[2], textarea = ref[3];
+ref = [React.DOM.div, React.DOM.h1, React.DOM.label], div = ref[0], h1 = ref[1], label = ref[2];
 
 module.exports = recl({
+  _onKeyDown: function(e) {
+    if (e.keyCode === 13) {
+      e.stopPropagation();
+      e.preventDefault();
+      return this.change(e);
+    }
+  },
+  _onBlur: function(e) {
+    return this.change(e);
+  },
+  change: function(e) {
+    var $t, txt;
+    $t = $(e.target).closest('.filter');
+    txt = $t.find('.input').text().trim();
+    if (txt.length === 0) {
+      txt = null;
+    }
+    return this.props.onChange($t.attr('data-key'), txt);
+  },
   render: function() {
     return div({
       className: 'filters'
-    }, [h1({}, 'Filters:')]);
+    }, [
+      h1({}, 'Filters:'), div({
+        className: 'owned filter',
+        'data-key': 'owned'
+      }, [
+        label({}, 'Owened by:'), div({
+          contentEditable: true,
+          className: 'input ib',
+          onKeyDown: this._onKeyDown,
+          onBlur: this._onBlur
+        }, this.props.filters.owned)
+      ]), div({
+        className: 'tag filter',
+        'data-key': 'tag'
+      }, [
+        label({}, 'Tag:'), div({
+          contentEditable: true,
+          className: 'input ib'
+        }, this.props.filters.tag)
+      ]), div({
+        className: 'channel filter',
+        'data-key': 'channel'
+      }, [
+        label({}, 'Channel:'), div({
+          contentEditable: true,
+          className: 'input ib'
+        }, this.props.filters.channel)
+      ]), div({
+        className: 'status filter',
+        'data-key': 'status'
+      }, [
+        label({}, 'Status:'), div({
+          contentEditable: true,
+          className: 'input ib'
+        }, this.props.filters.status)
+      ])
+    ]);
   }
 });
 
@@ -352,6 +417,11 @@ module.exports = recl({
       return e.preventDefault();
     }
   },
+  _changeListening: function() {},
+  _changeFilter: function(key, val) {
+    return WorkActions.setFilter(key, val);
+  },
+  _changeSorts: function() {},
   componentDidMount: function() {
     this.placeholder = $("<div class='item placeholder'><div class='sort'>x</div></div>");
     WorkStore.addChangeListener(this._onChangeStore);
@@ -385,9 +455,20 @@ module.exports = recl({
       div({
         className: 'ctrl'
       }, [
-        rece(ListeningComponent, this.state.listening), div({
+        rece(ListeningComponent, {
+          listening: this.state.listening,
+          onChange: this._changeListening
+        }), div({
           className: 'transforms'
-        }, [rece(FilterComponent, this.state.filters), rece(SortComponent, this.state.sorts)])
+        }, [
+          rece(FilterComponent, {
+            filters: this.state.filters,
+            onChange: this._changeFilter
+          }), rece(SortComponent, {
+            sorts: this.state.sorts,
+            onChange: this._changeSorts
+          })
+        ])
       ]), div({
         className: 'items',
         onDragOver: this._dragOver
@@ -429,19 +510,19 @@ module.exports = recl({
 
 
 },{}],6:[function(require,module,exports){
-var div, h1, input, rece, recl, ref, textarea;
+var button, div, h1, rece, recl, ref;
 
 recl = React.createClass;
 
 rece = React.createElement;
 
-ref = [React.DOM.div, React.DOM.h1, React.DOM.input, React.DOM.textarea], div = ref[0], h1 = ref[1], input = ref[2], textarea = ref[3];
+ref = [React.DOM.div, React.DOM.h1, React.DOM.button], div = ref[0], h1 = ref[1], button = ref[2];
 
 module.exports = recl({
   render: function() {
     return div({
       className: 'sorts'
-    }, [h1({}, 'Sorts:')]);
+    }, [h1({}, 'Sorts:'), button({}, 'Name'), button({}, 'Owner'), button({}, 'Date'), button({}, 'Priority')]);
   }
 });
 
@@ -918,7 +999,8 @@ _list = [
 _listening = [];
 
 _filters = {
-  owned_by: null,
+  owned: null,
+  tag: null,
   channel: null,
   status: null
 };
@@ -941,7 +1023,21 @@ WorkStore = assign({}, EventEmitter.prototype, {
     return this.removeListener("change", cb);
   },
   getList: function(key) {
-    return _list;
+    var add, k, list, v;
+    list = [];
+    for (k in _list) {
+      v = _list[k];
+      add = true;
+      if (_filters.owned !== null) {
+        if (v.owner !== _filters.owned) {
+          add = false;
+        }
+      }
+      if (add === true) {
+        list.push(v);
+      }
+    }
+    return list;
   },
   getListening: function() {
     return _listening;
@@ -949,8 +1045,18 @@ WorkStore = assign({}, EventEmitter.prototype, {
   getFilters: function() {
     return _filters;
   },
+  setFilter: function(arg) {
+    var key, val;
+    key = arg.key, val = arg.val;
+    return _filters[key] = val;
+  },
   getSorts: function() {
     return _sorts;
+  },
+  setSort: function(arg) {
+    var key, val;
+    key = arg.key, val = arg.val;
+    return _sorts[key] = val;
   },
   newItem: function(arg) {
     var index, item;
@@ -974,7 +1080,7 @@ WorkStore = assign({}, EventEmitter.prototype, {
   swapItem: function(arg) {
     var from, to;
     to = arg.to, from = arg.from;
-    return _list.splice(to, 0, list.splice(from, 1)[0]);
+    return _list.splice(to, 0, _list.splice(from, 1)[0]);
   },
   removeItem: function(arg) {
     var index, list;

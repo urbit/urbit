@@ -50,7 +50,8 @@ _list   = [
 ]
 _listening = []
 _filters = 
-  owned_by:null
+  owned:null
+  tag:null
   channel:null
   status:null
 _sorts =
@@ -64,13 +65,26 @@ WorkStore = assign {},EventEmitter.prototype,{
   addChangeListener: (cb) -> @on 'change', cb
   removeChangeListener: (cb) -> @removeListener "change", cb
   
-  getList: (key) -> _list
+  getList: (key) -> 
+    list = []
+    for k,v of _list
+      add = true
+      if _filters.owned isnt null
+        if v.owner isnt _filters.owned
+          add = false
+      if add is true
+        list.push v
+    list
 
   getListening: -> _listening
 
   getFilters: -> _filters
 
+  setFilter: ({key,val}) -> _filters[key] = val
+
   getSorts: -> _sorts
+
+  setSort: ({key,val}) -> _sorts[key] = val
 
   newItem: ({index}) ->
     item =
@@ -89,7 +103,7 @@ WorkStore = assign {},EventEmitter.prototype,{
     _list.splice index,0,item
 
   swapItem: ({to,from}) ->
-    _list.splice to,0,list.splice(from,1)[0]
+    _list.splice to,0,_list.splice(from,1)[0]
 
   removeItem: ({index}) -> 
     list = lists[list]

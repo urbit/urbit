@@ -89,6 +89,12 @@ module.exports = recl
     # cancel these
     if (kc is 13) or (kc is 38) or (kc is 40) then e.preventDefault()
 
+  _changeListening: ->
+
+  _changeFilter: (key,val) -> WorkActions.setFilter key,val
+
+  _changeSorts: ->
+
   componentDidMount: -> 
     @placeholder = $ "<div class='item placeholder'><div class='sort'>x</div></div>"
     WorkStore.addChangeListener @_onChangeStore
@@ -113,10 +119,19 @@ module.exports = recl
   render: ->
     (div {}, [
       (div {className:'ctrl'}, [
-        rece(ListeningComponent, @state.listening)
+        rece(ListeningComponent, {
+          listening:@state.listening
+          onChange:@_changeListening
+        })
         (div {className:'transforms'},[
-          rece(FilterComponent, @state.filters)
-          rece(SortComponent, @state.sorts)
+          rece(FilterComponent, {
+            filters:@state.filters
+            onChange:@_changeFilter
+          })
+          rece(SortComponent, {
+            sorts:@state.sorts
+            onChange:@_changeSorts
+          })
         ]),
       ])
       (div {

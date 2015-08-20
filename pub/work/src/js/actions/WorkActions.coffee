@@ -1,28 +1,36 @@
 Dispatcher = require '../dispatcher/Dispatcher.coffee'
 
 module.exports =
-  newItem: (index,list) ->
+  setFilter: (key,val) ->
+    Dispatcher.handleViewAction
+      type:'setFilter'
+      key:key
+      val:val
+
+  setSort: (key,val) ->
+    Dispatcher.handleViewAction
+      type:'setSort'
+      key:key
+      val:val
+
+  newItem: (index) ->
     Dispatcher.handleViewAction
       type:'newItem'
       index:index
-      list:list
 
-  swapItems: (to,from,list) ->
+  swapItems: (to,from) ->
     Dispatcher.handleViewAction
       type:'swapItem'
       from:from
-      list:list
       to:to
 
-  removeItem: (index,list) ->
+  removeItem: (index) ->
     Dispatcher.handleViewAction
       type:'removeItem'
       index:index
-      list:list
 
-  addItem: (index,item,list) ->
+  addItem: (index,item) ->
     Dispatcher.handleViewAction
       type:'addItem'
-      list:list
       index:index
       item:item
