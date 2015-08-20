@@ -1,5 +1,4 @@
-::  XX  need to deal with versions
-::  not implemented:  set audience, delete, sort
+::  not implemented:  set audience, delete
 ::
 ::::
   ::
@@ -250,6 +249,8 @@
 ::
 ++  poke-work-command
   |=  cod=command
+  ?.  =(our src)
+    ~|([%wrong-user our=our src=src] !!)
   =^  mos  +>.$
     ?:  connected
       [~ +>.$]
@@ -259,7 +260,7 @@
       %new    abut:create:(at [| - +]:+.cod)
       %old    =+  (at (~(got by tasks) id.cod))
               abet:(process-update:- version.cod dif.cod)
-      %sort   ~|(%not-implemented !!)
+      %sort   mirror-to-web(sort p.cod)
     ==
   [(welp mos mof) +>.$]
 ::
