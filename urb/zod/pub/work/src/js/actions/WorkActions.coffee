@@ -17,25 +17,34 @@ module.exports =
       description:''
       discussion:[]
     Persistence.put "new":item
-    Dispatcher.handleViewAction {type:'newItem', list, index, item}
+    Dispatcher.handleViewAction {type:'newItem', index, item}
 
-  swapItems: (to,from,list) ->
+  setFilter: (key,val) ->
+    Dispatcher.handleViewAction
+      type:'setFilter'
+      key:key
+      val:val
+
+  setSort: (key,val) ->
+    Dispatcher.handleViewAction
+      type:'setSort'
+      key:key
+      val:val 
+
+  swapItems: (to,from) ->
     Dispatcher.handleViewAction
       type:'swapItem'
       from:from
-      list:list
       to:to
 
-  removeItem: (index,list,id) ->
+  removeItem: (index,id) ->
     Persistence.put old:{id,dif:set:done:Date.now()}
     Dispatcher.handleViewAction
       type:'removeItem'
       index:index
-      list:list
 
-  addItem: (index,item,list) ->
-    Dispatcher.handleViewAction 
+  addItem: (index,item) ->
+    Dispatcher.handleViewAction
       type:'addItem'
-      list:list
       index:index
       item:item

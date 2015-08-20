@@ -14,7 +14,7 @@ module.exports = {
       id: window.util.uuid32(),
       version: 0,
       "date-created": Date.now(),
-      "date-modifed": Date.now(),
+      "date-modified": Date.now(),
       "due-date": null,
       owner: window.urb.ship,
       status: 'gave',
@@ -28,20 +28,32 @@ module.exports = {
     });
     return Dispatcher.handleViewAction({
       type: 'newItem',
-      list: list,
       index: index,
       item: item
     });
   },
-  swapItems: function(to, from, list) {
+  setFilter: function(key, val) {
+    return Dispatcher.handleViewAction({
+      type: 'setFilter',
+      key: key,
+      val: val
+    });
+  },
+  setSort: function(key, val) {
+    return Dispatcher.handleViewAction({
+      type: 'setSort',
+      key: key,
+      val: val
+    });
+  },
+  swapItems: function(to, from) {
     return Dispatcher.handleViewAction({
       type: 'swapItem',
       from: from,
-      list: list,
       to: to
     });
   },
-  removeItem: function(index, list, id) {
+  removeItem: function(index, id) {
     Persistence.put({
       old: {
         id: id,
@@ -54,14 +66,12 @@ module.exports = {
     });
     return Dispatcher.handleViewAction({
       type: 'removeItem',
-      index: index,
-      list: list
+      index: index
     });
   },
-  addItem: function(index, item, list) {
+  addItem: function(index, item) {
     return Dispatcher.handleViewAction({
       type: 'addItem',
-      list: list,
       index: index,
       item: item
     });
@@ -70,7 +80,81 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":5,"../persistence/Persistence.coffee":11}],2:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":8,"../persistence/Persistence.coffee":14}],2:[function(require,module,exports){
+var div, h1, label, rece, recl, ref;
+
+recl = React.createClass;
+
+rece = React.createElement;
+
+ref = [React.DOM.div, React.DOM.h1, React.DOM.label], div = ref[0], h1 = ref[1], label = ref[2];
+
+module.exports = recl({
+  _onKeyDown: function(e) {
+    if (e.keyCode === 13) {
+      e.stopPropagation();
+      e.preventDefault();
+      return this.change(e);
+    }
+  },
+  _onBlur: function(e) {
+    return this.change(e);
+  },
+  change: function(e) {
+    var $t, txt;
+    $t = $(e.target).closest('.filter');
+    txt = $t.find('.input').text().trim();
+    if (txt.length === 0) {
+      txt = null;
+    }
+    return this.props.onChange($t.attr('data-key'), txt);
+  },
+  render: function() {
+    return div({
+      className: 'filters'
+    }, [
+      h1({}, 'Filters:'), div({
+        className: 'owned filter',
+        'data-key': 'owned'
+      }, [
+        label({}, 'Owened by:'), div({
+          contentEditable: true,
+          className: 'input ib',
+          onKeyDown: this._onKeyDown,
+          onBlur: this._onBlur
+        }, this.props.filters.owned)
+      ]), div({
+        className: 'tag filter',
+        'data-key': 'tag'
+      }, [
+        label({}, 'Tag:'), div({
+          contentEditable: true,
+          className: 'input ib'
+        }, this.props.filters.tag)
+      ]), div({
+        className: 'channel filter',
+        'data-key': 'channel'
+      }, [
+        label({}, 'Channel:'), div({
+          contentEditable: true,
+          className: 'input ib'
+        }, this.props.filters.channel)
+      ]), div({
+        className: 'status filter',
+        'data-key': 'status'
+      }, [
+        label({}, 'Status:'), div({
+          contentEditable: true,
+          className: 'input ib'
+        }, this.props.filters.status)
+      ])
+    ]);
+  }
+});
+
+
+
+},{}],3:[function(require,module,exports){
 var WorkActions, div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -150,21 +234,21 @@ module.exports = recl({
           contentEditable: true,
           onFocus: this._focus,
           onKeyDown: this._keyDown,
-          className: 'input'
+          className: 'input ib'
         }, this.props.item.title)
       ]), div({
         className: 'date ib top'
       }, [
         div({
           contentEditable: true,
-          className: 'input'
+          className: 'input ib'
         }, this.formatDate(this.props.item['date-created']))
       ]), div({
         className: 'tags ib top'
       }, [
         div({
           contentEditable: true,
-          className: 'input'
+          className: 'input ib'
         }, this.props.item.tags.join(" "))
       ]), div({
         className: 'expand ib',
@@ -183,7 +267,7 @@ module.exports = recl({
         className: "description"
       }, [
         textarea({
-          className: 'input'
+          className: 'input ib'
         }, this.props.item.description)
       ]), div({
         className: "hr"
@@ -192,14 +276,38 @@ module.exports = recl({
       }, [
         div({
           className: "comments"
-        }, this.props.item.discussion.map(function(slug) {
-          return div({
-            className: 'slug'
-          }, slug);
-        })), div({
-          contentEditable: true,
-          className: 'input comment'
-        }, "")
+        }, this.props.item.discussion.map((function(_this) {
+          return function(slug) {
+            return div({
+              className: 'comment'
+            }, [
+              div({
+                className: 'hr2'
+              }, ""), div({
+                className: 'ship ib'
+              }, slug.ship), div({
+                className: 'date ib'
+              }, _this.formatDate(slug.date)), div({
+                className: 'body'
+              }, slug.body)
+            ]);
+          };
+        })(this))), div({
+          className: 'new comment'
+        }, [
+          div({
+            className: 'hr2'
+          }, ""), div({
+            className: 'ship ib'
+          }, "TALSUR-TODRES"), div({
+            className: 'date ib'
+          }, this.formatDate(new Date())), div({
+            contentEditable: true,
+            className: 'input'
+          }, ""), div({
+            className: 'submit'
+          }, 'Post')
+        ])
       ])
     ]);
   }
@@ -207,8 +315,8 @@ module.exports = recl({
 
 
 
-},{"../actions/WorkActions.coffee":1}],3:[function(require,module,exports){
-var ItemComponent, WorkActions, WorkStore, div, h1, input, rece, recl, ref, textarea;
+},{"../actions/WorkActions.coffee":1}],4:[function(require,module,exports){
+var FilterComponent, ItemComponent, ListeningComponent, SortComponent, WorkActions, WorkStore, div, h1, input, rece, recl, ref, textarea;
 
 recl = React.createClass;
 
@@ -222,10 +330,19 @@ WorkActions = require('../actions/WorkActions.coffee');
 
 ItemComponent = require('./ItemComponent.coffee');
 
+ListeningComponent = require('./ListeningComponent.coffee');
+
+FilterComponent = require('./FilterComponent.coffee');
+
+SortComponent = require('./SortComponent.coffee');
+
 module.exports = recl({
   stateFromStore: function() {
     return {
-      list: WorkStore.getList(this.props.list),
+      list: WorkStore.getList(),
+      listening: WorkStore.getListening(),
+      sorts: WorkStore.getSorts(),
+      filters: WorkStore.getFilters(),
       expand: false
     };
   },
@@ -257,7 +374,7 @@ module.exports = recl({
     if (this.drop === 'after') {
       to++;
     }
-    WorkActions.swapItems(to, from, this.props.list);
+    WorkActions.swapItems(to, from);
     this.dragged.removeClass('hidden');
     return this.placeholder.remove();
   },
@@ -297,7 +414,7 @@ module.exports = recl({
             select: true
           });
         }
-        WorkActions.newItem(ins, this.props.list);
+        WorkActions.newItem(ins);
         break;
       case 8:
         if (window.getSelection().getRangeAt(0).endOffset === 0 && e.target.innerText.length === 0) {
@@ -307,7 +424,7 @@ module.exports = recl({
               select: "end"
             });
           }
-          WorkActions.removeItem(this.state.selected, this.props.list, this.state.list[this.state.selected].id);
+          WorkActions.removeItem(this.state.selected, this.state.list[this.state.selected].id);
           e.preventDefault();
         }
         break;
@@ -335,6 +452,11 @@ module.exports = recl({
       return e.preventDefault();
     }
   },
+  _changeListening: function() {},
+  _changeFilter: function(key, val) {
+    return WorkActions.setFilter(key, val);
+  },
+  _changeSorts: function() {},
   componentDidMount: function() {
     this.placeholder = $("<div class='item placeholder'><div class='sort'>x</div></div>");
     WorkStore.addChangeListener(this._onChangeStore);
@@ -366,6 +488,23 @@ module.exports = recl({
   render: function() {
     return div({}, [
       div({
+        className: 'ctrl'
+      }, [
+        rece(ListeningComponent, {
+          listening: this.state.listening,
+          onChange: this._changeListening
+        }), div({
+          className: 'transforms'
+        }, [
+          rece(FilterComponent, {
+            filters: this.state.filters,
+            onChange: this._changeFilter
+          }), rece(SortComponent, {
+            sorts: this.state.sorts,
+            onChange: this._changeSorts
+          })
+        ])
+      ]), div({
         className: 'items',
         onDragOver: this._dragOver
       }, [
@@ -388,7 +527,45 @@ module.exports = recl({
 
 
 
-},{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":12,"./ItemComponent.coffee":2}],4:[function(require,module,exports){
+},{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":15,"./FilterComponent.coffee":2,"./ItemComponent.coffee":3,"./ListeningComponent.coffee":5,"./SortComponent.coffee":6}],5:[function(require,module,exports){
+var div, h1, input, rece, recl, ref, textarea;
+
+recl = React.createClass;
+
+rece = React.createElement;
+
+ref = [React.DOM.div, React.DOM.h1, React.DOM.input, React.DOM.textarea], div = ref[0], h1 = ref[1], input = ref[2], textarea = ref[3];
+
+module.exports = recl({
+  render: function() {
+    return div({
+      className: 'listening'
+    }, [h1({}, 'Listening:')]);
+  }
+});
+
+
+
+},{}],6:[function(require,module,exports){
+var button, div, h1, rece, recl, ref;
+
+recl = React.createClass;
+
+rece = React.createElement;
+
+ref = [React.DOM.div, React.DOM.h1, React.DOM.button], div = ref[0], h1 = ref[1], button = ref[2];
+
+module.exports = recl({
+  render: function() {
+    return div({
+      className: 'sorts'
+    }, [h1({}, 'Sorts:'), button({}, 'Name'), button({}, 'Owner'), button({}, 'Date'), button({}, 'Priority')]);
+  }
+});
+
+
+
+},{}],7:[function(require,module,exports){
 var ListComponent, div, input, rece, recl, ref, textarea;
 
 recl = React.createClass;
@@ -411,7 +588,7 @@ module.exports = recl({
 
 
 
-},{"./ListComponent.coffee":3}],5:[function(require,module,exports){
+},{"./ListComponent.coffee":4}],8:[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -433,7 +610,7 @@ module.exports = _.merge(new Dispatcher(), {
 
 
 
-},{"flux":7}],6:[function(require,module,exports){
+},{"flux":10}],9:[function(require,module,exports){
 var WorkComponent;
 
 WorkComponent = require('./components/WorkComponent.coffee');
@@ -446,7 +623,7 @@ $(function() {
 
 
 
-},{"./components/WorkComponent.coffee":4,"./util.coffee":13}],7:[function(require,module,exports){
+},{"./components/WorkComponent.coffee":7,"./util.coffee":16}],10:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -458,7 +635,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":8}],8:[function(require,module,exports){
+},{"./lib/Dispatcher":11}],11:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -710,7 +887,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":9}],9:[function(require,module,exports){
+},{"./invariant":12}],12:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -765,7 +942,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],10:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 function ToObject(val) {
@@ -804,7 +981,7 @@ module.exports = Object.assign || function (target, source) {
 	return to;
 };
 
-},{}],11:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 urb.appl = 'hood';
 
 module.exports = {
@@ -826,8 +1003,8 @@ module.exports = {
 
 
 
-},{}],12:[function(require,module,exports){
-var Dispatcher, EventEmitter, WorkStore, _following, _incoming, _upcoming, assign, lists;
+},{}],15:[function(require,module,exports){
+var Dispatcher, EventEmitter, WorkStore, _filters, _list, _listening, _sorts, assign;
 
 EventEmitter = require('events').EventEmitter;
 
@@ -835,12 +1012,12 @@ assign = require('object-assign');
 
 Dispatcher = require('../dispatcher/Dispatcher.coffee');
 
-_upcoming = [
+_list = [
   {
     id: "0v0",
     sort: 0,
     "date-created": new Date('2015-8-18'),
-    "date-modifed": new Date('2015-8-18'),
+    "date-modified": new Date('2015-8-18'),
     "date-due": null,
     owner: "~talsur-todres",
     audience: ["doznec/urbit-meta", "doznec/tlon"],
@@ -848,12 +1025,18 @@ _upcoming = [
     tags: ['food', 'office'],
     title: 'get groceries',
     description: 'first go out the door, \n then walk down the block.',
-    discussion: []
+    discussion: [
+      {
+        date: new Date('2015-8-18'),
+        ship: "wictuc-folrex",
+        body: "Seems like a great idea."
+      }
+    ]
   }, {
     id: "0v1",
     sort: 1,
     "date-created": new Date('2015-8-18'),
-    "date-modifed": new Date('2015-8-18'),
+    "date-modified": new Date('2015-8-18'),
     "date-due": null,
     owner: "~talsur-todres",
     audience: ["doznec/tlon"],
@@ -866,7 +1049,7 @@ _upcoming = [
     id: "0v2",
     sort: 2,
     "date-created": new Date('2015-8-18'),
-    "date-modifed": new Date('2015-8-18'),
+    "date-modified": new Date('2015-8-18'),
     "date-due": null,
     owner: "~talsur-todres",
     audience: ["doznec/tlon"],
@@ -878,14 +1061,20 @@ _upcoming = [
   }
 ];
 
-_following = {};
+_listening = [];
 
-_incoming = {};
+_filters = {
+  owned: null,
+  tag: null,
+  channel: null,
+  status: null
+};
 
-lists = {
-  'upcoming': _upcoming,
-  'following': _following,
-  'incoming': _incoming
+_sorts = {
+  name: null,
+  owner: null,
+  date: null,
+  priority: null
 };
 
 WorkStore = assign({}, EventEmitter.prototype, {
@@ -899,28 +1088,62 @@ WorkStore = assign({}, EventEmitter.prototype, {
     return this.removeListener("change", cb);
   },
   getList: function(key) {
-    return lists[key];
+    var add, k, list, v;
+    list = [];
+    for (k in _list) {
+      v = _list[k];
+      add = true;
+      if (_filters.owned !== null) {
+        if (v.owner !== _filters.owned) {
+          add = false;
+        }
+      }
+      if (add === true) {
+        list.push(v);
+      }
+    }
+    return list;
+  },
+  getListening: function() {
+    return _listening;
+  },
+  getFilters: function() {
+    return _filters;
+  },
+  setFilter: function(arg) {
+    var key, val;
+    key = arg.key, val = arg.val;
+    return _filters[key] = val;
+  },
+  getSorts: function() {
+    return _sorts;
+  },
+  setSort: function(arg) {
+    var key, val;
+    key = arg.key, val = arg.val;
+    return _sorts[key] = val;
   },
   newItem: function(arg) {
-    var _item, index, item, list;
-    index = arg.index, list = arg.list, item = arg.item;
+    var _item, index, item;
+    index = arg.index, item = arg.item;
     _item = _.extend({
       sort: index,
       audience: []
     }, item);
-    return lists[list].splice(index, 0, _item);
+    _item["date-created"] = new Date(item["date-created"]);
+    _item["date-modified"] = new Date(item["date-modified"]);
+    _item["date-due"] = item["due-date"];
+    return _list.splice(index, 0, _item);
   },
   swapItem: function(arg) {
-    var from, list, to;
-    to = arg.to, from = arg.from, list = arg.list;
-    list = lists[list];
-    return list.splice(to, 0, list.splice(from, 1)[0]);
+    var from, to;
+    to = arg.to, from = arg.from;
+    return _list.splice(to, 0, _list.splice(from, 1)[0]);
   },
   removeItem: function(arg) {
-    var index, list;
-    index = arg.index, list = arg.list;
-    list = lists[list];
-    return list.splice(index, 1);
+    var index;
+    index = arg.index;
+    return _list.splice(index, 1);
   }
 });
 
@@ -939,7 +1162,7 @@ module.exports = WorkStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":5,"events":14,"object-assign":10}],13:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":8,"events":17,"object-assign":13}],16:[function(require,module,exports){
 module.exports = {
   uuid32: function() {
     var i, str, vals;
@@ -979,7 +1202,7 @@ module.exports = {
 
 
 
-},{}],14:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1282,4 +1505,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[6]);
+},{}]},{},[9]);

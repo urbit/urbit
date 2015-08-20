@@ -6,9 +6,16 @@ WorkStore     = require '../stores/WorkStore.coffee'
 WorkActions   = require '../actions/WorkActions.coffee'
 ItemComponent = require './ItemComponent.coffee'
 
+ListeningComponent = require './ListeningComponent.coffee'
+FilterComponent = require './FilterComponent.coffee'
+SortComponent = require './SortComponent.coffee'
+
 module.exports = recl
   stateFromStore: -> {
-    list:WorkStore.getList @props.list
+    list:WorkStore.getList()
+    listening:WorkStore.getListening()
+    sorts:WorkStore.getSorts()
+    filters:WorkStore.getFilters()
     expand:false
   }
 
@@ -28,7 +35,7 @@ module.exports = recl
     to = Number @over.attr('data-index')
     if from<to then to--
     if @drop is 'after' then to++
-    WorkActions.swapItems to,from,@props.list
+    WorkActions.swapItems to,from
     @dragged.removeClass 'hidden'
     @placeholder.remove()
 
@@ -57,14 +64,14 @@ module.exports = recl
         else
           ins = @state.selected+1
           @setState {selected:ins,select:true}
-        WorkActions.newItem ins,@props.list
+        WorkActions.newItem ins
       # backspace - remove if at 0
       when 8
         if window.getSelection().getRangeAt(0).endOffset is 0 and
         e.target.innerText.length is 0
           if @state.selected isnt 0
             @setState {selected:@state.selected-1,select:"end"}
-          WorkActions.removeItem @state.selected,@props.list,@state.list[@state.selected].id
+          WorkActions.removeItem @state.selected,@state.list[@state.selected].id
           e.preventDefault()
       # up
       when 38
@@ -81,6 +88,12 @@ module.exports = recl
 
     # cancel these
     if (kc is 13) or (kc is 38) or (kc is 40) then e.preventDefault()
+
+  _changeListening: ->
+
+  _changeFilter: (key,val) -> WorkActions.setFilter key,val
+
+  _changeSorts: ->
 
   componentDidMount: -> 
     @placeholder = $ "<div class='item placeholder'><div class='sort'>x</div></div>"
@@ -105,6 +118,22 @@ module.exports = recl
 
   render: ->
     (div {}, [
+      (div {className:'ctrl'}, [
+        rece(ListeningComponent, {
+          listening:@state.listening
+          onChange:@_changeListening
+        })
+        (div {className:'transforms'},[
+          rece(FilterComponent, {
+            filters:@state.filters
+            onChange:@_changeFilter
+          })
+          rece(SortComponent, {
+            sorts:@state.sorts
+            onChange:@_changeSorts
+          })
+        ]),
+      ])
       (div {
         className:'items'
         onDragOver:@_dragOver

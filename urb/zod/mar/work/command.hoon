@@ -21,24 +21,29 @@
     ++  ship  (su fed:ag)
     ++  coma  (of new/task old/(ot id/id dif/uppd ~) sort/(ar id) ~)
     ++  task
-      %-  ot  :~
-        id/id           date-created/di
-        version/ni      date-modified/di
-        owner/ship      status/(ci (soft status) so)
-        tags/(as so)    due-date/(mu di)    title/so
-        description/so  discussion/(ar (ot date/di ship/ship body/so ~))
-      ==
+      %^    ot
+          :-  %task
+          %-  ot  :~
+            id/id           date-created/di
+            version/ni      date-modified/di
+            owner/ship      status/(ci (soft status) so)
+            tags/(as so)    date-due/(mu di)
+            done/(mu di)    title/so
+            description/so  discussion/(ar (ot date/di ship/ship body/so ~))
+          ==
+        audience/(as (ot ship/ship span/so ~))
+      ~
     ++  uppd
       %-  of  :~
         own/(of announce/ul claim/ul ~)
-        add/(of comment/(ot date/di body/so ~) ~)
+        add/(of comment/so ~)
         :-  %set
         %-  of  :~
-          due-date/di
+          date-due/(mu di)
           title/so
           description/so
           tags/(as so)
-          done/(mu di)
+          done/bo
           audience/(as (ot ship/ship span/so ~))
         ==
       ==
@@ -57,7 +62,8 @@
 ::   owner:'fyr',
 ::   status:'gave',
 ::   tags:['tag'],
-::   due-date:null,
+::   date-due:null,
+::   done:XX
 ::   title:'Test task',
 ::   description:'The converter owrks right?',
 ::   discussion:[{date:1440011611215,ship:'sondel',body:'hi'}]
