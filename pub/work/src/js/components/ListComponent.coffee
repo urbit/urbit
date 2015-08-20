@@ -6,9 +6,16 @@ WorkStore     = require '../stores/WorkStore.coffee'
 WorkActions   = require '../actions/WorkActions.coffee'
 ItemComponent = require './ItemComponent.coffee'
 
+ListeningComponent = require './ListeningComponent.coffee'
+FilterComponent = require './FilterComponent.coffee'
+SortComponent = require './SortComponent.coffee'
+
 module.exports = recl
   stateFromStore: -> {
-    list:WorkStore.getList @props.list
+    list:WorkStore.getList()
+    listening:WorkStore.getListening()
+    sorts:WorkStore.getSorts()
+    filters:WorkStore.getFilters()
     expand:false
   }
 
@@ -28,7 +35,7 @@ module.exports = recl
     to = Number @over.attr('data-index')
     if from<to then to--
     if @drop is 'after' then to++
-    WorkActions.swapItems to,from,@props.list
+    WorkActions.swapItems to,from
     @dragged.removeClass 'hidden'
     @placeholder.remove()
 
@@ -57,14 +64,14 @@ module.exports = recl
         else
           ins = @state.selected+1
           @setState {selected:ins,select:true}
-        WorkActions.newItem ins,@props.list
+        WorkActions.newItem ins
       # backspace - remove if at 0
       when 8
         if window.getSelection().getRangeAt(0).endOffset is 0 and
         e.target.innerText.length is 0
           if @state.selected isnt 0
             @setState {selected:@state.selected-1,select:"end"}
-          WorkActions.removeItem @state.selected,@props.list
+          WorkActions.removeItem @state.selected
           e.preventDefault()
       # up
       when 38
@@ -105,6 +112,13 @@ module.exports = recl
 
   render: ->
     (div {}, [
+      (div {className:'ctrl'}, [
+        rece(ListeningComponent, @state.listening)
+        (div {className:'transforms'},[
+          rece(FilterComponent, @state.filters)
+          rece(SortComponent, @state.sorts)
+        ]),
+      ])
       (div {
         className:'items'
         onDragOver:@_dragOver

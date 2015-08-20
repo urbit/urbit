@@ -37,8 +37,25 @@ module.exports = {
 };
 
 
+},{"../dispatcher/Dispatcher.coffee":8}],2:[function(require,module,exports){
+var div, h1, input, rece, recl, ref, textarea;
 
-},{"../dispatcher/Dispatcher.coffee":5}],2:[function(require,module,exports){
+recl = React.createClass;
+
+rece = React.createElement;
+
+ref = [React.DOM.div, React.DOM.h1, React.DOM.input, React.DOM.textarea], div = ref[0], h1 = ref[1], input = ref[2], textarea = ref[3];
+
+module.exports = recl({
+  render: function() {
+    return div({
+      className: 'filters'
+    }, [h1({}, 'Filters:')]);
+  }
+});
+
+
+},{}],3:[function(require,module,exports){
 var WorkActions, div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -198,9 +215,8 @@ module.exports = recl({
 });
 
 
-
-},{"../actions/WorkActions.coffee":1}],3:[function(require,module,exports){
-var ItemComponent, WorkActions, WorkStore, div, h1, input, rece, recl, ref, textarea;
+},{"../actions/WorkActions.coffee":1}],4:[function(require,module,exports){
+var FilterComponent, ItemComponent, ListeningComponent, SortComponent, WorkActions, WorkStore, div, h1, input, rece, recl, ref, textarea;
 
 recl = React.createClass;
 
@@ -214,10 +230,19 @@ WorkActions = require('../actions/WorkActions.coffee');
 
 ItemComponent = require('./ItemComponent.coffee');
 
+ListeningComponent = require('./ListeningComponent.coffee');
+
+FilterComponent = require('./FilterComponent.coffee');
+
+SortComponent = require('./SortComponent.coffee');
+
 module.exports = recl({
   stateFromStore: function() {
     return {
-      list: WorkStore.getList(this.props.list),
+      list: WorkStore.getList(),
+      listening: WorkStore.getListening(),
+      sorts: WorkStore.getSorts(),
+      filters: WorkStore.getFilters(),
       expand: false
     };
   },
@@ -249,7 +274,7 @@ module.exports = recl({
     if (this.drop === 'after') {
       to++;
     }
-    WorkActions.swapItems(to, from, this.props.list);
+    WorkActions.swapItems(to, from);
     this.dragged.removeClass('hidden');
     return this.placeholder.remove();
   },
@@ -289,7 +314,7 @@ module.exports = recl({
             select: true
           });
         }
-        WorkActions.newItem(ins, this.props.list);
+        WorkActions.newItem(ins);
         break;
       case 8:
         if (window.getSelection().getRangeAt(0).endOffset === 0 && e.target.innerText.length === 0) {
@@ -299,7 +324,7 @@ module.exports = recl({
               select: "end"
             });
           }
-          WorkActions.removeItem(this.state.selected, this.props.list);
+          WorkActions.removeItem(this.state.selected);
           e.preventDefault();
         }
         break;
@@ -358,6 +383,12 @@ module.exports = recl({
   render: function() {
     return div({}, [
       div({
+        className: 'ctrl'
+      }, [
+        rece(ListeningComponent, this.state.listening), div({
+          className: 'transforms'
+        }, [rece(FilterComponent, this.state.filters), rece(SortComponent, this.state.sorts)])
+      ]), div({
         className: 'items',
         onDragOver: this._dragOver
       }, [
@@ -379,8 +410,43 @@ module.exports = recl({
 });
 
 
+},{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":14,"./FilterComponent.coffee":2,"./ItemComponent.coffee":3,"./ListeningComponent.coffee":5,"./SortComponent.coffee":6}],5:[function(require,module,exports){
+var div, h1, input, rece, recl, ref, textarea;
 
-},{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":11,"./ItemComponent.coffee":2}],4:[function(require,module,exports){
+recl = React.createClass;
+
+rece = React.createElement;
+
+ref = [React.DOM.div, React.DOM.h1, React.DOM.input, React.DOM.textarea], div = ref[0], h1 = ref[1], input = ref[2], textarea = ref[3];
+
+module.exports = recl({
+  render: function() {
+    return div({
+      className: 'listening'
+    }, [h1({}, 'Listening:')]);
+  }
+});
+
+
+},{}],6:[function(require,module,exports){
+var div, h1, input, rece, recl, ref, textarea;
+
+recl = React.createClass;
+
+rece = React.createElement;
+
+ref = [React.DOM.div, React.DOM.h1, React.DOM.input, React.DOM.textarea], div = ref[0], h1 = ref[1], input = ref[2], textarea = ref[3];
+
+module.exports = recl({
+  render: function() {
+    return div({
+      className: 'sorts'
+    }, [h1({}, 'Sorts:')]);
+  }
+});
+
+
+},{}],7:[function(require,module,exports){
 var ListComponent, div, input, rece, recl, ref, textarea;
 
 recl = React.createClass;
@@ -402,8 +468,7 @@ module.exports = recl({
 });
 
 
-
-},{"./ListComponent.coffee":3}],5:[function(require,module,exports){
+},{"./ListComponent.coffee":4}],8:[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -424,8 +489,7 @@ module.exports = _.merge(new Dispatcher(), {
 });
 
 
-
-},{"flux":7}],6:[function(require,module,exports){
+},{"flux":10}],9:[function(require,module,exports){
 var WorkComponent;
 
 WorkComponent = require('./components/WorkComponent.coffee');
@@ -435,8 +499,7 @@ $(function() {
 });
 
 
-
-},{"./components/WorkComponent.coffee":4}],7:[function(require,module,exports){
+},{"./components/WorkComponent.coffee":7}],10:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -448,7 +511,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":8}],8:[function(require,module,exports){
+},{"./lib/Dispatcher":11}],11:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -700,7 +763,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":9}],9:[function(require,module,exports){
+},{"./invariant":12}],12:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -755,7 +818,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],10:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 function ToObject(val) {
@@ -794,8 +857,8 @@ module.exports = Object.assign || function (target, source) {
 	return to;
 };
 
-},{}],11:[function(require,module,exports){
-var Dispatcher, EventEmitter, WorkStore, _following, _incoming, _upcoming, assign, lists;
+},{}],14:[function(require,module,exports){
+var Dispatcher, EventEmitter, WorkStore, _filters, _list, _listening, _sorts, assign;
 
 EventEmitter = require('events').EventEmitter;
 
@@ -803,7 +866,7 @@ assign = require('object-assign');
 
 Dispatcher = require('../dispatcher/Dispatcher.coffee');
 
-_upcoming = [
+_list = [
   {
     id: 0,
     sort: 0,
@@ -852,14 +915,19 @@ _upcoming = [
   }
 ];
 
-_following = {};
+_listening = [];
 
-_incoming = {};
+_filters = {
+  owned_by: null,
+  channel: null,
+  status: null
+};
 
-lists = {
-  'upcoming': _upcoming,
-  'following': _following,
-  'incoming': _incoming
+_sorts = {
+  name: null,
+  owner: null,
+  date: null,
+  priority: null
 };
 
 WorkStore = assign({}, EventEmitter.prototype, {
@@ -873,12 +941,20 @@ WorkStore = assign({}, EventEmitter.prototype, {
     return this.removeListener("change", cb);
   },
   getList: function(key) {
-    return lists[key];
+    return _list;
+  },
+  getListening: function() {
+    return _listening;
+  },
+  getFilters: function() {
+    return _filters;
+  },
+  getSorts: function() {
+    return _sorts;
   },
   newItem: function(arg) {
-    var index, item, list;
-    index = arg.index, list = arg.list;
-    list = lists[list];
+    var index, item;
+    index = arg.index;
     item = {
       id: index,
       sort: index,
@@ -893,17 +969,16 @@ WorkStore = assign({}, EventEmitter.prototype, {
       description: '',
       discussion: []
     };
-    return list.splice(index, 0, item);
+    return _list.splice(index, 0, item);
   },
   swapItem: function(arg) {
-    var from, list, to;
-    to = arg.to, from = arg.from, list = arg.list;
-    list = lists[list];
-    return list.splice(to, 0, list.splice(from, 1)[0]);
+    var from, to;
+    to = arg.to, from = arg.from;
+    return _list.splice(to, 0, list.splice(from, 1)[0]);
   },
   removeItem: function(arg) {
     var index, list;
-    index = arg.index, list = arg.list;
+    index = arg.index;
     list = lists[list];
     return list.splice(index, 1);
   }
@@ -923,8 +998,7 @@ WorkStore.dispatchToken = Dispatcher.register(function(p) {
 module.exports = WorkStore;
 
 
-
-},{"../dispatcher/Dispatcher.coffee":5,"events":12,"object-assign":10}],12:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":8,"events":15,"object-assign":13}],15:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1227,4 +1301,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[6]);
+},{}]},{},[9]);
