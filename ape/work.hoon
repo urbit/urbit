@@ -22,15 +22,20 @@
 !:
 ::::
   ::
-|_  [bowl client connected=_| claiming=?]
+|_  [bowl client connected=_|]
 ++  at
-  |=  [task audience=(set station:talk)]
+  |=  [task audience=(set station:talk) claiming=?]
   =*  tax  +<-
   =|  moves=(list move)
   |%
   ++  abet
     ^-  [(list move) _+>.$]
     [(flop moves) +>.$(tasks (~(put by tasks) id tax audience claiming))]
+  ::
+  ++  abut
+    ^-  [(list move) _+>.$]
+    [(flop moves) +>.$]
+  ::
   ++  send
     |=  action=duty:work-stuff:talk
     ^+  +>
@@ -54,9 +59,11 @@
           [now *bouquet [%tax action]]
       ==
     ==
+  ::
   ++  claim
     %_    .
-        eny  (sham eny %direct)
+        eny       (sham eny %direct)
+        claiming  &
         moves
       :_  ~
       ^-  move
@@ -73,7 +80,8 @@
           [now *bouquet [%tax %claim id]]
       ==
     ==
-  ++  create            (send `duty:work-stuff:talk`[%create `task`tax])
+  ::
+  ++  create            (send [%create tax(date-created now, version 0)])
   ++  send-update       |*(* (send %update id +(version) +<))
   ++  announce          (send-update %announce ~)
   ++  release           (cury send-update %release)
@@ -136,7 +144,7 @@
               her=her
               from=from
               new-task=tax.action
-              existing-task=u.existing-task
+              existing-task=existing-task
           ==
       [~ +>.$]
     =.  tasks
@@ -144,12 +152,12 @@
       :_  |
       ?~  existing-task  from
       (~(uni in audience.u.existing-task) from)
-    =.  sort  ?~(existing-task sort [id.tax.action sort])
+    =.  sort  ?^(existing-task sort [id.tax.action sort])
     [~ +>.$]
   ::
       %claim
     =+  tax=(~(got by tasks) id.action)
-    ?.  &(=(our owner.tax) =(%announced status.tax))
+    ?.  &(=(our owner.task.tax) =(%announced status.task.tax))
       ~&  :*  %bad-claim
               her=her
               from=from
@@ -203,8 +211,12 @@
             ==
         ==
       :-  (~(uni in audience.u.tax) from)
+      ?:  ?=(%release -.meat.action)
+        |
       claiming.u.tax
-    ?:  =([%release our] meat.action)
+    ?:  ?&  =([%release our] meat.action)
+            claiming.u.tax
+        ==
       abet:accept:(at (~(got by tasks) id.action))
     [~ +>.$]
   ==
@@ -240,7 +252,7 @@
     initialize
   =^  mof  +>.$
     ?-  -.cod
-      %new    abet:create:(at [+ -]:+.cod)
+      %new    abut:create:(at [+ - |]:+.cod)
       %old    abet:(process-update:(at (~(got by tasks) id.cod)) dif.cod)
       %sort   ~|(%not-implemented !!)
     ==
