@@ -7,6 +7,7 @@
 ++  client-task
   $:  task=task
       audience=(set station:talk)
+      claiming=_|
   ==
 ++  task
   $:  id=@uvH
