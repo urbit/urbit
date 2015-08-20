@@ -188,7 +188,7 @@ window.urb.bind = function(path, params, cb, nicecb){ // or bind(path, cb)
   if(params.path[0] !== "/") params.path = "/"+params.path
   params.ship = params.ship || this.ship
   params.appl = params.appl || this.appl
-  params.mark = params.mark || "json"
+  params.mark = params.mark || this.bind.mark
   params.wire = params.wire || params.path
 
   if(typeof path != "string")
@@ -213,6 +213,8 @@ window.urb.bind = function(path, params, cb, nicecb){ // or bind(path, cb)
     if(!err && !$this.puls) $this.poll(params)
   })
 }
+urb.bind.mark = "json"
+
 window.urb.drop = function(path, params, cb){  // or drop(path,cb)
   if(typeof params === "function")
     {cb = params; params = {}}
