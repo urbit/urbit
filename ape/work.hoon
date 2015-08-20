@@ -121,21 +121,21 @@
   ^-  [mos=(list move) con=_+>.$]
   ?-    -.action
       %create                         ::  XX  should verify ownership
-    =+  existing-task=(~(get by tasks) id.p.action)
+    =+  existing-task=(~(get by tasks) id.tax.action)
     ~?  ?&  ?=(^ existing-task)
-            !=(p.action task.u.existing-task)
+            !=(tax.action task.u.existing-task)
         ==
       :*  %new-task-with-old-id
           her=her
           from=from
-          new-task=p.action
+          new-task=tax.action
           existing-task=u.existing-task
       ==
     =.  tasks
-      %^  ~(put by tasks)  id.p.action  p.action
+      %^  ~(put by tasks)  id.tax.action  tax.action
       ?~  existing-task  from
       (~(uni in audience.u.existing-task) from)
-    =.  sort  ?~(existing-task sort [id.p.action sort])
+    =.  sort  ?~(existing-task sort [id.tax.action sort])
     [~ +>.$]
   ::
       %claim
@@ -222,7 +222,7 @@
     initialize
   =^  mof  +>.$
     ?-  -.cod
-      %new    abet:create:(at +.cod)
+      %new    abet:create:(at [+ -]:+.cod)
       %old    abet:(process-update:(at (~(got by tasks) id.cod)) dif.cod)
       %sort   ~|(%not-implemented !!)
     ==
