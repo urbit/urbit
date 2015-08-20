@@ -103,7 +103,6 @@ WorkStore = assign {},EventEmitter.prototype,{
     _item = _.extend {sort:index,audience:[]}, item
     _item["date-created"]=new Date item["date-created"]
     _item["date-modified"]=new Date item["date-modified"]
-    _item["date-due"]=item["due-date"]
     _list.splice index,0,_item
 
   swapItem: ({to,from}) ->
