@@ -22,13 +22,11 @@ module.exports = {
       tags: [],
       title: '',
       description: '',
-      discussion: []
+      discussion: [],
+      audience: [window.util.talk.mainStationPath(window.urb.ship)]
     };
     Persistence.put({
-      "new": {
-        task: item,
-        audience: []
-      }
+      "new": item
     });
     return Dispatcher.handleViewAction({
       type: 'newItem',
@@ -76,7 +74,7 @@ module.exports = {
         id: id,
         dif: {
           set: {
-            done: Date.now()
+            done: true
           }
         }
       }
@@ -123,61 +121,57 @@ module.exports = recl({
     key = $t.attr('data-key');
     if (txt.length === 0) {
       txt = null;
-    }
-    if (key === 'audience') {
-      txt = txt.split(" ");
-    }
-    if (key === 'tags') {
-      txt = [txt];
+    } else {
+      switch (key) {
+        case 'audience':
+          txt = txt.split(" ");
+          break;
+        case 'tags':
+          txt = [txt];
+      }
     }
     return this.props.onChange(key, txt);
   },
+  fields: [
+    {
+      filter: 'owned',
+      key: 'owner',
+      title: 'Owned by:'
+    }, {
+      filter: 'tag',
+      key: 'tags',
+      title: 'Tag:'
+    }, {
+      filter: 'channel',
+      key: 'audience',
+      title: 'Audience:'
+    }, {
+      filter: 'status',
+      key: 'status',
+      title: 'Status:'
+    }
+  ],
   render: function() {
     return div({
       className: 'filters'
-    }, [
-      div({
-        className: 'owned filter ib',
-        'data-key': 'owner'
-      }, [
-        label({}, 'Owned by:'), div({
-          contentEditable: true,
-          className: 'input ib',
-          onKeyDown: this._onKeyDown,
-          onBlur: this._onBlur
-        }, this.props.filters.owned)
-      ]), div({
-        className: 'tag filter ib',
-        'data-key': 'tags'
-      }, [
-        label({}, 'Tag:'), div({
-          contentEditable: true,
-          className: 'input ib',
-          onKeyDown: this._onKeyDown,
-          onBlur: this._onBlur
-        }, this.props.filters.tag)
-      ]), div({
-        className: 'channel filter ib',
-        'data-key': 'audience'
-      }, [
-        label({}, 'Audience:'), div({
-          contentEditable: true,
-          className: 'input ib',
-          onKeyDown: this._onKeyDown,
-          onBlur: this._onBlur
-        }, this.props.filters.channel)
-      ]), div({
-        className: 'status filter ib',
-        'data-key': 'status'
-      }, [
-        label({}, 'Status:'), div({
-          contentEditable: true,
-          className: 'input ib',
-          onKeyDown: this._onKeyDown,
-          onBlur: this._onBlur
-        }, this.props.filters.status)
-      ])
-    ]);
+    }, this.fields.map((function(_this) {
+      return function(arg) {
+        var filter, key, title;
+        filter = arg.filter, key = arg.key, title = arg.title;
+        return div({
+          key: key,
+          'data-key': key,
+          className: filter + " filter ib"
+        }, [
+          label({}, title), div({
+            contentEditable: true,
+            className: 'input ib',
+            onKeyDown: _this._onKeyDown,
+            onBlur: _this._onBlur
+          }, _this.props.filters[filter])
+        ]);
+      };
+    })(this)));
   }
 });
 
@@ -231,6 +225,9 @@ module.exports = recl({
     } else {
       if (key === 'date-due') {
         d = $el.text().slice(1).replace(/\./g, "-");
+        if (d.length < 8) {
+          return NaN;
+        }
         return new Date(d).valueOf();
       }
       if (key === 'tags') {
@@ -290,8 +287,10 @@ module.exports = recl({
     val = this.getVal($t.find('.input'), key);
     if (this.compareVal(this.props.item[key], val, key)) {
       if (!this.validateField($t, id, key, val)) {
+        $t.addClass('invalid');
         return;
       }
+      $t.removeClass('invalid');
       if (this.to) {
         clearTimeout(this.to);
       }
@@ -302,6 +301,11 @@ module.exports = recl({
   },
   _focus: function(e) {
     return this.props._focus(e, this);
+  },
+  _markDone: function(e) {
+    var id;
+    id = $(e.target).closest('.item').attr('data-id');
+    return WorkActions.changeItem(id, 'done', true);
   },
   formatDate: function(d) {
     if (d === null) {
@@ -343,7 +347,8 @@ module.exports = recl({
       ]), div({
         className: 'sort ib top'
       }, this.props.item.sort), div({
-        className: 'done ib'
+        className: 'done ib',
+        onClick: this._markDone
       }, ''), div({
         className: 'title ib top field',
         'data-key': 'title'
@@ -356,7 +361,7 @@ module.exports = recl({
           className: 'input ib'
         }, this.props.item.title)
       ]), div({
-        className: 'date-due ib top field',
+        className: 'date ib top field',
         'data-key': 'date-due'
       }, [
         div({
@@ -1300,8 +1305,7 @@ WorkStore = assign({}, EventEmitter.prototype, {
     var _item, index, item;
     index = arg.index, item = arg.item;
     _item = _.extend({
-      sort: index,
-      audience: []
+      sort: index
     }, item);
     _item["date-created"] = new Date(item["date-created"]);
     _item["date-modified"] = new Date(item["date-modified"]);
@@ -1367,6 +1371,25 @@ module.exports = {
       return $('body').addClass('scrolling');
     } else {
       return $('body').removeClass('scrolling');
+    }
+  },
+  talk: {
+    mainStations: ["court", "floor", "porch"],
+    mainStationPath: function(user) {
+      return "~" + user + "/" + (window.util.talk.mainStation(user));
+    },
+    mainStation: function(user) {
+      if (!user) {
+        user = window.urb.user;
+      }
+      switch (user.length) {
+        case 3:
+          return "court";
+        case 6:
+          return "floor";
+        case 13:
+          return "porch";
+      }
     }
   }
 };

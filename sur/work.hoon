@@ -5,8 +5,9 @@
       sort=(list ,@uvH)
   ==
 ++  client-task
-  $:  task=task
+  $:  claiming=_|
       audience=(set station:talk)
+      task=task
   ==
 ++  task
   $:  id=@uvH
@@ -29,7 +30,7 @@
   ==
 ++  status  ?(%announced %released %accepted)
 ++  command  
-  $%  [%new task audience=(set station:talk)]
+  $%  [%new audience=(set station:talk) task]
       [%old id=@uvH dif=update]
       [%sort p=(list ,@uvH)]
   ==

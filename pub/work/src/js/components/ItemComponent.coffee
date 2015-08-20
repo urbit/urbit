@@ -37,6 +37,7 @@ module.exports = recl
     else
       if key is 'date-due'
         d = $el.text().slice(1).replace(/\./g, "-")
+        return NaN if d.length < 8
         return new Date(d).valueOf()      
       if key is 'tags'
         return $el.text().trim().split(" ")
@@ -68,7 +69,7 @@ module.exports = recl
           return 0
         1
       valid = 0 if i.length isnt val.length
-    return valid
+    valid
 
   _keyUp: (e) ->
     $t = $(e.target).closest '.field'
@@ -77,13 +78,20 @@ module.exports = recl
     val = @getVal $t.find('.input'),key
 
     if @compareVal @props.item[key],val,key
-      if not @validateField($t,id,key,val) then return
+      if not @validateField($t,id,key,val) 
+        $t.addClass 'invalid'
+        return
+      $t.removeClass 'invalid'
       if @to then clearTimeout @to
       @to = setTimeout -> 
           WorkActions.changeItem id,key,val
         ,1000
 
   _focus: (e) -> @props._focus e,@
+
+  _markDone: (e) ->
+    id = $(e.target).closest('.item').attr 'data-id'
+    WorkActions.changeItem id,'done',true
 
   formatDate: (d) ->
     return "" if d is null
@@ -117,7 +125,10 @@ module.exports = recl
             },@formatAudience(@props.item.audience))
           ])
         (div {className:'sort ib top'},@props.item.sort)
-        (div {className:'done ib'},'')
+        (div {
+          className:'done ib'
+          onClick:@_markDone
+          },'')
         (div {
           className:'title ib top field'
           'data-key':'title'
@@ -131,7 +142,7 @@ module.exports = recl
           },@props.item.title)
         ])
         (div {
-          className:'date-due ib top field'
+          className:'date ib top field'
           'data-key':'date-due'
           }, [
           (div {
