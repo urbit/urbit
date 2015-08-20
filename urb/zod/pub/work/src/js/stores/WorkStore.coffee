@@ -50,15 +50,15 @@ _list   = [
 ]
 _listening = []
 _filters = 
-  owned:null
-  tag:null
-  channel:null
+  owner:null
+  tags:null
+  audience:null
   status:null
 _sorts =
-  name:null
-  owner:null
-  date:null
-  priority:null
+  title:0
+  owner:0
+  date:0
+  sort:0
 
 WorkStore = assign {},EventEmitter.prototype,{
   emitChange: -> @emit 'change'
@@ -69,11 +69,21 @@ WorkStore = assign {},EventEmitter.prototype,{
     list = []
     for k,v of _list
       add = true
-      if _filters.owned isnt null
-        if v.owner isnt _filters.owned
-          add = false
+      for _k,_v of _filters
+        if _v is null then continue
+        c = v[_k]
+        if typeof(c) is 'object'
+          if _.intersection(c,_v).length is 0 then add = false
+        else
+          if c isnt _v then add = false
       if add is true
         list.push v
+    if _.uniq(_.values(_sorts)).length > 0
+      for k,v of _sorts
+        if v isnt 0
+          break
+      list = _.sortBy list,k,k
+      if v is -1 then list.reverse()
     list
 
   getListening: -> _listening
@@ -84,7 +94,10 @@ WorkStore = assign {},EventEmitter.prototype,{
 
   getSorts: -> _sorts
 
-  setSort: ({key,val}) -> _sorts[key] = val
+  setSort: ({key,val}) -> 
+    for k,v of _sorts
+      _sorts[k] = 0
+    _sorts[key] = val
 
   newItem: ({index}) ->
     item =
