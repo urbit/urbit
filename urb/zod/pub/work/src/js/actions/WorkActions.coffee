@@ -17,8 +17,8 @@ module.exports =
       title:''
       description:''
       discussion:[]
-    station = window.util.talk.mainStationPath window.urb.ship
-    Persistence.put "new": task:item, audience:[station]
+      audience:[window.util.talk.mainStationPath window.urb.ship]
+    Persistence.put "new":item
     Dispatcher.handleViewAction {type:'newItem', index, item}
 
   setFilter: (key,val) ->

@@ -9,7 +9,7 @@ Persistence.get('test', console.log.bind(console));
 
 module.exports = {
   newItem: function(index, list) {
-    var item, station;
+    var item;
     item = {
       id: window.util.uuid32(),
       version: 0,
@@ -22,14 +22,11 @@ module.exports = {
       tags: [],
       title: '',
       description: '',
-      discussion: []
+      discussion: [],
+      audience: [window.util.talk.mainStationPath(window.urb.ship)]
     };
-    station = window.util.talk.mainStationPath(window.urb.ship);
     Persistence.put({
-      "new": {
-        task: item,
-        audience: [station]
-      }
+      "new": item
     });
     return Dispatcher.handleViewAction({
       type: 'newItem',
@@ -1201,8 +1198,7 @@ WorkStore = assign({}, EventEmitter.prototype, {
     var _item, index, item;
     index = arg.index, item = arg.item;
     _item = _.extend({
-      sort: index,
-      audience: []
+      sort: index
     }, item);
     _item["date-created"] = new Date(item["date-created"]);
     _item["date-modified"] = new Date(item["date-modified"]);
