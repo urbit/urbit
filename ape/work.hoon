@@ -48,7 +48,9 @@
           |-  ^-  (list thought)
           :_  ~
           :+  (shaf %task eny)
-            [[[%& our (main our)] [*envelope %pending]] ~ ~]
+            %-  mo  ^-  (list ,[partner envelope delivery]:talk)
+            %+  turn  (~(tap in audience))
+            |=(sat=station:talk [[%& sat] [*envelope %pending]])
           [now *bouquet [%tax action]]
       ==
     ==
