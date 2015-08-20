@@ -54,10 +54,29 @@
           [now *bouquet [%tax action]]
       ==
     ==
+  ++  claim
+    %_    .
+        eny  (sham eny %direct)
+        moves
+      :_  ~
+      ^-  move
+      :*  ost  %poke
+          /claiming/(scot %uw id)
+          [our %talk]
+          %talk-command
+          ^-  command:talk
+          :-  %publish
+          |-  ^-  (list thought)
+          :_  ~
+          :+  (shaf %task eny)
+            [[[%& owner (main owner)] [*envelope %pending]] ~ ~]
+          [now *bouquet [%tax %claim id]]
+      ==
+    ==
   ++  create            (send `duty:work-stuff:talk`[%create `task`tax])
   ++  send-update       |*(* (send %update id +(version) +<))
   ++  announce          (send-update %announce ~)
-  ++  release           (cury send-update %announce)
+  ++  release           (cury send-update %release)
   ++  accept            (send-update %accept ~)
   ++  delete            (send-update %delete ~)
   ++  set-date-due      (cury send-update %set-date-due)
@@ -67,7 +86,6 @@
   ++  set-done          (cury send-update %set-done)
   ++  add-comment       (cury send-update %add-comment)
   ++  set-audience      ~|(%not-implemented !!)
-  ++  claim             ~|(%not-implemented !!)
   ++  process-update
     |=  up=update
     ^+  +>
@@ -98,9 +116,11 @@
 ++  process-duty
   |=  [when=@da her=ship from=(set station:talk) action=duty:work-stuff:talk]
   ^-  [(list move) _+>.$]
-  =<  mirror-to-web
+  =-  =^  mof  con  mirror-to-web:con
+      [(welp mos mof) con]
+  ^-  [mos=(list move) con=_+>.$]
   ?-    -.action
-      %create
+      %create                         ::  XX  should verify ownership
     =+  existing-task=(~(get by tasks) id.p.action)
     ~?  ?&  ?=(^ existing-task)
             !=(p.action task.u.existing-task)
@@ -116,7 +136,10 @@
       ?~  existing-task  from
       (~(uni in audience.u.existing-task) from)
     =.  sort  ?~(existing-task sort [id.p.action sort])
-    +>.$
+    [~ +>.$]
+  ::
+      %claim
+    abet:(release:(at (~(got by tasks) id.action)) her)
   ::
       %update
     =+  tax=(~(get by tasks) id.action)
@@ -126,7 +149,7 @@
               from=from
               action=action
           ==
-      +>.$
+      [~ +>.$]
     ?.  =(version.action +(version.task.u.tax))
       ~&  :*  %update-bad-version
               her
@@ -134,7 +157,7 @@
               action=action
               tax=tax
           ==
-      +>.$
+      [~ +>.$]
     =.  tasks
       %^  ~(put by tasks)  id.action
         ?:  ?&  ?=(?(%announce %release %accept) -.meat.action)
@@ -149,21 +172,23 @@
           task.u.tax
         ?-    -.meat.action
           %announce         task.u.tax(status %announced)
-          %release          task.u.tax(owner p.meat.action, status %released)
+          %release          task.u.tax(owner her.meat.action, status %released)
           %accept           task.u.tax(status %accepted)
-          %delete           !!
-          %set-date-due     task.u.tax(date-due p.meat.action)
-          %set-tags         task.u.tax(tags p.meat.action)
-          %set-title        task.u.tax(title p.meat.action)
-          %set-description  task.u.tax(description p.meat.action)
-          %set-done         task.u.tax(done `when)
+          %delete           ~|(%not-implemented !!)
+          %set-date-due     task.u.tax(date-due wen.meat.action)
+          %set-tags         task.u.tax(tags tag.meat.action)
+          %set-title        task.u.tax(title til.meat.action)
+          %set-description  task.u.tax(description des.meat.action)
+          %set-done         task.u.tax(done ?.(don.meat.action ~ `when))
           %add-comment
             %=  task.u.tax
-              discussion  [[when her p.meat.action] discussion.task.u.tax]
+              discussion  [[when her com.meat.action] discussion.task.u.tax]
             ==
         ==
       (~(uni in audience.u.tax) from)
-    +>.$
+    ?:  =([%release our] meat.action)
+      abet:accept:(at (~(got by tasks) id.action))
+    [~ +>.$]
   ==
 ::
 ++  mirror-to-web
