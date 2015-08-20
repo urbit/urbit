@@ -1,3 +1,4 @@
+::  XX  need to deal with versions and date modified
 ::
 ::::
   ::
@@ -47,7 +48,7 @@
           |-  ^-  (list thought)
           :_  ~
           :+  (shaf %task eny)
-            [[[%& our %porch] [*envelope %pending]] ~ ~]
+            [[[%& our (main our)] [*envelope %pending]] ~ ~]
           [now *bouquet [%tax action]]
       ==
     ==
@@ -89,8 +90,8 @@
 ::
 ++  initialize
   ^-  [(list move) _.]
-  :_  .  :_  ~
-  [ost %peer /peering [our %talk] /f/porch/0]
+  :_  .(connected %&)  :_  ~
+  [ost %peer /peering [our %talk] /f/(main our)/0]
 ::
 ++  process-duty
   |=  [when=@da her=ship from=(set station:talk) action=duty:work-stuff:talk]
@@ -98,10 +99,9 @@
   =<  mirror-to-web
   ?-    -.action
       %create
-    :-  ~
     =+  existing-task=(~(get by tasks) id.p.action)
     ~?  ?&  ?=(^ existing-task)
-            !=(p.action u.existing-task)
+            !=(p.action task.u.existing-task)
         ==
       :*  %new-task-with-old-id
           her=her
@@ -124,7 +124,7 @@
               from=from
               action=action
           ==
-      [~ +>.$]
+      +>.$
     ?.  =(version.action +(version.task.u.tax))
       ~&  :*  %update-bad-version
               her
@@ -132,7 +132,7 @@
               action=action
               tax=tax
           ==
-      [~ +>.$]
+      +>.$
     =.  tasks
       %^  ~(put by tasks)  id.action
         ?:  ?&  ?=(?(%announce %release %accept) -.meat.action)
@@ -166,10 +166,20 @@
 ::
 ++  mirror-to-web
   ^-  [(list move) _.]
+  ~&  [%mirroring tasks=tasks sort=sort]
   :_  .
-  %+  turn  (~(tap by sup))
-  |=  [ust=bone *]
-  [ust %diff %work-report tasks sort]
+  %+  murn  (~(tap by sup))
+  |=  [ust=bone her=ship pax=path]
+  ^-  (unit move)
+  ?:  ?=([%sole *] pax)
+    ~
+  `[ust %diff %work-report tasks sort]
+::
+++  coup
+  |=  [way=wire saw=(unit tang)]
+  ^-  [(list move) _+>.$]
+  ?>  ?=(~ saw)
+  [~ +>.$]
 ::
 ++  reap-peering
   |=  [way=wire saw=(unit tang)]
@@ -187,14 +197,14 @@
     ?-  -.cod
       %new    abet:create:(at +.cod)
       %old    abet:(process-update:(at (~(got by tasks) id.cod)) dif.cod)
-      %sort   !!
+      %sort   ~|(%not-implemented !!)
     ==
   [(welp mos mof) +>.$]
 ::
 ::  XX  maybe need to check that we haven't received this message before
 ::      by keeping a counter of last message received
-++  diff-peering
-  |=  [way=wire %talk-report rep=report]
+++  diff-talk-report
+  |=  [way=wire rep=report:talk]
   ^-  [(list move) _+>.$]
   ?>  ?=(%grams -.rep)
   |-  ^-  [(list move) _+>.^$]
