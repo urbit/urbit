@@ -34,15 +34,29 @@ module.exports = {
       item: item
     });
   },
-  changeItem: function(id, key, val) {
+  setItem: function(id, version, key, val) {
     var set;
     set = {};
     set[key] = val;
     return Persistence.put({
       old: {
         id: id,
+        version: version,
         dif: {
           set: set
+        }
+      }
+    });
+  },
+  addComment: function(id, version, val) {
+    return Persistence.put({
+      old: {
+        id: id,
+        version: version,
+        dif: {
+          add: {
+            comment: val
+          }
         }
       }
     });
@@ -283,7 +297,7 @@ module.exports = recl({
     return valid;
   },
   _keyUp: function(e) {
-    var $t, id, key, val;
+    var $t, id, key, val, ver;
     $t = $(e.target).closest('.field');
     id = $t.closest('.item').attr('data-id');
     key = $t.attr('data-key');
@@ -297,8 +311,9 @@ module.exports = recl({
       if (this.to) {
         clearTimeout(this.to);
       }
+      ver = this.props.item.version;
       return this.to = setTimeout(function() {
-        return WorkActions.changeItem(id, key, val);
+        return WorkActions.setItem(id, ver, key, val);
       }, 1000);
     }
   },
@@ -308,10 +323,17 @@ module.exports = recl({
   _markDone: function(e) {
     var id;
     id = $(e.target).closest('.item').attr('data-id');
-    return WorkActions.changeItem(id, 'done', true);
+    return WorkActions.setItem(id, this.props.item.version, 'done', true);
   },
   _claim: function(e) {},
   _release: function(e) {},
+  _submitComment: function(e) {
+    var $t, id, val;
+    $t = $(e.target).closest('.item');
+    id = $t.attr('data-id');
+    val = $t.find('.comment .input').text();
+    return WorkActions.addComment(id, this.props.item.version, val);
+  },
   formatDate: function(d) {
     if (d === null) {
       return "";
@@ -460,13 +482,14 @@ module.exports = recl({
             className: 'hr2'
           }, ""), div({
             className: 'ship ib'
-          }, "TALSUR-TODRES"), div({
+          }, window.urb.ship), div({
             className: 'date ib'
           }, this.formatDate(new Date())), div({
             contentEditable: true,
             className: 'input'
           }, ""), div({
-            className: 'submit'
+            className: 'submit',
+            onClick: this._submitComment
           }, 'Post')
         ])
       ])
@@ -1199,6 +1222,7 @@ Dispatcher = require('../dispatcher/Dispatcher.coffee');
 _list = [
   {
     id: "0v0",
+    version: 0,
     sort: 0,
     "date-created": new Date('2015-8-18'),
     "date-modified": new Date('2015-8-18'),
@@ -1218,6 +1242,7 @@ _list = [
     ]
   }, {
     id: "0v1",
+    version: 0,
     sort: 1,
     "date-created": new Date('2015-8-18'),
     "date-modified": new Date('2015-8-18'),
@@ -1231,6 +1256,7 @@ _list = [
     discussion: []
   }, {
     id: "0v2",
+    version: 0,
     sort: 2,
     "date-created": new Date('2015-8-18'),
     "date-modified": new Date('2015-8-18'),
