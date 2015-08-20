@@ -86,8 +86,8 @@
           ==                                            ::
 ++  rede                                                ::  universal project
           $:  lim=@da                                   ::  complete to
-              qyx=cult                                  ::  subscribers
               ref=(unit rind)                           ::  outgoing requests
+              qyx=cult                                  ::  subscribers
               dom=dome                                  ::  revision state
               dok=(unit dork)                           ::  outstanding diffs
               mer=(map (pair ship desk) mery)           ::  outstanding merges
@@ -130,9 +130,32 @@
 ::
 |%
 ++  de                                                  ::  per desk
-  |=  [now=@da hen=duct hun=duct hez=(unit duct)]
-  |=  [[who=@p for=@p] syd=@ta rede ran=rang mon=(map term beam)]
-  =*  red  +<+>-
+  |=  [now=@da hen=duct raft]
+  |=  [[our=@p her=@p] syd=desk]
+  =*  ruf  +>+<+>
+  =+  ^-  [hun=(unit duct) rede]
+      =+  rom=(~(get by fat.ruf) her)
+      ?~  rom
+        :-  ~
+        %+  fall
+          (~(get by rus:(fall (~(get by hoy.ruf) her) *rung)) syd)
+        :*  lim=~2000.1.1
+            ref=[~ *rind]
+            qyx=~
+            dom=*dome
+            dok=~
+            mer=~
+        ==
+      :-  `hun.u.rom
+      =+  jod=(fall (~(get by dos.u.rom) syd) *dojo)
+      :*  lim=now
+          ref=~
+          qyx=qyx.jod
+          dom=dom.jod
+          dok=dok.jod
+          mer=mer.jod
+      ==
+  =*  red  ->
   =|  yel=(list ,[p=duct q=gift])
   =|  byn=(list ,[p=duct q=riot])
   =|  reg=(list ,[p=duct q=gift])
@@ -140,11 +163,16 @@
   =|  tag=(list move)
   |%
   ++  abet
-    ^-  [(list move) rede]
-    :_  red
+    ^-  [(list move) raft]
+    :_  =+  rom=(~(get by fat.ruf) her)
+        ?~  rom
+          =+  rug=(~(put by rus:(fall (~(get by hoy.ruf) her) *rung)) syd red)
+          ruf(hoy (~(put by hoy.ruf) her rug))
+        =+  dos=(~(put by dos.u.rom) syd [qyx dom dok mer])
+        ruf(fat (~(put by fat.ruf) her [(need hun) dos]))
     ;:  weld
       %+  turn  (flop yel)
-      |=([a=duct b=gift] [hun %give b])
+      |=([a=duct b=gift] [(need hun) %give b])
     ::
       %+  turn  (flop reg)
       |=([a=duct b=gift] [a %give b])
@@ -155,7 +183,7 @@
       %+  turn  (flop say)
       |=  [a=duct b=path c=ship d=[p=@ud q=riff]]
       :-  a
-      [%pass b %a %wont [who c] [%c %question p.q.d (scot %ud p.d) ~] q.d]
+      [%pass b %a %wont [our c] [%c %question p.q.d (scot %ud p.d) ~] q.d]
     ::
       tag
     ==
@@ -192,7 +220,7 @@
       %tabl  (ford-fail >%strange-gage< ~)
       %&  (some [p.key p.val])
       %|  =.  p.val  [(sell q.p.key) p.val]
-          ~>  %slog.[0 %*(. >%ford-fail syd %for %why< |2.+> p.val)]
+          ~>  %slog.[0 %*(. >%ford-fail syd %her %why< |2.+> p.val)]
           ~
     ==
   ::
@@ -247,7 +275,7 @@
       +>.$(byn [[hen ~ [p.mun q.mun syd] r.mun p.dat] byn])
     =-  +>.$(tag [- tag])
     :*  hen  %pass  [%blab p.mun (scot q.mun) syd r.mun]
-        %f  %exec  who  ~  [who syd q.mun]  (lobe-to-silk:ze r.mun p.dat)
+        %f  %exec  our  ~  [our syd q.mun]  (lobe-to-silk:ze r.mun p.dat)
     ==
   ::
   ++  bleb                                              ::  ship sequence
@@ -276,7 +304,7 @@
       [%many %| [%ud let.dom] `case`q.p.rav r.p.rav]
     =+  inx=nix.u.ref
     %=  +>+.$
-      say        [[hen [(scot %ud inx) ~] for [inx syd ~ vaw]] say]
+      say        [[hen [(scot %ud inx) ~] her [inx syd ~ vaw]] say]
       nix.u.ref  +(nix.u.ref)
       bom.u.ref  (~(put by bom.u.ref) inx [hen vaw])
       fod.u.ref  (~(put by fod.u.ref) hen inx)
@@ -292,7 +320,7 @@
     =-  ?~(- ~ `[nam (lent s.bem) (sa -)])
     %+  skim  can
     |=  pax=path
-    &(=(p.bem for) =(q.bem syd) =((flop s.bem) (scag (lent s.bem) pax)))
+    &(=(p.bem her) =(q.bem syd) =((flop s.bem) (scag (lent s.bem) pax)))
   ::
   ++  mont
     |=  [pot=term pax=path]
@@ -304,8 +332,8 @@
     %_    +>.$
         tag
       :_  tag
-      :*  hen  %pass  [%ergoing (scot %p who) syd ~]  %f
-          %exec  who  ~  [who syd %da now]  %tabl
+      :*  hen  %pass  [%ergoing (scot %p our) syd ~]  %f
+          %exec  our  ~  [our syd %da now]  %tabl
           ^-  (list (pair silk silk))
           %+  turn  `(list path)`mus
           |=  a=path
@@ -331,7 +359,7 @@
     =+  nux=(~(get by fod.u.ref) hen)
     ?~  nux  +.$
     %=  +.$
-      say        [[hen [(scot %ud u.nux) ~] for [u.nux syd ~]] say]
+      say        [[hen [(scot %ud u.nux) ~] her [u.nux syd ~]] say]
       fod.u.ref  (~(del by fod.u.ref) hen)
       bom.u.ref  (~(del by bom.u.ref) u.nux)
     ==
@@ -363,7 +391,7 @@
         ~&  [%oh-no rave=rav aeon=yon letdom=let.dom]
         +>.^$
       ?~  u.var
-        (blab hen p.rav %& %null [%atom %n] ~)          ::  only for %x
+        (blab hen p.rav %& %null [%atom %n] ~)          ::  only her %x
       ?:  (equivalent-data:ze u.u.ver u.u.var)
         $(yon +(yon))
       (blab hen p.rav u.u.var)
@@ -401,7 +429,7 @@
     ^+  +>
     %_    +>.$
         yel
-      =+  pre=`path`~[(scot %p for) syd (scot %ud let.dom)]
+      =+  pre=`path`~[(scot %p her) syd (scot %ud let.dom)]
       ?-  -.lem
         |  :_  yel
            [hen %note '=' %leaf :(weld (trip p.lem) " " (spud pre))]
@@ -506,8 +534,8 @@
         ==
     ^-  (list move)
     :~  :*  hen  %pass
-            [%inserting (scot %p who) syd (scot %da wen) ~]
-            %f  %exec  who  ~  [who syd %da wen]  %tabl
+            [%inserting (scot %p our) syd (scot %da wen) ~]
+            %f  %exec  our  ~  [our syd %da wen]  %tabl
             ^-  (list (pair silk silk))
             %+  turn  ins
             |=  [pax=path mis=miso]
@@ -517,8 +545,8 @@
             [%cast - [%$ p.mis]]
         ==
         :*  hen  %pass
-            [%diffing (scot %p who) syd (scot %da wen) ~]
-            %f  %exec  who  ~  [who syd %da wen]  %tabl
+            [%diffing (scot %p our) syd (scot %da wen) ~]
+            %f  %exec  our  ~  [our syd %da wen]  %tabl
             ^-  (list (pair silk silk))
             %+  turn  dif
             |=  [pax=path mis=miso]
@@ -529,8 +557,8 @@
             [%pact [%$ p.-] [%$ p.mis]]
         ==
         :*  hen  %pass
-            [%castifying (scot %p who) syd (scot %da wen) ~]
-            %f  %exec  who  ~  [who syd %da wen]  %tabl
+            [%castifying (scot %p our) syd (scot %da wen) ~]
+            %f  %exec  our  ~  [our syd %da wen]  %tabl
             ^-  (list (pair silk silk))
             %+  turn  mut
             |=  [pax=path mis=miso]
@@ -548,8 +576,8 @@
     :-  hen
     ?+    -.mis   !!
         %mut
-      :-  [%diffing (scot %p who) syd (scot %da wen) pax]
-      :^  %f  %exec  who  :+  ~  [who syd %da wen]
+      :-  [%diffing (scot %p our) syd (scot %da wen) pax]
+      :^  %f  %exec  our  :+  ~  [our syd %da wen]
       ^-  silk
       :+  %diff
         (lobe-to-silk:ze pax (~(got by q:(aeon-to-yaki:ze let.dom)) pax))
@@ -558,8 +586,8 @@
       [%cast - [%$ p.mis]]
     ::
         %ins
-      :-  [%casting (scot %p who) syd (scot %da wen) pax]
-      :^  %f  %exec  who  :+  ~  [who syd %da wen]
+      :-  [%casting (scot %p our) syd (scot %da wen) pax]
+      :^  %f  %exec  our  :+  ~  [our syd %da wen]
       ^-  silk
       =+  (slag (dec (lent pax)) pax)
       =+  ?~(- %$ i.-)
@@ -660,8 +688,8 @@
     =-  %_(+>.$ tag [- tag])
     ^-  move
     :*  hen  %pass
-        [%mutating (scot %p who) syd (scot %da wen) ~]
-        %f  %exec  who  ~  [who syd %da wen]  %tabl
+        [%mutating (scot %p our) syd (scot %da wen) ~]
+        %f  %exec  our  ~  [our syd %da wen]  %tabl
         ^-  (list (pair silk silk))
         %+  turn  cat
         |=  [pax=path cay=cage]
@@ -763,8 +791,8 @@
         dok  ~
         tag
       :_  tag
-      :*  hen  %pass  [%ergoing (scot %p who) syd ~]  %f
-          %exec  who  ~  [who syd %da now]  %tabl
+      :*  hen  %pass  [%ergoing (scot %p our) syd ~]  %f
+          %exec  our  ~  [our syd %da now]  %tabl
           ^-  (list (pair silk silk))
           %+  turn  (~(tap in sum))
           |=  a=path
@@ -821,8 +849,8 @@
     %_    +>.$
         tag
       :_  tag
-      :*  hen  %pass  [%patching (scot %p who) syd ~]  %f
-          %exec  who  :^  ~  [who syd %da now]  %tabl
+      :*  hen  %pass  [%patching (scot %p our) syd ~]  %f
+          %exec  our  :^  ~  [our syd %da now]  %tabl
           ^-  (list (pair silk silk))
           %+  turn  (~(tap by hat))
           |=  [a=path b=lobe]
@@ -840,6 +868,7 @@
             bar=(set blob)                              ::  new content
         ==
     ^+  +>
+    =<  wake
     =+  ^-  nut=(map tako yaki)
         %-  mo  ^-  (list (pair tako yaki))
         %+  turn  (~(tap in lar))
@@ -893,7 +922,7 @@
     (edit wen lem)
   ::
   ++  exem                                            ::  execute merge
-    |=  [wen=@da her=@p sud=@tas gem=germ]            ::  aka direct change
+    |=  [wen=@da him=@p sud=@tas gem=germ]            ::  aka direct change
     !!
     ::  ?.  (gte p.mer let.dom)  !!                       ::  no
     ::  =.  +>.$  %=  +>.$
@@ -998,8 +1027,8 @@
     ~|  [%x-over-network-not-implemented [p q -.r]:rut hen]  !!
     ::  =-  %_(+>.$ tag [- tag])
     ::  :*  hen
-    ::      [%foreign-plops (scot %p who) (scot %p for) syd ~]
-    ::      %f  %exec  who  ~  %tabl
+    ::      [%foreign-plops (scot %p our) (scot %p her) syd ~]
+    ::      %f  %exec  our  ~  %tabl
     ::      ^-  (list (pair silk silk))
     ::      %+  turn  (~(tap in pop))
     ::      |=  a=plop
@@ -1021,8 +1050,8 @@
     ^+  +>
     =-  %_(+>.$ tag [- tag])
     :*  hen  %pass
-        [%foreign-x (scot %p who) (scot %p for) syd car (scot cas) pax]
-        %f  %exec  who  ~  [for syd cas]
+        [%foreign-x (scot %p our) (scot %p her) syd car (scot cas) pax]
+        %f  %exec  our  ~  [her syd cas]
         [%vale peg]
     ==
   ::
@@ -1044,8 +1073,8 @@
     =-  %_(+>.$ tag [- tag])
     =+  lum=(scot %da (fall lem *@da))
     :*  hen  %pass
-        [%foreign-plops (scot %p who) (scot %p for) syd lum ~]
-        %f  %exec  who  ~  [for syd cas]  %tabl
+        [%foreign-plops (scot %p our) (scot %p her) syd lum ~]
+        %f  %exec  our  ~  [her syd cas]  %tabl
         ^-  (list (pair silk silk))
         %+  turn  (~(tap in pop))
         |=  a=plop
@@ -1298,7 +1327,7 @@
         (~(del by bar) pax)
           %dif                                          ::  mutate, must exist
         =+  ber=(~(get by bar) pax)                     ::  XX  typed
-        =+  for==>((flop pax) ?~(. %$ i))
+        =+  her==>((flop pax) ?~(. %$ i))
         ?~  ber
           =+  har=(~(get by hat) pax)
           ?~  har  !!
@@ -1611,7 +1640,7 @@
     ++  read-at-aeon                                    ::    read-at-aeon:ze
       |=  [yon=aeon mun=mood]                           ::  seek and read
       ^-  (unit (unit (each cage lobe)))
-      ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))              ::  NB only for speed
+      ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))              ::  NB only her speed
         ?^(r.mun [~ ~] [~ ~ %& %aeon !>(yon)])
       ?:  ?=(%u p.mun)
         (read-u yon r.mun)
@@ -1672,7 +1701,7 @@
     ::
     ++  me                                              ::  merge ali into bob
       |=  [ali=(pair ship desk) alh=(unit ankh)]        ::  from
-      =+  bob=`(pair ship desk)`[who syd]               ::  to
+      =+  bob=`(pair ship desk)`[our syd]               ::  to
       =+  dat=(fall (~(get by mer) ali) *mery)          ::  merge data
       =|  don=?                                         ::  keep going
       |%
@@ -2014,11 +2043,11 @@
               ^-  (pair silk silk)
               =+  cal=(~(got by can.dal.dat) pax)
               =+  cob=(~(got by can.dob.dat) pax)
-              =+  ^=  for
+              =+  ^=  her
                   =+  (slag (dec (lent pax)) pax)
                   ?~(- %$ i.-)
               :-  [%$ %path !>(pax)]
-              [%join for [%$ cal] [%$ cob]]
+              [%join her [%$ cal] [%$ cob]]
           ==
         ==
       ::
@@ -2188,6 +2217,7 @@
         =.  hit.dom  (~(put by hit.dom) let.dom r.new.dat)
         =.  ank.dat  (checkout-ankh:ze (~(uni by bop.dat) p.can))
         =.  ank.dom  ank.dat
+        =>  .(..wake wake)
         ?~  hez  done:he
         =+  mus=(must-ergo (turn (~(tap by erg.dat)) head))
         ?:  =(~ mus)  done:he
@@ -2323,59 +2353,6 @@
       --
     --
   --
-::
-++  do
-  |=  [now=@da hen=duct [who=ship him=ship] syd=@tas ruf=raft]
-  =+  ^=  rug  ^-  rung
-      =+  rug=(~(get by hoy.ruf) him)
-      ?^(rug u.rug *rung)
-  =+  ^=  red  ^-  rede
-      =+  yit=(~(get by rus.rug) syd)
-      ?^(yit u.yit `rede`[~2000.1.1 ~ [~ *rind] *dome ~ ~])
-  ((de now hen ~ hez.ruf) [who him] syd red ran.ruf mon.ruf)
-::
-++  posh
-  |=  [him=ship syd=desk red=rede ruf=raft]
-  ^-  raft
-  =+  ^=  rug  ^-  rung
-      =+  rug=(~(get by hoy.ruf) him)
-      ?^(rug u.rug *rung)
-  ruf(hoy (~(put by hoy.ruf) him rug(rus (~(put by rus.rug) syd red))))
-::
-++  un                                                ::  domestic ship
-  |=  [who=@p now=@da hen=duct ruf=raft]
-  =+  ^=  yar  ^-  room
-      =+  yar=(~(get by fat.ruf) who)
-      ?~(yar *room u.yar)
-  |%
-  ++  abet  ruf(fat (~(put by fat.ruf) who yar))
-  ++  pish
-    |=  [syd=@ta red=rede run=rang]
-    %_  +>
-        ran.ruf  run
-        dos.yar
-      (~(put by dos.yar) syd [qyx.red dom.red dok.red mer.red])
-    ==
-  ::
-  ++  wake
-    =+  saz=(turn (~(tap by dos.yar) ~) |=([a=@tas b=*] a))
-    =|  moz=(list move)
-    =<  [moz ..wake]
-    |-  ^+  +
-    ?~  saz  +
-    =+  sog=abet:wake:(di i.saz)
-    $(saz t.saz, moz (weld moz -.sog), ..wake (pish i.saz +.sog ran.ruf))
-  ::
-  ++  di
-    |=  syd=@ta
-    =+  ^=  saq  ^-  dojo
-        =+  saq=(~(get by dos.yar) syd)
-        ?~(saq *dojo u.saq)
-    %^    (de now hen hun.yar hez.ruf)
-        [who who]
-      syd
-    [[now qyx.saq ~ dom.saq dok.saq mer.saq] ran.ruf mon.ruf]
-  --
 --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::              section 4cA, filesystem vane          ::
@@ -2411,11 +2388,15 @@
     [hen %give %hill (turn (~(tap by mon.ruf)) head)]~
   ::
       %init
-    :_  ..^$(fat.ruf (~(put by fat.ruf) p.q.hic [hen ~]))
+    :_  %_    ..^$
+            fat.ruf
+          ?<  (~(has by fat.ruf) p.q.hic)
+          (~(put by fat.ruf) p.q.hic [-(hun hen)]:[*room .])
+        ==
     =+  [bos=(sein p.q.hic) can=(clan p.q.hic)]
     %-  zing  ^-  (list (list move))
     :~  ?:  =(bos p.q.hic)  ~
-        [hen %pass / %c %merg p.q.hic %base bos %kids %init]~
+        [hen %pass /init-merge %c %merg p.q.hic %base bos %kids %init]~
     ::
         ~
     ==
@@ -2424,28 +2405,8 @@
     ?:  =(%$ q.q.hic)
       [~ ..^$]
     =^  mos  ruf
-      =+  une=(un p.q.hic now hen ruf)
-      =+  ^=  zat
-          (exec:(di:une q.q.hic) now r.q.hic)
-      =+  zot=abet.zat
-      :-  -.zot
-      =.  une  (pish:une q.q.hic +.zot ran.zat)
-      abet:une
-    ::  ~&  :+  %infoed
-    ::        len=(lent mos)
-    ::      %+  turn  mos
-    ::      |=  move
-    ::      ^-  [duct (unit path) term term]
-    ::      :-  p
-    ::      ^-  [(unit path) term term]
-    ::      ?+  -.q  [~ *term *term]
-    ::        %pass
-    ::              ^-  [(unit path) term term]
-    ::              [`p.q [- +<]:q.q]
-    ::        %give
-    ::              ^-  [(unit path) term term]
-    ::              [~ %give -.p.q]
-    ::      ==
+      =+  den=((de now hen ruf) [. .]:p.q.hic q.q.hic)
+      abet:(exec:den now r.q.hic)
     [mos ..^$]
   ::
       %into
@@ -2480,19 +2441,14 @@
       ==
     =+  yak=(~(got by hut.ran.ruf) (~(got by hit.dom.u.dos) let.dom.u.dos))
     =+  cos=(mode-to-soba q.yak (flop s.bem) q.q.hic r.q.hic)
-    [hen %pass / %c %info p.bem q.bem %& cos]~
+    [hen %pass /both %c %info p.bem q.bem %& cos]~
   ::
       %merg                                               ::  direct state up
     ?:  =(%$ q.q.hic)
       [~ ..^$]
     =^  mos  ruf
-      =+  une=(un p.q.hic now hen ruf)
-      =+  ^=  zat
-          abet:(start:(me:ze:(di:wake:une q.q.hic) [r.q.hic s.q.hic] ~) t.q.hic)
-      =+  zot=abet.zat
-      :-  -.zot
-      =.  une  (pish:une q.q.hic +.zot ran.zat)
-      abet:une
+      =+  den=((de now hen ruf) [. .]:p.q.hic q.q.hic)
+      abet:abet:(start:(me:ze:den [r.q.hic s.q.hic] ~) t.q.hic)
     [mos ..^$]
   ::
       %mont
@@ -2509,11 +2465,10 @@
     =+  dos=(~(get by dos.u.yar) r.q.hic)
     ?~  dos
       [~ ..^$]
-    =+  une=(un q.q.hic now hen ruf)
-    =+  wex=(di:une r.q.hic)
-    =+  wao=(mont:wex p.q.hic s.q.hic)
-    =+  woo=abet:wao
-    [-.woo ..^$(ruf abet:(pish:une r.q.hic +.woo ran.wao))]
+    =^  mos  ruf
+      =+  den=((de now hen ruf) [. .]:q.q.hic r.q.hic)
+      abet:(mont:den p.q.hic s.q.hic)
+    [mos ..^$]
   ::
       %ogre
     ?~  hez.ruf
@@ -2538,22 +2493,11 @@
   ::
       %warp
     =^  mos  ruf
-      ?:  =(p.p.q.hic q.p.q.hic)
-        =+  une=(un p.p.q.hic now hen ruf)
-        =+  wex=(di:une p.q.q.hic)
-        =+  ^=  wao
-          ?~  q.q.q.hic
-            ease:wex
-          (eave:wex u.q.q.q.hic)
-        =+  ^=  woo
-          abet:wao
-        [-.woo abet:(pish:une p.q.q.hic +.woo ran.wao)]
-      =+  wex=(do now hen p.q.hic p.q.q.hic ruf)
-      =+  ^=  woo
-        ?~  q.q.q.hic
-          abet:ease:wex
-        abet:(eave:wex u.q.q.q.hic)
-      [-.woo (posh q.p.q.hic p.q.q.hic +.woo ruf)]
+      =+  den=((de now hen ruf) p.q.hic p.q.q.hic)
+      =<  abet
+      ?~  q.q.q.hic
+        ease:den
+      (eave:den u.q.q.q.hic)
     [mos ..^$]
   ::
       %west
@@ -2569,14 +2513,10 @@
     ?>  ?=([%answer @ @ ~] q.q.hic)
     =+  syd=(slav %tas i.t.q.q.hic)
     =+  inx=(slav %ud i.t.t.q.q.hic)
-    =+  ^=  zat
-        =<  wake
-        %-  take-foreign-update:(do now hen p.q.hic syd ruf)
-        [inx ((hard (unit rand)) r.q.hic)]
     =^  mos  ruf
-      =+  zot=abet.zat
-      [-.zot (posh q.p.q.hic syd +.zot ruf)]
-    [[[hen %give %mack ~] mos] ..^$(ran.ruf ran.zat)]   ::  merge in new obj
+      =+  den=((de now hen ruf) p.q.hic syd)
+      abet:(take-foreign-update:den inx ((hard (unit rand)) r.q.hic))
+    [[[hen %give %mack ~] mos] ..^$]
   ::
       %wegh
     :_  ..^$  :_  ~
@@ -2614,11 +2554,8 @@
     [~ ~]
   =+  run=((soft care) ren)
   ?~  run  [~ ~]
-  =+  %.  [u.run u.luk tyl]
-      =<  aver
-      ?:  got
-        (di:(un his now ~ ruf) syd)
-      (do now ~ [his his] syd ruf)
+  =+  den=((de now [/scryduct ~] ruf) [. .]:his syd)
+  =+  (aver:den u.run u.luk tyl)
   ?~  -               -
   ?~  u.-             -
   ?:  ?=(%& -.u.u.-)  ``p.u.u.-
@@ -2635,9 +2572,6 @@
     =+  her=(slav %p i.t.t.t.tea)
     =*  sud  i.t.t.t.t.tea
     =*  sat  i.t.t.t.t.t.tea
-    =+  une=(un our now hen ruf)
-    =+  wak=une
-    =+  wex=(di:wak syd)
     =+  dat=?-(+<.q.hin %writ [%& p.q.hin], %made [%| q.q.hin])
     =+  ^-  kan=(unit ankh)
         %+  biff  (~(get by fat.ruf) her)
@@ -2645,10 +2579,10 @@
         %+  bind  (~(get by dos) sud)
         |=  dojo
         ank.dom
-    =+  wao=abet:(route:(me:ze:wex [her sud] kan) sat dat)
-    =+  woo=abet:wao
-    =+  sip=wake:(pish:une syd +.woo ran.wao)
-    [(weld -.sip -.woo) ..^$(ruf abet:[+.sip])]
+    =^  mos  ruf
+      =+  den=((de now hen ruf) [. .]:our syd)
+      abet:abet:(route:(me:ze:den [her sud] kan) sat dat)
+    [mos ..^$]
   ?:  ?=([%blab care @ @ *] tea)
     ?>  ?=(%made +<.q.hin)
     ?.  ?=(%& -.q.q.hin)
@@ -2669,82 +2603,60 @@
     ?+    -.tea  !!
         %inserting
       ?>  ?=([@ @ @ ~] t.tea)
-      =+  who=(slav %p i.t.tea)
+      =+  our=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
       =+  wen=(slav %da i.t.t.t.tea)
       =^  mos  ruf
-        =+  une=(un who now hen ruf)
-        =+  ^=  zat
-            (take-inserting:(di:une syd) wen q.q.hin)
-        =+  zot=abet.zat
-        [-.zot abet:(pish:une syd +.zot ran.zat)]
+        =+  den=((de now hen ruf) [. .]:our syd)
+        abet:(take-inserting:den wen q.q.hin)
       [mos ..^$]
     ::
         %diffing
       ?>  ?=([@ @ @ ~] t.tea)
-      =+  who=(slav %p i.t.tea)
+      =+  our=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
       =+  wen=(slav %da i.t.t.t.tea)
       =^  mos  ruf
-        =+  une=(un who now hen ruf)
-        =+  ^=  zat
-            (take-diffing:(di:une syd) wen q.q.hin)
-        =+  zot=abet.zat
-        [-.zot abet:(pish:une syd +.zot ran.zat)]
+        =+  den=((de now hen ruf) [. .]:our syd)
+        abet:(take-diffing:den wen q.q.hin)
       [mos ..^$]
     ::
         %castifying
       ?>  ?=([@ @ @ ~] t.tea)
-      =+  who=(slav %p i.t.tea)
+      =+  our=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
       =+  wen=(slav %da i.t.t.t.tea)
       =^  mos  ruf
-        =+  une=(un who now hen ruf)
-        =+  ^=  zat
-            (take-castify:(di:une syd) wen q.q.hin)
-        =+  zot=abet.zat
-        [-.zot abet:(pish:une syd +.zot ran.zat)]
+        =+  den=((de now hen ruf) [. .]:our syd)
+        abet:(take-castify:den wen q.q.hin)
       [mos ..^$]
     ::
         %mutating
       ?>  ?=([@ @ @ ~] t.tea)
-      =+  who=(slav %p i.t.tea)
+      =+  our=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
       =+  wen=(slav %da i.t.t.t.tea)
       =^  mos  ruf
-        =+  une=(un who now hen ruf)
-        =+  ^=  zat
-            (take-mutating:(di:une syd) wen q.q.hin)
-        =+  zot=abet.zat
-        [-.zot abet:(pish:une syd +.zot ran.zat)]
+        =+  den=((de now hen ruf) [. .]:our syd)
+        abet:(take-mutating:den wen q.q.hin)
       [mos ..^$]
     ::
         %patching
       ?>  ?=([@ @ ~] t.tea)
-      =+  who=(slav %p i.t.tea)
+      =+  our=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
       =^  mos  ruf
-        ?:  (~(has by fat.ruf) who)
-          =+  une=(un who now hen ruf)
-          =+  zat=(take-patch:(di:une syd) q.q.hin)
-          =+  zot=abet.zat
-          [-.zot abet:(pish:une syd +.zot ran.zat)]
-        =+  zax=(do now hen [who who] syd ruf)
-        =+  zat=(take-patch:zax q.q.hin)
-        =+  zot=abet.zat
-        [-.zot (posh who syd +.zot ruf)]
+        =+  den=((de now hen ruf) [. .]:our syd)
+        abet:(take-patch:den q.q.hin)
       [mos ..^$]
     ::
         %ergoing
       ?>  ?=([@ @ ~] t.tea)
-      =+  who=(slav %p i.t.tea)
+      =+  our=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
       =^  mos  ruf
-        =+  une=(un who now hen ruf)
-        =+  ^=  zat
-            (take-ergo:(di:une syd) q.q.hin)
-        =+  zot=abet.zat
-        [-.zot abet:(pish:une syd +.zot ran.zat)]
+        =+  den=((de now hen ruf) [. .]:our syd)
+        abet:(take-ergo:den q.q.hin)
       [mos ..^$]
     ::
         %foreign-plops
@@ -2753,12 +2665,10 @@
       =+  her=(slav %p i.t.t.tea)
       =*  syd  i.t.t.t.tea
       =+  lem=(slav %da i.t.t.t.t.tea)
-      =+  zax=(do now hen [our her] syd ruf)
-      =+  zat=(take-foreign-plops:zax ?~(lem ~ `lem) q.q.hin)
       =^  mos  ruf
-        =+  zot=abet.zat
-        [-.zot (posh her syd +.zot ruf)]
-      [mos ..^$(ran.ruf ran.zat)]
+        =+  den=((de now hen ruf) [our her] syd)
+        abet:(take-foreign-plops:den ?~(lem ~ `lem) q.q.hin)
+      [mos ..^$]
     ::
         %foreign-x
       ?>  ?=([@ @ @ @ @ *] t.tea)
@@ -2771,12 +2681,10 @@
           ?>  ?=([~ %$ case] -)
           ->+
       =*  pax  t.t.t.t.t.t.tea
-      =+  zax=(do now hen [our her] syd ruf)
-      =+  zat=(take-foreign-x:zax car cas pax q.q.hin)
       =^  mos  ruf
-        =+  zot=abet.zat
-        [-.zot (posh her syd +.zot ruf)]
-      [mos ..^$(ran.ruf ran.zat)]
+        =+  den=((de now hen ruf) [our her] syd)
+        abet:(take-foreign-x:den car cas pax q.q.hin)
+      [mos ..^$]
     ==
   ::
       %mere
@@ -2793,13 +2701,14 @@
   ::
       %note  [[hen %give +.q.hin]~ ..^$]
       %wake
-    =+  dal=(turn (~(tap by fat.ruf) ~) |=([a=@p b=room] a))
-    =|  mos=(list move)
-    |-  ^-  [p=(list move) q=_..^^$]
-    ?~  dal  [mos ..^^$]
-    =+  une=(un i.dal now hen ruf)
-    =^  som  une  wake:une
-    $(dal t.dal, ruf abet:une, mos (weld som mos))
+    ~|  %why-wakey  !!
+    ::  =+  dal=(turn (~(tap by fat.ruf) ~) |=([a=@p b=room] a))
+    ::  =|  mos=(list move)
+    ::  |-  ^-  [p=(list move) q=_..^^$]
+    ::  ?~  dal  [mos ..^^$]
+    ::  =+  une=(un i.dal now hen ruf)
+    ::  =^  som  une  wake:une
+    ::  $(dal t.dal, ruf abet:une, mos (weld som mos))
   ::
       %writ
     ?>  ?=([@ @ *] tea)
@@ -2808,7 +2717,7 @@
     =+  our=(slav %p i.tea)
     =+  him=(slav %p i.t.tea)
     :_  ..^$
-    :~  :*  hen  %pass  ~  %a
+    :~  :*  hen  %pass  /writ-wont  %a
             %wont  [our him]  [%c %answer t.t.tea]
             (bind p.+.q.hin rant-to-rand)
         ==

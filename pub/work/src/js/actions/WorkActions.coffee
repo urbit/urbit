@@ -1,6 +1,24 @@
-Dispatcher = require '../dispatcher/Dispatcher.coffee'
+Dispatcher   = require '../dispatcher/Dispatcher.coffee'
+Persistence  = require '../persistence/Persistence.coffee'
 
+Persistence.get 'test', console.log.bind(console)
 module.exports =
+  newItem: (index,list) ->
+    item =
+      id:window.util.uuid32()
+      version:0
+      "date-created":Date.now()
+      "date-modified":Date.now()
+      "due-date":null
+      owner:window.urb.ship
+      status:'gave'
+      tags:[]
+      title:''
+      description:''
+      discussion:[]
+    Persistence.put "new":item
+    Dispatcher.handleViewAction {type:'newItem', index, item}
+
   setFilter: (key,val) ->
     Dispatcher.handleViewAction
       type:'setFilter'
@@ -11,12 +29,7 @@ module.exports =
     Dispatcher.handleViewAction
       type:'setSort'
       key:key
-      val:val
-
-  newItem: (index) ->
-    Dispatcher.handleViewAction
-      type:'newItem'
-      index:index
+      val:val 
 
   swapItems: (to,from) ->
     Dispatcher.handleViewAction
@@ -24,7 +37,8 @@ module.exports =
       from:from
       to:to
 
-  removeItem: (index) ->
+  removeItem: (index,id) ->
+    Persistence.put old:{id,dif:set:done:Date.now()}
     Dispatcher.handleViewAction
       type:'removeItem'
       index:index
