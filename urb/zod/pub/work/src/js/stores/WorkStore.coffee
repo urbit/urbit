@@ -4,6 +4,7 @@ Dispatcher    = require '../dispatcher/Dispatcher.coffee'
 
 _list   = [
     id:"0v0"
+    version:0
     sort:0
     "date-created":new Date('2015-8-18')
     "date-modified":new Date('2015-8-18')
@@ -23,6 +24,7 @@ _list   = [
     ]
   ,
     id:"0v1"
+    version:0
     sort:1
     "date-created":new Date('2015-8-18')
     "date-modified":new Date('2015-8-18')
@@ -36,6 +38,7 @@ _list   = [
     discussion:[]
   ,
     id:"0v2"
+    version:0
     sort:2
     "date-created":new Date('2015-8-18')
     "date-modified":new Date('2015-8-18')

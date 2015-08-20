@@ -83,19 +83,27 @@ module.exports = recl
         return
       $t.removeClass 'invalid'
       if @to then clearTimeout @to
+      ver = @props.item.version
       @to = setTimeout -> 
-          WorkActions.changeItem id,key,val
+          WorkActions.setItem id,ver,key,val
         ,1000
 
   _focus: (e) -> @props._focus e,@
 
   _markDone: (e) ->
     id = $(e.target).closest('.item').attr 'data-id'
-    WorkActions.changeItem id,'done',true
+    WorkActions.setItem id,@props.item.version,'done',true
 
   _claim: (e) ->
 
   _release: (e) ->
+
+  _submitComment: (e) ->
+    $t = $(e.target).closest('.item')
+    id = $t.attr 'data-id'
+    val = $t.find('.comment .input').text()
+
+    WorkActions.addComment id,@props.item.version,val
 
   formatDate: (d) ->
     return "" if d is null
@@ -209,12 +217,12 @@ module.exports = recl
           ),
           (div {className:'new comment'},[
               (div {className:'hr2'},"")
-              (div {className:'ship ib'}, "TALSUR-TODRES")
+              (div {className:'ship ib'}, window.urb.ship)
               (div {className:'date ib'}, @formatDate(new Date()))
               (div {
                 contentEditable:true,
                 className:'input'},"")
-              (div {className:'submit'},'Post')
+              (div {className:'submit',onClick:@_submitComment},'Post')
           ])
         ])
     ])
