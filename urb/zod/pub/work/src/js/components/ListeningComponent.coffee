@@ -4,6 +4,4 @@ rece = React.createElement
 
 module.exports = recl
   render: ->
-    (div {className:'listening'}, [
-      (h1 {}, 'Listening:')
-    ])
+    (div {className:'listening'}, "")

@@ -1,9 +1,37 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var Dispatcher;
+var Dispatcher, Persistence;
 
 Dispatcher = require('../dispatcher/Dispatcher.coffee');
 
+Persistence = require('../persistence/Persistence.coffee');
+
+Persistence.get('test', console.log.bind(console));
+
 module.exports = {
+  newItem: function(index, list) {
+    var item;
+    item = {
+      id: window.util.uuid32(),
+      version: 0,
+      "date-created": Date.now(),
+      "date-modified": Date.now(),
+      "due-date": null,
+      owner: window.urb.ship,
+      status: 'gave',
+      tags: [],
+      title: '',
+      description: '',
+      discussion: []
+    };
+    Persistence.put({
+      "new": item
+    });
+    return Dispatcher.handleViewAction({
+      type: 'newItem',
+      index: index,
+      item: item
+    });
+  },
   setFilter: function(key, val) {
     return Dispatcher.handleViewAction({
       type: 'setFilter',
@@ -18,12 +46,6 @@ module.exports = {
       val: val
     });
   },
-  newItem: function(index) {
-    return Dispatcher.handleViewAction({
-      type: 'newItem',
-      index: index
-    });
-  },
   swapItems: function(to, from) {
     return Dispatcher.handleViewAction({
       type: 'swapItem',
@@ -31,7 +53,17 @@ module.exports = {
       to: to
     });
   },
-  removeItem: function(index) {
+  removeItem: function(index, id) {
+    Persistence.put({
+      old: {
+        id: id,
+        dif: {
+          set: {
+            done: Date.now()
+          }
+        }
+      }
+    });
     return Dispatcher.handleViewAction({
       type: 'removeItem',
       index: index
@@ -47,7 +79,8 @@ module.exports = {
 };
 
 
-},{"../dispatcher/Dispatcher.coffee":8}],2:[function(require,module,exports){
+
+},{"../dispatcher/Dispatcher.coffee":8,"../persistence/Persistence.coffee":14}],2:[function(require,module,exports){
 var div, h1, label, rece, recl, ref;
 
 recl = React.createClass;
@@ -68,56 +101,70 @@ module.exports = recl({
     return this.change(e);
   },
   change: function(e) {
-    var $t, txt;
+    var $t, key, txt;
     $t = $(e.target).closest('.filter');
     txt = $t.find('.input').text().trim();
+    key = $t.attr('data-key');
     if (txt.length === 0) {
       txt = null;
     }
-    return this.props.onChange($t.attr('data-key'), txt);
+    if (key === 'audience') {
+      txt = txt.split(" ");
+    }
+    if (key === 'tags') {
+      txt = [txt];
+    }
+    return this.props.onChange(key, txt);
   },
   render: function() {
     return div({
       className: 'filters'
     }, [
-      h1({}, 'Filters:'), div({
-        className: 'owned filter',
-        'data-key': 'owned'
+      div({
+        className: 'owned filter ib',
+        'data-key': 'owner'
       }, [
-        label({}, 'Owened by:'), div({
+        label({}, 'Owned by:'), div({
           contentEditable: true,
           className: 'input ib',
           onKeyDown: this._onKeyDown,
           onBlur: this._onBlur
         }, this.props.filters.owned)
       ]), div({
-        className: 'tag filter',
-        'data-key': 'tag'
+        className: 'tag filter ib',
+        'data-key': 'tags'
       }, [
         label({}, 'Tag:'), div({
           contentEditable: true,
-          className: 'input ib'
+          className: 'input ib',
+          onKeyDown: this._onKeyDown,
+          onBlur: this._onBlur
         }, this.props.filters.tag)
       ]), div({
-        className: 'channel filter',
-        'data-key': 'channel'
+        className: 'channel filter ib',
+        'data-key': 'audience'
       }, [
-        label({}, 'Channel:'), div({
+        label({}, 'Audience:'), div({
           contentEditable: true,
-          className: 'input ib'
+          className: 'input ib',
+          onKeyDown: this._onKeyDown,
+          onBlur: this._onBlur
         }, this.props.filters.channel)
       ]), div({
-        className: 'status filter',
+        className: 'status filter ib',
         'data-key': 'status'
       }, [
         label({}, 'Status:'), div({
           contentEditable: true,
-          className: 'input ib'
+          className: 'input ib',
+          onKeyDown: this._onKeyDown,
+          onBlur: this._onBlur
         }, this.props.filters.status)
       ])
     ]);
   }
 });
+
 
 
 },{}],3:[function(require,module,exports){
@@ -191,7 +238,7 @@ module.exports = recl({
         className: 'audience'
       }, this.props.item.audience.join(" ")), div({
         className: 'sort ib top'
-      }, this.props.index), div({
+      }, this.props.item.sort), div({
         className: 'done ib'
       }, ''), div({
         className: 'title ib top'
@@ -278,6 +325,7 @@ module.exports = recl({
     ]);
   }
 });
+
 
 
 },{"../actions/WorkActions.coffee":1}],4:[function(require,module,exports){
@@ -389,7 +437,7 @@ module.exports = recl({
               select: "end"
             });
           }
-          WorkActions.removeItem(this.state.selected);
+          WorkActions.removeItem(this.state.selected, this.state.list[this.state.selected].id);
           e.preventDefault();
         }
         break;
@@ -421,7 +469,9 @@ module.exports = recl({
   _changeFilter: function(key, val) {
     return WorkActions.setFilter(key, val);
   },
-  _changeSorts: function() {},
+  _changeSort: function(key, val) {
+    return WorkActions.setSort(key, val);
+  },
   componentDidMount: function() {
     this.placeholder = $("<div class='item placeholder'><div class='sort'>x</div></div>");
     WorkStore.addChangeListener(this._onChangeStore);
@@ -466,7 +516,7 @@ module.exports = recl({
             onChange: this._changeFilter
           }), rece(SortComponent, {
             sorts: this.state.sorts,
-            onChange: this._changeSorts
+            onChange: this._changeSort
           })
         ])
       ]), div({
@@ -491,7 +541,8 @@ module.exports = recl({
 });
 
 
-},{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":14,"./FilterComponent.coffee":2,"./ItemComponent.coffee":3,"./ListeningComponent.coffee":5,"./SortComponent.coffee":6}],5:[function(require,module,exports){
+
+},{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":15,"./FilterComponent.coffee":2,"./ItemComponent.coffee":3,"./ListeningComponent.coffee":5,"./SortComponent.coffee":6}],5:[function(require,module,exports){
 var div, h1, input, rece, recl, ref, textarea;
 
 recl = React.createClass;
@@ -504,27 +555,56 @@ module.exports = recl({
   render: function() {
     return div({
       className: 'listening'
-    }, [h1({}, 'Listening:')]);
+    }, "");
   }
 });
 
 
+
 },{}],6:[function(require,module,exports){
-var button, div, h1, rece, recl, ref;
+var button, div, h1, label, rece, recl, ref;
 
 recl = React.createClass;
 
 rece = React.createElement;
 
-ref = [React.DOM.div, React.DOM.h1, React.DOM.button], div = ref[0], h1 = ref[1], button = ref[2];
+ref = [React.DOM.div, React.DOM.h1, React.DOM.button, React.DOM.label], div = ref[0], h1 = ref[1], button = ref[2], label = ref[3];
 
 module.exports = recl({
+  _onClick: function(e) {
+    var $t, key, sor;
+    $t = $(e.target).closest('.sort');
+    key = $t.attr('data-key');
+    sor = Number($t.attr('data-state'));
+    if (sor === 0) {
+      sor = 1;
+    } else if (sor === 1) {
+      sor = -1;
+    } else if (sor === -1) {
+      sor = 0;
+    }
+    return this.props.onChange(key, sor);
+  },
   render: function() {
     return div({
       className: 'sorts'
-    }, [h1({}, 'Sorts:'), button({}, 'Name'), button({}, 'Owner'), button({}, 'Date'), button({}, 'Priority')]);
+    }, _.map(this.props.sorts, (function(_this) {
+      return function(s, k) {
+        return button({
+          'data-key': k,
+          'data-state': s,
+          className: "sort s-" + s,
+          onClick: _this._onClick
+        }, [
+          label({}, k), div({
+            className: 'caret ib'
+          }, '')
+        ]);
+      };
+    })(this)));
   }
 });
+
 
 
 },{}],7:[function(require,module,exports){
@@ -549,6 +629,7 @@ module.exports = recl({
 });
 
 
+
 },{"./ListComponent.coffee":4}],8:[function(require,module,exports){
 var Dispatcher;
 
@@ -570,17 +651,21 @@ module.exports = _.merge(new Dispatcher(), {
 });
 
 
+
 },{"flux":10}],9:[function(require,module,exports){
 var WorkComponent;
 
 WorkComponent = require('./components/WorkComponent.coffee');
+
+window.util = _.extend(window.util || {}, require('./util.coffee'));
 
 $(function() {
   return React.render(React.createElement(WorkComponent), $('#c')[0]);
 });
 
 
-},{"./components/WorkComponent.coffee":7}],10:[function(require,module,exports){
+
+},{"./components/WorkComponent.coffee":7,"./util.coffee":16}],10:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -939,6 +1024,28 @@ module.exports = Object.assign || function (target, source) {
 };
 
 },{}],14:[function(require,module,exports){
+urb.appl = 'hood';
+
+module.exports = {
+  put: function(update, cb) {
+    return urb.send(update, {
+      mark: 'work-command'
+    }, cb);
+  },
+  get: function(id, cb) {
+    var url;
+    url = (urb.util.basepath("/pub/work/")) + id + ".json";
+    return $.get(url, {}, function(data) {
+      if (cb) {
+        return cb(null, data);
+      }
+    });
+  }
+};
+
+
+
+},{}],15:[function(require,module,exports){
 var Dispatcher, EventEmitter, WorkStore, _filters, _list, _listening, _sorts, assign;
 
 EventEmitter = require('events').EventEmitter;
@@ -949,10 +1056,10 @@ Dispatcher = require('../dispatcher/Dispatcher.coffee');
 
 _list = [
   {
-    id: 0,
+    id: "0v0",
     sort: 0,
     "date-created": new Date('2015-8-18'),
-    "date-modifed": new Date('2015-8-18'),
+    "date-modified": new Date('2015-8-18'),
     "date-due": null,
     owner: "~talsur-todres",
     audience: ["doznec/urbit-meta", "doznec/tlon"],
@@ -968,10 +1075,10 @@ _list = [
       }
     ]
   }, {
-    id: 1,
+    id: "0v1",
     sort: 1,
     "date-created": new Date('2015-8-18'),
-    "date-modifed": new Date('2015-8-18'),
+    "date-modified": new Date('2015-8-18'),
     "date-due": null,
     owner: "~talsur-todres",
     audience: ["doznec/tlon"],
@@ -981,10 +1088,10 @@ _list = [
     description: 'dont forget about lunch.',
     discussion: []
   }, {
-    id: 2,
+    id: "0v2",
     sort: 2,
     "date-created": new Date('2015-8-18'),
-    "date-modifed": new Date('2015-8-18'),
+    "date-modified": new Date('2015-8-18'),
     "date-due": null,
     owner: "~talsur-todres",
     audience: ["doznec/tlon"],
@@ -999,17 +1106,17 @@ _list = [
 _listening = [];
 
 _filters = {
-  owned: null,
-  tag: null,
-  channel: null,
+  owner: null,
+  tags: null,
+  audience: null,
   status: null
 };
 
 _sorts = {
-  name: null,
-  owner: null,
-  date: null,
-  priority: null
+  title: 0,
+  owner: 0,
+  date: 0,
+  sort: 0
 };
 
 WorkStore = assign({}, EventEmitter.prototype, {
@@ -1023,18 +1130,41 @@ WorkStore = assign({}, EventEmitter.prototype, {
     return this.removeListener("change", cb);
   },
   getList: function(key) {
-    var add, k, list, v;
+    var _k, _v, add, c, k, list, v;
     list = [];
     for (k in _list) {
       v = _list[k];
       add = true;
-      if (_filters.owned !== null) {
-        if (v.owner !== _filters.owned) {
-          add = false;
+      for (_k in _filters) {
+        _v = _filters[_k];
+        if (_v === null) {
+          continue;
+        }
+        c = v[_k];
+        if (typeof c === 'object') {
+          if (_.intersection(c, _v).length === 0) {
+            add = false;
+          }
+        } else {
+          if (c !== _v) {
+            add = false;
+          }
         }
       }
       if (add === true) {
         list.push(v);
+      }
+    }
+    if (_.uniq(_.values(_sorts)).length > 0) {
+      for (k in _sorts) {
+        v = _sorts[k];
+        if (v !== 0) {
+          break;
+        }
+      }
+      list = _.sortBy(list, k, k);
+      if (v === -1) {
+        list.reverse();
       }
     }
     return list;
@@ -1054,28 +1184,25 @@ WorkStore = assign({}, EventEmitter.prototype, {
     return _sorts;
   },
   setSort: function(arg) {
-    var key, val;
+    var k, key, v, val;
     key = arg.key, val = arg.val;
+    for (k in _sorts) {
+      v = _sorts[k];
+      _sorts[k] = 0;
+    }
     return _sorts[key] = val;
   },
   newItem: function(arg) {
-    var index, item;
-    index = arg.index;
-    item = {
-      id: index,
+    var _item, index, item;
+    index = arg.index, item = arg.item;
+    _item = _.extend({
       sort: index,
-      "date-created": new Date(),
-      "date-modifed": new Date(),
-      "date-due": null,
-      owner: "~talsur-todres",
-      status: null,
-      tags: [],
-      audience: [],
-      title: '',
-      description: '',
-      discussion: []
-    };
-    return _list.splice(index, 0, item);
+      audience: []
+    }, item);
+    _item["date-created"] = new Date(item["date-created"]);
+    _item["date-modified"] = new Date(item["date-modified"]);
+    _item["date-due"] = item["due-date"];
+    return _list.splice(index, 0, _item);
   },
   swapItem: function(arg) {
     var from, to;
@@ -1083,10 +1210,9 @@ WorkStore = assign({}, EventEmitter.prototype, {
     return _list.splice(to, 0, _list.splice(from, 1)[0]);
   },
   removeItem: function(arg) {
-    var index, list;
+    var index;
     index = arg.index;
-    list = lists[list];
-    return list.splice(index, 1);
+    return _list.splice(index, 1);
   }
 });
 
@@ -1104,7 +1230,48 @@ WorkStore.dispatchToken = Dispatcher.register(function(p) {
 module.exports = WorkStore;
 
 
-},{"../dispatcher/Dispatcher.coffee":8,"events":15,"object-assign":13}],15:[function(require,module,exports){
+
+},{"../dispatcher/Dispatcher.coffee":8,"events":17,"object-assign":13}],16:[function(require,module,exports){
+module.exports = {
+  uuid32: function() {
+    var i, str, vals;
+    vals = (function() {
+      var j, results;
+      results = [];
+      for (i = j = 0; j <= 5; i = ++j) {
+        str = Math.ceil(Math.random() * 10000000).toString(32);
+        results.push(("00000" + str).substr(-5, 5));
+      }
+      return results;
+    })();
+    vals.unshift(Math.ceil(Math.random() * 8));
+    return "0v" + vals.join('.');
+  },
+  getScroll: function() {
+    return this.writingPosition = $('#c').outerHeight(true) + $('#c').offset().top - $(window).height();
+  },
+  setScroll: function() {
+    window.util.getScroll();
+    return $(window).scrollTop($("#c").height());
+  },
+  isScrolling: function() {
+    if (!window.util.writingPosition) {
+      window.util.getScroll();
+    }
+    return $(window).scrollTop() + $('#writing').outerHeight() < window.util.writingPosition;
+  },
+  checkScroll: function() {
+    if (window.util.isScrolling()) {
+      return $('body').addClass('scrolling');
+    } else {
+      return $('body').removeClass('scrolling');
+    }
+  }
+};
+
+
+
+},{}],17:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a

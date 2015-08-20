@@ -71,7 +71,7 @@ module.exports = recl
         e.target.innerText.length is 0
           if @state.selected isnt 0
             @setState {selected:@state.selected-1,select:"end"}
-          WorkActions.removeItem @state.selected
+          WorkActions.removeItem @state.selected,@state.list[@state.selected].id
           e.preventDefault()
       # up
       when 38
@@ -93,7 +93,7 @@ module.exports = recl
 
   _changeFilter: (key,val) -> WorkActions.setFilter key,val
 
-  _changeSorts: ->
+  _changeSort: (key,val) -> WorkActions.setSort key,val
 
   componentDidMount: -> 
     @placeholder = $ "<div class='item placeholder'><div class='sort'>x</div></div>"
@@ -130,7 +130,7 @@ module.exports = recl
           })
           rece(SortComponent, {
             sorts:@state.sorts
-            onChange:@_changeSorts
+            onChange:@_changeSort
           })
         ]),
       ])

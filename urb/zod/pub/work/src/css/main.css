@@ -83,7 +83,10 @@
   font-style: normal;
 }
 html,
-body {
+body,
+input,
+label,
+button {
   font-family: "bau";
   font-size: 18px;
 }
@@ -98,11 +101,38 @@ body {
 h1 {
   font-weight: 500;
 }
+.ctrl {
+  margin-top: 2rem;
+}
 .ctrl h1 {
   font-size: 1rem;
 }
+.ctrl .sort label,
+.ctrl .filter label {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  line-height: 2rem;
+  letter-spacing: 0.07rem;
+}
+.ctrl .filter {
+  line-height: 2rem;
+  margin-right: 1rem;
+}
+.ctrl .sort {
+  border: 3px solid transparent;
+  background-color: transparent;
+  outline: none;
+}
+.ctrl .sort.s-1,
+.ctrl .sort.s--1 {
+  border: 3px solid #ccc;
+}
+.ctrl .sort.s-1 label,
+.ctrl .sort.s--1 label {
+  margin-right: 1rem;
+}
 .items {
-  margin-top: 4rem;
+  margin-top: 2rem;
 }
 .item {
   display: block;
@@ -256,6 +286,20 @@ h1 {
   border-right: 6px solid transparent;
   border-bottom: 6px solid transparent;
   margin-top: 0.4rem;
+}
+.s-1 .caret,
+.caret.down {
+  border-left: 6px solid transparent;
+  border-top: 6px solid #000;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+}
+.s--1 .caret,
+.caret.up {
+  border-left: 6px solid transparent;
+  border-top: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #000;
 }
 .hr1 {
   height: 0.2rem;
