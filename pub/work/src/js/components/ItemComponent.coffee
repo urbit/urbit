@@ -51,7 +51,7 @@ module.exports = recl
       'data-index':@props.index
       }, [
         (div {className:'audience'},@props.item.audience.join(" "))
-        (div {className:'sort ib top'},@props.index)
+        (div {className:'sort ib top'},@props.item.sort)
         (div {className:'done ib'},'')
         (div {className:'title ib top'},[
           (div {
