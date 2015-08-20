@@ -49,10 +49,10 @@
       ==
     ++  id  (ci (slat %uv) so)
     ++  ship  (su fed:ag)
-    ++  coma  (of new/new old/(ot id/id dif/uppd ~) sort/(ar id) ~)
-    ++  new  (ot task/task audience/audi ~)
+    ++  coma  (of new/task old/(ot id/id dif/uppd ~) sort/(ar id) ~)
     ++  task
       %-  ot  :~
+        audience/audi
         id/id           date-created/di
         version/ni      date-modified/di
         owner/ship      status/(ci (soft status) so)
@@ -60,7 +60,8 @@
         done/(mu di)    title/so
         description/so  discussion/(ar (ot date/di ship/ship body/so ~))
       ==
-    ++  audi  (as (ot ship/ship span/so ~))
+    ++  audi  (as stan)
+    ++  stan  (su ;~((glue fas) ;~(pfix sig fed:ag) urs:ab))
     ++  uppd
       %-  of  :~
         own/(of announce/ul claim/ul ~)

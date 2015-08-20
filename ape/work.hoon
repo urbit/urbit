@@ -144,7 +144,7 @@
       :_  |
       ?~  existing-task  from
       (~(uni in audience.u.existing-task) from)
-    =.  sort  ?~(existing-task sort [id.action sort])
+    =.  sort  ?~(existing-task sort [id.tax.action sort])
     [~ +>.$]
   ::
       %claim
@@ -240,7 +240,7 @@
     initialize
   =^  mof  +>.$
     ?-  -.cod
-      %new    abet:create:(at +.cod)
+      %new    abet:create:(at [+ -]:+.cod)
       %old    abet:(process-update:(at (~(got by tasks) id.cod)) dif.cod)
       %sort   ~|(%not-implemented !!)
     ==

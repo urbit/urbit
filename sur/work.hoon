@@ -29,7 +29,7 @@
   ==
 ++  status  ?(%announced %released %accepted)
 ++  command  
-  $%  [%new task audience=(set station:talk)]
+  $%  [%new audience=(set station:talk) task]
       [%old id=@uvH dif=update]
       [%sort p=(list ,@uvH)]
   ==

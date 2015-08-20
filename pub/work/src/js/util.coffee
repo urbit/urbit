@@ -23,3 +23,16 @@ module.exports =
       $('body').addClass 'scrolling'
     else
       $('body').removeClass 'scrolling'
+  talk:
+    mainStations: ["court","floor","porch"]
+    mainStationPath: (user) -> "~#{user}/#{window.util.talk.mainStation(user)}"
+    mainStation: (user) ->
+      if not user then user = window.urb.user
+      switch user.length
+        when 3
+          return "court"
+        when 6
+          return "floor"
+        when 13
+          return "porch"
+
