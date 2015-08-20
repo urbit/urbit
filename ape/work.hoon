@@ -1,4 +1,5 @@
-::  XX  need to deal with versions and date modified
+::  XX  need to deal with versions
+::  not implemented:  set audience, delete, sort
 ::
 ::::
   ::
@@ -81,7 +82,8 @@
       ==
     ==
   ::
-  ++  create            (send [%create tax(date-created now, version 0)])
+  ++  create            %+  send  %create
+                        tax(date-created now, version 0, date-modified now)
   ++  send-update       |*(* (send %update id +(version) +<))
   ++  announce          (send-update %announce ~)
   ++  release           (cury send-update %release)
@@ -199,6 +201,7 @@
                 tax=tax
             ==
         task.u.tax
+      =.  date-modified.task.u.tax  when
       ?-    -.meat.action
         %announce         task.u.tax(status %announced)
         %release          task.u.tax(owner her.meat.action, status %released)
