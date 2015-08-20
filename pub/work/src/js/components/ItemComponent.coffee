@@ -93,18 +93,35 @@ module.exports = recl
     id = $(e.target).closest('.item').attr 'data-id'
     WorkActions.changeItem id,'done',true
 
+  _claim: (e) ->
+
+  _release: (e) ->
+
   formatDate: (d) ->
     return "" if d is null
     "~#{d.getFullYear()}.#{(d.getMonth()+1)}.#{d.getDate()}"
 
+  formatOwner: (o) ->
+    return "" if o is null
+    o.replace /\~/g,""
+
   formatAudience: (a) ->
-    a.join(" ").replace /\~/g,""
+    @formatOwner a.join(" ")
 
   getInitialState: -> {expand:false}
 
   render: ->
     itemClass = 'item'
     if @state.expand then itemClass += ' expand'
+
+    owner = []
+    if @props.item.owner?.slice(1) is window.urb.ship
+      k = 'mine'
+      owner.push (div {className:'release a',onClick:@_release},'Release')
+    if @props.item.owner is null
+      k = 'open'
+      owner.push (div {className:'claim a',onClick:@_claim}, "Claim")
+    owner.unshift (div {className:k},@formatOwner(@props.item.owner))
 
     (div {
       className:itemClass
@@ -115,13 +132,16 @@ module.exports = recl
       onDragEnd:@_dragEnd
       }, [
         (div {
-          className:'audience field'
+          className:'owner ib'
+          'data-key':'owner'
+          },owner)
+        (div {
+          className:'audience field ib'
           'data-key':'audience'
           },[
           (div {
             contentEditable:true
             className:'input ib'
-            onKeyUp:@_keyUp
             },@formatAudience(@props.item.audience))
           ])
         (div {className:'sort ib top'},@props.item.sort)
