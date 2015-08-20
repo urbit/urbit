@@ -21,8 +21,6 @@ module.exports =
     Dispatcher.handleViewAction {type:'newItem', index, item}
 
   changeItem: (id,key,val) ->
-    console.log 'change item'
-    console.log arguments
     set = {}
     set[key] = val
     Persistence.put old:{id,dif:{set}}

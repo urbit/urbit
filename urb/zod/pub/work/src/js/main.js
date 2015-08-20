@@ -38,8 +38,6 @@ module.exports = {
   },
   changeItem: function(id, key, val) {
     var set;
-    console.log('change item');
-    console.log(arguments);
     set = {};
     set[key] = val;
     return Persistence.put({
@@ -205,7 +203,6 @@ module.exports = recl({
   _dragEnd: function(e) {
     return this.props._dragEnd(e, this);
   },
-  commit: function($t) {},
   _keyDown: function(e) {
     var kc;
     this.props._keyDown(e, this);
@@ -227,13 +224,74 @@ module.exports = recl({
       e.preventDefault();
     }
   },
+  getVal: function($el, key) {
+    var a, d;
+    if ($el[0].tagName === 'TEXTAREA') {
+      return $el.val();
+    } else {
+      if (key === 'date-due') {
+        d = $el.text().slice(1).replace(/\./g, "-");
+        return new Date(d).valueOf();
+      }
+      if (key === 'tags') {
+        return $el.text().trim().split(" ");
+      }
+      if (key === 'audience') {
+        a = $el.text().trim().split(" ");
+        a = a.map(function(_a) {
+          return "~" + _a;
+        });
+        return a;
+      }
+      return $el.text();
+    }
+  },
+  compareVal: function(l, n, key) {
+    if (key === 'tags' || key === 'audience') {
+      return _.xor(l, n).length > 0;
+    }
+    if (key === 'date-due') {
+      return l !== new Date(n);
+    }
+    return l !== n;
+  },
+  validateField: function($t, id, key, val) {
+    var i, valid;
+    valid = 1;
+    if (key === 'date-due') {
+      if (isNaN(val)) {
+        valid = 0;
+      }
+    }
+    if (key === 'audience') {
+      i = _.filter(val, function(a) {
+        if (a[0] !== "~") {
+          return 0;
+        }
+        if (a.split("/").length < 2) {
+          return 0;
+        }
+        if (a.split("/")[0].length < 3 || a.split("/")[1].length < 3) {
+          return 0;
+        }
+        return 1;
+      });
+      if (i.length !== val.length) {
+        valid = 0;
+      }
+    }
+    return valid;
+  },
   _keyUp: function(e) {
     var $t, id, key, val;
     $t = $(e.target).closest('.field');
     id = $t.closest('.item').attr('data-id');
     key = $t.attr('data-key');
-    val = $t.find('.input').text();
-    if (this.props.item[key] !== val) {
+    val = this.getVal($t.find('.input'), key);
+    if (this.compareVal(this.props.item[key], val, key)) {
+      if (!this.validateField($t, id, key, val)) {
+        return;
+      }
       if (this.to) {
         clearTimeout(this.to);
       }
@@ -246,7 +304,13 @@ module.exports = recl({
     return this.props._focus(e, this);
   },
   formatDate: function(d) {
-    return (d.getDate()) + "-" + (d.getMonth() + 1) + "-" + (d.getFullYear());
+    if (d === null) {
+      return "";
+    }
+    return "~" + (d.getFullYear()) + "." + (d.getMonth() + 1) + "." + (d.getDate());
+  },
+  formatAudience: function(a) {
+    return a.join(" ").replace(/\~/g, "");
   },
   getInitialState: function() {
     return {
@@ -270,7 +334,13 @@ module.exports = recl({
       div({
         className: 'audience field',
         'data-key': 'audience'
-      }, this.props.item.audience.join(" ")), div({
+      }, [
+        div({
+          contentEditable: true,
+          className: 'input ib',
+          onKeyUp: this._keyUp
+        }, this.formatAudience(this.props.item.audience))
+      ]), div({
         className: 'sort ib top'
       }, this.props.item.sort), div({
         className: 'done ib'
@@ -286,18 +356,22 @@ module.exports = recl({
           className: 'input ib'
         }, this.props.item.title)
       ]), div({
-        className: 'date ib top field'
+        className: 'date-due ib top field',
+        'data-key': 'date-due'
       }, [
         div({
           contentEditable: true,
-          className: 'input ib'
-        }, this.formatDate(this.props.item['date-created']))
+          className: 'input ib',
+          onKeyUp: this._keyUp
+        }, this.formatDate(this.props.item['date-due']))
       ]), div({
-        className: 'tags ib top field'
+        className: 'tags ib top field',
+        'data-key': 'tags'
       }, [
         div({
           contentEditable: true,
-          className: 'input ib'
+          className: 'input ib',
+          onKeyUp: this._keyUp
         }, this.props.item.tags.join(" "))
       ]), div({
         className: 'expand ib',
@@ -313,10 +387,12 @@ module.exports = recl({
           className: 'caret left'
         }, "")
       ]), div({
-        className: 'description field'
+        className: 'description field',
+        'data-key': 'description'
       }, [
         textarea({
-          className: 'input ib'
+          className: 'input ib',
+          onKeyUp: this._keyUp
         }, this.props.item.description)
       ]), div({
         className: "hr"
@@ -1088,9 +1164,9 @@ _list = [
     sort: 0,
     "date-created": new Date('2015-8-18'),
     "date-modified": new Date('2015-8-18'),
-    "date-due": null,
+    "date-due": new Date('2015-8-18'),
     owner: "~talsur-todres",
-    audience: ["doznec/urbit-meta", "doznec/tlon"],
+    audience: ["~doznec/urbit-meta", "~doznec/tlon"],
     status: "working",
     tags: ['food', 'office'],
     title: 'get groceries',
@@ -1109,7 +1185,7 @@ _list = [
     "date-modified": new Date('2015-8-18'),
     "date-due": null,
     owner: "~talsur-todres",
-    audience: ["doznec/tlon"],
+    audience: ["~doznec/tlon"],
     status: "working",
     tags: ['home', 'office'],
     title: 'eat',
@@ -1122,7 +1198,7 @@ _list = [
     "date-modified": new Date('2015-8-18'),
     "date-due": null,
     owner: "~talsur-todres",
-    audience: ["doznec/tlon"],
+    audience: ["~doznec/tlon"],
     status: "working",
     tags: ['home'],
     title: 'sleep',
@@ -1143,7 +1219,7 @@ _filters = {
 _sorts = {
   title: 0,
   owner: 0,
-  date: 0,
+  "date-due": 0,
   sort: 0
 };
 
