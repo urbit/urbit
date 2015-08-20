@@ -37,6 +37,7 @@ module.exports = {
 };
 
 
+
 },{"../dispatcher/Dispatcher.coffee":5}],2:[function(require,module,exports){
 var WorkActions, div, recl, ref, textarea;
 
@@ -171,6 +172,7 @@ module.exports = recl({
     ]);
   }
 });
+
 
 
 },{"../actions/WorkActions.coffee":1}],3:[function(require,module,exports){
@@ -353,6 +355,7 @@ module.exports = recl({
 });
 
 
+
 },{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":11,"./ItemComponent.coffee":2}],4:[function(require,module,exports){
 var ListComponent, div, input, rece, recl, ref, textarea;
 
@@ -373,6 +376,7 @@ module.exports = recl({
     ]);
   }
 });
+
 
 
 },{"./ListComponent.coffee":3}],5:[function(require,module,exports){
@@ -396,6 +400,7 @@ module.exports = _.merge(new Dispatcher(), {
 });
 
 
+
 },{"flux":7}],6:[function(require,module,exports){
 var WorkComponent;
 
@@ -406,9 +411,10 @@ $(function() {
 });
 
 
+
 },{"./components/WorkComponent.coffee":4}],7:[function(require,module,exports){
 /**
- * Copyright (c) 2014, Facebook, Inc.
+ * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
@@ -852,6 +858,7 @@ WorkStore = assign({}, EventEmitter.prototype, {
       owner: "~talsur-todres",
       status: null,
       tags: [],
+      audience: [],
       title: '',
       description: '',
       discussion: []
@@ -884,6 +891,7 @@ WorkStore.dispatchToken = Dispatcher.register(function(p) {
 });
 
 module.exports = WorkStore;
+
 
 
 },{"../dispatcher/Dispatcher.coffee":5,"events":12,"object-assign":10}],12:[function(require,module,exports){

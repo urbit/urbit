@@ -115,7 +115,7 @@ $ ->
     mapr = matr.props
     unless mapr.prompt[appl]?
       return print '# not-joined: '+appl
-    urb.unsubscribe {appl, path: "/sole", wire: "/"}
+    urb.drop "/sole", {appl, wire: "/"}
     if appl is mapr.appl then cycle()
     updPrompt appl, null
     sysStatus()
@@ -135,8 +135,9 @@ $ ->
   #    pressed = []
   #  ), 500
 
+  urb.send.mark = 'sole-action'
   sendAction = (data)->
-    if matr.props.appl then urb.send {mark: 'sole-action', data}, (e,res)->
+    if matr.props.appl then urb.send data, (e,res)->
       if res.status isnt 200 then $('#err')[0].innerText = res.data.mess
     else if data is 'ret'
       app = /^[a-z-]+$/.exec(buffer[""].buf.slice(1))
