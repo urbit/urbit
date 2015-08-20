@@ -2,7 +2,7 @@
 ::::
   ::
 /?  314
-/-  *talk, *work
+/-  *work
 /+  talk
 !:
 ::::
@@ -10,72 +10,100 @@
 |%
 ++  move  (pair bone card)                              ::  all actions
 ++  card                                                ::  general card
-  $%  [%diff lime]                                      ::
+  $%  [%diff %work-report client]                       ::
       [%peer wire dock path]                            ::
       [%poke wire dock pear]                            ::
   ==                                                    ::
 ++  pear                                                ::  poke fruit
-  $%  [%talk-command command]                           ::
+  $%  [%talk-command command:talk]                      ::
   ==                                                    ::
 --
 !:
 ::::
   ::
-|_  [hid=bowl client]
+|_  [bowl client connected=_|]
 ++  at
-  |=  [task audience=(set station)]
+  |=  [task audience=(set station:talk)]
+  =*  tax  +<-
   =|  moves=(list move)
   |%
   ++  abet
     ^-  [(list move) _+>.$]
-    [(flop moves) +>.$(tasks (~(put by tasks) tax))]
+    [(flop moves) +>.$(tasks (~(put by tasks) id tax audience))]
   ++  send
-    |=  action=duty
+    |=  action=duty:work-stuff:talk
     ^+  +>
     %_    +>.$
         eny    (sham eny action)
         moves
+      :_  ~
+      ^-  move
       :*  ost  %poke
           /sending/(scot %uw id)/(scot %ud version)
           [our %talk]
           %talk-command
-          ^-  command
+          ^-  command:talk
           :-  %publish
           |-  ^-  (list thought)
           :_  ~
           :+  (shaf %task eny)
-            [[[%& our %tasks] [*envelope %pending]] ~ ~]
+            [[[%& our %porch] [*envelope %pending]] ~ ~]
           [now *bouquet [%tax action]]
       ==
     ==
-  ++  update            |*(* (send %update id +(version) +<))
-  ++  announce          (update %announce ~)
-  ++  release           (cury update %announce)
-  ++  accept            (update %accept ~)
-  ++  delete            (update %delete ~)
-  ++  set-due-date      (cury update %set-due-date)
-  ++  set-tags          (cury update %set-tags)
-  ++  set-title         (cury update %set-title)
-  ++  set-description   (cury update %set-description)
-  ++  set-complete      (update %set-complete ~)
-  ++  add-comment       (cury update %add-comment)
+  ++  create            (send `duty:work-stuff:talk`[%create `task`tax])
+  ++  send-update       |*(* (send %update id +(version) +<))
+  ++  announce          (send-update %announce ~)
+  ++  release           (cury send-update %announce)
+  ++  accept            (send-update %accept ~)
+  ++  delete            (send-update %delete ~)
+  ++  set-date-due      (cury send-update %set-date-due)
+  ++  set-tags          (cury send-update %set-tags)
+  ++  set-title         (cury send-update %set-title)
+  ++  set-description   (cury send-update %set-description)
+  ++  set-done          (cury send-update %set-done)
+  ++  add-comment       (cury send-update %add-comment)
+  ++  set-audience      ~|(%not-implemented !!)
+  ++  claim             ~|(%not-implemented !!)
+  ++  process-update
+    |=  up=update
+    ^+  +>
+    ?-    -.up
+        %add  ?>(?=(%comment +<.up) (add-comment +>.up))
+        %own
+      ?-  +<.up
+        %announce  announce
+        %claim     claim
+      ==
+        %set
+      ?-  +<.up
+        %date-due     (set-date-due +>.up)
+        %title        (set-title +>.up)
+        %description  (set-description +>.up)
+        %tags         (set-tags +>.up)
+        %done         (set-done +>.up)
+        %audience     ~|(%not-implemented !!) ::(set-audience +>.up)
+      ==
+    ==
   --
 ::
 ++  initialize
   ^-  [(list move) _.]
   :_  .  :_  ~
-  [ost %peer /peering [our %talk] /f/tasks/0]
+  [ost %peer /peering [our %talk] /f/porch/0]
 ::
 ++  process-duty
-  |=  [when=@da her=ship from=(set station) action=duty]
+  |=  [when=@da her=ship from=(set station:talk) action=duty:work-stuff:talk]
   ^-  [(list move) _+>.$]
   =<  mirror-to-web
   ?-    -.action
-      %proclaim
+      %create
     :-  ~
     =+  existing-task=(~(get by tasks) id.p.action)
-    ~?  !=(p.action u.existing-task)
-      $:  %new-task-with-old-id
+    ~?  ?&  ?=(^ existing-task)
+            !=(p.action u.existing-task)
+        ==
+      :*  %new-task-with-old-id
           her=her
           from=from
           new-task=p.action
@@ -91,14 +119,14 @@
       %update
     =+  tax=(~(get by tasks) id.action)
     ?~  tax
-      ~&  $:  %update-for-nonexistent-task
+      ~&  :*  %update-for-nonexistent-task
               her=her
               from=from
               action=action
           ==
       [~ +>.$]
-    ?.  =(version.action +(version.u.tax))
-      ~&  $:  %update-bad-version
+    ?.  =(version.action +(version.task.u.tax))
+      ~&  :*  %update-bad-version
               her
               from=from
               action=action
@@ -107,10 +135,10 @@
       [~ +>.$]
     =.  tasks
       %^  ~(put by tasks)  id.action
-        ?:  $&  ?=(?(%announce %release %accept) -.meat.action)
-                !=(her owner.task.u.tax))
+        ?:  ?&  ?=(?(%announce %release %accept) -.meat.action)
+                !=(her owner.task.u.tax)
             ==
-          ~&  $:  %not-owner
+          ~&  :*  %not-owner
                   her=her
                   from=from
                   action=action
@@ -122,13 +150,15 @@
           %release          task.u.tax(owner p.meat.action, status %released)
           %accept           task.u.tax(status %accepted)
           %delete           !!
-          %set-due-date     task.u.tax(date-due p.meat.action)
+          %set-date-due     task.u.tax(date-due p.meat.action)
           %set-tags         task.u.tax(tags p.meat.action)
           %set-title        task.u.tax(title p.meat.action)
           %set-description  task.u.tax(description p.meat.action)
-          %set-complete     task.u.tax(complete `when)
+          %set-done         task.u.tax(done `when)
           %add-comment
-            task.u.tax(discussion [[when her p.meat.action] discussion)
+            %=  task.u.tax
+              discussion  [[when her p.meat.action] discussion.task.u.tax]
+            ==
         ==
       (~(uni in audience.u.tax) from)
     +>.$
@@ -137,7 +167,7 @@
 ++  mirror-to-web
   ^-  [(list move) _.]
   :_  .
-  %+  turn  (~(tap by sup.hid))
+  %+  turn  (~(tap by sup))
   |=  [ust=bone *]
   [ust %diff %work-report tasks sort]
 ::
@@ -146,6 +176,20 @@
   ^-  [(list move) _+>.$]
   ?>  ?=([~ ~] +<)
   [~ +>.$]
+::
+++  poke-work-command
+  |=  cod=command
+  =^  mos  +>.$
+    ?:  connected
+      [~ +>.$]
+    initialize
+  =^  mof  +>.$
+    ?-  -.cod
+      %new    abet:create:(at +.cod)
+      %old    abet:(process-update:(at (~(got by tasks) id.cod)) dif.cod)
+      %sort   !!
+    ==
+  [(welp mos mof) +>.$]
 ::
 ::  XX  maybe need to check that we haven't received this message before
 ::      by keeping a counter of last message received
@@ -158,14 +202,14 @@
   =*  her   p.i.q.rep
   =*  when  p.r.q.i.q.rep
   =*  said  r.r.q.i.q.rep
-  =+  ^-  from=(set station)
-      %-  sa
+  =+  ^-  from=(set station:talk)
+      %-  sa  ^-  (list station:talk)
       %+  murn  (~(tap by q.q.i.q.rep))
-      |=  par=partner
-      `(unit station)`?.(?=(%& -.par) ~ `par)
+      |=  [par=partner *]
+      `(unit station:talk)`?.(?=(%& -.par) ~ `p.par)
   ?.  ?=(%tax -.said)
     $(p.rep +(p.rep), q.rep t.q.rep)
-  =^  mos  +>.^$  (process-duty her when from said)
+  =^  mos  +>.^$  (process-duty when her from +.said)
   =^  mof  +>.^$  $(p.rep +(p.rep), q.rep t.q.rep)
   [(weld mos mof) +>.^$]
 --

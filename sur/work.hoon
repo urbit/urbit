@@ -16,7 +16,8 @@
       owner=@p
       status=status
       tags=(set ,@t)
-      due-date=(unit ,@da)
+      date-due=(unit ,@da)
+      done=(unit ,@da)
       title=@t
       description=@t
       discussion=(list comment)
@@ -28,21 +29,21 @@
   ==
 ++  status  ?(%announced %released %accepted)
 ++  command  
-  $%  [%new task]
+  $%  [%new task audience=(set station:talk)]
       [%old id=@uvH dif=update]
       [%sort p=(list ,@uvH)]
   ==
 ++  update
   $%  $:  %set
-  $%  [%due-date p=@da]
+  $%  [%date-due p=@da]
       [%title p=@t]
       [%description p=@t]
       [%tags p=(set ,@t)]
-      [%done p=(unit ,@da)]
+      [%done p=?]
       [%audience p=(set station:talk)]
   ==  ==
       $:  %add
-  $%  [%comment [@da @t]]
+  $%  [%comment @t]
   ==  ==
       $:  %own
   $%  [%announce ~]
