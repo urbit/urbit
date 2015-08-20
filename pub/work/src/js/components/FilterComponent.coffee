@@ -15,6 +15,7 @@ module.exports = recl
     key = $t.attr('data-key')
     if txt.length is 0 then txt = null
     else switch key
+      when 'owner'    then txt = "~#{txt}"
       when 'audience' then txt = txt.split " "
       when 'tags'     then txt = [txt]
     @props.onChange key,txt
