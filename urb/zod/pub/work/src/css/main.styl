@@ -19,6 +19,10 @@ body
 
 h1
   font-weight 500
+
+.ctrl
+  h1
+    font-size 1rem
   
 .items
   margin-top 4rem
@@ -32,96 +36,116 @@ h1
   background-color #fff
   transition max-height 200ms linear
 
-.item .comments
-  height 0
+  &.expand
+    max-height 24rem
+    transition max-height 200ms linear
 
-.item.expand
-  max-height 16rem
-  transition max-height 200ms linear
+  .expand
+    margin-left 2rem
+    cursor pointer
+    transform-origin 3px 12px
+    transition transform 200ms linear
 
-.item .expand
-  margin-left 2rem
-  cursor pointer
-  transform-origin 3px 12px
-  transition transform 200ms linear
+  &.expand .expand
+    transform rotate(90deg)
+    transition transform 200ms linear
 
-.item.expand .expand
-  transform rotate(90deg)
-  transition transform 200ms linear
+  .sort
+  .title
+  .date
+  .tags
+  .comment
+    line-height 2rem
 
-.item .sort
-.item .title
-.item .date
-.item .tags
-.item .comment
-  line-height 2rem
+  .sort
+  .date
+    font-family 'scp'
 
-.item .sort
-.item .date
-  font-family 'scp'
+  .audience
+  .date
+  .ship
+    font-size .7rem
 
-.item .audience
-.item .date
-  font-size .7rem
+  .audience
+  .sort
+    color #ccc
 
-.item .audience
-.item .sort
-  color #ccc
-
-.item .audience
-  text-transform uppercase
-  height 1rem
-  letter-spacing .07rem
-  margin-left 2.2rem
-
-.item .done
-  width .7rem
-  height .7rem
-  margin-top .5rem
-  border .2rem solid #ccc
-
-.item .sort
-  font-size .6rem
-  width 2rem
-  text-align center
-
-.item .title
-  min-width 16rem
-  margin-left .5rem
-
-.item .date
-  min-width 6rem
-
-.item .tags
-  min-width 6rem
-
-.item .description
-.item .discussion
-  line-height 2rem
-  margin .5rem 0 .5rem 2.3rem
+  .audience
+  .date
+  .ship
+    text-transform uppercase
+    height 1rem
+    letter-spacing .07rem
   
-.item .description textarea
-  min-width 20rem
-  min-height 6rem
+  .audience
+    margin-left 2.2rem
 
-.item .hr
-  height .2rem
-  width 6rem
+  .done
+    width .7rem
+    height .7rem
+    margin-top .5rem
+    border .2rem solid #ccc
+
+  .sort
+    font-size .6rem
+    width 2rem
+    text-align center
+
+  .title
+    min-width 16rem
+    margin-left .5rem
+
+  .date
+    min-width 6rem
+
+  .tags
+    min-width 6rem
+
+  .description
+  .discussion
+    line-height 2rem
+    margin .5rem 0 .5rem 2.3rem
   
+  .description textarea
+    min-width 27rem
+    min-height 6rem
 
-.item .comp
-  width 3rem
-  opacity 0
+  .comp
+    width 3rem
+    opacity 0
+    .a
+      display block
+      font-size .7rem
+      font-weight 500
+      line-height .9rem
 
-.item .comp .a
-  display block
-  font-size .7rem
-  font-weight 500
-  line-height .9rem
+  &:hover .comp
+    opacity 1
+    
+  .submit
+    font-size .7rem
+    text-transform uppercase
+    display inline-block
+    background-color #b9b9b9
+    letter-spacing .07rem
+    color #fff
+    padding 0 .3rem
+    margin-top .5rem
 
-.item:hover .comp
-  opacity 1
+.comment
+  margin-bottom 1rem
+  
+  .date
+  .ship
+    margin-right 1rem
 
+  .body
+    margin-top 1rem
+
+  &.new .input
+    max-width 27rem
+    margin-top 1rem
+  
 /* global */
 
 .top
@@ -140,7 +164,6 @@ h1
 
 .input
   outline none
-  display inline-block
   padding 0 .3rem
   background-color #f9f9f9
   border 0
@@ -156,3 +179,14 @@ h1
   border-right 6px solid transparent
   border-bottom 6px solid transparent
   margin-top .4rem
+
+.hr1
+  height .2rem
+  width 6rem
+  background-color #ccc
+  margin-left 2.2rem
+  
+.hr2
+  height .1rem
+  width 3rem
+  background-color #ccc
