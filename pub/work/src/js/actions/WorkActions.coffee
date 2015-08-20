@@ -17,7 +17,8 @@ module.exports =
       title:''
       description:''
       discussion:[]
-    Persistence.put "new": task:item, audience:[]
+    station = window.util.talk.mainStationPath window.urb.ship
+    Persistence.put "new": task:item, audience:[station]
     Dispatcher.handleViewAction {type:'newItem', index, item}
 
   setFilter: (key,val) ->
@@ -39,7 +40,7 @@ module.exports =
       to:to
 
   removeItem: (index,id) ->
-    Persistence.put old:{id,dif:set:done:Date.now()}
+    Persistence.put old:{id,dif:set:done:true}
     Dispatcher.handleViewAction
       type:'removeItem'
       index:index
