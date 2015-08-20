@@ -81,21 +81,22 @@
 ++  work-stuff                                          ::
   |%                                                    ::
   ++  duty                                              ::
-    $%  [%create p=task]                                ::  create new task
+    $%  [%create tax=task]                              ::  create new task
+        [%claim id=@uvH]                                ::  claim task
         $:  %update                                     ::  operate on task
             id=@uvH                                     ::  which task
             version=@u                                  ::  version
             $=  meat                                    ::
             $%  [%announce ~]                           ::  make available
-                [%release p=ship]                       ::  pass to new owner
+                [%release her=ship]                     ::  pass to new owner
                 [%accept ~]                             ::  accept pass
                 [%delete ~]                             ::  delete task
-                [%set-date-due p=(unit ,@da)]           ::  set due date
-                [%set-tags p=(set ,@t)]                 ::  set tags
-                [%set-title p=@t]                       ::  set title
-                [%set-description p=@t]                 ::  set description
-                [%set-done p=?]                         ::  set done
-                [%add-comment p=@t]                     ::  add comment
+                [%set-date-due wen=(unit ,@da)]         ::  set due date
+                [%set-tags tag=(set ,@t)]               ::  set tags
+                [%set-title til=@t]                     ::  set title
+                [%set-description des=@t]               ::  set description
+                [%set-done don=?]                       ::  set done
+                [%add-comment com=@t]                   ::  add comment
             ==                                          ::
         ==                                              ::
     ==                                                  ::
