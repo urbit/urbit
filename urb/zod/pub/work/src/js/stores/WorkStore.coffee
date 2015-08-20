@@ -100,7 +100,7 @@ WorkStore = assign {},EventEmitter.prototype,{
     _sorts[key] = val
 
   newItem: ({index,item}) ->
-    _item = _.extend {sort:index,audience:[]}, item
+    _item = _.extend {sort:index}, item
     _item["date-created"]=new Date item["date-created"]
     _item["date-modified"]=new Date item["date-modified"]
     _list.splice index,0,_item

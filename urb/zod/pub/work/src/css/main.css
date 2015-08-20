@@ -159,17 +159,17 @@ h1 {
 }
 .item .sort,
 .item .title,
-.item .date-due,
+.item .date,
 .item .tags,
 .item .comment {
   line-height: 2rem;
 }
 .item .sort,
-.item .date-due {
+.item .date {
   font-family: 'scp';
 }
 .item .audience,
-.item .date-due,
+.item .date,
 .item .ship {
   font-size: 0.7rem;
 }
@@ -178,7 +178,7 @@ h1 {
   color: #ccc;
 }
 .item .audience,
-.item .date-due,
+.item .date,
 .item .ship {
   text-transform: uppercase;
   height: 1rem;
@@ -202,7 +202,7 @@ h1 {
   min-width: 16rem;
   margin-left: 0.5rem;
 }
-.item .date-due {
+.item .date {
   min-width: 6rem;
 }
 .item .tags {
@@ -243,7 +243,7 @@ h1 {
 .comment {
   margin-bottom: 1rem;
 }
-.comment .date-due,
+.comment .date,
 .comment .ship {
   margin-right: 1rem;
 }
@@ -279,6 +279,9 @@ h1 {
 }
 .input:focus {
   background-color: #e6e6e6;
+}
+.invalid .input {
+  color: #f00;
 }
 .caret.left {
   border-left: 6px solid #000;
