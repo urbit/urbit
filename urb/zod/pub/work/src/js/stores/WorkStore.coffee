@@ -2,7 +2,7 @@ EventEmitter  = require('events').EventEmitter
 assign        = require 'object-assign'
 Dispatcher    = require '../dispatcher/Dispatcher.coffee'
 
-_upcoming   = [
+_list   = [
     id:0
     sort:0
     "date-created":new Date('2015-8-18')
@@ -48,23 +48,31 @@ _upcoming   = [
     description:'go get some sleep.'
     discussion:[]
 ]
-_following  = {}
-_incoming   = {}
-
-lists =
-  'upcoming':_upcoming
-  'following':_following
-  'incoming':_incoming
+_listening = []
+_filters = 
+  owned_by:null
+  channel:null
+  status:null
+_sorts =
+  name:null
+  owner:null
+  date:null
+  priority:null
 
 WorkStore = assign {},EventEmitter.prototype,{
   emitChange: -> @emit 'change'
   addChangeListener: (cb) -> @on 'change', cb
   removeChangeListener: (cb) -> @removeListener "change", cb
   
-  getList: (key) -> lists[key]
+  getList: (key) -> _list
 
-  newItem: ({index,list}) ->
-    list = lists[list]
+  getListening: -> _listening
+
+  getFilters: -> _filters
+
+  getSorts: -> _sorts
+
+  newItem: ({index}) ->
     item =
       id:index
       sort:index
@@ -78,13 +86,12 @@ WorkStore = assign {},EventEmitter.prototype,{
       title:''
       description:''
       discussion:[]
-    list.splice index,0,item
+    _list.splice index,0,item
 
-  swapItem: ({to,from,list}) ->
-    list = lists[list]
-    list.splice to,0,list.splice(from,1)[0]
+  swapItem: ({to,from}) ->
+    _list.splice to,0,list.splice(from,1)[0]
 
-  removeItem: ({index,list}) -> 
+  removeItem: ({index}) -> 
     list = lists[list]
     list.splice index,1
 
