@@ -13,6 +13,10 @@ module.exports = recl
   
   _dragEnd: (e) -> @props._dragEnd e,@
 
+  commit: ($t) ->
+
+
+
   _keyDown: (e) -> 
     @props._keyDown e,@
 
@@ -31,6 +35,17 @@ module.exports = recl
       e.preventDefault()
       return
 
+  _keyUp: (e) ->
+    $t = $(e.target).closest '.field'
+    id = $t.closest('.item').attr 'data-id'
+    key = $t.attr 'data-key'
+    val = $t.find('.input').text()
+    if @props.item[key] isnt val
+      if @to then clearTimeout @to
+      @to = setTimeout -> 
+          WorkActions.changeItem id,key,val
+        ,1000
+
   _focus: (e) -> @props._focus e,@
 
   formatDate: (d) ->
@@ -45,29 +60,36 @@ module.exports = recl
     (div {
       className:itemClass
       draggable:true
+      'data-id':@props.item.id
       'data-index':@props.index
       onDragStart:@_dragStart
       onDragEnd:@_dragEnd
-      'data-index':@props.index
       }, [
-        (div {className:'audience'},@props.item.audience.join(" "))
+        (div {
+          className:'audience field'
+          'data-key':'audience'
+          },@props.item.audience.join(" "))
         (div {className:'sort ib top'},@props.item.sort)
         (div {className:'done ib'},'')
-        (div {className:'title ib top'},[
+        (div {
+          className:'title ib top field'
+          'data-key':'title'
+          },[
           (div {
             contentEditable:true
             onFocus:@_focus
             onKeyDown:@_keyDown
+            onKeyUp:@_keyUp
             className:'input ib'
           },@props.item.title)
         ])
-        (div {className:'date ib top'}, [
+        (div {className:'date ib top field'}, [
           (div {
             contentEditable:true
             className:'input ib'
             },@formatDate(@props.item['date-created']))
         ])
-        (div {className:'tags ib top'},[
+        (div {className:'tags ib top field'},[
           (div {
             contentEditable:true
             className:'input ib'
@@ -80,7 +102,7 @@ module.exports = recl
           },[
           (div {className:'caret left'},"")
         ])
-        (div {className:"description"},[
+        (div {className:'description field'},[
           (textarea {
             className:'input ib'
             },@props.item.description)
