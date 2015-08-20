@@ -81,7 +81,7 @@
 ++  work-stuff                                          ::
   |%                                                    ::
   ++  duty                                              ::
-    $%  [%create tax=task]                              ::  create new task
+    $%  [%create p=task]                                ::  create new task
         [%claim id=@uvH]                                ::  claim task
         $:  %update                                     ::  operate on task
             id=@uvH                                     ::  which task

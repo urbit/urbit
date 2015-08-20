@@ -761,7 +761,7 @@
     ++  ap-move-quit                                    ::  give quit move
       |=  [sto=bone vax=vase]
       ^-  (each cove tang)
-      ?^  q.vax  [%| (ap-suck "move: improper quit")]
+      ?^  q.vax  [%| (ap-suck "quit: improper give")]
       [%& `cove`[sto %give `cuft`[%quit ~]]]
     ::
     ++  ap-move-diff                                    ::  give diff move
@@ -769,20 +769,20 @@
       =.  vax  (spec vax)
       ^-  (each cove tang)
       ?.  &(?=(^ q.vax) ?=(@ -.q.vax) ((sane %tas) -.q.vax))
-        [%| (ap-suck "move: improper diff")]
+        [%| (ap-suck "diff: improper give")]
       [%& sto %give %diff `cage`[-.q.vax (slot 3 (spec vax))]]
     ::
     ++  ap-move-hiss                                    ::  pass %hiss
       |=  [sto=bone vax=vase]
       ^-  (each cove tang)
       ?.  &(?=([p=* q=@ q=^] q.vax) ((sane %tas) q.q.vax))
-        [%| (ap-suck "move: malformed hiss ask.[%hiss path mark cage]")]
+        [%| (ap-suck "hiss: malformed hiss ask.[%hiss wire mark cage]")]
       =+  gaw=(slot 7 vax)
       ?.  &(?=([p=@ q=^] q.gaw) ((sane %tas) p.q.gaw))
-        [%| (ap-suck "move: malformed cage")]
+        [%| (ap-suck "hiss: malformed cage")]
       =+  pux=((soft path) p.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
-        [%| (ap-suck "move: malformed path")]
+        [%| (ap-suck "hiss: malformed path")]
       :^  %&  sto  %pass
       :-  [(scot %p q.q.pry) %cay u.pux]
       [%hiss q.q.vax [p.q.gaw (slot 3 (spec gaw))]]
@@ -793,20 +793,20 @@
       ?.  ?&  ?=([p=* [q=@ r=@] s=*] q.vax)
               (gte 1 (met 7 q.q.vax))
           ==
-        [%| (ap-suck "move: malformed target")]
+        [%| (ap-suck "mess: malformed target")]
       =+  pux=((soft path) p.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
-        [%| (ap-suck "move: malformed path")]
+        [%| (ap-suck "mess: malformed path")]
       [%& [(scot %p q.q.vax) %out r.q.vax u.pux] q.q.vax r.q.vax]
     ::
     ++  ap-move-pass                                    ::  pass general move 
       |=  [sto=bone wut=* vax=vase]
       ^-  (each cove tang)
       ?.  &(?=(@ wut) ((sane %tas) wut))
-        [%| (ap-suck "move: malformed card")]
+        [%| (ap-suck "pass: malformed card")]
       =+  pux=((soft path) -.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
-        [%| (ap-suck "move: malformed path")]
+        [%| (ap-suck "pass: malformed path")]
       =+  huj=(ap-vain wut)
       ?~  huj  [%| (ap-suck "move: unknown note {(trip wut)}")]
       :^  %&  sto  %pass
@@ -855,17 +855,17 @@
               (gte 1 (met 7 q.q.vax))
               ((sane %tas) r.q.vax)
           ==
-        [%| (ap-suck "move: malformed send")]
+        [%| (ap-suck "send: improper ask.[%send wire gill club]")]
       =+  pux=((soft path) p.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
-        [%| (ap-suck "move: malformed path")]
+        [%| (ap-suck "send: malformed path")]
       ?:  ?=(%poke s.q.vax)
         =+  gav=(spec (slot 7 vax))
         ?>  =(%poke -.q.gav)
         ?.  ?&  ?=([p=@ q=*] t.q.vax)
                 ((sane %tas) p.t.q.vax)
             ==
-          [%| (ap-suck "move: malformed poke")]
+          [%| (ap-suck "send: malformed poke")]
         :^  %&  sto  %pass
         :-  [(scot %p q.q.vax) %out r.q.vax u.pux]
         ^-  cote
@@ -873,7 +873,7 @@
         [%send q.q.vax r.q.vax %poke p.t.q.vax (slot 3 (spec (slot 3 gav)))]
       =+  cob=((soft club) [s t]:q.vax)
       ?~  cob
-        [%| (ap-suck "move: malformed club")]
+        [%| (ap-suck "send: malformed club")]
       :^  %&  sto  %pass
       :-  [(scot %p q.q.vax) %out r.q.vax u.pux]
       ::  ~&  [%ap-move-send `path`[(scot %p q.q.vax) %out r.q.vax u.pux]]
