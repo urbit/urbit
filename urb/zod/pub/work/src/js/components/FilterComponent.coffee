@@ -14,45 +14,24 @@ module.exports = recl
     txt = $t.find('.input').text().trim()
     key = $t.attr('data-key')
     if txt.length is 0 then txt = null
-    if key is 'audience' then txt = txt.split " "
-    if key is 'tags' then txt = [txt]
+    else switch key
+      when 'audience' then txt = txt.split " "
+      when 'tags'     then txt = [txt]
     @props.onChange key,txt
+  
+  fields: [ {filter:'owned',   key:'owner',    title: 'Owned by:'},
+            {filter:'tag',     key:'tags',     title: 'Tag:'},
+            {filter:'channel', key:'audience', title: 'Audience:'},
+            {filter:'status',  key:'status',   title: 'Status:'} ]
+
   render: ->
-    (div {className:'filters'}, [
-      (div {className:'owned filter ib','data-key':'owner'}, [
-        (label {}, 'Owned by:')
+    (div {className:'filters'}, @fields.map ({filter,key,title})=>
+      (div {key, 'data-key':key, className:"#{filter} filter ib"}, [
+        (label {}, title)
         (div {
             contentEditable:true
             className:'input ib'
             onKeyDown:@_onKeyDown
             onBlur:@_onBlur
-            },@props.filters.owned)
-      ])
-      (div {className:'tag filter ib','data-key':'tags'}, [
-        (label {}, 'Tag:')
-        (div {
-            contentEditable:true
-            className:'input ib'
-            onKeyDown:@_onKeyDown
-            onBlur:@_onBlur
-            },@props.filters.tag)
-      ])
-      (div {className:'channel filter ib','data-key':'audience'}, [
-        (label {}, 'Audience:')
-        (div {
-            contentEditable:true
-            className:'input ib'
-            onKeyDown:@_onKeyDown
-            onBlur:@_onBlur
-            },@props.filters.channel)
-      ])
-      (div {className:'status filter ib','data-key':'status'}, [
-        (label {}, 'Status:')
-        (div {
-            contentEditable:true
-            className:'input ib'
-            onKeyDown:@_onKeyDown
-            onBlur:@_onBlur
-            },@props.filters.status)
-      ])
-    ])
+            },@props.filters[filter])
+      ]))
