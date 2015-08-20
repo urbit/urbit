@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/MessageActions.coffee":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var MessageDispatcher;
 
 MessageDispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -91,7 +91,7 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee":[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":7}],2:[function(require,module,exports){
 var StationDispatcher;
 
 StationDispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -179,7 +179,7 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/MemberComponent.coffee":[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":7}],3:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -208,7 +208,7 @@ module.exports = recl({
 
 
 
-},{}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/MessagesComponent.coffee":[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var Member, Message, MessageActions, MessageStore, StationActions, StationStore, a, br, div, input, moment, pre, recl, ref, textarea;
 
 moment = require('moment-timezone');
@@ -496,7 +496,7 @@ module.exports = recl({
 
 
 
-},{"../actions/MessageActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/MessageActions.coffee","../actions/StationActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee","../stores/MessageStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/MemberComponent.coffee","moment-timezone":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/index.js"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/StationComponent.coffee":[function(require,module,exports){
+},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":19,"../stores/StationStore.coffee":20,"./MemberComponent.coffee":3,"moment-timezone":14}],5:[function(require,module,exports){
 var Member, StationActions, StationStore, a, div, h1, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -683,7 +683,7 @@ module.exports = recl({
 
 
 
-},{"../actions/StationActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee","../stores/StationStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/WritingComponent.coffee":[function(require,module,exports){
+},{"../actions/StationActions.coffee":2,"../stores/StationStore.coffee":20,"./MemberComponent.coffee":3}],6:[function(require,module,exports){
 var Member, MessageActions, MessageStore, StationActions, StationStore, br, div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -960,7 +960,7 @@ module.exports = recl({
 
 
 
-},{"../actions/MessageActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/MessageActions.coffee","../actions/StationActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee","../stores/MessageStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/stores/MessageStore.coffee","../stores/StationStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/stores/StationStore.coffee","./MemberComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/MemberComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
+},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":19,"../stores/StationStore.coffee":20,"./MemberComponent.coffee":3}],7:[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -982,7 +982,7 @@ module.exports = _.merge(new Dispatcher(), {
 
 
 
-},{"flux":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/flux/index.js"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/main.coffee":[function(require,module,exports){
+},{"flux":10}],8:[function(require,module,exports){
 $(function() {
   var $c, MessagesComponent, StationActions, StationComponent, WritingComponent, clean, rend;
   StationActions = require('./actions/StationActions.coffee');
@@ -1013,7 +1013,7 @@ $(function() {
 
 
 
-},{"./actions/StationActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee","./components/MessagesComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/MessagesComponent.coffee","./components/StationComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/StationComponent.coffee","./components/WritingComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/components/WritingComponent.coffee","./move.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/move.coffee","./persistence/MessagePersistence.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/persistence/MessagePersistence.coffee","./persistence/StationPersistence.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/persistence/StationPersistence.coffee","./util.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/util.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/move.coffee":[function(require,module,exports){
+},{"./actions/StationActions.coffee":2,"./components/MessagesComponent.coffee":4,"./components/StationComponent.coffee":5,"./components/WritingComponent.coffee":6,"./move.coffee":9,"./persistence/MessagePersistence.coffee":17,"./persistence/StationPersistence.coffee":18,"./util.coffee":21}],9:[function(require,module,exports){
 var ldy, setSo, so;
 
 so = {};
@@ -1114,7 +1114,7 @@ $(window).on('scroll', window.util.checkScroll);
 
 
 
-},{}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/flux/index.js":[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -1126,7 +1126,7 @@ $(window).on('scroll', window.util.checkScroll);
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/flux/lib/Dispatcher.js"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/flux/lib/Dispatcher.js":[function(require,module,exports){
+},{"./lib/Dispatcher":11}],11:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1378,7 +1378,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/flux/lib/invariant.js"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/flux/lib/invariant.js":[function(require,module,exports){
+},{"./invariant":12}],12:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1433,8 +1433,8 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/data/packed/latest.json":[function(require,module,exports){
-module.exports=module.exports=module.exports=module.exports={
+},{}],13:[function(require,module,exports){
+module.exports={
 	"version": "2014j",
 	"zones": [
 		"Africa/Abidjan|LMT GMT|g.8 0|01|-2ldXH.Q",
@@ -2023,11 +2023,11 @@ module.exports=module.exports=module.exports=module.exports={
 		"Pacific/Pohnpei|Pacific/Ponape"
 	]
 }
-},{}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/index.js":[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 var moment = module.exports = require("./moment-timezone");
 moment.tz.load(require('./data/packed/latest.json'));
 
-},{"./data/packed/latest.json":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/data/packed/latest.json","./moment-timezone":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/moment-timezone.js"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/moment-timezone.js":[function(require,module,exports){
+},{"./data/packed/latest.json":13,"./moment-timezone":15}],15:[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.2.5
 //! author : Tim Wood
@@ -2430,9 +2430,9 @@ moment.tz.load(require('./data/packed/latest.json'));
 	return moment;
 }));
 
-},{"moment":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/node_modules/moment/moment.js"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/node_modules/moment/moment.js":[function(require,module,exports){
+},{"moment":16}],16:[function(require,module,exports){
 //! moment.js
-//! version : 2.10.3
+//! version : 2.10.6
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
 //! license : MIT
 //! momentjs.com
@@ -2527,6 +2527,7 @@ moment.tz.load(require('./data/packed/latest.json'));
                 flags.overflow < 0 &&
                 !flags.empty &&
                 !flags.invalidMonth &&
+                !flags.invalidWeekday &&
                 !flags.nullInput &&
                 !flags.invalidFormat &&
                 !flags.userInvalidated;
@@ -2607,7 +2608,7 @@ moment.tz.load(require('./data/packed/latest.json'));
     // Moment prototype object
     function Moment(config) {
         copyConfig(this, config);
-        this._d = new Date(+config._d);
+        this._d = new Date(config._d != null ? config._d.getTime() : NaN);
         // Prevent infinite loop in case updateOffset creates new moment
         // objects.
         if (updateInProgress === false) {
@@ -2621,16 +2622,20 @@ moment.tz.load(require('./data/packed/latest.json'));
         return obj instanceof Moment || (obj != null && obj._isAMomentObject != null);
     }
 
+    function absFloor (number) {
+        if (number < 0) {
+            return Math.ceil(number);
+        } else {
+            return Math.floor(number);
+        }
+    }
+
     function toInt(argumentForCoercion) {
         var coercedNumber = +argumentForCoercion,
             value = 0;
 
         if (coercedNumber !== 0 && isFinite(coercedNumber)) {
-            if (coercedNumber >= 0) {
-                value = Math.floor(coercedNumber);
-            } else {
-                value = Math.ceil(coercedNumber);
-            }
+            value = absFloor(coercedNumber);
         }
 
         return value;
@@ -2728,9 +2733,7 @@ moment.tz.load(require('./data/packed/latest.json'));
     function defineLocale (name, values) {
         if (values !== null) {
             values.abbr = name;
-            if (!locales[name]) {
-                locales[name] = new Locale();
-            }
+            locales[name] = locales[name] || new Locale();
             locales[name].set(values);
 
             // backwards compat for now: also set the locale
@@ -2834,16 +2837,14 @@ moment.tz.load(require('./data/packed/latest.json'));
     }
 
     function zeroFill(number, targetLength, forceSign) {
-        var output = '' + Math.abs(number),
+        var absNumber = '' + Math.abs(number),
+            zerosToFill = targetLength - absNumber.length,
             sign = number >= 0;
-
-        while (output.length < targetLength) {
-            output = '0' + output;
-        }
-        return (sign ? (forceSign ? '+' : '') : '-') + output;
+        return (sign ? (forceSign ? '+' : '') : '-') +
+            Math.pow(10, Math.max(0, zerosToFill)).toString().substr(1) + absNumber;
     }
 
-    var formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Q|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,4}|x|X|zz?|ZZ?|.)/g;
+    var formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Q|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g;
 
     var localFormattingTokens = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g;
 
@@ -2911,10 +2912,7 @@ moment.tz.load(require('./data/packed/latest.json'));
         }
 
         format = expandFormat(format, m.localeData());
-
-        if (!formatFunctions[format]) {
-            formatFunctions[format] = makeFormatFunction(format);
-        }
+        formatFunctions[format] = formatFunctions[format] || makeFormatFunction(format);
 
         return formatFunctions[format](m);
     }
@@ -2958,8 +2956,15 @@ moment.tz.load(require('./data/packed/latest.json'));
 
     var regexes = {};
 
+    function isFunction (sth) {
+        // https://github.com/moment/moment/issues/2325
+        return typeof sth === 'function' &&
+            Object.prototype.toString.call(sth) === '[object Function]';
+    }
+
+
     function addRegexToken (token, regex, strictRegex) {
-        regexes[token] = typeof regex === 'function' ? regex : function (isStrict) {
+        regexes[token] = isFunction(regex) ? regex : function (isStrict) {
             return (isStrict && strictRegex) ? strictRegex : regex;
         };
     }
@@ -3167,12 +3172,11 @@ moment.tz.load(require('./data/packed/latest.json'));
     }
 
     function deprecate(msg, fn) {
-        var firstTime = true,
-            msgWithStack = msg + '\n' + (new Error()).stack;
+        var firstTime = true;
 
         return extend(function () {
             if (firstTime) {
-                warn(msgWithStack);
+                warn(msg + '\n' + (new Error()).stack);
                 firstTime = false;
             }
             return fn.apply(this, arguments);
@@ -3220,14 +3224,14 @@ moment.tz.load(require('./data/packed/latest.json'));
             getParsingFlags(config).iso = true;
             for (i = 0, l = isoDates.length; i < l; i++) {
                 if (isoDates[i][1].exec(string)) {
-                    // match[5] should be 'T' or undefined
-                    config._f = isoDates[i][0] + (match[6] || ' ');
+                    config._f = isoDates[i][0];
                     break;
                 }
             }
             for (i = 0, l = isoTimes.length; i < l; i++) {
                 if (isoTimes[i][1].exec(string)) {
-                    config._f += isoTimes[i][0];
+                    // match[6] should be 'T' or space
+                    config._f += (match[6] || ' ') + isoTimes[i][0];
                     break;
                 }
             }
@@ -3306,7 +3310,10 @@ moment.tz.load(require('./data/packed/latest.json'));
     addRegexToken('YYYYY',  match1to6, match6);
     addRegexToken('YYYYYY', match1to6, match6);
 
-    addParseToken(['YYYY', 'YYYYY', 'YYYYYY'], YEAR);
+    addParseToken(['YYYYY', 'YYYYYY'], YEAR);
+    addParseToken('YYYY', function (input, array) {
+        array[YEAR] = input.length === 2 ? utils_hooks__hooks.parseTwoDigitYear(input) : toInt(input);
+    });
     addParseToken('YY', function (input, array) {
         array[YEAR] = utils_hooks__hooks.parseTwoDigitYear(input);
     });
@@ -3433,18 +3440,18 @@ moment.tz.load(require('./data/packed/latest.json'));
 
     //http://en.wikipedia.org/wiki/ISO_week_date#Calculating_a_date_given_the_year.2C_week_number_and_weekday
     function dayOfYearFromWeeks(year, week, weekday, firstDayOfWeekOfYear, firstDayOfWeek) {
-        var d = createUTCDate(year, 0, 1).getUTCDay();
-        var daysToAdd;
-        var dayOfYear;
+        var week1Jan = 6 + firstDayOfWeek - firstDayOfWeekOfYear, janX = createUTCDate(year, 0, 1 + week1Jan), d = janX.getUTCDay(), dayOfYear;
+        if (d < firstDayOfWeek) {
+            d += 7;
+        }
 
-        d = d === 0 ? 7 : d;
-        weekday = weekday != null ? weekday : firstDayOfWeek;
-        daysToAdd = firstDayOfWeek - d + (d > firstDayOfWeekOfYear ? 7 : 0) - (d < firstDayOfWeek ? 7 : 0);
-        dayOfYear = 7 * (week - 1) + (weekday - firstDayOfWeek) + daysToAdd + 1;
+        weekday = weekday != null ? 1 * weekday : firstDayOfWeek;
+
+        dayOfYear = 1 + week1Jan + 7 * (week - 1) - d + weekday;
 
         return {
-            year      : dayOfYear > 0 ? year      : year - 1,
-            dayOfYear : dayOfYear > 0 ? dayOfYear : daysInYear(year - 1) + dayOfYear
+            year: dayOfYear > 0 ? year : year - 1,
+            dayOfYear: dayOfYear > 0 ?  dayOfYear : daysInYear(year - 1) + dayOfYear
         };
     }
 
@@ -3730,9 +3737,19 @@ moment.tz.load(require('./data/packed/latest.json'));
     }
 
     function createFromConfig (config) {
+        var res = new Moment(checkOverflow(prepareConfig(config)));
+        if (res._nextDay) {
+            // Adding is smart enough around DST
+            res.add(1, 'd');
+            res._nextDay = undefined;
+        }
+
+        return res;
+    }
+
+    function prepareConfig (config) {
         var input = config._i,
-            format = config._f,
-            res;
+            format = config._f;
 
         config._locale = config._locale || locale_locales__getLocale(config._l);
 
@@ -3756,14 +3773,7 @@ moment.tz.load(require('./data/packed/latest.json'));
             configFromInput(config);
         }
 
-        res = new Moment(checkOverflow(config));
-        if (res._nextDay) {
-            // Adding is smart enough around DST
-            res.add(1, 'd');
-            res._nextDay = undefined;
-        }
-
-        return res;
+        return config;
     }
 
     function configFromInput(config) {
@@ -3843,7 +3853,7 @@ moment.tz.load(require('./data/packed/latest.json'));
         }
         res = moments[0];
         for (i = 1; i < moments.length; ++i) {
-            if (moments[i][fn](res)) {
+            if (!moments[i].isValid() || moments[i][fn](res)) {
                 res = moments[i];
             }
         }
@@ -3955,7 +3965,6 @@ moment.tz.load(require('./data/packed/latest.json'));
         } else {
             return local__createLocal(input).local();
         }
-        return model._isUTC ? local__createLocal(input).zone(model._offset || 0) : local__createLocal(input).local();
     }
 
     function getDateOffset (m) {
@@ -4055,12 +4064,7 @@ moment.tz.load(require('./data/packed/latest.json'));
     }
 
     function hasAlignedHourOffset (input) {
-        if (!input) {
-            input = 0;
-        }
-        else {
-            input = local__createLocal(input).utcOffset();
-        }
+        input = input ? local__createLocal(input).utcOffset() : 0;
 
         return (this.utcOffset() - input) % 60 === 0;
     }
@@ -4073,12 +4077,24 @@ moment.tz.load(require('./data/packed/latest.json'));
     }
 
     function isDaylightSavingTimeShifted () {
-        if (this._a) {
-            var other = this._isUTC ? create_utc__createUTC(this._a) : local__createLocal(this._a);
-            return this.isValid() && compareArrays(this._a, other.toArray()) > 0;
+        if (typeof this._isDSTShifted !== 'undefined') {
+            return this._isDSTShifted;
         }
 
-        return false;
+        var c = {};
+
+        copyConfig(c, this);
+        c = prepareConfig(c);
+
+        if (c._a) {
+            var other = c._isUTC ? create_utc__createUTC(c._a) : local__createLocal(c._a);
+            this._isDSTShifted = this.isValid() &&
+                compareArrays(c._a, other.toArray()) > 0;
+        } else {
+            this._isDSTShifted = false;
+        }
+
+        return this._isDSTShifted;
     }
 
     function isLocal () {
@@ -4238,7 +4254,7 @@ moment.tz.load(require('./data/packed/latest.json'));
     var add_subtract__add      = createAdder(1, 'add');
     var add_subtract__subtract = createAdder(-1, 'subtract');
 
-    function moment_calendar__calendar (time) {
+    function moment_calendar__calendar (time, formats) {
         // We want to compare the start of today, vs this.
         // Getting start-of-today depends on whether we're local/utc/offset or not.
         var now = time || local__createLocal(),
@@ -4250,7 +4266,7 @@ moment.tz.load(require('./data/packed/latest.json'));
                 diff < 1 ? 'sameDay' :
                 diff < 2 ? 'nextDay' :
                 diff < 7 ? 'nextWeek' : 'sameElse';
-        return this.format(this.localeData().calendar(format, this, local__createLocal(now)));
+        return this.format(formats && formats[format] || this.localeData().calendar(format, this, local__createLocal(now)));
     }
 
     function clone () {
@@ -4294,14 +4310,6 @@ moment.tz.load(require('./data/packed/latest.json'));
         } else {
             inputMs = +local__createLocal(input);
             return +(this.clone().startOf(units)) <= inputMs && inputMs <= +(this.clone().endOf(units));
-        }
-    }
-
-    function absFloor (number) {
-        if (number < 0) {
-            return Math.ceil(number);
-        } else {
-            return Math.floor(number);
         }
     }
 
@@ -4495,6 +4503,19 @@ moment.tz.load(require('./data/packed/latest.json'));
         return [m.year(), m.month(), m.date(), m.hour(), m.minute(), m.second(), m.millisecond()];
     }
 
+    function toObject () {
+        var m = this;
+        return {
+            years: m.year(),
+            months: m.month(),
+            date: m.date(),
+            hours: m.hours(),
+            minutes: m.minutes(),
+            seconds: m.seconds(),
+            milliseconds: m.milliseconds()
+        };
+    }
+
     function moment_valid__isValid () {
         return valid__isValid(this);
     }
@@ -4666,18 +4687,20 @@ moment.tz.load(require('./data/packed/latest.json'));
     // HELPERS
 
     function parseWeekday(input, locale) {
-        if (typeof input === 'string') {
-            if (!isNaN(input)) {
-                input = parseInt(input, 10);
-            }
-            else {
-                input = locale.weekdaysParse(input);
-                if (typeof input !== 'number') {
-                    return null;
-                }
-            }
+        if (typeof input !== 'string') {
+            return input;
         }
-        return input;
+
+        if (!isNaN(input)) {
+            return parseInt(input, 10);
+        }
+
+        input = locale.weekdaysParse(input);
+        if (typeof input === 'number') {
+            return input;
+        }
+
+        return null;
     }
 
     // LOCALES
@@ -4700,9 +4723,7 @@ moment.tz.load(require('./data/packed/latest.json'));
     function localeWeekdaysParse (weekdayName) {
         var i, mom, regex;
 
-        if (!this._weekdaysParse) {
-            this._weekdaysParse = [];
-        }
+        this._weekdaysParse = this._weekdaysParse || [];
 
         for (i = 0; i < 7; i++) {
             // make the regex if we don't have it already
@@ -4849,12 +4870,26 @@ moment.tz.load(require('./data/packed/latest.json'));
         return ~~(this.millisecond() / 10);
     });
 
-    function millisecond__milliseconds (token) {
-        addFormatToken(0, [token, 3], 0, 'millisecond');
-    }
+    addFormatToken(0, ['SSS', 3], 0, 'millisecond');
+    addFormatToken(0, ['SSSS', 4], 0, function () {
+        return this.millisecond() * 10;
+    });
+    addFormatToken(0, ['SSSSS', 5], 0, function () {
+        return this.millisecond() * 100;
+    });
+    addFormatToken(0, ['SSSSSS', 6], 0, function () {
+        return this.millisecond() * 1000;
+    });
+    addFormatToken(0, ['SSSSSSS', 7], 0, function () {
+        return this.millisecond() * 10000;
+    });
+    addFormatToken(0, ['SSSSSSSS', 8], 0, function () {
+        return this.millisecond() * 100000;
+    });
+    addFormatToken(0, ['SSSSSSSSS', 9], 0, function () {
+        return this.millisecond() * 1000000;
+    });
 
-    millisecond__milliseconds('SSS');
-    millisecond__milliseconds('SSSS');
 
     // ALIASES
 
@@ -4865,11 +4900,19 @@ moment.tz.load(require('./data/packed/latest.json'));
     addRegexToken('S',    match1to3, match1);
     addRegexToken('SS',   match1to3, match2);
     addRegexToken('SSS',  match1to3, match3);
-    addRegexToken('SSSS', matchUnsigned);
-    addParseToken(['S', 'SS', 'SSS', 'SSSS'], function (input, array) {
-        array[MILLISECOND] = toInt(('0.' + input) * 1000);
-    });
 
+    var token;
+    for (token = 'SSSS'; token.length <= 9; token += 'S') {
+        addRegexToken(token, matchUnsigned);
+    }
+
+    function parseMs(input, array) {
+        array[MILLISECOND] = toInt(('0.' + input) * 1000);
+    }
+
+    for (token = 'S'; token.length <= 9; token += 'S') {
+        addParseToken(token, parseMs);
+    }
     // MOMENTS
 
     var getSetMillisecond = makeGetSet('Milliseconds', false);
@@ -4916,6 +4959,7 @@ moment.tz.load(require('./data/packed/latest.json'));
     momentPrototype__proto.startOf      = startOf;
     momentPrototype__proto.subtract     = add_subtract__subtract;
     momentPrototype__proto.toArray      = toArray;
+    momentPrototype__proto.toObject     = toObject;
     momentPrototype__proto.toDate       = toDate;
     momentPrototype__proto.toISOString  = moment_format__toISOString;
     momentPrototype__proto.toJSON       = moment_format__toISOString;
@@ -5015,19 +5059,23 @@ moment.tz.load(require('./data/packed/latest.json'));
         LT   : 'h:mm A',
         L    : 'MM/DD/YYYY',
         LL   : 'MMMM D, YYYY',
-        LLL  : 'MMMM D, YYYY LT',
-        LLLL : 'dddd, MMMM D, YYYY LT'
+        LLL  : 'MMMM D, YYYY h:mm A',
+        LLLL : 'dddd, MMMM D, YYYY h:mm A'
     };
 
     function longDateFormat (key) {
-        var output = this._longDateFormat[key];
-        if (!output && this._longDateFormat[key.toUpperCase()]) {
-            output = this._longDateFormat[key.toUpperCase()].replace(/MMMM|MM|DD|dddd/g, function (val) {
-                return val.slice(1);
-            });
-            this._longDateFormat[key] = output;
+        var format = this._longDateFormat[key],
+            formatUpper = this._longDateFormat[key.toUpperCase()];
+
+        if (format || !formatUpper) {
+            return format;
         }
-        return output;
+
+        this._longDateFormat[key] = formatUpper.replace(/MMMM|MM|DD|dddd/g, function (val) {
+            return val.slice(1);
+        });
+
+        return this._longDateFormat[key];
     }
 
     var defaultInvalidDate = 'Invalid date';
@@ -5236,12 +5284,29 @@ moment.tz.load(require('./data/packed/latest.json'));
         return duration_add_subtract__addSubtract(this, input, value, -1);
     }
 
+    function absCeil (number) {
+        if (number < 0) {
+            return Math.floor(number);
+        } else {
+            return Math.ceil(number);
+        }
+    }
+
     function bubble () {
         var milliseconds = this._milliseconds;
         var days         = this._days;
         var months       = this._months;
         var data         = this._data;
-        var seconds, minutes, hours, years = 0;
+        var seconds, minutes, hours, years, monthsFromDays;
+
+        // if we have a mix of positive and negative values, bubble down first
+        // check: https://github.com/moment/moment/issues/2166
+        if (!((milliseconds >= 0 && days >= 0 && months >= 0) ||
+                (milliseconds <= 0 && days <= 0 && months <= 0))) {
+            milliseconds += absCeil(monthsToDays(months) + days) * 864e5;
+            days = 0;
+            months = 0;
+        }
 
         // The following code bubbles up values, see the tests for
         // examples of what that means.
@@ -5258,17 +5323,13 @@ moment.tz.load(require('./data/packed/latest.json'));
 
         days += absFloor(hours / 24);
 
-        // Accurately convert days to years, assume start from year 0.
-        years = absFloor(daysToYears(days));
-        days -= absFloor(yearsToDays(years));
-
-        // 30 days to a month
-        // TODO (iskren): Use anchor date (like 1st Jan) to compute this.
-        months += absFloor(days / 30);
-        days   %= 30;
+        // convert days to months
+        monthsFromDays = absFloor(daysToMonths(days));
+        months += monthsFromDays;
+        days -= absCeil(monthsToDays(monthsFromDays));
 
         // 12 months -> 1 year
-        years  += absFloor(months / 12);
+        years = absFloor(months / 12);
         months %= 12;
 
         data.days   = days;
@@ -5278,15 +5339,15 @@ moment.tz.load(require('./data/packed/latest.json'));
         return this;
     }
 
-    function daysToYears (days) {
+    function daysToMonths (days) {
         // 400 years have 146097 days (taking into account leap year rules)
-        return days * 400 / 146097;
+        // 400 years have 12 months === 4800
+        return days * 4800 / 146097;
     }
 
-    function yearsToDays (years) {
-        // years * 365 + absFloor(years / 4) -
-        //     absFloor(years / 100) + absFloor(years / 400);
-        return years * 146097 / 400;
+    function monthsToDays (months) {
+        // the reverse of daysToMonths
+        return months * 146097 / 4800;
     }
 
     function as (units) {
@@ -5298,11 +5359,11 @@ moment.tz.load(require('./data/packed/latest.json'));
 
         if (units === 'month' || units === 'year') {
             days   = this._days   + milliseconds / 864e5;
-            months = this._months + daysToYears(days) * 12;
+            months = this._months + daysToMonths(days);
             return units === 'month' ? months : months / 12;
         } else {
             // handle milliseconds separately because of floating point math errors (issue #1867)
-            days = this._days + Math.round(yearsToDays(this._months / 12));
+            days = this._days + Math.round(monthsToDays(this._months));
             switch (units) {
                 case 'week'   : return days / 7     + milliseconds / 6048e5;
                 case 'day'    : return days         + milliseconds / 864e5;
@@ -5352,7 +5413,7 @@ moment.tz.load(require('./data/packed/latest.json'));
         };
     }
 
-    var duration_get__milliseconds = makeGetter('milliseconds');
+    var milliseconds = makeGetter('milliseconds');
     var seconds      = makeGetter('seconds');
     var minutes      = makeGetter('minutes');
     var hours        = makeGetter('hours');
@@ -5430,13 +5491,36 @@ moment.tz.load(require('./data/packed/latest.json'));
     var iso_string__abs = Math.abs;
 
     function iso_string__toISOString() {
+        // for ISO strings we do not use the normal bubbling rules:
+        //  * milliseconds bubble up until they become hours
+        //  * days do not bubble at all
+        //  * months bubble up until they become years
+        // This is because there is no context-free conversion between hours and days
+        // (think of clock changes)
+        // and also not between days and months (28-31 days per month)
+        var seconds = iso_string__abs(this._milliseconds) / 1000;
+        var days         = iso_string__abs(this._days);
+        var months       = iso_string__abs(this._months);
+        var minutes, hours, years;
+
+        // 3600 seconds -> 60 minutes -> 1 hour
+        minutes           = absFloor(seconds / 60);
+        hours             = absFloor(minutes / 60);
+        seconds %= 60;
+        minutes %= 60;
+
+        // 12 months -> 1 year
+        years  = absFloor(months / 12);
+        months %= 12;
+
+
         // inspired by https://github.com/dordille/moment-isoduration/blob/master/moment.isoduration.js
-        var Y = iso_string__abs(this.years());
-        var M = iso_string__abs(this.months());
-        var D = iso_string__abs(this.days());
-        var h = iso_string__abs(this.hours());
-        var m = iso_string__abs(this.minutes());
-        var s = iso_string__abs(this.seconds() + this.milliseconds() / 1000);
+        var Y = years;
+        var M = months;
+        var D = days;
+        var h = hours;
+        var m = minutes;
+        var s = seconds;
         var total = this.asSeconds();
 
         if (!total) {
@@ -5473,7 +5557,7 @@ moment.tz.load(require('./data/packed/latest.json'));
     duration_prototype__proto.valueOf        = duration_as__valueOf;
     duration_prototype__proto._bubble        = bubble;
     duration_prototype__proto.get            = duration_get__get;
-    duration_prototype__proto.milliseconds   = duration_get__milliseconds;
+    duration_prototype__proto.milliseconds   = milliseconds;
     duration_prototype__proto.seconds        = seconds;
     duration_prototype__proto.minutes        = minutes;
     duration_prototype__proto.hours          = hours;
@@ -5511,7 +5595,7 @@ moment.tz.load(require('./data/packed/latest.json'));
     // Side effect imports
 
 
-    utils_hooks__hooks.version = '2.10.3';
+    utils_hooks__hooks.version = '2.10.6';
 
     setHookCallback(local__createLocal);
 
@@ -5542,10 +5626,18 @@ moment.tz.load(require('./data/packed/latest.json'));
     return _moment;
 
 }));
-},{}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/persistence/MessagePersistence.coffee":[function(require,module,exports){
-var MessageActions;
+},{}],17:[function(require,module,exports){
+var MessageActions, send;
 
 MessageActions = require('../actions/MessageActions.coffee');
+
+window.urb.appl = "talk";
+
+send = function(data, cb) {
+  return window.urb.send(data, {
+    mark: "talk-command"
+  }, cb);
+};
 
 module.exports = {
   listenStation: function(station, since) {
@@ -5553,10 +5645,7 @@ module.exports = {
     console.log('listen station');
     console.log(arguments);
     $this = this;
-    return window.urb.subscribe({
-      appl: "talk",
-      path: "/f/" + station + "/" + since
-    }, function(err, res) {
+    return window.urb.bind("/f/" + station + "/" + since, function(err, res) {
       var ref, ref1;
       if (err || !res.data) {
         console.log('/f/ err!');
@@ -5578,10 +5667,7 @@ module.exports = {
   get: function(station, start, end) {
     end = window.urb.util.numDot(end);
     start = window.urb.util.numDot(start);
-    return window.urb.subscribe({
-      appl: "talk",
-      path: "/f/" + station + "/" + end + "/" + start
-    }, function(err, res) {
+    return window.urb.bind("/f/" + station + "/" + end + "/" + start, function(err, res) {
       var ref, ref1;
       if (err || !res.data) {
         console.log('/f/ /e/s err');
@@ -5592,10 +5678,7 @@ module.exports = {
       console.log(res);
       if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
         MessageActions.loadMessages(res.data.grams, true);
-        return window.urb.unsubscribe({
-          appl: "talk",
-          path: "/f/" + station + "/" + end + "/" + start
-        }, function(err, res) {
+        return window.urb.drop("/f/" + station + "/" + end + "/" + start, function(err, res) {
           console.log('done');
           return console.log(res);
         });
@@ -5603,12 +5686,8 @@ module.exports = {
     });
   },
   sendMessage: function(message, cb) {
-    return window.urb.send({
-      appl: "talk",
-      mark: "talk-command",
-      data: {
-        publish: [message]
-      }
+    return send({
+      publish: [message]
     }, function(err, res) {
       console.log('sent');
       console.log(arguments);
@@ -5621,72 +5700,59 @@ module.exports = {
 
 
 
-},{"../actions/MessageActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/MessageActions.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/persistence/StationPersistence.coffee":[function(require,module,exports){
-var StationActions;
+},{"../actions/MessageActions.coffee":1}],18:[function(require,module,exports){
+var StationActions, design, send;
 
 StationActions = require('../actions/StationActions.coffee');
 
+window.urb.appl = "talk";
+
+send = function(data, cb) {
+  return window.urb.send(data, {
+    mark: "talk-command"
+  }, cb);
+};
+
+design = function(party, config, cb) {
+  return send({
+    design: {
+      party: party,
+      config: config
+    }
+  }, cb);
+};
+
 module.exports = {
   createStation: function(name, cb) {
-    return window.urb.send({
-      appl: "talk",
-      mark: "talk-command",
-      data: {
-        design: {
-          party: name,
-          config: {
-            sources: [],
-            caption: "",
-            cordon: {
-              posture: "white",
-              list: []
-            }
-          }
-        }
+    return design(name, {
+      sources: [],
+      caption: "",
+      cordon: {
+        posture: "white",
+        list: []
       }
     }, cb);
   },
   removeStation: function(name, cb) {
-    return window.urb.send({
-      appl: "talk",
-      mark: "talk-command",
-      data: {
-        design: {
-          party: name,
-          config: null
-        }
-      }
-    }, cb);
+    return design(name, null, cb);
   },
   setSources: function(station, ship, sources) {
-    var send;
-    send = {
-      appl: "talk",
-      mark: "talk-command",
-      data: {
-        design: {
-          party: station,
-          config: {
-            sources: sources,
-            caption: "",
-            cordon: {
-              posture: "white",
-              list: []
-            }
-          }
-        }
-      }
+    var cordon;
+    cordon = {
+      posture: "white",
+      list: []
     };
-    return window.urb.send(send, function(err, res) {
+    return design(station, {
+      sources: sources,
+      cordon: cordon,
+      caption: ""
+    }, function(err, res) {
       console.log('talk-command');
       return console.log(arguments);
     });
   },
   members: function() {
-    return window.urb.subscribe({
-      appl: "talk",
-      path: "/a/court"
-    }, function(err, res) {
+    return window.urb.bind("/a/court", function(err, res) {
       var ref, ref1;
       if (err || !res) {
         console.log('/a/ err');
@@ -5701,10 +5767,7 @@ module.exports = {
     });
   },
   listen: function() {
-    return window.urb.subscribe({
-      appl: "talk",
-      path: "/"
-    }, function(err, res) {
+    return window.urb.bind("/", function(err, res) {
       if (err || !res.data) {
         console.log('/ err');
         console.log(err);
@@ -5718,10 +5781,7 @@ module.exports = {
     });
   },
   listenStation: function(station) {
-    return window.urb.subscribe({
-      appl: "talk",
-      path: "/ax/" + station
-    }, function(err, res) {
+    return window.urb.bind("/ax/" + station, function(err, res) {
       var ref;
       if (err || !res) {
         console.log('/ax/ err');
@@ -5746,7 +5806,7 @@ module.exports = {
 
 
 
-},{"../actions/StationActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/actions/StationActions.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/stores/MessageStore.coffee":[function(require,module,exports){
+},{"../actions/StationActions.coffee":2}],19:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, MessageStore, _fetching, _last, _listening, _messages, _station, _typing, moment;
 
 moment = require('moment-timezone');
@@ -5892,7 +5952,7 @@ module.exports = MessageStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js","moment-timezone":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/node_modules/moment-timezone/index.js"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/stores/StationStore.coffee":[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":7,"events":22,"moment-timezone":14}],20:[function(require,module,exports){
 var EventEmitter, StationDispatcher, StationStore, _audience, _config, _listening, _members, _station, _stations, _typing, _validAudience;
 
 EventEmitter = require('events').EventEmitter;
@@ -6092,7 +6152,7 @@ module.exports = StationStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/util.coffee":[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":7,"events":22}],21:[function(require,module,exports){
 if (!window.util) {
   window.util = {};
 }
@@ -6204,7 +6264,7 @@ _.merge(window.util, {
 
 
 
-},{}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -6264,10 +6324,8 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
-      } else {
-        throw TypeError('Uncaught, unspecified "error" event.');
       }
-      return false;
+      throw TypeError('Uncaught, unspecified "error" event.');
     }
   }
 
@@ -6509,4 +6567,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},["/Users/galen/src/urbit-dev/urb/zod/base/pub/talk/src/js/main.coffee"]);
+},{}]},{},[8]);
