@@ -1679,7 +1679,7 @@
       "[{(trip p.sep)}]: {(trip q.sep)}"
     ::
         %tax
-      <sep>
+      " {<sep>}"
     ==
   -- 
 ::

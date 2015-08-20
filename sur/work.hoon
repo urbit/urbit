@@ -31,7 +31,7 @@
 ++  status  ?(%announced %released %accepted)
 ++  command  
   $%  [%new audience=(set station:talk) task]
-      [%old id=@uvH dif=update]
+      [%old id=@uvH version=@u dif=update]
       [%sort p=(list ,@uvH)]
   ==
 ++  update
