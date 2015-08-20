@@ -9,14 +9,15 @@ module.exports =
       version:0
       "date-created":Date.now()
       "date-modified":Date.now()
-      "due-date":null
+      "date-due":null
+      done:null
       owner:window.urb.ship
-      status:'gave'
+      status:'announced'
       tags:[]
       title:''
       description:''
       discussion:[]
-    Persistence.put "new":item
+    Persistence.put "new": task:item, audience:[]
     Dispatcher.handleViewAction {type:'newItem', index, item}
 
   changeItem: (id,key,val) ->
@@ -36,7 +37,7 @@ module.exports =
     Dispatcher.handleViewAction
       type:'setSort'
       key:key
-      val:val 
+      val:val
 
   swapItems: (to,from) ->
     Dispatcher.handleViewAction
