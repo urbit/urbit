@@ -3,10 +3,10 @@ assign        = require 'object-assign'
 Dispatcher    = require '../dispatcher/Dispatcher.coffee'
 
 _list   = [
-    id:0
+    id:"0v0"
     sort:0
     "date-created":new Date('2015-8-18')
-    "date-modifed":new Date('2015-8-18')
+    "date-modified":new Date('2015-8-18')
     "date-due":null
     owner:"~talsur-todres"
     audience:["doznec/urbit-meta","doznec/tlon"]
@@ -22,10 +22,10 @@ _list   = [
       }
     ]
   ,
-    id:1
+    id:"0v1"
     sort:1
     "date-created":new Date('2015-8-18')
-    "date-modifed":new Date('2015-8-18')
+    "date-modified":new Date('2015-8-18')
     "date-due":null
     owner:"~talsur-todres"
     audience:["doznec/tlon"]
@@ -35,10 +35,10 @@ _list   = [
     description:'dont forget about lunch.'
     discussion:[]
   ,
-    id:2
+    id:"0v2"
     sort:2
     "date-created":new Date('2015-8-18')
-    "date-modifed":new Date('2015-8-18')
+    "date-modified":new Date('2015-8-18')
     "date-due":null
     owner:"~talsur-todres"
     audience:["doznec/tlon"]
@@ -99,28 +99,17 @@ WorkStore = assign {},EventEmitter.prototype,{
       _sorts[k] = 0
     _sorts[key] = val
 
-  newItem: ({index}) ->
-    item =
-      id:index
-      sort:index
-      "date-created":new Date()
-      "date-modifed":new Date()
-      "date-due":null
-      owner:"~talsur-todres"
-      status:null
-      tags:[]
-      audience:[]
-      title:''
-      description:''
-      discussion:[]
-    _list.splice index,0,item
+  newItem: ({index,item}) ->
+    _item = _.extend {sort:index,audience:[]}, item
+    _item["date-created"]=new Date item["date-created"]
+    _item["date-modified"]=new Date item["date-modified"]
+    _item["date-due"]=item["due-date"]
+    _list.splice index,0,_item
 
   swapItem: ({to,from}) ->
     _list.splice to,0,_list.splice(from,1)[0]
 
-  removeItem: ({index}) -> 
-    list = lists[list]
-    list.splice index,1
+  removeItem: ({index}) ->  _list.splice index,1
 
 }
 
