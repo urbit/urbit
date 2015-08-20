@@ -22,7 +22,7 @@
 !:
 ::::
   ::
-|_  [bowl client connected=_|]
+|_  [bowl client connected=_| claiming=?]
 ++  at
   |=  [task audience=(set station:talk)]
   =*  tax  +<-
@@ -30,7 +30,7 @@
   |%
   ++  abet
     ^-  [(list move) _+>.$]
-    [(flop moves) +>.$(tasks (~(put by tasks) id tax audience))]
+    [(flop moves) +>.$(tasks (~(put by tasks) id tax audience claiming))]
   ++  send
     |=  action=duty:work-stuff:talk
     ^+  +>
@@ -141,6 +141,7 @@
       [~ +>.$]
     =.  tasks
       %^  ~(put by tasks)  id.tax.action  tax.action
+      :_  |
       ?~  existing-task  from
       (~(uni in audience.u.existing-task) from)
     =.  sort  ?~(existing-task sort [id.action sort])
@@ -201,7 +202,8 @@
               discussion  [[when her com.meat.action] discussion.task.u.tax]
             ==
         ==
-      (~(uni in audience.u.tax) from)
+      :-  (~(uni in audience.u.tax) from)
+      claiming.u.tax
     ?:  =([%release our] meat.action)
       abet:accept:(at (~(got by tasks) id.action))
     [~ +>.$]
