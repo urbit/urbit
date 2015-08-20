@@ -90,7 +90,7 @@
                 [%release p=ship]                       ::  pass to new owner
                 [%accept ~]                             ::  accept pass
                 [%delete ~]                             ::  delete task
-                [%set-date-due p=@da]                   ::  set due date
+                [%set-date-due p=(unit ,@da)]           ::  set due date
                 [%set-tags p=(set ,@t)]                 ::  set tags
                 [%set-title p=@t]                       ::  set title
                 [%set-description p=@t]                 ::  set description

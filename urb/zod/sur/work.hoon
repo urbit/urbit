@@ -35,7 +35,7 @@
   ==
 ++  update
   $%  $:  %set
-  $%  [%date-due p=@da]
+  $%  [%date-due p=(unit ,@da)]
       [%title p=@t]
       [%description p=@t]
       [%tags p=(set ,@t)]
