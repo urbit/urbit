@@ -34,6 +34,19 @@ module.exports = {
       item: item
     });
   },
+  changeItem: function(id, key, val) {
+    var set;
+    set = {};
+    set[key] = val;
+    return Persistence.put({
+      old: {
+        id: id,
+        dif: {
+          set: set
+        }
+      }
+    });
+  },
   setFilter: function(key, val) {
     return Dispatcher.handleViewAction({
       type: 'setFilter',
@@ -81,7 +94,6 @@ module.exports = {
 };
 
 
-
 },{"../dispatcher/Dispatcher.coffee":8,"../persistence/Persistence.coffee":14}],2:[function(require,module,exports){
 var div, h1, label, rece, recl, ref;
 
@@ -109,64 +121,59 @@ module.exports = recl({
     key = $t.attr('data-key');
     if (txt.length === 0) {
       txt = null;
-    }
-    if (key === 'audience') {
-      txt = txt.split(" ");
-    }
-    if (key === 'tags') {
-      txt = [txt];
+    } else {
+      switch (key) {
+        case 'audience':
+          txt = txt.split(" ");
+          break;
+        case 'tags':
+          txt = [txt];
+      }
     }
     return this.props.onChange(key, txt);
   },
+  fields: [
+    {
+      filter: 'owned',
+      key: 'owner',
+      title: 'Owned by:'
+    }, {
+      filter: 'tag',
+      key: 'tags',
+      title: 'Tag:'
+    }, {
+      filter: 'channel',
+      key: 'audience',
+      title: 'Audience:'
+    }, {
+      filter: 'status',
+      key: 'status',
+      title: 'Status:'
+    }
+  ],
   render: function() {
     return div({
       className: 'filters'
-    }, [
-      div({
-        className: 'owned filter ib',
-        'data-key': 'owner'
-      }, [
-        label({}, 'Owned by:'), div({
-          contentEditable: true,
-          className: 'input ib',
-          onKeyDown: this._onKeyDown,
-          onBlur: this._onBlur
-        }, this.props.filters.owned)
-      ]), div({
-        className: 'tag filter ib',
-        'data-key': 'tags'
-      }, [
-        label({}, 'Tag:'), div({
-          contentEditable: true,
-          className: 'input ib',
-          onKeyDown: this._onKeyDown,
-          onBlur: this._onBlur
-        }, this.props.filters.tag)
-      ]), div({
-        className: 'channel filter ib',
-        'data-key': 'audience'
-      }, [
-        label({}, 'Audience:'), div({
-          contentEditable: true,
-          className: 'input ib',
-          onKeyDown: this._onKeyDown,
-          onBlur: this._onBlur
-        }, this.props.filters.channel)
-      ]), div({
-        className: 'status filter ib',
-        'data-key': 'status'
-      }, [
-        label({}, 'Status:'), div({
-          contentEditable: true,
-          className: 'input ib',
-          onKeyDown: this._onKeyDown,
-          onBlur: this._onBlur
-        }, this.props.filters.status)
-      ])
-    ]);
+    }, this.fields.map((function(_this) {
+      return function(arg) {
+        var filter, key, title;
+        filter = arg.filter, key = arg.key, title = arg.title;
+        return div({
+          key: key,
+          'data-key': key,
+          className: filter + " filter ib"
+        }, [
+          label({}, title), div({
+            contentEditable: true,
+            className: 'input ib',
+            onKeyDown: _this._onKeyDown,
+            onBlur: _this._onBlur
+          }, _this.props.filters[filter])
+        ]);
+      };
+    })(this)));
   }
 });
-
 
 
 },{}],3:[function(require,module,exports){
@@ -211,11 +218,103 @@ module.exports = recl({
       e.preventDefault();
     }
   },
+  getVal: function($el, key) {
+    var a, d;
+    if ($el[0].tagName === 'TEXTAREA') {
+      return $el.val();
+    } else {
+      if (key === 'date-due') {
+        d = $el.text().slice(1).replace(/\./g, "-");
+        if (d.length < 8) {
+          return NaN;
+        }
+        return new Date(d).valueOf();
+      }
+      if (key === 'tags') {
+        return $el.text().trim().split(" ");
+      }
+      if (key === 'audience') {
+        a = $el.text().trim().split(" ");
+        a = a.map(function(_a) {
+          return "~" + _a;
+        });
+        return a;
+      }
+      return $el.text();
+    }
+  },
+  compareVal: function(l, n, key) {
+    if (key === 'tags' || key === 'audience') {
+      return _.xor(l, n).length > 0;
+    }
+    if (key === 'date-due') {
+      return l !== new Date(n);
+    }
+    return l !== n;
+  },
+  validateField: function($t, id, key, val) {
+    var i, valid;
+    valid = 1;
+    if (key === 'date-due') {
+      if (isNaN(val)) {
+        valid = 0;
+      }
+    }
+    if (key === 'audience') {
+      i = _.filter(val, function(a) {
+        if (a[0] !== "~") {
+          return 0;
+        }
+        if (a.split("/").length < 2) {
+          return 0;
+        }
+        if (a.split("/")[0].length < 3 || a.split("/")[1].length < 3) {
+          return 0;
+        }
+        return 1;
+      });
+      if (i.length !== val.length) {
+        valid = 0;
+      }
+    }
+    return valid;
+  },
+  _keyUp: function(e) {
+    var $t, id, key, val;
+    $t = $(e.target).closest('.field');
+    id = $t.closest('.item').attr('data-id');
+    key = $t.attr('data-key');
+    val = this.getVal($t.find('.input'), key);
+    if (this.compareVal(this.props.item[key], val, key)) {
+      if (!this.validateField($t, id, key, val)) {
+        $t.addClass('invalid');
+        return;
+      }
+      $t.removeClass('invalid');
+      if (this.to) {
+        clearTimeout(this.to);
+      }
+      return this.to = setTimeout(function() {
+        return WorkActions.changeItem(id, key, val);
+      }, 1000);
+    }
+  },
   _focus: function(e) {
     return this.props._focus(e, this);
   },
+  _markDone: function(e) {
+    var id;
+    id = $(e.target).closest('.item').attr('data-id');
+    return WorkActions.changeItem(id, 'done', true);
+  },
   formatDate: function(d) {
-    return (d.getDate()) + "-" + (d.getMonth() + 1) + "-" + (d.getFullYear());
+    if (d === null) {
+      return "";
+    }
+    return "~" + (d.getFullYear()) + "." + (d.getMonth() + 1) + "." + (d.getDate());
+  },
+  formatAudience: function(a) {
+    return a.join(" ").replace(/\~/g, "");
   },
   getInitialState: function() {
     return {
@@ -231,39 +330,53 @@ module.exports = recl({
     return div({
       className: itemClass,
       draggable: true,
+      'data-id': this.props.item.id,
       'data-index': this.props.index,
       onDragStart: this._dragStart,
-      onDragEnd: this._dragEnd,
-      'data-index': this.props.index
+      onDragEnd: this._dragEnd
     }, [
       div({
-        className: 'audience'
-      }, this.props.item.audience.join(" ")), div({
+        className: 'audience field',
+        'data-key': 'audience'
+      }, [
+        div({
+          contentEditable: true,
+          className: 'input ib',
+          onKeyUp: this._keyUp
+        }, this.formatAudience(this.props.item.audience))
+      ]), div({
         className: 'sort ib top'
       }, this.props.item.sort), div({
-        className: 'done ib'
+        className: 'done ib',
+        onClick: this._markDone
       }, ''), div({
-        className: 'title ib top'
+        className: 'title ib top field',
+        'data-key': 'title'
       }, [
         div({
           contentEditable: true,
           onFocus: this._focus,
           onKeyDown: this._keyDown,
+          onKeyUp: this._keyUp,
           className: 'input ib'
         }, this.props.item.title)
       ]), div({
-        className: 'date ib top'
+        className: 'date ib top field',
+        'data-key': 'date-due'
       }, [
         div({
           contentEditable: true,
-          className: 'input ib'
-        }, this.formatDate(this.props.item['date-created']))
+          className: 'input ib',
+          onKeyUp: this._keyUp
+        }, this.formatDate(this.props.item['date-due']))
       ]), div({
-        className: 'tags ib top'
+        className: 'tags ib top field',
+        'data-key': 'tags'
       }, [
         div({
           contentEditable: true,
-          className: 'input ib'
+          className: 'input ib',
+          onKeyUp: this._keyUp
         }, this.props.item.tags.join(" "))
       ]), div({
         className: 'expand ib',
@@ -279,10 +392,12 @@ module.exports = recl({
           className: 'caret left'
         }, "")
       ]), div({
-        className: "description"
+        className: 'description field',
+        'data-key': 'description'
       }, [
         textarea({
-          className: 'input ib'
+          className: 'input ib',
+          onKeyUp: this._keyUp
         }, this.props.item.description)
       ]), div({
         className: "hr"
@@ -327,7 +442,6 @@ module.exports = recl({
     ]);
   }
 });
-
 
 
 },{"../actions/WorkActions.coffee":1}],4:[function(require,module,exports){
@@ -543,7 +657,6 @@ module.exports = recl({
 });
 
 
-
 },{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":15,"./FilterComponent.coffee":2,"./ItemComponent.coffee":3,"./ListeningComponent.coffee":5,"./SortComponent.coffee":6}],5:[function(require,module,exports){
 var div, h1, input, rece, recl, ref, textarea;
 
@@ -560,7 +673,6 @@ module.exports = recl({
     }, "");
   }
 });
-
 
 
 },{}],6:[function(require,module,exports){
@@ -608,7 +720,6 @@ module.exports = recl({
 });
 
 
-
 },{}],7:[function(require,module,exports){
 var ListComponent, div, input, rece, recl, ref, textarea;
 
@@ -629,7 +740,6 @@ module.exports = recl({
     ]);
   }
 });
-
 
 
 },{"./ListComponent.coffee":4}],8:[function(require,module,exports){
@@ -653,7 +763,6 @@ module.exports = _.merge(new Dispatcher(), {
 });
 
 
-
 },{"flux":10}],9:[function(require,module,exports){
 var WorkComponent;
 
@@ -664,7 +773,6 @@ window.util = _.extend(window.util || {}, require('./util.coffee'));
 $(function() {
   return React.render(React.createElement(WorkComponent), $('#c')[0]);
 });
-
 
 
 },{"./components/WorkComponent.coffee":7,"./util.coffee":16}],10:[function(require,module,exports){
@@ -1046,7 +1154,6 @@ module.exports = {
 };
 
 
-
 },{}],15:[function(require,module,exports){
 var Dispatcher, EventEmitter, WorkStore, _filters, _list, _listening, _sorts, assign;
 
@@ -1062,8 +1169,8 @@ _list = [
     sort: 0,
     "date-created": new Date('2015-8-18'),
     "date-modified": new Date('2015-8-18'),
-    "date-due": null,
-    owner: "talsur-todres",
+    "date-due": new Date('2015-8-18'),
+    owner: "~talsur-todres",
     audience: ["~doznec/urbit-meta", "~doznec/tlon"],
     status: "working",
     tags: ['food', 'office'],
@@ -1082,7 +1189,7 @@ _list = [
     "date-created": new Date('2015-8-18'),
     "date-modified": new Date('2015-8-18'),
     "date-due": null,
-    owner: "talsur-todres",
+    owner: "~talsur-todres",
     audience: ["~doznec/tlon"],
     status: "working",
     tags: ['home', 'office'],
@@ -1095,7 +1202,7 @@ _list = [
     "date-created": new Date('2015-8-18'),
     "date-modified": new Date('2015-8-18'),
     "date-due": null,
-    owner: "talsur-todres",
+    owner: "~talsur-todres",
     audience: ["~doznec/tlon"],
     status: "working",
     tags: ['home'],
@@ -1117,7 +1224,7 @@ _filters = {
 _sorts = {
   title: 0,
   owner: 0,
-  date: 0,
+  "date-due": 0,
   sort: 0
 };
 
@@ -1230,7 +1337,6 @@ WorkStore.dispatchToken = Dispatcher.register(function(p) {
 module.exports = WorkStore;
 
 
-
 },{"../dispatcher/Dispatcher.coffee":8,"events":17,"object-assign":13}],16:[function(require,module,exports){
 module.exports = {
   uuid32: function() {
@@ -1287,7 +1393,6 @@ module.exports = {
     }
   }
 };
-
 
 
 },{}],17:[function(require,module,exports){

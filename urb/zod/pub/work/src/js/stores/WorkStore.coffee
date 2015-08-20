@@ -7,8 +7,8 @@ _list   = [
     sort:0
     "date-created":new Date('2015-8-18')
     "date-modified":new Date('2015-8-18')
-    "date-due":null
-    owner:"talsur-todres"
+    "date-due":new Date('2015-8-18')
+    owner:"~talsur-todres"
     audience:["~doznec/urbit-meta","~doznec/tlon"]
     status:"working"
     tags:['food','office']
@@ -27,7 +27,7 @@ _list   = [
     "date-created":new Date('2015-8-18')
     "date-modified":new Date('2015-8-18')
     "date-due":null
-    owner:"talsur-todres"
+    owner:"~talsur-todres"
     audience:["~doznec/tlon"]
     status:"working"
     tags:['home','office']
@@ -40,7 +40,7 @@ _list   = [
     "date-created":new Date('2015-8-18')
     "date-modified":new Date('2015-8-18')
     "date-due":null
-    owner:"talsur-todres"
+    owner:"~talsur-todres"
     audience:["~doznec/tlon"]
     status:"working"
     tags:['home']
@@ -57,7 +57,7 @@ _filters =
 _sorts =
   title:0
   owner:0
-  date:0
+  "date-due":0
   sort:0
 
 WorkStore = assign {},EventEmitter.prototype,{
