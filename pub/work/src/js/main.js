@@ -32,6 +32,21 @@ module.exports = {
       item: item
     });
   },
+  changeItem: function(id, key, val) {
+    var set;
+    console.log('change item');
+    console.log(arguments);
+    set = {};
+    set[key] = val;
+    return Persistence.put({
+      old: {
+        id: id,
+        dif: {
+          set: set
+        }
+      }
+    });
+  },
   setFilter: function(key, val) {
     return Dispatcher.handleViewAction({
       type: 'setFilter',
@@ -77,7 +92,6 @@ module.exports = {
     });
   }
 };
-
 
 
 },{"../dispatcher/Dispatcher.coffee":8,"../persistence/Persistence.coffee":14}],2:[function(require,module,exports){
@@ -166,7 +180,6 @@ module.exports = recl({
 });
 
 
-
 },{}],3:[function(require,module,exports){
 var WorkActions, div, recl, ref, textarea;
 
@@ -188,6 +201,7 @@ module.exports = recl({
   _dragEnd: function(e) {
     return this.props._dragEnd(e, this);
   },
+  commit: function($t) {},
   _keyDown: function(e) {
     var kc;
     this.props._keyDown(e, this);
@@ -207,6 +221,21 @@ module.exports = recl({
     }
     if ((kc === 9 && this.state.expand === false) || (kc === 27)) {
       e.preventDefault();
+    }
+  },
+  _keyUp: function(e) {
+    var $t, id, key, val;
+    $t = $(e.target).closest('.field');
+    id = $t.closest('.item').attr('data-id');
+    key = $t.attr('data-key');
+    val = $t.find('.input').text();
+    if (this.props.item[key] !== val) {
+      if (this.to) {
+        clearTimeout(this.to);
+      }
+      return this.to = setTimeout(function() {
+        return WorkActions.changeItem(id, key, val);
+      }, 1000);
     }
   },
   _focus: function(e) {
@@ -229,35 +258,38 @@ module.exports = recl({
     return div({
       className: itemClass,
       draggable: true,
+      'data-id': this.props.item.id,
       'data-index': this.props.index,
       onDragStart: this._dragStart,
-      onDragEnd: this._dragEnd,
-      'data-index': this.props.index
+      onDragEnd: this._dragEnd
     }, [
       div({
-        className: 'audience'
+        className: 'audience field',
+        'data-key': 'audience'
       }, this.props.item.audience.join(" ")), div({
         className: 'sort ib top'
       }, this.props.item.sort), div({
         className: 'done ib'
       }, ''), div({
-        className: 'title ib top'
+        className: 'title ib top field',
+        'data-key': 'title'
       }, [
         div({
           contentEditable: true,
           onFocus: this._focus,
           onKeyDown: this._keyDown,
+          onKeyUp: this._keyUp,
           className: 'input ib'
         }, this.props.item.title)
       ]), div({
-        className: 'date ib top'
+        className: 'date ib top field'
       }, [
         div({
           contentEditable: true,
           className: 'input ib'
         }, this.formatDate(this.props.item['date-created']))
       ]), div({
-        className: 'tags ib top'
+        className: 'tags ib top field'
       }, [
         div({
           contentEditable: true,
@@ -277,7 +309,7 @@ module.exports = recl({
           className: 'caret left'
         }, "")
       ]), div({
-        className: "description"
+        className: 'description field'
       }, [
         textarea({
           className: 'input ib'
@@ -325,7 +357,6 @@ module.exports = recl({
     ]);
   }
 });
-
 
 
 },{"../actions/WorkActions.coffee":1}],4:[function(require,module,exports){
@@ -541,7 +572,6 @@ module.exports = recl({
 });
 
 
-
 },{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":15,"./FilterComponent.coffee":2,"./ItemComponent.coffee":3,"./ListeningComponent.coffee":5,"./SortComponent.coffee":6}],5:[function(require,module,exports){
 var div, h1, input, rece, recl, ref, textarea;
 
@@ -558,7 +588,6 @@ module.exports = recl({
     }, "");
   }
 });
-
 
 
 },{}],6:[function(require,module,exports){
@@ -606,7 +635,6 @@ module.exports = recl({
 });
 
 
-
 },{}],7:[function(require,module,exports){
 var ListComponent, div, input, rece, recl, ref, textarea;
 
@@ -627,7 +655,6 @@ module.exports = recl({
     ]);
   }
 });
-
 
 
 },{"./ListComponent.coffee":4}],8:[function(require,module,exports){
@@ -651,7 +678,6 @@ module.exports = _.merge(new Dispatcher(), {
 });
 
 
-
 },{"flux":10}],9:[function(require,module,exports){
 var WorkComponent;
 
@@ -662,7 +688,6 @@ window.util = _.extend(window.util || {}, require('./util.coffee'));
 $(function() {
   return React.render(React.createElement(WorkComponent), $('#c')[0]);
 });
-
 
 
 },{"./components/WorkComponent.coffee":7,"./util.coffee":16}],10:[function(require,module,exports){
@@ -1044,7 +1069,6 @@ module.exports = {
 };
 
 
-
 },{}],15:[function(require,module,exports){
 var Dispatcher, EventEmitter, WorkStore, _filters, _list, _listening, _sorts, assign;
 
@@ -1230,7 +1254,6 @@ WorkStore.dispatchToken = Dispatcher.register(function(p) {
 module.exports = WorkStore;
 
 
-
 },{"../dispatcher/Dispatcher.coffee":8,"events":17,"object-assign":13}],16:[function(require,module,exports){
 module.exports = {
   uuid32: function() {
@@ -1268,7 +1291,6 @@ module.exports = {
     }
   }
 };
-
 
 
 },{}],17:[function(require,module,exports){
