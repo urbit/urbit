@@ -40,7 +40,7 @@
       :_  ~
       ^-  move
       :*  ost  %poke
-          /sending/(scot %uw id)/(scot %ud version)
+          /sending/(scot %uv id)/(scot %ud version)
           [our %talk]
           %talk-command
           ^-  command:talk
@@ -61,7 +61,7 @@
       :_  ~
       ^-  move
       :*  ost  %poke
-          /claiming/(scot %uw id)
+          /claiming/(scot %uv id)
           [our %talk]
           %talk-command
           ^-  command:talk
