@@ -41,6 +41,7 @@ module.exports = {
     set = {};
     key = key.split('_').join('-');
     set[key] = val;
+    version += 1;
     return Persistence.put({
       old: {
         id: id,
@@ -52,19 +53,25 @@ module.exports = {
     });
   },
   ownItem: function(arg, own) {
-    var id, version;
+    var id, o, version;
     id = arg.id, version = arg.version;
+    o = {};
+    o[own] = null;
+    version += 1;
     return Persistence.put({
       old: {
         id: id,
         version: version,
-        own: own
+        dif: {
+          own: o
+        }
       }
     });
   },
   addItem: function(arg, val) {
     var id, version;
     id = arg.id, version = arg.version;
+    version += 1;
     return Persistence.put({
       old: {
         id: id,
@@ -360,7 +367,7 @@ module.exports = recl({
     if (this.props.item.status === 'released') {
       return;
     }
-    if (this.props.item.status === 'accepted' && this.props.item.owner.slice(1) !== window.urb.ship) {
+    if (this.props.item.status === 'accepted' && this.formatOwner(this.props.item.owner) !== window.urb.ship) {
       return;
     }
     if (this.props.item.status === "announced") {
@@ -369,7 +376,7 @@ module.exports = recl({
     if (this.props.item.status === "accepted") {
       own = "announce";
     }
-    return WorkActions.ownItem(this.props.item, 'own', own);
+    return WorkActions.ownItem(this.props.item, own);
   },
   _submitComment: function(e) {
     var $t, val;
@@ -429,7 +436,7 @@ module.exports = recl({
     if (this.props.item.status === 'announced') {
       action = "claim";
     }
-    if (this.props.item.status === 'accepted' && this.props.item.owner.slice(1) === window.urb.ship) {
+    if (this.props.item.status === 'accepted' && this.formatOwner(this.props.item.owner) === window.urb.ship) {
       action = "release";
     }
     return div({
