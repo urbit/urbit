@@ -93,14 +93,16 @@ module.exports = recl
   _changeStatus: (e) ->
     return if @props.item.status is 'released'
     if @props.item.status is 'accepted' and 
-    @props.item.owner.slice(1) isnt window.urb.ship
+    @formatOwner(@props.item.owner) isnt window.urb.ship
       return
-    WorkActions.changeStatus @props.item.id
+    own = "claim" if @props.item.status is "announced"
+    own = "announce" if @props.item.status is "accepted"
+    WorkActions.ownItem @props.item,own
 
   _submitComment: (e) ->
     $t = $(e.target).closest('.item')
     val = $t.find('.comment .input').text()
-    WorkActions.addComment @props.item,val
+    WorkActions.addItem @props.item,val
 
   formatDate: (d) ->
     return "" if d is null
@@ -129,9 +131,9 @@ module.exports = recl
     if @state.expand then itemClass += ' expand'
 
     action = ""
-    if @props.item.status is 'announce'
+    if @props.item.status is 'announced'
       action = "claim"
-    if @props.item.status is 'accepted' and @props.item.owner.slice(1) is window.urb.ship
+    if @props.item.status is 'accepted' and @formatOwner(@props.item.owner) is window.urb.ship
       action = "release" 
 
     (div {
@@ -142,7 +144,7 @@ module.exports = recl
         (div {
           className:'header'
           },[
-            (@renderField 'owner', {}, @formatOwner)
+            (div {className:'owner ib'}, @formatOwner(@props.item.owner))
             (div {
               className:'status ib action-'+(action.length > 0)
               'data-key':'status'
@@ -151,7 +153,7 @@ module.exports = recl
                 (div {className:'label'}, @props.item.status)
                 (div {className:'action a'}, action)
               ])
-            (@renderField 'audience', {}, @formatAudience) # no onKeyUp?
+            (@renderField 'audience', {@onKeyUp}, @formatAudience) # no onKeyUp?
           ])
         (div {className:'sort ib top'}, @props.item.sort)
         (div {className:'done ib', onClick:@_markDone}, '')
