@@ -5,6 +5,9 @@ WorkActions   = require '../actions/WorkActions.coffee'
 
 module.exports = recl
   onDragStart: (e) ->
+    unless @props.draggable
+      e.preventDefault()
+      return
     $t = $(e.target)
     @dragged = $t.closest('.item')
     e.dataTransfer.effectAllowed = 'move'

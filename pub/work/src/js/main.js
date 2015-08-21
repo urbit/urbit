@@ -253,6 +253,10 @@ WorkActions = require('../actions/WorkActions.coffee');
 module.exports = recl({
   onDragStart: function(e) {
     var $t;
+    if (!this.props.draggable) {
+      e.preventDefault();
+      return;
+    }
     $t = $(e.target);
     this.dragged = $t.closest('.item');
     e.dataTransfer.effectAllowed = 'move';
@@ -571,8 +575,10 @@ SortComponent = require('./SortComponent.coffee');
 
 module.exports = recl({
   stateFromStore: function() {
+    window.canSort = WorkStore.canSort();
     return {
       list: WorkStore.getList(),
+      canSort: WorkStore.canSort(),
       listening: WorkStore.getListening(),
       sorts: WorkStore.getSorts(),
       filters: WorkStore.getFilters(),
@@ -762,6 +768,7 @@ module.exports = recl({
             item: item,
             _focus: _this._focus,
             _keyDown: _this._keyDown,
+            draggable: _this.state.canSort,
             _dragStart: _this._dragStart,
             _dragEnd: _this._dragEnd
           }));
@@ -1464,6 +1471,18 @@ WorkStore = assign({}, EventEmitter.prototype, {
       _sorts[k] = 0;
     }
     return _sorts[key] = val;
+  },
+  canSort: function() {
+    var k, v;
+    for (k in _sorts) {
+      v = _sorts[k];
+      if (k === "sort" && v === 1) {
+        return true;
+      } else if (v !== 0) {
+        return false;
+      }
+    }
+    return true;
   },
   itemFromData: function(item, index) {
     var _item;
