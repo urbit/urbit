@@ -1,19 +1,19 @@
 recl = React.createClass
-[div,textarea] = [React.DOM.div,React.DOM.textarea]
+{div,textarea} = React.DOM
 
 WorkActions   = require '../actions/WorkActions.coffee'
 
 module.exports = recl
-  _dragStart: (e) ->
+  onDragStart: (e) ->
     $t = $(e.target)
     @dragged = $t.closest('.item')
     e.dataTransfer.effectAllowed = 'move'
     e.dataTransfer.setData 'text/html',e.currentTarget
     @props._dragStart e,@
   
-  _dragEnd: (e) -> @props._dragEnd e,@
+  onDragEnd: (e) -> @props._dragEnd e,@
 
-  _keyDown: (e) -> 
+  onKeyDown: (e) -> 
     @props._keyDown e,@
 
     kc = e.keyCode
@@ -35,7 +35,7 @@ module.exports = recl
     if $el[0].tagName is 'TEXTAREA'
       return $el.val()
     else
-      if key is 'date-due'
+      if key is 'date_due'
         d = $el.text().slice(1).replace(/\./g, "-")
         return NaN if d.length < 8
         return new Date(d).valueOf()      
@@ -50,13 +50,13 @@ module.exports = recl
   compareVal: (l,n,key) ->
     if key is 'tags' or key is 'audience'
       return (_.xor(l,n).length > 0)
-    if key is 'date-due'
+    if key is 'date_due'
       return l isnt new Date(n)
     l isnt n
 
   validateField: ($t,id,key,val) ->
     valid = 1
-    if key is 'date-due'
+    if key is 'date_due'
       valid = 0 if isNaN(val)
     if key is 'audience'
       i = _.filter val,(a) -> 
@@ -71,7 +71,7 @@ module.exports = recl
       valid = 0 if i.length isnt val.length
     valid
 
-  _keyUp: (e) ->
+  onKeyUp: (e) ->
     $t = $(e.target).closest '.field'
     id = $t.closest('.item').attr 'data-id'
     key = $t.attr 'data-key'
@@ -88,7 +88,7 @@ module.exports = recl
           WorkActions.setItem id,ver,key,val
         ,1000
 
-  _focus: (e) -> @props._focus e,@
+  onFocus: (e) -> @props._focus e,@
 
   _markDone: (e) ->
     id = $(e.target).closest('.item').attr 'data-id'
@@ -118,6 +118,15 @@ module.exports = recl
 
   getInitialState: -> {expand:false}
 
+  renderField: (key,props,format=_.identity)->
+    _props = _.extend {}, props, {contentEditable:true,className:'input ib'}
+    className = "#{props.className ? key} field ib"
+    (div {className,'data-key':key}, (div _props, format(@props.item[key])))
+  
+  renderTopField: (key,props,format)->
+    _props = _.extend {className:"#{props.className ? key} top"}, props
+    @renderField key,_props,format
+  
   render: ->
     itemClass = 'item'
     if @state.expand then itemClass += ' expand'
@@ -132,79 +141,29 @@ module.exports = recl
     owner.unshift (div {className:k},@formatOwner(@props.item.owner))
 
     (div {
-      className:itemClass
-      draggable:true
-      'data-id':@props.item.id
-      'data-index':@props.index
-      onDragStart:@_dragStart
-      onDragEnd:@_dragEnd
+        className:itemClass
+        draggable:true
+        'data-id':@props.item.id
+        'data-index':@props.index
+        @onDragStart,@onDragEnd
       }, [
         (div {
           className:'owner ib'
           'data-key':'owner'
           },owner)
-        (div {
-          className:'audience field ib'
-          'data-key':'audience'
-          },[
-          (div {
-            contentEditable:true
-            className:'input ib'
-            },@formatAudience(@props.item.audience))
-          ])
-        (div {className:'sort ib top'},@props.item.sort)
-        (div {
-          className:'done ib'
-          onClick:@_markDone
-          },'')
-        (div {
-          className:'title ib top field'
-          'data-key':'title'
-          },[
-          (div {
-            contentEditable:true
-            onFocus:@_focus
-            onKeyDown:@_keyDown
-            onKeyUp:@_keyUp
-            className:'input ib'
-          },@props.item.title)
-        ])
-        (div {
-          className:'date ib top field'
-          'data-key':'date-due'
-          }, [
-          (div {
-            contentEditable:true
-            className:'input ib'
-            onKeyUp:@_keyUp
-            },@formatDate(@props.item['date-due']))
-        ])
-        (div {
-          className:'tags ib top field'
-          'data-key':'tags'
-          },[
-          (div {
-            contentEditable:true
-            className:'input ib'
-            onKeyUp:@_keyUp
-            },@props.item.tags.join(" "))
-        ])
+        (@renderField 'audience', {}, @formatAudience) # no onKeyUp?
+        (div {className:'sort ib top'}, @props.item.sort)
+        (div {className:'done ib', onClick:@_markDone}, '')
+        (@renderTopField 'title', {@onFocus,@onKeyDown,@onKeyUp})
+        (@renderTopField 'date_due', {@onKeyUp,className:'date'}, @formatDate)
+        (@renderTopField 'tags', {@onKeyUp}, (tags)-> tags.join(" "))
         (div {
           className:'expand ib',
-          onClick: (e) =>
-            @setState {expand:!@state.expand}
-          },[
-          (div {className:'caret left'},"")
-        ])
-        (div {
-          className:'description field'
-          'data-key':'description'
-          },[
-          (textarea {
-            className:'input ib'
-            onKeyUp:@_keyUp
-            },@props.item.description)
-        ])
+          onClick: (e) => @setState {expand:!@state.expand}
+          }, (div {className:'caret left'},"")
+        )
+        (@renderField 'description',{@onKeyUp})
+      
         (div {className:"hr"},"")
         (div {className:"discussion"},[
           (div {className:"comments"}, @props.item.discussion.map (slug) =>

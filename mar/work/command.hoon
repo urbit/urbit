@@ -49,14 +49,14 @@
       ==
     ++  id  (ci (slat %uv) so)
     ++  ship  (su fed:ag)
-    ++  coma  (of new/task old/(ot id/id version/ni dif/uppd ~) sort/(ar id) ~)
+    ++  coma  (of new/task old/(ot id/id dif/uppd ~) sort/(ar id) ~)
     ++  task
       %-  ot  :~
         audience/audi
-        id/id           date-created/di
-        version/ni      date-modified/di
+        id/id           'date_created'^di
+        version/ni      'date_modified'^di
         owner/ship      status/(ci (soft status) so)
-        tags/(as so)    date-due/(mu di)
+        tags/(as so)    'date_due'^(mu di)
         done/(mu di)    title/so
         description/so  discussion/(ar (ot date/di ship/ship body/so ~))
       ==

@@ -1,6 +1,6 @@
 recl = React.createClass
 rece = React.createElement
-[div,h1,button,label] = [React.DOM.div,React.DOM.h1,React.DOM.button,React.DOM.label]
+{div,h1,button,label} = React.DOM
 
 module.exports = recl
   _onClick: (e) ->

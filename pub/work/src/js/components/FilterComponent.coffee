@@ -1,6 +1,6 @@
 recl = React.createClass
 rece = React.createElement
-[div,h1,label] = [React.DOM.div,React.DOM.h1,React.DOM.label]
+{div,h1,label} = React.DOM
 
 module.exports = recl
   _onKeyDown: (e) -> 
