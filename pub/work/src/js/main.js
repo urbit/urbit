@@ -35,9 +35,11 @@ module.exports = {
       item: item
     });
   },
-  setItem: function(id, version, key, val) {
-    var set;
+  setItem: function(arg, key, val) {
+    var id, set, version;
+    id = arg.id, version = arg.version;
     set = {};
+    key = key.split('_').join('-');
     set[key] = val;
     return Persistence.put({
       old: {
@@ -49,7 +51,9 @@ module.exports = {
       }
     });
   },
-  addComment: function(id, version, val) {
+  addComment: function(arg, val) {
+    var id, version;
+    id = arg.id, version = arg.version;
     return Persistence.put({
       old: {
         id: id,
@@ -83,10 +87,13 @@ module.exports = {
       to: to
     });
   },
-  removeItem: function(index, id) {
+  removeItem: function(arg, index) {
+    var id, version;
+    id = arg.id, version = arg.version;
     Persistence.put({
       old: {
         id: id,
+        version: version,
         dif: {
           set: {
             done: true
@@ -283,7 +290,7 @@ module.exports = recl({
     }
     return l !== n;
   },
-  validateField: function($t, id, key, val) {
+  validateField: function($t, key, val) {
     var i, valid;
     valid = 1;
     if (key === 'date_due') {
@@ -311,13 +318,12 @@ module.exports = recl({
     return valid;
   },
   onKeyUp: function(e) {
-    var $t, id, key, val, ver;
+    var $t, key, val;
     $t = $(e.target).closest('.field');
-    id = $t.closest('.item').attr('data-id');
     key = $t.attr('data-key');
     val = this.getVal($t.find('.input'), key);
     if (this.compareVal(this.props.item[key], val, key)) {
-      if (!this.validateField($t, id, key, val)) {
+      if (!this.validateField($t, key, val)) {
         $t.addClass('invalid');
         return;
       }
@@ -325,19 +331,18 @@ module.exports = recl({
       if (this.to) {
         clearTimeout(this.to);
       }
-      ver = this.props.item.version;
-      return this.to = setTimeout(function() {
-        return WorkActions.setItem(id, ver, key, val);
-      }, 1000);
+      return this.to = setTimeout((function(_this) {
+        return function() {
+          return WorkActions.setItem(_this.props.item, key, val);
+        };
+      })(this), 1000);
     }
   },
   onFocus: function(e) {
     return this.props._focus(e, this);
   },
   _markDone: function(e) {
-    var id;
-    id = $(e.target).closest('.item').attr('data-id');
-    return WorkActions.setItem(id, this.props.item.version, 'done', true);
+    return WorkActions.setItem(this.props.item, 'done', true);
   },
   _changeStatus: function(e) {
     if (this.props.item.status === 'released') {
@@ -349,11 +354,10 @@ module.exports = recl({
     return WorkActions.changeStatus(this.props.item.id);
   },
   _submitComment: function(e) {
-    var $t, id, val;
+    var $t, val;
     $t = $(e.target).closest('.item');
-    id = $t.attr('data-id');
     val = $t.find('.comment .input').text();
-    return WorkActions.addComment(id, this.props.item.version, val);
+    return WorkActions.addComment(this.props.item, val);
   },
   formatDate: function(d) {
     if (d === null) {
@@ -413,8 +417,6 @@ module.exports = recl({
     return div({
       className: itemClass,
       draggable: true,
-      'data-id': this.props.item.id,
-      'data-index': this.props.index,
       onDragStart: this.onDragStart,
       onDragEnd: this.onDragEnd
     }, [
@@ -558,8 +560,8 @@ module.exports = recl({
   },
   _dragEnd: function(e, i) {
     var from, to;
-    from = Number(this.dragged.attr('data-index'));
-    to = Number(this.over.attr('data-index'));
+    from = Number(this.dragged.closest('item-wrap').attr('data-index'));
+    to = Number(this.over.closest('item-wrap').attr('data-index'));
     if (from < to) {
       to--;
     }
@@ -616,7 +618,7 @@ module.exports = recl({
               select: "end"
             });
           }
-          WorkActions.removeItem(this.state.selected, this.state.list[this.state.selected].id);
+          WorkActions.removeItem(this.state.list[this.state.selected], this.state.selected);
           e.preventDefault();
         }
         break;
@@ -702,20 +704,20 @@ module.exports = recl({
       ]), div({
         className: 'items',
         onDragOver: this._dragOver
-      }, [
-        _.map(this.state.list, (function(_this) {
-          return function(item, index) {
-            return rece(ItemComponent, {
-              item: item,
-              index: index,
-              _focus: _this._focus,
-              _keyDown: _this._keyDown,
-              _dragStart: _this._dragStart,
-              _dragEnd: _this._dragEnd
-            });
-          };
-        })(this))
-      ])
+      }, _.map(this.state.list, (function(_this) {
+        return function(item, index) {
+          return div({
+            className: 'item-wrap',
+            'data-index': index
+          }, rece(ItemComponent, {
+            item: item,
+            _focus: _this._focus,
+            _keyDown: _this._keyDown,
+            _dragStart: _this._dragStart,
+            _dragEnd: _this._dragEnd
+          }));
+        };
+      })(this)))
     ]);
   }
 });
@@ -1255,7 +1257,7 @@ _list = [
     date_created: new Date('2015-8-18'),
     date_modified: new Date('2015-8-18'),
     date_due: new Date('2015-8-18'),
-    owner: "~zod",
+    owner: "zod",
     audience: ["~doznec/urbit-meta", "~doznec/tlon"],
     status: "announce",
     tags: ['food', 'office'],
@@ -1289,7 +1291,7 @@ _list = [
     date_created: new Date('2015-8-18'),
     date_modified: new Date('2015-8-18'),
     date_due: null,
-    owner: "~talsur-todres",
+    owner: "talsur-todres",
     audience: ["~doznec/tlon"],
     status: "accepted",
     tags: ['home'],

@@ -31,8 +31,8 @@ module.exports = recl
   _dragStart: (e,i) -> @dragged = i.dragged
 
   _dragEnd: (e,i) -> 
-    from = Number @dragged.attr('data-index')
-    to = Number @over.attr('data-index')
+    from = Number @dragged.closest('item-wrap').attr('data-index')
+    to = Number @over.closest('item-wrap').attr('data-index')
     if from<to then to--
     if @drop is 'after' then to++
     WorkActions.swapItems to,from
@@ -71,7 +71,7 @@ module.exports = recl
         e.target.innerText.length is 0
           if @state.selected isnt 0
             @setState {selected:@state.selected-1,select:"end"}
-          WorkActions.removeItem @state.selected,@state.list[@state.selected].id
+          WorkActions.removeItem @state.list[@state.selected], @state.selected
           e.preventDefault()
       # up
       when 38
@@ -138,14 +138,14 @@ module.exports = recl
       (div {
         className:'items'
         onDragOver:@_dragOver
-        }, [
-          _.map @state.list,(item,index) => 
-            rece(ItemComponent,{
-              item
-              index
-              @_focus
-              @_keyDown
-              @_dragStart
-              @_dragEnd})
-      ])
+        }, _.map @state.list,(item,index) => 
+            div {className:'item-wrap','data-index':index},
+              rece(ItemComponent,{
+                item
+                @_focus
+                @_keyDown
+                @_dragStart
+                @_dragEnd
+              })
+      )
     ])
