@@ -80,11 +80,25 @@ module.exports = {
       val: val
     });
   },
-  swapItems: function(to, from) {
+  moveItem: function(list, to, from) {
+    var sort;
+    sort = _.clone(list);
+    sort.splice(to, 0, sort.splice(from, 1)[0]);
+    Persistence.put({
+      sort: sort
+    });
     return Dispatcher.handleViewAction({
-      type: 'swapItem',
+      list: sort,
+      to: to,
       from: from,
-      to: to
+      type: 'moveItems'
+    });
+  },
+  addItem: function(index, item) {
+    return Dispatcher.handleViewAction({
+      type: 'addItem',
+      index: index,
+      item: item
     });
   },
   removeItem: function(arg, index) {
@@ -106,13 +120,6 @@ module.exports = {
       index: index
     });
   },
-  addItem: function(index, item) {
-    return Dispatcher.handleViewAction({
-      type: 'addItem',
-      index: index,
-      item: item
-    });
-  },
   listenList: function(type) {
     return Persistence.subscribe(type, function(err, d) {
       var ref, sort, tasks;
@@ -127,6 +134,7 @@ module.exports = {
     });
   }
 };
+
 
 
 },{"../dispatcher/Dispatcher.coffee":8,"../persistence/Persistence.coffee":14}],2:[function(require,module,exports){
@@ -212,6 +220,7 @@ module.exports = recl({
     })(this)));
   }
 });
+
 
 
 },{}],3:[function(require,module,exports){
@@ -509,6 +518,7 @@ module.exports = recl({
 });
 
 
+
 },{"../actions/WorkActions.coffee":1}],4:[function(require,module,exports){
 var FilterComponent, ItemComponent, ListeningComponent, SortComponent, WorkActions, WorkStore, div, h1, input, rece, recl, ref, textarea;
 
@@ -559,16 +569,25 @@ module.exports = recl({
     return this.dragged = i.dragged;
   },
   _dragEnd: function(e, i) {
-    var from, to;
-    from = Number(this.dragged.closest('item-wrap').attr('data-index'));
-    to = Number(this.over.closest('item-wrap').attr('data-index'));
+    var from, id, to;
+    from = Number(this.dragged.closest('.item-wrap').attr('data-index'));
+    to = Number(this.over.closest('.item-wrap').attr('data-index'));
     if (from < to) {
       to--;
     }
     if (this.drop === 'after') {
       to++;
     }
-    WorkActions.swapItems(to, from);
+    WorkActions.moveItem((function() {
+      var j, len, ref1, results;
+      ref1 = this.state.list;
+      results = [];
+      for (j = 0, len = ref1.length; j < len; j++) {
+        id = ref1[j].id;
+        results.push(id);
+      }
+      return results;
+    }).call(this), to, from);
     this.dragged.removeClass('hidden');
     return this.placeholder.remove();
   },
@@ -708,6 +727,7 @@ module.exports = recl({
         return function(item, index) {
           return div({
             className: 'item-wrap',
+            key: item.id,
             'data-index': index
           }, rece(ItemComponent, {
             item: item,
@@ -721,6 +741,7 @@ module.exports = recl({
     ]);
   }
 });
+
 
 
 },{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":15,"./FilterComponent.coffee":2,"./ItemComponent.coffee":3,"./ListeningComponent.coffee":5,"./SortComponent.coffee":6}],5:[function(require,module,exports){
@@ -739,6 +760,7 @@ module.exports = recl({
     }, "");
   }
 });
+
 
 
 },{}],6:[function(require,module,exports){
@@ -786,6 +808,7 @@ module.exports = recl({
 });
 
 
+
 },{}],7:[function(require,module,exports){
 var ListComponent, div, h1, rece, recl, ref;
 
@@ -810,6 +833,7 @@ module.exports = recl({
 });
 
 
+
 },{"./ListComponent.coffee":4}],8:[function(require,module,exports){
 var Dispatcher;
 
@@ -831,6 +855,7 @@ module.exports = _.merge(new Dispatcher(), {
 });
 
 
+
 },{"flux":10}],9:[function(require,module,exports){
 var WorkComponent;
 
@@ -841,6 +866,7 @@ window.util = _.extend(window.util || {}, require('./util.coffee'));
 $(function() {
   return React.render(React.createElement(WorkComponent), $('#c')[0]);
 });
+
 
 
 },{"./components/WorkComponent.coffee":7,"./util.coffee":16}],10:[function(require,module,exports){
@@ -1240,8 +1266,9 @@ module.exports = {
 };
 
 
+
 },{}],15:[function(require,module,exports){
-var Dispatcher, EventEmitter, WorkStore, _filters, _list, _listening, _sorts, assign;
+var Dispatcher, EventEmitter, WorkStore, _filters, _list, _listening, _sorts, _tasks, assign;
 
 EventEmitter = require('events').EventEmitter;
 
@@ -1249,8 +1276,8 @@ assign = require('object-assign');
 
 Dispatcher = require('../dispatcher/Dispatcher.coffee');
 
-_list = [
-  {
+_tasks = {
+  "0v0": {
     id: "0v0",
     version: 0,
     sort: 0,
@@ -1270,7 +1297,8 @@ _list = [
         body: "Seems like a great idea."
       }
     ]
-  }, {
+  },
+  "0v1": {
     id: "0v1",
     version: 0,
     sort: 1,
@@ -1284,7 +1312,8 @@ _list = [
     title: 'eat',
     description: 'dont forget about lunch.',
     discussion: []
-  }, {
+  },
+  "0v2": {
     id: "0v2",
     version: 0,
     sort: 2,
@@ -1299,7 +1328,9 @@ _list = [
     description: 'go get some sleep.',
     discussion: []
   }
-];
+};
+
+_list = ["0v0", "0v1", "0v2"];
 
 _listening = [];
 
@@ -1328,52 +1359,44 @@ WorkStore = assign({}, EventEmitter.prototype, {
     return this.removeListener("change", cb);
   },
   getData: function(arg) {
-    var _tasks, got, i, id, j, len, sort, tasks;
+    var sort, tasks;
     sort = arg.sort, tasks = arg.tasks;
-    _tasks = _.clone(tasks);
-    for (i = j = 0, len = _list.length; j < len; i = ++j) {
-      id = _list[i].id;
-      if (!(got = _tasks[id])) {
-        continue;
-      }
-      delete _tasks[id];
-      _list[i] = this.itemFromData(got, i);
-    }
     return sort.map((function(_this) {
-      return function(k, index) {
-        if (_tasks[k]) {
-          return _this.newItem({
-            item: _tasks[k],
-            index: index
-          });
+      return function(id, index) {
+        if (!_tasks[id]) {
+          _list.splice(index, 0, id);
+        }
+        if (tasks[id]) {
+          return _tasks[id] = _this.itemFromData(tasks[id], index);
         }
       };
     })(this));
   },
   getList: function(key) {
-    var _k, _v, add, c, k, list, v;
+    var add, atr, c, i, id, k, len, list, task, v;
     list = [];
-    for (k in _list) {
-      v = _list[k];
+    for (i = 0, len = _list.length; i < len; i++) {
+      id = _list[i];
+      task = _tasks[id];
       add = true;
-      for (_k in _filters) {
-        _v = _filters[_k];
-        if (_v === null) {
+      for (atr in _filters) {
+        v = _filters[atr];
+        if (v === null) {
           continue;
         }
-        c = v[_k];
+        c = task[atr];
         if (typeof c === 'object') {
-          if (_.intersection(c, _v).length === 0) {
+          if (_.intersection(c, v).length === 0) {
             add = false;
           }
         } else {
-          if (c !== _v) {
+          if (c !== v) {
             add = false;
           }
         }
       }
       if (add === true) {
-        list.push(v);
+        list.push(task);
       }
     }
     if (_.uniq(_.values(_sorts)).length > 0) {
@@ -1440,15 +1463,11 @@ WorkStore = assign({}, EventEmitter.prototype, {
     });
     return _item;
   },
-  newItem: function(arg) {
-    var index, item;
-    item = arg.item, index = arg.index;
-    return _list.splice(index, 0, this.itemFromData(item, index));
-  },
-  swapItem: function(arg) {
-    var from, to;
-    to = arg.to, from = arg.from;
-    return _list.splice(to, 0, _list.splice(from, 1)[0]);
+  moveItems: function(arg) {
+    var from, list, to;
+    list = arg.list, to = arg.to, from = arg.from;
+    _tasks[_list[from]].sort = _tasks[_list[to]].sort;
+    return _list = list;
   },
   removeItem: function(arg) {
     var index;
@@ -1469,6 +1488,7 @@ WorkStore.dispatchToken = Dispatcher.register(function(p) {
 });
 
 module.exports = WorkStore;
+
 
 
 },{"../dispatcher/Dispatcher.coffee":8,"events":17,"object-assign":13}],16:[function(require,module,exports){
@@ -1527,6 +1547,7 @@ module.exports = {
     }
   }
 };
+
 
 
 },{}],17:[function(require,module,exports){
