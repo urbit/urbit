@@ -119,7 +119,6 @@ module.exports = {
 };
 
 
-
 },{"../dispatcher/Dispatcher.coffee":8,"../persistence/Persistence.coffee":14}],2:[function(require,module,exports){
 var div, h1, label, rece, recl, ref;
 
@@ -203,7 +202,6 @@ module.exports = recl({
     })(this)));
   }
 });
-
 
 
 },{}],3:[function(require,module,exports){
@@ -338,8 +336,15 @@ module.exports = recl({
     id = $(e.target).closest('.item').attr('data-id');
     return WorkActions.setItem(id, this.props.item.version, 'done', true);
   },
-  _claim: function(e) {},
-  _release: function(e) {},
+  _changeStatus: function(e) {
+    if (this.props.item.status === 'released') {
+      return;
+    }
+    if (this.props.item.status === 'accepted' && this.props.item.owner.slice(1) !== window.urb.ship) {
+      return;
+    }
+    return WorkActions.changeStatus(this.props.item.id);
+  },
   _submitComment: function(e) {
     var $t, id, val;
     $t = $(e.target).closest('.item');
@@ -368,29 +373,18 @@ module.exports = recl({
     };
   },
   render: function() {
-    var itemClass, k, owner, ref1;
+    var action, itemClass;
     itemClass = 'item';
     if (this.state.expand) {
       itemClass += ' expand';
     }
-    owner = [];
-    if (((ref1 = this.props.item.owner) != null ? ref1.slice(1) : void 0) === window.urb.ship) {
-      k = 'mine';
-      owner.push(div({
-        className: 'release a',
-        onClick: this._release
-      }, 'Release'));
+    action = "";
+    if (this.props.item.status === 'announce') {
+      action = "claim";
     }
-    if (this.props.item.owner === null) {
-      k = 'open';
-      owner.push(div({
-        className: 'claim a',
-        onClick: this._claim
-      }, "Claim"));
+    if (this.props.item.status === 'accepted' && this.props.item.owner.slice(1) === window.urb.ship) {
+      action = "release";
     }
-    owner.unshift(div({
-      className: k
-    }, this.formatOwner(this.props.item.owner)));
     return div({
       className: itemClass,
       draggable: true,
@@ -400,16 +394,30 @@ module.exports = recl({
       onDragEnd: this._dragEnd
     }, [
       div({
-        className: 'owner ib',
-        'data-key': 'owner'
-      }, owner), div({
-        className: 'audience field ib',
-        'data-key': 'audience'
+        className: 'header'
       }, [
         div({
-          contentEditable: true,
-          className: 'input ib'
-        }, this.formatAudience(this.props.item.audience))
+          className: 'owner ib ' + this.props.item.status,
+          'data-key': 'owner'
+        }, this.props.item.owner.slice(1)), div({
+          className: 'status ib action-' + (action.length > 0),
+          'data-key': 'status',
+          onClick: this._changeStatus
+        }, [
+          div({
+            className: 'label'
+          }, this.props.item.status), div({
+            className: 'action a'
+          }, action)
+        ]), div({
+          className: 'audience field ib',
+          'data-key': 'audience'
+        }, [
+          div({
+            contentEditable: true,
+            className: 'input ib'
+          }, this.formatAudience(this.props.item.audience))
+        ])
       ]), div({
         className: 'sort ib top'
       }, this.props.item.sort), div({
@@ -509,7 +517,6 @@ module.exports = recl({
     ]);
   }
 });
-
 
 
 },{"../actions/WorkActions.coffee":1}],4:[function(require,module,exports){
@@ -726,7 +733,6 @@ module.exports = recl({
 });
 
 
-
 },{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":15,"./FilterComponent.coffee":2,"./ItemComponent.coffee":3,"./ListeningComponent.coffee":5,"./SortComponent.coffee":6}],5:[function(require,module,exports){
 var div, h1, input, rece, recl, ref, textarea;
 
@@ -743,7 +749,6 @@ module.exports = recl({
     }, "");
   }
 });
-
 
 
 },{}],6:[function(require,module,exports){
@@ -791,7 +796,6 @@ module.exports = recl({
 });
 
 
-
 },{}],7:[function(require,module,exports){
 var ListComponent, div, h1, rece, recl, ref;
 
@@ -816,7 +820,6 @@ module.exports = recl({
 });
 
 
-
 },{"./ListComponent.coffee":4}],8:[function(require,module,exports){
 var Dispatcher;
 
@@ -838,7 +841,6 @@ module.exports = _.merge(new Dispatcher(), {
 });
 
 
-
 },{"flux":10}],9:[function(require,module,exports){
 var WorkComponent;
 
@@ -849,7 +851,6 @@ window.util = _.extend(window.util || {}, require('./util.coffee'));
 $(function() {
   return React.render(React.createElement(WorkComponent), $('#c')[0]);
 });
-
 
 
 },{"./components/WorkComponent.coffee":7,"./util.coffee":16}],10:[function(require,module,exports){
@@ -1249,7 +1250,6 @@ module.exports = {
 };
 
 
-
 },{}],15:[function(require,module,exports){
 var Dispatcher, EventEmitter, WorkStore, _filters, _list, _listening, _sorts, assign;
 
@@ -1269,7 +1269,7 @@ _list = [
     "date-due": new Date('2015-8-18'),
     owner: "~zod",
     audience: ["~doznec/urbit-meta", "~doznec/tlon"],
-    status: "working",
+    status: "announce",
     tags: ['food', 'office'],
     title: 'get groceries',
     description: 'first go out the door, \n then walk down the block.',
@@ -1287,9 +1287,9 @@ _list = [
     "date-created": new Date('2015-8-18'),
     "date-modified": new Date('2015-8-18'),
     "date-due": null,
-    owner: null,
+    owner: "~zod",
     audience: ["~doznec/tlon"],
-    status: "working",
+    status: "accepted",
     tags: ['home', 'office'],
     title: 'eat',
     description: 'dont forget about lunch.',
@@ -1303,7 +1303,7 @@ _list = [
     "date-due": null,
     owner: "~talsur-todres",
     audience: ["~doznec/tlon"],
-    status: "working",
+    status: "accepted",
     tags: ['home'],
     title: 'sleep',
     description: 'go get some sleep.',
@@ -1472,7 +1472,6 @@ WorkStore.dispatchToken = Dispatcher.register(function(p) {
 module.exports = WorkStore;
 
 
-
 },{"../dispatcher/Dispatcher.coffee":8,"events":17,"object-assign":13}],16:[function(require,module,exports){
 module.exports = {
   uuid32: function() {
@@ -1529,7 +1528,6 @@ module.exports = {
     }
   }
 };
-
 
 
 },{}],17:[function(require,module,exports){
