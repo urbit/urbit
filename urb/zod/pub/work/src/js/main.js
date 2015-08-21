@@ -1338,12 +1338,16 @@ WorkStore = assign({}, EventEmitter.prototype, {
     return this.removeListener("change", cb);
   },
   getData: function(arg) {
-    var _tasks, i, id, len, sort, tasks;
+    var _tasks, got, i, id, j, len, sort, tasks;
     sort = arg.sort, tasks = arg.tasks;
     _tasks = _.clone(tasks);
-    for (i = 0, len = _list.length; i < len; i++) {
+    for (i = j = 0, len = _list.length; j < len; i = ++j) {
       id = _list[i].id;
+      if (!(got = _tasks[id])) {
+        continue;
+      }
       delete _tasks[id];
+      _list[i] = this.itemFromData(got, i);
     }
     return sort.map((function(_this) {
       return function(k, index) {
