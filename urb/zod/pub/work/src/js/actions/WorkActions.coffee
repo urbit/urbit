@@ -1,7 +1,6 @@
 Dispatcher   = require '../dispatcher/Dispatcher.coffee'
 Persistence  = require '../persistence/Persistence.coffee'
 
-Persistence.get 'test', console.log.bind(console)
 module.exports =
   newItem: (index,list) ->
     item =
@@ -50,3 +49,9 @@ module.exports =
       type:'addItem'
       index:index
       item:item
+      
+  listenList: (type)->
+    Persistence.subscribe type, (err,d)->
+      if d?
+        {sort,tasks} = d.data
+        Dispatcher.handleServerAction {type:"getData",sort,tasks}

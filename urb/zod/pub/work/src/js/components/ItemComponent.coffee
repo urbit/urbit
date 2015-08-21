@@ -1,8 +1,14 @@
 recl = React.createClass
-[div,textarea] = [React.DOM.div,React.DOM.textarea]
+rece = React.createElement
+{div,textarea} = React.DOM
 
 WorkActions   = require '../actions/WorkActions.coffee'
 
+cediv = recl render: ->
+  div _.extend {}, @props,
+    contentEditable: true
+    dangerouslySetInnerHTML: __html: $('<div>').text(@props.text).html()
+    
 module.exports = recl
   _dragStart: (e) ->
     $t = $(e.target)
@@ -54,24 +60,24 @@ module.exports = recl
         (div {className:'sort ib top'},@props.item.sort)
         (div {className:'done ib'},'')
         (div {className:'title ib top'},[
-          (div {
-            contentEditable:true
+          (rece cediv, {
             onFocus:@_focus
             onKeyDown:@_keyDown
             className:'input ib'
-          },@props.item.title)
+            text: @props.item.title
+          }) 
         ])
         (div {className:'date ib top'}, [
-          (div {
-            contentEditable:true
+          (rece cediv, {
             className:'input ib'
-            },@formatDate(@props.item['date-created']))
+            text: @formatDate(@props.item['date-created'])
+          }) 
         ])
         (div {className:'tags ib top'},[
-          (div {
-            contentEditable:true
+          (rece cediv, {
             className:'input ib'
-            },@props.item.tags.join(" "))
+            text: @props.item.tags.join(" ")
+          }) 
         ])
         (div {
           className:'expand ib',

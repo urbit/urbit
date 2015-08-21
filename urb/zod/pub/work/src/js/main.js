@@ -5,8 +5,6 @@ Dispatcher = require('../dispatcher/Dispatcher.coffee');
 
 Persistence = require('../persistence/Persistence.coffee');
 
-Persistence.get('test', console.log.bind(console));
-
 module.exports = {
   newItem: function(index, list) {
     var item;
@@ -77,6 +75,19 @@ module.exports = {
       index: index,
       item: item
     });
+  },
+  listenList: function(type) {
+    return Persistence.subscribe(type, function(err, d) {
+      var ref, sort, tasks;
+      if (d != null) {
+        ref = d.data, sort = ref.sort, tasks = ref.tasks;
+        return Dispatcher.handleServerAction({
+          type: "getData",
+          sort: sort,
+          tasks: tasks
+        });
+      }
+    });
   }
 };
 
@@ -109,74 +120,83 @@ module.exports = recl({
     key = $t.attr('data-key');
     if (txt.length === 0) {
       txt = null;
-    }
-    if (key === 'audience') {
-      txt = txt.split(" ");
-    }
-    if (key === 'tags') {
-      txt = [txt];
+    } else {
+      switch (key) {
+        case 'audience':
+          txt = txt.split(" ");
+          break;
+        case 'tags':
+          txt = [txt];
+      }
     }
     return this.props.onChange(key, txt);
   },
+  fields: [
+    {
+      filter: 'owned',
+      key: 'owner',
+      title: 'Owned by:'
+    }, {
+      filter: 'tag',
+      key: 'tags',
+      title: 'Tag:'
+    }, {
+      filter: 'channel',
+      key: 'audience',
+      title: 'Audience:'
+    }, {
+      filter: 'status',
+      key: 'status',
+      title: 'Status:'
+    }
+  ],
   render: function() {
     return div({
       className: 'filters'
-    }, [
-      div({
-        className: 'owned filter ib',
-        'data-key': 'owner'
-      }, [
-        label({}, 'Owned by:'), div({
-          contentEditable: true,
-          className: 'input ib',
-          onKeyDown: this._onKeyDown,
-          onBlur: this._onBlur
-        }, this.props.filters.owned)
-      ]), div({
-        className: 'tag filter ib',
-        'data-key': 'tags'
-      }, [
-        label({}, 'Tag:'), div({
-          contentEditable: true,
-          className: 'input ib',
-          onKeyDown: this._onKeyDown,
-          onBlur: this._onBlur
-        }, this.props.filters.tag)
-      ]), div({
-        className: 'channel filter ib',
-        'data-key': 'audience'
-      }, [
-        label({}, 'Audience:'), div({
-          contentEditable: true,
-          className: 'input ib',
-          onKeyDown: this._onKeyDown,
-          onBlur: this._onBlur
-        }, this.props.filters.channel)
-      ]), div({
-        className: 'status filter ib',
-        'data-key': 'status'
-      }, [
-        label({}, 'Status:'), div({
-          contentEditable: true,
-          className: 'input ib',
-          onKeyDown: this._onKeyDown,
-          onBlur: this._onBlur
-        }, this.props.filters.status)
-      ])
-    ]);
+    }, this.fields.map((function(_this) {
+      return function(arg) {
+        var filter, key, title;
+        filter = arg.filter, key = arg.key, title = arg.title;
+        return div({
+          key: key,
+          'data-key': key,
+          className: filter + " filter ib"
+        }, [
+          label({}, title), div({
+            contentEditable: true,
+            className: 'input ib',
+            onKeyDown: _this._onKeyDown,
+            onBlur: _this._onBlur
+          }, _this.props.filters[filter])
+        ]);
+      };
+    })(this)));
   }
 });
 
 
 
 },{}],3:[function(require,module,exports){
-var WorkActions, div, recl, ref, textarea;
+var WorkActions, cediv, div, rece, recl, ref, textarea;
 
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.textarea], div = ref[0], textarea = ref[1];
+rece = React.createElement;
+
+ref = React.DOM, div = ref.div, textarea = ref.textarea;
 
 WorkActions = require('../actions/WorkActions.coffee');
+
+cediv = recl({
+  render: function() {
+    return div(_.extend({}, this.props, {
+      contentEditable: true,
+      dangerouslySetInnerHTML: {
+        __html: $('<div>').text(this.props.text).html()
+      }
+    }));
+  }
+});
 
 module.exports = recl({
   _dragStart: function(e) {
@@ -245,26 +265,26 @@ module.exports = recl({
       }, ''), div({
         className: 'title ib top'
       }, [
-        div({
-          contentEditable: true,
+        rece(cediv, {
           onFocus: this._focus,
           onKeyDown: this._keyDown,
-          className: 'input ib'
-        }, this.props.item.title)
+          className: 'input ib',
+          text: this.props.item.title
+        })
       ]), div({
         className: 'date ib top'
       }, [
-        div({
-          contentEditable: true,
-          className: 'input ib'
-        }, this.formatDate(this.props.item['date-created']))
+        rece(cediv, {
+          className: 'input ib',
+          text: this.formatDate(this.props.item['date-created'])
+        })
       ]), div({
         className: 'tags ib top'
       }, [
-        div({
-          contentEditable: true,
-          className: 'input ib'
-        }, this.props.item.tags.join(" "))
+        rece(cediv, {
+          className: 'input ib',
+          text: this.props.item.tags.join(" ")
+        })
       ]), div({
         className: 'expand ib',
         onClick: (function(_this) {
@@ -477,6 +497,7 @@ module.exports = recl({
   componentDidMount: function() {
     this.placeholder = $("<div class='item placeholder'><div class='sort'>x</div></div>");
     WorkStore.addChangeListener(this._onChangeStore);
+    WorkActions.listenList(this.props.list);
     return this.alias();
   },
   componentDidUpdate: function() {
@@ -1026,7 +1047,28 @@ module.exports = Object.assign || function (target, source) {
 };
 
 },{}],14:[function(require,module,exports){
+var cache, listeners;
+
 urb.appl = 'work';
+
+listeners = {};
+
+cache = null;
+
+urb.bind("/repo", function(err, dat) {
+  var cb, k, results;
+  if (err) {
+    return document.write(err);
+  } else {
+    cache = dat;
+    results = [];
+    for (k in listeners) {
+      cb = listeners[k];
+      results.push(cb(null, dat));
+    }
+    return results;
+  }
+});
 
 module.exports = {
   put: function(update, cb) {
@@ -1034,14 +1076,11 @@ module.exports = {
       mark: 'work-command'
     }, cb);
   },
-  get: function(id, cb) {
-    var url;
-    url = (urb.util.basepath("/pub/work/")) + id + ".json";
-    return $.get(url, {}, function(data) {
-      if (cb) {
-        return cb(null, data);
-      }
-    });
+  subscribe: function(key, cb) {
+    listeners[key] = cb;
+    if (cache != null) {
+      return cb(null, cache);
+    }
   }
 };
 
@@ -1131,6 +1170,25 @@ WorkStore = assign({}, EventEmitter.prototype, {
   removeChangeListener: function(cb) {
     return this.removeListener("change", cb);
   },
+  getData: function(arg) {
+    var _tasks, i, id, len, sort, tasks;
+    sort = arg.sort, tasks = arg.tasks;
+    _tasks = _.clone(tasks);
+    for (i = 0, len = _list.length; i < len; i++) {
+      id = _list[i].id;
+      delete _tasks[id];
+    }
+    return sort.map((function(_this) {
+      return function(k, index) {
+        if (_tasks[k]) {
+          return _this.newItem({
+            item: _tasks[k],
+            index: index
+          });
+        }
+      };
+    })(this));
+  },
   getList: function(key) {
     var _k, _v, add, c, k, list, v;
     list = [];
@@ -1194,15 +1252,28 @@ WorkStore = assign({}, EventEmitter.prototype, {
     }
     return _sorts[key] = val;
   },
-  newItem: function(arg) {
-    var _item, index, item;
-    index = arg.index, item = arg.item;
+  itemFromData: function(item, index) {
+    var _item;
+    if (index == null) {
+      index = 0;
+    }
     _item = _.extend({
       sort: index
     }, item);
-    _item["date-created"] = new Date(item["date-created"]);
     _item["date-modified"] = new Date(item["date-modified"]);
-    return _list.splice(index, 0, _item);
+    _item["date-created"] = new Date(item["date-created"]);
+    if (item["date-due"] != null) {
+      _item["date-due"] = new Date(item["date-due"]);
+    }
+    if (item.done != null) {
+      _item.done = new Date(item.done);
+    }
+    return _item;
+  },
+  newItem: function(arg) {
+    var index, item;
+    item = arg.item, index = arg.index;
+    return _list.splice(index, 0, this.itemFromData(item, index));
   },
   swapItem: function(arg) {
     var from, to;
