@@ -12,7 +12,7 @@ _tasks   =
     date_due:new Date('2015-8-18')
     owner:"zod"
     audience:["~doznec/urbit-meta","~doznec/tlon"]
-    status:"announce"
+    status:"announced"
     tags:['food','office']
     title:'get groceries'
     description:'first go out the door, \n then walk down the block.'
