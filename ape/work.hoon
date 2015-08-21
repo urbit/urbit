@@ -228,7 +228,7 @@
   %+  murn  (~(tap by sup))
   |=  [ust=bone her=ship pax=path]
   ^-  (unit move)
-  ?:(?=([%repo *] pax) ~ `[ust full-report])
+  ?:(?=([%sole *] pax) ~ `[ust full-report])
 ::
 ++  full-report  [%diff %work-report tasks sort]
 ++  peer-repo  |=(path [[ost full-report]~ +>.$])
