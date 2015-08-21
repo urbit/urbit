@@ -112,7 +112,7 @@ h1.leader:after {
   font-size: 1rem;
 }
 .ctrl .sorts {
-  margin-left: -9px;
+  margin-left: -0.3rem;
 }
 .ctrl .sort label,
 .ctrl .filter label {
@@ -126,17 +126,19 @@ h1.leader:after {
   margin-right: 1rem;
 }
 .ctrl .sort {
-  border: 3px solid transparent;
   background-color: transparent;
   outline: none;
+  border: 0;
+  cursor: pointer;
 }
 .ctrl .sort.s-1,
 .ctrl .sort.s--1 {
-  border: 3px solid #ccc;
+  font-weight: 500;
 }
 .ctrl .sort.s-1 label,
 .ctrl .sort.s--1 label {
-  margin-right: 1rem;
+  margin-right: 0.3rem;
+  cursor: pointer;
 }
 .items {
   margin-top: 2rem;
