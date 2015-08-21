@@ -15,11 +15,12 @@ module.exports = recl
     key = $t.attr('data-key')
     if txt.length is 0 then txt = null
     else switch key
+      when 'owner'    then txt = "~#{txt}"
       when 'audience' then txt = txt.split " "
       when 'tags'     then txt = [txt]
     @props.onChange key,txt
   
-  fields: [ {filter:'owned',   key:'owner',    title: 'Owned by:'},
+  fields: [ {filter:'owned',   key:'owner',    title: 'Owner:'},
             {filter:'tag',     key:'tags',     title: 'Tag:'},
             {filter:'channel', key:'audience', title: 'Audience:'},
             {filter:'status',  key:'status',   title: 'Status:'} ]
