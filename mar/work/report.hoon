@@ -24,12 +24,12 @@
             claiming/[%b claiming]
         =<  audience/[%a (turn (~(tap in audience)) .)]
         |=(a=station:talk [%s (crip "{<p.a>}/{(trip q.a)}")])
-        date-created/(jode date-created)
-       date-modified/(jode date-modified)
+      'date_created'^(jode date-created)
+     'date_modified'^(jode date-modified)
          description/[%s description]
       =<  discussion/[%a (turn discussion .)]
       |=(comment (jobe date/(jode date) ship/(jope ship) body/[%s body] ~))
-            date-due/?~(date-due ~ (jode u.date-due))
+          'date_due'^?~(date-due ~ (jode u.date-due))
                 done/?~(done ~ (jode u.done))
     ==
   ==

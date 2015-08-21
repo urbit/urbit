@@ -6,22 +6,25 @@ Dispatcher = require('../dispatcher/Dispatcher.coffee');
 Persistence = require('../persistence/Persistence.coffee');
 
 module.exports = {
-  newItem: function(index, list) {
-    var item;
+  newItem: function(index, _item) {
+    var item, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7;
+    if (_item == null) {
+      _item = {};
+    }
     item = {
       id: window.util.uuid32(),
       version: 0,
-      "date-created": Date.now(),
-      "date-modified": Date.now(),
-      "date-due": null,
-      done: null,
       owner: window.urb.ship,
-      status: 'announced',
-      tags: [],
-      title: '',
-      description: '',
-      discussion: [],
-      audience: [window.util.talk.mainStationPath(window.urb.ship)]
+      date_created: Date.now(),
+      date_modified: Date.now(),
+      date_due: (ref = _item.date_due) != null ? ref : null,
+      done: (ref1 = _item.done) != null ? ref1 : null,
+      status: (ref2 = _item.status) != null ? ref2 : 'announced',
+      tags: (ref3 = _item.tags) != null ? ref3 : [],
+      title: (ref4 = _item.title) != null ? ref4 : '',
+      description: (ref5 = _item.description) != null ? ref5 : '',
+      discussion: (ref6 = _item.discussion) != null ? ref6 : [],
+      audience: (ref7 = _item.audience) != null ? ref7 : [window.util.talk.mainStationPath(window.urb.ship)]
     };
     Persistence.put({
       "new": item
@@ -126,7 +129,7 @@ recl = React.createClass;
 
 rece = React.createElement;
 
-ref = [React.DOM.div, React.DOM.h1, React.DOM.label], div = ref[0], h1 = ref[1], label = ref[2];
+ref = React.DOM, div = ref.div, h1 = ref.h1, label = ref.label;
 
 module.exports = recl({
   _onKeyDown: function(e) {
@@ -209,12 +212,12 @@ var WorkActions, div, recl, ref, textarea;
 
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.textarea], div = ref[0], textarea = ref[1];
+ref = React.DOM, div = ref.div, textarea = ref.textarea;
 
 WorkActions = require('../actions/WorkActions.coffee');
 
 module.exports = recl({
-  _dragStart: function(e) {
+  onDragStart: function(e) {
     var $t;
     $t = $(e.target);
     this.dragged = $t.closest('.item');
@@ -222,10 +225,10 @@ module.exports = recl({
     e.dataTransfer.setData('text/html', e.currentTarget);
     return this.props._dragStart(e, this);
   },
-  _dragEnd: function(e) {
+  onDragEnd: function(e) {
     return this.props._dragEnd(e, this);
   },
-  _keyDown: function(e) {
+  onKeyDown: function(e) {
     var kc;
     this.props._keyDown(e, this);
     kc = e.keyCode;
@@ -251,7 +254,7 @@ module.exports = recl({
     if ($el[0].tagName === 'TEXTAREA') {
       return $el.val();
     } else {
-      if (key === 'date-due') {
+      if (key === 'date_due') {
         d = $el.text().slice(1).replace(/\./g, "-");
         if (d.length < 8) {
           return NaN;
@@ -275,7 +278,7 @@ module.exports = recl({
     if (key === 'tags' || key === 'audience') {
       return _.xor(l, n).length > 0;
     }
-    if (key === 'date-due') {
+    if (key === 'date_due') {
       return l !== new Date(n);
     }
     return l !== n;
@@ -283,7 +286,7 @@ module.exports = recl({
   validateField: function($t, id, key, val) {
     var i, valid;
     valid = 1;
-    if (key === 'date-due') {
+    if (key === 'date_due') {
       if (isNaN(val)) {
         valid = 0;
       }
@@ -307,7 +310,7 @@ module.exports = recl({
     }
     return valid;
   },
-  _keyUp: function(e) {
+  onKeyUp: function(e) {
     var $t, id, key, val, ver;
     $t = $(e.target).closest('.field');
     id = $t.closest('.item').attr('data-id');
@@ -328,7 +331,7 @@ module.exports = recl({
       }, 1000);
     }
   },
-  _focus: function(e) {
+  onFocus: function(e) {
     return this.props._focus(e, this);
   },
   _markDone: function(e) {
@@ -372,6 +375,28 @@ module.exports = recl({
       expand: false
     };
   },
+  renderField: function(key, props, format) {
+    var _props, className, ref1;
+    if (format == null) {
+      format = _.identity;
+    }
+    _props = _.extend({}, props, {
+      contentEditable: true,
+      className: 'input ib'
+    });
+    className = ((ref1 = props.className) != null ? ref1 : key) + " field ib";
+    return div({
+      className: className,
+      'data-key': key
+    }, div(_props, format(this.props.item[key])));
+  },
+  renderTopField: function(key, props, format) {
+    var _props, ref1;
+    _props = _.extend({
+      className: ((ref1 = props.className) != null ? ref1 : key) + " top"
+    }, props);
+    return this.renderField(key, _props, format);
+  },
   render: function() {
     var action, itemClass;
     itemClass = 'item';
@@ -390,16 +415,13 @@ module.exports = recl({
       draggable: true,
       'data-id': this.props.item.id,
       'data-index': this.props.index,
-      onDragStart: this._dragStart,
-      onDragEnd: this._dragEnd
+      onDragStart: this.onDragStart,
+      onDragEnd: this.onDragEnd
     }, [
       div({
         className: 'header'
       }, [
-        div({
-          className: 'owner ib ' + this.props.item.status,
-          'data-key': 'owner'
-        }, this.props.item.owner.slice(1)), div({
+        this.renderField('owner', {}, this.formatOwner), div({
           className: 'status ib action-' + (action.length > 0),
           'data-key': 'status',
           onClick: this._changeStatus
@@ -409,50 +431,24 @@ module.exports = recl({
           }, this.props.item.status), div({
             className: 'action a'
           }, action)
-        ]), div({
-          className: 'audience field ib',
-          'data-key': 'audience'
-        }, [
-          div({
-            contentEditable: true,
-            className: 'input ib'
-          }, this.formatAudience(this.props.item.audience))
-        ])
+        ]), this.renderField('audience', {}, this.formatAudience)
       ]), div({
         className: 'sort ib top'
       }, this.props.item.sort), div({
         className: 'done ib',
         onClick: this._markDone
-      }, ''), div({
-        className: 'title ib top field',
-        'data-key': 'title'
-      }, [
-        div({
-          contentEditable: true,
-          onFocus: this._focus,
-          onKeyDown: this._keyDown,
-          onKeyUp: this._keyUp,
-          className: 'input ib'
-        }, this.props.item.title)
-      ]), div({
-        className: 'date ib top field',
-        'data-key': 'date-due'
-      }, [
-        div({
-          contentEditable: true,
-          className: 'input ib',
-          onKeyUp: this._keyUp
-        }, this.formatDate(this.props.item['date-due']))
-      ]), div({
-        className: 'tags ib top field',
-        'data-key': 'tags'
-      }, [
-        div({
-          contentEditable: true,
-          className: 'input ib',
-          onKeyUp: this._keyUp
-        }, this.props.item.tags.join(" "))
-      ]), div({
+      }, ''), this.renderTopField('title', {
+        onFocus: this.onFocus,
+        onKeyDown: this.onKeyDown,
+        onKeyUp: this.onKeyUp
+      }), this.renderTopField('date_due', {
+        onKeyUp: this.onKeyUp,
+        className: 'date'
+      }, this.formatDate), this.renderTopField('tags', {
+        onKeyUp: this.onKeyUp
+      }, function(tags) {
+        return tags.join(" ");
+      }), div({
         className: 'expand ib',
         onClick: (function(_this) {
           return function(e) {
@@ -461,19 +457,11 @@ module.exports = recl({
             });
           };
         })(this)
-      }, [
-        div({
-          className: 'caret left'
-        }, "")
-      ]), div({
-        className: 'description field',
-        'data-key': 'description'
-      }, [
-        textarea({
-          className: 'input ib',
-          onKeyUp: this._keyUp
-        }, this.props.item.description)
-      ]), div({
+      }, div({
+        className: 'caret left'
+      }, "")), this.renderField('description', {
+        onKeyUp: this.onKeyUp
+      }), div({
         className: "hr"
       }, ""), div({
         className: "discussion"
@@ -526,7 +514,7 @@ recl = React.createClass;
 
 rece = React.createElement;
 
-ref = [React.DOM.div, React.DOM.h1, React.DOM.input, React.DOM.textarea], div = ref[0], h1 = ref[1], input = ref[2], textarea = ref[3];
+ref = React.DOM, div = ref.div, h1 = ref.h1, input = ref.input, textarea = ref.textarea;
 
 WorkStore = require('../stores/WorkStore.coffee');
 
@@ -740,7 +728,7 @@ recl = React.createClass;
 
 rece = React.createElement;
 
-ref = [React.DOM.div, React.DOM.h1, React.DOM.input, React.DOM.textarea], div = ref[0], h1 = ref[1], input = ref[2], textarea = ref[3];
+ref = React.DOM, div = ref.div, h1 = ref.h1, input = ref.input, textarea = ref.textarea;
 
 module.exports = recl({
   render: function() {
@@ -758,7 +746,7 @@ recl = React.createClass;
 
 rece = React.createElement;
 
-ref = [React.DOM.div, React.DOM.h1, React.DOM.button, React.DOM.label], div = ref[0], h1 = ref[1], button = ref[2], label = ref[3];
+ref = React.DOM, div = ref.div, h1 = ref.h1, button = ref.button, label = ref.label;
 
 module.exports = recl({
   _onClick: function(e) {
@@ -803,7 +791,7 @@ recl = React.createClass;
 
 rece = React.createElement;
 
-ref = [React.DOM.div, React.DOM.h1], div = ref[0], h1 = ref[1];
+ref = React.DOM, div = ref.div, h1 = ref.h1;
 
 ListComponent = require('./ListComponent.coffee');
 
@@ -1264,9 +1252,9 @@ _list = [
     id: "0v0",
     version: 0,
     sort: 0,
-    "date-created": new Date('2015-8-18'),
-    "date-modified": new Date('2015-8-18'),
-    "date-due": new Date('2015-8-18'),
+    date_created: new Date('2015-8-18'),
+    date_modified: new Date('2015-8-18'),
+    date_due: new Date('2015-8-18'),
     owner: "~zod",
     audience: ["~doznec/urbit-meta", "~doznec/tlon"],
     status: "announce",
@@ -1284,9 +1272,9 @@ _list = [
     id: "0v1",
     version: 0,
     sort: 1,
-    "date-created": new Date('2015-8-18'),
-    "date-modified": new Date('2015-8-18'),
-    "date-due": null,
+    date_created: new Date('2015-8-18'),
+    date_modified: new Date('2015-8-18'),
+    date_due: null,
     owner: "~zod",
     audience: ["~doznec/tlon"],
     status: "accepted",
@@ -1298,9 +1286,9 @@ _list = [
     id: "0v2",
     version: 0,
     sort: 2,
-    "date-created": new Date('2015-8-18'),
-    "date-modified": new Date('2015-8-18'),
-    "date-due": null,
+    date_created: new Date('2015-8-18'),
+    date_modified: new Date('2015-8-18'),
+    date_due: null,
     owner: "~talsur-todres",
     audience: ["~doznec/tlon"],
     status: "accepted",
@@ -1323,7 +1311,7 @@ _filters = {
 _sorts = {
   title: 0,
   owner: 0,
-  "date-due": 0,
+  date_due: 0,
   sort: 0
 };
 
@@ -1431,14 +1419,23 @@ WorkStore = assign({}, EventEmitter.prototype, {
     _item = _.extend({
       sort: index
     }, item);
-    _item["date-modified"] = new Date(item["date-modified"]);
-    _item["date-created"] = new Date(item["date-created"]);
-    if (item["date-due"] != null) {
-      _item["date-due"] = new Date(item["date-due"]);
+    _item.date_modified = new Date(item.date_modified);
+    _item.date_created = new Date(item.date_created);
+    if (item.date_due != null) {
+      _item.date_due = new Date(item.date_due);
     }
     if (item.done != null) {
       _item.done = new Date(item.done);
     }
+    _item.discussion = item.discussion.map(function(arg) {
+      var body, date, ship;
+      ship = arg.ship, body = arg.body, date = arg.date;
+      return {
+        ship: ship,
+        body: body,
+        date: new Date(date)
+      };
+    });
     return _item;
   },
   newItem: function(arg) {
