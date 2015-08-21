@@ -20,7 +20,7 @@
                owner/(jope owner)
                title/[%s title]
               status/[%s status]
-             version/[%s (scot %ud version)]
+             version/(jone version)
             claiming/[%b claiming]
         =<  audience/[%a (turn (~(tap in audience)) .)]
         |=(a=station:talk [%s (crip "{<p.a>}/{(trip q.a)}")])
