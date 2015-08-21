@@ -21,12 +21,13 @@ module.exports =
     Persistence.put "new":item
     Dispatcher.handleViewAction {type:'newItem', index, item}
 
-  setItem: (id,version,key,val) ->
+  setItem: ({id,version},key,val) ->
     set = {}
+    key = key.split('_').join '-'
     set[key] = val
     Persistence.put old:{id,version,dif:{set}}
 
-  addComment: (id,version,val) ->
+  addComment: ({id,version},val) ->
     Persistence.put old:{id,version,dif:add:comment:val}
 
   setFilter: (key,val) ->
@@ -47,8 +48,8 @@ module.exports =
       from:from
       to:to
 
-  removeItem: (index,id) ->
-    Persistence.put old:{id,dif:set:done:true}
+  removeItem: ({id,version},index) ->
+    Persistence.put old:{id,version,dif:set:done:true}
     Dispatcher.handleViewAction
       type:'removeItem'
       index:index
@@ -60,7 +61,7 @@ module.exports =
       item:item
       
   listenList: (type)->
-    Persistence.subscribe type, (err,d)->
+    Persistence.subscribe type, (err,d)-> 
       if d?
         {sort,tasks} = d.data
         Dispatcher.handleServerAction {type:"getData",sort,tasks}
