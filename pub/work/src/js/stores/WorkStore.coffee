@@ -68,6 +68,15 @@ WorkStore = assign {},EventEmitter.prototype,{
   addChangeListener: (cb) -> @on 'change', cb
   removeChangeListener: (cb) -> @removeListener "change", cb
   
+  getData: ({sort,tasks})->
+    _tasks = _.clone tasks
+    for {id},i in _list when got = _tasks[id]
+      delete _tasks[id]
+      _list[i] = @itemFromData got,i
+    sort.map (k,index)=> 
+      if _tasks[k]
+        @newItem {item:_tasks[k],index}
+  
   getList: (key) -> 
     list = []
     for k,v of _list
@@ -102,15 +111,17 @@ WorkStore = assign {},EventEmitter.prototype,{
       _sorts[k] = 0
     _sorts[key] = val
 
-  newItem: ({index,item}) ->
+    
+  itemFromData: (item,index=0)->
     _item = _.extend {sort:index}, item
-    _item["date-created"]=new Date item["date-created"]
-    _item["date-modified"]=new Date item["date-modified"]
-    _list.splice index,0,_item
-
-  swapItem: ({to,from}) ->
-    _list.splice to,0,_list.splice(from,1)[0]
-
+    _item["date-modified"] =  new Date item["date-modified"]
+    _item["date-created"] =   new Date item["date-created"]
+    _item["date-due"] =       new Date item["date-due"] if item["date-due"]?
+    _item.done =              new Date item.done if item.done?
+    _item
+    
+  newItem: ({item,index}) -> _list.splice index,0,@itemFromData item,index
+  swapItem: ({to,from}) -> _list.splice to,0,_list.splice(from,1)[0]
   removeItem: ({index}) ->  _list.splice index,1
 
 }

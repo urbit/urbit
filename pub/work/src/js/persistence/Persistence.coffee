@@ -1,6 +1,14 @@
 urb.appl = 'work'
+listeners = {}
+cache = null
+urb.bind "/repo", (err,dat)->
+  if err 
+    document.write err
+  else 
+    cache = dat
+    (cb null,dat) for k,cb of listeners
 module.exports =
   put: (update,cb) -> urb.send(update,{mark:'work-command'},cb)
-  get: (id,cb) ->
-    url = (urb.util.basepath "/pub/work/")+id+".json"
-    $.get url, {}, (data) -> if cb then cb null,data
+  subscribe: (key,cb) -> 
+    listeners[key] = cb
+    (cb null,cache) if cache?

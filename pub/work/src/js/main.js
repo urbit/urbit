@@ -5,8 +5,6 @@ Dispatcher = require('../dispatcher/Dispatcher.coffee');
 
 Persistence = require('../persistence/Persistence.coffee');
 
-Persistence.get('test', console.log.bind(console));
-
 module.exports = {
   newItem: function(index, list) {
     var item;
@@ -104,8 +102,22 @@ module.exports = {
       index: index,
       item: item
     });
+  },
+  listenList: function(type) {
+    return Persistence.subscribe(type, function(err, d) {
+      var ref, sort, tasks;
+      if (d != null) {
+        ref = d.data, sort = ref.sort, tasks = ref.tasks;
+        return Dispatcher.handleServerAction({
+          type: "getData",
+          sort: sort,
+          tasks: tasks
+        });
+      }
+    });
   }
 };
+
 
 
 },{"../dispatcher/Dispatcher.coffee":8,"../persistence/Persistence.coffee":14}],2:[function(require,module,exports){
@@ -191,6 +203,7 @@ module.exports = recl({
     })(this)));
   }
 });
+
 
 
 },{}],3:[function(require,module,exports){
@@ -498,6 +511,7 @@ module.exports = recl({
 });
 
 
+
 },{"../actions/WorkActions.coffee":1}],4:[function(require,module,exports){
 var FilterComponent, ItemComponent, ListeningComponent, SortComponent, WorkActions, WorkStore, div, h1, input, rece, recl, ref, textarea;
 
@@ -645,6 +659,7 @@ module.exports = recl({
   componentDidMount: function() {
     this.placeholder = $("<div class='item placeholder'><div class='sort'>x</div></div>");
     WorkStore.addChangeListener(this._onChangeStore);
+    WorkActions.listenList(this.props.list);
     return this.alias();
   },
   componentDidUpdate: function() {
@@ -711,6 +726,7 @@ module.exports = recl({
 });
 
 
+
 },{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":15,"./FilterComponent.coffee":2,"./ItemComponent.coffee":3,"./ListeningComponent.coffee":5,"./SortComponent.coffee":6}],5:[function(require,module,exports){
 var div, h1, input, rece, recl, ref, textarea;
 
@@ -727,6 +743,7 @@ module.exports = recl({
     }, "");
   }
 });
+
 
 
 },{}],6:[function(require,module,exports){
@@ -774,6 +791,7 @@ module.exports = recl({
 });
 
 
+
 },{}],7:[function(require,module,exports){
 var ListComponent, div, h1, rece, recl, ref;
 
@@ -798,6 +816,7 @@ module.exports = recl({
 });
 
 
+
 },{"./ListComponent.coffee":4}],8:[function(require,module,exports){
 var Dispatcher;
 
@@ -819,6 +838,7 @@ module.exports = _.merge(new Dispatcher(), {
 });
 
 
+
 },{"flux":10}],9:[function(require,module,exports){
 var WorkComponent;
 
@@ -829,6 +849,7 @@ window.util = _.extend(window.util || {}, require('./util.coffee'));
 $(function() {
   return React.render(React.createElement(WorkComponent), $('#c')[0]);
 });
+
 
 
 },{"./components/WorkComponent.coffee":7,"./util.coffee":16}],10:[function(require,module,exports){
@@ -1190,7 +1211,28 @@ module.exports = Object.assign || function (target, source) {
 };
 
 },{}],14:[function(require,module,exports){
+var cache, listeners;
+
 urb.appl = 'work';
+
+listeners = {};
+
+cache = null;
+
+urb.bind("/repo", function(err, dat) {
+  var cb, k, results;
+  if (err) {
+    return document.write(err);
+  } else {
+    cache = dat;
+    results = [];
+    for (k in listeners) {
+      cb = listeners[k];
+      results.push(cb(null, dat));
+    }
+    return results;
+  }
+});
 
 module.exports = {
   put: function(update, cb) {
@@ -1198,16 +1240,14 @@ module.exports = {
       mark: 'work-command'
     }, cb);
   },
-  get: function(id, cb) {
-    var url;
-    url = (urb.util.basepath("/pub/work/")) + id + ".json";
-    return $.get(url, {}, function(data) {
-      if (cb) {
-        return cb(null, data);
-      }
-    });
+  subscribe: function(key, cb) {
+    listeners[key] = cb;
+    if (cache != null) {
+      return cb(null, cache);
+    }
   }
 };
+
 
 
 },{}],15:[function(require,module,exports){
@@ -1297,6 +1337,29 @@ WorkStore = assign({}, EventEmitter.prototype, {
   removeChangeListener: function(cb) {
     return this.removeListener("change", cb);
   },
+  getData: function(arg) {
+    var _tasks, got, i, id, j, len, sort, tasks;
+    sort = arg.sort, tasks = arg.tasks;
+    _tasks = _.clone(tasks);
+    for (i = j = 0, len = _list.length; j < len; i = ++j) {
+      id = _list[i].id;
+      if (!(got = _tasks[id])) {
+        continue;
+      }
+      delete _tasks[id];
+      _list[i] = this.itemFromData(got, i);
+    }
+    return sort.map((function(_this) {
+      return function(k, index) {
+        if (_tasks[k]) {
+          return _this.newItem({
+            item: _tasks[k],
+            index: index
+          });
+        }
+      };
+    })(this));
+  },
   getList: function(key) {
     var _k, _v, add, c, k, list, v;
     list = [];
@@ -1360,15 +1423,28 @@ WorkStore = assign({}, EventEmitter.prototype, {
     }
     return _sorts[key] = val;
   },
-  newItem: function(arg) {
-    var _item, index, item;
-    index = arg.index, item = arg.item;
+  itemFromData: function(item, index) {
+    var _item;
+    if (index == null) {
+      index = 0;
+    }
     _item = _.extend({
       sort: index
     }, item);
-    _item["date-created"] = new Date(item["date-created"]);
     _item["date-modified"] = new Date(item["date-modified"]);
-    return _list.splice(index, 0, _item);
+    _item["date-created"] = new Date(item["date-created"]);
+    if (item["date-due"] != null) {
+      _item["date-due"] = new Date(item["date-due"]);
+    }
+    if (item.done != null) {
+      _item.done = new Date(item.done);
+    }
+    return _item;
+  },
+  newItem: function(arg) {
+    var index, item;
+    item = arg.item, index = arg.index;
+    return _list.splice(index, 0, this.itemFromData(item, index));
   },
   swapItem: function(arg) {
     var from, to;
@@ -1394,6 +1470,7 @@ WorkStore.dispatchToken = Dispatcher.register(function(p) {
 });
 
 module.exports = WorkStore;
+
 
 
 },{"../dispatcher/Dispatcher.coffee":8,"events":17,"object-assign":13}],16:[function(require,module,exports){
@@ -1452,6 +1529,7 @@ module.exports = {
     }
   }
 };
+
 
 
 },{}],17:[function(require,module,exports){
