@@ -98,6 +98,7 @@ module.exports = recl
   componentDidMount: -> 
     @placeholder = $ "<div class='item placeholder'><div class='sort'>x</div></div>"
     WorkStore.addChangeListener @_onChangeStore
+    WorkActions.listenList @props.list
     @alias()
 
   componentDidUpdate: -> 

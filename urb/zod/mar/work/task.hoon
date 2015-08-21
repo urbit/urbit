@@ -82,22 +82,6 @@
     %+  turn  discussion
     |=  comment  ^-  wain
     [(rend p/ship ' ' da/date ~) (indent (lore body))]
-  ++  json
-    =+  taz
-    %-  jobe  :~  id/(jape <id>)
-                tags/[%a (turn (~(tap in tags)) |=(a=cord s/a))]
-               owner/(jape <owner>)
-              status/(jape <status>)
-               title/[%s title]
-             version/(jape <version>)
-        date-created/(jode date-created)
-       date-modified/(jode date-modified)
-         description/[%s description]
-      =<  discussion/[%a (turn discussion .)]
-      |=(comment (jobe date/(jode date) ship/(jape <ship>) body/[%s body] ~))
-            date-due/?~(date-due ~ (jode u.date-due))
-                done/?~(done ~ (jode u.done))
-    ==
   --
 ++  grad  %txt
 --
