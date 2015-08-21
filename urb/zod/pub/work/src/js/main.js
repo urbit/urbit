@@ -51,7 +51,18 @@ module.exports = {
       }
     });
   },
-  addComment: function(arg, val) {
+  ownItem: function(arg, own) {
+    var id, version;
+    id = arg.id, version = arg.version;
+    return Persistence.put({
+      old: {
+        id: id,
+        version: version,
+        own: own
+      }
+    });
+  },
+  addItem: function(arg, val) {
     var id, version;
     id = arg.id, version = arg.version;
     return Persistence.put({
@@ -345,19 +356,26 @@ module.exports = recl({
     return WorkActions.setItem(this.props.item, 'done', true);
   },
   _changeStatus: function(e) {
+    var own;
     if (this.props.item.status === 'released') {
       return;
     }
     if (this.props.item.status === 'accepted' && this.props.item.owner.slice(1) !== window.urb.ship) {
       return;
     }
-    return WorkActions.changeStatus(this.props.item.id);
+    if (this.props.item.status === "announced") {
+      own = "claim";
+    }
+    if (this.props.item.status === "accepted") {
+      own = "announce";
+    }
+    return WorkActions.ownItem(this.props.item, 'own', own);
   },
   _submitComment: function(e) {
     var $t, val;
     $t = $(e.target).closest('.item');
     val = $t.find('.comment .input').text();
-    return WorkActions.addComment(this.props.item, val);
+    return WorkActions.addItem(this.props.item, val);
   },
   formatDate: function(d) {
     if (d === null) {
@@ -408,7 +426,7 @@ module.exports = recl({
       itemClass += ' expand';
     }
     action = "";
-    if (this.props.item.status === 'announce') {
+    if (this.props.item.status === 'announced') {
       action = "claim";
     }
     if (this.props.item.status === 'accepted' && this.props.item.owner.slice(1) === window.urb.ship) {
@@ -423,7 +441,9 @@ module.exports = recl({
       div({
         className: 'header'
       }, [
-        this.renderField('owner', {}, this.formatOwner), div({
+        div({
+          className: 'owner ib'
+        }, this.formatOwner(this.props.item.owner)), div({
           className: 'status ib action-' + (action.length > 0),
           'data-key': 'status',
           onClick: this._changeStatus
@@ -433,7 +453,9 @@ module.exports = recl({
           }, this.props.item.status), div({
             className: 'action a'
           }, action)
-        ]), this.renderField('audience', {}, this.formatAudience)
+        ]), this.renderField('audience', {
+          onKeyUp: this.onKeyUp
+        }, this.formatAudience)
       ]), div({
         className: 'sort ib top'
       }, this.props.item.sort), div({
@@ -1259,7 +1281,7 @@ _list = [
     date_due: new Date('2015-8-18'),
     owner: "zod",
     audience: ["~doznec/urbit-meta", "~doznec/tlon"],
-    status: "announce",
+    status: "announced",
     tags: ['food', 'office'],
     title: 'get groceries',
     description: 'first go out the door, \n then walk down the block.',
