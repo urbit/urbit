@@ -11,7 +11,7 @@ _list   = [
     "date-due":new Date('2015-8-18')
     owner:"~zod"
     audience:["~doznec/urbit-meta","~doznec/tlon"]
-    status:"working"
+    status:"announce"
     tags:['food','office']
     title:'get groceries'
     description:'first go out the door, \n then walk down the block.'
@@ -29,9 +29,9 @@ _list   = [
     "date-created":new Date('2015-8-18')
     "date-modified":new Date('2015-8-18')
     "date-due":null
-    owner:null
+    owner:"~zod"
     audience:["~doznec/tlon"]
-    status:"working"
+    status:"accepted"
     tags:['home','office']
     title:'eat'
     description:'dont forget about lunch.'
@@ -45,7 +45,7 @@ _list   = [
     "date-due":null
     owner:"~talsur-todres"
     audience:["~doznec/tlon"]
-    status:"working"
+    status:"accepted"
     tags:['home']
     title:'sleep'
     description:'go get some sleep.'

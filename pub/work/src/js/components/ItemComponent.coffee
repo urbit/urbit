@@ -94,15 +94,17 @@ module.exports = recl
     id = $(e.target).closest('.item').attr 'data-id'
     WorkActions.setItem id,@props.item.version,'done',true
 
-  _claim: (e) ->
-
-  _release: (e) ->
+  _changeStatus: (e) ->
+    return if @props.item.status is 'released'
+    if @props.item.status is 'accepted' and 
+    @props.item.owner.slice(1) isnt window.urb.ship
+      return
+    WorkActions.changeStatus @props.item.id
 
   _submitComment: (e) ->
     $t = $(e.target).closest('.item')
     id = $t.attr 'data-id'
     val = $t.find('.comment .input').text()
-
     WorkActions.addComment id,@props.item.version,val
 
   formatDate: (d) ->
@@ -122,14 +124,11 @@ module.exports = recl
     itemClass = 'item'
     if @state.expand then itemClass += ' expand'
 
-    owner = []
-    if @props.item.owner?.slice(1) is window.urb.ship
-      k = 'mine'
-      owner.push (div {className:'release a',onClick:@_release},'Release')
-    if @props.item.owner is null
-      k = 'open'
-      owner.push (div {className:'claim a',onClick:@_claim}, "Claim")
-    owner.unshift (div {className:k},@formatOwner(@props.item.owner))
+    action = ""
+    if @props.item.status is 'announce'
+      action = "claim"
+    if @props.item.status is 'accepted' and @props.item.owner.slice(1) is window.urb.ship
+      action = "release" 
 
     (div {
       className:itemClass
@@ -140,17 +139,29 @@ module.exports = recl
       onDragEnd:@_dragEnd
       }, [
         (div {
-          className:'owner ib'
-          'data-key':'owner'
-          },owner)
-        (div {
-          className:'audience field ib'
-          'data-key':'audience'
+          className:'header'
           },[
           (div {
-            contentEditable:true
-            className:'input ib'
-            },@formatAudience(@props.item.audience))
+            className:'owner ib '+@props.item.status
+            'data-key':'owner'
+            },@props.item.owner.slice(1))
+          (div {
+            className:'status ib action-'+(action.length > 0)
+            'data-key':'status'
+            onClick:@_changeStatus
+            },[
+              (div {className:'label'}, @props.item.status)
+              (div {className:'action a'}, action)
+            ])
+          (div {
+            className:'audience field ib'
+            'data-key':'audience'
+            },[
+            (div {
+              contentEditable:true
+              className:'input ib'
+              },@formatAudience(@props.item.audience))
+            ])
           ])
         (div {className:'sort ib top'},@props.item.sort)
         (div {
