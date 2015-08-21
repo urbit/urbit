@@ -25,12 +25,17 @@ module.exports =
     set = {}
     key = key.split('_').join '-'
     set[key] = val
+    version += 1
     Persistence.put old:{id,version,dif:{set}}
 
   ownItem: ({id,version},own) ->
-    Persistence.put old:{id,version,own:own}
+    o = {}
+    o[own] = null
+    version += 1
+    Persistence.put old:{id,version,dif:own:o}
 
   addItem: ({id,version},val) ->
+    version += 1
     Persistence.put old:{id,version,dif:add:comment:val}
 
   setFilter: (key,val) ->

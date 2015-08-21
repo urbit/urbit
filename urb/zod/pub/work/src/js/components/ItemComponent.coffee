@@ -93,11 +93,11 @@ module.exports = recl
   _changeStatus: (e) ->
     return if @props.item.status is 'released'
     if @props.item.status is 'accepted' and 
-    @props.item.owner.slice(1) isnt window.urb.ship
+    @formatOwner(@props.item.owner) isnt window.urb.ship
       return
     own = "claim" if @props.item.status is "announced"
     own = "announce" if @props.item.status is "accepted"
-    WorkActions.ownItem @props.item,'own',own
+    WorkActions.ownItem @props.item,own
 
   _submitComment: (e) ->
     $t = $(e.target).closest('.item')
@@ -133,7 +133,7 @@ module.exports = recl
     action = ""
     if @props.item.status is 'announced'
       action = "claim"
-    if @props.item.status is 'accepted' and @props.item.owner.slice(1) is window.urb.ship
+    if @props.item.status is 'accepted' and @formatOwner(@props.item.owner) is window.urb.ship
       action = "release" 
 
     (div {
