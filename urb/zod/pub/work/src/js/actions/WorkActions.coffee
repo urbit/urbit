@@ -2,21 +2,22 @@ Dispatcher   = require '../dispatcher/Dispatcher.coffee'
 Persistence  = require '../persistence/Persistence.coffee'
 
 module.exports =
-  newItem: (index,list) ->
+  newItem: (index,_item={}) ->
     item =
-      id:window.util.uuid32()
-      version:0
-      "date-created":Date.now()
-      "date-modified":Date.now()
-      "date-due":null
-      done:null
-      owner:window.urb.ship
-      status:'announced'
-      tags:[]
-      title:''
-      description:''
-      discussion:[]
-      audience:[window.util.talk.mainStationPath window.urb.ship]
+      id:             window.util.uuid32()
+      version:        0
+      owner:          window.urb.ship
+      date_created:   Date.now()
+      date_modified:  Date.now()
+      date_due:       _item.date_due    ? null
+      done:           _item.done        ? null
+      status:         _item.status      ? 'announced'
+      tags:           _item.tags        ? []
+      title:          _item.title       ? ''
+      description:    _item.description ? ''
+      discussion:     _item.discussion  ? []
+      audience:       _item.audience    ?
+        [window.util.talk.mainStationPath window.urb.ship]
     Persistence.put "new":item
     Dispatcher.handleViewAction {type:'newItem', index, item}
 

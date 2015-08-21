@@ -6,9 +6,9 @@ _list   = [
     id:"0v0"
     version:0
     sort:0
-    "date-created":new Date('2015-8-18')
-    "date-modified":new Date('2015-8-18')
-    "date-due":new Date('2015-8-18')
+    date_created:new Date('2015-8-18')
+    date_modified:new Date('2015-8-18')
+    date_due:new Date('2015-8-18')
     owner:"~zod"
     audience:["~doznec/urbit-meta","~doznec/tlon"]
     status:"working"
@@ -26,9 +26,9 @@ _list   = [
     id:"0v1"
     version:0
     sort:1
-    "date-created":new Date('2015-8-18')
-    "date-modified":new Date('2015-8-18')
-    "date-due":null
+    date_created:new Date('2015-8-18')
+    date_modified:new Date('2015-8-18')
+    date_due:null
     owner:null
     audience:["~doznec/tlon"]
     status:"working"
@@ -40,9 +40,9 @@ _list   = [
     id:"0v2"
     version:0
     sort:2
-    "date-created":new Date('2015-8-18')
-    "date-modified":new Date('2015-8-18')
-    "date-due":null
+    date_created:new Date('2015-8-18')
+    date_modified:new Date('2015-8-18')
+    date_due:null
     owner:"~talsur-todres"
     audience:["~doznec/tlon"]
     status:"working"
@@ -60,7 +60,7 @@ _filters =
 _sorts =
   title:0
   owner:0
-  "date-due":0
+  date_due:0
   sort:0
 
 WorkStore = assign {},EventEmitter.prototype,{
@@ -114,10 +114,12 @@ WorkStore = assign {},EventEmitter.prototype,{
     
   itemFromData: (item,index=0)->
     _item = _.extend {sort:index}, item
-    _item["date-modified"] =  new Date item["date-modified"]
-    _item["date-created"] =   new Date item["date-created"]
-    _item["date-due"] =       new Date item["date-due"] if item["date-due"]?
-    _item.done =              new Date item.done if item.done?
+    _item.date_modified =  new Date item.date_modified
+    _item.date_created =   new Date item.date_created
+    _item.date_due =       new Date item.date_due if item.date_due?
+    _item.done =           new Date item.done if item.done?
+    _item.discussion = item.discussion.map ({ship,body,date}) ->
+                                            {ship,body,date: new Date date}
     _item
     
   newItem: ({item,index}) -> _list.splice index,0,@itemFromData item,index

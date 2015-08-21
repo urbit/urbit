@@ -1,6 +1,6 @@
 recl = React.createClass
 rece = React.createElement
-[div,h1] = [React.DOM.div,React.DOM.h1]
+{div,h1} = React.DOM
 
 ListComponent = require './ListComponent.coffee'
 
