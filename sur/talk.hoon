@@ -90,7 +90,6 @@
             $%  [%announce ~]                           ::  make available
                 [%release her=ship]                     ::  pass to new owner
                 [%accept ~]                             ::  accept pass
-                [%delete ~]                             ::  delete task
                 [%set-date-due wen=(unit ,@da)]         ::  set due date
                 [%set-tags tag=(set ,@t)]               ::  set tags
                 [%set-title til=@t]                     ::  set title

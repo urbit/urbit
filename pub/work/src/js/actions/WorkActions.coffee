@@ -20,6 +20,14 @@ module.exports =
     Persistence.put "new":item
     Dispatcher.handleViewAction {type:'newItem', index, item}
 
+  setItem: (id,version,key,val) ->
+    set = {}
+    set[key] = val
+    Persistence.put old:{id,version,dif:{set}}
+
+  addComment: (id,version,val) ->
+    Persistence.put old:{id,version,dif:add:comment:val}
+
   setFilter: (key,val) ->
     Dispatcher.handleViewAction
       type:'setFilter'
