@@ -102,18 +102,21 @@ WorkStore = assign {},EventEmitter.prototype,{
     list
 
   getListening: -> _listening
-
   getFilters: -> _filters
-
   setFilter: ({key,val}) -> _filters[key] = val
-
   getSorts: -> _sorts
-
   setSort: ({key,val}) -> 
     for k,v of _sorts
       _sorts[k] = 0
     _sorts[key] = val
-
+  
+  canSort: ->
+    for k,v of _sorts
+      if k is "sort" and v is 1
+        return true
+      else if v isnt 0
+        return false 
+    true
     
   itemFromData: (item,index=0)->
     _item = _.extend {sort:index}, item

@@ -11,8 +11,9 @@ FilterComponent = require './FilterComponent.coffee'
 SortComponent = require './SortComponent.coffee'
 
 module.exports = recl
-  stateFromStore: -> {
+  stateFromStore: -> window.canSort = WorkStore.canSort(); {
     list:WorkStore.getList()
+    canSort:WorkStore.canSort()
     listening:WorkStore.getListening()
     sorts:WorkStore.getSorts()
     filters:WorkStore.getFilters()
@@ -144,6 +145,7 @@ module.exports = recl
                 item
                 @_focus
                 @_keyDown
+                draggable:@state.canSort
                 @_dragStart
                 @_dragEnd})
              )
