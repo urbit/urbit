@@ -9,7 +9,7 @@ _list   = [
     date_created:new Date('2015-8-18')
     date_modified:new Date('2015-8-18')
     date_due:new Date('2015-8-18')
-    owner:"~zod"
+    owner:"zod"
     audience:["~doznec/urbit-meta","~doznec/tlon"]
     status:"announce"
     tags:['food','office']
@@ -43,7 +43,7 @@ _list   = [
     date_created:new Date('2015-8-18')
     date_modified:new Date('2015-8-18')
     date_due:null
-    owner:"~talsur-todres"
+    owner:"talsur-todres"
     audience:["~doznec/tlon"]
     status:"accepted"
     tags:['home']

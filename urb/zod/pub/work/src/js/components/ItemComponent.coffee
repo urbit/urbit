@@ -54,7 +54,7 @@ module.exports = recl
       return l isnt new Date(n)
     l isnt n
 
-  validateField: ($t,id,key,val) ->
+  validateField: ($t,key,val) ->
     valid = 1
     if key is 'date_due'
       valid = 0 if isNaN(val)
@@ -73,26 +73,22 @@ module.exports = recl
 
   onKeyUp: (e) ->
     $t = $(e.target).closest '.field'
-    id = $t.closest('.item').attr 'data-id'
     key = $t.attr 'data-key'
     val = @getVal $t.find('.input'),key
 
     if @compareVal @props.item[key],val,key
-      if not @validateField($t,id,key,val) 
+      if not @validateField($t,key,val) 
         $t.addClass 'invalid'
         return
       $t.removeClass 'invalid'
       if @to then clearTimeout @to
-      ver = @props.item.version
-      @to = setTimeout -> 
-          WorkActions.setItem id,ver,key,val
+      @to = setTimeout => 
+          WorkActions.setItem @props.item,key,val
         ,1000
 
   onFocus: (e) -> @props._focus e,@
 
-  _markDone: (e) ->
-    id = $(e.target).closest('.item').attr 'data-id'
-    WorkActions.setItem id,@props.item.version,'done',true
+  _markDone: (e) -> WorkActions.setItem @props.item,'done',true
 
   _changeStatus: (e) ->
     return if @props.item.status is 'released'
@@ -103,9 +99,8 @@ module.exports = recl
 
   _submitComment: (e) ->
     $t = $(e.target).closest('.item')
-    id = $t.attr 'data-id'
     val = $t.find('.comment .input').text()
-    WorkActions.addComment id,@props.item.version,val
+    WorkActions.addComment @props.item,val
 
   formatDate: (d) ->
     return "" if d is null
@@ -142,8 +137,6 @@ module.exports = recl
     (div {
         className:itemClass
         draggable:true
-        'data-id':@props.item.id
-        'data-index':@props.index
         @onDragStart,@onDragEnd
       }, [
         (div {
