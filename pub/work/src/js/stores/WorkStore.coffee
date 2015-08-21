@@ -70,8 +70,9 @@ WorkStore = assign {},EventEmitter.prototype,{
   
   getData: ({sort,tasks})->
     _tasks = _.clone tasks
-    for {id} in _list
+    for {id},i in _list when got = _tasks[id]
       delete _tasks[id]
+      _list[i] = @itemFromData got,i
     sort.map (k,index)=> 
       if _tasks[k]
         @newItem {item:_tasks[k],index}
