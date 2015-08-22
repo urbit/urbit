@@ -1,9 +1,3 @@
-::  not implemented:  set audience
-::    when adding a station, send a new create.  need to eliminate
-::    sanity checks to make this work.  when removing a station,
-::    send a %archive message, which signifies that you'll no longer
-::    receive updates to that task.
-::  check ++prep for initialize
 ::  also check if talk can add stations to something other than porch
 ::  maybe look into storing a "following" set
 ::  make most updates not rely on knowing about task (all but claim?)
@@ -111,8 +105,15 @@
     +>.$(audience to)
   --
 ::
+++  prep
+  |=  [old=(unit (pair client ,_|))]
+  ^-  [(list move) _+>.$]
+  initialize(+<+ ?~(old +<+.+>.$ u.old))
+::
 ++  initialize
   ^-  [(list move) _.]
+  ?:  connected
+    [~ .]
   :_  .(connected %&)  :_  ~
   [ost %peer /peering [our %talk] /f/(main our)/0]
 ::
@@ -277,26 +278,20 @@
   |=  cod=command
   ?.  =(our src)
     ~|([%wrong-user our=our src=src] !!)
-  =^  mos  +>.$
-    ?:  connected
-      [~ +>.$]
-    initialize
-  =^  mof  +>.$
-    ?-  -.cod
-      %sort       mirror-to-web(sort p.cod)
-      %audience
-        =^  mow  +>.$
-          abet:(process-audience:(at (~(got by tasks) id.cod)) to.cod)
-        =^  mov  +>.$  mirror-to-web
-        [(welp mow mov) +>.$]
-      %old
-        =+  (at (~(got by tasks) id.cod))
-        abet:(process-update:- version.cod dif.cod)
-      %new
-        =.  +>.cod  +>.cod(date-created now, version 0, date-modified now)
-        abut:send-create:(at | | +.cod)
-    ==
-  [(welp mos mof) +>.$]
+  ?-  -.cod
+    %sort       mirror-to-web(sort p.cod)
+    %audience
+      =^  mow  +>.$
+        abet:(process-audience:(at (~(got by tasks) id.cod)) to.cod)
+      =^  mov  +>.$  mirror-to-web
+      [(welp mow mov) +>.$]
+    %old
+      =+  (at (~(got by tasks) id.cod))
+      abet:(process-update:- version.cod dif.cod)
+    %new
+      =.  +>.cod  +>.cod(date-created now, version 0, date-modified now)
+      abut:send-create:(at | | +.cod)
+  ==
 ::
 ::  XX  maybe need to check that we haven't received this message before
 ::      by keeping a counter of last message received
