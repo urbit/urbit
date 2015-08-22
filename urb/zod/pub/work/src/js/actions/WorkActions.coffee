@@ -17,7 +17,7 @@ module.exports =
       description:    _item.description ? ''
       discussion:     _item.discussion  ? []
       audience:       _item.audience    ?
-        [window.util.talk.mainStationPath window.urb.ship]
+        ["~zod/share", window.util.talk.mainStationPath window.urb.ship]
     Persistence.put "new":item
     Dispatcher.handleViewAction {type:'newItem', index, item}
 
@@ -34,7 +34,7 @@ module.exports =
     version += 1
     Persistence.put old:{id,version,dif:own:o}
 
-  addItem: ({id,version},val) ->
+  addComment: ({id,version},val) ->
     version += 1
     Persistence.put old:{id,version,dif:add:comment:val}
 

@@ -124,6 +124,7 @@ h1.leader:after {
 .ctrl .filter {
   line-height: 2rem;
   margin-right: 1rem;
+  vertical-align: middle;
 }
 .ctrl .sort {
   background-color: transparent;
@@ -143,6 +144,23 @@ h1.leader:after {
 .ctrl .sort.s--1 label {
   margin-right: 0.3rem;
   cursor: pointer;
+}
+.input-bool {
+  opacity: 0.3;
+}
+.input-bool.true,
+.input-bool.false {
+  opacity: 1;
+}
+.input-bool,
+.item .done {
+  width: 0.7rem;
+  height: 0.7rem;
+  border: 0.2rem solid #ccc;
+}
+.input-bool.true,
+.item .done-true {
+  background-color: #ccc;
 }
 .items {
   margin-top: 2rem;
@@ -198,6 +216,9 @@ h1.leader:after {
 .item .sort {
   color: #ccc;
 }
+.item .done {
+  margin-top: 0.5rem;
+}
 .item .owner,
 .item .audience,
 .item .date,
@@ -227,12 +248,6 @@ h1.leader:after {
 }
 .item .audience .input {
   background-color: transparent;
-}
-.item .done {
-  width: 0.7rem;
-  height: 0.7rem;
-  margin-top: 0.5rem;
-  border: 0.2rem solid #ccc;
 }
 .item .sort {
   font-size: 0.6rem;

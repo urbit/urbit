@@ -53,15 +53,16 @@ _list   = [
 ]
 _listening = []
 _filters = 
+  done:null
   owner:null
   tags:null
   audience:null
   status:null
 _sorts =
+  sort:0
   title:0
   owner:0
   date_due:0
-  sort:0
 
 WorkStore = assign {},EventEmitter.prototype,{
   emitChange: -> @emit 'change'
@@ -84,10 +85,14 @@ WorkStore = assign {},EventEmitter.prototype,{
       for _k,_v of _filters
         if _v is null then continue
         c = v[_k]
-        if typeof(c) is 'object'
-          if _.intersection(c,_v).length is 0 then add = false
-        else
-          if c isnt _v then add = false
+        switch _k
+          when 'tags' or 'audience'
+            if _.intersection(c,_v).length is 0 then add = false
+          when 'done'
+            if _v is true and not c then add = false
+            if _v is false and c then add = false
+          else
+            if c isnt _v then add = false
       if add is true
         list.push v
     if _.uniq(_.values(_sorts)).length > 0

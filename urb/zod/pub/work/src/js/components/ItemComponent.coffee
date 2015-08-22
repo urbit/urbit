@@ -100,13 +100,18 @@ module.exports = recl
     WorkActions.ownItem @props.item,own
 
   _submitComment: (e) ->
-    $t = $(e.target).closest('.item')
-    val = $t.find('.comment .input').text()
-    WorkActions.addItem @props.item,val
+    $input = $(e.target).closest('.item').find('.comment .input')
+    val = $input.text()
+    return if val.length is 0
+    WorkActions.addComment @props.item,val
+    $input.text('')
 
-  formatDate: (d) ->
+  formatDate: (d,l) ->
     return "" if d is null
-    "~#{d.getFullYear()}.#{(d.getMonth()+1)}.#{d.getDate()}"
+    _d = "~#{d.getFullYear()}.#{(d.getMonth()+1)}.#{d.getDate()}"
+    if l
+      _d += "..#{d.getHours()}.#{d.getMinutes()}.#{d.getSeconds()}"
+    _d
 
   formatOwner: (o) ->
     return "" if o is null
@@ -125,10 +130,19 @@ module.exports = recl
   renderTopField: (key,props,format)->
     _props = _.extend {className:"#{props.className ? key} top"}, props
     @renderField key,_props,format
+
+  componentDidMount: ->
+    formatDate = @formatDate
+    setInterval ->
+        $('.new.comment .date').text formatDate (new Date()),true
+      , 1000
   
   render: ->
     itemClass = 'item'
     if @state.expand then itemClass += ' expand'
+
+    discussion = _.clone @props.item.discussion
+    discussion.reverse()
 
     action = ""
     if @props.item.status is 'announced'
@@ -156,9 +170,9 @@ module.exports = recl
             (@renderField 'audience', {@onKeyUp}, @formatAudience) # no onKeyUp?
           ])
         (div {className:'sort ib top'}, @props.item.sort)
-        (div {className:'done ib', onClick:@_markDone}, '')
+        (div {className:'done ib done-'+@props.item.done?, onClick:@_markDone}, '')
         (@renderTopField 'title', {@onFocus,@onKeyDown,@onKeyUp})
-        (@renderTopField 'date_due', {@onKeyUp,className:'date'}, @formatDate)
+        (@renderField 'date_due', {@onKeyUp,className:'date top'}, @formatDate)
         (@renderTopField 'tags', {@onKeyUp}, (tags)-> tags.join(" "))
         (div {
           className:'expand ib',
@@ -169,18 +183,18 @@ module.exports = recl
       
         (div {className:"hr"},"")
         (div {className:"discussion"},[
-          (div {className:"comments"}, @props.item.discussion.map (slug) =>
+          (div {className:"comments"}, discussion.map (slug) =>
               (div {className:'comment'}, [
                 (div {className:'hr2'},"")
                 (div {className:'ship ib'}, slug.ship)
-                (div {className:'date ib'}, @formatDate(slug.date))
+                (div {className:'date ib'}, @formatDate(slug.date,true))
                 (div {className:'body'}, slug.body)
               ])
           ),
           (div {className:'new comment'},[
               (div {className:'hr2'},"")
               (div {className:'ship ib'}, window.urb.ship)
-              (div {className:'date ib'}, @formatDate(new Date()))
+              (div {className:'date ib'}, @formatDate(new Date(),true))
               (div {
                 contentEditable:true,
                 className:'input'},"")
