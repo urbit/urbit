@@ -85,13 +85,17 @@ module.exports = recl
         return
       $t.removeClass 'invalid'
       if @to then clearTimeout @to
-      @to = setTimeout => 
-          WorkActions.setItem @props.item,key,val
+      @to = setTimeout =>
+          if key is 'audience'
+            WorkActions.setAudience @props.item,val
+          else
+            WorkActions.setItem @props.item,key,val
         ,1000
 
   onFocus: (e) -> @props._focus e,@
 
-  _markDone: (e) -> WorkActions.setItem @props.item,'done',true
+  _markDone: (e) -> 
+    WorkActions.setItem @props.item,'done',(not @props.item.done?)
 
   _changeStatus: (e) ->
     return if @props.item.status is 'released'

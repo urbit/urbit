@@ -68,6 +68,16 @@ module.exports = {
       }
     });
   },
+  setAudience: function(arg, val) {
+    var id;
+    id = arg.id;
+    return Persistence.put({
+      audience: {
+        id: id,
+        to: val
+      }
+    });
+  },
   addComment: function(arg, val) {
     var id, version;
     id = arg.id, version = arg.version;
@@ -385,7 +395,11 @@ module.exports = recl({
       }
       return this.to = setTimeout((function(_this) {
         return function() {
-          return WorkActions.setItem(_this.props.item, key, val);
+          if (key === 'audience') {
+            return WorkActions.setAudience(_this.props.item, val);
+          } else {
+            return WorkActions.setItem(_this.props.item, key, val);
+          }
         };
       })(this), 1000);
     }
@@ -394,7 +408,7 @@ module.exports = recl({
     return this.props._focus(e, this);
   },
   _markDone: function(e) {
-    return WorkActions.setItem(this.props.item, 'done', true);
+    return WorkActions.setItem(this.props.item, 'done', this.props.item.done == null);
   },
   _changeStatus: function(e) {
     var own;
@@ -1452,10 +1466,15 @@ WorkStore = assign({}, EventEmitter.prototype, {
         if (_v === null) {
           continue;
         }
-        c = v[_k];
+        c = task[_k];
         switch (_k) {
           case 'tags' || 'audience':
             if (_.intersection(c, _v).length === 0) {
+              add = false;
+            }
+            break;
+          case 'owner':
+            if (c !== _v.replace(/\~/g, "")) {
               add = false;
             }
             break;
