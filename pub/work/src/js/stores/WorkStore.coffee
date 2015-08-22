@@ -87,10 +87,12 @@ WorkStore = assign {},EventEmitter.prototype,{
       add = true
       for _k,_v of _filters
         if _v is null then continue
-        c = v[_k]
+        c = task[_k]
         switch _k
           when 'tags' or 'audience'
             if _.intersection(c,_v).length is 0 then add = false
+          when 'owner'
+            if c isnt _v.replace(/\~/g, "") then add = false
           when 'done'
             if _v is true and not c then add = false
             if _v is false and c then add = false
