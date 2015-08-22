@@ -6,8 +6,9 @@
   ==
 ++  client-task
   $:  claiming=_|
+      archived=_|
       audience=(set station:talk)
-      task=task
+      tax=task
   ==
 ++  task
   $:  id=@uvH
@@ -33,6 +34,7 @@
   $%  [%new audience=(set station:talk) task]
       [%old id=@uvH version=@u dif=update]
       [%sort p=(list ,@uvH)]
+      [%audience id=@uvH to=(set station:talk)]
   ==
 ++  update
   $%  $:  %set
@@ -41,7 +43,6 @@
       [%description p=@t]
       [%tags p=(set ,@t)]
       [%done p=?]
-      [%audience p=(set station:talk)]
   ==  ==
       $:  %add
   $%  [%comment @t]

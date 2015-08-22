@@ -24,7 +24,7 @@ module.exports = {
       title: (ref4 = _item.title) != null ? ref4 : '',
       description: (ref5 = _item.description) != null ? ref5 : '',
       discussion: (ref6 = _item.discussion) != null ? ref6 : [],
-      audience: (ref7 = _item.audience) != null ? ref7 : ["~zod/share", window.util.talk.mainStationPath(window.urb.ship)]
+      audience: (ref7 = _item.audience) != null ? ref7 : [window.util.talk.mainStationPath(window.urb.ship)]
     };
     Persistence.put({
       "new": item
@@ -98,11 +98,25 @@ module.exports = {
       val: val
     });
   },
-  swapItems: function(to, from) {
+  moveItem: function(list, to, from) {
+    var sort;
+    sort = _.clone(list);
+    sort.splice(to, 0, sort.splice(from, 1)[0]);
+    Persistence.put({
+      sort: sort
+    });
     return Dispatcher.handleViewAction({
-      type: 'swapItem',
+      list: sort,
+      to: to,
       from: from,
-      to: to
+      type: 'moveItems'
+    });
+  },
+  addItem: function(index, item) {
+    return Dispatcher.handleViewAction({
+      type: 'addItem',
+      index: index,
+      item: item
     });
   },
   removeItem: function(arg, index) {
@@ -122,13 +136,6 @@ module.exports = {
     return Dispatcher.handleViewAction({
       type: 'removeItem',
       index: index
-    });
-  },
-  addItem: function(index, item) {
-    return Dispatcher.handleViewAction({
-      type: 'addItem',
-      index: index,
-      item: item
     });
   },
   listenList: function(type) {
@@ -267,6 +274,10 @@ WorkActions = require('../actions/WorkActions.coffee');
 module.exports = recl({
   onDragStart: function(e) {
     var $t;
+    if (!this.props.draggable) {
+      e.preventDefault();
+      return;
+    }
     $t = $(e.target);
     this.dragged = $t.closest('.item');
     e.dataTransfer.effectAllowed = 'move';
@@ -602,8 +613,10 @@ SortComponent = require('./SortComponent.coffee');
 
 module.exports = recl({
   stateFromStore: function() {
+    window.canSort = WorkStore.canSort();
     return {
       list: WorkStore.getList(),
+      canSort: WorkStore.canSort(),
       listening: WorkStore.getListening(),
       sorts: WorkStore.getSorts(),
       filters: WorkStore.getFilters(),
@@ -629,16 +642,25 @@ module.exports = recl({
     return this.dragged = i.dragged;
   },
   _dragEnd: function(e, i) {
-    var from, to;
-    from = Number(this.dragged.closest('item-wrap').attr('data-index'));
-    to = Number(this.over.closest('item-wrap').attr('data-index'));
+    var from, id, to;
+    from = Number(this.dragged.closest('.item-wrap').attr('data-index'));
+    to = Number(this.over.closest('.item-wrap').attr('data-index'));
     if (from < to) {
       to--;
     }
     if (this.drop === 'after') {
       to++;
     }
-    WorkActions.swapItems(to, from);
+    WorkActions.moveItem((function() {
+      var j, len, ref1, results;
+      ref1 = this.state.list;
+      results = [];
+      for (j = 0, len = ref1.length; j < len; j++) {
+        id = ref1[j].id;
+        results.push(id);
+      }
+      return results;
+    }).call(this), to, from);
     this.dragged.removeClass('hidden');
     return this.placeholder.remove();
   },
@@ -778,11 +800,13 @@ module.exports = recl({
         return function(item, index) {
           return div({
             className: 'item-wrap',
+            key: item.id,
             'data-index': index
           }, rece(ItemComponent, {
             item: item,
             _focus: _this._focus,
             _keyDown: _this._keyDown,
+            draggable: _this.state.canSort,
             _dragStart: _this._dragStart,
             _dragEnd: _this._dragEnd
           }));
@@ -1311,7 +1335,7 @@ module.exports = {
 
 
 },{}],15:[function(require,module,exports){
-var Dispatcher, EventEmitter, WorkStore, _filters, _list, _listening, _sorts, assign;
+var Dispatcher, EventEmitter, WorkStore, _filters, _list, _listening, _sorts, _tasks, assign;
 
 EventEmitter = require('events').EventEmitter;
 
@@ -1319,8 +1343,8 @@ assign = require('object-assign');
 
 Dispatcher = require('../dispatcher/Dispatcher.coffee');
 
-_list = [
-  {
+_tasks = {
+  "0v0": {
     id: "0v0",
     version: 0,
     sort: 0,
@@ -1340,7 +1364,8 @@ _list = [
         body: "Seems like a great idea."
       }
     ]
-  }, {
+  },
+  "0v1": {
     id: "0v1",
     version: 0,
     sort: 1,
@@ -1354,7 +1379,8 @@ _list = [
     title: 'eat',
     description: 'dont forget about lunch.',
     discussion: []
-  }, {
+  },
+  "0v2": {
     id: "0v2",
     version: 0,
     sort: 2,
@@ -1369,7 +1395,9 @@ _list = [
     description: 'go get some sleep.',
     discussion: []
   }
-];
+};
+
+_list = ["0v0", "0v1", "0v2"];
 
 _listening = [];
 
@@ -1399,33 +1427,25 @@ WorkStore = assign({}, EventEmitter.prototype, {
     return this.removeListener("change", cb);
   },
   getData: function(arg) {
-    var _tasks, got, i, id, j, len, sort, tasks;
+    var sort, tasks;
     sort = arg.sort, tasks = arg.tasks;
-    _tasks = _.clone(tasks);
-    for (i = j = 0, len = _list.length; j < len; i = ++j) {
-      id = _list[i].id;
-      if (!(got = _tasks[id])) {
-        continue;
-      }
-      delete _tasks[id];
-      _list[i] = this.itemFromData(got, i);
-    }
     return sort.map((function(_this) {
-      return function(k, index) {
-        if (_tasks[k]) {
-          return _this.newItem({
-            item: _tasks[k],
-            index: index
-          });
+      return function(id, index) {
+        if (!_tasks[id]) {
+          _list.splice(index, 0, id);
+        }
+        if (tasks[id]) {
+          return _tasks[id] = _this.itemFromData(tasks[id], index);
         }
       };
     })(this));
   },
   getList: function(key) {
-    var _k, _v, add, c, k, list, v;
+    var _k, _v, add, c, i, id, k, len, list, task, v;
     list = [];
-    for (k in _list) {
-      v = _list[k];
+    for (i = 0, len = _list.length; i < len; i++) {
+      id = _list[i];
+      task = _tasks[id];
       add = true;
       for (_k in _filters) {
         _v = _filters[_k];
@@ -1454,7 +1474,7 @@ WorkStore = assign({}, EventEmitter.prototype, {
         }
       }
       if (add === true) {
-        list.push(v);
+        list.push(task);
       }
     }
     if (_.uniq(_.values(_sorts)).length > 0) {
@@ -1494,6 +1514,18 @@ WorkStore = assign({}, EventEmitter.prototype, {
     }
     return _sorts[key] = val;
   },
+  canSort: function() {
+    var k, v;
+    for (k in _sorts) {
+      v = _sorts[k];
+      if (k === "sort" && v === 1) {
+        return true;
+      } else if (v !== 0) {
+        return false;
+      }
+    }
+    return true;
+  },
   itemFromData: function(item, index) {
     var _item;
     if (index == null) {
@@ -1521,15 +1553,11 @@ WorkStore = assign({}, EventEmitter.prototype, {
     });
     return _item;
   },
-  newItem: function(arg) {
-    var index, item;
-    item = arg.item, index = arg.index;
-    return _list.splice(index, 0, this.itemFromData(item, index));
-  },
-  swapItem: function(arg) {
-    var from, to;
-    to = arg.to, from = arg.from;
-    return _list.splice(to, 0, _list.splice(from, 1)[0]);
+  moveItems: function(arg) {
+    var from, list, to;
+    list = arg.list, to = arg.to, from = arg.from;
+    _tasks[_list[from]].sort = _tasks[_list[to]].sort;
+    return _list = list;
   },
   removeItem: function(arg) {
     var index;

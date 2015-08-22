@@ -17,8 +17,8 @@ module.exports =
       description:    _item.description ? ''
       discussion:     _item.discussion  ? []
       audience:       _item.audience    ?
-        ["~zod/share", window.util.talk.mainStationPath window.urb.ship]
-    Persistence.put "new":item
+        [window.util.talk.mainStationPath window.urb.ship]
+    Persistence.put new:item
     Dispatcher.handleViewAction {type:'newItem', index, item}
 
   setItem: ({id,version},key,val) ->
@@ -38,35 +38,21 @@ module.exports =
     version += 1
     Persistence.put old:{id,version,dif:add:comment:val}
 
-  setFilter: (key,val) ->
-    Dispatcher.handleViewAction
-      type:'setFilter'
-      key:key
-      val:val
-
-  setSort: (key,val) ->
-    Dispatcher.handleViewAction
-      type:'setSort'
-      key:key
-      val:val
-
-  swapItems: (to,from) ->
-    Dispatcher.handleViewAction
-      type:'swapItem'
-      from:from
-      to:to
-
-  removeItem: ({id,version},index) ->
-    Persistence.put old:{id,version,dif:set:done:true}
-    Dispatcher.handleViewAction
-      type:'removeItem'
-      index:index
+  setFilter: (key,val) -> Dispatcher.handleViewAction {type:'setFilter', key,val}
+  setSort: (key,val) -> Dispatcher.handleViewAction {type:'setSort',key,val}
+  moveItem: (list,to,from) ->
+    sort = _.clone list
+    sort.splice to, 0, sort.splice(from,1)[0]
+    Persistence.put {sort}
+    Dispatcher.handleViewAction {list:sort,to,from,type:'moveItems'}  
 
   addItem: (index,item) ->
-    Dispatcher.handleViewAction
-      type:'addItem'
-      index:index
-      item:item
+    Dispatcher.handleViewAction {type:'addItem',index,item}
+    
+  removeItem: ({id,version},index) ->
+    Persistence.put old:{id,version,dif:set:done:true}
+    Dispatcher.handleViewAction {type:'removeItem',index}
+
       
   listenList: (type)->
     Persistence.subscribe type, (err,d)-> 
