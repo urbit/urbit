@@ -49,7 +49,11 @@
       ==
     ++  id  (ci (slat %uv) so)
     ++  ship  (su fed:ag)
-    ++  coma  (of new/task old/(ot id/id version/ni dif/uppd ~) sort/(ar id) ~)
+    ++  coma
+      %-  of  :~
+        new/task      old/(ot id/id version/ni dif/uppd ~)
+        sort/(ar id)  audience/(ot id/id to/audi ~)
+      ==
     ++  task
       %-  ot  :~
         audience/audi
@@ -73,7 +77,6 @@
           description/so
           tags/(as so)
           done/bo
-          audience/audi
         ==
       ==
     --
