@@ -1,6 +1,6 @@
 recl = React.createClass
 rece = React.createElement
-[div,h1,input,textarea] = [React.DOM.div,React.DOM.h1,React.DOM.input,React.DOM.textarea]
+{div,h1,input,textarea} = React.DOM
 
 WorkStore     = require '../stores/WorkStore.coffee'
 WorkActions   = require '../actions/WorkActions.coffee'
@@ -11,8 +11,9 @@ FilterComponent = require './FilterComponent.coffee'
 SortComponent = require './SortComponent.coffee'
 
 module.exports = recl
-  stateFromStore: -> {
+  stateFromStore: -> window.canSort = WorkStore.canSort(); {
     list:WorkStore.getList()
+    canSort:WorkStore.canSort()
     listening:WorkStore.getListening()
     sorts:WorkStore.getSorts()
     filters:WorkStore.getFilters()
@@ -31,11 +32,11 @@ module.exports = recl
   _dragStart: (e,i) -> @dragged = i.dragged
 
   _dragEnd: (e,i) -> 
-    from = Number @dragged.attr('data-index')
-    to = Number @over.attr('data-index')
+    from = Number @dragged.closest('.item-wrap').attr('data-index')
+    to = Number @over.closest('.item-wrap').attr('data-index')
     if from<to then to--
     if @drop is 'after' then to++
-    WorkActions.swapItems to,from
+    WorkActions.moveItem (id for {id} in @state.list), to, from
     @dragged.removeClass 'hidden'
     @placeholder.remove()
 
@@ -71,7 +72,7 @@ module.exports = recl
         e.target.innerText.length is 0
           if @state.selected isnt 0
             @setState {selected:@state.selected-1,select:"end"}
-          WorkActions.removeItem @state.selected,@state.list[@state.selected].id
+          WorkActions.removeItem @state.list[@state.selected], @state.selected
           e.preventDefault()
       # up
       when 38
@@ -138,14 +139,15 @@ module.exports = recl
       (div {
         className:'items'
         onDragOver:@_dragOver
-        }, [
-          _.map @state.list,(item,index) => 
-            rece(ItemComponent,{
-              item
-              index
-              @_focus
-              @_keyDown
-              @_dragStart
-              @_dragEnd})
-      ])
+        }, _.map @state.list,(item,index) => 
+            (div {className:'item-wrap',key:item.id,'data-index':index},
+              rece(ItemComponent,{
+                item
+                @_focus
+                @_keyDown
+                draggable:@state.canSort
+                @_dragStart
+                @_dragEnd})
+             )
+      )
     ])

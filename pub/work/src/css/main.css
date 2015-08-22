@@ -105,6 +105,13 @@ h1.leader:after {
   content: "—";
   margin-left: 0.6rem;
 }
+.ctrl .sort label,
+.ctrl .filter label,
+.item .status {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.07rem;
+}
 .ctrl {
   margin-top: 2rem;
 }
@@ -113,13 +120,6 @@ h1.leader:after {
 }
 .ctrl .sorts {
   margin-left: -0.3rem;
-}
-.ctrl .sort label,
-.ctrl .filter label {
-  text-transform: uppercase;
-  font-size: 0.7rem;
-  line-height: 2rem;
-  letter-spacing: 0.07rem;
 }
 .ctrl .filter {
   line-height: 2rem;
@@ -130,6 +130,10 @@ h1.leader:after {
   outline: none;
   border: 0;
   cursor: pointer;
+}
+.ctrl .sort label,
+.ctrl .filter label {
+  line-height: 2rem;
 }
 .ctrl .sort.s-1,
 .ctrl .sort.s--1 {
@@ -167,6 +171,13 @@ h1.leader:after {
   transform: rotate(90deg);
   transition: transform 200ms linear;
 }
+.item .header {
+  display: block;
+  width: 100%;
+  height: 1rem;
+  overflow: hidden;
+  white-space: nowrap;
+}
 .item .sort,
 .item .title,
 .item .date,
@@ -196,17 +207,19 @@ h1.leader:after {
   letter-spacing: 0.07rem;
 }
 .item .owner {
-  width: 7rem;
-  margin-left: 2rem;
+  max-width: 7rem;
+  margin: 0 1rem 0 2rem;
 }
-.item .release {
+.item .label {
+  font-style: italic;
+  color: #555;
+}
+.item:hover .action-true .label,
+.item .action {
   display: none;
 }
-.item:hover .release {
+.item:hover .action-true .action {
   display: inline-block;
-}
-.item:hover .mine {
-  display: none;
 }
 .item .audience {
   margin-left: 2.2rem;
