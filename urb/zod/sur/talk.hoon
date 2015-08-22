@@ -83,6 +83,7 @@
   ++  duty                                              ::
     $%  [%create tax=task]                              ::  create new task
         [%claim id=@uvH]                                ::  claim task
+        [%archive id=@uvH]                              ::  archive task
         $:  %update                                     ::  operate on task
             id=@uvH                                     ::  which task
             version=@u                                  ::  version
