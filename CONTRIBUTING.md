@@ -79,6 +79,9 @@ Higher priority issues are likely to be assigned to someone - if this is
 the case, then contacting that person to coordinate before starting to
 work is probably a good idea.
 
+There is also a "help wanted" tag for things that we are especially
+eager to have outside contributions on. Check here first!
+
 ## Staying in touch
 
 The urbit developers communicate on urbit itself. Joining the
