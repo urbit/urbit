@@ -2,16 +2,17 @@ EventEmitter  = require('events').EventEmitter
 assign        = require 'object-assign'
 Dispatcher    = require '../dispatcher/Dispatcher.coffee'
 
-_list   = [
+_tasks   = 
+  "0v0":
     id:"0v0"
     version:0
     sort:0
-    "date-created":new Date('2015-8-18')
-    "date-modified":new Date('2015-8-18')
-    "date-due":new Date('2015-8-18')
-    owner:"~zod"
+    date_created:new Date('2015-8-18')
+    date_modified:new Date('2015-8-18')
+    date_due:new Date('2015-8-18')
+    owner:"zod"
     audience:["~doznec/urbit-meta","~doznec/tlon"]
-    status:"working"
+    status:"announced"
     tags:['food','office']
     title:'get groceries'
     description:'first go out the door, \n then walk down the block.'
@@ -22,35 +23,38 @@ _list   = [
         body:"Seems like a great idea."
       }
     ]
-  ,
+
+  "0v1":
     id:"0v1"
     version:0
     sort:1
-    "date-created":new Date('2015-8-18')
-    "date-modified":new Date('2015-8-18')
-    "date-due":null
-    owner:null
+    date_created:new Date('2015-8-18')
+    date_modified:new Date('2015-8-18')
+    date_due:null
+    owner:"~zod"
     audience:["~doznec/tlon"]
-    status:"working"
+    status:"accepted"
     tags:['home','office']
     title:'eat'
     description:'dont forget about lunch.'
     discussion:[]
-  ,
+    
+  "0v2":
     id:"0v2"
     version:0
     sort:2
-    "date-created":new Date('2015-8-18')
-    "date-modified":new Date('2015-8-18')
-    "date-due":null
-    owner:"~talsur-todres"
+    date_created:new Date('2015-8-18')
+    date_modified:new Date('2015-8-18')
+    date_due:null
+    owner:"talsur-todres"
     audience:["~doznec/tlon"]
-    status:"working"
+    status:"accepted"
     tags:['home']
     title:'sleep'
     description:'go get some sleep.'
     discussion:[]
-]
+
+_list = ["0v0","0v1","0v2"]
 _listening = []
 _filters = 
   owner:null
@@ -60,7 +64,7 @@ _filters =
 _sorts =
   title:0
   owner:0
-  "date-due":0
+  date_due:0
   sort:0
 
 WorkStore = assign {},EventEmitter.prototype,{
@@ -69,27 +73,26 @@ WorkStore = assign {},EventEmitter.prototype,{
   removeChangeListener: (cb) -> @removeListener "change", cb
   
   getData: ({sort,tasks})->
-    _tasks = _.clone tasks
-    for {id},i in _list when got = _tasks[id]
-      delete _tasks[id]
-      _list[i] = @itemFromData got,i
-    sort.map (k,index)=> 
-      if _tasks[k]
-        @newItem {item:_tasks[k],index}
+    sort.map (id,index)=> 
+      unless _tasks[id]
+        _list.splice index, 0, id
+      if tasks[id]  # XX client-side defaults
+        _tasks[id] = @itemFromData tasks[id], index
   
   getList: (key) -> 
     list = []
-    for k,v of _list
+    for id in _list
+      task = _tasks[id]
       add = true
-      for _k,_v of _filters
-        if _v is null then continue
-        c = v[_k]
+      for atr,v of _filters
+        if v is null then continue
+        c = task[atr]
         if typeof(c) is 'object'
-          if _.intersection(c,_v).length is 0 then add = false
+          if _.intersection(c,v).length is 0 then add = false
         else
-          if c isnt _v then add = false
+          if c isnt v then add = false
       if add is true
-        list.push v
+        list.push task
     if _.uniq(_.values(_sorts)).length > 0
       for k,v of _sorts
         if v isnt 0
@@ -99,30 +102,36 @@ WorkStore = assign {},EventEmitter.prototype,{
     list
 
   getListening: -> _listening
-
   getFilters: -> _filters
-
   setFilter: ({key,val}) -> _filters[key] = val
-
   getSorts: -> _sorts
-
   setSort: ({key,val}) -> 
     for k,v of _sorts
       _sorts[k] = 0
     _sorts[key] = val
-
+  
+  canSort: ->
+    for k,v of _sorts
+      if k is "sort" and v is 1
+        return true
+      else if v isnt 0
+        return false 
+    true
     
   itemFromData: (item,index=0)->
     _item = _.extend {sort:index}, item
-    _item["date-modified"] =  new Date item["date-modified"]
-    _item["date-created"] =   new Date item["date-created"]
-    _item["date-due"] =       new Date item["date-due"] if item["date-due"]?
-    _item.done =              new Date item.done if item.done?
+    _item.date_modified =  new Date item.date_modified
+    _item.date_created =   new Date item.date_created
+    _item.date_due =       new Date item.date_due if item.date_due?
+    _item.done =           new Date item.done if item.done?
+    _item.discussion = item.discussion.map ({ship,body,date}) ->
+                                            {ship,body,date: new Date date}
     _item
-    
-  newItem: ({item,index}) -> _list.splice index,0,@itemFromData item,index
-  swapItem: ({to,from}) -> _list.splice to,0,_list.splice(from,1)[0]
-  removeItem: ({index}) ->  _list.splice index,1
+
+  moveItems: ({list,to,from}) ->
+    _tasks[_list[from]].sort = _tasks[_list[to]].sort
+    _list = list
+  removeItem: ({index}) -> _list.splice index,1
 
 }
 
