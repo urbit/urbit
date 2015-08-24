@@ -68,7 +68,17 @@ module.exports = {
       }
     });
   },
-  addItem: function(arg, val) {
+  setAudience: function(arg, val) {
+    var id;
+    id = arg.id;
+    return Persistence.put({
+      audience: {
+        id: id,
+        to: val
+      }
+    });
+  },
+  addComment: function(arg, val) {
     var id, version;
     id = arg.id, version = arg.version;
     version += 1;
@@ -165,14 +175,28 @@ rece = React.createElement;
 ref = React.DOM, div = ref.div, h1 = ref.h1, label = ref.label;
 
 module.exports = recl({
-  _onKeyDown: function(e) {
+  onClick: function(e) {
+    var b;
+    switch (this.props.filters['done']) {
+      case null:
+        b = true;
+        break;
+      case true:
+        b = false;
+        break;
+      case false:
+        b = null;
+    }
+    return this.props.onChange('done', b);
+  },
+  onKeyDown: function(e) {
     if (e.keyCode === 13) {
       e.stopPropagation();
       e.preventDefault();
       return this.change(e);
     }
   },
-  _onBlur: function(e) {
+  onBlur: function(e) {
     return this.change(e);
   },
   change: function(e) {
@@ -198,6 +222,10 @@ module.exports = recl({
   },
   fields: [
     {
+      filter: 'done',
+      key: 'done',
+      title: ''
+    }, {
       filter: 'owned',
       key: 'owner',
       title: 'Owner:'
@@ -220,20 +248,25 @@ module.exports = recl({
       className: 'filters'
     }, this.fields.map((function(_this) {
       return function(arg) {
-        var filter, key, title;
+        var filter, input, key, title;
         filter = arg.filter, key = arg.key, title = arg.title;
+        input = div({
+          contentEditable: true,
+          className: 'input ib',
+          onKeyDown: _this.onKeyDown,
+          onBlur: _this.onBlur
+        }, _this.props.filters[filter]);
+        if (filter === 'done') {
+          input = div({
+            className: 'input-bool ib ' + _this.props.filters[key],
+            onClick: _this.onClick
+          }, "");
+        }
         return div({
           key: key,
           'data-key': key,
           className: filter + " filter ib"
-        }, [
-          label({}, title), div({
-            contentEditable: true,
-            className: 'input ib',
-            onKeyDown: _this._onKeyDown,
-            onBlur: _this._onBlur
-          }, _this.props.filters[filter])
-        ]);
+        }, [label({}, title), input]);
       };
     })(this)));
   }
@@ -424,7 +457,7 @@ module.exports = recl({
     return this.props._focus(e, this);
   },
   _markDone: function(e) {
-    return WorkActions.setItem(this.props.item, 'done', true);
+    return WorkActions.setItem(this.props.item, 'done', this.props.item.done == null);
   },
   _changeStatus: function(e) {
     var own;
@@ -443,16 +476,25 @@ module.exports = recl({
     return WorkActions.ownItem(this.props.item, own);
   },
   _submitComment: function(e) {
-    var $t, val;
-    $t = $(e.target).closest('.item');
-    val = $t.find('.comment .input').text();
-    return WorkActions.addItem(this.props.item, val);
+    var $input, val;
+    $input = $(e.target).closest('.item').find('.comment .input');
+    val = $input.text();
+    if (val.length === 0) {
+      return;
+    }
+    WorkActions.addComment(this.props.item, val);
+    return $input.text('');
   },
-  formatDate: function(d) {
+  formatDate: function(d, l) {
+    var _d;
     if (d === null) {
       return "";
     }
-    return "~" + (d.getFullYear()) + "." + (d.getMonth() + 1) + "." + (d.getDate());
+    _d = "~" + (d.getFullYear()) + "." + (d.getMonth() + 1) + "." + (d.getDate());
+    if (l) {
+      _d += ".." + (d.getHours()) + "." + (d.getMinutes()) + "." + (d.getSeconds());
+    }
+    return _d;
   },
   formatOwner: function(o) {
     if (o === null) {
@@ -493,12 +535,21 @@ module.exports = recl({
     }, props);
     return this.renderField(key, _props, format);
   },
+  componentDidMount: function() {
+    var formatDate;
+    formatDate = this.formatDate;
+    return setInterval(function() {
+      return $('.new.comment .date').text(formatDate(new Date(), true));
+    }, 1000);
+  },
   render: function() {
-    var action, itemClass;
+    var action, discussion, itemClass;
     itemClass = 'item';
     if (this.state.expand) {
       itemClass += ' expand';
     }
+    discussion = _.clone(this.props.item.discussion);
+    discussion.reverse();
     action = "";
     if (this.props.item.status === 'announced') {
       action = "claim";
@@ -531,7 +582,7 @@ module.exports = recl({
       ]), div({
         className: 'sort ib top'
       }, this.props.item.sort), div({
-        className: 'done ib',
+        className: 'done ib done-' + (this.props.item.done != null),
         onClick: this._markDone
       }, ''), this.renderTopField('title', {
         onFocus: this.onFocus,
@@ -560,7 +611,7 @@ module.exports = recl({
       }, [
         div({
           className: "comments"
-        }, this.props.item.discussion.map((function(_this) {
+        }, discussion.map((function(_this) {
           return function(slug) {
             return div({
               className: 'comment'
@@ -571,7 +622,7 @@ module.exports = recl({
                 className: 'ship ib'
               }, slug.ship), div({
                 className: 'date ib'
-              }, _this.formatDate(slug.date)), div({
+              }, _this.formatDate(slug.date, true)), div({
                 className: 'body'
               }, slug.body)
             ]);
@@ -585,7 +636,7 @@ module.exports = recl({
             className: 'ship ib'
           }, window.urb.ship), div({
             className: 'date ib'
-          }, this.formatDate(new Date())), div({
+          }, this.formatDate(new Date(), true)), div({
             contentEditable: true,
             className: 'input'
           }, ""), div({
@@ -1419,6 +1470,7 @@ _list = ["0v0", "0v1", "0v2"];
 _listening = [];
 
 _filters = {
+  done: null,
   owner: null,
   tags: null,
   audience: null,
@@ -1426,10 +1478,10 @@ _filters = {
 };
 
 _sorts = {
+  sort: 0,
   title: 0,
   owner: 0,
-  date_due: 0,
-  sort: 0
+  date_due: 0
 };
 
 WorkStore = assign({}, EventEmitter.prototype, {
@@ -1457,26 +1509,41 @@ WorkStore = assign({}, EventEmitter.prototype, {
     })(this));
   },
   getList: function(key) {
-    var add, atr, c, i, id, k, len, list, task, v;
+    var _k, _v, add, c, i, id, k, len, list, task, v;
     list = [];
     for (i = 0, len = _list.length; i < len; i++) {
       id = _list[i];
       task = _tasks[id];
       add = true;
-      for (atr in _filters) {
-        v = _filters[atr];
-        if (v === null) {
+      for (_k in _filters) {
+        _v = _filters[_k];
+        if (_v === null) {
           continue;
         }
-        c = task[atr];
-        if (typeof c === 'object') {
-          if (_.intersection(c, v).length === 0) {
-            add = false;
-          }
-        } else {
-          if (c !== v) {
-            add = false;
-          }
+        c = task[_k];
+        switch (_k) {
+          case 'tags' || 'audience':
+            if (_.intersection(c, _v).length === 0) {
+              add = false;
+            }
+            break;
+          case 'owner':
+            if (c !== _v.replace(/\~/g, "")) {
+              add = false;
+            }
+            break;
+          case 'done':
+            if (_v === true && !c) {
+              add = false;
+            }
+            if (_v === false && c) {
+              add = false;
+            }
+            break;
+          default:
+            if (c !== _v) {
+              add = false;
+            }
         }
       }
       if (add === true) {
