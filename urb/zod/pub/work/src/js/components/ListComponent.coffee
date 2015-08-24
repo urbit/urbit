@@ -96,6 +96,8 @@ module.exports = recl
 
   _changeSort: (key,val) -> WorkActions.setSort key,val
 
+  updated: false
+
   componentDidMount: -> 
     @placeholder = $ "<div class='item placeholder'><div class='sort'>x</div></div>"
     WorkStore.addChangeListener @_onChangeStore
@@ -103,6 +105,10 @@ module.exports = recl
     @alias()
 
   componentDidUpdate: -> 
+    if @updated is false
+      @updated = true
+      console.log 'first update'
+      console.log @state.list
     @alias()
     if @state.selected isnt undefined or @state.select
       $title = @$items.eq(@state.selected).find('.title .input')
