@@ -13,7 +13,7 @@
          sort/[%a (turn sort |=(a=@uv [%s (scot %uv a)]))]
     =<  tasks/(jobe (turn (~(tap by tasks)) .))
     |=  [@ client-task]
-    =+  task
+    =+  tax
     :-  (scot %uv id)
     %-  jobe  :~  id/[%s (scot %uv id)]
                 tags/[%a (turn (~(tap in tags)) |=(a=cord s/a))]

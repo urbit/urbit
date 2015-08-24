@@ -34,7 +34,10 @@ module.exports =
     version += 1
     Persistence.put old:{id,version,dif:own:o}
 
-  addItem: ({id,version},val) ->
+  setAudience: ({id},val) ->
+    Persistence.put audience:{id,to:val}
+
+  addComment: ({id,version},val) ->
     version += 1
     Persistence.put old:{id,version,dif:add:comment:val}
 

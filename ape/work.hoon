@@ -1,4 +1,13 @@
-::  not implemented:  set audience
+::  also check if talk can add stations to something other than porch
+::    it can't
+::  maybe look into storing a "following" set
+::  make most updates not rely on knowing about task (all but claim?)
+::  should let non-owners suggest that owner cross-post to another
+::    station
+::
+::  pretty-print in command-line interface
+::  serialize %lax to json
+::  bring up ~dozbud to test
 ::
 ::::
   ::
@@ -24,28 +33,27 @@
   ::
 |_  [bowl client connected=_|]
 ++  at
-  |=  [claiming=? audience=(set station:talk) task]
-  =*  tax  +<+>
+  |=  client-task
   =|  moves=(list move)
   |%
   ++  abet
     ^-  [(list move) _+>.$]
-    [(flop moves) +>.$(tasks (~(put by tasks) id +<.$))]
+    [(flop moves) +>.$(tasks (~(put by tasks) id.tax +<.$))]
   ::
   ++  abut
     ^-  [(list move) _+>.$]
     [(flop moves) +>.$]
   ::
-  ++  send
-    |=  action=duty:work-stuff:talk
+  ++  send-audience
+    |=  [to=(set station:talk) action=duty:work-stuff:talk]
     ^+  +>
     %_    +>.$
         eny    (sham eny action)
         moves
-      :_  ~
+      :_  moves
       ^-  move
       :*  ost  %poke
-          /sending/(scot %uv id)/(scot %ud version)
+          /sending/(scot %uv id.tax)/(scot %ud version.tax)
           [our %talk]
           %talk-command
           ^-  command:talk
@@ -54,36 +62,25 @@
           :_  ~
           :+  (shaf %task eny)
             %-  mo  ^-  (list ,[partner envelope delivery]:talk)
-            %+  turn  (~(tap in audience))
+            %+  turn  (~(tap in to))
             |=(sat=station:talk [[%& sat] [*envelope %pending]])
           [now *bouquet [%tax action]]
       ==
     ==
   ::
-  ++  claim
-    %_    .
-        eny       (sham eny %direct)
-        claiming  &
-        moves
-      :_  ~
-      ^-  move
-      :*  ost  %poke
-          /claiming/(scot %uv id)
-          [our %talk]
-          %talk-command
-          ^-  command:talk
-          :-  %publish
-          |-  ^-  (list thought)
-          :_  ~
-          :+  (shaf %task eny)
-            [[[%& owner (main owner)] [*envelope %pending]] ~ ~]
-          [now *bouquet [%tax %claim id]]
-      ==
-    ==
+  ++  send
+    |=  action=duty:work-stuff:talk
+    (send-audience audience action)
   ::
-  ++  create            %+  send  %create
-                        tax(date-created now, version 0, date-modified now)
-  ++  send-update       |*(* (send %update id +<))
+  ++  claim
+    (send-audience(claiming &) [[owner.tax (main owner.tax)] ~ ~] %claim id.tax)
+  ::
+  ++  send-archive
+    |=  to=(set station:talk)
+    (send-audience to %archive id.tax)
+  ::
+  ++  send-create       (send %create tax)
+  ++  send-update       |*(* (send %update id.tax +<))
   ++  release           |=([vers=@u her=@p] (send-update vers %release her))
   ++  accept            |=(vers=@u (send-update vers %accept ~))
   ++  process-update
@@ -103,13 +100,25 @@
         %description  (send-update vers %set-description +>.up)
         %tags         (send-update vers %set-tags +>.up)
         %done         (send-update vers %set-done +>.up)
-        %audience     ~|(%not-implemented !!)
       ==
     ==
+  ++  process-audience
+    |=  to=(set station:talk)
+    ^+  +>
+    =.  +>.$  (send-archive (~(dif in audience) to))
+    =.  +>.$  (send-audience (~(dif in to) audience) %create tax)
+    +>.$(audience to)
   --
+::
+++  prep
+  |=  [old=(unit (pair client ,_|))]
+  ^-  [(list move) _+>.$]
+  initialize(+<+ ?~(old +<+.+>.$ u.old))
 ::
 ++  initialize
   ^-  [(list move) _.]
+  ?:  connected
+    [~ .]
   :_  .(connected %&)  :_  ~
   [ost %peer /peering [our %talk] /f/(main our)/0]
 ::
@@ -117,20 +126,22 @@
   |=  [when=@da her=ship from=(set station:talk) action=duty:work-stuff:talk]
   ^-  [(list move) _+>.$]
   =-  =^  mof  con  mirror-to-web:con
-      [(welp mos mof) con]
+      [(welp mof mos) con]
   ^-  [mos=(list move) con=_+>.$]
   ?-    -.action
-      %create                         ::  XX  should verify ownership
+      %create
     =+  existing-task=(~(get by tasks) id.tax.action)
-    ~?  ?&  ?=(^ existing-task)
-            !=(tax.action task.u.existing-task)
+    ?:  ?&  ?=(^ existing-task)
+            !=(tax.action tax.u.existing-task)
+            !archived.u.existing-task
         ==
-      :*  %new-task-with-old-id
-          her=her
-          from=from
-          new-task=tax.action
-          existing-task=u.existing-task
-      ==
+      ~&  :*  %new-task-with-old-id
+              her=her
+              from=from
+              new-task=tax.action
+              existing-task=u.existing-task
+          ==
+      [~ +>.$]
     ?.  |(=(her owner.tax.action) =(%released status.tax.action))
       ~&  :*  %created-with-bad-owner
               her=her
@@ -139,17 +150,9 @@
               existing-task=existing-task
           ==
       [~ +>.$]
-    ?.  =(0 version.tax.action)
-      ~&  :*  %new-task-version-not-zero
-              her=her
-              from=from
-              new-task=tax.action
-              existing-task=existing-task
-          ==
-      [~ +>.$]
     =.  tasks
-      %^  ~(put by tasks)  id.tax.action  |  
-      :_  tax.action
+      %^  ~(put by tasks)  id.tax.action  |
+      :-  |  :_  tax.action
       ?~  existing-task  from
       (~(uni in audience.u.existing-task) from)
     =.  sort  ?^(existing-task sort [id.tax.action sort])
@@ -157,14 +160,40 @@
   ::
       %claim
     =+  tax=(~(got by tasks) id.action)
-    ?.  &(=(our owner.task.tax) =(%announced status.task.tax))
+    ?.  &(=(our owner.tax.tax) =(%announced status.tax.tax))
       ~&  :*  %bad-claim
               her=her
               from=from
               task=tax
           ==
       [~ +>.$]
-    abet:(release:(at (~(got by tasks) id.action)) +(version.task.tax) her)
+    abet:(release:(at (~(got by tasks) id.action)) +(version.tax.tax) her)
+  ::
+      %archive
+    =+  tax=(~(get by tasks) id.action)
+    ?~  tax
+      ~&  :*  %archive-for-nonexistent-task
+              her=her
+              from=from
+              action=action
+          ==
+      [~ +>.$]
+    ?:  !=(her owner.tax.u.tax)
+      ~&  :*  %archiver-not-owner
+              her=her
+              from=from
+              action=action
+              tax=tax
+          ==
+      [~ +>.$]
+    =.  tasks
+      %+  ~(put by tasks)  id.action
+      :*  claiming.u.tax
+          =(~ (~(dif in audience.u.tax) from))
+          (~(dif in audience.u.tax) from)
+          tax.u.tax
+      ==
+    [~ +>.$]
   ::
       %update
     =+  tax=(~(get by tasks) id.action)
@@ -175,7 +204,7 @@
               action=action
           ==
       [~ +>.$]
-    ?.  =(version.action +(version.task.u.tax))
+    ?.  =(version.action +(version.tax.u.tax))
       ~&  :*  %update-bad-version
               her
               from=from
@@ -183,42 +212,47 @@
               tax=tax
           ==
       [~ +>.$]
-    =.  tasks
-      %^  ~(put by tasks)  id.action
-        ?:  ?=(%release -.meat.action)
-          |
-        claiming.u.tax
-      :-  (~(uni in audience.u.tax) from)
-      ?:  ?&  ?=(?(%announce %release %accept) -.meat.action)
-              !=(her owner.task.u.tax)
+    ?:  ?&  ?=(?(%announce %release %accept) -.meat.action)
+            !=(her owner.tax.u.tax)
+        ==
+      ~&  :*  %not-owner
+              her=her
+              from=from
+              action=action
+              tax=tax
           ==
-        ~&  :*  %not-owner
-                her=her
-                from=from
-                action=action
-                tax=tax
-            ==
-        task.u.tax
-      =.  version.task.u.tax        version.action
-      =.  date-modified.task.u.tax  when
-      ?-    -.meat.action
-        %announce         task.u.tax(status %announced)
-        %release          task.u.tax(owner her.meat.action, status %released)
-        %accept           task.u.tax(status %accepted)
-        %set-date-due     task.u.tax(date-due wen.meat.action)
-        %set-tags         task.u.tax(tags tag.meat.action)
-        %set-title        task.u.tax(title til.meat.action)
-        %set-description  task.u.tax(description des.meat.action)
-        %set-done         task.u.tax(done ?.(don.meat.action ~ `when))
-        %add-comment
-          %=  task.u.tax
-            discussion  [[when her com.meat.action] discussion.task.u.tax]
+      [~ +>.$]
+    =.  tasks
+      %+  ~(put by tasks)  id.action
+      :*  ?:  ?=(%release -.meat.action)
+            |
+          claiming.u.tax
+      ::
+          archived.u.tax
+      ::
+          (~(uni in audience.u.tax) from)
+      ::
+          =.  version.tax.u.tax        version.action
+          =.  date-modified.tax.u.tax  when
+          ?-    -.meat.action
+            %announce         tax.u.tax(status %announced)
+            %release          tax.u.tax(owner her.meat.action, status %released)
+            %accept           tax.u.tax(status %accepted)
+            %set-date-due     tax.u.tax(date-due wen.meat.action)
+            %set-tags         tax.u.tax(tags tag.meat.action)
+            %set-title        tax.u.tax(title til.meat.action)
+            %set-description  tax.u.tax(description des.meat.action)
+            %set-done         tax.u.tax(done ?.(don.meat.action ~ `when))
+            %add-comment
+              %=  tax.u.tax
+                discussion  [[when her com.meat.action] discussion.tax.u.tax]
+              ==
           ==
       ==
     ?:  ?&  =([%release our] meat.action)
             claiming.u.tax
         ==
-      abet:(accept:(at (~(got by tasks) id.action)) +(+(version.task.u.tax)))
+      abet:(accept:(at (~(got by tasks) id.action)) +(+(version.tax.u.tax)))
     [~ +>.$]
   ==
 ::
@@ -249,18 +283,20 @@
   |=  cod=command
   ?.  =(our src)
     ~|([%wrong-user our=our src=src] !!)
-  =^  mos  +>.$
-    ?:  connected
-      [~ +>.$]
-    initialize
-  =^  mof  +>.$
-    ?-  -.cod
-      %new    abut:create:(at [| - +]:+.cod)
-      %old    =+  (at (~(got by tasks) id.cod))
-              abet:(process-update:- version.cod dif.cod)
-      %sort   mirror-to-web(sort p.cod)
-    ==
-  [(welp mos mof) +>.$]
+  ?-  -.cod
+    %sort       mirror-to-web(sort p.cod)
+    %audience
+      =^  mow  +>.$
+        abet:(process-audience:(at (~(got by tasks) id.cod)) to.cod)
+      =^  mov  +>.$  mirror-to-web
+      [(welp mov mow) +>.$]
+    %old
+      =+  (at (~(got by tasks) id.cod))
+      abet:(process-update:- version.cod dif.cod)
+    %new
+      =.  +>.cod  +>.cod(date-created now, version 0, date-modified now)
+      abut:send-create:(at | | +.cod)
+  ==
 ::
 ::  XX  maybe need to check that we haven't received this message before
 ::      by keeping a counter of last message received
