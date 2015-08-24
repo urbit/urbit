@@ -1,9 +1,91 @@
 recl = React.createClass
+rece = React.createElement
 {div,textarea} = React.DOM
 
 WorkActions   = require '../actions/WorkActions.coffee'
 
+Field = recl
+  displayName: 'Field'
+  getInitialState: -> invalid:no
+  shouldComponentUpdate: (props)->
+    while @oldValue?.length
+      if @oldValue[0] is props.defaultValue
+        return false
+      else @oldValue.shift()
+    true
+  
+  render: ->
+    className = "#{@props.className ? @props._key} field ib"
+    if @state.invalid then className += " invalid"
+    elem = @props.elem ? "div"
+
+    props = _.extend {}, @props, {
+      @onKeyUp
+      ref:'input'
+      defaultValue: @props.render @props.defaultValue
+      className: 'input ib'
+    }
+
+    div {className},
+      if elem is 'textarea' then (textarea props)
+      else
+        props.contentEditable = true
+        (rece elem, props, props.defaultValue)
+
+  onKeyUp: (e) ->
+    $t = $(e.target).closest '.field'
+    val = @parse @getVal()
+    unless @validate val
+      @setState invalid:yes
+      return
+    @setState invalid:no
+    
+    unless @equal @props.defaultValue, val
+    
+      @oldValue ?= []
+      @oldValue.push val
+      if @to then clearTimeout @to
+      @to = setTimeout => 
+          WorkActions.setItem @props.item,@props._key,val
+        ,1000
+
+  getVal: ->
+    if @props.elem is 'textarea'
+      $(@refs.input.getDOMNode()).val()
+    else $(@refs.input.getDOMNode()).text()
+      
+  parse : (text)-> switch @props._key
+    when 'tags'      then text.trim().split(" ")
+    when 'audience'  then text.trim().split(" ").map (a) -> "~#{a}"
+    when 'date_due'
+      d = text.slice(1).replace(/\./g, "-")
+      return NaN if d.length < 8
+      new Date(d).valueOf()
+    else text
+      
+
+  equal: (vol,val) -> switch @props._key
+    when 'tags', 'audience'
+      (_.xor(vol,val).length is 0)
+    when 'date_due'
+      vol.valueOf() is val
+    else vol is val
+
+  validate: (val) -> switch @props._key
+    when 'date_due'
+      !isNaN(val)
+    when 'audience'
+      for a in val
+        [ship,station,rest...] = a.split("/")
+        return no unless (rest.length is 0) and ship and station
+        return no if ship[0] isnt "~"             
+        return no if ship < 3
+        return no if station < 3
+      yes
+    else yes
+
 module.exports = recl
+  displayName: 'Item'
   onDragStart: (e) ->
     unless @props.draggable
       e.preventDefault()
@@ -17,7 +99,7 @@ module.exports = recl
   onDragEnd: (e) -> @props._dragEnd e,@
 
   onKeyDown: (e) -> 
-    @props._keyDown e,@
+    @props.title_keyDown e,@
 
     kc = e.keyCode
 
@@ -33,64 +115,6 @@ module.exports = recl
     if (kc is 9 and @state.expand is false) or (kc is 27) 
       e.preventDefault()
       return
-
-  getVal: ($el,key) ->
-    if $el[0].tagName is 'TEXTAREA'
-      return $el.val()
-    else
-      if key is 'date_due'
-        d = $el.text().slice(1).replace(/\./g, "-")
-        return NaN if d.length < 8
-        return new Date(d).valueOf()      
-      if key is 'tags'
-        return $el.text().trim().split(" ")
-      if key is 'audience'
-        a = $el.text().trim().split(" ")
-        a = a.map (_a) -> "~#{_a}"
-        return a
-      return $el.text()
-
-  compareVal: (l,n,key) ->
-    if key is 'tags' or key is 'audience'
-      return (_.xor(l,n).length > 0)
-    if key is 'date_due'
-      return l isnt new Date(n)
-    l isnt n
-
-  validateField: ($t,key,val) ->
-    valid = 1
-    if key is 'date_due'
-      valid = 0 if isNaN(val)
-    if key is 'audience'
-      i = _.filter val,(a) -> 
-        if a[0] isnt "~"
-          return 0
-        if a.split("/").length < 2
-          return 0
-        if a.split("/")[0].length < 3 or
-        a.split("/")[1].length < 3
-          return 0
-        1
-      valid = 0 if i.length isnt val.length
-    valid
-
-  onKeyUp: (e) ->
-    $t = $(e.target).closest '.field'
-    key = $t.attr 'data-key'
-    val = @getVal $t.find('.input'),key
-
-    if @compareVal @props.item[key],val,key
-      if not @validateField($t,key,val) 
-        $t.addClass 'invalid'
-        return
-      $t.removeClass 'invalid'
-      if @to then clearTimeout @to
-      @to = setTimeout =>
-          if key is 'audience'
-            WorkActions.setAudience @props.item,val
-          else
-            WorkActions.setItem @props.item,key,val
-        ,1000
 
   onFocus: (e) -> @props._focus e,@
 
@@ -124,15 +148,15 @@ module.exports = recl
     return "" if o is null
     o.replace /\~/g,""
 
-  formatAudience: (a) ->
-    @formatOwner a.join(" ")
+  formatAudience: (a) -> @formatOwner a.join(" ")
 
   getInitialState: -> {expand:false}
 
-  renderField: (key,props,format=_.identity)->
-    _props = _.extend {}, props, {contentEditable:true,className:'input ib'}
-    className = "#{props.className ? key} field ib"
-    (div {className,'data-key':key}, (div _props, format(@props.item[key])))
+  renderField: (_key,props,render=_.identity)->
+    {id,version} = @props.item
+    item = {id,version}
+    defaultValue =  @props.item[_key]
+    rece Field, $.extend props, {render,_key,item,defaultValue}
   
   renderTopField: (key,props,format)->
     _props = _.extend {className:"#{props.className ? key} top"}, props
@@ -174,19 +198,19 @@ module.exports = recl
                 (div {className:'label'}, @props.item.status)
                 (div {className:'action a'}, action)
               ])
-            (@renderField 'audience', {@onKeyUp}, @formatAudience) # no onKeyUp?
+            (@renderField 'audience', {}, @formatAudience)
           ])
         (div {className:'sort ib top'}, @props.item.sort)
         (div {className:'done ib done-'+@props.item.done?, onClick:@_markDone}, '')
-        (@renderTopField 'title', {@onFocus,@onKeyDown,@onKeyUp})
-        (@renderField 'date_due', {@onKeyUp,className:'date top'}, @formatDate)
-        (@renderTopField 'tags', {@onKeyUp}, (tags)-> tags.join(" "))
+        (@renderTopField 'title', {@onFocus,@onKeyDown})
+        (@renderTopField 'date_due', {className:'date'}, @formatDate)
+        (@renderTopField 'tags', {}, (tags)-> tags.join(" "))
         (div {
           className:'expand ib',
           onClick: (e) => @setState {expand:!@state.expand}
           }, (div {className:'caret left'},"")
         )
-        (@renderField 'description',{@onKeyUp})
+        (@renderField 'description',elem: "textarea")
       
         (div {className:"hr"},"")
         (div {className:"discussion"},[

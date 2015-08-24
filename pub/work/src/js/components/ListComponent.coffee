@@ -27,7 +27,7 @@ module.exports = recl
     @$el = $ @getDOMNode()
     @$items = @$el.find('.items').children()
 
-  _focus: (e,i) -> @setState {selected:i.props.index)}
+  _focus: (e,i) -> @setState {selected:i.props.index}
 
   _dragStart: (e,i) -> @dragged = i.dragged
 
@@ -54,7 +54,7 @@ module.exports = recl
       @drop = 'after'
       @placeholder.insertAfter $t
 
-  _keyDown: (e) ->
+  title_keyDown: (e) ->
     kc = e.keyCode
 
     switch kc
@@ -145,7 +145,7 @@ module.exports = recl
                 item
                 index
                 @_focus
-                @_keyDown
+                @title_keyDown
                 draggable:@state.canSort
                 @_dragStart
                 @_dragEnd})
