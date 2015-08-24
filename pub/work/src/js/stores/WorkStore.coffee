@@ -57,6 +57,10 @@ WorkStore = assign {},EventEmitter.prototype,{
       if v is -1 then list.reverse()
     list
 
+  newItem: ({index,item}) ->
+    _list.splice index,0,item.id
+    _tasks[item.id] = item
+
   getListening: -> _listening
   getFilters: -> _filters
   setFilter: ({key,val}) -> _filters[key] = val

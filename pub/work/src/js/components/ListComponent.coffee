@@ -105,11 +105,8 @@ module.exports = recl
     @alias()
 
   componentDidUpdate: -> 
-    if @updated is false
-      @updated = true
-      console.log 'first update'
-      console.log @state.list
     @alias()
+    @updated = true if @updated is false
     if @state.selected isnt undefined or @state.select
       $title = @$items.eq(@state.selected).find('.title .input')
     if @state.selected isnt undefined and @state.select
@@ -125,6 +122,9 @@ module.exports = recl
       @setState {select:false}
 
   render: ->
+    if @updated is true and @state.list.length is 0 
+      WorkActions.newItem 0
+
     (div {}, [
       (div {className:'ctrl'}, [
         rece(ListeningComponent, {

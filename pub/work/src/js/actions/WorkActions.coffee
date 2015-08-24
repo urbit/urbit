@@ -18,15 +18,21 @@ module.exports =
       discussion:     _item.discussion  ? []
       audience:       _item.audience    ?
         [window.util.talk.mainStationPath window.urb.ship]
-    Persistence.put new:item
-    Dispatcher.handleViewAction {type:'newItem', index, item}
+    Dispatcher.handleViewAction {type:'newItem',index,item}
 
-  setItem: ({id,version},key,val) ->
-    set = {}
-    key = key.split('_').join '-'
-    set[key] = val
-    version += 1
-    Persistence.put old:{id,version,dif:{set}}
+  setItem: (item,key,val) ->
+    item.version += 1
+    if item.version is 1
+      item[key] = val
+      item.created = Number item.created
+      item.date_modified = Number item.date_modified
+      item.date_created = Number item.date_created
+      Persistence.put new:item
+    else
+      set = {}
+      key = key.split('_').join '-'
+      set[key] = val
+      Persistence.put old:{id:item.id,version:item.version,dif:{set}}
 
   ownItem: ({id,version},own) ->
     o = {}
@@ -48,9 +54,6 @@ module.exports =
     sort.splice to, 0, sort.splice(from,1)[0]
     Persistence.put {sort}
     Dispatcher.handleViewAction {list:sort,to,from,type:'moveItems'}  
-
-  addItem: (index,item) ->
-    Dispatcher.handleViewAction {type:'addItem',index,item}
     
   removeItem: ({id,version},index) ->
     version += 1

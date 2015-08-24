@@ -26,31 +26,37 @@ module.exports = {
       discussion: (ref6 = _item.discussion) != null ? ref6 : [],
       audience: (ref7 = _item.audience) != null ? ref7 : [window.util.talk.mainStationPath(window.urb.ship)]
     };
-    Persistence.put({
-      "new": item
-    });
     return Dispatcher.handleViewAction({
       type: 'newItem',
       index: index,
       item: item
     });
   },
-  setItem: function(arg, key, val) {
-    var id, set, version;
-    id = arg.id, version = arg.version;
-    set = {};
-    key = key.split('_').join('-');
-    set[key] = val;
-    version += 1;
-    return Persistence.put({
-      old: {
-        id: id,
-        version: version,
-        dif: {
-          set: set
+  setItem: function(item, key, val) {
+    var set;
+    item.version += 1;
+    if (item.version === 1) {
+      item[key] = val;
+      item.created = Number(item.created);
+      item.date_modified = Number(item.date_modified);
+      item.date_created = Number(item.date_created);
+      return Persistence.put({
+        "new": item
+      });
+    } else {
+      set = {};
+      key = key.split('_').join('-');
+      set[key] = val;
+      return Persistence.put({
+        old: {
+          id: item.id,
+          version: item.version,
+          dif: {
+            set: set
+          }
         }
-      }
-    });
+      });
+    }
   },
   ownItem: function(arg, own) {
     var id, o, version;
@@ -120,13 +126,6 @@ module.exports = {
       to: to,
       from: from,
       type: 'moveItems'
-    });
-  },
-  addItem: function(index, item) {
-    return Dispatcher.handleViewAction({
-      type: 'addItem',
-      index: index,
-      item: item
     });
   },
   removeItem: function(arg, index) {
@@ -505,20 +504,15 @@ module.exports = recl({
     };
   },
   renderField: function(_key, props, render) {
-    var defaultValue, id, item, ref1, version;
+    var defaultValue;
     if (render == null) {
       render = _.identity;
     }
-    ref1 = this.props.item, id = ref1.id, version = ref1.version;
-    item = {
-      id: id,
-      version: version
-    };
     defaultValue = this.props.item[_key];
     return rece(Field, $.extend(props, {
       render: render,
       _key: _key,
-      item: item,
+      item: this.props.item,
       defaultValue: defaultValue
     }));
   },
@@ -808,12 +802,10 @@ module.exports = recl({
   },
   componentDidUpdate: function() {
     var $title, r, s;
+    this.alias();
     if (this.updated === false) {
       this.updated = true;
-      console.log('first update');
-      console.log(this.state.list);
     }
-    this.alias();
     if (this.state.selected !== void 0 || this.state.select) {
       $title = this.$items.eq(this.state.selected).find('.title .input');
     }
@@ -835,6 +827,9 @@ module.exports = recl({
     }
   },
   render: function() {
+    if (this.updated === true && this.state.list.length === 0) {
+      WorkActions.newItem(0);
+    }
     return div({}, [
       div({
         className: 'ctrl'
@@ -1504,6 +1499,12 @@ WorkStore = assign({}, EventEmitter.prototype, {
       }
     }
     return list;
+  },
+  newItem: function(arg) {
+    var index, item;
+    index = arg.index, item = arg.item;
+    _list.splice(index, 0, item.id);
+    return _tasks[item.id] = item;
   },
   getListening: function() {
     return _listening;

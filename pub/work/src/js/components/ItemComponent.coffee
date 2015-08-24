@@ -62,7 +62,6 @@ Field = recl
       return NaN if d.length < 8
       new Date(d).valueOf()
     else text
-      
 
   equal: (vol,val) -> switch @props._key
     when 'tags', 'audience'
@@ -153,10 +152,8 @@ module.exports = recl
   getInitialState: -> {expand:false}
 
   renderField: (_key,props,render=_.identity)->
-    {id,version} = @props.item
-    item = {id,version}
     defaultValue =  @props.item[_key]
-    rece Field, $.extend props, {render,_key,item,defaultValue}
+    rece Field, $.extend props, {render,_key,item:@props.item,defaultValue}
   
   renderTopField: (key,props,format)->
     _props = _.extend {className:"#{props.className ? key} top"}, props
