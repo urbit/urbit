@@ -1,8 +1,13 @@
 ::  also check if talk can add stations to something other than porch
+::    it can't
 ::  maybe look into storing a "following" set
 ::  make most updates not rely on knowing about task (all but claim?)
 ::  should let non-owners suggest that owner cross-post to another
 ::    station
+::
+::  pretty-print in command-line interface
+::  serialize %lax to json
+::  bring up ~dozbud to test
 ::
 ::::
   ::
@@ -121,7 +126,7 @@
   |=  [when=@da her=ship from=(set station:talk) action=duty:work-stuff:talk]
   ^-  [(list move) _+>.$]
   =-  =^  mof  con  mirror-to-web:con
-      [(welp mos mof) con]
+      [(welp mof mos) con]
   ^-  [mos=(list move) con=_+>.$]
   ?-    -.action
       %create
@@ -284,7 +289,7 @@
       =^  mow  +>.$
         abet:(process-audience:(at (~(got by tasks) id.cod)) to.cod)
       =^  mov  +>.$  mirror-to-web
-      [(welp mow mov) +>.$]
+      [(welp mov mow) +>.$]
     %old
       =+  (at (~(got by tasks) id.cod))
       abet:(process-update:- version.cod dif.cod)
