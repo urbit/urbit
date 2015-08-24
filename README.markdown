@@ -22,7 +22,7 @@ Pacakges
 
 #### Ubuntu or Debian
 
-Third-party pacakge files are maintained at https://github.com/yebyen/urbit-deb.
+Third-party pacakge files are maintained at https://github.com/yebyen/urbit-deb. Urbit is only supported on Jessie onward.
 
 #### OS X - Homebrew
 
@@ -51,7 +51,7 @@ urbit depends on:
 
     sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++ ragel cmake re2c
 
-*note: http requests are not supported on either debian wheezy or jessie
+*note: http requests are not supported on debian jessie
 due to an ssl issue*
 
 #### Fedora
