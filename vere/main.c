@@ -86,7 +86,7 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'I': {
-        u3_Host.ops_u.imp_c = strdup(optarg);
+        u3_Host.ops_u.imp_c = _main_presig(optarg);
         break;
       }
       case 'w': {
