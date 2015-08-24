@@ -40,8 +40,13 @@ module.exports =
     version += 1
     Persistence.put old:{id,version,dif:own:o}
 
-  setAudience: ({id},val) ->
-    Persistence.put audience:{id,to:val}
+  removeItem: ({id}) ->
+    Persistence.put audience:{id,to:[]}
+    Dispatcher.handleViewAction {type:'archiveItem',id}
+  
+  setAudience: ({id},to) ->
+    Persistence.put audience:{id,to}
+    Dispatcher.handleViewAction {type:'setAudienece',id,to}
 
   addComment: ({id,version},val) ->
     version += 1
@@ -54,11 +59,6 @@ module.exports =
     sort.splice to, 0, sort.splice(from,1)[0]
     Persistence.put {sort}
     Dispatcher.handleViewAction {list:sort,to,from,type:'moveItems'}  
-    
-  removeItem: ({id,version},index) ->
-    version += 1
-    Persistence.put audience:{id,to:[]}
-    Dispatcher.handleViewAction {type:'removeItem',index}
 
   listenList: (type)->
     Persistence.subscribe type, (err,d)-> 

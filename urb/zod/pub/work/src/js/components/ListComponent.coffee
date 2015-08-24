@@ -18,6 +18,7 @@ module.exports = recl
     sorts:WorkStore.getSorts()
     filters:WorkStore.getFilters()
     expand:false
+    updated:WorkStore.getUpdated()
   }
 
   getInitialState: -> @stateFromStore()
@@ -54,7 +55,7 @@ module.exports = recl
       @drop = 'after'
       @placeholder.insertAfter $t
 
-  title_keyDown: (e) ->
+  title_keyDown: (e,i) ->
     kc = e.keyCode
 
     switch kc
@@ -72,7 +73,7 @@ module.exports = recl
         e.target.innerText.length is 0
           if @state.selected isnt 0
             @setState {selected:@state.selected-1,select:"end"}
-          WorkActions.removeItem @state.list[@state.selected],@state.selected
+          WorkActions.removeItem i.props.item
           e.preventDefault()
       # up
       when 38
@@ -96,17 +97,14 @@ module.exports = recl
 
   _changeSort: (key,val) -> WorkActions.setSort key,val
 
-  updated: false
-
   componentDidMount: -> 
     @placeholder = $ "<div class='item placeholder'><div class='sort'>x</div></div>"
     WorkStore.addChangeListener @_onChangeStore
     WorkActions.listenList @props.list
     @alias()
 
-  componentDidUpdate: -> 
+  componentDidUpdate: (_props,_state)-> 
     @alias()
-    @updated = true if @updated is false
     if @state.selected isnt undefined or @state.select
       $title = @$items.eq(@state.selected).find('.title .input')
     if @state.selected isnt undefined and @state.select
@@ -122,9 +120,6 @@ module.exports = recl
       @setState {select:false}
 
   render: ->
-    if @updated is true and @state.list.length is 0 
-      WorkActions.newItem 0
-
     (div {}, [
       (div {className:'ctrl'}, [
         rece(ListeningComponent, {

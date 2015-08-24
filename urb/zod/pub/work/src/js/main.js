@@ -74,14 +74,33 @@ module.exports = {
       }
     });
   },
-  setAudience: function(arg, val) {
+  removeItem: function(arg) {
     var id;
     id = arg.id;
-    return Persistence.put({
+    Persistence.put({
       audience: {
         id: id,
-        to: val
+        to: []
       }
+    });
+    return Dispatcher.handleViewAction({
+      type: 'archiveItem',
+      id: id
+    });
+  },
+  setAudience: function(arg, to) {
+    var id;
+    id = arg.id;
+    Persistence.put({
+      audience: {
+        id: id,
+        to: to
+      }
+    });
+    return Dispatcher.handleViewAction({
+      type: 'setAudienece',
+      id: id,
+      to: to
     });
   },
   addComment: function(arg, val) {
@@ -126,21 +145,6 @@ module.exports = {
       to: to,
       from: from,
       type: 'moveItems'
-    });
-  },
-  removeItem: function(arg, index) {
-    var id, version;
-    id = arg.id, version = arg.version;
-    version += 1;
-    Persistence.put({
-      audience: {
-        id: id,
-        to: []
-      }
-    });
-    return Dispatcher.handleViewAction({
-      type: 'removeItem',
-      index: index
     });
   },
   listenList: function(type) {
@@ -668,7 +672,8 @@ module.exports = recl({
       listening: WorkStore.getListening(),
       sorts: WorkStore.getSorts(),
       filters: WorkStore.getFilters(),
-      expand: false
+      expand: false,
+      updated: WorkStore.getUpdated()
     };
   },
   getInitialState: function() {
@@ -734,7 +739,7 @@ module.exports = recl({
       return this.placeholder.insertAfter($t);
     }
   },
-  title_keyDown: function(e) {
+  title_keyDown: function(e, i) {
     var ins, kc, last, next;
     kc = e.keyCode;
     switch (kc) {
@@ -758,7 +763,7 @@ module.exports = recl({
               select: "end"
             });
           }
-          WorkActions.removeItem(this.state.list[this.state.selected], this.state.selected);
+          WorkActions.removeItem(i.props.item);
           e.preventDefault();
         }
         break;
@@ -793,19 +798,15 @@ module.exports = recl({
   _changeSort: function(key, val) {
     return WorkActions.setSort(key, val);
   },
-  updated: false,
   componentDidMount: function() {
     this.placeholder = $("<div class='item placeholder'><div class='sort'>x</div></div>");
     WorkStore.addChangeListener(this._onChangeStore);
     WorkActions.listenList(this.props.list);
     return this.alias();
   },
-  componentDidUpdate: function() {
+  componentDidUpdate: function(_props, _state) {
     var $title, r, s;
     this.alias();
-    if (this.updated === false) {
-      this.updated = true;
-    }
     if (this.state.selected !== void 0 || this.state.select) {
       $title = this.$items.eq(this.state.selected).find('.title .input');
     }
@@ -827,9 +828,6 @@ module.exports = recl({
     }
   },
   render: function() {
-    if (this.updated === true && this.state.list.length === 0) {
-      WorkActions.newItem(0);
-    }
     return div({}, [
       div({
         className: 'ctrl'
@@ -1391,7 +1389,7 @@ module.exports = {
 
 
 },{}],15:[function(require,module,exports){
-var Dispatcher, EventEmitter, WorkStore, _filters, _list, _listening, _sorts, _tasks, assign;
+var Dispatcher, EventEmitter, WorkStore, _filters, _list, _listening, _sorts, _tasks, _updated, assign;
 
 EventEmitter = require('events').EventEmitter;
 
@@ -1404,6 +1402,8 @@ _tasks = {};
 _list = [];
 
 _listening = [];
+
+_updated = Date.now();
 
 _filters = {
   done: null,
@@ -1433,7 +1433,7 @@ WorkStore = assign({}, EventEmitter.prototype, {
   getData: function(arg) {
     var sort, tasks;
     sort = arg.sort, tasks = arg.tasks;
-    return sort.map((function(_this) {
+    sort.map((function(_this) {
       return function(id, index) {
         if (!_tasks[id]) {
           _list.splice(index, 0, id);
@@ -1443,6 +1443,10 @@ WorkStore = assign({}, EventEmitter.prototype, {
         }
       };
     })(this));
+    return _updated = Date.now();
+  },
+  getUpdated: function() {
+    return _updated;
   },
   getList: function(key) {
     var _k, _v, add, c, i, id, k, len, list, task, v;
@@ -1450,6 +1454,9 @@ WorkStore = assign({}, EventEmitter.prototype, {
     for (i = 0, len = _list.length; i < len; i++) {
       id = _list[i];
       task = _tasks[id];
+      if (task.archived) {
+        continue;
+      }
       add = true;
       for (_k in _filters) {
         _v = _filters[_k];
@@ -1457,32 +1464,24 @@ WorkStore = assign({}, EventEmitter.prototype, {
           continue;
         }
         c = task[_k];
-        switch (_k) {
-          case 'tags' || 'audience':
-            if (_.intersection(c, _v).length === 0) {
-              add = false;
-            }
-            break;
-          case 'owner':
-            if (c !== _v.replace(/\~/g, "")) {
-              add = false;
-            }
-            break;
-          case 'done':
-            if (_v === true && !c) {
-              add = false;
-            }
-            if (_v === false && c) {
-              add = false;
-            }
-            break;
-          default:
-            if (c !== _v) {
-              add = false;
-            }
+        add = (function() {
+          switch (_k) {
+            case 'tags':
+            case 'audience':
+              return _.intersection(c, _v).length !== 0;
+            case 'owner':
+              return c === _v.replace(/\~/g, "");
+            case 'done':
+              return !!c === _v;
+            default:
+              return c === _v;
+          }
+        })();
+        if (!add) {
+          break;
         }
       }
-      if (add === true) {
+      if (add) {
         list.push(task);
       }
     }
@@ -1574,10 +1573,15 @@ WorkStore = assign({}, EventEmitter.prototype, {
     _tasks[_list[from]].sort = _tasks[_list[to]].sort;
     return _list = list;
   },
-  removeItem: function(arg) {
-    var index;
-    index = arg.index;
-    return _list.splice(index, 1);
+  setAudience: function(arg) {
+    var id, to;
+    id = arg.id, to = arg.to;
+    return _tasks[id].audience = to;
+  },
+  archiveItem: function(arg) {
+    var id;
+    id = arg.id;
+    return _tasks[id].archived = true;
   }
 });
 

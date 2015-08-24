@@ -2,9 +2,10 @@ EventEmitter  = require('events').EventEmitter
 assign        = require 'object-assign'
 Dispatcher    = require '../dispatcher/Dispatcher.coffee'
 
-_tasks     = {}
+_tasks   = {}
 _list      = []
 _listening = []
+_updated = Date.now()
 _filters = 
   done:null
   owner:null
@@ -28,26 +29,30 @@ WorkStore = assign {},EventEmitter.prototype,{
         _list.splice index, 0, id
       if tasks[id]  # XX client-side defaults
         _tasks[id] = @itemFromData tasks[id], index
+    _updated = Date.now()
+
+  getUpdated: -> _updated
   
   getList: (key) -> 
     list = []
     for id in _list
       task = _tasks[id]
+      if task.archived
+        continue
       add = true
       for _k,_v of _filters
         if _v is null then continue
         c = task[_k]
-        switch _k
-          when 'tags' or 'audience' # XX bug
-            if _.intersection(c,_v).length is 0 then add = false
+        add = switch _k
+          when 'tags', 'audience'
+            _.intersection(c,_v).length isnt 0
           when 'owner'
-            if c isnt _v.replace(/\~/g, "") then add = false
+            c is _v.replace(/\~/g, "")
           when 'done'
-            if _v is true and not c then add = false
-            if _v is false and c then add = false
-          else
-            if c isnt _v then add = false
-      if add is true
+            !!c is _v
+          else c is _v
+        break unless add
+      if add
         list.push task
     if _.uniq(_.values(_sorts)).length > 1
       for k,v of _sorts
@@ -91,7 +96,8 @@ WorkStore = assign {},EventEmitter.prototype,{
   moveItems: ({list,to,from}) ->
     _tasks[_list[from]].sort = _tasks[_list[to]].sort
     _list = list
-  removeItem: ({index}) -> _list.splice index,1
+  setAudience: ({id,to})-> _tasks[id].audience = to
+  archiveItem: ({id})-> _tasks[id].archived = true
 
 }
 
