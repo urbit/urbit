@@ -27,7 +27,7 @@ module.exports = recl
     @$el = $ @getDOMNode()
     @$items = @$el.find('.items').children()
 
-  _focus: (e,i) -> @setState {selected:Number(i.props.index)}
+  _focus: (e,i) -> @setState {selected:i.props.index}
 
   _dragStart: (e,i) -> @dragged = i.dragged
 
@@ -54,7 +54,7 @@ module.exports = recl
       @drop = 'after'
       @placeholder.insertAfter $t
 
-  title_keyDown: (e) ->
+  title_keyDown: (e,i) ->
     kc = e.keyCode
 
     switch kc
@@ -72,7 +72,7 @@ module.exports = recl
         e.target.innerText.length is 0
           if @state.selected isnt 0
             @setState {selected:@state.selected-1,select:"end"}
-          WorkActions.removeItem @state.list[@state.selected], @state.selected
+          WorkActions.removeItem i.props.item
           e.preventDefault()
       # up
       when 38
@@ -143,6 +143,7 @@ module.exports = recl
             (div {className:'item-wrap',key:item.id,'data-index':index},
               rece(ItemComponent,{
                 item
+                index
                 @_focus
                 @title_keyDown
                 draggable:@state.canSort

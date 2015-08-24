@@ -84,21 +84,22 @@ WorkStore = assign {},EventEmitter.prototype,{
     list = []
     for id in _list
       task = _tasks[id]
+      if task.archived
+        continue
       add = true
       for _k,_v of _filters
         if _v is null then continue
         c = task[_k]
-        switch _k
+        add = switch _k
           when 'tags' or 'audience'
-            if _.intersection(c,_v).length is 0 then add = false
+            _.intersection(c,_v).length isnt 0
           when 'owner'
-            if c isnt _v.replace(/\~/g, "") then add = false
+            c is _v.replace(/\~/g, "")
           when 'done'
-            if _v is true and not c then add = false
-            if _v is false and c then add = false
-          else
-            if c isnt _v then add = false
-      if add is true
+            !!c is _v
+          else c is _v
+        break unless add
+      if add
         list.push task
     if _.uniq(_.values(_sorts)).length > 0
       for k,v of _sorts
@@ -138,7 +139,7 @@ WorkStore = assign {},EventEmitter.prototype,{
   moveItems: ({list,to,from}) ->
     _tasks[_list[from]].sort = _tasks[_list[to]].sort
     _list = list
-  removeItem: ({index}) -> _list.splice index,1
+  setAudience: ({id,to})-> _tasks[id].audience = to
 
 }
 
