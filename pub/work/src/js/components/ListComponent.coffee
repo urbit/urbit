@@ -27,7 +27,7 @@ module.exports = recl
     @$el = $ @getDOMNode()
     @$items = @$el.find('.items').children()
 
-  _focus: (e,i) -> @setState {selected:Number(i.props.item.sort)}
+  _focus: (e,i) -> @setState {selected:i.props.index)}
 
   _dragStart: (e,i) -> @dragged = i.dragged
 
@@ -143,6 +143,7 @@ module.exports = recl
             (div {className:'item-wrap',key:item.id,'data-index':index},
               rece(ItemComponent,{
                 item
+                index
                 @_focus
                 @_keyDown
                 draggable:@state.canSort
