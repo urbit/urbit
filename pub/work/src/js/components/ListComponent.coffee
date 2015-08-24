@@ -72,7 +72,7 @@ module.exports = recl
         e.target.innerText.length is 0
           if @state.selected isnt 0
             @setState {selected:@state.selected-1,select:"end"}
-          WorkActions.removeItem @state.list[@state.selected], @state.selected
+          WorkActions.removeItem @state.list[@state.selected],@state.selected
           e.preventDefault()
       # up
       when 38
@@ -96,6 +96,8 @@ module.exports = recl
 
   _changeSort: (key,val) -> WorkActions.setSort key,val
 
+  updated: false
+
   componentDidMount: -> 
     @placeholder = $ "<div class='item placeholder'><div class='sort'>x</div></div>"
     WorkStore.addChangeListener @_onChangeStore
@@ -103,6 +105,10 @@ module.exports = recl
     @alias()
 
   componentDidUpdate: -> 
+    if @updated is false
+      @updated = true
+      console.log 'first update'
+      console.log @state.list
     @alias()
     if @state.selected isnt undefined or @state.select
       $title = @$items.eq(@state.selected).find('.title .input')

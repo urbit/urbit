@@ -132,15 +132,11 @@ module.exports = {
   removeItem: function(arg, index) {
     var id, version;
     id = arg.id, version = arg.version;
+    version += 1;
     Persistence.put({
-      old: {
+      audience: {
         id: id,
-        version: version,
-        dif: {
-          set: {
-            done: true
-          }
-        }
+        to: []
       }
     });
     return Dispatcher.handleViewAction({
@@ -803,6 +799,7 @@ module.exports = recl({
   _changeSort: function(key, val) {
     return WorkActions.setSort(key, val);
   },
+  updated: false,
   componentDidMount: function() {
     this.placeholder = $("<div class='item placeholder'><div class='sort'>x</div></div>");
     WorkStore.addChangeListener(this._onChangeStore);
@@ -811,6 +808,11 @@ module.exports = recl({
   },
   componentDidUpdate: function() {
     var $title, r, s;
+    if (this.updated === false) {
+      this.updated = true;
+      console.log('first update');
+      console.log(this.state.list);
+    }
     this.alias();
     if (this.state.selected !== void 0 || this.state.select) {
       $title = this.$items.eq(this.state.selected).find('.title .input');
@@ -1402,61 +1404,9 @@ assign = require('object-assign');
 
 Dispatcher = require('../dispatcher/Dispatcher.coffee');
 
-_tasks = {
-  "0v0": {
-    id: "0v0",
-    version: 0,
-    sort: 0,
-    date_created: new Date('2015-8-18'),
-    date_modified: new Date('2015-8-18'),
-    date_due: new Date('2015-8-18'),
-    owner: "zod",
-    audience: ["~doznec/urbit-meta", "~doznec/tlon"],
-    status: "announced",
-    tags: ['food', 'office'],
-    title: 'get groceries',
-    description: 'first go out the door, \n then walk down the block.',
-    discussion: [
-      {
-        date: new Date('2015-8-18'),
-        ship: "wictuc-folrex",
-        body: "Seems like a great idea."
-      }
-    ]
-  },
-  "0v1": {
-    id: "0v1",
-    version: 0,
-    sort: 1,
-    date_created: new Date('2015-8-18'),
-    date_modified: new Date('2015-8-18'),
-    date_due: null,
-    owner: "~zod",
-    audience: ["~doznec/tlon"],
-    status: "accepted",
-    tags: ['home', 'office'],
-    title: 'eat',
-    description: 'dont forget about lunch.',
-    discussion: []
-  },
-  "0v2": {
-    id: "0v2",
-    version: 0,
-    sort: 2,
-    date_created: new Date('2015-8-18'),
-    date_modified: new Date('2015-8-18'),
-    date_due: null,
-    owner: "talsur-todres",
-    audience: ["~doznec/tlon"],
-    status: "accepted",
-    tags: ['home'],
-    title: 'sleep',
-    description: 'go get some sleep.',
-    discussion: []
-  }
-};
+_tasks = {};
 
-_list = ["0v0", "0v1", "0v2"];
+_list = [];
 
 _listening = [];
 
@@ -1541,7 +1491,7 @@ WorkStore = assign({}, EventEmitter.prototype, {
         list.push(task);
       }
     }
-    if (_.uniq(_.values(_sorts)).length > 0) {
+    if (_.uniq(_.values(_sorts)).length > 1) {
       for (k in _sorts) {
         v = _sorts[k];
         if (v !== 0) {

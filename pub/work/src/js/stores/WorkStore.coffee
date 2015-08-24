@@ -2,59 +2,8 @@ EventEmitter  = require('events').EventEmitter
 assign        = require 'object-assign'
 Dispatcher    = require '../dispatcher/Dispatcher.coffee'
 
-_tasks   = 
-  "0v0":
-    id:"0v0"
-    version:0
-    sort:0
-    date_created:new Date('2015-8-18')
-    date_modified:new Date('2015-8-18')
-    date_due:new Date('2015-8-18')
-    owner:"zod"
-    audience:["~doznec/urbit-meta","~doznec/tlon"]
-    status:"announced"
-    tags:['food','office']
-    title:'get groceries'
-    description:'first go out the door, \n then walk down the block.'
-    discussion:[
-      {
-        date:new Date('2015-8-18')
-        ship:"wictuc-folrex"
-        body:"Seems like a great idea."
-      }
-    ]
-
-  "0v1":
-    id:"0v1"
-    version:0
-    sort:1
-    date_created:new Date('2015-8-18')
-    date_modified:new Date('2015-8-18')
-    date_due:null
-    owner:"~zod"
-    audience:["~doznec/tlon"]
-    status:"accepted"
-    tags:['home','office']
-    title:'eat'
-    description:'dont forget about lunch.'
-    discussion:[]
-    
-  "0v2":
-    id:"0v2"
-    version:0
-    sort:2
-    date_created:new Date('2015-8-18')
-    date_modified:new Date('2015-8-18')
-    date_due:null
-    owner:"talsur-todres"
-    audience:["~doznec/tlon"]
-    status:"accepted"
-    tags:['home']
-    title:'sleep'
-    description:'go get some sleep.'
-    discussion:[]
-
-_list = ["0v0","0v1","0v2"]
+_tasks     = {}
+_list      = []
 _listening = []
 _filters = 
   done:null
@@ -89,7 +38,7 @@ WorkStore = assign {},EventEmitter.prototype,{
         if _v is null then continue
         c = task[_k]
         switch _k
-          when 'tags' or 'audience'
+          when 'tags' or 'audience' # XX bug
             if _.intersection(c,_v).length is 0 then add = false
           when 'owner'
             if c isnt _v.replace(/\~/g, "") then add = false
@@ -100,7 +49,7 @@ WorkStore = assign {},EventEmitter.prototype,{
             if c isnt _v then add = false
       if add is true
         list.push task
-    if _.uniq(_.values(_sorts)).length > 0
+    if _.uniq(_.values(_sorts)).length > 1
       for k,v of _sorts
         if v isnt 0
           break

@@ -53,10 +53,10 @@ module.exports =
     Dispatcher.handleViewAction {type:'addItem',index,item}
     
   removeItem: ({id,version},index) ->
-    Persistence.put old:{id,version,dif:set:done:true}
+    version += 1
+    Persistence.put audience:{id,to:[]}
     Dispatcher.handleViewAction {type:'removeItem',index}
 
-      
   listenList: (type)->
     Persistence.subscribe type, (err,d)-> 
       if d?
