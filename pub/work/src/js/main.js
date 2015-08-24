@@ -68,14 +68,26 @@ module.exports = {
       }
     });
   },
-  setAudience: function(arg, val) {
+  removeItem: function(arg, index) {
+    var id, version;
+    id = arg.id, version = arg.version;
+    return this.setAudience({
+      id: id
+    }, []);
+  },
+  setAudience: function(arg, to) {
     var id;
     id = arg.id;
-    return Persistence.put({
+    Persistence.put({
       audience: {
         id: id,
-        to: val
+        to: to
       }
+    });
+    return Dispatcher.handleViewAction({
+      type: 'setAudienece',
+      id: id,
+      to: to
     });
   },
   addComment: function(arg, val) {
@@ -127,25 +139,6 @@ module.exports = {
       type: 'addItem',
       index: index,
       item: item
-    });
-  },
-  removeItem: function(arg, index) {
-    var id, version;
-    id = arg.id, version = arg.version;
-    Persistence.put({
-      old: {
-        id: id,
-        version: version,
-        dif: {
-          set: {
-            done: true
-          }
-        }
-      }
-    });
-    return Dispatcher.handleViewAction({
-      type: 'removeItem',
-      index: index
     });
   },
   listenList: function(type) {
@@ -696,7 +689,7 @@ module.exports = recl({
   },
   _focus: function(e, i) {
     return this.setState({
-      selected: Number(i.props.index)
+      selected: i.props.index
     });
   },
   _dragStart: function(e, i) {
@@ -747,7 +740,7 @@ module.exports = recl({
       return this.placeholder.insertAfter($t);
     }
   },
-  title_keyDown: function(e) {
+  title_keyDown: function(e, i) {
     var ins, kc, last, next;
     kc = e.keyCode;
     switch (kc) {
@@ -771,7 +764,7 @@ module.exports = recl({
               select: "end"
             });
           }
-          WorkActions.removeItem(this.state.list[this.state.selected], this.state.selected);
+          WorkActions.removeItem(i.props.item);
           e.preventDefault();
         }
         break;
@@ -865,6 +858,7 @@ module.exports = recl({
             'data-index': index
           }, rece(ItemComponent, {
             item: item,
+            index: index,
             _focus: _this._focus,
             title_keyDown: _this.title_keyDown,
             draggable: _this.state.canSort,
@@ -1514,6 +1508,9 @@ WorkStore = assign({}, EventEmitter.prototype, {
     for (i = 0, len = _list.length; i < len; i++) {
       id = _list[i];
       task = _tasks[id];
+      if (task.archived) {
+        continue;
+      }
       add = true;
       for (_k in _filters) {
         _v = _filters[_k];
@@ -1521,32 +1518,23 @@ WorkStore = assign({}, EventEmitter.prototype, {
           continue;
         }
         c = task[_k];
-        switch (_k) {
-          case 'tags' || 'audience':
-            if (_.intersection(c, _v).length === 0) {
-              add = false;
-            }
-            break;
-          case 'owner':
-            if (c !== _v.replace(/\~/g, "")) {
-              add = false;
-            }
-            break;
-          case 'done':
-            if (_v === true && !c) {
-              add = false;
-            }
-            if (_v === false && c) {
-              add = false;
-            }
-            break;
-          default:
-            if (c !== _v) {
-              add = false;
-            }
+        add = (function() {
+          switch (_k) {
+            case 'tags' || 'audience':
+              return _.intersection(c, _v).length !== 0;
+            case 'owner':
+              return c === _v.replace(/\~/g, "");
+            case 'done':
+              return !!c === _v;
+            default:
+              return c === _v;
+          }
+        })();
+        if (!add) {
+          break;
         }
       }
-      if (add === true) {
+      if (add) {
         list.push(task);
       }
     }
@@ -1632,10 +1620,10 @@ WorkStore = assign({}, EventEmitter.prototype, {
     _tasks[_list[from]].sort = _tasks[_list[to]].sort;
     return _list = list;
   },
-  removeItem: function(arg) {
-    var index;
-    index = arg.index;
-    return _list.splice(index, 1);
+  setAudience: function(arg) {
+    var id, to;
+    id = arg.id, to = arg.to;
+    return _tasks[id].audience = to;
   }
 });
 
