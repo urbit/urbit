@@ -63,7 +63,8 @@ by default.
 Next, check out `test`, which is the mainline development branch, and
 base a new branch on it to do your work on:
 
-    git checkout -b [branch name] test
+    git checkout test
+    git checkout -b [branch name]
 
 Now you are free to do your work on this branch. When finished, you may
 want to clean up your commits:
