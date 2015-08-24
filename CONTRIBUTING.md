@@ -2,6 +2,41 @@
 
 Thank you for your interest in contributing to urbit.
 
+## Development practice
+
+You may have an identity on the live network, but doing all your
+development on the live network would be cumbersome and unnecessary.
+Standard practice in urbit development is to work on a fake `~zod`. A
+fake `~zod` will get its initial files from the `urb/zod/` directory
+rather than trying to sync them over the network, which is invaluable
+for working in Hoon. Also, a fake `~zod` or any fake urbit instances you
+start do not talk to the live network, but to a fake network that exists
+only on your computer.
+
+To start a fake `~zod`, the command is:
+
+    bin/urbit -c -F -I \~zod [pier directory]
+
+(Your shell may not require backslash escaping the `~`.) To resume one
+that was already created, just as on the live network, remove `-c` (but
+leave the rest of the options there). `-F` uses the fake network, and
+`-I` starts an "imperial" instance - that is, an 8-bit galaxy.
+
+## Kernel development
+
+Working on either C or non-kernel Hoon should not bring any surprises,
+but the Hoon kernel (anything under `urb/zod/arvo/`) is bootstrapped
+from `urbit.pill` in `urb/`, and must be manually recompiled if any
+changes are made. The command to manually recompile the kernel and
+install the new kernel is `|reset` in `dojo`.  This rebuilds from the
+`arvo` directory in the `home` desk in `%clay`.  Currently, `|reset`
+does not reload apps like `dojo` itself, which will still reference the
+old kernel. To force them to reload, make a trivial edit to their main
+source file (under the `ape` directory) in `%clay`.
+
+If you do any kernel development, be sure to read the section below about
+pills.
+
 ## Git practice
 
 Since we use the GitHub issue tracker, it is helpful to contribute via a
@@ -68,6 +103,44 @@ less obvious stylistic rules are:
     The last arm in a core is not followed by an empty comment, because it
     is visually closed by the `--` that closes the core. The empty comment
     is also sometimes omitted in data structure definitions.
+
+## The kernel and pills
+
+urbit bootstraps itself using a binary blob called `urbit.pill`, which
+we do indeed keep in version control. This creates some special
+requirements. If you are not changing anything in the kernel (everything
+under `urb/zod/arvo/`) then you can skim this section (please at least
+skim it, though). If you are working there, then this section is
+critically important!
+
+The procedure for creating `urbit.pill` is often called "soliding". It
+is somewhat similar to `|reset`, but instead of replacing your running
+kernel, it writes the compiled kernel to a file. The command to solid
+is, on a fakezod:
+
+    .urbit/pill +solid
+
+When the compilation finishes, your `urbit.pill` will be found in the
+`[pier]/.urb/put/` directory. Copy it into `urb/` and add it to your
+commit.
+
+The requirement here is that every commit that changes the kernel must
+come with an `urbit.pill` built from the same code in `urb/zod/arvo/`
+for that commit. This is so that checking out an arbitrary revision and
+starting up a fakezod actually works as expected. However you do this is
+fine, but I like to do it as part of my committing process - just before
+`git commit`, I fire up a new fakezod. This will use the previous
+`urbit.pill`, but the kernel code in `%clay` will be copied from
+`urb/zod/arvo/`, so `+solid` will compile it. Then I copy `urbit.pill`
+into `urb/` and make my commit.
+
+If you rebase or interactive rebase your commits, be sure to preserve
+this property on all the commits you end up with. If multiple people
+were collaborating on your branch, you may end up with conflicts in
+`urbit.pill` and have to merge the branch into itself to resolve them.
+Just do the same procedure to create a new, merged pill before
+committing the merge. Otherwise, just make sure to use the correct
+`urbit.pill` for each commit.
 
 ## What to work on
 
