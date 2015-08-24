@@ -242,15 +242,148 @@ module.exports = recl({
 
 
 },{}],3:[function(require,module,exports){
-var WorkActions, div, recl, ref, textarea;
+var Field, WorkActions, div, rece, recl, ref, textarea,
+  slice = [].slice;
 
 recl = React.createClass;
+
+rece = React.createElement;
 
 ref = React.DOM, div = ref.div, textarea = ref.textarea;
 
 WorkActions = require('../actions/WorkActions.coffee');
 
+Field = recl({
+  displayName: 'Field',
+  getInitialState: function() {
+    return {
+      invalid: false
+    };
+  },
+  shouldComponentUpdate: function(props) {
+    var ref1;
+    while ((ref1 = this.oldValue) != null ? ref1.length : void 0) {
+      if (this.oldValue[0] === props.defaultValue) {
+        return false;
+      } else {
+        this.oldValue.shift();
+      }
+    }
+    return true;
+  },
+  render: function() {
+    var className, elem, props, ref1, ref2;
+    className = ((ref1 = this.props.className) != null ? ref1 : this.props._key) + " field ib";
+    if (this.state.invalid) {
+      className += " invalid";
+    }
+    elem = (ref2 = this.props.elem) != null ? ref2 : "div";
+    props = _.extend({}, this.props, {
+      onKeyUp: this.onKeyUp,
+      ref: 'input',
+      defaultValue: this.props.render(this.props.defaultValue),
+      className: 'input ib'
+    });
+    return div({
+      className: className
+    }, elem === 'textarea' ? textarea(props) : (props.contentEditable = true, rece(elem, props, props.defaultValue)));
+  },
+  onKeyUp: function(e) {
+    var $t, val;
+    $t = $(e.target).closest('.field');
+    val = this.parse(this.getVal());
+    if (!this.validate(val)) {
+      this.setState({
+        invalid: true
+      });
+      return;
+    }
+    this.setState({
+      invalid: false
+    });
+    if (!this.equal(this.props.defaultValue, val)) {
+      if (this.oldValue == null) {
+        this.oldValue = [];
+      }
+      this.oldValue.push(val);
+      if (this.to) {
+        clearTimeout(this.to);
+      }
+      return this.to = setTimeout((function(_this) {
+        return function() {
+          return WorkActions.setItem(_this.props.item, _this.props._key, val);
+        };
+      })(this), 1000);
+    }
+  },
+  getVal: function() {
+    if (this.props.elem === 'textarea') {
+      return $(this.refs.input.getDOMNode()).val();
+    } else {
+      return $(this.refs.input.getDOMNode()).text();
+    }
+  },
+  parse: function(text) {
+    var d;
+    switch (this.props._key) {
+      case 'tags':
+        return text.trim().split(" ");
+      case 'audience':
+        return text.trim().split(" ").map(function(a) {
+          return "~" + a;
+        });
+      case 'date_due':
+        d = text.slice(1).replace(/\./g, "-");
+        if (d.length < 8) {
+          return NaN;
+        }
+        return new Date(d).valueOf();
+      default:
+        return text;
+    }
+  },
+  equal: function(vol, val) {
+    switch (this.props._key) {
+      case 'tags':
+      case 'audience':
+        return _.xor(vol, val).length === 0;
+      case 'date_due':
+        return vol.valueOf() === val;
+      default:
+        return vol === val;
+    }
+  },
+  validate: function(val) {
+    var a, i, len, ref1, rest, ship, station;
+    switch (this.props._key) {
+      case 'date_due':
+        return !isNaN(val);
+      case 'audience':
+        for (i = 0, len = val.length; i < len; i++) {
+          a = val[i];
+          ref1 = a.split("/"), ship = ref1[0], station = ref1[1], rest = 3 <= ref1.length ? slice.call(ref1, 2) : [];
+          if (!((rest.length === 0) && ship && station)) {
+            return false;
+          }
+          if (ship[0] !== "~") {
+            return false;
+          }
+          if (ship < 3) {
+            return false;
+          }
+          if (station < 3) {
+            return false;
+          }
+        }
+        return true;
+      default:
+        return true;
+    }
+  }
+});
+
 module.exports = recl({
+  displayName: 'Item',
   onDragStart: function(e) {
     var $t;
     if (!this.props.draggable) {
@@ -268,7 +401,7 @@ module.exports = recl({
   },
   onKeyDown: function(e) {
     var kc;
-    this.props._keyDown(e, this);
+    this.props.title_keyDown(e, this);
     kc = e.keyCode;
     switch (kc) {
       case 9:
@@ -285,88 +418,6 @@ module.exports = recl({
     }
     if ((kc === 9 && this.state.expand === false) || (kc === 27)) {
       e.preventDefault();
-    }
-  },
-  getVal: function($el, key) {
-    var a, d;
-    if ($el[0].tagName === 'TEXTAREA') {
-      return $el.val();
-    } else {
-      if (key === 'date_due') {
-        d = $el.text().slice(1).replace(/\./g, "-");
-        if (d.length < 8) {
-          return NaN;
-        }
-        return new Date(d).valueOf();
-      }
-      if (key === 'tags') {
-        return $el.text().trim().split(" ");
-      }
-      if (key === 'audience') {
-        a = $el.text().trim().split(" ");
-        a = a.map(function(_a) {
-          return "~" + _a;
-        });
-        return a;
-      }
-      return $el.text();
-    }
-  },
-  compareVal: function(l, n, key) {
-    if (key === 'tags' || key === 'audience') {
-      return _.xor(l, n).length > 0;
-    }
-    if (key === 'date_due') {
-      return l !== new Date(n);
-    }
-    return l !== n;
-  },
-  validateField: function($t, key, val) {
-    var i, valid;
-    valid = 1;
-    if (key === 'date_due') {
-      if (isNaN(val)) {
-        valid = 0;
-      }
-    }
-    if (key === 'audience') {
-      i = _.filter(val, function(a) {
-        if (a[0] !== "~") {
-          return 0;
-        }
-        if (a.split("/").length < 2) {
-          return 0;
-        }
-        if (a.split("/")[0].length < 3 || a.split("/")[1].length < 3) {
-          return 0;
-        }
-        return 1;
-      });
-      if (i.length !== val.length) {
-        valid = 0;
-      }
-    }
-    return valid;
-  },
-  onKeyUp: function(e) {
-    var $t, key, val;
-    $t = $(e.target).closest('.field');
-    key = $t.attr('data-key');
-    val = this.getVal($t.find('.input'), key);
-    if (this.compareVal(this.props.item[key], val, key)) {
-      if (!this.validateField($t, key, val)) {
-        $t.addClass('invalid');
-        return;
-      }
-      $t.removeClass('invalid');
-      if (this.to) {
-        clearTimeout(this.to);
-      }
-      return this.to = setTimeout((function(_this) {
-        return function() {
-          return WorkActions.setItem(_this.props.item, key, val);
-        };
-      })(this), 1000);
     }
   },
   onFocus: function(e) {
@@ -417,20 +468,23 @@ module.exports = recl({
       expand: false
     };
   },
-  renderField: function(key, props, format) {
-    var _props, className, ref1;
-    if (format == null) {
-      format = _.identity;
+  renderField: function(_key, props, render) {
+    var defaultValue, id, item, ref1, version;
+    if (render == null) {
+      render = _.identity;
     }
-    _props = _.extend({}, props, {
-      contentEditable: true,
-      className: 'input ib'
-    });
-    className = ((ref1 = props.className) != null ? ref1 : key) + " field ib";
-    return div({
-      className: className,
-      'data-key': key
-    }, div(_props, format(this.props.item[key])));
+    ref1 = this.props.item, id = ref1.id, version = ref1.version;
+    item = {
+      id: id,
+      version: version
+    };
+    defaultValue = this.props.item[_key];
+    return rece(Field, $.extend(props, {
+      render: render,
+      _key: _key,
+      item: item,
+      defaultValue: defaultValue
+    }));
   },
   renderTopField: function(key, props, format) {
     var _props, ref1;
@@ -473,9 +527,7 @@ module.exports = recl({
           }, this.props.item.status), div({
             className: 'action a'
           }, action)
-        ]), this.renderField('audience', {
-          onKeyUp: this.onKeyUp
-        }, this.formatAudience)
+        ]), this.renderField('audience', {}, this.formatAudience)
       ]), div({
         className: 'sort ib top'
       }, this.props.item.sort), div({
@@ -483,14 +535,10 @@ module.exports = recl({
         onClick: this._markDone
       }, ''), this.renderTopField('title', {
         onFocus: this.onFocus,
-        onKeyDown: this.onKeyDown,
-        onKeyUp: this.onKeyUp
+        onKeyDown: this.onKeyDown
       }), this.renderTopField('date_due', {
-        onKeyUp: this.onKeyUp,
         className: 'date'
-      }, this.formatDate), this.renderTopField('tags', {
-        onKeyUp: this.onKeyUp
-      }, function(tags) {
+      }, this.formatDate), this.renderTopField('tags', {}, function(tags) {
         return tags.join(" ");
       }), div({
         className: 'expand ib',
@@ -504,7 +552,7 @@ module.exports = recl({
       }, div({
         className: 'caret left'
       }, "")), this.renderField('description', {
-        onKeyUp: this.onKeyUp
+        elem: "textarea"
       }), div({
         className: "hr"
       }, ""), div({
@@ -648,7 +696,7 @@ module.exports = recl({
       return this.placeholder.insertAfter($t);
     }
   },
-  _keyDown: function(e) {
+  title_keyDown: function(e) {
     var ins, kc, last, next;
     kc = e.keyCode;
     switch (kc) {
@@ -767,7 +815,7 @@ module.exports = recl({
           }, rece(ItemComponent, {
             item: item,
             _focus: _this._focus,
-            _keyDown: _this._keyDown,
+            title_keyDown: _this.title_keyDown,
             draggable: _this.state.canSort,
             _dragStart: _this._dragStart,
             _dragEnd: _this._dragEnd
