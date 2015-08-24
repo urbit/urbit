@@ -649,7 +649,7 @@ module.exports = recl({
   },
   _focus: function(e, i) {
     return this.setState({
-      selected: Number(i.props.index)
+      selected: Number(i.props.item.sort)
     });
   },
   _dragStart: function(e, i) {

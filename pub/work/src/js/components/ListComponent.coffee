@@ -27,7 +27,7 @@ module.exports = recl
     @$el = $ @getDOMNode()
     @$items = @$el.find('.items').children()
 
-  _focus: (e,i) -> @setState {selected:Number(i.props.index)}
+  _focus: (e,i) -> @setState {selected:Number(i.props.item.sort)}
 
   _dragStart: (e,i) -> @dragged = i.dragged
 
