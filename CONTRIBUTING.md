@@ -15,7 +15,7 @@ only on your computer.
 
 To start a fake `~zod`, the command is:
 
-    bin/urbit -c -F -I \~zod [pier directory]
+    bin/urbit -FI ~zod -c [pier directory]
 
 (Your shell may not require backslash escaping the `~`.) To resume one
 that was already created, just as on the live network, remove `-c` (but
