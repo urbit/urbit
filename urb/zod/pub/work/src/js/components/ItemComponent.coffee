@@ -30,7 +30,9 @@ Field = recl
       if elem is 'textarea' then (textarea props)
       else
         props.contentEditable = true
-        (rece elem, props, props.defaultValue)
+        props.dangerouslySetInnerHTML = 
+          __html: $('<div>').text(props.defaultValue).html()
+        (rece elem, props)
 
   onKeyUp: (e) ->
     $t = $(e.target).closest '.field'

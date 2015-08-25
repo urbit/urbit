@@ -113,7 +113,6 @@ module.exports = recl
         $title.focus()
       if @state.select is "end"
         r = window.getSelection().getRangeAt(0)
-        console.log @state.selected,$title
         r.setStart $title[0],0
         r.setEnd $title[0],0
         s = window.getSelection()
