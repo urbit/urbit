@@ -37,18 +37,19 @@ module.exports = recl
 
   render: ->
     (div {className:'filters'}, @fields.map ({filter,key,title})=>
-      input = (div {
+      (div {key, 'data-key':key, className:"#{filter} filter ib"},
+        (label {}, title)
+        switch filter
+          when 'done'
+            (div {
+                  className:'input-bool ib '+@props.filters[key],
+                  @onClick
+                },"")
+          else
+            (div {
                 contentEditable:true
                 className:'input ib'
                 @onKeyDown
                 @onBlur
               },@props.filters[filter])
-      if filter is 'done'
-        input = (div {
-                  className:'input-bool ib '+@props.filters[key],
-                  @onClick
-                },"")
-      (div {key, 'data-key':key, className:"#{filter} filter ib"}, [
-        (label {}, title)
-        input
-      ]))
+      ))

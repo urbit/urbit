@@ -254,25 +254,28 @@ module.exports = recl({
       className: 'filters'
     }, this.fields.map((function(_this) {
       return function(arg) {
-        var filter, input, key, title;
+        var filter, key, title;
         filter = arg.filter, key = arg.key, title = arg.title;
-        input = div({
-          contentEditable: true,
-          className: 'input ib',
-          onKeyDown: _this.onKeyDown,
-          onBlur: _this.onBlur
-        }, _this.props.filters[filter]);
-        if (filter === 'done') {
-          input = div({
-            className: 'input-bool ib ' + _this.props.filters[key],
-            onClick: _this.onClick
-          }, "");
-        }
         return div({
           key: key,
           'data-key': key,
           className: filter + " filter ib"
-        }, [label({}, title), input]);
+        }, label({}, title), (function() {
+          switch (filter) {
+            case 'done':
+              return div({
+                className: 'input-bool ib ' + this.props.filters[key],
+                onClick: this.onClick
+              }, "");
+            default:
+              return div({
+                contentEditable: true,
+                className: 'input ib',
+                onKeyDown: this.onKeyDown,
+                onBlur: this.onBlur
+              }, this.props.filters[filter]);
+          }
+        }).call(_this));
       };
     })(this)));
   }
@@ -566,93 +569,82 @@ module.exports = recl({
       draggable: true,
       onDragStart: this.onDragStart,
       onDragEnd: this.onDragEnd
-    }, [
-      div({
-        className: 'header'
-      }, [
-        div({
-          className: 'owner ib'
-        }, this.formatOwner(this.props.item.owner)), div({
-          className: 'status ib action-' + (action.length > 0),
-          'data-key': 'status',
-          onClick: this._changeStatus
-        }, [
-          div({
-            className: 'label'
-          }, this.props.item.status), div({
-            className: 'action a'
-          }, action)
-        ]), this.renderField('audience', {}, this.formatAudience)
-      ]), div({
-        className: 'sort ib top'
-      }, this.props.item.sort), div({
-        className: 'done ib done-' + (this.props.item.done != null),
-        onClick: this._markDone
-      }, ''), this.renderTopField('title', {
-        onFocus: this.onFocus,
-        onKeyDown: this.onKeyDown
-      }), this.renderTopField('date_due', {
-        className: 'date'
-      }, this.formatDate), this.renderTopField('tags', {}, function(tags) {
-        if (tags == null) {
-          tags = [];
-        }
-        return tags.join(" ");
-      }), div({
-        className: 'expand ib',
-        onClick: (function(_this) {
-          return function(e) {
-            return _this.setState({
-              expand: !_this.state.expand
-            });
-          };
-        })(this)
-      }, div({
-        className: 'caret left'
-      }, "")), this.renderField('description', {
-        elem: "textarea"
-      }), div({
-        className: "hr"
-      }, ""), discussion != null ? div({
-        className: "discussion"
-      }, [
-        div({
-          className: "comments"
-        }, discussion.map((function(_this) {
-          return function(slug) {
-            return div({
-              className: 'comment'
-            }, [
-              div({
-                className: 'hr2'
-              }, ""), div({
-                className: 'ship ib'
-              }, slug.ship), div({
-                className: 'date ib'
-              }, _this.formatDate(slug.date, true)), div({
-                className: 'body'
-              }, slug.body)
-            ]);
-          };
-        })(this))), div({
-          className: 'new comment'
-        }, [
-          div({
-            className: 'hr2'
-          }, ""), div({
-            className: 'ship ib'
-          }, window.urb.ship), div({
-            className: 'date ib'
-          }, this.formatDate()), div({
-            contentEditable: true,
-            className: 'input'
-          }, ""), div({
-            className: 'submit',
-            onClick: this._submitComment
-          }, 'Post')
-        ])
-      ]) : void 0
-    ]);
+    }, div({
+      className: 'header'
+    }, div({
+      className: 'owner ib'
+    }, this.formatOwner(this.props.item.owner)), div({
+      className: 'status ib action-' + (action.length > 0),
+      'data-key': 'status',
+      onClick: this._changeStatus
+    }, div({
+      className: 'label'
+    }, this.props.item.status), div({
+      className: 'action a'
+    }, action)), this.renderField('audience', {}, this.formatAudience)), div({
+      className: 'sort ib top'
+    }, this.props.item.sort), div({
+      className: 'done ib done-' + (this.props.item.done != null),
+      onClick: this._markDone
+    }, ''), this.renderTopField('title', {
+      onFocus: this.onFocus,
+      onKeyDown: this.onKeyDown
+    }), this.renderTopField('date_due', {
+      className: 'date'
+    }, this.formatDate), this.renderTopField('tags', {}, function(tags) {
+      if (tags == null) {
+        tags = [];
+      }
+      return tags.join(" ");
+    }), div({
+      className: 'expand ib',
+      onClick: (function(_this) {
+        return function(e) {
+          return _this.setState({
+            expand: !_this.state.expand
+          });
+        };
+      })(this)
+    }, div({
+      className: 'caret left'
+    }, "")), this.renderField('description', {
+      elem: "textarea"
+    }), div({
+      className: "hr"
+    }, ""), discussion != null ? div({
+      className: "discussion"
+    }, div({
+      className: "comments"
+    }, discussion.map((function(_this) {
+      return function(slug) {
+        return div({
+          className: 'comment',
+          key: slug.date
+        }, div({
+          className: 'hr2'
+        }, ""), div({
+          className: 'ship ib'
+        }, slug.ship), div({
+          className: 'date ib'
+        }, _this.formatDate(slug.date, true)), div({
+          className: 'body'
+        }, slug.body));
+      };
+    })(this))), div({
+      className: 'new comment'
+    }, div({
+      className: 'hr2'
+    }, ""), div({
+      className: 'ship ib'
+    }, window.urb.ship), div({
+      className: 'date ib'
+    }, this.formatDate()), div({
+      contentEditable: true,
+      className: 'input'
+    }), div({
+      className: 'submit',
+      onClick: this._submitComment
+    }, 'Post'))) : void 0);
   }
 });
 
@@ -828,71 +820,68 @@ module.exports = recl({
   componentDidUpdate: function(_props, _state) {
     var $title, r, s;
     this.alias();
-    if (this.state.selected !== void 0 || this.state.select) {
-      $title = this.$items.eq(this.state.selected).find('.title .input');
-    }
-    if (this.state.selected !== void 0 && this.state.select) {
-      $title.focus();
-    }
-    if (this.state.select === "end") {
-      r = window.getSelection().getRangeAt(0);
-      r.setStart($title[0], 1);
-      r.setEnd($title[0], 1);
-      s = window.getSelection();
-      s.removeAllRanges();
-      s.addRange(r);
-    }
     if (this.state.select) {
+      $title = this.$items.eq(this.state.selected).find('.title .input');
+      if (this.state.selected != null) {
+        $title.focus();
+      }
+      if (this.state.select === "end") {
+        r = window.getSelection().getRangeAt(0);
+        console.log(this.state.selected, $title);
+        r.setStart($title[0], 0);
+        r.setEnd($title[0], 0);
+        s = window.getSelection();
+        s.removeAllRanges();
+        s.addRange(r);
+      }
       return this.setState({
         select: false
       });
     }
   },
   render: function() {
-    return div({}, [
-      div({
-        className: 'ctrl'
-      }, [
-        rece(ListeningComponent, {
-          listening: this.state.listening,
-          onChange: this._changeListening
-        }), div({
-          className: 'transforms'
-        }, [
-          rece(FilterComponent, {
-            filters: this.state.filters,
-            onChange: this._changeFilter
-          }), rece(SortComponent, {
-            sorts: this.state.sorts,
-            onChange: this._changeSort
-          })
-        ])
-      ]), div({
-        className: 'items',
-        onDragOver: this._dragOver
-      }, _.map(this.state.list, (function(_this) {
-        return function(item, index) {
-          var className;
-          className = "item-wrap";
-          if (item.ghost) {
-            className += " ghost";
+    return div({}, div({
+      className: 'ctrl'
+    }, rece(ListeningComponent, {
+      listening: this.state.listening,
+      onChange: this._changeListening
+    }), div({
+      className: 'transforms'
+    }, rece(FilterComponent, {
+      filters: this.state.filters,
+      onChange: this._changeFilter
+    }), rece(SortComponent, {
+      sorts: this.state.sorts,
+      onChange: this._changeSort
+    }))), div({
+      className: 'items',
+      onDragOver: this._dragOver
+    }, _.map(this.state.list, (function(_this) {
+      return function(item, index) {
+        var className, key;
+        className = "item-wrap";
+        key = item.id;
+        if (item.ghost) {
+          className += " ghost";
+          if (key == null) {
+            key = "ghost";
           }
-          return div({
-            className: className,
-            key: item.id,
-            'data-index': index
-          }, rece(ItemComponent, {
-            item: item,
-            index: index,
-            _focus: _this._focus,
-            title_keyDown: _this.title_keyDown,
-            draggable: _this.state.canSort,
-            _dragStart: _this._dragStart,
-            _dragEnd: _this._dragEnd
-          }));
-        };
-      })(this)))
-    ]);
+        }
+        return div({
+          className: className,
+          key: key,
+          'data-index': index
+        }, rece(ItemComponent, {
+          item: item,
+          index: index,
+          _focus: _this._focus,
+          title_keyDown: _this.title_keyDown,
+          draggable: _this.state.canSort,
+          _dragStart: _this._dragStart,
+          _dragEnd: _this._dragEnd
+        }));
+      };
+    })(this))));
   }
 });
 
@@ -927,7 +916,7 @@ rece = React.createElement;
 ref = React.DOM, div = ref.div, h1 = ref.h1, button = ref.button, label = ref.label;
 
 module.exports = recl({
-  _onClick: function(e) {
+  onClick: function(e) {
     var $t, key, sor;
     $t = $(e.target).closest('.sort');
     key = $t.attr('data-key');
@@ -945,17 +934,16 @@ module.exports = recl({
     return div({
       className: 'sorts'
     }, _.map(this.props.sorts, (function(_this) {
-      return function(s, k) {
+      return function(state, key) {
         return button({
-          'data-key': k,
-          'data-state': s,
-          className: "sort s-" + s,
-          onClick: _this._onClick
-        }, [
-          label({}, k), div({
-            className: 'caret ib'
-          }, '')
-        ]);
+          key: key,
+          onClick: _this.onClick,
+          'data-key': key,
+          'data-state': state,
+          className: "sort s-" + state
+        }, label({}, key), div({
+          className: 'caret ib'
+        }, ''));
       };
     })(this)));
   }
@@ -976,13 +964,11 @@ ListComponent = require('./ListComponent.coffee');
 
 module.exports = recl({
   render: function() {
-    return div({}, [
-      h1({
-        className: 'leader'
-      }, "Work"), rece(ListComponent, {
-        list: 'upcoming'
-      })
-    ]);
+    return div({}, h1({
+      className: 'leader'
+    }, "Work"), rece(ListComponent, {
+      list: 'upcoming'
+    }));
   }
 });
 
