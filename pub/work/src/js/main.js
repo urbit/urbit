@@ -1,36 +1,31 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var Dispatcher, Persistence, makeItem;
+var Dispatcher, Persistence;
 
 Dispatcher = require('../dispatcher/Dispatcher.coffee');
 
 Persistence = require('../persistence/Persistence.coffee');
 
-makeItem = function(_item) {
-  var ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8;
-  if (_item == null) {
-    _item = {};
-  }
-  return {
-    date_created: Date.now(),
-    date_modified: Date.now(),
-    owner: window.urb.ship,
-    version: 0,
-    id: (ref = _item.id) != null ? ref : window.util.uuid32(),
-    date_due: (ref1 = _item.date_due) != null ? ref1 : null,
-    done: (ref2 = _item.done) != null ? ref2 : null,
-    status: (ref3 = _item.status) != null ? ref3 : 'announced',
-    tags: (ref4 = _item.tags) != null ? ref4 : [],
-    title: (ref5 = _item.title) != null ? ref5 : '',
-    description: (ref6 = _item.description) != null ? ref6 : '',
-    discussion: (ref7 = _item.discussion) != null ? ref7 : [],
-    audience: (ref8 = _item.audience) != null ? ref8 : [window.util.talk.mainStationPath(window.urb.ship)]
-  };
-};
-
 module.exports = {
   newItem: function(index, _item) {
-    var item;
-    item = makeItem(_item);
+    var item, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8;
+    if (_item == null) {
+      _item = {};
+    }
+    item = {
+      date_created: Date.now(),
+      date_modified: Date.now(),
+      owner: window.urb.ship,
+      version: 0,
+      id: (ref = _item.id) != null ? ref : window.util.uuid32(),
+      date_due: (ref1 = _item.date_due) != null ? ref1 : null,
+      done: (ref2 = _item.done) != null ? ref2 : null,
+      status: (ref3 = _item.status) != null ? ref3 : 'announced',
+      tags: (ref4 = _item.tags) != null ? ref4 : [],
+      title: (ref5 = _item.title) != null ? ref5 : '',
+      description: (ref6 = _item.description) != null ? ref6 : '',
+      discussion: (ref7 = _item.discussion) != null ? ref7 : [],
+      audience: (ref8 = _item.audience) != null ? ref8 : [window.util.talk.mainStationPath(window.urb.ship)]
+    };
     Persistence.put({
       "new": item
     });
@@ -41,29 +36,24 @@ module.exports = {
     });
   },
   setItem: function(arg, key, val) {
-    var ghost, id, item, set, version;
-    id = arg.id, version = arg.version, ghost = arg.ghost;
-    if (ghost) {
-      item = makeItem();
-      item[key] = val;
-      return Persistence.put({
-        "new": item
-      });
-    } else {
-      version += 1;
-      set = {};
-      key = key.split('_').join('-');
-      set[key] = val;
-      return Persistence.put({
-        old: {
-          id: id,
-          version: version,
-          dif: {
-            set: set
-          }
+    var id, obj, set, version;
+    id = arg.id, version = arg.version;
+    version += 1;
+    key = key.split('_').join('-');
+    set = (
+      obj = {},
+      obj["" + key] = val,
+      obj
+    );
+    return Persistence.put({
+      old: {
+        id: id,
+        version: version,
+        dif: {
+          set: set
         }
-      });
-    }
+      }
+    });
   },
   ownItem: function(arg, own) {
     var id, o, version;
@@ -171,7 +161,163 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":8,"../persistence/Persistence.coffee":14}],2:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":9,"../persistence/Persistence.coffee":15}],2:[function(require,module,exports){
+var WorkActions, div, rece, recl, ref, textarea,
+  slice = [].slice;
+
+recl = React.createClass;
+
+rece = React.createElement;
+
+ref = React.DOM, div = ref.div, textarea = ref.textarea;
+
+WorkActions = require('../actions/WorkActions.coffee');
+
+module.exports = recl({
+  displayName: 'Field',
+  getInitialState: function() {
+    return {
+      invalid: false
+    };
+  },
+  shouldComponentUpdate: function(props) {
+    var ref1;
+    while ((ref1 = this.oldValue) != null ? ref1.length : void 0) {
+      if (this.oldValue[0] === props.defaultValue) {
+        return false;
+      } else {
+        this.oldValue.shift();
+      }
+    }
+    return true;
+  },
+  render: function() {
+    var className, props, ref1;
+    className = ((ref1 = this.props.className) != null ? ref1 : this.props._key) + " field ib";
+    if (this.state.invalid) {
+      className += " invalid";
+    }
+    props = _.extend({}, this.props, {
+      onKeyUp: this.onKeyUp,
+      ref: 'input',
+      defaultValue: this.props.render(this.props.defaultValue),
+      className: 'input ib'
+    });
+    return div({
+      className: className
+    }, this.props.textarea ? textarea(props) : (props.contentEditable = true, props.dangerouslySetInnerHTML = {
+      __html: $('<div>').text(props.defaultValue).html()
+    }, div(props)));
+  },
+  onKeyUp: function(e) {
+    var $t, val;
+    $t = $(e.target).closest('.field');
+    val = this.parse(this.getVal());
+    if (!this.validate(val)) {
+      this.setState({
+        invalid: true
+      });
+      return;
+    }
+    this.setState({
+      invalid: false
+    });
+    if (!this.equal(this.props.defaultValue, val)) {
+      if (this.oldValue == null) {
+        this.oldValue = [];
+      }
+      this.oldValue.push(val);
+      if (this.to) {
+        clearTimeout(this.to);
+      }
+      return this.to = setTimeout((function(_this) {
+        return function() {
+          var _key, item, obj, ref1;
+          ref1 = _this.props, item = ref1.item, _key = ref1._key;
+          if (!item.ghost) {
+            return WorkActions.setItem(item, _key, val);
+          } else {
+            return WorkActions.newItem(item.index, (
+              obj = {
+                id: item.id
+              },
+              obj["" + _key] = val,
+              obj
+            ));
+          }
+        };
+      })(this), 1000);
+    }
+  },
+  getVal: function() {
+    if (this.props.textarea) {
+      return $(this.refs.input.getDOMNode()).val();
+    } else {
+      return $(this.refs.input.getDOMNode()).text();
+    }
+  },
+  parse: function(text) {
+    var d;
+    switch (this.props._key) {
+      case 'tags':
+        return text.trim().split(" ");
+      case 'audience':
+        return text.trim().split(" ").map(function(a) {
+          return "~" + a;
+        });
+      case 'date_due':
+        d = text.slice(1).replace(/\./g, "-");
+        if (d.length < 8) {
+          return NaN;
+        }
+        return new Date(d).valueOf();
+      default:
+        return text;
+    }
+  },
+  equal: function(vol, val) {
+    switch (this.props._key) {
+      case 'tags':
+      case 'audience':
+        return _.xor(vol, val).length === 0;
+      case 'date_due':
+        return vol.valueOf() === val;
+      default:
+        return (vol != null ? vol : "") === val;
+    }
+  },
+  validate: function(val) {
+    var a, i, len, ref1, rest, ship, station;
+    switch (this.props._key) {
+      case 'date_due':
+        return !isNaN(val);
+      case 'audience':
+        for (i = 0, len = val.length; i < len; i++) {
+          a = val[i];
+          ref1 = a.split("/"), ship = ref1[0], station = ref1[1], rest = 3 <= ref1.length ? slice.call(ref1, 2) : [];
+          if (!((rest.length === 0) && ship && station)) {
+            return false;
+          }
+          if (ship[0] !== "~") {
+            return false;
+          }
+          if (ship < 3) {
+            return false;
+          }
+          if (station < 3) {
+            return false;
+          }
+        }
+        return true;
+      default:
+        return true;
+    }
+  }
+});
+
+
+
+},{"../actions/WorkActions.coffee":1}],3:[function(require,module,exports){
 var div, h1, label, rece, recl, ref;
 
 recl = React.createClass;
@@ -283,9 +429,8 @@ module.exports = recl({
 
 
 
-},{}],3:[function(require,module,exports){
-var Field, WorkActions, div, rece, recl, ref, textarea,
-  slice = [].slice;
+},{}],4:[function(require,module,exports){
+var Field, WorkActions, div, rece, recl, ref, textarea;
 
 recl = React.createClass;
 
@@ -295,135 +440,7 @@ ref = React.DOM, div = ref.div, textarea = ref.textarea;
 
 WorkActions = require('../actions/WorkActions.coffee');
 
-Field = recl({
-  displayName: 'Field',
-  getInitialState: function() {
-    return {
-      invalid: false
-    };
-  },
-  shouldComponentUpdate: function(props) {
-    var ref1;
-    while ((ref1 = this.oldValue) != null ? ref1.length : void 0) {
-      if (this.oldValue[0] === props.defaultValue) {
-        return false;
-      } else {
-        this.oldValue.shift();
-      }
-    }
-    return true;
-  },
-  render: function() {
-    var className, props, ref1;
-    className = ((ref1 = this.props.className) != null ? ref1 : this.props._key) + " field ib";
-    if (this.state.invalid) {
-      className += " invalid";
-    }
-    props = _.extend({}, this.props, {
-      onKeyUp: this.onKeyUp,
-      ref: 'input',
-      defaultValue: this.props.render(this.props.defaultValue),
-      className: 'input ib'
-    });
-    return div({
-      className: className
-    }, this.props.textarea ? textarea(props) : (props.contentEditable = true, props.dangerouslySetInnerHTML = {
-      __html: $('<div>').text(props.defaultValue).html()
-    }, div(props)));
-  },
-  onKeyUp: function(e) {
-    var $t, val;
-    $t = $(e.target).closest('.field');
-    val = this.parse(this.getVal());
-    if (!this.validate(val)) {
-      this.setState({
-        invalid: true
-      });
-      return;
-    }
-    this.setState({
-      invalid: false
-    });
-    if (!this.equal(this.props.defaultValue, val)) {
-      if (this.oldValue == null) {
-        this.oldValue = [];
-      }
-      this.oldValue.push(val);
-      if (this.to) {
-        clearTimeout(this.to);
-      }
-      return this.to = setTimeout((function(_this) {
-        return function() {
-          return WorkActions.setItem(_this.props.item, _this.props._key, val);
-        };
-      })(this), 1000);
-    }
-  },
-  getVal: function() {
-    if (this.props.textarea) {
-      return $(this.refs.input.getDOMNode()).val();
-    } else {
-      return $(this.refs.input.getDOMNode()).text();
-    }
-  },
-  parse: function(text) {
-    var d;
-    switch (this.props._key) {
-      case 'tags':
-        return text.trim().split(" ");
-      case 'audience':
-        return text.trim().split(" ").map(function(a) {
-          return "~" + a;
-        });
-      case 'date_due':
-        d = text.slice(1).replace(/\./g, "-");
-        if (d.length < 8) {
-          return NaN;
-        }
-        return new Date(d).valueOf();
-      default:
-        return text;
-    }
-  },
-  equal: function(vol, val) {
-    switch (this.props._key) {
-      case 'tags':
-      case 'audience':
-        return _.xor(vol, val).length === 0;
-      case 'date_due':
-        return vol.valueOf() === val;
-      default:
-        return (vol != null ? vol : "") === val;
-    }
-  },
-  validate: function(val) {
-    var a, i, len, ref1, rest, ship, station;
-    switch (this.props._key) {
-      case 'date_due':
-        return !isNaN(val);
-      case 'audience':
-        for (i = 0, len = val.length; i < len; i++) {
-          a = val[i];
-          ref1 = a.split("/"), ship = ref1[0], station = ref1[1], rest = 3 <= ref1.length ? slice.call(ref1, 2) : [];
-          if (!((rest.length === 0) && ship && station)) {
-            return false;
-          }
-          if (ship[0] !== "~") {
-            return false;
-          }
-          if (ship < 3) {
-            return false;
-          }
-          if (station < 3) {
-            return false;
-          }
-        }
-        return true;
-      default:
-        return true;
-    }
-  }
-});
+Field = require('./FieldComponent.coffee');
 
 module.exports = recl({
   displayName: 'Item',
@@ -651,7 +668,7 @@ module.exports = recl({
 
 
 
-},{"../actions/WorkActions.coffee":1}],4:[function(require,module,exports){
+},{"../actions/WorkActions.coffee":1,"./FieldComponent.coffee":2}],5:[function(require,module,exports){
 var FilterComponent, ItemComponent, ListeningComponent, SortComponent, WorkActions, WorkStore, div, h1, input, rece, recl, ref, textarea;
 
 recl = React.createClass;
@@ -863,9 +880,6 @@ module.exports = recl({
         key = item.id;
         if (item.ghost) {
           className += " ghost";
-          if (key == null) {
-            key = "ghost";
-          }
         }
         return div({
           className: className,
@@ -887,7 +901,7 @@ module.exports = recl({
 
 
 
-},{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":15,"./FilterComponent.coffee":2,"./ItemComponent.coffee":3,"./ListeningComponent.coffee":5,"./SortComponent.coffee":6}],5:[function(require,module,exports){
+},{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":16,"./FilterComponent.coffee":3,"./ItemComponent.coffee":4,"./ListeningComponent.coffee":6,"./SortComponent.coffee":7}],6:[function(require,module,exports){
 var div, h1, input, rece, recl, ref, textarea;
 
 recl = React.createClass;
@@ -906,7 +920,7 @@ module.exports = recl({
 
 
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var button, div, h1, label, rece, recl, ref;
 
 recl = React.createClass;
@@ -951,7 +965,7 @@ module.exports = recl({
 
 
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var ListComponent, div, h1, rece, recl, ref;
 
 recl = React.createClass;
@@ -974,7 +988,7 @@ module.exports = recl({
 
 
 
-},{"./ListComponent.coffee":4}],8:[function(require,module,exports){
+},{"./ListComponent.coffee":5}],9:[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -996,7 +1010,7 @@ module.exports = _.merge(new Dispatcher(), {
 
 
 
-},{"flux":10}],9:[function(require,module,exports){
+},{"flux":11}],10:[function(require,module,exports){
 var WorkComponent;
 
 WorkComponent = require('./components/WorkComponent.coffee');
@@ -1009,7 +1023,7 @@ $(function() {
 
 
 
-},{"./components/WorkComponent.coffee":7,"./util.coffee":16}],10:[function(require,module,exports){
+},{"./components/WorkComponent.coffee":8,"./util.coffee":17}],11:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -1021,7 +1035,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":11}],11:[function(require,module,exports){
+},{"./lib/Dispatcher":12}],12:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1273,7 +1287,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":12}],12:[function(require,module,exports){
+},{"./invariant":13}],13:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1328,7 +1342,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 function ToObject(val) {
@@ -1367,7 +1381,7 @@ module.exports = Object.assign || function (target, source) {
 	return to;
 };
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var cache, listeners;
 
 urb.appl = 'work';
@@ -1407,14 +1421,16 @@ module.exports = {
 
 
 
-},{}],15:[function(require,module,exports){
-var Dispatcher, EventEmitter, WorkStore, _filters, _list, _listening, _sorts, _tasks, _updated, assign;
+},{}],16:[function(require,module,exports){
+var Dispatcher, EventEmitter, WorkStore, _filters, _ghost, _list, _listening, _sorts, _tasks, _updated, assign, uuid32;
 
 EventEmitter = require('events').EventEmitter;
 
 assign = require('object-assign');
 
 Dispatcher = require('../dispatcher/Dispatcher.coffee');
+
+uuid32 = require('../util.coffee').uuid32;
 
 _tasks = {};
 
@@ -1438,6 +1454,8 @@ _sorts = {
   owner: 0,
   date_due: 0
 };
+
+_ghost = uuid32();
 
 WorkStore = assign({}, EventEmitter.prototype, {
   emitChange: function() {
@@ -1518,6 +1536,7 @@ WorkStore = assign({}, EventEmitter.prototype, {
     }
     if (!(((_filters.owner != null) && _filters.owner !== urb.user) || (_filters.done != null))) {
       list.push({
+        id: _ghost,
         ghost: true,
         version: -1
       });
@@ -1527,6 +1546,9 @@ WorkStore = assign({}, EventEmitter.prototype, {
   newItem: function(arg) {
     var index, item;
     index = arg.index, item = arg.item;
+    if (item.id = _ghost) {
+      _ghost = window.util.uuid32();
+    }
     _list.splice(index, 0, item.id);
     return _tasks[item.id] = item;
   },
@@ -1625,7 +1647,7 @@ module.exports = WorkStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":8,"events":17,"object-assign":13}],16:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":9,"../util.coffee":17,"events":18,"object-assign":14}],17:[function(require,module,exports){
 module.exports = {
   uuid32: function() {
     var i, str, vals;
@@ -1684,7 +1706,7 @@ module.exports = {
 
 
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1987,4 +2009,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[9]);
+},{}]},{},[10]);
