@@ -17,7 +17,6 @@ Field = recl
   render: ->
     className = "#{@props.className ? @props._key} field ib"
     if @state.invalid then className += " invalid"
-    elem = @props.elem ? "div"
 
     props = _.extend {}, @props, {
       @onKeyUp
@@ -27,12 +26,12 @@ Field = recl
     }
 
     div {className},
-      if elem is 'textarea' then (textarea props)
+      if @props.textarea then (textarea props)
       else
         props.contentEditable = true
         props.dangerouslySetInnerHTML = 
           __html: $('<div>').text(props.defaultValue).html()
-        (rece elem, props)
+        (div props)
 
   onKeyUp: (e) ->
     $t = $(e.target).closest '.field'
@@ -52,7 +51,7 @@ Field = recl
         ,1000
 
   getVal: ->
-    if @props.elem is 'textarea'
+    if @props.textarea
       $(@refs.input.getDOMNode()).val()
     else $(@refs.input.getDOMNode()).text()
       
@@ -70,7 +69,7 @@ Field = recl
       (_.xor(vol,val).length is 0)
     when 'date_due'
       vol.valueOf() is val
-    else vol is val
+    else (vol ? "") is val
 
   validate: (val) -> switch @props._key
     when 'date_due'
@@ -205,7 +204,7 @@ module.exports = recl
           onClick: (e) => @setState {expand:!@state.expand}
           }, (div {className:'caret left'},"")
         )
-        (@renderField 'description',elem: "textarea")
+        (@renderField 'description',textarea: yes)
       
         (div {className:"hr"},"")
         if discussion?
