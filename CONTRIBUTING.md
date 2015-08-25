@@ -110,9 +110,9 @@ less obvious stylistic rules are:
 urbit bootstraps itself using a binary blob called `urbit.pill`, which
 we do indeed keep in version control. This creates some special
 requirements. If you are not changing anything in the kernel (everything
-under `urb/zod/arvo/`) then you can skim this section (please at least
-skim it, though). If you are working there, then this section is
-critically important!
+under `urb/zod/arvo/`) then you can skim this section (please do not
+skip it entirely, though).  If you *are* working there, then this
+section is critically important!
 
 The procedure for creating `urbit.pill` is often called "soliding". It
 is somewhat similar to `|reset`, but instead of replacing your running
