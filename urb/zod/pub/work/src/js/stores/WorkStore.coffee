@@ -60,6 +60,8 @@ WorkStore = assign {},EventEmitter.prototype,{
           break
       list = _.sortBy list,k,k
       if v is -1 then list.reverse()
+    unless (_filters.owner? and _filters.owner isnt urb.user) or _filters.done?
+      list.push ghost:true,version:-1
     list
 
   newItem: ({index,item}) ->

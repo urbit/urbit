@@ -11,6 +11,7 @@ FilterComponent = require './FilterComponent.coffee'
 SortComponent = require './SortComponent.coffee'
 
 module.exports = recl
+  displayName: 'List'
   stateFromStore: -> window.canSort = WorkStore.canSort(); {
     list:WorkStore.getList()
     canSort:WorkStore.canSort()
@@ -66,7 +67,8 @@ module.exports = recl
         else
           ins = @state.selected+1
           @setState {selected:ins,select:true}
-        WorkActions.newItem ins
+        {tags,audience} = i.props.item
+        WorkActions.newItem ins, {tags,audience}
       # backspace - remove if at 0
       when 8
         if window.getSelection().getRangeAt(0).endOffset is 0 and
@@ -141,7 +143,9 @@ module.exports = recl
         className:'items'
         onDragOver:@_dragOver
         }, _.map @state.list,(item,index) => 
-            (div {className:'item-wrap',key:item.id,'data-index':index},
+            className = "item-wrap"
+            if item.ghost then className += " ghost"
+            (div {className,key:item.id,'data-index':index},
               rece(ItemComponent,{
                 item
                 index

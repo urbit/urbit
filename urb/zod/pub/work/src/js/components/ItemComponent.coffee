@@ -136,18 +136,15 @@ module.exports = recl
     WorkActions.addComment @props.item,val
     $input.text('')
 
-  formatDate: (d,l) ->
-    return "" if d is null
+  formatDate: (d=(new Date),l) ->
     _d = "~#{d.getFullYear()}.#{(d.getMonth()+1)}.#{d.getDate()}"
     if l
       _d += "..#{d.getHours()}.#{d.getMinutes()}.#{d.getSeconds()}"
     _d
 
-  formatOwner: (o) ->
-    return "" if o is null
-    o.replace /\~/g,""
+  formatOwner: (o="") -> o.replace /\~/g,""
 
-  formatAudience: (a) -> @formatOwner a.join(" ")
+  formatAudience: (a=[]) -> @formatOwner a.join(" ")
 
   getInitialState: -> {expand:false}
 
@@ -160,16 +157,15 @@ module.exports = recl
     @renderField key,_props,format
 
   componentDidMount: ->
-    formatDate = @formatDate
-    setInterval ->
-        $('.new.comment .date').text formatDate (new Date()),true
+    setInterval =>
+        $('.new.comment .date').text @formatDate()
       , 1000
   
   render: ->
     itemClass = 'item'
     if @state.expand then itemClass += ' expand'
 
-    discussion = _.clone @props.item.discussion
+    discussion = _.clone @props.item.discussion ? []
     discussion.reverse()
 
     action = ""
@@ -201,7 +197,7 @@ module.exports = recl
         (div {className:'done ib done-'+@props.item.done?, onClick:@_markDone}, '')
         (@renderTopField 'title', {@onFocus,@onKeyDown})
         (@renderTopField 'date_due', {className:'date'}, @formatDate)
-        (@renderTopField 'tags', {}, (tags)-> tags.join(" "))
+        (@renderTopField 'tags', {}, (tags=[])-> tags.join(" "))
         (div {
           className:'expand ib',
           onClick: (e) => @setState {expand:!@state.expand}
@@ -210,23 +206,24 @@ module.exports = recl
         (@renderField 'description',elem: "textarea")
       
         (div {className:"hr"},"")
-        (div {className:"discussion"},[
-          (div {className:"comments"}, discussion.map (slug) =>
-              (div {className:'comment'}, [
+        if discussion?
+          (div {className:"discussion"},[
+            (div {className:"comments"}, discussion.map (slug) =>
+                (div {className:'comment'}, [
+                  (div {className:'hr2'},"")
+                  (div {className:'ship ib'}, slug.ship)
+                  (div {className:'date ib'}, @formatDate slug.date,true)
+                  (div {className:'body'}, slug.body)
+                ])
+            ),
+            (div {className:'new comment'},[
                 (div {className:'hr2'},"")
-                (div {className:'ship ib'}, slug.ship)
-                (div {className:'date ib'}, @formatDate(slug.date,true))
-                (div {className:'body'}, slug.body)
-              ])
-          ),
-          (div {className:'new comment'},[
-              (div {className:'hr2'},"")
-              (div {className:'ship ib'}, window.urb.ship)
-              (div {className:'date ib'}, @formatDate(new Date(),true))
-              (div {
-                contentEditable:true,
-                className:'input'},"")
-              (div {className:'submit',onClick:@_submitComment},'Post')
+                (div {className:'ship ib'}, window.urb.ship)
+                (div {className:'date ib'}, @formatDate())
+                (div {
+                  contentEditable:true,
+                  className:'input'},"")
+                (div {className:'submit',onClick:@_submitComment},'Post')
+            ])
           ])
-        ])
     ])
