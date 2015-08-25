@@ -1,38 +1,39 @@
 Dispatcher   = require '../dispatcher/Dispatcher.coffee'
 Persistence  = require '../persistence/Persistence.coffee'
 
+makeItem = (_item={})->
+  date_created:   Date.now()
+  date_modified:  Date.now()
+  owner:          window.urb.ship
+  version:        0
+  id:             _item.id          ? window.util.uuid32()
+  date_due:       _item.date_due    ? null
+  done:           _item.done        ? null
+  status:         _item.status      ? 'announced'
+  tags:           _item.tags        ? []
+  title:          _item.title       ? ''
+  description:    _item.description ? ''
+  discussion:     _item.discussion  ? []
+  audience:       _item.audience    ?
+    [window.util.talk.mainStationPath window.urb.ship]
+ 
 module.exports =
-  newItem: (index,_item={}) ->
-    item =
-      id:             window.util.uuid32()
-      version:        0
-      owner:          window.urb.ship
-      date_created:   Date.now()
-      date_modified:  Date.now()
-      date_due:       _item.date_due    ? null
-      done:           _item.done        ? null
-      status:         _item.status      ? 'announced'
-      tags:           _item.tags        ? []
-      title:          _item.title       ? ''
-      description:    _item.description ? ''
-      discussion:     _item.discussion  ? []
-      audience:       _item.audience    ?
-        [window.util.talk.mainStationPath window.urb.ship]
-    Dispatcher.handleViewAction {type:'newItem',index,item}
-
-  setItem: (item,key,val) ->
-    item.version += 1
-    if item.version is 1
+  newItem: (index,_item) ->
+    item = makeItem _item
+    Persistence.put new:item
+    Dispatcher.handleViewAction {type:'newItem', index, item}
+  
+  setItem: ({id,version,ghost},key,val) ->
+    if ghost
+      item = makeItem()
       item[key] = val
-      item.created = Number item.created
-      item.date_modified = Number item.date_modified
-      item.date_created = Number item.date_created
       Persistence.put new:item
     else
+      version += 1
       set = {}
       key = key.split('_').join '-'
       set[key] = val
-      Persistence.put old:{id:item.id,version:item.version,dif:{set}}
+      Persistence.put old:{id,version,dif:{set}}
 
   ownItem: ({id,version},own) ->
     o = {}

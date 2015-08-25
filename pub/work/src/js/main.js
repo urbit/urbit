@@ -1,56 +1,63 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var Dispatcher, Persistence;
+var Dispatcher, Persistence, makeItem;
 
 Dispatcher = require('../dispatcher/Dispatcher.coffee');
 
 Persistence = require('../persistence/Persistence.coffee');
 
+makeItem = function(_item) {
+  var ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8;
+  if (_item == null) {
+    _item = {};
+  }
+  return {
+    date_created: Date.now(),
+    date_modified: Date.now(),
+    owner: window.urb.ship,
+    version: 0,
+    id: (ref = _item.id) != null ? ref : window.util.uuid32(),
+    date_due: (ref1 = _item.date_due) != null ? ref1 : null,
+    done: (ref2 = _item.done) != null ? ref2 : null,
+    status: (ref3 = _item.status) != null ? ref3 : 'announced',
+    tags: (ref4 = _item.tags) != null ? ref4 : [],
+    title: (ref5 = _item.title) != null ? ref5 : '',
+    description: (ref6 = _item.description) != null ? ref6 : '',
+    discussion: (ref7 = _item.discussion) != null ? ref7 : [],
+    audience: (ref8 = _item.audience) != null ? ref8 : [window.util.talk.mainStationPath(window.urb.ship)]
+  };
+};
+
 module.exports = {
   newItem: function(index, _item) {
-    var item, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7;
-    if (_item == null) {
-      _item = {};
-    }
-    item = {
-      id: window.util.uuid32(),
-      version: 0,
-      owner: window.urb.ship,
-      date_created: Date.now(),
-      date_modified: Date.now(),
-      date_due: (ref = _item.date_due) != null ? ref : null,
-      done: (ref1 = _item.done) != null ? ref1 : null,
-      status: (ref2 = _item.status) != null ? ref2 : 'announced',
-      tags: (ref3 = _item.tags) != null ? ref3 : [],
-      title: (ref4 = _item.title) != null ? ref4 : '',
-      description: (ref5 = _item.description) != null ? ref5 : '',
-      discussion: (ref6 = _item.discussion) != null ? ref6 : [],
-      audience: (ref7 = _item.audience) != null ? ref7 : [window.util.talk.mainStationPath(window.urb.ship)]
-    };
+    var item;
+    item = makeItem(_item);
+    Persistence.put({
+      "new": item
+    });
     return Dispatcher.handleViewAction({
       type: 'newItem',
       index: index,
       item: item
     });
   },
-  setItem: function(item, key, val) {
-    var set;
-    item.version += 1;
-    if (item.version === 1) {
+  setItem: function(arg, key, val) {
+    var ghost, id, item, set, version;
+    id = arg.id, version = arg.version, ghost = arg.ghost;
+    if (ghost) {
+      item = makeItem();
       item[key] = val;
-      item.created = Number(item.created);
-      item.date_modified = Number(item.date_modified);
-      item.date_created = Number(item.date_created);
       return Persistence.put({
         "new": item
       });
     } else {
+      version += 1;
       set = {};
       key = key.split('_').join('-');
       set[key] = val;
       return Persistence.put({
         old: {
-          id: item.id,
-          version: item.version,
+          id: id,
+          version: version,
           dif: {
             set: set
           }
@@ -163,6 +170,7 @@ module.exports = {
 };
 
 
+
 },{"../dispatcher/Dispatcher.coffee":8,"../persistence/Persistence.coffee":14}],2:[function(require,module,exports){
 var div, h1, label, rece, recl, ref;
 
@@ -269,6 +277,7 @@ module.exports = recl({
     })(this)));
   }
 });
+
 
 
 },{}],3:[function(require,module,exports){
@@ -484,8 +493,8 @@ module.exports = recl({
   },
   formatDate: function(d, l) {
     var _d;
-    if (d === null) {
-      return "";
+    if (d == null) {
+      d = new Date;
     }
     _d = "~" + (d.getFullYear()) + "." + (d.getMonth() + 1) + "." + (d.getDate());
     if (l) {
@@ -494,12 +503,15 @@ module.exports = recl({
     return _d;
   },
   formatOwner: function(o) {
-    if (o === null) {
-      return "";
+    if (o == null) {
+      o = "";
     }
     return o.replace(/\~/g, "");
   },
   formatAudience: function(a) {
+    if (a == null) {
+      a = [];
+    }
     return this.formatOwner(a.join(" "));
   },
   getInitialState: function() {
@@ -528,19 +540,19 @@ module.exports = recl({
     return this.renderField(key, _props, format);
   },
   componentDidMount: function() {
-    var formatDate;
-    formatDate = this.formatDate;
-    return setInterval(function() {
-      return $('.new.comment .date').text(formatDate(new Date(), true));
-    }, 1000);
+    return setInterval((function(_this) {
+      return function() {
+        return $('.new.comment .date').text(_this.formatDate());
+      };
+    })(this), 1000);
   },
   render: function() {
-    var action, discussion, itemClass;
+    var action, discussion, itemClass, ref1;
     itemClass = 'item';
     if (this.state.expand) {
       itemClass += ' expand';
     }
-    discussion = _.clone(this.props.item.discussion);
+    discussion = _.clone((ref1 = this.props.item.discussion) != null ? ref1 : []);
     discussion.reverse();
     action = "";
     if (this.props.item.status === 'announced') {
@@ -582,6 +594,9 @@ module.exports = recl({
       }), this.renderTopField('date_due', {
         className: 'date'
       }, this.formatDate), this.renderTopField('tags', {}, function(tags) {
+        if (tags == null) {
+          tags = [];
+        }
         return tags.join(" ");
       }), div({
         className: 'expand ib',
@@ -598,7 +613,7 @@ module.exports = recl({
         elem: "textarea"
       }), div({
         className: "hr"
-      }, ""), div({
+      }, ""), discussion != null ? div({
         className: "discussion"
       }, [
         div({
@@ -628,7 +643,7 @@ module.exports = recl({
             className: 'ship ib'
           }, window.urb.ship), div({
             className: 'date ib'
-          }, this.formatDate(new Date(), true)), div({
+          }, this.formatDate()), div({
             contentEditable: true,
             className: 'input'
           }, ""), div({
@@ -636,10 +651,11 @@ module.exports = recl({
             onClick: this._submitComment
           }, 'Post')
         ])
-      ])
+      ]) : void 0
     ]);
   }
 });
+
 
 
 },{"../actions/WorkActions.coffee":1}],4:[function(require,module,exports){
@@ -664,6 +680,7 @@ FilterComponent = require('./FilterComponent.coffee');
 SortComponent = require('./SortComponent.coffee');
 
 module.exports = recl({
+  displayName: 'List',
   stateFromStore: function() {
     window.canSort = WorkStore.canSort();
     return {
@@ -740,7 +757,7 @@ module.exports = recl({
     }
   },
   title_keyDown: function(e, i) {
-    var ins, kc, last, next;
+    var audience, ins, kc, last, next, ref1, tags;
     kc = e.keyCode;
     switch (kc) {
       case 13:
@@ -753,7 +770,11 @@ module.exports = recl({
             select: true
           });
         }
-        WorkActions.newItem(ins);
+        ref1 = i.props.item, tags = ref1.tags, audience = ref1.audience;
+        WorkActions.newItem(ins, {
+          tags: tags,
+          audience: audience
+        });
         break;
       case 8:
         if (window.getSelection().getRangeAt(0).endOffset === 0 && e.target.innerText.length === 0) {
@@ -851,8 +872,13 @@ module.exports = recl({
         onDragOver: this._dragOver
       }, _.map(this.state.list, (function(_this) {
         return function(item, index) {
+          var className;
+          className = "item-wrap";
+          if (item.ghost) {
+            className += " ghost";
+          }
           return div({
-            className: 'item-wrap',
+            className: className,
             key: item.id,
             'data-index': index
           }, rece(ItemComponent, {
@@ -871,6 +897,7 @@ module.exports = recl({
 });
 
 
+
 },{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":15,"./FilterComponent.coffee":2,"./ItemComponent.coffee":3,"./ListeningComponent.coffee":5,"./SortComponent.coffee":6}],5:[function(require,module,exports){
 var div, h1, input, rece, recl, ref, textarea;
 
@@ -887,6 +914,7 @@ module.exports = recl({
     }, "");
   }
 });
+
 
 
 },{}],6:[function(require,module,exports){
@@ -934,6 +962,7 @@ module.exports = recl({
 });
 
 
+
 },{}],7:[function(require,module,exports){
 var ListComponent, div, h1, rece, recl, ref;
 
@@ -958,6 +987,7 @@ module.exports = recl({
 });
 
 
+
 },{"./ListComponent.coffee":4}],8:[function(require,module,exports){
 var Dispatcher;
 
@@ -979,6 +1009,7 @@ module.exports = _.merge(new Dispatcher(), {
 });
 
 
+
 },{"flux":10}],9:[function(require,module,exports){
 var WorkComponent;
 
@@ -989,6 +1020,7 @@ window.util = _.extend(window.util || {}, require('./util.coffee'));
 $(function() {
   return React.render(React.createElement(WorkComponent), $('#c')[0]);
 });
+
 
 
 },{"./components/WorkComponent.coffee":7,"./util.coffee":16}],10:[function(require,module,exports){
@@ -1388,6 +1420,7 @@ module.exports = {
 };
 
 
+
 },{}],15:[function(require,module,exports){
 var Dispatcher, EventEmitter, WorkStore, _filters, _list, _listening, _sorts, _tasks, _updated, assign;
 
@@ -1497,6 +1530,12 @@ WorkStore = assign({}, EventEmitter.prototype, {
         list.reverse();
       }
     }
+    if (!(((_filters.owner != null) && _filters.owner !== urb.user) || (_filters.done != null))) {
+      list.push({
+        ghost: true,
+        version: -1
+      });
+    }
     return list;
   },
   newItem: function(arg) {
@@ -1599,6 +1638,7 @@ WorkStore.dispatchToken = Dispatcher.register(function(p) {
 module.exports = WorkStore;
 
 
+
 },{"../dispatcher/Dispatcher.coffee":8,"events":17,"object-assign":13}],16:[function(require,module,exports){
 module.exports = {
   uuid32: function() {
@@ -1655,6 +1695,7 @@ module.exports = {
     }
   }
 };
+
 
 
 },{}],17:[function(require,module,exports){
