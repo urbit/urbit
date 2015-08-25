@@ -145,9 +145,7 @@ module.exports = recl
         }, _.map @state.list,(item,index) => 
             className = "item-wrap"
             key = item.id
-            if item.ghost
-              className += " ghost"
-              key ?= "ghost"
+            if item.ghost then className += " ghost"
             (div {className,key,'data-index':index},
               rece(ItemComponent,{
                 item

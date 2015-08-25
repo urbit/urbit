@@ -1,6 +1,7 @@
 EventEmitter  = require('events').EventEmitter
 assign        = require 'object-assign'
 Dispatcher    = require '../dispatcher/Dispatcher.coffee'
+{uuid32}      = require '../util.coffee'
 
 _tasks   = {}
 _list      = []
@@ -17,6 +18,7 @@ _sorts =
   title:0
   owner:0
   date_due:0
+_ghost = uuid32()
 
 WorkStore = assign {},EventEmitter.prototype,{
   emitChange: -> @emit 'change'
@@ -61,10 +63,12 @@ WorkStore = assign {},EventEmitter.prototype,{
       list = _.sortBy list,k,k
       if v is -1 then list.reverse()
     unless (_filters.owner? and _filters.owner isnt urb.user) or _filters.done?
-      list.push ghost:true,version:-1
+      list.push id:_ghost,ghost:true,version:-1
     list
 
   newItem: ({index,item}) ->
+    if item.id = _ghost
+      _ghost = window.util.uuid32()
     _list.splice index,0,item.id
     _tasks[item.id] = item
 
