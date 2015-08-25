@@ -328,7 +328,9 @@ Field = recl({
     });
     return div({
       className: className
-    }, elem === 'textarea' ? textarea(props) : (props.contentEditable = true, rece(elem, props, props.defaultValue)));
+    }, elem === 'textarea' ? textarea(props) : (props.contentEditable = true, props.dangerouslySetInnerHTML = {
+      __html: $('<div>').text(props.defaultValue).html()
+    }, rece(elem, props)));
   },
   onKeyUp: function(e) {
     var $t, val;
@@ -827,7 +829,6 @@ module.exports = recl({
       }
       if (this.state.select === "end") {
         r = window.getSelection().getRangeAt(0);
-        console.log(this.state.selected, $title);
         r.setStart($title[0], 0);
         r.setEnd($title[0], 0);
         s = window.getSelection();
