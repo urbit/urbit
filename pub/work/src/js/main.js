@@ -314,12 +314,11 @@ Field = recl({
     return true;
   },
   render: function() {
-    var className, elem, props, ref1, ref2;
+    var className, props, ref1;
     className = ((ref1 = this.props.className) != null ? ref1 : this.props._key) + " field ib";
     if (this.state.invalid) {
       className += " invalid";
     }
-    elem = (ref2 = this.props.elem) != null ? ref2 : "div";
     props = _.extend({}, this.props, {
       onKeyUp: this.onKeyUp,
       ref: 'input',
@@ -328,9 +327,9 @@ Field = recl({
     });
     return div({
       className: className
-    }, elem === 'textarea' ? textarea(props) : (props.contentEditable = true, props.dangerouslySetInnerHTML = {
+    }, this.props.textarea ? textarea(props) : (props.contentEditable = true, props.dangerouslySetInnerHTML = {
       __html: $('<div>').text(props.defaultValue).html()
-    }, rece(elem, props)));
+    }, div(props)));
   },
   onKeyUp: function(e) {
     var $t, val;
@@ -361,7 +360,7 @@ Field = recl({
     }
   },
   getVal: function() {
-    if (this.props.elem === 'textarea') {
+    if (this.props.textarea) {
       return $(this.refs.input.getDOMNode()).val();
     } else {
       return $(this.refs.input.getDOMNode()).text();
@@ -394,7 +393,7 @@ Field = recl({
       case 'date_due':
         return vol.valueOf() === val;
       default:
-        return vol === val;
+        return (vol != null ? vol : "") === val;
     }
   },
   validate: function(val) {
@@ -610,7 +609,7 @@ module.exports = recl({
     }, div({
       className: 'caret left'
     }, "")), this.renderField('description', {
-      elem: "textarea"
+      textarea: true
     }), div({
       className: "hr"
     }, ""), discussion != null ? div({
@@ -771,7 +770,7 @@ module.exports = recl({
         });
         break;
       case 8:
-        if (window.getSelection().getRangeAt(0).endOffset === 0 && e.target.innerText.length === 0) {
+        if ((window.getSelection().getRangeAt(0).endOffset === 0) && (e.target.innerText.length === 0) && !i.props.item.ghost) {
           if (this.state.selected !== 0) {
             this.setState({
               selected: this.state.selected - 1,

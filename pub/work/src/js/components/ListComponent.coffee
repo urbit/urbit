@@ -71,8 +71,9 @@ module.exports = recl
         WorkActions.newItem ins, {tags,audience}
       # backspace - remove if at 0
       when 8
-        if window.getSelection().getRangeAt(0).endOffset is 0 and
-        e.target.innerText.length is 0
+        if  (window.getSelection().getRangeAt(0).endOffset is 0) and
+            (e.target.innerText.length is 0) and
+            !i.props.item.ghost
           if @state.selected isnt 0
             @setState {selected:@state.selected-1,select:"end"}
           WorkActions.removeItem i.props.item
