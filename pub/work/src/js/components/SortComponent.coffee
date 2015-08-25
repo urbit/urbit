@@ -3,7 +3,7 @@ rece = React.createElement
 {div,h1,button,label} = React.DOM
 
 module.exports = recl
-  _onClick: (e) ->
+  onClick: (e) ->
     $t = $(e.target).closest '.sort'
     key = $t.attr('data-key')
     sor = Number $t.attr 'data-state'
@@ -12,14 +12,15 @@ module.exports = recl
     else if sor is -1 then sor = 0
     @props.onChange key,sor
   render: ->
-    (div {className:'sorts'}, _.map @props.sorts,(s,k) =>
+    (div {className:'sorts'}, _.map @props.sorts,(state,key) =>
       (button {
-        'data-key':k
-        'data-state':s
-        className:"sort s-#{s}"
-        onClick:@_onClick
-        }, [
-          (label {}, k)
+        key
+        @onClick
+        'data-key':key
+        'data-state':state
+        className:"sort s-#{state}"
+        },
+          (label {}, key)
           (div {className:'caret ib'}, '')
-        ])
+        )
     )

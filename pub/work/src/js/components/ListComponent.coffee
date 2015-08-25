@@ -107,28 +107,28 @@ module.exports = recl
 
   componentDidUpdate: (_props,_state)-> 
     @alias()
-    if @state.selected isnt undefined or @state.select
-      $title = @$items.eq(@state.selected).find('.title .input')
-    if @state.selected isnt undefined and @state.select
-      $title.focus()
-    if @state.select is "end"
-      r = window.getSelection().getRangeAt(0)
-      r.setStart $title[0],1
-      r.setEnd $title[0],1
-      s = window.getSelection()
-      s.removeAllRanges()
-      s.addRange r
     if @state.select
+      $title = @$items.eq(@state.selected).find('.title .input')
+      if @state.selected?
+        $title.focus()
+      if @state.select is "end"
+        r = window.getSelection().getRangeAt(0)
+        console.log @state.selected,$title
+        r.setStart $title[0],0
+        r.setEnd $title[0],0
+        s = window.getSelection()
+        s.removeAllRanges()
+        s.addRange r
       @setState {select:false}
 
   render: ->
-    (div {}, [
-      (div {className:'ctrl'}, [
+    (div {},
+      (div {className:'ctrl'},
         rece(ListeningComponent, {
           listening:@state.listening
           onChange:@_changeListening
         })
-        (div {className:'transforms'},[
+        (div {className:'transforms'},
           rece(FilterComponent, {
             filters:@state.filters
             onChange:@_changeFilter
@@ -137,15 +137,18 @@ module.exports = recl
             sorts:@state.sorts
             onChange:@_changeSort
           })
-        ]),
-      ])
+        )
+      )
       (div {
         className:'items'
         onDragOver:@_dragOver
         }, _.map @state.list,(item,index) => 
             className = "item-wrap"
-            if item.ghost then className += " ghost"
-            (div {className,key:item.id,'data-index':index},
+            key = item.id
+            if item.ghost
+              className += " ghost"
+              key ?= "ghost"
+            (div {className,key,'data-index':index},
               rece(ItemComponent,{
                 item
                 index
@@ -156,4 +159,4 @@ module.exports = recl
                 @_dragEnd})
              )
       )
-    ])
+    )

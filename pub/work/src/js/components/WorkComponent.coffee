@@ -6,7 +6,7 @@ ListComponent = require './ListComponent.coffee'
 
 module.exports = recl
   render: ->
-    (div {}, [
+    (div {},
       (h1 {className:'leader'}, "Work")
       (rece(ListComponent,{list:'upcoming'}))
-    ])
+    )

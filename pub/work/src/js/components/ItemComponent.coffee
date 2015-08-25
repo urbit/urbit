@@ -178,21 +178,21 @@ module.exports = recl
         className:itemClass
         draggable:true
         @onDragStart,@onDragEnd
-      }, [
+      },
         (div {
           className:'header'
-          },[
+          },
             (div {className:'owner ib'}, @formatOwner(@props.item.owner))
             (div {
               className:'status ib action-'+(action.length > 0)
               'data-key':'status'
               onClick:@_changeStatus
-              },[
+              },
                 (div {className:'label'}, @props.item.status)
                 (div {className:'action a'}, action)
-              ])
+              )
             (@renderField 'audience', {}, @formatAudience)
-          ])
+          )
         (div {className:'sort ib top'}, @props.item.sort)
         (div {className:'done ib done-'+@props.item.done?, onClick:@_markDone}, '')
         (@renderTopField 'title', {@onFocus,@onKeyDown})
@@ -207,23 +207,23 @@ module.exports = recl
       
         (div {className:"hr"},"")
         if discussion?
-          (div {className:"discussion"},[
+          (div {className:"discussion"},
             (div {className:"comments"}, discussion.map (slug) =>
-                (div {className:'comment'}, [
+                (div {className:'comment',key:slug.date},
                   (div {className:'hr2'},"")
                   (div {className:'ship ib'}, slug.ship)
                   (div {className:'date ib'}, @formatDate slug.date,true)
                   (div {className:'body'}, slug.body)
-                ])
+                )
             ),
-            (div {className:'new comment'},[
+            (div {className:'new comment'},
                 (div {className:'hr2'},"")
                 (div {className:'ship ib'}, window.urb.ship)
                 (div {className:'date ib'}, @formatDate())
                 (div {
                   contentEditable:true,
-                  className:'input'},"")
+                  className:'input'})
                 (div {className:'submit',onClick:@_submitComment},'Post')
-            ])
-          ])
-    ])
+            )
+          )
+    )
