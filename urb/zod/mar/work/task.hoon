@@ -52,12 +52,11 @@
     =+  [-.b `date-due=(unit ,@da)`+.b]
     =^  tags   a  (undent a ~(gas in *(set cord)))
     =^  title  a  ?~(a !! a)
-    =^  b  a  (advance a (parse owner=%p "." status=%tas ~))
-    ?>  ?=(status.task status.b)
+    =^  b  a  (advance a (parse creator=%p "." ~))              ::  XX doer
     =+  b
     =^  description  a  (undent a role)
-    :*  id  date-created  version   date-modified  owner
-        status      tags  date-due  ~       title  description  ::  XX done
+    :*  id  date-created  version   date-modified  creator
+        ~  tags  date-due  ~  title  description  ::  XX done
         |-  ^-  (list comment)
         ?:  =(~ a)  ~
         =^  b  a  (advance a (parse ship=%p " " date=%da ~))
@@ -76,7 +75,7 @@
     :-  (rend uv/id '_' da/date-created ' ' ud/version da/date-modified due)
     %+  welp  (indent (sort (~(tap in tags)) aor))
     :-  title
-    :-  (rend p/owner '.' tas/status ~)
+    :-  (rend p/creator ~)
     %-  zing  ^-  (list wain)
     :-  (indent (lore description))
     %+  turn  discussion
@@ -90,7 +89,7 @@
 ::    {tag2}
 ::    ...
 ::  {title}
-::  {owner}.{status}
+::  {creator}
 ::    {description}
 ::    {more description}
 ::  {ship1} {date}
