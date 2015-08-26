@@ -62,21 +62,24 @@ module.exports = recl
     switch kc
       # enter - add new
       when 13
+        {index} = i.props
         if window.getSelection().getRangeAt(0).endOffset is 0
           ins = @state.selected
         else
-          ins = @state.selected+1
+          index++
+          ins = @state.selected+1 # XX consolidate
           @setState {selected:ins,select:true}
-        {tags,audience} = i.props.item
-        WorkActions.newItem ins, {tags,audience}
+        WorkActions.moveGhost index
       # backspace - remove if at 0
       when 8
         if  (window.getSelection().getRangeAt(0).endOffset is 0) and
-            (e.target.innerText.length is 0) and
-            !i.props.item.ghost
-          if @state.selected isnt 0
-            @setState {selected:@state.selected-1,select:"end"}
-          WorkActions.removeItem i.props.item
+            (e.target.innerText.length is 0)
+          if i.props.item.ghost
+            WorkActions.moveGhost null
+          else
+            if @state.selected isnt 0
+              @setState {selected:@state.selected-1,select:"end"}
+            WorkActions.removeItem i.props.item
           e.preventDefault()
       # up
       when 38
@@ -145,9 +148,7 @@ module.exports = recl
         }, _.map @state.list,(item,index) => 
             className = "item-wrap"
             key = item.id
-            if item.ghost
-              className += " ghost"
-              key ?= "ghost"
+            if item.ghost then className += " ghost"
             (div {className,key,'data-index':index},
               rece(ItemComponent,{
                 item
