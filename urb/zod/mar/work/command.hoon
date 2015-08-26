@@ -56,6 +56,7 @@
       ==
     ++  task
       %-  ot  :~
+        ::index/ni
         audience/audi
         id/id           'date_created'^di
         version/ni      'date_modified'^di

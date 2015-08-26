@@ -258,7 +258,7 @@
 ::
 ++  mirror-to-web
   ^-  [(list move) _.]
-  ~&  [%mirroring tasks=tasks sort=sort]
+  ~&  [%mirroring sort=(turn sort |=(a=@uv `@uv`(rsh 2 25 a)))]
   :_  .
   %+  murn  (~(tap by sup))
   |=  [ust=bone her=ship pax=path]
