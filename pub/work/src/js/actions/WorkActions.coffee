@@ -51,7 +51,9 @@ module.exports =
     sort = _.clone list
     sort.splice to, 0, sort.splice(from,1)[0]
     Persistence.put {sort}
-    Dispatcher.handleViewAction {list:sort,to,from,type:'moveItems'}  
+    Dispatcher.handleViewAction {type:'moveItems',list:sort,to,from}
+    
+  moveGhost: (index)-> Dispatcher.handleViewAction {type:'moveGhost',index}  
 
   listenList: (type)->
     Persistence.subscribe type, (err,d)-> 
