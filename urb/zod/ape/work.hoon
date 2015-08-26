@@ -2,12 +2,16 @@
 ::    it can't
 ::  maybe look into storing a "following" set
 ::  make most updates not rely on knowing about task (all but claim?)
-::  should let non-owners suggest that owner cross-post to another
+::  should let non-creator suggest that creator cross-post to another
 ::    station
 ::
 ::  pretty-print in command-line interface
 ::  serialize %lax to json
 ::  bring up ~dozbud to test
+::
+::  save log!
+::
+::  audience stuff seems messed up from talk?  get extraneous stations
 ::
 ::::
   ::
@@ -31,7 +35,11 @@
 !:
 ::::
   ::
-|_  [bowl client connected=_|]
+|_  $:  bowl
+        client
+        connected=_|
+        unordered=(map ,[@uvH @u] (pair ship flesh:work-stuff:talk))
+    ==
 ++  at
   |=  client-task
   =|  moves=(list move)
@@ -72,34 +80,34 @@
     |=  action=duty:work-stuff:talk
     (send-audience audience action)
   ::
-  ++  claim
-    (send-audience(claiming &) [[owner.tax (main owner.tax)] ~ ~] %claim id.tax)
-  ::
   ++  send-archive
     |=  to=(set station:talk)
     (send-audience to %archive id.tax)
   ::
   ++  send-create       (send %create tax)
+  ++  send-change       |*  *
+                        %+  send-audience
+                          [[creator.tax (main creator.tax)] ~ ~]
+                        [%change id.tax +<]
   ++  send-update       |*(* (send %update id.tax +<))
-  ++  release           |=([vers=@u her=@p] (send-update vers %release her))
-  ++  accept            |=(vers=@u (send-update vers %accept ~))
   ++  process-update
-    |=  [vers=@u up=update]
+    |=  up=update
     ^+  +>
     ?-    -.up
-        %add  ?>(?=(%comment +<.up) (send-update vers %add-comment +>.up))
-        %own
+        %add  ?>(?=(%comment +<.up) (send-change %add-comment +>.up))
+        %doer
       ?-  +<.up
-        %announce  (send-update vers %announce ~)
-        %claim     claim
+        %release  (send-change %set-doer ~)
+        %claim    (send-change %set-doer `our)
       ==
+    ::
         %set
       ?-  +<.up
-        %date-due     (send-update vers %set-date-due +>.up)
-        %title        (send-update vers %set-title +>.up)
-        %description  (send-update vers %set-description +>.up)
-        %tags         (send-update vers %set-tags +>.up)
-        %done         (send-update vers %set-done +>.up)
+        %date-due     (send-change %set-date-due +>.up)
+        %title        (send-change %set-title +>.up)
+        %description  (send-change %set-description +>.up)
+        %tags         (send-change %set-tags +>.up)
+        %done         (send-change %set-done +>.up)
       ==
     ==
   ++  process-audience
@@ -111,7 +119,14 @@
   --
 ::
 ++  prep
-  |=  [old=(unit (pair client ,_|))]
+  |=  $=  old
+      $_
+      =<  $
+      %-  unit
+      $:  client
+          _|
+          (map ,[@uvH @u] (pair ship flesh:work-stuff:talk))
+      ==
   ^-  [(list move) _+>.$]
   initialize(+<+ ?~(old +<+.+>.$ u.old))
 ::
@@ -142,8 +157,8 @@
               existing-task=u.existing-task
           ==
       [~ +>.$]
-    ?.  |(=(her owner.tax.action) =(%released status.tax.action))
-      ~&  :*  %created-with-bad-owner
+    ?.  =(her creator.tax.action)
+      ~&  :*  %created-with-bad-creator
               her=her
               from=from
               new-task=tax.action
@@ -152,22 +167,11 @@
       [~ +>.$]
     =.  tasks
       %^  ~(put by tasks)  id.tax.action  |
-      :-  |  :_  tax.action
+      :_  tax.action
       ?~  existing-task  from
       (~(uni in audience.u.existing-task) from)
     =.  sort  ?^(existing-task sort [id.tax.action sort])
     [~ +>.$]
-  ::
-      %claim
-    =+  tax=(~(got by tasks) id.action)
-    ?.  &(=(our owner.tax.tax) =(%announced status.tax.tax))
-      ~&  :*  %bad-claim
-              her=her
-              from=from
-              task=tax
-          ==
-      [~ +>.$]
-    abet:(release:(at (~(got by tasks) id.action)) +(version.tax.tax) her)
   ::
       %archive
     =+  tax=(~(get by tasks) id.action)
@@ -178,8 +182,8 @@
               action=action
           ==
       [~ +>.$]
-    ?:  !=(her owner.tax.u.tax)
-      ~&  :*  %archiver-not-owner
+    ?:  !=(her creator.tax.u.tax)
+      ~&  :*  %archiver-not-creator
               her=her
               from=from
               action=action
@@ -188,12 +192,30 @@
       [~ +>.$]
     =.  tasks
       %+  ~(put by tasks)  id.action
-      :*  claiming.u.tax
-          =(~ (~(dif in audience.u.tax) from))
+      :*  =(~ (~(dif in audience.u.tax) from))
           (~(dif in audience.u.tax) from)
           tax.u.tax
       ==
     [~ +>.$]
+  ::
+      %change
+    =+  tax=(~(get by tasks) id.action)
+    ?~  tax
+      ~&  :*  %change-for-nonexistent-task
+              her=her
+              from=from
+              action=action
+          ==
+      [~ +>.$]
+    ?:  !=(our creator.tax.u.tax)
+      ~&  :*  %me-not-creator
+              her=her
+              from=from
+              action=action
+              tax=tax
+          ==
+      [~ +>.$]
+    abet:(send-update:(at u.tax) +(version.tax.u.tax) her meat.action)
   ::
       %update
     =+  tax=(~(get by tasks) id.action)
@@ -204,6 +226,14 @@
               action=action
           ==
       [~ +>.$]
+    ?:  !=(her creator.tax.u.tax)
+      ~&  :*  %her-not-creator
+              her=her
+              from=from
+              action=action
+              tax=tax
+          ==
+      [~ +>.$]
     ?.  =(version.action +(version.tax.u.tax))
       ~&  :*  %update-bad-version
               her
@@ -211,49 +241,40 @@
               action=action
               tax=tax
           ==
-      [~ +>.$]
-    ?:  ?&  ?=(?(%announce %release %accept) -.meat.action)
-            !=(her owner.tax.u.tax)
-        ==
-      ~&  :*  %not-owner
-              her=her
-              from=from
-              action=action
-              tax=tax
-          ==
-      [~ +>.$]
+      :-  ~
+      %_    +>.$
+          unordered
+        %+  ~(put by unordered)
+          [id.action version.action]
+        [her.action meat.action]
+      ==
+    |-
     =.  tasks
       %+  ~(put by tasks)  id.action
-      :*  ?:  ?=(%release -.meat.action)
-            |
-          claiming.u.tax
-      ::
-          archived.u.tax
-      ::
-          (~(uni in audience.u.tax) from)
-      ::
-          =.  version.tax.u.tax        version.action
-          =.  date-modified.tax.u.tax  when
-          ?-    -.meat.action
-            %announce         tax.u.tax(status %announced)
-            %release          tax.u.tax(owner her.meat.action, status %released)
-            %accept           tax.u.tax(status %accepted)
-            %set-date-due     tax.u.tax(date-due wen.meat.action)
-            %set-tags         tax.u.tax(tags tag.meat.action)
-            %set-title        tax.u.tax(title til.meat.action)
-            %set-description  tax.u.tax(description des.meat.action)
-            %set-done         tax.u.tax(done ?.(don.meat.action ~ `when))
-            %add-comment
-              %=  tax.u.tax
-                discussion  [[when her com.meat.action] discussion.tax.u.tax]
-              ==
+      :+  archived.u.tax
+        (~(uni in audience.u.tax) from)
+      =.  version.tax.u.tax        version.action
+      =.  date-modified.tax.u.tax  when
+      ?-    -.meat.action
+        %set-doer         tax.u.tax(doer her.meat.action)
+        %set-date-due     tax.u.tax(date-due wen.meat.action)
+        %set-tags         tax.u.tax(tags tag.meat.action)
+        %set-title        tax.u.tax(title til.meat.action)
+        %set-description  tax.u.tax(description des.meat.action)
+        %set-done         tax.u.tax(done ?.(don.meat.action ~ `when))
+        %add-comment
+          %=  tax.u.tax
+            discussion  [[when her com.meat.action] discussion.tax.u.tax]
           ==
       ==
-    ?:  ?&  =([%release our] meat.action)
-            claiming.u.tax
-        ==
-      abet:(accept:(at (~(got by tasks) id.action)) +(+(version.tax.u.tax)))
-    [~ +>.$]
+    =+  ooo=(~(get by unordered) id.action +(version.action))
+    ?~  ooo
+      [~ +>.^$]
+    %=  $
+      version.action  +(version.action)
+      her.action      p.u.ooo
+      meat.action     q.u.ooo
+    ==
   ==
 ::
 ++  mirror-to-web
@@ -292,10 +313,10 @@
       [(welp mov mow) +>.$]
     %old
       =+  (at (~(got by tasks) id.cod))
-      abet:(process-update:- version.cod dif.cod)
+      abet:(process-update:- dif.cod)
     %new
       =.  +>.cod  +>.cod(date-created now, version 0, date-modified now)
-      abut:send-create:(at | | +.cod)
+      abut:send-create:(at | +.cod)
   ==
 ::
 ::  XX  maybe need to check that we haven't received this message before
