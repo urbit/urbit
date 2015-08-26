@@ -82,31 +82,26 @@
   |%                                                    ::
   ++  duty                                              ::
     $%  [%create tax=task]                              ::  create new task
-        [%claim id=@uvH]                                ::  claim task
         [%archive id=@uvH]                              ::  archive task
-        $:  %update                                     ::  operate on task
-            id=@uvH                                     ::  which task
-            version=@u                                  ::  version
-            $=  meat                                    ::
-            $%  [%announce ~]                           ::  make available
-                [%release her=ship]                     ::  pass to new owner
-                [%accept ~]                             ::  accept pass
-                [%set-date-due wen=(unit ,@da)]         ::  set due date
-                [%set-tags tag=(set ,@t)]               ::  set tags
-                [%set-title til=@t]                     ::  set title
-                [%set-description des=@t]               ::  set description
-                [%set-done don=?]                       ::  set done
-                [%add-comment com=@t]                   ::  add comment
-            ==                                          ::
-        ==                                              ::
+        [%change id=@uvH meat=flesh]                    ::  request change
+        [%update id=@uvH version=@u her=ship meat=flesh]::  broadcast change
+    ==                                                  ::
+  ++  flesh                                             ::
+    $%  [%set-doer her=(unit ,@p)]                      ::  set doer
+        [%set-date-due wen=(unit ,@da)]                 ::  set due date
+        [%set-tags tag=(set ,@t)]                       ::  set tags
+        [%set-title til=@t]                             ::  set title
+        [%set-description des=@t]                       ::  set description
+        [%set-done don=?]                               ::  set done
+        [%add-comment com=@t]                           ::  add comment
     ==                                                  ::
   ++  task                                              ::
     $:  id=@uvH                                         ::
         date-created=@da                                ::
         version=@u                                      ::
         date-modified=@da                               ::
-        owner=@p                                        ::
-        status=status                                   ::
+        creator=@p                                      ::
+        doer=(unit ,@p)                                 ::
         tags=(set ,@t)                                  ::
         date-due=(unit ,@da)                            ::
         done=(unit ,@da)                                ::
@@ -119,9 +114,5 @@
         ship=@p                                         ::
         body=@t                                         ::
     ==                                                  ::
-  ++  status  ?(%announced %released %accepted)         ::
   --
-  ::  markdown
-  ::  image
-  ::  mime object
 --
