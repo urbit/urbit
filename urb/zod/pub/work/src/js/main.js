@@ -138,10 +138,16 @@ module.exports = {
       sort: sort
     });
     return Dispatcher.handleViewAction({
+      type: 'moveItems',
       list: sort,
       to: to,
-      from: from,
-      type: 'moveItems'
+      from: from
+    });
+  },
+  moveGhost: function(index) {
+    return Dispatcher.handleViewAction({
+      type: 'moveGhost',
+      index: index
     });
   },
   listenList: function(type) {
@@ -767,34 +773,36 @@ module.exports = recl({
     }
   },
   title_keyDown: function(e, i) {
-    var audience, ins, kc, last, next, ref1, tags;
+    var index, ins, kc, last, next;
     kc = e.keyCode;
     switch (kc) {
       case 13:
+        index = i.props.index;
         if (window.getSelection().getRangeAt(0).endOffset === 0) {
           ins = this.state.selected;
         } else {
+          index++;
           ins = this.state.selected + 1;
           this.setState({
             selected: ins,
             select: true
           });
         }
-        ref1 = i.props.item, tags = ref1.tags, audience = ref1.audience;
-        WorkActions.newItem(ins, {
-          tags: tags,
-          audience: audience
-        });
+        WorkActions.moveGhost(index);
         break;
       case 8:
-        if ((window.getSelection().getRangeAt(0).endOffset === 0) && (e.target.innerText.length === 0) && !i.props.item.ghost) {
-          if (this.state.selected !== 0) {
-            this.setState({
-              selected: this.state.selected - 1,
-              select: "end"
-            });
+        if ((window.getSelection().getRangeAt(0).endOffset === 0) && (e.target.innerText.length === 0)) {
+          if (i.props.item.ghost) {
+            WorkActions.moveGhost(null);
+          } else {
+            if (this.state.selected !== 0) {
+              this.setState({
+                selected: this.state.selected - 1,
+                select: "end"
+              });
+            }
+            WorkActions.removeItem(i.props.item);
           }
-          WorkActions.removeItem(i.props.item);
           e.preventDefault();
         }
         break;
@@ -1455,7 +1463,9 @@ _sorts = {
   date_due: 0
 };
 
-_ghost = uuid32();
+_ghost = {
+  id: uuid32()
+};
 
 WorkStore = assign({}, EventEmitter.prototype, {
   emitChange: function() {
@@ -1486,7 +1496,7 @@ WorkStore = assign({}, EventEmitter.prototype, {
     return _updated;
   },
   getList: function(key) {
-    var _k, _v, add, c, i, id, k, len, list, task, v;
+    var _k, _v, add, c, ghost, i, id, k, len, list, task, v;
     list = [];
     for (i = 0, len = _list.length; i < len; i++) {
       id = _list[i];
@@ -1534,23 +1544,30 @@ WorkStore = assign({}, EventEmitter.prototype, {
         list.reverse();
       }
     }
-    if (!(((_filters.owner != null) && _filters.owner !== urb.user) || (_filters.done != null))) {
-      list.push({
-        id: _ghost,
+    if (!(((_filters.owner != null) && _filters.owner !== urb.ship) || (_filters.done != null))) {
+      ghost = $.extend({}, _ghost, {
         ghost: true,
         version: -1
       });
+      if (ghost.index != null) {
+        list.splice(ghost.index, 0, ghost);
+      } else {
+        list.push(ghost);
+      }
     }
     return list;
   },
   newItem: function(arg) {
     var index, item;
     index = arg.index, item = arg.item;
-    if (item.id = _ghost) {
-      _ghost = window.util.uuid32();
+    if (item.id = _ghost.id) {
+      _ghost.id = uuid32();
+    }
+    if (index == null) {
+      index = _list.length;
     }
     _list.splice(index, 0, item.id);
-    return _tasks[item.id] = item;
+    return _tasks[item.id] = this.itemFromData(item, index);
   },
   getListening: function() {
     return _listening;
@@ -1561,6 +1578,7 @@ WorkStore = assign({}, EventEmitter.prototype, {
   setFilter: function(arg) {
     var key, val;
     key = arg.key, val = arg.val;
+    _ghost.index = null;
     return _filters[key] = val;
   },
   getSorts: function() {
@@ -1569,6 +1587,7 @@ WorkStore = assign({}, EventEmitter.prototype, {
   setSort: function(arg) {
     var k, key, v, val;
     key = arg.key, val = arg.val;
+    _ghost.index = null;
     for (k in _sorts) {
       v = _sorts[k];
       _sorts[k] = 0;
@@ -1619,6 +1638,11 @@ WorkStore = assign({}, EventEmitter.prototype, {
     list = arg.list, to = arg.to, from = arg.from;
     _tasks[_list[from]].sort = _tasks[_list[to]].sort;
     return _list = list;
+  },
+  moveGhost: function(arg) {
+    var index;
+    index = arg.index;
+    return _ghost.index = index;
   },
   setAudience: function(arg) {
     var id, to;

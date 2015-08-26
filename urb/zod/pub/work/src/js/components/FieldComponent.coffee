@@ -48,7 +48,7 @@ module.exports = recl
       if @to then clearTimeout @to
       @to = setTimeout =>
           {item,_key} = @props
-          unless item.ghost
+          if not item.ghost
             WorkActions.setItem item, _key, val
           else WorkActions.newItem item.index,
             id: item.id

@@ -18,7 +18,7 @@ _sorts =
   title:0
   owner:0
   date_due:0
-_ghost = uuid32()
+_ghost = id:uuid32()
 
 WorkStore = assign {},EventEmitter.prototype,{
   emitChange: -> @emit 'change'
@@ -62,21 +62,28 @@ WorkStore = assign {},EventEmitter.prototype,{
           break
       list = _.sortBy list,k,k
       if v is -1 then list.reverse()
-    unless (_filters.owner? and _filters.owner isnt urb.user) or _filters.done?
-      list.push id:_ghost,ghost:true,version:-1
+    unless (_filters.owner? and _filters.owner isnt urb.ship) or _filters.done?
+      ghost = $.extend {}, _ghost, ghost:true, version:-1
+      if ghost.index?
+        list.splice ghost.index, 0, ghost
+      else list.push ghost
     list
 
   newItem: ({index,item}) ->
-    if item.id = _ghost
-      _ghost = window.util.uuid32()
+    if item.id = _ghost.id
+      _ghost.id = uuid32()
+    index ?= _list.length
     _list.splice index,0,item.id
-    _tasks[item.id] = item
+    _tasks[item.id] = @itemFromData item, index
 
   getListening: -> _listening
   getFilters: -> _filters
-  setFilter: ({key,val}) -> _filters[key] = val
+  setFilter: ({key,val}) ->
+    _ghost.index = null
+    _filters[key] = val
   getSorts: -> _sorts
   setSort: ({key,val}) -> 
+    _ghost.index = null
     for k,v of _sorts
       _sorts[k] = 0
     _sorts[key] = val
@@ -102,6 +109,7 @@ WorkStore = assign {},EventEmitter.prototype,{
   moveItems: ({list,to,from}) ->
     _tasks[_list[from]].sort = _tasks[_list[to]].sort
     _list = list
+  moveGhost: ({index})-> _ghost.index = index
   setAudience: ({id,to})-> _tasks[id].audience = to
   archiveItem: ({id})-> _tasks[id].archived = true
 
