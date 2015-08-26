@@ -51,7 +51,7 @@
     ++  ship  (su fed:ag)
     ++  coma
       %-  of  :~
-        new/task      old/(ot id/id version/ni dif/uppd ~)
+        new/task      old/(ot id/id dif/uppd ~)
         sort/(ar id)  audience/(ot id/id to/audi ~)
       ==
     ++  task
@@ -60,7 +60,7 @@
         audience/audi
         id/id           'date_created'^di
         version/ni      'date_modified'^di
-        owner/ship      status/(ci (soft status) so)
+        creator/ship    doer/(mu ship)
         tags/(as so)    'date_due'^(mu di)
         done/(mu di)    title/so
         description/so  discussion/(ar (ot date/di ship/ship body/so ~))
@@ -69,7 +69,7 @@
     ++  stan  (su ;~((glue fas) ;~(pfix sig fed:ag) urs:ab))
     ++  uppd
       %-  of  :~
-        own/(of announce/ul claim/ul ~)
+        doer/(of release/ul claim/ul ~)
         add/(of comment/so ~)
         :-  %set
         %-  of  :~
@@ -92,8 +92,7 @@
 ::   date-created:1440011611215,
 ::   version:1,
 ::   date-modified:1440011611215,
-::   owner:'fyr',
-::   status:'gave',
+::   creator:'fyr',
 ::   tags:['tag'],
 ::   date-due:null,
 ::   done:false,

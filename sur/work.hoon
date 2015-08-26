@@ -5,8 +5,7 @@
       sort=(list ,@uvH)
   ==
 ++  client-task
-  $:  claiming=_|
-      archived=_|
+  $:  archived=_|
       audience=(set station:talk)
       tax=task
   ==
@@ -15,8 +14,8 @@
       date-created=@da
       version=@u
       date-modified=@da
-      owner=@p
-      status=status
+      creator=@p
+      doer=(unit ,@p)
       tags=(set ,@t)
       date-due=(unit ,@da)
       done=(unit ,@da)
@@ -29,10 +28,9 @@
       ship=@p
       body=@t
   ==
-++  status  ?(%announced %released %accepted)
-++  command  
+++  command
   $%  [%new audience=(set station:talk) task]
-      [%old id=@uvH version=@u dif=update]
+      [%old id=@uvH dif=update]
       [%sort p=(list ,@uvH)]
       [%audience id=@uvH to=(set station:talk)]
   ==
@@ -47,8 +45,8 @@
       $:  %add
   $%  [%comment @t]
   ==  ==
-      $:  %own
-  $%  [%announce ~]
+      $:  %doer
+  $%  [%release ~]
       [%claim ~]
   ==  ==
   ==
