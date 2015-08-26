@@ -68,7 +68,7 @@
     ++  stan  (su ;~((glue fas) ;~(pfix sig fed:ag) urs:ab))
     ++  uppd
       %-  of  :~
-        own/(of announce/ul claim/ul ~)
+        doer/(of release/ul claim/ul ~)
         add/(of comment/so ~)
         :-  %set
         %-  of  :~

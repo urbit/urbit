@@ -13,9 +13,6 @@
 ::
 ::  audience stuff seems messed up from talk?  get extraneous stations
 ::
-::  first thing to do is obviously make process-duty accept stuff out
-::    of order
-::
 ::::
   ::
 /?  314
@@ -98,15 +95,14 @@
     ^+  +>
     ?-    -.up
         %add  ?>(?=(%comment +<.up) (send-change %add-comment +>.up))
-        %own
+        %doer
       ?-  +<.up
-        %announce  (send-change %set-doer ~)
-        %claim     (send-change %set-doer `our)
+        %release  (send-change %set-doer ~)
+        %claim    (send-change %set-doer `our)
       ==
     ::
         %set
       ?-  +<.up
-        %doer         (send-change %set-doer +>.up)
         %date-due     (send-change %set-date-due +>.up)
         %title        (send-change %set-title +>.up)
         %description  (send-change %set-description +>.up)

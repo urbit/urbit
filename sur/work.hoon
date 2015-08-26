@@ -36,8 +36,7 @@
   ==
 ++  update
   $%  $:  %set
-  $%  [%doer p=(unit ,@p)]
-      [%date-due p=(unit ,@da)]
+  $%  [%date-due p=(unit ,@da)]
       [%title p=@t]
       [%description p=@t]
       [%tags p=(set ,@t)]
@@ -46,8 +45,8 @@
       $:  %add
   $%  [%comment @t]
   ==  ==
-      $:  %own
-  $%  [%announce ~]
+      $:  %doer
+  $%  [%release ~]
       [%claim ~]
   ==  ==
   ==
