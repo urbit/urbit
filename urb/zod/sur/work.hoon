@@ -32,11 +32,11 @@
   $%  [%new audience=(set station:talk) task]
       [%old id=@uvH dif=update]
       [%sort p=(list ,@uvH)]
-      [%audience id=@uvH to=(set station:talk)]
   ==
 ++  update
   $%  $:  %set
-  $%  [%date-due p=(unit ,@da)]
+  $%  [%audience to=(set station:talk)]
+      [%date-due p=(unit ,@da)]
       [%title p=@t]
       [%description p=@t]
       [%tags p=(set ,@t)]
