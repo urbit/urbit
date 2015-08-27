@@ -37,9 +37,7 @@ module.exports = recl
       e.preventDefault()
       return
 
-  onFocus: (e) -> 
-    @props._focus e,@
-    return true
+  onFocus: (e) -> @props._focus e,@
 
   _markDone: (e) -> 
     WorkActions.setItem @props.item,'done',(not (@props.item.done is true))
