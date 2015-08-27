@@ -355,7 +355,7 @@
         ==
       ==
     ::
-    ++  coax                                            ::  bolt across
+    ++  coax  !.                                        ::  bolt across
       |*  [hoc=(bolt) fun=(burg)]
       ?-  -.q.hoc
         %0  =+  nuf=$:fun(..+<- p.hoc)
@@ -1320,6 +1320,7 @@
       ::
           %tabl
         %-  cope  :_  (flux |=(rex=(list (pair gage gage)) [%tabl rex]))
+        !.
         |-  ^-  (bolt (list (pair gage gage)))
         ?~  p.kas  (fine cof ~)
         %.  [cof p.kas]
