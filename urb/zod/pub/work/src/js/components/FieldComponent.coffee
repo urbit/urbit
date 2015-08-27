@@ -35,22 +35,24 @@ module.exports = recl
 
   onKeyUp: (e) ->
     $t = $(e.target).closest '.field'
-    val = @parse @getVal()
+    _val = @getVal()
+    if @props.item.ghost and _val is ""
+      return
+    val = @parse _val
     unless @validate val
       @setState invalid:yes
       return
     @setState invalid:no
     
     unless @equal @props.defaultValue, val
-    
       @oldValue ?= []
       @oldValue.push val
       if @to then clearTimeout @to
       @to = setTimeout =>
-          {item,_key} = @props
+          {item,_key,index} = @props
           if item.version >= 0
             WorkActions.setItem item, _key, val
-          else WorkActions.newItem item.index,
+          else WorkActions.newItem index,
             id:        item.id
             tags:      item.tags
             audience:  item.audience
@@ -62,7 +64,7 @@ module.exports = recl
       $(@refs.input.getDOMNode()).val()
     else $(@refs.input.getDOMNode()).text()
       
-  parse : (text)-> switch @props._key
+  parse: (text)-> switch @props._key
     when 'tags'      then text.trim().split(" ")
     when 'audience'  then text.trim().split(" ").map (a) -> "~#{a}"
     when 'date_due'
@@ -71,12 +73,12 @@ module.exports = recl
       new Date(d).valueOf()
     else text
 
-  equal: (vol,val) -> switch @props._key
+  equal: (vol=(@parse ""),val) -> switch @props._key
     when 'tags', 'audience'
       (_.xor(vol,val).length is 0)
     when 'date_due'
       vol.valueOf() is val
-    else (vol ? "") is val
+    else vol is val
 
   validate: (val) -> switch @props._key
     when 'date_due'

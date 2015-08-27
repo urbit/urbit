@@ -44,14 +44,19 @@ module.exports = recl
   _markDone: (e) -> 
     WorkActions.setItem @props.item,'done',(not (@props.item.done is true))
 
+  getAction: -> switch @props.item.doer
+    when null
+      action = "claim"
+    when window.urb.ship
+      action = "release" 
+    else ""
+
   _changeStatus: (e) ->
     return if @props.item.status is 'released'
     if @props.item.status is 'accepted' and 
-    @formatCreator(@props.item.creator) isnt window.urb.ship
+    @formatOwner(@props.item.creator) isnt window.urb.ship
       return
-    own = "claim" if @props.item.status is "announced"
-    own = "announce" if @props.item.status is "accepted"
-    WorkActions.ownItem @props.item,own
+    WorkActions.ownItem @props.item,@getAction()
 
   _submitComment: (e) ->
     $input = $(e.target).closest('.item').find('.comment .input')
@@ -68,15 +73,16 @@ module.exports = recl
       _d += "..#{d.getHours()}.#{d.getMinutes()}.#{d.getSeconds()}"
     _d
 
-  formatCreator: (o="") -> o.replace /\~/g,""
+  formatOwner: (o="") -> o.replace /\~/g,""
 
-  formatAudience: (a=[]) -> @formatCreator a.join(" ")
+  formatAudience: (a=[]) -> @formatOwner a.join(" ")
 
   getInitialState: -> {expand:false}
 
   renderField: (_key,props,render=_.identity)->
-    defaultValue =  @props.item[_key]
-    rece Field, $.extend props, {render,_key,item:@props.item,defaultValue}
+    {item,index} =  @props
+    defaultValue =  item[_key]
+    rece Field, $.extend props, {render,_key,defaultValue,item,index}
   
   renderTopField: (key,props,format)->
     _props = _.extend props,{className:"#{props.className ? key} top"}
@@ -94,12 +100,8 @@ module.exports = recl
     discussion = _.clone @props.item.discussion ? []
     discussion.reverse()
 
-    action = ""
-    if @props.item.status is 'announced'
-      action = "claim"
-    if @props.item.status is 'accepted' and @formatCreator(@props.item.creator) is window.urb.ship
-      action = "release" 
-
+    action = @getAction()
+    
     (div {
         className:itemClass
         draggable:true
@@ -108,7 +110,7 @@ module.exports = recl
         (div {
           className:'header'
           },
-            (div {className:'creator ib'}, @formatCreator(@props.item.creator))
+            (div {className:'creator ib'}, @formatOwner(@props.item.owner))
             (div {
               className:'status ib action-'+(action.length > 0)
               'data-key':'status'
