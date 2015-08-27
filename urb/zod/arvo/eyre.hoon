@@ -1217,9 +1217,9 @@
       ?-  r.hat 
         [%| @]  (cat 3 '; Domain=' (rsh 3 1 (scot %if p.r.hat)))
         [%& %org %urbit *]  '; Domain=.urbit.org'
-        [%& @ @ *]  =+  dom=p.r.hat 
-                    =-  (rap 3 i.dom '.' i.t.dom -)
-                    |-(?~(t.t.dom ~ ['.' i.t.t.dom $(dom t.dom)]))
+        [%& @ @ *]  =-  (rap 3 "; Domain={-}{i.p.r.hat ~}")
+                    (turn (flop `path`t.p.r.hat) |=(a=span (cat 3 a '.')))
+                    
         [%& *]  ''  ::  XX security?
       ==
     ::
