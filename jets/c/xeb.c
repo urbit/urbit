@@ -11,10 +11,6 @@
   {
     mpz_t a_mp;
 
-    if ( !_(u3a_is_cat(a)) || !_(u3a_is_dog(a)) ) {
-        return u3m_bail(c3__fail);
-    }
-
     if ( __(u3a_is_dog(a)) ) {
       u3r_mp(a_mp, a);
       size_t log = mpz_sizeinbase(a_mp, 2);
