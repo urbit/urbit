@@ -162,6 +162,7 @@ J_B_OFILES=\
 
 J_C_OFILES=\
        jets/c/bex.o \
+       jets/c/xeb.o \
        jets/c/can.o \
        jets/c/cap.o \
        jets/c/cat.o \
