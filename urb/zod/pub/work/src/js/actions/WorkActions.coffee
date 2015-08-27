@@ -25,8 +25,6 @@ module.exports =
     Dispatcher.handleViewAction {type:'newItem', index, item}
   
   setItem: ({id,version},key,val) ->
-    if key is "audience"
-      return @setAudience {id},val
     version += 1
     key = key.split('_').join '-'
     set = "#{key}": val
