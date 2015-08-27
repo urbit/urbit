@@ -43,6 +43,11 @@ module.exports = {
   setItem: function(arg, key, val) {
     var id, obj, set, version;
     id = arg.id, version = arg.version;
+    if (key === "audience") {
+      return this.setAudience({
+        id: id
+      }, val);
+    }
     version += 1;
     key = key.split('_').join('-');
     set = (
@@ -86,14 +91,16 @@ module.exports = {
     });
   },
   removeItem: function(arg) {
-    var id;
-    id = arg.id;
-    Persistence.put({
-      audience: {
-        id: id,
-        to: []
-      }
-    });
+    var id, version;
+    id = arg.id, version = arg.version;
+    if (version >= 0) {
+      Persistence.put({
+        audience: {
+          id: id,
+          to: []
+        }
+      });
+    }
     return Dispatcher.handleViewAction({
       type: 'archiveItem',
       id: id
@@ -169,6 +176,7 @@ module.exports = {
     });
   }
 };
+
 
 
 },{"../dispatcher/Dispatcher.coffee":9,"../persistence/Persistence.coffee":15,"../util.coffee":17}],2:[function(require,module,exports){
@@ -279,7 +287,7 @@ module.exports = recl({
         return text.trim().split(" ");
       case 'audience':
         return text.trim().split(" ").map(function(a) {
-          return "~" + a;
+          return ("~" + a).toLowerCase();
         });
       case 'date_due':
         d = text.slice(1).replace(/\./g, "-");
@@ -333,6 +341,7 @@ module.exports = recl({
     }
   }
 });
+
 
 
 },{"../actions/WorkActions.coffee":1}],3:[function(require,module,exports){
@@ -446,6 +455,7 @@ module.exports = recl({
 });
 
 
+
 },{}],4:[function(require,module,exports){
 var Field, WorkActions, button, div, rece, recl, ref, textarea;
 
@@ -498,8 +508,7 @@ module.exports = recl({
     }
   },
   onFocus: function(e) {
-    this.props._focus(e, this);
-    return true;
+    return this.props._focus(e, this);
   },
   _markDone: function(e) {
     return WorkActions.setItem(this.props.item, 'done', !(this.props.item.done === true));
@@ -685,6 +694,7 @@ module.exports = recl({
 });
 
 
+
 },{"../actions/WorkActions.coffee":1,"./FieldComponent.coffee":2}],5:[function(require,module,exports){
 var FilterComponent, ItemComponent, ListeningComponent, SortComponent, WorkActions, WorkStore, div, h1, input, rece, recl, ref, textarea;
 
@@ -789,7 +799,7 @@ module.exports = recl({
     }
   },
   title_keyDown: function(e, i) {
-    var audience, index, ins, item, last, next, ref1, tags;
+    var audience, index, ins, item, last, next, prev, ref1, ref2, tags;
     switch (e.keyCode) {
       case 13:
         e.preventDefault();
@@ -816,15 +826,19 @@ module.exports = recl({
         }
         return WorkActions.newItem(index, item);
       case 8:
-        if ((window.getSelection().getRangeAt(0).endOffset === 0) && (e.target.innerText.length === 0)) {
+        if (window.getSelection().getRangeAt(0).endOffset === 0) {
           e.preventDefault();
-          if (this.state.selected !== 0) {
-            this.setState({
-              selected: this.state.selected - 1,
-              select: "end"
-            });
+          if (e.target.innerText.length === 0) {
+            if (this.state.selected !== 0) {
+              this.setState({
+                selected: this.state.selected - 1,
+                select: "end"
+              });
+            }
+            return WorkActions.removeItem(i.props.item);
+          } else if (((ref2 = i.props, index = ref2.index, ref2), index > 0) && (prev = this.state.list[i.props.index - 1], prev.version < 0)) {
+            return WorkActions.removeItem(prev);
           }
-          return WorkActions.removeItem(i.props.item);
         }
         break;
       case 38:
@@ -929,6 +943,7 @@ module.exports = recl({
 });
 
 
+
 },{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":16,"./FilterComponent.coffee":3,"./ItemComponent.coffee":4,"./ListeningComponent.coffee":6,"./SortComponent.coffee":7}],6:[function(require,module,exports){
 var div, h1, input, rece, recl, ref, textarea;
 
@@ -945,6 +960,7 @@ module.exports = recl({
     }, "");
   }
 });
+
 
 
 },{}],7:[function(require,module,exports){
@@ -991,6 +1007,7 @@ module.exports = recl({
 });
 
 
+
 },{}],8:[function(require,module,exports){
 var ListComponent, div, h1, rece, recl, ref;
 
@@ -1011,6 +1028,7 @@ module.exports = recl({
     }));
   }
 });
+
 
 
 },{"./ListComponent.coffee":5}],9:[function(require,module,exports){
@@ -1034,6 +1052,7 @@ module.exports = _.merge(new Dispatcher(), {
 });
 
 
+
 },{"flux":11}],10:[function(require,module,exports){
 var WorkComponent;
 
@@ -1044,6 +1063,7 @@ window.util = _.extend(window.util || {}, require('./util.coffee'));
 $(function() {
   return React.render(React.createElement(WorkComponent), $('#c')[0]);
 });
+
 
 
 },{"./components/WorkComponent.coffee":8,"./util.coffee":17}],11:[function(require,module,exports){
@@ -1443,6 +1463,7 @@ module.exports = {
 };
 
 
+
 },{}],16:[function(require,module,exports){
 var Dispatcher, EventEmitter, WorkStore, _filters, _ghost, _list, _listening, _sorts, _tasks, _updated, assign, uuid32;
 
@@ -1696,6 +1717,7 @@ WorkStore.dispatchToken = Dispatcher.register(function(p) {
 module.exports = WorkStore;
 
 
+
 },{"../dispatcher/Dispatcher.coffee":9,"../util.coffee":17,"events":18,"object-assign":14}],17:[function(require,module,exports){
 module.exports = {
   uuid32: function() {
@@ -1752,6 +1774,7 @@ module.exports = {
     }
   }
 };
+
 
 
 },{}],18:[function(require,module,exports){

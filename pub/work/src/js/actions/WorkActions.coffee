@@ -37,8 +37,9 @@ module.exports =
     version += 1
     Persistence.put old:{id,version,dif:doer:"#{act}":null}
 
-  removeItem: ({id}) ->
-    Persistence.put audience:{id,to:[]}
+  removeItem: ({id,version}) ->
+    if version >= 0
+      Persistence.put audience:{id,to:[]}
     Dispatcher.handleViewAction {type:'archiveItem',id}
   
   setAudience: ({id},to) ->

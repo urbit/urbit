@@ -67,8 +67,10 @@ module.exports = recl
       return if @state.noNew
       {index,item} = i.props
       if window.getSelection().getRangeAt(0).endOffset is 0
+        # console.log "new", index, "start"
         ins = @state.selected
       else
+        # console.log "new", index,"next"
         index++
         ins = @state.selected+1 # XX consolidate
         @setState {selected:ins,select:true}
