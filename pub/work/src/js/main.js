@@ -166,7 +166,6 @@ module.exports = {
 };
 
 
-
 },{"../dispatcher/Dispatcher.coffee":9,"../persistence/Persistence.coffee":15}],2:[function(require,module,exports){
 var WorkActions, div, rece, recl, ref, textarea,
   slice = [].slice;
@@ -322,7 +321,6 @@ module.exports = recl({
 });
 
 
-
 },{"../actions/WorkActions.coffee":1}],3:[function(require,module,exports){
 var div, h1, label, rece, recl, ref;
 
@@ -432,7 +430,6 @@ module.exports = recl({
     })(this)));
   }
 });
-
 
 
 },{}],4:[function(require,module,exports){
@@ -561,9 +558,9 @@ module.exports = recl({
   },
   renderTopField: function(key, props, format) {
     var _props, ref1;
-    _props = _.extend({
+    _props = _.extend(props, {
       className: ((ref1 = props.className) != null ? ref1 : key) + " top"
-    }, props);
+    });
     return this.renderField(key, _props, format);
   },
   componentDidMount: function() {
@@ -671,7 +668,6 @@ module.exports = recl({
     }, 'Post'))) : void 0);
   }
 });
-
 
 
 },{"../actions/WorkActions.coffee":1,"./FieldComponent.coffee":2}],5:[function(require,module,exports){
@@ -908,7 +904,6 @@ module.exports = recl({
 });
 
 
-
 },{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":16,"./FilterComponent.coffee":3,"./ItemComponent.coffee":4,"./ListeningComponent.coffee":6,"./SortComponent.coffee":7}],6:[function(require,module,exports){
 var div, h1, input, rece, recl, ref, textarea;
 
@@ -925,7 +920,6 @@ module.exports = recl({
     }, "");
   }
 });
-
 
 
 },{}],7:[function(require,module,exports){
@@ -972,7 +966,6 @@ module.exports = recl({
 });
 
 
-
 },{}],8:[function(require,module,exports){
 var ListComponent, div, h1, rece, recl, ref;
 
@@ -993,7 +986,6 @@ module.exports = recl({
     }));
   }
 });
-
 
 
 },{"./ListComponent.coffee":5}],9:[function(require,module,exports){
@@ -1017,7 +1009,6 @@ module.exports = _.merge(new Dispatcher(), {
 });
 
 
-
 },{"flux":11}],10:[function(require,module,exports){
 var WorkComponent;
 
@@ -1028,7 +1019,6 @@ window.util = _.extend(window.util || {}, require('./util.coffee'));
 $(function() {
   return React.render(React.createElement(WorkComponent), $('#c')[0]);
 });
-
 
 
 },{"./components/WorkComponent.coffee":8,"./util.coffee":17}],11:[function(require,module,exports){
@@ -1428,7 +1418,6 @@ module.exports = {
 };
 
 
-
 },{}],16:[function(require,module,exports){
 var Dispatcher, EventEmitter, WorkStore, _filters, _ghost, _list, _listening, _sorts, _tasks, _updated, assign, uuid32;
 
@@ -1451,9 +1440,9 @@ _updated = Date.now();
 _filters = {
   done: null,
   owner: null,
-  tags: null,
+  status: null,
   audience: null,
-  status: null
+  tags: null
 };
 
 _sorts = {
@@ -1670,7 +1659,6 @@ WorkStore.dispatchToken = Dispatcher.register(function(p) {
 module.exports = WorkStore;
 
 
-
 },{"../dispatcher/Dispatcher.coffee":9,"../util.coffee":17,"events":18,"object-assign":14}],17:[function(require,module,exports){
 module.exports = {
   uuid32: function() {
@@ -1727,7 +1715,6 @@ module.exports = {
     }
   }
 };
-
 
 
 },{}],18:[function(require,module,exports){

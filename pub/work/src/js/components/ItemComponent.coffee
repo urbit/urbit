@@ -75,7 +75,7 @@ module.exports = recl
     rece Field, $.extend props, {render,_key,item:@props.item,defaultValue}
   
   renderTopField: (key,props,format)->
-    _props = _.extend {className:"#{props.className ? key} top"}, props
+    _props = _.extend props,{className:"#{props.className ? key} top"}
     @renderField key,_props,format
 
   componentDidMount: ->
