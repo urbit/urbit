@@ -66,7 +66,7 @@ module.exports = recl
       
   parse: (text)-> switch @props._key
     when 'tags'      then text.trim().split(" ")
-    when 'audience'  then text.trim().split(" ").map (a) -> "~#{a}"
+    when 'audience'  then text.trim().split(" ").map (a) -> "~#{a}".toLowerCase()
     when 'date_due'
       d = text.slice(1).replace(/\./g, "-")
       return NaN if d.length < 8

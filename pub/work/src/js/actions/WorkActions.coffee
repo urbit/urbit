@@ -28,19 +28,20 @@ module.exports =
     version += 1
     key = key.split('_').join '-'
     set = "#{key}": val
-    Persistence.put old:{id,version,dif:{set}}
+    Persistence.put old:{id,dif:{set}}
     Dispatcher.handleViewAction {type:'updateItem',id,version,key,val}
 
   ownItem: ({id,version},act) ->
     version += 1
     Persistence.put old:{id,version,dif:doer:"#{act}":null}
 
-  removeItem: ({id}) ->
-    Persistence.put audience:{id,to:[]}
+  removeItem: ({id,version}) ->
+    if version >= 0
+      Persistence.put audience:{id,to:[]}
     Dispatcher.handleViewAction {type:'archiveItem',id}
   
   setAudience: ({id},to) ->
-    Persistence.put audience:{id,to}
+    Persistence.put old:{id,dif:audience:to}
     Dispatcher.handleViewAction {type:'setAudienece',id,to}
 
   addComment: ({id,version},val) ->
