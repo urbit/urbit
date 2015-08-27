@@ -10,9 +10,9 @@ _updated = Date.now()
 _filters = 
   done:null
   creator:null
-  tags:null
-  audience:null
   status:null
+  audience:null
+  tags:null
 _sorts =
   sort:0
   title:0

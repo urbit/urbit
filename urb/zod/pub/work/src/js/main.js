@@ -568,9 +568,9 @@ module.exports = recl({
   },
   renderTopField: function(key, props, format) {
     var _props, ref1;
-    _props = _.extend({
+    _props = _.extend(props, {
       className: ((ref1 = props.className) != null ? ref1 : key) + " top"
-    }, props);
+    });
     return this.renderField(key, _props, format);
   },
   componentDidMount: function() {
@@ -1462,9 +1462,9 @@ _updated = Date.now();
 _filters = {
   done: null,
   creator: null,
-  tags: null,
+  status: null,
   audience: null,
-  status: null
+  tags: null
 };
 
 _sorts = {
