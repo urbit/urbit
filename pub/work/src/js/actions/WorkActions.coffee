@@ -1,14 +1,15 @@
 Dispatcher   = require '../dispatcher/Dispatcher.coffee'
 Persistence  = require '../persistence/Persistence.coffee'
- 
+{uuid32}     = require '../util.coffee'
+
 module.exports =
   newItem: (index,_item={}) ->
     item =
       date_created:   Date.now()
       date_modified:  Date.now()
       owner:          window.urb.ship
-      version:        0
-      id:             _item.id          ? window.util.uuid32()
+      version:        -1
+      id:             _item.id          ? uuid32()
       date_due:       _item.date_due    ? null
       done:           _item.done        ? null
       status:         _item.status      ? 'announced'
@@ -18,7 +19,9 @@ module.exports =
       discussion:     _item.discussion  ? []
       audience:       _item.audience    ?
         [window.util.talk.mainStationPath window.urb.ship]
-    Persistence.put new:item
+    if item.date_due or item.title or item.description
+      item.version++
+      Persistence.put new:item
     Dispatcher.handleViewAction {type:'newItem', index, item}
   
   setItem: ({id,version},key,val) ->
@@ -26,6 +29,8 @@ module.exports =
     key = key.split('_').join '-'
     set = "#{key}": val
     Persistence.put old:{id,version,dif:{set}}
+    Dispatcher.handleViewAction {type:'updateItem',id,version}
+
 
   ownItem: ({id,version},own) ->
     o = {}
@@ -52,8 +57,6 @@ module.exports =
     sort.splice to, 0, sort.splice(from,1)[0]
     Persistence.put {sort}
     Dispatcher.handleViewAction {type:'moveItems',list:sort,to,from}
-    
-  moveGhost: (index)-> Dispatcher.handleViewAction {type:'moveGhost',index}  
 
   listenList: (type)->
     Persistence.subscribe type, (err,d)-> 

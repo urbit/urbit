@@ -48,10 +48,12 @@ module.exports = recl
       if @to then clearTimeout @to
       @to = setTimeout =>
           {item,_key} = @props
-          if not item.ghost
+          if item.version >= 0
             WorkActions.setItem item, _key, val
           else WorkActions.newItem item.index,
-            id: item.id
+            id:        item.id
+            tags:      item.tags
+            audience:  item.audience
             "#{_key}": val
         ,1000
 

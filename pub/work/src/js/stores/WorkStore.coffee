@@ -29,7 +29,9 @@ WorkStore = assign {},EventEmitter.prototype,{
     sort.map (id,index)=> 
       unless _tasks[id]
         _list.splice index, 0, id
-      if tasks[id]  # XX client-side defaults
+      if !tasks[id]
+        console.log "lost", id
+      else if !_tasks[id] or tasks[id].version > _tasks[id].version
         _tasks[id] = @itemFromData tasks[id], index
     _updated = Date.now()
 
@@ -39,7 +41,7 @@ WorkStore = assign {},EventEmitter.prototype,{
     list = []
     for id in _list
       task = _tasks[id]
-      if task.archived
+      if !task? or task.archived
         continue
       add = true
       for _k,_v of _filters
@@ -63,27 +65,28 @@ WorkStore = assign {},EventEmitter.prototype,{
       list = _.sortBy list,k,k
       if v is -1 then list.reverse()
     unless (_filters.owner? and _filters.owner isnt urb.ship) or _filters.done?
-      ghost = $.extend {}, _ghost, ghost:true, version:-1
-      if ghost.index?
-        list.splice ghost.index, 0, ghost
+      ghost = $.extend {ghost:true,version:-1}, _ghost
+      if _filters.tags     then ghost.tags     = _filters.tags
+      if _filters.audience then ghost.audience = _filters.audience
       else list.push ghost
     list
 
   newItem: ({index,item}) ->
-    if item.id = _ghost.id
-      _ghost.id = uuid32()
     index ?= _list.length
-    _list.splice index,0,item.id
+    if item.id is _ghost.id
+      _ghost.id = uuid32()
+    unless _tasks[item.id]?
+      _list.splice index,0,item.id
+    else if _tasks[item.id].version >= 0
+      throw new Error "Collision: already have #{item.id}"
     _tasks[item.id] = @itemFromData item, index
 
   getListening: -> _listening
   getFilters: -> _filters
   setFilter: ({key,val}) ->
-    _ghost.index = null
     _filters[key] = val
   getSorts: -> _sorts
   setSort: ({key,val}) -> 
-    _ghost.index = null
     for k,v of _sorts
       _sorts[k] = 0
     _sorts[key] = val
@@ -109,9 +112,9 @@ WorkStore = assign {},EventEmitter.prototype,{
   moveItems: ({list,to,from}) ->
     _tasks[_list[from]].sort = _tasks[_list[to]].sort
     _list = list
-  moveGhost: ({index})-> _ghost.index = index
   setAudience: ({id,to})-> _tasks[id].audience = to
   archiveItem: ({id})-> _tasks[id].archived = true
+  updateItem: ({id,version})-> _tasks[id].version = version
 
 }
 
