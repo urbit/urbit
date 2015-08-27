@@ -78,12 +78,15 @@ module.exports = recl
       WorkActions.newItem index, item
     # backspace - remove if at 0
     when 8
-      if  (window.getSelection().getRangeAt(0).endOffset is 0) and
-          (e.target.innerText.length is 0)
+      if  (window.getSelection().getRangeAt(0).endOffset is 0)
         e.preventDefault()
-        if @state.selected isnt 0
-          @setState {selected:@state.selected-1,select:"end"}
-        WorkActions.removeItem i.props.item
+        if (e.target.innerText.length is 0)
+          if @state.selected isnt 0
+            @setState {selected:@state.selected-1,select:"end"}
+          WorkActions.removeItem i.props.item
+        else if ({index} = i.props; index > 0) and
+                (prev = @state.list[i.props.index - 1]; prev.version < 0)
+          WorkActions.removeItem prev
     # up
     when 38
       e.preventDefault()
