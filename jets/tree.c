@@ -34,6 +34,7 @@ static u3j_harm _mood__hoon_turn_a[] = {{".2", u3wb_turn, c3y}, {}};
 static u3j_harm _mood__hoon_weld_a[] = {{".2", u3wb_weld, c3y}, {}};
 
 static u3j_harm _mood__hoon_bex_a[] = {{".2", u3wc_bex, c3y}, {}};
+static u3j_harm _mood__hoon_xeb_a[] = {{".2", u3wc_xeb, c3y}, {}};
 static u3j_harm _mood__hoon_can_a[] = {{".2", u3wc_can, c3y}, {}};
 static u3j_harm _mood__hoon_cap_a[] = {{".2", u3wc_cap, c3y}, {}};
 static u3j_harm _mood__hoon_cat_a[] = {{".2", u3wc_cat, c3y}, {}};
@@ -463,6 +464,7 @@ static u3j_core _mood__hoon_d[] =
     { "weld", _mood__hoon_weld_a },
 
     { "bex", _mood__hoon_bex_a },
+    { "xeb", _mood__hoon_xeb_a },
     { "can", _mood__hoon_can_a },
     { "cap", _mood__hoon_cap_a },
     { "cat", _mood__hoon_cat_a },
