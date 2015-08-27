@@ -39,6 +39,7 @@
   /** Tier 3.
   **/
     u3_noun u3wc_bex(u3_noun);
+    u3_noun u3wc_xeb(u3_noun);
     u3_noun u3wc_can(u3_noun);
     u3_noun u3wc_cap(u3_noun);
     u3_noun u3wc_cat(u3_noun);
