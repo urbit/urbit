@@ -1758,12 +1758,23 @@
   =^  moz  +>.$  ra-abet:(~(ra-cancel ra ost.hid ~) src.hid pax)
   [moz +>.$(shells (~(del by shells) ost.hid))]
 ::
-::++  poke-bit
-::  |=  [~]
-::  ^-  (quip move +>)
-::  :_  +>.$
-::  =+  paf=/(scot %p our.hid)/try/(scot %da now.hid)/talk/backlog/jam
-::  [ost.hid %info /jamfile our.hid (foal paf (jam +<+.+>.$))]~
+++  poke-save
+  |=  man=span
+  ^-  (quip move +>)
+  :_  +>.$
+  =+  paf=/(scot %p our.hid)/home/(scot %da now.hid)/talk/[man]/jam
+  =+  grams:(~(got by stories) man)
+  [ost.hid %info /jamfile our.hid (foal paf [%jam !>((jam -))])]~
+::
+++  poke-load
+  |=  man=span
+  =+  ^=  grams
+      %-  (hard (list telegram))
+      %-  cue
+      %-  (hard ,@)
+      .^(%cx /(scot %p our.hid)/home/(scot %da now.hid)/talk/[man]/jam)
+  =+  toy=(~(got by stories) man)
+  [~ +>.$(stories (~(put by stories) man toy(grams grams, count (lent grams))))]
 ::
 ++  prep
   |=  [old=(unit house)]
