@@ -43,11 +43,6 @@ module.exports = {
   setItem: function(arg, key, val) {
     var id, obj, set, version;
     id = arg.id, version = arg.version;
-    if (key === "audience") {
-      return this.setAudience({
-        id: id
-      }, val);
-    }
     version += 1;
     key = key.split('_').join('-');
     set = (
@@ -58,7 +53,6 @@ module.exports = {
     Persistence.put({
       old: {
         id: id,
-        version: version,
         dif: {
           set: set
         }
@@ -110,9 +104,11 @@ module.exports = {
     var id;
     id = arg.id;
     Persistence.put({
-      audience: {
+      old: {
         id: id,
-        to: to
+        dif: {
+          audience: to
+        }
       }
     });
     return Dispatcher.handleViewAction({
