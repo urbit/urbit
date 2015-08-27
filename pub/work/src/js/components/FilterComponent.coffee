@@ -16,7 +16,7 @@ module.exports = recl
     if e.keyCode is 13
       e.stopPropagation()
       e.preventDefault()
-      @change(e)
+  onKeyUp: (e) -> @change(e)
   onBlur: (e) -> @change(e)
   change: (e) ->
     $t = $(e.target).closest('.filter')
@@ -29,11 +29,12 @@ module.exports = recl
       when 'tags'     then txt = [txt]
     @props.onChange key,txt
   
-  fields: [ {filter:'done',    key:'done',    title: ''},
-            {filter:'owned',   key:'creator',    title: 'Owner:'},
+  fields: [ {filter:'done',    key:'done',     title: ''},
+            {filter:'owned',   key:'creator',  title: 'Owner:'},
+            {filter:'doer',    key:'doer',     title: 'Doer:'}
             {filter:'tag',     key:'tags',     title: 'Tag:'},
             {filter:'channel', key:'audience', title: 'Audience:'},
-            {filter:'status',  key:'status',   title: 'Status:'} ]
+          ]
 
   render: ->
     (div {className:'filters'}, @fields.map ({filter,key,title})=>
@@ -50,6 +51,7 @@ module.exports = recl
                 contentEditable:true
                 className:'input ib'
                 @onKeyDown
+                @onKeyUp
                 @onBlur
               },@props.filters[filter])
       ))
