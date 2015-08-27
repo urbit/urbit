@@ -13,7 +13,6 @@ module.exports =
       date_due:       _item.date_due    ? null
       done:           _item.done        ? null
       doer:           _item.doer        ? null
-      status:         _item.status      ? 'announced'
       tags:           _item.tags        ? []
       title:          _item.title       ? ''
       description:    _item.description ? ''
@@ -33,11 +32,9 @@ module.exports =
     Dispatcher.handleViewAction {type:'updateItem',id,version}
 
 
-  ownItem: ({id,version},own) ->
-    o = {}
-    o[own] = null
+  ownItem: ({id,version},act) ->
     version += 1
-    Persistence.put old:{id,version,dif:own:o}
+    Persistence.put old:{id,version,dif:doer:"#{act}":null}
 
   removeItem: ({id}) ->
     Persistence.put audience:{id,to:[]}
