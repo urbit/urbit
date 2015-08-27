@@ -13,9 +13,9 @@
 
     if ( __(u3a_is_dog(a)) ) {
       u3r_mp(a_mp, a);
-      size_t log = mpz_sizeinbase(a_mp, 2);
+      c3_d x = mpz_sizeinbase(a_mp, 2);
       mpz_t b_mp;
-      mpz_init_set_ui(b_mp, log);
+      mpz_init_set_ui(b_mp, x);
       return u3i_mp(b_mp);
     }
     else {
