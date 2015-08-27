@@ -9,14 +9,14 @@ _listening = []
 _updated = Date.now()
 _filters = 
   done:null
-  owner:null
+  creator:null
   tags:null
   audience:null
   status:null
 _sorts =
   sort:0
   title:0
-  owner:0
+  creator:0
   date_due:0
 _ghost = id:uuid32()
 
@@ -50,7 +50,7 @@ WorkStore = assign {},EventEmitter.prototype,{
         add = switch _k
           when 'tags', 'audience'
             _.intersection(c,_v).length isnt 0
-          when 'owner'
+          when 'creator'
             c is _v.replace(/\~/g, "")
           when 'done'
             !!c is _v
@@ -64,7 +64,7 @@ WorkStore = assign {},EventEmitter.prototype,{
           break
       list = _.sortBy list,k,k
       if v is -1 then list.reverse()
-    unless (_filters.owner? and _filters.owner isnt urb.ship) or _filters.done?
+    unless (_filters.creator? and _filters.owner isnt urb.ship) or _filters.done?
       ghost = $.extend {ghost:true,version:-1}, _ghost
       if _filters.tags     then ghost.tags     = _filters.tags
       if _filters.audience then ghost.audience = _filters.audience

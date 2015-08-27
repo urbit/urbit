@@ -45,7 +45,7 @@ module.exports = recl
   _changeStatus: (e) ->
     return if @props.item.status is 'released'
     if @props.item.status is 'accepted' and 
-    @formatOwner(@props.item.owner) isnt window.urb.ship
+    @formatOwner(@props.item.creator) isnt window.urb.ship
       return
     own = "claim" if @props.item.status is "announced"
     own = "announce" if @props.item.status is "accepted"
@@ -95,7 +95,7 @@ module.exports = recl
     action = ""
     if @props.item.status is 'announced'
       action = "claim"
-    if @props.item.status is 'accepted' and @formatOwner(@props.item.owner) is window.urb.ship
+    if @props.item.status is 'accepted' and @formatOwner(@props.item.creator) is window.urb.ship
       action = "release" 
 
     (div {
@@ -106,7 +106,7 @@ module.exports = recl
         (div {
           className:'header'
           },
-            (div {className:'owner ib'}, @formatOwner(@props.item.owner))
+            (div {className:'creator ib'}, @formatOwner(@props.item.owner))
             (div {
               className:'status ib action-'+(action.length > 0)
               'data-key':'status'
