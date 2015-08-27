@@ -171,7 +171,6 @@ module.exports = {
 };
 
 
-
 },{"../dispatcher/Dispatcher.coffee":9,"../persistence/Persistence.coffee":15,"../util.coffee":17}],2:[function(require,module,exports){
 var WorkActions, div, rece, recl, ref, textarea,
   slice = [].slice;
@@ -329,7 +328,6 @@ module.exports = recl({
 });
 
 
-
 },{"../actions/WorkActions.coffee":1}],3:[function(require,module,exports){
 var div, h1, label, rece, recl, ref;
 
@@ -441,7 +439,6 @@ module.exports = recl({
 });
 
 
-
 },{}],4:[function(require,module,exports){
 var Field, WorkActions, div, rece, recl, ref, textarea;
 
@@ -504,7 +501,7 @@ module.exports = recl({
     if (this.props.item.status === 'released') {
       return;
     }
-    if (this.props.item.status === 'accepted' && this.formatOwner(this.props.item.creator) !== window.urb.ship) {
+    if (this.props.item.status === 'accepted' && this.formatCreator(this.props.item.creator) !== window.urb.ship) {
       return;
     }
     if (this.props.item.status === "announced") {
@@ -536,7 +533,7 @@ module.exports = recl({
     }
     return _d;
   },
-  formatOwner: function(o) {
+  formatCreator: function(o) {
     if (o == null) {
       o = "";
     }
@@ -546,7 +543,7 @@ module.exports = recl({
     if (a == null) {
       a = [];
     }
-    return this.formatOwner(a.join(" "));
+    return this.formatCreator(a.join(" "));
   },
   getInitialState: function() {
     return {
@@ -592,7 +589,7 @@ module.exports = recl({
     if (this.props.item.status === 'announced') {
       action = "claim";
     }
-    if (this.props.item.status === 'accepted' && this.formatOwner(this.props.item.creator) === window.urb.ship) {
+    if (this.props.item.status === 'accepted' && this.formatCreator(this.props.item.creator) === window.urb.ship) {
       action = "release";
     }
     return div({
@@ -604,7 +601,7 @@ module.exports = recl({
       className: 'header'
     }, div({
       className: 'creator ib'
-    }, this.formatOwner(this.props.item.owner)), div({
+    }, this.formatCreator(this.props.item.creator)), div({
       className: 'status ib action-' + (action.length > 0),
       'data-key': 'status',
       onClick: this._changeStatus
@@ -678,7 +675,6 @@ module.exports = recl({
     }, 'Post'))) : void 0);
   }
 });
-
 
 
 },{"../actions/WorkActions.coffee":1,"./FieldComponent.coffee":2}],5:[function(require,module,exports){
@@ -919,7 +915,6 @@ module.exports = recl({
 });
 
 
-
 },{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":16,"./FilterComponent.coffee":3,"./ItemComponent.coffee":4,"./ListeningComponent.coffee":6,"./SortComponent.coffee":7}],6:[function(require,module,exports){
 var div, h1, input, rece, recl, ref, textarea;
 
@@ -936,7 +931,6 @@ module.exports = recl({
     }, "");
   }
 });
-
 
 
 },{}],7:[function(require,module,exports){
@@ -983,7 +977,6 @@ module.exports = recl({
 });
 
 
-
 },{}],8:[function(require,module,exports){
 var ListComponent, div, h1, rece, recl, ref;
 
@@ -1004,7 +997,6 @@ module.exports = recl({
     }));
   }
 });
-
 
 
 },{"./ListComponent.coffee":5}],9:[function(require,module,exports){
@@ -1028,7 +1020,6 @@ module.exports = _.merge(new Dispatcher(), {
 });
 
 
-
 },{"flux":11}],10:[function(require,module,exports){
 var WorkComponent;
 
@@ -1039,7 +1030,6 @@ window.util = _.extend(window.util || {}, require('./util.coffee'));
 $(function() {
   return React.render(React.createElement(WorkComponent), $('#c')[0]);
 });
-
 
 
 },{"./components/WorkComponent.coffee":8,"./util.coffee":17}],11:[function(require,module,exports){
@@ -1439,7 +1429,6 @@ module.exports = {
 };
 
 
-
 },{}],16:[function(require,module,exports){
 var Dispatcher, EventEmitter, WorkStore, _filters, _ghost, _list, _listening, _sorts, _tasks, _updated, assign, uuid32;
 
@@ -1688,7 +1677,6 @@ WorkStore.dispatchToken = Dispatcher.register(function(p) {
 module.exports = WorkStore;
 
 
-
 },{"../dispatcher/Dispatcher.coffee":9,"../util.coffee":17,"events":18,"object-assign":14}],17:[function(require,module,exports){
 module.exports = {
   uuid32: function() {
@@ -1745,7 +1733,6 @@ module.exports = {
     }
   }
 };
-
 
 
 },{}],18:[function(require,module,exports){
