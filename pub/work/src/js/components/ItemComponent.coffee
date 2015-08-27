@@ -54,7 +54,7 @@ module.exports = recl
   _changeStatus: (e) ->
     return if @props.item.status is 'released'
     if @props.item.status is 'accepted' and 
-    @formatOwner(@props.item.creator) isnt window.urb.ship
+    @formatCreator(@props.item.creator) isnt window.urb.ship
       return
     WorkActions.ownItem @props.item,@getAction()
 
@@ -73,9 +73,9 @@ module.exports = recl
       _d += "..#{d.getHours()}.#{d.getMinutes()}.#{d.getSeconds()}"
     _d
 
-  formatOwner: (o="") -> o.replace /\~/g,""
+  formatCreator: (o="") -> o.replace /\~/g,""
 
-  formatAudience: (a=[]) -> @formatOwner a.join(" ")
+  formatAudience: (a=[]) -> @formatCreator a.join(" ")
 
   getInitialState: -> {expand:false}
 
@@ -110,7 +110,7 @@ module.exports = recl
         (div {
           className:'header'
           },
-            (div {className:'creator ib'}, @formatOwner(@props.item.owner))
+            (div {className:'creator ib'}, @formatCreator(@props.item.creator))
             (div {
               className:'status ib action-'+(action.length > 0)
               'data-key':'status'
