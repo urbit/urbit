@@ -44,6 +44,12 @@ module.exports = recl
   _markDone: (e) -> 
     WorkActions.setItem @props.item,'done',(not (@props.item.done is true))
 
+  getStatus: ->
+    if @props.item.doer is window.urb.ship
+      return "owned"
+    if @props.item.doer is null
+      return "available"
+
   getAction: -> switch @props.item.doer
     when null
       action = "claim"
@@ -100,6 +106,7 @@ module.exports = recl
     discussion = _.clone @props.item.discussion ? []
     discussion.reverse()
 
+    status = @getStatus()
     action = @getAction()
     
     (div {
@@ -116,7 +123,7 @@ module.exports = recl
               'data-key':'status'
               onClick:@_changeStatus
               },
-                (div {className:'label'}, @props.item.status)
+                (div {className:'label'}, status)
                 (div {className:'action a'}, action)
               )
             (@renderField 'audience', {}, @formatAudience)

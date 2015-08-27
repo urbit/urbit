@@ -362,9 +362,11 @@ module.exports = recl({
   onKeyDown: function(e) {
     if (e.keyCode === 13) {
       e.stopPropagation();
-      e.preventDefault();
-      return this.change(e);
+      return e.preventDefault();
     }
+  },
+  onKeyUp: function(e) {
+    return this.change(e);
   },
   onBlur: function(e) {
     return this.change(e);
@@ -400,6 +402,10 @@ module.exports = recl({
       key: 'creator',
       title: 'Owner:'
     }, {
+      filter: 'doer',
+      key: 'doer',
+      title: 'Doer:'
+    }, {
       filter: 'tag',
       key: 'tags',
       title: 'Tag:'
@@ -407,10 +413,6 @@ module.exports = recl({
       filter: 'channel',
       key: 'audience',
       title: 'Audience:'
-    }, {
-      filter: 'status',
-      key: 'status',
-      title: 'Status:'
     }
   ],
   render: function() {
@@ -436,6 +438,7 @@ module.exports = recl({
                 contentEditable: true,
                 className: 'input ib',
                 onKeyDown: this.onKeyDown,
+                onKeyUp: this.onKeyUp,
                 onBlur: this.onBlur
               }, this.props.filters[filter]);
           }
@@ -503,6 +506,14 @@ module.exports = recl({
   },
   _markDone: function(e) {
     return WorkActions.setItem(this.props.item, 'done', !(this.props.item.done === true));
+  },
+  getStatus: function() {
+    if (this.props.item.doer === window.urb.ship) {
+      return "owned";
+    }
+    if (this.props.item.doer === null) {
+      return "available";
+    }
   },
   getAction: function() {
     var action;
@@ -592,13 +603,14 @@ module.exports = recl({
     })(this), 1000);
   },
   render: function() {
-    var action, discussion, itemClass, ref1;
+    var action, discussion, itemClass, ref1, status;
     itemClass = 'item';
     if (this.state.expand) {
       itemClass += ' expand';
     }
     discussion = _.clone((ref1 = this.props.item.discussion) != null ? ref1 : []);
     discussion.reverse();
+    status = this.getStatus();
     action = this.getAction();
     return div({
       className: itemClass,
@@ -615,7 +627,7 @@ module.exports = recl({
       onClick: this._changeStatus
     }, div({
       className: 'label'
-    }, this.props.item.status), div({
+    }, status), div({
       className: 'action a'
     }, action)), this.renderField('audience', {}, this.formatAudience)), div({
       className: 'sort ib top'
@@ -1465,7 +1477,7 @@ _updated = Date.now();
 _filters = {
   done: null,
   creator: null,
-  status: null,
+  doer: null,
   audience: null,
   tags: null
 };
@@ -1532,6 +1544,13 @@ WorkStore = assign({}, EventEmitter.prototype, {
             case 'tags':
             case 'audience':
               return _.intersection(c, _v).length !== 0;
+            case 'doer':
+              if (_v.toLowerCase() === 'none') {
+                _v = null;
+              } else {
+                _v = _v.replace(/\~/g, "");
+              }
+              return c === _v;
             case 'creator':
               return c === _v.replace(/\~/g, "");
             case 'done':
