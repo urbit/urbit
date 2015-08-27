@@ -30,8 +30,7 @@ module.exports =
     key = key.split('_').join '-'
     set = "#{key}": val
     Persistence.put old:{id,version,dif:{set}}
-    Dispatcher.handleViewAction {type:'updateItem',id,version}
-
+    Dispatcher.handleViewAction {type:'updateItem',id,version,key,val}
 
   ownItem: ({id,version},own) ->
     o = {}

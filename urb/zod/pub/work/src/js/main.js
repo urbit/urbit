@@ -63,7 +63,9 @@ module.exports = {
     return Dispatcher.handleViewAction({
       type: 'updateItem',
       id: id,
-      version: version
+      version: version,
+      key: key,
+      val: val
     });
   },
   ownItem: function(arg, own) {
@@ -329,13 +331,13 @@ module.exports = recl({
 
 
 },{"../actions/WorkActions.coffee":1}],3:[function(require,module,exports){
-var div, h1, label, rece, recl, ref;
+var button, div, h1, label, rece, recl, ref;
 
 recl = React.createClass;
 
 rece = React.createElement;
 
-ref = React.DOM, div = ref.div, h1 = ref.h1, label = ref.label;
+ref = React.DOM, div = ref.div, h1 = ref.h1, label = ref.label, button = ref.button;
 
 module.exports = recl({
   onClick: function(e) {
@@ -420,7 +422,7 @@ module.exports = recl({
         }, label({}, title), (function() {
           switch (filter) {
             case 'done':
-              return div({
+              return button({
                 className: 'input-bool ib ' + this.props.filters[key],
                 onClick: this.onClick
               }, "");
@@ -440,13 +442,13 @@ module.exports = recl({
 
 
 },{}],4:[function(require,module,exports){
-var Field, WorkActions, div, rece, recl, ref, textarea;
+var Field, WorkActions, button, div, rece, recl, ref, textarea;
 
 recl = React.createClass;
 
 rece = React.createElement;
 
-ref = React.DOM, div = ref.div, textarea = ref.textarea;
+ref = React.DOM, div = ref.div, textarea = ref.textarea, button = ref.button;
 
 WorkActions = require('../actions/WorkActions.coffee');
 
@@ -491,10 +493,11 @@ module.exports = recl({
     }
   },
   onFocus: function(e) {
-    return this.props._focus(e, this);
+    this.props._focus(e, this);
+    return true;
   },
   _markDone: function(e) {
-    return WorkActions.setItem(this.props.item, 'done', this.props.item.done == null);
+    return WorkActions.setItem(this.props.item, 'done', !(this.props.item.done === true));
   },
   _changeStatus: function(e) {
     var own;
@@ -611,8 +614,8 @@ module.exports = recl({
       className: 'action a'
     }, action)), this.renderField('audience', {}, this.formatAudience)), div({
       className: 'sort ib top'
-    }, this.props.item.sort), div({
-      className: 'done ib done-' + (this.props.item.done != null),
+    }, this.props.item.sort), button({
+      className: 'done ib done-' + (this.props.item.done === true),
       onClick: this._markDone
     }, ''), this.renderTopField('title', {
       onFocus: this.onFocus,
@@ -669,7 +672,7 @@ module.exports = recl({
     }, this.formatDate(new Date)), div({
       contentEditable: true,
       className: 'input'
-    }), div({
+    }), button({
       className: 'submit',
       onClick: this._submitComment
     }, 'Post'))) : void 0);
@@ -1657,9 +1660,12 @@ WorkStore = assign({}, EventEmitter.prototype, {
     return _tasks[id].archived = true;
   },
   updateItem: function(arg) {
-    var id, version;
-    id = arg.id, version = arg.version;
-    return _tasks[id].version = version;
+    var id, key, val, version;
+    id = arg.id, version = arg.version, key = arg.key, val = arg.val;
+    _tasks[id].version = version;
+    if (key === 'done') {
+      return _tasks[id].done = val;
+    }
   }
 });
 

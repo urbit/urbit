@@ -114,7 +114,9 @@ WorkStore = assign {},EventEmitter.prototype,{
     _list = list
   setAudience: ({id,to})-> _tasks[id].audience = to
   archiveItem: ({id})-> _tasks[id].archived = true
-  updateItem: ({id,version})-> _tasks[id].version = version
+  updateItem: ({id,version,key,val})-> 
+    _tasks[id].version = version
+    _tasks[id].done = val if key is 'done'
 
 }
 

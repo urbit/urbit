@@ -167,9 +167,12 @@ h1.leader:after {
 }
 .input-bool,
 .item .done {
-  width: 0.7rem;
-  height: 0.7rem;
+  width: 1rem;
+  height: 1rem;
   border: 0.2rem solid #ccc;
+  padding: 0;
+  outline: none;
+  background-color: #fff;
 }
 .input-bool.true,
 .item .done-true {
@@ -205,9 +208,11 @@ h1.leader:after {
   cursor: pointer;
   transform-origin: 6px 12px;
   transition: transform 200ms linear;
+  -webkit-transform-origin: 6px 12px;
 }
 .item.expand .expand {
   transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
   transition: transform 200ms linear;
 }
 .item .header {
@@ -314,11 +319,12 @@ h1.leader:after {
 }
 .item .submit {
   font-size: 0.7rem;
-  text-transform: uppercase;
+  font-weight: 500;
   display: inline-block;
   background-color: #b9b9b9;
   letter-spacing: 0.07rem;
   color: #fff;
+  border: 0;
   padding: 0 0.3rem;
   margin-top: 0.5rem;
 }
@@ -358,7 +364,10 @@ h1.leader:after {
   border: 0;
   font: inherit;
   resize: none;
+  -webkit-user-select: text;
+  user-select: text;
 }
+textarea:focus,
 .input:focus {
   background-color: #e6e6e6;
 }
@@ -396,4 +405,79 @@ h1.leader:after {
   height: 0.1rem;
   width: 3rem;
   background-color: #ccc;
+}
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  #c {
+    width: 100%;
+    margin: 0;
+    left: 0.6rem;
+  }
+  h1 {
+    font-size: 1rem;
+  }
+  input,
+  textarea {
+    -webkit-appearance: none;
+    border-radius: 0;
+  }
+  .input {
+    padding: 0 0.3rem 0 0.1rem;
+  }
+  .ctrl {
+    margin-top: 1rem;
+  }
+  .ctrl .sorts,
+  .ctrl .filters {
+    margin-left: 0;
+  }
+  .ctrl .filters .done label {
+    display: none;
+  }
+  .ctrl .sort {
+    padding: 0.2rem 0.3rem;
+  }
+  .ctrl .filter {
+    line-height: 1.3rem;
+  }
+  .ctrl .sort label,
+  .ctrl .filter label {
+    font-size: 0.7rem;
+    letter-spacing: 0.05rem;
+    line-height: 1.3rem;
+  }
+  .items {
+    margin-left: 0;
+  }
+  .item {
+    width: auto;
+  }
+  .item .sort {
+    display: none;
+  }
+  .item .title,
+  .item .date,
+  .item .tags {
+    min-width: 4rem;
+    max-width: 4rem;
+    margin-left: 0.3rem;
+  }
+  .item .expand {
+    float: right;
+    margin-right: 0.6rem;
+  }
+  .item .description,
+  .item .discussion {
+    margin: 0.5rem 0;
+  }
+  .item .description textarea {
+    min-width: 18rem;
+    margin: 0;
+  }
+  .item .comment.new {
+    max-width: 18rem;
+  }
+  .item .submit {
+    line-height: 1.6rem;
+    letter-spacing: 0;
+  }
 }

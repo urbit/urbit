@@ -1,6 +1,6 @@
 recl = React.createClass
 rece = React.createElement
-{div,textarea} = React.DOM
+{div,textarea,button} = React.DOM
 
 WorkActions   = require '../actions/WorkActions.coffee'
 Field         = require './FieldComponent.coffee'
@@ -37,10 +37,12 @@ module.exports = recl
       e.preventDefault()
       return
 
-  onFocus: (e) -> @props._focus e,@
+  onFocus: (e) -> 
+    @props._focus e,@
+    return true
 
   _markDone: (e) -> 
-    WorkActions.setItem @props.item,'done',(not @props.item.done?)
+    WorkActions.setItem @props.item,'done',(not (@props.item.done is true))
 
   _changeStatus: (e) ->
     return if @props.item.status is 'released'
@@ -118,7 +120,7 @@ module.exports = recl
             (@renderField 'audience', {}, @formatAudience)
           )
         (div {className:'sort ib top'}, @props.item.sort)
-        (div {className:'done ib done-'+@props.item.done?, onClick:@_markDone}, '')
+        (button {className:'done ib done-'+(@props.item.done is true), onClick:@_markDone}, '')
         (@renderTopField 'title', {@onFocus,@onKeyDown})
         (@renderTopField 'date_due', {className:'date'}, @formatDate)
         (@renderTopField 'tags', {}, (tags=[])-> tags.join(" "))
@@ -147,7 +149,7 @@ module.exports = recl
                 (div {
                   contentEditable:true,
                   className:'input'})
-                (div {className:'submit',onClick:@_submitComment},'Post')
+                (button {className:'submit',onClick:@_submitComment},'Post')
             )
           )
     )

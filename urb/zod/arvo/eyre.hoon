@@ -510,6 +510,9 @@
     ;html
       ;head
         ;meta(charset "utf-8");
+        ;meta(name "viewport", content "width=device-width, ".
+        "height=device-height, initial-scale=1.0, user-scalable=0, ".
+        "minimum-scale=1.0, maximum-scale=1.0");
         ;title:"{(trip a)}" 
         ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/".
           "libs/jquery/2.1.1/jquery.min.js");
