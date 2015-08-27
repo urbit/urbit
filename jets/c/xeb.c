@@ -1,4 +1,4 @@
-/* j/3/bex.c
+/* j/3/xeb.c
 **
 */
 #include "all.h"
@@ -10,6 +10,10 @@
   u3qc_xeb(u3_atom a)
   {
     mpz_t a_mp;
+
+    if ( !_(u3a_is_cat(a)) || !_(u3a_is_dog(a))) {
+        return u3m_bail(c3__fail);
+    }
 
     if ( __(u3a_is_dog(a)) ) {
       u3r_mp(a_mp, a);
