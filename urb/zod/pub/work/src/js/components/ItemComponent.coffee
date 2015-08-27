@@ -58,7 +58,9 @@ module.exports = recl
     WorkActions.addComment @props.item,val
     $input.text('')
 
-  formatDate: (d=(new Date),l) ->
+  formatDate: (d,l) ->
+    unless d
+      return ""
     _d = "~#{d.getFullYear()}.#{(d.getMonth()+1)}.#{d.getDate()}"
     if l
       _d += "..#{d.getHours()}.#{d.getMinutes()}.#{d.getSeconds()}"
@@ -80,7 +82,7 @@ module.exports = recl
 
   componentDidMount: ->
     setInterval =>
-        $('.new.comment .date').text @formatDate()
+        $('.new.comment .date').text @formatDate new Date
       , 1000
   
   render: ->
@@ -141,7 +143,7 @@ module.exports = recl
             (div {className:'new comment'},
                 (div {className:'hr2'},"")
                 (div {className:'ship ib'}, window.urb.ship)
-                (div {className:'date ib'}, @formatDate())
+                (div {className:'date ib'}, @formatDate new Date)
                 (div {
                   contentEditable:true,
                   className:'input'})

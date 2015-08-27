@@ -62,14 +62,15 @@ module.exports = recl
     switch kc
       # enter - add new
       when 13
-        {index} = i.props
+        {index,item} = i.props
         if window.getSelection().getRangeAt(0).endOffset is 0
           ins = @state.selected
         else
           index++
           ins = @state.selected+1 # XX consolidate
           @setState {selected:ins,select:true}
-        WorkActions.moveGhost index
+        {tags,audience} = item
+        WorkActions.newItem index, {tags,audience}
       # backspace - remove if at 0
       when 8
         if  (window.getSelection().getRangeAt(0).endOffset is 0) and
