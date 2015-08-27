@@ -833,7 +833,7 @@
   (mul 2 $(a (dec a)))
 ::
 ++  xeb                                                 ::  binary logarithm
-  ::  ~/  %xeb
+  ~/  %xeb
   |=  a=@
   ^-  @
   (met 0 a)
