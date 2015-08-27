@@ -106,7 +106,11 @@ h1.leader:after {
   margin-left: 0.6rem;
 }
 .ctrl .sort label,
-.ctrl .filter label,
+.ctrl .filter label {
+  text-transform: capitalize;
+  font-size: 1rem;
+  letter-spacing: 0.07rem;
+}
 .item .status {
   text-transform: uppercase;
   font-size: 0.7rem;
@@ -118,8 +122,16 @@ h1.leader:after {
 .ctrl h1 {
   font-size: 1rem;
 }
-.ctrl .sorts {
+.ctrl .sorts,
+.ctrl .filters {
   margin-left: -0.3rem;
+}
+.ctrl .sorts {
+  margin-top: 1rem;
+}
+.ctrl .sort,
+.ctrl .filter label {
+  font-weight: 500;
 }
 .ctrl .filter {
   line-height: 2rem;
@@ -127,18 +139,19 @@ h1.leader:after {
   vertical-align: middle;
 }
 .ctrl .sort {
-  background-color: transparent;
   outline: none;
   border: 0;
   cursor: pointer;
+  background-color: #000;
+  color: #fff;
+  margin-right: 1rem;
+}
+.ctrl .filter label {
+  margin-right: 0.3rem;
 }
 .ctrl .sort label,
 .ctrl .filter label {
   line-height: 2rem;
-}
-.ctrl .sort.s-1,
-.ctrl .sort.s--1 {
-  font-weight: 500;
 }
 .ctrl .sort.s-1 label,
 .ctrl .sort.s--1 label {
@@ -175,14 +188,22 @@ h1.leader:after {
   background-color: #fff;
   transition: max-height 200ms linear;
 }
+.item .description,
+.item .discussion {
+  display: none;
+}
 .item.expand {
   max-height: 24rem;
   transition: max-height 200ms linear;
 }
+.item.expand .description,
+.item.expand .discussion {
+  display: inherit;
+}
 .item .expand {
   margin-left: 2rem;
   cursor: pointer;
-  transform-origin: 3px 12px;
+  transform-origin: 6px 12px;
   transition: transform 200ms linear;
 }
 .item.expand .expand {
@@ -267,7 +288,7 @@ h1.leader:after {
 .item .description,
 .item .discussion {
   line-height: 2rem;
-  margin: 0.5rem 0 0.5rem 2.3rem;
+  margin: 0.5rem 0 0.5rem 2rem;
 }
 .item .discussion {
   max-height: 18rem;
@@ -275,7 +296,7 @@ h1.leader:after {
   overflow-y: scroll;
 }
 .item .description textarea {
-  min-width: 27rem;
+  min-width: 32rem;
   min-height: 6rem;
 }
 .item .comp {
@@ -312,7 +333,7 @@ h1.leader:after {
   margin-top: 1rem;
 }
 .comment.new .input {
-  max-width: 27rem;
+  max-width: 31rem;
   margin-top: 1rem;
 }
 /* global */
@@ -332,8 +353,8 @@ h1.leader:after {
 }
 .input {
   outline: none;
-  padding: 0 0.3rem;
-  background-color: #f9f9f9;
+  padding: 0 0.6rem 0 0.3rem;
+  background-color: #ececec;
   border: 0;
   font: inherit;
   resize: none;
@@ -345,16 +366,16 @@ h1.leader:after {
   color: #f00;
 }
 .caret.left {
-  border-left: 6px solid #000;
-  border-top: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-bottom: 6px solid transparent;
+  border-left: 12px solid #000;
+  border-top: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-bottom: 9px solid transparent;
   margin-top: 0.4rem;
 }
 .s-1 .caret,
 .caret.down {
   border-left: 6px solid transparent;
-  border-top: 6px solid #000;
+  border-top: 6px solid #fff;
   border-right: 6px solid transparent;
   border-bottom: 6px solid transparent;
 }
@@ -363,7 +384,7 @@ h1.leader:after {
   border-left: 6px solid transparent;
   border-top: 6px solid transparent;
   border-right: 6px solid transparent;
-  border-bottom: 6px solid #000;
+  border-bottom: 6px solid #fff;
 }
 .hr1 {
   height: 0.2rem;
