@@ -1,6 +1,6 @@
 recl = React.createClass
 rece = React.createElement
-{div,textarea} = React.DOM
+{div,textarea,button} = React.DOM
 
 WorkActions   = require '../actions/WorkActions.coffee'
 Field         = require './FieldComponent.coffee'
@@ -37,10 +37,12 @@ module.exports = recl
       e.preventDefault()
       return
 
-  onFocus: (e) -> @props._focus e,@
+  onFocus: (e) -> 
+    @props._focus e,@
+    return true
 
   _markDone: (e) -> 
-    WorkActions.setItem @props.item,'done',(not @props.item.done?)
+    WorkActions.setItem @props.item,'done',(not (@props.item.done is true))
 
   getAction: -> switch @props.item.doer
     when null
@@ -52,7 +54,7 @@ module.exports = recl
   _changeStatus: (e) ->
     return if @props.item.status is 'released'
     if @props.item.status is 'accepted' and 
-    @formatOwner(@props.item.creator) isnt window.urb.ship
+    @formatCreator(@props.item.creator) isnt window.urb.ship
       return
     WorkActions.ownItem @props.item,@getAction()
 
@@ -71,9 +73,9 @@ module.exports = recl
       _d += "..#{d.getHours()}.#{d.getMinutes()}.#{d.getSeconds()}"
     _d
 
-  formatOwner: (o="") -> o.replace /\~/g,""
+  formatCreator: (o="") -> o.replace /\~/g,""
 
-  formatAudience: (a=[]) -> @formatOwner a.join(" ")
+  formatAudience: (a=[]) -> @formatCreator a.join(" ")
 
   getInitialState: -> {expand:false}
 
@@ -108,7 +110,7 @@ module.exports = recl
         (div {
           className:'header'
           },
-            (div {className:'creator ib'}, @formatOwner(@props.item.owner))
+            (div {className:'creator ib'}, @formatCreator(@props.item.creator))
             (div {
               className:'status ib action-'+(action.length > 0)
               'data-key':'status'
@@ -120,7 +122,7 @@ module.exports = recl
             (@renderField 'audience', {}, @formatAudience)
           )
         (div {className:'sort ib top'}, @props.item.sort)
-        (div {className:'done ib done-'+@props.item.done?, onClick:@_markDone}, '')
+        (button {className:'done ib done-'+(@props.item.done is true), onClick:@_markDone}, '')
         (@renderTopField 'title', {@onFocus,@onKeyDown})
         (@renderTopField 'date_due', {className:'date'}, @formatDate)
         (@renderTopField 'tags', {}, (tags=[])-> tags.join(" "))
@@ -149,7 +151,7 @@ module.exports = recl
                 (div {
                   contentEditable:true,
                   className:'input'})
-                (div {className:'submit',onClick:@_submitComment},'Post')
+                (button {className:'submit',onClick:@_submitComment},'Post')
             )
           )
     )
