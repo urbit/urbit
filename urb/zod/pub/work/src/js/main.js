@@ -168,6 +168,7 @@ module.exports = {
 };
 
 
+
 },{"../dispatcher/Dispatcher.coffee":9,"../persistence/Persistence.coffee":15,"../util.coffee":17}],2:[function(require,module,exports){
 var WorkActions, div, rece, recl, ref, textarea,
   slice = [].slice;
@@ -332,6 +333,7 @@ module.exports = recl({
 });
 
 
+
 },{"../actions/WorkActions.coffee":1}],3:[function(require,module,exports){
 var div, h1, label, rece, recl, ref;
 
@@ -441,6 +443,7 @@ module.exports = recl({
     })(this)));
   }
 });
+
 
 
 },{}],4:[function(require,module,exports){
@@ -683,6 +686,7 @@ module.exports = recl({
 });
 
 
+
 },{"../actions/WorkActions.coffee":1,"./FieldComponent.coffee":2}],5:[function(require,module,exports){
 var FilterComponent, ItemComponent, ListeningComponent, SortComponent, WorkActions, WorkStore, div, h1, input, rece, recl, ref, textarea;
 
@@ -710,6 +714,7 @@ module.exports = recl({
     window.canSort = WorkStore.canSort();
     return {
       list: WorkStore.getList(),
+      noNew: WorkStore.noNew(),
       canSort: WorkStore.canSort(),
       listening: WorkStore.getListening(),
       sorts: WorkStore.getSorts(),
@@ -786,10 +791,13 @@ module.exports = recl({
     }
   },
   title_keyDown: function(e, i) {
-    var audience, index, ins, item, kc, last, next, ref1, tags;
-    kc = e.keyCode;
-    switch (kc) {
+    var audience, index, ins, item, last, next, ref1, tags;
+    switch (e.keyCode) {
       case 13:
+        e.preventDefault();
+        if (this.state.noNew) {
+          return;
+        }
         ref1 = i.props, index = ref1.index, item = ref1.item;
         if (window.getSelection().getRangeAt(0).endOffset === 0) {
           ins = this.state.selected;
@@ -808,42 +816,39 @@ module.exports = recl({
             audience: audience
           };
         }
-        WorkActions.newItem(index, item);
-        break;
+        return WorkActions.newItem(index, item);
       case 8:
         if ((window.getSelection().getRangeAt(0).endOffset === 0) && (e.target.innerText.length === 0)) {
+          e.preventDefault();
           if (this.state.selected !== 0) {
             this.setState({
               selected: this.state.selected - 1,
               select: "end"
             });
           }
-          WorkActions.removeItem(i.props.item);
-          e.preventDefault();
+          return WorkActions.removeItem(i.props.item);
         }
         break;
       case 38:
+        e.preventDefault();
         last = this.state.selected - 1;
         if (last < 0) {
           last = this.state.list.length - 1;
         }
         this.$items.eq(last).find('.title .input').focus();
-        this.setState({
+        return this.setState({
           select: "end"
         });
-        break;
       case 40:
+        e.preventDefault();
         next = this.state.selected + 1;
         if (next === this.state.list.length) {
           next = 0;
         }
         this.$items.eq(next).find('.title .input').focus();
-        this.setState({
+        return this.setState({
           select: "end"
         });
-    }
-    if ((kc === 13) || (kc === 38) || (kc === 40)) {
-      return e.preventDefault();
     }
   },
   _changeListening: function() {},
@@ -926,6 +931,7 @@ module.exports = recl({
 });
 
 
+
 },{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":16,"./FilterComponent.coffee":3,"./ItemComponent.coffee":4,"./ListeningComponent.coffee":6,"./SortComponent.coffee":7}],6:[function(require,module,exports){
 var div, h1, input, rece, recl, ref, textarea;
 
@@ -942,6 +948,7 @@ module.exports = recl({
     }, "");
   }
 });
+
 
 
 },{}],7:[function(require,module,exports){
@@ -988,6 +995,7 @@ module.exports = recl({
 });
 
 
+
 },{}],8:[function(require,module,exports){
 var ListComponent, div, h1, rece, recl, ref;
 
@@ -1008,6 +1016,7 @@ module.exports = recl({
     }));
   }
 });
+
 
 
 },{"./ListComponent.coffee":5}],9:[function(require,module,exports){
@@ -1031,6 +1040,7 @@ module.exports = _.merge(new Dispatcher(), {
 });
 
 
+
 },{"flux":11}],10:[function(require,module,exports){
 var WorkComponent;
 
@@ -1041,6 +1051,7 @@ window.util = _.extend(window.util || {}, require('./util.coffee'));
 $(function() {
   return React.render(React.createElement(WorkComponent), $('#c')[0]);
 });
+
 
 
 },{"./components/WorkComponent.coffee":8,"./util.coffee":17}],11:[function(require,module,exports){
@@ -1440,6 +1451,7 @@ module.exports = {
 };
 
 
+
 },{}],16:[function(require,module,exports){
 var Dispatcher, EventEmitter, WorkStore, _filters, _ghost, _list, _listening, _sorts, _tasks, _updated, assign, uuid32;
 
@@ -1557,7 +1569,7 @@ WorkStore = assign({}, EventEmitter.prototype, {
         list.reverse();
       }
     }
-    if (!(((_filters.creator != null) && _filters.owner !== urb.ship) || _filters.done === true)) {
+    if (!this.noNew()) {
       ghost = $.extend({
         ghost: true,
         version: -1
@@ -1567,9 +1579,8 @@ WorkStore = assign({}, EventEmitter.prototype, {
       }
       if (_filters.audience) {
         ghost.audience = _filters.audience;
-      } else {
-        list.push(ghost);
       }
+      list.push(ghost);
     }
     return list;
   },
@@ -1623,6 +1634,9 @@ WorkStore = assign({}, EventEmitter.prototype, {
       }
     }
     return true;
+  },
+  noNew: function() {
+    return (_filters.done === true) || (_filters.creator != null) && _filters.owner !== urb.ship;
   },
   itemFromData: function(item, index) {
     var _item;
@@ -1688,6 +1702,7 @@ WorkStore.dispatchToken = Dispatcher.register(function(p) {
 module.exports = WorkStore;
 
 
+
 },{"../dispatcher/Dispatcher.coffee":9,"../util.coffee":17,"events":18,"object-assign":14}],17:[function(require,module,exports){
 module.exports = {
   uuid32: function() {
@@ -1744,6 +1759,7 @@ module.exports = {
     }
   }
 };
+
 
 
 },{}],18:[function(require,module,exports){

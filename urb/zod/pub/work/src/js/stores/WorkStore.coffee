@@ -64,12 +64,11 @@ WorkStore = assign {},EventEmitter.prototype,{
           break
       list = _.sortBy list,k,k
       if v is -1 then list.reverse()
-    unless (_filters.creator? and _filters.owner isnt urb.ship) or 
-            _filters.done is true
+    unless @noNew()
       ghost = $.extend {ghost:true,version:-1}, _ghost
       if _filters.tags     then ghost.tags     = _filters.tags
       if _filters.audience then ghost.audience = _filters.audience
-      else list.push ghost
+      list.push ghost
     list
 
   newItem: ({index,item}) ->
@@ -99,6 +98,10 @@ WorkStore = assign {},EventEmitter.prototype,{
       else if v isnt 0
         return false 
     true
+    
+  noNew: ->
+     (_filters.done is true) or
+     _filters.creator? and _filters.owner isnt urb.ship
     
   itemFromData: (item,index=0)->
     _item = _.extend {sort:index}, item
