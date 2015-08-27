@@ -16,13 +16,12 @@
     =+  tax
     :-  (scot %uv id)
     %-  jobe  :~  id/[%s (scot %uv id)]
-                tags/[%a (turn (~(tap in tags)) |=(a=cord s/a))]
-               owner/(jope owner)
+                tags/[%a (turn (^sort (~(tap in tags)) aor) |=(a=cord s/a))]
+                doer/?~(doer ~ (jope u.doer))
                title/[%s title]
-              status/[%s status]
+             creator/(jope creator)
              version/(jone version)
             archived/[%b archived]
-            claiming/[%b claiming]
         =<  audience/[%a (turn (~(tap in audience)) .)]
         |=(a=station:talk [%s (crip "{<p.a>}/{(trip q.a)}")])
       'date_created'^(jode date-created)
@@ -35,19 +34,21 @@
     ==
   ==
 --  --
-::  {id}_{date-created} {version}{date-modified}{|(" {date-due}" ~)}
-::    {tag1}
-::    {tag2}
-::    ...
-::  {title}
-::  {owner}.{status}
-::    {description}
-::    {more description}
-::  {ship1} {date}
-::    {comment}
-::    {more comment}
-::    {more comment}
-::  {ship2} {date}
-::    {comment}
-::    {more comment}
-::    {more comment}
+::  sort: ["0v111id" ...]
+::  tasks: [ {
+::      id:"0v111id"
+::      tags:["str" ...]
+::      doer:|("~ship" null)
+::      title:"str"
+::      creator:"~ship"
+::      version:12345
+::      archived:false
+::      audience:["~ship/chan" ...]
+::      date_created:1262304000000
+::      date_modified:1262304000000
+::      description:"str"
+::      discussion:[{date:1262304000000 ship:"~ship" body:"str"} ...]
+::      date_due:?(1262304000000 null)
+::      done:?(1262304000000 null)
+::    }
+::  ...]
