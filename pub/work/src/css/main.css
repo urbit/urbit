@@ -207,7 +207,7 @@ h1.leader:after {
 .item .date {
   font-family: 'scp';
 }
-.item .owner,
+.item .creator,
 .item .audience,
 .item .date,
 .item .ship {
@@ -219,7 +219,7 @@ h1.leader:after {
 .item .done {
   margin-top: 0.5rem;
 }
-.item .owner,
+.item .creator,
 .item .audience,
 .item .date,
 .item .ship {
@@ -227,7 +227,7 @@ h1.leader:after {
   height: 1rem;
   letter-spacing: 0.07rem;
 }
-.item .owner {
+.item .creator {
   max-width: 7rem;
   margin: 0 1rem 0 2rem;
 }

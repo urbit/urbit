@@ -9,24 +9,25 @@ uuid32 = require('../util.coffee').uuid32;
 
 module.exports = {
   newItem: function(index, _item) {
-    var item, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8;
+    var item, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9;
     if (_item == null) {
       _item = {};
     }
     item = {
       date_created: Date.now(),
       date_modified: Date.now(),
-      owner: window.urb.ship,
+      creator: window.urb.ship,
       version: -1,
       id: (ref = _item.id) != null ? ref : uuid32(),
       date_due: (ref1 = _item.date_due) != null ? ref1 : null,
       done: (ref2 = _item.done) != null ? ref2 : null,
-      status: (ref3 = _item.status) != null ? ref3 : 'announced',
-      tags: (ref4 = _item.tags) != null ? ref4 : [],
-      title: (ref5 = _item.title) != null ? ref5 : '',
-      description: (ref6 = _item.description) != null ? ref6 : '',
-      discussion: (ref7 = _item.discussion) != null ? ref7 : [],
-      audience: (ref8 = _item.audience) != null ? ref8 : [window.util.talk.mainStationPath(window.urb.ship)]
+      doer: (ref3 = _item.doer) != null ? ref3 : null,
+      status: (ref4 = _item.status) != null ? ref4 : 'announced',
+      tags: (ref5 = _item.tags) != null ? ref5 : [],
+      title: (ref6 = _item.title) != null ? ref6 : '',
+      description: (ref7 = _item.description) != null ? ref7 : '',
+      discussion: (ref8 = _item.discussion) != null ? ref8 : [],
+      audience: (ref9 = _item.audience) != null ? ref9 : [window.util.talk.mainStationPath(window.urb.ship)]
     };
     if (item.date_due || item.title || item.description) {
       item.version++;
@@ -372,7 +373,7 @@ module.exports = recl({
       txt = null;
     } else {
       switch (key) {
-        case 'owner':
+        case 'creator':
           txt = "~" + txt;
           break;
         case 'audience':
@@ -391,7 +392,7 @@ module.exports = recl({
       title: ''
     }, {
       filter: 'owned',
-      key: 'owner',
+      key: 'creator',
       title: 'Owner:'
     }, {
       filter: 'tag',
@@ -503,7 +504,7 @@ module.exports = recl({
     if (this.props.item.status === 'released') {
       return;
     }
-    if (this.props.item.status === 'accepted' && this.formatOwner(this.props.item.owner) !== window.urb.ship) {
+    if (this.props.item.status === 'accepted' && this.formatOwner(this.props.item.creator) !== window.urb.ship) {
       return;
     }
     if (this.props.item.status === "announced") {
@@ -591,7 +592,7 @@ module.exports = recl({
     if (this.props.item.status === 'announced') {
       action = "claim";
     }
-    if (this.props.item.status === 'accepted' && this.formatOwner(this.props.item.owner) === window.urb.ship) {
+    if (this.props.item.status === 'accepted' && this.formatOwner(this.props.item.creator) === window.urb.ship) {
       action = "release";
     }
     return div({
@@ -602,7 +603,7 @@ module.exports = recl({
     }, div({
       className: 'header'
     }, div({
-      className: 'owner ib'
+      className: 'creator ib'
     }, this.formatOwner(this.props.item.owner)), div({
       className: 'status ib action-' + (action.length > 0),
       'data-key': 'status',
@@ -1460,7 +1461,7 @@ _updated = Date.now();
 
 _filters = {
   done: null,
-  owner: null,
+  creator: null,
   tags: null,
   audience: null,
   status: null
@@ -1469,7 +1470,7 @@ _filters = {
 _sorts = {
   sort: 0,
   title: 0,
-  owner: 0,
+  creator: 0,
   date_due: 0
 };
 
@@ -1528,7 +1529,7 @@ WorkStore = assign({}, EventEmitter.prototype, {
             case 'tags':
             case 'audience':
               return _.intersection(c, _v).length !== 0;
-            case 'owner':
+            case 'creator':
               return c === _v.replace(/\~/g, "");
             case 'done':
               return !!c === _v;
@@ -1556,7 +1557,7 @@ WorkStore = assign({}, EventEmitter.prototype, {
         list.reverse();
       }
     }
-    if (!(((_filters.owner != null) && _filters.owner !== urb.ship) || (_filters.done != null))) {
+    if (!(((_filters.creator != null) && _filters.owner !== urb.ship) || (_filters.done != null))) {
       ghost = $.extend({
         ghost: true,
         version: -1

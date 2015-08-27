@@ -7,11 +7,12 @@ module.exports =
     item =
       date_created:   Date.now()
       date_modified:  Date.now()
-      owner:          window.urb.ship
+      creator:        window.urb.ship
       version:        -1
       id:             _item.id          ? uuid32()
       date_due:       _item.date_due    ? null
       done:           _item.done        ? null
+      doer:           _item.doer        ? null
       status:         _item.status      ? 'announced'
       tags:           _item.tags        ? []
       title:          _item.title       ? ''
