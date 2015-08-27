@@ -1,17 +1,3 @@
-::  also check if talk can add stations to something other than porch
-::    it can't
-::  maybe look into storing a "following" set
-::  make most updates not rely on knowing about task (all but claim?)
-::  should let non-creator suggest that creator cross-post to another
-::    station
-::
-::  pretty-print in command-line interface
-::  serialize %lax to json
-::  bring up ~dozbud to test
-::
-::  save log!
-::
-::  audience stuff seems messed up from talk?  get extraneous stations
 ::
 ::::
   ::
@@ -103,6 +89,7 @@
     ::
         %set
       ?-  +<.up
+        %audience     (process-audience to.up)
         %date-due     (send-change %set-date-due +>.up)
         %title        (send-change %set-title +>.up)
         %description  (send-change %set-description +>.up)
@@ -306,14 +293,12 @@
     ~|([%wrong-user our=our src=src] !!)
   ?-  -.cod
     %sort       mirror-to-web(sort p.cod)
-    %audience
+    %old
       =^  mow  +>.$
-        abet:(process-audience:(at (~(got by tasks) id.cod)) to.cod)
+        =+  (at (~(got by tasks) id.cod))
+        abet:(process-update:- dif.cod)
       =^  mov  +>.$  mirror-to-web
       [(welp mov mow) +>.$]
-    %old
-      =+  (at (~(got by tasks) id.cod))
-      abet:(process-update:- dif.cod)
     %new
       =.  +>.cod  +>.cod(date-created now, version 0, date-modified now)
       abut:send-create:(at | +.cod)
