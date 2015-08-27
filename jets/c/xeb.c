@@ -11,7 +11,7 @@
   {
     mpz_t a_mp;
 
-    if ( !_(u3a_is_cat(a)) || !_(u3a_is_dog(a))) {
+    if ( !_(u3a_is_cat(a)) || !_(u3a_is_dog(a)) ) {
         return u3m_bail(c3__fail);
     }
 
