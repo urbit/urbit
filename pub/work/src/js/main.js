@@ -9,7 +9,7 @@ uuid32 = require('../util.coffee').uuid32;
 
 module.exports = {
   newItem: function(index, _item) {
-    var item, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9;
+    var item, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8;
     if (_item == null) {
       _item = {};
     }
@@ -22,12 +22,11 @@ module.exports = {
       date_due: (ref1 = _item.date_due) != null ? ref1 : null,
       done: (ref2 = _item.done) != null ? ref2 : null,
       doer: (ref3 = _item.doer) != null ? ref3 : null,
-      status: (ref4 = _item.status) != null ? ref4 : 'announced',
-      tags: (ref5 = _item.tags) != null ? ref5 : [],
-      title: (ref6 = _item.title) != null ? ref6 : '',
-      description: (ref7 = _item.description) != null ? ref7 : '',
-      discussion: (ref8 = _item.discussion) != null ? ref8 : [],
-      audience: (ref9 = _item.audience) != null ? ref9 : [window.util.talk.mainStationPath(window.urb.ship)]
+      tags: (ref4 = _item.tags) != null ? ref4 : [],
+      title: (ref5 = _item.title) != null ? ref5 : '',
+      description: (ref6 = _item.description) != null ? ref6 : '',
+      discussion: (ref7 = _item.discussion) != null ? ref7 : [],
+      audience: (ref8 = _item.audience) != null ? ref8 : [window.util.talk.mainStationPath(window.urb.ship)]
     };
     if (item.date_due || item.title || item.description) {
       item.version++;
@@ -66,18 +65,20 @@ module.exports = {
       version: version
     });
   },
-  ownItem: function(arg, own) {
-    var id, o, version;
+  ownItem: function(arg, act) {
+    var id, obj, version;
     id = arg.id, version = arg.version;
-    o = {};
-    o[own] = null;
     version += 1;
     return Persistence.put({
       old: {
         id: id,
         version: version,
         dif: {
-          own: o
+          doer: (
+            obj = {},
+            obj["" + act] = null,
+            obj
+          )
         }
       }
     });
@@ -503,21 +504,25 @@ module.exports = recl({
   _markDone: function(e) {
     return WorkActions.setItem(this.props.item, 'done', this.props.item.done == null);
   },
+  getAction: function() {
+    var action;
+    switch (this.props.item.doer) {
+      case null:
+        return action = "claim";
+      case window.urb.ship:
+        return action = "release";
+      default:
+        return "";
+    }
+  },
   _changeStatus: function(e) {
-    var own;
     if (this.props.item.status === 'released') {
       return;
     }
-    if (this.props.item.status === 'accepted' && this.formatCreator(this.props.item.creator) !== window.urb.ship) {
+    if (this.props.item.status === 'accepted' && this.formatOwner(this.props.item.creator) !== window.urb.ship) {
       return;
     }
-    if (this.props.item.status === "announced") {
-      own = "claim";
-    }
-    if (this.props.item.status === "accepted") {
-      own = "announce";
-    }
-    return WorkActions.ownItem(this.props.item, own);
+    return WorkActions.ownItem(this.props.item, this.getAction());
   },
   _submitComment: function(e) {
     var $input, val;
@@ -540,7 +545,7 @@ module.exports = recl({
     }
     return _d;
   },
-  formatCreator: function(o) {
+  formatOwner: function(o) {
     if (o == null) {
       o = "";
     }
@@ -550,7 +555,7 @@ module.exports = recl({
     if (a == null) {
       a = [];
     }
-    return this.formatCreator(a.join(" "));
+    return this.formatOwner(a.join(" "));
   },
   getInitialState: function() {
     return {
@@ -594,13 +599,7 @@ module.exports = recl({
     }
     discussion = _.clone((ref1 = this.props.item.discussion) != null ? ref1 : []);
     discussion.reverse();
-    action = "";
-    if (this.props.item.status === 'announced') {
-      action = "claim";
-    }
-    if (this.props.item.status === 'accepted' && this.formatCreator(this.props.item.creator) === window.urb.ship) {
-      action = "release";
-    }
+    action = this.getAction();
     return div({
       className: itemClass,
       draggable: true,
@@ -610,7 +609,7 @@ module.exports = recl({
       className: 'header'
     }, div({
       className: 'creator ib'
-    }, this.formatCreator(this.props.item.creator)), div({
+    }, this.formatOwner(this.props.item.owner)), div({
       className: 'status ib action-' + (action.length > 0),
       'data-key': 'status',
       onClick: this._changeStatus
