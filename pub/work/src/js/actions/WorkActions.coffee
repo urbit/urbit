@@ -13,7 +13,6 @@ module.exports =
       date_due:       _item.date_due    ? null
       done:           _item.done        ? null
       doer:           _item.doer        ? null
-      status:         _item.status      ? 'announced'
       tags:           _item.tags        ? []
       title:          _item.title       ? ''
       description:    _item.description ? ''
@@ -32,11 +31,9 @@ module.exports =
     Persistence.put old:{id,version,dif:{set}}
     Dispatcher.handleViewAction {type:'updateItem',id,version,key,val}
 
-  ownItem: ({id,version},own) ->
-    o = {}
-    o[own] = null
+  ownItem: ({id,version},act) ->
     version += 1
-    Persistence.put old:{id,version,dif:own:o}
+    Persistence.put old:{id,version,dif:doer:"#{act}":null}
 
   removeItem: ({id}) ->
     Persistence.put audience:{id,to:[]}
@@ -53,10 +50,8 @@ module.exports =
   setFilter: (key,val) -> Dispatcher.handleViewAction {type:'setFilter', key,val}
   setSort: (key,val) -> Dispatcher.handleViewAction {type:'setSort',key,val}
   moveItem: (list,to,from) ->
-    sort = _.clone list
-    sort.splice to, 0, sort.splice(from,1)[0]
-    Persistence.put {sort}
-    Dispatcher.handleViewAction {type:'moveItems',list:sort,to,from}
+    Persistence.put {sort:list}
+    Dispatcher.handleViewAction {type:'moveItems',list,to,from}
 
   listenList: (type)->
     Persistence.subscribe type, (err,d)-> 

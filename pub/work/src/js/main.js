@@ -9,7 +9,7 @@ uuid32 = require('../util.coffee').uuid32;
 
 module.exports = {
   newItem: function(index, _item) {
-    var item, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9;
+    var item, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8;
     if (_item == null) {
       _item = {};
     }
@@ -22,12 +22,11 @@ module.exports = {
       date_due: (ref1 = _item.date_due) != null ? ref1 : null,
       done: (ref2 = _item.done) != null ? ref2 : null,
       doer: (ref3 = _item.doer) != null ? ref3 : null,
-      status: (ref4 = _item.status) != null ? ref4 : 'announced',
-      tags: (ref5 = _item.tags) != null ? ref5 : [],
-      title: (ref6 = _item.title) != null ? ref6 : '',
-      description: (ref7 = _item.description) != null ? ref7 : '',
-      discussion: (ref8 = _item.discussion) != null ? ref8 : [],
-      audience: (ref9 = _item.audience) != null ? ref9 : [window.util.talk.mainStationPath(window.urb.ship)]
+      tags: (ref4 = _item.tags) != null ? ref4 : [],
+      title: (ref5 = _item.title) != null ? ref5 : '',
+      description: (ref6 = _item.description) != null ? ref6 : '',
+      discussion: (ref7 = _item.discussion) != null ? ref7 : [],
+      audience: (ref8 = _item.audience) != null ? ref8 : [window.util.talk.mainStationPath(window.urb.ship)]
     };
     if (item.date_due || item.title || item.description) {
       item.version++;
@@ -68,18 +67,20 @@ module.exports = {
       val: val
     });
   },
-  ownItem: function(arg, own) {
-    var id, o, version;
+  ownItem: function(arg, act) {
+    var id, obj, version;
     id = arg.id, version = arg.version;
-    o = {};
-    o[own] = null;
     version += 1;
     return Persistence.put({
       old: {
         id: id,
         version: version,
         dif: {
-          own: o
+          doer: (
+            obj = {},
+            obj["" + act] = null,
+            obj
+          )
         }
       }
     });
@@ -144,15 +145,12 @@ module.exports = {
     });
   },
   moveItem: function(list, to, from) {
-    var sort;
-    sort = _.clone(list);
-    sort.splice(to, 0, sort.splice(from, 1)[0]);
     Persistence.put({
-      sort: sort
+      sort: list
     });
     return Dispatcher.handleViewAction({
       type: 'moveItems',
-      list: sort,
+      list: list,
       to: to,
       from: from
     });
@@ -171,6 +169,7 @@ module.exports = {
     });
   }
 };
+
 
 
 },{"../dispatcher/Dispatcher.coffee":9,"../persistence/Persistence.coffee":15,"../util.coffee":17}],2:[function(require,module,exports){
@@ -222,9 +221,13 @@ module.exports = recl({
     }, div(props)));
   },
   onKeyUp: function(e) {
-    var $t, val;
+    var $t, _val, val;
     $t = $(e.target).closest('.field');
-    val = this.parse(this.getVal());
+    _val = this.getVal();
+    if (this.props.item.ghost && _val === "") {
+      return;
+    }
+    val = this.parse(_val);
     if (!this.validate(val)) {
       this.setState({
         invalid: true
@@ -244,12 +247,12 @@ module.exports = recl({
       }
       return this.to = setTimeout((function(_this) {
         return function() {
-          var _key, item, obj, ref1;
-          ref1 = _this.props, item = ref1.item, _key = ref1._key;
+          var _key, index, item, obj, ref1;
+          ref1 = _this.props, item = ref1.item, _key = ref1._key, index = ref1.index;
           if (item.version >= 0) {
             return WorkActions.setItem(item, _key, val);
           } else {
-            return WorkActions.newItem(item.index, (
+            return WorkActions.newItem(index, (
               obj = {
                 id: item.id,
                 tags: item.tags,
@@ -290,6 +293,9 @@ module.exports = recl({
     }
   },
   equal: function(vol, val) {
+    if (vol == null) {
+      vol = this.parse("");
+    }
     switch (this.props._key) {
       case 'tags':
       case 'audience':
@@ -297,7 +303,7 @@ module.exports = recl({
       case 'date_due':
         return vol.valueOf() === val;
       default:
-        return (vol != null ? vol : "") === val;
+        return vol === val;
     }
   },
   validate: function(val) {
@@ -328,6 +334,7 @@ module.exports = recl({
     }
   }
 });
+
 
 
 },{"../actions/WorkActions.coffee":1}],3:[function(require,module,exports){
@@ -441,6 +448,7 @@ module.exports = recl({
 });
 
 
+
 },{}],4:[function(require,module,exports){
 var Field, WorkActions, button, div, rece, recl, ref, textarea;
 
@@ -499,21 +507,25 @@ module.exports = recl({
   _markDone: function(e) {
     return WorkActions.setItem(this.props.item, 'done', !(this.props.item.done === true));
   },
+  getAction: function() {
+    var action;
+    switch (this.props.item.doer) {
+      case null:
+        return action = "claim";
+      case window.urb.ship:
+        return action = "release";
+      default:
+        return "";
+    }
+  },
   _changeStatus: function(e) {
-    var own;
     if (this.props.item.status === 'released') {
       return;
     }
-    if (this.props.item.status === 'accepted' && this.formatCreator(this.props.item.creator) !== window.urb.ship) {
+    if (this.props.item.status === 'accepted' && this.formatOwner(this.props.item.creator) !== window.urb.ship) {
       return;
     }
-    if (this.props.item.status === "announced") {
-      own = "claim";
-    }
-    if (this.props.item.status === "accepted") {
-      own = "announce";
-    }
-    return WorkActions.ownItem(this.props.item, own);
+    return WorkActions.ownItem(this.props.item, this.getAction());
   },
   _submitComment: function(e) {
     var $input, val;
@@ -536,7 +548,7 @@ module.exports = recl({
     }
     return _d;
   },
-  formatCreator: function(o) {
+  formatOwner: function(o) {
     if (o == null) {
       o = "";
     }
@@ -546,7 +558,7 @@ module.exports = recl({
     if (a == null) {
       a = [];
     }
-    return this.formatCreator(a.join(" "));
+    return this.formatOwner(a.join(" "));
   },
   getInitialState: function() {
     return {
@@ -554,16 +566,18 @@ module.exports = recl({
     };
   },
   renderField: function(_key, props, render) {
-    var defaultValue;
+    var defaultValue, index, item, ref1;
     if (render == null) {
       render = _.identity;
     }
-    defaultValue = this.props.item[_key];
+    ref1 = this.props, item = ref1.item, index = ref1.index;
+    defaultValue = item[_key];
     return rece(Field, $.extend(props, {
       render: render,
       _key: _key,
-      item: this.props.item,
-      defaultValue: defaultValue
+      defaultValue: defaultValue,
+      item: item,
+      index: index
     }));
   },
   renderTopField: function(key, props, format) {
@@ -588,13 +602,7 @@ module.exports = recl({
     }
     discussion = _.clone((ref1 = this.props.item.discussion) != null ? ref1 : []);
     discussion.reverse();
-    action = "";
-    if (this.props.item.status === 'announced') {
-      action = "claim";
-    }
-    if (this.props.item.status === 'accepted' && this.formatCreator(this.props.item.creator) === window.urb.ship) {
-      action = "release";
-    }
+    action = this.getAction();
     return div({
       className: itemClass,
       draggable: true,
@@ -604,7 +612,7 @@ module.exports = recl({
       className: 'header'
     }, div({
       className: 'creator ib'
-    }, this.formatCreator(this.props.item.creator)), div({
+    }, this.formatOwner(this.props.item.owner)), div({
       className: 'status ib action-' + (action.length > 0),
       'data-key': 'status',
       onClick: this._changeStatus
@@ -680,6 +688,7 @@ module.exports = recl({
 });
 
 
+
 },{"../actions/WorkActions.coffee":1,"./FieldComponent.coffee":2}],5:[function(require,module,exports){
 var FilterComponent, ItemComponent, ListeningComponent, SortComponent, WorkActions, WorkStore, div, h1, input, rece, recl, ref, textarea;
 
@@ -707,6 +716,7 @@ module.exports = recl({
     window.canSort = WorkStore.canSort();
     return {
       list: WorkStore.getList(),
+      noNew: WorkStore.noNew(),
       canSort: WorkStore.canSort(),
       listening: WorkStore.getListening(),
       sorts: WorkStore.getSorts(),
@@ -734,7 +744,7 @@ module.exports = recl({
     return this.dragged = i.dragged;
   },
   _dragEnd: function(e, i) {
-    var from, id, to;
+    var from, id, list, sort, to, version;
     from = Number(this.dragged.closest('.item-wrap').attr('data-index'));
     to = Number(this.over.closest('.item-wrap').attr('data-index'));
     if (from < to) {
@@ -743,16 +753,20 @@ module.exports = recl({
     if (this.drop === 'after') {
       to++;
     }
-    WorkActions.moveItem((function() {
+    sort = _.clone(this.state.list);
+    sort.splice(to, 0, sort.splice(from, 1)[0]);
+    list = (function() {
       var j, len, ref1, results;
-      ref1 = this.state.list;
       results = [];
-      for (j = 0, len = ref1.length; j < len; j++) {
-        id = ref1[j].id;
-        results.push(id);
+      for (j = 0, len = sort.length; j < len; j++) {
+        ref1 = sort[j], id = ref1.id, version = ref1.version;
+        if ((version != null ? version : -1) >= 0) {
+          results.push(id);
+        }
       }
       return results;
-    }).call(this), to, from);
+    })();
+    WorkActions.moveItem(list, to, from);
     this.dragged.removeClass('hidden');
     return this.placeholder.remove();
   },
@@ -779,10 +793,13 @@ module.exports = recl({
     }
   },
   title_keyDown: function(e, i) {
-    var audience, index, ins, item, kc, last, next, ref1, tags;
-    kc = e.keyCode;
-    switch (kc) {
+    var audience, index, ins, item, last, next, ref1, tags;
+    switch (e.keyCode) {
       case 13:
+        e.preventDefault();
+        if (this.state.noNew) {
+          return;
+        }
         ref1 = i.props, index = ref1.index, item = ref1.item;
         if (window.getSelection().getRangeAt(0).endOffset === 0) {
           ins = this.state.selected;
@@ -794,50 +811,46 @@ module.exports = recl({
             select: true
           });
         }
-        tags = item.tags, audience = item.audience;
-        WorkActions.newItem(index, {
-          tags: tags,
-          audience: audience
-        });
-        break;
+        if (!item.ghost) {
+          tags = item.tags, audience = item.audience;
+          item = {
+            tags: tags,
+            audience: audience
+          };
+        }
+        return WorkActions.newItem(index, item);
       case 8:
         if ((window.getSelection().getRangeAt(0).endOffset === 0) && (e.target.innerText.length === 0)) {
-          if (i.props.item.ghost) {
-            WorkActions.moveGhost(null);
-          } else {
-            if (this.state.selected !== 0) {
-              this.setState({
-                selected: this.state.selected - 1,
-                select: "end"
-              });
-            }
-            WorkActions.removeItem(i.props.item);
-          }
           e.preventDefault();
+          if (this.state.selected !== 0) {
+            this.setState({
+              selected: this.state.selected - 1,
+              select: "end"
+            });
+          }
+          return WorkActions.removeItem(i.props.item);
         }
         break;
       case 38:
+        e.preventDefault();
         last = this.state.selected - 1;
         if (last < 0) {
           last = this.state.list.length - 1;
         }
         this.$items.eq(last).find('.title .input').focus();
-        this.setState({
+        return this.setState({
           select: "end"
         });
-        break;
       case 40:
+        e.preventDefault();
         next = this.state.selected + 1;
         if (next === this.state.list.length) {
           next = 0;
         }
         this.$items.eq(next).find('.title .input').focus();
-        this.setState({
+        return this.setState({
           select: "end"
         });
-    }
-    if ((kc === 13) || (kc === 38) || (kc === 40)) {
-      return e.preventDefault();
     }
   },
   _changeListening: function() {},
@@ -893,11 +906,13 @@ module.exports = recl({
       onDragOver: this._dragOver
     }, _.map(this.state.list, (function(_this) {
       return function(item, index) {
-        var className, key;
+        var className, draggable, key;
         className = "item-wrap";
         key = item.id;
+        draggable = _this.state.canSort;
         if (item.ghost) {
           className += " ghost";
+          draggable = false;
         }
         return div({
           className: className,
@@ -906,9 +921,9 @@ module.exports = recl({
         }, rece(ItemComponent, {
           item: item,
           index: index,
+          draggable: draggable,
           _focus: _this._focus,
           title_keyDown: _this.title_keyDown,
-          draggable: _this.state.canSort,
           _dragStart: _this._dragStart,
           _dragEnd: _this._dragEnd
         }));
@@ -916,6 +931,7 @@ module.exports = recl({
     })(this))));
   }
 });
+
 
 
 },{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":16,"./FilterComponent.coffee":3,"./ItemComponent.coffee":4,"./ListeningComponent.coffee":6,"./SortComponent.coffee":7}],6:[function(require,module,exports){
@@ -934,6 +950,7 @@ module.exports = recl({
     }, "");
   }
 });
+
 
 
 },{}],7:[function(require,module,exports){
@@ -980,6 +997,7 @@ module.exports = recl({
 });
 
 
+
 },{}],8:[function(require,module,exports){
 var ListComponent, div, h1, rece, recl, ref;
 
@@ -1000,6 +1018,7 @@ module.exports = recl({
     }));
   }
 });
+
 
 
 },{"./ListComponent.coffee":5}],9:[function(require,module,exports){
@@ -1023,6 +1042,7 @@ module.exports = _.merge(new Dispatcher(), {
 });
 
 
+
 },{"flux":11}],10:[function(require,module,exports){
 var WorkComponent;
 
@@ -1033,6 +1053,7 @@ window.util = _.extend(window.util || {}, require('./util.coffee'));
 $(function() {
   return React.render(React.createElement(WorkComponent), $('#c')[0]);
 });
+
 
 
 },{"./components/WorkComponent.coffee":8,"./util.coffee":17}],11:[function(require,module,exports){
@@ -1432,6 +1453,7 @@ module.exports = {
 };
 
 
+
 },{}],16:[function(require,module,exports){
 var Dispatcher, EventEmitter, WorkStore, _filters, _ghost, _list, _listening, _sorts, _tasks, _updated, assign, uuid32;
 
@@ -1549,7 +1571,7 @@ WorkStore = assign({}, EventEmitter.prototype, {
         list.reverse();
       }
     }
-    if (!(((_filters.creator != null) && _filters.owner !== urb.ship) || (_filters.done != null))) {
+    if (!this.noNew()) {
       ghost = $.extend({
         ghost: true,
         version: -1
@@ -1559,9 +1581,8 @@ WorkStore = assign({}, EventEmitter.prototype, {
       }
       if (_filters.audience) {
         ghost.audience = _filters.audience;
-      } else {
-        list.push(ghost);
       }
+      list.push(ghost);
     }
     return list;
   },
@@ -1615,6 +1636,9 @@ WorkStore = assign({}, EventEmitter.prototype, {
       }
     }
     return true;
+  },
+  noNew: function() {
+    return (_filters.done === true) || (_filters.creator != null) && _filters.owner !== urb.ship;
   },
   itemFromData: function(item, index) {
     var _item;
@@ -1683,6 +1707,7 @@ WorkStore.dispatchToken = Dispatcher.register(function(p) {
 module.exports = WorkStore;
 
 
+
 },{"../dispatcher/Dispatcher.coffee":9,"../util.coffee":17,"events":18,"object-assign":14}],17:[function(require,module,exports){
 module.exports = {
   uuid32: function() {
@@ -1739,6 +1764,7 @@ module.exports = {
     }
   }
 };
+
 
 
 },{}],18:[function(require,module,exports){
