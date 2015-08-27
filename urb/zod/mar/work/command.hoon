@@ -52,7 +52,7 @@
     ++  coma
       %-  of  :~
         new/task      old/(ot id/id dif/uppd ~)
-        sort/(ar id)  audience/(ot id/id to/audi ~)
+        sort/(ar id)
       ==
     ++  task
       %-  ot  :~
@@ -73,6 +73,7 @@
         add/(of comment/so ~)
         :-  %set
         %-  of  :~
+          audience/audi
           date-due/(mu di)
           title/so
           description/so
