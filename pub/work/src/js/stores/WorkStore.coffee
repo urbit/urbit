@@ -64,7 +64,8 @@ WorkStore = assign {},EventEmitter.prototype,{
           break
       list = _.sortBy list,k,k
       if v is -1 then list.reverse()
-    unless (_filters.creator? and _filters.owner isnt urb.ship) or _filters.done?
+    unless (_filters.creator? and _filters.owner isnt urb.ship) or 
+            _filters.done is true
       ghost = $.extend {ghost:true,version:-1}, _ghost
       if _filters.tags     then ghost.tags     = _filters.tags
       if _filters.audience then ghost.audience = _filters.audience

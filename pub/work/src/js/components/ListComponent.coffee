@@ -38,7 +38,10 @@ module.exports = recl
     to = Number @over.closest('.item-wrap').attr('data-index')
     if from<to then to--
     if @drop is 'after' then to++
-    WorkActions.moveItem (id for {id} in @state.list), to, from
+    sort = _.clone @state.list
+    sort.splice to, 0, sort.splice(from,1)[0]
+    list = (id for {id,version} in sort when (version ? -1) >= 0)
+    WorkActions.moveItem list, to, from
     @dragged.removeClass 'hidden'
     @placeholder.remove()
 
@@ -69,18 +72,17 @@ module.exports = recl
           index++
           ins = @state.selected+1 # XX consolidate
           @setState {selected:ins,select:true}
-        {tags,audience} = item
-        WorkActions.newItem index, {tags,audience}
+        unless item.ghost
+          {tags,audience} = item
+          item = {tags,audience}
+        WorkActions.newItem index, item
       # backspace - remove if at 0
       when 8
         if  (window.getSelection().getRangeAt(0).endOffset is 0) and
             (e.target.innerText.length is 0)
-          if i.props.item.ghost
-            WorkActions.moveGhost null
-          else
-            if @state.selected isnt 0
-              @setState {selected:@state.selected-1,select:"end"}
-            WorkActions.removeItem i.props.item
+          if @state.selected isnt 0
+            @setState {selected:@state.selected-1,select:"end"}
+          WorkActions.removeItem i.props.item
           e.preventDefault()
       # up
       when 38
@@ -149,14 +151,17 @@ module.exports = recl
         }, _.map @state.list,(item,index) => 
             className = "item-wrap"
             key = item.id
-            if item.ghost then className += " ghost"
+            draggable = @state.canSort
+            if item.ghost
+              className += " ghost"
+              draggable = false
             (div {className,key,'data-index':index},
               rece(ItemComponent,{
                 item
                 index
+                draggable
                 @_focus
                 @title_keyDown
-                draggable:@state.canSort
                 @_dragStart
                 @_dragEnd})
              )
