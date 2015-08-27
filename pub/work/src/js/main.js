@@ -1,9 +1,11 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var Dispatcher, Persistence;
+var Dispatcher, Persistence, uuid32;
 
 Dispatcher = require('../dispatcher/Dispatcher.coffee');
 
 Persistence = require('../persistence/Persistence.coffee');
+
+uuid32 = require('../util.coffee').uuid32;
 
 module.exports = {
   newItem: function(index, _item) {
@@ -15,8 +17,8 @@ module.exports = {
       date_created: Date.now(),
       date_modified: Date.now(),
       owner: window.urb.ship,
-      version: 0,
-      id: (ref = _item.id) != null ? ref : window.util.uuid32(),
+      version: -1,
+      id: (ref = _item.id) != null ? ref : uuid32(),
       date_due: (ref1 = _item.date_due) != null ? ref1 : null,
       done: (ref2 = _item.done) != null ? ref2 : null,
       status: (ref3 = _item.status) != null ? ref3 : 'announced',
@@ -26,9 +28,12 @@ module.exports = {
       discussion: (ref7 = _item.discussion) != null ? ref7 : [],
       audience: (ref8 = _item.audience) != null ? ref8 : [window.util.talk.mainStationPath(window.urb.ship)]
     };
-    Persistence.put({
-      "new": item
-    });
+    if (item.date_due || item.title || item.description) {
+      item.version++;
+      Persistence.put({
+        "new": item
+      });
+    }
     return Dispatcher.handleViewAction({
       type: 'newItem',
       index: index,
@@ -45,7 +50,7 @@ module.exports = {
       obj["" + key] = val,
       obj
     );
-    return Persistence.put({
+    Persistence.put({
       old: {
         id: id,
         version: version,
@@ -53,6 +58,11 @@ module.exports = {
           set: set
         }
       }
+    });
+    return Dispatcher.handleViewAction({
+      type: 'updateItem',
+      id: id,
+      version: version
     });
   },
   ownItem: function(arg, own) {
@@ -144,12 +154,6 @@ module.exports = {
       from: from
     });
   },
-  moveGhost: function(index) {
-    return Dispatcher.handleViewAction({
-      type: 'moveGhost',
-      index: index
-    });
-  },
   listenList: function(type) {
     return Persistence.subscribe(type, function(err, d) {
       var ref, sort, tasks;
@@ -166,7 +170,7 @@ module.exports = {
 };
 
 
-},{"../dispatcher/Dispatcher.coffee":9,"../persistence/Persistence.coffee":15}],2:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":9,"../persistence/Persistence.coffee":15,"../util.coffee":17}],2:[function(require,module,exports){
 var WorkActions, div, rece, recl, ref, textarea,
   slice = [].slice;
 
@@ -239,12 +243,14 @@ module.exports = recl({
         return function() {
           var _key, item, obj, ref1;
           ref1 = _this.props, item = ref1.item, _key = ref1._key;
-          if (!item.ghost) {
+          if (item.version >= 0) {
             return WorkActions.setItem(item, _key, val);
           } else {
             return WorkActions.newItem(item.index, (
               obj = {
-                id: item.id
+                id: item.id,
+                tags: item.tags,
+                audience: item.audience
               },
               obj["" + _key] = val,
               obj
@@ -517,8 +523,8 @@ module.exports = recl({
   },
   formatDate: function(d, l) {
     var _d;
-    if (d == null) {
-      d = new Date;
+    if (!d) {
+      return "";
     }
     _d = "~" + (d.getFullYear()) + "." + (d.getMonth() + 1) + "." + (d.getDate());
     if (l) {
@@ -566,7 +572,7 @@ module.exports = recl({
   componentDidMount: function() {
     return setInterval((function(_this) {
       return function() {
-        return $('.new.comment .date').text(_this.formatDate());
+        return $('.new.comment .date').text(_this.formatDate(new Date));
       };
     })(this), 1000);
   },
@@ -659,7 +665,7 @@ module.exports = recl({
       className: 'ship ib'
     }, window.urb.ship), div({
       className: 'date ib'
-    }, this.formatDate()), div({
+    }, this.formatDate(new Date)), div({
       contentEditable: true,
       className: 'input'
     }), div({
@@ -769,11 +775,11 @@ module.exports = recl({
     }
   },
   title_keyDown: function(e, i) {
-    var index, ins, kc, last, next;
+    var audience, index, ins, item, kc, last, next, ref1, tags;
     kc = e.keyCode;
     switch (kc) {
       case 13:
-        index = i.props.index;
+        ref1 = i.props, index = ref1.index, item = ref1.item;
         if (window.getSelection().getRangeAt(0).endOffset === 0) {
           ins = this.state.selected;
         } else {
@@ -784,7 +790,11 @@ module.exports = recl({
             select: true
           });
         }
-        WorkActions.moveGhost(index);
+        tags = item.tags, audience = item.audience;
+        WorkActions.newItem(index, {
+          tags: tags,
+          audience: audience
+        });
         break;
       case 8:
         if ((window.getSelection().getRangeAt(0).endOffset === 0) && (e.target.innerText.length === 0)) {
@@ -1474,7 +1484,9 @@ WorkStore = assign({}, EventEmitter.prototype, {
         if (!_tasks[id]) {
           _list.splice(index, 0, id);
         }
-        if (tasks[id]) {
+        if (!tasks[id]) {
+          return console.log("lost", id);
+        } else if (!_tasks[id] || tasks[id].version > _tasks[id].version) {
           return _tasks[id] = _this.itemFromData(tasks[id], index);
         }
       };
@@ -1490,7 +1502,7 @@ WorkStore = assign({}, EventEmitter.prototype, {
     for (i = 0, len = _list.length; i < len; i++) {
       id = _list[i];
       task = _tasks[id];
-      if (task.archived) {
+      if ((task == null) || task.archived) {
         continue;
       }
       add = true;
@@ -1534,12 +1546,15 @@ WorkStore = assign({}, EventEmitter.prototype, {
       }
     }
     if (!(((_filters.owner != null) && _filters.owner !== urb.ship) || (_filters.done != null))) {
-      ghost = $.extend({}, _ghost, {
+      ghost = $.extend({
         ghost: true,
         version: -1
-      });
-      if (ghost.index != null) {
-        list.splice(ghost.index, 0, ghost);
+      }, _ghost);
+      if (_filters.tags) {
+        ghost.tags = _filters.tags;
+      }
+      if (_filters.audience) {
+        ghost.audience = _filters.audience;
       } else {
         list.push(ghost);
       }
@@ -1549,13 +1564,17 @@ WorkStore = assign({}, EventEmitter.prototype, {
   newItem: function(arg) {
     var index, item;
     index = arg.index, item = arg.item;
-    if (item.id = _ghost.id) {
-      _ghost.id = uuid32();
-    }
     if (index == null) {
       index = _list.length;
     }
-    _list.splice(index, 0, item.id);
+    if (item.id === _ghost.id) {
+      _ghost.id = uuid32();
+    }
+    if (_tasks[item.id] == null) {
+      _list.splice(index, 0, item.id);
+    } else if (_tasks[item.id].version >= 0) {
+      throw new Error("Collision: already have " + item.id);
+    }
     return _tasks[item.id] = this.itemFromData(item, index);
   },
   getListening: function() {
@@ -1567,7 +1586,6 @@ WorkStore = assign({}, EventEmitter.prototype, {
   setFilter: function(arg) {
     var key, val;
     key = arg.key, val = arg.val;
-    _ghost.index = null;
     return _filters[key] = val;
   },
   getSorts: function() {
@@ -1576,7 +1594,6 @@ WorkStore = assign({}, EventEmitter.prototype, {
   setSort: function(arg) {
     var k, key, v, val;
     key = arg.key, val = arg.val;
-    _ghost.index = null;
     for (k in _sorts) {
       v = _sorts[k];
       _sorts[k] = 0;
@@ -1628,11 +1645,6 @@ WorkStore = assign({}, EventEmitter.prototype, {
     _tasks[_list[from]].sort = _tasks[_list[to]].sort;
     return _list = list;
   },
-  moveGhost: function(arg) {
-    var index;
-    index = arg.index;
-    return _ghost.index = index;
-  },
   setAudience: function(arg) {
     var id, to;
     id = arg.id, to = arg.to;
@@ -1642,6 +1654,11 @@ WorkStore = assign({}, EventEmitter.prototype, {
     var id;
     id = arg.id;
     return _tasks[id].archived = true;
+  },
+  updateItem: function(arg) {
+    var id, version;
+    id = arg.id, version = arg.version;
+    return _tasks[id].version = version;
   }
 });
 
