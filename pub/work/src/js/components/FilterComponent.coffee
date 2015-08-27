@@ -1,6 +1,6 @@
 recl = React.createClass
 rece = React.createElement
-{div,h1,label} = React.DOM
+{div,h1,label,button} = React.DOM
 
 module.exports = recl
   onClick: (e) ->
@@ -41,7 +41,7 @@ module.exports = recl
         (label {}, title)
         switch filter
           when 'done'
-            (div {
+            (button {
                   className:'input-bool ib '+@props.filters[key],
                   @onClick
                 },"")

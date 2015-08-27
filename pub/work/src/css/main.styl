@@ -91,9 +91,12 @@ h1.leader:after
 
 .input-bool
 .item .done
-  width .7rem
-  height .7rem
+  width 1rem
+  height 1rem
   border .2rem solid #ccc
+  padding 0
+  outline none
+  background-color #fff
 
 .input-bool.true
 .item .done-true
@@ -129,9 +132,11 @@ h1.leader:after
     cursor pointer
     transform-origin 6px 12px
     transition transform 200ms linear
+    -webkit-transform-origin 6px 12px
 
   &.expand .expand
     transform rotate(90deg)
+    -webkit-transform rotate(90deg)
     transition transform 200ms linear
   
   .header
@@ -237,11 +242,12 @@ h1.leader:after
     
   .submit
     font-size .7rem
-    text-transform uppercase
+    font-weight 500
     display inline-block
     background-color #b9b9b9
     letter-spacing .07rem
     color #fff
+    border 0
     padding 0 .3rem
     margin-top .5rem
 
@@ -282,7 +288,10 @@ h1.leader:after
   border 0
   font inherit
   resize none
+  -webkit-user-select text
+  user-select text
   
+textarea:focus
 .input:focus
   background-color #e6e6e6
 
