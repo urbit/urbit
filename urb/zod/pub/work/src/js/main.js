@@ -142,15 +142,12 @@ module.exports = {
     });
   },
   moveItem: function(list, to, from) {
-    var sort;
-    sort = _.clone(list);
-    sort.splice(to, 0, sort.splice(from, 1)[0]);
     Persistence.put({
-      sort: sort
+      sort: list
     });
     return Dispatcher.handleViewAction({
       type: 'moveItems',
-      list: sort,
+      list: list,
       to: to,
       from: from
     });
@@ -221,9 +218,13 @@ module.exports = recl({
     }, div(props)));
   },
   onKeyUp: function(e) {
-    var $t, val;
+    var $t, _val, val;
     $t = $(e.target).closest('.field');
-    val = this.parse(this.getVal());
+    _val = this.getVal();
+    if (this.props.item.ghost && _val === "") {
+      return;
+    }
+    val = this.parse(_val);
     if (!this.validate(val)) {
       this.setState({
         invalid: true
@@ -243,12 +244,12 @@ module.exports = recl({
       }
       return this.to = setTimeout((function(_this) {
         return function() {
-          var _key, item, obj, ref1;
-          ref1 = _this.props, item = ref1.item, _key = ref1._key;
+          var _key, index, item, obj, ref1;
+          ref1 = _this.props, item = ref1.item, _key = ref1._key, index = ref1.index;
           if (item.version >= 0) {
             return WorkActions.setItem(item, _key, val);
           } else {
-            return WorkActions.newItem(item.index, (
+            return WorkActions.newItem(index, (
               obj = {
                 id: item.id,
                 tags: item.tags,
@@ -289,6 +290,9 @@ module.exports = recl({
     }
   },
   equal: function(vol, val) {
+    if (vol == null) {
+      vol = this.parse("");
+    }
     switch (this.props._key) {
       case 'tags':
       case 'audience':
@@ -296,7 +300,7 @@ module.exports = recl({
       case 'date_due':
         return vol.valueOf() === val;
       default:
-        return (vol != null ? vol : "") === val;
+        return vol === val;
     }
   },
   validate: function(val) {
@@ -554,16 +558,18 @@ module.exports = recl({
     };
   },
   renderField: function(_key, props, render) {
-    var defaultValue;
+    var defaultValue, index, item, ref1;
     if (render == null) {
       render = _.identity;
     }
-    defaultValue = this.props.item[_key];
+    ref1 = this.props, item = ref1.item, index = ref1.index;
+    defaultValue = item[_key];
     return rece(Field, $.extend(props, {
       render: render,
       _key: _key,
-      item: this.props.item,
-      defaultValue: defaultValue
+      defaultValue: defaultValue,
+      item: item,
+      index: index
     }));
   },
   renderTopField: function(key, props, format) {
@@ -735,7 +741,7 @@ module.exports = recl({
     return this.dragged = i.dragged;
   },
   _dragEnd: function(e, i) {
-    var from, id, to;
+    var from, id, list, sort, to, version;
     from = Number(this.dragged.closest('.item-wrap').attr('data-index'));
     to = Number(this.over.closest('.item-wrap').attr('data-index'));
     if (from < to) {
@@ -744,16 +750,20 @@ module.exports = recl({
     if (this.drop === 'after') {
       to++;
     }
-    WorkActions.moveItem((function() {
+    sort = _.clone(this.state.list);
+    sort.splice(to, 0, sort.splice(from, 1)[0]);
+    list = (function() {
       var j, len, ref1, results;
-      ref1 = this.state.list;
       results = [];
-      for (j = 0, len = ref1.length; j < len; j++) {
-        id = ref1[j].id;
-        results.push(id);
+      for (j = 0, len = sort.length; j < len; j++) {
+        ref1 = sort[j], id = ref1.id, version = ref1.version;
+        if ((version != null ? version : -1) >= 0) {
+          results.push(id);
+        }
       }
       return results;
-    }).call(this), to, from);
+    })();
+    WorkActions.moveItem(list, to, from);
     this.dragged.removeClass('hidden');
     return this.placeholder.remove();
   },
@@ -795,25 +805,24 @@ module.exports = recl({
             select: true
           });
         }
-        tags = item.tags, audience = item.audience;
-        WorkActions.newItem(index, {
-          tags: tags,
-          audience: audience
-        });
+        if (!item.ghost) {
+          tags = item.tags, audience = item.audience;
+          item = {
+            tags: tags,
+            audience: audience
+          };
+        }
+        WorkActions.newItem(index, item);
         break;
       case 8:
         if ((window.getSelection().getRangeAt(0).endOffset === 0) && (e.target.innerText.length === 0)) {
-          if (i.props.item.ghost) {
-            WorkActions.moveGhost(null);
-          } else {
-            if (this.state.selected !== 0) {
-              this.setState({
-                selected: this.state.selected - 1,
-                select: "end"
-              });
-            }
-            WorkActions.removeItem(i.props.item);
+          if (this.state.selected !== 0) {
+            this.setState({
+              selected: this.state.selected - 1,
+              select: "end"
+            });
           }
+          WorkActions.removeItem(i.props.item);
           e.preventDefault();
         }
         break;
@@ -894,11 +903,13 @@ module.exports = recl({
       onDragOver: this._dragOver
     }, _.map(this.state.list, (function(_this) {
       return function(item, index) {
-        var className, key;
+        var className, draggable, key;
         className = "item-wrap";
         key = item.id;
+        draggable = _this.state.canSort;
         if (item.ghost) {
           className += " ghost";
+          draggable = false;
         }
         return div({
           className: className,
@@ -907,9 +918,9 @@ module.exports = recl({
         }, rece(ItemComponent, {
           item: item,
           index: index,
+          draggable: draggable,
           _focus: _this._focus,
           title_keyDown: _this.title_keyDown,
-          draggable: _this.state.canSort,
           _dragStart: _this._dragStart,
           _dragEnd: _this._dragEnd
         }));
@@ -1557,7 +1568,7 @@ WorkStore = assign({}, EventEmitter.prototype, {
         list.reverse();
       }
     }
-    if (!(((_filters.creator != null) && _filters.owner !== urb.ship) || (_filters.done != null))) {
+    if (!(((_filters.creator != null) && _filters.owner !== urb.ship) || _filters.done === true)) {
       ghost = $.extend({
         ghost: true,
         version: -1

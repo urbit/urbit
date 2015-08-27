@@ -54,10 +54,8 @@ module.exports =
   setFilter: (key,val) -> Dispatcher.handleViewAction {type:'setFilter', key,val}
   setSort: (key,val) -> Dispatcher.handleViewAction {type:'setSort',key,val}
   moveItem: (list,to,from) ->
-    sort = _.clone list
-    sort.splice to, 0, sort.splice(from,1)[0]
-    Persistence.put {sort}
-    Dispatcher.handleViewAction {type:'moveItems',list:sort,to,from}
+    Persistence.put {sort:list}
+    Dispatcher.handleViewAction {type:'moveItems',list,to,from}
 
   listenList: (type)->
     Persistence.subscribe type, (err,d)-> 

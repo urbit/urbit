@@ -73,8 +73,9 @@ module.exports = recl
   getInitialState: -> {expand:false}
 
   renderField: (_key,props,render=_.identity)->
-    defaultValue =  @props.item[_key]
-    rece Field, $.extend props, {render,_key,item:@props.item,defaultValue}
+    {item,index} =  @props
+    defaultValue =  item[_key]
+    rece Field, $.extend props, {render,_key,defaultValue,item,index}
   
   renderTopField: (key,props,format)->
     _props = _.extend props,{className:"#{props.className ? key} top"}
