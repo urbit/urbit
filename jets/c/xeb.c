@@ -27,8 +27,7 @@
     }
   }
   u3_noun
-  u3wc_xeb(
-                  u3_noun cor)
+  u3wc_xeb(u3_noun cor)
   {
     u3_noun a;
 
