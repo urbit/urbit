@@ -29,6 +29,10 @@ h1.leader:after
 
 .ctrl .sort label
 .ctrl .filter label
+  text-transform capitalize
+  font-size 1rem
+  letter-spacing .07rem
+
 .item .status
   text-transform uppercase
   font-size .7rem
@@ -41,7 +45,15 @@ h1.leader:after
     font-size 1rem
   
   .sorts
+  .filters
     margin-left -.3rem
+  
+  .sorts
+    margin-top 1rem
+  
+  .sort
+  .filter label
+    font-weight 500
   
   .filter
     line-height 2rem
@@ -49,10 +61,15 @@ h1.leader:after
     vertical-align middle
     
   .sort
-    background-color transparent
     outline none
     border 0
     cursor pointer
+    background-color #000
+    color #fff
+    margin-right 1rem
+    
+  .filter label
+    margin-right .3rem 
     
   .sort label
   .filter label
@@ -60,8 +77,6 @@ h1.leader:after
   
   .sort.s-1
   .sort.s--1
-    font-weight 500
-    
     label
       margin-right .3rem
       cursor pointer
@@ -96,15 +111,23 @@ h1.leader:after
   overflow hidden
   background-color #fff
   transition max-height 200ms linear
+  
+  .description
+  .discussion
+    display none
 
   &.expand
     max-height 24rem
     transition max-height 200ms linear
+    
+    .description
+    .discussion
+      display inherit
 
   .expand
     margin-left 2rem
     cursor pointer
-    transform-origin 3px 12px
+    transform-origin 6px 12px
     transition transform 200ms linear
 
   &.expand .expand
@@ -189,7 +212,7 @@ h1.leader:after
   .description
   .discussion
     line-height 2rem
-    margin .5rem 0 .5rem 2.3rem
+    margin .5rem 0 .5rem 2rem
   
   .discussion
     max-height 18rem
@@ -197,7 +220,7 @@ h1.leader:after
     overflow-y scroll
   
   .description textarea
-    min-width 27rem
+    min-width 32rem
     min-height 6rem
 
   .comp
@@ -233,7 +256,7 @@ h1.leader:after
     margin-top 1rem
 
   &.new .input
-    max-width 27rem
+    max-width 31rem
     margin-top 1rem
   
 /* global */
@@ -254,8 +277,8 @@ h1.leader:after
 
 .input
   outline none
-  padding 0 .3rem
-  background-color #f9f9f9
+  padding 0 .6rem 0 .3rem
+  background-color #ececec
   border 0
   font inherit
   resize none
@@ -267,16 +290,16 @@ h1.leader:after
   color red
 
 .caret.left
-  border-left 6px solid #000
-  border-top 6px solid transparent
-  border-right 6px solid transparent
-  border-bottom 6px solid transparent
+  border-left 12px solid #000
+  border-top 9px solid transparent
+  border-right 9px solid transparent
+  border-bottom 9px solid transparent
   margin-top .4rem
 
 .s-1 .caret
 .caret.down
   border-left 6px solid transparent
-  border-top 6px solid #000
+  border-top 6px solid #fff
   border-right 6px solid transparent
   border-bottom 6px solid transparent
 
@@ -285,7 +308,7 @@ h1.leader:after
   border-left 6px solid transparent
   border-top 6px solid transparent
   border-right 6px solid transparent
-  border-bottom 6px solid #000
+  border-bottom 6px solid #fff
 
 .hr1
   height .2rem
