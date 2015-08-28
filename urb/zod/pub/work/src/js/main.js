@@ -43,14 +43,14 @@ module.exports = {
     });
   },
   setItem: function(arg, key, val) {
-    var id, obj, set, version;
+    var id, obj1, set, version;
     id = arg.id, version = arg.version;
     version += 1;
     key = key.split('_').join('-');
     set = (
-      obj = {},
-      obj["" + key] = val,
-      obj
+      obj1 = {},
+      obj1["" + key] = val,
+      obj1
     );
     Persistence.put({
       old: {
@@ -69,7 +69,7 @@ module.exports = {
     });
   },
   ownItem: function(arg, act) {
-    var id, obj, version;
+    var id, obj1, version;
     id = arg.id, version = arg.version;
     version += 1;
     return Persistence.put({
@@ -78,9 +78,9 @@ module.exports = {
         version: version,
         dif: {
           doer: (
-            obj = {},
-            obj["" + act] = null,
-            obj
+            obj1 = {},
+            obj1["" + act] = null,
+            obj1
           )
         }
       }
@@ -141,19 +141,23 @@ module.exports = {
       }
     });
   },
-  setFilter: function(key, val) {
-    return Dispatcher.handleViewAction({
+  setFilter: function(key, val, filters) {
+    Dispatcher.handleViewAction({
       type: 'setFilter',
       key: key,
       val: val
     });
+    filters[key] = val;
+    return Persistence.setLocal('filters', filters);
   },
-  setSort: function(key, val) {
-    return Dispatcher.handleViewAction({
+  setSort: function(key, val, sorts) {
+    Dispatcher.handleViewAction({
       type: 'setSort',
       key: key,
       val: val
     });
+    sorts[key] = val;
+    return Persistence.setLocal('sorts', sorts);
   },
   moveItem: function(list, to, from) {
     Persistence.put({
@@ -164,6 +168,22 @@ module.exports = {
       list: list,
       to: to,
       from: from
+    });
+  },
+  getLocal: function(key) {
+    return Persistence.getLocal(key, function(e, r) {
+      var obj;
+      if (e) {
+        new Error(e);
+      }
+      if (r === null) {
+        return;
+      }
+      obj = {
+        type: "load" + (key[0].toUpperCase() + key.slice(1))
+      };
+      obj[key] = r;
+      return Dispatcher.handleServerAction(obj);
     });
   },
   listenList: function(type) {
@@ -431,8 +451,12 @@ module.exports = recl({
       className: 'filters'
     }, this.fields.map((function(_this) {
       return function(arg) {
-        var filter, key, title;
+        var filter, key, title, txt;
         filter = arg.filter, key = arg.key, title = arg.title;
+        txt = _this.props.filters[key];
+        if (key === 'creator') {
+          txt = txt != null ? txt.replace(/\~/g, "") : void 0;
+        }
         return div({
           key: key,
           'data-key': key,
@@ -451,7 +475,7 @@ module.exports = recl({
                 onKeyDown: this.onKeyDown,
                 onKeyUp: this.onKeyUp,
                 onBlur: this.onBlur
-              }, this.props.filters[filter]);
+              }, txt);
           }
         }).call(_this));
       };
@@ -741,7 +765,6 @@ module.exports = recl({
       noNew: WorkStore.noNew(),
       canSort: WorkStore.canSort(),
       fulllist: WorkStore.getFullList(),
-      listening: WorkStore.getListening(),
       sorts: WorkStore.getSorts(),
       filters: WorkStore.getFilters(),
       expand: false,
@@ -888,15 +911,17 @@ module.exports = recl({
   },
   _changeListening: function() {},
   _changeFilter: function(key, val) {
-    return WorkActions.setFilter(key, val);
+    return WorkActions.setFilter(key, val, this.state.filters);
   },
   _changeSort: function(key, val) {
-    return WorkActions.setSort(key, val);
+    return WorkActions.setSort(key, val, this.state.sorts);
   },
   componentDidMount: function() {
     this.placeholder = $("<div class='item placeholder'><div class='sort'>x</div></div>");
     WorkStore.addChangeListener(this._onChangeStore);
     WorkActions.listenList(this.props.list);
+    WorkActions.getLocal('filters');
+    WorkActions.getLocal('sorts');
     return this.alias();
   },
   componentDidUpdate: function(_props, _state) {
@@ -1476,6 +1501,19 @@ module.exports = {
     if (cache != null) {
       return cb(null, cache);
     }
+  },
+  setLocal: function(key, val) {
+    return window.localStorage.setItem(key, JSON.stringify(val));
+  },
+  getLocal: function(key, cb) {
+    var e, out;
+    try {
+      out = JSON.parse(window.localStorage.getItem(key));
+      return cb(null, out);
+    } catch (_error) {
+      e = _error;
+      return cb(e);
+    }
   }
 };
 
@@ -1643,8 +1681,12 @@ WorkStore = assign({}, EventEmitter.prototype, {
     }
     return _tasks[item.id] = this.itemFromData(item, index);
   },
-  getListening: function() {
-    return _listening;
+  loadFilters: function(arg) {
+    var filters;
+    filters = arg.filters;
+    console.log('filters');
+    console.log(filters);
+    return _filters = filters;
   },
   getFilters: function() {
     return _filters;
@@ -1653,6 +1695,13 @@ WorkStore = assign({}, EventEmitter.prototype, {
     var key, val;
     key = arg.key, val = arg.val;
     return _filters[key] = val;
+  },
+  loadSorts: function(arg) {
+    var sorts;
+    sorts = arg.sorts;
+    console.log('load sorts');
+    console.log(sorts);
+    return _sorts = sorts;
   },
   getSorts: function() {
     return _sorts;
