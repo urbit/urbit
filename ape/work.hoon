@@ -72,6 +72,8 @@
   ::
   ++  send-create       (send %create tax)
   ++  send-change       |*  *
+                        ?:  =(our creator.tax)
+                          (send-update +(version.tax) our +<)
                         %+  send-audience
                           [[creator.tax (main creator.tax)] ~ ~]
                         [%change id.tax +<]
@@ -228,6 +230,9 @@
               action=action
               tax=tax
           ==
+      ?:  (lte version.action version.tax.u.tax)
+        ~&  %really-bad-version
+        [~ +>.$]
       :-  ~
       %_    +>.$
           unordered
