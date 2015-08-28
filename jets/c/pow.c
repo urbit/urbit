@@ -7,7 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qc_pow(u3_atom a, u3_atom b)
+  u3qc_pow(u3_atom a,
+           u3_atom b)
   {
     if ( !_(u3a_is_cat(b)) ) {
       return u3m_bail(c3__fail);
