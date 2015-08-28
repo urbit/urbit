@@ -5,7 +5,8 @@
 
 /* internal functions
 */
-  u3_noun _b_bif_putroot(u3_noun a, u3_noun b)
+  u3_noun _b_bif_putroot(u3_noun a,
+                         u3_noun b)
   {
     if ( u3_nul == a) {
       return u3nt(u3k(b), u3_nul, u3_nul);
@@ -62,7 +63,8 @@
     }
   }
 
-  u3_noun u3qdb_bif(u3_noun a, u3_noun b)
+  u3_noun u3qdb_bif(u3_noun a, 
+                    u3_noun b)
   {
     u3_noun c, n_c, l_c, r_c;
     u3_noun d;

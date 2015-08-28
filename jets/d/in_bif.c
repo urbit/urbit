@@ -5,7 +5,8 @@
 
 /* internal functions
 */
-  u3_noun _i_bif_putroot(u3_noun a, u3_noun b)
+  u3_noun _i_bif_putroot(u3_noun a,
+                         u3_noun b)
   {
     if ( u3_nul == a) {
       return u3nt(u3k(b), u3_nul, u3_nul);
@@ -28,8 +29,7 @@
           u3r_trel(c, &n_c, &l_c, &r_c);
           d = u3nt(u3k(n_c),
                    u3k(l_c),
-                   u3nt(u3k(n_a), u3k(r_c), u3k(r_a))
-                  );
+                   u3nt(u3k(n_a), u3k(r_c), u3k(r_a)));
           u3z(c);
           return d;
         } else {
@@ -37,8 +37,7 @@
           u3r_trel(c, &n_c, &l_c, &r_c);
           d = u3nt(u3k(n_c), 
                    u3nt(u3k(n_a), u3k(l_a), u3k(l_c)),
-                   u3k(r_c)
-                  );
+                   u3k(r_c));
           u3z(c);
           return d;
         }
@@ -58,7 +57,8 @@
     }
   }
 
-  u3_noun u3qdi_bif(u3_noun a, u3_noun b)
+  u3_noun u3qdi_bif(u3_noun a,
+                    u3_noun b)
   {
     u3_noun c, n_c, l_c, r_c;
     u3_noun d;

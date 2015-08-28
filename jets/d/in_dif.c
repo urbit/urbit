@@ -5,7 +5,8 @@
 
 /* internal functions
 */
-  u3_noun _i_dif_join(u3_noun d, u3_noun e)
+  u3_noun _i_dif_join(u3_noun d,
+                      u3_noun e)
   {
     if ( u3_nul == d ) {
       return u3k(e);
@@ -44,7 +45,8 @@
     }
   }
 
-  u3_noun u3qdi_dif(u3_noun a, u3_noun b)
+  u3_noun u3qdi_dif(u3_noun a,
+                    u3_noun b)
   {
     if ( u3_nul == b ) {
       return u3k(a);

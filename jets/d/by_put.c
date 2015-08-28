@@ -7,10 +7,9 @@
 /* functions
 */
   u3_noun
-  u3qdb_put(
-                       u3_noun a,
-                       u3_noun b,
-                       u3_noun c)
+  u3qdb_put(u3_noun a,
+            u3_noun b,
+            u3_noun c)
   {
     if ( u3_nul == a ) {
       return u3nt(
@@ -52,11 +51,10 @@
             {
               u3_noun e = u3nt
                 (u3k(n_d),
-                        u3k(l_d),
-                        u3nt(
-                              u3k(n_a),
-                              u3k(r_d),
-                              u3k(r_a)));
+                 u3k(l_d),
+                 u3nt(u3k(n_a),
+                      u3k(r_d),
+                      u3k(r_a)));
 
               u3z(d);
               return e;
@@ -68,19 +66,18 @@
 
           if ( c3y == u3qc_vor(pn_a, u3h(u3h(d))) ) {
             return u3nt(u3k(n_a),
-                                u3k(l_a),
-                                d);
+                        u3k(l_a),
+                        d);
           }
           else {
             u3r_trel(d, &n_d, &l_d, &r_d);
             {
               u3_noun e = u3nt
                 (u3k(n_d),
-                        u3nt(
-                              u3k(n_a),
-                              u3k(l_a),
-                              u3k(l_d)),
-                        u3k(r_d));
+                 u3nt(u3k(n_a),
+                      u3k(l_a),
+                      u3k(l_d)),
+                      u3k(r_d));
 
               u3z(d);
               return e;
@@ -91,21 +88,22 @@
     }
   }
   u3_noun
-  u3wdb_put(
-                      u3_noun cor)
+  u3wdb_put(u3_noun cor)
   {
     u3_noun a, b, c;
 
     if ( c3n == u3r_mean(cor, u3x_sam_2,   &b,
-                               u3x_sam_3,   &c,
-                               u3x_con_sam, &a, 0) ) {
+                              u3x_sam_3,   &c,
+                              u3x_con_sam, &a, 0) ) {
       return u3m_bail(c3__exit);
     } else {
       return u3qdb_put(a, b, c);
     }
   }
   u3_weak
-  u3kdb_put(u3_noun a, u3_noun b, u3_noun c)
+  u3kdb_put(u3_noun a,
+            u3_noun b,
+            u3_noun c)
   {
     // Bizarre asymmetry in old jets.
     //

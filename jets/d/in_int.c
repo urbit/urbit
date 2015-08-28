@@ -7,9 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qdi_int(
-                       u3_noun a,
-                       u3_noun b)
+  u3qdi_int(u3_noun a,
+            u3_noun b)
   {
     if ( u3_nul == a ) {
       return u3k(u3_nul);
@@ -42,39 +41,30 @@
         }
         else if ( c3y == u3r_sing(n_a, n_b) ) {
           return u3nt(u3k(n_a),
-                              u3qdi_int(l_a, l_b),
-                              u3qdi_int(r_a, r_b));
+                      u3qdi_int(l_a, l_b),
+                      u3qdi_int(r_a, r_b));
         }
         else if ( c3y == u3qc_hor(n_b, n_a) ) {
-          return u3qdi_uni(
-                                      u3qdi_int(
-                                                          l_a,
-                                                          u3nt(
-                                                                n_b,
-                                                                l_b,
-                                                                u3_nul)),
-                                      u3qdi_int(
-                                                          a,
-                                                          r_b));
+          return u3qdi_uni(u3qdi_int(l_a,
+                                     u3nt(n_b,
+                                          l_b,
+                                          u3_nul)),
+                           u3qdi_int(a,
+                                     r_b));
         }
         else {
-          return u3qdi_uni(
-                                      u3qdi_int(
-                                                          r_a,
-                                                          u3nt(
-                                                                n_b,
-                                                                u3_nul,
-                                                                r_b)),
-                                      u3qdi_int(
-                                                          a,
-                                                          l_b));
+          return u3qdi_uni(u3qdi_int(r_a,
+                                     u3nt(n_b,
+                                          u3_nul,
+                                          r_b)),
+                           u3qdi_int(a,
+                                     l_b));
         }
       }
     }
   }
   u3_noun
-  u3wdi_int(
-                      u3_noun cor)
+  u3wdi_int(u3_noun cor)
   {
     u3_noun a, b;
 

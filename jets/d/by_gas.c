@@ -7,9 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qdb_gas(
-                       u3_noun a,
-                       u3_noun b)
+  u3qdb_gas(u3_noun a,
+            u3_noun b)
   {
     if ( u3_nul == b ) {
       return u3k(a);
@@ -41,8 +40,7 @@
     }
   }
   u3_noun
-  u3wdb_gas(
-                      u3_noun cor)
+  u3wdb_gas(u3_noun cor)
   {
     u3_noun a, b;
 
@@ -53,7 +51,8 @@
     }
   }
   u3_noun
-  u3kdb_gas(u3_noun a, u3_noun b)
+  u3kdb_gas(u3_noun a,
+            u3_noun b)
   {
     u3_weak c = u3qdb_gas(a, b);
 
