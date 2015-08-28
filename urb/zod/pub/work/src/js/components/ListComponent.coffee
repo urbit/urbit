@@ -16,6 +16,7 @@ module.exports = recl
     list:WorkStore.getList()
     noNew:WorkStore.noNew()
     canSort:WorkStore.canSort()
+    fulllist:WorkStore.getFullList()
     listening:WorkStore.getListening()
     sorts:WorkStore.getSorts()
     filters:WorkStore.getFilters()
@@ -65,19 +66,19 @@ module.exports = recl
     when 13
       e.preventDefault()
       return if @state.noNew
-      {index,item} = i.props
+      {item} = i.props
+      after = null; before = null
       if window.getSelection().getRangeAt(0).endOffset is 0
-        # console.log "new", index, "start"
         ins = @state.selected
+        before = item.id
       else
-        # console.log "new", index,"next"
-        index++
+        after = item.id
         ins = @state.selected+1 # XX consolidate
         @setState {selected:ins,select:true}
       unless item.ghost
         {tags,audience} = item
         item = {tags,audience}
-      WorkActions.newItem index, item
+      WorkActions.newItem {before,after}, item
     # backspace - remove if at 0
     when 8
       if  (window.getSelection().getRangeAt(0).endOffset is 0)
