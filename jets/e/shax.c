@@ -15,7 +15,7 @@
 
   u3_noun
   u3qe_shay(u3_atom a,
-                    u3_atom b)
+            u3_atom b)
   {
     c3_assert(_(u3a_is_cat(a)));
     c3_y* fat_y = c3_malloc(a + 1);
@@ -50,8 +50,7 @@
 //   }
 //  XX  preformance
 u3_noun
-  u3qe_shax(
-                    u3_atom a)
+  u3qe_shax(u3_atom a)
   {
     c3_w  met_w = u3r_met(3, a);
     c3_y* fat_y = c3_malloc(met_w + 1);
@@ -81,7 +80,7 @@ u3_noun
 
   u3_noun
   u3qe_shal(u3_atom a,
-                    u3_atom b)
+            u3_atom b)
   {
     c3_assert(_(u3a_is_cat(a)));
     c3_y* fat_y = c3_malloc(a + 1);
@@ -108,9 +107,8 @@ u3_noun
   }
 
   u3_noun
-  u3qe_shas(
-                    u3_atom sal,
-                    u3_atom ruz)
+  u3qe_shas(u3_atom sal,
+            u3_atom ruz)
   {
     u3_noun one = u3qe_shax(ruz);
     u3_noun two = u3qc_mix(sal, one);
@@ -120,8 +118,7 @@ u3_noun
   }
 
   u3_noun
-  u3we_shax(
-                  u3_noun cor)
+  u3we_shax(u3_noun cor)
   {
     u3_noun a;
 
@@ -190,8 +187,7 @@ u3_noun
   }
 
   static u3_noun
-  _og_list(
-           u3_noun a,
+  _og_list(u3_noun a,
            u3_noun b,
            u3_noun c)
   {
@@ -226,7 +222,8 @@ u3_noun
   }
 
   u3_noun
-  u3qeo_raw(u3_atom a, u3_atom b)
+  u3qeo_raw(u3_atom a,
+            u3_atom b)
   {
     u3_noun x = u3qc_mix(b, a);
     u3_noun c = u3qe_shas(c3_s4('o','g','-','a'), x);

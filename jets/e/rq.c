@@ -55,7 +55,9 @@
 /* add
 */
   u3_noun
-  u3qeq_add(u3_atom a, u3_atom b, u3_atom r)
+  u3qeq_add(u3_atom a,
+            u3_atom b,
+            u3_atom r)
   {
     union quad c, d, e;
     _set_rounding(r);
@@ -91,7 +93,9 @@
 /* sub
 */
   u3_noun
-  u3qeq_sub(u3_atom a, u3_atom b, u3_atom r)
+  u3qeq_sub(u3_atom a,
+            u3_atom b,
+            u3_atom r)
   {
     union quad c, d, e;
     _set_rounding(r);
@@ -127,7 +131,9 @@
 /* mul
 */
   u3_noun
-  u3qeq_mul(u3_atom a, u3_atom b, u3_atom r)
+  u3qeq_mul(u3_atom a,
+            u3_atom b,
+            u3_atom r)
   {
     union quad c, d, e;
     _set_rounding(r);
@@ -163,7 +169,9 @@
 /* div
 */
   u3_noun
-  u3qeq_div(u3_atom a, u3_atom b, u3_atom r)
+  u3qeq_div(u3_atom a,
+            u3_atom b,
+            u3_atom r)
   {
     union quad c, d, e;
     _set_rounding(r);
@@ -199,7 +207,8 @@
 /* sqt
 */
   u3_noun
-  u3qeq_sqt(u3_atom a, u3_atom r)
+  u3qeq_sqt(u3_atom a,
+            u3_atom r)
   {
     union quad c, d;
     _set_rounding(r);
@@ -232,7 +241,10 @@
 /* fma
 */
   u3_noun
-  u3qeq_fma(u3_atom a, u3_atom b, u3_atom c, u3_atom r)
+  u3qeq_fma(u3_atom a,
+            u3_atom b,
+            u3_atom c,
+            u3_atom r)
   {
     union quad d, e, f, g;
     _set_rounding(r);
@@ -271,7 +283,8 @@
 /* lth
 */
   u3_noun
-  u3qeq_lth(u3_atom a, u3_atom b)
+  u3qeq_lth(u3_atom a,
+            u3_atom b)
   {
     union quad c, d;
     c.c = alloca(16);
@@ -303,7 +316,8 @@
 /* lte
 */
   u3_noun
-  u3qeq_lte(u3_atom a, u3_atom b)
+  u3qeq_lte(u3_atom a,
+            u3_atom b)
   {
     union quad c, d;
     c.c = alloca(16);
@@ -335,7 +349,8 @@
 /* equ
 */
   u3_noun
-  u3qeq_equ(u3_atom a, u3_atom b)
+  u3qeq_equ(u3_atom a,
+            u3_atom b)
   {
     union quad c, d;
     c.c = alloca(16);
@@ -367,7 +382,8 @@
 /* gte
 */
   u3_noun
-  u3qeq_gte(u3_atom a, u3_atom b)
+  u3qeq_gte(u3_atom a,
+            u3_atom b)
   {
     union quad c, d;
     c.c = alloca(16);
@@ -399,7 +415,8 @@
 /* gth
 */
   u3_noun
-  u3qeq_gth(u3_atom a, u3_atom b)
+  u3qeq_gth(u3_atom a,
+            u3_atom b)
   {
     union quad c, d;
     c.c = alloca(16);

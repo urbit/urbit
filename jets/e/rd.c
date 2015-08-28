@@ -55,7 +55,9 @@
 /* add
 */
   u3_noun
-  u3qer_add(u3_atom a, u3_atom b, u3_atom r)
+  u3qer_add(u3_atom a,
+            u3_atom b,
+            u3_atom r)
   {
     union doub c, d, e;
     _set_rounding(r);
@@ -85,7 +87,9 @@
 /* sub
 */
   u3_noun
-  u3qer_sub(u3_atom a, u3_atom b, u3_atom r)
+  u3qer_sub(u3_atom a,
+            u3_atom b,
+            u3_atom r)
   {
     union doub c, d, e;
     _set_rounding(r);
@@ -115,7 +119,9 @@
 /* mul
 */
   u3_noun
-  u3qer_mul(u3_atom a, u3_atom b, u3_atom r)
+  u3qer_mul(u3_atom a,
+            u3_atom b,
+            u3_atom r)
   {
     union doub c, d, e;
     _set_rounding(r);
@@ -145,7 +151,9 @@
 /* div
 */
   u3_noun
-  u3qer_div(u3_atom a, u3_atom b, u3_atom r)
+  u3qer_div(u3_atom a,
+            u3_atom b,
+            u3_atom r)
   {
     union doub c, d, e;
     _set_rounding(r);
@@ -175,7 +183,8 @@
 /* sqt
 */
   u3_noun
-  u3qer_sqt(u3_atom a, u3_atom r)
+  u3qer_sqt(u3_atom a,
+            u3_atom r)
   {
     union doub c, d;
     _set_rounding(r);
@@ -203,7 +212,10 @@
 /* fma
 */
   u3_noun
-  u3qer_fma(u3_atom a, u3_atom b, u3_atom c, u3_atom r)
+  u3qer_fma(u3_atom a,
+            u3_atom b,
+            u3_atom c,
+            u3_atom r)
   {
     union doub d, e, f, g;
     _set_rounding(r);
@@ -235,7 +247,8 @@
 /* lth
 */
   u3_noun
-  u3qer_lth(u3_atom a, u3_atom b)
+  u3qer_lth(u3_atom a,
+            u3_atom b)
   {
     union doub c, d;
     c.c = u3r_chub(0, a);
@@ -263,7 +276,8 @@
 /* lte
 */
   u3_noun
-  u3qer_lte(u3_atom a, u3_atom b)
+  u3qer_lte(u3_atom a,
+            u3_atom b)
   {
     union doub c, d;
     c.c = u3r_chub(0, a);
@@ -291,7 +305,8 @@
 /* equ
 */
   u3_noun
-  u3qer_equ(u3_atom a, u3_atom b)
+  u3qer_equ(u3_atom a,
+            u3_atom b)
   {
     union doub c, d;
     c.c = u3r_chub(0, a);
@@ -319,7 +334,8 @@
 /* gte
 */
   u3_noun
-  u3qer_gte(u3_atom a, u3_atom b)
+  u3qer_gte(u3_atom a,
+            u3_atom b)
   {
     union doub c, d;
     c.c = u3r_chub(0, a);
@@ -347,7 +363,8 @@
 /* gth
 */
   u3_noun
-  u3qer_gth(u3_atom a, u3_atom b)
+  u3qer_gth(u3_atom a,
+            u3_atom b)
   {
     union doub c, d;
     c.c = u3r_chub(0, a);

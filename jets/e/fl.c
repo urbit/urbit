@@ -21,7 +21,8 @@
 /* functions
 */
   static void
-  _satom_to_mp(mpz_t a_mp, u3_atom b)
+  _satom_to_mp(mpz_t a_mp,
+               u3_atom b)
   {
     if ( _(u3a_is_cat(b)) ) {
       c3_ws c = (b + 1) >> 1;
@@ -65,7 +66,8 @@
   }
 
   static void
-  _noun_to_flOptions(flOptions* a, u3_noun b)
+  _noun_to_flOptions(flOptions* a,
+                     u3_noun    b)
   {
     u3_noun c;
     u3_atom d, e, f, g, h;
@@ -95,7 +97,8 @@
   }
 
   static void
-  _noun_to_ea(ea* a, u3_noun b)
+  _noun_to_ea(ea*     a,
+              u3_noun b)
   {
     u3_atom c, d;
     u3x_cell(b, &c, &d);
@@ -118,7 +121,8 @@
   }
 
   static void
-  _xpd(ea* a, flOptions* b)
+  _xpd(ea*        a,
+       flOptions* b)
   {
     size_t z = mpz_sizeinbase(a->a, 2);
     if ( z >= b->precision ) return;
@@ -145,7 +149,10 @@
 
   /* a: floating point number, b: flOptions, i: rounding mode, j: sticky bit */
   u3_noun
-  u3qef_lug(u3_noun a, u3_noun b, u3_atom i, u3_atom j)
+  u3qef_lug(u3_noun a,
+            u3_noun b,
+            u3_atom i,
+            u3_atom j)
   {
     mpz_t v, g, h;
     ea c;
@@ -317,7 +324,8 @@
   }
 
   u3_noun
-  u3qef_drg(u3_noun a, u3_noun b)
+  u3qef_drg(u3_noun a,
+            u3_noun b)
   {
     ea c;
     flOptions d;

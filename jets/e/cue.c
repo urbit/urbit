@@ -6,8 +6,8 @@
 
   static u3_noun
   _cue_in(u3p(u3h_root) har_p,
-          u3_atom         a,
-          u3_atom         b)
+          u3_atom       a,
+          u3_atom       b)
   {
     u3_noun p, q;
 

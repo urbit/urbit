@@ -9,7 +9,9 @@
 /* functions
 */
   static u3_noun
-  _cqee_veri(u3_noun s, u3_noun m, u3_noun pk)
+  _cqee_veri(u3_noun s,
+             u3_noun m,
+             u3_noun pk)
   {
     c3_y  sig_y[64];
     c3_y  pub_y[32];
@@ -37,8 +39,8 @@
   {
     u3_noun a, b, c;
     if ( c3n == u3r_mean(cor,
-                          u3x_sam_2, &a, u3x_sam_6, &b,
-                          u3x_sam_7, &c, 0) ) {
+                         u3x_sam_2, &a, u3x_sam_6, &b,
+                         u3x_sam_7, &c, 0) ) {
       return u3m_bail(c3__fail);
     } else {
       return _cqee_veri(a, b, c);
