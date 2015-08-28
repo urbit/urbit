@@ -1,4 +1,4 @@
-[sigcab, `~_`, %sgcb](#sgcb)
+sigcab, `~_`, %sgcb
 ============================
 
 Insert `++tank` in trace

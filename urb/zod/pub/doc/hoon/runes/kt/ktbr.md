@@ -1,4 +1,4 @@
-[ketbar, `^|`, %ktbr](#ktbr)
+ketbar, `^|`, %ktbr
 ============================
 
 Convert `%gold` to `%iron`
@@ -9,10 +9,10 @@ Convert `%gold` to `%iron`
 See also
 --------
 
-[barlus, `|+`, %brls](#brls)
+barlus, `|+`, %brls
 ============================
 
-[ketpam, `^&`, %ktpm](#ktpm)
+ketpam, `^&`, %ktpm
 ============================
 
 Produces

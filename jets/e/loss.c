@@ -36,7 +36,8 @@
   //  extract lcs  -  XX don't use the stack like this
   //
   static u3_noun
-  _lext(u3_loss* loc_u, u3_noun kad)
+  _lext(u3_loss* loc_u,
+        u3_noun  kad)
   {
     if ( u3_nul == kad ) {
       return u3_nul;
@@ -79,9 +80,8 @@
       loc_u->lev_w = i_w;
     }
     loc_u->kct_w = 0;
-    loc_u->kad = c3_malloc(
-                              (1 + c3_min(loc_u->lev_w, loc_u->lel_w)) *
-                              sizeof(u3_noun));
+    loc_u->kad = c3_malloc((1 + c3_min(loc_u->lev_w, loc_u->lel_w)) *
+                             sizeof(u3_noun));
 
     //  Compute equivalence classes.
     //
@@ -96,7 +96,7 @@
 
         hav = u3kdb_get(u3k(loc_u->sev), u3k(how));
         teg = u3nc(u3i_words(1, &i_w),
-                          (hav == u3_none) ? u3_nul : hav);
+                   (hav == u3_none) ? u3_nul : hav);
         loc_u->sev = u3kdb_put(loc_u->sev, u3k(how), teg);
       }
     }
@@ -255,9 +255,8 @@
   }
 
   u3_noun
-  u3qe_loss(
-                    u3_noun hel,
-                    u3_noun hev)
+  u3qe_loss(u3_noun hel,
+            u3_noun hev)
   {
     u3_loss loc_u;
     u3_noun lcs;

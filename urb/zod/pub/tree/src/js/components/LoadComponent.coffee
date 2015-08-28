@@ -1,7 +1,8 @@
 recl = React.createClass
-[div,input,textarea] = [React.DOM.div,React.DOM.input,React.DOM.textarea]
+{div,input,textarea} = React.DOM
 
-module.exports = recl
+module.exports = recl 
+  displayName: "Load"
   getInitialState: -> {anim: 0}
   
   componentDidMount: -> @interval = setInterval @setAnim, 100
@@ -13,5 +14,5 @@ module.exports = recl
     if anim > 3 then anim = 0
     @setState {anim:anim}
 
-  render: ->
-    (div {className:"spin state-#{@state.anim}"}, "")
+  render: -> (div {className:"loading"},
+                (div {className:"spin state-#{@state.anim}"}, ""))

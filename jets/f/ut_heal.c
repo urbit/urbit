@@ -11,8 +11,7 @@
   _heal_as(u3_noun, u3_noun, u3_noun, u3_atom, u3_noun);
 
   static u3_noun
-  _heal_by(
-           u3_noun van,
+  _heal_by(u3_noun van,
            u3_noun sut,
            u3_noun qog,
            u3_noun ref)
@@ -38,8 +37,10 @@
           u3_noun sub = _heal_by(van, q_sut, qog, ref);
           u3_noun ret;
 
-          ret = u3qfu_busk
-            (van, sub, u3h(p_sut), u3h(u3t(p_sut)));
+          ret = u3qfu_busk(van, 
+                           sub, 
+                           u3h(p_sut), 
+                           u3h(u3t(p_sut)));
 
           u3z(sub);
           return ret;
@@ -73,8 +74,7 @@
   }
 
   static u3_noun
-  _heal_to(
-           u3_noun van,
+  _heal_to(u3_noun van,
            u3_noun sut,
            u3_noun gil,
            u3_noun qog,
@@ -176,8 +176,7 @@
   }
 
   static u3_noun
-  _heal_as(
-           u3_noun van,
+  _heal_as(u3_noun van,
            u3_noun sut,
            u3_noun qog,
            u3_atom axe,
@@ -201,12 +200,11 @@
 /* functions
 */
   u3_noun
-  _cqfu_heal(
-                        u3_noun van,
-                        u3_noun sut,
-                        u3_noun qog,
-                        u3_noun axe,
-                        u3_noun ref)
+  _cqfu_heal(u3_noun van,
+             u3_noun sut,
+             u3_noun qog,
+             u3_noun axe,
+             u3_noun ref)
   {
     return _heal_as(van, sut, qog, axe, ref);
   }
@@ -214,16 +212,15 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu_heal(
-                       u3_noun cor)
+  u3wfu_heal(u3_noun cor)
   {
     u3_noun van, sut, qog, axe, ref;
 
     if ( (c3n == u3r_mean(cor, u3x_sam_2, &qog,
-                                u3x_sam_6, &axe,
-                                u3x_sam_7, &ref,
-                                u3x_con, &van,
-                                0)) ||
+                               u3x_sam_6, &axe,
+                               u3x_sam_7, &ref,
+                               u3x_con, &van,
+                               0)) ||
          (c3n == u3ud(axe)) ||
          (u3_none == (sut = u3r_at(u3x_sam, van))) )
     {
@@ -235,10 +232,10 @@
 
   u3_noun
   u3qfu_heal(u3_noun van,
-                        u3_noun sut,
-                        u3_noun qog,
-                        u3_noun axe,
-                        u3_noun ref)
+             u3_noun sut,
+             u3_noun qog,
+             u3_noun axe,
+             u3_noun ref)
   {
     return _cqfu_heal(van, sut, qog, axe, ref);
   }

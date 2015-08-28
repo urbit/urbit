@@ -1,7 +1,7 @@
 section 2eJ, formatting (basic text)
 ====================================
 
-<h3 id="++cass"><code>++cass</code></h3>
+### `++cass`
 
 To lowercase
 
@@ -26,7 +26,7 @@ Produce the case insensitive (all lowercase) cord of a tape.
 
 ------------------------------------------------------------------------
 
-<h3 id="++cuss"><code>++cuss</code></h3>
+### `++cuss`
 
 To uppercase
 
@@ -53,7 +53,7 @@ letters, as a cord.
 
 ------------------------------------------------------------------------
 
-<h3 id="++crip"><code>++crip</code></h3>
+### `++crip`
 
 Tape to cord
 
@@ -72,7 +72,7 @@ Produce cord from a tape.
 
 ------------------------------------------------------------------------
 
-<h3 id="++mesc"><code>++mesc</code></h3>
+### `++mesc`
 
 Escape special chars
 
@@ -101,7 +101,7 @@ Escape special characters, used in [`++show`](/doc/hoon/library/2ez#++show)
 
 ------------------------------------------------------------------------
 
-<h3 id="++runt"><code>++runt</code></h3>
+### `++runt`
 
 Prepend `n` times
 
@@ -126,7 +126,7 @@ Add `a` repetitions of character `b` to the head of `c`
 
 ------------------------------------------------------------------------
 
-<h3 id="++sand"><code>++sand</code></h3>
+### `++sand`
 
 Soft-cast by odor
 
@@ -149,7 +149,7 @@ Soft-cast validity by odor.
 
 ------------------------------------------------------------------------
 
-<h3 id="++sane"><code>++sane</code></h3>
+### `++sane`
 
 Check odor validity
 
@@ -204,7 +204,7 @@ Check validity by odor. Produces a gate.
 
 ------------------------------------------------------------------------
 
-<h3 id="++trim"><code>++trim</code></h3>
+### `++trim`
 
 Tape split
 
@@ -232,7 +232,7 @@ Split first `a` characters off tape.
 
 ------------------------------------------------------------------------
 
-<h3 id="++trip"><code>++trip</code></h3>
+### `++trip`
 
 Cord to tape
 
@@ -257,7 +257,7 @@ Produce tape from cord.
 
 ------------------------------------------------------------------------
 
-<h3 id="++teff"><code>++teff</code></h3>
+### `++teff`
 
 UTF8 Length
 
@@ -281,7 +281,7 @@ Number of utf8 bytes.
 
 ------------------------------------------------------------------------
 
-<h3 id="++turf"><code>++turf</code></h3>
+### `++turf`
 
 UTF8 to UTF32 cord
 
@@ -322,7 +322,7 @@ Convert utf8 ([cord]()) to utf32 codepoints.
 
 ------------------------------------------------------------------------
 
-<h3 id="++tuba"><code>++tuba</code></h3>
+### `++tuba`
 
 UTF8 to UTF32 tape
 
@@ -343,7 +343,7 @@ Convert tape to list of codepoints.
 
 ------------------------------------------------------------------------
 
-<h3 id="++tufa"><code>++tufa</code></h3>
+### `++tufa`
 
 UTF32 to UTF8 tape
 
@@ -365,7 +365,7 @@ Wrap list of utf32 codepoints to utf8 [tape]().
 
 ------------------------------------------------------------------------
 
-<h3 id="++tuft"><code>++tuft</code></h3>
+### `++tuft`
 
 UTF32 to UTF8 text
 
@@ -411,7 +411,7 @@ Convert utf32 glyph to
 
 ------------------------------------------------------------------------
 
-<h3 id="++wack"><code>++wack</code></h3>
+### `++wack`
 
 Coin format encode
 
@@ -443,7 +443,7 @@ Escape span `~` as `~~` and `_` as `~-`. Used for printing.
 
 ------------------------------------------------------------------------
 
-<h3 id="++wick"><code>++wick</code></h3>
+### `++wick`
 
 Coin format decode
 
@@ -472,7 +472,7 @@ Unescape span `~~` as `~` and `~-` as `_`.
 
 ------------------------------------------------------------------------
 
-<h3 id="++woad"><code>++woad</code></h3>
+### `++woad`
 
 Unescape cord
 
@@ -519,7 +519,7 @@ Unescape cord codepoints.
 
 ------------------------------------------------------------------------
 
-<h3 id="++wood"><code>++wood</code></h3>
+### `++wood`
 
 Escape cord
 

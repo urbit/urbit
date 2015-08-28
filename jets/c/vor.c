@@ -8,7 +8,7 @@
 */
   u3_noun
   u3qc_vor(u3_atom a,
-                   u3_atom b)
+           u3_atom b)
   {
     c3_w c_w = u3r_mug(u3r_mug(a));
     c3_w d_w = u3r_mug(u3r_mug(b));

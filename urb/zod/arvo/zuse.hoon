@@ -716,13 +716,12 @@
   ++  attr                                              ::  attributes
     %+  knee  *mart  |.  ~+ 
     %-  star
-    ;~  pfix  (plus whit)
-      ;~  plug
-        ;~(sfix name tis)
-        ;~  pose
-          (ifix [doq doq] (star ;~(less doq escp)))
-          (ifix [soq soq] (star ;~(less soq escp)))
-        ==
+    ;~  plug  
+      ;~(pfix (plus whit) name)
+      ;~  pose
+        (ifix [;~(plug tis doq) doq] (star ;~(less doq escp)))
+        (ifix [;~(plug tis soq) soq] (star ;~(less soq escp)))
+        (easy ~)
       ==
     ==
   ::
@@ -1108,13 +1107,13 @@
     [~ ~]
   ?^  t.rax
     [p.pok [ire q.pok]]:[pok=$(rax t.rax) ire=i.rax]
-  =+  ^-  raf=(like tape)
-      %.  [1^1 (flop (trip i.rax))]
-      ;~(sfix (star ;~(less dot next)) dot)
+  =+  ^-  raf=(like term)
+      =>  |=(a=@ ((sand %tas) (crip (flop (trip a)))))
+      (;~(sfix (sear . sym) dot) [1^1 (flop (trip i.rax))])
   ?~  q.raf
     [~ [i.rax ~]]
-  =+  `[ext=tape [@ @] fyl=tape]`u.q.raf
-  :-  ?:(=(~ ext) ~ [~ (crip (flop ext))])
+  =+  `[ext=term [@ @] fyl=tape]`u.q.raf
+  :-  `ext
   ?:(=(~ fyl) ~ [(crip (flop fyl)) ~])
 ::
 ++  fuel                                                ::  parse fcgi

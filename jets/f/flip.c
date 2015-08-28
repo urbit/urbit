@@ -7,8 +7,7 @@
 /* functions
 */
   u3_noun
-  u3qf_flip(
-                    u3_noun hel)
+  u3qf_flip(u3_noun hel)
   {
     if ( c3y == u3r_sing(1, u3h(hel)) ) {
       if ( (c3y == u3t(hel)) ) {
@@ -21,16 +20,14 @@
       }
     }
     else {
-      return u3nq
-        (6,
-               u3k(hel),
-               u3nc(1, c3n),
-               u3nc(1, c3y));
+      return u3nq(6,
+                  u3k(hel),
+                  u3nc(1, c3n),
+                  u3nc(1, c3y));
     }
   }
   u3_noun
-  u3wf_flip(
-                   u3_noun cor)
+  u3wf_flip(u3_noun cor)
   {
     u3_noun hel;
 

@@ -1,4 +1,4 @@
-[dottis, `.=`, %dtts](#dtts)
+dottis, `.=`, %dtts
 ============================
 
 Equality

@@ -14,8 +14,12 @@ int _crypto_scrypt(const uint8_t *, size_t, const uint8_t *, size_t,
 */
 
   u3_noun
-  u3qes_hsl(u3_atom p, u3_atom pl, u3_atom s, u3_atom sl, u3_atom n,
-            u3_atom r, u3_atom  z, u3_atom d)
+  u3qes_hsl(u3_atom p, u3_atom pl,
+            u3_atom s, u3_atom sl,
+            u3_atom n,
+            u3_atom r, 
+            u3_atom z, 
+            u3_atom d)
   {
     // asserting that n is power of 2 in _crypto_scrypt
     if (!(_(u3a_is_atom(p)) && _(u3a_is_atom(s)) &&
@@ -53,7 +57,12 @@ int _crypto_scrypt(const uint8_t *, size_t, const uint8_t *, size_t,
   }
 
   u3_noun
-  u3qes_hsh(u3_atom p, u3_atom s, u3_atom n, u3_atom r, u3_atom  z, u3_atom d)
+  u3qes_hsh(u3_atom p,
+            u3_atom s,
+            u3_atom n,
+            u3_atom r,
+            u3_atom z,
+            u3_atom d)
   {
     // asserting that n is power of 2 in _crypto_scrypt
     if (!(_(u3a_is_atom(p)) && _(u3a_is_atom(s)) &&
@@ -91,8 +100,10 @@ int _crypto_scrypt(const uint8_t *, size_t, const uint8_t *, size_t,
   }
 
   u3_noun
-  u3qes_pbl(u3_atom p, u3_atom pl, u3_atom s, u3_atom sl,
-            u3_atom c, u3_atom d)
+  u3qes_pbl(u3_atom p, u3_atom pl,
+            u3_atom s, u3_atom sl,
+            u3_atom c,
+            u3_atom d)
   {
     if (!(_(u3a_is_atom(p)) && _(u3a_is_atom(s)) &&
           _(u3a_is_cat(pl)) && _(u3a_is_cat(sl)) &&

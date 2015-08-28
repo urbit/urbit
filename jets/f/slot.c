@@ -7,7 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qf_slot(u3_atom axe, u3_noun vax)
+  u3qf_slot(u3_atom axe,
+            u3_noun vax)
   {
     u3_noun fag = u3r_at(axe, u3t(vax));
 

@@ -7,8 +7,7 @@
 /* logic
 */
   static u3_noun
-  _rest_in_list(
-                u3_noun van,
+  _rest_in_list(u3_noun van,
                 u3_noun leg)
   {
     if ( u3_nul == leg ) {
@@ -17,15 +16,13 @@
       u3_noun i_leg = u3h(leg);
       u3_noun t_leg = u3t(leg);
 
-      return u3nc
-        (u3qfu_play(van, u3h(i_leg), u3t(i_leg)),
-                _rest_in_list(van, t_leg));
+      return u3nc(u3qfu_play(van, u3h(i_leg), u3t(i_leg)),
+                  _rest_in_list(van, t_leg));
     }
   }
 
   static u3_noun
-  _rest_in_stil(
-                u3_noun van,
+  _rest_in_stil(u3_noun van,
                 u3_noun gar)
   {
     u3_noun gun = u3qdi_gas(u3_nul, gar);
@@ -36,17 +33,15 @@
   }
 
   static u3_noun
-  _rest_in_fork(
-                u3_noun nog,
+  _rest_in_fork(u3_noun nog,
                 u3_noun fub)
   {
     if ( c3n == u3du(nog) ) {
       return fub;
     } else {
-      u3_noun buf = _rest_in_fork
-        (
-         u3t(nog),
-         u3qf_fork(u3h(nog), fub));
+      u3_noun buf = _rest_in_fork(u3t(nog),
+                                  u3qf_fork(u3h(nog),
+                                            fub));
 
         u3z(fub);
       return buf;
@@ -68,8 +63,7 @@
   }
 
   static u3_noun
-  _rest_hit_fan(
-                u3_noun fan,
+  _rest_hit_fan(u3_noun fan,
                 u3_noun leg)
   {
     if ( u3_nul == leg ) {
@@ -81,7 +75,9 @@
   }
 
   u3_noun
-  _cqfu_rest(u3_noun van, u3_noun sut, u3_noun leg)
+  _cqfu_rest(u3_noun van,
+             u3_noun sut,
+             u3_noun leg)
   {
     u3_noun fan = u3r_at(u3qfu_van_fan, van);
 
@@ -102,8 +98,7 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu_rest(
-                       u3_noun cor)
+  u3wfu_rest(u3_noun cor)
   {
     u3_noun sut, leg, van;
 
@@ -118,8 +113,8 @@
 
   u3_noun
   u3qfu_rest(u3_noun van,
-                        u3_noun sut,
-                        u3_noun leg)
+             u3_noun sut,
+             u3_noun leg)
   {
     c3_m    fun_m = c3__rest;
     u3_noun pro   = u3z_find_2(fun_m, sut, leg);

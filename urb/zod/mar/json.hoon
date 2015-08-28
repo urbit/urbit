@@ -7,7 +7,6 @@
   ::
 |_  jon=json
 ::
-++  garb  /oauth-tokens/bit-accounts/bit-transaction
 ++  grow                                                ::  convert to
   |%
   ++  mime  [/text/json (taco txt)]                     ::  convert to %mime

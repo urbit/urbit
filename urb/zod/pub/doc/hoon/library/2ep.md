@@ -8,7 +8,7 @@ anyway.
 
 ------------------------------------------------------------------------
 
-<h3 id="++berk"><code>++berk</code></h3>
+### `++berk`
 
 Invert diff patches
 
@@ -39,7 +39,7 @@ swapped. Produces a `bur`.
 
 ------------------------------------------------------------------------
 
-<h3 id="++diff"><code>++diff</code></h3>
+### `++diff`
 
 Generate patch
 
@@ -84,7 +84,7 @@ Produces a patch between two nouns, by change type
 
 ------------------------------------------------------------------------
 
-<h3 id="++loss"><code>++loss</code></h3>
+### `++loss`
 
 Longest subsequence
 
@@ -173,7 +173,7 @@ several internal helper arms. Produces a [`++tape`]().
 
 ------------------------------------------------------------------------
 
-<h3 id="++locz"><code>++locz</code></h3>
+### `++locz`
 
 Find common
 
@@ -204,7 +204,7 @@ producing a [\`++tape]().
 
 ------------------------------------------------------------------------
 
-<h3 id="++lore"><code>++lore</code></h3>
+### `++lore`
 
 Split on `\n`
 
@@ -240,7 +240,7 @@ Split on newlines, ascii `10`
 
 ------------------------------------------------------------------------
 
-<h3 id="++role"><code>++role</code></h3>
+### `++role`
 
 Join with `\n`
 
@@ -262,7 +262,7 @@ Join line list with newlines.
 
 ------------------------------------------------------------------------
 
-<h3 id="++lump"><code>++lump</code></h3>
+### `++lump`
 
 Change with `++udon`
 
@@ -309,7 +309,7 @@ Use udon to change noun
 
 ------------------------------------------------------------------------
 
-<h3 id="++lure"><code>++lure</code></h3>
+### `++lure`
 
 Patch `a`
 
@@ -332,7 +332,7 @@ Patch a by references to axis and literal.
 
 ------------------------------------------------------------------------
 
-<h3 id="++limp"><code>++limp</code></h3>
+### `++limp`
 
 Reverse patch
 
@@ -357,7 +357,7 @@ Reverse a patch (preprocessor unchanged)
 
 ------------------------------------------------------------------------
 
-<h3 id="++hump"><code>++hump</code></h3>
+### `++hump`
 
 Prep for diff
 
@@ -387,7 +387,7 @@ Prep atom for diff: leave alone, cue, or split by newlines.
 
 ------------------------------------------------------------------------
 
-<h3 id="++husk"><code>++husk</code></h3>
+### `++husk`
 
 Atomize post diff
 
@@ -434,7 +434,7 @@ Re-atomize after diff: leave alone, jam, or join with newlines.
 
 ------------------------------------------------------------------------
 
-<h3 id="++lurk"><code>++lurk</code></h3>
+### `++lurk`
 
 Apply list patch
 
@@ -474,7 +474,7 @@ Amend list using an urge: list of `[%& {number skipped}]` and
 
 ------------------------------------------------------------------------
 
-<h3 id="++lusk"><code>++lusk</code></h3>
+### `++lusk`
 
 `lcs` to list patch
 
@@ -535,7 +535,7 @@ Using a common sequence, generate urge from two lists
 
 ------------------------------------------------------------------------
 
-<h3 id="++nude"><code>++nude</code></h3>
+### `++nude`
 
 Tree change
 

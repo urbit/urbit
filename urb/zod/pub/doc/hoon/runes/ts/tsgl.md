@@ -1,4 +1,4 @@
-[tisgal, `=<`, %tsgl](#tsgl)
+tisgal, `=<`, %tsgl
 ============================
 
 Product as subject, inverse
@@ -10,7 +10,7 @@ lengthier and `=<` makes for more readable code.
 See also
 --------
 
-[tisgar, `=>`, %tsgr](#tsgr)
+tisgar, `=>`, %tsgr
 ============================
 
 Produces

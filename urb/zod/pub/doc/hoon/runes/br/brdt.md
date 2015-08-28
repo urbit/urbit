@@ -1,4 +1,4 @@
-[bardot, `|.`, %brdt](#brdt)
+bardot, `|.`, %brdt
 ============================
 
 Trap
@@ -13,7 +13,7 @@ a function that takes no inputs.
 See also
 --------
 
-[barhep, `|-`, %brhp](#brhp) [bartis, `|=`, %brts](#brts)
+barhep, `|-`, %brhp](#brhp) [bartis, `|=`, %brts
 
 Produces
 --------

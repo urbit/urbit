@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/actions/TreeActions.coffee":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var TreeDispatcher, TreePersistence;
 
 TreeDispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -6,59 +6,23 @@ TreeDispatcher = require('../dispatcher/Dispatcher.coffee');
 TreePersistence = require('../persistence/TreePersistence.coffee');
 
 module.exports = {
-  loadPath: function(path, body, kids) {
+  loadPath: function(path, data) {
     return TreeDispatcher.handleServerAction({
-      type: "path-load",
       path: path,
-      body: body,
-      kids: kids
+      data: data,
+      type: "path-load"
     });
   },
-  setLoading: function(state) {
-    return TreeDispatcher.handleViewAction({
-      type: "set-load",
-      load: state
-    });
-  },
-  loadKids: function(path, kids) {
-    return TreeDispatcher.handleServerAction({
-      type: "kids-load",
-      path: path,
-      kids: kids
-    });
-  },
-  loadSnip: function(path, snip) {
-    return TreeDispatcher.handleServerAction({
-      type: "snip-load",
-      path: path,
-      snip: snip
-    });
-  },
-  getPath: function(path, cb) {
-    var query;
-    query = null;
-    if (typeof cb === 'string') {
-      query = arguments[1];
-      cb = arguments[2];
+  sendQuery: function(path, query) {
+    if (query == null) {
+      return;
     }
     if (path.slice(-1) === "/") {
       path = path.slice(0, -1);
     }
     return TreePersistence.get(path, query, (function(_this) {
       return function(err, res) {
-        switch (query) {
-          case "snip":
-            _this.loadSnip(path, res.snip);
-            break;
-          case "kids":
-            _this.loadKids(path, res.kids);
-            break;
-          default:
-            _this.loadPath(path, res.body, res.kids, res.snip);
-        }
-        if (cb) {
-          return cb(err, res);
-        }
+        return _this.loadPath(path, res);
       };
     })(this));
   },
@@ -72,10 +36,16 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/dispatcher/Dispatcher.coffee","../persistence/TreePersistence.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/components/AnchorComponent.coffee":[function(require,module,exports){
-var BodyComponent, TreeActions, TreeStore, a, div, recl, ref;
+},{"../dispatcher/Dispatcher.coffee":13,"../persistence/TreePersistence.coffee":19}],2:[function(require,module,exports){
+var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, query, reactify, recl, ref;
 
-BodyComponent = require('./BodyComponent.coffee');
+clas = require('classnames');
+
+BodyComponent = React.createFactory(require('./BodyComponent.coffee'));
+
+query = require('./Async.coffee');
+
+reactify = require('./Reactify.coffee');
 
 TreeStore = require('../stores/TreeStore.coffee');
 
@@ -83,304 +53,377 @@ TreeActions = require('../actions/TreeActions.coffee');
 
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.a], div = ref[0], a = ref[1];
+ref = React.DOM, div = ref.div, a = ref.a;
 
-module.exports = recl({
-  stateFromStore: function() {
+Links = React.createFactory(query({
+  path: 't',
+  kids: {
+    name: 't',
+    head: 'r',
+    meta: 'j'
+  }
+}, recl({
+  displayName: "Links",
+  render: function() {
+    return div({
+      className: 'links'
+    }, this.props.children, this._render());
+  },
+  _render: function() {
+    var k, keys, ref1, ref2, ref3, sorted, style, v;
+    sorted = true;
+    keys = [];
+    ref1 = this.props.kids;
+    for (k in ref1) {
+      v = ref1[k];
+      if (((ref2 = v.meta) != null ? ref2.sort : void 0) == null) {
+        sorted = false;
+      }
+      keys[Number((ref3 = v.meta) != null ? ref3.sort : void 0)] = k;
+    }
+    if (sorted !== true) {
+      keys = _(this.props.kids).keys().sort();
+    }
+    style = {
+      marginTop: -24 * (keys.indexOf(this.props.curr)) + "px"
+    };
+    return div({
+      id: "sibs",
+      style: style
+    }, keys.map((function(_this) {
+      return function(key) {
+        var className, data, head, href;
+        href = window.tree.basepath(_this.props.path + "/" + key);
+        data = _this.props.kids[key];
+        if (data.meta) {
+          head = data.meta.title;
+        }
+        if (head == null) {
+          head = _this.toText(data.head);
+        }
+        head || (head = key);
+        className = clas({
+          active: key === _this.props.curr
+        });
+        return div({
+          className: className,
+          key: key
+        }, a({
+          href: href,
+          onClick: _this.props.onClick
+        }, head));
+      };
+    })(this)));
+  },
+  toText: function(elem) {
+    return reactify.walk(elem, function() {
+      return '';
+    }, function(s) {
+      return s;
+    }, function(arg) {
+      var c;
+      c = arg.c;
+      return (c != null ? c : []).join('');
+    });
+  }
+}), recl({
+  displayName: "Links_loading",
+  render: function() {
+    return div({
+      className: 'links'
+    }, this.props.children, this._render());
+  },
+  _render: function() {
+    return div({
+      id: "sibs"
+    }, div({
+      className: "active"
+    }, a({}, this.props.curr)));
+  }
+})));
+
+CLICK = 'a,h1,h2,h3,h4,h5,h6';
+
+module.exports = query({
+  sein: 't',
+  path: 't',
+  name: 't',
+  next: 't',
+  prev: 't'
+}, recl({
+  displayName: "Anchor",
+  getInitialState: function() {
     return {
-      crum: TreeStore.getCrumbs(),
-      curr: TreeStore.getCurr(),
-      pare: TreeStore.getPare(),
-      sibs: TreeStore.getSiblings(),
-      next: TreeStore.getNext(),
-      prev: TreeStore.getPrev(),
-      kids: TreeStore.getKids(),
-      tree: TreeStore.getTree([]),
-      cont: TreeStore.getCont(),
       url: window.location.pathname
     };
   },
-  checkPath: function(path) {
-    return this.state.cont[path] != null;
+  onClick: function() {
+    return this.toggleFocus();
+  },
+  onMouseOver: function() {
+    return this.toggleFocus(true);
+  },
+  onMouseOut: function() {
+    return this.toggleFocus(false);
+  },
+  onTouchStart: function() {
+    return this.ts = Number(Date.now());
+  },
+  onTouchEnd: function() {
+    var dt;
+    return dt = this.ts - Number(Date.now());
   },
   toggleFocus: function(state) {
     return $(this.getDOMNode()).toggleClass('focus', state);
   },
-  _click: function() {
-    return this.toggleFocus();
+  componentWillUnmount: function() {
+    clearInterval(this.interval);
+    return $('body').off('click', CLICK);
   },
-  _mouseOver: function() {
-    return this.toggleFocus(true);
+  componentDidUpdate: function() {
+    return this.setTitle();
   },
-  _mouseOut: function() {
-    return this.toggleFocus(false);
+  componentDidMount: function() {
+    var _this;
+    this.setTitle();
+    this.interval = setInterval(this.checkURL, 100);
+    $('body').on('keyup', (function(_this) {
+      return function(e) {
+        switch (e.keyCode) {
+          case 37:
+            return _this.goTo(_this.props.prev);
+          case 39:
+            return _this.goTo(_this.props.next);
+        }
+      };
+    })(this));
+    _this = this;
+    return $('body').on('click', CLICK, function(e) {
+      var href, id;
+      href = $(this).attr('href');
+      id = $(this).attr('id');
+      if ((href != null ? href[0] : void 0) === "/") {
+        e.preventDefault();
+        e.stopPropagation();
+        return _this.goTo(window.tree.fragpath(href));
+      } else if (id) {
+        return window.location.hash = id;
+      }
+    });
   },
-  _touchStart: function() {
-    return this.ts = Number(Date.now());
-  },
-  _touchEnd: function() {
-    var dt;
-    return dt = this.ts - Number(Date.now());
+  setTitle: function() {
+    var title;
+    title = $('#cont h1').first().text() || this.props.name;
+    return document.title = title + " - " + this.props.path;
   },
   setPath: function(href, hist) {
-    var next, rend;
+    var href_parts, next;
+    href_parts = href.split("#");
+    next = href_parts[0];
+    if (next.substr(-1) === "/") {
+      next = next.slice(0, -1);
+    }
+    href_parts[0] = next;
     if (hist !== false) {
-      history.pushState({}, "", window.tree.basepath(href));
+      history.pushState({}, "", window.tree.basepath(href_parts.join("")));
     }
-    next = href.split("#")[0];
-    rend = false;
-    if (next !== this.state.curr) {
+    if (next !== this.props.path) {
       React.unmountComponentAtNode($('#cont')[0]);
-      rend = true;
-    }
-    TreeActions.setCurr(next);
-    if (rend === true) {
+      TreeActions.setCurr(next);
       return React.render(BodyComponent({}, ""), $('#cont')[0]);
     }
   },
   goTo: function(path) {
-    var frag;
     this.toggleFocus(false);
     $("html,body").animate({
       scrollTop: 0
     });
-    frag = path.split("#")[0];
-    this.setPath(path);
-    if (!this.checkPath(frag)) {
-      return TreeActions.getPath(frag);
-    }
+    return this.setPath(path);
   },
   checkURL: function() {
     if (this.state.url !== window.location.pathname) {
-      return this.setPath(window.tree.fragpath(window.location.pathname), false);
+      this.setPath(window.tree.fragpath(window.location.pathname), false);
+      return this.setState({
+        url: window.location.pathname
+      });
     }
   },
-  setTitle: function() {
-    var title;
-    title = $('#cont h1').first().text();
-    if (title.length === 0) {
-      title = this.state.curr.split("/")[this.state.curr.split("/").length - 1];
-    }
-    return document.title = title + " - " + this.state.curr;
-  },
-  checkUp: function() {
-    var up;
-    up = this.state.curr.split("/");
-    up.pop();
-    up = up.join("/");
-    if (up.slice(-1) === "/") {
-      up = up.slice(0, -1);
-    }
-    if (!this.state.cont[up]) {
-      return TreeActions.getPath(up);
-    }
-  },
-  componentDidUpdate: function() {
-    this.setTitle();
-    return this.checkUp();
-  },
-  componentDidMount: function() {
-    TreeStore.addChangeListener(this._onChangeStore);
-    this.setTitle();
-    this.checkUp();
-    this.interval = setInterval(this.checkURL, 100);
-    $('body').on('keyup', (function(_this) {
-      return function(e) {
-        if (e.keyCode === 37) {
-          _this.goTo(_this.state.prev);
-        }
-        if (e.keyCode === 39) {
-          return _this.goTo(_this.state.next);
-        }
-      };
-    })(this));
-    return $('body').on('click', 'a', (function(_this) {
-      return function(e) {
-        var href;
-        href = $(e.target).closest('a').attr('href');
-        if (href[0] === "/") {
-          e.preventDefault();
-          e.stopPropagation();
-          return _this.goTo(window.tree.fragpath(href));
-        }
-      };
-    })(this));
-  },
-  componentWillUnmount: function() {
-    clearInterval(this.interval);
-    return $('body').off('click', 'a');
-  },
-  getInitialState: function() {
-    return this.stateFromStore();
-  },
-  _onChangeStore: function() {
-    return this.setState(this.stateFromStore());
+  renderArrow: function(name, path) {
+    var href;
+    href = window.tree.basepath(path);
+    return a({
+      href: href,
+      key: "arow-" + name,
+      className: "arow-" + name
+    }, "");
   },
   render: function() {
-    var _parts, ci, curr, href, k, obj, offset, p, parts, s, sibs, up;
-    parts = [];
-    if (this.state.pare) {
-      href = window.tree.basepath(this.state.pare);
-      parts.push(div({
-        id: "up"
-      }, a({
-        key: "arow-up",
-        href: href,
-        className: "arow-up"
-      }, "")));
-      if (this.state.prev || this.state.next) {
-        _parts = [];
-        if (this.state.prev) {
-          href = window.tree.basepath(this.state.prev);
-          _parts.push(a({
-            key: "arow-prev",
-            href: href,
-            className: "arow-prev"
-          }, ""));
-        }
-        if (this.state.next) {
-          href = window.tree.basepath(this.state.next);
-          _parts.push(a({
-            key: "arow-next",
-            href: href,
-            className: "arow-next"
-          }, ""));
-        }
-        parts.push(div({
-          id: "sides"
-        }, _parts));
-      }
-    }
-    curr = this.state.curr;
-    if (_.keys(this.state.sibs).length > 0) {
-      p = curr.split("/");
-      curr = p.pop();
-      up = p.join("/");
-      ci = 0;
-      k = 0;
-      sibs = _.map(_.keys(this.state.sibs).sort(), (function(_this) {
-        return function(i) {
-          var c;
-          c = "";
-          if (curr === i) {
-            c = "active";
-            ci = k;
-          }
-          k++;
-          href = window.tree.basepath(up + "/" + i);
-          return div({
-            className: c
-          }, a({
-            key: i + "-a",
-            href: href,
-            onClick: _this._click
-          }, i));
-        };
-      })(this));
-      offset = 0;
-      if (ci > 0) {
-        offset = 0;
-      }
-      s = {
-        marginTop: ((ci * -24) - offset) + "px"
-      };
-      parts.push(div({
-        key: "sibs",
-        id: "sibs",
-        style: s
-      }, sibs));
-    }
+    var obj;
     obj = {
-      onMouseOver: this._mouseOver,
-      onMouseOut: this._mouseOut,
-      onClick: this._click,
-      onTouchStart: this._touchStart,
-      onTouchEnd: this._touchEnd
+      onMouseOver: this.onMouseOver,
+      onMouseOut: this.onMouseOut,
+      onClick: this.onClick,
+      onTouchStart: this.onTouchStart,
+      onTouchEnd: this.onTouchEnd
     };
     if (_.keys(window).indexOf("ontouchstart") !== -1) {
       delete obj.onMouseOver;
       delete obj.onMouseOut;
     }
-    return div(obj, parts);
+    return div(obj, Links({
+      onClick: this.onClick,
+      curr: this.props.name,
+      dataPath: this.props.sein
+    }, this.props.sein ? _.filter([
+      div({
+        id: "up",
+        key: "up"
+      }, this.renderArrow("up", this.props.sein)), this.props.prev || this.props.next ? _.filter([
+        div({
+          id: "sides",
+          key: "sides"
+        }, this.props.prev ? this.renderArrow("prev", this.props.prev) : void 0, this.props.next ? this.renderArrow("next", this.props.next) : void 0)
+      ]) : void 0
+    ]) : void 0));
   }
-});
+}));
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/stores/TreeStore.coffee","./BodyComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/components/BodyComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/components/BodyComponent.coffee":[function(require,module,exports){
-var TreeActions, TreeStore, div, input, load, recl, ref, textarea;
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":20,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":10,"classnames":15}],3:[function(require,module,exports){
+var TreeActions, TreeStore, _load, code, div, recl, ref, span;
+
+_load = require('./LoadComponent.coffee');
 
 TreeStore = require('../stores/TreeStore.coffee');
 
 TreeActions = require('../actions/TreeActions.coffee');
 
-load = require('./LoadComponent.coffee');
+recl = React.createClass;
+
+ref = React.DOM, div = ref.div, span = ref.span, code = ref.code;
+
+module.exports = function(queries, Child, load) {
+  if (load == null) {
+    load = _load;
+  }
+  return recl({
+    displayName: "Async",
+    getInitialState: function() {
+      return this.stateFromStore();
+    },
+    _onChangeStore: function() {
+      return this.setState(this.stateFromStore());
+    },
+    getPath: function() {
+      var ref1;
+      return (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
+    },
+    stateFromStore: function() {
+      return {
+        got: TreeStore.fulfill(this.getPath(), queries)
+      };
+    },
+    componentDidMount: function() {
+      TreeStore.addChangeListener(this._onChangeStore);
+      return this.checkPath();
+    },
+    componentWillUnmount: function() {
+      return TreeStore.removeChangeListener(this._onChangeStore);
+    },
+    componentDidUpdate: function(_props, _state) {
+      if (_props !== this.props) {
+        this.setState(this.stateFromStore());
+      }
+      return this.checkPath();
+    },
+    checkPath: function() {
+      return TreeActions.sendQuery(this.getPath(), this.filterQueries());
+    },
+    filterQueries: function() {
+      return this.filterWith(this.state.got, queries);
+    },
+    filterWith: function(have, _queries) {
+      var k, kid, ref1, request;
+      if (have == null) {
+        return _queries;
+      }
+      request = {};
+      for (k in _queries) {
+        if (have[k] === void 0) {
+          request[k] = _queries[k];
+        }
+      }
+      if ((_queries.kids != null) && (have.kids != null)) {
+        if (_.isEmpty(have.kids)) {
+          request.kids = _queries.kids;
+        } else {
+          request.kids = {};
+          ref1 = have.kids;
+          for (k in ref1) {
+            kid = ref1[k];
+            _.merge(request.kids, this.filterWith(kid, _queries.kids));
+          }
+          if (_.isEmpty(request.kids)) {
+            delete request.kids;
+          }
+        }
+      }
+      if (!_.isEmpty(request)) {
+        return request;
+      }
+    },
+    scrollHash: function() {
+      var ref1;
+      return (ref1 = this.getHashElement()) != null ? ref1.scrollIntoView() : void 0;
+    },
+    getHashElement: function() {
+      var hash;
+      hash = document.location.hash;
+      if (hash) {
+        return document.getElementById(hash.slice(1));
+      }
+    },
+    render: function() {
+      return div({}, this.filterQueries() != null ? React.createElement(load, this.props) : (!this.getHashElement() ? setTimeout(this.scrollHash, 0) : void 0, React.createElement(Child, _.extend({}, this.props, this.state.got), this.props.children)));
+    }
+  });
+};
+
+
+
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":20,"./LoadComponent.coffee":9}],4:[function(require,module,exports){
+var div, query, reactify, recl;
+
+query = require('./Async.coffee');
+
+reactify = require('./Reactify.coffee');
 
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = ref[0], input = ref[1], textarea = ref[2];
+div = React.DOM.div;
 
-module.exports = recl({
-  stateFromStore: function() {
-    return {
-      body: TreeStore.getBody(),
-      load: TreeStore.getLoad(),
-      curr: TreeStore.getCurr(),
-      cont: TreeStore.getCont()
-    };
-  },
-  componentDidMount: function() {
-    return TreeStore.addChangeListener(this._onChangeStore);
-  },
-  componentWillUnmount: function() {
-    return TreeStore.removeChangeListener(this._onChangeStore);
-  },
-  componentDidUpdate: function(_props, _state) {
-    if (_state.curr !== this.state.curr) {
-      return setTimeout(((function(_this) {
-        return function() {
-          return _this.getPath(_state.curr);
-        };
-      })(this)), 0);
-    }
-  },
-  getInitialState: function() {
-    return this.stateFromStore();
-  },
-  _onChangeStore: function() {
-    return this.setState(this.stateFromStore());
-  },
-  getPath: function(path) {
-    if (this.state.cont[path] == null) {
-      TreeActions.setLoading(true);
-      return TreeActions.getPath(path, (function(_this) {
-        return function() {
-          return TreeActions.setLoading(false);
-        };
-      })(this));
-    }
-  },
+module.exports = query({
+  body: 'r',
+  path: 't'
+}, recl({
+  displayName: "Body",
   render: function() {
-    var parts, ref1;
-    parts = [];
-    parts.push(div({
+    return div({}, div({
       id: 'body',
-      key: "body" + this.state.curr
-    }, (ref1 = this.state.body) != null ? ref1 : div({
-      className: "loading"
-    }, load({}, ""))));
-    return div({}, parts);
+      key: "body" + this.props.path
+    }, reactify(this.props.body)));
   }
-});
+}));
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/components/LoadComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/components/CodeMirror.coffee":[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":10}],5:[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.textarea], div = ref[0], textarea = ref[1];
+ref = React.DOM, div = ref.div, textarea = ref.textarea;
 
 module.exports = recl({
   render: function() {
@@ -399,181 +442,173 @@ module.exports = recl({
 
 
 
-},{}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/components/KidsComponent.coffee":[function(require,module,exports){
-var TreeActions, TreeStore, a, div, hr, li, recl, ref, ul;
-
-TreeStore = require('../stores/TreeStore.coffee');
-
-TreeActions = require('../actions/TreeActions.coffee');
+},{}],6:[function(require,module,exports){
+var div, recl;
 
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.a, React.DOM.ul, React.DOM.li, React.DOM.hr], div = ref[0], a = ref[1], ul = ref[2], li = ref[3], hr = ref[4];
+div = React.DOM.div;
 
-module.exports = recl({
-  stateFromStore: function() {
-    var path, ref1;
-    path = (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
-    return {
-      cont: TreeStore.getCont(),
-      tree: TreeStore.getTree(path.split("/")),
-      path: path
-    };
-  },
-  componentDidMount: function() {
-    return TreeStore.addChangeListener(this._onChangeStore);
-  },
-  getInitialState: function() {
-    return this.stateFromStore();
-  },
-  _onChangeStore: function() {
-    return this.setState(this.stateFromStore());
-  },
-  componentDidMount: function() {
-    var cont, i, k, len, ref1;
-    cont = true;
-    ref1 = _.keys(this.state.tree);
-    for (i = 0, len = ref1.length; i < len; i++) {
-      k = ref1[i];
-      if (!this.state.cont[this.state.path + "/" + k]) {
-        cont = false;
-      }
+module.exports = {
+  codemirror: require('./CodeMirror.coffee'),
+  search: require('./SearchComponent.coffee'),
+  list: require('./ListComponent.coffee'),
+  kids: require('./KidsComponent.coffee'),
+  toc: require('./TocComponent.coffee'),
+  lost: recl({
+    render: function() {
+      return div({}, "<lost(", this.props.children, ")>");
     }
-    if (!this.state.tree || _.keys(this.state.tree).length === 0 || !cont) {
-      return TreeActions.getPath(this.state.path, "kids");
-    }
-  },
+  })
+};
+
+
+
+},{"./CodeMirror.coffee":5,"./KidsComponent.coffee":7,"./ListComponent.coffee":8,"./SearchComponent.coffee":11,"./TocComponent.coffee":12}],7:[function(require,module,exports){
+var a, div, hr, li, query, reactify, recl, ref, ul;
+
+reactify = require('./Reactify.coffee');
+
+query = require('./Async.coffee');
+
+recl = React.createClass;
+
+ref = React.DOM, div = ref.div, a = ref.a, ul = ref.ul, li = ref.li, hr = ref.hr;
+
+module.exports = query({
+  kids: {
+    body: 'r'
+  }
+}, recl({
+  displayName: "Kids",
   render: function() {
-    var _list, doc, ref1;
-    doc = (ref1 = this.state.tree) != null ? ref1 : [];
-    _list = _.map(_.keys(doc).sort(), (function(_this) {
-      return function(v) {
-        var _path;
-        _path = _this.state.path + "/" + v;
-        return [
-          div({
-            key: "kid-" + v
-          }, _this.state.cont[_path]), hr({}, "")
-        ];
-      };
-    })(this));
+    var v;
     return div({
-      key: "kids-" + this.state.path,
       className: "kids"
-    }, _list);
+    }, (function() {
+      var i, len, ref1, results;
+      ref1 = _.keys(this.props.kids).sort();
+      results = [];
+      for (i = 0, len = ref1.length; i < len; i++) {
+        v = ref1[i];
+        results.push([
+          div({
+            key: v
+          }, reactify(this.props.kids[v].body)), hr({}, "")
+        ]);
+      }
+      return results;
+    }).call(this));
   }
-});
+}));
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/stores/TreeStore.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/components/ListComponent.coffee":[function(require,module,exports){
-var TreeActions, TreeStore, a, div, h1, li, load, recl, ref, ul;
+},{"./Async.coffee":3,"./Reactify.coffee":10}],8:[function(require,module,exports){
+var a, clas, div, h1, li, query, reactify, recl, ref, ul;
 
-TreeStore = require('../stores/TreeStore.coffee');
+clas = require('classnames');
 
-TreeActions = require('../actions/TreeActions.coffee');
+reactify = require('./Reactify.coffee');
 
-load = require('./LoadComponent.coffee');
+query = require('./Async.coffee');
 
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.a, React.DOM.ul, React.DOM.li, React.DOM.h1], div = ref[0], a = ref[1], ul = ref[2], li = ref[3], h1 = ref[4];
+ref = React.DOM, div = ref.div, a = ref.a, ul = ref.ul, li = ref.li, h1 = ref.h1;
 
-module.exports = recl({
-  stateFromStore: function() {
-    var path, ref1;
-    path = (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
-    return {
-      snip: TreeStore.getSnip(),
-      tree: TreeStore.getTree(path.split("/")),
-      path: path
-    };
-  },
-  _onChangeStore: function() {
-    return this.setState(this.stateFromStore());
-  },
-  componentWillUnmount: function() {
-    return TreeStore.removeChangeListener(this._onChangeStore);
-  },
-  getInitialState: function() {
-    return this.stateFromStore();
-  },
-  getCont: function() {
-    var cont, i, k, keys, len;
-    cont = true;
-    keys = _.keys(this.state.tree);
-    for (i = 0, len = keys.length; i < len; i++) {
-      k = keys[i];
-      if (!this.state.snip[this.state.path + "/" + k]) {
-        cont = false;
-      }
-    }
-    if (keys.length === 0) {
-      cont = false;
-    }
-    return cont;
-  },
-  componentDidMount: function() {
-    var cont;
-    cont = this.getCont();
-    TreeStore.addChangeListener(this._onChangeStore);
-    if (!this.state.tree || _.keys(this.state.tree).length === 0 || !cont) {
-      return TreeActions.getPath(this.state.path, "snip");
-    }
-  },
-  render: function() {
-    var _list, doc, k, ref1;
-    doc = (ref1 = this.state.tree) != null ? ref1 : [];
-    if (!this.getCont()) {
-      _list = div({
-        className: "loading"
-      }, load({}, ""));
-    } else {
-      _list = _.map(_.keys(doc).sort(), (function(_this) {
-        return function(v) {
-          var _path, c, href, prev;
-          _path = _this.state.path + "/" + v;
-          if (_this.props.dataPreview != null) {
-            c = "preview";
-            if (_this.props.titlesOnly) {
-              prev = _this.state.snip[_path].head;
-            } else {
-              prev = _this.state.snip[_path];
-            }
-          } else {
-            c = "";
-            prev = h1({}, v);
-          }
-          href = window.tree.basepath(_path);
-          return li({}, a({
-            href: href,
-            className: c,
-            key: "list-a-" + _path
-          }, prev));
-        };
-      })(this));
-    }
-    k = "list";
-    if (this.props['data-source'] === 'default') {
-      k += " default";
-    }
-    return ul({
-      className: k,
-      key: "list-" + this.state.path
-    }, _list);
+module.exports = query({
+  path: 't',
+  kids: {
+    snip: 'r',
+    head: 'r',
+    meta: 'j'
   }
-});
+}, recl({
+  displayName: "List",
+  render: function() {
+    var k;
+    k = clas({
+      list: true,
+      posts: this.props.dataType === 'post',
+      "default": this.props['data-source'] === 'default'
+    });
+    return ul({
+      className: k
+    }, this.renderList());
+  },
+  renderList: function() {
+    var _keys, elem, href, i, item, k, len, parts, path, ref1, ref2, ref3, ref4, ref5, results, sorted, title, v;
+    sorted = true;
+    _keys = [];
+    ref1 = this.props.kids;
+    for (k in ref1) {
+      v = ref1[k];
+      if (((ref2 = v.meta) != null ? ref2.sort : void 0) == null) {
+        sorted = false;
+      }
+      _keys[Number((ref3 = v.meta) != null ? ref3.sort : void 0)] = k;
+    }
+    if (sorted !== true) {
+      _keys = _.keys(this.props.kids).sort();
+    }
+    if (this.props.dataType === 'post') {
+      _keys = _keys.reverse();
+    }
+    results = [];
+    for (i = 0, len = _keys.length; i < len; i++) {
+      item = _keys[i];
+      path = this.props.path + "/" + item;
+      elem = this.props.kids[item];
+      href = window.tree.basepath(path);
+      parts = [];
+      if ((ref4 = elem.meta) != null ? ref4.title : void 0) {
+        title = {
+          gn: 'h1',
+          c: [elem.meta.title]
+        };
+      } else {
+        title = elem.head;
+      }
+      title || (title = h1({}, item));
+      parts.push(title);
+      if (!this.props.titlesOnly) {
+        if (this.props.dataPreview) {
+          if (this.props.dataType === 'post') {
+            parts.push.apply(parts, elem.snip.c.slice(0, 2));
+          } else {
+            parts.push(elem.snip);
+          }
+        }
+      }
+      results.push(li({
+        key: item,
+        className: (ref5 = this.props.dataType) != null ? ref5 : ""
+      }, a({
+        href: href,
+        className: clas({
+          preview: this.props.dataPreview != null
+        })
+      }, reactify({
+        gn: 'div',
+        c: parts
+      }))));
+    }
+    return results;
+  }
+}));
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/components/LoadComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/components/LoadComponent.coffee":[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":10,"classnames":15}],9:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = ref[0], input = ref[1], textarea = ref[2];
+ref = React.DOM, div = ref.div, input = ref.input, textarea = ref.textarea;
 
 module.exports = recl({
+  displayName: "Load",
   getInitialState: function() {
     return {
       anim: 0
@@ -597,14 +632,354 @@ module.exports = recl({
   },
   render: function() {
     return div({
+      className: "loading"
+    }, div({
       className: "spin state-" + this.state.anim
-    }, "");
+    }, ""));
   }
 });
 
 
 
-},{}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
+},{}],10:[function(require,module,exports){
+var Virtual, div, load, reactify, recl, ref, rele, span, walk;
+
+recl = React.createClass;
+
+rele = React.createElement;
+
+ref = React.DOM, div = ref.div, span = ref.span;
+
+load = React.createFactory(require('./LoadComponent.coffee'));
+
+walk = function(root, _nil, _str, _comp) {
+  var _walk;
+  _walk = function(elem, key) {
+    var c, ga, gn, ref1;
+    switch (false) {
+      case !(elem == null):
+        return _nil();
+      case typeof elem !== "string":
+        return _str(elem);
+      case elem.gn == null:
+        gn = elem.gn, ga = elem.ga, c = elem.c;
+        c = (ref1 = c != null ? c.map(_walk) : void 0) != null ? ref1 : [];
+        return _comp.call(elem, {
+          gn: gn,
+          ga: ga,
+          c: c
+        }, key);
+      default:
+        throw "Bad react-json " + (JSON.stringify(elem));
+    }
+  };
+  return _walk(root);
+};
+
+Virtual = recl({
+  displayName: "Virtual",
+  render: function() {
+    var components;
+    components = window.tree.components;
+    return walk(this.props.manx, function() {
+      return load({}, "");
+    }, function(str) {
+      return str;
+    }, function(arg, key) {
+      var c, ga, gn, ref1;
+      gn = arg.gn, ga = arg.ga, c = arg.c;
+      return rele((ref1 = components[gn]) != null ? ref1 : gn, _.extend({
+        key: key
+      }, ga), c);
+    });
+  }
+});
+
+reactify = function(manx, key) {
+  return rele(Virtual, {
+    manx: manx,
+    key: key
+  });
+};
+
+module.exports = _.extend(reactify, {
+  walk: walk,
+  Virtual: Virtual
+});
+
+
+
+},{"./LoadComponent.coffee":9}],11:[function(require,module,exports){
+var a, div, input, query, reactify, recl, ref,
+  slice = [].slice;
+
+query = require('./Async.coffee');
+
+reactify = require('./Reactify.coffee');
+
+recl = React.createClass;
+
+ref = React.DOM, a = ref.a, div = ref.div, input = ref.input;
+
+module.exports = query({
+  name: 't',
+  kids: {
+    sect: 'j'
+  }
+}, recl({
+  hash: null,
+  displayName: "Search",
+  getInitialState: function() {
+    return {
+      search: 'wut'
+    };
+  },
+  onKeyUp: function(e) {
+    return this.setState({
+      search: e.target.value
+    });
+  },
+  wrap: function(elem, dir, path) {
+    var c, ga, gn, href, ref1;
+    if (path.slice(-1) === "/") {
+      path = path.slice(0, -1);
+    }
+    href = this.props.name + "/" + dir + path;
+    if (elem != null ? (ref1 = elem.ga) != null ? ref1.id : void 0 : void 0) {
+      gn = elem.gn, ga = elem.ga, c = elem.c;
+      ga = _.clone(ga);
+      href += "#" + ga.id;
+      delete ga.id;
+      elem = {
+        gn: gn,
+        ga: ga,
+        c: c
+      };
+    }
+    return {
+      gn: 'div',
+      c: [
+        {
+          gn: 'a',
+          ga: {
+            href: href
+          },
+          c: [elem]
+        }
+      ]
+    };
+  },
+  render: function() {
+    return div({}, input({
+      onKeyUp: this.onKeyUp,
+      ref: 'inp',
+      defaultValue: 'wut'
+    }), _(this.props.kids).map((function(_this) {
+      return function(arg, dir) {
+        var h, heds, path, results, sect;
+        sect = arg.sect;
+        results = [];
+        for (path in sect) {
+          heds = sect[path];
+          results.push((function() {
+            var i, len, results1;
+            results1 = [];
+            for (i = 0, len = heds.length; i < len; i++) {
+              h = heds[i];
+              results1.push(this.wrap(h, dir, path));
+            }
+            return results1;
+          }).call(_this));
+        }
+        return results;
+      };
+    })(this)).flatten().flatten().map(this.highlight).filter().take(50).map(reactify).value());
+  },
+  highlight: function(e) {
+    var got, res;
+    if (!this.state.search) {
+      return e;
+    }
+    got = false;
+    res = reactify.walk(e, function() {
+      return null;
+    }, (function(_this) {
+      return function(s) {
+        var lit, m;
+        m = s.split(_this.state.search);
+        if (m[1] == null) {
+          return [s];
+        }
+        lit = {
+          gn: 'span',
+          c: [_this.state.search],
+          ga: {
+            style: {
+              background: '#ff6'
+            }
+          }
+        };
+        got = true;
+        return [m[0]].concat(slice.call(_.flatten((function() {
+            var i, len, ref1, results;
+            ref1 = m.slice(1);
+            results = [];
+            for (i = 0, len = ref1.length; i < len; i++) {
+              s = ref1[i];
+              results.push([lit, s]);
+            }
+            return results;
+          })())));
+      };
+    })(this), function(arg) {
+      var c, ga, gn;
+      gn = arg.gn, ga = arg.ga, c = arg.c;
+      return {
+        gn: gn,
+        ga: ga,
+        c: _.flatten(c)
+      };
+    });
+    if (got) {
+      return res;
+    }
+  }
+}));
+
+
+
+},{"./Async.coffee":3,"./Reactify.coffee":10}],12:[function(require,module,exports){
+var div, query, reactify, recl;
+
+query = require('./Async.coffee');
+
+reactify = require('./Reactify.coffee');
+
+recl = React.createClass;
+
+div = React.DOM.div;
+
+module.exports = query({
+  body: 'r'
+}, recl({
+  hash: null,
+  displayName: "TableOfContents",
+  _click: function(e) {
+    return document.location.hash = this.urlsafe($(e.target).text());
+  },
+  urlsafe: function(str) {
+    return str.toLowerCase().replace(/\ /g, "-").replace(/[^a-z0-9~_.-]/g, "");
+  },
+  componentDidMount: function() {
+    this.int = setInterval(this.checkHash, 100);
+    this.st = $(window).scrollTop();
+    $(window).on('scroll', this.checkScroll);
+    return this.$headers = $('#toc h1, #toc h2, #toc h3, #toc h4');
+  },
+  checkScroll: function() {
+    var $h, hash, hst, k, ref, results, st, v;
+    st = $(window).scrollTop();
+    if (Math.abs(this.st - st) > 10) {
+      hash = null;
+      this.st = st;
+      ref = this.$headers;
+      results = [];
+      for (k in ref) {
+        v = ref[k];
+        if (v.tagName === void 0) {
+          continue;
+        }
+        $h = $(v);
+        hst = $h.offset().top - $h.outerHeight(true) + 10;
+        if (hst < st) {
+          hash = this.urlsafe($h.text());
+        }
+        if (hst > st && hash !== this.hash && hash !== null) {
+          this.hash = "#" + hash;
+          document.location.hash = hash;
+          break;
+        } else {
+          results.push(void 0);
+        }
+      }
+      return results;
+    }
+  },
+  checkHash: function() {
+    var $h, hash, k, offset, ref, ref1, results, v;
+    if (((ref = document.location.hash) != null ? ref.length : void 0) > 0 && document.location.hash !== this.hash) {
+      hash = document.location.hash.slice(1);
+      ref1 = this.$headers;
+      results = [];
+      for (k in ref1) {
+        v = ref1[k];
+        $h = $(v);
+        if (hash === this.urlsafe($h.text())) {
+          this.hash = document.location.hash;
+          offset = $h.offset().top - $h.outerHeight(true);
+          setTimeout(function() {
+            return $(window).scrollTop(offset, 10);
+          });
+          break;
+        } else {
+          results.push(void 0);
+        }
+      }
+      return results;
+    }
+  },
+  componentWillUnmount: function() {
+    return clearInterval(this.int);
+  },
+  collectHeaders: function(e) {
+    var hs, k, v;
+    hs = [
+      {
+        gn: "h1",
+        ga: {
+          className: "t"
+        },
+        c: ["Table of contents"]
+      }
+    ];
+    for (k in e) {
+      v = e[k];
+      if (!v.gn) {
+        continue;
+      }
+      if (v.gn[0] === 'h' && parseInt(v.gn[1]) !== NaN) {
+        hs.push(v);
+      }
+    }
+    return hs;
+  },
+  parseHeaders: function() {
+    var k, ref, ref1, v;
+    if (this.props.body.c) {
+      ref = this.props.body.c;
+      for (k in ref) {
+        v = ref[k];
+        if (v.gn === 'div' && ((ref1 = v.ga) != null ? ref1.id : void 0) === "toc") {
+          return {
+            gn: "div",
+            ga: {
+              className: "toc",
+              onClick: this._click
+            },
+            c: this.collectHeaders(v.c)
+          };
+        }
+      }
+    }
+  },
+  render: function() {
+    return reactify(this.parseHeaders());
+  }
+}));
+
+
+
+},{"./Async.coffee":3,"./Reactify.coffee":10}],13:[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -626,46 +1001,33 @@ module.exports = _.extend(new Dispatcher(), {
 
 
 
-},{"flux":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/node_modules/flux/index.js"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/main.coffee":[function(require,module,exports){
+},{"flux":16}],14:[function(require,module,exports){
 var rend;
 
 rend = React.render;
 
 $(function() {
-  var $body, TreeActions, TreePersistence, body, checkMove, checkScroll, codemirror, frag, head, kids, list, lost, po, setSo, so;
+  var $body, TreeActions, TreePersistence, body, checkMove, checkScroll, frag, head, po, setSo, so;
   $body = $('body');
   React.initializeTouchEvents(true);
-  codemirror = React.createFactory(require('./components/CodeMirror.coffee'));
   head = React.createFactory(require('./components/AnchorComponent.coffee'));
   body = React.createFactory(require('./components/BodyComponent.coffee'));
-  list = React.createFactory(require('./components/ListComponent.coffee'));
-  kids = React.createFactory(require('./components/KidsComponent.coffee'));
-  lost = React.createClass({
-    render: function() {
-      return React.DOM.div({}, "lost");
-    }
-  });
-  window.tree._basepath = window.location.pathname;
-  window.tree._basepath = window.tree._basepath.split("/");
-  window.tree._basepath = window.tree._basepath.slice(0, window.tree._basepath.indexOf("tree") + 1);
-  window.tree._basepath = window.tree._basepath.join("/");
+  window.tree.components = require('./components/Components.coffee');
+  window.tree._basepath = window.urb.util.basepath("/");
+  window.tree._basepath += (window.location.pathname.replace(window.tree._basepath, "")).split("/")[0];
   window.tree.basepath = function(path) {
+    var _path;
     if (path[0] !== "/") {
       path = "/" + path;
     }
-    return window.tree._basepath + path;
+    _path = window.tree._basepath + path;
+    if (_path.slice(-1) === "/") {
+      _path = _path.slice(0, -1);
+    }
+    return _path;
   };
   window.tree.fragpath = function(path) {
     return path.replace(window.tree._basepath, "");
-  };
-  window.tree.init({
-    kids: kids,
-    list: list,
-    lost: lost,
-    codemirror: codemirror
-  });
-  window.tree.reactify = function(str) {
-    return eval(str);
   };
   TreeActions = require('./actions/TreeActions.coffee');
   TreePersistence = require('./persistence/TreePersistence.coffee');
@@ -786,7 +1148,58 @@ $(function() {
 
 
 
-},{"./actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/actions/TreeActions.coffee","./components/AnchorComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/components/AnchorComponent.coffee","./components/BodyComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/components/BodyComponent.coffee","./components/CodeMirror.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/components/CodeMirror.coffee","./components/KidsComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/components/KidsComponent.coffee","./components/ListComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/components/ListComponent.coffee","./persistence/TreePersistence.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/node_modules/flux/index.js":[function(require,module,exports){
+},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./persistence/TreePersistence.coffee":19}],15:[function(require,module,exports){
+/*!
+  Copyright (c) 2015 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+
+(function () {
+	'use strict';
+
+	function classNames () {
+
+		var classes = '';
+
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+			if (!arg) continue;
+
+			var argType = typeof arg;
+
+			if ('string' === argType || 'number' === argType) {
+				classes += ' ' + arg;
+
+			} else if (Array.isArray(arg)) {
+				classes += ' ' + classNames.apply(null, arg);
+
+			} else if ('object' === argType) {
+				for (var key in arg) {
+					if (arg.hasOwnProperty(key) && arg[key]) {
+						classes += ' ' + key;
+					}
+				}
+			}
+		}
+
+		return classes.substr(1);
+	}
+
+	if (typeof module !== 'undefined' && module.exports) {
+		module.exports = classNames;
+	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd){
+		// AMD. Register as an anonymous module.
+		define(function () {
+			return classNames;
+		});
+	} else {
+		window.classNames = classNames;
+	}
+
+}());
+
+},{}],16:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -798,7 +1211,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js":[function(require,module,exports){
+},{"./lib/Dispatcher":17}],17:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1050,7 +1463,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/node_modules/flux/lib/invariant.js"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/node_modules/flux/lib/invariant.js":[function(require,module,exports){
+},{"./invariant":18}],18:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1105,44 +1518,79 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/persistence/TreePersistence.coffee":[function(require,module,exports){
-var TreeActions;
-
-TreeActions = require('../actions/TreeActions.coffee');
-
+},{}],19:[function(require,module,exports){
 module.exports = {
   get: function(path, query, cb) {
     var url;
-    url = (window.tree.basepath(path)) + ".json";
-    if (query) {
-      url += "?" + query;
+    if (query == null) {
+      query = "no-query";
     }
+    url = (window.tree.basepath(path)) + ".json?q=" + (this.encode(query));
     return $.get(url, {}, function(data) {
       if (cb) {
         return cb(null, data);
       }
     });
+  },
+  encode: function(obj) {
+    var _encode, delim;
+    delim = function(n) {
+      return ('_'.repeat(n)) || '.';
+    };
+    _encode = function(obj) {
+      var _dep, dep, k, res, sub, v;
+      if (typeof obj !== 'object') {
+        return [0, obj];
+      }
+      dep = 0;
+      sub = (function() {
+        var ref, results;
+        results = [];
+        for (k in obj) {
+          v = obj[k];
+          ref = _encode(v), _dep = ref[0], res = ref[1];
+          if (_dep > dep) {
+            dep = _dep;
+          }
+          if (res != null) {
+            results.push(k + (delim(_dep)) + res);
+          } else {
+            results.push(void 0);
+          }
+        }
+        return results;
+      })();
+      dep++;
+      return [dep, sub.join(delim(dep))];
+    };
+    return (_encode(obj))[1];
   }
 };
 
 
 
-},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/actions/TreeActions.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/stores/TreeStore.coffee":[function(require,module,exports){
-var EventEmitter, MessageDispatcher, TreeStore, _cont, _curr, _load, _snip, _tree;
+},{}],20:[function(require,module,exports){
+var EventEmitter, MessageDispatcher, QUERIES, TreeStore, _curr, _data, _tree, clog;
 
 EventEmitter = require('events').EventEmitter;
 
 MessageDispatcher = require('../dispatcher/Dispatcher.coffee');
 
+clog = console.log.bind(console);
+
 _tree = {};
 
-_cont = {};
-
-_snip = {};
-
-_load = false;
+_data = {};
 
 _curr = "";
+
+QUERIES = {
+  body: 'r',
+  head: 'r',
+  snip: 'r',
+  sect: 'j',
+  meta: 'j'
+};
 
 TreeStore = _.extend(EventEmitter.prototype, {
   addChangeListener: function(cb) {
@@ -1157,33 +1605,52 @@ TreeStore = _.extend(EventEmitter.prototype, {
   pathToArr: function(_path) {
     return _path.split("/");
   },
-  pathToObj: function(_path, _obj, kids) {
-    var __path, i, j, l, ref, ref1, results;
-    __path = this.pathToArr(_path);
-    for (i = j = 0, ref = __path.length - 1; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
-      _obj = _obj[__path[i]] = {};
-    }
-    if ((kids != null ? kids.length : void 0) > 0) {
-      results = [];
-      for (i = l = 0, ref1 = kids.length - 1; 0 <= ref1 ? l <= ref1 : l >= ref1; i = 0 <= ref1 ? ++l : --l) {
-        results.push(_obj[kids[i]] = {});
+  fulfill: function(path, query) {
+    return this.fulfillAt(this.getTree(path.split('/')), path, query);
+  },
+  fulfillAt: function(tree, path, query) {
+    var data, k, ref, sub, t;
+    data = this.fulfillLocal(path, query);
+    for (k in query) {
+      t = query[k];
+      if (!QUERIES[k]) {
+        continue;
       }
-      return results;
+      if (t !== QUERIES[k]) {
+        throw TypeError("Wrong query type: " + k + ", '" + t + "'");
+      }
+      data[k] = (ref = _data[path]) != null ? ref[k] : void 0;
+    }
+    if (query.kids) {
+      data.kids = {};
+      for (k in tree) {
+        sub = tree[k];
+        data.kids[k] = this.fulfillAt(sub, path + "/" + k, query.kids);
+      }
+    }
+    if (!_.isEmpty(data)) {
+      return data;
     }
   },
-  getTree: function(_path) {
-    var i, j, ref, tree;
-    tree = _tree;
-    if (_path.length > 0) {
-      for (i = j = 0, ref = _path.length - 1; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
-        if (tree[_path[i]]) {
-          tree = tree[_path[i]];
-        } else {
-          return null;
-        }
-      }
+  fulfillLocal: function(path, query) {
+    var data;
+    data = {};
+    if (query.path) {
+      data.path = path;
     }
-    return tree;
+    if (query.name) {
+      data.name = path.split("/").pop();
+    }
+    if (query.sein) {
+      data.sein = this.getPare(path);
+    }
+    if (query.next) {
+      data.next = this.getNext(path);
+    }
+    if (query.prev) {
+      data.prev = this.getPrev(path);
+    }
+    return data;
   },
   setCurr: function(path) {
     return _curr = path;
@@ -1191,61 +1658,58 @@ TreeStore = _.extend(EventEmitter.prototype, {
   getCurr: function() {
     return _curr;
   },
-  getCont: function() {
-    return _cont;
+  loadPath: function(path, data) {
+    return this.loadValues(this.getTree(path.split('/'), true), path, data);
   },
-  setLoad: function(load) {
-    return _load = load;
-  },
-  getLoad: function() {
-    return _load;
-  },
-  mergePathToTree: function(path, kids) {
-    var _obj;
-    _obj = {};
-    this.pathToObj(path, _obj, kids);
-    return _.merge(_tree, _obj);
-  },
-  getSnip: function() {
-    return _snip;
-  },
-  loadSnip: function(path, snip) {
-    var k, results, v;
-    this.mergePathToTree(path, _.pluck(snip, "name"));
-    if ((snip != null ? snip.length : void 0) !== 0) {
-      results = [];
-      for (k in snip) {
-        v = snip[k];
-        results.push(_snip[path + "/" + v.name] = {
-          head: window.tree.reactify(v.body.head),
-          body: window.tree.reactify(v.body.body)
-        });
+  loadValues: function(tree, path, data) {
+    var k, old, ref, ref1, v;
+    old = (ref = _data[path]) != null ? ref : {};
+    for (k in data) {
+      if (QUERIES[k]) {
+        old[k] = data[k];
       }
-      return results;
-    } else {
-      return _cont[path] = window.tree.reactify("React.createElement ('div', {}, [ React.createElement('h1', {className:'error'}, 'Error: Empty path'), React.createElement('div', {}, [ React.createElement('pre', {}, '" + (this.getCurr()) + "'), React.createElement('span', {}, 'is either empty or does not exist.') ]) ])");
     }
-  },
-  loadKids: function(path, kids) {
-    var k, results, v;
-    this.mergePathToTree(path, _.pluck(kids, "name"));
-    results = [];
-    for (k in kids) {
-      v = kids[k];
-      results.push(_cont[path + "/" + v.name] = window.tree.reactify(v.body));
+    ref1 = data.kids;
+    for (k in ref1) {
+      v = ref1[k];
+      if (tree[k] == null) {
+        tree[k] = {};
+      }
+      this.loadValues(tree[k], path + "/" + k, v);
     }
-    return results;
+    if (data.kids && _.isEmpty(data.kids)) {
+      old.body = {
+        gn: 'div',
+        c: [
+          {
+            gn: 'h1',
+            ga: {
+              className: 'error'
+            },
+            c: ['Error: Empty path']
+          }, {
+            gn: 'div',
+            c: [
+              {
+                gn: 'pre',
+                c: [this.getCurr()]
+              }, {
+                gn: 'span',
+                c: ['is either empty or does not exist.']
+              }
+            ]
+          }
+        ]
+      };
+    }
+    return _data[path] = old;
   },
-  loadPath: function(path, body, kids) {
-    this.mergePathToTree(path, kids);
-    return _cont[path] = window.tree.reactify(body);
-  },
-  getKids: function() {
-    return _.keys(this.getTree(_curr.split("/")));
-  },
-  getSiblings: function() {
+  getSiblings: function(path) {
     var curr;
-    curr = _curr.split("/");
+    if (path == null) {
+      path = _curr;
+    }
+    curr = path.split("/");
     curr.pop();
     if (curr.length !== 0) {
       return this.getTree(curr);
@@ -1253,13 +1717,34 @@ TreeStore = _.extend(EventEmitter.prototype, {
       return {};
     }
   },
-  getPrev: function() {
+  getTree: function(_path, make) {
+    var i, len, sub, tree;
+    if (make == null) {
+      make = false;
+    }
+    tree = _tree;
+    for (i = 0, len = _path.length; i < len; i++) {
+      sub = _path[i];
+      if (tree[sub] == null) {
+        if (!make) {
+          return null;
+        }
+        tree[sub] = {};
+      }
+      tree = tree[sub];
+    }
+    return tree;
+  },
+  getPrev: function(path) {
     var ind, key, par, sibs, win;
-    sibs = _.keys(this.getSiblings()).sort();
+    if (path == null) {
+      path = _curr;
+    }
+    sibs = _.keys(this.getSiblings(path)).sort();
     if (sibs.length < 2) {
       return null;
     } else {
-      par = _curr.split("/");
+      par = path.split("/");
       key = par.pop();
       ind = sibs.indexOf(key);
       win = ind - 1 >= 0 ? sibs[ind - 1] : sibs[sibs.length - 1];
@@ -1267,13 +1752,16 @@ TreeStore = _.extend(EventEmitter.prototype, {
       return par.join("/");
     }
   },
-  getNext: function() {
+  getNext: function(path) {
     var ind, key, par, sibs, win;
-    sibs = _.keys(this.getSiblings()).sort();
+    if (path == null) {
+      path = _curr;
+    }
+    sibs = _.keys(this.getSiblings(path)).sort();
     if (sibs.length < 2) {
       return null;
     } else {
-      par = _curr.split("/");
+      par = path.split("/");
       key = par.pop();
       ind = sibs.indexOf(key);
       win = ind + 1 < sibs.length ? sibs[ind + 1] : sibs[0];
@@ -1281,9 +1769,12 @@ TreeStore = _.extend(EventEmitter.prototype, {
       return par.join("/");
     }
   },
-  getPare: function() {
+  getPare: function(path) {
     var _path;
-    _path = this.pathToArr(_curr);
+    if (path == null) {
+      path = _curr;
+    }
+    _path = this.pathToArr(path);
     if (_path.length > 1) {
       _path.pop();
       _path = _path.join("/");
@@ -1291,28 +1782,6 @@ TreeStore = _.extend(EventEmitter.prototype, {
         _path = "/";
       }
       return _path;
-    } else {
-      return null;
-    }
-  },
-  getCrumbs: function() {
-    var _path, crum, crums, k, v;
-    _path = this.pathToArr(_curr);
-    crum = "";
-    crums = [];
-    for (k in _path) {
-      v = _path[k];
-      crum += "/" + v;
-      crums.push({
-        name: v,
-        path: crum
-      });
-    }
-    return crums;
-  },
-  getBody: function() {
-    if (_cont[_curr]) {
-      return _cont[_curr];
     } else {
       return null;
     }
@@ -1324,19 +1793,10 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
   action = payload.action;
   switch (action.type) {
     case 'path-load':
-      TreeStore.loadPath(action.path, action.body, action.kids, action.snip);
-      return TreeStore.emitChange();
-    case 'snip-load':
-      TreeStore.loadSnip(action.path, action.snip);
-      return TreeStore.emitChange();
-    case 'kids-load':
-      TreeStore.loadKids(action.path, action.kids);
+      TreeStore.loadPath(action.path, action.data);
       return TreeStore.emitChange();
     case 'set-curr':
       TreeStore.setCurr(action.path);
-      return TreeStore.emitChange();
-    case 'set-load':
-      TreeStore.setLoad(action.load);
       return TreeStore.emitChange();
   }
 });
@@ -1345,7 +1805,7 @@ module.exports = TreeStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js"}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":13,"events":21}],21:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1405,10 +1865,8 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
-      } else {
-        throw TypeError('Uncaught, unspecified "error" event.');
       }
-      return false;
+      throw TypeError('Uncaught, unspecified "error" event.');
     }
   }
 
@@ -1650,4 +2108,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},["/Users/galen/src/urbit-dev/urb/zod/base/pub/tree/src/js/main.coffee"]);
+},{}]},{},[14]);

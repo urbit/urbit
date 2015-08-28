@@ -1,4 +1,4 @@
-[wutcol, `?:`, %wtcl](#wtcl)
+wutcol, `?:`, %wtcl
 ============================
 
 If, then
@@ -11,7 +11,7 @@ loobean is true. `?:` is the inverse of `?.`.
 See also
 --------
 
-[wutdot, `?.`, %wtdt](#wtdt)
+wutdot, `?.`, %wtdt
 ============================
 
 Produces

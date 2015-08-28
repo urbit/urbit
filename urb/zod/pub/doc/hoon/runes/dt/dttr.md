@@ -1,4 +1,4 @@
-[dottar, `.*`, %dttr](#dttr)
+dottar, `.*`, %dttr
 ============================
 
 Nock

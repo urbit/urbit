@@ -1,4 +1,4 @@
-[cencab, `%_`, %cncb](#cncb)
+cencab, `%_`, %cncb
 ============================
 
 Evaluate with changes, cast

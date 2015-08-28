@@ -1,4 +1,4 @@
-[cenhep, `%-`, %cnhp](#cnhp)
+cenhep, `%-`, %cnhp
 ============================
 
 Slam, n-arguments

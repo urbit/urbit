@@ -1,26 +1,16 @@
 ::
-::::  /hoon/core/down/mar
+::::  /hoon/down/mar
   ::
 /?    314
 /-    *markdown
+/+    down-jet
 ::
 ::::
   ::
-//    /%/parse                       ::  inli donp parse
-//    /%/rend                        ::  sing sung sang flat into-inner
-::  ~%  %utyl  +>+>+>  ~
 |_  don=down
 ++  grab                                                ::  convert from
   |%
-  ++  md                                                ::  convert from %md
-    =<  |=(src=@t (mark src))
-    ~%  %down  ..is  ~
-    |%
-    ++  mark
-      ~/  %mark
-      |=  p=@t
-      (normalize (rash p parse))
-    --
+  ++  md  |=(src=@t (mark:down-jet src))
   ++  noun  down                                        ::  clam from %noun
   --
 ::
@@ -30,12 +20,12 @@
       ;html
         ;head:title:"Untitled"
         ;body
-          ;*  (sing don)
+          ;*  (print:down-jet don)
         ==
       ==
   ++  elem                                          ::  convert to %elem
     ;div
-      ;*  (sing don)
+      ;*  (print:down-jet don)
     ==
   ::  ++  react  elem
   --

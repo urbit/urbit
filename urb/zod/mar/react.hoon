@@ -10,10 +10,11 @@
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  tape  (react-to-tape own)
-  ++  react-js  (crip tape)
-::   ++  js  react-js                                      ::  convert to %js
-  ++  mime  [/text/javascript (taco react-js)]             ::  convert to %mime
+  ++  tape  (pojo react-json)
+  ++  react-js  (crip (react-to-tape own))
+::   ++  js  react-js                                   ::  convert to %js
+  ++  react-json  (react-to-json own)
+  ++  mime  [/application/json (tact tape)] ::  convert to %mime
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  manx                                ::  clam from %noun

@@ -8,7 +8,7 @@
 */
   u3_noun
   u3qb_lien(u3_noun a,
-                    u3_noun b)
+            u3_noun b)
   {
     if ( 0 == a ) {
       return c3n;
@@ -20,9 +20,9 @@
       }
       else switch ( (loz = u3n_slam_on(u3k(b), u3k(u3h(a)))) ) {
         case c3y:  return c3y;
-        case c3n:   return u3qb_lien(u3t(a), b);
-        default:      u3z(loz);
-                      return u3m_bail(c3__exit);
+        case c3n:  return u3qb_lien(u3t(a), b);
+        default:   u3z(loz);
+                   return u3m_bail(c3__exit);
       }
     }
   }

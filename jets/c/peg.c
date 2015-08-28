@@ -7,9 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qc_peg(
-                   u3_atom a,
-                   u3_atom b)
+  u3qc_peg(u3_atom a,
+           u3_atom b)
   {
     u3_atom c, d, e, f, g, h;
 
@@ -29,8 +28,7 @@
     return h;
   }
   u3_noun
-  u3wc_peg(
-                  u3_noun cor)
+  u3wc_peg(u3_noun cor)
   {
     u3_noun a, b;
 

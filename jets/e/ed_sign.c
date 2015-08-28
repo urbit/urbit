@@ -9,7 +9,8 @@
 /* functions
 */
   static u3_noun
-  _cqee_sign(u3_noun a, u3_noun b)
+  _cqee_sign(u3_noun a, 
+             u3_noun b)
   {
     c3_y sig_y[64];
     c3_y sed_y[32];
@@ -42,7 +43,7 @@
   {
     u3_noun a, b;
     if ( c3n == u3r_mean(cor,
-                          u3x_sam_2, &a, u3x_sam_3, &b, 0) ) {
+                         u3x_sam_2, &a, u3x_sam_3, &b, 0) ) {
       return u3m_bail(c3__fail);
     } else {
       return _cqee_sign(a, b);

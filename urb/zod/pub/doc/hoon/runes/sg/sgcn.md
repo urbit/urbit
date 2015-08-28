@@ -1,4 +1,4 @@
-[sigcen, `~%`, %sgcn](#sgcn)
+sigcen, `~%`, %sgcn
 ============================
 
 Core jet

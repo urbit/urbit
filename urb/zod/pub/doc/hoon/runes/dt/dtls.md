@@ -1,4 +1,4 @@
-[dotlus, `.+`, %dtls](#dtls)
+dotlus, `.+`, %dtls
 ============================
 
 Increment

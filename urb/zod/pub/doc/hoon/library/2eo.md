@@ -1,7 +1,7 @@
 section 2eO, virtualization
 ===========================
 
-<h3 id="++mack"><code>++mack</code></h3>
+### `++mack`
 
 Nock subject to unit
 
@@ -33,7 +33,7 @@ producing a `~`.
 
 ------------------------------------------------------------------------
 
-<h3 id="++mink"><code>++mink</code></h3>
+### `++mink`
 
 Mock interpreter
 
@@ -143,7 +143,7 @@ result becomes a `%1` `++tone`, indicating a block.
 
 ------------------------------------------------------------------------
 
-<h3 id="++mock"><code>++mock</code></h3>
+### `++mock`
 
 Compute formula on subject with hint
 
@@ -180,7 +180,7 @@ indicating a block.
 
 ------------------------------------------------------------------------
 
-<h3 id="++mook"><code>++mook</code></h3>
+### `++mook`
 
 Intelligently render crash annotation
 
@@ -250,7 +250,7 @@ Each may be a tank, cord, [`++spot`](), or trapped tank. Produces a
 
 ------------------------------------------------------------------------
 
-<h3 id="++mang"><code>++mang</code></h3>
+### `++mang`
 
 Unit: Slam gate with sample
 
@@ -292,7 +292,7 @@ Similar to [`++mong`]().
 
 ------------------------------------------------------------------------
 
-<h3 id="++mong"><code>++mong</code></h3>
+### `++mong`
 
 Slam gate with sample
 
@@ -334,7 +334,7 @@ Produces a [`++toon`]() computation result from slamming `gat` with
 
 ------------------------------------------------------------------------
 
-<h3 id="++mung"><code>++mung</code></h3>
+### `++mung`
 
 Virtualize slamming gate
 
@@ -376,7 +376,7 @@ Produces a [`++tone`]() computation result from slamming `gat` with
 
 ------------------------------------------------------------------------
 
-<h3 id="++mule"><code>++mule</code></h3>
+### `++mule`
 
 Typed virtual
 
@@ -415,7 +415,7 @@ the way. Used to lazily compute stack traces.
 
 ------------------------------------------------------------------------
 
-<h3 id="++mute"><code>++mute</code></h3>
+### `++mute`
 
 Untyped virtual
 

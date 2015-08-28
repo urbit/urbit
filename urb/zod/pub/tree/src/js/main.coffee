@@ -5,25 +5,19 @@ $ ->
 
   React.initializeTouchEvents(true)
 
-  codemirror        = React.createFactory require './components/CodeMirror.coffee'
-  head              = React.createFactory require './components/AnchorComponent.coffee'
-  body              = React.createFactory require './components/BodyComponent.coffee'
-  list              = React.createFactory require './components/ListComponent.coffee'
-  kids              = React.createFactory require './components/KidsComponent.coffee'
-  lost              = React.createClass
-    render: -> (React.DOM.div {}, "lost")
-
-
-  window.tree._basepath = window.location.pathname
-  window.tree._basepath = window.tree._basepath.split "/"
-  window.tree._basepath = window.tree._basepath.slice 0,window.tree._basepath.indexOf("tree")+1
-  window.tree._basepath = window.tree._basepath.join "/"
+  head = React.createFactory require './components/AnchorComponent.coffee'
+  body = React.createFactory require './components/BodyComponent.coffee'
+  window.tree.components = require './components/Components.coffee' # sigh
+  
+  window.tree._basepath = window.urb.util.basepath("/")
+  window.tree._basepath +=
+    (window.location.pathname.replace window.tree._basepath, "").split("/")[0]
   window.tree.basepath = (path) -> 
     if path[0] isnt "/" then path = "/"+path
-    window.tree._basepath + path
+    _path = window.tree._basepath + path
+    if _path.slice(-1) is "/" then _path = _path.slice(0,-1)
+    _path
   window.tree.fragpath = (path) -> path.replace window.tree._basepath,""
-  window.tree.init({kids:kids,list:list,lost:lost, codemirror:codemirror})
-  window.tree.reactify = (str) -> eval str
 
   TreeActions       = require './actions/TreeActions.coffee'
   TreePersistence   = require './persistence/TreePersistence.coffee'

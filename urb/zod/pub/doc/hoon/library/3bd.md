@@ -1,7 +1,7 @@
 section 3bD, JSON and XML
 =========================
 
-<h3 id="++moon"><code>++moon</code></h3>
+### `++moon`
 
 Mime type to `++cord`
 
@@ -27,7 +27,7 @@ Renders a [mime](http://en.wikipedia.org/wiki/MIME) type path with infix
     ~zod/try=> `@t`(moon /application/x-pnacl)
     'application/x-pnacl'
 
-<h3 id="++perk"><code>++perk</code></h3>
+### `++perk`
 
 Parse cube with fork
 
@@ -61,7 +61,7 @@ needlessly unwieldy.
     ! {1 1}
     ! exit
 
-<h3 id="++poja"><code>++poja</code></h3>
+### `++poja`
 
 JSON parser core
 
@@ -81,7 +81,7 @@ a [`++json`]().
     ~zod/try=> (poja 'invalid{json')
     ~
 
-<h3 id="++apex"><code>++apex</code></h3>
+### `++apex`
 
 Parse object
 
@@ -103,7 +103,7 @@ with current test:urbit.git
     ! {1 1}
     ! exit
 
-<h3 id="++valu"><code>++valu</code></h3>
+### `++valu`
 
 Parse value
 
@@ -135,7 +135,7 @@ Parsing rule. Parses JSON values to [`++json`]().
     ~zod/try=> (rash 'true' valu:poja)
     [%b p=%.y]
 
-<h3 id="++abox"><code>++abox</code></h3>
+### `++abox`
 
 Parse array
 
@@ -150,7 +150,7 @@ delimited by a `,`.
 JSON Objects
 ------------
 
-<h3 id="++pair"><code>++pair</code></h3>
+### `++pair`
 
 Parse key value pair
 
@@ -162,7 +162,7 @@ string and value delimited by `:`.
     ~zod/try=> (rash '"ham": 2' pair:poja)
     ['ham' [%n p=~.2]]
 
-<h3 id="++obje"><code>++obje</code></h3>
+### `++obje`
 
 Parse array of objects
 
@@ -174,7 +174,7 @@ key-value pairs that are enclosed within `{}` and separated by `,`.
     ~zod/try=> (rash '{"ham": 2, "lam":true}' obje:poja)
     [['ham' [%n p=~.2]] ~[['lam' [%b p=%.y]]]]
 
-<h3 id="++obox"><code>++obox</code></h3>
+### `++obox`
 
 Parse boxed object
 
@@ -189,7 +189,7 @@ a tag of `%o`. See also: [`++json`]().
 JSON Booleans
 -------------
 
-<h3 id="++bool"><code>++bool</code></h3>
+### `++bool`
 
 Parse boolean
 
@@ -209,7 +209,7 @@ Parsing rule. Parses a string of either `true` or `false` to a
 JSON strings
 ------------
 
-<h3 id="++stri"><code>++stri</code></h3>
+### `++stri`
 
 Parse string
 
@@ -228,7 +228,7 @@ of characters enclosed in double quotes along with escaping `\`s, to a
     ~zod/try=> (rash '"This be \\"quoted\\""' stri:poja)
     'This be "quoted"'
 
-<h3 id="++jcha"><code>++jcha</code></h3>
+### `++jcha`
 
 Parse char from string
 
@@ -249,7 +249,7 @@ string to a [`++cord`]().
     '
      '
 
-<h3 id="++esca"><code>++esca</code></h3>
+### `++esca`
 
 Parse escaped char
 
@@ -286,7 +286,7 @@ A- JSON numbers are stored as cords internally in lieu of full float
 support, so ++numb and subarms are really more *validators* than parsers
 per se.
 
-<h3 id="++numb"><code>++numb</code></h3>
+### `++numb`
 
 Parse number
 
@@ -318,7 +318,7 @@ part, or exponent part, to a [`++cord`]().
     ! {1 2}
     ! exit
 
-<h3 id="++digs"><code>++digs</code></h3>
+### `++digs`
 
 Parse 1-9
 
@@ -335,7 +335,7 @@ Parsing rule. Parses digits `0` through `9` to a [`++tape`]().
     ~zod/try=> (rash '7' digs:poja)
     "7"
 
-<h3 id="++expo"><code>++expo</code></h3>
+### `++expo`
 
 Parse exponent part
 
@@ -356,7 +356,7 @@ Parsing rule. Parses an exponent to a [`++cord`](). An exponent is an
     ~zod/try=> `tape`(rash 'E-4' expo:poja)
     "E-4"
 
-<h3 id="++frac"><code>++frac</code></h3>
+### `++frac`
 
 Fractional part
 
@@ -374,7 +374,7 @@ Parsing rule. Parses a dot followed by digits to a [`++cord`]().
 whitespace
 ----------
 
-<h3 id="++spac"><code>++spac</code></h3>
+### `++spac`
 
 Parse whitespace
 
@@ -392,7 +392,7 @@ Parsing rule. Parses a whitespace to a [`++tape`]().
     ! {1 4}
     ! exit
 
-<h3 id="++ws"><code>++ws</code></h3>
+### `++ws`
 
 Allow prefix whitespace
 
@@ -417,7 +417,7 @@ applying `sef`.
 Plumbing
 --------
 
-<h3 id="++mayb"><code>++mayb</code></h3>
+### `++mayb`
 
 Maybe parse
 
@@ -430,7 +430,7 @@ Parser modifier. Need to document, an example showing failure.
     ~zod/try=> ((mayb abox):poja 1^1 "not-an-array")
     [p=[p=1 q=1] q=[~ [p="" q=[p=[p=1 q=1] q="not-an-array"]]]]
 
-<h3 id="++twel"><code>++twel</code></h3>
+### `++twel`
 
 Weld two tapes
 
@@ -447,7 +447,7 @@ Concatenates two tapes, `a` and `b`, producing a `++tape`.
     ~zod/try=> (twel "kre" ""):poja
     ~[~~k ~~r ~~e]
 
-<h3 id="++piec"><code>++piec</code></h3>
+### `++piec`
 
 Parse char to list
 
@@ -464,7 +464,7 @@ Parser modifer. Parses an atom with `bus` and then wraps it in a
     ~zod/try=> (scan "4" (piec:poja dem:ag))
     [4 ~]
 
-<h3 id="++pojo"><code>++pojo</code></h3>
+### `++pojo`
 
 Print JSON
 
@@ -527,7 +527,7 @@ Renders a `++json` `val` as a [`++tape`]().
     ~zod/try=> (crip (pojo %o (mo sale/(jone 12) same/b/| ~)))
     '{"same":false,"sale":12}'
 
-<h3 id="++poxo"><code>++poxo</code></h3>
+### `++poxo`
 
 Print XML
 
@@ -546,7 +546,7 @@ Renders a `++manx` `a` as a [`++tape`]().
     ~zod/try=> (poxo ;div:(p:"tree > text" a))
     "<div><p>tree &gt; text</p><a></a></div>"
 
-<h3 id="++apex"><code>++apex</code></h3>
+### `++apex`
 
 Inner XML printer
 
@@ -581,7 +581,7 @@ Renders a `++manx` as a [`++tape`](), appending a suffix `rez\`.
     ~zod/try=> (~(apex poxo &) ;div:(p:"tree > text" a) "")
     "<div><p>tree > text</p><a></a></div>"
 
-<h3 id="++attr"><code>++attr</code></h3>
+### `++attr`
 
 Print attributes
 
@@ -609,7 +609,7 @@ Render XML attributes as a [`++tape`]().
     ~zod/try=> (crip (attr:poxo ~[sam/"hem" [%tok %ns]^"reptor"] "|appen"))
     'sam="hem" tok:ns="reptor"|appen'
 
-<h3 id="++escp"><code>++escp</code></h3>
+### `++escp`
 
 Escape XML
 
@@ -648,7 +648,7 @@ Escapes the XML special characters `"`, `&`, `'`, `<`, `>`.
     ~zod/try=> `tape`(~(escp poxo &) "x > y" ~)
     "x > y"
 
-<h3 id="++name"><code>++name</code></h3>
+### `++name`
 
 Print name
 
@@ -669,7 +669,7 @@ Renders a `++mane` as a `++tape`.
     ~zod/try=> (name:poxo %ham^%tor)
     "ham:tor"
 
-<h3 id="++many"><code>++many</code></h3>
+### `++many`
 
 Print node list
 
@@ -697,7 +697,7 @@ Renders multiple XML nodes as a [`++tape`]()
 
 ------------------------------------------------------------------------
 
-<h3 id="++poxa"><code>++poxa</code></h3>
+### `++poxa`
 
 Parse XML
 
@@ -718,7 +718,7 @@ Parses an XML node from a [`++cord`](), producing a unit [`++manx`]().
     ~zod/try=> (poxa '<<<<')
     ~
 
-<h3 id="++apex"><code>++apex</code></h3>
+### `++apex`
 
 Top level parser
 
@@ -745,7 +745,7 @@ Parses a node of XML, type [`++manx`]().
     ! {1 2}
     ! exit
 
-<h3 id="++attr"><code>++attr</code></h3>
+### `++attr`
 
 Parse XML attributes
 
@@ -781,7 +781,7 @@ or more space-prefixed name to string values. Result type [`++mart`]()
     ! {1 23}
     ! exit
 
-<h3 id="++chrd"><code>++chrd</code></h3>
+### `++chrd`
 
 Parse character data
 
@@ -800,7 +800,7 @@ Parsing rule. Parses XML character data. Result type [`++mars`]()
     ! {1 6}
     ! exit
 
-<h3 id="++comt"><code>++comt</code></h3>
+### `++comt`
 
 Parses comments
 
@@ -823,7 +823,7 @@ Parsing rule. Parses XML comment blocks.
     ! {1 18}
     ! exit
 
-<h3 id="++escp"><code>++escp</code></h3>
+### `++escp`
 
 Parse (possibly) escaped char
 
@@ -857,7 +857,7 @@ Parsing rule. Parses a nonspecial or escaped character. Result type
     ~zod/try=> (rash '&quot;' escp:xmlp)
     '"'
 
-<h3 id="++empt"><code>++empt</code></h3>
+### `++empt`
 
 Parse self-closing tag
 
@@ -876,7 +876,7 @@ Parsing rule. Parses self-closing XML tags that end in `/>`.
     ! {1 21}
     ! exit
 
-<h3 id="++head"><code>++head</code></h3>
+### `++head`
 
 Parse opening tag
 
@@ -895,7 +895,7 @@ Parsing rule. Parses the opening tag of an XML node. Result type
     ! {1 16}
     ! exit
 
-<h3 id="++name"><code>++name</code></h3>
+### `++name`
 
 Parse tag name
 
@@ -922,7 +922,7 @@ Parsing rule. Parses the name of an XML tag. Result type [`++mane`]()
     ! {1 4}
     ! exit
 
-<h3 id="++tail"><code>++tail</code></h3>
+### `++tail`
 
 Parse closing tag
 
@@ -938,7 +938,7 @@ Parsing rule. Parses an XML closing tag.
     ! {1 3}
     ! exit
 
-<h3 id="++whit"><code>++whit</code></h3>
+### `++whit`
 
 Parse whitespace, etc.
 
@@ -960,7 +960,7 @@ Parsing rule. Parses newlines, tabs, and spaces.
     ! {1 1}
     ! exit
 
-<h3 id="++jo"><code>++jo</code></h3>
+### `++jo`
 
 JSON reparsing core
 
@@ -975,7 +975,7 @@ A `fist` is a gate that produces a `grub`.
 
 A `grub` is a unit of some JSON value.
 
-<h3 id="++ar"><code>++ar</code></h3>
+### `++ar`
 
 Parse array to list
 
@@ -998,7 +998,7 @@ Reparser modifier. Reparses an array to the [`++unit`]() of a homogenous
     [~ u=~[1 2]]
     {[%~ u=it(@)] %~}
 
-<h3 id="++at"><code>++at</code></h3>
+### `++at`
 
 Reparse array as tuple
 
@@ -1023,7 +1023,7 @@ Reparser generator. Reparses an array as a fixed-length tuple of
     ~zod/try=> ((at ni so ni ~):jo a/~[n/'3' s/'to' n/''])
     ~
 
-<h3 id="++at-raw"><code>++at-raw</code></h3>
+### `++at-raw`
 
 Reparse array to tuple
 
@@ -1043,7 +1043,7 @@ Reparser generator. Reparses a list of [`++json`]() to a tuple of
     ~zod/try=> ((at-raw ni ni bo ~):jo ~[s/'hi' n/'1' b/&])
     [~ [~ 1] [~ u=%.y] ~]
 
-<h3 id="++bo"><code>++bo</code></h3>
+### `++bo`
 
 Reparse boolean
 
@@ -1061,7 +1061,7 @@ Reparser modifier. Reparses a boolean to the [`++unit`]() of a
     ~zod/try=> (bo:jo [%s 'hi'])
     ~
 
-<h3 id="++bu"><code>++bu</code></h3>
+### `++bu`
 
 Reparse boolean not
 
@@ -1079,7 +1079,7 @@ of a loobean.
     ~zod/try=> (bu:jo [%s 'hi'])
     ~
 
-<h3 id="++cu"><code>++cu</code></h3>
+### `++cu`
 
 Reparse and transform
 
@@ -1101,7 +1101,7 @@ producing a [`++unit`]().
     ~zod/try=> ((cu dec ni):jo [%b &])
     ~
 
-<h3 id="++da"><code>++da</code></h3>
+### `++da`
 
 Reparse UTC date
 
@@ -1120,7 +1120,7 @@ Reparser modifier. Reparses a UTC date string to a [`++unit`]().
     ~zod/try=> (da:jo [%n '20'])
     ~
 
-<h3 id="++di"><code>++di</code></h3>
+### `++di`
 
 Reparse millisecond date
 
@@ -1143,7 +1143,7 @@ Reparser modifier. Reparses the javascript millisecond date integer to a
     ~zod/try=> (di:jo [%n '25000'])
     [~ ~1970.1.1..00.00.25]
 
-<h3 id="++mu"><code>++mu</code></h3>
+### `++mu`
 
 Reparse unit
 
@@ -1169,7 +1169,7 @@ value, and are reparsed to results of \~ or (some {value}) respectively
     ~zod/try=> ((mu ni):jo [%s 'ma'])
     ~
 
-<h3 id="++ne"><code>++ne</code></h3>
+### `++ne`
 
 Reparse number as real
 
@@ -1184,7 +1184,7 @@ XX Currently unimplemented
 A- yup, this will eventually reparse a floating point atom, but
 interfaces for the latter are not currently stable.
 
-<h3 id="++ni"><code>++ni</code></h3>
+### `++ni`
 
 Reparse number as integer
 
@@ -1211,7 +1211,7 @@ Reparser modifier. Reparses an integer representation to a [\`++unit]().
     ~zod/try=> (ni:jo [%a ~[b/& b/& b/& b/&]])
     ~
 
-<h3 id="++no"><code>++no</code></h3>
+### `++no`
 
 Reparse number as text
 
@@ -1238,7 +1238,7 @@ Reparser modifier. Reparses a numeric representation to a [++cord]().
     ~zod/try=> (no:jo [%a ~[b/& b/& b/& b/&]])
     ~
 
-<h3 id="++of"><code>++of</code></h3>
+### `++of`
 
 Reparse object to frond
 
@@ -1278,7 +1278,7 @@ one of the key-value pairs in `wer`.
     ~zod/try=> ((of sem/sa som/ni ~):jo %o [%sem s/'hey'] ~ [%sam s/'other value'] ~ ~)
     ~
 
-<h3 id="++ot"><code>++ot</code></h3>
+### `++ot`
 
 Reparse object as tuple
 
@@ -1301,7 +1301,7 @@ the [`++edge`](), the results of which are produced in a tuple.
     ~zod/try=> ((ot sem/sa som/ni sem/sa ~):jo (jobe [%sem s/'ha'] [%som n/'20'] ~))
     [~ u=["ha" q=20 "ha"]]
 
-<h3 id="++ot-raw"><code>++ot-raw</code></h3>
+### `++ot-raw`
 
         ++  ot-raw                                            ::  object as tuple
         |*  wer=(pole ,[cord fist])
@@ -1321,7 +1321,7 @@ in a tuple.
     ~zod/try=> ((ot-raw sem/sa som/ni sem/sa ~):jo (mo [%sem s/'ha'] [%som b/|] ~))
     [[~ u="ha"] ~ [~ u="ha"] ~]
 
-<h3 id="++om"><code>++om</code></h3>
+### `++om`
 
 Parse object to map
 
@@ -1342,7 +1342,7 @@ using `wit`.
     ~zod/try=> ((om ni):jo (jobe [%sap n/'20'] [%sup n/'0x5'] [%sop n/'177'] ~))
     ~    
 
-<h3 id="++pe"><code>++pe</code></h3>
+### `++pe`
 
 Add prefix
 
@@ -1365,7 +1365,7 @@ Reparser modifier. Adds a static prefix `pre` to the parse result of
     ~zod/try=> ((pe %hi ni):jo b/|)
     ~
 
-<h3 id="++sa"><code>++sa</code></h3>
+### `++sa`
 
 Reparse string to tape
 
@@ -1383,7 +1383,7 @@ Reparser modifier. Reparses a [`++json`]() string to a [`++tape`]().
     ~zod/try=> (sa:jo a/~[s/'val 2'])
     ~
 
-<h3 id="++so"><code>++so</code></h3>
+### `++so`
 
 Reparse string to cord
 
@@ -1401,7 +1401,7 @@ Reparser modifier. Reparses a string to a [`++cord`]().
     ~zod/try=> (so:jo a/~[s/'val 2'])
     ~
 
-<h3 id="++su"><code>++su</code></h3>
+### `++su`
 
 Reparse string
 
@@ -1425,7 +1425,7 @@ Reparser generator. Produces a reparser that applies `sab` to a string.
     ~zod/try=> ((su:jo fed:ag) n/'20')
     ~
 
-<h3 id="++ul"><code>++ul</code></h3>
+### `++ul`
 
 Reparse null
 
@@ -1442,7 +1442,7 @@ Reparser modifier. Reparses a null value.
     ~zod/try=> (ul:jo b/&)
     ~
 
-<h3 id="++za"><code>++za</code></h3>
+### `++za`
 
 Pole of nonempty units
 
@@ -1463,7 +1463,7 @@ internally.
     ~zod/try=> (za:jo ~[`1 ~ `3])
     %.n
 
-<h3 id="++zl"><code>++zl</code></h3>
+### `++zl`
 
 Collapse unit list
 
@@ -1491,7 +1491,7 @@ empty, produces null.
     ~zod/try=> (zl:jo `(list (unit))`~[`1 ~ `3])
     ~
 
-<h3 id="++zp"><code>++zp</code></h3>
+### `++zp`
 
 Parses a
 
@@ -1514,7 +1514,7 @@ Collapses a `++pole` of `++unit`s `but`, producing a tuple.
     ~zod/try=> (zp:jo `(pole (unit))`~[`1 ~ `3])
     ! exit
 
-<h3 id="++zm"><code>++zm</code></h3>
+### `++zm`
 
 Collapse unit map
 
@@ -1545,7 +1545,7 @@ See also: [`++zp`](), [`++zl`]().
     ~zod/try=> (~(run by `(map ,@t ,@u)`(mo a/1 b/7 c/3 ~)) (flit |=(a=@ (lth a 5))))
     {[p='a' q=[~ u=1]] [p='c' q=[~ u=3]] [p='b' q=~]}
 
-<h3 id="++joba"><code>++joba</code></h3>
+### `++joba`
 
 `++json` from key-value pair
 
@@ -1570,7 +1570,7 @@ Produces a ++json object with one key.
     ~zod/try=> (crip (pojo (joba %hi (jone 2.130))))
     '{"hi":2130}'
 
-<h3 id="++jobe"><code>++jobe</code></h3>
+### `++jobe`
 
 Object from key-value list
 
@@ -1589,7 +1589,7 @@ Produces a `++json` object from a list `a` of key to `++json` values.
     ~zod/try=> (crip (pojo (jobe a/n/'20' b/~ c/a/~[s/'mol'] ~)))
     '{"b":null,"c":["mol"],"a":20}'
 
-<h3 id="++jape"><code>++jape</code></h3>
+### `++jape`
 
 `++json` string from tape
 
@@ -1610,7 +1610,7 @@ Produces a [`++json`]() string from a [`++tape`]().
     ~zod/try=> (crip (pojo (jape "semtek som? zeplo!")))
     '"semtek som? zeplo!"'
 
-<h3 id="++jone"><code>++jone</code></h3>
+### `++jone`
 
 `++json` number from unigned
 
@@ -1635,7 +1635,7 @@ Produces a `++json` number from an unsigned atom.
     ~zod/try=> (pojo (jone 1.203.196))
     "1203196"
 
-<h3 id="++jesc"><code>++jesc</code></h3>
+### `++jesc`
 
 Escape JSON character
 
@@ -1661,7 +1661,7 @@ Produces a `++tape` of an escaped [`++json`](/doc/hoon/library/3bi#++json) chara
     ~zod/try=> (jesc '"')
     "\""
 
-<h3 id="++scanf"><code>++scanf</code></h3>
+### `++scanf`
 
 Formatted scan
 
@@ -1693,7 +1693,7 @@ collapses the result list to a tuple, such that (scanf "foo 1 2 bar"
     ~zod/try=> `@da`(year `date`dat(- [%& -.dat], |6 ~[(div (mul |6.dat (bex 16)) 1.000)]))
     ~2014.8.12..23.10.58..ee56
 
-<h3 id="++parsf"><code>++parsf</code></h3>
+### `++parsf`
 
     ++  parsf                                              ::  make parser from:
       |^  |*  a=(pole ,_:/(*$&(_rule tape)))               ::  ;"chars{rule}chars"
@@ -1745,7 +1745,7 @@ more convenient list of discriminated tapes and rules.
 `bill` builds a parser out of rules and tapes, ignoring the literal
 sections and producing a list of the rules' results.
 
-<h3 id="++taco"><code>++taco</code></h3>
+### `++taco`
 
     ++  taco                                                ::  atom to octstream
       |=  tam=@  ^-  octs
@@ -1759,7 +1759,7 @@ An [octs] contains a length, to encode trailing zeroes.
     ~zod/try=> `@t`6.513.249
     'abc'
 
-<h3 id="++tact"><code>++tact</code></h3>
+### `++tact`
 
     ++  tact                                                ::  tape to octstream
       |=  tep=tape  ^-  octs
@@ -1773,7 +1773,7 @@ octs from tape
     ~zod/try=> `@t`6.513.249
     'abc'
 
-<h3 id="++tell"><code>++tell</code></h3>
+### `++tell`
 
     ++  tell                                                ::  wall to octstream
       |=  wol=wall  ^-  octs
@@ -1792,7 +1792,7 @@ octs from wall
     3
     '''
 
-<h3 id="++txml"><code>++txml</code></h3>
+### `++txml`
 
     ++  txml                                                ::  string to xml
       |=  tep=tape  ^-  manx

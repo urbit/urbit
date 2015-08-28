@@ -7,9 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qf_bull(
-                    u3_noun bid,
-                    u3_noun der)
+  u3qf_bull(u3_noun bid,
+            u3_noun der)
   {
     if ( (c3__void == der) ||
          (c3__void == u3t(u3t(u3t(bid)))) )
@@ -20,8 +19,7 @@
       (c3__bull, u3k(bid), u3k(der));
   }
   u3_noun
-  u3wf_bull(
-                   u3_noun cor)
+  u3wf_bull(u3_noun cor)
   {
     u3_noun bid, der;
 

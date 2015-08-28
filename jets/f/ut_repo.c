@@ -7,9 +7,8 @@
 /* logic
 */
   u3_noun
-  u3qfu_repo(
-                        u3_noun van,
-                        u3_noun sut)
+  u3qfu_repo(u3_noun van,
+             u3_noun sut)
   {
     u3_noun p_sut, q_sut;
 
@@ -18,8 +17,8 @@
 
       case c3__noun:
         return u3nt(c3__fork,
-                            u3nc(c3__atom, u3_blip),
-                            u3nt(c3__cell, c3__noun, c3__noun));
+                    u3nc(c3__atom, u3_blip),
+                    u3nt(c3__cell, c3__noun, c3__noun));
     }
     else switch ( u3h(sut) ) {
       default: {
@@ -62,8 +61,7 @@
   }
 
   u3_noun
-  u3wfu_repo(
-                       u3_noun cor)
+  u3wfu_repo(u3_noun cor)
   {
     u3_noun sut;
 

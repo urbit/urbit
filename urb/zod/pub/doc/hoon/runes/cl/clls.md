@@ -1,4 +1,4 @@
-[collus, `:+`, %clls](#clls)
+collus, `:+`, %clls
 ============================
 
 Tuple of three

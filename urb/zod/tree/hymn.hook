@@ -1,19 +1,20 @@
 ::
 /?    314
+/-    tree-include
 /=    gas    /$    fuel
-/=    ral    /:    /===    /%  /react-js/
+/=    dat    /^    tree-include
+             /:    /===/tree-gen    /%
+             /tree-include/
 ::
-::::
-  ::
-//    /%%/util
-::
-[util=. +>]
+/=    kid    /^    (map span tree-include)
+             /:    /===/tree-gen    /%  2    /_
+             /tree-include/
 ::
 !:
 ::::
   ::
 =+  dez=(trip &2:%)
-=+  ~(. util gas)
+=+  kids-json=a/(turn (~(tap by kid)) |=([a=span *] (joba %name s/a)))
 ;html
   ;head
     ;title: Tree
@@ -26,22 +27,14 @@
     ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js");
     ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.js");
     ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/codemirror/4.3.0/codemirror.js");
+    ;script(type "text/javascript", src "/{dez}/lib/urb.js");
     ;script(type "text/javascript", src "/{dez}/lib/syntax/hoon.js");
     ;script(type "text/javascript", src "/{dez}/pub/tree/src/js/main.js");
     ::;script(type "text/javascript", src "http://localhost:8000/docs/pub/tree/src/js/main.js");
   ==
   ;body
-    ;script(type "text/javascript"):"""
-                                    window.tree = \{}
-                                    window.tree.init = function(components) \{
-                                      window.tree.up = {(pojo (parent-json get-parent))}
-                                      window.tree.kids = {(pojo (kids-json get-kids))}
-                                      window.tree.bred = {(pojo (bread-json get-bread))}
-                                      with(components) \{
-                                        window.tree.body = {(trip ral)}
-                                      }
-                                    }
-                                    """
+    ;+  =+  inject=(jobe kids/kids-json body/body.dat ~)
+        ;script(type "text/javascript"): window.tree = {(pojo inject)}
     ;div#nav;
     ;div#cont;
   ==

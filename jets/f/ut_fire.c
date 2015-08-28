@@ -14,8 +14,8 @@
   {
     u3_noun rib = u3r_at(u3qfu_van_rib, van);
     u3_noun key = u3nt(u3k(sut),
-                               u3k(dox),
-                               u3k(gen));
+                       u3k(dox),
+                       u3k(gen));
     u3_noun ret;
 
     if ( c3y == u3qdi_has(rib, key) ) {
@@ -24,8 +24,9 @@
     else {
       u3_noun rob = u3qdi_put(rib, key);
       u3_noun von = u3i_molt(u3k(van),
-                                      u3qfu_van_rib, u3k(rob),
-                                      0);
+                             u3qfu_van_rib,
+                             u3k(rob),
+                             0);
       ret = u3qfu_mull(von, sut, c3__noun, dox, gen);
 
       u3z(von);
@@ -58,8 +59,7 @@
 
       if ( c3__ash == u3h(gat) ) {
         if ( (c3y == vet) &&
-             (c3n == u3qfu_nest
-                (van, qq_typ, c3y, p_typ)) )
+             (c3n == u3qfu_nest(van, qq_typ, c3y, p_typ)) )
         {
 #if 0
           u3_noun dun = u3qfu_dunq(van, "need", qq_typ);
@@ -99,8 +99,7 @@
   }
 
   static u3_noun
-  _fire_in(
-           u3_noun van,
+  _fire_in(u3_noun van,
            u3_noun vet,
            u3_noun hag)
   {
@@ -116,15 +115,14 @@
       } else {
         return u3nc
           (_fire_each(van, vet, u3h(i_hag), u3t(i_hag)),
-                  _fire_in(van, vet, t_hag));
+                      _fire_in(van, vet, t_hag));
       }
     }
   }
   u3_noun
-  _cqfu_fire(
-                        u3_noun van,
-                        u3_noun sut,
-                        u3_noun hag)
+  _cqfu_fire(u3_noun van,
+             u3_noun sut,
+             u3_noun hag)
   {
     u3_noun vet = u3r_at(u3qfu_van_vet, van);
 
@@ -152,8 +150,7 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu_fire(
-                       u3_noun cor)
+  u3wfu_fire(u3_noun cor)
   {
     u3_noun sut, hag, van;
 

@@ -7,8 +7,7 @@
 /* internals
 */
   static u3_noun
-  _look_in(
-           u3_noun cog,
+  _look_in(u3_noun cog,
            u3_noun dab,
            u3_atom axe)
   {
@@ -30,8 +29,8 @@
           if ( (c3y == u3du(qn_dab)) &&
                (c3y == u3r_sing(cog, pn_dab)) ) {
             return u3nt(u3_nul,
-                                u3k(axe),
-                                u3k(qn_dab));
+                        u3k(axe),
+                        u3k(qn_dab));
           }
           else {
             return u3_nul;
@@ -41,8 +40,8 @@
           if ( (c3y == u3du(qn_dab)) &&
                (c3y == u3r_sing(cog, pn_dab)) ) {
             return u3nt(u3_nul,
-                                u3qc_peg(axe, 2),
-                                u3k(qn_dab));
+                        u3qc_peg(axe, 2),
+                        u3k(qn_dab));
           }
           else {
             if ( c3y == u3qc_gor(cog, pn_dab) ) {
@@ -62,8 +61,8 @@
           if ( (c3y == u3du(qn_dab)) &&
                (c3y == u3r_sing(cog, pn_dab)) ) {
             return u3nt(u3_nul,
-                                u3qc_peg(axe, 2),
-                                u3k(qn_dab));
+                        u3qc_peg(axe, 2),
+                        u3k(qn_dab));
           }
           else {
             if ( c3y == u3qc_gor(cog, pn_dab) ) {
@@ -83,8 +82,8 @@
           if ( (c3y == u3du(qn_dab)) &&
                (c3y == u3r_sing(cog, pn_dab)) ) {
             return u3nt(u3_nul,
-                                u3qc_peg(axe, 2),
-                                u3k(qn_dab));
+                        u3qc_peg(axe, 2),
+                        u3k(qn_dab));
           }
           else {
             if ( c3y == u3qc_gor(cog, pn_dab) ) {
@@ -113,15 +112,13 @@
 /* functions
 */
   u3_noun
-  u3qf_look(
-                    u3_noun cog,
-                    u3_noun dab)
+  u3qf_look(u3_noun cog,
+            u3_noun dab)
   {
     return _look_in(cog, dab, 1);
   }
   u3_noun
-  u3wf_look(
-                   u3_noun cor)
+  u3wf_look(u3_noun cor)
   {
     u3_noun cog, dab;
 

@@ -1,4 +1,5 @@
-<h1><a name="bcbr"><code>bucbar $| %bcbr</code></a></h1>
+bucbar `$|` %bcbr
+=================
 
 <div class="short">
 

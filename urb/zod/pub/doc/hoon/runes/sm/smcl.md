@@ -1,4 +1,4 @@
-[semcol, `;:`, %smcl](#smcl)
+semcol, `;:`, %smcl
 ============================
 
 Apply fold

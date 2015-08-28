@@ -1,4 +1,4 @@
-[semzaz](#smzz)
+semzaz
 ===============
 
 `++sail` tag

@@ -1,4 +1,4 @@
-[coltar, `:*`, %cltr](#cltr)
+coltar, `:*`, %cltr
 ============================
 
 Tuple

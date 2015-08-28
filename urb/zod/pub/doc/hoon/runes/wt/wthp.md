@@ -1,4 +1,4 @@
-[wuthep, `?-`, %wthp](#wthp)
+wuthep, `?-`, %wthp
 ============================
 
 Switch
@@ -10,7 +10,7 @@ cases, `q` must be terminated by `==`.
 See also
 --------
 
-[wutlus, `?+`, %wtls](#wtls)
+wutlus, `?+`, %wtls
 ============================
 
 Produces

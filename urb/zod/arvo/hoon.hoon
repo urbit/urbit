@@ -474,7 +474,7 @@
 ::
 ++  div                                                 ::  divide
   ~/  %div
-  |=  [a=@ b=@]
+  |=  [a=_`@`1 b=_`@`1]
   ^-  @
   ~|  'div'
   ?<  =(0 b)
@@ -545,14 +545,14 @@
 ::
 ++  mod                                                 ::  remainder
   ~/  %mod
-  |=  [a=@ b=@]
+  |=  [a=_`@`1 b=_`@`1]
   ^-  @
   ?<  =(0 b)
   (sub a (mul b (div a b)))
 ::
 ++  mul                                                 ::  multiply
   ~/  %mul
-  |=  [a=@ b=@]
+  |=  [a=_`@`1 b=_`@`1]
   ^-  @
   =+  c=0
   |-
@@ -833,7 +833,7 @@
   (mul 2 $(a (dec a)))
 ::
 ++  xeb                                                 ::  binary logarithm
-  ::  ~/  %xeb
+  ~/  %xeb
   |=  a=@
   ^-  @
   (met 0 a)
@@ -1263,410 +1263,812 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cG, floating point           ::
 ::
-++  rlyd  |=  red=@rd  ^-  [s=? h=@ f=@ e=(unit tape) n=?]
-          ~&  [%rlyd `@ux`red]
-          =+  s=(sea:rd red)
-          =+  negexp==(1 (mod e.s 2))
-          [s=(sig:rd red) h=(hol:rd red) f=(fac:rd red) e=(err:rd red) n=negexp]
-++  rlyh  |=(reh=@rh ~|(%realh-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
-++  rlyq  |=(req=@rq ~|(%realq-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
-++  rlys  |=(res=@rs ~|(%reals-nyet ^-([s=? h=@ f=@ e=(unit tape) n=?] !!)))
-++  ryld  |=  v=[syn=? hol=@ zer=@ fac=@ exp=(unit ,@)]  ^-  @rd
-          ?:  &(=(hol.v 0) =(zer.v 0) =(fac.v 0))
-            (bit:rd (szer:vl:fl 1.023 52 syn.v))
-          ?~  exp.v
-            (bit:rd (cof:fl 52 1.023 v))
-          (ipow:rd u.exp.v (bit:rd (cof:fl 52 1.023 v)))
-++  rylh  |=([syn=? hol=@ zer=@ fac=@ exp=(unit ,@)] ~|(%realh-nyet ^-(@rh !!)))
-++  rylq  |=([syn=? hol=@ zer=@ fac=@ exp=(unit ,@)] ~|(%realq-nyet ^-(@rq !!)))
-++  ryls  |=([syn=? hol=@ zer=@ fac=@ exp=(unit ,@)] ~|(%reals-nyet ^-(@rs !!)))
-
-::  Floating point operations for general floating points.
-::  [s=sign, e=unbiased exponent, f=fraction a=ari]
-::  Value of floating point = (-1)^s * 2^h * (1.f) = (-1)^s * 2^h * a
-++  fl
+++  fn  ::  float, infinity, or NaN
+        ::  s=sign, e=exponent, a=arithmetic form
+        ::  (-1)^s * a * 2^e
+        $%  [%f s=? e=@s a=@u]
+            [%i s=?]
+            [%n ~]
+        ==
+::
+++  dn  ::  decimal float, infinity, or NaN
+        ::  (-1)^s * a * 10^e
+        $%  [%d s=? e=@s a=@u]
+            [%i s=?]
+            [%n ~]
+        ==
+::
+++  fl                                                  ::  arb. precision fp
+  =+  ^-  [[p=@u v=@s w=@u] r=?(%n %u %d %z %a) d=?(%d %f %i)]
+    [[113 -16.494 32.765] %n %d]
+  ::  p=precision:     number of bits in arithmetic form; must be at least 2
+  ::  v=min exponent:  minimum value of e
+  ::  w=width:         max - min value of e, 0 is fixed point
+  ::  r=rounding mode: nearest (ties to even), up, down, to zero, away from zero
+  ::  d=behavior:      return denormals, flush denormals to zero,
+  ::                   infinite exponent range
+  =>
+    ~%  %cofl  +>  ~
+    ::  internal functions; mostly operating on [e=@s a=@u], in other words
+    ::  positive numbers. many of these have undefined behavior if a=0.
+    |%
+    ++  rou
+      |=  [a=[e=@s a=@u]]  ^-  fn  (rau a &)
+    ::
+    ++  rau
+      |=  [a=[e=@s a=@u] t=?]  ^-  fn
+      ?-  r
+        %z  (lug %fl a t)  %d  (lug %fl a t)
+        %a  (lug %ce a t)  %u  (lug %ce a t)
+        %n  (lug %ne a t)
+      ==
+    ::
+    ++  add                                             ::  add; exact if e
+      |=  [a=[e=@s a=@u] b=[e=@s a=@u] e=?]  ^-  fn
+      =+  q=(dif:si e.a e.b)
+      |-  ?.  (syn:si q)  $(b a, a b, q +(q))           ::  a has larger exp
+      ?:  e
+        [%f & e.b (^add (lsh 0 (abs:si q) a.a) a.b)]
+      =+  [ma=(met 0 a.a) mb=(met 0 a.b)]
+      =+  ^=  w  %+  dif:si  e.a  %-  sun:si            ::  expanded exp of a
+        ?:  (gth prc ma)  (^sub prc ma)  0
+      =+  ^=  x  %+  sum:si  e.b  (sun:si mb)           ::  highest exp for b
+      ?:  =((cmp:si w x) --1)                           ::  don't need to add
+        ?-  r
+          %z  (lug %fl a &)  %d  (lug %fl a &)
+          %a  (lug %lg a &)  %u  (lug %lg a &)
+          %n  (lug %na a &)
+        ==
+      (rou [e.b (^add (lsh 0 (abs:si q) a.a) a.b)])
+    ::
+    ++  sub                                             ::  subtract; exact if e
+      |=  [a=[e=@s a=@u] b=[e=@s a=@u] e=?]  ^-  fn
+      =+  q=(dif:si e.a e.b)
+      |-  ?.  (syn:si q)
+        (fli $(b a, a b, q +(q), r swr))
+      =+  [ma=(met 0 a.a) mb=(met 0 a.b)]
+      =+  ^=  w  %+  dif:si  e.a  %-  sun:si
+        ?:  (gth prc ma)  (^sub prc ma)  0
+      =+  ^=  x  %+  sum:si  e.b  (sun:si mb)
+      ?:  &(!e =((cmp:si w x) --1))
+        ?-  r
+          %z  (lug %sm a &)  %d  (lug %sm a &)
+          %a  (lug %ce a &)  %u  (lug %ce a &)
+          %n  (lug %nt a &)
+        ==
+      =+  j=(lsh 0 (abs:si q) a.a)
+      |-  ?.  (gte j a.b)
+        (fli $(a.b j, j a.b, r swr))
+      =+  i=(^sub j a.b)
+      ?~  i  [%f & zer]
+      ?:  e  [%f & e.b i]  (rou [e.b i])
+    ::
+    ++  mul                                             ::  multiply
+      |=  [a=[e=@s a=@u] b=[e=@s a=@u]]  ^-  fn
+      (rou (sum:si e.a e.b) (^mul a.a a.b))
+    ::
+    ++  div                                             ::  divide
+      |=  [a=[e=@s a=@u] b=[e=@s a=@u]]  ^-  fn
+      =+  [ma=(met 0 a.a) mb=(met 0 a.b)]
+      =+  v=(dif:si (sun:si ma) (sun:si +((^add mb prc))))
+      =.  a  ?:  (syn:si v)  a
+      a(e (sum:si v e.a), a (lsh 0 (abs:si v) a.a))
+      =+  [j=(dif:si e.a e.b) q=(dvr a.a a.b)]
+      (rau [j p.q] =(q.q 0))
+    ::
+    ++  sqt                                             ::  square root
+      |=  [a=[e=@s a=@u]]  ^-  fn
+      =.  a
+        =+  [w=(met 0 a.a) x=(^mul +(prc) 2)]
+        =+  ?:((^lth w x) (^sub x w) 0)
+        =+  ?:  =((dis - 1) (dis (abs:si e.a) 1))  -
+          (^add - 1)
+        a(e (dif:si e.a (sun:si -)), a (lsh 0 - a.a))
+      =+  [y=(^sqt a.a) z=(fra:si e.a --2)]
+      (rau [z p.y] =(q.y 0))
+    ::
+    ++  lth                                             ::  less-than
+      |=  [a=[e=@s a=@u] b=[e=@s a=@u]]  ^-  ?
+      ?:  =(e.a e.b)  (^lth a.a a.b)
+      =+  c=(cmp:si (ibl a) (ibl b))
+      ?:  =(c -1)  &  ?:  =(c --1)  |
+      ?:  =((cmp:si e.a e.b) -1)
+        (^lth (rsh 0 (abs:si (dif:si e.a e.b)) a.a) a.b)
+      (^lth (lsh 0 (abs:si (dif:si e.a e.b)) a.a) a.b)
+    ::
+    ++  lte                                             ::  less-equals
+      |=  [a=[e=@s a=@u] b=[e=@s a=@u]]  ^-  ?
+      ?:  =(e.a e.b)  (^lte a.a a.b)
+      =+  c=(cmp:si (ibl a) (ibl b))
+      ?:  =(c -1)  &  ?:  =(c --1)  |
+      ?:  =((cmp:si e.a e.b) -1)
+        (^lte a.a (lsh 0 (abs:si (dif:si e.a e.b)) a.b))
+      (^lte (lsh 0 (abs:si (dif:si e.a e.b)) a.a) a.b)
+    ::
+    ++  equ                                             ::  equals
+      |=  [a=[e=@s a=@u] b=[e=@s a=@u]]  ^-  ?
+      ?.  =((ibl a) (ibl b))  |
+      ?:  =((cmp:si e.a e.b) -1)
+        =((lsh 0 (abs:si (dif:si e.a e.b)) a.b) a.a)
+      =((lsh 0 (abs:si (dif:si e.a e.b)) a.a) a.b)
+    ::
+    ::  integer binary logarithm: 2^ibl(a) <= |a| < 2^(ibl(a)+1)
+    ++  ibl
+      |=  [a=[e=@s a=@u]]  ^-  @s
+      (sum:si (sun:si (dec (met 0 a.a))) e.a)
+    ::
+    ::  change to a representation where a.a is odd
+    ::  every fn has a unique representation of this kind
+    ++  uni
+      |=  [a=[e=@s a=@u]]
+      |-  ?:  =((end 0 1 a.a) 1)  a
+      $(a.a (rsh 0 1 a.a), e.a (sum:si e.a --1))
+    ::
+    ::  expands to either full precision or to denormalized
+    ++  xpd
+      |=  [a=[e=@s a=@u]]
+      =+  ma=(met 0 a.a)
+      ?:  (gte ma prc)  a
+      =+  ?:  =(den %i)  (^sub prc ma)
+          =+  ^=  q
+            =+  w=(dif:si e.a emn)
+            ?:  (syn:si w)  (abs:si w)  0
+          (min q (^sub prc ma))
+      a(e (dif:si e.a (sun:si -)), a (lsh 0 - a.a))
+    ::
+    ::  central rounding mechanism
+    ::  can perform: floor, ceiling, smaller, larger,
+    ::               nearest (round ties to: even, away from 0, toward 0)
+    ::  s is sticky bit: represents a value less than ulp(a) = 2^(e.a)
+    ++  lug
+      ~/  %lug
+      |=  [t=?(%fl %ce %sm %lg %ne %na %nt) a=[e=@s a=@u] s=?]  ^-  fn
+      ?<  =(a.a 0)
+      =-
+        ?.  =(den %f)  -                                ::  flush denormals
+        ?.  ?=([%f *] -)  -
+        ?:  =((met 0 ->+>) prc)  -  [%f & zer]
+      ::
+      =+  m=(met 0 a.a)
+      ?>  |(s (gth m prc))                              ::  require precision
+      =+  ^=  q
+        =+  ^=  f                                       ::  reduce precision
+          ?:  (gth m prc)  (^sub m prc)  0
+        =+  ^=  g  %-  abs:si                           ::  enforce min. exp
+          ?:  =(den %i)  --0
+          ?:  =((cmp:si e.a emn) -1)  (dif:si emn e.a)  --0
+        (max f g)
+      =^  b  a  :-  (end 0 q a.a)
+        a(e (sum:si e.a (sun:si q)), a (rsh 0 q a.a))
+      ::
+      ?~  a.a
+        ?<  =(den %i)
+        ?-  t
+          %fl  [%f & zer]  %sm  [%f & zer]
+          %ce  [%f & spd]  %lg  [%f & spd]
+          %ne  ?:  s  [%f & ?:((^lte b (bex (dec q))) zer spd)]
+               [%f & ?:((^lth b (bex (dec q))) zer spd)]
+          %nt  ?:  s  [%f & ?:((^lte b (bex (dec q))) zer spd)]
+               [%f & ?:((^lth b (bex (dec q))) zer spd)]
+          %na  [%f & ?:((^lth b (bex (dec q))) zer spd)]
+        ==
+      ::
+      =.  a  (xpd a)
+      ::
+      =.  a
+        ?-  t
+          %fl  a
+          %lg  a(a +(a.a))
+          %sm  ?.  &(=(b 0) s)  a
+               ?:  &(=(e.a emn) !=(den %i))  a(a (dec a.a))
+               =+  y=(dec (^mul a.a 2))
+               ?.  (^lte (met 0 y) prc)  a(a (dec a.a))
+               [(dif:si e.a --1) y]
+          %ce  ?:  &(=(b 0) s)  a  a(a +(a.a))
+          %ne  ?~  b  a
+               =+  y=(bex (dec q))
+               ?:  &(=(b y) s)                          ::  round halfs to even
+                 ?~  (dis a.a 1)  a  a(a +(a.a))
+               ?:  (^lth b y)  a  a(a +(a.a))
+          %na  ?~  b  a
+               =+  y=(bex (dec q))
+               ?:  (^lth b y)  a  a(a +(a.a))
+          %nt  ?~  b  a
+               =+  y=(bex (dec q))
+               ?:  =(b y)  ?:  s  a  a(a +(a.a))
+               ?:  (^lth b y)  a  a(a +(a.a))
+        ==
+      ::
+      =.  a  ?.  =((met 0 a.a) +(prc))  a
+        a(a (rsh 0 1 a.a), e (sum:si e.a --1))
+      ?~  a.a  [%f & zer]
+      ::
+      ?:  =(den %i)  [%f & a]
+      ?:  =((cmp:si emx e.a) -1)  [%i &]  [%f & a]      ::  enforce max. exp
+    ::
+    ++  drg                                             ::  dragon4;
+      ~/  %drg                                          ::  convert to decimal
+      |=  [a=[e=@s a=@u]]  ^-  [@s @u]
+      ?<  =(a.a 0)
+      =.  a  (xpd a)
+      =+  r=(lsh 0 ?:((syn:si e.a) (abs:si e.a) 0) a.a)
+      =+  s=(lsh 0 ?.((syn:si e.a) (abs:si e.a) 0) 1)
+      =+  m=(lsh 0 ?:((syn:si e.a) (abs:si e.a) 0) 1)
+      =+  [k=--0 q=(^div (^add s 9) 10)]
+      |-  ?:  (^lth r q)
+        %=  $
+          k  (dif:si k --1)
+          r  (^mul r 10)
+          m  (^mul m 10)
+        ==
+      |-  ?:  (gte (^add (^mul r 2) m) (^mul s 2))
+        $(s (^mul s 10), k (sum:si k --1))
+      =+  [u=0 o=0]
+      |-
+      =+  v=(dvr (^mul r 10) s)
+      =>  %=  .
+          k  (dif:si k --1)
+          u  p.v
+          r  q.v
+          m  (^mul m 10)
+        ==
+      =+  l=(^lth (^mul r 2) m)
+      =+  ^=  h
+        ?|  (^lth (^mul s 2) m)
+            (gth (^mul r 2) (^sub (^mul s 2) m))
+        ==
+      ?:  &(!l !h)
+        $(o (^add (^mul o 10) u))
+      =+  q=&(h |(!l (gte (^mul r 2) s)))
+      =.  o  (^add (^mul o 10) ?:(q +(u) u))
+      [k o]
+    ::
+    ++  toj                                             ::  round to integer
+      |=  [a=[e=@s a=@u]]  ^-  fn
+      ?.  =((cmp:si e.a --0) -1)  [%f & a]
+      =+  x=(abs:si e.a)
+      =+  y=(rsh 0 x a.a)
+      ?:  |(=(r %d) =(r %z))  [%f & --0 y]
+      =+  z=(end 0 x a.a)
+      ?:  |(=(r %u) =(r %a))  [%f & --0 ?~(z y +(y))]
+      =+  i=(bex (dec x))
+      ?:  &(=(z i) =((dis y 1) 0))  [%f & --0 y]
+      ?:  (^lth z i)  [%f & --0 y]  [%f & --0 +(y)]
+    ::
+    ++  ned                                             ::  require ?=([%f *] a)
+      |=  [a=fn]  ^-  [%f s=? e=@s a=@u]
+      ?:  ?=([%f *] a)  a
+      ~|  %need-float  !!
+    ::
+    ++  shf                                             ::  a * 2^b; no rounding
+      |=  [a=fn b=@s]
+      ?:  |(?=([%n *] a) ?=([%i *] a))  a
+      a(e (sum:si e.a b))
+    ::
+    ++  fli                                             ::  flip sign
+      |=  [a=fn]  ^-  fn
+      ?-(-.a %f a(s !s.a), %i a(s !s.a), %n a)
+    ::
+    ++  swr  ?+(r r %d %u, %u %d)                       ::  flipped rounding
+    ++  prc  ?>((gth p 1) p)                            ::  force >= 2 precision
+    ++  den  d                                          ::  denorm/flush/inf exp
+    ++  emn  v                                          ::  minimum exponent
+    ++  emx  (sum:si emn (sun:si w))                    ::  maximum exponent
+    ++  spd  [e=emn a=1]                                ::  smallest denormal
+    ++  spn  [e=emn a=(bex (dec prc))]                  ::  smallest normal
+    ++  lfn  [e=emx a=(fil 0 prc 1)]                    ::  largest
+    ++  lfe  (sum:si emx (sun:si prc))                  ::  2^lfe is > than all
+    ++  zer  [e=--0 a=0]
+    --
   |%
-  ::  ari, or arithmetic form = 1 + mantissa
-  ::  passing around this is convenient because it preserves
-  ::  the number of zeros
+  ++  rou                                               ::  round
+    |=  [a=fn]  ^-  fn
+    ?.  ?=([%f *] a)  a
+    ?~  a.a  [%f s.a zer]
+    ?:  s.a  (^rou +>.a)
+    =.(r swr (fli (^rou +>.a)))
   ::
-  ::  more sophisticated people call this the significand, but that starts
-  ::  with s, and sign already starts with s, so the variables wouldn't be
-  ::  named very nicely
+  ++  syn                                               ::  get sign
+    |=  [a=fn]  ^-  ?
+    ?-(-.a %f s.a, %i s.a, %n &)
   ::
-  ::  Law: =((met 0 (ari p m)) +(p))
-  ++  ari  |=  [p=@u m=@u]  ^-  @
-           :: (lia p (mix (lsh 0 (met 0 m) 1) m))
-           (mix (lsh 0 p 1) m)
+  ++  abs                                               ::  absolute value
+    |=  [a=fn]  ^-  fn
+    ?:  ?=([%f *] a)  [%f & e.a a.a]
+    ?:  ?=([%i *] a)  [%i &]  [%n ~]
   ::
-  ::  bex base a to power p (call w/ b=0 c=1). very naive (need to replace)
-  ::  or jet
-  ++  bey  |=  [a=@u p=@u b=@u c=@u]  ^-  @u
-           ?:  =(b p)
-             c
-           $(c (^mul c a), b (^add b 1))
+  ++  add                                               ::  add
+    |=  [a=fn b=fn]  ^-  fn
+    ?:  |(?=([%n *] a) ?=([%n *] b))  [%n ~]
+    ?:  |(?=([%i *] a) ?=([%i *] b))
+      ?:  &(?=([%i *] a) ?=([%i *] b))
+        ?:  =(a b)  a  [%n ~]
+      ?:  ?=([%i *] a)  a  b
+    ?:  |(=(a.a 0) =(a.b 0))
+      ?.  &(=(a.a 0) =(a.b 0))  %-  rou  ?~(a.a b a)
+      [%f ?:(=(r %d) &(s.a s.b) |(s.a s.b)) zer]
+    %-  |=  [a=fn]
+        ?.  ?=([%f *] a)  a
+        ?.  =(a.a 0)  a
+        [%f !=(r %d) zer]
+    ?:  =(s.a s.b)
+      ?:  s.a  (^add +>.a +>.b |)
+      =.(r swr (fli (^add +>.a +>.b |)))
+    ?:  s.a  (^sub +>.a +>.b |)
+    (^sub +>.b +>.a |)
   ::
-  ::  convert from sign/whole/frac -> sign/exp/ari w/ precision p, bias b
-  ::  g is garbage
-  ++  cof  |=  [p=@u b=@u s=? h=@u z=@ f=@u g=(unit ,@)]  ^-  [s=? e=@s a=@u]
-           ?:  &(=(0 h) =(0 f))
-             [s=s e=`@s`(dec (^mul 2 b)) a=(ari p 0)]
-           ?:  &(=(0 h))
-             =+  a=(fra (^add p b) z f) ::p+b bits
-             =+  e=(dif:si (sun:si (met 0 a)) (sun:si +((^add p b))))
-             [s=s e=e a=(lia p a)]
-           =+  c=(fra p z f) :: p-bits
-           =+  a=(mix c (lsh 0 p h))
-           =+  e=(dif:si (sun:si (met 0 a)) (sun:si +(p)))
-           [s=s e=e a=(lia p a)]
+  ++  ead                                               ::  exact add
+    |=  [a=fn b=fn]  ^-  fn
+    ?:  |(?=([%n *] a) ?=([%n *] b))  [%n ~]
+    ?:  |(?=([%i *] a) ?=([%i *] b))
+      ?:  &(?=([%i *] a) ?=([%i *] b))
+        ?:  =(a b)  a  [%n ~]
+      ?:  ?=([%i *] a)  a  b
+    ?:  |(=(a.a 0) =(a.b 0))
+      ?.  &(=(a.a 0) =(a.b 0))  ?~(a.a b a)
+      [%f ?:(=(r %d) &(s.a s.b) |(s.a s.b)) zer]
+    %-  |=  [a=fn]
+        ?.  ?=([%f *] a)  a
+        ?.  =(a.a 0)  a
+        [%f !=(r %d) zer]
+    ?:  =(s.a s.b)
+      ?:  s.a  (^add +>.a +>.b &)
+      (fli (^add +>.a +>.b &))
+    ?:  s.a  (^sub +>.a +>.b &)
+    (^sub +>.b +>.a &)
   ::
-  ::  convert from sign/exp/ari -> sign/whole/frac w/ precision q
-  ++  cog  |=  [q=@u s=? e=@s a=@u]  ^-  [s=? h=@u f=@u]
-           ::?:  =(e -0)
-           ::    [s=s h=1 f=(fre q a)
-           ::?:  =((mod `@u`s 2) 0)  :: pos
-           ::  (coh q s e a)
-           ::?:  =((mod `@u`s 2)
-           ::=+  (^mul ari (bex e))
-           !!
+  ++  sub                                               ::  subtract
+    |=  [a=fn b=fn]  ^-  fn  (add a (fli b))
   ::
-  ::  Decimal length of number, for use in ++den
-  ++  dcl  |=  [f=@u]  ^-  @u
-           ?:  =(f 0)
-             0
-           (^add 1 $(f (^div f 10)))
+  ++  mul                                               ::  multiply
+    |=  [a=fn b=fn]  ^-  fn
+    ?:  |(?=([%n *] a) ?=([%n *] b))  [%n ~]
+    ?:  ?=([%i *] a)
+      ?:  ?=([%i *] b)  [%i =(s.a s.b)]
+      ?:  =(a.b 0)  [%n ~]  [%i =(s.a s.b)]
+    ?:  ?=([%i *] b)
+      ?:  =(a.a 0)  [%n ~]  [%i =(s.a s.b)]
+    ?:  |(=(a.a 0) =(a.b 0))  [%f =(s.a s.b) zer]
+    ?:  =(s.a s.b)  (^mul +>.a +>.b)
+    =.(r swr (fli (^mul +>.a +>.b)))
   ::
-  ::  Denominator of fraction, f is base 10
-  ++  den  |=  [f=@u z=@u]  ^-  @u
-           (bey 10 (^add z (dcl f)) 0 1)
-
-  ::  Binary fraction of precision p (ex, for doubles, p=52)
-  ++  fra  |=  [p=@u z=@u f=@u]  ^-  @u
-           (^div (lsh 0 p f) (den f z))
+  ++  emu                                               ::  exact multiply
+    |=  [a=fn b=fn]  ^-  fn
+    ?:  |(?=([%n *] a) ?=([%n *] b))  [%n ~]
+    ?:  ?=([%i *] a)
+      ?:  ?=([%i *] b)  [%i =(s.a s.b)]
+      ?:  =(a.b 0)  [%n ~]  [%i =(s.a s.b)]
+    ?:  ?=([%i *] b)
+      ?:  =(a.a 0)  [%n ~]  [%i =(s.a s.b)]
+    ?:  |(=(a.a 0) =(a.b 0))  [%f =(s.a s.b) zer]
+    [%f =(s.a s.b) (sum:si e.a e.b) (^^mul a.a a.b)]
   ::
-
-  ::  utility for ++fre
-  ++  rep  |=  [a=@ f=$+(@ @) c=@u]
-           ^-  @
-           ?:  =(c 0)
-             a
-           $(a (f a), c (dec c))
-  ::  Decimal fraction of precision q [for printing only] mas peg
-  ++  fre  |=  [q=@u n=[s=? e=@s a=@u]]  ^-  @u
-           =+  ^=  b
-               ?:  =(0 (mod e.n 2))
-                 ?:  (^gte (abs:si e.n) (met 0 a.n))
-                   1
-                 ::=+  k=(lsh 0 (^sub (dec (met 0 a.n)) (abs:si e.n)) 1)
-                 ::=+  r=(end 0 (^sub (dec (met 0 a.n)) (abs:si e.n)) a.n)
-                 ::(mix k r)
-                 (rep a.n mas (abs:si e.n))
-               ::=+  k=(lsh 0 (^add (dec (met 0 a.n)) (abs:si e.n)) 1)
-               ::=+  g=(lsh 0 (dec (met 0 a.n)) 1)
-               :::(mix k g a.n)
-               ::(rep a.n |=(a=@ (^mul 2 (peg a 0b10))) (abs:si e.n))  ::  kill & move
-               a.n
-           ~&  `@ub`b
-           ?:  =(0 (mod e.n 2))
-             =+  d=(bex (^sub (met 0 b) 1))
-             (^div (^mul b (bey 10 q 0 1)) d)
-           =+  d=(bex (^add (abs:si e.n) (dec (met 0 b))))
-           (^div (^mul b (bey 10 q 0 1)) d)
+  ++  div                                               ::  divide
+    |=  [a=fn b=fn]  ^-  fn
+    ?:  |(?=([%n *] a) ?=([%n *] b))  [%n ~]
+    ?:  ?=([%i *] a)
+      ?:  ?=([%i *] b)  [%n ~]  [%i =(s.a s.b)]
+    ?:  ?=([%i *] b)  [%f =(s.a s.b) zer]
+    ?:  =(a.a 0)  ?:  =(a.b 0)  [%n ~]  [%f =(s.a s.b) zer]
+    ?:  =(a.b 0)  [%i =(s.a s.b)]
+    ?:  =(s.a s.b)  (^div +>.a +>.b)
+    =.(r swr (fli (^div +>.a +>.b)))
   ::
-  ++  hol  |=  [p=@u n=[s=? e=@s a=@u]]  ^-  @u
-           ?:  =((mod `@`e.n 2) 0)
-             ?:  (^gte (abs:si e.n) p)
-               (lsh 0 (^sub (abs:si e.n) p) a.n)
-             (rsh 0 (^sub p (abs:si e.n)) a.n)
-           0
+  ++  fma                                               ::  fused multiply-add
+    |=  [a=fn b=fn c=fn]  ^-  fn                        ::  (a * b) + c
+    (add (emu a b) c)
   ::
-  ::  reverse ari, ari -> mantissa
-  ++  ira  |=  a=@u  ^-  @u
-           (mix (lsh 0 (dec (met 0 a)) 1) a)
+  ++  sqt                                               ::  square root
+    |=  [a=fn]  ^-  fn
+    ?:  ?=([%n *] a)  [%n ~]
+    ?:  ?=([%i *] a)  ?:(s.a a [%n ~])
+    ?~  a.a  [%f s.a zer]
+    ?:  s.a  (^sqt +>.a)  [%n ~]
   ::
-  ::  limit ari to precision p. Rounds if over, lsh if under.
-  ++  lia  |=  [p=@u a=@u]  ^-  @u
-           ?:  (^lte (met 0 a) (^add p 1))
-             (lsh 0 (^sub (^add p 1) (met 0 a)) a)
-           (rnd p a)
+  ++  inv                                               ::  inverse
+    |=  [a=fn]  ^-  fn
+    (div [%f & --0 1] a)
   ::
-  ::  round to nearest or even based on r (which has length n)
-  ::  n should be the actual length of r, as it exists within a
-  ::  The result is either (rhs 0 n a) or +(rsh 0 n a)
-  ++  rnd  |=  [p=@u a=@u]  ^-  @u
-           ?:  (^lte (met 0 a) (^add p 1))
-             a :: avoid overflow
-           =+  n=(^sub (met 0 a) (^add p 1))
-           =+  r=(end 0 n a)
-           (rne p a r n)
+  ++  sun                                               ::  uns integer to float
+    |=  [a=@u]  ^-  fn
+    (rou [%f & --0 a])
   ::
-  ::  the real rnd
-  ++  rne  |=  [p=@u a=@u r=@u n=@u]  ^-  @u
-           =+  b=(rsh 0 n a)
-           ?:  =(n 0)
-             a
-           ?:  !=((met 0 r) n) :: starts with 0 => not same distance
-             b
-           ?:  =((mod r 2) 0)
-             $(a (rsh 0 1 a), r (rsh 0 1 r), n (dec n)) :: ending 0s have no effect
-           ?:  =(r 1) :: equal distance, round to even
-             ?:  =((mod b 2) 0)
-               b
-             +(b)
-           +(b) :: starts with 1, not even distance
-  ::::::::::::
-  ::  black magic values
-  ++  vl
-    |%
-    ++  szer  |=  [b=@u p=@u s=?]
-              [s=s e=`@s`(dec (^mul b 2)) a=(lia p 0b1)]
-
-    ++  qnan  |=  [b=@u p=@u s=?]
-              [s=s e=`@s`(^mul 2 +(b)) a=(lia p `@`0b11)]
-
-    ++  snan  |=  [b=@u p=@u s=?]
-              [s=s e=`@s`(^mul 2 +(b)) a=(lia p `@`0b101)]
-
-    ++  inft  |=  [b=@u p=@u s=?]
-              [s=s e=`@s`(^mul 2 +(b)) a=(lia p `@`0b1)]
-    --
-  ::  black magic value tests
-  ++  te
-    |%
-    ++  zer  |=  [b=@u p=@u n=[s=? e=@s a=@u]]
-             =(e.n (dec (^mul b 2)))
-
-    ++  nan  |=  [b=@u n=[s=? e=@s a=@u]]
-             &(=(e.n (^mul 2 +(b))) !=(0 (ira a.n)))
-
-    ++  snan  |=  [b=@u n=[s=? e=@s a=@u]]
-              &(=(e.n (^mul 2 +(b))) !=((dec (met 0 a.n)) (met 0 (ira a.n))))
-
-    ++  inf  |=  [b=@u n=[s=? e=@s a=@u]]
-             &(=(e.n (^mul 2 +(b))) =(0 (ira a.n)))
-
-    ++  gar  |=  [b=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]
-             ^-  (unit ,[s=? e=@s a=@u])
-             ?:  (snan b n)  ~|(%floating-nan !!)
-             ?:  (snan b n)  ~|(%floating-nan !!)
-             ?:  (nan b n)  [~ n]
-             ?:  (nan b m)  [~ m]
-             ~
-    ++  pro  |=  [b=@u p=@u n=[s=? e=@s a=@u]]
-             ^-  [s=? e=@s a=@u]
-             =+  maxexp=`@s`(^mul 2 +(b))
-             =+  minexp=`@s`(dec (^mul 2 b))
-             ?:  &(=(0 (mod e.n 2)) (^gte e.n maxexp))
-               (inft:vl:fl b p s.n)
-             ?:  &(=(1 (mod e.n 2)) (^gte e.n minexp))
-               (szer:vl:fl b p s.n)                             :: flush denorms
-             n
-    ++  err  |=  [b=@u p=@u n=[s=? e=@s a=@u]]
-             ^-  (unit tape)
-             ?:  (snan b n)  [~ "snan"]
-             ?:  (nan b n)  [~ "nan"]
-             ?:  (inf b n)  [~ "inf"]
-             ?:  (zer b p n)  [~ "0"]
-             ~
-    --
-  ::::::::::::
-  ++  add  |=  [b=@u p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]
-           ^-  [s=? e=@s a=@u]
-           =+  g=(gar:te:fl b n m)
-           ?:  ?=(^ g)
-             u.g
-           ?:  (zer:te:fl b p n)
-             m
-           ?:  (zer:te:fl b p m)
-             n
-           ?:  &(!s.n !s.m)                        :: both negative
-             =+  r=$(s.n %.y, s.m %.y)
-             [s=%.n e=e.r a=a.r]
-           ?.  &(s.n s.m)                          :: if not both positive
-             (sub b p n [s=!s.m e=e.m a=a.m])      :: is actually sub
-           ?:  =(-1 (cmp:si e.n e.m))              :: guarantee e.n > e.m
-             $(n m, m n)
-           =+  dif=(abs:si (dif:si e.n e.m))       :: always pos
-           =+  a2=(lsh 0 dif a.n)                  :: p+1+dif bits
-           =+  a3=(^add a.m a2)                    :: at least p+1+dif bits
-           =+  dif2=(^sub (met 0 a3) (met 0 a2))   :: (met 0 a3) > (met 0 a2)
-           =+  e2=(sum:si (sun:si dif2) e.n)
-           (pro:te:fl b p [s=|(s.n s.m) e=e2 a=(lia p a3)])
-
-  ++  sub  |=  [b=@u p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]
-           ^-  [s=? e=@s a=@u]
-           =+  g=(gar:te:fl b n m)
-           ?:  ?=(^ g)
-             u.g
-           ?:  |((zer:te:fl b p n) (zer:te:fl b p m))
-              (add b p n m(s !s.m))                 :: why not
-           ?:  &(!s.n s.m)                           :: -a-b
-             (add b p n [s=%.n e.m a.m])             :: add handles negative case
-           ?:  &(s.n !s.m)                           :: a+b
-             (add b p n [s=%.y e.m a.m])             :: is actually add
-           ?.  |(=(--1 (cmp:si e.n e.m)) &(=(e.n e.m) (^gte a.n a.m)))  :: n > m
-             $(n m(s !s.m), m n(s !s.n))
-           =+  dif=(abs:si (dif:si e.n e.m))
-           =+  a2=(lsh 0 dif a.n)                    :: p+1+dif bits
-           =+  a3=(^sub a2 a.m)                      :: assume m < 0 for now
-           =+  dif2=(^sub (met 0 a2) (met 0 a3))     :: (met 0 a2) > (met 0 a3)
-           (pro:te:fl b p [s=s.n e=(dif:si e.n (sun:si dif2)) a=(lia p a3)])  :: n > m => s=s.n
-
-  ++  mul  |=  [b=@u p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@ a=@]
-           =+  g=(gar:te:fl b n m)
-           ?:  ?=(^ g)
-             u.g
-           ?:  |((zer:te:fl b p n) (zer:te:fl b p m))
-             (szer:vl:fl b p =(s.n s.m))
-           =+  a2=(^mul a.n a.m)
-           :: =+  a3=(mix (lsh 0 (^mul p 2) 1) (end 0 (^mul p 2) a2))
-           =+  e2=(met 0 (rsh 0 (^add 1 (^mul p 2)) a2))
-           :: =+  a4=(rnd p (rsh 0 e2 a3))
-           =+  a4=(lia p a2)
-           =+  s2==(s.n s.m)
-           (pro:te:fl b p [s=s2 e=:(sum:si e.n e.m (sun:si e2)) a=a4])
-
-  ++  div  |=  [b=@u p=@u n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  [s=? e=@ a=@]
-           =+  g=(gar:te:fl b n m)
-           ?:  &((zer:te:fl b p n) (zer:te:fl b p m))
-             (qnan:vl:fl b p %.n)
-           ?:  (zer:te:fl b p n)
-             (szer:vl:fl b p =(s.n s.m))
-           ?:  (zer:te:fl b p m)
-             (inft:vl:fl b p =(s.n s.m))
-           =+  c=(lia p (^div (lsh 0 (^mul p 3) a.n) a.m))
-           ?:  (^gte a.n a.m)
-             (pro:te:fl b p [s==(s.n s.m) e=(dif:si e.n e.m) a=c])
-           (pro:te:fl b p [s==(s.n s.m) e=(dif:si (dif:si e.n e.m) (sun:si 1)) a=c])
-
-  ++  lte  |=  [n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  ?
-           ?:  =(%.n n)
-             ?:  =(%.n m)
-               ?:  &(=(e.n a.n) =(a.n a.m))
-                 %.y
-               !$(s.n %.y, s.m %.y)
-             %.y
-           ?:  =(%.y m)
-             %.n
-           ?:  =(-1 (cmp:si e.n e.m))
-             %.y
-           ?:  =(--1 (cmp:si e.n e.m))
-             %.n
-           (^lte a.n a.m)
-
-  ++  lth  |=  [n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  ?
-           ?:  =(%.n n)
-             ?:  =(%.n m)
-               ?:  &(=(e.n a.n) =(a.n a.m))
-                 %.n
-               !$(s.n %.y, s.m %.y)
-             %.y
-           ?:  =(%.y m)
-             %.n
-           ?:  =(-1 (cmp:si e.n e.m))
-             %.y
-           ?:  =(--1 (cmp:si e.n e.m))
-             %.n
-           (^lth a.n a.m)
-
-  ++  gte  |=  [n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  ?
-           (lth m n)
-
-  ++  gth  |=  [n=[s=? e=@s a=@u] m=[s=? e=@s a=@u]]  ^-  ?
-           (lte m n)
+  ++  san                                               ::  sgn integer to float
+    |=  [a=@s]  ^-  fn
+    =+  b=(old:si a)
+    (rou [%f -.b --0 +.b])
+  ::
+  ::  comparisons return ~ in the event of a NaN
+  ++  lth                                               ::  less-than
+    |=  [a=fn b=fn]  ^-  (unit ,?)
+    ?:  |(?=([%n *] a) ?=([%n *] b))  ~  :-  ~
+    ?:  =(a b)  |
+    ?:  ?=([%i *] a)  !s.a  ?:  ?=([%i *] b)  s.b
+    ?:  |(=(a.a 0) =(a.b 0))
+      ?:  &(=(a.a 0) =(a.b 0))  |
+      ?:  =(a.a 0)  s.b  !s.a
+    ?:  !=(s.a s.b)  s.b
+    ?:  s.a  (^lth +>.a +>.b)  (^lth +>.b +>.a)
+  ::
+  ++  lte                                               ::  less-equal
+    |=  [a=fn b=fn]  ^-  (unit ,?)
+    ?:  |(?=([%n *] a) ?=([%n *] b))  ~  :-  ~
+    ?:  =(a b)  &
+    ?:  ?=([%i *] a)  !s.a  ?:  ?=([%i *] b)  s.b
+    ?:  |(=(a.a 0) =(a.b 0))
+      ?:  &(=(a.a 0) =(a.b 0))  &
+      ?:  =(a.a 0)  s.b  !s.a
+    ?:  !=(s.a s.b)  s.b
+    ?:  s.a  (^lte +>.a +>.b)  (^lte +>.b +>.a)
+  ::
+  ++  equ                                               ::  equal
+    |=  [a=fn b=fn]  ^-  (unit ,?)
+    ?:  |(?=([%n *] a) ?=([%n *] b))  ~  :-  ~
+    ?:  =(a b)  &
+    ?:  |(?=([%i *] a) ?=([%i *] b))  |
+    ?:  |(=(a.a 0) =(a.b 0))
+      ?:  &(=(a.a 0) =(a.b 0))  &  |
+    ?:  |(=(e.a e.b) !=(s.a s.b))  |
+    (^equ +>.a +>.b)
+  ::
+  ++  gte                                               ::  greater-equal
+    |=  [a=fn b=fn]  ^-  (unit ,?)  (lte b a)
+  ::
+  ++  gth                                               ::  greater-than
+    |=  [a=fn b=fn]  ^-  (unit ,?)  (lth b a)
+  ::
+  ++  drg                                               ::  float to decimal
+    |=  [a=fn]  ^-  dn
+    ?:  ?=([%n *] a)  [%n ~]
+    ?:  ?=([%i *] a)  [%i s.a]
+    ?~  a.a  [%d s.a --0 0]
+    [%d s.a (^drg +>.a)]
+  ::
+  ++  grd                                               ::  decimal to float
+    |=  [a=dn]  ^-  fn
+    ?:  ?=([%n *] a)  [%n ~]
+    ?:  ?=([%i *] a)  [%i s.a]
+    =>  .(r %n)
+    =+  q=(abs:si e.a)
+    ?:  (syn:si e.a)
+      (mul [%f s.a --0 a.a] [%f & e.a (pow 5 q)])
+    (div [%f s.a --0 a.a] [%f & (sun:si q) (pow 5 q)])
+  ::
+  ++  toi                                               ::  round to integer @s
+    |=  [a=fn]  ^-  (unit ,@s)
+    =+  b=(toj a)
+    ?.  ?=([%f *] b)  ~  :-  ~
+    =+  c=(^^mul (bex (abs:si e.b)) a.b)
+    (new:si s.b c)
+  ::
+  ++  toj                                               ::  round to integer fn
+    |=  [a=fn]  ^-  fn
+    ?.  ?=([%f *] a)  a
+    ?~  a.a  [%f s.a zer]
+    ?:  s.a  (^toj +>.a)
+    =.(r swr (fli (^toj +>.a)))
   --
 ::
-++  rd                                                  ::  core for @rd
-  ~%  %rd  +  ~
-  |%
-  ++  mlen  52                                          ::  mantissa bits
-  ++  elen  11                                          ::  exponent bits
-  ++  bias  1.023                                       ::  exponent bias
-  ++  dlen  14                                          ::  ~=log_10(2^mlen)
-  ::  Convert a sign/exp/ari cell into 64 bit atom
-  ++  bit  |=  a=[s=? e=@s a=@u]
-           =+  a2=(lia:fl mlen a.a)
-           =+  b=(ira:fl a2)
-           ::=+  c=(lsh 0 (^sub 52 (met 0 b)) b)
-           %+  can  0
-           [[mlen b] [[elen (abs:si (sum:si (sun:si bias) e.a))] [[1 `@`s.a] ~]]]
-  ::  Sign of an @rd
-  ++  sig  |=  [a=@rd]  ^-  ?
-           =(0 (rsh 0 (^add mlen elen) a))
-  ::  Exponent of an @rd
-  ++  exp  |=  [a=@rd]  ^-  @s
-           (dif:si (sun:si (rsh 0 mlen (end 0 (^add elen mlen) a))) (sun:si bias))
-  ::  Fraction of an @rd (binary)
-  ++  fac  |=  [a=@rd]  ^-  @u
-           (fre:fl dlen (sea a))
-  ::  Whole
-  ++  hol  |=  [a=@rd]  ^-  @u
-           (hol:fl mlen (sea a))
-  ::  Convert to sign/exp/ari form
-  ++  sea  |=  a=@rd  ^-  [s=? e=@s a=@u]
-           (pro:te:fl bias mlen [s=(sig a) e=(exp a) a=(ari:fl mlen (end 0 mlen a))])
-  ++  err  |=  a=@rd  ^-  (unit tape)
-           (err:te:fl bias mlen (sea a))
-
-  ::::::::::::
-  ++  sun  ~/  %sun
-           |=  a=@u  ^-  @rd
-           (bit (cof:fl mlen bias %.y a 0 0 ~))
-
-  ++  add  ~/  %add
-           |=  [a=@rd b=@rd]  ^-  @rd
-           (bit (add:fl bias mlen (sea a) (sea b)))
-
-  ++  sub  ~/  %sub
-           |=  [a=@rd b=@rd]  ^-  @rd
-           (bit (sub:fl bias mlen (sea a) (sea b)))
-
-  ++  mul  ~/  %mul
-           |=  [a=@rd b=@rd]  ^-  @rd
-           (bit (mul:fl bias mlen (sea a) (sea b)))
-
-  ++  div  ~/  %div
-           |=  [a=@rd b=@rd]  ^-  @rd
-           (bit (div:fl bias mlen (sea a) (sea b)))
-
-  ++  lte  ~/  %lte
-           |=  [a=@rd b=@rd]  ^-  ?
-           (lte:fl (sea a) (sea b))
-
-  ++  lth  ~/  %lth
-           |=  [a=@rd b=@rd]  ^-  ?
-           (lth:fl (sea a) (sea b))
-
-  ++  gte  ~/  %gte
-           |=  [a=@rd b=@rd]  ^-  ?
-           (gte:fl (sea a) (sea b))
-
-  ++  gth  ~/  %gth
-           |=  [a=@rd b=@rd]  ^-  ?
-           (gth:fl (sea a) (sea b))
-
-  ++  max  |=  [a=@rd b=@rd]  ^-  @rd
-           ?:  (gth a b)
-             a
-           b
-
-  ++  min  |=  [a=@rd b=@rd]  ^-  @rd
-           ?:  (lth a b)
-             a
-           b
-
-  ++  bex  |=  a=@s  ^-  @rd
-           (bit [s=%.y e=a a=(ari:fl mlen 0)])
-
-  ++  ipow  |=  [exp=@s n=@rd]
-            ^-  @rd
-            ?:  =(0 (mod exp 2))
-              ?:  =(0 exp)
-                n
-              (mul .~10 $(exp (^sub exp 2)))
-            ?:  =(1 exp)
-              (div n .~10)
-            (div $(exp (^sub exp 2)) .~10)
+++  ff                                                  ::  ieee 754 format fp
+  |_  [[w=@u p=@u b=@s] r=?(%n %u %d %z %a)]
+  ::  this core has no use outside of the functionality
+  ::  provided to ++rd, ++rs, ++rq, and ++rh
+  ::
+  ::  w=width:         bits in exponent field
+  ::  p=precision:     bits in fraction field
+  ::  w=bias:          added to exponent when storing
+  ::  r=rounding mode: same as in ++fl
+  ::
+  ++  sb  (bex (^add w p))                              ::  sign bit
+  ++  me  (dif:si (dif:si --1 b) (sun:si p))            ::  minimum exponent
+  ::
+  ++  pa
+    %*(. fl p +(p), v me, w (^sub (bex w) 3), d %d, r r)
+  ::
+  ++  sea                                               ::  @r to fn
+    |=  [a=@r]  ^-  fn
+    =+  [f=(cut 0 [0 p] a) e=(cut 0 [p w] a)]
+    =+  s=(sig a)
+    ?:  =(e 0)
+      ?:  =(f 0)  [%f s --0 0]  [%f s me f]
+    ?:  =(e (fil 0 w 1))
+      ?:  =(f 0)  [%i s]  [%n ~]
+    =+  q=:(sum:si (sun:si e) me -1)
+    =+  r=(^add f (bex p))
+    [%f s q r]
+  ::
+  ++  bit  |=  [a=fn]  (bif (rou:pa a))                 ::  fn to @r w/ rounding
+  ::
+  ++  bif                                               ::  fn to @r no rounding
+    |=  [a=fn]  ^-  @r
+    ?:  ?=([%i *] a)
+      =+  q=(lsh 0 p (fil 0 w 1))
+      ?:  s.a  q  (^add q sb)
+    ?:  ?=([%n *] a)  (lsh 0 (dec p) (fil 0 +(w) 1))
+    ?~  a.a  ?:  s.a  `@r`0  sb
+    =+  ma=(met 0 a.a)
+    ?.  =(ma +(p))
+      ?>  =(e.a me)
+      ?>  (^lth ma +(p))
+      ?:  s.a  `@r`a.a  (^add a.a sb)
+    =+  q=(sum:si (dif:si e.a me) --1)
+    =+  r=(^add (lsh 0 p (abs:si q)) (end 0 p a.a))
+    ?:  s.a  r  (^add r sb)
+  ::
+  ++  sig                                               ::  get sign
+    |=  [a=@r]  ^-  ?
+    =(0 (cut 0 [(^add p w) 1] a))
+  ::
+  ++  exp                                               ::  get exponent
+    |=  [a=@r]  ^-  @s
+    (dif:si (sun:si (cut 0 [p w] a)) b)
+  ::
+  ++  add                                               ::  add
+    |=  [a=@r b=@r]
+    (bif (add:pa (sea a) (sea b)))
+  ::
+  ++  sub                                               ::  subtract
+    |=  [a=@r b=@r]
+    (bif (sub:pa (sea a) (sea b)))
+  ::
+  ++  mul                                               ::  multiply
+    |=  [a=@r b=@r]
+    (bif (mul:pa (sea a) (sea b)))
+  ::
+  ++  div                                               ::  divide
+    |=  [a=@r b=@r]
+    (bif (div:pa (sea a) (sea b)))
+  ::
+  ++  fma                                               ::  fused multiply-add
+    |=  [a=@r b=@r c=@r]
+    (bif (fma:pa (sea a) (sea b) (sea c)))
+  ::
+  ++  sqt                                               ::  square root
+    |=  [a=@r]
+    (bif (sqt:pa (sea a)))
+  ::
+  ++  lth                                               ::  less-than
+    |=  [a=@r b=@r]  (fall (lth:pa (sea a) (sea b)) |)
+  ++  lte                                               ::  less-equals
+    |=  [a=@r b=@r]  (fall (lte:pa (sea a) (sea b)) |)
+  ++  equ                                               ::  equals
+    |=  [a=@r b=@r]  (fall (equ:pa (sea a) (sea b)) |)
+  ++  gte                                               ::  greater-equals
+    |=  [a=@r b=@r]  (fall (gte:pa (sea a) (sea b)) |)
+  ++  gth                                               ::  greater-than
+    |=  [a=@r b=@r]  (fall (gth:pa (sea a) (sea b)) |)
+  ++  sun                                               ::  uns integer to @r
+    |=  [a=@u]  (bit [%f & --0 a])
+  ++  san                                               ::  signed integer to @r
+    |=  [a=@s]  (bit [%f (syn:si a) --0 (abs:si a)])
+  ++  toi                                               ::  round to integer
+    |=  [a=@r]  (toi:pa (sea a))
+  ++  drg                                               ::  @r to decimal float
+    |=  [a=@r]  (drg:pa (sea a))
+  ++  grd                                               ::  decimal float to @r
+    |=  [a=dn]  (bif (grd:pa a))
+  --
+::
+++  rlyd  |=  a=@rd  ^-  dn  (drg:rd a)                 ::  prep @rd for print
+++  rlys  |=  a=@rs  ^-  dn  (drg:rs a)                 ::  prep @rs for print
+++  rlyh  |=  a=@rh  ^-  dn  (drg:rh a)                 ::  prep @rh for print
+++  rlyq  |=  a=@rq  ^-  dn  (drg:rq a)                 ::  prep @rq for print
+++  ryld  |=  a=dn  ^-  @rd  (grd:rd a)                 ::  finish parsing @rd
+++  ryls  |=  a=dn  ^-  @rs  (grd:rs a)                 ::  finish parsing @rs
+++  rylh  |=  a=dn  ^-  @rh  (grd:rh a)                 ::  finish parsing @rh
+++  rylq  |=  a=dn  ^-  @rq  (grd:rq a)                 ::  finish parsing @rq
+::
+++  rd                                                  ::  double precision fp
+  ~%  %rd  +>  ~
+  |_  r=?(%n %u %d %z)
+  ::  round to nearest, round up, round down, round to zero
+  ::
+  ++  ma
+    %*(. ff w 11, p 52, b --1.023, r r)
+  ::
+  ++  sea                                               ::  @rd to fn
+    |=  [a=@rd]  (sea:ma a)
+  ::
+  ++  bit                                               ::  fn to @rd
+    |=  [a=fn]  ^-  @rd  (bit:ma a)
+  ::
+  ++  add  ~/  %add                                     ::  add
+    |=  [a=@rd b=@rd]  ^-  @rd  ~|  %rd-fail
+    (add:ma a b)
+  ::
+  ++  sub  ~/  %sub                                     ::  subtract
+    |=  [a=@rd b=@rd]  ^-  @rd  ~|  %rd-fail
+    (sub:ma a b)
+  ::
+  ++  mul  ~/  %mul                                     ::  multiply
+    |=  [a=@rd b=@rd]  ^-  @rd  ~|  %rd-fail
+    (mul:ma a b)
+  ::
+  ++  div  ~/  %div                                     ::  divide
+    |=  [a=@rd b=@rd]  ^-  @rd  ~|  %rd-fail
+    (div:ma a b)
+  ::
+  ++  fma  ~/  %fma                                     ::  fused multiply-add
+    |=  [a=@rd b=@rd c=@rd]  ^-  @rd  ~|  %rd-fail
+    (fma:ma a b c)
+  ::
+  ++  sqt  ~/  %sqt                                     ::  square root
+    |=  [a=@rd]  ^-  @rd  ~|  %rd-fail
+    (sqt:ma a)
+  ::
+  ++  lth  ~/  %lth                                     ::  less-than
+    |=  [a=@rd b=@rd]  ~|  %rd-fail  (lth:ma a b)
+  ++  lte  ~/  %lte                                     ::  less-equals
+    |=  [a=@rd b=@rd]  ~|  %rd-fail  (lte:ma a b)
+  ++  equ  ~/  %equ                                     ::  equals
+    |=  [a=@rd b=@rd]  ~|  %rd-fail  (equ:ma a b)
+  ++  gte  ~/  %gte                                     ::  greater-equals
+    |=  [a=@rd b=@rd]  ~|  %rd-fail  (gte:ma a b)
+  ++  gth  ~/  %gth                                     ::  greater-than
+    |=  [a=@rd b=@rd]  ~|  %rd-fail  (gth:ma a b)
+  ::
+  ++  sun  |=  [a=@u]  ^-  @rd  (sun:ma a)              ::  uns integer to @rd
+  ++  san  |=  [a=@s]  ^-  @rd  (san:ma a)              ::  sgn integer to @rd
+  ++  sig  |=  [a=@rd]  ^-  ?  (sig:ma a)               ::  get sign
+  ++  exp  |=  [a=@rd]  ^-  @s  (exp:ma a)              ::  get exponent
+  ++  toi  |=  [a=@rd]  ^-  (unit ,@s)  (toi:ma a)      ::  round to integer
+  ++  drg  |=  [a=@rd]  ^-  dn  (drg:ma a)              ::  @rd to decimal float
+  ++  grd  |=  [a=dn]  ^-  @rd  (grd:ma a)              ::  decimal float to @rd
+  --
+::
+++  rs                                                  ::  single precision fp
+  ~%  %rs  +>  ~
+  |_  r=?(%n %u %d %z)
+  ::  round to nearest, round up, round down, round to zero
+  ::
+  ++  ma
+    %*(. ff w 8, p 23, b --127, r r)
+  ::
+  ++  sea                                               ::  @rs to fn
+    |=  [a=@rs]  (sea:ma a)
+  ::
+  ++  bit                                               ::  fn to @rs
+    |=  [a=fn]  ^-  @rs  (bit:ma a)
+  ::
+  ++  add  ~/  %add                                     ::  add
+    |=  [a=@rs b=@rs]  ^-  @rs  ~|  %rs-fail
+    (add:ma a b)
+  ::
+  ++  sub  ~/  %sub                                     ::  subtract
+    |=  [a=@rs b=@rs]  ^-  @rs  ~|  %rs-fail
+    (sub:ma a b)
+  ::
+  ++  mul  ~/  %mul                                     ::  multiply
+    |=  [a=@rs b=@rs]  ^-  @rs  ~|  %rs-fail
+    (mul:ma a b)
+  ::
+  ++  div  ~/  %div                                     ::  divide
+    |=  [a=@rs b=@rs]  ^-  @rs  ~|  %rs-fail
+    (div:ma a b)
+  ::
+  ++  fma  ~/  %fma                                     ::  fused multiply-add
+    |=  [a=@rs b=@rs c=@rs]  ^-  @rs  ~|  %rs-fail
+    (fma:ma a b c)
+  ::
+  ++  sqt  ~/  %sqt                                     ::  square root
+    |=  [a=@rs]  ^-  @rs  ~|  %rs-fail
+    (sqt:ma a)
+  ::
+  ++  lth  ~/  %lth                                     ::  less-than
+    |=  [a=@rs b=@rs]  ~|  %rs-fail  (lth:ma a b)
+  ++  lte  ~/  %lte                                     ::  less-equals
+    |=  [a=@rs b=@rs]  ~|  %rs-fail  (lte:ma a b)
+  ++  equ  ~/  %equ                                     ::  equals
+    |=  [a=@rs b=@rs]  ~|  %rs-fail  (equ:ma a b)
+  ++  gte  ~/  %gte                                     ::  greater-equals
+    |=  [a=@rs b=@rs]  ~|  %rs-fail  (gte:ma a b)
+  ++  gth  ~/  %gth                                     ::  greater-than
+    |=  [a=@rs b=@rs]  ~|  %rs-fail  (gth:ma a b)
+  ::
+  ++  sun  |=  [a=@u]  ^-  @rs  (sun:ma a)              ::  uns integer to @rs
+  ++  san  |=  [a=@s]  ^-  @rs  (san:ma a)              ::  sgn integer to @rs
+  ++  sig  |=  [a=@rs]  ^-  ?  (sig:ma a)               ::  get sign
+  ++  exp  |=  [a=@rs]  ^-  @s  (exp:ma a)              ::  get exponent
+  ++  toi  |=  [a=@rs]  ^-  (unit ,@s)  (toi:ma a)      ::  round to integer
+  ++  drg  |=  [a=@rs]  ^-  dn  (drg:ma a)              ::  @rs to decimal float
+  ++  grd  |=  [a=dn]  ^-  @rs  (grd:ma a)              ::  decimal float to @rs
+  --
+::
+++  rq                                                  ::  quad precision fp
+  ~%  %rq  +>  ~
+  |_  r=?(%n %u %d %z)
+  ::  round to nearest, round up, round down, round to zero
+  ::
+  ++  ma
+    %*(. ff w 15, p 112, b --16.383, r r)
+  ::
+  ++  sea                                               ::  @rq to fn
+    |=  [a=@rq]  (sea:ma a)
+  ::
+  ++  bit                                               ::  fn to @rq
+    |=  [a=fn]  ^-  @rq  (bit:ma a)
+  ::
+  ++  add  ~/  %add                                     ::  add
+    |=  [a=@rq b=@rq]  ^-  @rq  ~|  %rq-fail
+    (add:ma a b)
+  ::
+  ++  sub  ~/  %sub                                     ::  subtract
+    |=  [a=@rq b=@rq]  ^-  @rq  ~|  %rq-fail
+    (sub:ma a b)
+  ::
+  ++  mul  ~/  %mul                                     ::  multiply
+    |=  [a=@rq b=@rq]  ^-  @rq  ~|  %rq-fail
+    (mul:ma a b)
+  ::
+  ++  div  ~/  %div                                     ::  divide
+    |=  [a=@rq b=@rq]  ^-  @rq  ~|  %rq-fail
+    (div:ma a b)
+  ::
+  ++  fma  ~/  %fma                                     ::  fused multiply-add
+    |=  [a=@rq b=@rq c=@rq]  ^-  @rq  ~|  %rq-fail
+    (fma:ma a b c)
+  ::
+  ++  sqt  ~/  %sqt                                     ::  square root
+    |=  [a=@rq]  ^-  @rq  ~|  %rq-fail
+    (sqt:ma a)
+  ::
+  ++  lth  ~/  %lth                                     ::  less-than
+    |=  [a=@rq b=@rq]  ~|  %rq-fail  (lth:ma a b)
+  ++  lte  ~/  %lte                                     ::  less-equals
+    |=  [a=@rq b=@rq]  ~|  %rq-fail  (lte:ma a b)
+  ++  equ  ~/  %equ                                     ::  equals
+    |=  [a=@rq b=@rq]  ~|  %rq-fail  (equ:ma a b)
+  ++  gte  ~/  %gte                                     ::  greater-equals
+    |=  [a=@rq b=@rq]  ~|  %rq-fail  (gte:ma a b)
+  ++  gth  ~/  %gth                                     ::  greater-than
+    |=  [a=@rq b=@rq]  ~|  %rq-fail  (gth:ma a b)
+  ::
+  ++  sun  |=  [a=@u]  ^-  @rq  (sun:ma a)              ::  uns integer to @rq
+  ++  san  |=  [a=@s]  ^-  @rq  (san:ma a)              ::  sgn integer to @rq
+  ++  sig  |=  [a=@rq]  ^-  ?  (sig:ma a)               ::  get sign
+  ++  exp  |=  [a=@rq]  ^-  @s  (exp:ma a)              ::  get exponent
+  ++  toi  |=  [a=@rq]  ^-  (unit ,@s)  (toi:ma a)      ::  round to integer
+  ++  drg  |=  [a=@rq]  ^-  dn  (drg:ma a)              ::  @rq to decimal float
+  ++  grd  |=  [a=dn]  ^-  @rq  (grd:ma a)              ::  decimal float to @rq
+  --
+::
+++  rh                                                  ::  half precision fp
+  |_  r=?(%n %u %d %z)
+  ::  round to nearest, round up, round down, round to zero
+  ::
+  ++  ma
+    %*(. ff w 5, p 10, b --15, r r)
+  ::
+  ++  sea                                               ::  @rh to fn
+    |=  [a=@rh]  (sea:ma a)
+  ::
+  ++  bit                                               ::  fn to @rh
+    |=  [a=fn]  ^-  @rh  (bit:ma a)
+  ::
+  ++  tos                                               ::  @rh to @rs
+    |=  [a=@rh]  (bit:rs (sea a))
+  ::
+  ++  fos                                               ::  @rs to @rh
+    |=  [a=@rs]  (bit (sea:rs a))
+  ::
+  ++  lth  ~/  %lth                                     ::  less-than
+    |=  [a=@rh b=@rh]  ~|  %rh-fail  (lth:ma a b)
+  ++  lte  ~/  %lte                                     ::  less-equals
+    |=  [a=@rh b=@rh]  ~|  %rh-fail  (lte:ma a b)
+  ++  equ  ~/  %equ                                     ::  equals
+    |=  [a=@rh b=@rh]  ~|  %rh-fail  (equ:ma a b)
+  ++  gte  ~/  %gte                                     ::  greater-equals
+    |=  [a=@rh b=@rh]  ~|  %rh-fail  (gte:ma a b)
+  ++  gth  ~/  %gth                                     ::  greater-than
+    |=  [a=@rh b=@rh]  ~|  %rh-fail  (gth:ma a b)
+  ::
+  ++  sun  |=  [a=@u]  ^-  @rh  (sun:ma a)              ::  uns integer to @rh
+  ++  san  |=  [a=@s]  ^-  @rh  (san:ma a)              ::  sgn integer to @rh
+  ++  sig  |=  [a=@rh]  ^-  ?  (sig:ma a)               ::  get sign
+  ++  exp  |=  [a=@rh]  ^-  @s  (exp:ma a)              ::  get exponent
+  ++  toi  |=  [a=@rh]  ^-  (unit ,@s)  (toi:ma a)      ::  round to integer
+  ++  drg  |=  [a=@rh]  ^-  dn  (drg:ma a)              ::  @rh to decimal float
+  ++  grd  |=  [a=dn]  ^-  @rh  (grd:ma a)              ::  decimal float to @rh
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cH, urbit time               ::
@@ -1833,8 +2235,9 @@
   ?.(=(gol fud) ~ [~ gol])
 ::
 ++  slog                                                ::  deify printf
-  |=  [a=?(~ @u) b=tang]  ^+  same                      ::  .=  ~&(%a 1)
-  ?~(b same ~>(%slog.[a i.b] $(b t.b)))                 ::  ((slog `~[>%a<]) 1)
+  =|  pri=@                                             ::  priority level
+  |=  a=tang  ^+  same                                  ::  .=  ~&(%a 1)
+  ?~(a same ~>(%slog.[pri i.a] $(a t.a)))               ::  ((slog ~[>%a<]) 1)
 ::
 ++  mean  |=(a=tang (fear (flop a) |.(!!)))             ::  deify stack trace
 ++  fear                                                ::  insert user mean
@@ -1843,6 +2246,36 @@
   =>  .(a `tang`a)
   ?~  a  (+<+)
   ~_(i.a $(a t.a))
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::                section 2cJ, extra math               ::
+::
+++  sqt                                                 ::  sqrt w/remainder
+  ~/  %sqt
+  |=  a=@  ^-  [p=@ q=@]
+  ?~  a  [0 0]
+  =+  [q=(div (dec (xeb a)) 2) r=0]
+  =-  [-.b (sub a +.b)]
+  ^=  b  |-
+  =+  s=(add r (bex q))
+  =+  t=(mul s s)
+  ?:  =(q 0)
+    ?:  (lte t a)  [s t]  [r (mul r r)]
+  ?:  (lte t a)  $(r s, q (dec q))  $(q (dec q))
+::
+++  dvr
+  ~/  %dvr
+  |=  [a=@ b=@]  ^-  [p=@ q=@]
+  ?<  =(0 b)
+  [(div a b) (mod a b)]
+::
+++  pow
+  ~/  %pow
+  |=  [a=@ b=@]
+  ?:  =(b 0)  1
+  |-  ?:  =(b 1)  a
+  =+  c=$(b (div b 2))
+  =+  d=(mul c c)
+  ?~  (dis b 1)  d  (mul d a)
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::
 ::::              chapter 2d, containers                ::::
 ::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -3539,11 +3972,7 @@
         ::
             %r
           ?+  hay  (z-co q.p.lot)
-            %d
-          =+  r=(rlyd q.p.lot)
-          ?~  e.r
-            ['.' '~' (r-co r)]
-          ['.' '~' u.e.r]
+            %d  ['.' '~' (r-co (rlyd q.p.lot))]
             %h  ['.' '~' '~' (r-co (rlyh q.p.lot))]
             %q  ['.' '~' '~' '~' (r-co (rlyq q.p.lot))]
             %s  ['.' (r-co (rlys q.p.lot))]
@@ -3582,13 +4011,20 @@
       ++  c-co  (em-co [58 1] |=([? b=@ c=tape] [~(c ne b) c]))
       ++  d-co  |=(min=@ (em-co [10 min] |=([? b=@ c=tape] [~(d ne b) c])))
       ++  r-co
-        |=  [syn=? nub=@ der=@ ign=(unit tape) ne=?]
-        =>  .(rex ['.' (t-co ((d-co 1) der) ne)])
-        =>  .(rex ((d-co 1) nub))
-        ?:(syn rex ['-' rex])
-      ++  t-co  |=  [a=tape n=?]  ^-  tape
-        ?:  n  a
-        ?~  a  ~|(%empty-frac !!)  t.a
+        |=  [a=dn]
+        ?:  ?=([%i *] a)  (weld ?:(s.a "inf" "-inf") rex)
+        ?:  ?=([%n *] a)  (weld "nan" rex)
+        =+  ^=  e  %+  ed-co  [10 1]
+          |=  [a=? b=@ c=tape]
+          ?:  a  [~(d ne b) '.' c]
+          [~(d ne b) c]
+        =+  ^=  f
+          =>(.(rex ~) (e a.a))
+        =.  e.a  (sum:si e.a (sun:si (dec +.f)))
+        =+  b=?:((syn:si e.a) "e" "e-")
+        =>  .(rex ?~(e.a rex (weld b ((d-co 1) (abs:si e.a)))))
+        =>  .(rex (weld -.f rex))
+        ?:(s.a rex ['-' rex])
       ::
       ++  s-co
         |=  esc=(list ,@)  ^-  tape
@@ -3597,7 +4033,7 @@
           rex
         :-  '.'
         =>(.(rex $(esc t.esc)) ((x-co 4) i.esc))
-    ::
+      ::
       ++  v-co  |=(min=@ (em-co [32 min] |=([? b=@ c=tape] [~(v ne b) c])))
       ++  w-co  |=(min=@ (em-co [64 min] |=([? b=@ c=tape] [~(w ne b) c])))
       ++  x-co  |=(min=@ (em-co [16 min] |=([? b=@ c=tape] [~(x ne b) c])))
@@ -3616,6 +4052,22 @@
       min  ?:(=(0 min) 0 (dec min))
       hol  dar
       rex  (par =(0 dar) rad rex)
+    ==
+  ::
+  ++  ed-co
+    |=  [[bas=@ min=@] [par=$+([? @ tape] tape)]]
+    =+  [fir=& cou=0]
+    |=  hol=@
+    ^-  [tape @]
+    ?:  &(=(0 hol) =(0 min))
+      [rex cou]
+    =+  [rad=(mod hol bas) dar=(div hol bas)]
+    %=  $
+      min  ?:(=(0 min) 0 (dec min))
+      hol  dar
+      rex  (par &(=(0 dar) !fir) rad rex)
+      fir  |
+      cou  +(cou)
     ==
   ::
   ++  ox-co
@@ -3752,35 +4204,60 @@
     ==
   ++  royl
     ~+
-    =+  ^=  zer
-        (cook lent (star (just '0')))
+    =+  ^=  moo
+      |=  a=tape
+      :-  (lent a)
+      (scan a (bass 10 (plus sid:ab)))
     =+  ^=  voy
-        %+  cook  royl-cell
+      %+  cook  royl-cell
+      ;~  pose
         ;~  plug
-          ;~(pose (cold | hep) (easy &))
-          ;~(plug dim:ag ;~(pose ;~(pfix dot ;~(plug zer dim:ag)) (easy [0 0])))
-          ;~  pose
-            ;~  pfix
-              (just 'e')
-              (cook some ;~(plug ;~(pose (cold | hep) (easy &)) dim:ag))
+          (easy %d)
+          ;~  pose  (cold | hep)  (easy &)  ==
+          ;~  plug  dim:ag
+            ;~  pose
+              ;~(pfix dot (cook moo (plus (shim '0' '9'))))
+              (easy [0 0])
             ==
-            (easy ~)
+            ;~  pose
+              ;~  pfix
+                (just 'e')
+                ;~(plug ;~(pose (cold | hep) (easy &)) dim:ag)
+              ==
+              (easy [& 0])
+            ==
           ==
         ==
+        ;~  plug
+          (easy %i)
+          ;~  sfix
+            ;~  pose  (cold | hep)  (easy &)  ==
+            (jest 'inf')
+          ==
+        ==
+        ;~  plug
+          (easy %n)
+          (cold ~ (jest 'nan'))
+        ==
+      ==
     ;~  pose
       (stag %rh (cook rylh ;~(pfix ;~(plug sig sig) voy)))
       (stag %rq (cook rylq ;~(pfix ;~(plug sig sig sig) voy)))
       (stag %rd (cook ryld ;~(pfix sig voy)))
-      :: (stag %rs (cook ryls voy))
+      (stag %rs (cook ryls voy))
     ==
+  ::
   ++  royl-cell
-    |=  [a=? b=[c=@ d=@ e=@] f=(unit ,[h=? i=@])]
-    ^-  [? @ @ @ (unit ,@s)]
-    ?~  f
-      [a c.b d.b e.b ~]
-    ?:  h.u.f
-      [a c.b d.b e.b [~ (mul i.u.f 2)]]
-    [a c.b d.b e.b [~ (dec (mul i.u.f 2))]]
+    |=  $?  [%d a=? b=[c=@ [d=@ e=@] f=? i=@]]
+            [%i a=?]
+            [%n ~]
+        ==
+    ^-  dn
+    ?.  ?=([%d *] +<)  +<
+    =+  ^=  h
+      (dif:si (new:si f.b i.b) (sun:si d.b))
+    [%d a h (add (mul c.b (pow 10 d.b)) e.b)]
+  ::
   ++  tash
     ~+
     =+  ^=  neg
@@ -3793,6 +4270,7 @@
         ;~(pfix hep (cook |=(a=dime (neg & a)) bisk))
       ==
     ==
+  ::
   ++  twid
     ~+
     ;~  pose
@@ -4464,7 +4942,7 @@
   =+  si
   =+  [c=(sun a) d=(sun b)]
   =+  [u=[c=(sun 1) d=--0] v=[c=--0 d=(sun 1)]]
-  |-  ^-  [d=@ u=@ v=@]
+  |-  ^-  [d=@ u=@s v=@s]
   ?:  =(--0 c)
     [(abs d) d.u d.v]
   ::  ?>  ?&  =(c (sum (pro (sun a) c.u) (pro (sun b) c.v)))
@@ -5184,11 +5662,13 @@
     %+  shay  (add b 32)
     (add (lsh 3 b q) (mix k (fil 3 b 0x5c)))
   ::
-  ++  pbk  ~/  %pbk                                     :: PBKDF2-HMAC-SHA256
+  ++  pbk                                               :: PBKDF2-HMAC-SHA256
+    ~/  %pbk
     |=  [p=@ s=@ c=@ d=@]
     (pbl p (met 3 p) s (met 3 s) c d)
   ::
-  ++  pbl  ~/  %pbl                                     :: w/length
+  ++  pbl                                               :: w/length
+    ~/  %pbl
     |=  [p=@ pl=@ s=@ sl=@ c=@ d=@]
     =>  .(p (end 3 pl p), s (end 3 sl s))
     =+  h=32
@@ -5197,8 +5677,8 @@
             !=(c 0)
         ==
     =+  ^=  l  ?~  (mod d h)
-      (div d h)
-    +((div d h))
+        (div d h)
+      +((div d h))
     =+  r=(sub d (mul h (dec l)))
     =+  [t=0 j=1 k=1]
     =.  t  |-  ^-  @
@@ -5211,11 +5691,13 @@
       $(t (add t (lsh 3 (mul (dec j) h) f)), j +(j))
     (end 3 d t)
   ::
-  ++  hsh  ~/  %hsh                                     ::  scrypt
+  ++  hsh                                               ::  scrypt
+    ~/  %hsh
     |=  [p=@ s=@ n=@ r=@ z=@ d=@]
     (hsl p (met 3 p) s (met 3 s) n r z d)
   ::
-  ++  hsl  ~/  %hsl                                     ::  w/length
+  ++  hsl                                               ::  w/length
+    ~/  %hsl
     |=  [p=@ pl=@ s=@ sl=@ n=@ r=@ z=@ d=@]
     =|  v=(list (list ,@))
     =>  .(p (end 3 pl p), s (end 3 sl s))
@@ -5383,8 +5865,8 @@
     ?:  (lth b 256)
       [[b (end 0 b d)] ~]
     [[256 d] $(c d, b (sub b 256))]
-  ++  raws                                              ::  random bits continuation
-    |=  b=@
+  ++  raws                                              ::  random bits
+    |=  b=@                                             ::  continuation
     =+  r=(raw b)
     [r +>.$(a (shas %og-s r))]
   --
@@ -7175,10 +7657,13 @@
         [%pear *]
       ?.  =(lum q.q.ham)
         ~
-      ?:  ?=([%tas ~] +.q.ham)
-        [~ %leaf '%' '$' ~]
-      =+  fox=~(rend co [~ p.q.ham q.q.ham])
-      [~ %leaf ?:(=(['~' ~] fox) fox ['%' fox])]
+      =.  p.q.ham
+        (rash p.q.ham ;~(sfix (cook crip (star low)) (star hig)))
+      =+  fox=$(q.ham [%atom p.q.ham])
+      ?>  ?=([~ %leaf ^] fox)
+      ?:  ?=(?(%n %tas) p.q.ham)
+        fox
+      [~ %leaf '%' p.u.fox]
     ::
         [%stop *]
       ?:  (~(has in gil) [p.q.ham lum])  ~
@@ -7777,6 +8262,8 @@
         [%sgzp *]  ~_(duck(sut (play p.gen)) $(gen q.gen))
         [%sggr *]
       =+  hum=$(gen q.gen)
+      :: ?:  &(huz !?=($|(@ [?(%fast %memo) ^]) p.gen))
+      ::  hum
       :-  p.hum
       :+  %10
         ?-    p.gen
@@ -8385,7 +8872,8 @@
     |=  ref=type
     ~+
     ^-  type
-    ~|(%sift-lose ?>((nest(sut ref) & -:!>(*typo)) ref))
+    !!
+    :: ~|(%sift-lose ?>((nest(sut ref) & -:!>(*typo)) ref))
   ::
   ++  snub
     ~/  %snub

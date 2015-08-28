@@ -1,4 +1,4 @@
-[bucwut `$?` %bcwt](#bcwt)
+bucwut `$?` %bcwt
 ==========================
 
 Fork

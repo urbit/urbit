@@ -7,7 +7,8 @@
   //  good old linear search
   //
   static u3_noun
-  _po_find(u3_noun buf, u3_noun a)
+  _po_find(u3_noun buf, 
+           u3_noun a)
   {
     if ( !_(u3a_is_cat(a)) ) {
       return u3_nul;
@@ -32,8 +33,7 @@
   }
 
   u3_noun
-  u3wcp_ins(
-                      u3_noun cor)
+  u3wcp_ins(u3_noun cor)
   {
     u3_noun x, a, buf;
 
@@ -48,8 +48,7 @@
     }
   }
   u3_noun
-  u3wcp_ind(
-                      u3_noun cor)
+  u3wcp_ind(u3_noun cor)
   {
     u3_noun x, a, buf;
 
@@ -65,8 +64,7 @@
   }
 
   u3_noun
-  u3wcp_tos(
-                      u3_noun cor)
+  u3wcp_tos(u3_noun cor)
   {
     u3_noun x, a, buf;
 
@@ -86,8 +84,7 @@
     }
   }
   u3_noun
-  u3wcp_tod(
-                      u3_noun cor)
+  u3wcp_tod(u3_noun cor)
   {
     u3_noun x, a, buf;
 

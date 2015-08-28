@@ -7,8 +7,7 @@
 /* functions
 */
   u3_noun
-  u3qc_cap(
-                   u3_atom a)
+  u3qc_cap(u3_atom a)
   {
     c3_w met_w = u3r_met(0, a);
 
@@ -22,8 +21,7 @@
     }
   }
   u3_noun
-  u3wc_cap(
-                  u3_noun cor)
+  u3wc_cap(u3_noun cor)
   {
     u3_noun a;
 

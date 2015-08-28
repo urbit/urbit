@@ -1,4 +1,4 @@
-[tistar, `=*`, %tstr](#tstr)
+tistar, `=*`, %tstr
 ============================
 
 Alias

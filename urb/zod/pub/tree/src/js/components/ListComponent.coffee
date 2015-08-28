@@ -1,61 +1,70 @@
-TreeStore   = require '../stores/TreeStore.coffee'
-TreeActions = require '../actions/TreeActions.coffee'
+clas        = require 'classnames'
 
-load        = require './LoadComponent.coffee'
+reactify    = require './Reactify.coffee'
+query       = require './Async.coffee'
 
 recl = React.createClass
-[div,a,ul,li,h1] = [React.DOM.div,React.DOM.a,React.DOM.ul,React.DOM.li,React.DOM.h1]
+{div,a,ul,li,h1} = React.DOM
 
-module.exports = recl
-  stateFromStore: -> 
-    path = @props.dataPath ? TreeStore.getCurr()
-    {
-      snip:TreeStore.getSnip()
-      tree:TreeStore.getTree(path.split("/"))
-      path:path
-    }
-
-  _onChangeStore: ->
-    @setState @stateFromStore()
-
-  componentWillUnmount: ->
-    TreeStore.removeChangeListener @_onChangeStore
-
-  getInitialState: -> @stateFromStore()
-
-  getCont: ->
-    cont = true
-    keys = _.keys @state.tree
-    for k in keys
-      cont = false if not @state.snip[@state.path+"/"+k]
-    cont = false if keys.length is 0
-    cont
-
-  componentDidMount: ->
-    cont = @getCont()
-    TreeStore.addChangeListener @_onChangeStore
-    if not @state.tree or _.keys(@state.tree).length is 0 or not cont
-      TreeActions.getPath @state.path,"snip"
-
+module.exports = query {
+    path:'t'
+    kids:
+      snip:'r'
+      head:'r'
+      meta:'j'
+  }, recl
+  displayName: "List"
+  
   render: ->
-    doc = @state.tree ? []
+    k = clas
+      list: true
+      posts: @props.dataType is 'post'
+      default: @props['data-source'] is 'default'
+    (ul {className:k}, @renderList())
 
-    if not @getCont()
-      _list = (div {className:"loading"}, (load {}, ""))
-    else
-      _list = _.map _.keys(doc).sort(), (v) =>
-        _path = @state.path+"/"+v
-        if @props.dataPreview?
-          c = "preview"
-          if @props.titlesOnly
-            prev = @state.snip[_path].head
+  renderList: ->
+    # check if kids all have a sort meta tag
+    sorted = true
+    _keys = []
+    for k,v of @props.kids
+      if not v.meta?.sort? then sorted = false
+      _keys[Number(v.meta?.sort)] = k
+    if sorted isnt true
+      _keys = _.keys(@props.kids).sort()
+    if @props.dataType is 'post' then _keys=_keys.reverse()
+    for item in _keys
+      path = @props.path+"/"+item
+      elem = @props.kids[item]
+      href = window.tree.basepath path
+      parts = []
+      if elem.meta?.title
+        title = 
+          gn: 'h1'
+          c: [elem.meta.title]
+      else title = elem.head
+      title ||= (h1 {},item)
+      parts.push title
+      unless @props.titlesOnly        # redundant? this seems familiar
+        if @props.dataPreview 
+          if @props.dataType is 'post'
+            parts.push (elem.snip.c.slice 0,2)...
           else
-            prev = @state.snip[_path]
-        else
-          c = ""
-          prev = (h1 {},v)
-        href = window.tree.basepath _path
-        (li {}, (a {href:href,className:c,key:"list-a-"+_path}, prev))
-    k = "list"
-    if @props['data-source'] is 'default' then k += " default"
-    (ul {className:k,key:"list-"+@state.path}, _list)
+            parts.push elem.snip
+      li {key:item,className:@props.dataType ? ""},
+        a {href,className:(clas preview: @props.dataPreview?)},            
+          reactify
+            gn: 'div'
+            c: parts
+
+          # if not @props.dataPreview? then (h1 {},item)
+          # else if @props.dataType is 'post'
+          #   head = 
+          #     if elem.meta?.title
+          #       gn: 'h1'
+          #       c: [elem.meta.title]
+          #     else elem.head
+          #   reactify
+          #     gn: 'div'
+          #     c: [head, (elem.snip.c.slice 0,2)...]
+          # else if @props.titlesOnly? then reactify elem.head
+          # else div {}, (reactify elem.head), (reactify elem.snip)

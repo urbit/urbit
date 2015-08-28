@@ -1,4 +1,4 @@
-[dotwut,`.?`, %dtwt](#dtwt)
+dotwut,`.?`, %dtwt
 ===========================
 
 Noun or cell

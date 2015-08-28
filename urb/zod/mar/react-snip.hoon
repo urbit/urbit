@@ -6,22 +6,25 @@
 !:
 ::::
   ::
-|_  own=manx
+|_  [hed=marl tal=marl]
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  tape  (react-to-tape own)
-  ++  react-snip-js  (crip tape)
-  ++  react-snip-json
+  ++  mime  [/application/json (tact tape)]
+  ++  tape  (pojo react-snips-json)
+  ++  elem  ;div:(h1:"*{hed}" div:"*{tal}")
+  ++  react-snip-js  (crip (react-to-tape elem))
+  ++  react-snips-json
     ::?>  ?=([[%div ~] [[%h1 ~] *] [[%div ~] *] ~]] own)  :: xx mystery fish-loop
     %^  jobe
-      head/(jape tape(own &2.own))
-      body/(jape tape(own &3.own))
+      head/react-head-json
+      body/react-snip-json
     ~
-::   ++  js  react-snip-js                                 ::  convert to %js
-  ++  mime  [/text/javascript (taco react-snip-js)]                ::  convert to %mime
+  ::
+  ++  react-head-json  (react-to-json ;h1:"*{hed}")
+  ++  react-snip-json  (react-to-json ;div:"*{tal}")
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  manx                                ::  clam from %noun
-          ++  snip  |=  a=manx  a
+          ++  snip  |=(a=[marl marl] a)
 --        --

@@ -7,8 +7,7 @@
 /* functions
 */
   static u3_noun
-  _fish_in(
-           u3_noun van,
+  _fish_in(u3_noun van,
            u3_noun sut,
            u3_atom axe,
            u3_noun vit)
@@ -67,10 +66,9 @@
         if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u3m_bail(c3__fail);
         } else {
-          return u3nt
-            (5,
-                    u3nc(1, u3k(p_sut)),
-                    u3nc(0, u3k(axe)));
+          return u3nt(5,
+                      u3nc(1, u3k(p_sut)),
+                      u3nc(0, u3k(axe)));
         }
       }
       case c3__face: {
@@ -122,10 +120,9 @@
     }
   }
   u3_noun
-  _cqfu_fish(
-                        u3_noun van,
-                        u3_noun sut,
-                        u3_atom axe)
+  _cqfu_fish(u3_noun van,
+             u3_noun sut,
+             u3_atom axe)
   {
     return _fish_in(van, sut, axe, u3_nul);
   }
@@ -134,8 +131,7 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu_fish(
-                       u3_noun cor)
+  u3wfu_fish(u3_noun cor)
   {
     u3_noun sut, axe, van;
 
@@ -151,8 +147,8 @@
 
   u3_noun
   u3qfu_fish(u3_noun van,
-                        u3_noun sut,
-                        u3_noun axe)
+             u3_noun sut,
+             u3_noun axe)
   {
     c3_m    fun_m = c3__fish;
     u3_noun pro   = u3z_find_2(fun_m, sut, axe);

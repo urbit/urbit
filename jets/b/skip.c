@@ -7,9 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qb_skip(
-                    u3_noun a,
-                    u3_noun b)
+  u3qb_skip(u3_noun a,
+            u3_noun b)
   {
     if ( 0 == a ) {
       return a;
@@ -22,16 +21,15 @@
 
       switch ( hoz ) {
         case c3y:  return vyr;
-        case c3n:   return u3nc(u3k(u3h(a)), vyr);
-        default:      u3z(hoz);
-                      u3z(vyr);
-                      return u3_none;
+        case c3n:  return u3nc(u3k(u3h(a)), vyr);
+        default:   u3z(hoz);
+                   u3z(vyr);
+                   return u3_none;
       }
     }
   }
   u3_noun
-  u3wb_skip(
-                   u3_noun cor)
+  u3wb_skip(u3_noun cor)
   {
     u3_noun a, b;
 

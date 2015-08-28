@@ -1,6 +1,6 @@
 <div class="short">
 
-`hax # $ %hax`
+`hax # %hax`
 ============
 
 Pretty printing

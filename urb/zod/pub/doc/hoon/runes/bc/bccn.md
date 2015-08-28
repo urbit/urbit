@@ -1,4 +1,4 @@
-[buccen `$%` %bccn](#bccn)
+buccen `$%` %bccn
 ==========================
 
 Tagged union

@@ -5,27 +5,23 @@
 
 
   static u3_noun
-  _slip(
-        u3_noun weq,
+  _slip(u3_noun weq,
         u3_noun naz)
   {
     u3_noun p_naz, q_naz;
 
     u3x_cell(naz, &p_naz, &q_naz);
     if ( 10 == weq ) {
-      return u3nc(u3x_good(
-                                     u3i_vint(u3k(p_naz))),
-                          1);
+      return u3nc(u3x_good(u3i_vint(u3k(p_naz))),
+                           1);
     } else {
       return u3nc(u3k(p_naz),
-                          u3x_good(
-                                     u3i_vint(u3k(q_naz))));
+                  u3x_good(u3i_vint(u3k(q_naz))));
     }
   }
 
   static u3_noun
-  _fail(
-        u3_noun tub)
+  _fail(u3_noun tub)
   {
     u3_noun p_tub, q_tub;
 
@@ -34,8 +30,7 @@
   }
 
   static u3_noun
-  _last(
-        u3_noun zyc,
+  _last(u3_noun zyc,
         u3_noun naz)
   {
     u3_noun p_zyc, q_zyc, p_naz, q_naz;
@@ -58,8 +53,7 @@
   }
 
   static u3_noun
-  _next(
-        u3_noun tub)
+  _next(u3_noun tub)
   {
     u3_noun p_tub, q_tub;
     u3_noun zac;
@@ -74,12 +68,11 @@
 
       zac = _slip(iq_tub, p_tub);
 
-      return u3nc
-        (zac,
-                u3nq(u3_nul,
-                             u3k(iq_tub),
-                             u3k(zac),
-                             u3k(tq_tub)));
+      return u3nc(zac,
+                  u3nq(u3_nul,
+                       u3k(iq_tub),
+                       u3k(zac),
+                       u3k(tq_tub)));
     }
   }
 
@@ -87,8 +80,8 @@
 */
   u3_noun
   _cqe_bend_fun(u3_noun raq,
-                         u3_noun vex,
-                         u3_noun sab)
+                u3_noun vex,
+                u3_noun sab)
   {
     u3_noun p_vex, q_vex;
 
@@ -118,19 +111,17 @@
 
         u3x_cell(uq_yit, &puq_yit, &quq_yit);
 
-        vux = u3x_good
-                    (u3n_slam_on
-                       (u3k(raq),
-                               u3nc(u3k(puq_vex),
-                                            u3k(puq_yit))));
+        vux = u3x_good(u3n_slam_on(u3k(raq),
+                                   u3nc(u3k(puq_vex),
+                                   u3k(puq_yit))));
         if ( u3_nul == vux ) {
           ret = u3nc(yur, u3k(q_vex));
         }
         else {
           ret = u3nq(yur,
-                             u3_nul,
-                             u3k(u3t(vux)),
-                             u3k(quq_yit));
+                     u3_nul,
+                     u3k(u3t(vux)),
+                     u3k(quq_yit));
           u3z(vux);
         }
       }
@@ -145,8 +136,8 @@
     u3_noun van, raq, vex, sab;
 
     if ( (c3n == u3r_mean(cor, u3x_sam_2, &vex,
-                                u3x_sam_3, &sab,
-                                u3x_con, &van, 0)) ||
+                               u3x_sam_3, &sab,
+                               u3x_con, &van, 0)) ||
          (u3_none == (raq = u3r_at(u3x_sam, van))) )
     {
       return u3m_bail(c3__fail);
@@ -158,10 +149,9 @@
 /* cold
 */
   u3_noun
-  _cqe_cold_fun(
-                         u3_noun cus,
-                         u3_noun sef,
-                         u3_noun tub)
+  _cqe_cold_fun(u3_noun cus,
+                u3_noun sef,
+                u3_noun tub)
   {
     u3_noun vex = u3x_good(u3n_slam_on(u3k(sef), u3k(tub)));
     u3_noun p_vex, q_vex;
@@ -178,9 +168,9 @@
 
       u3x_cell(uq_vex, 0, &quq_vex);
       ret = u3nq(u3k(p_vex),
-                         u3_nul,
-                         u3k(cus),
-                         u3k(quq_vex));
+                 u3_nul,
+                 u3k(cus),
+                 u3k(quq_vex));
 
       u3z(vex);
       return ret;
@@ -188,8 +178,7 @@
   }
 
   u3_noun
- u3we_cold_fun(
-                        u3_noun cor)
+ u3we_cold_fun(u3_noun cor)
   {
     u3_noun van, cus, sef, tub;
 
@@ -205,10 +194,9 @@
 /* cook
 */
   u3_noun
-  _cqe_cook_fun(
-                         u3_noun poq,
-                         u3_noun sef,
-                         u3_noun tub)
+  _cqe_cook_fun(u3_noun poq,
+                u3_noun sef,
+                u3_noun tub)
   {
     u3_noun vex = u3x_good(u3n_slam_on(u3k(sef), u3k(tub)));
     u3_noun p_vex, q_vex;
@@ -227,9 +215,9 @@
       u3x_cell(uq_vex, &puq_vex, &quq_vex);
       wag = u3x_good(u3n_slam_on(u3k(poq), u3k(puq_vex)));
       ret = u3nq(u3k(p_vex),
-                         u3_nul,
-                         wag,
-                         u3k(quq_vex));
+                 u3_nul,
+                 wag,
+                 u3k(quq_vex));
 
       u3z(vex);
       return ret;
@@ -237,8 +225,7 @@
   }
 
   u3_noun
- u3we_cook_fun(
-                        u3_noun cor)
+ u3we_cook_fun(u3_noun cor)
   {
     u3_noun van, poq, sef, tub;
 
@@ -254,10 +241,9 @@
 /* comp
 */
   u3_noun
-  _cqe_comp_fun(
-                         u3_noun raq,
-                         u3_noun vex,
-                         u3_noun sab)
+  _cqe_comp_fun(u3_noun raq,
+                u3_noun vex,
+                u3_noun sab)
   {
     u3_noun p_vex, q_vex;
 
@@ -286,14 +272,11 @@
 
         u3x_cell(uq_yit, &puq_yit, &quq_yit);
         ret = u3nq(yur,
-                           u3_nul,
-                           u3x_good
-                            (
-                             u3n_slam_on
-                               (u3k(raq),
-                                       u3nc(u3k(puq_vex),
-                                                    u3k(puq_yit)))),
-                           u3k(quq_yit));
+                   u3_nul,
+                   u3x_good(u3n_slam_on(u3k(raq),
+                                        u3nc(u3k(puq_vex),
+                                             u3k(puq_yit)))),
+                   u3k(quq_yit));
       }
       u3z(yit);
       return ret;
@@ -301,14 +284,13 @@
   }
 
   u3_noun
- u3we_comp_fun(
-                        u3_noun cor)
+ u3we_comp_fun(u3_noun cor)
   {
     u3_noun van, raq, vex, sab;
 
     if ( (c3n == u3r_mean(cor, u3x_sam_2, &vex,
-                                u3x_sam_3, &sab,
-                                u3x_con, &van, 0)) ||
+                               u3x_sam_3, &sab,
+                               u3x_con, &van, 0)) ||
          (u3_none == (raq = u3r_at(u3x_sam, van))) )
     {
       return u3m_bail(c3__fail);
@@ -320,21 +302,19 @@
 /* easy
 */
   u3_noun
-  _cqe_easy_fun(
-                         u3_noun huf,
-                         u3_noun tub)
+  _cqe_easy_fun(u3_noun huf,
+                u3_noun tub)
   {
     u3_noun p_tub, q_tub;
 
     u3x_cell(tub, &p_tub, &q_tub);
     return u3nq(u3k(p_tub),
-                        u3_nul,
-                        u3k(huf),
-                        u3k(tub));
+                u3_nul,
+                u3k(huf),
+                u3k(tub));
   }
   u3_noun
- u3we_easy_fun(
-                        u3_noun cor)
+u3we_easy_fun(u3_noun cor)
   {
     u3_noun van, huf, tub;
 
@@ -350,10 +330,9 @@
 /* glue
 */
   u3_noun
-  _cqe_glue_fun(
-                         u3_noun bus,
-                         u3_noun vex,
-                         u3_noun sab)
+  _cqe_glue_fun(u3_noun bus,
+                u3_noun vex,
+                u3_noun sab)
   {
     u3_noun p_vex, q_vex;
 
@@ -397,10 +376,10 @@
 
           u3x_cell(uq_wam, &puq_wam, &quq_wam);
           ret = u3nq(goy,
-                             u3_nul,
-                             u3nc(u3k(puq_vex),
-                                          u3k(puq_wam)),
-                             u3k(quq_wam));
+                     u3_nul,
+                     u3nc(u3k(puq_vex),
+                          u3k(puq_wam)),
+                     u3k(quq_wam));
         }
         u3z(wam);
       }
@@ -410,8 +389,7 @@
   }
 
   u3_noun
- u3we_glue_fun(
-                        u3_noun cor)
+ u3we_glue_fun(u3_noun cor)
   {
     u3_noun van, bus, vex, sab;
 
@@ -429,10 +407,9 @@
 /* here
 */
   u3_noun
-  _cqe_here_fun(
-                         u3_noun hez,
-                         u3_noun sef,
-                         u3_noun tub)
+  _cqe_here_fun(u3_noun hez,
+                u3_noun sef,
+                u3_noun tub)
   {
     u3_noun vex = u3x_good(u3n_slam_on(u3k(sef), u3k(tub)));
     u3_noun p_vex, q_vex;
@@ -459,9 +436,9 @@
 
       wag = u3x_good(u3n_slam_on(u3k(hez), gud));
       ret = u3nq(u3k(p_vex),
-                         u3_nul,
-                         wag,
-                         u3k(quq_vex));
+                 u3_nul,
+                 wag,
+                 u3k(quq_vex));
 
       u3z(vex);
       return ret;
@@ -469,8 +446,7 @@
   }
 
   u3_noun
- u3we_here_fun(
-                        u3_noun cor)
+ u3we_here_fun(u3_noun cor)
   {
     u3_noun van, hez, sef, tub;
 
@@ -487,9 +463,8 @@
 /* just
 */
   u3_noun
-  _cqe_just_fun(
-                         u3_noun daf,
-                         u3_noun tub)
+  _cqe_just_fun(u3_noun daf,
+                u3_noun tub)
   {
     u3_noun p_tub, q_tub;
 
@@ -508,8 +483,7 @@
     }
   }
   u3_noun
- u3we_just_fun(
-                        u3_noun cor)
+ u3we_just_fun(u3_noun cor)
   {
     u3_noun van, daf, tub;
 
@@ -525,9 +499,8 @@
 /* mask
 */
   u3_noun
-  _cqe_mask_fun(
-                         u3_noun bud,
-                         u3_noun tub)
+  _cqe_mask_fun(u3_noun bud,
+                u3_noun tub)
   {
     u3_noun p_tub, q_tub;
 
@@ -549,8 +522,7 @@
     }
   }
   u3_noun
- u3we_mask_fun(
-                        u3_noun cor)
+ u3we_mask_fun(u3_noun cor)
   {
     u3_noun van, bud, tub;
 
@@ -565,9 +537,8 @@
 /* pfix
 */
   u3_noun
-  _cqe_pfix(
-                    u3_noun vex,
-                    u3_noun sab)
+  _cqe_pfix(u3_noun vex,
+            u3_noun sab)
   {
     u3_noun p_vex, q_vex;
 
@@ -585,18 +556,15 @@
       yit = u3x_good(u3n_slam_on(u3k(sab), u3k(quq_vex)));
 
       u3x_cell(yit, &p_yit, &q_yit);
-      ret = u3nc
-        (
-         _last(p_vex, p_yit),
-         u3k(q_yit));
+      ret = u3nc(_last(p_vex, p_yit),
+                 u3k(q_yit));
 
       u3z(yit);
       return ret;
     }
   }
   u3_noun
-  u3we_pfix(
-                   u3_noun cor)
+  u3we_pfix(u3_noun cor)
   {
     u3_noun vex, sab;
 
@@ -610,9 +578,8 @@
 /* plug
 */
   u3_noun
-  _cqe_plug(
-                    u3_noun vex,
-                    u3_noun sab)
+  _cqe_plug(u3_noun vex,
+            u3_noun sab)
   {
     u3_noun p_vex, q_vex;
 
@@ -642,18 +609,17 @@
 
         u3x_cell(uq_yit, &puq_yit, &quq_yit);
         ret = u3nq(yur,
-                           u3_nul,
-                           u3nc(u3k(puq_vex),
-                                        u3k(puq_yit)),
-                           u3k(quq_yit));
+                   u3_nul,
+                   u3nc(u3k(puq_vex),
+                        u3k(puq_yit)),
+                   u3k(quq_yit));
       }
       u3z(yit);
       return ret;
     }
   }
   u3_noun
-  u3we_plug(
-                   u3_noun cor)
+  u3we_plug(u3_noun cor)
   {
     u3_noun vex, sab;
 
@@ -668,7 +634,7 @@
 */
   u3_noun
   u3qe_pose(u3_noun vex,
-                    u3_noun sab)
+            u3_noun sab)
   {
     u3_noun p_vex, q_vex;
 
@@ -681,18 +647,15 @@
       u3_noun ret;
 
       u3x_cell(roq, &p_roq, &q_roq);
-      ret = u3nc
-        (
-         _last(p_vex, p_roq),
-         u3k(q_roq));
+      ret = u3nc(_last(p_vex, p_roq),
+                 u3k(q_roq));
 
       u3z(roq);
       return ret;
     }
   }
   u3_noun
-  u3we_pose(
-                   u3_noun cor)
+  u3we_pose(u3_noun cor)
   {
     u3_noun vex, sab;
 
@@ -706,7 +669,8 @@
 /* sfix
 */
   u3_noun
-  _cqe_sfix(u3_noun vex, u3_noun sab)
+  _cqe_sfix(u3_noun vex,
+            u3_noun sab)
   {
     u3_noun p_vex, q_vex;
 
@@ -736,9 +700,9 @@
         u3x_cell(uq_yit, &puq_yit, &quq_yit);
 
         ret = u3nq(yur,
-                           u3_nul,
-                           u3k(puq_vex),
-                           u3k(quq_yit));
+                   u3_nul,
+                   u3k(puq_vex),
+                   u3k(quq_yit));
       }
       u3z(yit);
       return ret;
@@ -760,7 +724,7 @@
 */
   u3_noun
   _cqe_shim_fun(u3_noun zep,
-                         u3_noun tub)
+                u3_noun tub)
   {
     u3_noun p_tub, q_tub;
 
@@ -789,8 +753,7 @@
     }
   }
   u3_noun
- u3we_shim_fun(
-                        u3_noun cor)
+ u3we_shim_fun(u3_noun cor)
   {
     u3_noun van, zep, tub;
 
@@ -806,10 +769,9 @@
 /* stag
 */
   u3_noun
-  _cqe_stag_fun(
-                         u3_noun gob,
-                         u3_noun sef,
-                         u3_noun tub)
+  _cqe_stag_fun(u3_noun gob,
+                u3_noun sef,
+                u3_noun tub)
   {
     u3_noun vex = u3x_good(u3n_slam_on(u3k(sef), u3k(tub)));
     u3_noun p_vex, q_vex;
@@ -828,9 +790,9 @@
       u3x_cell(uq_vex, &puq_vex, &quq_vex);
       wag = u3nc(u3k(gob), u3k(puq_vex));
       ret = u3nq(u3k(p_vex),
-                         u3_nul,
-                         wag,
-                         u3k(quq_vex));
+                 u3_nul,
+                 wag,
+                 u3k(quq_vex));
 
       u3z(vex);
       return ret;
@@ -838,8 +800,7 @@
   }
 
   u3_noun
- u3we_stag_fun(
-                        u3_noun cor)
+ u3we_stag_fun(u3_noun cor)
   {
     u3_noun van, gob, sef, tub;
 
@@ -855,8 +816,7 @@
 /* stew
 */
   static u3_noun
-  _stew_wor(
-            u3_noun ort,
+  _stew_wor(u3_noun ort,
             u3_noun wan)
   {
     if ( !_(u3a_is_cat(ort)) ) {
@@ -881,9 +841,8 @@
   }
 
   u3_noun
-  _cqe_stew_fun(
-                         u3_noun hel,
-                         u3_noun tub)
+  _cqe_stew_fun(u3_noun hel,
+                u3_noun tub)
   {
     u3_noun p_tub, q_tub;
 
@@ -937,8 +896,7 @@
     }
   }
  u3_noun
- u3we_stew_fun(
-                        u3_noun cor)
+ u3we_stew_fun(u3_noun cor)
   {
     u3_noun con, hel, tub;
 
@@ -955,9 +913,9 @@
 */
   u3_noun
   _cqe_stir_fun(u3_noun rud,
-                         u3_noun raq,
-                         u3_noun fel,
-                         u3_noun tub)
+                u3_noun raq,
+                u3_noun fel,
+                u3_noun tub)
   {
     u3_noun vex = u3x_good(u3n_slam_on(u3k(fel), u3k(tub)));
     u3_noun p_vex, q_vex;
@@ -966,9 +924,9 @@
     u3x_cell(vex, &p_vex, &q_vex);
     if ( c3n == u3du(q_vex) ) {
       ret = u3nq(u3k(p_vex),
-                         u3_nul,
-                         u3k(rud),
-                         u3k(tub));
+                 u3_nul,
+                 u3k(rud),
+                 u3k(tub));
     }
     else {
       u3_noun uq_vex = u3t(q_vex);
@@ -985,14 +943,12 @@
       uq_wag = u3t(q_wag);
       u3x_cell(uq_wag, &puq_wag, &quq_wag);
 
-      ret = u3nq
-        (_last(p_vex, p_wag),
-                u3_nul,
-                u3x_good(u3n_slam_on
-                            (u3k(raq),
-                                    u3nc(u3k(puq_vex),
-                                                 u3k(puq_wag)))),
-                u3k(quq_wag));
+      ret = u3nq(_last(p_vex, p_wag),
+                 u3_nul,
+                 u3x_good(u3n_slam_on(u3k(raq),
+                                      u3nc(u3k(puq_vex),
+                                           u3k(puq_wag)))),
+                 u3k(quq_wag));
       u3z(wag);
     }
     u3z(vex);
@@ -1006,9 +962,9 @@
 
     if ( (c3n == u3r_mean(cor, u3x_sam, &tub, u3x_con, &van, 0)) ||
          (c3n == u3r_mean(van, u3x_sam_2, &rud,
-                                u3x_sam_6, &raq,
-                                u3x_sam_7, &fel,
-                                0)) )
+                               u3x_sam_6, &raq,
+                               u3x_sam_7, &fel,
+                               0)) )
     {
       return u3m_bail(c3__fail);
     } else {

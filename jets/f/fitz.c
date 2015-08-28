@@ -7,8 +7,7 @@
 /* functions
 */
   static u3_noun
-  _fitz_fiz(
-            u3_noun yaz,
+  _fitz_fiz(u3_noun yaz,
             u3_noun wix)
   {
     c3_w yaz_w = u3r_met(3, yaz);
@@ -30,9 +29,8 @@
   }
 
   u3_noun
-  u3qf_fitz(
-                    u3_noun yaz,
-                    u3_noun wix)
+  u3qf_fitz(u3_noun yaz,
+            u3_noun wix)
   {
     c3_w i_w, met_w = c3_min(u3r_met(3, yaz), u3r_met(3, wix));
 
@@ -54,8 +52,7 @@
   }
 
   u3_noun
-  u3wf_fitz(
-                   u3_noun cor)
+  u3wf_fitz(u3_noun cor)
   {
     u3_noun yaz, wix;
 

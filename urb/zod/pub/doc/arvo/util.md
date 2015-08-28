@@ -11,7 +11,7 @@ You can find them in `/main/app`.
 
 ------------------------------------------------------------------------
 
-### [`:?begin`](#begin)
+### `:?begin`
 
 `~zod:dojo> :?begin [~ship-name [~valid-ticket-for-ship]]`
 
@@ -21,7 +21,7 @@ start an Urbit ship. Takes an option `[~ship-name]` or
 
 ------------------------------------------------------------------------
 
-### [`+cat`](#cat)
+### `+cat`
 
 `~zod:dojo> +cat /path/to/file [...]`
 
@@ -36,7 +36,7 @@ prints multiple files to the terminal.
 
 ------------------------------------------------------------------------
 
-### [`|cp`](#cp)
+### `|cp`
 
 `~zod:dojo> |cp /path/to/source /path/to/destination`
 
@@ -49,18 +49,17 @@ Copy a file to a given location.
 
 ------------------------------------------------------------------------
 
-### [`grep`](#grep)
+### `grep`
 
 <mark>GONE</mark>
 
-<s>`~zod:dojo> :grep 'literal'`
-
+`~zod:dojo> :grep 'literal'`
 "grep" a file or standard input. Currently only supports a literal cord, 
-but will eventuall support regular expressions.</s>
+but will eventuall support regular expressions.
 
 ------------------------------------------------------------------------
 
-### [`|hi`](#hi)
+### `|hi`
 
 `~zod:dojo> |hi ~ship ["message"]`
 
@@ -96,24 +95,22 @@ and on ~doznec
 
 ------------------------------------------------------------------------
 
-### [`:into`](#into)
+### `:into`
 
 <mark>GONE</mark>
 
-<s>
 `~zod:dojo> :into /path/to/file 'contents'`
 
 Write text to a file. If the specified file does not exist, create a
 file by that name. If it does exist, replace its contents.
-</s>
+
 
 ------------------------------------------------------------------------
 
-### [`|label`](#label)
+### `|label`
 
 <mark>GONE? returns file not found</mark>
 
-<s>
 `~zod:dojo> |label %path %label`
 
 "label". Add a label to a change number.
@@ -125,11 +122,11 @@ file by that name. If it does exist, replace its contents.
 
 Note that adding a label is part of the delta stream and creates a new
 change number, `3`.
-</s>
+
 
 ------------------------------------------------------------------------
 
-### [`+ls`](#ls)
+### `+ls`
 
 `~zod:dojo> :+ls path/to/directory`
 
@@ -143,15 +140,15 @@ display the files at the current path).
 
 ------------------------------------------------------------------------
 
-### [`|mount`](#mount)
+### `|mount`
 
 `~zod:dojo> |mount /path/to/directory/version %mount-point`
 
 Your files are not synced to unix by default.
 To sync a subtree to unix, run `|mount /path/to/directory %mount-point`.
-This will sync it into <pier>/<mount-point>.
+This will sync it into `<pier>/<mount-point>.`
 If you want to sync your whole home desk into f0/home, for example,
-run `|mount % %home`  You can also [`|unmount`](#unmount).
+run `|mount % %home`  You can also [`|unmount`]().
 
     ~zod:dojo> |mount /~zod/base/0 %base
     > |mount /~zod/base %base
@@ -159,7 +156,7 @@ run `|mount % %home`  You can also [`|unmount`](#unmount).
 
 ------------------------------------------------------------------------
 
-### [`|mv`](#mv)
+### `|mv`
 
 `~zod:dojo> |mv /path/to/source /path/to/destination`
 
@@ -173,7 +170,7 @@ that omits the moved file.
 
 ------------------------------------------------------------------------
 
-### [`|reload`](#reload)
+### `|reload`
 
 `~zod:dojo> |reload %vane-name [...]`
 
@@ -191,11 +188,11 @@ Possible values for %vane-name see [Overview](overview "overview"):
 
 ------------------------------------------------------------------------
 
-### [`|reset`](#reset)
+### `|reset`
 
 `~zod:dojo> |reset`
 
-Reloads all vanes. See [`|reload`](#reload) for reloading only or a specific vane.
+Reloads all vanes. See [`|reload`]() for reloading only or a specific vane.
 
     ~zod:dojo> |reset
     [%vega-start /~zod/home/~2015.6.29..23.51.42..f335/arvo/hoon]
@@ -218,7 +215,7 @@ Reloads all vanes. See [`|reload`](#reload) for reloading only or a specific van
 
 ------------------------------------------------------------------------
 
-### [`|rm`](#rm)
+### `|rm`
 
 `~zod:dojo> |rm /path/to/source`
 
@@ -229,7 +226,7 @@ Remove a file.
 
 ------------------------------------------------------------------------
 
-### [`+solid`](#solid)
+### `+solid`
 
 `~zod:dojo> +solid`
 
@@ -237,7 +234,7 @@ compiles a kernel into a new full urbit.pill
 
 ------------------------------------------------------------------------
 
-### [`|sync`](#sync)
+### `|sync`
 
 `~zod:dojo> |sync %source-desk ~hidduc-posmeg %target-desk`
 
@@ -246,7 +243,7 @@ target desk on your ship.
 
 ------------------------------------------------------------------------
 
-### [`+ticket`](#ticket)
+### `+ticket`
 
 `~zod:dojo> +ticket ~ship-name`
 
@@ -256,11 +253,10 @@ a yacht and takes the option \`[\~yacht-name-destroyer-name]
 
 ------------------------------------------------------------------------
 
-### [`:thumb`](#thumb)
+### `:thumb`
 
 <mark>GONE</mark>
 
-<s>
 `~zod:dojo> :thumb ~ship-name`
 
 Show the ships information. Only works if you issued a [`:hi`]
@@ -271,16 +267,16 @@ This command is not avaible since the switch from batz to `%gall`!
 Use this for the time beeing: - will:
 `~zod/try=> ((hard (unit gcos)) .^(%a /=gcos=/~ship-name))` - raw will:
 `~zod/try=> ((hard will) .^(%a /=will=/~ship-name))`
-</s>
+
 
 ------------------------------------------------------------------------
 
-### [`|unmount`](#unmount)
+### `|unmount`
 
 `~zod:dojo> |unmount /path/to/directory`
 
 Your files are not synced to unix by default.
-To sync a subtree to unix, run [`|mount`](#mount).
+To sync a subtree to unix, run `|mount`.
 You can unmount with either `|unmount /path/to/directory`
 or `|unmount %mount-point`.
 
@@ -290,7 +286,7 @@ or `|unmount %mount-point`.
 
 ------------------------------------------------------------------------
 
-### [`|unsync`](#unsync)
+### `|unsync`
 
 `~zod:dojo> |unsync %source-desk ~hidduc-posmeg %target-desk`
 
@@ -299,7 +295,7 @@ the target desk on your ship.
 
 ------------------------------------------------------------------------
 
-### [`|verb`](#verb)
+### `|verb`
 
 `~zod:dojo> |verb`
 
@@ -339,7 +335,7 @@ You'll see events, internal cards, and effects.
 
 ------------------------------------------------------------------------
 
-### [`|ye`](#ye)
+### `|ye`
 
 `~zod:dojo> |ye ["message"]`
 

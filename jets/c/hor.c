@@ -8,7 +8,7 @@
 */
   u3_noun
   u3qc_hor(u3_noun a,
-                   u3_noun b)
+           u3_noun b)
   {
     if ( c3y == u3ud(a) ) {
       if ( c3y == u3ud(b) ) {

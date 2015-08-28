@@ -7,7 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qa_lte(u3_atom a, u3_atom b)
+  u3qa_lte(u3_atom a,
+           u3_atom b)
   {
     if ( _(u3a_is_cat(a)) && _(u3a_is_cat(b)) ) {
       return __(a <= b);
@@ -42,7 +43,8 @@
     }
   }
   u3_noun
-  u3ka_lte(u3_noun a, u3_noun b)
+  u3ka_lte(u3_noun a,
+           u3_noun b)
   {
     u3_noun c = u3qa_lte(a, b);
 

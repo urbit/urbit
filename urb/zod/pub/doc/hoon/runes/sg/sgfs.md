@@ -1,4 +1,4 @@
-[sigfas, `~/`, %sgfs](#sgfs)
+sigfas, `~/`, %sgfs
 ============================
 
 Book arm jet

@@ -1,4 +1,4 @@
-[zapcap, %zpcb](#zpcb)
+zapcap, %zpcb
 ======================
 
 Path / location trace

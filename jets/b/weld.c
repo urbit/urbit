@@ -8,7 +8,7 @@
 */
   u3_noun
   u3qb_weld(u3_noun a,
-                    u3_noun b)
+            u3_noun b)
   {
     if ( 0 == a ) {
       return u3k(b);
@@ -32,7 +32,8 @@
     }
   }
   u3_noun
-  u3kb_weld(u3_noun a, u3_noun b)
+  u3kb_weld(u3_noun a, 
+            u3_noun b)
   {
     u3_noun c = u3qb_weld(a, b);
 

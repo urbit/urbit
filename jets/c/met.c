@@ -7,9 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qc_met(
-                   u3_atom a,
-                   u3_atom b)
+  u3qc_met(u3_atom a,
+           u3_atom b)
   {
     if ( !_(u3a_is_cat(a)) || (a >= 32) ) {
       if ( 0 == b ) {
@@ -26,8 +25,7 @@
     }
   }
   u3_noun
-  u3wc_met(
-                  u3_noun cor)
+  u3wc_met(u3_noun cor)
   {
     u3_noun a, b;
 

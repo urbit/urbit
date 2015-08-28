@@ -1,4 +1,4 @@
-[ketlus, `^+`, %ktls](#ktls)
+ketlus, `^+`, %ktls
 ============================
 
 Cast to type
@@ -14,7 +14,7 @@ is already defined by something inside our context.
 See also
 --------
 
-[kethep, `^-`, %kthp](#kthp)
+kethep, `^-`, %kthp
 ============================
 
 Produces

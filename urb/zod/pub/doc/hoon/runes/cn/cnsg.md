@@ -1,4 +1,4 @@
-[censig, `%~`, %cnsg](#cnsg)
+censig, `%~`, %cnsg
 ============================
 
 Pull with sample

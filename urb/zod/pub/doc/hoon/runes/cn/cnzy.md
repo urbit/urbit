@@ -1,4 +1,4 @@
-[cenzey, %cnzy](#cnzy)
+cenzey, %cnzy
 ======================
 
 Pull limb `p`

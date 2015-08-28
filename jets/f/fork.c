@@ -7,9 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qf_fork(
-                    u3_noun hoz,
-                    u3_noun bur)
+  u3qf_fork(u3_noun hoz,
+            u3_noun bur)
   {
     if ( c3y == u3r_sing(hoz, bur) ) {
       return u3k(hoz);
@@ -24,8 +23,7 @@
       (c3__fork, u3k(hoz), u3k(bur));
   }
   u3_noun
-  u3wf_fork(
-                   u3_noun cor)
+  u3wf_fork(u3_noun cor)
   {
     u3_noun hoz, bur;
 

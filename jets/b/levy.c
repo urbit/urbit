@@ -7,9 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qb_levy(
-                    u3_noun a,
-                    u3_noun b)
+  u3qb_levy(u3_noun a,
+            u3_noun b)
   {
     if ( 0 == a ) {
       return c3y;
@@ -28,8 +27,7 @@
     }
   }
   u3_noun
-  u3wb_levy(
-                   u3_noun cor)
+  u3wb_levy(u3_noun cor)
   {
     u3_noun a, b;
 

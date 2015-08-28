@@ -1,4 +1,4 @@
-[semsem, `;;`, %smsm](#smsm)
+semsem, `;;`, %smsm
 ============================
 
 Fixpoint

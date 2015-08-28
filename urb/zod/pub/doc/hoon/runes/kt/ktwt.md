@@ -1,4 +1,4 @@
-[ketwut, `^?`, %ktwt](#ktwt)
+ketwut, `^?`, %ktwt
 ============================
 
 Convert `%gold` to `%lead`
@@ -8,7 +8,7 @@ Convert `%gold` to `%lead`
 See also
 --------
 
-[ketbar, `^|`, %ktbr](#ktbr)
+ketbar, `^|`, %ktbr
 ============================
 
 Produces

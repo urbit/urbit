@@ -1,7 +1,7 @@
 section 2eH, parsing (idioms)
 =============================
 
-<h3 id="++alf"><code>++alf</code></h3>
+### `++alf`
 
 Alphabetic characters
 
@@ -18,7 +18,7 @@ Parse alphabetic characters, both upper and lowercase.
 
 ------------------------------------------------------------------------
 
-<h3 id="++aln"><code>++aln</code></h3>
+### `++aln`
 
 Alphanumeric characters
 
@@ -35,7 +35,7 @@ Parse alphanumeric characters - both alphabetic characters and numbers.
 
 ------------------------------------------------------------------------
 
-<h3 id="++alp"><code>++alp</code></h3>
+### `++alp`
 
 Alphanumeric and `-`
 
@@ -52,7 +52,7 @@ Parse alphanumeric strings and hep, "-".
 
 ------------------------------------------------------------------------
 
-<h3 id="++bet"><code>++bet</code></h3>
+### `++bet`
 
 Axis syntax `-`, `+`
 
@@ -67,7 +67,7 @@ Parse the hep and lus axis syntax.
 
 ------------------------------------------------------------------------
 
-<h3 id="++bin"><code>++bin</code></h3>
+### `++bin`
 
 Binary to atom
 
@@ -87,7 +87,7 @@ representation.
 
 ------------------------------------------------------------------------
 
-<h3 id="++but"><code>++but</code></h3>
+### `++but`
 
 Binary digit
 
@@ -108,7 +108,7 @@ Parse a single binary digit.
 
 ------------------------------------------------------------------------
 
-<h3 id="++cit"><code>++cit</code></h3>
+### `++cit`
 
 Octal digit
 
@@ -129,7 +129,7 @@ Parse a single octal digit.
 
 ------------------------------------------------------------------------
 
-<h3 id="++dem"><code>++dem</code></h3>
+### `++dem`
 
 Decimal to atom
 
@@ -148,7 +148,7 @@ Parse a decimal number to an atom.
 
 ------------------------------------------------------------------------
 
-<h3 id="++dit"><code>++dit</code></h3>
+### `++dit`
 
 Decimal digit
 
@@ -165,7 +165,7 @@ Parse a single decimal digit.
 
 ------------------------------------------------------------------------
 
-<h3 id="++gul"><code>++gul</code></h3>
+### `++gul`
 
 Axis syntax `<` or `>`
 
@@ -180,7 +180,7 @@ Parse the axis gal and gar axis syntax.
 
 ------------------------------------------------------------------------
 
-<h3 id="++gon"><code>++gon</code></h3>
+### `++gon`
 
 Long numbers
 
@@ -196,7 +196,7 @@ break characters bas and fas.
 
 ------------------------------------------------------------------------
 
-<h3 id="++hex"><code>++hex</code></h3>
+### `++hex`
 
 Hex to atom
 
@@ -221,7 +221,7 @@ Parse any hexadecimal number to an atom.
 
 ------------------------------------------------------------------------
 
-<h3 id="++hig"><code>++hig</code></h3>
+### `++hig`
 
 Uppercase
 
@@ -240,7 +240,7 @@ Parse a single uppercase letter.
 
 ------------------------------------------------------------------------
 
-<h3 id="++hit"><code>++hit</code></h3>
+### `++hit`
 
 Hex digits
 
@@ -263,7 +263,7 @@ Parse a single hexadecimal digit.
 
 ------------------------------------------------------------------------
 
-<h3 id="++low"><code>++low</code></h3>
+### `++low`
 
 Lowercase
 
@@ -282,7 +282,7 @@ Parse a single lowercase letter.
 
 ------------------------------------------------------------------------
 
-<h3 id="++mes"><code>++mes</code></h3>
+### `++mes`
 
 Hexbyte
 
@@ -301,7 +301,7 @@ Parse a hexbyte.
 
 ------------------------------------------------------------------------
 
-<h3 id="++nix"><code>++nix</code></h3>
+### `++nix`
 
 Letters, `-`, and `_`
 
@@ -316,7 +316,7 @@ Letters, `-`, and `_`
 
 ------------------------------------------------------------------------
 
-<h3 id="++nud"><code>++nud</code></h3>
+### `++nud`
 
 Numeric
 
@@ -335,7 +335,7 @@ Parse a numeric character - A number.
 
 ------------------------------------------------------------------------
 
-<h3 id="++prn"><code>++prn</code></h3>
+### `++prn`
 
 Printable character
 
@@ -353,7 +353,7 @@ Parse any printable character
 
 ------------------------------------------------------------------------
 
-<h3 id="++qat"><code>++qat</code></h3>
+### `++qat`
 
 Chars in blockcord
 
@@ -376,7 +376,7 @@ Parse character in cord block.
 
 ------------------------------------------------------------------------
 
-<h3 id="++qit"><code>++qit</code></h3>
+### `++qit`
 
 Chars in cord
 
@@ -406,7 +406,7 @@ Parse an individual character to its cord atom representation.
 
 ------------------------------------------------------------------------
 
-<h3 id="++qut"><code>++qut</code></h3>
+### `++qut`
 
 Cord
 
@@ -439,7 +439,7 @@ triple-soq cord which must be in an indented block.
 
 ------------------------------------------------------------------------
 
-<h3 id="++soqs"><code>++soqs</code></h3>
+### `++soqs`
 
 Delimiting `'''`
 
@@ -455,7 +455,7 @@ Triple single quote
 
 ------------------------------------------------------------------------
 
-<h3 id="++sym"><code>++sym</code></h3>
+### `++sym`
 
 Term
 
@@ -476,7 +476,7 @@ A term: a letter(lowercase), followed by letters, numbers, or `-`.
 
 ------------------------------------------------------------------------
 
-<h3 id="++ven"><code>++ven</code></h3>
+### `++ven`
 
 `+>-` axis syntax
 
@@ -506,7 +506,7 @@ Axis syntax parser
 
 ------------------------------------------------------------------------
 
-<h3 id="++vit"><code>++vit</code></h3>
+### `++vit`
 
 Base64 digit
 

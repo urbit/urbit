@@ -1,160 +1,131 @@
-BodyComponent = require './BodyComponent.coffee'
+clas        = require 'classnames'
+
+BodyComponent = React.createFactory require './BodyComponent.coffee'
+query       = require './Async.coffee'
+reactify    = require './Reactify.coffee'
 
 TreeStore   = require '../stores/TreeStore.coffee'
 TreeActions = require '../actions/TreeActions.coffee'
 
 recl = React.createClass
-[div,a] = [React.DOM.div,React.DOM.a]
+{div,a} = React.DOM
 
-module.exports = recl
-  stateFromStore: -> 
-    crum:TreeStore.getCrumbs()
-    curr:TreeStore.getCurr()
-    pare:TreeStore.getPare()
-    sibs:TreeStore.getSiblings()
-    next:TreeStore.getNext()
-    prev:TreeStore.getPrev()
-    kids:TreeStore.getKids()
-    tree:TreeStore.getTree([])
-    cont:TreeStore.getCont()
-    url:window.location.pathname
+Links = React.createFactory query {
+    path:'t'
+    kids:
+      name:'t'
+      head:'r'
+      meta:'j'
+  }, (recl
+    # {curr:'t',prev:'t,next:'t',onClick:'f'}
+    displayName: "Links"
+    render: -> div {className:'links'}, @props.children, @_render()
+    _render: ->
+      sorted = true
+      keys = []
+      for k,v of @props.kids
+        if not v.meta?.sort? then sorted = false
+        keys[Number(v.meta?.sort)] = k
+      if sorted isnt true
+        keys = _(@props.kids).keys().sort()
+      style = {marginTop: -24 * (keys.indexOf @props.curr) + "px"}
+      div {id:"sibs",style}, keys.map (key) =>
+        href = window.tree.basepath @props.path+"/"+key
+        data = @props.kids[key]
+        head = data.meta.title if data.meta
+        head ?= @toText data.head
+        head ||= key
+        className = clas active: key is @props.curr
+        (div {className,key}, (a {href,onClick:@props.onClick}, head))
 
-  checkPath: (path) -> @state.cont[path]?
+    toText: (elem)-> reactify.walk elem,
+                                 ()->''
+                                 (s)->s
+                                 ({c})->(c ? []).join ''
+  ),  recl
+    displayName: "Links_loading"
+    render: -> div {className:'links'}, @props.children, @_render()
+    _render: -> div {id:"sibs"}, div {className:"active"}, a {}, @props.curr
 
-  toggleFocus: (state) ->
-    $(@getDOMNode()).toggleClass 'focus',state
+CLICK = 'a,h1,h2,h3,h4,h5,h6'
+module.exports = query {sein:'t',path:'t',name:'t',next:'t',prev:'t'},recl
+  displayName: "Anchor"
+  getInitialState: -> url: window.location.pathname
+  
+  onClick: -> @toggleFocus()
+  onMouseOver: -> @toggleFocus true
+  onMouseOut: -> @toggleFocus false
+  onTouchStart: -> @ts = Number Date.now()
+  onTouchEnd: -> dt = @ts - Number Date.now()
 
-  _click: -> @toggleFocus()
+  toggleFocus: (state) -> $(@getDOMNode()).toggleClass 'focus',state
 
-  _mouseOver: -> @toggleFocus true
+  componentWillUnmount: -> clearInterval @interval; $('body').off 'click', CLICK
+  componentDidUpdate: -> @setTitle()
+  componentDidMount: -> 
+    @setTitle()
+    @interval = setInterval @checkURL,100
 
-  _mouseOut: -> @toggleFocus false
+    $('body').on 'keyup', (e) =>
+      switch e.keyCode
+        when 37 then @goTo @props.prev # left
+        when 39 then @goTo @props.next # right
+        
+    _this = @
+    $('body').on 'click', CLICK, (e) ->
+      href = $(@).attr('href')
+      id   = $(@).attr('id')
+      if href?[0] is "/"
+        e.preventDefault()
+        e.stopPropagation()
+        _this.goTo window.tree.fragpath href
+      else if id
+        window.location.hash = id
 
-  _touchStart: ->
-    @ts = Number Date.now()
-
-  _touchEnd: ->
-    dt = @ts - Number Date.now()
+  setTitle: ->
+    title = $('#cont h1').first().text() || @props.name
+    document.title = "#{title} - #{@props.path}"
 
   setPath: (href,hist) ->
-    if hist isnt false then history.pushState {}, "", window.tree.basepath href
-    next = href.split("#")[0]
-    rend = false
-    if next isnt @state.curr
+    href_parts = href.split("#")
+    next = href_parts[0]
+    if next.substr(-1) is "/" then next = next.slice(0,-1)
+    href_parts[0] = next
+    if hist isnt false
+      history.pushState {}, "", window.tree.basepath href_parts.join ""
+    if next isnt @props.path
       React.unmountComponentAtNode $('#cont')[0]
-      rend = true
-    TreeActions.setCurr next
-    if rend is true
+      TreeActions.setCurr next
       React.render (BodyComponent {}, ""),$('#cont')[0]
 
   goTo: (path) ->
     @toggleFocus false
     $("html,body").animate {scrollTop:0}
-    frag = path.split("#")[0]
     @setPath path
-    if not @checkPath frag
-      TreeActions.getPath frag
-
+  
   checkURL: ->
     if @state.url isnt window.location.pathname
       @setPath (window.tree.fragpath window.location.pathname),false
+      @setState url: window.location.pathname
 
-  setTitle: ->
-    title = $('#cont h1').first().text()
-    if title.length is 0
-      title = @state.curr.split("/")[@state.curr.split("/").length-1]
-
-    document.title = "#{title} - #{@state.curr}"
-
-  checkUp: ->
-    up = @state.curr.split "/"
-    up.pop()
-    up = up.join "/"
-    if up.slice(-1) is "/" then up = up.slice 0,-1
-
-    if not @state.cont[up]
-      TreeActions.getPath up
-
-  componentDidUpdate: -> 
-    @setTitle()
-    @checkUp()
-
-  componentDidMount: -> 
-    TreeStore.addChangeListener @_onChangeStore
-
-    @setTitle()
-    @checkUp()
-
-    @interval = setInterval @checkURL,100
-
-    $('body').on 'keyup', (e) =>
-      # left
-      if e.keyCode is 37
-        @goTo @state.prev
-      #right 
-      if e.keyCode is 39
-        @goTo @state.next
-
-    $('body').on 'click', 'a', (e) =>
-      href = $(e.target).closest('a').attr('href')
-      if href[0] is "/"
-        e.preventDefault()
-        e.stopPropagation()
-        @goTo window.tree.fragpath href
-
-  componentWillUnmount: -> 
-    clearInterval @interval
-    $('body').off 'click', 'a'
-
-  getInitialState: -> @stateFromStore()
-
-  _onChangeStore: ->  @setState @stateFromStore()
-
+  renderArrow: (name, path) ->
+    href = window.tree.basepath path
+    (a {href,key:"arow-#{name}",className:"arow-#{name}"},"")
+  
   render: ->
-    parts = []
-    if @state.pare
-      href = window.tree.basepath @state.pare
-      parts.push (div {id:"up"},(a {key:"arow-up",href:href,className:"arow-up"},""))
-      if @state.prev or @state.next
-        _parts = []
-        if @state.prev 
-          href = window.tree.basepath @state.prev
-          _parts.push (a {key:"arow-prev",href:href,className:"arow-prev"},"")
-        if @state.next 
-          href = window.tree.basepath @state.next
-          _parts.push (a {key:"arow-next",href:href,className:"arow-next"},"")
-        parts.push (div {id:"sides"}, _parts)
-
-    curr = @state.curr
-
-    if _.keys(@state.sibs).length > 0
-      p = curr.split "/"
-      curr = p.pop()
-      up = p.join "/"
-      ci=0
-      k=0
-      sibs = _.map _.keys(@state.sibs).sort(), (i) => 
-        c = ""
-        if curr is i
-          c = "active"
-          ci = k
-        k++
-        href = window.tree.basepath up+"/"+i
-        (div {className:c}, (a {key:i+"-a",href:href,onClick:@_click}, i))
-      offset = 0
-      if ci > 0 then offset = 0
-      s = {marginTop:((ci*-24)-offset)+"px"}
-      parts.push (div {key:"sibs",id:"sibs",style:s}, sibs)
-
-    obj =
-      onMouseOver:@_mouseOver
-      onMouseOut:@_mouseOut
-      onClick:@_click
-      onTouchStart:@_touchStart
-      onTouchEnd:@_touchEnd
-
+    obj = {@onMouseOver,@onMouseOut,@onClick,@onTouchStart,@onTouchEnd}
     if _.keys(window).indexOf("ontouchstart") isnt -1
       delete obj.onMouseOver
       delete obj.onMouseOut
 
-    div obj, parts
+    div obj, Links {
+      @onClick
+      curr:@props.name
+      dataPath:@props.sein
+    }, if @props.sein then _.filter [
+         div {id:"up",key:"up"}, @renderArrow "up", @props.sein
+         if @props.prev or @props.next then _.filter [
+           div {id:"sides",key:"sides"},
+             if @props.prev then @renderArrow "prev", @props.prev
+             if @props.next then @renderArrow "next", @props.next
+       ] ]

@@ -3,7 +3,6 @@
   ::
 /?  314
 |_  mud=@t
-++  garb  [%down ~]
 ++  grow
   |%
   ++  mime  [/text/coffeescript (taco mud)]

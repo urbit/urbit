@@ -1,4 +1,4 @@
-[cenket, `%^`, %cnkt](#cnkt)
+cenket, `%^`, %cnkt
 ============================
 
 Slam, three arguments

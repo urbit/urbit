@@ -8,7 +8,7 @@
 */
   u3_noun
   u3qc_mix(u3_atom a,
-                   u3_atom b)
+           u3_atom b)
   {
     c3_w lna_w = u3r_met(5, a);
     c3_w lnb_w = u3r_met(5, b);

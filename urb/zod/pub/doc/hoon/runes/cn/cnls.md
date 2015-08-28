@@ -1,4 +1,4 @@
-[cenlus, `%+`, %cnls](#cnls)
+cenlus, `%+`, %cnls
 ============================
 
 Slam, two arguments

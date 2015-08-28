@@ -15,12 +15,12 @@ only on your computer.
 
 To start a fake `~zod`, the command is:
 
-    bin/urbit -F -I ~zod -c [pier directory]
+    bin/urbit -F -I zod -c [pier directory]
 
-(Your shell may require backslash escaping the `~`.) To resume one
-that was already created, just as on the live network, remove `-c` (but
-leave the rest of the options there). `-F` uses the fake network, and
-`-I` starts an "imperial" instance - that is, an 8-bit galaxy.
+To resume one that was already created, just as on the live network,
+remove `-c` (but leave the rest of the options there). `-F` uses the
+fake network, and `-I` starts an "imperial" instance - that is, an 8-bit
+galaxy.
 
 ## Kernel development
 

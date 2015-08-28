@@ -7,7 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qdb_get(u3_noun a, u3_noun b)
+  u3qdb_get(u3_noun a,
+            u3_noun b)
   {
     if ( u3_nul == a ) {
       return u3_nul;
@@ -46,7 +47,8 @@
     }
   }
   u3_weak
-  u3kdb_get(u3_noun a, u3_noun b)
+  u3kdb_get(u3_noun a,
+            u3_noun b)
   {
     u3_noun c = u3qdb_get(a, b);
 
@@ -62,7 +64,8 @@
     }
   }
   u3_noun
-  u3kdb_got(u3_noun a, u3_noun b)
+  u3kdb_got(u3_noun a,
+            u3_noun b)
   {
     u3_weak c = u3kdb_get(a, b);
 

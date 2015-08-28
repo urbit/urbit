@@ -30,7 +30,7 @@
           $%  [%deal p=sock q=cush]                     ::  full transmission
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
-          $?  $:  %a                                    ::  by %ames
+          $?  $:  %a                                    ::  by %aformedmes
           $%  [%woot p=ship q=coop]                     ::
           ==  ==                                        ::
               $:  %b                                    ::  by %behn
@@ -430,7 +430,7 @@
     urb.waspFrom = function(sel,attr){
       Array.prototype.map.call(document.querySelectorAll(sel), 
         function(ele){
-          if((new URL(ele[attr])).host != document.location.host) return;
+          if(!ele[attr] || (new URL(ele[attr])).host != document.location.host) return;
           var xhr = new XMLHttpRequest()
           xhr.open("HEAD", ele[attr])
           xhr.send()
@@ -731,7 +731,7 @@
           [%of ^]
         ?~  q.tee  ~|(e/ford/lost/tee !!)
         ?:  ?=(%| -.q.sih)
-          ((slog 0 p.q.sih) +>.^$)             ::  XX get-even %mean
+          ((slog p.q.sih) +>.^$)             ::  XX get-even %mean
         %+  get-rush:(ire-ix p.tee)  q.tee
         =*  cay  p.q.sih
         ?>  ?=(%json p.cay)                    ::  XX others
@@ -748,7 +748,7 @@
         $(tee q.tee, q.q.p.q.sih (add-json jon q.q.cay))
       ::
           [%ha *]
-        :: ~&  e/ford/hen
+        %-  emule  |.  ^+  ..apex
         ?.  ?=(%& -.q.sih)
           (fail 404 p.sih p.q.sih)
         =*  cay  p.q.sih
@@ -761,8 +761,8 @@
           ?+  p.cay  q.cay          :: inject dependency long-poll
             %urb  =<  (slam !>(.) q.cay)
                   |=  urb=manx
-                  ~|  %malformed-urb
-                  ?>  ?=([[%html ~] [[%head ~] *] [[%body ~] ^] ~] urb)
+                  ~|  [%malformed-urb urb]
+                  ?>  ?=([[%html ~] [[%head ~] *] [[%body ~] *] ~] urb)
                   (inject p.sih urb)
           ==
         ~|  q.q.cay

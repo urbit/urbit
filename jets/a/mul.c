@@ -8,7 +8,7 @@
 */
   u3_noun
   u3qa_mul(u3_atom a,
-                   u3_atom b)
+           u3_atom b)
   {
     if ( _(u3a_is_cat(a)) && _(u3a_is_cat(b)) ) {
       c3_d c = ((c3_d) a) * ((c3_d) b);
@@ -42,7 +42,8 @@
     }
   }
   u3_noun
-  u3ka_mul(u3_noun a, u3_noun b)
+  u3ka_mul(u3_noun a, 
+           u3_noun b)
   {
     u3_noun c = u3qa_mul(a, b);
 

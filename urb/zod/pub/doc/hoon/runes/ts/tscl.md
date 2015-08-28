@@ -1,4 +1,4 @@
-[tiscol, `=:`, %tscl](#tscl)
+tiscol, `=:`, %tscl
 ============================
 
 Batch change subject
@@ -10,7 +10,7 @@ useful when you need to make a batch of changes to your subject.
 See also
 --------
 
-[tisdot, `=.`, %tsdt](#tsdt)
+tisdot, `=.`, %tsdt
 ============================
 
 Produces

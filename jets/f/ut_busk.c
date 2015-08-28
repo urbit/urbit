@@ -7,11 +7,10 @@
 /* logic
 */
   u3_noun
-  _cqfu_busk(
-                        u3_noun van,
-                        u3_noun sut,
-                        u3_noun cog,
-                        u3_noun hyp)
+  _cqfu_busk(u3_noun van,
+             u3_noun sut,
+             u3_noun cog,
+             u3_noun hyp)
   {
     u3_noun sep = u3qfu_seep(van, sut, c3__both, hyp);
     u3_noun bid = u3nt(u3k(cog), u3k(hyp), sep);
@@ -30,9 +29,9 @@
     u3_noun sut, cog, hyp, van;
 
     if ( (c3n == u3r_mean(cor, u3x_sam_2, &cog,
-                                u3x_sam_3, &hyp,
-                                u3x_con, &van,
-                                0)) ||
+                               u3x_sam_3, &hyp,
+                               u3x_con, &van,
+                               0)) ||
          (c3n == u3ud(cog)) ||
          (u3_none == (sut = u3r_at(u3x_sam, van))) )
     {
@@ -44,9 +43,9 @@
 
   u3_noun
   u3qfu_busk(u3_noun van,
-                        u3_noun sut,
-                        u3_noun cog,
-                        u3_noun hyp)
+             u3_noun sut,
+             u3_noun cog,
+             u3_noun hyp)
   {
     return _cqfu_busk(van, sut, cog, hyp);
   }

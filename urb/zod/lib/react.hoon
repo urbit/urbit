@@ -18,9 +18,67 @@
     %pattern  %polygon  %polyline  %radial-gradient  %rect  %stop  %svg
     %text  %tspan
   ==
+++  react-attrs
+  ~+  ^-  (map term cord)
+  %-  mo  ^-  (list ,[term cord])
+  :-  [%class 'className']
+  =-  (rash - (more next (cook |=(a=tape [(cass a) (crip a)]) (star alf))))
+  '''
+  accept acceptCharset accessKey action allowFullScreen allowTransparency alt
+  async autoComplete autoFocus autoPlay cellPadding cellSpacing charSet checked
+  classID className colSpan cols content contentEditable contextMenu controls
+  coords crossOrigin data dateTime defer dir disabled download draggable encType
+  form formAction formEncType formMethod formNoValidate formTarget frameBorder
+  headers height hidden high href hrefLang htmlFor httpEquiv icon id label lang
+  list loop low manifest marginHeight marginWidth max maxLength media mediaGroup
+  method min multiple muted name noValidate open optimum pattern placeholder
+  poster preload radioGroup readOnly rel required role rowSpan rows sandbox scope
+  scoped scrolling seamless selected shape size sizes span spellCheck src srcDoc
+  srcSet start step style tabIndex target title type useMap value width wmode
+  '''
 ++  react-vale
   ~(has in react-elems)
-++  react-to-tape
+++  react-to-json
+  |=  src=manx  ^-  json
+  ?:  ?=(_:/(**) src)
+    (jape v.i.a.g.src)
+  =+  atr=(mo a.g.src)
+  ?:  (~(has by atr) [%urb %codemirror])
+    ?>  ?=([[%pre *] _:/(**) ~] src)
+    $(src ;codemirror(value "{v.i.a.g.i.c.src}");)
+  ?:  (~(has by atr) [%urb %exec])           ::  runnable code attribute tag
+    ?>  ?=([[%pre *] _:/(**) ~] src)                  ::  verify its only a text node
+    =*  code  v.i.a.g.i.c.src
+    %_    $
+        src
+      =+  =<  result=(mule .)
+          !.(|.((slap !>(.) (ream (crip code)))))     ::  compile and run safely
+      =+  claz=?:(-.result "rancode" "failedcode")
+      ;div(class "{claz}")
+        ;pre:"{code}"
+        ;+  ?:  ?=(& -.result)
+              ;code:"{~(ram re (sell p.result))}"
+            ;pre
+              ;div:"error"
+              ;*  %+  turn  p.result
+                  |=  a=tank
+                  ^-  manx
+                  ;div:"{~(ram re a)}"
+      ==    ==
+    ==
+  %-  jobe  :~
+    c/a/(turn c.src ..$)
+    gn/s/(mane-to-cord n.g.src)
+    =<  ga/(jobe (turn a.g.src .))
+    |=  [a=mane b=tape]  ^-  [cord json]
+    :_  (jape b)
+    ?^  a  (mane-to-cord a)
+    (fall (~(get by react-attrs) a) a)
+  ==
+::
+++  mane-to-cord  |=(a=mane `cord`?@(a a (rap 3 -.a ':' +.a ~)))
+::  generates React javascript  XX deprecated
+++  react-to-tape                                    
   |=  src=manx  ^-  tape
   ?:  (~(has by (mo a.g.src)) [%urb %codemirror])
     ?>  ?=([[%pre *] _:/(**) ~] src)
@@ -52,25 +110,22 @@
     $(src error)
   ;:  weld
     "React.createElement("
-    =*  tan  n.g.src
-    ?^  tan  !!                                       ::  namespaces unsupported
-    ?:  (react-vale tan)
-      "'{(trip tan)}'"
-    (trip tan)
-    ::
+      =*  tan  n.g.src
+      ?^  tan  !!                                       ::  namespaces unsupported
+      ?:  (react-vale tan)
+        "'{(trip tan)}'"
+      (trip tan)
     ", "
-    =-  (pojo (jobe (turn a.g.src -)))
-    |=  [a=mane b=tape]
-    =.  a  ?+(a a %class 'className')
-    ?^(a !! [a (jape b)])
+      =-  (pojo (jobe (turn a.g.src -)))
+      |=  [a=mane b=tape]
+      =.  a  ?+(a a %class 'className')
+      ?^(a !! [a (jape b)])
     ", "
-    ::
-    =<  ~(ram re %rose [", " "[" "]"] (turn c.src .))
-    |=  a=manx
-    ?:  ?=(_:/(**) a)
-      leaf/(pojo (jape v.i.a.g.a))
-    leaf/^$(src a)
-    ::
+      =<  ~(ram re %rose [", " "[" "]"] (turn c.src .))
+      |=  a=manx
+      ?:  ?=(_:/(**) a)
+        leaf/(pojo (jape v.i.a.g.a))
+      leaf/^$(src a)
     ")"
   ==
 --

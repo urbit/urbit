@@ -1,4 +1,4 @@
-[centar, `%*`, %cntr](#cntr)
+centar, `%*`, %cntr
 ============================
 
 Pull with changes
