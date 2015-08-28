@@ -7,9 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qb_skim(
-                    u3_noun a,
-                    u3_noun b)
+  u3qb_skim(u3_noun a,
+            u3_noun b)
   {
     if ( 0 == a ) {
       return a;
@@ -22,10 +21,10 @@
 
       switch ( hoz ) {
         case c3y:  return u3nc(u3k(u3h(a)), vyr);
-        case c3n:   return vyr;
-        default:      u3z(hoz);
-                      u3z(vyr);
-                      return u3m_bail(c3__exit);
+        case c3n:  return vyr;
+        default:   u3z(hoz);
+                   u3z(vyr);
+                   return u3m_bail(c3__exit);
       }
     }
   }

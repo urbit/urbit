@@ -8,7 +8,7 @@
 */
   u3_noun
   u3qb_roll(u3_noun a,
-                    u3_noun b)
+            u3_noun b)
   {
     if ( 0 == a ) {
       return u3k(u3r_at(u3x_sam_3, b));
