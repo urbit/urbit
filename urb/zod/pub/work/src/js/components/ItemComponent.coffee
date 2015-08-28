@@ -42,11 +42,11 @@ module.exports = recl
   _markDone: (e) -> 
     WorkActions.setItem @props.item,'done',(not (@props.item.done is true))
 
-  getStatus: ->
-    if @props.item.doer is window.urb.ship
-      return "owned"
-    if @props.item.doer is null
-      return "available"
+  getStatus: -> switch @props.item.doer
+    when window.urb.ship then "owned"
+    when undefined      then ""
+    when null then "available"
+    else  "taken: ~"+@props.item.doer
 
   getAction: -> switch @props.item.doer
     when null
