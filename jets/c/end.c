@@ -7,10 +7,9 @@
 /* functions
 */
   u3_noun
-  u3qc_end(
-                   u3_atom a,
-                   u3_atom b,
-                   u3_atom c)
+  u3qc_end(u3_atom a,
+           u3_atom b,
+           u3_atom c)
   {
     if ( !_(u3a_is_cat(a)) || (a >= 32) ) {
       return u3m_bail(c3__fail);
