@@ -732,6 +732,7 @@ module.exports = recl({
       list: WorkStore.getList(),
       noNew: WorkStore.noNew(),
       canSort: WorkStore.canSort(),
+      fulllist: WorkStore.getFullList(),
       listening: WorkStore.getListening(),
       sorts: WorkStore.getSorts(),
       filters: WorkStore.getFilters(),
@@ -807,14 +808,15 @@ module.exports = recl({
     }
   },
   title_keyDown: function(e, i) {
-    var audience, index, ins, item, last, next, prev, ref1, ref2, tags;
+    var audience, index, ins, item, last, next, prev, ref1, tags;
     switch (e.keyCode) {
       case 13:
         e.preventDefault();
         if (this.state.noNew) {
           return;
         }
-        ref1 = i.props, index = ref1.index, item = ref1.item;
+        item = i.props.item;
+        index = this.state.fulllist.indexOf(item.id);
         if (window.getSelection().getRangeAt(0).endOffset === 0) {
           ins = this.state.selected;
         } else {
@@ -844,7 +846,7 @@ module.exports = recl({
               });
             }
             return WorkActions.removeItem(i.props.item);
-          } else if (((ref2 = i.props, index = ref2.index, ref2), index > 0) && (prev = this.state.list[i.props.index - 1], prev.version < 0)) {
+          } else if (((ref1 = i.props, index = ref1.index, ref1), index > 0) && (prev = this.state.list[i.props.index - 1], prev.version < 0)) {
             return WorkActions.removeItem(prev);
           }
         }
@@ -1540,6 +1542,9 @@ WorkStore = assign({}, EventEmitter.prototype, {
   getUpdated: function() {
     return _updated;
   },
+  getFullList: function() {
+    return _list;
+  },
   getList: function(key) {
     var _k, _v, add, c, ghost, i, id, k, len, list, task, v;
     list = [];
@@ -1561,13 +1566,6 @@ WorkStore = assign({}, EventEmitter.prototype, {
             case 'tags':
             case 'audience':
               return _.intersection(c, _v).length !== 0;
-            case 'doer':
-              if (_v.toLowerCase() === 'none') {
-                _v = null;
-              } else {
-                _v = _v.replace(/\~/g, "");
-              }
-              return c === _v;
             case 'creator':
               return c === _v.replace(/\~/g, "");
             case 'done':

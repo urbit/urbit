@@ -16,6 +16,7 @@ module.exports = recl
     list:WorkStore.getList()
     noNew:WorkStore.noNew()
     canSort:WorkStore.canSort()
+    fulllist:WorkStore.getFullList()
     listening:WorkStore.getListening()
     sorts:WorkStore.getSorts()
     filters:WorkStore.getFilters()
@@ -65,12 +66,11 @@ module.exports = recl
     when 13
       e.preventDefault()
       return if @state.noNew
-      {index,item} = i.props
+      {item} = i.props
+      index = @state.fulllist.indexOf item.id
       if window.getSelection().getRangeAt(0).endOffset is 0
-        # console.log "new", index, "start"
         ins = @state.selected
       else
-        # console.log "new", index,"next"
         index++
         ins = @state.selected+1 # XX consolidate
         @setState {selected:ins,select:true}
