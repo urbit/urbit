@@ -7,7 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qc_dvr(u3_atom a, u3_atom b)
+  u3qc_dvr(u3_atom a,
+           u3_atom b)
   {
     if ( 0 == b) {
       return u3m_bail(c3__exit);
