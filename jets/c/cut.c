@@ -51,8 +51,7 @@
     }
   }
   u3_noun
-  u3wc_cut(
-                  u3_noun cor)
+  u3wc_cut(u3_noun cor)
   {
     u3_noun a, b, c, d;
 

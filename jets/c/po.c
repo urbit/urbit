@@ -86,8 +86,7 @@
     }
   }
   u3_noun
-  u3wcp_tod(
-                      u3_noun cor)
+  u3wcp_tod(u3_noun cor)
   {
     u3_noun x, a, buf;
 
