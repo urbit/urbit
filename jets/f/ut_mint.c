@@ -698,7 +698,7 @@ int FOO;
       case c3__pmcl: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
-        u3_noun ruf = u3nt(c3__clhp, i
+        u3_noun ruf = u3nt(c3__clhp,
                            u3nc(u3_nul, 1),
                            u3k(p_gen));
         u3_noun ret = _mint_grow(van, sut, gol, c3__zinc, ruf, q_gen);
