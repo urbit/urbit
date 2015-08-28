@@ -7,8 +7,7 @@
 /* functions
 */
   u3_noun
-  u3qb_need(
-                    u3_noun a)
+  u3qb_need(u3_noun a)
   {
     if ( 0 == a ) {
       return u3m_bail(c3__exit);
@@ -18,8 +17,7 @@
     }
   }
   u3_noun
-  u3wb_need(
-                   u3_noun cor)
+  u3wb_need(u3_noun cor)
   {
     u3_noun a;
 

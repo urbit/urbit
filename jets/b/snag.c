@@ -8,7 +8,7 @@
 */
   u3_noun
   u3qb_snag(u3_atom a,
-                    u3_noun b)
+            u3_noun b)
   {
     if ( !_(u3a_is_cat(a)) ) {
       return u3m_bail(c3__fail);

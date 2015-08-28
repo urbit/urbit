@@ -8,8 +8,8 @@
 */
   u3_noun
   u3qb_clap(u3_noun a,
-                    u3_noun b,
-                    u3_noun c)
+            u3_noun b,
+            u3_noun c)
   {
     if ( 0 == a ) {
       return u3k(b);
@@ -27,8 +27,8 @@
     u3_noun a, b, c;
 
     if ( c3n == u3r_mean(cor, u3x_sam_2, &a,
-                               u3x_sam_6, &b,
-                               u3x_sam_7, &c, 0) ) {
+                              u3x_sam_6, &b,
+                              u3x_sam_7, &c, 0) ) {
       return u3m_bail(c3__exit);
     } else {
       return u3qb_clap(a, b, c);

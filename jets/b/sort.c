@@ -7,17 +7,15 @@
 /* functions
 */
   u3_noun
-  u3qb_sort(
-                    u3_noun a,
-                    u3_noun b)
+  u3qb_sort(u3_noun a,
+            u3_noun b)
   {
     //  must think about
     //
     return u3m_bail(c3__fail);
   }
   u3_noun
-  u3wb_sort(
-                   u3_noun cor)
+  u3wb_sort(u3_noun cor)
   {
     u3_noun a, b;
 
