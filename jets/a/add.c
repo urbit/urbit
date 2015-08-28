@@ -8,7 +8,7 @@
 */
   u3_noun
   u3qa_add(u3_atom a,
-                   u3_atom b)
+           u3_atom b)
   {
     if ( _(u3a_is_cat(a)) && _(u3a_is_cat(b)) ) {
       c3_w c = a + b;
@@ -43,7 +43,8 @@
   }
 
   u3_noun
-  u3ka_add(u3_noun a, u3_noun b)
+  u3ka_add(u3_noun a,
+           u3_noun b)
   {
     u3_noun c = u3qa_add(a, b);
 
