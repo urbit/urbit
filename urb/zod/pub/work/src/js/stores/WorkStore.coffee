@@ -37,6 +37,7 @@ WorkStore = assign {},EventEmitter.prototype,{
 
   getUpdated: -> _updated
   
+  getFullList: -> _list
   getList: (key) -> 
     list = []
     for id in _list
@@ -50,12 +51,6 @@ WorkStore = assign {},EventEmitter.prototype,{
         add = switch _k
           when 'tags', 'audience'
             _.intersection(c,_v).length isnt 0
-          when 'doer'
-            if _v.toLowerCase() is 'none'
-              _v = null 
-            else
-              _v = _v.replace(/\~/g, "")
-            c is _v
           when 'creator'
             c is _v.replace(/\~/g, "")
           when 'done'
