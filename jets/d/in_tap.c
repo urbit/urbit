@@ -7,8 +7,7 @@
 /* functions
 */
   static u3_noun
-  _tap_in(
-          u3_noun a,
+  _tap_in(u3_noun a,
           u3_noun b)
   {
     if ( u3_nul == a ) {
@@ -20,24 +19,21 @@
         u3z(b);
         return u3m_bail(c3__exit);
       } else {
-        return _tap_in
-          (r_a,
-                  u3nc(u3k(n_a),
-                               _tap_in(l_a, b)));
+        return _tap_in(r_a,
+                       u3nc(u3k(n_a),
+                       _tap_in(l_a, b)));
       }
     }
   }
 
   u3_noun
-  u3qdi_tap(
-                       u3_noun a,
-                       u3_noun b)
+  u3qdi_tap(u3_noun a,
+            u3_noun b)
   {
     return _tap_in(a, u3k(b));
   }
   u3_noun
-  u3wdi_tap(
-                      u3_noun cor)
+  u3wdi_tap(u3_noun cor)
   {
     u3_noun a, b;
 
@@ -48,7 +44,8 @@
     }
   }
   u3_noun
-  u3kdi_tap(u3_noun a, u3_noun b)
+  u3kdi_tap(u3_noun a,
+            u3_noun b)
   {
     u3_weak c = u3qdi_tap(a, b);
 

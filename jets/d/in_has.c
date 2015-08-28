@@ -7,7 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qdi_has(u3_noun a, u3_noun b)
+  u3qdi_has(u3_noun a,
+            u3_noun b)
   {
     if ( u3_nul == a ) {
       return c3n;
@@ -43,7 +44,8 @@
     }
   }
   u3_noun
-  u3kdi_has(u3_noun a, u3_noun b)
+  u3kdi_has(u3_noun a,
+            u3_noun b)
   {
     u3_weak c = u3qdi_has(a, b);
 
