@@ -7,7 +7,9 @@
 #include <string.h>
 
   u3_noun
-  u3qe_repg(u3_noun lub, u3_noun rad, u3_noun rep)
+  u3qe_repg(u3_noun lub,
+            u3_noun rad,
+            u3_noun rep)
   {
     c3_y* lub_y = u3r_tape(lub);
     c3_y* rad_y = u3r_tape(rad);

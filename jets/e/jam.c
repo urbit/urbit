@@ -11,10 +11,10 @@
 
   static u3_noun
   _jam_in_pair(u3p(u3h_root) har_p,
-               u3_atom h_a,
-               u3_atom t_a,
-               u3_atom b,
-               u3_noun l)
+               u3_atom       h_a,
+               u3_atom       t_a,
+               u3_atom       b,
+               u3_noun       l)
   {
     u3_noun w = u3nc(u3nc(2, 1), u3k(l));
     u3_noun x = u3qa_add(2, b);
@@ -48,8 +48,8 @@
 
   static u3_noun
   _jam_in_flat(u3p(u3h_root) har_p,
-               u3_atom a,
-               u3_noun l)
+               u3_atom       a,
+               u3_noun       l)
   {
     u3_noun d = u3qe_mat(a);
     u3_noun x = u3qa_add(1, u3h(d));
@@ -63,8 +63,8 @@
 
   static u3_noun
   _jam_in_ptr(u3p(u3h_root) har_p,
-              u3_atom u_c,
-              u3_noun l)
+              u3_atom       u_c,
+              u3_noun       l)
   {
     u3_noun d = u3qe_mat(u_c);
     u3_atom x = u3qc_lsh(0, 2, u3t(d));
@@ -80,9 +80,9 @@
 
   static u3_noun
   _jam_in(u3p(u3h_root) har_p,
-          u3_noun a,
-          u3_atom b,
-          u3_noun l)
+          u3_noun       a,
+          u3_atom       b,
+          u3_noun       l)
   {
     u3_noun c = u3h_get(har_p, a);
     u3_noun x;

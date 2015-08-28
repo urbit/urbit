@@ -7,8 +7,7 @@
 /* functions
 */
   static u3_noun
-  _norm(
-        u3_noun a)
+  _norm(u3_noun a)
   {
     if ( c3n == u3du(a) ) {
       return u3_nul;
@@ -19,8 +18,7 @@
   }
 
   static u3_noun
-  _good(
-        u3_noun a)
+  _good(u3_noun a)
   {
     while ( 1 ) {
       if ( u3_nul == a ) {

@@ -7,9 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qe_rub(
-                   u3_atom a,
-                   u3_atom b)
+  u3qe_rub(u3_atom a,
+           u3_atom b)
   {
     u3_atom c, d, e;
     u3_atom w, x, y, z;
@@ -65,8 +64,7 @@
     }
   }
   u3_noun
-  u3we_rub(
-                  u3_noun cor)
+  u3we_rub(u3_noun cor)
   {
     u3_noun a, b;
 

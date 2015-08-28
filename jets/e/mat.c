@@ -7,8 +7,7 @@
 /* functions
 */
   u3_noun
-  u3qe_mat(
-                   u3_atom a)
+  u3qe_mat(u3_atom a)
   {
     if ( 0 == a ) {
       return u3nc(1, 1);
@@ -39,8 +38,7 @@
     }
   }
   u3_noun
-  u3we_mat(
-                  u3_noun cor)
+  u3we_mat(u3_noun cor)
   {
     u3_noun a;
 
