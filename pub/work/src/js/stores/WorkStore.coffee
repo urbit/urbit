@@ -37,6 +37,7 @@ WorkStore = assign {},EventEmitter.prototype,{
 
   getUpdated: -> _updated
   
+  getFullList: -> _list
   getList: (key) -> 
     list = []
     for id in _list
@@ -50,12 +51,6 @@ WorkStore = assign {},EventEmitter.prototype,{
         add = switch _k
           when 'tags', 'audience'
             _.intersection(c,_v).length isnt 0
-          when 'doer'
-            if _v.toLowerCase() is 'none'
-              _v = null 
-            else
-              _v = _v.replace(/\~/g, "")
-            c is _v
           when 'creator'
             c is _v.replace(/\~/g, "")
           when 'done'
@@ -77,8 +72,16 @@ WorkStore = assign {},EventEmitter.prototype,{
       list.push ghost
     list
 
-  newItem: ({index,item}) ->
+  newItem: ({before,after,item}) ->
+    if before
+      index = _list.indexOf before
+      if index is -1 then index = null
+    if after
+      index = 1 + _list.indexOf after
+      if index is 0 then index = null
+      
     index ?= _list.length
+
     if item.id is _ghost.id
       _ghost.id = uuid32()
     unless _tasks[item.id]?

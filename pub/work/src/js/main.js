@@ -8,8 +8,9 @@ Persistence = require('../persistence/Persistence.coffee');
 uuid32 = require('../util.coffee').uuid32;
 
 module.exports = {
-  newItem: function(index, _item) {
-    var item, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8;
+  newItem: function(arg, _item) {
+    var after, before, item, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8;
+    before = arg.before, after = arg.after;
     if (_item == null) {
       _item = {};
     }
@@ -36,7 +37,8 @@ module.exports = {
     }
     return Dispatcher.handleViewAction({
       type: 'newItem',
-      index: index,
+      before: before,
+      after: after,
       item: item
     });
   },
@@ -89,9 +91,13 @@ module.exports = {
     id = arg.id, version = arg.version;
     if (version >= 0) {
       Persistence.put({
-        audience: {
+        old: {
           id: id,
-          to: []
+          dif: {
+            set: {
+              audience: []
+            }
+          }
         }
       });
     }
@@ -107,7 +113,9 @@ module.exports = {
       old: {
         id: id,
         dif: {
-          audience: to
+          set: {
+            audience: to
+          }
         }
       }
     });
@@ -254,7 +262,7 @@ module.exports = recl({
           if (item.version >= 0) {
             return WorkActions.setItem(item, _key, val);
           } else {
-            return WorkActions.newItem(index, (
+            return WorkActions.newItem({}, (
               obj = {
                 id: item.id,
                 tags: item.tags,
@@ -510,11 +518,15 @@ module.exports = recl({
     return WorkActions.setItem(this.props.item, 'done', !(this.props.item.done === true));
   },
   getStatus: function() {
-    if (this.props.item.doer === window.urb.ship) {
-      return "owned";
-    }
-    if (this.props.item.doer === null) {
-      return "available";
+    switch (this.props.item.doer) {
+      case window.urb.ship:
+        return "owned";
+      case void 0:
+        return "";
+      case null:
+        return "available";
+      default:
+        return "taken: ~" + this.props.item.doer;
     }
   },
   getAction: function() {
@@ -728,6 +740,7 @@ module.exports = recl({
       list: WorkStore.getList(),
       noNew: WorkStore.noNew(),
       canSort: WorkStore.canSort(),
+      fulllist: WorkStore.getFullList(),
       listening: WorkStore.getListening(),
       sorts: WorkStore.getSorts(),
       filters: WorkStore.getFilters(),
@@ -803,18 +816,21 @@ module.exports = recl({
     }
   },
   title_keyDown: function(e, i) {
-    var audience, index, ins, item, last, next, prev, ref1, ref2, tags;
+    var after, audience, before, index, ins, item, last, next, prev, ref1, tags;
     switch (e.keyCode) {
       case 13:
         e.preventDefault();
         if (this.state.noNew) {
           return;
         }
-        ref1 = i.props, index = ref1.index, item = ref1.item;
+        item = i.props.item;
+        after = null;
+        before = null;
         if (window.getSelection().getRangeAt(0).endOffset === 0) {
           ins = this.state.selected;
+          before = item.id;
         } else {
-          index++;
+          after = item.id;
           ins = this.state.selected + 1;
           this.setState({
             selected: ins,
@@ -828,7 +844,10 @@ module.exports = recl({
             audience: audience
           };
         }
-        return WorkActions.newItem(index, item);
+        return WorkActions.newItem({
+          before: before,
+          after: after
+        }, item);
       case 8:
         if (window.getSelection().getRangeAt(0).endOffset === 0) {
           e.preventDefault();
@@ -840,7 +859,7 @@ module.exports = recl({
               });
             }
             return WorkActions.removeItem(i.props.item);
-          } else if (((ref2 = i.props, index = ref2.index, ref2), index > 0) && (prev = this.state.list[i.props.index - 1], prev.version < 0)) {
+          } else if (((ref1 = i.props, index = ref1.index, ref1), index > 0) && (prev = this.state.list[i.props.index - 1], prev.version < 0)) {
             return WorkActions.removeItem(prev);
           }
         }
@@ -1529,6 +1548,9 @@ WorkStore = assign({}, EventEmitter.prototype, {
   getUpdated: function() {
     return _updated;
   },
+  getFullList: function() {
+    return _list;
+  },
   getList: function(key) {
     var _k, _v, add, c, ghost, i, id, k, len, list, task, v;
     list = [];
@@ -1550,13 +1572,6 @@ WorkStore = assign({}, EventEmitter.prototype, {
             case 'tags':
             case 'audience':
               return _.intersection(c, _v).length !== 0;
-            case 'doer':
-              if (_v.toLowerCase() === 'none') {
-                _v = null;
-              } else {
-                _v = _v.replace(/\~/g, "");
-              }
-              return c === _v;
             case 'creator':
               return c === _v.replace(/\~/g, "");
             case 'done':
@@ -1601,8 +1616,20 @@ WorkStore = assign({}, EventEmitter.prototype, {
     return list;
   },
   newItem: function(arg) {
-    var index, item;
-    index = arg.index, item = arg.item;
+    var after, before, index, item;
+    before = arg.before, after = arg.after, item = arg.item;
+    if (before) {
+      index = _list.indexOf(before);
+      if (index === -1) {
+        index = null;
+      }
+    }
+    if (after) {
+      index = 1 + _list.indexOf(after);
+      if (index === 0) {
+        index = null;
+      }
+    }
     if (index == null) {
       index = _list.length;
     }

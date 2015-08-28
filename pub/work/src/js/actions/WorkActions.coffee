@@ -3,7 +3,7 @@ Persistence  = require '../persistence/Persistence.coffee'
 {uuid32}     = require '../util.coffee'
 
 module.exports =
-  newItem: (index,_item={}) ->
+  newItem: ({before,after},_item={}) ->
     item =
       date_created:   Date.now()
       date_modified:  Date.now()
@@ -22,7 +22,7 @@ module.exports =
     if item.date_due or item.title or item.description
       item.version++
       Persistence.put new:item
-    Dispatcher.handleViewAction {type:'newItem', index, item}
+    Dispatcher.handleViewAction {type:'newItem', before, after, item}
   
   setItem: ({id,version},key,val) ->
     version += 1
@@ -37,11 +37,11 @@ module.exports =
 
   removeItem: ({id,version}) ->
     if version >= 0
-      Persistence.put audience:{id,to:[]}
+      Persistence.put old:{id,dif:set:audience:[]}
     Dispatcher.handleViewAction {type:'archiveItem',id}
   
   setAudience: ({id},to) ->
-    Persistence.put old:{id,dif:audience:to}
+    Persistence.put old:{id,dif:set:audience:to}
     Dispatcher.handleViewAction {type:'setAudienece',id,to}
 
   addComment: ({id,version},val) ->
