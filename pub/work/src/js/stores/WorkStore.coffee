@@ -72,8 +72,16 @@ WorkStore = assign {},EventEmitter.prototype,{
       list.push ghost
     list
 
-  newItem: ({index,item}) ->
+  newItem: ({before,after,item}) ->
+    if before
+      index = _list.indexOf before
+      if index is -1 then index = null
+    if after
+      index = 1 + _list.indexOf after
+      if index is 0 then index = null
+      
     index ?= _list.length
+
     if item.id is _ghost.id
       _ghost.id = uuid32()
     unless _tasks[item.id]?

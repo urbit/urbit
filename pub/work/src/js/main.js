@@ -8,8 +8,9 @@ Persistence = require('../persistence/Persistence.coffee');
 uuid32 = require('../util.coffee').uuid32;
 
 module.exports = {
-  newItem: function(index, _item) {
-    var item, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8;
+  newItem: function(arg, _item) {
+    var after, before, item, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8;
+    before = arg.before, after = arg.after;
     if (_item == null) {
       _item = {};
     }
@@ -36,7 +37,8 @@ module.exports = {
     }
     return Dispatcher.handleViewAction({
       type: 'newItem',
-      index: index,
+      before: before,
+      after: after,
       item: item
     });
   },
@@ -261,7 +263,7 @@ module.exports = recl({
           if (item.version >= 0) {
             return WorkActions.setItem(item, _key, val);
           } else {
-            return WorkActions.newItem(index, (
+            return WorkActions.newItem({}, (
               obj = {
                 id: item.id,
                 tags: item.tags,
@@ -814,7 +816,7 @@ module.exports = recl({
     }
   },
   title_keyDown: function(e, i) {
-    var audience, index, ins, item, last, next, prev, ref1, tags;
+    var after, audience, before, index, ins, item, last, next, prev, ref1, tags;
     switch (e.keyCode) {
       case 13:
         e.preventDefault();
@@ -822,11 +824,13 @@ module.exports = recl({
           return;
         }
         item = i.props.item;
-        index = this.state.fulllist.indexOf(item.id);
+        after = null;
+        before = null;
         if (window.getSelection().getRangeAt(0).endOffset === 0) {
           ins = this.state.selected;
+          before = item.id;
         } else {
-          index++;
+          after = item.id;
           ins = this.state.selected + 1;
           this.setState({
             selected: ins,
@@ -840,7 +844,10 @@ module.exports = recl({
             audience: audience
           };
         }
-        return WorkActions.newItem(index, item);
+        return WorkActions.newItem({
+          before: before,
+          after: after
+        }, item);
       case 8:
         if (window.getSelection().getRangeAt(0).endOffset === 0) {
           e.preventDefault();
@@ -1616,8 +1623,20 @@ WorkStore = assign({}, EventEmitter.prototype, {
     return list;
   },
   newItem: function(arg) {
-    var index, item;
-    index = arg.index, item = arg.item;
+    var after, before, index, item;
+    before = arg.before, after = arg.after, item = arg.item;
+    if (before) {
+      index = _list.indexOf(before);
+      if (index === -1) {
+        index = null;
+      }
+    }
+    if (after) {
+      index = 1 + _list.indexOf(after);
+      if (index === 0) {
+        index = null;
+      }
+    }
     if (index == null) {
       index = _list.length;
     }

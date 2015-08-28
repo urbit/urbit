@@ -52,7 +52,7 @@ module.exports = recl
           {item,_key,index} = @props
           if item.version >= 0
             WorkActions.setItem item, _key, val
-          else WorkActions.newItem index,
+          else WorkActions.newItem {},
             id:        item.id
             tags:      item.tags
             audience:  item.audience
