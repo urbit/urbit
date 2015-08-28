@@ -7,17 +7,14 @@
 /* logic
 */
   u3_noun
-  _cqfu_bust(
-                        u3_noun van,
-                        u3_noun sut,
-                        u3_noun dib)
+  _cqfu_bust(u3_noun van,
+             u3_noun sut,
+             u3_noun dib)
   {
     u3_noun yam = u3qfu_burn(van, sut);
-    u3_noun yib = u3nc
-      (
-       u3nc(u3k(u3h(u3h(yam))),
-                    u3k(dib)),
-       u3k(u3t(yam)));
+    u3_noun yib = u3nc(u3nc(u3k(u3h(u3h(yam))),
+                            u3k(dib)),
+                       u3k(u3t(yam)));
     u3_noun woo = u3nc(c3__cnzy, u3_blip);
     u3_noun wox = u3qfu_mint(van, sut, c3__noun, woo);
     u3_noun ret = u3n_nock_on(yib, u3k(u3t(wox)));
@@ -50,8 +47,8 @@
 
   u3_noun
   u3qfu_bust(u3_noun van,
-                        u3_noun sut,
-                        u3_noun dib)
+             u3_noun sut,
+             u3_noun dib)
   {
 #if 1
     return _cqfu_bust(van, sut, dib);

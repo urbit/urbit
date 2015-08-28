@@ -7,9 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qf_core(
-                    u3_noun pac,
-                    u3_noun con)
+  u3qf_core(u3_noun pac,
+            u3_noun con)
   {
     if ( (c3__void == pac) ) {
       return c3__void;
@@ -18,8 +17,7 @@
     }
   }
   u3_noun
-  u3wf_core(
-                   u3_noun cor)
+  u3wf_core(u3_noun cor)
   {
     u3_noun pac, con;
 

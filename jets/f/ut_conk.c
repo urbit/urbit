@@ -7,7 +7,9 @@
 /* logic
 */
   u3_noun
-  _cqfu_conk(u3_noun van, u3_noun sut, u3_noun got)
+  _cqfu_conk(u3_noun van,
+             u3_noun sut,
+             u3_noun got)
   {
     if ( c3y == u3ud(got) ) {
       return u3qf_face(got, sut);
@@ -62,8 +64,8 @@
     u3_noun sut, got, van;
 
     if ( (c3n == u3r_mean(cor, u3x_sam, &got,
-                                u3x_con, &van,
-                                0)) ||
+                               u3x_con, &van,
+                               0)) ||
          (u3_none == (sut = u3r_at(u3x_sam, van))) )
     {
       return u3m_bail(c3__fail);
@@ -74,8 +76,8 @@
 
   u3_noun
   u3qfu_conk(u3_noun van,
-                        u3_noun sut,
-                        u3_noun got)
+             u3_noun sut,
+             u3_noun got)
   {
     return _cqfu_conk(van, sut, got);
   }

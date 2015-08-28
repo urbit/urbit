@@ -14,8 +14,7 @@
     _nest_dext(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
 
   static u3_noun
-  _nest_cram(
-             u3_noun van,
+  _nest_cram(u3_noun van,
              u3_noun sut,
              u3_noun tel,
              u3_noun ref,
@@ -35,10 +34,8 @@
       u3x_trel(dab, &n_dab, &l_dab, &r_dab);
       u3x_trel(hem, &n_hem, &l_hem, &r_hem);
 
-      if ( (c3n == _nest_cram
-                        (van, sut, tel, ref, l_dab, l_hem, gil)) ||
-           (c3n == _nest_cram
-                        (van, sut, tel, ref, r_dab, r_hem, gil)) ) {
+      if ( (c3n == _nest_cram(van, sut, tel, ref, l_dab, l_hem, gil)) ||
+           (c3n == _nest_cram(van, sut, tel, ref, r_dab, r_hem, gil)) ) {
         return c3n;
       }
       u3x_cell(n_dab, &pn_dab, &qn_dab);
@@ -121,11 +118,11 @@
         else {
           u3_noun zoc = u3qdi_put(gil, hud);
           u3_noun tus = u3nt(c3__core,
-                                     u3k(qq_sut),
-                                     u3k(q_sut));
+                             u3k(qq_sut),
+                             u3k(q_sut));
           u3_noun fer = u3nt(c3__core,
-                                     u3k(qq_ref),
-                                     u3k(q_ref));
+                             u3k(qq_ref),
+                             u3k(q_ref));
 
           ret = _nest_cram(van, tus, tel, fer, qrq_sut, qrq_ref, zoc);
           u3z(fer);
@@ -143,13 +140,11 @@
               case c3__gold: {
                 return
                   c3a(_nest_dext(van, qq_sut, tel, qq_ref, gil),
-                         _nest_dext(van, qq_ref, tel, qq_sut, gil));
+                      _nest_dext(van, qq_ref, tel, qq_sut, gil));
               }
               case c3__iron: {
-                u3_noun s_sam = u3qfu_peek
-                                        (van, qq_sut, c3__rite, 2);
-                u3_noun r_sam = u3qfu_peek
-                                        (van, qq_ref, c3__rite, 2);
+                u3_noun s_sam = u3qfu_peek(van, qq_sut, c3__rite, 2);
+                u3_noun r_sam = u3qfu_peek(van, qq_ref, c3__rite, 2);
                 u3_noun ret = _nest_dext(van, r_sam, tel, s_sam, gil);
 
                 u3z(r_sam);
@@ -160,10 +155,8 @@
                 return c3y;
               }
               case c3__zinc: {
-                u3_noun s_pal = u3qfu_peek
-                                        (van, qq_sut, c3__read, 2);
-                u3_noun r_pal = u3qfu_peek
-                                        (van, qq_ref, c3__read, 2);
+                u3_noun s_pal = u3qfu_peek(van, qq_sut, c3__read, 2);
+                u3_noun r_pal = u3qfu_peek(van, qq_ref, c3__read, 2);
                 u3_noun ret = _nest_dext(van, s_pal, tel, r_pal, gil);
 
                 u3z(r_pal);
@@ -179,8 +172,7 @@
   }
 
   static u3_noun
-  _nest_dext_in(
-                u3_noun van,
+  _nest_dext_in(u3_noun van,
                 u3_noun sut,
                 u3_noun tel,
                 u3_noun ref,
@@ -225,7 +217,7 @@
         } else {
           if ( c3y == u3r_pq(ref, c3__cell, &p_ref, &q_ref) ) {
             return c3a(_nest_dext(van, p_sut, tel, p_ref, gil),
-                          _nest_dext(van, q_sut, tel, q_ref, gil));
+                       _nest_dext(van, q_sut, tel, q_ref, gil));
           }
           else return _nest_sint(van, sut, tel, ref, gil);
         }
@@ -279,7 +271,7 @@
           }
 
           return c3o(_nest_dext(van, p_sut, c3n, ref, gil),
-                       _nest_dext(van, q_sut, c3n, ref, gil));
+                     _nest_dext(van, q_sut, c3n, ref, gil));
         }
       }
       case c3__hold: p_sut = u3t(sut);
@@ -306,8 +298,7 @@
   }
 
   static u3_noun
-  _nest_dext_to(
-                u3_noun van,
+  _nest_dext_to(u3_noun van,
                 u3_noun sut,
                 u3_noun tel,
                 u3_noun ref,
@@ -329,8 +320,7 @@
   }
 
   static u3_noun
-  _nest_dext(
-             u3_noun van,
+  _nest_dext(u3_noun van,
              u3_noun sut,
              u3_noun tel,
              u3_noun ref,
@@ -357,8 +347,7 @@
   }
 
   static u3_noun
-  _nest_sint(
-             u3_noun van,
+  _nest_sint(u3_noun van,
              u3_noun sut,
              u3_noun tel,
              u3_noun ref,
@@ -412,7 +401,7 @@
         case c3__fork: {
           if ( (c3y == u3r_mean(ref, 6, &p_ref, 7, &q_ref, 0)) ) {
             return c3a(_nest_dext(van, sut, c3n, p_ref, gil),
-                          _nest_dext(van, sut, c3n, q_ref, gil));
+                       _nest_dext(van, sut, c3n, q_ref, gil));
           }
           else return u3m_bail(c3__fail);
         }
@@ -420,7 +409,7 @@
           p_ref = u3t(ref);
           {
             u3_noun hud = u3nc(u3k(sut),
-                                       u3k(ref));
+                               u3k(ref));
 
             if ( (c3y == u3qdi_has(gil, hud)) ) {
               u3z(hud);
@@ -447,11 +436,10 @@
   }
 
   u3_noun
-  _cqfu_nest(
-                        u3_noun van,
-                        u3_noun sut,
-                        u3_noun tel,
-                        u3_noun ref)
+  _cqfu_nest(u3_noun van,
+             u3_noun sut,
+             u3_noun tel,
+             u3_noun ref)
   {
     return _nest_dext(van, sut, tel, ref, u3_nul);
   }
@@ -464,9 +452,9 @@
     u3_noun sut, tel, ref, van;
 
     if ( (c3n == u3r_mean(cor, u3x_sam_2, &tel,
-                                u3x_sam_3, &ref,
-                                u3x_con, &van,
-                                0)) ||
+                               u3x_sam_3, &ref,
+                               u3x_con, &van,
+                               0)) ||
          (c3n == u3ud(tel)) || (tel > 1) ||
          (u3_none == (sut = u3r_at(u3x_sam, van))) )
     {
@@ -478,9 +466,9 @@
 
   u3_noun
   u3qfu_nest(u3_noun van,
-                        u3_noun sut,
-                        u3_noun tel,
-                        u3_noun ref)
+             u3_noun sut,
+             u3_noun tel,
+             u3_noun ref)
   {
     return _cqfu_nest(van, sut, tel, ref);
   }

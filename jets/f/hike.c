@@ -9,20 +9,19 @@
   /* _lily_hike_belt_root(): convert (pac) to a list of root tools.
   */
   static u3_noun
-  _lily_hike_belt_root(
-                       u3_noun pac)
+  _lily_hike_belt_root(u3_noun pac)
   {
     if ( (u3_nul == pac) ) {
       return u3_nul;
     }
     else {
-      u3_atom axis     = u3h(u3h(pac));
-      u3_noun tool     = u3t(u3h(pac));
+      u3_atom axis      = u3h(u3h(pac));
+      u3_noun tool      = u3t(u3h(pac));
       u3_noun list_tool = _lily_hike_belt_root(u3t(pac));
 
       if ( c3y == u3r_sing(1, axis) ) {
         return u3nc(u3k(tool),
-                            list_tool);
+                    list_tool);
       }
       else return list_tool;
     }
@@ -31,8 +30,7 @@
   /* _lily_hike_belt_l(): factor (pac) left.
   */
   static u3_noun
-  _lily_hike_belt_l(
-                    u3_noun pac)
+  _lily_hike_belt_l(u3_noun pac)
   {
     if ( (u3_nul == pac) ) {
       return u3_nul;
@@ -40,7 +38,7 @@
     else {
       u3_atom axis       = u3h(u3h(pac));
       u3_noun tool       = u3t(u3h(pac));
-      u3_noun belt_l = _lily_hike_belt_l(u3t(pac));
+      u3_noun belt_l     = _lily_hike_belt_l(u3t(pac));
 
       {
         if ( (1 != axis) &&
@@ -48,11 +46,9 @@
         {
           u3_atom axis_tap = u3qc_mas(axis);
 
-          return u3nc(
-                       u3nc(
-                             u3k(axis_tap),
-                             u3k(tool)),
-                       belt_l);
+          return u3nc(u3nc(u3k(axis_tap),
+                           u3k(tool)),
+                      belt_l);
         }
         else return belt_l;
       }
@@ -62,8 +58,7 @@
   /* _lily_hike_belt_r(): factor (pac) right.
   */
   static u3_noun
-  _lily_hike_belt_r(
-                    u3_noun pac)
+  _lily_hike_belt_r(u3_noun pac)
   {
     if ( (u3_nul == pac) ) {
       return u3_nul;
@@ -71,7 +66,7 @@
     else {
       u3_atom axis       = u3h(u3h(pac));
       u3_noun tool       = u3t(u3h(pac));
-      u3_noun belt_r = _lily_hike_belt_r(u3t(pac));
+      u3_noun belt_r     = _lily_hike_belt_r(u3t(pac));
 
       {
         if ( (1 != axis) &&
@@ -79,10 +74,9 @@
         {
           u3_atom axis_tap = u3qc_mas(axis);
 
-          return u3nc(
-                       u3nc(u3k(axis_tap),
-                                    u3k(tool)),
-                       belt_r);
+          return u3nc(u3nc(u3k(axis_tap),
+                           u3k(tool)),
+                      belt_r);
         }
         else return belt_r;
       }
@@ -92,9 +86,8 @@
 /* functions
 */
   u3_noun
-  u3qf_hike(
-                    u3_noun axe,
-                    u3_noun pac)
+  u3qf_hike(u3_noun axe,
+            u3_noun pac)
   {
     if ( (u3_nul == pac) ) {
       return u3nc(0, u3k(axe));
@@ -129,8 +122,7 @@
     }
   }
   u3_noun
-  u3wf_hike(
-                   u3_noun cor)
+  u3wf_hike(u3_noun cor)
   {
     u3_noun axe, pac;
 

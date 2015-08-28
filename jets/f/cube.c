@@ -7,19 +7,18 @@
 /* functions
 */
   u3_noun
-  u3qf_cube(
-                    u3_noun dil,
-                    u3_noun goq)
+  u3qf_cube(u3_noun dil,
+            u3_noun goq)
   {
     if ( c3__void == goq ) {
       return c3__void;
     }
-    else return u3nt
-      (c3__cube, u3k(dil), u3k(goq));
+    else return u3nt(c3__cube, 
+                     u3k(dil),
+                     u3k(goq));
   }
   u3_noun
-  u3wf_cube(
-                   u3_noun cor)
+  u3wf_cube(u3_noun cor)
   {
     u3_noun dil, goq;
 

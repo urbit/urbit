@@ -10,8 +10,7 @@
   _cqfu_peek(u3_noun, u3_noun, u3_noun, u3_atom);
 
   static u3_noun
-  _peek_in(
-           u3_noun van,
+  _peek_in(u3_noun van,
            u3_noun sut,
            u3_noun way,
            u3_atom axe,
@@ -147,11 +146,10 @@
   }
 
   u3_noun
-  _cqfu_peek(
-                        u3_noun van,
-                        u3_noun sut,
-                        u3_noun way,
-                        u3_atom axe)
+  _cqfu_peek(u3_noun van,
+             u3_noun sut,
+             u3_noun way,
+             u3_atom axe)
   {
     if ( 1 == axe ) {
       return u3k(sut);
@@ -162,15 +160,14 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu_peek(
-                       u3_noun cor)
+  u3wfu_peek(u3_noun cor)
   {
     u3_noun sut, way, axe, van;
 
     if ( (c3n == u3r_mean(cor, u3x_sam_2, &way,
-                                u3x_sam_3, &axe,
-                                u3x_con, &van,
-                                0)) ||
+                               u3x_sam_3, &axe,
+                               u3x_con, &van,
+                               0)) ||
          (c3n == u3ud(axe)) ||
          (u3_none == (sut = u3r_at(u3x_sam, van))) )
     {
@@ -182,9 +179,9 @@
 
   u3_noun
   u3qfu_peek(u3_noun van,
-                        u3_noun sut,
-                        u3_noun way,
-                        u3_noun axe)
+             u3_noun sut,
+             u3_noun way,
+             u3_noun axe)
   {
     c3_m    fun_m = c3__peek;
     u3_noun pro   = u3z_find_3(fun_m, sut, way, axe);

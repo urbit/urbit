@@ -7,8 +7,7 @@
 /* logic
 */
   static u3_noun
-  _burn_in(
-           u3_noun van,
+  _burn_in(u3_noun van,
            u3_noun sut,
            u3_noun gil)
   {
@@ -79,17 +78,15 @@
   }
 
   u3_noun
-  _cqfu_burn(
-                        u3_noun van,
-                        u3_noun sut)
+  _cqfu_burn(u3_noun van,
+             u3_noun sut)
   {
     return _burn_in(van, sut, u3_nul);
   }
 
   u3_noun
-  u3qfu_burn(
-                        u3_noun van,
-                        u3_noun sut)
+  u3qfu_burn(u3_noun van,
+             u3_noun sut)
   {
     c3_m    fun_m = c3__burn;
     u3_noun pro   = u3z_find(fun_m, sut);
@@ -105,8 +102,7 @@
   }
 
   u3_noun
-  u3wfu_burn(
-                       u3_noun cor)
+  u3wfu_burn(u3_noun cor)
   {
     u3_noun sut;
 
