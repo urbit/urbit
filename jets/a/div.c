@@ -8,7 +8,7 @@
 */
   u3_noun
   u3qa_div(u3_atom a,
-                   u3_atom b)
+           u3_atom b)
   {
     if ( 0 == b ) {
       return u3m_bail(c3__exit);

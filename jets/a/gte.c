@@ -7,7 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qa_gte(u3_atom a, u3_atom b)
+  u3qa_gte(u3_atom a,
+           u3_atom b)
   {
     if ( _(u3a_is_cat(a)) && _(u3a_is_cat(b)) ) {
       return __(a >= b);
@@ -28,8 +29,7 @@
     }
   }
   u3_noun
-  u3wa_gte(
-                  u3_noun cor)
+  u3wa_gte(u3_noun cor)
   {
     u3_noun a, b;
 

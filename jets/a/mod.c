@@ -7,9 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qa_mod(
-                   u3_atom a,
-                   u3_atom b)
+  u3qa_mod(u3_atom a,
+           u3_atom b)
   {
 #if 0
     if ( b == 3 && a == 2684227708 ) {
