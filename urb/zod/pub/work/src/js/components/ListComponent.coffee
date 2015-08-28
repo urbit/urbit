@@ -67,17 +67,18 @@ module.exports = recl
       e.preventDefault()
       return if @state.noNew
       {item} = i.props
-      index = @state.fulllist.indexOf item.id
+      after = null; before = null
       if window.getSelection().getRangeAt(0).endOffset is 0
         ins = @state.selected
+        before = item.id
       else
-        index++
+        after = item.id
         ins = @state.selected+1 # XX consolidate
         @setState {selected:ins,select:true}
       unless item.ghost
         {tags,audience} = item
         item = {tags,audience}
-      WorkActions.newItem index, item
+      WorkActions.newItem {before,after}, item
     # backspace - remove if at 0
     when 8
       if  (window.getSelection().getRangeAt(0).endOffset is 0)
