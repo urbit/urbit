@@ -10,8 +10,7 @@
   _fuse_in(u3_noun, u3_noun, u3_noun, u3_noun);
 
   static u3_noun
-  _fuse_repo(
-             u3_noun van,
+  _fuse_repo(u3_noun van,
              u3_noun sut,
              u3_noun ref,
              u3_noun bix)
@@ -34,8 +33,7 @@
   }
 
   static u3_noun
-  _fuse_in(
-           u3_noun van,
+  _fuse_in(u3_noun van,
            u3_noun sut,
            u3_noun ref,
            u3_noun bix)
@@ -157,10 +155,9 @@
   }
 
   u3_noun
-  _cqfu_fuse(
-                        u3_noun van,
-                        u3_noun sut,
-                        u3_noun ref)
+  _cqfu_fuse(u3_noun van,
+             u3_noun sut,
+             u3_noun ref)
   {
     return _fuse_in(van, sut, ref, u3_nul);
   }
@@ -168,8 +165,7 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu_fuse(
-                       u3_noun cor)
+  u3wfu_fuse(u3_noun cor)
   {
     u3_noun sut, ref, van;
 
@@ -184,8 +180,8 @@
 
   u3_noun
   u3qfu_fuse(u3_noun van,
-                        u3_noun sut,
-                        u3_noun ref)
+             u3_noun sut,
+             u3_noun ref)
   {
     c3_m    fun_m = c3__fuse;
     u3_noun pro   = u3z_find_2(fun_m, sut, ref);

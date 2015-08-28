@@ -5,10 +5,9 @@
 
 
   static u3_noun
-  _cqfu_wrap(
-                        u3_noun van,
-                        u3_noun sut,
-                        u3_noun yoz)
+  _cqfu_wrap(u3_noun van,
+             u3_noun sut,
+             u3_noun yoz)
   {
     u3_noun p_sut, q_sut;
 
@@ -30,17 +29,16 @@
         }
         else {
           return u3nt(c3__core,
-                              u3k(p_sut),
-                              u3nt(u3k(yoz),
-                                           u3k(qq_sut),
-                                           u3k(rq_sut)));
+                      u3k(p_sut),
+                      u3nt(u3k(yoz),
+                           u3k(qq_sut),
+                           u3k(rq_sut)));
         }
       }
       case c3__fork: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
-        return u3qf_fork
-          (_cqfu_wrap(van, p_sut, yoz),
-                  _cqfu_wrap(van, q_sut, yoz));
+        return u3qf_fork(_cqfu_wrap(van, p_sut, yoz),
+                         _cqfu_wrap(van, q_sut, yoz));
       }
       case c3__hold:
       {
@@ -56,8 +54,7 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu_wrap(
-                       u3_noun cor)
+  u3wfu_wrap(u3_noun cor)
   {
     u3_noun sut, yoz, van;
 
@@ -72,8 +69,8 @@
 
   u3_noun
   u3qfu_wrap(u3_noun van,
-                        u3_noun sut,
-                        u3_noun yoz)
+             u3_noun sut,
+             u3_noun yoz)
   {
     return _cqfu_wrap(van, sut, yoz);
   }

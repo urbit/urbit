@@ -7,8 +7,7 @@
 /* internals
 */
   static u3_noun
-  _tock_in(
-           u3_noun van,
+  _tock_in(u3_noun van,
            u3_noun sut,
            u3_noun peh,
            u3_noun mur,
@@ -75,10 +74,10 @@
     u3_noun van, sut, peh, mur, men;
 
     if ( (c3n == u3r_mean(cor, u3x_sam_2, &peh,
-                                u3x_sam_6, &mur,
-                                u3x_sam_7, &men,
-                                u3x_con, &van,
-                                0)) ||
+                               u3x_sam_6, &mur,
+                               u3x_sam_7, &men,
+                               u3x_con, &van,
+                               0)) ||
          (u3_none == (sut = u3r_at(u3x_sam, van))) )
     {
       return u3m_bail(c3__fail);
@@ -89,10 +88,10 @@
 
   u3_noun
   u3qfu_tock(u3_noun van,
-                        u3_noun sut,
-                        u3_noun peh,
-                        u3_noun mur,
-                        u3_noun men)
+             u3_noun sut,
+             u3_noun peh,
+             u3_noun mur,
+             u3_noun men)
   {
     return _cqfu_tock(van, sut, peh, mur, men);
   }

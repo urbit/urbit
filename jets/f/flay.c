@@ -7,8 +7,7 @@
 /* functions
 */
   static u3_noun
-  _flay_roll(
-             u3_noun quz)
+  _flay_roll(u3_noun quz)
   {
     if ( c3n == u3du(quz) ) {
       return c3__void;
@@ -22,8 +21,7 @@
   }
 
   u3_noun
-  u3qf_flay(
-                    u3_noun pok)
+  u3qf_flay(u3_noun pok)
   {
     u3_noun p_pok = u3h(pok);
     u3_noun q_pok = u3t(pok);
@@ -41,8 +39,7 @@
   }
 
   u3_noun
-  u3wf_flay(
-                   u3_noun cor)
+  u3wf_flay(u3_noun cor)
   {
     u3_noun pok;
 

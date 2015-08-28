@@ -7,9 +7,8 @@
 /* functions
 */
   u3_noun
-  u3qf_flor(
-                    u3_noun bos,
-                    u3_noun nif)
+  u3qf_flor(u3_noun bos,
+            u3_noun nif)
   {
     if ( c3y == u3r_sing(1, u3h(bos)) ) {
       if ( (u3_nul == u3t(bos)) ) {
@@ -25,17 +24,15 @@
         else return u3k(bos);
       }
       else {
-        return u3nq
-          (6,
-                  u3k(bos),
-                  u3nc(1, c3y),
-                  u3k(nif));
+        return u3nq(6,
+                    u3k(bos),
+                    u3nc(1, c3y),
+                    u3k(nif));
       }
     }
   }
   u3_noun
-  u3wf_flor(
-                   u3_noun cor)
+  u3wf_flor(u3_noun cor)
   {
     u3_noun bos, nif;
 

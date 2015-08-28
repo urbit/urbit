@@ -10,8 +10,7 @@
   _cqfu_cull(u3_noun, u3_noun, u3_noun, u3_atom, u3_noun);
 
   static u3_noun
-  _cull_in(
-           u3_noun van,
+  _cull_in(u3_noun van,
            u3_noun sut,
            u3_noun pol,
            u3_atom axe,
@@ -51,8 +50,7 @@
       }
       case c3__bull: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
-        u3_noun hic = _cqfu_cull
-                                    (van, q_sut, pol, axe, ref);
+        u3_noun hic = _cqfu_cull(van, q_sut, pol, axe, ref);
 
         if ( c3y == u3r_sing(hic, q_sut) ) {
           ret = u3k(sut);
@@ -82,8 +80,7 @@
         if ( 3 != now ) {
           ret = u3k(sut);
         } else {
-          u3_noun hub = _cqfu_cull
-                                   (van, p_sut, pol, lat, ref);
+          u3_noun hub = _cqfu_cull(van, p_sut, pol, lat, ref);
 
           ret = u3qf_core(hub, q_sut);
 
@@ -93,8 +90,7 @@
       }
       case c3__face: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
-        u3_noun hic = _cqfu_cull
-                                    (van, q_sut, pol, axe, ref);
+        u3_noun hic = _cqfu_cull(van, q_sut, pol, axe, ref);
 
         if ( c3y == u3r_sing(hic, q_sut) ) {
           ret = u3k(sut);
@@ -111,10 +107,8 @@
           return c3__void;
         } else {
           u3_noun zoc = u3qdi_put(vil, sut);
-          u3_noun sin = _cull_in
-            (van, p_sut, pol, axe, ref, now, lat, zoc);
-          u3_noun dex = _cull_in
-            (van, q_sut, pol, axe, ref, now, lat, zoc);
+          u3_noun sin = _cull_in(van, p_sut, pol, axe, ref, now, lat, zoc);
+          u3_noun dex = _cull_in(van, q_sut, pol, axe, ref, now, lat, zoc);
 
           ret = u3qf_fork(sin, dex);
           u3z(sin);
@@ -148,12 +142,11 @@
   }
 
   u3_noun
-  _cqfu_cull(
-                        u3_noun van,
-                        u3_noun sut,
-                        u3_noun pol,
-                        u3_atom axe,
-                        u3_noun ref)
+  _cqfu_cull(u3_noun van,
+             u3_noun sut,
+             u3_noun pol,
+             u3_atom axe,
+             u3_noun ref)
   {
     if ( 1 == axe ) {
       if ( c3y == pol ) {
@@ -177,9 +170,9 @@
     u3_noun sut, axe, pol, ref, van;
 
     if ( (c3n == u3r_mean(cor, u3x_sam_2, &pol,
-                                u3x_sam_6, &axe,
-                                u3x_sam_7, &ref,
-                                u3x_con, &van, 0)) ||
+                               u3x_sam_6, &axe,
+                               u3x_sam_7, &ref,
+                               u3x_con, &van, 0)) ||
          (c3n == u3ud(axe)) ||
          (u3_none == (sut = u3r_at(u3x_sam, van))) )
     {
@@ -191,10 +184,10 @@
 
   u3_noun
   u3qfu_cull(u3_noun van,
-                        u3_noun sut,
-                        u3_noun pol,
-                        u3_noun axe,
-                        u3_noun ref)
+             u3_noun sut,
+             u3_noun pol,
+             u3_noun axe,
+             u3_noun ref)
   {
     c3_m    fun_m = c3__cull;
     u3_noun pro   = u3z_find_4(fun_m, sut, pol, axe, ref);

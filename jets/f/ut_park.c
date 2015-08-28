@@ -7,11 +7,10 @@
 /* logic
 */
   u3_noun
-  _cqfu_park(
-                        u3_noun van,
-                        u3_noun sut,
-                        u3_noun way,
-                        u3_atom axe)
+  _cqfu_park(u3_noun van,
+             u3_noun sut,
+             u3_noun way,
+             u3_atom axe)
   {
     if ( c3n == u3du(sut) || c3__core != u3h(sut) ) {
       return u3m_bail(c3__fail);
@@ -40,7 +39,7 @@
           case c3__iron: return c3n;
           case c3__zinc: return
                           c3a(!(u3r_sing(1, axe)),
-                                 u3r_sing(2, u3qc_cap(axe)));
+                                u3r_sing(2, u3qc_cap(axe)));
         }
       }
       else if ( c3__rite == way ) {
@@ -51,7 +50,7 @@
           case c3__lead: return c3n;
           case c3__iron: return
                           c3a(!(u3r_sing(1, axe)),
-                                 u3r_sing(2, u3qc_cap(axe)));
+                                u3r_sing(2, u3qc_cap(axe)));
           case c3__zinc: return c3n;
         }
       }
@@ -63,15 +62,14 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu_park(
-                       u3_noun cor)
+  u3wfu_park(u3_noun cor)
   {
     u3_noun sut, way, axe, van;
 
     if ( (c3n == u3r_mean(cor, u3x_sam_2, &way,
-                                u3x_sam_3, &axe,
-                                u3x_con, &van,
-                                0)) ||
+                               u3x_sam_3, &axe,
+                               u3x_con, &van,
+                               0)) ||
          (c3n == u3ud(axe)) ||
          (u3_none == (sut = u3r_at(u3x_sam, van))) )
     {
@@ -83,9 +81,9 @@
 
   u3_noun
   u3qfu_park(u3_noun van,
-                        u3_noun sut,
-                        u3_noun way,
-                        u3_noun axe)
+             u3_noun sut,
+             u3_noun way,
+             u3_noun axe)
   {
     return _cqfu_park(van, sut, way, axe);
   }
