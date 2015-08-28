@@ -5,7 +5,7 @@
 
 /* internal functions
 */
-  u3_noun _b_dif_join(u3_noun d
+  u3_noun _b_dif_join(u3_noun d,
                       u3_noun e)
   {
     if ( u3_nul == d ) {
