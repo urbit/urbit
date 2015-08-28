@@ -521,11 +521,15 @@ module.exports = recl({
     return WorkActions.setItem(this.props.item, 'done', !(this.props.item.done === true));
   },
   getStatus: function() {
-    if (this.props.item.doer === window.urb.ship) {
-      return "owned";
-    }
-    if (this.props.item.doer === null) {
-      return "available";
+    switch (this.props.item.doer) {
+      case window.urb.ship:
+        return "owned";
+      case void 0:
+        return "";
+      case null:
+        return "available";
+      default:
+        return "taken: ~" + this.props.item.doer;
     }
   },
   getAction: function() {
