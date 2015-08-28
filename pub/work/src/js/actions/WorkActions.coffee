@@ -37,11 +37,11 @@ module.exports =
 
   removeItem: ({id,version}) ->
     if version >= 0
-      Persistence.put audience:{id,to:[]}
+      Persistence.put old:{id,dif:set:audience:[]}
     Dispatcher.handleViewAction {type:'archiveItem',id}
   
   setAudience: ({id},to) ->
-    Persistence.put old:{id,dif:audience:to}
+    Persistence.put old:{id,dif:set:audience:to}
     Dispatcher.handleViewAction {type:'setAudienece',id,to}
 
   addComment: ({id,version},val) ->

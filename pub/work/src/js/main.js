@@ -89,9 +89,13 @@ module.exports = {
     id = arg.id, version = arg.version;
     if (version >= 0) {
       Persistence.put({
-        audience: {
+        old: {
           id: id,
-          to: []
+          dif: {
+            set: {
+              audience: []
+            }
+          }
         }
       });
     }
@@ -107,7 +111,9 @@ module.exports = {
       old: {
         id: id,
         dif: {
-          audience: to
+          set: {
+            audience: to
+          }
         }
       }
     });
