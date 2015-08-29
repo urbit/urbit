@@ -127,10 +127,12 @@ commit.
 
 The requirement here is that every commit that changes the kernel must
 come with an `urbit.pill` built from the same code in `urb/zod/arvo/`
-for that commit. This is so that checking out an arbitrary revision and
-starting up a fakezod actually works as expected. However you do this is
-fine, but I like to do it as part of my committing process - just before
-`git commit`, I fire up a new fakezod. This will use the previous
+for that commit. (Only changing the actual Hoon code counts, so a change
+to a jet with no corresponding Hoon change does not require a new pill.)
+This is so that checking out an arbitrary revision and starting up a
+fakezod actually works as expected. However you do this is fine, but I
+like to do it as part of my committing process - just before `git
+commit`, I fire up a new fakezod. This will use the previous
 `urbit.pill`, but the kernel code in `%clay` will be copied from
 `urb/zod/arvo/`, so `+solid` will compile it. Then I copy `urbit.pill`
 into `urb/` and make my commit.
