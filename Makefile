@@ -19,7 +19,7 @@ else ifeq ($(UNAME),FreeBSD)
   OS=bsd
 else ifeq ($(UNAME),OpenBSD)
   OS=bsd
-else 
+else
   $(error unknown unix)
 endif
 
@@ -36,10 +36,17 @@ BIN=bin
 LIB=$(shell pwd)/urb
 
 RM=rm -f
+ifneq ($(UNAME),FreeBSD)
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
 CLD=g++ -O3 -L/usr/local/lib -L/opt/local/lib
+else
+CC=cc
+CXX=c++
+CXXFLAGS=$(CFLAGS)
+CLD=c++ -O3 -L/usr/local/lib -L/opt/local/lib
+endif
 
 ifeq ($(OS),osx)
   COSFLAGS=-fno-diagnostics-fixit-info
@@ -60,11 +67,12 @@ else
 LIBS=-lssl -lcrypto -lgmp -lncurses -lsigsegv $(OSLIBS)
 endif
 
-INCLUDE=i
+INCLUDE=include
 MDEFINES=-DU3_OS_$(OS) -DU3_OS_ENDIAN_$(ENDIAN) -D U3_LIB=\"$(LIB)\"
 
 # NOTFORCHECKIN - restore -O3
 # 	-DGHETTO
+#   -DHUSH
 CFLAGS= $(COSFLAGS) -O3 -msse3 -ffast-math \
 	-funsigned-char \
 	-I/usr/local/include \
@@ -79,6 +87,7 @@ CFLAGS= $(COSFLAGS) -O3 -msse3 -ffast-math \
 	-Ioutside/commonmark/src \
 	-Ioutside/commonmark/build/src \
 	-Ioutside/scrypt \
+        -Ioutside/softfloat-3/source/include \
 	$(DEFINES) \
 	$(MDEFINES)
 
@@ -106,165 +115,176 @@ else
 endif
 
 N_OFILES=\
-       n/a.o \
-       n/e.o \
-       n/h.o \
-       n/i.o \
-       n/j.o \
-       n/m.o \
-       n/n.o \
-       n/r.o \
-       n/t.o \
-       n/x.o \
-       n/v.o \
-       n/z.o
+       noun/allocate.o \
+       noun/events.o \
+       noun/hashtable.o \
+       noun/imprison.o \
+       noun/jets.o \
+       noun/manage.o \
+       noun/nock.o \
+       noun/retrieve.o \
+       noun/trace.o \
+       noun/xtract.o \
+       noun/vortex.o \
+       noun/zave.o
 
 J_A_OFILES=\
-       j/a/add.o \
-       j/a/dec.o \
-       j/a/div.o \
-       j/a/gte.o \
-       j/a/gth.o \
-       j/a/lte.o \
-       j/a/lth.o \
-       j/a/mod.o \
-       j/a/mul.o \
-       j/a/sub.o
+       jets/a/add.o \
+       jets/a/dec.o \
+       jets/a/div.o \
+       jets/a/gte.o \
+       jets/a/gth.o \
+       jets/a/lte.o \
+       jets/a/lth.o \
+       jets/a/mod.o \
+       jets/a/mul.o \
+       jets/a/sub.o
 
 J_B_OFILES=\
-       j/b/bind.o \
-       j/b/clap.o \
-       j/b/drop.o \
-       j/b/flop.o \
-       j/b/lent.o \
-       j/b/levy.o \
-       j/b/lien.o \
-       j/b/need.o \
-       j/b/reel.o \
-       j/b/roll.o \
-       j/b/skim.o \
-       j/b/skip.o \
-       j/b/scag.o \
-       j/b/slag.o \
-       j/b/snag.o \
-       j/b/sort.o \
-       j/b/turn.o \
-       j/b/weld.o
+       jets/b/bind.o \
+       jets/b/clap.o \
+       jets/b/drop.o \
+       jets/b/flop.o \
+       jets/b/lent.o \
+       jets/b/levy.o \
+       jets/b/lien.o \
+       jets/b/need.o \
+       jets/b/reel.o \
+       jets/b/roll.o \
+       jets/b/skim.o \
+       jets/b/skip.o \
+       jets/b/scag.o \
+       jets/b/slag.o \
+       jets/b/snag.o \
+       jets/b/sort.o \
+       jets/b/turn.o \
+       jets/b/weld.o
 
 J_C_OFILES=\
-       j/c/bex.o \
-       j/c/can.o \
-       j/c/cap.o \
-       j/c/cat.o \
-       j/c/con.o \
-       j/c/cut.o \
-       j/c/dor.o \
-       j/c/dis.o \
-       j/c/end.o \
-       j/c/gor.o \
-       j/c/hor.o \
-       j/c/lsh.o \
-       j/c/mas.o \
-       j/c/met.o \
-       j/c/mix.o \
-       j/c/mug.o \
-       j/c/peg.o \
-       j/c/po.o  \
-       j/c/rap.o \
-       j/c/rip.o \
-       j/c/rsh.o \
-       j/c/vor.o
+       jets/c/bex.o \
+       jets/c/xeb.o \
+       jets/c/can.o \
+       jets/c/cap.o \
+       jets/c/cat.o \
+       jets/c/con.o \
+       jets/c/cut.o \
+       jets/c/dor.o \
+       jets/c/dvr.o \
+       jets/c/dis.o \
+       jets/c/end.o \
+       jets/c/gor.o \
+       jets/c/hor.o \
+       jets/c/lsh.o \
+       jets/c/mas.o \
+       jets/c/met.o \
+       jets/c/mix.o \
+       jets/c/mug.o \
+       jets/c/peg.o \
+       jets/c/po.o  \
+       jets/c/pow.o \
+       jets/c/rap.o \
+       jets/c/rip.o \
+       jets/c/rsh.o \
+       jets/c/sqt.o \
+       jets/c/vor.o
 
 J_D_OFILES=\
-       j/d/in_has.o \
-       j/d/in_int.o \
-       j/d/in_gas.o \
-       j/d/in_mer.o \
-       j/d/in_put.o \
-       j/d/in_tap.o \
-       j/d/in_uni.o \
-       j/d/by_gas.o \
-       j/d/by_get.o \
-       j/d/by_has.o \
-       j/d/by_int.o \
-       j/d/by_put.o \
-       j/d/by_uni.o
+       jets/d/in_has.o \
+       jets/d/in_int.o \
+       jets/d/in_gas.o \
+       jets/d/in_mer.o \
+       jets/d/in_put.o \
+       jets/d/in_tap.o \
+       jets/d/in_uni.o \
+       jets/d/in_bif.o \
+       jets/d/in_dif.o \
+       jets/d/by_gas.o \
+       jets/d/by_get.o \
+       jets/d/by_has.o \
+       jets/d/by_int.o \
+       jets/d/by_put.o \
+       jets/d/by_uni.o \
+       jets/d/by_bif.o \
+       jets/d/by_dif.o
 
 J_E_OFILES=\
-       j/e/aesc.o \
-       j/e/cue.o \
-       j/e/jam.o \
-       j/e/mat.o \
-       j/e/mink.o \
-       j/e/mule.o \
-       j/e/parse.o \
-       j/e/rd.o \
-       j/e/repg.o \
-       j/e/rexp.o \
-       j/e/rub.o \
-       j/e/scr.o \
-       j/e/shax.o \
-       j/e/lore.o \
-       j/e/loss.o \
-       j/e/trip.o
+       jets/e/aesc.o \
+       jets/e/cue.o \
+       jets/e/fl.o \
+       jets/e/jam.o \
+       jets/e/mat.o \
+       jets/e/mink.o \
+       jets/e/mule.o \
+       jets/e/parse.o \
+       jets/e/rd.o \
+       jets/e/rq.o \
+       jets/e/rs.o \
+       jets/e/repg.o \
+       jets/e/rexp.o \
+       jets/e/rub.o \
+       jets/e/scr.o \
+       jets/e/shax.o \
+       jets/e/lore.o \
+       jets/e/loss.o \
+       jets/e/trip.o
 
 J_E_OFILES_ED=\
-       j/e/ed_puck.o \
-       j/e/ed_sign.o \
-       j/e/ed_veri.o
+       jets/e/ed_puck.o \
+       jets/e/ed_sign.o \
+       jets/e/ed_veri.o
 
 J_F_OFILES=\
-       j/f/al.o \
-       j/f/ap.o \
-       j/f/bull.o \
-       j/f/cell.o \
-       j/f/comb.o \
-       j/f/cons.o \
-       j/f/core.o \
-       j/f/cube.o \
-       j/f/face.o \
-       j/f/fitz.o \
-       j/f/flan.o \
-       j/f/flay.o \
-       j/f/flip.o \
-       j/f/flor.o \
-       j/f/fork.o \
-       j/f/hike.o \
-       j/f/look.o \
+       jets/f/al.o \
+       jets/f/ap.o \
+       jets/f/bull.o \
+       jets/f/cell.o \
+       jets/f/comb.o \
+       jets/f/cons.o \
+       jets/f/core.o \
+       jets/f/cube.o \
+       jets/f/face.o \
+       jets/f/fitz.o \
+       jets/f/flan.o \
+       jets/f/flay.o \
+       jets/f/flip.o \
+       jets/f/flor.o \
+       jets/f/fork.o \
+       jets/f/hike.o \
+       jets/f/look.o \
 
 J_F_OFILES_UT=\
-       j/f/ut.o \
-       j/f/ut_burn.o \
-       j/f/ut_busk.o \
-       j/f/ut_bust.o \
-       j/f/ut_conk.o \
-       j/f/ut_crop.o \
-       j/f/ut_cull.o \
-       j/f/ut_find.o \
-       j/f/ut_fink.o \
-       j/f/ut_fire.o \
-       j/f/ut_firm.o \
-       j/f/ut_fish.o \
-       j/f/ut_fuse.o \
-       j/f/ut_gain.o \
-       j/f/ut_heal.o \
-       j/f/ut_lose.o \
-       j/f/ut_mint.o \
-       j/f/ut_mull.o \
-       j/f/ut_nest.o \
-       j/f/ut_park.o \
-       j/f/ut_peek.o \
-       j/f/ut_play.o \
-       j/f/ut_repo.o \
-       j/f/ut_rest.o \
-       j/f/ut_seek.o \
-       j/f/ut_swab.o \
-       j/f/ut_tack.o \
-       j/f/ut_tock.o \
-       j/f/ut_wrap.o
+       jets/f/ut.o \
+       jets/f/ut_burn.o \
+       jets/f/ut_busk.o \
+       jets/f/ut_bust.o \
+       jets/f/ut_conk.o \
+       jets/f/ut_crop.o \
+       jets/f/ut_cull.o \
+       jets/f/ut_find.o \
+       jets/f/ut_fink.o \
+       jets/f/ut_fire.o \
+       jets/f/ut_firm.o \
+       jets/f/ut_fish.o \
+       jets/f/ut_fuse.o \
+       jets/f/ut_gain.o \
+       jets/f/ut_heal.o \
+       jets/f/ut_lose.o \
+       jets/f/ut_mint.o \
+       jets/f/ut_mull.o \
+       jets/f/ut_nest.o \
+       jets/f/ut_park.o \
+       jets/f/ut_peek.o \
+       jets/f/ut_play.o \
+       jets/f/ut_repo.o \
+       jets/f/ut_rest.o \
+       jets/f/ut_seek.o \
+       jets/f/ut_swab.o \
+       jets/f/ut_tack.o \
+       jets/f/ut_tock.o \
+       jets/f/ut_wrap.o
 
 J_G_OFILES=\
-       j/g/down.o
+       jets/g/down.o
 
 J_OFILES=\
        $(J_A_OFILES) \
@@ -276,7 +296,7 @@ J_OFILES=\
        $(J_F_OFILES) \
        $(J_F_OFILES_UT) \
        $(J_G_OFILES) \
-       j/tree.o
+       jets/tree.o
 
 BASE_OFILES=$(N_OFILES) $(J_OFILES)
 
@@ -287,25 +307,25 @@ OUT_OFILES=\
        outside/jhttp/http_parser.o
 
 V_OFILES=\
-       v/ames.o \
-       v/cttp.o \
-       v/http.o \
-       v/loop.o \
-       v/raft.o \
-       v/reck.o \
-       v/sist.o \
-       v/temp.o \
-       v/term.o \
-       v/time.o \
-       v/unix.o \
-       v/save.o \
-       v/walk.o
+       vere/ames.o \
+       vere/behn.o \
+       vere/cttp.o \
+       vere/http.o \
+       vere/loop.o \
+       vere/raft.o \
+       vere/reck.o \
+       vere/sist.o \
+       vere/term.o \
+       vere/time.o \
+       vere/unix.o \
+       vere/save.o \
+       vere/walk.o
 
 MAIN_FILE =\
-       v/main.o 
+       vere/main.o
 
 MEME_FILE =\
-       w/test.o
+       tests/test.o
 
 VERE_OFILES=\
        $(CRE2_OFILES) \
@@ -325,19 +345,19 @@ VERE_DFILES=$(VERE_OFILES:%.o=.d/%.d)
 -include $(VERE_DFILES)
 
 # This is a silly hack necessitated by the fact that libuv uses configure
-#   
-#    * Making 'all' obviously requires outside/libuv, 
+#
+#    * Making 'all' obviously requires outside/libuv,
 #      which requires the libuv Makefile to be created.
 #    * Making distclean on outside/libuv destroys the makefile.
-#    * ...so configuring outside/libuv is parodoxically required 
+#    * ...so configuring outside/libuv is parodoxically required
 #      in order to distclean it!
 #    * But what if developer types 'make distclean all' ?
-#    * first target makes libuv Makefile, then destroys it...and 
+#    * first target makes libuv Makefile, then destroys it...and
 #      second target knows that it was made.
 #    * ...so second target borks.
-#    * Solution: make libuv not only depend on its own Makefile, 
+#    * Solution: make libuv not only depend on its own Makefile,
 #      but on a side effect of creating its own makefile.
-#    
+#
 LIBUV_MAKEFILE=outside/libuv_0.11/Makefile
 LIBUV_MAKEFILE2=outside/libuv_0.11/config.log
 
@@ -352,6 +372,8 @@ LIBANACHRONISM=outside/anachronism/build/libanachronism.a
 LIBCOMMONMARK=outside/commonmark/build/src/libcmark.a
 
 LIBSCRYPT=outside/scrypt/scrypt.a
+
+LIBSOFTFLOAT=outside/softfloat-3/build/Linux-386-GCC/softfloat.a
 
 all: urbit
 
@@ -368,8 +390,23 @@ meme: $(BIN)/meme
 $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2):
 	cd outside/libuv_0.11 ; sh autogen.sh ; ./configure  --disable-dtrace
 
+# [h]act II: the plot thickens
+#
+#     * Specifying two targets that each configure libuv works
+#       when the rules are executed sequentially,
+#     * but when attempting a parallel build, it is likely Make
+#       will try to configure libuv simultaneously.
+#     * We can specify a dependency between the two targets so
+#       that execution of their rule(s) is serialized.
+#     * Further, libuv does not seem to be friendly towards
+#       parallel builds either. A true fix is out of scope here
+#     * ...so we must instruct Make to only use one job when it
+#       attempts to build libuv.
+#
+$(LIBUV_MAKEFILE2): $(LIBUV_MAKEFILE)
+
 $(LIBUV): $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2)
-	$(MAKE) -C outside/libuv_0.11 all-am
+	$(MAKE) -C outside/libuv_0.11 all-am -j1
 
 $(LIBRE2):
 	$(MAKE) -C outside/re2 obj/libre2.a
@@ -386,25 +423,28 @@ $(LIBCOMMONMARK):
 $(LIBSCRYPT):
 	$(MAKE) -C outside/scrypt MDEFINES="$(MDEFINES)"
 
+$(LIBSOFTFLOAT):
+	$(MAKE) -C outside/softfloat-3/build/Linux-386-GCC
+
 $(CRE2_OFILES): outside/cre2/src/src/cre2.cpp outside/cre2/src/src/cre2.h $(LIBRE2)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(V_OFILES): i/v/vere.h
+$(V_OFILES): include/vere/vere.h
 
 ifdef NO_SILENT_RULES
-$(BIN)/urbit: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT)
+$(BIN)/urbit: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 else
-$(BIN)/urbit: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT)
+$(BIN)/urbit: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 	@echo "    CCLD  $(BIN)/urbit"
 	@mkdir -p $(BIN)
-	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT)
+	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 endif
 
-$(BIN)/meme: $(LIBCRE) $(LIBCOMMONMARK) $(MEME_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT)
+$(BIN)/meme: $(LIBCRE) $(LIBCOMMONMARK) $(MEME_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/meme $(MEME_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT)
+	$(CLD) $(CLDOSFLAGS) -o $(BIN)/meme $(MEME_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 
 tags:
 	ctags -R -f .tags --exclude=root
@@ -431,14 +471,17 @@ debinstall:
 	cp urb/urbit.pill $(DESTDIR)/usr/share/urb
 	cp -R urb/zod $(DESTDIR)/usr/share/urb
 
-clean: 
+clean:
 	$(RM) $(VERE_OFILES) $(BIN)/urbit urbit.pkg $(VERE_DFILES)
 
+# 'make distclean all -jn' ∀ n>1 still does not work because it is possible
+# Make will attempt to build urbit while it is also cleaning urbit..
 distclean: clean $(LIBUV_MAKEFILE)
 	$(MAKE) -C outside/libuv_0.11 distclean
 	$(MAKE) -C outside/re2 clean
 	$(MAKE) -C outside/ed25519 clean
 	$(MAKE) -C outside/anachronism clean
 	$(MAKE) -C outside/scrypt clean
+	$(MAKE) -C outside/softfloat-3/build/Linux-386-GCC clean
 
 .PHONY: clean debbuild debinstalldistclean etags osxpackage tags
