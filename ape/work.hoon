@@ -311,6 +311,9 @@
 ::
 ::  XX  maybe need to check that we haven't received this message before
 ::      by keeping a counter of last message received
+::  XX  definitely do this!
+::  XX  handle and test the disconnection case
+::
 ++  diff-talk-report
   |=  [way=wire rep=report:talk]
   ^-  [(list move) _+>.$]
