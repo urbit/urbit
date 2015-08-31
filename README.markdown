@@ -17,9 +17,21 @@ keeping in touch or following the project you can:
 All of the source code is distributed under the MIT license, but is for
 all intents and purposes in the public domain.
 
-Install
--------
+Pacakges
+--------
 
+#### Ubuntu or Debian
+
+Third-party pacakge files are maintained at https://github.com/yebyen/urbit-deb. Urbit is only supported on Jessie onward.
+
+#### OS X - Homebrew
+
+    brew install --HEAD homebrew/head-only/urbit
+
+If this succeeds, proceed to the [Run section](#run). Otherwise, the build must be done manually:
+
+Dependencies
+------------
 urbit depends on:
 
     gcc
@@ -39,9 +51,12 @@ urbit depends on:
 
     sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++ ragel cmake re2c
 
+*note: http requests are not supported on debian jessie
+due to an ssl issue*
+
 #### Fedora
 
-    sudo yum install gcc gcc-c++ git gmp-devel openssl-devel openssl ncurses-devel libsigsegv-devel ctags automake autoconf libtool cmake re2c
+    sudo dnf install gcc gcc-c++ git gmp-devel openssl-devel openssl ncurses-devel libsigsegv-devel ctags automake autoconf libtool ragel cmake re2c
 
 #### AWS
 
@@ -59,6 +74,10 @@ Although `automake`/`autoconf`/`libtool` are generally installed by
 default, some have reported needing to uninstall and reinstall those
 three packages, at least with Homebrew. Your mileage may vary.
 
+#### FreeBSD
+
+    pkg install git gmake gmp libsigsegv openssl automake autoconf ragel cmake re2c libtool
+
 Build
 -----
 
@@ -74,7 +93,9 @@ Just run `make`:
 
     make
 
-Run
+(On FreeBSD, use `gmake` instead.)
+
+Run <a id="run"/>
 ---
 
 Inside of the `urbit` directory run
@@ -102,8 +123,12 @@ Basics
 `^v` will switch between the task manager and the focussed process. `^x`
 will switch between processes.
 
-To start a process that is not yet started run `*proc` from the task
+To start a process that is not yet started, run `*proc` from the task
 manager.
+
+To connect your console to a process that has already been started, run
+`+proc` from the task manager. Note that the process must be one that
+supports console access, such as dojo and talk.
 
 `^d` will exit the pier from the task manager. No matter how you shut
 your urbit down you'll be returned to exactly the same state as when you
@@ -139,6 +164,24 @@ clipped.
 
 `;<target>` sets the target for your messages, such as `;~urbit-name`
 for a private message.
+
+Filesystem Sync
+---------------
+
+Our filesystem, `%clay` does not automatically sync to unix. If you want
+to get files in and out of urbit, you'll need to setup a mount point.
+Since each mount point is always watching for changes you may also want
+to unmount from time to time.
+
+The syntax is as follows (from `dojo`):
+
+    |mount <clay-path> <mount-name>
+
+    |unmount <mount-name>
+
+or:
+
+    |unmount <clay-path>
 
 Sysadmin
 --------
