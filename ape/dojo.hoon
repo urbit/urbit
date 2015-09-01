@@ -4,10 +4,10 @@
 /?  314                                                 ::  arvo kelvin
 /-  sole                                               ::  console structures
 /+  sole                                                ::  console library
+[. sole]
 ::                                                      ::  ::
 ::::                                                    ::  ::::
   !:                                                    ::    ::
-[sole .]
 =>  |%                                                  ::  external structures
     ++  house                                           ::  all state
       $:  hoc=(map bone session)                        ::  conversations
@@ -365,7 +365,7 @@
               !&(?=(%del -.u.per) =(+(p.u.per) (lent buf.say)))
           ==
         dy-abet(per ~)
-      =^  lic  say  (~(transmit cs say) u.per)
+      =^  lic  say  (~(transmit sole say) u.per)
       (dy-diff(per ~) %mor [%det lic] [%err q.q.cag] ~)
     ::
     ++  dy-done                                         ::  dialog submit
@@ -408,10 +408,10 @@
     ++  dy-edit                                         ::  handle edit
       |=  cal=sole-change
       ^+  +>+>
-      =^  dat  say  (~(transceive cs say) cal)
+      =^  dat  say  (~(transceive sole say) cal)
       ?:  |(?=(^ per) ?=(^ pux) ?=(~ pro))
         ~&  %dy-edit-busy
-        =^  lic  say  (~(transmit cs say) dat)
+        =^  lic  say  (~(transmit sole say) dat)
         (dy-diff %mor [%det lic] [%bel ~] ~)
       (dy-slam(per `dat) /edit u.pro !>((tufa buf.say)))
     ::
@@ -571,7 +571,7 @@
   ::
   ++  he-pone                                           ::  clear prompt
     ^+  .
-    =^  cal  say  (~(transmit cs say) [%set ~])
+    =^  cal  say  (~(transmit sole say) [%set ~])
     (he-diff %mor [%det cal] ~)
   ::
   ++  he-prom                                           ::  send prompt
@@ -616,7 +616,7 @@
     ^+  +>
     ::  ~&  [%his-clock ler.cal]
     ::  ~&  [%our-clock ven.say]
-    =^  dat  say  (~(transceive cs say) cal)
+    =^  dat  say  (~(transceive sole say) cal)
     ?.  ?&  ?=(%del -.dat)
             =(+(p.dat) (lent buf.say))
         ==
@@ -624,7 +624,7 @@
     =+  foy=(he-dope (tufa buf.say))
     ?:  ?=(%& -.foy)  +>.$
     ::  ~&  [%bad-change dat ted.cal]
-    =^  lic  say  (~(transmit cs say) dat)
+    =^  lic  say  (~(transmit sole say) dat)
     ::  ~&  [%our-leg leg.say]
     (he-diff %mor [%det lic] [%err q.p.foy] ~)
   ::
@@ -648,7 +648,7 @@
         %|  (he-diff [%err p.doy])
         %&
       =+  old=(weld "> " (tufa buf.say))
-      =^  cal  say  (~(transmit cs say) [%set ~])
+      =^  cal  say  (~(transmit sole say) [%set ~])
       %.  p.doy
       =<  he-plan
       %-  he-diff

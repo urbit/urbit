@@ -9,6 +9,7 @@
 ::
 ++  grow  
   |%  ++  httpreq
+    ^-  request:http
     =-  [/com/coinbase/sandbox /oauth/token [%post ~] ~ `quay`-]
     :~  ['grant_type' 'authorization_code']
         ['code' oat.req]

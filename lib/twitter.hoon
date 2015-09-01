@@ -4,11 +4,10 @@
   ::
 /?    314
 /-   twitter
-=+   twit
+=+   twit:twitter
 !:
 ::::  functions
   ::
-[twitter .]
 |%
 ++  fass                                                ::  rewrite path
   |=  a=path
@@ -543,3 +542,4 @@
     (mold %get /statuses/lookup ,[us ~])
   --
 --
+=*(twitter . .)
