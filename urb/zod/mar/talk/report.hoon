@@ -3,6 +3,7 @@
   ::
 /?    314
 /-    *talk
+/+    talk
 !:
 |_  rep=report
 ::
@@ -90,7 +91,7 @@
         %lin  (jobe txt/[%s q.a] say/[%b p.a] ~)
         %url  (joba txt/[%s (crip (earf p.a))])
         %exp  (joba txt/[%s p.a])
-        %tax  (joba txt/(jape <p.a>))
+        %tax  (joba txt/(jape (rend-work-duty p.a)))
         %app  (jobe txt/[%s q.a] src/[%s p.a] ~)
         %fat  (jobe tor/(tors p.a) taf/$(a q.a) ~)
         ::  %inv  (jobe ship/(jope p.a) party/[%s q.a] ~)
