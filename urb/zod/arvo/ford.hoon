@@ -355,7 +355,7 @@
         ==
       ==
     ::
-    ++  coax                                            ::  bolt across
+    ++  coax  !.                                        ::  bolt across
       |*  [hoc=(bolt) fun=(burg)]
       ?-  -.q.hoc
         %0  =+  nuf=$:fun(+<- p.hoc)
@@ -584,7 +584,7 @@
     ++  fade                                            ::  compile to hood
       |=  [cof=cafe for=mark bem=beam]
       ^-  (bolt hood)
-      ::  %+  cool  |.(leaf/"ford: fade {<[(tope bem)]>}")
+      %+  cool  |.(leaf/"ford: fade {<[(tope bem)]>}")
       %+  cope  (cope (make cof [%bake for bem ~]) furl)
       |=  [cof=cafe cay=cage]
       %+  (clef %hood)  (fine cof bem(r [%ud 0]) cay)
@@ -1128,7 +1128,10 @@
         ?.  ?=(%2 -.q.raf)
           (cope raf (flux |=(vax=vase (some [for vax]))))
         =-  ((slog (flop `tang`-)) (flue cof))
-        ?^  t.pax  ~              ::  error on top-level marks
+        =+  (lent t.pax)
+        ?:  ?~  -  |                      ::  error if level above built
+            (~(has by res) (tack i.pax (scag (dec -) t.pax)))
+          ~
         :_(q.q.raf leaf/"! {<`mark`for>} build failed, ignoring.")
       --
     ::
@@ -1380,6 +1383,7 @@
       ::
           %tabl
         %-  cope  :_  (flux |=(rex=(list (pair gage gage)) [%tabl rex]))
+        !.
         |-  ^-  (bolt (list (pair gage gage)))
         ?~  p.kas  (fine cof ~)
         %.  [cof p.kas]
