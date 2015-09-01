@@ -333,7 +333,9 @@
     ::
         %red                                            ::  diff ack
       ?>  ?=([@ @ @ ~] t.pax)
-      ?>  ?=([%a %woot *] sih)
+      ?.  ?=([%a %woot *] sih)
+        ~&  [%red-went pax]
+        +>.$
       =+  :*  him=(slav %p i.t.pax)
               dap=i.t.t.pax
               num=(slav %ud i.t.t.t.pax)
