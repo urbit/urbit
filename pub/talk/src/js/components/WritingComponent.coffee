@@ -1,5 +1,5 @@
 recl = React.createClass
-[div,br,input,textarea] = [React.DOM.div,React.DOM.br,React.DOM.input,React.DOM.textarea]
+{div,br,input,textarea} = React.DOM
 
 MessageActions  = require '../actions/MessageActions.coffee'
 MessageStore    = require '../stores/MessageStore.coffee'

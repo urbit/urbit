@@ -1,7 +1,7 @@
 moment = require 'moment-timezone'
 
 recl = React.createClass
-[div,pre,br,input,textarea,a] = [React.DOM.div,React.DOM.pre,React.DOM.br,React.DOM.input,React.DOM.textarea,React.DOM.a]
+{div,pre,br,input,textarea,a} = React.DOM
 
 MessageActions  = require '../actions/MessageActions.coffee'
 MessageStore    = require '../stores/MessageStore.coffee'
@@ -51,17 +51,19 @@ Message = recl
     type = ['private','public']
     type = type[Number(aude.indexOf(window.util.mainStationPath(window.urb.user)) is -1)]
 
-    if speech.lin?.txt then txt = speech.lin.txt
-    if speech.url 
-      url = speech.url.url
-      txt = (a {href:url,target:"_blank"}, url)
-    if speech.app
-      txt = speech.app.txt
-      klass += " say"
-    if speech.exp
-      txt = speech.exp.code
-      klass += " exp"
-
+    mess = switch
+      when (con = speech.lin) or (con = speech.app) or
+           (con = speech.exp) or (con = speech.tax)
+        con.txt
+      when (con = speech.url)
+        (a {href:con.txt,target:"_blank"}, con.txt)
+      else "Unknown speech type:" + (" %"+x for x of speech).join ''
+    
+    klass += switch
+      when speech.app? then " say"
+      when speech.exp? then " exp"
+      else ""
+        
     div {className:"message#{klass}"}, [
         (div {className:"attr"}, [
           div {className:"type #{type}"}, ""
@@ -69,7 +71,7 @@ Message = recl
           div {onClick:@_handleAudi,className:"audi"}, audi
           div {className:"time"}, @convTime @props.thought.statement.date
         ])
-        div {className:"mess"}, txt,
+        div {className:"mess"}, mess,
           if attachments.length
             div {className:"fat"}, attachments
       ]
