@@ -50,9 +50,9 @@
       %set-doer         =+(feh "{(tr-term -.feh)} {?~(her "none" <u.her>)}")
       %set-date-due     =+(feh "{(tr-term -.feh)} {?~(wen "none" <u.wen>)}")
       %set-tags         =+(feh "{(tr-term -.feh)} {<tag>}")
-      %set-title        =+(feh "{(tr-term -.feh)} {<til>}")
-      %set-description  =+(feh "{(tr-term -.feh)} {<des>}")
-      %add-comment      =+(feh "{(tr-term -.feh)} {<com>}")
+      %set-title        =+(feh "{(tr-term -.feh)} {<(trip til)>}")
+      %set-description  =+(feh "{(tr-term -.feh)} {<(trip des)>}")
+      %add-comment      =+(feh "{(tr-term -.feh)} {<(trip com)>}")
     ==
   --
 --
