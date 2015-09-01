@@ -35,7 +35,6 @@ module.exports = {
 };
 
 
-
 },{"../dispatcher/Dispatcher.coffee":13,"../persistence/TreePersistence.coffee":19}],2:[function(require,module,exports){
 var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, query, reactify, recl, ref;
 
@@ -289,7 +288,6 @@ module.exports = query({
 }));
 
 
-
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":20,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":10,"classnames":15}],3:[function(require,module,exports){
 var TreeActions, TreeStore, _load, code, div, recl, ref, span;
 
@@ -391,7 +389,6 @@ module.exports = function(queries, Child, load) {
 };
 
 
-
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":20,"./LoadComponent.coffee":9}],4:[function(require,module,exports){
 var div, query, reactify, recl;
 
@@ -417,7 +414,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"./Reactify.coffee":10}],5:[function(require,module,exports){
 var div, recl, ref, textarea;
 
@@ -441,7 +437,6 @@ module.exports = recl({
 });
 
 
-
 },{}],6:[function(require,module,exports){
 var div, recl;
 
@@ -461,7 +456,6 @@ module.exports = {
     }
   })
 };
-
 
 
 },{"./CodeMirror.coffee":5,"./KidsComponent.coffee":7,"./ListComponent.coffee":8,"./SearchComponent.coffee":11,"./TocComponent.coffee":12}],7:[function(require,module,exports){
@@ -501,7 +495,6 @@ module.exports = query({
     }).call(this));
   }
 }));
-
 
 
 },{"./Async.coffee":3,"./Reactify.coffee":10}],8:[function(require,module,exports){
@@ -599,7 +592,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"./Reactify.coffee":10,"classnames":15}],9:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
@@ -638,7 +630,6 @@ module.exports = recl({
     }, ""));
   }
 });
-
 
 
 },{}],10:[function(require,module,exports){
@@ -706,7 +697,6 @@ module.exports = _.extend(reactify, {
   walk: walk,
   Virtual: Virtual
 });
-
 
 
 },{"./LoadComponent.coffee":9}],11:[function(require,module,exports){
@@ -847,7 +837,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"./Reactify.coffee":10}],12:[function(require,module,exports){
 var div, query, reactify, recl;
 
@@ -978,7 +967,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"./Reactify.coffee":10}],13:[function(require,module,exports){
 var Dispatcher;
 
@@ -998,7 +986,6 @@ module.exports = _.extend(new Dispatcher(), {
     });
   }
 });
-
 
 
 },{"flux":16}],14:[function(require,module,exports){
@@ -1145,7 +1132,6 @@ $(function() {
     return so.ls = so.cs;
   });
 });
-
 
 
 },{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./persistence/TreePersistence.coffee":19}],15:[function(require,module,exports){
@@ -1568,7 +1554,6 @@ module.exports = {
 };
 
 
-
 },{}],20:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, QUERIES, TreeStore, _curr, _data, _tree, clog;
 
@@ -1802,7 +1787,6 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
 });
 
 module.exports = TreeStore;
-
 
 
 },{"../dispatcher/Dispatcher.coffee":13,"events":21}],21:[function(require,module,exports){
