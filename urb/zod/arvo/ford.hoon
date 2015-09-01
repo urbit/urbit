@@ -646,7 +646,7 @@
           ==
         ::
           ;~  pose
-            (ifix [;~(plug fas hep gap) gap] (most ;~(plug com gaw) hoot))
+            (ifix [;~(plug fas hep gap) gap] (most ;~(plug com gaw) hoof))
             (easy ~)
           ==
         ::
@@ -668,12 +668,6 @@
             ;~(plug ;~(pfix fas case) ;~(pfix ;~(plug fas sig) fed:ag))
             (easy ~)
           ==
-        ==
-      ::
-      ++  hoot
-        ;~  pose
-          (stag %| ;~(pfix tar hoof))
-          (stag %& hoof)
         ==
       ::
       ++  hoop
@@ -1657,19 +1651,16 @@
         ==
       ::
       ++  head                                          ::  consume structures
-        |=  [cof=cafe bir=(list hoot)]
+        |=  [cof=cafe bir=(list hoof)]
         ^-  (bolt ,_..head)
         ?~  bir
           (fine cof ..head)
-        =.  boy
-          ?:  p.i.bir  boy
-          (welp boy [[[%cnzy p.q.i.bir] [%$ 1]] ~])
-        =+  byf=(~(get by rop) p.q.i.bir)
+        =+  byf=(~(get by rop) p.i.bir)
         ?^  byf
-          ?.  =(`hoof`q.i.bir `hoof`p.u.byf)
-            (flaw cof [%leaf "structure mismatch: {<~[p.u.byf q.i.bir]>}"]~)
+          ?.  =(`hoof`i.bir `hoof`p.u.byf)
+            (flaw cof [%leaf "structure mismatch: {<~[p.u.byf i.bir]>}"]~)
           $(bir t.bir)
-        %+  cope  (fame cof (hone %sur q.i.bir))
+        %+  cope  (fame cof (hone %sur i.bir))
         |=  [cof=cafe bem=beam]
         %+  cope  (fade cof %hoon bem)
         |=  [cof=cafe hyd=hood]
@@ -1681,8 +1672,8 @@
               zeg  zeg
               how  how
               rop  %+  ~(put by (~(uni by rop) rop.sel))
-                      p.q.i.bir 
-                   [q.i.bir [%tssg (flop boy.sel)]]
+                      p.i.bir 
+                   [i.bir [%tssg (flop boy.sel)]]
             ==
         ^^^$(cof cof, bir t.bir)
       ::
