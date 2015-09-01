@@ -87,11 +87,12 @@
       |=  a=speech
       %+  joba  -.a
       ?+  -.a  ~|(stub/-.a !!)
-        %lin  (jobe say/[%b p.a] txt/[%s q.a] ~)
-        %url  (jobe url/[%s (crip (earf p.a))] ~)
-        %exp  (jobe code/[%s p.a] ~)
-        %app  (jobe app/[%s p.a] txt/[%s q.a] ~)
-        %fat  (jobe fat/(tors p.a) taf/$(a q.a) ~)
+        %lin  (jobe txt/[%s q.a] say/[%b p.a] ~)
+        %url  (joba txt/[%s (crip (earf p.a))])
+        %exp  (joba txt/[%s p.a])
+        %tax  (joba txt/(jape <p.a>))
+        %app  (jobe txt/[%s q.a] src/[%s p.a] ~)
+        %fat  (jobe tor/(tors p.a) taf/$(a q.a) ~)
         ::  %inv  (jobe ship/(jope p.a) party/[%s q.a] ~)
       ==
     ::

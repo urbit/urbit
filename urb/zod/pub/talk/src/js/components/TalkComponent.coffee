@@ -1,6 +1,6 @@
 recl = React.createClass
 recf = React.createFactory
-[div] = [React.DOM.div]
+{div} = React.DOM
 
 StationComponent    = recf require './StationComponent.coffee'
 MessagesComponent   = recf require './MessagesComponent.coffee'
