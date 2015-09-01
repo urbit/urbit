@@ -2,10 +2,11 @@
 ::::  /hoon/sole/lib
   ::  
 /?    310
-/-    *sole
+/-    sole
 !:
 ::::
   ::
+[sole .]
 |%
 ++  cs                                                  ::  shared-state engine
   |_  sole-share

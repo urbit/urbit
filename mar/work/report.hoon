@@ -1,10 +1,11 @@
 ::
 ::::  /hoon/report/work/mar
   ::
-/-    *work
+/-    work
 !:
 ::::
   ::
+[work .]
 |_  client
 ++  grow  
 |%  ++  json

@@ -2,8 +2,9 @@
 ::::  /hoon/bit-get-token/mar
   ::
 /?    314
-/-    *bit-api
+/-    bit-api
 /+    http
+[bit-api .]
 |_  req=bit-get-token
 ::
 ++  grow  

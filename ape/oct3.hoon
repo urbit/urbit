@@ -2,7 +2,7 @@
 ::::  /hoon/oct3/ape                                    ::::::  dependencies
   ::                                                    ::  ::
 /?  310                                                 ::  arvo version
-/-  *sole, *oct3                                        ::  structures
+/-  sole, oct3                                        ::  structures
 /+  sole, oct3                                          ::  libraries
 ::                                                      ::  ::
 ::::                                                    ::::::  interfaces
@@ -39,6 +39,7 @@
 ::                                                      ::  ::
 ::::                                                    ::::::  process core
   ::                                                    ::  ::
+[sole oct3 .]
 |_  $:  bowl                                            ::
         moz=(list move)                                 ::  pending actions
         [%1 axle]                                       ::  process state, v1

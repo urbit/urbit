@@ -3,8 +3,9 @@
 ::::  /hoon/bit-accounts/mar
   ::
 /?    310
-/-    *bit-api
+/-    bit-api
 !:
+[bit-api .]
 |_  bit-accounts
 ::
 ++  grab                          ::  converter arm
