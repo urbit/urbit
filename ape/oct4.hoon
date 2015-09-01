@@ -114,12 +114,12 @@
   ++  abet  ..work(eye (~(put by eye) ost say))         ::  resolve
   ++  cusp  (cope !ept:here)                            ::  parsing rule
   ++  delt  |=  cal=sole-change                         ::  edit command line
-            =^  cul  say  (~(remit cs say) cal good)    ::
+            =^  cul  say  (~(remit sole say) cal good)    ::
             ?~(cul abet fail:(fect:abet det/u.cul))     ::
   ++  dive  =+  (rust (tufa buf.say) (punt comb))       ::  apply command line
             ?~(- fail ?~(-> show (plot:wipe ->+)))      ::
   ++  good  |=((list ,@c) -:(rose (tufa +<) cusp))      ::  validate input
-  ++  wipe  =^  cal  say  (~(transmit cs say) set/~)    ::  clear line
+  ++  wipe  =^  cal  say  (~(transmit sole say) set/~)    ::  clear line
             (fect:abet %det cal)                        ::
   --                                                    ::
 ::                                                      ::  ::

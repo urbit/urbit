@@ -59,7 +59,7 @@
 ++  coup-helm-hi    (wrap coup-hi):from-helm
 ++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
 ++  from-lib
-  |*  _[%helm ..$ ,_abet]:(helm-work)
+  |*  _[%helm ..$ ,_abet]:(helm)
   =>  .(+< [identity start finish]=+<)
   =-  [wrap=- *start]                 ::  usage (wrap handle-arm):from-foo
   |*  handle=_finish
@@ -67,9 +67,9 @@
   =.  +>.handle  (start hid (able identity))
   (ably (handle +<))
 ::
-++  from-drum  (from-lib %drum [..$ ,_se-abet]:(drum-work))
-++  from-helm  (from-lib %helm [..$ ,_abet]:(helm-work))
-++  from-kiln  (from-lib %kiln [..$ ,_abet]:(kiln-work))
+++  from-drum  (from-lib %drum [..$ ,_se-abet]:(drum))
+++  from-helm  (from-lib %helm [..$ ,_abet]:(helm))
+++  from-kiln  (from-lib %kiln [..$ ,_abet]:(kiln))
 ::
 ++  init-helm               |=([way=wire *] [~ +>])
 ++  made-kiln               (wrap take-made):from-kiln

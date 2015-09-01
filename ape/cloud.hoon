@@ -4,8 +4,6 @@
   ::
 /?  314
 /-  talk
-/+  talk, sole, http
-
 ::
 ::
 ::::  sivtyv-barnel

@@ -62,3 +62,4 @@
     acc(r $(acc r.acc))
   --
 --
+=*(tree . .)

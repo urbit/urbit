@@ -8,7 +8,7 @@
 !:
 ::::
   ::
-[talk .]
+[. talk]
 |%
 ++  main                                                ::  main story
   |=  our=ship  ^-  cord
@@ -56,3 +56,4 @@
     ==
   --
 --
+=*(talk . .)
