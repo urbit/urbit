@@ -184,7 +184,7 @@ var div, input, recl, ref, textarea;
 
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.input, React.DOM.textarea], div = ref[0], input = ref[1], textarea = ref[2];
+ref = React.DOM, div = ref.div, input = ref.input, textarea = ref.textarea;
 
 module.exports = recl({
   render: function() {
@@ -215,7 +215,7 @@ moment = require('moment-timezone');
 
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.pre, React.DOM.br, React.DOM.input, React.DOM.textarea, React.DOM.a], div = ref[0], pre = ref[1], br = ref[2], input = ref[3], textarea = ref[4], a = ref[5];
+ref = React.DOM, div = ref.div, pre = ref.pre, br = ref.br, input = ref.input, textarea = ref.textarea, a = ref.a;
 
 MessageActions = require('../actions/MessageActions.coffee');
 
@@ -262,7 +262,7 @@ Message = recl({
     return this.props._handlePm(user);
   },
   render: function() {
-    var attachments, aude, audi, delivery, klass, name, ref1, ref2, speech, txt, type, url;
+    var attachments, aude, audi, con, delivery, klass, mess, name, ref1, speech, type, x;
     delivery = _.uniq(_.pluck(this.props.thought.audience, "delivery"));
     klass = delivery.indexOf("received") !== -1 ? " received" : " pending";
     speech = this.props.thought.statement.speech;
@@ -295,24 +295,36 @@ Message = recl({
     });
     type = ['private', 'public'];
     type = type[Number(aude.indexOf(window.util.mainStationPath(window.urb.user)) === -1)];
-    if ((ref2 = speech.lin) != null ? ref2.txt : void 0) {
-      txt = speech.lin.txt;
-    }
-    if (speech.url) {
-      url = speech.url.url;
-      txt = a({
-        href: url,
-        target: "_blank"
-      }, url);
-    }
-    if (speech.app) {
-      txt = speech.app.txt;
-      klass += " say";
-    }
-    if (speech.exp) {
-      txt = speech.exp.code;
-      klass += " exp";
-    }
+    mess = (function() {
+      switch (false) {
+        case !((con = speech.lin) || (con = speech.app) || (con = speech.exp) || (con = speech.tax)):
+          return con.txt;
+        case !(con = speech.url):
+          return a({
+            href: con.txt,
+            target: "_blank"
+          }, con.txt);
+        default:
+          return "Unknown speech type:" + ((function() {
+            var results;
+            results = [];
+            for (x in speech) {
+              results.push(" %" + x);
+            }
+            return results;
+          })()).join('');
+      }
+    })();
+    klass += (function() {
+      switch (false) {
+        case speech.app == null:
+          return " say";
+        case speech.exp == null:
+          return " exp";
+        default:
+          return "";
+      }
+    })();
     return div({
       className: "message" + klass
     }, [
@@ -333,7 +345,7 @@ Message = recl({
         }, this.convTime(this.props.thought.statement.date))
       ]), div({
         className: "mess"
-      }, txt, attachments.length ? div({
+      }, mess, attachments.length ? div({
         className: "fat"
       }, attachments) : void 0)
     ]);
