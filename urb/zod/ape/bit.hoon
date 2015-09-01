@@ -63,7 +63,7 @@ $:  cred=(unit ,[app-secret=@t client-id=@t])
 ++  old-api
   |=  [pour-path=wire end-point=path req=$|(%get [%post p=json])]
   ^-  move
-  %^  httpreq  ost.hid  pour-path 
+  %^  send:http  ost.hid  pour-path 
   [/com/coinbase/api v1/end-point req ~ ['access_token' access:(need auth.vat)]~]
 ::
 ++  api-call

@@ -41,3 +41,4 @@
   ++  voy   ": {<~[(icon who)]>} (row/col): "           ::  print prompt
   --
 --
+=*(oct1 . .)
