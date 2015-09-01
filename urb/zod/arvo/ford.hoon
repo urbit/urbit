@@ -625,7 +625,7 @@
     ++  fair                                            ::  hood parsing rule
       |=  bem=beam
       ?>  ?=([%ud 0] r.bem)           ::  XX sentinel
-      =+  vez=(vang | (tope bem))
+      =+  vez=(vang & (tope bem))
       =<  hood
       |%  
       ++  case
