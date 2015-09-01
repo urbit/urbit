@@ -1,10 +1,11 @@
 ::
 ::::  /hoon/down-jet/lib
   ::
-/-    *markdown
+/-    markdown
 ::
 ::::
   ::
+[markdown .]
 //    /%/parse                       ::  inli donp parse
 //    /%/rend                        ::  sing sung sang flat into-inner
 |%

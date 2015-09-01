@@ -3,11 +3,12 @@
 ::::
   :: 
 /?  314
-/-  *talk, *bit-api
+/-  talk, bit-api
 /+  talk, sole, http
 !:
 ::::  sivtyv-barnel
   ::  be sure to have oauth2-code markk
+[talk bit-api .]
 |%
 ++  axle
 $:  cred=(unit ,[app-secret=@t client-id=@t])

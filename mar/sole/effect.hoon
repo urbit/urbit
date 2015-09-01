@@ -2,10 +2,11 @@
 ::::  /hoon/sole-effect/mar
   ::
 /?    314
-/-    *sole
+/-    sole
 !:
 ::::
   ::
+[sole .]
 |%
 ++  mar-sole-change                       ::  XX  dependency
   |_  cha=sole-change

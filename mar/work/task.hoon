@@ -1,10 +1,11 @@
 ::
 ::::  /hoon/task/work/mar
   ::
-/-    *work
+/-    work
 !:
 ::::
   ::
+[work .]
 |%
 ++  rend
   |=  a=(list $|(char dime))  ^-  cord

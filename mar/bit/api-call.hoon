@@ -2,7 +2,8 @@
 ::::  /hoon/bit-api-call/mar
   ::
 /?    314
-/-    *bit-api
+/-    bit-api
+[bit-api .]
 |_  [access-token=@t req=bit-api-call]
 ::
 ++  wrap

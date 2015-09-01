@@ -2,10 +2,11 @@
 ::::  /hoon/oct4/lib                               ::  ::  dependencies
   ::                                                    ::  ::
 /?    310                                               ::  arvo version
-/-    *oct4                                             ::  structures
+/-    oct4                                             ::  structures
 ::                                                      ::  ::
 ::::                                                    ::  ::  semantics
   !:                                                    ::  ::
+[oct4 .]
 |%
 ++  icon   |=(? ?:(+< 'X' 'O'))                         ::  display at
 ++  bo                                                  ::  per board
