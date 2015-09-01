@@ -2,11 +2,12 @@
 ::::
   ::
 /?  314
-/-  *work
+/-  work
 /+  talk
 !:
 ::::
   ::
+[work .]
 |%
 ++  move  (pair bone card)                              ::  all actions
 ++  card                                                ::  general card

@@ -2,11 +2,12 @@
 ::::  /hoon/down/mar
   ::
 /?    314
-/-    *markdown
+/-    markdown
 /+    down-jet
 ::
 ::::
   ::
+[markdown .]
 |_  [atr=(map cord cord) don=down]
 ++  grab                                                ::  convert from
   |%

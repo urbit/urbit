@@ -3,7 +3,7 @@
 ::::
   ::
 /?  314
-/-  *talk
+/-  talk
 /+  talk, sole, http
 
 ::
@@ -14,6 +14,7 @@
 ::  data structures                                                           ::             
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 !:
+[talk .]
 |%
 ++  instance
   $:  plat=?(%do %gce)  name=@t  id=@t  status=@t  created=@da  snapshot=name=@t  ::disk=@u  region=@t  

@@ -2,11 +2,12 @@
 ::::  /hoon/dojo/app                               ::  ::::
   ::                                                    ::    ::
 /?  314                                                 ::  arvo kelvin
-/-  *sole                                               ::  console structures
+/-  sole                                               ::  console structures
 /+  sole                                                ::  console library
 ::                                                      ::  ::
 ::::                                                    ::  ::::
   !:                                                    ::    ::
+[sole .]
 =>  |%                                                  ::  external structures
     ++  house                                           ::  all state
       $:  hoc=(map bone session)                        ::  conversations

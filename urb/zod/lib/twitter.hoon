@@ -3,11 +3,12 @@
 ::::  /hoon/twitter/lib
   ::
 /?    314
-/-   *twitter
+/-   twitter
 =+   twit
 !:
 ::::  functions
   ::
+[twitter .]
 |%
 ++  fass                                                ::  rewrite path
   |=  a=path

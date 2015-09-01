@@ -2,10 +2,11 @@
 ::::  /hoon/oct1/lib                                    ::::::  dependencies
   ::                                                    ::  ::
 /?    310                                               ::  arvo version
-/-    *oct1                                             ::  structures
+/-    oct1                                             ::  structures
 ::                                                      ::  ::
 ::::                                                    ::::::  semantics
   !:                                                    ::  ::
+[oct1 .]
 |%                                                      ::
 ++  icon   |=(? ?:(+< 'X' 'O'))                         ::  display at
 ++  bo                                                  ::  per board

@@ -2,10 +2,11 @@
 ::::  /hoon/sole-action/mar
   ::
 /?    314
-/-    *sole
+/-    sole
 !:
 ::::
   ::
+[sole .]
 |_  sole-action
 ::
 ++  grab                                                ::  convert from
