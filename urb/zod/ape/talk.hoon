@@ -2,16 +2,16 @@
 ::::  /hoon/talk/app                                    ::  ::
   ::                                                    ::  ::   
 /?    314
-/-    *talk, *sole
+/-    talk, sole
 /+    talk, sole
 /=    seed    /~    !>(.)
 /=    talk-doc    
       /;  |=(a=wain (turn a |=(b=cord [%txt "? {(trip b)}"])))
       /:  /===/pub/doc/talk/help  /txt/
-::
+!:
 ::::
   ::
-!:
+[talk sole .]
 =>  |%                                                  ::  data structures
     ++  house  ,[%1 house-1]                            ::  full state
     ++  house-any                                       ::  app history

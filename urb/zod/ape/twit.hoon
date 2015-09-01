@@ -2,11 +2,12 @@
 ::
 ::::  /hook/core/twit/app
   ::
-/-    *twitter
+/-    twitter
 /+    twitter, talk
 ::
 ::::  ~fyr
   ::
+[twitter .]
 |%
 ++  twit-path                                           ::  valid peer path
   $%  ::  [%home ~]                                         ::  home timeline
