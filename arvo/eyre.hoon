@@ -494,14 +494,14 @@
   ::
   ++  poke-test
     %+  titl  'Poke'
-    ;=  ;button(onclick "urb.testPoke('/~/to/hi/txt.json')"): Hi anonymous
-        ;button(onclick "urb.testPoke('/~/as/own/~/to/hi/txt.json')"): Hi
+    ;=  ;button(onclick "urb.testPoke('/~/to/hood/helm-hi.json')"): Hi anonymous
+        ;button(onclick "urb.testPoke('/~/as/own/~/to/hood/helm-hi.json')"): Hi
         ;pre:code#err;
         ;script@"/~/at/~/auth.js";
         ;script:'''
                 show = function(t){err.innerText = ":) " + Date.now() + "\n" + t}
                 urb.testPoke = function(url){
-                  req(url,{xyro:{test:true}}, show)
+                  req(url,{wire:"/",xyro:'test'}, show)
                 }
                 '''
     ==
@@ -510,6 +510,9 @@
     ;html
       ;head
         ;meta(charset "utf-8");
+        ;meta(name "viewport", content "width=device-width, ".
+        "height=device-height, initial-scale=1.0, user-scalable=0, ".
+        "minimum-scale=1.0, maximum-scale=1.0");
         ;title:"{(trip a)}" 
         ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/".
           "libs/jquery/2.1.1/jquery.min.js");
@@ -1217,9 +1220,9 @@
       ?-  r.hat 
         [%| @]  (cat 3 '; Domain=' (rsh 3 1 (scot %if p.r.hat)))
         [%& %org %urbit *]  '; Domain=.urbit.org'
-        [%& @ @ *]  =+  dom=p.r.hat 
-                    =-  (rap 3 i.dom '.' i.t.dom -)
-                    |-(?~(t.t.dom ~ ['.' i.t.t.dom $(dom t.dom)]))
+        [%& @ @ *]  =-  (rap 3 "; Domain={-}{i.p.r.hat ~}")
+                    (turn (flop `path`t.p.r.hat) |=(a=span (cat 3 a '.')))
+                    
         [%& *]  ''  ::  XX security?
       ==
     ::
