@@ -315,7 +315,7 @@ h1.leader:after {
   margin: 0.5rem 0 0.5rem 2rem;
 }
 .item .discussion {
-  max-height: 18rem;
+  max-height: 9rem;
   overflow-x: hidden;
   overflow-y: scroll;
 }
