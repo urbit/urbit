@@ -12,3 +12,10 @@ module.exports =
   subscribe: (key,cb) -> 
     listeners[key] = cb
     (cb null,cache) if cache?
+  setLocal: (key,val) -> window.localStorage.setItem key,JSON.stringify val
+  getLocal: (key,cb) -> 
+    try
+      out = JSON.parse window.localStorage.getItem key
+      cb null,out
+    catch e
+      cb e

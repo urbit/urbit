@@ -23,6 +23,12 @@ button
 h1
   font-weight 500
 
+input
+button
+.input
+  outline none
+  border 0
+
 h1.leader:after
   content "—"
   margin-left .6rem
@@ -61,7 +67,6 @@ h1.leader:after
     vertical-align middle
     
   .sort
-    outline none
     border 0
     cursor pointer
     background-color #000
@@ -108,6 +113,7 @@ h1.leader:after
 
 .item
   display block
+  min-height 3rem
   max-height 3rem
   margin-bottom 1.5rem
   width 36rem
@@ -117,7 +123,8 @@ h1.leader:after
   
   .description
   .discussion
-    display none
+    transition visibility 0s linear 200ms
+    visibility hidden
 
   &.expand
     max-height 24rem
@@ -125,7 +132,8 @@ h1.leader:after
     
     .description
     .discussion
-      display inherit
+      transition visibility 0s
+      visibility visible
 
   .expand
     margin-left 2rem
@@ -164,7 +172,17 @@ h1.leader:after
     font-size .7rem
 
   .sort
-    color #ccc
+    opacity 0
+    width 1rem
+    height .2rem
+    background-color #e0e0e0
+    border-top .2rem solid #ccc
+    border-bottom .2rem solid #ccc
+    margin 0 .5rem
+    margin-top -.6rem    
+
+  &:hover .sort
+    opacity 1
   
   .done
     margin-top .5rem
@@ -198,20 +216,21 @@ h1.leader:after
   
   .audience .input
     background-color transparent
-
-  .sort
-    font-size .6rem
-    width 2rem
-    text-align center
+  
+  .title
+  .date
+  .tags
+    overflow hidden
+    white-space nowrap
+    height 2rem
 
   .title
     min-width 16rem
     margin-left .5rem
 
   .date
-    min-width 6rem
-
   .tags
+    max-width 6rem
     min-width 6rem
 
   .description
@@ -220,7 +239,7 @@ h1.leader:after
     margin .5rem 0 .5rem 2rem
   
   .discussion
-    max-height 18rem
+    max-height 9rem
     overflow-x hidden
     overflow-y scroll
   
@@ -248,7 +267,7 @@ h1.leader:after
     letter-spacing .07rem
     color #fff
     border 0
-    padding 0 .3rem
+    padding .6rem .3rem
     margin-top .5rem
 
 .comment
@@ -282,7 +301,6 @@ h1.leader:after
   text-decoration underline
 
 .input
-  outline none
   padding 0 .6rem 0 .3rem
   background-color #ececec
   border 0
