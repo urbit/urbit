@@ -1879,7 +1879,7 @@
               [%tas p=@tas]                             ::  label
               [%ud p=@ud]                               ::  number
           ==                                            ::
-++  cash  ,@uvH                                         ::  ankh hash
+++  cash  ,@uvI                                         ::  ankh hash
 ++  chum  ,@uvI                                         ::  hashed passcode
 ++  clot                                                ::  symmetric record
           $:  yed=(unit ,[p=hand q=code])               ::  outbound

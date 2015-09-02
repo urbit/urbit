@@ -167,5 +167,11 @@
     --
   --
 ::
-++  grad  %mime
+++  grad
+  |%
+  ++  form  %talk-telegrams
+  ++  diff  |=((list telegram) +<)
+  ++  pact  |=((list telegram) +<)
+  ++  join  |=([(list telegram) (list telegram)] `(unit mime)`~)
+  --
 --
