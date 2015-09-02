@@ -3,8 +3,10 @@
   ::
 /?    314
 /+    tree,react
+[. tree react]
 !:
 ::::
+  ::
 |_  all=(map path marl)
 ::
 ++  grow                                                         ::  convert to

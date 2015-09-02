@@ -6,7 +6,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::  semantics
   !:                                                    ::  ::
-[oct4 .]
+[. ^oct4]
 |%
 ++  icon   |=(? ?:(+< 'X' 'O'))                         ::  display at
 ++  bo                                                  ::  per board

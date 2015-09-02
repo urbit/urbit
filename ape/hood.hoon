@@ -3,6 +3,7 @@
   ::                                                    ::  ::
 /?  314                                                 ::  zuse version
 /+  sole, talk, helm, kiln, drum                        ::  libraries
+[. helm kiln drum]
 ::                                                      ::  ::
 ::::                                                    ::  ::
   !:                                                    ::  ::

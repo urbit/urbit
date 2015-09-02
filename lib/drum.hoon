@@ -2,7 +2,9 @@
 ::::  /hoon/drum/lib                                    ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
+/-    sole
 /+    sole
+[. ^sole]
 !:                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -487,7 +489,7 @@
 ++  se-talk  
   |=  tac=(list tank) 
   ^+  +>
-  (se-emit 0 %poke /drum/talk [our %talk] (said our %drum now eny tac))
+  (se-emit 0 %poke /drum/talk [our %talk] (said:talk our %drum now eny tac))
 ::
 ++  se-text                                           ::  return text
   |=  txt=tape
