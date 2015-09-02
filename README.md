@@ -209,5 +209,6 @@ Contributing
 ------------
 
 The first step in contributing to urbit is to come and join us on `:talk`. 
+
 For more detailed instructions check out 
-[`contributing.md`](https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md).
+[`contributing.md`](https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md),.
