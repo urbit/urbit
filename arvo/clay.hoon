@@ -764,17 +764,19 @@
         (echo now %& *cart sim)
       ==
     ?~  dok  ~&  %no-dok  +>.$
-    =+  ^-  cat=(list (pair path cage))
+    =+  ^-  cat=(list (trel path lobe cage))
         %+  turn  (gage-to-cages res)
         |=  [pax=cage cay=cage]
-        ?.  ?=(%path p.pax)
+        ?.  ?=(%path-hash p.pax)
           ~|(%patch-bad-path-mark !!)
-        [((hard path) q.q.pax) cay]
+        [-< -> +]:[((hard ,[path lobe]) q.q.pax) cay]
     ::  ~&  %canned
     ::  ~&  %checking-out
     =.  ank.dom  (checkout-ankh:ze (mo cat))
-    =.  +>.$  =>(wake ?>(?=(^ dok) .))
     ::  ~&  %checked-out
+    ::  ~&  %waking
+    =.  +>.$  =>(wake ?>(?=(^ dok) .))
+    ::  ~&  %waked
     ?~  hez  +>.$(dok ~)
     =+  mus=(must-ergo (turn sim head))
     ?:  =(~ mus)
@@ -855,7 +857,7 @@
           %+  turn  (~(tap by hat))
           |=  [a=path b=lobe]
           ^-  (pair silk silk)
-          :-  [%$ %path !>(a)]
+          :-  [%$ %path-hash !>([a b])]
           (lobe-to-silk:ze a b)
       ==
     ==
@@ -1372,20 +1374,27 @@
       ==
     ::
     ++  checkout-ankh
-      |=  hat=(map path cage)
+      |=  hat=(map path (pair lobe cage))
       ^-  ankh
-      %-  cosh
+      ::  %-  cosh
       %+  roll  (~(tap by hat) ~)
-      |=  [[pat=path zar=cage] ank=ankh]
+      |=  [[pat=path lob=lobe zar=cage] ank=ankh]
       ^-  ankh
-      %-  cosh
+      ::  %-  cosh
       ?~  pat
-        ank(q [~ (sham q.q.zar) zar])
+        ank(q [~ lob zar])
       =+  nak=(~(get by r.ank) i.pat)
       %=  ank
         r  %+  ~(put by r.ank)  i.pat
            $(pat t.pat, ank (fall nak *ankh))
       ==
+    ::
+    ::  This is  unused at the moment.  This used to be called in
+    ::  ++checkout-ankh, but was removed for performance reasons.
+    ::  If we want to add it in again, the hash needs to be done
+    ::  more reasonably.  ++checkout-ankh now has the lobe of each
+    ::  child node, which should be used rather than re-hashing the
+    ::  whole thing.
     ::
     ++  cosh
       |=  ank=ankh
@@ -2215,7 +2224,10 @@
           +>.$
         =.  let.dom  +(let.dom)
         =.  hit.dom  (~(put by hit.dom) let.dom r.new.dat)
-        =.  ank.dat  (checkout-ankh:ze (~(uni by bop.dat) p.can))
+        =.  ank.dat
+          %-  checkout-ankh:ze
+          %-  ~(run by (~(uni by bop.dat) p.can))
+          |=(cage [(page-to-lobe p q.q) +<])
         =.  ank.dom  ank.dat
         =>  .(..wake wake)
         ?~  hez  done:he
