@@ -352,6 +352,7 @@ h1.leader:after {
 }
 .comment .date,
 .comment .ship {
+  max-width: 12rem;
   margin-right: 1rem;
 }
 .comment .body {
