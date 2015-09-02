@@ -1,5 +1,5 @@
 recl = React.createClass
-[div,input] = [React.DOM.div,React.DOM.input]
+{div,input} = React.DOM
 
 StationStore = require '../stores/StationStore.coffee'
 StationActions = require '../actions/StationActions.coffee'
