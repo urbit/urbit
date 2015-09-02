@@ -1427,16 +1427,13 @@
     ::
     ++  meow                                            ::  assemble
       |=  [how=beam arg=heel] 
-      =|  $:  rop=(map term (pair hoof twig))           ::  structure/complex
-              bil=(map term (pair hoof twig))           ::  libraries known
-              lot=(list term)                           ::  library stack
-              zeg=(set term)                            ::  library guard
+      =|  $:  rop=(map term (pair hoof twig))           ::  structures
+              bil=(map term (pair hoof twig))           ::  libraries
               boy=(list twig)                           ::  body stack
           ==
       ~%  %meow  ..meow
         ==
           %able  able
-          %ably  ably
           %abut  abut
           %apex  apex
           %body  body
@@ -1453,22 +1450,7 @@
         ^-  twig
         :+  %tsgr
           ?:(=(~ rop) [%$ 1] [%brcn (~(run by rop) |=([^ a=twig] [%ash a]))])
-        [%tssg (turn (flop lot) |=(a=term q:(~(got by bil) a)))]
-      ::
-      ++  ably                                          ::  naked structure
-        |=  [cof=cafe for=mark hyd=hood]                ::  XX unused
-        ^-  (bolt twig)
-        %+  cope  (apex cof hyd)
-        |=  [cof=cafe sel=_..ably]
-        =.  ..ably  sel
-        %+  fine  cof
-        ^-  twig
-        :+  %tsgl  [%cnzy for]
-        :-  %brcn
-        ^-  (map term foot)
-        %+  ~(put by `(map term foot)`(~(run by rop) |=([* a=twig] [%ash a])))
-          for 
-        [%ash [%tssg (flop boy)]]
+        ?:(=(~ bil) [%$ 1] [%brcn (~(run by bil) |=([^ a=twig] [%ash a]))])
       ::
       ++  abut                                          ::  generate
         |=  [cof=cafe hyd=hood]
@@ -1669,7 +1651,6 @@
         =.  ..head
             %=  sel
               boy  boy
-              zeg  zeg
               how  how
               rop  %+  ~(put by (~(uni by rop) rop.sel))
                       p.i.bir 
@@ -1688,9 +1669,6 @@
         |=  [cof=cafe bir=(list hoof)]
         ^-  (bolt ,_..neck)
         ?~  bir  (fine cof ..neck)
-        ?:  (~(has in zeg) p.i.bir)
-          (flaw cof [%leaf "circular dependency: {<i.bir>}"]~)
-        =+  goz=(~(put in zeg) p.i.bir)
         =+  byf=(~(get by bil) p.i.bir)
         ?^  byf
           ?.  =(`hoof`i.bir `hoof`p.u.byf)
@@ -1700,13 +1678,11 @@
         |=  [cof=cafe bem=beam]
         %+  cope  (fade cof %hoon bem)
         |=  [cof=cafe hyd=hood]
-        %+  cope  (apex(zeg goz, how bem, boy ~) cof hyd)
+        %+  cope  (apex(how bem, boy ~) cof hyd)
         |=  [cof=cafe sel=_..neck]
         =.  ..neck  
             %=  sel
-              zeg  zeg
               how  how
-              lot  [p.i.bir lot]
               bil  (~(put by bil) p.i.bir [i.bir [%tssg (flop boy.sel)]])
             ==
         ^^^$(cof cof, bir t.bir)
