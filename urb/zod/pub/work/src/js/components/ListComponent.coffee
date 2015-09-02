@@ -17,7 +17,6 @@ module.exports = recl
     noNew:WorkStore.noNew()
     canSort:WorkStore.canSort()
     fulllist:WorkStore.getFullList()
-    listening:WorkStore.getListening()
     sorts:WorkStore.getSorts()
     filters:WorkStore.getFilters()
     expand:false
@@ -107,14 +106,16 @@ module.exports = recl
 
   _changeListening: ->
 
-  _changeFilter: (key,val) -> WorkActions.setFilter key,val
+  _changeFilter: (key,val) -> WorkActions.setFilter key,val,@state.filters
 
-  _changeSort: (key,val) -> WorkActions.setSort key,val
+  _changeSort: (key,val) -> WorkActions.setSort key,val,@state.sorts
 
   componentDidMount: -> 
     @placeholder = $ "<div class='item placeholder'><div class='sort'>x</div></div>"
     WorkStore.addChangeListener @_onChangeStore
     WorkActions.listenList @props.list
+    WorkActions.getLocal 'filters'
+    WorkActions.getLocal 'sorts'
     @alias()
 
   componentDidUpdate: (_props,_state)-> 
