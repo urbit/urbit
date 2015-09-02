@@ -7,7 +7,7 @@
 !:                                                      ::  ::
 ::::                                                    ::  ::  protocol
   ::                                                    ::  ::
-[oct4 .]
+[oct4 ^oct4 .]
 |_  play                                                ::  game 
 ++  grab                                                ::  convert from
   |%

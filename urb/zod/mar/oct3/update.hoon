@@ -4,10 +4,10 @@
 /?    310                                               ::  arvo
 /-    oct3                                             ::  structures
 /+    oct3                                              ::  libraries
+[. oct3 ^oct3]
 !:                                                      ::  ::
 ::::                                                    ::  ::  protocol
   ::                                                    ::  ::
-[oct3 .]
 |_  play                                                ::  game 
 ++  grab                                                ::  convert from
   |%
