@@ -301,7 +301,7 @@ h1.leader:after {
   height: 2rem;
 }
 .item .title {
-  min-width: 16rem;
+  width: 16rem;
   margin-left: 0.5rem;
 }
 .item .date,
