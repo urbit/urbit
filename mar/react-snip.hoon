@@ -6,7 +6,7 @@
 !:
 ::::
   ::
-[react .]
+[. react]
 |_  [hed=marl tal=marl]
 ::
 ++  grow                                                ::  convert to
