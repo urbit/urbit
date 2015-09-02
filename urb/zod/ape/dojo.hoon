@@ -664,6 +664,14 @@
       %det  (he-stir +.act)
       %ret  (he-done (tufa buf.say))
     ==
+  ::
+  ++  he-lame                                           ::  handle error
+    |=  [wut=term why=tang]
+    ^+  +>
+    %-  (slog (flop `tang`[>%dojo-lame wut< why]))
+    ?^  poy
+      he-pine:~(dy-amok dy u.poy)
+    he-pine                           ::  XX give mean to original keystroke
   --
 ::
 ++  peer-sole
@@ -697,6 +705,10 @@
 ++  made
   |=  [way=wire dep=@uvH reg=gage]
   he-abet:(~(he-made he [[ost.hid ~] (~(got by hoc) ost.hid)]) way dep reg)
+::
+++  lame
+  |=  [wut=term why=tang]
+  he-abet:(~(he-lame he [[ost.hid ~] (~(got by hoc) ost.hid)]) wut why)
 ::
 ++  unto
   |=  [way=wire cit=cuft] 
