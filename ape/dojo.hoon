@@ -9,7 +9,8 @@
   !:                                                    ::    ::
 =>  |%                                                  ::  external structures
     ++  house                                           ::  all state
-      $:  hoc=(map bone session)                        ::  conversations
+      $:  %0
+          hoc=(map bone session)                        ::  conversations
       ==                                                ::
     ++  session                                         ::  per conversation
       $:  say=sole-share                                ::  command-line state
@@ -18,6 +19,7 @@
           poy=(unit dojo-project)                       ::  working 
           var=(map term cage)                           ::  variable state
           old=(set term)                                ::  used TLVs
+          buf=tape                                      ::  multiline buffer
       ==                                                ::
     ++  dojo-command                                    ::
       $%  [%flat p=path q=dojo-source]                  ::  noun to unix atom
@@ -103,6 +105,7 @@
   |_  [[ost=bone moz=(list move)] session]              ::
   ++  dp                                                ::  dojo parser
     |%  
+    ++  dp-command-line  ;~(sfix dp-command (just '\0a'))
     ++  dp-command                                      ::  ++dojo-command
       %+  knee  *dojo-command  |.  ~+
       ;~  pose
@@ -192,7 +195,7 @@
     ++  dp-server-cat   (stag 0 (stag %cat dp-device))  ::  ++dojo-server
     ++  dp-server-dog   (stag 0 (stag %dog dp-device))  ::  ++dojo-server
     ++  dp-server-pig   (stag 0 (stag %pig dp-device))  ::  ++dojo-server
-    ++  dp-twig         wide:(vang & dp-path)           ::  ++twig
+    ++  dp-twig         tall:(vang & dp-path)           ::  ++twig
     ++  dp-device       (most fas sym)                  ::  ++dojo-device
     ++  dp-value                                        ::  ++dojo-source
       %+  cook  |=(a=dojo-source a)
@@ -515,19 +518,23 @@
   ::
   ++  he-dope                                           ::  sole user of ++dp
     |=  txt=tape                                        ::
-    ^-  (each (unit dojo-command) hair)                 ::  prefix/result
-    =+  vex=((full dp-command):dp [1 1] txt)            ::
-    ?.  =(+((lent txt)) q.p.vex)                        ::  fully parsed
-      [%| p.p.vex (dec q.p.vex)]                        ::  syntax error
-    [%& ?~(q.vex ~ `p.u.q.vex)]                         ::  prefix/complete
+    ^-  (each (unit (each dojo-command tape)) hair)     ::  prefix/result
+    =+  len=+((lent txt))                               ::  line length
+    =.  txt  :(weld buf txt "\0a")                      ::
+    =+  vex=((full dp-command-line):dp [1 1] txt)       ::
+    ?:  =(q.p.vex len)                                  ::  matched until line end
+      [%& ~]                                            ::
+    ?:  =(p.p.vex +((lent (skim txt |=(a=@ =(10 a)))))) ::  parsed all lines
+      [%& ~ ?~(q.vex [%| txt] `p.u.q.vex)]              ::  new buffer/complete
+    [%| p.p.vex (dec q.p.vex)]                          ::  syntax error
   ::
   ++  he-duke                                           ::  ++he-dope variant
     |=  txt=tape
-    ^-  (each dojo-command ,@ud)
+    ^-  (each (unit (each dojo-command tape)) ,@ud)
     =+  foy=(he-dope txt)
     ?-  -.foy
       %|  [%| q.p.foy]
-      %&  ?~(p.foy [%| (lent txt)] [%& u.p.foy])
+      %&  [%& p.foy]
     ==
   ::
   ++  he-abet                                           ::  resolve
@@ -627,7 +634,7 @@
     |=  mad=dojo-command
     ^+  +>
     ?>  ?=(~ poy)
-    he-pine:(dy-step:~(dy-init dy mad [0 ~ ~ ~ ~ ~ ~]) 0)
+    he-pine:(dy-step:~(dy-init dy %*(. *dojo-project mad mad)) 0)
   ::
   ++  he-done                                           ::  parse command
     |=  txt=tape
@@ -642,15 +649,14 @@
     ?-    -.doy
         %|  (he-diff [%err p.doy])
         %&
+      ?~  p.doy
+        (he-diff [%err (lent txt)])
       =+  old=(weld "> " (tufa buf.say))
       =^  cal  say  (~(transmit cs say) [%set ~])
-      %.  p.doy
-      =<  he-plan
-      %-  he-diff
-      :~  %mor
-          [%txt old]
-          [%nex ~]
-          [%det cal]
+      =.  +>.$   (he-diff %mor txt/old nex/~ det/cal ~)
+      ?-  -.u.p.doy
+        %&  (he-plan(buf ~) p.u.p.doy)
+        %|  +>.$(buf p.u.p.doy)
       ==
     ==
   ::
@@ -665,6 +671,14 @@
     ==
   --
 ::
+++  prep
+  =+  sosh==>(*session .(|5 old))
+  |=  old=(unit ?(house (map bone ,_sosh)))  ^+  [~ ..prep]
+  ?~  old  `..prep
+  ?.  ?=([@ *] u.old)
+    $(u.old [%0 (~(run by u.old) |=(sos=_sosh sos(|5 [|5.sos ""])))])
+  `..prep(+<+ u.old)
+::
 ++  peer-sole
   |=  [pax=path]
   ^-  (quip move +>)
@@ -677,13 +691,7 @@
   %~  he-peer  he
   :-  [ost.hid ~]
   ^-  session
-  :*  *sole-share  ::  say=sole-share
-      %home           ::  syd=desk
-      ~               ::  luc=(unit case)
-      ~               ::  poy=(unit dojo-project)
-      ~               ::  var=(map term cage)
-      ~               ::  old=(set term)
-  ==
+  %*(. *session syd %home)
 ::
 ++  poke-sole-action
   |=  [act=sole-action]
