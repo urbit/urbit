@@ -25,6 +25,7 @@
       $%  [%flat p=path q=dojo-source]                  ::  noun to unix atom
           [%pill p=path q=dojo-source]                  ::  noun to unix pill
           ::  [%tree p=path q=dojo-source]              ::  noun to unix tree
+          [%file p=beam q=dojo-source]                  ::  save to clay
           [%poke p=goal q=dojo-source]                  ::  make and poke
           [%show p=dojo-source]                         ::  print
           [%verb p=term q=dojo-source]                  ::  store variable
@@ -88,6 +89,7 @@
           [%send wire [ship term] clap]                 ::
           [%exec wire @p (unit ,[beak silk])]           ::
           [%deal wire sock term club]                   ::
+          [%info wire @p toro]                          ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  sign                                            ::
@@ -151,17 +153,22 @@
       ::
         %+  stag  %verb
         ;~  pfix  tis
-          ;~(plug sym ;~(pfix ace dp-source))
+          ;~((glue ace) sym dp-source)
+        ==
+      ::
+        %+  stag  %file
+        ;~  pfix  tar
+          ;~((glue ace) dp-beam dp-source)
         ==
       ::
         %+  stag  %flat 
         ;~  pfix  pat
-          ;~(plug (most fas sym) ;~(pfix ace dp-source))
+          ;~((glue ace) (most fas sym) dp-source)
         ==
       ::
         %+  stag  %pill
         ;~  pfix  dot
-          ;~(plug (most fas sym) ;~(pfix ace dp-source))
+          ;~((glue ace) (most fas sym) dp-source)
         ==
       ::
         (stag %show dp-source)
@@ -188,10 +195,15 @@
         (cook |=(a=term `goal`[our.hid a]) sym)
         (easy [our.hid %hood])
       ==
+    ++  dp-beam                                         ::  ++beam
+      %+  sear  tome
+      =+  vez=(vang & dp-path)
+      (sear plex:vez (stag %clsg poor:vez))
+    ::
     ++  dp-model-cat  ;~(plug dp-server-cat dp-config)  ::  ++dojo-model
     ++  dp-model-dog  ;~(plug dp-server-dog dp-config)  ::  ++dojo-model
     ++  dp-model-pig  ;~(plug dp-server-pig dp-config)  ::  ++dojo-model
-    ++  dp-path       `path`/(scot %p our.hid)/home/(scot %da now.hid)
+    ++  dp-path       `path`/(scot %p our.hid)/[syd]/(scot %da now.hid)
     ++  dp-server-cat   (stag 0 (stag %cat dp-device))  ::  ++dojo-server
     ++  dp-server-dog   (stag 0 (stag %dog dp-device))  ::  ++dojo-server
     ++  dp-server-pig   (stag 0 (stag %pig dp-device))  ::  ++dojo-server
@@ -211,9 +223,9 @@
         (star ;~(pfix ace dp-value))
         %+  cook
           ~(gas by *(map term (unit dojo-source)))
-        %+  more  com
+        %-  star
         ;~  plug 
-          ;~(pfix ace tis sym)
+          ;~(pfix com ace tis sym)
           (punt ;~(pfix ace dp-value))
         ==
       ==
@@ -225,7 +237,7 @@
     ++  dy-amok  +>(poy ~)                              ::  terminate
     ++  dy-beak                                         ::  XX rethink
       ^-  beak
-      [our.hid %home [%da now.hid]]
+      [our.hid syd [%da now.hid]]
     ::
     ++  dy-ford                                         ::  send work to ford
       |=  [way=wire kas=silk]
@@ -257,6 +269,7 @@
       |=  mad=dojo-command
       ^+  [mad +>]
       ?-  -.mad
+        %file  =^(src +>.$ (dy-init-source q.mad) [[%file p.mad src] +>.$])
         %flat  =^(src +>.$ (dy-init-source q.mad) [[%flat p.mad src] +>.$])
         %pill  =^(src +>.$ (dy-init-source q.mad) [[%pill p.mad src] +>.$])
         %poke  =^(src +>.$ (dy-init-source q.mad) [[%poke p.mad src] +>.$])
@@ -386,6 +399,14 @@
             (~(got by rez) p.q.mad)
         ==
       ::
+          %file
+        %-  he-card(poy ~)  :*
+          %info
+          /file
+          our.hid
+          (foal (tope p.mad) (~(got by rez) p.q.mad))
+        ==
+      ::
           %flat
         =+  out=q.q:(~(got by rez) p.q.mad)
         ?^  out 
@@ -396,6 +417,7 @@
         (dy-rash %sag p.mad q.q:(~(got by rez) p.q.mad))
       ::
           %verb
+        ~&  (~(run by var) mug)
         dy-amok(var (~(put by var) p.mad (~(got by rez) p.q.mad)))
       ::
           %show
@@ -492,6 +514,7 @@
         %dv  [/hand [%core he-beak (flop p.q.u.cud)]]
         %ec  [/hand [%cast p.q.u.cud (dy-mare q.q.u.cud)]]
         %ex  [/hand (dy-mare p.q.u.cud)]
+        %va  [/hand %$ (~(got by var) p.q.u.cud)]
         %tu  :-  /hand
              :-  %$
              :-  %noun
