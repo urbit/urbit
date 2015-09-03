@@ -2,8 +2,9 @@
 ::::  /hoon/talk-telegrams/mar
   ::
 /?  314
-/-  *talk
+/-  talk
 !:
+=+  talk
 |_  gam=(list telegram)
 ::
 ++  grab
