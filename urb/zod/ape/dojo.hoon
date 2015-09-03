@@ -209,14 +209,10 @@
         (star ;~(pfix ace dp-value))
         %+  cook
           ~(gas by *(map term (unit dojo-source)))
-        %+  more  
-          ;~(plug com ace)
+        %+  more  com
         ;~  plug 
-          ;~(pfix tis sym)
-          ;~  pose 
-            ;~(pfix ace (stag ~ dp-value)) 
-            (easy ~)
-          ==
+          ;~(pfix ace tis sym)
+          (punt ;~(pfix ace dp-value))
         ==
       ==
     --
