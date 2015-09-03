@@ -14,12 +14,13 @@
           $:  qyx=cult                                  ::  subscribers
               dom=dome                                  ::  desk data
               dok=(unit dork)                           ::  outstanding diffs
-              mer=(map (pair ship desk) mery)           ::  outstanding merges
+              mer=(unit mery)                           ::  outstanding merge
           ==                                            ::
 ++  gift  gift-clay                                     ::  out result <-$
 ++  kiss  kiss-clay                                     ::  in request ->$
-++  mery                                                ::
-          $:  gem=germ                                  ::  strategy
+++  mery                                                ::  merge state
+          $:  sor=(pair ship desk)                      ::  merge source
+              gem=germ                                  ::  strategy
               cas=case                                  ::  ali's case
               ali=yaki                                  ::  ali's commit
               bob=yaki                                  ::  bob's commit
@@ -90,7 +91,7 @@
               qyx=cult                                  ::  subscribers
               dom=dome                                  ::  revision state
               dok=(unit dork)                           ::  outstanding diffs
-              mer=(map (pair ship desk) mery)           ::  outstanding merges
+              mer=(unit mery)                           ::  outstanding merges
           ==                                            ::
 ++  rind                                                ::  request manager
           $:  nix=@ud                                   ::  request index
@@ -1709,16 +1710,29 @@
       --
     ::
     ++  me                                              ::  merge ali into bob
-      |=  [ali=(pair ship desk) alh=(unit ankh)]        ::  from
+      |=  [ali=(pair ship desk) alh=(unit ankh) new=?]  ::  from
       =+  bob=`(pair ship desk)`[our syd]               ::  to
-      =+  dat=(fall (~(get by mer) ali) *mery)          ::  merge data
+      =+  ^-  dat=(each mery term)
+          ?~  mer
+            ?:  new
+              =+  *mery
+              `-(sor ali:+)
+            [%| %not-actually-merging]
+          ?.  new
+            ?:  =(ali sor.u.mer)
+              `u.mer
+            [%| %already-merging-from-somewhere-else]
+          [%| %already-merging-weird]
+      ?:  ?=(%| -.dat)
+        ~|(p.dat !!)
+      =+  dat=p.dat
       =|  don=?                                         ::  keep going
       |%
       ++  abet
         ^+  ..me
         ?:  don
-          ..me(mer (~(put by mer) ali dat))
-        ..me(mer (~(del by mer) ali), reg :_(reg [hen %mere gon.dat]))
+          ..me(mer `dat)
+        ..me(mer ~, reg :_(reg [hen %mere gon.dat]))
       ::
       ++  route
         |=  [sat=term res=(each riot gage)]
@@ -1736,8 +1750,6 @@
       ++  start
         |=  gem=germ
         ^+  +>
-        ?:  (~(has by mer) ali)
-          (error:he %already-merging ~)
         ?:  &(=(0 let.dom) !?=(?(%init %that) gem))
           (error:he %no-bob-desk ~)
         =.  gem.dat  gem
@@ -2460,7 +2472,7 @@
       [~ ..^$]
     =^  mos  ruf
       =+  den=((de now hen ruf) [. .]:p.q.hic q.q.hic)
-      abet:abet:(start:(me:ze:den [r.q.hic s.q.hic] ~) t.q.hic)
+      abet:abet:(start:(me:ze:den [r.q.hic s.q.hic] ~ &) t.q.hic)
     [mos ..^$]
   ::
       %mont
@@ -2593,7 +2605,7 @@
         ank.dom
     =^  mos  ruf
       =+  den=((de now hen ruf) [. .]:our syd)
-      abet:abet:(route:(me:ze:den [her sud] kan) sat dat)
+      abet:abet:(route:(me:ze:den [her sud] kan |) sat dat)
     [mos ..^$]
   ?:  ?=([%blab care @ @ *] tea)
     ?>  ?=(%made +<.q.hin)
