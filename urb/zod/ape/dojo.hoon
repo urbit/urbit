@@ -689,7 +689,7 @@
         %&
       ?~  p.doy
         (he-diff [%err (lent txt)])
-      =+  old=(weld "> " (tufa buf.say))
+      =+  old=(weld ?~(buf "> " "  ") (tufa buf.say))
       =^  cal  say  (~(transmit cs say) [%set ~])
       =.  +>.$   (he-diff %mor txt/old nex/~ det/cal ~)
       ?-  -.u.p.doy
