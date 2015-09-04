@@ -16,7 +16,8 @@
       $:  say=sole-share                                ::  command-line state
           syd=desk                                      ::  active desk 
           luc=(unit case)                               ::  special case
-          poy=(unit dojo-project)                       ::  working 
+          poy=(unit dojo-project)                       ::  working
+          [lib=(list hoof) arc=(list hoof)]             ::  lib/sur
           var=(map term cage)                           ::  variable state
           old=(set term)                                ::  used TLVs
           buf=tape                                      ::  multiline buffer
@@ -235,15 +236,11 @@
     |_  dojo-project                                    ::
     ++  dy-abet  +>(poy `+<)                            ::  resolve
     ++  dy-amok  +>(poy ~)                              ::  terminate
-    ++  dy-beak                                         ::  XX rethink
-      ^-  beak
-      [our.hid syd [%da now.hid]]
-    ::
     ++  dy-ford                                         ::  send work to ford
       |=  [way=wire kas=silk]
       ^+  +>+>
       ?>  ?=(~ pux)
-      (he-card(poy `+>+<(pux `way)) %exec way our.hid `[dy-beak kas])
+      (he-card(poy `+>+<(pux `way)) %exec way our.hid `[he-beak kas])
     ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
@@ -418,7 +415,17 @@
       ::
           %verb
         ~&  (~(run by var) mug)
-        dy-amok(var (~(put by var) p.mad (~(got by rez) p.q.mad)))
+        =+  cay=(~(got by rez) p.q.mad)
+        ~|  bad-set/[p.mad p.q.cay]
+        =<  dy-amok
+        ?+  p.mad  .(var (~(put by var) p.mad cay))
+          %now  ~|(%time-is-immutable !!)
+          %who  ~|(%self-is-immutable !!)
+          %law  .(syd ;;(@tas q.q.cay))
+          %dir  ~|(%cd-stub ?>(?=(~ q.q.cay) .))
+          %lib  .(lib ;;((list hoof) q.q.cay))
+          %arc  .(arc ;;((list hoof) q.q.cay))
+        ==
       ::
           %show
         =+  cay=(~(got by rez) p.p.mad)
@@ -474,8 +481,13 @@
       (dy-silk-config cag cig)
     ::
     ++  dy-twig-head                                    ::  dynamic state
-      ^-  vase
-      :(slop !>(`our=@p`our.hid) !>(`now=@da`now.hid) !>(`eny=@uvI`eny.hid))
+      ^-  cage
+      :-  %noun
+      !>  ^-  $:  law=desk  dir=path  
+                  [lib=(list hoof) arc=(list hoof)]
+                  [our=@p now=@da eny=@uvI]
+              ==
+          [syd / [lib arc] [our now eny]:hid]
     ::
     ++  dy-made-dial                                    ::  dialog product
       |=  cag=cage
@@ -528,7 +540,10 @@
     ++  dy-mare                                         ::  build expression
       |=  gen=twig
       ^-  silk
-      [%ride gen [[%$ %$ dy-twig-head] [%reef ~]]]
+      :+  %ride  gen
+      :-  [%$ dy-twig-head]
+      =+  sur=(turn arc |=(hoof [& +<]))
+      [%plan [he-beak ~] / zuse sur lib ~ ~]            ::  XX spur
     ::
     ++  dy-step                                         ::  advance project
       |=  nex=@ud
@@ -703,11 +718,15 @@
   --
 ::
 ++  prep
-  =+  sosh==>(*session .(|5 old))
+  =+  sosh==>(*session .(|4 |5(+ old)))
+  ::  ,_`..prep
   |=  old=(unit ?(house (map bone ,_sosh)))  ^+  [~ ..prep]
   ?~  old  `..prep
   ?.  ?=([@ *] u.old)
-    $(u.old [%0 (~(run by u.old) |=(sos=_sosh sos(|5 [|5.sos ""])))])
+    %=    $
+        u.old
+      [%0 (~(run by u.old) |=(sos=_sosh sos(|4 [[~ ~] &5.sos |5.sos ""])))]
+    ==
   `..prep(+<+ u.old)
 ::
 ++  peer-sole
