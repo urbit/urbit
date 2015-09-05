@@ -20,7 +20,9 @@
 ++  kiss  kiss-clay                                     ::  in request ->$
 ++  mery                                                ::  merge state
           $:  sor=(pair ship desk)                      ::  merge source
+              hen=duct                                  ::  formal source
               gem=germ                                  ::  strategy
+              wat=wait                                  ::  waiting on
               cas=case                                  ::  ali's case
               ali=yaki                                  ::  ali's commit
               bob=yaki                                  ::  bob's commit
@@ -33,6 +35,9 @@
               ank=ankh                                  ::  new state
               erg=(map path ,?)                         ::  ergoable changes
               gon=(each (set path) (pair term (list tank))) ::  return value
+          ==                                            ::
+++  wait  $?  %null   %ali    %diff-ali   %diff-bob     ::  what are we
+              %merge  %build  %checkout   %ergo         ::  waiting for?
           ==                                            ::
 ++  moot  ,[p=case q=case r=path s=(map path lobe)]     ::  stored change range
 ++  move  ,[p=duct q=(mold note gift)]                  ::  local move
@@ -924,23 +929,8 @@
     ^+  +>
     (edit wen lem)
   ::
-  ++  exem                                            ::  execute merge
-    |=  [wen=@da him=@p sud=@tas gem=germ]            ::  aka direct change
-    !!
-    ::  ?.  (gte p.mer let.dom)  !!                       ::  no
-    ::  =.  +>.$  %=  +>.$
-    ::              hut.ran  (~(uni by hut.r.mer) hut.ran)
-    ::              lat.ran  (~(uni by lat.r.mer) lat.ran)
-    ::              let.dom  p.mer
-    ::              hit.dom  (~(uni by q.mer) hit.dom)
-    ::            ==
-    ::  =+  ^=  hed                                       ::  head commit
-    ::      =<  q
-    ::      %-  ~(got by hut.ran)
-    ::      %-  ~(got by hit.dom)
-    ::      let.dom
-    ::  (echa:wake:(checkout-ankh hed))
-  ::
+  ::  Be careful to call ++wake if/when necessary.  Every case
+  ::  must call it individually.
   ++  take-foreign-update                              ::  external change
     |=  [inx=@ud rut=(unit rand)]
     ^+  +>
@@ -955,7 +945,8 @@
         ==
     ?~  rut
       =+  rav=`rave`q.u.ruv
-      %=    +>+.$
+      =<  ?>(?=(^ ref) .)
+      %_    wake
           lim
         ?.(&(?=(%many -.rav) ?=(%da -.q.q.rav)) lim `@da`p.q.q.rav)
       ::
@@ -987,7 +978,7 @@
           %null  [[%atom %n] ~]
           %nako  !>(~|([%harding [&1 &2 &3]:q.r.u.rut] ((hard nako) q.r.u.rut)))
         ==
-      ?.  ?=(%nako p.r.u.rut)  +>+.$
+      ?.  ?=(%nako p.r.u.rut)  [?>(?=(^ ref) .)]:wake
       =+  rav=`rave`q.u.ruv
       ?>  ?=(%many -.rav)
       |-  ^+  +>+.^$
@@ -1012,7 +1003,8 @@
       ==
     ::
         %y
-      %_    +>+.$
+      =<  ?>(?=(^ ref) .)
+      %_    wake
           haw.u.ref
         %+  ~(put by haw.u.ref)
           [p.p.u.rut q.p.u.rut q.u.rut]
@@ -1020,7 +1012,7 @@
       ==
     ::
         %z
-      ~|  %its-prolly-reasonable-to-request-ankh-over-the-network-sorry
+      ~|  %its-prolly-not-reasonable-to-request-ankh-over-the-network-sorry
       !!
     ==
   ::
@@ -1651,6 +1643,13 @@
       |=  [yon=aeon mun=mood]                           ::  seek and read
       ^-  (unit (unit (each cage lobe)))
       ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))              ::  NB only her speed
+        ::  ~&  :*  %dude-someones-getting-curious
+        ::          mun=mun
+        ::          yon=yon
+        ::          our=our
+        ::          her=her
+        ::          syd=syd
+        ::      ==
         ?^(r.mun [~ ~] [~ ~ %& %aeon !>(yon)])
       ?:  ?=(%u p.mun)
         (read-u yon r.mun)
@@ -1716,13 +1715,31 @@
           ?~  mer
             ?:  new
               =+  *mery
-              `-(sor ali:+)
+              `-(sor ali:+, hen hen:+, wat %null)
             [%| %not-actually-merging]
           ?.  new
             ?:  =(ali sor.u.mer)
               `u.mer
+            ~&  :*  %already-merging-from-somewhere-else
+                    ali=ali
+                    sor=sor.u.mer
+                    gem=gem.u.mer
+                    wat=wat.u.mer
+                    cas=cas.u.mer
+                    hen=hen
+                    henmer=hen.u.mer
+                ==
             [%| %already-merging-from-somewhere-else]
-          [%| %already-merging-weird]
+          ~&  :*  %already-merging-from-somewhere
+                  ali=ali
+                  sor=sor.u.mer
+                  gem=gem.u.mer
+                  wat=wat.u.mer
+                  cas=cas.u.mer
+                  hen=hen
+                  henmer=hen.u.mer
+              ==
+          [%| %already-merging-from-somewhere]
       ?:  ?=(%| -.dat)
         ~|(p.dat !!)
       =+  dat=p.dat
@@ -1737,6 +1754,15 @@
       ++  route
         |=  [sat=term res=(each riot gage)]
         ^+  +>.$
+        ?.  =(sat wat.dat)
+          ~|  :*  %hold-your-horses-merge-out-of-order
+                  sat=sat
+                  wat=wat.dat
+                  ali=ali
+                  bob=bob
+                  hepres=-.res
+              ==
+           !!
         ?+  +<  ~|((crip <[%bad-stage sat ?~(-.res %riot %gage)]>) !!)
           [%ali %& *]       %.(p.res fetched-ali)
           [%diff-ali %| *]  %.(p.res diffed-ali)
@@ -1766,7 +1792,7 @@
       ::
       ++  fetch-ali
         ^+  .
-        =-  %_(+ tag [- tag])
+        =-  %_(+ tag [- tag], wat.dat %ali)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ali ~]
             %c  %warp  [p.bob p.ali]  q.ali
@@ -1971,7 +1997,7 @@
       ::
       ++  diff-ali
         ^+  .
-        (diff-bas %ali ali.dat ali bob.dat)
+        (diff-bas(wat.dat %diff-ali) %ali ali.dat ali bob.dat)
       ::
       ++  diffed-ali
         |=  res=gage
@@ -2011,7 +2037,7 @@
       ::
       ++  diff-bob
         ^+  .
-        (diff-bas %bob bob.dat bob ali.dat)
+        (diff-bas(wat.dat %diff-bob) %bob bob.dat bob ali.dat)
       ::
       ++  diffed-bob
         |=  res=gage
@@ -2054,7 +2080,7 @@
         |-  ^+  +.$
         ?+    gem.dat  ~|  [%merge-weird-gem gem.dat]  !!
             ?(%mate %meld)
-          =-  %_(+.$ tag [- tag])
+          =-  %_(+.$ tag [- tag], wat.dat %merge)
           :*  hen  %pass
               [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %merge ~]
               %f  %exec  p.bob  ~  [p.bob q.bob cas.dat]  %tabl
@@ -2088,7 +2114,7 @@
       ::
       ++  build
         ^+  .
-        =-  %_(+ tag [- tag])
+        =-  %_(+ tag [- tag], wat.dat %build)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %build ~]
             %f  %exec  p.bob  ~  [p.bob q.bob cas.dat]  %tabl
@@ -2209,7 +2235,7 @@
       ::
       ++  checkout
         ^+  .
-        =-  %_(+ tag [- tag])
+        =-  %_(+ tag [- tag], wat.dat %checkout)
         =+  val=?:(?=(%init gem.dat) ali bob)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout ~]
@@ -2249,7 +2275,7 @@
       ::
       ++  ergo
         ^+  .
-        =-  %_(+ tag [- tag])
+        =-  %_(+ tag [- tag], wat.dat %ergo)
         =+  ^-  sum=(set path)
             =+  (must-ergo (turn (~(tap by erg.dat)) head))
             =+  (turn (~(tap by -)) (corl tail tail))
@@ -2518,6 +2544,12 @@
       %warp
     =^  mos  ruf
       =+  den=((de now hen ruf) p.q.hic p.q.q.hic)
+      ::  =-  ~?  ?=([~ %sing %w *] q.q.q.hic)
+      ::        :*  %someones-warping 
+      ::            rav=u.q.q.q.hic
+      ::            mos=-<
+      ::        ==
+      ::      -
       =<  abet
       ?~  q.q.q.hic
         ease:den
