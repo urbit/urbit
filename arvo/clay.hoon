@@ -440,12 +440,12 @@
         |  :_  yel
            [hen %note '=' %leaf :(weld (trip p.lem) " " (spud pre))]
         &  |-  ^+  yel
-           ?~  q.p.lem  yel
-           :_  $(q.p.lem t.q.p.lem)
+           ?~  p.lem  yel
+           :_  $(p.lem t.p.lem)
            :-  hen
            :+  %note
-             ?-(-.q.i.q.p.lem %del '-', %ins '+', %dif ':')
-           [%leaf (spud (weld pre p.i.q.p.lem))]
+             ?-(-.q.i.p.lem %del '-', %ins '+', %dif ':')
+           [%leaf (spud (weld pre p.i.p.lem))]
       ==
     ==
   ::
@@ -460,10 +460,10 @@
       wake:(echo:(checkout-ankh u.hat) wen lem)
     ?.  =(~ dok)
       ~&  %already-applying-changes  +>
-    =+  del=(skim q.p.lem :(corl (cury test %del) head tail))
-    =+  ins=(skim q.p.lem :(corl (cury test %ins) head tail))
-    =+  dif=(skim q.p.lem :(corl (cury test %dif) head tail))
-    =+  mut=(skim q.p.lem :(corl (cury test %mut) head tail))
+    =+  del=(skim p.lem :(corl (cury test %del) head tail))
+    =+  ins=(skim p.lem :(corl (cury test %ins) head tail))
+    =+  dif=(skim p.lem :(corl (cury test %dif) head tail))
+    =+  mut=(skim p.lem :(corl (cury test %mut) head tail))
     =^  ink  ins
       ^-  [(list (pair path miso)) (list (pair path miso))]
       %+  skid  `(list (pair path miso))`ins
@@ -625,10 +625,10 @@
           ^-  (list (pair path misu))
           (turn u.mut.u.dok |=([pax=path cal=[lobe cage]] [pax %dif cal]))
         ==
-    =+  hat=(edit:ze wen %& *cart sim)
+    =+  hat=(edit:ze wen %& sim)
     ?~  dok  ~&  %no-changes  !!
     ?~  -.hat
-      ([echo(dok ~)]:.(+>.$ +.hat) wen %& *cart sim)
+      ([echo(dok ~)]:.(+>.$ +.hat) wen %& sim)
     (checkout-ankh(lat.ran lat.ran.+.hat) u.-.hat)
   ::
   ++  take-inserting
@@ -761,13 +761,13 @@
           ^-  (list (pair path misu))
           (turn u.mut.u.dok |=([pax=path cal=[lobe cage]] [pax %dif cal]))
         ==
-    =^  hat  +>.$  (edit:ze now %& *cart sim)  ::  XX  do same in ++apply-edit
+    =^  hat  +>.$  (edit:ze now %& sim)  ::  XX  do same in ++apply-edit
     ?~  dok  ~&  %no-dok  +>.$
     =>
       %=    .
           +>.$
         ?<  ?=(~ hat)                                   ::  XX  whut?
-        (echo now %& *cart sim)
+        (echo now %& sim)
       ==
     ?~  dok  ~&  %no-dok  +>.$
     =+  ^-  cat=(list (trel path lobe cage))
@@ -1330,20 +1330,13 @@
           (make-delta p.mys [(lobe-to-mark u.har) u.har] [p q.q]:q.mys)
                                                         :: XX check vase !evil
         ::  XX of course that's a problem, p.u.ber isn't in rang since it
-        ::     was just cretated.  We shouldn't be sending multiple
+        ::     was just created.  We shouldn't be sending multiple
         ::     diffs
-        %+  ~(put by bar)  pax
-        (make-delta p.mys [(lobe-to-mark p.u.ber) p.u.ber] [p q.q]:q.mys)
-                                                        :: XX check vase !evil
+        ::  %+  ~(put by bar)  pax
+        ::  (make-delta p.mys [(lobe-to-mark p.u.ber) p.u.ber] [p q.q]:q.mys)
+        ::                                              :: XX check vase !evil
+        ~|([%two-diffs-for-same-file syd pax] !!)
       ==
-    ::
-    ++  as-arch
-      ^-  arch
-      :+  p.ank.dom
-        ?~(q.ank.dom ~ [~ p.u.q.ank.dom])
-      |-  ^-  (map ,@ta ,~)
-      ?~  r.ank.dom  ~
-      [[p.n.r.ank.dom ~] $(r.ank.dom l.r.ank.dom) $(r.ank.dom r.r.ank.dom)]
     ::
     ++  case-to-aeon                                    ::    case-to-aeon:ze
       |=  lok=case                                      ::  act count through
@@ -1375,34 +1368,11 @@
       ^-  ankh
       ::  %-  cosh
       ?~  pat
-        ank(q [~ lob zar])
-      =+  nak=(~(get by r.ank) i.pat)
+        ank(fil [~ lob zar])
+      =+  nak=(~(get by dir.ank) i.pat)
       %=  ank
-        r  %+  ~(put by r.ank)  i.pat
-           $(pat t.pat, ank (fall nak *ankh))
-      ==
-    ::
-    ::  This is  unused at the moment.  This used to be called in
-    ::  ++checkout-ankh, but was removed for performance reasons.
-    ::  If we want to add it in again, the hash needs to be done
-    ::  more reasonably.  ++checkout-ankh now has the lobe of each
-    ::  child node, which should be used rather than re-hashing the
-    ::  whole thing.
-    ::
-    ++  cosh
-      |=  ank=ankh
-      %_    ank
-          p
-        ^-  cash
-        %+  mix  ?~(q.ank 0 p.u.q.ank)
-        =+  axe=1
-        |-  ^-  cash
-        ?~  r.ank  *@
-        ;:  mix
-          (shaf %dash (mix axe (shaf %dush (mix p.n.r.ank p.q.n.r.ank))))
-          $(r.ank l.r.ank, axe (peg axe 2))
-          $(r.ank r.r.ank, axe (peg axe 3))
-        ==
+        dir  %+  ~(put by dir.ank)  i.pat
+             $(pat t.pat, ank (fall nak *ankh))
       ==
     ::
     ++  edit                                            ::    edit:ze
@@ -1444,20 +1414,12 @@
       =(u.zat lob)
       ::  =((lobe-to-cage u.zat) (lobe-to-cage lob))
     ::
-    ++  forge-nori                                      ::    forge-nori:ze
-      |=  yak=yaki                                      ::  forge nori
-      ^-  nori
-      !!
-      ::  ?~  p.yak  !!                                 ::  no parent, no diff
-      ::  :+  %&  *cart                                 ::  diff w/ 1st parent
-      ::  (~(tap by (diff-yakis (tako-to-yaki i.p.yak) yak)) ~)
-    ::
     ++  forge-yaki                                      ::    forge-yaki:ze
       |=  [wen=@da par=(unit tako) lem=suba]            ::  forge yaki
       =+  ^=  per
           ?~  par  ~
           ~[u.par]
-      =+  gar=(update-lat (apply-changes q.lem) lat.ran)
+      =+  gar=(update-lat (apply-changes lem) lat.ran)
       :-  (make-yaki per +.gar wen)                     ::  from existing diff
       -.gar                                             ::  fix lat
     ::
@@ -1557,7 +1519,7 @@
         =+  ^=  yak
             %-  aeon-to-yaki
             let.dom
-        ?^(r.mun ~ [~ %w !>([t.yak (forge-nori yak)])])
+        ?^(r.mun ~ !!) :: [~ %w !>([t.yak (forge-nori yak)])])
       (query(ank.dom ank:(descend-path:(zu ank.dom) r.mun)) p.mun)
     ::
     ++  read-u
@@ -1577,7 +1539,10 @@
       ?~  tak
         ~
       ?:  &(?=(~ ref) =(yon let.dom))
-        `(bind q.ank:(descend-path:(zu ank.dom) pax) (corl (cury same %&) tail))
+        :-  ~
+        %+  bind
+          fil.ank:(descend-path:(zu ank.dom) pax)
+        (corl (cury same %&) tail)
       =+  yak=(tako-to-yaki u.tak)
       =+  lob=(~(get by q.yak) pax)
       ?~  lob
@@ -1699,8 +1664,8 @@
       ++  descend                                       ::  descend
         |=  lol=@ta
         ^+  +>
-        =+  you=(~(get by r.ank) lol)
-        +>.$(ram [lol ram], ank ?~(you [*cash ~ ~] u.you))
+        =+  you=(~(get by dir.ank) lol)
+        +>.$(ram [lol ram], ank ?~(you [~ ~] u.you))
       ::
       ++  descend-path                                  ::  descend recursively
         |=  way=path
@@ -2374,7 +2339,7 @@
             ?>  ?=(%& -<)
             [%$ p.-]
           ?:  =([~ lob] lal)
-            [%$ +:(need q.ank:(descend-path:(zu (need alh)) pax))]
+            [%$ +:(need fil.ank:(descend-path:(zu (need alh)) pax))]
           =+  bol=(~(got by lat.ran) lob)
           ?-  -.bol
             %direct     [%volt q.bol]
@@ -2478,7 +2443,7 @@
     ?:  =(0 let.dom.u.dos)
       =+  cos=(mode-to-soba ~ s.bem q.q.hic r.q.hic)
       =+  ^-  [one=(list ,[path miso]) two=(list ,[path miso])]
-          %+  skid  q.cos
+          %+  skid  cos
           |=  [a=path b=miso]
           ?&  ?=(%ins -.b)
               ?=(%mime p.p.b)
@@ -2486,8 +2451,8 @@
               ?|  =([%hook ~] -)
                   =([%hoon ~] -)
           ==  ==
-      :~  [hen %pass /one %c %info p.bem q.bem %& p.cos one]
-          [hen %pass /two %c %info p.bem q.bem %& p.cos two]
+      :~  [hen %pass /one %c %info p.bem q.bem %& one]
+          [hen %pass /two %c %info p.bem q.bem %& two]
       ==
     =+  yak=(~(got by hut.ran.ruf) (~(got by hit.dom.u.dos) let.dom.u.dos))
     =+  cos=(mode-to-soba q.yak (flop s.bem) q.q.hic r.q.hic)
@@ -2793,7 +2758,6 @@
 ++  mode-to-soba
   |=  [hat=(map path lobe) pax=path all=? mod=mode]
   ^-  soba
-  :-  *cart
   %+  welp
     ^-  (list (pair path miso))
     ?.  all

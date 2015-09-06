@@ -475,9 +475,8 @@
     =<  win
     %-  blab:(spam tan)
     :_  ~
-    :*  ost  %info  /kiln/[syd]
-        our  (cat 3 syd '-scratch')
-        %&  *cart
+    :*  ost  %info  /kiln/[syd]  our
+        (cat 3 syd '-scratch')  %&
         %+  murn  can
         |=  [p=path q=(unit miso)]
         `(unit (pair path miso))`?~(q ~ `[p u.q])
