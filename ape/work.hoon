@@ -83,7 +83,7 @@
     |=  up=update
     ^+  +>
     ?-    -.up
-        %add  ?>(?=(%comment +<.up) (send-change %add-comment +>.up))
+        %add  ?>(?=(%comment +<.up) (send-change %add-comment our +>.up))
         %doer
       ?-  +<.up
         %release  (send-change %set-doer ~)
@@ -258,7 +258,7 @@
         %set-done         tax.u.tax(done ?.(don.meat.action ~ `when))
         %add-comment
           %=  tax.u.tax
-            discussion  [[when her com.meat.action] discussion.tax.u.tax]
+            discussion  [[when [who com]:meat.action] discussion.tax.u.tax]
           ==
       ==
     =+  ooo=(~(get by unordered) id.action +(version.action))
