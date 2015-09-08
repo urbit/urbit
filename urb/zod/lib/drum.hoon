@@ -367,6 +367,8 @@
               +>.$(inx 0)
             (se-alas u.lag)
   =.  +>.$  (se-text "[unlinked from {<gyl>}]")
+  ?:  =(gyl [our %dojo])                              ::  undead dojo
+    (se-link gyl)
   se-prom(liv.maz ?~(fug & liv.maz))
 ::
 ++  se-dump                                           ::  print tanks
