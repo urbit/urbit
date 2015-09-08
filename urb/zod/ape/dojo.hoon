@@ -98,7 +98,7 @@
           [%unto p=cuft]                                ::  
       ==                                                ::
     --                                                  ::
-::                                                      ::
+!:                                                      ::
 ::::                                                    ::
   ::                                                    ::
 |_  $:  hid=bowl                                        ::  system state
@@ -383,6 +383,12 @@
         (dy-diff %bel ~)
       (dy-slam /dial u.pro !>(txt))
     ::
+    ++  dy-cast
+      |*  [typ=_,* bun=vase]
+      |=  a=vase  ^-  typ
+      ?>  (~(nest ut p.bun) & p.a)
+      ;;(typ q.a)
+    ::
     ++  dy-over                                         ::  finish construction
       ^+  +>
       ?-    -.mad
@@ -416,20 +422,20 @@
           %verb
         ~&  (~(run by var) mug)
         =+  cay=(~(got by rez) p.q.mad)
+        =.  var  (~(put by var) p.mad cay)
         ~|  bad-set/[p.mad p.q.cay]
         =<  dy-amok
-        ?+  p.mad  .(var (~(put by var) p.mad cay))
+        ?+  p.mad  .
           %now  ~|(%time-is-immutable !!)
           %who  ~|(%self-is-immutable !!)
-          %law  .(syd ;;(@tas q.q.cay))
-          %dir  ~|(%cd-stub ?>(?=(~ q.q.cay) .))
-          %lib  .(lib ;;((list hoof) q.q.cay))
-          %arc  .(arc ;;((list hoof) q.q.cay))
+          %dir  .(syd q:((dy-cast beam !>(*beam)) q.cay))
+          %lib  .(lib ((dy-cast (list hoof) !>(*(list hoof))) q.cay))
+          %arc  .(arc ((dy-cast (list hoof) !>(*(list hoof))) q.cay))
         ==
       ::
           %show
         =+  cay=(~(got by rez) p.p.mad)
-        (dy-rash %tan ?+(p.cay [(sell q.cay)]~ %tang ;;(tang q.q.cay)))
+        (dy-rash %tan >p.cay< ?+(p.cay [(sell q.cay)]~ %tang ;;(tang q.q.cay)))
       ==
     ::
     ++  dy-edit                                         ::  handle edit
@@ -537,9 +543,35 @@
              (slop hed $(p.q.u.cud t.p.q.u.cud))
       ==
     ::
+    ++  dy-twig-mark                                    ::  XX architect
+      =+  ^=  ope
+          |=  gen=twig  ^-  twig
+          ?:  ?=(?(%sggl %sggr) -.gen)
+            $(gen q.gen)
+          =+  ~(open ap gen)
+          ?.(=(gen -) $(gen -) gen)
+      |=  gen=twig  ^-  (unit mark)
+      =.  gen  (ope gen)
+      ?.  ?=(%dtkt -.gen)  ~
+      =.  p.gen  (ope p.gen)
+      ?@  -.p.gen  ~
+      ?+    ~(feck ap p.p.gen)  ~
+          [~ %cx]
+        =+  gin=(ope q.p.gen)
+        |-
+        ?@  -.gin  ~
+        =.  q.gin  (ope q.gin)
+        ?^  -.q.gin  $(gin q.gin)
+        =.  p.gin  (ope p.gin)
+        ?.  ?=([[?(%dtzz %dtzy) @ @] [%dtzz %n ~]] gin)
+          ~
+        (some q.p.gin)
+      ==
+    ::
     ++  dy-mare                                         ::  build expression
       |=  gen=twig
       ^-  silk
+      :+  %cast  (fall (dy-twig-mark gen) %noun)
       :+  %ride  gen
       :-  [%$ dy-twig-head]
       =+  sur=(turn arc |=(hoof [& +<]))
