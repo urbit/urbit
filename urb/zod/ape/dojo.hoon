@@ -14,6 +14,7 @@
       ==                                                ::
     ++  session                                         ::  per conversation
       $:  say=sole-share                                ::  command-line state
+::           dir=beam
           syd=desk                                      ::  active desk 
           luc=(unit case)                               ::  special case
           poy=(unit dojo-project)                       ::  working
@@ -44,6 +45,7 @@
           [%ge p=dojo-model]                            ::  generator
           [%sc p=dojo-model]                            ::  script
           [%tu p=(list dojo-source)]                    ::  tuple
+          [%ur p=purl]                                  ::  http GET request
           [%va p=term]                                  ::  dojo variable
       ==                                                ::
     ++  dojo-filter                                     ::  pipeline filter
@@ -88,6 +90,7 @@
     ++  card                                            ::  general card
       $%  [%diff %sole-effect sole-effect]              ::
           [%send wire [ship term] clap]                 ::
+          [%hiss wire mark [%purl purl]]                ::
           [%exec wire @p (unit ,[beak silk])]           ::
           [%deal wire sock term club]                   ::
           [%info wire @p toro]                          ::
@@ -178,7 +181,7 @@
     ++  dp-build                                        ::  ++dojo-build
       %+  knee  *dojo-build  |.  ~+
       ;~  pose
-        ;~(pfix lus (stag %ge dp-model-cat))
+        ;~(pfix lus ;~(pose (stag %ur auri:epur) (stag %ge dp-model-cat)))
         ;~(pfix wut (stag %di dp-model-dog))
         ;~(pfix buc (stag %va sym))
         ;~(pfix pam (stag %ec ;~(plug ;~(sfix sym dot) dp-twig)))
@@ -242,6 +245,12 @@
       ?>  ?=(~ pux)
       (he-card(poy `+>+<(pux `way)) %exec way our.hid `[he-beak kas])
     ::
+    ++  dy-eyre                                         ::  send work to eyre
+      |=  [way=wire req=[%purl purl]]
+      ^+  +>+>
+      ?>  ?=(~ pux)
+      (he-card(poy `+>+<(pux `way)) %hiss way %octs req)
+    ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
       ?~  pux  +>
@@ -301,6 +310,7 @@
         %fi  !!
         %ge  =^(mod +>.$ (dy-init-model p.bul) [[%ge mod] +>.$])
         %sc  !!
+        %ur  [bul +>.$]
         %tu  =^  dof  +>.$
                  |-  ^+  [p.bul +>.^$]
                  ?~  p.bul  [~ +>.^$]
@@ -524,6 +534,8 @@
     ++  dy-make                                         ::  build step
       ^+  +>
       ?>  ?=(^ cud)
+      ?:  ?=(%ur -.q.u.cud)
+        (dy-eyre /hand %purl p.q.u.cud)
       %-  dy-ford
       ^-  (pair path silk)
       ?+  -.q.u.cud  !!
@@ -669,6 +681,13 @@
       %tabl  !!
     ==
   ::
+  ++  he-sigh                                           ::  result from ford
+    |=  [way=wire oct=octs]
+    ^+  +>
+    ?>  ?=(^ poy)
+    ?>  ?=([%hand ~] way)             ::  XX options?
+    he-pine:(~(dy-hand dy u.poy(pux ~)) %octs !>(oct))
+  ::
   ++  he-unto                                           ::  result from behn
     |=  cit=cuft
     ^+  +>
@@ -787,10 +806,15 @@
   |=  [way=wire dep=@uvH reg=gage]
   he-abet:(~(he-made he [[ost.hid ~] (~(got by hoc) ost.hid)]) way dep reg)
 ::
+++  sigh-octs
+  |=  [way=wire oct=octs]
+  he-abet:(~(he-sigh he [[ost.hid ~] (~(got by hoc) ost.hid)]) way oct)
+::
 ++  lame
   |=  [wut=term why=tang]
   he-abet:(~(he-lame he [[ost.hid ~] (~(got by hoc) ost.hid)]) wut why)
 ::
+++  sigh-tang  |=([a=wire b=tang] (lame (cat 3 'sigh-' -.a) b))
 ++  unto
   |=  [way=wire cit=cuft] 
   he-abet:(~(he-unto he [[ost.hid ~] (~(got by hoc) ost.hid)]) cit)
