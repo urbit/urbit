@@ -1831,6 +1831,8 @@
             ?(%meet %mate %meld)
           ?:  =(r.ali.dat r.bob.dat)
             done:he
+          ?.  (~(has in hut.ran) r.bob.dat)
+            (error:he %bad-bob-tako >r.bob.dat< ~)
           ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
             done:he
           ?:  (~(has in (reachable-takos r.ali.dat)) r.bob.dat)
