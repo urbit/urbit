@@ -11,12 +11,11 @@
 ::::
   !:
 |=  $:  [now=@da eny=@uvI bek=beak]
-        [arg=[?(sorc [syd=$|(desk beaky) sorc])] opt=(map ,%gem germ)]
+        [arg=[?(sorc [syd=$|(desk beaky) sorc])] gem=?(%auto germ)]
     ==
 =*  our  p.bek
 |^  :-  %kiln-merge
-    ^-  [syd=desk her=ship sud=desk gem=?(germ %auto)]
-    =+  gem=(fall (~(get by opt) %gem) %auto)
+    ^-  [syd=desk her=ship sud=desk gem=?(%auto germ)]
     ?-  arg
       [@ @ ~]    =+(arg [sud ?.(=(our her) her (sein her)) sud gem])
       [^ ~]      =+((pars bek.arg) [dez ?.(=(our who) who (sein who)) dez gem])

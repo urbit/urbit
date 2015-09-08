@@ -43,14 +43,14 @@ module.exports = {
     });
   },
   setItem: function(arg, key, val) {
-    var id, obj, set, version;
+    var id, obj1, set, version;
     id = arg.id, version = arg.version;
     version += 1;
     key = key.split('_').join('-');
     set = (
-      obj = {},
-      obj["" + key] = val,
-      obj
+      obj1 = {},
+      obj1["" + key] = val,
+      obj1
     );
     Persistence.put({
       old: {
@@ -69,7 +69,7 @@ module.exports = {
     });
   },
   ownItem: function(arg, act) {
-    var id, obj, version;
+    var id, obj1, version;
     id = arg.id, version = arg.version;
     version += 1;
     return Persistence.put({
@@ -78,9 +78,9 @@ module.exports = {
         version: version,
         dif: {
           doer: (
-            obj = {},
-            obj["" + act] = null,
-            obj
+            obj1 = {},
+            obj1["" + act] = null,
+            obj1
           )
         }
       }
@@ -141,19 +141,23 @@ module.exports = {
       }
     });
   },
-  setFilter: function(key, val) {
-    return Dispatcher.handleViewAction({
+  setFilter: function(key, val, filters) {
+    Dispatcher.handleViewAction({
       type: 'setFilter',
       key: key,
       val: val
     });
+    filters[key] = val;
+    return Persistence.setLocal('filters', filters);
   },
-  setSort: function(key, val) {
-    return Dispatcher.handleViewAction({
+  setSort: function(key, val, sorts) {
+    Dispatcher.handleViewAction({
       type: 'setSort',
       key: key,
       val: val
     });
+    sorts[key] = val;
+    return Persistence.setLocal('sorts', sorts);
   },
   moveItem: function(list, to, from) {
     Persistence.put({
@@ -164,6 +168,22 @@ module.exports = {
       list: list,
       to: to,
       from: from
+    });
+  },
+  getLocal: function(key) {
+    return Persistence.getLocal(key, function(e, r) {
+      var obj;
+      if (e) {
+        new Error(e);
+      }
+      if (r === null) {
+        return;
+      }
+      obj = {
+        type: "load" + (key[0].toUpperCase() + key.slice(1))
+      };
+      obj[key] = r;
+      return Dispatcher.handleServerAction(obj);
     });
   },
   listenList: function(type) {
@@ -180,7 +200,6 @@ module.exports = {
     });
   }
 };
-
 
 
 },{"../dispatcher/Dispatcher.coffee":9,"../persistence/Persistence.coffee":15,"../util.coffee":17}],2:[function(require,module,exports){
@@ -347,7 +366,6 @@ module.exports = recl({
 });
 
 
-
 },{"../actions/WorkActions.coffee":1}],3:[function(require,module,exports){
 var button, div, h1, label, rece, recl, ref;
 
@@ -433,8 +451,12 @@ module.exports = recl({
       className: 'filters'
     }, this.fields.map((function(_this) {
       return function(arg) {
-        var filter, key, title;
+        var filter, key, title, txt;
         filter = arg.filter, key = arg.key, title = arg.title;
+        txt = _this.props.filters[key];
+        if (key === 'creator') {
+          txt = txt != null ? txt.replace(/\~/g, "") : void 0;
+        }
         return div({
           key: key,
           'data-key': key,
@@ -453,14 +475,13 @@ module.exports = recl({
                 onKeyDown: this.onKeyDown,
                 onKeyUp: this.onKeyUp,
                 onBlur: this.onBlur
-              }, this.props.filters[filter]);
+              }, txt);
           }
         }).call(_this));
       };
     })(this)));
   }
 });
-
 
 
 },{}],4:[function(require,module,exports){
@@ -647,8 +668,8 @@ module.exports = recl({
     }, status), div({
       className: 'action a'
     }, action)), this.renderField('audience', {}, this.formatAudience)), div({
-      className: 'sort ib top'
-    }, this.props.item.sort), button({
+      className: 'sort ib'
+    }, ''), button({
       className: 'done ib done-' + (this.props.item.done === true),
       onClick: this._markDone
     }, ''), this.renderTopField('title', {
@@ -714,7 +735,6 @@ module.exports = recl({
 });
 
 
-
 },{"../actions/WorkActions.coffee":1,"./FieldComponent.coffee":2}],5:[function(require,module,exports){
 var FilterComponent, ItemComponent, ListeningComponent, SortComponent, WorkActions, WorkStore, div, h1, input, rece, recl, ref, textarea;
 
@@ -745,7 +765,6 @@ module.exports = recl({
       noNew: WorkStore.noNew(),
       canSort: WorkStore.canSort(),
       fulllist: WorkStore.getFullList(),
-      listening: WorkStore.getListening(),
       sorts: WorkStore.getSorts(),
       filters: WorkStore.getFilters(),
       expand: false,
@@ -892,15 +911,17 @@ module.exports = recl({
   },
   _changeListening: function() {},
   _changeFilter: function(key, val) {
-    return WorkActions.setFilter(key, val);
+    return WorkActions.setFilter(key, val, this.state.filters);
   },
   _changeSort: function(key, val) {
-    return WorkActions.setSort(key, val);
+    return WorkActions.setSort(key, val, this.state.sorts);
   },
   componentDidMount: function() {
     this.placeholder = $("<div class='item placeholder'><div class='sort'>x</div></div>");
     WorkStore.addChangeListener(this._onChangeStore);
     WorkActions.listenList(this.props.list);
+    WorkActions.getLocal('filters');
+    WorkActions.getLocal('sorts');
     return this.alias();
   },
   componentDidUpdate: function(_props, _state) {
@@ -970,7 +991,6 @@ module.exports = recl({
 });
 
 
-
 },{"../actions/WorkActions.coffee":1,"../stores/WorkStore.coffee":16,"./FilterComponent.coffee":3,"./ItemComponent.coffee":4,"./ListeningComponent.coffee":6,"./SortComponent.coffee":7}],6:[function(require,module,exports){
 var div, h1, input, rece, recl, ref, textarea;
 
@@ -987,7 +1007,6 @@ module.exports = recl({
     }, "");
   }
 });
-
 
 
 },{}],7:[function(require,module,exports){
@@ -1034,7 +1053,6 @@ module.exports = recl({
 });
 
 
-
 },{}],8:[function(require,module,exports){
 var ListComponent, div, h1, rece, recl, ref;
 
@@ -1055,7 +1073,6 @@ module.exports = recl({
     }));
   }
 });
-
 
 
 },{"./ListComponent.coffee":5}],9:[function(require,module,exports){
@@ -1079,7 +1096,6 @@ module.exports = _.merge(new Dispatcher(), {
 });
 
 
-
 },{"flux":11}],10:[function(require,module,exports){
 var WorkComponent;
 
@@ -1090,7 +1106,6 @@ window.util = _.extend(window.util || {}, require('./util.coffee'));
 $(function() {
   return React.render(React.createElement(WorkComponent), $('#c')[0]);
 });
-
 
 
 },{"./components/WorkComponent.coffee":8,"./util.coffee":17}],11:[function(require,module,exports){
@@ -1486,9 +1501,21 @@ module.exports = {
     if (cache != null) {
       return cb(null, cache);
     }
+  },
+  setLocal: function(key, val) {
+    return window.localStorage.setItem(key, JSON.stringify(val));
+  },
+  getLocal: function(key, cb) {
+    var e, out;
+    try {
+      out = JSON.parse(window.localStorage.getItem(key));
+      return cb(null, out);
+    } catch (_error) {
+      e = _error;
+      return cb(e);
+    }
   }
 };
-
 
 
 },{}],16:[function(require,module,exports){
@@ -1654,8 +1681,12 @@ WorkStore = assign({}, EventEmitter.prototype, {
     }
     return _tasks[item.id] = this.itemFromData(item, index);
   },
-  getListening: function() {
-    return _listening;
+  loadFilters: function(arg) {
+    var filters;
+    filters = arg.filters;
+    console.log('filters');
+    console.log(filters);
+    return _filters = filters;
   },
   getFilters: function() {
     return _filters;
@@ -1664,6 +1695,13 @@ WorkStore = assign({}, EventEmitter.prototype, {
     var key, val;
     key = arg.key, val = arg.val;
     return _filters[key] = val;
+  },
+  loadSorts: function(arg) {
+    var sorts;
+    sorts = arg.sorts;
+    console.log('load sorts');
+    console.log(sorts);
+    return _sorts = sorts;
   },
   getSorts: function() {
     return _sorts;
@@ -1759,7 +1797,6 @@ WorkStore.dispatchToken = Dispatcher.register(function(p) {
 module.exports = WorkStore;
 
 
-
 },{"../dispatcher/Dispatcher.coffee":9,"../util.coffee":17,"events":18,"object-assign":14}],17:[function(require,module,exports){
 module.exports = {
   uuid32: function() {
@@ -1816,7 +1853,6 @@ module.exports = {
     }
   }
 };
-
 
 
 },{}],18:[function(require,module,exports){

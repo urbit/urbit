@@ -90,10 +90,18 @@ WorkStore = assign {},EventEmitter.prototype,{
       throw new Error "Collision: already have #{item.id}"
     _tasks[item.id] = @itemFromData item, index
 
-  getListening: -> _listening
+  loadFilters: ({filters}) -> 
+    console.log 'filters'
+    console.log filters
+    _filters = filters
   getFilters: -> _filters
   setFilter: ({key,val}) ->
     _filters[key] = val
+
+  loadSorts: ({sorts}) -> 
+    console.log 'load sorts'
+    console.log sorts
+    _sorts = sorts
   getSorts: -> _sorts
   setSort: ({key,val}) -> 
     for k,v of _sorts

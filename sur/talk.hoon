@@ -91,9 +91,9 @@
         [%set-date-due wen=(unit ,@da)]                 ::  set due date
         [%set-tags tag=(set ,@t)]                       ::  set tags
         [%set-title til=@t]                             ::  set title
-        [%set-description des=@t]                       ::  set description
+        [%set-description des=@t] ::  XX (list ,@t)     ::  set description
         [%set-done don=?]                               ::  set done
-        [%add-comment com=@t]                           ::  add comment
+        [%add-comment com=@t]   ::  XX (list ,@t)       ::  add comment
     ==                                                  ::
   ++  task                                              ::
     $:  id=@uvH                                         ::
