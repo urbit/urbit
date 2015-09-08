@@ -52,7 +52,7 @@
           ==  ==                                        ::
               $:  %c                                    ::  to %clay
           $%  [%info p=@p q=@tas r=nori]                ::  internal edit
-              [%merg p=@p q=@tas r=@p s=@tas t=germ]    ::  merge desks
+              [%merg p=@p q=@tas r=@p s=@tas t=case u=germ]  ::  merge desks
               [%warp p=sock q=riff]                     ::
           ==  ==                                        ::
               $:  %d                                    ::
@@ -1608,19 +1608,21 @@
       |=  [yon=aeon mun=mood]                           ::  seek and read
       ^-  (unit (unit (each cage lobe)))
       ?:  &(?=(%w p.mun) !?=(%ud -.q.mun))              ::  NB only her speed
-        ::  ~&  :*  %dude-someones-getting-curious
-        ::          mun=mun
-        ::          yon=yon
-        ::          our=our
-        ::          her=her
-        ::          syd=syd
-        ::      ==
         ?^(r.mun [~ ~] [~ ~ %& %aeon !>(yon)])
       ?:  ?=(%u p.mun)
         (read-u yon r.mun)
       ?:  ?=(%x p.mun)
         (read-x yon r.mun)
       ?:  ?=(%y p.mun)
+        ::  =-  ~&  :*  %dude-someones-getting-curious
+        ::              mun=mun
+        ::              yon=yon
+        ::              our=our
+        ::              her=her
+        ::              syd=syd
+        ::              hep=-
+        ::          ==
+        ::      -
         (bind (read-y yon r.mun) (curr bind (cury same %&)))
       %+  bind
         (rewind yon)
@@ -1739,12 +1741,12 @@
         ==
       ::
       ++  start
-        |=  gem=germ
+        |=  [cas=case gem=germ]
         ^+  +>
         ?:  &(=(0 let.dom) !?=(?(%init %that) gem))
           (error:he %no-bob-desk ~)
+        =.  cas.dat  cas
         =.  gem.dat  gem
-        =.  cas.dat  [%da now]
         ?:  =(0 let.dom)
           fetch-ali(gem.dat %init)
         =+  (~(get by hit.dom) let.dom)
@@ -2201,10 +2203,13 @@
       ++  checkout
         ^+  .
         =-  %_(+ tag [- tag], wat.dat %checkout)
-        =+  val=?:(?=(%init gem.dat) ali bob)
+        =+  ^-  val=beak
+            ?:  ?=(%init gem.dat)
+              [p.ali q.ali cas.dat]
+            [p.bob q.bob da/now]
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout ~]
-            %f  %exec  p.bob  ~  [p.val q.val cas.dat]  %tabl
+            %f  %exec  p.bob  ~  val  %tabl
             ^-  (list (pair silk silk))
             %+  murn  (~(tap by q.new.dat))
             |=  [pax=path lob=lobe]
@@ -2308,7 +2313,7 @@
         ++  error
           |=  [err=term tan=(list tank)]
           ^+  ..he
-          ..he(don |, gon.dat [%| err >ali< >bob< tan])
+          ..he(don |, gon.dat [%| err >ali< >bob< >cas.dat< tan])
         ::
         ++  find-merge-points
           |=  [p=yaki q=yaki]                           ::  maybe need jet
@@ -2411,7 +2416,7 @@
     =+  [bos=(sein p.q.hic) can=(clan p.q.hic)]
     %-  zing  ^-  (list (list move))
     :~  ?:  =(bos p.q.hic)  ~
-        [hen %pass /init-merge %c %merg p.q.hic %base bos %kids %init]~
+        [hen %pass /init-merge %c %merg p.q.hic %base bos %kids da/now %init]~
     ::
         ~
     ==
@@ -2463,7 +2468,7 @@
       [~ ..^$]
     =^  mos  ruf
       =+  den=((de now hen ruf) [. .]:p.q.hic q.q.hic)
-      abet:abet:(start:(me:ze:den [r.q.hic s.q.hic] ~ &) t.q.hic)
+      abet:abet:(start:(me:ze:den [r.q.hic s.q.hic] ~ &) t.q.hic u.q.hic)
     [mos ..^$]
   ::
       %mont

@@ -49,7 +49,7 @@
       [%sith p=@p q=@uw r=?]                            ::
   ==                                                    ::
 ++  note-clay                                           ::
-  $%  [%merg p=@p q=@tas r=@p s=@tas t=germ]            ::  merge desks
+  $%  [%merg p=@p q=@tas r=@p s=@tas t=case u=germ]     ::  merge desks
       [%warp p=sock q=riff]                             ::  wait for clay, hack
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
@@ -209,7 +209,7 @@
         =+  myt=(flop (need tem))
         =+  can=(clan our)
         =.  tem  ~
-        =.  moz  :_(moz [hen %pass / %c %merg our %home our %base %init])
+        =.  moz  :_(moz [hen %pass / %c %merg our %home our %base da/now %init])
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
         =.  +>  ?:  ?=(%czar can)  +>
                 (sync %base (sein our) %kids)

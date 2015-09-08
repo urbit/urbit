@@ -13,18 +13,18 @@
 |=  pax=path
 ^-  tang
 =+  ark=;;(arch .^(%cy pax))
-?^  q.ark
+?^  fil.ark
   ?:  =(%sched -:(flop pax))
     [>;;((map ,@da cord) .^(%cx pax))<]~
   [leaf/(spud pax) (pretty-file .^(%cx pax))]
-?-     r.ark                                          ::  handle ambiguity
+?-     dir.ark                                          ::  handle ambiguity
     ~
   [rose/[" " `~]^~[leaf/"~" (smyt pax)]]~
     [[@t ~] ~ ~]
-  $(pax (welp pax /[p.n.r.ark]))
+  $(pax (welp pax /[p.n.dir.ark]))
     *
   =-  [palm/[": " ``~]^-]~
   :~  rose/[" " `~]^~[leaf/"*" (smyt pax)] 
-      `tank`(subdir pax r.ark)
+      `tank`(subdir pax dir.ark)
   ==
 ==

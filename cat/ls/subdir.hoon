@@ -10,11 +10,11 @@
       (turn paf |=(a=span leaf/(trip a)))
   |-  ^-  [dir=? paf=path]
   =+  arf=;;(arch .^(%cy (weld pax paf)))
-  ?^  q.arf  
+  ?^  fil.arf  
     [| paf]
-  ?~  r.arf
+  ?~  dir.arf
     [& paf]  ::  !!
-  ?.  ?=([^ ~ ~] r.arf)
+  ?.  ?=([^ ~ ~] dir.arf)
     [& paf]
-  $(paf (welp paf /[p.n.r.arf]))
+  $(paf (welp paf /[p.n.dir.arf]))
 --
