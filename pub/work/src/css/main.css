@@ -301,7 +301,7 @@ h1.leader:after {
   height: 2rem;
 }
 .item .title {
-  min-width: 16rem;
+  width: 16rem;
   margin-left: 0.5rem;
 }
 .item .date,
@@ -315,7 +315,7 @@ h1.leader:after {
   margin: 0.5rem 0 0.5rem 2rem;
 }
 .item .discussion {
-  max-height: 18rem;
+  max-height: 9rem;
   overflow-x: hidden;
   overflow-y: scroll;
 }
@@ -352,6 +352,7 @@ h1.leader:after {
 }
 .comment .date,
 .comment .ship {
+  max-width: 12rem;
   margin-right: 1rem;
 }
 .comment .body {
