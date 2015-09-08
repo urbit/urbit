@@ -543,8 +543,7 @@
       ^-  silk
       :+  %ride  gen
       :-  [%$ dy-twig-head]
-      =+  sur=(turn arc |=(hoof [& +<]))
-      [%plan [he-beak ~] / zuse sur lib ~ ~]            ::  XX spur
+      [%plan [he-beak ~] / zuse arc lib ~ ~]            ::  XX spur
     ::
     ++  dy-step                                         ::  advance project
       |=  nex=@ud
