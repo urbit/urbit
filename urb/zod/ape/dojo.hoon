@@ -1,4 +1,4 @@
-::                                                      ::  ::
+ ::                                                      ::  ::
 ::::  /hoon/dojo/app                               ::  ::::
   ::                                                    ::    ::
 /?  314                                                 ::  arvo kelvin
@@ -495,11 +495,11 @@
     ++  dy-twig-head                                    ::  dynamic state
       ^-  cage
       :-  %noun
-      =+  sloop=|=([a=vase b=vase] ?:(=(*vase a) b (slop a b)))
+      =+  sloop=|=([a=vase b=vase] ?:(=(*vase a) b ?:(=(*vase b) a (slop a b))))
       %+  sloop
         %-  ~(rep by var)
         |=  [[a=term @ b=vase] c=vase]  ^-  vase
-        (sloop c face/[a p.b] q.b)
+        (sloop b(p face/[a p.b]) c)
       !>  ^-  $:  law=desk  dir=path  
                   [lib=(list hoof) arc=(list hoof)]
                   [our=@p now=@da eny=@uvI]
