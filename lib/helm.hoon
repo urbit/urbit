@@ -102,7 +102,7 @@
   %+  turn  all
   =+  top=`path`/(scot %p our)/[syd]/(scot %da now)/arvo
   =+  ark=(arch .^(%cy top))
-  =+  van=(~(tap by r.ark))
+  =+  van=(~(tap by dir.ark))
   |=  nam=@tas
   =.  nam
     ?.  =(1 (met 3 nam))

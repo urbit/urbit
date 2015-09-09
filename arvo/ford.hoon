@@ -152,10 +152,10 @@
   %-  ~(gas by *(map ,@ span))
   =|  rac=(list (pair ,@ span))
   |-  ^+  rac
-  ?~  r.arc  rac
-  =.  rac  $(r.arc l.r.arc, rac $(r.arc r.r.arc))
-  =+  gib=(wox p.n.r.arc)
-  ?~(gib rac [[u.gib p.n.r.arc] rac])
+  ?~  dir.arc  rac
+  =.  rac  $(dir.arc l.dir.arc, rac $(dir.arc r.dir.arc))
+  =+  gib=(wox p.n.dir.arc)
+  ?~(gib rac [[u.gib p.n.dir.arc] rac])
 ::
 ++  tack                                                ::  fold path to term
   |=  a=[i=term t=(list term)]  ^-  term
@@ -326,7 +326,7 @@
         :^    %pass
             [(scot %p our) (scot %ud num) (scot %ud p.kig) ~]
           %c
-        ~&  >>  [%camping bem]
+        ~&  >>  [%camping ren bem]
         [%warp [our p.bem] q.bem [~ %sing ren r.bem (flop s.bem)]]
       ==
     ::
@@ -924,7 +924,7 @@
         %^  lash  cof  bem
         |=  [cof=cafe dir=span]
         %+  cope  (lend cof bem(s [dir s.bem]))
-        (flux |=(a=arch ?~(r.a ~ (some ~))))
+        (flux |=(a=arch ?~(dir.a ~ (some ~))))
       ::
       ++  marks
         =<  (cope (laze cof bem) (flux .))
@@ -956,12 +956,12 @@
       =.  s.bem  [for s.bem]
       %+  cope  (lend cof bem)
       |=  [cof=cafe arc=arch]
-      ?^  q.arc  (fine cof (some &))
-      ?.  (~(has by r.arc) %hook)
+      ?^  fil.arc  (fine cof (some &))
+      ?.  (~(has by dir.arc) %hook)
         (flue cof)
       %+  cope  (lend cof bem(s [%hook s.bem]))
       |=  [cof=cafe arc=arch]
-      ?~  q.arc
+      ?~  fil.arc
         (flue cof)
       (fine cof (some |))
     ::
@@ -1029,7 +1029,7 @@
     ++  lash                                            ::  filter at beam
       |*  [cof=cafe bem=beam fun=(burg span (unit))]
       %+  cope  (lend cof bem)
-      |=([cof=cafe arc=arch] ((some-in-map fun) cof r.arc))
+      |=([cof=cafe arc=arch] ((some-in-map fun) cof dir.arc))
     ::
     ++  lear                                            ::  load core
       |=  [cof=cafe bem=beam]  ^-  (bolt vase)
@@ -1096,7 +1096,7 @@
       ++  wide
         %+  cope  (lend cof here)
         |=  [cof=cafe arc=arch]
-        =+  all=(skim (turn (~(tap by r.arc)) head) (sane %tas))
+        =+  all=(skim (turn (~(tap by dir.arc)) head) (sane %tas))
         =.  all  (sort all gth)                         ::  short-deepest
         |-  ^-  (bolt (map mark vase))
         ?~  all  (fine cof res)
@@ -1104,7 +1104,7 @@
         |=  [cof=cafe res=(map mark vase)]
         =.  ^res  res
         =-  (cope - (tall i.all))
-        ?.  (~(has by r.arc) %hoon)  (flue cof)
+        ?.  (~(has by dir.arc) %hoon)  (flue cof)
         node(cof cof)
       ::
       ++  tall
@@ -1697,7 +1697,7 @@
           %+  cool  |.(leaf/"ford: wilt {<[(tope p.hop)]>}")
           %+  cope  (lend cof p.hop)
           |=  [cof=cafe arc=arch]
-          ?:  (~(has by r.arc) %hoon)
+          ?:  (~(has by dir.arc) %hoon)
             %+  cope  (fade cof %hoon p.hop)
             |=  [cof=cafe hyd=hood]
             %+  cope  (apex(boy ~) cof hyd)
