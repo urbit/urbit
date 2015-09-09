@@ -249,7 +249,7 @@
       |=  [way=wire req=[%purl purl]]
       ^+  +>+>
       ?>  ?=(~ pux)
-      (he-card(poy `+>+<(pux `way)) %hiss way %octs req)
+      (he-card(poy `+>+<(pux `way)) %hiss way %httr req)
     ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
@@ -445,7 +445,17 @@
       ::
           %show
         =+  cay=(~(got by rez) p.p.mad)
-        (dy-rash %tan >p.cay< ?+(p.cay [(sell q.cay)]~ %tang ;;(tang q.q.cay)))
+        %^  dy-rash  %tan  >p.cay<
+        ?+  p.cay  [(sell q.cay)]~
+          %tang  ;;(tang q.q.cay)
+          %httr
+            =+  hit=;;(httr q.q.cay)
+            =-  (flop (turn `wall`- |=(a=tape leaf/(dash:ut a ''))))
+            :-  "HTTP {<p.hit>}"
+            %+  weld
+              (turn q.hit |=([a=@t b=@t] "{(trip a)}: {(trip b)}"))
+            (turn `wain`?~(r.hit ~ (lore q.u.r.hit)) trip)
+        ==
       ==
     ::
     ++  dy-edit                                         ::  handle edit
@@ -682,14 +692,14 @@
     ==
   ::
   ++  he-sigh                                           ::  result from ford
-    |=  [way=wire oct=octs]
+    |=  [way=wire hit=httr]
     ^+  +>
     ?>  ?=(^ poy)
     ?>  ?=([%hand ~] way)             ::  XX options?
-    he-pine:(~(dy-hand dy u.poy(pux ~)) %octs !>(oct))
+    he-pine:(~(dy-hand dy u.poy(pux ~)) %httr !>(hit))
   ::
   ++  he-unto                                           ::  result from behn
-    |=  cit=cuft
+    |=  [way=wire cit=cuft]
     ^+  +>
     ?.  ?=(%coup -.cit)
       ~&  [%strange-unto cit]
@@ -745,7 +755,7 @@
       =.  +>.$   (he-diff %mor txt/old nex/~ det/cal ~)
       ?-  -.u.p.doy
         %&  (he-plan(buf ~) p.u.p.doy)
-        %|  +>.$(buf p.u.p.doy)
+        %|  (he-diff(buf p.u.p.doy) pro/[& %$ "< "])
       ==
     ==
   ::
@@ -809,7 +819,7 @@
   (wrap he-type):arm
 ::
 ++  made       (wrap he-made):arm
-++  sigh-octs  (wrap he-sigh):arm
+++  sigh-httr  (wrap he-sigh):arm
 ++  sigh-tang  |=([a=wire b=tang] ~|(`term`(cat 3 'sigh-' -.a) (mean b)))
 ++  lame       (wrap he-lame):arm
 ++  unto       (wrap he-unto):arm
