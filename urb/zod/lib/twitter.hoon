@@ -3,8 +3,8 @@
 ::::  /hoon/twitter/lib
   ::
 /?    314
-/-   *twitter
-=+   twit
+/-   twitter
+=+   twit:twitter
 !:
 ::::  functions
   ::
@@ -542,3 +542,4 @@
     (mold %get /statuses/lookup ,[us ~])
   --
 --
+=*(twitter . .)

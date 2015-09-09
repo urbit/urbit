@@ -1,6 +1,7 @@
 ::  Input twitter keys
-/-    *sole, *twitter
+/-    sole, twitter
 !:
+[sole twitter .]
 |%
 ++  baz64  (cook crip (star alp))
 --

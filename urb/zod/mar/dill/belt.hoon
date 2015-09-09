@@ -2,10 +2,11 @@
 ::::  /hoon/dill-belt/mar
   ::
 /?    314
-/-    kyev,*sole
+/-    kyev,sole
 !:
 ::::
   ::
+[sole .]
 |_  dill-belt
 ::
 ++  grab                                                ::  convert from

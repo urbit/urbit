@@ -1,3 +1,8 @@
+::
+::::  /hoon/work/sur
+  ::
+  ::  A block comment might go here!
+  ::
 /-    talk
 |%
 ++  client
@@ -20,20 +25,20 @@
       date-due=(unit ,@da)
       done=(unit ,@da)
       title=@t
-      description=@t
+      description=@t    ::  XX (list ,@t)
       discussion=(list comment)
   ==
 ++  comment
   $:  date=@da
       ship=@p
-      body=@t
+      body=@t   ::  XX (list ,@t)
   ==
 ++  command
   $%  [%new audience=(set station:talk) task]
       [%old id=@uvH dif=update]
       [%sort p=(list ,@uvH)]
   ==
-++  update
+++  update    ::  XX rename, web-edit?
   $%  $:  %set
   $%  [%audience to=(set station:talk)]
       [%date-due p=(unit ,@da)]

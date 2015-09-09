@@ -48,11 +48,28 @@ module.exports =
     version += 1
     Persistence.put old:{id,version,dif:add:comment:val}
 
-  setFilter: (key,val) -> Dispatcher.handleViewAction {type:'setFilter', key,val}
-  setSort: (key,val) -> Dispatcher.handleViewAction {type:'setSort',key,val}
+  setFilter: (key,val,filters) -> 
+    Dispatcher.handleViewAction {type:'setFilter', key,val}
+    filters[key] = val
+    Persistence.setLocal 'filters',filters
+
+  setSort: (key,val,sorts) -> 
+    Dispatcher.handleViewAction {type:'setSort',key,val}
+    sorts[key] = val
+    Persistence.setLocal 'sorts',sorts
+
   moveItem: (list,to,from) ->
     Persistence.put {sort:list}
     Dispatcher.handleViewAction {type:'moveItems',list,to,from}
+
+  getLocal: (key)->
+    Persistence.getLocal key,(e,r) ->
+      new Error(e) if e
+      return if r is null
+      obj = 
+        type:"load#{key[0].toUpperCase()+key.slice(1)}"
+      obj[key] = r
+      Dispatcher.handleServerAction obj
 
   listenList: (type)->
     Persistence.subscribe type, (err,d)-> 
