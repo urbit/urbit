@@ -4,10 +4,11 @@
   ::  This file is in the public domain.
   ::
 /?    314 
-/-    *talk
+/-    talk
 !:
 ::::
   ::
+[. ^talk]
 |%
 ++  main                                                ::  main story
   |=  our=ship  ^-  cord
@@ -55,3 +56,4 @@
     ==
   --
 --
+=*(talk . .)

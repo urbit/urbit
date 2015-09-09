@@ -1476,7 +1476,10 @@
     :^  hen  %give  %mass
     :-  %eyre
     :-  %|
-    :~  bol/`bol
+    :~  dependencies/`liz  sessions/`wup  views/`wix
+        ducts/[%| ~[dead/`ded proxy/`pox outgoing/`ask]]
+        hosts/`dop
+        misc/`bol
     ==
   =+  our=`@p`0x100  ::  XX  sentinel
   =+  ska=(slod ski)

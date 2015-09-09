@@ -11,6 +11,7 @@ module.exports = recl
     else if sor is 1 then sor = -1
     else if sor is -1 then sor = 0
     @props.onChange key,sor
+
   render: ->
     (div {className:'sorts'}, _.map @props.sorts,(state,key) =>
       (button {

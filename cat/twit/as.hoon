@@ -1,7 +1,8 @@
-/-    *twitter
+/-    twitter
 ::
 ::::
   ::
+[twitter .]
 |=  $:  [now=@da eny=@uvI bec=beak]
         [[who=span msg=cord ~] ~]
     ==

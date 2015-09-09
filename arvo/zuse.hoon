@@ -1028,26 +1028,26 @@
   |=  [pax=path val=cage]
   ^-  miso
   =+  dir=((hard arch) .^(%cy pax))
-  ?~  q.dir  [%ins val]
+  ?~  fil.dir  [%ins val]
   [%mut val]
 ::
 ++  file                                                ::  simple file load
   |=  pax=path
   ^-  (unit)
   =+  dir=((hard arch) .^(%cy pax))
-  ?~(q.dir ~ [~ .^(%cx pax)])
+  ?~(fil.dir ~ [~ .^(%cx pax)])
 ::
 ++  foal                                                ::  high-level write
   |=  [pax=path val=cage]
   ^-  toro
   ?>  ?=([* * * *] pax)
-  [i.t.pax [%& [*cart [[t.t.t.pax (feel pax val)] ~]]]]
+  [i.t.pax [%& [[[t.t.t.pax (feel pax val)] ~]]]]
 ::
 ++  fray                                                ::  high-level delete
   |=  pax=path
   ^-  toro
   ?>  ?=([* * * *] pax)
-  [i.t.pax [%& [*cart [[t.t.t.pax [%del ~]] ~]]]]
+  [i.t.pax [%& [[[t.t.t.pax [%del ~]] ~]]]]
 ::
 ++  furl                                                ::  unify changes
   |=  [one=toro two=toro]
@@ -1056,7 +1056,7 @@
   ?>  ?&  =(p.one p.two)                                ::  same path
           &(?=(& -.q.one) ?=(& -.q.two))                ::  both deltas
       ==
-  [p.one [%& [*cart (weld q.p.q.one q.p.q.two)]]]
+  [p.one [%& (weld p.q.one p.q.two)]]
 ::
 ++  tame                                                ::  parse kite path
   |=  hap=path
@@ -1811,9 +1811,8 @@
 ++  aeon  ,@ud                                          ::
 ++  agon  (map ,[p=ship q=desk] ,[p=@ud q=@ud r=waks])  ::  mergepts
 ++  ankh                                                ::  fs node (new)
-          $:  p=cash                                    ::  recursive hash
-              q=(unit ,[p=cash q=cage])                 ::  file
-              r=(map ,@ta ankh)                         ::  folders
+          $:  fil=(unit ,[p=lobe q=cage])               ::  file
+              dir=(map ,@ta ankh)                       ::  folders
           ==                                            ::
 ++  apex  ,[p=@uvI q=(map ,@ta ,@uvI) r=(map ,@ta ,~)]  ::  node report (old)
 ++  ares  (unit ,[p=term q=(list tank)])                ::  possible error
@@ -1872,14 +1871,12 @@
           $?  %good                                     ::  delivered
               %dead                                     ::  rejected
           ==                                            ::
-++  cart  ,[p=cash q=cash]                              ::  hash change
 ++  care  ?(%u %v %w %x %y %z)                          ::  clay submode
 ++  case                                                ::  ship desk case spur
           $%  [%da p=@da]                               ::  date
               [%tas p=@tas]                             ::  label
               [%ud p=@ud]                               ::  number
           ==                                            ::
-++  cash  ,@uvH                                         ::  ankh hash
 ++  chum  ,@uvI                                         ::  hashed passcode
 ++  clot                                                ::  symmetric record
           $:  yed=(unit ,[p=hand q=code])               ::  outbound
@@ -2260,11 +2257,11 @@
               lys=@da                                   ::  last sent
               pac=rock                                  ::  packet data
           ==                                            ::
-++  soba  ,[p=cart q=(list ,[p=path q=miso])]           ::  delta
+++  soba  (list ,[p=path q=miso])                       ::  delta
 ++  sock  ,[p=ship q=ship]                              ::  outgoing [from to]
 ++  spur  path                                          ::  ship desk case spur
 ++  step  ,[p=bray q=gens r=pass]                       ::  identity stage
-++  suba  ,[p=cart q=(list ,[p=path q=misu])]           ::  delta
+++  suba  (list ,[p=path q=misu])                       ::  delta
 ++  tako  ,@                                            ::  yaki ref
 ++  tick  ,@ud                                          ::  process id
 ++  toro  ,[p=@ta q=nori]                               ::  general change
@@ -2355,11 +2352,11 @@
           ==                                            ::
 ++  kiss-clay                                           ::  in request ->$
           $%  [%boat ~]                                 ::  pier rebooted
-              [%info p=@p q=desk r=nori]                ::  internal edit
+              [%info p=@p q=@tas r=nori]                ::  internal edit
               [%init p=@p]                              ::  report install
-              [%into p=desk q=? r=mode]                 ::  external edit
-              [%merg p=@p q=desk r=@p s=desk t=germ]    ::  merge desks
-              [%mont p=@tas q=@p r=desk s=path]         ::  mount to unix
+              [%into p=@tas q=? r=mode]                 ::  external edit
+              [%merg p=@p q=@tas r=@p s=@tas t=case u=germ]  ::  merge desks
+              [%mont p=@tas q=@p r=@tas s=path]         ::  mount to unix
               [%ogre p=$|(@tas beam)]                   ::  delete mount point
               [%warp p=sock q=riff]                     ::  file request
               [%wegh ~]                                 ::  report memory
@@ -2488,13 +2485,12 @@
   ::
 ++  hood                                                ::  assembly plan
   $:  zus=@ud                                           ::  zuse kelvin
-      sur=(list hoot)                                   ::  structures
+      sur=(list hoof)                                   ::  structures
       lib=(list hoof)                                   ::  libraries
       fan=(list horn)                                   ::  resources
       src=(list hoop)                                   ::  program
   ==                                                    ::
 ++  hoof  (pair term (unit (pair case ship)))           ::  resource reference
-++  hoot  (pair bean hoof)                              ::  structure gate/core
 ++  hoop                                                ::  source in hood
   $%  [%& p=twig]                                       ::  direct twig
       [%| p=beam]                                       ::  resource location   

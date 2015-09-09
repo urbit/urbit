@@ -66,6 +66,7 @@
 !:
 ::::
   ::
+[tree .]
 ^-  json
 =+  ^=  schem
     =+  seh=(fall (~(get by qix.gas) 'q') 'body.r')

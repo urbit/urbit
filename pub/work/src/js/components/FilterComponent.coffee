@@ -16,8 +16,8 @@ module.exports = recl
     if e.keyCode is 13
       e.stopPropagation()
       e.preventDefault()
-  onKeyUp: (e) -> @change(e)
-  onBlur: (e) -> @change(e)
+  onKeyUp: (e) -> @change e
+  onBlur: (e) -> @change e
   change: (e) ->
     $t = $(e.target).closest('.filter')
     txt = $t.find('.input').text().trim()
@@ -38,6 +38,9 @@ module.exports = recl
 
   render: ->
     (div {className:'filters'}, @fields.map ({filter,key,title})=>
+      txt = @props.filters[key]
+      txt = txt?.replace(/\~/g,"") if key is 'creator'
+
       (div {key, 'data-key':key, className:"#{filter} filter ib"},
         (label {}, title)
         switch filter
@@ -53,5 +56,5 @@ module.exports = recl
                 @onKeyDown
                 @onKeyUp
                 @onBlur
-              },@props.filters[filter])
+              },txt)
       ))

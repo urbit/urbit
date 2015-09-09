@@ -2,20 +2,21 @@
 ::::  /hoon/talk/app                                    ::  ::
   ::                                                    ::  ::   
 /?    314
-/-    *talk, *sole
+/-    talk, sole
 /+    talk, sole
 /=    seed    /~    !>(.)
 /=    talk-doc    
       /;  |=(a=wain (turn a |=(b=cord [%txt "? {(trip b)}"])))
       /:  /===/pub/doc/talk/help  /txt/
-::
+!:
 ::::
   ::
-!:
+[. talk sole]
 =>  |%                                                  ::  data structures
-    ++  house  ,[%1 house-1]                            ::  full state
+    ++  house  ,[%2 house-2]                            ::  full state
     ++  house-any                                       ::  app history
       $%  [%1 house-1]                                  ::  1: talk
+          [%2 house-2]                                  ::  1: talk
       ==                                                ::
     ++  house-1                                         ::
       $:  stories=(map span story)                      ::  conversations
@@ -23,6 +24,15 @@
           outbox=(pair ,@ud (map ,@ud thought))         ::  urbit outbox
           folks=(map ship human)                        ::  human identities
           shells=(map bone shell)                       ::  interaction state
+      ==                                                ::
+    ::                                                  ::
+    ++  house-2                                         ::
+      $:  stories=(map span story)                      ::  conversations
+          general=(set bone)                            ::  meta-subscribe
+          outbox=(pair ,@ud (map ,@ud thought))         ::  urbit outbox
+          folks=(map ship human)                        ::  human identities
+          shells=(map bone shell)                       ::  interaction state
+          log=(map span ,@ud)                           ::  logged to clay
       ==                                                ::
     ::                                                  ::
     ++  story                                           ::  wire content
@@ -741,13 +751,13 @@
       ^+  +>
       ?~  lit  +>
       =^  lic  say.she
-          (~(transmit cs say.she) `sole-edit`?~(t.lit i.lit [%mor lit]))
+          (~(transmit sole say.she) `sole-edit`?~(t.lit i.lit [%mor lit]))
       (sh-fact [%mor [%det lic] ~])
     ::
     ++  sh-stir                                         ::  apply edit
       |=  cal=sole-change
       ^+  +>
-      =^  inv  say.she  (~(transceive cs say.she) cal)
+      =^  inv  say.she  (~(transceive sole say.she) cal)
       =+  lit=(sh-sane inv buf.say.she)
       ?~  lit
         +>.$
@@ -896,7 +906,7 @@
       ?~  jub  (sh-fact %bel ~)
       =.  +>  (sh-work u.jub)
       =+  buf=buf.say.she
-      =^  cal  say.she  (~(transmit cs say.she) [%set ~])
+      =^  cal  say.she  (~(transmit sole say.she) [%set ~])
       %-  sh-fact
       :*  %mor
           [%nex ~]
@@ -1699,7 +1709,10 @@
   |=  [cod=command]
   ^-  [(list move) _+>]
   ::  ~&  [%talk-poke-command src.hid cod]
-  ra-abet:(~(ra-apply ra ost.hid ~) src.hid cod)
+  =^  mos  +>.$
+      ra-abet:(~(ra-apply ra ost.hid ~) src.hid cod)
+  =^  mow  +>.$  log-all-to-file
+  [(welp mos mow) +>.$]
 ::
 ++  poke-sole-action                                    ::  accept console
   |=  [act=sole-action]
@@ -1707,8 +1720,12 @@
 ::
 ++  diff-talk-report                                    ::
   |=  [way=wire rad=report]
-  %+  etch-friend  way  |=  [man=span cuz=station]
-  ra-abet:(~(ra-diff-talk-report ra ost.hid ~) man cuz rad)
+  ^-  (quip move +>)
+  =^  mos  +>.$
+      %+  etch-friend  way  |=  [man=span cuz=station]
+      ra-abet:(~(ra-diff-talk-report ra ost.hid ~) man cuz rad)
+  =^  mow  +>.$  log-all-to-file
+  [(welp mos mow) +>.$]
 ::
 ++  coup-repeat                                         ::
   |=  [way=wire saw=(unit tang)]
@@ -1758,28 +1775,55 @@
   =^  moz  +>.$  ra-abet:(~(ra-cancel ra ost.hid ~) src.hid pax)
   [moz +>.$(shells (~(del by shells) ost.hid))]
 ::
+++  log-all-to-file
+  ^-  (quip move .)
+  :_  %_  .
+        log   %-  ~(urn by log)
+              |=([man=span len=@ud] count:(~(got by stories) man))
+      ==
+  %+  murn  (~(tap by log))
+  |=  [man=span len=@ud]
+  ^-  (unit move)
+  ?:  (gte len count:(~(got by stories) man))
+    ~
+  `(log-to-file man)
+::
+++  log-to-file
+  |=  man=span
+  ^-  move
+  =+  paf=/(scot %p our.hid)/home/(scot %da now.hid)/talk/[man]/talk-telegrams
+  =+  grams:(~(got by stories) man)
+  [ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]
+::
 ++  poke-save
   |=  man=span
   ^-  (quip move +>)
-  :_  +>.$
-  =+  paf=/(scot %p our.hid)/home/(scot %da now.hid)/talk/[man]/jam
-  =+  grams:(~(got by stories) man)
-  [ost.hid %info /jamfile our.hid (foal paf [%jam !>((jam -))])]~
+  [[(log-to-file man) ~] +>.$]
 ::
 ++  poke-load
   |=  man=span
   =+  ^=  grams
       %-  (hard (list telegram))
-      %-  cue
-      %-  (hard ,@)
-      .^(%cx /(scot %p our.hid)/home/(scot %da now.hid)/talk/[man]/jam)
+      .^  %cx
+          /(scot %p our.hid)/home/(scot %da now.hid)/talk/[man]/talk-telegrams
+      ==
   =+  toy=(~(got by stories) man)
   [~ +>.$(stories (~(put by stories) man toy(grams grams, count (lent grams))))]
 ::
+++  poke-log
+  |=  man=span
+  ^-  (quip move +>)
+  :-  [(log-to-file man) ~]
+  +>.$(log (~(put by log) man count:(~(got by stories) man)))
+::
 ++  prep
-  |=  [old=(unit house)]
+  |=  [old=(unit house-any)]
   ^-  (quip move +>)
   ?~  old
     ra-abet:~(ra-init ra 0 ~)
-  [~ +>(+<+ u.old)]
+  |-
+  ?-  -.u.old
+    %1  $(u.old [%2 stories general outbox folks shells ~]:u.old)
+    %2  [~ +>.^$(+<+ u.old)]
+  ==
 --

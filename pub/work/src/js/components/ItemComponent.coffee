@@ -126,7 +126,7 @@ module.exports = recl
               )
             (@renderField 'audience', {}, @formatAudience)
           )
-        (div {className:'sort ib top'}, @props.item.sort)
+        (div {className:'sort ib'}, '')
         (button {className:'done ib done-'+(@props.item.done is true), onClick:@_markDone}, '')
         (@renderTopField 'title', {@onFocus,@onKeyDown})
         (@renderTopField 'date_due', {className:'date'}, @formatDate)
