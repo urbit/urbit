@@ -2,16 +2,16 @@
 ::::  /hoon/talk/app                                    ::  ::
   ::                                                    ::  ::   
 /?    314
-/-    *talk, *sole
+/-    talk, sole
 /+    talk, sole
 /=    seed    /~    !>(.)
 /=    talk-doc    
       /;  |=(a=wain (turn a |=(b=cord [%txt "? {(trip b)}"])))
       /:  /===/pub/doc/talk/help  /txt/
-::
+!:
 ::::
   ::
-!:
+[. talk sole]
 =>  |%                                                  ::  data structures
     ++  house  ,[%1 house-1]                            ::  full state
     ++  house-any                                       ::  app history
@@ -741,13 +741,13 @@
       ^+  +>
       ?~  lit  +>
       =^  lic  say.she
-          (~(transmit cs say.she) `sole-edit`?~(t.lit i.lit [%mor lit]))
+          (~(transmit sole say.she) `sole-edit`?~(t.lit i.lit [%mor lit]))
       (sh-fact [%mor [%det lic] ~])
     ::
     ++  sh-stir                                         ::  apply edit
       |=  cal=sole-change
       ^+  +>
-      =^  inv  say.she  (~(transceive cs say.she) cal)
+      =^  inv  say.she  (~(transceive sole say.she) cal)
       =+  lit=(sh-sane inv buf.say.she)
       ?~  lit
         +>.$
@@ -896,7 +896,7 @@
       ?~  jub  (sh-fact %bel ~)
       =.  +>  (sh-work u.jub)
       =+  buf=buf.say.she
-      =^  cal  say.she  (~(transmit cs say.she) [%set ~])
+      =^  cal  say.she  (~(transmit sole say.she) [%set ~])
       %-  sh-fact
       :*  %mor
           [%nex ~]

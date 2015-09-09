@@ -2,11 +2,12 @@
 ::::
   ::
 /?  314
-/-  *work
+/-  work
 /+  talk
 !:
 ::::
   ::
+[. work]
 |%
 ++  move  (pair bone card)                              ::  all actions
 ++  card                                                ::  general card
@@ -40,7 +41,6 @@
   ::
   ++  send-audience
     |=  [to=(set station:talk) action=duty:work-stuff:talk]
-    ^+  +>
     %_    +>.$
         eny    (sham eny action)
         moves
@@ -50,14 +50,14 @@
           /sending/(scot %uv id.tax)/(scot %ud version.tax)
           [our %talk]
           %talk-command
-          ^-  command:talk
+          =>  [. talk]  ^-  command:talk
           :-  %publish
           |-  ^-  (list thought)
           :_  ~
           :+  (shaf %task eny)
-            %-  mo  ^-  (list ,[partner envelope delivery]:talk)
+            %-  mo  ^-  (list ,[partner envelope delivery])
             %+  turn  (~(tap in to))
-            |=(sat=station:talk [[%& sat] [*envelope %pending]])
+            |=(sat=station [[%& sat] [*envelope %pending]])
           [now *bouquet [%tax action]]
       ==
     ==
@@ -75,7 +75,7 @@
                         ?:  =(our creator.tax)
                           (send-update +(version.tax) our +<)
                         %+  send-audience
-                          [[creator.tax (main creator.tax)] ~ ~]
+                          [[creator.tax (main:talk creator.tax)] ~ ~]
                         [%change id.tax +<]
   ++  send-update       |*(* (send %update id.tax +<))
   ++  process-update
@@ -124,7 +124,7 @@
   ?:  connected
     [~ .]
   :_  .(connected %&)  :_  ~
-  [ost %peer /peering [our %talk] /f/(main our)/0]
+  [ost %peer /peering [our %talk] /f/(main:talk our)/0]
 ::
 ++  process-duty
   |=  [when=@da her=ship from=(set station:talk) action=duty:work-stuff:talk]
@@ -326,8 +326,9 @@
   =+  ^-  from=(set station:talk)
       %-  sa  ^-  (list station:talk)
       %+  murn  (~(tap by q.q.i.q.rep))
+      =>  talk
       |=  [par=partner *]
-      `(unit station:talk)`?.(?=(%& -.par) ~ `p.par)
+      `(unit station)`?.(?=(%& -.par) ~ `p.par)
   ?.  ?=(%tax -.said)
     $(p.rep +(p.rep), q.rep t.q.rep)
   =^  mos  +>.^$  (process-duty when her from +.said)

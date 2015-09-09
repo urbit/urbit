@@ -2355,11 +2355,11 @@
           ==                                            ::
 ++  kiss-clay                                           ::  in request ->$
           $%  [%boat ~]                                 ::  pier rebooted
-              [%info p=@p q=desk r=nori]                ::  internal edit
+              [%info p=@p q=@tas r=nori]                ::  internal edit
               [%init p=@p]                              ::  report install
-              [%into p=desk q=? r=mode]                 ::  external edit
-              [%merg p=@p q=desk r=@p s=desk t=germ]    ::  merge desks
-              [%mont p=@tas q=@p r=desk s=path]         ::  mount to unix
+              [%into p=@tas q=? r=mode]                 ::  external edit
+              [%merg p=@p q=@tas r=@p s=@tas t=germ]    ::  merge desks
+              [%mont p=@tas q=@p r=@tas s=path]         ::  mount to unix
               [%ogre p=$|(@tas beam)]                   ::  delete mount point
               [%warp p=sock q=riff]                     ::  file request
               [%wegh ~]                                 ::  report memory
@@ -2488,13 +2488,12 @@
   ::
 ++  hood                                                ::  assembly plan
   $:  zus=@ud                                           ::  zuse kelvin
-      sur=(list hoot)                                   ::  structures
+      sur=(list hoof)                                   ::  structures
       lib=(list hoof)                                   ::  libraries
       fan=(list horn)                                   ::  resources
       src=(list hoop)                                   ::  program
   ==                                                    ::
 ++  hoof  (pair term (unit (pair case ship)))           ::  resource reference
-++  hoot  (pair bean hoof)                              ::  structure gate/core
 ++  hoop                                                ::  source in hood
   $%  [%& p=twig]                                       ::  direct twig
       [%| p=beam]                                       ::  resource location   

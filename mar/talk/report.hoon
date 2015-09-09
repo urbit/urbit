@@ -2,9 +2,10 @@
 ::::  /hoon/talk-report/mar
   ::
 /?    314
-/-    *talk
+/-    talk
 /+    talk
 !:
+[talk .]
 |_  rep=report
 ::
 ++  grab                                                ::  convert from

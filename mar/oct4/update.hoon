@@ -2,11 +2,12 @@
 ::::  /hoon/oct4-update/mar                        ::::::  dependencies
   ::                                                    ::  ::
 /?    310                                               ::  arvo
-/-    *oct4                                             ::  structures
+/-    oct4                                             ::  structures
 /+    oct4                                              ::  libraries
 !:                                                      ::  ::
 ::::                                                    ::  ::  protocol
   ::                                                    ::  ::
+[oct4 ^oct4 .]
 |_  play                                                ::  game 
 ++  grab                                                ::  convert from
   |%

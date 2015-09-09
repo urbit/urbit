@@ -3,11 +3,12 @@
 ::::
   :: 
 /?  314
-/-  *talk, *bit-api
+/-  talk, bit-api
 /+  talk, sole, http
 !:
 ::::  sivtyv-barnel
   ::  be sure to have oauth2-code markk
+[talk bit-api .]
 |%
 ++  axle
 $:  cred=(unit ,[app-secret=@t client-id=@t])
@@ -62,7 +63,7 @@ $:  cred=(unit ,[app-secret=@t client-id=@t])
 ++  old-api
   |=  [pour-path=wire end-point=path req=$|(%get [%post p=json])]
   ^-  move
-  %^  httpreq  ost.hid  pour-path 
+  %^  send:http  ost.hid  pour-path 
   [/com/coinbase/api v1/end-point req ~ ['access_token' access:(need auth.vat)]~]
 ::
 ++  api-call

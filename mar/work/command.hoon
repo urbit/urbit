@@ -1,10 +1,11 @@
 ::
 ::::  /hoon/command/work/mar
   ::
-/-    *work
+/-    work
 !:
 ::::
   ::
+[work .]
 |_  mad=command
 ++  grab
   |%  ++  noun  command
