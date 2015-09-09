@@ -446,7 +446,7 @@
       ::
           %show
         =+  cay=(~(got by rez) p.p.mad)
-        %^  dy-rash  %tan  >p.cay<
+        %+  dy-rash  %tan
         ?+  p.cay  [(sell q.cay)]~
           %tang  ;;(tang q.q.cay)
           %httr
