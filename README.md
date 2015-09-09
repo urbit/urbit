@@ -208,5 +208,7 @@ pier. Your original ticket will still work.
 Contributing
 ------------
 
-If you're interested in contributing to urbit development come and
-`:talk` with us. We'll help you get oriented and up to speed.
+The first step in contributing to urbit is to come and join us on `:talk`. 
+
+For more detailed instructions check out 
+[`contributing.md`](https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md),.
