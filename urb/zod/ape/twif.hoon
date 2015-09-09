@@ -1,5 +1,6 @@
-/-    *twitter
+/-    twitter
 !:
+[twitter .]
 |_  [bowl ~]
 ++  poke-noun  |=(span (onwards [%peer / [our %twit] /user/[+<]]))
 ++  onwards  |*([mark *] [[ost +<]~ +>.$])

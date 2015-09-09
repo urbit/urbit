@@ -5,5 +5,5 @@
 /+    http
 |_  hiss
 ::
-++  grab  |%    ++  httpreq  httpreq-to-hiss
+++  grab  |%    ++  httpreq  request-to-hiss:http
 --        --

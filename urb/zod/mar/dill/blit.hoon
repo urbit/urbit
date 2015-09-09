@@ -2,7 +2,8 @@
 ::::  /hoon/dill-blit/mar
   ::
 /?    314
-/-    *sole
+/-    sole
+[sole .]
 |_  dib=dill-blit
 ::
 ++  grab                                                ::  convert from
