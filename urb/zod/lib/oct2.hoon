@@ -2,10 +2,11 @@
 ::::  /hoon/oct2/lib                                    ::::::  dependencies
   ::                                                    ::  ::
 /?    310                                               ::  arvo version
-/-    *oct2                                             ::  structures
+/-    oct2                                             ::  structures
 ::                                                      ::  ::
 ::::                                                    ::::::  semantics
   !:                                                    ::  ::
+[oct2 .]
 |%                                                      ::
 ++  icon   |=(? ?:(+< 'X' 'O'))                         ::  display at
 ++  bo                                                  ::  per board
@@ -56,3 +57,4 @@
             ?.(ept " ({-}'s turn) " ": {-} (row/col): ")::
   --
 --
+=*(oct2 . .)

@@ -8,4 +8,4 @@
   ::
 |=  [^ [arg=path ~] ~]
 =+  lon=((hard arch) .^(%cy arg))
-tang/[?~(r.lon leaf/"~" (subdir arg r.lon))]~
+tang/[?~(dir.lon leaf/"~" (subdir arg dir.lon))]~

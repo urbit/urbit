@@ -2,8 +2,9 @@
 ::::  /hoon/dojo/app                               ::  ::::
   ::                                                    ::    ::
 /?  314                                                 ::  arvo kelvin
-/-  *sole                                               ::  console structures
+/-  sole                                               ::  console structures
 /+  sole                                                ::  console library
+[. sole]
 ::                                                      ::  ::
 ::::                                                    ::  ::::
   !:                                                    ::    ::
@@ -369,7 +370,7 @@
               !&(?=(%del -.u.per) =(+(p.u.per) (lent buf.say)))
           ==
         dy-abet(per ~)
-      =^  lic  say  (~(transmit cs say) u.per)
+      =^  lic  say  (~(transmit sole say) u.per)
       (dy-diff(per ~) %mor [%det lic] [%err q.q.cag] ~)
     ::
     ++  dy-done                                         ::  dialog submit
@@ -431,7 +432,7 @@
       ::
           %show
         =+  cay=(~(got by rez) p.p.mad)
-        %^  dy-rash  %tan  >p.cay<
+        %+  dy-rash  %tan
         ?+  p.cay  [(sell q.cay)]~
           %tang  ;;(tang q.q.cay)
           %httr
@@ -447,10 +448,10 @@
     ++  dy-edit                                         ::  handle edit
       |=  cal=sole-change
       ^+  +>+>
-      =^  dat  say  (~(transceive cs say) cal)
+      =^  dat  say  (~(transceive sole say) cal)
       ?:  |(?=(^ per) ?=(^ pux) ?=(~ pro))
         ~&  %dy-edit-busy
-        =^  lic  say  (~(transmit cs say) dat)
+        =^  lic  say  (~(transmit sole say) dat)
         (dy-diff %mor [%det lic] [%bel ~] ~)
       (dy-slam(per `dat) /edit u.pro !>((tufa buf.say)))
     ::
@@ -591,8 +592,7 @@
       :+  %cast  (fall (dy-twig-mark gen) %noun)
       :+  %ride  gen
       :-  [%$ dy-twig-head]
-      =+  sur=(turn arc |=(hoof [& +<]))
-      [%plan [he-beak ~] / zuse sur lib ~ ~]            ::  XX spur
+      [%plan [he-beak ~] / zuse arc lib ~ ~]            ::  XX spur
     ::
     ++  dy-step                                         ::  advance project
       |=  nex=@ud
@@ -660,7 +660,7 @@
   ::
   ++  he-pone                                           ::  clear prompt
     ^+  .
-    =^  cal  say  (~(transmit cs say) [%set ~])
+    =^  cal  say  (~(transmit sole say) [%set ~])
     (he-diff %mor [%det cal] ~)
   ::
   ++  he-prom                                           ::  send prompt
@@ -712,7 +712,7 @@
     ^+  +>
     ::  ~&  [%his-clock ler.cal]
     ::  ~&  [%our-clock ven.say]
-    =^  dat  say  (~(transceive cs say) cal)
+    =^  dat  say  (~(transceive sole say) cal)
     ?.  ?&  ?=(%del -.dat)
             =(+(p.dat) (lent buf.say))
         ==
@@ -720,7 +720,7 @@
     =+  foy=(he-dope (tufa buf.say))
     ?:  ?=(%& -.foy)  +>.$
     ::  ~&  [%bad-change dat ted.cal]
-    =^  lic  say  (~(transmit cs say) dat)
+    =^  lic  say  (~(transmit sole say) dat)
     ::  ~&  [%our-leg leg.say]
     (he-diff %mor [%det lic] [%err q.p.foy] ~)
   ::
@@ -746,7 +746,7 @@
       ?~  p.doy
         (he-diff [%err (lent txt)])
       =+  old=(weld ?~(buf "> " "  ") (tufa buf.say))
-      =^  cal  say  (~(transmit cs say) [%set ~])
+      =^  cal  say  (~(transmit sole say) [%set ~])
       =.  +>.$   (he-diff %mor txt/old nex/~ det/cal ~)
       ?-  -.u.p.doy
         %&  (he-plan(buf ~) p.u.p.doy)
