@@ -780,6 +780,16 @@
     ==
   `..prep(+<+ u.old)
 ::
+::  pattern:  ++  foo  |=(data he-abet:(~(he-foo he (~(got by hoc) ost)) data))
+++  arm  (arm-session (~(got by hoc) ost.hid))
+++  arm-session
+  |=  ses=session
+  =>  ~(. he [ost.hid ~] ses)
+  =-  [wrap=- +]
+  |*  he-arm=_he-type
+  |=  _+<.he-arm  ^-  (quip move ..he)
+  he-abet:(he-arm +<)
+::
 ++  peer-sole
   |=  [pax=path]
   ^-  (quip move +>)
@@ -795,30 +805,14 @@
   %*(. *session syd %home)
 ::
 ++  poke-sole-action
-  |=  [act=sole-action]
-  ^-  (quip move +>)
-  ~|  [%dojo-poke ost.hid -.act (~(run by hoc) ,~)]
-  ::  ~&  [%dojo-poke ost.hid src.hid act]
-  ::  ~?  !=(src.hid our.hid)  [%dojo-poke ost.hid src.hid]
-  he-abet:(~(he-type he [ost.hid ~] (~(got by hoc) ost.hid)) act)
+  |=  act=sole-action  ~|  poke/act  %.  act
+  (wrap he-type):arm
 ::
-++  made
-  |=  [way=wire dep=@uvH reg=gage]
-  he-abet:(~(he-made he [[ost.hid ~] (~(got by hoc) ost.hid)]) way dep reg)
-::
-++  sigh-octs
-  |=  [way=wire oct=octs]
-  he-abet:(~(he-sigh he [[ost.hid ~] (~(got by hoc) ost.hid)]) way oct)
-::
-++  lame
-  |=  [wut=term why=tang]
-  he-abet:(~(he-lame he [[ost.hid ~] (~(got by hoc) ost.hid)]) wut why)
-::
-++  sigh-tang  |=([a=wire b=tang] (lame (cat 3 'sigh-' -.a) b))
-++  unto
-  |=  [way=wire cit=cuft] 
-  he-abet:(~(he-unto he [[ost.hid ~] (~(got by hoc) ost.hid)]) cit)
-::
+++  made       (wrap he-made):arm
+++  sigh-octs  (wrap he-sigh):arm
+++  sigh-tang  |=([a=wire b=tang] ~|(`term`(cat 3 'sigh-' -.a) (mean b)))
+++  lame       (wrap he-lame):arm
+++  unto       (wrap he-unto):arm
 ++  pull
   |=  [pax=path]
   ^-  (quip move +>)
