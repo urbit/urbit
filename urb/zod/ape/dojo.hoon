@@ -14,6 +14,7 @@
       ==                                                ::
     ++  session                                         ::  per conversation
       $:  say=sole-share                                ::  command-line state
+::           dir=beam
           syd=desk                                      ::  active desk 
           luc=(unit case)                               ::  special case
           poy=(unit dojo-project)                       ::  working
@@ -44,6 +45,7 @@
           [%ge p=dojo-model]                            ::  generator
           [%sc p=dojo-model]                            ::  script
           [%tu p=(list dojo-source)]                    ::  tuple
+          [%ur p=purl]                                  ::  http GET request
           [%va p=term]                                  ::  dojo variable
       ==                                                ::
     ++  dojo-filter                                     ::  pipeline filter
@@ -88,6 +90,7 @@
     ++  card                                            ::  general card
       $%  [%diff %sole-effect sole-effect]              ::
           [%send wire [ship term] clap]                 ::
+          [%hiss wire mark [%purl purl]]                ::
           [%exec wire @p (unit ,[beak silk])]           ::
           [%deal wire sock term club]                   ::
           [%info wire @p toro]                          ::
@@ -98,7 +101,7 @@
           [%unto p=cuft]                                ::  
       ==                                                ::
     --                                                  ::
-::                                                      ::
+!:                                                      ::
 ::::                                                    ::
   ::                                                    ::
 |_  $:  hid=bowl                                        ::  system state
@@ -178,7 +181,7 @@
     ++  dp-build                                        ::  ++dojo-build
       %+  knee  *dojo-build  |.  ~+
       ;~  pose
-        ;~(pfix lus (stag %ge dp-model-cat))
+        ;~(pfix lus ;~(pose (stag %ur auri:epur) (stag %ge dp-model-cat)))
         ;~(pfix wut (stag %di dp-model-dog))
         ;~(pfix buc (stag %va sym))
         ;~(pfix pam (stag %ec ;~(plug ;~(sfix sym dot) dp-twig)))
@@ -242,6 +245,12 @@
       ?>  ?=(~ pux)
       (he-card(poy `+>+<(pux `way)) %exec way our.hid `[he-beak kas])
     ::
+    ++  dy-eyre                                         ::  send work to eyre
+      |=  [way=wire req=[%purl purl]]
+      ^+  +>+>
+      ?>  ?=(~ pux)
+      (he-card(poy `+>+<(pux `way)) %hiss way %httr req)
+    ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
       ?~  pux  +>
@@ -301,6 +310,7 @@
         %fi  !!
         %ge  =^(mod +>.$ (dy-init-model p.bul) [[%ge mod] +>.$])
         %sc  !!
+        %ur  [bul +>.$]
         %tu  =^  dof  +>.$
                  |-  ^+  [p.bul +>.^$]
                  ?~  p.bul  [~ +>.^$]
@@ -383,6 +393,12 @@
         (dy-diff %bel ~)
       (dy-slam /dial u.pro !>(txt))
     ::
+    ++  dy-cast
+      |*  [typ=_,* bun=vase]
+      |=  a=vase  ^-  typ
+      ?>  (~(nest ut p.bun) & p.a)
+      ;;(typ q.a)
+    ::
     ++  dy-over                                         ::  finish construction
       ^+  +>
       ?-    -.mad
@@ -416,20 +432,30 @@
           %verb
         ~&  (~(run by var) mug)
         =+  cay=(~(got by rez) p.q.mad)
+        =.  var  (~(put by var) p.mad cay)
         ~|  bad-set/[p.mad p.q.cay]
         =<  dy-amok
-        ?+  p.mad  .(var (~(put by var) p.mad cay))
+        ?+  p.mad  .
           %now  ~|(%time-is-immutable !!)
           %who  ~|(%self-is-immutable !!)
-          %law  .(syd ;;(@tas q.q.cay))
-          %dir  ~|(%cd-stub ?>(?=(~ q.q.cay) .))
-          %lib  .(lib ;;((list hoof) q.q.cay))
-          %arc  .(arc ;;((list hoof) q.q.cay))
+          %dir  .(syd q:((dy-cast beam !>(*beam)) q.cay))
+          %lib  .(lib ((dy-cast (list hoof) !>(*(list hoof))) q.cay))
+          %arc  .(arc ((dy-cast (list hoof) !>(*(list hoof))) q.cay))
         ==
       ::
           %show
         =+  cay=(~(got by rez) p.p.mad)
-        (dy-rash %tan ?+(p.cay [(sell q.cay)]~ %tang ;;(tang q.q.cay)))
+        %^  dy-rash  %tan  >p.cay<
+        ?+  p.cay  [(sell q.cay)]~
+          %tang  ;;(tang q.q.cay)
+          %httr
+            =+  hit=;;(httr q.q.cay)
+            =-  (flop (turn `wall`- |=(a=tape leaf/(dash:ut a ''))))
+            :-  "HTTP {<p.hit>}"
+            %+  weld
+              (turn q.hit |=([a=@t b=@t] "{(trip a)}: {(trip b)}"))
+            (turn `wain`?~(r.hit ~ (lore q.u.r.hit)) trip)
+        ==
       ==
     ::
     ++  dy-edit                                         ::  handle edit
@@ -518,6 +544,8 @@
     ++  dy-make                                         ::  build step
       ^+  +>
       ?>  ?=(^ cud)
+      ?:  ?=(%ur -.q.u.cud)
+        (dy-eyre /hand %purl p.q.u.cud)
       %-  dy-ford
       ^-  (pair path silk)
       ?+  -.q.u.cud  !!
@@ -537,9 +565,35 @@
              (slop hed $(p.q.u.cud t.p.q.u.cud))
       ==
     ::
+    ++  dy-twig-mark                                    ::  XX architect
+      =+  ^=  ope
+          |=  gen=twig  ^-  twig
+          ?:  ?=(?(%sggl %sggr) -.gen)
+            $(gen q.gen)
+          =+  ~(open ap gen)
+          ?.(=(gen -) $(gen -) gen)
+      |=  gen=twig  ^-  (unit mark)
+      =.  gen  (ope gen)
+      ?.  ?=(%dtkt -.gen)  ~
+      =.  p.gen  (ope p.gen)
+      ?@  -.p.gen  ~
+      ?+    ~(feck ap p.p.gen)  ~
+          [~ %cx]
+        =+  gin=(ope q.p.gen)
+        |-
+        ?@  -.gin  ~
+        =.  q.gin  (ope q.gin)
+        ?^  -.q.gin  $(gin q.gin)
+        =.  p.gin  (ope p.gin)
+        ?.  ?=([[?(%dtzz %dtzy) @ @] [%dtzz %n ~]] gin)
+          ~
+        (some q.p.gin)
+      ==
+    ::
     ++  dy-mare                                         ::  build expression
       |=  gen=twig
       ^-  silk
+      :+  %cast  (fall (dy-twig-mark gen) %noun)
       :+  %ride  gen
       :-  [%$ dy-twig-head]
       =+  sur=(turn arc |=(hoof [& +<]))
@@ -637,8 +691,15 @@
       %tabl  !!
     ==
   ::
+  ++  he-sigh                                           ::  result from ford
+    |=  [way=wire hit=httr]
+    ^+  +>
+    ?>  ?=(^ poy)
+    ?>  ?=([%hand ~] way)             ::  XX options?
+    he-pine:(~(dy-hand dy u.poy(pux ~)) %httr !>(hit))
+  ::
   ++  he-unto                                           ::  result from behn
-    |=  cit=cuft
+    |=  [way=wire cit=cuft]
     ^+  +>
     ?.  ?=(%coup -.cit)
       ~&  [%strange-unto cit]
@@ -694,7 +755,7 @@
       =.  +>.$   (he-diff %mor txt/old nex/~ det/cal ~)
       ?-  -.u.p.doy
         %&  (he-plan(buf ~) p.u.p.doy)
-        %|  +>.$(buf p.u.p.doy)
+        %|  (he-diff(buf p.u.p.doy) pro/[& %$ "< "])
       ==
     ==
   ::
@@ -729,6 +790,16 @@
     ==
   `..prep(+<+ u.old)
 ::
+::  pattern:  ++  foo  |=(data he-abet:(~(he-foo he (~(got by hoc) ost)) data))
+++  arm  (arm-session (~(got by hoc) ost.hid))
+++  arm-session
+  |=  ses=session
+  =>  ~(. he [ost.hid ~] ses)
+  =-  [wrap=- +]
+  |*  he-arm=_he-type
+  |=  _+<.he-arm  ^-  (quip move ..he)
+  he-abet:(he-arm +<)
+::
 ++  peer-sole
   |=  [pax=path]
   ^-  (quip move +>)
@@ -744,25 +815,14 @@
   %*(. *session syd %home)
 ::
 ++  poke-sole-action
-  |=  [act=sole-action]
-  ^-  (quip move +>)
-  ~|  [%dojo-poke ost.hid -.act (~(run by hoc) ,~)]
-  ::  ~&  [%dojo-poke ost.hid src.hid act]
-  ::  ~?  !=(src.hid our.hid)  [%dojo-poke ost.hid src.hid]
-  he-abet:(~(he-type he [ost.hid ~] (~(got by hoc) ost.hid)) act)
+  |=  act=sole-action  ~|  poke/act  %.  act
+  (wrap he-type):arm
 ::
-++  made
-  |=  [way=wire dep=@uvH reg=gage]
-  he-abet:(~(he-made he [[ost.hid ~] (~(got by hoc) ost.hid)]) way dep reg)
-::
-++  lame
-  |=  [wut=term why=tang]
-  he-abet:(~(he-lame he [[ost.hid ~] (~(got by hoc) ost.hid)]) wut why)
-::
-++  unto
-  |=  [way=wire cit=cuft] 
-  he-abet:(~(he-unto he [[ost.hid ~] (~(got by hoc) ost.hid)]) cit)
-::
+++  made       (wrap he-made):arm
+++  sigh-httr  (wrap he-sigh):arm
+++  sigh-tang  |=([a=wire b=tang] ~|(`term`(cat 3 'sigh-' -.a) (mean b)))
+++  lame       (wrap he-lame):arm
+++  unto       (wrap he-unto):arm
 ++  pull
   |=  [pax=path]
   ^-  (quip move +>)
