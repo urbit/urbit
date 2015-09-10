@@ -1,4 +1,4 @@
- ::                                                      ::  ::
+::                                                      ::  ::
 ::::  /hoon/dojo/app                               ::  ::::
   ::                                                    ::    ::
 /?  314                                                 ::  arvo kelvin
@@ -15,9 +15,7 @@
       ==                                                ::
     ++  session                                         ::  per conversation
       $:  say=sole-share                                ::  command-line state
-::           dir=beam
-          syd=desk                                      ::  active desk 
-          luc=(unit case)                               ::  special case
+          dir=beam                                      ::  active path
           poy=(unit dojo-project)                       ::  working
           [lib=(list hoof) arc=(list hoof)]             ::  lib/sur
           var=(map term cage)                           ::  variable state
@@ -154,6 +152,12 @@
           ;~(plug sym (punt ;~(pfix ace dp-source)))
         ==
       ::
+        ;~  pfix  fas
+          %+  cook
+            |=(a=(list twig) `dojo-command`[%verb %dir ~ [0 %ex %clsg a]])
+          dp-poor
+        ==
+      ::
         ;~  plug  (cold %file tar)
           ;~((glue ace) dp-beam dp-source)
         ==
@@ -197,11 +201,12 @@
     ++  dp-model-cat  ;~(plug dp-server-cat dp-config)  ::  ++dojo-model
     ++  dp-model-dog  ;~(plug dp-server-dog dp-config)  ::  ++dojo-model
     ++  dp-model-pig  ;~(plug dp-server-pig dp-config)  ::  ++dojo-model
-    ++  dp-path       `path`/(scot %p our.hid)/[syd]/(scot %da now.hid)
+    ++  dp-path       (tope he-beam)                    ::  ++path
     ++  dp-server-cat   (stag 0 (stag %cat dp-device))  ::  ++dojo-server
     ++  dp-server-dog   (stag 0 (stag %dog dp-device))  ::  ++dojo-server
     ++  dp-server-pig   (stag 0 (stag %pig dp-device))  ::  ++dojo-server
     ++  dp-twig         tall:(vang & dp-path)           ::  ++twig
+    ++  dp-poor         poor:(vang & (tope dir))        ::  (list ++twig)
     ++  dp-device       (most fas sym)                  ::  ++dojo-device
     ++  dp-value                                        ::  ++dojo-source
       ;~  pose
@@ -417,17 +422,28 @@
         (dy-rash %sag p.mad q.q:(~(got by rez) p.q.mad))
       ::
           %verb
-        ?~  q.mad  dy-amok(var (~(del by var) p.mad))
+        ?~  q.mad 
+          =.  var  (~(del by var) p.mad)
+          =<  dy-amok
+          ?+  p.mad  . 
+            ?(%eny %now %our)  !!
+            %lib  .(lib ~)
+            %arc  .(arc ~)
+            %dir  .(dir [[our.hid %home ud/0] /])
+          ==
         =+  cay=(~(got by rez) p.u.q.mad)
         =.  var  (~(put by var) p.mad cay)
         ~|  bad-set/[p.mad p.q.cay]
         =<  dy-amok
         ?+  p.mad  .
+          %eny  ~|(%entropy-is-eternal !!)
           %now  ~|(%time-is-immutable !!)
-          %who  ~|(%self-is-immutable !!)
-          %dir  .(syd q:((dy-cast beam !>(*beam)) q.cay))
+          %our  ~|(%self-is-immutable !!)
           %lib  .(lib ((dy-cast (list hoof) !>(*(list hoof))) q.cay))
           %arc  .(arc ((dy-cast (list hoof) !>(*(list hoof))) q.cay))
+          %dir  =.  dir  (need (tome ((dy-cast path !>(*path)) q.cay)))
+                =-  +(..dy (he-diff %tan - ~))
+                rose/[" " `~]^~[leaf/"=%" (smyt (tope he-beak s.dir))]
         ==
       ::
           %show
@@ -501,11 +517,7 @@
         %-  ~(rep by var)
         |=  [[a=term @ b=vase] c=vase]  ^-  vase
         (sloop b(p face/[a p.b]) c)
-      !>  ^-  $:  law=desk  dir=path  
-                  [lib=(list hoof) arc=(list hoof)]
-                  [our=@p now=@da eny=@uvI]
-              ==
-          [syd / [lib arc] [our now eny]:hid]
+      !>(`[our=@p now=@da eny=@uvI]`[our now eny]:hid)
     ::
     ++  dy-made-dial                                    ::  dialog product
       |=  cag=cage
@@ -592,7 +604,7 @@
       :+  %cast  (fall (dy-twig-mark gen) %noun)
       :+  %ride  gen
       :-  [%$ dy-twig-head]
-      [%plan [he-beak ~] / zuse arc lib ~ ~]            ::  XX spur
+      [%plan he-beam / zuse arc lib ~ ~]
     ::
     ++  dy-step                                         ::  advance project
       |=  nex=@ud
@@ -627,9 +639,11 @@
   ++  he-abet                                           ::  resolve
     [(flop moz) %_(+> hoc (~(put by hoc) ost +<+))]
   ::
-  ++  he-beak                                           ::  logical beam
-    ^-  beak
-    [our.hid syd ?^(luc u.luc [%da now.hid])]
+  ++  he-beak  -:he-beam
+  ++  he-beam                                           ::  logical beam
+    ^-  beam
+    ?.  =(ud/0 r.dir)  dir
+    dir(r [%da now.hid])
   ::
   ++  he-card                                           ::  emit gift
     |=  cad=card
@@ -651,7 +665,7 @@
     ?~(poy . ~(dy-stop dy u.poy))
   ::
   ++  he-peer                                           ::  subscribe to
-    he-prom
+    |=(pax=path ?>(=(~ pax) he-prom))
   ::
   ++  he-pine                                           ::  restore prompt
     ^+  .
@@ -666,7 +680,7 @@
   ++  he-prom                                           ::  send prompt
     %-  he-diff
     :-  %pro
-    [& %$ "> "]
+    [& %$ ?~(buf "> " "< ")]
   ::
   ++  he-made                                           ::  result from ford
     |=  [way=wire dep=@uvH reg=gage]
@@ -734,6 +748,7 @@
     |=  txt=tape
     ^+  +>
     ?~  txt
+      =<  he-prom(buf ~)
       %-  he-diff
       :~  %mor
           [%txt "> "]
@@ -750,7 +765,7 @@
       =.  +>.$   (he-diff %mor txt/old nex/~ det/cal ~)
       ?-  -.u.p.doy
         %&  (he-plan(buf ~) p.u.p.doy)
-        %|  (he-diff(buf p.u.p.doy) pro/[& %$ "< "])
+        %|  he-prom(buf p.u.p.doy)
       ==
     ==
   ::
@@ -795,18 +810,11 @@
   he-abet:(he-arm +<)
 ::
 ++  peer-sole
-  |=  [pax=path]
-  ^-  (quip move +>)
-  ::  ~&  [%dojo-peer ost.hid pax]
-  ~?  !=(src.hid our.hid)  [%dojo-peer-stranger ost.hid src.hid pax]
+  ~?  !=(src.hid our.hid)  [%dojo-peer-stranger ost.hid src.hid]
   ::  ?>  =(src.hid our.hid)
-  ~?  (~(has by hoc) ost.hid)  [%dojo-peer-replaced ost.hid pax]
-  ?>  =(~ pax)
-  =<  he-abet
-  %~  he-peer  he
-  :-  [ost.hid ~]
-  ^-  session
-  %*(. *session syd %home)
+  ~?  (~(has by hoc) ost.hid)  [%dojo-peer-replaced ost.hid]
+  =+  ses=%*(. *session -.dir [our.hid %home ud/0])
+  (wrap he-peer):(arm-session ses)
 ::
 ++  poke-sole-action
   |=  act=sole-action  ~|  poke/act  %.  act
