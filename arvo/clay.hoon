@@ -338,8 +338,8 @@
     %_    +>.$
         tag
       :_  tag
-      :*  hen  %pass  [%ergoing (scot %p our) syd ~]  %f
-          %exec  our  ~  [our syd %da now]  %tabl
+      :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %f
+          %exec  our  ~  [her syd %da now]  %tabl
           ^-  (list (pair silk silk))
           %+  turn  `(list path)`mus
           |=  a=path
@@ -540,8 +540,8 @@
         ==
     ^-  (list move)
     :~  :*  hen  %pass
-            [%inserting (scot %p our) syd (scot %da wen) ~]
-            %f  %exec  our  ~  [our syd %da wen]  %tabl
+            [%inserting (scot %p her) syd (scot %da wen) ~]
+            %f  %exec  our  ~  [her syd %da wen]  %tabl
             ^-  (list (pair silk silk))
             %+  turn  ins
             |=  [pax=path mis=miso]
@@ -551,8 +551,8 @@
             [%cast - [%$ p.mis]]
         ==
         :*  hen  %pass
-            [%diffing (scot %p our) syd (scot %da wen) ~]
-            %f  %exec  our  ~  [our syd %da wen]  %tabl
+            [%diffing (scot %p her) syd (scot %da wen) ~]
+            %f  %exec  our  ~  [her syd %da wen]  %tabl
             ^-  (list (pair silk silk))
             %+  turn  dif
             |=  [pax=path mis=miso]
@@ -563,8 +563,8 @@
             [%pact [%$ p.-] [%$ p.mis]]
         ==
         :*  hen  %pass
-            [%castifying (scot %p our) syd (scot %da wen) ~]
-            %f  %exec  our  ~  [our syd %da wen]  %tabl
+            [%castifying (scot %p her) syd (scot %da wen) ~]
+            %f  %exec  our  ~  [her syd %da wen]  %tabl
             ^-  (list (pair silk silk))
             %+  turn  mut
             |=  [pax=path mis=miso]
@@ -582,8 +582,8 @@
     :-  hen
     ?+    -.mis   !!
         %mut
-      :-  [%diffing (scot %p our) syd (scot %da wen) pax]
-      :^  %f  %exec  our  :+  ~  [our syd %da wen]
+      :-  [%diffing (scot %p her) syd (scot %da wen) pax]
+      :^  %f  %exec  our  :+  ~  [her syd %da wen]
       ^-  silk
       :+  %diff
         (lobe-to-silk:ze pax (~(got by q:(aeon-to-yaki:ze let.dom)) pax))
@@ -592,8 +592,8 @@
       [%cast - [%$ p.mis]]
     ::
         %ins
-      :-  [%casting (scot %p our) syd (scot %da wen) pax]
-      :^  %f  %exec  our  :+  ~  [our syd %da wen]
+      :-  [%casting (scot %p her) syd (scot %da wen) pax]
+      :^  %f  %exec  our  :+  ~  [her syd %da wen]
       ^-  silk
       =+  (slag (dec (lent pax)) pax)
       =+  ?~(- %$ i.-)
@@ -694,8 +694,8 @@
     =-  %_(+>.$ tag [- tag])
     ^-  move
     :*  hen  %pass
-        [%mutating (scot %p our) syd (scot %da wen) ~]
-        %f  %exec  our  ~  [our syd %da wen]  %tabl
+        [%mutating (scot %p her) syd (scot %da wen) ~]
+        %f  %exec  our  ~  [her syd %da wen]  %tabl
         ^-  (list (pair silk silk))
         %+  turn  cat
         |=  [pax=path cay=cage]
@@ -799,8 +799,8 @@
         dok  ~
         tag
       :_  tag
-      :*  hen  %pass  [%ergoing (scot %p our) syd ~]  %f
-          %exec  our  ~  [our syd %da now]  %tabl
+      :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %f
+          %exec  our  ~  [her syd %da now]  %tabl
           ^-  (list (pair silk silk))
           %+  turn  (~(tap in sum))
           |=  a=path
@@ -857,8 +857,8 @@
     %_    +>.$
         tag
       :_  tag
-      :*  hen  %pass  [%patching (scot %p our) syd ~]  %f
-          %exec  our  :^  ~  [our syd %da now]  %tabl
+      :*  hen  %pass  [%patching (scot %p her) syd ~]  %f
+          %exec  our  :^  ~  [her syd %da now]  %tabl
           ^-  (list (pair silk silk))
           %+  turn  (~(tap by hat))
           |=  [a=path b=lobe]
