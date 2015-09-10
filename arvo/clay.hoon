@@ -281,7 +281,7 @@
       +>.$(byn [[hen ~ [p.mun q.mun syd] r.mun p.dat] byn])
     =-  +>.$(tag [- tag])
     :*  hen  %pass  [%blab p.mun (scot q.mun) syd r.mun]
-        %f  %exec  our  ~  [our syd q.mun]  (lobe-to-silk:ze r.mun p.dat)
+        %f  %exec  our  ~  [her syd q.mun]  (lobe-to-silk:ze r.mun p.dat)
     ==
   ::
   ++  bleb                                              ::  ship sequence
@@ -1938,13 +1938,13 @@
         ==
       ::
       ++  diff-bas
-        |=  [nam=term yak=yaki oth=(pair ship desk) yuk=yaki]
+        |=  [nam=term yak=yaki oth=(trel ship desk case) yuk=yaki]
         ^+  +>
         =-  %_(+>.$ tag [- tag])
         :*  hen  %pass
             =+  (cat 3 %diff- nam)
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali - ~]
-            %f  %exec  p.bob  ~  [p.oth q.oth cas.dat]  %tabl
+            %f  %exec  p.bob  ~  [p.oth q.oth r.oth]  %tabl
             ^-  (list (pair silk silk))
             %+  murn  (~(tap by q.bas.dat))
             |=  [pax=path lob=lobe]
@@ -1966,7 +1966,7 @@
       ::
       ++  diff-ali
         ^+  .
-        (diff-bas(wat.dat %diff-ali) %ali ali.dat ali bob.dat)
+        (diff-bas(wat.dat %diff-ali) %ali ali.dat [p.ali q.ali cas.dat] bob.dat)
       ::
       ++  diffed-ali
         |=  res=gage
@@ -2006,7 +2006,7 @@
       ::
       ++  diff-bob
         ^+  .
-        (diff-bas(wat.dat %diff-bob) %bob bob.dat bob ali.dat)
+        (diff-bas(wat.dat %diff-bob) %bob bob.dat [p.bob q.bob da/now] ali.dat)
       ::
       ++  diffed-bob
         |=  res=gage
@@ -2052,7 +2052,7 @@
           =-  %_(+.$ tag [- tag], wat.dat %merge)
           :*  hen  %pass
               [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %merge ~]
-              %f  %exec  p.bob  ~  [p.bob q.bob cas.dat]  %tabl
+              %f  %exec  p.bob  ~  [p.bob q.bob da/now]  %tabl
               ^-  (list (pair silk silk))
               %+  turn  (~(tap by (~(int by can.dal.dat) can.dob.dat)))
               |=  [pax=path *]
@@ -2086,7 +2086,7 @@
         =-  %_(+ tag [- tag], wat.dat %build)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %build ~]
-            %f  %exec  p.bob  ~  [p.bob q.bob cas.dat]  %tabl
+            %f  %exec  p.bob  ~  [p.bob q.bob da/now]  %tabl
             ^-  (list (pair silk silk))
             %+  murn  (~(tap by bof.dat))
             |=  [pax=path cay=(unit cage)]
@@ -2255,10 +2255,13 @@
             |=  [pak=(set path) acc=(set path)]
             (~(uni in acc) pak)
         =+  zez=ze(ank.dom ank.dat)
-        =+  val=?:(?=(%init gem.dat) ali bob)
+        =+  ^-  val=beak
+            ?:  ?=(%init gem.dat)
+              [p.ali q.ali cas.dat]
+            [p.bob q.bob da/now]
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ergo ~]
-            %f  %exec  p.bob  ~  [p.val q.val cas.dat]  %tabl
+            %f  %exec  p.bob  ~  val  %tabl
             ^-  (list (pair silk silk))
             %+  turn  (~(tap in sum))
             |=  a=path
