@@ -789,15 +789,15 @@
   --
 ::
 ++  prep
-  =+  sosh==+(*session -(poy *(unit)))
+  =+  sosh==+(*session ,[_say syd=desk * (unit) _|3.-])
   :: ,_`..prep
-  |=  old=(unit ?(house [%0 (map bone ,_sosh)]))  ^+  [~ ..prep]
+  |=  old=(unit ?(house [%0 p=(map bone sosh)]))  ^+  [~ ..prep]
   ?~  old  `..prep
   ?:  ?=(%1 -.u.old)  `..prep(+<+ u.old)
-  %=  $
-      u.old
-    [%1 (~(run by +.u.old) |=(sos=_sosh sos(poy ~)))]
-  ==
+  =<  ^$(u.old [%1 (~(run by p.u.old) .)])
+  |=  sos=sosh  ^-  session
+  =-  ~!  [%*(. *session poy *(unit)) -]  -
+  [-.sos [[our.hid syd.sos ud/0] /] ~ |4.sos]
 ::
 ::  pattern:  ++  foo  |=(data he-abet:(~(he-foo he (~(got by hoc) ost)) data))
 ++  arm  (arm-session (~(got by hoc) ost.hid))
