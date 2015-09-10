@@ -36,7 +36,7 @@ Message = recl
     speech = @props.thought.statement.speech
     attachments = []
     while speech.fat?
-      attachments.push pre {}, speech.fat.fat.tank.join("\n")
+      attachments.push pre {}, speech.fat.tor.tank.join("\n")
       speech = speech.fat.taf  # XX
     if !speech? then return;
     if speech.lin?.say is false then klass += " say"
