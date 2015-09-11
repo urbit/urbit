@@ -518,6 +518,35 @@
         [%pro pom(cad [':' ' ' cad.pom])]
       ==
     ::
+    ++  dy-made-scar                                    ::  scraper product
+      |=  cag=cage
+      ^+  +>+>
+      ?.  ?=(^ q.q.cag)
+        (dy-diff %err q.q.cag)
+      =+  tan=((list tank) +2.q.q.cag)
+      =.  +>+>.$  (he-diff %tan tan)
+      =+  vax=(spec (slot 3 q.cag))
+      ~_  (sell q.cag)
+      ?+    -.q.vax  !!
+          %& 
+        ?~  +.q.vax
+          ~&  %dy-made-scar-abort
+          (dy-rash %bel ~)
+        (dy-meal (slot 7 vax))
+      ::
+          %|
+        =+  hiz=;;(hiss +<.q.vax)
+        %-  (slog leaf/"< {(earn p.hiz)}" ~)
+        (dy-eyre(pro `(slap (slot 7 vax) cnzy/%q)) /scar hiz)
+      ==
+    ::
+    ++  dy-sigh-scar                                    ::  scraper result
+      |=  dat=cage
+      ?~  pro
+        ~&  %dy-no-scraper
+        (dy-show dat)
+      (dy-slam(pux ~) /scar u.pro q.dat) 
+    ::
     ++  dy-made-gent                                    ::  generator product
       |=  cag=cage
       (dy-meal q.cag)
@@ -669,6 +698,7 @@
             [%hand ~]  dy-hand:dye
             [%dial ~]  dy-made-dial:dye
             [%gent ~]  dy-made-gent:dye
+            [%scar ~]  dy-made-scar:dye
             [%edit ~]  dy-made-edit:dye
           ==
       %|  (he-diff(poy ~) %tan p.reg)
@@ -685,6 +715,7 @@
     ?+  way  !!
       [%hand ~]  dy-hand:dye
       [%show ~]  dy-show:dye
+      [%scar ~]  dy-sigh-scar:dye
     ==
   ::
   ++  he-unto                                           ::  result from behn
