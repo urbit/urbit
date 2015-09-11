@@ -348,7 +348,7 @@
     ::
     ++  dy-done                                         ::  dialog submit
       |=  txt=tape
-      ?.  ?=(^ pro)
+      ?:  |(?=(^ per) ?=(^ pux) ?=(~ pro))
         ~&  %dy-no-prompt
         (dy-diff %bel ~)
       (dy-slam /dial u.pro !>(txt))
