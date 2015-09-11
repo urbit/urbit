@@ -268,7 +268,7 @@ Message = recl({
     speech = this.props.thought.statement.speech;
     attachments = [];
     while (speech.fat != null) {
-      attachments.push(pre({}, speech.fat.fat.tank.join("\n")));
+      attachments.push(pre({}, speech.fat.tor.tank.join("\n")));
       speech = speech.fat.taf;
     }
     if (speech == null) {
@@ -700,7 +700,7 @@ var Member, MessageActions, MessageStore, StationActions, StationStore, br, div,
 
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.br, React.DOM.input, React.DOM.textarea], div = ref[0], br = ref[1], input = ref[2], textarea = ref[3];
+ref = React.DOM, div = ref.div, br = ref.br, input = ref.input, textarea = ref.textarea;
 
 MessageActions = require('../actions/MessageActions.coffee');
 

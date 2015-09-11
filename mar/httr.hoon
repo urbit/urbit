@@ -7,10 +7,11 @@
 ++  grow  |%  ++  wall  (turn wain trip)
               ++  wain  (lore cord)
               ++  json  (need (poja cord))
-              ++  cord
+              ++  cord  q:octs
+              ++  octs
                 ~|  hit
                 ?>  =(2 (div p.hit 100))
-                q:(need r.hit)        
+                (need r.hit)
           --
 ++  grab                                                ::  convert from
   |%
