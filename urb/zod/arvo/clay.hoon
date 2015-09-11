@@ -1786,36 +1786,9 @@
         |-
         ?-    gem.dat
             %init
-          ?.  =(let.dom 0)
-            (error:he %bad-init-merge ~)
-          ::  skim hook/hoon files
           =.  new.dat  ali.dat
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
           =.  erg.dat  (~(run by q.ali.dat) |=(lobe %&))
-          checkout
-        ::
-            %fine
-          ?:  =(r.ali.dat r.bob.dat)
-            ::  ~&  [%fine-trivial ali=<ali> bob=<bob> r.ali.dat r.bob.dat]
-            done:he
-          ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
-            ::  ~&  [%fine-mostly-trivial ali=<ali> bob=<bob>]
-            done:he
-          ?.  (~(has in (reachable-takos r.ali.dat)) r.bob.dat)
-            ::  ~&  [%fine-not-so-trivial ali=<ali> bob=<bob>]
-            (error:he %bad-fine-merge ~)
-          ::  ~&  [%fine-lets-go ali=<ali> bob=<bob>]
-          =.  new.dat  ali.dat
-          =.  erg.dat
-            %-  mo  ^-  (list ,[path ?])
-            %+  murn  (~(tap by (~(uni by q.bob.dat) q.ali.dat)))
-            |=  [pax=path lob=lobe]
-            ^-  (unit ,[path ?])
-            =+  a=(~(get by q.ali.dat) pax)
-            =+  b=(~(get by q.bob.dat) pax)
-            ?:  =(a b)
-              ~
-            `[pax !=(~ a)]
           checkout
         ::
             %this
@@ -1830,6 +1803,30 @@
           ?:  =(r.ali.dat r.bob.dat)  done:he
           =.  new.dat  (make-yaki [r.ali.dat r.bob.dat ~] q.ali.dat now)
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
+          =.  erg.dat
+            %-  mo  ^-  (list ,[path ?])
+            %+  murn  (~(tap by (~(uni by q.bob.dat) q.ali.dat)))
+            |=  [pax=path lob=lobe]
+            ^-  (unit ,[path ?])
+            =+  a=(~(get by q.ali.dat) pax)
+            =+  b=(~(get by q.bob.dat) pax)
+            ?:  =(a b)
+              ~
+            `[pax !=(~ a)]
+          checkout
+        ::
+            %fine
+          ?:  =(r.ali.dat r.bob.dat)
+            ::  ~&  [%fine-trivial ali=<ali> bob=<bob> r.ali.dat r.bob.dat]
+            done:he
+          ?:  (~(has in (reachable-takos r.bob.dat)) r.ali.dat)
+            ::  ~&  [%fine-mostly-trivial ali=<ali> bob=<bob>]
+            done:he
+          ?.  (~(has in (reachable-takos r.ali.dat)) r.bob.dat)
+            ::  ~&  [%fine-not-so-trivial ali=<ali> bob=<bob>]
+            (error:he %bad-fine-merge ~)
+          ::  ~&  [%fine-lets-go ali=<ali> bob=<bob>]
+          =.  new.dat  ali.dat
           =.  erg.dat
             %-  mo  ^-  (list ,[path ?])
             %+  murn  (~(tap by (~(uni by q.bob.dat) q.ali.dat)))

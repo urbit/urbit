@@ -419,7 +419,7 @@
       =>  =+  :-  "%mate merge failed with conflicts,"
               "setting up scratch space at %{(trip tic)}"
           [tic=tic (spam leaf/-< leaf/-> q.p.are)]
-      (fancy-merge tic our syd %that)
+      (fancy-merge tic our syd %init)
     ==
   ::
   ++  tape-to-tanks
