@@ -5,6 +5,6 @@
 ::
 ::::
   !:
-|=  [* [[txt=@tas ~] ~]]
+|=  [^ [[txt=@tas ~] ~]]
 :-  %noun
 (crip (weld "hello, " (flop (trip txt))))
