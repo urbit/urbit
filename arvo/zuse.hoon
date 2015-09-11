@@ -1984,7 +1984,15 @@
           ==                                            ::
 ++  gilt  ,[@tas *]                                     ::  presumed gift
 ++  gens  ,[p=lang q=gcos]                              ::  general identity
-++  germ  ?(%init %fine %that %this %mate %meet %meld)  ::  merge style
+++  germ                                                ::  merge style
+          $?  %init                                     ::  new desk
+              %this                                     ::  ours with parents
+              %that                                     ::  hers with parents
+              %fine                                     ::  fast forward
+              %meet                                     ::  orthogonal files
+              %mate                                     ::  orthogonal changes
+              %meld                                     ::  force merge
+          ==                                            ::
 ++  gcos                                                ::  id description
           $%  [%czar ~]                                 ::  8-bit ship
               [%duke p=what]                            ::  32-bit ship
