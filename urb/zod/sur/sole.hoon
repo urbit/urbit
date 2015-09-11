@@ -13,44 +13,6 @@
       haw=@uvH                                          ::  source hash
       ted=sole-edit                                     ::  state change
   ==                                                    ::
-++  sole-dialog                                         ::  standard dialog
-  |*  out=$+(* *)                                       ::  output structure
-  $+(sole-input (sole-result out))                      ::  output function
-::                                                      ::
-++  sole-result                                         ::  conditional result
-  |*  out=$+(* *)                                       ::  output structure
-  $|(@ud (sole-product out))                            ::  error position
-::                                                      ::
-++  sole-product                                        ::  success result
-  |*  out=$+(* *)                                       ::
-  %+  pair  (list tank)                                 ::  
-  %+  each  (unit out)                                  ::  ~ is abort
-  (pair sole-prompt (sole-dialog out))                  ::  ask and continue
-::                                                      ::
-++  sole-so                                             ::  construct result
-  |*  pro=*                                             ::
-  [p=*(list tank) q=[%& p=[~ u=pro]]]                   ::
-::                                                      ::
-++  sole-yo                                             ::  add output tank
-  |*  [tan=tank res=(sole-result)]                      ::
-  ?@  res  res                                          ::
-  [p=[i=tan t=p.res] q=q.res]                           ::
-::                                                      ::
-++  sole-lo                                             ::  construct prompt
-  |*  [pom=sole-prompt mor=(sole-dialog)]               ::
-  [p=*(list tank) q=[%| p=pom q=mor]]                   ::
-::                                                      ::
-++  sole-no                                             ::  empty result
-  [p=*(list tank) q=~]                                  ::
-::                                                      ::
-++  sole-go                                             ::  parse by rule
-  |*  [sef=_rule fun=$+(* *)]                           ::
-  |=  txt=sole-input                                    ::
-  =+  vex=(sef [0 0] txt)                               ::
-  ?:  |(!=((lent txt) q.p.vex) ?=(~ q.vex))             ::
-    q.p.vex                                             ::
-  (fun p.u.q.vex)                                       ::
-::                                                      ::
 ++  sole-clock  ,[own=@ud his=@ud]                      ::  vector clock
 ++  sole-edit                                           ::  shared state change
   $%  [%del p=@ud]                                      ::  delete one at
@@ -83,10 +45,73 @@
       tag=term                                          ::  history mode
       cad=tape                                          ::  caption
   ==                                                    ::
-++  sole-input  tape                                    ::  prompt input
 ++  sole-share                                          ::  symmetric state
   $:  ven=sole-clock                                    ::  our vector clock
       leg=(list sole-edit)                              ::  unmerged edits
       buf=sole-buffer                                   ::  sole state
   ==                                                    ::
+::                                                      ::
+::                                                      ::
+++  sole-dialog                                         ::  standard dialog
+  |*  out=$+(* *)                                       ::  output structure
+  $+(sole-input (sole-result out))                      ::  output function
+::                                                      ::
+++  sole-input  tape                                    ::  prompt input
+++  sole-result                                         ::  conditional result
+  |*  out=$+(* *)                                       ::  output structure
+  $|(@ud (sole-product out))                            ::  error position
+::                                                      ::
+++  sole-product                                        ::  success result
+  |*  out=$+(* *)                                       ::
+  %+  pair  (list tank)                                 ::  
+  %+  each  (unit out)                                  ::  ~ is abort
+  (pair sole-prompt (sole-dialog out))                  ::  ask and continue
+::                                                      ::
+++  sole-request                                        ::  scraper result
+  |*  out=$+(* *)                                       ::  output structure
+  %+  pair  (list tank)                                 ::  
+  %+  each  (unit out)                                  ::  ~ is abort
+  %+  pair  (list hiss)                                 ::  ask
+  $+((list httr) (sole-request out))                    ::  and continue
+::                                                      ::
+++  sole-gen                                            ::  XX virtual type
+  $%  [%cat $+((sole-args) (cask))]                     ::  direct noun
+      [%dog $+((sole-args) (sole-product (cask)))]      ::  dialog
+      [%pig $+((sole-args) (sole-request (cask)))]      ::  scraper
+  ==                                                    ::
+++  sole-args                                           ::  generator arguments
+  |*  _[lit=,* opt=,*]                                  ::
+  ,[[now=@da eny=@uvI bek=beak] [lit opt]]              ::
+::                                                      ::
+::                                                      ::
+++  sole-so                                             ::  construct result
+  |*  pro=*                                             ::
+  [p=*(list tank) q=[%& p=[~ u=pro]]]                   ::
+::                                                      ::
+++  sole-yo                                             ::  add output tank
+  |*  [tan=tank res=(sole-result)]                      ::
+  ?@  res  res                                          ::
+  [p=[i=tan t=p.res] q=q.res]                           ::
+::                                                      ::
+++  sole-lo                                             ::  construct prompt
+  |*  [pom=sole-prompt mor=(sole-dialog)]               ::
+  [p=*(list tank) q=[%| p=pom q=mor]]                   ::
+::                                                      ::
+++  sole-at                                             ::  fetch url
+  |*  [pul=_purl fun=$+(httr *)]                        ::
+  =<  [p=*(list tank) q=[%| p=[pul %get ~ ~] q=.]]      ::
+  |=  rez=(list httr)                                   ::
+  ?>  ?=([^ ~] rez)                                     ::
+  (fun i.rez)                                           ::
+::                                                      ::
+++  sole-no                                             ::  empty result
+  [p=*(list tank) q=~]                                  ::
+::                                                      ::
+++  sole-go                                             ::  parse by rule
+  |*  [sef=_rule fun=$+(* *)]                           ::
+  |=  txt=sole-input                                    ::
+  =+  vex=(sef [0 0] txt)                               ::
+  ?:  |(!=((lent txt) q.p.vex) ?=(~ q.vex))             ::
+    q.p.vex                                             ::
+  (fun p.u.q.vex)                                       ::
 --
