@@ -37,17 +37,14 @@
           q=dojo-build                                  ::  general build
       ==                                                ::
     ++  dojo-build                                      ::  one ford step
-      $%  [%ex p=twig]                                  ::  hoon expression
-          [%dv p=path]                                  ::  gate from source
-          [%fi p=dojo-filter q=dojo-source]             ::  filter
+      $%  [%ur p=purl]                                  ::  http GET request
           [%ge p=dojo-model]                            ::  generator
+          [%dv p=path]                                  ::  core from source
+          [%ex p=twig]                                  ::  hoon expression
+          [%as p=mark q=dojo-source]                    ::  simple transmute
+          [%do p=twig q=dojo-source]                    ::  gate apply
           [%tu p=(list dojo-source)]                    ::  tuple
-          [%ur p=purl]                                  ::  http GET request
       ==                                                ::
-    ++  dojo-filter                                     ::  pipeline filter
-      $|  mark                                          ::  simple transmute
-      twig                                              ::  function gate
-                                                        ::
     ++  dojo-model                                      ::  data construction 
       $:  p=dojo-server                                 ::  core source
           q=dojo-config                                 ::  configuration
@@ -153,11 +150,11 @@
       ;~  pose
         ;~(plug (cold %ge lus) dp-model)
         ;~(plug (cold %ur lus) auri:epur)
-        ;~(plug (cold %fi cab) ;~((glue ace) dp-filter dp-source))
+        ;~(plug (cold %as pam) sym ;~(pfix ace dp-source))
+        ;~(plug (cold %do cab) dp-twig ;~(pfix ace dp-source))
         dp-value
       ==
     :: 
-    ++  dp-filter  ;~(pose ;~(sfix sym cab) dp-twig)     ::  ++dojo-filter
     ++  dp-goal                                          ::  ++goal
       %+  cook  |=(a=goal a)
       ;~  pose
@@ -244,7 +241,7 @@
         %show  =^(src +>.$ (dy-init-source p.mad) [mad(p src) +>.$])
         %verb  =^(src +>.$ (dy-init-source-unit q.mad) [mad(q src) +>.$])
         %http
-          =.  r.mad  [0 %fi %mime r.mad]
+          =.  r.mad  [0 %as %mime r.mad]
           =^  src  +>.$  (dy-init-source r.mad)
           [mad(r src) +>.$]
       ==
@@ -271,8 +268,8 @@
       ?-    -.bul
         %ex  [bul +>.$]
         %dv  [bul +>.$]
-        %fi  =^  mor  +>.$  (dy-init-source q.bul)
-             [bul(q mor) +>.$]
+        %as  =^(mor +>.$ (dy-init-source q.bul) [bul(q mor) +>.$])
+        %do  =^(mor +>.$ (dy-init-source q.bul) [bul(q mor) +>.$])
         %ge  =^(mod +>.$ (dy-init-model p.bul) [[%ge mod] +>.$])
         %ur  [bul +>.$]
         %tu  =^  dof  +>.$
@@ -537,8 +534,8 @@
         %ge  (dy-silk-config (dy-cage p.p.p.bil) q.p.bil)
         %dv  [/hand [%core he-beak (flop p.bil)]]
         %ex  [/hand (dy-mare p.bil)]
-        %fi  =+  dat=[%$ (dy-cage p.q.bil)]
-             [/hand ?@(p.bil [%cast p.bil dat] [%call (dy-mare p.bil) dat])]
+        %as  [/hand [%cast p.bil [%$ (dy-cage p.q.bil)]]]
+        %do  [/hand [%call (dy-mare p.bil) [%$ (dy-cage p.q.bil)]]]
         %tu  :-  /hand
              :-  %$
              :-  %noun
@@ -780,9 +777,9 @@
   ?~  old  `..prep
   ?-  -.u.old
     %2  `..prep(+<+ u.old)
-    %1  `..prep(+<+ [%2 (~(run by p.u.old) |=(session-0 +<(poy ~)))])
+    %1  `..prep(+<+ [%2 (~(run by p.u.old) |=(session-1 +<(poy ~)))])
     %0  =<  ^$(u.old [%1 (~(run by p.u.old) .)])
-        |=  sos=session-0  ^-  session
+        |=  sos=session-0  ^-  session-1
         [-.sos [[our.hid syd.sos ud/0] /] |3.sos]
   ==
 ::
