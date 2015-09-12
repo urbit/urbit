@@ -7,7 +7,7 @@
 !:
 ::::
   ::
-:-  %cat
+:-  %say
 |=  [^ [arg=(list path)] ~]
 =-  tang/(flop `tang`(zing -))
 %+  turn  arg
