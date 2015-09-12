@@ -5,7 +5,7 @@
 ::
 ::::
   !:
-:-  %cat
+:-  %say
 |=  $:  [now=@da eny=@uvI bec=beak]
         [[who=@p myl=@t ~] ~]
     ==

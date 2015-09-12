@@ -10,7 +10,7 @@
 ::
 ::::
   !:
-:-  %cat
+:-  %say
 |=  $:  [now=@da eny=@uvI bek=beak]
         [arg=[?(sorc [syd=$|(desk beaky) sorc])] gem=?(%auto germ)]
     ==

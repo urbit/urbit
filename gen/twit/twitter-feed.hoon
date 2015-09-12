@@ -10,7 +10,7 @@
 |_  [hide ~]
 ++  stat  ,[id=@u who=@ta now=@da txt=@t]
 ++  rens
-:-  %cat
+:-  %say
   |=(stat rose/[": " `~]^~[leaf/"{<now>} @{(trip who)}" leaf/(trip txt)])
 ++  peer  ,_`.
 ++  poke--args  

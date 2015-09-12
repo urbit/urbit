@@ -6,7 +6,7 @@
 ++  baz64  (cook crip (star alp))
 --
 !:
-:-  %dog
+:-  %ask
 |=  $:  [now=@da eny=@uvI bec=beak]
         [~ ~]
     ==

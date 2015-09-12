@@ -11,7 +11,7 @@
     ++  scug  |*([a=@ b=(pole)] ?~(b ~ ?~(a ~ [-.b $(b +.b, a (dec a))])))
     --
 [sole .]
-:-  %dog
+:-  %ask
 |=  $:  [now=@da eny=@uvI bec=beak]
         [arg=_(scug *@ ~[his=*@p tic=*@p]) ~]
     ==

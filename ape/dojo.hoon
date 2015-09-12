@@ -470,15 +470,15 @@
       |=  [cay=cage cig=dojo-config]
       ^-  [wire silk]
       :-  ?+  -.q.q.cay  ~|(%bad-gen ~_((sell (slot 2 q.cay)) !!))
-            %cat  /gent
-            %dog  /dial
-            %pig  /scar
+            %say  /gent
+            %ask  /dial
+            %get  /scar
           ==
       =+  gat=(slot 3 q.cay)
       :+  %call  (dy-silk-vase gat)
       :+  (dy-silk-vase !>([now=now.hid eny=eny.hid bec=he-beak]))
         (dy-silk-sources p.cig)
-      :+  %mute  (dy-silk-vase (slot 27 gat))
+      :+  %mute  (dy-silk-vase (fall (slew 27 gat) !>(~)))
       %+  turn  (~(tap by q.cig))
       |=  [a=term b=(unit dojo-source)]
       ^-  (pair wing silk)
@@ -536,7 +536,7 @@
       ::
           %|
         =+  hiz=;;(hiss +<.q.vax)
-        %-  (slog leaf/"< {(earn p.hiz)}" ~)
+        =.  ..dy  (he-diff %tan leaf/"< {(earn p.hiz)}" ~)
         (dy-eyre(pro `(slap (slot 7 vax) cnzy/%q)) /scar hiz)
       ==
     ::

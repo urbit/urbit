@@ -5,7 +5,7 @@
 ::
 ::::
   !:
-:-  %cat
+:-  %say
 |=  $:  [now=@da eny=@uvI byk=beak]
         [arg=$?([dap=term ~] [who=ship dap=term ~]) ~]
     ==

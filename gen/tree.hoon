@@ -5,7 +5,7 @@
 !:
 ::::
   ::
-:-  %cat
+:-  %say
 |=  [^ [pax=path fla=$|(~ [%full ~])] ~]
 =+  len=(lent pax)
 =+  rend=?^(fla dank:ut |=(a=path (dank:ut (slag len a))))

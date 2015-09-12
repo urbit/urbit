@@ -5,7 +5,7 @@
 ::
 ::::
   !:
-:-  %cat
+:-  %say
 |=  [^ [arg=(list cord) ~]]
 :-  %keys 
 arg

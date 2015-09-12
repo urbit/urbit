@@ -7,7 +7,7 @@
 ::::
   !:
 [sole .]
-:-  %cat
+:-  %say
 |=  $:  [now=@da eny=@ bec=beak]
         [~ ~]
     ==

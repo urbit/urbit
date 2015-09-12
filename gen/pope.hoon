@@ -3,7 +3,7 @@
 !:
 =+  cryp=bruw                         ::  XX  change to ec2 ++brew eventually
 =+  [sole]
-:-  %dog
+:-  %ask
 |=  $:  [now=@da eny=@uvI bec=beak]
         [[who=ship ~] ~]
     ==

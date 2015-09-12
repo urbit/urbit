@@ -74,9 +74,9 @@
   (pair hiss $+(httr (sole-request out)))               ::  fetch and continue
 ::                                                      ::
 ++  sole-gen                                            ::  XX virtual type
-  $%  [%cat $+((sole-args) (cask))]                     ::  direct noun
-      [%dog $+((sole-args) (sole-product (cask)))]      ::  dialog
-      [%pig $+((sole-args) (sole-request (cask)))]      ::  scraper
+  $%  [%say $+((sole-args) (cask))]                     ::  direct noun
+      [%ask $+((sole-args) (sole-product (cask)))]      ::  dialog
+      [%get $+((sole-args) (sole-request (cask)))]      ::  scraper
   ==                                                    ::
 ++  sole-args                                           ::  generator arguments
   |*  _[lit=,* opt=,*]                                  ::
