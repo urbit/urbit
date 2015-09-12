@@ -215,6 +215,9 @@
   =<  se-abet  =<  se-view
   (se-link gyl)
 ::
+:: ++  poke-exit                                         ::
+::   |=(~ se-abet:(se-blit `dill-blit`[%qit ~]))  ::  XX find bone
+:: ::
 ++  reap-phat                                         ::
   |=  [way=wire saw=(unit tang)]  
   =<  se-abet  =<  se-view
