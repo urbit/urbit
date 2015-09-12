@@ -71,7 +71,7 @@
     ++  goal  ,[p=ship q=term]                          ::  flat application
     ++  clap                                            ::  action, user
       $%  [%peer p=path]                                ::  subscribe
-          [%poke p=term q=*]                            ::  apply
+          [%poke p=(cask)]                              ::  apply
           [%pull ~]                                     ::  unsubscribe
       ==                                                ::
     ++  club                                            ::  action, system
@@ -148,8 +148,8 @@
     ++  dp-build                                        ::  ++dojo-build
       %+  knee  *dojo-build  |.  ~+
       ;~  pose
-        ;~(plug (cold %ge lus) dp-model)
         ;~(plug (cold %ur lus) auri:epur)
+        ;~(plug (cold %ge lus) dp-model)
         ;~(plug (cold %as pam) sym ;~(pfix ace dp-source))
         ;~(plug (cold %do cab) dp-twig ;~(pfix ace dp-source))
         dp-value
