@@ -355,7 +355,7 @@
         if(this.status !== 205) {
           return urb.keep()
         }
-        document.location.reload()
+        urb.onupdate()
       })
       urb.wreq.addEventListener('error', urb.keep)
       urb.wreq.addEventListener('abort', urb.keep)
@@ -365,6 +365,7 @@
       setTimeout(urb.call,1000*urb.tries)
       urb.tries++
     }
+    urb.onupdate = function(){document.location.reload()}
     urb.call()
     urb.wasp = function(deh){
       var old = /[^/]*$/.exec(urb.wurl)[0]
