@@ -1816,6 +1816,12 @@
   :-  [(log-to-file man) ~]
   +>.$(log (~(put by log) man count:(~(got by stories) man)))
 ::
+++  poke-unlog
+  |=  man=span
+  ^-  (quip move +>)
+  :-  ~
+  +>.$(log (~(del by log) man))
+::
 ++  prep
   |=  [old=(unit house-any)]
   ^-  (quip move +>)
