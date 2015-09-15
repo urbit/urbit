@@ -218,8 +218,8 @@
       %+  ke  *torso  |.  ~+
       %-  of  :~
         name/(ot nom/so mon/tors ~) 
-        text/(ot dat/(cu lore so) ~)
-        tank/(cu (hard (list tank)) blob)
+        text/(cu lore so)
+        tank/(ot dat/(cu (hard (list tank)) blob) ~)
       ==
     ::
     ++  blob  (cu cue (su fel:ofis))
