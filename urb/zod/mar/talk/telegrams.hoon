@@ -3,6 +3,7 @@
   ::
 /?  314
 /-  talk
+/+  talk
 !:
 =+  talk
 |_  gam=(list telegram)
@@ -204,9 +205,9 @@
       %+  ke  *speech  |.  ~+
       %-  of  :~
         lin/(ot say/bo txt/so ~) 
-        url/(su aurf:urlp)
-        exp/so
-        tax/dute
+        url/(ot txt/(su aurf:urlp) ~)
+        exp/(ot txt/so ~)
+        tax/(ot xat/dute ~)
         app/(ot txt/so src/so ~)
         fat/(ot tor/tors taf/spec ~)
         ext/(ot nom/so txe/blob ~)
@@ -286,9 +287,9 @@
       %+  joba  -.a
       ?+  -.a  ~|(stub/-.a !!)
         %lin  (jobe txt/[%s q.a] say/[%b p.a] ~)
-        %url  (jape (earf p.a))
-        %exp  [%s p.a]
-        %tax  (grow-work-duty p.a)
+        %url  (joba txt/(jape (earf p.a)))
+        %exp  (joba txt/[%s p.a])
+        %tax  (jobe txt/(jape (rend-work-duty p.a)) xat/(grow-work-duty p.a) ~)
         %app  (jobe txt/[%s q.a] src/[%s p.a] ~)
         %fat  (jobe tor/(tors p.a) taf/$(a q.a) ~)
         %ext  (jobe nom/[%s p.a] txe/(jape (sifo (jam +.a))) ~)
