@@ -218,7 +218,7 @@
       %+  ke  *torso  |.  ~+
       %-  of  :~
         name/(ot nom/so mon/tors ~) 
-        text/(cu lore so)
+        text/(ot dat/(cu lore so) ~)
         tank/(cu (hard (list tank)) blob)
       ==
     ::
@@ -245,6 +245,7 @@
       ==
     ::
     ++  jope  |=(a=ship (jape +:<a>)) ::[%s (crip +:(scow %p a))])
+    ++  joke  |=(a=tank [%s (role (turn (wash 0^80 a) crip))])
     ++  jode  |=(a=time (jone (div (mul (sub a ~1970.1.1) 1.000) ~s1)))
     ++  jome                                            ::  stringify keys
       |*  [a=_cord b=_json]
@@ -302,7 +303,7 @@
       %+  joba  -.a
       ?-  -.a
         %text  [%s (role +.a)]
-        %tank  (jape (sifo (jam +.a)))
+        %tank  (jobe txt/[%a (turn +.a joke)] dat/(jape (sifo (jam +.a))) ~)
         %name  (jobe nom/s/p.a mon/$(a q.a) ~)
       ==
     ::
