@@ -696,6 +696,7 @@
   $(a t.a)
 ::
 ++  murn                                                ::  maybe transform
+  ~/  %murn
   |*  [a=(list) b=$+(* (unit))]
   |-
   ?~  a  ~
