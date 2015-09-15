@@ -81,6 +81,7 @@
 ++  peer-drum               (wrap peer):from-drum
 ++  poke-dill-belt          (wrap poke-dill-belt):from-drum
 ++  poke-drum-link          (wrap poke-link):from-drum
+::++  poke-drum-exit          (wrap poke-exit):from-drum
 ++  poke-drum-start         (wrap poke-start):from-drum
 ++  poke-helm-hi            (wrap poke-hi):from-helm
 ++  poke-helm-init          (wrap poke-init):from-helm

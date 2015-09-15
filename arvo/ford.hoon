@@ -993,9 +993,10 @@
         (fine cof [%atom %t] u.mas)
       %+  cope  (fang cof for)
       |=  [cof=cafe tux=vase]
-      =+  bob=(slot 6 tux)
-      ?:  (~(nest ut p.bob) | p.sam)
-        (fine cof sam)
+      =+  typ=p:(slot 6 tux)
+      =.  typ  ?+(-.typ typ %face q.typ)                ::  XX vulcanization
+      ?:  (~(nest ut typ) | p.sam)
+        (fine cof typ q.sam)
       ?.  (slob %grab p.tux)
         (flaw cof [%leaf "ford: no grab: {<[for bek]>}"]~)
       =+  gab=(slap tux [%cnzy %grab])
@@ -1003,9 +1004,9 @@
         (flaw cof [%leaf "ford: no noun: {<[for bek]>}"]~)
       %+  cope  (maul cof (slap gab [%cnzy %noun]) [%noun q.sam])
       |=  [cof=cafe pro=vase]
-      ?>  (~(nest ut p.bob) | p.pro)
+      ?>  (~(nest ut typ) | p.pro)
       ?:  =(q.pro q.sam) 
-        (fine cof p.bob q.pro)
+        (fine cof typ q.pro)
       (flaw cof [%leaf "ford: invalid content: {<[for bek]>}"]~)
     ::
     ++  lamp                                            ::  normalize version
@@ -1285,7 +1286,9 @@
           (fine cof %& p.kas [%atom %t] '')
         %+  cope  (fang cof p.kas)
         |=  [cof=cafe tux=vase]
-        (fine cof [%& p.kas (slot 6 tux)])
+        =+  [typ=p val=q]:(slot 6 tux)
+        =.  typ  ?+(-.typ typ %face q.typ)              ::  XX vulcanization
+        (fine cof [%& p.kas [typ val]])
       ::
           %call
         ::  %+  cool  |.(leaf/"ford: call {<`@p`(mug kas)>}")

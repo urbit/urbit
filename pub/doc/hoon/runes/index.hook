@@ -1,8 +1,8 @@
 /+    tree
 /:    /%%/    /%
   /^    [tip=marl sub=(map span marl) ~]
-  /.    /;    (getall %h1 ~)    /elem/
-        /_    /;    (getall %h1 ~)    /elem/
+  /.    /;    (getall:tree %h1 ~)    /elem/
+        /_    /;    (getall:tree %h1 ~)    /elem/
   ==
 !:
 ::::
