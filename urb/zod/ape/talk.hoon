@@ -1791,21 +1791,29 @@
 ++  log-to-file
   |=  man=span
   ^-  move
-  =+  paf=/(scot %p our.hid)/home/(scot %da now.hid)/talk/[man]/talk-telegrams
+  =+  =+  =+  (yore now.hid)
+          %^  cat  3  man
+          `@t`(rsh 3 2 (scot %ui :(add d.t (mul 100 m) (mul 10.000 y))))
+      paf=/(scot %p our.hid)/home/(scot %da now.hid)/talk/[-]/talk-telegrams
   =+  grams:(~(got by stories) man)
   [ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]
 ::
 ++  poke-save
   |=  man=span
   ^-  (quip move +>)
-  [[(log-to-file man) ~] +>.$]
+  =+  paf=/(scot %p our.hid)/home/(scot %da now.hid)/talk/[man]/talk-telegrams
+  =+  grams:(~(got by stories) man)
+  [[ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]~ +>.$]
 ::
 ++  poke-load
   |=  man=span
   =+  ^=  grams
       %-  (hard (list telegram))
       .^  %cx
-          /(scot %p our.hid)/home/(scot %da now.hid)/talk/[man]/talk-telegrams
+          =+  =+  (yore now.hid)
+              %^  cat  3  man
+              `@t`(rsh 3 2 (scot %ui :(add d.t (mul 100 m) (mul 10.000 y))))
+          /(scot %p our.hid)/home/(scot %da now.hid)/talk/[-]/talk-telegrams
       ==
   =+  toy=(~(got by stories) man)
   [~ +>.$(stories (~(put by stories) man toy(grams grams, count (lent grams))))]
@@ -1815,6 +1823,12 @@
   ^-  (quip move +>)
   :-  [(log-to-file man) ~]
   +>.$(log (~(put by log) man count:(~(got by stories) man)))
+::
+++  poke-unlog
+  |=  man=span
+  ^-  (quip move +>)
+  :-  ~
+  +>.$(log (~(del by log) man))
 ::
 ++  prep
   |=  [old=(unit house-any)]
