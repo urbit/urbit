@@ -139,11 +139,40 @@
         ;~(plug (cold %http lus) (easy %post) auri:epur ;~(pfix ace dp-source))
         ;~(plug (cold %http hep) (easy %put) auri:epur ;~(pfix ace dp-source))
         ;~(plug (cold %verb tis) sym (punt ;~(pfix ace dp-source)))
-        =<  ;~(plug (cold %verb fas) (cook . dp-poor))
-        |=(a=(list twig) [%dir ~ [0 %ex %clsg a]])
+        ;~  plug  (cold %verb fas) 
+          ;~  pose
+            ;~(plug (cold %arc hep) (punt ;~(pfix gap dp-hooves)))
+            ;~(plug (cold %lib lus) (punt ;~(pfix gap dp-hooves)))
+            (stag %dir :(stag ~ 0 %ex %clsg dp-poor))
+          ==
+        ==
       ::
         (stag %show dp-source)
       ==
+    ++  dp-hooves                                       ::  hoof list
+      :(stag 0 %ex %clsg (cook |=(a=tusk a) (most ;~(plug com gaw) dp-hoof)))
+    ::
+    ++  dp-hoof                                         ::  ++ford-hoof twig
+      %+  cook  |*(a=* ~!(+.a `twig`a))
+      ;~  plug
+        :(stag %dtzy %tas sym)
+        %-  dp-twig-punt
+        ;~  (glue fas) 
+          ;~(pfix fas (sear dp-case-twig nuck:so))
+          (stag %dtzy ;~(plug (cold %p sig) fed:ag))
+        ==
+      ==
+    ::
+    ++  dp-twig-punt                                   ::  twig of unit
+      |*(a=_rule ;~(pose (stag [%bczp %null] a) (easy [%bczp %null])))
+    ::
+    ++  dp-case-twig
+      |=  a=coin  ^-  (unit twig)
+      ?.  ?=([~ case] a)  ~
+      %+  some
+        [%dtzz %tas p.p.a]
+      [%dtzy p.a]
+    ::
     ++  dp-source  (stag 0 dp-build)                    ::  ++dojo-source
     ++  dp-build                                        ::  ++dojo-build
       %+  knee  *dojo-build  |.  ~+
@@ -166,7 +195,7 @@
         ;~(pose sym (easy dp-default-app))
       ==
     ++  dp-beam                                         ::  ++beam
-      %+  sear  tome
+      %+  cook  |=(a=path =+((tome a) ?^(- u [he-beak (flop a)])))
       =+  vez=(vang & dp-path)
       (sear plex:vez (stag %clsg poor:vez))
     ::
