@@ -113,7 +113,7 @@ Begin
 
 To begin a 32-bit planet use
 
-    :?begin
+    |begin
 
 which will guide you through the setup process.
 
