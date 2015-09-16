@@ -174,4 +174,3 @@
   |=  [way=wire her=ship cop=coop]  =<  abet
   (emit %flog ~ %text "woot: {<[way cop]>}")
 --
-=*(helm . .)
