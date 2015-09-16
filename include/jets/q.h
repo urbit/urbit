@@ -27,6 +27,7 @@
     u3_noun u3qb_lien(u3_noun, u3_noun);
     u3_noun u3qb_murn(u3_noun, u3_noun);
     u3_noun u3qb_need(u3_noun);
+    u3_noun u3qb_reap(u3_atom, u3_noun);
     u3_noun u3qb_reel(u3_noun, u3_noun);
     u3_noun u3qb_roll(u3_noun, u3_noun); 
     u3_noun u3qb_skim(u3_noun, u3_noun);
