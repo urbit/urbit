@@ -706,6 +706,7 @@
   [i=u.c t=$(a t.a)]
 ::
 ++  reap                                                ::  replicate
+  ~/  %reap
   |*  [a=@ b=*]
   |-  ^-  (list ,_b)
   ?~  a  ~
