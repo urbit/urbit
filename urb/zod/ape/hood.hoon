@@ -97,6 +97,7 @@
 ++  poke-kiln-cp            (wrap poke-cp):from-kiln
 ++  poke-kiln-label         (wrap poke-label):from-kiln
 ++  poke-kiln-merge         (wrap poke-merge):from-kiln
+++  poke-kiln-cancel        (wrap poke-cancel):from-kiln
 ++  poke-kiln-mount         (wrap poke-mount):from-kiln
 ++  poke-kiln-mv            (wrap poke-mv):from-kiln
 ++  poke-kiln-rm            (wrap poke-rm):from-kiln

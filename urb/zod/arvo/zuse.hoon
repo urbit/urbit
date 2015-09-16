@@ -2360,6 +2360,7 @@
           ==                                            ::
 ++  kiss-clay                                           ::  in request ->$
           $%  [%boat ~]                                 ::  pier rebooted
+              [%drop p=@p q=@tas]                       ::  cancel pending merge
               [%info p=@p q=@tas r=nori]                ::  internal edit
               [%init p=@p]                              ::  report install
               [%into p=@tas q=? r=mode]                 ::  external edit

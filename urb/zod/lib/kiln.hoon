@@ -54,6 +54,7 @@
 =>  |%                                                ::  arvo structures
     ++  card                                          ::
       $%  [%exec wire @p ~ [beak silk]]               ::
+          [%drop wire @p @tas]                        ::
           [%info wire @p @tas nori]                   ::
           [%mont wire @tas @p @tas path]              ::
           [%ogre wire $|(@tas beam)]                  ::
@@ -117,6 +118,10 @@
 ++  poke-merge                                        ::
   |=  kiln-merge
   abet:abet:(merge:(work syd) ali sud gim)
+::
+++  poke-cancel
+  |=  syd=desk
+  abet:(emit %drop /cancel our syd)
 ::
 ++  do-info
   |=  [mez=tape tor=toro]
