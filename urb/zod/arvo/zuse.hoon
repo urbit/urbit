@@ -1836,7 +1836,6 @@
 ++  blob                                                ::  fs blob
           $%  [%delta p=lobe q=[p=mark q=lobe] r=page]  ::  delta on q
               [%direct p=lobe q=page]                   ::  immediate
-              [%indirect p=lobe q=page r=lobe s=page]   ::  both
           ==                                            ::
 ++  boat  (map (pair bone wire) (trel bean ship path))  ::  outgoing subs
 ++  boon                                                ::  fort output
