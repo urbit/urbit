@@ -216,6 +216,7 @@
         =.  +>  (sync %home our %base)
         =.  +>  ?.  ?=(?(%king %czar) can)  +>
                 (sync %kids our %base)
+        =.  +>  autoload
         =.  +>  peer
         |-  ^+  +>+
         ?~  myt  +>+
@@ -255,7 +256,18 @@
         %_    +>.$
             moz
           :_  moz
-          [hen %pass ~ %g %deal [our our] ram %poke %hood-sync -:!>(syn) syn]
+          :*  hen  %pass  /sync  %g  %deal  [our our]
+              ram  %poke  %hood-sync  -:!>(syn)  syn
+          ==
+        ==
+      ::
+      ++  autoload
+        %_    .
+            moz
+          :_  moz
+          :*  hen  %pass  /autoload  %g  %deal  [our our]
+              ram  %poke  %kiln-autoload  [%cube ~ [%atom %n]]  ~
+          ==
         ==
       ::
       ++  pump                                          ::  send diff ack
