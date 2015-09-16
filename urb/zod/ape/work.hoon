@@ -24,7 +24,8 @@
   ::
 |_  $:  bowl
         client
-        connected=_|
+        connected=_|                                    ::  subscribed to talk
+        count=@ud                                       ::  # messages from talk
         unordered=(map ,[@uvH @u] (pair ship flesh:work-stuff:talk))
     ==
 ++  at
@@ -82,7 +83,7 @@
     |=  up=update
     ^+  +>
     ?-    -.up
-        %add  ?>(?=(%comment +<.up) (send-change %add-comment +>.up))
+        %add  ?>(?=(%comment +<.up) (send-change %add-comment our +>.up))
         %doer
       ?-  +<.up
         %release  (send-change %set-doer ~)
@@ -114,6 +115,7 @@
       %-  unit
       $:  client
           _|
+          @ud
           (map ,[@uvH @u] (pair ship flesh:work-stuff:talk))
       ==
   ^-  [(list move) _+>.$]
@@ -124,7 +126,7 @@
   ?:  connected
     [~ .]
   :_  .(connected %&)  :_  ~
-  [ost %peer /peering [our %talk] /f/(main:talk our)/0]
+  [ost %peer /peering [our %talk] /f/(main:talk our)/(scot %ud count)]
 ::
 ++  process-duty
   |=  [when=@da her=ship from=(set station:talk) action=duty:work-stuff:talk]
@@ -256,7 +258,7 @@
         %set-done         tax.u.tax(done ?.(don.meat.action ~ `when))
         %add-comment
           %=  tax.u.tax
-            discussion  [[when her com.meat.action] discussion.tax.u.tax]
+            discussion  [[when [who com]:meat.action] discussion.tax.u.tax]
           ==
       ==
     =+  ooo=(~(get by unordered) id.action +(version.action))
@@ -309,28 +311,25 @@
       abut:send-create:(at | +.cod)
   ==
 ::
-::  XX  maybe need to check that we haven't received this message before
-::      by keeping a counter of last message received
-::  XX  definitely do this!
-::  XX  handle and test the disconnection case
-::
+::  XX  test the disconnection case
 ++  diff-talk-report
   |=  [way=wire rep=report:talk]
   ^-  [(list move) _+>.$]
   ?>  ?=(%grams -.rep)
   |-  ^-  [(list move) _+>.^$]
   ?~  q.rep  [~ +>.^$]
+  =.  count  +(count)
   =*  her   p.i.q.rep
   =*  when  p.r.q.i.q.rep
   =*  said  r.r.q.i.q.rep
+  ?.  ?=(%tax -.said)
+    $(p.rep +(p.rep), q.rep t.q.rep)
   =+  ^-  from=(set station:talk)
       %-  sa  ^-  (list station:talk)
       %+  murn  (~(tap by q.q.i.q.rep))
       =>  talk
       |=  [par=partner *]
       `(unit station)`?.(?=(%& -.par) ~ `p.par)
-  ?.  ?=(%tax -.said)
-    $(p.rep +(p.rep), q.rep t.q.rep)
   =^  mos  +>.^$  (process-duty when her from +.said)
   =^  mof  +>.^$  $(p.rep +(p.rep), q.rep t.q.rep)
   [(weld mos mof) +>.^$]

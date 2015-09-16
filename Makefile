@@ -148,7 +148,9 @@ J_B_OFILES=\
        jets/b/lent.o \
        jets/b/levy.o \
        jets/b/lien.o \
+       jets/b/murn.o \
        jets/b/need.o \
+       jets/b/reap.o \
        jets/b/reel.o \
        jets/b/roll.o \
        jets/b/skim.o \
