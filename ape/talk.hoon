@@ -1791,10 +1791,10 @@
 ++  log-to-file
   |=  man=span
   ^-  move
-  =+  =+  =+  (yore now.hid)
-          %^  cat  3  man
-          `@t`(rsh 3 2 (scot %ui :(add d.t (mul 100 m) (mul 10.000 y))))
-      paf=/(scot %p our.hid)/home/(scot %da now.hid)/talk/[-]/talk-telegrams
+  =+  ^-  paf=path
+      =+  day=(year %*(. (yore now.hid) +.t +:*tarp))
+      %+  tope  [our.hid %home da/now.hid]
+      /talk-telegrams/(scot %da day)/[man]/talk
   =+  grams:(~(got by stories) man)
   [ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]
 ::
@@ -1810,10 +1810,7 @@
   =+  ^=  grams
       %-  (hard (list telegram))
       .^  %cx
-          =+  =+  (yore now.hid)
-              %^  cat  3  man
-              `@t`(rsh 3 2 (scot %ui :(add d.t (mul 100 m) (mul 10.000 y))))
-          /(scot %p our.hid)/home/(scot %da now.hid)/talk/[-]/talk-telegrams
+          /(scot %p our.hid)/home/(scot %da now.hid)/talk/[man]/talk-telegrams
       ==
   =+  toy=(~(got by stories) man)
   [~ +>.$(stories (~(put by stories) man toy(grams grams, count (lent grams))))]

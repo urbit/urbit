@@ -3,7 +3,12 @@
 ::::  /hook/hymn/talklog/pub
   ::
 /?    310
-/=    mez    /:  /===/talk    /%    /;  pojo  /json/
+/=    mez
+  /:    /===/talk
+  /%    2
+  /;    pojo
+  /;    |=(a=(list ,[@ p=json]) =.(a (flop a) ?~(a [%a ~] p.i.a)))
+  /&    /json/
 |%
 ++  cdnj  |=(a=tape ;script(src "//cdnjs.cloudflare.com/ajax/libs/{a}");)
 --
