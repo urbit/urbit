@@ -1171,6 +1171,15 @@
                 (bleb p.i.xiq +(u.nab) ?:(p.q.i.xiq ~ `[u.nab u.huy]))
       ==
     ==
+  ++  drop-me
+    ^+  .
+    ?~  mer
+      .
+    %-  emit(mer ~)  ^-  move  :*
+      hen.u.mer  %give  %mere  %|  %user-interrupt 
+      >sor.u.mer<  >our<  >cas.u.mer<  >gem.u.mer<  ~
+    ==
+  ::
   ++  ze
     |%
     ++  aeon-to-tako  ~(got by hit.dom)
@@ -1680,7 +1689,7 @@
         ?:  don
           ..me(mer `dat)
         =.  mer  ~
-        =>  (emit hen %give %mere gon.dat)
+        =>  (emit hen.dat %give %mere gon.dat)
         ..me
       ::
       ++  emit
@@ -2380,6 +2389,20 @@
     :_  ..^$
     [hen %give %hill (turn (~(tap by mon.ruf)) head)]~
   ::
+      %drop
+    =^  mos  ruf
+      =+  den=((de now hen ruf) [. .]:p.q.hic q.q.hic)
+      abet:drop-me:den
+    [mos ..^$]
+  ::
+      %info
+    ?:  =(%$ q.q.hic)
+      [~ ..^$]
+    =^  mos  ruf
+      =+  den=((de now hen ruf) [. .]:p.q.hic q.q.hic)
+      abet:(exec:den now r.q.hic)
+    [mos ..^$]
+  ::
       %init
     :_  %_    ..^$
             fat.ruf
@@ -2393,14 +2416,6 @@
     ::
         ~
     ==
-  ::
-      %info
-    ?:  =(%$ q.q.hic)
-      [~ ..^$]
-    =^  mos  ruf
-      =+  den=((de now hen ruf) [. .]:p.q.hic q.q.hic)
-      abet:(exec:den now r.q.hic)
-    [mos ..^$]
   ::
       %into
     =.  hez.ruf  `hen
