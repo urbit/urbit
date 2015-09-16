@@ -10,6 +10,7 @@
 ++  kiln-pith                                           ::
     $:  rem=(map desk kiln-desk)                        ::
         syn=(map kiln-sync ,[let=@ud ust=bone])         ::
+        autoload=?                                      ::
     ==                                                  ::
 ++  kiln-desk                                           ::  per-desk state
     $:  auto=?                                          ::  escalate on failure
@@ -156,6 +157,13 @@
   (foal where %sched !>((~(put by old) tym eve)))
 ::
 ++  poke-autoload
+  |=  lod=(unit ,?)
+  ?^  lod
+    abet(autoload u.lod)
+  =<  abet(autoload !autoload)
+  (spam leaf/"turning autoload o{?:(autoload "ff" "n")}" ~)
+::
+++  poke-start-autoload
   |=  ~
   =<  abet
   %-  emil
@@ -206,6 +214,8 @@
   ?>  ?=(^ rot)
   =+  syd=(slav %tas i.way)
   =.  +>.$
+    ?.  autoload
+      +>.$
     ?:  ?=(%hoon syd)
       (emit %poke /kiln/reload/[syd] [our %hood] %helm-reset ~)
     (emit %poke /kiln/reload/[syd] [our %hood] %helm-reload ~[syd])
