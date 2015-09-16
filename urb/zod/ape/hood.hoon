@@ -56,6 +56,11 @@
   ~?  ?=(^ saw)  [%kiln-spam-lame u.saw]
   [~ +>]
 ::
+++  coup-kiln-reload                                    ::
+  |=  [way=wire saw=(unit tang)]
+  ~?  ?=(^ saw)  [%kiln-reload-lame u.saw]
+  [~ +>]
+::
 ++  coup-drum-phat  (wrap take-coup-phat):from-drum
 ++  coup-helm-hi    (wrap coup-hi):from-helm
 ++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
@@ -103,11 +108,13 @@
 ++  poke-kiln-rm            (wrap poke-rm):from-kiln
 ++  poke-kiln-schedule      (wrap poke-schedule):from-kiln
 ++  poke-kiln-sync          (wrap poke-sync):from-kiln
+++  poke-kiln-autoload      (wrap poke-autoload):from-kiln
 ++  poke-kiln-unmount       (wrap poke-unmount):from-kiln
 ++  poke-kiln-unsync        (wrap poke-unsync):from-kiln
 ++  poke-will               (wrap poke-will):from-helm
 ++  quit-drum-phat          (wrap quit-phat):from-drum
 ++  reap-drum-phat          (wrap reap-phat):from-drum
 ++  woot-helm               (wrap take-woot):from-helm
-++  writ-kiln-sync          (wrap take-writ):from-kiln
+++  writ-kiln-autoload      (wrap take-writ-autoload):from-kiln
+++  writ-kiln-sync          (wrap take-writ-sync):from-kiln
 --
