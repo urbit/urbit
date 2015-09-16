@@ -1686,10 +1686,10 @@
       (weld " " txt)
     ::
         %app
-      "[{(trip p.sep)}]: {(trip q.sep)}"
+      (trim 62 "[{(trip p.sep)}]: {(trip q.sep)}")
     ::
         %tax
-      " {(rend-work-duty p.sep)}"
+      (trim 62 " {(rend-work-duty p.sep)}")
     ==
   -- 
 ::
