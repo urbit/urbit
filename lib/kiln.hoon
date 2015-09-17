@@ -289,7 +289,7 @@
       ?+  p.p.mes
         :*  (render "sync failed" sud her syd)
             leaf/"please manually merge the desks with"
-            leaf/":+merge %{(trip syd)} {(scow %p her)} %{(trip sud)}"
+            leaf/"|merge %{(trip syd)} {(scow %p her)} %{(trip sud)}"
             leaf/""
             leaf/"error code: {<p.p.mes>}"
             q.p.mes
@@ -502,7 +502,7 @@
             """
             done setting up scratch space in {<[-]>}
             please resolve the following conflicts and run
-            :+merge {<syd>} our {<[-]>}
+            |merge {<syd>} our {<[-]>}
             """
             %^  tanks-if-any
               "annotated conflicts in:"  annotated
