@@ -215,6 +215,9 @@
   =<  se-abet  =<  se-view
   (se-link gyl)
 ::
+:: ++  poke-exit                                         ::
+::   |=(~ se-abet:(se-blit `dill-blit`[%qit ~]))  ::  XX find bone
+:: ::
 ++  reap-phat                                         ::
   |=  [way=wire saw=(unit tang)]  
   =<  se-abet  =<  se-view
@@ -367,6 +370,8 @@
               +>.$(inx 0)
             (se-alas u.lag)
   =.  +>.$  (se-text "[unlinked from {<gyl>}]")
+  ?:  =(gyl [our %dojo])                              ::  undead dojo
+    (se-link gyl)
   se-prom(liv.maz ?~(fug & liv.maz))
 ::
 ++  se-dump                                           ::  print tanks

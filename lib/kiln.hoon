@@ -57,7 +57,7 @@
           [%info wire @p @tas nori]                   ::
           [%mont wire @tas @p @tas path]              ::
           [%ogre wire $|(@tas beam)]                  ::
-          [%merg wire @p @tas @p @tas germ]           ::
+          [%merg wire @p @tas @p @tas case germ]      ::
           [%poke wire dock pear]                      ::
           [%warp wire sock riff]                      ::
       ==                                              ::
@@ -228,7 +228,7 @@
     %-  blab  :_  ~
     :*  ost  %merg
         /kiln/sync/[syd]/(scot %p her)/[sud]
-        our  syd  her  sud
+        our  syd  her  sud  ud/let
         ?:  =(0 .^(%cw /(scot %p our)/[syd]/(scot %da now)))
           %init
         %mate
@@ -317,7 +317,7 @@
   ::
   ++  perform                                         ::  
     ^+  .
-    (blab [ost %merg /kiln/[syd] our syd her sud gem] ~)
+    (blab [ost %merg /kiln/[syd] our syd her sud cas gem] ~)
   ::
   ++  fancy-merge                                     ::  send to self
     |=  [syd=desk her=@p sud=desk gem=?(%auto germ)]
@@ -344,7 +344,7 @@
     ?~  saw
       =>  (spam leaf/"%melding %{(trip sud)} into scratch space" ~)
       %-  blab  :_  ~
-      [ost %merg /kiln/[syd] our (cat 3 syd '-scratch') her sud gem]
+      [ost %merg /kiln/[syd] our (cat 3 syd '-scratch') her sud cas gem]
     =+  :-  "failed to set up conflict resolution scratch space"
         "I'm out of ideas"
     lose:(spam leaf/-< leaf/-> u.saw)
@@ -419,7 +419,7 @@
       =>  =+  :-  "%mate merge failed with conflicts,"
               "setting up scratch space at %{(trip tic)}"
           [tic=tic (spam leaf/-< leaf/-> q.p.are)]
-      (fancy-merge tic our syd %that)
+      (fancy-merge tic our syd %init)
     ==
   ::
   ++  tape-to-tanks
@@ -475,9 +475,8 @@
     =<  win
     %-  blab:(spam tan)
     :_  ~
-    :*  ost  %info  /kiln/[syd]
-        our  (cat 3 syd '-scratch')
-        %&  *cart
+    :*  ost  %info  /kiln/[syd]  our
+        (cat 3 syd '-scratch')  %&
         %+  murn  can
         |=  [p=path q=(unit miso)]
         `(unit (pair path miso))`?~(q ~ `[p u.q])
