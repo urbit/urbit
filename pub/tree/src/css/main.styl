@@ -32,10 +32,13 @@ hr
   border 0
   border-top 2px solid #f4f4f4
 
+h1
+  margin-top 4rem
+
 h2
 h3
   margin 0
-  margin-top 1rem
+  margin-top 2rem
 
 h1
 h2
@@ -361,8 +364,8 @@ div.post
     display inline
 
 div.toc
-  margin-top 6rem
-  margin-bottom 6rem
+  margin-top 3rem
+  margin-bottom 3rem
 
   h1
   h2
@@ -372,6 +375,8 @@ div.toc
     cursor pointer
     text-decoration underline
     font-size 1.2rem
+    margin-top .3rem
+    margin-bottom .3rem
   
   h2
     margin-left 1rem
@@ -386,6 +391,7 @@ div.toc
     font-weight 500
     font-size 2rem
     text-decoration none
+    margin-bottom 2rem
 
 #body .CodeMirror
   font-size .8rem
@@ -401,5 +407,26 @@ div.toc
 
 .error
   color rgba(249,23,51,1)
+
+.warning
+  background-color rgb(255,53,55)
+  padding 1rem
+  width 18rem
+  margin 2rem 0
+  color #fff
+  
+  a
+    color inherit
+    border-color #fff
+  
+  h1
+    font-size 1rem
+  
+  h1
+  p
+    margin 0 .3rem
+
+.warning.w
+  width auto
 
 @import 'mobile'
