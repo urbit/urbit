@@ -29,4 +29,3 @@
     [%get headers ~]
   [%post headers ~ (tact (pojo p.req-type))]
 --
-=*(http . .)

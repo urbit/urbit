@@ -6585,6 +6585,7 @@
   ^-  (list term)
   ?+    typ  ~
       [%hold *]  $(typ ~(repo ut typ))
+      [%bull *]  $(typ ~(repo ut typ))
       [%core *]
     (turn (~(tap by q.r.q.typ) ~) |=([a=term *] a))
   ==
