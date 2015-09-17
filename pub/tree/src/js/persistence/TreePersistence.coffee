@@ -3,7 +3,7 @@ module.exports =
     url = "#{window.tree.basepath(path)}.json?q=#{@encode query}"
     $.get url, {}, (data) -> if cb then cb null,data
   encode: (obj)->
-    delim = (n)-> ('_'.repeat n) || '.'
+    delim = (n)-> Array(n+1).join('_') || '.'
     _encode = (obj)->
       if typeof obj isnt 'object'
         return [0,obj]
