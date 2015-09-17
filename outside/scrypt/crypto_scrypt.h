@@ -30,7 +30,6 @@
 #define _CRYPTO_SCRYPT_H_
 
 #include <stdint.h>
-#include <emmintrin.h>
 
 void smix(uint8_t *, size_t, uint64_t, uint32_t *, uint32_t *);
 void PBKDF2_SHA256(const uint8_t *, size_t, const uint8_t *, size_t,

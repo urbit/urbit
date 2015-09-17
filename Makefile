@@ -71,9 +71,9 @@ INCLUDE=include
 MDEFINES=-DU3_OS_$(OS) -DU3_OS_ENDIAN_$(ENDIAN) -D U3_LIB=\"$(LIB)\"
 
 # NOTFORCHECKIN - restore -O3
-# 	-DGHETTO
+# 	-DGHETTO \
 #   -DHUSH
-CFLAGS= $(COSFLAGS) -O3 -msse3 -ffast-math \
+CFLAGS= $(COSFLAGS) -O3 -ffast-math \
 	-funsigned-char \
 	-I/usr/local/include \
 	-I/opt/local/include \
@@ -473,6 +473,7 @@ debinstall:
 
 clean:
 	$(RM) $(VERE_OFILES) $(BIN)/urbit urbit.pkg $(VERE_DFILES)
+	$(RM) -r debian/files debian/urbit*
 
 # 'make distclean all -jn' ∀ n>1 still does not work because it is possible
 # Make will attempt to build urbit while it is also cleaning urbit..
