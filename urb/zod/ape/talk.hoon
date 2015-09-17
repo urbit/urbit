@@ -1686,10 +1686,10 @@
       (weld " " txt)
     ::
         %app
-      "[{(trip p.sep)}]: {(trip q.sep)}"
+      (trim 62 "[{(trip p.sep)}]: {(trip q.sep)}")
     ::
         %tax
-      " {(rend-work-duty p.sep)}"
+      (trim 62 " {(rend-work-duty p.sep)}")
     ==
   -- 
 ::
@@ -1791,14 +1791,19 @@
 ++  log-to-file
   |=  man=span
   ^-  move
-  =+  paf=/(scot %p our.hid)/home/(scot %da now.hid)/talk/[man]/talk-telegrams
+  =+  ^-  paf=path
+      =+  day=(year %*(. (yore now.hid) +.t +:*tarp))
+      %+  tope  [our.hid %home da/now.hid]
+      /talk-telegrams/(scot %da day)/[man]/talk
   =+  grams:(~(got by stories) man)
   [ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]
 ::
 ++  poke-save
   |=  man=span
   ^-  (quip move +>)
-  [[(log-to-file man) ~] +>.$]
+  =+  paf=/(scot %p our.hid)/home/(scot %da now.hid)/talk/[man]/talk-telegrams
+  =+  grams:(~(got by stories) man)
+  [[ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]~ +>.$]
 ::
 ++  poke-load
   |=  man=span
@@ -1815,6 +1820,12 @@
   ^-  (quip move +>)
   :-  [(log-to-file man) ~]
   +>.$(log (~(put by log) man count:(~(got by stories) man)))
+::
+++  poke-unlog
+  |=  man=span
+  ^-  (quip move +>)
+  :-  ~
+  +>.$(log (~(del by log) man))
 ::
 ++  prep
   |=  [old=(unit house-any)]
