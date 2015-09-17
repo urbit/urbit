@@ -1495,17 +1495,17 @@
         |=  [cof=cafe bax=vase doe=term hon=horn]
         ^-  (bolt vase)
         %+  cope  (lash cof how (flux (slat doe)))
-        |=  [cof=cafe yep=(map ,@ span)]
-        =+  ^=  poy  ^-  (list (pair ,@ span))
+        |=  [cof=cafe yep=(map span ,@)]
+        =+  ^=  poy  ^-  (list (pair span ,@))
             %+  sort  (~(tap by yep) ~)
-            |=([a=[@ *] b=[@ *]] (lth -.a -.b))
+            |=([[* a=@] [* b=@]] (lth a b))
         %+  cope
           |-  ^-  (bolt (list (pair ,@ vase)))
           ?~  poy  (flue cof)
           %+  cope  $(poy t.poy)
           |=  [cof=cafe nex=(list (pair ,@ vase))]
-          %+  cope  (chap(s.how [q.i.poy s.how]) cof bax hon)
-          (flux |=(elt=vase [[p.i.poy elt] nex]))
+          %+  cope  (chap(s.how [p.i.poy s.how]) cof bax hon)
+          (flux |=(elt=vase [[q.i.poy elt] nex]))
         %-  flux
         |=  yal=(list (pair ,@ vase))  ^-  vase
         ?~  yal  [[%cube 0 [%atom %n]] 0]

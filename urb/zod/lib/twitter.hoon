@@ -542,4 +542,3 @@
     (mold %get /statuses/lookup ,[us ~])
   --
 --
-=*(twitter . .)

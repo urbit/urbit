@@ -17,4 +17,3 @@
 ::
 ++  print  sing
 --
-=*(down-jet . .)

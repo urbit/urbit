@@ -12,10 +12,10 @@
 :-  %tang  %-  flop
 |-  ^-  tang
 =+  ark=;;(arch .^(cy/pax))
-=-  ?~  q.ark  -
+=-  ?~  fil.ark  -
     [(rend pax) -]
 %-  zing
 %+  turn
-  (sort (~(tap by r.ark)) aor)
+  (sort (~(tap by dir.ark)) aor)
 |=  [a=@t ~] 
 ^$(pax (welp pax /[a]))
