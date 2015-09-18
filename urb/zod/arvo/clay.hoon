@@ -1035,8 +1035,6 @@
     ::          %direct
     ::        :-  [%$ %blob !>([%direct p.a *cage])]
     ::        [%vale p.q.a q.q.a]
-    ::      ::
-    ::          %indirect  ~|  %foreign-indirect-not-implemented  !!
     ::      ==
     ::  ==
   ::
@@ -1081,8 +1079,6 @@
             %direct
           :-  [%$ %blob !>([%direct p.a *page])]
           [%vale p.q.a q.q.a]
-        ::
-            %indirect  ~|  %foreign-indirect-not-implemented  !!
         ==
     ==
   ::
@@ -1101,7 +1097,6 @@
         ?-  -.bol
           %delta      [-.bol p.bol q.bol p.cay q.q.cay]
           %direct     [-.bol p.bol p.cay q.q.cay]
-          %indirect   ~|  %plop-indirect-not-implemented  !!
         ==
     %^    apply-foreign-update
         lem
@@ -1231,7 +1226,6 @@
       ?-  -
         %delta      p.q
         %direct     p.q
-        %indirect   p.q
       ==
     ++  lobe-to-silk                  ::  XX  maybe move hoo{n,k} stuff here
       |=  [pax=path lob=lobe]
@@ -1249,7 +1243,6 @@
       =+  bol=(~(got by lat.ran) lob)
       ?-  -.bol
         %direct     [%volt q.bol]
-        %indirect   [%volt q.bol]
         %delta      ~|  delta/q.q.bol
                     [%pact $(lob q.q.bol) [%volt r.bol]]
       ==
@@ -1482,7 +1475,6 @@
       ?-  -.gar
         %direct    (~(put in far) lob)
         %delta     (~(put in $(lob q.q.gar)) lob)
-        %indirect  (~(put in $(lob r.gar)) lob)
       ==
     ::
     ++  data-twixt-takos
@@ -1555,8 +1547,6 @@
       |-  ^-  @t                      ::  (urge cord) would be faster
       =+  bol=(lobe-to-blob u.lob)
       ?:  ?=(%direct -.bol)
-        ((hard ,@t) q.q.bol)
-      ?:  ?=(%indirect -.bol)
         ((hard ,@t) q.q.bol)
       ?>  ?=(%delta -.bol)
       =+  txt=$(u.lob q.q.bol)
@@ -1645,7 +1635,7 @@
       ::    %-  ~(run by hat)
       ::    |=  a=lobe
       ::    =+  (lobe-to-blob a)
-      ::    ?-(-.- %direct q.-, %indirect q.-, %delta !!)
+      ::    ?-(-.- %direct q.-, %delta !!)
       ::`+>.$(ank.dom (checkout-ankh -), let.dom yon)
     ::
     ++  update-lat                                      ::   update-lat:ze
@@ -2350,7 +2340,6 @@
           =+  bol=(~(got by lat.ran) lob)
           ?-  -.bol
             %direct     [%volt q.bol]
-            %indirect   [%volt q.bol]
             %delta      [%pact $(lob q.q.bol) [%volt r.bol]]
           ==
         ::
