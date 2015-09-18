@@ -13,10 +13,11 @@
   ::
 [. talk sole]
 =>  |%                                                  ::  data structures
-    ++  house  ,[%2 house-2]                            ::  full state
+    ++  house  ,[%3 house-3]                            ::  full state
     ++  house-any                                       ::  app history
       $%  [%1 house-1]                                  ::  1: talk
-          [%2 house-2]                                  ::  1: talk
+          [%2 house-2]                                  ::  2: talk
+          [%3 house-3]                                  ::  3: talk
       ==                                                ::
     ++  house-1                                         ::
       $:  stories=(map span story)                      ::  conversations
@@ -33,6 +34,17 @@
           folks=(map ship human)                        ::  human identities
           shells=(map bone shell)                       ::  interaction state
           log=(map span ,@ud)                           ::  logged to clay
+      ==                                                ::
+    ::                                                  ::
+    ++  house-3                                         ::
+      $:  stories=(map span story)                      ::  conversations
+          general=(set bone)                            ::  meta-subscribe
+          outbox=(pair ,@ud (map ,@ud thought))         ::  urbit outbox
+          folks=(map ship human)                        ::  human identities
+          shells=(map bone shell)                       ::  interaction state
+          log=(map span ,@ud)                           ::  logged to clay
+          nik=(map (set partner) char)                  ::
+          nak=(jug char (set partner))                  ::
       ==                                                ::
     ::                                                  ::
     ++  story                                           ::  wire content
@@ -89,11 +101,15 @@
     ++  work                                            ::  interface action
       $%  [%number p=? q=@ud]                           ::  activate by number
           [%help ~]                                     ::  print usage info
+          [%what p=$|(char (set partner))]              ::  show bound glyph
+          [%bind p=char q=(unit (set partner))]         ::
           [%join p=(set partner)]                       ::  
           [%say p=speech]                               ::
           [%eval p=twig q=cord]                         ::
-          [%invite p=span q=(list partner)]             ::
-          [%banish p=span q=(list partner)]             ::
+          [%invite p=span q=(list partner)]             ::  whitelist add
+          [%banish p=span q=(list partner)]             ::  blacklist add
+          [%block p=span q=(list partner)]              ::  blacklist add
+          [%author p=span q=(list partner)]             ::  whitelist add
           [%target p=(set partner)]                     ::  set active targets
           ::  [%destroy p=span]                         ::
           [%create p=posture q=span r=cord]             ::
@@ -112,6 +128,7 @@
         ?.  (lth lez len)  nez
         (runt [(sub len lez) '-'] nez)
       :(welp pre (scag (dec len) nez) "+")  
+    ++  glyphs  `wall`~[">=+-" "}),." "'`^" "$%&@"]     :: station char pool
     --
 |_  [hid=bowl house]
 ++  ra                                                  ::  per transaction
@@ -148,8 +165,8 @@
       ++  stan                                          ::  station
         ;~  pose
           (cold [our.hid man.she] tis)
-          ;~(pfix cen (cook |=(a=term [our.hid a]) sym))
-          ;~(pfix fas (cook |=(a=term [(sein our.hid) a]) sym))
+          ;~(pfix cen (stag our.hid sym))
+          ;~(pfix fas (stag (sein our.hid) sym))
         ::
           %+  cook
             |=  [a=@p b=(unit term)]
@@ -189,6 +206,7 @@
           (cold %brown (jest %mailbox))
         ==
       ::
+      ++  glyph  (mask "/\\\{(<!?{(zing glyphs)}")      ::  station postfix
       ++  work
         %+  knee  *^work  |.  ~+
         ;~  pose
@@ -199,6 +217,9 @@
           ==
         ::
           ;~((glue ace) (perk %join ~) parq)
+          ;~((glue ace) (perk %bind ~) glyph (punt parq))
+          ;~((glue ace) (perk %what ~) ;~(pose parq glyph))
+        ::
           ;~(plug (perk %help ~) (easy ~))
           (stag %number nump)
           (stag %target parz)
@@ -805,8 +826,12 @@
           %number  (number +.job)
           %join    (join +.job)
           %eval    (eval +.job)
+          %what    (what +.job)
+          %bind    (bind +.job)
           %invite  (invite +.job)
           %banish  (banish +.job)
+          %author  (author +.job)
+          %block   (block +.job)
           %create  (create +.job)
           %target  (target +.job)
           %probe   (probe +.job)
@@ -837,7 +862,39 @@
           $(tal t.tal, sources.loc (~(put in sources.loc) i.tal))
         ==
       ::
+      ++  what                                          ::  %what
+        |=  qur=$|(char (set partner))  ^+  ..sh-work
+        ?^  qur
+          =+  cha=(~(get by nik) qur)
+          (sh-fact %txt ?~(cha "none" [u.cha]~))
+        =+  pan=(~(tap in (~(get ju nak) qur)))
+        ?:  =(~ pan)  (sh-fact %txt "~")
+        =<  (sh-fact %mor (turn pan .))
+        |=(a=(set partner) [%txt ~(te-whom te man.she a)])
+      ::
+      ++  bind                                          ::  %bind
+        |=  [cha=char pan=(unit (set partner))]  ^+  ..sh-work
+        ~&  bind/[cha pan nik nak]
+        ?~  pan  $(pan [~ ?~(active.she passive.she u.active.she)])
+        =+  ole=(~(get by nik) u.pan)
+        ?:  =(ole [~ cha])  ..sh-work
+        =.  nak  ?~(ole nak (~(del ju nak) u.ole u.pan))
+        =:  nak  (~(put ju nak) cha u.pan)
+            nik  (~(put by nik) u.pan cha)
+          ==
+        ..sh-work
+      ::
       ++  invite                                        ::  %invite
+        |=  [nom=span tal=(list partner)]
+        ^+  ..sh-work
+        !!
+      ::
+      ++  block                                         ::  %block
+        |=  [nom=span tal=(list partner)]
+        ^+  ..sh-work
+        !!
+      ::
+      ++  author                                        ::  %author
         |=  [nom=span tal=(list partner)]
         ^+  ..sh-work
         !!
@@ -1610,8 +1667,7 @@
   ::
   ++  te-maud  ^-  ?                                    ::  multiple audience
     =.  .  te-deaf
-    ?~  lix  %|
-    |(!=(~ l.lix) !=(~ r.lix))
+    !?=($|(~ [* ~ ~]) lix)
   ::
   ++  te-prom  ^-  tape                                 ::  render targets
     =.  .  te-deaf
@@ -1630,6 +1686,17 @@
   ::
   ++  te-whom                                           ::  render sender
     (~(ta-show ta man (need te-best)) ~ te-maud)
+  ::
+  ++  te-pref                                           ::  audience glyph
+    ^-  tape
+    =+  cha=(~(get by nik) lix)
+    ?^  cha  ~[u.cha ' ']
+    ?.  ?=([[& ^] ~ ~] lix)  "* "
+    =+  sta=p.n.lix
+    =+  sot=(~(got by stories) q.sta)
+    ?:  &(=(p.sta our.hid) ?=(%brown p.cordon.shape.sot))
+      ": "
+    "* "
   --
 ::
 ++  tr                                                  ::  telegram renderer
@@ -1680,7 +1747,7 @@
         %lin
       =+  txt=(trip q.sep)
       ?:  p.sep
-        (weld ": " txt)
+        (weld ~(te-pref te man tr-pals) txt)
       ?:  oug
         (weld "@ " txt)
       (weld " " txt)
@@ -1835,6 +1902,7 @@
   |-
   ?-  -.u.old
     %1  $(u.old [%2 stories general outbox folks shells ~]:u.old)
-    %2  [~ +>.^$(+<+ u.old)]
+    %2  $(u.old [%3 stories general outbox folks shells log ~ ~]:u.old)
+    %3  [~ +>.^$(+<+ u.old)]
   ==
 --
