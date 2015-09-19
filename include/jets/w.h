@@ -29,6 +29,7 @@
     u3_noun u3wb_reap(u3_noun);
     u3_noun u3wb_reel(u3_noun);
     u3_noun u3wb_roll(u3_noun);
+    u3_noun u3wb_skid(u3_noun);
     u3_noun u3wb_skim(u3_noun);
     u3_noun u3wb_skip(u3_noun);
     u3_noun u3wb_scag(u3_noun);
