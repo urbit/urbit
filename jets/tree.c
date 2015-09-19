@@ -26,6 +26,7 @@ static u3j_harm _mood__hoon_need_a[] = {{".2", u3wb_need, c3y}, {}};
 static u3j_harm _mood__hoon_reap_a[] = {{".2", u3wb_reap, c3y}, {}};
 static u3j_harm _mood__hoon_reel_a[] = {{".2", u3wb_reel, c3y}, {}};
 static u3j_harm _mood__hoon_roll_a[] = {{".2", u3wb_roll, c3y}, {}};
+static u3j_harm _mood__hoon_skid_a[] = {{".2", u3wb_skid, c3y}, {}};
 static u3j_harm _mood__hoon_skim_a[] = {{".2", u3wb_skim, c3y}, {}};
 static u3j_harm _mood__hoon_skip_a[] = {{".2", u3wb_skip, c3y}, {}};
 static u3j_harm _mood__hoon_scag_a[] = {{".2", u3wb_scag, c3y}, {}};
@@ -458,6 +459,7 @@ static u3j_core _mood__hoon_d[] =
     { "reap", _mood__hoon_reap_a },
     { "reel", _mood__hoon_reel_a },
     { "roll", _mood__hoon_roll_a },
+    { "skid", _mood__hoon_skid_a },
     { "skim", _mood__hoon_skim_a },
     { "skip", _mood__hoon_skip_a },
     { "scag", _mood__hoon_scag_a },
