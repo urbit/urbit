@@ -729,6 +729,7 @@
   $(a t.a, b b(+<+ (b i.a +<+.b)))
 ::
 ++  skid                                                ::  separate
+  ~/  %skid
   |*  [a=(list) b=$+(* ?)]
   |-  ^+  [p=a q=a]
   ?~  a  [~ ~]
