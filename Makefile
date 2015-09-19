@@ -153,6 +153,7 @@ J_B_OFILES=\
        jets/b/reap.o \
        jets/b/reel.o \
        jets/b/roll.o \
+       jets/b/skid.o \
        jets/b/skim.o \
        jets/b/skip.o \
        jets/b/scag.o \
