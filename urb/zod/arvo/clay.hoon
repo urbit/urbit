@@ -1933,15 +1933,18 @@
           |=  [pax=path lob=lobe]
           (~(has by q.bas.dat) pax)
         =.  cal.dal.dat
-          %-  mo
-          %+  skim  (~(tap by q.bas.dat))
+          %-  mo  ^-  (list (pair path lobe))
+          %+  murn  (~(tap by q.bas.dat))
           |=  [pax=path lob=lobe]
+          ^-  (unit (pair path lobe))
           =+  a=(~(get by q.ali.dat) pax)
           =+  b=(~(get by q.bob.dat) pax)
-          ?&  ?=(^ a)
-              !=([~ lob] a)
-              =([~ lob] b)
-          ==
+          ?.  ?&  ?=(^ a)
+                  !=([~ lob] a)
+                  =([~ lob] b)
+              ==
+            ~
+          `[pax +.a]
         =.  can.dal.dat  p.can
         =.  old.dal.dat
           %-  mo  ^-  (list ,[path ~])
@@ -1973,15 +1976,18 @@
           |=  [pax=path lob=lobe]
           (~(has by q.bas.dat) pax)
         =.  cal.dob.dat
-          %-  mo
-          %+  skim  (~(tap by q.bas.dat))
+          %-  mo  ^-  (list (pair path lobe))
+          %+  murn  (~(tap by q.bas.dat))
           |=  [pax=path lob=lobe]
+          ^-  (unit (pair path lobe))
           =+  a=(~(get by q.ali.dat) pax)
           =+  b=(~(get by q.bob.dat) pax)
-          ?&  ?=(^ b)
-              !=([~ lob] b)
-              =([~ lob] a)
-          ==
+          ?.  ?&  ?=(^ b)
+                  !=([~ lob] b)
+                  =([~ lob] a)
+              ==
+            ~
+          `[pax +.b]
         =.  can.dob.dat  p.can
         =.  old.dob.dat
           %-  mo  ^-  (list ,[path ~])
@@ -2070,7 +2076,7 @@
             %-  ~(urn by con)
             |=  [pax=path *]
             (~(got by q.bas.dat) pax)
-        =.  con                                         ::  add/del conflict
+        =.  con                                         ::  change/del conflict
           %-  ~(uni by con)
           %-  mo  ^-  (list ,[path *])
           %+  skim  (~(tap by old.dal.dat))
@@ -2079,7 +2085,7 @@
             ~|  %strange-add-and-del
             !!
           (~(has by can.dob.dat) pax)
-        =.  con                                         ::  add/del conflict
+        =.  con                                         ::  change/del conflict
           %-  ~(uni by con)
           %-  mo  ^-  (list ,[path *])
           %+  skim  (~(tap by old.dob.dat))
@@ -2126,6 +2132,13 @@
                 [(lobe-to-mark u.-) u.-]
               [p q.q]:cay
           [(~(put by hat) pax p.bol) (~(put by lat) p.bol bol)]
+        ::  ~&  old=(~(run by old) mug)
+        ::  ~&  newdal=(~(run by new.dal.dat) mug)
+        ::  ~&  newdob=(~(run by new.dob.dat) mug)
+        ::  ~&  caldal=(~(run by cal.dal.dat) mug)
+        ::  ~&  caldob=(~(run by cal.dob.dat) mug)
+        ::  ~&  hot=(~(run by hot) mug)
+        ::  ~&  cas=(~(run by cas) mug)
         =+  ^-  hat=(map path lobe)                     ::  all the content
           %-  ~(uni by old)
           %-  ~(uni by new.dal.dat)
@@ -2134,6 +2147,7 @@
           %-  ~(uni by cal.dob.dat)
           %-  ~(uni by hot)
           cas
+        ::  ~&  >  hat=(~(run by hat) mug)
         =+  ^-  del=(map path ,?)
             (~(run by (~(uni by old.dal.dat) old.dob.dat)) |=(~ %|))
         =.  gon.dat  [%& (sa (turn (~(tap by con)) head))]
