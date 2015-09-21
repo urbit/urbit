@@ -100,7 +100,7 @@
         house                                           ::  program state
     ==                                                  ::
 ++  he                                                  ::  per session
-  |_  [[ost=bone moz=(list move)] session]              ::
+  |_  [moz=(list move) session]              ::
   ++  dp                                                ::  dojo parser
     |%  
     ++  dp-default-app  %hood
@@ -670,7 +670,11 @@
     ==
   ::
   ++  he-abet                                           ::  resolve
-    [(flop moz) %_(+> hoc (~(put by hoc) ost +<+))]
+    [(flop moz) %_(+> hoc (~(put by hoc) ost.hid +<+))]
+  ::
+  ++  he-abut                                           ::  discard
+    =>  he-stop
+    [(flop moz) %_(+> hoc (~(del by hoc) ost.hid))]
   ::
   ++  he-beak  -:he-beam
   ++  he-beam                                           ::  logical beam
@@ -681,7 +685,7 @@
   ++  he-card                                           ::  emit gift
     |=  cad=card
     ^+  +>
-    %_(+> moz [[ost cad] moz])
+    %_(+> moz [[ost.hid cad] moz])
   ::
   ++  he-send
     |=  [way=wire him=ship dap=term cop=clap]
@@ -844,10 +848,10 @@
   ==
 ::
 ::  pattern:  ++  foo  |=(data he-abet:(~(he-foo he (~(got by hoc) ost)) data))
-++  arm  (arm-session (~(got by hoc) ost.hid))
+++  arm  (arm-session ~ (~(got by hoc) ost.hid))
 ++  arm-session
-  |=  ses=session
-  =>  ~(. he [ost.hid ~] ses)
+  |=  [moz=(list move) ses=session]
+  =>  ~(. he moz ses)
   =-  [wrap=- +]
   |*  he-arm=_he-type
   |=  _+<.he-arm  ^-  (quip move ..he)
@@ -856,9 +860,12 @@
 ++  peer-sole
   ~?  !=(src.hid our.hid)  [%dojo-peer-stranger ost.hid src.hid]
   ::  ?>  =(src.hid our.hid)
-  ~?  (~(has by hoc) ost.hid)  [%dojo-peer-replaced ost.hid]
+  =^  moz  .
+    ?.  (~(has by hoc) ost.hid)  [~ .]
+    ~&  [%dojo-peer-replaced ost.hid]
+    ~(he-abut he ~ (~(got by hoc) ost.hid))
   =+  ses=%*(. *session -.dir [our.hid %home ud/0])
-  (wrap he-peer):(arm-session ses)
+  (wrap he-peer):(arm-session moz ses)
 ::
 ++  poke-sole-action
   |=  act=sole-action  ~|  poke/act  %.  act
@@ -872,7 +879,6 @@
 ++  pull
   |=  [pax=path]
   ^-  (quip move +>)
-  =^  moz  +>
-    he-abet:~(he-stop he [[ost.hid ~] (~(got by hoc) ost.hid)])
+  =^  moz  +>  ~(he-abut he ~ (~(got by hoc) ost.hid))
   [moz +>.$(hoc (~(del by hoc) ost.hid))]
 --
