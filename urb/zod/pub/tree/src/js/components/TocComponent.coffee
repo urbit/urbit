@@ -52,13 +52,13 @@ module.exports = query {body:'r'}, recl
   componentWillUnmount: ->
     clearInterval @int
 
-
-
   collectHeaders: (e) ->
     hs = [{gn:"h1", ga:{className:"t"}, c:["Table of contents"]}]
     for k,v of e
       if not v.gn then continue
       if v.gn[0] is 'h' and parseInt(v.gn[1]) isnt NaN
+        _v = _.clone v
+        delete _v.ga.id
         hs.push v
     return hs
 
