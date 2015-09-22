@@ -4,8 +4,11 @@ urbit
 urbit is a new programming and execution environment designed from
 scratch.
 
-At present urbit is under heavy development. If you're interested in
-keeping in touch or following the project you can:
+At present urbit is under heavy development.  It's not useful for
+any external purpose.  Documentation is completely inadequate.
+
+If you're interested in keeping in touch or following the project
+you can:
 
 -   Enter your email address at [urbit.org](http://urbit.org).
 -   Subscribe to the
@@ -17,12 +20,12 @@ keeping in touch or following the project you can:
 All of the source code is distributed under the MIT license, but is for
 all intents and purposes in the public domain.
 
-Pacakges
+Packages
 --------
 
 #### Ubuntu or Debian
 
-Third-party pacakge files are maintained at https://github.com/yebyen/urbit-deb. Urbit is only supported on Jessie onward.
+Third-party package files are maintained at https://github.com/yebyen/urbit-deb. Urbit is only supported on Jessie onward.
 
 #### OS X - Homebrew
 
@@ -145,15 +148,11 @@ Use `^x` to switch to the `talk` prompt and then run
 
 to join the `urbit-meta` channel. People in there are helpful.
 
-There are four main `talk` commands:
+There are three main `talk` commands:
 
     ;join ~urbit-name/channel
 
 `;join` subscribes your main feed to a remote channel.
-
-    ;create channel %name 'description'
-
-`;create` creates a channel on your urbit.
 
     ;<number>
 
@@ -199,7 +198,7 @@ your urbit and:
 where pier is the name of your pier.
 
 While the network is still young from time to time we reboot the entire
-thing. We call this a 'continuity breach' since we're breaking the
+universe. We call this a 'continuity breach' since we're breaking the
 continuity of our crypto.
 
 When this happens you'll need to back up your data and start a fresh
