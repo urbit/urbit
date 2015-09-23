@@ -1693,23 +1693,26 @@ TreeStore = _.extend(EventEmitter.prototype, {
     return this.fulfillAt(this.getTree(path.split('/')), path, query);
   },
   fulfillAt: function(tree, path, query) {
-    var data, k, ref, sub, t;
+    var data, have, k, sub, t;
     data = this.fulfillLocal(path, query);
-    for (k in query) {
-      t = query[k];
-      if (!QUERIES[k]) {
-        continue;
+    have = _data[path];
+    if (have != null) {
+      for (k in query) {
+        t = query[k];
+        if (!QUERIES[k]) {
+          continue;
+        }
+        if (t !== QUERIES[k]) {
+          throw TypeError("Wrong query type: " + k + ", '" + t + "'");
+        }
+        data[k] = have[k];
       }
-      if (t !== QUERIES[k]) {
-        throw TypeError("Wrong query type: " + k + ", '" + t + "'");
-      }
-      data[k] = (ref = _data[path]) != null ? ref[k] : void 0;
-    }
-    if (query.kids && !_data[path].EMPTY) {
-      data.kids = {};
-      for (k in tree) {
-        sub = tree[k];
-        data.kids[k] = this.fulfillAt(sub, path + "/" + k, query.kids);
+      if (query.kids && !have.EMPTY) {
+        data.kids = {};
+        for (k in tree) {
+          sub = tree[k];
+          data.kids[k] = this.fulfillAt(sub, path + "/" + k, query.kids);
+        }
       }
     }
     if (!_.isEmpty(data)) {
