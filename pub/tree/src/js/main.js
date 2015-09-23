@@ -1705,7 +1705,7 @@ TreeStore = _.extend(EventEmitter.prototype, {
       }
       data[k] = (ref = _data[path]) != null ? ref[k] : void 0;
     }
-    if (query.kids && !_data.EMPTY) {
+    if (query.kids && !_data[path].EMPTY) {
       data.kids = {};
       for (k in tree) {
         sub = tree[k];
@@ -1762,7 +1762,7 @@ TreeStore = _.extend(EventEmitter.prototype, {
       this.loadValues(tree[k], path + "/" + k, v);
     }
     if (data.kids && _.isEmpty(data.kids)) {
-      _data.EMPTY = true;
+      old.EMPTY = true;
       old.body = {
         gn: 'div',
         c: [
