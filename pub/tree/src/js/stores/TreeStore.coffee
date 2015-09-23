@@ -21,13 +21,15 @@ TreeStore = _.extend EventEmitter.prototype, {
   fulfill: (path,query) -> @fulfillAt (@getTree path.split '/'),path,query
   fulfillAt: (tree,path,query)->
     data = @fulfillLocal path, query
-    for k,t of query when QUERIES[k]
-      if t isnt QUERIES[k] then throw TypeError "Wrong query type: #{k}, '#{t}'"
-      data[k] = _data[path]?[k]
-    if query.kids and not _data[path]?.EMPTY
-      data.kids = {}
-      for k,sub of tree
-        data.kids[k] = @fulfillAt sub, path+"/"+k, query.kids
+    have = _data[path]
+    if have?
+      for k,t of query when QUERIES[k]
+        if t isnt QUERIES[k] then throw TypeError "Wrong query type: #{k}, '#{t}'"
+        data[k] = have[k]
+      if query.kids and not have.EMPTY
+        data.kids = {}
+        for k,sub of tree
+          data.kids[k] = @fulfillAt sub, path+"/"+k, query.kids
     data unless _.isEmpty data
       
   fulfillLocal: (path, query)->
