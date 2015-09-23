@@ -24,7 +24,7 @@ TreeStore = _.extend EventEmitter.prototype, {
     for k,t of query when QUERIES[k]
       if t isnt QUERIES[k] then throw TypeError "Wrong query type: #{k}, '#{t}'"
       data[k] = _data[path]?[k]
-    if query.kids and not _data[path].EMPTY
+    if query.kids and not _data[path]?.EMPTY
       data.kids = {}
       for k,sub of tree
         data.kids[k] = @fulfillAt sub, path+"/"+k, query.kids
