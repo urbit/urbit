@@ -10,12 +10,29 @@ module.exports = recl
 
   onClick: -> @submit()
   onKeyUp: (e) -> 
-    $('div.email').text($('div.email').text())
-    if e.keyCode is 13 then @submit()
+    email = @$email.val()
+    valid = (email.indexOf('@') != -1 && 
+      email.indexOf('.') != -1 && 
+      email.length > 7 && 
+      email.split(".")[1].length > 1 &&
+      email.split("@")[0].length > 0 &&
+      email.split("@")[1].length > 4)
+    @$email.toggleClass 'valid',valid
+    @$email.removeClass 'error'
+    if e.keyCode is 13 
+      if valid is true 
+        @submit()
+        e.stopPropagation()
+        e.preventDefault()
+        return false
+      else
+        @$email.addClass 'error'
 
   submit: ->
-    email = $('div.email').text()
-    @setState {submit:true}
+    $.post @props.dataPath,{email:@$email.text()},() ->
+      @setState {submit:true}
+
+  componentDidMount: -> @$email = $('input.email')
 
   render: ->
     if @state.submit is false

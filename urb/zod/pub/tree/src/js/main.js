@@ -480,17 +480,33 @@ module.exports = recl({
     return this.submit();
   },
   onKeyUp: function(e) {
-    $('div.email').text($('div.email').text());
+    var email, valid;
+    email = this.$email.val();
+    valid = email.indexOf('@') !== -1 && email.indexOf('.') !== -1 && email.length > 7 && email.split(".")[1].length > 1 && email.split("@")[0].length > 0 && email.split("@")[1].length > 4;
+    this.$email.toggleClass('valid', valid);
+    this.$email.removeClass('error');
     if (e.keyCode === 13) {
-      return this.submit();
+      if (valid === true) {
+        this.submit();
+        e.stopPropagation();
+        e.preventDefault();
+        return false;
+      } else {
+        return this.$email.addClass('error');
+      }
     }
   },
   submit: function() {
-    var email;
-    email = $('div.email').text();
-    return this.setState({
-      submit: true
+    return $.post(this.props.dataPath, {
+      email: this.$email.text()
+    }, function() {
+      return this.setState({
+        submit: true
+      });
     });
+  },
+  componentDidMount: function() {
+    return this.$email = $('input.email');
   },
   render: function() {
     var cont;
