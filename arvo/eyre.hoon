@@ -431,13 +431,14 @@
     urb.waspFrom = function(sel,attr){
       Array.prototype.map.call(document.querySelectorAll(sel), 
         function(ele){
-          if(!ele[attr] || (new URL(ele[attr])).host != document.location.host) return;
+          if(!ele[attr] || (new URL(ele[attr])).host != document.location.host)
+            return;
           var xhr = new XMLHttpRequest()
           xhr.open("HEAD", ele[attr])
           xhr.send()
           xhr.onload = function(){
-            var tag = JSON.parse(this.getResponseHeader("etag"))
-            if(tag) urb.wasp(tag)
+            var dep = this.getResponseHeader("etag")
+            if(dep) urb.wasp(JSON.parse(dep.substr(2)))
     }})}
     if(urb.wasp){urb.waspFrom('script','src'); urb.waspFrom('link','href')}
     '''
@@ -771,7 +772,7 @@
           ==
         ~|  q.q.cay
         =+  ((hard ,[mit=mite rez=octs]) q.q.cay)
-        =+  dep=(crip (pojo %s (scot %uv p.sih)))
+        =+  dep=(crip "W/{(pojo %s (scot %uv p.sih))}")
         (give-thou 200 ~[etag/dep content-type/(moon mit)] ~ rez)
       ==
     ==
