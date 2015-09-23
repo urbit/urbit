@@ -35,7 +35,7 @@ module.exports = {
 };
 
 
-},{"../dispatcher/Dispatcher.coffee":13,"../persistence/TreePersistence.coffee":19}],2:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":14,"../persistence/TreePersistence.coffee":20}],2:[function(require,module,exports){
 var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, query, reactify, recl, ref;
 
 clas = require('classnames');
@@ -288,7 +288,7 @@ module.exports = query({
 }));
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":20,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":10,"classnames":15}],3:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":11,"classnames":16}],3:[function(require,module,exports){
 var TreeActions, TreeStore, _load, code, div, recl, ref, span;
 
 _load = require('./LoadComponent.coffee');
@@ -389,7 +389,7 @@ module.exports = function(queries, Child, load) {
 };
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":20,"./LoadComponent.coffee":9}],4:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
 var div, query, reactify, recl;
 
 query = require('./Async.coffee');
@@ -414,7 +414,7 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":10}],5:[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":11}],5:[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -450,6 +450,7 @@ module.exports = {
   list: require('./ListComponent.coffee'),
   kids: require('./KidsComponent.coffee'),
   toc: require('./TocComponent.coffee'),
+  email: require('./EmailComponent.coffee'),
   lost: recl({
     render: function() {
       return div({}, "<lost(", this.props.children, ")>");
@@ -458,7 +459,85 @@ module.exports = {
 };
 
 
-},{"./CodeMirror.coffee":5,"./KidsComponent.coffee":7,"./ListComponent.coffee":8,"./SearchComponent.coffee":11,"./TocComponent.coffee":12}],7:[function(require,module,exports){
+},{"./CodeMirror.coffee":5,"./EmailComponent.coffee":7,"./KidsComponent.coffee":8,"./ListComponent.coffee":9,"./SearchComponent.coffee":12,"./TocComponent.coffee":13}],7:[function(require,module,exports){
+var button, div, input, p, reactify, recl, ref;
+
+reactify = require('./Reactify.coffee');
+
+recl = React.createClass;
+
+ref = React.DOM, div = ref.div, p = ref.p, button = ref.button, input = ref.input;
+
+module.exports = recl({
+  displayName: "email",
+  getInitialState: function() {
+    return {
+      submit: false,
+      email: ""
+    };
+  },
+  onClick: function() {
+    return this.submit();
+  },
+  onKeyUp: function(e) {
+    var email, valid;
+    email = this.$email.val();
+    valid = email.indexOf('@') !== -1 && email.indexOf('.') !== -1 && email.length > 7 && email.split(".")[1].length > 1 && email.split("@")[0].length > 0 && email.split("@")[1].length > 4;
+    this.$email.toggleClass('valid', valid);
+    this.$email.removeClass('error');
+    if (e.keyCode === 13) {
+      if (valid === true) {
+        this.submit();
+        e.stopPropagation();
+        e.preventDefault();
+        return false;
+      } else {
+        return this.$email.addClass('error');
+      }
+    }
+  },
+  submit: function() {
+    return $.post(this.props.dataPath, {
+      email: this.$email.text()
+    }, function() {
+      return this.setState({
+        submit: true
+      });
+    });
+  },
+  componentDidMount: function() {
+    return this.$email = $('input.email');
+  },
+  render: function() {
+    var cont;
+    if (this.state.submit === false) {
+      cont = [
+        input({
+          key: "field",
+          className: "email",
+          placeholder: "your@email.com",
+          onKeyUp: this.onKeyUp
+        }, this.state.email), button({
+          key: "submit",
+          className: "submit",
+          onClick: this.onClick
+        }, "Submit")
+      ];
+    } else {
+      cont = [
+        div({
+          className: "submitted"
+        }, "Got it. Thanks!")
+      ];
+    }
+    return p({
+      className: "email"
+    }, cont);
+  }
+});
+
+
+},{"./Reactify.coffee":11}],8:[function(require,module,exports){
 var a, div, hr, li, query, reactify, recl, ref, ul;
 
 reactify = require('./Reactify.coffee');
@@ -497,7 +576,7 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":10}],8:[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":11}],9:[function(require,module,exports){
 var a, clas, div, h1, li, query, reactify, recl, ref, ul;
 
 clas = require('classnames');
@@ -592,7 +671,7 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":10,"classnames":15}],9:[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":11,"classnames":16}],10:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -632,7 +711,7 @@ module.exports = recl({
 });
 
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var Virtual, div, load, reactify, recl, ref, rele, span, walk;
 
 recl = React.createClass;
@@ -699,7 +778,7 @@ module.exports = _.extend(reactify, {
 });
 
 
-},{"./LoadComponent.coffee":9}],11:[function(require,module,exports){
+},{"./LoadComponent.coffee":10}],12:[function(require,module,exports){
 var a, div, input, query, reactify, recl, ref,
   slice = [].slice;
 
@@ -837,7 +916,7 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":10}],12:[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":11}],13:[function(require,module,exports){
 var div, query, reactify, recl;
 
 query = require('./Async.coffee');
@@ -969,7 +1048,7 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":10}],13:[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":11}],14:[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -990,7 +1069,7 @@ module.exports = _.extend(new Dispatcher(), {
 });
 
 
-},{"flux":16}],14:[function(require,module,exports){
+},{"flux":17}],15:[function(require,module,exports){
 var rend;
 
 rend = React.render;
@@ -1136,7 +1215,7 @@ $(function() {
 });
 
 
-},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./persistence/TreePersistence.coffee":19}],15:[function(require,module,exports){
+},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./persistence/TreePersistence.coffee":20}],16:[function(require,module,exports){
 /*!
   Copyright (c) 2015 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -1144,50 +1223,50 @@ $(function() {
 */
 
 (function () {
-  'use strict';
+	'use strict';
 
-  function classNames () {
+	function classNames () {
 
-    var classes = '';
+		var classes = '';
 
-    for (var i = 0; i < arguments.length; i++) {
-      var arg = arguments[i];
-      if (!arg) continue;
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+			if (!arg) continue;
 
-      var argType = typeof arg;
+			var argType = typeof arg;
 
-      if ('string' === argType || 'number' === argType) {
-        classes += ' ' + arg;
+			if ('string' === argType || 'number' === argType) {
+				classes += ' ' + arg;
 
-      } else if (Array.isArray(arg)) {
-        classes += ' ' + classNames.apply(null, arg);
+			} else if (Array.isArray(arg)) {
+				classes += ' ' + classNames.apply(null, arg);
 
-      } else if ('object' === argType) {
-        for (var key in arg) {
-          if (arg.hasOwnProperty(key) && arg[key]) {
-            classes += ' ' + key;
-          }
-        }
-      }
-    }
+			} else if ('object' === argType) {
+				for (var key in arg) {
+					if (arg.hasOwnProperty(key) && arg[key]) {
+						classes += ' ' + key;
+					}
+				}
+			}
+		}
 
-    return classes.substr(1);
-  }
+		return classes.substr(1);
+	}
 
-  if (typeof module !== 'undefined' && module.exports) {
-    module.exports = classNames;
-  } else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd){
-    // AMD. Register as an anonymous module.
-    define(function () {
-      return classNames;
-    });
-  } else {
-    window.classNames = classNames;
-  }
+	if (typeof module !== 'undefined' && module.exports) {
+		module.exports = classNames;
+	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd){
+		// AMD. Register as an anonymous module.
+		define(function () {
+			return classNames;
+		});
+	} else {
+		window.classNames = classNames;
+	}
 
 }());
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -1199,7 +1278,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":17}],17:[function(require,module,exports){
+},{"./lib/Dispatcher":18}],18:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1451,7 +1530,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":18}],18:[function(require,module,exports){
+},{"./invariant":19}],19:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1506,7 +1585,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 module.exports = {
   get: function(path, query, cb) {
     var url;
@@ -1523,7 +1602,7 @@ module.exports = {
   encode: function(obj) {
     var _encode, delim;
     delim = function(n) {
-      return ('_'.repeat(n)) || '.';
+      return Array(n + 1).join('_') || '.';
     };
     _encode = function(obj) {
       var _dep, dep, k, res, sub, v;
@@ -1556,7 +1635,7 @@ module.exports = {
 };
 
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, QUERIES, TreeStore, _curr, _data, _tree, clog;
 
 EventEmitter = require('events').EventEmitter;
@@ -1791,7 +1870,7 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
 module.exports = TreeStore;
 
 
-},{"../dispatcher/Dispatcher.coffee":13,"events":21}],21:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":14,"events":22}],22:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2094,4 +2173,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[14]);
+},{}]},{},[15]);
