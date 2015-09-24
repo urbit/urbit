@@ -506,12 +506,14 @@ module.exports = recl({
   },
   submit: function() {
     return $.post(this.props.dataPath, {
-      email: this.$email.text()
-    }, function() {
-      return this.setState({
-        submit: true
-      });
-    });
+      email: this.$email.val()
+    }, (function(_this) {
+      return function() {
+        return _this.setState({
+          submit: true
+        });
+      };
+    })(this));
   },
   componentDidMount: function() {
     return this.$email = $('input.email');
