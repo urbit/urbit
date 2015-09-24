@@ -356,8 +356,8 @@ module.exports = function(queries, Child, load) {
           }
         }
       }
-      if ((_queries.kids != null) && (have.kids != null)) {
-        if (_.isEmpty(have.kids)) {
+      if (_queries.kids != null) {
+        if (have.kids == null) {
           request.kids = _queries.kids;
         } else {
           request.kids = {};
@@ -1707,11 +1707,17 @@ TreeStore = _.extend(EventEmitter.prototype, {
         }
         data[k] = have[k];
       }
-      if (query.kids && !have.EMPTY) {
-        data.kids = {};
-        for (k in tree) {
-          sub = tree[k];
-          data.kids[k] = this.fulfillAt(sub, path + "/" + k, query.kids);
+      if (query.kids) {
+        if (have.EMPTY) {
+          data.kids = {};
+        } else {
+          for (k in tree) {
+            sub = tree[k];
+            if (data.kids == null) {
+              data.kids = {};
+            }
+            data.kids[k] = this.fulfillAt(sub, path + "/" + k, query.kids);
+          }
         }
       }
     }
