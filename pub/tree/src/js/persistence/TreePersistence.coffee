@@ -1,6 +1,9 @@
+dedup = {}  # XX wrong layer
 module.exports =
   get: (path,query="no-query",cb) ->
     url = "#{window.tree.basepath(path)}.json?q=#{@encode query}"
+    return if dedup[url]
+    dedup[url] = true
     $.get url, {}, (data) -> if cb then cb null,data
   encode: (obj)->
     delim = (n)-> Array(n+1).join('_') || '.'
