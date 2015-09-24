@@ -1603,6 +1603,10 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 module.exports = invariant;
 
 },{}],20:[function(require,module,exports){
+var dedup;
+
+dedup = {};
+
 module.exports = {
   get: function(path, query, cb) {
     var url;
@@ -1610,6 +1614,10 @@ module.exports = {
       query = "no-query";
     }
     url = (window.tree.basepath(path)) + ".json?q=" + (this.encode(query));
+    if (dedup[url]) {
+      return;
+    }
+    dedup[url] = true;
     return $.get(url, {}, function(data) {
       if (cb) {
         return cb(null, data);
