@@ -47,7 +47,7 @@ Links = React.createFactory query {
     render: -> div {className:'links'}, @props.children, @_render()
     _render: -> div {id:"sibs"}, div {className:"active"}, a {}, @props.curr
 
-CLICK = 'a' # 'a,h1,h2,h3,h4,h5,h6'
+CLICK = 'a,h1,h2,h3,h4,h5,h6'
 module.exports = query {sein:'t',path:'t',name:'t',next:'t',prev:'t'},recl
   displayName: "Anchor"
   getInitialState: -> url: window.location.pathname
