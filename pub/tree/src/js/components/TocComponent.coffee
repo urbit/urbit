@@ -26,7 +26,7 @@ module.exports = query {body:'r'}, recl
     if Math.abs(@st-st) > 10
       hash = null
       @st = st
-      for k,v of @$headers
+      for v in @$headers 
         continue if v.tagName is undefined
         $h = $ v
         hst = $h.offset().top-$h.outerHeight(true)+10
@@ -40,7 +40,7 @@ module.exports = query {body:'r'}, recl
   checkHash: ->
     if document.location.hash?.length > 0 and document.location.hash isnt @hash
       hash = document.location.hash.slice(1)
-      for k,v of @$headers
+      for v in @$headers 
         $h = $ v
         if hash is @urlsafe $h.text()
           @hash = document.location.hash

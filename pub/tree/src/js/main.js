@@ -961,15 +961,15 @@ module.exports = query({
     return this.$headers = $('#toc h1, #toc h2, #toc h3, #toc h4');
   },
   checkScroll: function() {
-    var $h, hash, hst, k, ref, results, st, v;
+    var $h, hash, hst, i, len, ref, results, st, v;
     st = $(window).scrollTop();
     if (Math.abs(this.st - st) > 10) {
       hash = null;
       this.st = st;
       ref = this.$headers;
       results = [];
-      for (k in ref) {
-        v = ref[k];
+      for (i = 0, len = ref.length; i < len; i++) {
+        v = ref[i];
         if (v.tagName === void 0) {
           continue;
         }
@@ -990,13 +990,13 @@ module.exports = query({
     }
   },
   checkHash: function() {
-    var $h, hash, k, offset, ref, ref1, results, v;
+    var $h, hash, i, len, offset, ref, ref1, results, v;
     if (((ref = document.location.hash) != null ? ref.length : void 0) > 0 && document.location.hash !== this.hash) {
       hash = document.location.hash.slice(1);
       ref1 = this.$headers;
       results = [];
-      for (k in ref1) {
-        v = ref1[k];
+      for (i = 0, len = ref1.length; i < len; i++) {
+        v = ref1[i];
         $h = $(v);
         if (hash === this.urlsafe($h.text())) {
           this.hash = document.location.hash;
