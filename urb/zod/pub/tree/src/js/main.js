@@ -933,7 +933,8 @@ module.exports = query({
 
 
 },{"./Async.coffee":3,"./Reactify.coffee":11}],13:[function(require,module,exports){
-var div, query, reactify, recl;
+var div, query, reactify, recl,
+  slice = [].slice;
 
 query = require('./Async.coffee');
 
@@ -948,17 +949,17 @@ module.exports = query({
 }, recl({
   hash: null,
   displayName: "TableOfContents",
-  _click: function(e) {
-    return document.location.hash = this.urlsafe($(e.target).text());
-  },
-  urlsafe: function(str) {
-    return str.toLowerCase().replace(/\ /g, "-").replace(/[^a-z0-9~_.-]/g, "");
+  _click: function(id) {
+    return function() {
+      if (id) {
+        return document.location.hash = id;
+      }
+    };
   },
   componentDidMount: function() {
     this.int = setInterval(this.checkHash, 100);
     this.st = $(window).scrollTop();
-    $(window).on('scroll', this.checkScroll);
-    return this.$headers = $('#toc h1, #toc h2, #toc h3, #toc h4');
+    return this.$headers = $('#toc').children('h1,h2,h3,h4').filter('[id]');
   },
   checkScroll: function() {
     var $h, hash, hst, i, len, ref, results, st, v;
@@ -976,7 +977,7 @@ module.exports = query({
         $h = $(v);
         hst = $h.offset().top - $h.outerHeight(true) + 10;
         if (hst < st) {
-          hash = this.urlsafe($h.text());
+          hash = $h.attr('id');
         }
         if (hst > st && hash !== this.hash && hash !== null) {
           this.hash = "#" + hash;
@@ -998,7 +999,7 @@ module.exports = query({
       for (i = 0, len = ref1.length; i < len; i++) {
         v = ref1[i];
         $h = $(v);
-        if (hash === this.urlsafe($h.text())) {
+        if (hash === $h.attr('id')) {
           this.hash = document.location.hash;
           offset = $h.offset().top - $h.outerHeight(true);
           setTimeout(function() {
@@ -1015,44 +1016,39 @@ module.exports = query({
   componentWillUnmount: function() {
     return clearInterval(this.int);
   },
-  collectHeaders: function(e) {
-    var _v, hs, k, v;
-    hs = [
-      {
-        gn: "h1",
-        ga: {
-          className: "t"
-        },
-        c: ["Table of contents"]
-      }
-    ];
-    for (k in e) {
-      v = e[k];
-      if (!v.gn) {
-        continue;
-      }
-      if (v.gn[0] === 'h' && parseInt(v.gn[1]) !== NaN) {
-        _v = _.clone(v);
-        delete _v.ga.id;
-        hs.push(v);
-      }
+  collectHeader: function(arg) {
+    var c, ga, gn;
+    gn = arg.gn, ga = arg.ga, c = arg.c;
+    if (gn && gn[0] === 'h' && parseInt(gn[1]) !== NaN) {
+      ga = _.clone(ga);
+      ga.onClick = this._click(ga.id);
+      delete ga.id;
+      return {
+        gn: gn,
+        ga: ga,
+        c: c
+      };
     }
-    return hs;
   },
   parseHeaders: function() {
-    var k, ref, ref1, v;
+    var i, len, ref, ref1, v;
     if (this.props.body.c) {
       ref = this.props.body.c;
-      for (k in ref) {
-        v = ref[k];
+      for (i = 0, len = ref.length; i < len; i++) {
+        v = ref[i];
         if (v.gn === 'div' && ((ref1 = v.ga) != null ? ref1.id : void 0) === "toc") {
           return {
             gn: "div",
             ga: {
-              className: "toc",
-              onClick: this._click
+              className: "toc"
             },
-            c: this.collectHeaders(v.c)
+            c: [{
+                gn: "h1",
+                ga: {
+                  className: "t"
+                },
+                c: ["Table of contents"]
+              }].concat(slice.call(_.filter(v.c.map(this.collectHeader))))
           };
         }
       }
