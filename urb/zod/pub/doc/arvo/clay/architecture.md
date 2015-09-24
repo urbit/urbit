@@ -277,7 +277,7 @@ referentially transparent manner.
 A `%next` request checks query at the given revision, and it
 produces the result of the query the next time it changes, along
 with the revsion number when it changes.  Thus, a `%next` of a
-`%u` is triggered when a file is added or deleted, a `%next of a
+`%u` is triggered when a file is added or deleted, a `%next` of a
 `%x` is triggered when a file is added, deleted, or changed, and
 a `%next` of a `%y` is triggered when a file or any of its
 children is added, deleted, or changed.
