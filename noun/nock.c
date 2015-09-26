@@ -139,6 +139,10 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 	&&l6, &&l7, &&l8, &&l9, &&l10, &&l11
       };
 
+      if(hib > 11) {
+	return u3m_bail(c3__exit);
+      }
+
       goto *lut[hib];
     
       {
