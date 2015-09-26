@@ -10557,7 +10557,7 @@
       [@ %sync *]  %c
       [@ %term *]  %d
       [@ %http *]  %e
-      [@ %temp *]  %t
+      [@ %behn *]  %b
     ==
   ::
   ++  doos                                              ::  sleep until

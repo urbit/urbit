@@ -1,8 +1,8 @@
 ::                                                      ::  ::
-::::  /hoon/dojo/app                               ::  ::::
+::::  /hoon/dojo/app                                    ::  ::::
   ::                                                    ::    ::
 /?  314                                                 ::  arvo kelvin
-/-  sole                                               ::  console structures
+/-  sole                                                ::  console structures
 /+  sole                                                ::  console library
 [. sole]
 ::                                                      ::  ::
