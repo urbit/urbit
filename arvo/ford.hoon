@@ -499,7 +499,7 @@
     ++  dash                                            ::  process cache
       |=  cof=cafe
       ^+  +>
-      ~?    &
+      ~?    |
           :+  %dash  (lent (skim (~(tap in p.cof)) |=(a=calx ?=(%bake -.a))))
           =.  q.cof  (~(dif by q.cof) jav.bay)
           =+  num=10
