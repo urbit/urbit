@@ -360,8 +360,8 @@ _unix_scan_mount_point(u3_umon* mon_u)
         if ( '.' != out_u->d_name[len_w]
              || '\0' == out_u->d_name[len_w + 1]
              || '~' == out_u->d_name[strlen(out_u->d_name) - 1]
-	     || ('#' == out_u->d_name[0] &&
-		 '#' == out_u->d_name[strlen(out_u->d_name) - 1])
+             || ('#' == out_u->d_name[0] &&
+                 '#' == out_u->d_name[strlen(out_u->d_name) - 1])
 	     ) {
           free(pax_c);
           continue;
@@ -899,7 +899,7 @@ _unix_update_dir(u3_udir* dir_u)
             if ( !strchr(out_u->d_name,'.')
                  || '~' == out_u->d_name[strlen(out_u->d_name) - 1]
                  || ('#' == out_u->d_name[0] &&
-		     '#' == out_u->d_name[strlen(out_u->d_name) - 1])
+                     '#' == out_u->d_name[strlen(out_u->d_name) - 1])
                ) {
               free(pax_c);
               continue;
