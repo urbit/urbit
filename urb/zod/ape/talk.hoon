@@ -128,7 +128,7 @@
         ?.  (lth lez len)  nez
         (runt [(sub len lez) '-'] nez)
       :(welp pre (scag (dec len) nez) "+")  
-    ++  glyphs  `wall`~[">=+-" "}),." "'`^" "$%&@"]     :: station char pool
+    ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]     :: station char pool
     --
 |_  [hid=bowl house]
 ++  ra                                                  ::  per transaction
@@ -846,9 +846,29 @@
         sh-prod(active.she `~(tr-pals tr man.she gam))
       ::
       ++  help  |=(~ (sh-fact %mor talk-doc))           ::  %help
+      ++  nick
+        |=  idx=@
+        =<  cha.ole
+        %+  reel  glyphs
+        |=  [all=tape ole=[cha=char num=@]]
+        =+  new=(snag (mod idx (lent all)) all)
+        =+  num=~(wyt in (~(get ju nak) new))
+        ?~  cha.ole  [new num]
+        ?:  (lth num.ole num)
+          ole
+        [new num]
+      ::
       ++  join                                          ::  %join
         |=  lix=(set partner)
         ^+  ..sh-work
+        =.  ..sh-work
+          =+  (~(get by nik) lix)
+          ?^  -  (sh-note "has glyph {<u>}")
+          =+  cha=(nick (mug lix))
+          =:  nik  (~(put by nik) lix cha)
+              nak  (~(put ju nak) cha lix)
+            ==
+          (sh-note "new glyph {<cha>}")
         =+  loc=loc.system.she
         %^  sh-tell  %design  man.she
         :-  ~
@@ -870,7 +890,7 @@
         =+  pan=(~(tap in (~(get ju nak) qur)))
         ?:  =(~ pan)  (sh-fact %txt "~")
         =<  (sh-fact %mor (turn pan .))
-        |=(a=(set partner) [%txt ~(te-whom te man.she a)])
+        |=(a=(set partner) [%txt <a>]) ::  XX ~(te-whom te man.she a)
       ::
       ++  bind                                          ::  %bind
         |=  [cha=char pan=(unit (set partner))]  ^+  ..sh-work
@@ -1693,8 +1713,8 @@
     ?^  cha  ~[u.cha ' ']
     ?.  ?=([[& ^] ~ ~] lix)  "* "
     =+  sta=p.n.lix
-    =+  sot=(~(got by stories) q.sta)
-    ?:  &(=(p.sta our.hid) ?=(%brown p.cordon.shape.sot))
+    =+  sot=(~(get by stories) q.sta)
+    ?:  &(=(p.sta our.hid) ?=(^ sot) ?=(%brown p.cordon.shape.u.sot))
       ": "
     "* "
   --

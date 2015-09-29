@@ -218,8 +218,8 @@
     ++  dp-poor    poor:(vang | (tope dir))             ::  (list ++twig)
     ++  dp-value                                        ::  ++dojo-source
       ;~  pose
-        (stag %tu (ifix [sel ser] (most ace dp-source)))
         (stag %ex dp-twig)
+        (stag %tu (ifix [sel ser] (most ace dp-source)))
       ==
     ::
     ++  dp-config                                       ::  ++dojo-config
