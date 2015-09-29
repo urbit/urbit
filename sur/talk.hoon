@@ -93,7 +93,7 @@
         [%set-title til=@t]                             ::  set title
         [%set-description des=@t] ::  XX (list ,@t)     ::  set description
         [%set-done don=?]                               ::  set done
-        [%add-comment com=@t]   ::  XX (list ,@t)       ::  add comment
+        [%add-comment who=@p com=@t]   ::  XX (list ,@t) ::  add comment
     ==                                                  ::
   ++  task                                              ::
     $:  id=@uvH                                         ::
