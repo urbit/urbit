@@ -63,7 +63,8 @@
       %set-tags         =+(feh "{(tr-term -.feh)} {<tag>}")
       %set-title        =+(feh "{(tr-term -.feh)} {<(trip til)>}")
       %set-description  =+(feh "{(tr-term -.feh)} {<(trip des)>}")
-      %add-comment      =+(feh "{(tr-term -.feh)} {<(trip com)>}")
+      %add-comment      =+  feh
+                        "{(tr-term -.feh)} {(scow %p who)} {<(trip com)>}"
     ==
   --
 --

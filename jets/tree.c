@@ -21,9 +21,12 @@ static u3j_harm _mood__hoon_flop_a[] = {{".2", u3wb_flop, c3y}, {}};
 static u3j_harm _mood__hoon_lent_a[] = {{".2", u3wb_lent, c3y}, {}};
 static u3j_harm _mood__hoon_levy_a[] = {{".2", u3wb_levy, c3y}, {}};
 static u3j_harm _mood__hoon_lien_a[] = {{".2", u3wb_lien, c3y}, {}};
+static u3j_harm _mood__hoon_murn_a[] = {{".2", u3wb_murn, c3y}, {}};
 static u3j_harm _mood__hoon_need_a[] = {{".2", u3wb_need, c3y}, {}};
+static u3j_harm _mood__hoon_reap_a[] = {{".2", u3wb_reap, c3y}, {}};
 static u3j_harm _mood__hoon_reel_a[] = {{".2", u3wb_reel, c3y}, {}};
 static u3j_harm _mood__hoon_roll_a[] = {{".2", u3wb_roll, c3y}, {}};
+static u3j_harm _mood__hoon_skid_a[] = {{".2", u3wb_skid, c3y}, {}};
 static u3j_harm _mood__hoon_skim_a[] = {{".2", u3wb_skim, c3y}, {}};
 static u3j_harm _mood__hoon_skip_a[] = {{".2", u3wb_skip, c3y}, {}};
 static u3j_harm _mood__hoon_scag_a[] = {{".2", u3wb_scag, c3y}, {}};
@@ -451,9 +454,12 @@ static u3j_core _mood__hoon_d[] =
     { "lent", _mood__hoon_lent_a },
     { "levy", _mood__hoon_levy_a },
     { "lien", _mood__hoon_lien_a },
+    { "murn", _mood__hoon_murn_a },
     { "need", _mood__hoon_need_a },
+    { "reap", _mood__hoon_reap_a },
     { "reel", _mood__hoon_reel_a },
     { "roll", _mood__hoon_roll_a },
+    { "skid", _mood__hoon_skid_a },
     { "skim", _mood__hoon_skim_a },
     { "skip", _mood__hoon_skip_a },
     { "scag", _mood__hoon_scag_a },
