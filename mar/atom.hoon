@@ -7,7 +7,7 @@
 |_  ato=@
 ++  grab  |%
           ++  noun  ,@
-          ++  mime  |=([^ p=octs] q.p)
+          ++  mime  |=([* p=octs] q.p)
           --
 ++  grow  |%
           ++  mime  [/aplication/x-urb-unknown (taco ato)]

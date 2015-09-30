@@ -34,15 +34,26 @@
   =+  work-stuff
   |^  |=  due=duty  ^-  tape
       ?-    -.due
-          %archive  =+(due " -{(tr-id id)} {(trip -.due)}.")
-          %create   =+(due " -{(tr-id id.tax)} {(trip -.due)}: {<title.tax>}")
-          %change   =+(due " -{(tr-id id)} {(trip -.due)}: {(tr-meat meat)}")
+          %archive  =+(due " -{(tr-id id)} fin.")
+          %create   =+(due " -{(tr-id id.tax)} new: {<title.tax>}")
+          %change   =+(due " -{(tr-id id)} mod {(tr-meat meat)}")
           %update   
         =+  due
-        " -{(tr-id id)} {(trip -.due)} {<version>} by {<her>}: {(tr-meat meat.due)}"
+        " -{(tr-id id)} v{<version>} by {<her>} {(tr-meat meat.due)}"
       ==
   ++  tr-id  |=(a=@uv (scow %uv (rsh 2 25 a)))
-  ++  tr-term  |=(a=term (rash a (star ;~(pose (cold ' ' hep) next))))
+  ++  tr-term  
+    |=  a=term
+    =+  ^-  [typ=tape key=tape]
+        %+  rash  a
+        ;~  (glue hep)
+          (plus aln)
+          (plus ;~(pose (cold ' ' hep) next))
+        ==
+    ?+  (crip typ)  "{typ} {key}"
+      %set  ":{key}"
+      %add  "+{key}"
+    ==
   ++  tr-meat
     |=  feh=flesh  ^-  tape
     ?-  -.feh
@@ -52,8 +63,8 @@
       %set-tags         =+(feh "{(tr-term -.feh)} {<tag>}")
       %set-title        =+(feh "{(tr-term -.feh)} {<(trip til)>}")
       %set-description  =+(feh "{(tr-term -.feh)} {<(trip des)>}")
-      %add-comment      =+(feh "{(tr-term -.feh)} {<(trip com)>}")
+      %add-comment      =+  feh
+                        "{(tr-term -.feh)} {(scow %p who)} {<(trip com)>}"
     ==
   --
 --
-=*(talk . .)
