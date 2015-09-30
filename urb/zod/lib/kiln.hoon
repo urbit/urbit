@@ -10,6 +10,7 @@
 ++  kiln-pith                                           ::
     $:  rem=(map desk kiln-desk)                        ::
         syn=(map kiln-sync ,[let=@ud ust=bone])         ::
+        autoload=?                                      ::
     ==                                                  ::
 ++  kiln-desk                                           ::  per-desk state
     $:  auto=?                                          ::  escalate on failure
@@ -54,6 +55,7 @@
 =>  |%                                                ::  arvo structures
     ++  card                                          ::
       $%  [%exec wire @p ~ [beak silk]]               ::
+          [%drop wire @p @tas]                        ::
           [%info wire @p @tas nori]                   ::
           [%mont wire @tas @p @tas path]              ::
           [%ogre wire $|(@tas beam)]                  ::
@@ -64,6 +66,8 @@
     ++  pear                                          ::  poke fruit
       $%  [%talk-command command:talk]                ::
           [%kiln-merge kiln-merge]                    ::
+          [%helm-reload (list term)]                  ::
+          [%helm-reset ~]                             ::
       ==                                              ::
     ++  move  (pair bone card)                        ::  user-level move
     --
@@ -118,6 +122,10 @@
   |=  kiln-merge
   abet:abet:(merge:(work syd) ali sud gim)
 ::
+++  poke-cancel
+  |=  syd=desk
+  abet:(emit %drop /cancel our syd)
+::
 ++  do-info
   |=  [mez=tape tor=toro]
   abet:(emit:(spam leaf/mez ~) %info /kiln our tor)
@@ -148,6 +156,25 @@
   =+  old=;;((map ,@da cord) (fall (file where) ~))
   (foal where %sched !>((~(put by old) tym eve)))
 ::
+++  poke-autoload
+  |=  lod=(unit ,?)
+  ?^  lod
+    abet(autoload u.lod)
+  =<  abet(autoload !autoload)
+  (spam leaf/"turning autoload o{?:(autoload "ff" "n")}" ~)
+::
+++  poke-start-autoload
+  |=  ~
+  =<  abet
+  %-  emil
+  %+  turn
+    `(list term)`~[%ames %behn %clay %dill %eyre %ford %gall %zuse %hoon]
+  |=  syd=term
+  ^-  card
+  :*  %warp  /kiln/autoload/[syd]  [our our]  %home  ~
+      %next  %y  da/now  /arvo/[syd]/hoon
+  ==
+::
 ++  take  |=(way=wire ?>(?=([@ ~] way) (work i.way))) ::  general handler
 ++  take-mere                                         ::
   |=  [way=wire are=(each (set path) (pair term tang))]
@@ -171,7 +198,7 @@
       ==
   abet:abet:(mere:(auto hos) mes)
 ::
-++  take-writ                                         ::
+++  take-writ-sync                                    ::
   |=  [way=wire rot=riot]
   ?>  ?=([@ @ @ ~] way)
   =+  ^-  hos=kiln-sync
@@ -180,6 +207,24 @@
           sud=(slav %tas i.t.t.way)
       ==
   abet:abet:(writ:(auto hos) rot)
+::
+++  take-writ-autoload
+  |=  [way=wire rot=riot]
+  ?>  ?=([@ ~] way)
+  ?>  ?=(^ rot)
+  =+  syd=(slav %tas i.way)
+  =.  +>.$
+    ?.  autoload
+      +>.$
+    ?:  ?=(%hoon syd)
+      (emit %poke /kiln/reload/[syd] [our %hood] %helm-reset ~)
+    (emit %poke /kiln/reload/[syd] [our %hood] %helm-reload ~[syd])
+  =.  +>.$
+    %-  emit  :*
+      %warp  /kiln/autoload/[syd]  [our our]  %home  ~
+      %next  %y  da/now  /arvo/[syd]/hoon
+    ==
+  abet
 ::
 ++  spam
   |=  mes=(list tank)
@@ -244,7 +289,7 @@
       ?+  p.p.mes
         :*  (render "sync failed" sud her syd)
             leaf/"please manually merge the desks with"
-            leaf/":+merge %{(trip syd)} {(scow %p her)} %{(trip sud)}"
+            leaf/"|merge %{(trip syd)} {(scow %p her)} %{(trip sud)}"
             leaf/""
             leaf/"error code: {<p.p.mes>}"
             q.p.mes
@@ -419,7 +464,7 @@
       =>  =+  :-  "%mate merge failed with conflicts,"
               "setting up scratch space at %{(trip tic)}"
           [tic=tic (spam leaf/-< leaf/-> q.p.are)]
-      (fancy-merge tic our syd %that)
+      (fancy-merge tic our syd %init)
     ==
   ::
   ++  tape-to-tanks
@@ -457,7 +502,7 @@
             """
             done setting up scratch space in {<[-]>}
             please resolve the following conflicts and run
-            :+merge {<syd>} our {<[-]>}
+            |merge {<syd>} our {<[-]>}
             """
             %^  tanks-if-any
               "annotated conflicts in:"  annotated
@@ -483,4 +528,3 @@
     ==
   --
 --
-=*(kiln . .)

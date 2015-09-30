@@ -355,7 +355,7 @@
         if(this.status !== 205) {
           return urb.keep()
         }
-        document.location.reload()
+        urb.onupdate()
       })
       urb.wreq.addEventListener('error', urb.keep)
       urb.wreq.addEventListener('abort', urb.keep)
@@ -365,6 +365,7 @@
       setTimeout(urb.call,1000*urb.tries)
       urb.tries++
     }
+    urb.onupdate = function(){document.location.reload()}
     urb.call()
     urb.wasp = function(deh){
       var old = /[^/]*$/.exec(urb.wurl)[0]
@@ -430,13 +431,14 @@
     urb.waspFrom = function(sel,attr){
       Array.prototype.map.call(document.querySelectorAll(sel), 
         function(ele){
-          if(!ele[attr] || (new URL(ele[attr])).host != document.location.host) return;
+          if(!ele[attr] || (new URL(ele[attr])).host != document.location.host)
+            return;
           var xhr = new XMLHttpRequest()
           xhr.open("HEAD", ele[attr])
           xhr.send()
           xhr.onload = function(){
-            var tag = JSON.parse(this.getResponseHeader("etag"))
-            if(tag) urb.wasp(tag)
+            var dep = this.getResponseHeader("etag")
+            if(dep) urb.wasp(JSON.parse(dep.substr(2)))
     }})}
     if(urb.wasp){urb.waspFrom('script','src'); urb.waspFrom('link','href')}
     '''
@@ -770,7 +772,7 @@
           ==
         ~|  q.q.cay
         =+  ((hard ,[mit=mite rez=octs]) q.q.cay)
-        =+  dep=(crip (pojo %s (scot %uv p.sih)))
+        =+  dep=(crip "W/{(pojo %s (scot %uv p.sih))}")
         (give-thou 200 ~[etag/dep content-type/(moon mit)] ~ rez)
       ==
     ==

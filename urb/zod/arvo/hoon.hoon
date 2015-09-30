@@ -696,6 +696,7 @@
   $(a t.a)
 ::
 ++  murn                                                ::  maybe transform
+  ~/  %murn
   |*  [a=(list) b=$+(* (unit))]
   |-
   ?~  a  ~
@@ -705,6 +706,7 @@
   [i=u.c t=$(a t.a)]
 ::
 ++  reap                                                ::  replicate
+  ~/  %reap
   |*  [a=@ b=*]
   |-  ^-  (list ,_b)
   ?~  a  ~
@@ -727,6 +729,7 @@
   $(a t.a, b b(+<+ (b i.a +<+.b)))
 ::
 ++  skid                                                ::  separate
+  ~/  %skid
   |*  [a=(list) b=$+(* ?)]
   |-  ^+  [p=a q=a]
   ?~  a  [~ ~]
@@ -6585,6 +6588,7 @@
   ^-  (list term)
   ?+    typ  ~
       [%hold *]  $(typ ~(repo ut typ))
+      [%bull *]  $(typ ~(repo ut typ))
       [%core *]
     (turn (~(tap by q.r.q.typ) ~) |=([a=term *] a))
   ==
@@ -10553,7 +10557,7 @@
       [@ %sync *]  %c
       [@ %term *]  %d
       [@ %http *]  %e
-      [@ %temp *]  %t
+      [@ %behn *]  %b
     ==
   ::
   ++  doos                                              ::  sleep until

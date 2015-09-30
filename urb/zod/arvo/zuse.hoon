@@ -1836,7 +1836,6 @@
 ++  blob                                                ::  fs blob
           $%  [%delta p=lobe q=[p=mark q=lobe] r=page]  ::  delta on q
               [%direct p=lobe q=page]                   ::  immediate
-              [%indirect p=lobe q=page r=lobe s=page]   ::  both
           ==                                            ::
 ++  boat  (map (pair bone wire) (trel bean ship path))  ::  outgoing subs
 ++  boon                                                ::  fort output
@@ -1984,7 +1983,15 @@
           ==                                            ::
 ++  gilt  ,[@tas *]                                     ::  presumed gift
 ++  gens  ,[p=lang q=gcos]                              ::  general identity
-++  germ  ?(%init %fine %that %this %mate %meet %meld)  ::  merge style
+++  germ                                                ::  merge style
+          $?  %init                                     ::  new desk
+              %this                                     ::  ours with parents
+              %that                                     ::  hers with parents
+              %fine                                     ::  fast forward
+              %meet                                     ::  orthogonal files
+              %mate                                     ::  orthogonal changes
+              %meld                                     ::  force merge
+          ==                                            ::
 ++  gcos                                                ::  id description
           $%  [%czar ~]                                 ::  8-bit ship
               [%duke p=what]                            ::  32-bit ship
@@ -2352,6 +2359,7 @@
           ==                                            ::
 ++  kiss-clay                                           ::  in request ->$
           $%  [%boat ~]                                 ::  pier rebooted
+              [%drop p=@p q=@tas]                       ::  cancel pending merge
               [%info p=@p q=@tas r=nori]                ::  internal edit
               [%init p=@p]                              ::  report install
               [%into p=@tas q=? r=mode]                 ::  external edit

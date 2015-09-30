@@ -993,9 +993,10 @@
         (fine cof [%atom %t] u.mas)
       %+  cope  (fang cof for)
       |=  [cof=cafe tux=vase]
-      =+  bob=(slot 6 tux)
-      ?:  (~(nest ut p.bob) | p.sam)
-        (fine cof sam)
+      =+  typ=p:(slot 6 tux)
+      =.  typ  ?+(-.typ typ %face q.typ)                ::  XX vulcanization
+      ?:  (~(nest ut typ) | p.sam)
+        (fine cof typ q.sam)
       ?.  (slob %grab p.tux)
         (flaw cof [%leaf "ford: no grab: {<[for bek]>}"]~)
       =+  gab=(slap tux [%cnzy %grab])
@@ -1003,9 +1004,9 @@
         (flaw cof [%leaf "ford: no noun: {<[for bek]>}"]~)
       %+  cope  (maul cof (slap gab [%cnzy %noun]) [%noun q.sam])
       |=  [cof=cafe pro=vase]
-      ?>  (~(nest ut p.bob) | p.pro)
+      ?>  (~(nest ut typ) | p.pro)
       ?:  =(q.pro q.sam) 
-        (fine cof p.bob q.pro)
+        (fine cof typ q.pro)
       (flaw cof [%leaf "ford: invalid content: {<[for bek]>}"]~)
     ::
     ++  lamp                                            ::  normalize version
@@ -1285,7 +1286,9 @@
           (fine cof %& p.kas [%atom %t] '')
         %+  cope  (fang cof p.kas)
         |=  [cof=cafe tux=vase]
-        (fine cof [%& p.kas (slot 6 tux)])
+        =+  [typ=p val=q]:(slot 6 tux)
+        =.  typ  ?+(-.typ typ %face q.typ)              ::  XX vulcanization
+        (fine cof [%& p.kas [typ val]])
       ::
           %call
         ::  %+  cool  |.(leaf/"ford: call {<`@p`(mug kas)>}")
@@ -1492,17 +1495,17 @@
         |=  [cof=cafe bax=vase doe=term hon=horn]
         ^-  (bolt vase)
         %+  cope  (lash cof how (flux (slat doe)))
-        |=  [cof=cafe yep=(map ,@ span)]
-        =+  ^=  poy  ^-  (list (pair ,@ span))
+        |=  [cof=cafe yep=(map span ,@)]
+        =+  ^=  poy  ^-  (list (pair span ,@))
             %+  sort  (~(tap by yep) ~)
-            |=([a=[@ *] b=[@ *]] (lth -.a -.b))
+            |=([[* a=@] [* b=@]] (lth a b))
         %+  cope
           |-  ^-  (bolt (list (pair ,@ vase)))
           ?~  poy  (flue cof)
           %+  cope  $(poy t.poy)
           |=  [cof=cafe nex=(list (pair ,@ vase))]
-          %+  cope  (chap(s.how [q.i.poy s.how]) cof bax hon)
-          (flux |=(elt=vase [[p.i.poy elt] nex]))
+          %+  cope  (chap(s.how [p.i.poy s.how]) cof bax hon)
+          (flux |=(elt=vase [[q.i.poy elt] nex]))
         %-  flux
         |=  yal=(list (pair ,@ vase))  ^-  vase
         ?~  yal  [[%cube 0 [%atom %n]] 0]

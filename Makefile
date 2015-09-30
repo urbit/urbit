@@ -148,9 +148,12 @@ J_B_OFILES=\
        jets/b/lent.o \
        jets/b/levy.o \
        jets/b/lien.o \
+       jets/b/murn.o \
        jets/b/need.o \
+       jets/b/reap.o \
        jets/b/reel.o \
        jets/b/roll.o \
+       jets/b/skid.o \
        jets/b/skim.o \
        jets/b/skip.o \
        jets/b/scag.o \
@@ -324,21 +327,12 @@ V_OFILES=\
 MAIN_FILE =\
        vere/main.o
 
-MEME_FILE =\
-       tests/test.o
-
 VERE_OFILES=\
        $(CRE2_OFILES) \
        $(OUT_OFILES) \
        $(BASE_OFILES) \
        $(MAIN_FILE) \
        $(V_OFILES)
-
-MEME_OFILES=\
-       $(CRE2_OFILES) \
-       $(OUT_OFILES) \
-       $(BASE_OFILES) \
-       $(MEME_FILE)
 
 VERE_DFILES=$(VERE_OFILES:%.o=.d/%.d)
 
@@ -385,7 +379,6 @@ all: urbit
 	@echo "# Set custom configuration here, please!" > ".make.conf"
 
 urbit: $(BIN)/urbit
-meme: $(BIN)/meme
 
 $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2):
 	cd outside/libuv_0.11 ; sh autogen.sh ; ./configure  --disable-dtrace
@@ -441,10 +434,6 @@ $(BIN)/urbit: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIB
 	@mkdir -p $(BIN)
 	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 endif
-
-$(BIN)/meme: $(LIBCRE) $(LIBCOMMONMARK) $(MEME_OFILES) $(LIBUV) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBSCRYPT) $(LIBSOFTFLOAT)
-	mkdir -p $(BIN)
-	$(CLD) $(CLDOSFLAGS) -o $(BIN)/meme $(MEME_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 
 tags:
 	ctags -R -f .tags --exclude=root
