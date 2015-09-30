@@ -1,5 +1,0 @@
-Lunt: Reference
-===============
-
-Lunt: Commentary
-================
