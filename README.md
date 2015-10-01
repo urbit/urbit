@@ -1,11 +1,12 @@
 urbit
 =====
 
-urbit is a new programming and execution environment designed from
-scratch.
+Urbit is a new computing environment designed from scratch.
 
 At present urbit is under heavy development.  It's not useful for
 any external purpose.  Documentation is completely inadequate.
+Anyone can use the interpreter, of course, but the network is
+invitation-only.
 
 If you're interested in keeping in touch or following the project
 you can:
@@ -17,8 +18,7 @@ you can:
 -   Follow [@urbit_](https://twitter.com/urbit\_) on Twitter.
 -   Get in touch with us via email, <urbit@urbit.org>
 
-All of the source code is distributed under the MIT license, but is for
-all intents and purposes in the public domain.
+All of the source code is distributed under the MIT license.
 
 Packages
 --------
@@ -30,8 +30,6 @@ Third-party package files are maintained at https://github.com/yebyen/urbit-deb.
 #### OS X - Homebrew
 
     brew install --HEAD homebrew/head-only/urbit
-
-If this succeeds, proceed to the [Run section](#run). Otherwise, the build must be done manually:
 
 Dependencies
 ------------
@@ -98,27 +96,29 @@ Just run `make`:
 
 (On FreeBSD, use `gmake` instead.)
 
-Run <a id="run"/>
+Run (with a network invitation)
 ---
 
-Inside of the `urbit` directory run
+If you have a planet named `~fintud-macrep` and a ticket
+`~fortyv-tombyt-tabsen-sonres`, run 
 
-    bin/urbit -c pier
+    bin/urbit -w fintud-macrep -t fortyv-tombyt-tabsen-sonres
 
-where `pier` is a directory that does not exist.
+Your pier (all Urbit state, log and checkpoint) will be in
+`./fintud-macrep`.  To restart Urbit:
 
-All your state (an append-only log and a memory checkpoint) will live in
-this directory. The name of your pier doesn't matter and is not visible
-internally.
+    bin/urbit fintud-macrep
 
-Begin
------
+Run (without a network invitation)
+---
 
-To begin a 32-bit planet use
+Run
 
-    |begin
+    bin/urbit -c mypier
 
-which will guide you through the setup process.
+Urbit will create a comet in `mypier`.  To restart:
+
+    bin/urbit mypier
 
 Basics
 ------
@@ -139,6 +139,8 @@ turned it off.
 
 Talk
 ----
+
+If you're on the network, you can use its most basic application, `talk`.
 
 If `talk` is not running, start it with `*talk` from the task manager.
 
@@ -167,7 +169,7 @@ for a private message.
 Filesystem Sync
 ---------------
 
-Our filesystem, `%clay` does not automatically sync to unix. If you want
+Our filesystem, `%clay`, does not automatically sync to unix. If you want
 to get files in and out of urbit, you'll need to setup a mount point.
 Since each mount point is always watching for changes you may also want
 to unmount from time to time.
