@@ -21,7 +21,7 @@
     ?~  +.arg  -
     (fun.q.q tic.arg)
 %+  sole-lo
-  [%& %helm-begin "your ship: ~"]
+  [%& %helm-begin "your urbit: ~"]
 %+  sole-go  fed:ag
 |=  his=@p
 %+  sole-lo
