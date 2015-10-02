@@ -610,7 +610,7 @@ module.exports = query({
     }, this.renderList());
   },
   renderList: function() {
-    var _keys, elem, href, i, item, k, len, parts, path, ref1, ref2, ref3, ref4, ref5, results, sorted, title, v;
+    var _date, _keys, date, elem, href, i, item, k, len, parts, path, preview, ref1, ref2, ref3, ref4, ref5, results, sorted, title, v;
     sorted = true;
     _keys = [];
     ref1 = this.props.kids;
@@ -650,13 +650,37 @@ module.exports = query({
           c: [item]
         };
       }
+      if (!this.props.titlesOnly) {
+        if (this.props.dataDates) {
+          _date = elem.meta.date;
+          if (!_date || _date.length === 0) {
+            _date = "";
+          }
+          date = {
+            gn: 'div',
+            ga: {
+              className: 'date'
+            },
+            c: [_date]
+          };
+          parts.push(date);
+        }
+      }
       parts.push(title);
       if (!this.props.titlesOnly) {
         if (this.props.dataPreview) {
-          if (this.props.dataType === 'post') {
+          if (this.props.dataType === 'post' && !elem.meta.preview) {
             parts.push.apply(parts, elem.snip.c.slice(0, 2));
           } else {
-            parts.push(elem.snip);
+            if (elem.meta.preview) {
+              preview = {
+                gn: 'p',
+                c: [elem.meta.preview]
+              };
+            } else {
+              preview = elem.snip;
+            }
+            parts.push(preview);
           }
         }
       }
@@ -1228,12 +1252,14 @@ $(function() {
   Licensed under the MIT License (MIT), see
   http://jedwatson.github.io/classnames
 */
+/* global define */
 
 (function () {
 	'use strict';
 
-	function classNames () {
+	var hasOwn = {}.hasOwnProperty;
 
+	function classNames () {
 		var classes = '';
 
 		for (var i = 0; i < arguments.length; i++) {
@@ -1242,15 +1268,13 @@ $(function() {
 
 			var argType = typeof arg;
 
-			if ('string' === argType || 'number' === argType) {
+			if (argType === 'string' || argType === 'number') {
 				classes += ' ' + arg;
-
 			} else if (Array.isArray(arg)) {
 				classes += ' ' + classNames.apply(null, arg);
-
-			} else if ('object' === argType) {
+			} else if (argType === 'object') {
 				for (var key in arg) {
-					if (arg.hasOwnProperty(key) && arg[key]) {
+					if (hasOwn.call(arg, key) && arg[key]) {
 						classes += ' ' + key;
 					}
 				}
@@ -1262,15 +1286,14 @@ $(function() {
 
 	if (typeof module !== 'undefined' && module.exports) {
 		module.exports = classNames;
-	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd){
-		// AMD. Register as an anonymous module.
-		define(function () {
+	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
+		// register as 'classnames', consistent with npm package name
+		define('classnames', function () {
 			return classNames;
 		});
 	} else {
 		window.classNames = classNames;
 	}
-
 }());
 
 },{}],17:[function(require,module,exports){
