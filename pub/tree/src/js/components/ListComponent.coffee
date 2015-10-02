@@ -26,9 +26,15 @@ module.exports = query {
     # check if kids all have a sort meta tag
     sorted = true
     _keys = []
-    for k,v of @props.kids
-      if not v.meta?.sort? then sorted = false
-      _keys[Number(v.meta?.sort)] = k
+    if not @props.sortBy
+      for k,v of @props.kids
+        if not v.meta?.sort? then sorted = false
+        _keys[Number(v.meta?.sort)] = k
+    else
+      sorted = true
+      _keys = _.keys _.sortBy _.clone(@props.kids),(kid) -> 
+        Number kid.meta.date.slice(1).replace /\./g,""
+      _keys.reverse()
     if sorted isnt true
       _keys = _.keys(@props.kids).sort()
     if @props.dataType is 'post' then _keys=_keys.reverse()
