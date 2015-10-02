@@ -238,7 +238,11 @@
   ++  dy                                                ::  project work
     |_  dojo-project                                    ::
     ++  dy-abet  +>(poy `+<)                            ::  resolve
-    ++  dy-amok  +>(poy ~)                              ::  terminate
+    ++  dy-amok                                         ::  terminate
+      ?~  pux  +>(poy ~)
+      %.  [%txt "! cancel {<u.pux>}"]
+      he-diff:(he-card(poy ~) %exec u.pux our.hid ~)
+    ::
     ++  dy-ford                                         ::  send work to ford
       |=  [way=wire kas=silk]
       ^+  +>+>
@@ -709,6 +713,11 @@
       dy-make(cud `[nex (~(got by job) nex)])
     --
   ::
+  ++  he-baxp                                           ::  exit out of project
+    |=  ~  ^+  +>
+    ?~  poy  he-pine
+    he-pine:~(dy-amok dy u.poy)
+  ::
   ++  he-dope                                           ::  sole user of ++dp
     |=  txt=tape                                        ::
     ^-  (each (unit (each dojo-command tape)) hair)     ::  prefix/result
@@ -937,6 +946,7 @@
   |=  act=sole-action  ~|  poke/act  %.  act
   (wrap he-type):arm
 ::
+++  poke-sole-back  (wrap he-baxp):arm
 ++  made       (wrap he-made):arm
 ++  sigh-httr  (wrap he-sigh):arm
 ++  sigh-tang  |=([a=wire b=tang] ~|(`term`(cat 3 'sigh-' -.a) (mean b)))

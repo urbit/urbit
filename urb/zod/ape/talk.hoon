@@ -992,6 +992,7 @@
           [%txt (weld "----------------| " (tufa buf))]
       ==
     ::
+    ++  sh-baxp  (sh-pact ~)                            ::  clear target
     ++  sh-sole                                         ::  apply edit
       |=  act=sole-action
       ^+  +>
@@ -1057,7 +1058,15 @@
     ?~  shu
       ~&  [%ra-console-broken ost.hid]
       +>.$
-    sh-abet:(~(sh-sole sh ~ (~(got by shells) ost.hid)) act)
+    sh-abet:(~(sh-sole sh ~ u.shu) act)
+  ::  
+  ++  ra-baxp
+    ^+  ..ra-baxp
+    =+  shu=(~(get by shells) ost.hid)
+    ?~  shu
+      ~&  [%ra-console-broken ost.hid]
+      ..ra-baxp
+    sh-abet:~(sh-baxp sh ~ u.shu)
   ::  
   ++  ra-emil                                           ::  ra-emit move list
     |=  mol=(list move)
@@ -1804,6 +1813,7 @@
   |=  [act=sole-action]
   ra-abet:(ra-sole:ra act)
 ::
+++  poke-sole-back  |=(~ ra-abet:ra-baxp:ra)            ::  SOL backspace
 ++  diff-talk-report                                    ::
   |=  [way=wire rad=report]
   ^-  (quip move +>)
