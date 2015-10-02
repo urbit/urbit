@@ -34,10 +34,10 @@ module.exports = (queries, Child, load=_load)-> recl
   filterWith: (have,_queries)->
     return _queries unless have?
     request = {}
-    for k of _queries
+    for k of _queries when k isnt 'kids'
       request[k] = _queries[k] unless have[k] isnt undefined
-    if _queries.kids? and have.kids?
-      if _.isEmpty have.kids
+    if _queries.kids?
+      if not have.kids?
         request.kids = _queries.kids
       else
         request.kids = {}

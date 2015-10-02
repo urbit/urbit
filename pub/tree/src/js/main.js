@@ -35,6 +35,7 @@ module.exports = {
 };
 
 
+
 },{"../dispatcher/Dispatcher.coffee":14,"../persistence/TreePersistence.coffee":20}],2:[function(require,module,exports){
 var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, query, reactify, recl, ref;
 
@@ -288,6 +289,7 @@ module.exports = query({
 }));
 
 
+
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":11,"classnames":16}],3:[function(require,module,exports){
 var TreeActions, TreeStore, _load, code, div, recl, ref, span;
 
@@ -348,12 +350,14 @@ module.exports = function(queries, Child, load) {
       }
       request = {};
       for (k in _queries) {
-        if (have[k] === void 0) {
-          request[k] = _queries[k];
+        if (k !== 'kids') {
+          if (have[k] === void 0) {
+            request[k] = _queries[k];
+          }
         }
       }
-      if ((_queries.kids != null) && (have.kids != null)) {
-        if (_.isEmpty(have.kids)) {
+      if (_queries.kids != null) {
+        if (have.kids == null) {
           request.kids = _queries.kids;
         } else {
           request.kids = {};
@@ -389,6 +393,7 @@ module.exports = function(queries, Child, load) {
 };
 
 
+
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
 var div, query, reactify, recl;
 
@@ -414,6 +419,7 @@ module.exports = query({
 }));
 
 
+
 },{"./Async.coffee":3,"./Reactify.coffee":11}],5:[function(require,module,exports){
 var div, recl, ref, textarea;
 
@@ -437,6 +443,7 @@ module.exports = recl({
 });
 
 
+
 },{}],6:[function(require,module,exports){
 var div, recl;
 
@@ -457,6 +464,7 @@ module.exports = {
     }
   })
 };
+
 
 
 },{"./CodeMirror.coffee":5,"./EmailComponent.coffee":7,"./KidsComponent.coffee":8,"./ListComponent.coffee":9,"./SearchComponent.coffee":12,"./TocComponent.coffee":13}],7:[function(require,module,exports){
@@ -498,12 +506,14 @@ module.exports = recl({
   },
   submit: function() {
     return $.post(this.props.dataPath, {
-      email: this.$email.text()
-    }, function() {
-      return this.setState({
-        submit: true
-      });
-    });
+      email: this.$email.val()
+    }, (function(_this) {
+      return function() {
+        return _this.setState({
+          submit: true
+        });
+      };
+    })(this));
   },
   componentDidMount: function() {
     return this.$email = $('input.email');
@@ -535,6 +545,7 @@ module.exports = recl({
     }, cont);
   }
 });
+
 
 
 },{"./Reactify.coffee":11}],8:[function(require,module,exports){
@@ -574,6 +585,7 @@ module.exports = query({
     }).call(this));
   }
 }));
+
 
 
 },{"./Async.coffee":3,"./Reactify.coffee":11}],9:[function(require,module,exports){
@@ -702,6 +714,7 @@ module.exports = query({
 }));
 
 
+
 },{"./Async.coffee":3,"./Reactify.coffee":11,"classnames":16}],10:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
@@ -740,6 +753,7 @@ module.exports = recl({
     }, ""));
   }
 });
+
 
 
 },{}],11:[function(require,module,exports){
@@ -807,6 +821,7 @@ module.exports = _.extend(reactify, {
   walk: walk,
   Virtual: Virtual
 });
+
 
 
 },{"./LoadComponent.coffee":10}],12:[function(require,module,exports){
@@ -947,8 +962,10 @@ module.exports = query({
 }));
 
 
+
 },{"./Async.coffee":3,"./Reactify.coffee":11}],13:[function(require,module,exports){
-var div, query, reactify, recl;
+var div, query, reactify, recl,
+  slice = [].slice;
 
 query = require('./Async.coffee');
 
@@ -963,35 +980,35 @@ module.exports = query({
 }, recl({
   hash: null,
   displayName: "TableOfContents",
-  _click: function(e) {
-    return document.location.hash = this.urlsafe($(e.target).text());
-  },
-  urlsafe: function(str) {
-    return str.toLowerCase().replace(/\ /g, "-").replace(/[^a-z0-9~_.-]/g, "");
+  _click: function(id) {
+    return function() {
+      if (id) {
+        return document.location.hash = id;
+      }
+    };
   },
   componentDidMount: function() {
     this.int = setInterval(this.checkHash, 100);
     this.st = $(window).scrollTop();
-    $(window).on('scroll', this.checkScroll);
-    return this.$headers = $('#toc h1, #toc h2, #toc h3, #toc h4');
+    return this.$headers = $('#toc').children('h1,h2,h3,h4').filter('[id]');
   },
   checkScroll: function() {
-    var $h, hash, hst, k, ref, results, st, v;
+    var $h, hash, hst, i, len, ref, results, st, v;
     st = $(window).scrollTop();
     if (Math.abs(this.st - st) > 10) {
       hash = null;
       this.st = st;
       ref = this.$headers;
       results = [];
-      for (k in ref) {
-        v = ref[k];
+      for (i = 0, len = ref.length; i < len; i++) {
+        v = ref[i];
         if (v.tagName === void 0) {
           continue;
         }
         $h = $(v);
         hst = $h.offset().top - $h.outerHeight(true) + 10;
         if (hst < st) {
-          hash = this.urlsafe($h.text());
+          hash = $h.attr('id');
         }
         if (hst > st && hash !== this.hash && hash !== null) {
           this.hash = "#" + hash;
@@ -1005,15 +1022,15 @@ module.exports = query({
     }
   },
   checkHash: function() {
-    var $h, hash, k, offset, ref, ref1, results, v;
+    var $h, hash, i, len, offset, ref, ref1, results, v;
     if (((ref = document.location.hash) != null ? ref.length : void 0) > 0 && document.location.hash !== this.hash) {
       hash = document.location.hash.slice(1);
       ref1 = this.$headers;
       results = [];
-      for (k in ref1) {
-        v = ref1[k];
+      for (i = 0, len = ref1.length; i < len; i++) {
+        v = ref1[i];
         $h = $(v);
-        if (hash === this.urlsafe($h.text())) {
+        if (hash === $h.attr('id')) {
           this.hash = document.location.hash;
           offset = $h.offset().top - $h.outerHeight(true);
           setTimeout(function() {
@@ -1030,44 +1047,39 @@ module.exports = query({
   componentWillUnmount: function() {
     return clearInterval(this.int);
   },
-  collectHeaders: function(e) {
-    var _v, hs, k, v;
-    hs = [
-      {
-        gn: "h1",
-        ga: {
-          className: "t"
-        },
-        c: ["Table of contents"]
-      }
-    ];
-    for (k in e) {
-      v = e[k];
-      if (!v.gn) {
-        continue;
-      }
-      if (v.gn[0] === 'h' && parseInt(v.gn[1]) !== NaN) {
-        _v = _.clone(v);
-        delete _v.ga.id;
-        hs.push(v);
-      }
+  collectHeader: function(arg) {
+    var c, ga, gn;
+    gn = arg.gn, ga = arg.ga, c = arg.c;
+    if (gn && gn[0] === 'h' && parseInt(gn[1]) !== NaN) {
+      ga = _.clone(ga);
+      ga.onClick = this._click(ga.id);
+      delete ga.id;
+      return {
+        gn: gn,
+        ga: ga,
+        c: c
+      };
     }
-    return hs;
   },
   parseHeaders: function() {
-    var k, ref, ref1, v;
+    var i, len, ref, ref1, v;
     if (this.props.body.c) {
       ref = this.props.body.c;
-      for (k in ref) {
-        v = ref[k];
+      for (i = 0, len = ref.length; i < len; i++) {
+        v = ref[i];
         if (v.gn === 'div' && ((ref1 = v.ga) != null ? ref1.id : void 0) === "toc") {
           return {
             gn: "div",
             ga: {
-              className: "toc",
-              onClick: this._click
+              className: "toc"
             },
-            c: this.collectHeaders(v.c)
+            c: [{
+                gn: "h1",
+                ga: {
+                  className: "t"
+                },
+                c: ["Table of contents"]
+              }].concat(slice.call(_.filter(v.c.map(this.collectHeader))))
           };
         }
       }
@@ -1077,6 +1089,7 @@ module.exports = query({
     return reactify(this.parseHeaders());
   }
 }));
+
 
 
 },{"./Async.coffee":3,"./Reactify.coffee":11}],14:[function(require,module,exports){
@@ -1098,6 +1111,7 @@ module.exports = _.extend(new Dispatcher(), {
     });
   }
 });
+
 
 
 },{"flux":17}],15:[function(require,module,exports){
@@ -1244,6 +1258,7 @@ $(function() {
     return so.ls = so.cs;
   });
 });
+
 
 
 },{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./persistence/TreePersistence.coffee":20}],16:[function(require,module,exports){
@@ -1616,6 +1631,10 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 module.exports = invariant;
 
 },{}],20:[function(require,module,exports){
+var dedup;
+
+dedup = {};
+
 module.exports = {
   get: function(path, query, cb) {
     var url;
@@ -1623,6 +1642,10 @@ module.exports = {
       query = "no-query";
     }
     url = (window.tree.basepath(path)) + ".json?q=" + (this.encode(query));
+    if (dedup[url]) {
+      return;
+    }
+    dedup[url] = true;
     return $.get(url, {}, function(data) {
       if (cb) {
         return cb(null, data);
@@ -1665,6 +1688,7 @@ module.exports = {
 };
 
 
+
 },{}],21:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, QUERIES, TreeStore, _curr, _data, _tree, clog;
 
@@ -1705,23 +1729,32 @@ TreeStore = _.extend(EventEmitter.prototype, {
     return this.fulfillAt(this.getTree(path.split('/')), path, query);
   },
   fulfillAt: function(tree, path, query) {
-    var data, k, ref, sub, t;
+    var data, have, k, sub, t;
     data = this.fulfillLocal(path, query);
-    for (k in query) {
-      t = query[k];
-      if (!QUERIES[k]) {
-        continue;
+    have = _data[path];
+    if (have != null) {
+      for (k in query) {
+        t = query[k];
+        if (!QUERIES[k]) {
+          continue;
+        }
+        if (t !== QUERIES[k]) {
+          throw TypeError("Wrong query type: " + k + ", '" + t + "'");
+        }
+        data[k] = have[k];
       }
-      if (t !== QUERIES[k]) {
-        throw TypeError("Wrong query type: " + k + ", '" + t + "'");
-      }
-      data[k] = (ref = _data[path]) != null ? ref[k] : void 0;
-    }
-    if (query.kids) {
-      data.kids = {};
-      for (k in tree) {
-        sub = tree[k];
-        data.kids[k] = this.fulfillAt(sub, path + "/" + k, query.kids);
+      if (query.kids) {
+        if (have.EMPTY) {
+          data.kids = {};
+        } else {
+          for (k in tree) {
+            sub = tree[k];
+            if (data.kids == null) {
+              data.kids = {};
+            }
+            data.kids[k] = this.fulfillAt(sub, path + "/" + k, query.kids);
+          }
+        }
       }
     }
     if (!_.isEmpty(data)) {
@@ -1774,29 +1807,7 @@ TreeStore = _.extend(EventEmitter.prototype, {
       this.loadValues(tree[k], path + "/" + k, v);
     }
     if (data.kids && _.isEmpty(data.kids)) {
-      old.body = {
-        gn: 'div',
-        c: [
-          {
-            gn: 'h1',
-            ga: {
-              className: 'error'
-            },
-            c: ['Error: Empty path']
-          }, {
-            gn: 'div',
-            c: [
-              {
-                gn: 'pre',
-                c: [this.getCurr()]
-              }, {
-                gn: 'span',
-                c: ['is either empty or does not exist.']
-              }
-            ]
-          }
-        ]
-      };
+      old.EMPTY = true;
     }
     return _data[path] = old;
   },
@@ -1898,6 +1909,7 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
 });
 
 module.exports = TreeStore;
+
 
 
 },{"../dispatcher/Dispatcher.coffee":14,"events":22}],22:[function(require,module,exports){
