@@ -35,7 +35,6 @@ module.exports = {
 };
 
 
-
 },{"../dispatcher/Dispatcher.coffee":14,"../persistence/TreePersistence.coffee":20}],2:[function(require,module,exports){
 var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, query, reactify, recl, ref;
 
@@ -289,7 +288,6 @@ module.exports = query({
 }));
 
 
-
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":11,"classnames":16}],3:[function(require,module,exports){
 var TreeActions, TreeStore, _load, code, div, recl, ref, span;
 
@@ -393,7 +391,6 @@ module.exports = function(queries, Child, load) {
 };
 
 
-
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
 var div, query, reactify, recl;
 
@@ -419,7 +416,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"./Reactify.coffee":11}],5:[function(require,module,exports){
 var div, recl, ref, textarea;
 
@@ -443,7 +439,6 @@ module.exports = recl({
 });
 
 
-
 },{}],6:[function(require,module,exports){
 var div, recl;
 
@@ -464,7 +459,6 @@ module.exports = {
     }
   })
 };
-
 
 
 },{"./CodeMirror.coffee":5,"./EmailComponent.coffee":7,"./KidsComponent.coffee":8,"./ListComponent.coffee":9,"./SearchComponent.coffee":12,"./TocComponent.coffee":13}],7:[function(require,module,exports){
@@ -547,7 +541,6 @@ module.exports = recl({
 });
 
 
-
 },{"./Reactify.coffee":11}],8:[function(require,module,exports){
 var a, div, hr, li, query, reactify, recl, ref, ul;
 
@@ -587,7 +580,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"./Reactify.coffee":11}],9:[function(require,module,exports){
 var a, clas, div, h1, li, query, reactify, recl, ref, ul;
 
@@ -625,13 +617,21 @@ module.exports = query({
     var _date, _keys, date, elem, href, i, item, k, len, parts, path, preview, ref1, ref2, ref3, ref4, ref5, results, sorted, title, v;
     sorted = true;
     _keys = [];
-    ref1 = this.props.kids;
-    for (k in ref1) {
-      v = ref1[k];
-      if (((ref2 = v.meta) != null ? ref2.sort : void 0) == null) {
-        sorted = false;
+    if (!this.props.sortBy) {
+      ref1 = this.props.kids;
+      for (k in ref1) {
+        v = ref1[k];
+        if (((ref2 = v.meta) != null ? ref2.sort : void 0) == null) {
+          sorted = false;
+        }
+        _keys[Number((ref3 = v.meta) != null ? ref3.sort : void 0)] = k;
       }
-      _keys[Number((ref3 = v.meta) != null ? ref3.sort : void 0)] = k;
+    } else {
+      sorted = true;
+      _keys = _.keys(_.sortBy(_.clone(this.props.kids), function(kid) {
+        return Number(kid.meta.date.slice(1).replace(/\./g, ""));
+      }));
+      _keys.reverse();
     }
     if (sorted !== true) {
       _keys = _.keys(this.props.kids).sort();
@@ -714,7 +714,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"./Reactify.coffee":11,"classnames":16}],10:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
@@ -753,7 +752,6 @@ module.exports = recl({
     }, ""));
   }
 });
-
 
 
 },{}],11:[function(require,module,exports){
@@ -821,7 +819,6 @@ module.exports = _.extend(reactify, {
   walk: walk,
   Virtual: Virtual
 });
-
 
 
 },{"./LoadComponent.coffee":10}],12:[function(require,module,exports){
@@ -962,7 +959,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"./Reactify.coffee":11}],13:[function(require,module,exports){
 var div, query, reactify, recl,
   slice = [].slice;
@@ -1091,7 +1087,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"./Reactify.coffee":11}],14:[function(require,module,exports){
 var Dispatcher;
 
@@ -1111,7 +1106,6 @@ module.exports = _.extend(new Dispatcher(), {
     });
   }
 });
-
 
 
 },{"flux":17}],15:[function(require,module,exports){
@@ -1258,7 +1252,6 @@ $(function() {
     return so.ls = so.cs;
   });
 });
-
 
 
 },{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./persistence/TreePersistence.coffee":20}],16:[function(require,module,exports){
@@ -1688,7 +1681,6 @@ module.exports = {
 };
 
 
-
 },{}],21:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, QUERIES, TreeStore, _curr, _data, _tree, clog;
 
@@ -1909,7 +1901,6 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
 });
 
 module.exports = TreeStore;
-
 
 
 },{"../dispatcher/Dispatcher.coffee":14,"events":22}],22:[function(require,module,exports){
