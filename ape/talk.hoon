@@ -110,7 +110,7 @@
           [%banish p=span q=(list partner)]             ::  blacklist add
           [%block p=span q=(list partner)]              ::  blacklist add
           [%author p=span q=(list partner)]             ::  whitelist add
-          [%target p=(set partner)]                     ::  set active targets
+          [%target p=$|(?(~ char) (set partner))]       ::  set active targets
           ::  [%destroy p=span]                         ::
           [%create p=posture q=span r=cord]             ::
           [%probe p=station]                            ::
@@ -182,15 +182,9 @@
           (stag %& stan)
           (stag %| pasp)
         ==
-      ++  parq                                          ::  non-empty partners
-        %+  cook
-          |=(a=(list partner) (~(gas in *(set partner)) a))
+      ++  parz                                          ::  non-empty partners
+        %+  cook  ~(gas in *(set partner))
         (most ;~(plug com (star ace)) parn)
-      ::
-      ++  parz                                          ::  partner set
-        %+  cook
-          |=(a=(list partner) (~(gas in *(set partner)) a))
-        (more ;~(plug com (star ace)) parn)
       ::
       ++  nump                                          ::  number reference
         ;~  pose
@@ -216,13 +210,13 @@
             qut
           ==
         ::
-          ;~((glue ace) (perk %join ~) parq)
-          ;~((glue ace) (perk %bind ~) glyph (punt parq))
-          ;~((glue ace) (perk %what ~) ;~(pose parq glyph))
+          ;~((glue ace) (perk %join ~) parz)
+          ;~((glue ace) (perk %bind ~) glyph (punt parz))
+          ;~((glue ace) (perk %what ~) ;~(pose parz glyph))
         ::
           ;~(plug (perk %help ~) (easy ~))
           (stag %number nump)
-          (stag %target parz)
+          (stag %target ;~(pose parz glyph (easy ~)))
         ==
       --
     ++  sh-abet
@@ -303,6 +297,8 @@
     ::
     ++  sh-poss                                         ::  passive update
       |=  lix=(set partner)
+      ?^  buf.say.she
+        +>.$
       =+  sap=(sh-pare lix)
       ?:  =(sap passive.she)
         +>.$
@@ -937,8 +933,19 @@
         (join [[%& our.hid nom] ~ ~])
       ::
       ++  target                                        ::  %target
-        |=  lix=(set partner)
-        (sh-pact lix)
+        |=  lix=?((set partner) char)
+        ?~  lix  (sh-pact lix)
+        ?^  lix  (sh-pact lix)
+        =+  lax=(~(get ju nak) lix)
+        ?:  =(~ lax)  (sh-note "unknown {<lix>}")
+        ?:  ?=([* ~ ~] lax)  (sh-pact n.lax)
+        |-  ^-  sh-pact
+        ?~  grams.roy  
+          (sh-note:(what lix) "ambiguous {<lix>}")
+        =+  pan=(sa (turn :_(head (~(tap by q.q.i.grams.roy)))))
+        ?:  (~(has in lax) pan)
+          (sh-pact pan)
+        $(grams.roy t.grams.roy)
       ::
       ++  number                                        ::  %number
         |=  [rel=? num=@ud]
