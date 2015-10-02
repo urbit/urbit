@@ -163,6 +163,13 @@ _main_getopt(c3_i argc, c3_c** argv)
     return c3n;
   }
 
+  if ( u3_Host.ops_u.tic_c == 0 && u3_Host.ops_u.who_c != 0 ) {
+      c3_c tic_c[29];
+      printf("your ticket: ~");
+      scanf("%28s",tic_c);
+      u3_Host.ops_u.tic_c = _main_presig(tic_c);
+  }
+
   if ( c3y == u3_Host.ops_u.bat ) {
     u3_Host.ops_u.dem = c3y;
     u3_Host.ops_u.nuu = c3y;
@@ -314,6 +321,14 @@ main(c3_i   argc,
     u3_ve_usage(argc, argv);
     return 1;
   }
+
+  if ( c3y == u3_Host.ops_u.nuu ) {
+    struct stat s;
+    if ( !stat(u3_Host.dir_c, &s) ) {
+      fprintf(stderr, "used -c but %s already exists\n", u3_Host.dir_c);
+      exit(1);
+    }
+   }
 
   u3_ve_sysopt();
 
