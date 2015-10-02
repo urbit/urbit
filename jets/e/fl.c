@@ -89,7 +89,8 @@
     u3r_mp(a->expWidth, h);
 
     if ( !(_(u3a_is_cat(d)) && _(u3a_is_cat(e))) ) {
-      mpz_clears(a->minExp, a->expWidth, 0);
+      mpz_clear(a->minExp);
+      mpz_clear(a->expWidth);
       u3m_bail(c3__exit);
     }
     a->rMode = d;
@@ -160,12 +161,14 @@
     _noun_to_ea(&c, a);
     _noun_to_flOptions(&d, b);
     if ( mpz_sgn(c.a) == 0 ) {
-      mpz_clears(d.minExp, d.expWidth, c.a, c.e, 0);
+      mpz_clear(d.minExp); mpz_clear(d.expWidth);
+      mpz_clear(c.a); mpz_clear(c.e);
       return u3m_bail(c3__exit);
     }
     size_t m = mpz_sizeinbase(c.a, 2);
     if ( !_(j) && (m <= d.precision) ) {
-      mpz_clears(d.minExp, d.expWidth, c.a, c.e, 0);
+      mpz_clear(d.minExp); mpz_clear(d.expWidth);
+      mpz_clear(c.a); mpz_clear(c.e);
       return u3m_bail(c3__exit);
     }
     c3_w q = 0;
@@ -175,7 +178,9 @@
          (mpz_cmp(c.e, d.minExp) < 0) ) {
       mpz_sub(g, d.minExp, c.e);
       if ( !mpz_fits_uint_p(g) ) {
-        mpz_clears(g, d.minExp, d.expWidth, c.a, c.e, 0);
+        mpz_clear(g);
+        mpz_clear(d.minExp); mpz_clear(d.expWidth);
+        mpz_clear(c.a); mpz_clear(c.e);
         return u3m_bail(c3__exit);
       }
       q = mpz_get_ui(g);
@@ -192,19 +197,21 @@
       c3_t y;
       switch ( i ) {
         default:
-          mpz_clears(v, h, g, d.minExp, d.expWidth, c.a, c.e, 0);
+          mpz_clear(v); mpz_clear(h); mpz_clear(g);
+          mpz_clear(d.minExp); mpz_clear(d.expWidth);
+          mpz_clear(c.a); mpz_clear(c.e);
           return u3m_bail(c3__exit);
         case c3__fl:
         case c3__sm:
           mpz_set_ui(c.a, 0);
           mpz_set_ui(c.e, 0);
-          mpz_clears(v, h, g, 0);
+          mpz_clear(v); mpz_clear(h); mpz_clear(g);
           break;
         case c3__ce:
         case c3__lg:
           mpz_set_ui(c.a, 1);
           mpz_set(c.e, d.minExp);
-          mpz_clears(v, h, g, 0);
+          mpz_clear(v); mpz_clear(h); mpz_clear(g);
           break;
         case c3__ne:
         case c3__nt:
@@ -217,12 +224,11 @@
           if ( y ) {
             mpz_set_ui(c.a, 0);
             mpz_set_ui(c.e, 0);
-            mpz_clears(v, h, g, 0);
           } else {
             mpz_set_ui(c.a, 1);
             mpz_set(c.e, d.minExp);
-            mpz_clears(v, h, g, 0);
           }
+          mpz_clear(v); mpz_clear(h); mpz_clear(g);
           break;
       }
       goto end;
@@ -231,7 +237,9 @@
     switch ( i ) {
       c3_ws x;
       default:
-        mpz_clears(v, h, g, d.minExp, d.expWidth, c.a, c.e, 0);
+        mpz_clear(v); mpz_clear(h); mpz_clear(g);
+        mpz_clear(d.minExp); mpz_clear(d.expWidth);
+        mpz_clear(c.a); mpz_clear(c.e);
         return u3m_bail(c3__exit);
       case c3__fl:
         break;
@@ -288,16 +296,18 @@
     }
     if ( mpz_sgn(c.a) == 0 ) {
       mpz_set_ui(c.e, 0);
-      mpz_clears(v, h, g, 0);
+      mpz_clear(v); mpz_clear(h); mpz_clear(g);
       goto end;
     }
     mpz_set(g, d.minExp);
     mpz_add(g, g, d.expWidth);
     if ( (d.eMode != c3__i) && (mpz_cmp(g, c.e) < 0) ) {
-      mpz_clears(v, h, g, d.minExp, d.expWidth, c.a, c.e, 0);
+      mpz_clear(v); mpz_clear(h); mpz_clear(g);
+      mpz_clear(d.minExp); mpz_clear(d.expWidth);
+      mpz_clear(c.a); mpz_clear(c.e);
       return u3nc(c3__i, c3y);
     }
-    mpz_clears(v, h, g, 0);
+    mpz_clear(v); mpz_clear(h); mpz_clear(g);
 
     //  all mpz except in c, d structures cleared; c contains result
     end:
@@ -308,7 +318,7 @@
       }
     }
     u3_noun ret = u3nq(c3__f, c3y, u3k(_mp_to_satom(c.e)), u3k(u3i_mp(c.a)));
-    mpz_clears(d.minExp, d.expWidth, 0);
+    mpz_clear(d.minExp); mpz_clear(d.expWidth);
     return ret;
   }
 
@@ -332,12 +342,14 @@
     _noun_to_ea(&c, a);
     _noun_to_flOptions(&d, b);
     if ( mpz_sgn(c.a) == 0 ) {
-      mpz_clears(d.minExp, d.expWidth, c.a, c.e, 0);
+      mpz_clear(d.minExp); mpz_clear(d.expWidth);
+      mpz_clear(c.a); mpz_clear(c.e);
       u3m_bail(c3__exit);
     }
     _xpd(&c, &d);
     if ( !mpz_fits_sint_p(c.e) ) {
-      mpz_clears(d.minExp, d.expWidth, c.a, c.e, 0);
+      mpz_clear(d.minExp); mpz_clear(d.expWidth);
+      mpz_clear(c.a); mpz_clear(c.e);
       u3m_bail(c3__exit);
     }
     mpz_t r, s, m, i, j, u, o;
@@ -398,7 +410,9 @@
       mpz_add(o, o, u);
     }
     mpz_set(c.a, o);
-    mpz_clears(r, s, m, i, j, u, o, d.minExp, d.expWidth, 0);
+    mpz_clear(r); mpz_clear(s); mpz_clear(m);
+    mpz_clear(i); mpz_clear(j); mpz_clear(u);
+    mpz_clear(o); mpz_clear(d.minExp); mpz_clear(d.expWidth);
 
     return _ea_to_noun(&c);
   }

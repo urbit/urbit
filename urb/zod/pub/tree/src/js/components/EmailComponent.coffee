@@ -29,7 +29,7 @@ module.exports = recl
         @$email.addClass 'error'
 
   submit: ->
-    $.post @props.dataPath,{email:@$email.text()},() ->
+    $.post @props.dataPath,{email:@$email.val()},() =>
       @setState {submit:true}
 
   componentDidMount: -> @$email = $('input.email')
