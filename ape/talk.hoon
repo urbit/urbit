@@ -132,7 +132,7 @@
     --
 |_  [hid=bowl house]
 ++  ra                                                  ::  per transaction
-  |_  [ost=bone moves=(list move)]
+  |_  moves=(list move)
   ++  sh                                                ::  per console
     |_  $:  coz=(list command)                          ::  talk actions
             she=shell
@@ -173,7 +173,7 @@
             [a ?^(b u.b (main a))]
           ;~  plug
             ship
-            ;~(pose (stag ~ ;~(pfix fas urs:ab)) (easy ~))
+            (punt ;~(pfix fas urs:ab))
           ==
         ==
       ::
@@ -229,7 +229,7 @@
       ^+  +>
       =+  zoc=(flop coz)
       |-  ^+  +>+>
-      ?~  zoc  +>+>.$(shells (~(put by shells) ost she))
+      ?~  zoc  +>+>.$(shells (~(put by shells) ost.hid she))
       $(zoc t.zoc, +>.$ (sh-deal i.zoc))
     ::
     ++  sh-deal                                         ::  apply from shell
@@ -249,19 +249,18 @@
     ++  sh-fact                                         ::  send console effect
       |=  fec=sole-effect
       ^+  +>
-      +>(moves :_(moves [ost %diff %sole-effect fec]))
+      +>(moves :_(moves [ost.hid %diff %sole-effect fec]))
     ::
     ++  sh-peep                                         ::  peer to path
       |=  pax=path
       ^+  +>
-      +>(+> (~(ra-subscribe ra ost ~) her.she pax))
+      +>(+> (ra-subscribe her.she pax))
     ::
     ++  sh-peer                                         ::  subscribe shell
       =<  sh-prod
       %_    .
           +>
-        %-  ra-subscribe:(~(ra-subscribe ra ost ~) her.she ~)
-        [her.she [%afx man.she ~]]
+        (ra-subscribe:(ra-subscribe her.she ~) her.she [%afx man.she ~])
       ==
     ::
     ++  sh-prod                                         ::  show prompt
@@ -1012,7 +1011,7 @@
         |-  ^-  (pair (list move) (list sole-effect))
         ?~  moves  [~ ~]
         =+  mor=$(moves t.moves)
-        ?:  ?&  =(ost p.i.moves) 
+        ?:  ?&  =(ost.hid p.i.moves) 
                 ?=([%diff %sole-effect *] q.i.moves)
             ==
           [p.mor [+>.q.i.moves q.mor]]
@@ -1022,7 +1021,7 @@
             ?~  q.yop  ~ 
             ?~(t.q.yop `i.q.yop `[%mor (flop `(list sole-effect)`q.yop)])
         ==
-    ?~(foc moz [[ost %diff %sole-effect u.foc] moz])
+    ?~(foc moz [[ost.hid %diff %sole-effect u.foc] moz])
   ::
   ++  ra-abet                                           ::  complete core
     ra-abed:ra-axel
@@ -1044,21 +1043,21 @@
     =.  q.rey  (flop q.rey)
     |-  ^+  +>
     ?~  q.rey  ra-axel
-    $(q.rey t.q.rey, +> (ra-back(ost p.i.q.rey) q.i.q.rey))
+    $(q.rey t.q.rey, +> (ra-back(ost.hid p.i.q.rey) q.i.q.rey))
   ::
   ++  ra-back
     |=  rad=report
     ^+  +>
-    sh-abet:(~(sh-repo sh ~ (~(got by shells) ost)) rad)
+    sh-abet:(~(sh-repo sh ~ (~(got by shells) ost.hid)) rad)
   ::
   ++  ra-sole
     |=  act=sole-action
     ^+  +>
-    =+  shu=(~(get by shells) ost)
+    =+  shu=(~(get by shells) ost.hid)
     ?~  shu
-      ~&  [%ra-console-broken ost]
+      ~&  [%ra-console-broken ost.hid]
       +>.$
-    sh-abet:(~(sh-sole sh ~ (~(got by shells) ost)) act)
+    sh-abet:(~(sh-sole sh ~ (~(got by shells) ost.hid)) act)
   ::  
   ++  ra-emil                                           ::  ra-emit move list
     |=  mol=(list move)
@@ -1075,7 +1074,7 @@
   ::
   ++  ra-house                                          ::  emit partners
     |=  ost=bone
-    %+  ra-emit  ost
+    %+  ra-emit  ost.hid
     :+  %diff  %talk-report
     :-  %house
     %-  ~(gas in *(map span (pair posture cord)))
@@ -1169,7 +1168,7 @@
     |=  [src=ship pax=path]
     ^+  +>
     ?.  ?=([@ @ *] pax)
-      +>(general (~(del in general) ost))
+      +>(general (~(del in general) ost.hid))
     %-  (ra-know i.t.pax)  |=  par=_pa  =<  pa-abet
     (pa-notify:pa-cancel:par src %gone *human)
   ::
@@ -1194,9 +1193,9 @@
   ++  ra-subscribe                                      ::  listen to
     |=  [her=ship pax=path]
     ^+  +>
-    ::  ~&  [%ra-subscribe ost her pax]
+    ::  ~&  [%ra-subscribe ost.hid her pax]
     ?:  ?=(~ pax)
-      (ra-house(general (~(put in general) ost)) ost)
+      (ra-house(general (~(put in general) ost.hid)) ost.hid)
     ?.  ?=([@ @ *] pax)
       (ra-evil %talk-bad-path)
     =+  ^=  vab  ^-  (set ,@tas)
@@ -1273,7 +1272,7 @@
     |=  [cuz=station tip=thought]
     ^+  +>
     =.  +>
-        %+  ra-emit  ost
+        %+  ra-emit  ost.hid
         :*  %poke
             /repeat/(scot %ud p.outbox)/(scot %p p.cuz)/[q.cuz]
             [p.cuz %talk]
@@ -1301,18 +1300,18 @@
     ++  pa-watch                                        ::  watch presence
       |=  her=ship
       ?.  (pa-admire her)
-        (pa-sauce ost [%quit ~]~)
-      =.  viewers  (~(put in viewers) ost)
-      (pa-display ost ~ ~)
+        (pa-sauce ost.hid [%quit ~]~)
+      =.  viewers  (~(put in viewers) ost.hid)
+      (pa-display ost.hid ~ ~)
     ::
     ++  pa-master                                       ::  hear config
       |=  her=ship
       ?.  (pa-admire her)
         ~&  [%pa-admire-not her]
-        (pa-sauce ost [%quit ~]~)
-      =.  owners  (~(put in owners) ost)
+        (pa-sauce ost.hid [%quit ~]~)
+      =.  owners  (~(put in owners) ost.hid)
       ::  ~&  [%pa-master her man shape]
-      (pa-sauce ost [[%diff %talk-report %cabal shape mirrors] ~])
+      (pa-sauce ost.hid [[%diff %talk-report %cabal shape mirrors] ~])
     ::
     ++  pa-display                                      ::  update presence
       |=  vew=(set bone)
@@ -1421,11 +1420,11 @@
       pa-monitor
     ::
     ++  pa-cancel                                       ::  unsubscribe from
-      ~&  [%pa-cancel ost]
+      ~&  [%pa-cancel ost.hid]
       %_  .
-        guests  (~(del by guests) ost)
-        viewers  (~(del in viewers) ost)
-        owners  (~(del in owners) ost)
+        guests  (~(del by guests) ost.hid)
+        viewers  (~(del in viewers) ost.hid)
+        owners  (~(del in owners) ost.hid)
       ==
     ::
     ++  pa-notify                                       ::  local presence
@@ -1469,10 +1468,10 @@
       |=  riv=river
       ^+  +>
       =-  ::  ~&  [%pa-start riv lab]
-          =.  +>.$  (pa-sauce ost [[%diff %talk-report %grams q.lab r.lab] ~])
+          =.  +>.$  (pa-sauce ost.hid [[%diff %talk-report %grams q.lab r.lab] ~])
           ?:  p.lab
-            (pa-sauce ost [[%quit ~] ~])
-          +>.$(guests (~(put by guests) ost riv))
+            (pa-sauce ost.hid [[%quit ~] ~])
+          +>.$(guests (~(put by guests) ost.hid riv))
       ^=  lab
       =+  [end=count gaz=grams dun=| zeg=*(list telegram)]
       |-  ^-  (trel ,? ,@ud (list telegram))
@@ -1494,7 +1493,7 @@
       ^+  +>
       ?.  (pa-admire her)
         ~&  [%pa-listen-admire ~]
-        (pa-sauce ost [%quit ~]~)
+        (pa-sauce ost.hid [%quit ~]~)
       =+  ^=  ruv  ^-  (unit river)
           ?:  ?=(~ pax)
             `[[%ud ?:((lth count 64) 0 (sub count 64))] [%da (dec (bex 128))]]
@@ -1510,7 +1509,7 @@
       ::  ~&  [%pa-listen her pax ruv]
       ?~  ruv
         ~&  [%pa-listen-malformed pax]
-        (pa-sauce ost [%quit ~]~)
+        (pa-sauce ost.hid [%quit ~]~)
       (pa-start u.ruv)
     ::
     ++  pa-refresh                                      ::  update to guests
@@ -1784,40 +1783,40 @@
   |=  [pax=path]
   ^-  [(list move) _+>]
   ~?  !=(src.hid our.hid)  [%peer-talk-stranger src.hid]
-  ::  ~&   [%talk-peer src ost pax]
+  ::  ~&   [%talk-peer src ost.hid pax]
   ?:  ?=([%sole *] pax)
     ?>  =(our.hid src.hid)
     ~?  (~(has by shells) ost.hid)  [%talk-peer-replaced ost.hid pax]
-    ra-abet:(~(ra-console ra ost.hid ~) src.hid t.pax)
+    ra-abet:(ra-console:ra src.hid t.pax)
   ::  ~&  [%talk-peer-data ost.hid src.hid pax]
-  ra-abet:(~(ra-subscribe ra ost.hid ~) src.hid pax)
+  ra-abet:(ra-subscribe:ra src.hid pax)
 ::
 ++  poke-talk-command                                   ::  accept command
   |=  [cod=command]
   ^-  [(list move) _+>]
   ::  ~&  [%talk-poke-command src.hid cod]
   =^  mos  +>.$
-      ra-abet:(~(ra-apply ra ost.hid ~) src.hid cod)
+      ra-abet:(ra-apply:ra src.hid cod)
   =^  mow  +>.$  log-all-to-file
   [(welp mos mow) +>.$]
 ::
 ++  poke-sole-action                                    ::  accept console
   |=  [act=sole-action]
-  ra-abet:(~(ra-sole ra ost.hid ~) act)
+  ra-abet:(ra-sole:ra act)
 ::
 ++  diff-talk-report                                    ::
   |=  [way=wire rad=report]
   ^-  (quip move +>)
   =^  mos  +>.$
       %+  etch-friend  way  |=  [man=span cuz=station]
-      ra-abet:(~(ra-diff-talk-report ra ost.hid ~) man cuz rad)
+      ra-abet:(ra-diff-talk-report:ra man cuz rad)
   =^  mow  +>.$  log-all-to-file
   [(welp mos mow) +>.$]
 ::
 ++  coup-repeat                                         ::
   |=  [way=wire saw=(unit tang)]
   %+  etch-repeat  [%repeat way]  |=  [num=@ud src=@p man=span]
-  ra-abet:(~(ra-coup-repeat ra ost.hid ~) [num src man] saw)
+  ra-abet:(ra-coup-repeat:ra [num src man] saw)
 ::
 ++  etch                                                ::  parse wire
   |=  way=wire
@@ -1848,18 +1847,18 @@
   ?~  saw  [~ +>]
   %+  etch-friend  [%friend way]  |=  [man=span cuz=station]
   ~&  [%reap-friend-fail man cuz u.saw]
-  ra-abet:(~(ra-quit ra ost.hid ~) man cuz)
+  ra-abet:(ra-quit:ra man cuz)
 ::
 ++  quit-friend                                         ::
   |=  way=wire
   %+  etch-friend  [%friend way]  |=  [man=span cuz=station]
-  ra-abet:(~(ra-retry ra ost.hid ~) man cuz)
+  ra-abet:(ra-retry:ra man cuz)
 ::
 ++  pull                                                ::
   |=  [pax=path]
   ^-  [(list move) _+>]
   ~&  [%talk-pull src.hid ost.hid pax]
-  =^  moz  +>.$  ra-abet:(~(ra-cancel ra ost.hid ~) src.hid pax)
+  =^  moz  +>.$  ra-abet:(ra-cancel:ra src.hid pax)
   [moz +>.$(shells (~(del by shells) ost.hid))]
 ::
 ++  log-all-to-file
@@ -1918,7 +1917,7 @@
   |=  [old=(unit house-any)]
   ^-  (quip move +>)
   ?~  old
-    ra-abet:~(ra-init ra 0 ~)
+    ra-abet:ra-init:ra
   |-
   ?-  -.u.old
     %1  $(u.old [%2 stories general outbox folks shells ~]:u.old)
