@@ -3202,7 +3202,7 @@
   ?~  q.vex
     =+  roq=(sab)
     [p=(last p.vex p.roq) q=q.roq]
-  vex(q ~)
+  (fail +<.sab)
 ::
 ++  pfix                                                ::  discard first rule
   ~/  %pfix
