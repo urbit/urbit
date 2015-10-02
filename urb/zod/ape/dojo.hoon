@@ -459,7 +459,7 @@
         %+  dy-print  cay
         ?-  p.p.mad
           0  ~
-          1  ~[[%rose [~ "  " ~] (skol p.q.cay) ~] [%rose [~ "    " ~] >p.cay< ~]]
+          1  [%rose [~ "  " ~] (skol p.q.cay) ~]~ :: [%rose [~ "    " ~] >p.cay< ~]
           2  [%rose [~ "  " ~] (dy-show-type-noun p.q.cay) ~]~
         ==
       ==
