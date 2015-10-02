@@ -48,13 +48,29 @@ module.exports = query {
         title =
           gn: 'h1'
           c: [item]
+      unless @props.titlesOnly        # redundant? this seems familiar
+        if @props.dataDates
+          _date = elem.meta.date
+          if not _date or _date.length is 0 then _date = ""
+          date = 
+            gn: 'div'
+            ga: 
+              className: 'date'
+            c: [_date]
+          parts.push date
       parts.push title
       unless @props.titlesOnly        # redundant? this seems familiar
         if @props.dataPreview 
-          if @props.dataType is 'post'
+          if @props.dataType is 'post' and not elem.meta.preview
             parts.push (elem.snip.c.slice 0,2)...
           else
-            parts.push elem.snip
+            if elem.meta.preview 
+              preview = 
+                gn: 'p'
+                c: [elem.meta.preview]
+            else 
+              preview = elem.snip
+            parts.push preview
       li {key:item,className:@props.dataType ? ""},
         a {href,className:(clas preview: @props.dataPreview?)},            
           reactify
