@@ -1,7 +1,7 @@
-urbit
-=====
+Urbit Manual
+============
 
-is a general-purpose computing stack designed to live in the cloud. 
+Urbit is a general-purpose computing stack designed to live in the cloud. 
 
 <list dataPreview="true"></list>
 
@@ -11,6 +11,4 @@ is a general-purpose computing stack designed to live in the cloud.
 
 ------------------------------------------------------------------------
 
-If you're new to the system, take a look at some of the
-[guides](doc/guide) to get oriented. Come join us on `:talk` in the
-`/urbit-meta` channel to ask questions and get help.
+Come join us on `:talk` in the `/urbit-meta` channel to ask questions and get help.
