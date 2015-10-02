@@ -142,7 +142,7 @@ Links = React.createFactory(query({
   }
 })));
 
-CLICK = 'a';
+CLICK = 'a,h1,h2,h3,h4,h5,h6';
 
 module.exports = query({
   sein: 't',
@@ -1785,29 +1785,6 @@ TreeStore = _.extend(EventEmitter.prototype, {
     }
     if (data.kids && _.isEmpty(data.kids)) {
       old.EMPTY = true;
-      old.body = {
-        gn: 'div',
-        c: [
-          {
-            gn: 'h1',
-            ga: {
-              className: 'error'
-            },
-            c: ['Error: Empty path']
-          }, {
-            gn: 'div',
-            c: [
-              {
-                gn: 'pre',
-                c: [this.getCurr()]
-              }, {
-                gn: 'span',
-                c: ['is either empty or does not exist.']
-              }
-            ]
-          }
-        ]
-      };
     }
     return _data[path] = old;
   },

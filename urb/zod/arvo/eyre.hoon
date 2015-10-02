@@ -148,6 +148,7 @@
 ::
 ++  fcgi                                                ::  credential caboose
   |=  [quy=quay ced=cred]  ^-  coin
+  ~&  fcgi/[`@uv`(mug ced) quy]
   :*  %many
       [%$ %ta ~]
       [%blob ced]
