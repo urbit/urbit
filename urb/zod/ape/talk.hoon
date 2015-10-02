@@ -26,7 +26,6 @@
           folks=(map ship human)                        ::  human identities
           shells=(map bone shell)                       ::  interaction state
       ==                                                ::
-    ::                                                  ::
     ++  house-2                                         ::
       $:  stories=(map span story)                      ::  conversations
           general=(set bone)                            ::  meta-subscribe
@@ -35,7 +34,6 @@
           shells=(map bone shell)                       ::  interaction state
           log=(map span ,@ud)                           ::  logged to clay
       ==                                                ::
-    ::                                                  ::
     ++  house-3                                         ::
       $:  stories=(map span story)                      ::  conversations
           general=(set bone)                            ::  meta-subscribe
@@ -46,7 +44,6 @@
           nik=(map (set partner) char)                  ::
           nak=(jug char (set partner))                  ::
       ==                                                ::
-    ::                                                  ::
     ++  story                                           ::  wire content
       $:  count=@ud                                     ::  (lent grams)
           grams=(list telegram)                         ::  all history
@@ -97,7 +94,6 @@
       $%  [%repeat p=@ud q=@p r=span]                   ::
           [%friend p=span q=station]                    ::
       ==                                                ::
-    ::                                                  ::
     ++  work                                            ::  interface action
       $%  [%number p=? q=@ud]                           ::  activate by number
           [%help ~]                                     ::  print usage info
@@ -105,17 +101,17 @@
           [%bind p=char q=(unit (set partner))]         ::
           [%join p=(set partner)]                       ::  
           [%say p=speech]                               ::
-          [%eval p=twig q=cord]                         ::
+          [%eval p=cord q=twig]                         ::
           [%invite p=span q=(list partner)]             ::  whitelist add
           [%banish p=span q=(list partner)]             ::  blacklist add
           [%block p=span q=(list partner)]              ::  blacklist add
           [%author p=span q=(list partner)]             ::  whitelist add
-          [%target p=$|(?(~ char) (set partner))]       ::  set active targets
+          [%target p=where q=(unit work)]               ::  set active targets
           ::  [%destroy p=span]                         ::
           [%create p=posture q=span r=cord]             ::
           [%probe p=station]                            ::
       ==                                                ::
-    ::                                                  ::
+    ++  where  ?((set partner) char)                    ::  audience/shorthand
     ++  sigh                                            ::  assemble label
       |=  [len=@ud pre=tape yiz=cord]
       ^-  tape
@@ -136,12 +132,15 @@
   ++  sh                                                ::  per console
     |_  $:  coz=(list command)                          ::  talk actions
             she=shell
-        == 
-    ++  sh-expr  wide:(vang & [&1:% &2:% (scot %da now.hid) |3:%])
-    ::
+        ==
     ++  sh-scad                                         ::  command parser
       =<  work
-      |%  
+      |%
+      ++  expr                                          ::  [cord twig]
+        |=  tub=nail  %.  tub
+        %+  stag  (crip q.tub)
+        wide:(vang & [&1:% &2:% (scot %da now.hid) |3:%])
+      ::
       ++  dare                                          ::  @dr
         %+  sear
           |=  a=coin
@@ -200,9 +199,18 @@
           (cold %brown (jest %mailbox))
         ==
       ::
+      ++  message
+        ;~  pose
+          ;~(plug (cold %eval hax) expr)
+          :(stag %say %url aurf:urlp)
+          :(stag %say %lin | ;~(pfix pat (cook crip (plus prn))))
+          :(stag %say %lin & ;~(less sem (cook crip (plus prn))))
+        ==
+      ::
       ++  glyph  (mask "/\\\{(<!?{(zing glyphs)}")      ::  station postfix
       ++  work
         %+  knee  *^work  |.  ~+
+        =-  ;~(pose ;~(pfix sem -) message)
         ;~  pose
           ;~  (glue ace)  (perk %create ~)
             pore
@@ -216,7 +224,8 @@
         ::
           ;~(plug (perk %help ~) (easy ~))
           (stag %number nump)
-          (stag %target ;~(pose parz glyph (easy ~)))
+          =+  (punt ;~(pfix ace message))
+          (stag %target ;~(plug ;~(pose parz glyph (easy ~)) -))
         ==
       --
     ++  sh-abet
@@ -741,26 +750,18 @@
       ::  (fix inx '\\' lit)
       lit
     ::
-    ++  sh-sane-rule                                    ::  sanitize by rule
-      |*  sef=_rule
-      |=  [inv=sole-edit txt=tape]
-      ^-  (list sole-edit)
-      =+  ryv=(rose txt sef)
-      ?:(-.ryv ~ [inv ~])
-    ::
     ++  sh-sane                                         ::  sanitize input
       |=  [inv=sole-edit buf=(list ,@c)]
       ^-  (list sole-edit)
-      ?~  buf  ~
-      =+  txt=(tufa buf)
-      ?:  =(& -:(rose txt aurf:urlp))  ~
-      ?:  =(';' -.txt)
-        ((sh-sane-rule sh-scad) inv +.txt) 
-      ?:  =('#' -.txt)
-        ((sh-sane-rule sh-expr) inv +.txt) 
-      ?:  =('@' -.txt)
-        (sh-sane-chat +.buf)
-      (sh-sane-chat buf)
+      =+  res=(rose (tufa buf) sh-scad)
+      ?+    res    ~
+          [%| @]
+        [inv ~]
+          [%& ~ [%say ^]]
+        (sh-sane-chat buf)
+          [%& ~ [%target * ~ %say ^]]
+        (sh-sane-chat buf)
+      ==
     ::
     ++  sh-slug                                         ::  edit to sanity
       |=  lit=(list sole-edit)
@@ -778,20 +779,6 @@
       ?~  lit
         +>.$
       (sh-slug lit)
-    ::
-    ++  sh-pork                                         ::  parse work
-      ^-  (unit work)
-      ?~  buf.say.she  ~
-      =+  txt=(tufa buf.say.she)
-      =+  rou=(rust txt aurf:urlp)
-      ?^  rou  `[%say %url u.rou]
-      ?:  =(';' -.txt)
-        (rust +.txt sh-scad)
-      ?:  =('#' -.txt)
-        (bind (rust +.txt sh-expr) |=(a=twig [%eval a (crip +.txt)]))
-      ?:  =('@' -.txt)
-        `[%say %lin | (crip +.txt)]
-      `[%say %lin & (crip txt)]
     ::
     ++  sh-lame                                         ::  send error
       |=  txt=tape
@@ -933,7 +920,9 @@
         (join [[%& our.hid nom] ~ ~])
       ::
       ++  target                                        ::  %target
-        |=  lix=?((set partner) char)
+        |=  [lix=?((set partner) char) woe=(unit ^work)]
+        =-  ?~(woe end work(job u.woe, ..sh-pact end))
+        ^-  end=sh-pact
         ?~  lix  (sh-pact lix)
         ?^  lix  (sh-pact lix)
         =+  lax=(~(get ju nak) lix)
@@ -966,7 +955,7 @@
         ..sh-work
       ::
       ++  eval                                          ::  run
-        |=  [exe=twig txt=cord]
+        |=  [txt=cord exe=twig]
         %^  say  %fat
           tank/[(sell (slap (slop sh-twig-head seed) exe))]~
         [%exp txt]
@@ -985,7 +974,7 @@
       =+  lit=(sh-sane [%nop ~] buf.say.she)
       ?^  lit
         (sh-slug lit)
-      =+  jub=sh-pork
+      =+  jub=(rust (tufa buf.say.she) sh-scad)
       ?~  jub  (sh-fact %bel ~)
       =.  +>  (sh-work u.jub)
       =+  buf=buf.say.she
