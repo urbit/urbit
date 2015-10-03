@@ -35,7 +35,6 @@ module.exports = {
 };
 
 
-
 },{"../dispatcher/Dispatcher.coffee":14,"../persistence/TreePersistence.coffee":20}],2:[function(require,module,exports){
 var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, query, reactify, recl, ref;
 
@@ -142,7 +141,7 @@ Links = React.createFactory(query({
   }
 })));
 
-CLICK = 'a';
+CLICK = 'a,h1,h2,h3,h4,h5,h6';
 
 module.exports = query({
   sein: 't',
@@ -289,7 +288,6 @@ module.exports = query({
 }));
 
 
-
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":11,"classnames":16}],3:[function(require,module,exports){
 var TreeActions, TreeStore, _load, code, div, recl, ref, span;
 
@@ -393,7 +391,6 @@ module.exports = function(queries, Child, load) {
 };
 
 
-
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
 var div, query, reactify, recl;
 
@@ -419,7 +416,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"./Reactify.coffee":11}],5:[function(require,module,exports){
 var div, recl, ref, textarea;
 
@@ -443,7 +439,6 @@ module.exports = recl({
 });
 
 
-
 },{}],6:[function(require,module,exports){
 var div, recl;
 
@@ -464,7 +459,6 @@ module.exports = {
     }
   })
 };
-
 
 
 },{"./CodeMirror.coffee":5,"./EmailComponent.coffee":7,"./KidsComponent.coffee":8,"./ListComponent.coffee":9,"./SearchComponent.coffee":12,"./TocComponent.coffee":13}],7:[function(require,module,exports){
@@ -547,7 +541,6 @@ module.exports = recl({
 });
 
 
-
 },{"./Reactify.coffee":11}],8:[function(require,module,exports){
 var a, div, hr, li, query, reactify, recl, ref, ul;
 
@@ -587,7 +580,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"./Reactify.coffee":11}],9:[function(require,module,exports){
 var a, clas, div, h1, li, query, reactify, recl, ref, ul;
 
@@ -622,16 +614,24 @@ module.exports = query({
     }, this.renderList());
   },
   renderList: function() {
-    var _keys, elem, href, i, item, k, len, parts, path, ref1, ref2, ref3, ref4, ref5, results, sorted, title, v;
+    var _date, _keys, date, elem, href, i, item, k, len, parts, path, preview, ref1, ref2, ref3, ref4, ref5, results, sorted, title, v;
     sorted = true;
     _keys = [];
-    ref1 = this.props.kids;
-    for (k in ref1) {
-      v = ref1[k];
-      if (((ref2 = v.meta) != null ? ref2.sort : void 0) == null) {
-        sorted = false;
+    if (!this.props.sortBy) {
+      ref1 = this.props.kids;
+      for (k in ref1) {
+        v = ref1[k];
+        if (((ref2 = v.meta) != null ? ref2.sort : void 0) == null) {
+          sorted = false;
+        }
+        _keys[Number((ref3 = v.meta) != null ? ref3.sort : void 0)] = k;
       }
-      _keys[Number((ref3 = v.meta) != null ? ref3.sort : void 0)] = k;
+    } else {
+      sorted = true;
+      _keys = _.keys(_.sortBy(_.clone(this.props.kids), function(kid) {
+        return Number(kid.meta.date.slice(1).replace(/\./g, ""));
+      }));
+      _keys.reverse();
     }
     if (sorted !== true) {
       _keys = _.keys(this.props.kids).sort();
@@ -662,13 +662,37 @@ module.exports = query({
           c: [item]
         };
       }
+      if (!this.props.titlesOnly) {
+        if (this.props.dataDates) {
+          _date = elem.meta.date;
+          if (!_date || _date.length === 0) {
+            _date = "";
+          }
+          date = {
+            gn: 'div',
+            ga: {
+              className: 'date'
+            },
+            c: [_date]
+          };
+          parts.push(date);
+        }
+      }
       parts.push(title);
       if (!this.props.titlesOnly) {
         if (this.props.dataPreview) {
-          if (this.props.dataType === 'post') {
+          if (this.props.dataType === 'post' && !elem.meta.preview) {
             parts.push.apply(parts, elem.snip.c.slice(0, 2));
           } else {
-            parts.push(elem.snip);
+            if (elem.meta.preview) {
+              preview = {
+                gn: 'p',
+                c: [elem.meta.preview]
+              };
+            } else {
+              preview = elem.snip;
+            }
+            parts.push(preview);
           }
         }
       }
@@ -688,7 +712,6 @@ module.exports = query({
     return results;
   }
 }));
-
 
 
 },{"./Async.coffee":3,"./Reactify.coffee":11,"classnames":16}],10:[function(require,module,exports){
@@ -729,7 +752,6 @@ module.exports = recl({
     }, ""));
   }
 });
-
 
 
 },{}],11:[function(require,module,exports){
@@ -797,7 +819,6 @@ module.exports = _.extend(reactify, {
   walk: walk,
   Virtual: Virtual
 });
-
 
 
 },{"./LoadComponent.coffee":10}],12:[function(require,module,exports){
@@ -938,7 +959,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"./Reactify.coffee":11}],13:[function(require,module,exports){
 var div, query, reactify, recl,
   slice = [].slice;
@@ -1067,7 +1087,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"./Reactify.coffee":11}],14:[function(require,module,exports){
 var Dispatcher;
 
@@ -1087,7 +1106,6 @@ module.exports = _.extend(new Dispatcher(), {
     });
   }
 });
-
 
 
 },{"flux":17}],15:[function(require,module,exports){
@@ -1236,19 +1254,20 @@ $(function() {
 });
 
 
-
 },{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./persistence/TreePersistence.coffee":20}],16:[function(require,module,exports){
 /*!
   Copyright (c) 2015 Jed Watson.
   Licensed under the MIT License (MIT), see
   http://jedwatson.github.io/classnames
 */
+/* global define */
 
 (function () {
 	'use strict';
 
-	function classNames () {
+	var hasOwn = {}.hasOwnProperty;
 
+	function classNames () {
 		var classes = '';
 
 		for (var i = 0; i < arguments.length; i++) {
@@ -1257,15 +1276,13 @@ $(function() {
 
 			var argType = typeof arg;
 
-			if ('string' === argType || 'number' === argType) {
+			if (argType === 'string' || argType === 'number') {
 				classes += ' ' + arg;
-
 			} else if (Array.isArray(arg)) {
 				classes += ' ' + classNames.apply(null, arg);
-
-			} else if ('object' === argType) {
+			} else if (argType === 'object') {
 				for (var key in arg) {
-					if (arg.hasOwnProperty(key) && arg[key]) {
+					if (hasOwn.call(arg, key) && arg[key]) {
 						classes += ' ' + key;
 					}
 				}
@@ -1277,15 +1294,14 @@ $(function() {
 
 	if (typeof module !== 'undefined' && module.exports) {
 		module.exports = classNames;
-	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd){
-		// AMD. Register as an anonymous module.
-		define(function () {
+	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
+		// register as 'classnames', consistent with npm package name
+		define('classnames', function () {
 			return classNames;
 		});
 	} else {
 		window.classNames = classNames;
 	}
-
 }());
 
 },{}],17:[function(require,module,exports){
@@ -1665,7 +1681,6 @@ module.exports = {
 };
 
 
-
 },{}],21:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, QUERIES, TreeStore, _curr, _data, _tree, clog;
 
@@ -1785,29 +1800,6 @@ TreeStore = _.extend(EventEmitter.prototype, {
     }
     if (data.kids && _.isEmpty(data.kids)) {
       old.EMPTY = true;
-      old.body = {
-        gn: 'div',
-        c: [
-          {
-            gn: 'h1',
-            ga: {
-              className: 'error'
-            },
-            c: ['Error: Empty path']
-          }, {
-            gn: 'div',
-            c: [
-              {
-                gn: 'pre',
-                c: [this.getCurr()]
-              }, {
-                gn: 'span',
-                c: ['is either empty or does not exist.']
-              }
-            ]
-          }
-        ]
-      };
     }
     return _data[path] = old;
   },
@@ -1909,7 +1901,6 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
 });
 
 module.exports = TreeStore;
-
 
 
 },{"../dispatcher/Dispatcher.coffee":14,"events":22}],22:[function(require,module,exports){

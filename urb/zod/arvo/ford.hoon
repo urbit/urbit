@@ -499,6 +499,19 @@
     ++  dash                                            ::  process cache
       |=  cof=cafe
       ^+  +>
+      ~?    |
+          :+  %dash  (lent (skim (~(tap in p.cof)) |=(a=calx ?=(%bake -.a))))
+          =.  q.cof  (~(dif by q.cof) jav.bay)
+          =+  num=10
+          %.  |=  a=(list calx) 
+              =+  len=(lent a)
+              =-  [len (scag num (turn a f)) ?:((gth len num) %etc ~)]
+              =+  dewe=|=(beam +<(s ?+(s s [@ %web *] t.t.s)))
+              f=|=(b=calx [-.b ?+(-.b ~ %bake [p.q.b (tope (dewe q.q.b))])])
+          %~  run  by
+          =<  `(jar term calx)`(~(rep by q.cof) .)
+          |=  [[* a=calx] b=(jar term calx)]
+          (~(add ja b) -.a a)
       %_(+> jav.bay q.cof)
     ::
     ++  diff                                            ::  diff
@@ -1866,7 +1879,6 @@
 ::
 ++  load                                                ::  highly forgiving
   |=  old=axle
-  ::=.  pol.old  (~(run by pol.old) |=(baby +<(jav ~)))
   ..^$(+>- old)
   ::=.  old  
   ::    ?.  ?=([%0 *] old)  old                           ::  remove at 1
