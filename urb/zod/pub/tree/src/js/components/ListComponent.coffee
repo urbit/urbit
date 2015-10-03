@@ -26,19 +26,20 @@ module.exports = query {
     # check if kids all have a sort meta tag
     sorted = true
     _keys = []
-    if not @props.sortBy
-      for k,v of @props.kids
+    for k,v of @props.kids
+      if @props.sortBy
+        if @props.sortBy is 'date'
+          if not v.meta?.date? then sorted = false
+          _k = Number v.meta.date.slice(1).replace /\./g,""
+          _keys[_k] = k
+      else
         if not v.meta?.sort? then sorted = false
         _keys[Number(v.meta?.sort)] = k
-    else
-      sorted = true
-      _keys = _.keys _.sortBy _.clone(@props.kids),(kid) -> 
-        Number kid.meta.date.slice(1).replace /\./g,""
-      _keys.reverse()
+    if @props.sortBy is 'date' then _keys.reverse()
     if sorted isnt true
       _keys = _.keys(@props.kids).sort()
     if @props.dataType is 'post' then _keys=_keys.reverse()
-    for item in _keys
+    for item in _.values _keys
       path = @props.path+"/"+item
       elem = @props.kids[item]
       href = window.tree.basepath path
