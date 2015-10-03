@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee":[function(require,module,exports){
 var TreeDispatcher, TreePersistence;
 
 TreeDispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -35,7 +35,8 @@ module.exports = {
 };
 
 
-},{"../dispatcher/Dispatcher.coffee":14,"../persistence/TreePersistence.coffee":20}],2:[function(require,module,exports){
+
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/dispatcher/Dispatcher.coffee","../persistence/TreePersistence.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/AnchorComponent.coffee":[function(require,module,exports){
 var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, query, reactify, recl, ref;
 
 clas = require('classnames');
@@ -288,7 +289,8 @@ module.exports = query({
 }));
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":11,"classnames":16}],3:[function(require,module,exports){
+
+},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/stores/TreeStore.coffee","./Async.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Async.coffee","./BodyComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/BodyComponent.coffee","./Reactify.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee","classnames":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/classnames/index.js"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Async.coffee":[function(require,module,exports){
 var TreeActions, TreeStore, _load, code, div, recl, ref, span;
 
 _load = require('./LoadComponent.coffee');
@@ -391,7 +393,8 @@ module.exports = function(queries, Child, load) {
 };
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
+
+},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/LoadComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/BodyComponent.coffee":[function(require,module,exports){
 var div, query, reactify, recl;
 
 query = require('./Async.coffee');
@@ -416,7 +419,8 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":11}],5:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/CodeMirror.coffee":[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -439,7 +443,8 @@ module.exports = recl({
 });
 
 
-},{}],6:[function(require,module,exports){
+
+},{}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Components.coffee":[function(require,module,exports){
 var div, recl;
 
 recl = React.createClass;
@@ -461,7 +466,8 @@ module.exports = {
 };
 
 
-},{"./CodeMirror.coffee":5,"./EmailComponent.coffee":7,"./KidsComponent.coffee":8,"./ListComponent.coffee":9,"./SearchComponent.coffee":12,"./TocComponent.coffee":13}],7:[function(require,module,exports){
+
+},{"./CodeMirror.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/CodeMirror.coffee","./EmailComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/EmailComponent.coffee","./KidsComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/KidsComponent.coffee","./ListComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/ListComponent.coffee","./SearchComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/SearchComponent.coffee","./TocComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/TocComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/EmailComponent.coffee":[function(require,module,exports){
 var button, div, input, p, reactify, recl, ref;
 
 reactify = require('./Reactify.coffee');
@@ -541,7 +547,8 @@ module.exports = recl({
 });
 
 
-},{"./Reactify.coffee":11}],8:[function(require,module,exports){
+
+},{"./Reactify.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/KidsComponent.coffee":[function(require,module,exports){
 var a, div, hr, li, query, reactify, recl, ref, ul;
 
 reactify = require('./Reactify.coffee');
@@ -580,7 +587,8 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":11}],9:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/ListComponent.coffee":[function(require,module,exports){
 var a, clas, div, h1, li, query, reactify, recl, ref, ul;
 
 clas = require('classnames');
@@ -614,23 +622,28 @@ module.exports = query({
     }, this.renderList());
   },
   renderList: function() {
-    var _date, _keys, date, elem, href, i, item, k, len, parts, path, preview, ref1, ref2, ref3, ref4, ref5, results, sorted, title, v;
+    var _date, _k, _keys, date, elem, href, i, item, k, len, parts, path, preview, ref1, ref2, ref3, ref4, ref5, ref6, ref7, results, sorted, title, v;
     sorted = true;
     _keys = [];
-    if (!this.props.sortBy) {
-      ref1 = this.props.kids;
-      for (k in ref1) {
-        v = ref1[k];
-        if (((ref2 = v.meta) != null ? ref2.sort : void 0) == null) {
+    ref1 = this.props.kids;
+    for (k in ref1) {
+      v = ref1[k];
+      if (this.props.sortBy) {
+        if (this.props.sortBy === 'date') {
+          if (((ref2 = v.meta) != null ? ref2.date : void 0) == null) {
+            sorted = false;
+          }
+          _k = Number(v.meta.date.slice(1).replace(/\./g, ""));
+          _keys[_k] = k;
+        }
+      } else {
+        if (((ref3 = v.meta) != null ? ref3.sort : void 0) == null) {
           sorted = false;
         }
-        _keys[Number((ref3 = v.meta) != null ? ref3.sort : void 0)] = k;
+        _keys[Number((ref4 = v.meta) != null ? ref4.sort : void 0)] = k;
       }
-    } else {
-      sorted = true;
-      _keys = _.keys(_.sortBy(_.clone(this.props.kids), function(kid) {
-        return Number(kid.meta.date.slice(1).replace(/\./g, ""));
-      }));
+    }
+    if (this.props.sortBy === 'date') {
       _keys.reverse();
     }
     if (sorted !== true) {
@@ -639,15 +652,16 @@ module.exports = query({
     if (this.props.dataType === 'post') {
       _keys = _keys.reverse();
     }
+    ref5 = _.values(_keys);
     results = [];
-    for (i = 0, len = _keys.length; i < len; i++) {
-      item = _keys[i];
+    for (i = 0, len = ref5.length; i < len; i++) {
+      item = ref5[i];
       path = this.props.path + "/" + item;
       elem = this.props.kids[item];
       href = window.tree.basepath(path);
       parts = [];
       title = null;
-      if ((ref4 = elem.meta) != null ? ref4.title : void 0) {
+      if ((ref6 = elem.meta) != null ? ref6.title : void 0) {
         title = {
           gn: 'h1',
           c: [elem.meta.title]
@@ -698,7 +712,7 @@ module.exports = query({
       }
       results.push(li({
         key: item,
-        className: (ref5 = this.props.dataType) != null ? ref5 : ""
+        className: (ref7 = this.props.dataType) != null ? ref7 : ""
       }, a({
         href: href,
         className: clas({
@@ -714,7 +728,8 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":11,"classnames":16}],10:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee","classnames":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/classnames/index.js"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/LoadComponent.coffee":[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -754,7 +769,8 @@ module.exports = recl({
 });
 
 
-},{}],11:[function(require,module,exports){
+
+},{}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee":[function(require,module,exports){
 var Virtual, div, load, reactify, recl, ref, rele, span, walk;
 
 recl = React.createClass;
@@ -821,7 +837,8 @@ module.exports = _.extend(reactify, {
 });
 
 
-},{"./LoadComponent.coffee":10}],12:[function(require,module,exports){
+
+},{"./LoadComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/LoadComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/SearchComponent.coffee":[function(require,module,exports){
 var a, div, input, query, reactify, recl, ref,
   slice = [].slice;
 
@@ -959,7 +976,8 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":11}],13:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/TocComponent.coffee":[function(require,module,exports){
 var div, query, reactify, recl,
   slice = [].slice;
 
@@ -1087,7 +1105,8 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":11}],14:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -1108,7 +1127,8 @@ module.exports = _.extend(new Dispatcher(), {
 });
 
 
-},{"flux":17}],15:[function(require,module,exports){
+
+},{"flux":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/index.js"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/main.coffee":[function(require,module,exports){
 var rend;
 
 rend = React.render;
@@ -1254,7 +1274,8 @@ $(function() {
 });
 
 
-},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./persistence/TreePersistence.coffee":20}],16:[function(require,module,exports){
+
+},{"./actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee","./components/AnchorComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/AnchorComponent.coffee","./components/BodyComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/BodyComponent.coffee","./components/Components.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Components.coffee","./persistence/TreePersistence.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/classnames/index.js":[function(require,module,exports){
 /*!
   Copyright (c) 2015 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -1304,7 +1325,7 @@ $(function() {
 	}
 }());
 
-},{}],17:[function(require,module,exports){
+},{}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/index.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -1316,7 +1337,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":18}],18:[function(require,module,exports){
+},{"./lib/Dispatcher":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js":[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1568,7 +1589,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":19}],19:[function(require,module,exports){
+},{"./invariant":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/lib/invariant.js"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/lib/invariant.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1623,7 +1644,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],20:[function(require,module,exports){
+},{}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/persistence/TreePersistence.coffee":[function(require,module,exports){
 var dedup;
 
 dedup = {};
@@ -1681,7 +1702,8 @@ module.exports = {
 };
 
 
-},{}],21:[function(require,module,exports){
+
+},{}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/stores/TreeStore.coffee":[function(require,module,exports){
 var EventEmitter, MessageDispatcher, QUERIES, TreeStore, _curr, _data, _tree, clog;
 
 EventEmitter = require('events').EventEmitter;
@@ -1903,7 +1925,8 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
 module.exports = TreeStore;
 
 
-},{"../dispatcher/Dispatcher.coffee":14,"events":22}],22:[function(require,module,exports){
+
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js"}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1963,8 +1986,10 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
+      } else {
+        throw TypeError('Uncaught, unspecified "error" event.');
       }
-      throw TypeError('Uncaught, unspecified "error" event.');
+      return false;
     }
   }
 
@@ -2206,4 +2231,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[15]);
+},{}]},{},["/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/main.coffee"]);
