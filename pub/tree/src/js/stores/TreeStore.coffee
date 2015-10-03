@@ -59,14 +59,15 @@ TreeStore = _.extend EventEmitter.prototype, {
       
     if data.kids && _.isEmpty data.kids
       old.EMPTY = true
-      old.body =
-        gn: 'div'
-        c: [ {gn:'h1',  ga:{className:'error'}, c:['Error: Empty path']}
-             {gn:'div', c:[
-               {gn:'pre',  c:[@getCurr()]}
-               {gn:'span', c:['is either empty or does not exist.']}
-               # {gn:'list'}  XX handle empty snip
-           ] }]
+      #  XX why here?
+      # old.body =
+      #   gn: 'div'
+      #   c: [ {gn:'h1',  ga:{className:'error'}, c:['Error: Empty path']}
+      #        {gn:'div', c:[
+      #          {gn:'pre',  c:[@getCurr()]}
+      #          {gn:'span', c:['is either empty or does not exist.']}
+      #          # {gn:'list'}  XX handle empty snip
+      #      ] }]
         
     _data[path] = old
 
