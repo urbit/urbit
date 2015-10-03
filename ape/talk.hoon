@@ -100,7 +100,7 @@
           [%what p=$|(char (set partner))]              ::  show bound glyph
           [%bind p=char q=(unit (set partner))]         ::
           [%join p=(set partner)]                       ::  
-          [%say p=speech]                               ::
+          [%say p=(list speech)]                        ::
           [%eval p=cord q=twig]                         ::
           [%invite p=span q=(list partner)]             ::  whitelist add
           [%banish p=span q=(list partner)]             ::  blacklist add
@@ -202,11 +202,17 @@
       ++  message
         ;~  pose
           ;~(plug (cold %eval hax) expr)
-          :(stag %say %url aurf:urlp)
-          :(stag %say %lin | ;~(pfix pat (cook crip (plus prn))))
-          :(stag %say %lin & ;~(less sem (cook crip (plus prn))))
+        ::
+          %+  stag  %say
+          %+  most  (jest '•')
+          ;~  pose
+            (stag %url aurf:urlp)
+            :(stag %lin | ;~(pfix pat text))
+            :(stag %lin & ;~(less sem text))
+          ==
         ==
       ::
+      ++  text  (cook crip (star (shim ' ' '~')))       ::  bullets separating
       ++  glyph  (mask "/\\\{(<!?{(zing glyphs)}")      ::  station postfix
       ++  work
         %+  knee  *^work  |.  ~+
@@ -625,7 +631,7 @@
     ++  sh-note                                         ::  shell message
       |=  txt=tape
       ^+  +>
-      (sh-fact %txt (runt [16 '-'] `tape`['|' ' ' (scag 62 txt)]))
+      (sh-fact %txt (runt [14 '-'] `tape`['|' ' ' (scag 64 txt)]))
     ::
     ++  sh-spaz                                         ::  print status
       |=  saz=status
@@ -731,36 +737,43 @@
     ++  sh-sane-chat                                    ::  sanitize chatter
       |=  buf=(list ,@c)
       ^-  (list sole-edit)
-      =+  :-  inx=0
-          ^=  fix
-          |=  [inx=@ud cha=@t lit=(list sole-edit)]
-          ^+  lit
-          [[%mor [%del inx] [%ins inx `@c`cha] ~] lit]
-      |-  ^-  (list sole-edit)
-      ?:  =(62 inx)
-        |-  ^-  (list sole-edit)
-        ?~(buf ~ [[%del 62] $(buf t.buf)])
-      ?~  buf  ~
-      =+  lit=$(inx +(inx), buf t.buf)
-      ?:  |((lth i.buf 32) (gth i.buf 126))
-        (fix inx '?' lit)
-      ?:  &((gte i.buf 'A') (lte i.buf 'Z'))
-        (fix inx (add 32 i.buf) lit)
-      ::  ?:  &(=('/' i.buf) ?=([47 *] t.buf))
-      ::  (fix inx '\\' lit)
-      lit
+      =+  [inx=0 sap=0 con=0]
+      |^  run
+      ++  fix  |=(cha=@ [%mor [%del inx] [%ins inx `@c`cha] ~])
+      ++  run  ^-  (list sole-edit)
+        ?~  buf  ~
+        ?:  =(i.buf (turf '•'))
+          run(con 0, inx +(inx), buf t.buf) 
+        ?:  =(64 con)
+          =+  dif=(sub inx sap)
+          ?:  (lth dif 64)
+            [(fix(inx sap) (turf '•')) run(con dif)]
+          [[%ins inx (turf '•')] run(con 0, inx +(inx))]
+        ?:  =(i.buf ' ')
+          run(sap inx, inx +(inx), con +(con), buf t.buf)
+        =+  lit=run(inx +(inx), con +(con), buf t.buf)
+        ?:  |((lth i.buf 32) (gth i.buf 126))
+          [(fix '?') lit]
+        ?:  &((gte i.buf 'A') (lte i.buf 'Z'))
+          [(fix (add 32 i.buf)) lit]
+        lit
+      --
     ::
     ++  sh-sane                                         ::  sanitize input
       |=  [inv=sole-edit buf=(list ,@c)]
       ^-  (list sole-edit)
       =+  res=(rose (tufa buf) sh-scad)
-      ?+    res    ~
-          [%| @]
-        [inv ~]
-          [%& ~ [%say ^]]
-        (sh-sane-chat buf)
-          [%& ~ [%target * ~ %say ^]]
-        (sh-sane-chat buf)
+      ?:  ?=(| -.res)  [inv ~]
+      =+  wok=`(unit work)`p.res
+      |-  ^-  (list sole-edit)
+      ?~  wok  ~
+      ?+  -.u.wok  ~
+        %target  $(wok q.u.wok)
+        %say  |-  ::  XX per line
+              ?~  p.u.wok  ~
+              ?:  ?=(%lin -.i.p.u.wok)
+                (sh-sane-chat buf)
+              $(p.u.wok t.p.u.wok)
       ==
     ::
     ++  sh-slug                                         ::  edit to sanity
@@ -915,7 +928,7 @@
             %^  sh-tell  %design  nom
             :-  ~
             :+  *(set partner)
-              (end 3 62 txt)
+              (end 3 64 txt)
             [por ~]
         (join [[%& our.hid nom] ~ ~])
       ::
@@ -956,17 +969,18 @@
       ::
       ++  eval                                          ::  run
         |=  [txt=cord exe=twig]
-        %^  say  %fat
-          tank/[(sell (slap (slop sh-twig-head seed) exe))]~
-        [%exp txt]
+        =+  tan=(sell (slap (slop sh-twig-head seed) exe))
+        (say [%fat tank/[tan]~ exp/txt] ~)
       ::
       ++  say                                           ::  publish
-        |=  sep=speech
+        |=  sep=(list speech)
         ^+  ..sh-work
+        ?~  sep    ..sh-work
         =^  sir  ..sh-work  sh-uniq
-        %=    ..sh-work
+        %_    $
+            sep  t.sep
             coz  :_  coz
-          [%publish [[sir sh-whom [now.hid ~ sep]] ~]]
+          [%publish [[sir sh-whom [now.hid ~ i.sep]] ~]]
         ==
       --
     ::
@@ -1233,7 +1247,7 @@
     %_    tip
         q.r.r
       %-  crip
-      %+  scag  62
+      %+  scag  64
       %-  tufa
       %+  turn  (tuba (trip q.r.r.tip))
       |=  a=@c
@@ -1736,20 +1750,18 @@
     =+  oug==(who our.hid)
     =+  txt=(tr-text oug)
     ?:  =(~ txt)  ""
-    =+  eck=?:((~(has by aud) [%& our.hid man]) '*' '-')
-    =+  heb=?:(oug '>' '<')
     =+  ^=  baw
         ::  ?:  oug 
         ::  ~(te-whom te man tr-pals)
         (~(sn-curt sn man [who (main who)]) |)
-    [heb eck (weld baw txt)]
+    (weld baw txt)
   ::
   ++  tr-pals
     ^-  (set partner)
     %-  ~(gas in *(set partner))
     (turn (~(tap by aud)) |=([a=partner *] a))
   ::
-  ++  trim
+  ++  chow
     |=  [len=@u txt=tape]
     ?:  (gth len (lent txt))  txt
     (weld (scag (dec len) txt) "…")
@@ -1760,8 +1772,8 @@
     ?+    -.sep  ~&(tr-lost/sep "")
         %fat
       =+  rem=$(sep q.sep)
-      ?:  (gth (lent rem) 60)  (trim 62 rem)
-      =-  "{rem}  {(trim (sub 60 (lent rem)) -)}"
+      ?:  (gth (lent rem) 62)  (chow 64 rem)
+      =-  "{rem}  {(chow (sub 62 (lent rem)) -)}"
       ?+  -.p.sep  "..."
         %tank  ~(ram re %rose [" " `~] +.p.sep)
       ==
@@ -1777,10 +1789,10 @@
       (weld " " txt)
     ::
         %app
-      (trim 62 "[{(trip p.sep)}]: {(trip q.sep)}")
+      (chow 64 "[{(trip p.sep)}]: {(trip q.sep)}")
     ::
         %tax
-      (trim 62 " {(rend-work-duty p.sep)}")
+      (chow 64 " {(rend-work-duty p.sep)}")
     ==
   -- 
 ::
