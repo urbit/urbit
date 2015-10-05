@@ -192,13 +192,16 @@ to unmount from time to time.
 
 The full syntax is as follows (from `dojo`):
 
-    |mount <clay-path> <mount-name>
+    |mount <path-in-clay> [<mount-name>]
+
+The `<mount-name>` is optional and defaults to the last part of 
+the `<path-in-clay>`.
 
     |unmount <mount-name>
 
 or:
 
-    |unmount <clay-path>
+    |unmount <path-in-clay>
 
 Sysadmin
 --------
