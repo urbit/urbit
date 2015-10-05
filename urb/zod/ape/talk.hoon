@@ -39,7 +39,7 @@
           general=(set bone)                            ::  meta-subscribe
           outbox=(pair ,@ud (map ,@ud thought))         ::  urbit outbox
           folks=(map ship human)                        ::  human identities
-          shells=(map bone shell)                        ::  interaction state
+          shells=(map bone shell)                       ::  interaction state
           log=(map span ,@ud)                           ::  logged to clay
           nik=(map (set partner) char)                  ::
           nak=(jug char (set partner))                  ::
@@ -1377,7 +1377,6 @@
         %cabal  (pa-cabal cuz +.rad)
         %group  (pa-remind [%& cuz] +.rad)
         %grams  =.  q.+.rad
-                  ~&  [p.+.rad (lent q.+.rad)]
                   ?.  ?=(%pawn (clan our.hid))   q.+.rad 
                   ?.  (gth (lent q.+.rad) 200)   q.+.rad
                   (slag (sub (lent q.+.rad) 200) q.+.rad)
