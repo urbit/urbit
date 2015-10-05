@@ -37,12 +37,17 @@ module.exports = query {
       elem = @props.kids[item]
       href = window.tree.basepath path
       parts = []
+      title = null
       if elem.meta?.title
         title = 
           gn: 'h1'
           c: [elem.meta.title]
-      else title = elem.head
-      title ||= (h1 {},item)
+      if elem.head.c.length > 0
+        title = elem.head
+      if not title
+        title =
+          gn: 'h1'
+          c: [item]
       parts.push title
       unless @props.titlesOnly        # redundant? this seems familiar
         if @props.dataPreview 
