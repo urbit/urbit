@@ -184,8 +184,8 @@ a digraph - a sequence of two ASCII glyphs.  If you know C, you
 know digraphs like `->` and `?:` and are used to reading them as
 single characters.
 
-In Hoon you can *say* them as words: "dasran" and "wattis"
-respectively.  In a metalhead language, if we had to say 
+In Hoon you can *say* them as words: "dasran" or "dart" for `->`,
+and "wutcol" for `?:`. In a metalhead language, if we had to say 
 "minus greater-than" and "question-colon", we'd just die.
 
 Most twig stems are made from runes, by concatenating the glyph
