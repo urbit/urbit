@@ -39,7 +39,7 @@
           general=(set bone)                            ::  meta-subscribe
           outbox=(pair ,@ud (map ,@ud thought))         ::  urbit outbox
           folks=(map ship human)                        ::  human identities
-          shells=(map bone shell)                       ::  interaction state
+          shells=(map bone shell)                        ::  interaction state
           log=(map span ,@ud)                           ::  logged to clay
           nik=(map (set partner) char)                  ::
           nak=(jug char (set partner))                  ::
@@ -743,6 +743,7 @@
       ++  run  ^-  (list sole-edit)
         ?~  buf  ~
         ?:  =(i.buf (turf '•'))
+          ?~  con  [[%del inx] run(buf t.buf)]
           run(con 0, inx +(inx), buf t.buf) 
         ?:  =(64 con)
           =+  dif=(sub inx sap)
@@ -837,8 +838,9 @@
       ++  activate                                      ::  from %number
         |=  gam=telegram
         ^+  ..sh-work
-        ~&  [%activate gam]
-        sh-prod(active.she `~(tr-pals tr man.she gam))
+        =+  tay=~(. tr man.she gam)
+        =.  ..sh-work  (sh-fact %tan tr-tank:tay ~)
+        sh-prod(active.she `tr-pals:tay)
       ::
       ++  help  |=(~ (sh-fact %mor talk-doc))           ::  %help
       ++  nick
@@ -959,6 +961,7 @@
             (add num (mul dog (div count.roy dog)))
         ?:  (gte num count.roy)
           (sh-lame "{(scow %ud num)}: no such telegram")
+        ~&  number/num
         (activate (snag (sub count.roy +(num)) grams.roy))
       ::
       ++  probe                                         ::  inquire
@@ -1752,14 +1755,16 @@
           sep=speech
       ==
   ++  tr-line  ^-  tape                                 ::  one-line print
-    =+  oug==(who our.hid)
-    =+  txt=(tr-text oug)
+    =+  txt=(tr-text =(who our.hid))
     ?:  =(~ txt)  ""
     =+  ^=  baw
         ::  ?:  oug 
         ::  ~(te-whom te man tr-pals)
         (~(sn-curt sn man [who (main who)]) |)
     (weld baw txt)
+  ::
+  ++  tr-tank  ^-  tank
+    >+<<  :: XX
   ::
   ++  tr-pals
     ^-  (set partner)
