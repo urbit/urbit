@@ -808,7 +808,7 @@
       %_(+> coz [cod coz])
     ::
     ++  sh-twig-head  ^-  vase                          ::  eval data
-      :(slop !>(`our=@p`our.hid) !>(`now=@da`now.hid) !>(`eny=@uvI`eny.hid))
+      !>(`[our=@p now=@da eny=@uvI]`[our.hid now.hid (shas %eny eny.hid)])
     ::
     ++  sh-work                                         ::  do work
       |=  job=work
@@ -1373,7 +1373,12 @@
       ?+  -.rad  ~|([%talk-odd-friend rad] !!)
         %cabal  (pa-cabal cuz +.rad)
         %group  (pa-remind [%& cuz] +.rad)
-        %grams  (pa-lesson q.+.rad)
+        %grams  =.  q.+.rad
+                  ~&  [p.+.rad (lent q.+.rad)]
+                  ?.  ?=(%pawn (clan our.hid))   q.+.rad 
+                  ?.  (gth (lent q.+.rad) 200)   q.+.rad
+                  (slag (sub (lent q.+.rad) 200) q.+.rad)
+                (pa-lesson q.+.rad)
       ==
     ::
     ++  pa-quit                                         ::  stop subscription
