@@ -1,9 +1,13 @@
+---
+sort: 3
+---
+
 <div class="short">
 
-References
+Interpreter
 ==========
 
-These references cover terminology and our interpreter, `vere`.
+The urbit interpreter and C code.
 
 </div>
 

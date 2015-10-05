@@ -646,15 +646,22 @@ module.exports = query({
       elem = this.props.kids[item];
       href = window.tree.basepath(path);
       parts = [];
+      title = null;
       if ((ref4 = elem.meta) != null ? ref4.title : void 0) {
         title = {
           gn: 'h1',
           c: [elem.meta.title]
         };
-      } else {
+      }
+      if (elem.head.c.length > 0) {
         title = elem.head;
       }
-      title || (title = h1({}, item));
+      if (!title) {
+        title = {
+          gn: 'h1',
+          c: [item]
+        };
+      }
       parts.push(title);
       if (!this.props.titlesOnly) {
         if (this.props.dataPreview) {

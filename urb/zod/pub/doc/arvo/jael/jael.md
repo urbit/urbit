@@ -1,5 +1,0 @@
-Jael: Reference
-===============
-
-Jael: Commentary
-================
