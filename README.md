@@ -3,13 +3,12 @@ urbit
 
 Urbit is a new computing environment designed from scratch.
 
-At present urbit is under heavy development.  It's not useful for
-any external purpose.  Documentation is completely inadequate.
-Anyone can use the interpreter, of course, but the network is
-invitation-only.
+At present urbit is under heavy development. It's not useful for any
+external purpose. Documentation is completely inadequate. Anyone can use
+the interpreter, of course, but the network is invitation-only.
 
-If you're interested in keeping in touch or following the project
-you can:
+If you're interested in keeping in touch or following the project you
+can:
 
 -   Enter your email address at [urbit.org](http://urbit.org).
 -   Subscribe to the
@@ -25,7 +24,9 @@ Packages
 
 #### Ubuntu or Debian
 
-Third-party package files are maintained at https://github.com/yebyen/urbit-deb. Urbit is only supported on Jessie onward.
+Third-party package files are maintained at
+https://github.com/yebyen/urbit-deb. Urbit is only supported on Jessie
+onward.
 
 #### OS X - Homebrew
 
@@ -33,6 +34,7 @@ Third-party package files are maintained at https://github.com/yebyen/urbit-deb.
 
 Dependencies
 ------------
+
 urbit depends on:
 
     gcc
@@ -52,8 +54,8 @@ urbit depends on:
 
     sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++ ragel cmake re2c
 
-*note: http requests are not supported on debian jessie
-due to an ssl issue*
+*note: http requests are not supported on debian jessie due to an ssl
+issue*
 
 #### Fedora
 
@@ -97,26 +99,28 @@ Just run `make`:
 (On FreeBSD, use `gmake` instead.)
 
 Run (with a network invitation)
----
+-------------------------------
 
 If you have a planet named `~fintud-macrep` and a ticket
-`~fortyv-tombyt-tabsen-sonres`, run 
+`~fortyv-tombyt-tabsen-sonres`, run
 
     bin/urbit -w fintud-macrep -t fortyv-tombyt-tabsen-sonres
 
 Your pier (all Urbit state, log and checkpoint) will be in
-`./fintud-macrep`.  To restart Urbit:
+`./fintud-macrep`.
+
+To start Urbit again omit the `-w` and `-t` flags:
 
     bin/urbit fintud-macrep
 
 Run (without a network invitation)
----
-
-Run
+----------------------------------
 
     bin/urbit -c mypier
 
-Urbit will create a comet in `mypier`.  To restart:
+Urbit will create a comet in `mypier`.
+
+To start Urbit again omit the `-c` flag:
 
     bin/urbit mypier
 
@@ -140,7 +144,8 @@ turned it off.
 Talk
 ----
 
-If you're on the network, you can use its most basic application, `talk`.
+If you're on the network, you can use its most basic application,
+`talk`.
 
 If `talk` is not running, start it with `*talk` from the task manager.
 
@@ -169,12 +174,23 @@ for a private message.
 Filesystem Sync
 ---------------
 
-Our filesystem, `%clay`, does not automatically sync to unix. If you want
-to get files in and out of urbit, you'll need to setup a mount point.
+The Urbit filesystem, `%clay` doesn't automatically sync to unix. If
+you'd like to browse the contents of your Urbit from unix you'll need to
+use `|mount`.
+
+`|mount` creates a mirror in unix of files from `%clay` that is always
+watching for changes. To sync your entire `home/` desk run:
+
+    |mount %
+
+you should see a directory called `home/` get created inside your pier.
+When you change files in this directory the changes will get synced into
+your urbit.
+
 Since each mount point is always watching for changes you may also want
 to unmount from time to time.
 
-The syntax is as follows (from `dojo`):
+The full syntax is as follows (from `dojo`):
 
     |mount <clay-path> <mount-name>
 
@@ -209,7 +225,8 @@ pier. Your original ticket will still work.
 Contributing
 ------------
 
-The first step in contributing to urbit is to come and join us on `:talk`. 
+The first step in contributing to urbit is to come and join us on
+`:talk`.
 
-For more detailed instructions check out 
+For more detailed instructions check out
 [`contributing.md`](https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md),.
