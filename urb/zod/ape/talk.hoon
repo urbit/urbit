@@ -1279,7 +1279,6 @@
         %cabal  (pa-cabal cuz +.rad)
         %group  (pa-remind [%& cuz] +.rad)
         %grams  =.  q.+.rad
-                  ~&  [p.+.rad (lent q.+.rad)]
                   ?.  ?=(%pawn (clan our.hid))   q.+.rad 
                   ?.  (gth (lent q.+.rad) 200)   q.+.rad
                   (slag (sub (lent q.+.rad) 200) q.+.rad)
