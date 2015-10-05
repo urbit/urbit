@@ -10,36 +10,52 @@ Dropbox or a reactive git.  If you `|mount` the desks, you can
 have synchronization between directories on your moon and planet's 
 systems.
 
-Creating your moon name
------------------------
-
-First, for creating your moon you need to come up with a moon name.
-For this you need a number less than 2^32 (since every planet has 
-2^32 moons) in it's phonemic representation or `@p`:
-
-```
-> `@p`0x12.3456
-~hobdyl-pontyr
-```
-
-Take your partial name above and append it with your planet name to
-get your full moon name, in this case `~hobdyl-pontyr-matfeb-sablud` for my planet `~matfeb-sablud`.
-
 Creating your moon
 ------------------
 
-On your planet:
+Each planet can issue 2^32 moons. Moon names look like two planet
+names glued together and always end with the signing planet name. So
+for the planet `~matfeb-sablud` one could generate a moon `~talsur-
+todres-matfeb-sablud`.
+
+### On your planet
+
+All of your moons will sync from your `%kids` desk. Your planet
+should come with one by default, but let's check to see:
 
 ```
-> |sync %kids our %base :: only have to do this once
-> +ticket ~hobdyl-pontyr-matfeb-sablud  :: has to be done for every moon
-~some-ticket
+> +ls /=kids=
 ```
 
-On your pc/laptop:
+You should get a list of directories. If you just get `~` you can
+set one up with the following command:
 
 ```
-> bin/urbit -w hobdyl-pontyr-matfeb-sablud -t some-ticket
+>|sync %kids our %base
+```
+
+To generate a random moon you can run the following in the `dojo`:
+
+``` 
++ticket =+(`@p`(cat 5 our (mod eny (pow 2 32))) ~&(- -)) 
+```
+
+The output will print your moon name above the line with the
+command. It will look something like this:
+
+``` 
+~some-moon-some-planet 
+> +ticket =+(`@p`(cat 5 our (mod eny (pow 2 32))) ~&(- -))
+~some-ticket 
+```
+
+You'll use both of these values to create your moon in the next
+step.
+
+### On your PC/laptop
+
+```
+> bin/urbit -w some-moon-some-planet -t some-ticket
 ```
 
 Wait for it to boot up and there you have it.  You've created your
