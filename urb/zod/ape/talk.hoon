@@ -208,7 +208,7 @@
           ;~  pose
             (stag %url aurf:urlp)
             :(stag %lin | ;~(pfix pat text))
-            :(stag %lin & ;~(less sem text))
+            :(stag %lin & ;~(less sem hax text))
           ==
         ==
       ::
