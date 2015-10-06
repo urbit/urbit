@@ -292,6 +292,8 @@
           ?~  active.she
             [['(' ')'] passive.she]
           [['[' ']'] u.active.she]
+      =+  cha=(~(get by nik) q.rew)
+      ?^  cha  ~[u.cha ' ']
       =+  por=~(te-prom te man.she q.rew)
       (weld `tape`[p.p.rew por] `tape`[q.p.rew ' ' ~])
     ::
