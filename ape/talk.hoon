@@ -841,7 +841,7 @@
         |=  gam=telegram
         ^+  ..sh-work
         =+  tay=~(. tr man.she gam)
-        =.  ..sh-work  (sh-fact %tan tr-tank:tay ~)
+        =.  ..sh-work  (sh-fact %tan tr-tang:tay)
         sh-prod(active.she `tr-pals:tay)
       ::
       ++  help  |=(~ (sh-fact %mor talk-doc))           ::  %help
@@ -961,11 +961,11 @@
         ?@  num
           ?:  (gte num count.roy)
             (sh-lame "{(scow %s (new:si | +(num)))}: no such telegram")
-          =.  ..sh-fact  (sh-fact %txt "@ {(scow %s (new:si | +(num)))}")
+          =.  ..sh-fact  (sh-fact %txt "? {(scow %s (new:si | +(num)))}")
           (activate (snag num grams.roy))
         ?.  (gth q.num count.roy)
           =+  msg=(deli count.roy num)
-          =.  ..sh-fact  (sh-fact %txt "@ {(scow %ud msg)}")
+          =.  ..sh-fact  (sh-fact %txt "? {(scow %ud msg)}")
           (activate (snag (sub count.roy +(msg)) grams.roy))
         (sh-lame "…{(reap p.num '0')}{(scow %ud q.num)}: no such telegram")
       ::
@@ -983,8 +983,9 @@
       ::
       ++  eval                                          ::  run
         |=  [txt=cord exe=twig]
-        =+  tan=(sell (slap (slop sh-twig-head seed) exe))
-        (say [%fat tank/[tan]~ exp/txt] ~)
+        =>  |.([(sell (slap (slop sh-twig-head seed) exe))]~)
+        =+  tan=p:(mule .)
+        (say [%fat tank/tan exp/txt] ~)
       ::
       ++  say                                           ::  publish
         |=  sep=(list speech)
@@ -1690,7 +1691,9 @@
     ^-  tape
     ?-    -.one
         %&  
-      ?~  moy 
+      ?~  moy
+        =+  cha=(~(get by nik) one ~ ~)
+        =-  ?~(cha - "'{u.cha ~}' {-}")
         ~(sn-phat sn man p.one)
       (~(sn-curt sn man p.one) u.moy)
     ::
@@ -1761,7 +1764,7 @@
           sen=serial
           aud=audience
           wen=@da
-          bou=(set flavor)
+          bou=bouquet
           sep=speech
       ==
   ++  tr-line  ^-  tape                                 ::  one-line print
@@ -1773,8 +1776,35 @@
         (~(sn-curt sn man [who (main who)]) |)
     (weld baw txt)
   ::
-  ++  tr-tank  ^-  tank
-    >+<<  :: XX
+  ++  tr-tang  ^-  tang
+    %+  welp  tr-sep-tang
+    =+  hed=leaf/"{(scow %uv sen)} at {(scow %da wen)}"
+    =+  =<  paz=(turn (~(tap by aud)) .)
+        |=([a=partner *] leaf/~(ta-full ta man a))
+    =+  bok=(turn (sort (~(tap in bou)) aor) smyt)
+    [%rose [" " ~ ~] [hed >who< [%rose [", " "to " ~] paz] bok]]~
+  ::
+  ++  tr-sep-tang
+    |-  ^-  tang
+    =<  ?+(. . [@ *] [.]~)  ^-  ?(tank tang)            ::  wrap single tanks
+    ?+  -.sep  [>sep<]~
+      %exp  leaf/"# {(trip p.sep)}"
+      %lin  leaf/"{?:(p.sep "" "@ ")}{(trip q.sep)}"
+      %non  ~
+      %app  rose/[": " ~ ~]^~[leaf/"[{(trip p.sep)}]" leaf/(trip q.sep)]
+      %tax  leaf/(rend-work-duty p.sep)
+      %url  leaf/"/ {(earf p.sep)}"
+      %mor  ?~(p.sep ~ (weld $(p.sep t.p.sep) $(sep i.p.sep)))
+      %fat  (welp (tr-rend-tors p.sep) $(sep q.sep))
+    ==
+  ::
+  ++  tr-rend-tors
+    |=  a=torso  ^-  tang
+    ?-  -.a
+      %name  (welp $(a q.a) leaf/"={(trip p.a)}" ~)
+      %tank  +.a
+      %text  (turn (flop +.a) |=(b=cord leaf/(trip b)))
+    ==
   ::
   ++  tr-pals
     ^-  (set partner)
