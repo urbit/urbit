@@ -97,6 +97,7 @@
     ++  work                                            ::  interface action
       $%  [%number p=$|(@ud [@u @ud])]                  ::  relative/absolute
           [%help ~]                                     ::  print usage info
+          [%who p=?((set partner) char)]                ::  presence
           [%what p=$|(char (set partner))]              ::  show bound glyph
           [%bind p=char q=(unit (set partner))]         ::
           [%join p=(set partner)]                       ::  
@@ -225,8 +226,16 @@
             qut
           ==
         ::
+          ;~  plug  (perk %who ~)
+            ;~  pose
+              ;~(pfix ace parz)
+              ;~(pfix ace glyph)
+              (easy ~)
+            ==
+          ==
+        ::
+          ;~(plug (perk %bind ~) ;~(pfix ace glyph) (punt ;~(pfix ace parz)))
           ;~((glue ace) (perk %join ~) parz)
-          ;~((glue ace) (perk %bind ~) glyph (punt parz))
           ;~((glue ace) (perk %what ~) ;~(pose parz glyph))
         ::
           ;~(plug (perk %help ~) (easy ~))
@@ -824,6 +833,7 @@
           %number  (number +.job)
           %join    (join +.job)
           %eval    (eval +.job)
+          %who     (who +.job)
           %what    (what +.job)
           %bind    (bind +.job)
           %invite  (invite +.job)
@@ -891,6 +901,22 @@
         =<  (sh-fact %mor (turn pan .))
         |=(a=(set partner) [%txt <a>]) ::  XX ~(te-whom te man.she a)
       ::
+      ++  who                                          ::  %who
+        |=  lix=?((set partner) char)  ^+  ..sh-work
+        =<  ?~(lix (. lix) ?^(lix (. lix) (fetch-nik lix .)))
+        |=  pan=(set partner)
+        =<  (sh-fact %mor (murn (sort (~(tap by q.guests.she)) aor) .))
+        |=  [pon=partner alt=atlas]  ^-  (unit sole-effect)
+        ?.  |(=(~ pan) (~(has in pan) pon))  ~
+        =-  `[%tan rose/[", " `~]^- leaf/~(ta-full ta man.she pon) ~]
+        =<  (murn (sort (~(tap by alt)) aor) .)
+        |=  [a=ship b=presence c=human]  ^-  (unit tank) :: XX names
+        ?-  b
+          %gone  ~
+          %hear  `>a<
+          %talk  `>a<      ::  XX difference
+        ==
+      :: 
       ++  bind                                          ::  %bind
         |=  [cha=char pan=(unit (set partner))]  ^+  ..sh-work
         ~&  bind/[cha pan nik nak]
@@ -939,18 +965,22 @@
       ++  target                                        ::  %target
         |=  [lix=?((set partner) char) woe=(unit ^work)]
         =-  ?~(woe end work(job u.woe, ..sh-pact end))
-        ^-  end=sh-pact
-        ?~  lix  (sh-pact lix)
-        ?^  lix  (sh-pact lix)
-        =+  lax=(~(get ju nak) lix)
-        ?:  =(~ lax)  (sh-lame "unknown {<lix>}")
-        ?:  ?=([* ~ ~] lax)  (sh-pact n.lax)
-        |-  ^-  sh-pact
+        ^-  end=_..sh-work
+        ?~  lix  (sh-pact lix) 
+        ?^  lix  (sh-pact lix) 
+        (fetch-nik lix sh-pact)
+      ::
+      ++  fetch-nik
+        |=  [cha=char sh-fun=$+((set partner) _..sh-work)]
+        =+  lax=(~(get ju nak) cha)
+        ?:  =(~ lax)  (sh-lame "unknown {<cha>}")
+        ?:  ?=([* ~ ~] lax)  (sh-fun n.lax)
+        |-  ^-  sh-fun
         ?~  grams.roy  
-          (sh-lame:(what lix) "ambiguous {<lix>}")
+          (sh-lame:(what cha) "ambiguous {<cha>}")
         =+  pan=(sa (turn :_(head (~(tap by q.q.i.grams.roy)))))
         ?:  (~(has in lax) pan)
-          (sh-pact pan)
+          (sh-fun pan)
         $(grams.roy t.grams.roy)
       ::
       ++  number                                        ::  %number
