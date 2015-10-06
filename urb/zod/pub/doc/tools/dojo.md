@@ -1,7 +1,9 @@
 
 # `:dojo`
 
-The dojo is a typed functional shell.  Its prompt is:
+`:dojo` shell basics.
+
+Its prompt is:
 
     ~urbit-name:dojo>
 
