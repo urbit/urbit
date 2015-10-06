@@ -95,7 +95,7 @@
           [%friend p=span q=station]                    ::
       ==                                                ::
     ++  work                                            ::  interface action
-      $%  [%number p=? q=@ud]                           ::  activate by number
+      $%  [%number p=$|(@ud [@u @ud])]                  ::  relative/absolute
           [%help ~]                                     ::  print usage info
           [%what p=$|(char (set partner))]              ::  show bound glyph
           [%bind p=char q=(unit (set partner))]         ::
@@ -187,8 +187,9 @@
       ::
       ++  nump                                          ::  number reference
         ;~  pose
-          (stag %& dem:ag)
-          (stag %| ;~(pfix (just '0') dem:ag))
+          ;~(pfix hep dem:ag)
+          ;~(plug (cook lent (plus (just '0'))) dem:ag)
+          (stag 0 dem:ag)
         ==
       ::
       ++  pore                                          ::  posture
@@ -231,7 +232,8 @@
           ;~(plug (perk %help ~) (easy ~))
           (stag %number nump)
           =+  (punt ;~(pfix ace message))
-          (stag %target ;~(plug ;~(pose parz glyph (easy ~)) -))
+          (stag %target ;~(plug ;~(pose parz glyph) -))
+          (stag %number (cook lent (star sem)))
         ==
       --
     ++  sh-abet
@@ -941,28 +943,37 @@
         ?~  lix  (sh-pact lix)
         ?^  lix  (sh-pact lix)
         =+  lax=(~(get ju nak) lix)
-        ?:  =(~ lax)  (sh-note "unknown {<lix>}")
+        ?:  =(~ lax)  (sh-lame "unknown {<lix>}")
         ?:  ?=([* ~ ~] lax)  (sh-pact n.lax)
         |-  ^-  sh-pact
         ?~  grams.roy  
-          (sh-note:(what lix) "ambiguous {<lix>}")
+          (sh-lame:(what lix) "ambiguous {<lix>}")
         =+  pan=(sa (turn :_(head (~(tap by q.q.i.grams.roy)))))
         ?:  (~(has in lax) pan)
           (sh-pact pan)
         $(grams.roy t.grams.roy)
       ::
       ++  number                                        ::  %number
-        |=  [rel=? num=@ud]
+        |=  num=$|(@ud [p=@u q=@ud])
         ^+  ..sh-work
         =+  roy=(~(got by stories) man.she)
-        =.  num
-            ?.  rel  num
-            =+  dog=|-(?:(=(0 num) 1 (mul 10 $(num (div num 10)))))
-            (add num (mul dog (div count.roy dog)))
-        ?:  (gte num count.roy)
-          (sh-lame "{(scow %ud num)}: no such telegram")
-        ~&  number/num
-        (activate (snag (sub count.roy +(num)) grams.roy))
+        |-
+        ?@  num
+          ?:  (gte num count.roy)
+            (sh-lame "{(scow %s (new:si | +(num)))}: no such telegram")
+          =.  ..sh-fact  (sh-fact %txt "@ {(scow %s (new:si | +(num)))}")
+          (activate (snag num grams.roy))
+        ?.  (gth q.num count.roy)
+          =+  msg=(deli count.roy num)
+          =.  ..sh-fact  (sh-fact %txt "@ {(scow %ud msg)}")
+          (activate (snag (sub count.roy +(msg)) grams.roy))
+        (sh-lame "…{(reap p.num '0')}{(scow %ud q.num)}: no such telegram")
+      ::
+      ++  deli                                          ::  find number
+        |=  [max=@ud nul=@u fin=@ud]  ^-  @ud
+        =+  dog=|-(?:(=(0 fin) 1 (mul 10 $(fin (div fin 10)))))
+        =.  dog  (mul dog (pow 10 nul))
+        (add fin (sub max (mod max dog)))
       ::
       ++  probe                                         ::  inquire
         |=  cuz=station
