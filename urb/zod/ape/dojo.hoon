@@ -762,6 +762,7 @@
   ::
   ++  he-stop                                           ::  abort work
     ^+  .
+    =.  buf  ""
     ?~(poy . ~(dy-stop dy u.poy))
   ::
   ++  he-peer                                           ::  subscribe to
