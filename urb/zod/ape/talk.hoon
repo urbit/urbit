@@ -1814,7 +1814,13 @@
   ++  chow
     |=  [len=@u txt=tape]
     ?:  (gth len (lent txt))  txt
-    (weld (scag (dec len) txt) "…")
+    =.  txt  (scag len txt)
+    |-
+    ?~  txt  txt
+    ?:  =(' ' i.txt)
+      |-(['_' ?.(?=([%' ' *] t.txt) t.txt $(txt t.txt))])
+    ?~  t.txt  "…"
+    [i.txt $(txt t.txt)]
   ::
   ++  tr-text
     |=  oug=?
@@ -1823,13 +1829,20 @@
         %fat
       =+  rem=$(sep q.sep)
       ?:  (gth (lent rem) 62)  (chow 64 rem)
-      =-  "{rem}  {(chow (sub 62 (lent rem)) -)}"
+      =-  "{rem}{(chow (sub 64 (lent rem)) "  {-}")}"
       ?+  -.p.sep  "..."
         %tank  ~(ram re %rose [" " `~] +.p.sep)
       ==
     ::
-        %url  ['/' ' ' (earf p.sep)]
-        %exp  ['#' ' ' (trip p.sep)]
+        %exp  (chow 66 '#' ' ' (trip p.sep))
+        %url  =+  ful=(earf p.sep)
+              ?:  (gth 64 (lent ful))  ['/' ' ' ful]
+              :+  '/'  '_' 
+              =+  hok=r.p.p.p.sep
+              ~!  hok
+              =<  ?~(-.hok (reel p.hok .) +:(scow %if p.hok))
+              |=([a=span b=tape] ?~(b (trip a) (welp b '.' (trip a))))
+    ::
         %lin
       =+  txt=(trip q.sep)
       ?:  p.sep
