@@ -1306,6 +1306,7 @@
     %+  cook  deft
     (ifix [fas ;~(pose fas (easy ~))] (more fas smeg))
   ++  aurf                                              ::  2396 with fragment
+    %+  cook  |=(a=purf a)
     ;~(plug auri (punt ;~(pfix hax (cook crip (star pque)))))
   ++  auri                                              ::  2396 URL
     %+  cook
