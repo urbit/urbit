@@ -6,6 +6,7 @@
   $%  ::  [%abo ~]                                      ::  reset interaction
       [%det sole-change]                                ::  command line edit
       [%ret ~]                                          ::  submit and clear
+      [%clr ~]                                          ::  exit context
   ==                                                    :: 
 ++  sole-buffer  (list ,@c)                             ::  command state
 ++  sole-change                                         ::  network change
