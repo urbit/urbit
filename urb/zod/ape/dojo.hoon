@@ -218,8 +218,8 @@
     ++  dp-poor    poor:(vang | (tope dir))             ::  (list ++twig)
     ++  dp-value                                        ::  ++dojo-source
       ;~  pose
-        (stag %tu (ifix [sel ser] (most ace dp-source)))
         (stag %ex dp-twig)
+        (stag %tu (ifix [sel ser] (most ace dp-source)))
       ==
     ::
     ++  dp-config                                       ::  ++dojo-config
@@ -254,7 +254,8 @@
     ++  dy-stop                                         ::  stop work
       ^+  +>
       ?~  pux  +>
-      (he-card(poy ~) %exec u.pux our.hid ~)
+      %.  [%txt "! cancel {<u.pux>}"]
+      he-diff:(he-card(poy ~) %exec u.pux our.hid ~)
     ::
     ++  dy-slam                                         ::  call by ford
       |=  [way=wire gat=vase sam=vase]
@@ -709,6 +710,7 @@
       dy-make(cud `[nex (~(got by job) nex)])
     --
   ::
+  ++  he-baxp  |=(~ he-pine:he-stop)                    ::  exit out of project
   ++  he-dope                                           ::  sole user of ++dp
     |=  txt=tape                                        ::
     ^-  (each (unit (each dojo-command tape)) hair)     ::  prefix/result
@@ -760,6 +762,7 @@
   ::
   ++  he-stop                                           ::  abort work
     ^+  .
+    =.  buf  ""
     ?~(poy . ~(dy-stop dy u.poy))
   ::
   ++  he-peer                                           ::  subscribe to
@@ -937,6 +940,7 @@
   |=  act=sole-action  ~|  poke/act  %.  act
   (wrap he-type):arm
 ::
+++  poke-sole-back  (wrap he-baxp):arm
 ++  made       (wrap he-made):arm
 ++  sigh-httr  (wrap he-sigh):arm
 ++  sigh-tang  |=([a=wire b=tang] ~|(`term`(cat 3 'sigh-' -.a) (mean b)))
