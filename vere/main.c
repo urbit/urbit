@@ -163,6 +163,13 @@ _main_getopt(c3_i argc, c3_c** argv)
     return c3n;
   }
 
+  if ( u3_Host.ops_u.tic_c == 0 && u3_Host.ops_u.who_c != 0 ) {
+      c3_c tic_c[29];
+      printf("your ticket: ~");
+      scanf("%28s",tic_c);
+      u3_Host.ops_u.tic_c = _main_presig(tic_c);
+  }
+
   if ( c3y == u3_Host.ops_u.bat ) {
     u3_Host.ops_u.dem = c3y;
     u3_Host.ops_u.nuu = c3y;
@@ -203,8 +210,24 @@ _main_getopt(c3_i argc, c3_c** argv)
 static void
 u3_ve_usage(c3_i argc, c3_c** argv)
 {
-  fprintf(stderr, "%s: usage: [-v] [-k stage] [-p ames_port] computer\n",
-                  argv[0]);
+  c3_c *use_c[] = {"Usage: %s [options...] computer\n",
+    "-w name       Immediately upgrade to ~name\n",
+    "-t ticket     Use ~ticket automatically\n",
+    "-I galaxy     Start as ~galaxy\n",
+    "-F            Fake keys\n",
+    "-L            Local-only network\n",
+    "-n host       Set unix hostname\n",
+    "-p ames_port  Set the HTTP port to bind to\n",
+    "-v            Verbose\n",
+    "-D            Recompute from events\n",
+    "-P            Profiling\n",
+    "-M            Memory madness\n",
+    "-f            Fuzz testing\n",
+    "-k stage      Start at Hoon kernel version stage\n",
+    "-Xwtf         Skip last event\n"};
+  for ( c3_i i=0; i < sizeof(use_c)/sizeof(c3_c*); i++ ) {
+    fprintf(stderr,use_c[i],argv[0]);
+  }
   exit(1);
 }
 
@@ -314,6 +337,14 @@ main(c3_i   argc,
     u3_ve_usage(argc, argv);
     return 1;
   }
+
+  if ( c3y == u3_Host.ops_u.nuu ) {
+    struct stat s;
+    if ( !stat(u3_Host.dir_c, &s) ) {
+      fprintf(stderr, "used -c but %s already exists\n", u3_Host.dir_c);
+      exit(1);
+    }
+   }
 
   u3_ve_sysopt();
 

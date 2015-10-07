@@ -4,7 +4,7 @@
   #nav > div
   #nav.up
   #nav.top
-  #nav > .focus
+  #nav .focus
     transform: translate3d(0,0,0);
     -webkit-transform: translate3d(0,0,0);
   
@@ -25,12 +25,12 @@
     position fixed
     top 0
   
-  #nav > div
+  #nav > div > div
     max-height 1rem
     overflow hidden
     transition max-height .3s ease-in-out
   
-  #nav > .focus
+  #nav .focus
     max-height 40rem
     transition max-height .3s ease-in-out
   
@@ -57,14 +57,14 @@
     background-color #fff
     z-index 2
   
-  #nav > div
+  #nav > div > div
     max-height 1.4rem
   
   #nav > div
     padding-top .6rem
     
   #nav #sibs
-    width 18rem
+    width 11rem
 
   #nav #sibs > div
     height 20px
@@ -104,8 +104,9 @@
 
 /* phones portrait and landscape ----------- */
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px)
-  #nav > div
+  #nav > div > div
     max-height 1.6rem
+  
   #nav a
     font-size .7rem
     

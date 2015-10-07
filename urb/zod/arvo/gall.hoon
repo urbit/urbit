@@ -1122,6 +1122,7 @@
         %deal  `%g
         %exec  `%f
         %flog  `%d
+        %drop  `%c
         %info  `%c
         %merg  `%c
         %mont  `%c

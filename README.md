@@ -1,11 +1,14 @@
 urbit
 =====
 
-urbit is a new programming and execution environment designed from
-scratch.
+Urbit is a new computing environment designed from scratch.
 
-At present urbit is under heavy development. If you're interested in
-keeping in touch or following the project you can:
+At present urbit is under heavy development. It's not useful for any
+external purpose. Documentation is completely inadequate. Anyone can use
+the interpreter, of course, but the network is invitation-only.
+
+If you're interested in keeping in touch or following the project you
+can:
 
 -   Enter your email address at [urbit.org](http://urbit.org).
 -   Subscribe to the
@@ -14,24 +17,24 @@ keeping in touch or following the project you can:
 -   Follow [@urbit_](https://twitter.com/urbit\_) on Twitter.
 -   Get in touch with us via email, <urbit@urbit.org>
 
-All of the source code is distributed under the MIT license, but is for
-all intents and purposes in the public domain.
+All of the source code is distributed under the MIT license.
 
-Pacakges
+Packages
 --------
 
 #### Ubuntu or Debian
 
-Third-party pacakge files are maintained at https://github.com/yebyen/urbit-deb. Urbit is only supported on Jessie onward.
+Third-party package files are maintained at
+https://github.com/yebyen/urbit-deb. Urbit is only supported on Jessie
+onward.
 
 #### OS X - Homebrew
 
     brew install --HEAD homebrew/head-only/urbit
 
-If this succeeds, proceed to the [Run section](#run). Otherwise, the build must be done manually:
-
 Dependencies
 ------------
+
 urbit depends on:
 
     gcc
@@ -51,8 +54,8 @@ urbit depends on:
 
     sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++ ragel cmake re2c
 
-*note: http requests are not supported on debian jessie
-due to an ssl issue*
+*note: http requests are not supported on debian jessie due to an ssl
+issue*
 
 #### Fedora
 
@@ -95,27 +98,31 @@ Just run `make`:
 
 (On FreeBSD, use `gmake` instead.)
 
-Run <a id="run"/>
----
+Run (with a network invitation)
+-------------------------------
 
-Inside of the `urbit` directory run
+If you have a planet named `~fintud-macrep` and a ticket
+`~fortyv-tombyt-tabsen-sonres`, run
 
-    bin/urbit -c pier
+    bin/urbit -w fintud-macrep -t fortyv-tombyt-tabsen-sonres
 
-where `pier` is a directory that does not exist.
+Your pier (all Urbit state, log and checkpoint) will be in
+`./fintud-macrep`.
 
-All your state (an append-only log and a memory checkpoint) will live in
-this directory. The name of your pier doesn't matter and is not visible
-internally.
+To start Urbit again omit the `-w` and `-t` flags:
 
-Begin
------
+    bin/urbit fintud-macrep
 
-To begin a 32-bit planet use
+Run (without a network invitation)
+----------------------------------
 
-    |begin
+    bin/urbit -c mypier
 
-which will guide you through the setup process.
+Urbit will create a comet in `mypier`.
+
+To start Urbit again omit the `-c` flag:
+
+    bin/urbit mypier
 
 Basics
 ------
@@ -137,6 +144,9 @@ turned it off.
 Talk
 ----
 
+If you're on the network, you can use its most basic application,
+`talk`.
+
 If `talk` is not running, start it with `*talk` from the task manager.
 
 Use `^x` to switch to the `talk` prompt and then run
@@ -145,15 +155,11 @@ Use `^x` to switch to the `talk` prompt and then run
 
 to join the `urbit-meta` channel. People in there are helpful.
 
-There are four main `talk` commands:
+There are three main `talk` commands:
 
     ;join ~urbit-name/channel
 
 `;join` subscribes your main feed to a remote channel.
-
-    ;create channel %name 'description'
-
-`;create` creates a channel on your urbit.
 
     ;<number>
 
@@ -168,20 +174,34 @@ for a private message.
 Filesystem Sync
 ---------------
 
-Our filesystem, `%clay` does not automatically sync to unix. If you want
-to get files in and out of urbit, you'll need to setup a mount point.
+The Urbit filesystem, `%clay` doesn't automatically sync to unix. If
+you'd like to browse the contents of your Urbit from unix you'll need to
+use `|mount`.
+
+`|mount` creates a mirror in unix of files from `%clay` that is always
+watching for changes. To sync your entire `home/` desk run:
+
+    |mount %
+
+you should see a directory called `home/` get created inside your pier.
+When you change files in this directory the changes will get synced into
+your urbit.
+
 Since each mount point is always watching for changes you may also want
 to unmount from time to time.
 
-The syntax is as follows (from `dojo`):
+The full syntax is as follows (from `dojo`):
 
-    |mount <clay-path> <mount-name>
+    |mount <path-in-clay> [<mount-name>]
+
+The `<mount-name>` is optional and defaults to the last part of 
+the `<path-in-clay>`.
 
     |unmount <mount-name>
 
 or:
 
-    |unmount <clay-path>
+    |unmount <path-in-clay>
 
 Sysadmin
 --------
@@ -199,7 +219,7 @@ your urbit and:
 where pier is the name of your pier.
 
 While the network is still young from time to time we reboot the entire
-thing. We call this a 'continuity breach' since we're breaking the
+universe. We call this a 'continuity breach' since we're breaking the
 continuity of our crypto.
 
 When this happens you'll need to back up your data and start a fresh
@@ -208,7 +228,8 @@ pier. Your original ticket will still work.
 Contributing
 ------------
 
-The first step in contributing to urbit is to come and join us on `:talk`. 
+The first step in contributing to urbit is to come and join us on
+`:talk`.
 
-For more detailed instructions check out 
+For more detailed instructions check out
 [`contributing.md`](https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md),.
