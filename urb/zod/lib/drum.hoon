@@ -134,7 +134,6 @@
 =>  |%                                                ::  arvo structures
     ++  pear                                          ::  request
       $%  [%sole-action p=sole-action]                ::
-          [%sole-back ~]                              ::  back out of dialog
           [%talk-command command:talk]                ::
       ==                                              ::
     ++  lime                                          ::  update
@@ -615,7 +614,7 @@
         ta-bel
       .(str.u.ris (scag (dec (lent str.u.ris)) str.u.ris))
     ?:  =(0 pos.inp)
-      (ta-poke %sole-back ~)
+      (ta-act %clr ~)
       :: .(+> (se-blit %bel ~))
     =+  pre=(dec pos.inp)
     (ta-hom(pos.inp pre) %del pre)
