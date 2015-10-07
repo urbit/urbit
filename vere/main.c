@@ -210,8 +210,24 @@ _main_getopt(c3_i argc, c3_c** argv)
 static void
 u3_ve_usage(c3_i argc, c3_c** argv)
 {
-  fprintf(stderr, "%s: usage: [-v] [-k stage] [-p ames_port] computer\n",
-                  argv[0]);
+  c3_c *use_c[] = {"Usage: %s [options...] computer\n",
+    "-w name       Immediately upgrade to ~name\n",
+    "-t ticket     Use ~ticket automatically\n",
+    "-I galaxy     Start as ~galaxy\n",
+    "-F            Fake keys\n",
+    "-L            Local-only network\n",
+    "-n host       Set unix hostname\n",
+    "-p ames_port  Set the HTTP port to bind to\n",
+    "-v            Verbose\n",
+    "-D            Recompute from events\n",
+    "-P            Profiling\n",
+    "-M            Memory madness\n",
+    "-f            Fuzz testing\n",
+    "-k stage      Start at Hoon kernel version stage\n",
+    "-Xwtf         Skip last event\n"};
+  for ( c3_i i=0; i < sizeof(use_c)/sizeof(c3_c*); i++ ) {
+    fprintf(stderr,use_c[i],argv[0]);
+  }
   exit(1);
 }
 
