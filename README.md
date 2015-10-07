@@ -1,4 +1,4 @@
-urbit
+Urbit
 =====
 
 Urbit is a new computing environment designed from scratch.
@@ -19,21 +19,23 @@ can:
 
 All of the source code is distributed under the MIT license.
 
-Packages
---------
-
-#### Ubuntu or Debian
-
-Third-party package files are maintained at
-https://github.com/yebyen/urbit-deb. Urbit is only supported on Jessie
-onward.
+Install from packages
+--------------------
 
 #### OS X - Homebrew
 
     brew install --HEAD homebrew/head-only/urbit
 
-Dependencies
-------------
+#### Ubuntu or Debian
+
+Third-party package files are maintained at
+https://github.com/yebyen/urbit-deb. 
+
+Urbit is only supported on jessie onward (but outgoing HTTPS
+requests only work on stretch).
+
+Install by hand
+---------------
 
 urbit depends on:
 
@@ -101,15 +103,22 @@ Just run `make`:
 Run (with a network invitation)
 -------------------------------
 
-If you have a planet named `~fintud-macrep` and a ticket
-`~fortyv-tombyt-tabsen-sonres`, run
+Your invitation is a planet (32-bit urbit), with a name like
+`~fintud-macrep`, and a ticket (sekrit code), like
+`~fortyv-tombyt-tabsen-sonres`.  Run
 
     bin/urbit -w fintud-macrep -t fortyv-tombyt-tabsen-sonres
 
 Your pier (all Urbit state, log and checkpoint) will be in
-`./fintud-macrep`.
+`./fintud-macrep`.  You can move it, and it's portable.  Doing
+`rm -r fintud-macrep/.urb/chk` will delete the checkpoint,
+meaning all your events need to be recomputed, but making the
+image smaller.
 
-To start Urbit again omit the `-w` and `-t` flags:
+To quit Urbit (without destroying any data, since Urbit is a
+database): ^D.
+
+To start ~fintud-macrep again, omit the `-w` and `-t` flags:
 
     bin/urbit fintud-macrep
 
@@ -118,11 +127,32 @@ Run (without a network invitation)
 
     bin/urbit -c mypier
 
-Urbit will create a comet in `mypier`.
+Urbit will create a comet (128-bit urbit) in `mypier`.
 
-To start Urbit again omit the `-c` flag:
+To quit Urbit (without destroying any data, since Urbit is a
+database): ^D.  Note that you can kill your urbit process as
+nastily as you want, 
+
+To start your comet again, omit the `-c` flag:
 
     bin/urbit mypier
+
+Getting started 
+---------------
+
+Your urbit is a Web server, so the best place to read about it 
+is in your browser.
+
+Urbit prints the HTTP port it's serving when it starts up:
+
+    http: live (insecure) on 8080
+
+8080 is the default.  If you're running on AWS or another cloud
+service, this port may be firewalled; go to the firewall
+configuration to open it.
+
+Learn these two control keys first:  
+Press ^v 
 
 Basics
 ------
