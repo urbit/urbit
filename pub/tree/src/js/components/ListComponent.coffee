@@ -27,29 +27,57 @@ module.exports = query {
     sorted = true
     _keys = []
     for k,v of @props.kids
-      if not v.meta?.sort? then sorted = false
-      _keys[Number(v.meta?.sort)] = k
+      if @props.sortBy
+        if @props.sortBy is 'date'
+          if not v.meta?.date? then sorted = false
+          _k = Number v.meta.date.slice(1).replace /\./g,""
+          _keys[_k] = k
+      else
+        if not v.meta?.sort? then sorted = false
+        _keys[Number(v.meta?.sort)] = k
+    if @props.sortBy is 'date' then _keys.reverse()
     if sorted isnt true
       _keys = _.keys(@props.kids).sort()
     if @props.dataType is 'post' then _keys=_keys.reverse()
-    for item in _keys
+    for item in _.values _keys
       path = @props.path+"/"+item
       elem = @props.kids[item]
       href = window.tree.basepath path
       parts = []
+      title = null
       if elem.meta?.title
         title = 
           gn: 'h1'
           c: [elem.meta.title]
-      else title = elem.head
-      title ||= (h1 {},item)
+      if elem.head.c.length > 0
+        title = elem.head
+      if not title
+        title =
+          gn: 'h1'
+          c: [item]
+      unless @props.titlesOnly        # redundant? this seems familiar
+        if @props.dataDates
+          _date = elem.meta.date
+          if not _date or _date.length is 0 then _date = ""
+          date = 
+            gn: 'div'
+            ga: 
+              className: 'date'
+            c: [_date]
+          parts.push date
       parts.push title
       unless @props.titlesOnly        # redundant? this seems familiar
         if @props.dataPreview 
-          if @props.dataType is 'post'
+          if @props.dataType is 'post' and not elem.meta.preview
             parts.push (elem.snip.c.slice 0,2)...
           else
-            parts.push elem.snip
+            if elem.meta.preview 
+              preview = 
+                gn: 'p'
+                c: [elem.meta.preview]
+            else 
+              preview = elem.snip
+            parts.push preview
       li {key:item,className:@props.dataType ? ""},
         a {href,className:(clas preview: @props.dataPreview?)},            
           reactify

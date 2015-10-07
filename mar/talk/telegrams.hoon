@@ -71,7 +71,7 @@
       set-title/so
       set-description/so
       set-done/bo
-      add-comment/so
+      add-comment/(ot ship/(su fed:ag) com/so ~)
     ==
   --
 ++  grow-work-duty
@@ -123,7 +123,7 @@
       %set-title        [%s til]
       %set-description  [%s des]
       %set-done         [%b don]
-      %add-comment      [%s com]
+      %add-comment      (jobe ship/(jope who) com/[%s com] ~)
     ==
   --
 ++  grab

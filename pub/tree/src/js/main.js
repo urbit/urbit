@@ -35,8 +35,7 @@ module.exports = {
 };
 
 
-
-},{"../dispatcher/Dispatcher.coffee":13,"../persistence/TreePersistence.coffee":19}],2:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":14,"../persistence/TreePersistence.coffee":20}],2:[function(require,module,exports){
 var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, query, reactify, recl, ref;
 
 clas = require('classnames');
@@ -289,8 +288,7 @@ module.exports = query({
 }));
 
 
-
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":20,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":10,"classnames":15}],3:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":11,"classnames":16}],3:[function(require,module,exports){
 var TreeActions, TreeStore, _load, code, div, recl, ref, span;
 
 _load = require('./LoadComponent.coffee');
@@ -350,12 +348,14 @@ module.exports = function(queries, Child, load) {
       }
       request = {};
       for (k in _queries) {
-        if (have[k] === void 0) {
-          request[k] = _queries[k];
+        if (k !== 'kids') {
+          if (have[k] === void 0) {
+            request[k] = _queries[k];
+          }
         }
       }
-      if ((_queries.kids != null) && (have.kids != null)) {
-        if (_.isEmpty(have.kids)) {
+      if (_queries.kids != null) {
+        if (have.kids == null) {
           request.kids = _queries.kids;
         } else {
           request.kids = {};
@@ -391,8 +391,7 @@ module.exports = function(queries, Child, load) {
 };
 
 
-
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":20,"./LoadComponent.coffee":9}],4:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
 var div, query, reactify, recl;
 
 query = require('./Async.coffee');
@@ -417,8 +416,7 @@ module.exports = query({
 }));
 
 
-
-},{"./Async.coffee":3,"./Reactify.coffee":10}],5:[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":11}],5:[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -441,7 +439,6 @@ module.exports = recl({
 });
 
 
-
 },{}],6:[function(require,module,exports){
 var div, recl;
 
@@ -455,6 +452,7 @@ module.exports = {
   list: require('./ListComponent.coffee'),
   kids: require('./KidsComponent.coffee'),
   toc: require('./TocComponent.coffee'),
+  email: require('./EmailComponent.coffee'),
   lost: recl({
     render: function() {
       return div({}, "<lost(", this.props.children, ")>");
@@ -463,8 +461,87 @@ module.exports = {
 };
 
 
+},{"./CodeMirror.coffee":5,"./EmailComponent.coffee":7,"./KidsComponent.coffee":8,"./ListComponent.coffee":9,"./SearchComponent.coffee":12,"./TocComponent.coffee":13}],7:[function(require,module,exports){
+var button, div, input, p, reactify, recl, ref;
 
-},{"./CodeMirror.coffee":5,"./KidsComponent.coffee":7,"./ListComponent.coffee":8,"./SearchComponent.coffee":11,"./TocComponent.coffee":12}],7:[function(require,module,exports){
+reactify = require('./Reactify.coffee');
+
+recl = React.createClass;
+
+ref = React.DOM, div = ref.div, p = ref.p, button = ref.button, input = ref.input;
+
+module.exports = recl({
+  displayName: "email",
+  getInitialState: function() {
+    return {
+      submit: false,
+      email: ""
+    };
+  },
+  onClick: function() {
+    return this.submit();
+  },
+  onKeyUp: function(e) {
+    var email, valid;
+    email = this.$email.val();
+    valid = email.indexOf('@') !== -1 && email.indexOf('.') !== -1 && email.length > 7 && email.split(".")[1].length > 1 && email.split("@")[0].length > 0 && email.split("@")[1].length > 4;
+    this.$email.toggleClass('valid', valid);
+    this.$email.removeClass('error');
+    if (e.keyCode === 13) {
+      if (valid === true) {
+        this.submit();
+        e.stopPropagation();
+        e.preventDefault();
+        return false;
+      } else {
+        return this.$email.addClass('error');
+      }
+    }
+  },
+  submit: function() {
+    return $.post(this.props.dataPath, {
+      email: this.$email.val()
+    }, (function(_this) {
+      return function() {
+        return _this.setState({
+          submit: true
+        });
+      };
+    })(this));
+  },
+  componentDidMount: function() {
+    return this.$email = $('input.email');
+  },
+  render: function() {
+    var cont;
+    if (this.state.submit === false) {
+      cont = [
+        input({
+          key: "field",
+          className: "email",
+          placeholder: "your@email.com",
+          onKeyUp: this.onKeyUp
+        }, this.state.email), button({
+          key: "submit",
+          className: "submit",
+          onClick: this.onClick
+        }, "Submit")
+      ];
+    } else {
+      cont = [
+        div({
+          className: "submitted"
+        }, "Got it. Thanks!")
+      ];
+    }
+    return p({
+      className: "email"
+    }, cont);
+  }
+});
+
+
+},{"./Reactify.coffee":11}],8:[function(require,module,exports){
 var a, div, hr, li, query, reactify, recl, ref, ul;
 
 reactify = require('./Reactify.coffee');
@@ -503,8 +580,7 @@ module.exports = query({
 }));
 
 
-
-},{"./Async.coffee":3,"./Reactify.coffee":10}],8:[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":11}],9:[function(require,module,exports){
 var a, clas, div, h1, li, query, reactify, recl, ref, ul;
 
 clas = require('classnames');
@@ -538,16 +614,29 @@ module.exports = query({
     }, this.renderList());
   },
   renderList: function() {
-    var _keys, elem, href, i, item, k, len, parts, path, ref1, ref2, ref3, ref4, ref5, results, sorted, title, v;
+    var _date, _k, _keys, date, elem, href, i, item, k, len, parts, path, preview, ref1, ref2, ref3, ref4, ref5, ref6, ref7, results, sorted, title, v;
     sorted = true;
     _keys = [];
     ref1 = this.props.kids;
     for (k in ref1) {
       v = ref1[k];
-      if (((ref2 = v.meta) != null ? ref2.sort : void 0) == null) {
-        sorted = false;
+      if (this.props.sortBy) {
+        if (this.props.sortBy === 'date') {
+          if (((ref2 = v.meta) != null ? ref2.date : void 0) == null) {
+            sorted = false;
+          }
+          _k = Number(v.meta.date.slice(1).replace(/\./g, ""));
+          _keys[_k] = k;
+        }
+      } else {
+        if (((ref3 = v.meta) != null ? ref3.sort : void 0) == null) {
+          sorted = false;
+        }
+        _keys[Number((ref4 = v.meta) != null ? ref4.sort : void 0)] = k;
       }
-      _keys[Number((ref3 = v.meta) != null ? ref3.sort : void 0)] = k;
+    }
+    if (this.props.sortBy === 'date') {
+      _keys.reverse();
     }
     if (sorted !== true) {
       _keys = _.keys(this.props.kids).sort();
@@ -555,35 +644,67 @@ module.exports = query({
     if (this.props.dataType === 'post') {
       _keys = _keys.reverse();
     }
+    ref5 = _.values(_keys);
     results = [];
-    for (i = 0, len = _keys.length; i < len; i++) {
-      item = _keys[i];
+    for (i = 0, len = ref5.length; i < len; i++) {
+      item = ref5[i];
       path = this.props.path + "/" + item;
       elem = this.props.kids[item];
       href = window.tree.basepath(path);
       parts = [];
-      if ((ref4 = elem.meta) != null ? ref4.title : void 0) {
+      title = null;
+      if ((ref6 = elem.meta) != null ? ref6.title : void 0) {
         title = {
           gn: 'h1',
           c: [elem.meta.title]
         };
-      } else {
+      }
+      if (elem.head.c.length > 0) {
         title = elem.head;
       }
-      title || (title = h1({}, item));
+      if (!title) {
+        title = {
+          gn: 'h1',
+          c: [item]
+        };
+      }
+      if (!this.props.titlesOnly) {
+        if (this.props.dataDates) {
+          _date = elem.meta.date;
+          if (!_date || _date.length === 0) {
+            _date = "";
+          }
+          date = {
+            gn: 'div',
+            ga: {
+              className: 'date'
+            },
+            c: [_date]
+          };
+          parts.push(date);
+        }
+      }
       parts.push(title);
       if (!this.props.titlesOnly) {
         if (this.props.dataPreview) {
-          if (this.props.dataType === 'post') {
+          if (this.props.dataType === 'post' && !elem.meta.preview) {
             parts.push.apply(parts, elem.snip.c.slice(0, 2));
           } else {
-            parts.push(elem.snip);
+            if (elem.meta.preview) {
+              preview = {
+                gn: 'p',
+                c: [elem.meta.preview]
+              };
+            } else {
+              preview = elem.snip;
+            }
+            parts.push(preview);
           }
         }
       }
       results.push(li({
         key: item,
-        className: (ref5 = this.props.dataType) != null ? ref5 : ""
+        className: (ref7 = this.props.dataType) != null ? ref7 : ""
       }, a({
         href: href,
         className: clas({
@@ -599,8 +720,7 @@ module.exports = query({
 }));
 
 
-
-},{"./Async.coffee":3,"./Reactify.coffee":10,"classnames":15}],9:[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":11,"classnames":16}],10:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -640,8 +760,7 @@ module.exports = recl({
 });
 
 
-
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var Virtual, div, load, reactify, recl, ref, rele, span, walk;
 
 recl = React.createClass;
@@ -708,8 +827,7 @@ module.exports = _.extend(reactify, {
 });
 
 
-
-},{"./LoadComponent.coffee":9}],11:[function(require,module,exports){
+},{"./LoadComponent.coffee":10}],12:[function(require,module,exports){
 var a, div, input, query, reactify, recl, ref,
   slice = [].slice;
 
@@ -847,9 +965,9 @@ module.exports = query({
 }));
 
 
-
-},{"./Async.coffee":3,"./Reactify.coffee":10}],12:[function(require,module,exports){
-var div, query, reactify, recl;
+},{"./Async.coffee":3,"./Reactify.coffee":11}],13:[function(require,module,exports){
+var div, query, reactify, recl,
+  slice = [].slice;
 
 query = require('./Async.coffee');
 
@@ -864,35 +982,35 @@ module.exports = query({
 }, recl({
   hash: null,
   displayName: "TableOfContents",
-  _click: function(e) {
-    return document.location.hash = this.urlsafe($(e.target).text());
-  },
-  urlsafe: function(str) {
-    return str.toLowerCase().replace(/\ /g, "-").replace(/[^a-z0-9~_.-]/g, "");
+  _click: function(id) {
+    return function() {
+      if (id) {
+        return document.location.hash = id;
+      }
+    };
   },
   componentDidMount: function() {
     this.int = setInterval(this.checkHash, 100);
     this.st = $(window).scrollTop();
-    $(window).on('scroll', this.checkScroll);
-    return this.$headers = $('#toc h1, #toc h2, #toc h3, #toc h4');
+    return this.$headers = $('#toc').children('h1,h2,h3,h4').filter('[id]');
   },
   checkScroll: function() {
-    var $h, hash, hst, k, ref, results, st, v;
+    var $h, hash, hst, i, len, ref, results, st, v;
     st = $(window).scrollTop();
     if (Math.abs(this.st - st) > 10) {
       hash = null;
       this.st = st;
       ref = this.$headers;
       results = [];
-      for (k in ref) {
-        v = ref[k];
+      for (i = 0, len = ref.length; i < len; i++) {
+        v = ref[i];
         if (v.tagName === void 0) {
           continue;
         }
         $h = $(v);
         hst = $h.offset().top - $h.outerHeight(true) + 10;
         if (hst < st) {
-          hash = this.urlsafe($h.text());
+          hash = $h.attr('id');
         }
         if (hst > st && hash !== this.hash && hash !== null) {
           this.hash = "#" + hash;
@@ -906,15 +1024,15 @@ module.exports = query({
     }
   },
   checkHash: function() {
-    var $h, hash, k, offset, ref, ref1, results, v;
+    var $h, hash, i, len, offset, ref, ref1, results, v;
     if (((ref = document.location.hash) != null ? ref.length : void 0) > 0 && document.location.hash !== this.hash) {
       hash = document.location.hash.slice(1);
       ref1 = this.$headers;
       results = [];
-      for (k in ref1) {
-        v = ref1[k];
+      for (i = 0, len = ref1.length; i < len; i++) {
+        v = ref1[i];
         $h = $(v);
-        if (hash === this.urlsafe($h.text())) {
+        if (hash === $h.attr('id')) {
           this.hash = document.location.hash;
           offset = $h.offset().top - $h.outerHeight(true);
           setTimeout(function() {
@@ -931,42 +1049,39 @@ module.exports = query({
   componentWillUnmount: function() {
     return clearInterval(this.int);
   },
-  collectHeaders: function(e) {
-    var hs, k, v;
-    hs = [
-      {
-        gn: "h1",
-        ga: {
-          className: "t"
-        },
-        c: ["Table of contents"]
-      }
-    ];
-    for (k in e) {
-      v = e[k];
-      if (!v.gn) {
-        continue;
-      }
-      if (v.gn[0] === 'h' && parseInt(v.gn[1]) !== NaN) {
-        hs.push(v);
-      }
+  collectHeader: function(arg) {
+    var c, ga, gn;
+    gn = arg.gn, ga = arg.ga, c = arg.c;
+    if (gn && gn[0] === 'h' && parseInt(gn[1]) !== NaN) {
+      ga = _.clone(ga);
+      ga.onClick = this._click(ga.id);
+      delete ga.id;
+      return {
+        gn: gn,
+        ga: ga,
+        c: c
+      };
     }
-    return hs;
   },
   parseHeaders: function() {
-    var k, ref, ref1, v;
+    var i, len, ref, ref1, v;
     if (this.props.body.c) {
       ref = this.props.body.c;
-      for (k in ref) {
-        v = ref[k];
+      for (i = 0, len = ref.length; i < len; i++) {
+        v = ref[i];
         if (v.gn === 'div' && ((ref1 = v.ga) != null ? ref1.id : void 0) === "toc") {
           return {
             gn: "div",
             ga: {
-              className: "toc",
-              onClick: this._click
+              className: "toc"
             },
-            c: this.collectHeaders(v.c)
+            c: [{
+                gn: "h1",
+                ga: {
+                  className: "t"
+                },
+                c: ["Table of contents"]
+              }].concat(slice.call(_.filter(v.c.map(this.collectHeader))))
           };
         }
       }
@@ -978,8 +1093,7 @@ module.exports = query({
 }));
 
 
-
-},{"./Async.coffee":3,"./Reactify.coffee":10}],13:[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":11}],14:[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -1000,8 +1114,7 @@ module.exports = _.extend(new Dispatcher(), {
 });
 
 
-
-},{"flux":16}],14:[function(require,module,exports){
+},{"flux":17}],15:[function(require,module,exports){
 var rend;
 
 rend = React.render;
@@ -1147,19 +1260,20 @@ $(function() {
 });
 
 
-
-},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./persistence/TreePersistence.coffee":19}],15:[function(require,module,exports){
+},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./persistence/TreePersistence.coffee":20}],16:[function(require,module,exports){
 /*!
   Copyright (c) 2015 Jed Watson.
   Licensed under the MIT License (MIT), see
   http://jedwatson.github.io/classnames
 */
+/* global define */
 
 (function () {
 	'use strict';
 
-	function classNames () {
+	var hasOwn = {}.hasOwnProperty;
 
+	function classNames () {
 		var classes = '';
 
 		for (var i = 0; i < arguments.length; i++) {
@@ -1168,15 +1282,13 @@ $(function() {
 
 			var argType = typeof arg;
 
-			if ('string' === argType || 'number' === argType) {
+			if (argType === 'string' || argType === 'number') {
 				classes += ' ' + arg;
-
 			} else if (Array.isArray(arg)) {
 				classes += ' ' + classNames.apply(null, arg);
-
-			} else if ('object' === argType) {
+			} else if (argType === 'object') {
 				for (var key in arg) {
-					if (arg.hasOwnProperty(key) && arg[key]) {
+					if (hasOwn.call(arg, key) && arg[key]) {
 						classes += ' ' + key;
 					}
 				}
@@ -1188,18 +1300,17 @@ $(function() {
 
 	if (typeof module !== 'undefined' && module.exports) {
 		module.exports = classNames;
-	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd){
-		// AMD. Register as an anonymous module.
-		define(function () {
+	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
+		// register as 'classnames', consistent with npm package name
+		define('classnames', function () {
 			return classNames;
 		});
 	} else {
 		window.classNames = classNames;
 	}
-
 }());
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -1211,7 +1322,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":17}],17:[function(require,module,exports){
+},{"./lib/Dispatcher":18}],18:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1463,7 +1574,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":18}],18:[function(require,module,exports){
+},{"./invariant":19}],19:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1518,7 +1629,11 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
+var dedup;
+
+dedup = {};
+
 module.exports = {
   get: function(path, query, cb) {
     var url;
@@ -1526,6 +1641,10 @@ module.exports = {
       query = "no-query";
     }
     url = (window.tree.basepath(path)) + ".json?q=" + (this.encode(query));
+    if (dedup[url]) {
+      return;
+    }
+    dedup[url] = true;
     return $.get(url, {}, function(data) {
       if (cb) {
         return cb(null, data);
@@ -1568,8 +1687,7 @@ module.exports = {
 };
 
 
-
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, QUERIES, TreeStore, _curr, _data, _tree, clog;
 
 EventEmitter = require('events').EventEmitter;
@@ -1609,23 +1727,32 @@ TreeStore = _.extend(EventEmitter.prototype, {
     return this.fulfillAt(this.getTree(path.split('/')), path, query);
   },
   fulfillAt: function(tree, path, query) {
-    var data, k, ref, sub, t;
+    var data, have, k, sub, t;
     data = this.fulfillLocal(path, query);
-    for (k in query) {
-      t = query[k];
-      if (!QUERIES[k]) {
-        continue;
+    have = _data[path];
+    if (have != null) {
+      for (k in query) {
+        t = query[k];
+        if (!QUERIES[k]) {
+          continue;
+        }
+        if (t !== QUERIES[k]) {
+          throw TypeError("Wrong query type: " + k + ", '" + t + "'");
+        }
+        data[k] = have[k];
       }
-      if (t !== QUERIES[k]) {
-        throw TypeError("Wrong query type: " + k + ", '" + t + "'");
-      }
-      data[k] = (ref = _data[path]) != null ? ref[k] : void 0;
-    }
-    if (query.kids) {
-      data.kids = {};
-      for (k in tree) {
-        sub = tree[k];
-        data.kids[k] = this.fulfillAt(sub, path + "/" + k, query.kids);
+      if (query.kids) {
+        if (have.EMPTY) {
+          data.kids = {};
+        } else {
+          for (k in tree) {
+            sub = tree[k];
+            if (data.kids == null) {
+              data.kids = {};
+            }
+            data.kids[k] = this.fulfillAt(sub, path + "/" + k, query.kids);
+          }
+        }
       }
     }
     if (!_.isEmpty(data)) {
@@ -1678,29 +1805,7 @@ TreeStore = _.extend(EventEmitter.prototype, {
       this.loadValues(tree[k], path + "/" + k, v);
     }
     if (data.kids && _.isEmpty(data.kids)) {
-      old.body = {
-        gn: 'div',
-        c: [
-          {
-            gn: 'h1',
-            ga: {
-              className: 'error'
-            },
-            c: ['Error: Empty path']
-          }, {
-            gn: 'div',
-            c: [
-              {
-                gn: 'pre',
-                c: [this.getCurr()]
-              }, {
-                gn: 'span',
-                c: ['is either empty or does not exist.']
-              }
-            ]
-          }
-        ]
-      };
+      old.EMPTY = true;
     }
     return _data[path] = old;
   },
@@ -1804,8 +1909,7 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
 module.exports = TreeStore;
 
 
-
-},{"../dispatcher/Dispatcher.coffee":13,"events":21}],21:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":14,"events":22}],22:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2108,4 +2212,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[14]);
+},{}]},{},[15]);
