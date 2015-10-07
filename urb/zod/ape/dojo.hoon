@@ -119,6 +119,7 @@
       ?~(b [%brev a] [[%verb a] u.b])
     ::
     ++  dp-command                                      ::  ++dojo-command
+      :: =<  ;~(less |-(;~(pose (jest '|*') ;~(pfix next (knee ** |.(^$))))) .)
       %+  knee  *dojo-command  |.  ~+
       ;~  pose  
         ;~  pfix  bar
@@ -253,9 +254,10 @@
     ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
+      =.  poy  ~
       ?~  pux  +>
       %.  [%txt "! cancel {<u.pux>}"]
-      he-diff:(he-card(poy ~) %exec u.pux our.hid ~)
+      he-diff:(he-card %exec u.pux our.hid ~)
     ::
     ++  dy-slam                                         ::  call by ford
       |=  [way=wire gat=vase sam=vase]
@@ -543,6 +545,7 @@
       ?-  -.act
         %det  (dy-edit +.act)
         %ret  (dy-done (tufa buf.say))
+        %clr  dy-stop
       ==
     ::
     ++  dy-cage       |=(num=@ud (~(got by rez) num))   ::  known cage
@@ -710,7 +713,6 @@
       dy-make(cud `[nex (~(got by job) nex)])
     --
   ::
-  ++  he-baxp  |=(~ he-pine:he-stop)                    ::  exit out of project
   ++  he-dope                                           ::  sole user of ++dp
     |=  txt=tape                                        ::
     ^-  (each (unit (each dojo-command tape)) hair)     ::  prefix/result
@@ -762,7 +764,6 @@
   ::
   ++  he-stop                                           ::  abort work
     ^+  .
-    =.  buf  ""
     ?~(poy . ~(dy-stop dy u.poy))
   ::
   ++  he-peer                                           ::  subscribe to
@@ -885,6 +886,7 @@
     ?-  -.act
       %det  (he-stir +.act)
       %ret  (he-done (tufa buf.say))
+      %clr  he-pine(buf "")
     ==
   ::
   ++  he-lame                                           ::  handle error
@@ -939,8 +941,6 @@
 ++  poke-sole-action
   |=  act=sole-action  ~|  poke/act  %.  act
   (wrap he-type):arm
-::
-++  poke-sole-back  (wrap he-baxp):arm
 ++  made       (wrap he-made):arm
 ++  sigh-httr  (wrap he-sigh):arm
 ++  sigh-tang  |=([a=wire b=tang] ~|(`term`(cat 3 'sigh-' -.a) (mean b)))
