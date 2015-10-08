@@ -982,9 +982,20 @@
         |=  [her=(unit ship) nym=(unit cord)]
         ^+  ..sh-work
         ?:  ?=([~ ~] +<)
-          (sh-note "display all associations")
+          %+  sh-fact  %mor
+          %+  turn  (~(tap by folks))
+          |=  [p=ship q=human]
+          :-  %txt
+          ?~  hand.q
+            "{<p>}:"
+          "{<p>}: {<u.hand.q>}"
         ?~  nym
-          (sh-note "display one assocation")
+          ?>  ?=(^ her)
+          =+  asc=(~(get by folks) u.her)
+          %+  sh-fact  %txt
+          ?~  asc  "{<u.her>} unbound"
+          ?~  hand.u.asc  "{<u.her>}:"
+          "{<u.her>}: {<u.hand.u.asc>}"
         ?~  her
           (sh-note "display reverse association")
         %=  ..sh-work
