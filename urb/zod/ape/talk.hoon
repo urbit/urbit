@@ -978,11 +978,18 @@
             [por ~]
         (join [[%& our.hid nom] ~ ~])
       ::
-      ++  nick
+      ++  nick                                          ::  %nick
         |=  [her=(unit ship) nym=(unit cord)]
         ^+  ..sh-work
-        ~&  [her nym]
-        ..sh-work
+        ?:  ?=([~ ~] +<)
+          (sh-note "display all associations")
+        ?~  nym
+          (sh-note "display one assocation")
+        ?~  her
+          (sh-note "display reverse association")
+        %=  ..sh-work
+          folks  (~(put by folks) u.her [true=~ hand=nym])
+        ==
       ::
       ++  target                                        ::  %target
         |=  [lix=?((set partner) char) woe=(unit ^work)]
