@@ -107,6 +107,7 @@
           [%banish p=span q=(list partner)]             ::  blacklist add
           [%block p=span q=(list partner)]              ::  blacklist add
           [%author p=span q=(list partner)]             ::  whitelist add
+          [%nick p=(unit ship) q=(unit cord)]           ::
           [%target p=where q=(unit work)]               ::  set active targets
           ::  [%destroy p=span]                         ::
           [%create p=posture q=span r=cord]             ::
@@ -214,6 +215,7 @@
           ==
         ==
       ::
+      ++  nick  (cook crip (stun [1 14] low))           ::  nickname
       ++  text  (cook crip (star (shim ' ' '~')))       ::  bullets separating
       ++  glyph  (mask "/\\\{(<!?{(zing glyphs)}")      ::  station postfix
       ++  work
@@ -237,6 +239,17 @@
           ;~(plug (perk %bind ~) ;~(pfix ace glyph) (punt ;~(pfix ace parz)))
           ;~((glue ace) (perk %join ~) parz)
           ;~((glue ace) (perk %what ~) ;~(pose parz glyph))
+        ::
+          ;~  plug  (perk %nick ~)
+            ;~  pose
+              (cook some ;~(pfix ace ship))
+              (easy ~)
+            ==
+            ;~  pose
+              (cook some ;~(pfix ace nick))
+              (easy ~)
+            ==
+          ==
         ::
           ;~(plug (perk %help ~) (easy ~))
           (stag %number nump)
@@ -843,6 +856,7 @@
           %author  (author +.job)
           %block   (block +.job)
           %create  (create +.job)
+          %nick    (nick +.job)
           %target  (target +.job)
           %probe   (probe +.job)
           %help    (help)
@@ -857,7 +871,7 @@
         sh-prod(active.she `tr-pals:tay)
       ::
       ++  help  |=(~ (sh-fact %mor talk-doc))           ::  %help
-      ++  nick
+      ++  glyph
         |=  idx=@
         =<  cha.ole
         %+  reel  glyphs
@@ -875,7 +889,7 @@
         =.  ..sh-work
           =+  (~(get by nik) lix)
           ?^  -  (sh-note "has glyph {<u>}")
-          =+  cha=(nick (mug lix))
+          =+  cha=(glyph (mug lix))
           =:  nik  (~(put by nik) lix cha)
               nak  (~(put ju nak) cha lix)
             ==
@@ -963,6 +977,42 @@
               (end 3 64 txt)
             [por ~]
         (join [[%& our.hid nom] ~ ~])
+      ::
+      ++  reverse-folks
+        |=  nym=span
+        ^-  (list ship)
+        %+  murn  (~(tap by folks))
+        |=  [p=ship q=human]
+        ?~  hand.q  ~
+        ?.  =(u.hand.q nym)  ~
+        [~ u=p]
+      ::
+      ++  nick                                          ::  %nick
+        |=  [her=(unit ship) nym=(unit cord)]
+        ^+  ..sh-work
+        ?:  ?=([~ ~] +<)
+          %+  sh-fact  %mor
+          %+  turn  (~(tap by folks))
+          |=  [p=ship q=human]
+          :-  %txt
+          ?~  hand.q
+            "{<p>}:"
+          "{<p>}: {<u.hand.q>}"
+        ?~  nym
+          ?>  ?=(^ her)
+          =+  asc=(~(get by folks) u.her)
+          %+  sh-fact  %txt
+          ?~  asc  "{<u.her>} unbound"
+          ?~  hand.u.asc  "{<u.her>}:"
+          "{<u.her>}: {<u.hand.u.asc>}"
+        ?~  her
+          %+  sh-fact  %mor
+          %+  turn  (reverse-folks u.nym)
+          |=  p=ship
+          [%txt "{<p>}: {<u.nym>}"]
+        %=  ..sh-work
+          folks  (~(put by folks) u.her [true=~ hand=nym])
+        ==
       ::
       ++  target                                        ::  %target
         |=  [lix=?((set partner) char) woe=(unit ^work)]
