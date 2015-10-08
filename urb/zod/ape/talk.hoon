@@ -978,6 +978,15 @@
             [por ~]
         (join [[%& our.hid nom] ~ ~])
       ::
+      ++  reverse-folks
+        |=  nym=span
+        ^-  (list ship)
+        %+  murn  (~(tap by folks))
+        |=  [p=ship q=human]
+        ?~  hand.q  ~
+        ?.  =(u.hand.q nym)  ~
+        [~ u=p]
+      ::
       ++  nick                                          ::  %nick
         |=  [her=(unit ship) nym=(unit cord)]
         ^+  ..sh-work
@@ -997,7 +1006,10 @@
           ?~  hand.u.asc  "{<u.her>}:"
           "{<u.her>}: {<u.hand.u.asc>}"
         ?~  her
-          (sh-note "display reverse association")
+          %+  sh-fact  %mor
+          %+  turn  (reverse-folks u.nym)
+          |=  p=ship
+          [%txt "{<p>}: {<u.nym>}"]
         %=  ..sh-work
           folks  (~(put by folks) u.her [true=~ hand=nym])
         ==
