@@ -107,6 +107,7 @@
           [%banish p=span q=(list partner)]             ::  blacklist add
           [%block p=span q=(list partner)]              ::  blacklist add
           [%author p=span q=(list partner)]             ::  whitelist add
+          [%nick ~]                                     ::
           [%target p=where q=(unit work)]               ::  set active targets
           ::  [%destroy p=span]                         ::
           [%create p=posture q=span r=cord]             ::
@@ -237,6 +238,8 @@
           ;~(plug (perk %bind ~) ;~(pfix ace glyph) (punt ;~(pfix ace parz)))
           ;~((glue ace) (perk %join ~) parz)
           ;~((glue ace) (perk %what ~) ;~(pose parz glyph))
+        ::
+          ;~(plug (perk %nick ~) (easy ~))
         ::
           ;~(plug (perk %help ~) (easy ~))
           (stag %number nump)
@@ -843,6 +846,7 @@
           %author  (author +.job)
           %block   (block +.job)
           %create  (create +.job)
+          %nick    (nick)
           %target  (target +.job)
           %probe   (probe +.job)
           %help    (help)
@@ -857,7 +861,7 @@
         sh-prod(active.she `tr-pals:tay)
       ::
       ++  help  |=(~ (sh-fact %mor talk-doc))           ::  %help
-      ++  nick
+      ++  glyph
         |=  idx=@
         =<  cha.ole
         %+  reel  glyphs
@@ -875,7 +879,7 @@
         =.  ..sh-work
           =+  (~(get by nik) lix)
           ?^  -  (sh-note "has glyph {<u>}")
-          =+  cha=(nick (mug lix))
+          =+  cha=(glyph (mug lix))
           =:  nik  (~(put by nik) lix cha)
               nak  (~(put ju nak) cha lix)
             ==
@@ -963,6 +967,11 @@
               (end 3 64 txt)
             [por ~]
         (join [[%& our.hid nom] ~ ~])
+      ::
+      ++  nick
+        |=  *
+        ^+  ..sh-work
+        !!
       ::
       ++  target                                        ::  %target
         |=  [lix=?((set partner) char) woe=(unit ^work)]
