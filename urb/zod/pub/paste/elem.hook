@@ -1,0 +1,30 @@
+/=  all  /;  flop  /^  (list (pair time ,*))  /:  /%%/  /&  /mime/
+;div
+  ;script@"//code.jquery.com/jquery-2.1.4.min.js";
+  ;script@"/~/at/home/lib/urb.js";
+  ;script:'''
+          urb.appl = 'write'
+          urb.send.mark = 'write-paste'
+          submit = function(){
+            urb.send({
+              txt:$("textarea").val(),
+              typ:$("select :selected").val()
+            }, function(){
+              $.getJSON('paste/new.json',null,function(resp){
+                if(!resp) throw "No paste"
+                window.location = "paste/"+resp.u
+            })})
+          }
+          '''
+::
+  ;p:textarea;
+  ;button(onclick "submit()"):"Submit"
+  ;select
+    ;option(value "md"): Markdown
+    ;option(value "txt"): Text
+    ;option(value "hoon"): Hoon
+  ==
+  ;hr;
+  ; recent:
+  ;*  (turn all |=([a=time *] ;p:a/"paste/{<a>}":"{<a>}"))
+==
