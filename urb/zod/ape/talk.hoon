@@ -107,7 +107,7 @@
           [%banish p=span q=(list partner)]             ::  blacklist add
           [%block p=span q=(list partner)]              ::  blacklist add
           [%author p=span q=(list partner)]             ::  whitelist add
-          [%nick ~]                                     ::
+          [%nick p=(unit ship) q=(unit cord)]           ::
           [%target p=where q=(unit work)]               ::  set active targets
           ::  [%destroy p=span]                         ::
           [%create p=posture q=span r=cord]             ::
@@ -215,6 +215,7 @@
           ==
         ==
       ::
+      ++  nick  (cook crip (stun [1 14] low))           ::  nickname
       ++  text  (cook crip (star (shim ' ' '~')))       ::  bullets separating
       ++  glyph  (mask "/\\\{(<!?{(zing glyphs)}")      ::  station postfix
       ++  work
@@ -239,7 +240,16 @@
           ;~((glue ace) (perk %join ~) parz)
           ;~((glue ace) (perk %what ~) ;~(pose parz glyph))
         ::
-          ;~(plug (perk %nick ~) (easy ~))
+          ;~  plug  (perk %nick ~)
+            ;~  pose
+              (cook some ;~(pfix ace ship))
+              (easy ~)
+            ==
+            ;~  pose
+              (cook some ;~(pfix ace nick))
+              (easy ~)
+            ==
+          ==
         ::
           ;~(plug (perk %help ~) (easy ~))
           (stag %number nump)
@@ -846,7 +856,7 @@
           %author  (author +.job)
           %block   (block +.job)
           %create  (create +.job)
-          %nick    (nick)
+          %nick    (nick +.job)
           %target  (target +.job)
           %probe   (probe +.job)
           %help    (help)
@@ -969,9 +979,10 @@
         (join [[%& our.hid nom] ~ ~])
       ::
       ++  nick
-        |=  *
+        |=  [her=(unit ship) nym=(unit cord)]
         ^+  ..sh-work
-        !!
+        ~&  [her nym]
+        ..sh-work
       ::
       ++  target                                        ::  %target
         |=  [lix=?((set partner) char) woe=(unit ^work)]
