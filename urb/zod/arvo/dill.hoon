@@ -214,7 +214,7 @@
         =.  +>  ?:  ?=(%czar can)  +>
                 (sync %base (sein our) %kids)
         =.  +>  (sync %home our %base)
-        =.  +>  ?.  ?=(?(%king %czar) can)  +>
+        =.  +>  ?.  ?=(?(%duke %king %czar) can)  +>
                 (sync %kids our %base)
         =.  +>  autoload
         =.  +>  peer
