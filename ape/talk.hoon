@@ -1005,6 +1005,7 @@
         |=  [max=@ud nul=@u fin=@ud]  ^-  @ud
         =+  dog=|-(?:(=(0 fin) 1 (mul 10 $(fin (div fin 10)))))
         =.  dog  (mul dog (pow 10 nul))
+        =-  ?:((lte - max) - (sub - dog))
         (add fin (sub max (mod max dog)))
       ::
       ++  probe                                         ::  inquire
