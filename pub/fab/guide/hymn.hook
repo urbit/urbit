@@ -16,34 +16,25 @@
               ==
             (flop b)
         /@
+        /%
         /hymn/
 ::
-|%
-++  rut
-  |=  [gus=epic]
-  =+  ^=  nyp
-    ?:  =(-.nyp.gus %gin)
-      "{<nyp.gus>}/{+:(scow %p p.bem.gus)}"
-    "{<nyp.gus>}"
-  "{nyp}".
-  "/{(trip q.bem.gas)}".
-  "{<`path`(flop (slag 1 s.bem.gas))>}"
---
+=+  rut=?>(?=([@ @ *] s.bem.gas) (trip i.t.s.bem.gas))
 ::
 ^-  manx
 ;html
   ;head
     ;title: Helo Web
     ;meta(charset "utf-8");
-    ;link/"{(rut gas)}/main.css"(rel "stylesheet", type "text/css");
-    ;script(src "{(rut gas)}/main.js", type "text/javascript");
+    ;link/"{rut}/main.css"(rel "stylesheet", type "text/css");
+    ;script(src "{rut}/main.js", type "text/javascript");
   ==
   ;body
     ;div#container
       ;div#head
         ;div.info
           ;div.ship: {(scow %p p.bem.gas)}
-          ;div.path: {(spud s.bem.gas)} desk at rev {(scow %ud p.r.bem.gas)}
+          ;div.path: {(spud s.bem.gas)} desk {<q.bem.gas>} at rev {(scow r.bem.gas)}
         ==      
         ;h1: Learning %ford
       ==
