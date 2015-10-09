@@ -1,0 +1,12 @@
+;html
+  ;head
+    ;meta(charset "utf-8");
+    ;title: Exercise 1
+  ==
+  ;body
+    ;div
+      ;h1: Exercise 1 — Simple HTML
+      ;p: As you may notice, urbit has no problem talking to the web.
+    ==
+  ==
+==
