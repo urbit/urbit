@@ -307,6 +307,7 @@
     %cru  (ta-cru:taz p.bet q.bet)
     %ctl  (ta-ctl:taz p.bet)
     %del  ta-del:taz
+    %hey  taz(mir [0 ~])
     %met  (ta-met:taz p.bet)
     %ret  ta-ret:taz
     %txt  (ta-txt:taz p.bet)
