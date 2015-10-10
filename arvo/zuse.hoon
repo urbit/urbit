@@ -2399,6 +2399,7 @@
       [%cru p=@tas q=(list tank)]                       ::  echo error
       [%ctl p=@]                                        ::  control-key
       [%del ~]                                          ::  true delete
+      [%hey ~]                                          ::  refresh
       [%met p=@]                                        ::  meta-key
       [%ret ~]                                          ::  return
       [%rez p=@ud q=@ud]                                ::  resize, cols, rows
