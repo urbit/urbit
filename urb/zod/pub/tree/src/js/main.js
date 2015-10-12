@@ -414,6 +414,10 @@ module.exports = query({
 }, recl({
   displayName: "Body",
   render: function() {
+    $("#cont").attr('class', '');
+    if (this.props.meta.layout) {
+      $("#cont").attr('class', this.props.meta.layout.replace(/,/g, " "));
+    }
     return div({}, div({
       id: 'body',
       key: "body" + this.props.path

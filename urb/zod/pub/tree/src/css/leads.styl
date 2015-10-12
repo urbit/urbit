@@ -1,0 +1,142 @@
+#cont.lead
+  #body
+    margin-top 3rem
+    margin-top 0
+
+  h1
+    margin-top 1rem
+    &.fold
+      margin-top 6rem
+    &.leader
+      margin-left -3rem
+
+  h1.leader,
+  img.logo
+    vertical-align middle
+    line-height 2rem
+
+  img
+    &.logo
+      margin-right 1rem
+
+  &
+  .list li,
+  .list li a,
+  .list li h1, 
+    font-size 1.6rem
+    line-height 2.6rem
+
+  a
+    line-height 1.6rem
+    border-bottom 3px solid #000
+    line-height 1rem
+
+  .footer
+    margin 4rem 0 4rem 0
+    font-weight 500
+    color #ccc
+    p
+      margin 0
+
+  input.email
+    border-radius 0
+    font inherit
+    font-family 'scp'
+    font-weight 300
+    line-height 2rem
+    min-width 2rem
+    border 0
+    outline 0
+    background-color transparent
+    border-bottom 3px dotted #000
+    margin-right 1rem
+    display inline-block
+    &.valid
+      color #99F27C
+    &.error
+      color #F74040
+  
+  .email:empty:not(:focus):before
+    content attr(data-ph)
+    
+  ::-webkit-input-placeholder
+    color #e6e7e8
+
+  :-moz-placeholder
+    color #e6e7e8
+
+  ::-moz-placeholder
+    color #e6e7e8
+
+  :-ms-input-placeholder
+    color #e6e7e8
+
+  button
+    &.submit
+      font inherit
+      border 0
+      background-color #fff
+      border-bottom 3px solid #000
+      font-size 1.6rem
+      line-height 1.6rem
+      display inline-block
+      text-align left
+      margin-top 1rem
+      height 2rem
+      padding 0 .6rem
+
+  li
+    &::before
+      content ''
+      padding-right none
+
+  .list
+    li
+      margin-bottom 1rem
+      a
+        text-transform none
+
+  .list li,
+  .list li a,
+  .list li h1
+    white-space normal
+    letter-spacing 0
+
+  .list li a > div div,
+  .list li a > div p
+    display block
+    margin-left 0
+
+  .date
+    font-weight 400
+
+  .date,
+  div.footer
+    font-family 'scp'
+    font-size .7rem
+
+@media only screen and (min-width: 320px) and (max-width: 1024px)
+  #cont.lead
+    top 0rem
+    font-size 1rem
+    line-height 1.6rem
+
+    img.logo
+      display block
+      margin-bottom 1rem
+
+    h1.leader,
+    h1.fold
+      font-size 1.6rem
+      margin-left 0
+
+    .list li,
+    .list li a,
+    .list li h1, 
+      font-size 1rem
+      line-height 1.6rem
+
+    .date,
+    div.footer
+      font-size .6rem
+

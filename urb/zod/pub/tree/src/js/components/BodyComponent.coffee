@@ -6,4 +6,13 @@ recl   = React.createClass
 
 module.exports = query {body:'r',path:'t',meta:'j'}, recl
   displayName: "Body"
-  render: -> (div {}, (div {id:'body',key:"body"+@props.path}, reactify @props.body))
+  render: -> 
+    $("#cont").attr 'class',''
+    if @props.meta.layout
+      $("#cont").attr 'class',@props.meta.layout.replace /,/g," "
+    (div {}, 
+      (div {
+          id:'body',
+          key:"body"+@props.path}, 
+        reactify @props.body)
+    )
