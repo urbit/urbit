@@ -1,6 +1,8 @@
 `%clay` 
 ========
 
+`%clay` filesystem utilities.
+
 ## Paths
 
 ### Structure

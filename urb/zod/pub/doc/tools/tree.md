@@ -1,6 +1,6 @@
 # `:tree`
 
-`:tree` is the web filesystem interface.
+`:tree` static file hosting internals.
 
 `:tree` is a single-page app that uses a backend in `/home/tree` to load contents from `%clay` as the user navigates around as `%json`. The frontend lives in `/home/pub/tree` and is a fairly straightforward [React](https://facebook.github.io/react/) / [Flux](https://facebook.github.io/flux/) app.
 
