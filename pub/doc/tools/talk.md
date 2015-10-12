@@ -1,5 +1,7 @@
 # `:talk`
 
+`:talk` messaging interface.
+
 `:talk` is the Urbit appliance for chatter and notifications.
 For less sophisticated users, Urbit *is* just `:talk`.  If you
 see `:talk` as "like Slack, but distributed," or "like IRC, but
