@@ -1719,7 +1719,12 @@
         %czar  (weld "          " raw)
         %king  (weld "       " raw)
         %duke  raw
-        %earl  :(welp (scag 7 raw) "^" (scag 6 (slag 22 raw)))
+        %earl  ;:  welp
+                 (scag 1 raw)
+                 (scag 6 (slag 15 raw))
+                 "^"
+                 (scag 6 (slag 22 raw))
+               ==
         %pawn  :(welp (scag 7 raw) "_" (scag 6 (slag 51 raw)))
     ==
   ::
