@@ -501,6 +501,205 @@ div.toc h1.t {
 .warning.w {
   width: auto;
 }
+h1.lead {
+  margin-top: 1rem;
+  margin-bottom: 6rem;
+  font-size: 1.6rem;
+  line-height: 2rem;
+  margin-bottom: 3rem;
+}
+h2 {
+  margin-top: 3rem;
+}
+h2.date {
+  margin-top: 0;
+  line-height: 0.7rem;
+}
+#nav #sibs {
+  width: 11rem;
+}
+#nav #sibs > div {
+  margin-bottom: 0.6rem;
+  height: auto;
+  margin-bottom: 4px;
+  height: 20px;
+}
+#nav a {
+  white-space: normal;
+  border: none;
+  white-space: nowrap;
+  border-bottom: 1px solid #000;
+}
+.date {
+  font-weight: 400;
+  font-family: 'scp';
+  font-size: 0.7rem;
+}
+@media only screen and (min-width: 320px) and (max-width: 1024px) {
+  #cont {
+    top: 2rem;
+  }
+  h1.lead {
+    font-size: 1.6rem;
+    line-height: 2rem;
+    margin-bottom: 3rem;
+  }
+  #nav #sibs {
+    width: 11rem;
+  }
+  #nav #sibs > div {
+    margin-bottom: 4px;
+    height: 20px;
+  }
+  #nav a {
+    white-space: nowrap;
+    border-bottom: 1px solid #000;
+  }
+}
+#cont.lead #body {
+  margin-top: 3rem;
+  margin-top: 0;
+}
+#cont.lead h1 {
+  margin-top: 1rem;
+}
+#cont.lead h1.fold {
+  margin-top: 6rem;
+}
+#cont.lead h1.leader {
+  margin-left: -3rem;
+}
+#cont.lead h1.leader,
+#cont.lead img.logo {
+  vertical-align: middle;
+  line-height: 2rem;
+}
+#cont.lead img.logo {
+  margin-right: 1rem;
+}
+#cont.lead,
+#cont.lead .list li,
+#cont.lead .list li a,
+#cont.lead .list li h1 {
+  font-size: 1.6rem;
+  line-height: 2.6rem;
+}
+#cont.lead a {
+  line-height: 1.6rem;
+  border-bottom: 3px solid #000;
+  line-height: 1rem;
+}
+#cont.lead .footer {
+  margin: 4rem 0 4rem 0;
+  font-weight: 500;
+  color: #ccc;
+}
+#cont.lead .footer p {
+  margin: 0;
+}
+#cont.lead input.email {
+  border-radius: 0;
+  font: inherit;
+  font-family: 'scp';
+  font-weight: 300;
+  line-height: 2rem;
+  min-width: 2rem;
+  border: 0;
+  outline: 0;
+  background-color: transparent;
+  border-bottom: 3px dotted #000;
+  margin-right: 1rem;
+  display: inline-block;
+}
+#cont.lead input.email.valid {
+  color: #99f27c;
+}
+#cont.lead input.email.error {
+  color: #f74040;
+}
+#cont.lead .email:empty:not(:focus):before {
+  content: attr(data-ph);
+}
+#cont.lead ::-webkit-input-placeholder {
+  color: #e6e7e8;
+}
+#cont.lead :-moz-placeholder {
+  color: #e6e7e8;
+}
+#cont.lead ::-moz-placeholder {
+  color: #e6e7e8;
+}
+#cont.lead :-ms-input-placeholder {
+  color: #e6e7e8;
+}
+#cont.lead button.submit {
+  font: inherit;
+  border: 0;
+  background-color: #fff;
+  border-bottom: 3px solid #000;
+  font-size: 1.6rem;
+  line-height: 1.6rem;
+  display: inline-block;
+  text-align: left;
+  margin-top: 1rem;
+  height: 2rem;
+  padding: 0 0.6rem;
+}
+#cont.lead li::before {
+  content: '';
+  padding-right: none;
+}
+#cont.lead .list li {
+  margin-bottom: 1rem;
+}
+#cont.lead .list li a {
+  text-transform: none;
+}
+#cont.lead .list li,
+#cont.lead .list li a,
+#cont.lead .list li h1 {
+  white-space: normal;
+  letter-spacing: 0;
+}
+#cont.lead .list li a > div div,
+#cont.lead .list li a > div p {
+  display: block;
+  margin-left: 0;
+}
+#cont.lead .date {
+  font-weight: 400;
+}
+#cont.lead .date,
+#cont.lead div.footer {
+  font-family: 'scp';
+  font-size: 0.7rem;
+}
+@media only screen and (min-width: 320px) and (max-width: 1024px) {
+  #cont.lead {
+    top: 0rem;
+    font-size: 1rem;
+    line-height: 1.6rem;
+  }
+  #cont.lead img.logo {
+    display: block;
+    margin-bottom: 1rem;
+  }
+  #cont.lead h1.leader,
+  #cont.lead h1.fold {
+    font-size: 1.6rem;
+    margin-left: 0;
+  }
+  #cont.lead .list li,
+  #cont.lead .list li a,
+  #cont.lead .list li h1 {
+    font-size: 1rem;
+    line-height: 1.6rem;
+  }
+  #cont.lead .date,
+  #cont.lead div.footer {
+    font-size: 0.6rem;
+  }
+}
 @media only screen and (max-width: 1170px) {
   #nav,
   #nav > div,
