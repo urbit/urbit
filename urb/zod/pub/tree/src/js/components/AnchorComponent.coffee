@@ -48,7 +48,7 @@ Links = React.createFactory query {
     _render: -> div {id:"sibs"}, div {className:"active"}, a {}, @props.curr
 
 CLICK = 'a,h1,h2,h3,h4,h5,h6'
-module.exports = query {sein:'t',path:'t',name:'t',next:'t',prev:'t'},recl
+module.exports = query {sein:'t',path:'t',name:'t',next:'t',prev:'t',meta:'j'},recl
   displayName: "Anchor"
   getInitialState: -> url: window.location.pathname
   
@@ -113,6 +113,10 @@ module.exports = query {sein:'t',path:'t',name:'t',next:'t',prev:'t'},recl
     (a {href,key:"arow-#{name}",className:"arow-#{name}"},"")
   
   render: ->
+    if @props.meta.anchor is 'none' 
+      console.log 'no anchor'
+      return (div {}, "")
+
     obj = {@onMouseOver,@onMouseOut,@onClick,@onTouchStart,@onTouchEnd}
     if _.keys(window).indexOf("ontouchstart") isnt -1
       delete obj.onMouseOver
