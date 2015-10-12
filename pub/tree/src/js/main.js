@@ -149,7 +149,8 @@ module.exports = query({
   path: 't',
   name: 't',
   next: 't',
-  prev: 't'
+  prev: 't',
+  meta: 'j'
 }, recl({
   displayName: "Anchor",
   getInitialState: function() {
@@ -259,6 +260,10 @@ module.exports = query({
   },
   render: function() {
     var obj;
+    if (this.props.meta.anchor === 'none') {
+      console.log('no anchor');
+      return div({}, "");
+    }
     obj = {
       onMouseOver: this.onMouseOver,
       onMouseOut: this.onMouseOut,
@@ -407,7 +412,8 @@ div = React.DOM.div;
 
 module.exports = query({
   body: 'r',
-  path: 't'
+  path: 't',
+  meta: 'j'
 }, recl({
   displayName: "Body",
   render: function() {
