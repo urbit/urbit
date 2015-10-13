@@ -560,22 +560,47 @@ h2.date {
   margin-top: 3rem;
   margin-top: 0;
 }
+#cont.lead .bar {
+  margin-top: 2rem;
+}
+#cont.lead .bar > div {
+  display: inline-block;
+}
+#cont.lead .bar a.logo {
+  display: inline-block;
+  height: 2rem;
+  vertical-align: middle;
+  border: none;
+}
+#cont.lead .bar img.logo {
+  margin-right: 18px;
+}
+#cont.lead .bar ul.list.nav {
+  margin: 0;
+}
+#cont.lead .bar ul.list.nav li {
+  display: inline-block;
+  margin-bottom: 0;
+  margin-right: 1rem;
+}
+#cont.lead .bar ul.list.nav li a {
+  border-bottom: none;
+}
+#cont.lead .bar ul.list.nav h1 {
+  text-decoration: none;
+  border-bottom: 2px solid #000;
+  text-transform: capitalize;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.03rem;
+}
 #cont.lead h1 {
   margin-top: 1rem;
+  vertical-align: middle;
+  line-height: 4rem;
 }
 #cont.lead h1.fold {
   margin-top: 6rem;
-}
-#cont.lead h1.leader {
-  margin-left: -3rem;
-}
-#cont.lead h1.leader,
-#cont.lead img.logo {
-  vertical-align: middle;
-  line-height: 2rem;
-}
-#cont.lead img.logo {
-  margin-right: 1rem;
 }
 #cont.lead,
 #cont.lead .list li,
@@ -586,12 +611,12 @@ h2.date {
 }
 #cont.lead a {
   line-height: 1.6rem;
-  border-bottom: 3px solid #000;
   line-height: 1rem;
 }
 #cont.lead .footer {
   margin: 4rem 0 4rem 0;
-  font-weight: 500;
+  font-weight: 200;
+  line-height: 1rem;
   color: #ccc;
 }
 #cont.lead .footer p {
@@ -669,7 +694,17 @@ h2.date {
 #cont.lead .date {
   font-weight: 400;
 }
-#cont.lead .date,
+#cont.lead .kids p.ib {
+  margin-top: 0;
+}
+#cont.lead .kids h3 {
+  font-size: 1rem;
+}
+#cont.lead .kids h3::after {
+  content: "\2014";
+  margin-left: 1em;
+}
+#cont.lead .kids h2,
 #cont.lead div.footer {
   font-family: 'scp';
   font-size: 0.7rem;

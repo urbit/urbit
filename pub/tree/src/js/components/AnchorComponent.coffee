@@ -114,7 +114,6 @@ module.exports = query {sein:'t',path:'t',name:'t',next:'t',prev:'t',meta:'j'},r
   
   render: ->
     if @props.meta.anchor is 'none' 
-      console.log 'no anchor'
       return (div {}, "")
 
     obj = {@onMouseOver,@onMouseOut,@onClick,@onTouchStart,@onTouchEnd}

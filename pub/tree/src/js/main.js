@@ -260,7 +260,6 @@ module.exports = query({
   render: function() {
     var obj;
     if (this.props.meta.anchor === 'none') {
-      console.log('no anchor');
       return div({}, "");
     }
     obj = {
@@ -564,24 +563,56 @@ ref = React.DOM, div = ref.div, a = ref.a, ul = ref.ul, li = ref.li, hr = ref.hr
 
 module.exports = query({
   kids: {
-    body: 'r'
+    body: 'r',
+    meta: 'j'
   }
 }, recl({
   displayName: "Kids",
   render: function() {
-    var v;
+    var _k, _keys, elem, item, k, klass, ref1, ref2, ref3, ref4, sorted, v;
+    klass = "kids";
+    if (this.props.dataType) {
+      klass += " " + this.props.dataType;
+    }
+    sorted = true;
+    _keys = [];
+    ref1 = this.props.kids;
+    for (k in ref1) {
+      v = ref1[k];
+      if (this.props.sortBy) {
+        if (this.props.sortBy === 'date') {
+          if (((ref2 = v.meta) != null ? ref2.date : void 0) == null) {
+            sorted = false;
+          }
+          _k = Number(v.meta.date.slice(1).replace(/\./g, ""));
+          _keys[_k] = k;
+        }
+      } else {
+        if (((ref3 = v.meta) != null ? ref3.sort : void 0) == null) {
+          sorted = false;
+        }
+        _keys[Number((ref4 = v.meta) != null ? ref4.sort : void 0)] = k;
+      }
+    }
+    if (this.props.sortBy === 'date') {
+      _keys.reverse();
+    }
+    if (sorted !== true) {
+      _keys = _.keys(this.props.kids).sort();
+    }
     return div({
-      className: "kids"
+      className: klass
     }, (function() {
-      var i, len, ref1, results;
-      ref1 = _.keys(this.props.kids).sort();
+      var i, len, ref5, results;
+      ref5 = _.values(_keys);
       results = [];
-      for (i = 0, len = ref1.length; i < len; i++) {
-        v = ref1[i];
+      for (i = 0, len = ref5.length; i < len; i++) {
+        item = ref5[i];
+        elem = this.props.kids[item];
         results.push([
           div({
-            key: v
-          }, reactify(this.props.kids[v].body)), hr({}, "")
+            key: item
+          }, reactify(elem.body)), hr({}, "")
         ]);
       }
       return results;
@@ -615,7 +646,8 @@ module.exports = query({
   render: function() {
     var k;
     k = clas({
-      list: true,
+      list: true
+    }, this.props.dataType, {
       posts: this.props.dataType === 'post',
       "default": this.props['data-source'] === 'default'
     });
@@ -1734,6 +1766,8 @@ TreeStore = _.extend(EventEmitter.prototype, {
     return _path.split("/");
   },
   fulfill: function(path, query) {
+    console.log('fulfill');
+    console.log(path);
     return this.fulfillAt(this.getTree(path.split('/')), path, query);
   },
   fulfillAt: function(tree, path, query) {
