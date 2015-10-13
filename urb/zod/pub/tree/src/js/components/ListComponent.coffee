@@ -18,7 +18,8 @@ module.exports = query {
   render: ->
     k = clas
       list: true
-      posts: @props.dataType is 'post'
+      @props.dataType
+      posts: @props.dataType is 'post' # needs css update
       default: @props['data-source'] is 'default'
     (ul {className:k}, @renderList())
 
