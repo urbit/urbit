@@ -2222,7 +2222,7 @@
   (a b c)
 ::
 ++  gulf                                                ::  range list
-  |=([a=@ b=@] `(list ,@)`?:(=(a b) ~ [a $(a +(a))]))
+  |=([a=@ b=@] `(list ,@)`?:(=(a +(b)) ~ [a $(a +(a))]))
 ::
 ++  hard                                                ::  force coerce to type
   |*  han=$+(* *)
