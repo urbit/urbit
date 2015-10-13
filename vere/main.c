@@ -342,7 +342,7 @@ main(c3_i   argc,
   if ( c3y == u3_Host.ops_u.nuu ) {
     struct stat s;
     if ( !stat(u3_Host.dir_c, &s) ) {
-      fprintf(stderr, "used -c but %s already exists\n", u3_Host.dir_c);
+      fprintf(stderr, "tried to create, but %s already exists\n", u3_Host.dir_c);
       exit(1);
     }
    }
