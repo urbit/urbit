@@ -225,7 +225,8 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-f            Fuzz testing\n",
     "-k stage      Start at Hoon kernel version stage\n",
     "-Xwtf         Skip last event\n"};
-  for ( c3_i i=0; i < sizeof(use_c)/sizeof(c3_c*); i++ ) {
+  c3_i i;
+  for ( i=0; i < sizeof(use_c)/sizeof(c3_c*); i++ ) {
     fprintf(stderr,use_c[i],argv[0]);
   }
   exit(1);
