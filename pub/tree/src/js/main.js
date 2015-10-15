@@ -693,6 +693,9 @@ module.exports = query({
       path = this.props.path + "/" + item;
       elem = this.props.kids[item];
       href = window.tree.basepath(path);
+      if (elem.meta.link) {
+        href = elem.meta.link;
+      }
       parts = [];
       title = null;
       if ((ref6 = elem.meta) != null ? ref6.title : void 0) {
