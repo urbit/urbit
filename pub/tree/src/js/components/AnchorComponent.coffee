@@ -30,7 +30,8 @@ Links = React.createFactory query {
         keys = _.keys(@props.kids).sort()
       else
         keys = _.values keys
-      style = {marginTop: -24 * (keys.indexOf @props.curr) + "px"}
+      if keys.indexOf(@props.curr) isnt -1
+        style = {marginTop: -24 * (keys.indexOf @props.curr) + "px"}
       div {id:"sibs",style}, keys.map (key) =>
         href = window.tree.basepath @props.path+"/"+key
         data = @props.kids[key]
@@ -81,7 +82,12 @@ module.exports = query {sein:'t',path:'t',name:'t',next:'t',prev:'t',meta:'j'},r
         e.preventDefault()
         e.stopPropagation()
         _this.goTo window.tree.fragpath href
-      else if id
+      else
+        e.preventDefault()
+        e.stopPropagation()
+        base = window.tree.fragpath(document.location.pathname)
+        _this.goTo base+"/#{href}"
+      if id
         window.location.hash = id
 
   setTitle: ->

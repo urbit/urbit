@@ -13,7 +13,11 @@ module.exports = (queries, Child, load=_load)-> recl
   _onChangeStore: ->
     if @isMounted() then @setState @stateFromStore()
   
-  getPath: -> @props.dataPath ? TreeStore.getCurr()
+  getPath: -> 
+    path = @props.dataPath ? TreeStore.getCurr()
+    if path.slice(-1) is "/"
+      path.slice 0,-1
+    else path
   stateFromStore: -> got: TreeStore.fulfill @getPath(), queries
   
   componentDidMount: -> 

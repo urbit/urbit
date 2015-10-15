@@ -85,9 +85,11 @@ Links = React.createFactory(query({
     } else {
       keys = _.values(keys);
     }
-    style = {
-      marginTop: -24 * (keys.indexOf(this.props.curr)) + "px"
-    };
+    if (keys.indexOf(this.props.curr) !== -1) {
+      style = {
+        marginTop: -24 * (keys.indexOf(this.props.curr)) + "px"
+      };
+    }
     return div({
       id: "sibs",
       style: style
@@ -201,14 +203,20 @@ module.exports = query({
     })(this));
     _this = this;
     return $('body').on('click', CLICK, function(e) {
-      var href, id;
+      var base, href, id;
       href = $(this).attr('href');
       id = $(this).attr('id');
       if ((href != null ? href[0] : void 0) === "/") {
         e.preventDefault();
         e.stopPropagation();
-        return _this.goTo(window.tree.fragpath(href));
-      } else if (id) {
+        _this.goTo(window.tree.fragpath(href));
+      } else {
+        e.preventDefault();
+        e.stopPropagation();
+        base = window.tree.fragpath(document.location.pathname);
+        _this.goTo(base + ("/" + href));
+      }
+      if (id) {
         return window.location.hash = id;
       }
     });
@@ -322,8 +330,13 @@ module.exports = function(queries, Child, load) {
       }
     },
     getPath: function() {
-      var ref1;
-      return (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
+      var path, ref1;
+      path = (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
+      if (path.slice(-1) === "/") {
+        return path.slice(0, -1);
+      } else {
+        return path;
+      }
     },
     stateFromStore: function() {
       return {

@@ -102,6 +102,10 @@ hr {
 }
 h1 {
   margin-top: 4rem;
+  line-height: 2.6rem;
+}
+#body > div > h1:first-of-type {
+  margin-top: 1rem;
 }
 h2,
 h3 {
@@ -692,6 +696,20 @@ h2.date {
   #cont.lead div.footer {
     font-size: 0.6rem;
   }
+}
+.video iframe {
+  width: 42rem;
+  height: 24rem;
+}
+.video .leader {
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 2.6rem;
+  margin-bottom: 4rem;
+}
+.video .short img {
+  margin-top: 2rem;
+  width: 42rem;
 }
 @media only screen and (max-width: 1170px) {
   #nav,
