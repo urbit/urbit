@@ -271,6 +271,10 @@ h3.time {
   border-bottom: none;
   margin-bottom: 0.3rem;
 }
+.list > li > a h1 {
+  font-size: inherit;
+  line-height: inherit;
+}
 #nav a,
 .list > li > a h1 {
   border-bottom: 1px solid #000;
@@ -290,20 +294,20 @@ h3.time {
 #sides a {
   margin-right: 0.6rem;
 }
-#nav .arow-up,
-#nav .arow-next,
-#nav .arow-prev {
+.arow-up,
+.arow-next,
+.arow-prev {
   width: 0;
   height: 0;
   border: 0.4rem solid transparent;
 }
-#nav .arow-up {
+.arow-up {
   border-bottom: 0.6rem solid #000;
 }
-#nav .arow-next {
+.arow-next {
   border-left: 0.6rem solid #000;
 }
-#nav .arow-prev {
+.arow-prev {
   border-right: 0.6rem solid #000;
 }
 #bred {
@@ -356,7 +360,6 @@ h3.time {
 }
 .list li a h1 code {
   text-transform: lowercase;
-  border-bottom: 1px solid #000;
 }
 .list li a code {
   padding: 0.2rem;
@@ -371,25 +374,6 @@ h3.time {
 }
 .list h1 {
   font-size: 0.7rem;
-}
-.list.posts .post {
-  margin-bottom: 2rem;
-}
-.list.posts .post h1 {
-  text-transform: none;
-  font-size: 1.6rem;
-  line-height: 1.8rem;
-  margin-bottom: 1rem;
-  display: block;
-}
-.list.posts .post h2 {
-  font-size: 0.7rem;
-  font-weight: 400;
-  line-height: 1rem;
-  margin-top: 0;
-}
-.list.posts li.post:before {
-  content: "";
 }
 div.root h1 {
   margin-bottom: 2rem;
@@ -515,6 +499,25 @@ h2.date {
   margin-top: 0;
   line-height: 0.7rem;
 }
+.list.posts .post {
+  margin-bottom: 2rem;
+}
+.list.posts .post h1 {
+  text-transform: none;
+  font-size: 1.6rem;
+  line-height: 1.8rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+.list.posts .post h2 {
+  font-size: 0.7rem;
+  font-weight: 400;
+  line-height: 1rem;
+  margin-top: 0;
+}
+.list.posts li.post:before {
+  content: "";
+}
 #nav #sibs {
   width: 11rem;
 }
@@ -602,10 +605,13 @@ h2.date {
 #cont.lead h1.fold {
   margin-top: 6rem;
 }
-#cont.lead,
-#cont.lead .list li,
-#cont.lead .list li a,
-#cont.lead .list li h1 {
+#cont.lead .list > li > a h1 {
+  margin: 0;
+  line-height: inherit;
+  text-transform: capitalize;
+  font-size: 1.2rem;
+}
+#cont.lead {
   font-size: 1.6rem;
   line-height: 2.6rem;
 }
@@ -673,23 +679,6 @@ h2.date {
 #cont.lead li::before {
   content: '';
   padding-right: none;
-}
-#cont.lead .list li {
-  margin-bottom: 1rem;
-}
-#cont.lead .list li a {
-  text-transform: none;
-}
-#cont.lead .list li,
-#cont.lead .list li a,
-#cont.lead .list li h1 {
-  white-space: normal;
-  letter-spacing: 0;
-}
-#cont.lead .list li a > div div,
-#cont.lead .list li a > div p {
-  display: block;
-  margin-left: 0;
 }
 #cont.lead .date {
   font-weight: 400;
