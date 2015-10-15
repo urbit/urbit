@@ -288,6 +288,7 @@
   ?>  ?=(~ saw)
   [~ +>.$]
 ::
+++  quit-peering  |=(way=wire ?>(?=(~ way) initialize(connected |)))
 ++  reap-peering
   |=  [way=wire saw=(unit tang)]
   ^-  [(list move) _+>.$]
