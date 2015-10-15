@@ -91,8 +91,6 @@ html {
 }
 a {
   color: #000;
-  text-decoration: none;
-  border-bottom: 2px solid #000;
   display: inline-block;
   line-height: 0.8rem;
 }
@@ -252,7 +250,6 @@ h3.time {
   overflow: hidden;
 }
 #nav #sibs > div {
-  height: 20px;
   margin-bottom: 4px;
 }
 .focus #sibs {
@@ -263,12 +260,11 @@ h3.time {
 .list > li > a {
   text-transform: uppercase;
   font-size: 0.7rem;
+  line-height: 1rem;
   font-weight: 200;
   letter-spacing: 1px;
-  white-space: nowrap;
 }
 .list > li > a {
-  border-bottom: none;
   margin-bottom: 0.3rem;
 }
 .list > li > a h1 {
@@ -277,7 +273,6 @@ h3.time {
 }
 #nav a,
 .list > li > a h1 {
-  border-bottom: 1px solid #000;
   margin-right: 0.3rem;
 }
 #nav .active a {
@@ -518,21 +513,6 @@ h2.date {
 .list.posts li.post:before {
   content: "";
 }
-#nav #sibs {
-  width: 11rem;
-}
-#nav #sibs > div {
-  margin-bottom: 0.6rem;
-  height: auto;
-  margin-bottom: 4px;
-  height: 20px;
-}
-#nav a {
-  white-space: normal;
-  border: none;
-  white-space: nowrap;
-  border-bottom: 1px solid #000;
-}
 .date {
   font-weight: 400;
   font-family: 'scp';
@@ -546,17 +526,6 @@ h2.date {
     font-size: 1.6rem;
     line-height: 2rem;
     margin-bottom: 3rem;
-  }
-  #nav #sibs {
-    width: 11rem;
-  }
-  #nav #sibs > div {
-    margin-bottom: 4px;
-    height: 20px;
-  }
-  #nav a {
-    white-space: nowrap;
-    border-bottom: 1px solid #000;
   }
 }
 #cont.lead #body {
@@ -742,6 +711,12 @@ h2.date {
     background-color: #fff;
     z-index: 2;
   }
+  #nav a {
+    white-space: nowrap;
+  }
+  #nav #sibs > div {
+    height: 20px;
+  }
   #nav.m-down,
   #nav.m-up {
     position: absolute;
@@ -835,6 +810,7 @@ h2.date {
     max-height: 1.6rem;
   }
   #nav a {
+    line-height: auto;
     font-size: 0.7rem;
   }
   #nav #sibs > div {

@@ -27,7 +27,9 @@ Links = React.createFactory query {
         if not v.meta?.sort? then sorted = false
         keys[Number(v.meta?.sort)] = k
       if sorted isnt true
-        keys = _(@props.kids).keys().sort()
+        keys = _.keys(@props.kids).sort()
+      else
+        keys = _.values keys
       style = {marginTop: -24 * (keys.indexOf @props.curr) + "px"}
       div {id:"sibs",style}, keys.map (key) =>
         href = window.tree.basepath @props.path+"/"+key

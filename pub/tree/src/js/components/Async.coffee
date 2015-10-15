@@ -10,8 +10,8 @@ module.exports = (queries, Child, load=_load)-> recl
   displayName: "Async"
   
   getInitialState: -> @stateFromStore()
-  _onChangeStore: ->  
-    @setState @stateFromStore()
+  _onChangeStore: ->
+    if @isMounted() then @setState @stateFromStore()
   
   getPath: -> @props.dataPath ? TreeStore.getCurr()
   stateFromStore: -> got: TreeStore.fulfill @getPath(), queries
