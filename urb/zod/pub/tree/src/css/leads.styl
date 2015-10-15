@@ -36,12 +36,14 @@
     line-height 4rem
     &.fold
       margin-top 6rem
-    
+  
+  .list > li > a h1
+    margin 0
+    line-height inherit
+    text-transform capitalize
+    font-size 1.2rem
 
   &
-  .list li,
-  .list li a,
-  .list li h1, 
     font-size 1.6rem
     line-height 2.6rem
 
@@ -104,27 +106,9 @@
       height 2rem
       padding 0 .6rem
 
-  li
-    &::before
-      content ''
-      padding-right none
-
-  .list
-    li
-      margin-bottom 1rem
-      a
-        text-transform none
-
-  .list li,
-  .list li a,
-  .list li h1
-    white-space normal
-    letter-spacing 0
-
-  .list li a > div div,
-  .list li a > div p
-    display block
-    margin-left 0
+  li::before
+    content ''
+    padding-right none
 
   .date
     font-weight 400
