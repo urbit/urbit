@@ -81,11 +81,15 @@ Links = React.createFactory(query({
       keys[Number((ref3 = v.meta) != null ? ref3.sort : void 0)] = k;
     }
     if (sorted !== true) {
-      keys = _(this.props.kids).keys().sort();
+      keys = _.keys(this.props.kids).sort();
+    } else {
+      keys = _.values(keys);
     }
-    style = {
-      marginTop: -24 * (keys.indexOf(this.props.curr)) + "px"
-    };
+    if (keys.indexOf(this.props.curr) !== -1) {
+      style = {
+        marginTop: -24 * (keys.indexOf(this.props.curr)) + "px"
+      };
+    }
     return div({
       id: "sibs",
       style: style
@@ -148,7 +152,8 @@ module.exports = query({
   path: 't',
   name: 't',
   next: 't',
-  prev: 't'
+  prev: 't',
+  meta: 'j'
 }, recl({
   displayName: "Anchor",
   getInitialState: function() {
@@ -198,14 +203,20 @@ module.exports = query({
     })(this));
     _this = this;
     return $('body').on('click', CLICK, function(e) {
-      var href, id;
+      var base, href, id;
       href = $(this).attr('href');
       id = $(this).attr('id');
       if ((href != null ? href[0] : void 0) === "/") {
         e.preventDefault();
         e.stopPropagation();
-        return _this.goTo(window.tree.fragpath(href));
-      } else if (id) {
+        _this.goTo(window.tree.fragpath(href));
+      } else {
+        e.preventDefault();
+        e.stopPropagation();
+        base = window.tree.fragpath(document.location.pathname);
+        _this.goTo(base + ("/" + href));
+      }
+      if (id) {
         return window.location.hash = id;
       }
     });
@@ -258,6 +269,9 @@ module.exports = query({
   },
   render: function() {
     var obj;
+    if (this.props.meta.anchor === 'none') {
+      return div({}, "");
+    }
     obj = {
       onMouseOver: this.onMouseOver,
       onMouseOut: this.onMouseOut,
@@ -311,11 +325,18 @@ module.exports = function(queries, Child, load) {
       return this.stateFromStore();
     },
     _onChangeStore: function() {
-      return this.setState(this.stateFromStore());
+      if (this.isMounted()) {
+        return this.setState(this.stateFromStore());
+      }
     },
     getPath: function() {
-      var ref1;
-      return (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
+      var path, ref1;
+      path = (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
+      if (path.slice(-1) === "/") {
+        return path.slice(0, -1);
+      } else {
+        return path;
+      }
     },
     stateFromStore: function() {
       return {
@@ -404,10 +425,15 @@ div = React.DOM.div;
 
 module.exports = query({
   body: 'r',
-  path: 't'
+  path: 't',
+  meta: 'j'
 }, recl({
   displayName: "Body",
   render: function() {
+    $("#cont").attr('class', '');
+    if (this.props.meta.layout) {
+      $("#cont").attr('class', this.props.meta.layout.replace(/,/g, " "));
+    }
     return div({}, div({
       id: 'body',
       key: "body" + this.props.path
@@ -554,24 +580,56 @@ ref = React.DOM, div = ref.div, a = ref.a, ul = ref.ul, li = ref.li, hr = ref.hr
 
 module.exports = query({
   kids: {
-    body: 'r'
+    body: 'r',
+    meta: 'j'
   }
 }, recl({
   displayName: "Kids",
   render: function() {
-    var v;
+    var _k, _keys, elem, item, k, klass, ref1, ref2, ref3, ref4, sorted, v;
+    klass = "kids";
+    if (this.props.dataType) {
+      klass += " " + this.props.dataType;
+    }
+    sorted = true;
+    _keys = [];
+    ref1 = this.props.kids;
+    for (k in ref1) {
+      v = ref1[k];
+      if (this.props.sortBy) {
+        if (this.props.sortBy === 'date') {
+          if (((ref2 = v.meta) != null ? ref2.date : void 0) == null) {
+            sorted = false;
+          }
+          _k = Number(v.meta.date.slice(1).replace(/\./g, ""));
+          _keys[_k] = k;
+        }
+      } else {
+        if (((ref3 = v.meta) != null ? ref3.sort : void 0) == null) {
+          sorted = false;
+        }
+        _keys[Number((ref4 = v.meta) != null ? ref4.sort : void 0)] = k;
+      }
+    }
+    if (this.props.sortBy === 'date') {
+      _keys.reverse();
+    }
+    if (sorted !== true) {
+      _keys = _.keys(this.props.kids).sort();
+    }
     return div({
-      className: "kids"
+      className: klass
     }, (function() {
-      var i, len, ref1, results;
-      ref1 = _.keys(this.props.kids).sort();
+      var i, len, ref5, results;
+      ref5 = _.values(_keys);
       results = [];
-      for (i = 0, len = ref1.length; i < len; i++) {
-        v = ref1[i];
+      for (i = 0, len = ref5.length; i < len; i++) {
+        item = ref5[i];
+        elem = this.props.kids[item];
         results.push([
           div({
-            key: v
-          }, reactify(this.props.kids[v].body)), hr({}, "")
+            key: item
+          }, reactify(elem.body)), hr({}, "")
         ]);
       }
       return results;
@@ -605,7 +663,8 @@ module.exports = query({
   render: function() {
     var k;
     k = clas({
-      list: true,
+      list: true
+    }, this.props.dataType, {
       posts: this.props.dataType === 'post',
       "default": this.props['data-source'] === 'default'
     });
@@ -651,6 +710,9 @@ module.exports = query({
       path = this.props.path + "/" + item;
       elem = this.props.kids[item];
       href = window.tree.basepath(path);
+      if (elem.meta.link) {
+        href = elem.meta.link;
+      }
       parts = [];
       title = null;
       if ((ref6 = elem.meta) != null ? ref6.title : void 0) {
