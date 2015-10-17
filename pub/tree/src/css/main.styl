@@ -21,8 +21,6 @@ html
 
 a
   color #000
-  text-decoration none
-  border-bottom 2px solid #000
   display inline-block
   line-height .8rem
 
@@ -34,6 +32,10 @@ hr
 
 h1
   margin-top 4rem
+  line-height 2.6rem
+
+#body > div > h1:first-of-type
+  margin-top 1rem
 
 h2
 h3
@@ -179,7 +181,6 @@ h3.time
   overflow hidden
 
 #nav #sibs > div
-  height 20px
   margin-bottom 4px
 
 .focus #sibs
@@ -190,17 +191,19 @@ h3.time
 .list > li > a
   text-transform uppercase
   font-size .7rem
+  line-height 1rem
   font-weight 200
   letter-spacing 1px
-  white-space nowrap
 
 .list > li > a
-  border-bottom none
   margin-bottom .3rem
+
+.list > li > a h1
+  font-size inherit
+  line-height inherit
 
 #nav a
 .list > li > a h1
-  border-bottom 1px solid #000
   margin-right .3rem
 
 #nav .active a
@@ -217,18 +220,18 @@ h3.time
 #sides a
   margin-right .6rem
 
-#nav .arow-up
-#nav .arow-next
-#nav .arow-prev
+.arow-up
+.arow-next
+.arow-prev
   width 0
   height 0
   border .4rem solid transparent
 
-#nav .arow-up
+.arow-up
   border-bottom .6rem solid #000
-#nav .arow-next
+.arow-next
   border-left .6rem solid #000
-#nav .arow-prev
+.arow-prev
   border-right .6rem solid #000
 
 #bred
@@ -281,7 +284,6 @@ h3.time
 
 .list li a h1 code
   text-transform lowercase
-  border-bottom 1px solid #000
 
 .list li a code
   padding .2rem
@@ -296,26 +298,6 @@ h3.time
 
 .list h1
   font-size .7rem
-
-.list.posts
-  .post
-    margin-bottom 2rem
-  
-  .post h1
-    text-transform none
-    font-size 1.6rem
-    line-height 1.8rem
-    margin-bottom 1rem
-    display block
-  
-  .post h2
-    font-size .7rem
-    font-weight 400
-    line-height 1rem
-    margin-top 0
-  
-  li.post:before 
-    content ""
 
 div.root
   h1
@@ -428,5 +410,9 @@ div.toc
 
 .warning.w
   width auto
+
+@import 'posts'
+@import 'leads'
+@import 'video'
 
 @import 'mobile'
