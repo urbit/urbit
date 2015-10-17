@@ -105,7 +105,14 @@ u3v_wish(const c3_c* str_c)
     //  It's probably not a good idea to use u3v_wish() 
     //  outside the top level...
     //
-    return _cv_nock_wish(u3i_string(str_c));
+    u3_noun txt = u3i_string(str_c);
+    u3_noun exp = u3kdb_get(u3A->yot, u3k(txt));
+    
+    if ( u3_none != exp ) {
+      u3z(txt);
+      return exp;
+    }
+    else return _cv_nock_wish(u3i_string(str_c));
   }
 }
 
