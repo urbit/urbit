@@ -15,17 +15,18 @@ Tutorial
         web fabricators
         marks
         %gall appliances
+    Contributing
 
 Inactive
     (all old doc)
 
 Speculative
-    Whitepapers, essays, artifacts.
+    Whitepapers, essays, etc.
 
 Videos
-    
+   
 
-    
+!=  =+  ^=  core  |%  ++  dech  |=  [a=@ b=@]  ?:  =(+(b) a) b $(b +(b))  ++  dec  |=  a=@  ++  add  |=  [a=@ b=@]  ^-  @  ?:  =(0 a)  b  $(a (dec a), b +(b))  --  (add.core 10 10)
 
 
 Urbit is a general-purpose computing stack designed to live in the cloud. 
