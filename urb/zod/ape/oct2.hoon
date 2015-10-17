@@ -2,8 +2,9 @@
 ::::  /hoon/oct2/ape                                    ::::::  dependencies
   ::                                                    ::  ::
 /?  310                                                 ::  arvo version
-/-  sole, oct2                                        ::  structures
+/-  sole, oct2                                          ::  structures
 /+  sole, oct2                                          ::  libraries
+[. sole oct2]                                           ::  ::
 ::                                                      ::  ::
 ::::                                                    ::::::  interfaces
   !:                                                    ::  ::
@@ -37,7 +38,6 @@
 ::                                                      ::  ::
 ::::                                                    ::::::  process core
   ::                                                    ::  ::
-[sole oct2 .]
 |_  $:  bowl                                            ::
         moz=(list move)                                 ::  pending actions
         [%1 axle]                                       ::  process state, v1
@@ -80,16 +80,16 @@
 ++  work                                                ::  console action
   |=  act=sole-action                                   ::  
   =+  say=(~(got by eye) ost)                           ::
-  |^  ?:(?=(%det -.act) (delt +.act) dive)              ::
+  |^  ?+(-.act abet %det (delt +.act), %ret dive)       ::
   ++  abet  ..work(eye (~(put by eye) ost say))         ::  resolve
   ++  cusp  (cope !ept:here)                            ::  parsing rule
   ++  delt  |=  cal=sole-change                         ::  edit command line
-            =^  cul  say  (~(remit sole say) cal good)    ::
+            =^  cul  say  (~(remit sole say) cal good)  ::
             ?~(cul abet fail:(fect:abet det/u.cul))     ::
   ++  dive  =+  (rust (tufa buf.say) (punt come))       ::  apply command line
             ?~(- fail ?~(-> show (kick:wipe ->+)))      ::
   ++  good  |=((list ,@c) -:(rose (tufa +<) cusp))      ::  validate input
-  ++  wipe  =^  cal  say  (~(transmit sole say) set/~)    ::  clear line
+  ++  wipe  =^  cal  say  (~(transmit sole say) set/~)  ::  clear line
             (fect:abet %det cal)                        ::
   --                                                    ::
 ::                                                      ::  ::

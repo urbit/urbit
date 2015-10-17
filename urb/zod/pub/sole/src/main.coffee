@@ -82,7 +82,7 @@ $ ->
     mapr = matr.props
     switch Object.keys(ruh)[0]
       when 'txt' then print ruh.txt
-      when 'tan' then ruh.tan.split("\n").reverse().map print
+      when 'tan' then ruh.tan.split("\n").map print
       when 'pro' then updPrompt app, ruh.pro.cad
       when 'hop' then update cursor: ruh.hop; bell() # XX buffer.transpose?
       when 'blk' then console.log "Stub #{str ruh}"
