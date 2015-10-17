@@ -1,43 +1,50 @@
-urbit
-=====
+# Urbit
 
-Urbit is a new computing environment designed from scratch.
+Urbit is a clean-slate system software stack.  It's patent-free
+and MIT licensed.  It runs its own encrypted P2P network over UDP.
 
-At present urbit is under heavy development. It's not useful for any
-external purpose. Documentation is completely inadequate. Anyone can use
-the interpreter, of course, but the network is invitation-only.
+At present urbit is under heavy development. It's not useful for
+any external purpose. Documentation is completely inadequate.
+Anyone can try the interpreter, of course, but the network is
+officially invitation-only.
 
-If you're interested in keeping in touch or following the project you
-can:
+If you're interested in keeping in touch or following the project
+you can:
 
--   Enter your email address at [urbit.org](http://urbit.org).
--   Subscribe to the
+-   Give us your email address at [urbit.org](http://urbit.org).
+-   Check out the
     [urbit-dev](https://groups.google.com/forum/#!forum/urbit-dev)
     mailing list.
 -   Follow [@urbit_](https://twitter.com/urbit\_) on Twitter.
--   Get in touch with us via email, <urbit@urbit.org>
+-   Hit us up by email, <urbit@urbit.org>.  We're nice!
 
-All of the source code is distributed under the MIT license.
-
-Packages
---------
-
-#### Ubuntu or Debian
-
-Third-party package files are maintained at
-https://github.com/yebyen/urbit-deb. Urbit is only supported on Jessie
-onward.
+Install a package
+-----------------
 
 #### OS X - Homebrew
 
     brew install --HEAD homebrew/head-only/urbit
 
-Dependencies
-------------
+#### Ubuntu or Debian
+
+Third-party packages are available, at:
+
+    https://github.com/yebyen/urbit-deb
+
+Urbit is only supported on Jessie onward (but outgoing HTTPS
+requests only work on Stretch; I wish we knew why; if you have an
+idea why or just think you can help, please let us know).
+
+Install by hand
+---------------
+
+First, install all our external dependencies.  Then, make.
+
+### Dependencies
 
 urbit depends on:
 
-    gcc
+    gcc (or clang)
     gmp
     libsigsegv
     openssl
@@ -53,9 +60,6 @@ urbit depends on:
 #### Ubuntu or Debian
 
     sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++ ragel cmake re2c
-
-*note: http requests are not supported on debian jessie due to an ssl
-issue*
 
 #### Fedora
 
@@ -81,8 +85,7 @@ three packages, at least with Homebrew. Your mileage may vary.
 
     pkg install git gmake gmp libsigsegv openssl automake autoconf ragel cmake re2c libtool
 
-Build
------
+### Build instructions
 
 Clone the repo:
 
@@ -92,37 +95,159 @@ Clone the repo:
 
     cd urbit
 
-Just run `make`:
+Run `make`:
 
     make
 
 (On FreeBSD, use `gmake` instead.)
 
-Run (with a network invitation)
--------------------------------
+The executable is `bin/urbit`.  Install it somewhere, or just use
+it in place.
 
-If you have a planet named `~fintud-macrep` and a ticket
-`~fortyv-tombyt-tabsen-sonres`, run
+Create your urbit
+---------------
 
-    bin/urbit -w fintud-macrep -t fortyv-tombyt-tabsen-sonres
+Urbit is a semi-decentralized P2P network.  So you may or may not
+have an invitation.
 
-Your pier (all Urbit state, log and checkpoint) will be in
-`./fintud-macrep`.
+If you have an invitation, it's a *ticket* that lets you create
+a 32-bit Urbit plot, aka *planet*.  If you don't have an
+invitation, you have to create a 128-bit plot, aka *comet*.
 
-To start Urbit again omit the `-w` and `-t` flags:
+As a comet, you're not necessarily a bad person.  But you could
+be anyone, so you have zero reputation.  You have no official
+access to any Urbit services.  Any connectivity you may enjoy
+could be shut off at any time.  And probably will be.
+
+If you have an invitation, it's a planet like `~fintud-macrep`
+and a ticket like `~fortyv-tombyt-tabsen-sonres`.  Run
+
+    urbit -w fintud-macrep -t fortyv-tombyt-tabsen-sonres
+
+If you don't, pick a nickname for your comet, like `mycomet`.
+Urbit will randomly generate a 128-bit address, but 
+
+    urbit -c mycomet
+
+Either way, creating your urbit will take some time.  Go get
+a cup of coffee.  Some of this time involves creating keys;
+some of it involves downloading code over Urbit itself.
+
+Note that Urbit is a P2P network that runs over random UDP ports;
+some firewalls may not like it.  Urbit without connectivity isn't
+useless, but it can't boot without the network.
+
+But however horribly hacked, the `urbit` process can only read
+and write inside the `fintud-macrep` or `mycomet` directory,
+which we call your *pier*.  A pier is portable; any Urbit install
+on any OS can execute the same pier.
+
+In the pier directory is a set of user-level mount points.  Mount
+points are synced Dropbox style, with Unix file changes
+autocommitted to the Urbit revision control system (`%clay`) and
+vice versa.  You edit Urbit code with vim and emacs, or whatever.
+
+Also within the pier is a system directory, `.urb`, which
+contains an event log (`egz.hope`), a checkpoint (`.chk`), and
+I/O directories for uploads and downloads (`put` and `get`).
+You can compact the pier by deleting the checkpoint, although
+that means Urbit needs to re-execute its entire event history.
+This will take some time.  Go have a beer.
+
+When it's created (and before it calls `chroot()`), your urbit 
+creates a passcode file, with a name like `~posluc-darnup`, 
+in `~/.urbit`.  If you want to encrypt the checkpoint and log,
+delete this file; Urbit will prompt you for its contents.  Please
+be warned that Urbit is not at present secure in any way!
+
+Wait until you see a prompt, like
+
+      ~fintud-macrep:talk>
+
+and then press ^D to quit.   Your urbit is born.
+
+Execute 
+-------
+
+To restart your urbit, run with the pier name:
+
+    urbit fintud-macrep
+    urbit mycomet
+
+Your Urbit is a database, at least in theory.  You can kill the
+process however you like, and it won't lose state.  In theory.
+In practice, this works better on OS X than Linux.  Also, don't
+let your filesystem run out of disk!
+
+Out of the box, your urbit is running two default appliances,
+`:dojo` (a shell or REPL) and `:talk`.  Switch between them with
+`^X`.  Note that all apps share an output log, but `^X` switches
+the prompt.
+
+`^D` from any default appliance exits the urbit process.
+
+Learn more
+----------
+
+Your urbit is a web server, so the best place to read about it 
+is in your browser.
+
+Urbit prints the HTTP port it's serving when it starts up:
+
+    http: live (insecure) on 8080
+
+8080 is the default.  If you're running on AWS or another cloud
+service, this port may be firewalled; go to the firewall
+configuration to open it.  In a last resort, you can use our
+server, doznec.urbit.org.
+
+Or just talk
+------------
+
+Use `^X` to get into `:talk`, and 
+From `:talk`, 
+
+    ~
+
+Doing more
+----------
+
+To test the dojo, run 
+Doing more
+
+
+From either of the core 
+
+directory.  Your pier (all Urbit state, log and checkpoint) will
+be in `./fintud-macrep`.  The format is portable.  Doing `rm -r
+fintud-macrep/.urb/chk` will delete the checkpoint, meaning all
+your events need to be recomputed, but making the image smaller.
+
 
     bin/urbit fintud-macrep
 
 Run (without a network invitation)
 ----------------------------------
 
-    bin/urbit -c mypier
+To create a comet (128-bit urbit) in the Unix directory 
+`mycomet`:
 
-Urbit will create a comet in `mypier`.
+    bin/urbit -c mycomet
 
-To start Urbit again omit the `-c` flag:
+This will take a little while.  Go smoke a bowl.
+
+This process can only read and write files within `mycomet`.
+
+To quit Urbit (without destroying any data, since Urbit is a
+database): ^D.
+
+To start your comet again, omit the `-c` flag:
 
     bin/urbit mypier
+
+
+Learn these two control keys first: ^D to quit Urbit (from either
+of the two core applications), 
 
 Basics
 ------

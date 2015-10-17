@@ -345,7 +345,11 @@ main(c3_i   argc,
       fprintf(stderr, "tried to create, but %s already exists\n", u3_Host.dir_c);
       exit(1);
     }
-   }
+  }
+  if ( 0 == getuid() ) {
+    chroot(u3_Host.dir_c);
+    u3_Host.dir_c = "/";
+  }
 
   u3_ve_sysopt();
 
