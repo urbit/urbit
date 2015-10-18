@@ -145,7 +145,7 @@ Links = React.createFactory(query({
   }
 })));
 
-CLICK = 'a,h1,h2,h3,h4,h5,h6';
+CLICK = 'a';
 
 module.exports = query({
   sein: 't',
