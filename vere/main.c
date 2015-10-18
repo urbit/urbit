@@ -346,11 +346,12 @@ main(c3_i   argc,
       exit(1);
     }
   }
+#if 0
   if ( 0 == getuid() ) {
     chroot(u3_Host.dir_c);
     u3_Host.dir_c = "/";
   }
-
+#endif
   u3_ve_sysopt();
 
   printf("~\n");
