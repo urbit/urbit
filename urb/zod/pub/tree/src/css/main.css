@@ -79,6 +79,7 @@ pre,
 li:before,
 .spin,
 #bred a,
+.mono,
 h3.time {
   font-family: "scp", "Courier New", courier, monospace;
 }
@@ -612,14 +613,13 @@ h2.date {
   line-height: 2.6rem;
 }
 #cont.lead a {
-  line-height: 1.6rem;
   line-height: 1rem;
+}
+#cont.lead .mono {
+  font-size: 1.3rem;
 }
 #cont.lead .footer {
   margin: 4rem 0 4rem 0;
-  font-weight: 200;
-  line-height: 1rem;
-  color: #ccc;
 }
 #cont.lead .footer p {
   margin: 0;
@@ -693,10 +693,14 @@ h2.date {
   content: "\2014";
   margin-left: 1em;
 }
-#cont.lead .kids h2,
-#cont.lead div.footer {
+#cont.lead .kids h2 {
   font-family: 'scp';
   font-size: 0.7rem;
+}
+@media only screen and (max-width: 1170px) {
+  #cont.lead {
+    top: 0rem;
+  }
 }
 @media only screen and (min-width: 320px) and (max-width: 1024px) {
   #cont.lead {
@@ -711,6 +715,7 @@ h2.date {
   #cont.lead h1.leader,
   #cont.lead h1.fold {
     font-size: 1.6rem;
+    line-height: 3rem;
     margin-left: 0;
   }
   #cont.lead .list li,
@@ -718,6 +723,12 @@ h2.date {
   #cont.lead .list li h1 {
     font-size: 1rem;
     line-height: 1.6rem;
+  }
+  #cont.lead button.submit {
+    font-size: 1rem;
+  }
+  #cont.lead .mono {
+    font-size: 0.7rem;
   }
   #cont.lead .date,
   #cont.lead div.footer {

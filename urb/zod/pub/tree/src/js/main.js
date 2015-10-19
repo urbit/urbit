@@ -585,7 +585,7 @@ module.exports = recl({
           key: "submit",
           className: "submit",
           onClick: this.onClick
-        }, "Go")
+        }, "Sign up")
       ];
     } else {
       cont = [

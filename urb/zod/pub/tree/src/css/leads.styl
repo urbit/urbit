@@ -53,14 +53,13 @@
     line-height 2.6rem
 
   a
-    line-height 1.6rem
     line-height 1rem
+  
+  .mono
+    font-size 1.3rem
 
   .footer
     margin 4rem 0 4rem 0
-    font-weight 200
-    line-height 1rem
-    color #ccc
     p
       margin 0
     code
@@ -100,19 +99,18 @@
   :-ms-input-placeholder
     color #e6e7e8
 
-  button
-    &.submit
-      font inherit
-      border 0
-      background-color #fff
-      border-bottom 3px solid #000
-      font-size 1.6rem
-      line-height 1.6rem
-      display inline-block
-      text-align left
-      margin-top 1rem
-      height 2rem
-      padding 0 .6rem
+  button.submit
+    font inherit
+    border 0
+    background-color #fff
+    border-bottom 3px solid #000
+    font-size 1.6rem
+    line-height 1.6rem
+    display inline-block
+    text-align left
+    margin-top 1rem
+    height 2rem
+    padding 0 .6rem
 
   li::before
     content ''
@@ -132,9 +130,12 @@
     margin-left 1em
 
   .kids h2,
-  div.footer
     font-family 'scp'
     font-size .7rem
+
+@media only screen and (max-width: 1170px)
+  #cont.lead
+    top 0rem
 
 @media only screen and (min-width: 320px) and (max-width: 1024px)
   #cont.lead
@@ -149,6 +150,7 @@
     h1.leader,
     h1.fold
       font-size 1.6rem
+      line-height 3rem
       margin-left 0
 
     .list li,
@@ -156,6 +158,12 @@
     .list li h1, 
       font-size 1rem
       line-height 1.6rem
+    
+    button.submit
+      font-size 1rem
+
+    .mono
+      font-size .7rem
 
     .date,
     div.footer
