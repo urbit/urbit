@@ -556,6 +556,7 @@ h2.date {
 }
 #cont.lead .bar {
   margin-top: 2rem;
+  margin-bottom: 2rem;
 }
 #cont.lead .bar > div {
   display: inline-block;
@@ -568,17 +569,21 @@ h2.date {
 }
 #cont.lead .bar img.logo {
   margin-right: 18px;
+  margin-top: 0;
 }
 #cont.lead .bar ul.list.nav {
   margin: 0;
+  line-height: 2rem;
 }
 #cont.lead .bar ul.list.nav li {
   display: inline-block;
   margin-bottom: 0;
   margin-right: 1rem;
+  vertical-align: middle;
 }
 #cont.lead .bar ul.list.nav li a {
   border-bottom: none;
+  text-decoration: none;
 }
 #cont.lead .bar ul.list.nav h1 {
   text-decoration: none;
@@ -618,6 +623,10 @@ h2.date {
 }
 #cont.lead .footer p {
   margin: 0;
+}
+#cont.lead .footer code {
+  line-height: 1rem;
+  font-size: 0.7rem;
 }
 #cont.lead input.email {
   border-radius: 0;
