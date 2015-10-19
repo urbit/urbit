@@ -186,46 +186,6 @@ the prompt.
 
 `^D` from any default appliance exits the urbit process.
 
-Learn more
-----------
-
-Your urbit is a web server, so the best place to read about it 
-is in your browser.
-
-Urbit prints the HTTP port it's serving when it starts up:
-
-    http: live (insecure) on 8080
-
-8080 is the default.  If you're running on AWS or another cloud
-service, this port may be firewalled; go to the firewall
-configuration to open it.  In a last resort, you can use our
-server, doznec.urbit.org.
-
-Or just talk
-------------
-
-Use `^X` to get into `:talk`, and 
-From `:talk`, 
-
-    ~
-
-Doing more
-----------
-
-To test the dojo, run 
-Doing more
-
-
-From either of the core 
-
-directory.  Your pier (all Urbit state, log and checkpoint) will
-be in `./fintud-macrep`.  The format is portable.  Doing `rm -r
-fintud-macrep/.urb/chk` will delete the checkpoint, meaning all
-your events need to be recomputed, but making the image smaller.
-
-
-    bin/urbit fintud-macrep
-
 Run (without a network invitation)
 ----------------------------------
 
@@ -248,23 +208,6 @@ To start your comet again, omit the `-c` flag:
 
 Learn these two control keys first: ^D to quit Urbit (from either
 of the two core applications), 
-
-Basics
-------
-
-`^v` will switch between the task manager and the focussed process. `^x`
-will switch between processes.
-
-To start a process that is not yet started, run `*proc` from the task
-manager.
-
-To connect your console to a process that has already been started, run
-`+proc` from the task manager. Note that the process must be one that
-supports console access, such as dojo and talk.
-
-`^d` will exit the pier from the task manager. No matter how you shut
-your urbit down you'll be returned to exactly the same state as when you
-turned it off.
 
 Talk
 ----
@@ -295,6 +238,31 @@ clipped.
 
 `;<target>` sets the target for your messages, such as `;~urbit-name`
 for a private message.
+
+Basics
+------
+
+`^x` will switch between processes. To start a process that is not yet
+started, run `*proc` from the task manager.
+
+To connect your console to a process that has already been started, run
+`+proc` from the task manager. Note that the process must be one that
+supports console access, such as dojo and talk.
+
+`^d` will exit the pier from the task manager. No matter how you shut
+your urbit down you'll be returned to exactly the same state as when you
+turned it off.
+
+Doing more
+----------
+
+Your pier (all Urbit state, log and checkpoint) will be in
+`./fintud-macrep`.  The format is portable.  Doing `rm -r
+fintud-macrep/.urb/chk` will delete the checkpoint, meaning all
+your events need to be recomputed, but making the image smaller.
+
+    bin/urbit fintud-macrep
+
 
 Filesystem Sync
 ---------------
@@ -349,6 +317,21 @@ continuity of our crypto.
 
 When this happens you'll need to back up your data and start a fresh
 pier. Your original ticket will still work.
+
+Web server
+----------
+
+Your urbit is a web server. localhost:8080 is the default. If that is
+taken, you may want to try localhost:8081.
+
+If you're running on AWS or another cloud service, this port may
+be firewalled; go to the firewall configuration to open it. In a
+last resort, you can use our server, doznec.urbit.org.
+
+Try going to http://localhost:8080/home/pub/talk/fab to talk via
+a web interface. Note that for the time being the login code is
+output to your console (e.g. `code='laslyt-mocwyd-hobmyn-rolbyl'`)
+it's not the same as your planet ticket.
 
 Contributing
 ------------
