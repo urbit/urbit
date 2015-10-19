@@ -145,6 +145,30 @@ Just do the same procedure to create a new, merged pill before
 committing the merge. Otherwise, just make sure to use the correct
 `urbit.pill` for each commit.
 
+## Debug urbit with `gdb`
+
+Follow the build instructions in README.md but run `make` with argument `DEBUG=yes`:
+
+(If you've already built urbit first run `make clean`.)
+
+    make DEBUG=yes
+
+Run `gdb`, while loading `bin/urbit` and its symbol table:
+
+    gdb bin/urbit
+
+Set a breakpoint on `main()` (optional):
+
+    break main
+
+Run your urbit comet `mycomet`:
+
+    run mycomet
+
+Continue from the breakpoint on `main()`:
+
+    continue
+
 ## What to work on
 
 If you are not thinking of contributing with a specific goal in mind,
