@@ -190,13 +190,10 @@ Learn more
 ----------
 
 Your urbit is a web server, so the best place to read about it 
-is in your browser.
+is in your browser. localhost:8080 is the default. If that is
+taken, you may want to try localhost:8081.
 
-Urbit prints the HTTP port it's serving when it starts up:
-
-    http: live (insecure) on 8080
-
-8080 is the default.  If you're running on AWS or another cloud
+If you're running on AWS or another cloud
 service, this port may be firewalled; go to the firewall
 configuration to open it.  In a last resort, you can use our
 server, doznec.urbit.org.
