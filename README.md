@@ -329,7 +329,7 @@ be firewalled; go to the firewall configuration to open it. In a
 last resort, you can use our server, doznec.urbit.org.
 
 Try going to http://localhost:8080/home/pub/talk/fab to talk via
-a web interface. Note that for the time being,, the login code is
+a web interface. Note that for the time being, the login code is
 output to your console, it's not the same as your planet ticket.
 
 Contributing
