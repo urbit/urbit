@@ -79,6 +79,7 @@ pre,
 li:before,
 .spin,
 #bred a,
+.mono,
 h3.time {
   font-family: "scp", "Courier New", courier, monospace;
 }
@@ -612,8 +613,10 @@ h2.date {
   line-height: 2.6rem;
 }
 #cont.lead a {
-  line-height: 1.6rem;
   line-height: 1rem;
+}
+#cont.lead .mono {
+  font-size: 1.3rem;
 }
 #cont.lead .footer {
   margin: 4rem 0 4rem 0;
