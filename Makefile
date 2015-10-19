@@ -447,7 +447,7 @@ tags:
 	ctags -R -f .tags --exclude=root
 
 etags:
-	etags -f .etags $$(find -name '*.c' -or -name '*.h')
+	etags -f .etags $$(find . -name '*.c' -or -name '*.h')
 
 osxpackage:
 	$(RM) -r inst
