@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee":[function(require,module,exports){
 var TreeDispatcher, TreePersistence;
 
 TreeDispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -35,8 +35,9 @@ module.exports = {
 };
 
 
-},{"../dispatcher/Dispatcher.coffee":14,"../persistence/TreePersistence.coffee":20}],2:[function(require,module,exports){
-var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, query, reactify, recl, ref;
+
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/dispatcher/Dispatcher.coffee","../persistence/TreePersistence.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/AnchorComponent.coffee":[function(require,module,exports){
+var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, getKeys, query, reactify, recl, ref;
 
 clas = require('classnames');
 
@@ -54,6 +55,25 @@ recl = React.createClass;
 
 ref = React.DOM, div = ref.div, a = ref.a;
 
+getKeys = function(props) {
+  var k, keys, ref1, ref2, ref3, sorted, v;
+  sorted = true;
+  keys = [];
+  ref1 = props.kids;
+  for (k in ref1) {
+    v = ref1[k];
+    if (((ref2 = v.meta) != null ? ref2.sort : void 0) == null) {
+      sorted = false;
+    }
+    keys[Number((ref3 = v.meta) != null ? ref3.sort : void 0)] = k;
+  }
+  if (sorted !== true) {
+    return keys = _.keys(props.kids).sort();
+  } else {
+    return keys = _.values(keys);
+  }
+};
+
 Links = React.createFactory(query({
   path: 't',
   kids: {
@@ -66,25 +86,55 @@ Links = React.createFactory(query({
   render: function() {
     return div({
       className: 'links'
-    }, this.props.children, this._render());
+    }, this.props.children, this.renderUp(), this.renderSibs(), this.renderArrows());
   },
-  _render: function() {
-    var k, keys, ref1, ref2, ref3, sorted, style, v;
-    sorted = true;
-    keys = [];
-    ref1 = this.props.kids;
-    for (k in ref1) {
-      v = ref1[k];
-      if (((ref2 = v.meta) != null ? ref2.sort : void 0) == null) {
-        sorted = false;
+  renderUp: function() {
+    if (this.props.sein) {
+      return div({
+        id: "up",
+        key: "up"
+      }, this.renderArrow("up", this.props.sein));
+    }
+  },
+  renderArrow: function(name, path) {
+    var href;
+    href = window.tree.basepath(path);
+    return a({
+      href: href,
+      key: "arow-" + name,
+      className: "arow-" + name
+    }, "");
+  },
+  renderArrows: function() {
+    var index, keys, next, prev;
+    keys = getKeys(this.props);
+    if (keys.length > 1) {
+      index = keys.indexOf(this.props.curr);
+      prev = index - 1;
+      next = index + 1;
+      if (prev < 0) {
+        prev = keys.length - 1;
       }
-      keys[Number((ref3 = v.meta) != null ? ref3.sort : void 0)] = k;
+      if (next === keys.length) {
+        next = 0;
+      }
+      prev = keys[prev];
+      next = keys[next];
     }
-    if (sorted !== true) {
-      keys = _.keys(this.props.kids).sort();
-    } else {
-      keys = _.values(keys);
+    if (this.props.sein) {
+      if (prev || next) {
+        return _.filter([
+          div({
+            id: "sides",
+            key: "sides"
+          }, prev ? this.renderArrow("prev", this.props.sein + "/" + prev) : void 0, next ? this.renderArrow("next", this.props.sein + "/" + next) : void 0)
+        ]);
+      }
     }
+  },
+  renderSibs: function() {
+    var keys, style;
+    keys = getKeys(this.props);
     if (keys.indexOf(this.props.curr) !== -1) {
       style = {
         marginTop: -24 * (keys.indexOf(this.props.curr)) + "px"
@@ -151,8 +201,6 @@ module.exports = query({
   sein: 't',
   path: 't',
   name: 't',
-  next: 't',
-  prev: 't',
   meta: 'j'
 }, recl({
   displayName: "Anchor",
@@ -192,14 +240,7 @@ module.exports = query({
     this.setTitle();
     this.interval = setInterval(this.checkURL, 100);
     $('body').on('keyup', (function(_this) {
-      return function(e) {
-        switch (e.keyCode) {
-          case 37:
-            return _this.goTo(_this.props.prev);
-          case 39:
-            return _this.goTo(_this.props.next);
-        }
-      };
+      return function(e) {};
     })(this));
     _this = this;
     return $('body').on('click', CLICK, function(e) {
@@ -258,15 +299,6 @@ module.exports = query({
       });
     }
   },
-  renderArrow: function(name, path) {
-    var href;
-    href = window.tree.basepath(path);
-    return a({
-      href: href,
-      key: "arow-" + name,
-      className: "arow-" + name
-    }, "");
-  },
   render: function() {
     var obj;
     if (this.props.meta.anchor === 'none') {
@@ -286,23 +318,15 @@ module.exports = query({
     return div(obj, Links({
       onClick: this.onClick,
       curr: this.props.name,
-      dataPath: this.props.sein
-    }, this.props.sein ? _.filter([
-      div({
-        id: "up",
-        key: "up"
-      }, this.renderArrow("up", this.props.sein)), this.props.prev || this.props.next ? _.filter([
-        div({
-          id: "sides",
-          key: "sides"
-        }, this.props.prev ? this.renderArrow("prev", this.props.prev) : void 0, this.props.next ? this.renderArrow("next", this.props.next) : void 0)
-      ]) : void 0
-    ]) : void 0));
+      dataPath: this.props.sein,
+      sein: this.props.sein
+    }));
   }
 }));
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":11,"classnames":16}],3:[function(require,module,exports){
+
+},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/stores/TreeStore.coffee","./Async.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Async.coffee","./BodyComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/BodyComponent.coffee","./Reactify.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee","classnames":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/classnames/index.js"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Async.coffee":[function(require,module,exports){
 var TreeActions, TreeStore, _load, code, div, recl, ref, span;
 
 _load = require('./LoadComponent.coffee');
@@ -412,8 +436,9 @@ module.exports = function(queries, Child, load) {
 };
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
-var div, query, reactify, recl;
+
+},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/LoadComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/BodyComponent.coffee":[function(require,module,exports){
+var div, img, p, query, reactify, recl, ref;
 
 query = require('./Async.coffee');
 
@@ -421,7 +446,7 @@ reactify = require('./Reactify.coffee');
 
 recl = React.createClass;
 
-div = React.DOM.div;
+ref = React.DOM, div = ref.div, p = ref.p, img = ref.img;
 
 module.exports = query({
   body: 'r',
@@ -430,19 +455,32 @@ module.exports = query({
 }, recl({
   displayName: "Body",
   render: function() {
+    var body;
     $("#cont").attr('class', '');
     if (this.props.meta.layout) {
       $("#cont").attr('class', this.props.meta.layout.replace(/,/g, " "));
     }
-    return div({}, div({
+    body = [reactify(this.props.body)];
+    if (this.props.meta.logo != null) {
+      body.unshift(img({
+        className: "logo " + this.props.meta.logo
+      }, ""));
+    }
+    if (this.props.meta.footer != null) {
+      body.push(div({
+        className: "footer"
+      }, [p({}, "This page was generated by one of 2^32 Urbit planets.")]));
+    }
+    return div({
       id: 'body',
       key: "body" + this.props.path
-    }, reactify(this.props.body)));
+    }, body);
   }
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":11}],5:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/CodeMirror.coffee":[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -465,7 +503,8 @@ module.exports = recl({
 });
 
 
-},{}],6:[function(require,module,exports){
+
+},{}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Components.coffee":[function(require,module,exports){
 var div, recl;
 
 recl = React.createClass;
@@ -487,7 +526,8 @@ module.exports = {
 };
 
 
-},{"./CodeMirror.coffee":5,"./EmailComponent.coffee":7,"./KidsComponent.coffee":8,"./ListComponent.coffee":9,"./SearchComponent.coffee":12,"./TocComponent.coffee":13}],7:[function(require,module,exports){
+
+},{"./CodeMirror.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/CodeMirror.coffee","./EmailComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/EmailComponent.coffee","./KidsComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/KidsComponent.coffee","./ListComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/ListComponent.coffee","./SearchComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/SearchComponent.coffee","./TocComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/TocComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/EmailComponent.coffee":[function(require,module,exports){
 var button, div, input, p, reactify, recl, ref;
 
 reactify = require('./Reactify.coffee');
@@ -567,7 +607,8 @@ module.exports = recl({
 });
 
 
-},{"./Reactify.coffee":11}],8:[function(require,module,exports){
+
+},{"./Reactify.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/KidsComponent.coffee":[function(require,module,exports){
 var a, div, hr, li, query, reactify, recl, ref, ul;
 
 reactify = require('./Reactify.coffee');
@@ -638,7 +679,8 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":11}],9:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/ListComponent.coffee":[function(require,module,exports){
 var a, clas, div, h1, li, query, reactify, recl, ref, ul;
 
 clas = require('classnames');
@@ -721,7 +763,7 @@ module.exports = query({
           c: [elem.meta.title]
         };
       }
-      if (elem.head.c.length > 0) {
+      if (!title && elem.head.c.length > 0) {
         title = elem.head;
       }
       if (!title) {
@@ -782,7 +824,8 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":11,"classnames":16}],10:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee","classnames":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/classnames/index.js"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/LoadComponent.coffee":[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -822,7 +865,8 @@ module.exports = recl({
 });
 
 
-},{}],11:[function(require,module,exports){
+
+},{}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee":[function(require,module,exports){
 var Virtual, div, load, reactify, recl, ref, rele, span, walk;
 
 recl = React.createClass;
@@ -889,7 +933,8 @@ module.exports = _.extend(reactify, {
 });
 
 
-},{"./LoadComponent.coffee":10}],12:[function(require,module,exports){
+
+},{"./LoadComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/LoadComponent.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/SearchComponent.coffee":[function(require,module,exports){
 var a, div, input, query, reactify, recl, ref,
   slice = [].slice;
 
@@ -1027,7 +1072,8 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":11}],13:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/TocComponent.coffee":[function(require,module,exports){
 var div, query, reactify, recl,
   slice = [].slice;
 
@@ -1155,7 +1201,8 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":11}],14:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -1176,7 +1223,8 @@ module.exports = _.extend(new Dispatcher(), {
 });
 
 
-},{"flux":17}],15:[function(require,module,exports){
+
+},{"flux":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/index.js"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/main.coffee":[function(require,module,exports){
 var rend;
 
 rend = React.render;
@@ -1322,7 +1370,8 @@ $(function() {
 });
 
 
-},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./persistence/TreePersistence.coffee":20}],16:[function(require,module,exports){
+
+},{"./actions/TreeActions.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/actions/TreeActions.coffee","./components/AnchorComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/AnchorComponent.coffee","./components/BodyComponent.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/BodyComponent.coffee","./components/Components.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/components/Components.coffee","./persistence/TreePersistence.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/classnames/index.js":[function(require,module,exports){
 /*!
   Copyright (c) 2015 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -1372,7 +1421,7 @@ $(function() {
 	}
 }());
 
-},{}],17:[function(require,module,exports){
+},{}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/index.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -1384,7 +1433,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":18}],18:[function(require,module,exports){
+},{"./lib/Dispatcher":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js":[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1636,7 +1685,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":19}],19:[function(require,module,exports){
+},{"./invariant":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/lib/invariant.js"}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/node_modules/flux/lib/invariant.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1691,7 +1740,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],20:[function(require,module,exports){
+},{}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/persistence/TreePersistence.coffee":[function(require,module,exports){
 var dedup;
 
 dedup = {};
@@ -1749,7 +1798,8 @@ module.exports = {
 };
 
 
-},{}],21:[function(require,module,exports){
+
+},{}],"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/stores/TreeStore.coffee":[function(require,module,exports){
 var EventEmitter, MessageDispatcher, QUERIES, TreeStore, _curr, _data, _tree, clog;
 
 EventEmitter = require('events').EventEmitter;
@@ -1786,6 +1836,9 @@ TreeStore = _.extend(EventEmitter.prototype, {
     return _path.split("/");
   },
   fulfill: function(path, query) {
+    if (path === "/") {
+      path = "";
+    }
     return this.fulfillAt(this.getTree(path.split('/')), path, query);
   },
   fulfillAt: function(tree, path, query) {
@@ -1971,7 +2024,8 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
 module.exports = TreeStore;
 
 
-},{"../dispatcher/Dispatcher.coffee":14,"events":22}],22:[function(require,module,exports){
+
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js"}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2031,8 +2085,10 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
+      } else {
+        throw TypeError('Uncaught, unspecified "error" event.');
       }
-      throw TypeError('Uncaught, unspecified "error" event.');
+      return false;
     }
   }
 
@@ -2274,4 +2330,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[15]);
+},{}]},{},["/Users/galen/src/urbit-dev/urb/zod/pub/tree/src/js/main.coffee"]);

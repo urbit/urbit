@@ -51,7 +51,7 @@ module.exports = query {
         title = 
           gn: 'h1'
           c: [elem.meta.title]
-      if elem.head.c.length > 0
+      if not title && elem.head.c.length > 0
         title = elem.head
       if not title
         title =
