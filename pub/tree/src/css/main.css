@@ -92,11 +92,16 @@ html {
 }
 a {
   color: #000;
+  border-bottom: 1px solid #000;
+  text-decoration: none;
   display: inline-block;
   line-height: 0.8rem;
 }
 a:visited {
   opacity: 0.5;
+}
+a code {
+  line-height: inherit;
 }
 hr {
   display: inline-block;
@@ -146,6 +151,7 @@ pre {
   background-color: #f5f5f5;
   padding: 0.3rem;
   margin-left: -0.3rem;
+  white-space: pre-line;
 }
 code {
   line-height: 1.2rem;
@@ -266,7 +272,7 @@ h3.time {
   overflow: hidden;
 }
 #nav #sibs > div {
-  margin-bottom: 4px;
+  margin-bottom: 0.6rem;
 }
 .focus #sibs {
   margin-top: 0 !important;

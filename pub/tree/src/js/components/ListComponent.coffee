@@ -43,6 +43,7 @@ module.exports = query {
     for item in _.values _keys
       path = @props.path+"/"+item
       elem = @props.kids[item]
+      if elem.meta.hide? then continue
       href = window.tree.basepath path
       if elem.meta.link then href = elem.meta.link
       parts = []
