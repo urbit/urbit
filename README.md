@@ -186,17 +186,28 @@ the prompt.
 
 `^D` from any default appliance exits the urbit process.
 
-Learn more
-----------
+Run (without a network invitation)
+----------------------------------
 
-Your urbit is a web server, so the best place to read about it 
-is in your browser. localhost:8080 is the default. If that is
-taken, you may want to try localhost:8081.
+To create a comet (128-bit urbit) in the Unix directory 
+`mycomet`:
 
-If you're running on AWS or another cloud
-service, this port may be firewalled; go to the firewall
-configuration to open it.  In a last resort, you can use our
-server, doznec.urbit.org.
+    bin/urbit -c mycomet
+
+This will take a little while.  Go smoke a bowl.
+
+This process can only read and write files within `mycomet`.
+
+To quit Urbit (without destroying any data, since Urbit is a
+database): ^D.
+
+To start your comet again, omit the `-c` flag:
+
+    bin/urbit mypier
+
+
+Learn these two control keys first: ^D to quit Urbit (from either
+of the two core applications), 
 
 Or just talk
 ------------
@@ -222,29 +233,6 @@ your events need to be recomputed, but making the image smaller.
 
 
     bin/urbit fintud-macrep
-
-Run (without a network invitation)
-----------------------------------
-
-To create a comet (128-bit urbit) in the Unix directory 
-`mycomet`:
-
-    bin/urbit -c mycomet
-
-This will take a little while.  Go smoke a bowl.
-
-This process can only read and write files within `mycomet`.
-
-To quit Urbit (without destroying any data, since Urbit is a
-database): ^D.
-
-To start your comet again, omit the `-c` flag:
-
-    bin/urbit mypier
-
-
-Learn these two control keys first: ^D to quit Urbit (from either
-of the two core applications), 
 
 Basics
 ------
@@ -346,6 +334,16 @@ continuity of our crypto.
 
 When this happens you'll need to back up your data and start a fresh
 pier. Your original ticket will still work.
+
+Web server
+----------
+
+Your urbit is a web server. localhost:8080 is the default. If that is
+taken, you may want to try localhost:8081.
+
+If you're running on AWS or another cloud service, this port may
+be firewalled; go to the firewall configuration to open it.  In a
+last resort, you can use our server, doznec.urbit.org.
 
 Contributing
 ------------
