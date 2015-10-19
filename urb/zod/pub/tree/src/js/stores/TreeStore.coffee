@@ -19,6 +19,7 @@ TreeStore = _.extend EventEmitter.prototype, {
   pathToArr: (_path) -> _path.split "/"
     
   fulfill: (path,query) ->
+    if path is "/" then path = ""
     @fulfillAt (@getTree path.split '/'),path,query
   fulfillAt: (tree,path,query)->
     data = @fulfillLocal path, query

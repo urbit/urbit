@@ -24,6 +24,9 @@ a
   display inline-block
   line-height .8rem
 
+a:visited
+  opacity .5
+
 hr
   display inline-block
   width 6rem
@@ -35,6 +38,7 @@ h1
   line-height 2.6rem
 
 #body > div > h1:first-of-type
+#body div.short > h1:first-of-type
   margin-top 1rem
 
 h2
@@ -162,9 +166,16 @@ li:before
   transition opacity 1s ease-in-out
   z-index 4
 
+img.logo.black
+  content url("https://storage.googleapis.com/urbit-extra/logo/logo-black-100x100.png")
+
+img.logo.white
+  content url("https://storage.googleapis.com/urbit-extra/logo/logo-white-100x100.png")
+
 img.logo
   height 2rem
   width 2rem
+  margin-top 1rem
 
 h3.time
   margin-top: .3rem
@@ -386,6 +397,13 @@ div.toc
   background-color #fff
   padding-right 1rem
   margin-left -1rem
+
+.footer
+  font-family 'scp'
+  font-size .7rem
+  font-weight 400
+  margin-top 3rem
+  color #ccc
 
 .error
   color rgba(249,23,51,1)
