@@ -70,10 +70,18 @@ endif
 INCLUDE=include
 MDEFINES=-DU3_OS_$(OS) -DU3_OS_ENDIAN_$(ENDIAN) -D U3_LIB=\"$(LIB)\"
 
+DEBUG=no
+
+ifeq ($(DEBUG),yes)
+DEBUGFLAGS=-g
+else
+DEBUGFLAGS=-O3
+endif
+
 # NOTFORCHECKIN - restore -O3
 # 	-DGHETTO \
 #   -DHUSH
-CFLAGS= $(COSFLAGS) -O3 -ffast-math \
+CFLAGS= $(COSFLAGS) $(DEBUGFLAGS) -ffast-math \
 	-funsigned-char \
 	-I/usr/local/include \
 	-I/opt/local/include \
