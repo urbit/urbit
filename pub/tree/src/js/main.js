@@ -35,6 +35,7 @@ module.exports = {
 };
 
 
+
 },{"../dispatcher/Dispatcher.coffee":14,"../persistence/TreePersistence.coffee":20}],2:[function(require,module,exports){
 var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, query, reactify, recl, ref;
 
@@ -309,6 +310,7 @@ module.exports = query({
 }));
 
 
+
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":11,"classnames":16}],3:[function(require,module,exports){
 var TreeActions, TreeStore, _load, code, div, recl, ref, span;
 
@@ -419,6 +421,7 @@ module.exports = function(queries, Child, load) {
 };
 
 
+
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
 var Next, a, div, img, p, query, reactify, recl, ref;
 
@@ -503,6 +506,7 @@ module.exports = query({
 }));
 
 
+
 },{"./Async.coffee":3,"./Reactify.coffee":11}],5:[function(require,module,exports){
 var div, recl, ref, textarea;
 
@@ -526,6 +530,7 @@ module.exports = recl({
 });
 
 
+
 },{}],6:[function(require,module,exports){
 var div, recl;
 
@@ -546,6 +551,7 @@ module.exports = {
     }
   })
 };
+
 
 
 },{"./CodeMirror.coffee":5,"./EmailComponent.coffee":7,"./KidsComponent.coffee":8,"./ListComponent.coffee":9,"./SearchComponent.coffee":12,"./TocComponent.coffee":13}],7:[function(require,module,exports){
@@ -628,6 +634,7 @@ module.exports = recl({
 });
 
 
+
 },{"./Reactify.coffee":11}],8:[function(require,module,exports){
 var a, div, hr, li, query, reactify, recl, ref, ul;
 
@@ -697,6 +704,7 @@ module.exports = query({
     }).call(this));
   }
 }));
+
 
 
 },{"./Async.coffee":3,"./Reactify.coffee":11}],9:[function(require,module,exports){
@@ -846,6 +854,7 @@ module.exports = query({
 }));
 
 
+
 },{"./Async.coffee":3,"./Reactify.coffee":11,"classnames":16}],10:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
@@ -884,6 +893,7 @@ module.exports = recl({
     }, ""));
   }
 });
+
 
 
 },{}],11:[function(require,module,exports){
@@ -951,6 +961,7 @@ module.exports = _.extend(reactify, {
   walk: walk,
   Virtual: Virtual
 });
+
 
 
 },{"./LoadComponent.coffee":10}],12:[function(require,module,exports){
@@ -1091,6 +1102,7 @@ module.exports = query({
 }));
 
 
+
 },{"./Async.coffee":3,"./Reactify.coffee":11}],13:[function(require,module,exports){
 var div, query, reactify, recl,
   slice = [].slice;
@@ -1219,6 +1231,7 @@ module.exports = query({
 }));
 
 
+
 },{"./Async.coffee":3,"./Reactify.coffee":11}],14:[function(require,module,exports){
 var Dispatcher;
 
@@ -1240,6 +1253,7 @@ module.exports = _.extend(new Dispatcher(), {
 });
 
 
+
 },{"flux":17}],15:[function(require,module,exports){
 var rend;
 
@@ -1255,11 +1269,15 @@ $(function() {
   window.tree._basepath = window.urb.util.basepath("/");
   window.tree._basepath += (window.location.pathname.replace(window.tree._basepath, "")).split("/")[0];
   window.tree.basepath = function(path) {
-    var _path;
+    var _path, prefix;
+    prefix = window.tree._basepath;
+    if (prefix === "/") {
+      prefix = "";
+    }
     if (path[0] !== "/") {
       path = "/" + path;
     }
-    _path = window.tree._basepath + path;
+    _path = prefix + path;
     if (_path.slice(-1) === "/") {
       _path = _path.slice(0, -1);
     }
@@ -1404,6 +1422,7 @@ $(function() {
     return so.ls = so.cs;
   });
 });
+
 
 
 },{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./persistence/TreePersistence.coffee":20}],16:[function(require,module,exports){
@@ -1833,6 +1852,7 @@ module.exports = {
 };
 
 
+
 },{}],21:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, QUERIES, TreeStore, _curr, _data, _tree, clog;
 
@@ -2056,6 +2076,7 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
 });
 
 module.exports = TreeStore;
+
 
 
 },{"../dispatcher/Dispatcher.coffee":14,"events":22}],22:[function(require,module,exports){
