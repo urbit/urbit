@@ -59,18 +59,18 @@ And hit return.  Don't worry, no one but you will see this.  The
 
 It's boring to post to yourself.  Let's join a station:
 
-    ~tasfyn-partyv: ;join /urbit-test
+    ~tasfyn-partyv: ;join /urbit-meta
 
-(`/urbit-test` is a federal station, meaning it's hosted by your
+(`/urbit-meta` is a federal station, meaning it's hosted by your
 star (for `~tasfyn-partyv`, `~doznec`).  The `/` notation is just 
-an abbreviation for `~doznec/urbit-test`.)
+an abbreviation for `~doznec/urbit-meta`.)
 
 You'll see:
 
-    ---------:talk| %porch subscribed to /urbit-test, called `>`
-    ---------:talk| rules of /urbit-test:
+    ---------:talk| %porch subscribed to /urbit-meta, called `>`
+    ---------:talk| rules of /urbit-meta:
     ---------:talk|   test posts only.  no shitposting.  no pedos/nazis.
-           ~doznec> ~tasfyn-partyv admitted to %urbit-test
+           ~doznec> ~tasfyn-partyv admitted to %urbit-meta
     ~tasfyn-partyv:talk>
 
 Notice the character assignment - stations you're subscribed to are
@@ -78,7 +78,7 @@ assigned [consistent ASCII glyphs](#-station-glyphs), which you'll
 see in the log when you hear from these stations, and on the prompt
 when you're talking to them.
 
-Post a line to `/urbit-test`:
+Post a line to `/urbit-meta`:
 
     ~tasfyn-partyv:talk> hello, world
 
@@ -86,18 +86,18 @@ You'll see, echoed back at you through `~doznec`:
 
     ~tasfyn-partyv:talk> hello, world
 
-And of course, anyone else in `/urbit-test` will see it as well.
-But you don't care about `/urbit-test`, so leave it:
+And of course, anyone else in `/urbit-meta` will see it as well.
+But you don't care about `/urbit-meta`, so leave it:
 
     ~tasfyn-partyv:talk> ;leave
 
 You'll see:
 
-    ---------:talk| %porch has left /urbit-test, called `>`
+    ---------:talk| %porch has left /urbit-meta, called `>`
 
 Everyone else will see:
 
-    ~doznec> ~tasfyn-partyv has left %urbit-test
+    ~doznec> ~tasfyn-partyv has left %urbit-meta
 
 
 Now you're ready to use `:talk` for real!  List the federal
@@ -140,7 +140,7 @@ glyph.  Posts to a station use that station's glyph.
 
 You can see a list of glyph bindings with `;what`.  Write
 `;what >` to see what station `>` is bound to, or
-`;what /urbit-test` to see if `/urbit-test` has a binding.
+`;what /urbit-meta` to see if `/urbit-meta` has a binding.
 
 ### Audience selection
 
@@ -157,14 +157,13 @@ Otherwise, the audience is shown in parens:
 `:talk` works fairly hard to get the audience right and minimize
 manual switching.  But to manually set the audience, the command
 is simply `;station` - eg, `;~wictuc-folrex` for a direct post;
-`/urbit-test` or `~doznec/urbit-test` to post to a federal
+`/urbit-meta` or `~doznec/urbit-meta` to post to a federal
 station, `%mystation` to post to a station on your own ship.
 For a station bound to a glyph, `;` then the glyph; eg, `;>`.
 
 You can post a line and set the audience in one command, eg:
 
-;~wictuc-folrex this is a private message
-
+    ;~wictuc-folrex this is a private message
 
 You can configure your audience in a number of ways, which are
 applied in priority order.  From strongest to weakest:
