@@ -182,7 +182,7 @@ Urbit prints the HTTP port it's serving when it starts up:
 
     http: live (insecure) on 8080
 
-8080 is the default. If you're running on AWS or another cloud
+8080 is the default. When it's not available we use 8081. Then 8082, and so on. If you're running on AWS or another cloud
 service, this port may be firewalled; go to the firewall
 configuration to open it.
 
