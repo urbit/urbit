@@ -193,17 +193,13 @@ plain `urbit.org`, and hosts the public docs
 [here](http://urbit.org/docs). (They are, of course, the same as
 those that ship with your urbit.)
 
-Assuming your Urbit is on `localhost:8080`, the Urbit docs are at
+Assuming your Urbit is on `localhost:8080`, your copy of the docs are at
 
     http://localhost:8080/home/docs
 
-and `:talk` is
+To continue getting setup, start here:
 
-    http://localhost:8080/home/pub/talk/fab
-
-(For the time being the login code is output to your console. First
-try any text, then you'll see a printf that looks like
-`code='laslyt-mocwyd-hobmyn-rolbyl'` in your terminal. That code will get you in.)
+    http://localhost:8080/home/docs/user/start
 
 Contributing
 ============
