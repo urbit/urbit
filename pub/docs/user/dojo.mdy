@@ -1,10 +1,10 @@
 ---
 title: Dojo manual
-sort: 7
+sort: 8
 next: true
 ---
 
-# `:dojo`
+# `:dojo` manual
 
 The dojo is a typed functional shell.  Its prompt is:
 
