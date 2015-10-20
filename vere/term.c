@@ -355,7 +355,9 @@ u3_term_io_talk(void)
         uL(fprintf(uH, "term: listen: %s\n", uv_strerror(ret_w)));
       }
     }
+#if 0
     uL(fprintf(uH, "term: live (but unsupported) on %d\n", tel_u->por_s));
+#endif
     break;
   }
 }
