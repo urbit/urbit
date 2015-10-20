@@ -48,8 +48,8 @@ can access them at
 
 Assuming you're running on port 8080. The port is printed on startup.
 
-Installation guide
-==================
+Install
+=======
 
 Urbit can be installed on most Unix systems. There is no Windows
 port. Windows is a wonderful OS, we just haven't gotten to it yet.
@@ -139,14 +139,11 @@ Run `make`:
 The executable is `bin/urbit`. Install it somewhere, or just use it
 where it is.
 
-Launch procedure
-================
+Launch
+======
 
 An urbit is a persistent server on the `%ames` P2P network. You'll
 create one of these servers now. 
-
-Launch instructions
--------------------
 
 If you have an invitation, it's a planet like `~fintud-macrep` and a
 ticket like `~fortyv-tombyt-tabsen-sonres`. Run
@@ -175,8 +172,8 @@ or
 Your urbit is launched! Ladies and gentlemen, we are floating in
 space.
 
-Read the docs
-=============
+Docs
+====
 
 Your urbit is your personal web server. The best place to read its
 docs is by pointing your browser at it.
