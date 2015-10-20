@@ -19,6 +19,9 @@
     ul.list.nav
       margin 0
       line-height 2rem
+      li::before
+        content ''
+        padding-right none
       li
         display inline-block
         margin-bottom 0
@@ -27,6 +30,11 @@
       li a
         border-bottom none
         text-decoration none
+      li a h1
+        margin 0
+        line-height inherit
+        text-transform capitalize
+        font-size 1.2rem
       h1
         text-decoration none
         border-bottom 2px solid #000
@@ -42,11 +50,8 @@
     &.fold
       margin-top 6rem
   
-  .list > li > a h1
-    margin 0
-    line-height inherit
-    text-transform capitalize
-    font-size 1.2rem
+  .list li h1
+    line-height 2rem
 
   &
     font-size 1.6rem
@@ -111,10 +116,6 @@
     margin-top 1rem
     height 2rem
     padding 0 .6rem
-
-  li::before
-    content ''
-    padding-right none
 
   .date
     font-weight 400
