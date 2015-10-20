@@ -46,6 +46,7 @@ Links = React.createFactory query {
       div {id:"sibs",style}, keys.map (key) =>
         href = window.tree.basepath @props.path+"/"+key
         data = @props.kids[key]
+        return null if data.meta.hide
         head = data.meta.title if data.meta
         head ?= @toText data.head
         head ||= key
@@ -121,15 +122,17 @@ module.exports = query {
     $('body').on 'click', CLICK, (e) ->
       href = $(@).attr('href')
       id   = $(@).attr('id')
-      if href?[0] is "/"
-        e.preventDefault()
-        e.stopPropagation()
-        _this.goTo window.tree.fragpath href
-      else
-        e.preventDefault()
-        e.stopPropagation()
-        base = window.tree.fragpath(document.location.pathname)
-        _this.goTo base+"/#{href}"
+      if href 
+        if not /^https?:\/\//i.test(href)
+          if href?[0] is "/"
+            e.preventDefault()
+            e.stopPropagation()
+            _this.goTo window.tree.fragpath href
+          else
+            e.preventDefault()
+            e.stopPropagation()
+            base = window.tree.fragpath(document.location.pathname)
+            _this.goTo base+"/#{href}"
       if id
         window.location.hash = id
 

@@ -111,6 +111,9 @@ Links = React.createFactory(query({
         var className, data, head, href;
         href = window.tree.basepath(_this.props.path + "/" + key);
         data = _this.props.kids[key];
+        if (data.meta.hide) {
+          return null;
+        }
         if (data.meta) {
           head = data.meta.title;
         }
@@ -261,15 +264,19 @@ module.exports = query({
       var base, href, id;
       href = $(this).attr('href');
       id = $(this).attr('id');
-      if ((href != null ? href[0] : void 0) === "/") {
-        e.preventDefault();
-        e.stopPropagation();
-        _this.goTo(window.tree.fragpath(href));
-      } else {
-        e.preventDefault();
-        e.stopPropagation();
-        base = window.tree.fragpath(document.location.pathname);
-        _this.goTo(base + ("/" + href));
+      if (href) {
+        if (!/^https?:\/\//i.test(href)) {
+          if ((href != null ? href[0] : void 0) === "/") {
+            e.preventDefault();
+            e.stopPropagation();
+            _this.goTo(window.tree.fragpath(href));
+          } else {
+            e.preventDefault();
+            e.stopPropagation();
+            base = window.tree.fragpath(document.location.pathname);
+            _this.goTo(base + ("/" + href));
+          }
+        }
       }
       if (id) {
         return window.location.hash = id;

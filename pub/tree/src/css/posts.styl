@@ -1,59 +1,33 @@
-h1.lead
-  margin-top 1rem
-  margin-bottom 6rem
-  font-size 1.6rem
-  line-height 2rem
-  margin-bottom 3rem
-
-h2
-  margin-top 3rem
-  &.date
-    margin-top 0
-    line-height .7rem
-
-.list.posts
-  .post
-    margin-bottom 2rem
-  
-  .post h1
-    text-transform none
-    font-size 1.6rem
-    line-height 1.8rem
-    margin-bottom 1rem
+div.post
+  h1
+    font-size 2.8rem
+    line-height 4rem
     display block
+    margin-top 1rem
+    margin-bottom 1rem
   
-  .post h2
+  h2
+    font-family 'scp'
     font-size .7rem
-    font-weight 400
     line-height 1rem
-    margin-top 0
+    letter-spacing 1px
   
-  li.post:before 
-    content ""
-
-// #nav #sibs
-//     width 11rem
-//     & > div
-//       margin-bottom .6rem
-//       height auto
-//       margin-bottom 4px
-//       height 20px
-//   a
-//     white-space normal
-//     border none
-//     white-space nowrap
-//     border-bottom 1px solid #000
-
-.date
-  font-weight 400
-  font-family 'scp'
-  font-size .7rem
-
-@media only screen and (min-width: 320px) and (max-width: 1024px)
-  #cont
-    top 2rem
-
-  h1.lead
-    font-size 1.6rem
-    line-height 2rem
-    margin-bottom 3rem
+  h3
+    margin-top 0
+    font-size .7rem
+    font-weight 200
+    letter-spacing .1rem
+    text-transform uppercase
+  h3::before
+    content '\2014'
+    margin-right .3rem
+  
+  p
+    font-size 1.2rem
+    line-height 2.2rem
+  
+  li p
+    display inline
+    
+  p.ib
+    margin-top 0
