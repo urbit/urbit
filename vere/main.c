@@ -225,7 +225,8 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-f            Fuzz testing\n",
     "-k stage      Start at Hoon kernel version stage\n",
     "-Xwtf         Skip last event\n"};
-  for ( c3_i i=0; i < sizeof(use_c)/sizeof(c3_c*); i++ ) {
+  c3_i i;
+  for ( i=0; i < sizeof(use_c)/sizeof(c3_c*); i++ ) {
     fprintf(stderr,use_c[i],argv[0]);
   }
   exit(1);
@@ -341,11 +342,16 @@ main(c3_i   argc,
   if ( c3y == u3_Host.ops_u.nuu ) {
     struct stat s;
     if ( !stat(u3_Host.dir_c, &s) ) {
-      fprintf(stderr, "used -c but %s already exists\n", u3_Host.dir_c);
+      fprintf(stderr, "tried to create, but %s already exists\n", u3_Host.dir_c);
       exit(1);
     }
-   }
-
+  }
+#if 0
+  if ( 0 == getuid() ) {
+    chroot(u3_Host.dir_c);
+    u3_Host.dir_c = "/";
+  }
+#endif
   u3_ve_sysopt();
 
   printf("~\n");

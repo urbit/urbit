@@ -79,6 +79,7 @@ pre,
 li:before,
 .spin,
 #bred a,
+.mono,
 h3.time {
   font-family: "scp", "Courier New", courier, monospace;
 }
@@ -91,10 +92,16 @@ html {
 }
 a {
   color: #000;
+  border-bottom: 1px solid #000;
   text-decoration: none;
-  border-bottom: 2px solid #000;
   display: inline-block;
   line-height: 0.8rem;
+}
+a:visited {
+  opacity: 0.5;
+}
+a code {
+  line-height: inherit;
 }
 hr {
   display: inline-block;
@@ -104,6 +111,11 @@ hr {
 }
 h1 {
   margin-top: 4rem;
+  line-height: 2.6rem;
+}
+#body > div > h1:first-of-type,
+#body div.short > h1:first-of-type {
+  margin-top: 1rem;
 }
 h2,
 h3 {
@@ -139,6 +151,7 @@ pre {
   background-color: #f5f5f5;
   padding: 0.3rem;
   margin-left: -0.3rem;
+  white-space: pre-line;
 }
 code {
   line-height: 1.2rem;
@@ -171,6 +184,7 @@ li:before {
   position: fixed;
   top: 0rem;
   width: 57rem;
+  height: 100%;
   padding-top: 1rem;
   z-index: 0;
   margin-left: -32rem;
@@ -187,7 +201,7 @@ li:before {
   transition: opacity 0.3s ease-in-out;
 }
 #cont {
-  position: absolute;
+  position: relative;
   top: 0;
   margin-bottom: 9rem;
 }
@@ -233,9 +247,16 @@ li:before {
   transition: opacity 1s ease-in-out;
   z-index: 4;
 }
+img.logo.black {
+  content: url("https://storage.googleapis.com/urbit-extra/logo/logo-black-100x100.png");
+}
+img.logo.white {
+  content: url("https://storage.googleapis.com/urbit-extra/logo/logo-white-100x100.png");
+}
 img.logo {
   height: 2rem;
   width: 2rem;
+  margin-top: 1rem;
 }
 h3.time {
   margin-top: 0.3rem;
@@ -252,8 +273,7 @@ h3.time {
   overflow: hidden;
 }
 #nav #sibs > div {
-  height: 20px;
-  margin-bottom: 4px;
+  margin-bottom: 0.6rem;
 }
 .focus #sibs {
   margin-top: 0 !important;
@@ -263,17 +283,28 @@ h3.time {
 .list > li > a {
   text-transform: uppercase;
   font-size: 0.7rem;
+  line-height: 1rem;
   font-weight: 200;
   letter-spacing: 1px;
-  white-space: nowrap;
+}
+#nav .link-next {
+  position: absolute;
+  bottom: 4rem;
+  margin-left: 1rem;
+}
+#nav .link-next a {
+  font-weight: 500;
+  font-size: 1rem;
 }
 .list > li > a {
-  border-bottom: none;
   margin-bottom: 0.3rem;
+}
+.list > li > a h1 {
+  font-size: inherit;
+  line-height: inherit;
 }
 #nav a,
 .list > li > a h1 {
-  border-bottom: 1px solid #000;
   margin-right: 0.3rem;
 }
 #nav .active a {
@@ -290,20 +321,20 @@ h3.time {
 #sides a {
   margin-right: 0.6rem;
 }
-#nav .arow-up,
-#nav .arow-next,
-#nav .arow-prev {
+.arow-up,
+.arow-next,
+.arow-prev {
   width: 0;
   height: 0;
   border: 0.4rem solid transparent;
 }
-#nav .arow-up {
+.arow-up {
   border-bottom: 0.6rem solid #000;
 }
-#nav .arow-next {
+.arow-next {
   border-left: 0.6rem solid #000;
 }
-#nav .arow-prev {
+.arow-prev {
   border-right: 0.6rem solid #000;
 }
 #bred {
@@ -356,7 +387,6 @@ h3.time {
 }
 .list li a h1 code {
   text-transform: lowercase;
-  border-bottom: 1px solid #000;
 }
 .list li a code {
   padding: 0.2rem;
@@ -371,25 +401,6 @@ h3.time {
 }
 .list h1 {
   font-size: 0.7rem;
-}
-.list.posts .post {
-  margin-bottom: 2rem;
-}
-.list.posts .post h1 {
-  text-transform: none;
-  font-size: 1.6rem;
-  line-height: 1.8rem;
-  margin-bottom: 1rem;
-  display: block;
-}
-.list.posts .post h2 {
-  font-size: 0.7rem;
-  font-weight: 400;
-  line-height: 1rem;
-  margin-top: 0;
-}
-.list.posts li.post:before {
-  content: "";
 }
 div.root h1 {
   margin-bottom: 2rem;
@@ -409,31 +420,6 @@ h2.sub {
   letter-spacing: 1px;
   margin-top: 0;
   text-transform: uppercase;
-}
-div.post h1 {
-  font-size: 2.8rem;
-  line-height: 4rem;
-  display: block;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-div.post h2 {
-  line-height: 1rem;
-  letter-spacing: 1px;
-}
-div.post h2 {
-  margin-top: 4rem;
-}
-div.post h2 {
-  font-size: 1.2rem;
-  font-weight: 500;
-}
-div.post p {
-  font-size: 1.2rem;
-  line-height: 2.2rem;
-}
-div.post li p {
-  display: inline;
 }
 div.toc {
   margin-top: 3rem;
@@ -477,6 +463,13 @@ div.toc h1.t {
   padding-right: 1rem;
   margin-left: -1rem;
 }
+.footer {
+  font-family: 'scp';
+  font-size: 0.7rem;
+  font-weight: 400;
+  margin-top: 3rem;
+  color: #ccc;
+}
 .error {
   color: #f91733;
 }
@@ -501,6 +494,224 @@ div.toc h1.t {
 .warning.w {
   width: auto;
 }
+div.post h1 {
+  font-size: 2.8rem;
+  line-height: 4rem;
+  display: block;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+div.post h2 {
+  font-family: 'scp';
+  font-size: 0.7rem;
+  line-height: 1rem;
+  letter-spacing: 1px;
+}
+div.post h3 {
+  margin-top: 0;
+  font-size: 0.7rem;
+  font-weight: 200;
+  letter-spacing: 0.1rem;
+  text-transform: uppercase;
+}
+div.post h3::before {
+  content: '\2014';
+  margin-right: 0.3rem;
+}
+div.post p {
+  font-size: 1.2rem;
+  line-height: 2.2rem;
+}
+div.post li p {
+  display: inline;
+}
+div.post p.ib {
+  margin-top: 0;
+}
+#cont.lead #body {
+  margin-top: 3rem;
+  margin-top: 0;
+}
+#cont.lead .bar {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+#cont.lead .bar > div {
+  display: inline-block;
+}
+#cont.lead .bar a.logo {
+  display: inline-block;
+  height: 2rem;
+  vertical-align: middle;
+  border: none;
+}
+#cont.lead .bar img.logo {
+  margin-right: 18px;
+  margin-top: 0;
+}
+#cont.lead .bar ul.list.nav {
+  margin: 0;
+  line-height: 2rem;
+}
+#cont.lead .bar ul.list.nav li {
+  display: inline-block;
+  margin-bottom: 0;
+  margin-right: 1rem;
+  vertical-align: middle;
+}
+#cont.lead .bar ul.list.nav li a {
+  border-bottom: none;
+  text-decoration: none;
+}
+#cont.lead .bar ul.list.nav h1 {
+  text-decoration: none;
+  border-bottom: 2px solid #000;
+  text-transform: capitalize;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.03rem;
+}
+#cont.lead h1 {
+  margin-top: 1rem;
+  vertical-align: middle;
+  line-height: 4rem;
+}
+#cont.lead h1.fold {
+  margin-top: 6rem;
+}
+#cont.lead .list > li > a h1 {
+  margin: 0;
+  line-height: inherit;
+  text-transform: capitalize;
+  font-size: 1.2rem;
+}
+#cont.lead {
+  font-size: 1.6rem;
+  line-height: 2.6rem;
+}
+#cont.lead a {
+  line-height: 1rem;
+}
+#cont.lead .mono {
+  font-size: 1.3rem;
+}
+#cont.lead .footer {
+  margin: 4rem 0 4rem 0;
+}
+#cont.lead .footer p {
+  margin: 0;
+}
+#cont.lead .footer code {
+  line-height: 1rem;
+  font-size: 0.7rem;
+}
+#cont.lead input.email {
+  border-radius: 0;
+  font: inherit;
+  font-family: 'scp';
+  font-weight: 300;
+  line-height: 2rem;
+  min-width: 2rem;
+  border: 0;
+  outline: 0;
+  background-color: transparent;
+  border-bottom: 3px dotted #000;
+  margin-right: 1rem;
+  display: inline-block;
+}
+#cont.lead input.email.valid {
+  color: #99f27c;
+}
+#cont.lead input.email.error {
+  color: #f74040;
+}
+#cont.lead .email:empty:not(:focus):before {
+  content: attr(data-ph);
+}
+#cont.lead ::-webkit-input-placeholder {
+  color: #e6e7e8;
+}
+#cont.lead :-moz-placeholder {
+  color: #e6e7e8;
+}
+#cont.lead ::-moz-placeholder {
+  color: #e6e7e8;
+}
+#cont.lead :-ms-input-placeholder {
+  color: #e6e7e8;
+}
+#cont.lead button.submit {
+  font: inherit;
+  border: 0;
+  background-color: #fff;
+  border-bottom: 3px solid #000;
+  font-size: 1.6rem;
+  line-height: 1.6rem;
+  display: inline-block;
+  text-align: left;
+  margin-top: 1rem;
+  height: 2rem;
+  padding: 0 0.6rem;
+}
+#cont.lead li::before {
+  content: '';
+  padding-right: none;
+}
+#cont.lead .date {
+  font-weight: 400;
+}
+@media only screen and (max-width: 1170px) {
+  #cont.lead {
+    top: 0rem;
+  }
+}
+@media only screen and (min-width: 320px) and (max-width: 1024px) {
+  #cont.lead {
+    top: 0rem;
+    font-size: 1rem;
+    line-height: 1.6rem;
+  }
+  #cont.lead img.logo {
+    display: block;
+    margin-bottom: 1rem;
+  }
+  #cont.lead h1.leader,
+  #cont.lead h1.fold {
+    font-size: 1.6rem;
+    line-height: 3rem;
+    margin-left: 0;
+  }
+  #cont.lead .list li,
+  #cont.lead .list li a,
+  #cont.lead .list li h1 {
+    font-size: 1rem;
+    line-height: 1.6rem;
+  }
+  #cont.lead button.submit {
+    font-size: 1rem;
+  }
+  #cont.lead .mono {
+    font-size: 0.7rem;
+  }
+  #cont.lead .date,
+  #cont.lead div.footer {
+    font-size: 0.6rem;
+  }
+}
+.video iframe {
+  width: 42rem;
+  height: 24rem;
+}
+.video .leader {
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 2.6rem;
+  margin-bottom: 4rem;
+}
+.video .short img {
+  margin-top: 2rem;
+  width: 42rem;
+}
 @media only screen and (max-width: 1170px) {
   #nav,
   #nav > div,
@@ -518,6 +729,12 @@ div.toc h1.t {
     margin-left: -21rem;
     background-color: #fff;
     z-index: 2;
+  }
+  #nav a {
+    white-space: nowrap;
+  }
+  #nav #sibs > div {
+    height: 20px;
   }
   #nav.m-down,
   #nav.m-up {
@@ -612,6 +829,7 @@ div.toc h1.t {
     max-height: 1.6rem;
   }
   #nav a {
+    line-height: auto;
     font-size: 0.7rem;
   }
   #nav #sibs > div {

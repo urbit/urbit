@@ -1,43 +1,85 @@
-urbit
+Urbit
 =====
 
-Urbit is a new computing environment designed from scratch.
+Urbit is a clean-slate system software stack defined as a
+deterministic computer. An encrypted P2P network, `%ames`, runs on a
+functional operating system, Arvo, written in a strict, typed
+functional language, Hoon, which compiles itself to a combinator
+interpreter, Nock, whose spec gzips to 340 bytes.
 
-At present urbit is under heavy development. It's not useful for any
-external purpose. Documentation is completely inadequate. Anyone can use
-the interpreter, of course, but the network is invitation-only.
+What is this for? Most directly, Urbit is designed as a personal
+cloud server for self-hosted web apps. It also uses HTTP APIs to
+manage data stuck in traditional web applications.
 
-If you're interested in keeping in touch or following the project you
-can:
+More broadly, Urbit's network tackles identity and security problems
+which the Internet can't easily address. Programming for a
+deterministic single-level store is also a different experience from
+Unix programming, regardless of language.
 
--   Enter your email address at [urbit.org](http://urbit.org).
--   Subscribe to the
+Getting involved
+----------------
+
+If you're interested in following Urbit, you can:
+
+-   Read our documentation at [urbit.org](http://urbit.org/docs)
+-   Subscribe to our newsletter at [urbit.org](http://urbit.org).
+-   Check out the
     [urbit-dev](https://groups.google.com/forum/#!forum/urbit-dev)
     mailing list.
 -   Follow [@urbit_](https://twitter.com/urbit\_) on Twitter.
--   Get in touch with us via email, <urbit@urbit.org>
+-   Hit us up by email, `urbit@urbit.org`. We're nice!
 
-All of the source code is distributed under the MIT license.
+Code of conduct
+---------------
 
-Packages
---------
+Everyone involved in the Urbit project needs to understand and
+respect our code of conduct, which is: "don't be rude."
 
-#### Ubuntu or Debian
+Documentation
+=============
 
-Third-party package files are maintained at
-https://github.com/yebyen/urbit-deb. Urbit is only supported on Jessie
-onward.
+In-progress documentation can be found at
+[urbit.org/docs](http://urbit.org/docs).
 
-#### OS X - Homebrew
+These docs ship with your urbit. If you're running one locally you
+can access them at
+
+    http://localhost:8080/home/docs
+
+Assuming you're running on port 8080. The port is printed on startup.
+
+Install
+=======
+
+Urbit can be installed on most Unix systems. There is no Windows
+port. Windows is a wonderful OS, we just haven't gotten to it yet.
+Use a VM.
+
+Install as a package
+--------------------
+
+### OS X - Homebrew
 
     brew install --HEAD homebrew/head-only/urbit
 
-Dependencies
-------------
+### Ubuntu or Debian
+
+Third-party packages are available, at:
+
+    https://github.com/yebyen/urbit-deb
+
+Urbit is only supported on Jessie onward (but outbound HTTPS requests only work on Stretch; I wish we knew why; help us!)
+
+Hand-build from source
+----------------------
+
+First, install all external dependencies. Then, make.
+
+### Dependencies
 
 urbit depends on:
 
-    gcc
+    gcc (or clang)
     gmp
     libsigsegv
     openssl
@@ -53,9 +95,6 @@ urbit depends on:
 #### Ubuntu or Debian
 
     sudo apt-get install libgmp3-dev libsigsegv-dev openssl libssl-dev libncurses5-dev git make exuberant-ctags automake autoconf libtool g++ ragel cmake re2c
-
-*note: http requests are not supported on debian jessie due to an ssl
-issue*
 
 #### Fedora
 
@@ -81,8 +120,7 @@ three packages, at least with Homebrew. Your mileage may vary.
 
     pkg install git gmake gmp libsigsegv openssl automake autoconf ragel cmake re2c libtool
 
-Build
------
+### Download and make
 
 Clone the repo:
 
@@ -92,144 +130,82 @@ Clone the repo:
 
     cd urbit
 
-Just run `make`:
+Run `make`:
 
     make
 
 (On FreeBSD, use `gmake` instead.)
 
-Run (with a network invitation)
--------------------------------
+The executable is `bin/urbit`. Install it somewhere, or just use it
+where it is.
 
-If you have a planet named `~fintud-macrep` and a ticket
-`~fortyv-tombyt-tabsen-sonres`, run
+Launch
+======
 
-    bin/urbit -w fintud-macrep -t fortyv-tombyt-tabsen-sonres
+An urbit is a persistent server on the `%ames` P2P network. You'll
+create one of these servers now. 
 
-Your pier (all Urbit state, log and checkpoint) will be in
-`./fintud-macrep`.
+If you have an invitation, it's a planet like `~fintud-macrep` and a
+ticket like `~fortyv-tombyt-tabsen-sonres`. Run
 
-To start Urbit again omit the `-w` and `-t` flags:
+    urbit -w fintud-macrep -t fortyv-tombyt-tabsen-sonres
 
-    bin/urbit fintud-macrep
+(You can leave the `~` on, but it annoys some Unix shells.)
 
-Run (without a network invitation)
-----------------------------------
+If you don't have an invitation, pick a nickname for your comet, like
+`mycomet`. Urbit will randomly generate a 128-bit plot:
 
-    bin/urbit -c mypier
+    urbit -c mycomet
 
-Urbit will create a comet in `mypier`.
+Either way, creating your urbit will take some time. Some of this
+time involves creating keys; some of it involves downloading code
+over Urbit itself. Go get a cup of coffee. Or a beer.
 
-To start Urbit again omit the `-c` flag:
+Wait until you see a prompt, something like
 
-    bin/urbit mypier
+      ~fintud-macrep:talk() 
 
-Basics
-------
+or
 
-`^v` will switch between the task manager and the focussed process. `^x`
-will switch between processes.
+      ~fintud-macrep:dojo> 
 
-To start a process that is not yet started, run `*proc` from the task
-manager.
+Your urbit is launched! Ladies and gentlemen, we are floating in
+space.
 
-To connect your console to a process that has already been started, run
-`+proc` from the task manager. Note that the process must be one that
-supports console access, such as dojo and talk.
+Docs
+====
 
-`^d` will exit the pier from the task manager. No matter how you shut
-your urbit down you'll be returned to exactly the same state as when you
-turned it off.
+Your urbit is your personal web server. The best place to read its
+docs is by pointing your browser at it.
 
-Talk
-----
+Urbit prints the HTTP port it's serving when it starts up:
 
-If you're on the network, you can use its most basic application,
-`talk`.
+    http: live (insecure) on 8080
 
-If `talk` is not running, start it with `*talk` from the task manager.
+8080 is the default. When it's not available we use 8081. Then 8082, and so on. If you're running on AWS or another cloud
+service, this port may be firewalled; go to the firewall
+configuration to open it.
 
-Use `^x` to switch to the `talk` prompt and then run
+(*Always run any urbit HTTP server which is even semi-serious inside a reliable, battle-proven frontline server like nginx.*)
 
-    ;join ~doznec/urbit-meta
+Urbit's own official planet `~winsen-pagdel` is also bound to just
+plain `urbit.org`, and hosts the public docs
+[here](http://urbit.org/docs). (They are, of course, the same as
+those that ship with your urbit.)
 
-to join the `urbit-meta` channel. People in there are helpful.
+Assuming your Urbit is on `localhost:8080`, your copy of the docs are at
 
-There are three main `talk` commands:
+    http://localhost:8080/home/docs
 
-    ;join ~urbit-name/channel
+To continue getting setup, start here:
 
-`;join` subscribes your main feed to a remote channel.
-
-    ;<number>
-
-`;<number>` activates a previous message number, like a URL that got
-clipped.
-
-    ;<target>
-
-`;<target>` sets the target for your messages, such as `;~urbit-name`
-for a private message.
-
-Filesystem Sync
----------------
-
-The Urbit filesystem, `%clay` doesn't automatically sync to unix. If
-you'd like to browse the contents of your Urbit from unix you'll need to
-use `|mount`.
-
-`|mount` creates a mirror in unix of files from `%clay` that is always
-watching for changes. To sync your entire `home/` desk run:
-
-    |mount %
-
-you should see a directory called `home/` get created inside your pier.
-When you change files in this directory the changes will get synced into
-your urbit.
-
-Since each mount point is always watching for changes you may also want
-to unmount from time to time.
-
-The full syntax is as follows (from `dojo`):
-
-    |mount <path-in-clay> [<mount-name>]
-
-The `<mount-name>` is optional and defaults to the last part of 
-the `<path-in-clay>`.
-
-    |unmount <mount-name>
-
-or:
-
-    |unmount <path-in-clay>
-
-Sysadmin
---------
-
-For the most part, updates to the system are automatically synced to
-your urbit across the network.
-
-When we make updates to the interpreter you should be able to shut down
-your urbit and:
-
-    git pull origin master
-    make
-    bin/urbit pier
-
-where pier is the name of your pier.
-
-While the network is still young from time to time we reboot the entire
-universe. We call this a 'continuity breach' since we're breaking the
-continuity of our crypto.
-
-When this happens you'll need to back up your data and start a fresh
-pier. Your original ticket will still work.
+    http://localhost:8080/home/docs/user/start
 
 Contributing
-------------
+============
 
 The first step in contributing to urbit is to come and join us on
 `:talk`.
 
 For more detailed instructions check out
-[`contributing.md`](https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md),.
+[`contributing.md`](https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md).

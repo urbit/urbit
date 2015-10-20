@@ -36,7 +36,7 @@ module.exports = {
 
 
 },{"../dispatcher/Dispatcher.coffee":14,"../persistence/TreePersistence.coffee":20}],2:[function(require,module,exports){
-var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, query, reactify, recl, ref;
+var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, getKeys, query, reactify, recl, ref;
 
 clas = require('classnames');
 
@@ -54,6 +54,25 @@ recl = React.createClass;
 
 ref = React.DOM, div = ref.div, a = ref.a;
 
+getKeys = function(props) {
+  var k, keys, ref1, ref2, ref3, sorted, v;
+  sorted = true;
+  keys = [];
+  ref1 = props.kids;
+  for (k in ref1) {
+    v = ref1[k];
+    if (((ref2 = v.meta) != null ? ref2.sort : void 0) == null) {
+      sorted = false;
+    }
+    keys[Number((ref3 = v.meta) != null ? ref3.sort : void 0)] = k;
+  }
+  if (sorted !== true) {
+    return keys = _.keys(props.kids).sort();
+  } else {
+    return keys = _.values(keys);
+  }
+};
+
 Links = React.createFactory(query({
   path: 't',
   kids: {
@@ -66,26 +85,24 @@ Links = React.createFactory(query({
   render: function() {
     return div({
       className: 'links'
-    }, this.props.children, this._render());
+    }, this.props.children, this.renderUp(), this.renderSibs(), this.renderArrows(), this.renderNext());
   },
-  _render: function() {
-    var k, keys, ref1, ref2, ref3, sorted, style, v;
-    sorted = true;
-    keys = [];
-    ref1 = this.props.kids;
-    for (k in ref1) {
-      v = ref1[k];
-      if (((ref2 = v.meta) != null ? ref2.sort : void 0) == null) {
-        sorted = false;
-      }
-      keys[Number((ref3 = v.meta) != null ? ref3.sort : void 0)] = k;
+  renderUp: function() {
+    if (this.props.sein) {
+      return div({
+        id: "up",
+        key: "up"
+      }, this.renderArrow("up", this.props.sein));
     }
-    if (sorted !== true) {
-      keys = _(this.props.kids).keys().sort();
+  },
+  renderSibs: function() {
+    var keys, style;
+    keys = getKeys(this.props);
+    if (keys.indexOf(this.props.curr) !== -1) {
+      style = {
+        marginTop: -24 * (keys.indexOf(this.props.curr)) + "px"
+      };
     }
-    style = {
-      marginTop: -24 * (keys.indexOf(this.props.curr)) + "px"
-    };
     return div({
       id: "sibs",
       style: style
@@ -94,6 +111,9 @@ Links = React.createFactory(query({
         var className, data, head, href;
         href = window.tree.basepath(_this.props.path + "/" + key);
         data = _this.props.kids[key];
+        if (data.meta.hide) {
+          return null;
+        }
         if (data.meta) {
           head = data.meta.title;
         }
@@ -113,6 +133,57 @@ Links = React.createFactory(query({
         }, head));
       };
     })(this)));
+  },
+  renderArrow: function(name, path) {
+    var href;
+    href = window.tree.basepath(path);
+    return a({
+      href: href,
+      key: "arow-" + name,
+      className: "arow-" + name
+    }, "");
+  },
+  renderArrows: function() {
+    var index, keys, next, prev;
+    keys = getKeys(this.props);
+    if (keys.length > 1) {
+      index = keys.indexOf(this.props.curr);
+      prev = index - 1;
+      next = index + 1;
+      if (prev < 0) {
+        prev = keys.length - 1;
+      }
+      if (next === keys.length) {
+        next = 0;
+      }
+      prev = keys[prev];
+      next = keys[next];
+      this.next = next;
+    }
+    if (this.props.sein) {
+      if (prev || next) {
+        return _.filter([
+          div({
+            id: "sides",
+            key: "sides"
+          }, prev ? this.renderArrow("prev", this.props.sein + "/" + prev) : void 0, next ? this.renderArrow("next", this.props.sein + "/" + next) : void 0)
+        ]);
+      }
+    }
+  },
+  renderNext: function() {
+    var curr, next, ref1;
+    curr = this.props.kids[this.props.curr];
+    if (curr != null ? (ref1 = curr.meta) != null ? ref1.next : void 0 : void 0) {
+      next = this.props.kids[this.next];
+      return div({
+        className: "link-next"
+      }, [
+        a({
+          href: this.props.sein + "/" + next.name
+        }, "Next: " + next.meta.title)
+      ]);
+    }
   },
   toText: function(elem) {
     return reactify.walk(elem, function() {
@@ -141,14 +212,13 @@ Links = React.createFactory(query({
   }
 })));
 
-CLICK = 'a,h1,h2,h3,h4,h5,h6';
+CLICK = 'a';
 
 module.exports = query({
   sein: 't',
   path: 't',
   name: 't',
-  next: 't',
-  prev: 't'
+  meta: 'j'
 }, recl({
   displayName: "Anchor",
   getInitialState: function() {
@@ -187,25 +257,28 @@ module.exports = query({
     this.setTitle();
     this.interval = setInterval(this.checkURL, 100);
     $('body').on('keyup', (function(_this) {
-      return function(e) {
-        switch (e.keyCode) {
-          case 37:
-            return _this.goTo(_this.props.prev);
-          case 39:
-            return _this.goTo(_this.props.next);
-        }
-      };
+      return function(e) {};
     })(this));
     _this = this;
     return $('body').on('click', CLICK, function(e) {
-      var href, id;
+      var base, href, id;
       href = $(this).attr('href');
       id = $(this).attr('id');
-      if ((href != null ? href[0] : void 0) === "/") {
-        e.preventDefault();
-        e.stopPropagation();
-        return _this.goTo(window.tree.fragpath(href));
-      } else if (id) {
+      if (href) {
+        if (!/^https?:\/\//i.test(href)) {
+          if ((href != null ? href[0] : void 0) === "/") {
+            e.preventDefault();
+            e.stopPropagation();
+            _this.goTo(window.tree.fragpath(href));
+          } else {
+            e.preventDefault();
+            e.stopPropagation();
+            base = window.tree.fragpath(document.location.pathname);
+            _this.goTo(base + ("/" + href));
+          }
+        }
+      }
+      if (id) {
         return window.location.hash = id;
       }
     });
@@ -247,17 +320,11 @@ module.exports = query({
       });
     }
   },
-  renderArrow: function(name, path) {
-    var href;
-    href = window.tree.basepath(path);
-    return a({
-      href: href,
-      key: "arow-" + name,
-      className: "arow-" + name
-    }, "");
-  },
   render: function() {
     var obj;
+    if (this.props.meta.anchor === 'none') {
+      return div({}, "");
+    }
     obj = {
       onMouseOver: this.onMouseOver,
       onMouseOut: this.onMouseOut,
@@ -272,18 +339,9 @@ module.exports = query({
     return div(obj, Links({
       onClick: this.onClick,
       curr: this.props.name,
-      dataPath: this.props.sein
-    }, this.props.sein ? _.filter([
-      div({
-        id: "up",
-        key: "up"
-      }, this.renderArrow("up", this.props.sein)), this.props.prev || this.props.next ? _.filter([
-        div({
-          id: "sides",
-          key: "sides"
-        }, this.props.prev ? this.renderArrow("prev", this.props.prev) : void 0, this.props.next ? this.renderArrow("next", this.props.next) : void 0)
-      ]) : void 0
-    ]) : void 0));
+      dataPath: this.props.sein,
+      sein: this.props.sein
+    }));
   }
 }));
 
@@ -311,11 +369,18 @@ module.exports = function(queries, Child, load) {
       return this.stateFromStore();
     },
     _onChangeStore: function() {
-      return this.setState(this.stateFromStore());
+      if (this.isMounted()) {
+        return this.setState(this.stateFromStore());
+      }
     },
     getPath: function() {
-      var ref1;
-      return (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
+      var path, ref1;
+      path = (ref1 = this.props.dataPath) != null ? ref1 : TreeStore.getCurr();
+      if (path.slice(-1) === "/") {
+        return path.slice(0, -1);
+      } else {
+        return path;
+      }
     },
     stateFromStore: function() {
       return {
@@ -392,7 +457,7 @@ module.exports = function(queries, Child, load) {
 
 
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
-var div, query, reactify, recl;
+var div, img, p, query, reactify, recl, ref;
 
 query = require('./Async.coffee');
 
@@ -400,18 +465,35 @@ reactify = require('./Reactify.coffee');
 
 recl = React.createClass;
 
-div = React.DOM.div;
+ref = React.DOM, div = ref.div, p = ref.p, img = ref.img;
 
 module.exports = query({
   body: 'r',
-  path: 't'
+  path: 't',
+  meta: 'j'
 }, recl({
   displayName: "Body",
   render: function() {
-    return div({}, div({
+    var body;
+    $("#cont").attr('class', '');
+    if (this.props.meta.layout) {
+      $("#cont").attr('class', this.props.meta.layout.replace(/,/g, " "));
+    }
+    body = [reactify(this.props.body)];
+    if (this.props.meta.logo != null) {
+      body.unshift(img({
+        className: "logo " + this.props.meta.logo
+      }, ""));
+    }
+    if (this.props.meta.footer != null) {
+      body.push(div({
+        className: "footer"
+      }, [p({}, "This page was served by Urbit.")]));
+    }
+    return div({
       id: 'body',
       key: "body" + this.props.path
-    }, reactify(this.props.body)));
+    }, body);
   }
 }));
 
@@ -525,7 +607,7 @@ module.exports = recl({
           key: "submit",
           className: "submit",
           onClick: this.onClick
-        }, "Submit")
+        }, "Sign up")
       ];
     } else {
       cont = [
@@ -554,24 +636,56 @@ ref = React.DOM, div = ref.div, a = ref.a, ul = ref.ul, li = ref.li, hr = ref.hr
 
 module.exports = query({
   kids: {
-    body: 'r'
+    body: 'r',
+    meta: 'j'
   }
 }, recl({
   displayName: "Kids",
   render: function() {
-    var v;
+    var _k, _keys, elem, item, k, klass, ref1, ref2, ref3, ref4, sorted, v;
+    klass = "kids";
+    if (this.props.dataType) {
+      klass += " " + this.props.dataType;
+    }
+    sorted = true;
+    _keys = [];
+    ref1 = this.props.kids;
+    for (k in ref1) {
+      v = ref1[k];
+      if (this.props.sortBy) {
+        if (this.props.sortBy === 'date') {
+          if (((ref2 = v.meta) != null ? ref2.date : void 0) == null) {
+            sorted = false;
+          }
+          _k = Number(v.meta.date.slice(1).replace(/\./g, ""));
+          _keys[_k] = k;
+        }
+      } else {
+        if (((ref3 = v.meta) != null ? ref3.sort : void 0) == null) {
+          sorted = false;
+        }
+        _keys[Number((ref4 = v.meta) != null ? ref4.sort : void 0)] = k;
+      }
+    }
+    if (this.props.sortBy === 'date') {
+      _keys.reverse();
+    }
+    if (sorted !== true) {
+      _keys = _.keys(this.props.kids).sort();
+    }
     return div({
-      className: "kids"
+      className: klass
     }, (function() {
-      var i, len, ref1, results;
-      ref1 = _.keys(this.props.kids).sort();
+      var i, len, ref5, results;
+      ref5 = _.values(_keys);
       results = [];
-      for (i = 0, len = ref1.length; i < len; i++) {
-        v = ref1[i];
+      for (i = 0, len = ref5.length; i < len; i++) {
+        item = ref5[i];
+        elem = this.props.kids[item];
         results.push([
           div({
-            key: v
-          }, reactify(this.props.kids[v].body)), hr({}, "")
+            key: item
+          }, reactify(elem.body)), hr({}, "")
         ]);
       }
       return results;
@@ -605,7 +719,8 @@ module.exports = query({
   render: function() {
     var k;
     k = clas({
-      list: true,
+      list: true
+    }, this.props.dataType, {
       posts: this.props.dataType === 'post',
       "default": this.props['data-source'] === 'default'
     });
@@ -650,7 +765,13 @@ module.exports = query({
       item = ref5[i];
       path = this.props.path + "/" + item;
       elem = this.props.kids[item];
+      if (elem.meta.hide != null) {
+        continue;
+      }
       href = window.tree.basepath(path);
+      if (elem.meta.link) {
+        href = elem.meta.link;
+      }
       parts = [];
       title = null;
       if ((ref6 = elem.meta) != null ? ref6.title : void 0) {
@@ -659,7 +780,7 @@ module.exports = query({
           c: [elem.meta.title]
         };
       }
-      if (elem.head.c.length > 0) {
+      if (!title && elem.head.c.length > 0) {
         title = elem.head;
       }
       if (!title) {
@@ -1169,13 +1290,14 @@ $(function() {
     };
   });
   checkMove = function() {
-    var ds, dx, dy;
+    var db, ds, dx, dy;
     if (po.lm !== null && po.cm !== null) {
       po.cs = $(window).scrollTop();
+      db = $(window).height() - (po.cs + window.innerHeight);
       ds = Math.abs(po.cs - po.ls);
       dx = Math.abs(po.cm.x - po.lm.x);
       dy = Math.abs(po.cm.y - po.lm.y);
-      $('#nav').toggleClass('moving', dx > 20 || dy > 20);
+      $('#nav').toggleClass('moving', dx > 20 || dy > 20 || db < 180);
     }
     po.lm = po.cm;
     return po.ls = po.cs;
@@ -1724,6 +1846,9 @@ TreeStore = _.extend(EventEmitter.prototype, {
     return _path.split("/");
   },
   fulfill: function(path, query) {
+    if (path === "/") {
+      path = "";
+    }
     return this.fulfillAt(this.getTree(path.split('/')), path, query);
   },
   fulfillAt: function(tree, path, query) {

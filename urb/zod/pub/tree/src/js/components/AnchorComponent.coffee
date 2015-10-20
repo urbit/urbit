@@ -10,6 +10,17 @@ TreeActions = require '../actions/TreeActions.coffee'
 recl = React.createClass
 {div,a} = React.DOM
 
+getKeys = (props) ->
+  sorted = true
+  keys = []
+  for k,v of props.kids
+    if not v.meta?.sort? then sorted = false
+    keys[Number(v.meta?.sort)] = k
+  if sorted isnt true
+    keys = _.keys(props.kids).sort()
+  else
+    keys = _.values keys
+
 Links = React.createFactory query {
     path:'t'
     kids:
@@ -19,24 +30,55 @@ Links = React.createFactory query {
   }, (recl
     # {curr:'t',prev:'t,next:'t',onClick:'f'}
     displayName: "Links"
-    render: -> div {className:'links'}, @props.children, @_render()
-    _render: ->
-      sorted = true
-      keys = []
-      for k,v of @props.kids
-        if not v.meta?.sort? then sorted = false
-        keys[Number(v.meta?.sort)] = k
-      if sorted isnt true
-        keys = _(@props.kids).keys().sort()
-      style = {marginTop: -24 * (keys.indexOf @props.curr) + "px"}
+    render: -> div {className:'links'}, 
+      @props.children, 
+      @renderUp(),
+      @renderSibs(),
+      @renderArrows(),
+      @renderNext()
+    renderUp: ->
+      if @props.sein 
+        div {id:"up",key:"up"}, @renderArrow "up", @props.sein
+    renderSibs: ->
+      keys = getKeys @props
+      if keys.indexOf(@props.curr) isnt -1
+        style = {marginTop: -24 * (keys.indexOf @props.curr) + "px"}
       div {id:"sibs",style}, keys.map (key) =>
         href = window.tree.basepath @props.path+"/"+key
         data = @props.kids[key]
+        return null if data.meta.hide
         head = data.meta.title if data.meta
         head ?= @toText data.head
         head ||= key
         className = clas active: key is @props.curr
         (div {className,key}, (a {href,onClick:@props.onClick}, head))
+    renderArrow: (name, path) ->
+      href = window.tree.basepath path
+      (a {href,key:"arow-#{name}",className:"arow-#{name}"},"")
+    renderArrows: ->
+      keys = getKeys @props
+      if keys.length > 1
+        index = keys.indexOf(@props.curr)
+        prev = index-1
+        next = index+1
+        if prev < 0 then prev = keys.length-1
+        if next is keys.length then next = 0
+        prev = keys[prev]
+        next = keys[next]
+        @next = next
+      if @props.sein 
+        if prev or next then _.filter [
+          div {id:"sides",key:"sides"},
+            if prev then @renderArrow "prev", "#{@props.sein}/#{prev}"
+            if next then @renderArrow "next", "#{@props.sein}/#{next}"
+          ]    
+    renderNext: ->
+      curr = @props.kids[@props.curr]
+      if curr?.meta?.next
+        next = @props.kids[@next]
+        (div {className:"link-next"}, [
+          (a {href:"#{@props.sein}/#{next.name}"}, "Next: #{next.meta.title}")
+        ])
 
     toText: (elem)-> reactify.walk elem,
                                  ()->''
@@ -47,8 +89,13 @@ Links = React.createFactory query {
     render: -> div {className:'links'}, @props.children, @_render()
     _render: -> div {id:"sibs"}, div {className:"active"}, a {}, @props.curr
 
-CLICK = 'a,h1,h2,h3,h4,h5,h6'
-module.exports = query {sein:'t',path:'t',name:'t',next:'t',prev:'t'},recl
+CLICK = 'a'
+module.exports = query {
+  sein:'t'
+  path:'t'
+  name:'t'
+  meta:'j'
+  },recl
   displayName: "Anchor"
   getInitialState: -> url: window.location.pathname
   
@@ -67,19 +114,26 @@ module.exports = query {sein:'t',path:'t',name:'t',next:'t',prev:'t'},recl
     @interval = setInterval @checkURL,100
 
     $('body').on 'keyup', (e) =>
-      switch e.keyCode
-        when 37 then @goTo @props.prev # left
-        when 39 then @goTo @props.next # right
+      # switch e.keyCode
+      #   when 37 then @goTo @props.prev # left
+      #   when 39 then @goTo @props.next # right
         
     _this = @
     $('body').on 'click', CLICK, (e) ->
       href = $(@).attr('href')
       id   = $(@).attr('id')
-      if href?[0] is "/"
-        e.preventDefault()
-        e.stopPropagation()
-        _this.goTo window.tree.fragpath href
-      else if id
+      if href 
+        if not /^https?:\/\//i.test(href)
+          if href?[0] is "/"
+            e.preventDefault()
+            e.stopPropagation()
+            _this.goTo window.tree.fragpath href
+          else
+            e.preventDefault()
+            e.stopPropagation()
+            base = window.tree.fragpath(document.location.pathname)
+            _this.goTo base+"/#{href}"
+      if id
         window.location.hash = id
 
   setTitle: ->
@@ -107,12 +161,11 @@ module.exports = query {sein:'t',path:'t',name:'t',next:'t',prev:'t'},recl
     if @state.url isnt window.location.pathname
       @setPath (window.tree.fragpath window.location.pathname),false
       @setState url: window.location.pathname
-
-  renderArrow: (name, path) ->
-    href = window.tree.basepath path
-    (a {href,key:"arow-#{name}",className:"arow-#{name}"},"")
   
   render: ->
+    if @props.meta.anchor is 'none' 
+      return (div {}, "")
+
     obj = {@onMouseOver,@onMouseOut,@onClick,@onTouchStart,@onTouchEnd}
     if _.keys(window).indexOf("ontouchstart") isnt -1
       delete obj.onMouseOver
@@ -122,10 +175,5 @@ module.exports = query {sein:'t',path:'t',name:'t',next:'t',prev:'t'},recl
       @onClick
       curr:@props.name
       dataPath:@props.sein
-    }, if @props.sein then _.filter [
-         div {id:"up",key:"up"}, @renderArrow "up", @props.sein
-         if @props.prev or @props.next then _.filter [
-           div {id:"sides",key:"sides"},
-             if @props.prev then @renderArrow "prev", @props.prev
-             if @props.next then @renderArrow "next", @props.next
-       ] ]
+      sein:@props.sein
+    }
