@@ -38,7 +38,7 @@ module.exports = recl
     if @state.submit is false
       cont = [
         (input {key:"field",className:"email",placeholder:"your@email.com",@onKeyUp}, @state.email)
-        (button {key:"submit",className:"submit",@onClick}, "Submit")
+        (button {key:"submit",className:"submit",@onClick}, "Sign up")
       ]
     else
       cont = [(div {className:"submitted"},"Got it. Thanks!")]

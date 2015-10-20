@@ -1,0 +1,24 @@
+---
+logo: black
+anchor: none
+---
+
+<div class="short">
+
+# Urbit documentation
+
+The Urbit doc is divided into three parts: user doc, developer
+doc, and general propaganda (whitepaper, essays, videos, etc).
+
+If you want to try Urbit, start with the [user doc](docs/user).
+If you want to learn about Urbit, subject yourself to the
+[theory](docs/theory).  Or start with the user doc.  It
+doesn't assume any prior knowledge of the technology.
+
+If you want to code on Urbit, which is certainly what Urbit is
+for right now, we're sorry.  The developer doc remains under
+construction.  We'll have more soon, starting with Nock.
+
+<list dataSort="true"></list>
+
+</div>

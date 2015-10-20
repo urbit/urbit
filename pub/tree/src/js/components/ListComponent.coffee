@@ -18,7 +18,8 @@ module.exports = query {
   render: ->
     k = clas
       list: true
-      posts: @props.dataType is 'post'
+      @props.dataType
+      posts: @props.dataType is 'post' # needs css update
       default: @props['data-source'] is 'default'
     (ul {className:k}, @renderList())
 
@@ -42,14 +43,16 @@ module.exports = query {
     for item in _.values _keys
       path = @props.path+"/"+item
       elem = @props.kids[item]
+      if elem.meta.hide? then continue
       href = window.tree.basepath path
+      if elem.meta.link then href = elem.meta.link
       parts = []
       title = null
       if elem.meta?.title
         title = 
           gn: 'h1'
           c: [elem.meta.title]
-      if elem.head.c.length > 0
+      if not title && elem.head.c.length > 0
         title = elem.head
       if not title
         title =

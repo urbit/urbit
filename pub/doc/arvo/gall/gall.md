@@ -1,5 +1,0 @@
-Gall: Reference
-===============
-
-Gall: Commentary
-================
