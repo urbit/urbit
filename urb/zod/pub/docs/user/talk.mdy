@@ -1,10 +1,10 @@
 ---
 title: Talk manual
-sort: 6
+sort: 7
 next: true
 ---
 
-# `:talk`
+# `:talk` manual
 
 `:talk` is the Urbit appliance for chatter and notifications.
 For less sophisticated users, Urbit *is* just `:talk`.  If you

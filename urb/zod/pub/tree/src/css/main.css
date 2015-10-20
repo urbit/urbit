@@ -90,6 +90,10 @@ html {
   line-height: 1.6rem;
   -webkit-text-size-adjust: none;
 }
+p {
+  font-size: 1.2rem;
+  line-height: 2rem;
+}
 a {
   color: #000;
   border-bottom: 1px solid #000;
@@ -145,7 +149,7 @@ h3 code {
 }
 pre,
 code {
-  font-size: 0.8rem;
+  font-size: 1rem;
 }
 pre {
   background-color: #f5f5f5;
@@ -165,10 +169,11 @@ ul {
   padding: 0;
 }
 li:before {
-  content: "+";
+  font-family: 'scp';
+  content: "\2022";
   padding-right: 0.3rem;
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 500;
 }
 #nav,
 #cont {
@@ -184,7 +189,6 @@ li:before {
   position: fixed;
   top: 0rem;
   width: 57rem;
-  height: 100%;
   padding-top: 1rem;
   z-index: 0;
   margin-left: -32rem;
@@ -281,6 +285,9 @@ h3.time {
 }
 #nav a,
 .list > li > a {
+  display: inline;
+}
+#nav a {
   text-transform: uppercase;
   font-size: 0.7rem;
   line-height: 1rem;
@@ -288,24 +295,15 @@ h3.time {
   letter-spacing: 1px;
 }
 #nav .link-next {
-  position: absolute;
-  bottom: 4rem;
-  margin-left: 1rem;
-}
-#nav .link-next a {
+  margin-top: 2rem;
   font-weight: 500;
-  font-size: 1rem;
 }
-.list > li > a {
-  margin-bottom: 0.3rem;
+.list > li {
+  margin-bottom: 1rem;
 }
 .list > li > a h1 {
   font-size: inherit;
   line-height: inherit;
-}
-#nav a,
-.list > li > a h1 {
-  margin-right: 0.3rem;
 }
 #nav .active a {
   font-weight: 500;
@@ -319,6 +317,7 @@ h3.time {
   float: right;
 }
 #sides a {
+  display: inline-block;
   margin-right: 0.6rem;
 }
 .arow-up,
@@ -463,7 +462,7 @@ div.toc h1.t {
   padding-right: 1rem;
   margin-left: -1rem;
 }
-.footer {
+.footer p {
   font-family: 'scp';
   font-size: 0.7rem;
   font-weight: 400;
@@ -497,7 +496,6 @@ div.toc h1.t {
 div.post h1 {
   font-size: 2.8rem;
   line-height: 4rem;
-  display: block;
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
@@ -517,6 +515,14 @@ div.post h3 {
 div.post h3::before {
   content: '\2014';
   margin-right: 0.3rem;
+}
+div.post .list li {
+  margin-bottom: 0;
+  font-size: 1.2rem;
+}
+div.post .list li:before {
+  line-height: 2.3rem;
+  vertical-align: top;
 }
 div.post p {
   font-size: 1.2rem;
@@ -553,6 +559,10 @@ div.post p.ib {
   margin: 0;
   line-height: 2rem;
 }
+#cont.lead .bar ul.list.nav li::before {
+  content: '';
+  padding-right: none;
+}
 #cont.lead .bar ul.list.nav li {
   display: inline-block;
   margin-bottom: 0;
@@ -562,6 +572,12 @@ div.post p.ib {
 #cont.lead .bar ul.list.nav li a {
   border-bottom: none;
   text-decoration: none;
+}
+#cont.lead .bar ul.list.nav li a h1 {
+  margin: 0;
+  line-height: inherit;
+  text-transform: capitalize;
+  font-size: 1.2rem;
 }
 #cont.lead .bar ul.list.nav h1 {
   text-decoration: none;
@@ -579,11 +595,8 @@ div.post p.ib {
 #cont.lead h1.fold {
   margin-top: 6rem;
 }
-#cont.lead .list > li > a h1 {
-  margin: 0;
-  line-height: inherit;
-  text-transform: capitalize;
-  font-size: 1.2rem;
+#cont.lead .list li h1 {
+  line-height: 2rem;
 }
 #cont.lead {
   font-size: 1.6rem;
@@ -652,10 +665,6 @@ div.post p.ib {
   margin-top: 1rem;
   height: 2rem;
   padding: 0 0.6rem;
-}
-#cont.lead li::before {
-  content: '';
-  padding-right: none;
 }
 #cont.lead .date {
   font-weight: 400;
@@ -727,14 +736,23 @@ div.post p.ib {
     opacity: 1;
     width: 42rem;
     margin-left: -21rem;
-    background-color: #fff;
+    background-color: transparent;
     z-index: 2;
+  }
+  #nav > div {
+    background-color: #fff;
   }
   #nav a {
     white-space: nowrap;
   }
   #nav #sibs > div {
     height: 20px;
+    margin-bottom: 4px;
+  }
+  #nav #sibs > div.active a,
+  #nav #sibs > div a {
+    border-bottom: none;
+    text-decoration: underline;
   }
   #nav.m-down,
   #nav.m-up {
@@ -773,11 +791,10 @@ div.post p.ib {
     padding-top: 0;
     opacity: 1;
     left: 0;
-    background-color: #fff;
     z-index: 2;
   }
   #nav > div > div {
-    max-height: 1.4rem;
+    max-height: 1.2rem;
   }
   #nav > div {
     padding-top: 0.6rem;
