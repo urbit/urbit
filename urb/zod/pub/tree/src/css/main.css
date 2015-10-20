@@ -421,31 +421,6 @@ h2.sub {
   margin-top: 0;
   text-transform: uppercase;
 }
-div.post h1 {
-  font-size: 2.8rem;
-  line-height: 4rem;
-  display: block;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-div.post h2 {
-  line-height: 1rem;
-  letter-spacing: 1px;
-}
-div.post h2 {
-  margin-top: 4rem;
-}
-div.post h2 {
-  font-size: 1.2rem;
-  font-weight: 500;
-}
-div.post p {
-  font-size: 1.2rem;
-  line-height: 2.2rem;
-}
-div.post li p {
-  display: inline;
-}
 div.toc {
   margin-top: 3rem;
   margin-bottom: 3rem;
@@ -519,53 +494,39 @@ div.toc h1.t {
 .warning.w {
   width: auto;
 }
-h1.lead {
-  margin-top: 1rem;
-  margin-bottom: 6rem;
-  font-size: 1.6rem;
-  line-height: 2rem;
-  margin-bottom: 3rem;
-}
-h2 {
-  margin-top: 3rem;
-}
-h2.date {
-  margin-top: 0;
-  line-height: 0.7rem;
-}
-.list.posts .post {
-  margin-bottom: 2rem;
-}
-.list.posts .post h1 {
-  text-transform: none;
-  font-size: 1.6rem;
-  line-height: 1.8rem;
-  margin-bottom: 1rem;
+div.post h1 {
+  font-size: 2.8rem;
+  line-height: 4rem;
   display: block;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
-.list.posts .post h2 {
-  font-size: 0.7rem;
-  font-weight: 400;
-  line-height: 1rem;
-  margin-top: 0;
-}
-.list.posts li.post:before {
-  content: "";
-}
-.date {
-  font-weight: 400;
+div.post h2 {
   font-family: 'scp';
   font-size: 0.7rem;
+  line-height: 1rem;
+  letter-spacing: 1px;
 }
-@media only screen and (min-width: 320px) and (max-width: 1024px) {
-  #cont {
-    top: 2rem;
-  }
-  h1.lead {
-    font-size: 1.6rem;
-    line-height: 2rem;
-    margin-bottom: 3rem;
-  }
+div.post h3 {
+  margin-top: 0;
+  font-size: 0.7rem;
+  font-weight: 200;
+  letter-spacing: 0.1rem;
+  text-transform: uppercase;
+}
+div.post h3::before {
+  content: '\2014';
+  margin-right: 0.3rem;
+}
+div.post p {
+  font-size: 1.2rem;
+  line-height: 2.2rem;
+}
+div.post li p {
+  display: inline;
+}
+div.post p.ib {
+  margin-top: 0;
 }
 #cont.lead #body {
   margin-top: 3rem;
@@ -698,20 +659,6 @@ h2.date {
 }
 #cont.lead .date {
   font-weight: 400;
-}
-#cont.lead .kids p.ib {
-  margin-top: 0;
-}
-#cont.lead .kids h3 {
-  font-size: 1rem;
-}
-#cont.lead .kids h3::after {
-  content: "\2014";
-  margin-left: 1em;
-}
-#cont.lead .kids h2 {
-  font-family: 'scp';
-  font-size: 0.7rem;
 }
 @media only screen and (max-width: 1170px) {
   #cont.lead {
