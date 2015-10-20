@@ -1,11 +1,20 @@
 /=  all  /;  flop  /^  (list (pair time ,*))  /:  /%%/  /&  /mime/
 ;div
+  ;link(rel "stylesheet", href "/home/lib/base.css");
+  ;link(rel "stylesheet", href "/home/pub/paste/main.css");
   ;script@"//code.jquery.com/jquery-2.1.4.min.js";
   ;script@"/~/at/home/lib/urb.js";
   ;script:'''
+          document.title = 'pastebin - urbit'
           urb.appl = 'write'
           urb.send.mark = 'write-paste'
           submit = function(){
+            if($("select :selected").attr('value')===undefined) {
+              $("select").addClass('err')
+              return false
+            }
+            $("select").removeClass('err')
+            $("textarea,button").attr('disabled', true)
             urb.send({
               txt:$("textarea").val(),
               typ:$("select :selected").val()
@@ -17,14 +26,16 @@
           }
           '''
 ::
+  ;h1: New
   ;p:textarea;
-  ;button(onclick "submit()"):"Submit"
   ;select
+    ;option(): Type
     ;option(value "md"): Markdown
     ;option(value "txt"): Text
     ;option(value "hoon"): Hoon
   ==
+  ;button(onclick "submit()"):"Submit"
   ;hr;
-  ; recent:
+  ;h1: Recent
   ;*  (turn all |=([a=time *] ;p:a/"paste/{<a>}":"{<a>}"))
 ==
