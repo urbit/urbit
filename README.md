@@ -144,8 +144,7 @@ Launch procedure
 ================
 
 An urbit is a persistent server on the `%ames` P2P network. You'll
-create one of these servers now. To understand what you're building,
-you need to know a little about the network.
+create one of these servers now. 
 
 Launch instructions
 -------------------
@@ -166,15 +165,13 @@ Either way, creating your urbit will take some time. Some of this
 time involves creating keys; some of it involves downloading code
 over Urbit itself. Go get a cup of coffee. Or a beer.
 
-Wait until you see a prompt, either
+Wait until you see a prompt, something like
 
       ~fintud-macrep:talk() 
 
 or
 
       ~fintud-macrep:dojo> 
-
-and then press \^D to quit.
 
 Your urbit is launched! Ladies and gentlemen, we are floating in
 space.
@@ -205,14 +202,13 @@ Assuming your Urbit is on `localhost:8080`, the Urbit docs are at
 
     http://localhost:8080/home/docs
 
-And `:talk` is:
+and `:talk` is
 
     http://localhost:8080/home/pub/talk/fab
 
-For the time being the login code is output to your console. First
+(For the time being the login code is output to your console. First
 try any text, then you'll see a printf that looks like
-`code='laslyt-mocwyd-hobmyn-rolbyl'` in your terminal. That code will
-get you in.
+`code='laslyt-mocwyd-hobmyn-rolbyl'` in your terminal. That code will get you in.)
 
 Contributing
 ============
