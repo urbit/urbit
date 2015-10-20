@@ -1025,10 +1025,15 @@
     ++  lamp                                            ::  normalize version
       |=  [cof=cafe bem=beam]
       ^-  (bolt beam)
-      ?:  ?=(%ud -.r.bem)  (fine cof bem)
-      =+  von=(save ~ %cw bem(s ~))
-      ?~  von  [p=cof q=[%1 [%w bem ~] ~ ~]]
-      (fine cof bem(r [%ud ((hard ,@) +.+:(need u.von))]))
+      %+  cope
+        ?:  ?=(%ud -.r.bem)  (fine cof bem)
+        =+  von=(save ~ %cw bem(s ~))
+        ?~  von  [p=cof q=[%1 [%w bem ~] ~ ~]]
+        (fine cof bem(r [%ud ((hard ,@) +.+:(need u.von))]))
+      |=  [cof=cafe bem=[[ship desk %ud r=@u] s=spur]]
+      ?:  =(0 r.bem)
+        (flaw cof [leaf/"ford: no data: {(tope bem(s ~))}"]~)
+      (fine cof bem)
     ::
     ++  lave                                            ::  validate
       |=  [cof=cafe for=mark som=*]

@@ -117,7 +117,7 @@
         ?+    -.kyz  ~&  [%strange-kiss -.kyz]  +>
           %flow  +>
           %harm  +>
-          %hail  +>
+          %hail  (send %hey ~)
           %belt  (send `dill-belt`p.kyz)
           %text  (from %out (tuba p.kyz))
           %crud  ::  (send `dill-belt`[%cru p.kyz q.kyz])

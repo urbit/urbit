@@ -2222,7 +2222,7 @@
   (a b c)
 ::
 ++  gulf                                                ::  range list
-  |=([a=@ b=@] `(list ,@)`?:(=(a b) ~ [a $(a +(a))]))
+  |=([a=@ b=@] `(list ,@)`?:(=(a +(b)) ~ [a $(a +(a))]))
 ::
 ++  hard                                                ::  force coerce to type
   |*  han=$+(* *)
@@ -3202,7 +3202,7 @@
   ?~  q.vex
     =+  roq=(sab)
     [p=(last p.vex p.roq) q=q.roq]
-  vex(q ~)
+  (fail +<.sab)
 ::
 ++  pfix                                                ::  discard first rule
   ~/  %pfix

@@ -119,6 +119,7 @@
       ?~(b [%brev a] [[%verb a] u.b])
     ::
     ++  dp-command                                      ::  ++dojo-command
+      :: =<  ;~(less |-(;~(pose (jest '|*') ;~(pfix next (knee ** |.(^$))))) .)
       %+  knee  *dojo-command  |.  ~+
       ;~  pose  
         ;~  pfix  bar
@@ -218,8 +219,8 @@
     ++  dp-poor    poor:(vang | (tope dir))             ::  (list ++twig)
     ++  dp-value                                        ::  ++dojo-source
       ;~  pose
-        (stag %tu (ifix [sel ser] (most ace dp-source)))
         (stag %ex dp-twig)
+        (stag %tu (ifix [sel ser] (most ace dp-source)))
       ==
     ::
     ++  dp-config                                       ::  ++dojo-config
@@ -253,8 +254,10 @@
     ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
+      =.  poy  ~
       ?~  pux  +>
-      (he-card(poy ~) %exec u.pux our.hid ~)
+      %.  [%txt "! cancel {<u.pux>}"]
+      he-diff:(he-card %exec u.pux our.hid ~)
     ::
     ++  dy-slam                                         ::  call by ford
       |=  [way=wire gat=vase sam=vase]
@@ -542,6 +545,7 @@
       ?-  -.act
         %det  (dy-edit +.act)
         %ret  (dy-done (tufa buf.say))
+        %clr  dy-stop
       ==
     ::
     ++  dy-cage       |=(num=@ud (~(got by rez) num))   ::  known cage
@@ -882,6 +886,7 @@
     ?-  -.act
       %det  (he-stir +.act)
       %ret  (he-done (tufa buf.say))
+      %clr  he-pine(buf "")
     ==
   ::
   ++  he-lame                                           ::  handle error
@@ -936,7 +941,6 @@
 ++  poke-sole-action
   |=  act=sole-action  ~|  poke/act  %.  act
   (wrap he-type):arm
-::
 ++  made       (wrap he-made):arm
 ++  sigh-httr  (wrap he-sigh):arm
 ++  sigh-tang  |=([a=wire b=tang] ~|(`term`(cat 3 'sigh-' -.a) (mean b)))
