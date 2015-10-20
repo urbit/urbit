@@ -13,8 +13,10 @@ $ ->
   window.tree._basepath +=
     (window.location.pathname.replace window.tree._basepath, "").split("/")[0]
   window.tree.basepath = (path) -> 
+    prefix = window.tree._basepath
+    if prefix is "/" then prefix = ""
     if path[0] isnt "/" then path = "/"+path
-    _path = window.tree._basepath + path
+    _path = prefix + path
     if _path.slice(-1) is "/" then _path = _path.slice(0,-1)
     _path
   window.tree.fragpath = (path) -> path.replace window.tree._basepath,""
