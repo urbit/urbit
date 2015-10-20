@@ -161,7 +161,7 @@ Every finished line is parsed into one `++dojo-command`:
       ==                                    ::
 
 Each kind of `++dojo-command` is an action that depends on one
-noun thproduction, a `++dojo-recipe`.  We describe first the
+noun production, a `++dojo-recipe`.  We describe first the
 commands, then the recipes.
 
 ##### `[%show p=dojo-recipe]`
