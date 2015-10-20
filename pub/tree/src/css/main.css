@@ -184,7 +184,6 @@ li:before {
   position: fixed;
   top: 0rem;
   width: 57rem;
-  height: 100%;
   padding-top: 1rem;
   z-index: 0;
   margin-left: -32rem;
@@ -286,15 +285,11 @@ h3.time {
   line-height: 1rem;
   font-weight: 200;
   letter-spacing: 1px;
+  display: inline;
 }
 #nav .link-next {
-  position: absolute;
-  bottom: 4rem;
-  margin-left: 1rem;
-}
-#nav .link-next a {
+  margin-top: 2rem;
   font-weight: 500;
-  font-size: 1rem;
 }
 .list > li > a {
   margin-bottom: 0.3rem;
@@ -302,10 +297,6 @@ h3.time {
 .list > li > a h1 {
   font-size: inherit;
   line-height: inherit;
-}
-#nav a,
-.list > li > a h1 {
-  margin-right: 0.3rem;
 }
 #nav .active a {
   font-weight: 500;
@@ -319,6 +310,7 @@ h3.time {
   float: right;
 }
 #sides a {
+  display: inline-block;
   margin-right: 0.6rem;
 }
 .arow-up,
@@ -727,14 +719,23 @@ div.post p.ib {
     opacity: 1;
     width: 42rem;
     margin-left: -21rem;
-    background-color: #fff;
+    background-color: transparent;
     z-index: 2;
+  }
+  #nav > div {
+    background-color: #fff;
   }
   #nav a {
     white-space: nowrap;
   }
   #nav #sibs > div {
     height: 20px;
+    margin-bottom: 4px;
+  }
+  #nav #sibs > div.active a,
+  #nav #sibs > div a {
+    border-bottom: none;
+    text-decoration: underline;
   }
   #nav.m-down,
   #nav.m-up {
@@ -773,11 +774,10 @@ div.post p.ib {
     padding-top: 0;
     opacity: 1;
     left: 0;
-    background-color: #fff;
     z-index: 2;
   }
   #nav > div > div {
-    max-height: 1.4rem;
+    max-height: 1.2rem;
   }
   #nav > div {
     padding-top: 0.6rem;
