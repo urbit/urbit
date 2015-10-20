@@ -68,8 +68,7 @@ Third-party packages are available, at:
 
     https://github.com/yebyen/urbit-deb
 
-Urbit is only supported on Jessie onward (but outbound HTTPS requests
-only work on Stretch; I wish we knew why; help us!)
+Urbit is only supported on Jessie onward (but outbound HTTPS requests only work on Stretch; I wish we knew why; help us!)
 
 Hand-build from source
 ----------------------
@@ -190,13 +189,12 @@ Urbit prints the HTTP port it's serving when it starts up:
 service, this port may be firewalled; go to the firewall
 configuration to open it.
 
-(*Always run any urbit HTTP server which is even semi-serious inside
-a reliable, battle-proven frontline server like nginx.*)
+(*Always run any urbit HTTP server which is even semi-serious inside a reliable, battle-proven frontline server like nginx.*)
 
 Urbit's own official planet `~winsen-pagdel` is also bound to just
 plain `urbit.org`, and hosts the public docs
 [here](http://urbit.org/docs). (They are, of course, the same as
-those that ship with your urbit).
+those that ship with your urbit.)
 
 Assuming your Urbit is on `localhost:8080`, the Urbit docs are at
 
