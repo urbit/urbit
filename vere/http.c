@@ -1054,9 +1054,11 @@ _http_start(u3_http* htp_u)
         uL(fprintf(uH, "http: listen: %s\n", uv_strerror(ret)));
       }
     }
+#if 0
     uL(fprintf(uH, "http: live (%s) on %d\n",
                    (c3y == htp_u->sec) ? "\"secure\"" : "insecure",
                    htp_u->por_w));
+#endif
     break;
   }
 }

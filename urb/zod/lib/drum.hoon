@@ -28,7 +28,6 @@
   $:  edg=_80                                           ::  terminal columns
       off=@ud                                           ::  window offset
       kil=(unit (list ,@c))                             ::  kill buffer
-      maz=master                                        ::  master window
       inx=@ud                                           ::  ring index
       fug=(map gill (unit target))                      ::  connections
       mir=(pair ,@ud (list ,@c))                        ::  mirrored terminal
@@ -69,7 +68,8 @@
   =+  myr=(clan our)
   ?:  =(%pawn myr)
     [[%base %talk] [%base %dojo] ~]
-  ?:  =(%earl myr)  ~
+  ?:  =(%earl myr)
+    [[%home %dojo] ~]
   [[%home %talk] [%home %dojo] ~]
 ::
 ++  deft-fish                                           ::  default connects
@@ -77,11 +77,8 @@
   %-  ~(gas in *(set gill))
   ^-  (list gill)
   =+  myr=(clan our)
-  :: ?:  =(%pawn myr)
-  ::   [[our %dojo] ~]
   ?:  =(%earl myr)
-    =+  dad=(sein our)
-    [[dad %talk] [dad %dojo] ~]
+    [[(sein our) %talk] [our %dojo] ~]
   [[our %talk] [our %dojo] ~]
 ::
 ++  deft-mast                                           ::  default master
@@ -100,7 +97,6 @@
   :*  80                                                ::  edg
       0                                                 ::  off
       ~                                                 ::  kil
-      (deft-mast our)                                   ::  maz
       0                                                 ::  inx
       ~                                                 ::  fug
       [0 ~]                                             ::  mir
@@ -148,39 +144,6 @@
           [%pass wire note]                           ::
       ==                                              ::
     ++  move  (pair bone card)                        ::  user-level move
-    ++  sp                                            ::  command parser
-      |%  ++  sp-ukase
-            %+  knee  *ukase  |.  ~+
-            ;~  pose
-              (stag %add ;~(pfix lus sp-gills))
-              (stag %del ;~(pfix hep sp-gills))
-              (stag %new ;~(pfix tar sp-wells))
-            ==
-          ::
-          ++  sp-gills
-            ;~  pose
-              (most ;~(plug com ace) sp-gill)
-              %+  cook
-                |=  a=ship
-                [[a %talk] [a %dojo] ~]
-              ;~(pfix sig fed:ag)
-            ==
-          ::
-          ++  sp-gill
-            ;~  pose
-              (stag our sym)
-              ;~  plug
-                ;~(pfix sig fed:ag)
-                ;~(pfix fas sym)
-              ==
-            ==
-          ++  sp-well
-            ;~  pose
-              ;~(plug sym ;~(pfix fas sym))
-              (stag %home sym)
-            ==
-          ++  sp-wells  (most ;~(plug com ace) sp-well)
-      --
     --
 |_  [moz=(list move) biz=(list dill-blit)]
 ++  diff-sole-effect-phat                             ::
@@ -335,11 +298,8 @@
     +>
   =+  gul=se-agon
   =+  tur=`(unit (unit target))`?~(gul ~ (~(get by fug) u.gul))
-  ?:  &(!liv.maz |(=(~ gul) =(~ tur) =([~ ~] tur)))  (se-blit %bel ~)
-  =+  ^=  taz
-      ?:  liv.maz 
-        ~(. ta [& %& `gill`(fall gul [our %none])] `target`tar.maz)
-      ~(. ta [& %| (need gul)] `target`(need (need tur)))
+  ?:  |(=(~ gul) =(~ tur) =([~ ~] tur))  (se-blit %bel ~)
+  =+  taz=~(. ta [& (need gul)] `target`(need (need tur)))
   =<  ta-abet
   ?-  -.bet
     %aro  (ta-aro:taz p.bet)
@@ -347,6 +307,7 @@
     %cru  (ta-cru:taz p.bet q.bet)
     %ctl  (ta-ctl:taz p.bet)
     %del  ta-del:taz
+    %hey  taz(mir [0 ~])
     %met  (ta-met:taz p.bet)
     %ret  ta-ret:taz
     %txt  (ta-txt:taz p.bet)
@@ -372,7 +333,7 @@
   =.  +>.$  (se-text "[unlinked from {<gyl>}]")
   ?:  =(gyl [our %dojo])                              ::  undead dojo
     (se-link gyl)
-  se-prom(liv.maz ?~(fug & liv.maz))
+  +>.$
 ::
 ++  se-dump                                           ::  print tanks
   |=  tac=(list tank)
@@ -396,12 +357,12 @@
   ^+  +>
   =.  +>  (se-text "[linked to {<gyl>}]")
   ?>  =(~ (~(got by fug) gyl))
-  (se-alas:se-prom(liv.maz |, fug (~(put by fug) gyl `*target)) gyl)
+  (se-alas(fug (~(put by fug) gyl `*target)) gyl)
 ::
 ++  se-nuke                                           ::  teardown
   |=  gyl=gill
   ^+  +>
-  (se-drop:(se-pull(liv.maz |) gyl) & gyl)
+  (se-drop:(se-pull gyl) & gyl)
 ::
 ++  se-like                                           ::  act in master
   |=  kus=ukase
@@ -446,14 +407,6 @@
   ?~  t.yal  i.yal
   :(welp i.yal ", " $(yal t.yal))
 ::
-++  se-prom                                           ::  update drum prompt
-  ^+  .
-  =+  mux=se-plot
-  %_    +
-      cad.pom.tar.maz
-    (welp (scow %p our) ?~(mux "# " :(welp ":" mux "# ")))
-  ==
-::
 ++  se-link                                           ::  connect to app
   |=  gyl=gill
   +>(eel (~(put in eel) gyl))
@@ -477,15 +430,13 @@
   (se-show (sub p.lin off) (scag edg (slag off q.lin)))
 ::
 ++  se-view                                           ::  flush buffer
-  ?:  liv.maz
-    (se-just ~(ta-vew ta [& & ~zod %$] tar.maz))
   =+  gul=se-agon
-  ?~  gul  se-view(liv.maz &)
+  ?~  gul  +
   =+  gyr=(~(get by fug) u.gul)
-  ?~  gyr  se-view(liv.maz &)
-  ?~  u.gyr  se-view(liv.maz &)
+  ?~  gyr  +>
+  ?~  u.gyr  +>
   %-  se-just
-  ~(ta-vew ta [& | u.gul] u.u.gyr)
+  ~(ta-vew ta [& u.gul] u.u.gyr)
 ::
 ++  se-emit                                           ::  emit move
   |=  mov=move
@@ -517,7 +468,7 @@
 ++  se-tame                                           ::  switch connection
   |=  gyl=gill
   ^+  ta
-  ~(. ta [& %| gyl] (need (~(got by fug) gyl)))
+  ~(. ta [& gyl] (need (~(got by fug) gyl)))
 ::
 ++  se-diff                                           ::  receive results
   |=  [gyl=gill fec=sole-effect]
@@ -526,44 +477,24 @@
 ::
 ++  ta                                                ::  per target
   |_  $:  $:  liv=?                                   ::  don't delete
-              mav=?                                   ::  showing master
               gyl=gill                                ::  target app
           ==                                          ::
           target                                      ::  target state
       ==                                              ::
   ++  ta-abet                                         ::  resolve
     ^+  ..ta
-    =.  liv.maz  mav
-    ?:  mav
-      ?.  liv
-        (se-blit `dill-blit`[%qit ~])
-      se-prom:+>(tar.maz +<+)
     ?.  liv  
-      =.  ..ta  (se-nuke gyl) 
-      ..ta(liv.maz =(~ fug))
+      ?:   (~(has in (deft-fish our)) gyl)
+        (se-blit qit/~)
+      (se-nuke gyl) 
     ..ta(fug (~(put by fug) gyl ``target`+<+))
   ::
-  ++  ta-ant                                          ::  toggle master
-    ^+  .
-    ?:  mav
-      ?:  =(~ fug)  ta-bel
-      %_  .
-        mav      |
-        +<+      (need (~(got by fug) gyl))
-        tar.maz  +<+
-      ==
-    %_  .
-      mav  &
-      +<+  tar.maz
-      fug  (~(put by fug) gyl `+<+) 
-    ==
+  ++  ta-poke  |=(a=pear +>(..ta (se-poke gyl a)))    ::  poke gyl
   ::
   ++  ta-act                                          ::  send action
     |=  act=sole-action
     ^+  +>
-    ?:  mav  
-      +>.$
-    +>.$(+> (se-poke gyl %sole-action act))
+    (ta-poke %sole-action act)
   ::
   ++  ta-aro                                          ::  hear arrow
     |=  key=?(%d %l %r %u)
@@ -613,7 +544,8 @@
         ta-bel
       .(str.u.ris (scag (dec (lent str.u.ris)) str.u.ris))
     ?:  =(0 pos.inp)
-      .(+> (se-blit %bel ~))
+      (ta-act %clr ~)
+      :: .(+> (se-blit %bel ~))
     =+  pre=(dec pos.inp)
     (ta-hom(pos.inp pre) %del pre)
   ::
@@ -657,7 +589,7 @@
               ta-bel
             %-  ta-hom(pos.inp 0, kil `(scag pos.inp buf.say.inp))
             (ta-cut 0 pos.inp)
-        %v  ta-ant
+        %v  ta-bel
         %x  +>(+> se-anon)
         %y  ?~  kil  ta-bel 
             %-  ta-hom(pos.inp (add pos.inp (lent u.kil)))
@@ -766,18 +698,7 @@
     +>(pom pom(cad :(welp (scow %p p.gyl) ":" (trip q.gyl) cad.pom)))
   ::
   ++  ta-ret                                          ::  hear return
-    ?.  mav
-      (ta-act %ret ~)
-    =+  txt=(tufa buf.say.inp)
-    =+  fey=(rose txt sp-ukase:sp)
-    ?-  -.fey
-      %|  (ta-erl (lent (tuba (scag p.fey txt))))
-      %&  ?~  p.fey 
-            (ta-erl (lent buf.say.inp))
-          =.  +>+>  (se-like u.p.fey)
-          =.  pom  pom.tar.maz
-          (ta-hom:ta-nex %set ~)
-    ==
+    (ta-act %ret ~)
   ::
   ++  ta-ser                                          ::  reverse search
     |=  ext=(list ,@c)

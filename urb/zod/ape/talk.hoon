@@ -13,10 +13,11 @@
   ::
 [. talk sole]
 =>  |%                                                  ::  data structures
-    ++  house  ,[%2 house-2]                            ::  full state
+    ++  house  ,[%3 house-3]                            ::  full state
     ++  house-any                                       ::  app history
       $%  [%1 house-1]                                  ::  1: talk
-          [%2 house-2]                                  ::  1: talk
+          [%2 house-2]                                  ::  2: talk
+          [%3 house-3]                                  ::  3: talk
       ==                                                ::
     ++  house-1                                         ::
       $:  stories=(map span story)                      ::  conversations
@@ -25,7 +26,6 @@
           folks=(map ship human)                        ::  human identities
           shells=(map bone shell)                       ::  interaction state
       ==                                                ::
-    ::                                                  ::
     ++  house-2                                         ::
       $:  stories=(map span story)                      ::  conversations
           general=(set bone)                            ::  meta-subscribe
@@ -34,7 +34,16 @@
           shells=(map bone shell)                       ::  interaction state
           log=(map span ,@ud)                           ::  logged to clay
       ==                                                ::
-    ::                                                  ::
+    ++  house-3                                         ::
+      $:  stories=(map span story)                      ::  conversations
+          general=(set bone)                            ::  meta-subscribe
+          outbox=(pair ,@ud (map ,@ud thought))         ::  urbit outbox
+          folks=(map ship human)                        ::  human identities
+          shells=(map bone shell)                       ::  interaction state
+          log=(map span ,@ud)                           ::  logged to clay
+          nik=(map (set partner) char)                  ::
+          nak=(jug char (set partner))                  ::
+      ==                                                ::
     ++  story                                           ::  wire content
       $:  count=@ud                                     ::  (lent grams)
           grams=(list telegram)                         ::  all history
@@ -85,21 +94,26 @@
       $%  [%repeat p=@ud q=@p r=span]                   ::
           [%friend p=span q=station]                    ::
       ==                                                ::
-    ::                                                  ::
     ++  work                                            ::  interface action
-      $%  [%number p=? q=@ud]                           ::  activate by number
+      $%  [%number p=$|(@ud [@u @ud])]                  ::  relative/absolute
           [%help ~]                                     ::  print usage info
+          [%who p=?((set partner) char)]                ::  presence
+          [%what p=$|(char (set partner))]              ::  show bound glyph
+          [%bind p=char q=(unit (set partner))]         ::
           [%join p=(set partner)]                       ::  
-          [%say p=speech]                               ::
-          [%eval p=twig q=cord]                         ::
-          [%invite p=span q=(list partner)]             ::
-          [%banish p=span q=(list partner)]             ::
-          [%target p=(set partner)]                     ::  set active targets
+          [%say p=(list speech)]                        ::
+          [%eval p=cord q=twig]                         ::
+          [%invite p=span q=(list partner)]             ::  whitelist add
+          [%banish p=span q=(list partner)]             ::  blacklist add
+          [%block p=span q=(list partner)]              ::  blacklist add
+          [%author p=span q=(list partner)]             ::  whitelist add
+          [%nick p=(unit ship) q=(unit cord)]           ::
+          [%target p=where q=(unit work)]               ::  set active targets
           ::  [%destroy p=span]                         ::
           [%create p=posture q=span r=cord]             ::
           [%probe p=station]                            ::
       ==                                                ::
-    ::                                                  ::
+    ++  where  ?((set partner) char)                    ::  audience/shorthand
     ++  sigh                                            ::  assemble label
       |=  [len=@ud pre=tape yiz=cord]
       ^-  tape
@@ -112,19 +126,23 @@
         ?.  (lth lez len)  nez
         (runt [(sub len lez) '-'] nez)
       :(welp pre (scag (dec len) nez) "+")  
+    ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]     :: station char pool
     --
 |_  [hid=bowl house]
 ++  ra                                                  ::  per transaction
-  |_  [ost=bone moves=(list move)]
+  |_  moves=(list move)
   ++  sh                                                ::  per console
     |_  $:  coz=(list command)                          ::  talk actions
             she=shell
-        == 
-    ++  sh-expr  wide:(vang & [&1:% &2:% (scot %da now.hid) |3:%])
-    ::
+        ==
     ++  sh-scad                                         ::  command parser
       =<  work
-      |%  
+      |%
+      ++  expr                                          ::  [cord twig]
+        |=  tub=nail  %.  tub
+        %+  stag  (crip q.tub)
+        wide:(vang & [&1:% &2:% (scot %da now.hid) |3:%])
+      ::
       ++  dare                                          ::  @dr
         %+  sear
           |=  a=coin
@@ -148,15 +166,15 @@
       ++  stan                                          ::  station
         ;~  pose
           (cold [our.hid man.she] tis)
-          ;~(pfix cen (cook |=(a=term [our.hid a]) sym))
-          ;~(pfix fas (cook |=(a=term [(sein our.hid) a]) sym))
+          ;~(pfix cen (stag our.hid sym))
+          ;~(pfix fas (stag (sein our.hid) sym))
         ::
           %+  cook
             |=  [a=@p b=(unit term)]
             [a ?^(b u.b (main a))]
           ;~  plug
             ship
-            ;~(pose (stag ~ ;~(pfix fas urs:ab)) (easy ~))
+            (punt ;~(pfix fas urs:ab))
           ==
         ==
       ::
@@ -165,20 +183,15 @@
           (stag %& stan)
           (stag %| pasp)
         ==
-      ++  parq                                          ::  non-empty partners
-        %+  cook
-          |=(a=(list partner) (~(gas in *(set partner)) a))
+      ++  parz                                          ::  non-empty partners
+        %+  cook  ~(gas in *(set partner))
         (most ;~(plug com (star ace)) parn)
-      ::
-      ++  parz                                          ::  partner set
-        %+  cook
-          |=(a=(list partner) (~(gas in *(set partner)) a))
-        (more ;~(plug com (star ace)) parn)
       ::
       ++  nump                                          ::  number reference
         ;~  pose
-          (stag %& dem:ag)
-          (stag %| ;~(pfix (just '0') dem:ag))
+          ;~(pfix hep dem:ag)
+          ;~(plug (cook lent (plus (just '0'))) dem:ag)
+          (stag 0 dem:ag)
         ==
       ::
       ++  pore                                          ::  posture
@@ -189,8 +202,25 @@
           (cold %brown (jest %mailbox))
         ==
       ::
+      ++  message
+        ;~  pose
+          ;~(plug (cold %eval hax) expr)
+        ::
+          %+  stag  %say
+          %+  most  (jest '•')
+          ;~  pose
+            (stag %url aurf:urlp)
+            :(stag %lin | ;~(pfix pat text))
+            :(stag %lin & ;~(less sem hax text))
+          ==
+        ==
+      ::
+      ++  nick  (cook crip (stun [1 14] low))           ::  nickname
+      ++  text  (cook crip (star (shim ' ' '~')))       ::  bullets separating
+      ++  glyph  (mask "/\\\{(<!?{(zing glyphs)}")      ::  station postfix
       ++  work
         %+  knee  *^work  |.  ~+
+        =-  ;~(pose ;~(pfix sem -) message)
         ;~  pose
           ;~  (glue ace)  (perk %create ~)
             pore
@@ -198,17 +228,41 @@
             qut
           ==
         ::
-          ;~((glue ace) (perk %join ~) parq)
+          ;~  plug  (perk %who ~)
+            ;~  pose
+              ;~(pfix ace parz)
+              ;~(pfix ace glyph)
+              (easy ~)
+            ==
+          ==
+        ::
+          ;~(plug (perk %bind ~) ;~(pfix ace glyph) (punt ;~(pfix ace parz)))
+          ;~((glue ace) (perk %join ~) parz)
+          ;~((glue ace) (perk %what ~) ;~(pose parz glyph))
+        ::
+          ;~  plug  (perk %nick ~)
+            ;~  pose
+              (cook some ;~(pfix ace ship))
+              (easy ~)
+            ==
+            ;~  pose
+              (cook some ;~(pfix ace nick))
+              (easy ~)
+            ==
+          ==
+        ::
           ;~(plug (perk %help ~) (easy ~))
           (stag %number nump)
-          (stag %target parz)
+          =+  (punt ;~(pfix ace message))
+          (stag %target ;~(plug ;~(pose parz glyph) -))
+          (stag %number (cook lent (star sem)))
         ==
       --
     ++  sh-abet
       ^+  +>
       =+  zoc=(flop coz)
       |-  ^+  +>+>
-      ?~  zoc  +>+>.$(shells (~(put by shells) ost she))
+      ?~  zoc  +>+>.$(shells (~(put by shells) ost.hid she))
       $(zoc t.zoc, +>.$ (sh-deal i.zoc))
     ::
     ++  sh-deal                                         ::  apply from shell
@@ -228,19 +282,18 @@
     ++  sh-fact                                         ::  send console effect
       |=  fec=sole-effect
       ^+  +>
-      +>(moves :_(moves [ost %diff %sole-effect fec]))
+      +>(moves :_(moves [ost.hid %diff %sole-effect fec]))
     ::
     ++  sh-peep                                         ::  peer to path
       |=  pax=path
       ^+  +>
-      +>(+> (~(ra-subscribe ra ost ~) her.she pax))
+      +>(+> (ra-subscribe her.she pax))
     ::
     ++  sh-peer                                         ::  subscribe shell
       =<  sh-prod
       %_    .
           +>
-        %-  ra-subscribe:(~(ra-subscribe ra ost ~) her.she ~)
-        [her.she [%afx man.she ~]]
+        (ra-subscribe:(ra-subscribe her.she ~) her.she [%afx man.she ~])
       ==
     ::
     ++  sh-prod                                         ::  show prompt
@@ -252,6 +305,8 @@
           ?~  active.she
             [['(' ')'] passive.she]
           [['[' ']'] u.active.she]
+      =+  cha=(~(get by nik) q.rew)
+      ?^  cha  ~[u.cha ' ']
       =+  por=~(te-prom te man.she q.rew)
       (weld `tape`[p.p.rew por] `tape`[q.p.rew ' ' ~])
     ::
@@ -283,6 +338,8 @@
     ::
     ++  sh-poss                                         ::  passive update
       |=  lix=(set partner)
+      ?^  buf.say.she
+        +>.$
       =+  sap=(sh-pare lix)
       ?:  =(sap passive.she)
         +>.$
@@ -600,7 +657,7 @@
     ++  sh-note                                         ::  shell message
       |=  txt=tape
       ^+  +>
-      (sh-fact %txt (runt [16 '-'] `tape`['|' ' ' (scag 62 txt)]))
+      (sh-fact %txt (runt [14 '-'] `tape`['|' ' ' (scag 64 txt)]))
     ::
     ++  sh-spaz                                         ::  print status
       |=  saz=status
@@ -706,45 +763,45 @@
     ++  sh-sane-chat                                    ::  sanitize chatter
       |=  buf=(list ,@c)
       ^-  (list sole-edit)
-      =+  :-  inx=0
-          ^=  fix
-          |=  [inx=@ud cha=@t lit=(list sole-edit)]
-          ^+  lit
-          [[%mor [%del inx] [%ins inx `@c`cha] ~] lit]
-      |-  ^-  (list sole-edit)
-      ?:  =(62 inx)
-        |-  ^-  (list sole-edit)
-        ?~(buf ~ [[%del 62] $(buf t.buf)])
-      ?~  buf  ~
-      =+  lit=$(inx +(inx), buf t.buf)
-      ?:  |((lth i.buf 32) (gth i.buf 126))
-        (fix inx '?' lit)
-      ?:  &((gte i.buf 'A') (lte i.buf 'Z'))
-        (fix inx (add 32 i.buf) lit)
-      ::  ?:  &(=('/' i.buf) ?=([47 *] t.buf))
-      ::  (fix inx '\\' lit)
-      lit
-    ::
-    ++  sh-sane-rule                                    ::  sanitize by rule
-      |*  sef=_rule
-      |=  [inv=sole-edit txt=tape]
-      ^-  (list sole-edit)
-      =+  ryv=(rose txt sef)
-      ?:(-.ryv ~ [inv ~])
+      =+  [inx=0 sap=0 con=0]
+      |^  run
+      ++  fix  |=(cha=@ [%mor [%del inx] [%ins inx `@c`cha] ~])
+      ++  run  ^-  (list sole-edit)
+        ?~  buf  ~
+        ?:  =(i.buf (turf '•'))
+          ?~  con  [[%del inx] run(buf t.buf)]
+          run(con 0, inx +(inx), buf t.buf) 
+        ?:  =(64 con)
+          =+  dif=(sub inx sap)
+          ?:  (lth dif 64)
+            [(fix(inx sap) (turf '•')) run(con dif)]
+          [[%ins inx (turf '•')] run(con 0, inx +(inx))]
+        ?:  =(i.buf ' ')
+          run(sap inx, inx +(inx), con +(con), buf t.buf)
+        =+  lit=run(inx +(inx), con +(con), buf t.buf)
+        ?:  |((lth i.buf 32) (gth i.buf 126))
+          [(fix '?') lit]
+        ?:  &((gte i.buf 'A') (lte i.buf 'Z'))
+          [(fix (add 32 i.buf)) lit]
+        lit
+      --
     ::
     ++  sh-sane                                         ::  sanitize input
       |=  [inv=sole-edit buf=(list ,@c)]
       ^-  (list sole-edit)
-      ?~  buf  ~
-      =+  txt=(tufa buf)
-      ?:  =(& -:(rose txt aurf:urlp))  ~
-      ?:  =(';' -.txt)
-        ((sh-sane-rule sh-scad) inv +.txt) 
-      ?:  =('#' -.txt)
-        ((sh-sane-rule sh-expr) inv +.txt) 
-      ?:  =('@' -.txt)
-        (sh-sane-chat +.buf)
-      (sh-sane-chat buf)
+      =+  res=(rose (tufa buf) sh-scad)
+      ?:  ?=(| -.res)  [inv ~]
+      =+  wok=`(unit work)`p.res
+      |-  ^-  (list sole-edit)
+      ?~  wok  ~
+      ?+  -.u.wok  ~
+        %target  $(wok q.u.wok)
+        %say  |-  ::  XX per line
+              ?~  p.u.wok  ~
+              ?:  ?=(%lin -.i.p.u.wok)
+                (sh-sane-chat buf)
+              $(p.u.wok t.p.u.wok)
+      ==
     ::
     ++  sh-slug                                         ::  edit to sanity
       |=  lit=(list sole-edit)
@@ -763,20 +820,6 @@
         +>.$
       (sh-slug lit)
     ::
-    ++  sh-pork                                         ::  parse work
-      ^-  (unit work)
-      ?~  buf.say.she  ~
-      =+  txt=(tufa buf.say.she)
-      =+  rou=(rust txt aurf:urlp)
-      ?^  rou  `[%say %url u.rou]
-      ?:  =(';' -.txt)
-        (rust +.txt sh-scad)
-      ?:  =('#' -.txt)
-        (bind (rust +.txt sh-expr) |=(a=twig [%eval a (crip +.txt)]))
-      ?:  =('@' -.txt)
-        `[%say %lin | (crip +.txt)]
-      `[%say %lin & (crip txt)]
-    ::
     ++  sh-lame                                         ::  send error
       |=  txt=tape
       (sh-fact [%txt txt])
@@ -792,7 +835,7 @@
       %_(+> coz [cod coz])
     ::
     ++  sh-twig-head  ^-  vase                          ::  eval data
-      :(slop !>(`our=@p`our.hid) !>(`now=@da`now.hid) !>(`eny=@uvI`eny.hid))
+      !>(`[our=@p now=@da eny=@uvI]`[our.hid now.hid (shas %eny eny.hid)])
     ::
     ++  sh-work                                         ::  do work
       |=  job=work
@@ -805,9 +848,15 @@
           %number  (number +.job)
           %join    (join +.job)
           %eval    (eval +.job)
+          %who     (who +.job)
+          %what    (what +.job)
+          %bind    (bind +.job)
           %invite  (invite +.job)
           %banish  (banish +.job)
+          %author  (author +.job)
+          %block   (block +.job)
           %create  (create +.job)
+          %nick    (nick +.job)
           %target  (target +.job)
           %probe   (probe +.job)
           %help    (help)
@@ -817,13 +866,34 @@
       ++  activate                                      ::  from %number
         |=  gam=telegram
         ^+  ..sh-work
-        ~&  [%activate gam]
-        sh-prod(active.she `~(tr-pals tr man.she gam))
+        =+  tay=~(. tr man.she gam)
+        =.  ..sh-work  (sh-fact %tan tr-tang:tay)
+        sh-prod(active.she `tr-pals:tay)
       ::
       ++  help  |=(~ (sh-fact %mor talk-doc))           ::  %help
+      ++  glyph
+        |=  idx=@
+        =<  cha.ole
+        %+  reel  glyphs
+        |=  [all=tape ole=[cha=char num=@]]
+        =+  new=(snag (mod idx (lent all)) all)
+        =+  num=~(wyt in (~(get ju nak) new))
+        ?~  cha.ole  [new num]
+        ?:  (lth num.ole num)
+          ole
+        [new num]
+      ::
       ++  join                                          ::  %join
         |=  lix=(set partner)
         ^+  ..sh-work
+        =.  ..sh-work
+          =+  (~(get by nik) lix)
+          ?^  -  (sh-note "has glyph {<u>}")
+          =+  cha=(glyph (mug lix))
+          =:  nik  (~(put by nik) lix cha)
+              nak  (~(put ju nak) cha lix)
+            ==
+          (sh-note "new glyph {<cha>}")
         =+  loc=loc.system.she
         %^  sh-tell  %design  man.she
         :-  ~
@@ -837,7 +907,55 @@
           $(tal t.tal, sources.loc (~(put in sources.loc) i.tal))
         ==
       ::
+      ++  what                                          ::  %what
+        |=  qur=$|(char (set partner))  ^+  ..sh-work
+        ?^  qur
+          =+  cha=(~(get by nik) qur)
+          (sh-fact %txt ?~(cha "none" [u.cha]~))
+        =+  pan=(~(tap in (~(get ju nak) qur)))
+        ?:  =(~ pan)  (sh-fact %txt "~")
+        =<  (sh-fact %mor (turn pan .))
+        |=(a=(set partner) [%txt <a>]) ::  XX ~(te-whom te man.she a)
+      ::
+      ++  who                                          ::  %who
+        |=  lix=?((set partner) char)  ^+  ..sh-work
+        =<  ?~(lix (. lix) ?^(lix (. lix) (fetch-nik lix .)))
+        |=  pan=(set partner)
+        =<  (sh-fact %mor (murn (sort (~(tap by q.guests.she)) aor) .))
+        |=  [pon=partner alt=atlas]  ^-  (unit sole-effect)
+        ?.  |(=(~ pan) (~(has in pan) pon))  ~
+        =-  `[%tan rose/[", " `~]^- leaf/~(ta-full ta man.she pon) ~]
+        =<  (murn (sort (~(tap by alt)) aor) .)
+        |=  [a=ship b=presence c=human]  ^-  (unit tank) :: XX names
+        ?-  b
+          %gone  ~
+          %hear  `>a<
+          %talk  `>a<      ::  XX difference
+        ==
+      :: 
+      ++  bind                                          ::  %bind
+        |=  [cha=char pan=(unit (set partner))]  ^+  ..sh-work
+        ~&  bind/[cha pan nik nak]
+        ?~  pan  $(pan [~ ?~(active.she passive.she u.active.she)])
+        =+  ole=(~(get by nik) u.pan)
+        ?:  =(ole [~ cha])  ..sh-work
+        =.  nak  ?~(ole nak (~(del ju nak) u.ole u.pan))
+        =:  nak  (~(put ju nak) cha u.pan)
+            nik  (~(put by nik) u.pan cha)
+          ==
+        ..sh-work
+      ::
       ++  invite                                        ::  %invite
+        |=  [nom=span tal=(list partner)]
+        ^+  ..sh-work
+        !!
+      ::
+      ++  block                                         ::  %block
+        |=  [nom=span tal=(list partner)]
+        ^+  ..sh-work
+        !!
+      ::
+      ++  author                                        ::  %author
         |=  [nom=span tal=(list partner)]
         ^+  ..sh-work
         !!
@@ -856,25 +974,89 @@
             %^  sh-tell  %design  nom
             :-  ~
             :+  *(set partner)
-              (end 3 62 txt)
+              (end 3 64 txt)
             [por ~]
         (join [[%& our.hid nom] ~ ~])
       ::
+      ++  reverse-folks
+        |=  nym=span
+        ^-  (list ship)
+        %+  murn  (~(tap by folks))
+        |=  [p=ship q=human]
+        ?~  hand.q  ~
+        ?.  =(u.hand.q nym)  ~
+        [~ u=p]
+      ::
+      ++  nick                                          ::  %nick
+        |=  [her=(unit ship) nym=(unit cord)]
+        ^+  ..sh-work
+        ?:  ?=([~ ~] +<)
+          %+  sh-fact  %mor
+          %+  turn  (~(tap by folks))
+          |=  [p=ship q=human]
+          :-  %txt
+          ?~  hand.q
+            "{<p>}:"
+          "{<p>}: {<u.hand.q>}"
+        ?~  nym
+          ?>  ?=(^ her)
+          =+  asc=(~(get by folks) u.her)
+          %+  sh-fact  %txt
+          ?~  asc  "{<u.her>} unbound"
+          ?~  hand.u.asc  "{<u.her>}:"
+          "{<u.her>}: {<u.hand.u.asc>}"
+        ?~  her
+          %+  sh-fact  %mor
+          %+  turn  (reverse-folks u.nym)
+          |=  p=ship
+          [%txt "{<p>}: {<u.nym>}"]
+        %=  ..sh-work
+          folks  (~(put by folks) u.her [true=~ hand=nym])
+        ==
+      ::
       ++  target                                        ::  %target
-        |=  lix=(set partner)
-        (sh-pact lix)
+        |=  [lix=?((set partner) char) woe=(unit ^work)]
+        =-  ?~(woe end work(job u.woe, ..sh-pact end))
+        ^-  end=_..sh-work
+        ?~  lix  (sh-pact lix) 
+        ?^  lix  (sh-pact lix) 
+        (fetch-nik lix sh-pact)
+      ::
+      ++  fetch-nik
+        |=  [cha=char sh-fun=$+((set partner) _..sh-work)]
+        =+  lax=(~(get ju nak) cha)
+        ?:  =(~ lax)  (sh-lame "unknown {<cha>}")
+        ?:  ?=([* ~ ~] lax)  (sh-fun n.lax)
+        |-  ^-  sh-fun
+        ?~  grams.roy  
+          (sh-lame:(what cha) "ambiguous {<cha>}")
+        =+  pan=(sa (turn :_(head (~(tap by q.q.i.grams.roy)))))
+        ?:  (~(has in lax) pan)
+          (sh-fun pan)
+        $(grams.roy t.grams.roy)
       ::
       ++  number                                        ::  %number
-        |=  [rel=? num=@ud]
+        |=  num=$|(@ud [p=@u q=@ud])
         ^+  ..sh-work
         =+  roy=(~(got by stories) man.she)
-        =.  num
-            ?.  rel  num
-            =+  dog=|-(?:(=(0 num) 1 (mul 10 $(num (div num 10)))))
-            (add num (mul dog (div count.roy dog)))
-        ?:  (gte num count.roy)
-          (sh-lame "{(scow %ud num)}: no such telegram")
-        (activate (snag (sub count.roy +(num)) grams.roy))
+        |-
+        ?@  num
+          ?:  (gte num count.roy)
+            (sh-lame "{(scow %s (new:si | +(num)))}: no such telegram")
+          =.  ..sh-fact  (sh-fact %txt "? {(scow %s (new:si | +(num)))}")
+          (activate (snag num grams.roy))
+        ?.  (gth q.num count.roy)
+          =+  msg=(deli count.roy num)
+          =.  ..sh-fact  (sh-fact %txt "? {(scow %ud msg)}")
+          (activate (snag (sub count.roy +(msg)) grams.roy))
+        (sh-lame "…{(reap p.num '0')}{(scow %ud q.num)}: no such telegram")
+      ::
+      ++  deli                                          ::  find number
+        |=  [max=@ud nul=@u fin=@ud]  ^-  @ud
+        =+  dog=|-(?:(=(0 fin) 1 (mul 10 $(fin (div fin 10)))))
+        =.  dog  (mul dog (pow 10 nul))
+        =-  ?:((lte - max) - (sub - dog))
+        (add fin (sub max (mod max dog)))
       ::
       ++  probe                                         ::  inquire
         |=  cuz=station
@@ -883,18 +1065,20 @@
         ..sh-work
       ::
       ++  eval                                          ::  run
-        |=  [exe=twig txt=cord]
-        %^  say  %fat
-          tank/[(sell (slap (slop sh-twig-head seed) exe))]~
-        [%exp txt]
+        |=  [txt=cord exe=twig]
+        =>  |.([(sell (slap (slop sh-twig-head seed) exe))]~)
+        =+  tan=p:(mule .)
+        (say [%fat tank/tan exp/txt] ~)
       ::
       ++  say                                           ::  publish
-        |=  sep=speech
+        |=  sep=(list speech)
         ^+  ..sh-work
+        ?~  sep    ..sh-work
         =^  sir  ..sh-work  sh-uniq
-        %=    ..sh-work
+        %_    $
+            sep  t.sep
             coz  :_  coz
-          [%publish [[sir sh-whom [now.hid ~ sep]] ~]]
+          [%publish [[sir sh-whom [now.hid ~ i.sep]] ~]]
         ==
       --
     ::
@@ -902,7 +1086,7 @@
       =+  lit=(sh-sane [%nop ~] buf.say.she)
       ?^  lit
         (sh-slug lit)
-      =+  jub=sh-pork
+      =+  jub=(rust (tufa buf.say.she) sh-scad)
       ?~  jub  (sh-fact %bel ~)
       =.  +>  (sh-work u.jub)
       =+  buf=buf.say.she
@@ -921,6 +1105,7 @@
       ^+  +>
       ?-  -.act
         %det  (sh-stir +.act)
+        %clr  (sh-pact ~)
         %ret  sh-done
       ==
     ::
@@ -935,7 +1120,7 @@
         |-  ^-  (pair (list move) (list sole-effect))
         ?~  moves  [~ ~]
         =+  mor=$(moves t.moves)
-        ?:  ?&  =(ost p.i.moves) 
+        ?:  ?&  =(ost.hid p.i.moves) 
                 ?=([%diff %sole-effect *] q.i.moves)
             ==
           [p.mor [+>.q.i.moves q.mor]]
@@ -945,7 +1130,7 @@
             ?~  q.yop  ~ 
             ?~(t.q.yop `i.q.yop `[%mor (flop `(list sole-effect)`q.yop)])
         ==
-    ?~(foc moz [[ost %diff %sole-effect u.foc] moz])
+    ?~(foc moz [[ost.hid %diff %sole-effect u.foc] moz])
   ::
   ++  ra-abet                                           ::  complete core
     ra-abed:ra-axel
@@ -967,21 +1152,21 @@
     =.  q.rey  (flop q.rey)
     |-  ^+  +>
     ?~  q.rey  ra-axel
-    $(q.rey t.q.rey, +> (ra-back(ost p.i.q.rey) q.i.q.rey))
+    $(q.rey t.q.rey, +> (ra-back(ost.hid p.i.q.rey) q.i.q.rey))
   ::
   ++  ra-back
     |=  rad=report
     ^+  +>
-    sh-abet:(~(sh-repo sh ~ (~(got by shells) ost)) rad)
+    sh-abet:(~(sh-repo sh ~ (~(got by shells) ost.hid)) rad)
   ::
   ++  ra-sole
     |=  act=sole-action
     ^+  +>
-    =+  shu=(~(get by shells) ost)
+    =+  shu=(~(get by shells) ost.hid)
     ?~  shu
-      ~&  [%ra-console-broken ost]
+      ~&  [%ra-console-broken ost.hid]
       +>.$
-    sh-abet:(~(sh-sole sh ~ (~(got by shells) ost)) act)
+    sh-abet:(~(sh-sole sh ~ u.shu) act)
   ::  
   ++  ra-emil                                           ::  ra-emit move list
     |=  mol=(list move)
@@ -998,7 +1183,7 @@
   ::
   ++  ra-house                                          ::  emit partners
     |=  ost=bone
-    %+  ra-emit  ost
+    %+  ra-emit  ost.hid
     :+  %diff  %talk-report
     :-  %house
     %-  ~(gas in *(map span (pair posture cord)))
@@ -1092,7 +1277,7 @@
     |=  [src=ship pax=path]
     ^+  +>
     ?.  ?=([@ @ *] pax)
-      +>(general (~(del in general) ost))
+      +>(general (~(del in general) ost.hid))
     %-  (ra-know i.t.pax)  |=  par=_pa  =<  pa-abet
     (pa-notify:pa-cancel:par src %gone *human)
   ::
@@ -1117,9 +1302,9 @@
   ++  ra-subscribe                                      ::  listen to
     |=  [her=ship pax=path]
     ^+  +>
-    ::  ~&  [%ra-subscribe ost her pax]
+    ::  ~&  [%ra-subscribe ost.hid her pax]
     ?:  ?=(~ pax)
-      (ra-house(general (~(put in general) ost)) ost)
+      (ra-house(general (~(put in general) ost.hid)) ost.hid)
     ?.  ?=([@ @ *] pax)
       (ra-evil %talk-bad-path)
     =+  ^=  vab  ^-  (set ,@tas)
@@ -1152,7 +1337,7 @@
     %_    tip
         q.r.r
       %-  crip
-      %+  scag  62
+      %+  scag  64
       %-  tufa
       %+  turn  (tuba (trip q.r.r.tip))
       |=  a=@c
@@ -1196,7 +1381,7 @@
     |=  [cuz=station tip=thought]
     ^+  +>
     =.  +>
-        %+  ra-emit  ost
+        %+  ra-emit  ost.hid
         :*  %poke
             /repeat/(scot %ud p.outbox)/(scot %p p.cuz)/[q.cuz]
             [p.cuz %talk]
@@ -1224,18 +1409,18 @@
     ++  pa-watch                                        ::  watch presence
       |=  her=ship
       ?.  (pa-admire her)
-        (pa-sauce ost [%quit ~]~)
-      =.  viewers  (~(put in viewers) ost)
-      (pa-display ost ~ ~)
+        (pa-sauce ost.hid [%quit ~]~)
+      =.  viewers  (~(put in viewers) ost.hid)
+      (pa-display ost.hid ~ ~)
     ::
     ++  pa-master                                       ::  hear config
       |=  her=ship
       ?.  (pa-admire her)
         ~&  [%pa-admire-not her]
-        (pa-sauce ost [%quit ~]~)
-      =.  owners  (~(put in owners) ost)
+        (pa-sauce ost.hid [%quit ~]~)
+      =.  owners  (~(put in owners) ost.hid)
       ::  ~&  [%pa-master her man shape]
-      (pa-sauce ost [[%diff %talk-report %cabal shape mirrors] ~])
+      (pa-sauce ost.hid [[%diff %talk-report %cabal shape mirrors] ~])
     ::
     ++  pa-display                                      ::  update presence
       |=  vew=(set bone)
@@ -1278,7 +1463,11 @@
       ?+  -.rad  ~|([%talk-odd-friend rad] !!)
         %cabal  (pa-cabal cuz +.rad)
         %group  (pa-remind [%& cuz] +.rad)
-        %grams  (pa-lesson q.+.rad)
+        %grams  =.  q.+.rad
+                  ?.  ?=(%pawn (clan our.hid))   q.+.rad 
+                  ?.  (gth (lent q.+.rad) 200)   q.+.rad
+                  (slag (sub (lent q.+.rad) 200) q.+.rad)
+                (pa-lesson q.+.rad)
       ==
     ::
     ++  pa-quit                                         ::  stop subscription
@@ -1344,11 +1533,11 @@
       pa-monitor
     ::
     ++  pa-cancel                                       ::  unsubscribe from
-      ~&  [%pa-cancel ost]
+      ~&  [%pa-cancel ost.hid]
       %_  .
-        guests  (~(del by guests) ost)
-        viewers  (~(del in viewers) ost)
-        owners  (~(del in owners) ost)
+        guests  (~(del by guests) ost.hid)
+        viewers  (~(del in viewers) ost.hid)
+        owners  (~(del in owners) ost.hid)
       ==
     ::
     ++  pa-notify                                       ::  local presence
@@ -1392,10 +1581,10 @@
       |=  riv=river
       ^+  +>
       =-  ::  ~&  [%pa-start riv lab]
-          =.  +>.$  (pa-sauce ost [[%diff %talk-report %grams q.lab r.lab] ~])
+          =.  +>.$  (pa-sauce ost.hid [[%diff %talk-report %grams q.lab r.lab] ~])
           ?:  p.lab
-            (pa-sauce ost [[%quit ~] ~])
-          +>.$(guests (~(put by guests) ost riv))
+            (pa-sauce ost.hid [[%quit ~] ~])
+          +>.$(guests (~(put by guests) ost.hid riv))
       ^=  lab
       =+  [end=count gaz=grams dun=| zeg=*(list telegram)]
       |-  ^-  (trel ,? ,@ud (list telegram))
@@ -1417,7 +1606,7 @@
       ^+  +>
       ?.  (pa-admire her)
         ~&  [%pa-listen-admire ~]
-        (pa-sauce ost [%quit ~]~)
+        (pa-sauce ost.hid [%quit ~]~)
       =+  ^=  ruv  ^-  (unit river)
           ?:  ?=(~ pax)
             `[[%ud ?:((lth count 64) 0 (sub count 64))] [%da (dec (bex 128))]]
@@ -1433,7 +1622,7 @@
       ::  ~&  [%pa-listen her pax ruv]
       ?~  ruv
         ~&  [%pa-listen-malformed pax]
-        (pa-sauce ost [%quit ~]~)
+        (pa-sauce ost.hid [%quit ~]~)
       (pa-start u.ruv)
     ::
     ++  pa-refresh                                      ::  update to guests
@@ -1531,7 +1720,12 @@
         %czar  (weld "          " raw)
         %king  (weld "       " raw)
         %duke  raw
-        %earl  :(welp (scag 7 raw) "^" (scag 6 (slag 22 raw)))
+        %earl  ;:  welp
+                 (scag 1 raw)
+                 (scag 6 (slag 15 raw))
+                 "^"
+                 (scag 6 (slag 22 raw))
+               ==
         %pawn  :(welp (scag 7 raw) "_" (scag 6 (slag 51 raw)))
     ==
   ::
@@ -1577,7 +1771,9 @@
     ^-  tape
     ?-    -.one
         %&  
-      ?~  moy 
+      ?~  moy
+        =+  cha=(~(get by nik) one ~ ~)
+        =-  ?~(cha - "'{u.cha ~}' {-}")
         ~(sn-phat sn man p.one)
       (~(sn-curt sn man p.one) u.moy)
     ::
@@ -1610,8 +1806,7 @@
   ::
   ++  te-maud  ^-  ?                                    ::  multiple audience
     =.  .  te-deaf
-    ?~  lix  %|
-    |(!=(~ l.lix) !=(~ r.lix))
+    !?=($|(~ [* ~ ~]) lix)
   ::
   ++  te-prom  ^-  tape                                 ::  render targets
     =.  .  te-deaf
@@ -1630,6 +1825,17 @@
   ::
   ++  te-whom                                           ::  render sender
     (~(ta-show ta man (need te-best)) ~ te-maud)
+  ::
+  ++  te-pref                                           ::  audience glyph
+    ^-  tape
+    =+  cha=(~(get by nik) lix)
+    ?^  cha  ~[u.cha ' ']
+    ?.  ?=([[& ^] ~ ~] lix)  "* "
+    =+  sta=p.n.lix
+    =+  sot=(~(get by stories) q.sta)
+    ?:  &(=(p.sta our.hid) ?=(^ sot) ?=(%brown p.cordon.shape.u.sot))
+      ": "
+    "* "
   --
 ::
 ++  tr                                                  ::  telegram renderer
@@ -1638,30 +1844,63 @@
           sen=serial
           aud=audience
           wen=@da
-          bou=(set flavor)
+          bou=bouquet
           sep=speech
       ==
   ++  tr-line  ^-  tape                                 ::  one-line print
-    =+  oug==(who our.hid)
-    =+  txt=(tr-text oug)
+    =+  txt=(tr-text =(who our.hid))
     ?:  =(~ txt)  ""
-    =+  eck=?:((~(has by aud) [%& our.hid man]) '*' '-')
-    =+  heb=?:(oug '>' '<')
     =+  ^=  baw
         ::  ?:  oug 
         ::  ~(te-whom te man tr-pals)
         (~(sn-curt sn man [who (main who)]) |)
-    [heb eck (weld baw txt)]
+    (weld baw txt)
+  ::
+  ++  tr-tang  ^-  tang
+    %+  welp  tr-sep-tang
+    =+  hed=leaf/"{(scow %uv sen)} at {(scow %da wen)}"
+    =+  =<  paz=(turn (~(tap by aud)) .)
+        |=([a=partner *] leaf/~(ta-full ta man a))
+    =+  bok=(turn (sort (~(tap in bou)) aor) smyt)
+    [%rose [" " ~ ~] [hed >who< [%rose [", " "to " ~] paz] bok]]~
+  ::
+  ++  tr-sep-tang
+    |-  ^-  tang
+    =<  ?+(. . [@ *] [.]~)  ^-  ?(tank tang)            ::  wrap single tanks
+    ?+  -.sep  [>sep<]~
+      %exp  leaf/"# {(trip p.sep)}"
+      %lin  leaf/"{?:(p.sep "" "@ ")}{(trip q.sep)}"
+      %non  ~
+      %app  rose/[": " ~ ~]^~[leaf/"[{(trip p.sep)}]" leaf/(trip q.sep)]
+      %tax  leaf/(rend-work-duty p.sep)
+      %url  leaf/"/ {(earf p.sep)}"
+      %mor  ?~(p.sep ~ (weld $(p.sep t.p.sep) $(sep i.p.sep)))
+      %fat  (welp (tr-rend-tors p.sep) $(sep q.sep))
+    ==
+  ::
+  ++  tr-rend-tors
+    |=  a=torso  ^-  tang
+    ?-  -.a
+      %name  (welp $(a q.a) leaf/"={(trip p.a)}" ~)
+      %tank  +.a
+      %text  (turn (flop +.a) |=(b=cord leaf/(trip b)))
+    ==
   ::
   ++  tr-pals
     ^-  (set partner)
     %-  ~(gas in *(set partner))
     (turn (~(tap by aud)) |=([a=partner *] a))
   ::
-  ++  trim
+  ++  chow
     |=  [len=@u txt=tape]
     ?:  (gth len (lent txt))  txt
-    (weld (scag (dec len) txt) "…")
+    =.  txt  (scag len txt)
+    |-
+    ?~  txt  txt
+    ?:  =(' ' i.txt)
+      |-(['_' ?.(?=([%' ' *] t.txt) t.txt $(txt t.txt))])
+    ?~  t.txt  "…"
+    [i.txt $(txt t.txt)]
   ::
   ++  tr-text
     |=  oug=?
@@ -1669,27 +1908,34 @@
     ?+    -.sep  ~&(tr-lost/sep "")
         %fat
       =+  rem=$(sep q.sep)
-      ?:  (gth (lent rem) 60)  (trim 62 rem)
-      =-  "{rem}  {(trim (sub 60 (lent rem)) -)}"
+      ?:  (gth (lent rem) 62)  (chow 64 rem)
+      =-  "{rem}{(chow (sub 64 (lent rem)) "  {-}")}"
       ?+  -.p.sep  "..."
         %tank  ~(ram re %rose [" " `~] +.p.sep)
       ==
     ::
-        %url  ['/' ' ' (earf p.sep)]
-        %exp  ['#' ' ' (trip p.sep)]
+        %exp  (chow 66 '#' ' ' (trip p.sep))
+        %url  =+  ful=(earf p.sep)
+              ?:  (gth 64 (lent ful))  ['/' ' ' ful]
+              :+  '/'  '_' 
+              =+  hok=r.p.p.p.sep
+              ~!  hok
+              =<  ?~(-.hok (reel p.hok .) +:(scow %if p.hok))
+              |=([a=span b=tape] ?~(b (trip a) (welp b '.' (trip a))))
+    ::
         %lin
       =+  txt=(trip q.sep)
       ?:  p.sep
-        (weld ": " txt)
+        (weld ~(te-pref te man tr-pals) txt)
       ?:  oug
         (weld "@ " txt)
       (weld " " txt)
     ::
         %app
-      (trim 62 "[{(trip p.sep)}]: {(trip q.sep)}")
+      (chow 64 "[{(trip p.sep)}]: {(trip q.sep)}")
     ::
         %tax
-      (trim 62 " {(rend-work-duty p.sep)}")
+      (chow 64 " {(rend-work-duty p.sep)}")
     ==
   -- 
 ::
@@ -1697,40 +1943,40 @@
   |=  [pax=path]
   ^-  [(list move) _+>]
   ~?  !=(src.hid our.hid)  [%peer-talk-stranger src.hid]
-  ::  ~&   [%talk-peer src ost pax]
+  ::  ~&   [%talk-peer src ost.hid pax]
   ?:  ?=([%sole *] pax)
     ?>  =(our.hid src.hid)
     ~?  (~(has by shells) ost.hid)  [%talk-peer-replaced ost.hid pax]
-    ra-abet:(~(ra-console ra ost.hid ~) src.hid t.pax)
+    ra-abet:(ra-console:ra src.hid t.pax)
   ::  ~&  [%talk-peer-data ost.hid src.hid pax]
-  ra-abet:(~(ra-subscribe ra ost.hid ~) src.hid pax)
+  ra-abet:(ra-subscribe:ra src.hid pax)
 ::
 ++  poke-talk-command                                   ::  accept command
   |=  [cod=command]
   ^-  [(list move) _+>]
   ::  ~&  [%talk-poke-command src.hid cod]
   =^  mos  +>.$
-      ra-abet:(~(ra-apply ra ost.hid ~) src.hid cod)
+      ra-abet:(ra-apply:ra src.hid cod)
   =^  mow  +>.$  log-all-to-file
   [(welp mos mow) +>.$]
 ::
 ++  poke-sole-action                                    ::  accept console
   |=  [act=sole-action]
-  ra-abet:(~(ra-sole ra ost.hid ~) act)
+  ra-abet:(ra-sole:ra act)
 ::
 ++  diff-talk-report                                    ::
   |=  [way=wire rad=report]
   ^-  (quip move +>)
   =^  mos  +>.$
       %+  etch-friend  way  |=  [man=span cuz=station]
-      ra-abet:(~(ra-diff-talk-report ra ost.hid ~) man cuz rad)
+      ra-abet:(ra-diff-talk-report:ra man cuz rad)
   =^  mow  +>.$  log-all-to-file
   [(welp mos mow) +>.$]
 ::
 ++  coup-repeat                                         ::
   |=  [way=wire saw=(unit tang)]
   %+  etch-repeat  [%repeat way]  |=  [num=@ud src=@p man=span]
-  ra-abet:(~(ra-coup-repeat ra ost.hid ~) [num src man] saw)
+  ra-abet:(ra-coup-repeat:ra [num src man] saw)
 ::
 ++  etch                                                ::  parse wire
   |=  way=wire
@@ -1761,18 +2007,18 @@
   ?~  saw  [~ +>]
   %+  etch-friend  [%friend way]  |=  [man=span cuz=station]
   ~&  [%reap-friend-fail man cuz u.saw]
-  ra-abet:(~(ra-quit ra ost.hid ~) man cuz)
+  ra-abet:(ra-quit:ra man cuz)
 ::
 ++  quit-friend                                         ::
   |=  way=wire
   %+  etch-friend  [%friend way]  |=  [man=span cuz=station]
-  ra-abet:(~(ra-retry ra ost.hid ~) man cuz)
+  ra-abet:(ra-retry:ra man cuz)
 ::
 ++  pull                                                ::
   |=  [pax=path]
   ^-  [(list move) _+>]
   ~&  [%talk-pull src.hid ost.hid pax]
-  =^  moz  +>.$  ra-abet:(~(ra-cancel ra ost.hid ~) src.hid pax)
+  =^  moz  +>.$  ra-abet:(ra-cancel:ra src.hid pax)
   [moz +>.$(shells (~(del by shells) ost.hid))]
 ::
 ++  log-all-to-file
@@ -1831,10 +2077,11 @@
   |=  [old=(unit house-any)]
   ^-  (quip move +>)
   ?~  old
-    ra-abet:~(ra-init ra 0 ~)
+    ra-abet:ra-init:ra
   |-
   ?-  -.u.old
     %1  $(u.old [%2 stories general outbox folks shells ~]:u.old)
-    %2  [~ +>.^$(+<+ u.old)]
+    %2  $(u.old [%3 stories general outbox folks shells log ~ ~]:u.old)
+    %3  [~ +>.^$(+<+ u.old)]
   ==
 --

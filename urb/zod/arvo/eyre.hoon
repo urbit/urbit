@@ -148,7 +148,6 @@
 ::
 ++  fcgi                                                ::  credential caboose
   |=  [quy=quay ced=cred]  ^-  coin
-  ~&  fcgi/[`@uv`(mug ced) quy]
   :*  %many
       [%$ %ta ~]
       [%blob ced]
@@ -1502,13 +1501,6 @@
 ++  load                                                ::  take previous state
   |=  old=bolo
   ^+  ..^$
-  =+  mej=|=(a=* (met 3 (jam a)))
-  ~&  :*  gub=(mej gub.old)  hov=(mej hov.old)  ged=(mej ged.old)  
-          ded=(mej ded.old)  pox=(mej pox.old)  ask=(mej ask.old)  
-          kes=(mej kes.old)  ney=(mej ney.old)  dop=(mej dop.old)  
-          liz=(mej liz.old)  wup=(mej wup.old)  sop=(mej sop.old)
-          wix=(mej wix.old)
-      ==
   ..^$(+>- old)
 ::
 ++  scry

@@ -819,7 +819,7 @@
         void
         u3_term_ef_bake(u3_noun  fav);
 
-      /* u3_term_ef_blit(): send %blit effect to to terminal.
+      /* u3_term_ef_blit(): send %blit effect to terminal.
       */
         void
         u3_term_ef_blit(c3_l    tid_l,
@@ -950,7 +950,7 @@
         void
         u3_unix_ef_ogre(u3_noun mon);
 
-      /* u3_unix_ef_ogre(): delete mount point
+      /* u3_unix_ef_hill(): enumerate mount points
       */
         void
         u3_unix_ef_hill(u3_noun hil);
