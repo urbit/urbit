@@ -92,11 +92,16 @@ html {
 }
 a {
   color: #000;
+  border-bottom: 1px solid #000;
+  text-decoration: none;
   display: inline-block;
   line-height: 0.8rem;
 }
 a:visited {
   opacity: 0.5;
+}
+a code {
+  line-height: inherit;
 }
 hr {
   display: inline-block;
@@ -146,6 +151,7 @@ pre {
   background-color: #f5f5f5;
   padding: 0.3rem;
   margin-left: -0.3rem;
+  white-space: pre-line;
 }
 code {
   line-height: 1.2rem;
@@ -178,6 +184,7 @@ li:before {
   position: fixed;
   top: 0rem;
   width: 57rem;
+  height: 100%;
   padding-top: 1rem;
   z-index: 0;
   margin-left: -32rem;
@@ -194,7 +201,7 @@ li:before {
   transition: opacity 0.3s ease-in-out;
 }
 #cont {
-  position: absolute;
+  position: relative;
   top: 0;
   margin-bottom: 9rem;
 }
@@ -266,7 +273,7 @@ h3.time {
   overflow: hidden;
 }
 #nav #sibs > div {
-  margin-bottom: 4px;
+  margin-bottom: 0.6rem;
 }
 .focus #sibs {
   margin-top: 0 !important;
@@ -279,6 +286,15 @@ h3.time {
   line-height: 1rem;
   font-weight: 200;
   letter-spacing: 1px;
+}
+#nav .link-next {
+  position: absolute;
+  bottom: 4rem;
+  margin-left: 1rem;
+}
+#nav .link-next a {
+  font-weight: 500;
+  font-size: 1rem;
 }
 .list > li > a {
   margin-bottom: 0.3rem;

@@ -34,10 +34,23 @@ Links = React.createFactory query {
       @props.children, 
       @renderUp(),
       @renderSibs(),
-      @renderArrows()
+      @renderArrows(),
+      @renderNext()
     renderUp: ->
       if @props.sein 
         div {id:"up",key:"up"}, @renderArrow "up", @props.sein
+    renderSibs: ->
+      keys = getKeys @props
+      if keys.indexOf(@props.curr) isnt -1
+        style = {marginTop: -24 * (keys.indexOf @props.curr) + "px"}
+      div {id:"sibs",style}, keys.map (key) =>
+        href = window.tree.basepath @props.path+"/"+key
+        data = @props.kids[key]
+        head = data.meta.title if data.meta
+        head ?= @toText data.head
+        head ||= key
+        className = clas active: key is @props.curr
+        (div {className,key}, (a {href,onClick:@props.onClick}, head))
     renderArrow: (name, path) ->
       href = window.tree.basepath path
       (a {href,key:"arow-#{name}",className:"arow-#{name}"},"")
@@ -51,24 +64,20 @@ Links = React.createFactory query {
         if next is keys.length then next = 0
         prev = keys[prev]
         next = keys[next]
+        @next = next
       if @props.sein 
         if prev or next then _.filter [
           div {id:"sides",key:"sides"},
             if prev then @renderArrow "prev", "#{@props.sein}/#{prev}"
             if next then @renderArrow "next", "#{@props.sein}/#{next}"
           ]    
-    renderSibs: ->
-      keys = getKeys @props
-      if keys.indexOf(@props.curr) isnt -1
-        style = {marginTop: -24 * (keys.indexOf @props.curr) + "px"}
-      div {id:"sibs",style}, keys.map (key) =>
-        href = window.tree.basepath @props.path+"/"+key
-        data = @props.kids[key]
-        head = data.meta.title if data.meta
-        head ?= @toText data.head
-        head ||= key
-        className = clas active: key is @props.curr
-        (div {className,key}, (a {href,onClick:@props.onClick}, head))
+    renderNext: ->
+      curr = @props.kids[@props.curr]
+      if curr?.meta?.next
+        next = @props.kids[@next]
+        (div {className:"link-next"}, [
+          (a {href:"#{@props.sein}/#{next.name}"}, "Next: #{next.meta.title}")
+        ])
 
     toText: (elem)-> reactify.walk elem,
                                  ()->''
