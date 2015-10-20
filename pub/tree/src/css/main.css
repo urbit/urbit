@@ -184,6 +184,7 @@ li:before {
   position: fixed;
   top: 0rem;
   width: 57rem;
+  height: 100%;
   padding-top: 1rem;
   z-index: 0;
   margin-left: -32rem;
@@ -200,7 +201,7 @@ li:before {
   transition: opacity 0.3s ease-in-out;
 }
 #cont {
-  position: absolute;
+  position: relative;
   top: 0;
   margin-bottom: 9rem;
 }
@@ -285,6 +286,15 @@ h3.time {
   line-height: 1rem;
   font-weight: 200;
   letter-spacing: 1px;
+}
+#nav .link-next {
+  position: absolute;
+  bottom: 4rem;
+  margin-left: 1rem;
+}
+#nav .link-next a {
+  font-weight: 500;
+  font-size: 1rem;
 }
 .list > li > a {
   margin-bottom: 0.3rem;

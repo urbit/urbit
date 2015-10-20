@@ -47,11 +47,13 @@ $ ->
     if po.lm isnt null and po.cm isnt null
       po.cs = $(window).scrollTop()
 
+      db = $(window).height()-(po.cs+window.innerHeight)
+
       ds = Math.abs po.cs-po.ls
       dx = Math.abs po.cm.x-po.lm.x
       dy = Math.abs po.cm.y-po.lm.y
       
-      $('#nav').toggleClass 'moving',(dx > 20 or dy > 20)
+      $('#nav').toggleClass 'moving',(dx > 20 or dy > 20 or db < 180)
     po.lm = po.cm
     po.ls = po.cs
   setInterval checkMove,200
