@@ -5,7 +5,7 @@ sort: 2
 ---
 <div class="short">
 
-# Developer doc
+# Developer documentation
 
 Urbit has three programming layers: Nock (combinator nano-VM),
 Hoon (strict functional language), and Arvo (functional OS).

@@ -1,9 +1,9 @@
 ---
-title: Filesystem
-sort: 8
+title: Filesystem handbook
+sort: 6
 ---
 
-# The Urbit filesystem, `%clay`
+# Filesystem handbook
 
 Urbit has its own revision-controlled filesystem, the `%clay`
 vane.  `%clay` is like a simplified `git`, but more reactive,
