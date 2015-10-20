@@ -1,0 +1,42 @@
+body {
+  font-family: 'bau';
+  margin: 4rem;
+  width: 48rem;
+}
+
+hr {
+  width: 8rem;
+  height: .2rem;
+  background-color: #ccc;
+  margin: 3rem 0;
+  border: 0;
+}
+
+button,
+textarea {
+  outline: none;
+}
+
+button {
+  margin-left: 1rem;
+}
+
+textarea {
+  width: 100%;
+  min-height: 12rem;
+  border: 0;
+  background-color: #eaeaea;
+}
+
+select {
+  border: 3px solid transparent;
+}
+
+.err {
+  border: 3px solid red;
+}
+
+a {
+  font-family: 'scp';
+  color: inherit;
+}
