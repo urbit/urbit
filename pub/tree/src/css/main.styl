@@ -20,6 +20,10 @@ html
   line-height 1.6rem
   -webkit-text-size-adjust none
 
+p
+  font-size 1.2rem
+  line-height 2rem
+
 a
   color #000
   border-bottom 1px solid #000
@@ -75,7 +79,7 @@ h3 code
 
 pre
 code
-  font-size .8rem
+  font-size 1rem
 
 pre
   background-color #f5f5f5
@@ -95,10 +99,11 @@ ul
   padding 0
 
 li:before
-  content "+"
+  font-family 'scp'
+  content "\2022"
   padding-right .3rem
-  font-size .8rem
-  font-weight 600
+  font-size 1rem
+  font-weight 500
 
 #nav
 #cont
@@ -114,7 +119,6 @@ li:before
   position fixed
   top 0rem
   width 57rem
-  height 100%
   padding-top 1rem
   z-index 0
   margin-left -32rem
@@ -208,6 +212,9 @@ h3.time
 
 #nav a
 .list > li > a
+  display inline
+
+#nav a
   text-transform uppercase
   font-size .7rem
   line-height 1rem
@@ -215,24 +222,15 @@ h3.time
   letter-spacing 1px
 
 #nav .link-next
-  position absolute
-  bottom 4rem
-  margin-left 1rem
-  
-  a
-    font-weight 500
-    font-size 1rem
+  margin-top 2rem
+  font-weight 500
 
-.list > li > a
-  margin-bottom .3rem
+.list > li
+  margin-bottom 1rem
 
 .list > li > a h1
   font-size inherit
   line-height inherit
-
-#nav a
-.list > li > a h1
-  margin-right .3rem
 
 #nav .active a
   font-weight 500
@@ -246,6 +244,7 @@ h3.time
   float right
 
 #sides a
+  display inline-block
   margin-right .6rem
 
 .arow-up
@@ -389,7 +388,7 @@ div.toc
   padding-right 1rem
   margin-left -1rem
 
-.footer
+.footer p
   font-family 'scp'
   font-size .7rem
   font-weight 400

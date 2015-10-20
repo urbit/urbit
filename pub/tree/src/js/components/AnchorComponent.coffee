@@ -10,17 +10,6 @@ TreeActions = require '../actions/TreeActions.coffee'
 recl = React.createClass
 {div,a} = React.DOM
 
-getKeys = (props) ->
-  sorted = true
-  keys = []
-  for k,v of props.kids
-    if not v.meta?.sort? then sorted = false
-    keys[Number(v.meta?.sort)] = k
-  if sorted isnt true
-    keys = _.keys(props.kids).sort()
-  else
-    keys = _.values keys
-
 Links = React.createFactory query {
     path:'t'
     kids:
@@ -28,19 +17,17 @@ Links = React.createFactory query {
       head:'r'
       meta:'j'
   }, (recl
-    # {curr:'t',prev:'t,next:'t',onClick:'f'}
     displayName: "Links"
     render: -> div {className:'links'}, 
       @props.children, 
       @renderUp(),
       @renderSibs(),
-      @renderArrows(),
-      @renderNext()
+      @renderArrows() 
     renderUp: ->
       if @props.sein 
         div {id:"up",key:"up"}, @renderArrow "up", @props.sein
     renderSibs: ->
-      keys = getKeys @props
+      keys = window.tree.util.getKeys @props.kids
       if keys.indexOf(@props.curr) isnt -1
         style = {marginTop: -24 * (keys.indexOf @props.curr) + "px"}
       div {id:"sibs",style}, keys.map (key) =>
@@ -56,7 +43,7 @@ Links = React.createFactory query {
       href = window.tree.basepath path
       (a {href,key:"arow-#{name}",className:"arow-#{name}"},"")
     renderArrows: ->
-      keys = getKeys @props
+      keys = window.tree.util.getKeys @props.kids
       if keys.length > 1
         index = keys.indexOf(@props.curr)
         prev = index-1
@@ -65,20 +52,12 @@ Links = React.createFactory query {
         if next is keys.length then next = 0
         prev = keys[prev]
         next = keys[next]
-        @next = next
       if @props.sein 
         if prev or next then _.filter [
           div {id:"sides",key:"sides"},
             if prev then @renderArrow "prev", "#{@props.sein}/#{prev}"
             if next then @renderArrow "next", "#{@props.sein}/#{next}"
-          ]    
-    renderNext: ->
-      curr = @props.kids[@props.curr]
-      if curr?.meta?.next
-        next = @props.kids[@next]
-        (div {className:"link-next"}, [
-          (a {href:"#{@props.sein}/#{next.name}"}, "Next: #{next.meta.title}")
-        ])
+          ]
 
     toText: (elem)-> reactify.walk elem,
                                  ()->''
@@ -113,10 +92,10 @@ module.exports = query {
     @setTitle()
     @interval = setInterval @checkURL,100
 
-    $('body').on 'keyup', (e) =>
-      # switch e.keyCode
-      #   when 37 then @goTo @props.prev # left
-      #   when 39 then @goTo @props.next # right
+    # $('body').on 'keyup', (e) =>
+    #   switch e.keyCode
+    #     when 37 then @goTo @props.prev # left
+    #     when 39 then @goTo @props.next # right
         
     _this = @
     $('body').on 'click', CLICK, (e) ->
