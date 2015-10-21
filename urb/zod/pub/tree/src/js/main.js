@@ -456,7 +456,7 @@ Next = React.createFactory(query({
           className: "link-next"
         }, [
           a({
-            href: this.props.sein + "/" + next.name
+            href: this.props.path + "/" + next.name
           }, "Next: " + next.meta.title)
         ]);
       }

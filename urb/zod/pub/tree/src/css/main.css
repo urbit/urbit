@@ -275,6 +275,7 @@ h3.time {
   width: 8rem;
   transition: margin-top 0.3s ease-in-out;
   overflow: hidden;
+  padding-top: 0.3rem;
 }
 #nav #sibs > div {
   margin-bottom: 0.6rem;
@@ -294,7 +295,7 @@ h3.time {
   font-weight: 200;
   letter-spacing: 1px;
 }
-#nav .link-next {
+.link-next {
   margin-top: 2rem;
   font-weight: 500;
 }
@@ -558,6 +559,7 @@ div.post p.ib {
 #cont.lead .bar ul.list.nav {
   margin: 0;
   line-height: 2rem;
+  display: inline-block;
 }
 #cont.lead .bar ul.list.nav li::before {
   content: '';
@@ -606,6 +608,10 @@ div.post p.ib {
 #cont.lead p {
   font-size: 1.6rem;
   line-height: 3rem;
+}
+#cont.lead .post p {
+  font-size: 1.2rem;
+  line-height: 2.2rem;
 }
 #cont.lead .mono {
   font-size: 1.3rem;
@@ -739,14 +745,14 @@ div.post p.ib {
     opacity: 1;
     width: 42rem;
     margin-left: -21rem;
-    background-color: transparent;
-    z-index: 2;
-  }
-  #nav > div {
     background-color: #fff;
+    z-index: 2;
   }
   #nav a {
     white-space: nowrap;
+  }
+  #nav #sibs {
+    width: 12rem;
   }
   #nav #sibs > div {
     height: 20px;
@@ -766,7 +772,7 @@ div.post p.ib {
     top: 0;
   }
   #nav > div > div {
-    max-height: 1rem;
+    max-height: 2rem;
     overflow: hidden;
     transition: max-height 0.3s ease-in-out;
   }

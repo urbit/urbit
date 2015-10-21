@@ -24,7 +24,7 @@ Next = React.createFactory query {
           next = @props.kids[next]
 
           (div {className:"link-next"}, [
-            (a {href:"#{@props.sein}/#{next.name}"}, "Next: #{next.meta.title}")
+            (a {href:"#{@props.path}/#{next.name}"}, "Next: #{next.meta.title}")
           ])
   )
 
