@@ -150,7 +150,7 @@ Links = React.createFactory(query({
           div({
             id: "sides",
             key: "sides"
-          }, prev ? this.renderArrow("prev", this.props.sein + "/" + prev) : void 0, next ? this.renderArrow("next", this.props.sein + "/" + next) : void 0)
+          }, prev ? this.renderArrow("prev", sein + "/" + prev) : void 0, next ? this.renderArrow("next", sein + "/" + next) : void 0)
         ]);
       }
     }
