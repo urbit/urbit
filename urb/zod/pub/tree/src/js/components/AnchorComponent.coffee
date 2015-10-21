@@ -103,17 +103,12 @@ module.exports = query {
     $('body').on 'click', CLICK, (e) ->
       href = $(@).attr('href')
       id   = $(@).attr('id')
-      if href 
-        if not /^https?:\/\//i.test(href)
-          if href?[0] is "/"
-            e.preventDefault()
-            e.stopPropagation()
-            _this.goTo window.tree.fragpath href
-          else
-            e.preventDefault()
-            e.stopPropagation()
-            base = window.tree.fragpath(document.location.pathname)
-            _this.goTo base+"/#{href}"
+      if href and not /^https?:\/\//i.test(href)
+        e.preventDefault()
+        e.stopPropagation()
+        if href?[0] isnt "/"
+          href = (document.location.pathname.replace /[^\/]*$/, '') + href
+        _this.goTo window.tree.fragpath href
       if id
         window.location.hash = id
 
