@@ -783,6 +783,9 @@ div.post p.ib {
   #cont {
     top: 3rem;
   }
+  #cont.no-anchor {
+    top: 0;
+  }
 }
 @media only screen and (min-width: 320px) and (max-width: 1024px) {
   body,
@@ -839,7 +842,6 @@ div.post p.ib {
     border-right: 0.6rem solid #000;
   }
   #cont {
-    top: 3rem;
     left: 0;
     padding-bottom: 9rem;
   }
