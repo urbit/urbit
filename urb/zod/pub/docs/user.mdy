@@ -5,7 +5,7 @@ sort: 1
 ---
 <div class="short">
 
-# User doc
+# User documentation
 
 Read the [introduction](intro) for a summary of Urbit.
 The [installation guide](install) gets you ready to run.
@@ -13,11 +13,11 @@ The [launch procedure](launch) holds your hand as you create
 your server image.  Once your urbit is live, the [quickstart
 page](start) is all you need if in a hurry.
 
-For power users, the [appliance handbook](admin) explains
+For power users, the [appliance handbook](appliance) explains
 your apps and how to control them.  The [filesystem handbook](clay) 
-describes the Urbit filesystem, `clay`, and how to sync it with Unix.
-Finally, the [`:dojo` manual](dojo) and [`:talk` manual](talk) 
-explain the fine points of our shell and messenger respectively.
+explains the Urbit filesystem and how to sync it with Unix.
+Finally, the [:dojo manual](dojo) and [:talk manual](talk) 
+explore the fine points of our shell and messenger respectively.
 
 <list dataSort="true"></list>
 

@@ -1,15 +1,22 @@
 ---
-title: Basic administration
+title: Appliance handbook
 sort: 5
 next: true
 ---
 
-# Basic administration
+# Appliance handbook
 
-You've built and launched your urbit.  How do you control it?
+You've built and launched your urbit.  How do you control it
+securely?  Three ways: through the Unix console, over the Web,
+or via an Urbit moon.
 
-You have three ways to drive your brand-new urbit: through the
-Unix console, through the Web, or through an Urbit moon.
+What are you controlling, anyway?  A user-level application on
+Urbit is called an "appliance."  Think of an appliance as like a
+Unix process that's also a persistent database.
+
+By default, your urbit is running two appliances, the `:dojo`
+shell and the `:talk` messenger.  For more advanced information
+about your appliance state, see the end of this document.
 
 ## Console
 
@@ -265,5 +272,3 @@ specified, the desk is `%home`:
     |start %foo %away
 
 If the appliance is running, `|start` sets its desk instead.
-
-

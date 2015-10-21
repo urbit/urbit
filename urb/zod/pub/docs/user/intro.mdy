@@ -12,7 +12,7 @@ on a functional operating system, Arvo, written in a strict,
 typed functional language, Hoon, which compiles itself to a
 combinator interpreter, Nock, whose spec gzips to 340 bytes.
 
-What is this for?  Most directly, Urbit is designed as a
+What is Urbit for?  Most directly, Urbit is designed as a
 personal cloud server for self-hosted web apps.  It also uses
 HTTP APIs to manage data stuck in traditional web applications.
 
