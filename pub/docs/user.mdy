@@ -17,7 +17,7 @@ For power users, the [appliance handbook](appliance) explains
 your apps and how to control them.  The [filesystem handbook](clay) 
 explains the Urbit filesystem and how to sync it with Unix.
 Finally, the [:dojo manual](dojo) and [:talk manual](talk) 
-reveal the fine points of our shell and messenger respectively.
+explore the fine points of our shell and messenger respectively.
 
 <list dataSort="true"></list>
 
