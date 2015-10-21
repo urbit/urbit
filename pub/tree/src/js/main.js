@@ -36,7 +36,7 @@ module.exports = {
 
 
 },{"../dispatcher/Dispatcher.coffee":14,"../persistence/TreePersistence.coffee":20}],2:[function(require,module,exports){
-var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, getKeys, query, reactify, recl, ref;
+var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, query, reactify, recl, ref;
 
 clas = require('classnames');
 
@@ -54,25 +54,6 @@ recl = React.createClass;
 
 ref = React.DOM, div = ref.div, a = ref.a;
 
-getKeys = function(props) {
-  var k, keys, ref1, ref2, ref3, sorted, v;
-  sorted = true;
-  keys = [];
-  ref1 = props.kids;
-  for (k in ref1) {
-    v = ref1[k];
-    if (((ref2 = v.meta) != null ? ref2.sort : void 0) == null) {
-      sorted = false;
-    }
-    keys[Number((ref3 = v.meta) != null ? ref3.sort : void 0)] = k;
-  }
-  if (sorted !== true) {
-    return keys = _.keys(props.kids).sort();
-  } else {
-    return keys = _.values(keys);
-  }
-};
-
 Links = React.createFactory(query({
   path: 't',
   kids: {
@@ -85,7 +66,7 @@ Links = React.createFactory(query({
   render: function() {
     return div({
       className: 'links'
-    }, this.props.children, this.renderUp(), this.renderSibs(), this.renderArrows(), this.renderNext());
+    }, this.props.children, this.renderUp(), this.renderSibs(), this.renderArrows());
   },
   renderUp: function() {
     if (this.props.sein) {
@@ -97,7 +78,7 @@ Links = React.createFactory(query({
   },
   renderSibs: function() {
     var keys, style;
-    keys = getKeys(this.props);
+    keys = window.tree.util.getKeys(this.props.kids);
     if (keys.indexOf(this.props.curr) !== -1) {
       style = {
         marginTop: -24 * (keys.indexOf(this.props.curr)) + "px"
@@ -145,7 +126,7 @@ Links = React.createFactory(query({
   },
   renderArrows: function() {
     var index, keys, next, prev;
-    keys = getKeys(this.props);
+    keys = window.tree.util.getKeys(this.props.kids);
     if (keys.length > 1) {
       index = keys.indexOf(this.props.curr);
       prev = index - 1;
@@ -158,7 +139,6 @@ Links = React.createFactory(query({
       }
       prev = keys[prev];
       next = keys[next];
-      this.next = next;
     }
     if (this.props.sein) {
       if (prev || next) {
@@ -169,20 +149,6 @@ Links = React.createFactory(query({
           }, prev ? this.renderArrow("prev", this.props.sein + "/" + prev) : void 0, next ? this.renderArrow("next", this.props.sein + "/" + next) : void 0)
         ]);
       }
-    }
-  },
-  renderNext: function() {
-    var curr, next, ref1;
-    curr = this.props.kids[this.props.curr];
-    if (curr != null ? (ref1 = curr.meta) != null ? ref1.next : void 0 : void 0) {
-      next = this.props.kids[this.next];
-      return div({
-        className: "link-next"
-      }, [
-        a({
-          href: this.props.sein + "/" + next.name
-        }, "Next: " + next.meta.title)
-      ]);
     }
   },
   toText: function(elem) {
@@ -256,9 +222,6 @@ module.exports = query({
     var _this;
     this.setTitle();
     this.interval = setInterval(this.checkURL, 100);
-    $('body').on('keyup', (function(_this) {
-      return function(e) {};
-    })(this));
     _this = this;
     return $('body').on('click', CLICK, function(e) {
       var base, href, id;
@@ -457,7 +420,7 @@ module.exports = function(queries, Child, load) {
 
 
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
-var div, img, p, query, reactify, recl, ref;
+var Next, a, div, img, p, query, reactify, recl, ref;
 
 query = require('./Async.coffee');
 
@@ -465,12 +428,48 @@ reactify = require('./Reactify.coffee');
 
 recl = React.createClass;
 
-ref = React.DOM, div = ref.div, p = ref.p, img = ref.img;
+ref = React.DOM, div = ref.div, p = ref.p, img = ref.img, a = ref.a;
+
+Next = React.createFactory(query({
+  path: 't',
+  kids: {
+    name: 't',
+    head: 'r',
+    meta: 'j'
+  }
+}, recl({
+  displayName: "Links",
+  render: function() {
+    var curr, index, keys, next, ref1;
+    curr = this.props.kids[this.props.curr];
+    if (curr != null ? (ref1 = curr.meta) != null ? ref1.next : void 0 : void 0) {
+      keys = window.tree.util.getKeys(this.props.kids);
+      if (keys.length > 1) {
+        index = keys.indexOf(this.props.curr);
+        next = index + 1;
+        if (next === keys.length) {
+          next = 0;
+        }
+        next = keys[next];
+        next = this.props.kids[next];
+        return div({
+          className: "link-next"
+        }, [
+          a({
+            href: this.props.sein + "/" + next.name
+          }, "Next: " + next.meta.title)
+        ]);
+      }
+    }
+  }
+})));
 
 module.exports = query({
   body: 'r',
+  name: 't',
   path: 't',
-  meta: 'j'
+  meta: 'j',
+  sein: 't'
 }, recl({
   displayName: "Body",
   render: function() {
@@ -484,6 +483,12 @@ module.exports = query({
       body.unshift(img({
         className: "logo " + this.props.meta.logo
       }, ""));
+    }
+    if (this.props.meta.next != null) {
+      body.push(Next({
+        dataPath: this.props.sein,
+        curr: this.props.name
+      }));
     }
     if (this.props.meta.footer != null) {
       body.push(div({
@@ -1270,6 +1275,25 @@ $(function() {
   TreeActions.loadPath(frag, window.tree.body, window.tree.kids);
   rend(head({}, ""), $('#nav')[0]);
   rend(body({}, ""), $('#cont')[0]);
+  window.tree.util = {
+    getKeys: function(kids) {
+      var k, keys, ref, ref1, sorted, v;
+      sorted = true;
+      keys = [];
+      for (k in kids) {
+        v = kids[k];
+        if (((ref = v.meta) != null ? ref.sort : void 0) == null) {
+          sorted = false;
+        }
+        keys[Number((ref1 = v.meta) != null ? ref1.sort : void 0)] = k;
+      }
+      if (sorted !== true) {
+        return keys = _.keys(kids).sort();
+      } else {
+        return keys = _.values(keys);
+      }
+    }
+  };
   checkScroll = function() {
     if ($(window).scrollTop() > 20) {
       return $('#nav').addClass('scrolling');

@@ -1,10 +1,10 @@
 ---
 title: Talk manual
-sort: 6
+sort: 7
 next: true
 ---
 
-# `:talk`
+# `:talk` manual
 
 `:talk` is the Urbit appliance for chatter and notifications.
 For less sophisticated users, Urbit *is* just `:talk`.  If you
@@ -41,69 +41,73 @@ active Urbit stars cooperate to federate, manage and mirror a
 collectively-managed namespace, very like Usenet.  These
 "federal" stations are generally public-access boards.
 
+Right now, the only public federal station is `urbit-meta`.
+Because the party always starts in the kitchen.
+
 ## Quickstart
 
 Let's post something!  At the default `:talk` prompt
 
-    ~tasfyn-partyv:talk: 
+    ~fintud-macrep:talk()
 
 type the message:
 
-    ~tasfyn-partyv:talk: hello, world.
+    ~fintud-macrep:talk() hello, world.
 
 And hit return.  Don't worry, no one but you will see this.  The
 `:` means you're posting to yourself.  You'll get the post:
 
-    ~tasfyn-partyv: hello, world.
-    ~tasfyn-partyv:talk: 
+    ~fintud-macrep: hello, world.
+    ~fintud-macrep:talk()
 
 It's boring to post to yourself.  Let's join a station:
 
-    ~tasfyn-partyv: ;join /urbit-test
+    ~fintud-macrep: ;join /urbit-meta
 
-(`/urbit-test` is a federal station, meaning it's hosted by your
-star (for `~tasfyn-partyv`, `~doznec`).  The `/` notation is just 
-an abbreviation for `~doznec/urbit-test`.)
+(`/urbit-meta` is a federal station, meaning it's hosted by your
+star (for `~fintud-macrep`, `~doznec`).  The `/` notation is just 
+an abbreviation for `~doznec/urbit-meta`.)
 
 You'll see:
 
-    ---------:talk| %porch subscribed to /urbit-test, called `>`
-    ---------:talk| rules of /urbit-test:
-    ---------:talk|   test posts only.  no shitposting.  no pedos/nazis.
-           ~doznec> ~tasfyn-partyv admitted to %urbit-test
-    ~tasfyn-partyv:talk>
+    ---------:talk| %porch subscribed to /urbit-meta, called `>`
+    ---------:talk| rules of /urbit-meta:
+    ---------:talk|   don't be rude
+    ---------:talk|   urbit-meta is politically correct and safe for work
+           ~doznec= ~fintud-macrep admitted to %urbit-meta
+    ~fintud-macrep:talk=
 
 Notice the character assignment - stations you're subscribed to are
 assigned [consistent ASCII glyphs](#-station-glyphs), which you'll 
 see in the log when you hear from these stations, and on the prompt
 when you're talking to them.
 
-Post a line to `/urbit-test`:
+Post a line to `/urbit-meta`:
 
-    ~tasfyn-partyv:talk> hello, world
+    ~fintud-macrep:talk= hello, world
 
 You'll see, echoed back at you through `~doznec`:
 
-    ~tasfyn-partyv:talk> hello, world
+    ~fintud-macrep:talk= hello, world
 
-And of course, anyone else in `/urbit-test` will see it as well.
-But you don't care about `/urbit-test`, so leave it:
+And of course, anyone else in `/urbit-meta` will see it as well.
+But you don't care about `/urbit-meta`, so leave it:
 
-    ~tasfyn-partyv:talk> ;leave
+    ~fintud-macrep:talk= ;leave
 
 You'll see:
 
-    ---------:talk| %porch has left /urbit-test, called `>`
+    ---------:talk| %porch has left /urbit-meta, called `>`
 
 Everyone else will see:
 
-    ~doznec> ~tasfyn-partyv has left %urbit-test
+    ~doznec= ~fintud-macrep has left %urbit-meta
 
 
 Now you're ready to use `:talk` for real!  List the federal
 groups currently available with
 
-    ~tasfyn-partyv:talk> ;list
+    ~fintud-macrep:talk= ;list
 
 For general discussion about Urbit, we recommend `/urbit-meta`.
 
@@ -140,7 +144,7 @@ glyph.  Posts to a station use that station's glyph.
 
 You can see a list of glyph bindings with `;what`.  Write
 `;what >` to see what station `>` is bound to, or
-`;what /urbit-test` to see if `/urbit-test` has a binding.
+`;what /urbit-meta` to see if `/urbit-meta` has a binding.
 
 ### Audience selection
 
@@ -148,23 +152,22 @@ Audience selection is important in a multiplexed communicator!
 The audience is always shown in your prompt.  If there's a glyph
 for it, it's shown as the glyph:
 
-    ~tasfyn-partyv:talk> 
+    ~fintud-macrep:talk= 
 
 Otherwise, the audience is shown in parens:
 
-    ~tasfyn-partyv:talk(~wictuc-folrex) 
+    ~fintud-macrep:talk(~dannum-mitryl) 
 
 `:talk` works fairly hard to get the audience right and minimize
 manual switching.  But to manually set the audience, the command
-is simply `;station` - eg, `;~wictuc-folrex` for a direct post;
-`/urbit-test` or `~doznec/urbit-test` to post to a federal
+is simply `;station` - eg, `;~dannum-mitryl` for a direct post;
+`/urbit-meta` or `~doznec/urbit-meta` to post to a federal
 station, `%mystation` to post to a station on your own ship.
 For a station bound to a glyph, `;` then the glyph; eg, `;>`.
 
 You can post a line and set the audience in one command, eg:
 
-;~wictuc-folrex this is a private message
-
+    ;~dannum-mitryl this is a private message
 
 You can configure your audience in a number of ways, which are
 applied in priority order.  From strongest to weakest:
@@ -190,13 +193,13 @@ between source and content.
 
 The conventional example is a URL.  When you post a URL:
 
-    ~tasfyn-partyv:talk> http://foobar.com/moo/baz
+    ~fintud-macrep:talk= http://foobar.com/moo/baz
 
 This will appear in the flow as:
 
-    ~tasfyn-partyv>_foobar.com
+    ~fintud-macrep>_foobar.com
 
-meaning that `~tasfyn-partyv` posted a link to `foobar.com`,
+meaning that `~fintud-macrep` posted a link to `foobar.com`,
 on the station or conversation whose glyph is `>`.
 
 The effect of activating a post depends on the post.  For a link,
@@ -230,15 +233,15 @@ offline.   Use the `;nick` command to assign or look up
 nicknames.
 
 `;nick` with no arguments lists all nicknames; `;nick
-~tasfyn-partyv` looks up a nickname; `;nick curtis` searches in
-reverse; `;nick ~tasfyn-partyv curtis` creates a nickname.
+~fintud-macrep` looks up a nickname; `;nick plato` searches in
+reverse; `;nick ~fintud-macrep plato` creates a nickname.
 All nicknames must be 14 characters or less, lowercase.
 
 Of course, nicknames are strictly local - like the names on
 entries in a phonebook.  Sometimes in a post you want to mention
-someone you know by a nickname.  Just type `~curtis`, and `:talk`
-will replace it magically with `~tasfyn-partyv` (or beep if no
-`~curtis` is bound).
+someone you know by a nickname.  Just type `~plato`, and `:talk`
+will replace it magically with `~fintud-macrep` (or beep if no
+`~plato` is bound).
 
 ### Presence
 
@@ -253,8 +256,7 @@ lists everyone in that station.
 If one or more urbits in your audience is typing, `:talk`'s
 presence system will detect it and change the prompt:
 
-    ~tasfyn-partyv [~wictuc-folrex...]> 
-
+    ~fintud-macrep [~dannum-mitryl...]= 
 
 ### Creating and managing stations
 
@@ -267,22 +269,21 @@ To create your own mailbox, party, journal or board:
 etc.
 
 Every form of station has an exception list; to block
-`~wictuc-folrex` from your default mailbox `%porch`,
+`~dannum-mitryl` from your default mailbox `%porch`,
 
-    ;block %porch ~wictuc-folrex
+    ;block %porch ~dannum-mitryl
 
 To invite people to `%myfunparty`:
 
-    ;invite %myfunparty ~wictuc-folrex, ~sondel-forsut
+    ;invite %myfunparty ~dannum-mitryl, ~lagret-marpub
 
 To ban from `%bizarre-board`:
 
-    ;banish %bizarre-board ~wictuc-folrex
+    ;banish %bizarre-board ~dannum-mitryl
 
 To appoint a coauthor of `%serious-journal`:
 
-    ;author %serious-journal ~sondel-forsut
-
+    ;author %serious-journal ~lagret-marpub
 
 #### Station glyphs
 

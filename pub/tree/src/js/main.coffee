@@ -30,6 +30,18 @@ $ ->
   rend (head {}, ""),$('#nav')[0]
   rend (body {}, ""),$('#cont')[0]
 
+  window.tree.util = 
+    getKeys: (kids) ->
+      sorted = true
+      keys = []
+      for k,v of kids
+        if not v.meta?.sort? then sorted = false
+        keys[Number(v.meta?.sort)] = k
+      if sorted isnt true
+        keys = _.keys(kids).sort()
+      else
+        keys = _.values keys
+
   checkScroll = ->
     if $(window).scrollTop() > 20
       $('#nav').addClass 'scrolling'

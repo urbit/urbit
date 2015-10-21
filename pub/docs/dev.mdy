@@ -5,7 +5,7 @@ sort: 2
 ---
 <div class="short">
 
-# Developer doc
+# Developer documentation
 
 Urbit has three programming layers: Nock (combinator nano-VM),
 Hoon (strict functional language), and Arvo (functional OS).
@@ -20,7 +20,7 @@ internals, but again it helps.  But you need to know Hoon.
 Don't worry, 
 
 Alas, the developer doc is still under construction.  We'll have
-more soon, starting with Nock.
+more soon.
 
 <list></list>
 
