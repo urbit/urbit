@@ -1,3 +1,5 @@
+clas    = require 'classnames'
+
 logo       = require './Logo.coffee'
 query      = require './Async.coffee'
 reactify   = require './Reactify.coffee'
@@ -44,9 +46,7 @@ module.exports = query {
 }, recl
   displayName: "Body"
   render: -> 
-    $("#cont").attr 'class',''
-    if @props.meta.layout
-      $("#cont").attr 'class',@props.meta.layout.replace /,/g," "
+    className = (@props.meta.layout?.replace() /,/g," ") || ""
     body = [reactify @props.body]
     if @props.meta.logo?
       body.unshift (Logo color:@props.meta.logo)
@@ -57,5 +57,7 @@ module.exports = query {
         (p {}, "This page was served by Urbit.")])
     (div {
         id:'body',
-        key:"body"+@props.path}, 
+        key:"body"+@props.path
+        className
+        }, 
       body)

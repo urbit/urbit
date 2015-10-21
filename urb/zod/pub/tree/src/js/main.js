@@ -268,7 +268,6 @@ module.exports = query({
     $("html,body").animate({
       scrollTop: 0
     });
-    $("#cont").attr('class', '');
     $('#nav').attr('style', '');
     $('#nav').removeClass('scrolling m-up');
     return $('#nav').addClass('m-down m-fixed');
@@ -426,7 +425,9 @@ module.exports = function(queries, Child, load) {
 
 
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":22,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
-var Logo, Next, a, div, img, logo, p, query, reactify, recl, ref;
+var Logo, Next, a, clas, div, img, logo, p, query, reactify, recl, ref;
+
+clas = require('classnames');
 
 logo = require('./Logo.coffee');
 
@@ -495,11 +496,8 @@ module.exports = query({
 }, recl({
   displayName: "Body",
   render: function() {
-    var body;
-    $("#cont").attr('class', '');
-    if (this.props.meta.layout) {
-      $("#cont").attr('class', this.props.meta.layout.replace(/,/g, " "));
-    }
+    var body, className, ref1;
+    className = ((ref1 = this.props.meta.layout) != null ? ref1.replace()(/,/g, " ") : void 0) || "";
     body = [reactify(this.props.body)];
     if (this.props.meta.logo != null) {
       body.unshift(Logo({
@@ -519,14 +517,15 @@ module.exports = query({
     }
     return div({
       id: 'body',
-      key: "body" + this.props.path
+      key: "body" + this.props.path,
+      className: className
     }, body);
   }
 }));
 
 
 
-},{"./Async.coffee":3,"./Logo.coffee":11,"./Reactify.coffee":12}],5:[function(require,module,exports){
+},{"./Async.coffee":3,"./Logo.coffee":11,"./Reactify.coffee":12,"classnames":17}],5:[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
