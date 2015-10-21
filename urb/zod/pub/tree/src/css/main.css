@@ -571,7 +571,7 @@ div.post p.ib {
 }
 #cont.lead .bar ul.list.nav li a {
   border-bottom: none;
-  text-decoration: none;
+  text-decoration: underline;
 }
 #cont.lead .bar ul.list.nav li a h1 {
   margin: 0;
@@ -580,8 +580,6 @@ div.post p.ib {
   font-size: 1.2rem;
 }
 #cont.lead .bar ul.list.nav h1 {
-  text-decoration: none;
-  border-bottom: 2px solid #000;
   text-transform: capitalize;
   font-size: 1rem;
   font-weight: 400;
@@ -605,6 +603,10 @@ div.post p.ib {
 #cont.lead a {
   line-height: 1rem;
 }
+#cont.lead p {
+  font-size: 1.6rem;
+  line-height: 3rem;
+}
 #cont.lead .mono {
   font-size: 1.3rem;
 }
@@ -613,6 +615,7 @@ div.post p.ib {
 }
 #cont.lead .footer p {
   margin: 0;
+  font-size: 0.7rem;
 }
 #cont.lead .footer code {
   line-height: 1rem;
