@@ -1,9 +1,16 @@
+logo       = require './Logo.coffee'
 query      = require './Async.coffee'
 reactify   = require './Reactify.coffee'
 
 recl   = React.createClass
 {div,p,img,a}  = React.DOM
 
+Logo = React.createFactory recl render: ->
+  {color} = @props
+  if color is "white" or color is "black"  # else?
+    src = "//storage.googleapis.com/urbit-extra/logo/logo-#{color}-100x100.png"
+  (img {src,className:"logo"})
+  
 Next = React.createFactory query {
     path:'t'
     kids:
@@ -42,7 +49,7 @@ module.exports = query {
       $("#cont").attr 'class',@props.meta.layout.replace /,/g," "
     body = [reactify @props.body]
     if @props.meta.logo?
-      body.unshift (img {className:"logo #{@props.meta.logo}"}, "")
+      body.unshift (Logo color:@props.meta.logo)
     if @props.meta.next?
       body.push Next {dataPath:@props.sein,curr:@props.name}
     if @props.meta.footer?
