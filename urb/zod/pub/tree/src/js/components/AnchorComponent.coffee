@@ -52,11 +52,13 @@ Links = React.createFactory query {
         if next is keys.length then next = 0
         prev = keys[prev]
         next = keys[next]
-      if @props.sein 
+      if @props.sein
+        sein = @props.sein
+        if sein is "/" then sein = "" 
         if prev or next then _.filter [
           div {id:"sides",key:"sides"},
-            if prev then @renderArrow "prev", "#{@props.sein}/#{prev}"
-            if next then @renderArrow "next", "#{@props.sein}/#{next}"
+            if prev then @renderArrow "prev", "#{sein}/#{prev}"
+            if next then @renderArrow "next", "#{sein}/#{next}"
           ]
 
     toText: (elem)-> reactify.walk elem,
@@ -131,13 +133,21 @@ module.exports = query {
       TreeActions.setCurr next
       React.render (BodyComponent {}, ""),$('#cont')[0]
 
+  reset: ->
+    $("html,body").animate {scrollTop:0}
+    $("#cont").attr 'class',''
+    $('#nav').attr 'style',''
+    $('#nav').removeClass 'scrolling m-up'
+    $('#nav').addClass 'm-down m-fixed'
+
   goTo: (path) ->
     @toggleFocus false
-    $("html,body").animate {scrollTop:0}
+    @reset()
     @setPath path
   
   checkURL: ->
     if @state.url isnt window.location.pathname
+      @reset()
       @setPath (window.tree.fragpath window.location.pathname),false
       @setState url: window.location.pathname
   

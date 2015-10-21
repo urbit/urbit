@@ -260,7 +260,6 @@ img.logo.white {
 img.logo {
   height: 2rem;
   width: 2rem;
-  margin-top: 1rem;
 }
 h3.time {
   margin-top: 0.3rem;
@@ -294,7 +293,7 @@ h3.time {
   font-weight: 200;
   letter-spacing: 1px;
 }
-#nav .link-next {
+.link-next {
   margin-top: 2rem;
   font-weight: 500;
 }
@@ -311,7 +310,7 @@ h3.time {
 }
 #up {
   padding-right: 1rem;
-  margin-top: -0.3rem;
+  margin-top: -8px;
 }
 #sides {
   float: right;
@@ -520,10 +519,6 @@ div.post .list li {
   margin-bottom: 0;
   font-size: 1.2rem;
 }
-div.post .list li:before {
-  line-height: 2.3rem;
-  vertical-align: top;
-}
 div.post p {
   font-size: 1.2rem;
   line-height: 2.2rem;
@@ -534,91 +529,111 @@ div.post li p {
 div.post p.ib {
   margin-top: 0;
 }
-#cont.lead #body {
+@media only screen and (min-width: 320px) and (max-width: 1024px) {
+  div.post h2,
+  div.post h3 {
+    font-size: 0.5rem;
+  }
+  div.post p {
+    font-size: 1rem;
+    line-height: 2rem;
+  }
+  div.post li h1 {
+    font-weight: 400;
+  }
+  div.post li::before {
+    font-weight: 200;
+  }
+}
+.lead #body {
   margin-top: 3rem;
   margin-top: 0;
 }
-#cont.lead .bar {
+.lead .bar {
   margin-top: 2rem;
   margin-bottom: 2rem;
 }
-#cont.lead .bar > div {
+.lead .bar > div {
   display: inline-block;
 }
-#cont.lead .bar a.logo {
+.lead .bar a.logo {
   display: inline-block;
   height: 2rem;
   vertical-align: middle;
   border: none;
 }
-#cont.lead .bar img.logo {
+.lead .bar img.logo {
   margin-right: 18px;
   margin-top: 0;
 }
-#cont.lead .bar ul.list.nav {
+.lead .bar ul {
   margin: 0;
   line-height: 2rem;
+  display: inline-block;
 }
-#cont.lead .bar ul.list.nav li::before {
+.lead .bar ul li::before {
   content: '';
   padding-right: none;
 }
-#cont.lead .bar ul.list.nav li {
+.lead .bar ul li {
   display: inline-block;
   margin-bottom: 0;
   margin-right: 1rem;
   vertical-align: middle;
 }
-#cont.lead .bar ul.list.nav li a {
+.lead .bar ul li a {
   border-bottom: none;
-  text-decoration: none;
+  text-decoration: underline;
 }
-#cont.lead .bar ul.list.nav li a h1 {
+.lead .bar ul li a h1 {
   margin: 0;
   line-height: inherit;
   text-transform: capitalize;
   font-size: 1.2rem;
 }
-#cont.lead .bar ul.list.nav h1 {
-  text-decoration: none;
-  border-bottom: 2px solid #000;
+.lead .bar ul h1 {
   text-transform: capitalize;
   font-size: 1rem;
   font-weight: 400;
   letter-spacing: 0.03rem;
 }
-#cont.lead h1 {
+.lead h1 {
   margin-top: 1rem;
   vertical-align: middle;
   line-height: 4rem;
 }
-#cont.lead h1.fold {
+.lead h1.fold {
   margin-top: 6rem;
 }
-#cont.lead .list li h1 {
+.lead .list li h1 {
   line-height: 2rem;
 }
-#cont.lead {
+.lead {
   font-size: 1.6rem;
   line-height: 2.6rem;
 }
-#cont.lead a {
+.lead a {
   line-height: 1rem;
 }
-#cont.lead .mono {
+.lead p {
+  font-size: 1.6rem;
+  line-height: 3rem;
+}
+.lead .mono {
   font-size: 1.3rem;
 }
-#cont.lead .footer {
+.lead .footer {
   margin: 4rem 0 4rem 0;
 }
-#cont.lead .footer p {
+.lead .footer p {
   margin: 0;
+  font-size: 0.7rem;
 }
-#cont.lead .footer code {
+.lead .footer code {
   line-height: 1rem;
   font-size: 0.7rem;
 }
-#cont.lead input.email {
+.lead input.email {
   border-radius: 0;
   font: inherit;
   font-family: 'scp';
@@ -632,28 +647,28 @@ div.post p.ib {
   margin-right: 1rem;
   display: inline-block;
 }
-#cont.lead input.email.valid {
+.lead input.email.valid {
   color: #99f27c;
 }
-#cont.lead input.email.error {
+.lead input.email.error {
   color: #f74040;
 }
-#cont.lead .email:empty:not(:focus):before {
+.lead .email:empty:not(:focus):before {
   content: attr(data-ph);
 }
-#cont.lead ::-webkit-input-placeholder {
+.lead ::-webkit-input-placeholder {
   color: #e6e7e8;
 }
-#cont.lead :-moz-placeholder {
+.lead :-moz-placeholder {
   color: #e6e7e8;
 }
-#cont.lead ::-moz-placeholder {
+.lead ::-moz-placeholder {
   color: #e6e7e8;
 }
-#cont.lead :-ms-input-placeholder {
+.lead :-ms-input-placeholder {
   color: #e6e7e8;
 }
-#cont.lead button.submit {
+.lead button.submit {
   font: inherit;
   border: 0;
   background-color: #fff;
@@ -666,7 +681,7 @@ div.post p.ib {
   height: 2rem;
   padding: 0 0.6rem;
 }
-#cont.lead .date {
+.lead .date {
   font-weight: 400;
 }
 @media only screen and (max-width: 1170px) {
@@ -677,6 +692,18 @@ div.post p.ib {
 @media only screen and (min-width: 320px) and (max-width: 1024px) {
   #cont.lead {
     top: 0rem;
+    font-size: 1rem;
+    line-height: 1.6rem;
+  }
+  #cont.lead .post h1 {
+    font-size: 2rem;
+    line-height: 3rem;
+  }
+  #cont.lead .bar {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  #cont.lead .bar .list li h1 {
     font-size: 1rem;
     line-height: 1.6rem;
   }
@@ -696,11 +723,12 @@ div.post p.ib {
     font-size: 1rem;
     line-height: 1.6rem;
   }
+  #cont.lead input.email {
+    font-size: 1.2rem;
+    width: 100%;
+  }
   #cont.lead button.submit {
     font-size: 1rem;
-  }
-  #cont.lead .mono {
-    font-size: 0.7rem;
   }
   #cont.lead .date,
   #cont.lead div.footer {
@@ -736,14 +764,14 @@ div.post p.ib {
     opacity: 1;
     width: 42rem;
     margin-left: -21rem;
-    background-color: transparent;
-    z-index: 2;
-  }
-  #nav > div {
     background-color: #fff;
+    z-index: 2;
   }
   #nav a {
     white-space: nowrap;
+  }
+  #nav #sibs {
+    width: 12rem;
   }
   #nav #sibs > div {
     height: 20px;
@@ -763,7 +791,7 @@ div.post p.ib {
     top: 0;
   }
   #nav > div > div {
-    max-height: 1rem;
+    max-height: 2rem;
     overflow: hidden;
     transition: max-height 0.3s ease-in-out;
   }
@@ -774,11 +802,18 @@ div.post p.ib {
   #cont {
     top: 3rem;
   }
+  #cont.no-anchor {
+    top: 0;
+  }
 }
 @media only screen and (min-width: 320px) and (max-width: 1024px) {
   body,
   html {
     font-size: 21px;
+  }
+  p {
+    font-size: 1rem;
+    line-height: 2rem;
   }
   #nav,
   #cont {
@@ -801,6 +836,7 @@ div.post p.ib {
   }
   #nav #sibs {
     width: 11rem;
+    padding-top: 0;
   }
   #nav #sibs > div {
     height: 20px;
@@ -811,7 +847,8 @@ div.post p.ib {
     font-size: 0.7rem;
   }
   #nav #sides {
-    float: right;
+    float: none;
+    margin-left: 1rem;
   }
   #nav .arow-up,
   #nav .arow-next,
@@ -830,7 +867,6 @@ div.post p.ib {
     border-right: 0.6rem solid #000;
   }
   #cont {
-    top: 3rem;
     left: 0;
     padding-bottom: 9rem;
   }

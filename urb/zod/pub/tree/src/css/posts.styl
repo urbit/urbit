@@ -24,9 +24,6 @@ div.post
   .list li 
     margin-bottom 0
     font-size 1.2rem
-  .list li:before
-    line-height 2.3rem
-    vertical-align top
 
   p
     font-size 1.2rem
@@ -37,3 +34,17 @@ div.post
     
   p.ib
     margin-top 0
+
+@media only screen and (min-width: 320px) and (max-width: 1024px)
+  div.post
+    h2
+    h3
+      font-size .5rem
+    p
+      font-size 1rem
+      line-height 2rem
+    
+    li h1
+      font-weight 400
+    li::before
+      font-weight 200
