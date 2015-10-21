@@ -377,6 +377,12 @@ LIBSCRYPT=outside/scrypt/scrypt.a
 
 LIBSOFTFLOAT=outside/softfloat-3/build/Linux-386-GCC/softfloat.a
 
+TAGS=\
+       .tags \
+       .etags \
+       GPATH GTAGS GRTAGS \
+       cscope.in.out cscope.po.out cscope.out
+
 all: urbit
 
 .MAKEFILE-VERSION: Makefile .make.conf
@@ -443,11 +449,19 @@ $(BIN)/urbit: $(LIBCRE) $(LIBCOMMONMARK) $(VERE_OFILES) $(LIBUV) $(LIBRE2) $(LIB
 	@$(CLD) $(CLDOSFLAGS) -o $(BIN)/urbit $(VERE_OFILES) $(LIBUV) $(LIBCRE) $(LIBRE2) $(LIBED25519) $(LIBANACHRONISM) $(LIBS) $(LIBCOMMONMARK) $(LIBSCRYPT) $(LIBSOFTFLOAT)
 endif
 
-tags:
-	ctags -R -f .tags --exclude=root
+tags: ctags etags gtags cscope
+
+ctags:
+	@ctags -R -f .tags --exclude=root || true
 
 etags:
-	etags -f .etags $$(find . -name '*.c' -or -name '*.h')
+	@etags -f .etags $$(find . -name '*.c' -or -name '*.h') || true
+
+gtags:
+	@gtags || true
+
+cscope:
+	@cscope -b -q -R || true
 
 osxpackage:
 	$(RM) -r inst
@@ -469,7 +483,7 @@ debinstall:
 	cp -R urb/zod $(DESTDIR)/usr/share/urb
 
 clean:
-	$(RM) $(VERE_OFILES) $(BIN)/urbit urbit.pkg $(VERE_DFILES)
+	$(RM) $(VERE_OFILES) $(BIN)/urbit urbit.pkg $(VERE_DFILES) $(TAGS)
 	$(RM) -r debian/files debian/urbit*
 
 # 'make distclean all -jn' ∀ n>1 still does not work because it is possible
