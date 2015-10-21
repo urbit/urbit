@@ -57,8 +57,8 @@ Links = React.createFactory query {
         if sein is "/" then sein = "" 
         if prev or next then _.filter [
           div {id:"sides",key:"sides"},
-            if prev then @renderArrow "prev", "#{@props.sein}/#{prev}"
-            if next then @renderArrow "next", "#{@props.sein}/#{next}"
+            if prev then @renderArrow "prev", "#{sein}/#{prev}"
+            if next then @renderArrow "next", "#{sein}/#{next}"
           ]
 
     toText: (elem)-> reactify.walk elem,
