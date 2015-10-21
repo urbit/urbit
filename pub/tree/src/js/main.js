@@ -268,15 +268,23 @@ module.exports = query({
       return React.render(BodyComponent({}, ""), $('#cont')[0]);
     }
   },
-  goTo: function(path) {
-    this.toggleFocus(false);
+  reset: function() {
     $("html,body").animate({
       scrollTop: 0
     });
+    $("#cont").attr('class', '');
+    $('#nav').attr('style', '');
+    $('#nav').removeClass('scrolling m-up');
+    return $('#nav').addClass('m-down m-fixed');
+  },
+  goTo: function(path) {
+    this.toggleFocus(false);
+    this.reset();
     return this.setPath(path);
   },
   checkURL: function() {
     if (this.state.url !== window.location.pathname) {
+      this.reset();
       this.setPath(window.tree.fragpath(window.location.pathname), false);
       return this.setState({
         url: window.location.pathname
