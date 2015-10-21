@@ -33,7 +33,6 @@ Links = React.createFactory query {
       div {id:"sibs",style}, keys.map (key) =>
         href = window.tree.basepath @props.path+"/"+key
         data = @props.kids[key]
-        return null if data.meta.hide
         head = data.meta.title if data.meta
         head ?= @toText data.head
         head ||= key
@@ -107,7 +106,7 @@ module.exports = query {
         e.preventDefault()
         e.stopPropagation()
         if href?[0] isnt "/"
-          href = (document.location.pathname.replace /[^\/]*$/, '') + href
+          href = (document.location.pathname.replace /\/?[^\/]*$/, '') + href
         _this.goTo window.tree.fragpath href
       if id
         window.location.hash = id
