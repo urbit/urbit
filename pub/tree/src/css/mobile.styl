@@ -14,14 +14,14 @@
     opacity 1
     width 42rem
     margin-left -21rem
-    background-color transparent
-    z-index 2
-  
-  #nav > div
     background-color #fff
+    z-index 2
   
   #nav a
     white-space nowrap
+    
+  #nav #sibs
+    width 12rem
     
   #nav #sibs > div
     height 20px
@@ -41,7 +41,7 @@
     top 0
   
   #nav > div > div
-    max-height 1rem
+    max-height 2rem
     overflow hidden
     transition max-height .3s ease-in-out
   
@@ -51,13 +51,19 @@
   
   #cont
     top 3rem
+  #cont.no-anchor
+    top 0
 
 /* tablets + phones ----------- */
 @media only screen and (min-width: 320px) and (max-width: 1024px)
   body
   html
     font-size 21px
-    
+  
+  p
+    font-size 1rem
+    line-height 2rem
+
   #nav
   #cont
     width 94%
@@ -79,6 +85,7 @@
     
   #nav #sibs
     width 11rem
+    padding-top 0
 
   #nav #sibs > div
     height 20px
@@ -89,7 +96,8 @@
     font-size .7rem
   
   #nav #sides
-    float right
+    float none
+    margin-left 1rem
   
   #nav .arow-up
   #nav .arow-next
@@ -106,10 +114,9 @@
     border-right .6rem solid #000
 
   #cont
-    top 3rem
     left 0
     padding-bottom 9rem
-  
+
   #cont h1:first-child
     margin-top 0
   

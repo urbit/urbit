@@ -125,7 +125,7 @@ Links = React.createFactory(query({
     }, "");
   },
   renderArrows: function() {
-    var index, keys, next, prev;
+    var index, keys, next, prev, sein;
     keys = window.tree.util.getKeys(this.props.kids);
     if (keys.length > 1) {
       index = keys.indexOf(this.props.curr);
@@ -141,12 +141,16 @@ Links = React.createFactory(query({
       next = keys[next];
     }
     if (this.props.sein) {
+      sein = this.props.sein;
+      if (sein === "/") {
+        sein = "";
+      }
       if (prev || next) {
         return _.filter([
           div({
             id: "sides",
             key: "sides"
-          }, prev ? this.renderArrow("prev", this.props.sein + "/" + prev) : void 0, next ? this.renderArrow("next", this.props.sein + "/" + next) : void 0)
+          }, prev ? this.renderArrow("prev", sein + "/" + prev) : void 0, next ? this.renderArrow("next", sein + "/" + next) : void 0)
         ]);
       }
     }
@@ -268,15 +272,23 @@ module.exports = query({
       return React.render(BodyComponent({}, ""), $('#cont')[0]);
     }
   },
-  goTo: function(path) {
-    this.toggleFocus(false);
+  reset: function() {
     $("html,body").animate({
       scrollTop: 0
     });
+    $("#cont").attr('class', '');
+    $('#nav').attr('style', '');
+    $('#nav').removeClass('scrolling m-up');
+    return $('#nav').addClass('m-down m-fixed');
+  },
+  goTo: function(path) {
+    this.toggleFocus(false);
+    this.reset();
     return this.setPath(path);
   },
   checkURL: function() {
     if (this.state.url !== window.location.pathname) {
+      this.reset();
       this.setPath(window.tree.fragpath(window.location.pathname), false);
       return this.setState({
         url: window.location.pathname
@@ -456,7 +468,7 @@ Next = React.createFactory(query({
           className: "link-next"
         }, [
           a({
-            href: this.props.sein + "/" + next.name
+            href: this.props.path + "/" + next.name
           }, "Next: " + next.meta.title)
         ]);
       }
@@ -1255,11 +1267,15 @@ $(function() {
   window.tree._basepath = window.urb.util.basepath("/");
   window.tree._basepath += (window.location.pathname.replace(window.tree._basepath, "")).split("/")[0];
   window.tree.basepath = function(path) {
-    var _path;
+    var _path, prefix;
+    prefix = window.tree._basepath;
+    if (prefix === "/") {
+      prefix = "";
+    }
     if (path[0] !== "/") {
       path = "/" + path;
     }
-    _path = window.tree._basepath + path;
+    _path = prefix + path;
     if (_path.slice(-1) === "/") {
       _path = _path.slice(0, -1);
     }

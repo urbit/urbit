@@ -1,4 +1,4 @@
-#cont.lead
+.lead
   #body
     margin-top 3rem
     margin-top 0
@@ -16,9 +16,10 @@
     img.logo
       margin-right 18px
       margin-top 0
-    ul.list.nav
+    ul
       margin 0
       line-height 2rem
+      display inline-block
       li::before
         content ''
         padding-right none
@@ -29,15 +30,13 @@
         vertical-align middle
       li a
         border-bottom none
-        text-decoration none
+        text-decoration underline
       li a h1
         margin 0
         line-height inherit
         text-transform capitalize
         font-size 1.2rem
       h1
-        text-decoration none
-        border-bottom 2px solid #000
         text-transform capitalize
         font-size 1rem
         font-weight 400
@@ -60,6 +59,10 @@
   a
     line-height 1rem
   
+  p
+    font-size 1.6rem
+    line-height 3rem
+
   .mono
     font-size 1.3rem
 
@@ -67,6 +70,7 @@
     margin 4rem 0 4rem 0
     p
       margin 0
+      font-size .7rem
     code
       line-height 1rem
       font-size .7rem
@@ -129,6 +133,18 @@
     top 0rem
     font-size 1rem
     line-height 1.6rem
+    
+    .post h1
+      font-size 2rem
+      line-height 3rem
+
+    .bar
+      margin-top 1rem
+      margin-bottom 1rem
+  
+      .list li h1, 
+        font-size 1rem
+        line-height 1.6rem
 
     img.logo
       display block
@@ -146,11 +162,12 @@
       font-size 1rem
       line-height 1.6rem
     
+    input.email
+      font-size 1.2rem
+      width 100%
+
     button.submit
       font-size 1rem
-
-    .mono
-      font-size .7rem
 
     .date,
     div.footer
