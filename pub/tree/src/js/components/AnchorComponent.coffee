@@ -129,7 +129,7 @@ module.exports = query {
 
   reset: ->
     $("html,body").animate {scrollTop:0}
-    $("#cont").attr 'class',''
+    #  $("#cont").attr 'class',''
     $('#nav').attr 'style',''
     $('#nav').removeClass 'scrolling m-up'
     $('#nav').addClass 'm-down m-fixed'
