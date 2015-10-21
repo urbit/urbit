@@ -93,9 +93,6 @@ Links = React.createFactory(query({
         var className, data, head, href;
         href = window.tree.basepath(_this.props.path + "/" + key);
         data = _this.props.kids[key];
-        if (data.meta.hide) {
-          return null;
-        }
         if (data.meta) {
           head = data.meta.title;
         }
@@ -236,7 +233,7 @@ module.exports = query({
         e.preventDefault();
         e.stopPropagation();
         if ((href != null ? href[0] : void 0) !== "/") {
-          href = (document.location.pathname.replace(/[^\/]*$/, '')) + href;
+          href = (document.location.pathname.replace(/\/?[^\/]*$/, '')) + href;
         }
         _this.goTo(window.tree.fragpath(href));
       }
@@ -1290,7 +1287,7 @@ $(function() {
     return _path;
   };
   window.tree.fragpath = function(path) {
-    return path.replace(window.tree._basepath, "");
+    return path.replace(/\/$/, '').replace(window.tree._basepath, "");
   };
   TreeActions = require('./actions/TreeActions.coffee');
   TreePersistence = require('./persistence/TreePersistence.coffee');
@@ -1301,15 +1298,18 @@ $(function() {
   rend(body({}, ""), $('#cont')[0]);
   window.tree.util = {
     getKeys: function(kids) {
-      var k, keys, ref, ref1, sorted, v;
+      var k, keys, ref, ref1, ref2, sorted, v;
       sorted = true;
       keys = [];
       for (k in kids) {
         v = kids[k];
-        if (((ref = v.meta) != null ? ref.sort : void 0) == null) {
+        if ((ref = v.meta) != null ? ref.hide : void 0) {
+          continue;
+        }
+        if (((ref1 = v.meta) != null ? ref1.sort : void 0) == null) {
           sorted = false;
         }
-        keys[Number((ref1 = v.meta) != null ? ref1.sort : void 0)] = k;
+        keys[Number((ref2 = v.meta) != null ? ref2.sort : void 0)] = k;
       }
       if (sorted !== true) {
         return keys = _.keys(kids).sort();

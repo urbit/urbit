@@ -19,7 +19,9 @@ $ ->
     _path = prefix + path
     if _path.slice(-1) is "/" then _path = _path.slice(0,-1)
     _path
-  window.tree.fragpath = (path) -> path.replace window.tree._basepath,""
+  window.tree.fragpath = (path) ->
+    path.replace(/\/$/,'')
+        .replace(window.tree._basepath,"")
 
   TreeActions       = require './actions/TreeActions.coffee'
   TreePersistence   = require './persistence/TreePersistence.coffee'
@@ -37,6 +39,7 @@ $ ->
       sorted = true
       keys = []
       for k,v of kids
+        continue if v.meta?.hide
         if not v.meta?.sort? then sorted = false
         keys[Number(v.meta?.sort)] = k
       if sorted isnt true
