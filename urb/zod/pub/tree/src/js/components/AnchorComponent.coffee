@@ -75,7 +75,7 @@ module.exports = query {
   path:'t'
   name:'t'
   meta:'j'
-  },recl
+  },(recl
   displayName: "Anchor"
   getInitialState: -> url: window.location.pathname
   
@@ -159,4 +159,4 @@ module.exports = query {
       curr:@props.name
       dataPath:@props.sein
       sein:@props.sein
-    }
+    }), div

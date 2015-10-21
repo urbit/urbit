@@ -310,7 +310,7 @@ module.exports = query({
       sein: this.props.sein
     }));
   }
-}));
+}), div);
 
 
 
