@@ -52,7 +52,9 @@ Links = React.createFactory query {
         if next is keys.length then next = 0
         prev = keys[prev]
         next = keys[next]
-      if @props.sein 
+      if @props.sein
+        sein = @props.sein
+        if sein is "/" then sein = "" 
         if prev or next then _.filter [
           div {id:"sides",key:"sides"},
             if prev then @renderArrow "prev", "#{@props.sein}/#{prev}"

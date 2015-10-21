@@ -125,7 +125,7 @@ Links = React.createFactory(query({
     }, "");
   },
   renderArrows: function() {
-    var index, keys, next, prev;
+    var index, keys, next, prev, sein;
     keys = window.tree.util.getKeys(this.props.kids);
     if (keys.length > 1) {
       index = keys.indexOf(this.props.curr);
@@ -141,6 +141,10 @@ Links = React.createFactory(query({
       next = keys[next];
     }
     if (this.props.sein) {
+      sein = this.props.sein;
+      if (sein === "/") {
+        sein = "";
+      }
       if (prev || next) {
         return _.filter([
           div({
