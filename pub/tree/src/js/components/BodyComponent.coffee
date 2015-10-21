@@ -46,7 +46,7 @@ module.exports = query {
 }, recl
   displayName: "Body"
   render: -> 
-    className = (@props.meta.layout?.replace() /,/g," ") || ""
+    className = (@props.meta.layout?.replace /,/g," ") || ""
     body = [reactify @props.body]
     if @props.meta.logo?
       body.unshift (Logo color:@props.meta.logo)
