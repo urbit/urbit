@@ -251,8 +251,11 @@ module.exports = query({
     });
   },
   setTitle: function() {
-    var title;
+    var ref1, title;
     title = $('#cont h1').first().text() || this.props.name;
+    if ((ref1 = this.props.meta) != null ? ref1.title : void 0) {
+      title = this.props.meta.title;
+    }
     return document.title = title + " - " + this.props.path;
   },
   setPath: function(href, hist) {
