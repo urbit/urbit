@@ -50,7 +50,7 @@
   (let ((st (make-syntax-table lisp-mode-syntax-table)))
     (modify-syntax-entry ?\' "\"" st)
     (modify-syntax-entry ?| "." st)
-    (modify-syntax-entry ?; "." st)
+    (modify-syntax-entry ?\; "." st)
     (modify-syntax-entry ?\" "\"" st)
     (modify-syntax-entry ?: ". 12b" st)
     (modify-syntax-entry ?\n "> b" st)
