@@ -233,7 +233,7 @@ module.exports = query({
         e.preventDefault();
         e.stopPropagation();
         if ((href != null ? href[0] : void 0) !== "/") {
-          href = (document.location.pathname.replace(/\/?[^\/]*$/, '')) + href;
+          href = (document.location.pathname.replace(/[^\/]*$/, '')) + href;
         }
         _this.goTo(window.tree.fragpath(href));
       }
