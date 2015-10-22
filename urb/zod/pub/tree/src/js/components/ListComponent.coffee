@@ -43,6 +43,7 @@ module.exports = query {
     for item in _.values _keys
       path = @props.path+"/"+item
       elem = @props.kids[item]
+      if elem.meta.hide? then continue
       href = window.tree.basepath path
       if elem.meta.link then href = elem.meta.link
       parts = []
@@ -51,7 +52,7 @@ module.exports = query {
         title = 
           gn: 'h1'
           c: [elem.meta.title]
-      if elem.head.c.length > 0
+      if not title && elem.head.c.length > 0
         title = elem.head
       if not title
         title =

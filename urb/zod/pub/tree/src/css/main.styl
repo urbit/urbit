@@ -9,6 +9,7 @@ pre
 li:before
 .spin
 #bred a
+.mono
 h3.time
   font-family "scp","Courier New",courier,monospace
 
@@ -19,10 +20,22 @@ html
   line-height 1.6rem
   -webkit-text-size-adjust none
 
+p
+  font-size 1.2rem
+  line-height 2rem
+
 a
   color #000
+  border-bottom 1px solid #000
+  text-decoration none
   display inline-block
   line-height .8rem
+
+a:visited
+  opacity .5
+
+a code
+  line-height inherit
 
 hr
   display inline-block
@@ -35,6 +48,7 @@ h1
   line-height 2.6rem
 
 #body > div > h1:first-of-type
+#body div.short > h1:first-of-type
   margin-top 1rem
 
 h2
@@ -65,12 +79,13 @@ h3 code
 
 pre
 code
-  font-size .8rem
+  font-size 1rem
 
 pre
   background-color #f5f5f5
   padding .3rem
   margin-left -.3rem
+  white-space pre-line
 
 code
   line-height 1.2rem
@@ -84,10 +99,11 @@ ul
   padding 0
 
 li:before
-  content "+"
+  font-family 'scp'
+  content "\2022"
   padding-right .3rem
-  font-size .8rem
-  font-weight 600
+  font-size 1rem
+  font-weight 500
 
 #nav
 #cont
@@ -119,7 +135,7 @@ li:before
   transition opacity .3s ease-in-out
 
 #cont
-  position absolute
+  position relative
   top 0
   margin-bottom 9rem
 
@@ -181,7 +197,7 @@ h3.time
   overflow hidden
 
 #nav #sibs > div
-  margin-bottom 4px
+  margin-bottom .6rem
 
 .focus #sibs
   margin-top 0 !important
@@ -189,22 +205,25 @@ h3.time
 
 #nav a
 .list > li > a
+  display inline
+
+#nav a
   text-transform uppercase
   font-size .7rem
   line-height 1rem
   font-weight 200
   letter-spacing 1px
 
-.list > li > a
-  margin-bottom .3rem
+.link-next
+  margin-top 2rem
+  font-weight 500
+
+.list > li
+  margin-bottom 1rem
 
 .list > li > a h1
   font-size inherit
   line-height inherit
-
-#nav a
-.list > li > a h1
-  margin-right .3rem
 
 #nav .active a
   font-weight 500
@@ -212,12 +231,13 @@ h3.time
 
 #up
   padding-right 1rem
-  margin-top -.3rem
+  margin-top -8px
 
 #sides
   float right
 
 #sides a
+  display inline-block
   margin-right .6rem
 
 .arow-up
@@ -319,32 +339,6 @@ h2.sub
   margin-top 0
   text-transform uppercase
 
-div.post
-  h1
-    font-size 2.8rem
-    line-height 4rem
-    display block
-    margin-top 1rem
-    margin-bottom 1rem
-  
-  h2
-    line-height 1rem
-    letter-spacing 1px
-  
-  h2
-    margin-top 4rem
-  
-  h2
-    font-size 1.2rem
-    font-weight 500
-  
-  p
-    font-size 1.2rem
-    line-height 2.2rem
-  
-  li p
-    display inline
-
 div.toc
   margin-top 3rem
   margin-bottom 3rem
@@ -386,6 +380,13 @@ div.toc
   background-color #fff
   padding-right 1rem
   margin-left -1rem
+
+.footer p
+  font-family 'scp'
+  font-size .7rem
+  font-weight 400
+  margin-top 3rem
+  color #ccc
 
 .error
   color rgba(249,23,51,1)

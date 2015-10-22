@@ -178,6 +178,11 @@
   =<  se-abet  =<  se-view
   (se-link gyl)
 ::
+++  poke-unlink                                       ::
+  |=  gyl=gill
+  =<  se-abet  =<  se-view
+  (se-klin gyl)
+::
 :: ++  poke-exit                                         ::
 ::   |=(~ se-abet:(se-blit `dill-blit`[%qit ~]))  ::  XX find bone
 :: ::
@@ -406,6 +411,10 @@
   ?~  yal  ~
   ?~  t.yal  i.yal
   :(welp i.yal ", " $(yal t.yal))
+::
+++  se-klin                                           ::  disconnect app
+  |=  gyl=gill
+  +>(eel (~(del in eel) gyl))
 ::
 ++  se-link                                           ::  connect to app
   |=  gyl=gill

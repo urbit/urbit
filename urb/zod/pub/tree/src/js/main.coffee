@@ -13,11 +13,15 @@ $ ->
   window.tree._basepath +=
     (window.location.pathname.replace window.tree._basepath, "").split("/")[0]
   window.tree.basepath = (path) -> 
+    prefix = window.tree._basepath
+    if prefix is "/" then prefix = ""
     if path[0] isnt "/" then path = "/"+path
-    _path = window.tree._basepath + path
+    _path = prefix + path
     if _path.slice(-1) is "/" then _path = _path.slice(0,-1)
     _path
-  window.tree.fragpath = (path) -> path.replace window.tree._basepath,""
+  window.tree.fragpath = (path) ->
+    path.replace(/\/$/,'')
+        .replace(window.tree._basepath,"")
 
   TreeActions       = require './actions/TreeActions.coffee'
   TreePersistence   = require './persistence/TreePersistence.coffee'
@@ -29,6 +33,19 @@ $ ->
 
   rend (head {}, ""),$('#nav')[0]
   rend (body {}, ""),$('#cont')[0]
+
+  window.tree.util = 
+    getKeys: (kids) ->
+      sorted = true
+      keys = []
+      for k,v of kids
+        continue if v.meta?.hide
+        if not v.meta?.sort? then sorted = false
+        keys[Number(v.meta?.sort)] = k
+      if sorted isnt true
+        keys = _.keys(kids).sort()
+      else
+        keys = _.values keys
 
   checkScroll = ->
     if $(window).scrollTop() > 20
@@ -47,11 +64,13 @@ $ ->
     if po.lm isnt null and po.cm isnt null
       po.cs = $(window).scrollTop()
 
+      db = $(window).height()-(po.cs+window.innerHeight)
+
       ds = Math.abs po.cs-po.ls
       dx = Math.abs po.cm.x-po.lm.x
       dy = Math.abs po.cm.y-po.lm.y
       
-      $('#nav').toggleClass 'moving',(dx > 20 or dy > 20)
+      $('#nav').toggleClass 'moving',(dx > 20 or dy > 20 or db < 180)
     po.lm = po.cm
     po.ls = po.cs
   setInterval checkMove,200
