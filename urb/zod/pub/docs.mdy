@@ -8,8 +8,8 @@ layout: no-anchor
 
 # Urbit documentation
 
-The Urbit doc is divided into three parts: [user doc](user),
-[developer doc](dev), and [theory](theory) (whitepaper, essays,
+The Urbit doc is divided into three parts: [user doc](docs/user),
+[developer doc](docs/dev), and [theory](docs/theory) (whitepaper, essays,
 videos, etc).
 
 If you want to try Urbit, start with the user doc.  If you want

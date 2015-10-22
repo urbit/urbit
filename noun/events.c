@@ -115,8 +115,9 @@ u3e_fault(void* adr_v, c3_i ser_i)
 {
   c3_w* adr_w = (c3_w*) adr_v;
 
-  if ( (adr_w < u3_Loom) || (adr_w > (u3_Loom + u3a_words)) ) {
+  if ( (adr_w < u3_Loom) || (adr_w >= (u3_Loom + u3a_words)) ) {
     fprintf(stderr, "address %p out of loom!\r\n", adr_v);
+    fprintf(stderr, "loom: [%p : %p)\r\n", u3_Loom, u3_Loom + u3a_words);
     c3_assert(0);
     return 0;
   }

@@ -14,3 +14,9 @@
 /make.conf
 /.make.conf
 node_modules/
+.tags
+.etags
+GPATH
+GTAGS
+GRTAGS
+cscope.*

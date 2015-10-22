@@ -33,7 +33,6 @@ Links = React.createFactory query {
       div {id:"sibs",style}, keys.map (key) =>
         href = window.tree.basepath @props.path+"/"+key
         data = @props.kids[key]
-        return null if data.meta.hide
         head = data.meta.title if data.meta
         head ?= @toText data.head
         head ||= key
@@ -76,7 +75,7 @@ module.exports = query {
   path:'t'
   name:'t'
   meta:'j'
-  },recl
+  },(recl
   displayName: "Anchor"
   getInitialState: -> url: window.location.pathname
   
@@ -103,17 +102,12 @@ module.exports = query {
     $('body').on 'click', CLICK, (e) ->
       href = $(@).attr('href')
       id   = $(@).attr('id')
-      if href 
-        if not /^https?:\/\//i.test(href)
-          if href?[0] is "/"
-            e.preventDefault()
-            e.stopPropagation()
-            _this.goTo window.tree.fragpath href
-          else
-            e.preventDefault()
-            e.stopPropagation()
-            base = window.tree.fragpath(document.location.pathname)
-            _this.goTo base+"/#{href}"
+      if href and not /^https?:\/\//i.test(href)
+        e.preventDefault()
+        e.stopPropagation()
+        if href?[0] isnt "/"
+          href = (document.location.pathname.replace /[^\/]*\/?$/, '') + href
+        _this.goTo window.tree.fragpath href
       if id
         window.location.hash = id
 
@@ -136,7 +130,7 @@ module.exports = query {
 
   reset: ->
     $("html,body").animate {scrollTop:0}
-    $("#cont").attr 'class',''
+    #  $("#cont").attr 'class',''
     $('#nav').attr 'style',''
     $('#nav').removeClass 'scrolling m-up'
     $('#nav').addClass 'm-down m-fixed'
@@ -166,4 +160,4 @@ module.exports = query {
       curr:@props.name
       dataPath:@props.sein
       sein:@props.sein
-    }
+    }), div

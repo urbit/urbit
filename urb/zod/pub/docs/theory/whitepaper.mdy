@@ -1,12 +1,12 @@
 ---
-title: Urbit Whitepaper
+title: Urbit whitepaper
 sort: 0
 ---
 
 Urbit: an operating function
 ============================
 
-<div class="warning">This is Urbit whitepaper DRAFT 41K. Some small details
+<div class="warning">This is Urbit whitepaper DRAFT 40K. Some small details
 remain at variance with the codebase.</div>
 
 Abstract
@@ -1049,17 +1049,17 @@ is easier than it looks.
 Languages do need to be read out loud, and the conventional names
 for punctuation are clumsy. So Hoon replaces them:
 
-    ace [1 space]  dot .               pan ]
-    bar |          fas /               pel )
-    bis \          gap [>1 space, nl]  pid }
-    buc $          hax #               ran >
-    cab _          ket ^               rep '
-    cen %          lep (               sac ;
-    col :          lit <               tar *
-    com ,          lus +               tec `
-    das -          mat @               tis =
-    den "          med &               wut ?
-    dip {          nap [               zap !
+    ace [1 space]   gal <               pel (
+    bar |           gap [>1 space, nl]  per )
+    bas \           gar >               sel [
+    buc $           hax #               sem ;
+    cab _           hep -               ser ]
+    cen %           kel {               soq '
+    col :           ker }               tar *
+    com ,           ket ^               tec `
+    doq "           lus +               tis =
+    dot .           pam &               wut ?
+    fas /           pat @               zap !
 
 For example, `%=` sounds like "centis" rather than "percent
 equals." Since even a silent reader will subvocalize, the length

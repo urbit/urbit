@@ -1,0 +1,48 @@
+# [PackageDev] target_format: plist, ext: tmLanguage
+---
+name: hoon
+scopeName: source.hoon
+fileTypes: [hoon, hook]
+uuid: 9a56507d-ae34-4bd0-84fa-079029cb9509
+
+patterns:
+- comment: comment
+  name: comment.line.hoon
+  begin: '::'
+  end: \n
+- comment: doqbloq
+  name: string.double.hoon
+  begin: \s*"""
+  end: \s*"""
+- comment: soqbloq
+  name: string.double.hoon
+  begin: \s*'''
+  end: \s*'''
+- comment: tape
+  name: string.double.hoon
+  begin: \"
+  end: \"
+- comment: cord
+  name: string.single.hoon
+  begin: \'
+  end: \'
+- comment: arm
+  name: constant.character.hoon
+  match: "[a-z]([a-z0-9-]*[a-z0-9])?/"
+- comment: arm
+  name: entity.name.function.hoon
+  match: "\\+\\+  [a-z]([a-z0-9-]*[a-z0-9])?"
+- comment: cube
+  name: constant.character.hoon
+  match: "%[a-z]([a-z0-9-]*[a-z0-9])?"
+- comment: odor
+  name: storage.type.hoon
+  match: "@[a-z]([a-z0-9-]*[a-z0-9])?"
+- comment: rune
+  name: keyword.control.hoon
+  match: "[+\\-|$%:.#^~;=?!_,&@\\/<>%*]"
+- comment: rune
+  name: keyword.control.hoon
+  begin: ';script(type "text/coffeescript")'
+  end: '=='
+...

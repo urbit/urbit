@@ -1430,8 +1430,8 @@
       ^-  (bolt type)
       %+  (clef %slit)  (fine cof gat sam)
       |=  [cof=cafe gat=type sam=type]
-      %+  cool  |.(>sam<)
-      %+  cool  |.(>(~(peek ut gat) %free 6)<)
+      %+  cool  |.(%.(%have ~(dunk ut sam)))
+      %+  cool  |.(%.(%want ~(dunk ut (~(peek ut gat) %free 6))))
       =+  top=(mule |.((slit gat sam)))
       ?-  -.top
         |  (flaw cof p.top)
