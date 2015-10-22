@@ -1,17 +1,17 @@
 clas    = require 'classnames'
 
-logo       = require './Logo.coffee'
 query      = require './Async.coffee'
 reactify   = require './Reactify.coffee'
 
 recl   = React.createClass
 {div,p,img,a}  = React.DOM
 
-Logo = React.createFactory recl render: ->
-  {color} = @props
-  if color is "white" or color is "black"  # else?
-    src = "//storage.googleapis.com/urbit-extra/logo/logo-#{color}-100x100.png"
-  (img {src,className:"logo"})
+Logo = React.createFactory recl 
+  render: ->
+    {color} = @props
+    if color is "white" or color is "black"  # else?
+      src = "//storage.googleapis.com/urbit-extra/logo/logo-#{color}-100x100.png"
+    (a {href:"http://urbit.org",style:{border:"none"}}, [(img {src,className:"logo"})])
   
 Next = React.createFactory query {
     path:'t'
