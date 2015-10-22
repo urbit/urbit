@@ -495,7 +495,7 @@
     ?.  liv  
       ?:   (~(has in (deft-fish our)) gyl)
         (se-blit qit/~)
-      (se-nuke gyl) 
+      (se-nuke gyl)
     ..ta(fug (~(put by fug) gyl ``target`+<+))
   ::
   ++  ta-poke  |=(a=pear +>(..ta (se-poke gyl a)))    ::  poke gyl
@@ -556,7 +556,7 @@
       (ta-act %clr ~)
       :: .(+> (se-blit %bel ~))
     =+  pre=(dec pos.inp)
-    (ta-hom(pos.inp pre) %del pre)
+    (ta-hom %del pre)
   ::
   ++  ta-ctl                                          ::  hear control
     |=  key=@ud
@@ -596,13 +596,12 @@
             ==
         %u  ?:  =(0 pos.inp)
               ta-bel
-            %-  ta-hom(pos.inp 0, kil `(scag pos.inp buf.say.inp))
+            %-  ta-hom(kil `(scag pos.inp buf.say.inp))
             (ta-cut 0 pos.inp)
         %v  ta-bel
         %x  +>(+> se-anon)
-        %y  ?~  kil  ta-bel 
-            %-  ta-hom(pos.inp (add pos.inp (lent u.kil)))
-            (ta-cat pos.inp u.kil)
+        %y  ?~  kil  ta-bel
+            (ta-hom (ta-cat pos.inp u.kil))
     ==
   ::
   ++  ta-cru                                          ::  hear crud
@@ -653,7 +652,7 @@
       |-  ^-  @ud
       ?-  -.ted
         %del  ?:((gth pos.inp p.ted) (dec pos.inp) pos.inp)
-        %ins  ?:((lte pos.inp p.ted) +(pos.inp) pos.inp)
+        %ins  ?:((gte pos.inp p.ted) +(pos.inp) pos.inp)
         %mor  |-  ^-  @ud
               ?~  p.ted  pos.inp
               $(p.ted t.p.ted, pos.inp ^$(ted i.p.ted))
@@ -743,7 +742,7 @@
     ^+  +>
     ?^  ris
       (ta-ser txt)
-    %-  ta-hom(pos.inp (add (lent txt) pos.inp))
+    %-  ta-hom
     :-  %mor
     |-  ^-  (list sole-edit)
     ?~  txt  ~
