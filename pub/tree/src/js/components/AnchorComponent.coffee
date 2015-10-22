@@ -106,7 +106,7 @@ module.exports = query {
         e.preventDefault()
         e.stopPropagation()
         if href?[0] isnt "/"
-          href = (document.location.pathname.replace /[^\/]*$/, '') + href
+          href = (document.location.pathname.replace /[^\/]*\/?$/, '') + href
         _this.goTo window.tree.fragpath href
       if id
         window.location.hash = id
