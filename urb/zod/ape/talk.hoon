@@ -1858,6 +1858,7 @@
   ::
   ++  tr-tang  ^-  tang
     %+  welp  tr-sep-tang
+    =.  wen  (sub wen (mod wen (div wen ~s0..0001)))     :: round
     =+  hed=leaf/"{(scow %uv sen)} at {(scow %da wen)}"
     =+  =<  paz=(turn (~(tap by aud)) .)
         |=([a=partner *] leaf/~(ta-full ta man a))
