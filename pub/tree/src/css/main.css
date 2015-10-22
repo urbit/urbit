@@ -79,6 +79,7 @@ pre,
 li:before,
 .spin,
 #bred a,
+.mono,
 h3.time {
   font-family: "scp", "Courier New", courier, monospace;
 }
@@ -89,10 +90,22 @@ html {
   line-height: 1.6rem;
   -webkit-text-size-adjust: none;
 }
+p {
+  font-size: 1.2rem;
+  line-height: 2rem;
+}
 a {
   color: #000;
+  border-bottom: 1px solid #000;
+  text-decoration: none;
   display: inline-block;
   line-height: 0.8rem;
+}
+a:visited {
+  opacity: 0.5;
+}
+a code {
+  line-height: inherit;
 }
 hr {
   display: inline-block;
@@ -104,7 +117,8 @@ h1 {
   margin-top: 4rem;
   line-height: 2.6rem;
 }
-#body > div > h1:first-of-type {
+#body > div > h1:first-of-type,
+#body div.short > h1:first-of-type {
   margin-top: 1rem;
 }
 h2,
@@ -135,12 +149,13 @@ h3 code {
 }
 pre,
 code {
-  font-size: 0.8rem;
+  font-size: 1rem;
 }
 pre {
   background-color: #f5f5f5;
   padding: 0.3rem;
   margin-left: -0.3rem;
+  white-space: pre-line;
 }
 code {
   line-height: 1.2rem;
@@ -154,10 +169,11 @@ ul {
   padding: 0;
 }
 li:before {
-  content: "+";
+  font-family: 'scp';
+  content: "\2022";
   padding-right: 0.3rem;
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 500;
 }
 #nav,
 #cont {
@@ -189,7 +205,7 @@ li:before {
   transition: opacity 0.3s ease-in-out;
 }
 #cont {
-  position: absolute;
+  position: relative;
   top: 0;
   margin-bottom: 9rem;
 }
@@ -235,6 +251,12 @@ li:before {
   transition: opacity 1s ease-in-out;
   z-index: 4;
 }
+img.logo.black {
+  content: url("https://storage.googleapis.com/urbit-extra/logo/logo-black-100x100.png");
+}
+img.logo.white {
+  content: url("https://storage.googleapis.com/urbit-extra/logo/logo-white-100x100.png");
+}
 img.logo {
   height: 2rem;
   width: 2rem;
@@ -254,7 +276,7 @@ h3.time {
   overflow: hidden;
 }
 #nav #sibs > div {
-  margin-bottom: 4px;
+  margin-bottom: 0.6rem;
 }
 .focus #sibs {
   margin-top: 0 !important;
@@ -262,22 +284,25 @@ h3.time {
 }
 #nav a,
 .list > li > a {
+  display: inline;
+}
+#nav a {
   text-transform: uppercase;
   font-size: 0.7rem;
   line-height: 1rem;
   font-weight: 200;
   letter-spacing: 1px;
 }
-.list > li > a {
-  margin-bottom: 0.3rem;
+.link-next {
+  margin-top: 2rem;
+  font-weight: 500;
+}
+.list > li {
+  margin-bottom: 1rem;
 }
 .list > li > a h1 {
   font-size: inherit;
   line-height: inherit;
-}
-#nav a,
-.list > li > a h1 {
-  margin-right: 0.3rem;
 }
 #nav .active a {
   font-weight: 500;
@@ -285,12 +310,13 @@ h3.time {
 }
 #up {
   padding-right: 1rem;
-  margin-top: -0.3rem;
+  margin-top: -8px;
 }
 #sides {
   float: right;
 }
 #sides a {
+  display: inline-block;
   margin-right: 0.6rem;
 }
 .arow-up,
@@ -393,31 +419,6 @@ h2.sub {
   margin-top: 0;
   text-transform: uppercase;
 }
-div.post h1 {
-  font-size: 2.8rem;
-  line-height: 4rem;
-  display: block;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-div.post h2 {
-  line-height: 1rem;
-  letter-spacing: 1px;
-}
-div.post h2 {
-  margin-top: 4rem;
-}
-div.post h2 {
-  font-size: 1.2rem;
-  font-weight: 500;
-}
-div.post p {
-  font-size: 1.2rem;
-  line-height: 2.2rem;
-}
-div.post li p {
-  display: inline;
-}
 div.toc {
   margin-top: 3rem;
   margin-bottom: 3rem;
@@ -460,6 +461,13 @@ div.toc h1.t {
   padding-right: 1rem;
   margin-left: -1rem;
 }
+.footer p {
+  font-family: 'scp';
+  font-size: 0.7rem;
+  font-weight: 400;
+  margin-top: 3rem;
+  color: #ccc;
+}
 .error {
   color: #f91733;
 }
@@ -484,124 +492,148 @@ div.toc h1.t {
 .warning.w {
   width: auto;
 }
-h1.lead {
+div.post h1 {
+  font-size: 2.8rem;
+  line-height: 4rem;
   margin-top: 1rem;
-  margin-bottom: 6rem;
-  font-size: 1.6rem;
-  line-height: 2rem;
-  margin-bottom: 3rem;
-}
-h2 {
-  margin-top: 3rem;
-}
-h2.date {
-  margin-top: 0;
-  line-height: 0.7rem;
-}
-.list.posts .post {
-  margin-bottom: 2rem;
-}
-.list.posts .post h1 {
-  text-transform: none;
-  font-size: 1.6rem;
-  line-height: 1.8rem;
   margin-bottom: 1rem;
-  display: block;
 }
-.list.posts .post h2 {
-  font-size: 0.7rem;
-  font-weight: 400;
-  line-height: 1rem;
-  margin-top: 0;
-}
-.list.posts li.post:before {
-  content: "";
-}
-.date {
-  font-weight: 400;
+div.post h2 {
   font-family: 'scp';
   font-size: 0.7rem;
+  line-height: 1rem;
+  letter-spacing: 1px;
+}
+div.post h3 {
+  margin-top: 0;
+  font-size: 0.7rem;
+  font-weight: 200;
+  letter-spacing: 0.1rem;
+  text-transform: uppercase;
+}
+div.post h3::before {
+  content: '\2014';
+  margin-right: 0.3rem;
+}
+div.post .list li {
+  margin-bottom: 0;
+  font-size: 1.2rem;
+}
+div.post p {
+  font-size: 1.2rem;
+  line-height: 2.2rem;
+}
+div.post li p {
+  display: inline;
+}
+div.post p.ib {
+  margin-top: 0;
 }
 @media only screen and (min-width: 320px) and (max-width: 1024px) {
-  #cont {
-    top: 2rem;
+  div.post h2,
+  div.post h3 {
+    font-size: 0.5rem;
   }
-  h1.lead {
-    font-size: 1.6rem;
+  div.post p {
+    font-size: 1rem;
     line-height: 2rem;
-    margin-bottom: 3rem;
+  }
+  div.post li h1 {
+    font-weight: 400;
+  }
+  div.post li::before {
+    font-weight: 200;
   }
 }
-#cont.lead #body {
+.lead #body {
   margin-top: 3rem;
   margin-top: 0;
 }
-#cont.lead .bar {
+.lead .bar {
   margin-top: 2rem;
+  margin-bottom: 2rem;
 }
-#cont.lead .bar > div {
+.lead .bar > div {
   display: inline-block;
 }
-#cont.lead .bar a.logo {
+.lead .bar a.logo {
   display: inline-block;
   height: 2rem;
   vertical-align: middle;
   border: none;
 }
-#cont.lead .bar img.logo {
+.lead .bar img.logo {
   margin-right: 18px;
+  margin-top: 0;
 }
-#cont.lead .bar ul.list.nav {
+.lead .bar ul {
   margin: 0;
+  line-height: 2rem;
+  display: inline-block;
 }
-#cont.lead .bar ul.list.nav li {
+.lead .bar ul li::before {
+  content: '';
+  padding-right: none;
+}
+.lead .bar ul li {
   display: inline-block;
   margin-bottom: 0;
   margin-right: 1rem;
-}
-#cont.lead .bar ul.list.nav li a {
-  border-bottom: none;
-}
-#cont.lead .bar ul.list.nav h1 {
-  text-decoration: none;
-  border-bottom: 2px solid #000;
-  text-transform: capitalize;
-  font-size: 1rem;
-  font-weight: 400;
-  letter-spacing: 0.03rem;
-}
-#cont.lead h1 {
-  margin-top: 1rem;
   vertical-align: middle;
-  line-height: 4rem;
 }
-#cont.lead h1.fold {
-  margin-top: 6rem;
+.lead .bar ul li a {
+  border-bottom: none;
+  text-decoration: underline;
 }
-#cont.lead .list > li > a h1 {
+.lead .bar ul li a h1 {
   margin: 0;
   line-height: inherit;
   text-transform: capitalize;
   font-size: 1.2rem;
 }
-#cont.lead {
+.lead .bar ul h1 {
+  text-transform: capitalize;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.03rem;
+}
+.lead h1 {
+  margin-top: 1rem;
+  vertical-align: middle;
+  line-height: 4rem;
+}
+.lead h1.fold {
+  margin-top: 6rem;
+}
+.lead .list li h1 {
+  line-height: 2rem;
+}
+.lead {
   font-size: 1.6rem;
   line-height: 2.6rem;
 }
-#cont.lead a {
-  line-height: 1.6rem;
+.lead a {
   line-height: 1rem;
 }
-#cont.lead .footer {
+.lead p {
+  font-size: 1.6rem;
+  line-height: 3rem;
+}
+.lead .mono {
+  font-size: 1.3rem;
+}
+.lead .footer {
   margin: 4rem 0 4rem 0;
-  font-weight: 200;
-  line-height: 1rem;
-  color: #ccc;
 }
-#cont.lead .footer p {
+.lead .footer p {
   margin: 0;
+  font-size: 0.7rem;
 }
-#cont.lead input.email {
+.lead .footer code {
+  line-height: 1rem;
+  font-size: 0.7rem;
+}
+.lead input.email {
   border-radius: 0;
   font: inherit;
   font-family: 'scp';
@@ -615,28 +647,28 @@ h2.date {
   margin-right: 1rem;
   display: inline-block;
 }
-#cont.lead input.email.valid {
+.lead input.email.valid {
   color: #99f27c;
 }
-#cont.lead input.email.error {
+.lead input.email.error {
   color: #f74040;
 }
-#cont.lead .email:empty:not(:focus):before {
+.lead .email:empty:not(:focus):before {
   content: attr(data-ph);
 }
-#cont.lead ::-webkit-input-placeholder {
+.lead ::-webkit-input-placeholder {
   color: #e6e7e8;
 }
-#cont.lead :-moz-placeholder {
+.lead :-moz-placeholder {
   color: #e6e7e8;
 }
-#cont.lead ::-moz-placeholder {
+.lead ::-moz-placeholder {
   color: #e6e7e8;
 }
-#cont.lead :-ms-input-placeholder {
+.lead :-ms-input-placeholder {
   color: #e6e7e8;
 }
-#cont.lead button.submit {
+.lead button.submit {
   font: inherit;
   border: 0;
   background-color: #fff;
@@ -649,31 +681,29 @@ h2.date {
   height: 2rem;
   padding: 0 0.6rem;
 }
-#cont.lead li::before {
-  content: '';
-  padding-right: none;
-}
-#cont.lead .date {
+.lead .date {
   font-weight: 400;
 }
-#cont.lead .kids p.ib {
-  margin-top: 0;
-}
-#cont.lead .kids h3 {
-  font-size: 1rem;
-}
-#cont.lead .kids h3::after {
-  content: "\2014";
-  margin-left: 1em;
-}
-#cont.lead .kids h2,
-#cont.lead div.footer {
-  font-family: 'scp';
-  font-size: 0.7rem;
+@media only screen and (max-width: 1170px) {
+  #cont.lead {
+    top: 0rem;
+  }
 }
 @media only screen and (min-width: 320px) and (max-width: 1024px) {
   #cont.lead {
     top: 0rem;
+    font-size: 1rem;
+    line-height: 1.6rem;
+  }
+  #cont.lead .post h1 {
+    font-size: 2rem;
+    line-height: 3rem;
+  }
+  #cont.lead .bar {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  #cont.lead .bar .list li h1 {
     font-size: 1rem;
     line-height: 1.6rem;
   }
@@ -684,6 +714,7 @@ h2.date {
   #cont.lead h1.leader,
   #cont.lead h1.fold {
     font-size: 1.6rem;
+    line-height: 3rem;
     margin-left: 0;
   }
   #cont.lead .list li,
@@ -691,6 +722,13 @@ h2.date {
   #cont.lead .list li h1 {
     font-size: 1rem;
     line-height: 1.6rem;
+  }
+  #cont.lead input.email {
+    font-size: 1.2rem;
+    width: 100%;
+  }
+  #cont.lead button.submit {
+    font-size: 1rem;
   }
   #cont.lead .date,
   #cont.lead div.footer {
@@ -732,8 +770,17 @@ h2.date {
   #nav a {
     white-space: nowrap;
   }
+  #nav #sibs {
+    width: 12rem;
+  }
   #nav #sibs > div {
     height: 20px;
+    margin-bottom: 4px;
+  }
+  #nav #sibs > div.active a,
+  #nav #sibs > div a {
+    border-bottom: none;
+    text-decoration: underline;
   }
   #nav.m-down,
   #nav.m-up {
@@ -744,7 +791,7 @@ h2.date {
     top: 0;
   }
   #nav > div > div {
-    max-height: 1rem;
+    max-height: 2rem;
     overflow: hidden;
     transition: max-height 0.3s ease-in-out;
   }
@@ -755,11 +802,18 @@ h2.date {
   #cont {
     top: 3rem;
   }
+  #cont.no-anchor {
+    top: 0;
+  }
 }
 @media only screen and (min-width: 320px) and (max-width: 1024px) {
   body,
   html {
     font-size: 21px;
+  }
+  p {
+    font-size: 1rem;
+    line-height: 2rem;
   }
   #nav,
   #cont {
@@ -772,17 +826,17 @@ h2.date {
     padding-top: 0;
     opacity: 1;
     left: 0;
-    background-color: #fff;
     z-index: 2;
   }
   #nav > div > div {
-    max-height: 1.4rem;
+    max-height: 1.2rem;
   }
   #nav > div {
     padding-top: 0.6rem;
   }
   #nav #sibs {
     width: 11rem;
+    padding-top: 0;
   }
   #nav #sibs > div {
     height: 20px;
@@ -793,7 +847,8 @@ h2.date {
     font-size: 0.7rem;
   }
   #nav #sides {
-    float: right;
+    float: none;
+    margin-left: 1rem;
   }
   #nav .arow-up,
   #nav .arow-next,
@@ -812,7 +867,6 @@ h2.date {
     border-right: 0.6rem solid #000;
   }
   #cont {
-    top: 3rem;
     left: 0;
     padding-bottom: 9rem;
   }
