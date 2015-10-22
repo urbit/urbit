@@ -5,39 +5,42 @@ sort: 8
 
 # `:dojo` manual
 
-The dojo is a typed functional shell.  Its prompt is:
+The dojo is a typed functional shell.  Assuming our default
+plot `~fintud-macrep`,  
 
-    ~urbit-name:dojo>
+Its prompt is:
+
+    ~fintud-macrep:dojo>
 
 ## Quickstart
 
 To print a Hoon expression or other recipe:
 
-    ~urbit-name:dojo> (add 2 2)
+    ~fintud-macrep:dojo> (add 2 2)
 
 To save a recipe as a variable `foo`:
 
-    ~urbit-name:dojo> =foo (add 2 2)
+    ~fintud-macrep:dojo> =foo (add 2 2)
 
 To save as a unix file (`$pier/.urb/put/foo/bar.baz`):
 
-    ~urbit-name:dojo> .foo/bar/baz (add 2 2)
+    ~fintud-macrep:dojo> .foo/bar/baz (add 2 2)
 
 To save as an urbit file (`/===/foo/bar/baz`):
 
-    ~urbit-name:dojo> *foo/bar/baz (add 2 2)
+    ~fintud-macrep:dojo> *foo/bar/baz (add 2 2)
 
 A noun generator with ordered and named arguments:
 
-    ~urbit-name:dojo> +make one two three, =foo (add 2 2), =bar 42
+    ~fintud-macrep:dojo> +make one two three, =foo (add 2 2), =bar 42
 
 A poke message to an urbit daemon:
 
-    ~urbit-name:dojo> :~urbit-name/talk (add 2 2)
+    ~fintud-macrep:dojo> :~fintud-macrep/talk (add 2 2)
 
 A system command to `:hood`:
 
-    ~urbit-name:dojo> |reload %vane
+    ~fintud-macrep:dojo> |reload %vane
 
 ## Manual
 
@@ -51,10 +54,18 @@ applies this product in a side effect -- show, save, or send.
 
 ### Theory
 
-The dojo is not just a Hoon interpreter.  Hoon is a purely
-functional language; dojo recipes are *conceptually* functional,
-but they often use concrete actions or interactions.  A simple
-Hoon expression is only one kind of recipe.
+In the quickstart we learned a crude interpretation of the dojo
+in terms of "expressions, generators and operations."  While
+nothing in the quickstart section is inaccurate, it's not the way
+the system works internally.
+
+*All* dojo lines are commands.  An operation uses a *recipe*
+to create a noun, which the command uses in its side effect.
+Just printing the noun is a trivial case of a command.
+
+Recipes are *conceptually* functional, but often use concrete,
+stateful action sequences.  A simple Hoon expression (*twig*) is
+purely functional, but it's only one kind of recipe.
 
 A recipe can get data from an HTTP GET request or an interactive
 input dialog.  It can also query, even block on, the Urbit
@@ -70,7 +81,8 @@ network.  And each session's state is independent.  (If you want
 to work on two things at a time, connect two console sessions to
 your dojo.)
 
-Once you've built your product noun, you show, save, or send it.
+Once you've built the product of your recipe, you show, save, 
+or send it.
 
 You can pretty-print the product to the console.  You can save it
 -- as a dojo variable, as a revision to the Urbit filesystem, or
@@ -83,19 +95,19 @@ language, but the dojo is a dynamic interpreter.  The nouns you
 build in the dojo are dynamically typed nouns, or "cages".
 
 A cage actually has two layers of type: "mark," a network label
-(like a MIME type), and "range," a Hoon language type.  When a
+(like a MIME type), and "span," a Hoon language type.  When a
 cage is sent across the Urbit network, the receiving daemon
 validates the noun against its own version of the mark, and
-regenerates the range.
+regenerates the span.
 
 Of course, sometimes a recipe produces a noun with mark `%noun`,
-meaning "any noun," and range `*`, the set of all nouns.  We have
+meaning "any noun," and span `*`, the set of all nouns.  We have
 no choice but to do the best we can with mystery nouns, but we 
 prefer a formal description.
 
-Marks let us perform a variety of formal typed operations on
-nouns: validation of untrusted data, format conversion, even
-patch and diff for revision control.
+A mark is also called a "format."  Marks let us perform a variety
+of formal typed operations on nouns: validation, translation,
+even patch and diff for revision control.
 
 ### Other resources
 
@@ -111,20 +123,20 @@ of it as pseudocode -- the meaning should be clear from context.
 To use the dojo, type a complete command at the dojo prompt.
 The simplest command just prints a Hoon expression:
 
-    ~urbit-name:dojo> (add 2 2)
+    ~fintud-macrep:dojo> (add 2 2)
 
 Hit return.  You'll see:
 
     > (add 2 2)
     4
-    ~urbit-name:dojo> 
+    ~fintud-macrep:dojo> 
 
 Similarly in tall form,
 
-    ~urbit-name:dojo> %+  add  2  2
+    ~fintud-macrep:dojo> %+  add  2  2
     > %+  add  2  2
     4
-    ~urbit-name:dojo> 
+    ~fintud-macrep:dojo> 
 
 An incomplete command goes into a multiline input buffer.  Use
 the up-arrow (see the console history section) to get the last
@@ -132,14 +144,14 @@ command back, edit it so it's just `%+  add  2`, and press return.
 You'll see:
 
     > %+  add  2
-    ~urbit-name/dojo<
+    ~fintud-macrep/dojo<
 
 Enter `2`.  You'll see:
 
     > %+  add  2
       2
     4
-    ~urbit-name/dojo>
+    ~fintud-macrep/dojo>
 
 The full command that parses and runs is the concatenation of all
 the partial lines, with a space inserted between them.  To clear
@@ -160,27 +172,27 @@ Every finished line is parsed into one `++dojo-command`:
       ==                                    ::
 
 Each kind of `++dojo-command` is an action that depends on one
-noun thproduction, a `++dojo-recipe`.  We describe first the
+noun production, a `++dojo-recipe`.  We describe first the
 commands, then the recipes.
 
 ##### `[%show p=dojo-recipe]`
 
 To print the product, the command is just the recipe:
 
-    ~urbit-name:dojo> (add 2 2)
+    ~fintud-macrep:dojo> (add 2 2)
 
 ##### `[%verb p=term q=dojo-recipe]`
 
 To save the product to a variable `foo`:
 
-    ~urbit-name:dojo> =foo (add 2 2)
+    ~fintud-macrep:dojo> =foo (add 2 2)
 
 `foo` goes into your Hoon subject (scope) and is available to all
 expressions.
 
 To unbind `foo`:
 
-    ~urbit-name:dojo> =foo
+    ~fintud-macrep:dojo> =foo
 
 The dojo has a set of special variables, some read-write and some
 read-only: `dir`, `lib`, `arc`, `now`, `our`.
@@ -202,17 +214,17 @@ filesystem paths.)
 
 To save:
 
-    ~urbit-name:dojo> *%/numbers/four (add 2 2)
+    ~fintud-macrep:dojo> *%/numbers/four (add 2 2)
 
 To edit:
 
-    ~urbit-name:dojo> -%/numbers/four (add 2 2)
+    ~fintud-macrep:dojo> -%/numbers/four (add 2 2)
 
 A save (`*`) overwrites the current (if any) version of the file
 with a new version of any mark.  The save command above will work
 (if you want `/numbers/four` at your current path).
 
-An edit (`-`) produces a diff whose mark has to match the diff
+An edit (`-`) applies a diff whose mark has to match the diff
 mark for the current version of the file.  The edit command above
 will not work, because evaluating a Hoon expression like `(add 2
 2)` just produces a `%noun` mark, ie, an arbitrary noun.
@@ -224,48 +236,49 @@ change since the version specified, the command will fail.
 
 ##### `[%unix p=path q=dojo-recipe]`
 
-    ~urbit-name:dojo> ./numbers/four (add 2 2)
+    ~fintud-macrep:dojo> ./numbers/four (add 2 2)
 
 The product is saved as a Unix file (its mark is translated
 to MIME, and the MIME type is mapped as the extension).
 
 ##### `[%poke p=goal q=dojo-recipe]`
 
-A poke is a one-way transactional request.  It either succeeds
-and returns no information, or fails and produces an error dump.
+A poke or *order* is a one-way transactional request.  It either
+succeeds and returns no information, or fails and produces an
+error dump.
 
-Every poke is sent to one daemon on one urbit.  The default urbit
-is your urbit.  The default daemon is the system daemon, `:hood`.
-The following syntactic forms are equivalent:
+Every order is sent to one daemon on one urbit.  The default
+urbit is your urbit.  The default daemon is the system daemon,
+`:hood`.  The following syntactic forms are equivalent:
 
-    ~urbit-name:dojo> :~urbit-name/hood (add 2 2)
-    ~urbit-name:dojo> :hood (add 2 2)
-    ~urbit-name:dojo> :~urbit-name (add 2 2)
-    ~urbit-name:dojo> : (add 2 2)
+    ~fintud-macrep:dojo> :~fintud-macrep/hood (add 2 2)
+    ~fintud-macrep:dojo> :hood (add 2 2)
+    ~fintud-macrep:dojo> :~fintud-macrep (add 2 2)
+    ~fintud-macrep:dojo> : (add 2 2)
 
 Urbit pokes do not have a separate verb.  The mark of the message
 defines the semantics of the operation.  You don't call a method
 `foo` whose argument is a noun in mark `bar` -- you poke a noun
 in mark `bar`.  The mark is the protocol is the method.
 
-If the poke succeeds, you'll see an `>=` line.  If not, you'll
+If the order succeeds, you'll see an `>=` line.  If not, you'll
 see an error report, typically with a stack trace.
 
 It's common (but not necessary) to use a custom generator for the 
 daemon you're talking to.  (For generators, see below.)  Hence
 
-    ~urbit-name:dojo> :~urbit-name/fish +fish/catch (add 2 2)
+    ~fintud-macrep:dojo> :~fintud-macrep/fish +fish/catch (add 2 2)
 
 It's irritating to type "fish" twice, just because we're using a
 fish generator to talk to a fish daemon.  Hence a shortcut:
 
-    ~urbit-name:dojo> :~urbit-name/fish|catch (add 2 2)
+    ~fintud-macrep:dojo> :~fintud-macrep/fish|catch (add 2 2)
 
 If we combine all these defaults, we get the "system command"
 shortcut:
 
-    ~urbit-name:dojo> :~urbit-name/hood +hood/reload %ames
-    ~urbit-name:dojo> |reload %ames
+    ~fintud-macrep:dojo> :~fintud-macrep/hood +hood/reload %ames
+    ~fintud-macrep:dojo> |reload %ames
 
 This is the most common poke, a generated message to your own
 hood. 
@@ -274,11 +287,11 @@ hood.
 
 The Web has its own poke, unfortunately in two flavors.  To POST,
 
-    ~urbit-name:dojo> +http://website.com (add 2 2)
+    ~fintud-macrep:dojo> +http://website.com (add 2 2)
 
 To PUT:
 
-    ~urbit-name:dojo> -http://website.com (add 2 2)
+    ~fintud-macrep:dojo> -http://website.com (add 2 2)
 
 As with a poke, you'll get a >= for success, or an error report.
 
@@ -288,7 +301,7 @@ But wait, what's a recipe?  Simplifying the actual code slightly:
 
     ++  dojo-recipe                          ::  functional build
       $%  [%ex p=twig]                       ::  hoon expression
-          [%as p=mark q=dojo-recipe]         ::  conversion
+          [%as p=mark q=dojo-recipe]         ::  format conversion
           [%do p=twig q=dojo-recipe]         ::  apply gate
           [%ge p=dojo-script]                ::  generator
           [%ur p=purl]                       ::  get url
@@ -316,7 +329,9 @@ A twig produces the trivial mark `%noun`, except in two cases
 where the dojo can do better.  The dojo analyzes the twig to
 detect two trivial cases where direct evaluation gives us a mark:
 a variable reference like `foo` that matches a dojo variable, or
-an urbitspace dereference like `.^(/cx/~urbit-name/main/1/foo)`.
+an urbitspace dereference like `.^(/cx/~fintud-macrep/main/1/foo)`.
+In either case, if we executed these through Hoon, we'd get the
+same noun with the same span.
 
 ##### `[%tu p=(list dojo-recipe)]`
 
@@ -339,7 +354,7 @@ arguments are recipes.  The path specifies a Hoon source file in
 For the path `/fun/make`, the ordered arguments `1`, `2` and `3`, 
 and the named arguments `foo` and `bar`, the syntax is:
 
-    ~urbit-name:dojo> +fun/make 1 2 3, =foo (add 2 2), =bar 42
+    ~fintud-macrep:dojo> +fun/make 1 2 3, =foo (add 2 2), =bar 42
 
 Unless this non-closed form is the end of a command, it needs to
 be surrounded by `[]` to make it play well with others.
@@ -359,8 +374,8 @@ recipe, we can chain them to make a conversion pipeline.
 
 To convert a recipe, just precede it with the converison form, `&mark`:
 
-    ~urbit-name:dojo> &noun (add 2 2)
-    ~urbit-name:dojo> &md (add 50 7)
+    ~fintud-macrep:dojo> &noun (add 2 2)
+    ~fintud-macrep:dojo> &md (add 50 7)
 
 ##### `[%do p=twig q=dojo-recipe]`
 
@@ -368,8 +383,8 @@ To convert a recipe, just precede it with the converison form, `&mark`:
 
 Its syntax is a hoon expression preceeded by `_`:
 
-    ~urbit-name:dojo> _lore 'hello\0aworld'
-    ~urbit-name:dojo> _|=(a=@ (mul 3 a))} (add 2 2)
+    ~fintud-macrep:dojo> _lore 'hello\0aworld'
+    ~fintud-macrep:dojo> _|=(a=@ (mul 3 a))} (add 2 2)
 
 ##### `[%ur p=purl]`
 
@@ -409,7 +424,7 @@ if the user specifies `=foo 42`, your `opt` is replaced with
 Bear in mind that dojo syntax is list-centric, so your `arg` will
 always end with a `~`.  For instance,
 
-    ~urbit-name/dojo> +fun/make 1 2 3
+    ~fintud-macrep/dojo> +fun/make 1 2 3
 
 will generate an `arg` of `[1 2 3 ~]`.  Yes, this is the only
 place in Urbit where we do list-centric arguments.
@@ -417,27 +432,21 @@ place in Urbit where we do list-centric arguments.
 Note also that script configuration is typed.  The user's command
 will fail if there's a type mismatch.  But `arg` does not have to
 be a homogeneous list -- just a tuple with `~` on the end.  Also,
-you can use `arg=*` and sort out the nouns by hand.
-
-You can also use `*` anywhere if you're not interested in the
-system context, or in 
+you can use `arg=*` and sort out the nouns by hand.  Any value
+you don't care about can simply be `*`.
 
 #### Generators
 
-There are three kinds of generators: builders (with no special 
-I/O), dialogs (which read console input), and scrapers (which
-pull data from the webs).  Any generator can use `.^` to both
-read from and block (wait for remote or delayed results) on
-the Urbit global namespace.
+There are four kinds of generators: builders (with no special 
+I/O), dialogs (which read console input), scrapers (which pull
+data from the webs), and synthesizers (which produce another
+generator).  Any generator can use `.^` to both read from and
+block (wait for remote or delayed results) on the Urbit global
+namespace.
 
 A generator produces a cell whose tail is the configuration gate,
-and whose head is either `%say` for a builder, `%ask` for a
-dialog, or `%get` for a scraper.
-
-(If you want to write one generator which both prompts the user 
-and scrapes the web, don't. Write two, and configure the second
-with the result of the first. We pay a price for keeping things
-stupid.)
+and whose head is `%say` for a builder, `%ask` for a dialog, 
+`%get` for a scraper, and `%con` for a constructor.
 
 #### Builders
 
@@ -521,3 +530,8 @@ A scraper is much like a dialog, except instead of `sole-lo` and
 
 `++sole-at` takes a `purl` request url, and a gate through
 which to slam the result `httr`.
+
+#### Synthesizer
+
+A synthesizer simply produces another recipe.  Its 
+

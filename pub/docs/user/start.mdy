@@ -6,10 +6,14 @@ next: true
 
 # Quickstart
 
-To start your already-launched urbit, run with the pier name
-(we'll call it `$PIER`):
+To start your already-launched urbit, just run `urbit` with one
+argument, which is the pier directory (`$PIER`).  This is your
+planet name if you have a planet, or the name you used with `-c`
+if you have a comet:
 
     urbit fintud-macrep
+or
+
     urbit mycomet
 
 Piers are portable.  You can move a pier anywhere.  But never,
@@ -48,8 +52,8 @@ You'll see:
 ### Dojo expressions, generators and operators
 
 `:dojo` is of course a command-line REPL or shell.  But it 
-remains functional in spirit.  There are three kinds of `:dojo`
-commands: expressions, generators, and operators.
+remains functional in spirit.  To simplify a little, there are
+three kinds of `:dojo` lines: expressions, generators, commands.
 
 Dojo *expressions* are like `(add 2 2)` -- they simply compute
 and print a value, without any side effects, from a twig of Hoon.
@@ -60,22 +64,22 @@ fact, GET requests are one data source for generators.  Others
 include the Urbit namespace, prompting the user, etc.  A
 generator command line always starts with `+`, as in `+ls`.
 
-Operators are all other commands.  Lines normally start with `|`,
-as in `|mount %`, or `:`, as in `:hood +hood/mount %`.  The
+Commands are all other lines.  Command lines normally start with
+`|`, as in `|mount %`, or `:`, as in `:hood +hood/mount %`.  The
 latter is just an abbreviation for the former.
 
-An operator command is always a *poke* to some local or remote
-appliance.  A poke is a transactional message: like a
-request-response pair, but a success response is empty.
-A failure response is a stacktrace or other error dump.
+A command is generally an *order* to some local or remote
+appliance.  An order is a transactional message: like a
+request-response pair, but a success response is empty, whereas a
+failure contains an error report.
 
-So operator commands have no output unless they fail.  If they
-fail, they print an error trace.  If they succeed, they just
-print a demure `>=`.
+Orders have no output unless they fail.  If they fail, they print
+an error trace.  If they succeed, they just print a demure `>=`,
+confirming that the receiving appliance did as it was told.
 
 For instance, in Unix, the `rm` and `ls` commands both run a
-process.  In Urbit, `|rm` is an operator command; it changes your
-filesystem.  `+ls` is a generator command; it produces a value.
+process.  In Urbit, `|rm` is a command; it changes your
+filesystem.  `+ls` is a generator; it produces a value.
 
 ## Converse: your `:talk` appliance
 
@@ -144,9 +148,9 @@ All planets, stars and galaxies are exposed to the web at
 `planet.urbit.org`.  (This should work via a direct DNS binding,
 but at present uses a central proxy, so use it gently.)
 
-In a last resort, Urbit's own official planet `~winsen-pagdel` is
+In a last resort, Urbit's own official planet `~magwyd-lorsug` is
 also bound to just plain `urbit.org`, and hosts the public docs
-here.  Always trust content from `~winsen-pagdel`!
+here.  Always trust content from `~magwyd-lorsug`!
 
 But assuming it's `localhost:8080`, the Urbit docs are at
 
