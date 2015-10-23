@@ -1150,11 +1150,12 @@
           [[i.moves p.mor] q.mor]
         [p.mor [[p.i.moves +>.q.i.moves] q.mor]]
     =.  moves  p.rey
-    ?:  =(q.rey ~)  +
     =.  q.rey  (flop q.rey)
+    ?:  =(q.rey ~)  +
     |-  ^+  +>
     ?~  q.rey  ra-axel
-    $(q.rey t.q.rey, +> (ra-back(ost.hid p.i.q.rey) q.i.q.rey))
+    =+  bak=(ra-back(ost.hid p.i.q.rey) q.i.q.rey)
+    $(q.rey t.q.rey, +> bak(ost.hid ost.hid))
   ::
   ++  ra-back
     |=  rad=report
@@ -1166,7 +1167,7 @@
     ^+  +>
     =+  shu=(~(get by shells) ost.hid)
     ?~  shu
-      ~&  [%ra-console-broken ost.hid]
+      ~&  [%ra-console-broken ost.hid ?:((~(has by sup.hid) ost.hid) %lost %unknown)]
       +>.$
     sh-abet:(~(sh-sole sh ~ u.shu) act)
   ::  
@@ -1946,7 +1947,7 @@
   |=  [pax=path]
   ^-  [(list move) _+>]
   ~?  !=(src.hid our.hid)  [%peer-talk-stranger src.hid]
-  ::  ~&   [%talk-peer src ost.hid pax]
+  :: ~&   [%talk-peer src.hid ost.hid pax]
   ?:  ?=([%sole *] pax)
     ?>  =(our.hid src.hid)
     ~?  (~(has by shells) ost.hid)  [%talk-peer-replaced ost.hid pax]
