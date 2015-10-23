@@ -7,6 +7,68 @@ StationActions  = require '../actions/StationActions.coffee'
 StationStore    = require '../stores/StationStore.coffee'
 Member          = require './MemberComponent.coffee'
 
+SHIPSHAPE = ///
+^~?(                              #preamble
+   [a-z]{3}                       # galaxy
+ | [a-z]{6}(-[a-z]{6}){0,3}       # star - moon
+ |   [a-z]{6}(-[a-z]{6}){3}       # comet
+   (--[a-z]{6}(-[a-z]{6}){3})+    #
+)$                                #postamble
+///
+PO = '''
+dozmarbinwansamlitsighidfidlissogdirwacsabwissib
+rigsoldopmodfoglidhopdardorlorhodfolrintogsilmir
+holpaslacrovlivdalsatlibtabhanticpidtorbolfosdot
+losdilforpilramtirwintadbicdifrocwidbisdasmidlop
+rilnardapmolsanlocnovsitnidtipsicropwitnatpanmin
+ritpodmottamtolsavposnapnopsomfinfonbanporworsip
+ronnorbotwicsocwatdolmagpicdavbidbaltimtasmallig
+sivtagpadsaldivdactansidfabtarmonranniswolmispal
+lasdismaprabtobrollatlonnodnavfignomnibpagsopral
+bilhaddocridmocpacravripfaltodtiltinhapmicfanpat
+taclabmogsimsonpinlomrictapfirhasbosbatpochactid
+havsaplindibhosdabbitbarracparloddosbortochilmac
+tomdigfilfasmithobharmighinradmashalraglagfadtop
+mophabnilnosmilfopfamdatnoldinhatnacrisfotribhoc
+nimlarfitwalrapsarnalmoslandondanladdovrivbacpol
+laptalpitnambonrostonfodponsovnocsorlavmatmipfap
+
+zodnecbudwessevpersutletfulpensytdurwepserwylsun
+rypsyxdyrnuphebpeglupdepdysputlughecryttyvsydnex
+lunmeplutseppesdelsulpedtemledtulmetwenbynhexfeb
+pyldulhetmevruttylwydtepbesdexsefwycburderneppur
+rysrebdennutsubpetrulsynregtydsupsemwynrecmegnet
+secmulnymtevwebsummutnyxrextebfushepbenmuswyxsym
+selrucdecwexsyrwetdylmynmesdetbetbeltuxtugmyrpel
+syptermebsetdutdegtexsurfeltudnuxruxrenwytnubmed
+lytdusnebrumtynseglyxpunresredfunrevrefmectedrus
+bexlebduxrynnumpyxrygryxfeptyrtustyclegnemfermer
+tenlusnussyltecmexpubrymtucfyllepdebbermughuttun
+bylsudpemdevlurdefbusbeprunmelpexdytbyttyplevmyl
+wedducfurfexnulluclennerlexrupnedlecrydlydfenwel
+nydhusrelrudneshesfetdesretdunlernyrsebhulryllud
+remlysfynwerrycsugnysnyllyndyndemluxfedsedbecmun
+lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes
+'''
+
+Audience = recl
+  displayName: "Audience"
+  onKeyDown: (e) ->
+    if e.keyCode is 13 
+      e.preventDefault()
+      setTimeout () ->
+          $('#writing').focus()
+        ,0
+      return false
+  render: ->
+    div {
+          id:"audi"
+          className:"audi valid-#{@props.valid}"
+          contentEditable:true
+          @onKeyDown
+          onBlur:@props.onBlur
+        }, @props.audi.join(" ")
+
 module.exports = recl
   set: ->
     if window.localStorage and @$writing then window.localStorage.setItem 'writing', @$writing.text()
@@ -26,20 +88,21 @@ module.exports = recl
     s.ludi = _.without s.ludi, window.util.mainStationPath window.urb.user
     s
 
-  getInitialState: -> @stateFromStore()
+  getInitialState: -> _.extend @stateFromStore(), length:0, lengthy: false
 
   typing: (state) ->
     if @state.typing[@state.station] isnt state
       StationActions.setTyping @state.station,state
 
-  _blur: -> 
+  onBlur: -> 
     @$writing.text @$writing.text()
     MessageActions.setTyping false
     @typing false
 
-  _focus: -> 
+  onFocus: -> 
     MessageActions.setTyping true
     @typing true
+    @cursorAtEnd
 
   addCC: (audi) ->
     listening = @state.config[window.util.mainStation(window.urb.user)].sources
@@ -62,22 +125,14 @@ module.exports = recl
       audi = @state.audi    
     audi = @addCC audi
     MessageActions.sendMessage @$writing.text().trim(),audi
-    @$length.text "0/62"
     @$writing.text('')
+    @setState length:0
     @set()
     @typing false
 
-  _audiKeyDown: (e) ->
-    if e.keyCode is 13 
-      e.preventDefault()
-      setTimeout () ->
-          $('#writing').focus()
-        ,0
-      return false
-
-  _writingKeyUp: (e) ->
+  onKeyUp: (e) ->
     if not window.urb.util.isURL @$writing.text()
-      @$length.toggleClass('valid-false',(@$writing.text().length > 62))
+      @setState lengthy: (@$writing.text().length > 62)
     # r = window.getSelection().getRangeAt(0).cloneRange()
     # @$writing.text @$writing.text()
     # setTimeout => 
@@ -87,7 +142,7 @@ module.exports = recl
     #     console.log r
     #   ,0
 
-  _writingKeyDown: (e) ->
+  onKeyDown: (e) ->
     if e.keyCode is 13
       txt = @$writing.text()
       e.preventDefault()
@@ -95,10 +150,10 @@ module.exports = recl
            window.urb.util.isURL @$writing.text() )
         @sendMessage()
       return false
-    @_input()
+    @onInput()
     @set()
 
-  _input: (e) ->
+  onInput: (e) ->
     text   = @$writing.text()
     length = text.length
     # geturl = new RegExp [
@@ -113,11 +168,10 @@ module.exports = recl
     #   for url in urls
     #     length -= url.length
     #     length += 10
-    @$length.text "#{length}/62"
-
-  _setFocus: -> @$writing.focus()
+    @setState {length}
 
   _validateAudiPart: (a) ->
+    a = a.trim()
     # if a[0] isnt "~"
     #   return false
     if a.indexOf("/") isnt -1
@@ -127,9 +181,9 @@ module.exports = recl
       ship = _a[0]
     else
       ship = a
-    if ship.length < 3
-      return false
-    return true
+     
+    return (SHIPSHAPE.test ship) and 
+      _.all (ship.match /[a-z]{3}/g), (a)-> -1 isnt PO.indexOf a
 
   _validateAudi: ->
     v = $('#audi').text()
@@ -138,23 +192,17 @@ module.exports = recl
       return true
     if v.length < 5 # zod/a is shortest
       return false
-    v = v.split " "
-    for a in v
-      a = a.trim()
-      valid = @_validateAudiPart(a)
-    valid
+    _.all (v.split /\ +/), @_validateAudiPart
 
   _setAudi: ->
     valid = @_validateAudi()
     StationActions.setValidAudience valid
     if valid is true
-      v = $('#audi').text()
-      if v.length is 0 then v = window.util.mainStationPath window.urb.user
-      v = v.split " "
-      for k,_v of v
-        if _v[0] isnt "~" then v[k] = "~#{_v}"
-      StationActions.setAudience v
-      v
+      stan = $('#audi').text() || window.util.mainStationPath window.urb.user
+      stan = (stan.split /\ +/).map (v)->
+        if v[0] is "~" then v else "~"+v
+      StationActions.setAudience stan
+      stan
     else
       false
 
@@ -178,12 +226,11 @@ module.exports = recl
     StationStore.addChangeListener @_onChangeStore
     MessageStore.addChangeListener @_onChangeStore
     @$el = $ @getDOMNode()
-    @$length = $('#length')
     @$writing = $('#writing')
     @$writing.focus()
     if @get() 
       @$writing.text @get()
-      @_input()
+      @onInput()
     @interval = setInterval =>
         @$el.find('.time').text @getTime()
       , 1000
@@ -210,25 +257,14 @@ module.exports = recl
     div {className:k}, [
       (div {className:"attr"}, [
         (React.createElement Member, iden)
-        (div {
-          id:"audi"
-          className:"audi valid-#{@state.valid}"
-          contentEditable:true
-          onKeyDown: @_audiKeyDown
-          onBlur:@_setAudi
-          }, audi.join(" "))
+        (React.createElement Audience, {audi,valid:@state.valid, onBlur:@_setAudi})
         (div {className:"time"}, @getTime())        
       ])
       (div {
           id:"writing"
           contentEditable:true
-          onFocus: @_focus
-          onBlur: @_blur
-          onInput: @_input
-          onPaste: @_input
-          onKeyDown: @_writingKeyDown
-          onKeyUp: @_writingKeyUp
-          onFocus: @cursorAtEnd
+          onPaste: @onInput
+          @onInput, @onFocus, @onBlur, @onKeyDown, @onKeyUp
         }, "")
-      div {id:"length"}, "0/62"
+       (div {id:"length",className:("valid-false" if @state.lengthy)}, "#{@state.length}/62")
       ]
