@@ -1179,7 +1179,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cF, signed and modular ints  ::
 ::
-++  si                                                  ::  signed integer
+++  si  !:                                              ::  signed integer
   |%
   ++  abs  |=(a=@s (add (end 0 1 a) (rsh 0 1 a)))       ::  absolute value
   ++  dif  |=  [a=@s b=@s]                              ::  subtraction
@@ -4939,7 +4939,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::            section 2eW, lite number theory           ::
 ::
-++  egcd                                                ::  schneier's egcd
+++  egcd  !:                                            ::  schneier's egcd
   |=  [a=@ b=@]
   =+  si
   =+  [c=(sun a) d=(sun b)]
@@ -6599,7 +6599,7 @@
   |=  [[tab=@ edg=@] tac=tank]  ^-  wall
   (~(win re tac) tab edg)
 ::
-++  wa                                                  ::  cached compile
+++  wa  !:                                              ::  cached compile
   |_  worm
   ++  nell  |=(ref=type (nest [%cell %noun %noun] ref)) ::  nest in cell
   ++  nest                                              ::  nest:ut
@@ -9027,7 +9027,7 @@
       $(i.ruw t.i.ruw, cah [i.i.ruw cah])
     $(i.ruw t.i.ruw, cah ~, yun [p.i.i.ruw (wod cah yun)])
   ::
-  ++  posh
+  ++  posh  !:
     |=  [pre=(unit tyke) pof=(unit ,[p=@ud q=tyke])]
     ^-  (unit (list twig))
     =-  ?^(- - ~&(%posh-fail -))
@@ -9335,7 +9335,7 @@
       ==
     --
   ::
-  ++  scat
+  ++  scat  !:
     %+  knee  *twig  |.  ~+
     %-  stew
     ^.  stet  ^.  limo
