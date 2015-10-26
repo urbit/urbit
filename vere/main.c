@@ -71,6 +71,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.dem = c3n;
   u3_Host.ops_u.fog = c3n;
   u3_Host.ops_u.fak = c3n;
+  u3_Host.ops_u.tex = c3n;
   u3_Host.ops_u.pro = c3n;
   u3_Host.ops_u.dry = c3n;
   u3_Host.ops_u.veb = c3n;
@@ -79,7 +80,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.mem = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i = getopt(argc, argv, "I:w:t:X:f:k:l:n:p:r:LabcdgqvFMPD")) != -1 ) {
+  while ( (ch_i=getopt(argc, argv,"I:w:t:f:k:l:n:p:r:LabcdgqvxFMPDX")) != -1 ) {
     switch ( ch_i ) {
       case 'M': {
         u3_Host.ops_u.mem = c3y;
@@ -99,10 +100,12 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.tic_c = _main_presig(optarg);
         break;
       }
+      case 'x': {
+        u3_Host.ops_u.tex = c3y;
+        break;
+      }
       case 'X': {
-        if ( 0 != strcmp("wtf", optarg) ) {
-          return c3n;
-        } else u3_Host.ops_u.fog = c3y;
+        u3_Host.ops_u.fog = c3y;
         break;
       }
       case 'f': {
@@ -346,6 +349,7 @@ main(c3_i   argc,
       exit(1);
     }
   }
+
 #if 0
   if ( 0 == getuid() ) {
     chroot(u3_Host.dir_c);
@@ -353,6 +357,19 @@ main(c3_i   argc,
   }
 #endif
   u3_ve_sysopt();
+
+  //  Block profiling signal, which should be delievered to exactly one thread.
+  //
+  if ( _(u3_Host.ops_u.pro) ) {
+    sigset_t set;
+
+    sigemptyset(&set);
+    sigaddset(&set, SIGPROF);
+    if ( 0 != pthread_sigmask(SIG_BLOCK, &set, NULL) ) {
+      perror("pthread_sigmask");
+      exit(1);
+    }
+  }
 
   printf("~\n");
   //  printf("welcome.\n");
