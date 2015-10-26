@@ -78,6 +78,16 @@ else
 DEBUGFLAGS=-O3
 endif
 
+# libuv version
+#LIBUV_VER=libuv_0.11
+LIBUV_VER=libuv-v1.7.5
+
+ifeq ($(LIBUV_VER),libuv_0.11)
+LIBUV_CONFIGURE_OPTIONS=--disable-dtrace
+else
+LIBUV_CONFIGURE_OPTIONS=
+endif
+
 # NOTFORCHECKIN - restore -O3
 # 	-DGHETTO \
 #   -DHUSH
@@ -86,7 +96,7 @@ CFLAGS= $(COSFLAGS) $(DEBUGFLAGS) -ffast-math \
 	-I/usr/local/include \
 	-I/opt/local/include \
 	-I$(INCLUDE) \
-	-Ioutside/libuv_0.11/include \
+	-Ioutside/$(LIBUV_VER)/include \
 	-Ioutside/anachronism/include \
 	-Ioutside/bpt \
 	-Ioutside/re2 \
@@ -360,10 +370,10 @@ VERE_DFILES=$(VERE_OFILES:%.o=.d/%.d)
 #    * Solution: make libuv not only depend on its own Makefile,
 #      but on a side effect of creating its own makefile.
 #
-LIBUV_MAKEFILE=outside/libuv_0.11/Makefile
-LIBUV_MAKEFILE2=outside/libuv_0.11/config.log
+LIBUV_MAKEFILE=outside/$(LIBUV_VER)/Makefile
+LIBUV_MAKEFILE2=outside/$(LIBUV_VER)/config.log
 
-LIBUV=outside/libuv_0.11/.libs/libuv.a
+LIBUV=outside/$(LIBUV_VER)/.libs/libuv.a
 
 LIBRE2=outside/re2/obj/libre2.a
 
@@ -395,7 +405,7 @@ all: urbit
 urbit: $(BIN)/urbit
 
 $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2):
-	cd outside/libuv_0.11 ; sh autogen.sh ; ./configure  --disable-dtrace
+	cd outside/$(LIBUV_VER) ; sh autogen.sh ; ./configure $(LIBUV_CONFIGURE_OPTIONS)
 
 # [h]act II: the plot thickens
 #
@@ -413,7 +423,7 @@ $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2):
 $(LIBUV_MAKEFILE2): $(LIBUV_MAKEFILE)
 
 $(LIBUV): $(LIBUV_MAKEFILE) $(LIBUV_MAKEFILE2)
-	$(MAKE) -C outside/libuv_0.11 all-am -j1
+	$(MAKE) -C outside/$(LIBUV_VER) all-am -j1
 
 $(LIBRE2):
 	$(MAKE) -C outside/re2 obj/libre2.a
@@ -489,7 +499,7 @@ clean:
 # 'make distclean all -jn' ∀ n>1 still does not work because it is possible
 # Make will attempt to build urbit while it is also cleaning urbit..
 distclean: clean $(LIBUV_MAKEFILE)
-	$(MAKE) -C outside/libuv_0.11 distclean
+	$(MAKE) -C outside/$(LIBUV_VER) distclean
 	$(MAKE) -C outside/re2 clean
 	$(MAKE) -C outside/ed25519 clean
 	$(MAKE) -C outside/anachronism clean
