@@ -4,7 +4,7 @@ sort: 4
 hide: true
 ---
 
-# Constitution of a digital republic: part 1, goals
+# Design of a digital republic <br /> Part I — Goals
 
 Some of us remember when the Internet was a social network.
 Today, the Internet is a modem.
@@ -13,7 +13,7 @@ It's a wonderful modem.  It connects you to all kinds of great
 online services.  Some of which are social "networks," but only
 networks in the MBA sense.  Really they're social *servers*:
 giant virtual mainframes running one hardcoded program.  1976 
-called -- it wants its acoustic coupler back.
+called — it wants its acoustic coupler back.
 
 So, you prefer 1996.  So, you wish you had your decentralized
 Internet back.  So, you don't seem alone in this.  So, we know 
@@ -34,8 +34,8 @@ against "Governments of the Industrial World, you weary giants of
 flesh and steel."
 
 Well... hindsight is 20/20.  But in hindsight, even in 1996
-things were starting to head south.  Usenet -- the brain of the
-Internet, when the Internet had a brain -- was already
+things were starting to head south.  Usenet — the brain of the
+Internet, when the Internet had a brain — was already
 disintegrating under the barbarian invasions.  And where is the
 WELL these days?  (John Perry Barlow is probably still on it.)
 
@@ -79,7 +79,7 @@ Dealing is way better than worrying.  1996 worried about the
 problem; 2016 ought to deal with it.
 
 A constitution is not a declaration.  It's not a list of ideals.
-It's more like a bridge -- an actual structure, that fails unless
+It's more like a bridge — an actual structure, that fails unless
 it stands up to genuine load.  A bridge isn't a bridge unless it
 works.  If you want a bridge, you have to build a bridge.  It
 doesn't typically happen that you set out to build something
@@ -94,7 +94,7 @@ network.  They weren't trying to, and they didn't.
 If we want a decentralized social network, we can't do it without
 rigorous engineering work.  And we can't limit our work to the
 world of code.  A decentralized network has to work not just
-technically -- but politically, economically, and socially.
+technically — but politically, economically, and socially.
 
 Where do we go from here?  How do we get back to 1996?  Admit 
 we've failed, and try again.  How else?
@@ -289,7 +289,7 @@ republic, but it certainly works and it's better than nothing.
 Thus what seems like an optimal political design: the ugly,
 centralized, young larva that's designed to molt into a
 beautiful, mature, decentralized butterfly.  And once mature, the
-larva must molt or die -- not keep growing into a gigantic,
+larva must molt or die — not keep growing into a gigantic,
 man-eating caterpillar of death.
 
 ## Economic engineering
@@ -374,8 +374,8 @@ space by giving blocks away.  You may even increase the value of
 your own position.
 
 A monopolized network is not politically healthy.  So its
-economic value is lower.  So -- if the network is properly
-designed and structured -- it can be stably demonopolized.  The
+economic value is lower.  So — if the network is properly
+designed and structured — it can be stably demonopolized.  The
 monopoly power achieved by combining large positions is smaller
 than the reputation cost of remonopolization, so centrifugal
 force dominates and the system stays decentralized.
@@ -562,4 +562,4 @@ Goals are more interesting than ideals, don't you think?
 Goals and features are also different things.  What are the
 features of a network that attempts to achieve these design
 goals?  In the next installment, we'll look at how our own
-network -- Urbit -- measures up to these yardsticks.
+network — Urbit — measures up to these yardsticks.
