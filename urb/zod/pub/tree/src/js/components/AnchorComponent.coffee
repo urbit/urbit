@@ -113,6 +113,7 @@ module.exports = query {
 
   setTitle: ->
     title = $('#cont h1').first().text() || @props.name
+    title = @props.meta.title if @props.meta?.title
     document.title = "#{title} - #{@props.path}"
 
   setPath: (href,hist) ->
