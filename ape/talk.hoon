@@ -8,7 +8,7 @@
 /=    talk-doc    
       /;  |=(a=wain (turn a |=(b=cord [%txt "? {(trip b)}"])))
       /:  /===/pub/doc/talk/help  /txt/
-!:
+::
 ::::
   ::
 [. talk sole]
@@ -1150,12 +1150,11 @@
           [[i.moves p.mor] q.mor]
         [p.mor [[p.i.moves +>.q.i.moves] q.mor]]
     =.  moves  p.rey
-    =.  q.rey  (flop q.rey)
     ?:  =(q.rey ~)  +
+    =.  q.rey  (flop q.rey)
     |-  ^+  +>
     ?~  q.rey  ra-axel
-    =+  bak=(ra-back(ost.hid p.i.q.rey) q.i.q.rey)
-    $(q.rey t.q.rey, +> bak(ost.hid ost.hid))
+    $(q.rey t.q.rey, +> (ra-back(ost.hid p.i.q.rey) q.i.q.rey))
   ::
   ++  ra-back
     |=  rad=report
@@ -1167,7 +1166,7 @@
     ^+  +>
     =+  shu=(~(get by shells) ost.hid)
     ?~  shu
-      ~&  [%ra-console-broken ost.hid ?:((~(has by sup.hid) ost.hid) %lost %unknown)]
+      ~&  [%ra-console-broken ost.hid]
       +>.$
     sh-abet:(~(sh-sole sh ~ u.shu) act)
   ::  
@@ -1947,7 +1946,7 @@
   |=  [pax=path]
   ^-  [(list move) _+>]
   ~?  !=(src.hid our.hid)  [%peer-talk-stranger src.hid]
-  :: ~&   [%talk-peer src.hid ost.hid pax]
+  ::  ~&   [%talk-peer src ost.hid pax]
   ?:  ?=([%sole *] pax)
     ?>  =(our.hid src.hid)
     ~?  (~(has by shells) ost.hid)  [%talk-peer-replaced ost.hid pax]
@@ -2027,6 +2026,7 @@
 ::
 ++  log-all-to-file
   ^-  (quip move .)
+  ?:  &  [~ .]  ::  XXX!!!!
   :_  %_  .
         log   %-  ~(urn by log)
               |=([man=span len=@ud] count:(~(got by stories) man))
@@ -2067,6 +2067,8 @@
 ::
 ++  poke-log
   |=  man=span
+  ~&  %poke-log
+
   ^-  (quip move +>)
   :-  [(log-to-file man) ~]
   +>.$(log (~(put by log) man count:(~(got by stories) man)))
