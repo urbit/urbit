@@ -29,14 +29,14 @@
 --                                                      ::
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    %gall state
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-++  axle-n  ?(axle axle-0)                              ::  upgrade path
-++  axle-0  ,[%0 pol=(map ship mast-0)]                 ::
-++  mast-0                                              ::
-  (cork mast |=(mast +<(bum (~(run by bum) seat-0))))   ::
-++  seat-0                                              ::
-  (cork seat |=(seat +<(|7 zam=(scar |7.+<))))          ::
+++  axle-n  ?(axle axle-1)                              ::  upgrade path
+++  axle-1  ,[%1 pol=(map ship mast-1)]                 ::
+++  mast-1                                              ::
+  (cork mast |=(mast +<(bum (~(run by bum) seat-1))))   ::
+++  seat-1                                              ::
+  (cork seat |=(seat +<+))                              ::
 ++  axle                                                ::  all state
-  $:  %1                                                ::  state version
+  $:  %2                                                ::  state version
       pol=(map ship mast)                               ::  apps by ship
   ==                                                    ::
 ++  gest                                                ::  subscriber data
@@ -66,7 +66,8 @@
       r=(map bone duct)                                 ::  by bone
   ==                                                    ::
 ++  seat                                                ::  agent state
-  $:  mom=duct                                          ::  control duct 
+  $:  vel=worm                                          ::  cache
+      mom=duct                                          ::  control duct 
       liv=?                                             ::  unstopped
       toc=torc                                          ::  privilege
       tyc=stic                                          ::  statistics
@@ -93,9 +94,11 @@
         eny=@uvI                                        ::  entropy
         ska=sled                                        ::  activate
     ==                                                  ::  opaque core
+~%  %gall-top  ..is  ~
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::  state machine
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  mo
+  ~%  %gall-mo  +>  ~ 
   |_  $:  $:  our=@p 
               hen=duct
               moz=(list move)
@@ -528,6 +531,7 @@
     ==
   ::
   ++  ap                                                ::  agent engine
+    ~%  %gall-ap  +>  ~
     |_  $:  $:  dap=dude
                 pry=prey
                 ost=bone
@@ -617,12 +621,13 @@
       |=([a=(each suss tang)] [hen %give %onto a])
     ::
     ++  ap-call                                         ::  call into server
+      ~/  %ap-call
       |=  [cog=term arg=vase]
       ^-  [(unit tang) _+>]
       =.  +>  ap-bowl 
-      =+  arm=(ap-farm cog)
+      =^  arm  +>.$  (ap-farm cog)
       ?:  ?=(%| -.arm)  [`p.arm +>.$]
-      =+  zem=(ap-slam cog p.arm arg)
+      =^  zem  +>.$  (ap-slam cog p.arm arg)
       ?:  ?=(%| -.zem)  [`p.zem +>.$]
       (ap-sake p.zem) 
     ::
@@ -677,13 +682,16 @@
       +(qel.ged (~(put by qel.ged) ost u.soy))
     ::
     ++  ap-farm                                         ::  produce arm
+      ~/  %ap-farm
       |=  cog=term
-      ^-  (each vase tang)
-      =+  puz=(mule |.((~(mint ut p.hav) [%noun [%cnzy cog]])))
-      ?:  ?=(%| -.puz)  [%| p.puz]
-      =+  ton=(mock [q.hav q.p.puz] ap-sled)
+      ^-  [(each vase tang) _+>]
+      =+  pyz=(mule |.((~(mint wa vel) p.hav [%cnzy cog])))
+      ?:  ?=(%| -.pyz)  
+        :_(+>.$ [%| +.pyz])
+      :_  +>.$(vel `worm`+>.pyz)
+      =+  ton=(mock [q.hav q.+<.pyz] ap-sled)
       ?-  -.ton
-        %0  [%& p.p.puz p.ton]
+        %0  [%& p.+<.pyz p.ton]
         %1  [%| (turn p.ton |=(a=* (smyt (path a))))]
         %2  [%| p.ton]
       ==
@@ -740,15 +748,17 @@
       |=([a=term b=term] `term`(cat 3 a (cat 3 '-' b)))
     ::
     ++  ap-move                                         ::  process each move
+      ~/  %ap-move
       |=  vax=vase
-      ^-  (each cove tang)
-      ?@  q.vax    [%| (ap-suck "move: invalid move (atom)")]
-      ?^  -.q.vax  [%| (ap-suck "move: invalid move (bone)")]
-      ?@  +.q.vax  [%| (ap-suck "move: invalid move (card)")]
+      ^-  [(each cove tang) _+>]
+      ?@  q.vax    :_(+>.$ [%| (ap-suck "move: invalid move (atom)")])
+      ?^  -.q.vax  :_(+>.$ [%| (ap-suck "move: invalid move (bone)")])
+      ?@  +.q.vax  :_(+>.$ [%| (ap-suck "move: invalid move (card)")])
       =+  hun=(~(get by r.zam) -.q.vax)
       ?.  (~(has by r.zam) -.q.vax) 
-        [%| (ap-suck "move: invalid card (bone {<-.q.vax>})")]
-      =+  cav=(slot 3 (spec (slot 3 vax)))
+        :_(+>.$ [%| (ap-suck "move: invalid card (bone {<-.q.vax>})")])
+      =^  pec  vel  (~(spot wa vel) 3 vax)
+      =^  cav  vel  (~(slot wa vel) 3 pec)
       ?+  +<.q.vax  
                (ap-move-pass -.q.vax +<.q.vax cav)
         %diff  (ap-move-diff -.q.vax cav)
@@ -762,36 +772,41 @@
     ::
     ++  ap-move-quit                                    ::  give quit move
       |=  [sto=bone vax=vase]
-      ^-  (each cove tang)
+      ^-  [(each cove tang) _+>]
+      :_  +>
       ?^  q.vax  [%| (ap-suck "quit: improper give")]
       [%& `cove`[sto %give `cuft`[%quit ~]]]
     ::
     ++  ap-move-diff                                    ::  give diff move
       |=  [sto=bone vax=vase]
-      =.  vax  (spec vax)
-      ^-  (each cove tang)
-      ?.  &(?=(^ q.vax) ?=(@ -.q.vax) ((sane %tas) -.q.vax))
-        [%| (ap-suck "diff: improper give")]
-      [%& sto %give %diff `cage`[-.q.vax (slot 3 (spec vax))]]
+      ^-  [(each cove tang) _+>]
+      =^  pec  vel  (~(spec wa vel) vax)
+      ?.  &(?=(^ q.pec) ?=(@ -.q.pec) ((sane %tas) -.q.pec))
+        :_(+>.$ [%| (ap-suck "diff: improper give")])
+      =^  tel  vel  (~(slot wa vel) 3 pec)
+      :_(+>.$ [%& sto %give %diff `cage`[-.q.pec tel]])
     ::
     ++  ap-move-hiss                                    ::  pass %hiss
       |=  [sto=bone vax=vase]
-      ^-  (each cove tang)
+      ^-  [(each cove tang) _+>]
       ?.  &(?=([p=* q=@ q=^] q.vax) ((sane %tas) q.q.vax))
-        [%| (ap-suck "hiss: malformed hiss ask.[%hiss wire mark cage]")]
-      =+  gaw=(slot 7 vax)
+        :_(+>.$ [%| (ap-suck "hiss: bad hiss ask.[%hiss wire mark cage]")])
+      =^  gaw  vel  (~(slot wa vel) 7 vax)
       ?.  &(?=([p=@ q=^] q.gaw) ((sane %tas) p.q.gaw))
-        [%| (ap-suck "hiss: malformed cage")]
+        :_(+>.$ [%| (ap-suck "hiss: malformed cage")])
       =+  pux=((soft path) p.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
-        [%| (ap-suck "hiss: malformed path")]
+        :_(+>.$ [%| (ap-suck "hiss: malformed path")])
+      =^  paw  vel  (~(stop wa vel) 3 gaw)
+      :_  +>.$
       :^  %&  sto  %pass
       :-  [(scot %p q.q.pry) %cay u.pux]
-      [%hiss q.q.vax [p.q.gaw (slot 3 (spec gaw))]]
+      [%hiss q.q.vax [p.q.gaw paw]]
     ::
     ++  ap-move-mess                                    ::  extract path, target
       |=  vax=vase
-      ^-  (each (trel path ship term) tang)
+      ^-  [(each (trel path ship term) tang) _+>]
+      :_  +>.$
       ?.  ?&  ?=([p=* [q=@ r=@] s=*] q.vax)
               (gte 1 (met 7 q.q.vax))
           ==
@@ -803,34 +818,39 @@
     ::
     ++  ap-move-pass                                    ::  pass general move 
       |=  [sto=bone wut=* vax=vase]
-      ^-  (each cove tang)
+      ^-  [(each cove tang) _+>]
       ?.  &(?=(@ wut) ((sane %tas) wut))
-        [%| (ap-suck "pass: malformed card")]
+        :_(+>.$ [%| (ap-suck "pass: malformed card")])
       =+  pux=((soft path) -.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
-        [%| (ap-suck "pass: malformed path")]
+        :_(+>.$ [%| (ap-suck "pass: malformed path")])
       =+  huj=(ap-vain wut)
-      ?~  huj  [%| (ap-suck "move: unknown note {(trip wut)}")]
+      ?~  huj  :_(+>.$ [%| (ap-suck "move: unknown note {(trip wut)}")])
+      =^  tel  vel  (~(slot wa vel) 3 vax)
+      :_  +>.$
       :^  %&  sto  %pass
       :-  [(scot %p q.q.pry) %inn u.pux]
-      [%meta u.huj (slop (ap-term %tas wut) (slot 3 vax))]
+      [%meta u.huj (slop (ap-term %tas wut) tel)]
     ::
     ++  ap-move-poke                                    ::  pass %poke
       |=  [sto=bone vax=vase]
-      ^-  (each cove tang)
-      =+  yep=(ap-move-mess vax)
-      ?:  ?=(%| -.yep)  yep
-      =+  gaw=(slot 7 vax)
+      ^-  [(each cove tang) _+>]
+      =^  yep  +>.$  (ap-move-mess vax)
+      ?:  ?=(%| -.yep)  :_(+>.$ yep)
+      =^  gaw  vel  (~(slot wa vel) 7 vax)
       ?.  &(?=([p=@ q=*] q.gaw) ((sane %tas) p.q.gaw))
-        [%| (ap-suck "poke: malformed cage")]
+        :_(+>.$ [%| (ap-suck "poke: malformed cage")])
+      =^  paw  vel  (~(stop wa vel) 3 gaw)
+      :_  +>.$
       :^  %&  sto  %pass
       :-  p.p.yep
-      [%send q.p.yep r.p.yep %poke p.q.gaw (slot 3 (spec gaw))]
+      [%send q.p.yep r.p.yep %poke p.q.gaw paw]
     ::
     ++  ap-move-peer                                    ::  pass %peer
       |=  [sto=bone vax=vase]
-      ^-  (each cove tang)
-      =+  yep=(ap-move-mess vax)
+      ^-  [(each cove tang) _+>]
+      =^  yep  +>.$  (ap-move-mess vax)
+      :_  +>.$
       ?:  ?=(%| -.yep)  yep
       =+  pux=((soft path) +>.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
@@ -841,8 +861,9 @@
     ::
     ++  ap-move-pull                                    ::  pass %pull
       |=  [sto=bone vax=vase]
-      ^-  (each cove tang)
-      =+  yep=(ap-move-mess vax)
+      ^-  [(each cove tang) _+>]
+      =^  yep  +>.$  (ap-move-mess vax)
+      :_  +>.$
       ?:  ?=(%| -.yep)  yep
       ?.  =(~ +>.q.vax)
         [%| (ap-suck "pull: malformed card")]
@@ -852,27 +873,31 @@
     ::
     ++  ap-move-send                                    ::  pass gall action
       |=  [sto=bone vax=vase]
-      ^-  (each cove tang)
+      ^-  [(each cove tang) _+>]
       ?.  ?&  ?=([p=* [q=@ r=@] [s=@ t=*]] q.vax)
               (gte 1 (met 7 q.q.vax))
               ((sane %tas) r.q.vax)
           ==
-        [%| (ap-suck "send: improper ask.[%send wire gill club]")]
+        :_(+>.$ [%| (ap-suck "send: improper ask.[%send wire gill club]")])
       =+  pux=((soft path) p.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
-        [%| (ap-suck "send: malformed path")]
+        :_(+>.$ [%| (ap-suck "send: malformed path")])
       ?:  ?=(%poke s.q.vax)
-        =+  gav=(spec (slot 7 vax))
+        =^  gav  vel  (~(spot wa vel) 7 vax)
         ?>  =(%poke -.q.gav)
         ?.  ?&  ?=([p=@ q=*] t.q.vax)
                 ((sane %tas) p.t.q.vax)
             ==
-          [%| (ap-suck "send: malformed poke")]
+          :_(+>.$ [%| (ap-suck "send: malformed poke")])
+        =^  vig  vel  (~(spot wa vel) 3 gav)
+        =^  geb  vel  (~(slot wa vel) 3 vig)
+        :_  +>.$
         :^  %&  sto  %pass
         :-  [(scot %p q.q.vax) %out r.q.vax u.pux]
         ^-  cote
         ::  ~&  [%ap-move-send `path`[(scot %p q.q.vax) %out r.q.vax u.pux]]
-        [%send q.q.vax r.q.vax %poke p.t.q.vax (slot 3 (spec (slot 3 gav)))]
+        [%send q.q.vax r.q.vax %poke p.t.q.vax geb]
+      :_  +>.$
       =+  cob=((soft club) [s t]:q.vax)
       ?~  cob
         [%| (ap-suck "send: malformed club")]
@@ -954,11 +979,12 @@
       =+  cug=(ap-find [-.q.vax pax])
       ?~  cug
         (ap-lame -.q.vax (ap-suck "pour: no {(trip -.q.vax)}: {<pax>}"))
+      =^  tel  vel  (~(slot wa vel) 3 vax)
       =^  cam  +>.$
           %+  ap-call  q.u.cug
           %+  slop
             !>(`path`(slag p.u.cug pax))
-          (slot 3 vax)
+          tel
       ?^  cam  (ap-lame -.q.vax u.cam)
       +>.$
     ::
@@ -1055,12 +1081,15 @@
     ::
     ++  ap-safe                                         ::  process move list
       |=  vax=vase
-      ^-  (each (list cove) tang)
-      ?~  q.vax  [%& ~]
-      ?@  q.vax  [%| (ap-suck "move: malformed list")]
-      =+  sud=(ap-move (slot 2 vax))
-      ?:  ?=(%| -.sud)  sud
-      =+  res=$(vax (slot 3 vax))
+      ^-  [(each (list cove) tang) _+>]
+      ?~  q.vax  :_(+>.$ [%& ~])
+      ?@  q.vax  :_(+>.$ [%| (ap-suck "move: malformed list")])
+      =^  hed  vel  (~(slot wa vel) 2 vax)
+      =^  sud  +>.$  (ap-move hed)
+      ?:  ?=(%| -.sud)  :_(+>.$ sud)
+      =^  tel  vel  (~(slot wa vel) 3 vax)
+      =^  res  +>.$  $(vax tel)
+      :_  +>.$
       ?:  ?=(%| -.res)  res
       [%& p.sud p.res]
     ::
@@ -1069,9 +1098,11 @@
       ^-  [(unit tang) _+>]
       ?:  ?=(@ q.vax)
         [`(ap-suck "sake: invalid product (atom)") +>.$]
-      =+  muz=(ap-safe (slot 2 vax))
+      =^  hed  vel  (~(slot wa vel) 2 vax)
+      =^  muz  +>.$  (ap-safe hed)
       ?:  ?=(%| -.muz)  [`p.muz +>.$]
-      =+  sav=(ap-save (slot 3 vax))
+      =^  tel  vel  (~(slot wa vel) 3 vax)
+      =^  sav  +>.$  (ap-save tel)
       ?:  ?=(%| -.sav)  [`p.sav +>.$]
       :-  ~
       %_  +>.$
@@ -1081,22 +1112,32 @@
     ::
     ++  ap-save                                         ::  verify core
       |=  vax=vase
-      ^-  (each vase tang)
-      ?.  (~(nest ut p.hav) %| p.vax)
+      ^-  [(each vase tang) _+>]
+      =^  gud  vel  (~(nest wa vel) p.hav p.vax)
+      :_  +>.$
+      ?.  gud
         [%| (ap-suck "invalid core")]
       [%& vax]
     ::
+    ++  ap-mong
+      ~/  %ap-mong
+      |=  [[gat=* sam=*] sky=$+(* (unit))]
+      ^-  toon
+      (mong [gat sam] sky)
+    ::
     ++  ap-slam                                         ::  virtual slam
+      ~/  %ap-slam
       |=  [cog=term gat=vase arg=vase]
-      ^-  (each vase tang)
-      =+  wiz=(mule |.((slit p.gat p.arg)))
-      ?:  ?=(%| -.wiz)
+      ^-  [(each vase tang) _+>]
+      =+  wyz=(mule |.((~(play wa vel) [%cell p.gat p.arg] [%cncl `2 `3])))
+      ?:  ?=(%| -.wyz)
         %-  =+  sam=(~(peek ut p.gat) %free 6)
             (slog >%ap-slam-mismatch< ~(duck ut p.arg) ~(duck ut sam) ~)
-        [%| (ap-suck "call: {<cog>}: type mismatch")]
-      =+  ton=(mong [q.gat q.arg] ap-sled)
+        :_(+>.$ [%| (ap-suck "call: {<cog>}: type mismatch")])
+      :_  +>.$(vel +>.wyz)
+      =+  ton=(ap-mong [q.gat q.arg] ap-sled)
       ?-  -.ton
-        %0  [%& p.wiz p.ton]
+        %0  [%& +<.wyz p.ton]
         %1  [%| (turn p.ton |=(a=* (smyt (path a))))]
         %2  [%| p.ton]
       ==
@@ -1136,6 +1177,7 @@
     --
   --
 ++  call                                                ::  request
+  ~%  %gall-call  +>   ~
   |=  [hen=duct hic=(hypo (hobo kiss-gall))]
   ^-  [p=(list move) q=_..^$]
   =>  .(q.hic ?.(?=(%soft -.q.hic) q.hic ((hard kiss-gall) p.q.hic)))
@@ -1203,11 +1245,11 @@
 ++  load                                                ::  recreate vane
   |=  old=axle-n
   ^+  ..^$
-  ?:  ?=(%1 -.old)  ..^$(all old)
+  ?:  ?=(%2 -.old)  ..^$(all old)
   %=  $
-    old  =>  |=(seat-0 `seat`+<(zam [~ zam]))
-         =>  |=(mast-0 +<(bum (~(run by bum) +>)))
-         old(- %1, pol (~(run by pol.old) .))
+    old  =>  |=(seat-1 `seat`[*worm +<])
+         =>  |=(mast-1 +<(bum (~(run by bum) +>)))
+         old(- %2, pol (~(run by pol.old) .))
   ==
 ::
 ++  scry

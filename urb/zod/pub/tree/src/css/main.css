@@ -251,12 +251,6 @@ li:before {
   transition: opacity 1s ease-in-out;
   z-index: 4;
 }
-img.logo.black {
-  content: url("https://storage.googleapis.com/urbit-extra/logo/logo-black-100x100.png");
-}
-img.logo.white {
-  content: url("https://storage.googleapis.com/urbit-extra/logo/logo-white-100x100.png");
-}
 img.logo {
   height: 2rem;
   width: 2rem;
@@ -545,57 +539,57 @@ div.post p.ib {
     font-weight: 200;
   }
 }
-.lead #body {
-  margin-top: 3rem;
-  margin-top: 0;
-}
-.lead .bar {
+.bar {
   margin-top: 2rem;
   margin-bottom: 2rem;
 }
-.lead .bar > div {
+.bar > div {
   display: inline-block;
 }
-.lead .bar a.logo {
+.bar a.logo {
   display: inline-block;
   height: 2rem;
   vertical-align: middle;
   border: none;
 }
-.lead .bar img.logo {
+.bar img.logo {
   margin-right: 18px;
   margin-top: 0;
 }
-.lead .bar ul {
+.bar ul {
   margin: 0;
   line-height: 2rem;
   display: inline-block;
 }
-.lead .bar ul li::before {
+.bar ul li::before {
   content: '';
   padding-right: none;
 }
-.lead .bar ul li {
+.bar ul li {
   display: inline-block;
   margin-bottom: 0;
   margin-right: 1rem;
   vertical-align: middle;
 }
-.lead .bar ul li a {
+.bar ul li a {
   border-bottom: none;
   text-decoration: underline;
 }
-.lead .bar ul li a h1 {
+.bar ul li a h1 {
   margin: 0;
   line-height: inherit;
   text-transform: capitalize;
   font-size: 1.2rem;
 }
-.lead .bar ul h1 {
+.bar ul h1 {
   text-transform: capitalize;
   font-size: 1rem;
   font-weight: 400;
   letter-spacing: 0.03rem;
+}
+.lead #body {
+  margin-top: 3rem;
+  margin-top: 0;
 }
 .lead h1 {
   margin-top: 1rem;
