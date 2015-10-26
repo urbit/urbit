@@ -5,6 +5,14 @@ sort: 4
 
 # Design of a digital republic <br /> Part I — Goals
 
+---
+title: Network architecture: goals
+sort: 4
+hide: true
+---
+
+# Design of a digital republic: part 1, goals
+
 Some of us remember when the Internet was a social network.
 Today, the Internet is a modem.
 
@@ -561,4 +569,5 @@ Goals are more interesting than ideals, don't you think?
 Goals and features are also different things.  What are the
 features of a network that attempts to achieve these design
 goals?  In the next installment, we'll look at how our own
-network — Urbit — measures up to these yardsticks.
+network — [Urbit](http://urbit.org) — measures up to these 
+yardsticks.
