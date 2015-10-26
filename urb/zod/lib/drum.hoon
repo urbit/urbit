@@ -127,6 +127,7 @@
   ::
 |=  [bowl drum-part]                                  ::  main drum work
 =+  (fall (~(get by bin) ost) (deft-pipe our))
+=*  dev  -
 =>  |%                                                ::  arvo structures
     ++  pear                                          ::  request
       $%  [%sole-action p=sole-action]                ::
@@ -230,7 +231,7 @@
   ?.  se-ably
     =.  .  se-adit
     [(flop moz) +>+>+<+]
-  =.  .  se-adze:se-adit
+  =.  .  se-subze:se-adze:se-adit
   :_  %_(+>+>+<+ bin (~(put by bin) ost `source`+>+<))
   ^-  (list move)
   %+  welp  (flop moz) 
@@ -240,25 +241,46 @@
 ::
 ++  se-ably  (~(has by sup) ost)                      ::  caused by console
 ++  se-adit                                           ::  update servers
-  =+  yar=(~(tap by ray))
-  |-  ^+  +>
-  ?~  yar  +>
-  =+  hig=(~(get by fur) q.i.yar) 
-  ?:  &(?=(^ hig) |(?=(~ u.hig) =(p.i.yar syd.u.u.hig)))  $(yar t.yar)
-  %=    $
-      yar  t.yar
-      +>
-    =.  +>.$  (se-text "activated app {(trip p.i.yar)}/{(trip q.i.yar)}")
-    %-  se-emit(fur (~(put by fur) q.i.yar ~))
-    [ost %conf [%drum p.i.yar q.i.yar ~] [our q.i.yar] %load our p.i.yar]
-  ==
+  ^+  .
+  %+  roll  (~(tap in ray))
+  =<  .(con +>)
+  |=  [wel=well con=_..se-adit]  ^+  con
+  =.  +>.$  con
+  =+  hig=(~(get by fur) q.wel) 
+  ?:  &(?=(^ hig) |(?=(~ u.hig) =(p.wel syd.u.u.hig)))  +>.$
+  =.  +>.$  (se-text "activated app {(trip p.wel)}/{(trip q.wel)}")
+  %-  se-emit(fur (~(put by fur) q.wel ~))
+  [ost %conf [%drum p.wel q.wel ~] [our q.wel] %load our p.wel]
 ::
 ++  se-adze                                           ::  update connections
-  =+  lee=(~(tap by eel))
-  |-  ^+  +>
-  ?~  lee  +>
-  ?:  (~(has by fug) i.lee)  $(lee t.lee)
-  $(lee t.lee, +> (se-peer i.lee))
+  ^+  .
+  %+  roll  (~(tap in eel))
+  =<  .(con +>)
+  |=  [gil=gill con=_.]  ^+  con
+  =.  +>.$  con
+  ?:  (~(has by fug) gil)
+    +>.$
+  (se-peer gil)
+::
+++  se-subze                                          ::  downdate connections
+  =<  .(dev (~(got by bin) ost))
+  =.  bin  (~(put by bin) ost dev)
+  ^+  .
+  %-  ~(rep by bin)
+  =<  .(con +>)
+  |=  [[ost=bone dev=source] con=_.]  ^+  con
+  =+  xeno=se-subze-local:%_(con ost ost, dev dev)
+  xeno(ost ost.con, dev dev.con, bin (~(put by bin) ost dev.xeno))
+::
+++  se-subze-local
+  ^+  .
+  %-  ~(rep by fug)
+  =<  .(con +>)
+  |=  [[gil=gill *] con=_.]  ^+  con
+  =.  +>.$  con
+  ?:  (~(has in eel) gil)
+    +>.$
+  (se-nuke gil)
 ::
 ++  se-aint                                           ::  ignore result
   |=  gyl=gill
@@ -495,7 +517,7 @@
     ?.  liv  
       ?:   (~(has in (deft-fish our)) gyl)
         (se-blit qit/~)
-      (se-nuke gyl) 
+      (se-nuke gyl)
     ..ta(fug (~(put by fug) gyl ``target`+<+))
   ::
   ++  ta-poke  |=(a=pear +>(..ta (se-poke gyl a)))    ::  poke gyl
@@ -556,7 +578,7 @@
       (ta-act %clr ~)
       :: .(+> (se-blit %bel ~))
     =+  pre=(dec pos.inp)
-    (ta-hom(pos.inp pre) %del pre)
+    (ta-hom %del pre)
   ::
   ++  ta-ctl                                          ::  hear control
     |=  key=@ud
@@ -596,13 +618,12 @@
             ==
         %u  ?:  =(0 pos.inp)
               ta-bel
-            %-  ta-hom(pos.inp 0, kil `(scag pos.inp buf.say.inp))
+            %-  ta-hom(kil `(scag pos.inp buf.say.inp))
             (ta-cut 0 pos.inp)
         %v  ta-bel
         %x  +>(+> se-anon)
-        %y  ?~  kil  ta-bel 
-            %-  ta-hom(pos.inp (add pos.inp (lent u.kil)))
-            (ta-cat pos.inp u.kil)
+        %y  ?~  kil  ta-bel
+            (ta-hom (ta-cat pos.inp u.kil))
     ==
   ::
   ++  ta-cru                                          ::  hear crud
@@ -653,7 +674,7 @@
       |-  ^-  @ud
       ?-  -.ted
         %del  ?:((gth pos.inp p.ted) (dec pos.inp) pos.inp)
-        %ins  ?:((lte pos.inp p.ted) +(pos.inp) pos.inp)
+        %ins  ?:((gte pos.inp p.ted) +(pos.inp) pos.inp)
         %mor  |-  ^-  @ud
               ?~  p.ted  pos.inp
               $(p.ted t.p.ted, pos.inp ^$(ted i.p.ted))
@@ -743,7 +764,7 @@
     ^+  +>
     ?^  ris
       (ta-ser txt)
-    %-  ta-hom(pos.inp (add (lent txt) pos.inp))
+    %-  ta-hom
     :-  %mor
     |-  ^-  (list sole-edit)
     ?~  txt  ~

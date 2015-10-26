@@ -763,27 +763,29 @@
     ++  sh-sane-chat                                    ::  sanitize chatter
       |=  buf=(list ,@c)
       ^-  (list sole-edit)
+      ?~  buf  ~
       =+  [inx=0 sap=0 con=0]
-      |^  run
-      ++  fix  |=(cha=@ [%mor [%del inx] [%ins inx `@c`cha] ~])
-      ++  run  ^-  (list sole-edit)
-        ?~  buf  ~
-        ?:  =(i.buf (turf '•'))
-          ?~  con  [[%del inx] run(buf t.buf)]
-          run(con 0, inx +(inx), buf t.buf) 
-        ?:  =(64 con)
-          =+  dif=(sub inx sap)
-          ?:  (lth dif 64)
-            [(fix(inx sap) (turf '•')) run(con dif)]
-          [[%ins inx (turf '•')] run(con 0, inx +(inx))]
-        ?:  =(i.buf ' ')
-          run(sap inx, inx +(inx), con +(con), buf t.buf)
-        =+  lit=run(inx +(inx), con +(con), buf t.buf)
-        ?:  |((lth i.buf 32) (gth i.buf 126))
-          [(fix '?') lit]
-        ?:  &((gte i.buf 'A') (lte i.buf 'Z'))
-          [(fix (add 32 i.buf)) lit]
-        lit
+      |^  ^-  (list sole-edit)
+          ?:  =(i.buf (turf '•'))
+            ?.  =(0 con)  newline
+            [[%del inx] ?~(t.buf ~ $(buf t.buf))]
+          ?:  =(i.buf ' ')
+            ?.  =(64 con)  advance(sap inx)
+            [(fix (turf '•')) newline]
+          ?:  =(64 con)
+            =+  dif=(sub inx sap)
+            ?:  (lth dif 64)
+              [(fix(inx sap) (turf '•')) $(con dif)]
+            [[%ins inx (turf '•')] $(con 0, inx +(inx))]
+          ?:  |((lth i.buf 32) (gth i.buf 126))
+            [(fix '?') advance]
+          ?:  &((gte i.buf 'A') (lte i.buf 'Z'))
+            [(fix (add 32 i.buf)) advance]
+          advance
+      ::
+      ++  advance  ?~(t.buf ~ $(con +(con), inx +(inx), buf t.buf))
+      ++  newline  ?~(t.buf ~ $(con 0, inx +(inx), buf t.buf))
+      ++  fix  |=(cha=@ [%mor [%del inx] [%ins inx `@c`cha] ~])  
       --
     ::
     ++  sh-sane                                         ::  sanitize input
@@ -1148,11 +1150,12 @@
           [[i.moves p.mor] q.mor]
         [p.mor [[p.i.moves +>.q.i.moves] q.mor]]
     =.  moves  p.rey
-    ?:  =(q.rey ~)  +
     =.  q.rey  (flop q.rey)
+    ?:  =(q.rey ~)  +
     |-  ^+  +>
     ?~  q.rey  ra-axel
-    $(q.rey t.q.rey, +> (ra-back(ost.hid p.i.q.rey) q.i.q.rey))
+    =+  bak=(ra-back(ost.hid p.i.q.rey) q.i.q.rey)
+    $(q.rey t.q.rey, +> bak(ost.hid ost.hid))
   ::
   ++  ra-back
     |=  rad=report
@@ -1164,7 +1167,7 @@
     ^+  +>
     =+  shu=(~(get by shells) ost.hid)
     ?~  shu
-      ~&  [%ra-console-broken ost.hid]
+      ~&  [%ra-console-broken ost.hid ?:((~(has by sup.hid) ost.hid) %lost %unknown)]
       +>.$
     sh-abet:(~(sh-sole sh ~ u.shu) act)
   ::  
@@ -1858,6 +1861,7 @@
   ::
   ++  tr-tang  ^-  tang
     %+  welp  tr-sep-tang
+    =.  wen  (sub wen (mod wen (div wen ~s0..0001)))     :: round
     =+  hed=leaf/"{(scow %uv sen)} at {(scow %da wen)}"
     =+  =<  paz=(turn (~(tap by aud)) .)
         |=([a=partner *] leaf/~(ta-full ta man a))
@@ -1943,7 +1947,7 @@
   |=  [pax=path]
   ^-  [(list move) _+>]
   ~?  !=(src.hid our.hid)  [%peer-talk-stranger src.hid]
-  ::  ~&   [%talk-peer src ost.hid pax]
+  :: ~&   [%talk-peer src.hid ost.hid pax]
   ?:  ?=([%sole *] pax)
     ?>  =(our.hid src.hid)
     ~?  (~(has by shells) ost.hid)  [%talk-peer-replaced ost.hid pax]
