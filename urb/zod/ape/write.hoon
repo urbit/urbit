@@ -26,6 +26,8 @@
 ::
 ++  made
   |=  [pax=wire @ res=gage]
+  ?.  =(our src)
+    ~|(foreign-write/[our=our src=src] !!)
   ?+  -.res  ~|(gage/-.res !!)
     %|  (mean p.res)
     %&  =-  [[ost %info / our -]~ +>.$]
