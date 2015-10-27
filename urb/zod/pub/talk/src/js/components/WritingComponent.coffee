@@ -70,6 +70,7 @@ Audience = recl
         }, @props.audi.join(" ")
 
 module.exports = recl
+  displayName: "Writing"
   set: ->
     if window.localStorage and @$writing then window.localStorage.setItem 'writing', @$writing.text()
 
@@ -124,7 +125,8 @@ module.exports = recl
     else
       audi = @state.audi    
     audi = @addCC audi
-    MessageActions.sendMessage @$writing.text().trim(),audi
+    txt = @$writing.text().trim().replace(/\xa0/g,' ')
+    MessageActions.sendMessage txt,audi
     @$writing.text('')
     @setState length:0
     @set()
@@ -141,13 +143,12 @@ module.exports = recl
     #     s.addRange r
     #     console.log r
     #   ,0
-
+  
   onKeyDown: (e) ->
     if e.keyCode is 13
       txt = @$writing.text()
       e.preventDefault()
-      if ( (txt.length > 0 and txt.length < 63) or
-           window.urb.util.isURL @$writing.text() )
+      if txt.length > 0
         @sendMessage()
       return false
     @onInput()
@@ -266,5 +267,5 @@ module.exports = recl
           onPaste: @onInput
           @onInput, @onFocus, @onBlur, @onKeyDown, @onKeyUp
         }, "")
-       (div {id:"length",className:("valid-false" if @state.lengthy)}, "#{@state.length}/62")
+       (div {id:"length"}, "#{@state.length}/64 (#{Math.ceil @state.length / 64})")
       ]
