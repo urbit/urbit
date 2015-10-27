@@ -95,6 +95,7 @@
         %tax  (joba txt/(jape (rend-work-duty p.a)))
         %app  (jobe txt/[%s q.a] src/[%s p.a] ~)
         %fat  (jobe tor/(tors p.a) taf/$(a q.a) ~)
+        %mor  a/(turn p.a spec)
         ::  %inv  (jobe ship/(jope p.a) party/[%s q.a] ~)
       ==
     ::

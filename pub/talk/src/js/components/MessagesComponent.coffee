@@ -29,6 +29,15 @@ Message = recl
     return if user.toLowerCase() is 'system'
     @props._handlePm user
 
+  renderSpeech: (speech)-> switch
+    when (con = speech.lin) or (con = speech.app) or
+         (con = speech.exp) or (con = speech.tax)
+      con.txt
+    when (con = speech.url)
+      (a {href:con.txt,target:"_blank"}, con.txt)
+    when (con = speech.mor) then con.map @renderSpeech
+    else "Unknown speech type:" + (" %"+x for x of speech).join ''
+
   render: ->
     # pendingClass = if @props.pending isnt "received" then "pending" else ""
     delivery = _.uniq _.pluck @props.thought.audience, "delivery"
@@ -50,14 +59,8 @@ Message = recl
 
     type = ['private','public']
     type = type[Number(aude.indexOf(window.util.mainStationPath(window.urb.user)) is -1)]
-
-    mess = switch
-      when (con = speech.lin) or (con = speech.app) or
-           (con = speech.exp) or (con = speech.tax)
-        con.txt
-      when (con = speech.url)
-        (a {href:con.txt,target:"_blank"}, con.txt)
-      else "Unknown speech type:" + (" %"+x for x of speech).join ''
+    
+    mess = @renderSpeech speech
     
     klass += switch
       when speech.app? then " say"
