@@ -37,7 +37,7 @@ module.exports = {
     return window.talk.MessagePersistence.get(station, start, end);
   },
   sendMessage: function(message, audience) {
-    var _audi, _message, i, k, len, ref, ref1, results, say, serial, speech, speeches, txt, v;
+    var _audi, _message, j, k, len, ref, ref1, results, say, serial, speech, speeches, txt, v;
     serial = window.util.uuid32();
     audience = _.uniq(audience);
     _audi = {};
@@ -69,7 +69,8 @@ module.exports = {
         url: message
       };
     }
-    speeches = !(((ref = speech.lin) != null ? ref.txt.length : void 0) > 64) ? [speech] : ((ref1 = speech.lin, say = ref1.say, txt = ref1.txt, ref1), txt.match(/(.{1,64}$|.{0,64} |.{64}|.+$)/g).map(function(s) {
+    speeches = !(((ref = speech.lin) != null ? ref.txt.length : void 0) > 64) ? [speech] : ((ref1 = speech.lin, say = ref1.say, txt = ref1.txt, ref1), txt.match(/(.{1,64}$|.{0,64} |.{64}|.+$)/g).map(function(s, i) {
+      say || (say = i !== 0);
       return {
         lin: {
           say: say,
@@ -78,8 +79,8 @@ module.exports = {
       };
     }));
     results = [];
-    for (i = 0, len = speeches.length; i < len; i++) {
-      speech = speeches[i];
+    for (j = 0, len = speeches.length; j < len; j++) {
+      speech = speeches[j];
       _message = {
         ship: window.urb.ship,
         thought: {
@@ -241,7 +242,6 @@ StationStore = require('../stores/StationStore.coffee');
 Member = require('./MemberComponent.coffee');
 
 Message = recl({
-  displayName: "Message",
   lz: function(n) {
     if (n < 10) {
       return "0" + n;
