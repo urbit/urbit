@@ -1872,12 +1872,12 @@
     |-  ^-  tang
     =<  ?+(. . [@ *] [.]~)  ^-  ?(tank tang)            ::  wrap single tanks
     ?+  -.sep  [>sep<]~
-      %exp  leaf/"# {(trip p.sep)}"
+      %exp  palm/[~ "#" " " ~]^~[leaf/(trip p.sep)]
       %lin  leaf/"{?:(p.sep "" "@ ")}{(trip q.sep)}"
       %non  ~
       %app  rose/[": " ~ ~]^~[leaf/"[{(trip p.sep)}]" leaf/(trip q.sep)]
       %tax  leaf/(rend-work-duty p.sep)
-      %url  leaf/"/ {(earf p.sep)}"
+      %url  palm/[~ "/" " " ~]^~[leaf/(earf p.sep)]
       %mor  ?~(p.sep ~ (weld $(p.sep t.p.sep) $(sep i.p.sep)))
       %fat  (welp (tr-rend-tors p.sep) $(sep q.sep))
     ==
@@ -1924,6 +1924,8 @@
               :+  '/'  '_' 
               =+  hok=r.p.p.p.sep
               ~!  hok
+              =-  (swag [(sub (max 64 (lent -)) 64) 64] -)
+              ^-  tape
               =<  ?~(-.hok (reel p.hok .) +:(scow %if p.hok))
               |=([a=span b=tape] ?~(b (trip a) (welp b '.' (trip a))))
     ::
