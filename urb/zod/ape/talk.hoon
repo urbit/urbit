@@ -1168,7 +1168,8 @@
     ^+  +>
     =+  shu=(~(get by shells) ost.hid)
     ?~  shu
-      ~&  [%ra-console-broken ost.hid ?:((~(has by sup.hid) ost.hid) %lost %unknown)]
+      ~&  :+  %ra-console-broken  ost.hid 
+          ?:((~(has by sup.hid) ost.hid) %lost %unknown)
       +>.$
     sh-abet:(~(sh-sole sh ~ u.shu) act)
   ::  
@@ -1311,11 +1312,7 @@
       (ra-house(general (~(put in general) ost.hid)) ost.hid)
     ?.  ?=([@ @ *] pax)
       (ra-evil %talk-bad-path)
-    =+  ^=  vab  ^-  (set ,@tas)
-        =|  vab=(set ,@tas)
-        |-  ^+  vab
-        ?:  =(0 i.pax)  vab
-        $(i.pax (rsh 3 1 i.pax), vab (~(put in vab) (end 3 1 i.pax)))
+    =+  vab=(~(gas in *(set ,@tas)) (rip 3 i.pax))
     =+  pur=(~(get by stories) i.t.pax)
     ?~  pur
       ~&  [%bad-subscribe-story-c i.t.pax]
@@ -1585,7 +1582,8 @@
       |=  riv=river
       ^+  +>
       =-  ::  ~&  [%pa-start riv lab]
-          =.  +>.$  (pa-sauce ost.hid [[%diff %talk-report %grams q.lab r.lab] ~])
+          =.  +>.$
+          (pa-sauce ost.hid [[%diff %talk-report %grams q.lab r.lab] ~])
           ?:  p.lab
             (pa-sauce ost.hid [[%quit ~] ~])
           +>.$(guests (~(put by guests) ost.hid riv))
@@ -1612,17 +1610,16 @@
         ~&  [%pa-listen-admire ~]
         (pa-sauce ost.hid [%quit ~]~)
       =+  ^=  ruv  ^-  (unit river)
-          ?:  ?=(~ pax)
-            `[[%ud ?:((lth count 64) 0 (sub count 64))] [%da (dec (bex 128))]]
-          ?:  ?=([@ ~] pax)
-            =+  say=(slay i.pax)
-            ?.  ?=([~ %$ ?(%ud %da) @] say)  ~
-            `[(point +>.say) [%da (dec (bex 128))]]
-          ?.  ?=([@ @ ~] pax)  ~
-          =+  [say=(slay i.pax) den=(slay i.t.pax)]
-          ?.  ?=([~ %$ ?(%ud %da) @] say)  ~
-          ?.  ?=([~ %$ ?(%ud %da) @] den)  ~
-          `[(point +>.say) (point +>.den)]
+          %+  biff
+            (zl:jo (turn pax ;~(biff slay |=(a=coin `(unit dime)`?~(-.a a ~)))))
+          |=  paf=(list dime)
+          ?~  paf
+            $(paf [%ud (sub (max 64 count) 64)]~)
+          ?~  t.paf
+            $(t.paf [%da (dec (bex 128))]~)
+          ?.  ?=([[?(%ud %da) @] [?(%ud %da) @] ~] paf)
+            ~
+          `[[?+(- . %ud .)]:i.paf [?+(- . %ud .)]:i.t.paf]  ::  XX types
       ::  ~&  [%pa-listen her pax ruv]
       ?~  ruv
         ~&  [%pa-listen-malformed pax]
