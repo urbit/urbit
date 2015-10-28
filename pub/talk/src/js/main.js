@@ -69,7 +69,7 @@ module.exports = {
         url: message
       };
     }
-    speeches = !(((ref = speech.lin) != null ? ref.txt.length : void 0) > 64) ? [speech] : ((ref1 = speech.lin, say = ref1.say, txt = ref1.txt, ref1), txt.match(/(.{0,64}$|.{0,64} |.{64}|.+$)/g).map(function(s) {
+    speeches = !(((ref = speech.lin) != null ? ref.txt.length : void 0) > 64) ? [speech] : ((ref1 = speech.lin, say = ref1.say, txt = ref1.txt, ref1), txt.match(/(.{1,64}$|.{0,64} |.{64}|.+$)/g).map(function(s) {
       return {
         lin: {
           say: say,

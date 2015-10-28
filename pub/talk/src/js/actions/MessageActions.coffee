@@ -61,7 +61,7 @@ module.exports =
         [speech]
       else 
         {say,txt} = speech.lin
-        txt.match(/(.{0,64}$|.{0,64} |.{64}|.+$)/g).map (s)->
+        txt.match(/(.{1,64}$|.{0,64} |.{64}|.+$)/g).map (s)->
           lin: {say, txt:
             if s.slice -1 isnt " "
               s
