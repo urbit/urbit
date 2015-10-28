@@ -4768,20 +4768,31 @@
   |=  lub=@
   =|  tez=(list ,@t)
   |-  ^+  tez
+  =+  ^=  wor
+    =+  [meg=0 i=0]
+    |-  ^-  [meg=@ i=@ end=@f]
+    =+  gam=(cut 3 [i 1] lub)
+    ?:  =(0 gam)
+      [meg i %.y]
+    ?:  =(10 gam)
+      [meg i %.n]
+    $(meg (cat 3 meg gam), i +(i))
+  ?:  end.wor
+    (flop ^+(tez [meg.wor tez]))
   ?:  =(0 lub)  (flop tez)
-  =+  ^=  meg
-      =+  meg=0
-      |-  ^-  @ud
-      =+  gam=(cut 3 [meg 1] lub)
-      ?:(|(=(10 gam) =(0 gam)) meg $(meg +(meg)))
-  =+  res=(rsh 3 +(meg) lub)
-  ?:  &(=(0 (cut 3 [meg 1] lub)) !=(0 res))
-    !!
-  $(lub res, tez [(end 3 meg lub) tez])
+  $(lub (rsh 3 +(i.wor) lub), tez [meg.wor tez])
 ::
 ++  role                                                ::  line list to atom
   |=  tez=(list ,@t)
-  (rap 3 (turn tez |=(a=@t (cat 3 a 10))))
+  =|  [our=@ i=@ud]
+  |-  ^-  @
+    ?~  tez
+      our
+    ?:  =(0 i.tez)
+      $(i +(i), tez t.tez, our (cat 3 our 10))
+    ?:  =(0 i)
+      $(i +(i), tez t.tez, our i.tez)
+    $(i +(i), tez t.tez, our (cat 3 (cat 3 our 10) i.tez))
 ::
 ++  lump                                                ::  apply patch
   |=  [don=udon src=*]
