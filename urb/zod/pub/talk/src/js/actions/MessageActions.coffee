@@ -57,11 +57,11 @@ module.exports =
       speech = url: message
 
     speeches =
-      if speech.lin?.txt.length < 64
+      if not (speech.lin?.txt.length > 64)
         [speech]
       else 
         {say,txt} = speech.lin
-        txt.match(/(.{0,64} |.{64}|.+$)/g).map (s)->
+        txt.match(/(.{0,64}$|.{0,64} |.{64}|.+$)/g).map (s)->
           lin: {say, txt:
             if s.slice -1 isnt " "
               s
@@ -83,3 +83,4 @@ module.exports =
         type:"message-send"
         message:_message
       window.talk.MessagePersistence.sendMessage _message.thought
+
