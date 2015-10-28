@@ -214,6 +214,7 @@ static void
 u3_ve_usage(c3_i argc, c3_c** argv)
 {
   c3_c *use_c[] = {"Usage: %s [options...] computer\n",
+    "-c pier       Create a new urbit in pier/\n",
     "-w name       Immediately upgrade to ~name\n",
     "-t ticket     Use ~ticket automatically\n",
     "-I galaxy     Start as ~galaxy\n",
@@ -222,8 +223,15 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-n host       Set unix hostname\n",
     "-p ames_port  Set the HTTP port to bind to\n",
     "-v            Verbose\n",
+    "-q            Quiet\n",
     "-D            Recompute from events\n",
     "-P            Profiling\n",
+    "-b            Batch create\n",
+    "-d            Daemon mode\n",
+    "-g            Set GC flag\n",
+    "-x            Exit immediately\n",
+    "-r host       Initial peer address\n",
+    "-l port       Initial peer port\n",
     "-M            Memory madness\n",
     "-f            Fuzz testing\n",
     "-k stage      Start at Hoon kernel version stage\n",
