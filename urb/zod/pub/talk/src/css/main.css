@@ -534,6 +534,8 @@ a {
 #writing {
   min-height: 1.6rem;
   min-width: 1.3rem;
+  max-width: 32rem;
+  line-height: 2rem;
   outline: none;
   padding: 0.3rem 0.1rem;
   margin-top: -0.3rem;
