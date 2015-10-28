@@ -223,9 +223,12 @@ module.exports = recl({
 
 
 },{}],4:[function(require,module,exports){
-var Member, Message, MessageActions, MessageStore, StationActions, StationStore, a, br, div, input, moment, pre, recl, ref, textarea;
+var Member, Message, MessageActions, MessageStore, StationActions, StationStore, a, br, clas, div, input, moment, pre, recl, ref, textarea,
+  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 moment = require('moment-timezone');
+
+clas = require('classnames');
 
 recl = React.createClass;
 
@@ -242,6 +245,7 @@ StationStore = require('../stores/StationStore.coffee');
 Member = require('./MemberComponent.coffee');
 
 Message = recl({
+  displayName: "Message",
   lz: function(n) {
     if (n < 10) {
       return "0" + n;
@@ -299,9 +303,8 @@ Message = recl({
     }
   },
   render: function() {
-    var attachments, aude, audi, delivery, klass, mess, name, ref1, speech, type;
+    var attachments, aude, audi, className, delivery, mainStation, name, ref1, speech, type;
     delivery = _.uniq(_.pluck(this.props.thought.audience, "delivery"));
-    klass = delivery.indexOf("received") !== -1 ? " received" : " pending";
     speech = this.props.thought.statement.speech;
     attachments = [];
     while (speech.fat != null) {
@@ -311,40 +314,29 @@ Message = recl({
     if (speech == null) {
       return;
     }
-    if (((ref1 = speech.lin) != null ? ref1.say : void 0) === false) {
-      klass += " say";
-    }
-    if (speech.url) {
-      klass += " url";
-    }
-    if (this.props.unseen === true) {
-      klass += " new";
-    }
-    if (this.props.sameAs === true) {
-      klass += " same";
-    } else {
-      klass += " first";
-    }
     name = this.props.name ? this.props.name : "";
     aude = _.keys(this.props.thought.audience);
     audi = window.util.clipAudi(aude).map(function(_audi) {
       return div({}, _audi.slice(1));
     });
-    type = ['private', 'public'];
-    type = type[Number(aude.indexOf(window.util.mainStationPath(window.urb.user)) === -1)];
-    mess = this.renderSpeech(speech);
-    klass += (function() {
+    mainStation = window.util.mainStationPath(window.urb.user);
+    type = indexOf.call(aude, mainStation) >= 0 ? 'private' : 'public';
+    className = clas({
+      message: true
+    }, (this.props.sameAs ? "same" : "first"), (delivery.indexOf("received") !== -1 ? "received" : "pending"), {
+      say: ((ref1 = speech.lin) != null ? ref1.say : void 0) === false,
+      url: speech.url,
+      'new': this.props.unseen
+    }, (function() {
       switch (false) {
         case speech.app == null:
-          return " say";
+          return "say";
         case speech.exp == null:
-          return " exp";
-        default:
-          return "";
+          return "exp";
       }
-    })();
+    })());
     return div({
-      className: "message" + klass
+      className: className
     }, [
       div({
         className: "attr"
@@ -363,7 +355,7 @@ Message = recl({
         }, this.convTime(this.props.thought.statement.date))
       ]), div({
         className: "mess"
-      }, mess, attachments.length ? div({
+      }, this.renderSpeech(speech), attachments.length ? div({
         className: "fat"
       }, attachments) : void 0)
     ]);
@@ -482,7 +474,7 @@ module.exports = recl({
     return StationActions.setAudience(audi);
   },
   render: function() {
-    var _messages, _station, lastIndex, lastSaid, messages, ref1, ref2, ref3, sources, station;
+    var _messages, _station, lastIndex, lastSaid, ref1, ref2, ref3, sources, station;
     station = this.state.station;
     _station = "~" + window.urb.ship + "/" + station;
     sources = _.clone((ref1 = (ref2 = this.state.configs[this.state.station]) != null ? ref2.sources : void 0) != null ? ref1 : []);
@@ -502,32 +494,33 @@ module.exports = recl({
     })(this), 1);
     lastIndex = this.lastSeen ? _messages.indexOf(this.lastSeen) + 1 : null;
     lastSaid = null;
-    messages = _messages.map((function(_this) {
-      return function(_message, k) {
-        var ref4;
-        if (lastIndex && lastIndex === k) {
-          _message.unseen = true;
-        }
-        if ((ref4 = _message.thought.statement.speech) != null ? ref4.app : void 0) {
-          _message.ship = "system";
-        }
-        _message.sameAs = lastSaid === _message.ship;
-        _message.station = _this.state.station;
-        _message._handlePm = _this._handlePm;
-        _message._handleAudi = _this._handleAudi;
-        lastSaid = _message.ship;
-        return React.createElement(Message, _message);
-      };
-    })(this));
     return div({
       id: "messages"
-    }, messages);
+    }, _messages.map((function(_this) {
+      return function(_message, k) {
+        var mess, nowSaid, ref4;
+        nowSaid = [_message.ship, _message.thought.audience];
+        station = _this.state.station;
+        mess = {
+          station: station,
+          _handlePm: _this._handlePm,
+          _handleAudi: _this._handleAudi,
+          unseen: lastIndex && lastIndex === k,
+          sameAs: _.isEqual(lastSaid, nowSaid)
+        };
+        lastSaid = nowSaid;
+        if ((ref4 = _message.thought.statement.speech) != null ? ref4.app : void 0) {
+          mess.ship = "system";
+        }
+        return React.createElement(Message, _.extend({}, _message, mess));
+      };
+    })(this)));
   }
 });
 
 
 
-},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":19,"../stores/StationStore.coffee":20,"./MemberComponent.coffee":3,"moment-timezone":14}],5:[function(require,module,exports){
+},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":20,"../stores/StationStore.coffee":21,"./MemberComponent.coffee":3,"classnames":10,"moment-timezone":15}],5:[function(require,module,exports){
 var Member, StationActions, StationStore, a, div, h1, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -714,7 +707,7 @@ module.exports = recl({
 
 
 
-},{"../actions/StationActions.coffee":2,"../stores/StationStore.coffee":20,"./MemberComponent.coffee":3}],6:[function(require,module,exports){
+},{"../actions/StationActions.coffee":2,"../stores/StationStore.coffee":21,"./MemberComponent.coffee":3}],6:[function(require,module,exports){
 var Audience, Member, MessageActions, MessageStore, PO, SHIPSHAPE, StationActions, StationStore, br, div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -1004,7 +997,7 @@ module.exports = recl({
 
 
 
-},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":19,"../stores/StationStore.coffee":20,"./MemberComponent.coffee":3}],7:[function(require,module,exports){
+},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":20,"../stores/StationStore.coffee":21,"./MemberComponent.coffee":3}],7:[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -1026,7 +1019,7 @@ module.exports = _.merge(new Dispatcher(), {
 
 
 
-},{"flux":10}],8:[function(require,module,exports){
+},{"flux":11}],8:[function(require,module,exports){
 $(function() {
   var $c, MessagesComponent, StationActions, StationComponent, WritingComponent, clean, rend;
   StationActions = require('./actions/StationActions.coffee');
@@ -1057,7 +1050,7 @@ $(function() {
 
 
 
-},{"./actions/StationActions.coffee":2,"./components/MessagesComponent.coffee":4,"./components/StationComponent.coffee":5,"./components/WritingComponent.coffee":6,"./move.coffee":9,"./persistence/MessagePersistence.coffee":17,"./persistence/StationPersistence.coffee":18,"./util.coffee":21}],9:[function(require,module,exports){
+},{"./actions/StationActions.coffee":2,"./components/MessagesComponent.coffee":4,"./components/StationComponent.coffee":5,"./components/WritingComponent.coffee":6,"./move.coffee":9,"./persistence/MessagePersistence.coffee":18,"./persistence/StationPersistence.coffee":19,"./util.coffee":22}],9:[function(require,module,exports){
 var ldy, setSo, so;
 
 so = {};
@@ -1159,6 +1152,56 @@ $(window).on('scroll', window.util.checkScroll);
 
 
 },{}],10:[function(require,module,exports){
+/*!
+  Copyright (c) 2015 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+/* global define */
+
+(function () {
+	'use strict';
+
+	var hasOwn = {}.hasOwnProperty;
+
+	function classNames () {
+		var classes = '';
+
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+			if (!arg) continue;
+
+			var argType = typeof arg;
+
+			if (argType === 'string' || argType === 'number') {
+				classes += ' ' + arg;
+			} else if (Array.isArray(arg)) {
+				classes += ' ' + classNames.apply(null, arg);
+			} else if (argType === 'object') {
+				for (var key in arg) {
+					if (hasOwn.call(arg, key) && arg[key]) {
+						classes += ' ' + key;
+					}
+				}
+			}
+		}
+
+		return classes.substr(1);
+	}
+
+	if (typeof module !== 'undefined' && module.exports) {
+		module.exports = classNames;
+	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
+		// register as 'classnames', consistent with npm package name
+		define('classnames', function () {
+			return classNames;
+		});
+	} else {
+		window.classNames = classNames;
+	}
+}());
+
+},{}],11:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -1170,7 +1213,7 @@ $(window).on('scroll', window.util.checkScroll);
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":11}],11:[function(require,module,exports){
+},{"./lib/Dispatcher":12}],12:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1422,7 +1465,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":12}],12:[function(require,module,exports){
+},{"./invariant":13}],13:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1477,7 +1520,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports={
 	"version": "2014j",
 	"zones": [
@@ -2067,11 +2110,11 @@ module.exports={
 		"Pacific/Pohnpei|Pacific/Ponape"
 	]
 }
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var moment = module.exports = require("./moment-timezone");
 moment.tz.load(require('./data/packed/latest.json'));
 
-},{"./data/packed/latest.json":13,"./moment-timezone":15}],15:[function(require,module,exports){
+},{"./data/packed/latest.json":14,"./moment-timezone":16}],16:[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.2.5
 //! author : Tim Wood
@@ -2474,7 +2517,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 	return moment;
 }));
 
-},{"moment":16}],16:[function(require,module,exports){
+},{"moment":17}],17:[function(require,module,exports){
 //! moment.js
 //! version : 2.10.6
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -5670,7 +5713,7 @@ moment.tz.load(require('./data/packed/latest.json'));
     return _moment;
 
 }));
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var MessageActions, send;
 
 MessageActions = require('../actions/MessageActions.coffee');
@@ -5744,7 +5787,7 @@ module.exports = {
 
 
 
-},{"../actions/MessageActions.coffee":1}],18:[function(require,module,exports){
+},{"../actions/MessageActions.coffee":1}],19:[function(require,module,exports){
 var StationActions, design, send;
 
 StationActions = require('../actions/StationActions.coffee');
@@ -5850,7 +5893,7 @@ module.exports = {
 
 
 
-},{"../actions/StationActions.coffee":2}],19:[function(require,module,exports){
+},{"../actions/StationActions.coffee":2}],20:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, MessageStore, _fetching, _last, _listening, _messages, _station, _typing, moment;
 
 moment = require('moment-timezone');
@@ -5997,7 +6040,7 @@ module.exports = MessageStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":7,"events":22,"moment-timezone":14}],20:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":7,"events":23,"moment-timezone":15}],21:[function(require,module,exports){
 var EventEmitter, StationDispatcher, StationStore, _audience, _config, _listening, _members, _station, _stations, _typing, _validAudience;
 
 EventEmitter = require('events').EventEmitter;
@@ -6197,7 +6240,7 @@ module.exports = StationStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":7,"events":22}],21:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":7,"events":23}],22:[function(require,module,exports){
 if (!window.util) {
   window.util = {};
 }
@@ -6309,7 +6352,7 @@ _.merge(window.util, {
 
 
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a

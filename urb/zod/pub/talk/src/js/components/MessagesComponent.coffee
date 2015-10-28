@@ -1,4 +1,5 @@
 moment = require 'moment-timezone'
+clas = require 'classnames'
 
 recl = React.createClass
 {div,pre,br,input,textarea,a} = React.DOM
@@ -10,6 +11,7 @@ StationStore    = require '../stores/StationStore.coffee'
 Member          = require './MemberComponent.coffee'
 
 Message = recl
+  displayName: "Message"
   lz: (n) -> if n<10 then "0#{n}" else "#{n}"
 
   convTime: (time) ->
@@ -39,42 +41,38 @@ Message = recl
     else "Unknown speech type:" + (" %"+x for x of speech).join ''
 
   render: ->
-    # pendingClass = if @props.pending isnt "received" then "pending" else ""
+    # pendingClass = clas pending: @props.pending isnt "received"
     delivery = _.uniq _.pluck @props.thought.audience, "delivery"
-    klass = if delivery.indexOf("received") isnt -1 then " received" else " pending"
     speech = @props.thought.statement.speech
     attachments = []
     while speech.fat?
       attachments.push pre {}, speech.fat.tor.tank.join("\n")
       speech = speech.fat.taf  # XX
     if !speech? then return;
-    if speech.lin?.say is false then klass += " say"
-    if speech.url then klass += " url"
-    if @props.unseen is true then klass += " new"
-    if @props.sameAs is true then klass += " same" else klass += " first"
-
+    
     name = if @props.name then @props.name else ""
     aude = _.keys @props.thought.audience
     audi = window.util.clipAudi(aude).map (_audi) -> (div {}, _audi.slice(1))
 
-    type = ['private','public']
-    type = type[Number(aude.indexOf(window.util.mainStationPath(window.urb.user)) is -1)]
-    
-    mess = @renderSpeech speech
-    
-    klass += switch
-      when speech.app? then " say"
-      when speech.exp? then " exp"
-      else ""
+    mainStation = window.util.mainStationPath(window.urb.user)
+    type = if mainStation in aude then 'private' else 'public'
+
+    className = clas {message:true},
+      (if @props.sameAs then "same" else "first"),
+      (if delivery.indexOf("received") isnt -1 then "received" else "pending"),
+      {say: speech.lin?.say is false, url: speech.url, 'new': @props.unseen},
+      switch
+        when speech.app? then "say"
+        when speech.exp? then "exp"
         
-    div {className:"message#{klass}"}, [
+    div {className}, [
         (div {className:"attr"}, [
           div {className:"type #{type}"}, ""
           (div {onClick:@_handlePm}, (React.createElement Member,{ship:@props.ship}))
           div {onClick:@_handleAudi,className:"audi"}, audi
           div {className:"time"}, @convTime @props.thought.statement.date
         ])
-        div {className:"mess"}, mess,
+        div {className:"mess"}, (@renderSpeech speech),
           if attachments.length
             div {className:"fat"}, attachments
       ]
@@ -194,14 +192,17 @@ module.exports = recl
     lastIndex = if @lastSeen then _messages.indexOf(@lastSeen)+1 else null
     lastSaid = null
 
-    messages = _messages.map (_message,k) => 
-      if lastIndex and lastIndex is k then _message.unseen = true
+    div {id: "messages"}, _messages.map (_message,k) =>
+      nowSaid = [_message.ship,_message.thought.audience]
+      {station} = @state
+      mess = {
+        station, @_handlePm, @_handleAudi,
+        unseen: lastIndex and lastIndex is k
+        sameAs: _.isEqual lastSaid, nowSaid
+      }
+      lastSaid = nowSaid
+              
       if _message.thought.statement.speech?.app
-        _message.ship = "system"
-      _message.sameAs = lastSaid is _message.ship
-      _message.station = @state.station
-      _message._handlePm = @_handlePm
-      _message._handleAudi = @_handleAudi
-      lastSaid = _message.ship
-      React.createElement Message,_message
-    div {id: "messages"}, messages
+        mess.ship = "system"
+
+      React.createElement Message, (_.extend {}, _message, mess)
