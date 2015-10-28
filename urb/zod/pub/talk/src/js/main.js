@@ -37,7 +37,7 @@ module.exports = {
     return window.talk.MessagePersistence.get(station, start, end);
   },
   sendMessage: function(message, audience) {
-    var _audi, _message, k, serial, speech, v;
+    var _audi, _message, i, k, len, ref, ref1, results, say, serial, speech, speeches, txt, v;
     serial = window.util.uuid32();
     audience = _.uniq(audience);
     _audi = {};
@@ -69,23 +69,36 @@ module.exports = {
         url: message
       };
     }
-    _message = {
-      ship: window.urb.ship,
-      thought: {
-        serial: serial,
-        audience: _audi,
-        statement: {
-          bouquet: [],
-          speech: speech,
-          date: Date.now()
+    speeches = ((ref = speech.lin) != null ? ref.txt.length : void 0) < 64 ? [speech] : ((ref1 = speech.lin, say = ref1.say, txt = ref1.txt, ref1), txt.match(/(.{0,64} |.{64}|.+$)/g).map(function(s) {
+      return {
+        lin: {
+          say: say,
+          txt: s.slice(-1 !== " ") ? s : s.slice(0, -1)
         }
-      }
-    };
-    MessageDispatcher.handleViewAction({
-      type: "message-send",
-      message: _message
-    });
-    return window.talk.MessagePersistence.sendMessage(_message.thought);
+      };
+    }));
+    results = [];
+    for (i = 0, len = speeches.length; i < len; i++) {
+      speech = speeches[i];
+      _message = {
+        ship: window.urb.ship,
+        thought: {
+          serial: window.util.uuid32(),
+          audience: _audi,
+          statement: {
+            bouquet: [],
+            speech: speech,
+            date: Date.now()
+          }
+        }
+      };
+      MessageDispatcher.handleViewAction({
+        type: "message-send",
+        message: _message
+      });
+      results.push(window.talk.MessagePersistence.sendMessage(_message.thought));
+    }
+    return results;
   }
 };
 
@@ -261,8 +274,31 @@ Message = recl({
     }
     return this.props._handlePm(user);
   },
+  renderSpeech: function(speech) {
+    var con, x;
+    switch (false) {
+      case !((con = speech.lin) || (con = speech.app) || (con = speech.exp) || (con = speech.tax)):
+        return con.txt;
+      case !(con = speech.url):
+        return a({
+          href: con.txt,
+          target: "_blank"
+        }, con.txt);
+      case !(con = speech.mor):
+        return con.map(this.renderSpeech);
+      default:
+        return "Unknown speech type:" + ((function() {
+          var results;
+          results = [];
+          for (x in speech) {
+            results.push(" %" + x);
+          }
+          return results;
+        })()).join('');
+    }
+  },
   render: function() {
-    var attachments, aude, audi, con, delivery, klass, mess, name, ref1, speech, type, x;
+    var attachments, aude, audi, delivery, klass, mess, name, ref1, speech, type;
     delivery = _.uniq(_.pluck(this.props.thought.audience, "delivery"));
     klass = delivery.indexOf("received") !== -1 ? " received" : " pending";
     speech = this.props.thought.statement.speech;
@@ -295,26 +331,7 @@ Message = recl({
     });
     type = ['private', 'public'];
     type = type[Number(aude.indexOf(window.util.mainStationPath(window.urb.user)) === -1)];
-    mess = (function() {
-      switch (false) {
-        case !((con = speech.lin) || (con = speech.app) || (con = speech.exp) || (con = speech.tax)):
-          return con.txt;
-        case !(con = speech.url):
-          return a({
-            href: con.txt,
-            target: "_blank"
-          }, con.txt);
-        default:
-          return "Unknown speech type:" + ((function() {
-            var results;
-            results = [];
-            for (x in speech) {
-              results.push(" %" + x);
-            }
-            return results;
-          })()).join('');
-      }
-    })();
+    mess = this.renderSpeech(speech);
     klass += (function() {
       switch (false) {
         case speech.app == null:
@@ -353,6 +370,7 @@ Message = recl({
 });
 
 module.exports = recl({
+  displayName: "Messages",
   pageSize: 50,
   paddingTop: 100,
   stateFromStore: function() {
@@ -402,7 +420,7 @@ module.exports = recl({
   sortedMessages: function(messages) {
     return _.sortBy(messages, function(_message) {
       _message.pending = _message.thought.audience[station];
-      return _message.thought.statement.date;
+      return _message.key;
     });
   },
   componentDidMount: function() {
@@ -696,7 +714,7 @@ module.exports = recl({
 
 
 },{"../actions/StationActions.coffee":2,"../stores/StationStore.coffee":20,"./MemberComponent.coffee":3}],6:[function(require,module,exports){
-var Member, MessageActions, MessageStore, StationActions, StationStore, br, div, input, recl, ref, textarea;
+var Audience, Member, MessageActions, MessageStore, PO, SHIPSHAPE, StationActions, StationStore, br, div, input, recl, ref, textarea;
 
 recl = React.createClass;
 
@@ -712,7 +730,34 @@ StationStore = require('../stores/StationStore.coffee');
 
 Member = require('./MemberComponent.coffee');
 
+SHIPSHAPE = /^~?([a-z]{3}|[a-z]{6}(-[a-z]{6}){0,3}|[a-z]{6}(-[a-z]{6}){3}(--[a-z]{6}(-[a-z]{6}){3})+)$/;
+
+PO = 'dozmarbinwansamlitsighidfidlissogdirwacsabwissib\nrigsoldopmodfoglidhopdardorlorhodfolrintogsilmir\nholpaslacrovlivdalsatlibtabhanticpidtorbolfosdot\nlosdilforpilramtirwintadbicdifrocwidbisdasmidlop\nrilnardapmolsanlocnovsitnidtipsicropwitnatpanmin\nritpodmottamtolsavposnapnopsomfinfonbanporworsip\nronnorbotwicsocwatdolmagpicdavbidbaltimtasmallig\nsivtagpadsaldivdactansidfabtarmonranniswolmispal\nlasdismaprabtobrollatlonnodnavfignomnibpagsopral\nbilhaddocridmocpacravripfaltodtiltinhapmicfanpat\ntaclabmogsimsonpinlomrictapfirhasbosbatpochactid\nhavsaplindibhosdabbitbarracparloddosbortochilmac\ntomdigfilfasmithobharmighinradmashalraglagfadtop\nmophabnilnosmilfopfamdatnoldinhatnacrisfotribhoc\nnimlarfitwalrapsarnalmoslandondanladdovrivbacpol\nlaptalpitnambonrostonfodponsovnocsorlavmatmipfap\n\nzodnecbudwessevpersutletfulpensytdurwepserwylsun\nrypsyxdyrnuphebpeglupdepdysputlughecryttyvsydnex\nlunmeplutseppesdelsulpedtemledtulmetwenbynhexfeb\npyldulhetmevruttylwydtepbesdexsefwycburderneppur\nrysrebdennutsubpetrulsynregtydsupsemwynrecmegnet\nsecmulnymtevwebsummutnyxrextebfushepbenmuswyxsym\nselrucdecwexsyrwetdylmynmesdetbetbeltuxtugmyrpel\nsyptermebsetdutdegtexsurfeltudnuxruxrenwytnubmed\nlytdusnebrumtynseglyxpunresredfunrevrefmectedrus\nbexlebduxrynnumpyxrygryxfeptyrtustyclegnemfermer\ntenlusnussyltecmexpubrymtucfyllepdebbermughuttun\nbylsudpemdevlurdefbusbeprunmelpexdytbyttyplevmyl\nwedducfurfexnulluclennerlexrupnedlecrydlydfenwel\nnydhusrelrudneshesfetdesretdunlernyrsebhulryllud\nremlysfynwerrycsugnysnyllyndyndemluxfedsedbecmun\nlyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes';
+
+Audience = recl({
+  displayName: "Audience",
+  onKeyDown: function(e) {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      setTimeout(function() {
+        return $('#writing').focus();
+      }, 0);
+      return false;
+    }
+  },
+  render: function() {
+    return div({
+      id: "audi",
+      className: "audi valid-" + this.props.valid,
+      contentEditable: true,
+      onKeyDown: this.onKeyDown,
+      onBlur: this.props.onBlur
+    }, this.props.audi.join(" "));
+  }
+});
+
 module.exports = recl({
+  displayName: "Writing",
   set: function() {
     if (window.localStorage && this.$writing) {
       return window.localStorage.setItem('writing', this.$writing.text());
@@ -738,21 +783,25 @@ module.exports = recl({
     return s;
   },
   getInitialState: function() {
-    return this.stateFromStore();
+    return _.extend(this.stateFromStore(), {
+      length: 0,
+      lengthy: false
+    });
   },
   typing: function(state) {
     if (this.state.typing[this.state.station] !== state) {
       return StationActions.setTyping(this.state.station, state);
     }
   },
-  _blur: function() {
+  onBlur: function() {
     this.$writing.text(this.$writing.text());
     MessageActions.setTyping(false);
     return this.typing(false);
   },
-  _focus: function() {
+  onFocus: function() {
     MessageActions.setTyping(true);
-    return this.typing(true);
+    this.typing(true);
+    return this.cursorAtEnd;
   },
   addCC: function(audi) {
     var cc, i, len, listening, s;
@@ -773,7 +822,7 @@ module.exports = recl({
     return audi;
   },
   sendMessage: function() {
-    var audi;
+    var audi, txt;
     if (this._validateAudi() === false) {
       $('#audi').focus();
       return;
@@ -784,50 +833,46 @@ module.exports = recl({
       audi = this.state.audi;
     }
     audi = this.addCC(audi);
-    MessageActions.sendMessage(this.$writing.text().trim(), audi);
-    this.$length.text("0/62");
+    txt = this.$writing.text().trim().replace(/\xa0/g, ' ');
+    MessageActions.sendMessage(txt, audi);
     this.$writing.text('');
+    this.setState({
+      length: 0
+    });
     this.set();
     return this.typing(false);
   },
-  _audiKeyDown: function(e) {
-    if (e.keyCode === 13) {
-      e.preventDefault();
-      setTimeout(function() {
-        return $('#writing').focus();
-      }, 0);
-      return false;
-    }
-  },
-  _writingKeyUp: function(e) {
+  onKeyUp: function(e) {
     if (!window.urb.util.isURL(this.$writing.text())) {
-      return this.$length.toggleClass('valid-false', this.$writing.text().length > 62);
+      return this.setState({
+        lengthy: this.$writing.text().length > 62
+      });
     }
   },
-  _writingKeyDown: function(e) {
+  onKeyDown: function(e) {
     var txt;
     if (e.keyCode === 13) {
       txt = this.$writing.text();
       e.preventDefault();
-      if ((txt.length > 0 && txt.length < 63) || window.urb.util.isURL(this.$writing.text())) {
+      if (txt.length > 0) {
         this.sendMessage();
       }
       return false;
     }
-    this._input();
+    this.onInput();
     return this.set();
   },
-  _input: function(e) {
+  onInput: function(e) {
     var length, text;
     text = this.$writing.text();
     length = text.length;
-    return this.$length.text(length + "/62");
-  },
-  _setFocus: function() {
-    return this.$writing.focus();
+    return this.setState({
+      length: length
+    });
   },
   _validateAudiPart: function(a) {
     var _a, ship;
+    a = a.trim();
     if (a.indexOf("/") !== -1) {
       _a = a.split("/");
       if (_a[1].length === 0) {
@@ -837,13 +882,12 @@ module.exports = recl({
     } else {
       ship = a;
     }
-    if (ship.length < 3) {
-      return false;
-    }
-    return true;
+    return (SHIPSHAPE.test(ship)) && _.all(ship.match(/[a-z]{3}/g), function(a) {
+      return -1 !== PO.indexOf(a);
+    });
   },
   _validateAudi: function() {
-    var a, i, len, v, valid;
+    var v;
     v = $('#audi').text();
     v = v.trim();
     if (v.length === 0) {
@@ -852,32 +896,23 @@ module.exports = recl({
     if (v.length < 5) {
       return false;
     }
-    v = v.split(" ");
-    for (i = 0, len = v.length; i < len; i++) {
-      a = v[i];
-      a = a.trim();
-      valid = this._validateAudiPart(a);
-    }
-    return valid;
+    return _.all(v.split(/\ +/), this._validateAudiPart);
   },
   _setAudi: function() {
-    var _v, k, v, valid;
+    var stan, valid;
     valid = this._validateAudi();
     StationActions.setValidAudience(valid);
     if (valid === true) {
-      v = $('#audi').text();
-      if (v.length === 0) {
-        v = window.util.mainStationPath(window.urb.user);
-      }
-      v = v.split(" ");
-      for (k in v) {
-        _v = v[k];
-        if (_v[0] !== "~") {
-          v[k] = "~" + _v;
+      stan = $('#audi').text() || window.util.mainStationPath(window.urb.user);
+      stan = (stan.split(/\ +/)).map(function(v) {
+        if (v[0] === "~") {
+          return v;
+        } else {
+          return "~" + v;
         }
-      }
-      StationActions.setAudience(v);
-      return v;
+      });
+      StationActions.setAudience(stan);
+      return stan;
     } else {
       return false;
     }
@@ -905,12 +940,11 @@ module.exports = recl({
     StationStore.addChangeListener(this._onChangeStore);
     MessageStore.addChangeListener(this._onChangeStore);
     this.$el = $(this.getDOMNode());
-    this.$length = $('#length');
     this.$writing = $('#writing');
     this.$writing.focus();
     if (this.get()) {
       this.$writing.text(this.get());
-      this._input();
+      this.onInput();
     }
     return this.interval = setInterval((function(_this) {
       return function() {
@@ -944,28 +978,25 @@ module.exports = recl({
       div({
         className: "attr"
       }, [
-        React.createElement(Member, iden), div({
-          id: "audi",
-          className: "audi valid-" + this.state.valid,
-          contentEditable: true,
-          onKeyDown: this._audiKeyDown,
+        React.createElement(Member, iden), React.createElement(Audience, {
+          audi: audi,
+          valid: this.state.valid,
           onBlur: this._setAudi
-        }, audi.join(" ")), div({
+        }), div({
           className: "time"
         }, this.getTime())
       ]), div({
         id: "writing",
         contentEditable: true,
-        onFocus: this._focus,
-        onBlur: this._blur,
-        onInput: this._input,
-        onPaste: this._input,
-        onKeyDown: this._writingKeyDown,
-        onKeyUp: this._writingKeyUp,
-        onFocus: this.cursorAtEnd
+        onPaste: this.onInput,
+        onInput: this.onInput,
+        onFocus: this.onFocus,
+        onBlur: this.onBlur,
+        onKeyDown: this.onKeyDown,
+        onKeyUp: this.onKeyUp
       }, ""), div({
         id: "length"
-      }, "0/62")
+      }, this.state.length + "/64 (" + (Math.ceil(this.state.length / 64)) + ")")
     ]);
   }
 });
@@ -5898,11 +5929,12 @@ MessageStore = _.merge(new EventEmitter, {
     return _messages[message.thought.serial] = message;
   },
   loadMessages: function(messages, last, get) {
-    var k, serial, v;
-    for (k in messages) {
-      v = messages[k];
+    var i, key, len, serial, v;
+    key = last;
+    for (i = 0, len = messages.length; i < len; i++) {
+      v = messages[i];
       serial = v.thought.serial;
-      v.key = serial;
+      v.key = key++;
       _messages[serial] = v;
     }
     if (last < _last || _last === null || get === true) {
