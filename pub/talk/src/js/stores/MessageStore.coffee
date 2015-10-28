@@ -52,9 +52,10 @@ MessageStore = _.merge new EventEmitter,{
     _messages[message.thought.serial] = message
 
   loadMessages: (messages,last,get) ->
-    for k,v of messages
+    key = last
+    for v in messages
       serial = v.thought.serial
-      v.key = serial
+      v.key = key++
       # always overwrite with new
       _messages[serial] = v
     _last = last if last < _last or _last is null or get is true

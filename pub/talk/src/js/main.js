@@ -370,6 +370,7 @@ Message = recl({
 });
 
 module.exports = recl({
+  displayName: "Messages",
   pageSize: 50,
   paddingTop: 100,
   stateFromStore: function() {
@@ -419,7 +420,7 @@ module.exports = recl({
   sortedMessages: function(messages) {
     return _.sortBy(messages, function(_message) {
       _message.pending = _message.thought.audience[station];
-      return _message.thought.statement.date;
+      return _message.key;
     });
   },
   componentDidMount: function() {
@@ -5928,11 +5929,12 @@ MessageStore = _.merge(new EventEmitter, {
     return _messages[message.thought.serial] = message;
   },
   loadMessages: function(messages, last, get) {
-    var k, serial, v;
-    for (k in messages) {
-      v = messages[k];
+    var i, key, len, serial, v;
+    key = last;
+    for (i = 0, len = messages.length; i < len; i++) {
+      v = messages[i];
       serial = v.thought.serial;
-      v.key = serial;
+      v.key = key++;
       _messages[serial] = v;
     }
     if (last < _last || _last === null || get === true) {
