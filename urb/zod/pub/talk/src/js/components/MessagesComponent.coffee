@@ -80,6 +80,7 @@ Message = recl
       ]
 
 module.exports = recl
+  displayName: "Messages"
   pageSize: 50
   paddingTop: 100
 
@@ -125,7 +126,8 @@ module.exports = recl
   sortedMessages: (messages) ->
     _.sortBy messages, (_message) -> 
           _message.pending = _message.thought.audience[station]
-          _message.thought.statement.date
+          _message.key
+          #_message.thought.statement.date
 
   componentDidMount: ->
     MessageStore.addChangeListener @_onChangeStore
