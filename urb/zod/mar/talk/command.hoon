@@ -27,6 +27,13 @@
       ^-  (unit (list ,_[(wonk *fel) (need *wit)]))
       (zl (turn (~(tap by a)) (head-rush fel)))
     ::
+    ++  ke                                              ::  callbacks
+      |*  [gar=* sef=_|.(fist)]
+      |=  jon=json
+      ^-  (unit ,_gar)
+      =-  ~!  gar  ~!  (need -)  -
+      ((sef) jon)
+    ::
     ++  as                                              ::  array as set
       :: |*(a=fist (cu sa (ar a)))  ::  XX  types
       |*  a=fist 
@@ -69,20 +76,31 @@
       %+  sear  (soft passport)
       ;~((glue fas) sym urs:ab)                         ::  XX  [a-z0-9_]{1,15}
     ::
+    ++  speeech  ?(speech [%eval p=@t] [%mor p=(list speeech)])
     ++  eval
-      |=  a=(trel ,@da bouquet ?(speech [%eval p=@t]))  ^-  statement
-      ?.  ?=(%eval -.r.a)  a
-      =+  pax=[&1:% &2:% (scot %da p.a) |3:%]
-      =-  a(r [%fat tank/- %exp p.r.a])
-      p:(mule |.([(sell (slap !>(..zuse) (rain pax p.r.a)))]~))
+      |=  a=(trel ,@da bouquet speeech)  ^-  statement
+      %=  a  r  ^-  speech
+        |-
+        ?:  ?=(%mor -.r.a)
+          [%mor (turn p.r.a |=(b=speeech ^$(r.a b)))]
+        ?.  ?=(%eval -.r.a)  r.a
+        =-  [%fat tank/- %exp p.r.a]
+        =+  pax=[&1:% &2:% (scot %da p.a) |3:%]
+        p:(mule |.([(sell (slap !>(..zuse) (rain pax p.r.a)))]~))
+      ==
     ::
     ++  stam
       ^-  $+(json (unit statement))
       %+  cu  eval
-      =-  (ot date/di bouquet/(as (ar so)) speech/(of -) ~)
+      (ot date/di bouquet/(as (ar so)) speech/spec ~)
+    ::
+    ++  spec
+      %+  ke  *speeech  |.
+      %-  of
       :~  lin/(ot say/bo txt/so ~) 
           url/(su aurf:urlp)
           eval/so
+          mor/(ar spec)
           ::  exp/(cu |=(a=cord [a ~]) so)
           ::  inv/(ot ship/(su fed:ag) party/(su urs:ab) ~)
       ==
