@@ -7,6 +7,12 @@ module.exports =
       station:station
       config:config
 
+  loadGlyphs: (glyphs) ->
+    StationDispatcher.handleServerAction
+      type: "glyphs-load"
+      station:station
+      glyphs:glyphs
+
   switchStation: (station) ->
     StationDispatcher.handleViewAction
       type:"station-switch"

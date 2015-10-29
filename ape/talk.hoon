@@ -739,6 +739,18 @@
       ?~  gaz  +>
       $(gaz t.gaz, num +(num), +> (sh-repo-gram num i.gaz))
     ::
+    ++  sh-repo-glyph                                   ::  apply binding
+      |=  nac=(jug char (set partner))
+      ^+  +>
+      %_  sh-prod
+        nak  nac
+        nik  %-  ~(gas by *(map (set partner) char))
+             =-  (zing `(list (list ,[(set partner) char]))`-)
+             %+  turn  (~(tap by nac))
+             |=  [a=char b=(set (set partner))]
+             (turn (~(tap by b)) |=(c=(set partner) [c a]))
+      ==
+    ::
     ++  sh-repo                                         ::  apply report
       |=  rad=report
       ^+  +>
@@ -746,6 +758,7 @@
       ?-  -.rad
         %cabal   (sh-repo-cabal +.rad)
         %grams   (sh-repo-grams +.rad)
+        %glyph   (sh-repo-glyph +.rad)                  ::  XX ever happens?
         %group   (sh-repo-group +.rad)
         %house   (sh-repo-house +.rad)
       ==
@@ -935,6 +948,9 @@
         =:  nak  (~(put ju nak) cha u.pan)
             nik  (~(put by nik) u.pan cha)
           ==
+        =.  ..pa
+          %-  (ra-know man.she) 
+          |=(_pa pa-abet:(pa-report glyphers %glyph nak))
         ..sh-work
       ::
       ++  invite                                        ::  %invite
@@ -1397,6 +1413,16 @@
       ::==
       &
     ::
+    ++  pa-report                                       ::  update
+      |=  [wac=(set bone) caw=report]
+      ::  ~&  [%pa-report man -.caw]
+      ^+  +>
+      ?~  wac  +>
+      =.  +>  $(wac l.wac)
+      =.  +>  $(wac r.wac)
+      ::  ~&  [%pa-report-cabal man shape]
+      (pa-sauce n.wac [%diff %talk-report caw]~)
+    ::
     ++  pa-watch-group                                  ::  subscribe presence
       |=  her=ship
       ?.  (pa-admire her)
@@ -1419,31 +1445,18 @@
         ~&  [%pa-admire-not her]
         (pa-sauce ost.hid [%quit ~]~)
       =.  glyphers  (~(put in glyphers) ost.hid)
-      ::  ~&  [%pa-watch-glyph her man shape]
-      (pa-sauce ost.hid [[%diff %talk-report %cabal shape mirrors] ~])
+      (pa-report [ost.hid ~ ~] %glyph nak)
     ::
     ++  pa-report-group                                  ::  update presence
       |=  vew=(set bone)
-      =+  ^=  reg
-          :_  remotes
-          |-  ^-  atlas
-          ?~  locals  ~
-          [[p.n.locals q.q.n.locals] $(locals l.locals) $(locals r.locals)]
-      ::  ~&  [%pa-report-group man reg]
-      |-  ^+  +>.^$
-      ?~  vew  +>.^$
-      =.  +>.^$  $(vew l.vew)
-      =.  +>.^$  $(vew r.vew)
-      (pa-sauce n.vew [[%diff %talk-report %group reg] ~])
+      %^  pa-report  vew  %group
+      :_  remotes
+      |-  ^-  atlas
+      ?~  locals  ~
+      [[p.n.locals q.q.n.locals] $(locals l.locals) $(locals r.locals)]
     ::
     ++  pa-report-cabal                                 ::  update config
-      =+  owe=cabalers
-      |-  ^+  +>
-      ?~  owe  +>
-      =.  +>  $(owe l.owe)
-      =.  +>  $(owe r.owe)
-      ::  ~&  [%pa-report-cabal man shape]
-      (pa-sauce n.owe [[%diff %talk-report %cabal shape mirrors] ~])
+      (pa-report cabalers %cabal shape mirrors)
     ::
     ++  pa-cabal
       |=  [cuz=station con=config ham=(map station config)]

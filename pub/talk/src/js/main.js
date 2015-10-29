@@ -118,6 +118,13 @@ module.exports = {
       config: config
     });
   },
+  loadGlyphs: function(glyphs) {
+    return StationDispatcher.handleServerAction({
+      type: "glyphs-load",
+      station: station,
+      glyphs: glyphs
+    });
+  },
   switchStation: function(station) {
     return StationDispatcher.handleViewAction({
       type: "station-switch",
@@ -223,7 +230,7 @@ module.exports = recl({
 
 
 },{}],4:[function(require,module,exports){
-var Member, Message, MessageActions, MessageStore, StationActions, StationStore, a, br, clas, div, input, moment, pre, recl, ref, textarea,
+var Member, Message, MessageActions, MessageStore, StationActions, StationStore, a, br, clas, div, input, moment, pre, recl, ref, span, textarea,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 moment = require('moment-timezone');
@@ -232,7 +239,7 @@ clas = require('classnames');
 
 recl = React.createClass;
 
-ref = React.DOM, div = ref.div, pre = ref.pre, br = ref.br, input = ref.input, textarea = ref.textarea, a = ref.a;
+ref = React.DOM, div = ref.div, pre = ref.pre, br = ref.br, span = ref.span, input = ref.input, textarea = ref.textarea, a = ref.a;
 
 MessageActions = require('../actions/MessageActions.coffee');
 
@@ -346,7 +353,8 @@ Message = recl({
         }, ""), div({
           onClick: this._handlePm
         }, React.createElement(Member, {
-          ship: this.props.ship
+          ship: this.props.ship,
+          glyph: this.props.glyph
         })), div({
           onClick: this._handleAudi,
           className: "audi"
@@ -355,7 +363,9 @@ Message = recl({
         }, this.convTime(this.props.thought.statement.date))
       ]), div({
         className: "mess"
-      }, this.renderSpeech(speech), attachments.length ? div({
+      }, span({
+        className: "glyph"
+      }, this.props.glyph || "*"), " ", this.renderSpeech(speech), attachments.length ? div({
         className: "fat"
       }, attachments) : void 0)
     ]);
@@ -375,7 +385,8 @@ module.exports = recl({
       station: window.util.mainStation(),
       stations: StationStore.getStations(),
       configs: StationStore.getConfigs(),
-      typing: MessageStore.getTyping()
+      typing: MessageStore.getTyping(),
+      glyph: StationStore.getGlyphMap()
     };
   },
   getInitialState: function() {
@@ -505,6 +516,7 @@ module.exports = recl({
           station: station,
           _handlePm: _this._handlePm,
           _handleAudi: _this._handleAudi,
+          glyph: _this.state.glyph[(_.keys(_message.thought.audience)).join(" ")],
           unseen: lastIndex && lastIndex === k,
           sameAs: _.isEqual(lastSaid, nowSaid)
         };
@@ -5868,14 +5880,14 @@ module.exports = {
     });
   },
   listenStation: function(station) {
-    return window.urb.bind("/ax/" + station, function(err, res) {
+    return window.urb.bind("/avx/" + station, function(err, res) {
       var ref;
       if (err || !res) {
-        console.log('/ax/ err');
+        console.log('/avx/ err');
         console.log(err);
         return;
       }
-      console.log('/ax/');
+      console.log('/avx/');
       console.log(res.data);
       if (res.data.ok === true) {
         StationActions.listeningStation(station);
@@ -5885,7 +5897,10 @@ module.exports = {
         StationActions.loadMembers(res.data.group.global);
       }
       if ((ref = res.data.cabal) != null ? ref.loc : void 0) {
-        return StationActions.loadConfig(station, res.data.cabal.loc);
+        StationActions.loadConfig(station, res.data.cabal.loc);
+      }
+      if (res.data.glyph) {
+        return StationActions.loadGlyphs(res.data.glyph);
       }
     });
   }
@@ -6041,7 +6056,7 @@ module.exports = MessageStore;
 
 
 },{"../dispatcher/Dispatcher.coffee":7,"events":23,"moment-timezone":15}],21:[function(require,module,exports){
-var EventEmitter, StationDispatcher, StationStore, _audience, _config, _listening, _members, _station, _stations, _typing, _validAudience;
+var EventEmitter, StationDispatcher, StationStore, _audience, _config, _glyphs, _listening, _members, _shpylg, _station, _stations, _typing, _validAudience;
 
 EventEmitter = require('events').EventEmitter;
 
@@ -6060,6 +6075,10 @@ _station = null;
 _config = {};
 
 _typing = {};
+
+_glyphs = {};
+
+_shpylg = {};
 
 _validAudience = true;
 
@@ -6100,6 +6119,19 @@ StationStore = _.merge(new EventEmitter, {
   },
   getConfig: function(station) {
     return _config[station];
+  },
+  getGlyph: function(station) {
+    return _shpylg[station];
+  },
+  getGlyphMap: function() {
+    return _shpylg;
+  },
+  getGlyphAudience: function(glyph) {
+    var aud, ref;
+    aud = (ref = _glyphs[glyph]) != null ? ref : [];
+    if (aud.length === 1) {
+      return aud[0];
+    }
   },
   getMember: function(ship) {
     return {
@@ -6147,6 +6179,25 @@ StationStore = _.merge(new EventEmitter, {
   },
   loadStations: function(stations) {
     return _stations = stations;
+  },
+  loadGlyphs: function(glyphs) {
+    var aud, auds, char, results;
+    _glyphs = glyphs;
+    _shpylg = {};
+    results = [];
+    for (char in glyphs) {
+      auds = glyphs[char];
+      results.push((function() {
+        var i, len, results1;
+        results1 = [];
+        for (i = 0, len = auds.length; i < len; i++) {
+          aud = auds[i];
+          results1.push(_shpylg[aud.join(" ")] = char);
+        }
+        return results1;
+      })());
+    }
+    return results;
   },
   getStations: function() {
     return _stations;
@@ -6210,6 +6261,10 @@ StationStore.dispatchToken = StationDispatcher.register(function(payload) {
       break;
     case "config-load":
       StationStore.loadConfig(action.station, action.config);
+      StationStore.emitChange();
+      break;
+    case "glyphs-load":
+      StationStore.loadGlyphs(action.glyphs);
       StationStore.emitChange();
       break;
     case "stations-load":

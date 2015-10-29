@@ -2,7 +2,7 @@ moment = require 'moment-timezone'
 clas = require 'classnames'
 
 recl = React.createClass
-{div,pre,br,input,textarea,a} = React.DOM
+{div,pre,br,span,input,textarea,a} = React.DOM
 
 MessageActions  = require '../actions/MessageActions.coffee'
 MessageStore    = require '../stores/MessageStore.coffee'
@@ -68,11 +68,15 @@ Message = recl
     div {className}, [
         (div {className:"attr"}, [
           div {className:"type #{type}"}, ""
-          (div {onClick:@_handlePm}, (React.createElement Member,{ship:@props.ship}))
+          (div {onClick:@_handlePm},
+           (React.createElement Member,{ship:@props.ship,glyph:@props.glyph}))
           div {onClick:@_handleAudi,className:"audi"}, audi
           div {className:"time"}, @convTime @props.thought.statement.date
         ])
-        div {className:"mess"}, (@renderSpeech speech),
+        
+        div {className:"mess"}, 
+          (span {className:"glyph"}, @props.glyph || "*"), " ", # XX css
+          (@renderSpeech speech)
           if attachments.length
             div {className:"fat"}, attachments
       ]
@@ -91,6 +95,7 @@ module.exports = recl
     stations:StationStore.getStations()
     configs:StationStore.getConfigs()
     typing:MessageStore.getTyping()
+    glyph:StationStore.getGlyphMap()
   }
 
   getInitialState: -> @stateFromStore()
@@ -197,6 +202,7 @@ module.exports = recl
       {station} = @state
       mess = {
         station, @_handlePm, @_handleAudi,
+        glyph: @state.glyph[(_.keys _message.thought.audience).join " "]
         unseen: lastIndex and lastIndex is k
         sameAs: _.isEqual lastSaid, nowSaid
       }
