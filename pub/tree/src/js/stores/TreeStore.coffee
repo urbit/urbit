@@ -29,7 +29,7 @@ TreeStore = _.extend EventEmitter.prototype, {
         if t isnt QUERIES[k] then throw TypeError "Wrong query type: #{k}, '#{t}'"
         data[k] = have[k]
       if query.kids
-        if have.EMPTY
+        if have.kids is false
           data.kids = {}
         else for k,sub of tree
           data.kids ?= {}
@@ -60,16 +60,7 @@ TreeStore = _.extend EventEmitter.prototype, {
       @loadValues tree[k], path+"/"+k, v
       
     if data.kids && _.isEmpty data.kids
-      old.EMPTY = true
-      #  XX why here?
-      # old.body =
-      #   gn: 'div'
-      #   c: [ {gn:'h1',  ga:{className:'error'}, c:['Error: Empty path']}
-      #        {gn:'div', c:[
-      #          {gn:'pre',  c:[@getCurr()]}
-      #          {gn:'span', c:['is either empty or does not exist.']}
-      #          # {gn:'list'}  XX handle empty snip
-      #      ] }]
+      old.kids = false
         
     _data[path] = old
 
