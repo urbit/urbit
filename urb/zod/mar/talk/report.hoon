@@ -21,6 +21,7 @@
         ?-  -.rep
           %cabal  (cabl +.rep)
           %house  a/(turn (~(tap by +.rep)) jose)
+          %glyph  ((jome |=(a=char a) nack) +.rep)
           %grams  (jobe num/(jone p.rep) tele/[%a (turn q.rep gram)] ~)
           %group  (jobe local/(grop p.rep) global/%.(q.rep (jome parn grop)) ~)
         ==
@@ -54,6 +55,7 @@
       |=(c=_[+<.a +<.b] [(a -.c) (b +.c)])
     ::
     ::
+    ++  nack  |=(a=(set (set partner)) [%a (turn (~(tap in a)) sorc)])
     ++  grop  (jome phon stas)                          ::  (map ship status)
     ++  phon  |=(a=ship (scot %p a))
     ++  stas  |=(status (jobe presence/(joce p) human/(huma q) ~))
@@ -125,10 +127,14 @@
         ham/((jome stat conf) ham)
       ==
     ::
+    ++  sorc  
+      |=  a=(set partner)  ^-  json
+      [%a (turn (~(tap in a)) |=(b=partner s/(parn b)))]
+    ::
     ++  conf
       |=  config
       %-  jobe  :~
-        sources/[%a (turn (~(tap in sources)) |=(a=partner [%s (parn a)]))]
+        sources/(sorc sources)
         caption/[%s caption]
         =-  cordon/(jobe posture/[%s -.cordon] list/[%a -] ~)
         (turn (~(tap in q.cordon)) jope)                ::  XX  jase

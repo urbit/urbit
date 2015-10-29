@@ -588,44 +588,41 @@
   --
 ::
 ++  pojo                                                ::  print json
+  =|  rez=tape
   |=  val=json
   ^-  tape
-  ?~  val  "null"
+  ?~  val  (weld "null" rez)
   ?-    -.val
       %a
-    ;:  weld
-      "["
-      =|  rez=tape
-      |-  ^+  rez
-      ?~  p.val  rez
-      $(p.val t.p.val, rez :(weld rez ^$(val i.p.val) ?~(t.p.val ~ ",")))
-      "]"
-    ==
+    :-  '['
+    =.  rez  [']' rez]
+    !.
+    ?~  p.val  rez
+    |-
+    ?~  t.p.val  ^$(val i.p.val)
+    ^$(val i.p.val, rez [',' $(p.val t.p.val)])
  ::
-      %b  ?:(p.val "true" "false")
-      %n  (trip p.val)
+      %b  (weld ?:(p.val "true" "false") rez)
+      %n  (weld (trip p.val) rez)
       %s
-    ;:  welp
-      "\""
-      %+  reel
-        (turn (trip p.val) jesc)
-      |=([p=tape q=tape] (welp +<))
-      "\""
-    ==
+    :-  '"'
+    =.  rez  ['"' rez]
+    =+  viz=(trip p.val)
+    !.
+    |-
+    ?~  viz  rez
+    (weld (jesc i.viz) $(viz t.viz))
+ ::
       %o
-    ;:  welp
-      "\{"
-      =+  viz=(~(tap by p.val) ~)
-      =|  rez=tape
-      |-  ^+  rez
-      ?~  viz  rez
-      %=    $
-          viz  t.viz
-          rez
-        :(welp rez "\"" (trip p.i.viz) "\":" ^$(val q.i.viz) ?~(t.viz ~ ","))
-      ==
-      "}"
-    ==
+    :-  '{'
+    =.  rez  ['}' rez]
+    =+  viz=(~(tap by p.val))
+    ?~  viz  rez
+    !.
+    |-  ^+  rez
+    ?~  t.viz  ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
+    =.  rez  [',' $(viz t.viz)]
+    ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
   ==
 ::
 ::

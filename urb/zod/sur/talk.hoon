@@ -51,6 +51,7 @@
       [%grams (pair ,@ud (list telegram))]              ::  beginning, thoughts
       [%group register]                                 ::  presence
       [%house shelf]                                    ::  station set
+      [%glyph (jug char (set partner))]                 ::  relevant binding
   ==                                                    ::
 ++  speech                                              ::  narrative action
   $%  [%lan p=span q=@t]                                ::  local announce
