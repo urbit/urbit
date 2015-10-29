@@ -9,6 +9,8 @@ _listening  = []
 _station    = null
 _config     = {}
 _typing     = {}
+_glyphs     = {}
+_shpylg     = {}
 
 _validAudience = true
 
@@ -38,6 +40,15 @@ StationStore = _.merge new EventEmitter,{
   getConfigs: -> _config
 
   getConfig: (station) -> _config[station]
+  
+  getGlyph: (station) -> _shpylg[station]
+  
+  getGlyphMap: -> _shpylg
+  
+  getGlyphAudience: (glyph) ->
+    aud = _glyphs[glyph] ? []
+    if aud.length is 1
+      aud[0]
 
   getMember: (ship) -> {ship:ship}
 
@@ -62,6 +73,13 @@ StationStore = _.merge new EventEmitter,{
     _stations.push(station) if _stations.indexOf(station) is -1
 
   loadStations: (stations) -> _stations = stations 
+  
+  loadGlyphs: (glyphs) ->
+    _glyphs = glyphs
+    _shpylg = {}
+    for char,auds of glyphs
+      for aud in auds
+        _shpylg[aud.join " "] = char
 
   getStations: -> _stations
 
@@ -113,6 +131,10 @@ StationStore.dispatchToken = StationDispatcher.register (payload) ->
       break
     when "config-load" #[name:'loadConfig', args:['station', 'config']]
       StationStore.loadConfig action.station,action.config
+      StationStore.emitChange()
+      break
+    when "glyphs-load" #[name:'loadConfig', args:['station', 'config']]
+      StationStore.loadGlyphs action.glyphs
       StationStore.emitChange()
       break
     when "stations-load"
