@@ -7,5 +7,6 @@ module.exports = recl
     k = "ship"
     k+= " #{@props.presence}" if @props.presence
     div {className:"iden"}, [
+      # div {}, @props.glyph || "*"
       div {className:k}, @props.ship
     ]
