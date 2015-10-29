@@ -13,37 +13,25 @@
   ::
 [. talk sole]
 =>  |%                                                  ::  data structures
-    ++  house  ,[%3 house-3]                            ::  full state
+    ++  house  ,[%4 house-4]                            ::  full state
     ++  house-any                                       ::  app history
-      $%  [%1 house-1]                                  ::  1: talk
-          [%2 house-2]                                  ::  2: talk
-          [%3 house-3]                                  ::  3: talk
-      ==                                                ::
-    ++  house-1                                         ::
-      $:  stories=(map span story)                      ::  conversations
-          general=(set bone)                            ::  meta-subscribe
-          outbox=(pair ,@ud (map ,@ud thought))         ::  urbit outbox
-          folks=(map ship human)                        ::  human identities
-          shells=(map bone shell)                       ::  interaction state
-      ==                                                ::
-    ++  house-2                                         ::
-      $:  stories=(map span story)                      ::  conversations
-          general=(set bone)                            ::  meta-subscribe
-          outbox=(pair ,@ud (map ,@ud thought))         ::  urbit outbox
-          folks=(map ship human)                        ::  human identities
-          shells=(map bone shell)                       ::  interaction state
-          log=(map span ,@ud)                           ::  logged to clay
+      $%  [%3 house-3]                                  ::  3: talk
+          [%4 house-4]                                  ::  4: talk
       ==                                                ::
     ++  house-3                                         ::
+      %+  cork  house-4  |=  house-4                    ::  modern house with
+      +<(stories (~(run by stories) story-3))           ::  old stories
+    ++  house-4                                         ::
       $:  stories=(map span story)                      ::  conversations
           general=(set bone)                            ::  meta-subscribe
           outbox=(pair ,@ud (map ,@ud thought))         ::  urbit outbox
           folks=(map ship human)                        ::  human identities
           shells=(map bone shell)                       ::  interaction state
           log=(map span ,@ud)                           ::  logged to clay
-          nik=(map (set partner) char)                  ::
-          nak=(jug char (set partner))                  ::
+          nik=(map (set partner) char)                  ::  bound station glyphs
+          nak=(jug char (set partner))                  ::  station glyph lookup
       ==                                                ::
+    ++  story-3  (cork story |=(story +<(|10 &11.+<)))  ::  missing glyphers
     ++  story                                           ::  wire content
       $:  count=@ud                                     ::  (lent grams)
           grams=(list telegram)                         ::  all history
@@ -53,9 +41,10 @@
           sequence=(map partner ,@ud)                   ::  partners heard
           shape=config                                  ::  configuration
           known=(map serial ,@ud)                       ::  messages heard
-          guests=(map bone river)                       ::  message followers
-          viewers=(set bone)                            ::  presence followers
-          owners=(set bone)                             ::  config followers
+          gramsers=(map bone river)                     ::  message followers
+          groupers=(set bone)                           ::  presence followers
+          cabalers=(set bone)                           ::  config followers
+          glyphers=(set bone)                           ::  glyph followers
       ==                                                ::
     ++  shell                                           ::  console session
       $:  her=ship                                      ::  client identity
@@ -64,7 +53,7 @@
           say=sole-share                                ::  console state
           active=(unit (set partner))                   ::  active targets
           passive=(set partner)                         ::  passive targets
-          guests=register                               ::  presence mirror
+          owners=register                               ::  presence mirror
           harbor=(map span (pair posture cord))         ::  stations mirror
           system=cabal                                  ::  config mirror
       ==                                                ::
@@ -694,15 +683,15 @@
     ++  sh-repo-group-here                              ::  update local
       |=  loc=atlas
       ^+  +>
-      =+  cul=(sh-repo-atlas-diff p.guests.she loc)
-      =.  p.guests.she  loc
+      =+  cul=(sh-repo-atlas-diff p.owners.she loc)
+      =.  p.owners.she  loc
       (sh-repo-group-diff-here "" cul)
     ::
     ++  sh-repo-group-there                             ::  update foreign
       |=  yid=(map partner atlas)
-      =+  day=(sh-repo-rogue-diff q.guests.she yid)
-      =+  dun=q.guests.she
-      =.  q.guests.she  yid
+      =+  day=(sh-repo-rogue-diff q.owners.she yid)
+      =+  dun=q.owners.she
+      =.  q.owners.she  yid
       =.  +>.$
           |-  ^+  +>.^$
           ?~  old.day  +>.^$
@@ -924,7 +913,7 @@
         |=  lix=?((set partner) char)  ^+  ..sh-work
         =<  ?~(lix (. lix) ?^(lix (. lix) (fetch-nik lix .)))
         |=  pan=(set partner)
-        =<  (sh-fact %mor (murn (sort (~(tap by q.guests.she)) aor) .))
+        =<  (sh-fact %mor (murn (sort (~(tap by q.owners.she)) aor) .))
         |=  [pon=partner alt=atlas]  ^-  (unit sole-effect)
         ?.  |(=(~ pan) (~(has in pan) pon))  ~
         =-  `[%tan rose/[", " `~]^- leaf/~(ta-full ta man.she pon) ~]
@@ -1319,10 +1308,11 @@
       (ra-evil %talk-no-story)
     =+  soy=~(. pa i.t.pax u.pur)
     =^  who  +>.$  (ra-human her)
-    =.  soy  ?.((~(has in vab) %a) soy (pa-watch:soy her))
-    =.  soy  ?.((~(has in vab) %x) soy (pa-master:soy her))
+    =.  soy  ?.((~(has in vab) %a) soy (pa-watch-group:soy her))
+    =.  soy  ?.((~(has in vab) %v) soy (pa-watch-glyph:soy her))
+    =.  soy  ?.((~(has in vab) %x) soy (pa-watch-cabal:soy her))
+    =.  soy  ?.((~(has in vab) %f) soy (pa-watch-grams:soy her t.t.pax))
     =.  soy  (pa-notify:soy her %hear who)
-    =.  soy  ?.((~(has in vab) %f) soy (pa-listen:soy her t.t.pax))
     pa-abet:soy
   ::
   ++  ra-think                                          ::  publish/review
@@ -1407,43 +1397,52 @@
       ::==
       &
     ::
-    ++  pa-watch                                        ::  watch presence
+    ++  pa-watch-group                                  ::  subscribe presence
       |=  her=ship
       ?.  (pa-admire her)
         (pa-sauce ost.hid [%quit ~]~)
-      =.  viewers  (~(put in viewers) ost.hid)
-      (pa-display ost.hid ~ ~)
+      =.  groupers  (~(put in groupers) ost.hid)
+      (pa-report-group ost.hid ~ ~)
     ::
-    ++  pa-master                                       ::  hear config
+    ++  pa-watch-cabal                                  ::  subscribe config
       |=  her=ship
       ?.  (pa-admire her)
         ~&  [%pa-admire-not her]
         (pa-sauce ost.hid [%quit ~]~)
-      =.  owners  (~(put in owners) ost.hid)
-      ::  ~&  [%pa-master her man shape]
+      =.  cabalers  (~(put in cabalers) ost.hid)
+      ::  ~&  [%pa-watch-cabal her man shape]
       (pa-sauce ost.hid [[%diff %talk-report %cabal shape mirrors] ~])
     ::
-    ++  pa-display                                      ::  update presence
+    ++  pa-watch-glyph                                  ::  subscribe config
+      |=  her=ship
+      ?.  (pa-admire her)
+        ~&  [%pa-admire-not her]
+        (pa-sauce ost.hid [%quit ~]~)
+      =.  glyphers  (~(put in glyphers) ost.hid)
+      ::  ~&  [%pa-watch-glyph her man shape]
+      (pa-sauce ost.hid [[%diff %talk-report %cabal shape mirrors] ~])
+    ::
+    ++  pa-report-group                                  ::  update presence
       |=  vew=(set bone)
       =+  ^=  reg
           :_  remotes
           |-  ^-  atlas
           ?~  locals  ~
           [[p.n.locals q.q.n.locals] $(locals l.locals) $(locals r.locals)]
-      ::  ~&  [%pa-display man reg]
+      ::  ~&  [%pa-report-group man reg]
       |-  ^+  +>.^$
       ?~  vew  +>.^$
       =.  +>.^$  $(vew l.vew)
       =.  +>.^$  $(vew r.vew)
       (pa-sauce n.vew [[%diff %talk-report %group reg] ~])
     ::
-    ++  pa-monitor                                      ::  update config
-      =+  owe=owners
+    ++  pa-report-cabal                                 ::  update config
+      =+  owe=cabalers
       |-  ^+  +>
       ?~  owe  +>
       =.  +>  $(owe l.owe)
       =.  +>  $(owe r.owe)
-      ::  ~&  [%pa-monitor man shape]
+      ::  ~&  [%pa-report-cabal man shape]
       (pa-sauce n.owe [[%diff %talk-report %cabal shape mirrors] ~])
     ::
     ++  pa-cabal
@@ -1453,7 +1452,7 @@
       =.  mirrors  (~(put by mirrors) cuz con)
       ?:  =(mirrors old)
         +>.$
-      pa-monitor 
+      pa-report-cabal 
     ::
     ++  pa-diff-talk-report                             ::  subscribed update
       |=  [cuz=station rad=report]
@@ -1473,7 +1472,7 @@
     ::
     ++  pa-quit                                         ::  stop subscription
       |=  tay=partner
-      pa-monitor(sources.shape (~(del in sources.shape) tay))
+      pa-report-cabal(sources.shape (~(del in sources.shape) tay))
     ::
     ++  pa-sauce                                        ::  send backward
       |=  [ost=bone cub=(list card)]
@@ -1531,14 +1530,15 @@
       =.  +>.$  (pa-acquire p.dif)
       =.  +>.$  (pa-abjure q.dif)
       =.  shape  cof
-      pa-monitor
+      pa-report-cabal
     ::
     ++  pa-cancel                                       ::  unsubscribe from
       ~&  [%pa-cancel ost.hid]
       %_  .
-        guests  (~(del by guests) ost.hid)
-        viewers  (~(del in viewers) ost.hid)
-        owners  (~(del in owners) ost.hid)
+        gramsers  (~(del by gramsers) ost.hid)
+        groupers  (~(del in groupers) ost.hid)
+        glyphers  (~(del in glyphers) ost.hid)
+        cabalers  (~(del in cabalers) ost.hid)
       ==
     ::
     ++  pa-notify                                       ::  local presence
@@ -1549,7 +1549,7 @@
             (~(del by locals) her)
           (~(put by locals) her now.hid saz)
       ?:  =(nol locals)  +>.$
-      (pa-display(locals nol) viewers)
+      (pa-report-group(locals nol) groupers)
     ::
     ++  pa-remind                                       ::  remote presence
       |=  [tay=partner loc=atlas rem=(map partner atlas)]
@@ -1576,7 +1576,7 @@
       ?.  |(?=(~ gub) !=(buk u.gub))
         +>.$
       =.  remotes  (~(put by remotes) tay buk)
-      (pa-display viewers)
+      (pa-report-group groupers)
     ::
     ++  pa-start                                        ::  start stream
       |=  riv=river
@@ -1586,7 +1586,7 @@
           (pa-sauce ost.hid [[%diff %talk-report %grams q.lab r.lab] ~])
           ?:  p.lab
             (pa-sauce ost.hid [[%quit ~] ~])
-          +>.$(guests (~(put by guests) ost.hid riv))
+          +>.$(gramsers (~(put by gramsers) ost.hid riv))
       ^=  lab
       =+  [end=count gaz=grams dun=| zeg=*(list telegram)]
       |-  ^-  (trel ,? ,@ud (list telegram))
@@ -1603,11 +1603,11 @@
         [dun end zeg]
       $(end (dec end), gaz t.gaz, zeg [i.gaz zeg])
     ::
-    ++  pa-listen                                       ::  subscribe
+    ++  pa-watch-grams                                  ::  subscribe messages
       |=  [her=ship pax=path]
       ^+  +>
       ?.  (pa-admire her)
-        ~&  [%pa-listen-admire ~]
+        ~&  [%pa-watch-grams-admire ~]
         (pa-sauce ost.hid [%quit ~]~)
       =+  ^=  ruv  ^-  (unit river)
           %+  biff
@@ -1620,38 +1620,38 @@
           ?.  ?=([[?(%ud %da) @] [?(%ud %da) @] ~] paf)
             ~
           `[[?+(- . %ud .)]:i.paf [?+(- . %ud .)]:i.t.paf]  ::  XX types
-      ::  ~&  [%pa-listen her pax ruv]
+      ::  ~&  [%pa-watch-grams her pax ruv]
       ?~  ruv
-        ~&  [%pa-listen-malformed pax]
+        ~&  [%pa-watch-grams-malformed pax]
         (pa-sauce ost.hid [%quit ~]~)
       (pa-start u.ruv)
     ::
-    ++  pa-refresh                                      ::  update to guests
+    ++  pa-refresh                                      ::  update to listeners
       |=  [num=@ud gam=telegram]
       ^+  +>
       =+  ^=  moy
           |-  ^-  (pair (list bone) (list move))
-          ?~  guests  [~ ~]
-          ::  ~&  [%pa-refresh num n.guests]
-          =+  lef=$(guests l.guests)
-          =+  rit=$(guests r.guests)
+          ?~  gramsers  [~ ~]
+          ::  ~&  [%pa-refresh num n.gramsers]
+          =+  lef=$(gramsers l.gramsers)
+          =+  rit=$(gramsers r.gramsers)
           =+  old=[p=(welp p.lef p.rit) q=(welp q.lef q.rit)]
-          ?:  ?-  -.q.q.n.guests                        ::  after the end
-                %ud  (lte p.q.q.n.guests num)
-                %da  (lte p.q.q.n.guests p.r.q.gam)
+          ?:  ?-  -.q.q.n.gramsers                        ::  after the end
+                %ud  (lte p.q.q.n.gramsers num)
+                %da  (lte p.q.q.n.gramsers p.r.q.gam)
               ==
-            [[p.n.guests p.old] [[p.n.guests %quit ~] q.old]]
-          ?:  ?-  -.p.q.n.guests                        ::  before the start
-                %ud  (gth p.p.q.n.guests num)
-                %da  (gth p.p.q.n.guests p.r.q.gam)
+            [[p.n.gramsers p.old] [[p.n.gramsers %quit ~] q.old]]
+          ?:  ?-  -.p.q.n.gramsers                        ::  before the start
+                %ud  (gth p.p.q.n.gramsers num)
+                %da  (gth p.p.q.n.gramsers p.r.q.gam)
               ==
             old
           :-  p.old
-          [[p.n.guests %diff %talk-report %grams num gam ~] q.old]
+          [[p.n.gramsers %diff %talk-report %grams num gam ~] q.old]
       =.  moves  (welp q.moy moves)
       |-  ^+  +>.^$
       ?~  p.moy  +>.^$
-      $(p.moy t.p.moy, guests (~(del by guests) i.p.moy))
+      $(p.moy t.p.moy, gramsers (~(del by gramsers) i.p.moy))
     ::
     ++  pa-lesson                                       ::  learn multiple
       |=  gaz=(list telegram)
@@ -2081,14 +2081,14 @@
   +>.$(log (~(del by log) man))
 ::
 ++  prep
-  |=  [old=(unit house-any)]
-  ^-  (quip move +>)
+  |=  old=(unit house-any)
+  ^-  (quip move ..prep)
   ?~  old
     ra-abet:ra-init:ra
   |-
   ?-  -.u.old
-    %1  $(u.old [%2 stories general outbox folks shells ~]:u.old)
-    %2  $(u.old [%3 stories general outbox folks shells log ~ ~]:u.old)
-    %3  [~ +>.^$(+<+ u.old)]
+    %4  [~ ..prep(+<+ u.old)]
+    %3  =<  ^$(-.u.old %4, stories.u.old (~(run by stories.u.old) .))
+        |=(story-3 `story`+<(cabalers [cabalers glyphers=*(set bone)]))
   ==
 --
