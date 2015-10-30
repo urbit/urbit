@@ -349,8 +349,9 @@ Message = recl({
         className: "attr"
       }, [
         div({
-          className: "type " + type
-        }, ""), div({
+          className: "type " + type,
+          "data-glyph": this.props.glyph || "*"
+        }), div({
           onClick: this._handlePm
         }, React.createElement(Member, {
           ship: this.props.ship,
@@ -363,9 +364,7 @@ Message = recl({
         }, this.convTime(this.props.thought.statement.date))
       ]), div({
         className: "mess"
-      }, span({
-        className: "glyph"
-      }, this.props.glyph || "*"), " ", this.renderSpeech(speech), attachments.length ? div({
+      }, this.renderSpeech(speech), attachments.length ? div({
         className: "fat"
       }, attachments) : void 0)
     ]);

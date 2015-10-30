@@ -67,7 +67,7 @@ Message = recl
         
     div {className}, [
         (div {className:"attr"}, [
-          div {className:"type #{type}"}, ""
+          div {className:"type #{type}", "data-glyph": @props.glyph || "*"}
           (div {onClick:@_handlePm},
            (React.createElement Member,{ship:@props.ship,glyph:@props.glyph}))
           div {onClick:@_handleAudi,className:"audi"}, audi
@@ -75,7 +75,6 @@ Message = recl
         ])
         
         div {className:"mess"}, 
-          (span {className:"glyph"}, @props.glyph || "*"), " ", # XX css
           (@renderSpeech speech)
           if attachments.length
             div {className:"fat"}, attachments
