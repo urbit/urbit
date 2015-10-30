@@ -1204,6 +1204,7 @@
     ::
     ++  show-login-page
       |=  ses=(unit hole)  ^-  (each pest ,_done)
+      %-  (slog leaf/"Login code for {(scow %p our)} is: {(trip load-secret)}" ~)
       ?.  ?=($|(~ [~ %html]) p.pok)
         [%& %red ~]
       ?~  ses
