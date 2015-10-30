@@ -888,6 +888,17 @@
           ole
         [new num]
       ::
+      ++  set-glyph
+        |=  [cha=char lix=(set partner)]
+        =:  nik  (~(put by nik) lix cha)
+            nak  (~(put ju nak) cha lix)
+          ==
+        %_    ..sh-work
+            ..pa
+          %-  (ra-know man.she) 
+          |=(_pa pa-abet:(pa-report glyphers %glyph nak))
+        ==
+      ::
       ++  join                                          ::  %join
         |=  lix=(set partner)
         ^+  ..sh-work
@@ -895,10 +906,7 @@
           =+  (~(get by nik) lix)
           ?^  -  (sh-note "has glyph {<u>}")
           =+  cha=(glyph (mug lix))
-          =:  nik  (~(put by nik) lix cha)
-              nak  (~(put ju nak) cha lix)
-            ==
-          (sh-note "new glyph {<cha>}")
+          (sh-note:(set-glyph cha lix) "new glyph {<cha>}")
         =+  loc=loc.system.she
         %^  sh-tell  %design  man.she
         :-  ~
@@ -944,14 +952,7 @@
         ?~  pan  $(pan [~ ?~(active.she passive.she u.active.she)])
         =+  ole=(~(get by nik) u.pan)
         ?:  =(ole [~ cha])  ..sh-work
-        =.  nak  ?~(ole nak (~(del ju nak) u.ole u.pan))
-        =:  nak  (~(put ju nak) cha u.pan)
-            nik  (~(put by nik) u.pan cha)
-          ==
-        =.  ..pa
-          %-  (ra-know man.she) 
-          |=(_pa pa-abet:(pa-report glyphers %glyph nak))
-        ..sh-work
+        (sh-note:(set-glyph cha u.pan) "bound {<cha>} {<u.pan>}")
       ::
       ++  invite                                        ::  %invite
         |=  [nom=span tal=(list partner)]
