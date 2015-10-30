@@ -29,7 +29,12 @@
     ;title: Talk
   ==
   ;body
-    ;div#c;
+    ;div#c
+      ;div#station-container;
+      ;div#messages-container;
+      ;div#writing-container;
+      ;div#scrolling: BOTTOM
+    ==
     ;script(type "text/javascript", src "/home/pub/talk/src/js/main.js");
   ==
 ==
