@@ -1032,7 +1032,7 @@ module.exports = _.merge(new Dispatcher(), {
 
 },{"flux":11}],8:[function(require,module,exports){
 $(function() {
-  var $c, MessagesComponent, StationActions, StationComponent, WritingComponent, clean, rend;
+  var $c, MessagesComponent, StationActions, StationComponent, WritingComponent, rend;
   StationActions = require('./actions/StationActions.coffee');
   rend = React.render;
   window.talk = {};
@@ -1045,15 +1045,6 @@ $(function() {
   MessagesComponent = require('./components/MessagesComponent.coffee');
   WritingComponent = require('./components/WritingComponent.coffee');
   $c = $('#c');
-  clean = function() {
-    React.unmountComponentAtNode($('#station-container')[0]);
-    React.unmountComponentAtNode($('#messages-container')[0]);
-    return React.unmountComponentAtNode($('#writing-container')[0]);
-  };
-  $c.append("<div id='station-container'></div>");
-  $c.append("<div id='messages-container'></div>");
-  $c.append("<div id='writing-container'></div>");
-  $c.append("<div id='scrolling'>BOTTOM</div>");
   rend(React.createElement(StationComponent, {}), $('#station-container')[0]);
   rend(React.createElement(MessagesComponent, {}), $('#messages-container')[0]);
   return rend(React.createElement(WritingComponent, {}), $('#writing-container')[0]);
