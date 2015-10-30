@@ -25,15 +25,11 @@ $(() ->
 
   $c = $('#c')
 
-  clean = ->
-    React.unmountComponentAtNode $('#station-container')[0]
-    React.unmountComponentAtNode $('#messages-container')[0]
-    React.unmountComponentAtNode $('#writing-container')[0]
+  # clean = ->  # ??
+  #   React.unmountComponentAtNode $('#station-container')[0]
+  #   React.unmountComponentAtNode $('#messages-container')[0]
+  #   React.unmountComponentAtNode $('#writing-container')[0]
 
-  $c.append "<div id='station-container'></div>"
-  $c.append "<div id='messages-container'></div>"
-  $c.append "<div id='writing-container'></div>"
-  $c.append "<div id='scrolling'>BOTTOM</div>"
   rend (React.createElement(StationComponent, {})),$('#station-container')[0]
   rend (React.createElement(MessagesComponent, {})),$('#messages-container')[0]
   rend (React.createElement(WritingComponent, {})),$('#writing-container')[0]
