@@ -40,12 +40,12 @@ ifneq ($(UNAME),FreeBSD)
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ -O3 -L/usr/local/lib -L/opt/local/lib
+CLD=g++ -O3 -L/usr/local/lib -L/opt/local/lib -L/usr/local/opt/openssl/lib
 else
 CC=cc
 CXX=c++
 CXXFLAGS=$(CFLAGS)
-CLD=c++ -O3 -L/usr/local/lib -L/opt/local/lib
+CLD=c++ -O3 -L/usr/local/lib -L/opt/local/lib -L/usr/local/opt/openssl/lib
 endif
 
 ifeq ($(OS),osx)
@@ -95,6 +95,7 @@ CFLAGS= $(COSFLAGS) $(DEBUGFLAGS) -ffast-math \
 	-funsigned-char \
 	-I/usr/local/include \
 	-I/opt/local/include \
+  -I/usr/local/opt/openssl/include \
 	-I$(INCLUDE) \
 	-Ioutside/$(LIBUV_VER)/include \
 	-Ioutside/anachronism/include \
