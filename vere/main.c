@@ -354,7 +354,7 @@ report(void)
   printf("sigsegv: %d.%d\n", (libsigsegv_version >> 8) & 0xff, libsigsegv_version & 0xff);
   printf("openssl: %s\n", SSLeay_version(SSLEAY_VERSION));
   printf("curses: %s\n", curses_version());
-  //  libuv -- add when it becomes an external dependency
+  printf("libuv: %s\n", uv_version_string());
 }
 
 c3_i
