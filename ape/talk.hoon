@@ -1748,7 +1748,7 @@
     ^-  tape
     ?:  =(p.one our.hid)
       ?:  =(q.one man)
-        "="
+        ":"
       ['%' (trip q.one)]
     ?:  =(p.one (sein our.hid))
       ['/' (trip q.one)]
@@ -1841,16 +1841,24 @@
   ++  te-whom                                           ::  render sender
     (~(ta-show ta man (need te-best)) ~ te-maud)
   ::
+  ++  ta-dire                                           ::  direct message
+    |=  pan=partner  ^-  ?
+    ?&  ?=(& -.pan)
+        =(p.p.pan our.hid)
+    ::
+        =+  sot=(~(get by stories) q.p.pan)
+        &(?=(^ sot) ?=(%brown p.cordon.shape.u.sot))
+    ==
+  ::
   ++  te-pref                                           ::  audience glyph
     ^-  tape
     =+  cha=(~(get by nik) lix)
     ?^  cha  ~[u.cha ' ']
-    ?.  ?=([[& ^] ~ ~] lix)  "* "
-    =+  sta=p.n.lix
-    =+  sot=(~(get by stories) q.sta)
-    ?:  &(=(p.sta our.hid) ?=(^ sot) ?=(%brown p.cordon.shape.u.sot))
+    ?.  (lien (~(tap by lix)) ta-dire)
+      "* "
+    ?:  ?=([[& ^] ~ ~] lix)
       ": "
-    "* "
+    "; "
   --
 ::
 ++  tr                                                  ::  telegram renderer
@@ -1944,7 +1952,10 @@
         %lin
       =+  txt=(trip q.sep)
       ?:  p.sep
-        (weld ~(te-pref te man tr-pals) txt)
+        =+  pal=tr-pals
+        =.  pal  ?:  =(who our.hid)  pal
+                 (~(del in pal) [%& who (main who)])
+        (weld ~(te-pref te man pal) txt)
       ?:  oug
         (weld "@ " txt)
       (weld " " txt)
