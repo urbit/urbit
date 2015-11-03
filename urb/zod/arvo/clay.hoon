@@ -1,6 +1,15 @@
 !:
 ::  clay (4c), revision control
 ::
+::  This is split in three top-level sections:  structure definitions, main
+::  logic, and arvo interface.
+::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::
+::  Here are the structures.  `++raft` is the formal arvo state.  It's also
+::  worth noting that many of the clay-related structures are defined in zuse.
+::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |=  pit=vase
 =>  |%
 ++  cane                                                ::  change set
@@ -129,11 +138,55 @@
               mim=(map path mime)                       ::  mime cache
           ==                                            ::
 --  =>
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::              section 4cA, filesystem logic           ::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::  section 4cA, filesystem logic
 ::
+::  This core contains the main logic of clay.  Besides `++ze`, this directly
+::  contains the logic for commiting new revisions (local urbits), managing
+::  and notifying subscribers (reactivity), and pulling and validating content
+::  (remote urbits).
 ::
+::  The state includes:
 ::
+::  --  current time `now`
+::  --  current duct `hen`
+::  --  local urbit `our`
+::  --  target urbit `her`
+::  --  target desk `syd`
+::  --  all vane state `++raft` (rarely used, except for the object store)
+::
+::  For local desks, `our` == `her` is one of the urbits on our pier.  For
+::  foreign desks, `her` is the urbit the desk is on and `our` is the local
+::  urbit that's managing the relationship with the foreign urbit.  Don't mix
+::  up those two, or there will be wailing and gnashing of teeth.
+::
+::  While setting up `++de`, we check if the given `her` is a local urbit.  If
+::  so, we pull the room from `fat` in the raft and get the desk information
+::  from `dos` in there.  Otherwise, we get the rung from `hoy` and get the
+::  desk information from `rus` in there.  In either case, we normalize the
+::  desk information to a `++rede`, which is all the desk-specific data that
+::  we utilize in `++de`.  Because it's effectively a part of the `++de`
+::  state, let's look at what we've got:
+::
+::  --  `lim` is the most recent date we're confident we have all the
+::      information for.  For local desks, this is always `now`.  For foreign
+::      desks, this is the last time we got a full update from the foreign
+::      urbit.
+::  --  `ref` is a possible request manager.  For local desks, this is null.
+::      For foreign desks, this keeps track of all pending foreign requests
+::      plus a cache of the responses to previous requests.
+::  --  `qyx` is the set of subscriptions, keyed by duct.  These subscriptions
+::      exist only until they've been filled.
+::  --  `dom` is the actual state of the filetree.  Since this is used almost
+::      exclusively in `++ze`, we describe it there.
+::  --  `dok` is a possible set of outstanding requests to ford to perform
+::      various tasks on commit.  This is null iff we're not in the middle of
+::      a commit.
+::  --  `mer` is the state of a possible pending merge.  This is null iff
+::      we're not in the middle of a merge.  Since this is used almost
+::      exclusively in `++me`, we describe it there.
+::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |%
 ++  de                                                  ::  per desk
   |=  [now=@da hen=duct raft]
@@ -299,7 +352,7 @@
     =.  qyx  (~(put by qyx) hen rov)
     ?~  ref
       (mabe rov (cury bait hen))
-    |-  ^+  +>+.$                                       ::  XX  why?
+    |-  ^+  +>+.$
     =+  rav=(reve rov)
     =+  ^=  vaw  ^-  rave
       ?.  ?=([%sing %v *] rav)  rav
@@ -1154,6 +1207,33 @@
       >sor.u.mer<  >our<  >cas.u.mer<  >gem.u.mer<  ~
     ==
   ::
+  ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  ::
+  ::  This core has no additional state, and the distinction exists purely for
+  ::  documentation.  The overarching theme is that `++de` directly contains
+  ::  logic for metadata about the desk, while `++ze` is composed primarily
+  ::  of helper functions for manipulating the desk state (`++dome`) itself.
+  ::  Functions include:
+  ::
+  ::  --  converting between cases, commit hashes, commits, content hashes,
+  ::      and conent
+  ::  --  creating commits and content and adding them to the tree
+  ::  --  finding which data needs to be sent over the network to keep the
+  ::  --  other urbit up-to-date
+  ::  --  reading from the file tree through different `++care` options
+  ::  --  the `++me` core for merging.
+  ::
+  ::  The dome is composed of the following:
+  ::
+  ::  --  `ank` is the ankh, which is the file data itself.  An ankh is both
+  ::      a possible file and a possible directory.  An ankh has both:
+  ::      --  `fil`, a possible file, stored as both a cage and its hash
+  ::      --  `dir`, a map of @ta to more ankhs.
+  ::  --  `let` is the number of the most recent revision.
+  ::  --  `hit` is a map of revision numbers to commit hashes.
+  ::  --  `lab` is a map of labels to revision numbers.
+  ::
+  ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ++  ze
     |%
     ++  aeon-to-tako  ~(got by hit.dom)
@@ -1616,6 +1696,58 @@
         ?~(way +> $(way t.way, +> (descend i.way)))
       --
     ::
+    ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    ::
+    ::  This core is specific to any currently running merge.  This is
+    ::  basically a simple (DAG-shaped) state machine.  We always say we're
+    ::  merging from 'ali' to 'bob.  The basic steps, not all of which are
+    ::  always needed, are:
+    ::
+    ::  --  fetch ali's desk
+    ::  --  diff ali's desk against the mergebase
+    ::  --  diff bob's desk against the mergebase
+    ::  --  merge the diffs
+    ::  --  build the new state
+    ::  --  "checkout" (apply to actual `++dome`) the new state
+    ::  --  "ergo" (tell unix about) any changes
+    ::
+    ::  The state filled in order through each step:
+    ::
+    ::  --  `sor` is the urbit and desk of ali.
+    ::  --  `hen` is the duct that instigated the merge.
+    ::  --  `gem` is the merge strategy.  These are described in
+    ::      `++fetched-ali`.
+    ::  --  `wat` is the current step of the merge process.
+    ::  --  `cas` is the case in ali's desk that we're merging from.
+    ::  --  `ali` is the commit from ali's desk.
+    ::  --  `bob` is the commit from bob's desk.
+    ::  --  `bas` is the commit from the mergebase.
+    ::  --  `dal` is the set of changes from the mergebase to ali's desk.
+    ::  --  `dob` is the set of changes from the mergebase to bob's desk.
+    ::      These two merit slightly more explanation.  There are four kinds
+    ::      of changes:
+    ::      --  `new` is the set of files in the new desk and not in the
+    ::          mergebase.
+    ::      --  `cal` is the set of changes in the new desk from the mergebase
+    ::          except for any that are also in the other new desk.
+    ::      --  `can` is the set of changes in the new desk from the mergebase
+    ::          and that are also in the other new desk (potential conflicts).
+    ::      --  `old` is the set of files in the mergebase and not in the new
+    ::          desk.
+    ::  --  `bof` is the set of changes to the same files in ali and bob.
+    ::      Null for a file means a conflict while a cage means the diffs
+    ::      have been merged.
+    ::  --  `bop` is the result of patching the original files with the above
+    ::      merged diffs.
+    ::  --  `new` is the newly-created commit.
+    ::  --  `ank` is the ankh for the new state.
+    ::  --  `erg` is the sets of files that should be told to unix.  True
+    ::      means to write the file while false means to delete the file.
+    ::  --  `gon` is the return value of the merge.  On success we produce a
+    ::      set of the paths that had conflicting changes.  On failure we
+    ::      produce an error code and message.
+    ::
+    ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     ++  me                                              ::  merge ali into bob
       |=  [ali=(pair ship desk) alh=(unit ankh) new=?]  ::  from
       =+  bob=`(pair ship desk)`[our syd]               ::  to
@@ -2268,6 +2400,11 @@
             [(slag len pax) (~(got by can) pax)]
         ==
       ::
+      ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+      ::
+      ::  This core is a small set of helper functions to assist in merging.
+      ::
+      ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       ++  he
         |%
         ++  done
@@ -2341,6 +2478,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::              section 4cA, filesystem vane          ::
 ::                                                    ::
+::  The state is XX
 =|                                                    ::  instrument state
     $:  %0                                            ::  vane version
         ruf=raft                                      ::  revision tree
