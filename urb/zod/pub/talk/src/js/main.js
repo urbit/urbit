@@ -385,7 +385,7 @@ module.exports = recl({
       stations: StationStore.getStations(),
       configs: StationStore.getConfigs(),
       typing: MessageStore.getTyping(),
-      glyph: StationStore.getGlyphMap()
+      glyphs: StationStore.getGlyphMap()
     };
   },
   getInitialState: function() {
@@ -508,14 +508,15 @@ module.exports = recl({
       id: "messages"
     }, _messages.map((function(_this) {
       return function(_message, k) {
-        var mess, nowSaid, ref4;
+        var glyph, mess, nowSaid, ref4;
         nowSaid = [_message.ship, _message.thought.audience];
+        glyph = window.util.getGlyph(_this.state.glyphs, _.keys(_message.thought.audience));
         station = _this.state.station;
         mess = {
+          glyph: glyph,
           station: station,
           _handlePm: _this._handlePm,
           _handleAudi: _this._handleAudi,
-          glyph: _this.state.glyph[(_.keys(_message.thought.audience)).join(" ")],
           unseen: lastIndex && lastIndex === k,
           sameAs: _.isEqual(lastSaid, nowSaid)
         };
@@ -6293,10 +6294,13 @@ if (!window.util) {
 _.merge(window.util, {
   mainStations: ["court", "floor", "porch"],
   mainStationPath: function(user) {
+    if (user == null) {
+      user = window.urb.user;
+    }
     return "~" + user + "/" + (window.util.mainStation(user));
   },
   mainStation: function(user) {
-    if (!user) {
+    if (user == null) {
       user = window.urb.user;
     }
     switch (user.length) {
@@ -6308,10 +6312,22 @@ _.merge(window.util, {
         return "porch";
     }
   },
+  getGlyph: function(glyphs, audi) {
+    return glyphs[audi.join(" ")] || (function() {
+      switch (false) {
+        case !!_.contains(audi, window.util.mainStationPath()):
+          return "*";
+        case audi.length !== 1:
+          return ":";
+        default:
+          return ";";
+      }
+    })();
+  },
   clipAudi: function(audi) {
     var ms, regx;
     audi = audi.join(" ");
-    ms = window.util.mainStationPath(window.urb.user);
+    ms = window.util.mainStationPath();
     regx = new RegExp("/" + ms, "g");
     audi = audi.replace(regx, "");
     return audi.split(" ");
@@ -6319,7 +6335,7 @@ _.merge(window.util, {
   expandAudi: function(audi) {
     var ms;
     audi = audi.join(" ");
-    ms = window.util.mainStationPath(window.urb.user);
+    ms = window.util.mainStationPath();
     if (audi.indexOf(ms) === -1) {
       if (audi.length > 0) {
         audi += " ";

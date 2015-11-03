@@ -94,7 +94,7 @@ module.exports = recl
     stations:StationStore.getStations()
     configs:StationStore.getConfigs()
     typing:MessageStore.getTyping()
-    glyph:StationStore.getGlyphMap()
+    glyphs:StationStore.getGlyphMap()
   }
 
   getInitialState: -> @stateFromStore()
@@ -198,10 +198,10 @@ module.exports = recl
 
     div {id: "messages"}, _messages.map (_message,k) =>
       nowSaid = [_message.ship,_message.thought.audience]
+      glyph = window.util.getGlyph @state.glyphs, _.keys _message.thought.audience
       {station} = @state
       mess = {
-        station, @_handlePm, @_handleAudi,
-        glyph: @state.glyph[(_.keys _message.thought.audience).join " "]
+        glyph, station, @_handlePm, @_handleAudi,
         unseen: lastIndex and lastIndex is k
         sameAs: _.isEqual lastSaid, nowSaid
       }
