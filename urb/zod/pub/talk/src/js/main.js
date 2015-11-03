@@ -532,11 +532,11 @@ module.exports = recl({
 
 
 },{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":20,"../stores/StationStore.coffee":21,"./MemberComponent.coffee":3,"classnames":10,"moment-timezone":15}],5:[function(require,module,exports){
-var Member, StationActions, StationStore, a, div, h1, input, recl, ref, textarea;
+var Member, StationActions, StationStore, a, div, h1, input, recl, ref, style, textarea;
 
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.input, React.DOM.textarea, React.DOM.h1, React.DOM.a], div = ref[0], input = ref[1], textarea = ref[2], h1 = ref[3], a = ref[4];
+ref = React.DOM, div = ref.div, style = ref.style, input = ref.input, textarea = ref.textarea, h1 = ref.h1, a = ref.a;
 
 StationStore = require('../stores/StationStore.coffee');
 
@@ -545,6 +545,7 @@ StationActions = require('../actions/StationActions.coffee');
 Member = require('./MemberComponent.coffee');
 
 module.exports = recl({
+  displayName: "Station",
   stateFromStore: function() {
     return {
       audi: StationStore.getAudience(),
@@ -623,7 +624,7 @@ module.exports = recl({
     return StationActions.setSources(this.state.station, _sources);
   },
   render: function() {
-    var _remove, _sources, head, members, parts, sourceCtrl, sourceInput, sources;
+    var _remove, _sources, members, parts, sourceCtrl, sourceInput, sources;
     parts = [];
     members = [];
     if (this.state.station && this.state.members) {
@@ -648,7 +649,7 @@ module.exports = recl({
         className: "join",
         onKeyUp: this._keyUp,
         placeholder: "+"
-      }, "")
+      })
     ];
     sourceCtrl = div({
       className: "sour-ctrl"
@@ -675,44 +676,34 @@ module.exports = recl({
     } else {
       sources = "";
     }
-    head = div({
-      id: "head"
-    }, [
-      div({
-        id: "who"
-      }, [
-        div({
-          className: "sig"
-        }, ""), div({
-          className: "ship"
-        }, "" + window.urb.user)
-      ]), div({
-        id: "where"
-      }, [
-        div({
-          className: "slat"
-        }, "talk"), div({
-          className: "path"
-        }, ""), div({
-          className: "caret"
-        }, "")
-      ])
-    ]);
-    parts.push(head);
-    parts.push(div({
-      id: "stations"
-    }, [h1({}, "Listening to"), div({}, sources), sourceCtrl]));
-    parts.push(div({
-      id: "audience"
-    }, div({}, [
-      h1({}, "Talking to"), div({
-        id: "members"
-      }, members)
-    ])));
     return div({
       id: "station",
       onClick: this._toggleOpen
-    }, parts);
+    }, div({
+      id: "head"
+    }, div({
+      id: "who"
+    }, div({
+      className: "sig"
+    }), div({
+      className: "ship"
+    }, "" + window.urb.user)), div({
+      id: "where"
+    }, div({
+      className: "slat"
+    }, "talk"), div({
+      className: "path"
+    }), div({
+      className: "caret"
+    })), div({
+      id: "offline"
+    }, "Warning: no connection server.")), div({
+      id: "stations"
+    }, h1({}, "Listening to"), div({}, sources), sourceCtrl), div({
+      id: "audience"
+    }, div({}, h1({}, "Talking to"), div({
+      id: "members"
+    }, members))));
   }
 });
 

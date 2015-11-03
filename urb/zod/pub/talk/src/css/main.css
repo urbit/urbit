@@ -591,6 +591,9 @@ a {
   font-size: 0.8rem;
   text-transform: uppercase;
 }
+body:not(.offline) #offline {
+  display: none;
+}
 @media only screen and (min-width: 1024px) {
   #station-container:hover {
     max-height: 30rem;
