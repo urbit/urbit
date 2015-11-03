@@ -1,3 +1,9 @@
+---
+title: Hoon 101.4: functions
+sort: 4
+hide: true
+next: false
+---
 # Hoon 4: toward actual functions
 
 Okay, we've programmed.  We've achieved decrement.  We've written
