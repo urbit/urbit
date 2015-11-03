@@ -594,6 +594,12 @@ a {
 body:not(.offline) #offline {
   display: none;
 }
+#offline {
+  transition: color 0.25s ease;
+}
+#offline.error {
+  color: #f00;
+}
 @media only screen and (min-width: 1024px) {
   #station-container:hover {
     max-height: 30rem;

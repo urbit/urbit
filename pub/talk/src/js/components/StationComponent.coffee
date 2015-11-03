@@ -109,7 +109,7 @@ module.exports = recl
           div {className:"path"} #, window.util.mainStation(window.urb.user))
           div {className:"caret"}
         )
-        div {id:"offline"}, "Warning: no connection server."
+        div {id:"offline"}, "Warning: no connection to server."
       )
       div {id:"stations"}, (h1 {}, "Listening to"),(div {},sources),sourceCtrl
       div {id:"audience"}, div {}, (h1 {}, "Talking to"),(div {id:"members"},members)
