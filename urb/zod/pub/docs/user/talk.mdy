@@ -126,7 +126,7 @@ insert a Unicode bullet-point character in an appropriate space
 in your post, to show you the prospective linebreak.  Your essay
 will be posted in multiple lines.
 
-A URL is any valid URL.  A command is any line starting with `;`.
+A URL is any valid URL. A command is any line starting with `;`.
 
 ### Source annotation
 
@@ -138,13 +138,23 @@ Any post you see reached you in one of three ways.  Either it was
 sent directly to just you; to you and others; or to a station you
 subscribe to.
 
-Posts to just you are `:`.  Posts to you and others (a multiparty
-conversation) are `*`, unless you've bound this conversation to a
-glyph.  Posts to a station use that station's glyph.
+Informational messages are `|`. Posts directly to you are `:`.  Posts to
+you and others (a multiparty conversation) are `;`, unless you've bound
+this conversation to a glyph. Posts to a station use that station's
+glyph. Posts to a complex audience that doesn't directly include you are
+`*`.
+
+### Station Glyphs
+
+Glyphs are assigned by station hash out of the lists `>=+-`, `}),.`,
+``"'`^``, and `$%&@`, in decreasing order of preference, and cycling
+back to the first in case of sufficient collisions.
 
 You can see a list of glyph bindings with `;what`.  Write
-`;what >` to see what station `>` is bound to, or
-`;what /urbit-meta` to see if `/urbit-meta` has a binding.
+
+Alphanumeric characters and `|#;:*~_` are reserved; all others (the above
+lists, and `\/!?({<`) can be manually assigned. `;bind > /urbit-test`
+will assign the `>` annotation to `/urbit-test`.
 
 ### Audience selection
 
@@ -228,6 +238,8 @@ most recent; etc.
 
 ### Nicknames
 
+<mark>Not yet implemented</mark>
+
 Sometimes you know your Urbit friends by other names, on or
 offline.   Use the `;nick` command to assign or look up
 nicknames.
@@ -253,12 +265,18 @@ lists everyone in that station.
 
 ### Typing indicator
 
+<mark>Not yet implemented</mark>
+
 If one or more urbits in your audience is typing, `:talk`'s
 presence system will detect it and change the prompt:
 
     ~fintud-macrep [~dannum-mitryl...]= 
 
 ### Creating and managing stations
+
+
+<mark>Non-channel stations, and managing white/blacklists, 
+are a planned feature that is not yet implemented</mark>
 
 To create your own mailbox, party, journal or board:
 
@@ -284,10 +302,3 @@ To ban from `%bizarre-board`:
 To appoint a coauthor of `%serious-journal`:
 
     ;author %serious-journal ~lagret-marpub
-
-#### Station glyphs
-
-Station are assigned out of the list `:|}>`, then
-randomly out of it and the sets `-+*.`, ``,=`'^\/``,
-`$%&@`, and `{<[]()`, in decreasing order of probabilty. 
-Alphanumeric characters and `!#?;~_` are reserved.

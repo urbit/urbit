@@ -11,10 +11,10 @@ argument, which is the pier directory (`$PIER`).  This is your
 planet name if you have a planet, or the name you used with `-c`
 if you have a comet:
 
-    urbit fintud-macrep
+    bin/urbit fintud-macrep
 or
 
-    urbit mycomet
+    bin/urbit mycomet
 
 Piers are portable.  You can move a pier anywhere.  But never,
 *ever* run the same urbit in two places at once.  (If you try to
@@ -83,7 +83,8 @@ filesystem.  `+ls` is a generator; it produces a value.
 
 ## Converse: your `:talk` appliance
 
-To use Urbit as a social network, switch to `:talk`:
+To use Urbit as a social network, switch to `:talk` (remember, use ^x to
+switch between appliances):
 
     ~fintud-macrep:talk()
 
@@ -94,6 +95,8 @@ Join the global station `urbit-meta`:
 You're on the air!  You should see some backlog to give you
 context.  Please remember our code of conduct: don't be rude.
 Also, `urbit-meta` is politically correct and safe for work.
+
+For more instructions on how to use `:talk`, see the [`:talk` manual](http://urbit.org/docs/user/talk)
 
 ## Using the filesystem
 
