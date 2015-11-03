@@ -83,7 +83,8 @@ filesystem.  `+ls` is a generator; it produces a value.
 
 ## Converse: your `:talk` appliance
 
-To use Urbit as a social network, switch to `:talk`:
+To use Urbit as a social network, switch to `:talk` (remember, use ^x to
+switch between appliances):
 
     ~fintud-macrep:talk()
 
