@@ -719,7 +719,7 @@ module.exports = recl({
       className: "caret"
     })), div({
       id: "offline"
-    }, "Warning: no connection server.")), div({
+    }, "Warning: no connection to server.")), div({
       id: "stations"
     }, h1({}, "Listening to"), div({}, sources), sourceCtrl), div({
       id: "audience"
@@ -878,9 +878,8 @@ module.exports = recl({
         if (window.talk.online) {
           this.sendMessage();
         } else {
-          this.errHue = ((this.errHue || 0) + (Math.random() * 300) + 30) % 360;
-          $('#offline').css({
-            color: husl.toHex(this.errHue, 90, 50)
+          $('#offline').addClass('error').one('transitionend', function() {
+            return $('#offline').removeClass('error');
           });
         }
       }
