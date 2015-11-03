@@ -154,7 +154,7 @@
       ::
       ++  stan                                          ::  station
         ;~  pose
-          (cold [our.hid man.she] tis)
+          (cold [our.hid man.she] col)
           ;~(pfix cen (stag our.hid sym))
           ;~(pfix fas (stag (sein our.hid) sym))
         ::
@@ -179,7 +179,10 @@
       ++  nump                                          ::  number reference
         ;~  pose
           ;~(pfix hep dem:ag)
-          ;~(plug (cook lent (plus (just '0'))) dem:ag)
+          ;~  plug
+            (cook lent (plus (just '0')))
+            ;~(pose dem:ag (easy 0))
+          ==
           (stag 0 dem:ag)
         ==
       ::
@@ -356,7 +359,7 @@
       ::  =+  pad=(sub 36 (lent bun))
       ::  =+  now=`@da`(dis now.hid 0xffff.ffff.ffff.ffff.0000.0000.0000.0000)
       %+  sh-fact  %txt
-      (runt [(sub 15 (lent bun)) '-'] "[{bun}]")
+      (runt [(sub 13 (lent bun)) '-'] "[{bun}]")
     ::
     ++  sh-repo-house-diff
       |=  [one=shelf two=shelf]
@@ -1055,7 +1058,9 @@
           =.  ..sh-fact  (sh-fact %txt "? {(scow %s (new:si | +(num)))}")
           (activate (snag num grams.roy))
         ?.  (gth q.num count.roy)
-          =+  msg=(deli count.roy num)
+          ?~  count.roy
+            (sh-lame "0: no messages")
+          =+  msg=(deli (dec count.roy) num)
           =.  ..sh-fact  (sh-fact %txt "? {(scow %ud msg)}")
           (activate (snag (sub count.roy +(msg)) grams.roy))
         (sh-lame "…{(reap p.num '0')}{(scow %ud q.num)}: no such telegram")
@@ -1748,7 +1753,7 @@
     ^-  tape
     ?:  =(p.one our.hid)
       ?:  =(q.one man)
-        "="
+        ":"
       ['%' (trip q.one)]
     ?:  =(p.one (sein our.hid))
       ['/' (trip q.one)]
@@ -1841,16 +1846,24 @@
   ++  te-whom                                           ::  render sender
     (~(ta-show ta man (need te-best)) ~ te-maud)
   ::
+  ++  ta-dire                                           ::  direct message
+    |=  pan=partner  ^-  ?
+    ?&  ?=(& -.pan)
+        =(p.p.pan our.hid)
+    ::
+        =+  sot=(~(get by stories) q.p.pan)
+        &(?=(^ sot) ?=(%brown p.cordon.shape.u.sot))
+    ==
+  ::
   ++  te-pref                                           ::  audience glyph
     ^-  tape
     =+  cha=(~(get by nik) lix)
     ?^  cha  ~[u.cha ' ']
-    ?.  ?=([[& ^] ~ ~] lix)  "* "
-    =+  sta=p.n.lix
-    =+  sot=(~(get by stories) q.sta)
-    ?:  &(=(p.sta our.hid) ?=(^ sot) ?=(%brown p.cordon.shape.u.sot))
+    ?.  (lien (~(tap by lix)) ta-dire)
+      "* "
+    ?:  ?=([[& ^] ~ ~] lix)
       ": "
-    "* "
+    "; "
   --
 ::
 ++  tr                                                  ::  telegram renderer
@@ -1944,7 +1957,10 @@
         %lin
       =+  txt=(trip q.sep)
       ?:  p.sep
-        (weld ~(te-pref te man tr-pals) txt)
+        =+  pal=tr-pals
+        =.  pal  ?:  =(who our.hid)  pal
+                 (~(del in pal) [%& who (main who)])
+        (weld ~(te-pref te man pal) txt)
       ?:  oug
         (weld "@ " txt)
       (weld " " txt)
