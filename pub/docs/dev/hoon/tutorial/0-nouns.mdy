@@ -1,7 +1,7 @@
 ---
 title: Hoon 101.0: nouns, spans, and molds
 sort: 0
-next: false
+next: true
 ---
 
 # Hoon 101.0: nouns, spans and molds
@@ -32,8 +32,8 @@ digressions in braces.  If you see a {paragraph} or two,
 assume it's of interest to language nerds only.  These
 digressions are "guaranteed not on the test."
 
-{The name "Hoon" is from the Wallace Stevens poem, _Tea at the
-Palaz of Hoon_.  It also means "hooligan" in Australian.}
+> The name "Hoon" is from the Wallace Stevens poem, _Tea at the
+Palaz of Hoon_.  It also means "hooligan" in Australian.
 
 ## Nouns: data made boring
 
@@ -48,11 +48,11 @@ Nouns are strict; there is no such thing as an infinite noun.
 And, of course, nouns are immutable.  There's basically no way to
 have any real fun with nouns.
 
-{Nouns are Lisp's S-expressions, minus a lot of hacks, tricks,
+> Nouns are Lisp's S-expressions, minus a lot of hacks, tricks,
 and features that made sense 50 years ago.  In particular,
 because atoms are not tagged (an atom can encode a string, for
 instance), nouns need a static type system.  How do you print an
-atom if you don't know whether it's a string or a number?}
+atom if you don't know whether it's a string or a number?
 
 ## A type system for nouns
 
