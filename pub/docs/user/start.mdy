@@ -11,10 +11,10 @@ argument, which is the pier directory (`$PIER`).  This is your
 planet name if you have a planet, or the name you used with `-c`
 if you have a comet:
 
-    urbit fintud-macrep
+    bin/urbit fintud-macrep
 or
 
-    urbit mycomet
+    bin/urbit mycomet
 
 Piers are portable.  You can move a pier anywhere.  But never,
 *ever* run the same urbit in two places at once.  (If you try to
