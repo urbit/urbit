@@ -1,76 +1,31 @@
-StationDispatcher = require '../dispatcher/Dispatcher.coffee'
+Dispatcher   =  require '../dispatcher/Dispatcher.coffee'
+serverAction = (f)-> ()-> Dispatcher.handleServerAction f.apply this,arguments
+viewAction   = (f)-> ()-> Dispatcher.handleViewAction   f.apply this,arguments
 
-module.exports =
-  loadConfig: (station,config) ->
-    StationDispatcher.handleServerAction
-      type: "config-load"
-      station:station
-      config:config
+_persistence = require '../persistence/StationPersistence.coffee'
+      
+Persistence = _persistence StationActions: module.exports = 
+  loadGlyphs:          serverAction (glyphs) -> {glyphs,type:"glyphs-load"}      
+  loadMembers:        serverAction (members) -> {members,type:"members-load"}      
+  loadStations:      serverAction (stations) -> {stations,type:"stations-load"}
+  loadConfig:  serverAction (station,config) -> {station,config,type:"config-load"}
 
-  loadGlyphs: (glyphs) ->
-    StationDispatcher.handleServerAction
-      type: "glyphs-load"
-      station:station
-      glyphs:glyphs
-
-  switchStation: (station) ->
-    StationDispatcher.handleViewAction
-      type:"station-switch"
-      station:station
-
-  setAudience: (audience) ->
-    StationDispatcher.handleViewAction
-      type:"station-set-audience"
-      audience:audience
-
-  setValidAudience: (valid) ->
-    StationDispatcher.handleViewAction
-      type:"station-set-valid-audience"
-      valid:valid
-
-  toggleAudience: (station) ->
-    StationDispatcher.handleViewAction
-      type:"station-audience-toggle"
-      station:station    
-
-  removeStation: (station) ->
-    window.talk.StationPersistence.removeStation station
-
-  setSources: (station,sources) ->
-    window.talk.StationPersistence.setSources station,window.urb.ship,sources
-
-  createStation: (name) ->
-    window.talk.StationPersistence.createStation name
-
-  listenStation: (station) ->
-    window.talk.StationPersistence.listenStation station
-
-  listeningStation: (station) ->
-    StationDispatcher.handleViewAction
-      type:"station-listen"
-      station:station
-
-  setTyping: (station,state) ->
-    StationDispatcher.handleViewAction
-      type:"typing-set"
-      station:station
-      state:state
-
-  ping: (_ping) ->
-    window.talk.StationPersistence.ping _ping
-
-  loadStations: (stations) ->
-    StationDispatcher.handleServerAction
-      type:"stations-load"
-      stations:stations
-
-  loadMembers: (members) ->
-    StationDispatcher.handleServerAction
-      type:"members-load"
-      members:members
+  setTyping:  viewAction (station,state) -> {station,state,type:"typing-set"}
+  setAudience:     viewAction (audience) -> {audience,type:"station-set-audience"}
+  setValidAudience:   viewAction (valid) -> {valid,type:"station-set-valid-audience"}
+  toggleAudience:   viewAction (station) -> {station,type:"station-audience-toggle"}    
+  switchStation:    viewAction (station) -> {station,type:"station-switch"}
+  listeningStation: viewAction (station) -> {station,type:"station-listen"}
 
   createStation: (station) ->
-    StationDispatcher.handleViewAction
-      type: "station-create"
-      station: station
-    window.talk.StationPersistence.createStation station
+    Dispatcher.handleViewAction {station,type: "station-create"}
+    Persistence.createStation station
+    
+  listen:    () -> Persistence.listen()
+  ping: (_ping) -> Persistence.ping _ping
+  removeStation: (station) -> Persistence.removeStation station
+  listenStation: (station) -> Persistence.listenStation station
+  createStation:    (name) -> Persistence.createStation name
+  
+  setSources: (station,sources) ->
+    Persistence.setSources station,window.urb.ship,sources
