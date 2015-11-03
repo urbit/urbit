@@ -37,7 +37,7 @@ module.exports = {
     return window.talk.MessagePersistence.get(station, start, end);
   },
   sendMessage: function(message, audience) {
-    var _audi, _message, k, serial, speech, v;
+    var _audi, _message, j, k, len, ref, ref1, results, say, serial, speech, speeches, txt, v;
     serial = window.util.uuid32();
     audience = _.uniq(audience);
     _audi = {};
@@ -69,23 +69,37 @@ module.exports = {
         url: message
       };
     }
-    _message = {
-      ship: window.urb.ship,
-      thought: {
-        serial: serial,
-        audience: _audi,
-        statement: {
-          bouquet: [],
-          speech: speech,
-          date: Date.now()
+    speeches = !(((ref = speech.lin) != null ? ref.txt.length : void 0) > 64) ? [speech] : ((ref1 = speech.lin, say = ref1.say, txt = ref1.txt, ref1), txt.match(/(.{1,64}$|.{0,64} |.{64}|.+$)/g).map(function(s, i) {
+      say || (say = i !== 0);
+      return {
+        lin: {
+          say: say,
+          txt: s.slice(-1 !== " ") ? s : s.slice(0, -1)
         }
-      }
-    };
-    MessageDispatcher.handleViewAction({
-      type: "message-send",
-      message: _message
-    });
-    return window.talk.MessagePersistence.sendMessage(_message.thought);
+      };
+    }));
+    results = [];
+    for (j = 0, len = speeches.length; j < len; j++) {
+      speech = speeches[j];
+      _message = {
+        ship: window.urb.ship,
+        thought: {
+          serial: window.util.uuid32(),
+          audience: _audi,
+          statement: {
+            bouquet: [],
+            speech: speech,
+            date: Date.now()
+          }
+        }
+      };
+      MessageDispatcher.handleViewAction({
+        type: "message-send",
+        message: _message
+      });
+      results.push(window.talk.MessagePersistence.sendMessage(_message.thought));
+    }
+    return results;
   }
 };
 
@@ -102,6 +116,13 @@ module.exports = {
       type: "config-load",
       station: station,
       config: config
+    });
+  },
+  loadGlyphs: function(glyphs) {
+    return StationDispatcher.handleServerAction({
+      type: "glyphs-load",
+      station: station,
+      glyphs: glyphs
     });
   },
   switchStation: function(station) {
@@ -209,13 +230,16 @@ module.exports = recl({
 
 
 },{}],4:[function(require,module,exports){
-var Member, Message, MessageActions, MessageStore, StationActions, StationStore, a, br, div, input, moment, pre, recl, ref, textarea;
+var Member, Message, MessageActions, MessageStore, StationActions, StationStore, a, br, clas, div, input, moment, pre, recl, ref, span, textarea,
+  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 moment = require('moment-timezone');
 
+clas = require('classnames');
+
 recl = React.createClass;
 
-ref = React.DOM, div = ref.div, pre = ref.pre, br = ref.br, input = ref.input, textarea = ref.textarea, a = ref.a;
+ref = React.DOM, div = ref.div, pre = ref.pre, br = ref.br, span = ref.span, input = ref.input, textarea = ref.textarea, a = ref.a;
 
 MessageActions = require('../actions/MessageActions.coffee');
 
@@ -228,6 +252,7 @@ StationStore = require('../stores/StationStore.coffee');
 Member = require('./MemberComponent.coffee');
 
 Message = recl({
+  displayName: "Message",
   lz: function(n) {
     if (n < 10) {
       return "0" + n;
@@ -261,10 +286,32 @@ Message = recl({
     }
     return this.props._handlePm(user);
   },
+  renderSpeech: function(speech) {
+    var con, x;
+    switch (false) {
+      case !((con = speech.lin) || (con = speech.app) || (con = speech.exp) || (con = speech.tax)):
+        return con.txt;
+      case !(con = speech.url):
+        return a({
+          href: con.txt,
+          target: "_blank"
+        }, con.txt);
+      case !(con = speech.mor):
+        return con.map(this.renderSpeech);
+      default:
+        return "Unknown speech type:" + ((function() {
+          var results;
+          results = [];
+          for (x in speech) {
+            results.push(" %" + x);
+          }
+          return results;
+        })()).join('');
+    }
+  },
   render: function() {
-    var attachments, aude, audi, con, delivery, klass, mess, name, ref1, speech, type, x;
+    var attachments, aude, audi, className, delivery, mainStation, name, ref1, speech, type;
     delivery = _.uniq(_.pluck(this.props.thought.audience, "delivery"));
-    klass = delivery.indexOf("received") !== -1 ? " received" : " pending";
     speech = this.props.thought.statement.speech;
     attachments = [];
     while (speech.fat != null) {
@@ -274,69 +321,41 @@ Message = recl({
     if (speech == null) {
       return;
     }
-    if (((ref1 = speech.lin) != null ? ref1.say : void 0) === false) {
-      klass += " say";
-    }
-    if (speech.url) {
-      klass += " url";
-    }
-    if (this.props.unseen === true) {
-      klass += " new";
-    }
-    if (this.props.sameAs === true) {
-      klass += " same";
-    } else {
-      klass += " first";
-    }
     name = this.props.name ? this.props.name : "";
     aude = _.keys(this.props.thought.audience);
     audi = window.util.clipAudi(aude).map(function(_audi) {
       return div({}, _audi.slice(1));
     });
-    type = ['private', 'public'];
-    type = type[Number(aude.indexOf(window.util.mainStationPath(window.urb.user)) === -1)];
-    mess = (function() {
-      switch (false) {
-        case !((con = speech.lin) || (con = speech.app) || (con = speech.exp) || (con = speech.tax)):
-          return con.txt;
-        case !(con = speech.url):
-          return a({
-            href: con.txt,
-            target: "_blank"
-          }, con.txt);
-        default:
-          return "Unknown speech type:" + ((function() {
-            var results;
-            results = [];
-            for (x in speech) {
-              results.push(" %" + x);
-            }
-            return results;
-          })()).join('');
-      }
-    })();
-    klass += (function() {
+    mainStation = window.util.mainStationPath(window.urb.user);
+    type = indexOf.call(aude, mainStation) >= 0 ? 'private' : 'public';
+    className = clas({
+      message: true
+    }, (this.props.sameAs ? "same" : "first"), (delivery.indexOf("received") !== -1 ? "received" : "pending"), {
+      say: ((ref1 = speech.lin) != null ? ref1.say : void 0) === false,
+      url: speech.url,
+      'new': this.props.unseen
+    }, (function() {
       switch (false) {
         case speech.app == null:
-          return " say";
+          return "say";
         case speech.exp == null:
-          return " exp";
-        default:
-          return "";
+          return "exp";
       }
-    })();
+    })());
     return div({
-      className: "message" + klass
+      className: className
     }, [
       div({
         className: "attr"
       }, [
         div({
-          className: "type " + type
-        }, ""), div({
+          className: "type " + type,
+          "data-glyph": this.props.glyph || "*"
+        }), div({
           onClick: this._handlePm
         }, React.createElement(Member, {
-          ship: this.props.ship
+          ship: this.props.ship,
+          glyph: this.props.glyph
         })), div({
           onClick: this._handleAudi,
           className: "audi"
@@ -345,7 +364,7 @@ Message = recl({
         }, this.convTime(this.props.thought.statement.date))
       ]), div({
         className: "mess"
-      }, mess, attachments.length ? div({
+      }, this.renderSpeech(speech), attachments.length ? div({
         className: "fat"
       }, attachments) : void 0)
     ]);
@@ -353,6 +372,7 @@ Message = recl({
 });
 
 module.exports = recl({
+  displayName: "Messages",
   pageSize: 50,
   paddingTop: 100,
   stateFromStore: function() {
@@ -364,7 +384,8 @@ module.exports = recl({
       station: window.util.mainStation(),
       stations: StationStore.getStations(),
       configs: StationStore.getConfigs(),
-      typing: MessageStore.getTyping()
+      typing: MessageStore.getTyping(),
+      glyph: StationStore.getGlyphMap()
     };
   },
   getInitialState: function() {
@@ -402,7 +423,7 @@ module.exports = recl({
   sortedMessages: function(messages) {
     return _.sortBy(messages, function(_message) {
       _message.pending = _message.thought.audience[station];
-      return _message.thought.statement.date;
+      return _message.key;
     });
   },
   componentDidMount: function() {
@@ -463,7 +484,7 @@ module.exports = recl({
     return StationActions.setAudience(audi);
   },
   render: function() {
-    var _messages, _station, lastIndex, lastSaid, messages, ref1, ref2, ref3, sources, station;
+    var _messages, _station, lastIndex, lastSaid, ref1, ref2, ref3, sources, station;
     station = this.state.station;
     _station = "~" + window.urb.ship + "/" + station;
     sources = _.clone((ref1 = (ref2 = this.state.configs[this.state.station]) != null ? ref2.sources : void 0) != null ? ref1 : []);
@@ -483,32 +504,34 @@ module.exports = recl({
     })(this), 1);
     lastIndex = this.lastSeen ? _messages.indexOf(this.lastSeen) + 1 : null;
     lastSaid = null;
-    messages = _messages.map((function(_this) {
-      return function(_message, k) {
-        var ref4;
-        if (lastIndex && lastIndex === k) {
-          _message.unseen = true;
-        }
-        if ((ref4 = _message.thought.statement.speech) != null ? ref4.app : void 0) {
-          _message.ship = "system";
-        }
-        _message.sameAs = lastSaid === _message.ship;
-        _message.station = _this.state.station;
-        _message._handlePm = _this._handlePm;
-        _message._handleAudi = _this._handleAudi;
-        lastSaid = _message.ship;
-        return React.createElement(Message, _message);
-      };
-    })(this));
     return div({
       id: "messages"
-    }, messages);
+    }, _messages.map((function(_this) {
+      return function(_message, k) {
+        var mess, nowSaid, ref4;
+        nowSaid = [_message.ship, _message.thought.audience];
+        station = _this.state.station;
+        mess = {
+          station: station,
+          _handlePm: _this._handlePm,
+          _handleAudi: _this._handleAudi,
+          glyph: _this.state.glyph[(_.keys(_message.thought.audience)).join(" ")],
+          unseen: lastIndex && lastIndex === k,
+          sameAs: _.isEqual(lastSaid, nowSaid)
+        };
+        lastSaid = nowSaid;
+        if ((ref4 = _message.thought.statement.speech) != null ? ref4.app : void 0) {
+          mess.ship = "system";
+        }
+        return React.createElement(Message, _.extend({}, _message, mess));
+      };
+    })(this)));
   }
 });
 
 
 
-},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":19,"../stores/StationStore.coffee":20,"./MemberComponent.coffee":3,"moment-timezone":14}],5:[function(require,module,exports){
+},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":20,"../stores/StationStore.coffee":21,"./MemberComponent.coffee":3,"classnames":10,"moment-timezone":15}],5:[function(require,module,exports){
 var Member, StationActions, StationStore, a, div, h1, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -695,8 +718,8 @@ module.exports = recl({
 
 
 
-},{"../actions/StationActions.coffee":2,"../stores/StationStore.coffee":20,"./MemberComponent.coffee":3}],6:[function(require,module,exports){
-var Member, MessageActions, MessageStore, StationActions, StationStore, br, div, input, recl, ref, textarea;
+},{"../actions/StationActions.coffee":2,"../stores/StationStore.coffee":21,"./MemberComponent.coffee":3}],6:[function(require,module,exports){
+var Audience, Member, MessageActions, MessageStore, PO, SHIPSHAPE, StationActions, StationStore, br, div, input, recl, ref, textarea;
 
 recl = React.createClass;
 
@@ -712,7 +735,34 @@ StationStore = require('../stores/StationStore.coffee');
 
 Member = require('./MemberComponent.coffee');
 
+SHIPSHAPE = /^~?([a-z]{3}|[a-z]{6}(-[a-z]{6}){0,3}|[a-z]{6}(-[a-z]{6}){3}(--[a-z]{6}(-[a-z]{6}){3})+)$/;
+
+PO = 'dozmarbinwansamlitsighidfidlissogdirwacsabwissib\nrigsoldopmodfoglidhopdardorlorhodfolrintogsilmir\nholpaslacrovlivdalsatlibtabhanticpidtorbolfosdot\nlosdilforpilramtirwintadbicdifrocwidbisdasmidlop\nrilnardapmolsanlocnovsitnidtipsicropwitnatpanmin\nritpodmottamtolsavposnapnopsomfinfonbanporworsip\nronnorbotwicsocwatdolmagpicdavbidbaltimtasmallig\nsivtagpadsaldivdactansidfabtarmonranniswolmispal\nlasdismaprabtobrollatlonnodnavfignomnibpagsopral\nbilhaddocridmocpacravripfaltodtiltinhapmicfanpat\ntaclabmogsimsonpinlomrictapfirhasbosbatpochactid\nhavsaplindibhosdabbitbarracparloddosbortochilmac\ntomdigfilfasmithobharmighinradmashalraglagfadtop\nmophabnilnosmilfopfamdatnoldinhatnacrisfotribhoc\nnimlarfitwalrapsarnalmoslandondanladdovrivbacpol\nlaptalpitnambonrostonfodponsovnocsorlavmatmipfap\n\nzodnecbudwessevpersutletfulpensytdurwepserwylsun\nrypsyxdyrnuphebpeglupdepdysputlughecryttyvsydnex\nlunmeplutseppesdelsulpedtemledtulmetwenbynhexfeb\npyldulhetmevruttylwydtepbesdexsefwycburderneppur\nrysrebdennutsubpetrulsynregtydsupsemwynrecmegnet\nsecmulnymtevwebsummutnyxrextebfushepbenmuswyxsym\nselrucdecwexsyrwetdylmynmesdetbetbeltuxtugmyrpel\nsyptermebsetdutdegtexsurfeltudnuxruxrenwytnubmed\nlytdusnebrumtynseglyxpunresredfunrevrefmectedrus\nbexlebduxrynnumpyxrygryxfeptyrtustyclegnemfermer\ntenlusnussyltecmexpubrymtucfyllepdebbermughuttun\nbylsudpemdevlurdefbusbeprunmelpexdytbyttyplevmyl\nwedducfurfexnulluclennerlexrupnedlecrydlydfenwel\nnydhusrelrudneshesfetdesretdunlernyrsebhulryllud\nremlysfynwerrycsugnysnyllyndyndemluxfedsedbecmun\nlyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes';
+
+Audience = recl({
+  displayName: "Audience",
+  onKeyDown: function(e) {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      setTimeout(function() {
+        return $('#writing').focus();
+      }, 0);
+      return false;
+    }
+  },
+  render: function() {
+    return div({
+      id: "audi",
+      className: "audi valid-" + this.props.valid,
+      contentEditable: true,
+      onKeyDown: this.onKeyDown,
+      onBlur: this.props.onBlur
+    }, this.props.audi.join(" "));
+  }
+});
+
 module.exports = recl({
+  displayName: "Writing",
   set: function() {
     if (window.localStorage && this.$writing) {
       return window.localStorage.setItem('writing', this.$writing.text());
@@ -738,21 +788,25 @@ module.exports = recl({
     return s;
   },
   getInitialState: function() {
-    return this.stateFromStore();
+    return _.extend(this.stateFromStore(), {
+      length: 0,
+      lengthy: false
+    });
   },
   typing: function(state) {
     if (this.state.typing[this.state.station] !== state) {
       return StationActions.setTyping(this.state.station, state);
     }
   },
-  _blur: function() {
+  onBlur: function() {
     this.$writing.text(this.$writing.text());
     MessageActions.setTyping(false);
     return this.typing(false);
   },
-  _focus: function() {
+  onFocus: function() {
     MessageActions.setTyping(true);
-    return this.typing(true);
+    this.typing(true);
+    return this.cursorAtEnd;
   },
   addCC: function(audi) {
     var cc, i, len, listening, s;
@@ -773,7 +827,7 @@ module.exports = recl({
     return audi;
   },
   sendMessage: function() {
-    var audi;
+    var audi, txt;
     if (this._validateAudi() === false) {
       $('#audi').focus();
       return;
@@ -784,50 +838,46 @@ module.exports = recl({
       audi = this.state.audi;
     }
     audi = this.addCC(audi);
-    MessageActions.sendMessage(this.$writing.text().trim(), audi);
-    this.$length.text("0/62");
+    txt = this.$writing.text().trim().replace(/\xa0/g, ' ');
+    MessageActions.sendMessage(txt, audi);
     this.$writing.text('');
+    this.setState({
+      length: 0
+    });
     this.set();
     return this.typing(false);
   },
-  _audiKeyDown: function(e) {
-    if (e.keyCode === 13) {
-      e.preventDefault();
-      setTimeout(function() {
-        return $('#writing').focus();
-      }, 0);
-      return false;
-    }
-  },
-  _writingKeyUp: function(e) {
+  onKeyUp: function(e) {
     if (!window.urb.util.isURL(this.$writing.text())) {
-      return this.$length.toggleClass('valid-false', this.$writing.text().length > 62);
+      return this.setState({
+        lengthy: this.$writing.text().length > 62
+      });
     }
   },
-  _writingKeyDown: function(e) {
+  onKeyDown: function(e) {
     var txt;
     if (e.keyCode === 13) {
       txt = this.$writing.text();
       e.preventDefault();
-      if ((txt.length > 0 && txt.length < 63) || window.urb.util.isURL(this.$writing.text())) {
+      if (txt.length > 0) {
         this.sendMessage();
       }
       return false;
     }
-    this._input();
+    this.onInput();
     return this.set();
   },
-  _input: function(e) {
+  onInput: function(e) {
     var length, text;
     text = this.$writing.text();
     length = text.length;
-    return this.$length.text(length + "/62");
-  },
-  _setFocus: function() {
-    return this.$writing.focus();
+    return this.setState({
+      length: length
+    });
   },
   _validateAudiPart: function(a) {
     var _a, ship;
+    a = a.trim();
     if (a.indexOf("/") !== -1) {
       _a = a.split("/");
       if (_a[1].length === 0) {
@@ -837,13 +887,12 @@ module.exports = recl({
     } else {
       ship = a;
     }
-    if (ship.length < 3) {
-      return false;
-    }
-    return true;
+    return (SHIPSHAPE.test(ship)) && _.all(ship.match(/[a-z]{3}/g), function(a) {
+      return -1 !== PO.indexOf(a);
+    });
   },
   _validateAudi: function() {
-    var a, i, len, v, valid;
+    var v;
     v = $('#audi').text();
     v = v.trim();
     if (v.length === 0) {
@@ -852,32 +901,23 @@ module.exports = recl({
     if (v.length < 5) {
       return false;
     }
-    v = v.split(" ");
-    for (i = 0, len = v.length; i < len; i++) {
-      a = v[i];
-      a = a.trim();
-      valid = this._validateAudiPart(a);
-    }
-    return valid;
+    return _.all(v.split(/\ +/), this._validateAudiPart);
   },
   _setAudi: function() {
-    var _v, k, v, valid;
+    var stan, valid;
     valid = this._validateAudi();
     StationActions.setValidAudience(valid);
     if (valid === true) {
-      v = $('#audi').text();
-      if (v.length === 0) {
-        v = window.util.mainStationPath(window.urb.user);
-      }
-      v = v.split(" ");
-      for (k in v) {
-        _v = v[k];
-        if (_v[0] !== "~") {
-          v[k] = "~" + _v;
+      stan = $('#audi').text() || window.util.mainStationPath(window.urb.user);
+      stan = (stan.split(/\ +/)).map(function(v) {
+        if (v[0] === "~") {
+          return v;
+        } else {
+          return "~" + v;
         }
-      }
-      StationActions.setAudience(v);
-      return v;
+      });
+      StationActions.setAudience(stan);
+      return stan;
     } else {
       return false;
     }
@@ -905,12 +945,11 @@ module.exports = recl({
     StationStore.addChangeListener(this._onChangeStore);
     MessageStore.addChangeListener(this._onChangeStore);
     this.$el = $(this.getDOMNode());
-    this.$length = $('#length');
     this.$writing = $('#writing');
     this.$writing.focus();
     if (this.get()) {
       this.$writing.text(this.get());
-      this._input();
+      this.onInput();
     }
     return this.interval = setInterval((function(_this) {
       return function() {
@@ -944,35 +983,32 @@ module.exports = recl({
       div({
         className: "attr"
       }, [
-        React.createElement(Member, iden), div({
-          id: "audi",
-          className: "audi valid-" + this.state.valid,
-          contentEditable: true,
-          onKeyDown: this._audiKeyDown,
+        React.createElement(Member, iden), React.createElement(Audience, {
+          audi: audi,
+          valid: this.state.valid,
           onBlur: this._setAudi
-        }, audi.join(" ")), div({
+        }), div({
           className: "time"
         }, this.getTime())
       ]), div({
         id: "writing",
         contentEditable: true,
-        onFocus: this._focus,
-        onBlur: this._blur,
-        onInput: this._input,
-        onPaste: this._input,
-        onKeyDown: this._writingKeyDown,
-        onKeyUp: this._writingKeyUp,
-        onFocus: this.cursorAtEnd
+        onPaste: this.onInput,
+        onInput: this.onInput,
+        onFocus: this.onFocus,
+        onBlur: this.onBlur,
+        onKeyDown: this.onKeyDown,
+        onKeyUp: this.onKeyUp
       }, ""), div({
         id: "length"
-      }, "0/62")
+      }, this.state.length + "/64 (" + (Math.ceil(this.state.length / 64)) + ")")
     ]);
   }
 });
 
 
 
-},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":19,"../stores/StationStore.coffee":20,"./MemberComponent.coffee":3}],7:[function(require,module,exports){
+},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":20,"../stores/StationStore.coffee":21,"./MemberComponent.coffee":3}],7:[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -994,9 +1030,9 @@ module.exports = _.merge(new Dispatcher(), {
 
 
 
-},{"flux":10}],8:[function(require,module,exports){
+},{"flux":11}],8:[function(require,module,exports){
 $(function() {
-  var $c, MessagesComponent, StationActions, StationComponent, WritingComponent, clean, rend;
+  var $c, MessagesComponent, StationActions, StationComponent, WritingComponent, rend;
   StationActions = require('./actions/StationActions.coffee');
   rend = React.render;
   window.talk = {};
@@ -1009,15 +1045,6 @@ $(function() {
   MessagesComponent = require('./components/MessagesComponent.coffee');
   WritingComponent = require('./components/WritingComponent.coffee');
   $c = $('#c');
-  clean = function() {
-    React.unmountComponentAtNode($('#station-container')[0]);
-    React.unmountComponentAtNode($('#messages-container')[0]);
-    return React.unmountComponentAtNode($('#writing-container')[0]);
-  };
-  $c.append("<div id='station-container'></div>");
-  $c.append("<div id='messages-container'></div>");
-  $c.append("<div id='writing-container'></div>");
-  $c.append("<div id='scrolling'>BOTTOM</div>");
   rend(React.createElement(StationComponent, {}), $('#station-container')[0]);
   rend(React.createElement(MessagesComponent, {}), $('#messages-container')[0]);
   return rend(React.createElement(WritingComponent, {}), $('#writing-container')[0]);
@@ -1025,7 +1052,7 @@ $(function() {
 
 
 
-},{"./actions/StationActions.coffee":2,"./components/MessagesComponent.coffee":4,"./components/StationComponent.coffee":5,"./components/WritingComponent.coffee":6,"./move.coffee":9,"./persistence/MessagePersistence.coffee":17,"./persistence/StationPersistence.coffee":18,"./util.coffee":21}],9:[function(require,module,exports){
+},{"./actions/StationActions.coffee":2,"./components/MessagesComponent.coffee":4,"./components/StationComponent.coffee":5,"./components/WritingComponent.coffee":6,"./move.coffee":9,"./persistence/MessagePersistence.coffee":18,"./persistence/StationPersistence.coffee":19,"./util.coffee":22}],9:[function(require,module,exports){
 var ldy, setSo, so;
 
 so = {};
@@ -1127,6 +1154,56 @@ $(window).on('scroll', window.util.checkScroll);
 
 
 },{}],10:[function(require,module,exports){
+/*!
+  Copyright (c) 2015 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+/* global define */
+
+(function () {
+	'use strict';
+
+	var hasOwn = {}.hasOwnProperty;
+
+	function classNames () {
+		var classes = '';
+
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+			if (!arg) continue;
+
+			var argType = typeof arg;
+
+			if (argType === 'string' || argType === 'number') {
+				classes += ' ' + arg;
+			} else if (Array.isArray(arg)) {
+				classes += ' ' + classNames.apply(null, arg);
+			} else if (argType === 'object') {
+				for (var key in arg) {
+					if (hasOwn.call(arg, key) && arg[key]) {
+						classes += ' ' + key;
+					}
+				}
+			}
+		}
+
+		return classes.substr(1);
+	}
+
+	if (typeof module !== 'undefined' && module.exports) {
+		module.exports = classNames;
+	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
+		// register as 'classnames', consistent with npm package name
+		define('classnames', function () {
+			return classNames;
+		});
+	} else {
+		window.classNames = classNames;
+	}
+}());
+
+},{}],11:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -1138,7 +1215,7 @@ $(window).on('scroll', window.util.checkScroll);
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":11}],11:[function(require,module,exports){
+},{"./lib/Dispatcher":12}],12:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1390,7 +1467,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":12}],12:[function(require,module,exports){
+},{"./invariant":13}],13:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1445,7 +1522,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports={
 	"version": "2014j",
 	"zones": [
@@ -2035,11 +2112,11 @@ module.exports={
 		"Pacific/Pohnpei|Pacific/Ponape"
 	]
 }
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var moment = module.exports = require("./moment-timezone");
 moment.tz.load(require('./data/packed/latest.json'));
 
-},{"./data/packed/latest.json":13,"./moment-timezone":15}],15:[function(require,module,exports){
+},{"./data/packed/latest.json":14,"./moment-timezone":16}],16:[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.2.5
 //! author : Tim Wood
@@ -2442,7 +2519,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 	return moment;
 }));
 
-},{"moment":16}],16:[function(require,module,exports){
+},{"moment":17}],17:[function(require,module,exports){
 //! moment.js
 //! version : 2.10.6
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -5638,7 +5715,7 @@ moment.tz.load(require('./data/packed/latest.json'));
     return _moment;
 
 }));
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var MessageActions, send;
 
 MessageActions = require('../actions/MessageActions.coffee');
@@ -5712,7 +5789,7 @@ module.exports = {
 
 
 
-},{"../actions/MessageActions.coffee":1}],18:[function(require,module,exports){
+},{"../actions/MessageActions.coffee":1}],19:[function(require,module,exports){
 var StationActions, design, send;
 
 StationActions = require('../actions/StationActions.coffee');
@@ -5793,14 +5870,14 @@ module.exports = {
     });
   },
   listenStation: function(station) {
-    return window.urb.bind("/ax/" + station, function(err, res) {
+    return window.urb.bind("/avx/" + station, function(err, res) {
       var ref;
       if (err || !res) {
-        console.log('/ax/ err');
+        console.log('/avx/ err');
         console.log(err);
         return;
       }
-      console.log('/ax/');
+      console.log('/avx/');
       console.log(res.data);
       if (res.data.ok === true) {
         StationActions.listeningStation(station);
@@ -5810,7 +5887,10 @@ module.exports = {
         StationActions.loadMembers(res.data.group.global);
       }
       if ((ref = res.data.cabal) != null ? ref.loc : void 0) {
-        return StationActions.loadConfig(station, res.data.cabal.loc);
+        StationActions.loadConfig(station, res.data.cabal.loc);
+      }
+      if (res.data.glyph) {
+        return StationActions.loadGlyphs(res.data.glyph);
       }
     });
   }
@@ -5818,7 +5898,7 @@ module.exports = {
 
 
 
-},{"../actions/StationActions.coffee":2}],19:[function(require,module,exports){
+},{"../actions/StationActions.coffee":2}],20:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, MessageStore, _fetching, _last, _listening, _messages, _station, _typing, moment;
 
 moment = require('moment-timezone');
@@ -5898,11 +5978,12 @@ MessageStore = _.merge(new EventEmitter, {
     return _messages[message.thought.serial] = message;
   },
   loadMessages: function(messages, last, get) {
-    var k, serial, v;
-    for (k in messages) {
-      v = messages[k];
+    var i, key, len, serial, v;
+    key = last;
+    for (i = 0, len = messages.length; i < len; i++) {
+      v = messages[i];
       serial = v.thought.serial;
-      v.key = serial;
+      v.key = key++;
       _messages[serial] = v;
     }
     if (last < _last || _last === null || get === true) {
@@ -5964,8 +6045,8 @@ module.exports = MessageStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":7,"events":22,"moment-timezone":14}],20:[function(require,module,exports){
-var EventEmitter, StationDispatcher, StationStore, _audience, _config, _listening, _members, _station, _stations, _typing, _validAudience;
+},{"../dispatcher/Dispatcher.coffee":7,"events":23,"moment-timezone":15}],21:[function(require,module,exports){
+var EventEmitter, StationDispatcher, StationStore, _audience, _config, _glyphs, _listening, _members, _shpylg, _station, _stations, _typing, _validAudience;
 
 EventEmitter = require('events').EventEmitter;
 
@@ -5984,6 +6065,10 @@ _station = null;
 _config = {};
 
 _typing = {};
+
+_glyphs = {};
+
+_shpylg = {};
 
 _validAudience = true;
 
@@ -6024,6 +6109,19 @@ StationStore = _.merge(new EventEmitter, {
   },
   getConfig: function(station) {
     return _config[station];
+  },
+  getGlyph: function(station) {
+    return _shpylg[station];
+  },
+  getGlyphMap: function() {
+    return _shpylg;
+  },
+  getGlyphAudience: function(glyph) {
+    var aud, ref;
+    aud = (ref = _glyphs[glyph]) != null ? ref : [];
+    if (aud.length === 1) {
+      return aud[0];
+    }
   },
   getMember: function(ship) {
     return {
@@ -6071,6 +6169,25 @@ StationStore = _.merge(new EventEmitter, {
   },
   loadStations: function(stations) {
     return _stations = stations;
+  },
+  loadGlyphs: function(glyphs) {
+    var aud, auds, char, results;
+    _glyphs = glyphs;
+    _shpylg = {};
+    results = [];
+    for (char in glyphs) {
+      auds = glyphs[char];
+      results.push((function() {
+        var i, len, results1;
+        results1 = [];
+        for (i = 0, len = auds.length; i < len; i++) {
+          aud = auds[i];
+          results1.push(_shpylg[aud.join(" ")] = char);
+        }
+        return results1;
+      })());
+    }
+    return results;
   },
   getStations: function() {
     return _stations;
@@ -6136,6 +6253,10 @@ StationStore.dispatchToken = StationDispatcher.register(function(payload) {
       StationStore.loadConfig(action.station, action.config);
       StationStore.emitChange();
       break;
+    case "glyphs-load":
+      StationStore.loadGlyphs(action.glyphs);
+      StationStore.emitChange();
+      break;
     case "stations-load":
       StationStore.loadStations(action.stations);
       StationStore.emitChange();
@@ -6164,7 +6285,7 @@ module.exports = StationStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":7,"events":22}],21:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":7,"events":23}],22:[function(require,module,exports){
 if (!window.util) {
   window.util = {};
 }
@@ -6276,7 +6397,7 @@ _.merge(window.util, {
 
 
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a

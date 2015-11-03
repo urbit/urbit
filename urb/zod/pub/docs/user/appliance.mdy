@@ -83,11 +83,11 @@ possible; it's not well-optimized.
 
 There's a web interface to `:talk` at
 
-    http://localhost:8080/~~/pub/talk/fab
+    http://localhost:8080/~~/home/pub/talk/fab
 
 and a dojo interface at
 
-    http://localhost:8080/~~/pub/dojo/fab
+    http://localhost:8080/~~/home/pub/dojo/fab
 
 The `:talk` client is beautiful and works quite well.  Use it.
 The `:dojo` client is a bit more of a work in progress.  (For

@@ -1128,7 +1128,7 @@ u3m_soft(c3_w    sec_w,
 {
   u3_noun why;
  
-  why = u3m_soft_top(sec_w, (1 << 18), fun_f, arg);   // 512K pad
+  why = u3m_soft_top(sec_w, (1 << 20), fun_f, arg);   // 2MB pad
 
   if ( 0 == u3h(why) ) {
     return why;

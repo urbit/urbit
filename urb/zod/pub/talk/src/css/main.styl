@@ -391,12 +391,12 @@ a
   content "~"
 
 .type.private:before
-  content "•"
+  content attr(data-glyph)
   font-size 1rem
   line-height 1.1rem
 
 .type.public:before
-  content "▒"
+  content attr(data-glyph)
   font-size .8rem
   line-height 1.2rem
 
@@ -488,6 +488,8 @@ a
 #writing
   min-height 1.6rem
   min-width 1.3rem
+  max-width 32rem
+  line-height 2rem
   outline none
   padding .3rem .1rem
   margin-top -.3rem

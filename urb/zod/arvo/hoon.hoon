@@ -1254,7 +1254,6 @@
   --
 ::
 ++  stat                                                ::  positive counter
-  !:
   |*  a=$+(* *)
   |=  (trel ,? a (map a ,@ud))
   ^+  r
@@ -6600,8 +6599,7 @@
   |=  [[tab=@ edg=@] tac=tank]  ^-  wall
   (~(win re tac) tab edg)
 ::
-++  wa                                                  ::  cached compile
-  !:
+++  wa  !:                                              ::  cached compile
   |_  worm
   ++  nell  |=(ref=type (nest [%cell %noun %noun] ref)) ::  nest in cell
   ++  nest                                              ::  nest:ut
@@ -6668,13 +6666,19 @@
     =^  typ  +>+<.$  (play p.vax [%wtgr gen [%$ 1]])
     [[typ q.vax] +>+<.$]
   ::
-  ++  spot                                              ::  slot and spec
+  ++  spot                                              ::  slot then spec
     |=  [axe=@ vax=vase]
     ^-  [vase worm]
     =^  xav  +>+<  (slot axe vax)
     (spec xav)
+  ::
+  ++  stop                                              ::  spec then slot
+    |=  [axe=@ vax=vase]
+    ^-  [vase worm]
+    =^  xav  +>+<  (spec vax)
+    (slot axe xav)
   --
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  
 ::                section 2fB, macro expansion          ::
 ::
 ++  ah                                                  ::  tiki engine
@@ -10345,14 +10349,14 @@
         ==
       ?.(-.hig ~ `[(slym gat +>.hil) +.hig])
     ::
-    ++  slur-a  ~/(%slur-a |=([gat=vase hil=mill] (slur gat hil)))
-    ++  slur-b  ~/(%slur-b |=([gat=vase hil=mill] (slur gat hil)))
-    ++  slur-c  ~/(%slur-c |=([gat=vase hil=mill] (slur gat hil)))
-    ++  slur-d  ~/(%slur-d |=([gat=vase hil=mill] (slur gat hil)))
-    ++  slur-e  ~/(%slur-e |=([gat=vase hil=mill] (slur gat hil)))
-    ++  slur-f  ~/(%slur-f |=([gat=vase hil=mill] (slur gat hil)))
-    ++  slur-g  ~/(%slur-g |=([gat=vase hil=mill] (slur gat hil)))
-    ++  slur-z  ~/(%slur-z |=([gat=vase hil=mill] (slur gat hil)))
+    ++  slur-a  ~/(%slur-a |=([gat=vase hil=mill] =+(%a (slur gat hil))))
+    ++  slur-b  ~/(%slur-b |=([gat=vase hil=mill] =+(%b (slur gat hil))))
+    ++  slur-c  ~/(%slur-c |=([gat=vase hil=mill] =+(%c (slur gat hil))))
+    ++  slur-d  ~/(%slur-d |=([gat=vase hil=mill] =+(%d (slur gat hil))))
+    ++  slur-e  ~/(%slur-e |=([gat=vase hil=mill] =+(%e (slur gat hil))))
+    ++  slur-f  ~/(%slur-f |=([gat=vase hil=mill] =+(%f (slur gat hil))))
+    ++  slur-g  ~/(%slur-g |=([gat=vase hil=mill] =+(%g (slur gat hil))))
+    ++  slur-z  ~/(%slur-z |=([gat=vase hil=mill] =+(%z (slur gat hil))))
     ::
     ++  slur-pro                                        ::  profiling slur
       ~/  %slur-pro

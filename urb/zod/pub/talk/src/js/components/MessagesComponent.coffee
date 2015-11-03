@@ -1,7 +1,8 @@
 moment = require 'moment-timezone'
+clas = require 'classnames'
 
 recl = React.createClass
-{div,pre,br,input,textarea,a} = React.DOM
+{div,pre,br,span,input,textarea,a} = React.DOM
 
 MessageActions  = require '../actions/MessageActions.coffee'
 MessageStore    = require '../stores/MessageStore.coffee'
@@ -10,6 +11,7 @@ StationStore    = require '../stores/StationStore.coffee'
 Member          = require './MemberComponent.coffee'
 
 Message = recl
+  displayName: "Message"
   lz: (n) -> if n<10 then "0#{n}" else "#{n}"
 
   convTime: (time) ->
@@ -29,54 +31,57 @@ Message = recl
     return if user.toLowerCase() is 'system'
     @props._handlePm user
 
+  renderSpeech: (speech)-> switch
+    when (con = speech.lin) or (con = speech.app) or
+         (con = speech.exp) or (con = speech.tax)
+      con.txt
+    when (con = speech.url)
+      (a {href:con.txt,target:"_blank"}, con.txt)
+    when (con = speech.mor) then con.map @renderSpeech
+    else "Unknown speech type:" + (" %"+x for x of speech).join ''
+
   render: ->
-    # pendingClass = if @props.pending isnt "received" then "pending" else ""
+    # pendingClass = clas pending: @props.pending isnt "received"
     delivery = _.uniq _.pluck @props.thought.audience, "delivery"
-    klass = if delivery.indexOf("received") isnt -1 then " received" else " pending"
     speech = @props.thought.statement.speech
     attachments = []
     while speech.fat?
       attachments.push pre {}, speech.fat.tor.tank.join("\n")
       speech = speech.fat.taf  # XX
     if !speech? then return;
-    if speech.lin?.say is false then klass += " say"
-    if speech.url then klass += " url"
-    if @props.unseen is true then klass += " new"
-    if @props.sameAs is true then klass += " same" else klass += " first"
-
+    
     name = if @props.name then @props.name else ""
     aude = _.keys @props.thought.audience
     audi = window.util.clipAudi(aude).map (_audi) -> (div {}, _audi.slice(1))
 
-    type = ['private','public']
-    type = type[Number(aude.indexOf(window.util.mainStationPath(window.urb.user)) is -1)]
+    mainStation = window.util.mainStationPath(window.urb.user)
+    type = if mainStation in aude then 'private' else 'public'
 
-    mess = switch
-      when (con = speech.lin) or (con = speech.app) or
-           (con = speech.exp) or (con = speech.tax)
-        con.txt
-      when (con = speech.url)
-        (a {href:con.txt,target:"_blank"}, con.txt)
-      else "Unknown speech type:" + (" %"+x for x of speech).join ''
-    
-    klass += switch
-      when speech.app? then " say"
-      when speech.exp? then " exp"
-      else ""
+    className = clas {message:true},
+      (if @props.sameAs then "same" else "first"),
+      (if delivery.indexOf("received") isnt -1 then "received" else "pending"),
+      {say: speech.lin?.say is false, url: speech.url, 'new': @props.unseen},
+      switch
+        when speech.app? then "say"
+        when speech.exp? then "exp"
         
-    div {className:"message#{klass}"}, [
+    div {className}, [
         (div {className:"attr"}, [
-          div {className:"type #{type}"}, ""
-          (div {onClick:@_handlePm}, (React.createElement Member,{ship:@props.ship}))
+          div {className:"type #{type}", "data-glyph": @props.glyph || "*"}
+          (div {onClick:@_handlePm},
+           (React.createElement Member,{ship:@props.ship,glyph:@props.glyph}))
           div {onClick:@_handleAudi,className:"audi"}, audi
           div {className:"time"}, @convTime @props.thought.statement.date
         ])
-        div {className:"mess"}, mess,
+        
+        div {className:"mess"}, 
+          (@renderSpeech speech)
           if attachments.length
             div {className:"fat"}, attachments
       ]
 
 module.exports = recl
+  displayName: "Messages"
   pageSize: 50
   paddingTop: 100
 
@@ -89,6 +94,7 @@ module.exports = recl
     stations:StationStore.getStations()
     configs:StationStore.getConfigs()
     typing:MessageStore.getTyping()
+    glyph:StationStore.getGlyphMap()
   }
 
   getInitialState: -> @stateFromStore()
@@ -122,7 +128,8 @@ module.exports = recl
   sortedMessages: (messages) ->
     _.sortBy messages, (_message) -> 
           _message.pending = _message.thought.audience[station]
-          _message.thought.statement.date
+          _message.key
+          #_message.thought.statement.date
 
   componentDidMount: ->
     MessageStore.addChangeListener @_onChangeStore
@@ -189,14 +196,18 @@ module.exports = recl
     lastIndex = if @lastSeen then _messages.indexOf(@lastSeen)+1 else null
     lastSaid = null
 
-    messages = _messages.map (_message,k) => 
-      if lastIndex and lastIndex is k then _message.unseen = true
+    div {id: "messages"}, _messages.map (_message,k) =>
+      nowSaid = [_message.ship,_message.thought.audience]
+      {station} = @state
+      mess = {
+        station, @_handlePm, @_handleAudi,
+        glyph: @state.glyph[(_.keys _message.thought.audience).join " "]
+        unseen: lastIndex and lastIndex is k
+        sameAs: _.isEqual lastSaid, nowSaid
+      }
+      lastSaid = nowSaid
+              
       if _message.thought.statement.speech?.app
-        _message.ship = "system"
-      _message.sameAs = lastSaid is _message.ship
-      _message.station = @state.station
-      _message._handlePm = @_handlePm
-      _message._handleAudi = @_handleAudi
-      lastSaid = _message.ship
-      React.createElement Message,_message
-    div {id: "messages"}, messages
+        mess.ship = "system"
+
+      React.createElement Message, (_.extend {}, _message, mess)
