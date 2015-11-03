@@ -4,7 +4,7 @@ reactify    = require './Reactify.coffee'
 query       = require './Async.coffee'
 
 recl = React.createClass
-{div,a,ul,li,h1} = React.DOM
+{div,pre,span,a,ul,li,h1} = React.DOM
 
 module.exports = query {
     path:'t'
@@ -21,7 +21,15 @@ module.exports = query {
       @props.dataType
       posts: @props.dataType is 'post' # needs css update
       default: @props['data-source'] is 'default'
-    (ul {className:k}, @renderList())
+    kids = @renderList()
+    unless kids.length is 0 and @props.is404?
+      return (ul {className:k}, kids)
+
+    div {className:k},
+      h1  {className:'error'}, 'Error: Empty path'
+      div {},
+        pre  {}, @props.path
+        span {}, 'is either empty or does not exist.'
 
   renderList: ->
     # check if kids all have a sort meta tag

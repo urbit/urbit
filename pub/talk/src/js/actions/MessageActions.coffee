@@ -56,17 +56,32 @@ module.exports =
     else if window.urb.util.isURL(message)
       speech = url: message
 
-    _message =
-      ship:window.urb.ship
-      thought:
-        serial:serial
-        audience:_audi
-        statement:
-          bouquet:[]
-          speech:speech
-          date: Date.now()
-          
-    MessageDispatcher.handleViewAction
-      type:"message-send"
-      message:_message
-    window.talk.MessagePersistence.sendMessage _message.thought
+    speeches =
+      if not (speech.lin?.txt.length > 64)
+        [speech]
+      else 
+        {say,txt} = speech.lin
+        txt.match(/(.{1,64}$|.{0,64} |.{64}|.+$)/g).map (s,i)->
+          say ||= i isnt 0
+          lin: {say, txt:
+            if s.slice -1 isnt " "
+              s
+            else s.slice 0,-1
+          }
+        
+    for speech in speeches
+      _message =
+        ship:window.urb.ship
+        thought:
+          serial:window.util.uuid32()
+          audience:_audi
+          statement:
+            bouquet:[]
+            speech:speech
+            date: Date.now()
+
+      MessageDispatcher.handleViewAction
+        type:"message-send"
+        message:_message
+      window.talk.MessagePersistence.sendMessage _message.thought
+

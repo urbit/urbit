@@ -36,7 +36,7 @@ module.exports = {
 
 
 
-},{"../dispatcher/Dispatcher.coffee":15,"../persistence/TreePersistence.coffee":21}],2:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":14,"../persistence/TreePersistence.coffee":20}],2:[function(require,module,exports){
 var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, query, reactify, recl, ref;
 
 clas = require('classnames');
@@ -243,8 +243,11 @@ module.exports = query({
     });
   },
   setTitle: function() {
-    var title;
+    var ref1, title;
     title = $('#cont h1').first().text() || this.props.name;
+    if ((ref1 = this.props.meta) != null ? ref1.title : void 0) {
+      title = this.props.meta.title;
+    }
     return document.title = title + " - " + this.props.path;
   },
   setPath: function(href, hist) {
@@ -313,7 +316,7 @@ module.exports = query({
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":22,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":12,"classnames":17}],3:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":11,"classnames":16}],3:[function(require,module,exports){
 var TreeActions, TreeStore, _load, code, div, recl, ref, span;
 
 _load = require('./LoadComponent.coffee');
@@ -424,12 +427,10 @@ module.exports = function(queries, Child, load) {
 
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":22,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
-var Logo, Next, a, clas, div, img, logo, p, query, reactify, recl, ref;
+},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
+var Logo, Next, a, clas, div, img, p, query, reactify, recl, ref;
 
 clas = require('classnames');
-
-logo = require('./Logo.coffee');
 
 query = require('./Async.coffee');
 
@@ -446,10 +447,17 @@ Logo = React.createFactory(recl({
     if (color === "white" || color === "black") {
       src = "//storage.googleapis.com/urbit-extra/logo/logo-" + color + "-100x100.png";
     }
-    return img({
-      src: src,
-      className: "logo"
-    });
+    return a({
+      href: "http://urbit.org",
+      style: {
+        border: "none"
+      }
+    }, [
+      img({
+        src: src,
+        className: "logo"
+      })
+    ]);
   }
 }));
 
@@ -525,7 +533,7 @@ module.exports = query({
 
 
 
-},{"./Async.coffee":3,"./Logo.coffee":11,"./Reactify.coffee":12,"classnames":17}],5:[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":11,"classnames":16}],5:[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -572,7 +580,7 @@ module.exports = {
 
 
 
-},{"./CodeMirror.coffee":5,"./EmailComponent.coffee":7,"./KidsComponent.coffee":8,"./ListComponent.coffee":9,"./SearchComponent.coffee":13,"./TocComponent.coffee":14}],7:[function(require,module,exports){
+},{"./CodeMirror.coffee":5,"./EmailComponent.coffee":7,"./KidsComponent.coffee":8,"./ListComponent.coffee":9,"./SearchComponent.coffee":12,"./TocComponent.coffee":13}],7:[function(require,module,exports){
 var button, div, input, p, reactify, recl, ref;
 
 reactify = require('./Reactify.coffee');
@@ -653,7 +661,7 @@ module.exports = recl({
 
 
 
-},{"./Reactify.coffee":12}],8:[function(require,module,exports){
+},{"./Reactify.coffee":11}],8:[function(require,module,exports){
 var a, div, hr, li, query, reactify, recl, ref, ul;
 
 reactify = require('./Reactify.coffee');
@@ -725,8 +733,8 @@ module.exports = query({
 
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":12}],9:[function(require,module,exports){
-var a, clas, div, h1, li, query, reactify, recl, ref, ul;
+},{"./Async.coffee":3,"./Reactify.coffee":11}],9:[function(require,module,exports){
+var a, clas, div, h1, li, pre, query, reactify, recl, ref, span, ul;
 
 clas = require('classnames');
 
@@ -736,7 +744,7 @@ query = require('./Async.coffee');
 
 recl = React.createClass;
 
-ref = React.DOM, div = ref.div, a = ref.a, ul = ref.ul, li = ref.li, h1 = ref.h1;
+ref = React.DOM, div = ref.div, pre = ref.pre, span = ref.span, a = ref.a, ul = ref.ul, li = ref.li, h1 = ref.h1;
 
 module.exports = query({
   path: 't',
@@ -748,16 +756,24 @@ module.exports = query({
 }, recl({
   displayName: "List",
   render: function() {
-    var k;
+    var k, kids;
     k = clas({
       list: true
     }, this.props.dataType, {
       posts: this.props.dataType === 'post',
       "default": this.props['data-source'] === 'default'
     });
-    return ul({
+    kids = this.renderList();
+    if (!(kids.length === 0 && (this.props.is404 != null))) {
+      return ul({
+        className: k
+      }, kids);
+    }
+    return div({
       className: k
-    }, this.renderList());
+    }, h1({
+      className: 'error'
+    }, 'Error: Empty path'), div({}, pre({}, this.props.path), span({}, 'is either empty or does not exist.')));
   },
   renderList: function() {
     var _date, _k, _keys, date, elem, href, i, item, k, len, parts, path, preview, ref1, ref2, ref3, ref4, ref5, ref6, ref7, results, sorted, title, v;
@@ -873,7 +889,7 @@ module.exports = query({
 
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":12,"classnames":17}],10:[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":11,"classnames":16}],10:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -915,11 +931,6 @@ module.exports = recl({
 
 
 },{}],11:[function(require,module,exports){
-
-
-
-
-},{}],12:[function(require,module,exports){
 var Virtual, div, load, reactify, recl, ref, rele, span, walk;
 
 recl = React.createClass;
@@ -987,7 +998,7 @@ module.exports = _.extend(reactify, {
 
 
 
-},{"./LoadComponent.coffee":10}],13:[function(require,module,exports){
+},{"./LoadComponent.coffee":10}],12:[function(require,module,exports){
 var a, div, input, query, reactify, recl, ref,
   slice = [].slice;
 
@@ -1126,7 +1137,7 @@ module.exports = query({
 
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":12}],14:[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":11}],13:[function(require,module,exports){
 var div, query, reactify, recl,
   slice = [].slice;
 
@@ -1255,7 +1266,7 @@ module.exports = query({
 
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":12}],15:[function(require,module,exports){
+},{"./Async.coffee":3,"./Reactify.coffee":11}],14:[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -1277,7 +1288,7 @@ module.exports = _.extend(new Dispatcher(), {
 
 
 
-},{"flux":18}],16:[function(require,module,exports){
+},{"flux":17}],15:[function(require,module,exports){
 var rend;
 
 rend = React.render;
@@ -1451,7 +1462,7 @@ $(function() {
 
 
 
-},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./persistence/TreePersistence.coffee":21}],17:[function(require,module,exports){
+},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./persistence/TreePersistence.coffee":20}],16:[function(require,module,exports){
 /*!
   Copyright (c) 2015 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -1501,7 +1512,7 @@ $(function() {
 	}
 }());
 
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -1513,7 +1524,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":19}],19:[function(require,module,exports){
+},{"./lib/Dispatcher":18}],18:[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1765,7 +1776,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":20}],20:[function(require,module,exports){
+},{"./invariant":19}],19:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1820,7 +1831,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],21:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 var dedup;
 
 dedup = {};
@@ -1879,7 +1890,7 @@ module.exports = {
 
 
 
-},{}],22:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, QUERIES, TreeStore, _curr, _data, _tree, clog;
 
 EventEmitter = require('events').EventEmitter;
@@ -1937,7 +1948,7 @@ TreeStore = _.extend(EventEmitter.prototype, {
         data[k] = have[k];
       }
       if (query.kids) {
-        if (have.EMPTY) {
+        if (have.kids === false) {
           data.kids = {};
         } else {
           for (k in tree) {
@@ -2000,7 +2011,7 @@ TreeStore = _.extend(EventEmitter.prototype, {
       this.loadValues(tree[k], path + "/" + k, v);
     }
     if (data.kids && _.isEmpty(data.kids)) {
-      old.EMPTY = true;
+      old.kids = false;
     }
     return _data[path] = old;
   },
@@ -2105,7 +2116,7 @@ module.exports = TreeStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":15,"events":23}],23:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":14,"events":22}],22:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2408,4 +2419,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[16]);
+},{}]},{},[15]);
