@@ -1,206 +1,228 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var MessageDispatcher;
+var Dispatcher, Persistence, _persistence;
 
-MessageDispatcher = require('../dispatcher/Dispatcher.coffee');
+Dispatcher = require('../dispatcher/Dispatcher.coffee');
 
-module.exports = {
-  loadMessages: function(grams, get) {
-    return MessageDispatcher.handleServerAction({
-      type: "messages-load",
-      messages: grams.tele,
-      last: grams.num,
-      get: get
-    });
-  },
-  listenStation: function(station, date) {
-    if (!date) {
-      date = window.urb.util.toDate(new Date());
-    }
-    return window.talk.MessagePersistence.listenStation(station, date);
-  },
-  listeningStation: function(station) {
-    return MessageDispatcher.handleViewAction({
-      type: "messages-listen",
-      station: station
-    });
-  },
-  setTyping: function(state) {
-    return MessageDispatcher.handleViewAction({
-      type: "messages-typing",
-      state: state
-    });
-  },
-  getMore: function(station, start, end) {
-    MessageDispatcher.handleViewAction({
-      type: "messages-fetch"
-    });
-    return window.talk.MessagePersistence.get(station, start, end);
-  },
-  sendMessage: function(message, audience) {
-    var _audi, _message, j, k, len, ref, ref1, results, say, serial, speech, speeches, txt, v;
-    serial = window.util.uuid32();
-    audience = _.uniq(audience);
-    _audi = {};
-    for (k in audience) {
-      v = audience[k];
-      _audi[v] = {
-        envelope: {
-          visible: true,
-          sender: null
-        },
-        delivery: "pending"
-      };
-    }
-    speech = {
-      lin: {
-        say: true,
-        txt: message
-      }
-    };
-    if (message[0] === "@") {
-      speech.lin.txt = speech.lin.txt.slice(1).trim();
-      speech.lin.say = false;
-    } else if (message[0] === "#") {
-      speech = {
-        "eval": speech.lin.txt.slice(1).trim()
-      };
-    } else if (window.urb.util.isURL(message)) {
-      speech = {
-        url: message
-      };
-    }
-    speeches = !(((ref = speech.lin) != null ? ref.txt.length : void 0) > 64) ? [speech] : ((ref1 = speech.lin, say = ref1.say, txt = ref1.txt, ref1), txt.match(/(.{1,64}$|.{0,64} |.{64}|.+$)/g).map(function(s, i) {
-      say || (say = i !== 0);
-      return {
-        lin: {
-          say: say,
-          txt: s.slice(-1 !== " ") ? s : s.slice(0, -1)
-        }
-      };
-    }));
-    results = [];
-    for (j = 0, len = speeches.length; j < len; j++) {
-      speech = speeches[j];
-      _message = {
-        ship: window.urb.ship,
-        thought: {
-          serial: window.util.uuid32(),
-          audience: _audi,
-          statement: {
-            bouquet: [],
-            speech: speech,
-            date: Date.now()
-          }
-        }
-      };
-      MessageDispatcher.handleViewAction({
-        type: "message-send",
-        message: _message
+_persistence = require('../persistence/MessagePersistence.coffee');
+
+Persistence = _persistence({
+  MessageActions: module.exports = {
+    loadMessages: function(messages, last, get) {
+      return Dispatcher.handleServerAction({
+        messages: messages,
+        last: last,
+        get: get,
+        type: "messages-load"
       });
-      results.push(window.talk.MessagePersistence.sendMessage(_message.thought));
+    },
+    listenStation: function(station, date) {
+      if (!date) {
+        date = window.urb.util.toDate(new Date());
+      }
+      return Persistence.listenStation(station, date);
+    },
+    listeningStation: function(station) {
+      return Dispatcher.handleViewAction({
+        station: station,
+        type: "messages-listen"
+      });
+    },
+    setTyping: function(state) {
+      return Dispatcher.handleViewAction({
+        state: state,
+        type: "messages-typing"
+      });
+    },
+    getMore: function(station, start, end) {
+      Dispatcher.handleViewAction({
+        type: "messages-fetch"
+      });
+      return Persistence.get(station, start, end);
+    },
+    sendMessage: function(txt, audience) {
+      var _audi, j, k, len, message, ref, ref1, results, say, serial, speech, speeches, v;
+      serial = window.util.uuid32();
+      audience = _.uniq(audience);
+      _audi = {};
+      for (k in audience) {
+        v = audience[k];
+        _audi[v] = {
+          envelope: {
+            visible: true,
+            sender: null
+          },
+          delivery: "pending"
+        };
+      }
+      speech = {
+        lin: {
+          txt: txt,
+          say: true
+        }
+      };
+      if (txt[0] === "@") {
+        speech.lin.txt = speech.lin.txt.slice(1).trim();
+        speech.lin.say = false;
+      } else if (txt[0] === "#") {
+        speech = {
+          "eval": speech.lin.txt.slice(1).trim()
+        };
+      } else if (window.urb.util.isURL(txt)) {
+        speech = {
+          url: txt
+        };
+      }
+      speeches = !(((ref = speech.lin) != null ? ref.txt.length : void 0) > 64) ? [speech] : ((ref1 = speech.lin, say = ref1.say, txt = ref1.txt, ref1), txt.match(/(.{1,64}$|.{0,64} |.{64}|.+$)/g).map(function(s, i) {
+        say || (say = i !== 0);
+        return {
+          lin: {
+            say: say,
+            txt: s.slice(-1 !== " ") ? s : s.slice(0, -1)
+          }
+        };
+      }));
+      results = [];
+      for (j = 0, len = speeches.length; j < len; j++) {
+        speech = speeches[j];
+        message = {
+          ship: window.urb.ship,
+          thought: {
+            serial: window.util.uuid32(),
+            audience: _audi,
+            statement: {
+              bouquet: [],
+              speech: speech,
+              date: Date.now()
+            }
+          }
+        };
+        Dispatcher.handleViewAction({
+          message: message,
+          type: "message-send"
+        });
+        results.push(Persistence.sendMessage(message.thought));
+      }
+      return results;
     }
-    return results;
   }
+});
+
+
+
+},{"../dispatcher/Dispatcher.coffee":7,"../persistence/MessagePersistence.coffee":18}],2:[function(require,module,exports){
+var Dispatcher, Persistence, _persistence, serverAction, viewAction;
+
+Dispatcher = require('../dispatcher/Dispatcher.coffee');
+
+serverAction = function(f) {
+  return function() {
+    return Dispatcher.handleServerAction(f.apply(this, arguments));
+  };
 };
 
-
-
-},{"../dispatcher/Dispatcher.coffee":7}],2:[function(require,module,exports){
-var StationDispatcher;
-
-StationDispatcher = require('../dispatcher/Dispatcher.coffee');
-
-module.exports = {
-  loadConfig: function(station, config) {
-    return StationDispatcher.handleServerAction({
-      type: "config-load",
-      station: station,
-      config: config
-    });
-  },
-  loadGlyphs: function(glyphs) {
-    return StationDispatcher.handleServerAction({
-      type: "glyphs-load",
-      station: station,
-      glyphs: glyphs
-    });
-  },
-  switchStation: function(station) {
-    return StationDispatcher.handleViewAction({
-      type: "station-switch",
-      station: station
-    });
-  },
-  setAudience: function(audience) {
-    return StationDispatcher.handleViewAction({
-      type: "station-set-audience",
-      audience: audience
-    });
-  },
-  setValidAudience: function(valid) {
-    return StationDispatcher.handleViewAction({
-      type: "station-set-valid-audience",
-      valid: valid
-    });
-  },
-  toggleAudience: function(station) {
-    return StationDispatcher.handleViewAction({
-      type: "station-audience-toggle",
-      station: station
-    });
-  },
-  removeStation: function(station) {
-    return window.talk.StationPersistence.removeStation(station);
-  },
-  setSources: function(station, sources) {
-    return window.talk.StationPersistence.setSources(station, window.urb.ship, sources);
-  },
-  createStation: function(name) {
-    return window.talk.StationPersistence.createStation(name);
-  },
-  listenStation: function(station) {
-    return window.talk.StationPersistence.listenStation(station);
-  },
-  listeningStation: function(station) {
-    return StationDispatcher.handleViewAction({
-      type: "station-listen",
-      station: station
-    });
-  },
-  setTyping: function(station, state) {
-    return StationDispatcher.handleViewAction({
-      type: "typing-set",
-      station: station,
-      state: state
-    });
-  },
-  ping: function(_ping) {
-    return window.talk.StationPersistence.ping(_ping);
-  },
-  loadStations: function(stations) {
-    return StationDispatcher.handleServerAction({
-      type: "stations-load",
-      stations: stations
-    });
-  },
-  loadMembers: function(members) {
-    return StationDispatcher.handleServerAction({
-      type: "members-load",
-      members: members
-    });
-  },
-  createStation: function(station) {
-    StationDispatcher.handleViewAction({
-      type: "station-create",
-      station: station
-    });
-    return window.talk.StationPersistence.createStation(station);
-  }
+viewAction = function(f) {
+  return function() {
+    return Dispatcher.handleViewAction(f.apply(this, arguments));
+  };
 };
 
+_persistence = require('../persistence/StationPersistence.coffee');
+
+Persistence = _persistence({
+  StationActions: module.exports = {
+    loadGlyphs: serverAction(function(glyphs) {
+      return {
+        glyphs: glyphs,
+        type: "glyphs-load"
+      };
+    }),
+    loadMembers: serverAction(function(members) {
+      return {
+        members: members,
+        type: "members-load"
+      };
+    }),
+    loadStations: serverAction(function(stations) {
+      return {
+        stations: stations,
+        type: "stations-load"
+      };
+    }),
+    loadConfig: serverAction(function(station, config) {
+      return {
+        station: station,
+        config: config,
+        type: "config-load"
+      };
+    }),
+    setTyping: viewAction(function(station, state) {
+      return {
+        station: station,
+        state: state,
+        type: "typing-set"
+      };
+    }),
+    setAudience: viewAction(function(audience) {
+      return {
+        audience: audience,
+        type: "station-set-audience"
+      };
+    }),
+    setValidAudience: viewAction(function(valid) {
+      return {
+        valid: valid,
+        type: "station-set-valid-audience"
+      };
+    }),
+    toggleAudience: viewAction(function(station) {
+      return {
+        station: station,
+        type: "station-audience-toggle"
+      };
+    }),
+    switchStation: viewAction(function(station) {
+      return {
+        station: station,
+        type: "station-switch"
+      };
+    }),
+    listeningStation: viewAction(function(station) {
+      return {
+        station: station,
+        type: "station-listen"
+      };
+    }),
+    createStation: function(station) {
+      Dispatcher.handleViewAction({
+        station: station,
+        type: "station-create"
+      });
+      return Persistence.createStation(station);
+    },
+    listen: function() {
+      return Persistence.listen();
+    },
+    ping: function(_ping) {
+      return Persistence.ping(_ping);
+    },
+    removeStation: function(station) {
+      return Persistence.removeStation(station);
+    },
+    listenStation: function(station) {
+      return Persistence.listenStation(station);
+    },
+    createStation: function(name) {
+      return Persistence.createStation(name);
+    },
+    setSources: function(station, sources) {
+      return Persistence.setSources(station, window.urb.ship, sources);
+    }
+  }
+});
 
 
-},{"../dispatcher/Dispatcher.coffee":7}],3:[function(require,module,exports){
+
+},{"../dispatcher/Dispatcher.coffee":7,"../persistence/StationPersistence.coffee":19}],3:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -1028,10 +1050,9 @@ $(function() {
   rend = React.render;
   window.talk = {};
   window.talk.MessagePersistence = require('./persistence/MessagePersistence.coffee');
-  window.talk.StationPersistence = require('./persistence/StationPersistence.coffee');
   require('./util.coffee');
   require('./move.coffee');
-  window.talk.StationPersistence.listen();
+  StationActions.listen();
   StationComponent = require('./components/StationComponent.coffee');
   MessagesComponent = require('./components/MessagesComponent.coffee');
   WritingComponent = require('./components/WritingComponent.coffee');
@@ -1043,7 +1064,7 @@ $(function() {
 
 
 
-},{"./actions/StationActions.coffee":2,"./components/MessagesComponent.coffee":4,"./components/StationComponent.coffee":5,"./components/WritingComponent.coffee":6,"./move.coffee":9,"./persistence/MessagePersistence.coffee":18,"./persistence/StationPersistence.coffee":19,"./util.coffee":22}],9:[function(require,module,exports){
+},{"./actions/StationActions.coffee":2,"./components/MessagesComponent.coffee":4,"./components/StationComponent.coffee":5,"./components/WritingComponent.coffee":6,"./move.coffee":9,"./persistence/MessagePersistence.coffee":18,"./util.coffee":22}],9:[function(require,module,exports){
 var ldy, setSo, so;
 
 so = {};
@@ -5707,9 +5728,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 
 }));
 },{}],18:[function(require,module,exports){
-var MessageActions, send;
-
-MessageActions = require('../actions/MessageActions.coffee');
+var send;
 
 window.urb.appl = "talk";
 
@@ -5719,71 +5738,75 @@ send = function(data, cb) {
   }, cb);
 };
 
-module.exports = {
-  listenStation: function(station, since) {
-    var $this;
-    console.log('listen station');
-    console.log(arguments);
-    $this = this;
-    return window.urb.bind("/f/" + station + "/" + since, function(err, res) {
-      var ref, ref1;
-      if (err || !res.data) {
-        console.log('/f/ err!');
-        console.log(err);
-        console.log(res);
-        $this.listenStation(station, since);
-        return;
-      }
-      console.log('/f/');
-      console.log(res.data);
-      if (res.data.ok === true) {
-        MessageActions.listeningStation(station);
-      }
-      if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
-        return MessageActions.loadMessages(res.data.grams);
-      }
-    });
-  },
-  get: function(station, start, end) {
-    end = window.urb.util.numDot(end);
-    start = window.urb.util.numDot(start);
-    return window.urb.bind("/f/" + station + "/" + end + "/" + start, function(err, res) {
-      var ref, ref1;
-      if (err || !res.data) {
-        console.log('/f/ /e/s err');
-        console.log(err);
-        return;
-      }
-      console.log('/f/ /e/s');
-      console.log(res);
-      if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
-        MessageActions.loadMessages(res.data.grams, true);
-        return window.urb.drop("/f/" + station + "/" + end + "/" + start, function(err, res) {
-          console.log('done');
-          return console.log(res);
-        });
-      }
-    });
-  },
-  sendMessage: function(message, cb) {
-    return send({
-      publish: [message]
-    }, function(err, res) {
-      console.log('sent');
+module.exports = function(arg) {
+  var MessageActions;
+  MessageActions = arg.MessageActions;
+  return {
+    listenStation: function(station, since) {
+      var $this;
+      console.log('listen station');
       console.log(arguments);
-      if (cb) {
-        return cb(err, res);
-      }
-    });
-  }
+      $this = this;
+      return window.urb.bind("/f/" + station + "/" + since, function(err, res) {
+        var num, ref, ref1, ref2, ref3, tele;
+        if (err || !res.data) {
+          console.log('/f/ err!');
+          console.log(err);
+          console.log(res);
+          $this.listenStation(station, since);
+          return;
+        }
+        console.log('/f/');
+        console.log(res.data);
+        if (res.data.ok === true) {
+          MessageActions.listeningStation(station);
+        }
+        if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
+          ref3 = (ref2 = res.data) != null ? ref2.grams : void 0, tele = ref3.tele, num = ref3.num;
+          return MessageActions.loadMessages(tele, num);
+        }
+      });
+    },
+    get: function(station, start, end) {
+      end = window.urb.util.numDot(end);
+      start = window.urb.util.numDot(start);
+      return window.urb.bind("/f/" + station + "/" + end + "/" + start, function(err, res) {
+        var num, ref, ref1, ref2, ref3, tele;
+        if (err || !res.data) {
+          console.log('/f/ /e/s err');
+          console.log(err);
+          return;
+        }
+        console.log('/f/ /e/s');
+        console.log(res);
+        if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
+          ref3 = (ref2 = res.data) != null ? ref2.grams : void 0, tele = ref3.tele, num = ref3.num;
+          MessageActions.loadMessages(tele, num, true);
+          return window.urb.drop("/f/" + station + "/" + end + "/" + start, function(err, res) {
+            console.log('done');
+            return console.log(res);
+          });
+        }
+      });
+    },
+    sendMessage: function(message, cb) {
+      return send({
+        publish: [message]
+      }, function(err, res) {
+        console.log('sent');
+        console.log(arguments);
+        if (cb) {
+          return cb(err, res);
+        }
+      });
+    }
+  };
 };
 
 
 
-},{"../actions/MessageActions.coffee":1}],19:[function(require,module,exports){
-var StationActions, design, send;
-
-StationActions = require('../actions/StationActions.coffee');
+},{}],19:[function(require,module,exports){
+var design, send;
 
 window.urb.appl = "talk";
 
@@ -5802,94 +5825,98 @@ design = function(party, config, cb) {
   }, cb);
 };
 
-module.exports = {
-  createStation: function(name, cb) {
-    return design(name, {
-      sources: [],
-      caption: "",
-      cordon: {
+module.exports = function(arg) {
+  var StationActions;
+  StationActions = arg.StationActions;
+  return {
+    createStation: function(name, cb) {
+      return design(name, {
+        sources: [],
+        caption: "",
+        cordon: {
+          posture: "white",
+          list: []
+        }
+      }, cb);
+    },
+    removeStation: function(name, cb) {
+      return design(name, null, cb);
+    },
+    setSources: function(station, ship, sources) {
+      var cordon;
+      cordon = {
         posture: "white",
         list: []
-      }
-    }, cb);
-  },
-  removeStation: function(name, cb) {
-    return design(name, null, cb);
-  },
-  setSources: function(station, ship, sources) {
-    var cordon;
-    cordon = {
-      posture: "white",
-      list: []
-    };
-    return design(station, {
-      sources: sources,
-      cordon: cordon,
-      caption: ""
-    }, function(err, res) {
-      console.log('talk-command');
-      return console.log(arguments);
-    });
-  },
-  members: function() {
-    return window.urb.bind("/a/court", function(err, res) {
-      var ref, ref1;
-      if (err || !res) {
-        console.log('/a/ err');
-        console.log(err);
-        return;
-      }
-      console.log('/a/');
-      console.log(res.data);
-      if ((ref = res.data) != null ? (ref1 = ref.group) != null ? ref1.global : void 0 : void 0) {
-        return StationActions.loadMembers(res.data.group.global);
-      }
-    });
-  },
-  listen: function() {
-    return window.urb.bind("/", function(err, res) {
-      if (err || !res.data) {
-        console.log('/ err');
-        console.log(err);
-        return;
-      }
-      console.log('/');
-      console.log(res.data);
-      if (res.data.house) {
-        return StationActions.loadStations(res.data.house);
-      }
-    });
-  },
-  listenStation: function(station) {
-    return window.urb.bind("/avx/" + station, function(err, res) {
-      var ref;
-      if (err || !res) {
-        console.log('/avx/ err');
-        console.log(err);
-        return;
-      }
-      console.log('/avx/');
-      console.log(res.data);
-      if (res.data.ok === true) {
-        StationActions.listeningStation(station);
-      }
-      if (res.data.group) {
-        res.data.group.global[window.util.mainStationPath(window.urb.user)] = res.data.group.local;
-        StationActions.loadMembers(res.data.group.global);
-      }
-      if ((ref = res.data.cabal) != null ? ref.loc : void 0) {
-        StationActions.loadConfig(station, res.data.cabal.loc);
-      }
-      if (res.data.glyph) {
-        return StationActions.loadGlyphs(res.data.glyph);
-      }
-    });
-  }
+      };
+      return design(station, {
+        sources: sources,
+        cordon: cordon,
+        caption: ""
+      }, function(err, res) {
+        console.log('talk-command');
+        return console.log(arguments);
+      });
+    },
+    members: function() {
+      return window.urb.bind("/a/court", function(err, res) {
+        var ref, ref1;
+        if (err || !res) {
+          console.log('/a/ err');
+          console.log(err);
+          return;
+        }
+        console.log('/a/');
+        console.log(res.data);
+        if ((ref = res.data) != null ? (ref1 = ref.group) != null ? ref1.global : void 0 : void 0) {
+          return StationActions.loadMembers(res.data.group.global);
+        }
+      });
+    },
+    listen: function() {
+      return window.urb.bind("/", function(err, res) {
+        if (err || !res.data) {
+          console.log('/ err');
+          console.log(err);
+          return;
+        }
+        console.log('/');
+        console.log(res.data);
+        if (res.data.house) {
+          return StationActions.loadStations(res.data.house);
+        }
+      });
+    },
+    listenStation: function(station) {
+      return window.urb.bind("/avx/" + station, function(err, res) {
+        var ref;
+        if (err || !res) {
+          console.log('/avx/ err');
+          console.log(err);
+          return;
+        }
+        console.log('/avx/');
+        console.log(res.data);
+        if (res.data.ok === true) {
+          StationActions.listeningStation(station);
+        }
+        if (res.data.group) {
+          res.data.group.global[window.util.mainStationPath(window.urb.user)] = res.data.group.local;
+          StationActions.loadMembers(res.data.group.global);
+        }
+        if ((ref = res.data.cabal) != null ? ref.loc : void 0) {
+          StationActions.loadConfig(station, res.data.cabal.loc);
+        }
+        if (res.data.glyph) {
+          return StationActions.loadGlyphs(res.data.glyph);
+        }
+      });
+    }
+  };
 };
 
 
 
-},{"../actions/StationActions.coffee":2}],20:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, MessageStore, _fetching, _last, _listening, _messages, _station, _typing, moment;
 
 moment = require('moment-timezone');

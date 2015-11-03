@@ -1,11 +1,10 @@
 $(() ->
-  StationActions = require './actions/StationActions.coffee'
+  StationActions = require './actions/StationActions.coffee' #start poll
 
   rend = React.render
   
   window.talk = {}
   window.talk.MessagePersistence = require './persistence/MessagePersistence.coffee'
-  window.talk.StationPersistence = require './persistence/StationPersistence.coffee'
 
   require './util.coffee'
   require './move.coffee'
@@ -17,7 +16,7 @@ $(() ->
   #     $('#nav').removeClass 'scrolling'
   # setInterval checkScroll, 500
 
-  window.talk.StationPersistence.listen()
+  StationActions.listen()
 
   StationComponent    = require './components/StationComponent.coffee'
   MessagesComponent   = require './components/MessagesComponent.coffee'
