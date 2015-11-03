@@ -1,4 +1,10 @@
-# Hoon 3: our first program
+---
+title: Hoon 101.3: our first program
+sort: 3
+hide: true
+next: false
+---
+# Hoon 101.3: our first program
 
 It's time for us to do some actual programming.  In this section,
 we'll work through that classic Urbit pons asinorum, decrement.

@@ -7,8 +7,9 @@ sort: 2
 
 # Developer documentation
 
-Urbit has three programming layers: Nock (combinator nano-VM),
-Hoon (strict functional language), and Arvo (functional OS).
+Urbit has three programming layers: [Nock](dev/nock) (combinator nano-VM),
+[Hoon](dev/hoon) (strict functional language), and [Arvo](dev/arvo) (functional
+OS).
 
 To code in Urbit, the least you need to learn is Hoon, plus a
 little bit of Arvo.  Nock is a sort of functional assembly

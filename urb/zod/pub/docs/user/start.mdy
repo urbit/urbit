@@ -96,6 +96,8 @@ You're on the air!  You should see some backlog to give you
 context.  Please remember our code of conduct: don't be rude.
 Also, `urbit-meta` is politically correct and safe for work.
 
+For more instructions on how to use `:talk`, see the [`:talk` manual](http://urbit.org/docs/user/talk)
+
 ## Using the filesystem
 
 The Urbit filesystem, `%clay`, is a revision-control system (like
