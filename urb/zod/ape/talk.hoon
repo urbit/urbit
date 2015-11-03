@@ -154,7 +154,7 @@
       ::
       ++  stan                                          ::  station
         ;~  pose
-          (cold [our.hid man.she] tis)
+          (cold [our.hid man.she] col)
           ;~(pfix cen (stag our.hid sym))
           ;~(pfix fas (stag (sein our.hid) sym))
         ::
