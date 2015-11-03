@@ -20,7 +20,7 @@ Next = React.createFactory query {
       head:'r'
       meta:'j'
   }, (recl
-    displayName: "Links"
+    displayName: "Next"
     render: ->
       curr = @props.kids[@props.curr]
       if curr?.meta?.next
@@ -32,9 +32,11 @@ Next = React.createFactory query {
           next = keys[next]
           next = @props.kids[next]
 
-          (div {className:"link-next"}, [
-            (a {href:"#{@props.path}/#{next.name}"}, "Next: #{next.meta.title}")
-          ])
+          if next
+            return (div {className:"link-next"}, [
+              (a {href:"#{@props.path}/#{next.name}"}, "Next: #{next.meta.title}")
+            ])
+      return (div {},"")
   )
 
 module.exports = query {
