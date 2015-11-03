@@ -89,6 +89,3 @@ Run `make`:
     make
 
 (On FreeBSD, use `gmake` instead.)
-
-The executable is `bin/urbit`.  Install it somewhere, or just use
-it where it is.
