@@ -1,6 +1,8 @@
 recl = React.createClass
 {div,br,input,textarea} = React.DOM
 
+husl = require 'husl'
+
 MessageActions  = require '../actions/MessageActions.coffee'
 MessageStore    = require '../stores/MessageStore.coffee'
 StationActions  = require '../actions/StationActions.coffee'
@@ -149,7 +151,13 @@ module.exports = recl
       txt = @$writing.text()
       e.preventDefault()
       if txt.length > 0
-        @sendMessage()
+        if window.talk.online
+          @sendMessage()
+        else
+          #@errHue = ((@errHue || 0) + (Math.random() * 300) + 30) % 360
+          #$('#offline').css color: husl.toHex @errHue, 90, 50 
+          $('#offline').addClass('error').one 'transitionend',
+            -> $('#offline').removeClass 'error'
       return false
     @onInput()
     @set()

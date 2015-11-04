@@ -1,17 +1,12 @@
 recl = React.createClass
-[div,input,textarea,h1,a] = [
-  React.DOM.div,
-  React.DOM.input,
-  React.DOM.textarea,
-  React.DOM.h1,
-  React.DOM.a
-]
+{div,style,input,textarea,h1,a} = React.DOM
 
 StationStore    = require '../stores/StationStore.coffee'
 StationActions  = require '../actions/StationActions.coffee'
 Member          = require './MemberComponent.coffee'
 
 module.exports = recl
+  displayName: "Station"
   stateFromStore: -> {
     audi:StationStore.getAudience()
     members:StationStore.getMembers()
@@ -88,7 +83,7 @@ module.exports = recl
     else
       members = ""
 
-    sourceInput = [(input {className:"join",onKeyUp:@_keyUp,placeholder:"+"}, "")]
+    sourceInput = [(input {className:"join",onKeyUp:@_keyUp,placeholder:"+"})]
     sourceCtrl = div {className:"sour-ctrl"},sourceInput
 
     sources = []
@@ -103,21 +98,19 @@ module.exports = recl
     else
       sources = "" 
 
-    head = (div {id:"head"}, 
-        [ (div {id:"who"},[
-            (div {className:"sig"},"")
-            (div {className:"ship"},"#{window.urb.user}")
-          ])
-          (div {id:"where"},[
-            (div {className:"slat"},"talk")
-            (div {className:"path"},"") #window.util.mainStation(window.urb.user))
-            (div {className:"caret"},"")
-          ])
-        ]
+    (div {id:"station",onClick:@_toggleOpen},
+      (div {id:"head"}, 
+        (div {id:"who"},
+          div {className:"sig"}
+          div {className:"ship"},"#{window.urb.user}"
+        )
+        (div {id:"where"},
+          div {className:"slat"},"talk"
+          div {className:"path"} #, window.util.mainStation(window.urb.user))
+          div {className:"caret"}
+        )
+        div {id:"offline"}, "Warning: no connection to server."
       )
-
-    parts.push head
-    parts.push (div {id:"stations"}, [(h1 {}, "Listening to"),(div {},sources),sourceCtrl])
-    parts.push (div {id:"audience"}, (div {},[(h1 {}, "Talking to"),(div {id:"members"},members)]))
-
-    div {id:"station",onClick:@_toggleOpen},parts
+      div {id:"stations"}, (h1 {}, "Listening to"),(div {},sources),sourceCtrl
+      div {id:"audience"}, div {}, (h1 {}, "Talking to"),(div {id:"members"},members)
+    )
