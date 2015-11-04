@@ -61,6 +61,7 @@
           [%ogre wire $|(@tas beam)]                  ::
           [%merg wire @p @tas @p @tas case germ]      ::
           [%poke wire dock pear]                      ::
+          [%wait wire @da]                            ::
           [%warp wire sock riff]                      ::
       ==                                              ::
     ++  pear                                          ::  poke fruit
@@ -175,6 +176,10 @@
       %next  %y  da/now  /arvo/[syd]/hoon
   ==
 ::
+++  poke-overload
+  |=  syd=term
+  abet:(emit %wait /kiln/overload/[syd] (add ~s10 now))
+::
 ++  take  |=(way=wire ?>(?=([@ ~] way) (work i.way))) ::  general handler
 ++  take-mere                                         ::
   |=  [way=wire are=(each (set path) (pair term tang))]
@@ -224,6 +229,16 @@
       %warp  /kiln/autoload/[syd]  [our our]  %home  ~
       %next  %y  da/now  /arvo/[syd]/hoon
     ==
+  abet
+::
+++  take-wake-overload
+  |=  [way=wire ~]
+  ?>  ?=([@ ~] way)
+  =+  syd=(slav %tas i.way)
+  =.  +>.$
+    (emit %poke /kiln/overload/[syd] [our %hood] %helm-reload ~[syd])
+  =.  +>.$
+    (emit %wait /kiln/overload/[syd] (add ~m60 now))
   abet
 ::
 ++  spam
