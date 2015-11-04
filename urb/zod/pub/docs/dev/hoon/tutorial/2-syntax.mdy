@@ -166,7 +166,7 @@ Let's see autocons in action:
 [%dtzy %ud 42]
 ~tasfyn-partyv:dojo/sandbox> ??? 0x2a
 [%dtzy %ux 42]
-~tasfyn-partyv:dojo/sandbox> ??? [42 0xa]
+~tasfyn-partyv:dojo/sandbox> ??? [42 0x2a]
 [[%dtzy %ud 42] %dtzy %ux 42]
 ```
 (As always, it may confuse *you* that this is the same noun as
