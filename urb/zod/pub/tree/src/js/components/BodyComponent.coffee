@@ -57,7 +57,7 @@ module.exports = query {
   render: -> 
     className = (@props.meta.layout?.replace /,/g," ") || ""
     body = [reactify @props.body]
-    if document.location.hostname is 'urbit.org' and @props.meta.spam
+    if document.location.hostname is 'urbit.org' and @props.meta.spam?
       body.unshift (Spam {}, "")
     if @props.meta.logo?
       body.unshift (Logo color:@props.meta.logo)
