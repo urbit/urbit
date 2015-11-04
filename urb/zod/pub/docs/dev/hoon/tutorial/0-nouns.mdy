@@ -35,13 +35,10 @@ Palaz of Hoon_.  It also means "hooligan" in Australian.
 A noun is an atom or a cell.  An atom is any unsigned integer.  A
 cell is an ordered pair of nouns.
 
-The noun is an intentionally boring data model.  Nouns don't have 
-cycles (although a noun implementation should take advantage of
-acyclic graph structure).  Noun comparison is always by value
-(there is no way for the programmer to test pointer equality).
-Nouns are strict; there is no such thing as an infinite noun.
-And, of course, nouns are immutable.  There's basically no way to
-have any real fun with nouns.
+Nouns are trees; they have no cycles.  Noun comparison is always 
+by value (the programmer can't test pointer equality).  Nouns are 
+strict; there is no such thing as an infinite noun.  And nouns are 
+immutable.  There's just no way to have any real fun with nouns.
 
 > Nouns are Lisp's S-expressions, minus a lot of hacks, tricks,
 and features that made sense 50 years ago.  In particular,
