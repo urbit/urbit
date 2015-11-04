@@ -11,6 +11,7 @@
     "classnames": "^2.2.0",
     "coffeeify": "~0.7.0",
     "flux": "~2.0.1",
+    "husl": "^6.0.1",
     "lodash": "~2.4.1",
     "moment-timezone": "~0.2.4"
   }
