@@ -22,9 +22,9 @@ The main disadvantage of Hoon is that its syntax and semantics
 are unfamiliar.  The syntax will remind too many of Perl, but
 like most human languages (and unlike Perl) it combines a regular
 core structure with irregular variations.  And Hoon's semantic
-is bounded by the size of the compiler: type inference plus code
-generation are 2000 lines of Hoon.  Most peoples' experience is
-that the language is much easier to learn than it looks.
+complexity is bounded by the size of the compiler: type inference plus code
+generation are 2000 lines of Hoon.  Most peoples' experience is that the
+language is much easier to learn than it looks.
 
 > The name "Hoon" is from the Wallace Stevens poem, _Tea at the
 Palaz of Hoon_.  It also means "hooligan" in Australian.
@@ -71,6 +71,19 @@ as the range of a mold function.  This mold can also be used to
 validate or normalize untrusted, untyped data -- a common problem
 in modern programming, because networks.
 
+> Sending a noun over the network is a good example of why Hoon
+is different.  In a normal modern language, you serialize and
+deserialize a data type by extending your type to implement a
+serialization interface.  A really good language can process your
+type definition and automatically generate this code.  In Hoon,
+we have one function `jam` that converts any noun to an atom,
+and another `cue` that inverts `jam`.  To validate, the receiver
+applies its own mold to the cued noun, and we've sent typed data
+over the network without any attack surface (except `jam` and
+`cue`, which fit on a page).  No custom serialization code,
+manual or generated, is required.  The mold itself is not sent;
+protocol agreement is out of band.
+
 Hoon's inference algorithm is dumber than the unification
 algorithms (Hindley-Milner) used in most typed functional
 languages.  Hoon thinks only forward, not backward.  Eg, Haskell
@@ -78,26 +91,19 @@ can infer the result type of a function from its argument
 (forward), or the argument type from the result (backward).
 Hoon can do the first but not the second.
 
-So Hoon needs more manual typecasts, which you usually want
+So Hoon needs more manual annotations, which you usually want
 anyway for prosaic software-engineering reasons.  Otherwise its
 typesystem solves more or less the same job, including
 pattern-matching, genericity / typeclasses, etc.
 
-> Sending a noun over the network is a good example of why Hoon
-is different.  In a normal modern language, you serialize and
-deserialize a data type by extending your type to implement a
-serialization interface.  In Hoon, any value is just a noun, so
-we have one function (`jam`) that converts any noun to an atom,
-and another (`cue`) that is its inverse.  To validate, the
-receiver runs its own mold on the cued noun, and we've sent typed
-data over the network without any attack surface (except `jam`
-and `cue`, which fit on a page).  No custom serialization methods
-are required, and the mold itself is never sent; protocol
-agreement is out of band.
+> A good test of a static higher-order typesystem is whether it can
+infer the product type of a grammar defined as a combinator
+parser.  The Hoon parser passes this test; when it typechecks, 
+the parser's range nests within the span of the expression mold.
 
 ## Let's make some nouns
 
-Nouns aren't even slightly hard.  Let's make a noun:
+Let's make a noun:
 ```
 ~tasfyn-partyv:dojo> 42
 ```
@@ -106,7 +112,7 @@ You'll see the expression you entered, then the result:
 > 42
 42
 ```
-Let's try a different value: 
+Let's try a different noun.  Or is it different?
 ```
 ~tasfyn-partyv:dojo> 0x2a
 ```
@@ -138,11 +144,11 @@ Let's make some cells.  Try these on your own urbit:
 We observe that cells associate right: `[a b c]` is just another
 way of writing `[a [b c]]`.
 
-> Lisp veterans beware: Hoon `[a b]` is Lisp `(a . b)`, Lisp
-`(a b)` is Hoon `[a b ~]`(`~` represents nil, with a value of
-atom `0`). Lisp and Hoon are both pair-oriented languages down
-below, but Lisp has a layer of sugar that makes it look
-list-oriented.  Hoon loves its "improper lists," ie, tuples.
+Lisp masters beware: Hoon `[a b]` is Lisp `(a . b)`, Lisp
+`(a b)` is Hoon `[a b ~]`.  `~` means nil, with value zero.  Lisp
+and Hoon are both pair-oriented languages down below, but Lisp
+has a layer of sugar that makes it look list-oriented.  Hoon
+loves its "improper lists," ie, tuples.
 
 ## Looking at spans
 
@@ -169,15 +175,17 @@ type food chain.
 
 ## Looking at spans, part 2
 
-Good style in Hoon is concrete style.  When a Hoon programmer
-defines an abstract semantic value in terms of a noun, we rarely
-put a conceptual layer of abstraction between value and noun.  We
-think of the semantic value as an interpretation of the
-concrete noun, and often we just think of the noun.
+Usually, good style in Hoon is concrete style.  When a Hoon
+programmer defines an abstract semantic value in terms of a noun,
+we rarely put a conceptual layer of abstraction between value and
+noun.  We think of the value as an interpretation of the noun.
+We don't think of the noun as an implementation of the noun.
 
-With the `?` command, we *do* use an abstract layer, by printing
-our span noun in a custom syntax.  But we can also look at the
-span noun directly, with the `??` command.
+But rules are made to be broken.  With the `?` command, we *do*
+use an abstract layer, by printing our span noun in that custom
+syntax.  But we can also look at the span noun directly, with the
+`??` command.  As we'll see, `??` is mainly for newbies, but
+newbies love it.
 
 ```
 ~tasfyn-partyv:dojo> ?? 42
@@ -228,12 +236,12 @@ numbers we've just been using, and make them constants:
 %42
 ```
 
-> Spans are an exception to the concrete style, because we use
-"manual laziness" to define recursive structures.  A recursive
-span contains Hoon code which is evaluated to apply it.  In
-practice, it often contains the entire Urbit kernel, so you
-wouldn't want to try to print it in the dojo.  If you find
-`??` taking a weirdly long time, this may have happened; just
+> Why `??`? Spans are an exception to concrete style, because they
+use "manual laziness" to define logically recursive structures.
+A recursive span contains Hoon code which is evaluated to apply
+it.  In practice, this noun often contains the entire Urbit
+kernel, so you wouldn't want to try to print it in the dojo.  If
+you find `??` taking a weirdly long time, this may have happened;
 press ^C.
 
 ## Our first mold
