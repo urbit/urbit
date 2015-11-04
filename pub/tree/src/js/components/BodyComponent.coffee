@@ -12,7 +12,14 @@ Logo = React.createFactory recl
     if color is "white" or color is "black"  # else?
       src = "//storage.googleapis.com/urbit-extra/logo/logo-#{color}-100x100.png"
     (a {href:"http://urbit.org",style:{border:"none"}}, [(img {src,className:"logo"})])
-  
+
+Spam = React.createFactory recl
+  render: ->
+    (div {className:'spam'}, [
+      (a {href:"http://urbit.org"}, "Sign up"),
+      " for an Urbit invite."
+    ])
+
 Next = React.createFactory query {
     path:'t'
     kids:
@@ -50,6 +57,8 @@ module.exports = query {
   render: -> 
     className = (@props.meta.layout?.replace /,/g," ") || ""
     body = [reactify @props.body]
+    if document.location.hostname is 'urbit.org'
+      body.unshift (Spam {}, "")
     if @props.meta.logo?
       body.unshift (Logo color:@props.meta.logo)
     if @props.meta.next?
