@@ -20,6 +20,7 @@ window.urb.req = function(method,url,params,json,cb) {
   if(params.wire) { _data.wire = params.wire; }
   if(cb) {
     xhr.onload = function() {
+      var err,res
       try {
         err = null
         res = {
@@ -36,7 +37,9 @@ window.urb.req = function(method,url,params,json,cb) {
         }
         res = null
       }
-      cb(err,res)
+      finally {
+       cb(err,res)
+      }
     }
     xhr.onerror = function() {
       cb({
@@ -64,7 +67,7 @@ window.urb.qreq = function(method,url,params,json,cb) {
   walk = function() {
     qobj = {}
     qobj.oargs = window.urb.reqq[0]
-    qobj.nargs = [].slice.apply(qobj.oargs,[0,4])
+    qobj.nargs = [].slice.call(qobj.oargs,0,4)
     qobj.nargs.push(function(){
       if(this.oargs[4])
         this.oargs[4].apply(window.urb,arguments)
@@ -90,6 +93,7 @@ window.urb.send = function(data,params,cb) { // or send(data, cb)
   params.ship = params.ship || this.ship
   params.appl = params.appl || this.appl
   params.mark = params.mark || $send.mark
+  // params.seqn = params.seqn || $send.seqn
   params.wire = params.wire || "/"
   params.xyro = (typeof(params.data) === 'undefined') ? null : params.data
 
@@ -100,17 +104,17 @@ window.urb.send = function(data,params,cb) { // or send(data, cb)
   url = ["to",params.appl,params.mark]
   url = "/~/"+url.join("/")
 
-  $send.seqn++
+  // $send.seqn++
 
   this.qreq('post',url,params,true,function(err,data) {
-    if(err) { $send.seqn--; }
-    else if(data && data.data.fail && urb.wall !== false)
+    /* if(err) { $send.seqn--; }
+    else */ if(data && data.data.fail && urb.wall !== false)
       document.write("<pre>"+JSON.stringify(params.xyro)+"\n"
                             +data.data.mess+"</pre>") // XX
     if(cb) { cb.apply(this,arguments); }
   })
 }
-window.urb.send.seqn = 0
+// window.urb.send.seqn = 0
 window.urb.send.mark = "json"
 
 
@@ -139,6 +143,7 @@ window.urb.poll = function(params) {
 
   $this = this
   this.req("get",url,params,true,function(err,res) {
+    $this.poll.dely = params.dely || $this.poll.dely
     if(res){
       if(res.data.beat)
         return $this.poll(params)
@@ -158,27 +163,25 @@ window.urb.poll = function(params) {
           default:
         throw new Error("Lost event %"+res.data.type)
       }
-    }
-
-    dely = params.dely || $this.poll.dely
-
-    if(err)
-      dely = dely+Math.ceil(dely*.02)
-    else {
-      $this.poll.dely = 0
       if(params.incs)
         params.incs()
       else 
         $this.poll.seqn++
+      $this.poll.dely = 250
+      return $this.poll(params)
     }
-
-    setTimeout(function() {
-      $this.poll(params)
-    },dely)
+    
+    else if(err){
+      setTimeout(function() {
+        $this.poll(params)
+      }, $this.poll.dely)
+      $this.poll.dely += Math.ceil($this.poll.dely*.2)
+    }
+    else throw "Neither error nor result on poll"
   })
 }
 window.urb.poll.seqn = 1
-window.urb.poll.dely = 0
+window.urb.poll.dely = 250
 
 window.urb.bind = function(path, params, cb, nicecb){ // or bind(path, cb)
   if(!params || typeof params === "function")

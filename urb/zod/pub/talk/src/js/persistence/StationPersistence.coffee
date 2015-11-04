@@ -1,9 +1,7 @@
-StationActions = require '../actions/StationActions.coffee'
-
 window.urb.appl = "talk"
 send = (data,cb)-> window.urb.send data, {mark:"talk-command"}, cb
 design = (party,config,cb)-> send {design:{party,config}}, cb
-module.exports =
+module.exports = ({StationActions})->
   createStation: (name,cb) ->
     design name, {
       sources:[]

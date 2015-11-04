@@ -62,7 +62,7 @@ And hit return.  Don't worry, no one but you will see this.  The
 
 It's boring to post to yourself.  Let's join a station:
 
-    ~fintud-macrep: ;join /urbit-meta
+    ~fintud-macrep: ;join ~doznec/urbit-meta
 
 (`/urbit-meta` is a federal station, meaning it's hosted by your
 star (for `~fintud-macrep`, `~doznec`).  The `/` notation is just 

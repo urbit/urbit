@@ -1,206 +1,228 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var MessageDispatcher;
+var Dispatcher, Persistence, _persistence;
 
-MessageDispatcher = require('../dispatcher/Dispatcher.coffee');
+Dispatcher = require('../dispatcher/Dispatcher.coffee');
 
-module.exports = {
-  loadMessages: function(grams, get) {
-    return MessageDispatcher.handleServerAction({
-      type: "messages-load",
-      messages: grams.tele,
-      last: grams.num,
-      get: get
-    });
-  },
-  listenStation: function(station, date) {
-    if (!date) {
-      date = window.urb.util.toDate(new Date());
-    }
-    return window.talk.MessagePersistence.listenStation(station, date);
-  },
-  listeningStation: function(station) {
-    return MessageDispatcher.handleViewAction({
-      type: "messages-listen",
-      station: station
-    });
-  },
-  setTyping: function(state) {
-    return MessageDispatcher.handleViewAction({
-      type: "messages-typing",
-      state: state
-    });
-  },
-  getMore: function(station, start, end) {
-    MessageDispatcher.handleViewAction({
-      type: "messages-fetch"
-    });
-    return window.talk.MessagePersistence.get(station, start, end);
-  },
-  sendMessage: function(message, audience) {
-    var _audi, _message, j, k, len, ref, ref1, results, say, serial, speech, speeches, txt, v;
-    serial = window.util.uuid32();
-    audience = _.uniq(audience);
-    _audi = {};
-    for (k in audience) {
-      v = audience[k];
-      _audi[v] = {
-        envelope: {
-          visible: true,
-          sender: null
-        },
-        delivery: "pending"
-      };
-    }
-    speech = {
-      lin: {
-        say: true,
-        txt: message
-      }
-    };
-    if (message[0] === "@") {
-      speech.lin.txt = speech.lin.txt.slice(1).trim();
-      speech.lin.say = false;
-    } else if (message[0] === "#") {
-      speech = {
-        "eval": speech.lin.txt.slice(1).trim()
-      };
-    } else if (window.urb.util.isURL(message)) {
-      speech = {
-        url: message
-      };
-    }
-    speeches = !(((ref = speech.lin) != null ? ref.txt.length : void 0) > 64) ? [speech] : ((ref1 = speech.lin, say = ref1.say, txt = ref1.txt, ref1), txt.match(/(.{1,64}$|.{0,64} |.{64}|.+$)/g).map(function(s, i) {
-      say || (say = i !== 0);
-      return {
-        lin: {
-          say: say,
-          txt: s.slice(-1 !== " ") ? s : s.slice(0, -1)
-        }
-      };
-    }));
-    results = [];
-    for (j = 0, len = speeches.length; j < len; j++) {
-      speech = speeches[j];
-      _message = {
-        ship: window.urb.ship,
-        thought: {
-          serial: window.util.uuid32(),
-          audience: _audi,
-          statement: {
-            bouquet: [],
-            speech: speech,
-            date: Date.now()
-          }
-        }
-      };
-      MessageDispatcher.handleViewAction({
-        type: "message-send",
-        message: _message
+_persistence = require('../persistence/MessagePersistence.coffee');
+
+Persistence = _persistence({
+  MessageActions: module.exports = {
+    loadMessages: function(messages, last, get) {
+      return Dispatcher.handleServerAction({
+        messages: messages,
+        last: last,
+        get: get,
+        type: "messages-load"
       });
-      results.push(window.talk.MessagePersistence.sendMessage(_message.thought));
+    },
+    listenStation: function(station, date) {
+      if (!date) {
+        date = window.urb.util.toDate(new Date());
+      }
+      return Persistence.listenStation(station, date);
+    },
+    listeningStation: function(station) {
+      return Dispatcher.handleViewAction({
+        station: station,
+        type: "messages-listen"
+      });
+    },
+    setTyping: function(state) {
+      return Dispatcher.handleViewAction({
+        state: state,
+        type: "messages-typing"
+      });
+    },
+    getMore: function(station, start, end) {
+      Dispatcher.handleViewAction({
+        type: "messages-fetch"
+      });
+      return Persistence.get(station, start, end);
+    },
+    sendMessage: function(txt, audience) {
+      var _audi, j, k, len, message, ref, ref1, results, say, serial, speech, speeches, v;
+      serial = window.util.uuid32();
+      audience = _.uniq(audience);
+      _audi = {};
+      for (k in audience) {
+        v = audience[k];
+        _audi[v] = {
+          envelope: {
+            visible: true,
+            sender: null
+          },
+          delivery: "pending"
+        };
+      }
+      speech = {
+        lin: {
+          txt: txt,
+          say: true
+        }
+      };
+      if (txt[0] === "@") {
+        speech.lin.txt = speech.lin.txt.slice(1).trim();
+        speech.lin.say = false;
+      } else if (txt[0] === "#") {
+        speech = {
+          "eval": speech.lin.txt.slice(1).trim()
+        };
+      } else if (window.urb.util.isURL(txt)) {
+        speech = {
+          url: txt
+        };
+      }
+      speeches = !(((ref = speech.lin) != null ? ref.txt.length : void 0) > 64) ? [speech] : ((ref1 = speech.lin, say = ref1.say, txt = ref1.txt, ref1), txt.match(/(.{1,64}$|.{0,64} |.{64}|.+$)/g).map(function(s, i) {
+        say || (say = i !== 0);
+        return {
+          lin: {
+            say: say,
+            txt: s.slice(-1 !== " ") ? s : s.slice(0, -1)
+          }
+        };
+      }));
+      results = [];
+      for (j = 0, len = speeches.length; j < len; j++) {
+        speech = speeches[j];
+        message = {
+          ship: window.urb.ship,
+          thought: {
+            serial: window.util.uuid32(),
+            audience: _audi,
+            statement: {
+              bouquet: [],
+              speech: speech,
+              date: Date.now()
+            }
+          }
+        };
+        Dispatcher.handleViewAction({
+          message: message,
+          type: "message-send"
+        });
+        results.push(Persistence.sendMessage(message.thought));
+      }
+      return results;
     }
-    return results;
   }
+});
+
+
+
+},{"../dispatcher/Dispatcher.coffee":7,"../persistence/MessagePersistence.coffee":19}],2:[function(require,module,exports){
+var Dispatcher, Persistence, _persistence, serverAction, viewAction;
+
+Dispatcher = require('../dispatcher/Dispatcher.coffee');
+
+serverAction = function(f) {
+  return function() {
+    return Dispatcher.handleServerAction(f.apply(this, arguments));
+  };
 };
 
-
-
-},{"../dispatcher/Dispatcher.coffee":7}],2:[function(require,module,exports){
-var StationDispatcher;
-
-StationDispatcher = require('../dispatcher/Dispatcher.coffee');
-
-module.exports = {
-  loadConfig: function(station, config) {
-    return StationDispatcher.handleServerAction({
-      type: "config-load",
-      station: station,
-      config: config
-    });
-  },
-  loadGlyphs: function(glyphs) {
-    return StationDispatcher.handleServerAction({
-      type: "glyphs-load",
-      station: station,
-      glyphs: glyphs
-    });
-  },
-  switchStation: function(station) {
-    return StationDispatcher.handleViewAction({
-      type: "station-switch",
-      station: station
-    });
-  },
-  setAudience: function(audience) {
-    return StationDispatcher.handleViewAction({
-      type: "station-set-audience",
-      audience: audience
-    });
-  },
-  setValidAudience: function(valid) {
-    return StationDispatcher.handleViewAction({
-      type: "station-set-valid-audience",
-      valid: valid
-    });
-  },
-  toggleAudience: function(station) {
-    return StationDispatcher.handleViewAction({
-      type: "station-audience-toggle",
-      station: station
-    });
-  },
-  removeStation: function(station) {
-    return window.talk.StationPersistence.removeStation(station);
-  },
-  setSources: function(station, sources) {
-    return window.talk.StationPersistence.setSources(station, window.urb.ship, sources);
-  },
-  createStation: function(name) {
-    return window.talk.StationPersistence.createStation(name);
-  },
-  listenStation: function(station) {
-    return window.talk.StationPersistence.listenStation(station);
-  },
-  listeningStation: function(station) {
-    return StationDispatcher.handleViewAction({
-      type: "station-listen",
-      station: station
-    });
-  },
-  setTyping: function(station, state) {
-    return StationDispatcher.handleViewAction({
-      type: "typing-set",
-      station: station,
-      state: state
-    });
-  },
-  ping: function(_ping) {
-    return window.talk.StationPersistence.ping(_ping);
-  },
-  loadStations: function(stations) {
-    return StationDispatcher.handleServerAction({
-      type: "stations-load",
-      stations: stations
-    });
-  },
-  loadMembers: function(members) {
-    return StationDispatcher.handleServerAction({
-      type: "members-load",
-      members: members
-    });
-  },
-  createStation: function(station) {
-    StationDispatcher.handleViewAction({
-      type: "station-create",
-      station: station
-    });
-    return window.talk.StationPersistence.createStation(station);
-  }
+viewAction = function(f) {
+  return function() {
+    return Dispatcher.handleViewAction(f.apply(this, arguments));
+  };
 };
 
+_persistence = require('../persistence/StationPersistence.coffee');
+
+Persistence = _persistence({
+  StationActions: module.exports = {
+    loadGlyphs: serverAction(function(glyphs) {
+      return {
+        glyphs: glyphs,
+        type: "glyphs-load"
+      };
+    }),
+    loadMembers: serverAction(function(members) {
+      return {
+        members: members,
+        type: "members-load"
+      };
+    }),
+    loadStations: serverAction(function(stations) {
+      return {
+        stations: stations,
+        type: "stations-load"
+      };
+    }),
+    loadConfig: serverAction(function(station, config) {
+      return {
+        station: station,
+        config: config,
+        type: "config-load"
+      };
+    }),
+    setTyping: viewAction(function(station, state) {
+      return {
+        station: station,
+        state: state,
+        type: "typing-set"
+      };
+    }),
+    setAudience: viewAction(function(audience) {
+      return {
+        audience: audience,
+        type: "station-set-audience"
+      };
+    }),
+    setValidAudience: viewAction(function(valid) {
+      return {
+        valid: valid,
+        type: "station-set-valid-audience"
+      };
+    }),
+    toggleAudience: viewAction(function(station) {
+      return {
+        station: station,
+        type: "station-audience-toggle"
+      };
+    }),
+    switchStation: viewAction(function(station) {
+      return {
+        station: station,
+        type: "station-switch"
+      };
+    }),
+    listeningStation: viewAction(function(station) {
+      return {
+        station: station,
+        type: "station-listen"
+      };
+    }),
+    createStation: function(station) {
+      Dispatcher.handleViewAction({
+        station: station,
+        type: "station-create"
+      });
+      return Persistence.createStation(station);
+    },
+    listen: function() {
+      return Persistence.listen();
+    },
+    ping: function(_ping) {
+      return Persistence.ping(_ping);
+    },
+    removeStation: function(station) {
+      return Persistence.removeStation(station);
+    },
+    listenStation: function(station) {
+      return Persistence.listenStation(station);
+    },
+    createStation: function(name) {
+      return Persistence.createStation(name);
+    },
+    setSources: function(station, sources) {
+      return Persistence.setSources(station, window.urb.ship, sources);
+    }
+  }
+});
 
 
-},{"../dispatcher/Dispatcher.coffee":7}],3:[function(require,module,exports){
+
+},{"../dispatcher/Dispatcher.coffee":7,"../persistence/StationPersistence.coffee":20}],3:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -532,12 +554,12 @@ module.exports = recl({
 
 
 
-},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":20,"../stores/StationStore.coffee":21,"./MemberComponent.coffee":3,"classnames":10,"moment-timezone":15}],5:[function(require,module,exports){
-var Member, StationActions, StationStore, a, div, h1, input, recl, ref, textarea;
+},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":21,"../stores/StationStore.coffee":22,"./MemberComponent.coffee":3,"classnames":10,"moment-timezone":16}],5:[function(require,module,exports){
+var Member, StationActions, StationStore, a, div, h1, input, recl, ref, style, textarea;
 
 recl = React.createClass;
 
-ref = [React.DOM.div, React.DOM.input, React.DOM.textarea, React.DOM.h1, React.DOM.a], div = ref[0], input = ref[1], textarea = ref[2], h1 = ref[3], a = ref[4];
+ref = React.DOM, div = ref.div, style = ref.style, input = ref.input, textarea = ref.textarea, h1 = ref.h1, a = ref.a;
 
 StationStore = require('../stores/StationStore.coffee');
 
@@ -546,6 +568,7 @@ StationActions = require('../actions/StationActions.coffee');
 Member = require('./MemberComponent.coffee');
 
 module.exports = recl({
+  displayName: "Station",
   stateFromStore: function() {
     return {
       audi: StationStore.getAudience(),
@@ -624,7 +647,7 @@ module.exports = recl({
     return StationActions.setSources(this.state.station, _sources);
   },
   render: function() {
-    var _remove, _sources, head, members, parts, sourceCtrl, sourceInput, sources;
+    var _remove, _sources, members, parts, sourceCtrl, sourceInput, sources;
     parts = [];
     members = [];
     if (this.state.station && this.state.members) {
@@ -649,7 +672,7 @@ module.exports = recl({
         className: "join",
         onKeyUp: this._keyUp,
         placeholder: "+"
-      }, "")
+      })
     ];
     sourceCtrl = div({
       className: "sour-ctrl"
@@ -676,55 +699,47 @@ module.exports = recl({
     } else {
       sources = "";
     }
-    head = div({
-      id: "head"
-    }, [
-      div({
-        id: "who"
-      }, [
-        div({
-          className: "sig"
-        }, ""), div({
-          className: "ship"
-        }, "" + window.urb.user)
-      ]), div({
-        id: "where"
-      }, [
-        div({
-          className: "slat"
-        }, "talk"), div({
-          className: "path"
-        }, ""), div({
-          className: "caret"
-        }, "")
-      ])
-    ]);
-    parts.push(head);
-    parts.push(div({
-      id: "stations"
-    }, [h1({}, "Listening to"), div({}, sources), sourceCtrl]));
-    parts.push(div({
-      id: "audience"
-    }, div({}, [
-      h1({}, "Talking to"), div({
-        id: "members"
-      }, members)
-    ])));
     return div({
       id: "station",
       onClick: this._toggleOpen
-    }, parts);
+    }, div({
+      id: "head"
+    }, div({
+      id: "who"
+    }, div({
+      className: "sig"
+    }), div({
+      className: "ship"
+    }, "" + window.urb.user)), div({
+      id: "where"
+    }, div({
+      className: "slat"
+    }, "talk"), div({
+      className: "path"
+    }), div({
+      className: "caret"
+    })), div({
+      id: "offline"
+    }, "Warning: no connection to server.")), div({
+      id: "stations"
+    }, h1({}, "Listening to"), div({}, sources), sourceCtrl), div({
+      id: "audience"
+    }, div({}, h1({}, "Talking to"), div({
+      id: "members"
+    }, members))));
   }
 });
 
 
 
-},{"../actions/StationActions.coffee":2,"../stores/StationStore.coffee":21,"./MemberComponent.coffee":3}],6:[function(require,module,exports){
-var Audience, Member, MessageActions, MessageStore, PO, SHIPSHAPE, StationActions, StationStore, br, div, input, recl, ref, textarea;
+},{"../actions/StationActions.coffee":2,"../stores/StationStore.coffee":22,"./MemberComponent.coffee":3}],6:[function(require,module,exports){
+var Audience, Member, MessageActions, MessageStore, PO, SHIPSHAPE, StationActions, StationStore, br, div, husl, input, recl, ref, textarea;
 
 recl = React.createClass;
 
 ref = React.DOM, div = ref.div, br = ref.br, input = ref.input, textarea = ref.textarea;
+
+husl = require('husl');
 
 MessageActions = require('../actions/MessageActions.coffee');
 
@@ -861,7 +876,13 @@ module.exports = recl({
       txt = this.$writing.text();
       e.preventDefault();
       if (txt.length > 0) {
-        this.sendMessage();
+        if (window.talk.online) {
+          this.sendMessage();
+        } else {
+          $('#offline').addClass('error').one('transitionend', function() {
+            return $('#offline').removeClass('error');
+          });
+        }
       }
       return false;
     }
@@ -1009,7 +1030,7 @@ module.exports = recl({
 
 
 
-},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":20,"../stores/StationStore.coffee":21,"./MemberComponent.coffee":3}],7:[function(require,module,exports){
+},{"../actions/MessageActions.coffee":1,"../actions/StationActions.coffee":2,"../stores/MessageStore.coffee":21,"../stores/StationStore.coffee":22,"./MemberComponent.coffee":3,"husl":14}],7:[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -1037,11 +1058,18 @@ $(function() {
   StationActions = require('./actions/StationActions.coffee');
   rend = React.render;
   window.talk = {};
-  window.talk.MessagePersistence = require('./persistence/MessagePersistence.coffee');
-  window.talk.StationPersistence = require('./persistence/StationPersistence.coffee');
+  window.talk.online = true;
+  setInterval((function() {
+    window.talk.online = window.urb.poll.dely < 500;
+    if (window.talk.online) {
+      return $('body').removeClass('offline');
+    } else {
+      return $('body').addClass('offline');
+    }
+  }), 300);
   require('./util.coffee');
   require('./move.coffee');
-  window.talk.StationPersistence.listen();
+  StationActions.listen();
   StationComponent = require('./components/StationComponent.coffee');
   MessagesComponent = require('./components/MessagesComponent.coffee');
   WritingComponent = require('./components/WritingComponent.coffee');
@@ -1053,7 +1081,7 @@ $(function() {
 
 
 
-},{"./actions/StationActions.coffee":2,"./components/MessagesComponent.coffee":4,"./components/StationComponent.coffee":5,"./components/WritingComponent.coffee":6,"./move.coffee":9,"./persistence/MessagePersistence.coffee":18,"./persistence/StationPersistence.coffee":19,"./util.coffee":22}],9:[function(require,module,exports){
+},{"./actions/StationActions.coffee":2,"./components/MessagesComponent.coffee":4,"./components/StationComponent.coffee":5,"./components/WritingComponent.coffee":6,"./move.coffee":9,"./util.coffee":23}],9:[function(require,module,exports){
 var ldy, setSo, so;
 
 so = {};
@@ -1524,6 +1552,390 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 module.exports = invariant;
 
 },{}],14:[function(require,module,exports){
+// Generated by CoffeeScript 1.9.3
+(function() {
+  var L_to_Y, Y_to_L, conv, distanceFromPole, dotProduct, epsilon, fromLinear, getBounds, intersectLineLine, kappa, lengthOfRayUntilIntersect, m, m_inv, maxChromaForLH, maxSafeChromaForL, refU, refV, root, toLinear;
+
+  m = {
+    R: [3.2409699419045214, -1.5373831775700935, -0.49861076029300328],
+    G: [-0.96924363628087983, 1.8759675015077207, 0.041555057407175613],
+    B: [0.055630079696993609, -0.20397695888897657, 1.0569715142428786]
+  };
+
+  m_inv = {
+    X: [0.41239079926595948, 0.35758433938387796, 0.18048078840183429],
+    Y: [0.21263900587151036, 0.71516867876775593, 0.072192315360733715],
+    Z: [0.019330818715591851, 0.11919477979462599, 0.95053215224966058]
+  };
+
+  refU = 0.19783000664283681;
+
+  refV = 0.468319994938791;
+
+  kappa = 903.2962962962963;
+
+  epsilon = 0.0088564516790356308;
+
+  getBounds = function(L) {
+    var bottom, channel, j, k, len1, len2, m1, m2, m3, ref, ref1, ref2, ret, sub1, sub2, t, top1, top2;
+    sub1 = Math.pow(L + 16, 3) / 1560896;
+    sub2 = sub1 > epsilon ? sub1 : L / kappa;
+    ret = [];
+    ref = ['R', 'G', 'B'];
+    for (j = 0, len1 = ref.length; j < len1; j++) {
+      channel = ref[j];
+      ref1 = m[channel], m1 = ref1[0], m2 = ref1[1], m3 = ref1[2];
+      ref2 = [0, 1];
+      for (k = 0, len2 = ref2.length; k < len2; k++) {
+        t = ref2[k];
+        top1 = (284517 * m1 - 94839 * m3) * sub2;
+        top2 = (838422 * m3 + 769860 * m2 + 731718 * m1) * L * sub2 - 769860 * t * L;
+        bottom = (632260 * m3 - 126452 * m2) * sub2 + 126452 * t;
+        ret.push([top1 / bottom, top2 / bottom]);
+      }
+    }
+    return ret;
+  };
+
+  intersectLineLine = function(line1, line2) {
+    return (line1[1] - line2[1]) / (line2[0] - line1[0]);
+  };
+
+  distanceFromPole = function(point) {
+    return Math.sqrt(Math.pow(point[0], 2) + Math.pow(point[1], 2));
+  };
+
+  lengthOfRayUntilIntersect = function(theta, line) {
+    var b1, len, m1;
+    m1 = line[0], b1 = line[1];
+    len = b1 / (Math.sin(theta) - m1 * Math.cos(theta));
+    if (len < 0) {
+      return null;
+    }
+    return len;
+  };
+
+  maxSafeChromaForL = function(L) {
+    var b1, j, len1, lengths, m1, ref, ref1, x;
+    lengths = [];
+    ref = getBounds(L);
+    for (j = 0, len1 = ref.length; j < len1; j++) {
+      ref1 = ref[j], m1 = ref1[0], b1 = ref1[1];
+      x = intersectLineLine([m1, b1], [-1 / m1, 0]);
+      lengths.push(distanceFromPole([x, b1 + x * m1]));
+    }
+    return Math.min.apply(Math, lengths);
+  };
+
+  maxChromaForLH = function(L, H) {
+    var hrad, j, l, len1, lengths, line, ref;
+    hrad = H / 360 * Math.PI * 2;
+    lengths = [];
+    ref = getBounds(L);
+    for (j = 0, len1 = ref.length; j < len1; j++) {
+      line = ref[j];
+      l = lengthOfRayUntilIntersect(hrad, line);
+      if (l !== null) {
+        lengths.push(l);
+      }
+    }
+    return Math.min.apply(Math, lengths);
+  };
+
+  dotProduct = function(a, b) {
+    var i, j, ref, ret;
+    ret = 0;
+    for (i = j = 0, ref = a.length - 1; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
+      ret += a[i] * b[i];
+    }
+    return ret;
+  };
+
+  fromLinear = function(c) {
+    if (c <= 0.0031308) {
+      return 12.92 * c;
+    } else {
+      return 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
+    }
+  };
+
+  toLinear = function(c) {
+    var a;
+    a = 0.055;
+    if (c > 0.04045) {
+      return Math.pow((c + a) / (1 + a), 2.4);
+    } else {
+      return c / 12.92;
+    }
+  };
+
+  conv = {
+    'xyz': {},
+    'luv': {},
+    'lch': {},
+    'husl': {},
+    'huslp': {},
+    'rgb': {},
+    'hex': {}
+  };
+
+  conv.xyz.rgb = function(tuple) {
+    var B, G, R;
+    R = fromLinear(dotProduct(m.R, tuple));
+    G = fromLinear(dotProduct(m.G, tuple));
+    B = fromLinear(dotProduct(m.B, tuple));
+    return [R, G, B];
+  };
+
+  conv.rgb.xyz = function(tuple) {
+    var B, G, R, X, Y, Z, rgbl;
+    R = tuple[0], G = tuple[1], B = tuple[2];
+    rgbl = [toLinear(R), toLinear(G), toLinear(B)];
+    X = dotProduct(m_inv.X, rgbl);
+    Y = dotProduct(m_inv.Y, rgbl);
+    Z = dotProduct(m_inv.Z, rgbl);
+    return [X, Y, Z];
+  };
+
+  Y_to_L = function(Y) {
+    if (Y <= epsilon) {
+      return Y * kappa;
+    } else {
+      return 116 * Math.pow(Y, 1 / 3) - 16;
+    }
+  };
+
+  L_to_Y = function(L) {
+    if (L <= 8) {
+      return L / kappa;
+    } else {
+      return Math.pow((L + 16) / 116, 3);
+    }
+  };
+
+  conv.xyz.luv = function(tuple) {
+    var L, U, V, X, Y, Z, varU, varV;
+    X = tuple[0], Y = tuple[1], Z = tuple[2];
+    if (Y === 0) {
+      return [0, 0, 0];
+    }
+    L = Y_to_L(Y);
+    varU = (4 * X) / (X + (15 * Y) + (3 * Z));
+    varV = (9 * Y) / (X + (15 * Y) + (3 * Z));
+    U = 13 * L * (varU - refU);
+    V = 13 * L * (varV - refV);
+    return [L, U, V];
+  };
+
+  conv.luv.xyz = function(tuple) {
+    var L, U, V, X, Y, Z, varU, varV;
+    L = tuple[0], U = tuple[1], V = tuple[2];
+    if (L === 0) {
+      return [0, 0, 0];
+    }
+    varU = U / (13 * L) + refU;
+    varV = V / (13 * L) + refV;
+    Y = L_to_Y(L);
+    X = 0 - (9 * Y * varU) / ((varU - 4) * varV - varU * varV);
+    Z = (9 * Y - (15 * varV * Y) - (varV * X)) / (3 * varV);
+    return [X, Y, Z];
+  };
+
+  conv.luv.lch = function(tuple) {
+    var C, H, Hrad, L, U, V;
+    L = tuple[0], U = tuple[1], V = tuple[2];
+    C = Math.sqrt(Math.pow(U, 2) + Math.pow(V, 2));
+    if (C < 0.00000001) {
+      H = 0;
+    } else {
+      Hrad = Math.atan2(V, U);
+      H = Hrad * 360 / 2 / Math.PI;
+      if (H < 0) {
+        H = 360 + H;
+      }
+    }
+    return [L, C, H];
+  };
+
+  conv.lch.luv = function(tuple) {
+    var C, H, Hrad, L, U, V;
+    L = tuple[0], C = tuple[1], H = tuple[2];
+    Hrad = H / 360 * 2 * Math.PI;
+    U = Math.cos(Hrad) * C;
+    V = Math.sin(Hrad) * C;
+    return [L, U, V];
+  };
+
+  conv.husl.lch = function(tuple) {
+    var C, H, L, S, max;
+    H = tuple[0], S = tuple[1], L = tuple[2];
+    if (L > 99.9999999 || L < 0.00000001) {
+      C = 0;
+    } else {
+      max = maxChromaForLH(L, H);
+      C = max / 100 * S;
+    }
+    return [L, C, H];
+  };
+
+  conv.lch.husl = function(tuple) {
+    var C, H, L, S, max;
+    L = tuple[0], C = tuple[1], H = tuple[2];
+    if (L > 99.9999999 || L < 0.00000001) {
+      S = 0;
+    } else {
+      max = maxChromaForLH(L, H);
+      S = C / max * 100;
+    }
+    return [H, S, L];
+  };
+
+  conv.huslp.lch = function(tuple) {
+    var C, H, L, S, max;
+    H = tuple[0], S = tuple[1], L = tuple[2];
+    if (L > 99.9999999 || L < 0.00000001) {
+      C = 0;
+    } else {
+      max = maxSafeChromaForL(L);
+      C = max / 100 * S;
+    }
+    return [L, C, H];
+  };
+
+  conv.lch.huslp = function(tuple) {
+    var C, H, L, S, max;
+    L = tuple[0], C = tuple[1], H = tuple[2];
+    if (L > 99.9999999 || L < 0.00000001) {
+      S = 0;
+    } else {
+      max = maxSafeChromaForL(L);
+      S = C / max * 100;
+    }
+    return [H, S, L];
+  };
+
+  conv.rgb.hex = function(tuple) {
+    var ch, hex, j, len1;
+    hex = "#";
+    for (j = 0, len1 = tuple.length; j < len1; j++) {
+      ch = tuple[j];
+      ch = Math.round(ch * 1e6) / 1e6;
+      if (ch < 0 || ch > 1) {
+        throw new Error("Illegal rgb value: " + ch);
+      }
+      ch = Math.round(ch * 255).toString(16);
+      if (ch.length === 1) {
+        ch = "0" + ch;
+      }
+      hex += ch;
+    }
+    return hex;
+  };
+
+  conv.hex.rgb = function(hex) {
+    var b, g, j, len1, n, r, ref, results;
+    if (hex.charAt(0) === "#") {
+      hex = hex.substring(1, 7);
+    }
+    r = hex.substring(0, 2);
+    g = hex.substring(2, 4);
+    b = hex.substring(4, 6);
+    ref = [r, g, b];
+    results = [];
+    for (j = 0, len1 = ref.length; j < len1; j++) {
+      n = ref[j];
+      results.push(parseInt(n, 16) / 255);
+    }
+    return results;
+  };
+
+  conv.lch.rgb = function(tuple) {
+    return conv.xyz.rgb(conv.luv.xyz(conv.lch.luv(tuple)));
+  };
+
+  conv.rgb.lch = function(tuple) {
+    return conv.luv.lch(conv.xyz.luv(conv.rgb.xyz(tuple)));
+  };
+
+  conv.husl.rgb = function(tuple) {
+    return conv.lch.rgb(conv.husl.lch(tuple));
+  };
+
+  conv.rgb.husl = function(tuple) {
+    return conv.lch.husl(conv.rgb.lch(tuple));
+  };
+
+  conv.huslp.rgb = function(tuple) {
+    return conv.lch.rgb(conv.huslp.lch(tuple));
+  };
+
+  conv.rgb.huslp = function(tuple) {
+    return conv.lch.huslp(conv.rgb.lch(tuple));
+  };
+
+  root = {};
+
+  root.fromRGB = function(R, G, B) {
+    return conv.rgb.husl([R, G, B]);
+  };
+
+  root.fromHex = function(hex) {
+    return conv.rgb.husl(conv.hex.rgb(hex));
+  };
+
+  root.toRGB = function(H, S, L) {
+    return conv.husl.rgb([H, S, L]);
+  };
+
+  root.toHex = function(H, S, L) {
+    return conv.rgb.hex(conv.husl.rgb([H, S, L]));
+  };
+
+  root.p = {};
+
+  root.p.toRGB = function(H, S, L) {
+    return conv.xyz.rgb(conv.luv.xyz(conv.lch.luv(conv.huslp.lch([H, S, L]))));
+  };
+
+  root.p.toHex = function(H, S, L) {
+    return conv.rgb.hex(conv.xyz.rgb(conv.luv.xyz(conv.lch.luv(conv.huslp.lch([H, S, L])))));
+  };
+
+  root.p.fromRGB = function(R, G, B) {
+    return conv.lch.huslp(conv.luv.lch(conv.xyz.luv(conv.rgb.xyz([R, G, B]))));
+  };
+
+  root.p.fromHex = function(hex) {
+    return conv.lch.huslp(conv.luv.lch(conv.xyz.luv(conv.rgb.xyz(conv.hex.rgb(hex)))));
+  };
+
+  root._conv = conv;
+
+  root._getBounds = getBounds;
+
+  root._maxChromaForLH = maxChromaForLH;
+
+  root._maxSafeChromaForL = maxSafeChromaForL;
+
+  if (!((typeof module !== "undefined" && module !== null) || (typeof jQuery !== "undefined" && jQuery !== null) || (typeof requirejs !== "undefined" && requirejs !== null))) {
+    this.HUSL = root;
+  }
+
+  if (typeof module !== "undefined" && module !== null) {
+    module.exports = root;
+  }
+
+  if (typeof jQuery !== "undefined" && jQuery !== null) {
+    jQuery.husl = root;
+  }
+
+  if ((typeof requirejs !== "undefined" && requirejs !== null) && (typeof define !== "undefined" && define !== null)) {
+    define(root);
+  }
+
+}).call(this);
+
+},{}],15:[function(require,module,exports){
 module.exports={
 	"version": "2014j",
 	"zones": [
@@ -2113,11 +2525,11 @@ module.exports={
 		"Pacific/Pohnpei|Pacific/Ponape"
 	]
 }
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var moment = module.exports = require("./moment-timezone");
 moment.tz.load(require('./data/packed/latest.json'));
 
-},{"./data/packed/latest.json":14,"./moment-timezone":16}],16:[function(require,module,exports){
+},{"./data/packed/latest.json":15,"./moment-timezone":17}],17:[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.2.5
 //! author : Tim Wood
@@ -2520,7 +2932,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 	return moment;
 }));
 
-},{"moment":17}],17:[function(require,module,exports){
+},{"moment":18}],18:[function(require,module,exports){
 //! moment.js
 //! version : 2.10.6
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -5716,10 +6128,8 @@ moment.tz.load(require('./data/packed/latest.json'));
     return _moment;
 
 }));
-},{}],18:[function(require,module,exports){
-var MessageActions, send;
-
-MessageActions = require('../actions/MessageActions.coffee');
+},{}],19:[function(require,module,exports){
+var send;
 
 window.urb.appl = "talk";
 
@@ -5729,71 +6139,75 @@ send = function(data, cb) {
   }, cb);
 };
 
-module.exports = {
-  listenStation: function(station, since) {
-    var $this;
-    console.log('listen station');
-    console.log(arguments);
-    $this = this;
-    return window.urb.bind("/f/" + station + "/" + since, function(err, res) {
-      var ref, ref1;
-      if (err || !res.data) {
-        console.log('/f/ err!');
-        console.log(err);
-        console.log(res);
-        $this.listenStation(station, since);
-        return;
-      }
-      console.log('/f/');
-      console.log(res.data);
-      if (res.data.ok === true) {
-        MessageActions.listeningStation(station);
-      }
-      if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
-        return MessageActions.loadMessages(res.data.grams);
-      }
-    });
-  },
-  get: function(station, start, end) {
-    end = window.urb.util.numDot(end);
-    start = window.urb.util.numDot(start);
-    return window.urb.bind("/f/" + station + "/" + end + "/" + start, function(err, res) {
-      var ref, ref1;
-      if (err || !res.data) {
-        console.log('/f/ /e/s err');
-        console.log(err);
-        return;
-      }
-      console.log('/f/ /e/s');
-      console.log(res);
-      if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
-        MessageActions.loadMessages(res.data.grams, true);
-        return window.urb.drop("/f/" + station + "/" + end + "/" + start, function(err, res) {
-          console.log('done');
-          return console.log(res);
-        });
-      }
-    });
-  },
-  sendMessage: function(message, cb) {
-    return send({
-      publish: [message]
-    }, function(err, res) {
-      console.log('sent');
+module.exports = function(arg) {
+  var MessageActions;
+  MessageActions = arg.MessageActions;
+  return {
+    listenStation: function(station, since) {
+      var $this;
+      console.log('listen station');
       console.log(arguments);
-      if (cb) {
-        return cb(err, res);
-      }
-    });
-  }
+      $this = this;
+      return window.urb.bind("/f/" + station + "/" + since, function(err, res) {
+        var num, ref, ref1, ref2, ref3, tele;
+        if (err || !res.data) {
+          console.log('/f/ err!');
+          console.log(err);
+          console.log(res);
+          $this.listenStation(station, since);
+          return;
+        }
+        console.log('/f/');
+        console.log(res.data);
+        if (res.data.ok === true) {
+          MessageActions.listeningStation(station);
+        }
+        if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
+          ref3 = (ref2 = res.data) != null ? ref2.grams : void 0, tele = ref3.tele, num = ref3.num;
+          return MessageActions.loadMessages(tele, num);
+        }
+      });
+    },
+    get: function(station, start, end) {
+      end = window.urb.util.numDot(end);
+      start = window.urb.util.numDot(start);
+      return window.urb.bind("/f/" + station + "/" + end + "/" + start, function(err, res) {
+        var num, ref, ref1, ref2, ref3, tele;
+        if (err || !res.data) {
+          console.log('/f/ /e/s err');
+          console.log(err);
+          return;
+        }
+        console.log('/f/ /e/s');
+        console.log(res);
+        if ((ref = res.data) != null ? (ref1 = ref.grams) != null ? ref1.tele : void 0 : void 0) {
+          ref3 = (ref2 = res.data) != null ? ref2.grams : void 0, tele = ref3.tele, num = ref3.num;
+          MessageActions.loadMessages(tele, num, true);
+          return window.urb.drop("/f/" + station + "/" + end + "/" + start, function(err, res) {
+            console.log('done');
+            return console.log(res);
+          });
+        }
+      });
+    },
+    sendMessage: function(message, cb) {
+      return send({
+        publish: [message]
+      }, function(err, res) {
+        console.log('sent');
+        console.log(arguments);
+        if (cb) {
+          return cb(err, res);
+        }
+      });
+    }
+  };
 };
 
 
 
-},{"../actions/MessageActions.coffee":1}],19:[function(require,module,exports){
-var StationActions, design, send;
-
-StationActions = require('../actions/StationActions.coffee');
+},{}],20:[function(require,module,exports){
+var design, send;
 
 window.urb.appl = "talk";
 
@@ -5812,94 +6226,98 @@ design = function(party, config, cb) {
   }, cb);
 };
 
-module.exports = {
-  createStation: function(name, cb) {
-    return design(name, {
-      sources: [],
-      caption: "",
-      cordon: {
+module.exports = function(arg) {
+  var StationActions;
+  StationActions = arg.StationActions;
+  return {
+    createStation: function(name, cb) {
+      return design(name, {
+        sources: [],
+        caption: "",
+        cordon: {
+          posture: "white",
+          list: []
+        }
+      }, cb);
+    },
+    removeStation: function(name, cb) {
+      return design(name, null, cb);
+    },
+    setSources: function(station, ship, sources) {
+      var cordon;
+      cordon = {
         posture: "white",
         list: []
-      }
-    }, cb);
-  },
-  removeStation: function(name, cb) {
-    return design(name, null, cb);
-  },
-  setSources: function(station, ship, sources) {
-    var cordon;
-    cordon = {
-      posture: "white",
-      list: []
-    };
-    return design(station, {
-      sources: sources,
-      cordon: cordon,
-      caption: ""
-    }, function(err, res) {
-      console.log('talk-command');
-      return console.log(arguments);
-    });
-  },
-  members: function() {
-    return window.urb.bind("/a/court", function(err, res) {
-      var ref, ref1;
-      if (err || !res) {
-        console.log('/a/ err');
-        console.log(err);
-        return;
-      }
-      console.log('/a/');
-      console.log(res.data);
-      if ((ref = res.data) != null ? (ref1 = ref.group) != null ? ref1.global : void 0 : void 0) {
-        return StationActions.loadMembers(res.data.group.global);
-      }
-    });
-  },
-  listen: function() {
-    return window.urb.bind("/", function(err, res) {
-      if (err || !res.data) {
-        console.log('/ err');
-        console.log(err);
-        return;
-      }
-      console.log('/');
-      console.log(res.data);
-      if (res.data.house) {
-        return StationActions.loadStations(res.data.house);
-      }
-    });
-  },
-  listenStation: function(station) {
-    return window.urb.bind("/avx/" + station, function(err, res) {
-      var ref;
-      if (err || !res) {
-        console.log('/avx/ err');
-        console.log(err);
-        return;
-      }
-      console.log('/avx/');
-      console.log(res.data);
-      if (res.data.ok === true) {
-        StationActions.listeningStation(station);
-      }
-      if (res.data.group) {
-        res.data.group.global[window.util.mainStationPath(window.urb.user)] = res.data.group.local;
-        StationActions.loadMembers(res.data.group.global);
-      }
-      if ((ref = res.data.cabal) != null ? ref.loc : void 0) {
-        StationActions.loadConfig(station, res.data.cabal.loc);
-      }
-      if (res.data.glyph) {
-        return StationActions.loadGlyphs(res.data.glyph);
-      }
-    });
-  }
+      };
+      return design(station, {
+        sources: sources,
+        cordon: cordon,
+        caption: ""
+      }, function(err, res) {
+        console.log('talk-command');
+        return console.log(arguments);
+      });
+    },
+    members: function() {
+      return window.urb.bind("/a/court", function(err, res) {
+        var ref, ref1;
+        if (err || !res) {
+          console.log('/a/ err');
+          console.log(err);
+          return;
+        }
+        console.log('/a/');
+        console.log(res.data);
+        if ((ref = res.data) != null ? (ref1 = ref.group) != null ? ref1.global : void 0 : void 0) {
+          return StationActions.loadMembers(res.data.group.global);
+        }
+      });
+    },
+    listen: function() {
+      return window.urb.bind("/", function(err, res) {
+        if (err || !res.data) {
+          console.log('/ err');
+          console.log(err);
+          return;
+        }
+        console.log('/');
+        console.log(res.data);
+        if (res.data.house) {
+          return StationActions.loadStations(res.data.house);
+        }
+      });
+    },
+    listenStation: function(station) {
+      return window.urb.bind("/avx/" + station, function(err, res) {
+        var ref;
+        if (err || !res) {
+          console.log('/avx/ err');
+          console.log(err);
+          return;
+        }
+        console.log('/avx/');
+        console.log(res.data);
+        if (res.data.ok === true) {
+          StationActions.listeningStation(station);
+        }
+        if (res.data.group) {
+          res.data.group.global[window.util.mainStationPath(window.urb.user)] = res.data.group.local;
+          StationActions.loadMembers(res.data.group.global);
+        }
+        if ((ref = res.data.cabal) != null ? ref.loc : void 0) {
+          StationActions.loadConfig(station, res.data.cabal.loc);
+        }
+        if (res.data.glyph) {
+          return StationActions.loadGlyphs(res.data.glyph);
+        }
+      });
+    }
+  };
 };
 
 
 
-},{"../actions/StationActions.coffee":2}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, MessageStore, _fetching, _last, _listening, _messages, _station, _typing, moment;
 
 moment = require('moment-timezone');
@@ -6046,7 +6464,7 @@ module.exports = MessageStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":7,"events":23,"moment-timezone":15}],21:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":7,"events":24,"moment-timezone":16}],22:[function(require,module,exports){
 var EventEmitter, StationDispatcher, StationStore, _audience, _config, _glyphs, _listening, _members, _shpylg, _station, _stations, _typing, _validAudience;
 
 EventEmitter = require('events').EventEmitter;
@@ -6286,7 +6704,7 @@ module.exports = StationStore;
 
 
 
-},{"../dispatcher/Dispatcher.coffee":7,"events":23}],22:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.coffee":7,"events":24}],23:[function(require,module,exports){
 if (!window.util) {
   window.util = {};
 }
@@ -6413,7 +6831,7 @@ _.merge(window.util, {
 
 
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
