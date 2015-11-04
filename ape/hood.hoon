@@ -61,6 +61,11 @@
   ~?  ?=(^ saw)  [%kiln-reload-lame u.saw]
   [~ +>]
 ::
+++  coup-kiln-overload                                  ::
+  |=  [way=wire saw=(unit tang)]
+  ~?  ?=(^ saw)  [%kiln-overload-lame u.saw]
+  [~ +>]
+::
 ++  coup-drum-phat  (wrap take-coup-phat):from-drum
 ++  coup-helm-hi    (wrap coup-hi):from-helm
 ++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
@@ -81,6 +86,7 @@
 ++  made-kiln                 (wrap take-made):from-kiln
 ++  mere-kiln                 (wrap take-mere):from-kiln
 ++  mere-kiln-sync            (wrap take-mere-sync):from-kiln
+++  wake-kiln-overload        (wrap take-wake-overload):from-kiln
 ++  note-helm                 (wrap take-note):from-helm
 ++  onto-drum                 (wrap take-onto):from-drum
 ++  peer-drum                 (wrap peer):from-drum
@@ -111,6 +117,7 @@
 ++  poke-kiln-sync            (wrap poke-sync):from-kiln
 ++  poke-kiln-start-autoload  (wrap poke-start-autoload):from-kiln
 ++  poke-kiln-autoload        (wrap poke-autoload):from-kiln
+++  poke-kiln-overload        (wrap poke-overload):from-kiln
 ++  poke-kiln-unmount         (wrap poke-unmount):from-kiln
 ++  poke-kiln-unsync          (wrap poke-unsync):from-kiln
 ++  poke-will                 (wrap poke-will):from-helm
