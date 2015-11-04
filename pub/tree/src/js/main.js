@@ -676,13 +676,13 @@ module.exports = query({
 }, recl({
   displayName: "Kids",
   render: function() {
-    var _k, _keys, elem, item, k, klass, ref1, ref2, ref3, ref4, sorted, v;
+    var _k, _keys, d, elem, item, k, keyed, klass, ref1, ref2, ref3, ref4, sorted, str, v;
     klass = "kids";
     if (this.props.dataType) {
       klass += " " + this.props.dataType;
     }
     sorted = true;
-    _keys = [];
+    keyed = {};
     ref1 = this.props.kids;
     for (k in ref1) {
       v = ref1[k];
@@ -690,32 +690,43 @@ module.exports = query({
         if (this.props.sortBy === 'date') {
           if (((ref2 = v.meta) != null ? ref2.date : void 0) == null) {
             sorted = false;
+            continue;
           }
-          _k = Number(v.meta.date.slice(1).replace(/\./g, ""));
-          _keys[_k] = k;
+          d = v.meta.date.slice(1).split(".");
+          if (d.length < 3) {
+            sorted = false;
+            continue;
+          }
+          str = d[0] + "-" + d[1] + "-" + d[2];
+          if (d.length > 3) {
+            str += " " + d[3] + ":" + d[4] + ":" + d[5];
+          }
+          _k = Number(new Date(str));
+          keyed[_k] = k;
         }
       } else {
         if (((ref3 = v.meta) != null ? ref3.sort : void 0) == null) {
           sorted = false;
         }
-        _keys[Number((ref4 = v.meta) != null ? ref4.sort : void 0)] = k;
+        keyed[Number((ref4 = v.meta) != null ? ref4.sort : void 0)] = k;
       }
+    }
+    if (sorted !== true) {
+      _keys = _.keys(this.props.kids).sort();
+    } else {
+      _keys = _.keys(keyed).sort();
     }
     if (this.props.sortBy === 'date') {
       _keys.reverse();
     }
-    if (sorted !== true) {
-      _keys = _.keys(this.props.kids).sort();
-    }
     return div({
       className: klass
     }, (function() {
-      var i, len, ref5, results;
-      ref5 = _.values(_keys);
+      var i, len, results;
       results = [];
-      for (i = 0, len = ref5.length; i < len; i++) {
-        item = ref5[i];
-        elem = this.props.kids[item];
+      for (i = 0, len = _keys.length; i < len; i++) {
+        item = _keys[i];
+        elem = this.props.kids[keyed[item]];
         results.push([
           div({
             key: item

@@ -951,7 +951,6 @@
       :: 
       ++  bind                                          ::  %bind
         |=  [cha=char pan=(unit (set partner))]  ^+  ..sh-work
-        ~&  bind/[cha pan nik nak]
         ?~  pan  $(pan [~ ?~(active.she passive.she u.active.she)])
         =+  ole=(~(get by nik) u.pan)
         ?:  =(ole [~ cha])  ..sh-work
@@ -1102,7 +1101,8 @@
         (sh-slug lit)
       =+  jub=(rust (tufa buf.say.she) sh-scad)
       ?~  jub  (sh-fact %bel ~)
-      =.  +>  (sh-work u.jub)
+      %.  u.jub
+      =<  sh-work
       =+  buf=buf.say.she
       =^  cal  say.she  (~(transmit sole say.she) [%set ~])
       %-  sh-fact
@@ -1111,7 +1111,7 @@
           [%det cal]
           ?.  ?=([%';' *] buf)  ~ 
           :_  ~
-          [%txt (weld "----------------| " (tufa buf))]
+          [%txt (runt [14 '-'] `tape`['|' ' ' (tufa buf)])]
       ==
     ::
     ++  sh-sole                                         ::  apply edit
@@ -2040,7 +2040,8 @@
   ^-  (quip move +>)
   ?~  saw  [~ +>]
   %+  etch-friend  [%friend way]  |=  [man=span cuz=station]
-  ~&  [%reap-friend-fail man cuz u.saw]
+  =.  u.saw  [>%reap-friend-fail man cuz< u.saw]
+  %-  (slog (flop u.saw))
   ra-abet:(ra-quit:ra man cuz)
 ::
 ++  quit-friend                                         ::

@@ -1,8 +1,7 @@
-MessageActions = require '../actions/MessageActions.coffee'
-
 window.urb.appl = "talk"
 send = (data,cb)-> window.urb.send data, {mark:"talk-command"}, cb
-module.exports =
+
+module.exports = ({MessageActions}) ->
   listenStation: (station,since) ->
     console.log 'listen station'
     console.log arguments
@@ -19,7 +18,8 @@ module.exports =
         if res.data.ok is true
           MessageActions.listeningStation station
         if res.data?.grams?.tele
-          MessageActions.loadMessages res.data.grams
+          {tele,num} = res.data?.grams
+          MessageActions.loadMessages tele, num
 
   get: (station,start,end) ->
     end   = window.urb.util.numDot end
@@ -32,7 +32,8 @@ module.exports =
       console.log '/f/ /e/s'
       console.log res        
       if res.data?.grams?.tele
-        MessageActions.loadMessages res.data.grams,true
+        {tele,num} = res.data?.grams
+        MessageActions.loadMessages tele,num,true
         window.urb.drop "/f/#{station}/#{end}/#{start}", (err,res) ->
           console.log 'done'
           console.log res
