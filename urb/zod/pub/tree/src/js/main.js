@@ -519,6 +519,9 @@ module.exports = query({
     var body, className, ref1;
     className = ((ref1 = this.props.meta.layout) != null ? ref1.replace(/,/g, " ") : void 0) || "";
     body = [reactify(this.props.body)];
+    if (document.location.hostname === 'urbit.org' && this.props.meta.spam) {
+      body.unshift(Spam({}, ""));
+    }
     if (this.props.meta.logo != null) {
       body.unshift(Logo({
         color: this.props.meta.logo
