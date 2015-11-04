@@ -1,33 +1,26 @@
-MessageDispatcher = require '../dispatcher/Dispatcher.coffee'
+Dispatcher   =  require '../dispatcher/Dispatcher.coffee'
 
-module.exports =
-  loadMessages: (grams,get) ->
-    MessageDispatcher.handleServerAction
-      type:"messages-load"
-      messages:grams.tele
-      last:grams.num
-      get:get
+_persistence = require '../persistence/MessagePersistence.coffee'
+  
+Persistence = _persistence MessageActions: module.exports = 
+  loadMessages: (messages,last,get) ->
+    Dispatcher.handleServerAction {messages,last,get,type:"messages-load"}
 
   listenStation: (station,date) ->
     if not date then date = window.urb.util.toDate(new Date())
-    window.talk.MessagePersistence.listenStation station,date
+    Persistence.listenStation station,date
 
   listeningStation: (station) ->
-    MessageDispatcher.handleViewAction
-      type:"messages-listen"
-      station:station
+    Dispatcher.handleViewAction {station,type:"messages-listen"}
 
   setTyping: (state) ->
-    MessageDispatcher.handleViewAction
-      type:"messages-typing"
-      state:state    
+    Dispatcher.handleViewAction {state,type:"messages-typing"}
 
   getMore: (station,start,end) ->
-    MessageDispatcher.handleViewAction
-      type:"messages-fetch"
-    window.talk.MessagePersistence.get station,start,end
+    Dispatcher.handleViewAction type:"messages-fetch"      
+    Persistence.get station,start,end
 
-  sendMessage: (message,audience) ->
+  sendMessage: (txt,audience) ->
     serial = window.util.uuid32()
 
     # audience.push window.util.mainStationPath window.urb.user
@@ -41,20 +34,17 @@ module.exports =
           sender:null
         delivery:"pending"
 
-    speech = 
-      lin:
-        say:true
-        txt:message
+    speech = lin: {txt, say:true}
 
-    if message[0] is "@"
+    if txt[0] is "@"
       speech.lin.txt = speech.lin.txt.slice(1).trim()
       speech.lin.say = false
       
-    else if message[0] is "#"
+    else if txt[0] is "#"
       speech = eval: speech.lin.txt.slice(1).trim()
 
-    else if window.urb.util.isURL(message)
-      speech = url: message
+    else if window.urb.util.isURL(txt)
+      speech = url: txt
 
     speeches =
       if not (speech.lin?.txt.length > 64)
@@ -70,7 +60,7 @@ module.exports =
           }
         
     for speech in speeches
-      _message =
+      message =
         ship:window.urb.ship
         thought:
           serial:window.util.uuid32()
@@ -80,8 +70,6 @@ module.exports =
             speech:speech
             date: Date.now()
 
-      MessageDispatcher.handleViewAction
-        type:"message-send"
-        message:_message
-      window.talk.MessagePersistence.sendMessage _message.thought
+      Dispatcher.handleViewAction {message,type:"message-send"}
+      Persistence.sendMessage message.thought
 

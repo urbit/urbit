@@ -1,11 +1,17 @@
 $(() ->
-  StationActions = require './actions/StationActions.coffee'
+  StationActions = require './actions/StationActions.coffee' #start poll
 
   rend = React.render
   
   window.talk = {}
-  window.talk.MessagePersistence = require './persistence/MessagePersistence.coffee'
-  window.talk.StationPersistence = require './persistence/StationPersistence.coffee'
+  window.talk.online = yes
+
+  setInterval (->
+    window.talk.online = window.urb.poll.dely < 500
+    if window.talk.online
+      $('body').removeClass 'offline'
+    else $('body').addClass 'offline'
+  ), 300
 
   require './util.coffee'
   require './move.coffee'
@@ -16,8 +22,9 @@ $(() ->
   #   else
   #     $('#nav').removeClass 'scrolling'
   # setInterval checkScroll, 500
+  
 
-  window.talk.StationPersistence.listen()
+  StationActions.listen()
 
   StationComponent    = require './components/StationComponent.coffee'
   MessagesComponent   = require './components/MessagesComponent.coffee'
