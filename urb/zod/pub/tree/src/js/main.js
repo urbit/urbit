@@ -425,7 +425,7 @@ module.exports = function(queries, Child, load) {
 
 
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
-var Logo, Next, a, clas, div, img, p, query, reactify, recl, ref;
+var Logo, Next, Spam, a, clas, div, img, p, query, reactify, recl, ref;
 
 clas = require('classnames');
 
@@ -454,6 +454,18 @@ Logo = React.createFactory(recl({
         src: src,
         className: "logo"
       })
+    ]);
+  }
+}));
+
+Spam = React.createFactory(recl({
+  render: function() {
+    return div({
+      className: 'spam'
+    }, [
+      a({
+        href: "http://urbit.org"
+      }, "Sign up"), " for an Urbit invite."
     ]);
   }
 }));
@@ -507,6 +519,9 @@ module.exports = query({
     var body, className, ref1;
     className = ((ref1 = this.props.meta.layout) != null ? ref1.replace(/,/g, " ") : void 0) || "";
     body = [reactify(this.props.body)];
+    if (document.location.hostname === 'urbit.org') {
+      body.unshift(Spam({}, ""));
+    }
     if (this.props.meta.logo != null) {
       body.unshift(Logo({
         color: this.props.meta.logo
