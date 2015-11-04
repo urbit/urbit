@@ -2475,10 +2475,19 @@
     --
   --
 --
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::              section 4cA, filesystem vane          ::
-::                                                    ::
-::  The state is XX
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::              section 4cA, filesystem vane
+::
+::  This is the arvo interface vane.  Our formal state is a `++raft`, which
+::  has five components:
+::
+::  --  `fat` is the state for all local desks.
+::  --  `hoy` is the state for all foreign desks.
+::  --  `ran` is the global, hash-addressed object store.
+::  --  `mon` is the set of mount points in unix.
+::  --  `hez` is the duct to the unix sync.
+::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
     $:  %0                                            ::  vane version
         ruf=raft                                      ::  revision tree
@@ -2666,6 +2675,7 @@
     ==
   ==
 ::
+::  All timers are handled by `%behn` nowadays.
 ++  doze
   |=  [now=@da hen=duct]
   ^-  (unit ,@da)
@@ -2677,6 +2687,7 @@
   ..^$(ruf ruf.old)
 ::
 ++  scry                                              ::  inspect
+  ::  Make a request 
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit cage))
   ::  ~&  scry/[ren `path`[(scot %p his) syd ~(rent co lot) tyl]]
