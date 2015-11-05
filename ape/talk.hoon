@@ -90,6 +90,7 @@
           [%what p=$|(char (set partner))]              ::  show bound glyph
           [%bind p=char q=(unit (set partner))]         ::
           [%join p=(set partner)]                       ::  
+          [%leave p=(set partner)]                       ::  
           [%say p=(list speech)]                        ::
           [%eval p=cord q=twig]                         ::
           [%invite p=span q=(list partner)]             ::  whitelist add
@@ -230,6 +231,7 @@
         ::
           ;~(plug (perk %bind ~) ;~(pfix ace glyph) (punt ;~(pfix ace parz)))
           ;~((glue ace) (perk %join ~) parz)
+          ;~((glue ace) (perk %leave ~) parz)
           ;~((glue ace) (perk %what ~) ;~(pose parz glyph))
         ::
           ;~  plug  (perk %nick ~)
@@ -854,6 +856,7 @@
       ++  work
         ?-  -.job
           %number  (number +.job)
+          %leave   (leave +.job)
           %join    (join +.job)
           %eval    (eval +.job)
           %who     (who +.job)
@@ -912,16 +915,14 @@
           (sh-note:(set-glyph cha lix) "new glyph {<cha>}")
         =+  loc=loc.system.she
         %^  sh-tell  %design  man.she
-        :-  ~
-        =+  tal=(~(tap in lix))
-        %_    loc
-            sources
-          |-  ^-  (set partner)
-          ?~  tal  sources.loc
-          ?:  (~(has in sources.loc) i.tal)
-            $(tal t.tal, sources.loc (~(del in sources.loc) i.tal))
-          $(tal t.tal, sources.loc (~(put in sources.loc) i.tal))
-        ==
+        `loc(sources (~(uni in sources.loc) lix))
+      ::
+      ++  leave                                          ::  %leave
+        |=  lix=(set partner)
+        ^+  ..sh-work
+        =+  loc=loc.system.she
+        %^  sh-tell  %design  man.she
+        `loc(sources (~(dif in sources.loc) lix))
       ::
       ++  what                                          ::  %what
         |=  qur=$|(char (set partner))  ^+  ..sh-work
