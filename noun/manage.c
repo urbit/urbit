@@ -1463,10 +1463,12 @@ _cm_init(c3_o chk_o)
                    MAP_ANON | MAP_PRIVATE,
                    -1, 0);
 
-      if ( -1 == (c3_ps)map_v ) {
-        fprintf(stderr, "boot: map failed twice\r\n");
-      } else {
-        fprintf(stderr, "boot: map failed - try U3_OS_LoomBase %p\r\n", map_v);
+      fprintf(stderr, "boot: mapping %dMB failed\r\n", (len_w / (1024 * 1024)));
+      fprintf(stderr, "see install instructions for adding swap space\r\n");
+      if ( -1 != (c3_ps)map_v ) {
+        fprintf(stderr, 
+                "if porting to a new platform, try U3_OS_LoomBase %p\r\n", 
+                map_v);
       }
       exit(1);
     }
