@@ -6,7 +6,7 @@ next: true
 
 # Launch procedure
 
-An urbit is a persistent server on the `%ames` P2P network.
+An urbit is a persistent server on the Urbit P2P network.
 You'll create one of these servers now.  To understand what
 you're building, you need to know a little about the network.
 
@@ -31,8 +31,8 @@ the miscellaneous true facts below:
 
 ## Network architecture
 
-An Urbit address is a 128-bit number, or *plot*.  Every server on
-the Urbit network (or just an "urbit") has one unique plot.
+An Urbit address is a number, or *plot*, under 2^128.  Every
+server on the Urbit network has one unique plot.
 
 Since Urbit is designed as a personal server, a plot is both a
 network address and a digital identity.  There is no additional
