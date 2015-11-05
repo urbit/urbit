@@ -86,11 +86,11 @@
     ++  work                                            ::  interface action
       $%  [%number p=$|(@ud [@u @ud])]                  ::  relative/absolute
           [%help ~]                                     ::  print usage info
-          [%who p=?((set partner) char)]                ::  presence
+          [%who p=where]                                ::  presence
           [%what p=$|(char (set partner))]              ::  show bound glyph
-          [%bind p=char q=(unit (set partner))]         ::
-          [%join p=(set partner)]                       ::  
-          [%leave p=(set partner)]                       ::  
+          [%bind p=char q=(unit where)]                 ::
+          [%join p=where]                               ::  
+          [%leave p=where]                              ::  
           [%say p=(list speech)]                        ::
           [%eval p=cord q=twig]                         ::
           [%invite p=span q=(list partner)]             ::  whitelist add
@@ -103,7 +103,7 @@
           [%create p=posture q=span r=cord]             ::
           [%probe p=station]                            ::
       ==                                                ::
-    ++  where  ?((set partner) char)                    ::  audience/shorthand
+    ++  where  (set partner)                            ::  non-empty audience 
     ++  sigh                                            ::  assemble label
       |=  [len=@ud pre=tape yiz=cord]
       ^-  tape
@@ -173,6 +173,20 @@
           (stag %& stan)
           (stag %| pasp)
         ==
+      ++  partners-flat                                 ::  collapse mixed list
+        |=  a=(list (each partner (set partner)))
+        ^-  (set partner)
+        ?~  a  ~
+        ?-  -.i.a
+          %&  (~(put in $(a t.a)) p.i.a)
+          %|  (~(uni in $(a t.a)) p.i.a)
+        ==
+      ::
+      ++  para                                          ::  partners alias
+        %+  cook  partners-flat
+        %+  most  ;~(plug com (star ace))
+        (pick parn (sear sh-glyf glyph))
+      ::
       ++  parz                                          ::  non-empty partners
         %+  cook  ~(gas in *(set partner))
         (most ;~(plug com (star ace)) parn)
@@ -221,17 +235,10 @@
             qut
           ==
         ::
-          ;~  plug  (perk %who ~)
-            ;~  pose
-              ;~(pfix ace parz)
-              ;~(pfix ace glyph)
-              (easy ~)
-            ==
-          ==
-        ::
-          ;~(plug (perk %bind ~) ;~(pfix ace glyph) (punt ;~(pfix ace parz)))
-          ;~((glue ace) (perk %join ~) parz)
-          ;~((glue ace) (perk %leave ~) parz)
+          ;~(plug (perk %who ~) ;~(pose para (easy ~)))
+          ;~(plug (perk %bind ~) ;~(pfix ace glyph) (punt ;~(pfix ace para)))
+          ;~((glue ace) (perk %join ~) para)
+          ;~((glue ace) (perk %leave ~) para)
           ;~((glue ace) (perk %what ~) ;~(pose parz glyph))
         ::
           ;~  plug  (perk %nick ~)
@@ -247,8 +254,7 @@
         ::
           ;~(plug (perk %help ~) (easy ~))
           (stag %number nump)
-          =+  (punt ;~(pfix ace message))
-          (stag %target ;~(plug ;~(pose parz glyph) -))
+          (stag %target ;~(plug para (punt ;~(pfix ace message))))
           (stag %number (cook lent (star sem)))
         ==
       --
@@ -363,6 +369,18 @@
       %+  sh-fact  %txt
       (runt [(sub 13 (lent bun)) '-'] "[{bun}]")
     ::
+    ++  sh-glyf                                         ::  decode glyph
+      |=  cha=char  ^-  (unit (set partner))
+      =+  lax=(~(get ju nak) cha)
+      ?:  =(~ lax)  ~
+      ?:  ?=([* ~ ~] lax)  `n.lax
+      =+  grams=grams:(~(got by stories) man.she)
+      |-  ^-  (unit (set partner))
+      ?~  grams  ~
+      =+  pan=(sa (turn :_(head (~(tap by q.q.i.grams)))))
+      ?:  (~(has in lax) pan)  `pan
+      $(grams t.grams)
+      ::
     ++  sh-repo-house-diff
       |=  [one=shelf two=shelf]
       =|  $=  ret
@@ -906,23 +924,23 @@
         ==
       ::
       ++  join                                          ::  %join
-        |=  lix=(set partner)
+        |=  pan=(set partner)
         ^+  ..sh-work
         =.  ..sh-work
-          =+  (~(get by nik) lix)
+          =+  (~(get by nik) pan)
           ?^  -  (sh-note "has glyph {<u>}")
-          =+  cha=(glyph (mug lix))
-          (sh-note:(set-glyph cha lix) "new glyph {<cha>}")
+          =+  cha=(glyph (mug pan))
+          (sh-note:(set-glyph cha pan) "new glyph {<cha>}")
         =+  loc=loc.system.she
         %^  sh-tell  %design  man.she
-        `loc(sources (~(uni in sources.loc) lix))
+        `loc(sources (~(uni in sources.loc) pan))
       ::
       ++  leave                                          ::  %leave
-        |=  lix=(set partner)
+        |=  pan=(set partner)
         ^+  ..sh-work
         =+  loc=loc.system.she
         %^  sh-tell  %design  man.she
-        `loc(sources (~(dif in sources.loc) lix))
+        `loc(sources (~(dif in sources.loc) pan))
       ::
       ++  what                                          ::  %what
         |=  qur=$|(char (set partner))  ^+  ..sh-work
@@ -935,9 +953,7 @@
         |=(a=(set partner) [%txt <a>]) ::  XX ~(te-whom te man.she a)
       ::
       ++  who                                          ::  %who
-        |=  lix=?((set partner) char)  ^+  ..sh-work
-        =<  ?~(lix (. lix) ?^(lix (. lix) (fetch-nik lix .)))
-        |=  pan=(set partner)
+        |=  pan=(set partner)  ^+  ..sh-work
         =<  (sh-fact %mor (murn (sort (~(tap by q.owners.she)) aor) .))
         |=  [pon=partner alt=atlas]  ^-  (unit sole-effect)
         ?.  |(=(~ pan) (~(has in pan) pon))  ~
@@ -1027,25 +1043,10 @@
         ==
       ::
       ++  target                                        ::  %target
-        |=  [lix=?((set partner) char) woe=(unit ^work)]
-        =-  ?~(woe end work(job u.woe, ..sh-pact end))
-        ^-  end=_..sh-work
-        ?~  lix  (sh-pact lix) 
-        ?^  lix  (sh-pact lix) 
-        (fetch-nik lix sh-pact)
-      ::
-      ++  fetch-nik
-        |=  [cha=char sh-fun=$+((set partner) _..sh-work)]
-        =+  lax=(~(get ju nak) cha)
-        ?:  =(~ lax)  (sh-lame "unknown {<cha>}")
-        ?:  ?=([* ~ ~] lax)  (sh-fun n.lax)
-        |-  ^-  sh-fun
-        ?~  grams.roy  
-          (sh-lame:(what cha) "ambiguous {<cha>}")
-        =+  pan=(sa (turn :_(head (~(tap by q.q.i.grams.roy)))))
-        ?:  (~(has in lax) pan)
-          (sh-fun pan)
-        $(grams.roy t.grams.roy)
+        |=  [pan=(set partner) woe=(unit ^work)]
+        ^+  ..sh-work
+        =.  ..sh-pact  (sh-pact pan)
+        ?~(woe ..sh-work work(job u.woe))
       ::
       ++  number                                        ::  %number
         |=  num=$|(@ud [p=@u q=@ud])
