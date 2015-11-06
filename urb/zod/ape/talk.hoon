@@ -97,6 +97,8 @@
           [%block p=span q=(list partner)]              ::  blacklist add
           [%author p=span q=(list partner)]             ::  whitelist add
           [%nick p=(unit ship) q=(unit cord)]           ::
+          [%set p=span]                                 ::
+          [%unset p=span]                               ::
           [%target p=where q=(unit work)]               ::  set active targets
           ::  [%destroy p=span]                         ::
           [%create p=posture q=span r=cord]             ::
@@ -210,6 +212,10 @@
       ++  nick  (cook crip (stun [1 14] low))           ::  nickname
       ++  text  (cook crip (star (shim ' ' '~')))       ::  bullets separating
       ++  glyph  (mask "/\\\{(<!?{(zing glyphs)}")      ::  station postfix
+      ++  setting
+        %-  perk  :~
+          %noob
+        ==
       ++  work
         %+  knee  *^work  |.  ~+
         =-  ;~(pose ;~(pfix sem -) message)
@@ -242,6 +248,9 @@
               (easy ~)
             ==
           ==
+        ::
+          ;~(plug (perk %set ~) ;~(pose ;~(pfix ace setting) (easy %$)))
+          ;~(plug (perk %unset ~) ;~(pfix ace setting))
         ::
           ;~(plug (perk %help ~) (easy ~))
           (stag %number nump)
@@ -865,6 +874,8 @@
           %block   (block +.job)
           %create  (create +.job)
           %nick    (nick +.job)
+          %set     (wo-set +.job)
+          %unset   (unset +.job)
           %target  (target +.job)
           %probe   (probe +.job)
           %help    (help)
@@ -1024,6 +1035,16 @@
         %=  ..sh-work
           folks  (~(put by folks) u.her [true=~ hand=nym])
         ==
+      ::
+      ++  wo-set                                        ::  %set
+        |=  seg=span
+        ^+  ..sh-work
+        ..sh-work
+      ::
+      ++  unset                                         ::  %unset
+        |=  neg=span
+        ^+  ..sh-work
+        ..sh-work
       ::
       ++  target                                        ::  %target
         |=  [lix=?((set partner) char) woe=(unit ^work)]
