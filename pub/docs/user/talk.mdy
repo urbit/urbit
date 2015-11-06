@@ -238,7 +238,7 @@ most recent; etc.
 
 ### Nicknames
 
-<mark>Not yet implemented</mark>
+<mark>Partially implemented</mark>
 
 Sometimes you know your Urbit friends by other names, on or
 offline.   Use the `;nick` command to assign or look up
@@ -254,6 +254,10 @@ entries in a phonebook.  Sometimes in a post you want to mention
 someone you know by a nickname.  Just type `~plato`, and `:talk`
 will replace it magically with `~fintud-macrep` (or beep if no
 `~plato` is bound).
+
+If you would prefer to see nicknames instead of urbit names when
+someone speaks, use `;set noob`. `;unset noob` disables this
+setting.
 
 ### Presence
 
@@ -302,3 +306,12 @@ To ban from `%bizarre-board`:
 To appoint a coauthor of `%serious-journal`:
 
     ;author %serious-journal ~lagret-marpub
+
+### Settings
+
+To set a frontend option in your `talk` session, use `;set
+[option]`, or `;unset [option]` to unset it. To see all currently
+set options, just type `;set`. The options available are:
+
+- `noob` - Display user-defined nicknames instead of ship names
+  if available.
