@@ -223,7 +223,7 @@
         ==
       ::
       ++  nick  (cook crip (stun [1 14] low))           ::  nickname
-      ++  text  (cook crip (star (shim ' ' '~')))       ::  bullets separating
+      ++  text  (cook crip (plus (shim ' ' '~')))       ::  bullets separating
       ++  glyph  (mask "/\\\{(<!?{(zing glyphs)}")      ::  station postfix
       ++  work
         %+  knee  *^work  |.  ~+
