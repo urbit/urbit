@@ -34,7 +34,7 @@ u3_sist_pack(c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
 
   lar_u.tem_w = tem_w;
   lar_u.typ_w = typ_w;
-  lar_u.syn_w = u3r_mug((c3_w)tar_d);
+  lar_u.syn_w = u3r_mug_d(tar_d);
   lar_u.mug_w = u3r_mug_both(u3r_mug_words(bob_w, len_w),
                                u3r_mug_both(u3r_mug(lar_u.tem_w),
                                               u3r_mug(lar_u.typ_w)));
@@ -718,7 +718,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
       u3_lo_bail();
     }
 
-    if ( lar_u.syn_w != u3r_mug((c3_w)tar_d) ) {
+    if ( lar_u.syn_w != u3r_mug_d(tar_d) ) {
       uL(fprintf(uH, "rest_nuu failed (d)\n"));
       u3_lo_bail();
     }
@@ -977,12 +977,12 @@ _sist_rest()
         u3_lo_bail();
       }
 
-      if ( lar_u.syn_w != u3r_mug((c3_w)tar_d) ) {
+      if ( lar_u.syn_w != u3r_mug_d(tar_d) ) {
         if ( c3n == rup ) {
           uL(fprintf(uH, "corruption detected; attempting to fix\n"));
           rup = c3y;
         }
-        uL(fprintf(uH, "lar:%x mug:%x\n", lar_u.syn_w, u3r_mug((c3_w)tar_d)));
+        uL(fprintf(uH, "lar:%x mug:%x\n", lar_u.syn_w, u3r_mug_d(tar_d)));
         end_d--; u3Z->lug_u.len_d--;
         continue;
       }
