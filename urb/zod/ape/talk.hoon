@@ -758,13 +758,9 @@
     ::
     ++  sh-repo-grams                                   ::  apply telegrams
       |=  [num=@ud gaz=(list telegram)]
-      =.  gaz
-        =+  len=(lent gaz)
-        ?.((gth len 200) gaz (slag (sub len 200) gaz))
-      |-
-      ^+  +>+
-      ?~  gaz  +>+
-      $(gaz t.gaz, num +(num), +>+ (sh-repo-gram num i.gaz))
+      ^+  +>
+      ?~  gaz  +>
+      $(gaz t.gaz, num +(num), +> (sh-repo-gram num i.gaz))
     ::
     ++  sh-repo-glyph                                   ::  apply binding
       |=  nac=(jug char (set partner))
@@ -1488,11 +1484,7 @@
       ?+  -.rad  ~|([%talk-odd-friend rad] !!)
         %cabal  (pa-cabal cuz +.rad)
         %group  (pa-remind [%& cuz] +.rad)
-        %grams  :: =.  q.+.rad
-                ::   ?.  ?=(%pawn (clan our.hid))   q.+.rad 
-                ::   ?.  (gth (lent q.+.rad) 200)   q.+.rad
-                ::   (slag (sub (lent q.+.rad) 200) q.+.rad)
-                (pa-lesson q.+.rad)
+        %grams  (pa-lesson q.+.rad)
       ==
     ::
     ++  pa-quit                                         ::  stop subscription
