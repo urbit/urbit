@@ -364,7 +364,7 @@
     ::
     ++  sh-rend                                         ::  print on one line
       |=  gam=telegram
-      =+  lin=~(tr-line tr man.she gam)
+      =+  lin=~(tr-line tr man.she (~(has in settings.she) %noob) gam)
       (sh-pass:(sh-fact %txt lin) q.q.gam) 
     ::
     ++  sh-numb                                         ::  print msg number
@@ -891,7 +891,7 @@
       ++  activate                                      ::  from %number
         |=  gam=telegram
         ^+  ..sh-work
-        =+  tay=~(. tr man.she gam)
+        =+  tay=~(. tr man.she (~(has in settings.she) %noob) gam)
         =.  ..sh-work  (sh-fact %tan tr-tang:tay)
         sh-prod(active.she `tr-pals:tay)
       ::
@@ -1785,6 +1785,17 @@
         %pawn  :(welp (scag 7 raw) "_" (scag 6 (slag 51 raw)))
     ==
   ::
+  ++  sn-nick
+    |.  ^-  tape
+    =+  nym=(~(get by folks) p.one)
+    ?~  nym
+      (sn-curt |)
+    ?~  hand.u.nym
+      (sn-curt |)
+    =+  raw=(trip u.hand.u.nym)
+    =+  len=(sub 14 (lent raw))
+    (weld (reap len ' ') raw)
+  ::
   ++  sn-phat                                           ::  render accurately
     ^-  tape
     ?:  =(p.one our.hid)
@@ -1904,6 +1915,7 @@
 ::
 ++  tr                                                  ::  telegram renderer
   |_  $:  man=span
+          nob=?
           who=ship
           sen=serial
           aud=audience
@@ -1917,7 +1929,9 @@
     =+  ^=  baw
         ::  ?:  oug 
         ::  ~(te-whom te man tr-pals)
-        (~(sn-curt sn man [who (main who)]) |)
+        ?.  nob
+          (~(sn-curt sn man [who (main who)]) |)
+        (~(sn-nick sn man [who (main who)]))
     (weld baw txt)
   ::
   ++  tr-tang  ^-  tang
