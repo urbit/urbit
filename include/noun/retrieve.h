@@ -54,6 +54,13 @@
         u3r_mug_words(const c3_w *buf_w,
                       c3_w        len_w);
 
+      /* u3r_mug_d():
+      **
+      **   Compute the mug of `num`, LSW first.
+      */
+        c3_w
+        u3r_mug_d(c3_d num_d);
+
       /* u3r_mug_bytes():
       **
       **   Compute the mug of `buf`, `len`, LSW first.
