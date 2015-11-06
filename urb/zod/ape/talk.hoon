@@ -246,12 +246,20 @@
         ::
           ;~  plug  (perk %nick ~)
             ;~  pose
-              (cook some ;~(pfix ace ship))
-              (easy ~)
-            ==
-            ;~  pose
-              (cook some ;~(pfix ace nick))
-              (easy ~)
+              ;~  plug
+                (cook some ;~(pfix ace ship))
+                (cold (some '') ;~(pfix ace sig))
+              ==
+              ;~  plug
+                ;~  pose
+                  (cook some ;~(pfix ace ship))
+                  (easy ~)
+                ==
+                ;~  pose
+                  (cook some ;~(pfix ace nick))
+                  (easy ~)
+                ==
+              ==
             ==
           ==
         ::
@@ -1039,7 +1047,9 @@
           |=  p=ship
           [%txt "{<p>}: {<u.nym>}"]
         %=  ..sh-work
-          folks  (~(put by folks) u.her [true=~ hand=nym])
+          folks  ?~  u.nym
+                   (~(del by folks) u.her)
+                 (~(put by folks) u.her [true=~ hand=nym])
         ==
       ::
       ++  wo-set                                        ::  %set

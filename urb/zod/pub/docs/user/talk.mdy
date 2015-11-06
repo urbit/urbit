@@ -246,8 +246,9 @@ nicknames.
 
 `;nick` with no arguments lists all nicknames; `;nick
 ~fintud-macrep` looks up a nickname; `;nick plato` searches in
-reverse; `;nick ~fintud-macrep plato` creates a nickname.
-All nicknames must be 14 characters or less, lowercase.
+reverse; `;nick ~fintud-macrep plato` creates a nickname, and
+`;nick ~fintud-macrep ~` clears an assigned nickname.  All
+nicknames must be 14 characters or less, lowercase.
 
 Of course, nicknames are strictly local - like the names on
 entries in a phonebook.  Sometimes in a post you want to mention
