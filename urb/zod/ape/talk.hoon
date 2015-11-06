@@ -13,15 +13,19 @@
   ::
 [. talk sole]
 =>  |%                                                  ::  data structures
-    ++  house  ,[%4 house-4]                            ::  full state
+    ++  house  ,[%5 house-5]                            ::  full state
     ++  house-any                                       ::  app history
       $%  [%3 house-3]                                  ::  3: talk
           [%4 house-4]                                  ::  4: talk
+          [%5 house-5]                                  ::  5: talk
       ==                                                ::
     ++  house-3                                         ::
       %+  cork  house-4  |=  house-4                    ::  modern house with
       +<(stories (~(run by stories) story-3))           ::  old stories
     ++  house-4                                         ::
+      %+  cork  house-5  |=  house-5                    ::  modern house with
+      +<(shells (~(run by shells) shell-4))             ::  no settings
+    ++  house-5                                         ::
       $:  stories=(map span story)                      ::  conversations
           general=(set bone)                            ::  meta-subscribe
           outbox=(pair ,@ud (map ,@ud thought))         ::  urbit outbox
@@ -56,7 +60,9 @@
           owners=register                               ::  presence mirror
           harbor=(map span (pair posture cord))         ::  stations mirror
           system=cabal                                  ::  config mirror
+          settings=(set span)                           ::  frontend settings
       ==                                                ::
+    ++  shell-4  (cork shell |=(shell +<(|8 &9.+<)))    ::  missing settings
     ++  river  (pair point point)                       ::  stream definition
     ++  point                                           ::  stream endpoint
       $%  [%ud p=@ud]                                   ::  by number
@@ -86,10 +92,11 @@
     ++  work                                            ::  interface action
       $%  [%number p=$|(@ud [@u @ud])]                  ::  relative/absolute
           [%help ~]                                     ::  print usage info
-          [%who p=?((set partner) char)]                ::  presence
+          [%who p=where]                                ::  presence
           [%what p=$|(char (set partner))]              ::  show bound glyph
-          [%bind p=char q=(unit (set partner))]         ::
-          [%join p=(set partner)]                       ::  
+          [%bind p=char q=(unit where)]                 ::
+          [%join p=where]                               ::  
+          [%leave p=where]                              ::  
           [%say p=(list speech)]                        ::
           [%eval p=cord q=twig]                         ::
           [%invite p=span q=(list partner)]             ::  whitelist add
@@ -97,12 +104,14 @@
           [%block p=span q=(list partner)]              ::  blacklist add
           [%author p=span q=(list partner)]             ::  whitelist add
           [%nick p=(unit ship) q=(unit cord)]           ::
+          [%set p=span]                                 ::
+          [%unset p=span]                               ::
           [%target p=where q=(unit work)]               ::  set active targets
           ::  [%destroy p=span]                         ::
           [%create p=posture q=span r=cord]             ::
           [%probe p=station]                            ::
       ==                                                ::
-    ++  where  ?((set partner) char)                    ::  audience/shorthand
+    ++  where  (set partner)                            ::  non-empty audience 
     ++  sigh                                            ::  assemble label
       |=  [len=@ud pre=tape yiz=cord]
       ^-  tape
@@ -172,6 +181,20 @@
           (stag %& stan)
           (stag %| pasp)
         ==
+      ++  partners-flat                                 ::  collapse mixed list
+        |=  a=(list (each partner (set partner)))
+        ^-  (set partner)
+        ?~  a  ~
+        ?-  -.i.a
+          %&  (~(put in $(a t.a)) p.i.a)
+          %|  (~(uni in $(a t.a)) p.i.a)
+        ==
+      ::
+      ++  para                                          ::  partners alias
+        %+  cook  partners-flat
+        %+  most  ;~(plug com (star ace))
+        (pick parn (sear sh-glyf glyph))
+      ::
       ++  parz                                          ::  non-empty partners
         %+  cook  ~(gas in *(set partner))
         (most ;~(plug com (star ace)) parn)
@@ -208,8 +231,12 @@
         ==
       ::
       ++  nick  (cook crip (stun [1 14] low))           ::  nickname
-      ++  text  (cook crip (star (shim ' ' '~')))       ::  bullets separating
+      ++  text  (cook crip (plus (shim ' ' '~')))       ::  bullets separating
       ++  glyph  (mask "/\\\{(<!?{(zing glyphs)}")      ::  station postfix
+      ++  setting
+        %-  perk  :~
+          %noob
+        ==
       ++  work
         %+  knee  *^work  |.  ~+
         =-  ;~(pose ;~(pfix sem -) message)
@@ -220,33 +247,37 @@
             qut
           ==
         ::
-          ;~  plug  (perk %who ~)
-            ;~  pose
-              ;~(pfix ace parz)
-              ;~(pfix ace glyph)
-              (easy ~)
-            ==
-          ==
-        ::
-          ;~(plug (perk %bind ~) ;~(pfix ace glyph) (punt ;~(pfix ace parz)))
-          ;~((glue ace) (perk %join ~) parz)
+          ;~(plug (perk %who ~) ;~(pose para (easy ~)))
+          ;~(plug (perk %bind ~) ;~(pfix ace glyph) (punt ;~(pfix ace para)))
+          ;~((glue ace) (perk %join ~) para)
+          ;~((glue ace) (perk %leave ~) para)
           ;~((glue ace) (perk %what ~) ;~(pose parz glyph))
         ::
           ;~  plug  (perk %nick ~)
             ;~  pose
-              (cook some ;~(pfix ace ship))
-              (easy ~)
-            ==
-            ;~  pose
-              (cook some ;~(pfix ace nick))
-              (easy ~)
+              ;~  plug
+                (cook some ;~(pfix ace ship))
+                (cold (some '') ;~(pfix ace sig))
+              ==
+              ;~  plug
+                ;~  pose
+                  (cook some ;~(pfix ace ship))
+                  (easy ~)
+                ==
+                ;~  pose
+                  (cook some ;~(pfix ace nick))
+                  (easy ~)
+                ==
+              ==
             ==
           ==
         ::
+          ;~(plug (perk %set ~) ;~(pose ;~(pfix ace setting) (easy %$)))
+          ;~(plug (perk %unset ~) ;~(pfix ace setting))
+        ::
           ;~(plug (perk %help ~) (easy ~))
           (stag %number nump)
-          =+  (punt ;~(pfix ace message))
-          (stag %target ;~(plug ;~(pose parz glyph) -))
+          (stag %target ;~(plug para (punt ;~(pfix ace message))))
           (stag %number (cook lent (star sem)))
         ==
       --
@@ -349,7 +380,7 @@
     ::
     ++  sh-rend                                         ::  print on one line
       |=  gam=telegram
-      =+  lin=~(tr-line tr man.she gam)
+      =+  lin=~(tr-line tr man.she (~(has in settings.she) %noob) gam)
       (sh-pass:(sh-fact %txt lin) q.q.gam) 
     ::
     ++  sh-numb                                         ::  print msg number
@@ -361,6 +392,18 @@
       %+  sh-fact  %txt
       (runt [(sub 13 (lent bun)) '-'] "[{bun}]")
     ::
+    ++  sh-glyf                                         ::  decode glyph
+      |=  cha=char  ^-  (unit (set partner))
+      =+  lax=(~(get ju nak) cha)
+      ?:  =(~ lax)  ~
+      ?:  ?=([* ~ ~] lax)  `n.lax
+      =+  grams=grams:(~(got by stories) man.she)
+      |-  ^-  (unit (set partner))
+      ?~  grams  ~
+      =+  pan=(sa (turn :_(head (~(tap by q.q.i.grams)))))
+      ?:  (~(has in lax) pan)  `pan
+      $(grams t.grams)
+      ::
     ++  sh-repo-house-diff
       |=  [one=shelf two=shelf]
       =|  $=  ret
@@ -854,6 +897,7 @@
       ++  work
         ?-  -.job
           %number  (number +.job)
+          %leave   (leave +.job)
           %join    (join +.job)
           %eval    (eval +.job)
           %who     (who +.job)
@@ -865,6 +909,8 @@
           %block   (block +.job)
           %create  (create +.job)
           %nick    (nick +.job)
+          %set     (wo-set +.job)
+          %unset   (unset +.job)
           %target  (target +.job)
           %probe   (probe +.job)
           %help    (help)
@@ -874,7 +920,7 @@
       ++  activate                                      ::  from %number
         |=  gam=telegram
         ^+  ..sh-work
-        =+  tay=~(. tr man.she gam)
+        =+  tay=~(. tr man.she (~(has in settings.she) %noob) gam)
         =.  ..sh-work  (sh-fact %tan tr-tang:tay)
         sh-prod(active.she `tr-pals:tay)
       ::
@@ -903,25 +949,23 @@
         ==
       ::
       ++  join                                          ::  %join
-        |=  lix=(set partner)
+        |=  pan=(set partner)
         ^+  ..sh-work
         =.  ..sh-work
-          =+  (~(get by nik) lix)
+          =+  (~(get by nik) pan)
           ?^  -  (sh-note "has glyph {<u>}")
-          =+  cha=(glyph (mug lix))
-          (sh-note:(set-glyph cha lix) "new glyph {<cha>}")
+          =+  cha=(glyph (mug pan))
+          (sh-note:(set-glyph cha pan) "new glyph {<cha>}")
         =+  loc=loc.system.she
         %^  sh-tell  %design  man.she
-        :-  ~
-        =+  tal=(~(tap in lix))
-        %_    loc
-            sources
-          |-  ^-  (set partner)
-          ?~  tal  sources.loc
-          ?:  (~(has in sources.loc) i.tal)
-            $(tal t.tal, sources.loc (~(del in sources.loc) i.tal))
-          $(tal t.tal, sources.loc (~(put in sources.loc) i.tal))
-        ==
+        `loc(sources (~(uni in sources.loc) pan))
+      ::
+      ++  leave                                          ::  %leave
+        |=  pan=(set partner)
+        ^+  ..sh-work
+        =+  loc=loc.system.she
+        %^  sh-tell  %design  man.she
+        `loc(sources (~(dif in sources.loc) pan))
       ::
       ++  what                                          ::  %what
         |=  qur=$|(char (set partner))  ^+  ..sh-work
@@ -934,9 +978,7 @@
         |=(a=(set partner) [%txt <a>]) ::  XX ~(te-whom te man.she a)
       ::
       ++  who                                          ::  %who
-        |=  lix=?((set partner) char)  ^+  ..sh-work
-        =<  ?~(lix (. lix) ?^(lix (. lix) (fetch-nik lix .)))
-        |=  pan=(set partner)
+        |=  pan=(set partner)  ^+  ..sh-work
         =<  (sh-fact %mor (murn (sort (~(tap by q.owners.she)) aor) .))
         |=  [pon=partner alt=atlas]  ^-  (unit sole-effect)
         ?.  |(=(~ pan) (~(has in pan) pon))  ~
@@ -1022,29 +1064,35 @@
           |=  p=ship
           [%txt "{<p>}: {<u.nym>}"]
         %=  ..sh-work
-          folks  (~(put by folks) u.her [true=~ hand=nym])
+          folks  ?~  u.nym
+                   (~(del by folks) u.her)
+                 (~(put by folks) u.her [true=~ hand=nym])
+        ==
+      ::
+      ++  wo-set                                        ::  %set
+        |=  seg=span
+        ^+  ..sh-work
+        ?~  seg
+          %+  sh-fact  %mor
+          %+  turn  (~(tap in settings.she))
+          |=  s=span
+          [%txt (trip s)]
+        %=  ..sh-work
+          settings.she  (~(put in settings.she) seg)
+        ==
+      ::
+      ++  unset                                         ::  %unset
+        |=  neg=span
+        ^+  ..sh-work
+        %=  ..sh-work
+          settings.she  (~(del in settings.she) neg)
         ==
       ::
       ++  target                                        ::  %target
-        |=  [lix=?((set partner) char) woe=(unit ^work)]
-        =-  ?~(woe end work(job u.woe, ..sh-pact end))
-        ^-  end=_..sh-work
-        ?~  lix  (sh-pact lix) 
-        ?^  lix  (sh-pact lix) 
-        (fetch-nik lix sh-pact)
-      ::
-      ++  fetch-nik
-        |=  [cha=char sh-fun=$+((set partner) _..sh-work)]
-        =+  lax=(~(get ju nak) cha)
-        ?:  =(~ lax)  (sh-lame "unknown {<cha>}")
-        ?:  ?=([* ~ ~] lax)  (sh-fun n.lax)
-        |-  ^-  sh-fun
-        ?~  grams.roy  
-          (sh-lame:(what cha) "ambiguous {<cha>}")
-        =+  pan=(sa (turn :_(head (~(tap by q.q.i.grams.roy)))))
-        ?:  (~(has in lax) pan)
-          (sh-fun pan)
-        $(grams.roy t.grams.roy)
+        |=  [pan=(set partner) woe=(unit ^work)]
+        ^+  ..sh-work
+        =.  ..sh-pact  (sh-pact pan)
+        ?~(woe ..sh-work work(job u.woe))
       ::
       ++  number                                        ::  %number
         |=  num=$|(@ud [p=@u q=@ud])
@@ -1312,7 +1360,7 @@
     ^+  +>
     =+  man=`span`?~(pax (main her) ?>(?=(~ t.pax) i.pax))
     =+  ^=  she  ^-  shell
-        [her man 0 *sole-share ~ [[%& our.hid man] ~ ~] [~ ~] ~ *cabal]
+        [her man 0 *sole-share ~ [[%& our.hid man] ~ ~] [~ ~] ~ *cabal ~]
     sh-abet:~(sh-peer sh ~ she)
   ::
   ++  ra-subscribe                                      ::  listen to
@@ -1482,11 +1530,7 @@
       ?+  -.rad  ~|([%talk-odd-friend rad] !!)
         %cabal  (pa-cabal cuz +.rad)
         %group  (pa-remind [%& cuz] +.rad)
-        %grams  =.  q.+.rad
-                  ?.  ?=(%pawn (clan our.hid))   q.+.rad 
-                  ?.  (gth (lent q.+.rad) 200)   q.+.rad
-                  (slag (sub (lent q.+.rad) 200) q.+.rad)
-                (pa-lesson q.+.rad)
+        %grams  (pa-lesson q.+.rad)
       ==
     ::
     ++  pa-quit                                         ::  stop subscription
@@ -1527,7 +1571,8 @@
       %+  turn  tal
       |=  tay=partner
       ^-  (list card)
-      =+  num=(fall (~(get by sequence) tay) 0)
+      :: =+  num=(fall (~(get by sequence) tay) 0) :: XX unused
+      =+  old=(sub now.hid ~d1)
       ?-  -.tay
         %|  !!
         %&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
@@ -1535,7 +1580,7 @@
             :*  %peer
                 /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
                 [p.p.tay %talk] 
-                /afx/[q.p.tay]/(scot %ud num)
+                /afx/[q.p.tay]/(scot %da old)
             ==
       ==
     ::
@@ -1749,6 +1794,17 @@
         %pawn  :(welp (scag 7 raw) "_" (scag 6 (slag 51 raw)))
     ==
   ::
+  ++  sn-nick
+    |.  ^-  tape
+    =+  nym=(~(get by folks) p.one)
+    ?~  nym
+      (sn-curt |)
+    ?~  hand.u.nym
+      (sn-curt |)
+    =+  raw=(trip u.hand.u.nym)
+    =+  len=(sub 14 (lent raw))
+    (weld (reap len ' ') raw)
+  ::
   ++  sn-phat                                           ::  render accurately
     ^-  tape
     ?:  =(p.one our.hid)
@@ -1868,6 +1924,7 @@
 ::
 ++  tr                                                  ::  telegram renderer
   |_  $:  man=span
+          nob=?
           who=ship
           sen=serial
           aud=audience
@@ -1881,7 +1938,9 @@
     =+  ^=  baw
         ::  ?:  oug 
         ::  ~(te-whom te man tr-pals)
-        (~(sn-curt sn man [who (main who)]) |)
+        ?.  nob
+          (~(sn-curt sn man [who (main who)]) |)
+        (~(sn-nick sn man [who (main who)]))
     (weld baw txt)
   ::
   ++  tr-tang  ^-  tang
@@ -2118,7 +2177,9 @@
     ra-abet:ra-init:ra
   |-
   ?-  -.u.old
-    %4  [~ ..prep(+<+ u.old)]
+    %5  [~ ..prep(+<+ u.old)]
+    %4  =<  ^$(-.u.old %5, shells.u.old (~(run by shells.u.old) .))
+        |=(shell-4 `shell`+<(system [system settings=*(set span)]))
     %3  =<  ^$(-.u.old %4, stories.u.old (~(run by stories.u.old) .))
         |=(story-3 `story`+<(cabalers [cabalers glyphers=*(set bone)]))
   ==
