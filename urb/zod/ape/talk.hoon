@@ -1045,12 +1045,21 @@
       ++  wo-set                                        ::  %set
         |=  seg=span
         ^+  ..sh-work
-        ..sh-work
+        ?~  seg
+          %+  sh-fact  %mor
+          %+  turn  (~(tap in settings.she))
+          |=  s=span
+          [%txt (trip s)]
+        %=  ..sh-work
+          settings.she  (~(put in settings.she) seg)
+        ==
       ::
       ++  unset                                         ::  %unset
         |=  neg=span
         ^+  ..sh-work
-        ..sh-work
+        %=  ..sh-work
+          settings.she  (~(del in settings.she) neg)
+        ==
       ::
       ++  target                                        ::  %target
         |=  [lix=?((set partner) char) woe=(unit ^work)]
