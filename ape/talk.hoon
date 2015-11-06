@@ -1525,7 +1525,8 @@
       %+  turn  tal
       |=  tay=partner
       ^-  (list card)
-      =+  num=(fall (~(get by sequence) tay) 0)
+      :: =+  num=(fall (~(get by sequence) tay) 0) :: XX unused
+      =+  old=(sub now.hid ~d1)
       ?-  -.tay
         %|  !!
         %&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
@@ -1533,7 +1534,7 @@
             :*  %peer
                 /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
                 [p.p.tay %talk] 
-                /afx/[q.p.tay]/(scot %ud num)
+                /afx/[q.p.tay]/(scot %da old)
             ==
       ==
     ::
