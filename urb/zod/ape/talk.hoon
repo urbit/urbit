@@ -13,15 +13,19 @@
   ::
 [. talk sole]
 =>  |%                                                  ::  data structures
-    ++  house  ,[%4 house-4]                            ::  full state
+    ++  house  ,[%5 house-5]                            ::  full state
     ++  house-any                                       ::  app history
       $%  [%3 house-3]                                  ::  3: talk
           [%4 house-4]                                  ::  4: talk
+          [%5 house-5]                                  ::  5: talk
       ==                                                ::
     ++  house-3                                         ::
       %+  cork  house-4  |=  house-4                    ::  modern house with
       +<(stories (~(run by stories) story-3))           ::  old stories
     ++  house-4                                         ::
+      %+  cork  house-5  |=  house-5                    ::  modern house with
+      +<(shells (~(run by shells) shell-4))             ::  no settings
+    ++  house-5                                         ::
       $:  stories=(map span story)                      ::  conversations
           general=(set bone)                            ::  meta-subscribe
           outbox=(pair ,@ud (map ,@ud thought))         ::  urbit outbox
@@ -56,7 +60,9 @@
           owners=register                               ::  presence mirror
           harbor=(map span (pair posture cord))         ::  stations mirror
           system=cabal                                  ::  config mirror
+          settings=(set span)                           ::  frontend settings
       ==                                                ::
+    ++  shell-4  (cork shell |=(shell +<(|8 &9.+<)))    ::  missing settings
     ++  river  (pair point point)                       ::  stream definition
     ++  point                                           ::  stream endpoint
       $%  [%ud p=@ud]                                   ::  by number
@@ -1333,7 +1339,7 @@
     ^+  +>
     =+  man=`span`?~(pax (main her) ?>(?=(~ t.pax) i.pax))
     =+  ^=  she  ^-  shell
-        [her man 0 *sole-share ~ [[%& our.hid man] ~ ~] [~ ~] ~ *cabal]
+        [her man 0 *sole-share ~ [[%& our.hid man] ~ ~] [~ ~] ~ *cabal ~]
     sh-abet:~(sh-peer sh ~ she)
   ::
   ++  ra-subscribe                                      ::  listen to
@@ -2139,7 +2145,9 @@
     ra-abet:ra-init:ra
   |-
   ?-  -.u.old
-    %4  [~ ..prep(+<+ u.old)]
+    %5  [~ ..prep(+<+ u.old)]
+    %4  =<  ^$(-.u.old %5, shells.u.old (~(run by shells.u.old) .))
+        |=(shell-4 `shell`+<(system [system settings=*(set span)]))
     %3  =<  ^$(-.u.old %4, stories.u.old (~(run by stories.u.old) .))
         |=(story-3 `story`+<(cabalers [cabalers glyphers=*(set bone)]))
   ==
