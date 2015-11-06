@@ -104,12 +104,8 @@ Everyone else will see:
     ~doznec= ~fintud-macrep has left %urbit-meta
 
 
-Now you're ready to use `:talk` for real!  List the federal
-groups currently available with
-
-    ~fintud-macrep:talk= ;list
-
-For general discussion about Urbit, we recommend `/urbit-meta`.
+Now you're ready to use `:talk` for real! For general discussion
+about Urbit, we recommend `/urbit-meta`.
 
 ## Manual
 
