@@ -1,4 +1,4 @@
-[dotzey, %dtzy](#dttr)
+[dotzay, %dtzy](#dttr)
 ======================
 
 Odored atom
