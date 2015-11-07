@@ -3,7 +3,7 @@ wutpam, `?&`, %wtpm
 
 AND
 
-`?&` is a synthetic hoon that computes the "and" of the loobeans in `p`.
+`?&` is a synthetic rune that computes the "and" of the loobeans in `p`.
 `?&` is commonly used as a control-flow mechanism.
 
 Produces

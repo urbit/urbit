@@ -3,7 +3,7 @@ zapcap, %zpcb
 
 Path / location trace
 
-`!_` is a virtual natural hoon that traces the stack if debugging is
+`!_` is a virtual natural rune that traces the stack if debugging is
 enabled, putting the current path and location range of each rune.
 
 Produces

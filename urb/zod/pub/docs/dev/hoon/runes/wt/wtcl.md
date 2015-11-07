@@ -3,7 +3,7 @@ wutcol, `?:`, %wtcl
 
 If, then
 
-`?:`, `wutcol`, is a natural hoon that produces `q` if `p` is yes (`&`,
+`?:`, `wutcol`, is a natural rune that produces `q` if `p` is yes (`&`,
 `0`), or `r` if `p` is no (`|`, 1). `?:` is most similar to the
 traditional "if" statement, producing the first expression if the
 loobean is true. `?:` is the inverse of `?.`.

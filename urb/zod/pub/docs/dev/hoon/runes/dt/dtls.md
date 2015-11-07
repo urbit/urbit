@@ -3,7 +3,7 @@ dotlus, `.+`, %dtls
 
 Increment
 
-`.+` is a natural hoon that generates nock operator `4`, which
+`.+` is a natural rune that generates nock operator `4`, which
 increments an atomic operand.
 
 Produces

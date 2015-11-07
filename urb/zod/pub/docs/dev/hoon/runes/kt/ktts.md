@@ -3,7 +3,7 @@ kettis, `^=`, %ktts
 
 Wrap
 
-`^=`, `kettis`, `[%ktts p=toga q=twig]` is a natural hoon that wraps `q`
+`^=`, `kettis`, `[%ktts p=toga q=twig]` is a natural rune that wraps `q`
 in the [`++toga`]() `p`. `^=` is most commonly used for assignment,
 adding one or more names to values.
 

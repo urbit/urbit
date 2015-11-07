@@ -3,7 +3,7 @@ ketbar, `^|`, %ktbr
 
 Convert `%gold` to `%iron`
 
-`^|` is a natural hoon that converts a [`%gold`]() core into an
+`^|` is a natural rune that converts a [`%gold`]() core into an
 [`%iron`]() core.
 
 See also

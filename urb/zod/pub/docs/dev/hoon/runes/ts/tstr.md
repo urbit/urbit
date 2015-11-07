@@ -3,7 +3,7 @@ tistar, `=*`, %tstr
 
 Alias
 
-`=*` is a natural hoon that creates a `%bull`, or alias, type.
+`=*` is a natural rune that creates a `%bull`, or alias, type.
 
 Produces
 --------

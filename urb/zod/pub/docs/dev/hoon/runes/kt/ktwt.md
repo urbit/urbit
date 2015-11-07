@@ -3,7 +3,7 @@ ketwut, `^?`, %ktwt
 
 Convert `%gold` to `%lead`
 
-`^?` is a natural hoon that converts a `%gold` core into a `%lead` core.
+`^?` is a natural rune that converts a `%gold` core into a `%lead` core.
 
 See also
 --------

@@ -3,7 +3,7 @@ ketsig, `^~`, %ktsg
 
 Compile statically
 
-`^~` is a natural hoon that tries to execute `p` statically at compile
+`^~` is a natural rune that tries to execute `p` statically at compile
 time; if this fails, `p` remains dynamic. `^~` is primarily useful for
 optimization, when you know that a value is static, or is most likely
 static, `^~` can simplify the compilation.

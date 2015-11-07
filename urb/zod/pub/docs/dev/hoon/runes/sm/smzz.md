@@ -3,7 +3,7 @@ semzaz
 
 `++sail` tag
 
-`semzaz`, is a virtual hoon frequently referred to as [`++sail`]() in
+`semzaz`, is a virtual rune frequently referred to as [`++sail`]() in
 reference to `++sail`:vast which parses it. It is the most basic part of
 the templating structure frequently used to produce [`++manx`](). In its
 simplest and most common form we see `semzaz` as

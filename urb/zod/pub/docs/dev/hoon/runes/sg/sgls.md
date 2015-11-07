@@ -3,7 +3,7 @@ siglus, `~+`, %sgls
 
 Memoize
 
-`~+`, `siglus`, is a synthetic hoon that hints to the interpreter to
+`~+`, `siglus`, is a synthetic rune that hints to the interpreter to
 memoize (cache) the computation of `p`.
 
 Produces
