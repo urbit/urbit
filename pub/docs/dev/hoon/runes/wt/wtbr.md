@@ -3,7 +3,7 @@ wutbar, `?|`, %wtbr
 
 OR
 
-`?|` is a synthetic hoon that computes the "or" of the loobeans in `p`.
+`?|` is a synthetic rune that computes the "or" of the loobeans in `p`.
 `?|` is commonly used as a control-flow mechanism.
 
 Produces

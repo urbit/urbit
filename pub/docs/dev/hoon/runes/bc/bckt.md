@@ -3,7 +3,7 @@ bucket `$^` %bckt
 
 Normalizing gate, `%herb`
 
-`$^`, is a tile hoon that declares an [`%herb`](). An `%herb` is a gate,
+`$^`, is a tile rune that declares an [`%herb`](). An `%herb` is a gate,
 accepting a sample of \* and normalizing it as you choose. If you use a
 twig as a tile, it's treated as an herb.
 

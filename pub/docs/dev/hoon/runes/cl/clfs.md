@@ -3,7 +3,7 @@ colfas, `:/`, %clfs
 
 Internal interpolation
 
-`:/`, `colfas`, is a synthetic hoon that produces `[%$ [%$ p ~] ~]`,
+`:/`, `colfas`, is a synthetic rune that produces `[%$ [%$ p ~] ~]`,
 i.e., `[0 [0 p 0] 0]`.
 
 See also

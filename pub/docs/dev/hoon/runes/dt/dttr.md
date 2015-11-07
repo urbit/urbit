@@ -3,7 +3,7 @@ dottar, `.*`, %dttr
 
 Nock
 
-`.*` is a natural hoon that calculates the nock of subject `p` and
+`.*` is a natural rune that calculates the nock of subject `p` and
 formula `q`. `.*` makes it possible to compute nock formulas in user
 space.
 

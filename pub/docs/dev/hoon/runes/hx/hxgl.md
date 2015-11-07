@@ -3,7 +3,7 @@ haxgal, `#<`, %hxgl
 
 Prettyprint `++tape`
 
-`#<` is a synthetic hoon that slams the gate [`++noah`]() with `p`. `#<`
+`#<` is a synthetic rune that slams the gate [`++noah`]() with `p`. `#<`
 is used to produce a [`++tape`]() of the computation passed to it, and
 is only used in the irregular form.
 

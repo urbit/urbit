@@ -3,7 +3,7 @@ bardot, `|.`, %brdt
 
 Trap
 
-`|.`, is a synthetic hoon that produces a [dry]() [`%gold`]() trap. A
+`|.`, is a synthetic rune that produces a [dry]() [`%gold`]() trap. A
 trap is a [`door`]() with one only arm [`$`](), the empty name.
 
 The default action performed on a trap is kicking it by pulling the arm

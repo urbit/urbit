@@ -3,7 +3,7 @@ wuthep, `?-`, %wthp
 
 Switch
 
-`?-` is a synthetic hoon that selects a case in `q` for the value of
+`?-` is a synthetic rune that selects a case in `q` for the value of
 `p`. The labels in `q` must match the [icon]() of `p`. The list of
 cases, `q` must be terminated by `==`.
 

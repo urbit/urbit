@@ -3,10 +3,10 @@ haxgar, `#>`, %hxgr
 
 Prettyprint `++tank`
 
-`#>`, `haxgar`, `[%hxgr p=tusk]`is a synthetic hoon that slams the
+`#>`, `haxgar`, `[%hxgr p=tusk]`is a synthetic rune that slams the
 assumed gate `cain` on `[%zpgr %cntr p]`.
 
-`#>` is a synthetic hoon that slams the gate [`++cain`]() with `p`. `#>`
+`#>` is a synthetic rune that slams the gate [`++cain`]() with `p`. `#>`
 is used to produce a [`++tank`]() of the computation passed to it, and
 is only used in the irregular form.
 

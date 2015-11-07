@@ -3,7 +3,7 @@ tiscol, `=:`, %tscl
 
 Batch change subject
 
-`=:` is a synthetic hoon that produces `q` with the subject modified by
+`=:` is a synthetic rune that produces `q` with the subject modified by
 the list of changes in `p` which must be terminated by a `==`. `=:` is
 useful when you need to make a batch of changes to your subject.
 
