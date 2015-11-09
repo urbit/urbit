@@ -132,7 +132,7 @@
               ins=(unit (list (pair path cage)))        ::  inserts
               dig=(map path cage)                       ::  store diffs
               dif=(unit (list (trel path lobe cage)))   ::  changes
-              muc=(map path cage)                       ::  store miso
+              muc=(map path cage)                       ::  store mutations
               muh=(map path lobe)                       ::  store hashes
               mut=(unit (list (trel path lobe cage)))   ::  mutations
               mim=(map path mime)                       ::  mime cache
@@ -492,6 +492,60 @@
           $(p.lem t.p.lem)
     ==
   ::
+  ::  This is the entry point to the commit flow.  It deserves some
+  ::  explaining, since it's rather long and convoluted.
+  ::
+  ::  We take a `++nori`, which is either a label-add request or a `++soba`,
+  ::  which is a list of changes.  If it's a label, it's easy and we just pass
+  ::  it to `++edit:ze`.
+  ::
+  ::  If the given `++nori` is a list of file changes, then we our goal is to
+  ::  convert the list of `++miso` changes to `++misu` changes.  In other
+  ::  words, turn the `++nori` into a `++nuri`.  Then, we pass it to
+  ::  `++edit:ze`, which applies the changes to our state, and then we
+  ::  check out the new revision.  XX  reword
+  ::
+  ::  Anyhow, enough of high-level wishy-washy talk.  It's time to get down to
+  ::  the nitty-gritty.
+  ::
+  ::  When we get a list of `++miso` changes, we split them into four types:
+  ::  deletions, insertions, diffs (i.e. change from diff), and mutations
+  ::  (i.e. change from new data).  We do four different things with them.
+  ::
+  ::  For deletions, we just fill in `del` in `++dork` with a list of the
+  ::  deleted files.
+  ::
+  ::  For insertions, we distinguish bewtween `%hoon` files and all other
+  ::  files.  For `%hoon` files, we just store them to `ink` in `++dork` so
+  ::  that we add diff them directly.  `%hoon` files have to be treated
+  ::  specially to make the bootstrapping sequence work, since the mark
+  ::  definitions are themselves `%hoon` files.
+  ::
+  ::  For the other files, we make a `%tabl` compound ford request to convert
+  ::  the data for the new file to the the mark indicated by the last span in
+  ::  the path.
+  ::
+  ::  For diffs, we make a `%tabl` compound ford request to apply the diff to
+  ::  the existing content.  We also store the diffs in `dig` in `++dork`.
+  ::
+  ::  For mutations, we make a `%tabl` compound ford request to convert the
+  ::  given new data to the mark of the already-existing file.  Later on in
+  ::  `++take-castify` we'll create the ford request to actually perform the
+  ::  diff.  We also store the mutations in `muc` in `++dork`.  I'm pretty
+  ::  sure that's useless because who cares about the original data.
+  ::  XX delete `muc`.
+  ::
+  ::  Finally, for performance reasons we cache any of the data that came in
+  ::  as a `%mime` cage.  We do this because many commits come from unix,
+  ::  where they're passed in as `%mime` and need to be turned back into it
+  ::  for the ergo.  We cache both `%hoon` and non-`%hoon` inserts and
+  ::  mutations.
+  ::
+  ::  At this point, the flow of control goes through the three ford requests
+  ::  back to `++take-inserting`, `++take-diffing`, and `++take-castifying`,
+  ::  which itself leads to `++take-mutating`.  Once each of those has
+  ::  completed, we end up at `++apply-edit`, where our unified story picks up
+  ::  again.
   ++  edit                                              ::  apply changes
     |=  [wen=@da lem=nori]
     ^+  +>
@@ -608,31 +662,7 @@
       ==
     ==
   ::
-  ++  silkify
-    |=  [wen=@da pax=path mis=miso]
-    ^-  [duct path note]
-    ~|  [%silkifying pax -.mis]
-    :-  hen
-    ?+    -.mis   !!
-        %mut
-      :-  [%diffing (scot %p her) syd (scot %da wen) pax]
-      :^  %f  %exec  our  :+  ~  [her syd %da wen]
-      ^-  silk
-      :+  %diff
-        (lobe-to-silk:ze pax (~(got by q:(aeon-to-yaki:ze let.dom)) pax))
-      =+  (slag (dec (lent pax)) pax)
-      =+  ?~(- %$ i.-)
-      [%cast - [%$ p.mis]]
-    ::
-        %ins
-      :-  [%casting (scot %p her) syd (scot %da wen) pax]
-      :^  %f  %exec  our  :+  ~  [her syd %da wen]
-      ^-  silk
-      =+  (slag (dec (lent pax)) pax)
-      =+  ?~(- %$ i.-)
-      [%cast - [%$ p.mis]]
-    ==
-  ::
+  ::  See ++edit for a description of the commit flow.
   ++  apply-edit
     |=  wen=@da
     ^+  +>
@@ -664,6 +694,7 @@
       ([echo(dok ~)]:.(+>.$ +.hat) wen %& sim)
     (checkout-ankh(lat.ran lat.ran.+.hat) u.-.hat)
   ::
+  ::  See ++edit for a description of the commit flow.
   ++  take-inserting
     |=  [wen=@da res=gage]
     ^+  +>
@@ -684,6 +715,7 @@
       ~|(%clay-take-inserting-strange-path-mark !!)
     [((hard path) q.q.pax) cay]
   ::
+  ::  See ++edit for a description of the commit flow.
   ++  take-diffing
     |=  [wen=@da res=gage]
     ^+  +>
@@ -706,6 +738,7 @@
     =+  paf=((hard path) q.q.pax)
     [paf (page-to-lobe:ze [p q.q]:cay) (~(got by dig.u.dok) paf)]
   ::
+  ::  See ++edit for a description of the commit flow.
   ++  take-castify
     |=  [wen=@da res=gage]
     ^+  +>
@@ -736,6 +769,7 @@
         [%diff - [%$ cay]]
     ==
   ::
+  ::  See ++edit for a description of the commit flow.
   ++  take-mutating
     |=  [wen=@da res=gage]
     ^+  +>
@@ -760,6 +794,7 @@
     =+  paf=((hard path) q.q.pax)
     `[paf (~(got by muh.u.dok) paf) cay]
   ::
+  ::  See ++edit for a description of the commit flow.
   ++  take-patch
     |=  res=gage
     ^+  +>
@@ -844,6 +879,7 @@
         (lobe-to-silk:ze a p.-)
     ==
   ::
+  ::  See ++edit for a description of the commit flow.
   ++  take-ergo
     |=  res=gage
     ^+  +>
@@ -870,6 +906,7 @@
         [(slag len pax) (~(got by can) pax)]
     ==
   ::
+  ::  See ++edit for a description of the commit flow.
   ++  checkout-ankh
     |=  hat=(map path lobe)
     ^+  +>
@@ -2692,7 +2729,6 @@
   ..^$(ruf ruf.old)
 ::
 ++  scry                                              ::  inspect
-  ::  Make a request 
   |=  [fur=(unit (set monk)) ren=@tas his=ship syd=desk lot=coin tyl=path]
   ^-  (unit (unit cage))
   ::  ~&  scry/[ren `path`[(scot %p his) syd ~(rent co lot) tyl]]
