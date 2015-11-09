@@ -160,4 +160,4 @@ module.exports = query {
       curr:@props.name
       dataPath:@props.sein
       sein:@props.sein
-    }), div
+    }), "div"

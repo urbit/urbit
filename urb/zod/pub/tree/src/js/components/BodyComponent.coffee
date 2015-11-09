@@ -6,27 +6,38 @@ reactify   = require './Reactify.coffee'
 recl   = React.createClass
 {div,p,img,a}  = React.DOM
 
-Logo = React.createFactory recl 
-  render: ->
-    {color} = @props
-    if color is "white" or color is "black"  # else?
-      src = "//storage.googleapis.com/urbit-extra/logo/logo-#{color}-100x100.png"
-    (a {href:"http://urbit.org",style:{border:"none"}}, [(img {src,className:"logo"})])
+extras = 
+  footer: recl
+    displayName: "Footer"
+    render: ->
+      (div {className:"footer"}, (p {}, "This page was served by Urbit."))
+  logo: recl 
+    displayName:"Logo"
+    render: ->
+      {color} = @props
+      if color is "white" or color is "black"  # else?
+        src = "//storage.googleapis.com/urbit-extra/logo/logo-#{color}-100x100.png"
+      (a {href:"http://urbit.org",style:{border:"none"}}, 
+       (img {src,className:"logo"})
+      )
 
-Spam = React.createFactory recl
-  render: ->
-    (div {className:'spam'}, [
-      (a {href:"http://urbit.org#sign-up"}, "Sign up"),
-      " for an Urbit invite."
-    ])
+  spam: recl
+    displayName:"Spam"
+    render: ->
+      if document.location.hostname isnt 'urbit.org'
+        return (div {})
+      (div {className:'spam'},
+        (a {href:"http://urbit.org#sign-up"}, "Sign up")
+        " for an Urbit invite."
+      )
 
-Next = React.createFactory query {
+  next: query {
     path:'t'
     kids:
       name:'t'
       head:'r'
       meta:'j'
-  }, (recl
+  }, recl
     displayName: "Next"
     render: ->
       curr = @props.kids[@props.curr]
@@ -44,7 +55,6 @@ Next = React.createFactory query {
               (a {href:"#{@props.path}/#{next.name}"}, "Next: #{next.meta.title}")
             ])
       return (div {},"")
-  )
 
 module.exports = query {
   body:'r'
@@ -56,16 +66,17 @@ module.exports = query {
   displayName: "Body"
   render: -> 
     className = (@props.meta.layout?.replace /,/g," ") || ""
-    body = [reactify @props.body]
-    if document.location.hostname is 'urbit.org' and @props.meta.spam?
-      body.unshift (Spam {}, "")
-    if @props.meta.logo?
-      body.unshift (Logo color:@props.meta.logo)
-    if @props.meta.next?
-      body.push Next {dataPath:@props.sein,curr:@props.name}
-    if @props.meta.footer?
-      body.push (div {className:"footer"}, [
-        (p {}, "This page was served by Urbit.")])
+    body = [reactify @props.body, "body"]
+    
+    extra = (name,pos,props={})=> 
+      props.key = name
+      if @props.meta[name]?
+        body[pos] React.createElement extras[name], props
+    extra 'spam', 'unshift'
+    extra 'logo', 'unshift', color: @props.meta.logo
+    extra 'next', 'push', {dataPath:@props.sein,curr:@props.name}
+    extra 'footer', 'push'
+    
     (div {
         id:'body',
         key:"body"+@props.path
