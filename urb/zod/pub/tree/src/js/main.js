@@ -428,7 +428,7 @@ module.exports = function(queries, Child, load) {
 
 
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
-var a, clas, div, extras, img, p, query, reactify, recl, ref;
+var a, clas, div, extras, img, p, query, reactify, recl, ref, rele;
 
 clas = require('classnames');
 
@@ -438,15 +438,22 @@ reactify = require('./Reactify.coffee');
 
 recl = React.createClass;
 
+rele = React.createElement;
+
 ref = React.DOM, div = ref.div, p = ref.p, img = ref.img, a = ref.a;
 
 extras = {
-  footer: recl({
-    displayName: "Footer",
+  spam: recl({
+    displayName: "Spam",
     render: function() {
+      if (document.location.hostname !== 'urbit.org') {
+        return div({});
+      }
       return div({
-        className: "footer"
-      }, p({}, "This page was served by Urbit."));
+        className: 'spam'
+      }, a({
+        href: "http://urbit.org#sign-up"
+      }, "Sign up"), " for an Urbit invite.");
     }
   }),
   logo: recl({
@@ -466,19 +473,6 @@ extras = {
         src: src,
         className: "logo"
       }));
-    }
-  }),
-  spam: recl({
-    displayName: "Spam",
-    render: function() {
-      if (document.location.hostname !== 'urbit.org') {
-        return div({});
-      }
-      return div({
-        className: 'spam'
-      }, a({
-        href: "http://urbit.org#sign-up"
-      }, "Sign up"), " for an Urbit invite.");
     }
   }),
   next: query({
@@ -516,7 +510,15 @@ extras = {
       }
       return div({}, "");
     }
-  }))
+  })),
+  footer: recl({
+    displayName: "Footer",
+    render: function() {
+      return div({
+        className: "footer"
+      }, p({}, "This page was served by Urbit."));
+    }
+  })
 };
 
 module.exports = query({
@@ -528,34 +530,28 @@ module.exports = query({
 }, recl({
   displayName: "Body",
   render: function() {
-    var body, className, extra, ref1;
-    className = ((ref1 = this.props.meta.layout) != null ? ref1.replace(/,/g, " ") : void 0) || "";
-    body = [reactify(this.props.body, "body")];
+    var className, extra, ref1;
+    className = clas((ref1 = this.props.meta.layout) != null ? ref1.split(',') : void 0);
     extra = (function(_this) {
-      return function(name, pos, props) {
+      return function(name, props) {
         if (props == null) {
           props = {};
         }
-        props.key = name;
         if (_this.props.meta[name] != null) {
-          return body[pos](React.createElement(extras[name], props));
+          return React.createElement(extras[name], props);
         }
       };
     })(this);
-    extra('spam', 'unshift');
-    extra('logo', 'unshift', {
-      color: this.props.meta.logo
-    });
-    extra('next', 'push', {
-      dataPath: this.props.sein,
-      curr: this.props.name
-    });
-    extra('footer', 'push');
     return div({
       id: 'body',
       key: "body" + this.props.path,
       className: className
-    }, body);
+    }, extra('spam'), extra('logo', {
+      color: this.props.meta.logo
+    }), reactify(this.props.body), extra('next', {
+      dataPath: this.props.sein,
+      curr: this.props.name
+    }), extra('footer'));
   }
 }));
 
