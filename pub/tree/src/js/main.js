@@ -312,7 +312,7 @@ module.exports = query({
       sein: this.props.sein
     }));
   }
-}), div);
+}), "div");
 
 
 
@@ -428,7 +428,7 @@ module.exports = function(queries, Child, load) {
 
 
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
-var Logo, Next, Spam, a, clas, div, img, p, query, reactify, recl, ref;
+var a, clas, div, extras, img, p, query, reactify, recl, ref;
 
 clas = require('classnames');
 
@@ -440,75 +440,84 @@ recl = React.createClass;
 
 ref = React.DOM, div = ref.div, p = ref.p, img = ref.img, a = ref.a;
 
-Logo = React.createFactory(recl({
-  render: function() {
-    var color, src;
-    color = this.props.color;
-    if (color === "white" || color === "black") {
-      src = "//storage.googleapis.com/urbit-extra/logo/logo-" + color + "-100x100.png";
+extras = {
+  footer: recl({
+    displayName: "Footer",
+    render: function() {
+      return div({
+        className: "footer"
+      }, p({}, "This page was served by Urbit."));
     }
-    return a({
-      href: "http://urbit.org",
-      style: {
-        border: "none"
+  }),
+  logo: recl({
+    displayName: "Logo",
+    render: function() {
+      var color, src;
+      color = this.props.color;
+      if (color === "white" || color === "black") {
+        src = "//storage.googleapis.com/urbit-extra/logo/logo-" + color + "-100x100.png";
       }
-    }, [
-      img({
+      return a({
+        href: "http://urbit.org",
+        style: {
+          border: "none"
+        }
+      }, img({
         src: src,
         className: "logo"
-      })
-    ]);
-  }
-}));
-
-Spam = React.createFactory(recl({
-  render: function() {
-    return div({
-      className: 'spam'
-    }, [
-      a({
+      }));
+    }
+  }),
+  spam: recl({
+    displayName: "Spam",
+    render: function() {
+      if (document.location.hostname !== 'urbit.org') {
+        return div({});
+      }
+      return div({
+        className: 'spam'
+      }, a({
         href: "http://urbit.org#sign-up"
-      }, "Sign up"), " for an Urbit invite."
-    ]);
-  }
-}));
-
-Next = React.createFactory(query({
-  path: 't',
-  kids: {
-    name: 't',
-    head: 'r',
-    meta: 'j'
-  }
-}, recl({
-  displayName: "Next",
-  render: function() {
-    var curr, index, keys, next, ref1;
-    curr = this.props.kids[this.props.curr];
-    if (curr != null ? (ref1 = curr.meta) != null ? ref1.next : void 0 : void 0) {
-      keys = window.tree.util.getKeys(this.props.kids);
-      if (keys.length > 1) {
-        index = keys.indexOf(this.props.curr);
-        next = index + 1;
-        if (next === keys.length) {
-          next = 0;
-        }
-        next = keys[next];
-        next = this.props.kids[next];
-        if (next) {
-          return div({
-            className: "link-next"
-          }, [
-            a({
-              href: this.props.path + "/" + next.name
-            }, "Next: " + next.meta.title)
-          ]);
+      }, "Sign up"), " for an Urbit invite.");
+    }
+  }),
+  next: query({
+    path: 't',
+    kids: {
+      name: 't',
+      head: 'r',
+      meta: 'j'
+    }
+  }, recl({
+    displayName: "Next",
+    render: function() {
+      var curr, index, keys, next, ref1;
+      curr = this.props.kids[this.props.curr];
+      if (curr != null ? (ref1 = curr.meta) != null ? ref1.next : void 0 : void 0) {
+        keys = window.tree.util.getKeys(this.props.kids);
+        if (keys.length > 1) {
+          index = keys.indexOf(this.props.curr);
+          next = index + 1;
+          if (next === keys.length) {
+            next = 0;
+          }
+          next = keys[next];
+          next = this.props.kids[next];
+          if (next) {
+            return div({
+              className: "link-next"
+            }, [
+              a({
+                href: this.props.path + "/" + next.name
+              }, "Next: " + next.meta.title)
+            ]);
+          }
         }
       }
+      return div({}, "");
     }
-    return div({}, "");
-  }
-})));
+  }))
+};
 
 module.exports = query({
   body: 'r',
@@ -519,28 +528,29 @@ module.exports = query({
 }, recl({
   displayName: "Body",
   render: function() {
-    var body, className, ref1;
+    var body, className, extra, ref1;
     className = ((ref1 = this.props.meta.layout) != null ? ref1.replace(/,/g, " ") : void 0) || "";
-    body = [reactify(this.props.body)];
-    if (document.location.hostname === 'urbit.org' && (this.props.meta.spam != null)) {
-      body.unshift(Spam({}, ""));
-    }
-    if (this.props.meta.logo != null) {
-      body.unshift(Logo({
-        color: this.props.meta.logo
-      }));
-    }
-    if (this.props.meta.next != null) {
-      body.push(Next({
-        dataPath: this.props.sein,
-        curr: this.props.name
-      }));
-    }
-    if (this.props.meta.footer != null) {
-      body.push(div({
-        className: "footer"
-      }, [p({}, "This page was served by Urbit.")]));
-    }
+    body = [reactify(this.props.body, "body")];
+    extra = (function(_this) {
+      return function(name, pos, props) {
+        if (props == null) {
+          props = {};
+        }
+        props.key = name;
+        if (_this.props.meta[name] != null) {
+          return body[pos](React.createElement(extras[name], props));
+        }
+      };
+    })(this);
+    extra('spam', 'unshift');
+    extra('logo', 'unshift', {
+      color: this.props.meta.logo
+    });
+    extra('next', 'push', {
+      dataPath: this.props.sein,
+      curr: this.props.name
+    });
+    extra('footer', 'push');
     return div({
       id: 'body',
       key: "body" + this.props.path,
