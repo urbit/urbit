@@ -16,7 +16,7 @@ Logo = React.createFactory recl
 Spam = React.createFactory recl
   render: ->
     (div {className:'spam'}, [
-      (a {href:"http://urbit.org"}, "Sign up"),
+      (a {href:"http://urbit.org#sign-up"}, "Sign up"),
       " for an Urbit invite."
     ])
 
