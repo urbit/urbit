@@ -269,17 +269,22 @@ _ames_recv_cb(uv_udp_t*        wax_u,
   else {
     u3_lo_open();
     {
-      struct sockaddr_in* add_u = (struct sockaddr_in *)adr_u;
       u3_noun             msg   = u3i_bytes((c3_w)nrd_i, (c3_y*)buf_u->base);
+
+      // fprintf(stderr, "ames: plan\r\n");
+#if 0
+      u3z(msg);
+#else
+      struct sockaddr_in* add_u = (struct sockaddr_in *)adr_u;
       c3_s                por_s = ntohs(add_u->sin_port);
       c3_w                pip_w = ntohl(add_u->sin_addr.s_addr);
 
-      // fprintf(stderr, "ames: plan\r\n");
       u3v_plan
         (u3nt(u3_blip, c3__ames, u3_nul),
          u3nt(c3__hear,
               u3nq(c3__if, u3k(u3A->now), por_s, u3i_words(1, &pip_w)),
               msg));
+#endif
     }
     _ames_free(buf_u->base);
     u3_lo_shut(c3y);
