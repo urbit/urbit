@@ -1,45 +1,43 @@
 ---
 title: Hoon 101.1: twigs and legs
 sort: 1
-hide: true
+spam: true
 next: false
 ---
 # Hoon 101.1: twigs and legs
 
-In the last chapter we learned how to make nouns.  In this
-chapter we'll start programming a little.
+In the [last chapter](0-nouns), we learned how to make nouns.  In
+this chapter we'll get into Hoon expressions, or *twigs*.
 
-Reminder: we nest large digressions in curly braces.  If you see
-a {paragraph} or two, assume it's of interest to language nerds
-only, and "guaranteed not on the test."
+## How to use this tutorial
+
+Ideally, you've installed an Urbit planet (if you have a ticket)
+or comet (if you don't).  See the [user doc](../../../user).  We
+recommend opening up the dojo and just typing the examples; you
+don't know a language until you know it in your fingers.
 
 ## Nock for Hoon programmers
 
-Hoon compiles itself to a pico-interpreter called Nock, a
-combinator algebra defined in 200 words.  This isn't the place to
-explain Nock (which is to Hoon much as assembly language is to
-C), but Nock is just a way to express a function as a noun.
+Hoon compiles itself to a pico-interpreter called
+[Nock](../../nock), a combinator algebra defined in 200 words.  This
+isn't the place to explain Nock (which relates to Hoon much as
+assembly language relates to C), but Nock is just a way to
+express a function as a noun.
 
-Specifically, you can think of Nock as a (Turing-complete)
-interpreter shaped like (pseudocode):
+Nock is a Turing-complete interpreter shaped like (pseudocode):
 ```
 Nock(problem) => product
 ```
-This `problem` is always a cell `[subject formula]`.   The
-function is `formula`.  The input to the function is the noun
-`subject`.  The output is the noun `product`.
-
-(Why is Nock `[subject formula]` rather than `[formula subject]`?
-Or, to use more familiar terminology, why `[argument function]`
-rather than `[function argument]`?  For no good reason, but it
-doesn't really matter in practice.)
+The `problem` is always a cell `[subject formula]`.   The
+function is the `formula`.  The input to the function is the 
+`subject`.  The output is the `product`.
 
 ## From Hoon to Nock
 
 The Hoon parser turns an source expression (even one as simple as
 `42` from the last chapter) into a noun called a `twig`.  If you
 know what an AST is, a twig is an AST.  (If you don't know what
-an AST is, you probably don't have any student loans.)
+an AST is, it's not necessarily worth the student loans.)
 
 To simplify slightly, the Hoon compiler is shaped like:
 ```
@@ -52,24 +50,21 @@ produces a Nock formula that computes `function-twig` on that
 subject, and a `product-span` that is the span of the product
 (ie, result type).
 
-{This is really a nontrivial difference.  In a normal,
+> This is really a nontrivial difference.  In a normal,
 non-subject-oriented language, your code executes against a
 scope, stack, environment, or other variable context, probably
-not even a regular user-level value.  For ordinary coders, "SOP"
-is one of the hardest things to understand about Hoon; for some
-reason, your brain keeps wanting the interpreter to be more
-complicated.  There is of course a stack in a Nock interpreter,
-but solely for reduction state; actually, you can build a Nock
-that uses the C stack only, but still provides perfect TCO.}
+not even a regular user-level value.  For ordinary coders,
+"subject-oriented programming" is one of the hardest things to
+understand about Hoon; for some reason, your brain keeps wanting
+the interpreter state to be more interesting.
 
 ## From constants to twigs
 
 In the last chapter we were entering degenerate twigs like `42`.
 Obviously a numeric constant doesn't use the subject at all, so
-it's not a very interesting example of SOP.
+it's not a very interesting example.
 
-Let's use the dojo variable facility (this is *not* Hoon syntax,
-just a dojo command) to make a test subject:
+Let's save a test subject as a dojo variable:
 ```
 ~tasfyn-partyv:dojo> =test [[[8 9] 5] [6 7]]
 ```
@@ -79,13 +74,16 @@ to include this `test` noun.  Let's check that it's there:
 ~tasfyn-partyv:dojo> test
 [[[8 9] 5] 6 7]
 ```
-{If you're wondering why `[6 7]` got printed as `6 7`, remember
-that `[]` associates to the right.}
+> If you're wondering why `[6 7]` got printed as `6 7`, remember
+that `[]` associates to the right.  Also, `=test` is not in any
+way Hoon syntax; it's dojo syntax.  Every Hoon twig is a valid
+dojo command, but not vice versa.
 
 We want to use `test`, this harmless little noun, as the subject
 for some equally harmless twigs.  We can do this with the `:`
 syntax, which composes twigs in the functional sense.  The twig
-`a:b` uses the product of twig `b` as the subject of twig `a`:
+`a:b` uses the product of twig `b` as the subject of twig `a`.
+Trivial cases:
 ```
 ~tasfyn-partyv:dojo> 42:test
 42
@@ -127,23 +125,23 @@ In our example noun, each leaf is its own tree address:
 ~tasfyn-partyv:dojo> +7:test
 7
 ```
-{An instinct for binary tree geometry develops over time as you
+> An instinct for binary tree geometry develops over time as you
 use the system, rather the way most programmers learn to do
-binary math.  No, really.}
+binary math.  No, really.
 
 ## Lark syntax
 
 This alternative syntax for a tree address maps noun geometry
-directly to a glyph, skipping numbers.  Lark syntax creates a
-recognizable geometric shape by alternating between two head/tail
-pairs, read left to right: `-` and `+`, `<` and `>`.
+directly to a glyph.  Lark syntax creates a recognizable
+geometric shape by alternating between two head/tail pairs, read
+left to right: `-` and `+`, `<` and `>`.
 
 Thus `-` is `+2`, `+` is `+3`, `+<` is `+6`, `->` is `+5`, `-<+`
 is `+9`, etc.
 
-{Why lark syntax?  Code full of numbers is ugly and distracting,
+> Why lark syntax?  Code full of numbers is ugly and distracting,
 and looks like hardcoded constants.  We actually almost never use
-the `+` syntax.}
+the `+` syntax.
 
 ## Simple faces
 
@@ -161,7 +159,7 @@ foo=42
   [%face %foo [%atom %ud]]
 foo=42
 ```
-To extend our `++span` mold:
+To extend our `++span` mold from the last chapter:
 ```
 ++  span
   $%  [%atom p=@tas]
@@ -196,12 +194,6 @@ foo=[6 7]
 
 ## Interesting faces; wings
 
-Again, you're probably used to name resolution in variable scopes
-and flat records, but not in trees.  (Partly this is because the
-tradition in language design is to eschew semantics that make it
-hard to build simple symbol tables, because linear search of a
-nontrivial tree is a bad idea on '80s hardware.}
-
 Let's look at a few more interesting face cases.  First, suppose
 we have two cases of `foo`? 
 ```
@@ -220,7 +212,7 @@ But what about nested labels?
 ```
 ~tasfyn-partyv:dojo> =test [[[8 9] 5] foo=[6 bar=7]]
 ~tasfyn-partyv:dojo> bar:test
-/~tasfyn-partyv/home/~2015.9.16..21.40.21..1aec:<[1 1].[1 9]>
+/~tasfyn-partyv/home/~2015.11.7..21.40.21..1aec:<[1 1].[1 9]>
 -find-limb.bar
 find-none
 ```
@@ -234,8 +226,8 @@ out, we need to search *into* it:
 Note that the wing runs from left to right, ie, the opposite of
 most languages: `bar.foo` means "bar within foo."
 
-Each step in a wing is a `limb`.  {Most languages use metaphors;
-Hoon abuses them.}  A limb can be a tree address, like `+3` or
+Each step in a wing is a `limb`.  (Most languages use metaphors;
+Hoon abuses them.)  A limb can be a tree address, like `+3` or
 `.`, or a label like `foo`.  We can combine them in one wing:
 ```
 ~tasfyn-partyv:dojo> bar.foo.+3:test
@@ -251,14 +243,19 @@ and `bar:foo:test`, even though they produce the same product:
 That's different from running `bar` on the product of `foo` on
 the product of `test`.
 
+> You're probably used to name resolution in variable scopes
+and flat records, but not in trees.  Partly this is because the
+tradition in language design is to eschew semantics that make it
+hard to build simple symbol tables, because linear search of a
+nontrivial tree is a bad idea on '80s hardware.
+
 ## Mutation
 
 Mutation?  Well, not really.  We can't modify nouns; the concept
-doesn't even make sense in Hoon.
+doesn't even make sense in Hoon (or Nock).
 
-Rather, we build new nouns which are {logical -- the pointers are
-shared, of course} copies of old ones, but with mutations.  Let's 
-build a "mutated" copy of our test noun:
+Rather, we build new nouns which are copies of old ones, but 
+with mutations.  Let's build a "mutated" copy of our test noun:
 ```
 ~tasfyn-partyv:dojo> test
 [[[8 9] 5] foo=[6 bar=7]]
@@ -279,3 +276,10 @@ Can we use mutation to build a cyclical noun?  Nice try, but no:
 ~tasfyn-partyv:dojo> test(+8 test)
 [[[[[[8 9] 5] foo=[6 bar=7]] 9] 5] foo=[6 bar=7]]
 ```
+
+## Progress
+
+Now, not only can we build a noun, we can get data out of it and
+even evolve new, related nouns.  We've still seen only two very
+restricted kinds of twigs: constants and legs.  In the next
+chapter, we'll actually write some interesting expressions.
