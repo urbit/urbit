@@ -11,6 +11,6 @@
     ==
 :-  %drum-start
 ?>  ((sane %tas) -.arg)
-?@  +.arg  [%home -.arg]
+?@  +.arg  [q.bec -.arg]
 ?>  ((sane %tas) +<.arg)
 [-.arg +<.arg]
