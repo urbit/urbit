@@ -3,7 +3,7 @@ kethep, `^-`, %kthp
 
 Cast to bunt
 
-`^-` is a synthetic hoon that casts `q` to `~(bunt al p)`, i.e. the icon
+`^-` is a synthetic rune that casts `q` to `~(bunt al p)`, i.e. the icon
 of `p`.
 
 See also

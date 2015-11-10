@@ -3,7 +3,7 @@ cenzaz, %cnzz
 
 Pull wing `p`
 
-`cenzaz` is a synthetic hoon that pulls wing `p` from the subject.
+`cenzaz` is a synthetic rune that pulls wing `p` from the subject.
 `cenzaz` is only used internally by `hoon.hoon`, but is used implicitly
 whenever dereferencing occurs.
 

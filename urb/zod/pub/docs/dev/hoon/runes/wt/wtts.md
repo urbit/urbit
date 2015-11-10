@@ -3,7 +3,7 @@ wuttis, `?=`, %wtts
 
 Is in tile
 
-`?=` is a natural hoon that produces true if the leg at wing `q` is in
+`?=` is a natural rune that produces true if the leg at wing `q` is in
 tile `p`.
 
 Produces

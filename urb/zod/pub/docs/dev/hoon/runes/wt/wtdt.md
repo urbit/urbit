@@ -3,7 +3,7 @@ wutdot, `?.`, %wtdt
 
 If, else
 
-`?.`is a synthetic hoon that produces `r` if `p` is yes (`&`, `0`), or
+`?.`is a synthetic rune that produces `r` if `p` is yes (`&`, `0`), or
 `q` if `p` is no (`|`, 1). `?.` is sort of like "if not", producing the
 second expression if the loobean is true. `?.` is the inverse of `?:`.
 

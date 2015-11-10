@@ -3,7 +3,7 @@ tisbar, `=|`, %tsbr
 
 Bunt to subject
 
-`=|` is a synthetic hoon that pushes the [bunt](), or default value, of
+`=|` is a synthetic rune that pushes the [bunt](), or default value, of
 `p` on the subject and sends it to `q`.
 
 Produces

@@ -3,7 +3,7 @@ dotwut,`.?`, %dtwt
 
 Noun or cell
 
-`.?`, `dotwut`, `[%dtwt p=twig]` is a natural hoon that applies nock `3`
+`.?`, `dotwut`, `[%dtwt p=twig]` is a natural rune that applies nock `3`
 to a noun: if the noun is a cell, it returns the loobean `&` (true); if
 the noun is an atom, it returns the loobean `|` (false).
 
