@@ -143,7 +143,7 @@ Launch
 ======
 
 An urbit is a persistent server on the `%ames` P2P network. You'll
-create one of these servers now. 
+create one of these servers now.
 
 If you have an invitation, it's a planet like `~fintud-macrep` and a
 ticket like `~fortyv-tombyt-tabsen-sonres`. Run
@@ -163,14 +163,24 @@ over Urbit itself. Go get a cup of coffee. Or a beer.
 
 Wait until you see a prompt, something like
 
-      ~fintud-macrep:talk() 
+      ~fintud-macrep:talk()
 
 or
 
-      ~fintud-macrep:dojo> 
+      ~fintud-macrep:dojo>
 
 Your urbit is launched! Ladies and gentlemen, we are floating in
 space.
+
+### Relaunch
+
+To use Urbit normally after creating your planet or comet:
+
+    urbit fintud-macrep
+
+or
+
+    urbit mycomet
 
 Docs
 ====
@@ -208,4 +218,4 @@ The first step in contributing to urbit is to come and join us on
 `:talk`.
 
 For more detailed instructions check out
-[`contributing.md`](https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md).
+[`CONTRIBUTING.md`](https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md).
