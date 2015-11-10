@@ -483,7 +483,12 @@
           =.  +>.^$
             %+  print-to-dill
               ?-(-.q.i.p.lem %del '-', %ins '+', %dif ':')
-            [%leaf (spud (weld pre p.i.p.lem))]
+            :+  %rose  ["/" "/" ~]
+            %+  turn  (weld pre p.i.p.lem)
+            |=  a=cord
+            ?:  ((sane %ta) a)
+              [%leaf (trip a)]
+            [%leaf (dash:ut (trip a) '\'')]
           $(p.lem t.p.lem)
     ==
   ::

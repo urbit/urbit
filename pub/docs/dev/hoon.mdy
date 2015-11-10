@@ -8,8 +8,10 @@ sort: 2
 
 # Hoon
 
-Hoon is a strict, typed, pure functional language.
+Hoon is a strict, typed, pure functional language.  It works.
+This site is served by an urbit written in Hoon.
 
-We're still updating the docs; start with the tutorial, ["Hoon 101"](hoon/tutorial).
+We're still developing the documentation; start with the
+bottom-up tutorial, ["Hoon 101"](hoon/tutorial).
 
 </div>

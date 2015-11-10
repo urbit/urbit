@@ -225,3 +225,19 @@ lot of other things you can do with it.  But you can see a simple
 example in `$PIER/try/hello/hymn.hook`, accessible at
 
     http://localhost:8080/home/try/hello
+
+## Continuity breaches
+
+We occasionally perform "continuity breaches", wherein every
+urbit on the network must be created from scratch.  This occurs
+whenever a major urbit (usually `~zod` or `~doznec`) loses state
+and/or corrupts its event log.  We will always send a message on
+the urbit-dev mailing list when this happens.
+
+To get on the new network, delete your current urbits, or at
+least move them out of sight.  Pull the latest master from urbit
+and run `make`.  Then create your urbit again with `bin/urbit -c
+<pier>` or `bin/urbit -w <planet> -t <ticket>`.  You'll have to
+rejoin `/urbit-meta` and copy in any file changes you wish to
+preserve.  If you're having difficulty getting on the new
+continuity era, send an email to urbit-dev.
