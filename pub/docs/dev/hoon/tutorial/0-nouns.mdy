@@ -30,6 +30,13 @@ language is much easier to learn than it looks.
 > The name "Hoon" is from the Wallace Stevens poem, _Tea at the
 Palaz of Hoon_.  It also means "hooligan" in Australian.
 
+## How to use this tutorial
+
+Ideally, you've installed an Urbit planet (if you have a ticket)
+or comet (if you don't).  See the [user doc](../../../user).  We
+recommend opening up the dojo and just typing the examples; you
+don't know a language until you know it in your fingers.
+
 ## Nouns: data made boring
 
 A noun is an atom or a cell.  An atom is any unsigned integer.  A
@@ -271,7 +278,9 @@ structures is to name the legs of a tuple `p`, `q`, `r`, `s` and
 `t`.  If you get all the way to `t`, your noun is probably not
 simple or self-explaining; meaningful names are recommended.
 
+## Progress
+
 Believe it or not, at this point we understand nouns completely.
 We don't understand spans and molds completely, but we get the
-basics.  In the next chapter, we'll see how Hoon expressions
-(twigs) turn one noun into another.
+basics.  In the [next chapter](1-twigs), we'll see how Hoon
+expressions (twigs) turn one noun into another.
