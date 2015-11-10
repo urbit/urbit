@@ -35,6 +35,7 @@ module.exports = {
 };
 
 
+
 },{"../dispatcher/Dispatcher.coffee":14,"../persistence/TreePersistence.coffee":20}],2:[function(require,module,exports){
 var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, query, reactify, recl, ref;
 
@@ -311,7 +312,8 @@ module.exports = query({
       sein: this.props.sein
     }));
   }
-}), div);
+}), "div");
+
 
 
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":11,"classnames":16}],3:[function(require,module,exports){
@@ -424,8 +426,9 @@ module.exports = function(queries, Child, load) {
 };
 
 
+
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
-var Logo, Next, Spam, a, clas, div, img, p, query, reactify, recl, ref;
+var a, clas, div, extras, img, p, query, reactify, recl, ref, rele;
 
 clas = require('classnames');
 
@@ -435,77 +438,88 @@ reactify = require('./Reactify.coffee');
 
 recl = React.createClass;
 
+rele = React.createElement;
+
 ref = React.DOM, div = ref.div, p = ref.p, img = ref.img, a = ref.a;
 
-Logo = React.createFactory(recl({
-  render: function() {
-    var color, src;
-    color = this.props.color;
-    if (color === "white" || color === "black") {
-      src = "//storage.googleapis.com/urbit-extra/logo/logo-" + color + "-100x100.png";
-    }
-    return a({
-      href: "http://urbit.org",
-      style: {
-        border: "none"
+extras = {
+  spam: recl({
+    displayName: "Spam",
+    render: function() {
+      if (document.location.hostname !== 'urbit.org') {
+        return div({});
       }
-    }, [
-      img({
+      return div({
+        className: 'spam'
+      }, a({
+        href: "http://urbit.org#sign-up"
+      }, "Sign up"), " for an Urbit invite.");
+    }
+  }),
+  logo: recl({
+    displayName: "Logo",
+    render: function() {
+      var color, src;
+      color = this.props.color;
+      if (color === "white" || color === "black") {
+        src = "//storage.googleapis.com/urbit-extra/logo/logo-" + color + "-100x100.png";
+      }
+      return a({
+        href: "http://urbit.org",
+        style: {
+          border: "none"
+        }
+      }, img({
         src: src,
         className: "logo"
-      })
-    ]);
-  }
-}));
-
-Spam = React.createFactory(recl({
-  render: function() {
-    return div({
-      className: 'spam'
-    }, [
-      a({
-        href: "http://urbit.org"
-      }, "Sign up"), " for an Urbit invite."
-    ]);
-  }
-}));
-
-Next = React.createFactory(query({
-  path: 't',
-  kids: {
-    name: 't',
-    head: 'r',
-    meta: 'j'
-  }
-}, recl({
-  displayName: "Next",
-  render: function() {
-    var curr, index, keys, next, ref1;
-    curr = this.props.kids[this.props.curr];
-    if (curr != null ? (ref1 = curr.meta) != null ? ref1.next : void 0 : void 0) {
-      keys = window.tree.util.getKeys(this.props.kids);
-      if (keys.length > 1) {
-        index = keys.indexOf(this.props.curr);
-        next = index + 1;
-        if (next === keys.length) {
-          next = 0;
-        }
-        next = keys[next];
-        next = this.props.kids[next];
-        if (next) {
-          return div({
-            className: "link-next"
-          }, [
-            a({
-              href: this.props.path + "/" + next.name
-            }, "Next: " + next.meta.title)
-          ]);
+      }));
+    }
+  }),
+  next: query({
+    path: 't',
+    kids: {
+      name: 't',
+      head: 'r',
+      meta: 'j'
+    }
+  }, recl({
+    displayName: "Next",
+    render: function() {
+      var curr, index, keys, next, ref1;
+      curr = this.props.kids[this.props.curr];
+      if (curr != null ? (ref1 = curr.meta) != null ? ref1.next : void 0 : void 0) {
+        keys = window.tree.util.getKeys(this.props.kids);
+        if (keys.length > 1) {
+          index = keys.indexOf(this.props.curr);
+          next = index + 1;
+          if (next === keys.length) {
+            next = 0;
+          }
+          next = keys[next];
+          next = this.props.kids[next];
+          if (next) {
+            return div({
+              className: "link-next"
+            }, [
+              a({
+                href: this.props.path + "/" + next.name
+              }, "Next: " + next.meta.title)
+            ]);
+          }
         }
       }
+      return div({}, "");
     }
-    return div({}, "");
-  }
-})));
+  })),
+  footer: recl({
+    displayName: "Footer",
+    render: function() {
+      return div({
+        className: "footer"
+      }, p({}, "This page was served by Urbit."));
+    }
+  })
+};
 
 module.exports = query({
   body: 'r',
@@ -516,35 +530,31 @@ module.exports = query({
 }, recl({
   displayName: "Body",
   render: function() {
-    var body, className, ref1;
-    className = ((ref1 = this.props.meta.layout) != null ? ref1.replace(/,/g, " ") : void 0) || "";
-    body = [reactify(this.props.body)];
-    if (document.location.hostname === 'urbit.org' && (this.props.meta.spam != null)) {
-      body.unshift(Spam({}, ""));
-    }
-    if (this.props.meta.logo != null) {
-      body.unshift(Logo({
-        color: this.props.meta.logo
-      }));
-    }
-    if (this.props.meta.next != null) {
-      body.push(Next({
-        dataPath: this.props.sein,
-        curr: this.props.name
-      }));
-    }
-    if (this.props.meta.footer != null) {
-      body.push(div({
-        className: "footer"
-      }, [p({}, "This page was served by Urbit.")]));
-    }
+    var className, extra, ref1;
+    className = clas((ref1 = this.props.meta.layout) != null ? ref1.split(',') : void 0);
+    extra = (function(_this) {
+      return function(name, props) {
+        if (props == null) {
+          props = {};
+        }
+        if (_this.props.meta[name] != null) {
+          return React.createElement(extras[name], props);
+        }
+      };
+    })(this);
     return div({
       id: 'body',
       key: "body" + this.props.path,
       className: className
-    }, body);
+    }, extra('spam'), extra('logo', {
+      color: this.props.meta.logo
+    }), reactify(this.props.body), extra('next', {
+      dataPath: this.props.sein,
+      curr: this.props.name
+    }), extra('footer'));
   }
 }));
+
 
 
 },{"./Async.coffee":3,"./Reactify.coffee":11,"classnames":16}],5:[function(require,module,exports){
@@ -570,6 +580,7 @@ module.exports = recl({
 });
 
 
+
 },{}],6:[function(require,module,exports){
 var div, recl;
 
@@ -590,6 +601,7 @@ module.exports = {
     }
   })
 };
+
 
 
 },{"./CodeMirror.coffee":5,"./EmailComponent.coffee":7,"./KidsComponent.coffee":8,"./ListComponent.coffee":9,"./SearchComponent.coffee":12,"./TocComponent.coffee":13}],7:[function(require,module,exports){
@@ -666,10 +678,12 @@ module.exports = recl({
       ];
     }
     return p({
-      className: "email"
+      className: "email",
+      id: "sign-up"
     }, cont);
   }
 });
+
 
 
 },{"./Reactify.coffee":11}],8:[function(require,module,exports){
@@ -752,6 +766,7 @@ module.exports = query({
     }).call(this));
   }
 }));
+
 
 
 },{"./Async.coffee":3,"./Reactify.coffee":11}],9:[function(require,module,exports){
@@ -909,6 +924,7 @@ module.exports = query({
 }));
 
 
+
 },{"./Async.coffee":3,"./Reactify.coffee":11,"classnames":16}],10:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
@@ -947,6 +963,7 @@ module.exports = recl({
     }, ""));
   }
 });
+
 
 
 },{}],11:[function(require,module,exports){
@@ -1014,6 +1031,7 @@ module.exports = _.extend(reactify, {
   walk: walk,
   Virtual: Virtual
 });
+
 
 
 },{"./LoadComponent.coffee":10}],12:[function(require,module,exports){
@@ -1154,6 +1172,7 @@ module.exports = query({
 }));
 
 
+
 },{"./Async.coffee":3,"./Reactify.coffee":11}],13:[function(require,module,exports){
 var div, query, reactify, recl,
   slice = [].slice;
@@ -1282,6 +1301,7 @@ module.exports = query({
 }));
 
 
+
 },{"./Async.coffee":3,"./Reactify.coffee":11}],14:[function(require,module,exports){
 var Dispatcher;
 
@@ -1301,6 +1321,7 @@ module.exports = _.extend(new Dispatcher(), {
     });
   }
 });
+
 
 
 },{"flux":17}],15:[function(require,module,exports){
@@ -1474,6 +1495,7 @@ $(function() {
     return so.ls = so.cs;
   });
 });
+
 
 
 },{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./persistence/TreePersistence.coffee":20}],16:[function(require,module,exports){
@@ -1903,6 +1925,7 @@ module.exports = {
 };
 
 
+
 },{}],21:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, QUERIES, TreeStore, _curr, _data, _tree, clog;
 
@@ -2126,6 +2149,7 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
 });
 
 module.exports = TreeStore;
+
 
 
 },{"../dispatcher/Dispatcher.coffee":14,"events":22}],22:[function(require,module,exports){

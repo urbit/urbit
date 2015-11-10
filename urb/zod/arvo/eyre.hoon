@@ -453,6 +453,7 @@
           ;span#ship(contenteditable "");
         ==
         ;input#pass(type "password");
+        ;h2.advice: (Your login code has been printed to your console.)
         ;pre:code#err;
         ;script@"/~/at/~/auth.js";
         ;script:'''
