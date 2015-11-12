@@ -10,7 +10,7 @@
         [~ ~]
     ==
 :-  %noun
-=+  top=`path`/(scot %p p.bec)/home/(scot %da now)/arvo
+=+  top=`path`/(scot %p p.bec)/[q.bec]/(scot %da now)/arvo
 =+  pax=`path`(weld top `path`[%hoon ~])
 ~&  %solid-start
 =+  gen=(reck pax)
