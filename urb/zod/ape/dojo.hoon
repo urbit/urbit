@@ -697,7 +697,8 @@
     ++  dy-mare                                         ::  build expression
       |=  gen=twig
       ^-  silk
-      :+  %cast  (fall (dy-twig-mark gen) %noun)
+      =+  too=(dy-twig-mark gen)
+      =-  ?~(too - [%cast u.too -])
       :+  %ride  gen
       :-  [%$ dy-twig-head]
       [%plan he-beam / zuse arc lib ~ ~]
