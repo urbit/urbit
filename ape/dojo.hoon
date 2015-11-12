@@ -141,12 +141,15 @@
           ==
         ==
       ::
-        ;~(pfix tis (dp-variable sym ;~(pfix ace dp-source)))
+        ;~  pfix  tis
+          %+  dp-variable  ;~(pose sym (cold %dir cen))
+          ;~(pfix ace dp-source)
+        ==
+      ::
         ;~  pfix  fas 
           ;~  pose
             (dp-variable (cold %arc hep) ;~(pfix gap dp-hooves))
             (dp-variable (cold %lib lus) ;~(pfix gap dp-hooves))
-            :(stag [%verb %dir] 0 %ex %clsg dp-poor)
           ==
         ==
       ::
