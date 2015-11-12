@@ -31,14 +31,12 @@ module.exports = query {kids: {body:'r', meta:'j'}}, recl
         if not v.meta?.sort? then sorted = false
         keyed[Number(v.meta?.sort)] = k
 
-    if sorted isnt true 
-      _keys = _.keys(@props.kids).sort()
-    else
-      _keys = _.keys(keyed).sort()
-
-    if @props.sortBy is 'date' then _keys.reverse()
+    if sorted is false then keyed = _.keys this.props.kids
+    
+    keys = _.keys(keyed).sort()
+    if @props.sortBy is 'date' then keys.reverse()
 
     div {className:klass},
-      for item in _keys
-        elem = @props.kids[keyed[item]]
-        [(div {key:item}, reactify elem.body), (hr {},"")]
+      for k in keys
+        elem = @props.kids[keyed[k]] ? ""
+        [(div {key:keyed[k]}, reactify elem.body), (hr {},"")]
