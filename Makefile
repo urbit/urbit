@@ -35,17 +35,31 @@ BIN=bin
 
 LIB=$(shell pwd)/urb
 
+# Only include/link with this if it exists.
+# (Mac OS X El Capitan clean install does not have /opt)
+ifneq (,$(wildcard /opt/local/.))
+  OPTLOCALINC=-I/opt/local/include
+  OPTLOCALLIB=-L/opt/local/lib
+endif
+
+# Only include/link with this if it exists.
+# (`brew install openssl` on Mac OS X El Capitan puts openssl here)
+ifneq (,$(wildcard /usr/local/opt/openssl/.))
+  OPENSSLINC=-I/usr/local/opt/openssl/include
+  OPENSSLLIB=-L/usr/local/opt/openssl/lib
+endif
+
 RM=rm -f
 ifneq ($(UNAME),FreeBSD)
 CC=gcc
 CXX=g++
 CXXFLAGS=$(CFLAGS)
-CLD=g++ -O3 -L/usr/local/lib -L/opt/local/lib -L/usr/local/opt/openssl/lib
+CLD=g++ -O3 -L/usr/local/lib $(OPTLOCALLIB) $(OPENSSLLIB)
 else
 CC=cc
 CXX=c++
 CXXFLAGS=$(CFLAGS)
-CLD=c++ -O3 -L/usr/local/lib -L/opt/local/lib -L/usr/local/opt/openssl/lib
+CLD=c++ -O3 -L/usr/local/lib $(OPTLOCALLIB) $(OPENSSLLIB)
 endif
 
 ifeq ($(OS),osx)
@@ -94,8 +108,8 @@ endif
 CFLAGS= $(COSFLAGS) $(DEBUGFLAGS) -ffast-math \
 	-funsigned-char \
 	-I/usr/local/include \
-	-I/opt/local/include \
-  -I/usr/local/opt/openssl/include \
+	$(OPTLOCALINC) \
+	$(OPENSSLINC) \
 	-I$(INCLUDE) \
 	-Ioutside/$(LIBUV_VER)/include \
 	-Ioutside/anachronism/include \
@@ -106,7 +120,7 @@ CFLAGS= $(COSFLAGS) $(DEBUGFLAGS) -ffast-math \
 	-Ioutside/commonmark/src \
 	-Ioutside/commonmark/build/src \
 	-Ioutside/scrypt \
-        -Ioutside/softfloat-3/source/include \
+	-Ioutside/softfloat-3/source/include \
 	$(DEFINES) \
 	$(MDEFINES)
 
