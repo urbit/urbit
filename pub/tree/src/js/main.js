@@ -35,7 +35,6 @@ module.exports = {
 };
 
 
-
 },{"../dispatcher/Dispatcher.coffee":14,"../persistence/TreePersistence.coffee":20}],2:[function(require,module,exports){
 var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, query, reactify, recl, ref;
 
@@ -315,7 +314,6 @@ module.exports = query({
 }), "div");
 
 
-
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":11,"classnames":16}],3:[function(require,module,exports){
 var TreeActions, TreeStore, _load, code, div, recl, ref, span;
 
@@ -424,7 +422,6 @@ module.exports = function(queries, Child, load) {
     }
   });
 };
-
 
 
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
@@ -556,7 +553,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"./Reactify.coffee":11,"classnames":16}],5:[function(require,module,exports){
 var div, recl, ref, textarea;
 
@@ -580,7 +576,6 @@ module.exports = recl({
 });
 
 
-
 },{}],6:[function(require,module,exports){
 var div, recl;
 
@@ -601,7 +596,6 @@ module.exports = {
     }
   })
 };
-
 
 
 },{"./CodeMirror.coffee":5,"./EmailComponent.coffee":7,"./KidsComponent.coffee":8,"./ListComponent.coffee":9,"./SearchComponent.coffee":12,"./TocComponent.coffee":13}],7:[function(require,module,exports){
@@ -685,7 +679,6 @@ module.exports = recl({
 });
 
 
-
 },{"./Reactify.coffee":11}],8:[function(require,module,exports){
 var a, div, hr, li, query, reactify, recl, ref, ul;
 
@@ -705,7 +698,7 @@ module.exports = query({
 }, recl({
   displayName: "Kids",
   render: function() {
-    var _k, _keys, d, elem, item, k, keyed, klass, ref1, ref2, ref3, ref4, sorted, str, v;
+    var _k, d, elem, k, keyed, keys, klass, ref1, ref2, ref3, ref4, sorted, str, v;
     klass = "kids";
     if (this.props.dataType) {
       klass += " " + this.props.dataType;
@@ -740,25 +733,24 @@ module.exports = query({
         keyed[Number((ref4 = v.meta) != null ? ref4.sort : void 0)] = k;
       }
     }
-    if (sorted !== true) {
-      _keys = _.keys(this.props.kids).sort();
-    } else {
-      _keys = _.keys(keyed).sort();
+    if (sorted === false) {
+      keyed = _.keys(this.props.kids);
     }
+    keys = _.keys(keyed).sort();
     if (this.props.sortBy === 'date') {
-      _keys.reverse();
+      keys.reverse();
     }
     return div({
       className: klass
     }, (function() {
-      var i, len, results;
+      var i, len, ref5, results;
       results = [];
-      for (i = 0, len = _keys.length; i < len; i++) {
-        item = _keys[i];
-        elem = this.props.kids[keyed[item]];
+      for (i = 0, len = keys.length; i < len; i++) {
+        k = keys[i];
+        elem = (ref5 = this.props.kids[keyed[k]]) != null ? ref5 : "";
         results.push([
           div({
-            key: item
+            key: keyed[k]
           }, reactify(elem.body)), hr({}, "")
         ]);
       }
@@ -766,7 +758,6 @@ module.exports = query({
     }).call(this));
   }
 }));
-
 
 
 },{"./Async.coffee":3,"./Reactify.coffee":11}],9:[function(require,module,exports){
@@ -924,7 +915,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"./Reactify.coffee":11,"classnames":16}],10:[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
@@ -963,7 +953,6 @@ module.exports = recl({
     }, ""));
   }
 });
-
 
 
 },{}],11:[function(require,module,exports){
@@ -1031,7 +1020,6 @@ module.exports = _.extend(reactify, {
   walk: walk,
   Virtual: Virtual
 });
-
 
 
 },{"./LoadComponent.coffee":10}],12:[function(require,module,exports){
@@ -1172,7 +1160,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"./Reactify.coffee":11}],13:[function(require,module,exports){
 var div, query, reactify, recl,
   slice = [].slice;
@@ -1301,7 +1288,6 @@ module.exports = query({
 }));
 
 
-
 },{"./Async.coffee":3,"./Reactify.coffee":11}],14:[function(require,module,exports){
 var Dispatcher;
 
@@ -1321,7 +1307,6 @@ module.exports = _.extend(new Dispatcher(), {
     });
   }
 });
-
 
 
 },{"flux":17}],15:[function(require,module,exports){
@@ -1497,21 +1482,18 @@ $(function() {
 });
 
 
-
 },{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./persistence/TreePersistence.coffee":20}],16:[function(require,module,exports){
 /*!
   Copyright (c) 2015 Jed Watson.
   Licensed under the MIT License (MIT), see
   http://jedwatson.github.io/classnames
 */
-/* global define */
 
 (function () {
 	'use strict';
 
-	var hasOwn = {}.hasOwnProperty;
-
 	function classNames () {
+
 		var classes = '';
 
 		for (var i = 0; i < arguments.length; i++) {
@@ -1520,13 +1502,15 @@ $(function() {
 
 			var argType = typeof arg;
 
-			if (argType === 'string' || argType === 'number') {
+			if ('string' === argType || 'number' === argType) {
 				classes += ' ' + arg;
+
 			} else if (Array.isArray(arg)) {
 				classes += ' ' + classNames.apply(null, arg);
-			} else if (argType === 'object') {
+
+			} else if ('object' === argType) {
 				for (var key in arg) {
-					if (hasOwn.call(arg, key) && arg[key]) {
+					if (arg.hasOwnProperty(key) && arg[key]) {
 						classes += ' ' + key;
 					}
 				}
@@ -1538,14 +1522,15 @@ $(function() {
 
 	if (typeof module !== 'undefined' && module.exports) {
 		module.exports = classNames;
-	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
-		// register as 'classnames', consistent with npm package name
-		define('classnames', function () {
+	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd){
+		// AMD. Register as an anonymous module.
+		define(function () {
 			return classNames;
 		});
 	} else {
 		window.classNames = classNames;
 	}
+
 }());
 
 },{}],17:[function(require,module,exports){
@@ -1925,7 +1910,6 @@ module.exports = {
 };
 
 
-
 },{}],21:[function(require,module,exports){
 var EventEmitter, MessageDispatcher, QUERIES, TreeStore, _curr, _data, _tree, clog;
 
@@ -2149,7 +2133,6 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
 });
 
 module.exports = TreeStore;
-
 
 
 },{"../dispatcher/Dispatcher.coffee":14,"events":22}],22:[function(require,module,exports){
