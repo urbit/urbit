@@ -1,20 +1,32 @@
 ---
-title: Hoon 101.2: serious syntax
+title: Hoon 101.2: syntax
 sort: 2
-hide: true
+spam: true
 next: false
 ---
-# Hoon 2: serious syntax
+# Hoon 101.2: full-contact syntax
 
-We've done a bunch of fun stuff on the command line.  We know our
-nouns.  It's time to actually write some serious code -- in a
-real source file.
+In [chapter 0](0-nouns), we read about nouns.  In [chapter 1](1-twigs), 
+we discovered twigs and legs.
+
+Up till now, we've done everything in the dojo, Hoon's shell /
+REPL.  Now it's time to actually write a real Hoon source file,
+and get a bit deeper into the syntax.
+
+## How to use this tutorial
+
+Ideally, you've installed an Urbit planet (if you have a ticket)
+or comet (if you don't).  See the [user doc](../../../user).
+
+We recommend opening up the dojo and just typing the examples;
+you don't know a language until you know it in your fingers.
+Also, make sure you've worked through the chapters in order.
 
 ## Building a simple generator
 
 In Urbit there's a variety of source file roles, distinguished by
 the magic paths they're loaded from: `/gen` for generators,
-`/ape` for appliances, `/fab` for renderers, etc.
+`/ape` for appliances, `/lib` for libraries, etc.
 
 We'll start with a generator, the simplest kind of Urbit program.
 
@@ -22,98 +34,130 @@ We'll start with a generator, the simplest kind of Urbit program.
 
 A desk is the Urbit equivalent of a `git` branch.  We're just
 playing around here and don't intend to soil our `%home` desk with
-test files, so let's make a sandbox:
+test files.  So let's make a sandbox:
 ```
-|merge %sandbox our %home
+|sync %sandbox our %home
 ```
-### Mount the sandbox
 
-Your Urbit pier is in `~/tasfyn-partyv`, or at least mine is.
-So we can get our code into Urbit, run the command 
+You just merged the `%home` desk on your own ship into a new
+`%sandbox` desk.  `%sandbox` has everything in `%home`, but we'll
+add more.  Future changes in `%home` (such as our over-the-air
+updates) will also propagate into `%sandbox`.
+
+> Desks are always born in merges; it makes no sense to create an
+empty desk, because anything you do in a desk depends on other
+files in the desk.  For instance, your file types (marks) are
+defined by source files in the same desk.
+
+### Mount the sandbox from Unix
+
+Run the command
 ```
 ~tasfyn-partyv:dojo> |mount /=sandbox=/gen %gen
 ```
-mounts the `/gen` folder from the `%sandbox` desk in your Unix
-directory  `~/tasfyn-partyv/gen`.  The mount is a two-way sync,
-like your Dropbox.  When you edit a Unix file and save, your edit
-is automatically committed as a change to `%sandbox`.
+This mounts the `/gen` folder from the `%sandbox` desk in your Unix
+directory  `~/tasfyn-partyv/gen`.
+
+The mount is a two-way sync, "Dropbox style."  When you edit a
+Unix file and save, your edit is automatically committed as a
+change in the `%sandbox` desk.  If you change `%sandbox` files
+from Urbit, these changes will also propagate to Unix.
 
 ### Execute from the sandbox
 
-The `%sandbox` desk obviously is merged from `%home`, so it
-contains find all the default facilities you'd expect there.
-Bear in mind, we didn't set it to auto-update when `%home` 
-is updated (that would be `|sync` instead of `|merge`).
-
-So we're not roughing it when we set the dojo to load from
-`%sandbox`:
+Let's set the dojo desk to `%sandbox`:
 ```
-[switch to %home]
+~tasfyn-partyv:dojo> =dir /=sandbox
+=% /~tasfyn-partyv/sandbox/~2015.11.13..02.49.37..9e6c/
+```
+Your prompt will change to:
+```
+~tasfyn-partyv:dojo/sandbox
 ```
 
-### Write your builder
+### Write hello, world
 
 Let's build the simplest possible kind of generator, a builder.
-With your favorite Unix text editor (there are Hoon modes for vim
-and emacs), create the file `~/tasfyn-partyv/gen/test.hoon`.
-Edit it into this:
+
+First, configure your favorite Unix text editor to work with
+Hoon.  There are Hoon modes for vim, emacs and Sublime in the
+`extras/` directory of the github repo.
+
+Second, create the file `~/tasfyn-partyv/gen/test.hoon`.
+Paste this text into it:
 ```
 :-  %say  |=  *  :-  %noun
 [%hello %world]
 ```
 Get the spaces exactly right, please.  Hoon is not in general a
-whitespace-sensitive language, but the difference between one
-space and two-or-more matters.  And for the moment, think of
+whitespace-sensitive language, but the difference between one space and
+two-or-more matters.  And for the moment, think of
 ```
 :-  %say  |=  *  :-  %noun
 ```
-as gibberish boilerplate at the start of a file, like `#include
-"stdio.h"` at the start of a C program.   Any of our old Hoon
-constants would work in place of `[%hello %world`].
+as gibberish boilerplate, like `#include "stdio.h"` at the start of a C
+program. 
 
 Now, run your builder:
 ```
 ~tasfyn-partyv:dojo/sandbox> +test
 [%hello %world]
 ```
-Obviously this is your first Hoon *program* per se.  
+This is your first Hoon *program* per se.  Congrats!
 
 ## Hoon syntax 101
 
 But what's up with this syntax?
 
-### A syntactic apology
+### Some syntactic relatives
 
 The relationship between ASCII and human programming languages
 is like the relationship between the electric guitar and
 rock-and-roll.  If it doesn't have a guitar, it's not rock.
-Some great rockers play three chords, like Johnny Ramone; some
-shred it up, like Jimmy Page.
+If it doesn't use ASCII, it's not a programming language.
 
-The two major families of ASCII-shredding languages are Perl and
-the even more spectacular APL.  (Using non-ASCII characters is
-just a fail, but APL successors like J fixed this.)  No one
-has any right to rag on Larry Wall or Ken Iverson, but Hoon, 
-though it shreds, shreds very differently.
+Some great rock guitarists play three chords, like Johnny Ramone;
+some shred it up, like Jimmy Page.  If Lisp is the Ramones of
+syntax, Perl or APL is Led Zeppelin.  No one has any right to rag
+on Perl or APL, but Hoon is a "metalhead" language that shreds
+its ASCII very differently.
 
-The philosophical case for a "metalhead" language is threefold.
+### The case for heavy metal
+
+The philosophical case for a metalhead language is threefold.
 One, human beings are much better at associating meaning with
 symbols than they think they are.  Two, a programming language is
-a professional tool and not a plastic shovel for three-year-olds.
+a professional tool and not a plastic beach shovel.
+
+> "There's a guitar player, a harp player, a double-bass player,
+all holding up their blisters. Imagine if you downloaded a
+library off the internet... and it gave you blisters! Right? The
+horror! And yet... every musician has overcome a barrier to entry
+similar to this."  — Rich Hickey
 
 And three, the alternative to heavy metal is keywords.  When you
 use a keyword language, not only are you forcing the programmer
-to tiptoe around a ridiculous maze of restricted words used and
-reserved, you're expressing your program through two translation
-steps: symbol->English and English->computation.  When you shred,
-you are going direct: symbol->computation.  Especially in a pure
-language, this creates a sense of "seeing the function" which no
-keyword language can quite duplicate.
+to tiptoe around a ridiculous maze of reserved words.  You're
+expressing your program through two translation steps:
+symbol->English and English->computation.
 
-But any metalhead language you don't yet know is line noise.
-Let's get you up to speed as fast as possible.
+When you shred, you are going direct: symbol->computation.  A
+pure-functional language with syntax on the metalhead principle
+creates a sense of "seeing the function" which no keyword
+language can quite duplicate.  Also, all the words you see on the
+screen are actually meaningful terms in the program.
+
+But a great metalhead language should *not* be user-extensible.
+That way lies King Crimson.  (Maybe Haskell is King Crimson: the
+prog-rock of programming languages.)  A language is a standard;
+if users can do whatever with ASCII, there is no standard.  If a
+metal language can work, it's only by rigorous consistency and
+predictability.  No macros, operator overloading, etc, etc.
 
 ### A glyphic bestiary
+
+Any metalhead language you don't yet know is line noise.  Let's
+get you up to speed as fast as possible.
 
 A programming language needs to be not just read but said.  But
 no one wants to say "ampersand."  Therefore, we've taken the
@@ -122,33 +166,46 @@ liberty of assigning three-letter names to all ASCII glyphs.
 Some of these bindings are obvious and some aren't.  You'll be
 genuinely surprised at how easy they are to remember:
 ```
-    ace [1 space]  dot .               pan ]
-    bar |          fas /               pel )
-    bis \          gap [>1 space, nl]  pid }
-    buc $          hax #               ran >
-    cab _          ket ^               rep '
-    cen %          lep (               sac ;
-    col :          lit <               tar *
-    com ,          lus +               tec `
-    das -          mat @               tis =
-    den "          med &               wut ?
-    dip {          nap [               zap !
+    ace [1 space]   gal <               pel (
+    bar |           gap [>1 space, nl]  per )
+    bas \           gar >               sel [
+    buc $           hax #               sem ;
+    cab _           hep -               ser ]
+    cen %           kel {               soq '
+    col :           ker }               tar *
+    com ,           ket ^               tec `
+    doq "           lus +               tis =
+    dot .           pam &               wut ?
+    fas /           pat @               zap !
 ```
-It's fun to confuse people by using these outside Urbit.  A few
-digraphs also have irregular sounds:
+It's fun to confuse the muggles by using these outside Urbit.
+
+Hoon is not whitespace-sensitive, except that its grammar defines
+two distinct whitespace tokens: `ace`, a single space, and `gap`,
+anything else.  `\t`, `\r`, and `\l` choke the parser and should
+not appear in your file.
+
+A few digraphs also have irregular sounds:
 ```
 ==  stet
 --  shed
 ++  slus
-->  dart
--<  dusk
-+>  lark
-+<  lush
+->  lark
+-<  lush
++>  dark
++<  dish
 ```
+
+You might remember wondering where the "lark syntax" of chapter 1
+got its name.  Lark syntax is read in digraphs from the left, so
+`+>+` is `darkgar`.
+
+> `+>+` is of course `cdddr` in Lisp.
 
 ### The shape of a twig
 
-A twig, of course, is a noun.  As usual, the easiest way to
+As we learned in chapter 1, a twig - the parsed form of a Hoon
+expression - is a noun.  As usual in Hoon, the easiest way to
 explain both the syntax that compiles into that noun, and the
 semantic meaning of the noun, is the noun's physical structure.
 
@@ -156,21 +213,22 @@ semantic meaning of the noun, is the noun's physical structure.
 
 A twig is always a cell, and any cell of twigs is a twig
 producing a cell.  As an homage to Lisp, we call this
-"autocons."  Where you'd write `(cons a b)` in Lisp, you write
-`[a b]` in Hoon, and the shape of the twig follows.
+"autocons."
+
+Where you'd write `(cons a b)` in Lisp, you write `[a b]` in
+Hoon.  The Lisp expression, in Hoon syntax, would be `[%cons a b
+~]`.  But the Hoon twig is just `[a b]`.
 
 The `???` prefix prints a twig as a noun instead of running it.
 Let's see autocons in action:
 ```
 ~tasfyn-partyv:dojo/sandbox> ??? 42
-[%dtzy %ud 42]
+[%dtzy p=%ud q=42]
 ~tasfyn-partyv:dojo/sandbox> ??? 0x2a
-[%dtzy %ux 42]
-~tasfyn-partyv:dojo/sandbox> ??? [42 0x2a]
-[[%dtzy %ud 42] %dtzy %ux 42]
+[%dtzy p=%ux q=42]
+~tasfyn-partyv:dojo/sandbox> ??? [42 0xa]
+[[%dtzy p=%ud q=42] [%dtzy p=%ux q=42]]
 ```
-(As always, it may confuse *you* that this is the same noun as
-`[[%dtzy %ud 42] [%dtzy %ux 42]]`, but it doesn't confuse Hoon.)
 
 #### The stem-bulb pattern
 
@@ -178,30 +236,32 @@ If the head of your twig is a cell, it's an autocons.  If the
 head is an atom, it's an unpronounceable four-letter symbol like
 the `%dtzy` above.
 
-This is the same pattern as we see in the `span` mold -- a
-variant record, essentially, in nouns.  The head of one of these
-cells is called the "stem."  The tail is the "bulb."  The shape
-of the bulb is totally dependent on the value of the stem.
+Except for the funny autocons case, twigs have the same shape
+we see in the `span` mold, which we met in chapter 0.  It's
+essentially a variant record, the most common data structure
+ever.  In Hoon it's called a *kelp*.
+
+The head of a kelp (like `%dtzy` above) is called the *stem*.
+The tail (like `[%ux 42]`) is the *bulb*.
 
 #### Runes and stems
 
-A "rune" (a word intentionally chosen to annoy Go programmers) is
-a digraph - a sequence of two ASCII glyphs.  If you know C, you
-know digraphs like `->` and `?:` and are used to reading them as
-single characters.
+A *rune* is a digraph - a sequence of two ASCII glyphs.  If you
+know C, you know digraphs like `!=` and `?:` and are used to
+reading them as single characters.
 
-In Hoon you can *say* them as words: "dasran" and "wattis"
-respectively.  In a metalhead language, if we had to say 
-"minus greater-than" and "question-colon", we'd just die.
+In Hoon you can *say* runes as words: "zaptis" and "wutcol"
+respectively.  If we had to say "exclamation point equals" and
+"question-colon" all the time, we'd just die.
 
 Most twig stems are made from runes, by concatenating the glyph
 names and removing the vowels.  For example, the rune `=+`,
 pronounced "tislus," becomes the stem `%tsls`.  (Note that in
-many noun implementations, this is a 31-bit direct value.)
+most noun implementations, this is a 31-bit direct value.)
 
-(Some stems (like `%dtzy`) are not runes, simply because they
-don't have regular-form syntax and don't need to use precious
-ASCII real estate.  They are otherwise no different.)
+> Some twig stems (like `%dtzy`) are not runes, simply because
+they don't have regular-form syntax and don't need to use
+precious ASCII real estate.  They are otherwise no different.
 
 An important point to note about runes: they're organized.  The
 first glyph in the rune defines a category.  For instance, runes
@@ -212,18 +272,18 @@ Another important point about runes: they come in two flavors,
 "natural" (stems interpreted directly by the compiler) and
 "synthetic" (macros, essentially).
 
-(Language food fight warning: one advantage of Hoon over Lisp is
-that all Hoon macros are inherently hygienic.  Another advantage
-is that Hoon has no (user-level) macros.  In Hoon terms, nobody 
-gets to invent their own runes.  A DSL is always and everywhere
-a write-only language.  Hoon shreds its ASCII pretty hard, but
-the same squiggles mean the same things in everyone's code.)
+> Language food fight warning: one advantage of Hoon over Lisp
+is no gensyms.  All Hoon macros are perfectly hygienic.  Another
+advantage is that Hoon has no (user-level) macros.  In Hoon
+terms, nobody gets to invent their own runes, because that way
+lies DSL write-only chaos.  But if we had user-level macros,
+they'd be perfectly hygienic as well.
 
-#### Wide and tall regular forms
+#### Tall and wide regular forms
 
 A good rune example is the simple rune `=+`, pronounced "tislus",
-which becomes the stem `%tsls`.  A `%tsls` twig has the shape
-`[%tsls twig twig]`.
+which becomes the stem `%tsls`.  A `%tsls` twig has the mold
+`[%tsls p=twig q=twig]`.
 
 The very elegance of functional languages creates a visual
 problem that imperative languages lack.  An imperative language
@@ -264,10 +324,10 @@ The wide syntax for a `=+` twig, or any binary rune: `(`, the
 first subtwig, one space, the second subtwig, and `)`).  To read
 this twig out loud, you'd say:
 ```
-tislus lap planet is cen world ace nep cen hello ace planet pen
-pal
+tislus pel planet tis cen world ace sel cen hello ace planet ser per
 ```
-("tis" not in a rune gets contracted to "is".)
+> Various colloquialisms inevitably creep into this usage.  "tis" not 
+in a rune gets contracted to "is"; "ace" is often just assumed; etc.
 
 Let's try a tall `=+` in `test.hoon`: 
 ```
@@ -296,22 +356,20 @@ difference between one space (`ace`) and more space (`gap`), the
 parser doesn't care how you format your code.  Hoon is not Go --
 there are no fixed rules for doing it right.
 
-However, the universal convention is to keep lines under 80
-characters.  Also, hard tab characters are illegal.  And when in
-doubt, make your code look like the kernel code.
+> Keep lines under 80 characters, though.  The parser doesn't
+enforce this yet.  But it will, so watch out!
 
 ##### Backstep indentation
 
-Note that the "variable declaration" concept of `=+` (which is no
-more a variable declaration than a Tasmanian tiger is a tiger)
-works perfectly here.  Because `[%hello planet]` -- despite being
-a subtree of the the `=+` twig -- is at the same indent level.
-So our code flows down the screen, not down and to the right, and
-of course there are no superfluous terminators.  It looks good,
-and creates fewer hard-to-find syntax errors than you'd think.
+Note that the "variable declaration" metaphor of `=+` works
+perfectly here.  Because `[%hello planet]` -- despite being a
+subtree of the the `=+` twig -- is at the same indent level.  A
+variable declaration shouldn't add indent depth.  And `=+`
+doesn't.  Our code flows down the screen, not down and to the
+right, and of course there are no superfluous terminators.
 
-This is called "backstep" indentation.  Another example, using a
-ternary rune that has a strange resemblance to C:
+Another example, using a ternary rune with a strange resemblance
+to C:
 ```
 :-  %say  |=  *  :-  %noun
 =+  planet=%world
@@ -319,9 +377,21 @@ ternary rune that has a strange resemblance to C:
   [%hello planet]
 [%goodbye planet]
 ```
+This is called "backstep" indentation.  Not all the children of
+`?:` ("wuttis", `%wtts`) are at the same indent as the parent;
+but one of them is.
+
 It's not always the case when backstepping that the largest
-subtwig is at the bottom and loses no margin, but it often is.
-And not all runes have tuple structure; some are n-ary, and use
+subtwig is at the bottom and loses no indent, but it often is.
+And we do a lot to help you maintain this.
+
+For instance, `=+` ("tislus") is a binary rune: `=+(a b)`.  In
+most cases of `=+` the heavy twig is `b`, but sometimes it's `a`.
+So we can use its friend the `=-` rune ("tishep") to get the same
+semantics with the right shape: `=-(b a)`.  Similarly, instead of
+`?:(a b c)`, we can write `?.(a c b)`.
+
+Not all runes have tuple structure; some are n-ary, and use
 the `==` terminator (again, pronounced "stet"):
 ```
 :-  %say  |=  *  :-  %noun
@@ -333,14 +403,7 @@ the `==` terminator (again, pronounced "stet"):
 ==
 ```
 So we occasionally lose right-margin as we descend a deep twig.
-But we can keep this lossage low with good layout design.  The
-goal is to keep the heavy twigs on the right, and Hoon tries as
-hard as possible to help you with this.
-
-For instance, `=+` ("tislus") is a binary rune: `=+(a b)`.  In
-most cases of `=+` the heavy twig is `b`, but sometimes it's `a`.
-So we can use its friend the `=-` rune ("tisdas") to get the same
-semantics with the right shape: `=-(b a)`.
+But we can keep this lossage low with good layout design. 
 
 #### Irregular forms
 
@@ -394,5 +457,9 @@ Or with a gratuitous use of tall form:
 =+  ^=  planet  %world
 [%hello planet]
 ```
+## Progress
+
 Now you know how to read Hoon!  For fun, try to pronounce more of
 the code on this page.  Please don't laugh too hard at yourself.
+
+In the next chapter, we'll actually write a real program...
