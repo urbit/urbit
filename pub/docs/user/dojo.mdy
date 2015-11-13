@@ -199,8 +199,10 @@ read-only: `dir`, `lib`, `arc`, `now`, `our`.
 
 The read-write specials are `dir`, `lib` and `arc`. `dir` is the beak
 (revision-control branch) and directory this session is operating in, 
-and normally accessed/set with `%`. `lib` is a set of libraries, and 
-`arc` a set of structures, to put in the Hoon subject.
+and accessed with `%`. `lib` is a set of libraries, and `arc` a set
+of structures, to put in the Hoon subject.
+
+They can be set by `=%`, `/+`, and `/-` respectively
 
 Read-only specials are `now`, the current (128-bit `@da`) time,
 and `our`, the current urbit.

@@ -1032,7 +1032,7 @@
         (fine cof bem(r [%ud ((hard ,@) +.+:(need u.von))]))
       |=  [cof=cafe bem=[[ship desk %ud r=@u] s=spur]]
       ?:  =(0 r.bem)
-        (flaw cof [leaf/"ford: no data: {(tope bem(s ~))}"]~)
+        (flaw cof [leaf/"ford: no data: {<(tope bem(s ~))>}"]~)
       (fine cof bem)
     ::
     ++  lave                                            ::  validate
