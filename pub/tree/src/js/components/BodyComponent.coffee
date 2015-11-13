@@ -15,7 +15,7 @@ extras =
         return (div {})
       (div {className:'spam'},
         (a {href:"http://urbit.org#sign-up"}, "Sign up")
-        " for an Urbit invite."
+        " for our newsletter."
       )
 
   logo: recl 
