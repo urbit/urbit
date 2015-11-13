@@ -12,10 +12,11 @@ this chapter we'll get into Hoon expressions, or *twigs*.
 ## How to use this tutorial
 
 Ideally, you've installed an Urbit planet (if you have a ticket)
-or comet (if you don't).  See the [user doc](../../../user).  
+or comet (if you don't).  See the [user doc](../../../user).
 
 We recommend opening up the dojo and just typing the examples;
 you don't know a language until you know it in your fingers.
+Also, make sure you've worked through the chapters in order.
 
 ## Nock for Hoon programmers
 
@@ -282,5 +283,4 @@ Can we use mutation to build a cyclical noun?  Nice try, but no:
 
 Now, not only can we build a noun, we can get data out of it and
 even evolve new, related nouns.  We've still seen only two very
-restricted kinds of twigs: constants and legs.  In the next
-chapter, we'll actually write some interesting expressions.
+restricted kinds of twigs: constants and legs.  In the [next chapter](2-syntax), we'll actually write some interesting expressions.

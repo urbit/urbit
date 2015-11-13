@@ -20,6 +20,7 @@ or comet (if you don't).  See the [user doc](../../../user).
 
 We recommend opening up the dojo and just typing the examples;
 you don't know a language until you know it in your fingers.
+Also, make sure you've worked through the chapters in order.
 
 ## Building a simple generator
 
@@ -41,8 +42,7 @@ test files.  So let's make a sandbox:
 You just merged the `%home` desk on your own ship into a new
 `%sandbox` desk.  `%sandbox` has everything in `%home`, but we'll
 add more.  Future changes in `%home` (such as our over-the-air
-updates) will also propagate into `%sandbox`.  (For a one-time
-merge, use `|merge` instead of `|sync`.
+updates) will also propagate into `%sandbox`.
 
 > Desks are always born in merges; it makes no sense to create an
 empty desk, because anything you do in a desk depends on other
@@ -51,8 +51,7 @@ defined by source files in the same desk.
 
 ### Mount the sandbox from Unix
 
-Your Urbit pier is in `~/tasfyn-partyv`, or at least mine is.
-So we can get our code into Urbit, run the command 
+Run the command
 ```
 ~tasfyn-partyv:dojo> |mount /=sandbox=/gen %gen
 ```
@@ -82,29 +81,29 @@ Let's build the simplest possible kind of generator, a builder.
 
 First, configure your favorite Unix text editor to work with
 Hoon.  There are Hoon modes for vim, emacs and Sublime in the
-`extras/` directory of the repository.
+`extras/` directory of the github repo.
 
 Second, create the file `~/tasfyn-partyv/gen/test.hoon`.
-Edit it into this:
+Paste this text into it:
 ```
 :-  %say  |=  *  :-  %noun
 [%hello %world]
 ```
 Get the spaces exactly right, please.  Hoon is not in general a
-whitespace-sensitive language, but the difference between one
-space and two-or-more matters.  And for the moment, think of
+whitespace-sensitive language, but the difference between one space and
+two-or-more matters.  And for the moment, think of
 ```
 :-  %say  |=  *  :-  %noun
 ```
-as gibberish boilerplate at the start of a generator, like
-`#include "stdio.h"` at the start of a C program. 
+as gibberish boilerplate, like `#include "stdio.h"` at the start of a C
+program. 
 
 Now, run your builder:
 ```
 ~tasfyn-partyv:dojo/sandbox> +test
 [%hello %world]
 ```
-Obviously this is your first Hoon *program* per se.  Congrats!
+This is your first Hoon *program* per se.  Congrats!
 
 ## Hoon syntax 101
 
@@ -119,16 +118,22 @@ If it doesn't use ASCII, it's not a programming language.
 
 Some great rock guitarists play three chords, like Johnny Ramone;
 some shred it up, like Jimmy Page.  If Lisp is the Ramones of
-syntax, Perl or APL is Led Zeppelin.  Hoon is another "metalhead"
-language, but a very different one.  While no one has any right
-to rag on Perl or APL, Hoon shreds its ASCII very differently.
+syntax, Perl or APL is Led Zeppelin.  No one has any right to rag
+on Perl or APL, but Hoon is a "metalhead" language that shreds
+its ASCII very differently.
 
-### Philosophy of syntax
+### The case for heavy metal
 
 The philosophical case for a metalhead language is threefold.
 One, human beings are much better at associating meaning with
 symbols than they think they are.  Two, a programming language is
 a professional tool and not a plastic beach shovel.
+
+> "There's a guitar player, a harp player, a double-bass player,
+all holding up their blisters. Imagine if you downloaded a
+library off the internet... and it gave you blisters! Right? The
+horror! And yet... every musician has overcome a barrier to entry
+similar to this."  — Rich Hickey
 
 And three, the alternative to heavy metal is keywords.  When you
 use a keyword language, not only are you forcing the programmer
@@ -222,7 +227,7 @@ Let's see autocons in action:
 ~tasfyn-partyv:dojo/sandbox> ??? 0x2a
 [%dtzy p=%ux q=42]
 ~tasfyn-partyv:dojo/sandbox> ??? [42 0xa]
-[[%dtzy p=%ud 42] [%dtzy p=%ux q=42]]
+[[%dtzy p=%ud q=42] [%dtzy p=%ux q=42]]
 ```
 
 #### The stem-bulb pattern
@@ -242,11 +247,11 @@ The tail (like `[%ux 42]`) is the *bulb*.
 #### Runes and stems
 
 A *rune* is a digraph - a sequence of two ASCII glyphs.  If you
-know C, you know digraphs like `=+` and `?:` and are used to
+know C, you know digraphs like `!=` and `?:` and are used to
 reading them as single characters.
 
-In Hoon you can *say* runes as words: "tislus" and "wattis"
-respectively.  If we had to say "equals plus" and
+In Hoon you can *say* runes as words: "zaptis" and "wutcol"
+respectively.  If we had to say "exclamation point equals" and
 "question-colon" all the time, we'd just die.
 
 Most twig stems are made from runes, by concatenating the glyph
@@ -254,9 +259,9 @@ names and removing the vowels.  For example, the rune `=+`,
 pronounced "tislus," becomes the stem `%tsls`.  (Note that in
 most noun implementations, this is a 31-bit direct value.)
 
-(Some stems (like `%dtzy`) are not runes, simply because they
-don't have regular-form syntax and don't need to use precious
-ASCII real estate.  They are otherwise no different.)
+> Some twig stems (like `%dtzy`) are not runes, simply because
+they don't have regular-form syntax and don't need to use
+precious ASCII real estate.  They are otherwise no different.
 
 An important point to note about runes: they're organized.  The
 first glyph in the rune defines a category.  For instance, runes
@@ -268,14 +273,13 @@ Another important point about runes: they come in two flavors,
 "synthetic" (macros, essentially).
 
 > Language food fight warning: one advantage of Hoon over Lisp
-is no gensyms.  All Hoon macros are inherently hygienic.  Another
+is no gensyms.  All Hoon macros are perfectly hygienic.  Another
 advantage is that Hoon has no (user-level) macros.  In Hoon
-terms, nobody gets to invent their own runes.  A DSL is always
-and everywhere a write-only language.  Hoon shreds its ASCII
-pretty hard, but the same squiggles mean the same things in
-everyone's code.
+terms, nobody gets to invent their own runes, because that way
+lies DSL write-only chaos.  But if we had user-level macros,
+they'd be perfectly hygienic as well.
 
-#### Wide and tall regular forms
+#### Tall and wide regular forms
 
 A good rune example is the simple rune `=+`, pronounced "tislus",
 which becomes the stem `%tsls`.  A `%tsls` twig has the mold
@@ -357,10 +361,10 @@ enforce this yet.  But it will, so watch out!
 
 ##### Backstep indentation
 
-Note that the "variable declaration" concept of `=+` works
+Note that the "variable declaration" metaphor of `=+` works
 perfectly here.  Because `[%hello planet]` -- despite being a
-subtree of the the `=+` twig -- is at the same indent level.
-A variable declaration shouldn't add indent depth.  And `=+`
+subtree of the the `=+` twig -- is at the same indent level.  A
+variable declaration shouldn't add indent depth.  And `=+`
 doesn't.  Our code flows down the screen, not down and to the
 right, and of course there are no superfluous terminators.
 
@@ -453,5 +457,9 @@ Or with a gratuitous use of tall form:
 =+  ^=  planet  %world
 [%hello planet]
 ```
+## Progress
+
 Now you know how to read Hoon!  For fun, try to pronounce more of
 the code on this page.  Please don't laugh too hard at yourself.
+
+In the next chapter, we'll actually write a real program...
