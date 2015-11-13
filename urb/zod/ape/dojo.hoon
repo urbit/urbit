@@ -424,8 +424,14 @@
           %our  ~|(%self-is-immutable !!)
           %lib  .(lib ((dy-cast (list hoof) !>(*(list hoof))) q.cay))
           %arc  .(arc ((dy-cast (list hoof) !>(*(list hoof))) q.cay))
-          %dir  =.  dir  (need (tome ((dy-cast path !>(*path)) q.cay)))
-                =-  +(..dy (he-diff %tan - ~))
+          %dir  =+  ^=  pax  ^-  path
+                    =+  pax=((dy-cast path !>(*path)) q.cay)
+                    ?:  ?=(~ pax)  ~[(scot %p our.hid) %home '0']
+                    ?:  ?=([@ ~] pax)  ~[i.pax %home '0']
+                    ?:  ?=([@ @ ~] pax)  ~[i.pax i.t.pax '0']
+                    pax
+                =.  dir  (need (tome pax))
+                =-  +>(..dy (he-diff %tan - ~))
                 rose/[" " `~]^~[leaf/"=%" (smyt (tope he-beak s.dir))]
         ==
       ::
@@ -522,7 +528,11 @@
               ==
       ?-  -.bil
         ?(%ur %dv)  bil
-        %ex  p.bil
+        %ex  ?.  ?=([%cltr *] p.bil)  p.bil
+                 |-  ^-  twig
+                 ?~  p.p.bil  !!
+                 ?~  t.p.p.bil  i.p.p.bil
+                 [i.p.p.bil $(p.p.bil t.p.p.bil)]
         %tu  ?~  p.bil  !!
              |-
              ?~  t.p.bil  ^$(bil q.i.p.bil)
@@ -722,7 +732,7 @@
     =+  len=+((lent txt))                               ::  line length
     =.  txt  :(weld buf txt "\0a")                      ::
     =+  vex=((full dp-command-line):dp [1 1] txt)       ::
-    ?:  =(q.p.vex len)                                  ::  matched until line end
+    ?:  =(q.p.vex len)                                  ::  matched to line end
       [%& ~]                                            ::
     ?:  =(p.p.vex +((lent (skim txt |=(a=@ =(10 a)))))) ::  parsed all lines
       [%& ~ ?~(q.vex [%| txt] `p.u.q.vex)]              ::  new buffer/complete
@@ -782,10 +792,23 @@
     =^  cal  say  (~(transmit sole say) [%set ~])
     (he-diff %mor [%det cal] ~)
   ::
+  ++  he-prow                                           ::  where we are
+    ^-  tape
+    ?:  &(=(our.hid p.dir) =(%home q.dir) =([%ud 0] r.dir) =(~ s.dir))  ~
+    %+  weld
+      ?:  &(=(our.hid p.dir) =([%ud 0] r.dir))
+        (weld "/" (trip q.dir))
+      ;:  weld
+        "/"  ?:(=(our.hid p.dir) "=" (scow %p p.dir))
+        "/"  ?:(=(%home q.dir) "=" (trip q.dir))
+        "/"  ?:(=([%ud 0] r.dir) "=" (scow r.dir))
+      == 
+    ?:(=(~ s.dir) "" (spud s.dir))
+  ::
   ++  he-prom                                           ::  send prompt
     %-  he-diff
     :-  %pro
-    [& %$ ?~(buf "> " "< ")]
+    [& %$ (weld he-prow ?~(buf "> " "< "))]
   ::
   ++  he-made                                           ::  result from ford
     |=  [way=wire dep=@uvH reg=gage]
