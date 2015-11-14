@@ -84,12 +84,14 @@
 			<string>constant.character.hoon</string>
 		</dict>
 		<dict>
+			<key>begin</key>
+			<string>\+[-+]  (?=[a-z]([a-z0-9-]*[a-z0-9])?)</string>
 			<key>comment</key>
 			<string>arm</string>
-			<key>match</key>
-			<string>\+\+  [a-z]([a-z0-9-]*[a-z0-9])?</string>
-			<key>name</key>
+			<key>contentName</key>
 			<string>entity.name.function.hoon</string>
+			<key>end</key>
+			<string>(?![a-z0-9-])</string>
 		</dict>
 		<dict>
 			<key>comment</key>
