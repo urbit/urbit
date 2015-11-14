@@ -21,10 +21,12 @@ patterns:
 - comment: tape
   name: string.double.hoon
   begin: \"
+  patterns: [{match: '\\.|[^"]'}]
   end: \"
 - comment: cord
   name: string.single.hoon
   begin: \'
+  patterns: [{match: "\\\\.|[^']"}]
   end: \'
 - comment: arm
   name: constant.character.hoon

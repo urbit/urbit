@@ -50,6 +50,13 @@
 			<string>\"</string>
 			<key>name</key>
 			<string>string.double.hoon</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>match</key>
+					<string>\\.|[^"]</string>
+				</dict>
+			</array>
 		</dict>
 		<dict>
 			<key>begin</key>
@@ -60,6 +67,13 @@
 			<string>\'</string>
 			<key>name</key>
 			<string>string.single.hoon</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>match</key>
+					<string>\\.|[^']</string>
+				</dict>
+			</array>
 		</dict>
 		<dict>
 			<key>comment</key>
