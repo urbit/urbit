@@ -51,7 +51,7 @@ We'll start by clearing the subject:
 =>  ~
 [%hello %world]
 ```
-The `=>` rune ("tisran"), for `=>(p q)` executes `p` against 
+The `=>` rune ("tisgar"), for `=>(p q)` executes `p` against
 the subject, then uses that product as the subject of `q`.
 
 (We've already used an irregular form of `=>`, or to be more
