@@ -378,7 +378,7 @@ to C:
 [%goodbye planet]
 ```
 This is called "backstep" indentation.  Not all the children of
-`?:` ("wuttis", `%wtts`) are at the same indent as the parent;
+`?:` ("wutcol", `%wtcl`) are at the same indent as the parent;
 but one of them is.
 
 It's not always the case when backstepping that the largest
