@@ -55,7 +55,7 @@ The `=>` rune ("tisgar"), for `=>(p q)` executes `p` against
 the subject, then uses that product as the subject of `q`.
 
 (We've already used an irregular form of `=>`, or to be more
-precise its mirror `=<` ("tislit").  In chapter 1, when we wrote
+precise its mirror `=<` ("tisgal").  In chapter 1, when we wrote
 `+3:test`, we meant `=>(test +3)` or `=<(+3 test)`.)
 
 What is this `~`?  It's Hoon `nil`, a zero atom with this span:
