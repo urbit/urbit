@@ -198,7 +198,7 @@ A few digraphs also have irregular sounds:
 
 You might remember wondering where the "lark syntax" of chapter 1
 got its name.  Lark syntax is read in digraphs from the left, so
-`+>+` is `darkgar`.
+`+>+` is `darklus`.
 
 > `+>+` is of course `cdddr` in Lisp.
 
@@ -378,7 +378,7 @@ to C:
 [%goodbye planet]
 ```
 This is called "backstep" indentation.  Not all the children of
-`?:` ("wuttis", `%wtts`) are at the same indent as the parent;
+`?:` ("wutcol", `%wtcl`) are at the same indent as the parent;
 but one of them is.
 
 It's not always the case when backstepping that the largest

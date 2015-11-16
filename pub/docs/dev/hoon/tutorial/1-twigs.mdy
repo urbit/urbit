@@ -247,8 +247,8 @@ the product of `test`.
 
 > You're probably used to name resolution in variable scopes
 and flat records, but not in trees.  Partly this is because the
-tradition in language design is to eschew semantics that make it
-hard to build simple symbol tables, because linear search of a
+tradition in language design is to prefer semantics that make it
+easy to build simple symbol tables, because linear search of a
 nontrivial tree is a bad idea on '80s hardware.
 
 ## Mutation
