@@ -21,17 +21,20 @@ patterns:
 - comment: tape
   name: string.double.hoon
   begin: \"
+  patterns: [{match: '\\.|[^"]'}]
   end: \"
 - comment: cord
   name: string.single.hoon
   begin: \'
+  patterns: [{match: "\\\\.|[^']"}]
   end: \'
 - comment: arm
   name: constant.character.hoon
   match: "[a-z]([a-z0-9-]*[a-z0-9])?/"
 - comment: arm
-  name: entity.name.function.hoon
-  match: "\\+\\+  [a-z]([a-z0-9-]*[a-z0-9])?"
+  contentName: entity.name.function.hoon
+  begin: "\\+[-+]  (?=[a-z]([a-z0-9-]*[a-z0-9])?)"
+  end: "(?![a-z0-9-])"
 - comment: cube
   name: constant.character.hoon
   match: "%[a-z]([a-z0-9-]*[a-z0-9])?"

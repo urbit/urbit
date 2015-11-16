@@ -51,11 +51,11 @@ We'll start by clearing the subject:
 =>  ~
 [%hello %world]
 ```
-The `=>` rune ("tisran"), for `=>(p q)` executes `p` against 
+The `=>` rune ("tisgar"), for `=>(p q)` executes `p` against
 the subject, then uses that product as the subject of `q`.
 
 (We've already used an irregular form of `=>`, or to be more
-precise its mirror `=<` ("tislit").  In chapter 1, when we wrote
+precise its mirror `=<` ("tisgal").  In chapter 1, when we wrote
 `+3:test`, we meant `=>(test +3)` or `=<(+3 test)`.)
 
 What is this `~`?  It's Hoon `nil`, a zero atom with this span:
@@ -285,7 +285,7 @@ noun `[%dtts a b]`.  Likewise, `+(a)` is `.+(a)`, ie, "dotlus"
 or `[%dtls a]`.
 
 `?:` is a regular rune which does exactly what you think it does.
-Bear in mind, though, that in Hoon 0 (`&`, "rob") is true and 1
+Bear in mind, though, that in Hoon 0 (`&`, "pam") is true and 1
 (`|`, "bar") is false.
 
 The real action is in `dec(pre +(pre))`.  This is obviously an
