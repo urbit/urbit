@@ -734,9 +734,9 @@
     |=  ext=(list ,@c)
     ^+  +>
     ?:  |(?=(~ ris) =(0 pos.u.ris))  ta-bel
+    =+  sop=?~(ext (dec pos.u.ris) pos.u.ris)
     =+  tot=(weld str.u.ris ext)
-    =+  dol=(slag (sub num.hit pos.u.ris) old.hit)
-    =+  sop=pos.u.ris
+    =+  dol=(slag (sub num.hit sop) old.hit)
     =+  ^=  ser
         =+  ^=  beg
             |=  [a=(list ,@c) b=(list ,@c)]  ^-  ?
@@ -750,7 +750,7 @@
           `sop
         $(sop (dec sop), dol t.dol)
     ?~  sup  ta-bel
-    (ta-mov(str.u.ris tot, pos.u.ris (dec u.sup)) (dec u.sup))
+    (ta-mov(str.u.ris tot, pos.u.ris u.sup) (dec u.sup))
   ::
   ++  ta-tan                                          ::  print tanks
     |=  tac=(list tank)
