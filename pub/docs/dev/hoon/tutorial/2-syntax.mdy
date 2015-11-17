@@ -244,6 +244,16 @@ ever.  In Hoon it's called a *kelp*.
 The head of a kelp (like `%dtzy` above) is called the *stem*.
 The tail (like `[%ux 42]`) is the *bulb*.
 
+> Think about how to encode tagged data in a noun.  It seems
+obvious that the noun is a cell, where the head of the cell is
+the tag (stem) and the tail is the data (bulb).  Then, all these
+nouns are cells whose head is an atom.  This leaves two noun
+shapes "out of band": atoms, and cells whose head is a cell.
+
+> Since no twig is an atom, a cell `[twig twig]` is always a cell
+whose head is a cell.  So we can distinguish "autocons" from all
+stem-bulb nouns, and assign it specific semantics.
+
 #### Runes and stems
 
 A *rune* is a digraph - a sequence of two ASCII glyphs.  If you
@@ -359,7 +369,7 @@ there are no fixed rules for doing it right.
 > Keep lines under 80 characters, though.  The parser doesn't
 enforce this yet.  But it will, so watch out!
 
-##### Backstep indentation
+#### Backstep indentation
 
 Note that the "variable declaration" metaphor of `=+` works
 perfectly here.  Because `[%hello planet]` -- despite being a

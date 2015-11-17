@@ -663,6 +663,7 @@
       %sag  +>(+> (se-blit fec))
       %sav  +>(+> (se-blit fec))
       %txt  $(fec [%tan [%leaf p.fec]~])
+      %url  +>(+> (se-blit fec))
     ==
   ::
   ++  ta-dog                                          ::  change cursor
