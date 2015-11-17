@@ -1,4 +1,4 @@
-::
+ ::
 ::::  /hoon/sole/sur
   !:
 |%
@@ -36,6 +36,7 @@
       [%tan p=(list tank)]                              ::  classic tank
   ::  [%taq p=tanq]                                     ::  modern tank
       [%txt p=tape]                                     ::  text line
+      [%url p=@t]                                       ::  activate url
   ==                                                    ::
 ++  sole-command                                        ::  command state
   $:  pos=@ud                                           ::  cursor position

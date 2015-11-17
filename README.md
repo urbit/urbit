@@ -55,6 +55,27 @@ Urbit can be installed on most Unix systems. There is no Windows
 port. Windows is a wonderful OS, we just haven't gotten to it yet.
 Use a VM.
 
+Configure swap if needed
+------------------------
+
+Urbit wants to map 2GB of memory when it boots up.  We won't
+necessarily use all this memory, we just want to see it.  On a
+normal modern PC or Mac, this is not an issue.  On some small
+cloud virtual machines (Amazon or Digital Ocean), the default
+memory configuration is smaller than this, and you need to
+manually configure a swapfile.
+
+To add swap to a DO droplet:
+
+https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04
+
+To add swap on an Amazon instance:
+
+http://stackoverflow.com/questions/17173972/how-do-you-add-swap-to-an-ec2-instance
+
+Don't spend a lot of time tweaking these settings; the simplest
+thing is fine.
+
 Install as a package
 --------------------
 
