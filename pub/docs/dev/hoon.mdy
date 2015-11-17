@@ -1,7 +1,7 @@
 ---
 logo: black
-title: Hoon
 sort: 2
+title: Hoon
 ---
 
 <div class="short">
@@ -12,6 +12,8 @@ Hoon is a strict, typed, pure functional language.  This site is served by an
 urbit written in Hoon.
 
 We're still developing the documentation; start with the
-bottom-up tutorial, ["Hoon 101"](hoon/tutorial).
+top-down, get-your-hands-dirty-fast
+[tutorial](hoon/top-down/0-quickstart) or
+go for the bottom-up tutorial, ["Hoon 101"](hoon/tutorial).
 
 </div>
