@@ -4,10 +4,7 @@
 /?    314
 /-    talk, sole
 /+    talk, sole
-/=    seed    /~    !>(.)
-/=    talk-doc    
-      /;  |=(a=wain (turn a |=(b=cord [%txt "? {(trip b)}"])))
-      /:  /===/pub/doc/talk/help  /txt/
+/=    seed  /~  !>(.)
 ::
 ::::
   ::
@@ -913,7 +910,7 @@
           %unset   (unset +.job)
           %target  (target +.job)
           %probe   (probe +.job)
-          %help    (help)
+          %help    help
           %say     (say +.job)
         ==
       ::
@@ -921,10 +918,12 @@
         |=  gam=telegram
         ^+  ..sh-work
         =+  tay=~(. tr man.she (~(has in settings.she) %noob) gam)
-        =.  ..sh-work  (sh-fact %tan tr-tang:tay)
+        =.  ..sh-work  (sh-fact tr-fact:tay)
         sh-prod(active.she `tr-pals:tay)
       ::
-      ++  help  |=(~ (sh-fact %mor talk-doc))           ::  %help
+      ++  help  
+        (sh-fact %txt "see http://urbit.org/docs/user/talk")
+      ::
       ++  glyph
         |=  idx=@
         =<  cha.ole
@@ -1597,7 +1596,7 @@
       pa-report-cabal
     ::
     ++  pa-cancel                                       ::  unsubscribe from
-      ~&  [%pa-cancel ost.hid]
+      ::  ~&  [%pa-cancel ost.hid]
       %_  .
         gramsers  (~(del by gramsers) ost.hid)
         groupers  (~(del in groupers) ost.hid)
@@ -1932,6 +1931,9 @@
           bou=bouquet
           sep=speech
       ==
+  ++  tr-fact  ^-  sole-effect                          ::  activate effect
+    ~[%mor [%tan tr-meta] tr-body]
+  ::
   ++  tr-line  ^-  tape                                 ::  one-line print
     =+  txt=(tr-text =(who our.hid))
     ?:  =(~ txt)  ""
@@ -1943,8 +1945,7 @@
         (~(sn-nick sn man [who (main who)]))
     (weld baw txt)
   ::
-  ++  tr-tang  ^-  tang
-    %+  welp  tr-sep-tang
+  ++  tr-meta  ^-  tang
     =.  wen  (sub wen (mod wen (div wen ~s0..0001)))     :: round
     =+  hed=leaf/"{(scow %uv sen)} at {(scow %da wen)}"
     =+  =<  paz=(turn (~(tap by aud)) .)
@@ -1952,18 +1953,17 @@
     =+  bok=(turn (sort (~(tap in bou)) aor) smyt)
     [%rose [" " ~ ~] [hed >who< [%rose [", " "to " ~] paz] bok]]~
   ::
-  ++  tr-sep-tang
-    |-  ^-  tang
-    =<  ?+(. . [@ *] [.]~)  ^-  ?(tank tang)            ::  wrap single tanks
-    ?+  -.sep  [>sep<]~
-      %exp  palm/[~ "#" " " ~]^~[leaf/(trip p.sep)]
-      %lin  leaf/"{?:(p.sep "" "@ ")}{(trip q.sep)}"
-      %non  ~
-      %app  rose/[": " ~ ~]^~[leaf/"[{(trip p.sep)}]" leaf/(trip q.sep)]
-      %tax  leaf/(rend-work-duty p.sep)
-      %url  palm/[~ "/" " " ~]^~[leaf/(earf p.sep)]
-      %mor  ?~(p.sep ~ (weld $(p.sep t.p.sep) $(sep i.p.sep)))
-      %fat  (welp (tr-rend-tors p.sep) $(sep q.sep))
+  ++  tr-body
+    |-  ^-  sole-effect
+    ?+  -.sep  tan/[>sep<]~
+      %exp  tan/~[leaf/"# {(trip p.sep)}"]
+      %lin  tan/~[leaf/"{?:(p.sep "" "@ ")}{(trip q.sep)}"]
+      %non  tan/~
+      %app  tan/~[rose/[": " ~ ~]^~[leaf/"[{(trip p.sep)}]" leaf/(trip q.sep)]]
+      %tax  tan/~[leaf/(rend-work-duty p.sep)]
+      %url  url/(crip (earf p.sep))
+      %mor  mor/(turn p.sep |=(speech ^$(sep +<)))
+      %fat  [%mor tan/(tr-rend-tors p.sep) $(sep q.sep) ~]
     ==
   ::
   ++  tr-rend-tors
@@ -2111,7 +2111,7 @@
 ++  pull                                                ::
   |=  [pax=path]
   ^-  [(list move) _+>]
-  ~&  [%talk-pull src.hid ost.hid pax]
+  ::  ~&  [%talk-pull src.hid ost.hid pax]
   =^  moz  +>.$  ra-abet:(ra-cancel:ra src.hid pax)
   [moz +>.$(shells (~(del by shells) ost.hid))]
 ::
