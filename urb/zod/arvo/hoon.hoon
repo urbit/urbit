@@ -7235,15 +7235,15 @@
         *           gen
     ==
   ::
-  ++  rake
-    ^-  wing
-    ?-  gen
-      [~ *]         [gen ~]
-      [%cnzy *]     [p.gen ~]
-      [%cnzz *]     p.gen
-      [%cnts * ~]   p.gen
-      [%zpcb *]     rake(gen q.gen)
-      *             ~|(%rake-twig !!)
+  ++  rake  ~|(%rake-twig (need reek))
+  ++  reek
+    ^-  (unit wing)
+    ?+  gen  ~
+      [~ *]         `[gen ~]
+      [%cnzy *]     `[p.gen ~]
+      [%cnzz *]     `p.gen
+      [%cnts * ~]   `p.gen
+      [%zpcb *]     reek(gen q.gen)
     ==
   ++  rusk
     ^-  term
@@ -9900,8 +9900,8 @@
     ^-  (unit twig)
     ?-    -.vil
         %col  [~ %tsgl ros p.vil]
-        %pel  [~ %cnts ~(rake ap ros) p.vil]
-        %pat  [~ %bcpt ~(rake ap ros) p.vil]
+        %pel  (bind ~(reek ap ros) |=(hyp=wing [%cnts hyp p.vil]))
+        %pat  (bind ~(reek ap ros) |=(hyp=wing [%bcpt hyp p.vil]))
         %ket  [~ ros p.vil]
         %tis  =+  tog=~(hock ap ros)
               ?:(=([%0 ~] tog) ~ [~ %ktts tog p.vil])
