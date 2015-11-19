@@ -142,8 +142,10 @@
         ==
       ::
         ;~  pfix  tis
-          %+  dp-variable  ;~(pose sym (cold %dir cen))
-          ;~(pfix ace dp-source)
+          ;~  pose
+            (dp-variable (cold %dir cen) ;~(pfix ace :(stag 0 %ex dp-rood)))
+            (dp-variable sym ;~(pfix ace dp-source))
+          ==
         ==
       ::
         ;~  pfix  fas 
@@ -219,7 +221,18 @@
     ++  dp-path    (tope he-beam)                       ::  ++path
     ++  dp-server  (stag 0 (most fas sym))              ::  ++dojo-server
     ++  dp-twig    tall:(vang | dp-path)                ::  ++twig
-    ++  dp-poor    poor:(vang | (tope dir))             ::  (list ++twig)
+    ++  dp-rood                                         ::  'dir' twig
+      =>  (vang | (tope dir))
+      ;~  pose
+        rood
+      ::
+        =-  ;~(pfix cen (stag %clsg -))                 ::  XX refactor ++scat
+        %+  sear  |=([a=@ud b=tyke] (posh ~ ~ a b))
+        ;~  pose
+          porc
+          (cook |=(a=(list) [(lent a) ~]) (star cen))
+        ==
+      ==
     ++  dp-value                                        ::  ++dojo-source
       ;~  pose
         (stag %ex dp-twig)
