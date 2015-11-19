@@ -95,7 +95,6 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'w': {
         u3_Host.ops_u.who_c = _main_presig(optarg);
         u3_Host.ops_u.nuu = c3y;
-        u3_Host.dir_c = strdup(1 + u3_Host.ops_u.who_c);
         break;
       }
       case 't': {
@@ -196,6 +195,10 @@ _main_getopt(c3_i argc, c3_c** argv)
         exit(1);
       }
     }
+  }
+
+  if ( argc != (optind + 1) && u3_Host.ops_u.who_c != 0 ) {
+    u3_Host.dir_c = strdup(1 + u3_Host.ops_u.who_c);
   }
 
   if ( argc != (optind + 1) ) {
