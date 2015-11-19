@@ -30,8 +30,8 @@ like `mycomet`.  Urbit will randomly generate a 128-bit plot:
     bin/urbit -c mycomet
 
 Either way, creating your urbit will take some time.  Some of
-this time involves creating keys; some of it involves downloading
-code over Urbit itself.
+this time involves generating keys; some of it involves
+downloading code over Urbit itself.
 
 If you turn off your pier at any time (either "nicely" with `^D`
 from talk or the dojo or by power-failure, oom-killer, or other
@@ -68,37 +68,14 @@ You'll see:
     4
     ~fintud-macrep:dojo>
 
-You can also run commands from the dojo.  Unix users should
-recognize some of these (`%` means current working directory).
+While there are some tools for interacting with urbit's
+filesystem direclty, often it's useful to edit urbit files from
+Unix.  Use `|mount` to set up a Dropbox-style sync directory in
+your pier directory:
 
-    > +ls %
-      ape/
-      arvo/
-      docs/
-      elem/hook
-      front/
-      gen/
-      index/hook
-      lib/
-      mar/
-      pub/
-      spec/nock/%/txt
-      sur/
-      tree/
-      tree-gen/tree-include/hook
-      try/readme/md
-    > +cat %/try/readme
-    /~nibrun-dozlyr-wictuc-folrex/home/~2015.11.17..21.22.58..ee8e/try/readme/md
-    /=try=/
- 
-    This is the try desk. Feel free to try out whatever you want here.
-
-Often it's useful to edit urbit files from Unix.  Use `|mount` to
-set up a Dropbox-style sync directory in your pier directory:
-
-    > |mount %
+    ~fintud-macrep:dojo> |mount %
     >=
-    > |unmount %
+    ~fintud-macrep:dojo> |unmount %
     >=
 
 Look inside your pier directory to find your files, and edit them
@@ -107,7 +84,7 @@ with your favorite Unix text editor.
 Sometimes you want to get files from another urbit.  There's two
 main commands to do this.
 
-    > |merge %my-examples ~wactex-ribmex %examples
+    ~fintud-macrep:dojo> |merge %examples ~wactex-ribmex %examples
     >=
     ; ~wactex-ribmex is your neighbor
     ; ~wactex-ribmex is your neighbor
@@ -115,7 +92,7 @@ main commands to do this.
     merged with strategy %init
 
 This pulls a bunch of examples from `~wactex-ribmex`'s `%examples`
-desk and puts them in our `%my-examples` desk.  A desk is a
+desk and puts them in our `%examples` desk.  A desk is a
 branch (in the git branch sense) of our filesystem.
 
 You can, of course, merge the examples into your `%home`
@@ -123,12 +100,12 @@ You can, of course, merge the examples into your `%home`
 while merging into an existing desk does an intelligent git-style
 merge, with conflict resolution and stuff.
 
-    > |sync %my-examples ~wactex-ribmex %examples
+    ~fintud-macrep:dojo> |sync %examples ~wactex-ribmex %examples
     >=
-    activated sync from %examples on ~wactex-ribmex to %my-examples
-    sync succeeded from %examples on ~wactex-ribmex to %my-examples
-    > |unsync %my-examples ~wactex-ribmex %examples
-    ended autosync from %examples on ~wactex-ribmex to %my-examples
+    activated sync from %examples on ~wactex-ribmex to %examples
+    sync succeeded from %examples on ~wactex-ribmex to %examples
+    ~fintud-macrep:dojo> |unsync %examples ~wactex-ribmex %examples
+    ended autosync from %examples on ~wactex-ribmex to %examples
 
 `|sync` does an initial `|merge`, then listens for changes on the
 foreign desk and runs `|merge` automatically whenever it changes.
@@ -138,19 +115,23 @@ course, unsync it, but this voids your warranty.
 
 You can change which desk is your current working directory with:
 
-    > =% /=my-examples
+    ~fintud-macrep:dojo> =dir /=examples
 
-When you change your desk all commands will be using the files
-from that desk.  Unfortunately, changing your working directory
-to anywhere but the top directory is currently
-[broken](http://github.com/urbit/urbit/issues/565).  If this
-is fixed when you're reading this, please submit a pull request
-for this document explaining how to do it!
+> `dir` is a special dojo variable, but you can also create your
+> own variables with the same syntax.  `=my-var (add 2 3)` allows
+> you to use `my-var` for `5` anywhere later on.
+
+When you change your desk all commands will use the files from
+that desk.  Unfortunately, changing your working directory to
+anywhere but the top directory is currently
+[broken](http://github.com/urbit/urbit/issues/565).  If this is
+fixed when you're reading this, please submit a pull request for
+this document explaining how to do it!
 
 The last command we'll discuss in this quickstart is `+moon`,
 which only works on planets.
 
-    > +moon
+    ~fintud-macrep:dojo> +moon
     "moon: ~ramnec-rossug-fintud-macrep; ticket: ~holtyl-mognyl-dostyp-moslud"
 
 This generates a random moon and ticket.  A moon is a subidentity
