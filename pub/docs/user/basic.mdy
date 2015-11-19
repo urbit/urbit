@@ -1,20 +1,10 @@
 ---
 next: true
-sort: 1
-title: Quickstart
+sort: 3
+title: Basic Operation
 ---
 
-# Quickstart
-
-If you're interested in programming in urbit, you've come to the
-right place.  This is a jump-in, get-your-hands-dirty,
-roll-in-the-mud-and-figure-things-out intro to programming hoon
-on urbit.
-
-The first thing to do, of course, is get an urbit up and running.
-The only ingredients are a Unix box and a pinch of courage, so
-check out the [installation
-instructions](http://urbit.org/docs/user/install) to get started.
+# Basic Operation
 
 Once urbit is installed, if you have an invitation, it's a planet
 like `~fintud-macrep` and a ticket like
