@@ -1,6 +1,6 @@
 ---
 logo: black
-sort: 2
+sort: 1
 title: Basic Hoon
 ---
 
@@ -14,10 +14,14 @@ Euler](https://projecteuler.net/) problem and
 [fizzbuzz](https://en.wikipedia.org/wiki/Fizz_buzz).
 
 To run this code, you'll need an urbit, and you'll need the
-`%examples` desk from `~wactex-ribmex`.  If you don't have an
-urbit running, check out the [dev quickstart](0-quickstart).  If
-you haven't pulled the examples desk from `~wactex-ribmex`, do so
-now:
+`%examples` desk from `~wactex-ribmex`.  If you haven't installed
+urbit yet, check out the [installation
+instructions](http://urbit.org/docs/user/install).  Once urbit is
+intalled, take a look at the [basic
+operation](http://urbit.org/docs/user/basic) of your urbit.
+
+If you haven't pulled the examples desk from `~wactex-ribmex`, do
+so now:
 
     ~fintud-macrep:dojo> |merge %examples ~wactex-ribmex %examples
     >=
