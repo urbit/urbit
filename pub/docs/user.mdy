@@ -1,7 +1,7 @@
 ---
 logo: black
-title: User doc
 sort: 1
+title: User doc
 ---
 
 <div class="short">
@@ -10,9 +10,9 @@ sort: 1
 
 Read the [introduction](user/intro) for a summary of Urbit.
 The [installation guide](user/install) gets you ready to run.
-The [launch procedure](user/launch) holds your hand as you create
-your server image.  Once your urbit is live, the [quickstart
-page](user/start) is all you need if in a hurry.
+Launch with [basic operation](user/basic) and get a feel for the
+system.  Once your urbit is live, the [walking tour](user/tour)
+shows how to do some common tasks.
 
 For power users, the [appliance handbook](user/appliance) explains
 your apps and how to control them.  The [filesystem handbook](user/clay) 
