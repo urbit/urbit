@@ -1,20 +1,10 @@
 ---
-title: Quickstart
-sort: 4
 next: true
+sort: 4
+title: Walking Tour
 ---
 
-# Quickstart
-
-To start your already-launched urbit, just run `urbit` with one
-argument, which is the pier directory (`$PIER`).  This is your
-planet name if you have a planet, or the name you used with `-c`
-if you have a comet:
-
-    bin/urbit fintud-macrep
-or
-
-    bin/urbit mycomet
+# Walking Tour
 
 Piers are portable.  You can move a pier anywhere.  But never,
 *ever* run the same urbit in two places at once.  (If you try to
@@ -23,31 +13,6 @@ pier, Urbit will kill the old process.)
 
 (Also, don't let the Unix filesystem it's on run out of disk.
 This is a known way to corrupt your urbit!  Sorry.)
-
-## Basic operation 
-
-Out of the box, your urbit is running two default appliances,
-`:dojo` (a shell or REPL) and `:talk`.  Switch between them with
-`^X`.  Note that all apps share an output log, but `^X` switches
-the prompt.
-
-`^D` from any default appliance exits the urbit process.
-
-## Compute: your `:dojo` appliance
-
-If your plot is `~fintud-macrep`, the dojo prompt is
-
-    ~fintud-macrep:dojo> 
-
-Type any Hoon expression at the command line and see the result:
-
-    ~fintud-macrep:dojo> (add 2 2)
-
-You'll see:
-
-    > (add 2 2)
-    4
-    ~fintud-macrep:dojo> 
 
 ### Dojo expressions, generators and operators
 
@@ -96,7 +61,8 @@ You're on the air!  You should see some backlog to give you
 context.  Please remember our code of conduct: don't be rude.
 Also, `urbit-meta` is politically correct and safe for work.
 
-For more instructions on how to use `:talk`, see the [`:talk` manual](http://urbit.org/docs/user/talk)
+For more instructions on how to use `:talk`, see the [`:talk`
+manual](http://urbit.org/docs/user/talk)
 
 ## Using the filesystem
 

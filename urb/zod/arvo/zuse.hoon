@@ -2389,6 +2389,7 @@
       [%mor ~]                                          ::  newline
       [%sag p=path q=*]                                 ::  save to jamfile
       [%sav p=path q=@]                                 ::  save to file
+      [%url p=@t]                                       ::  activate url
   ==                                                    ::
 ++  dill-belt                                           ::  new belt
   $%  [%aro p=?(%d %l %r %u)]                           ::  arrow key
@@ -2413,6 +2414,7 @@
       [%out p=(list ,@c)]                               ::  send output line
       [%sag p=path q=*]                                 ::  save to jamfile
       [%sav p=path q=@]                                 ::  save to file
+      [%url p=@t]                                       ::  activate url
   ==                                                    ::
 ++  flog                                                ::  sent to %dill
   $%  [%crud p=@tas q=(list tank)]                      ::
@@ -2427,6 +2429,7 @@
 ++  gift-dill                                           ::  out result <-$
   $%  [%bbye ~]                                         ::  reset prompt
       [%blit p=(list blit)]                             ::  terminal output
+      [%burl p=@t]                                      ::  activate url
       [%init p=@p]                                      ::  set owner
       [%logo ~]                                         ::  logout
       [%mass p=mass]                                    ::  memory usage
