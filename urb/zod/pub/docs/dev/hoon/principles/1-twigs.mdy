@@ -281,6 +281,6 @@ Can we use mutation to build a cyclical noun?  Nice try, but no:
 
 ## Progress
 
-Now, not only can we build a noun, we can get data out of it and
+Now, not only can you build a noun, you can get data out of it and
 even evolve new, related nouns.  We've still seen only two very
 restricted kinds of twigs: constants and legs.  In the [next chapter](2-syntax), we'll actually write some interesting expressions.
