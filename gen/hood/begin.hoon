@@ -18,7 +18,9 @@
     ==
 ^-  (sole-result (cask begs))
 ?.  =(safety %off)
-  %+  sole-yo  leaf/"|begin is deprecated, please use -w -t"
+  %+  sole-yo
+    :-  %leaf
+    "|begin is deprecated, please invoke urbit with -w [name] -t [ticket]"
   sole-no
 =-  ?~  arg  -
     =+  (fun.q.q his.arg)
