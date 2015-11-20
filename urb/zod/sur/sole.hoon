@@ -103,7 +103,7 @@
   [p=*(list tank) q=[%| p=[pul %get ~ ~] q=fun]]        ::
 ::                                                      ::
 ++  sole-no                                             ::  empty result
-  [p=*(list tank) q=~]                                  ::
+  [p=*(list tank) q=[%& ~]]                             ::
 ::                                                      ::
 ++  sole-go                                             ::  parse by rule
   |*  [sef=_rule fun=$+(* *)]                           ::
