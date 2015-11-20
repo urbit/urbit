@@ -222,6 +222,7 @@ _main_getopt(c3_i argc, c3_c** argv)
 static void
 u3_ve_usage(c3_i argc, c3_c** argv)
 {
+#if 0
   c3_c *use_c[] = {"Usage: %s [options...] computer\n",
     "-c pier       Create a new urbit in pier/\n",
     "-w name       Immediately upgrade to ~name\n",
@@ -246,9 +247,19 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-k stage      Start at Hoon kernel version stage\n",
     "-R            Report urbit build info\n",
     "-Xwtf         Skip last event\n"};
+#else
+  c3_c *use_c[] = {
+    "simple usage: \n",
+    "   %s -c <mycomet> to create a comet (anonymous urbit)\n",
+    "   %s -w <myplanet> -t <myticket> if you have a ticket\n",
+    "   %s <myplanet or mycomet> to restart an existing urbit\n",
+    0
+  };
+#endif
+
   c3_i i;
-  for ( i=0; i < sizeof(use_c)/sizeof(c3_c*); i++ ) {
-    fprintf(stderr,use_c[i],argv[0]);
+  for ( i=0; use_c[i]; i++ ) {
+    fprintf(stderr, use_c[i], argv[0]);
   }
   exit(1);
 }
@@ -382,6 +393,12 @@ main(c3_i   argc,
       fprintf(stderr, "tried to create, but %s already exists\n", u3_Host.dir_c);
       fprintf(stderr, "normal usage: %s %s\n", argv[0], u3_Host.dir_c);
       exit(1);
+    }
+  } else {
+    struct stat s;
+    if ( -1 == stat(u3_Host.dir_c, &s) ) {
+      fprintf(stderr, "%s: urbit not found\n", u3_Host.dir_c);
+      u3_ve_usage(argc, argv);
     }
   }
 

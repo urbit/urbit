@@ -1120,6 +1120,7 @@
 #   define c3__unix   c3_s4('u','n','i','x')
 #   define c3__unt    c3_s3('u','n','t')
 #   define c3__up     c3_s2('u','p')
+#   define c3__url    c3_s3('u','r','l')
 #   define c3__use    c3_s3('u','s','e')
 #   define c3__ut     c3_s2('u','t')
 #   define c3__uv     c3_s2('u','v')
