@@ -134,11 +134,11 @@ data]` pair.  Our new `span` mold:
 
 ### Structure of a core
 
-The core is a cell `[battery payload]`.  The payload is data, the
-battery is code -- a tree of Nock formulas.
+The core is a cell `[battery payload]`.  The battery is code,
+the payload is data-- a tree of Nock formulas.
 
-In the `%core` span, the payload is described by an arbitrary
-span.  The battery is described by a map of symbol to twig.
+In the `%core` span, the battery is described by an arbitrary
+span.  The payload is described by a map of symbol to twig.
 
 > Yes, the span contains the complete AST of the whole core.
 This is a very different approach from most typed languages,
