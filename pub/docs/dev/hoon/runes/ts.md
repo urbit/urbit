@@ -30,7 +30,7 @@ formula `a`. Used to make code more readable by making it flow vertically.
 `q`. 
 
 [`=-`]() Inverse of `=+`. Pushes data and code `q` on the subject
-for the formula `q`. 
+for the formula `p`.
 
 [`=|`]() Pushes the bunt of a tile `p` on the subject for the formula `q`. 
 
