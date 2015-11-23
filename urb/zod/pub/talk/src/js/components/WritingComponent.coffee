@@ -251,6 +251,9 @@ module.exports = recl
   _onChangeStore: -> @setState @stateFromStore()
 
   render: ->
+    if window.urb.user isnt window.urb.ship #foreign
+      return div {className:"writing"}
+    
     user = "~"+window.urb.user
     iden = StationStore.getMember(user)
     ship = if iden then iden.ship else user
@@ -262,7 +265,7 @@ module.exports = recl
       audi[k] = v.slice(1)
 
     k = "writing"
-
+    
     div {className:k}, [
       (div {className:"attr"}, [
         (React.createElement Member, iden)

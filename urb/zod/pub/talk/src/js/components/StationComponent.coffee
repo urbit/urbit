@@ -73,6 +73,9 @@ module.exports = recl
     StationActions.setSources @state.station,_sources
 
   render: ->
+    if window.urb.user isnt window.urb.ship #foreign
+      return div {id:"station"}
+    
     parts = []
     members = []
 

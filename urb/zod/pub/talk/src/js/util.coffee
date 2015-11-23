@@ -5,7 +5,7 @@ _.merge window.util,
   mainStationPath: (user = window.urb.user) -> 
     "~#{user}/#{window.util.mainStation(user)}"
 
-  mainStation: (user = window.urb.user) ->
+  mainStation: (user = window.urb.ship) ->
     switch user.length
       when 3
         return "court"

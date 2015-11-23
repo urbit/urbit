@@ -648,6 +648,11 @@ module.exports = recl({
   },
   render: function() {
     var _remove, _sources, members, parts, sourceCtrl, sourceInput, sources;
+    if (window.urb.user !== window.urb.ship) {
+      return div({
+        id: "station"
+      });
+    }
     parts = [];
     members = [];
     if (this.state.station && this.state.members) {
@@ -988,6 +993,11 @@ module.exports = recl({
   },
   render: function() {
     var audi, iden, k, name, ship, user, v;
+    if (window.urb.user !== window.urb.ship) {
+      return div({
+        className: "writing"
+      });
+    }
     user = "~" + window.urb.user;
     iden = StationStore.getMember(user);
     ship = iden ? iden.ship : user;
@@ -6719,7 +6729,7 @@ _.merge(window.util, {
   },
   mainStation: function(user) {
     if (user == null) {
-      user = window.urb.user;
+      user = window.urb.ship;
     }
     switch (user.length) {
       case 3:
