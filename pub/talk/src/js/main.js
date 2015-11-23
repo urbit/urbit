@@ -403,7 +403,7 @@ module.exports = recl({
       last: MessageStore.getLast(),
       fetching: MessageStore.getFetching(),
       listening: MessageStore.getListening(),
-      station: window.util.mainStation(),
+      station: window.talk.mainStation,
       stations: StationStore.getStations(),
       configs: StationStore.getConfigs(),
       typing: MessageStore.getTyping(),
@@ -573,7 +573,7 @@ module.exports = recl({
     return {
       audi: StationStore.getAudience(),
       members: StationStore.getMembers(),
-      station: window.util.mainStation(),
+      station: window.talk.mainStation,
       stations: StationStore.getStations(),
       configs: StationStore.getConfigs(),
       typing: StationStore.getTyping(),
@@ -830,8 +830,11 @@ module.exports = recl({
     return this.cursorAtEnd;
   },
   addCC: function(audi) {
-    var cc, i, len, listening, s;
-    listening = this.state.config[window.util.mainStation(window.urb.user)].sources;
+    var cc, i, len, listening, ref1, ref2, s;
+    if (window.urb.user !== window.urb.ship) {
+      return audi;
+    }
+    listening = (ref1 = (ref2 = this.state.config[window.util.mainStation(window.urb.user)]) != null ? ref2.sources : void 0) != null ? ref1 : [];
     cc = false;
     for (i = 0, len = audi.length; i < len; i++) {
       s = audi[i];
@@ -993,11 +996,6 @@ module.exports = recl({
   },
   render: function() {
     var audi, iden, k, name, ship, user, v;
-    if (window.urb.user !== window.urb.ship) {
-      return div({
-        className: "writing"
-      });
-    }
     user = "~" + window.urb.user;
     iden = StationStore.getMember(user);
     ship = iden ? iden.ship : user;
@@ -1067,7 +1065,6 @@ $(function() {
   var $c, MessagesComponent, StationActions, StationComponent, WritingComponent, rend;
   StationActions = require('./actions/StationActions.coffee');
   rend = React.render;
-  window.talk = {};
   window.talk.online = true;
   setInterval((function() {
     window.talk.online = window.urb.poll.dely < 500;

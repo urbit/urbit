@@ -108,7 +108,9 @@ module.exports = recl
     @cursorAtEnd
 
   addCC: (audi) ->
-    listening = @state.config[window.util.mainStation(window.urb.user)].sources
+    if window.urb.user isnt window.urb.ship #foreign
+      return audi
+    listening = @state.config[window.util.mainStation(window.urb.user)]?.sources ? []
     cc = false
     for s in audi
       if listening.indexOf(s) is -1
@@ -251,8 +253,8 @@ module.exports = recl
   _onChangeStore: -> @setState @stateFromStore()
 
   render: ->
-    if window.urb.user isnt window.urb.ship #foreign
-      return div {className:"writing"}
+    # if window.urb.user isnt window.urb.ship #foreign
+    #   return div {className:"writing"}
     
     user = "~"+window.urb.user
     iden = StationStore.getMember(user)
