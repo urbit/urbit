@@ -2,6 +2,15 @@
 ::
 ::::  /hook/hymn/fab/talk/pub/
   ::
+/+  talk
+/=  gas  /$  fuel                                       ::  get request info
+=+  ^-  man=span
+    ~|  bad-path/but.gas
+    %-  need
+    ?+  but.gas  ~
+      [@ ~]  ((sand %ta) i.but.gas)
+      ~      (some (main:talk (slav %p -:%)))
+    ==
 |%
 ++  cdnj
   |=  a=wall  ^-  marl
@@ -21,7 +30,7 @@
       "lodash.js/2.4.1/lodash.min.js"
       "react/0.13.1/react.js"
     ==
-    :: remove /~~ for anon
+    :: add /~~ for authenticated
     ;script(type "text/javascript", src "/~/at/home/lib/urb.js");
     ;meta(name "viewport", content "width=device-width, height=device-height, ".
      "initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0");
@@ -35,6 +44,7 @@
       ;div#writing-container;
       ;div#scrolling: BOTTOM
     ==
+    ;script: window.talk = {(pojo (joba 'mainStation' s/man))}
     ;script(type "text/javascript", src "/home/pub/talk/src/js/main.js");
   ==
 ==

@@ -10,7 +10,7 @@ module.exports = recl
   stateFromStore: -> {
     audi:StationStore.getAudience()
     members:StationStore.getMembers()
-    station:window.util.mainStation()
+    station:window.talk.mainStation
     stations:StationStore.getStations()
     configs:StationStore.getConfigs()
     typing:StationStore.getTyping()
