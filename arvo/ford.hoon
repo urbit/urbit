@@ -1388,7 +1388,7 @@
           %plan  (cope (abut:(meow p.kas q.kas) cof r.kas) faun)
           %reef  (faun cof pit)
           %ride
-        %+  cool  |.(leaf/"ford: build failed}")
+        %+  cool  |.(leaf/"ford: build failed")
         %+  cope  $(kas q.kas)
         %-  tabl-run
         |=  [cof=cafe cay=cage]
