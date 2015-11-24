@@ -673,7 +673,7 @@
       ?.  (~(has by sup.ged) ost)  .
       =+  soy=(~(get by qel.ged) ost)
       ?:  |(?=(~ soy) =(0 u.soy))  
-        ~&  [%ap-fill-under [our dap] q.q.pry ost]
+        ::  ~&  [%ap-fill-under [our dap] q.q.pry ost]
         +
       =.  u.soy  (dec u.soy)
       ::  ~&  [%ap-fill-sub [[our dap] q.q.pry ost] u.soy]
@@ -978,6 +978,8 @@
         (ap-lame %pour (ap-suck "pour: malformed card"))
       =+  cug=(ap-find [-.q.vax pax])
       ?~  cug
+        ?:  =(-.q.vax %went)
+          +>.$
         (ap-lame -.q.vax (ap-suck "pour: no {(trip -.q.vax)}: {<pax>}"))
       =^  tel  vel  (~(slot wa vel) 3 vax)
       =^  cam  +>.$
@@ -1049,7 +1051,7 @@
     ::
     ++  ap-pull                                         ::  load delete
       =+  wim=(~(get by sup.ged) ost)
-      ?~  wim  ~&(%ap-pull-none +)
+      ?~  wim  +  ::  ~&(%ap-pull-none +)
       =:  sup.ged  (~(del by sup.ged) ost)
           qel.ged  (~(del by qel.ged) ost)
         ==
@@ -1062,7 +1064,7 @@
       +>+
     ::
     ++  ap-kill                                         ::  queue kill
-      ~&  [%ap-kill dap ost]
+      ::  ~&  [%ap-kill dap ost]
       (ap-give:ap-pull %quit ~)
     ::
     ++  ap-take                                         ::  non-diff gall take
@@ -1070,7 +1072,7 @@
       ^+  +>
       =+  cug=(ap-find cog pax)
       ?~  cug
-        ~&  [%ap-take-none cog pax]
+        ::  ~&  [%ap-take-none cog pax]
         +>.$
       =^  cam  +>.$  
         %+  ap-call  q.u.cug

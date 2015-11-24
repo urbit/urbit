@@ -13,9 +13,15 @@
 [sole .]
 :-  %ask
 |=  $:  [now=@da eny=@uvI bec=beak]
-        [arg=_(scug *@ ~[his=*@p tic=*@p]) ~]
+        [arg=_(scug *@ ~[his=*@p tic=*@p])]
+        safety=?(%on %off)
     ==
 ^-  (sole-result (cask begs))
+?.  =(safety %off)
+  %+  sole-yo
+    :-  %leaf
+    "|begin is deprecated, please invoke urbit with -w [name] -t [ticket]"
+  sole-no
 =-  ?~  arg  -
     =+  (fun.q.q his.arg)
     ?~  +.arg  -

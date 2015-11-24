@@ -1125,12 +1125,25 @@ _term_ef_blit(u3_utty* uty_u,
       u3_noun pib = u3k(u3t(u3t(blt)));
       u3_noun jam;
 
-      fprintf(stderr, "jamming...\r\n");
       jam = u3ke_jam(pib);
-      fprintf(stderr, "jammed.\r\n");
 
       _term_it_save(u3k(u3h(u3t(blt))), jam);
     } break;
+
+    case c3__url: {
+      if ( c3n == u3ud(u3t(blt)) ) {
+        break;
+      } else {
+        c3_c* txt_c = u3r_string(u3t(blt));
+
+        _term_it_show_clear(uty_u);
+        _term_it_write_str(uty_u, txt_c);
+        free(txt_c);
+
+        _term_it_show_more(uty_u);
+        _term_it_refresh_line(uty_u);
+      }
+    }
   }
   u3z(blt);
 
