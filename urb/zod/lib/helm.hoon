@@ -54,6 +54,7 @@
     ++  pear                                          ::  poke fruit
       $%  [%hood-unsync desk ship desk]               ::
           [%talk-command command:talk]                ::
+          [%ask-mail cord]                            ::
           [%helm-hi cord]                             ::
       ==                                              ::
     --
@@ -87,6 +88,11 @@
   |=  [her=ship mes=(unit tape)]  =<  abet
   %^  emit  %poke  /helm/hi/(scot %p her)
   [[her %hood] %helm-hi ?~(mes '' (crip u.mes))]
+::
+++  poke-send-ask
+  |=  mel=cord  =<  abet
+  %^  emit  %poke  /helm/ask/(scot %p ~doznec)
+  [[~doznec %ask] %ask-mail mel]
 ::
 ++  poke-hi  |=(mes=@t abet:(emit %flog /di %text "< {<src>}: {(trip mes)}"))
 ++  coup-hi
