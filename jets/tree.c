@@ -352,8 +352,6 @@ static u3j_harm _mood__hoon__ut_bust_a[] = {{".2", u3wfu_bust}, {}};
 static u3j_harm _mood__hoon__ut_conk_a[] = {{".2", u3wfu_conk}, {}};
 static u3j_harm _mood__hoon__ut_crop_a[] = {{".2", u3wfu_crop}, {}};
 static u3j_harm _mood__hoon__ut_cull_a[] = {{".2", u3wfu_cull}, {}};
-static u3j_harm _mood__hoon__ut_find_a[] = {{".2", u3wfu_find}, {}};
-static u3j_harm _mood__hoon__ut_fink_a[] = {{".2", u3wfu_fink}, {}};
 static u3j_harm _mood__hoon__ut_fire_a[] = {{".2", u3wfu_fire}, {}};
 static u3j_harm _mood__hoon__ut_firm_a[] = {{".2", u3wfu_firm}, {}};
 static u3j_harm _mood__hoon__ut_fish_a[] = {{".2", u3wfu_fish}, {}};
@@ -379,8 +377,6 @@ static u3j_core _mood__hoon__ut_d[] =
     { "conk", _mood__hoon__ut_conk_a },
     { "crop", _mood__hoon__ut_crop_a },
     { "cull", _mood__hoon__ut_cull_a },
-    { "find", _mood__hoon__ut_find_a },
-    { "fink", _mood__hoon__ut_fink_a },
     { "fire", _mood__hoon__ut_fire_a },
     { "firm", _mood__hoon__ut_firm_a },
     { "fish", _mood__hoon__ut_fish_a },
