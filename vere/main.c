@@ -371,6 +371,13 @@ report(void)
   printf("libuv: %s\n", uv_version_string());
 }
 
+void
+_stop_exit(c3_i int_i)
+{
+  fprintf(stderr, "\r\n[received keyboard stop signal, exiting]\r\n");
+  u3_lo_bail();
+}
+
 c3_i
 main(c3_i   argc,
      c3_c** argv)
@@ -422,6 +429,10 @@ main(c3_i   argc,
       exit(1);
     }
   }
+
+  //  Handle SIGTSTP as if it was SIGTERM.
+  //
+  signal(SIGTSTP, _stop_exit);
 
   printf("~\n");
   //  printf("welcome.\n");
