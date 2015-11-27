@@ -6570,7 +6570,7 @@
 ::
 ++  slab
   |=  [cog=@tas typ=type]
-  !=(~ q:(~(fino ut typ) 0 %free `cog))
+  !=(~ q:(~(find ut typ) 0 %free `cog))
 ::
 ++  slob                                                ::  superficial arm
   |=  [cog=@tas typ=type]
@@ -7864,7 +7864,7 @@
       [['.' ~] ['-' ~] ~ ~]
     [[%leaf (mesc (trip paz))] duck ~]
   ::
-  ++  fino
+  ++  find
     |=  [dep=@ud way=?(%read %rite %both %free) cug=(unit term)]
     =+  gil=*(set type)
     |-  ^-  [p=@ud q=(unit post)]
@@ -7953,7 +7953,7 @@
     ^-  port
     ::  ~_  (dunk 'type')
     ~_  (show [%c 'find-limb'] ?~(cug '*' ?:(=(%$ u.cug) '$' [%a u.cug])))
-    =+  hoq=(fino dep way cug)
+    =+  hoq=(find dep way cug)
     ?~  q.hoq
       ~|(%find-none !!)
     (flee u.q.hoq)
@@ -7963,7 +7963,7 @@
     ^-  post
     ::  ~_  (dunk 'type')
     ~_  (show [%c 'find-limb'] ?:(=(%$ cog) '$' [%a cog]))
-    =+  hoq=(fino dep way `cog)
+    =+  hoq=(find dep way `cog)
     ?~  q.hoq
       ~|(%find-none !!)
     u.q.hoq
@@ -8904,7 +8904,7 @@
       [p.gav ?~(sap heh (face u.sap heh))]
     ::
         [| *]
-      =+  dob=`post`(need q:(fino p.i.peh %rite q.i.peh))
+      =+  dob=`post`(need q:(find p.i.peh %rite q.i.peh))
       ~|  [%tack-limb q.i.peh]
       ?:  ?=(%2 -.q.dob)
         =+  hoc=(peg axe p.dob)
