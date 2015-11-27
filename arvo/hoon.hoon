@@ -1,4 +1,4 @@
-!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::     
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject
@@ -83,7 +83,6 @@
           u=[p=(a +>-.b) q=[p=(hair -.b) q=(tape +.b)]] ::
 ++  limb  $|  term                                      ::
           $%  [%& p=axis]                               ::
-              [%| p=@ud q=term]                         ::
               [%2 p=@ud q=[~ term]]                     ::
           ==                                            ::
 ++  line  ,[p=[%leaf p=odor q=@] q=tile]                ::  %kelp case
@@ -7418,7 +7417,6 @@
     =+  ^=  poz  ^-  post
         ?-  -.i.peh
           &  [p.i.peh %& (peek %both p.i.peh)]
-          |  (finq p.i.peh %both q.i.peh)
           %2  (finq p.i.peh %both +.q.i.peh)
         ==
     |-  ^-  type
@@ -7426,7 +7424,6 @@
       ?-  -.q.poz
         0  ?-  -.i.peh
               &  ^$(peh t.peh)
-              |  (face q.i.peh ^$(peh t.peh, sut p.q.poz))
               %2  (face +.q.i.peh ^$(peh t.peh, sut p.q.poz))
            ==
         1  ^$(peh t.peh)
@@ -8864,11 +8861,6 @@
     ?-    i.hyp
         [& *]
       [(peg p.zar p.i.hyp) %& (peek(sut syp) way p.i.hyp)]
-    ::
-        [| *]
-      =>  .(sut syp)
-      =+  hud=(fink p.i.hyp way q.i.hyp)
-      [(peg p.zar p.hud) q.hud]
     ::
         [2 *]
       =>  .(sut syp)
