@@ -10,7 +10,8 @@
   !:                                                    ::    ::
 =>  |%                                                  ::  external structures
     ++  house                                           ::  all state
-      $:  %3
+      $:  %4
+          egg=@u                                        ::  command count
           hoc=(map bone session)                        ::  conversations
       ==                                                ::
     ++  session                                         ::  per conversation
@@ -161,7 +162,7 @@
     ++  dp-sink
       ;~  pose
         ;~(plug (cold %file tar) dp-beam)
-        ;~(plug (cold %flat pat) (most fas sym))
+        ;~(plug (cold %flat pat) (most fas qut))
         ;~(plug (cold %pill dot) (most fas sym))
         ;~(plug (cold %http lus) (easy %post) auri:epur)
         ;~(plug (cold %http hep) (easy %put) auri:epur)
@@ -734,9 +735,9 @@
       ^+  +>+>
       ?>  ?=(~ cud)
       ?:  ?=([%show 3] -.mad)
-        dy-over
+        he-easter:dy-over
       ?:  =(nex num)
-        dy-over
+        he-easter:dy-over
       dy-make(cud `[nex (~(got by job) nex)])
     --
   ::
@@ -760,6 +761,16 @@
       %|  [%| q.p.foy]
       %&  [%& p.foy]
     ==
+  ::
+  ++  he-easter                                         ::  hint messages
+    ^+  .
+    =.  egg  +(egg)
+    =-  ?~(msg ..he-diff (he-diff %tan leaf/u.msg ~))
+    ^-  msg=(unit tape)
+    ?+  (clan our.hid)  ~
+      %pawn  ?+  egg  ~
+        5  `":: To request a planet, run  |ask 'your@email.co'"
+    ==       ==  
   ::
   ++  he-abet                                           ::  resolve
     [(flop moz) %_(+> hoc (~(put by hoc) ost.hid +<+))]
@@ -946,13 +957,15 @@
       $%  [%0 p=(map bone session-0)]
           [%1 p=(map bone session-1)]
           [%2 p=(map bone session-1)]
+          [%3 p=(map bone session)]
       ==
   |=  old=(unit ?(house hoze))  ^+  [~ ..prep]
   ?~  old  `..prep
   ?-  -.u.old
-    %3  `..prep(+<+ u.old)
-    %2  `..prep(+<+ [%3 (~(run by p.u.old) |=(session-1 +<(poy ~)))])
-    %1  `..prep(+<+ [%3 (~(run by p.u.old) |=(session-1 +<(poy ~)))])
+    %4  `..prep(+<+ u.old)
+    %3  $(u.old %*(. *house hoc p.u.old))
+    %2  $(u.old [%3 (~(run by p.u.old) |=(session-1 +<(poy ~)))])
+    %1  $(u.old [%3 (~(run by p.u.old) |=(session-1 +<(poy ~)))])
     %0  =<  ^$(u.old [%1 (~(run by p.u.old) .)])
         |=  sos=session-0  ^-  session-1
         [-.sos [[our.hid syd.sos ud/0] /] |3.sos]
