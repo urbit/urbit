@@ -574,22 +574,18 @@
       ^+  .
       =+  [pyz=zip ful=*(set bone)]
       |-  ^+  +>
-      ?~  pyz
-        =+  ded=(~(tap in ful) ~)
-        |-  ^+  +>.^$
-        ?~  ded  +>.^$
-        %=    $
-            ded   t.ded
-            +>.^$
-          %=  ap-kill
-            ost      i.ded
-            q.q.pry  p:(~(got by sup.ged) i.ded)
-          ==
-        ==
-      ?.  ?=([%give %diff *] q.i.pyz)
-        $(pyz t.pyz)
-      =^  vad  +>  ap-fill(ost p.i.pyz)
-      $(pyz t.pyz, ful ?:(vad ful (~(put in ful) p.i.pyz)))
+      ?^  pyz
+        ?.  ?=([%give %diff *] q.i.pyz)
+          $(pyz t.pyz)
+        =^  vad  +>  ap-fill(ost p.i.pyz)
+        $(pyz t.pyz, ful ?:(vad ful (~(put in ful) p.i.pyz)))
+      =+  ded=(~(tap in ful) ~)
+      |-  ^+  +>.^$
+      ?~  ded  +>.^$
+      =>  %*(. $(ded t.ded) ost i.ded)
+      =+  tib=(~(get by sup.ged) ost)
+      ?~  tib  ~&([%ap-abut-bad-bone dap ost] ..ap-kill)
+      ap-kill(q.q.pry p.u.tib)
     ::
     ++  ap-aver                                         ::  cove to move
       |=  cov=cove
