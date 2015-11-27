@@ -609,9 +609,12 @@
     =.  rez  ['"' rez]
     =+  viz=(trip p.val)
     !.
-    |-
+    |-  ^-  tape
     ?~  viz  rez
-    (weld (jesc i.viz) $(viz t.viz))
+    =+  hed=(jesc i.viz)
+    ?:  ?=([@ ~] hed)                 :: common case
+      [i.hed $(viz t.viz)]            :: cons-and-tail
+    (weld hed $(viz t.viz))
  ::
       %o
     :-  '{'

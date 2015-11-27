@@ -103,6 +103,7 @@
 ++  poke-helm-reload-desk     (wrap poke-reload-desk):from-helm
 ++  poke-helm-reset           (wrap poke-reset):from-helm
 ++  poke-helm-send-hi         (wrap poke-send-hi):from-helm
+++  poke-helm-send-ask        (wrap poke-send-ask):from-helm
 ++  poke-helm-verb            (wrap poke-verb):from-helm
 ++  poke-helm-begin           (wrap poke-begin):from-helm
 ++  poke-hood-sync            (wrap poke-sync):from-kiln
