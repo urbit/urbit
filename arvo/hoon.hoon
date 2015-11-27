@@ -81,7 +81,11 @@
           ?@  +.b  ~                                    ::
           :-  ~                                         ::
           u=[p=(a +>-.b) q=[p=(hair -.b) q=(tape +.b)]] ::
-++  limb  $|(term $%([%& p=axis] [%| p=@ud q=term]))    ::
+++  limb  $|  term                                      ::
+          $%  [%& p=axis]                               ::
+              [%| p=@ud q=term]                         ::
+              [%2 p=@ud q=(unit term)]                  ::
+          ==                                            ::
 ++  line  ,[p=[%leaf p=odor q=@] q=tile]                ::  %kelp case
 ++  list  |*  a=_,*                                     ::  null-term list
           $|(~ [i=a t=(list a)])                        ::
