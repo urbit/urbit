@@ -573,6 +573,10 @@ static u3j_core _mood_d[] =
     {}
   };
 
+static u3j_core _k161_d[] =
+  { { "mood", 0, _mood_d },
+    {}
+  };
 static u3j_core _k162_d[] =
   { { "mood", 0, _mood_d },
     {}
@@ -583,6 +587,7 @@ static u3j_core _k163_d[] =
   };
 
 static u3j_core _d[] = {
+  { "k161", 0, _k161_d},
   { "k162", 0, _k162_d},
   { "k163", 0, _k163_d},
   {}
