@@ -1,4 +1,4 @@
-!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject
@@ -8166,22 +8166,23 @@
   ::
   ++  heal
     ~/  %heal
-    |=  [qog=(unit term) axe=axis ref=type]
+    |=  [qug=(unit (unit term)) axe=axis ref=type]
     ^-  type
     ?:  =(1 axe)
-      ?~  qog
+      ?~  qug
         ref
       |-  ^-  type
       ?-    sut
-          [%bull *]   ~&  %heal-bull
-                      ?:  =(u.qog p.p.sut)
+          [%bull *]   ?:  &(?=(^ u.qug) =(u.u.qug p.p.sut))
                         ref
                       (busk(sut $(sut q.sut)) p.p.sut q.p.sut)
           [%core *]   ref
-          [%face *]   ?.(=(u.qog p.sut) ~|('heal-name' !!) (face p.sut ref))
+          [%face *]   ?.  |(?=(~ u.qug) =(u.u.qug p.sut))
+                        ~|('heal-name' !!) 
+                      (face p.sut ref)
           [%fork *]   (fork $(sut p.sut) $(sut q.sut))
           [%hold *]   $(sut repo)
-          *           ~|([%name u.qog] ~|('heal-name' !!))
+          *           ~|([%name u.qug] ~|('heal-name' !!))
       ==
     =+  [now=(cap axe) lat=(mas axe)]
     =+  gil=*(set type)
@@ -8912,11 +8913,11 @@
         =+  hoc=(peg axe p.dob)
         =+  guh=$(peh t.peh, sut s.p.q.dob, axe (peg hoc r.p.q.dob))
         =+  zig=$(peh q.p.q.dob, sut q.q.dob, mur q.guh)
-        =+  zug=(heal [~ +.q.i.peh] p.dob (busk(sut q.zig) p.p.q.dob q.p.q.dob))
+        =+  zug=(heal `q.i.peh p.dob (busk(sut q.zig) p.p.q.dob q.p.q.dob))
         [p.guh zug]
       =+  wuf=(flay (flee dob))
       =+  gav=$(peh t.peh, sut q.wuf, axe (peg axe p.wuf))
-      [p.gav (heal [~ +.q.i.peh] p.wuf q.gav)]
+      [p.gav (heal `q.i.peh p.wuf q.gav)]
     ==
   ::
   ++  tock
