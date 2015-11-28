@@ -6570,7 +6570,7 @@
 ::
 ++  slab
   |=  [cog=@tas typ=type]
-  !=(~ q:(~(fino ut typ) 0 %free `cog))
+  !=(~ q:(~(find ut typ) 0 %free `cog))
 ::
 ++  slob                                                ::  superficial arm
   |=  [cog=@tas typ=type]
@@ -7267,7 +7267,7 @@
       %duck   duck
       %dune   dune
       %dunk   dunk
-      %fino   fino
+      %find   find
       %fire   fire
       %firm   firm
       %fish   fish
@@ -7417,7 +7417,7 @@
     =+  ^=  poz  ^-  post
         ?-  -.i.peh
           &  [p.i.peh %& (peek %both p.i.peh)]
-          |  (finq p.i.peh %both +.q.i.peh)
+          |  (finq p.i.peh %both q.i.peh)
         ==
     |-  ^-  type
     ?:  =(1 p.poz)
@@ -7865,8 +7865,8 @@
       [['.' ~] ['-' ~] ~ ~]
     [[%leaf (mesc (trip paz))] duck ~]
   ::
-  ++  fino
-    ~/  %fino
+  ++  find
+    ~/  %find
     |=  [dep=@ud way=?(%read %rite %both %free) cug=(unit term)]
     =+  gil=*(set type)
     |-  ^-  [p=@ud q=(unit post)]
@@ -7896,7 +7896,7 @@
       ?~  q.taf
         taf
       ?.  (park way p.u.q.taf)
-        ~|(%fino-park !!)
+        ~|(%find-park !!)
       [p.taf ~ (peg 3 p.u.q.taf) q.u.q.taf]
     ::
         [%cube *]
@@ -7916,7 +7916,7 @@
       ?:  (~(has in gil) p.sut)
         $(sut q.sut)
       =+  [hax=$(sut p.sut) yor=$(sut q.sut)]
-      ~|  %fino-fork
+      ~|  %find-fork
       ?:  =(hax yor)
         hax
       ?>  &(?=(^ q.hax) ?=(^ q.yor) =(p.hax p.yor) =(p.u.q.hax p.u.q.yor))
@@ -7949,25 +7949,25 @@
       $(gil (~(put in gil) sut), sut repo)
     ==
   ::
-  ++  finc
-    ~/  %finc
+  ++  fink
+    ~/  %fink
     |=  [dep=@ud way=?(%read %rite %both %free) cug=(unit term)]
     ^-  port
     ::  ~_  (dunk 'type')
-    ~_  (show [%c 'fino-limb'] ?~(cug '*' ?:(=(%$ u.cug) '$' [%a u.cug])))
-    =+  hoq=(fino dep way cug)
+    ~_  (show [%c 'find-limb'] ?~(cug '*' ?:(=(%$ u.cug) '$' [%a u.cug])))
+    =+  hoq=(find dep way cug)
     ?~  q.hoq
-      ~|(%fino-none !!)
+      ~|(%find-none !!)
     (flee u.q.hoq)
   ::
   ++  finq
-    |=  [dep=@ud way=?(%read %rite %both %free) cog=term]
+    |=  [dep=@ud way=?(%read %rite %both %free) cug=(unit term)]
     ^-  post
     ::  ~_  (dunk 'type')
-    ~_  (show [%c 'fino-limb'] ?:(=(%$ cog) '$' [%a cog]))
-    =+  hoq=(fino dep way `cog)
+    ~_  (show [%c 'find-limb'] ?~(cug '*' ?:(=(%$ u.cug) '$' [%a u.cug])))
+    =+  hoq=(find dep way cug)
     ?~  q.hoq
-      ~|(%fino-none !!)
+      ~|(%find-none !!)
     u.q.hoq
   ::
   ++  fire
@@ -8865,7 +8865,7 @@
     ::
         [| *]
       =>  .(sut syp)
-      =+  hud=(finc p.i.hyp way q.i.hyp)
+      =+  hud=(fink p.i.hyp way q.i.hyp)
       [(peg p.zar p.hud) q.hud]
     ==
   ::
@@ -8906,7 +8906,7 @@
       [p.gav ?~(sap heh (face u.sap heh))]
     ::
         [| *]
-      =+  dob=`post`(need q:(fino p.i.peh %rite q.i.peh))
+      =+  dob=`post`(need q:(find p.i.peh %rite q.i.peh))
       ~|  [%tack-limb q.i.peh]
       ?:  ?=(%2 -.q.dob)
         =+  hoc=(peg axe p.dob)
