@@ -3,7 +3,6 @@
 */
 #include "all.h"
 
-#if 0
   static u3_noun
   _fino_in(u3_noun van,
            u3_noun sut,
@@ -318,7 +317,7 @@
       }
     }
   }
-
+#if 0
   static u3_noun
   _find_in(u3_noun van,
            u3_noun sut,
@@ -620,6 +619,7 @@
   {
     return _find_in(van, sut, dep, way, cug, u3_nul);
   }
+#endif
 
   u3_noun
   _cqfu_fino(u3_noun van,
@@ -674,6 +674,7 @@
 
 /* boilerplate
 */
+#if 0
   u3_noun
   u3wfu_find(u3_noun cor)
   {
