@@ -57,7 +57,7 @@
     // u3t_push(u3nc(c3__mean, dun));
     u3t_push(u3nc(c3__mean, nuc));
     {
-      u3_noun hoq = u3qfu_fino(van, sut, dep, way, cug);
+      u3_noun hoq = u3qfu_find(van, sut, dep, way, cug);
       u3_noun fin = u3t(hoq);
 
       if ( u3_nul == fin ) {

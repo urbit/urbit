@@ -4,7 +4,7 @@
 #include "all.h"
 
   static u3_noun
-  _fino_in(u3_noun van,
+  _find_in(u3_noun van,
            u3_noun sut,
            u3_noun dep,
            u3_noun way,
@@ -26,7 +26,7 @@
         else {
           if ( (c3n == u3du(cug)) ||
                (c3n == u3r_sing(u3t(cug), u3h(p_sut))) ) {
-            return _fino_in(van, q_sut, dep, way, cug, gil);
+            return _find_in(van, q_sut, dep, way, cug, gil);
           }
           else {
             if ( 0 == dep ) {
@@ -36,7 +36,7 @@
                                u3nt(2, u3k(p_sut),
                                     u3k(q_sut))));
             } else {
-              return _fino_in(van, q_sut, u3qa_dec(dep), way, cug, gil);
+              return _find_in(van, q_sut, u3qa_dec(dep), way, cug, gil);
             }
           }
         }
@@ -45,13 +45,13 @@
         if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u3m_bail(c3__fail);
         } else {
-          u3_noun taf = _fino_in(van, p_sut, dep, way, cug, gil);
+          u3_noun taf = _find_in(van, p_sut, dep, way, cug, gil);
           u3_noun p_taf = u3h(taf);
           u3_noun q_taf = u3t(taf);
           u3_noun ret;
 
           if ( u3_nul == q_taf ) {
-            u3_noun bov = _fino_in(van, q_sut, p_taf, way, cug, gil);
+            u3_noun bov = _find_in(van, q_sut, p_taf, way, cug, gil);
             u3_noun p_bov = u3h(bov);
             u3_noun q_bov = u3t(bov);
 
@@ -107,7 +107,7 @@
           }
 
           if ( u3_nul == zem ) {
-            u3_noun taf = _fino_in(van, p_sut, dep, way, cug, gil);
+            u3_noun taf = _find_in(van, p_sut, dep, way, cug, gil);
             u3_noun p_taf = u3h(taf);
             u3_noun q_taf = u3t(taf);
 
@@ -184,7 +184,7 @@
       }
       case c3__cube: {
         u3_noun fop = u3qfu_repo(van, sut);
-        u3_noun pro = _fino_in(van, fop, dep, way, cug, gil);
+        u3_noun pro = _find_in(van, fop, dep, way, cug, gil);
 
         u3z(fop);
         return pro;
@@ -195,14 +195,14 @@
         }
 
         if ( (c3y == u3qdi_has(gil, q_sut)) ) {
-          return _fino_in(van, p_sut, dep, way, cug, gil);
+          return _find_in(van, p_sut, dep, way, cug, gil);
         }
         else if ( (c3y == u3qdi_has(gil, p_sut)) ) {
-          return _fino_in(van, q_sut, dep, way, cug, gil);
+          return _find_in(van, q_sut, dep, way, cug, gil);
         }
         else {
-          u3_noun hax = _fino_in(van, p_sut, dep, way, cug, gil);
-          u3_noun yor = _fino_in(van, q_sut, dep, way, cug, gil);
+          u3_noun hax = _find_in(van, p_sut, dep, way, cug, gil);
+          u3_noun yor = _find_in(van, q_sut, dep, way, cug, gil);
           u3_noun p_hax = u3h(hax);
           u3_noun p_yor = u3h(yor);
           u3_noun q_hax = u3t(hax);
@@ -307,7 +307,7 @@
         else {
           u3_noun zoc = u3qdi_put(gil, sut);
           u3_noun fop = u3qfu_repo(van, sut);
-          u3_noun pro = _fino_in(van, fop, dep, way, cug, zoc);
+          u3_noun pro = _find_in(van, fop, dep, way, cug, zoc);
 
           u3z(fop);
           u3z(zoc);
@@ -319,19 +319,19 @@
   }
 
   u3_noun
-  _cqfu_fino(u3_noun van,
+  _cqfu_find(u3_noun van,
              u3_noun sut,
              u3_noun dep,
              u3_noun way,
              u3_noun cug)
   {
-    return _fino_in(van, sut, dep, way, cug, u3_nul);
+    return _find_in(van, sut, dep, way, cug, u3_nul);
   }
 
 /* boilerplate
 */
   u3_noun
-  u3wfu_fino(u3_noun cor)
+  u3wfu_find(u3_noun cor)
   {
     u3_noun sut, dep, way, cug, van;
 
@@ -344,25 +344,25 @@
     {
       return u3m_bail(c3__fail);
     } else {
-      return _cqfu_fino(van, sut, dep, way, cug);
+      return _cqfu_find(van, sut, dep, way, cug);
     }
   }
 
   u3_noun
-  u3qfu_fino(u3_noun van,
+  u3qfu_find(u3_noun van,
              u3_noun sut,
              u3_noun dep,
              u3_noun way,
              u3_noun cug)
   {
-    c3_m    fun_m = c3__fino;
+    c3_m    fun_m = c3__find;
     u3_noun pro   = u3z_find_4(fun_m, sut, dep, way, cug);
 
     if ( u3_none != pro ) {
       return pro;
     }
     else {
-      pro = _cqfu_fino(van, sut, dep, way, cug);
+      pro = _cqfu_find(van, sut, dep, way, cug);
 
       return u3z_save_4(fun_m, sut, dep, way, cug, pro);
     }

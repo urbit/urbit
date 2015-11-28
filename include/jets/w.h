@@ -219,9 +219,7 @@
     u3_noun u3wfu_crop(u3_noun);
     u3_noun u3wfu_cull(u3_noun);
     u3_noun u3wfu_duck(u3_noun);
-    u3_noun u3wfu_finc(u3_noun);
     u3_noun u3wfu_find(u3_noun);
-    u3_noun u3wfu_fino(u3_noun);
     u3_noun u3wfu_fink(u3_noun);
     u3_noun u3wfu_fire(u3_noun);
     u3_noun u3wfu_firm(u3_noun);
