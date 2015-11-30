@@ -232,39 +232,50 @@
       ?~  p.sih  +>.$ 
       :: ~&  writ/tea
       =+  dap=(~(got by deh.bay) dep)
-      =-  ?~(dop con con(deh.bay (~(put by deh.bay) dep dop)))
-      ^-  [dop=$|(~ _dap) con=_+>.$]
+      =-  +>.$(mow mow, deh.bay ?~(dop deh.bay (~(put by deh.bay) dep dop)))
+      ^-  [dop=$|(~ _dap) mow=_mow]
       ?-    -.dap
-          %done  `+>.$                ::  writ redundant
+          %done  `mow                ::  writ redundant
           %init  ~|(never-subscribed/dep !!)
           %sent
-        =-  [[%done ~] +>.$(mow (weld - mow))]
-        ^-  (list move)
-        %+  weld  (turn (~(tap in p.dap)) |=(hen=duct [hen %give %news dep]))
-        =.  q.dap  (~(del in q.dap) bem)
-        %+  turn  (~(tap in q.dap))                     ::  cancel outstanding
-        |=  bem=beam
-        =.  tea  [(scot %p our) (scot %uv dep) (tope bem)]
-        [hen %pass tea %c %warp [our p.bem] q.bem ~]
+        :-  [%done ~]
+        ;:  weld
+          (axap dep (~(del in q.dap) bem))              ::  cancel outstanding
+          (turn (~(tap in p.dap)) |=(hen=duct [hen %give %news dep]))
+          mow
+    ==  ==
       ==
-    ==
+  ::
+  ++  axap                                              ::  unsubscribe beams
+    |=  [dep=@uvH dap=(set beam)]
+    %+  turn  (~(tap in dap))
+    |=  bem=beam
+    :^  hen  %pass  [(scot %p our) (scot %uv dep) (tope bem)]
+    [%c %warp [our p.bem] q.bem ~]
   ::
   ++  awap                                              ::  get next revision
     ~%  %ford-w  ..is  ~
-    |=  dep=@uvH
+    |=  [dep=@uvH ask=?]
     ?~  dep
       ~&(dep-empty/hen +>.$)
     ?:  =(dep 0vtest)                 ::  upstream testing
-      +>.$(mow :_(mow [hen %give %news dep]))
+      +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
     =+  dap=(~(get by deh.bay) dep)
     ?~  dap  ~&(dep-missed/dep +>.$)  ::  XX  ~|  !!
     :: ~&  awap/[dep u.dap]
     ?-  -.u.dap
-      %done  +>.$(mow :_(mow [hen %give %news dep]))
+      %done  +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
       %sent
-        =.  p.u.dap  (~(put in p.u.dap) hen)
-        +>.$(deh.bay (~(put by deh.bay) dep u.dap))
+        =.  p.u.dap  
+          ?:  ask  (~(put in p.u.dap) hen)
+          (~(del in p.u.dap) hen)
+        ?^  p.u.dap
+          +>.$(deh.bay (~(put by deh.bay) dep u.dap))
+        =.  mow  (weld (axap dep q.u.dap) mow)
+        +>.$(deh.bay (~(put by deh.bay) dep [%init q.u.dap]))
+    ::
       %init
+        ?.  ask  ~&(awap-kill-empty/dep +>.$)  :: crash?
         %_    +>.$
             deh.bay 
           (~(put by deh.bay) dep [%sent [hen ~ ~] p.u.dap])
