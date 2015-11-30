@@ -272,7 +272,7 @@
             [%smsg p=twig q=tusk]                       ::  gonads
             [%smsm p=tile q=twig]                       ::  make sure q is a p
           ::                                            ::::::  compositions
-            [%tsbr p=tile q=twig]                       ::  push bunt: =+(_p q)
+            [%tsbr p=tile q=twig]                       ::  push bunt: =+(*p q)
             [%tscl p=tram q=twig]                       ::  p changes, then q
             [%tscn p=twig q=twig]                       ::  XX not used
             [%tsdt p=wing q=twig r=twig]                ::  r with p set to q
