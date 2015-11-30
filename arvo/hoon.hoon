@@ -1,4 +1,4 @@
-::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::   
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject
@@ -29,7 +29,7 @@
 ++  axis  ,@                                            ::  tree address
 ++  also  ,[p=term q=wing r=type]                       ::  alias
 ++  bank  (list ,@cF)                                   ::  UTF-32 string
-++  base  ?([%atom p=odor] %noun %cell %bean %null)     ::  axils, @ * ^ ? ~
+++  base  ?([%atom p=odor] %noun %cell %bean %void %null)  
 ++  bean  ,?                                            ::  0=&=yes, 1=|=no
 ++  beer  $|(@ [~ p=twig])                              ::  simple embed
 ++  beet  $|  @                                         ::  advanced embed
@@ -216,7 +216,7 @@
             [%cbpm p=twig q=twig]                       ::  pairhead fork (bush)
             [%cbbr p=twig q=twig]                       ::  atom fork (reed)
             [%cbwt p=(list twig)]                       ::  untagged fork
-            [%cbzy p=term q=@]                          ::  symbol
+            [%cbzy p=stem]                          ::  symbol
             [%cbzz p=base]                              ::  base
           ::                                            ::::::  tuples
             [%clcb p=twig q=twig]                       ::  [q p]
@@ -326,6 +326,7 @@
             [%zpwt p=$|(p=@ [p=@ q=@]) q=twig]          ::  restrict hoon vers.
             [%zpzp ~]                                   ::  always crash
           ==                                            ::
+++  stem  (pair term ,@)                                ::
 ++  tine  (list ,[p=tile q=twig])                       ::
 ++  tusk  (list twig)                                   ::
 ++  tyre  (list ,[p=term q=twig])                       ::
@@ -6750,6 +6751,7 @@
         %noun      [%dttr [%dtzz %$ 0] [[%dtzz %$ 0] [%dtzz %$ 1]]]
         %cell      =+(nec=$(sec [%axil %noun]) [nec nec])
         %bean      [%dtts [%dtzz %$ 0] [%dtzz %$ 0]]
+        %void      [%zpzp ~]
         %null      [%dtzz %n %$]
       ==
     ::
@@ -6836,6 +6838,9 @@
             [%dtts [%dtzz %$ |] [~ axe]]
           [%dtzz %f |]
         [%dtzz %f &]
+      ::
+          %void
+        bunt
       ::
           %null
         bunt
@@ -6931,6 +6936,48 @@
       [@ *]            =+(neg=open ?:(=(gen neg) [%0 ~] $(gen neg)))
       [^ *]            =+  toe=[$(gen p.gen) $(gen q.gen)]
                        ?:(=(toe [[%0 ~] [%0 ~]]) [%0 ~] [%2 toe])
+    ==
+  ::
+  ++  bile
+    ^-  (each line tile)
+    =+  boil
+    ?:  ?=([[%leaf *] *] -)
+      [%& [%leaf p.p.- q.p.-] q.-]
+    [%| -]
+  ::
+  ++  boil
+    ^-  tile
+    ?+  gen  [%herb gen]
+    ::
+        [%cbbr *]  [%reed boil(gen p.gen) boil(gen q.gen)]
+        [%cbcl *]
+      |-  ^-  tile
+      ?~  p.gen  [%axil %null]
+      ?~  t.p.gen  boil(gen i.p.gen)
+      [boil(gen i.p.gen) $(p.gen t.p.gen)]
+    ::
+        [%cbcn *]
+      ?~  p.gen
+        [%axil %void]
+      ?~  t.p.gen
+        boil(gen i.p.gen)
+      =+  :*  def=bile(gen i.p.gen)
+              ^=  end  ^-  (list line)
+              %+  turn  `(list twig)`t.p.gen
+              |=(a=twig =+(bile(gen a) ?>(?=(%& -<) ->)))
+          ==
+      ?-  -.def
+        %&  [%kelp p.def end]
+        %|  ?~(end p.def [%fern p.def [%kelp end] ~])
+      ==
+    ::
+        [%cbpm *]  [%bush boil(gen p.gen) boil(gen q.gen)]
+        [%cbsg *]  [%weed p.gen]
+        [%cbwt *]  =+  (turn p.gen |=(a=twig boil(gen a)))
+                   ?~(- [%axil %void] [%fern -])
+        [%cbzy *]  [%leaf p.gen]
+        [%cbzz *]  [%axil p.gen]
+        [%zpcb *]  boil(gen q.gen)
     ==
   ::
   ++  open
