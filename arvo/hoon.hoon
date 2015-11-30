@@ -1,4 +1,4 @@
-::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::   
+!:::::  :::::::::::::::::::::::::::::::::::::::::::::::::::::: 
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject
@@ -213,9 +213,11 @@
             [%cbbr p=twig q=twig]                       ::  atom fork (reed)
             [%cbcl p=(list twig)]                       ::  tuple
             [%cbcn p=(list twig)]                       ::  tagged fork (kelp)
+            [%cbls p=twig q=twig]                       ::  function
             [%cbpm p=twig q=twig]                       ::  pairhead fork (bush)
             [%cbsg p=twig]                              ::  example
             [%cbwt p=(list twig)]                       ::  untagged fork
+            [%cbts p=term q=twig]                       ::  name
             [%cbzy p=stem]                              ::  symbol
             [%cbzz p=base]                              ::  base
           ::                                            ::::::  tuples
@@ -6978,7 +6980,9 @@
       ==
     ::
         [%cbpm *]  [%bush boil(gen p.gen) boil(gen q.gen)]
+        [%cbls *]  [%weed [%brts [%herb p.gen] [%bctr %herb q.gen]]]
         [%cbsg *]  [%weed p.gen]
+        [%cbts *]  [%bark p.gen boil(gen q.gen)]
         [%cbwt *]  =+  (turn p.gen |=(a=twig boil(gen a)))
                    ?~(- [%axil %void] [%fern -])
         [%cbzy *]  [%leaf p.gen]
@@ -9514,6 +9518,7 @@
       :-  '^'
         ;~  pose
           (stag %cnzz rope)
+          (cold [%cbzz %cell] ket)
         ==
       :-  '`'
         ;~  pfix  tec
@@ -9716,8 +9721,10 @@
                 :~  ['|' (rune bar %cbbr expb)]
                     [':' (rune col %cbcl exps)]
                     ['%' (rune cen %cbcn exps)]
+                    ['+' (rune lus %cbls expb)]
                     ['&' (rune pam %cbpm expb)]
                     ['~' (rune sig %cbsg expa)]
+                    ['=' (rune tis %cbts expg)]
                     ['?' (rune wut %cbwt exps)]
                 ==
               ==
@@ -9996,6 +10003,7 @@
             $%  [%tis p=twig]
                 [%col p=twig]
                 [%ket p=twig]
+                [%lus p=twig]
                 [%pat p=tile]
                 [%pel p=tram]
             ==
@@ -10006,6 +10014,8 @@
         %pel  (bind ~(reek ap ros) |=(hyp=wing [%cnts hyp p.vil]))
         %pat  (bind ~(reek ap ros) |=(hyp=wing [%bcpt hyp p.vil]))
         %ket  [~ ros p.vil]
+        %lus  =+  tog=~(hock ap ros)
+              ?.(?=(@ tog) ~ [~ %cbts tog p.vil])
         %tis  =+  tog=~(hock ap ros)
               ?:(=([%0 ~] tog) ~ [~ %ktts tog p.vil])
     ==
@@ -10018,6 +10028,7 @@
         ;~(plug (cold %tis tis) wide)
         ;~(plug (cold %col col) wide)
         ;~(plug (cold %ket ket) wide)
+        ;~(plug (cold %lus lus) wide)
         ;~(plug (cold %pat pat) hill)
         ;~  plug
           (easy %pel)
