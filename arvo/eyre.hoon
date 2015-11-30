@@ -24,7 +24,7 @@
           ==  ==                                        ::
               $:  %f                                    ::  to %ford
           $%  [%exec p=@p q=(unit ,[beak silk])]        ::
-              [%wasp p=@p q=@uvH]                       ::
+              [%wasp p=@p q=@uvH r=?]                   ::
           ==  ==                                        ::
               $:  %g                                    ::  to %gall
           $%  [%deal p=sock q=cush]                     ::  full transmission
@@ -940,13 +940,25 @@
       (~(get by (mo quy)) %oryx)
     ::
     ::
+    ++  del-dependency
+      |=  [a=@uvH b=(each duct ixor)]  ^+  done
+      ?~  a  done
+      =+  all=(~(get ju liz) a)
+      ?:  =(~ all)  done
+      =.  all  (~(del in all) b)
+      =.  liz  (~(put by liz) a all)
+      ?^  liz  done
+      =-  -(hen hen.+)
+      (pass-note(hen `~) on/~ %f [%wasp our a |])
+    ::
     ++  new-dependency
       |=  [a=@uvH b=(each duct ixor)]  ^+  done
       ?~  a  done
       =+  had=(~(has by liz) a)
       =.  liz  (~(put ju liz) a b)
       ?:  had  done
-      (pass-note on/~ %f [%wasp our a])
+      =-  -(hen hen.+)
+      (pass-note(hen `~) on/~ %f [%wasp our a &])
     ::
     ++  parse
       ^-  (each perk httr)
@@ -1118,7 +1130,7 @@
         =<  [%| (nice-json)]
         ?-  p.hem
           %put   (new-dependency q.hem %| ire)
-          %delt  done(liz (~(del ju liz) q.hem %| ire))
+          %delt  (del-dependency q.hem %| ire)
         ==
       ::
           %mess
