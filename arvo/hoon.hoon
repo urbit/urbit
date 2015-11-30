@@ -9678,7 +9678,7 @@
                 ^.  stet  ^.  limo
                 :~  ['|' (rune bar %tsbr expo)]
                     ['.' (rune dot %tsdt expq)]
-                    ['^' (rune ket %tskt expd)]
+                    ['^' (rune ket %tskt bono)]
                     [':' (rune col %tscl expp)]
                     ['<' (rune gal %tsgl expb)]
                     ['>' (rune gar %tsgr expb)]
@@ -9869,6 +9869,13 @@
             dem
             (ifix [sel ser] ;~(plug dem ;~(pfix ace dem)))
           ==
+          loaf
+        ==
+    ++  bono  |.                                        ::  term, wing, 2 twigs
+        ;~  gunk                                        ::  (as twigs)
+          (cook |=(cog=term [%cnzz [cog ~]]) sym)
+          (cook |=(hyp=wing [%cnzz hyp]) rope)
+          loaf
           loaf
         ==
     ++  bont  ;~  (bend)                                ::  term, optional twig
