@@ -209,6 +209,15 @@
             [%brtr p=tile q=twig]                       ::  vulcan. wet gate
             [%brts p=tile q=twig]                       ::  dry %gold gate
             [%brwt p=twig]                              ::  dry %lead trap
+          ::                                            ::::::  molds
+            [%cbsg p=twig]                              ::  example
+            [%cbcn p=(list twig)]                       ::  tagged fork (kelp)
+            [%cbcl p=(list twig)]                       ::  tuple
+            [%cbpm p=twig q=twig]                       ::  pairhead fork (bush)
+            [%cbbr p=twig q=twig]                       ::  atom fork (reed)
+            [%cbwt p=(list twig)]                       ::  untagged fork
+            [%cbzy p=term q=@]                          ::  symbol
+            [%cbzz p=base]                              ::  base
           ::                                            ::::::  tuples
             [%clcb p=twig q=twig]                       ::  [q p]
             [%clcn p=tusk]                              ::  [[p ~] ~]
