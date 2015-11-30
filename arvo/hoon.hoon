@@ -210,13 +210,13 @@
             [%brts p=tile q=twig]                       ::  dry %gold gate
             [%brwt p=twig]                              ::  dry %lead trap
           ::                                            ::::::  molds
-            [%cbsg p=twig]                              ::  example
-            [%cbcn p=(list twig)]                       ::  tagged fork (kelp)
-            [%cbcl p=(list twig)]                       ::  tuple
-            [%cbpm p=twig q=twig]                       ::  pairhead fork (bush)
             [%cbbr p=twig q=twig]                       ::  atom fork (reed)
+            [%cbcl p=(list twig)]                       ::  tuple
+            [%cbcn p=(list twig)]                       ::  tagged fork (kelp)
+            [%cbpm p=twig q=twig]                       ::  pairhead fork (bush)
+            [%cbsg p=twig]                              ::  example
             [%cbwt p=(list twig)]                       ::  untagged fork
-            [%cbzy p=stem]                          ::  symbol
+            [%cbzy p=stem]                              ::  symbol
             [%cbzz p=base]                              ::  base
           ::                                            ::::::  tuples
             [%clcb p=twig q=twig]                       ::  [q p]
@@ -6768,7 +6768,10 @@
       [%wtcl [%bczp %bean] ^$(sec i.p.sec) $(p.sec t.p.sec)]
     ::
         [%herb *]
-      (home [%tsgl [%cnzy %$] p.sec])
+      =+  cys=~(boil ap p.sec)
+      ?:  ?=(%herb -.cys)
+        (home [%tsgl [%cnzy %$] p.sec])
+      $(sec cys)
     ::
         [%kelp *]
       |-  ^-  twig
@@ -6870,7 +6873,10 @@
       $(i.p.sec i.t.p.sec, t.p.sec t.t.p.sec)
     ::
         [%herb *]
-      [%cnhp (home p.sec) [~ axe] ~]
+      =+  cys=~(boil ap p.sec)
+      ?:  ?=(%herb -.cys)
+        [%cnhp (home p.sec) [~ axe] ~]
+      $(sec cys)
     ::
         [%kelp *]
       %-  tun  |=  gon=*  =>  .(nag gon)
@@ -6977,6 +6983,9 @@
                    ?~(- [%axil %void] [%fern -])
         [%cbzy *]  [%leaf p.gen]
         [%cbzz *]  [%axil p.gen]
+        [%ktts *]  ?.  ?=(@ p.gen) 
+                     [%herb gen]      ::  XX dubious
+                   [%bark p.gen boil(gen q.gen)]
         [%zpcb *]  boil(gen q.gen)
     ==
   ::
@@ -7006,6 +7015,16 @@
         [%brhp *]  [%tsgl [%cnzy %$] [%brdt p.gen]]
         [%brts *]  [%brcb p.gen (~(put by *(map term foot)) %$ [%ash q.gen])]
         [%brwt *]  [%ktwt %brdt p.gen]
+    ::
+        [%cbbr *]  ~(clam al boil)
+        [%cbcl *]  ~(clam al boil)
+        [%cbcn *]  ~(clam al boil)
+        [%cbpm *]  ~(clam al boil)
+        [%cbsg *]  ~(clam al boil)
+        [%cbwt *]  ~(clam al boil)
+        [%cbzy *]  ~(clam al boil)
+        [%cbzz *]  ~(clam al boil)
+    ::
         [%clkt *]  [p.gen q.gen r.gen s.gen]
         [%clfs *]  =+(zoy=[%dtzz %ta %$] [%clsg [zoy [%clsg [zoy p.gen] ~]] ~])
         [%clls *]  [p.gen q.gen r.gen]
@@ -9403,8 +9422,18 @@
           :: (stag %zpcn (cold ~ ;~(plug zap cen)))
         ==
       :-  '$'
-        rump
-        ::  (cook |=(a=wing [%cnts a ~]) rope)
+        ;~  pose
+          ;~  pfix  buc
+            ;~  pose
+              (stag %cbzy (stag %tas (cold %$ buc)))
+              (stag %cbzy (stag %f (cold & pam)))
+              (stag %cbzy (stag %f (cold | bar)))
+              (stag %cbzy (stag %t qut))
+              (stag %cbzy (sear |=(a=coin ?:(?=(%$ -.a) (some +.a) ~)) nuck:so))
+            ==
+          ==
+          rump
+        ==
       :-  '%'
         ;~  pfix  cen
           ;~  pose
@@ -9415,7 +9444,6 @@
             (stag %dtzz (stag %t qut))
             (cook (jock &) nuck:so)
             (stag %clsg (sear |=(a=(list) (posh ~ ~ (lent a) ~)) (star cen)))
-            ::  (easy [%clsg (poof wer)])
           ==
         ==
       :-  '&'
@@ -9429,8 +9457,15 @@
         (stag %dtzy (stag %t qut))
       :-  '('
         (stag %cnhp (ifix [pel per] (most ace wide)))
+      :-  '{'
+        (stag %cbcl (ifix [kel ker] (most ace wide)))
       :-  '*'
-        (stag %bctr ;~(pfix tar hill))
+        ;~  pose
+          (stag %bctr ;~(pfix tar hill))
+          (cold [%cbzz %noun] tar)
+        ==
+      :-  '@'
+        ;~(pfix pat (stag %cbzz (stag %atom mota)))
       :-  '+'
         ;~  pose
           (stag %dtls ;~(pfix lus (ifix [pel per] wide)))
@@ -9672,6 +9707,18 @@
                     ['-' (rune hep %clhp expb)]
                     ['~' (rune sig %clsg exps)]
                     ['*' (rune tar %cltr exps)]
+                ==
+              ==
+            :-  '_'
+              ;~  pfix  cab
+                %-  stew
+                ^.  stet  ^.  limo
+                :~  ['|' (rune bar %cbbr expb)]
+                    [':' (rune col %cbcl exps)]
+                    ['%' (rune cen %cbcn exps)]
+                    ['&' (rune pam %cbpm expb)]
+                    ['~' (rune sig %cbsg expa)]
+                    ['?' (rune wut %cbwt exps)]
                 ==
               ==
             :-  '.'
