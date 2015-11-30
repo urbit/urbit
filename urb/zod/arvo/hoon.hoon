@@ -4603,7 +4603,7 @@
   |=  [[sub=* fol=*] sky=$+(* (unit))]
   (mook (mink [sub fol] sky))
 ::
-++  mork                              ::  XX name
+++  moop
   |=  pon=(list ,[@ta *])  ^+  pon
   ?~  pon  ~
   :-  i.pon
@@ -4629,7 +4629,7 @@
   ^-  toon
   ?.  ?=([2 *] ton)  ton
   :-  %2
-  =.  p.ton  (mork p.ton)
+  =.  p.ton  (moop p.ton)
   =+  yel=(lent p.ton)
   =.  p.ton
     ?.  (gth yel 256)  p.ton
