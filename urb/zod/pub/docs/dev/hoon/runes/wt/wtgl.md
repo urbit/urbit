@@ -45,3 +45,8 @@ Examples
     %foo
     ~zod/try=> ?<(=(0x1 1) %foo)
     ! exit
+
+Equivalent to
+-------------
+
+    ?:(p !! q)

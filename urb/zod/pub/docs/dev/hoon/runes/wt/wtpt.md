@@ -52,3 +52,8 @@ Examples
     ! exit
     ~zod/try=> ?@(`*`[1 1] 1 2)
     2 
+
+Equivalent to
+-------------
+
+    ?:(?=(@ p) q r)
