@@ -105,7 +105,7 @@ course, unsync it, but this voids your warranty.
 
 You can change which desk is your current working directory with:
 
-    ~fintud-macrep:dojo> =dir /=examples
+    ~fintud-macrep:dojo> =dir /=examples=
 
 > `dir` is a special dojo variable, but you can also create your
 > own variables with the same syntax.  `=my-var (add 2 3)` allows
