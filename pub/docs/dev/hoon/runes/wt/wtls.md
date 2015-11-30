@@ -101,5 +101,5 @@ covered, or the default.
           ==
     0
 
-This example shows how `?-` can fail. Our input icon must match the icon
+This example shows how `?+` can fail. Our input icon must match the icon
 of our cases.
