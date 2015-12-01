@@ -48,3 +48,8 @@ Here we use `=|` to generate the default value of a `@p`, which is
 
 Here we add the bunt of `a=[b=@ c=@]` and perform a very basic operation
 on it.
+
+Equivalent to
+-------------
+
+    =+(*p q)

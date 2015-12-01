@@ -73,3 +73,8 @@ the sum of the latter two as the second, and the differene as the third.
 In the first call you can see that our type information is lost, and we
 produce our cord as an atom. By adding a `^+  a` we cast the result to
 our input, and type information is retained.
+
+Equivalent to
+-------------
+
+    ^-(_p q)
