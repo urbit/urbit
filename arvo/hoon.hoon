@@ -212,11 +212,11 @@
             [%brwt p=twig]                              ::  dry %lead trap
           ::                                            ::::::  molds
             [%cbbr p=twig q=twig]                       ::  atom fork (reed)
+            [%cbcb p=twig]                              ::  example
             [%cbcl p=(list twig)]                       ::  tuple
             [%cbcn p=(list twig)]                       ::  tagged fork (kelp)
             [%cbls p=twig q=twig]                       ::  function
             [%cbpm p=twig q=twig]                       ::  pairhead fork (bush)
-            [%cbsg p=twig]                              ::  example
             [%cbwt p=(list twig)]                       ::  untagged fork
             [%cbts p=term q=twig]                       ::  name
             [%cbzy p=stem]                              ::  symbol
@@ -6960,6 +6960,7 @@
     ?+  gen  [%herb gen]
     ::
         [%cbbr *]  [%reed boil(gen p.gen) boil(gen q.gen)]
+        [%cbcb *]  [%weed p.gen]
         [%cbcl *]
       |-  ^-  tile
       ?~  p.gen  [%axil %null]
@@ -6983,7 +6984,6 @@
     ::
         [%cbpm *]  [%bush boil(gen p.gen) boil(gen q.gen)]
         [%cbls *]  [%weed [%brts [%herb p.gen] [%bctr %herb q.gen]]]
-        [%cbsg *]  [%weed p.gen]
         [%cbts *]  [%bark p.gen boil(gen q.gen)]
         [%cbwt *]  =+  (turn p.gen |=(a=twig boil(gen a)))
                    ?~(- [%axil %void] [%fern -])
@@ -7024,11 +7024,11 @@
         [%brwt *]  [%ktwt %brdt p.gen]
     ::
         [%cbbr *]  ~(clam al boil)
+        [%cbcb *]  ~(clam al boil)
         [%cbcl *]  ~(clam al boil)
         [%cbcn *]  ~(clam al boil)
         [%cbls *]  ~(clam al boil)
         [%cbpm *]  ~(clam al boil)
-        [%cbsg *]  ~(clam al boil)
         [%cbwt *]  ~(clam al boil)
         [%cbts *]  ~(clam al boil)
         [%cbzy *]  ~(clam al boil)
@@ -9731,11 +9731,11 @@
                 %-  stew
                 ^.  stet  ^.  limo
                 :~  ['|' (rune bar %cbbr expb)]
+                    ['_' (rune cab %cbcb expa)]
                     [':' (rune col %cbcl exps)]
                     ['%' (rune cen %cbcn exps)]
                     ['+' (rune lus %cbls expb)]
                     ['&' (rune pam %cbpm expb)]
-                    ['~' (rune sig %cbsg expa)]
                     ['=' (rune tis %cbts expg)]
                     ['?' (rune wut %cbwt exps)]
                 ==
