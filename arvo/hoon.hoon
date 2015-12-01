@@ -2370,7 +2370,7 @@
       ?:  (hor b n.a)
         [n.a $(a l.a) r.a]
       [n.a l.a $(a r.a)]
-    |-  ^-  _?($~ __(a))
+    |-  ^-  _?($~ {__(a)})
     ?~  l.a  r.a
     ?~  r.a  l.a
     ?:  (vor n.l.a n.r.a)
@@ -2468,7 +2468,7 @@
   ::
   +-  tap                                               ::  list tiles a set
     ~/  %tap
-    |=  b=(list ,_?>(?=(^ a) n.a))
+    |=  b+(list __(?>(?=(^ a) n.a)))
     ^+  b
     ?~  a
       b
