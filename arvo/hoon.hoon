@@ -206,6 +206,7 @@
             {$bczp p+base}                              ::  bunt an axil
           ::                                            ::::::  cores
             {$brcb p+tile q+(map term foot)}            ::  %gold tray, sample p
+            {$brcl p+twig q+twig}                       ::  %brts by example
             {$brcn p+(map term foot)}                   ::  %gold core, natural
             {$brdt p+twig}                              ::  dry %gold trap
             {$brfs p+tile q+(map term foot)}            ::  vulcan. %gold tray
@@ -483,9 +484,9 @@
   |=  a+@
   ^-  ?(%2 %3)
   ?-  a
-    %2        %2
-    %3        %3
-    ?(%0 %1)  !!
+    $2        %2
+    $3        %3
+    ?($0 $1)  !!
     *         $(a (div a 2))
   ==
 ::
@@ -501,7 +502,7 @@
 ::
 ++  div                                                 ::  divide
   ~/  %div
-  |=  {a+_~(`@`1) b+_~(`@`1)}
+  |:  [a=`@`1 b=`@`1]
   ^-  @
   ~|  'div'
   ?<  =(0 b)
@@ -550,10 +551,10 @@
   |=  a+@
   ^-  @
   ?-  a
-    1   !!
-    2   1
-    3   1
-    *   (add (mod a 2) (mul $(a (div a 2)) 2))
+    $1   !!
+    $2   1
+    $3   1
+    *    (add (mod a 2) (mul $(a (div a 2)) 2))
   ==
 ::
 ++  max                                                 ::  maximum
@@ -572,14 +573,14 @@
 ::
 ++  mod                                                 ::  remainder
   ~/  %mod
-  |=  {a+_~(`@`1) b+_~(`@`1)}
+  |:  [a=`@`1 b=`@`1]
   ^-  @
   ?<  =(0 b)
   (sub a (mul b (div a b)))
 ::
 ++  mul                                                 ::  multiply
   ~/  %mul
-  |=  [a=_`@`1 b=_`@`1]
+  |:  [a=`@`1 b=`@`1]
   ^-  @
   =+  c=0
   |-
@@ -588,7 +589,7 @@
 ::
 ++  peg                                                 ::  tree connect
   ~/  %peg
-  |=  [a=@ b=@]
+  |=  {a+@ b+@}
   ^-  @
   ?-  b
     1   a
@@ -7017,6 +7018,7 @@
         [%bctr *]  [%ktsg ~(bunt al p.gen)]
         [%bczp *]  [%bctr %axil p.gen]
         [%brcb *]  [%tsls [%bctr p.gen] [%brcn q.gen]]
+        [%brcl *]  [%tsls [%ktsg p.gen] [%brdt q.gen]]
         [%brdt *]  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
         [%brtr *]  [%brfs p.gen (~(put by *(map term foot)) %$ [%elm q.gen])]
         [%brfs *]  ~|  %elm-tile
