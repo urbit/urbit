@@ -195,17 +195,25 @@ To unbind `foo`:
     ~fintud-macrep:dojo> =foo
 
 The dojo has a set of special variables, some read-write and some
-read-only: `dir`, `lib`, `arc`, `now`, `our`.
+read-only: `dir`, `lib`, `arc`, `now`, `our`, `eny`.
 
-The read-write specials are `dir`, `lib` and `arc`. `dir` is the beak
-(revision-control branch) and directory this session is operating in, 
-and accessed with `%`. `lib` is a set of libraries, and `arc` a set
-of structures, to put in the Hoon subject.
+The read-write specials are `dir`, `lib` and `arc`. `dir` is the
+current working beak (`%clay` branch and revision) and directory. The
+current beak is often the invalid "version 0", which is shorthand for
+the most recent revision. If you need a valid `%clay` path, say, as an
+argument to `+ls`, use the special read-only variable `%`, which
+automatically expands this to the current time. If `dir` is unset,
+then the current working path is defaulted to the current revision of
+the `home` desk on your urbit.
 
-They can be set by `=%`, `/+`, and `/-` respectively
+`lib` is a set of libraries, and `arc` a set of structures, to put in
+the Hoon subject. Add libraries with the `%ford` rune `/+`, and
+structures with `/-`. Libraries will be loaded from the `lib`
+directory in the current beak, and structures from the `sur`
+directory.
 
-Read-only specials are `now`, the current (128-bit `@da`) time,
-and `our`, the current urbit.
+Read-only specials are `now`, the current (128-bit `@da`) time, `our`,
+the current urbit, and `eny`, 256 bits of fresh entropy.
 
 ##### `[%edit p=path q=dojo-recipe]`
 ##### `[%save p=path q=dojo-recipe]`
