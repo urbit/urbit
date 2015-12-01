@@ -9673,6 +9673,7 @@
                 ^.  stet  ^.  limo
                 :~  ['_' (rune cab %brcb expv)]
                     ['%' (rune cen %brcn expe)]
+                    [':' (rune col %brcl expb)]
                     ['.' (rune dot %brdt expa)]
                     ['/' (rune fas %brfs expv)]
                     ['-' (rune hep %brhp expa)]
