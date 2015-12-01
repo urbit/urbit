@@ -82,370 +82,377 @@
           ==                                            ::
 ++  gate  _+(* *)                                       ::  general gate
 ++  hair  {p+@ud q+@ud}                                 ::  parsing trace
-++  like  |*  a=_,*                                     ::  generic edge
-          |=  b=_`*`[(hair) ~]                          ::
+++  like  |*  a+_+(* *)                                 ::  generic edge
+          |=  b+_~(`*`[(hair) ~])                       ::
           :-  p=(hair -.b)                              ::
           ^=  q                                         ::
           ?@  +.b  ~                                    ::
           :-  ~                                         ::
           u=[p=(a +>-.b) q=[p=(hair -.b) q=(tape +.b)]] ::
-++  limb  $|(term $%([%& p=axis] [%| p=@ud q=term]))    ::
-++  line  ,[p=[%leaf p=odor q=@] q=tile]                ::  %kelp case
-++  list  |*  a=_,*                                     ::  null-term list
-          $|(~ [i=a t=(list a)])                        ::
-++  lone  |*(a=$+(* *) ,p=a)                            ::  just one thing
-++  mane  $|(@tas [@tas @tas])                          ::  XML name/space
-++  manx  ,[g=marx c=marl]                              ::  XML node
+++  limb  _|(term _%({$& p+axis} {$| p+@ud q+term}))    ::
+++  line  {p+{$leaf p+odor q+@} q+tile}                 ::  %kelp case
+++  list  |*  a+_+(* *)                                 ::  null-term list
+          _|($~ {i+a t+(list a)})                       ::
+++  lone  |*(a+_+(* *) p+a)                             ::  just one thing
+++  mane  _|(@tas {@tas @tas})                          ::  XML name/space
+++  manx  {g+marx c+marl}                               ::  XML node
 ++  marl  (list manx)                                   ::  XML node list
-++  mars  ,[t=[n=%$ a=[i=[n=%$ v=tape] t=~]] c=~]       ::  XML cdata
-++  mart  (list ,[n=mane v=tape])                       ::  XML attributes
-++  marx  ,[n=mane a=mart]                              ::  XML tag
-++  metl  ?(%gold %iron %zinc %lead)                    ::  core variance
-++  noun  ,*                                            ::  any noun
-++  null  ,~                                            ::  null, nil, etc
-++  odor  ,@ta                                          ::  atom format
-++  tarp  ,[d=@ud h=@ud m=@ud s=@ud f=(list ,@ux)]      ::  parsed time
-++  time  ,@da                                          ::  galactic time
-++  tree  |*  a=_,*                                     ::  binary tree
-          $|(~ [n=a l=(tree a) r=(tree a)])             ::
-++  nail  ,[p=hair q=tape]                              ::  parsing input
-++  numb  ,@                                            ::  just a number
-++  pair  |*([a=$+(* *) b=$+(* *)] ,[p=a q=b])          ::  just a pair
-++  quid  |*([a=$+(* *) b=*] ,[a _b])                   ::  for =^
-++  quip  |*([a=$+(* *) b=*] ,[(list a) _b])            ::  for =^
-++  wand  |*  a=(pole $+(* *))                          ::  hetero list
+++  mars  {t+{n+$$ a+{i+{n+$$ v+tape} t+$~}} c+$~}      ::  XML cdata
+++  mart  (list {n+mane v+tape})                        ::  XML attributes
+++  marx  {n+mane a+mart}                               ::  XML tag
+++  metl  ?($gold $iron $zinc $lead)                    ::  core variance
+++  noun  *                                             ::  any noun
+++  null  $~                                            ::  null, nil, etc
+++  odor  @ta                                           ::  atom format
+++  tarp  {d+@ud h+@ud m+@ud s+@ud f+(list @ux)}        ::  parsed time
+++  time  @da                                           ::  galactic time
+++  tree  |*  a+_+(* *)                                 ::  binary tree
+          _|($~ {n+a l+(tree a) r+(tree a)})            ::
+++  nail  {p+hair q+tape}                               ::  parsing input
+++  numb  @                                             ::  just a number
+++  pair  |*({a+_+(* *) b+_+(* *)} {p+a q+b})           ::  just a pair
+++  quid  |*({a+_+(* *) b+*} {a _~(b)})                 ::  for =^
+++  quip  |*({a+_+(* *) b+*} {(list a) _~(b)})          ::  for =^
+++  wand  |*  a+(pole _+(* *))                          ::  hetero list
           |=  b=*                                       ::
           ?~  a  ~                                      ::
           ?@  b  ~                                      ::
           [i=(-.a -.b) t=$(a +.a, b +.b)]               ::
-++  pass  ,@                                            ::  public key
+++  pass  @                                             ::  public key
 ++  path  (list span)                                   ::  filesys location
-++  pint  ,[p=[p=@ q=@] q=[p=@ q=@]]                    ::  line/column range
-++  pole  |*  a=_,*                                     ::  nameless list
-          $|(~ [a (pole a)])                            ::
-++  port  $:  p=axis                                    ::
-              $=  q                                     ::
-              $%  [%& p=type]                           ::
-                  [%| p=axis q=(list ,[p=type q=foot])] ::
+++  pint  {p+{p+@ q+@} q+{p+@ q+@}}                     ::  line/column range
+++  pole  |*  a+_+(* *)                                 ::  nameless list
+          _|($~ {a (pole a)})                           ::
+++  port  _:  p+axis                                    ::
+              _=  q                                     ::
+              _%  {$& p+type}                           ::
+                  {$| p+axis q+(list {p+type q+foot})}  ::
               ==                                        ::
           ==                                            ::
-++  post  $:  p=axis                                    ::
-              $=  q                                     ::
-              $%  [0 p=type]                            ::
-                  [1 p=axis q=(list ,[p=type q=foot])]  ::
-                  [2 p=twin q=type]                     ::
+++  post  _:  p+axis                                    ::
+              _=  q                                     ::
+              _%  {$0 p+type}                           ::
+                  {$1 p+axis q+(list {p=type q=foot})}  ::
+                  {$2 p+twin q+type}                    ::
               ==                                        ::
           ==                                            ::
-++  prop  $:  p=axis                                    ::
-              $=  q                                     ::
-              [p=?(~ axis) q=(list ,[p=type q=foot])]   ::
+++  prop  _:  p+axis                                    ::
+              _=  q                                     ::
+              {p=?($~ axis) q+(list {p+type q+foot})}   ::
           ==                                            ::
-++  qual  |*  [a=$+(* *) b=$+(* *) c=$+(* *) d=$+(* *)] ::  just a quadruple
-          ,[p=a q=b r=c s=d]                            ::
-                                                        ::  XX move to zuse
-++  ring  ,@                                            ::  private key
-++  rule  |=(tub=nail `edge`[p.tub ~ ~ tub])            ::  parsing rule
-++  span  ,@ta                                          ::  text-atom (ASCII)
-++  spot  ,[p=path q=pint]                              ::  range in file
+++  qual  |*  {a+_+(* *) b+_+(* *) c+_+(* *) d+_+(* *)} ::  just a quadruple
+          {p+a q+b r+c s+d}                             ::
+++  ring  @                                             ::  private key
+++  rule  |=(tub+nail `edge`[p.tub ~ ~ tub])            ::  parsing rule
+++  span  @ta                                           ::  text-atom (ASCII)
+++  spot  {p+path q+pint}                               ::  range in file
 ++  tang  (list tank)                                   ::  bottom-first error
-++  tank  $%  [%leaf p=tape]                            ::  printing formats
-              $:  %palm                                 ::  backstep list
-                  p=[p=tape q=tape r=tape s=tape]       ::
-                  q=(list tank)                         ::
+++  tank  _%  {$leaf p+tape}                            ::  printing formats
+              _:  $palm                                 ::  backstep list
+                  p+{p+tape q+tape r+tape s+tape}       ::
+                  q+(list tank)                         ::
               ==                                        ::
-              $:  %rose                                 ::  flat list
-                  p=[p=tape q=tape r=tape]              ::  mid open close
-                  q=(list tank)                         ::
+              _:  $rose                                 ::  flat list
+                  p+{p+tape q+tape r+tape}              ::  mid open close
+                  q+(list tank)                         ::
               ==                                        ::
           ==                                            ::
-++  tanq                                                ::  modern tank
-          $?  [~ p=(list tanq)]                         ::  list of printables
-              [~ ~ p=tape]                              ::  simple string
-              (pair ,@tas tanq)                         ::  captioned
+++  tanq                                                ::  future tank   
+          _?  {$~ p+(list tanq)}                        ::  list of printables
+              {$~ $~ p+tape}                            ::  simple string
+              (pair @tas tanq)                          ::  captioned
           ==                                            ::
-++  tape  (list char)                                   ::  like a string
-++  term  ,@tas                                         ::  Hoon ASCII subset
+++  tape  (list char)                                   ::  string as list
+++  term  @tas                                          ::  ascii symbol
 ++  tiki                                                ::  test case
-          $%  [& p=(unit term) q=wing]                  ::  simple wing
-              [| p=(unit term) q=twig]                  ::  named wing
+          _%  {$& p+(unit term) q+wing}                 ::  simple wing
+              {$| p+(unit term) q+twig}                 ::  named wing
           ==                                            ::
-++  tile  $&  [p=tile q=tile]                           ::  ordered pair
-          $%  [%axil p=base]                            ::  base type
-              [%bark p=term q=tile]                     ::  name
-              [%bush p=tile q=tile]                     ::  pair/tag
-              [%fern p=[i=tile t=(list tile)]]          ::  plain selection
-              [%herb p=twig]                            ::  gate
-              [%kelp p=[i=line t=(list line)]]          ::  tag selection
-              [%leaf p=term q=@]                        ::  constant atom
-              [%reed p=tile q=tile]                     ::  atom/cell
-              [%weed p=twig]                            ::  example
+++  tile  _&  {p+tile q+tile}                           ::  ordered pair
+          _%  {$axil p+base}                            ::  base type
+              {$bark p+term q+tile}                     ::  name
+              {$bush p+tile q+tile}                     ::  pair/tag
+              {$fern p+{i+tile t+(list tile)}}          ::  plain selection
+              {$herb p+twig}                            ::  gate
+              {$kelp p+{i+line t+(list line)}}          ::  tag selection
+              {$leaf p+term q+@}                        ::  constant atom
+              {$reed p+tile q+tile}                     ::  atom/cell
+              {$weed p+twig}                            ::  example
           ==                                            ::
 ++  toga                                                ::  face control
-          $|  p=term                                    ::  two togas
-          $%  [0 ~]                                     ::  no toga
-              [1 p=term q=toga]                         ::  deep toga
-              [2 p=toga q=toga]                         ::  cell toga
+          _|  p+term                                    ::  two togas
+          _%  {$0 $~}                                   ::  no toga
+              {$1 p+term q+toga}                        ::  deep toga
+              {$2 p+toga q+toga}                        ::  cell toga
           ==                                            ::
-++  trap  |*(a=_,* ,_|?(*a))                            ::  makes perfect sense
-++  trel  |*  [a=$+(* *) b=$+(* *) c=$+(* *)]           ::  just a triple
-          ,[p=a q=b r=c]                                ::
+++  trap  |*(a+_+(* *) _~(a))                           ::  makes perfect sense
+++  trel  |*  {a+_+(* *) b+_+(* *) c+_+(* *)}           ::  just a triple
+          {p+a q+b r+c}                                 ::
 ++  tuna                                                ::  tagflow
-          $%  [%a p=twig]                               ::  plain text
-              [%b p=twig]                               ::  single tag
-              [%c p=twig]                               ::  simple list
-              [%d p=twig]                               ::  dynamic list
-              [%e p=twig q=(list tuna)]                 ::  element
-              [%f p=(list tuna)]                        ::  subflow
+          _%  {$a p+twig}                               ::  plain text
+              {$b p+twig}                               ::  single tag
+              {$c p+twig}                               ::  simple list
+              {$d p+twig}                               ::  dynamic list
+              {$e p+twig q+(list tuna)}                 ::  element
+              {$f p+(list tuna)}                        ::  subflow
           ==                                            ::
-++  twig  $&  [p=twig q=twig]                           ::
-          $%                                            ::
-            [%$ p=axis]                                 ::  simple leg
+++  twig  _&  {p+twig q+twig}                           ::
+          _%                                            ::
+            {$$ p+axis}                                 ::  simple leg
           ::                                            ::::::  tiling
-            [%bccm p=tile]                              ::  clam a tile
-            [%bcpt p=wing q=tile]                       ::  whip p into q
-            [%bctr p=tile]                              ::  bunt a tile w/ ^~
-            [%bczp p=base]                              ::  bunt an axil
+            {$bccm p+tile}                              ::  clam a tile
+            {$bcpt p+wing q+tile}                       ::  whip p into q
+            {$bctr p+tile}                              ::  bunt a tile w/ ^~
+            {$bczp p+base}                              ::  bunt an axil
           ::                                            ::::::  cores
-            [%brcb p=tile q=(map term foot)]            ::  %gold tray, sample p
-            [%brcn p=(map term foot)]                   ::  %gold core, natural
-            [%brdt p=twig]                              ::  dry %gold trap
-            [%brfs p=tile q=(map term foot)]            ::  vulcan. %gold tray
-            [%brkt p=twig q=(map term foot)]            ::  %gold book
-            [%brhp p=twig]                              ::  kick dry %gold trap
-            [%brls p=tile q=twig]                       ::  dry %iron gate
-            [%brpt p=tile q=tile r=twig]                ::  XX not used
-            [%brtr p=tile q=twig]                       ::  vulcan. wet gate
-            [%brts p=tile q=twig]                       ::  dry %gold gate
-            [%brwt p=twig]                              ::  dry %lead trap
+            {$brcb p+tile q+(map term foot)}            ::  %gold tray, sample p
+            {$brcn p+(map term foot)}                   ::  %gold core, natural
+            {$brdt p+twig}                              ::  dry %gold trap
+            {$brfs p+tile q+(map term foot)}            ::  vulcan. %gold tray
+            {$brkt p+twig q+(map term foot)}            ::  %gold book
+            {$brhp p+twig}                              ::  kick dry %gold trap
+            {$brls p+tile q+twig}                       ::  dry %iron gate
+            {$brpt p+tile q+tile r+twig}                ::  XX not used
+            {$brtr p+tile q+twig}                       ::  vulcan. wet gate
+            {$brts p+tile q+twig}                       ::  dry %gold gate
+            {$brwt p+twig}                              ::  dry %lead trap
           ::                                            ::::::  molds
-            [%cbbr p=twig q=twig]                       ::  atom fork (reed)
-            [%cbcl p=(list twig)]                       ::  tuple
-            [%cbcn p=(list twig)]                       ::  tagged fork (kelp)
-            [%cbls p=twig q=twig]                       ::  function
-            [%cbpm p=twig q=twig]                       ::  pairhead fork (bush)
-            [%cbsg p=twig]                              ::  example
-            [%cbwt p=(list twig)]                       ::  untagged fork
-            [%cbts p=term q=twig]                       ::  name
-            [%cbzy p=stem]                              ::  symbol
-            [%cbzz p=base]                              ::  base
+            {$cbbr p+twig q+twig}                       ::  atom fork (reed)
+            {$cbcl p+(list twig)}                       ::  tuple
+            {$cbcn p+(list twig)}                       ::  tagged fork (kelp)
+            {$cbls p+twig q+twig}                       ::  function
+            {$cbpm p+twig q+twig}                       ::  pairhead fork (bush)
+            {$cbsg p+twig}                              ::  example
+            {$cbwt p+(list twig)}                       ::  untagged fork
+            {$cbts p+term q+twig}                       ::  name
+            {$cbzy p+stem}                              ::  symbol
+            {$cbzz p+base}                              ::  base
           ::                                            ::::::  tuples
-            [%clcb p=twig q=twig]                       ::  [q p]
-            [%clcn p=tusk]                              ::  [[p ~] ~]
-            [%clfs p=twig]                              ::  [%$ [%$ p ~] ~]
-            [%clkt p=twig q=twig r=twig s=twig]         ::  [p q r s]
-            [%clhp p=twig q=twig]                       ::  [p q]
-            [%clls p=twig q=twig r=twig]                ::  [p q r]
-            [%clsg p=tusk]                              ::  [p ~]
-            [%cltr p=tusk]                              ::  p as a tuple
-            [%clzz p=tusk]                              ::  macro
+            {$clcb p+twig q+twig}                       ::  [q p]
+            {$clcn p+tusk}                              ::  [[p ~] ~]
+            {$clfs p+twig}                              ::  {$$ {$$ p ~] ~]
+            {$clkt p+twig q+twig r+twig s+twig}         ::  [p q r s]
+            {$clhp p+twig q+twig}                       ::  [p q]
+            {$clls p+twig q+twig r+twig}                ::  [p q r]
+            {$clsg p+tusk}                              ::  [p ~]
+            {$cltr p+tusk}                              ::  p as a tuple
+            {$clzz p+tusk}                              ::  macro
           ::                                            ::::::  invocations
-            [%cncb p=wing q=tram]                       ::  %=, then cast to p
-            [%cncl p=twig q=twig]                       ::  pull $.p w/ sample q
-            [%cndt p=twig q=twig]                       ::  %-(q p)
-            [%cnhp p=twig q=tusk]                       ::  slam p w/ sample q
-            [%cntr p=wing q=twig r=tram]                ::  pull p.q w/ changes
-            [%cnkt p=twig q=twig r=twig s=twig]         ::  slam p w/ :*(q r s)
-            [%cnls p=twig q=twig r=twig]                ::  slam p w/ :*(q r)
-            [%cnsg p=wing q=twig r=twig]                ::  pull p from q with r
-            [%cnts p=wing q=tram]                       ::  eval. p w/ q changes
-            [%cnzy p=term]                              ::  pulls limb p
-            [%cnzz p=wing]                              ::  pulls p
+            {$cncb p+wing q+tram}                       ::  %+, then cast to p
+            {$cncl p+twig q+twig}                       ::  pull $.p w/ sample q
+            {$cndt p+twig q+twig}                       ::  %-(q p)
+            {$cnhp p+twig q+tusk}                       ::  slam p w/ sample q
+            {$cntr p+wing q+twig r+tram}                ::  pull p.q w/ changes
+            {$cnkt p+twig q+twig r+twig s+twig}         ::  slam p w/ :*(q r s)
+            {$cnls p+twig q+twig r+twig}                ::  slam p w/ :*(q r)
+            {$cnsg p+wing q+twig r+twig}                ::  pull p from q with r
+            {$cnts p+wing q+tram}                       ::  eval. p w/ q changes
+            {$cnzy p+term}                              ::  pulls limb p
+            {$cnzz p+wing}                              ::  pulls p
           ::                                            ::::::  nock
-            [%dtkt p=twig]                              ::  nock 11 data skyhook
-            [%dtls p=twig]                              ::  nock 4 increment
-            [%dtzy p=term q=@]                          ::  atom constant
-            [%dtzz p=term q=*]                          ::  cubical constant
-            [%dttr p=twig q=twig]                       ::  nock p w/ formula q
-            [%dtts p=twig q=twig]                       ::  nock 5 equality test
-            [%dtwt p=twig]                              ::  nock 3 cell test
+            {$dtkt p+twig}                              ::  nock 11 data skyhook
+            {$dtls p+twig}                              ::  nock 4 increment
+            {$dtzy p+term q+@}                          ::  atom constant
+            {$dtzz p+term q+*}                          ::  cubical constant
+            {$dttr p+twig q+twig}                       ::  nock p w/ formula q
+            {$dtts p+twig q+twig}                       ::  nock 5 equality test
+            {$dtwt p+twig}                              ::  nock 3 cell test
           ::                                            ::::::  prettyprinting
-            [%hxgl p=tusk]                              ::  prettyprint tape
-            [%hxgr p=tusk]                              ::  prettyprint tank
+            {$hxgl p+tusk}                              ::  prettyprint tape
+            {$hxgr p+tusk}                              ::  prettyprint tank
           ::                                            ::::::  type conversion
-            [%ktbr p=twig]                              ::  %gold core to %iron
-            [%ktdt p=twig q=twig]                       ::  cast q to type (p q)
-            [%ktls p=twig q=twig]                       ::  cast q to p, verify
-            [%kthx p=twig q=twig]                       ::  cast q to p, verify
-            [%kthp p=tile q=twig]                       ::  cast q to icon of p
-            [%ktpm p=twig]                              ::  %gold core to %zinc
-            [%ktsg p=twig]                              ::  p as static constant
-            [%ktts p=toga q=twig]                       ::  wrap q in toga p
-            [%ktwt p=twig]                              ::  %gold core to %lead
+            {$ktbr p+twig}                              ::  %gold core to %iron
+            {$ktdt p+twig q+twig}                       ::  cast q to type (p q)
+            {$ktls p+twig q+twig}                       ::  cast q to p, verify
+            {$kthx p+twig q+twig}                       ::  cast q to p, verify
+            {$kthp p+tile q+twig}                       ::  cast q to icon of p
+            {$ktpm p+twig}                              ::  %gold core to %zinc
+            {$ktsg p+twig}                              ::  p as static constant
+            {$ktts p+toga q+twig}                       ::  wrap q in toga p
+            {$ktwt p+twig}                              ::  %gold core to %lead
           ::                                            ::::::  hints
-            [%sgbr p=twig q=twig]                       ::  print p if q fails
-            [%sgcb p=twig q=twig]                       ::  put p in q's trace
-            [%sgcn p=chum q=twig r=tyre s=twig]         ::  mark core for jets
-            [%sgfs p=chum q=twig]                       ::  jet arm in ~% core
-            [%sggl p=$|(term [p=term q=twig]) q=twig]   ::  hint p to product q
-            [%sggr p=$|(term [p=term q=twig]) q=twig]   ::  hint p to q
-            [%sgbc p=term q=twig]                       ::  label q, profiling
-            [%sgls p=@ q=twig]                          ::  cache/memoize
-            [%sgpm p=@ud q=twig r=twig]                 ::  print q w/priority
-            [%sgts p=twig q=twig]                       ::  avoid duplication
-            [%sgwt p=@ud q=twig r=twig s=twig]          ::  hint iff q is yes
-            [%sgzp p=twig q=twig]                       ::  type in stacktrace
+            {$sgbr p+twig q+twig}                       ::  print p if q fails
+            {$sgcb p+twig q+twig}                       ::  put p in q's trace
+            {$sgcn p+chum q+twig r+tyre s+twig}         ::  mark core for jets
+            {$sgfs p+chum q+twig}                       ::  jet arm in ~% core
+            {$sggl p+_|(term {p+term q+twig}) q+twig}   ::  hint p to product q
+            {$sggr p+_|(term {p+term q+twig}) q+twig}   ::  hint p to q
+            {$sgbc p+term q+twig}                       ::  label q, profiling
+            {$sgls p+@ q+twig}                          ::  cache/memoize
+            {$sgpm p+@ud q+twig r+twig}                 ::  print q w/priority
+            {$sgts p+twig q+twig}                       ::  avoid duplication
+            {$sgwt p+@ud q+twig r+twig s+twig}          ::  hint iff q is yes
+            {$sgzp p+twig q+twig}                       ::  type in stacktrace
           ::                                            ::::::  miscellaneous
-            [%smcl p=twig q=tusk]                       ::  binary to n-ary
-            [%smdt p=twig q=tusk]                       ::
-            [%smdq p=(list beer)]                       ::  assemble string
-            [%smsg p=twig q=tusk]                       ::  gonads
-            [%smsm p=tile q=twig]                       ::  make sure q is a p
+            {$smcl p+twig q+tusk}                       ::  binary to n-ary
+            {$smdt p+twig q+tusk}                       ::
+            {$smdq p+(list beer)}                       ::  assemble string
+            {$smsg p+twig q+tusk}                       ::  gonads
+            {$smsm p+tile q+twig}                       ::  make sure q is a p
           ::                                            ::::::  compositions
-            [%tsbr p=tile q=twig]                       ::  push bunt: =+(_p q)
-            [%tscl p=tram q=twig]                       ::  p changes, then q
-            [%tscn p=twig q=twig]                       ::  XX not used
-            [%tsdt p=wing q=twig r=twig]                ::  r with p set to q
-            [%tsfs p=twig q=twig]                       ::  XX not used
-            [%tsgl p=twig q=twig]                       ::  =>(q p)
-            [%tshp p=twig q=twig]                       ::  flip push: =+(q p)
-            [%tsgr p=twig q=twig]                       ::  use p as .. of q
-            [%tskt p=twig q=twig r=twig s=twig]         ::  state machine wing
-            [%tsls p=twig q=twig]                       ::  push p on .. of q
-            [%tspm p=tile q=twig]                       ::  XX not used
-            [%tspt p=tile q=twig]                       ::  XX not used
-            [%tstr p=term q=wing r=twig]                ::  make a %bull/alias
-            [%tssg p=tusk]                              ::  compose twig list
+            {$tsbr p+tile q+twig}                       ::  push bunt: ++(_p q)
+            {$tscl p+tram q+twig}                       ::  p changes, then q
+            {$tscn p+twig q+twig}                       ::  XX not used
+            {$tsdt p+wing q+twig r+twig}                ::  r with p set to q
+            {$tsfs p+twig q+twig}                       ::  XX not used
+            {$tsgl p+twig q+twig}                       ::  +>(q p)
+            {$tshp p+twig q+twig}                       ::  flip push: ++(q p)
+            {$tsgr p+twig q+twig}                       ::  use p as .. of q
+            {$tskt p+twig q+twig r+twig s+twig}         ::  state machine wing
+            {$tsls p+twig q+twig}                       ::  push p on .. of q
+            {$tspm p+tile q+twig}                       ::  XX not used
+            {$tspt p+tile q+twig}                       ::  XX not used
+            {$tstr p+term q+wing r+twig}                ::  make a %bull/alias
+            {$tssg p+tusk}                              ::  compose twig list
           ::                                            ::::::  conditionals
-            [%wtbr p=tusk]                              ::  logical OR
-            [%wthp p=wing q=tine]                       ::  select case in q
-            [%wthz p=tiki q=tine]                       ::  tiki %wthp
-            [%wtcl p=twig q=twig r=twig]                ::  if p, then q, else r
-            [%wtdt p=twig q=twig r=twig]                ::  unless, ?:(p r q)
-            [%wtkt p=wing q=twig r=twig]                ::  if p is a cell
-            [%wtkz p=tiki q=twig r=twig]                ::  tiki %wtkt
-            [%wtgl p=twig q=twig]                       ::  assert |, ?:(p !! q)
-            [%wtgr p=twig q=twig]                       ::  assert &, ?:(p q !!)
-            [%wtls p=wing q=twig r=tine]                ::  %wthp w/ default
-            [%wtlz p=tiki q=twig r=tine]                ::  tiki %wtls
-            [%wtpm p=tusk]                              ::  logical AND
-            [%wtpt p=wing q=twig r=twig]                ::  if p is an atom
-            [%wtpz p=tiki q=twig r=twig]                ::  tiki %wtpt
-            [%wtsg p=wing q=twig r=twig]                ::  if p is null
-            [%wtsz p=tiki q=twig r=twig]                ::  tiki %wtsg
-            [%wtts p=tile q=wing]                       ::  if q is in tile p
-            [%wttz p=tile q=tiki]                       ::  tiki %wtts
-            [%wtzp p=twig]                              ::  logical NOT
+            {$wtbr p+tusk}                              ::  logical OR
+            {$wthp p+wing q+tine}                       ::  select case in q
+            {$wthz p+tiki q+tine}                       ::  tiki %wthp
+            {$wtcl p+twig q+twig r+twig}                ::  if p, then q, else r
+            {$wtdt p+twig q+twig r+twig}                ::  unless, ?:(p r q)
+            {$wtkt p+wing q+twig r+twig}                ::  if p is a cell
+            {$wtkz p+tiki q+twig r+twig}                ::  tiki %wtkt
+            {$wtgl p+twig q+twig}                       ::  assert |, ?:(p !! q)
+            {$wtgr p+twig q+twig}                       ::  assert &, ?:(p q !!)
+            {$wtls p+wing q+twig r+tine}                ::  %wthp w/ default
+            {$wtlz p+tiki q+twig r+tine}                ::  tiki %wtls
+            {$wtpm p+tusk}                              ::  logical AND
+            {$wtpt p+wing q+twig r+twig}                ::  if p is an atom
+            {$wtpz p+tiki q+twig r+twig}                ::  tiki %wtpt
+            {$wtsg p+wing q+twig r+twig}                ::  if p is null
+            {$wtsz p+tiki q+twig r+twig}                ::  tiki %wtsg
+            {$wtts p+tile q+wing}                       ::  if q is in tile p
+            {$wttz p+tile q+tiki}                       ::  tiki %wtts
+            {$wtzp p+twig}                              ::  logical NOT
           ::                                            ::::::  special
-            [%zpcb p=spot q=twig]                       ::  debug info in trace
-            [%zpcm p=twig q=twig]                       ::  q twig with p type
-            [%zpcn ~]                                   ::  obsolete
-            [%zpfs p=twig]                              ::  report .. as error
-            [%zpgr p=twig]                              ::  vase w/ value p
-            [%zpsm p=twig q=twig]                       ::  [type noun] pair
-            [%zpts p=twig]                              ::  Nock formula of p
-            [%zpwt p=$|(p=@ [p=@ q=@]) q=twig]          ::  restrict hoon vers.
-            [%zpzp ~]                                   ::  always crash
+            {$zpcb p+spot q+twig}                       ::  debug info in trace
+            {$zpcm p+twig q+twig}                       ::  q twig with p type
+            {$zpcn $~}                                  ::  obsolete
+            {$zpfs p+twig}                              ::  report .. as error
+            {$zpgr p+twig}                              ::  vase w/ value p
+            {$zpsm p+twig q+twig}                       ::  [type noun] pair
+            {$zpts p+twig}                              ::  Nock formula of p
+            {$zpwt p+_|(p+@ {p+@ q+@}) q+twig}          ::  restrict hoon vers.
+            {$zpzp $~}                                  ::  always crash
           ==                                            ::
-++  stem  (pair term ,@)                                ::
-++  tine  (list ,[p=tile q=twig])                       ::
+++  stem  (pair term @)                                 ::
+++  tine  (list {p+tile q+twig})                        ::
 ++  tusk  (list twig)                                   ::
-++  tyre  (list ,[p=term q=twig])                       ::
+++  tyre  (list {p+term q+twig})                       ::
 ++  tyke  (list (unit twig))                            ::
-++  tram  (list ,[p=wing q=twig])                       ::
+++  tram  (list {p+wing q+twig})                       ::
 ::                                                      ::::::  virtual nock
-++  nock  $&  [p=nock q=nock]                           ::  autocons
-          $%  [%0 p=@]                                  ::  axis select
-              [%1 p=*]                                  ::  constant
-              [%2 p=nock q=nock]                        ::  compose
-              [%3 p=nock]                               ::  cell test
-              [%4 p=nock]                               ::  increment
-              [%5 p=nock q=nock]                        ::  equality test
-              [%6 p=nock q=nock r=nock]                 ::  if, then, else
-              [%7 p=nock q=nock]                        ::  serial compose
-              [%8 p=nock q=nock]                        ::  push onto subject
-              [%9 p=@ q=nock]                           ::  select arm and fire
-              [%10 p=?(@ [p=@ q=nock]) q=nock]          ::  hint
-              [%11 p=nock]                              ::  grab data from sky
+++  nock  _&  {p+nock q+nock}                           ::  autocons
+          _%  {$0 p+@}                                  ::  axis select
+              {$1 p+*}                                  ::  constant
+              {$2 p+nock q+nock}                        ::  compose
+              {$3 p+nock}                               ::  cell test
+              {$4 p+nock}                               ::  increment
+              {$5 p+nock q+nock}                        ::  equality test
+              {$6 p+nock q+nock r+nock}                 ::  if, then, else
+              {$7 p+nock q+nock}                        ::  serial compose
+              {$8 p+nock q+nock}                        ::  push onto subject
+              {$9 p+@ q+nock}                           ::  select arm and fire
+              {$10 p+_|(@ {p+@ q+nock}) q+nock}         ::  hint
+              {$11 p+nock}                              ::  grab data from sky
           ==                                            ::
-++  tone  $%  [%0 p=*]                                  ::  success
-              [%1 p=(list)]                             ::  blocks
-              [%2 p=(list ,[@ta *])]                    ::  error ~_s
+++  tone  _%  {$0 p+*}                                  ::  success
+              {$1 p+(list)}                             ::  blocks
+              {$2 p+(list {@ta *})}                     ::  error ~_s
           ==                                            ::
-++  toon  $%  [%0 p=*]                                  ::  success
-              [%1 p=(list)]                             ::  blocks
-              [%2 p=(list tank)]                        ::  stack trace
+++  toon  _%  {$0 p+*}                                  ::  success
+              {$1 p+(list)}                             ::  blocks
+              {$2 p+(list tank)}                        ::  stack trace
           ==                                            ::
-++  tune  $%  [%0 p=vase]                               ::
-              [%1 p=(list)]                             ::
-              [%2 p=(list ,[@ta *])]                    ::
+++  tune  _%  {$0 p+vase}                               ::
+              {$1 p+(list)}                             ::
+              {$2 p+(list {@ta *})}                    ::
           ==                                            ::
-++  twin  ,[p=term q=wing r=axis s=type]                ::  alias info
-++  type  $|  ?(%noun %void)                            ::  set all or set none
-          $%  [%atom p=term]                            ::  number and format
-              [%bull p=twin q=type]                     ::  wing synonym
-              [%cell p=type q=type]                     ::  ordered pair
-              [%core p=type q=coil]                     ::
-              [%cube p=* q=type]                        ::  constant
-              [%face p=term q=type]                     ::  name
-              [%fork p=type q=type]                     ::  union/branch
-              [%hold p=(list ,[p=type q=twig])]         ::  infinite genrator
+++  twin  {p+term q+wing r+axis s+type}                ::  alias info
+++  type  _|  ?($noun $void)                            ::  set all or set none
+          _%  {$atom p+term}                            ::  number and format
+              {$bull p+twin q+type}                     ::  wing synonym
+              {$cell p+type q+type}                     ::  ordered pair
+              {$core p+type q+coil}                     ::
+              {$cube p+* q+type}                        ::  constant
+              {$face p+term q+type}                     ::  name
+              {$fork p+type q+type}                     ::  union/branch
+              {$hold p+(list {p+type q+twig})}         ::  infinite genrator
           ==                                            ::
 ++  typo  type                                          ::  old type
 ++  udal                                                ::  atomic change (%b)
-          $:  p=@ud                                     ::  blockwidth
-              q=(list ,[p=@ud q=(unit ,[p=@ q=@])])     ::  indels
+          _:  p+@ud                                     ::  blockwidth
+              q+(list {p+@ud q+(unit {p+@ q+@})})      ::  indels
           ==                                            ::
 ++  udon                                                ::  abstract delta
-          $:  p=umph                                    ::  preprocessor
-              $=  q                                     ::  patch
-              $%  [%a p=* q=*]                          ::  trivial replace
-                  [%b p=udal]                           ::  atomic indel
-                  [%c p=(urge)]                         ::  list indel
-                  [%d p=upas q=upas]                    ::  tree edit
+          _:  p=umph                                    ::  preprocessor
+              _=  q                                     ::  patch
+              _%  {$a p+* q+*}                          ::  trivial replace
+                  {$b p+udal}                           ::  atomic indel
+                  {$c p+(urge)}                         ::  list indel
+                  {$d p+upas q+upas}                    ::  tree edit
               ==                                        ::
           ==                                            ::
 ++  umph                                                ::  change filter
-          $|  $?  %a                                    ::  no filter
-                  %b                                    ::  jamfile
-                  %c                                    ::  LF text
+          _|  _?  $a                                    ::  no filter
+                  $b                                    ::  jamfile
+                  $c                                    ::  LF text
               ==                                        ::
-          $%  [%d p=@ud]                                ::  blocklist
+          _%  {$d p+@ud}                                ::  blocklist
           ==                                            ::
-++  unce  |*  a=_,*                                     ::  change part
-          $%  [%& p=@ud]                                ::  skip[copy]
-              [%| p=(list a) q=(list a)]                ::  p -> q[chunk]
+++  unce  |*  a+_+(* *)                                 ::  change part
+          _%  {$& p+@ud}                                ::  skip[copy]
+              {$| p+(list a) q+(list a)}                ::  p -> q[chunk]
           ==                                            ::
-++  unit  |*  a=_,*                                     ::  maybe
-          $|(~ [~ u=a])                                 ::
+++  unit  |*  a+_+(* *)                                 ::  maybe
+          _|($~ {$~ u+a})                               ::
 ++  upas                                                ::  tree change (%d)
-          $&  [p=upas q=upas]                           ::  cell
-          $%  [%0 p=axis]                               ::  copy old
-              [%1 p=*]                                  ::  insert new
-              [%2 p=axis q=udon]                        ::  mutate!
+          _&  {p+upas q+upas}                           ::  cell
+          _%  {$0 p+axis}                               ::  copy old
+              {$1 p+*}                                  ::  insert new
+              {$2 p+axis q+udon}                        ::  mutate!
           ==                                            ::
-++  urge  |*(a=_,* (list (unce a)))                     ::  list change
-++  vase  ,[p=type q=*]                                 ::  type-value pair
-++  vise  ,[p=typo q=*]                                 ::  old vase
+++  urge  |*(a+_+(* *) (list (unce a)))                 ::  list change
+++  vase  {p+type q+*}                                  ::  type-value pair
+++  vise  {p+typo q+*}                                  ::  old vase
 ++  wall  (list tape)                                   ::  text lines (no \n)
 ++  wain  (list cord)                                   ::  text lines (no \n)
 ++  wing  (list limb)                                   ::
-++  wine  $|  ?(%noun %path %type %void %wall %wool %yarn)
-          $%  [%atom p=term]                            ::
-              [%core p=(list ,@ta) q=wine]              ::
-              [%face p=term q=wine]                     ::
-              [%list p=term q=wine]                     ::
-              [%pear p=term q=@]                        ::
-              [%pick p=(list wine)]                     ::
-              [%plot p=(list wine)]                     ::
-              [%stop p=@ud]                             ::
-              [%tree p=term q=wine]                     ::
-              [%unit p=term q=wine]                     ::
+++  wine                                                ::  printable type
+          _|  _?  $noun                                 ::
+                  $path                                 ::
+                  $type                                 ::
+                  $void                                 ::
+                  $wall                                 ::
+                  $wool                                 ::
+                  $yarn                                 ::
+              ==                                        ::
+          _%  {$atom p+term}                            ::
+              {$core p+(list @ta) q+wine}               ::
+              {$face p+term q+wine}                     ::
+              {$list p+term q+wine}                     ::
+              {$pear p+term q+@}                        ::
+              {$pick p+(list wine)}                     ::
+              {$plot p+(list wine)}                     ::
+              {$stop p+@ud}                             ::
+              {$tree p+term q+wine}                     ::
+              {$unit p+term q+wine}                     ::
           ==                                            ::
-++  wonk  |*(veq=edge ?~(q.veq !! p.u.q.veq))           ::
+++  wonk  |*(veq+edge ?~(q.veq !! p.u.q.veq))           ::
 ++  worm                                                ::  compiler cache
-  $:  nes=(set ,^)                                      ::  ++nest
-      pay=(map (pair type twig) type)                   ::  ++play
-      mit=(map (pair type twig) (pair type nock))       ::  ++mint
+  _:  nes+(set ^)                                       ::  ++nest
+      pay+(map (pair type twig) type)                   ::  ++play
+      mit+(map (pair type twig) (pair type nock))       ::  ++mint
   ==                                                    ::
 ::                                                      ::
-++  map  |*  [a=_,* b=_,*]                              ::  associative tree
-         $|(~ [n=[p=a q=b] l=(map a b) r=(map a b)])    ::
-++  qeu  |*  a=_,*                                      ::  queue
-         $|(~ [n=a l=(qeu a) r=(qeu a)])                ::
-++  set  |*  a=_,*                                      ::  set
-         $|(~ [n=a l=(set a) r=(set a)])                ::
-++  jar  |*([a=_,* b=_,*] (map a (list b)))             ::  map of lists
-++  jug  |*([a=_,* b=_,*] (map a (set b)))              ::  map of sets
+++  map  |*  [a+_+(* *) b+_+(* *)]                      ::  associative tree
+         _|($~ {n+{p+a q+b} l+(map a b) r+(map a b)})   ::
+++  qeu  |*  a+_+(* *)                                  ::  queue
+         _|($~ {n+a l+(qeu a) r+(qeu a)})               ::
+++  set  |*  a+_+(* *)                                  ::  set
+         _|($~ {n+a l+(set a) r+(set a)})                ::
+++  jar  |*([a+_+(* *) b+_+(* *)] (map a (list b)))     ::  map of lists
+++  jug  |*([a+_+(* *) b+_+(* *)] (map a (set b)))      ::  map of sets
 --                                                      ::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 2, Hoon libraries and compiler ::::::
@@ -813,7 +820,7 @@
 ::
 ++  turn                                                ::  transform
   ~/  %turn
-  |*  [a=(list) b=_,*]
+  |*  [a=(list) b+_+(* *)]
   |-
   ?~  a  ~
   [i=(b i.a) t=$(a t.a)]
@@ -2223,9 +2230,9 @@
 ++  head  |*(^ +<-)                                     ::  get head
 ++  tail  |*(^ +<+)                                     ::  get head
 ++  test  |=(^ =(+<- +<+))                              ::  equality
-++  cork  |*([a=_,* b=gate] (corl b a))                 ::  compose forward
+++  cork  |*([a+_+(* *) b=gate] (corl b a))                 ::  compose forward
 ++  corl                                                ::  compose backwards
-  |*  [a=gate b=_,*]
+  |*  [a=gate b+_+(* *)]
   =<  +:|.((a (b)))      ::  type check
   |*  c=_+<.b
   (a (b c))
@@ -2716,7 +2723,7 @@
     $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
   ::
   +-  rib                                               ::  transform + product
-    |*  [b=* c=_,*]
+    |*  [b=* c+_+(* *)]
     |-  ^+  [b a]
     ?~  a  [b ~]
     =+  d=(c n.a b)
@@ -2726,7 +2733,7 @@
     [-.f [n.a +.e +.f]]
   ::
   +-  run                                               ::  apply gate to values
-    |*  b=_,*
+    |*  b+_+(* *)
     |-
     ?~  a  a
     [n=[p=p.n.a q=(b q.n.a)] l=$(a l.a) r=$(a r.a)]
@@ -2955,7 +2962,7 @@
 ::
 ++  cook                                                ::  apply gate
   ~/  %cook
-  |*  [poq=_,* sef=_rule]
+  |*  [poq+_+(* *) sef=_rule]
   ~/  %fun
   |=  tub=nail
   =+  vex=(sef tub)
@@ -10346,7 +10353,7 @@
           ==                                            ::
 ++  desk  ,@tas                                         ::  ship desk case spur
 ++  cage  (cask vase)                                   ::  global metadata
-++  cask  |*(a=_,* (pair mark a))                       ::  global data
+++  cask  |*(a+_+(* *) (pair mark a))                       ::  global data
 ++  cuff                                                ::  permissions
           $:  p=(unit (set monk))                       ::  can be read by
               q=(set monk)                              ::  caused or created by
