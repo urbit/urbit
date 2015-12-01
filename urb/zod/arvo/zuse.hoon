@@ -2470,6 +2470,7 @@
       [[%hat ~] p=hole q=hart]                          ::  login redirect
       [[%get ~] p=@uvH q=[? clip httq]]                 ::  remote request
       [[%got ~] p=@uvH q=httr]                          ::  remote response
+      [[%gib ~] p=@uvH]                                 ::  remote cancel
   ==                                                    ::
 ::::                                                    ::
 ++  kiss-eyre                                           ::  in request ->$
