@@ -83,7 +83,7 @@
 ++  gate  _+(* *)                                       ::  general gate
 ++  hair  {p+@ud q+@ud}                                 ::  parsing trace
 ++  like  |*  a+_+(* *)                                 ::  generic edge
-          |=  b+_~(`*`[(hair) ~])                       ::
+          |=  b+__(`*`[(hair) ~])                       ::
           :-  p=(hair -.b)                              ::
           ^=  q                                         ::
           ?@  +.b  ~                                    ::
@@ -111,8 +111,8 @@
 ++  nail  {p+hair q+tape}                               ::  parsing input
 ++  numb  @                                             ::  just a number
 ++  pair  |*({a+_+(* *) b+_+(* *)} {p+a q+b})           ::  just a pair
-++  quid  |*({a+_+(* *) b+*} {a _~(b)})                 ::  for =^
-++  quip  |*({a+_+(* *) b+*} {(list a) _~(b)})          ::  for =^
+++  quid  |*({a+_+(* *) b+*} {a __(b)})                 ::  for =^
+++  quip  |*({a+_+(* *) b+*} {(list a) __(b)})          ::  for =^
 ++  wand  |*  a+(pole _+(* *))                          ::  hetero list
           |=  b=*                                       ::
           ?~  a  ~                                      ::
@@ -185,7 +185,7 @@
               {$1 p+term q+toga}                        ::  deep toga
               {$2 p+toga q+toga}                        ::  cell toga
           ==                                            ::
-++  trap  |*(a+_+(* *) _~(a))                           ::  makes perfect sense
+++  trap  |*(a+_+(* *) __(a))                           ::  makes perfect sense
 ++  trel  |*  {a+_+(* *) b+_+(* *) c+_+(* *)}           ::  just a triple
           {p+a q+b r+c}                                 ::
 ++  tuna                                                ::  tagflow
@@ -219,11 +219,11 @@
             {$brwt p+twig}                              ::  dry %lead trap
           ::                                            ::::::  molds
             {$cbbr p+twig q+twig}                       ::  atom fork (reed)
+            {$cbcb p+twig}                              ::  example
             {$cbcl p+(list twig)}                       ::  tuple
             {$cbcn p+(list twig)}                       ::  tagged fork (kelp)
             {$cbls p+twig q+twig}                       ::  function
             {$cbpm p+twig q+twig}                       ::  pairhead fork (bush)
-            {$cbsg p+twig}                              ::  example
             {$cbwt p+(list twig)}                       ::  untagged fork
             {$cbts p+term q+twig}                       ::  name
             {$cbzy p+stem}                              ::  symbol
@@ -633,7 +633,7 @@
   [~ u=[u.a u.b]]
 ::
 ++  clap                                                ::  combine
-  |*  {a+(unit) b+(unit) c+_~(|=(^ +<-))}
+  |*  {a+(unit) b+(unit) c+__(|=(^ +<-))}
   ?~  a  b
   ?~  b  a
   [~ u=(c u.a u.b)]
@@ -736,13 +736,13 @@
 ++  reap                                                ::  replicate
   ~/  %reap
   |*  {a+@ b+*}
-  |-  ^-  (list _~(b))
+  |-  ^-  (list __(b))
   ?~  a  ~
   [b $(a (dec a))]
 ::
 ++  reel                                                ::  right fold
   ~/  %reel
-  |*  {a+(list) b+_~(|=({* *} +<+))}
+  |*  {a+(list) b+__(|=({* *} +<+))}
   |-  ^+  +<+.b
   ?~  a
     +<+.b
@@ -750,7 +750,7 @@
 ::
 ++  roll                                                ::  left fold
   ~/  %roll
-  |*  {a+(list) b+_~(|=({* *} +<+))}
+  |*  {a+(list) b+__(|=({* *} +<+))}
   |-  ^+  +<+.b
   ?~  a
     +<+.b
@@ -2275,7 +2275,7 @@
 ::
 ++  mean  |=(a+tang (fear (flop a) |.(!!)))             ::  deify stack trace
 ++  fear                                                ::  insert user mean
-  |*  {a+tang _~(|?(**))}
+  |*  {a+tang __(|?(**))}
   ^+  (+<+)
   =>  .(a `tang`a)
   ?~  a  (+<+)
@@ -2370,7 +2370,7 @@
       ?:  (hor b n.a)
         [n.a $(a l.a) r.a]
       [n.a l.a $(a r.a)]
-    |-  ^-  _?($~ _~(a))
+    |-  ^-  _?($~ __(a))
     ?~  l.a  r.a
     ?~  r.a  l.a
     ?:  (vor n.l.a n.r.a)
@@ -2379,7 +2379,7 @@
   ::
   +-  dif                                               ::  difference
     ~/  %dif
-    |*  b+_~(a)
+    |*  b+__(a)
     |-  ^+  a
     ?~  b
       a
@@ -2387,7 +2387,7 @@
     ?>  ?=(^ c)
     =+  d=$(a l.c, b l.b)
     =+  e=$(a r.c, b r.b)
-    |-  ^-  _?($~ _~(a))
+    |-  ^-  _?($~ __(a))
     ?~  d  e
     ?~  e  d
     ?:  (vor n.d n.e)
@@ -2406,7 +2406,7 @@
   ::
   +-  gas                                               ::  concatenate
     ~/  %gas
-    |=  b=(list _~(?>(?=(^ a) n.a)))
+    |=  b=(list __(?>(?=(^ a) n.a)))
     |-  ^+  a
     ?~  b
       a
@@ -2426,7 +2426,7 @@
   ::
   +-  int                                               ::  intersection
     ~/  %int
-    |*  b+_~(a)
+    |*  b+__(a)
     |-  ^+  a
     ?~  b
       ~
@@ -2461,7 +2461,7 @@
     [n.c [n.a l.a l.c] r.c]
   ::
   +-  rep                                               ::  replace by product
-    |*  b+_~(|=([* *] +<+))
+    |*  b+__(|=([* *] +<+))
     |-
     ?~  a  +<+.b
     $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
@@ -6979,6 +6979,7 @@
     ?+  gen  [%herb gen]
     ::
         [%cbbr *]  [%reed boil(gen p.gen) boil(gen q.gen)]
+        [%cbcb *]  [%weed p.gen]
         [%cbcl *]
       |-  ^-  tile
       ?~  p.gen  [%axil %null]
@@ -7002,7 +7003,6 @@
     ::
         [%cbpm *]  [%bush boil(gen p.gen) boil(gen q.gen)]
         [%cbls *]  [%weed [%brts [%herb p.gen] [%bctr %herb q.gen]]]
-        [%cbsg *]  [%weed p.gen]
         [%cbts *]  [%bark p.gen boil(gen q.gen)]
         [%cbwt *]  =+  (turn p.gen |=(a=twig boil(gen a)))
                    ?~(- [%axil %void] [%fern -])
@@ -7043,11 +7043,11 @@
         [%brwt *]  [%ktwt %brdt p.gen]
     ::
         [%cbbr *]  ~(clam al boil)
+        [%cbcb *]  ~(clam al boil)
         [%cbcl *]  ~(clam al boil)
         [%cbcn *]  ~(clam al boil)
         [%cbls *]  ~(clam al boil)
         [%cbpm *]  ~(clam al boil)
-        [%cbsg *]  ~(clam al boil)
         [%cbwt *]  ~(clam al boil)
         [%cbts *]  ~(clam al boil)
         [%cbzy *]  ~(clam al boil)
@@ -9750,11 +9750,11 @@
                 %-  stew
                 ^.  stet  ^.  limo
                 :~  ['|' (rune bar %cbbr expb)]
+                    ['_' (rune cab %cbcb expa)]
                     [':' (rune col %cbcl exps)]
                     ['%' (rune cen %cbcn exps)]
                     ['+' (rune lus %cbls expb)]
                     ['&' (rune pam %cbpm expb)]
-                    ['~' (rune sig %cbsg expa)]
                     ['=' (rune tis %cbts expg)]
                     ['?' (rune wut %cbwt exps)]
                 ==
