@@ -8,7 +8,7 @@
 :-  %say
 |=  [^ [pax=path fla=$|(~ [%full ~])] ~]
 =+  len=(lent pax)
-=+  rend=?^(fla dank:ut |=(a=path (dank:ut (slag len a))))
+=+  rend=?^(fla smyt |=(a=path (smyt (slag len a))))
 :-  %tang  %-  flop
 |-  ^-  tang
 =+  ark=;;(arch .^(cy/pax))

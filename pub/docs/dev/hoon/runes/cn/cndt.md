@@ -55,3 +55,8 @@ Here we add `2` to the product of `2` and `20`, and use `%.` to
 decrement our result. As you can see, `%.` is most useful for code
 organization, when you need to compute intermediate products for your
 final result.
+
+Equivalent to
+-------------
+
+    %-(q p)
