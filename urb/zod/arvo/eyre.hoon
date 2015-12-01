@@ -136,9 +136,9 @@
 ::
 ++  pest                                                ::  result
   $|  ~
-  $%  [%| p=whir q=[beak silk]]                         ::  execute request
-      [%$ p=httr]                                       ::  direct response
+  $%  [%$ p=httr]                                       ::  direct response
       [%red ~]                                          ::  parent redirect
+      [%boil p=whir q=term r=beam]                      ::  ford request
   :: 
       [%js p=@t]                                        ::  script
       [%json p=json]                                    ::  data
@@ -630,7 +630,7 @@
         ~&  dead-request/hen
         +>.$(ded (~(put in ded) hen))                   ::  uncaught requests
       =+  lid=(~(got by lyv) hen)
-      ~&  did-thud/[-.lid hen]
+      :: ~&  did-thud/[-.lid hen]
       ?-  -.lid
         %exec  (pass-note p.lid %f [%exec our ~])
         %poll  poll-dead:(ire-ix p.lid)
@@ -925,14 +925,14 @@
     ++  nice-json  (teba ^nice-json)
     ++  pass-note  (teba ^pass-note)
     ::
-    ++  ford-get-beam
-      |=  [bem=beam ext=term]
+    ++  ford-boil
+      |=  [wir=whir ext=term bem=beam]
       =+  yac=for-client
       =.  him.yac  ?.(aut anon him.yac)
-      =:  s.bem  [%web ~(rent co (fcgi quy fcgi-cred.yac)) s.bem]
-          r.bem  ?+(r.bem r.bem [%ud %0] da/now)
+      =:  r.bem  ?+(r.bem r.bem [%ud %0] da/now)
+          s.bem  [%web ~(rent co (fcgi quy fcgi-cred.yac)) s.bem]
         ==
-      [-.bem [%boil ext bem ~]]
+      (execute wir -.bem [%boil ext bem ~])
     ::
     ::
     ++  apex                                              
@@ -949,11 +949,11 @@
       ?~  pez  done
       ?-  -.pez
           ~  (give-thou (add-cookies cug p.pez))
-          |  (execute +.pez)
           %js  $(pez [~ (resp 200 text//javascript p.pez)])
           %json  (give-json 200 cug p.pez)
           %html  (give-html 200 cug p.pez)
           %htme  (give-html 401 cug p.pez)
+          %boil  (ford-boil +.pez)
           %red
         =+  url=(earn hat pok(p [~ %html]) quy)
         ?+    p.pok  ~|(bad-redirect/[p.pok url] !!)
@@ -1143,8 +1143,8 @@
         =.  wir  ?+(mef !! %get wir, %head [%he wir])
         ~|  bad-beam/q.bem
         ?<  =([~ 0] (sky %cw (tope bem(+ ~, r [%da now]))))
-        =-  ?.(aut [%& %| -] [%| (execute -)])  ::  XX properly
-        [wir (ford-get-beam bem ext)]
+        =+  [wir ext bem]
+        ?.(aut [%& %boil -] [%| (ford-boil -)])  ::  XX properly
       ::
           %bugs  
         ?-  p.hem
@@ -1204,7 +1204,7 @@
         ?~  p.pez  pez
         ?+    -.p.pez  ~&(bad-inject/p.pez !!)
             %red  pez
-            %|
+            %boil
           =.  ya  abet.yac 
           [%| (resolve ~ p.pez(p [%at ses.yac p.p.pez]))]
         ::
@@ -1490,7 +1490,7 @@
       ^+  ..ix
       ?.  =(ude [~ hen &])
         abet  :: old long poll
-      (pass-note:abet of//[ire] [%b %rest era])
+      (pass-note:abet(ude ~) of//[ire] [%b %rest era])
     ::
     ++  subs-to-json
       |=  [a=dock b=path]
