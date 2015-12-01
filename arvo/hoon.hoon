@@ -1,4 +1,4 @@
-!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::      
+!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject
@@ -25,9 +25,9 @@
   ~
 |%                                                      ::
 ++  abel  typo                                          ::  original sin: type
-++  ache  |*([a=$+(* *) b=$+(* *)] $%([| p=b] [& p=a])) ::  each, b default
-++  axis  ,@                                            ::  tree address
-++  also  ,[p=term q=wing r=type]                       ::  alias
+++  ache  |*  {a+_+(* *) b+_+(* *)}                     ::  either a or b
+          _%({$| p+b} {$& p+a})                         ::    b default
+++  axis  @                                             ::  tree address
 ++  bank  (list ,@cF)                                   ::  UTF-32 string
 ++  base  ?([%atom p=odor] %noun %cell %bean %void %null)  
 ++  bean  ,?                                            ::  0=&=yes, 1=|=no
@@ -65,12 +65,13 @@
 ++  dock  (pair ,@p term)                               ::  message target
 ++  date  ,[[a=? y=@ud] m=@ud t=tarp]                   ::  parsed date
 ++  dime  ,[p=@ta q=@]                                  ::
-++  each  |*([a=$+(* *) b=$+(* *)] $%([& p=a] [| p=b])) ::  either a or b
+++  each  |*  {a+_+(* *) b+_+(* *)}                     ::  either a or b
+          _%({$& p+a} {$| p+b})                         ::    a default
 ++  edge  ,[p=hair q=(unit ,[p=* q=nail])]              ::  parsing output
-++  foot  $%  [%ash p=twig]                             ::  dry arm, geometric
-              [%elm p=twig]                             ::  wet arm, generic
-              [%oak ~]                                  ::  XX not used
-              [%yew p=(map term foot)]                  ::  XX not used
+++  foot  _%  {$ash p+twig}                             ::  dry arm, geometric
+              {$elm p+twig}                             ::  wet arm, generic
+              {$oak $~}                                 ::  XX not used
+              {$yew p+(map term foot)}                  ::  XX not used
           ==                                            ::
 ++  gate  $+(* *)                                       ::  general gate
 ++  hair  ,[p=@ud q=@ud]                                ::  parsing trace
