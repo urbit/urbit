@@ -9518,6 +9518,7 @@
         ;~  pose
           %+  stag  %bccm 
           (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil))))
+        ::  (stag %cbwt ;~(pfix wut (ifix [pel per] (most ace wide))))
         ::
           (cold [%cbzz %bean] wut)
         ==
