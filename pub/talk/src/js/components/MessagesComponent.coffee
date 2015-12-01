@@ -90,7 +90,7 @@ module.exports = recl
     last:MessageStore.getLast()
     fetching:MessageStore.getFetching()
     listening:MessageStore.getListening()
-    station:window.util.mainStation()
+    station:window.talk.mainStation
     stations:StationStore.getStations()
     configs:StationStore.getConfigs()
     typing:MessageStore.getTyping()
