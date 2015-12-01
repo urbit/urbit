@@ -1,6 +1,7 @@
 ---
 logo: black
 sort: 1
+next: true
 title: Basic Hoon
 ---
 
