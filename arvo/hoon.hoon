@@ -9533,6 +9533,7 @@
         ;~  pose
           %+  stag  %bccm 
           (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil))))
+        ::  (stag %cbwt ;~(pfix wut (ifix [pel per] (most ace wide))))
         ::
           (cold [%cbzz %bean] wut)
         ==
@@ -9687,6 +9688,7 @@
                 ^.  stet  ^.  limo
                 :~  ['_' (rune cab %brcb expv)]
                     ['%' (rune cen %brcn expe)]
+                    [':' (rune col %brcl expb)]
                     ['.' (rune dot %brdt expa)]
                     ['/' (rune fas %brfs expv)]
                     ['-' (rune hep %brhp expa)]
