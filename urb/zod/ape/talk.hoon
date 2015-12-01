@@ -1376,6 +1376,8 @@
       ~&  [%bad-subscribe-story-c i.t.pax]
       (ra-evil %talk-no-story)
     =+  soy=~(. pa i.t.pax u.pur)
+    ?.  (pa-visible:soy her)
+      (ra-evil %talk-no-story)
     =^  who  +>.$  (ra-human her)
     =.  soy  ?.((~(has in vab) %a) soy (pa-watch-group:soy her))
     =.  soy  ?.((~(has in vab) %v) soy (pa-watch-glyph:soy her))
@@ -1465,6 +1467,16 @@
       ::  %|  !(~(has in p.cordon.shape) her)
       ::==
       &
+    ::
+    ++  pa-visible                                      ::  display to
+      |=  her=ship
+      ^-  ?
+      ?-  p.cordon.shape
+        %black  &
+        %green  &
+        %brown  =(her our.hid)
+        %white  (~(has in q.cordon.shape) her)
+      ==
     ::
     ++  pa-report                                       ::  update
       |=  [wac=(set bone) caw=report]

@@ -10,7 +10,7 @@ module.exports = recl
   stateFromStore: -> {
     audi:StationStore.getAudience()
     members:StationStore.getMembers()
-    station:window.util.mainStation()
+    station:window.talk.mainStation
     stations:StationStore.getStations()
     configs:StationStore.getConfigs()
     typing:StationStore.getTyping()
@@ -73,6 +73,9 @@ module.exports = recl
     StationActions.setSources @state.station,_sources
 
   render: ->
+    if window.urb.user isnt window.urb.ship #foreign
+      return div {id:"station"}
+    
     parts = []
     members = []
 
