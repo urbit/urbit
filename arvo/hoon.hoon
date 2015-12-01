@@ -28,53 +28,60 @@
 ++  ache  |*  {a+_+(* *) b+_+(* *)}                     ::  either a or b
           _%({$| p+b} {$& p+a})                         ::    b default
 ++  axis  @                                             ::  tree address
-++  bank  (list ,@cF)                                   ::  UTF-32 string
-++  base  ?([%atom p=odor] %noun %cell %bean %void %null)  
-++  bean  ,?                                            ::  0=&=yes, 1=|=no
-++  beer  $|(@ [~ p=twig])                              ::  simple embed
-++  beet  $|  @                                         ::  advanced embed
-          $%  [%a p=twig]                               ::  take tape
-              [%b p=twig]                               ::  take manx
-              [%c p=twig]                               ::  take marl
-              [%d p=twig]                               ::  take $+(marl marl)
-              [%e p=twig q=(list tuna)]                 ::  element literal
+++  bank  (list @cF)                                    ::  UTF-32 string
+++  base                                                ::  base mold
+          _?  {$atom p+odor}                            ::  atom
+              $noun                                     ::  any noun
+              $cell                                     ::  any cell
+              $bean                                     ::  loobean
+              $void                                     ::  no nouns
+              $null                                     ::  ~ == 0
           ==                                            ::
-++  bloq  ,@                                            ::  blockclass
-++  calf  ,[p=(map ,@ud wine) q=wine]                   ::
-++  char  ,@tD                                          ::  UTF-8 byte
+++  bean  ?                                             ::  0=&=yes, 1=|=no
+++  beer  _|(@ {$~ p+twig})                             ::  simple embed
+++  beet  _|  @                                         ::  advanced embed
+          _%  {$a p+twig}                               ::  take tape
+              {$b p+twig}                               ::  take manx
+              {$c p+twig}                               ::  take marl
+              {$d p+twig}                               ::  take $+(marl marl)
+              {$e p+twig q+(list tuna)}                 ::  element literal
+          ==                                            ::
+++  bloq  @                                             ::  blockclass
+++  calf  {p+(map @ud wine) q+wine}                     ::
+++  char  @tD                                           ::  UTF-8 byte
 ++  chub                                                ::  registered battery
-          $:  p=(pair chum tyre)                        ::  definition
-              q=*                                       ::  battery
-              r=(unit (pair axis chub))                 ::  parent
+          _:  p+(pair chum tyre)                        ::  definition
+              q+*                                       ::  battery
+              r+(unit (pair axis chub))                 ::  parent
           ==                                            ::
-++  chum  $?  lef=term                                  ::  jet name
-              [std=term kel=@]                          ::  kelvin version
-              [ven=term pro=term kel=@]                 ::  vendor and product
-              [ven=term pro=term ver=@ kel=@]           ::  all of the above
+++  chum  _?  lef+term                                  ::  jet name
+              {std+term kel+@}                          ::  kelvin version
+              {ven+term pro+term kel+@}                 ::  vendor and product
+              {ven+term pro+term ver+@ kel+@}           ::  all of the above
           ==                                            ::
-++  clue  ,[p=chum q=nock r=(list (pair term nock))]    ::  battery definition
-++  coil  $:  p=?(%gold %iron %lead %zinc)              ::  core type
-              q=type                                    ::
-              r=[p=?(~ ^) q=(map term foot)]            ::
+++  clue  {p+chum q+nock r+(list (pair term nock))}     ::  battery definition
+++  coil  _:  p+?($gold $iron $lead $zinc)              ::  core type
+              q+type                                    ::
+              r+{p=?($~ ^) q+(map term foot)}            ::
           ==                                            ::
-++  coin  $%  [%$ p=dime]                               ::
-              [%blob p=*]                               ::
-              [%many p=(list coin)]                     ::
+++  coin  _%  {$$ p+dime}                               ::
+              {$blob p+*}                               ::
+              {$many p+(list coin)}                     ::
           ==                                            ::
-++  cord  ,@t                                           ::  text atom (UTF-8)
-++  dock  (pair ,@p term)                               ::  message target
-++  date  ,[[a=? y=@ud] m=@ud t=tarp]                   ::  parsed date
-++  dime  ,[p=@ta q=@]                                  ::
+++  cord  @t                                            ::  text atom (UTF-8)
+++  date  {{a+? y+@ud} m+@ud t+tarp}                    ::  parsed date
+++  dime  {p+@ta q+@}                                  ::
+++  dock  (pair @p term)                                ::  message target
 ++  each  |*  {a+_+(* *) b+_+(* *)}                     ::  either a or b
           _%({$& p+a} {$| p+b})                         ::    a default
-++  edge  ,[p=hair q=(unit ,[p=* q=nail])]              ::  parsing output
+++  edge  {p+hair q+(unit {p+* q+nail})}                ::  parsing output
 ++  foot  _%  {$ash p+twig}                             ::  dry arm, geometric
               {$elm p+twig}                             ::  wet arm, generic
               {$oak $~}                                 ::  XX not used
               {$yew p+(map term foot)}                  ::  XX not used
           ==                                            ::
-++  gate  $+(* *)                                       ::  general gate
-++  hair  ,[p=@ud q=@ud]                                ::  parsing trace
+++  gate  _+(* *)                                       ::  general gate
+++  hair  {p+@ud q+@ud}                                 ::  parsing trace
 ++  like  |*  a=_,*                                     ::  generic edge
           |=  b=_`*`[(hair) ~]                          ::
           :-  p=(hair -.b)                              ::
