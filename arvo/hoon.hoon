@@ -473,14 +473,14 @@
 ::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  add                                                 ::  add
   ~/  %add
-  |=  [a=@ b=@]
+  |=  {a+@ b+@}
   ^-  @
   ?:  =(0 a)  b
   $(a (dec a), b +(b))
 ::
 ++  cap                                                 ::  tree head
   ~/  %cap
-  |=  a=@
+  |=  a+@
   ^-  ?(%2 %3)
   ?-  a
     %2        %2
@@ -491,7 +491,7 @@
 ::
 ++  dec                                                 ::  decrement
   ~/  %dec
-  |=  a=@
+  |=  a+@
   ~|  %decrement-underflow
   ?<  =(0 a)
   =+  b=0
@@ -501,7 +501,7 @@
 ::
 ++  div                                                 ::  divide
   ~/  %div
-  |=  [a=_`@`1 b=_`@`1]
+  |=  {a+_~(`@`1) b+_~(`@`1)}
   ^-  @
   ~|  'div'
   ?<  =(0 b)
@@ -512,31 +512,31 @@
 ::
 ++  fac                                                 ::  factorial
   ~/  %fac
-  |=  a=@
+  |=  a+@
   ^-  @
   ?:  =(0 a)  1
   (mul a $(a (dec a)))
 ::
 ++  gte                                                 ::  greater-equal
   ~/  %gte
-  |=  [a=@ b=@]
+  |=  {a+@ b+@}
   ^-  ?
   !(lth a b)
 ::
 ++  gth                                                 ::  greater-than
   ~/  %gth
-  |=  [a=@ b=@]
+  |=  {a+@ b+@}
   ^-  ?
   !(lte a b)
 ::
 ++  lte                                                 ::  less-equal
   ~/  %lte
-  |=  [a=@ b=@]
+  |=  {a+@ b+@}
   |(=(a b) (lth a b))
 ::
 ++  lth                                                 ::  less-than
   ~/  %lth
-  |=  [a=@ b=@]
+  |=  {a+@ b+@}
   ^-  ?
   ?&  !=(a b)
       |-
@@ -547,7 +547,7 @@
 ::
 ++  mas                                                 ::  tree body
   ~/  %mas
-  |=  a=@
+  |=  a+@
   ^-  @
   ?-  a
     1   !!
@@ -558,21 +558,21 @@
 ::
 ++  max                                                 ::  maximum
   ~/  %max
-  |=  [a=@ b=@]
+  |=  {a+@ b+@}
   ^-  @
   ?:  (gth a b)  a
   b
 ::
 ++  min                                                 ::  minimum
   ~/  %min
-  |=  [a=@ b=@]
+  |=  {a+@ b+@}
   ^-  @
   ?:  (lth a b)  a
   b
 ::
 ++  mod                                                 ::  remainder
   ~/  %mod
-  |=  [a=_`@`1 b=_`@`1]
+  |=  {a+_~(`@`1) b+_~(`@`1)}
   ^-  @
   ?<  =(0 b)
   (sub a (mul b (div a b)))
