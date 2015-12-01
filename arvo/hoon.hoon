@@ -9511,7 +9511,12 @@
       :-  '='
         (stag %dtts ;~(pfix tis (ifix [pel per] ;~(glam wide wide))))
       :-  '?'
-        (stag %bccm (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil)))))
+        ;~  pose
+          %+  stag  %bccm 
+          (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil))))
+        ::
+          (cold [%cbzz %bean] wut)
+        ==
       :-  '['
         rupl
       :-  ','
