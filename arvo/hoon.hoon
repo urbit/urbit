@@ -7024,9 +7024,11 @@
         [%cbbr *]  ~(clam al boil)
         [%cbcl *]  ~(clam al boil)
         [%cbcn *]  ~(clam al boil)
+        [%cbls *]  ~(clam al boil)
         [%cbpm *]  ~(clam al boil)
         [%cbsg *]  ~(clam al boil)
         [%cbwt *]  ~(clam al boil)
+        [%cbts *]  ~(clam al boil)
         [%cbzy *]  ~(clam al boil)
         [%cbzz *]  ~(clam al boil)
     ::
