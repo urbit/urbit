@@ -199,6 +199,7 @@
             [%bczp p=base]                              ::  bunt an axil
           ::                                            ::::::  cores
             [%brcb p=tile q=(map term foot)]            ::  %gold tray, sample p
+            [%brcl p=twig q=twig]                       ::  %brts by example
             [%brcn p=(map term foot)]                   ::  %gold core, natural
             [%brdt p=twig]                              ::  dry %gold trap
             [%brfs p=tile q=(map term foot)]            ::  vulcan. %gold tray
@@ -7002,6 +7003,7 @@
         [%bctr *]  [%ktsg ~(bunt al p.gen)]
         [%bczp *]  [%bctr %axil p.gen]
         [%brcb *]  [%tsls [%bctr p.gen] [%brcn q.gen]]
+        [%brcl *]  [%tsls [%ktsg p.gen] [%brdt q.gen]]
         [%brdt *]  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
         [%brtr *]  [%brfs p.gen (~(put by *(map term foot)) %$ [%elm q.gen])]
         [%brfs *]  ~|  %elm-tile
