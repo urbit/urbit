@@ -10139,7 +10139,10 @@
           ?~(a !! ?~(t.a i.a [i.a $(a t.a)]))
         (most ace toil)
       :-  '_'
-        (stag %weed ;~(pfix cab wide))
+        ;~  pose
+          (stag %weed ;~(pfix cab wide))
+          (stag %herb wide)
+        ==
       :-  ['0' '9']
         (stag %leaf bisk:so)
       :-  ['a' 'z']
