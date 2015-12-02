@@ -3,7 +3,7 @@
   ::
 /?    314
 /-    markdown
-/+    down-jet
+/+    down-jet, frontmatter
 ::
 ::::
   ::
@@ -11,8 +11,11 @@
 |_  don=down
 ++  grab                                                ::  convert from
   |%
-  ++  md  |=(src=@t (mark:down-jet src))
   ++  noun  down                                        ::  clam from %noun
+  ++  md
+    |=  src=@t
+    =+  [atr mud]=(parse:frontmatter (lore src))
+    [[%meta atr] (mark:down-jet mud)]
   --
 ::
 ++  grow                                                ::  convert into
