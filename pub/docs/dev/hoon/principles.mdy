@@ -1,7 +1,7 @@
 ---
 logo: black
-title: Hoon 101
 sort: 2
+title: Hoon 101
 ---
 
 Welcome to Hoon 101!

@@ -1,8 +1,8 @@
 ---
-title: Hoon 101.4: functions
+next: false
 sort: 4
 spam: true
-next: false
+title: Hoon 101.4: functions
 ---
 # Hoon 4: toward actual functions
 

@@ -1,7 +1,7 @@
 ---
 logo: black
-title: Arvo
 sort: 3
+title: Arvo
 ---
 <div class="short">
 

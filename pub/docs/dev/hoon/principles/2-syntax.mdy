@@ -1,8 +1,8 @@
 ---
-title: Hoon 101.2: syntax
+next: false
 sort: 2
 spam: true
-next: false
+title: Hoon 101.2: syntax
 ---
 # Hoon 101.2: full-contact syntax
 

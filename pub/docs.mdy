@@ -1,7 +1,7 @@
 ---
-logo: black
 anchor: none
 layout: no-anchor
+logo: black
 ---
 
 <div class="short">
