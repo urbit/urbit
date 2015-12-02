@@ -1,7 +1,7 @@
 ---
 logo: black
-title: Nock
 sort: 1
+title: Nock
 ---
 
 # Nock
