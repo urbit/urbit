@@ -1,6 +1,6 @@
 ---
-title: Urbit whitepaper
 sort: 0
+title: Urbit whitepaper
 ---
 
 Urbit: an operating function

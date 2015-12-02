@@ -1,8 +1,8 @@
 ---
-title: Hoon 101.3: an algorithm
+next: false
 sort: 3
 spam: true
-next: false
+title: Hoon 101.3: an algorithm
 ---
 # Hoon 101.3: an algorithm
 
