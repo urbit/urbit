@@ -26,7 +26,7 @@
       [~ a]
     [[- c] a]:[(rsh 3 2 i.a) $(a t.a)]
   [(b `wain`c) a]
-++  keen  |*(_[a=,* b=rule] |=(c=nail `(like a)`(b c)))
+++  keen  |*([a=* b=rule] |=(c=nail `(like a)`(b c)))
 ++  parse
   |*  [hed=?(~ $|(@tas tape)) tal=(pole)]
   ?~  hed  (..$ tal)
@@ -38,7 +38,7 @@
   (some q.p.a)
 ::
 ++  advance
-  |*  [a=wain b=_rule]  ^+  [(wonk *b) a]
+  |*  [a=wain b=rule]  ^+  [(wonk *b) a]
   ?~(a !! ~|(i.a [(rash i.a b) t.a]))
 --
 !:

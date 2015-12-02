@@ -578,12 +578,12 @@
   ++  frac   ;~(plug dot digs)                          :: Fractional part
   ::  whitespace
   ++  spac  (star (mask [`@`9 `@`10 `@`13 ' ' ~]))
-  ++  ws  |*(sef=_rule ;~(pfix spac sef))
+  ++  ws  |*(sef=rule ;~(pfix spac sef))
   ::  plumbing
-  ++  mayb  |*(bus=_rule ;~(pose bus (easy "")))
+  ++  mayb  |*(bus=rule ;~(pose bus (easy "")))
   ++  twel  |=([a=tape b=tape] (weld a b))
   ++  piec
-    |*  bus=_rule
+    |*  bus=rule
     (cook |=(a=@ [a ~]) bus)
   --
 ::
@@ -878,7 +878,7 @@
     (zm (~(run by p.jon) wit))
   ::
   ++  op                                                ::  parse keys of map
-    |*  [fel=_rule wit=fist]
+    |*  [fel=rule wit=fist]
     %+  cu  mo
     %-  ci  :_  (om wit)
     |=  a=(map cord ,_(need *wit))
@@ -975,11 +975,11 @@
   ==
 ::
 ++  scanf                                              ::  formatted scan
-  |*  [tape (pole ,_:/(*$&(_rule tape)))]
+  |*  [tape (pole ,_:/(*$&(rule tape)))]
   =>  .(+< [a b]=+<)
   (scan a (parsf b))
 ++  parsf                                              ::  make parser from:
-  |^  |*  a=(pole ,_:/(*$&(_rule tape)))               ::  ;"chars{rule}chars"
+  |^  |*  a=(pole ,_:/(*$&(rule tape)))               ::  ;"chars{rule}chars"
       %-  cook  :_  (bill (norm a))
       |*  (list)
       ?~  +<  ~
@@ -988,7 +988,7 @@
   ::
   ::  .=  (norm [;"{n}, {n}"]:n=dim:ag)  ~[[& dim] [| ", "] [& dim]]:ag
   ++  norm                                             
-    |*  (pole ,_:/(*$&(_rule tape)))
+    |*  (pole ,_:/(*$&(rule tape)))
     ?~  +<  ~
     =>  .(+< [i=+<- t=+<+])
     :_  t=$(+< t)
@@ -1002,7 +1002,7 @@
   ::  .=  (bill ~[[& dim] [| ", "] [& dim]]:ag)
   ::  ;~(plug dim ;~(pfix com ace ;~(plug dim (easy)))):ag
   ++  bill
-    |*  (list (each ,_rule tape))
+    |*  (list (each rule tape))
     ?~  +<  (easy ~)
     ?:  ?=(| -.i)  ;~(pfix (jest (crip p.i)) $(+< t))
     %+  cook  |*([* *] [i t]=+<)

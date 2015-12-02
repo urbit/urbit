@@ -92,7 +92,7 @@
   ::
   ++  lose  |=(a=tape [[;lost:"{a}"]~ lum])
   ++  chomp
-    |*  [tap=tape fel=_rule]
+    |*  [tap=tape fel=rule]
     ^-  [(unit ,_(wonk *fel)) _lum]
     =+  vex=(fel 1^1 tap)
     ?~  q.vex  [~ lum]
@@ -185,7 +185,7 @@
   ::
   ++  lose  |=(a=tape [[;lost:"{a}"]~ lim])
   ++  chomp
-    |*  [tap=tape fel=_rule]
+    |*  [tap=tape fel=rule]
     ^-  [(unit ,_(wonk *fel)) _lim]
     =+  vex=(fel 1^1 tap)
     ?~  q.vex  [~ lim]

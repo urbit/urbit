@@ -151,7 +151,7 @@
         ~
       ==
     ++  op                                              ::  parse keys of map
-      |*  [fel=_rule wit=fist]
+      |*  [fel=rule wit=fist]
       %+  cu  mo
       %-  ci  :_  (om wit)
       |=  a=(map cord ,_(need *wit))
@@ -173,7 +173,7 @@
     ::
     ++  lake  |*(a=_,* $+(json (unit a)))
     ++  head-rush
-      |*  a=_rule
+      |*  a=rule
       |*  [b=cord c=*]
       =+  nit=(rush b a) 
       ?~  nit  ~

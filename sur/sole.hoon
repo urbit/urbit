@@ -106,7 +106,7 @@
   [p=*(list tank) q=[%& ~]]                             ::
 ::                                                      ::
 ++  sole-go                                             ::  parse by rule
-  |*  [sef=_rule fun=$+(* *)]                           ::
+  |*  [sef=rule fun=$+(* *)]                           ::
   |=  txt=sole-input                                    ::
   =+  vex=(sef [0 0] txt)                               ::
   ?:  |(!=((lent txt) q.p.vex) ?=(~ q.vex))             ::

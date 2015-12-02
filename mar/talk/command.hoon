@@ -20,7 +20,7 @@
         ==
     |%
     ++  op                                              ::  parse keys of map
-      |*  [fel=_rule wit=fist]
+      |*  [fel=rule wit=fist]
       %+  cu  mo
       %-  ci  :_  (om wit)
       |=  a=(map cord ,_(need *wit))
@@ -42,14 +42,14 @@
     ::
     ++  lake  |*(a=_,* $+(json (unit a)))
     ++  peach
-      |*  a=_[rule rule]
+      |*  a=[rule rule]
       |=  tub=nail  
       ^-  (like (each ,_(wonk (-.a)) ,_(wonk (+.a))))
       %.  tub
       ;~(pose (stag %& -.a) (stag %| +.a))
     ::
     ++  head-rush
-      |*  a=_rule
+      |*  a=rule
       |*  [b=cord c=*]
       =+  nit=(rush b a) 
       ?~  nit  ~

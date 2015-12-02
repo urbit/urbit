@@ -60,20 +60,20 @@
   =+  neu=(weld (reap sto ' ') t.q.tub)
   (next tub(q neu))
 ::
-++  whif  |*(a=_rule ;~(sfix a (star ace)))
-++  ahed  |*(a=_rule ;~(simu a (easy ~)))
-++  opts  |*(a=_rule ;~((bend) (easy ~) a))
-++  lots  |*([a=@u b=_rule] ;~(pfix (stun [a a] b) (star b)))
-++  leas  |*(a=_rule ;~(pfix ;~(less (stun 4^4 ace) (stun 0^3 ace)) a))
+++  whif  |*(a=rule ;~(sfix a (star ace)))
+++  ahed  |*(a=rule ;~(simu a (easy ~)))
+++  opts  |*(a=rule ;~((bend) (easy ~) a))
+++  lots  |*([a=@u b=rule] ;~(pfix (stun [a a] b) (star b)))
+++  leas  |*(a=rule ;~(pfix ;~(less (stun 4^4 ace) (stun 0^3 ace)) a))
 ++  pech  
-  |*  a=_[rule rule]
+  |*  a=[rule rule]
   |=  tub=nail  
   ^-  (like (each ,_(wonk (-.a)) ,_(wonk (+.a))))
   %.  tub
   ;~(pose (stag %& -.a) (stag %| +.a))
 ::
 ++  lite                                                ::  literal matched
-  |*  a=_rule
+  |*  a=rule
   |=  tub=nail  ^-  (like tape)
   =+  vex=(a tub)
   ?~  q.vex  vex
@@ -89,13 +89,6 @@
   |=  tub=nail
   ^-  (like a)
   [[0 0] ~ (a q.tub) [0 0] ~]
-:: ++  vary                                             ::  XX  types
-::   |=  a=tape
-::   ?~  a  !!                                             ::  XX cast to _(b)
-::   |*  b=_|=(_rule rule)
-::   ?~  t.a  (b (just i.a))
-::   ;~(pose (b (just i.a)) $(a t.a))
-::
 --  ==
   =~
 |%
@@ -269,7 +262,7 @@
         (pexp nore(rec " "))
       ==
     ++  pexp
-      |*  cha=_rule
+      |*  cha=rule
       =+  chu=;~(less pel per cha)
       |-                                                ::  XX  Chesterton fence
       %+  knee  *tape  |.  ~+
@@ -287,7 +280,7 @@
       ==
     ++  titl
       %.  ~[soq^soq doq^doq pel^per]
-      |*  a=(pole ,_[rule rule])
+      |*  a=(pole ,[rule rule])
       ?~  a  fail
       ;~  pose
       (ifix -.a (star ;~(pose esc htm-enty ;~(less ->.a prn))))
@@ -485,7 +478,7 @@
   :(strip nobas (star ace) (flop a))
 ::
 ++  scab
-  |*  [a=tape b=_rule]
+  |*  [a=tape b=rule]
   (wonk (b [1 1] a))
 ::
 ++  donp
@@ -515,7 +508,7 @@
   ++  hrul
     %+  cold  [%hrul ~]
     %.  ~[tar hep cab]  ::  (vary "*-_")
-    |*  a=(pole ,_rule)
+    |*  a=(pole rule)
     ?~  a   fail
     ;~(pose ;~(plug (lots 3 (whif -.a)) (ahed eol)) $(a +.a))
   ::
@@ -632,14 +625,14 @@
     ==
   ::
   ++  snack                                             ::  advance by parser
-    |*  a=_rule
+    |*  a=rule
     ^-  [(unit ,_(wonk (a))) nail]
     =+  vex=(a tub)
     ?~  q.vex  [~ tub]
     [`p q]:u.q.vex
   ::
   ++  snake                                             ::  advance with trace
-    |*  fel=_rule
+    |*  fel=rule
     =-  (snack (here - fel))
     |*([[[@ a=@u] [@ b=@u]] c=*] [p=(sub b a) q=c])
   ::

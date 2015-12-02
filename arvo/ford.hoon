@@ -716,7 +716,7 @@
           ==
         ::
         ++  rail
-          |*  [wid=_rule tal=_rule]
+          |*  [wid=rule tal=rule]
           ?.  tol  wid
           ;~(pose wid tal)
         ::

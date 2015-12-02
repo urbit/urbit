@@ -83,7 +83,7 @@
      [[& y] m d h.t m.t s.t (div (mul ms.t 0x1.0000) 1.000) ~]
   ++  parse-day    (parsf ;"{dem}\-{dem}\-{dem}")
   ++  parse-seconds  (parsf ;"{dem}:{dem}:{dem}{(optional ;~(pfix dot dem))}")
-  ++  optional  |*(fel=_rule ;~(pose fel (easy 0)))
+  ++  optional  |*(fel=rule ;~(pose fel (easy 0)))
   ++  parse-zone
     ;~  pose 
       (cold [& 0 0] (jest 'Z')) 
