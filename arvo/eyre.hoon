@@ -696,7 +696,7 @@
     |=  [tee=whir typ=type sih=sign]
     ^+  +>
     =.  our  ?~(hov our u.hov)  ::  XX
-    ?:  &(?=(?(%of %ow) -.tee) !(~(has by wix) p.tee))
+    ?:  &(?=([?(%of %ow) ^] tee) !(~(has by wix) p.tee))
       ~&(dead-ire/[`whir`tee (,[term term ~] +.sih)] +>)
     ?-    &2.sih
         %crud  +>.$(mow [[hen %slip %d %flog +.sih] mow])
