@@ -1,8 +1,8 @@
 ---
-title: Hoon 101.0: nouns, spans, and molds
+next: true
 sort: 0
 spam: true
-next: true
+title: Hoon 101.0: nouns, spans, and molds
 ---
 
 # Hoon 101.0: nouns, spans and molds

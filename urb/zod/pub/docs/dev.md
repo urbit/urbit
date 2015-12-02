@@ -1,7 +1,7 @@
 ---
 logo: black
-title: Developer doc
 sort: 2
+title: Developer doc
 ---
 <div class="short">
 

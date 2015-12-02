@@ -29,6 +29,7 @@
 :: ++  mist  |*(a=_,* ,[i=a t=$|(~ (mist a))])             ::  .=(%mist +(%list))
 ++  node                                                ::  childless block
   $%  [%para p=kids]
+      [%meta p=(map cord cord)]                         ::  front matter
       [%hrul ~]
       [%head p=@u q=kids]
       [%code p=(unit ,[p=char q=@u r=tape]) q=wain]     ::  info, contents
