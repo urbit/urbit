@@ -2470,6 +2470,7 @@
       [[%hat ~] p=hole q=hart]                          ::  login redirect
       [[%get ~] p=@uvH q=[? clip httq]]                 ::  remote request
       [[%got ~] p=@uvH q=httr]                          ::  remote response
+      [[%gib ~] p=@uvH]                                 ::  remote cancel
   ==                                                    ::
 ::::                                                    ::
 ++  kiss-eyre                                           ::  in request ->$
@@ -2564,7 +2565,7 @@
           ==                                            ::
 ++  kiss-ford                                           ::  in request ->$
           $%  [%exec p=@p q=(unit bilk)]                ::  make / kill
-              [%wasp p=@p q=@uvH]                       ::  depends query
+              [%wasp p=@p q=[@uvH ?]]                   ::  depends ask / kill
               [%wegh ~]                                 ::  report memory
           ==                                            ::
 ::
