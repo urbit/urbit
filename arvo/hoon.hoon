@@ -2939,7 +2939,7 @@
 ::
 ++  cold                                                ::  replace w/ constant
   ~/  %cold
-  |*  [cus=* sef=_rule]
+  |*  [cus=* sef=rule]
   ~/  %fun
   |=  tub=nail
   =+  vex=(sef tub)
@@ -2949,7 +2949,7 @@
 ::
 ++  cook                                                ::  apply gate
   ~/  %cook
-  |*  [poq=_,* sef=_rule]
+  |*  [poq=_,* sef=rule]
   ~/  %fun
   |=  tub=nail
   =+  vex=(sef tub)
@@ -2967,19 +2967,19 @@
 ::
 ++  fail  |=(tub=nail [p=p.tub q=~])                    ::  never parse
 ++  full                                                ::  has to fully parse
-  |*  sef=_rule
+  |*  sef=rule
   |=  tub=nail
   =+  vex=(sef tub)
   ?~(q.vex vex ?:(=(~ q.q.u.q.vex) vex [p=p.vex q=~]))
 ::
 ++  funk                                                ::  add to tape first
-  |*  [pre=tape sef=_rule]
+  |*  [pre=tape sef=rule]
   |=  tub=nail
   (sef p.tub (weld pre q.tub))
 ::
 ++  here                                                ::  place-based apply
   ~/  %here
-  |*  [hez=_|=([a=pint b=*] [a b]) sef=_rule]
+  |*  [hez=_|=([a=pint b=*] [a b]) sef=rule]
   ~/  %fun
   |=  tub=nail
   =+  vex=(sef tub)
@@ -2987,7 +2987,7 @@
     vex
   [p=p.vex q=[~ u=[p=(hez [p.tub p.q.u.q.vex] p.u.q.vex) q=q.u.q.vex]]]
 ::
-++  inde  |*  sef=_rule                                 :: indentation block
+++  inde  |*  sef=rule                                 :: indentation block
   |=  nail  ^+  (sef)
   =+  [har tap]=[p q]:+<
   =+  lev=(fil 3 (dec q.har) ' ')
@@ -3056,7 +3056,7 @@
   [zac [~ i.q.tub [zac t.q.tub]]]
 ::
 ++  sear                                                ::  conditional cook
-  |*  [pyq=_|=(* *(unit)) sef=_rule]
+  |*  [pyq=_|=(* *(unit)) sef=rule]
   |=  tub=nail
   =+  vex=(sef tub)
   ?~  q.vex
@@ -3080,7 +3080,7 @@
 ::
 ++  stag                                                ::  add a label
   ~/  %stag
-  |*  [gob=* sef=_rule]
+  |*  [gob=* sef=rule]
   ~/  %fun
   |=  tub=nail
   =+  vex=(sef tub)
@@ -3089,7 +3089,7 @@
   [p=p.vex q=[~ u=[p=[gob p.u.q.vex] q=q.u.q.vex]]]
 ::
 ++  stet
-  |*  leh=(list ,[?(@ [@ @]) _rule])
+  |*  leh=(list ,[?(@ [@ @]) rule])
   |-
   ?~  leh
     ~
@@ -3097,7 +3097,7 @@
 ::
 ++  stew                                                ::  switch by first char
   ~/  %stew
-  |*  leh=(list ,[p=?(@ [@ @]) q=_rule])                ::  char/range keys
+  |*  leh=(list ,[p=?(@ [@ @]) q=rule])                ::  char/range keys
   =+  ^=  wor                                           ::  range complete lth
       |=  [ort=?(@ [@ @]) wan=?(@ [@ @])]
       ?@  ort
@@ -3141,7 +3141,7 @@
 ::
 ++  stir
   ~/  %stir
-  |*  [rud=* raq=_|*([a=* b=*] [a b]) fel=_rule]
+  |*  [rud=* raq=_|*([a=* b=*] [a b]) fel=rule]
   ~/  %fun
   |=  tub=nail
   ^-  (like ,_rud)
@@ -3153,7 +3153,7 @@
   [(last p.vex p.wag) [~ (raq p.u.q.vex p.u.q.wag) q.u.q.wag]]
 ::
 ++  stun                                                ::  parse several times
-  |*  [[les=@ mos=@] fel=_rule]
+  |*  [[les=@ mos=@] fel=rule]
   |=  tub=nail
   ^-  (like (list ,_(wonk (fel))))
   ?:  =(0 mos)
@@ -3178,7 +3178,7 @@
   ~/  %bend
   |*  raq=_|*([a=* b=*] [~ u=[a b]])
   ~/  %fun
-  |*  [vex=edge sab=_rule]
+  |*  [vex=edge sab=rule]
   ?~  q.vex
     vex
   =+  yit=(sab q.u.q.vex)
@@ -3194,7 +3194,7 @@
   ~/  %comp
   |*  raq=_|*([a=* b=*] [a b])                          ::  arbitrary compose
   ~/  %fun
-  |*  [vex=edge sab=_rule]
+  |*  [vex=edge sab=rule]
   ?~  q.vex
     vex
   =+  yit=(sab q.u.q.vex)
@@ -3205,13 +3205,13 @@
 ::
 ++  glue                                                ::  add rule
   ~/  %glue
-  |*  bus=_rule
+  |*  bus=rule
   ~/  %fun
-  |*  [vex=edge sab=_rule]
+  |*  [vex=edge sab=rule]
   (plug vex ;~(pfix bus sab))
 ::
 ++  less                                                ::  no first and second
-  |*  [vex=edge sab=_rule]
+  |*  [vex=edge sab=rule]
   ?~  q.vex
     =+  roq=(sab)
     [p=(last p.vex p.roq) q=q.roq]
@@ -3223,7 +3223,7 @@
 ::
 ++  plug                                                ::  first then second
   ~/  %plug
-  |*  [vex=edge sab=_rule]
+  |*  [vex=edge sab=rule]
   ?~  q.vex
     vex
   =+  yit=(sab q.u.q.vex)
@@ -3234,13 +3234,13 @@
 ::
 ++  pose                                                ::  first or second
   ~/  %pose
-  |*  [vex=edge sab=_rule]
+  |*  [vex=edge sab=rule]
   ?~  q.vex
     =+  roq=(sab)
     [p=(last p.vex p.roq) q=q.roq]
   vex
 ++  simu                                                ::  first and second
-  |*  [vex=edge sab=_rule]
+  |*  [vex=edge sab=rule]
   ?~  q.vex
     vex
   =+  roq=(sab)
@@ -3253,7 +3253,7 @@
 ::                section 2eE, parsing (composers)      ::
 ::
 ++  bass
-  |*  [wuc=@ tyd=_rule]
+  |*  [wuc=@ tyd=rule]
   %+  cook
     |=  waq=(list ,@)
     %+  roll
@@ -3262,7 +3262,7 @@
   tyd
 ::
 ++  boss
-  |*  [wuc=@ tyd=_rule]
+  |*  [wuc=@ tyd=rule]
   %+  cook
     |=  waq=(list ,@)
     %+  reel
@@ -3275,33 +3275,33 @@
   ;~(pose (cold %& (jest sic)) (cold %| (jest non)))
 ::
 ++  ifix
-  |*  [fel=[p=_rule q=_rule] hof=_rule]
+  |*  [fel=[p=rule q=rule] hof=rule]
   ;~(pfix p.fel ;~(sfix hof q.fel))
 ::
 ++  more
-  |*  [bus=_rule fel=_rule]
+  |*  [bus=rule fel=rule]
   ;~(pose (most bus fel) (easy ~))
 ::
 ++  most
-  |*  [bus=_rule fel=_rule]
+  |*  [bus=rule fel=rule]
   ;~(plug fel (star ;~(pfix bus fel)))
 ::
 ++  pick
-  |*  [a=_rule b=_rule]
+  |*  [a=rule b=rule]
   ;~  pose
     (stag %& a)
     (stag %| b)
   ==
 ::
-++  plus  |*(fel=_rule ;~(plug fel (star fel)))
-++  punt  |*([a=_rule] ;~(pose (stag ~ a) (easy ~)))
+++  plus  |*(fel=rule ;~(plug fel (star fel)))
+++  punt  |*([a=rule] ;~(pose (stag ~ a) (easy ~)))
 ++  slug
   |*  raq=_|*([a=* b=*] [a b])
-  |*  [bus=_rule fel=_rule]
+  |*  [bus=rule fel=rule]
   ;~((comp raq) fel (stir +<+.raq raq ;~(pfix bus fel)))
 ::
 ++  star                                                ::  0 or more times
-  |*  fel=_rule
+  |*  fel=rule
   (stir `(list ,_(wonk *fel))`~ |*([a=* b=*] [a b]) fel)
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eF, parsing (ascii)          ::
@@ -3438,19 +3438,19 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eI, parsing (external)       ::
 ::
-++  rash  |*([naf=@ sab=_rule] (scan (trip naf) sab))   ::
-++  rose  |*  [los=tape sab=_rule]
+++  rash  |*([naf=@ sab=rule] (scan (trip naf) sab))   ::
+++  rose  |*  [los=tape sab=rule]
           =+  vex=(sab [[1 1] los])
           =+  len=(lent los)
           ?.  =(+(len) q.p.vex)  [%| p=(dec q.p.vex)]
           ?~  q.vex
             [%& p=~]
           [%& p=[~ u=p.u.q.vex]]
-++  rush  |*([naf=@ sab=_rule] (rust (trip naf) sab))
-++  rust  |*  [los=tape sab=_rule]
+++  rush  |*([naf=@ sab=rule] (rust (trip naf) sab))
+++  rust  |*  [los=tape sab=rule]
           =+  vex=((full sab) [[1 1] los])
           ?~(q.vex ~ [~ u=p.u.q.vex])
-++  scan  |*  [los=tape sab=_rule]
+++  scan  |*  [los=tape sab=rule]
           =+  vex=((full sab) [[1 1] los])
           ?~  q.vex
             ~_  (show [%m '{%d %d}'] p.p.vex q.p.vex ~)
@@ -3864,7 +3864,7 @@
   --
 ++  ag
   |%
-  ++  ape  |*(fel=_rule ;~(pose (cold 0 (just '0')) fel))
+  ++  ape  |*(fel=rule ;~(pose (cold 0 (just '0')) fel))
   ++  bay  (ape (bass 16 ;~(plug qeb:ab (star ;~(pfix dog qib:ab)))))
   ++  bip  =+  tod=(ape qex:ab)
            (bass 0x1.0000 ;~(plug tod (stun [7 7] ;~(pfix dog tod))))
@@ -4535,7 +4535,7 @@
 ::
 ++  mink
   ~/  %mink
-  |=  [[sub=* fol=*] sky=_+(* (unit))]
+  |=  [[sub=* fol=*] sky=$+(* (unit))]
   =+  tax=*(list ,[@ta *])
   |-  ^-  tone
   ?@  fol
@@ -4609,7 +4609,7 @@
   ==
 ::
 ++  mock
-  |=  [[sub=* fol=*] sky=_+(* (unit))]
+  |=  [[sub=* fol=*] sky=$+(* (unit))]
   (mook (mink [sub fol] sky))
 ::
 ++  mook
@@ -4660,20 +4660,20 @@
   ==
 ::
 ++  mang
-  |=  [[gat=* sam=*] sky=_+(* (unit))]
+  |=  [[gat=* sam=*] sky=$+(* (unit))]
   ^-  (unit)
   =+  ton=(mong [[gat sam] sky])
   ?.(?=([0 *] ton) ~ [~ p.ton])
 ::
 ++  mong
-  |=  [[gat=* sam=*] sky=_+(* (unit))]
+  |=  [[gat=* sam=*] sky=$+(* (unit))]
   ^-  toon
   ?.  &(?=(^ gat) ?=(^ +.gat))
     [%2 ~]
   (mock [[-.gat [sam +>.gat]] -.gat] sky)
 ::
 ++  mung
-  |=  [[gat=* sam=*] sky=_+(* (unit))]
+  |=  [[gat=* sam=*] sky=$+(* (unit))]
   ^-  tone
   ?.  &(?=(^ gat) ?=(^ +.gat))
     [%2 ~]
@@ -6149,7 +6149,7 @@
     (weld ~(ram re (show d -.gar)) $(i (add 2 i), gar +.gar))
   ::
   ++  shop
-    |=  [aug=* vel=_+(a=@ tape)]
+    |=  [aug=* vel=$+(a=@ tape)]
     ^-  tank
     ?:  ?=(@ aug)
       [%leaf (vel aug)]
@@ -6186,7 +6186,7 @@
   ++  rub   `tape`['0' 'b' (rum 2 ~ |=(b=@ (add '0' b)))]
   ++  rud   (rum 10 ~ |=(b=@ (add '0' b)))
   ++  rum
-    |=  [b=@ c=tape d=_+(@ @)]
+    |=  [b=@ c=tape d=$+(@ @)]
     ^-  tape
     ?:  =(0 a)
       [(d 0) c]
@@ -6249,7 +6249,7 @@
   ^-  type
   ?:(|(=(%void der) =(%void s.bid)) %void [%bull bid der])
 ::
-++  cain  |=(vax=vase (sell vax))                       ::  _+(vase tank) for #>
+++  cain  |=(vax=vase (sell vax))                       ::  $+(vase tank) for #>
 ++  cell                                                ::  make %cell type
   ~/  %cell
   |=  [hed=type tal=type]
@@ -6497,8 +6497,8 @@
   |=  txt=@
   q:(~(mint ut %noun) %noun (ream txt))
 ::
-++  noah  |=(vax=vase (pave vax))                       ::  _+(vase tape) for #<
-++  onan  |=(vix=vise (seer vix))                       ::  _+(vise vase) for !>
+++  noah  |=(vax=vase (pave vax))                       ::  $+(vase tape) for #<
+++  onan  |=(vix=vise (seer vix))                       ::  $+(vise vase) for !>
 ++  rain                                                ::  parse with % path
   |=  [bon=path txt=@]
   ^-  twig
@@ -6564,7 +6564,7 @@
   ^-  vase
   [[%cell p.hed p.tal] [q.hed q.tal]]
 ::
-++  skol                                                ::  _+(type tank) for ~!
+++  skol                                                ::  $+(type tank) for ~!
   |=  typ=type  ^-  tank
   ~(duck ut typ)
 ::
@@ -6811,7 +6811,7 @@
   ++  whip
     |=  axe=axis
     =+  ^=  tun
-        |=  noy=_+(* twig)
+        |=  noy=$+(* twig)
         ^-  twig
         ?@  nag
           =+  luz=[%cnts [[~ 1] ~] [[[%& axe] ~] bunt(sec [%axil %cell])] ~]
@@ -10350,15 +10350,15 @@
           ==                                            ::
 ++  desk  ,@tas                                         ::  ship desk case spur
 ++  cage  (cask vase)                                   ::  global metadata
-++  cask  |*(a+_+(* *) (pair mark a))                       ::  global data
+++  cask  |*(a+$+(* *) (pair mark a))                       ::  global data
 ++  cuff                                                ::  permissions
           $:  p=(unit (set monk))                       ::  can be read by
               q=(set monk)                              ::  caused or created by
           ==                                            ::
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
-++  hypo  |*(a=_+(* *) (pair type a))                   ::  type associated
-++  hobo  |*  a=_+(* *)                                 ::  kiss wrapper
+++  hypo  |*(a=$+(* *) (pair type a))                   ::  type associated
+++  hobo  |*  a=$+(* *)                                 ::  kiss wrapper
           $?  $%  [%soft p=*]                           ::
               ==                                        ::
               a                                         ::
@@ -10383,7 +10383,7 @@
 ++  milt  ,[p=* q=*]                                    ::  metavase
 ++  monk  (each ship ,[p=@tas q=@ta])                   ::  general identity
 ++  mold                                                ::  new kernel action
-          |*  [a=_+(* *) b=_+(* *)]                     ::  forward/reverse
+          |*  [a=$+(* *) b=$+(* *)]                     ::  forward/reverse
           $%  [%pass p=path q=a]                        ::  advance
               [%slip p=a]                               ::  lateral
               [%sick p=b]                               ::  lame refactoring
