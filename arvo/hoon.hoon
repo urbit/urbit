@@ -1,4 +1,4 @@
-!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::   
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject
@@ -1307,6 +1307,13 @@
             {$i s=?}
             {$n $~}
         ==
+::
+++  rn  ::  parsed decimal float
+        ::
+        _%  {$d a+? b+{c+@ {d+@ e+@} f+? i+@}}
+            {$i a+?}
+            {$n $~}
+        == 
 ::
 ++  fl                                                  ::  arb. precision fp
   =+  ^-  {{p+@u v+@s w+@u} r+_?($n $u $d $z $a) d+_?($d $f $i)}
@@ -4283,10 +4290,7 @@
     ==
   ::
   ++  royl-cell
-    |=  _?  {$d a+? b+{c+@ {d+@ e+@} f+? i+@}}
-            {$i a+?}
-            {$n $~}
-        ==
+    |=  rn
     ^-  dn
     ?.  ?=({$d *} +<)  +<
     =+  ^=  h
@@ -4546,7 +4550,7 @@
 ::
 ++  mink
   ~/  %mink
-  |=  [[sub=* fol=*] sky=_+(* (unit))]
+  |=  {{sub+* fol+*} sky+_+(* (unit))}
   =+  tax=*(list ,[@ta *])
   |-  ^-  tone
   ?@  fol
@@ -4620,7 +4624,7 @@
   ==
 ::
 ++  mock
-  |=  [[sub=* fol=*] sky=_+(* (unit))]
+  |=  {{sub+* fol+*} sky+_+(* (unit))}
   (mook (mink [sub fol] sky))
 ::
 ++  mook
@@ -4671,20 +4675,20 @@
   ==
 ::
 ++  mang
-  |=  [[gat=* sam=*] sky=_+(* (unit))]
+  |=  [[gat=* sam=*] sky=$+(* (unit))]
   ^-  (unit)
   =+  ton=(mong [[gat sam] sky])
   ?.(?=([0 *] ton) ~ [~ p.ton])
 ::
 ++  mong
-  |=  [[gat=* sam=*] sky=_+(* (unit))]
+  |=  [[gat=* sam=*] sky=$+(* (unit))]
   ^-  toon
   ?.  &(?=(^ gat) ?=(^ +.gat))
     [%2 ~]
   (mock [[-.gat [sam +>.gat]] -.gat] sky)
 ::
 ++  mung
-  |=  [[gat=* sam=*] sky=_+(* (unit))]
+  |=  [[gat=* sam=*] sky=$+(* (unit))]
   ^-  tone
   ?.  &(?=(^ gat) ?=(^ +.gat))
     [%2 ~]
@@ -6160,7 +6164,7 @@
     (weld ~(ram re (show d -.gar)) $(i (add 2 i), gar +.gar))
   ::
   ++  shop
-    |=  [aug=* vel=_+(a=@ tape)]
+    |=  [aug=* vel=$+(a=@ tape)]
     ^-  tank
     ?:  ?=(@ aug)
       [%leaf (vel aug)]
@@ -6197,7 +6201,7 @@
   ++  rub   `tape`['0' 'b' (rum 2 ~ |=(b=@ (add '0' b)))]
   ++  rud   (rum 10 ~ |=(b=@ (add '0' b)))
   ++  rum
-    |=  [b=@ c=tape d=_+(@ @)]
+    |=  [b=@ c=tape d=$+(@ @)]
     ^-  tape
     ?:  =(0 a)
       [(d 0) c]
@@ -6260,7 +6264,7 @@
   ^-  type
   ?:(|(=(%void der) =(%void s.bid)) %void [%bull bid der])
 ::
-++  cain  |=(vax=vase (sell vax))                       ::  _+(vase tank) for #>
+++  cain  |=(vax=vase (sell vax))                       ::  $+(vase tank) for #>
 ++  cell                                                ::  make %cell type
   ~/  %cell
   |=  [hed=type tal=type]
@@ -6508,8 +6512,8 @@
   |=  txt=@
   q:(~(mint ut %noun) %noun (ream txt))
 ::
-++  noah  |=(vax=vase (pave vax))                       ::  _+(vase tape) for #<
-++  onan  |=(vix=vise (seer vix))                       ::  _+(vise vase) for !>
+++  noah  |=(vax=vase (pave vax))                       ::  $+(vase tape) for #<
+++  onan  |=(vix=vise (seer vix))                       ::  $+(vise vase) for !>
 ++  rain                                                ::  parse with % path
   |=  [bon=path txt=@]
   ^-  twig
@@ -6575,7 +6579,7 @@
   ^-  vase
   [[%cell p.hed p.tal] [q.hed q.tal]]
 ::
-++  skol                                                ::  _+(type tank) for ~!
+++  skol                                                ::  $+(type tank) for ~!
   |=  typ=type  ^-  tank
   ~(duck ut typ)
 ::
@@ -6822,7 +6826,7 @@
   ++  whip
     |=  axe=axis
     =+  ^=  tun
-        |=  noy=_+(* twig)
+        |=  noy=$+(* twig)
         ^-  twig
         ?@  nag
           =+  luz=[%cnts [[~ 1] ~] [[[%& axe] ~] bunt(sec [%axil %cell])] ~]
@@ -10361,15 +10365,15 @@
           ==                                            ::
 ++  desk  ,@tas                                         ::  ship desk case spur
 ++  cage  (cask vase)                                   ::  global metadata
-++  cask  |*(a+_+(* *) (pair mark a))                       ::  global data
+++  cask  |*(a+$+(* *) (pair mark a))                       ::  global data
 ++  cuff                                                ::  permissions
           $:  p=(unit (set monk))                       ::  can be read by
               q=(set monk)                              ::  caused or created by
           ==                                            ::
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
-++  hypo  |*(a=_+(* *) (pair type a))                   ::  type associated
-++  hobo  |*  a=_+(* *)                                 ::  kiss wrapper
+++  hypo  |*(a=$+(* *) (pair type a))                   ::  type associated
+++  hobo  |*  a=$+(* *)                                 ::  kiss wrapper
           $?  $%  [%soft p=*]                           ::
               ==                                        ::
               a                                         ::
@@ -10394,7 +10398,7 @@
 ++  milt  ,[p=* q=*]                                    ::  metavase
 ++  monk  (each ship ,[p=@tas q=@ta])                   ::  general identity
 ++  mold                                                ::  new kernel action
-          |*  [a=_+(* *) b=_+(* *)]                     ::  forward/reverse
+          |*  [a=$+(* *) b=$+(* *)]                     ::  forward/reverse
           $%  [%pass p=path q=a]                        ::  advance
               [%slip p=a]                               ::  lateral
               [%sick p=b]                               ::  lame refactoring
