@@ -9671,6 +9671,7 @@
                 %-  stew
                 ^.  stet  ^.  limo
                 :~  ['_' (rune cab %brcb expv)]
+                    [':' (rune col %brcl expb)]
                     ['%' (rune cen %brcn expe)]
                     ['.' (rune dot %brdt expa)]
                     ['/' (rune fas %brfs expv)]
