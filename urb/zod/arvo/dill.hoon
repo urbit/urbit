@@ -76,9 +76,6 @@
   $%  [%nice ~]                                         ::
       [%init p=ship]                                    ::
   ==                                                    ::
-++  sign-gall                                           ::  see %gall
-  $%  [%onto p=(unit tang)]                             ::
-  ==                                                    ::
 ++  sign-clay                                           ::
   $%  [%mere p=(each (set path) (pair term tang))]      ::
       [%note p=@tD q=tank]                              ::

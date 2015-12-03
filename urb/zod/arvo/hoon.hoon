@@ -9772,7 +9772,18 @@
     ++  wisp                                            ::  core tail
       %-  ulva
       %+  cook
-        |=(a=(list ,[p=term q=foot]) (~(gas by *(map term foot)) a))
+        |=  a=(list ,[p=term q=foot])
+        =+  take=*(set term)
+        =+  cur=a
+        |-
+          ?@  cur
+            (~(gas by *(map term foot)) a)
+          ?:  (~(has in take) -.i.cur)
+            ~|  taken-name/-.i.cur
+            ::     (~(gas by *(map term foot)) a)
+            !!
+          ~&  [put/take -.i.cur]
+          $(take (~(put in take) -.i.cur), cur t.cur)
       (most muck boog)
     ::
     ++  toad                                            ::  untrap parser exp

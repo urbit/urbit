@@ -1883,13 +1883,10 @@
               heg=(map hand code)                       ::  proposed
               qim=(map hand code)                       ::  inbound
           ==                                            ::
-++  coal  ,*                                            ::  untyped vase
-++  code  ,@uvI                                         ::  symmetric key
 ++  cone                                                ::  reconfiguration
           $%  [& p=twig]                                ::  transform
               [| p=(list ,@tas)]                        ::  alter
           ==                                            ::
-++  chum  ,@uvI                                         ::  hashed passcode
 ++  claw                                                ::  startup chain
           $:  joy=(unit coal)                           ::  local context
               ran=(unit coal)                           ::  arguments
@@ -1901,10 +1898,6 @@
 ++  clip  (each ,@if ,@is)                              ::  client IP
 ++  coal  ,*                                            ::  untyped vase
 ++  code  ,@uvI                                         ::  symmetric key
-++  cone                                                ::  reconfiguration
-          $%  [& p=twig]                                ::  transform
-              [| p=(list ,@tas)]                        ::  alter
-          ==                                            ::
 ++  coop  (unit ares)                                   ::  e2e ack
 ++  corn                                                ::  flow by server
           $:  hen=duct                                  ::  admin channel
