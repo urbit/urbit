@@ -136,7 +136,7 @@
           ,[p=a q=b r=c s=d]                            ::
                                                         ::  XX move to zuse
 ++  ring  ,@                                            ::  private key
-++  rule  |=(tub=nail `edge`[p.tub ~ ~ tub])            ::  parsing rule
+++  rule  $+(nail edge)
 ++  span  ,@ta                                          ::  text-atom (ASCII)
 ++  spot  ,[p=path q=pint]                              ::  range in file
 ++  tang  (list tank)                                   ::  bottom-first error
@@ -4337,6 +4337,10 @@
 ++  stab                                                ::  parse cord to path
   =+  fel=;~(pfix fas (more fas urs:ab))
   |=(zep=@t `path`(rash zep fel))
+
+
+
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eM, regular-expressions      ::
 ::
@@ -4531,7 +4535,7 @@
 ::
 ++  mink
   ~/  %mink
-  |=  [[sub=* fol=*] sky=$+(* (unit))]
+  |=  [[sub=* fol=*] sky=_+(* (unit))]
   =+  tax=*(list ,[@ta *])
   |-  ^-  tone
   ?@  fol
@@ -4605,7 +4609,7 @@
   ==
 ::
 ++  mock
-  |=  [[sub=* fol=*] sky=$+(* (unit))]
+  |=  [[sub=* fol=*] sky=_+(* (unit))]
   (mook (mink [sub fol] sky))
 ::
 ++  mook
@@ -4656,20 +4660,20 @@
   ==
 ::
 ++  mang
-  |=  [[gat=* sam=*] sky=$+(* (unit))]
+  |=  [[gat=* sam=*] sky=_+(* (unit))]
   ^-  (unit)
   =+  ton=(mong [[gat sam] sky])
   ?.(?=([0 *] ton) ~ [~ p.ton])
 ::
 ++  mong
-  |=  [[gat=* sam=*] sky=$+(* (unit))]
+  |=  [[gat=* sam=*] sky=_+(* (unit))]
   ^-  toon
   ?.  &(?=(^ gat) ?=(^ +.gat))
     [%2 ~]
   (mock [[-.gat [sam +>.gat]] -.gat] sky)
 ::
 ++  mung
-  |=  [[gat=* sam=*] sky=$+(* (unit))]
+  |=  [[gat=* sam=*] sky=_+(* (unit))]
   ^-  tone
   ?.  &(?=(^ gat) ?=(^ +.gat))
     [%2 ~]
@@ -6145,7 +6149,7 @@
     (weld ~(ram re (show d -.gar)) $(i (add 2 i), gar +.gar))
   ::
   ++  shop
-    |=  [aug=* vel=$+(a=@ tape)]
+    |=  [aug=* vel=_+(a=@ tape)]
     ^-  tank
     ?:  ?=(@ aug)
       [%leaf (vel aug)]
@@ -6182,7 +6186,7 @@
   ++  rub   `tape`['0' 'b' (rum 2 ~ |=(b=@ (add '0' b)))]
   ++  rud   (rum 10 ~ |=(b=@ (add '0' b)))
   ++  rum
-    |=  [b=@ c=tape d=$+(@ @)]
+    |=  [b=@ c=tape d=_+(@ @)]
     ^-  tape
     ?:  =(0 a)
       [(d 0) c]
@@ -6245,7 +6249,7 @@
   ^-  type
   ?:(|(=(%void der) =(%void s.bid)) %void [%bull bid der])
 ::
-++  cain  |=(vax=vase (sell vax))                       ::  $+(vase tank) for #>
+++  cain  |=(vax=vase (sell vax))                       ::  _+(vase tank) for #>
 ++  cell                                                ::  make %cell type
   ~/  %cell
   |=  [hed=type tal=type]
@@ -6493,8 +6497,8 @@
   |=  txt=@
   q:(~(mint ut %noun) %noun (ream txt))
 ::
-++  noah  |=(vax=vase (pave vax))                       ::  $+(vase tape) for #<
-++  onan  |=(vix=vise (seer vix))                       ::  $+(vise vase) for !>
+++  noah  |=(vax=vase (pave vax))                       ::  _+(vase tape) for #<
+++  onan  |=(vix=vise (seer vix))                       ::  _+(vise vase) for !>
 ++  rain                                                ::  parse with % path
   |=  [bon=path txt=@]
   ^-  twig
@@ -6560,7 +6564,7 @@
   ^-  vase
   [[%cell p.hed p.tal] [q.hed q.tal]]
 ::
-++  skol                                                ::  $+(type tank) for ~!
+++  skol                                                ::  _+(type tank) for ~!
   |=  typ=type  ^-  tank
   ~(duck ut typ)
 ::
@@ -6807,7 +6811,7 @@
   ++  whip
     |=  axe=axis
     =+  ^=  tun
-        |=  noy=$+(* twig)
+        |=  noy=_+(* twig)
         ^-  twig
         ?@  nag
           =+  luz=[%cnts [[~ 1] ~] [[[%& axe] ~] bunt(sec [%axil %cell])] ~]
@@ -6984,7 +6988,7 @@
       ==
     ::
         [%cbpm *]  [%bush boil(gen p.gen) boil(gen q.gen)]
-        [%cbls *]  [%weed [%brts [%herb p.gen] [%bctr %herb q.gen]]]
+        [%cbls *]  [%weed [%brls [%herb p.gen] [%bctr %herb q.gen]]]
         [%cbts *]  [%bark p.gen boil(gen q.gen)]
         [%cbwt *]  =+  (turn p.gen |=(a=twig boil(gen a)))
                    ?~(- [%axil %void] [%fern -])
@@ -9650,12 +9654,12 @@
       ?:(tol ;~(pose ;~(pfix gap $:har(tol &)) dur) dur)
     ::
     ++  rung
-      |*  [dif=_rule tuq=* har=_exqa]
+      |*  [dif=rule tuq=* har=_exqa]
       ;~(pfix dif (stag tuq (toad har)))
     ::
     ++  gunk  ~+((glue muck))
     ++  muck  ?:(tol gap ace)
-    ++  butt  |*(zor=_rule ?:(tol ;~(sfix zor ;~(plug gap duz)) zor))
+    ++  butt  |*(zor=rule ?:(tol ;~(sfix zor ;~(plug gap duz)) zor))
     ++  loaf  ?:(tol howl toil)
     ++  lobe  ?:(tol tall wide)
     ++  exqa  |.(loaf)
@@ -9887,14 +9891,14 @@
       ?:(tol ;~(pose ;~(pfix gap $:har(tol &)) dur) dur)
     ::
     ++  rune                                            ::  build rune
-      |*  [dif=_rule tuq=* har=_expa]
+      |*  [dif=rule tuq=* har=_expa]
       ;~(pfix dif (stag tuq (toad har)))
     ::
     ++  glop  ~+((glue mash))                           ::  separated by space
     ++  gunk  ~+((glue muck))                           ::  separated list
-    ++  butt  |*  zor=_rule                             ::  closing == if tall
+    ++  butt  |*  zor=rule                             ::  closing == if tall
               ?:(tol ;~(sfix zor ;~(plug gap duz)) zor)
-    ++  ulva  |*  zor=_rule                             ::  closing -- and tall
+    ++  ulva  |*  zor=rule                             ::  closing -- and tall
               ?.(tol fail ;~(sfix zor ;~(plug gap dun)))
     ++  hank  (most muck loaf)                          ::  gapped twigs
     ++  loaf  ?:(tol tall wide)                         ::  hoon, current width
@@ -10162,7 +10166,7 @@
         (stag %leaf (stag %n (cold ~ sig)))
     ==
   ++  wart
-    |*  zor=_rule
+    |*  zor=rule
     %+  here
       |=  [a=pint b=twig]
       ?:(bug [%zpcb [wer a] b] b)
@@ -10346,15 +10350,15 @@
           ==                                            ::
 ++  desk  ,@tas                                         ::  ship desk case spur
 ++  cage  (cask vase)                                   ::  global metadata
-++  cask  |*(a=_,* (pair mark a))                       ::  global data
+++  cask  |*(a+_+(* *) (pair mark a))                       ::  global data
 ++  cuff                                                ::  permissions
           $:  p=(unit (set monk))                       ::  can be read by
               q=(set monk)                              ::  caused or created by
           ==                                            ::
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
-++  hypo  |*(a=$+(* *) (pair type a))                   ::  type associated
-++  hobo  |*  a=$+(* *)                                 ::  kiss wrapper
+++  hypo  |*(a=_+(* *) (pair type a))                   ::  type associated
+++  hobo  |*  a=_+(* *)                                 ::  kiss wrapper
           $?  $%  [%soft p=*]                           ::
               ==                                        ::
               a                                         ::
@@ -10379,7 +10383,7 @@
 ++  milt  ,[p=* q=*]                                    ::  metavase
 ++  monk  (each ship ,[p=@tas q=@ta])                   ::  general identity
 ++  mold                                                ::  new kernel action
-          |*  [a=$+(* *) b=$+(* *)]                     ::  forward/reverse
+          |*  [a=_+(* *) b=_+(* *)]                     ::  forward/reverse
           $%  [%pass p=path q=a]                        ::  advance
               [%slip p=a]                               ::  lateral
               [%sick p=b]                               ::  lame refactoring
@@ -10392,9 +10396,9 @@
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
 ++  ship  ,@p                                           ::  network identity
 ++  sink  (trel bone ship path)                         ::  subscription
-++  sled  $+  [(unit (set monk)) term beam]             ::  namespace function
+++  sled  _+  [(unit (set monk)) term beam]             ::  namespace function
           (unit (unit cage))                            ::
-++  slad  $+  [(unit (set monk)) term beam]             ::  undertyped
+++  slad  _+  [(unit (set monk)) term beam]             ::  undertyped
           (unit (unit (cask)))                          ::
 ++  slut  $+(* (unit (unit)))                           ::  old namespace
 ++  vile                                                ::  reflexive constants

@@ -114,7 +114,7 @@
     ::
     ++  dp-command-line  ;~(sfix dp-command (just '\0a'))
     ++  dp-variable                                     ::  %verb or %brev
-      |*  [sym=_rule src=_rule]
+      |*  [sym=rule src=rule]
       %-  cook  :_  ;~(plug sym (punt src))
       |=  [a=term b=(unit dojo-source)]  ^-  dojo-command
       ?~(b [%brev a] [[%verb a] u.b])
@@ -183,7 +183,7 @@
       ==
     ::
     ++  dp-twig-punt                                   ::  twig of unit
-      |*(a=_rule ;~(pose (stag [%bczp %null] a) (easy [%bczp %null])))
+      |*(a=rule ;~(pose (stag [%bczp %null] a) (easy [%bczp %null])))
     ::
     ++  dp-case-twig
       |=  a=coin  ^-  (unit twig)
