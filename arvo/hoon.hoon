@@ -6982,7 +6982,7 @@
       ==
     ::
         [%cbpm *]  [%bush boil(gen p.gen) boil(gen q.gen)]
-        [%cbls *]  [%weed [%brts [%herb p.gen] [%bctr %herb q.gen]]]
+        [%cbls *]  [%weed [%brls [%herb p.gen] [%bctr %herb q.gen]]]
         [%cbsg *]  [%weed p.gen]
         [%cbts *]  [%bark p.gen boil(gen q.gen)]
         [%cbwt *]  =+  (turn p.gen |=(a=twig boil(gen a)))
