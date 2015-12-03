@@ -43,7 +43,7 @@
           _%  {$a p+twig}                               ::  take tape
               {$b p+twig}                               ::  take manx
               {$c p+twig}                               ::  take marl
-              {$d p+twig}                               ::  take $+(marl marl)
+              {$d p+twig}                               ::  take _+(marl marl)
               {$e p+twig q+(list tuna)}                 ::  element literal
           ==                                            ::
 ++  bloq  @                                             ::  blockclass
@@ -4283,9 +4283,9 @@
     ==
   ::
   ++  royl-cell
-    |=  $?  [%d a=? b=[c=@ [d=@ e=@] f=? i=@]]
-            [%i a=?]
-            [%n ~]
+    |=  _?  {$d a+? b+{c+@ {d+@ e+@} f+? i+@}}
+            {$i a+?}
+            {$n $~}
         ==
     ^-  dn
     ?.  ?=({$d *} +<)  +<
@@ -4322,14 +4322,14 @@
       royl
     ==
   --
-++  scot  ~/  %scot  |=(mol=dime ~(rent co %$ mol))
-++  scow  |=(mol=dime ~(rend co %$ mol))
-++  slat  |=(mod=@tas |=(txt=@ta (slaw mod txt)))
-++  slav  |=([mod=@tas txt=@ta] (need (slaw mod txt)))
+++  scot  ~/  %scot  |=(mol+dime ~(rent co %$ mol))
+++  scow  |=(mol+dime ~(rend co %$ mol))
+++  slat  |=(mod+@tas |=(txt=@ta (slaw mod txt)))
+++  slav  |=({mod+@tas txt+@ta} (need (slaw mod txt)))
 ++  slaw
   ~/  %slaw
-  |=  [mod=@tas txt=@ta]
-  ^-  (unit ,@)
+  |=  {mod+@tas txt+@ta}
+  ^-  (unit @)
   =+  con=(slay txt)
   ?.(&(?=([~ %$ @ @] con) =(p.p.u.con mod)) ~ [~ q.p.u.con])
 ::
@@ -4550,7 +4550,7 @@
 ::
 ++  mink
   ~/  %mink
-  |=  [[sub=* fol=*] sky=$+(* (unit))]
+  |=  [[sub=* fol=*] sky=_+(* (unit))]
   =+  tax=*(list ,[@ta *])
   |-  ^-  tone
   ?@  fol
@@ -4624,7 +4624,7 @@
   ==
 ::
 ++  mock
-  |=  [[sub=* fol=*] sky=$+(* (unit))]
+  |=  [[sub=* fol=*] sky=_+(* (unit))]
   (mook (mink [sub fol] sky))
 ::
 ++  mook
@@ -4675,20 +4675,20 @@
   ==
 ::
 ++  mang
-  |=  [[gat=* sam=*] sky=$+(* (unit))]
+  |=  [[gat=* sam=*] sky=_+(* (unit))]
   ^-  (unit)
   =+  ton=(mong [[gat sam] sky])
   ?.(?=([0 *] ton) ~ [~ p.ton])
 ::
 ++  mong
-  |=  [[gat=* sam=*] sky=$+(* (unit))]
+  |=  [[gat=* sam=*] sky=_+(* (unit))]
   ^-  toon
   ?.  &(?=(^ gat) ?=(^ +.gat))
     [%2 ~]
   (mock [[-.gat [sam +>.gat]] -.gat] sky)
 ::
 ++  mung
-  |=  [[gat=* sam=*] sky=$+(* (unit))]
+  |=  [[gat=* sam=*] sky=_+(* (unit))]
   ^-  tone
   ?.  &(?=(^ gat) ?=(^ +.gat))
     [%2 ~]
@@ -6164,7 +6164,7 @@
     (weld ~(ram re (show d -.gar)) $(i (add 2 i), gar +.gar))
   ::
   ++  shop
-    |=  [aug=* vel=$+(a=@ tape)]
+    |=  [aug=* vel=_+(a=@ tape)]
     ^-  tank
     ?:  ?=(@ aug)
       [%leaf (vel aug)]
@@ -6201,7 +6201,7 @@
   ++  rub   `tape`['0' 'b' (rum 2 ~ |=(b=@ (add '0' b)))]
   ++  rud   (rum 10 ~ |=(b=@ (add '0' b)))
   ++  rum
-    |=  [b=@ c=tape d=$+(@ @)]
+    |=  [b=@ c=tape d=_+(@ @)]
     ^-  tape
     ?:  =(0 a)
       [(d 0) c]
@@ -6264,7 +6264,7 @@
   ^-  type
   ?:(|(=(%void der) =(%void s.bid)) %void [%bull bid der])
 ::
-++  cain  |=(vax=vase (sell vax))                       ::  $+(vase tank) for #>
+++  cain  |=(vax=vase (sell vax))                       ::  _+(vase tank) for #>
 ++  cell                                                ::  make %cell type
   ~/  %cell
   |=  [hed=type tal=type]
@@ -6512,8 +6512,8 @@
   |=  txt=@
   q:(~(mint ut %noun) %noun (ream txt))
 ::
-++  noah  |=(vax=vase (pave vax))                       ::  $+(vase tape) for #<
-++  onan  |=(vix=vise (seer vix))                       ::  $+(vise vase) for !>
+++  noah  |=(vax=vase (pave vax))                       ::  _+(vase tape) for #<
+++  onan  |=(vix=vise (seer vix))                       ::  _+(vise vase) for !>
 ++  rain                                                ::  parse with % path
   |=  [bon=path txt=@]
   ^-  twig
@@ -6579,7 +6579,7 @@
   ^-  vase
   [[%cell p.hed p.tal] [q.hed q.tal]]
 ::
-++  skol                                                ::  $+(type tank) for ~!
+++  skol                                                ::  _+(type tank) for ~!
   |=  typ=type  ^-  tank
   ~(duck ut typ)
 ::
@@ -6826,7 +6826,7 @@
   ++  whip
     |=  axe=axis
     =+  ^=  tun
-        |=  noy=$+(* twig)
+        |=  noy=_+(* twig)
         ^-  twig
         ?@  nag
           =+  luz=[%cnts [[~ 1] ~] [[[%& axe] ~] bunt(sec [%axil %cell])] ~]
@@ -10372,8 +10372,8 @@
           ==                                            ::
 ++  curd  ,[p=@tas q=*]                                 ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
-++  hypo  |*(a=$+(* *) (pair type a))                   ::  type associated
-++  hobo  |*  a=$+(* *)                                 ::  kiss wrapper
+++  hypo  |*(a=_+(* *) (pair type a))                   ::  type associated
+++  hobo  |*  a=_+(* *)                                 ::  kiss wrapper
           $?  $%  [%soft p=*]                           ::
               ==                                        ::
               a                                         ::
@@ -10398,7 +10398,7 @@
 ++  milt  ,[p=* q=*]                                    ::  metavase
 ++  monk  (each ship ,[p=@tas q=@ta])                   ::  general identity
 ++  mold                                                ::  new kernel action
-          |*  [a=$+(* *) b=$+(* *)]                     ::  forward/reverse
+          |*  [a=_+(* *) b=_+(* *)]                     ::  forward/reverse
           $%  [%pass p=path q=a]                        ::  advance
               [%slip p=a]                               ::  lateral
               [%sick p=b]                               ::  lame refactoring
@@ -10411,9 +10411,9 @@
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
 ++  ship  ,@p                                           ::  network identity
 ++  sink  (trel bone ship path)                         ::  subscription
-++  sled  $+  [(unit (set monk)) term beam]             ::  namespace function
+++  sled  _+  [(unit (set monk)) term beam]             ::  namespace function
           (unit (unit cage))                            ::
-++  slad  $+  [(unit (set monk)) term beam]             ::  undertyped
+++  slad  _+  [(unit (set monk)) term beam]             ::  undertyped
           (unit (unit (cask)))                          ::
 ++  slut  $+(* (unit (unit)))                           ::  old namespace
 ++  vile                                                ::  reflexive constants
