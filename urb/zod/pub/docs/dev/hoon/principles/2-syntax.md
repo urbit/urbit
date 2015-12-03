@@ -1,8 +1,8 @@
 ---
-title: Hoon 101.2: syntax
+next: false
 sort: 2
 spam: true
-next: false
+title: Hoon 101.2: syntax
 ---
 # Hoon 101.2: full-contact syntax
 
@@ -67,7 +67,7 @@ from Urbit, these changes will also propagate to Unix.
 
 Let's set the dojo desk to `%sandbox`:
 ```
-~tasfyn-partyv:dojo> =dir /=sandbox
+~tasfyn-partyv:dojo> =dir /=sandbox=
 =% /~tasfyn-partyv/sandbox/~2015.11.13..02.49.37..9e6c/
 ```
 Your prompt will change to:

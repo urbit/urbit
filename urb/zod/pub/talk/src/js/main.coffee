@@ -3,7 +3,6 @@ $(() ->
 
   rend = React.render
   
-  window.talk = {}
   window.talk.online = yes
 
   setInterval (->

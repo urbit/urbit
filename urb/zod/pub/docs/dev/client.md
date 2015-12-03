@@ -1,8 +1,8 @@
 ---
-logo: black
-title: Frontend tools
-sort: 4
 hide: true
+logo: black
+sort: 4
+title: Frontend tools
 ---
 
 Frontend tools

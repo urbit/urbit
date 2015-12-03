@@ -52,3 +52,8 @@ First we set a shell variable `a` to be a gate that takes two arguments
 and produces their sum. Then we use `%+` to pass values to our gate.
 `%+` is most useful for code organization, when you need to compute
 intermediate products for your final computation.
+
+Equivalent to
+-------------
+
+    %-(p [q r])

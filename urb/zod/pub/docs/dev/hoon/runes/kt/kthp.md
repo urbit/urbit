@@ -63,3 +63,8 @@ In this case we see a very common use of `^-`, at the top of a [gate]().
 This pattern is considered good hoon style for two reasons: it gives the
 reader a clear pattern for understanding what your code produces, and it
 helps ensure type-safety.
+
+Equivalent to
+-------------
+
+    ^+(*p q)

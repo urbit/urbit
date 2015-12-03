@@ -1,8 +1,8 @@
 ---
-logo: black
-title: Interpreter
-sort: 5
 hide: true
+logo: black
+sort: 5
+title: Interpreter
 ---
 
 # Interpreter

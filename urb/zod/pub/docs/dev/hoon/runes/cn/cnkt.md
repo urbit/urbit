@@ -39,3 +39,8 @@ None
 
 Examples
 --------
+
+Equivalent to
+-------------
+
+    %-(p [q r s])
