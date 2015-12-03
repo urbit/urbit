@@ -136,7 +136,7 @@
           ,[p=a q=b r=c s=d]                            ::
                                                         ::  XX move to zuse
 ++  ring  ,@                                            ::  private key
-++  rule  $+(nail edge)
+++  rule  ,_|=(nail *edge)                              ::  parsing rule
 ++  span  ,@ta                                          ::  text-atom (ASCII)
 ++  spot  ,[p=path q=pint]                              ::  range in file
 ++  tang  (list tank)                                   ::  bottom-first error
@@ -213,7 +213,6 @@
           ::                                            ::::::  molds
             [%cbcb p=twig]                              ::  example
             [%cbbr p=twig q=twig]                       ::  atom fork (reed)
-            [%cbcb p=twig]                              ::  example
             [%cbcl p=(list twig)]                       ::  tuple
             [%cbcn p=(list twig)]                       ::  tagged fork (kelp)
             [%cbls p=twig q=twig]                       ::  function
@@ -4337,14 +4336,6 @@
 ++  stab                                                ::  parse cord to path
   =+  fel=;~(pfix fas (more fas urs:ab))
   |=(zep=@t `path`(rash zep fel))
-
-
-
-
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 2eM, regular-expressions      ::
-::
-
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eN, pseudo-cryptography      ::
 ::
@@ -9677,8 +9668,8 @@
                 %-  stew
                 ^.  stet  ^.  limo
                 :~  ['_' (rune cab %brcb expv)]
-                    [':' (rune col %brcl expb)]
                     ['%' (rune cen %brcn expe)]
+                    [':' (rune col %brcl expb)]
                     ['.' (rune dot %brdt expa)]
                     ['/' (rune fas %brfs expv)]
                     ['-' (rune hep %brhp expa)]
@@ -10350,7 +10341,7 @@
           ==                                            ::
 ++  desk  ,@tas                                         ::  ship desk case spur
 ++  cage  (cask vase)                                   ::  global metadata
-++  cask  |*(a+$+(* *) (pair mark a))                       ::  global data
+++  cask  |*(a+_+(* *) (pair mark a))                       ::  global data
 ++  cuff                                                ::  permissions
           $:  p=(unit (set monk))                       ::  can be read by
               q=(set monk)                              ::  caused or created by
@@ -10396,9 +10387,9 @@
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
 ++  ship  ,@p                                           ::  network identity
 ++  sink  (trel bone ship path)                         ::  subscription
-++  sled  _+  [(unit (set monk)) term beam]             ::  namespace function
+++  sled  $+  [(unit (set monk)) term beam]             ::  namespace function
           (unit (unit cage))                            ::
-++  slad  _+  [(unit (set monk)) term beam]             ::  undertyped
+++  slad  $+  [(unit (set monk)) term beam]             ::  undertyped
           (unit (unit (cask)))                          ::
 ++  slut  $+(* (unit (unit)))                           ::  old namespace
 ++  vile                                                ::  reflexive constants
