@@ -4357,10 +4357,6 @@
   =+  fel=;~(pfix fas (more fas urs:ab))
   |=(zep=@t `path`(rash zep fel))
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::                section 2eM, regular-expressions      ::
-::
-
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eN, pseudo-cryptography      ::
 ::
 ++  un                                                  ::  =(x (wred (wren x)))
