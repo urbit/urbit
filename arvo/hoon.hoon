@@ -213,6 +213,7 @@
           ::                                            ::::::  molds
             [%cbcb p=twig]                              ::  example
             [%cbbr p=twig q=twig]                       ::  atom fork (reed)
+            [%cbcb p=twig]                              ::  example
             [%cbcl p=(list twig)]                       ::  tuple
             [%cbcn p=(list twig)]                       ::  tagged fork (kelp)
             [%cbls p=twig q=twig]                       ::  function
@@ -6960,6 +6961,7 @@
     ?+  gen  [%herb gen]
     ::
         [%cbbr *]  [%reed boil(gen p.gen) boil(gen q.gen)]
+        [%cbcb *]  [%weed p.gen]
         [%cbcl *]
       |-  ^-  tile
       ?~  p.gen  [%axil %null]
@@ -6982,8 +6984,7 @@
       ==
     ::
         [%cbpm *]  [%bush boil(gen p.gen) boil(gen q.gen)]
-        [%cbls *]  [%weed [%brls [%herb p.gen] [%bctr %herb q.gen]]]
-        [%cbcb *]  [%weed p.gen]
+        [%cbls *]  [%weed [%brts [%herb p.gen] [%bctr %herb q.gen]]]
         [%cbts *]  [%bark p.gen boil(gen q.gen)]
         [%cbwt *]  =+  (turn p.gen |=(a=twig boil(gen a)))
                    ?~(- [%axil %void] [%fern -])
@@ -7024,11 +7025,11 @@
         [%brwt *]  [%ktwt %brdt p.gen]
     ::
         [%cbbr *]  ~(clam al boil)
+        [%cbcb *]  ~(clam al boil)
         [%cbcl *]  ~(clam al boil)
         [%cbcn *]  ~(clam al boil)
         [%cbls *]  ~(clam al boil)
         [%cbpm *]  ~(clam al boil)
-        [%cbcb *]  ~(clam al boil)
         [%cbwt *]  ~(clam al boil)
         [%cbts *]  ~(clam al boil)
         [%cbzy *]  ~(clam al boil)
@@ -9518,6 +9519,7 @@
         ;~  pose
           %+  stag  %bccm 
           (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil))))
+        ::  (stag %cbwt ;~(pfix wut (ifix [pel per] (most ace wide))))
         ::
           (cold [%cbzz %bean] wut)
         ==
@@ -10138,7 +10140,10 @@
           ?~(a !! ?~(t.a i.a [i.a $(a t.a)]))
         (most ace toil)
       :-  '_'
-        (stag %weed ;~(pfix cab wide))
+        ;~  pose
+          (stag %weed ;~(pfix cab wide))
+          (stag %herb wide)
+        ==
       :-  ['0' '9']
         (stag %leaf bisk:so)
       :-  ['a' 'z']
