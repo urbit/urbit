@@ -2478,6 +2478,7 @@
               [%crud p=@tas q=(list tank)]              ::  XX rethink
               [%hiss p=mark q=cage]                     ::  outbound user req
               [%init p=@p]                              ::  report install
+              [%serv p=$|(desk beam)]                   ::  set serving root
               [%them p=(unit hiss)]                     ::  outbound request
               [%they p=@ud q=httr]                      ::  inbound response
               [%this p=? q=clip r=httq]                 ::  inbound request

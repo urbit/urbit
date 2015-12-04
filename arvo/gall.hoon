@@ -1166,6 +1166,7 @@
         %merg  `%c
         %mont  `%c
         %ogre  `%c
+        %serv  `%e
         %them  `%e
         %wait  `%b
         %want  `%a

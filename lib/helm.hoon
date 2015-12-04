@@ -47,6 +47,7 @@
       $%  [%cash wire p=@p q=buck]                    ::
           [%conf wire dock %load ship term]           ::
           [%flog wire flog]                           ::
+          [%serv wire ?(desk beam)]                   ::
           [%poke wire dock pear]                      ::
           [%wont wire sock path *]                    ::  send message
       ==                                              ::
@@ -93,6 +94,10 @@
   |=  mel=cord  =<  abet
   %^  emit  %poke  /helm/ask/(scot %p ~doznec)
   [[~doznec %ask] %ask-mail mel]
+::
+++  poke-serve
+  |=  top=?(desk beam)  =<  abet
+  (emit %serv /helm/serv top)
 ::
 ++  poke-hi  |=(mes=@t abet:(emit %flog /di %text "< {<src>}: {(trip mes)}"))
 ++  coup-hi
