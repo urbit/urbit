@@ -66,9 +66,10 @@
 --                                                      ::
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
-  $:  %3                                                ::  version
+  $:  %4                                                ::  version
       gub=@t                                            ::  random identity
       hov=(unit ship)                                   ::  master for remote
+      top=beam                                          ::  ford serve prefix
       ged=duct                                          ::  client interface
       ded=(set duct)                                    ::  killed requests
       lyv=(map duct live)                               ::  living requests
@@ -561,13 +562,19 @@
     |=  kyz=kiss
     ^+  +>
     =.  our  ?~(hov our u.hov)  ::  XX
+    =.  p.top  our              ::  XX necessary?
     ?-    -.kyz
         %born  +>.$(ged hen)                            ::  register external
+        %serv
+      =<  ~&([%serving (tope top)] .)
+      ?^(p.kyz +>.$(top p.kyz) +>.$(q.top p.kyz))
+    ::
         %crud
       +>.$(mow [[hen %slip %d %flog kyz] mow])
     ::
         %init                                           ::  register ownership
-      +>.$(hov ?~(hov [~ p.kyz] [~ (min u.hov p.kyz)]))
+      =.  our  ?~(hov p.kyz (min u.hov p.kyz))
+      +>.$(hov [~ our], top [[our %home ud/0] /web])
     ::
         %this                                           ::  inbound request
       %-  emule  |.  ^+  ..apex
@@ -1595,19 +1602,21 @@
   ~
 ::
 ++  load                                                ::  take previous state
+  =+  bolo-3=,_[%3 +(|2 |3.+)]:*bolo                    ::  no top
   =+  even-2=?(even [%mean p=[dock path] *])            ::  old %quit
   =+  ^=  stem-2                                        ::  no die, sus
       ,_=+(*stem -(|3 |5.-, q.eve *(map ,@u even-2)))
-  =+  bolo-2=,_[%2 %*(+ *bolo wix *(map ixor stem-2))]
+  =+  bolo-2=,_[%2 %*(+ *bolo-3 wix *(map ixor stem-2))]
   =+  bolo-1=,_[%1 +(|4 |5.+)]:*bolo-2                  ::  no lyv
-  |=  old=?(bolo bolo-1 bolo-2)
+  |=  old=?(bolo bolo-1 bolo-2 bolo-3)
   ^+  ..^$
   ?-  -.old
-    %3  ..^$(+>- old)
+    %4  ..^$(+>- old)
+    %3  $(-.old %4, |2.+.old [[[(need hov.old) %home ud/0] /web] |2.+.old])
     %2  =+  evn=|=(a=even-2 ?+(-.a a %mean [%quit p.a]))
         =+  stm=|=(a=stem-2 a(|3 [now ~ |3.a(q.eve (~(run by q.eve.a) evn))]))
-        $(old [%3 +.old(wix (~(run by wix.old) stm))])
-    %1  $(old [%2 +(|4 [~ |4.+])]:old)
+        $(-.old %3, wix.old (~(run by wix.old) stm))
+    %1  $(-.old %2, |4.+.old [~ |4.+.old])
   ==
 ::
 ++  scry
