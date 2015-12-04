@@ -3560,7 +3560,8 @@
   |-  ^-  (list ,@c)
   =+  b=(teff a)
   ?:  =(0 b)  ~
-  :-  %+  can  0
+  =+  ^=  c
+      %+  can  0
       %+  turn
         ^-  (list ,[p=@ q=@])
         ?+  b  !!
@@ -3570,7 +3571,8 @@
           4  [[24 6] [16 6] [8 6] [0 3] ~]
         ==
       |=([p=@ q=@] [q (cut 0 [p q] a)])
-  $(a (rsh 3 b a))
+  ?.  =((tuft c) (end 3 b a))  ~|(%bad-utf8 !!)
+  [c $(a (rsh 3 b a))]
 ::
 ++  tuba                                                ::  utf8 to utf32 tape
   |=  a=tape
@@ -3592,14 +3594,14 @@
     ~
   =+  b=(end 5 1 a)
   =+  c=$(a (rsh 5 1 a))
-  ?:  (lth b 0x7f)
+  ?:  (lte b 0x7f)
     [b c]
-  ?:  (lth b 0x7ff)
+  ?:  (lte b 0x7ff)
     :*  (mix 0b1100.0000 (cut 0 [6 5] b))
         (mix 0b1000.0000 (end 0 6 b))
         c
     ==
-  ?:  (lth b 0xffff)
+  ?:  (lte b 0xffff)
     :*  (mix 0b1110.0000 (cut 0 [12 4] b))
         (mix 0b1000.0000 (cut 0 [6 6] b))
         (mix 0b1000.0000 (end 0 6 b))
