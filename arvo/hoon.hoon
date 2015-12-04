@@ -2242,20 +2242,20 @@
 ++  head  |*(^ +<-)                                     ::  get head
 ++  tail  |*(^ +<+)                                     ::  get head
 ++  test  |=(^ =(+<- +<+))                              ::  equality
-++  cork  |*({a+_+(* *) b+gate} (corl b a))                 ::  compose forward
+++  cork  |*([a=__(|=(* **)) b=gate] (corl b a))        ::  compose forward
 ++  corl                                                ::  compose backwards
-  |*  {a+gate b+_+(* *)}
+  |*  [a=gate b=__(|=(* **))]
   =<  +:|.((a (b)))      ::  type check
   |*  c=_+<.b
   (a (b c))
 ::
 ++  cury                                                ::  curry left
-  |*  {a+_+(^ *) b+*}
+  |*  [a=__(|=(^ **)) b=*]
   |*  c=_+<+.a
   (a b c)
 ::
 ++  curr                                                ::  curry right
-  |*  {a+_+(^ *) c+*}
+  |*  [a=__(|=(^ **)) c=*]     
   |*  b=_+<+.a
   (a b c)
 ::
@@ -4300,7 +4300,7 @@
   ++  tash
     ~+
     =+  ^=  neg
-        |=  {syn+? mol+dime}  ^-  dime
+        |=  [syn=? mol=dime]  ^-  dime
         ?>  =('u' (end 3 1 p.mol))
         [(cat 3 's' (rsh 3 1 p.mol)) (new:si syn q.mol)]
     ;~  pfix  hep
@@ -4313,7 +4313,7 @@
   ++  twid
     ~+
     ;~  pose
-      (cook |=(a+@ [%blob (cue a)]) ;~(pfix (just '0') vum:ag))
+      (cook |=(a=@ [%blob (cue a)]) ;~(pfix (just '0') vum:ag))
       (stag ~ crub)
     ==
   ::
@@ -4326,14 +4326,14 @@
       royl
     ==
   --
-++  scot  ~/  %scot  |=(mol+dime ~(rent co %$ mol))
-++  scow  |=(mol+dime ~(rend co %$ mol))
-++  slat  |=(mod+@tas |=(txt=@ta (slaw mod txt)))
-++  slav  |=({mod+@tas txt+@ta} (need (slaw mod txt)))
+++  scot  ~/  %scot  |=(mol=dime ~(rent co %$ mol))
+++  scow  |=(mol=dime ~(rend co %$ mol))
+++  slat  |=(mod=@tas |=(txt=@ta (slaw mod txt)))
+++  slav  |=([mod=@tas txt=@ta] (need (slaw mod txt)))
 ++  slaw
   ~/  %slaw
-  |=  {mod+@tas txt+@ta}
-  ^-  (unit @)
+  |=  [mod=@tas txt=@ta]
+  ^-  (unit ,@)
   =+  con=(slay txt)
   ?.(&(?=([~ %$ @ @] con) =(p.p.u.con mod)) ~ [~ q.p.u.con])
 ::
@@ -4550,7 +4550,7 @@
 ::
 ++  mink
   ~/  %mink
-  |=  {{sub+* fol+*} sky+_+(* (unit))}
+  |=  [[sub=* fol=*] sky=$+(* (unit))]
   =+  tax=*(list ,[@ta *])
   |-  ^-  tone
   ?@  fol
@@ -4624,7 +4624,7 @@
   ==
 ::
 ++  mock
-  |=  {{sub+* fol+*} sky+_+(* (unit))}
+  |=  [[sub=* fol=*] sky=$+(* (unit))]
   (mook (mink [sub fol] sky))
 ::
 ++  mook
@@ -10365,7 +10365,7 @@
           ==                                            ::
 ++  desk  ,@tas                                         ::  ship desk case spur
 ++  cage  (cask vase)                                   ::  global metadata
-++  cask  |*(a+$+(* *) (pair mark a))                       ::  global data
+++  cask  |*(a+_+(* *) (pair mark a))                       ::  global data
 ++  cuff                                                ::  permissions
           $:  p=(unit (set monk))                       ::  can be read by
               q=(set monk)                              ::  caused or created by
@@ -10411,9 +10411,9 @@
 ++  pone  (list ,[p=@tas q=vise])                       ::  kernel modules, old
 ++  ship  ,@p                                           ::  network identity
 ++  sink  (trel bone ship path)                         ::  subscription
-++  sled  _+  [(unit (set monk)) term beam]             ::  namespace function
+++  sled  $+  [(unit (set monk)) term beam]             ::  namespace function
           (unit (unit cage))                            ::
-++  slad  _+  [(unit (set monk)) term beam]             ::  undertyped
+++  slad  $+  [(unit (set monk)) term beam]             ::  undertyped
           (unit (unit (cask)))                          ::
 ++  slut  $+(* (unit (unit)))                           ::  old namespace
 ++  vile                                                ::  reflexive constants
