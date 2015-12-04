@@ -4,8 +4,6 @@ sort: 4
 title: Subscriptions
 ---
 
-## Subscriptions
-
 We've dealt fairly extensively with "poke" messages to an app,
 but these are somewhat limited.  A poke is a one-way message, but
 more often we want to subscribe to updates from another app.  You

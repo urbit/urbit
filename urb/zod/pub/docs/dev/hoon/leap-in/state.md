@@ -4,8 +4,6 @@ sort: 3
 title: State
 ---
 
-## State
-
 In the last section we built a few small apps that sent moves.
 These apps were entirely stateless, though.  Most useful apps
 require some amount of state.  Let's build a trivial stateful
