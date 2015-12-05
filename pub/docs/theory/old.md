@@ -1,7 +1,7 @@
 ---
-title: demo.2013
 layout: video
 sort: 3
+title: demo.2013
 ---
 
 # demo.2013

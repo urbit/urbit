@@ -1,7 +1,7 @@
 ---
-title: Theory
-sort: 3
 logo: black
+sort: 3
+title: Theory
 ---
 
 <div class="short">

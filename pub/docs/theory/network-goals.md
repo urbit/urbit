@@ -1,6 +1,6 @@
 ---
-title: Network architecture: goals
 sort: 4
+title: Network architecture: goals
 ---
 
 # Design of a digital republic: part 1, goals

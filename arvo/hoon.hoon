@@ -291,8 +291,8 @@
             {$smsg p+twig q+tusk}                       ::  gonads
             {$smsm p+tile q+twig}                       ::  make sure q is a p
           ::                                            ::::::  compositions
-            {$tsbr p+tile q+twig}                       ::  push bunt: ++(_p q)
-            {$tscl p+tram q+twig}                       ::  p changes, then q
+            {$tsbr p+tile q+twig}                       ::  push bunt: ++(*p q)
+            {$tscl p+tram q+twig}                       ::  p changes then q
             {$tscn p+twig q+twig}                       ::  XX not used
             {$tsdt p+wing q+twig r+twig}                ::  r with p set to q
             {$tsfs p+twig q+twig}                       ::  XX not used
@@ -303,7 +303,7 @@
             {$tsls p+twig q+twig}                       ::  push p on .. of q
             {$tspm p+tile q+twig}                       ::  XX not used
             {$tspt p+tile q+twig}                       ::  XX not used
-            {$tstr p+term q+wing r+twig}                ::  make a %bull/alias
+            {$tstr p+term q+wing r+twig}                ::  make a $bull/alias
             {$tssg p+tusk}                              ::  compose twig list
           ::                                            ::::::  conditionals
             {$wtbr p+tusk}                              ::  logical OR
@@ -1051,6 +1051,18 @@
   ?:  =(-.a -.b)
     (gor +.a +.b)
   (gor -.a -.b)
+::
+++  lor                                                 ::  l-order
+  ~/  %lor
+  |=  [a=* b=*]
+  ^-  ?
+  ?:  =(a b)  &
+  ?@  a
+    ?^  b  &
+    (lth a b)
+  ?:  =(-.a -.b)
+    $(a +.a, b +.b)
+  $(a -.a, b -.b)
 ::
 ++  vor                                                 ::  v-order
   ~/  %vor
@@ -4348,15 +4360,12 @@
   [~ p.u.q.vex]
 ::
 ++  smyt                                                ::  pretty print path
-  |=  bon+path  ^-  tank
-  :+  %rose  [['/' ~] ['/' ~] ['/' ~]]
+  |=  bon=path  ^-  tank
+  :+  %rose  [['/' ~] ['/' ~] ~]
   (turn bon |=(a+@ [%leaf (trip a)]))
 ::
 ++  spat  |=(pax+path (crip (spud pax)))                ::  render path to cord
-++  spud                                                ::  render path to tape
-  |=  pax+path  ^-  tape
-  =-  ~(ram re %rose ["/" "/" ~] -)
-  (turn pax |=(a+span [%leaf (trip a)]))
+++  spud  |=(pax+path ~(ram re (smyt pax)))             ::  render path to tape
 ++  stab                                                ::  parse cord to path
   =+  fel=;~(pfix fas (more fas urs:ab))
   |=(zep=@t `path`(rash zep fel))
@@ -4627,11 +4636,33 @@
   |=  {{sub+* fol+*} sky+_+(* (unit))}
   (mook (mink [sub fol] sky))
 ::
+++  moop
+  |=  pon=(list ,[@ta *])  ^+  pon
+  ?~  pon  ~
+  :-  i.pon
+  ?.  ?=([%spot * ^] i.pon)
+    $(pon t.pon)
+  ?.  ?=([[%spot * ^] *] t.pon)
+    $(pon t.pon)
+  =>  .(pon t.pon)
+  =+  sot=+.i.pon
+  |-  ^-  (list ,[@ta *])
+  ?.  ?=([[%spot * ^] *] t.pon)
+    [[%spot sot] ^$(pon t.pon)]
+  =+  sop=+.i.pon
+  ?:  ?&  =(-.sop -.sot)
+          (lor +<.sop +<.sot)
+          (lor +>.sot +>.sop)
+        ==
+    $(sot sop, pon t.pon)
+  [[%spot sot] ^$(pon t.pon)]
+::
 ++  mook
   |=  ton+tone
   ^-  toon
   ?.  ?=({$2 *} ton)  ton
   :-  %2
+  =.  p.ton  (moop p.ton)
   =+  yel=(lent p.ton)
   =.  p.ton
     ?.  (gth yel 256)  p.ton
@@ -4641,38 +4672,25 @@
     :_  (slag (sub yel 128) p.ton)
     :-  %lose
     %+  rap  3
-    ;:  weld
-      "[skipped "
-      ~(rend co %$ %ud (sub yel 256))
-      " frames]"
-    ==
+    "[skipped {(scow %ud (sub yel 256))} frames]"
   |-  ^-  (list tank)
   ?~  p.ton  ~
   =+  rex=$(p.ton t.p.ton)
   ?+    -.i.p.ton  rex
       $hunk  [(tank +.i.p.ton) rex]
       $lose  [[%leaf (rip 3 (@ +.i.p.ton))] rex]
-      $hand  :_(rex [%leaf (scow %p (mug +.i.p.ton))])
+      $hand  [[%leaf (scow %p (mug +.i.p.ton))] rex]
       $mean  :_  rex
              ?@  +.i.p.ton  [%leaf (rip 3 (@ +.i.p.ton))]
              =+  mac=(mack +.i.p.ton +<.i.p.ton)
              ?~(mac [%leaf "####"] (tank u.mac))
       $spot  :_  rex
              =+  sot=(spot +.i.p.ton)
-             :-  %leaf
-             ;:  weld
-               ~(ram re (smyt p.sot))
-               ":<["
-               ~(rend co ~ %ud p.p.q.sot)
-               " "
-               ~(rend co ~ %ud q.p.q.sot)
-               "].["
-               ~(rend co ~ %ud p.q.q.sot)
-               " "
-               ~(rend co ~ %ud q.q.q.sot)
-               "]>"
-             ==
-  ==
+             :+  %rose  [":" ~ ~]
+             :~  (smyt p.sot)
+                 =>  [ud=|=(a=@u (scow %ud a)) q.sot]
+                 leaf/"<[{(ud p.p)} {(ud q.p)}].[{(ud p.q)} {(ud q.q)}]>"
+  ==         ==
 ::
 ++  mang
   |=  {{gat+* sam+*} sky+_+(* (unit))}
@@ -7566,7 +7584,6 @@
         $void       %void
     ==
   ::
-  ++  dank  |=(pax=path ^-(tank (dish [~ %path] pax)))
   ++  dash
       |=  {mil+tape lim+char}  ^-  tape
       :-  lim
@@ -9826,7 +9843,7 @@
                 ^.  stet  ^.  limo
                 :~  ['|' (rune bar %tsbr expo)]
                     ['.' (rune dot %tsdt expq)]
-                    ['^' (rune ket %tskt expd)]
+                    ['^' (rune ket %tskt bono)]
                     [':' (rune col %tscl expp)]
                     ['<' (rune gal %tsgl expb)]
                     ['>' (rune gar %tsgr expb)]
@@ -10021,6 +10038,13 @@
             dem
             (ifix [sel ser] ;~(plug dem ;~(pfix ace dem)))
           ==
+          loaf
+        ==
+    ++  bono  |.                                        ::  term, wing, 2 twigs
+        ;~  gunk                                        ::  (as twigs)
+          (cook |=(cog=term [%cnzz [cog ~]]) sym)
+          (cook |=(hyp=wing [%cnzz hyp]) rope)
+          loaf
           loaf
         ==
     ++  bont  ;~  (bend)                                ::  term, optional twig

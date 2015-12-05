@@ -51,3 +51,8 @@ Examples
 Here we see two common cases of `?.` in the wide form, one uses an
 expression `gth` that produces a loobean and the other [`?=`]() to
 produce one of its cases.
+
+Equivalent to
+-------------
+
+    ?:(p r q)

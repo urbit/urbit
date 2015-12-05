@@ -1,6 +1,7 @@
 ---
 logo: black
 sort: 1
+next: true
 title: Basic Hoon
 ---
 
@@ -38,7 +39,7 @@ your Unix pier directory:
 
 Switch desks to run commands from the `%examples` desk:
 
-    ~fintud-macrep:dojo> =dir /=examples
+    ~fintud-macrep:dojo> =dir /=examples=
     =% /~fintud-macrep/examples/~2015.11.13..02.25.00..41e9/
 
 Run an example:

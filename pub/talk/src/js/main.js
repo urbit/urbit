@@ -403,7 +403,7 @@ module.exports = recl({
       last: MessageStore.getLast(),
       fetching: MessageStore.getFetching(),
       listening: MessageStore.getListening(),
-      station: window.util.mainStation(),
+      station: window.talk.mainStation,
       stations: StationStore.getStations(),
       configs: StationStore.getConfigs(),
       typing: MessageStore.getTyping(),
@@ -573,7 +573,7 @@ module.exports = recl({
     return {
       audi: StationStore.getAudience(),
       members: StationStore.getMembers(),
-      station: window.util.mainStation(),
+      station: window.talk.mainStation,
       stations: StationStore.getStations(),
       configs: StationStore.getConfigs(),
       typing: StationStore.getTyping(),
@@ -648,6 +648,11 @@ module.exports = recl({
   },
   render: function() {
     var _remove, _sources, members, parts, sourceCtrl, sourceInput, sources;
+    if (window.urb.user !== window.urb.ship) {
+      return div({
+        id: "station"
+      });
+    }
     parts = [];
     members = [];
     if (this.state.station && this.state.members) {
@@ -825,8 +830,11 @@ module.exports = recl({
     return this.cursorAtEnd;
   },
   addCC: function(audi) {
-    var cc, i, len, listening, s;
-    listening = this.state.config[window.util.mainStation(window.urb.user)].sources;
+    var cc, i, len, listening, ref1, ref2, s;
+    if (window.urb.user !== window.urb.ship) {
+      return audi;
+    }
+    listening = (ref1 = (ref2 = this.state.config[window.util.mainStation(window.urb.user)]) != null ? ref2.sources : void 0) != null ? ref1 : [];
     cc = false;
     for (i = 0, len = audi.length; i < len; i++) {
       s = audi[i];
@@ -1057,7 +1065,6 @@ $(function() {
   var $c, MessagesComponent, StationActions, StationComponent, WritingComponent, rend;
   StationActions = require('./actions/StationActions.coffee');
   rend = React.render;
-  window.talk = {};
   window.talk.online = true;
   setInterval((function() {
     window.talk.online = window.urb.poll.dely < 500;
@@ -6719,7 +6726,7 @@ _.merge(window.util, {
   },
   mainStation: function(user) {
     if (user == null) {
-      user = window.urb.user;
+      user = window.urb.ship;
     }
     switch (user.length) {
       case 3:

@@ -63,3 +63,8 @@ Here we show that `*@tas`, the bunt of `@tas` is equivalent to the empty
 
 Similar to the above case, we show the bunt of a [`++unit`](), which is
 `~`, and test against it.
+
+Equivalent to
+-------------
+
+    ?:(?=(^ p) q r)

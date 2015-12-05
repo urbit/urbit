@@ -1,6 +1,6 @@
 ---
-title: Contributing
 sort: 6
+title: Contributing
 ---
 
 # Contributing to urbit

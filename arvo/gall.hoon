@@ -202,7 +202,7 @@
     |=  [byk=beak dap=dude dep=@uvH]
     ^+  +>
     %+  mo-pass  [%sys %dep (scot %p p.byk) q.byk dap ~] 
-    [%f %wasp our dep]
+    [%f %wasp our dep &] 
   ::
   ++  mo-boot                                           ::  create ship
     |=  [dap=dude how=?(%new %old) byk=beak]

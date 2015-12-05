@@ -43,3 +43,8 @@ Examples
     1
     ~zod/try=> ?~((sub 20 20) 1 2)
     1
+
+Equivalent to
+-------------
+
+    ?:(?=(~ p) q r)

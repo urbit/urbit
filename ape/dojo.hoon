@@ -144,7 +144,7 @@
       ::
         ;~  pfix  tis
           ;~  pose
-            (dp-variable (cold %dir cen) ;~(pfix ace :(stag 0 %ex dp-rood)))
+            (dp-variable (jest %dir) ;~(pfix ace :(stag 0 %ex dp-rood)))
             (dp-variable sym ;~(pfix ace dp-source))
           ==
         ==
