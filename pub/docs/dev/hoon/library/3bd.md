@@ -1131,7 +1131,7 @@ Reparse millisecond date
         (add ~1970.1.1 (div (mul ~s1 a) 1.000))
       ::
 
-Reparser modifier. Reparses the javascript millisecond date integer to a
+Reparser modifier. Reparses the JavaScript millisecond date integer to a
 [`++unit`]().
 
     ~zod/try=> (di:jo [%s '2014-10-29'])
