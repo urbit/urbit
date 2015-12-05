@@ -142,7 +142,6 @@
           [%peer wire dock path]                      ::
           [%poke wire dock pear]                      ::
           [%pull wire dock ~]                         ::
-          [%pass wire note]                           ::
       ==                                              ::
     ++  move  (pair bone card)                        ::  user-level move
     --
