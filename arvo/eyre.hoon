@@ -1,164 +1,163 @@
 !:  ::  %eyre, http servant
 !?  164
-::::
-|=  pit=vase
+!:::
+|=  pit+vase
 =>  =~
 |%                                                      ::  interfaces
 ++  gift  gift-eyre                                     ::  out result <-$
 ++  kiss  kiss-eyre                                     ::  in request ->$
-++  move  ,[p=duct q=(mold note gift)]                  ::  local move
+++  move  {p+duct q+(mold note gift)}                   ::  local move
 ++  note                                                ::  out request $->
-          $%  $:  %a                                    ::  to %ames
-          $%  [%wont p=sock q=[path *]]                 ::
+          _%  _:  $a                                    ::  to %ames
+          _%  {$wont p+sock q+{path *}}                 ::
           ==  ==                                        ::
-              $:  %b                                    ::  to  %behn
-          $%  [%wait p=@da]                             ::
-              [%rest p=@da]                             ::
+              _:  $b                                    ::  to  %behn
+          _%  {$wait p+@da}                             ::
+              {$rest p+@da}                             ::
           ==  ==                                        ::
-              $:  %d                                    ::  to %dill
-          $%  [%flog p=[%crud p=@tas q=(list tank)]]    ::
+              _:  $d                                    ::  to %dill
+          _%  {$flog p+{$crud p+@tas q+(list tank)}}    ::
           ==  ==                                        ::
-              $:  %e                                    ::  to self
-          $%  [%thud ~]                                 ::  proxied death
-              [%this p=? q=clip r=httq]                 ::  proxied request
-              [%meta vase:,[%them (unit httr)]]         ::  type check
+              _:  $e                                    ::  to self
+          _%  {$thud $~}                                ::  proxied death
+              {$this p+? q+clip r+httq}                 ::  proxied request
+              {$meta vase:{$them (unit httr)}}          ::  type check
           ==  ==                                        ::
-              $:  %f                                    ::  to %ford
-          $%  [%exec p=@p q=(unit ,[beak silk])]        ::
-              [%wasp p=@p q=@uvH r=?]                   ::
+              _:  $f                                    ::  to %ford
+          _%  {$exec p+@p q+(unit {beak silk})}         ::
+              {$wasp p+@p q+@uvH r+?}                   ::
           ==  ==                                        ::
-              $:  %g                                    ::  to %gall
-          $%  [%deal p=sock q=cush]                     ::  full transmission
+              _:  $g                                    ::  to %gall
+          _%  {$deal p+sock q+cush}                     ::  full transmission
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
-          $?  $:  %a                                    ::  by %aformedmes
-          $%  [%woot p=ship q=coop]                     ::
+          _?  _:  $a                                    ::  by %aformedmes
+          _%  {$woot p+ship q+coop}                     ::
           ==  ==                                        ::
-              $:  %b                                    ::  by %behn
-          $%  [%wake ~]                                 ::  timer activate
+              _:  $b                                    ::  by %behn
+          _%  {$wake $~}                                ::  timer activate
           ==  ==                                        ::
-              $:  %g                                    ::  by %gall
-          $%  [%unto p=cuft]                            ::  within agent
+              _:  $g                                    ::  by %gall
+          _%  {$unto p+cuft}                            ::  within agent
           ==  ==                                        ::
-              $:  %e                                    ::  by self
-          $%  [%thou p=httr]                            ::  response for proxy
+              _:  $e                                    ::  by self
+          _%  {$thou p+httr}                            ::  response for proxy
           ==  ==                                        ::
-              $:  %f                                    ::  by %ford
-          $%  [%made p=@uvH q=gage]                     ::
-              [%news p=@uvH]                            ::
+              _:  $f                                    ::  by %ford
+          _%  {$made p+@uvH q+gage}                     ::
+              {$news p+@uvH}                            ::
           ==  ==                                        ::
-              $:  @tas                                  ::  by any
-          $%  [%crud p=@tas q=(list tank)]              ::
+              _:  @tas                                  ::  by any
+          _%  {$crud p+@tas q+(list tank)}              ::
           ==  ==  ==                                    ::
-++  ixor  ,@t                                           ::  oryx hash
-++  whir  $|  ~                                         ::  wire subset
-          $%  [%at p=hole q=whir]                       ::  authenticated
-              [%ay p=span:ship q=span:,@uvH ~]          ::  remote duct
-              [%ha p=path:beak]                         ::  GET request
-              [%he p=whir]                              ::  HEAD request
-              [%hi p=mark ~]                            ::  outbound HTTP
-              [%si ~]                                   ::  response done
-              [%of p=ixor q=$|(~ whir-of)]              ::  associated view
-              [%ow p=ixor ~]                            ::  dying view
-              [%on ~]                                   ::  dependency
+++  ixor  @t                                            ::  oryx hash
+++  whir  _|  $~                                        ::  wire subset
+          _%  {$at p+hole q+whir}                       ::  authenticated
+              {$ay p+span:ship q+span:@uvH $~}          ::  remote duct
+              {$ha p+path:beak}                         ::  GET request
+              {$he p+whir}                              ::  HEAD request
+              {$hi p+mark $~}                           ::  outbound HTTP
+              {$si $~}                                  ::  response done
+              {$of p+ixor q+_|($~ whir-of)}             ::  associated view
+              {$ow p+ixor $~}                           ::  dying view
+              {$on $~}                                  ::  dependency
           ==                                            ::
-++  whir-of  ,[p=span:ship q=term r=wire]               ::  path in dock
+++  whir-of  {p+span:ship q+term r+wire}                ::  path in dock
 --                                                      ::
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
-  $:  %3                                                ::  version
-      gub=@t                                            ::  random identity
-      hov=(unit ship)                                   ::  master for remote
-      ged=duct                                          ::  client interface
-      ded=(set duct)                                    ::  killed requests
-      lyv=(map duct live)                               ::  living requests
-      pox=(map ,@uvH duct)                              ::  proxied sessions
-      ask=[p=@ud q=(map ,@ud ,[p=duct q=hiss])]         ::  outgoing by number
-      kes=(map duct ,@ud)                               ::  outgoing by duct
-      ney=@uvI                                          ::  rolling entropy
-      dop=(map host ship)                               ::  host aliasing
-      liz=(jug ,@uvH (each duct ixor))                  ::  ford depsets
-      wup=(map hole cyst)                               ::  secure sessions
-      sop=(map hole ,[ship ?])                          ::  foreign sess names
-      wix=(map ixor stem)                               ::  open views
+  _:  $3                                                ::  version
+      gub+@t                                            ::  random identity
+      hov+(unit ship)                                   ::  master for remote
+      ged+duct                                          ::  client interface
+      ded+(set duct)                                    ::  killed requests
+      lyv+(map duct live)                               ::  living requests
+      pox+(map @uvH duct)                               ::  proxied sessions
+      ask+{p+@ud q+(map @ud {p+duct q+hiss})}           ::  outgoing by number
+      kes+(map duct @ud)                                ::  outgoing by duct
+      ney+@uvI                                          ::  rolling entropy
+      dop+(map host ship)                               ::  host aliasing
+      liz+(jug @uvH (each duct ixor))                   ::  ford depsets
+      wup+(map hole cyst)                               ::  secure sessions
+      sop+(map hole {ship ?})                           ::  foreign sess names
+      wix+(map ixor stem)                               ::  open views
   ==                                                    ::
 ::
 ++  live                                                ::  in flight
-  $%  [%exec p=whir]                                    ::  ford build
-      [%wasp p=(list ,@uvH)]                            ::  ford deps
-      [%xeno p=ship]                                    ::  proxied request
-      [%poll p=ixor]                                    ::  session state
+  _%  {$exec p+whir}                                    ::  ford build
+      {$wasp p+(list @uvH)}                             ::  ford deps
+      {$xeno p+ship}                                    ::  proxied request
+      {$poll p+ixor}                                    ::  session state
   ==
 ++  cyst                                                ::  client session
-  $:  ced=cred                                          ::  credential
-      [him=ship aut=(set ship)]                         ::  authenticated
-      cug=(list ,@t)                                    ::  unacked cookies
-      lax=@da                                           ::  last used
-      way=(map ship ,[purl duct])                       ::  waiting auth
-      vew=(set oryx)                                    ::  open views XX expire
+  _:  ced+cred                                          ::  credential
+      {him+ship aut+(set ship)}                         ::  authenticated
+      cug+(list @t)                                     ::  unacked cookies
+      lax+@da                                           ::  last used
+      way+(map ship {purl duct})                        ::  waiting auth
+      vew+(set oryx)                                    ::  open views XX expire
   ==                                                    ::
 ::
 ++  stem                                                ::  client view
-  $:  him=ship                                          ::  static identity
-      ude=(unit ,[p=duct q=?])                          ::  stream, long-poll?
-      era=@da                                           ::  next wake
-      die=@da                                           ::  collection date
-      sus=(set ,[dock %json wire path])                 ::  subscriptions
-      eve=[p=@u q=(map ,@u even)]                       ::  queued events
-      med=(qeu duct)                                    ::  waiting /~/to/
+  _:  him+ship                                          ::  static identity
+      ude+(unit {p+duct q+?})                           ::  stream long-poll?
+      era+@da                                           ::  next wake
+      die+@da                                           ::  collection date
+      sus+(set {dock $json wire path})                  ::  subscriptions
+      eve+{p+@u q+(map @u even)}                        ::  queued events
+      med+(qeu duct)                                    ::  waiting /~/to/
   ==
-::++  honk  $%([%nice ~] [%mean p=ares])                  ::  old gall result
 ++  even                                                ::  client event
-  $%  [%news p=@uvH]
-      [%quit p=[dock path]]
-      [%rush p=[dock path] q=json]
+  _%  {$news p+@uvH}
+      {$quit p+{dock path}}
+      {$rush p+{dock path} q+json}
   ==
 ::
 ++  perk                                                ::  parsed request
-  $%  [%auth p=perk-auth]
-      [%away ~]
-      [%bugs p=?(%as %to) ~]
-      [%beam p=beam]
-      [%deps p=?(%put %delt) q=@uvH]
-      [%mess p=dock q=mark r=wire s=json]
-      [%poll p=[i=@uvH t=(list ,@uvH)]]
-      [%spur p=spur]
-      [%subs p=?(%put %delt) q=[dock %json wire path]]
-      [%view p=ixor q=[~ u=@ud]]
+  _%  {$auth p+perk-auth}
+      {$away $~}
+      {$bugs p+?($as $to) $~}
+      {$beam p+beam}
+      {$deps p+?($put $delt) q+@uvH}
+      {$mess p+dock q+mark r+wire s+json}
+      {$poll p+{i+@uvH t+(list @uvH)}}
+      {$spur p+spur}
+      {$subs p+?($put $delt) q+{dock $json wire path}}
+      {$view p+ixor q+{$~ u+@ud}}
   ==
 ::
 ++  perk-auth                                           ::  parsed auth
-  $%  [%at p=pork]                                      ::  inject auth
-      [%del p=(unit ship)]
-      [%get him=ship rem=pork]
-      [%js ~]
-      [%json ~]
-      [%try him=ship paz=(unit cord)]
-      [%xen ses=hole rem=pork]
+  _%  {$at p+pork}                                      ::  inject auth
+      {$del p+(unit ship)}
+      {$get him+ship rem+pork}
+      {$js $~}
+      {$json $~}
+      {$try him+ship paz+(unit cord)}
+      {$xen ses+hole rem+pork}
   ==
 ::
 ++  pest                                                ::  result
-  $|  ~
-  $%  [%$ p=httr]                                       ::  direct response
-      [%red ~]                                          ::  parent redirect
-      [%boil p=whir q=term r=beam]                      ::  ford request
+  _|  $~
+  _%  {$$ p+httr}                                       ::  direct response
+      {$red $~}                                         ::  parent redirect
+      {$boil p+whir q+term r+beam}                      ::  ford request
   :: 
-      [%js p=@t]                                        ::  script
-      [%json p=json]                                    ::  data
-      [%html p=manx]                                    ::  successful page
-      [%htme p=manx]                                    ::  authentication fail 
+      {$js p+@t}                                        ::  script
+      {$json p+json}                                    ::  data
+      {$html p+manx}                                    ::  successful page
+      {$htme p+manx}                                    ::  authentication fail 
   ==
 --                                                      ::
 |%
 ++  eat-headers
-  |=  hed=(list ,[p=@t q=@t])  ^-  math
+  |=  hed+(list {p+@t q+@t})  ^-  math
   %+  roll  hed
-  |=  [a=[p=cord cord] b=math] 
+  |=  {a+{p+cord cord} b+math} 
   =.  p.a  (cass (trip p.a))
   (~(add ja b) a)
 ::
 ++  fcgi                                                ::  credential caboose
-  |=  [quy=quay ced=cred]  ^-  coin
+  |=  {quy+quay ced+cred}  ^-  coin
   :*  %many
       [%$ %ta ~]
       [%blob ced]
@@ -167,18 +166,18 @@
       [[%$ %t p.i.quy] [%$ %t q.i.quy] $(quy t.quy)]
   ==
 ::
-++  gsig  |=([a=dock b=path] [(scot %p p.a) q.a b])
+++  gsig  |=({a+dock b+path} [(scot %p p.a) q.a b])
 ++  session-from-cookies
-  |=  [nam=@t maf=math]
+  |=  {nam+@t maf+math}
   ^-  (unit hole)
-  (from-cookies maf |=([k=@t v=@] &(=(nam k) !=('~' v))))
+  (from-cookies maf |=({k+@t v+@} &(=(nam k) !=('~' v))))
 ::
 ++  ship-from-cookies
-  |=  maf=math  ^-  (unit ship)
-  (biff (from-cookies maf |=([k=@ @] =(%ship k))) (slat %p))
+  |=  maf+math  ^-  (unit ship)
+  (biff (from-cookies maf |=({k+@ @} =(%ship k))) (slat %p))
 ::
 ++  from-cookies
-  |=  [maf=math fil=$+([@t @t] ?)]
+  |=  {maf+math fil+_+({@t @t} ?)}
   =+  `cot=(list ,@t)`(~(get ju maf) 'cookie')
   =+  `cok=quay`(zing `(list quay)`(murn cot (curr rush cock:epur)))
   |-  ^-  (unit cord)
@@ -186,20 +185,20 @@
   ?:((fil i.cok) [~ q.i.cok] $(cok t.cok))
 ::
 ++  wush
-  |=  [wid=@u tan=tang]
+  |=  {wid+@u tan+tang}
   ^-  tape
   =+  rolt=|=(a=wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
   (rolt (turn tan |=(a=tank (rolt (wash 0^wid a)))))
 ::
 ::
 ++  add-cookies
-  |=  [cug=(list ,@t) hit=httr]  ^-  httr
+  |=  {cug+(list @t) hit+httr}  ^-  httr
   ?~  cug  hit
   =+  cuh=(turn `(list ,@t)`cug |=(a=@t set-cookie/a))
   hit(q (weld cuh q.hit))
 ::
 ++  inject                                            ::  inject dependency
-  |=  [dep=@uvH max=[[%html ~] [[%head ~] hed=marl] [[%body ~] tal=marl] ~]]
+  |=  {dep+@uvH max+{{$html $~} {{$head $~} hed+marl} {{$body $~} tal+marl} $~}}
   ^-  manx
   =:  hed.max  :_(hed.max ;meta(charset "utf-8", urb_injected "");)
       tal.max  (welp tal.max ;script(urb_injected ""):"{(trip etag:js)}" ~)
@@ -208,7 +207,7 @@
   max(hed :_(hed.max ;script@"/~/on/{<dep>}.js"(urb_injected "");))
 ::
 ++  add-json                                            ::  inject window.urb
-  |=  [urb=json jaz=cord]  ^-  cord 
+  |=  {urb+json jaz+cord}  ^-  cord 
   =-  (cat 3 (crip -) jaz)
   """
   var _urb = {(pojo urb)}
@@ -217,19 +216,19 @@
   """
 ::
 ++  ares-to-json
-  |=  err=ares  ^-  json
+  |=  err+ares  ^-  json
   =-  (jobe fail/s/typ mess/(jape mez) ~)
-  ^-  [typ=term mez=tape]
+  ^-  {typ+term mez+tape}
   ?~  err  [%fail "Unknown Error"]
   [p.u.err (wush 160 q.u.err)]
 ::
 ++  resp                                                ::  mimed response
-  |=  [sas=@uG mit=mite rez=@]  ^-  httr
+  |=  {sas+@uG mit+mite rez+@}  ^-  httr
   ::  (weld (turn cug |=(a=@t ['set-cookie' a]))
   [sas ~[content-type/(moon mit)] [~ (taco rez)]]
 ::
 ++  render-tang                                         ::  tanks to manx
-  |=  tan=tang
+  |=  tan+tang
   ;html
     ;head
       ;link(rel "stylesheet", href "/home/lib/base.css"); ::  XX desk
@@ -520,7 +519,7 @@
                 '''
     ==
   ++  titl  
-    |=  [a=cord b=marl] 
+    |=  {a+cord b+marl} 
     ;html
       ;head
         ;meta(charset "utf-8");
@@ -538,11 +537,12 @@
 --
 |%                                                      ::  functions
 ++  ye                                                  ::  per event
-  =|  $:  $:  hen=duct                                  ::  event floor
-              $:  now=@da                               ::  event date
-                  eny=@                                 ::  unique entropy
-                  our=ship                              ::  current ship
-                  sky=$+(* (unit))                      ::  system namespace
+  =|  $^
+      _:  _:  hen+duct                                  ::  event floor
+              _:  now+@da                               ::  event date
+                  eny+@                                 ::  unique entropy
+                  our+ship                              ::  current ship
+                  sky+_+(* (unit))                      ::  system namespace
               ==                                        ::
               mow=(list move)                           ::  pending actions
           ==                                            ::
@@ -551,14 +551,14 @@
   =*  bol  ->
   |%
   ++  abet                                              ::  resolve moves
-    ^-  [(list move) bolo]
+    ^-  {(list move) bolo}
     [(flop mow) bol]
   ::
   ++  adit  .(ney (mix eny ney))                        ::  flip entropy
   ::
   ++  anon  `@p`(add our ^~((bex 64)))                  ::  pseudo-sub
   ++  apex                                              ::  accept request
-    |=  kyz=kiss
+    |=  kyz+kiss
     ^+  +>
     =.  our  ?~(hov our u.hov)  ::  XX
     ?-    -.kyz
