@@ -1,6 +1,6 @@
-!:  ::  ames (4a), networking
+::  ::  ames (4a), networking
 ::
-  |=  pit=vase
+  |=  pit+vase
   =>  =~
 ::  structures
 |%

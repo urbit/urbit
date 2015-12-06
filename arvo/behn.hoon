@@ -1,6 +1,6 @@
 ::  ::  %behn, just a timer
 !?  164
-!:::
+::::
 |=  pit=vase
 =>  =~
 |%

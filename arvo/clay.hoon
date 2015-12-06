@@ -1,4 +1,4 @@
-!:
+::
 ::  clay (4c), revision control
 ::
 ::  This is split in three top-level sections:  structure definitions, main
@@ -834,7 +834,7 @@
         |=  {pax+cage cay+cage}
         ?.  ?=($path-hash p.pax)
           ~|(%patch-bad-path-mark !!)
-        [-< -> +]:[((hard ,[path lobe]) q.q.pax) cay]
+        [-< -> +]:[((hard {path lobe}) q.q.pax) cay]
     ::  ~&  %canned
     ::  ~&  %checking-out
     =.  ank.dom  (checkout-ankh:ze (mo cat))
@@ -2122,7 +2122,7 @@
           `[pax +.a]
         =.  can.dal.dat  p.can
         =.  old.dal.dat
-          %-  mo  ^-  (list ,[path ~])
+          %-  mo  ^-  (list {path $~})
           %+  murn  (~(tap by q.bas.dat))
           |=  {pax+path lob+lobe}
           ?.  =(~ (~(get by q.ali.dat) pax))
@@ -2608,7 +2608,7 @@
       ~
     ?:  =(0 let.dom.u.dos)
       =+  cos=(mode-to-soba ~ s.bem q.q.hic r.q.hic)
-      =+  ^-  [one=(list ,[path miso]) two=(list ,[path miso])]
+      =+  ^-  {one+(list {path miso}) two+(list {path miso})}
           %+  skid  cos
           |=  {a+path b+miso}
           ?&  ?=($ins -.b)
