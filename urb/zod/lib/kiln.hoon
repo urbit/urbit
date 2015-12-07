@@ -142,7 +142,7 @@
   |=  [input=path output=path] 
   %+  do-info  "moved"
   ?>  =(-:(flop input) -:(flop output))
-  %+  furl  (fray output)
+  %+  furl  (fray input)
   (foal output -:(flop input) %noun .^(%cx input))
 ::
 ++  poke-label
