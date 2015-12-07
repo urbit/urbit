@@ -5,11 +5,11 @@
 /+    tree
 /=    gas    /$    fuel
 /=    dat    /^    tree-include
-             /:    /===/tree-gen    /%
+             /:    /===/fab    /%
              /tree-include/
 ::
 /=    kid    /^    (map span tree-include)
-             /:    /===/tree-gen    /%  2    /_
+             /:    /===/fab    /%  2    /_
              /tree-include/
 !:
 ::::
