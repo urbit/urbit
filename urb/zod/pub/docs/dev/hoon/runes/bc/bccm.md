@@ -1,7 +1,9 @@
 buccom `$,` %bccm
 ==========================
 
-Normalizing gate, `%clam`
+Produces a type validator function for type (mold) `p`. This function accepts a
+value: if value fits within type, produce that value. If not, produce default
+value for that type. XX correctness
 
 `$,` is a synthetic rune that produces a `%leaf`, a normalizing gate or
 [clam]() for `p`. `$,` is used to ensure an input value fits a certain
@@ -59,3 +61,6 @@ In `++cord`, `,` creates a gate that validates atoms of the odor
     [%b 0 0]
     ~zod/try=> (,$%([%a @] [%b ^]) [%b "ame"])
     [%b 97 [109 101 0]]
+
+
+See how in all of these examples `,` is applied to a mold to create a function which is then called against the second argument within the `()`.

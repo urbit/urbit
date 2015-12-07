@@ -3,13 +3,12 @@ bucbar `$|` %bcbr
 
 <div class="short">
 
-Atom or cell
-------------
+Creates a type (mold) that's a union between an atom `p` and cell `b`
 
-`$|` is a tile rune that produces a [`%reed`](), a tile whose [icon]()
-is a [fork]() between two nouns: an [atom]() of `tile` `p` and a cell of
-`tile` `q`. `$|` is similar to [`$?`](), but is more strict in that in
-only contains one atom tile and one cell tile.
+`$|` is a mold rune that produces a [`%reed`](), a mold whose [span]()
+is a [fork]() between two nouns: an [atom]() of `mold` `p` and a cell of
+`mold` `q`. `$|` is similar to [`$?`](), but is more strict in that in
+only contains one atom mold and one cell mold.
 
 </div>
 
@@ -17,11 +16,11 @@ only contains one atom tile and one cell tile.
 </hr>
 ### Produces
 
-[`Tile`](): `[%reed p=tile q=tile]`
+[`mold`](): `[%reed p=mold q=mold]`
 
-### Sample
+### Accepts
 
-`p` is a [`tile`]() `q` is a [`tile`]()
+`p` is a [`mold`]() of an atom and `q` is a [`mold`]() of a cell.
 
 ### Tall form
 
@@ -32,20 +31,13 @@ only contains one atom tile and one cell tile.
 
     $|(p q)
 
-### Irregular form
-
-None
-
 ### Examples
-
-    ~zod/try=> *$|(~ [~ u=@])
-    ~
-    ~zod/try=> :type; *$|(~ [~ u=@])
-    ~
-    u(@)
 
     ++  list  |*  a=_,*                                     ::  null-terminated list
               $|(~ [i=a t=(list a)])                        ::
+
+    ~zod/try=> *$|(~ [~ u=@])
+    ~
 
 In `++list`, `$|` specifies that every element in a noun that can be
 cast to a `++list` is either the atom `~` or the cell

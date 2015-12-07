@@ -1,20 +1,20 @@
 buccol `$:` %bccl
 ==========================
 
-Tile autocons
+Mold autocons. Creates a type of an array of types.
 
-`$:` is a tile rune that constructs the tile of a tuple from a tuple of
-tiles.
+`$:` is a mold rune that constructs the mold of a tuple from a
+tuple of molds.
 
 Produces
 --------
 
-[Tile](): `[p=tile q=tile]`
+[mold](): `[p=mold q=mold]`
 
-Sample
-------
+Children
+-------
 
-`p` is a [tile](). `q` is a [tile]().
+`p` is a [mold](). `q` is a [mold]().
 
 Tall form
 ---------
@@ -37,6 +37,8 @@ Examples
 --------
 
     ~zod/try=> *[1 2]
+    [%1 %2]
+    ~zod/try=> (,$:(1 2) "ham")
     [%1 %2]
     ~zod/try=> (,[1 2] "ham")
     [%1 %2]
