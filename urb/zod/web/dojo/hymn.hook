@@ -1,6 +1,6 @@
 ::    Console front-end
 ::
-::::  /hook/hymn/fab/sole/pub
+::::  /hook/hymn/dojo/web
   ::
 /?    310
 |%
@@ -18,7 +18,7 @@
             "mousetrap/1.4.6/mousetrap.js"
             "react/0.11.0/react.js"
         ==
-    ;script(src "{(spud /~~/~/at/[&2:%]/lib/'urb.js')}"); 
+    ;script@"/~~/~/at/lib/urb.js";
     ;script: urb.appl = 'dojo'
     ;style:'''
            #term {
@@ -32,8 +32,8 @@
   ;body
     ;div#err;
     ;div#term:""
-    ;script@"src/share.coffee"(type "text/coffeescript");
-    ;script@"src/main.coffee"(type "text/coffeescript");
+    ;script@"dojo/share.coffee"(type "text/coffeescript");
+    ;script@"dojo/main.coffee"(type "text/coffeescript");
     ;+  (cdnj "coffee-script/1.7.1/coffee-script.min.js")
   ==  
 ==

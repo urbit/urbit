@@ -1,7 +1,6 @@
 ::                                                      ::  ::
 ::::  /hook/hymn/fab/oct3/pub/                          ::::::
   ::                                                    ::  ::
-=+  dez=(trip &2:%)
 ^-  manx
 ;html
   ;head
@@ -13,19 +12,19 @@
     ==
     ;script
       =type  "text/javascript"
-      =src   "/~~/~/at/base/lib/urb.js"
+      =src   "/~~/~/at/lib/urb.js"
       ;
     ==
     ;link
       =type  "text/css" 
       =rel   "stylesheet" 
-      =href  "/{dez}/lib/base.css"
+      =href  "/lib/base.css"
       ;
     ==
     ;link
       =type  "text/css"
       =rel   "stylesheet"
-      =href  "/{dez}/pub/oct3/src/main.css"
+      =href  "/oct3/main.css"
       ;
     ==
     ;title: :oct3
@@ -44,6 +43,6 @@
     ==
     ;div#bord;
     ;div#audi;
-    ;script(type "text/javascript", src "/{dez}/pub/oct3/src/main.js");
+    ;script(type "text/javascript", src "/oct3/main.js");
   ==
 ==
