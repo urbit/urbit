@@ -178,7 +178,7 @@
 ::
 ++  from-cookies
   |=  {maf+math fil+_+({@t @t} ?)}
-  =+  `cot=(list ,@t)`(~(get ju maf) 'cookie')
+  =+  `cot=(list @t)`(~(get ju maf) 'cookie')
   =+  `cok=quay`(zing `(list quay)`(murn cot (curr rush cock:epur)))
   |-  ^-  (unit cord)
   ?~  cok  ~
@@ -194,7 +194,7 @@
 ++  add-cookies
   |=  {cug+(list @t) hit+httr}  ^-  httr
   ?~  cug  hit
-  =+  cuh=(turn `(list ,@t)`cug |=(a=@t set-cookie/a))
+  =+  cuh=(turn `(list @t)`cug |=(a=@t set-cookie/a))
   hit(q (weld cuh q.hit))
 ::
 ++  inject                                            ::  inject dependency
@@ -697,7 +697,7 @@
     ^+  +>
     =.  our  ?~(hov our u.hov)  ::  XX
     ?:  &(?=({?($of $ow) ^} tee) !(~(has by wix) p.tee))
-      ~&(dead-ire/[`whir`tee (,[term term ~] +.sih)] +>)
+      ~&(dead-ire/[`whir`tee ({term term $~} +.sih)] +>)
     ?-    &2.sih
         $crud  +>.$(mow [[hen %slip %d %flog +.sih] mow])
     ::  $dumb  
@@ -921,7 +921,7 @@
     ^-  @ta
     =+  pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
     %^  rsh  3  1
-    (scot %p (,@ (need (sky %a pax))))
+    (scot %p (@ (need (sky %a pax))))
   ::
   ::
   ++  handle
@@ -1080,7 +1080,7 @@
             $on
           :-  %poll
           ?^  but  [(raid but %uv ~)]~
-          =+  dep=((hard (list ,[@ ~])) quy)
+          =+  dep=((hard (list {@ $~})) quy)
           =<  ?~(. !! .)
           (turn dep |=([a=@tas ~] (slav %uv a)))
         ::
@@ -1602,7 +1602,7 @@
 ++  load                                                ::  take previous state
   =+  even-2=?(even [%mean p=[dock path] *])            ::  old %quit
   =+  ^=  stem-2                                        ::  no die, sus
-      __(=+(*stem -(|3 |5.-, q.eve *(map ,@u even-2))))
+      __(=+(*stem -(|3 |5.-, q.eve *(map @u even-2))))
   =+  bolo-2=__([%2 %*(+ *bolo wix *(map ixor stem-2))])
   =+  bolo-1=__([%1 +(|4 |5.+)]:*bolo-2)                ::  no lyv
   |=  old=?(bolo bolo-1 bolo-2)
