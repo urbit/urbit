@@ -828,7 +828,7 @@
         "/"  ?:(=(%home q.dir) "=" (trip q.dir))
         "/"  ?:(=([%ud 0] r.dir) "=" (scow r.dir))
       == 
-    ?:(=(~ s.dir) "" (spud s.dir))
+    ?:(=(~ s.dir) "" (spud (flop s.dir)))
   ::
   ++  he-prom                                           ::  send prompt
     %-  he-diff
