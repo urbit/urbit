@@ -233,7 +233,7 @@
   |=  tan=tang
   ;html
     ;head
-      ;link(rel "stylesheet", href "/home/lib/base.css"); ::  XX desk
+      ;link(rel "stylesheet", href "/lib/base.css");
       ;title: server error
     ==
     ;body:div#c.err:pre:code:"{(wush 80 tan)}"
@@ -531,7 +531,7 @@
         ;title:"{(trip a)}" 
         ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/".
           "libs/jquery/2.1.1/jquery.min.js");
-        ;link(rel "stylesheet", href "/home/lib/base.css");
+        ;link(rel "stylesheet", href "/lib/base.css");
       ==
       ;body:div#c:"*{b}"
     ==
@@ -823,7 +823,6 @@
       ==
     ==
   ::
-  ++  root-beak  `beak`[our %home da/now]               ::  XX
   ++  emule
     |=  a=_|?(..emule)  ^+  ..emule
     =+  mul=(mule a)
@@ -849,7 +848,7 @@
   ::
   ++  back                                              ::  %ford bounce
     |=  [tea=whir mar=mark cay=cage]
-    (pass-note tea (ford-req root-beak [%cast mar `cay]))
+    (pass-note tea (ford-req -.top [%cast mar `cay]))
   ::
   ++  del-deps
     |=  [a=@uvH b=(each duct ixor)]  ^+  +>.$
@@ -1014,6 +1013,8 @@
       ^-  (each perk httr)
       |^  =+  hit=as-magic-filename
           ?^  hit  [%| u.hit]
+          ?:  is-spur
+            [%& %spur (flop q.pok)]
           =+  bem=as-beam
           ?^  bem  [%& %beam u.bem]
           ?.  check-oryx
@@ -1039,14 +1040,16 @@
           ==
         ==
       ::
-      ++  as-beam
+      ++  is-spur  |(?~(q.pok & ((sane %tas) i.q.pok)))
+      ++  as-beam                     
         ^-  (unit beam)
-        |-
-        ?~  q.pok
-          $(q.pok /index)
-        ?.  ((sane %tas) i.q.pok)
-          (tome q.pok)
-        `[[our i.q.pok ud/0] (flop t.q.pok)]
+        ?~  q.pok  ~
+        =+  ^-  (unit ,[@ dez=desk rel=?])              :: /=desk/, /=desk=/
+            (rush i.q.pok ;~(plug tis sym ;~(pose (cold | tis) (easy &))))
+        ?~  -  (tome q.pok)                             :: /~ship/desk/case/...
+        :+  ~  [our dez.u r.top]
+        ?.  rel.u  (flop t.q.pok)
+        (weld (flop t.q.pok) s.top)   :: /=desk/... as hoon /=desk%/...
       ::
       ++  as-aux-request                                ::  /~/... req parser
         ^-  (unit perk)
@@ -1160,7 +1163,7 @@
           %away  [%& %html logout-page:xml]
           ?(%beam %spur)
         =+  ext=(fall p.pok %urb)
-        =+  bem=?-(-.hem %beam p.hem, %spur [root-beak p.hem])
+        =+  bem=?-(-.hem %beam p.hem, %spur [-.top (weld p.hem s.top)])
         =+  wir=`whir`[%ha (tope -.bem ~)]
         =.  wir  ?+(mef !! %get wir, %head [%he wir])
         ~|  bad-beam/q.bem
