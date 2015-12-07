@@ -15,7 +15,7 @@
 ::
 ++  poke-write-paste
   |=  [typ=?(%hoon %md %txt) txt=@t]
-  (poke--data [`typ /pub/paste/(scot %da now)] %mime / (taco txt))
+  (poke--data [`typ /web/paste/(scot %da now)] %mime / (taco txt))
 ::
 ++  poke--data
   |=  [[ext=(unit ,@t) pax=path] dat=$%([%json json] [%mime mime])]

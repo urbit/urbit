@@ -21,14 +21,14 @@
       "lodash.js/2.4.1/lodash.min.js"
       "react/0.13.1/react.js"
     ==
-    ;script(type "text/javascript", src "/~/as/own/~/at/home/lib/urb.js");
+    ;script(type "text/javascript", src "/~/as/own/~/at/lib/urb.js");
     ;meta(name "viewport", content "width=device-width, height=device-height, ".
      "initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0");
-    ;link(type "text/css", rel "stylesheet", href "/home/pub/work/src/css/main.css");
+    ;link(type "text/css", rel "stylesheet", href "/work/css/main.css");
     ;title: Work
   ==
   ;body
     ;div#c;
-    ;script(type "text/javascript", src "/home/pub/work/src/js/main.js");
+    ;script(type "text/javascript", src "/work/js/main.js");
   ==
 ==

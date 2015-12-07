@@ -4,9 +4,9 @@
 
 # building
 
-in `src/js/`:
+in `js/`:
 `watchify -v -t coffeeify -o main.js main.coffee`
 
-in `src/css/`:
+in `css/`:
 `stylus -w main.styl`
 
