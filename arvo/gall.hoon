@@ -1218,17 +1218,9 @@
     :^  hen  %give  %mass
     :-  %gall
     :-  %|
-    %-  |=  a=(list (list mass))  ^-  (list mass)      :: XX single-home
-        =+  a2=a
-        ?~  a  !!
-        ?~  i.a  ~
-        :_  $(a (turn a2 tail))
-        :-  p.i.i.a
-        ?~  -.q.i.i.a  
-          [%& (turn (turn a2 head) |=(b=mass ?~(-.q.b p.q.b !!)))]
-        [%| $(a (turn (turn a2 head) |=(b=mass ?~(-.q.b !! p.q.b))))]
-    %+  turn  (~(tap by pol.all))
-    |=  [@ mast]
+    %+  turn  (~(tap by pol.all))     :: XX single-home
+    |=  [our=@ mast]  ^-  mass
+    :+  (scot %p our)  %|
     :~  foreign/`sap
         blocked/[%| (sort :_(aor (~(tap by (~(run by wub) |=(sofa `+<))))))]
         active/[%| (sort :_(aor (~(tap by (~(run by bum) |=(seat `+<))))))]
