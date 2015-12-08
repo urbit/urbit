@@ -1194,7 +1194,7 @@
       ::
           %poll
         ?:  ?=([~ %js] p.pok)  ::  XX treat non-json cases?
-          =+  polling-url=['/' (apex:earn %| pok(u.p %json) quy)]
+          =+  polling-url=(apex:earn %| pok(u.p %json) quy)
           [%& %js (add-json (joba %wurl (jape polling-url)) poll:js)]
         =.  lyv  (~(put by lyv) hen %wasp p.hem)
         |-
