@@ -1,5 +1,5 @@
-sigbuc, `~$`, %sgbc
-============================
+`~$`
+====
 
 Label for profiling
 
@@ -11,8 +11,8 @@ Produces
 
 Twig: `[%sgbc p=term q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [term](). `q` is a [twig]().
 
@@ -26,11 +26,6 @@ Wide form
 ---------
 
     ~$(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

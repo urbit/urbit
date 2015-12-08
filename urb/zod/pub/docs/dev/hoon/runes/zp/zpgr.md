@@ -1,7 +1,8 @@
-zapgar, `!>`, %zpgr
-============================
+`!>`
+====
 
-`++vase` with value
+Produces a cell (known as a `++vase` here) of both the type and value of `p`. Useful to debugging purposes.
+
 
 `!>` is a synthetic rune that produces a vase (a `[type noun]` cell)
 with the value `p`. Uses biblical arms [`++onan`](), [`++abel`](). `!>`
@@ -12,8 +13,8 @@ Produces
 
 Twig: `[%zpgr p=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig]().
 
@@ -26,11 +27,6 @@ Wide form
 ---------
 
     !>(p)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

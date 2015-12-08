@@ -1,7 +1,7 @@
-semdoq, %smdq
-======================
+`;"`
+====
 
-String
+
 
 `semdoq` is a synthetic rune used to make strings, interpreted or not.
 

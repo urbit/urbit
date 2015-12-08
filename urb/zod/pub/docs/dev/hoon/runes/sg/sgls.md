@@ -1,7 +1,5 @@
-siglus, `~+`, %sgls
-============================
-
-Memoize
+`~+`
+====
 
 `~+`, `siglus`, is a synthetic rune that hints to the interpreter to
 memoize (cache) the computation of `p`.
@@ -11,8 +9,8 @@ Produces
 
 Twig: `[%sgls p=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig]()
 

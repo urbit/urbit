@@ -1,7 +1,9 @@
-semcen, `;%`
-=====================
+`;%`
+====
 
-`++sail` list
+Performs the same function as `%-`, except within XML template syntax
+(aka `++sail`). Passes `q`, a list of n arguments, to function `p`.
+
 
 `;%` is a virtual rune used within [`++sail`]() for passing a list of
 child nodes to a gate. `;%` is used for transforming a list of child
@@ -17,8 +19,8 @@ Produces
 
 Twig: [`++marl`]()
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig]().
 
@@ -33,11 +35,6 @@ Wide form
     %{p}
 
 (within quoted form)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

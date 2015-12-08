@@ -1,5 +1,5 @@
-zapwut, `!?`, %zpwt
-============================
+`!?`
+====
 
 Restrict version
 
@@ -10,8 +10,8 @@ Produces
 
 Twig: `[%zpwt p=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig]().
 
@@ -27,16 +27,6 @@ To declare code that runs only in 164K through 161K:
 
     !?  [164 161] 
     q
-
-Wide form
----------
-
-None
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

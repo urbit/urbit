@@ -1,5 +1,5 @@
-semsig, `;~`, %smsg
-============================
+`;~`
+====
 
 Monad composer
 
@@ -10,8 +10,8 @@ Produces
 
 Twig: `[%smsg p=(list beer)]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [`++list`]() of [`++beer`]().
 

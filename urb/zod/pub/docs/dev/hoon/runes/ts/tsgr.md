@@ -1,5 +1,5 @@
-tisgar, `=>`, %tsgr
-============================
+`=>`
+====
 
 Product as subject
 
@@ -7,19 +7,13 @@ Product as subject
 `q`. `=>` is the inverse of `=<`. Use `=>` when your `p` isn't too long
 and `=>` makes for more readable code.
 
-See also
---------
-
-tisgal, `=<`, %tsgl
-============================
-
 Produces
 --------
 
 Twig: `[%tsgr p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` and `q` are [twig]()s.
 
@@ -33,11 +27,6 @@ Wide form
 ---------
 
     =>(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

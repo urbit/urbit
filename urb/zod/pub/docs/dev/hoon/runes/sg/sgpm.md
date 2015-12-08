@@ -1,7 +1,7 @@
 sigpam, `~&`, %sgpm
 ============================
 
-printf
+'PrintF' or 'log' in other languages. Often used for debugging.
 
 `~&`, `sigpam`, is a synthetic rune that prints `q` on the console
 before computing `r`. `p` is the log priority, 0-3 defaulting to 0. `~&`
@@ -13,8 +13,8 @@ Produces
 
 Twig: `[%sgpm p=@ud q=twig r=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [`@ud`]() `q` is a [twig]() `r` is a [twig]()
 
@@ -45,11 +45,6 @@ Wide form
 ---------
 
     ~&(>> q r)
-
-Irregular form
---------------
-
-undefined
 
 Examples
 --------

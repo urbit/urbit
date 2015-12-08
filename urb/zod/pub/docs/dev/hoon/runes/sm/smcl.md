@@ -1,7 +1,7 @@
-semcol, `;:`, %smcl
-============================
+`;:`
+====
 
-Apply fold
+Apply a binary function `p` to a tuple `q` with n elements. Similar to folding over the tuple `q`.
 
 Syntax
 ======
@@ -15,8 +15,8 @@ Produces
 
 Twig: `[%smcl p=twig q=tusk]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig](). `q` is a [`++tusk`]().
 

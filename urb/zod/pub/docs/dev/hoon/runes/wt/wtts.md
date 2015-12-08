@@ -1,7 +1,8 @@
-wuttis, `?=`, %wtts
-============================
+`?=`
+====
 
-Is in tile
+Tests whether `q` is of type (mold) `p`.
+
 
 `?=` is a natural rune that produces true if the leg at wing `q` is in
 tile `p`.
@@ -26,11 +27,6 @@ Wide form
 ---------
 
     ?=(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

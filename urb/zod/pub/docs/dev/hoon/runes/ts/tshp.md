@@ -1,25 +1,23 @@
-tishep, `=-`, %tshp
-============================
+`=-`
+====
 
-Push on, inverse
+An inverted `=+`. Pushes variable `q` onto the subject and then
+executes `p` against the new subject.  Allows us to place the larger of `p` and
+`q` as the bottom expression, making for for more readable code (see the
+section on [backstep]()).
+
 
 `=-` is a synthetic rune that pushes `q` on the subject and sends it to
 `p`. `=-` is the inverse of `=+`. Use `=-` when your computation, `q` is
 lengthier and `=-` makes for more readable code.
-
-See also
---------
-
-tislus, `=+`, %tsls
-============================
 
 Produces
 --------
 
 Twig: `[%tshp p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` and `q` are [twig]()s.
 
@@ -33,11 +31,6 @@ Wide form
 ---------
 
     =-(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

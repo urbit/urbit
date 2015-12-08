@@ -1,5 +1,5 @@
-semsem, `;;`, %smsm
-============================
+`;;`
+====
 
 Fixpoint
 
@@ -17,8 +17,8 @@ Produces
 
 Twig: `[%smsm p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig](). `q` is a [twig]().
 
@@ -32,11 +32,6 @@ Wide form
 ---------
 
     ;;(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

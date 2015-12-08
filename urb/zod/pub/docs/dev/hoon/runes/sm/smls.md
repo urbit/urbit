@@ -1,5 +1,5 @@
-semlus, `;+`
-=====================
+`;+`
+====
 
 `++sail` manx
 
@@ -33,11 +33,6 @@ Wide form
     +{a}
 
 (within quoted form)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

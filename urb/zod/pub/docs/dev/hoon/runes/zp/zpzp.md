@@ -1,7 +1,9 @@
-zapzap, `!!`, %zpzp
-============================
+`!!`
+====
 
-Crash
+Always causes a crash. Useful when testing unfinished code so that you don't
+have to worry about type stuff for different conditional cases you have yet to
+cover.
 
 `!?` is a natural rune that always crashes.
 
@@ -10,25 +12,15 @@ Produces
 
 Twig: `[%zpzp ~]`
 
-Sample
-------
+Accepts
+-------
 
 Always ignored
-
-Tall form
----------
-
-None
 
 Wide form
 ---------
 
     !!
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

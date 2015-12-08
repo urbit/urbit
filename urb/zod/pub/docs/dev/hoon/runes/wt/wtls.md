@@ -1,25 +1,22 @@
-wutlus, `?+`, %wtls
-============================
+`?+`
+====
 
-Switch with default
+Switch statement with default value. Identical to `?-` except for
+that it takes a default case `q` if none of the cases in `r` match the type of
+`p`. As with `?-`, the most common type used to switch on is the cube, which
+begins with `%` followed by text.
 
 `?+` is a synthetic rune that selects a case in `q` for the actual type
 of `p` with a default case, `q`. The labels in `r` must have the same
 [icon]() as `p` The list of cases, `r` must be terminated by `==`.
-
-See also
---------
-
-wuthep, `?-`, %wthp
-============================
 
 Produces
 --------
 
 Twig: `[%wtls p=wing q=twig r=tine]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [`++wing`](). `q` is a [twig](). `r` is a [`++tine`]().
 
@@ -51,11 +48,6 @@ Wide form
 ---------
 
     ?+(p p.i.r q.i.r, p.i.t.r q.i.t.r, p.i.t.t.r q.i.t.t.r)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

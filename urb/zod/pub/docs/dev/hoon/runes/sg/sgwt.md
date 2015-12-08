@@ -1,7 +1,9 @@
-sigwut, `~?`, %sgwt
-============================
+`~?`
+====
 
-Conditional printf
+Same as `~&` except for that `r` is printed to the console if and only
+if `q` evaluates to true.
+
 
 `~?` is a synthetic rune with the same hint effect as `~&`, printing `r`
 if and only if `q` produces `&`, loobean yes.
@@ -11,8 +13,8 @@ Produces
 
 Twig: `[%sgwt p=@ud q=twig r=twig s=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [`@ud`](). `q` is a [twig](). `r` is a [twig](). `s` is a
 [twig]().
@@ -44,11 +46,6 @@ Wide form
 ---------
 
     ~&(>> q r)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

@@ -1,5 +1,5 @@
-siggal, `~<`, %sggl
-============================
+`~<`
+====
 
 Hint to product
 
@@ -12,8 +12,8 @@ Produces
 
 Twig: `[%sggl p=$|(term [p=term q=twig]) q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is either a [`++term`]() or a `++term` twig pair. `q` is a [twig]()
 
@@ -35,11 +35,6 @@ Wide form
 
     ~<(%foo q)
     ~<(%foo.bar q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

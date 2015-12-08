@@ -1,7 +1,10 @@
-wutket, `?^`, %wtkt
-============================
+`?^`
+====
 
-Is bunt, inverse
+An if-then-else statement that tests whether `p` is equal to the default value
+(bunt) of its type, producing `r` if true and `q` if false. Used to check
+whether a clam has succeeded.
+
 
 `?^` is a synthetic rune that evaluates `r` if `p` is equal to the
 [bunt]() for its [tile](), otherwise `q` is evaluated.
@@ -11,8 +14,8 @@ Produces
 
 Twig: `[%wtkt p=wing q=twig r=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [`++wing`](). `q` and `r` are [twig]()s.
 
@@ -27,11 +30,6 @@ Wide form
 ---------
 
     ?^(p q r)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

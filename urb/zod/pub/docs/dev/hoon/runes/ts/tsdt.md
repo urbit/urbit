@@ -1,7 +1,9 @@
-tisdot, `=.`, %tsdt
-============================
+`=.`
+====
 
-Single change subject
+Produces `r` with `p` in the subject set to `q`. Allows you to change
+a value in your subject before executing more code against it.
+
 
 `=.` is a synthetic rune that produces `r` with `p` in the subject set
 to `q`.
@@ -11,8 +13,8 @@ Produces
 
 Twig: `[%tsdt p=wing q=twig r=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [`wing`](). `q` and `r` are [`twig`]()s.
 
@@ -34,11 +36,6 @@ Wide form
 ---------
 
     =.(p q r)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

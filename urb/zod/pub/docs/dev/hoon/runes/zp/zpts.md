@@ -1,17 +1,17 @@
-zaptis, `!=`, %zpts
-============================
+`!=`
+====
 
 Show nock
 
 `!=` is a natural rune that produces the formula of twig p as a noun.
 
-Produces
---------
+Accepts
+-------
 
 Twig: `[%zpts p=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig]().
 
@@ -24,11 +24,6 @@ Wide form
 ---------
 
     !=(p)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

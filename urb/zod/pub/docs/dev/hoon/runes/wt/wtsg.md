@@ -1,7 +1,9 @@
-wutsig, `?~`, %wtsg
-============================
+`?~`
+====
 
-If `~`
+If-then-else statement that tests whether `p` is an atom, producing `q` if true
+and `r` if false.
+
 
 `?~` is a synthetic rune that produces `q` if `p` is `~`, `r` otherwise.
 
@@ -10,8 +12,8 @@ Produces
 
 Twig: `[%wtsg p=wing q=twig r=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [`++wing`](). `q` and `r` are [twig]()s.
 
@@ -26,11 +28,6 @@ Wide form
 ---------
 
     ?~(p q r)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

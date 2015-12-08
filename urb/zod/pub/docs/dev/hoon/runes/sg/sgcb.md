@@ -1,7 +1,8 @@
-sigcab, `~_`, %sgcb
-============================
+`~_`
+====
 
-Insert `++tank` in trace
+Inserts pre-formatted stackframe `p` into the stacktrace of `q`. 
+
 
 `~_` is a synthetic rune that inserts `p`, a trap producing `tank`, in
 the trace of `q`.
@@ -11,8 +12,8 @@ Produces
 
 Twig: `[%sgcb p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig]() `q` is a [twig]()
 
@@ -26,11 +27,6 @@ Wide form
 ---------
 
     ~_(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

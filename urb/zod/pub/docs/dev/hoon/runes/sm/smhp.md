@@ -1,7 +1,8 @@
-semhep, `;-`
-=====================
+`;-`
+====
 
-`++sail` tape
+Interpolates a string (aka tape) into a `++marl`, the datastructure
+
 
 `;-` is a virtual rune used within [`++sail`]() to interpolate a tape.
 
@@ -31,11 +32,6 @@ Wide form
     -{a}
 
 (within quoted form)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

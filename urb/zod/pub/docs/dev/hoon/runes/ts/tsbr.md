@@ -1,7 +1,9 @@
-tisbar, `=|`, %tsbr
-============================
+`=|`
+====
 
-Bunt to subject
+Produces the default value of input type (aka mold) `p` and makes it
+available/pushes it onto `q`.
+
 
 `=|` is a synthetic rune that pushes the [bunt](), or default value, of
 `p` on the subject and sends it to `q`.
@@ -11,8 +13,8 @@ Produces
 
 Twig: `[%tsbr p=tile q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [tile](). `q` is a [twig]().
 
@@ -26,11 +28,6 @@ Wide form
 ---------
 
     =|(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------
@@ -48,8 +45,3 @@ Here we use `=|` to generate the default value of a `@p`, which is
 
 Here we add the bunt of `a=[b=@ c=@]` and perform a very basic operation
 on it.
-
-Equivalent to
--------------
-
-    =+(*p q)

@@ -1,7 +1,8 @@
-wutzap, `?!`, %wtzp
-============================
+`?!`
+====
 
-NOT
+Produces the logical 'not' of `p`.
+
 
 `?!` is a synthetic rune that produces the logical "not" of `p`.
 
@@ -10,8 +11,8 @@ Produces
 
 Twig: `[%wtzp p=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig]().
 

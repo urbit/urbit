@@ -1,24 +1,19 @@
-wutgar, `?>`, %wtgr
-============================
+`?>`
+====
 
-Assert yes
+Asserts that `p` is true before evaluating `q`. Crashes if `p` evaluates to true.
+
 
 `?>` is a synthetic rune that produces `q`, asserting that `p` is yes
 (`&`, 0).
-
-See also
---------
-
-wutgal, `?<`, %wtgl
-============================
 
 Produces
 --------
 
 Twig: `[%wtgr p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` and `q` are [twig]()s.
 
@@ -32,11 +27,6 @@ Wide form
 ---------
 
     ?>(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

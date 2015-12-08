@@ -1,25 +1,22 @@
-wutdot, `?.`, %wtdt
-============================
+`?.`
+====
 
-If, else
+Inverted If-then-else: unless `p` is true, evaluate `r`. Used to
+keep the heavier of `q` and `r` as the bottom expression, which makes for more
+readable code (see the section on [backstep]()).
+
 
 `?.`is a synthetic rune that produces `r` if `p` is yes (`&`, `0`), or
 `q` if `p` is no (`|`, 1). `?.` is sort of like "if not", producing the
 second expression if the loobean is true. `?.` is the inverse of `?:`.
-
-See also
---------
-
-wutcol, `?:`, %wtcl
-============================
 
 Produces
 --------
 
 Twig: `[%wtdt p=twig q=twig r=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p`, `q`, and `r` are [twig]()s.
 
@@ -34,11 +31,6 @@ Wide form
 ---------
 
     ?.(p q r)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

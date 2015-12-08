@@ -1,16 +1,11 @@
-wutgal, `?<`, %wtgl
-============================
+`?<`
+====
 
-Assert no
+Asserts that `p` is false before evaluating `q`. Crashes if `p` evaluates to false.
+
 
 `?<` is a synthetic rune that produces `q`, asserting that `p` is no
 (`|`, 1).
-
-See also
---------
-
-wutgar, `?>`, %wtgr
-============================
 
 Produces
 --------
@@ -32,11 +27,6 @@ Wide form
 ---------
 
     ?<(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

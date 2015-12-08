@@ -1,7 +1,8 @@
-wutpat, `?@`, %wtpt
-============================
+`?@`
+====
 
-If atom
+If-then-else statement that tests whether `p` is an atom, producing `q` if true and `r` if false.
+
 
 `?@` is a synthetic rune that produces `q` if `p` is an atom, `r`
 otherwise.
@@ -11,8 +12,8 @@ Produces
 
 Twig: `[%wtpt p=wing q=twig r=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [`++wing`](). `q` and `r` are [twig]()s.
 

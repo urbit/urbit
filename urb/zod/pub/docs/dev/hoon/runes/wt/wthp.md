@@ -1,25 +1,22 @@
-wuthep, `?-`, %wthp
-============================
+`?-`
+====
 
-Switch
+Switch statement. Different from the traditional switch statement in
+that it switches on a type instead of a value. The most common type used to
+switch on is the cube, which begins with `%` followed by text.
+
 
 `?-` is a synthetic rune that selects a case in `q` for the value of
 `p`. The labels in `q` must match the [icon]() of `p`. The list of
 cases, `q` must be terminated by `==`.
-
-See also
---------
-
-wutlus, `?+`, %wtls
-============================
 
 Produces
 --------
 
 Twig: `[%wthp p=wing q=tine]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [`++wine`](). `q` is a [`++tine`]().
 
@@ -49,11 +46,6 @@ Wide form
 ---------
 
     ?-(p p.i.q q.i.q, p.i.t.q q.i.t.q, p.i.t.t.q q.i.t.t.q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

@@ -1,7 +1,6 @@
-sigfas, `~/`, %sgfs
-============================
+`~/`
+====
 
-Book arm jet
 
 `~/` is a synthetic rune that implements one common case - a gate arm in
 a book, i.e. a library function - of the [`~%`]() jet hint. `~/` assumes
@@ -12,8 +11,8 @@ Produces
 
 Twig: `[%sgfs p=term q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [term](). `q` is a [twig]().
 
@@ -27,11 +26,6 @@ Wide form
 ---------
 
     ~/(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------
