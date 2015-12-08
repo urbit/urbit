@@ -766,7 +766,6 @@
           [%of @ ~]  ~|(e/ford/lost/tee !!)
           [%si ~]  (give-sigh q.sih)
           [%re ^]
-        ~&  redirect/-.q.sih
         ?:  ?=(%& -.q.sih)                            ::  redirect
           =*  cay  p.q.sih
           ?>  ?=(%quri p.cay)
