@@ -592,9 +592,9 @@
   |=  {a+@ b+@}
   ^-  @
   ?-  b
-    1   a
-    2   (mul a 2)
-    3   +((mul a 2))
+    $1  a
+    $2  (mul a 2)
+    $3  +((mul a 2))
     *   (add (mod b 2) (mul $(b (div b 2)) 2))
   ==
 ::
@@ -3604,10 +3604,10 @@
       %+  turn
         ^-  (list {p+@ q+@})
         ?+  b  !!
-          1  [[0 7] ~]
-          2  [[8 6] [0 5] ~]
-          3  [[16 6] [8 6] [0 4] ~]
-          4  [[24 6] [16 6] [8 6] [0 3] ~]
+          $1  [[0 7] ~]
+          $2  [[8 6] [0 5] ~]
+          $3  [[16 6] [8 6] [0 4] ~]
+          $4  [[24 6] [16 6] [8 6] [0 3] ~]
         ==
       |=({p+@ q+@} [q (cut 0 [p q] a)])
   $(a (rsh 3 b a))
@@ -8002,7 +8002,7 @@
         {$bull *}
       ?.  =(cog p.p.sut)
         $(sut q.sut)
-      ?.  ?=(0 dep)
+      ?.  ?=($0 dep)
         $(dep (dec dep), sut q.sut)
       [0 ~ 1 %2 p.sut q.sut]
     ::
@@ -8032,7 +8032,7 @@
     ::
         {$face *}
       ?:  =(cog p.sut)
-        ?.  ?=(0 dep)
+        ?.  ?=($0 dep)
           [(dec dep) ~]
         [0 ~ 1 %0 q.sut]
       [dep ~]
@@ -8050,25 +8050,25 @@
       ?>  &(?=(^ q.hax) ?=(^ q.yor) =(p.hax p.yor) =(p.u.q.hax p.u.q.yor))
       :-   p.hax
       ?-  -.q.u.q.hax
-        0  ?>  ?=(0 -.q.u.q.yor)
-           [~ p.u.q.hax %0 (fork p.q.u.q.hax p.q.u.q.yor)]
-        1  ?>  &(?=(1 -.q.u.q.yor) =(p.q.u.q.yor p.q.u.q.hax))
-           [~ p.u.q.hax %1 p.q.u.q.hax (weld q.q.u.q.hax q.q.u.q.yor)]
-        2  ?>  ?&  ?=(2 -.q.u.q.yor)
-                   =(p.p.q.u.q.hax p.p.q.u.q.yor)
-                   =(q.p.q.u.q.hax q.p.q.u.q.yor)
-                   =(r.p.q.u.q.hax r.p.q.u.q.yor)
-               ==
-           :*  ~
-               p.u.q.hax
-               %2
-               :*  p.p.q.u.q.hax
-                   q.p.q.u.q.hax
-                   r.p.q.u.q.hax
-                   (fork s.p.q.u.q.hax s.p.q.u.q.yor)
-               ==
-               (fork q.q.u.q.hax q.q.u.q.yor)
-           ==
+        $0  ?>  ?=($0 -.q.u.q.yor)
+            [~ p.u.q.hax %0 (fork p.q.u.q.hax p.q.u.q.yor)]
+        $1  ?>  &(?=($1 -.q.u.q.yor) =(p.q.u.q.yor p.q.u.q.hax))
+            [~ p.u.q.hax %1 p.q.u.q.hax (weld q.q.u.q.hax q.q.u.q.yor)]
+        $2  ?>  ?&  ?=($2 -.q.u.q.yor)
+                    =(p.p.q.u.q.hax p.p.q.u.q.yor)
+                    =(q.p.q.u.q.hax q.p.q.u.q.yor)
+                    =(r.p.q.u.q.hax r.p.q.u.q.yor)
+                ==
+            :*  ~
+                p.u.q.hax
+                %2
+                :*  p.p.q.u.q.hax
+                    q.p.q.u.q.hax
+                    r.p.q.u.q.hax
+                    (fork s.p.q.u.q.hax s.p.q.u.q.yor)
+                ==
+                (fork q.q.u.q.hax q.q.u.q.yor)
+            ==
       ==
     ::
         {$hold *}
@@ -8390,7 +8390,7 @@
         {$ktsg *}
       =+  nef=$(gen p.gen)
       =+  moc=(mink [burn q.nef] |=(* ~))
-      [p.nef ?:(?=(0 -.moc) [%1 p.moc] q.nef)]
+      [p.nef ?:(?=($0 -.moc) [%1 p.moc] q.nef)]
     ::
         {$ktts *}  =+(vat=$(gen q.gen) [(conk(sut p.vat) p.gen) q.vat])
         {$ktwt *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %lead) q.vat])
@@ -9001,7 +9001,7 @@
     |=  {way+?($read $rite $both $free) hyp+wing}
     ^-  {p+axis q+type}
     =+  zar=(seek way hyp)
-    ?>(?=(& -.q.zar) [p.zar p.q.zar])
+    ?>(?=($& -.q.zar) [p.zar p.q.zar])
   ::
   ++  sift
     |=  ref+type
@@ -10155,9 +10155,9 @@
       :-  '%'
         fail
       :-  '&'
-        (stag %leaf (stag %f (cold & pam)))
+        fail
       :-  '*'
-        (cold [%axil %noun] tar)
+        (stag %herb wide)
       :-  '?'
         ;~  pose
           (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil))))
@@ -10184,7 +10184,7 @@
           (stag %herb wide)
         ==
       :-  ['0' '9']
-        (stag %leaf bisk:so)
+        fail
       :-  ['a' 'z']
         ;~  pose
           %+  sear
@@ -10497,7 +10497,7 @@
     ++  slid
       |=  {hed+mill tal+mill}
       ^-  mill
-      ?:  &(?=(& -.hed) ?=(& -.tal))
+      ?:  &(?=($& -.hed) ?=($& -.tal))
         [%& (slop p.hed p.tal)]
       [%| [%cell p.p.hed p.p.tal] [q.p.hed q.p.tal]]
     ::
