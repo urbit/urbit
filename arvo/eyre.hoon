@@ -57,6 +57,7 @@
               [%ha p=path:beak]                         ::  GET request
               [%he p=whir]                              ::  HEAD request
               [%hi p=mark ~]                            ::  outbound HTTP
+              [%re p=span:whir q=mark r=path:beam]      ::  redirect check
               [%si ~]                                   ::  response done
               [%of p=ixor q=$|(~ whir-of)]              ::  associated view
               [%ow p=ixor ~]                            ::  dying view
@@ -764,12 +765,24 @@
           $|(~ [?(%on %ay %ow) *])  ~|(e/ford/lost/tee !!)
           [%of @ ~]  ~|(e/ford/lost/tee !!)
           [%si ~]  (give-sigh q.sih)
+          [%re ^]
+        ~&  redirect/-.q.sih
+        ?:  ?=(%& -.q.sih)                            ::  redirect
+          =*  cay  p.q.sih
+          ?>  ?=(%quri p.cay)
+          =+  url=((hard quri) q.q.cay)
+          (give-thou 307 [location/(crip (apex:earn url))]~ ~)
+        =+  wir=((hard whir) (need (puck p.tee)))
+        =+  bem=(need (tome r.tee))
+        (execute wir -.bem [%boil q.tee bem ~])
+      ::
           [%hi ^]
         ?:  ?=(%| -.q.sih)
           (give-sigh q.sih)  ::  XX crash?
         =*  cay  p.q.sih
         ?>  ?=(%hiss p.cay)
         (pass-note tee [%e %meta :(slop !>(%them) !>(~) q.cay)])
+      ::
           [%he *]                     ::  XX hack
         =.  ..axon  $(tee p.tee)
         %_  ..axon
@@ -946,14 +959,14 @@
     ++  nice-json  (teba ^nice-json)
     ++  pass-note  (teba ^pass-note)
     ::
-    ++  ford-boil
-      |=  [wir=whir ext=term bem=beam]
+    ++  fcgi-beam
+      |=  bem=beam
       =+  yac=for-client
       =.  him.yac  ?.(aut anon him.yac)
-      =:  r.bem  ?+(r.bem r.bem [%ud %0] da/now)
-          s.bem  [%web ~(rent co (fcgi quy fcgi-cred.yac)) s.bem]
-        ==
-      (execute wir -.bem [%boil ext bem ~])
+      %_  bem
+        r  ?+(r.bem r.bem [%ud %0] da/now)
+        s  [%web ~(rent co (fcgi quy fcgi-cred.yac)) s.bem]
+      ==
     ::
     ::
     ++  apex                                              
@@ -974,7 +987,15 @@
           %json  (give-json 200 cug p.pez)
           %html  (give-html 200 cug p.pez)
           %htme  (give-html 401 cug p.pez)
-          %boil  (ford-boil +.pez)
+          %boil
+        =+  wir=[%re (pack [- +]:p.pez) q.pez (tope r.pez)]
+        =.  s.r.pez  
+          |-  ^-  spur
+          ?:  =(s.top s.r.pez)  [%red s.r.pez]
+          ?~  s.r.pez  [%red s.r.pez]
+          [i.s.r.pez $(s.r.pez t.s.r.pez)]
+        (execute wir -.r.pez [%boil %quri r.pez ~])
+      ::
           %red
         =+  url=(earn hat pok(p [~ %html]) quy)
         ?+    p.pok  ~|(bad-redirect/[p.pok url] !!)
@@ -1164,12 +1185,12 @@
           ?(%beam %spur)
         =+  ext=(fall p.pok %urb)
         =+  bem=?-(-.hem %beam p.hem, %spur [-.top (weld p.hem s.top)])
-        =+  wir=`whir`[%ha (tope -.bem ~)]
-        =.  wir  ?+(mef !! %get wir, %head [%he wir])
         ~|  bad-beam/q.bem
         ?<  =([~ 0] (sky %cw (tope bem(+ ~, r [%da now]))))
-        =+  [wir ext bem]
-        ?.(aut [%& %boil -] [%| (ford-boil -)])  ::  XX properly
+        =+  wir=`whir`[%ha (tope -.bem ~)]
+        =.  wir  ?+(mef !! %get wir, %head [%he wir])
+        =+  [%& %boil wir ext (fcgi-beam bem)]
+        ?.(aut - [%| (resolve -)])  ::  XX properly
       ::
           %bugs  
         ?-  p.hem
