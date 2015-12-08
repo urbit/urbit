@@ -100,7 +100,7 @@
           =+  det=(lte (add 256 (met 0 c)) mx.her)
           =+  lip=?:(det c 0)
           =-  (add ?:(p.mav 0 1) (lsh 0 1 q.mav))
-          ^=  mav  ^-  [p=? q=@]
+          ^=  mav  ^-  {p+? q+@}
           :-  det
           =+  dog=(pad mx.her [256 b] lip)
           =+  hog=(push.her dog)
@@ -109,7 +109,7 @@
         ++  sign
           |=  {a+@ b+@}  ^-  @
           =-  (add ?:(p.mav 0 1) (lsh 0 1 q.mav))
-          ^=  mav  ^-  [p=? q=@]
+          ^=  mav  ^-  {p+? q+@}
           =+  det=(lte (add 128 (met 0 b)) mx)
           :-  det
           =+  hec=(shaf (mix %agis a) b)
@@ -671,12 +671,12 @@
     %=    $
       xet  t.xet
       rez  ?-  i.xet
-             34  ['&' 'q' 'u' 'o' 't' ';' rez]
-             38  ['&' 'a' 'm' 'p' ';' rez]
-             39  ['&' '#' '3' '9' ';' rez]
-             60  ['&' 'l' 't' ';' rez]
-             62  ['&' 'g' 't' ';' rez]
-             *   [i.xet rez]
+             $34  ['&' 'q' 'u' 'o' 't' ';' rez]
+             $38  ['&' 'a' 'm' 'p' ';' rez]
+             $39  ['&' '#' '3' '9' ';' rez]
+             $60  ['&' 'l' 't' ';' rez]
+             $62  ['&' 'g' 't' ';' rez]
+             *    [i.xet rez]
            ==
     ==
   ::
@@ -773,8 +773,8 @@
   --
 ::
 ++  jo                                                  ::  json reparser
-  =>  |%  ++  grub  (unit ,*) 
-          ++  fist  $+(json grub)
+  =>  |%  ++  grub  (unit *) 
+          ++  fist  _+(json grub)
       --
   |%
   ++  ar                                                ::  array as list
@@ -818,7 +818,7 @@
   ::
   ++  da                                                ::  UTC date
     |=  jon+json
-    ?.  ?=([%s *] jon)  ~
+    ?.  ?=({$s *} jon)  ~
     (bind (stud p.jon) |=(a=date (year a)))
   ::
   ++  di                                                ::  millisecond date
@@ -968,13 +968,13 @@
   =+  utf=|=(a+@ ['\\' 'u' ((x-co 4):co a)]) 
   |=  a+@  ^-  tape
   ?+  a  ?:((gth a 0x1f) [a ~] (utf a))
-    10  "\\n"
-    34  "\\\""
-    92  "\\\\"
+    $10  "\\n"
+    $34  "\\\""
+    $92  "\\\\"
   ==
 ::
 ++  scanf                                              ::  formatted scan
-  |*  [tape (pole __(:/(*{_&(rule tape)})))]
+  |*  {tape (pole __(:/(*{_&(rule tape)})))}
   =>  .(+< [a b]=+<)
   (scan a (parsf b))
 ++  parsf                                              ::  make parser from:
@@ -1003,8 +1003,8 @@
   ++  bill
     |*  (list (each rule tape))
     ?~  +<  (easy ~)
-    ?:  ?=(| -.i)  ;~(pfix (jest (crip p.i)) $(+< t))
-    %+  cook  |*([* *] [i t]=+<)
+    ?:  ?=($| -.i)  ;~(pfix (jest (crip p.i)) $(+< t))
+    %+  cook  |*({* *} [i t]=+<)
     ;~(plug p.i $(+< t))
   --
 ::
@@ -1039,13 +1039,13 @@
 ++  foal                                                ::  high-level write
   |=  {pax+path val+cage}
   ^-  toro
-  ?>  ?=([* * * *] pax)
+  ?>  ?=({* * * *} pax)
   [i.t.pax [%& [[[t.t.t.pax (feel pax val)] ~]]]]
 ::
 ++  fray                                                ::  high-level delete
   |=  pax+path
   ^-  toro
-  ?>  ?=([* * * *] pax)
+  ?>  ?=({* * * *} pax)
   [i.t.pax [%& [[[t.t.t.pax [%del ~]] ~]]]]
 ::
 ++  furl                                                ::  unify changes
@@ -1053,14 +1053,14 @@
   ^-  toro
   ~|  %furl
   ?>  ?&  =(p.one p.two)                                ::  same path
-          &(?=(& -.q.one) ?=(& -.q.two))                ::  both deltas
+          &(?=($& -.q.one) ?=($& -.q.two))              ::  both deltas
       ==
   [p.one [%& (weld p.q.one p.q.two)]]
 ::
 ++  tame                                                ::  parse kite path
   |=  hap+path
   ^-  (unit kite)
-  ?.  ?=([@ @ @ @ *] hap)  ~
+  ?.  ?=({@ @ @ @ *} hap)  ~
   =+  :*  hyr=(slay i.hap)
           fal=(slay i.t.hap)
           dyc=(slay i.t.t.hap)
@@ -1256,8 +1256,8 @@
   ++  apex
     |=  qur+quri
     ?-  -.qur
-      %&  (weld (head p.p.qur) `tape`['/' $(qur [%| +.p.qur])])
-      %|  (weld (body p.qur) (tail q.qur))
+      $&  (weld (head p.p.qur) `tape`['/' $(qur [%| +.p.qur])])
+      $|  (weld (body p.qur) (tail q.qur))
     ==
   ::
   ++  body
@@ -1276,10 +1276,10 @@
       ?:(&(p.har !?=(hoke r.har)) "https://" "http://")
     ::
       ?-  -.r.har
-        |  (trip (rsh 3 1 (scot %if p.r.har)))
-        &  =+  rit=(flop p.r.har)
-           |-  ^-  tape
-           ?~(rit ~ (weld (trip i.rit) ?~(t.rit "" `tape`['.' $(rit t.rit)])))
+        $|  (trip (rsh 3 1 (scot %if p.r.har)))
+        $&  =+  rit=(flop p.r.har)
+            |-  ^-  tape
+            ?~(rit ~ (weld (trip i.rit) ?~(t.rit "" `tape`['.' $(rit t.rit)])))
       ==
     ::
       ?~(q.har ~ `tape`[':' (trip (rsh 3 2 (scot %ui u.q.har)))])
@@ -1316,7 +1316,7 @@
         %+  sear
           |=  a+@t
           ^-  (unit ?)
-          ?+(a ~ %http [~ %|], %https [~ %&])
+          ?+(a ~ $http [~ %|], $https [~ %&])
         ;~(sfix scem ;~(plug col fas fas))
         thor
       ==
@@ -1709,7 +1709,7 @@
   ?~  pax  &  ?~  r.+<  | 
   &(=(i.pax i.r.+<) $(pax t.pax, r.+< t.r.+<))
 ::
-++  prey  |=([pax=path hid=bowl] (pale hid (prix pax))) ::  prefix 
+++  prey  |=({pax+path hid+bowl} (pale hid (prix pax))) ::  prefix 
 ++  hunt                                                ::  first of unit dates
   |=  {one+(unit @da) two+(unit @da)}
   ^-  (unit @da)
@@ -2099,11 +2099,11 @@
 ++  purf  (pair purl (unit @t))                         ::  url with fragment
 ++  purl  {p+hart q+pork r+quay}                        ::  parsed url
 ++  putt                                                ::  outgoing message
-          $:  ski+snow                                  ::  sequence acked/sent
+          _:  ski+snow                                  ::  sequence acked/sent
               wyv+(list rock)                           ::  packet list XX gear
           ==                                            ::
 ++  pyre                                                ::  cascade stash
-          $:  p+(map {p+path q+path r+coal} coal)       ::  by path
+          _:  p+(map {p+path q+path r+coal} coal)       ::  by path
               q+(map {p+path q+@uvI r+coal} coal)       ::  by source hash
               r+(map {p+* q+coal} coal)                 ::  by (soft) twig
           ==                                            ::
@@ -2113,22 +2113,22 @@
               {$| p+pork q+quay}                        ::  relative
           ==                                            ::
 ++  race                                                ::  inbound stream
-          $:  did+@ud                                   ::  filled sequence
+          _:  did+@ud                                   ::  filled sequence
               dod+?                                     ::  not processing
               bum+(map @ud ares)                        ::  nacks
               mis+(map @ud {p+cape q+lane r+flap s+(unit)}) ::  misordered
           ==                                            ::
 ++  rank  ?($czar $king $duke $earl $pawn)              ::  ship width class
-++  rang  $:  hut+(map tako yaki)                       ::
+++  rang  _:  hut+(map tako yaki)                       ::
               lat+(map lobe blob)                       ::
           ==                                            ::
 ++  rand                                                ::  unvalidated rant
-          $:  p+{p+care q+case r+@tas}                  ::  clade release book
+          _:  p+{p+care q+case r+@tas}                  ::  clade release book
               q+path                                    ::  spur
               r+page                                    ::  data
           ==                                            ::
 ++  rant                                                ::  namespace binding
-          $:  p+{p+care q+case r+@tas}                  ::  clade release book
+          _:  p+{p+care q+case r+@tas}                  ::  clade release book
               q+path                                    ::  spur
               r+cage                                    ::  data
           ==                                            ::
@@ -2138,12 +2138,12 @@
               {$many p+? q+moat}                        ::  change range
           ==                                            ::
 ++  rill                                                ::  outbound stream
-          $:  sed+@ud                                   ::  sent
+          _:  sed+@ud                                   ::  sent
               san+(map @ud duct)                        ::  outstanding
           ==                                            ::
 ++  riot  (unit rant)                                   ::  response/complete
 ++  road                                                ::  secured oneway route
-          $:  exp+@da                                   ::  expiration date
+          _:  exp+@da                                   ::  expiration date
               lun+(unit lane)                           ::  route to friend
               lew+will                                  ::  will of friend
           ==                                            ::
@@ -2153,7 +2153,7 @@
 ++  saba  {p+ship q+@tas r+moar s+dome}                 ::  patch/merge
 ++  sack  {p+ship q+ship}                               ::  incoming [our his}
 ++  sufi                                                ::  domestic host
-          $:  hoy+(list ship)                           ::  hierarchy
+          _:  hoy+(list ship)                           ::  hierarchy
               val+wund                                  ::  private keys
               law+will                                  ::  server will
               seh+(map hand {p+ship q+@da})             ::  key cache
@@ -2161,7 +2161,7 @@
           ==                                            ::
 ++  salt  @uv                                           ::  entropy
 ++  seal                                                ::  auth conversation
-          $:  whu+(unit ship)                           ::  client identity
+          _:  whu+(unit ship)                           ::  client identity
               pul+purl                                  ::  destination url
               wit+?                                     ::  wait for partner
               foy+(unit {p+ship q+hole})                ::  partner to notify
@@ -2169,18 +2169,18 @@
           ==                                            ::
 ++  sect  ?($black $blue $red $orange $white)           ::  banner
 ++  shed                                                ::  packet flow
-          $:  $:  rtt+@dr                               ::  smoothed rtt
+          _:  _:  rtt+@dr                               ::  smoothed rtt
                   rto+@dr                               ::  retransmit timeout
                   rtn+(unit @da)                        ::  next timeout
                   rue+(unit @da)                        ::  last heard from
               ==                                        ::
-              $:  nus+@ud                               ::  number sent
+              _:  nus+@ud                               ::  number sent
                   nif+@ud                               ::  number live
                   nep+@ud                               ::  next expected
                   caw+@ud                               ::  logical window
                   cag+@ud                               ::  congest thresh
               ==                                        ::
-              $:  diq+(map flap @ud)                    ::  packets sent
+              _:  diq+(map flap @ud)                    ::  packets sent
                   pyz+(map soup @ud)                    ::  message/unacked
                   puq+(qeu {p+@ud q+soul})              ::  packet queue
               ==                                        ::
@@ -2191,7 +2191,7 @@
 ++  soap  {p+{p+life q+life} q+path r+@ud}              ::  statement id
 ++  soup  {p+path q+@ud}                                ::  new statement id
 ++  soul                                                ::  packet in travel
-          $:  gom+soup                                  ::  message identity
+          _:  gom+soup                                  ::  message identity
               nux+@ud                                   ::  xmission count
               liv+?                                     ::  deemed live
               lys+@da                                   ::  last sent
@@ -2206,13 +2206,13 @@
 ++  tick  @ud                                           ::  process id
 ++  toro  {p+@ta q+nori}                                ::  general change
 ++  town                                                ::  all security state
-          $:  lit+@ud                                   ::  imperial modulus
+          _:  lit+@ud                                   ::  imperial modulus
               any+@                                     ::  entropy
               urb+(map ship sufi)                       ::  all keys and routes
               fak+?                                     ::
           ==                                            ::
 ++  tube  {p+@ta q+@ta r+@ta s+path}                    ::  canonical path
-++  tutu  ,*                                            ::  presumed type
+++  tutu  *                                             ::  presumed type
 ++  yaki  {p+(list tako) q+(map path lobe) r+tako t+@da} ::  commit
 ++  view  ?($u $v $w $x $y $z)                          ::  view mode
 ++  waks  (map path woof)                               ::  list file states
@@ -2274,7 +2274,7 @@
 ::::    %clay
   ::
 ++  khan                                                ::
-          $:  fil+(unit (unit cage))                    ::  XX see khan-to-soba
+          _:  fil+(unit (unit cage))                    ::  XX see khan-to-soba
               dir+(unit (map @ta (unit khan)))          ::
           ==                                            ::
 ++  mode  (list {path (unit mime)})                     ::
@@ -2430,7 +2430,7 @@
 ::::    %ford
   ::
 ++  hood                                                ::  assembly plan
-  $:  zus+@ud                                           ::  zuse kelvin
+  _:  zus+@ud                                           ::  zuse kelvin
       sur+(list hoof)                                   ::  structures
       lib+(list hoof)                                   ::  libraries
       fan+(list horn)                                   ::  resources
