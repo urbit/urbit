@@ -679,7 +679,7 @@
   |*  a+(list)
   =>  .(a (homo a))
   ^+  a
-  =+  b=`_a`~
+  =+  b=`__(a)`~
   |-
   ?~  a  b
   $(a t.a, b [i.a b])
@@ -3069,7 +3069,7 @@
 ++  knee                                                ::  callbacks
   |*  {gar+* sef+__(|.(*rule))}
   |=  tub+nail
-  ^-  (like ,_gar)
+  ^-  (like __(gar))
   ((sef) tub)
 ::
 ++  mask                                                ::  match char in set
@@ -3181,7 +3181,7 @@
   |*  {rud+* raq+__(|*({a+* b+*} [a b])) fel+rule}
   ~/  %fun
   |=  tub+nail
-  ^-  (like ,_rud)
+  ^-  (like __(rud))
   =+  vex=(fel tub)
   ?~  q.vex
     [p.vex [~ rud tub]]
@@ -3811,7 +3811,7 @@
         [(runt [tab ' '] hom) lug]
       =>  .(tab (add tab 2), edg (sub edg 2))
       =+  mut=(trim (sub edg tab) hom)
-      :-  (runt [(sub tab 2) ' '] ['\\' '/' (weld p.mut `_hom`['\\' '/' ~])])
+      :-  (runt [(sub tab 2) ' '] ['\\' '/' (weld p.mut `__(hom)`['\\' '/' ~])])
       =>  .(hom q.mut)
       |-
       ?~  hom
@@ -4761,7 +4761,7 @@
   |*  {hel+(list) hev+(list)}
   |-  ^+  hev
   =+  ^=  sev
-      =+  [inx=0 sev=*(map ,_i.-.hev (list @ud))]
+      =+  [inx=0 sev=*(map __(i.-.hev) (list @ud))]
       |-  ^+  sev
       ?~  hev  sev
       =+  guy=(~(get by sev) i.hev)
@@ -5205,7 +5205,7 @@
         [pro=pro dif=dif pow=pow ror=ror nnk=8 nnb=4 nnr=14]
     =>  |%
         ++  cipa                                        ::  AES params
-          $_  ^?  |%
+          __  ^?  |%
           ++  co  *{p+@ q+@ r+@ s+@}                    ::  col coefs
           ++  ix  |+(a+@ *@)                            ::  key index
           ++  ro  *{p+@ q+@ r+@ s+@}                    ::  row shifts
@@ -6671,7 +6671,7 @@
     ^-  {? worm}
     ?:  (~(has in nes) [sut ref])  [& +>+<]
     =+  gat=|=({a+type b+type} (~(nest ut a) | b))
-    ?.  (,? .*(gat(+< [sut ref]) -.gat))
+    ?.  (? .*(gat(+< [sut ref]) -.gat))
       ::  ~&  %nets-failed
       ::  =+  tag=`*`skol
       ::  =+  foo=(tank .*(tag(+< ref) -.tag))
@@ -7307,7 +7307,9 @@
         q.i.q.gen
       $(q.gen t.q.gen)
     ::
-        {$wtls *}   [%wthp p.gen (weld r.gen `_r.gen`[[[%axil %noun] q.gen] ~])]
+        {$wtls *}   
+      [%wthp p.gen (weld r.gen `__(r.gen)`[[[%axil %noun] q.gen] ~])]
+    ::
         {$wtpm *}
       |-
       ?~(p.gen [%dtzz %f 0] [%wtcl i.p.gen $(p.gen t.p.gen) [%dtzz %f 1]])
@@ -8676,7 +8678,8 @@
     ~/  %nest
     |=  {tel+? ref+type}
     ^-  ?
-    =|  $:  gem=(set {p+type q+type})                ::  prune ref
+    =|  $^
+        _:  gem=(set {p+type q+type})                ::  prune ref
             gul=(set {p+type q+type})                ::  assume match
             meg=(set {p+type q+type})                ::  prune sut
         ==
@@ -9058,7 +9061,7 @@
       [*(unit axis) ~]
     =+  geq=(tack(sut p.i.men) peh mur)
     =+  mox=$(men t.men)
-    [(mate p.mox `_p.mox`[~ p.geq]) [[q.geq q.i.men] q.mox]]
+    [(mate p.mox `__(p.mox)`[~ p.geq]) [[q.geq q.i.men] q.mox]]
   ::
   ++  wrap
     ~/  %wrap
@@ -9562,16 +9565,11 @@
         (stag %dtts ;~(pfix tis (ifix [pel per] ;~(glam wide wide))))
       :-  '?'
         ;~  pose
-          %+  stag  %bccm 
-          (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil))))
-        ::  (stag %cbwt ;~(pfix wut (ifix [pel per] (most ace wide))))
-        ::
+          (stag %cbwt ;~(pfix wut (ifix [pel per] (most ace wide))))
           (cold [%cbzz %bean] wut)
         ==
       :-  '['
         rupl
-      :-  ','
-        (stag %bccm ;~(pfix com hill))
       :-  '^'
         ;~  pose
           (stag %cnzz rope)
@@ -9659,36 +9657,7 @@
           %-  stew
           ^.  stet  ^.  limo
           :~
-            ['|' (rung bar %reed exqb)]
-            ['&' (rung pam %bush exqb)]
-            ['?' (rung wut %fern exqc)]
-            ['_' (rung cab %weed exqd)]
             ['^' (rung ket %herb exqd)]
-            ['=' (rung tis %bark exqe)]
-            :-  '+'
-              %+  cook
-                |=({a+tile b+tile} [%weed [%brls a [%bctr b]]])
-              ;~(pfix lus (toad exqb))
-            :-  '%'
-              ;~  pfix  cen
-                %+  sear
-                  |=  a=(list tile)  ^-  (unit tile)
-                  =-  ?~(b ~ ?~(u.b ~ [~ %kelp i.u.b t.u.b]))
-                  ^=  b
-                  |-  ^-  (unit (list line))
-                  ?~  a  [~ ~]
-                  =+  c=$(a t.a)
-                  ?~  c  ~
-                  ?.  ?=({{$leaf *} *} i.a)  ~
-                  [~ [p.i.a q.i.a] u.c]
-                (toad exqc)
-              ==
-            :-  ':'
-              ;~  pfix  col
-                %+  cook
-                  |=(a+(list tile) ?~(a !! ?~(t.a i.a [i.a $(a t.a)])))
-                (toad exqc)
-              ==
           ==
         ==
     |%
@@ -10159,30 +10128,21 @@
       :-  '*'
         (stag %herb wide)
       :-  '?'
-        ;~  pose
-          (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil))))
-          (stag %axil (cold %bean wut))
-        ==
+        (stag %herb wide)
       :-  '@'
-        ;~(pfix pat (stag %axil (stag %atom mota)))
+        (stag %herb wide)
       :-  '^'
-        ;~  pose
-          (stag %herb (stag %cnzz rope))
-          (cold [%axil %cell] ket)
-        ==
+        (stag %herb wide)
       :-  '('
         (stag %herb wide)
       :-  '{'
         (stag %herb wide)
       :-  '.'
-        (stag %herb (stag %cnzz rope))
+        (stag %herb wide)
       :-  '['
         fail
       :-  '_'
-        ;~  pose
-          (stag %weed ;~(pfix cab wide))
-          (stag %herb wide)
-        ==
+        (stag %herb wide)
       :-  ['0' '9']
         fail
       :-  ['a' 'z']
@@ -10399,7 +10359,7 @@
           ==                                            ::
 ++  kirk  (unit (set monk))                             ::  audience
 ++  lens                                                ::  observation core
-  $_  ^?                                                ::
+  __  ^?                                                ::
   |%  ++  u  *(unit (unit $~))                          ::  existence
       ++  v  *(unit (unit cage))                        ::  full history
       ++  w  *(unit (unit (unit cage)))                 ::  latest diff
