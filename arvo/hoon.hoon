@@ -2808,9 +2808,9 @@
   +-  bal
     |-  ^+  a
     ?~  a  ~
-    ?.  |(?=(~ l.a) (vor n.a n.l.a))
+    ?.  |(?=($~ l.a) (vor n.a n.l.a))
       $(a [n.l.a l.l.a $(a [n.a r.l.a r.a])])
-    ?.  |(?=(~ r.a) (vor n.a n.r.a))
+    ?.  |(?=($~ r.a) (vor n.a n.r.a))
       $(a [n.r.a $(a [n.a l.a l.r.a]) r.r.a])
     a
   ::
@@ -3050,7 +3050,7 @@
   |-  ^-  (like @t)
   ?:  =(0 daf)
     [p=p.tub q=[~ u=[p=fad q=tub]]]
-  ?:  |(?=(~ q.tub) !=((end 3 1 daf) i.q.tub))
+  ?:  |(?=($~ q.tub) !=((end 3 1 daf) i.q.tub))
     (fail tub)
   $(p.tub (lust i.q.tub p.tub), q.tub t.q.tub, daf (rsh 3 1 daf))
 ::
@@ -4740,8 +4740,8 @@
   ?~  bur  ~
   :_  $(bur t.bur)
   ?-  -.i.bur
-    &  i.bur
-    |  [%| q.i.bur p.i.bur]
+    {$&}  i.bur
+    {$|}  [%| q.i.bur p.i.bur]
   ==
 ::
 ++  diff                                                ::  generate patch
@@ -4799,7 +4799,7 @@
     =+  ^=  zes
         =+  [inx=0 zes=*(list {p+@ud q+@ud})]
         |-  ^+  zes
-        ?:  |(?=(~ gay) (gth inx p.gox))  zes
+        ?:  |(?=($~ gay) (gth inx p.gox))  zes
         ?.  (lonk inx i.gay)  $(gay t.gay)
         ?.  (hink inx i.gay)  $(inx +(inx))
         $(inx +(inx), gay t.gay, zes [[inx i.gay] zes])
@@ -4940,7 +4940,7 @@
     |-  ^+  +
     ?~  hel
       ?~  hev
-        ?>(?=(~ lcs) +)
+        ?>(?=($~ lcs) +)
       $(hev t.hev, rag (done %| ~ [i.hev ~]))
     ?~  hev
       $(hel t.hel, rag (done %| [i.hel ~] ~))
@@ -6214,7 +6214,7 @@
       rud
     rux
   ::
-  ++  rf    `tape`[?-(a & '&', | '|', * !!) ~]
+  ++  rf    `tape`[?-(a $& '&', $| '|', * !!) ~]
   ++  rn    `tape`[?>(=(0 a) '~') ~]
   ++  rt    `tape`['\'' (weld (mesc (trip a)) `tape`['\'' ~])]
   ++  rta   rt
@@ -6485,7 +6485,8 @@
   |=  rad+?
   |=  lot+coin  ^-  twig
   ?-    -.lot
-      ~      ?:(rad [%dtzz p.lot] [%dtzy p.lot])
+      $~      
+    ?:(rad [%dtzz p.lot] [%dtzy p.lot])
   ::
       $blob
     ?:  rad
@@ -6740,13 +6741,13 @@
   ++  blue
     |=  gen+twig
     ^-  twig
-    ?.  &(?=(| -.tig) ?=(~ p.tig))  gen
+    ?.  &(?=($| -.tig) ?=($~ p.tig))  gen
     [%tsgr [~ 3] gen]
   ::
   ++  pink
     |=  tyl+tile
     ^-  tile
-    ?.  &(?=(| -.tig) ?=(~ p.tig))  tyl
+    ?.  &(?=($| -.tig) ?=($~ p.tig))  tyl
     ?-  -.tyl
       ?($leaf $axil)  tyl
       $herb  [%herb [%tsgr [~ 3] p.tyl]]
@@ -6940,10 +6941,10 @@
     ::
         {$reed *}
       ?-  nag
-        &  [%wtpt [[%& axe] ~] $(sec p.sec, nag |) $(sec q.sec, nag [& &])]
-        |  $(sec p.sec)
-        ^  $(sec q.sec)
-        *  !!
+        {$&}  [%wtpt [[%& axe] ~] $(sec p.sec, nag |) $(sec q.sec, nag [& &])]
+        {$|}  $(sec p.sec)
+        ^     $(sec q.sec)
+        *     !!
       ==
     ::
         {$weed *}
@@ -7165,7 +7166,7 @@
     ::
         {$smcl *}
       ?-    q.gen
-          ~       [%zpzp ~]
+          $~      [%zpzp ~]
           {* $~}  i.q.gen
           ^
         :+  %tsls
@@ -7175,7 +7176,7 @@
         ?-  yex
           {* $~}  [%tsgr [~ 3] i.yex]
           {* ^}   [%cnhp [~ 2] [%tsgr [~ 3] i.yex] $(yex t.yex) ~]
-          ~       !!
+          $~      !!
         ==
       ==
     ::
@@ -7233,11 +7234,11 @@
         {$smsg *}                                       ::                  ;~
       |-  ^-  twig
       ?-  q.gen
-          ~       ~|(%open-smsg !!)
+          $~      ~|(%open-smsg !!)
           ^
         :+  %tsgr  [%ktts %v ~ 1]                       ::  =>  v=.
         |-  ^-  twig                                    ::
-        ?:  ?=(~ t.q.gen)                               ::
+        ?:  ?=($~ t.q.gen)                              ::
           [%tsgr [%cnzy %v] i.q.gen]                    ::  =>(v {i.q.gen})
         :+  %tsls  [%ktts %a $(q.gen t.q.gen)]          ::  =+  ^=  a
         :+  %tsls                                       ::    {$(q.gen t.q.gen)}
@@ -7868,12 +7869,13 @@
       :+  %list
         (cat 3 p.i.p.i.t.p.u.may p.i.t.p.i.t.p.u.may)
       q.i.p.i.t.p.u.may
-    ?:  ?&  ?=  $:  $:  $plot
+    ?:  ?&  ?=  $^
+                _:  _:  $plot
                         {$face *}
                         {$face * $stop *}
                         {{$face * $stop *} $~}
                     ==
-                    ~
+                   $~
                 ==
                 t.p.u.may
             =(p.q.ham p.q.i.t.p.i.t.p.u.may)
@@ -8232,7 +8234,7 @@
       waf
     ~|  [%hang-on p.i.goy]
     =+  yeq=(~(get by dab) p.i.goy)
-    ?<  ?=(~ yeq)
+    ?<  ?=($~ yeq)
     ?-    -.u.yeq
         $ash
       ?>  ?=({$ash *} q.i.goy)
@@ -8258,8 +8260,8 @@
   ::
   ++  harp
     |=  dab=(map term foot)
-    ^-  ?(~ ^)
-    ?:  ?=(~ dab)
+    ^-  ?($~ ^)
+    ?:  ?=($~ dab)
       ~
     =+  ^=  vad
         ?+  -.q.n.dab  !!
@@ -8654,7 +8656,7 @@
     ++  bake
       |=  dab+(map term foot)
       ^-  *
-      ?:  ?=(~ dab)
+      ?:  ?=($~ dab)
         ~
       =+  ^=  vad
           ?+  -.q.n.dab  !!
@@ -8725,7 +8727,7 @@
       |=  {dab+(map term foot) hem+(map term foot)}
       ^-  ?
       ?-    dab
-          ~   =(hem ~)
+          $~  =(hem ~)
           ^
         ?&  ?=(^ hem)
             =(p.n.dab p.n.hem)
@@ -8938,7 +8940,7 @@
     ==
   ::
   ++  reco
-    |*  fuy=_|=(p=type p)
+    |*  fuy=__(|=(p+type p))
     =+  por=repo
     =+  yot=(fuy por)
     ?:  =(yot por)
@@ -8981,9 +8983,9 @@
     =>  .(i.hyp ?^(i.hyp i.hyp [%| p=0 q=i.hyp]))
     =+  zar=$(hyp t.hyp)
     =+  ^=  syp
-        ?-    -.q.zar
-            &  p.q.zar
-            |  (fire (turn q.q.zar |=({p+type q+foot} [p [%ash ~ 1]])))
+        ?-  -.q.zar
+          {$&}  p.q.zar
+          {$|}  (fire (turn q.q.zar |=({p+type q+foot} [p [%ash ~ 1]])))
         ==
     ?-    i.hyp
         {$& *}
@@ -10185,18 +10187,17 @@
         (stag %leaf bisk:so)
       :-  ['a' 'z']
         ;~  pose
+          %+  sear
+            |=(a+tile `(unit tile)`~)
           (stag %bark ;~(plug sym ;~(pfix tis toil)))
           (stag %herb wide)
         ==
       :-  '$'
-        ;~  pose
-          (noil |)
-          (stag %herb wide)
-        ==
+        (stag %herb wide)
       :-  '|'
-        (stag %leaf (stag %f (cold | bar)))
+        fail
       :-  '~'
-        (stag %leaf (stag %n (cold ~ sig)))
+        fail
     ==
   ++  wart
     |*  zor=rule
@@ -10571,8 +10572,8 @@
       |=  a+duct
       %-  bind  :_  |=(b=(pair arvo worm) [`move`[a p.b] q.b])
       =-  ?-  -.har
-            |  ~&  [%dead-card p.har]  ~                ::  XX properly log?
-            &  (some p.har)
+            {$|}  ~&  [%dead-card p.har]  ~                ::  XX properly log?
+            {$&}  (some p.har)
           ==
       ^=  har  ^-  (each (pair arvo worm) term)
       =^  caq  p.sew  (~(spot wa p.sew) 3 wec)
