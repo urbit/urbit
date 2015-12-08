@@ -6,7 +6,7 @@
   ;script@"/~/as/own/~/at/home/lib/urb.js";
   ;script:'''
           document.title = 'pastebin - urbit'
-          urb.appl = 'write'
+          urb.appl = 'hood'
           urb.send.mark = 'write-paste'
           submit = function(){
             if($("select :selected").attr('value')===undefined) {
