@@ -2,7 +2,7 @@
 ::::  /hoon/hood/ape                                    ::  ::
   ::                                                    ::  ::
 /?  314                                                 ::  zuse version
-/+  sole, talk, helm, kiln, drum                        ::  libraries
+/+  sole, talk, helm, kiln, drum, write                 ::  libraries
 [. helm kiln drum]
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -17,6 +17,7 @@
         %drum  ?>(?=(%drum -.paw) `drum-part`paw)       ::
         %helm  ?>(?=(%helm -.paw) `helm-part`paw)       ::
         %kiln  ?>(?=(%kiln -.paw) `kiln-part`paw)       ::
+        %write  ?>(?=(%write -.paw) `part:write`paw)    ::
       ==                                                ::
     ++  hood-head  ,_-:*hood-part                       ::
     ++  hood-make                                       ::
@@ -25,11 +26,13 @@
         %drum  (drum-port our)                          ::
         %helm  *helm-part                               ::
         %kiln  *kiln-part                               ::
+        %write  *part:write                             ::
       ==                                                ::
     ++  hood-part                                       ::
       $%  [%drum %0 drum-pith]                          ::
           [%helm %0 helm-pith]                          ::
           [%kiln %0 kiln-pith]                          ::
+          [%write %0 pith:write]                        ::
       ==                                                ::
     --                                                  ::
 ::                                                      ::  ::
@@ -81,8 +84,10 @@
 ++  from-drum  (from-lib %drum [..$ ,_se-abet]:(drum))
 ++  from-helm  (from-lib %helm [..$ ,_abet]:(helm))
 ++  from-kiln  (from-lib %kiln [..$ ,_abet]:(kiln))
+++  from-write  (from-lib %write [..$ ,_abet]:(write))
 ::
 ++  init-helm                 |=([way=wire *] [~ +>])
+++  made-write                (wrap made):from-write
 ++  made-kiln                 (wrap take-made):from-kiln
 ++  mere-kiln                 (wrap take-mere):from-kiln
 ++  mere-kiln-sync            (wrap take-mere-sync):from-kiln
@@ -102,6 +107,7 @@
 ++  poke-helm-reload          (wrap poke-reload):from-helm
 ++  poke-helm-reload-desk     (wrap poke-reload-desk):from-helm
 ++  poke-helm-reset           (wrap poke-reset):from-helm
+++  poke-helm-serve           (wrap poke-serve):from-helm
 ++  poke-helm-send-hi         (wrap poke-send-hi):from-helm
 ++  poke-helm-send-ask        (wrap poke-send-ask):from-helm
 ++  poke-helm-verb            (wrap poke-verb):from-helm
@@ -121,6 +127,7 @@
 ++  poke-kiln-overload        (wrap poke-overload):from-kiln
 ++  poke-kiln-unmount         (wrap poke-unmount):from-kiln
 ++  poke-kiln-unsync          (wrap poke-unsync):from-kiln
+++  poke-write-paste          (wrap poke-paste):from-write
 ++  poke-will                 (wrap poke-will):from-helm
 ++  quit-drum-phat            (wrap quit-phat):from-drum
 ++  reap-drum-phat            (wrap reap-phat):from-drum
