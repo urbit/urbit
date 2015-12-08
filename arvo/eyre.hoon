@@ -754,7 +754,10 @@
       =.  our  (need hov)                             ::  XX
       |-  ^+  ..axon
       ?-    tee
-          _|($~ {?($on $ay $ow) *})  
+          $~  
+        ~|(e/ford/lost/tee !!)
+      ::
+          {_?($on $ay $ow) *}
         ~|(e/ford/lost/tee !!)
       ::
           {$of @ $~}  ~|(e/ford/lost/tee !!)

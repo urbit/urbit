@@ -79,7 +79,6 @@
           [%peer wire dock path]                        ::
           [%poke wire dock pear]                        ::
           [%pull wire dock ~]                           ::
-          [%pass wire note]                             ::
           [%quit ~]                                     ::
       ==                                                ::
     ++  weir                                            ::  parsed wire
