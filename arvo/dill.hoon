@@ -43,7 +43,7 @@
 ++  mess                                                ::
   _%  {$dill-belt p+(hypo dill-belt)}                   ::
   ==                                                    ::
-++  move  ,[p=duct q=(mold note gift)]                  ::  local move
+++  move  {p+duct q+(mold note gift)}                   ::  local move   
 ++  note-ames                                           ::  weird ames move
   _%  {$make p+(unit @t) q+@ud r+@ s+?}                 ::
       {$sith p+@p q+@uw r+?}                            ::
@@ -105,7 +105,7 @@
 =>  |%
     ++  as                                              ::  per cause
       |_  $^
-          $:  {moz+(list move) hen+duct our+ship}
+          _:  {moz+(list move) hen+duct our+ship}
               axon
           ==
       ++  abet                                          ::  resolve
@@ -215,7 +215,7 @@
         =.  +>  ?:  ?=($czar can)  +>
                 (sync %base (sein our) %kids)
         =.  +>  (sync %home our %base)
-        =.  +>  ?.  ?=(?(%duke %king %czar) can)  +>
+        =.  +>  ?.  ?=(?($duke $king $czar) can)  +>
                 (sync %kids our %base)
         =.  +>  autoload
         =.  +>  peer

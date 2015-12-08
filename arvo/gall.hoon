@@ -300,7 +300,7 @@
   ++  mo-chew                                           ::  reverse build path
     |=  pax+path
     ^-  beak
-    ?>  ?=([@ @ @ ~] pax)
+    ?>  ?=({@ @ @ $~} pax)
     [(slav %p i.pax) i.t.pax da/(slav %da i.t.t.pax)]
   ::
   ++  mo-cyst                                           ::  take in /sys
@@ -392,9 +392,9 @@
       ==
     ::
         $val                                            ::  inbound validate
-      ?>  ?=([@ @ ~] t.pax)
+      ?>  ?=({@ @ $~} t.pax)
       =+  [him=(slav %p i.t.pax) dap=i.t.t.pax]
-      ?>  ?=([%f %made *] sih)
+      ?>  ?=({$f $made *} sih)
       ?-  -.q.+>.sih
         $tabl  !!
         {$|}   (mo-give %unto %coup `p.q.+>.sih)        ::  XX invalid, crash
@@ -404,10 +404,10 @@
         $way                                            ::  outbound request
       ?:  ?=({$a $went *} sih)  ::  XX AWFUL
         ~&  %way-went-bug
-        ?>  ?=([@ ~] t.pax)
+        ?>  ?=({@ $~} t.pax)
         %-  mo-awed
         :*  p.+>.sih
-            (?(%peer %poke %pull) i.t.pax)
+            (?($peer $poke $pull) i.t.pax)
             ~
         ==
       ?>  ?=({$a $woot *} sih)
@@ -431,7 +431,7 @@
     =+  vax=(slot 3 `vase`hin)
     ?-  i.t.t.pax
       $inn  ap-abet:(ap-pour:pap t.t.t.pax (slot 3 `vase`hin))      
-      $cay  ?.  ?=([%e %sigh *] q.hin)
+      $cay  ?.  ?=({$e $sigh *} q.hin)
               ~&  [%mo-cook-weird q.hin]
               ~&  [%mo-cook-weird-path pax]
               +>.$
@@ -672,7 +672,7 @@
       ^+  .
       ?.  (~(has by sup.ged) ost)  .
       =+  soy=(~(get by qel.ged) ost)
-      ?:  |(?=(~ soy) =(0 u.soy))  
+      ?:  |(?=($~ soy) =(0 u.soy))  
         ::  ~&  [%ap-fill-under [our dap] q.q.pry ost]
         +
       =.  u.soy  (dec u.soy)
@@ -807,7 +807,7 @@
       |=  vax+vase
       ^-  {(each (trel path ship term) tang) __(+>)}
       :_  +>.$
-      ?.  ?&  ?=([p=* [q=@ r=@] s=*] q.vax)
+      ?.  ?&  ?=({p+* {q+@ r+@} s+*} q.vax)
               (gte 1 (met 7 q.q.vax))
           ==
         [%| (ap-suck "mess: malformed target")]
@@ -885,7 +885,7 @@
       ?:  ?=($poke s.q.vax)
         =^  gav  vel  (~(spot wa vel) 7 vax)
         ?>  =(%poke -.q.gav)
-        ?.  ?&  ?=([p=@ q=*] t.q.vax)
+        ?.  ?&  ?=({p+@ q+*} t.q.vax)
                 ((sane %tas) p.t.q.vax)
             ==
           :_(+>.$ [%| (ap-suck "send: malformed poke")])
@@ -1130,7 +1130,7 @@
     ++  ap-slam                                         ::  virtual slam
       ~/  %ap-slam
       |=  {cog+term gat+vase arg+vase}
-      ^-  [(each vase tang) __(+>)]
+      ^-  {(each vase tang) __(+>)}
       =+  wyz=(mule |.((~(play wa vel) [%cell p.gat p.arg] [%cncl `2 `3])))
       ?:  ?=($| -.wyz)
         %-  =+  sam=(~(peek ut p.gat) %free 6)
@@ -1217,7 +1217,7 @@
     =<  mo-abet
     (mo-gawd:(mo-abed:mo our hen) him dap mes)
   ::
-      %wegh
+      $wegh
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
     :-  %gall
@@ -1232,7 +1232,7 @@
           [%& (turn (turn a2 head) |=(b=mass ?~(-.q.b p.q.b !!)))]
         [%| $(a (turn (turn a2 head) |=(b=mass ?~(-.q.b !! p.q.b))))]
     %+  turn  (~(tap by pol.all))
-    |=  [@ mast]
+    |=  {@ mast}
     :~  foreign/`sap
         blocked/[%| (sort :_(aor (~(tap by (~(run by wub) |=(sofa `+<))))))]
         active/[%| (sort :_(aor (~(tap by (~(run by bum) |=(seat `+<))))))]
@@ -1256,7 +1256,7 @@
 ::
 ++  scry
   |=  {fur+(unit (set monk)) ren+@tas who+ship syd+desk lot+coin tyl+path}
-  ^-  (unit (unit (pair mark ,*)))
+  ^-  (unit (unit (pair mark *)))
   [~ ~]
 ::
 ++  stay                                                ::  save w/o cache
