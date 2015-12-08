@@ -61,7 +61,7 @@
   ::
   ++  meld                                              ::  verify connect
     |=  {new+deed old+deed}
-    ^-  &
+    ^-  $&
     ?>  (melt new old)
     ?>  =((shaf %meld (sham q.new)) (need (sure:as:(haul r.q.old) *code p.new)))
     %&
@@ -97,7 +97,7 @@
   ::
   ++  pier  !:                                          ::  initial deed
     |=  wed+deed
-    ^-  &
+    ^-  $&
     ?>  =+  rac=(clan r.p.q.wed)
         =+  loy=(haul r.q.wed)
         ?:  &(r.wed =(rac %czar))  %&
@@ -141,7 +141,7 @@
     |=  zar+@pD
     ^-  @uvH  ^-  @
     %+  snag  zar
-    ^-  (list ,@uw)
+    ^-  (list @uw)
     :~  0wN.Kdp5k.p5ncD.4Wsih.bFQFu   ::    0, ~zod, Tlon (gleba)
         0w0                           ::    1, ~nec, Curtis Yarvin (sator)
         0w0                           ::    2, ~bud, Charles Songhurst (angelus)
@@ -535,10 +535,10 @@
           ^+  +>
           %=    +>
               lun.wod.dur
-            ?:  ?=([%ix *] ryn)
-              ?:  ?|  ?=(~ lun.wod.dur)
-                      ?=([%ix *] u.lun.wod.dur)
-                      ?&  ?=([%if *] u.lun.wod.dur)
+            ?:  ?=({$ix *} ryn)
+              ?:  ?|  ?=($~ lun.wod.dur)
+                      ?=({$ix *} u.lun.wod.dur)
+                      ?&  ?=({$if *} u.lun.wod.dur)
                           (gth p.ryn (add ~s10 p.u.lun.wod.dur))
                       ==
                   ==
@@ -730,7 +730,7 @@
             |-  ^-  (list ship)
             ?:((lth our 256) ~ =+(seg=(sein our) [seg $(our seg)]))
         ::
-            (turn mac |=([p=life q=ring] [p q (weur q)]))
+            (turn mac |=({p+life q+ring} [p q (weur q)]))
             wil
             ~
             ~
@@ -803,7 +803,7 @@
     ::
     ++  boom                                            ::    boom:pu
       |=  now+@da  ^-  ?                                ::  address timeout
-      |(?=(~ rue) (gte (sub now u.rue) ~m1))
+      |(?=($~ rue) (gte (sub now u.rue) ~m1))
     ::
     ++  bust                                            ::    bust:pu
       ^-  ?                                             ::  not responding
@@ -975,11 +975,11 @@
         %-  ~(gas by *(map ship sufi))
         %+  turn
           (~(tap by urb.ton.fox) ~)
-        |=  [p=ship q=sufi]  ^-  [p=ship q=sufi]
+        |=  {p+ship q+sufi}  ^-  {p+ship q+sufi}
         :-  p
         %=    q
             val
-          (turn val.q |=([p=life q=ring r=acru] [p q (weur q)]))
+          (turn val.q |=({p+life q+ring r+acru} [p q (weur q)]))
         ==
       ==
     ++  come                                            ::    come:am
@@ -1049,7 +1049,7 @@
     ::
     ++  have                                            ::    have:am
       |=  {our+ship buq+buck}                           ::  acquire license
-      ^-  [p=(list boon) q=fort]
+      ^-  {p+(list boon) q+fort}
       =:  ton.fox  (~(ha go ton.fox) our buq)
           zac.fox  (~(put by zac.fox) our *corn)
         ==
@@ -1146,13 +1146,13 @@
           ::  ~&  [%cook cop num cha ram]
           =+  rum=(need (~(get by raz.bah) cha))
           =+  lat=(~(get by mis.rum) did.rum)
-          ?:  &(?=(~ lat) ?=(~ ram))
+          ?:  &(?=($~ lat) ?=($~ ram))
             ~&  %ack-late-or-redundant
             [%| +>.$]
           :-  %&
           =+  ^-  {ryn+lane dam+flap}
               ?^  ram  [ryn.u.ram dam.u.ram]
-              ?<  ?=(~ lat)
+              ?<  ?=($~ lat)
               [q r]:u.lat
           =.  raz.bah
             ?^  ram  raz.bah
@@ -1217,7 +1217,7 @@
               ::
                   $full
                 ::  ~&  %chew-full
-                =+  mex=((hard ,[p=[p=life q=life] q=will r=@]) (cue msg))
+                =+  mex=((hard {p+{p+life q+life} q+will r+@}) (cue msg))
                 =.  diz  (deng:diz q.mex)
                 =+  wug=cluy:diz
                 ?>  =(q.p.mex p.wug)
@@ -1229,7 +1229,7 @@
               ::
                   $open
                 ::  ~&  %chew-open
-                =+  mex=((hard ,[p=[~ q=life] q=will r=@]) (cue msg))
+                =+  mex=((hard {p+{$~ q+life} q+will r+@}) (cue msg))
                 =.  diz  (deng:diz q.mex)
                 =+  wug=cluy:diz
                 ?>  =(q.p.mex p.wug)
@@ -1238,7 +1238,7 @@
                 (west(msg mes))
               ==
             ++  west
-              |=  ~
+              |=  $~
               =+  vib=(cue msg)
               =+  mal=(meal vib)
               ?.  =(mal vib)
@@ -1382,7 +1382,7 @@
             |=  {sin+skin duv+dove}                     ::  assemble fragments
             ^+  +>
             %+  chew  sin
-            =+  [nix=0 rax=*(list ,@)]
+            =+  [nix=0 rax=*(list @)]
             |-  ^-  @
             ?:  =(p.duv nix)
               (can ?:(fak.ton.fox 16 13) (turn (flop rax) |=(a=@ [1 a])))
@@ -1394,7 +1394,7 @@
           ^+  +>
           ?.  ?&  =(~ puq.puz)
                   ?|  bust:puz
-                      ?=(~ rue.puz)
+                      ?=($~ rue.puz)
                       (gth now (add ~s32 u.rue.puz))
                       (lth u.rue.puz hop.fox)
                   ==
@@ -1485,7 +1485,7 @@
                   =+  qup=(~(tap to puq.sop.bah) ~)
                   :-  %qup
                   %+  turn  qup
-                  |=  [a=@ud b=soul]
+                  |=  {a+@ud b+soul}
                   :*  a
                       nux.b
                       liv.b
@@ -1498,12 +1498,12 @@
               :-  %raz
               =+  zar=(~(tap by raz.bah) ~)
               %+  turn  zar
-              |=  [a=path b=race]
+              |=  {a+path b+race}
               :+  a
                 did.b
               =+  ciy=(~(tap by mis.b) ~)
               %+  turn  ciy
-              |=  [c=@ud d=[p=cape q=lane r=flap s=(unit)]]
+              |=  {c+@ud d+{p+cape q+lane r+flap s+(unit)}}
               [c p.d r.d]
           ::
               [%ryl (~(tap to ryl.bah) ~)]
@@ -1534,7 +1534,7 @@
           %+  skim  (~(tap by wab.weg) ~)
           |=  {a+ship b+bath}
           !(~(boom pu sop.b) now)
-        |=([a=ship b=bath] a)
+        |=({a+ship b+bath} a)
       ::
       ++  pong                                          ::    pong:um:am
         |=  {her+ship hen+duct}                         ::  test neighbor
@@ -1564,7 +1564,7 @@
     |%                                                  ::  vane interface
     ++  call                                            ::  handle request
       |=  $^
-          $:  hen+duct
+          _:  hen+duct
               hic+(hypo (hobo kiss-ames))
           ==
       =>  %=    .                                       ::  XX temporary
@@ -1573,7 +1573,7 @@
             ?:  ?=($soft -.q.hic)
               ((hard kiss-ames) p.q.hic)
             ?:  (~(nest ut -:!>(*kiss-ames)) | p.hic)  q.hic
-            ~&  [%ames-call-flub (,@tas `*`-.q.hic)]
+            ~&  [%ames-call-flub (@tas `*`-.q.hic)]
             ((hard kiss-ames) q.hic)
           ==
       ^-  {p+(list move) q+__(..^$)}
@@ -1583,7 +1583,7 @@
     ::
     ++  doze
       |=  {now+@da hen+duct}
-      =+  doz=`(unit ,@da)`[~ (add now ~s32)]
+      =+  doz=`(unit @da)`[~ (add now ~s32)]
       |-  ^+  doz
       ?~  zac.fox  doz
       =.  doz  $(zac.fox l.zac.fox)
@@ -1613,12 +1613,12 @@
       ^=  old
       ?.  =(0 ren)  ~
       ?+    lot  ~
-          [$$ $ud @]
+          {$$ $ud @}
         %+  bind
           (perm who u.hun q.p.lot [syd t.tyl])
         |=(a=* [%noun !>(a)])
       ::
-          [$$ $da @]
+          {$$ $da @}
         ?.  =(now q.p.lot)  ~
         %+  bind
           (temp who u.hun [syd t.tyl])
@@ -1740,8 +1740,8 @@
           :+  %flog  %text
           ;:  weld
             "; "
-            ?:  |(?=(~ nym) =(%$ u.nym))  fom
-            :(weld fom " " (trip ((hard ,@) u.nym)))
+            ?:  |(?=($~ nym) =(%$ u.nym))  fom
+            :(weld fom " " (trip ((hard @) u.nym)))
             q.bon
           ==
       ==
@@ -1797,7 +1797,7 @@
       ~&  %ames-weighing
       [[hen %give %mass wegh]~ +>]
     =+  ^=  fuy  
-        ^-  [p=(list boon) q=fort]
+        ^-  {p+(list boon) q+fort}
         ?-    -.kyz
             $barn
           [~ fox(gad hen)]
@@ -1887,7 +1887,7 @@
       [~ pals:(~(um am [now fox]) our)]
     ?.  ?=({$life $~} tyl)
       =+  muc=$(tyl [%life ~])
-      (perm our his ?~(muc 0 (,@ud u.muc)) tyl)
+      (perm our his ?~(muc 0 (@ud u.muc)) tyl)
     =+  gys=(~(us go ton.fox) our)
     ?~  gys  ~
     ?.  =(our his)
