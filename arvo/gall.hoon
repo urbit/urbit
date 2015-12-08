@@ -1210,10 +1210,10 @@
     =+  our=p.p.q.hic
     =+  him=q.p.q.hic
     ?:  ?=($ge i.q.q.hic)
-      =+  mes=((hard ,[@ud rook]) r.q.hic)
+      =+  mes=((hard {@ud rook}) r.q.hic)
       =<  mo-abet
       (mo-gawk:(mo-abed:mo our hen) him dap mes)
-    =+  mes=((hard ,[@ud roon]) r.q.hic)
+    =+  mes=((hard {@ud roon}) r.q.hic)
     =<  mo-abet
     (mo-gawd:(mo-abed:mo our hen) him dap mes)
   ::

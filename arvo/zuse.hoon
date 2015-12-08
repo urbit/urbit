@@ -1256,8 +1256,8 @@
   ++  apex
     |=  qur+quri
     ?-  -.qur
-      $&  (weld (head p.p.qur) `tape`['/' $(qur [%| +.p.qur])])
-      $|  (weld (body p.qur) (tail q.qur))
+      {$&}  (weld (head p.p.qur) `tape`['/' $(qur [%| +.p.qur])])
+      {$|}  (weld (body p.qur) (tail q.qur))
     ==
   ::
   ++  body
@@ -1276,10 +1276,10 @@
       ?:(&(p.har !?=(hoke r.har)) "https://" "http://")
     ::
       ?-  -.r.har
-        $|  (trip (rsh 3 1 (scot %if p.r.har)))
-        $&  =+  rit=(flop p.r.har)
-            |-  ^-  tape
-            ?~(rit ~ (weld (trip i.rit) ?~(t.rit "" `tape`['.' $(rit t.rit)])))
+        {$|}  (trip (rsh 3 1 (scot %if p.r.har)))
+        {$&}  =+  rit=(flop p.r.har)
+              |-  ^-  tape
+              ?~(rit ~ (weld (trip i.rit) ?~(t.rit "" `tape`['.' $(rit t.rit)])))
       ==
     ::
       ?~(q.har ~ `tape`[':' (trip (rsh 3 2 (scot %ui u.q.har)))])
