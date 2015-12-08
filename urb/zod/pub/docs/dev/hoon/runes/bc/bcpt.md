@@ -1,5 +1,5 @@
-bucpat `$@` %bcpt
-==========================
+`$@` 
+====
 
 Wing to tile
 
@@ -10,23 +10,10 @@ Produces
 
 Tile: `[%bcpt p=wing q=tile]`
 
-Sample
+Accepts
 ------
 
 `p` is a [`++wing`](). `q` is a [tile]().
-
-Tall form
----------
-
-None
-
-Wide form
----------
-
-None
-
-Irregular form
---------------
 
     p@q
 

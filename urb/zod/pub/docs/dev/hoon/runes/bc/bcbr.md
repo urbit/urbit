@@ -1,9 +1,9 @@
-bucbar `$|` %bcbr
+`$|`
 =================
 
 <div class="short">
 
-Creates a type (mold) that's a union between an atom `p` and cell `b`
+Creates a type (mold) that's a union between an atom `p` and cell `b`.
 
 `$|` is a mold rune that produces a [`%reed`](), a mold whose [span]()
 is a [fork]() between two nouns: an [atom]() of `mold` `p` and a cell of

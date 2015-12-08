@@ -1,7 +1,8 @@
-colket, `:^`, %clkt
-============================
+`:^`
+====
 
-Tuple of four
+Construct a tuple of four elements.
+
 
 `:^` is a synthetic rune that produces a cell `[p q r s]`.
 
@@ -10,8 +11,8 @@ Produces
 
 Twig: `[%clkt p=twig q=twig r=twig s=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig](). `q` is a [twig](). `r` is a [twig](). `s` is a
 [twig]().
@@ -39,11 +40,6 @@ Wide form
 ---------
 
     :^(p q r s)
-
-Irregular form
---------------
-
-undefined
 
 Examples
 --------

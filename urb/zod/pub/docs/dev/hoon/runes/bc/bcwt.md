@@ -1,7 +1,7 @@
-bucwut `$?` %bcwt
-==========================
+`$?` 
+====
 
-Fork
+Produce a union between a list of types `p`. The default value (bunt) is the value of the first element.
 
 `$?` produces a fork, called a `%fern`. A `%fern` is a non-empty list of
 cases.
@@ -11,8 +11,8 @@ Produces
 
 [Tile](): `[%fern p=[i=tile t=(list tile)]]`.
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [list]() of [tiles]().
 
@@ -22,11 +22,6 @@ Tall form
     $?  p
         q
     ==
-
-Wide form
----------
-
-None
 
 Irregular form
 --------------

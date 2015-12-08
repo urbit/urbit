@@ -1,7 +1,8 @@
-bucpam `$&` %bcpm
-==========================
+`$&` 
+====
 
-Pair / tag
+Produces a type (mold) that's a union between two different kinds of noun `p` and `q`, cells whose head is a cell and cells whose head is an atom. Its default value (bunt) is the value of `q`. One important use of `$&` is to implement autocons in [`++twig`]() and [`++tile`]().
+
 
 `$&` is a tile rune that produces a `%bush`. A `%bush` is a tile whose
 [icon]() is a [fork]() between two different kinds of nouns: cells whose
@@ -14,8 +15,8 @@ Produces
 
 [Tile](): `[%bush p=tile q=tile]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [tile]().
 
@@ -29,11 +30,6 @@ Wide form
 ---------
 
     $&(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

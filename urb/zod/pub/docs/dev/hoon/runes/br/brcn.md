@@ -1,7 +1,10 @@
-barcen, `|%`, %brcn
-============================
+`|%`
+====
 
-Build Core
+Constructs a generic core with n named expressions closed with `--`. Cores are
+similar to an object with named properties (aka arms) that can contain either
+functions or data.
+
 
 `|%` is a natural rune that produces a [core](). `|%` takes a list of
 [arm]()s . The list must be closed with a `--`.
@@ -11,18 +14,13 @@ containing either functions or data. A `|%` accepts both [dry or
 `%elm`]() and [wet or `%ash`]() arms. For more about variance, see the
 [glossary]().
 
-See also
---------
-
-[barcab, `|_`, `%brcb`]() [barfas, `|/`, `%brfs`]()
-
 Produces
 --------
 
 Twig: `[%brcn p=(map term foot)]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [`map`]() with [`++term`]() keys and [`++foot`]() values, which
 are called arms.
@@ -36,16 +34,6 @@ Tall form
     +-  p.n.l.q
       q.n.l.q
     --
-
-Wide form
----------
-
-None
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

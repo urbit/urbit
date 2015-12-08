@@ -1,24 +1,23 @@
-kethep, `^-`, %kthp
-============================
+`^-`
+====
 
-Cast to bunt
+Casts `q` to the type (aka mold) of `p`. The same as
+`^+`, except for that `q` is actually cast to the bunt of `q`
+(`$,(q)`). The easiest way to make a basic cast. Used when you
+already have already created a validator function (clam) from a
+type (mold). 
+
 
 `^-` is a synthetic rune that casts `q` to `~(bunt al p)`, i.e. the icon
 of `p`.
-
-See also
---------
-
-ketlus, `^+`, %ktls
-============================
 
 Produces
 --------
 
 Twig: `[%kthp p=tile q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [tile](). `q` is a [twig]().
 
@@ -63,8 +62,3 @@ In this case we see a very common use of `^-`, at the top of a [gate]().
 This pattern is considered good hoon style for two reasons: it gives the
 reader a clear pattern for understanding what your code produces, and it
 helps ensure type-safety.
-
-Equivalent to
--------------
-
-    ^+(*p q)

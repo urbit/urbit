@@ -1,27 +1,21 @@
-ketbar, `^|`, %ktbr
-============================
+`^|`
+====
 
-Convert `%gold` to `%iron`
+Converts a core to a core whose context is unreadable. Useful in
+preventing type fails when replacing one core with one context
+with another core with a different context.
+
 
 `^|` is a natural rune that converts a [`%gold`]() core into an
 [`%iron`]() core.
-
-See also
---------
-
-barlus, `|+`, %brls
-============================
-
-ketpam, `^&`, %ktpm
-============================
 
 Produces
 --------
 
 Twig: `[%ktbr p=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig]().
 
@@ -34,11 +28,6 @@ Wide form
 ---------
 
     ^|(p)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

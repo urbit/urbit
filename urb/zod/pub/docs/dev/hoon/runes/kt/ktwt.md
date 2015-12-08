@@ -1,15 +1,12 @@
 ketwut, `^?`, %ktwt
 ============================
 
-Convert `%gold` to `%lead`
+Used to convert a core whose context is unreadable (aka
+a %gold core) to a core both of whose context and sample are
+unreadable. XX type reasons
+
 
 `^?` is a natural rune that converts a `%gold` core into a `%lead` core.
-
-See also
---------
-
-ketbar, `^|`, %ktbr
-============================
 
 Produces
 --------
@@ -30,11 +27,6 @@ Wide form
 ---------
 
     ^?(p)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

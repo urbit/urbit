@@ -1,12 +1,12 @@
-dotlus, `.+`, %dtls
-============================
+`.+`
+====
 
-Increment
+Increments an atom.
 
 `.+` is a natural rune that generates nock operator `4`, which
 increments an atomic operand.
 
-Produces
+Accepts
 --------
 
 Twig: `[%dtls p=twig]`

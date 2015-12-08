@@ -1,25 +1,22 @@
-cencab, `%_`, %cncb
-============================
+`%_`
+====
 
-Evaluate with changes, cast
+The same as `%=`, except for that the product is cast
+back to the type of `p`. You generally want to use `%_` unless
+you are intentionally trying to change the type.
 
 `%_` is a synthetic rune that evaluates `p` with the changes specified
 in `q`, then casts the product back to the type of `p`. `%_` is used to
 change a batch of [`++wing`]()s all at once, ensuring that the resulting
 product is type checked.
 
-See also
---------
-
-[`%=`](#cnts) is similar, but without type-checking.
-
 Produces
 --------
 
 Twig: `[%cncb p=wing q=tram]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [`++wing`](), a list of [`++limb`]()s. `q` is a [`++tram`](), a
 list of [`++wing`]()s and twigs.
@@ -36,11 +33,6 @@ Wide form
 ---------
 
     %_(p p.i.q q.i.q, p.i.t.q q.i.t.q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------
@@ -72,3 +64,13 @@ In this case we're using `%_` to swap the values of the faces in `a`.
 At first we set up a simple gate `z` with a variable, `a` in its
 context. Subsequently we use `%_` to change the value of `a` within the
 context of `z` and compute the output again.
+
+    =+(a=[var1=1 var2=2] %_(a var1 [3 4]))
+    ...
+    type-fail
+    ford: build failed
+
+The example above fails because the type of the result is a cell
+of a cell and an atom (`[^ @]`) does not fit within the type of
+`a` (`[@ @]`).
+

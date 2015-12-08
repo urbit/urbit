@@ -1,10 +1,8 @@
-barcab, `|_`, %brcb
-============================
+`|_`
+====
 
-Door: core with sample
-
-`|_` is a synthetic rune that produces a [`%gold`]() [door]() with
-sample `p` and [arms]() `q`. The list must be closed with a `--`.
+Core with sample. Similar to `|%`, but also takes input data (aka sample)
+available within the entire core.
 
 `|_` is similar to `|%`, but defines a sample for the set of arms it
 contains. Moreover, `|_` only accepts [dry or `%elm`]() arms. Put
@@ -12,18 +10,13 @@ simply, type checking on these arms is performed on the input before
 computation. For more on variance, see the [glossary entry]() and the
 examples below.
 
-See also
---------
-
-[barcen, `|%`, `%brcn`]() [barfas, `|/`, `%brfs`]()
-
 Produces
 --------
 
 Twig: `[%brcb p=tile q=(map term foot)]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [tile](). `q` is a [`map`]() with [`++term`]() keys and
 [`++foot`]() values.
@@ -35,16 +28,6 @@ Tall form
     ++  p.n.q
       q.n.q
     --
-
-Wide form
----------
-
-None
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

@@ -1,7 +1,8 @@
-collus, `:+`, %clls
-============================
+`:+`
+====
 
-Tuple of three
+Construct a tuple of three elements.
+
 
 `:+` is a synthetic rune that produces a cell `[p q r]`.
 
@@ -10,8 +11,8 @@ Produces
 
 Twig: `[%clls p=twig q=twig r=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig](). `q` is a [twig](). `r` is a [twig]().
 
@@ -33,11 +34,6 @@ Wide form
 ---------
 
     :+(p q r)
-
-Irregular form
---------------
-
-undefined
 
 Examples
 --------

@@ -1,18 +1,16 @@
-colcab, `:_`, %clcb
-============================
+`:_`
+====
 
-Cell, backwards
-
-`:_`, `colcab`, `[%clcb p=twig q=twig]` is a synthetic rune that
-produces the cell `[q p]`.
+Construct an inverted tuple of two elements `a` and `b`. Exists primarily
+for code readability and organization.
 
 Produces
 --------
 
 Twig: `[%clcb p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig](). `q` is a [twig]().
 
@@ -26,11 +24,6 @@ Wide form
 ---------
 
     :_(p q)
-
-Irregular form
---------------
-
-undefined
 
 Examples
 --------

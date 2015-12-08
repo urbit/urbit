@@ -1,23 +1,19 @@
-colfas, `:/`, %clfs
-============================
+`:/`
+====
 
-Internal interpolation
+Convert a string (aka tape) to XML XX
+
 
 `:/`, `colfas`, is a synthetic rune that produces `[%$ [%$ p ~] ~]`,
 i.e., `[0 [0 p 0] 0]`.
-
-See also
---------
-
-[`++manx`]() [`%smdq`](#smdq)
 
 Produces
 --------
 
 Twig: `[%clfs p=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig]()
 
@@ -30,11 +26,6 @@ Wide form
 ---------
 
     :/(p)
-
-Irregular form
---------------
-
-undefined
 
 Examples
 --------

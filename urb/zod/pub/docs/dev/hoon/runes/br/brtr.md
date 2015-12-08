@@ -1,7 +1,9 @@
-bartar, `|*`, %brtr
-============================
+`|*`
+====
 
-Wet gate
+Similar to `|=` except that it does type checking at
+call time, and that the product type is checked to be the same as
+the input type, rather than the sample tile.
 
 `|*` is a synthetic rune that produces a [wet]() [gate]() with sample
 [`$*(p)`](), arm `q`. A gate is a core with one arm, [`$`](), the empty
@@ -11,19 +13,13 @@ name.
 in that it does type checking at runtime. With `|*`, the product type is
 checked to be the same as the input type, rather than the sample tile.
 
-See also
---------
-
-bartis, `|=`, %brts
-============================
-
 Produces
 --------
 
 Twig: `[%brtr p=tile q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [tile](). `q` is a [twig]().
 
@@ -37,11 +33,6 @@ Wide form
 ---------
 
     |*(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

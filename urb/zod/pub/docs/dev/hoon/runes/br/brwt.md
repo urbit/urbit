@@ -1,7 +1,11 @@
-barwut, `|?`, %brwt
-============================
+`|?`
+====
 
-`%lead` trap
+Similar to `|-` except for that the 'sample' and
+'context' of the core being passed is hidden in order to avoid
+type conflicts with a core that has a different sample and
+context.
+
 
 `|?` is a synthetic rune that produces a dry [`%lead`]() trap. `%lead`
 traps are used when we want to pass one core to another core, as both
@@ -14,8 +18,8 @@ Produces
 
 Twig: `[%brwt q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `q` is a [twig]().
 
@@ -28,11 +32,6 @@ Wide form
 ---------
 
     |?(p)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

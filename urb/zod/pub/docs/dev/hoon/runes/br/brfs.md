@@ -1,7 +1,7 @@
-barfas, `|/`, %brfs
-============================
+`|/`
+====
 
-Door with tile
+Similar to `|_` except that it takes and produces well-typed output. XX
 
 `|/` is a synthetic rune that produces a [`%gold`]() [door]() with
 sample `[%bctr p]` and list of [arm]()s `q`. The list of arms must be
@@ -20,8 +20,8 @@ Produces
 
 Twig: `[%brfs p=tile q=(map term foot)]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a tile. `q` is a [`map`]() with [`++term`]() keys and
 [`++foot`]() values.
@@ -33,16 +33,6 @@ Tall form
     +-  p.n.q
       q.n.q
     --
-
-Wide form
----------
-
-None
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

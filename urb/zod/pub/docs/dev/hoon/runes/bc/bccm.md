@@ -1,5 +1,5 @@
-buccom `$,` %bccm
-==========================
+`$,`
+====
 
 Produces a type validator function for type (mold) `p`. This function accepts a
 value: if value fits within type, produce that value. If not, produce default
@@ -15,7 +15,7 @@ Produces
 
 [Twig](): `[%bccm p=tile]`
 
-Sample
+Accepts
 ------
 
 `p` is a [tile]()
@@ -24,11 +24,6 @@ Tall form
 ---------
 
     $,  p
-
-Wide form
----------
-
-None
 
 Irregular form
 --------------
@@ -63,4 +58,4 @@ In `++cord`, `,` creates a gate that validates atoms of the odor
     [%b 97 [109 101 0]]
 
 
-See how in all of these examples `,` is applied to a mold to create a function which is then called against the second argument within the `()`.
+See how in all of these examples `,` is applied to a mold to create a validator function which is then called against the second argument within the `()`.

@@ -1,7 +1,8 @@
-dotket, `.^`, %dtkt
-============================
+`.^`
+====
 
-Load from `%clay`
+ Generates nock operator `11`, which--in virtual userspace
+nock, [`++mock`]()--loads a file from the global namespace, %clay.
 
 `.^`, `dotket`, `[%dtkt p=twig]` is a natural rune that generates nock
 operator `11`, which in virtual userspace nock, [`++mock`]() loads a
@@ -12,8 +13,8 @@ Produces
 
 Twig: `[%dtkt p=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig]().
 
@@ -26,11 +27,6 @@ Wide form
 ---------
 
     .^(p)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

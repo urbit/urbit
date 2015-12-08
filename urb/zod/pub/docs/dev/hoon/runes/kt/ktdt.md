@@ -1,7 +1,11 @@
-ketdot, `^.`, %ktdt
-============================
+`^.`
+====
 
-Cast to product type
+Casts `q` to the product of calling `p` on `q`. The same
+as casting `q` to the product type of `p`. Useful when you want
+to cast to the type of a function that you don't want to actually
+run at runtime.
+
 
 `^.` is a synthetic rune that casts `q` to the type of `(p q)`. `^.` is
 the same as casting `q` to the product type of `p` and comes in handy
@@ -12,8 +16,8 @@ Produces
 
 Twig: `[%ktdt p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig](). `q` is a [twig]().
 
@@ -22,16 +26,6 @@ Tall form
 
     ^.  p
         q
-
-Wide form
----------
-
-None
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

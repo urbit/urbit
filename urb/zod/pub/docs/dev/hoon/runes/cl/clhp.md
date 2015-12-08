@@ -1,7 +1,8 @@
-colhep, `:-`, %clhp
-============================
+`:-`
+====
 
-Cell
+Construct a tuple of two elements.
+
 
 `:-`, `colhep`, `[%clhp p=twig q=twig]` is a synthetic rune that
 produces the cell `[p q]`.
@@ -11,8 +12,8 @@ Produces
 
 Twig: `[%clhp p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig](). `q` is a [twig]().
 

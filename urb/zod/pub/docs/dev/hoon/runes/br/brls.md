@@ -1,7 +1,9 @@
-barlus, `|+`, %brls
-============================
+`|+`
+====
 
-`%iron` gate
+Similar to `|=`, but differs in that its sample cannot be read. It can
+be thought of as similar to a private function. XX not private
+
 
 `|+` is a synthetic rune that produces a [dry]() [`%iron`]() [gate]()
 with sample [`$*(p)`]() and [arm]()s `q`. `|+` is similar to `|=`, but
@@ -18,8 +20,8 @@ Produces
 
 Twig: `[%brls p=tile q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [tile](). `q` is a [twig]().
 
@@ -33,11 +35,6 @@ Wide form
 ---------
 
     |+(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

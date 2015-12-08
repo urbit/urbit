@@ -1,7 +1,8 @@
-colsig, `:~`, %clsg
-============================
+`:~`
+====
 
-Null-terminated tuple
+Construct a null-terminated tuple of n elements. Closed with `==`.
+
 
 `:~`, `colsig`, `[%clsg p=tusk]` is a synthetic rune that produces a
 null-terminated tuple.
@@ -11,8 +12,8 @@ Produces
 
 Twig: `[%clsg p=tusk]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [`++tusk`](), a list of twigs.
 

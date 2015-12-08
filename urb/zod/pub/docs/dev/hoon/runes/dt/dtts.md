@@ -1,23 +1,21 @@
-dottis, `.=`, %dtts
-============================
+`.=`
+====
 
-Equality
+Nock operator 5: tests two nouns `p` and
+`q` for equality, producing a boolean.
+
 
 `.=` is a natural rune that applies Nock 5 (equality) to determine if
 the products of p and q are equivalent, and produces a loobean.
 
-See also
---------
-
-[Nock tutorial]()
 
 Produces
 --------
 
 Twig: `[%dtts p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig](). `q` is a [twig]().
 

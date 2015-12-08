@@ -1,7 +1,7 @@
-barket, `|^`, %brkt
-============================
+`|^`
+====
 
-Kicked book
+Similar to `|-` except that it can contain internal arms.
 
 `|^` is a synthetic rune that produces and then kicks a [`%gold`]()
 [book]() with sample `p` as a [`%$(p)`](), and a list of [arm]()s `q`.
@@ -10,18 +10,13 @@ The list must be closed with a `--`.
 `|^` is similar to `|-`, but differs in that it can contain internal
 arms.
 
-See also
---------
-
-barhep, `|-`, %brhp](#brhp) [barcab, `|_`, %brcb
-
 Produces
 --------
 
 Twig: `[%brkt p=twig q=(map term foot)]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig](). `q` is a [`map`]() with [`++term`]() keys and
 [`++foot`]() values, which are called arms.
@@ -33,16 +28,6 @@ Tall form
     ++  p.n.q
       q.n.q
     --
-
-Wide form
----------
-
-None
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

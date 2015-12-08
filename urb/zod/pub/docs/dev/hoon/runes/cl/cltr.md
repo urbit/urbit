@@ -1,7 +1,7 @@
-coltar, `:*`, %cltr
-============================
+`:*`
+====
 
-Tuple
+Construct a tuple of n elements. Closed with `==`.
 
 `:*`, `coltar`, `[%cltr p=tusk]` is a synthetic rune that produces a
 tuple.
@@ -11,8 +11,8 @@ Produces
 
 Twig: `[%cltr p=tusk]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [`++tusk`](), a list of twigs.
 

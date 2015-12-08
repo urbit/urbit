@@ -1,5 +1,5 @@
-bucket `$^` %bckt
-==========================
+`$^` 
+====
 
 Normalizing gate, `%herb`
 
@@ -12,8 +12,8 @@ Produces
 
 Tile: `[%herb p=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig]().
 
@@ -26,11 +26,6 @@ Wide form
 ---------
 
     $^(p)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

@@ -1,7 +1,7 @@
 buclus `$+` %bcls
 ==========================
 
-Signature
+Similar to a type signature. Produces a type (mold) for a function that accepts `p` and produces `q`.
 
 `$+` a tile for a gate which accepts `p` and produces `q`. `$+` is
 similar to a function signature. `$+(p q)` is a `%bark` of a `%weed`, or
@@ -10,12 +10,12 @@ similar to a function signature. `$+(p q)` is a `%bark` of a `%weed`, or
 Produces
 --------
 
-Tile: `$_(|+(p _q))`
+Mold: `$_(|+(p _q))`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [tile]() `q` is a [tile]()
+`p` is a [mold]() `q` is a [mold]()
 
 Tall form
 ---------
@@ -26,11 +26,6 @@ Wide form
 ---------
 
       $+(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

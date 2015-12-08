@@ -1,7 +1,10 @@
-censig, `%~`, %cnsg
-============================
+`%~`
+====
 
-Pull with sample
+Evaluates the expression addressed at `p` within core
+`q` whose sample (argument) is set to `r`. Used frequently with
+maps and sets, etc.
+
 
 `%~` is a synthetic rune that [pull]()s `p` from the [door]() `q` with
 its sample set to `r`. `%~` is used to produce an arm `p` inside of a
@@ -12,8 +15,8 @@ Produces
 
 Twig: `[%cnsg p=wing q=twig r=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [`wing`](). `q` and `r` are [`twig`]()s.
 
@@ -68,3 +71,10 @@ the value of `'b'` in our map.
 This is a very common use of `%~`. Most of the container engines in
 `hoon.hoon` use doors with samples, so we use `%~` to set the sample and
 pull the door to produce a gate we can pass data to.
+
+     =door |_  a=@
+      ++  fort  |=  b=@
+      (add b a)
+      --
+     (%~(fort door 10) 1)
+     11

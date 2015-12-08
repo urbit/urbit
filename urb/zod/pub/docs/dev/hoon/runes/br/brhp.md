@@ -1,7 +1,7 @@
-barhep, `|-`, %brhp
-============================
+`|-`
+====
 
-Kicked trap
+Same as `|.` except for that it is automatically called. A function with no arguments that's automatically called when constructed.
 
 `|-` is a synthetic rune that produces a dry [`%gold`]() trap and
 [kicks]() it. You can think of a trap like a 'trap door', since `|-` is
@@ -11,18 +11,13 @@ a [`door`]() with only one arm [`$`](), the empty name.
 similar to creating and calling an anonymous function and is quite
 commonly used for loops or recursion.
 
-See also
---------
-
-bardot, `|.`, %brdt
-
 Produces
 --------
 
 Twig: `[%brhp p=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a twig
 
@@ -35,11 +30,6 @@ Wide form
 ---------
 
     |-(p)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

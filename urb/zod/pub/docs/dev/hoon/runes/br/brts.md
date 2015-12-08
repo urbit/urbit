@@ -1,7 +1,9 @@
-bartis, `|=`, %brts
-============================
+`|=`
+====
 
-Dry gate
+Produces a function. Same as `|_` except that it has only one
+arm that is automatically called.
+
 
 `|=`, is a synthetic rune that produces a [dry]() [`%gold`]() gate with
 sample [`$*(p)`](), arm `q`. A gate is a core with one arm, [`$`](), the
@@ -12,19 +14,13 @@ the result of some computation. `|=` differs from `|*` in that its
 typechecking occurs at compile-time to ensure that all inputs match its
 sample tile.
 
-See also
---------
-
-bartar, `|*`, %brtr
-============================
-
 Produces
 --------
 
 Twig: `[%brts p=tile q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [tile](). `q` is a [twig]().
 
@@ -38,11 +34,6 @@ Wide form
 ---------
 
     |=(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

@@ -1,7 +1,12 @@
-ketlus, `^+`, %ktls
-============================
+`^+`
+====
 
-Cast to type
+Casts `q` to the type of `p`, verifying that it contains
+the type of `q`. Similar to `^+`, but doesn't bunt `p`. Used to
+cast to types (molds) that have previously been made into validator
+functions (clams) with `$,`. For example, the arguments to a `|=` are
+automatically bunted with a `=|`, so `^+` is used.
+
 
 Syntax
 ======
@@ -10,12 +15,6 @@ Syntax
 verifying that it contains the type of `q`. `^+` is similar to `^-`, but
 doesn't bunt the subject. Most often we use `^+` to cast when our type
 is already defined by something inside our context.
-
-See also
---------
-
-kethep, `^-`, %kthp
-============================
 
 Produces
 --------
@@ -37,11 +36,6 @@ Wide form
 ---------
 
     ^+(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

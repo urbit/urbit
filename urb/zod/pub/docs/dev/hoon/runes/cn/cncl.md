@@ -1,5 +1,5 @@
-cencol, `%:`, %cncl
-============================
+`%:`
+====
 
 Slam, one argument
 
@@ -14,8 +14,8 @@ Produces
 
 Twig: `[%cncl p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [twig](), most commonly a [gate]() `q` is a [twig]()
 
@@ -29,11 +29,6 @@ Wide form
 ---------
 
     %:(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

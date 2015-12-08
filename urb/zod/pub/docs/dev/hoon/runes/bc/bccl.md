@@ -1,7 +1,7 @@
-buccol `$:` %bccl
-==========================
+`$:`
+====
 
-Mold autocons. Creates a type of an array of types.
+Mold autocons. Creates a type of an array of types. When used in its irregular form, can accept n children.
 
 `$:` is a mold rune that constructs the mold of a tuple from a
 tuple of molds.

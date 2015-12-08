@@ -1,7 +1,8 @@
-buccen `$%` %bccn
-==========================
+`$%` 
+====
 
-Tagged union
+Produces the type of the tagged union of a list of cases that are key-value
+pairs ([%leave]()s) whose key must be a [%cube]().
 
 `$%` is a tile rune that produces a [`%kelp`](), the tile of the
 discriminated union. `$%` takes a list of lines which are labeled cases,
@@ -10,10 +11,10 @@ called fronds, closed by `==`. Commonly used for pattern matching.
 Produces
 --------
 
-[Twig](): `[%kelp p=[i=line t=(list line)]]`
+[mold](): `[%kelp p=[i=line t=(list line)]]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [`++list`]() of [`++line`]()s.
 
@@ -23,16 +24,6 @@ Tall form
     $%  p
         q
     ==
-
-Wide form
----------
-
-None
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

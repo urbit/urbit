@@ -1,5 +1,5 @@
-buccab `$_` %bccb
-==========================
+`$_`
+====
 
 Uses a twig `p` to produce a type (mold) that is the same as the
 default type (span) of `p`, except for that the default value
@@ -12,12 +12,12 @@ the twig used to make the example.
 Produces
 --------
 
-Tile: `[%weed p=twig]`
+Mold: `[%weed p=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [tile]().
+`p` is a [mold]().
 
 Tall form
 ---------

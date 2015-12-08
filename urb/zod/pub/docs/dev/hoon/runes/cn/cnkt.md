@@ -1,7 +1,7 @@
-cenket, `%^`, %cnkt
-============================
+`%^`
+====
 
-Slam, three arguments
+Call function with three arguments.
 
 `%^` is a synthetic rune that that [pull]()s [`$`]() from the [door]()
 `p` with its sample set to `[%cntr q r s]`. `%^` in the most common case
@@ -13,10 +13,10 @@ Produces
 
 Twig: `[%cnkt p=twig q=twig r=twig s=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [twig](), most commonly a [gate](). `q`, `r` and `s` are
+`p` is a [twig](), most commonly a function. The arguments `q`, `r` and `s` are
 [twig]()s.
 
 Tall form
@@ -31,16 +31,3 @@ Wide form
 ---------
 
     %^(p q r s)
-
-Irregular form
---------------
-
-None
-
-Examples
---------
-
-Equivalent to
--------------
-
-    %-(p [q r s])

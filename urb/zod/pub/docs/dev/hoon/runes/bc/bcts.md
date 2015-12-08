@@ -1,7 +1,7 @@
-buctis `$=` %bcts
-==========================
+`$=` 
+====
 
-Face for tile
+Adds a name `p` to a type.
 
 `$=` is a tile rune that produces a `%bark`. A `%bark` is a tile that
 wraps a [face]() around another tile. Used primarily to add faces to
@@ -12,7 +12,7 @@ Produces
 
 [Tile](): `[%bark p=term q=tile]`
 
-Sample
+Accepts
 ------
 
 `p` is a [term]().
@@ -24,16 +24,6 @@ Tall form
 
     $=  p
         q
-
-Wide form
----------
-
-None
-
-Irregular form
---------------
-
-None
 
 Examples
 --------
