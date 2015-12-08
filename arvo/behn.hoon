@@ -225,7 +225,7 @@
 ::
 ++  stay  [%0 tym]
 ++  take                                                ::  process move
-  |=  [tea=wire hen=duct hin=(hypo sign)]
-  ^-  [p=(list move) q=_..^$]
+  |=  {tea+wire hen+duct hin+(hypo sign)}
+  ^+  [p=*(list move) q=..^$]
   !!
 --

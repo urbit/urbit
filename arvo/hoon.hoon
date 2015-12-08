@@ -10146,12 +10146,7 @@
       :-  ['0' '9']
         fail
       :-  ['a' 'z']
-        ;~  pose
-          %+  sear
-            |=(a+tile `(unit tile)`~)
-          (stag %bark ;~(plug sym ;~(pfix tis toil)))
-          (stag %herb wide)
-        ==
+        (stag %herb wide)
       :-  '$'
         (stag %herb wide)
       :-  '|'
