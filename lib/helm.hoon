@@ -32,6 +32,8 @@
   ==                                                    ::
 ++  hood-reset                                          ::  reset command
   ,~                                                    ::
+++  hood-deset                                          ::  reset command
+  ,~                                                    ::
 ++  helm-verb                                           ::  reset command
   ,~                                                    ::
 ++  hood-reload                                         ::  reload command
@@ -149,6 +151,14 @@
   =+  way=`path`(welp top /[q])
   =+  txt=((hard ,@) .^(%cx (welp way /hoon)))
   [%flog /reset %veer p way txt]
+::
+++  poke-deset                                        ::  deset system
+  |=  hood-deset  =<  abet
+  %-  emil
+  %-  flop  ^-  (list card) 
+  =+  top=`path`/(scot %p our)/home/(scot %da now)/arvo
+  :-  [%flog /deset %vega (weld top `path`/hoon)]
+  ~
 ::
 ++  poke-will                                         ::  hear certificate
   |=  wil=(unit will)
