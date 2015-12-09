@@ -7,9 +7,9 @@
 ::
 ++  grow                                                ::  convert to
   |%
-  ++  mime  `^mime`[/text/hoon (taco own)]              ::  convert to %mime
+  ++  mime  `^mime`[/text/x-hoon (taco own)]            ::  convert to %mime
   ++  elem                                              ::  convert to %html
-    ;div:pre(urb_codemirror ""):"{(trip own)}"
+    ;div:pre(urb_codemirror "", mode "hoon"):"{(trip own)}"
     :: =+  gen-id="src-{<`@ui`(mug own)>}"
     :: ;div
     ::   ;textarea(id "{gen-id}"):"{(trip own)}"

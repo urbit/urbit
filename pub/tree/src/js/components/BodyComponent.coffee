@@ -2,10 +2,11 @@ clas    = require 'classnames'
 
 query      = require './Async.coffee'
 reactify   = require './Reactify.coffee'
+codemirror = require './CodeMirror.coffee'
 
 recl   = React.createClass
 rele   = React.createElement
-{div,p,img,a}  = React.DOM
+{div,pre,p,img,a,button}  = React.DOM
 
 extras =
   spam: recl
@@ -53,10 +54,17 @@ extras =
               (a {href:"#{@props.path}/#{next.name}"}, "Next: #{next.meta.title}")
             ])
       return (div {},"")
+
   footer: recl
     displayName: "Footer"
     render: ->
       (div {className:"footer"}, (p {}, "This page was served by Urbit."))
+
+Edit = query {mime:'m'}, recl
+  displayName: "Edit"
+  render: ->
+    {mite,octs} = @props.mime
+    codemirror {value:octs, readOnly:false, mode:mite}
 
 module.exports = query {
   body:'r'
@@ -66,11 +74,18 @@ module.exports = query {
   sein:'t'
 }, recl
   displayName: "Body"
+  getInitialState: -> edit:false
   render: -> 
-    className = clas (@props.meta.layout?.split ',')    
+    className = clas (@props.meta.layout?.split ',')
+    own = urb.ship is urb.user
     extra = (name,props={})=> 
-      if @props.meta[name]? then React.createElement extras[name], props
+      if @props.meta[name]? then rele extras[name], props
     
+    body =
+      if @state.edit
+        rele Edit, {onFinish:=> @setState edit:false}
+      else reactify @props.body
+
     (div {
         id:'body',
         key:"body"+@props.path
@@ -78,7 +93,10 @@ module.exports = query {
         },
       extra 'spam'
       extra 'logo', color: @props.meta.logo
-      reactify @props.body
+      if own 
+        button {onClick: => @setState edit:true}, "Edit"
+      body
       extra 'next', {dataPath:@props.sein,curr:@props.name}
+      if own then button {}, "Add"
       extra 'footer'
     )

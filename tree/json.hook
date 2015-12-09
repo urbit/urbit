@@ -26,6 +26,7 @@
       [%head %r]
       [%body %r]
       [%meta %j]
+      [%mime %m]
   ==
 ++  to-queries
   |=  a=schema  ^-  (list query)
@@ -38,9 +39,10 @@
     %kids  [%kids (to-queries ?@(+.a !! +.a))]
   ==
 ++  from-type                         ::  XX holding out for noun odors
-  |=  a=$%([%t p=cord] [%r p=json] [%j p=json])
+  |=  a=$%([%t p=cord] [%r p=json] [%j p=json] [%m mime])
   ?-  -.a
     %t  [%s p.a]
+    %m  (jobe mite/[%s (moon p.a)] octs/[%s q.q.a] ~)
     %r  p.a
     %j  p.a
   ==
@@ -56,6 +58,7 @@
     %snip  (from-type +.a snip.dat)
     %sect  (from-type +.a sect.dat)
     %meta  (from-type +.a meta.dat)
+    %mime  (from-type +.a mime.dat)
     %body  (from-type +.a body.dat)
     %kids  ?<  (~(has by (mo p.a)) %kids)  ::  XX recursion? 
            =<  o/(~(urn by kid) .)
