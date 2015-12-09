@@ -509,41 +509,43 @@
       ==
     ::
     ++  dy-show-type-noun
-      |=  a+type  ^-  tank
+      |=  a=type  ^-  tank
       =-  >[-]<
-      |-  ^-  $?  $%  {$atom @tas}
-                      [%cell _$ _$]
-                      [%cube * _$]
-                      [%face @tas _$]
-                      [%fork _$ _$]
-                      [%hold (list ,[_$ twig])]
+      |-  ^-  $^
+              _?  _%  {$atom @tas}
+                      {$cell __($) __($)}
+                      {$cube * __($)}
+                      {$face @tas __($)}
+                      {$fork __($) __($)}
+                      {$hold (list {__($) twig})}
                   ==
                   wain                :: "<|core|>"
-                  ?(%noun %void)
+                  $^(_?($noun $void))
               ==
       ?+  a  a
-        [?(%cube %face) ^]  a(q $(a q.a))
-        [?(%cell %fork) ^]  a(p $(a p.a), q $(a q.a))
-        [%bull ^]  $(a q.a)
-        [%core ^]  `wain`/core
-        [%hold *]  a(p (turn p.a |=([b=type c=twig] [^$(a b) c])))
+        {_?($cube $face) ^}  a(q $(a q.a))
+        {_?($cell $fork) ^}  a(p $(a p.a), q $(a q.a))
+        {$bull ^}  $(a q.a)
+        {$core ^}  `wain`/core
+        {$hold *}  a(p (turn p.a |=({b+type c+twig} [^$(a b) c])))
       ==
     ::
     ++  dy-show-source
       |=  a+dojo-source  ^-  tank
       =-  >[-]<
       =+  `[@ bil=dojo-build]`a
-      |-  ^-  $&  [_$ _$]
-              $?  twig
-                  $%  [%ur purl]
-                      [%dv path]
-                      [%as mark _$]
-                      [%do twig _$]
-                      [%ge path (list ,_$) (map term (unit ,_$))]
+      |-  ^-  $^
+              _&  [__($) __($)]
+              _?  twig
+                  _%  {$ur purl}
+                      {$dv path}
+                      {$as mark __($)}
+                      {$do twig __($)}
+                      {$ge path (list __($)) (map term (unit __($)))}
                   ==
               ==
       ?-  -.bil
-        _?($ur $dv)  bil
+        $^(_?($ur $dv))  bil
         $ex  ?.  ?=([%cltr *] p.bil)  p.bil
                  |-  ^-  twig
                  ?~  p.p.bil  !!
@@ -560,7 +562,7 @@
       ==
     ::
     ++  dy-edit                                         ::  handle edit
-      |=  cal=sole-change
+      |=  cal+sole-change
       ^+  +>+>
       =^  dat  say  (~(transceive sole say) cal)
       ?:  |(?=(^ per) ?=(^ pux) ?=($~ pro))
@@ -570,30 +572,30 @@
       (dy-slam(per `dat) /edit u.pro !>((tufa buf.say)))
     ::
     ++  dy-type                                         ::  sole action
-      |=  act=sole-action
+      |=  act+sole-action
       ?-  -.act
         %det  (dy-edit +.act)
         %ret  (dy-done (tufa buf.say))
         %clr  dy-stop
       ==
     ::
-    ++  dy-cage       |=(num=@ud (~(got by rez) num))   ::  known cage
-    ++  dy-vase       |=(num=@ud q:(dy-cage num))       ::  known vase
-    ++  dy-silk-vase  |=(vax=vase [%$ %noun vax])       ::  vase to silk
+    ++  dy-cage       |=(num+@ud (~(got by rez) num))   ::  known cage
+    ++  dy-vase       |=(num+@ud q:(dy-cage num))       ::  known vase
+    ++  dy-silk-vase  |=(vax+vase [%$ %noun vax])       ::  vase to silk
     ++  dy-silk-sources                                 ::  sources to silk
-      |=  src=(list dojo-source)  ^-  silk
+      |=  src+(list dojo-source)  ^-  silk
       %-  dy-silk-vase
       |-
       ?~  src  !>(~)
       (slop (dy-vase p.i.src) $(src t.src))
     ::
     ++  dy-silk-config                                  ::  configure
-      |=  [cay=cage cig=dojo-config]
+      |=  {cay+cage cig+dojo-config}
       ^-  [wire silk]
       :-  ?+  -.q.q.cay  ~|(%bad-gen ~_((sell (slot 2 q.cay)) !!))
-            %say  /gent
-            %ask  /dial
-            %get  /scar
+            $say  /gent
+            $ask  /dial
+            $get  /scar
           ==
       =+  gat=(slot 3 q.cay)
       :+  %call  (dy-silk-vase gat)
@@ -610,10 +612,10 @@
     ++  dy-twig-head                                    ::  dynamic state
       ^-  cage
       :-  %noun
-      =+  sloop=|=([a=vase b=vase] ?:(=(*vase a) b ?:(=(*vase b) a (slop a b))))
+      =+  sloop=|=({a+vase b+vase} ?:(=(*vase a) b ?:(=(*vase b) a (slop a b))))
       %+  sloop
         %-  ~(rep by var)
-        |=  [[a=term @ b=vase] c=vase]  ^-  vase
+        |=  {{a+term @ b+vase} c+vase}  ^-  vase
         (sloop b(p face/[a p.b]) c)
       !>([our=our now=now eny=eny]:hid)
     ::
@@ -626,13 +628,13 @@
       =.  +>+>.$  (he-diff %tan tan)
       =+  vax=(spec (slot 3 q.cag))
       ?+    -.q.vax  !!
-          %& 
+          {$&}
         ?~  +.q.vax
           ~&  %dy-made-dial-abort
           (dy-rash %bel ~)
         (dy-meal (slot 7 vax))
       ::
-          %|
+          {$|}
         =<  he-pone
         %-  dy-diff(pro `(slap (slot 7 vax) [%cnzy %q]))
         =+  pom=(sole-prompt +<.q.vax)
@@ -640,7 +642,7 @@
       ==
     ::
     ++  dy-made-scar                                    ::  scraper product
-      |=  cag=cage
+      |=  cag+cage
       ^+  +>+>
       ?.  ?=(^ q.q.cag)
         (dy-diff %err q.q.cag)
@@ -649,27 +651,27 @@
       =+  vax=(spec (slot 3 q.cag))
       ~_  (sell q.cag)
       ?+    -.q.vax  !!
-          %& 
+          {$&}
         ?~  +.q.vax
           ~&  %dy-made-scar-abort
           (dy-rash %bel ~)
         (dy-meal (slot 7 vax))
       ::
-          %|
+          {$|}
         =+  hiz=;;(hiss +<.q.vax)
         =.  ..dy  (he-diff %tan leaf/"< {(earn p.hiz)}" ~)
         (dy-eyre(pro `(slap (slot 7 vax) cnzy/%q)) /scar hiz)
       ==
     ::
     ++  dy-sigh-scar                                    ::  scraper result
-      |=  dat=cage
+      |=  dat+cage
       ?~  pro
         ~&  %dy-no-scraper
         (dy-show dat)
       (dy-slam(pux ~) /scar u.pro q.dat) 
     ::
     ++  dy-made-gent                                    ::  generator product
-      |=  cag=cage
+      |=  cag+cage
       (dy-meal q.cag)
     ::
     ++  dy-make                                         ::  build step
@@ -681,12 +683,12 @@
       %-  dy-ford
       ^-  (pair path silk)
       ?-  -.bil
-        %ge  (dy-silk-config (dy-cage p.p.p.bil) q.p.bil)
-        %dv  [/hand [%core he-beak (flop p.bil)]]
-        %ex  [/hand (dy-mare p.bil)]
-        %as  [/hand [%cast p.bil [%$ (dy-cage p.q.bil)]]]
-        %do  [/hand [%call (dy-mare p.bil) [%$ (dy-cage p.q.bil)]]]
-        %tu  :-  /hand
+        $ge  (dy-silk-config (dy-cage p.p.p.bil) q.p.bil)
+        $dv  [/hand [%core he-beak (flop p.bil)]]
+        $ex  [/hand (dy-mare p.bil)]
+        $as  [/hand [%cast p.bil [%$ (dy-cage p.q.bil)]]]
+        $do  [/hand [%call (dy-mare p.bil) [%$ (dy-cage p.q.bil)]]]
+        $tu  :-  /hand
              :-  %$
              :-  %noun
              |-  ^-  vase
@@ -698,12 +700,12 @@
     ::
     ++  dy-twig-mark                                    ::  XX architect
       =+  ^=  ope
-          |=  gen=twig  ^-  twig
+          |=  gen+twig  ^-  twig
           ?:  ?=(?(%sggl %sggr) -.gen)
             $(gen q.gen)
           =+  ~(open ap gen)
           ?.(=(gen -) $(gen -) gen)
-      |=  gen=twig  ^-  (unit mark)
+      |=  gen+twig  ^-  (unit mark)
       =.  gen  (ope gen)
       ?:  ?=([%cnts [@ ~] ~] gen)
         (bind (~(get by var) i.p.gen) head)
@@ -724,7 +726,7 @@
       ==
     ::
     ++  dy-mare                                         ::  build expression
-      |=  gen=twig
+      |=  gen+twig
       ^-  silk
       =+  too=(dy-twig-mark gen)
       =-  ?~(too - [%cast u.too -])
@@ -733,7 +735,7 @@
       [%plan he-beam / zuse arc lib ~ ~]
     ::
     ++  dy-step                                         ::  advance project
-      |=  nex=@ud
+      |=  nex+@ud
       ^+  +>+>
       ?>  ?=($~ cud)
       ?:  ?=([%show 3] -.mad)
@@ -751,17 +753,17 @@
     =+  vex=((full dp-command-line):dp [1 1] txt)       ::
     ?:  =(q.p.vex len)                                  ::  matched to line end
       [%& ~]                                            ::
-    ?:  =(p.p.vex +((lent (skim txt |=(a=@ =(10 a)))))) ::  parsed all lines
+    ?:  =(p.p.vex +((lent (skim txt |=(a+@ =(10 a)))))) ::  parsed all lines
       [%& ~ ?~(q.vex [%| txt] `p.u.q.vex)]              ::  new buffer/complete
     [%| p.p.vex (dec q.p.vex)]                          ::  syntax error
   ::
   ++  he-duke                                           ::  ++he-dope variant
-    |=  txt=tape
-    ^-  (each (unit (each dojo-command tape)) ,@ud)
+    |=  txt+tape
+    ^-  (each (unit (each dojo-command tape)) @ud)
     =+  foy=(he-dope txt)
     ?-  -.foy
-      %|  [%| q.p.foy]
-      %&  [%& p.foy]
+      {$|}  [%| q.p.foy]
+      {$&}  [%& p.foy]
     ==
   ::
   ++  he-easter                                         ::  hint messages
@@ -788,17 +790,17 @@
     dir(r [%da now.hid])
   ::
   ++  he-card                                           ::  emit gift
-    |=  cad=card
+    |=  cad+card
     ^+  +>
     %_(+> moz [[ost.hid cad] moz])
   ::
   ++  he-send
-    |=  [way=wire him=ship dap=term cop=clap]
+    |=  {way+wire him+ship dap+term cop+clap}
     ^+  +>
     (he-card %send way [him dap] cop)
   ::
   ++  he-diff                                           ::  emit update
-    |=  fec=sole-effect
+    |=  fec+sole-effect
     ^+  +>
     (he-card %diff %sole-effect fec)
   ::
@@ -807,7 +809,7 @@
     ?~(poy . ~(dy-stop dy u.poy))
   ::
   ++  he-peer                                           ::  subscribe to
-    |=(pax=path ?>(=(~ pax) he-prom))
+    |=(pax+path ?>(=(~ pax) he-prom))
   ::
   ++  he-pine                                           ::  restore prompt
     ^+  .
@@ -838,35 +840,35 @@
     [& %$ (weld he-prow ?~(buf "> " "< "))]
   ::
   ++  he-made                                           ::  result from ford
-    |=  [way=wire dep=@uvH reg=gage]
+    |=  {way+wire dep+@uvH reg+gage}
     ^+  +>
     ?>  ?=(^ poy)
     =<  he-pine
     ?-  -.reg
-      %&  %.  p.reg
-          =+  dye=~(. dy u.poy(pux ~))
-          ?+  way  !!
-            [%hand ~]  dy-hand:dye
-            [%dial ~]  dy-made-dial:dye
-            [%gent ~]  dy-made-gent:dye
-            [%scar ~]  dy-made-scar:dye
-            [%edit ~]  dy-made-edit:dye
-          ==
-      %|  (he-diff(poy ~) %tan p.reg)
+      {$&}  %.  p.reg
+            =+  dye=~(. dy u.poy(pux ~))
+            ?+  way  !!
+              [%hand ~]  dy-hand:dye
+              [%dial ~]  dy-made-dial:dye
+              [%gent ~]  dy-made-gent:dye
+              [%scar ~]  dy-made-scar:dye
+              [%edit ~]  dy-made-edit:dye
+            ==
+      {$|}  (he-diff(poy ~) %tan p.reg)
       %tabl  !!
     ==
   ::
   ++  he-sigh                                           ::  result from eyre
-    |=  [way=wire hit=httr]
+    |=  {way+wire hit+httr}
     ^+  +>
     ?>  ?=(^ poy)
     =<  he-pine
     %.  [%httr !>(hit)]
     =+  dye=~(. dy u.poy(pux ~))
     ?+  way  !!
-      [%hand ~]  dy-hand:dye
-      [%show ~]  dy-show:dye
-      [%scar ~]  dy-sigh-scar:dye
+      {$hand $~}  dy-hand:dye
+      {$show $~}  dy-show:dye
+      {$scar $~}  dy-sigh-scar:dye
     ==
   ::
   ++  he-unto                                           ::  result from behn
@@ -880,11 +882,11 @@
     (he-diff %tan u.p.cit)
   ::
   ++  he-like                                           ::  accept line
-    |=  buf=(list ,@c)
+    |=  buf+(list @c)
     =(%& -:(he-dope (tufa buf)))
   ::
   ++  he-stir                                           ::  apply change
-    |=  cal=sole-change
+    |=  cal+sole-change
     ^+  +>
     ::  ~&  [%his-clock ler.cal]
     ::  ~&  [%our-clock ven.say]
@@ -901,13 +903,13 @@
     (he-diff %mor [%det lic] [%err q.p.foy] ~)
   ::
   ++  he-plan                                           ::  execute command
-    |=  mad=dojo-command
+    |=  mad+dojo-command
     ^+  +>
     ?>  ?=($~ poy)
     he-pine:(dy-step:~(dy-init dy %*(. *dojo-project mad mad)) 0)
   ::
   ++  he-done                                           ::  parse command
-    |=  txt=tape
+    |=  txt+tape
     ^+  +>
     ?~  txt
       =<  he-prom(buf ~)
@@ -918,32 +920,32 @@
       ==
     =+  doy=(he-duke txt)
     ?-    -.doy
-        %|  (he-diff [%err p.doy])
-        %&
+        {$|}  (he-diff [%err p.doy])
+        {$&}
       ?~  p.doy
         (he-diff [%err (lent txt)])
       =+  old=(weld ?~(buf "> " "  ") (tufa buf.say))
       =^  cal  say  (~(transmit sole say) [%set ~])
       =.  +>.$   (he-diff %mor txt/old nex/~ det/cal ~)
       ?-  -.u.p.doy
-        %&  (he-plan(buf ~) p.u.p.doy)
-        %|  he-prom(buf p.u.p.doy)
+        {$&}  (he-plan(buf ~) p.u.p.doy)
+        {$|}  he-prom(buf p.u.p.doy)
       ==
     ==
   ::
   ++  he-type                                           ::  apply input
-    |=  act=sole-action
+    |=  act+sole-action
     ^+  +>
     ?^  poy
       he-pine:(~(dy-type dy u.poy) act)
     ?-  -.act
-      %det  (he-stir +.act)
-      %ret  (he-done (tufa buf.say))
-      %clr  he-pine(buf "")
+      $det  (he-stir +.act)
+      $ret  (he-done (tufa buf.say))
+      $clr  he-pine(buf "")
     ==
   ::
   ++  he-lame                                           ::  handle error
-    |=  [wut=term why=tang]
+    |=  {wut+term why+tang}
     ^+  +>
     %-  (slog (flop `tang`[>%dojo-lame wut< why]))
     ?^  poy
@@ -956,19 +958,19 @@
   =+  session-0==+(*session-1 ,[_say syd=desk * _|2.-])
   :: ,_`..prep
   =+  ^=  hoze
-      $%  [%0 p=(map bone session-0)]
-          [%1 p=(map bone session-1)]
-          [%2 p=(map bone session-1)]
-          [%3 p=(map bone session)]
+      _%  {$0 p+(map bone session-0)}
+          {$1 p+(map bone session-1)}
+          {$2 p+(map bone session-1)}
+          {$3 p+(map bone session)}
       ==
   |=  old=(unit ?(house hoze))  ^+  [~ ..prep]
   ?~  old  `..prep
   ?-  -.u.old
-    %4  `..prep(+<+ u.old)
-    %3  $(u.old %*(. *house hoc p.u.old))
-    %2  $(u.old [%3 (~(run by p.u.old) |=(session-1 +<(poy ~)))])
-    %1  $(u.old [%3 (~(run by p.u.old) |=(session-1 +<(poy ~)))])
-    %0  =<  ^$(u.old [%1 (~(run by p.u.old) .)])
+    $4  `..prep(+<+ u.old)
+    $3  $(u.old %*(. *house hoc p.u.old))
+    $2  $(u.old [%3 (~(run by p.u.old) |=(session-1 +<(poy ~)))])
+    $1  $(u.old [%3 (~(run by p.u.old) |=(session-1 +<(poy ~)))])
+    $0  =<  ^$(u.old [%1 (~(run by p.u.old) .)])
         |=  sos=session-0  ^-  session-1
         [-.sos [[our.hid syd.sos ud/0] /] |3.sos]
   ==
@@ -976,7 +978,7 @@
 ::  pattern:  ++  foo  |=(data he-abet:(~(he-foo he (~(got by hoc) ost)) data))
 ++  arm  (arm-session ~ (~(got by hoc) ost.hid))
 ++  arm-session
-  |=  [moz=(list move) ses=session]
+  |=  {moz+(list move) ses+session}
   =>  ~(. he moz ses)
   =-  [wrap=- +]
   |*  he-arm=_he-type
@@ -994,15 +996,15 @@
   (wrap he-peer):(arm-session moz ses)
 ::
 ++  poke-sole-action
-  |=  act=sole-action  ~|  poke/act  %.  act
+  |=  act+sole-action  ~|  poke/act  %.  act
   (wrap he-type):arm
 ++  made       (wrap he-made):arm
 ++  sigh-httr  (wrap he-sigh):arm
-++  sigh-tang  |=([a=wire b=tang] ~|(`term`(cat 3 'sigh-' -.a) (mean b)))
+++  sigh-tang  |=({a+wire b+tang} ~|(`term`(cat 3 'sigh-' -.a) (mean b)))
 ++  lame       (wrap he-lame):arm
 ++  unto       (wrap he-unto):arm
 ++  pull
-  |=  [pax=path]
+  |=  {pax+path}
   ^-  (quip move +>)
   =^  moz  +>  ~(he-abut he ~ (~(got by hoc) ost.hid))
   [moz +>.$(hoc (~(del by hoc) ost.hid))]
