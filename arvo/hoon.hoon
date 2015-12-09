@@ -9712,7 +9712,7 @@
                   ?~  a  [~ ~]
                   =+  c=$(a t.a)
                   ?~  c  ~
-                  ?.  ?=([[%leaf *] *] i.a)  ~
+                  ?.  ?=({{$leaf *} *} i.a)  ~
                   [~ [p.i.a q.i.a] u.c]
                 (toad exqc)
               ==
@@ -10195,11 +10195,11 @@
             %+  cook
               |=  lot=coin  ^-  tile
               ?-    -.lot
-                  ~   [%leaf p.lot]
-                  %blob
+                  $~   [%leaf p.lot]
+                  $blob
                 ?@(p.lot [%leaf %$ p.lot] [$(p.lot -.p.lot) $(p.lot +.p.lot)])
               ::
-                  %many
+                  $many
                 ?~(p.lot [%leaf %n ~] [$(lot i.p.lot) $(p.lot t.p.lot)])
               ==
             nuck:so
