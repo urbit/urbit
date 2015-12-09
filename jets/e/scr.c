@@ -237,11 +237,12 @@ _crypto_scrypt(const uint8_t * passwd, size_t passwdlen,
 		errno = EINVAL;
 		goto err0;
 	}
-	if ((r > SIZE_MAX / 128 / p) ||
+	int test_size_max = (r > SIZE_MAX / 128 / p) || (N > SIZE_MAX / 128 / r);
+	
 #if SIZE_MAX / 256 <= UINT32_MAX
-	    (r > (SIZE_MAX - 64) / 256) ||
+	test_size_max = (r > (SIZE_MAX - 64) / 256) || test_size_max;
 #endif
-	    (N > SIZE_MAX / 128 / r)) {
+	if(test_size_max) {
 		errno = ENOMEM;
 		goto err0;
 	}
