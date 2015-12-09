@@ -6662,7 +6662,7 @@
     ^-  {? worm}
     ?:  (~(has in nes) [sut ref])  [& +>+<]
     ?.  (~(nest ut sut) | ref)
-      ::  ~&  %nest-failed
+      ~&  %wa-nest-failed
       [| +>+<]
     [& +>+<(nes (~(put in nes) [sut ref]))]
   ::
@@ -6672,14 +6672,15 @@
     ?:  (~(has in nes) [sut ref])  [& +>+<]
     =+  gat=|=({a+type b+type} (~(nest ut a) | b))
     ?.  (? .*(gat(+< [sut ref]) -.gat))
-      ::  ~&  %nets-failed
-      ::  =+  tag=`*`skol
-      ::  =+  foo=(tank .*(tag(+< ref) -.tag))
-      ::  =+  bar=(skol sut)
-      ::  ~&  %nets-need
-      ::  ~>  %slog.[0 bar]
-      ::  ~&  %nets-have
-      ::  ~>  %slog.[0 foo]
+      ~&  %nets-failed
+      =+  tag=`*`skol
+      =+  foo=(tank .*(tag(+< ref) -.tag))
+      =+  bar=(skol sut)
+      ~&  %nets-need
+      ~>  %slog.[0 bar]
+      ~&  %nets-have
+      ~>  %slog.[0 foo]
+      ~&  %nets-done
       [| +>+<.$]
     [& +>+<.$(nes (~(put in nes) [sut ref]))]
   ::
@@ -7601,58 +7602,75 @@
   ++  dial
     |=  ham+calf
     =+  gid=*(set @ud)
-    |-  ^-  tank
-    ?-    q.ham
-        $noun      [%leaf '*' ~]
-        $path      [%leaf '/' ~]
-        $type      [%leaf '#' 't' ~]
-        $void      [%leaf '#' ~]
-        $wool      [%leaf '*' '"' '"' ~]
-        $wall      [%leaf '*' '\'' '\'' ~]
-        $yarn      [%leaf '"' '"' ~]
-        {$atom *}  [%leaf '@' (trip p.q.ham)]
-        {$core *}
-      :+  %rose
-        [[' ' ~] ['<' ~] ['>' ~]]
-      |-  ^-  (list tank)
-      ?~  p.q.ham
-        [^$(q.ham q.q.ham) ~]
-      [[%leaf (rip 3 i.p.q.ham)] $(p.q.ham t.p.q.ham)]
+    =<  `tank`-:$
+    |%  
+    ++  many
+      |=  haz=(list wine)
+      ^-  {(list tank) (set @ud)}
+      ?~  haz  [~ gid]
+      =^  mor  gid  $(haz t.haz)
+      =^  dis  gid  ^$(q.ham i.haz)
+      [[dis mor] gid]
     ::
-        {$face *}
-      [%palm [['=' ~] ~ ~ ~] [%leaf (trip p.q.ham)] $(q.ham q.q.ham) ~]
-    ::
-        {$list *}
-      [%rose [" " (weld (trip p.q.ham) "(") ")"] $(q.ham q.q.ham) ~]
-    ::
-        {$pick *}
-      :+  %rose
-        [[' ' ~] ['{' ~] ['}' ~]]
-      |-  ^-  (list tank)
-      ?~(p.q.ham ~ [^$(q.ham i.p.q.ham) $(p.q.ham t.p.q.ham)])
-    ::
-        {$plot *}
-      :+  %rose
-        [[' ' ~] ['[' ~] [']' ~]]
-      |-  ^-  (list tank)
-      ?~(p.q.ham ~ [^$(q.ham i.p.q.ham) $(p.q.ham t.p.q.ham)])
-    ::
-        {$pear *}
-      [%leaf '%' ~(rend co [~ p.q.ham q.q.ham])]
-    ::
-        {$stop *}
-      ?:  (~(has in gid) p.q.ham)
-        [%leaf '$' ~(rend co [~ %ud p.q.ham])]
-      :+  %palm
-        [['.' ~] ['^' '$' ~(rend co [~ %ud p.q.ham])] ~ ~]
-      [$(gid (~(put in gid) p.q.ham), q.ham (need (~(get by p.ham) p.q.ham))) ~]
-    ::
-        {$tree *}
-      [%rose [" " (weld (trip p.q.ham) "(") ")"] $(q.ham q.q.ham) ~]
-    ::
-        {$unit *}
-      [%rose [" " (weld (trip p.q.ham) "(") ")"] $(q.ham q.q.ham) ~]
-    ==
+    ++  $
+      ^-  {tank (set @ud)}
+      ?-    q.ham
+          $noun      :_(gid [%leaf '*' ~])
+          $path      :_(gid [%leaf '/' ~])
+          $type      :_(gid [%leaf '#' 't' ~]) 
+          $void      :_(gid [%leaf '#' ~])
+          $wool      :_(gid [%leaf '*' '"' '"' ~])
+          $wall      :_(gid [%leaf '*' '\'' '\'' ~])
+          $yarn      :_(gid [%leaf '"' '"' ~])
+          {$atom *}  :_(gid [%leaf '@' (trip p.q.ham)])
+          {$core *}
+        =^  cox  gid  $(q.ham q.q.ham)
+        :_  gid
+        :+  %rose
+          [[' ' ~] ['<' ~] ['>' ~]]
+        |-  ^-  (list tank)
+        ?~  p.q.ham  [cox ~]
+        [[%leaf (rip 3 i.p.q.ham)] $(p.q.ham t.p.q.ham)]
+      ::
+          {$face *}
+        =^  cox  gid  $(q.ham q.q.ham)
+        :_(gid [%palm [['=' ~] ~ ~ ~] [%leaf (trip p.q.ham)] cox ~])
+      ::
+          {$list *}
+        =^  cox  gid  $(q.ham q.q.ham)
+        :_(gid [%rose [" " (weld (trip p.q.ham) "(") ")"] cox ~])
+      ::
+          {$pick *}
+        =^  coz  gid  (many p.q.ham)
+        :_(gid [%rose [[' ' ~] ['{' ~] ['}' ~]] coz])
+      ::
+          {$plot *}
+        =^  coz  gid  (many p.q.ham)
+        :_(gid [%rose [[' ' ~] ['[' ~] [']' ~]] coz])
+      ::
+          {$pear *}
+        :_(gid [%leaf '%' ~(rend co [~ p.q.ham q.q.ham])])
+      ::
+          {$stop *}
+        =+  num=~(rend co [~ %ud p.q.ham])
+        ?:  (~(has in gid) p.q.ham)
+          :_(gid [%leaf '$' num])
+        =^  cox  gid
+            %=  $
+              gid    (~(put in gid) p.q.ham)
+              q.ham  (~(got by p.ham) p.q.ham)
+            ==
+        :_(gid [%palm [['.' ~] ['^' '$' num] ~ ~] cox ~])
+      ::
+          {$tree *}
+        =^  cox  gid  $(q.ham q.q.ham)
+        :_(gid [%rose [" " (weld (trip p.q.ham) "(") ")"] cox ~])
+      ::
+          {$unit *}
+        =^  cox  gid  $(q.ham q.q.ham)
+        :_(gid [%rose [" " (weld (trip p.q.ham) "(") ")"] cox ~])
+      ==
+    --
   ::
   ++  dish
     |=  {ham+calf lum+*}  ^-  tank
@@ -10576,7 +10594,17 @@
     =+  rev=(slym (slap bud (rain pax txt)) bud)
     =+  syg=(slym rev arg)
     ~|  %load-lost
-    +>.$(q.sew (slam (slap syg [%cnzy %load]) (slap rig [%cnzy %stay])))
+    ::  ~&  %ruck-testing
+    =+  old=(slap rig [%cnzy %stay])
+    =+  new=(slap syg [%cnzy %load])
+    =+  sam=(~(peek ut p.new) %free 6)
+    ~?  !(~(nest ut sam) | p.old)  %ruck-fail
+    ::    ::  ~>  %slog.[0 (skol old)]
+    ::    ::  ~>  %slog.[0 (skol sam)]
+    ::    ::  =+  foo=(~(nest ut sam) & old)
+    ::    !!
+    ~&  %ruck-good
+    +>.$(q.sew (slam new old))
   ::
   ++  wink                                              ::  deploy
     |=  {now+@da eny+@ ski+slad}
@@ -10612,7 +10640,14 @@
           {$&}  (~(nest wa p.sew) p.sam p.p.hil)
           {$|}  (~(nets wa p.sew) p.sam p.p.hil)
         ==
-      ?.(-.hig ~ `[(slym gat +>.hil) +.hig])
+      ?.  -.hig
+        ?-  -.hil 
+          {$&}  ~&  [%raw-nest (~(nest ut p.sam) | p.p.hil)]
+                ~
+          {$|}  ~&(%slur-no-nets ~)
+        ==
+      ~&  [%slur-did -.hig]
+      `[(slym gat +>.hil) +.hig]
     ::
     ++  slur-a  ~/(%slur-a |=({gat+vase hil+mill} =+(%a (slur gat hil))))
     ++  slur-b  ~/(%slur-b |=({gat+vase hil+mill} =+(%b (slur gat hil))))
@@ -10764,6 +10799,7 @@
       =+  ^=  pru
           ?~  pux
             ~|  [%swim-call-vane lal ({term $~} +.p.hil)]
+            ~&  [%swim-call-vane lal ({term $~} +.p.hil)]
             =^  vax  p.sew  (~(slap wa p.sew) rig [%cnzy %call])
             %^  slur-pro  lal  vax
             (slid [%& duc.vil hen] (slix hil))
