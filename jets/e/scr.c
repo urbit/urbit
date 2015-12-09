@@ -237,7 +237,7 @@ _crypto_scrypt(const uint8_t * passwd, size_t passwdlen,
 		errno = EINVAL;
 		goto err0;
 	}
-	int test_size_max = (r > SIZE_MAX / 128 / p) || N > SIZE_MAX / 128 / r);
+	int test_size_max = (r > SIZE_MAX / 128 / p) || (N > SIZE_MAX / 128 / r);
 	
 #if SIZE_MAX / 256 <= UINT32_MAX
 	test_size_max = (r > (SIZE_MAX - 64) / 256) || test_size_max;
