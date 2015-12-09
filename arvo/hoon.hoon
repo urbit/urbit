@@ -10640,14 +10640,7 @@
           {$&}  (~(nest wa p.sew) p.sam p.p.hil)
           {$|}  (~(nets wa p.sew) p.sam p.p.hil)
         ==
-      ?.  -.hig
-        ?-  -.hil 
-          {$&}  ~&  [%raw-nest (~(nest ut p.sam) | p.p.hil)]
-                ~
-          {$|}  ~&(%slur-no-nets ~)
-        ==
-      ~&  [%slur-did -.hig]
-      `[(slym gat +>.hil) +.hig]
+      ?.(-.hig ~ `[(slym gat +>.hil) +.hig])
     ::
     ++  slur-a  ~/(%slur-a |=({gat+vase hil+mill} =+(%a (slur gat hil))))
     ++  slur-b  ~/(%slur-b |=({gat+vase hil+mill} =+(%b (slur gat hil))))
@@ -10799,7 +10792,6 @@
       =+  ^=  pru
           ?~  pux
             ~|  [%swim-call-vane lal ({term $~} +.p.hil)]
-            ~&  [%swim-call-vane lal ({term $~} +.p.hil)]
             =^  vax  p.sew  (~(slap wa p.sew) rig [%cnzy %call])
             %^  slur-pro  lal  vax
             (slid [%& duc.vil hen] (slix hil))
