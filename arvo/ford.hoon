@@ -1896,7 +1896,8 @@
 ::
 ++  load                                                ::  highly forgiving
   |=  old=axle
-  ..^$(+>- old)
+  ::  ..^$(+>- old)
+  ..^$
   ::=.  old  
   ::    ?.  ?=([%0 *] old)  old                           ::  remove at 1
   ::    :-  %1 
