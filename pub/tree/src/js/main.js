@@ -22,6 +22,9 @@ module.exports = {
     }
     return TreePersistence.get(path, query, (function(_this) {
       return function(err, res) {
+        if (err != null) {
+          throw err;
+        }
         return _this.loadPath(path, res);
       };
     })(this));
@@ -30,6 +33,14 @@ module.exports = {
     return TreeDispatcher.handleViewAction({
       type: "set-curr",
       path: path
+    });
+  },
+  saveFile: function(spur, mime, cb) {
+    return TreePersistence.put(spur, mime, function(err, res) {
+      if (err != null) {
+        throw err;
+      }
+      return cb(res);
     });
   }
 };
@@ -428,7 +439,7 @@ module.exports = function(queries, Child, load) {
 
 
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
-var Edit, a, button, clas, codemirror, div, extras, img, p, pre, query, reactify, recl, ref, rele;
+var Edit, TreeActions, a, button, clas, codemirror, div, extras, img, p, pre, query, reactify, recl, ref, rele;
 
 clas = require('classnames');
 
@@ -437,6 +448,8 @@ query = require('./Async.coffee');
 reactify = require('./Reactify.coffee');
 
 codemirror = require('./CodeMirror.coffee');
+
+TreeActions = require('../actions/TreeActions.coffee');
 
 recl = React.createClass;
 
@@ -530,7 +543,7 @@ Edit = query({
   render: function() {
     var mite, octs, ref1;
     ref1 = this.props.mime, mite = ref1.mite, octs = ref1.octs;
-    return codemirror({
+    return rele(codemirror, {
       value: octs,
       readOnly: false,
       mode: mite
@@ -543,7 +556,8 @@ module.exports = query({
   name: 't',
   path: 't',
   meta: 'j',
-  sein: 't'
+  sein: 't',
+  spur: 't'
 }, recl({
   displayName: "Body",
   getInitialState: function() {
@@ -552,9 +566,9 @@ module.exports = query({
     };
   },
   render: function() {
-    var body, className, extra, own, ref1;
+    var body, className, editButton, extra, onClick, own, ref1;
     className = clas((ref1 = this.props.meta.layout) != null ? ref1.split(',') : void 0);
-    own = urb.ship === urb.user;
+    own = urb.user && urb.user === urb.ship;
     extra = (function(_this) {
       return function(name, props) {
         if (props == null) {
@@ -565,30 +579,41 @@ module.exports = query({
         }
       };
     })(this);
-    body = this.state.edit ? rele(Edit, {
-      onFinish: (function(_this) {
+    if (!this.state.edit) {
+      body = reactify(this.props.body);
+      editButton = button({
+        onClick: (function(_this) {
+          return function() {
+            return _this.setState({
+              edit: true
+            });
+          };
+        })(this)
+      }, "Edit");
+    } else {
+      body = rele(Edit, {});
+      onClick = (function(_this) {
         return function() {
-          return _this.setState({
-            edit: false
+          var txt;
+          txt = $(_this.getDOMNode()).find('.CodeMirror')[0].CodeMirror.getValue();
+          return TreeActions.saveFile(_this.props.spur, txt, function() {
+            return _this.setState({
+              edit: false
+            });
           });
         };
-      })(this)
-    }) : reactify(this.props.body);
+      })(this);
+      editButton = button({
+        onClick: onClick
+      }, "Done");
+    }
     return div({
       id: 'body',
       key: "body" + this.props.path,
       className: className
     }, extra('spam'), extra('logo', {
       color: this.props.meta.logo
-    }), own ? button({
-      onClick: (function(_this) {
-        return function() {
-          return _this.setState({
-            edit: true
-          });
-        };
-      })(this)
-    }, "Edit") : void 0, body, extra('next', {
+    }), own ? editButton : void 0, body, extra('next', {
       dataPath: this.props.sein,
       curr: this.props.name
     }), own ? button({}, "Add") : void 0, extra('footer'));
@@ -597,7 +622,7 @@ module.exports = query({
 
 
 
-},{"./Async.coffee":3,"./CodeMirror.coffee":5,"./Reactify.coffee":11,"classnames":16}],5:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"./Async.coffee":3,"./CodeMirror.coffee":5,"./Reactify.coffee":11,"classnames":16}],5:[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -608,7 +633,7 @@ module.exports = recl({
   render: function() {
     return div({}, textarea({
       ref: 'ed',
-      value: this.props.value
+      defaultValue: this.props.value
     }));
   },
   componentDidMount: function() {
@@ -1911,7 +1936,18 @@ var dedup;
 
 dedup = {};
 
+if (urb.send) {
+  urb.appl = 'hood';
+  urb.send.mark = 'write-tree';
+}
+
 module.exports = {
+  put: function(sup, mime, cb) {
+    return urb.send({
+      sup: sup,
+      mime: mime
+    }, cb);
+  },
   get: function(path, query, cb) {
     var url;
     if (query == null) {
@@ -1986,7 +2022,8 @@ QUERIES = {
   snip: 'r',
   sect: 'j',
   meta: 'j',
-  mime: 'm'
+  mime: 'm',
+  spur: 't'
 };
 
 TreeStore = _.extend(EventEmitter.prototype, {

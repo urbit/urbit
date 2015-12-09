@@ -21,6 +21,7 @@
   $%  [%kids p=(list query)]
       [%name %t]
       [%path %t]
+      [%spur %t]
       [%sect %j]
       [%snip %r]
       [%head %r]
@@ -54,6 +55,7 @@
   ?-  -.a
     %name  (from-type +.a ?^(s.bem i.s.bem q.bem))
     %path  (from-type +.a (crip (spud (flop s.bem))))
+    %spur  (from-type +.a (crip (spud s.bem)))
     %head  (from-type +.a head.dat)
     %snip  (from-type +.a snip.dat)
     %sect  (from-type +.a sect.dat)

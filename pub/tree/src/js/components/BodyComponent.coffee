@@ -4,6 +4,8 @@ query      = require './Async.coffee'
 reactify   = require './Reactify.coffee'
 codemirror = require './CodeMirror.coffee'
 
+TreeActions = require '../actions/TreeActions.coffee'
+
 recl   = React.createClass
 rele   = React.createElement
 {div,pre,p,img,a,button}  = React.DOM
@@ -64,7 +66,7 @@ Edit = query {mime:'m'}, recl
   displayName: "Edit"
   render: ->
     {mite,octs} = @props.mime
-    codemirror {value:octs, readOnly:false, mode:mite}
+    rele codemirror, {value:octs, readOnly:false, mode:mite}
 
 module.exports = query {
   body:'r'
@@ -72,19 +74,27 @@ module.exports = query {
   path:'t'
   meta:'j'
   sein:'t'
+  spur:'t'
 }, recl
   displayName: "Body"
   getInitialState: -> edit:false
   render: -> 
     className = clas (@props.meta.layout?.split ',')
-    own = urb.ship is urb.user
+    own = urb.user and urb.user is urb.ship
     extra = (name,props={})=> 
       if @props.meta[name]? then rele extras[name], props
     
-    body =
-      if @state.edit
-        rele Edit, {onFinish:=> @setState edit:false}
-      else reactify @props.body
+    unless @state.edit
+      body = reactify @props.body
+      editButton = button {onClick: => @setState edit:true}, "Edit"
+      
+    else
+      body = rele Edit, {}
+      
+      onClick = =>
+        txt = $(@getDOMNode()).find('.CodeMirror')[0].CodeMirror.getValue() # XX refs
+        TreeActions.saveFile @props.spur, txt, => @setState edit:false
+      editButton = button {onClick}, "Done"
 
     (div {
         id:'body',
@@ -93,8 +103,7 @@ module.exports = query {
         },
       extra 'spam'
       extra 'logo', color: @props.meta.logo
-      if own 
-        button {onClick: => @setState edit:true}, "Edit"
+      if own then editButton
       body
       extra 'next', {dataPath:@props.sein,curr:@props.name}
       if own then button {}, "Add"

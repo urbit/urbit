@@ -32,6 +32,9 @@
 ::     pax/(cu deft (su fel:stab))
 ::     dat/(of json/some mime/(pe / (cu taco so)) ~)    ::  XX mite
 ::   ==
+++  poke-tree
+  |=  [sup=spur mim=mime]  ^+  abet
+  (poke--data [`%md (flop sup)] %mime mim)  ::  XX determine extension
 ::
 ++  poke-paste
   |=  [typ=?(%hoon %md %txt) txt=@t]  ^+  abet

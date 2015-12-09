@@ -7,7 +7,7 @@ _tree = {}
 _data = {}
 _curr = ""
 
-QUERIES = {body:'r', head:'r', snip:'r', sect:'j', meta:'j', mime:'m'}
+QUERIES = {body:'r', head:'r', snip:'r', sect:'j', meta:'j', mime:'m', spur:'t'}
 
 TreeStore = _.extend EventEmitter.prototype, {
   addChangeListener: (cb) -> @on 'change', cb
