@@ -144,7 +144,8 @@ module.exports = query {
     if @state.url isnt window.location.pathname
       @reset()
       @setPath (window.tree.fragpath window.location.pathname),false
-      @setState url: window.location.pathname
+      if @isMounted() # XX interval should have been cleared
+        @setState url: window.location.pathname
   
   render: ->
     if @props.meta.anchor is 'none' 

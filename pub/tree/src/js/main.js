@@ -40,7 +40,9 @@ module.exports = {
       if (err != null) {
         throw err;
       }
-      return cb(res);
+      if (cb != null) {
+        return cb(res);
+      }
     });
   }
 };
@@ -295,9 +297,11 @@ module.exports = query({
     if (this.state.url !== window.location.pathname) {
       this.reset();
       this.setPath(window.tree.fragpath(window.location.pathname), false);
-      return this.setState({
-        url: window.location.pathname
-      });
+      if (this.isMounted()) {
+        return this.setState({
+          url: window.location.pathname
+        });
+      }
     }
   },
   render: function() {
@@ -439,7 +443,7 @@ module.exports = function(queries, Child, load) {
 
 
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
-var Edit, TreeActions, a, button, clas, codemirror, div, extras, img, p, pre, query, reactify, recl, ref, rele;
+var Add, Edit, TreeActions, a, button, clas, codemirror, div, extras, img, input, p, pre, query, reactify, recl, ref, rele;
 
 clas = require('classnames');
 
@@ -455,7 +459,7 @@ recl = React.createClass;
 
 rele = React.createElement;
 
-ref = React.DOM, div = ref.div, pre = ref.pre, p = ref.p, img = ref.img, a = ref.a, button = ref.button;
+ref = React.DOM, input = ref.input, div = ref.div, pre = ref.pre, p = ref.p, img = ref.img, a = ref.a, button = ref.button;
 
 extras = {
   spam: recl({
@@ -545,11 +549,56 @@ Edit = query({
     ref1 = this.props.mime, mite = ref1.mite, octs = ref1.octs;
     return rele(codemirror, {
       value: octs,
+      mode: mite,
       readOnly: false,
-      mode: mite
+      autofocus: true
     });
   }
 }));
+
+Add = recl({
+  displayName: "Add",
+  getInitialState: function() {
+    return {
+      edit: false
+    };
+  },
+  onClick: function() {
+    return this.setState({
+      edit: true
+    });
+  },
+  componentDidUpdate: function() {
+    if (this.state.edit) {
+      return $(this.getDOMNode()).focus();
+    }
+  },
+  render: function() {
+    if (!this.state.edit) {
+      return button({
+        onClick: this.onClick
+      }, "Add");
+    } else {
+      return input({
+        type: "text",
+        onKeyDown: (function(_this) {
+          return function(e) {
+            var neu, newPath;
+            if (13 === e.keyCode) {
+              neu = _this.getDOMNode().value;
+              newPath = _this.props.path + "/" + neu;
+              history.pushState({}, "", window.tree.basepath(newPath + "#edit"));
+              TreeActions.saveFile("/" + neu + _this.props.spur, '', function() {});
+              return _this.setState({
+                edit: false
+              });
+            }
+          };
+        })(this)
+      });
+    }
+  }
+});
 
 module.exports = query({
   body: 'r',
@@ -562,8 +611,23 @@ module.exports = query({
   displayName: "Body",
   getInitialState: function() {
     return {
-      edit: false
+      edit: document.location.hash === "#edit"
     };
+  },
+  setEdit: function() {
+    this.hash = document.location.hash;
+    document.location.hash = "#edit";
+    return this.setState({
+      edit: true
+    });
+  },
+  unsetEdit: function() {
+    var ref1;
+    document.location.hash = (ref1 = this.hash) != null ? ref1 : "";
+    this.setState({
+      edit: false
+    });
+    return document.location.reload();
   },
   render: function() {
     var body, className, editButton, extra, onClick, own, ref1;
@@ -584,9 +648,7 @@ module.exports = query({
       editButton = button({
         onClick: (function(_this) {
           return function() {
-            return _this.setState({
-              edit: true
-            });
+            return _this.setEdit();
           };
         })(this)
       }, "Edit");
@@ -597,9 +659,7 @@ module.exports = query({
           var txt;
           txt = $(_this.getDOMNode()).find('.CodeMirror')[0].CodeMirror.getValue();
           return TreeActions.saveFile(_this.props.spur, txt, function() {
-            return _this.setState({
-              edit: false
-            });
+            return _this.unsetEdit();
           });
         };
       })(this);
@@ -616,7 +676,10 @@ module.exports = query({
     }), own ? editButton : void 0, body, extra('next', {
       dataPath: this.props.sein,
       curr: this.props.name
-    }), own ? button({}, "Add") : void 0, extra('footer'));
+    }), own ? rele(Add, {
+      spur: this.props.spur,
+      path: this.props.path
+    }) : void 0, extra('footer'));
   }
 }));
 

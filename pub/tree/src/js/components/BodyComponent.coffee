@@ -8,7 +8,7 @@ TreeActions = require '../actions/TreeActions.coffee'
 
 recl   = React.createClass
 rele   = React.createElement
-{div,pre,p,img,a,button}  = React.DOM
+{input,div,pre,p,img,a,button}  = React.DOM
 
 extras =
   spam: recl
@@ -66,7 +66,28 @@ Edit = query {mime:'m'}, recl
   displayName: "Edit"
   render: ->
     {mite,octs} = @props.mime
-    rele codemirror, {value:octs, readOnly:false, mode:mite}
+    rele codemirror, {value:octs, mode:mite, readOnly:false, autofocus:true}
+    
+Add = recl
+  displayName: "Add"
+  getInitialState: -> edit:false
+  onClick: -> @setState edit:true
+  componentDidUpdate: ->
+    if @state.edit
+      $(@getDOMNode()).focus()
+  render: ->
+    unless @state.edit
+      button {@onClick}, "Add"
+    else
+      input {type:"text",onKeyDown:(e)=>
+        if 13 is e.keyCode
+          neu = @getDOMNode().value
+          newPath = @props.path+"/"+neu
+          history.pushState {}, "", window.tree.basepath newPath + "#edit"
+          TreeActions.saveFile "/"+neu+@props.spur, '', ->
+            # TreeActions.setCurr newPath
+          @setState edit:false
+      } 
 
 module.exports = query {
   body:'r'
@@ -77,7 +98,16 @@ module.exports = query {
   spur:'t'
 }, recl
   displayName: "Body"
-  getInitialState: -> edit:false
+  getInitialState: -> edit: document.location.hash is "#edit"
+  setEdit: ->
+    @hash = document.location.hash
+    document.location.hash = "#edit" # XX generic state<->hash binding
+    @setState edit:true
+  unsetEdit: ->
+    document.location.hash = @hash ? ""
+    @setState edit:false
+    document.location.reload()  # XX sigh
+  
   render: -> 
     className = clas (@props.meta.layout?.split ',')
     own = urb.user and urb.user is urb.ship
@@ -86,14 +116,14 @@ module.exports = query {
     
     unless @state.edit
       body = reactify @props.body
-      editButton = button {onClick: => @setState edit:true}, "Edit"
+      editButton = button {onClick: => @setEdit()}, "Edit"
       
     else
       body = rele Edit, {}
       
       onClick = =>
         txt = $(@getDOMNode()).find('.CodeMirror')[0].CodeMirror.getValue() # XX refs
-        TreeActions.saveFile @props.spur, txt, => @setState edit:false
+        TreeActions.saveFile @props.spur, txt, => @unsetEdit()
       editButton = button {onClick}, "Done"
 
     (div {
@@ -106,6 +136,6 @@ module.exports = query {
       if own then editButton
       body
       extra 'next', {dataPath:@props.sein,curr:@props.name}
-      if own then button {}, "Add"
+      if own then rele Add,{spur:@props.spur, path:@props.path}
       extra 'footer'
     )

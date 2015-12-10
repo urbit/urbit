@@ -20,4 +20,4 @@ module.exports =
   saveFile: (spur, mime, cb) ->
     TreePersistence.put spur, mime, (err,res)->
       if err? then throw err
-      cb res
+      if cb? then cb res
