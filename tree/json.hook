@@ -74,6 +74,6 @@
 [tree .]
 ^-  json
 =+  ^=  schem
-    =+  seh=(fall (~(get by qix.gas) 'q') 'body.r')
+    =+  seh=(fall (~(get by qix.gas) 'q') 'spur.t_mime.m_body.r_kids.name.t')
     ~|(bad-noun/seh ;;(schema (rash seh read-schem)))
 (from-queries bem.gas(s but.gas) (to-queries schem))

@@ -29,7 +29,7 @@ $ ->
   frag = window.tree.fragpath window.location.pathname
 
   TreeActions.setCurr frag
-  TreeActions.loadPath frag,window.tree.body,window.tree.kids
+  TreeActions.loadPath frag,window.tree.data
 
   rend (head {}, ""),$('#nav')[0]
   rend (body {}, ""),$('#cont')[0]

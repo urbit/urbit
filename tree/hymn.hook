@@ -2,19 +2,12 @@
 /?    314
 /-    tree-include
 /=    gas    /$    fuel
-/=    dat    /^    tree-include
-             /:    /===/tree-gen    /%
-             /tree-include/
-::
-/=    kid    /^    (map span tree-include)
-             /:    /===/tree-gen    /%  2    /_
-             /tree-include/
+/=    dat    /:  /%%/    /%  /json/ :: default include
 ::
 !:
 ::::
   ::
 =+  dez=(trip &2:%)
-=+  kids-json=a/(turn (~(tap by kid)) |=([a=span *] (joba %name s/a)))
 =+  aut=(~(has ju aut.ced.gas) %$ (scot %p p.bem.gas))
 ;html
   ;head
@@ -38,9 +31,7 @@
         [;script(type "text/javascript", src "/~/as/own/~/at/home/lib/urb.js");]~
   ==
   ;body
-    ;+  =+  mime=(jobe mite/[%s (moon p.mime.dat)] octs/[%s q.q.mime.dat] ~)  :: XX factor out
-        =+  inject=(jobe kids/kids-json body/body.dat ?.(aut ~ [mime/mime]~))
-        ;script(type "text/javascript"): window.tree = {(pojo inject)}
+    ;script(type "text/javascript"): window.tree = {(pojo (joba %data dat))}
     ;div#nav;
     ;div#cont;
   ==
