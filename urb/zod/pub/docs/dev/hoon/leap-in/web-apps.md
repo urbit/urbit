@@ -66,7 +66,8 @@ producing `%click`.
 
 We also convert from json by parsing a json string with `so:jo`,
 asserting the parsing succeeded with `need`, and asserting the
-result was 'click' with `?>`, which asserts true.
+result was 'click' with `?>`, which asserts that its first child
+is true.
 
 > Note the argument to `++json`is `jon=^json`.  Why `^json`?
 > `++json` shadows the type definition, so if we want to refer to
@@ -132,8 +133,8 @@ the app from the command line.
 
 *Exercise*:
 
-- Modify `sink` from the subcriptions chapter to listen to
-  `click` and print out the subscription updates on the command
+- Modify `:sink` from the subcriptions chapter to listen to
+  `:click` and print out the subscription updates on the command
   line.
 
 That's all that's needed for the back end.  The front end is just

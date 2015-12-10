@@ -10,8 +10,8 @@ more often we want to subscribe to updates from another app.  You
 could build a subscription model out of one-way pokes, but it's
 such a common pattern that it's built into arvo.
 
-Let's take a look at two apps, `source` and `sink`.  First,
-`source`:
+Let's take a look at two apps, `:source` and `:sink`.  First,
+`:source`:
 
 ```
 /?    314
@@ -34,7 +34,7 @@ Let's take a look at two apps, `source` and `sink`.  First,
 --
 ```
 
-And secondly, `sink`:
+And secondly, `:sink`:
 
 ```
 /?    314
@@ -100,13 +100,13 @@ Here's some sample output of the two working together:
 ```
 
 Hopefully you can get a sense for what's happening here.  When we
-poke `sink` with `%on`, `sink` subscribes to `source`, and so
-whenever we poke `source`, `sink` gets the update and prints it
-out.  Then we unsubscribe by poking `sink` with `%off`, and
-`sink` stops getting updates.  We then resubscribe.
+poke `:sink` with `%on`, `:sink` subscribes to `:source`, and so
+whenever we poke `:source`, `:sink` gets the update and prints it
+out.  Then we unsubscribe by poking `:sink` with `%off`, and
+`:sink` stops getting updates.  We then resubscribe.
 
-There's a fair bit going on in this code,  Let's look at `source`
-first.
+There's a fair bit going on in this code,  Let's look at
+`:source` first.
 
 Our definition of `move` is fairly specific, since we're only
 going to sending one kind of move.  The `%diff` move is a
@@ -161,13 +161,13 @@ that means "tell bone `o` this subscription update:  `[%noun
 arg]`".  This is fairly dense code, but what it's doing is
 straightforward.
 
-`source` should now makes sense.  `sink` is a little longer, but
-not much more complicated.
+`:source` should now makes sense.  `:sink` is a little longer,
+but not much more complicated.
 
-In `sink`, our definition of of `++move` is different.  All moves
-start with a `bone`, and we conventionally refer to the second
-half as the "card", so that we can say a move is an action that
-sends a card along a bone.
+In `:sink`, our definition of of `++move` is different.  All
+moves start with a `bone`, and we conventionally refer to the
+second half as the "card", so that we can say a move is an action
+that sends a card along a bone.
 
 We have two kinds of cards here:  we `%peer` to start a
 subscription, and we `%pull` to stop it.  Both of these are
@@ -179,13 +179,13 @@ this, because its semantics are to cancel any subscriptions
 coming over this duct.  If your bone and wire are the same as
 when you subscribed, then the cancellation will happen correctly.
 
-The only state we need for `sink` is a loobean to tell whether
-we're already subscribed to `source`.  We use `available=?`,
+The only state we need for `:sink` is a loobean to tell whether
+we're already subscribed to `:source`.  We use `available=?`,
 where `?` is a boolean (which defaults to true).
 
 In `++poke-noun` we check our input to see if it's `%on` and
 we're available, which means we should subscribe.  If so, we
-produce the move to subscribe to `source`:
+produce the move to subscribe to `:source`:
 
 ```
 [ost %peer /subscribe [our %source] /the-path]
@@ -195,7 +195,7 @@ Also, we set available to false (`|`) with `+>.$(available |)`.
 
 Otherwise, if our input is `%off` and we're already subscribed
 (i.e. `available` is false), then we unsubscribe with from
-`source`:
+`:source`:
 
 ```
 [ost %pull /subscribe [our %source] ~]

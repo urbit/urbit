@@ -25,13 +25,13 @@ Here's `ape/sum.hoon`:
 We can start with `|start %sum`, then run:
 
 ```
-~fintud-macrep:dojo> :switch &atom 5
+~fintud-macrep:dojo> :sum &atom 5
 [%so-far 5]
 >=
-~fintud-macrep:dojo> :switch &atom 2
+~fintud-macrep:dojo> :sum &atom 2
 [%so-far 7]
 >=
-~fintud-macrep:dojo> :switch &atom 15
+~fintud-macrep:dojo> :sum &atom 15
 [%so-far 22]
 >=
 ```
