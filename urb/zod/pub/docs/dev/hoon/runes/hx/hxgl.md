@@ -1,10 +1,9 @@
 haxgal, `#<`, %hxgl
 ============================
 
-Prettyprint `++tape`
+Prettyprint string [`++tape`]()
 
-`#<` is a synthetic rune that slams the gate [`++noah`]() with `p`. `#<`
-is used to produce a [`++tape`]() of the computation passed to it, and
+`#<` is a synthetic rune that calls the function [`++noah`]() with argument `p`. Used to produce a [`++tape`]() of the expression passed to it, and
 is only used in the irregular form.
 
 Produces
@@ -15,7 +14,7 @@ Twig: `[%hxgl p=tusk]`
 Sample
 ------
 
-`p` is a [++tusk]().
+`p` is a [`++tusk`](), a list of [`twig`]().
 
 Tall form
 ---------

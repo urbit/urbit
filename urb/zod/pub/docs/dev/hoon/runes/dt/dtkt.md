@@ -1,12 +1,11 @@
 `.^`
 ====
 
- Generates nock operator `11`, which--in virtual userspace
-nock, [`++mock`]()--loads a file from the global namespace, %clay.
+Nock 11
 
-`.^`, `dotket`, `[%dtkt p=twig]` is a natural rune that generates nock
-operator `11`, which in virtual userspace nock, [`++mock`]() loads a
-file from the global namespace.
+Generates nock operator `11`, which--in virtual userspace
+nock, [`++mock`]()--loads a file from the global namespace, [%clay]().
+
 
 Produces
 --------
@@ -16,7 +15,7 @@ Twig: `[%dtkt p=twig]`
 Accepts
 -------
 
-`p` is a [twig]().
+`p` is a [`++twig`]().
 
 Tall form
 ---------

@@ -1,14 +1,12 @@
 `%_`
 ====
 
-The same as `%=`, except for that the product is cast
-back to the type of `p`. You generally want to use `%_` unless
-you are intentionally trying to change the type.
+`%=`, but product cast to `p`
 
-`%_` is a synthetic rune that evaluates `p` with the changes specified
-in `q`, then casts the product back to the type of `p`. `%_` is used to
-change a batch of [`++wing`]()s all at once, ensuring that the resulting
-product is type checked.
+The same as [`%=`](), except for that the product is cast
+back to the type of `p`. Evaluates `p` with the changes specified in `q`, then casts the product back to the type of `p`. `%_` is used to change a batch of [`++wing`]()s all at once, ensuring that the resulting product is type checked.
+
+You generally want to use `%_` unless you are intentionally trying to change the type.
 
 Produces
 --------
@@ -18,8 +16,8 @@ Twig: `[%cncb p=wing q=tram]`
 Accepts
 -------
 
-`p` is a [`++wing`](), a list of [`++limb`]()s. `q` is a [`++tram`](), a
-list of [`++wing`]()s and twigs.
+`p` is a `++wing`, a list of [`++limb`]()s. `q` is a [`++tram`](), a
+list of key value pairs of [`++wing`]()s to twigs.
 
 Tall form
 ---------
@@ -45,10 +43,10 @@ Examples
 Here we're using `%_` to add 3 to all of the values inside of our shell
 variable `a`.
 
-    /~zod/try=> =a [b='odors' c='twigs' d='tiles']
+    /~zod/try=> =a [b='odors' c='twigs' d='molds']
     changed %a
     /~zod/try=> %_(a b c.a, c d.a, d b.a)
-    [b='twigs' c='tiles' d='odors']
+    [b='twigs' c='molds' d='odors']
 
 In this case we're using `%_` to swap the values of the faces in `a`.
 
@@ -61,7 +59,7 @@ In this case we're using `%_` to swap the values of the faces in `a`.
     (%_(z a 100) 1)
     101
 
-At first we set up a simple gate `z` with a variable, `a` in its
+At first we set up a simple function `z` with a variable, `a` in its
 context. Subsequently we use `%_` to change the value of `a` within the
 context of `z` and compute the output again.
 

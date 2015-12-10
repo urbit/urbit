@@ -15,7 +15,7 @@ Twig: `[%sggl p=$|(term [p=term q=twig]) q=twig]`
 Accepts
 -------
 
-`p` is either a [`++term`]() or a `++term` twig pair. `q` is a [twig]()
+`p` is either a [`++term`]() or a `++term` twig pair. `q` is a twig.
 
 Tall form
 ---------

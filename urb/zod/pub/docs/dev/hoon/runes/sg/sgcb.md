@@ -1,11 +1,10 @@
 `~_`
 ====
 
+Pre-formatted stackframe into stacktrace
+
 Inserts pre-formatted stackframe `p` into the stacktrace of `q`. 
-
-
-`~_` is a synthetic rune that inserts `p`, a trap producing `tank`, in
-the trace of `q`.
+In hoon terminology, inserts `p`, a [trap]() producing a [++`tank`]() (pretty printed text), in the trace of `q`.
 
 Produces
 --------
@@ -15,7 +14,7 @@ Twig: `[%sgcb p=twig q=twig]`
 Accepts
 -------
 
-`p` is a [twig]() `q` is a [twig]()
+`p` is a [`++twig`]() `q` is a twig
 
 Tall form
 ---------

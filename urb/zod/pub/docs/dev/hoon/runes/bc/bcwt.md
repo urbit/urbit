@@ -1,20 +1,19 @@
 `$?` 
 ====
 
-Produce a union between a list of types `p`. The default value (bunt) is the value of the first element.
+Union of types
 
-`$?` produces a fork, called a `%fern`. A `%fern` is a non-empty list of
-cases.
+Produce a union between a non-empty list of [mold]()s `p`. The default value ([bunt]()) is the value of the first element.
 
 Produces
 --------
 
-[Tile](): `[%fern p=[i=tile t=(list tile)]]`.
+A validator function that keeps trying to validate a value using every mold in `p` from left to right. On a success, the value is produced. If no mold in `p` succeeds, the default value of the last element in `p` is produced.
 
 Accepts
 -------
 
-`p` is a [list]() of [tiles]().
+`p` is a [++list]() of mold.
 
 Tall form
 ---------
@@ -34,7 +33,7 @@ Examples
     ++  base  ?([%atom p=odor] %noun %cell %bean %null)     ::  axils, @ * ^ ? ~
 
 `++base`, `?` (the irregular form of `$?`) specifies a list of
-orthoganal cases for the `%axil` tile.
+orthoganal cases for the `%axil` mold.
 
     ~zod/try=> *?(%a %b %c)
     %a

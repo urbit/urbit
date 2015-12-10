@@ -1,14 +1,11 @@
 `%~`
 ====
 
+Call arm in door w/argument
+
 Evaluates the expression addressed at `p` within core
-`q` whose sample (argument) is set to `r`. Used frequently with
-maps and sets, etc.
-
-
-`%~` is a synthetic rune that [pull]()s `p` from the [door]() `q` with
-its sample set to `r`. `%~` is used to produce an arm `p` inside of a
-door `q` with the door's sample set to `r`.
+`q` whose input data ([sample]()) is set to `r`. Used frequently with
+[`++map`]()s and [`++set`]()s, etc.
 
 Produces
 --------

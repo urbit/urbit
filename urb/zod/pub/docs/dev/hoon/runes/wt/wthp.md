@@ -1,7 +1,8 @@
 `?-`
 ====
 
-Switch statement. Different from the traditional switch statement in
+Switch statement.
+Different from the traditional switch statement in
 that it switches on a type instead of a value. The most common type used to
 switch on is the cube, which begins with `%` followed by text.
 

@@ -1,6 +1,7 @@
 `~>`
 ====
 
+Arbitrary hint
 
 `~>` is a natural rune that applies arbitrary hint `p` to `q`.
 
@@ -12,7 +13,7 @@ Twig: `[%sggr p=$|(term [p=term q=twig]) q=twig]`
 Accepts
 -------
 
-`p` is either a [`++term`]() or a `++term` twig pair. `q` is a [twig]()
+`p` is either a [`++term`]() or a term [`++twig`] pair. `q` is a twig.
 
 Tall form
 ---------

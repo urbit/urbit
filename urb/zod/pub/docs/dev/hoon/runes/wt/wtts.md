@@ -5,17 +5,17 @@ Tests whether `q` is of type (mold) `p`.
 
 
 `?=` is a natural rune that produces true if the leg at wing `q` is in
-tile `p`.
+mold `p`.
 
 Produces
 --------
 
-Twig: `[%wtts p=tile q=wing]`
+Twig: `[%wtts p=mold q=wing]`
 
 Sample
 ------
 
-`p` is a [tile](). `q` is a [`++wing`]().
+`p` is a [mold](). `q` is a [`++wing`]().
 
 Tall form
 ---------

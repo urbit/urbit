@@ -1,15 +1,12 @@
 `%.`
 ====
 
-Inverts the order of `%-`, so the argument is the first
+Inverted function call 
+
+Inverts the order of [`%-`](), so the argument is the first
 element and the second element is the function. Exists primarily
 for code readability and organization. See the [backstep
 section]() for more information.
-
-
-`%.` is a synthetic rune that reverses the order of [`%-`](). `%.`
-exists primarily for code readability and organization, see the [style
-guide]().
 
 Produces
 --------
@@ -19,7 +16,7 @@ Twig: `[%cndt p=twig q=twig]`
 Accepts
 -------
 
-`p` and `q` are [twig]()s. `p` is the argument and `q` is the function.
+`p` and `q` are [`++twig`]()s. `p` is the argument and `q` is the function (that's a twig).
 
 Tall form
 ---------

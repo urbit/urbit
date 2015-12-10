@@ -1,8 +1,7 @@
 `:/`
 ====
 
-Convert a string (aka tape) to XML XX
-
+String to XML XX
 
 `:/`, `colfas`, is a synthetic rune that produces `[%$ [%$ p ~] ~]`,
 i.e., `[0 [0 p 0] 0]`.
@@ -15,7 +14,7 @@ Twig: `[%clfs p=twig]`
 Accepts
 -------
 
-`p` is a [twig]()
+`p` is a [`++twig`]()
 
 Tall form
 ---------
@@ -35,4 +34,4 @@ Examples
     ~zod/try=> :/(add 2 2)
     [[%~. [%~. 4] ~] ~]
 
-Wraps twig in `[%$ [%$ .] ~]~`, used for interpolation.
+Wraps `++twig` in `[%$ [%$ .] ~]~`, used for interpolation.

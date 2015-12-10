@@ -1,12 +1,9 @@
 centar, `%*`, %cntr
 ============================
 
-The same as `%~` but can make changes anywhere, not just within the input data (sample). Evaluates the expression `p` within core `q` with changes `r` to the context.
+`%~` call arm from [door]() w/context changes
 
-
-`%*` is a synthetic rune that [pull]()s the wing `p` from a [door]() `q`
-with changes `r`, terminated by `==`. `%*` is used to specify changes in
-the context of a wing when it is pulled.
+The same as `%~` but can make changes anywhere in the [context](), not just within the input data ([sample]()). Evaluates the expression `p` within core `q` with changes `r` to the context.
 
 Produces
 --------

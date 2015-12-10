@@ -7,7 +7,7 @@ whether a clam has succeeded.
 
 
 `?^` is a synthetic rune that evaluates `r` if `p` is equal to the
-[bunt]() for its [tile](), otherwise `q` is evaluated.
+[bunt]() for its [mold](), otherwise `q` is evaluated.
 
 Produces
 --------

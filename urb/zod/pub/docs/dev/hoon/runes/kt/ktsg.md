@@ -1,15 +1,11 @@
 `^~`
 ====
 
+Try executing `p` at compile time
+
 Tries to execute `p` statically at compile time. If this
 fails, `p` remains dynamic. Primarily useful for
 optimization: when a value is static, `^~` can simplify the compilation.
-
-
-`^~` is a natural rune that tries to execute `p` statically at compile
-time; if this fails, `p` remains dynamic. `^~` is primarily useful for
-optimization, when you know that a value is static, or is most likely
-static, `^~` can simplify the compilation.
 
 Produces
 --------
@@ -19,7 +15,7 @@ Twig: `[%ktsg p=twig]`
 Accepts
 -------
 
-`p` is a [twig]().
+`p` is a [`++twig`]().
 
 Tall form
 ---------
@@ -40,6 +36,6 @@ Examples
     [%1 p=42]
 
 Here we use [`++make`]() to examine the nock generated for a particular
-computation. We start with a simple kicked trap, `|-` that just
+computation. We start with a simple kicked trap, `|-`, that just
 generates the static value `42`. When we wrap our `|-` in a `^~` you can
 see that our compilation is much simpler.

@@ -1,37 +1,35 @@
 `$:`
 ====
 
-Mold autocons. Creates a type of an array of types. When used in its irregular form, can accept n children.
-
-`$:` is a mold rune that constructs the mold of a tuple from a
-tuple of molds.
+Tuple of molds
 
 Produces
 --------
 
-[mold](): `[p=mold q=mold]`
+A validator function that validates a tuple of nouns against a tuple of [mold]()s.
 
-Children
--------
+Accepts
+--------
 
-`p` is a [mold](). `q` is a [mold]().
+`p` is a list of molds.
 
 Tall form
 ---------
 
-    $:  p
-        q
+    $:  i.p
+        i.t.p
+        i.t.t.p
     ==
 
 Wide form
 ---------
 
-    $:(p q)
+    $:(i.p i.t.p i.t.t.p)
 
 Irregular form
 --------------
 
-    [p q]
+    {i.p i.t.p i.t.t.p}
 
 Examples
 --------

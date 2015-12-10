@@ -1,24 +1,22 @@
 `|_`
 ====
 
-Core with sample. Similar to `|%`, but also takes input data (aka sample)
-available within the entire core.
+Door: core with sample (input values)
 
-`|_` is similar to `|%`, but defines a sample for the set of arms it
-contains. Moreover, `|_` only accepts [dry or `%elm`]() arms. Put
-simply, type checking on these arms is performed on the input before
-computation. For more on variance, see the [glossary entry]() and the
-examples below.
+Similar to [`|%`](), but also takes input data (aka [sample]())
+available within the entire core. Cores of this type are called doors.
+Moreover, `|_` only accepts [dry or `%elm`]() arms--in other words,
+type checking on these arms is performed on the input before computation.
 
 Produces
 --------
 
-Twig: `[%brcb p=tile q=(map term foot)]`
+Twig: `[%brcb p=twig q=(map term foot)]`
 
 Accepts
 -------
 
-`p` is a [tile](). `q` is a [`map`]() with [`++term`]() keys and
+`p` is a a [mold](). `q` is a [`++map`]() with [`++term`]() keys and
 [`++foot`]() values.
 
 Tall form
@@ -46,7 +44,7 @@ In this example we create a door `mol` that operates on a [`@ud`](),
 `a`. We add two arms to our door, `++succ` and `++prev`, and invoke them
 with the irregular form of [`%~`](). Doors are commonly invoked with
 `%~`, irregular form `~(arm door sample)`, which replaces the door's
-sample and pulls the specified arm.
+sample and calls the specified arm.
 
     /~zod/try=> =kom
                       |_  a=(list)
@@ -71,8 +69,8 @@ sample and pulls the specified arm.
 
 Here we're demonstrating the difference between `|_` and `|/`. We create
 a nearly identical door using both runes, each with an arm that produces
-the tail of the sample, `a`. You can see that our wet gates use the
-sample as a tile to produce well-typed output.
+the tail of the sample `a`. You can see that [wet]() functions use the
+sample as a mold to produce well-typed output.
 
     ++  ne
       |_  tig=@

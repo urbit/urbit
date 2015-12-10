@@ -1,27 +1,21 @@
 `|*`
 ====
 
+Wet function
+
 Similar to `|=` except that it does type checking at
 call time, and that the product type is checked to be the same as
-the input type, rather than the sample tile.
-
-`|*` is a synthetic rune that produces a [wet]() [gate]() with sample
-[`$*(p)`](), arm `q`. A gate is a core with one arm, [`$`](), the empty
-name.
-
-`|*` is similar to a function in the same way that `|=` is, but differs
-in that it does type checking at runtime. With `|*`, the product type is
-checked to be the same as the input type, rather than the sample tile.
+the input type (in other words it's [wet]()), rather than the input ([sample]()) [mold]().
 
 Produces
 --------
 
-Twig: `[%brtr p=tile q=twig]`
+Twig: `[%brtr p=mold q=twig]`
 
 Accepts
 -------
 
-`p` is a [tile](). `q` is a [twig]().
+`p` is a mold. `q` is a [++twig]().
 
 Tall form
 ---------
@@ -44,7 +38,7 @@ Examples
 
 This is a concise way of understanding the difference between `|*` and
 `|=`. We use `%.` in both cases to slam each gate with the sample `'c'`.
-`|=` uses its tile `a=@` to cast `'c'` to an atom (`99` is the ASCII
+`|=` uses its mold `a=@` to cast `'c'` to an atom (`99` is the ASCII
 code for `'c'`). `|*` simply ensures that the product type matches the
 input sample type.
 

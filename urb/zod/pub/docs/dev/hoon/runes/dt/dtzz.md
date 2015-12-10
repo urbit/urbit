@@ -7,11 +7,6 @@ Cube
 `q` and odor `p`, if `q` is an atom. A cube is an atom whose type
 contains only itself.
 
-See also
---------
-
-[`cube`]()
-
 Produces
 --------
 

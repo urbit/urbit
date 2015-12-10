@@ -1,0 +1,159 @@
+I. Things to discuss
+
+Phil:
+
+- we are in need of a separate sail section.
+
+- do we use (or assume that people  words like 'subject'? Confusing to use context and 'context.' See `=:`. Should we use stack?
+
+- what's the best way to explain 'changes to the context' followed by `q` evalauted? `=^`
+- where do we explain backstep.
+
+- how do we explain the type system? We really need to cover
+  that. The ?~ can't find limb $ could be trick for people. 
+
+
+Galen:
+
+- links (glossary)
+
+- Change all mold -> mold and icon -> span 
+
+
+- do we want to include sections on Kingside and Queenside (ie
+
+- needs to be consistency among links to arms--do we use ++ or
+  not?
+
+- probably should go through to check out redundant explanations
+
+- need to go over Produces section for all runes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+II. Runes that still need documenting
+
+  1. $^
+
+  2. $&
+
+  3. make an example that shows $% accepting a function
+  
+  4. finish the |. explanation.
+
+  5. |/
+
+  6. Checkout |^
+
+  7. Checkout |*
+
+  8. :/
+
+  9. #>
+
+  10. #<
+
+  11. ~$
+
+  12.~/ 
+
+  13. ~<   
+
+  14. ;~
+
+  15. !/
+
+  16. !;
+        
+  17. !=
+        
+  18. !?
+
+  19. |_
+  ~+
+
+  ;~
+
+  ?-
+
+  !,
+
+  Anton:
+
+  ;;
+
+  ;*
+
+  smzz
+
+III. Runes to remove
+
+  1. $@
+  2. $!
+  3. %:
+  4. any rune with zy or zz
+  5. ^&
+  6. ;"
+  7. wthz
+
+III. Glossary
+
+  1. span
+  2. mold
+  3. bunt
+  4. twig
+  5. cube.
+  6. leaves.
+  7. reed
+  7. kelps.
+  8. sample.
+  9. dry
+  10. wet
+  11. iron
+  12. gold
+  13. lead, etc.
+  13.5 wet
+  13.55 ash
+  14. core?
+  15. gate (example of |%)
+  16. door
+  17. trap
+  18. wing
+  19. limb
+  20. tram
+  21. inline
+  22. backstep
+  23. weed
+  24. arm
+  25. head
+  26. tail
+
+
+IV. Better examples wanted for
+
+  1. $|
+  2. $: (we should give examples for all of those special cases
+  so that we don't have to describe them :p).
+  3. $&

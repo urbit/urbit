@@ -1,16 +1,19 @@
 `$*` 
 ====
 
-Default value
+Bunt (default value)
 
-`$*`, is a synthetic rune that produces the [bunt]() (default value) of
-a tile as a compile-time constant if possible. If it is not possible,
-then it is produced dynamically.
+Produces the default value ([bunt]()) of [mold]() `p`. Does so as a compile-time constant if possible. If not possible, then it is produced dynamically.
 
 Produces
 --------
 
-[Twig](): `[%bctr p=tile]`
+The default value (bunt) of the mold `p`.
+
+Accepts
+-------
+
+A mold `p`.
 
 Tall form
 ---------

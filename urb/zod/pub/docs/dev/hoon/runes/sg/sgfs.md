@@ -1,10 +1,10 @@
 `~/`
 ====
 
+XX
 
-`~/` is a synthetic rune that implements one common case - a gate arm in
-a book, i.e. a library function - of the [`~%`]() jet hint. `~/` assumes
-the parent axis is `7` and there are no children.
+`~/` is a synthetic rune that implements one common case - a function arm in
+a [book](), i.e. a library function - of the [`~%`]() [jet]() hint. Assumes the parent axis is `7` and that there are no children.
 
 Produces
 --------
@@ -14,7 +14,7 @@ Twig: `[%sgfs p=term q=twig]`
 Accepts
 -------
 
-`p` is a [term](). `q` is a [twig]().
+`p` is a [`++term`](). `q` is a [`++twig`]().
 
 Tall form
 ---------

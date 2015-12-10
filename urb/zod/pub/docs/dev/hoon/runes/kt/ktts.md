@@ -16,7 +16,7 @@ Twig: `[%ktts p=toga q=twig]`
 Accepts
 -------
 
-`p` is a [`++toga`](). `q` is a [twig]().
+`p` is a `++toga`. `q` is a [`++twig`]().
 
 Tall form
 ---------

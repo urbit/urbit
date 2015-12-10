@@ -1,13 +1,9 @@
 `.=`
 ====
 
-Nock operator 5: tests two nouns `p` and
-`q` for equality, producing a boolean.
+Test equality
 
-
-`.=` is a natural rune that applies Nock 5 (equality) to determine if
-the products of p and q are equivalent, and produces a loobean.
-
+Nock operator 5: tests two nouns `p` and `q` for equality, producing a boolean.
 
 Produces
 --------
@@ -17,7 +13,7 @@ Twig: `[%dtts p=twig q=twig]`
 Accepts
 -------
 
-`p` is a [twig](). `q` is a [twig]().
+`p` is a [`++twig`](). `q` is a twig.
 
 Tall form
 ---------
@@ -70,6 +66,6 @@ following cases serve to show similar implicit down-casts.
     'yes a'
 
 In common practice `.=` is often used inside of [`?`]() runes, where
-switching on equality is needed. Here we construct a simple gate to test
-if our sample is equal to `'a'` and produce either `'yes a'` or
+switching on equality is needed. Here we construct a simple function to test
+if our argument is equal to `'a'` and produce either `'yes a'` or
 `'not a'` accordingly.

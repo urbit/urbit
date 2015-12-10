@@ -1,18 +1,10 @@
 `|%`
 ====
 
-Constructs a generic core with n named expressions closed with `--`. Cores are
-similar to an object with named properties (aka arms) that can contain either
-functions or data.
+Generic core
 
-
-`|%` is a natural rune that produces a [core](). `|%` takes a list of
-[arm]()s . The list must be closed with a `--`.
-
-The product of `|%` is similar to an object with named properties
-containing either functions or data. A `|%` accepts both [dry or
-`%elm`]() and [wet or `%ash`]() arms. For more about variance, see the
-[glossary]().
+Constructs a generic core with n named expressions, closed with `--`. Cores are
+similar to an object with named properties (aka [arms]()) that can contain either functions or data. Accepts both [dry or `%elm`]() and [wet or `%ash`]() arms.
 
 Produces
 --------
@@ -22,7 +14,7 @@ Twig: `[%brcn p=(map term foot)]`
 Accepts
 -------
 
-`p` is a [`map`]() with [`++term`]() keys and [`++foot`]() values, which
+`p` is a [`++map`]() with [`++term`]() keys and [`++foot`]() values, which
 are called arms.
 
 Tall form
@@ -49,7 +41,7 @@ Examples
     (g.a 1)
     101
 
-Here we create a core with two arms `n`, a constant and `g`, a simple
+Here we create a core with two arms `n`, a constant, and `g`, a simple
 function. `g` adds our constant `n` to whatever is passed to it.
 
     /~zod/try=> 
@@ -67,7 +59,7 @@ function. `g` adds our constant `n` to whatever is passed to it.
     26
 
 Extending our previous example a bit, we nest a core inside our arm `l`
-and make our [gate]() `g` a bit more complicated. `g` now computes the
+and make our function `g` a bit more complicated. `g` now computes the
 sum of its argument and the arm `r` inside `l`, and divides that by `s`
 inside `l`.
 
@@ -119,5 +111,5 @@ shows, `|%` is also used to encapsulate arms that perform calculations.
           --
 
 [`++si`](), found in `hoon.hoon`, uses `|%` to create a core whose arms
-contain gates used to calculate with signed integers, [`@s`](). In this
-case our core is made up entirely of gates.
+contain functions used to calculate with signed integers, [`@s`](). In this
+case our core is made up entirely of functions.

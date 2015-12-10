@@ -8,12 +8,12 @@ wuttaz, `?=`, %wttz
 Produces
 --------
 
-Twig: `[%wttz p=tile q=tiki]`
+Twig: `[%wttz p=mold q=tiki]`
 
 Sample
 ------
 
-`p` is a [tile](). `q` is a [`++tiki`]().
+`p` is a [mold](). `q` is a [`++tiki`]().
 
 Tall form
 ---------

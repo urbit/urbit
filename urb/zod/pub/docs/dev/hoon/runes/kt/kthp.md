@@ -1,25 +1,19 @@
 `^-`
 ====
 
-Casts `q` to the type (aka mold) of `p`. The same as
-`^+`, except for that `q` is actually cast to the bunt of `q`
-(`$,(q)`). The easiest way to make a basic cast. Used when you
-already have already created a validator function (clam) from a
-type (mold). 
+Cast
 
-
-`^-` is a synthetic rune that casts `q` to `~(bunt al p)`, i.e. the icon
-of `p`.
+Casts `q` to the [span]() of `p`. The same as `^+`, except for that `q` is actually cast to the bunt of `q` (`$,(q)`). The easiest way to make a basic cast. Used when you already have already created a validator function ([mold]()) for a span.
 
 Produces
 --------
 
-Twig: `[%kthp p=tile q=twig]`
+Twig: `[%kthp p=mold q=twig]`
 
 Accepts
 -------
 
-`p` is a [tile](). `q` is a [twig]().
+`p` is a mold. `q` is a [`++twig`]().
 
 Tall form
 ---------
@@ -48,7 +42,7 @@ Examples
     'a'
 
 Here we see a straightforward use of `^-` in both irregular and wide
-form, simply casting an atom to a char. `97` is the ASCII code for
+forms, simply casting an atom to a `@t`. `97` is the ASCII code for
 `'a'`.
 
     /~zod/try=> =cor  |=  a=@
@@ -58,7 +52,7 @@ form, simply casting an atom to a char. `97` is the ASCII code for
     /~zod/try=> (cor 97)
     [~ ~.a]
 
-In this case we see a very common use of `^-`, at the top of a [gate]().
+In this case we see a very common use of `^-`, at the top of a function.
 This pattern is considered good hoon style for two reasons: it gives the
 reader a clear pattern for understanding what your code produces, and it
 helps ensure type-safety.

@@ -1,0 +1,123 @@
+Still to do
+-----------
+
+- switch out pull to call
+- switch out function for gate
+- put back in the zay runes
+- put in `` in all [++*]()
+
+
+Conventions
+-----------------
+
+1. if there's a word that's not immediately clear it should be linked to, but only the first instance (per definition).
+
+2. when you're linking to a library function, include the ++.
+
+  - when you've already linked to a name in the library, the next instance of that name on that page should not have a prepended ++ nor any sort of link or demarcation (``).
+
+3. when linking to the glossary, ++ should be omitted.
+
+4. mold and span should be linked to and immediately explained somewhere, but everything else should be explained in plain english.
+
+5. the only hoon words that should be used instead of commonspeak are those that *really* have the potential to confuse people. As of now:
+
+  - span
+  - mold
+
+For all other hoon words, give an english explanation and then use the hoon word in parens after. The one exception to this is in the one-liner descriptions where it's impossible to use regular english to concisely explain a concept. For example, $| is unbunt.
+
+
+Checklist for every rune
+------------------------
+
+  - one liner
+
+  - one or two explanations, depending on whether they're redundant. In other words, does longform description make sense?
+  
+  - ensure it's properly formatted
+
+  - examples are good
+
+
+Words for glossary (or that just need to be documented somewhere)
+-----------------------------------------------------------------
+
+1. mold
+2. span
+3. head
+4. tail
+5. cube
+6. twig
+7. face
+8. term
+9. dry vs elm
+10. wet vs ash
+11. door
+12. drap
+13. $
+14. book
+15. sample
+16. context
+17. backstep
+18. all odors
+19. cons
+20. atom
+21. jet
+22. hint
+
+General things that need attention
+----------------------------------
+
+1. Don't know if the 'Produces' section for the runes listed below are actually helpful. If it's not, what would be helpful here?
+
+  - |
+
+2. I cleaned up the # runes a little bit but need someone to go over the entirety of both of those pages.
+
+3. In the ^ section, I'm not sure my language is 100% correct. For example: 'cast q to the type of p'. Should I say this, or should I say span of p, (or even mold?). To be safe, please checkout all of the descriptions in this seciton.
+
+4. While i did clean it up a little, the entirety of the ~ section should be checked by someone more qualified.
+
+  - ~/ needs an explanation
+  - not sure ~= one-liner is good enough.
+  - ~% needs an explanation for p thru s
+  - p in ~& is confusing, because we say it's a @ud, but in all the examples its a number of >.
+
+
+Specific things that need to be added or checked out
+----------------------------------------------------
+
+0. Don't know which mold words are going away (%reed, etc)--someone else will have to take care of that.
+
+1. $: needs more about how it validates tuples that have some matching cases. Examples should also be used to clarify.
+
+2. Examples for $&
+
+3. Look at the irregular form portion of $=; is the 'note' correct?
+
+4. Please checkout my $= description, not sure if it's entirely accurate.
+
+5. In the 'accepts' section of |_, I say that p is a mold, because that's what the person needs to input. However, I believe the answer that is *actually* correct is that 'p is a twig that produces a mold'. Can't make the call here.
+
+6. I feel like we should highlight natural runes in a different color.
+
+7. Please checkout the definition of |.
+
+8. See the 'XX' in |/.
+
+9. Don't know what a book is please checkout |^
+
+10. Need help with `:/`
+
+11. We don't still use `%:`, do we
+
+12. checkout
+
+13. can we get rid of ^&. If not, please check it out.
+
+14. Not sure if my ^. explanation is correct.
+
+15. Fill in the XX in ^?. Basically, need an explanation when it's useful. think i get it but am not sure.
+
+16. Checkout the explanation of tanks in ~_. Not sure if it's correct.

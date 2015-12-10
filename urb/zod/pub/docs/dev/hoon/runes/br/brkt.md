@@ -1,14 +1,11 @@
 `|^`
 ====
 
-Similar to `|-` except that it can contain internal arms.
+Same as `|-` except that it can contain internal arms.
 
-`|^` is a synthetic rune that produces and then kicks a [`%gold`]()
+`|^` is a synthetic rune that produces and then calls a [`%gold`]()
 [book]() with sample `p` as a [`%$(p)`](), and a list of [arm]()s `q`.
-The list must be closed with a `--`.
-
-`|^` is similar to `|-`, but differs in that it can contain internal
-arms.
+`q` must be closed with a `--`.
 
 Produces
 --------
@@ -18,7 +15,7 @@ Twig: `[%brkt p=twig q=(map term foot)]`
 Accepts
 -------
 
-`p` is a [twig](). `q` is a [`map`]() with [`++term`]() keys and
+`p` is a [++twig](). `q` is a [`map`]() with [`++term`]() keys and
 [`++foot`]() values, which are called arms.
 
 Tall form
@@ -84,5 +81,5 @@ commonly used inside another gate or core.
       --
     ::
 
-[`++mum`]() is a hashing gate, which uses two helper arms to computes
+[`++mum`]() is a hashing gate, which uses two helper arms to compute
 its results. The `|^` at the top performs the computation.

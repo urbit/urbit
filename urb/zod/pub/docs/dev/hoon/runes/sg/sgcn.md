@@ -1,10 +1,9 @@
 `~%`
 ====
 
+Register jet
+
 Registers a jet in core `s` so that it can be called when that code is run.
-
-
-`~%` is a synthetic rune, identifies a core for specific optimization.
 
 Produces
 --------
@@ -14,8 +13,8 @@ Twig: `[%sgcn p=term q=twig r=tyre s=twig]`
 Accepts
 -------
 
-`p` is a [`++term`]() `q` is a [twig]() `r` is a [`++tyre`]() `s` is a
-[twig]()
+`p` is a [`++term`]() `q` is a [`++twig`]() `r` is a [`++tyre`]() `s` is a
+twig.
 
 Tall form
 ---------

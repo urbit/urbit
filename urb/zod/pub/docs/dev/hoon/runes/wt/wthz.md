@@ -9,7 +9,7 @@ case in `q` for the actual type of `p`.
 Produces
 --------
 
-[Twig or tile]
+[Twig or mold]
 
 Sample
 ------

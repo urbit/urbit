@@ -1,13 +1,11 @@
 `^|`
 ====
 
-Converts a core to a core whose context is unreadable. Useful in
+Make core context unreadable
+
+Converts a core to a core whose [context]() is unreadable. Useful in
 preventing type fails when replacing one core with one context
-with another core with a different context.
-
-
-`^|` is a natural rune that converts a [`%gold`]() core into an
-[`%iron`]() core.
+with another core with a different context. In hoon-specific terminonlogy, `^|` is a natural rune that converts a [`%gold`]() core into an [`%iron`]() core.
 
 Produces
 --------
@@ -17,7 +15,7 @@ Twig: `[%ktbr p=twig]`
 Accepts
 -------
 
-`p` is a [twig]().
+`p` is a [`++twig`]().
 
 Tall form
 ---------
@@ -45,6 +43,4 @@ Examples
     ! exit
 
 Here we crete a simple gate and assign it to the shell variable `cor`.
-We can examine the sample of `cor` with `+<` to produce `a=0`. Assigning
-a new shell variable, `iro` as the `^|` of `cor` we can no longer peek
-in to its subject.
+We can examine the sample of `cor` with `+<` (the [head]() of the [tail]()) to produce `a=0`. Assigning a new shell variable, `iro` as the `^|` of `cor` we can no longer peek in to its subject.

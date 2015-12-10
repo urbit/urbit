@@ -1,23 +1,19 @@
 `$_`
 ====
 
-Uses a twig `p` to produce a type (mold) that is the same as the
-default type (span) of `p`, except for that the default value
-(bunt) of the type produced is the value of `p`, rather than the
-standard default value.
+Unbunt (any noun to specific value)
 
-`$_` produces a mold-by-example, called a `%weed`. A `%weed` contains
-the twig used to make the example.
+Uses a [++twig]() `p` to produce a [mold]() that takes an arbitrary noun and produces the value of `p`. Used when you want the default value of a mold to be anything other than the standard default value ([bunt]()).
 
 Produces
 --------
 
-Mold: `[%weed p=twig]`
+A validator function that takes an arbitrary noun and produces the value of `p`.
 
 Accepts
 -------
 
-`p` is a [mold]().
+`p` is a twig.
 
 Tall form
 ---------
@@ -40,11 +36,11 @@ Examples
     ~zod/try=> *_12
     12
     ~zod/try=> *@
-    12
+    0
     ~zod/try=> :type; *_12
     12
     @ud
     ~zod/try=> ^-(_(add 2 2) 'a')
     97
 
-Here, see how the default value of `_12` is 12, whereas the default value of `@`--the type (span) of `12`--is `0`.
+Here, see how the default value of `_12` is 12, whereas the default value of `@`--the type ([span]()) of `12`--is `0`.

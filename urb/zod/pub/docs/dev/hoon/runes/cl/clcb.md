@@ -1,8 +1,9 @@
 `:_`
 ====
 
-Construct an inverted tuple of two elements `a` and `b`. Exists primarily
-for code readability and organization.
+Inverted tuple of `p` `q`
+
+Exists for code readability and organization. See the [backstep]() convention.
 
 Produces
 --------
@@ -12,7 +13,7 @@ Twig: `[%clcb p=twig q=twig]`
 Accepts
 -------
 
-`p` is a [twig](). `q` is a [twig]().
+`p` is a [++twig](). `q` is a twig.
 
 Tall form
 ---------

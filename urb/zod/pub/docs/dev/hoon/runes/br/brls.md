@@ -1,29 +1,20 @@
 `|+`
 ====
 
-Similar to `|=`, but differs in that its sample cannot be read. It can
-be thought of as similar to a private function. XX not private
+Function with unreadable sample
 
-
-`|+` is a synthetic rune that produces a [dry]() [`%iron`]() [gate]()
-with sample [`$*(p)`]() and [arm]()s `q`. `|+` is similar to `|=`, but
-differs in that its sample cannot be read. It can be thought of as
-similar to a private function.
-
-See also
---------
-
-bartis, `|=`, %brts
+`|+` is a synthetic rune that produces a [dry]() [`%iron`]() function
+with argument (aka [sample]()) [`$*(p)`]() and [arm]()s `q`. `|+` is similar to `|=`, but differs in that its input (sample) cannot be read and thus cannot interfere with the type system.
 
 Produces
 --------
 
-Twig: `[%brls p=tile q=twig]`
+Twig: `[%brls p=mold q=twig]`
 
 Accepts
 -------
 
-`p` is a [tile](). `q` is a [twig]().
+`p` is a [mold](). `q` is a [`++twig`]().
 
 Tall form
 ---------
@@ -46,9 +37,7 @@ Examples
     ~zod/try=> +<:|=(a=@ a)
     a=0
 
-Here we're trying to read the sample, using `+<` of two different kinds
-of gates. With `|+` you can see we cause an error, whereas with `|=` our
-default sample is `a=0`.
+Here we're trying to read the sample, using the [head]() of the [tail]() of two different kinds of functions. With `|+` you can see we cause an error, whereas with `|=` our default sample is `a=0`.
 
     ~zod/try=> %.(20 |+(a=@ a))
     20

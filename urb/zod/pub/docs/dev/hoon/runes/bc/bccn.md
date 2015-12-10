@@ -1,22 +1,19 @@
 `$%` 
 ====
 
-Produces the type of the tagged union of a list of cases that are key-value
-pairs ([%leave]()s) whose key must be a [%cube]().
+Tagged union
 
-`$%` is a tile rune that produces a [`%kelp`](), the tile of the
-discriminated union. `$%` takes a list of lines which are labeled cases,
-called fronds, closed by `==`. Commonly used for pattern matching.
+Produces a [mold]() of a tagged union of a list of case pairs.
 
 Produces
 --------
 
-[mold](): `[%kelp p=[i=line t=(list line)]]`
+A validator function that uses the value's [head]() as a tag to select a mold validate the tail of the value.
 
 Accepts
 -------
 
-`p` is a [`++list`]() of [`++line`]()s.
+A list of cells of molds whose heads must be a [cube]().
 
 Tall form
 ---------

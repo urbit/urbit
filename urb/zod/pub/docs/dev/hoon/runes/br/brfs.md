@@ -1,29 +1,23 @@
 `|/`
 ====
 
+`|_` with well typed output
+
 Similar to `|_` except that it takes and produces well-typed output. XX
 
 `|/` is a synthetic rune that produces a [`%gold`]() [door]() with
-sample `[%bctr p]` and list of [arm]()s `q`. The list of arms must be
+[sample]() `[%bctr p]` and list of  [wet or %ash]() [arm]()s `q`. The list of arms must be
 closed with a `--`.
-
-`|/` is similar to `|_` in that it accepts a sample for the set of arms
-, but differs in that it accepts [wet or `%ash`]() arms.
-
-See also
---------
-
-[barcab, `|_`, `%brcb`]() [barcen, `|%`, `%brcn`]()
 
 Produces
 --------
 
-Twig: `[%brfs p=tile q=(map term foot)]`
+Twig: `[%brfs p=mold q=(map term foot)]`
 
 Accepts
 -------
 
-`p` is a tile. `q` is a [`map`]() with [`++term`]() keys and
+`p` is a [mold](). `q` is a [`++map`]() with [`++term`]() keys and
 [`++foot`]() values.
 
 Tall form
@@ -75,7 +69,7 @@ divides our sample by two, the other divides by two.
 Here we're demonstrating the difference between `|_` and `|/`. We create
 a nearly identical door using both runes, each with an arm that produces
 the tail of the sample, `a`. You can see that our wet gates use the
-sample as a tile to produce well-typed output.
+[sample]() as a mold to produce well-typed output.
 
     ++  by                                                  ::  map engine
           ~/  %by
@@ -89,7 +83,7 @@ sample as a tile to produce well-typed output.
             &
           ?&((b q.n.a) $(a l.a) $(a r.a))
 
-All of the container engines in `hoon.hoon` use `|/` to set up the tile
+All of the container engines in `hoon.hoon` use `|/` to set up the mold
 for their operations. In `++by`, the map engine, `|/` creates a door
 that takes a map that is passed to its arms. See more about using `++by`
 in the [library]().

@@ -11,12 +11,12 @@ available/pushes it onto `q`.
 Produces
 --------
 
-Twig: `[%tsbr p=tile q=twig]`
+Twig: `[%tsbr p=mold q=twig]`
 
 Accepts
 -------
 
-`p` is a [tile](). `q` is a [twig]().
+`p` is a [mold](). `q` is a [twig]().
 
 Tall form
 ---------
