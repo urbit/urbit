@@ -16,12 +16,12 @@
     %-  cu  :_  (ar a)
     ~(gas in *(set __((need *a))))
   ++  ot
-    |*  a=(pole ,[@tas fist])
-    |=  b=json
+    |*  a+(pole {@tas fist})
+    |=  b+json
     %.  ((^ot a) b)
     %-  slog
     ?+  b  ~
-        [%o *] 
+        {$o *} 
       %+  murn  `(list {@tas fist})`a
       |=  [c=term d=fist]  ^-  (unit tank)
       =+  (~(get by p.b) c)

@@ -20,7 +20,7 @@
   ==
 ++  react-attrs
   ~+  ^-  (map term cord)
-  %-  mo  ^-  (list ,[term cord])
+  %-  mo  ^-  (list {term cord})
   :-  [%class 'className']
   =-  (rash - (more next (cook |=(a=tape [(cass a) (crip a)]) (star alf))))
   '''
@@ -38,16 +38,17 @@
   '''
 ++  react-vale
   ~(has in react-elems)
+::
 ++  react-to-json
-  |=  src=manx  ^-  json
-  ?:  ?=(_:/(**) src)
+  |=  src+manx  ^-  json
+  ?:  ?=(__(:/(**)) src)
     (jape v.i.a.g.src)
   =+  atr=(mo a.g.src)
   ?:  (~(has by atr) [%urb %codemirror])
-    ?>  ?=([[%pre *] _:/(**) ~] src)
+    ?>  ?=({{$pre *} __(:/(**)) $~} src)
     $(src ;codemirror(value "{v.i.a.g.i.c.src}");)
   ?:  (~(has by atr) [%urb %exec])           ::  runnable code attribute tag
-    ?>  ?=([[%pre *] _:/(**) ~] src)                  ::  verify its only a text node
+    ?>  ?=({{$pre *} __(:/(**)) $~} src)      ::  verify its only a text node
     =*  code  v.i.a.g.i.c.src
     %_    $
         src
@@ -56,7 +57,7 @@
       =+  claz=?:(-.result "rancode" "failedcode")
       ;div(class "{claz}")
         ;pre:"{code}"
-        ;+  ?:  ?=(& -.result)
+        ;+  ?:  ?=($& -.result)
               ;code:"{~(ram re (sell p.result))}"
             ;pre
               ;div:"error"
@@ -70,7 +71,7 @@
     c/a/(turn c.src ..$)
     gn/s/(mane-to-cord n.g.src)
     =<  ga/(jobe (turn a.g.src .))
-    |=  [a=mane b=tape]  ^-  [cord json]
+    |=  {a+mane b+tape}  ^-  {cord json}
     :_  (jape b)
     ?^  a  (mane-to-cord a)
     (fall (~(get by react-attrs) a) a)
@@ -79,16 +80,16 @@
 ++  mane-to-cord  |=(a=mane `cord`?@(a a (rap 3 -.a ':' +.a ~)))
 ::  generates React javascript  XX deprecated
 ++  react-to-tape                                    
-  |=  src=manx  ^-  tape
+  |=  src+manx  ^-  tape
   ?:  (~(has by (mo a.g.src)) [%urb %codemirror])
-    ?>  ?=([[%pre *] _:/(**) ~] src)
+    ?>  ?=({{$pre *} __(:/(**)) $~} src)
     $(src ;codemirror(value "{v.i.a.g.i.c.src}");)
   ?:  (~(has by (mo a.g.src)) [%urb %exec])           ::  runnable code attribute tag
-    ?>  ?=([[%pre *] _:/(**) ~] src)                  ::  verify its only a text node
+    ?>  ?=({{$pre *} __(:/(**)) $~} src)     ::  verify its only a text node
     =*  code  v.i.a.g.i.c.src
     =+  ^=  result
       (mule |.((slap !>(.) (ream (crip code)))))      ::  compile and run safely
-    ?:  ?=(%.y -.result)                              ::  it was ok
+    ?:  ?=($.y -.result)                              ::  it was ok
         =+  ^=  new
           ;div(class "rancode")
                 ;pre:"{code}"
@@ -111,18 +112,18 @@
   ;:  weld
     "React.createElement("
       =*  tan  n.g.src
-      ?^  tan  !!                                       ::  namespaces unsupported
+      ?^  tan  !!                           ::  namespaces unsupported
       ?:  (react-vale tan)
         "'{(trip tan)}'"
       (trip tan)
     ", "
       =-  (pojo (jobe (turn a.g.src -)))
-      |=  [a=mane b=tape]
+      |=  {a+mane b+tape}
       =.  a  ?+(a a %class 'className')
       ?^(a !! [a (jape b)])
     ", "
       =<  ~(ram re %rose [", " "[" "]"] (turn c.src .))
-      |=  a=manx
+      |=  a+manx
       ?:  ?=(_:/(**) a)
         leaf/(pojo (jape v.i.a.g.a))
       leaf/^$(src a)

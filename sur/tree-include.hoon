@@ -1,7 +1,7 @@
 |-
-$:  body=json
-    head=json
-    snip=json
-    meta=json
-    sect=json
+_:  body+json
+    head+json
+    snip+json
+    meta+json
+    sect+json
 ==
