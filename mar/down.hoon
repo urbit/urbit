@@ -8,12 +8,12 @@
 ::::
   ::
 [markdown .]
-|_  don=down
+|_  don+down
 ++  grab                                                ::  convert from
   |%
   ++  noun  down                                        ::  clam from %noun
   ++  md
-    |=  src=@t
+    |=  src+@t
     =+  [atr mud]=(parse:frontmatter (lore src))
     [[%meta atr] (mark:down-jet mud)]
   --

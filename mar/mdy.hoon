@@ -4,7 +4,7 @@
 /?  314
 /+  frontmatter
 !:
-|_  [atr=(map cord cord) mud=@t]
+|_  {atr+(map cord cord) mud+@t}
 ++  grow
   |%
   ++  front  atr
@@ -14,7 +14,7 @@
   --
 ++  grab
   |%
-  ++  noun  ,[(map cord cord) @t]
+  ++  noun  {(map cord cord) @t}
   ++  md  (cork lore txt)
   ++  txt  parse:frontmatter
   --

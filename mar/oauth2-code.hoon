@@ -4,11 +4,11 @@
   ::
 /?  310
 !:
-|_  cod=cord
+|_  cod+cord
 ::
 ++  grab                          ::  converter arm
   |%
-  ++  noun  ,@t                   ::  clam from noun
+  ++  noun  @t                    ::  clam from noun
   ++  json  (cork so:jo need)     ::  (need (so:jo jon))
   --
 --

@@ -3,17 +3,17 @@
   ::
 /?  314
 !:
-|_  own=mime
+|_  own+mime
 ++  grab                                                ::  convert from
   |% 
   ++  noun  mime                                        ::  clam from %noun
-  ++  tape  |=(a=_"" [/application/x-urb-unknown (tact a)])
+  ++  tape  |=(a+__("") [/application/x-urb-unknown (tact a)])
   --
 ++  grad
   |%
   ++  form  %mime
   ++  diff  |=(mime +<)
   ++  pact  |=(mime +<)
-  ++  join  |=([mime mime] `(unit mime)`~)
+  ++  join  |=({mime mime} `(unit mime)`~)
   --
 --

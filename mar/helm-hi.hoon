@@ -2,11 +2,11 @@
 ::::  /hoon/helm-hi/mar
   ::
 /?  314
-|_  txt=cord
+|_  txt+cord
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun  ,@t                                         ::  clam from %noun
+  ++  noun  @t                                          ::  clam from %noun
   ++  json  (cork so:jo need)
   --
 ++  grow

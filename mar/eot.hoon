@@ -5,7 +5,7 @@
   ::
 ::::  compute
   ::
-|_  otf=@
+|_  otf+@
 ::
 ++  grow                                                ::  convert to
   |%
@@ -14,8 +14,8 @@
   --
 ++  grab
   |%
-  ++  mime  |=([p=mite q=octs] q.q)
-  ++  noun  ,@
+  ++  mime  |=({p+mite q+octs} q.q)
+  ++  noun  @
   --
 ++  grad  %mime
 --

@@ -7,7 +7,7 @@
 ::::
   ::
 [. react]
-|_  own=manx
+|_  own+manx
 ::
 ++  grow                                                ::  convert to
   |%
@@ -19,5 +19,5 @@
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  manx                                ::  clam from %noun
-          ++  elem  |=  a=manx  a
+          ++  elem  |=  a+manx  a
 --        --

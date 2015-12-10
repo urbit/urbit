@@ -9,8 +9,8 @@
   --
 ++  grab
   |%
-  ++  mime  |=([p=mite q=octs] (,@t q.q))
-  ++  noun  ,@t
+  ++  mime  |=({p+mite q+octs} (@t q.q))
+  ++  noun  @t
   --
 ++  grad  %mime
 --

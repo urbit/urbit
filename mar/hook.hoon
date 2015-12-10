@@ -40,8 +40,8 @@
   --
 ++  grab
   |%                                            ::  convert from
-  ++  mime  |=([p=mite q=octs] q.q)
-  ++  noun  ,@t                                 ::  clam from %noun
+  ++  mime  |=({p+mite q+octs} q.q)
+  ++  noun  @t                                  ::  clam from %noun
   ++  txt
     |=  wan=wain
     =+  (role wan)

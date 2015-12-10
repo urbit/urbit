@@ -6,7 +6,7 @@
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun  ,@t                                         ::  clam from %noun
+  ++  noun  @t                                          ::  clam from %noun
   ++  json  (cork so:jo need)
   --
 --

@@ -4,11 +4,11 @@
   ::
 /?  310
 !:
-|_  [tok=@t ref=@t]
+|_  {tok+@t ref+@t}
 ::
 ++  grab                          ::  converter arm
   |%
-  ++  noun  ,[@t @t]              ::  clam from noun
+  ++  noun  {@t @t}               ::  clam from noun
   ++  json  (corl need (ot 'access_token'^so 'refresh_token'^so ~):jo)
   --
 --

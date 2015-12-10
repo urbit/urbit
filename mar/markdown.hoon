@@ -13,8 +13,8 @@
   --
 ++  grab
   |%
-  ++  mime  |=([p=mite q=octs] q.q)
-  ++  noun  ,@t
+  ++  mime  |=({p+mite q+octs} q.q)
+  ++  noun  @t
   ++  md  |=(@t +<)
   ++  txt
     |=  wan=wain

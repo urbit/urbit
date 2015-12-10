@@ -4,7 +4,7 @@
 /?  314
 :: /=  dep  /$  |=([^ but=path] `@uvH`?>(?=([%dep @ ~] but) (slav %uv i.t.but)))
 !:
-|_  own=manx
+|_  own+manx
 ::
 ++  grow                                                ::  convert to
   |%
@@ -15,7 +15,7 @@
   |%                                                    ::  convert from
   ++  noun  manx                                        ::  clam from %noun
   ++  hymn                                              ::  inject into %hymn
-    |=  old=manx  old                 ::  moved to %eyre
+    |=  old+manx  old                 ::  moved to %eyre
     :: ~|  hymn//mal-formed
     :: ::  ~|  old
     :: ?>  ?=([[%html ~] [[%head ~] *] [[%body ~] ^] ~] old) ::  XX static

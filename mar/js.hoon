@@ -2,7 +2,7 @@
 ::::  /hoon/core/js/mar
   ::
 !:
-|_  mud=@
+|_  mud+@
 ++  grow
   |%
   ++  mime  [/application/javascript (taco (,@t mud))]
@@ -13,7 +13,7 @@
   --
 ++  grab
   |%                                                    ::  convert from
-  ++  mime  |=([p=mite q=octs] (,@t q.q))
+  ++  mime  |=({p+mite q+octs} (@t q.q))
   ++  noun  cord                                        ::  clam from %noun
   --
 ++  grad  %mime
