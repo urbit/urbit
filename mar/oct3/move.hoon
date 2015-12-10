@@ -5,7 +5,7 @@
 !:
 ::::
   ::
-=+  point=,[x=@ y=@]
+=+  point={x+@ y+@}
 |_  point
 ::
 ++  grab                                                ::  convert from

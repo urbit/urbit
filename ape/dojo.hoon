@@ -102,7 +102,7 @@
 ::::                                                    ::
   ::                                                    ::
 |_  $^ 
-    $:  hid+bowl                                        ::  system state
+    _:  hid+bowl                                        ::  system state
         house                                           ::  program state
     ==                                                  ::
 ++  he                                                  ::  per session
@@ -298,7 +298,7 @@
       ^+  [mad +>]
       ?@  -.mad  [mad +>.$]
       =.  q.mad
-        ?+(-.p.mad q.mad %http [0 %as %mime q.mad])
+        ?+(-.p.mad q.mad $http [0 %as %mime q.mad])
       =^  src  +>.$  (dy-init-source q.mad)
       [mad(q src) +>.$]
     ::
@@ -410,7 +410,7 @@
       (dy-slam /dial u.pro !>(txt))
     ::
     ++  dy-cast
-      |*  [typ=_,* bun=vase]
+      |*  {typ+__(*) bun+vase}
       |=  a=vase  ^-  typ
       ?>  (~(nest ut p.bun) & p.a)
       ;;(typ q.a)
@@ -504,7 +504,7 @@
           =-  (flop (turn `wall`- |=(a=tape leaf/(dash:ut a ''))))
           :-  "HTTP {<p.hit>}"
           %+  weld
-            (turn q.hit |=([a=@t b=@t] "{(trip a)}: {(trip b)}"))
+            (turn q.hit |=({a+@t b+@t} "{(trip a)}: {(trip b)}"))
           (turn `wain`?~(r.hit ~ (lore q.u.r.hit)) trip)
       ==
     ::
@@ -533,7 +533,7 @@
     ++  dy-show-source
       |=  a+dojo-source  ^-  tank
       =-  >[-]<
-      =+  `[@ bil=dojo-build]`a
+      =+  `{@ bil+dojo-build}`a
       |-  ^-  $^
               _&  [__($) __($)]
               _?  twig
@@ -546,7 +546,7 @@
               ==
       ?-  -.bil
         $^(_?($ur $dv))  bil
-        $ex  ?.  ?=([%cltr *] p.bil)  p.bil
+        $ex  ?.  ?=({$cltr *} p.bil)  p.bil
                  |-  ^-  twig
                  ?~  p.p.bil  !!
                  ?~  t.p.p.bil  i.p.p.bil
@@ -574,9 +574,9 @@
     ++  dy-type                                         ::  sole action
       |=  act+sole-action
       ?-  -.act
-        %det  (dy-edit +.act)
-        %ret  (dy-done (tufa buf.say))
-        %clr  dy-stop
+        $det  (dy-edit +.act)
+        $ret  (dy-done (tufa buf.say))
+        $clr  dy-stop
       ==
     ::
     ++  dy-cage       |=(num+@ud (~(got by rez) num))   ::  known cage
@@ -591,7 +591,7 @@
     ::
     ++  dy-silk-config                                  ::  configure
       |=  {cay+cage cig+dojo-config}
-      ^-  [wire silk]
+      ^-  {wire silk}
       :-  ?+  -.q.q.cay  ~|(%bad-gen ~_((sell (slot 2 q.cay)) !!))
             $say  /gent
             $ask  /dial
@@ -603,7 +603,7 @@
         (dy-silk-sources p.cig)
       :+  %mute  (dy-silk-vase (fall (slew 27 gat) !>(~)))
       %+  turn  (~(tap by q.cig))
-      |=  [a=term b=(unit dojo-source)]
+      |=  {a+term b+(unit dojo-source)}
       ^-  (pair wing silk)
       :-  [a ~]
       %-  dy-silk-vase
@@ -701,26 +701,26 @@
     ++  dy-twig-mark                                    ::  XX architect
       =+  ^=  ope
           |=  gen+twig  ^-  twig
-          ?:  ?=(?(%sggl %sggr) -.gen)
+          ?:  ?=(?($sggl $sggr) -.gen)
             $(gen q.gen)
           =+  ~(open ap gen)
           ?.(=(gen -) $(gen -) gen)
       |=  gen+twig  ^-  (unit mark)
       =.  gen  (ope gen)
-      ?:  ?=([%cnts [@ ~] ~] gen)
+      ?:  ?=({$cnts {@ $~} $~} gen)
         (bind (~(get by var) i.p.gen) head)
       ?.  ?=($dtkt -.gen)  ~
       =.  p.gen  (ope p.gen)
       ?@  -.p.gen  ~
       ?+    ~(feck ap p.p.gen)  ~
-          [~ %cx]
+          {$~ $cx}
         =+  gin=(ope q.p.gen)
         |-
         ?@  -.gin  ~
         =.  q.gin  (ope q.gin)
         ?^  -.q.gin  $(gin q.gin)
         =.  p.gin  (ope p.gin)
-        ?.  ?=([[?(%dtzz %dtzy) @ @] [%dtzz %n ~]] gin)
+        ?.  ?=({{?($dtzz $dtzy) @ @} {$dtzz $n $~}} gin)
           ~
         (some q.p.gin)
       ==
@@ -738,7 +738,7 @@
       |=  nex+@ud
       ^+  +>+>
       ?>  ?=($~ cud)
-      ?:  ?=([%show 3] -.mad)
+      ?:  ?=({$show $3} -.mad)
         he-easter:dy-over
       ?:  =(nex num)
         he-easter:dy-over
@@ -772,8 +772,8 @@
     =-  ?~(msg ..he-diff (he-diff %tan leaf/u.msg ~))
     ^-  msg=(unit tape)
     ?+  (clan our.hid)  ~
-      %pawn  ?+  egg  ~
-        5  `":: To request a planet, run  |ask 'your@email.co'"
+      $pawn  ?+  egg  ~
+        $5  `":: To request a planet, run  |ask 'your@email.co'"
     ==       ==  
   ::
   ++  he-abet                                           ::  resolve
@@ -848,14 +848,14 @@
       {$&}  %.  p.reg
             =+  dye=~(. dy u.poy(pux ~))
             ?+  way  !!
-              [%hand ~]  dy-hand:dye
-              [%dial ~]  dy-made-dial:dye
-              [%gent ~]  dy-made-gent:dye
-              [%scar ~]  dy-made-scar:dye
-              [%edit ~]  dy-made-edit:dye
+              {$hand $~}  dy-hand:dye
+              {$dial $~}  dy-made-dial:dye
+              {$gent $~}  dy-made-gent:dye
+              {$scar $~}  dy-made-scar:dye
+              {$edit $~}  dy-made-edit:dye
             ==
       {$|}  (he-diff(poy ~) %tan p.reg)
-      %tabl  !!
+      $tabl  !!
     ==
   ::
   ++  he-sigh                                           ::  result from eyre
@@ -872,7 +872,7 @@
     ==
   ::
   ++  he-unto                                           ::  result from behn
-    |=  [way=wire cit=cuft]
+    |=  {way+wire cit+cuft}
     ^+  +>
     ?.  ?=($coup -.cit)
       ~&  [%strange-unto cit]
@@ -954,8 +954,8 @@
   --
 ::
 ++  prep
-  =+  session-1==+(*session ,_-(poy *(unit)))
-  =+  session-0==+(*session-1 ,[_say syd=desk * _|2.-])
+  =+  session-1==+(*session __(-(poy *(unit))))
+  =+  session-0==+(*session-1 __([__(say) syd=desk * __(|2.-)]))
   :: ,_`..prep
   =+  ^=  hoze
       _%  {$0 p+(map bone session-0)}
@@ -965,14 +965,8 @@
       ==
   |=  old=(unit ?(house hoze))  ^+  [~ ..prep]
   ?~  old  `..prep
-  ?-  -.u.old
+  ?+  -.u.old  !!
     $4  `..prep(+<+ u.old)
-    $3  $(u.old %*(. *house hoc p.u.old))
-    $2  $(u.old [%3 (~(run by p.u.old) |=(session-1 +<(poy ~)))])
-    $1  $(u.old [%3 (~(run by p.u.old) |=(session-1 +<(poy ~)))])
-    $0  =<  ^$(u.old [%1 (~(run by p.u.old) .)])
-        |=  sos=session-0  ^-  session-1
-        [-.sos [[our.hid syd.sos ud/0] /] |3.sos]
   ==
 ::
 ::  pattern:  ++  foo  |=(data he-abet:(~(he-foo he (~(got by hoc) ost)) data))
@@ -981,8 +975,9 @@
   |=  {moz+(list move) ses+session}
   =>  ~(. he moz ses)
   =-  [wrap=- +]
-  |*  he-arm=_he-type
-  |=  _+<.he-arm  ^-  (quip move ..he)
+  |*  he-arm=__(he-type)
+  |=  __(+<.he-arm)  
+  ^-  (quip move ..he)
   he-abet:(he-arm +<)
 ::
 ++  peer-sole

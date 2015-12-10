@@ -16,11 +16,11 @@
   ++  jon  a/(turn (gulf 0 9) |=(@ b/(bit +<)))         ::  to json
   ++  off  |=(point (add x (mul 3 y)))                  ::  bitfield address
   ++  set  |=(point (con bud (bex (off +<))))           ::  set point
-  ++  win  %-  lien  :_  |=(a=@ =(a (dis a bud)))       ::  test for win
+  ++  win  %-  lien  :_  |=(a+@ =(a (dis a bud)))       ::  test for win
            (rip 4 0wl04h0.4A0Aw.4A00s.0e070)            ::  with bitmasks
   --                                                    ::
 ++  go                                                  ::  play from
-  |_  [src=ship game]                                   ::
+  |_  {src+ship game}                                   ::
   ++  at  |_  point                                     ::  per point
           ++  g  `game`+>+<+                            ::  game
           ++  k  &(!|(x o) ept)                         ::  legal move

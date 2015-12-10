@@ -90,8 +90,9 @@
     --
   ::
   ++  mash
-    |=  $:  [als=ship ald=desk ali=(urge cord)]
-            [bos=ship bod=desk bob=(urge cord)]
+    |=  $^ 
+        _:  {als+ship ald+desk ali+(urge cord)}
+            {bos+ship bod+desk bob+(urge cord)}
         ==
     ^-  (urge cord)
     |^
@@ -115,7 +116,7 @@
           [i.bob $(ali t.ali, bob t.bob)]
         ?:  (gth p.i.ali (lent p.i.bob))
           [i.bob $(p.i.ali (sub p.i.ali (lent p.i.bob)), bob t.bob)]
-        =+  ^-  [fic=(unce cord) ali=(urge cord) bob=(urge cord)]
+        =+  ^-  {fic+(unce cord) ali+(urge cord) bob+(urge cord)}
             (resolve ali bob)
         [fic $(ali ali, bob bob)]
         ::  ~   ::  here, alice is good for a while, but not for the whole
@@ -124,7 +125,7 @@
         {$|}
       ?-  -.i.bob
           {$|}
-        =+  ^-  [fic=(unce cord) ali=(urge cord) bob=(urge cord)]
+        =+  ^-  {fic+(unce cord) ali+(urge cord) bob+(urge cord)}
             (resolve ali bob)
         [fic $(ali ali, bob bob)]
       ::
@@ -133,22 +134,23 @@
           [i.ali $(ali t.ali, bob t.bob)]
         ?:  (gth p.i.bob (lent p.i.ali))
           [i.ali $(ali t.ali, p.i.bob (sub p.i.bob (lent p.i.ali)))]
-        =+  ^-  [fic=(unce cord) ali=(urge cord) bob=(urge cord)]
+        =+  ^-  {fic+(unce cord) ali+(urge cord) bob+(urge cord)}
             (resolve ali bob)
         [fic $(ali ali, bob bob)]
       ==
     ==
     ::
     ++  annotate                                        ::  annotate conflict
-      |=  $:  ali=(list ,@t)
-              bob=(list ,@t)
-              bas=(list ,@t)
+      |=  $^
+          _:  ali+(list @t)
+              bob+(list @t)
+              bas+(list @t)
           ==
-      ^-  (list ,@t)
+      ^-  (list @t)
       %-  zing
-      ^-  (list (list ,@t))
+      ^-  (list (list @t))
       %-  flop
-      ^-  (list (list ,@t))
+      ^-  (list (list @t))
       :-  :_  ~
           %^  cat  3  '<<<<<<<<<<<<' 
           %^  cat  3  ' '

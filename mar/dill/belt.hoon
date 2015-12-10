@@ -2,7 +2,7 @@
 ::::  /hoon/dill-belt/mar
   ::
 /?    314
-/-    kyev,sole
+/-    kyev, sole
 !:
 ::::
   ::
@@ -13,7 +13,7 @@
   |%
   ++  json
     =<  (cork . kyev)
-    |=  jon=^json  ^-  ^kyev
+    |=  jon+^json  ^-  ^kyev
     %-  need
     %.  jon  =>  jo  %-  ot
     :~  mod/(cu ^sa (ar (su (perk ~[%ctrl %shift %alt %meta]))))
@@ -25,9 +25,9 @@
             %up    %down   %left  %right
     ==  ==
   ++  kyev
-    |=  kev=^kyev  ^-  dill-belt
+    |=  kev+^kyev  ^-  dill-belt
     ~|  dill-belt-incomplete/kev
-    ?:  ?=([%act ?(%ctrl %shift %alt %meta)] q.kev)
+    ?:  ?=({$act ?($ctrl $shift $alt $meta)} q.kev)
       [%txt ~]                        ::  ignore
     =+  mod=(~(del in p.kev) %shift)
     ?^  mod
@@ -37,10 +37,10 @@
           q.kev
         (con 96 q.kev)                ::  ctrl key decoding
       =+  cha=(tuba (trip q.kev))
-      ?>  ?=([@ ~] cha)               ::  of a single character
+      ?>  ?=({@ $~} cha)               ::  of a single character
       ?+  mod  !!                     ::  modified by one buckykey
-        [%ctrl ~ ~]  [%ctl i.cha]
-        [%alt ~ ~]   [%met i.cha]
+        {$ctrl ~ ~}  [%ctl i.cha]
+        {$alt ~ ~}   [%met i.cha]
       ==
     ?@  q.kev
       [%txt (tuba (trip q.kev))]

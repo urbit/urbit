@@ -6,15 +6,15 @@
 /+  talk
 !:
 =+  talk
-|_  gam=(list telegram)
+|_  gam+(list telegram)
 ::
 ++  grab-work-duty  =>  [jo work-stuff]
   |^  dute
   ++  as
-    :: |*(a=fist (cu sa (ar a)))  ::  XX  types
-    |*  a=fist 
+    :: |*(a+fist (cu sa (ar a)))  ::  XX  types
+    |*  a+fist 
     %-  cu  :_  (ar a)
-    ~(gas in *(set ,_(need *a)))
+    ~(gas in *(set __((need *a))))
   ++  ot
     |*  a=(pole ,[@tas fist])
     |=  b=json
@@ -22,7 +22,7 @@
     %-  slog
     ?+  b  ~
         [%o *] 
-      %+  murn  `(list ,[@tas fist])`a
+      %+  murn  `(list {@tas fist})`a
       |=  [c=term d=fist]  ^-  (unit tank)
       =+  (~(get by p.b) c)
       ?~  -  (some >[c (turn (~(tap by p.b)) head)]<)
@@ -31,14 +31,14 @@
       ~
     ==
   ++  of
-    |*  a=(pole ,[@tas fist])
-    |=  b=json
+    |*  a+(pole {@tas fist})
+    |=  b+json
     %.  ((of:jo a) b)
     %-  slog
     ?+  b  ~
         [%o *] 
       %+  murn  `(list ,[@tas fist])`a
-      |=  [c=term d=fist]  ^-  (unit tank)
+      |=  {c+term d+fist}  ^-  (unit tank)
       =+  (~(get by p.b) c)
       ?~  -  ~
       =+  (d u)
@@ -76,15 +76,15 @@
   --
 ++  grow-work-duty
   =>  work-stuff
-  =+  jope=|=(a=ship [%s (rsh 3 1 (scot %p a))])
-  =+  jove=|=(a=@uvI [%s (scot %uv a)])
+  =+  jope=|=(a+ship [%s (rsh 3 1 (scot %p a))])
+  =+  jove=|=(a+@uvI [%s (scot %uv a)])
   =<  |=  duty
       %+  joba  +<-
       ?-  +<-
-        %create   (task tax)
-        %archive  (jove id)
-        %change   (jobe id/(jove id) meat/(flesh meat) ~)
-        %update
+        $create   (task tax)
+        $archive  (jove id)
+        $change   (jobe id/(jove id) meat/(flesh meat) ~)
+        $update
           %-  jobe  :~ 
             id/(jove id)
             version/(jone version)
@@ -94,7 +94,7 @@
       ==
   |%
   ++  tags
-    |=  a=(set ,@t)
+    |=  a+(set @t)
     [%a (turn (sort (~(tap in a)) aor) |=(b=cord s/b))]
   ::
   ++  task
@@ -117,13 +117,13 @@
     |=  ^flesh
     %+  joba  +<-
     ?-  +<-
-      %set-doer         ?~(her ~ (jope u.her))
-      %set-date-due     ?~(wen ~ (jode u.wen))
-      %set-tags         (tags tag)
-      %set-title        [%s til]
-      %set-description  [%s des]
-      %set-done         [%b don]
-      %add-comment      (jobe ship/(jope who) com/[%s com] ~)
+      $set-doer         ?~(her ~ (jope u.her))
+      $set-date-due     ?~(wen ~ (jode u.wen))
+      $set-tags         (tags tag)
+      $set-title        [%s til]
+      $set-description  [%s des]
+      $set-done         [%b don]
+      $add-comment      (jobe ship/(jope who) com/[%s com] ~)
     ==
   --
 ++  grab
@@ -132,18 +132,18 @@
   ++  mime  |=(^mime (json (rash q.q apex:poja)))
   ++  json
     =>  [jo ..telegram dute=grab-work-duty]
-    |=  a=json  ^-  (list telegram)
+    |=  a+json  ^-  (list telegram)
     =-  (need ((ar (ot ship/(su fed:ag) thought/thot ~)) a))
     |%
     ++  of
-      |*  a=(pole ,[@tas fist])
-      |=  b=json
+      |*  a+(pole {@tas fist})
+      |=  b+json
       %.  ((of:jo a) b)
       %-  slog
       ?+  b  ~
           [%o *] 
-        %+  murn  `(list ,[@tas fist])`a
-        |=  [c=term d=fist]  ^-  (unit tank)
+        %+  murn  `(list {@tas fist})`a
+        |=  {c+term d+fist}  ^-  (unit tank)
         =+  (~(get by p.b) c)
         ?~  -  ~
         =+  (d u)
@@ -151,37 +151,37 @@
         ~
       ==
     ++  op                                              ::  parse keys of map
-      |*  [fel=rule wit=fist]
+      |*  {fel+rule wit+fist}
       %+  cu  mo
       %-  ci  :_  (om wit)
-      |=  a=(map cord ,_(need *wit))
-      ^-  (unit (list ,_[(wonk *fel) (need *wit)]))
+      |=  a+(map cord __((need *wit)))
+      ^-  (unit (list __([(wonk *fel) (need *wit)])))
       (zl (turn (~(tap by a)) (head-rush fel)))
     ::
     ++  as                                              ::  array as set
-      :: |*(a=fist (cu sa (ar a)))  ::  XX  types
-      |*  a=fist 
+      :: |*(a+fist (cu sa (ar a)))  ::  XX  types
+      |*  a+fist 
       %-  cu  :_  (ar a)
-      ~(gas in *(set ,_(need *a)))
+      ~(gas in *(set __((need *a))))
     ::
     ++  ke                                              ::  callbacks
-      |*  [gar=* sef=_|.(fist)]
-      |=  jon=json
-      ^-  (unit ,_gar)
+      |*  {gar+* sef+__(|.(fist))}
+      |=  jon+json
+      ^-  (unit __(gar))
       =-  ~!  gar  ~!  (need -)  -
       ((sef) jon)
     ::
-    ++  lake  |*(a=_,* $+(json (unit a)))
+    ++  lake  |*(a=__(*) $+(json (unit a)))
     ++  head-rush
-      |*  a=rule
-      |*  [b=cord c=*]
+      |*  a+rule
+      |*  {b+cord c+*}
       =+  nit=(rush b a) 
       ?~  nit  ~
       (some [u.nit c])
     ::
     ::
     ++  thot
-      ^-  $+(json (unit thought))
+      ^-  _+(json (unit thought))
       %-  ot  :~
         serial/(ci (slat %uv) so)
         audience/audi 
@@ -194,7 +194,7 @@
     ++  lope  (ot visible/bo sender/(mu (su parn)) ~)
     ::
     ++  parn
-      ^-  $+(nail (like partner))
+      ^-  _+(nail (like partner))
       %+  pick
         ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
       %+  sear  (soft passport)
@@ -266,17 +266,17 @@
       a/(turn (~(tap in a)) |=(b=path a/(turn b |=(c=span s/c))))
     ::
     ++  parn
-      |=  a=partner  ^-  cord
+      |=  a+partner  ^-  cord
       ?-  -.a
-        %&  (stat p.a)
-        %|  %-  crip
-            ?-  -.p.a
-              %twitter  "{(trip -.p.a)}/{(trip p.p.a)}"
-            ==
+        {$&}  (stat p.a)
+        {$|}  %-  crip
+              ?-  -.p.a
+                %twitter  "{(trip -.p.a)}/{(trip p.p.a)}"
+              ==
       ==
     ::
     ++  stat
-      |=  a=station  ^-  cord
+      |=  a+station  ^-  cord
       (crip "{<p.a>}/{(trip q.a)}")
     ::
     ++  stam
@@ -287,24 +287,24 @@
       |=  a=speech
       %+  joba  -.a
       ?+  -.a  ~|(stub/-.a !!)
-        %lin  (jobe txt/[%s q.a] say/[%b p.a] ~)
-        %url  (joba txt/(jape (earf p.a)))
-        %exp  (joba txt/[%s p.a])
-        %tax  (jobe txt/(jape (rend-work-duty p.a)) xat/(grow-work-duty p.a) ~)
-        %app  (jobe txt/[%s q.a] src/[%s p.a] ~)
-        %fat  (jobe tor/(tors p.a) taf/$(a q.a) ~)
-        %ext  (jobe nom/[%s p.a] txe/(jape (sifo (jam +.a))) ~)
-        %non  ~
-        ::  %inv  (jobe ship/(jope p.a) party/[%s q.a] ~)
+        $lin  (jobe txt/[%s q.a] say/[%b p.a] ~)
+        $url  (joba txt/(jape (earf p.a)))
+        $exp  (joba txt/[%s p.a])
+        $tax  (jobe txt/(jape (rend-work-duty p.a)) xat/(grow-work-duty p.a) ~)
+        $app  (jobe txt/[%s q.a] src/[%s p.a] ~)
+        $fat  (jobe tor/(tors p.a) taf/$(a q.a) ~)
+        $ext  (jobe nom/[%s p.a] txe/(jape (sifo (jam +.a))) ~)
+        $non  ~
+        ::  $inv  (jobe ship/(jope p.a) party/[%s q.a] ~)
       ==
     ::
     ++  tors
-      |=  a=torso
+      |=  a+torso
       %+  joba  -.a
       ?-  -.a
-        %text  [%s (role +.a)]
-        %tank  (jobe txt/[%a (turn +.a joke)] dat/(jape (sifo (jam +.a))) ~)
-        %name  (jobe nom/s/p.a mon/$(a q.a) ~)
+        $text  [%s (role +.a)]
+        $tank  (jobe txt/[%a (turn +.a joke)] dat/(jape (sifo (jam +.a))) ~)
+        $name  (jobe nom/s/p.a mon/$(a q.a) ~)
       ==
     ::
     --
@@ -315,6 +315,6 @@
   ++  form  %talk-telegrams
   ++  diff  |=((list telegram) +<)
   ++  pact  |=((list telegram) +<)
-  ++  join  |=([(list telegram) (list telegram)] `(unit mime)`~)
+  ++  join  |=({(list telegram) (list telegram)} `(unit mime)`~)
   --
 --

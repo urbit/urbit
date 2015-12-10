@@ -8,37 +8,38 @@
 [work .]
 |%
 ++  rend
-  |=  a=(list $|(char dime))  ^-  cord
+  |=  a=(list _|(char dime))  ^-  cord
   %-  crip
   |-  ^-  tape
   ?~  a  ~
   ?@  i.a  [i.a $(a t.a)]
   (weld (scow i.a) $(a t.a))
 ::
-++  indent  |=(a=wain (turn a |=(b=cord (cat 3 '  ' b))))
+++  indent  |=(a+wain (turn a |=(b+cord (cat 3 '  ' b))))
 ::
 ++  undent
-  |*  [a=wain b=$+(wain *)]  ^+  [*b a]
+  |*  {a+wain b+_+(wain *)}  ^+  [*b a]
   =^  c  a
-    |-  ^-  [c=wain a=wain]
+    |-  ^-  {c+wain a+wain}
     ?~  a  [~ a]
     ?.  =('  ' (end 3 2 i.a))
       [~ a]
     [[- c] a]:[(rsh 3 2 i.a) $(a t.a)]
   [(b `wain`c) a]
-++  keen  |*([a=* b=rule] |=(c=nail `(like a)`(b c)))
+::
+++  keen  |*({a+* b+rule} |=(c+nail `(like a)`(b c)))
 ++  parse
-  |*  [hed=?(~ $|(@tas tape)) tal=(pole)]
+  |*  {hed+_?($~ _|(@tas tape)) tal+(pole)}   
   ?~  hed  (..$ tal)
   ?^  hed  ;~(pfix (just (crip hed)) (..$ tal))
   =-  ?~(tal had ;~(plug had (..$ tal)))
   =<  had=(sear . nuck:so)
   |=  a=coin  ^-  (unit (odo:raid hed))
-  ?.  &(?=([%$ @ @] a) =(hed p.p.a))  ~
+  ?.  &(?=({$$ @ @} a) =(hed p.p.a))  ~
   (some q.p.a)
 ::
 ++  advance
-  |*  [a=wain b=rule]  ^+  [(wonk *b) a]
+  |*  {a+wain b+rule}  ^+  [(wonk *b) a]
   ?~(a !! ~|(i.a [(rash i.a b) t.a]))
 --
 !:
@@ -47,15 +48,15 @@
 |_  taz=task
 ++  grab
   |%  ++  txt
-    |=  a=wain  ^+  taz
+    |=  a+wain  ^+  taz
     =+  ~[id=%uv "_" date-created=%da " " version=%ud date-modified=%da]
     =^  b  a  (advance a ;~(plug (parse -) (punt (parse " " %da ~))))
-    =+  [-.b `date-due=(unit ,@da)`+.b]
+    =+  [-.b `date-due=(unit @da)`+.b]
     =^  tags   a  (undent a ~(gas in *(set cord)))
     =^  title  a  ?~(a !! a)
     =^  b  a  %+  advance  a
       ;~(plug (parse %p ~) (punt (parse ">" %p ~)) (punt (parse "X" %da ~)))
-    =+  `[creator=@p doer=(unit ,@p) done=(unit ,@da)]`b
+    =+  `{creator+@p doer+(unit @p) done+(unit @da)}`b
     =^  description  a  (undent a role)
     :*  id  date-created  version   date-modified  creator
         doer  tags  date-due  done  title  description  ::  XX done

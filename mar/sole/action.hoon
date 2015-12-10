@@ -12,16 +12,16 @@
 ++  grab                                                ::  convert from
   |%
   ++  json
-    |=  jon=^json  ^-  sole-action
+    |=  jon+^json  ^-  sole-action
     %-  need  %.  jon
     =>  [jo ..sole-action]
     |^  (fo %ret (of det/change ~))
     ++  fo
-      |*  [a=term b=fist]
+      |*  {a+term b+fist}
       |=(c=json ?.(=([%s a] c) (b c) (some [a ~])))
     ::
     ++  ra
-      |*  [a=[p=term q=fist] b=fist]
+      |*  {a+{p+term q+fist} b+fist}
       |=  c=json  %.  c
       ?.(=(%a -.c) b (pe p.a (ar q.a)))
     ::

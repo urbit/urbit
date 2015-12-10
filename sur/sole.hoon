@@ -39,16 +39,16 @@
       {$url p+@t}                                       ::  activate url
   ==                                                    ::
 ++  sole-command                                        ::  command state
-  $:  pos+@ud                                           ::  cursor position
+  _:  pos+@ud                                           ::  cursor position
       say+sole-share                                    ::  cursor 
   ==                                                    ::
 ++  sole-prompt                                         ::  prompt definition
-  $:  vis+?                                             ::  command visible
+  _:  vis+?                                             ::  command visible
       tag+term                                          ::  history mode
       cad+tape                                          ::  caption
   ==                                                    ::
 ++  sole-share                                          ::  symmetric state
-  $:  ven+sole-clock                                    ::  our vector clock
+  _:  ven+sole-clock                                    ::  our vector clock
       leg+(list sole-edit)                              ::  unmerged edits
       buf+sole-buffer                                   ::  sole state
   ==                                                    ::
@@ -73,7 +73,7 @@
   |*  out+_+(* *)                                       ::  output structure
   %+  pair  (list tank)                                 ::  
   %+  each  (unit out)                                  ::  ~ is abort
-  (pair hiss $+(httr (sole-request out)))               ::  fetch and continue
+  (pair hiss _+(httr (sole-request out)))               ::  fetch and continue
 ::                                                      ::
 ++  sole-gen                                            ::  XX virtual type
   _%  {$say _+((sole-args) (cask))}                     ::  direct noun
@@ -109,7 +109,7 @@
   |*  {sef+rule fun+_+(* *)}                            ::
   |=  txt+sole-input                                    ::
   =+  vex=(sef [0 0] txt)                               ::
-  ?:  |(!=((lent txt) q.p.vex) ?=(~ q.vex))             ::
+  ?:  |(!=((lent txt) q.p.vex) ?=($~ q.vex))            ::
     q.p.vex                                             ::
   (fun p.u.q.vex)                                       ::
 --

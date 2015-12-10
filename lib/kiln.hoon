@@ -57,7 +57,7 @@
           {$drop wire @p @tas}                          ::
           {$info wire @p @tas nori}                     ::
           {$mont wire @tas @p @tas path}                ::
-          {$ogre wire $|(@tas beam)}                    ::
+          {$ogre wire _|(@tas beam)}                    ::
           {$merg wire @p @tas @p @tas case germ}        ::
           {$poke wire dock pear}                        ::
           {$wait wire @da}                              ::
@@ -179,7 +179,7 @@
   |=  syd+term
   abet:(emit %wait /kiln/overload/[syd] (add ~s10 now))
 ::
-++  take  |=(way=wire ?>(?=([@ ~] way) (work i.way))) ::  general handler
+++  take  |=(way+wire ?>(?=({@ $~} way) (work i.way))) ::  general handler
 ++  take-mere                                         ::
   |=  {way+wire are+(each (set path) (pair term tang))}
   abet:abet:(mere:(take way) are)
@@ -359,20 +359,20 @@
     |=  gag+gage
     ^-  (each (list (pair cage cage)) tang)
     ?.  ?=($tabl -.gag)
-      (mule |.(`~`(ford-fail >%strange-gage< ~)))
-    =<  ?+(. [%& .] [@ *] .)
-    |-  ^-  ?((list ,[cage cage]) (each ,~ tang))
+      (mule |.(`$~`(ford-fail >%strange-gage< ~)))
+    =<  ?+(. [%& .] {@ *} .)
+    |-  ^-  ?((list {cage cage}) (each $~ tang))
     ?~  p.gag  ~
     =*  hed  i.p.gag
     ?-    -.p.hed
-        {$tabl}  (mule |.(`~`(ford-fail >%strange-gage< ~)))
-        {$|}     (mule |.(`~`(ford-fail p.p.hed)))
+        {$tabl}  (mule |.(`$~`(ford-fail >%strange-gage< ~)))
+        {$|}     (mule |.(`$~`(ford-fail p.p.hed)))
         {$&}     
       ?-  -.q.hed
-        $tabl  (mule |.(`~`(ford-fail >%strange-gage< ~)))
-        {$|}   (mule |.(`~`(ford-fail p.q.hed)))
+        $tabl  (mule |.(`$~`(ford-fail >%strange-gage< ~)))
+        {$|}   (mule |.(`$~`(ford-fail p.q.hed)))
         {$&}   =+  $(p.gag t.p.gag)
-               ?+(- [[p.p p.q]:hed -] [@ *] -)
+               ?+(- [[p.p p.q]:hed -] {@ *} -)
         ==
     ==
   ::
@@ -507,9 +507,9 @@
           !!
         [((hard path) q.q.pax) ?:(?=($null p.dif) ~ `[%dif dif])]
     :: ~&  >  kiln-made/[(turn can head) syd=syd +<.abet]
-    =+  notated=(skid can |=([path a=(unit miso)] ?=(^ a)))
-    =+  annotated=(turn `(list (pair path ,*))`-.notated head)
-    =+  unnotated=(turn `(list (pair path ,*))`+.notated head)
+    =+  notated=(skid can |=({path a+(unit miso)} ?=(^ a)))
+    =+  annotated=(turn `(list (pair path *))`-.notated head)
+    =+  unnotated=(turn `(list (pair path *))`+.notated head)
     =+  `desk`(cat 3 syd '-scratch')
     =+  ^-  tan=(list tank)
         %-  zing
@@ -539,7 +539,7 @@
     :*  ost  %info  /kiln/[syd]  our
         (cat 3 syd '-scratch')  %&
         %+  murn  can
-        |=  [p=path q=(unit miso)]
+        |=  {p+path q+(unit miso)}
         `(unit (pair path miso))`?~(q ~ `[p u.q])
     ==
   --

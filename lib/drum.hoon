@@ -246,7 +246,7 @@
   |=  {wel+well con+__(..se-adit)}  ^+  con
   =.  +>.$  con
   =+  hig=(~(get by fur) q.wel) 
-  ?:  &(?=(^ hig) |(?=(~ u.hig) =(p.wel syd.u.u.hig)))  +>.$
+  ?:  &(?=(^ hig) |(?=($~ u.hig) =(p.wel syd.u.u.hig)))  +>.$
   =.  +>.$  (se-text "activated app {(trip p.wel)}/{(trip q.wel)}")
   %-  se-emit(fur (~(put by fur) q.wel ~))
   [ost %conf [%drum p.wel q.wel ~] [our q.wel] %load our p.wel]
@@ -286,7 +286,7 @@
   ^-  ?
   ?.  (~(has by bin) ost)  &
   =+  gyr=(~(get by fug) gyl)
-  |(?=(~ gyr) ?=([~ ~] gyr))
+  |(?=($~ gyr) ?=({$~ $~} gyr))
 ::
 ++  se-alas                                           ::  recalculate index
   |=  gyl+gill
@@ -300,7 +300,7 @@
 ::
 ++  se-amor                                           ::  live targets
   ^-  (list gill)
-  (skim (~(tap in eel)) |=(gill ?=([~ ~ *] (~(get by fug) +<))))
+  (skim (~(tap in eel)) |=(gill ?=({$~ $~ *} (~(get by fug) +<))))
 ::
 ++  se-anon                                           ::  rotate index
   =+  wag=se-amor
@@ -426,7 +426,7 @@
         =+  c=(yey a)
         ?~(b ['?' c] c)
       ^-  (list tape)
-      %+  turn  (skip (~(tap by fur)) |=([term *] (~(has by fug) [our +<-])))
+      %+  turn  (skip (~(tap by fur)) |=({term *} (~(has by fug) [our +<-])))
       |=({term *} ['-' (pry our +<-)])
   |-  ^-  tape
   ?~  yal  ~
@@ -734,7 +734,7 @@
   ++  ta-ser                                          ::  reverse search
     |=  ext+(list @c)
     ^+  +>
-    ?:  |(?=(~ ris) =(0 pos.u.ris))  ta-bel
+    ?:  |(?=($~ ris) =(0 pos.u.ris))  ta-bel
     =+  sop=?~(ext (dec pos.u.ris) pos.u.ris)
     =+  tot=(weld str.u.ris ext)
     =+  dol=(slag (sub num.hit sop) old.hit)

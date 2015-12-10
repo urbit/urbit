@@ -17,12 +17,12 @@
   |%
   ++  json  ^-  ^json                                   ::  to %json  
     ~!  +>-<
-    ?:  ?=(| +>-<)
+    ?:  ?=({$|} +>-<)
       ~!  +>-<
       ~!  p
       s/(crip p)
     =+  she=|=(ship s/(scot %p +<))
-    =+  hes=|=([ship *] (she +<-))
+    =+  hes=|=({ship *} (she +<-))
     %-  jobe
     :~  who/s/?:(who.p %x %o) 
         plx/?~(p.sag.p ~ (she u.p.sag.p))

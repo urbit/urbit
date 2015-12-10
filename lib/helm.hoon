@@ -98,7 +98,7 @@
 ::
 ++  poke-hi  |=(mes+@t abet:(emit %flog /di %text "< {<src>}: {(trip mes)}"))
 ++  coup-hi
-  |=  [pax=path cop=(unit tang)]  =<  abet
+  |=  {pax+path cop+(unit tang)}  =<  abet
   ?>  ?=({@t $~} pax)
   (emit %flog ~ %text "hi {(trip i.pax)} {?~(cop "" "un")}succesful")
 ::
@@ -115,9 +115,9 @@
   =.  nam
     ?.  =(1 (met 3 nam))
       nam
-    =+  ^-  zaz=(list ,[p=span ~])
-        (skim van |=([a=term ~] =(nam (end 3 1 a))))
-    ?>  ?=([[@ ~] ~] zaz)
+    =+  ^-  zaz+(list {p+span $~})
+        (skim van |=({a+term $~} =(nam (end 3 1 a))))
+    ?>  ?=({{@ $~} $~} zaz)
     `term`p.i.zaz
   =+  tip=(end 3 1 nam)
   =+  way=(welp top /[nam])
@@ -137,7 +137,7 @@
   =+  top=`path`/(scot %p our)/home/(scot %da now)/arvo
   :-  [%flog /reset %vega (weld top `path`/hoon)]
   %+  turn
-    ^-  (list ,[p=@tas q=@tas])
+    ^-  (list {p+@tas q+@tas})
     :~  [%$ %zuse]
         [%a %ames]
         [%b %behn]

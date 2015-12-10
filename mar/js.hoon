@@ -5,9 +5,9 @@
 |_  mud+@
 ++  grow
   |%
-  ++  mime  [/application/javascript (taco (,@t mud))]
+  ++  mime  [/application/javascript (taco (@t mud))]
   ++  elem  ;script
-              ;-  (trip (,@t mud))
+              ;-  (trip (@t mud))
             ==
   ++  hymn  ;html:(head:"+{elem}" body)
   --

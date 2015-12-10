@@ -6,8 +6,9 @@
 ::::
   !:
 :-  %say
-|=  $:  [now=@da eny=@uvI bec=beak]
-        [arg=?(~ [? ~]) ~]
+|=  $^
+    _:  {now+@da eny+@uvI bec+beak}
+        {arg+?($~ {? $~}) $~}
     ==
 :-  %kiln-autoload
-`(unit ,?)`?~(arg ~ `-.arg)
+`(unit ?)`?~(arg ~ `-.arg)
