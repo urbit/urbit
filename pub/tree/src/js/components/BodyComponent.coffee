@@ -63,21 +63,28 @@ extras =
     render: ->
       (div {className:"footer"}, (p {}, "This page was served by Urbit."))
 
-Edit = query {mime:'m'}, recl
+Edit = query {spur:'t',mime:'m'}, recl
   displayName: "Edit"
+  doneEditing: ->
+    txt = $(@getDOMNode()).find('.CodeMirror')[0].CodeMirror.getValue() # XX refs
+    if txt is @props.mime.octs
+      return @props.unsetEdit false
+    TreeActions.saveFile @props.spur, txt, => @props.unsetEdit()
+    @props.setPending()
+
   render: ->
     {mite,octs} = @props.mime
     rele codemirror, {value:octs, mode:mite, readOnly:false, autofocus:true}
     
-Add = recl
+Add = query {spur:'t',path:'t'}, recl
   displayName: "Add"
-  getInitialState: -> edit:false
-  onClick: -> @setState edit:true
+  getInitialState: -> input:false
+  onClick: -> @setState input:true
   componentDidUpdate: ->
-    if @state.edit
+    if @state.input
       $(@getDOMNode()).focus()
   render: ->
-    unless @state.edit
+    unless @state.input
       button {@onClick}, "Add"
     else
       input {type:"text",onKeyDown:(e)=>
@@ -96,7 +103,7 @@ Add = recl
             mime:{mite:"text/x-markdown",octs:'# '+value}
             body:{gn:"div",ga:{},c:[{gn:"h1",ga:{},c:[value]}]}
           }
-          @setState edit:false
+          @setState input:false
       } 
 
 module.exports = query {
@@ -105,26 +112,41 @@ module.exports = query {
   path:'t'
   meta:'j'
   sein:'t'
-  spur:'t'
 }, recl
   displayName: "Body"
-  getInitialState: -> edit: document.location.hash is "#edit"
+  isOwn: -> urb.user? and urb.user is urb.ship
+  getInitialState: -> edit: @isOwn() and document.location.hash is "#edit"
+  
+  pauseWasp: ->
+    @urb_onupdate = urb.onupdate
+    urb.onupdate = => @urb_updated = arguments
+  resumeWasp: -> 
+    if @urb_onupdate
+      urb.onupdate = @urb_onupdate
+      delete @urb_onupdate
+      if @urb_updated
+        urb.onupdate.apply urb, @urb_updated
+      
+  setPending: -> @setState edit:"pending"
   setEdit: ->
     @hash = document.location.hash
     document.location.hash = "#edit" # XX generic state<->hash binding
     @setState edit:true
-    urb.onupdate = -> # disable autoreload
-  unsetEdit: ->
+    @pauseWasp()
+  unsetEdit: (mod)->
     document.location.hash = @hash ? ""
-    document.location.reload()  # XX sigh
-    # @setState edit:false
+    if mod isnt false
+      document.location.reload()
+    else
+      @resumeWasp()
+      @setState edit:false
   doDelete: ->
     TreeActions.deleteFile @props.spur, => @unsetEdit()
     @setState edit:"gone"
   
   render: -> 
     className = clas (@props.meta.layout?.split ',')
-    own = urb.user and urb.user is urb.ship
+    own = @isOwn()
     extra = (name,props={})=> 
       if @props.meta[name]? then rele extras[name], props
     
@@ -136,11 +158,11 @@ module.exports = query {
         body = div {}, rele load, {}
         editButton = button {onClick: => @setEdit()}, "Edit"
       when true
-        body = rele Edit, {}
+        body = rele Edit, {ref:"editor",@setPending,@unsetEdit}
         onClick = =>
-          txt = $(@getDOMNode()).find('.CodeMirror')[0].CodeMirror.getValue() # XX refs
-          TreeActions.saveFile @props.spur, txt, => @unsetEdit()
-          @setState edit:"pending"
+          {loaded} = @refs.editor.refs # components/Async
+          if loaded? then loaded.doneEditing()
+          else @unsetEdit false
         editButton = button {onClick}, "Done"
 
     (div {
@@ -154,6 +176,6 @@ module.exports = query {
       if own then button {onClick: => @doDelete()}, "Delete"
       body
       extra 'next', {dataPath:@props.sein,curr:@props.name}
-      if own then rele Add,{spur:@props.spur, path:@props.path}
+      if own then rele Add, {}
       extra 'footer'
     )

@@ -63,5 +63,5 @@ module.exports = (queries, Child, load=_load)-> recl
       if not @getHashElement()        # onmount?
         setTimeout @scrollHash,0
       React.createElement Child,
-        (_.extend {}, @props, @state.got),
+        (_.extend {}, @props, @state.got, ref:"loaded"),
         @props.children

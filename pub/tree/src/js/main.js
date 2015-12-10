@@ -445,7 +445,9 @@ module.exports = function(queries, Child, load) {
       }
     },
     render: function() {
-      return div({}, this.filterQueries() != null ? React.createElement(load, this.props) : (!this.getHashElement() ? setTimeout(this.scrollHash, 0) : void 0, React.createElement(Child, _.extend({}, this.props, this.state.got), this.props.children)));
+      return div({}, this.filterQueries() != null ? React.createElement(load, this.props) : (!this.getHashElement() ? setTimeout(this.scrollHash, 0) : void 0, React.createElement(Child, _.extend({}, this.props, this.state.got, {
+        ref: "loaded"
+      }), this.props.children)));
     }
   });
 };
@@ -553,9 +555,23 @@ extras = {
 };
 
 Edit = query({
+  spur: 't',
   mime: 'm'
 }, recl({
   displayName: "Edit",
+  doneEditing: function() {
+    var txt;
+    txt = $(this.getDOMNode()).find('.CodeMirror')[0].CodeMirror.getValue();
+    if (txt === this.props.mime.octs) {
+      return this.props.unsetEdit(false);
+    }
+    TreeActions.saveFile(this.props.spur, txt, (function(_this) {
+      return function() {
+        return _this.props.unsetEdit();
+      };
+    })(this));
+    return this.props.setPending();
+  },
   render: function() {
     var mite, octs, ref1;
     ref1 = this.props.mime, mite = ref1.mite, octs = ref1.octs;
@@ -568,25 +584,28 @@ Edit = query({
   }
 }));
 
-Add = recl({
+Add = query({
+  spur: 't',
+  path: 't'
+}, recl({
   displayName: "Add",
   getInitialState: function() {
     return {
-      edit: false
+      input: false
     };
   },
   onClick: function() {
     return this.setState({
-      edit: true
+      input: true
     });
   },
   componentDidUpdate: function() {
-    if (this.state.edit) {
+    if (this.state.input) {
       return $(this.getDOMNode()).focus();
     }
   },
   render: function() {
-    if (!this.state.edit) {
+    if (!this.state.input) {
       return button({
         onClick: this.onClick
       }, "Add");
@@ -624,7 +643,7 @@ Add = recl({
                 }
               });
               return _this.setState({
-                edit: false
+                input: false
               });
             }
           };
@@ -632,21 +651,45 @@ Add = recl({
       });
     }
   }
-});
+}));
 
 module.exports = query({
   body: 'r',
   name: 't',
   path: 't',
   meta: 'j',
-  sein: 't',
-  spur: 't'
+  sein: 't'
 }, recl({
   displayName: "Body",
+  isOwn: function() {
+    return (urb.user != null) && urb.user === urb.ship;
+  },
   getInitialState: function() {
     return {
-      edit: document.location.hash === "#edit"
+      edit: this.isOwn() && document.location.hash === "#edit"
     };
+  },
+  pauseWasp: function() {
+    this.urb_onupdate = urb.onupdate;
+    return urb.onupdate = (function(_this) {
+      return function() {
+        return _this.urb_updated = arguments;
+      };
+    })(this);
+  },
+  resumeWasp: function() {
+    if (this.urb_onupdate) {
+      urb.onupdate = this.urb_onupdate;
+      delete this.urb_onupdate;
+      if (this.urb_updated) {
+        return urb.onupdate.apply(urb, this.urb_updated);
+      }
+    }
+  },
+  setPending: function() {
+    return this.setState({
+      edit: "pending"
+    });
   },
   setEdit: function() {
     this.hash = document.location.hash;
@@ -654,12 +697,19 @@ module.exports = query({
     this.setState({
       edit: true
     });
-    return urb.onupdate = function() {};
+    return this.pauseWasp();
   },
-  unsetEdit: function() {
+  unsetEdit: function(mod) {
     var ref1;
     document.location.hash = (ref1 = this.hash) != null ? ref1 : "";
-    return document.location.reload();
+    if (mod !== false) {
+      return document.location.reload();
+    } else {
+      this.resumeWasp();
+      return this.setState({
+        edit: false
+      });
+    }
   },
   doDelete: function() {
     TreeActions.deleteFile(this.props.spur, (function(_this) {
@@ -674,7 +724,7 @@ module.exports = query({
   render: function() {
     var body, className, editButton, extra, onClick, own, ref1;
     className = clas((ref1 = this.props.meta.layout) != null ? ref1.split(',') : void 0);
-    own = urb.user && urb.user === urb.ship;
+    own = this.isOwn();
     extra = (function(_this) {
       return function(name, props) {
         if (props == null) {
@@ -708,17 +758,20 @@ module.exports = query({
         }, "Edit");
         break;
       case true:
-        body = rele(Edit, {});
+        body = rele(Edit, {
+          ref: "editor",
+          setPending: this.setPending,
+          unsetEdit: this.unsetEdit
+        });
         onClick = (function(_this) {
           return function() {
-            var txt;
-            txt = $(_this.getDOMNode()).find('.CodeMirror')[0].CodeMirror.getValue();
-            TreeActions.saveFile(_this.props.spur, txt, function() {
-              return _this.unsetEdit();
-            });
-            return _this.setState({
-              edit: "pending"
-            });
+            var loaded;
+            loaded = _this.refs.editor.refs.loaded;
+            if (loaded != null) {
+              return loaded.doneEditing();
+            } else {
+              return _this.unsetEdit(false);
+            }
           };
         })(this);
         editButton = button({
@@ -740,10 +793,7 @@ module.exports = query({
     }, "Delete") : void 0, body, extra('next', {
       dataPath: this.props.sein,
       curr: this.props.name
-    }), own ? rele(Add, {
-      spur: this.props.spur,
-      path: this.props.path
-    }) : void 0, extra('footer'));
+    }), own ? rele(Add, {}) : void 0, extra('footer'));
   }
 }));
 
