@@ -185,7 +185,7 @@
               {$1 p+term q+toga}                        ::  deep toga
               {$2 p+toga q+toga}                        ::  cell toga
           ==                                            ::
-++  trap  |*(a+_+(* *) __(a))                           ::  makes perfect sense
+++  trap  |*(a+__(*) __(|?(*a)))                        ::  makes perfect sense
 ++  trel  |*  {a+_+(* *) b+_+(* *) c+_+(* *)}           ::  just a triple
           {p+a q+b r+c}                                 ::
 ++  tuna                                                ::  tagflow
@@ -6670,17 +6670,15 @@
     |=  {sut+type ref+*}
     ^-  {? worm}
     ?:  (~(has in nes) [sut ref])  [& +>+<]
-    =+  gat=|=({a+type b+type} (~(nest ut a) | b))
+    =+  gat=|=({a+type b+type} (~(nest ut a) | b))    
     ?.  (? .*(gat(+< [sut ref]) -.gat))
-      ~&  %nets-failed
-      =+  tag=`*`skol
-      =+  foo=(tank .*(tag(+< ref) -.tag))
-      =+  bar=(skol sut)
-      ~&  %nets-need
-      ~>  %slog.[0 bar]
-      ~&  %nets-have
-      ~>  %slog.[0 foo]
-      ~&  %nets-done
+      ::  ~&  %nets-failed
+      ::  =+  tag=`*`skol
+      ::  =+  foo=(tank .*(tag(+< [%cell sut ref]) -.tag))
+      ::  =+  bar=(skol sut)
+      ::  ~&  %nets-need-have
+      ::  ~>  %slog.[0 foo]
+      ::  ~&  %nets-done
       [| +>+<.$]
     [& +>+<.$(nes (~(put in nes) [sut ref]))]
   ::
