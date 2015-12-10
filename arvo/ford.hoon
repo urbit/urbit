@@ -1895,7 +1895,7 @@
   ~
 ::
 ++  load                                                ::  highly forgiving
-  |=  old=*
+  |=  old=axle  
   ..^$(+>- old)
   ::  ..^$
   ::=.  old  
