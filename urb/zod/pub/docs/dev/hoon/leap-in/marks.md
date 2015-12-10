@@ -65,10 +65,10 @@ marked atom and convert it to our new mark.
 '57'
 ```
 
-There's no requirement, implicit or otherwise, that conversions
-back and forth between marks be inverses of each other.  These
-are semantic conversions, in that they refer to the same concept.
-They're not isomorphisms.
+ASCII 9 is 57.  There's no requirement, implicit or otherwise,
+that conversions back and forth between marks be inverses of each
+other.  These are semantic conversions, in that they refer to the
+same concept.  They're not isomorphisms.
 
 Let's play around a little more:
 
@@ -118,7 +118,6 @@ that can be omitted.  If we omit the `hymn`, though, we get:
 
 ```
 ~fintud-macrep:dojo> &mime &cord 17
-```
 [[%text %x-markdown ~] p=1 q='7']
 ```
 

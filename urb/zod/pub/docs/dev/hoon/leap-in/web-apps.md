@@ -131,7 +131,7 @@ the app from the command line.
 >=
 ```
 
-*Exercise*:
+**Exercise**:
 
 - Modify `:sink` from the subcriptions chapter to listen to
   `:click` and print out the subscription updates on the command
@@ -253,14 +253,14 @@ This app can be tested from the web by going to
 `/~~/home/pub/click` on your server.  Usually, this is
 `ship-name.urbit.org/~~/home/pub/click`.
 
-*Exercises*:
-
-- Open the app in multiple tabs, click the button, and
-  verify that all the tabs stay in sink.  Poke it manually from
-  the command line and verify the tabs are updated as well.
-
 Note that the app doesn't have anything web-specific in itself.
 As far as it knows, it's just receiving pokes and subscriptions.
 The javascript is fairly pure as well, sending and receiving json
 everywhere.  The marks are the translation layer, and they're the
 only things that need to know how the hoon types map to json.
+
+**Exercise**:
+
+- Open the app in multiple tabs, click the button, and verify
+  that all the tabs stay in sink.  Poke it manually from the
+  command line and verify the tabs are updated as well.

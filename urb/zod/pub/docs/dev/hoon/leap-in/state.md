@@ -87,3 +87,20 @@ If you want to write to the filesystem, you can, but it's not
 needed for persistence.  Urbit has transactional events, which
 makes it an ACID operating system.  You don't have to worry about
 persistence when programming in urbit.
+
+**Exercises**:
+
+- Modify `:sum` to reset the counter when you poke it with zero.
+
+- Write an app that prints out the previous value you poked it
+  with.  Sample output:
+
+```
+~fintud-macrep:dojo> :last 7
+[%last 0]
+>=
+~fintud-macrep:dojo> :last [1 2 3]
+[%last 7]
+>=
+~fintud-macrep:dojo> :last 'howdy'
+[%last [1 2 3]]

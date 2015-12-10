@@ -166,7 +166,7 @@ This is run as follows:
 Which causes `~sampel-sipnym` to print `[%receiving 'howdy']` and
 `[%receiving 'how do you do']`.
 
-*Exercises*:
+**Exercises**:
 
 - Create a generator for `:sum` from [State](state) so that
   you can run `:sum|add 5` to add numbers to it.
