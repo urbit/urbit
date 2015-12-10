@@ -1,11 +1,9 @@
 `?@`
 ====
 
+If atom-then-else
+
 If-then-else statement that tests whether `p` is an atom, producing `q` if true and `r` if false.
-
-
-`?@` is a synthetic rune that produces `q` if `p` is an atom, `r`
-otherwise.
 
 Produces
 --------
@@ -15,7 +13,7 @@ Twig: `[%wtpt p=wing q=twig r=twig]`
 Accepts
 -------
 
-`p` is a [`++wing`](). `q` and `r` are [twig]()s.
+`p` is a [`++wing`](). `q` and `r` are [++twig]()s.
 
 Tall form
 ---------
@@ -30,11 +28,6 @@ Wide form
 ---------
 
     ?@(p q r)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

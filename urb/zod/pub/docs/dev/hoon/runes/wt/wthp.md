@@ -1,15 +1,9 @@
 `?-`
 ====
 
-Switch statement.
-Different from the traditional switch statement in
-that it switches on a type instead of a value. The most common type used to
-switch on is the cube, which begins with `%` followed by text.
+Switch
 
-
-`?-` is a synthetic rune that selects a case in `q` for the value of
-`p`. The labels in `q` must match the [icon]() of `p`. The list of
-cases, `q` must be terminated by `==`.
+Different from the traditional switch statement in that it switches on a type instead of a value. More specifically, the labels in `q` must match the [span]() of `p`. `q` must be terminated with a `==`.
 
 Produces
 --------
@@ -65,9 +59,9 @@ Examples
       (cor %b)
     2
 
-Here is a simple example of `?-` showing that its input must have a well
+Here is a simple example of `?-` that thows its input must have a well
 defined type for which all of the cases are covered. We create a core,
-`cor` that takes an input `typ` which must be either `%a` or `%b` with
+`cor`, that takes an input `typ` which must be either `%a` or `%b` with
 [`$%`](). Calling `cor` with valid arguments selects one of our cases.
 
     ~zod/try=> 
@@ -87,6 +81,5 @@ defined type for which all of the cases are covered. We create a core,
 
 Here we can see a common failure case with `?-`. In the first example
 all of our possible input cases are not covered when we pass in a `@t`,
-so we fail with `mint-vain` – a compilation error. When we construct a well
-typed input and select a case from it `?-` in fact has all of the cases
-covered and produces correct output.
+so we fail with `mint-vain`, a compilation error. When we construct a well
+typed input and cover all of the possible cases, we get the desired result.

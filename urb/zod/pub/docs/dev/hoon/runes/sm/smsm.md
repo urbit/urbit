@@ -20,7 +20,7 @@ Twig: `[%smsm p=twig q=twig]`
 Accepts
 -------
 
-`p` is a [twig](). `q` is a [twig]().
+`p` is a [`++twig`](). `q` is a twig.
 
 Tall form
 ---------

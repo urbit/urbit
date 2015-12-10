@@ -6,8 +6,6 @@ If-null-then-else
 If-then-else statement that tests whether `p` is null, producing `q` if true
 and `r` if false.
 
-`?~` is a synthetic rune that produces `q` if `p` is `~`, `r` otherwise.
-
 Produces
 --------
 
@@ -16,7 +14,7 @@ Twig: `[%wtsg p=wing q=twig r=twig]`
 Accepts
 -------
 
-`p` is a [`++wing`](). `q` and `r` are [twig]()s.
+`p` is a [`++wing`](). `q` and `r` are [`++twig`]()s.
 
 Tall form
 ---------

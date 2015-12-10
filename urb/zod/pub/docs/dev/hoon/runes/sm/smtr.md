@@ -1,16 +1,9 @@
 `;*`
 ====
 
+Interpolate list of XML nodes
+
 Interpolates a list of XML nodes within our XML template syntax (aka sail)
-
-
-`;*` is a virtual rune used within [`++sail`]() to interpolate a list of
-marl.
-
-See also
---------
-
-The `%c` case inside of [`++tuna`]().
 
 Produces
 --------
@@ -20,7 +13,7 @@ Twig: [`++marl`]()
 Accepts
 -------
 
-`p` is a twig
+`p` is a [`++twig`]()
 
 Tall form
 ---------

@@ -1,6 +1,8 @@
 `?|`
 ====
 
+Logical 'or'
+
 Computes the logical 'or' operation on a list of boolean expressions `p`.
 
 Produces
@@ -11,7 +13,7 @@ Twig: `[%wtbr p=tusk]`
 Accepts
 -------
 
-`p` is a [`++tusk`](), a list of [twig]()s.
+`p` is a [`++tusk`](), a list of [`++twig`]()s.
 
 Tall form
 ---------

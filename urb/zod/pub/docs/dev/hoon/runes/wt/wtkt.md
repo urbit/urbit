@@ -1,13 +1,7 @@
 `?^`
 ====
 
-An if-then-else statement that tests whether `p` is equal to the default value
-(bunt) of its type, producing `r` if true and `q` if false. Used to check
-whether a clam has succeeded.
-
-
-`?^` is a synthetic rune that evaluates `r` if `p` is equal to the
-[bunt]() for its [mold](), otherwise `q` is evaluated.
+If `p` is cell-then-else
 
 Produces
 --------
@@ -17,7 +11,7 @@ Twig: `[%wtkt p=wing q=twig r=twig]`
 Accepts
 -------
 
-`p` is a [`++wing`](). `q` and `r` are [twig]()s.
+`p` is a [`++wing`](). `q` and `r` are [`++twig`]()s.
 
 Tall form
 ---------
@@ -45,7 +39,7 @@ Examples
                %empty
     %full
 
-Here we show that `*@tas`, the bunt of `@tas` is equivalent to the empty
+Here we show that `*@tas`, the [bunt]() of `@tas` is equivalent to the empty
 [`++tape`]() `""`, then use it in two `?^` cases.
 
     ~zod/try=> *(unit)

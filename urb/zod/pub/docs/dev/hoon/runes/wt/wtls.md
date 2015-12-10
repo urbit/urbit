@@ -1,14 +1,11 @@
 `?+`
 ====
 
-Switch statement with default value. Identical to `?-` except for
-that it takes a default case `q` if none of the cases in `r` match the type of
-`p`. As with `?-`, the most common type used to switch on is the cube, which
-begins with `%` followed by text.
+Switch w/default value
 
-`?+` is a synthetic rune that selects a case in `q` for the actual type
-of `p` with a default case, `q`. The labels in `r` must have the same
-[icon]() as `p` The list of cases, `r` must be terminated by `==`.
+Identical to [`?-`]() except for that it takes a default case `q` if none of the cases in `r` match the type of `p`. More specifically, the labels in `q` must match the [span]() of `p`. `q` must be terminated with a `==`.
+
+As with `?-`, the most common type used to switch on is the [cube](), which begins with `%` followed by text.
 
 Produces
 --------
@@ -18,7 +15,7 @@ Twig: `[%wtls p=wing q=twig r=tine]`
 Accepts
 -------
 
-`p` is a [`++wing`](). `q` is a [twig](). `r` is a [`++tine`]().
+`p` is a [`++wing`](). `q` is a [`++twig`](). `r` is a [`++tine`]().
 
 Tall form
 ---------
@@ -67,7 +64,7 @@ Examples
     0
 
 Here is a simple example of `?+` showing that although the cases must
-match the icon of its input, all possible cases don't need to be covered
+match the [span]() of its input, all possible cases don't need to be covered
 since `?+` has a default case. We create a core, `cor` that takes an
 input `typ`, a `@ta`. Calling `cor` selects one of our cases when it is
 covered, or the default.
@@ -93,7 +90,7 @@ covered, or the default.
           ==
     0
 
-This example shows how `?+` can fail. Our input icon must match the icon
+This example shows how `?+` can fail. Our input span must match the span
 of our cases.
 
 Equivalent to

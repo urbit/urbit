@@ -1,21 +1,19 @@
 `?<`
 ====
 
+Assert `p` is false
+
 Asserts that `p` is false before evaluating `q`. Crashes if `p` evaluates to false.
-
-
-`?<` is a synthetic rune that produces `q`, asserting that `p` is no
-(`|`, 1).
 
 Produces
 --------
 
 Twig: `[%wtgl p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` and `q` are [twig]()s.
+`p` and `q` are [`++twig`]()s.
 
 Tall form
 ---------

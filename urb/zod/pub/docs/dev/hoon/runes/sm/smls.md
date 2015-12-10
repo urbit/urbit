@@ -1,16 +1,11 @@
 `;+`
 ====
 
-`++sail` manx
+Interpolate [`++manx`]()
 
 `;+` is a virtual rune used within [`++sail`]() to interpolate a manx.
 `;+` is useful when you need to dynamically produce a tag in a `++sail`
 block.
-
-See also
---------
-
-The `%b` case inside of [`++tuna`]().
 
 Produces
 --------

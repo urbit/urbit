@@ -5,6 +5,10 @@ Still to do
 - switch out function for gate
 - put back in the zay runes
 - put in `` in all [++*]()
+- add link syntax to references to virtual rune
+
+
+- put links in
 
 
 Conventions
@@ -65,6 +69,9 @@ Words for glossary (or that just need to be documented somewhere)
 20. atom
 21. jet
 22. hint
+23. virtual rune
+24. subject
+25. formula
 
 General things that need attention
 ----------------------------------
@@ -84,6 +91,11 @@ General things that need attention
   - ~% needs an explanation for p thru s
   - p in ~& is confusing, because we say it's a @ud, but in all the examples its a number of >.
 
+5. The ; runes need another set of eyes.
+
+  - not sure if the ;~ examples are explained correctly.
+
+  - help with ;;
 
 Specific things that need to be added or checked out
 ----------------------------------------------------
@@ -121,3 +133,11 @@ Specific things that need to be added or checked out
 15. Fill in the XX in ^?. Basically, need an explanation when it's useful. think i get it but am not sure.
 
 16. Checkout the explanation of tanks in ~_. Not sure if it's correct.
+
+17. Could be cool to show the breakdown of =+. Too tired to right now :p
+
+18. For ?., could be useful to show example where ?. keeps things cleaner. Again, too tired.
+
+19. No idea on %wthz, %wtkz, %wtlz, %wtpz, %wtsz, %wttz
+
+20. Help with !, , !/

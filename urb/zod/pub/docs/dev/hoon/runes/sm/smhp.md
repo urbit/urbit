@@ -1,25 +1,19 @@
 `;-`
 ====
 
-Interpolates a string (aka tape) into a `++marl`, the datastructure
+Interpolate string
 
-
-`;-` is a virtual rune used within [`++sail`]() to interpolate a tape.
-
-See also
---------
-
-The `%a` case inside of [`++tuna`]().
+Interpolates a string (aka [++tape]()) into a [`++marl`](), our datastructure for XML.
 
 Produces
 --------
 
-Twig: [`++tape`]()
+Twig: tape
 
 Sample
 ------
 
-`p` is a [twig]().
+`p` is a [`++twig`]().
 
 Tall form
 ---------
