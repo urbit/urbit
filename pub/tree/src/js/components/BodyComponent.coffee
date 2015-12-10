@@ -74,7 +74,12 @@ Edit = query {spur:'t',mime:'m'}, recl
 
   render: ->
     {mite,octs} = @props.mime
-    rele codemirror, {value:octs, mode:mite, readOnly:false, autofocus:true}
+    rele codemirror, 
+      value:octs
+      mode:mite
+      readOnly:false
+      autofocus:true
+      extraKeys:'Cmd-Enter':@doneEditing
     
 Add = query {spur:'t',path:'t'}, recl
   displayName: "Add"

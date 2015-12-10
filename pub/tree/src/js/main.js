@@ -579,7 +579,10 @@ Edit = query({
       value: octs,
       mode: mite,
       readOnly: false,
-      autofocus: true
+      autofocus: true,
+      extraKeys: {
+        'Cmd-Enter': this.doneEditing
+      }
     });
   }
 }));
