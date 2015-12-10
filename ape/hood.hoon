@@ -128,6 +128,7 @@
 ++  poke-kiln-unsync          (wrap poke-unsync):from-kiln
 ++  poke-write-paste          (wrap poke-paste):from-write
 ++  poke-write-tree           (wrap poke-tree):from-write
+++  poke-write-wipe           (wrap poke-wipe):from-write
 ++  poke-will                 (wrap poke-will):from-helm
 ++  quit-drum-phat            (wrap quit-phat):from-drum
 ++  reap-drum-phat            (wrap reap-phat):from-drum

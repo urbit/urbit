@@ -38,7 +38,8 @@
         [;script(type "text/javascript", src "/~/as/own/~/at/home/lib/urb.js");]~
   ==
   ;body
-    ;+  =+  inject=(jobe kids/kids-json body/body.dat ~)
+    ;+  =+  mime=(jobe mite/[%s (moon p.mime.dat)] octs/[%s q.q.mime.dat] ~)  :: XX factor out
+        =+  inject=(jobe kids/kids-json body/body.dat ?.(aut ~ [mime/mime]~))
         ;script(type "text/javascript"): window.tree = {(pojo inject)}
     ;div#nav;
     ;div#cont;

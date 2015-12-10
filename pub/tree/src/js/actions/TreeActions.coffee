@@ -21,3 +21,8 @@ module.exports =
     TreePersistence.put spur, mime, (err,res)->
       if err? then throw err
       if cb? then cb res
+      
+  deleteFile: (spur, cb) ->
+    TreePersistence.del spur, (err,res)->
+      if err? then throw err
+      if cb? then cb res

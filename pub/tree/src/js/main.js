@@ -44,6 +44,16 @@ module.exports = {
         return cb(res);
       }
     });
+  },
+  deleteFile: function(spur, cb) {
+    return TreePersistence.del(spur, function(err, res) {
+      if (err != null) {
+        throw err;
+      }
+      if (cb != null) {
+        return cb(res);
+      }
+    });
   }
 };
 
@@ -443,9 +453,11 @@ module.exports = function(queries, Child, load) {
 
 
 },{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
-var Add, Edit, TreeActions, a, button, clas, codemirror, div, extras, img, input, p, pre, query, reactify, recl, ref, rele;
+var Add, Edit, TreeActions, a, button, clas, codemirror, div, extras, img, input, load, p, pre, query, reactify, recl, ref, rele;
 
 clas = require('classnames');
+
+load = require('./LoadComponent.coffee');
 
 query = require('./Async.coffee');
 
@@ -583,12 +595,34 @@ Add = recl({
         type: "text",
         onKeyDown: (function(_this) {
           return function(e) {
-            var neu, newPath;
+            var escp, newPath, newSpur, value;
             if (13 === e.keyCode) {
-              neu = _this.getDOMNode().value;
-              newPath = _this.props.path + "/" + neu;
+              value = _this.getDOMNode().value;
+              escp = value.toLowerCase().replace(/[^a-z0-9._~-]+/g, '-');
+              newPath = _this.props.path + "/" + escp;
+              newSpur = "/" + escp + _this.props.spur;
               history.pushState({}, "", window.tree.basepath(newPath + "#edit"));
-              TreeActions.saveFile("/" + neu + _this.props.spur, '', function() {});
+              urb.onupdate = function() {};
+              TreeActions.saveFile(newSpur, '# ' + value, function() {});
+              TreeActions.loadPath(newPath, {
+                spur: newSpur,
+                meta: {},
+                mime: {
+                  mite: "text/x-markdown",
+                  octs: '# ' + value
+                },
+                body: {
+                  gn: "div",
+                  ga: {},
+                  c: [
+                    {
+                      gn: "h1",
+                      ga: {},
+                      c: [value]
+                    }
+                  ]
+                }
+              });
               return _this.setState({
                 edit: false
               });
@@ -617,17 +651,25 @@ module.exports = query({
   setEdit: function() {
     this.hash = document.location.hash;
     document.location.hash = "#edit";
-    return this.setState({
+    this.setState({
       edit: true
     });
+    return urb.onupdate = function() {};
   },
   unsetEdit: function() {
     var ref1;
     document.location.hash = (ref1 = this.hash) != null ? ref1 : "";
-    this.setState({
-      edit: false
-    });
     return document.location.reload();
+  },
+  doDelete: function() {
+    TreeActions.deleteFile(this.props.spur, (function(_this) {
+      return function() {
+        return _this.unsetEdit();
+      };
+    })(this));
+    return this.setState({
+      edit: "gone"
+    });
   },
   render: function() {
     var body, className, editButton, extra, onClick, own, ref1;
@@ -643,29 +685,45 @@ module.exports = query({
         }
       };
     })(this);
-    if (!this.state.edit) {
-      body = reactify(this.props.body);
-      editButton = button({
-        onClick: (function(_this) {
+    switch (this.state.edit) {
+      case false:
+        body = reactify(this.props.body);
+        editButton = button({
+          onClick: (function(_this) {
+            return function() {
+              return _this.setEdit();
+            };
+          })(this)
+        }, "Edit");
+        break;
+      case "pending":
+      case "gone":
+        body = div({}, rele(load, {}));
+        editButton = button({
+          onClick: (function(_this) {
+            return function() {
+              return _this.setEdit();
+            };
+          })(this)
+        }, "Edit");
+        break;
+      case true:
+        body = rele(Edit, {});
+        onClick = (function(_this) {
           return function() {
-            return _this.setEdit();
+            var txt;
+            txt = $(_this.getDOMNode()).find('.CodeMirror')[0].CodeMirror.getValue();
+            TreeActions.saveFile(_this.props.spur, txt, function() {
+              return _this.unsetEdit();
+            });
+            return _this.setState({
+              edit: "pending"
+            });
           };
-        })(this)
-      }, "Edit");
-    } else {
-      body = rele(Edit, {});
-      onClick = (function(_this) {
-        return function() {
-          var txt;
-          txt = $(_this.getDOMNode()).find('.CodeMirror')[0].CodeMirror.getValue();
-          return TreeActions.saveFile(_this.props.spur, txt, function() {
-            return _this.unsetEdit();
-          });
-        };
-      })(this);
-      editButton = button({
-        onClick: onClick
-      }, "Done");
+        })(this);
+        editButton = button({
+          onClick: onClick
+        }, "Done");
     }
     return div({
       id: 'body',
@@ -673,7 +731,13 @@ module.exports = query({
       className: className
     }, extra('spam'), extra('logo', {
       color: this.props.meta.logo
-    }), own ? editButton : void 0, body, extra('next', {
+    }), own ? editButton : void 0, own ? button({
+      onClick: (function(_this) {
+        return function() {
+          return _this.doDelete();
+        };
+      })(this)
+    }, "Delete") : void 0, body, extra('next', {
       dataPath: this.props.sein,
       curr: this.props.name
     }), own ? rele(Add, {
@@ -685,7 +749,7 @@ module.exports = query({
 
 
 
-},{"../actions/TreeActions.coffee":1,"./Async.coffee":3,"./CodeMirror.coffee":5,"./Reactify.coffee":11,"classnames":16}],5:[function(require,module,exports){
+},{"../actions/TreeActions.coffee":1,"./Async.coffee":3,"./CodeMirror.coffee":5,"./LoadComponent.coffee":10,"./Reactify.coffee":11,"classnames":16}],5:[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -2001,14 +2065,20 @@ dedup = {};
 
 if (urb.send) {
   urb.appl = 'hood';
-  urb.send.mark = 'write-tree';
 }
 
 module.exports = {
+  del: function(sup, cb) {
+    return urb.send(sup, {
+      mark: 'write-wipe'
+    }, cb);
+  },
   put: function(sup, mime, cb) {
     return urb.send({
       sup: sup,
       mime: mime
+    }, {
+      mark: 'write-tree'
     }, cb);
   },
   get: function(path, query, cb) {

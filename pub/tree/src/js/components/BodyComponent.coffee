@@ -1,5 +1,6 @@
 clas    = require 'classnames'
 
+load       = require './LoadComponent.coffee'
 query      = require './Async.coffee'
 reactify   = require './Reactify.coffee'
 codemirror = require './CodeMirror.coffee'
@@ -81,11 +82,20 @@ Add = recl
     else
       input {type:"text",onKeyDown:(e)=>
         if 13 is e.keyCode
-          neu = @getDOMNode().value
-          newPath = @props.path+"/"+neu
+          {value} = @getDOMNode()
+          escp = value.toLowerCase().replace(/[^a-z0-9._~-]+/g, '-')
+          newPath = @props.path+"/"+escp
+          newSpur = "/"+escp+@props.spur
           history.pushState {}, "", window.tree.basepath newPath + "#edit"
-          TreeActions.saveFile "/"+neu+@props.spur, '', ->
-            # TreeActions.setCurr newPath
+          # TreeActions.setCurr newPath # XX indirect through Anchor poll
+          urb.onupdate = -> # disable autoreload
+          TreeActions.saveFile newSpur, '# '+value, ->
+          TreeActions.loadPath newPath, {
+            spur:newSpur
+            meta:{}
+            mime:{mite:"text/x-markdown",octs:'# '+value}
+            body:{gn:"div",ga:{},c:[{gn:"h1",ga:{},c:[value]}]}
+          }
           @setState edit:false
       } 
 
@@ -103,10 +113,14 @@ module.exports = query {
     @hash = document.location.hash
     document.location.hash = "#edit" # XX generic state<->hash binding
     @setState edit:true
+    urb.onupdate = -> # disable autoreload
   unsetEdit: ->
     document.location.hash = @hash ? ""
-    @setState edit:false
     document.location.reload()  # XX sigh
+    # @setState edit:false
+  doDelete: ->
+    TreeActions.deleteFile @props.spur, => @unsetEdit()
+    @setState edit:"gone"
   
   render: -> 
     className = clas (@props.meta.layout?.split ',')
@@ -114,17 +128,20 @@ module.exports = query {
     extra = (name,props={})=> 
       if @props.meta[name]? then rele extras[name], props
     
-    unless @state.edit
-      body = reactify @props.body
-      editButton = button {onClick: => @setEdit()}, "Edit"
-      
-    else
-      body = rele Edit, {}
-      
-      onClick = =>
-        txt = $(@getDOMNode()).find('.CodeMirror')[0].CodeMirror.getValue() # XX refs
-        TreeActions.saveFile @props.spur, txt, => @unsetEdit()
-      editButton = button {onClick}, "Done"
+    switch @state.edit
+      when false
+        body = reactify @props.body
+        editButton = button {onClick: => @setEdit()}, "Edit"
+      when "pending", "gone"
+        body = div {}, rele load, {}
+        editButton = button {onClick: => @setEdit()}, "Edit"
+      when true
+        body = rele Edit, {}
+        onClick = =>
+          txt = $(@getDOMNode()).find('.CodeMirror')[0].CodeMirror.getValue() # XX refs
+          TreeActions.saveFile @props.spur, txt, => @unsetEdit()
+          @setState edit:"pending"
+        editButton = button {onClick}, "Done"
 
     (div {
         id:'body',
@@ -134,6 +151,7 @@ module.exports = query {
       extra 'spam'
       extra 'logo', color: @props.meta.logo
       if own then editButton
+      if own then button {onClick: => @doDelete()}, "Delete"
       body
       extra 'next', {dataPath:@props.sein,curr:@props.name}
       if own then rele Add,{spur:@props.spur, path:@props.path}

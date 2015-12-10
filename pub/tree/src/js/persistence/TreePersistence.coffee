@@ -1,10 +1,10 @@
 dedup = {}  # XX wrong layer
 if urb.send
   urb.appl = 'hood'
-  urb.send.mark = 'write-tree'
 
 module.exports =
-  put: (sup,mime,cb)-> urb.send {sup,mime},cb
+  del: (sup,cb)-> urb.send sup,{mark:'write-wipe'}, cb
+  put: (sup,mime,cb)-> urb.send {sup,mime},{mark:'write-tree'}, cb
     
   get: (path,query="no-query",cb) ->
     url = "#{window.tree.basepath(path)}.json?q=#{@encode query}"
