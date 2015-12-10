@@ -1,12 +1,10 @@
 `!_`
 ====
 
+Path & range in stack trace
+
 Traces the stack if debugging is enabled, putting the current path and
 location range of each rune.
-
-
-`!_` is a virtual natural rune that traces the stack if debugging is
-enabled, putting the current path and location range of each rune.
 
 Produces
 --------
@@ -16,7 +14,7 @@ Twig: `[%zpcb p=spot q=twig]`
 Accepts
 -------
 
-`p` is a [`++spot`](). `q` is a [twig]().
+`p` is a [`++spot`](). `q` is a [`++twig`]().
 
 Tall form
 ---------

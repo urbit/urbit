@@ -14,7 +14,7 @@ Twig: `[%zpsm p=twig q=twig]`
 Accepts
 -------
 
-`p` and `q` are [twig]()s.
+`p` and `q` are [`++twig`]()s.
 
 Tall form
 ---------

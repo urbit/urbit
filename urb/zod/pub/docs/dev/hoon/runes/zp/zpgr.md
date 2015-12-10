@@ -1,12 +1,11 @@
 `!>`
 ====
 
-Produces a cell (known as a `++vase` here) of both the type and value of `p`. Useful to debugging purposes.
+Produce [type value]
 
+Produces a cell (known as a [`++vase`]() here) of both the type and value of `p`. Useful for debugging purposes. 
 
-`!>` is a synthetic rune that produces a vase (a `[type noun]` cell)
-with the value `p`. Uses biblical arms [`++onan`](), [`++abel`](). `!>`
-is useful for debugging type information.
+Uses biblical arms [`++onan`](), [`++abel`](). 
 
 Produces
 --------
@@ -16,7 +15,7 @@ Twig: `[%zpgr p=twig]`
 Accepts
 -------
 
-`p` is a [twig]().
+`p` is a [`++twig`]().
 
 Tall form
 ---------

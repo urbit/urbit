@@ -13,7 +13,7 @@ Twig: `[%zpwt p=twig]`
 Accepts
 -------
 
-`p` is a [twig]().
+`p` is a [`++twig`]().
 
 Tall form
 ---------

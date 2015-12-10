@@ -1,11 +1,13 @@
 `!!`
 ====
 
+Crash
+
 Always causes a crash. Useful when testing unfinished code so that you don't
 have to worry about type stuff for different conditional cases you have yet to
 cover.
 
-`!?` is a natural rune that always crashes.
+Frequently used as sentinel, especially when you don't want the type system to give you type fails before you've written out every possible branch of the computation.
 
 Produces
 --------
@@ -15,7 +17,7 @@ Twig: `[%zpzp ~]`
 Accepts
 -------
 
-Always ignored
+N/A (always ignored)
 
 Wide form
 ---------
@@ -24,8 +26,6 @@ Wide form
 
 Examples
 --------
-
-Frequently used as sentinel
 
     ~zod/try=> !!
     ! exit

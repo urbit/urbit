@@ -3,7 +3,7 @@
 
 Show nock
 
-`!=` is a natural rune that produces the formula of twig p as a noun.
+`!=` is a natural rune that produces the formula of `p` as a noun.
 
 Accepts
 -------
@@ -13,7 +13,7 @@ Twig: `[%zpts p=twig]`
 Accepts
 -------
 
-`p` is a [twig]().
+`p` is a [`++twig`]().
 
 Tall form
 ---------

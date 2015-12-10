@@ -76,9 +76,8 @@ Words for glossary (or that just need to be documented somewhere)
 General things that need attention
 ----------------------------------
 
-1. Don't know if the 'Produces' section for the runes listed below are actually helpful. If it's not, what would be helpful here?
+1. Don't know if the 'Produces' section for the majority of the rune sections are actually helpful. If they are not, 
 
-  - |
 
 2. I cleaned up the # runes a little bit but need someone to go over the entirety of both of those pages.
 
@@ -140,4 +139,4 @@ Specific things that need to be added or checked out
 
 19. No idea on %wthz, %wtkz, %wtlz, %wtpz, %wtsz, %wttz
 
-20. Help with !, , !/
+20. Help with !, & !/
