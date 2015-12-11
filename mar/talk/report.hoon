@@ -75,7 +75,7 @@
         {$&}  (stat p.a)
         {$|}  %-  crip
               ?-  -.p.a
-                %twitter  "{(trip -.p.a)}/{(trip p.p.a)}"
+                $twitter  "{(trip -.p.a)}/{(trip p.p.a)}"
               ==
       ==
     ::

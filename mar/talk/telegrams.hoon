@@ -23,7 +23,7 @@
     ?+  b  ~
         {$o *} 
       %+  murn  `(list {@tas fist})`a
-      |=  [c=term d=fist]  ^-  (unit tank)
+      |=  {c+term d+fist}  ^-  (unit tank)
       =+  (~(get by p.b) c)
       ?~  -  (some >[c (turn (~(tap by p.b)) head)]<)
       =+  (d u)
@@ -36,8 +36,8 @@
     %.  ((of:jo a) b)
     %-  slog
     ?+  b  ~
-        [%o *] 
-      %+  murn  `(list ,[@tas fist])`a
+        {$o *}
+      %+  murn  `(list {@tas fist})`a
       |=  {c+term d+fist}  ^-  (unit tank)
       =+  (~(get by p.b) c)
       ?~  -  ~
@@ -141,7 +141,7 @@
       %.  ((of:jo a) b)
       %-  slog
       ?+  b  ~
-          [%o *] 
+          {$o *} 
         %+  murn  `(list {@tas fist})`a
         |=  {c+term d+fist}  ^-  (unit tank)
         =+  (~(get by p.b) c)
@@ -171,7 +171,7 @@
       =-  ~!  gar  ~!  (need -)  -
       ((sef) jon)
     ::
-    ++  lake  |*(a=__(*) $+(json (unit a)))
+    ++  lake  |*(a=__(*) _+(json (unit a)))
     ++  head-rush
       |*  a+rule
       |*  {b+cord c+*}
@@ -238,23 +238,23 @@
     (jobe ship/(jope p) thought/(thot q) ~)
     ::
     ++  jove
-      |=  [a=envelope b=delivery]
+      |=  {a+envelope b+delivery}
       %-  jobe  :~
         envelope/(jobe visible/[%b p.a] sender/?~(q.a ~ s/(parn u.q.a)) ~)
         delivery/[%s b]
       ==
     ::
-    ++  jope  |=(a=ship (jape +:<a>)) ::[%s (crip +:(scow %p a))])
-    ++  joke  |=(a=tank [%s (role (turn (wash 0^80 a) crip))])
-    ++  jode  |=(a=time (jone (div (mul (sub a ~1970.1.1) 1.000) ~s1)))
+    ++  jope  |=(a+ship (jape +:<a>)) ::[%s (crip +:(scow %p a))])
+    ++  joke  |=(a+tank [%s (role (turn (wash 0^80 a) crip))])
+    ++  jode  |=(a+time (jone (div (mul (sub a ~1970.1.1) 1.000) ~s1)))
     ++  jome                                            ::  stringify keys
-      |*  [a=_cord b=_json]
-      |=  c=(map ,_+<.a ,_+<.b)
+      |*  {a+__(cord) b+__(json)}
+      |=  c=(map __(+<.a) __(+<.b))
       (jobe (turn (~(tap by c)) (both a b)))
     ::
     ++  both                                            ::  cons two gates
-      |*  [a=_,* b=_,*]
-      |=(c=_[+<.a +<.b] [(a -.c) (b +.c)])
+      |*  {a+__(*) b+__(*)}
+      |=(c+__([+<.a +<.b]) [(a -.c) (b +.c)])
     ::
     ++  thot
       |=  thought
@@ -262,7 +262,7 @@
     ::
     ++  audi  (jome parn jove)
     ++  bouq
-      |=  a=bouquet
+      |=  a+bouquet
       a/(turn (~(tap in a)) |=(b=path a/(turn b |=(c=span s/c))))
     ::
     ++  parn
@@ -271,7 +271,7 @@
         {$&}  (stat p.a)
         {$|}  %-  crip
               ?-  -.p.a
-                %twitter  "{(trip -.p.a)}/{(trip p.p.a)}"
+                $twitter  "{(trip -.p.a)}/{(trip p.p.a)}"
               ==
       ==
     ::
@@ -284,7 +284,7 @@
       (jobe date/(jode p) bouquet/(bouq q) speech/(spec r) ~)
     ::
     ++  spec
-      |=  a=speech
+      |=  a+speech
       %+  joba  -.a
       ?+  -.a  ~|(stub/-.a !!)
         $lin  (jobe txt/[%s q.a] say/[%b p.a] ~)

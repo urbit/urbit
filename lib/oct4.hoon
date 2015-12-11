@@ -20,7 +20,7 @@
            (rip 4 0wl04h0.4A0Aw.4A00s.0e070)            ::  with bitmasks
   --                                                    ::
 ++  go                                                  ::  play from
-  |_  [src=ship game]                                   ::
+  |_  {src+ship game}                                   ::
   ++  at  |_  point                                     ::  per point
           ++  g  `game`+>+<+                            ::  game
           ++  k  &(!|(x o) ept)                         ::  legal move
@@ -45,7 +45,7 @@
   ++  res  ?.  |(~(win bo box) ~(win bo boo))           ::  possible result
            ?:  =(511 (con boo box))                     ::
            `"tie :-("  ~  `"{<nam>} wins"               ::
-  ++  row  |=  y=@  :-  (add y '1')  %-  zing           ::  print row
+  ++  row  |=  y+@  :-  (add y '1')  %-  zing           ::  print row
            (turn (gulf 0 3) |=(@ ~[' ' ~(v at y +<)]))  ::
   ++  str  =+  [own ~[(icon who)]]  ^-  tape            ::  print player
             ?~(-< -> (scow %p u.-<))                    ::

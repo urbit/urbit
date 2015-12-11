@@ -10,7 +10,7 @@
                 |=  {tym+@da ite+cord}  ^-  manx
                 ;li: ;{b "{<tym>}"}: {(trip ite)}
       ++  sorted-list
-        (sort (~(tap by dat)) |=([[l=@ @] [r=@ @]] (lth l r)))
+        (sort (~(tap by dat)) |=({{l+@ @} {r+@ @}} (lth l r)))
   --
 ++  grab
   |%                                                    ::  convert from

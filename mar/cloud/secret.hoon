@@ -1,9 +1,9 @@
 !:
-|_  cod=cord
+|_  cod+cord
 ::
 ++  grab                          ::  converter am
   |%
-  ++  noun  ,@t                   ::  clam from noun
-  ++  json  (cork (ot secret/so platform/so ~):jo need)     ::  (need (so:jo jon))
+  ++  noun  @t                    ::  clam from noun
+  ++  json  (cork (ot secret/so platform/so ~):jo need)
   --
 --

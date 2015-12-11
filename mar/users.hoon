@@ -4,7 +4,7 @@
 /?  314
 /-  users
 !:
-|_  use=users
+|_  use+users
 ::
 ++  grab                                                ::  convert from
   |%
@@ -18,8 +18,7 @@
     :-  %a
     %+  turn
       use
-    |=
-      [p=@p q=@t]
+    |=  {p+@p q+@t}
     %-  jobe
       ~[[%ship (jape <p>)] [%name [%s q]]]
   ++  mime

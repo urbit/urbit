@@ -9,11 +9,11 @@
 |_  client
 ++  grow  
 |%  ++  json
-  =+  jope=|=(a=ship [%s (rsh 3 1 (scot %p a))])
+  =+  jope=|=(a+ship [%s (rsh 3 1 (scot %p a))])
   %-  jobe  :~
          sort/[%a (turn sort |=(a=@uv [%s (scot %uv a)]))]
     =<  tasks/(jobe (turn (~(tap by tasks)) .))
-    |=  [@ client-task]
+    |=  {@ client-task}
     =+  tax
     :-  (scot %uv id)
     %-  jobe  :~  id/[%s (scot %uv id)]

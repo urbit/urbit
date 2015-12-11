@@ -119,12 +119,12 @@
     ", "
       =-  (pojo (jobe (turn a.g.src -)))
       |=  {a+mane b+tape}
-      =.  a  ?+(a a %class 'className')
+      =.  a  ?+(a a $class 'className')
       ?^(a !! [a (jape b)])
     ", "
       =<  ~(ram re %rose [", " "[" "]"] (turn c.src .))
       |=  a+manx
-      ?:  ?=(_:/(**) a)
+      ?:  ?=(__(:/(**)) a)
         leaf/(pojo (jape v.i.a.g.a))
       leaf/^$(src a)
     ")"

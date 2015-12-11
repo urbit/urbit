@@ -4,46 +4,46 @@
   ::
 |%
 ++  into-inner
-  |=  [a=marl b=manx]
+  |=  {a+marl b+manx}
   ?~  c.b  b(c a)
   $(b i.c.b)
 ::
 ++  flat
-  |=  a=marl
+  |=  a+marl
   ^-  tape
   ?~  a  ~
   %-  weld  :_  $(a t.a)
   ^-  tape
   ?~  n.g.i.a
-    ?>(?=(_:/(**) i.a) v.i.a.g.i.a)
+    ?>(?=(__(:/(**)) i.a) v.i.a.g.i.a)
   ?+    n.g.i.a  $(a c.i.a)
-      %img
+      $img
     %-  zing  ^-  wall
-    %+  murn  a.g.i.a   |=  [a=mane b=tape]
+    %+  murn  a.g.i.a   |=  {a+mane b+tape}  
     ^-  (unit tape)
     ?+  a  ~
-      %alt  [~ b]
+      $alt  [~ b]
     ==
   ==
 ++  sanitize
- |=  a=marl  ^-  tape
+ |=  a+marl  ^-  tape
  =-  (zing `wall`(scan (flat a) fel))
  =<  fel=;~(sfix (star ;~(plug (cold '-' -) (plus +))) (star next)) 
- [(star ;~(less aln prn)) ;~(pose nud low (cook |=(a=@ (add a ' ')) hig))]
+ [(star ;~(less aln prn)) ;~(pose nud low (cook |=(a+@ (add a ' ')) hig))]
 ::
 ++  sang                                                ::  tight item children
-  |=  a=(list elem)
+  |=  a+(list elem)
   ^-  marl
   ?~  a  ~
   %-  weld  :_  $(a t.a)
-  ?.  ?=(%para -.i.a)
+  ?.  ?=($para -.i.a)
     (sing i.a ~)
   (sung p.i.a)
 ::
 ++  sing                                                ::  elem to manx
   =>  |%
       ++  first-word
-        |=  a=tape
+        |=  a+tape
         =.  a  (trip (crip a))                          ::  XX valid tapes
         ^-  (unit tape)
         =.  a  q.q:(need q:((star ace) [1 1] a))
@@ -52,7 +52,7 @@
         (some (wonk vex))
       --
   =+  [tig=| had=*(unit mane)]
-  |=  lum=(list elem)
+  |=  lum+(list elem)
   |^  ^-  marl
       =+  a=apex
       ?~  q.a
@@ -60,12 +60,12 @@
       (weld p.a $(lum q.a))
   ::
   ++  apex
-    ^-  [p=marl q=_lum]
+    ^-  {p+marl q+__(lum)}  
     ?~  lum  
       ?~  had  [~ ~]
       (lose "unclosed {<u.had>}")
     =>  [ele=i.lum .(lum t.lum)]
-    ?.  ?=(%html -.ele)
+    ?.  ?=($html -.ele)
       (push (reso ele) ~)
     ::  begin reparsing of html that the spec jankily lets through  ::
     =+  tex=(trip (role p.ele))
@@ -90,45 +90,45 @@
     (lose "close {<u.tal>}")
     ::  end reparsing of html that the spec jankily lets through  ::
   ::
-  ++  lose  |=(a=tape [[;lost:"{a}"]~ lum])
+  ++  lose  |=(a+tape [[;lost:"{a}"]~ lum])
   ++  chomp
-    |*  [tap=tape fel=rule]
-    ^-  [(unit ,_(wonk *fel)) _lum]
+    |*  {tap+tape fel+rule}
+    ^-  {(unit __((wonk *fel))) __(lum)}  
     =+  vex=(fel 1^1 tap)
     ?~  q.vex  [~ lum]
     :-  [~ (wonk vex)]
     ?~(q.q.u.q.vex lum [[%html (lore (crip q.q.u.q.vex))] lum])
   ::
   ++  push
-    |=  a=marl
+    |=  a+marl
     ^+  apex
     ?~  a  apex
     [[b p] q]:[b=i.a (push t.a)]
   ::
   ++  reso
-    |=  a=elem
+    |=  a+elem
     ?^  -.a
-      =.  tig  ?.(?=(%list -.p.a) tig p.p.a)
-      ?:  &(tig ?=(%item -.p.a))
+      =.  tig  ?.(?=($list -.p.a) tig p.p.a)
+      ?:  &(tig ?=($item -.p.a))
         [/li (sang q.a)]
       %+  into-inner  ^$(lum q.a)
       ?-  -.p.a
-        %bloq  ;blockquote;
-        %item  ;li;
-        %list  ?@  q.p.a  ;ul;
+        $bloq  ;blockquote;
+        $item  ;li;
+        $list  ?@  q.p.a  ;ul;
                ?:  =(1 p.q.p.a)  ;ol;
                =+  num=(pojo (jone p.q.p.a))
                ;ol(start num);
       ==
     ?-  -.a  ::  :/("unimplemented {<p.a>}")
-      %html  !!                       ::  handled earlier   XX do type stuff
-      %para  [/p (sung p.a)]
-      %head  
+      $html  !!                       ::  handled earlier   XX do type stuff
+      $para  [/p (sung p.a)]
+      $head  
         =+  [hed=(add %h0 (lsh 3 1 p.a)) kid=(sung q.a)]
         [[hed id/(sanitize kid) ~] kid]
     ::
-      %hrul  ;hr;
-      %meta  =+  jon=`json`o/(~(run by p.a) |=(cord s/+<))
+      $hrul  ;hr;
+      $meta  =+  jon=`json`o/(~(run by p.a) |=(cord s/+<))
              ;meta(value "{(pojo jon)}", name "frontmatter", urb_front "");
   ::     %html  
              ::=+  tex=(role (turn p.a crip))
@@ -138,17 +138,17 @@
              ::?^  -  :/(~)
              ::;lost: {<p.a>}
         :: :/([(role (turn p.a crip))]~)                ::  XX  haaaaaaack
-      %defn  :/(~)
-      %code  =+  lan=?~(p.a ~ (first-word r.u.p.a))
+      $defn  :/(~)
+      $code  =+  lan=?~(p.a ~ (first-word r.u.p.a))
              =+  tex=(trip (role q.a))
              ?~  lan  ;pre:code:"{tex}"
              ;pre:code(class "language-{u.lan}"):"{tex}"
 
     ==
   --
-::
+::  
 ++  sung
-  |=  lim=kids
+  |=  lim+kids
   =+  had=*(unit mane)
   |^  ^-  marl
       =+  a=apex
@@ -157,14 +157,14 @@
       (weld p.a $(lim q.a))
   ::
   ++  apex
-    ^-  [p=marl q=_lim]
+    ^-  {p+marl q+__(lim)}
     ?~  lim  
       ?~  had  [~ ~]
       (lose "unclosed {<u.had>}")
     =>  [ele=i.lim .(lim t.lim)]
-    ?.  ?=(%htmt -.ele)
-      ?:  &(?=(%$ -.ele) ?=([[%$ *] *] lim))
-        apex(p.i.lim (weld p.ele p.i.lim))
+    ?.  ?=($htmt -.ele)
+      ?:  &(?=($$ -.ele) ?=({{$$ *} *} lim))
+        apex(p.i.lim (weld p.ele p.i.lim))  
       (push (reso ele) ~)
     =+  tex=(trip p.ele)
     =^  emo  lim  (chomp tex empt:poxa)
@@ -185,25 +185,25 @@
       (lose "unclosed {<u.had>}")
     (lose "unopened {<u.tal>}")
   ::
-  ++  lose  |=(a=tape [[;lost:"{a}"]~ lim])
+  ++  lose  |=(a+tape [[;lost:"{a}"]~ lim])
   ++  chomp
-    |*  [tap=tape fel=rule]
-    ^-  [(unit ,_(wonk *fel)) _lim]
+    |*  {tap+tape fel+rule}
+    ^-  {(unit __((wonk *fel))) __(lim)}
     =+  vex=(fel 1^1 tap)
     ?~  q.vex  [~ lim]
     :-  [~ (wonk vex)]
     ?~(q.q.u.q.vex lim [[%htmt (crip q.q.u.q.vex)] lim])
   ::
   ++  push
-    |=  a=marl
+    |=  a+marl
     ^+  apex
     ?~  a  apex
     [[b p] q]:[b=i.a (push t.a)]
   ::
   ++  urly
-    |=  a=tape  ^-  tape
+    |=  a+tape  ^-  tape
     ?~  a  ~
-    :: ?:  (gth i.a 0xff)  "XX"                       ::  XX
+    :: ?:  (gth i.a 0xff)  "XX"                       ::  XX  
     ?:  ?|  [?=(^ q)]:(alp 1^1 a)
             (~(has in (sa "!*'();:@&=+$,/?#%.~_")) i.a) ::  XX  reparse
         ==
@@ -211,16 +211,16 @@
     (weld (urle (trip i.a)) $(a t.a))
   ::
   ++  reso
-    |=  b=inline
+    |=  b+inline
     ^-  manx
     ?@  -.b
       ?-  -.b
-        %$     :/(p.b)
-        %line  ;br;
-        %code  ;code:"{p.b}"
-        %htmt  !!  ::p.b              ::  handled earlier ::  XX  do type stuff
+        $$     :/(p.b)
+        $line  ;br;
+        $code  ;code:"{p.b}"
+        $htmt  !!  ::p.b              ::  handled earlier ::  XX  do type stuff
       ==
-    ?:  ?=(%blot -.p.b)
+    ?:  ?=($blot -.p.b)
       =+  res=`manx`;img(src (urly p.p.b), alt (flat (turn q.b ..$)));
         :: ;img@"{p.p.b}";
       ?~  q.p.b  res
@@ -228,12 +228,12 @@
     =+  kid=(sung q.b)
     %+  into-inner  kid
     ?-  p.b
-      [%emph ?]  ?.(p.p.b ;em; ;strong;)
-      [%delt ~]  ;del;
-      [%link ^]  =+  url=(urly p.p.b)
-                 =.  url  ?^(url url "#{(sanitize kid)}")
-                 ?~  q.p.b  ;a/"{url}";
-                 ;a/"{url}"(title u.q.p.b);
+      {$emph ?}   ?.(p.p.b ;em; ;strong;)
+      {$delt $~}  ;del;
+      {$link ^}   =+  url=(urly p.p.b)
+                  =.  url  ?^(url url "#{(sanitize kid)}")
+                  ?~  q.p.b  ;a/"{url}";
+                  ;a/"{url}"(title u.q.p.b);
     ==
   --
 --

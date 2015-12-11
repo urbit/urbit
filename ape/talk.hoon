@@ -10,11 +10,11 @@
   ::
 [. talk sole]
 =>  |%                                                  ::  data structures
-    ++  house  ,[%5 house-5]                            ::  full state
+    ++  house  {$5 house-5}                             ::  full state
     ++  house-any                                       ::  app history
-      $%  [%3 house-3]                                  ::  3: talk
-          [%4 house-4]                                  ::  4: talk
-          [%5 house-5]                                  ::  5: talk
+      _%  {$3 house-3}                                  ::  3: talk
+          {$4 house-4}                                  ::  4: talk
+          {$5 house-5}                                  ::  5: talk
       ==                                                ::
     ++  house-3                                         ::
       %+  cork  house-4  |=  house-4                    ::  modern house with
@@ -23,93 +23,93 @@
       %+  cork  house-5  |=  house-5                    ::  modern house with
       +<(shells (~(run by shells) shell-4))             ::  no settings
     ++  house-5                                         ::
-      $:  stories=(map span story)                      ::  conversations
-          general=(set bone)                            ::  meta-subscribe
-          outbox=(pair ,@ud (map ,@ud thought))         ::  urbit outbox
-          folks=(map ship human)                        ::  human identities
-          shells=(map bone shell)                       ::  interaction state
-          log=(map span ,@ud)                           ::  logged to clay
-          nik=(map (set partner) char)                  ::  bound station glyphs
-          nak=(jug char (set partner))                  ::  station glyph lookup
+      _:  stories+(map span story)                      ::  conversations
+          general+(set bone)                            ::  meta-subscribe
+          outbox+(pair @ud (map @ud thought))           ::  urbit outbox
+          folks+(map ship human)                        ::  human identities
+          shells+(map bone shell)                       ::  interaction state
+          log+(map span @ud)                            ::  logged to clay
+          nik+(map (set partner) char)                  ::  bound station glyphs
+          nak+(jug char (set partner))                  ::  station glyph lookup
       ==                                                ::
     ++  story-3  (cork story |=(story +<(|10 &11.+<)))  ::  missing glyphers
     ++  story                                           ::  wire content
-      $:  count=@ud                                     ::  (lent grams)
-          grams=(list telegram)                         ::  all history
-          locals=(map ship (pair ,@da status))          ::  local presence
-          remotes=(map partner atlas)                   ::  remote presence
-          mirrors=(map station config)                  ::  remote config
-          sequence=(map partner ,@ud)                   ::  partners heard
-          shape=config                                  ::  configuration
-          known=(map serial ,@ud)                       ::  messages heard
-          gramsers=(map bone river)                     ::  message followers
-          groupers=(set bone)                           ::  presence followers
-          cabalers=(set bone)                           ::  config followers
-          glyphers=(set bone)                           ::  glyph followers
+      _:  count+@ud                                     ::  (lent grams)
+          grams+(list telegram)                         ::  all history
+          locals+(map ship (pair @da status))           ::  local presence
+          remotes+(map partner atlas)                   ::  remote presence
+          mirrors+(map station config)                  ::  remote config
+          sequence+(map partner @ud)                    ::  partners heard
+          shape+config                                  ::  configuration
+          known+(map serial @ud)                        ::  messages heard
+          gramsers+(map bone river)                     ::  message followers
+          groupers+(set bone)                           ::  presence followers
+          cabalers+(set bone)                           ::  config followers
+          glyphers+(set bone)                           ::  glyph followers
       ==                                                ::
     ++  shell                                           ::  console session
-      $:  her=ship                                      ::  client identity
-          man=span                                      ::  mailbox
-          count=@ud                                     ::  messages shown
-          say=sole-share                                ::  console state
-          active=(unit (set partner))                   ::  active targets
-          passive=(set partner)                         ::  passive targets
-          owners=register                               ::  presence mirror
-          harbor=(map span (pair posture cord))         ::  stations mirror
-          system=cabal                                  ::  config mirror
-          settings=(set span)                           ::  frontend settings
+      _:  her+ship                                      ::  client identity
+          man+span                                      ::  mailbox
+          count+@ud                                     ::  messages shown
+          say+sole-share                                ::  console state
+          active+(unit (set partner))                   ::  active targets
+          passive+(set partner)                         ::  passive targets
+          owners+register                               ::  presence mirror
+          harbor+(map span (pair posture cord))         ::  stations mirror
+          system+cabal                                  ::  config mirror
+          settings+(set span)                           ::  frontend settings
       ==                                                ::
     ++  shell-4  (cork shell |=(shell +<(|8 &9.+<)))    ::  missing settings
     ++  river  (pair point point)                       ::  stream definition
     ++  point                                           ::  stream endpoint
-      $%  [%ud p=@ud]                                   ::  by number
-          [%da p=@da]                                   ::  by date
+      _%  {$ud p+@ud}                                   ::  by number
+          {$da p+@da}                                   ::  by date
       ==                                                ::
     ++  move  (pair bone card)                          ::  all actions
     ++  lime                                            ::  diff fruit
-      $%  [%talk-report report]                         ::
-          [%sole-effect sole-effect]                    ::
+      _%  {$talk-report report}                         ::
+          {$sole-effect sole-effect}                    ::
       ==                                                ::
     ++  pear                                            ::  poke fruit
-      $%  [%talk-command command]                       ::
+      _%  {$talk-command command}                       ::
       ==                                                ::
     ++  card                                            ::  general card
-      $%  [%diff lime]                                  ::
-          [%info wire @p @tas nori]                     ::
-          [%peer wire dock path]                        ::
-          [%poke wire dock pear]                        ::
-          [%pull wire dock ~]                           ::
-          [%quit ~]                                     ::
+      _%  {$diff lime}                                  ::
+          {$info wire @p @tas nori}                     ::
+          {$peer wire dock path}                        ::
+          {$poke wire dock pear}                        ::
+          {$pull wire dock ~}                           ::
+          {$quit $~}                                     ::
       ==                                                ::
     ++  weir                                            ::  parsed wire
-      $%  [%repeat p=@ud q=@p r=span]                   ::
-          [%friend p=span q=station]                    ::
+      _%  {$repeat p+@ud q+@p r+span}                   ::
+          {$friend p+span q+station}                    ::
       ==                                                ::
     ++  work                                            ::  interface action
-      $%  [%number p=$|(@ud [@u @ud])]                  ::  relative/absolute
-          [%help ~]                                     ::  print usage info
-          [%who p=where]                                ::  presence
-          [%what p=$|(char (set partner))]              ::  show bound glyph
-          [%bind p=char q=(unit where)]                 ::
-          [%join p=where]                               ::  
-          [%leave p=where]                              ::  
-          [%say p=(list speech)]                        ::
-          [%eval p=cord q=twig]                         ::
-          [%invite p=span q=(list partner)]             ::  whitelist add
-          [%banish p=span q=(list partner)]             ::  blacklist add
-          [%block p=span q=(list partner)]              ::  blacklist add
-          [%author p=span q=(list partner)]             ::  whitelist add
-          [%nick p=(unit ship) q=(unit cord)]           ::
-          [%set p=span]                                 ::
-          [%unset p=span]                               ::
-          [%target p=where q=(unit work)]               ::  set active targets
-          ::  [%destroy p=span]                         ::
-          [%create p=posture q=span r=cord]             ::
-          [%probe p=station]                            ::
+      _%  {$number p+$|(@ud {@u @ud})}                  ::  relative/absolute
+          {$help ~}                                     ::  print usage info
+          {$who p+where}                                ::  presence
+          {$what p+$|(char (set partner))}              ::  show bound glyph
+          {$bind p+char q+(unit where)}                 ::
+          {$join p+where}                               ::  
+          {$leave p+where}                              ::  
+          {$say p+(list speech)}                        ::
+          {$eval p+cord q+twig}                         ::
+          {$invite p+span q+(list partner)}             ::  whitelist add
+          {$banish p+span q+(list partner)}             ::  blacklist add
+          {$block p+span q+(list partner)}              ::  blacklist add
+          {$author p+span q+(list partner)}             ::  whitelist add
+          {$nick p+(unit ship) q+(unit cord)}           ::
+          {$set p+span}                                 ::
+          {$unset p+span}                               ::
+          {$target p+where q+(unit work)}               ::  set active targets
+          ::  {$destroy p+span}                         ::
+          {$create p+posture q+span r+cord}             ::
+          {$probe p+station}                            ::
       ==                                                ::
     ++  where  (set partner)                            ::  non-empty audience 
     ++  sigh                                            ::  assemble label
-      |=  [len=@ud pre=tape yiz=cord]
+      |=  {len+@ud pre+tape yiz+cord}
       ^-  tape
       =+  nez=(trip yiz)
       =+  lez=(lent nez)
@@ -124,30 +124,31 @@
     --
 |_  [hid=bowl house]
 ++  ra                                                  ::  per transaction
-  |_  moves=(list move)
+  |_  moves+(list move)
   ++  sh                                                ::  per console
-    |_  $:  coz=(list command)                          ::  talk actions
-            she=shell
+    |_  $^
+        _:  coz+(list command)                          ::  talk actions
+            she+shell
         ==
     ++  sh-scad                                         ::  command parser
       =<  work
       |%
       ++  expr                                          ::  [cord twig]
-        |=  tub=nail  %.  tub
+        |=  tub+nail  %.  tub
         %+  stag  (crip q.tub)
         wide:(vang & [&1:% &2:% (scot %da now.hid) |3:%])
       ::
       ++  dare                                          ::  @dr
         %+  sear
-          |=  a=coin
-          ?.  ?=([%$ %dr @] a)  ~
+          |=  a+coin
+          ?.  ?=({$$ $dr @} a)  ~
           (some `@dr`+>.a)
         nuck:so
       ::
       ++  ship  ;~(pfix sig fed:ag)                     ::  ship
       ++  shiz                                          ::  ship set
         %+  cook
-          |=(a=(list ^ship) (~(gas in *(set ^ship)) a))
+          |=(a+(list ^ship) (~(gas in *(set ^ship)) a))
         (most ;~(plug com (star ace)) ship)
       ::
       ++  pasp                                          ::  passport
@@ -164,7 +165,7 @@
           ;~(pfix fas (stag (sein our.hid) sym))
         ::
           %+  cook
-            |=  [a=@p b=(unit term)]
+            |=  {a+@p b+(unit term)}
             [a ?^(b u.b (main a))]
           ;~  plug
             ship
@@ -178,12 +179,12 @@
           (stag %| pasp)
         ==
       ++  partners-flat                                 ::  collapse mixed list
-        |=  a=(list (each partner (set partner)))
+        |=  a+(list (each partner (set partner)))
         ^-  (set partner)
         ?~  a  ~
         ?-  -.i.a
-          %&  (~(put in $(a t.a)) p.i.a)
-          %|  (~(uni in $(a t.a)) p.i.a)
+          {$&}  (~(put in $(a t.a)) p.i.a)
+          {$|}  (~(uni in $(a t.a)) p.i.a)
         ==
       ::
       ++  para                                          ::  partners alias
@@ -288,23 +289,23 @@
       |=  cod=command
       ^+  +>
       ?-    -.cod
-          %design
+          $design
         ?~  q.cod
           =.  +>+>.$  (ra-config p.cod *config)
           +>.$(stories (~(del by stories) p.cod))
         +>(+> (ra-config p.cod u.q.cod))
       ::
-          %review   +>(+> (ra-think | her.she +.cod))
-          %publish  +>(+> (ra-think & her.she +.cod))
+          $review   +>(+> (ra-think | her.she +.cod))
+          $publish  +>(+> (ra-think & her.she +.cod))
       ==
     ::
     ++  sh-fact                                         ::  send console effect
-      |=  fec=sole-effect
+      |=  fec+sole-effect
       ^+  +>
       +>(moves :_(moves [ost.hid %diff %sole-effect fec]))
     ::
     ++  sh-peep                                         ::  peer to path
-      |=  pax=path
+      |=  pax+path
       ^+  +>
       +>(+> (ra-subscribe her.she pax))
     ::
@@ -320,7 +321,7 @@
       %+  sh-fact  %pro
       :+  &  %talk-line
       ^-  tape
-      =+  ^=  rew  ^-  (pair (pair ,@t ,@t) (set partner))
+      =+  ^=  rew  ^-  (pair (pair @t @t) (set partner))
           ?~  active.she
             [['(' ')'] passive.she]
           [['[' ']'] u.active.she]
@@ -331,19 +332,19 @@
       (weld `tape`[p.p.rew por] `tape`[q.p.rew ' ' ~])
     ::
     ++  sh-pact                                         ::  update active aud
-      |=  lix=(set partner)
+      |=  lix+(set partner)
       ^+  +>
       =+  act=?~(lix ~ `(sh-pare lix))
       ?:  =(active.she act)  +>.$
       sh-prod(active.she act)
     ::
     ++  sh-pare                                         ::  adjust target list
-      |=  paz=(set partner)
+      |=  paz+(set partner)
       ?:  (sh-pear paz)  paz
       (~(put in paz) [%& our.hid man.she])
     ::
     ++  sh-pear                                         ::  hearback
-      |=  paz=(set partner)
+      |=  paz+(set partner)
       ?~  paz  |
       ?|  $(paz l.paz) 
           $(paz r.paz)
@@ -351,13 +352,13 @@
       ==
     ::
     ++  sh-pass                                         ::  passive from aud
-      |=  aud=audience
+      |=  aud+audience
       %-  sh-poss
       %-  ~(gas in *(set partner))
       (turn (~(tap by aud)) |=([a=partner *] a))
     ::
     ++  sh-poss                                         ::  passive update
-      |=  lix=(set partner)
+      |=  lix+(set partner)
       ?^  buf.say.she
         +>.$
       =+  sap=(sh-pare lix)
@@ -366,33 +367,31 @@
       sh-prod(passive.she sap)
     ::
     ++  sh-pest                                         ::  report listen
-      |=  tay=partner
+      |=  tay+partner
       ^+  +>
-      ?.  ?=(%& -.tay)  +>
+      ?.  ?=($& -.tay)  +>
       =+  sib=(~(get by ham.system.she) `station`p.tay)
-      ?.  |(?=(~ sib) !?=(%white p.cordon.u.sib))
+      ?.  |(?=($~ sib) !?=($white p.cordon.u.sib))
         +>.$
       (sh-poss [tay ~ ~])
     ::
     ++  sh-rend                                         ::  print on one line
-      |=  gam=telegram
+      |=  gam+telegram
       =+  lin=~(tr-line tr man.she (~(has in settings.she) %noob) gam)
       (sh-pass:(sh-fact %txt lin) q.q.gam) 
     ::
     ++  sh-numb                                         ::  print msg number
-      |=  num=@ud
+      |=  num+@ud
       ^+  +>
       =+  bun=(scow %ud num)
-      ::  =+  pad=(sub 36 (lent bun))
-      ::  =+  now=`@da`(dis now.hid 0xffff.ffff.ffff.ffff.0000.0000.0000.0000)
       %+  sh-fact  %txt
       (runt [(sub 13 (lent bun)) '-'] "[{bun}]")
     ::
     ++  sh-glyf                                         ::  decode glyph
-      |=  cha=char  ^-  (unit (set partner))
+      |=  cha+char  ^-  (unit (set partner))
       =+  lax=(~(get ju nak) cha)
       ?:  =(~ lax)  ~
-      ?:  ?=([* ~ ~] lax)  `n.lax
+      ?:  ?=({* $~ $~} lax)  `n.lax
       =+  grams=grams:(~(got by stories) man.she)
       |-  ^-  (unit (set partner))
       ?~  grams  ~
@@ -401,11 +400,11 @@
       $(grams t.grams)
       ::
     ++  sh-repo-house-diff
-      |=  [one=shelf two=shelf]
-      =|  $=  ret
-          $:  old=(list (pair span (pair posture cord)))
-              new=(list (pair span (pair posture cord)))
-              cha=(list (pair span (pair posture cord)))
+      |=  {one+shelf two+shelf}
+      =|  _=  ret
+          _:  old+(list (pair span (pair posture cord)))
+              new+(list (pair span (pair posture cord)))
+              cha+(list (pair span (pair posture cord)))
           ==
       ^+  ret
       =.  ret
@@ -429,11 +428,11 @@
       ret 
     ::
     ++  sh-repo-atlas-diff
-      |=  [one=atlas two=atlas]
-      =|  $=  ret
-          $:  old=(list (pair ship status))
-              new=(list (pair ship status))
-              cha=(list (pair ship status))
+      |=  {one+atlas two+atlas}
+      =|  _=  ret
+          _:  old+(list (pair ship status))
+              new+(list (pair ship status))
+              cha+(list (pair ship status))
           ==
       ^+  ret
       =.  ret
@@ -457,11 +456,11 @@
       ret 
     ::
     ++  sh-repo-cabal-diff
-      |=  [one=(map station config) two=(map station config)]
-      =|  $=  ret
-          $:  old=(list (pair station config))
-              new=(list (pair station config))
-              cha=(list (pair station config))
+      |=  {one+(map station config) two+(map station config)}
+      =|  _=  ret
+          _:  old+(list (pair station config))
+              new+(list (pair station config))
+              cha+(list (pair station config))
           ==
       ^+  ret
       =.  ret
@@ -485,9 +484,9 @@
       ret
     ::
     ++  sh-repo-rogue-diff
-      |=  [one=(map partner atlas) two=(map partner atlas)]
-      =|  $=  ret
-          $:  old=(list (pair partner atlas))
+      |=  {one+(map partner atlas) two+(map partner atlas)}
+      =|  _=  ret
+          _:  old+(list (pair partner atlas))
               new=(list (pair partner atlas))
               cha=(list (pair partner atlas))
           ==
@@ -513,10 +512,10 @@
       ret
     ::
     ++  sh-repo-whom-diff
-      |=  [one=(set partner) two=(set partner)]
-      =|  $=  ret
-          $:  old=(list partner)
-              new=(list partner)
+      |=  {one+(set partner) two+(set partner)}
+      =|  _=  ret
+          _:  old+(list partner)
+              new+(list partner)
           ==
       ^+  ret
       =.  ret
@@ -538,10 +537,10 @@
       ret
     ::
     ++  sh-repo-ship-diff
-      |=  [one=(set ship) two=(set ship)]
-      =|  $=  ret
-          $:  old=(list ship)
-              new=(list ship)
+      |=  {one+(set ship) two+(set ship)}
+      =|  _=  ret
+          _:  old+(list ship)
+              new+(list ship)
           ==
       ^+  ret
       =.  ret
@@ -563,18 +562,18 @@
       ret 
     ::
     ++  sh-puss
-      |=  a=posture  ^-  tape
+      |=  a+posture  ^-  tape
       ?-  a
-        %black  "channel"
-        %brown  "mailbox"
-        %white  "village"
-        %green  "journal"
+        $black  "channel"
+        $brown  "mailbox"
+        $white  "village"
+        $green  "journal"
       ==
     ::
     ++  sh-repo-config-exceptions
-      |=  [pre=tape por=posture old=(list ship) new=(list ship)]
-      =+  out=?:(?=(?(%black %brown) por) "try " "cut ")
-      =+  inn=?:(?=(?(%black %brown) por) "ban " "add ")
+      |=  {pre+tape por+posture old+(list ship) new+(list ship)}
+      =+  out=?:(?=(?($black $brown) por) "try " "cut ")
+      =+  inn=?:(?=(?($black $brown) por) "ban " "add ")
       =.  +>.$
           |-  ^+  +>.^$
           ?~  old  +>.^$
@@ -588,7 +587,7 @@
       +>.$
     ::
     ++  sh-repo-config-sources
-      |=  [pre=tape old=(list partner) new=(list partner)]
+      |=  {pre+tape old+(list partner) new+(list partner)}
       ^+  +>
       =.  +>.$
           |-  ^+  +>.^$
@@ -603,7 +602,7 @@
       +>.$
     ::
     ++  sh-repo-config-show
-      |=  [pre=tape laz=config loc=config]
+      |=  {pre+tape laz+config loc+config}
       ^+  +>
       =.  +>.$
         ?:  =(caption.loc caption.laz)  +>.$
@@ -624,10 +623,11 @@
       (sh-repo-ship-diff q.cordon.laz q.cordon.loc)
     ::
     ++  sh-repo-cabal-changes
-      |=  $:  laz=(map station config)
-              old=(list (pair station config))
-              new=(list (pair station config))
-              cha=(list (pair station config))
+      |=  $^
+          _:  laz+(map station config)
+              old+(list (pair station config))
+              new+(list (pair station config))
+              cha+(list (pair station config))
           ==
       =.  +>.$
           |-  ^+  +>.^$
@@ -647,7 +647,7 @@
       +>.$
     ::
     ++  sh-repo-cabal
-      |=  bal=cabal
+      |=  bal+cabal
       ^+  +>
       =+  laz=system.she
       =.  system.she  bal
@@ -657,7 +657,7 @@
       (sh-repo-config-show "" loc.laz loc.bal)
     ::
     ++  sh-repo-house
-      |=  awl=(map span (pair posture cord))
+      |=  awl+(map span (pair posture cord))
       ^+  +>
       =+  dif=(sh-repo-house-diff harbor.she awl) 
       =.  harbor.she  awl
@@ -687,21 +687,22 @@
       +>.$
     ::
     ++  sh-note                                         ::  shell message
-      |=  txt=tape
+      |=  txt+tape
       ^+  +>
       (sh-fact %txt (runt [14 '-'] `tape`['|' ' ' (scag 64 txt)]))
     ::
     ++  sh-spaz                                         ::  print status
-      |=  saz=status
+      |=  saz+status
       ^-  tape
       ['%' (trip p.saz)]
     ::
     ++  sh-repo-group-diff-here                         ::  print atlas diff
-      |=  $:  pre=tape 
-            $=  cul
-            $:  old=(list (pair ship status))
-                new=(list (pair ship status))
-                cha=(list (pair ship status))
+      |=  $^
+          _:  pre+tape 
+            _=  cul
+            _:  old+(list (pair ship status))
+                new+(list (pair ship status))
+                cha+(list (pair ship status))
             ==
           ==
       =.  +>.$
@@ -723,14 +724,14 @@
       +>.$
     ::
     ++  sh-repo-group-here                              ::  update local
-      |=  loc=atlas
+      |=  loc+atlas
       ^+  +>
       =+  cul=(sh-repo-atlas-diff p.owners.she loc)
       =.  p.owners.she  loc
       (sh-repo-group-diff-here "" cul)
     ::
     ++  sh-repo-group-there                             ::  update foreign
-      |=  yid=(map partner atlas)
+      |=  yid+(map partner atlas)
       =+  day=(sh-repo-rogue-diff q.owners.she yid)
       =+  dun=q.owners.she
       =.  q.owners.she  yid
@@ -758,14 +759,14 @@
       +>.$
     ::
     ++  sh-repo-group
-      |=  ges=register
+      |=  ges+register
       ^+  +>
       =.  +>  (sh-repo-group-here p.ges)
       =.  +>  (sh-repo-group-there q.ges)
       +>
     ::
     ++  sh-repo-gram
-      |=  [num=@ud gam=telegram]
+      |=  {num+@ud gam+telegram}
       ^+  +>
       ?:  =(num count.she)
         =.  +>  ?:(=(0 (mod num 5)) (sh-numb num) +>)
@@ -776,13 +777,13 @@
       +> 
     ::
     ++  sh-repo-grams                                   ::  apply telegrams
-      |=  [num=@ud gaz=(list telegram)]
+      |=  {num+@ud gaz+(list telegram)}
       ^+  +>
       ?~  gaz  +>
       $(gaz t.gaz, num +(num), +> (sh-repo-gram num i.gaz))
     ::
     ++  sh-repo-glyph                                   ::  apply binding
-      |=  nac=(jug char (set partner))
+      |=  nac+(jug char (set partner))
       ^+  +>
       %_  sh-prod
         nak  nac
@@ -794,19 +795,19 @@
       ==
     ::
     ++  sh-repo                                         ::  apply report
-      |=  rad=report
+      |=  rad+report
       ^+  +>
       ::  ~&  [%sh-repo rad]
       ?-  -.rad
-        %cabal   (sh-repo-cabal +.rad)
-        %grams   (sh-repo-grams +.rad)
-        %glyph   (sh-repo-glyph +.rad)                  ::  XX ever happens?
-        %group   (sh-repo-group +.rad)
-        %house   (sh-repo-house +.rad)
+        $cabal   (sh-repo-cabal +.rad)
+        $grams   (sh-repo-grams +.rad)
+        $glyph   (sh-repo-glyph +.rad)                  ::  XX ever happens?
+        $group   (sh-repo-group +.rad)
+        $house   (sh-repo-house +.rad)
       ==
     ::
     ++  sh-sane-chat                                    ::  sanitize chatter
-      |=  buf=(list ,@c)
+      |=  buf+(list @c)
       ^-  (list sole-edit)
       ?~  buf  ~
       =+  [inx=0 sap=0 con=0]
@@ -834,24 +835,24 @@
       --
     ::
     ++  sh-sane                                         ::  sanitize input
-      |=  [inv=sole-edit buf=(list ,@c)]
+      |=  {inv+sole-edit buf+(list @c)}
       ^-  (list sole-edit)
       =+  res=(rose (tufa buf) sh-scad)
-      ?:  ?=(| -.res)  [inv ~]
+      ?:  ?=($| -.res)  [inv ~]
       =+  wok=`(unit work)`p.res
       |-  ^-  (list sole-edit)
       ?~  wok  ~
       ?+  -.u.wok  ~
-        %target  $(wok q.u.wok)
-        %say  |-  ::  XX per line
+        $target  $(wok q.u.wok)
+        $say  |-  ::  XX per line
               ?~  p.u.wok  ~
-              ?:  ?=(%lin -.i.p.u.wok)
+              ?:  ?=($lin -.i.p.u.wok)
                 (sh-sane-chat buf)
               $(p.u.wok t.p.u.wok)
       ==
     ::
     ++  sh-slug                                         ::  edit to sanity
-      |=  lit=(list sole-edit)
+      |=  lit+(list sole-edit)
       ^+  +>
       ?~  lit  +>
       =^  lic  say.she
@@ -859,7 +860,7 @@
       (sh-fact [%mor [%det lic] ~])
     ::
     ++  sh-stir                                         ::  apply edit
-      |=  cal=sole-change
+      |=  cal+sole-change
       ^+  +>
       =^  inv  say.she  (~(transceive sole say.she) cal)
       =+  lit=(sh-sane inv buf.say.she)
@@ -868,7 +869,7 @@
       (sh-slug lit)
     ::
     ++  sh-lame                                         ::  send error
-      |=  txt=tape
+      |=  txt+tape
       (sh-fact [%txt txt])
     ::
     ++  sh-whom                                         ::  current audience
@@ -878,43 +879,43 @@
       |=(a=partner [a *envelope %pending])
     ::
     ++  sh-tell                                         ::  add command
-      |=  cod=command
+      |=  cod+command
       %_(+> coz [cod coz])
     ::
     ++  sh-twig-head  ^-  vase                          ::  eval data
-      !>(`[our=@p now=@da eny=@uvI]`[our.hid now.hid (shas %eny eny.hid)])
+      !>(`{our+@p now+@da eny+@uvI}`[our.hid now.hid (shas %eny eny.hid)])
     ::
     ++  sh-work                                         ::  do work
-      |=  job=work
+      |=  job+work
       ^+  +>
       =+  roy=(~(got by stories) man.she)
       =<  work
       |%
       ++  work
         ?-  -.job
-          %number  (number +.job)
-          %leave   (leave +.job)
-          %join    (join +.job)
-          %eval    (eval +.job)
-          %who     (who +.job)
-          %what    (what +.job)
-          %bind    (bind +.job)
-          %invite  (invite +.job)
-          %banish  (banish +.job)
-          %author  (author +.job)
-          %block   (block +.job)
-          %create  (create +.job)
-          %nick    (nick +.job)
-          %set     (wo-set +.job)
-          %unset   (unset +.job)
-          %target  (target +.job)
-          %probe   (probe +.job)
-          %help    help
-          %say     (say +.job)
+          $number  (number +.job)
+          $leave   (leave +.job)
+          $join    (join +.job)
+          $eval    (eval +.job)
+          $who     (who +.job)
+          $what    (what +.job)
+          $bind    (bind +.job)
+          $invite  (invite +.job)
+          $banish  (banish +.job)
+          $author  (author +.job)
+          $block   (block +.job)
+          $create  (create +.job)
+          $nick    (nick +.job)
+          $set     (wo-set +.job)
+          $unset   (unset +.job)
+          $target  (target +.job)
+          $probe   (probe +.job)
+          $help    help
+          $say     (say +.job)
         ==
       ::
       ++  activate                                      ::  from %number
-        |=  gam=telegram
+        |=  gam+telegram
         ^+  ..sh-work
         =+  tay=~(. tr man.she (~(has in settings.she) %noob) gam)
         =.  ..sh-work  (sh-fact tr-fact:tay)
@@ -924,10 +925,10 @@
         (sh-fact %txt "see http://urbit.org/docs/user/talk")
       ::
       ++  glyph
-        |=  idx=@
+        |=  idx+@
         =<  cha.ole
         %+  reel  glyphs
-        |=  [all=tape ole=[cha=char num=@]]
+        |=  {all+tape ole+{cha+char num+@}}
         =+  new=(snag (mod idx (lent all)) all)
         =+  num=~(wyt in (~(get ju nak) new))
         ?~  cha.ole  [new num]
@@ -936,7 +937,7 @@
         [new num]
       ::
       ++  set-glyph
-        |=  [cha=char lix=(set partner)]
+        |=  {cha+char lix+(set partner)}
         =:  nik  (~(put by nik) lix cha)
             nak  (~(put ju nak) cha lix)
           ==
@@ -947,7 +948,7 @@
         ==
       ::
       ++  join                                          ::  %join
-        |=  pan=(set partner)
+        |=  pan+(set partner)
         ^+  ..sh-work
         =.  ..sh-work
           =+  (~(get by nik) pan)
@@ -959,65 +960,65 @@
         `loc(sources (~(uni in sources.loc) pan))
       ::
       ++  leave                                          ::  %leave
-        |=  pan=(set partner)
+        |=  pan+(set partner)
         ^+  ..sh-work
         =+  loc=loc.system.she
         %^  sh-tell  %design  man.she
         `loc(sources (~(dif in sources.loc) pan))
       ::
       ++  what                                          ::  %what
-        |=  qur=$|(char (set partner))  ^+  ..sh-work
+        |=  qur=_|(char (set partner))  ^+  ..sh-work
         ?^  qur
           =+  cha=(~(get by nik) qur)
           (sh-fact %txt ?~(cha "none" [u.cha]~))
         =+  pan=(~(tap in (~(get ju nak) qur)))
         ?:  =(~ pan)  (sh-fact %txt "~")
         =<  (sh-fact %mor (turn pan .))
-        |=(a=(set partner) [%txt <a>]) ::  XX ~(te-whom te man.she a)
+        |=(a+(set partner) [%txt <a>]) ::  XX ~(te-whom te man.she a)
       ::
       ++  who                                          ::  %who
-        |=  pan=(set partner)  ^+  ..sh-work
+        |=  pan+(set partner)  ^+  ..sh-work
         =<  (sh-fact %mor (murn (sort (~(tap by q.owners.she)) aor) .))
-        |=  [pon=partner alt=atlas]  ^-  (unit sole-effect)
+        |=  {pon+partner alt+atlas}  ^-  (unit sole-effect)
         ?.  |(=(~ pan) (~(has in pan) pon))  ~
         =-  `[%tan rose/[", " `~]^- leaf/~(ta-full ta man.she pon) ~]
         =<  (murn (sort (~(tap by alt)) aor) .)
-        |=  [a=ship b=presence c=human]  ^-  (unit tank) :: XX names
+        |=  {a+ship b+presence c+human}  ^-  (unit tank) :: XX names
         ?-  b
-          %gone  ~
-          %hear  `>a<
-          %talk  `>a<      ::  XX difference
+          $gone  ~
+          $hear  `>a<
+          $talk  `>a<      ::  XX difference
         ==
       :: 
       ++  bind                                          ::  %bind
-        |=  [cha=char pan=(unit (set partner))]  ^+  ..sh-work
+        |=  {cha+char pan+(unit (set partner))}  ^+  ..sh-work
         ?~  pan  $(pan [~ ?~(active.she passive.she u.active.she)])
         =+  ole=(~(get by nik) u.pan)
         ?:  =(ole [~ cha])  ..sh-work
         (sh-note:(set-glyph cha u.pan) "bound {<cha>} {<u.pan>}")
       ::
       ++  invite                                        ::  %invite
-        |=  [nom=span tal=(list partner)]
+        |=  {nom+span tal+(list partner)}
         ^+  ..sh-work
         !!
       ::
       ++  block                                         ::  %block
-        |=  [nom=span tal=(list partner)]
+        |=  {nom+span tal+(list partner)}
         ^+  ..sh-work
         !!
       ::
       ++  author                                        ::  %author
-        |=  [nom=span tal=(list partner)]
+        |=  {nom+span tal+(list partner)}
         ^+  ..sh-work
         !!
       ::
       ++  banish                                        ::  %banish
-        |=  [nom=span tal=(list partner)]
+        |=  {nom+span tal+(list partner)}
         ^+  ..sh-work
         !!
       ::
       ++  create                                        ::  %create
-        |=  [por=posture nom=span txt=cord]
+        |=  {por+posture nom+span txt+cord}
         ^+  ..sh-work
         ?:  (~(has in stories) nom) 
           (sh-lame "{(trip nom)}: already exists")
@@ -1030,7 +1031,7 @@
         (join [[%& our.hid nom] ~ ~])
       ::
       ++  reverse-folks
-        |=  nym=span
+        |=  nym+span
         ^-  (list ship)
         %+  murn  (~(tap by folks))
         |=  [p=ship q=human]
@@ -1039,12 +1040,12 @@
         [~ u=p]
       ::
       ++  nick                                          ::  %nick
-        |=  [her=(unit ship) nym=(unit cord)]
+        |=  {her+(unit ship) nym+(unit cord)}
         ^+  ..sh-work
-        ?:  ?=([~ ~] +<)
+        ?:  ?=({$~ $~} +<)
           %+  sh-fact  %mor
           %+  turn  (~(tap by folks))
-          |=  [p=ship q=human]
+          |=  {p+ship q+human}
           :-  %txt
           ?~  hand.q
             "{<p>}:"
@@ -1059,7 +1060,7 @@
         ?~  her
           %+  sh-fact  %mor
           %+  turn  (reverse-folks u.nym)
-          |=  p=ship
+          |=  p+ship
           [%txt "{<p>}: {<u.nym>}"]
         %=  ..sh-work
           folks  ?~  u.nym
@@ -1068,32 +1069,32 @@
         ==
       ::
       ++  wo-set                                        ::  %set
-        |=  seg=span
+        |=  seg+span
         ^+  ..sh-work
         ?~  seg
           %+  sh-fact  %mor
           %+  turn  (~(tap in settings.she))
-          |=  s=span
+          |=  s+span
           [%txt (trip s)]
         %=  ..sh-work
           settings.she  (~(put in settings.she) seg)
         ==
       ::
       ++  unset                                         ::  %unset
-        |=  neg=span
+        |=  neg+span
         ^+  ..sh-work
         %=  ..sh-work
           settings.she  (~(del in settings.she) neg)
         ==
       ::
       ++  target                                        ::  %target
-        |=  [pan=(set partner) woe=(unit ^work)]
+        |=  {pan+(set partner) woe+(unit ^work)}
         ^+  ..sh-work
         =.  ..sh-pact  (sh-pact pan)
         ?~(woe ..sh-work work(job u.woe))
       ::
       ++  number                                        ::  %number
-        |=  num=$|(@ud [p=@u q=@ud])
+        |=  num+_|(@ud {p+@u q+@ud})
         ^+  ..sh-work
         =+  roy=(~(got by stories) man.she)
         |-
@@ -1111,26 +1112,26 @@
         (sh-lame "…{(reap p.num '0')}{(scow %ud q.num)}: no such telegram")
       ::
       ++  deli                                          ::  find number
-        |=  [max=@ud nul=@u fin=@ud]  ^-  @ud
+        |=  {max+@ud nul+@u fin+@ud}  ^-  @ud
         =+  dog=|-(?:(=(0 fin) 1 (mul 10 $(fin (div fin 10)))))
         =.  dog  (mul dog (pow 10 nul))
         =-  ?:((lte - max) - (sub - dog))
         (add fin (sub max (mod max dog)))
       ::
       ++  probe                                         ::  inquire
-        |=  cuz=station
+        |=  cuz+station
         ^+  ..sh-work
         ~&  [%probe cuz]
         ..sh-work
       ::
       ++  eval                                          ::  run
-        |=  [txt=cord exe=twig]
+        |=  {txt+cord exe+twig}
         =>  |.([(sell (slap (slop sh-twig-head seed) exe))]~)
         =+  tan=p:(mule .)
         (say [%fat tank/tan exp/txt] ~)
       ::
       ++  say                                           ::  publish
-        |=  sep=(list speech)
+        |=  sep+(list speech)
         ^+  ..sh-work
         ?~  sep    ..sh-work
         =^  sir  ..sh-work  sh-uniq
@@ -1161,20 +1162,20 @@
       ==
     ::
     ++  sh-sole                                         ::  apply edit
-      |=  act=sole-action
+      |=  act+sole-action
       ^+  +>
       ?-  -.act
-        %det  (sh-stir +.act)
-        %clr  (sh-pact ~)
-        %ret  sh-done
+        $det  (sh-stir +.act)
+        $clr  (sh-pact ~)
+        $ret  sh-done
       ==
     ::
     ++  sh-uniq
-      ^-  [serial _.]
+      ^-  [serial __(.)]
       [(shaf %serial eny.hid) .(eny.hid (shax eny.hid))]
     --
   ++  ra-abed                                           ::  resolve core
-    ^-  [(list move) _+>]
+    ^+  [*(list move) +>]
     :_  +>
     =+  ^=  yop  
         |-  ^-  (pair (list move) (list sole-effect))
@@ -1356,7 +1357,7 @@
   ++  ra-console                                        ::  console subscribe
     |=  [her=ship pax=path]
     ^+  +>
-    =+  man=`span`?~(pax (main her) ?>(?=(~ t.pax) i.pax))
+    =+  man=`span`?~(pax (main her) ?>(?=($~ t.pax) i.pax))
     =+  ^=  she  ^-  shell
         [her man 0 *sole-share ~ [[%& our.hid man] ~ ~] [~ ~] ~ *cabal ~]
     sh-abet:~(sh-peer sh ~ she)
@@ -1365,7 +1366,7 @@
     |=  [her=ship pax=path]
     ^+  +>
     ::  ~&  [%ra-subscribe ost.hid her pax]
-    ?:  ?=(~ pax)
+    ?:  ?=($~ pax)
       (ra-house(general (~(put in general) ost.hid)) ost.hid)
     ?.  ?=([@ @ *] pax)
       (ra-evil %talk-bad-path)
@@ -1647,7 +1648,7 @@
           ==
       =+  gub=(~(get by remotes) tay)
       ::  ~&  [%pa-remind tay gub buk]
-      ?.  |(?=(~ gub) !=(buk u.gub))
+      ?.  |(?=($~ gub) !=(buk u.gub))
         +>.$
       =.  remotes  (~(put by remotes) tay buk)
       (pa-report-group groupers)
@@ -1918,7 +1919,7 @@
         =(p.p.pan our.hid)
     ::
         =+  sot=(~(get by stories) q.p.pan)
-        &(?=(^ sot) ?=(%brown p.cordon.shape.u.sot))
+        &(?=(^ sot) ?=($brown p.cordon.shape.u.sot))
     ==
   ::
   ++  te-pref                                           ::  audience glyph
@@ -2098,12 +2099,12 @@
 ++  etch-friend                                         ::
   |=  [way=wire fun=$+([man=span cuz=station] [(list move) _+>])]
   =+  wer=(etch way)
-  ?>(?=(%friend -.wer) (fun p.wer q.wer))
+  ?>(?=($friend -.wer) (fun p.wer q.wer))
 ::
 ++  etch-repeat                                         ::
   |=  [way=wire fun=$+([num=@ud src=@p man=span] [(list move) _+>])]
   =+  wer=(etch way)
-  ?>(?=(%repeat -.wer) (fun p.wer q.wer r.wer))
+  ?>(?=($repeat -.wer) (fun p.wer q.wer r.wer))
 ::
 ++  reap-friend                                         ::
   |=  [way=wire saw=(unit tang)]

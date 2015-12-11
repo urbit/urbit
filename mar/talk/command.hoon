@@ -40,7 +40,7 @@
       %-  cu  :_  (ar a)
       ~(gas in *(set __((need *a))))
     ::
-    ++  lake  |*(a+__(*) $+(json (unit a)))
+    ++  lake  |*(a+__(*) _+(json (unit a)))
     ++  peach
       |*  a+{rule rule}
       |=  tub+nail  
@@ -57,7 +57,7 @@
     ::
     ::
     ++  thot
-      ^-  $+(json (unit thought))
+      ^-  _+(json (unit thought))
       %-  ot  :~
         serial/(ci (slat %uv) so)
         audience/audi 
@@ -107,7 +107,7 @@
       ==
     ::
     ++  conf
-      ^-  $+(json (unit config))
+      ^-  _+(json (unit config))
       %-  ot  :~
         sources/(as (su parn))
         caption/so

@@ -1,1 +1,1 @@
-(list ,[p=@p q=@t])
+(list {p+@p q+@t})
