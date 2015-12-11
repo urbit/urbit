@@ -1,14 +1,14 @@
 ::
 /?    314
 /-    tree-include
-/=    gas    /$    fuel
 /=    dat    /:  /%%/    /%  /json/ :: default include
+/=    aut    /;  |=(gas=epic (~(has ju aut.ced.gas) %$ (scot %p p.bem.gas)))
+             /$    fuel
 ::
 !:
 ::::
   ::
 =+  dez=(trip &2:%)
-=+  aut=(~(has ju aut.ced.gas) %$ (scot %p p.bem.gas))
 ;html
   ;head
     ;title: Tree
