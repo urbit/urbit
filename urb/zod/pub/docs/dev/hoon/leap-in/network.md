@@ -155,7 +155,7 @@ Let's write our first network message!  Here's `/ape/pong.hoon`:
 ```
 /?    314
 |%
-  ++  move  ,[bone term path *]
+  ++  move  ,[bone term wire *]
 --
 !:
 |_  [bowl state=~]
@@ -222,7 +222,7 @@ with one element:
 
 The general form of a move is
 
-`[bone term path *]`
+`[bone term wire *]`
 
 `["cause" action tack-new-layer-on-cause action-specific
 information]`
@@ -240,10 +240,10 @@ reference to that duct (in the same way that a Unix file
 descriptor is an opaque reference to a file structure).  Thus,
 the center of all this is the concept of a "duct".
 
-A duct is stack of causes, represented as paths.  At the bottom
-of every duct is a unix event, such as a keystroke, network
-packet, file change, or timer event.  When arvo is given this
-event, it routes the event to appropriate kernel module for
+A duct is stack of causes, represented as paths, called wires.
+At the bottom of every duct is a unix event, such as a keystroke,
+network packet, file change, or timer event.  When arvo is given
+this event, it routes the event to appropriate kernel module for
 handling. 
 
 Sometimes, the module can immediately handle the event and
@@ -253,12 +253,13 @@ directly.  When the module cannot service the request itself, it
 sends a method other kernel modules or applications to do certain
 things, and produces the result from that.  When it sends a
 message to another kernel module or application, it also sends
-duct it was given, along with a new path, onto the duct.  Now the
+duct it was given, along with a new wire, onto the duct.  Now the
 duct has two entries, with the unix even on the bottom and the
 kernel module that handled it next.  This process can continue
 indefinitely, adding more and more layers onto the duct.  When an
 entity finally produces a result, a layer is popped off the duct,
 and the result is passed all the way back..
+
 
 In effect, a duct is an arvo-level call stack.  The duct system
 creates a structured message-passing system.  It's worth noting
@@ -276,8 +277,8 @@ Thus, we say to send the network message along the given bone
 layer can have any data we want in it, but we don't need anything
 specific here, so we just use `/sending`.  If we were expecting a
 response (which we're not), it would come back along the
-`/sending` path.  It's a good idea for debugging purposes to make
-the path human-readable, but it's not necessary.
+`/sending` wire.  It's a good idea for debugging purposes to make
+the wire human-readable, but it's not necessary.
 
 Looking back at the general form of a move, there is a `term`,
 which in this case is `%poke`.  This is the name of the
