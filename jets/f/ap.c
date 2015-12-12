@@ -22,6 +22,19 @@
     static u3_noun
     _open_in(u3_noun ter, u3_noun gen);
 
+#if 0
+    /* ~(. al gen)
+    */
+    static u3_noun
+    _al_bore(u3_noun ter,
+             u3_noun gen)
+    {
+      u3_noun gat = u3j_hook(u3k(ter), "al");
+
+      return u3i_molt(gat, u3x_sam, u3nc(c3__herb, u3k(gen)), 0);
+    }
+#endif
+
     /* ~(. al gen)
     */
     static u3_noun
@@ -476,12 +489,14 @@
                 u3nq(c3__cnhp, u3k(p_gen), u3k(q_gen), u3_nul),
                 u3k(q_gen));
   }
+#if 0
    _open_do_pq(kthp)   //  ^-
   {
     return u3nt(c3__ktls,
-                _ap_bunt(_al_core(ter, p_gen), p_gen),
+                _ap_bunt(_al_bore(ter, p_gen), p_gen),
                 u3k(q_gen));
   }
+#endif
 /***
 ****
 ***/
@@ -776,7 +791,7 @@
 	_open_p   (hxgr);
 
 	_open_pq  (ktdt);
-	_open_pq  (kthp);
+// _open_pq  (kthp);
 
 	_open_pq  (sgts);
 //	_open_pq  (sgbr);
