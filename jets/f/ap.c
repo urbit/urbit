@@ -21,7 +21,6 @@
 
     static u3_noun
     _open_in(u3_noun ter, u3_noun gen);
-
 #if 0
     /* ~(. al gen)
     */
@@ -34,7 +33,6 @@
       return u3i_molt(gat, u3x_sam, u3nc(c3__herb, u3k(gen)), 0);
     }
 #endif
-
     /* ~(. al gen)
     */
     static u3_noun
@@ -791,7 +789,7 @@
 	_open_p   (hxgr);
 
 	_open_pq  (ktdt);
-// _open_pq  (kthp);
+//  _open_pq  (kthp);
 
 	_open_pq  (sgts);
 //	_open_pq  (sgbr);
