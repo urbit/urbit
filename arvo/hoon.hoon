@@ -1,4 +1,4 @@
-!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::   
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject
@@ -201,7 +201,6 @@
             {$$ p+axis}                                 ::  simple leg
           ::                                            ::::::  tiling
             {$bccm p+tile}                              ::  clam a tile
-            {$bckt p+twig}                              ::  temporary
             {$bcpt p+wing q+tile}                       ::  whip p into q
             {$bctr p+tile}                              ::  bunt a tile w/ ^~
             {$bczp p+base}                              ::  bunt an axil
@@ -266,8 +265,7 @@
             {$ktbr p+twig}                              ::  %gold core to %iron
             {$ktdt p+twig q+twig}                       ::  cast q to type (p q)
             {$ktls p+twig q+twig}                       ::  cast q to p, verify
-            {$kthx p+twig q+twig}                       ::  cast q to p, verify
-            {$kthp p+tile q+twig}                       ::  cast q to icon of p
+            {$kthz p+twig q+twig}                       ::  cast q to icon of p
             {$ktpm p+twig}                              ::  %gold core to %zinc
             {$ktsg p+twig}                              ::  p as static constant
             {$ktts p+toga q+twig}                       ::  wrap q in toga p
@@ -6874,7 +6872,7 @@
         buv
       ::
           $noun
-        [%kthp [%axil %noun] [~ axe]]
+        [%kthz [%cbzz %noun] [~ axe]]
       ::
           $cell
         =+  buv=bunt
@@ -7043,7 +7041,6 @@
     ?-    gen
         {$~ *}     [%cnts [gen ~] ~]
         {$bccm *}  ~(clam al p.gen)
-        {$bckt *}  p.gen
         {$bctr *}  [%ktsg ~(bunt al p.gen)]
         {$bczp *}  [%bctr %axil p.gen]
         {$brcb *}  [%tsls [%bctr p.gen] [%brcn q.gen]]
@@ -7126,7 +7123,7 @@
         {$hxgr *}  [%cnhp [%cnzy %cain] [%zpgr [%cltr p.gen]] ~]
     ::
         {$ktdt *}  [%ktls [%cnhp p.gen q.gen ~] q.gen]
-        {$kthp *}  [%ktls ~(bunt al p.gen) q.gen]
+        {$kthz *}  [%ktls ~(bunt al [%herb p.gen]) q.gen]
         {$sgbr *}
       :+  %sggr
         :-  %mean
@@ -8404,9 +8401,6 @@
         {$ktls *}
       =+(hif=(nice (play p.gen)) [hif q:$(gen q.gen, gol hif)])
     ::
-        {$kthx *}
-      =+(hif=(nice (play p.gen)) [hif q:$(gen q.gen, gol hif)])
-    ::
         {$ktpm *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %zinc) q.vat])
         {$ktsg *}
       =+  nef=$(gen p.gen)
@@ -8570,10 +8564,6 @@
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) (wrap(sut q.vat) %iron)])
     ::
         {$ktls *}
-      =+  hif=[p=(nice (play p.gen)) q=(play(sut dox) p.gen)]
-      =+($(gen q.gen, gol p.hif) hif)
-    ::
-        {$kthx *}
       =+  hif=[p=(nice (play p.gen)) q=(play(sut dox) p.gen)]
       =+($(gen q.gen, gol p.hif) hif)
     ::
@@ -8933,7 +8923,6 @@
       {$dtts *}  bool
       {$dtwt *}  bool
       {$ktbr *}  (wrap(sut $(gen p.gen)) %iron)
-      {$kthx *}  $(gen p.gen)
       {$ktls *}  $(gen p.gen)
       {$ktpm *}  (wrap(sut $(gen p.gen)) %zinc)
       {$ktsg *}  $(gen p.gen)
@@ -9601,9 +9590,9 @@
               |=({a+@ta b+twig} [%ktls [%dtzy a 0] [%ktls [%dtzy %$ 0] b]])
             ;~(pfix pat ;~(plug mota ;~(pfix tec wide)))
             ;~  pfix  tar
-              (stag %kthp (stag [%herb %cbzz %noun] ;~(pfix tec wide)))
+              (stag %kthz (stag [%cbzz %noun] ;~(pfix tec wide)))
             ==
-            (stag %kthp ;~(plug toil ;~(pfix tec wide)))
+            (stag %kthz ;~(plug wide ;~(pfix tec wide)))
             (stag %ktls ;~(pfix lus ;~(plug wide ;~(pfix tec wide))))
             (cook |=(a+twig [[%dtzz %n ~] a]) wide)
           ==
@@ -9742,7 +9731,9 @@
                   %-  stew
                   ^.  stet  ^.  limo
                   :~
-                    ['^' (rune ket %bckt expa)]
+                    [',' (rune com %bccm expt)]
+                    ['*' (rune tar %bctr expt)]
+                    ['@' (rune pat %bcpt expu)]
                   ==
                 ==
                 (stag %bccm (noil tol))
@@ -9791,9 +9782,9 @@
                 ^.  stet  ^.  limo
                 :~  ['|' (rune bar %ktbr expa)]
                     ['.' (rune dot %ktdt expb)]
-                    ['-' (rune hep %kthp expo)]
+                    ['-' (rune hep %kthz expb)]
                     ['+' (rune lus %ktls expb)]
-                    ['#' (rune hax %kthx expb)]
+                    ['#' (rune hax %kthz expb)]
                     ['&' (rune pam %ktpm expa)]
                     ['~' (rune sig %ktsg expa)]
                     ['=' (rune tis %ktts expg)]
