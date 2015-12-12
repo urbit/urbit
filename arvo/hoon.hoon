@@ -201,6 +201,7 @@
             {$$ p+axis}                                 ::  simple leg
           ::                                            ::::::  tiling
             {$bccm p+tile}                              ::  clam a tile
+            {$bckt p+twig}                              ::  temporary
             {$bcpt p+wing q+tile}                       ::  whip p into q
             {$bctr p+tile}                              ::  bunt a tile w/ ^~
             {$bczp p+base}                              ::  bunt an axil
@@ -7042,6 +7043,7 @@
     ?-    gen
         {$~ *}     [%cnts [gen ~] ~]
         {$bccm *}  ~(clam al p.gen)
+        {$bckt *}  p.gen
         {$bctr *}  [%ktsg ~(bunt al p.gen)]
         {$bczp *}  [%bctr %axil p.gen]
         {$brcb *}  [%tsls [%bctr p.gen] [%brcn q.gen]]
@@ -9740,9 +9742,7 @@
                   %-  stew
                   ^.  stet  ^.  limo
                   :~
-                    [',' (rune com %bccm expt)]
-                    ['*' (rune tar %bctr expt)]
-                    ['@' (rune pat %bcpt expu)]
+                    ['^' (rune ket %bckt expa)]
                   ==
                 ==
                 (stag %bccm (noil tol))
