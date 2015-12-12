@@ -582,18 +582,6 @@
         u3z(zel);
         return ret;
       }
-      case c3__kthx: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _mull_used();
-      {
-        u3_noun p_hif = _mull_nice(van, gol, u3qfu_play(van, sut, p_gen));
-        u3_noun q_hif = u3qfu_play(van, dox, p_gen);
-
-        u3_noun zel = _mull_in(van, sut, p_hif, dox, q_gen);
-        u3_noun ret = u3nc(p_hif, q_hif);
-
-        u3z(zel);
-        return ret;
-      }
       case c3__tsgr: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {
