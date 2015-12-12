@@ -973,7 +973,7 @@
         `loc(sources (~(dif in sources.loc) pan))
       ::
       ++  what                                          ::  %what
-        |=  qur=_|(char (set partner))  ^+  ..sh-work
+        |=  qur+_|(char (set partner))  ^+  ..sh-work
         ?^  qur
           =+  cha=(~(get by nik) qur)
           (sh-fact %txt ?~(cha "none" [u.cha]~))

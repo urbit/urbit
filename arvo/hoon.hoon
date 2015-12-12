@@ -6662,7 +6662,7 @@
     ^-  {? worm}
     ?:  (~(has in nes) [sut ref])  [& +>+<]
     ?.  (~(nest ut sut) | ref)
-      ::  ~&  %nest-failed
+      ~&  %wa-nest-failed
       [| +>+<]
     [& +>+<(nes (~(put in nes) [sut ref]))]
   ::
@@ -6670,16 +6670,15 @@
     |=  {sut+type ref+*}
     ^-  {? worm}
     ?:  (~(has in nes) [sut ref])  [& +>+<]
-    =+  gat=|=({a+type b+type} (~(nest ut a) | b))
+    =+  gat=|=({a+type b+type} (~(nest ut a) | b))    
     ?.  (? .*(gat(+< [sut ref]) -.gat))
       ::  ~&  %nets-failed
       ::  =+  tag=`*`skol
-      ::  =+  foo=(tank .*(tag(+< ref) -.tag))
+      ::  =+  foo=(tank .*(tag(+< [%cell sut ref]) -.tag))
       ::  =+  bar=(skol sut)
-      ::  ~&  %nets-need
-      ::  ~>  %slog.[0 bar]
-      ::  ~&  %nets-have
+      ::  ~&  %nets-need-have
       ::  ~>  %slog.[0 foo]
+      ::  ~&  %nets-done
       [| +>+<.$]
     [& +>+<.$(nes (~(put in nes) [sut ref]))]
   ::
@@ -9582,11 +9581,16 @@
         (stag %dtts ;~(pfix tis (ifix [pel per] ;~(glam wide wide))))
       :-  '?'
         ;~  pose
-          (stag %cbwt ;~(pfix wut (ifix [pel per] (most ace wide))))
+          %+  stag  %bccm 
+          (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil))))
+        ::  (stag %cbwt ;~(pfix wut (ifix [pel per] (most ace wide))))
+        ::
           (cold [%cbzz %bean] wut)
         ==
       :-  '['
         rupl
+      :-  ','
+        (stag %bccm ;~(pfix com hill))
       :-  '^'
         ;~  pose
           (stag %cnzz rope)
@@ -9668,13 +9672,72 @@
       ==
     ==
   ++  sump  (ifix [kel ker] (stag %cltr (most ace wide)))
+::  ++  noil
+::    |=  tol=?
+::    =<  ;~  pfix  buc
+::          %-  stew
+::          ^.  stet  ^.  limo
+::          :~
+::            ['^' (rung ket %herb exqd)]
+::          ==
+::        ==
+::    |%
+::    ++  toad
+::      |*  har=__(exqa)
+::      =+  dur=(ifix [pel per] $:har(tol |))
+::      ?:(tol ;~(pose ;~(pfix gap $:har(tol &)) dur) dur)
+::    ::
+::    ++  rung
+::      |*  {dif+rule tuq+* har+__(exqa)}
+::      ;~(pfix dif (stag tuq (toad har)))
+::    ::
+::    ++  gunk  ~+((glue muck))
+::    ++  muck  ?:(tol gap ace)
+::    ++  butt  |*(zor=rule ?:(tol ;~(sfix zor ;~(plug gap duz)) zor))
+::    ++  loaf  ?:(tol howl toil)
+::    ++  lobe  ?:(tol tall wide)
+::    ++  exqa  |.(loaf)
+::    ++  exqb  |.(;~(gunk loaf loaf))
+::    ++  exqc  |.((butt (most muck loaf)))
+::    ++  exqd  |.(lobe)
+::    ++  exqe  |.(;~(gunk sym loaf))
+::    --
   ++  noil
     |=  tol=?
     =<  ;~  pfix  buc
           %-  stew
           ^.  stet  ^.  limo
           :~
+            ['|' (rung bar %reed exqb)]
+            ['&' (rung pam %bush exqb)]
+            ['?' (rung wut %fern exqc)]
+            ['_' (rung cab %weed exqd)]
             ['^' (rung ket %herb exqd)]
+            ['=' (rung tis %bark exqe)]
+            :-  '+'
+              %+  cook
+                |=({a+tile b+tile} [%weed [%brls a [%bctr b]]])
+              ;~(pfix lus (toad exqb))
+            :-  '%'
+              ;~  pfix  cen
+                %+  sear
+                  |=  a=(list tile)  ^-  (unit tile)
+                  =-  ?~(b ~ ?~(u.b ~ [~ %kelp i.u.b t.u.b]))
+                  ^=  b
+                  |-  ^-  (unit (list line))
+                  ?~  a  [~ ~]
+                  =+  c=$(a t.a)
+                  ?~  c  ~
+                  ?.  ?=({{$leaf *} *} i.a)  ~
+                  [~ [p.i.a q.i.a] u.c]
+                (toad exqc)
+              ==
+            :-  ':'
+              ;~  pfix  col
+                %+  cook
+                  |=(a+(list tile) ?~(a !! ?~(t.a i.a [i.a $(a t.a)])))
+                (toad exqc)
+              ==
           ==
         ==
     |%
@@ -10139,43 +10202,113 @@
     ^.  stet  ^.  limo
     :~
       :-  '%'
-        fail
+        ;~  pfix  cen
+          ;~  pose
+            (stag %leaf (stag %tas (cold %$ buc)))
+            (stag %leaf (stag %f (cold & pam)))
+            (stag %leaf (stag %f (cold | bar)))
+            (stag %leaf (stag %t qut))
+            %+  cook
+              |=  lot=coin  ^-  tile
+              ?-    -.lot
+                  $~   [%leaf p.lot]
+                  $blob
+                ?@(p.lot [%leaf %$ p.lot] [$(p.lot -.p.lot) $(p.lot +.p.lot)])
+              ::
+                  $many
+                ?~(p.lot [%leaf %n ~] [$(lot i.p.lot) $(p.lot t.p.lot)])
+              ==
+            nuck:so
+          ==
+        ==
       :-  '&'
-        fail
+        (stag %leaf (stag %f (cold & pam)))
       :-  '*'
-        (stag %herb wide)
+        (cold [%axil %noun] tar)
       :-  '?'
-        (stag %herb wide)
+        ;~  pose
+          (stag %fern ;~(pfix wut (ifix [pel per] (most ace toil))))
+          (stag %axil (cold %bean wut))
+        ==
       :-  '@'
-        (stag %herb wide)
+        ;~(pfix pat (stag %axil (stag %atom mota)))
       :-  '^'
-        (stag %herb wide)
+        ;~  pose
+          (stag %herb (stag %cnzz rope))
+          (cold [%axil %cell] ket)
+        ==
       :-  '('
         (stag %herb wide)
       :-  '{'
         (stag %herb wide)
       :-  '.'
-        (stag %herb wide)
+        (stag %herb (stag %cnzz rope))
       :-  '['
-        fail
+        %+  ifix  [sel ser]
+        %+  cook
+          |=  a+(list tile)
+          ?~(a !! ?~(t.a i.a [i.a $(a t.a)]))
+        (most ace toil)
       :-  '_'
-        (stag %herb wide)
+        ;~  pose
+          (stag %weed ;~(pfix cab wide))
+          (stag %herb wide)
+        ==
       :-  ['0' '9']
-        fail
+        (stag %leaf bisk:so)
       :-  ['a' 'z']
         ;~  pose
-          %+  sear
-            |=(a+tile `(unit tile)`~)
           (stag %bark ;~(plug sym ;~(pfix tis toil)))
           (stag %herb wide)
         ==
       :-  '$'
-        (stag %herb wide)
+        ;~  pose
+          (noil |)
+          (stag %herb wide)
+        ==
       :-  '|'
-        fail
+        (stag %leaf (stag %f (cold | bar)))
       :-  '~'
-        fail
+        (stag %leaf (stag %n (cold ~ sig)))
     ==
+::  ++  toil
+::    %+  knee  *tile  |.  ~+
+::    %-  stew
+::    ^.  stet  ^.  limo
+::    :~
+::      :-  '%'
+::        fail
+::      :-  '&'
+::        fail
+::      :-  '*'
+::        (stag %herb wide)
+::      :-  '?'
+::        (stag %herb wide)
+::      :-  '@'
+::        (stag %herb wide)
+::      :-  '^'
+::        (stag %herb wide)
+::      :-  '('
+::        (stag %herb wide)
+::      :-  '{'
+::        (stag %herb wide)
+::      :-  '.'
+::        (stag %herb wide)
+::      :-  '['
+::        fail
+::      :-  '_'
+::        (stag %herb wide)
+::      :-  ['0' '9']
+::        fail
+::      :-  ['a' 'z']
+::        (stag %herb wide)
+::      :-  '$'
+::        (stag %herb wide)
+::      :-  '|'
+::        fail
+::      :-  '~'
+::        fail
+::    ==
   ++  wart
     |*  zor=rule
     %+  here
@@ -10459,7 +10592,17 @@
     =+  rev=(slym (slap bud (rain pax txt)) bud)
     =+  syg=(slym rev arg)
     ~|  %load-lost
-    +>.$(q.sew (slam (slap syg [%cnzy %load]) (slap rig [%cnzy %stay])))
+    ::  ~&  %ruck-testing
+    =+  old=(slap rig [%cnzy %stay])
+    =+  new=(slap syg [%cnzy %load])
+    =+  sam=(~(peek ut p.new) %free 6)
+    ~?  !(~(nest ut sam) | p.old)  %ruck-fail
+    ::    ::  ~>  %slog.[0 (skol old)]
+    ::    ::  ~>  %slog.[0 (skol sam)]
+    ::    ::  =+  foo=(~(nest ut sam) & old)
+    ::    !!
+    ~&  %ruck-good
+    +>.$(q.sew (slam new old))
   ::
   ++  wink                                              ::  deploy
     |=  {now+@da eny+@ ski+slad}

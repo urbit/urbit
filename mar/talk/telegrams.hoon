@@ -181,7 +181,7 @@
     ::
     ::
     ++  thot
-      ^-  _+(json (unit thought))
+      ^-  $^(_+(json (unit thought)))
       %-  ot  :~
         serial/(ci (slat %uv) so)
         audience/audi 

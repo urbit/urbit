@@ -91,7 +91,7 @@
       ==
     ::
     ++  stam
-      ^-  _+(json (unit statement))
+      ^-  $^  _+(json (unit statement))   
       %+  cu  eval
       (ot date/di bouquet/(as (ar so)) speech/spec ~)
     ::
