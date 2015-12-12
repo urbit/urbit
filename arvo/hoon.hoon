@@ -265,7 +265,7 @@
             {$ktbr p+twig}                              ::  %gold core to %iron
             {$ktdt p+twig q+twig}                       ::  cast q to type (p q)
             {$ktls p+twig q+twig}                       ::  cast q to p, verify
-            {$kthz p+twig q+twig}                       ::  cast q to icon of p
+            {$kthp p+twig q+twig}                       ::  cast q to icon of p
             {$ktpm p+twig}                              ::  %gold core to %zinc
             {$ktsg p+twig}                              ::  p as static constant
             {$ktts p+toga q+twig}                       ::  wrap q in toga p
@@ -6872,7 +6872,7 @@
         buv
       ::
           $noun
-        [%kthz [%cbzz %noun] [~ axe]]
+        [%kthp [%cbzz %noun] [~ axe]]
       ::
           $cell
         =+  buv=bunt
@@ -7123,7 +7123,7 @@
         {$hxgr *}  [%cnhp [%cnzy %cain] [%zpgr [%cltr p.gen]] ~]
     ::
         {$ktdt *}  [%ktls [%cnhp p.gen q.gen ~] q.gen]
-        {$kthz *}  [%ktls ~(bunt al [%herb p.gen]) q.gen]
+        {$kthp *}  [%ktls ~(bunt al [%herb p.gen]) q.gen]
         {$sgbr *}
       :+  %sggr
         :-  %mean
@@ -9590,9 +9590,9 @@
               |=({a+@ta b+twig} [%ktls [%dtzy a 0] [%ktls [%dtzy %$ 0] b]])
             ;~(pfix pat ;~(plug mota ;~(pfix tec wide)))
             ;~  pfix  tar
-              (stag %kthz (stag [%cbzz %noun] ;~(pfix tec wide)))
+              (stag %kthp (stag [%cbzz %noun] ;~(pfix tec wide)))
             ==
-            (stag %kthz ;~(plug wide ;~(pfix tec wide)))
+            (stag %kthp ;~(plug wide ;~(pfix tec wide)))
             (stag %ktls ;~(pfix lus ;~(plug wide ;~(pfix tec wide))))
             (cook |=(a+twig [[%dtzz %n ~] a]) wide)
           ==
@@ -9782,9 +9782,8 @@
                 ^.  stet  ^.  limo
                 :~  ['|' (rune bar %ktbr expa)]
                     ['.' (rune dot %ktdt expb)]
-                    ['-' (rune hep %kthz expb)]
+                    ['-' (rune hep %kthp expb)]
                     ['+' (rune lus %ktls expb)]
-                    ['#' (rune hax %kthz expb)]
                     ['&' (rune pam %ktpm expa)]
                     ['~' (rune sig %ktsg expa)]
                     ['=' (rune tis %ktts expg)]
