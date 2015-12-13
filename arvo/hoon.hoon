@@ -7025,13 +7025,7 @@
                    ?~(- [%axil %void] [%fern -])
         {$cbzy *}  [%leaf p.gen]
         {$cbzz *}  [%axil p.gen]
-        {$ktts *}  ?.  ?=(@ p.gen) 
-                     [%herb gen]      ::  XX dubious
-                   [%bark p.gen boil(gen q.gen)]
-        {$zpcb *}  ?.  ?=({$ktts *} q.gen)
-                     boil(gen q.gen)
-                   ~>  %slog.[0 (show %o p.gen)]
-                   boil(gen q.gen)
+        {$zpcb *}  boil(gen q.gen)
     ==
   ::
   ++  open  
@@ -9689,7 +9683,7 @@
     ++  exqe  |.(;~(gunk sym loaf))
     --
   ++  norm                                              ::  rune regular form
-    |=  tol=?
+    |=  tol+?  
     =<  %-  stew
         ^.  stet  ^.  limo
         :~  :-  '|'
