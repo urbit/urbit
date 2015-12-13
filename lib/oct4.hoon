@@ -10,13 +10,13 @@
 |%
 ++  icon   |=(? ?:(+< 'X' 'O'))                         ::  display at
 ++  bo                                                  ::  per board
-  |_  bud=board                                         ::
+  |_  bud+board                                         ::
   ++  bit  |=(@ =(1 (cut 0 [+< 1] bud)))                ::  moved at address
   ++  get  |=(point (bit (off +<)))                     ::  get point
   ++  jon  a/(turn (gulf 0 9) |=(@ b/(bit +<)))         ::  to json
   ++  off  |=(point (add x (mul 3 y)))                  ::  bitfield address
   ++  set  |=(point (con bud (bex (off +<))))           ::  set point
-  ++  win  %-  lien  :_  |=(a=@ =(a (dis a bud)))       ::  test for win
+  ++  win  %-  lien  :_  |=(a+@ =(a (dis a bud)))       ::  test for win
            (rip 4 0wl04h0.4A0Aw.4A00s.0e070)            ::  with bitmasks
   --                                                    ::
 ++  go                                                  ::  play from

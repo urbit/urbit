@@ -10,7 +10,7 @@
 |%                                                      ::
 ++  icon   |=(? ?:(+< 'X' 'O'))                         ::  display at
 ++  bo                                                  ::  per board
-  |_  bud=board                                         ::
+  |_  bud+board                                         ::
   ++  bit  |=(@ =(1 (cut 0 [+< 1] bud)))                ::  moved at address
   ++  get  |=(point (bit (off +<)))                     ::  get point
   ++  jon  a/(turn (gulf 0 9) |=(@ b/(bit +<)))         ::  to json
@@ -45,7 +45,7 @@
   ++  res  ?.  |(~(win bo box) ~(win bo boo))           ::  possible result
            ?:  =(511 (con boo box))                     ::
            `"tie :-("  ~  `"{<nam>} wins"               ::
-  ++  row  |=  y=@  :-  (add y '1')  %-  zing           ::  print row
+  ++  row  |=  y+@  :-  (add y '1')  %-  zing           ::  print row
            (turn (gulf 0 3) |=(@ ~[' ' ~(v at y +<)]))  ::
   ++  str  =+  [own ~[(icon who)]]  ^-  tape            ::  print player
             ?~(-< -> (scow %p u.-<))                    ::

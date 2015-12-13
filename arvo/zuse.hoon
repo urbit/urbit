@@ -1,4 +1,4 @@
-::   
+::
 ::  zuse (3), standard library (tang)   
 ::
 ~%  %zuse  +  ~
@@ -120,7 +120,7 @@
           |=  {a+@ b+@}
           ^-  (unit @)
           =+  [det==(0 (end 0 1 b)) bod=(rsh 0 1 b)]
-          =+  gox=?:(det [p=bod q=0] ((hard {p=@ q=@}) (cue bod)))
+          =+  gox=?:(det [p=bod q=0] ((hard {p+@ q+@}) (cue bod)))
           =+  dog=(pull p.gox)
           =+  pig=(dap mx 128 dog)
           =+  log=?:(det q.pig q.gox)
@@ -130,7 +130,7 @@
           ^-  (unit {p+@ q+@})
           =+  her=(haul a)
           =+  [det==(0 (end 0 1 b)) bod=(rsh 0 1 b)]
-          =+  gox=?:(det [p=bod q=0] ((hard {p=@ q=@}) (cue bod)))
+          =+  gox=?:(det [p=bod q=0] ((hard {p+@ q+@}) (cue bod)))
           =+  dog=(punt p.gox)
           =+  pig=(dap mx 256 dog)
           =+  ^=  cow
@@ -201,7 +201,7 @@
         ++  nol
           |=  a+@
           ^+  ^?(..nu)
-          =+  b=((hard {p=@ q=@}) (cue a))
+          =+  b=((hard {p+@ q+@}) (cue a))
           ..nu(mos (mul p.b q.b), pon [~ (ersa p.b q.b)])
     --
   --
@@ -415,9 +415,9 @@
   ^-  tape
   =+  wey=(daws yed)
   ;:  weld
-      `tape`(snag wey (turn wik:yu |=(a=tape (scag 3 a))))
+      `tape`(snag wey (turn wik:yu |=(a+tape (scag 3 a))))
       ", "  ~(rud at d.t.yed)  " "
-      `tape`(snag (dec m.yed) (turn mon:yu |=(a=tape (scag 3 a))))
+      `tape`(snag (dec m.yed) (turn mon:yu |=(a+tape (scag 3 a))))
       " "  (scag 1 ~(rud at y.yed))  (slag 2 ~(rud at y.yed))  " "
       ~(rud at h.t.yed)  ":"  ~(rud at m.t.yed)  ":"  ~(rud at s.t.yed)
       " "  "+0000"
@@ -426,7 +426,7 @@
 ++  stud    !:                                          ::  parse UTC format
   =<  |=  a+cord                                        ::  expose parsers
       %+  biff  (rush a (more sepa elem))
-      |=  b=(list __((wonk *elem)))  ^-  (unit date)
+      |=  b+(list __((wonk *elem)))  ^-  (unit date)
       =-  ?.((za:jo -) ~ (some (zp:jo -)))
       ^+  =+  [*date u=unit]
           *{(u __([a y])) (u __(m)) (u __(d.t)) (u __(+.t)) $~}
@@ -465,7 +465,7 @@
   --
 ::
 ++  unt                                                 ::  UGT to UTC time
-  |=  a=@
+  |=  a+@
   (div (sub a ~1970.1.1) ~s1)
 ::
 ++  yu                                                  ::  UTC format constants
@@ -533,7 +533,7 @@
       (cold ~ (jest 'null'))
       (stag %b bool)
       (stag %s stri)
-      (cook |=(s=tape [%n p=(rap 3 s)]) numb)
+      (cook |=(s+tape [%n p=(rap 3 s)]) numb)
       abox
       obox
     ==
@@ -583,7 +583,7 @@
   ++  mayb  |*(bus+rule ;~(pose bus (easy "")))
   ++  twel  |=({a+tape b+tape} (weld a b))
   ++  piec
-    |*  bus=rule
+    |*  bus+rule
     (cook |=(a+@ [a ~]) bus)
   --
 ::
@@ -629,7 +629,7 @@
   ==
 ::
 ++  poxo                                                ::  node to tape
-  =<  |=(a=manx `tape`(apex a ~))
+  =<  |=(a+manx `tape`(apex a ~))
   |_  __([unq=`?`| cot=`?`|])                           ::  self-close all tags
   ++  apex                                              ::  top level
     |=  {mex+manx rez+tape}
@@ -643,7 +643,7 @@
     :-  '<'
     %+  welp  tam
     =-  ?~(att rez [' ' (attr att rez)])
-    ^-  rez=tape
+    ^-  rez+tape
     ?:  &(?=($~ c.mex) |(cot (clot man)))
       [' ' '/' '>' rez]
     :-  '>'
@@ -819,7 +819,7 @@
   ++  da                                                ::  UTC date
     |=  jon+json
     ?.  ?=({$s *} jon)  ~
-    (bind (stud p.jon) |=(a=date (year a)))
+    (bind (stud p.jon) |=(a+date (year a)))
   ::
   ++  di                                                ::  millisecond date
     %-  cu  :_  ni
@@ -871,8 +871,8 @@
     [?~(ten ~ (+.-.wer u.ten)) ((ot-raw +.wer) jom)]
   ::
   ++  om                                                ::  object as map
-    |*  wit=fist
-    |=  jon=json
+    |*  wit+fist
+    |=  jon+json
     ?.  ?=({$o *} jon)  ~
     (zm (~(run by p.jon) wit))
   ::
@@ -897,7 +897,7 @@
     ?.(?=({$s *} jon) ~ (some (trip p.jon)))
   ::
   ++  so                                                ::  string as cord
-    |=  jon=json
+    |=  jon+json
     ?.(?=({$s *} jon) ~ (some p.jon))
   ::
   ++  su                                                ::  parse string
@@ -908,7 +908,7 @@
   ::
   ++  ul  |=(jon+json ?~(jon (some ~) ~))               ::  null
   ++  za                                                ::  full unit pole
-    |*  pod=(pole (unit))
+    |*  pod+(pole (unit))
     ?~  pod  &
     ?~  -.pod  |
     (za +.pod)
@@ -932,7 +932,7 @@
   ::
   ++  zm                                                ::  collapse unit map
     |*  lum+(map term (unit))
-    ?:  (~(rep by lum) |=({{@ a=(unit)} b=__(|)} |(b ?=($~ a))))
+    ?:  (~(rep by lum) |=({{@ a+(unit)} b+__(|)} |(b ?=($~ a))))
       ~
     (some (~(run by lum) need))
   --
@@ -978,7 +978,7 @@
   =>  .(+< [a b]=+<)
   (scan a (parsf b))
 ++  parsf                                              ::  make parser from:
-  |^  |*  a=(pole __(:/(*{_&(rule tape)})))            ::  ;"chars{rule}chars"
+  |^  |*  a+(pole __(:/(*{_&(rule tape)})))            ::  ;"chars{rule}chars"
       %-  cook  :_  (bill (norm a))
       |*  (list)
       ?~  +<  ~
@@ -1018,7 +1018,7 @@
 ::
 ++  tell                                                ::  wall to octstream
   |=  wol+wall  ^-  octs
-  =+  buf=(rap 3 (turn wol |=(a=tape (crip (weld a `tape`[`@`10 ~])))))
+  =+  buf=(rap 3 (turn wol |=(a+tape (crip (weld a `tape`[`@`10 ~])))))
   [(met 3 buf) buf]
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bF, filesystem interface     ::
@@ -1084,11 +1084,11 @@
   ^-  (unit beam)
   ?.  ?=({* * * *} pax)  ~
   %+  biff  (slaw %p i.pax)
-  |=  who=ship
+  |=  who+ship
   %+  biff  (slaw %tas i.t.pax)
-  |=  dex=desk
+  |=  dex+desk
   %+  biff  (slay i.t.t.pax)
-  |=  cis=coin
+  |=  cis+coin
   ?.  ?=({$$ case} cis)  ~
   `(unit beam)`[~ [who dex `case`p.cis] (flop t.t.t.pax)]
 ::
@@ -1106,7 +1106,7 @@
     [~ ~]
   ?^  t.rax
     [p.pok [ire q.pok]]:[pok=$(rax t.rax) ire=i.rax]
-  =+  ^-  raf=(like term)
+  =+  ^-  raf+(like term)
       =>  |=(a+@ ((sand %tas) (crip (flop (trip a)))))
       (;~(sfix (sear . sym) dot) [1^1 (flop (trip i.rax))])
   ?~  q.raf
@@ -1144,7 +1144,7 @@
   ==
 ::
 ++  sifo                                                ::  64-bit encode
-  |=  tig=@
+  |=  tig+@
   ^-  tape
   =+  poc=(~(dif fo 3) 0 (met 3 tig))
   =+  pad=(lsh 3 poc (swap 3 tig))
@@ -1159,8 +1159,8 @@
   (weld (flop (slag poc sif)) (reap poc '='))
 ::
 ++  ofis  ::  XX broken
-  =-  |=(a=cord (rash a fel))
-  =<  fel=(cook |+(a=@ `@t`(swap 3 a)) (bass 64 .))
+  =-  |=(a+cord (rash a fel))
+  =<  fel=(cook |+(a+@ `@t`(swap 3 a)) (bass 64 .))
   =-  (cook welp ;~(plug (plus siw) (stun 0^2 (cold %0 tis))))
   ^=  siw
   ;~  pose
@@ -1178,7 +1178,7 @@
       =>  .(b `(tup a)`b)
       ?~  +.a  [(scot -.a b) ~]
       [(scot -.a -.b) `(paf +.a)`(..$ +.a +.b)]
-  :-  paf=|*(a=(pole) ?~(a $~ {(odo:raid -.a(. %ta)) (..$ +.a)}))
+  :-  paf=|*(a+(pole) ?~(a $~ {(odo:raid -.a(. %ta)) (..$ +.a)}))
   tup=|*({a+@tas b+(pole @tas)} =+(c=(odo:raid a) ?~(b c {c (..$ b)})))
 ::
 ::  .=  [p=%ack q=~sarnel r=&]
@@ -1251,7 +1251,7 @@
   pul(q.q [(rsh 3 1 (scot %p who)) q.q.pul])
 ::
 ++  earn                                                ::  purl to tape
-  =<  |=(pul=purl `tape`(apex ~ pul))
+  =<  |=(pul+purl `tape`(apex ~ pul))
   |%
   ++  apex
     |=  qur+quri
@@ -1305,7 +1305,7 @@
     %+  cook  deft
     (ifix [fas ;~(pose fas (easy ~))] (more fas smeg))
   ++  aurf                                              ::  2396 with fragment
-    %+  cook  |+(a=purf a)
+    %+  cook  |+(a+purf a)
     ;~(plug auri (punt ;~(pfix hax (cook crip (star pque)))))
   ++  auri                                              ::  2396 URL
     %+  cook
@@ -1326,7 +1326,7 @@
     (most ;~(plug sem ace) ;~(plug toke ;~(pfix tis tosk)))
   ++  dlab                                              ::  2396 domainlabel
     %+  sear
-      |=  a=@ta
+      |=  a+@ta
       ?.(=('-' (rsh 3 (dec (met 3 a)) a)) [~ u=a] ~)
     %+  cook  cass
     ;~(plug aln (star alp))
@@ -1397,7 +1397,7 @@
     ==
   ++  zest                                              ::  2616 request-uri
     ;~  pose
-      (stag %& (cook |=(a=purl a) auri))
+      (stag %& (cook |=(a+purl a) auri))
       (stag %| ;~(plug apat yque))
     ==
   --
@@ -1418,253 +1418,7 @@
 ::
 ++  glam                                                ::  carrier names
   |=  zar+@pD  ^-  tape
-  %+  snag  zar
-  ^-  (list tape)
-  :~  "Tianming"  "Pepin the Short"  "Haile Selassie"  "Alfred the Great"
-      "Tamerlane"  "Pericles"  "Talleyrand"  "Yongle"  "Seleucus"
-      "Uther Pendragon"  "Louis XVI"  "Ahmad Shāh Durrānī"  "Constantine"
-      "Wilhelm I"  "Akbar"  "Louis XIV"  "Nobunaga"  "Alexander VI"
-      "Philippe II"  "Julius II"  "David"  "Niall Noígíallach"  "Kublai Khan"
-      "Öz Beg Khan"  "Ozymandias"  "Ögedei Khan"  "Jiang Jieshi"  "Darius"
-      "Shivaji"  "Qianlong"  "Bolesław I Chrobry"  "Tigranes"  "Han Wudi"
-      "Charles X"  "Naresuan"  "Frederick II"  "Simeon"  "Kangxi"
-      "Suleiman the Magnificent"  "Pedro II"  "Genghis Khan"  "Laozi"
-      "Porfirio Díaz"  "Pakal"  "Wu Zetian"  "Garibaldi"  "Matthias Corvinus"
-      "Leopold II"  "Leonidas"  "Sitting Bull"  "Nebuchadnezzar II"
-      "Rhodes"  "Henry VIII"  "Attila"  "Catherine II"  "Chulalongkorn"
-      "Uthmān"  "Augustus"  "Faustin"  "Chongde"  "Justinian"
-      "Afonso de Albuquerque"  "Antoninus Pius"  "Cromwell"  "Innocent X"
-      "Fidel"  "Frederick the Great"  "Canute"  "Vytautas"  "Amina"
-      "Hammurabi"  "Suharto"  "Victoria"  "Hiawatha"  "Paul V"  "Shaka"
-      "Lê Thánh Tông"  "Ivan Asen II"  "Tiridates"  "Nefertiti"  "Gwangmu"
-      "Ferdinand & Isabella"  "Askia"  "Xuande"  "Boris Godunov"  "Gilgamesh"
-      "Maximillian I"  "Mao"  "Charlemagne"  "Narai"  "Hanno"  "Charles I & V"
-      "Alexander II"  "Mansa Musa"  "Zoe Porphyrogenita"  "Metternich"
-      "Robert the Bruce"  "Pachacutec"  "Jefferson"  "Solomon"  "Nicholas I"
-      "Barbarossa"  "FDR"  "Pius X"  "Gwanggaeto"  "Abbas I"  "Julius Caesar"
-      "Lee Kuan Yew"  "Ranavalona I"  "Go-Daigo"  "Zenobia"  "Henry V"
-      "Bảo Đại"  "Casimir III"  "Cyrus"  "Charles the Wise"  "Sandrokottos"
-      "Agamemnon"  "Clement VII"  "Suppiluliuma"  "Deng Xiaoping"
-      "Victor Emmanuel"  "Ajatasatru"  "Jan Sobieski"  "Huangdi"  "Xuantong"
-      "Narmer"  "Cosimo de' Medici"  "Möngke Khan"  "Stephen Dušan"  "Henri IV"
-      "Mehmed Fatih"  "Conn Cétchathach"  "Francisco Franco"  "Leo X"
-      "Kammu"  "Krishnadevaraya"  "Elizabeth I"  "Norton I"  "Washington"
-      "Meiji"  "Umar"  "TR"  "Peter the Great"  "Agustin I"  "Ashoka"
-      "William the Conqueror"  "Kongolo Mwamba"  "Song Taizu"
-      "Ivan the Terrible"  "Yao"  "Vercingetorix"  "Geronimo"  "Rurik"
-      "Urban VIII"  "Alexios Komnenos"  "Maria I"  "Tamar"  "Bismarck"
-      "Arthur"  "Jimmu"  "Gustavus Adolphus"  "Suiko"  "Basil I"  "Montezuma"
-      "Santa Anna"  "Xerxes"  "Beyazıt Yıldırım"  "Samudragupta"  "James I"
-      "George III"  "Kamehameha"  "Francesco Sforza"  "Trajan"
-      "Rajendra Chola"  "Hideyoshi"  "Cleopatra"  "Alexander"
-      "Ashurbanipal"  "Paul III"  "Vespasian"  "Tecumseh"  "Narasimhavarman"
-      "Suryavarman II"  "Bokassa I"  "Charles Canning"  "Theodosius"
-      "Francis II"  "Zhou Wen"  "William Jardine"  "Ahmad al-Mansur"
-      "Lajos Nagy"  "Theodora"  "Mussolini"  "Samuil"  "Osman Gazi"
-      "Kim Il-sung"  "Maria Theresa"  "Lenin"  "Tokugawa"  "Marcus Aurelius"
-      "Nzinga Mbande"  "Edward III"  "Joseph II"  "Pulakesi II"  "Priam"
-      "Qin Shi Huang"  "Shah Jahan"  "Sejong"  "Sui Wendi"  "Otto I"
-      "Napoleon III"  "Prester John"  "Dido"  "Joao I"  "Gregory I"
-      "Gajah Mada"  "Abd-ar Rahmān III"  "Taizong"  "Franz Josef I"
-      "Nicholas II"  "Gandhi"  "Chandragupta II"  "Peter III"
-      "Oba Ewuare"  "Louis IX"  "Napoleon"  "Selim Yavuz"  "Shun"
-      "Hayam Wuruk"  "Jagiełło"  "Nicaule"  "Sargon"  "Saladin"  "Charles II"
-      "Brian Boru"  "Da Yu"  "Antiochus III"  "Charles I"
-      "Jan Pieterszoon Coen"  "Hongwu"  "Mithridates"  "Hadrian"  "Ptolemy"
-      "Benito Juarez"  "Sun Yat-sen"  "Raja Raja Chola"  "Bolivar"  "Pius VII"
-      "Shapur II"  "Taksin"  "Ram Khamhaeng"  "Hatshepsut"  "Alī"  "Matilda"
-      "Ataturk"
-  ==
-::
-++  glon                                                ::  ISO language codes
-  |=  lag=lang
-  ^-  (unit tape)
-  ?+  lag  ~
-    $aa  [~ "Afar"]
-    $ab  [~ "Abkhazian"]
-    $ae  [~ "Avestan"]
-    $af  [~ "Afrikaans"]
-    $ak  [~ "Akan"]
-    $am  [~ "Amharic"]
-    $an  [~ "Aragonese"]
-    $ar  [~ "Arabic"]
-    $as  [~ "Assamese"]
-    $av  [~ "Avaric"]
-    $ay  [~ "Aymara"]
-    $az  [~ "Azerbaijani"]
-    $ba  [~ "Bashkir"]
-    $be  [~ "Belarusian"]
-    $bg  [~ "Bulgarian"]
-    $bh  [~ "Bihari"]
-    $bi  [~ "Bislama"]
-    $bm  [~ "Bambara"]
-    $bn  [~ "Bengali"]
-    $bo  [~ "Tibetan"]
-    $br  [~ "Breton"]
-    $bs  [~ "Bosnian"]
-    $ca  [~ "Catalan"]
-    $ce  [~ "Chechen"]
-    $ch  [~ "Chamorro"]
-    $co  [~ "Corsican"]
-    $cr  [~ "Cree"]
-    $cs  [~ "Czech"]
-    $cu  [~ "Slavonic"]
-    $cv  [~ "Chuvash"]
-    $cy  [~ "Welsh"]
-    $da  [~ "Danish"]
-    $de  [~ "German"]
-    $dv  [~ "Maldivian"]
-    $dz  [~ "Dzongkha"]
-    $ee  [~ "Ewe"]
-    $el  [~ "Greek"]
-    $en  [~ "English"]
-    $eo  [~ "Esperanto"]
-    $es  [~ "Spanish"]
-    $et  [~ "Estonian"]
-    $eu  [~ "Basque"]
-    $fa  [~ "Persian"]
-    $ff  [~ "Fulah"]
-    $fi  [~ "Finnish"]
-    $fj  [~ "Fijian"]
-    $fo  [~ "Faroese"]
-    $fr  [~ "French"]
-    $fy  [~ "Frisian"]
-    $ga  [~ "Irish Gaelic"]
-    $gd  [~ "Scottish Gaelic"]
-    $gl  [~ "Galician"]
-    $gn  [~ "Guarani"]
-    $gu  [~ "Gujarati"]
-    $gv  [~ "Manx"]
-    $ha  [~ "Hausa"]
-    $he  [~ "Hebrew"]
-    $hi  [~ "Hindi"]
-    $ho  [~ "Hiri Motu"]
-    $hr  [~ "Croatian"]
-    $ht  [~ "Haitian Creole"]
-    $hu  [~ "Hungarian"]
-    $hy  [~ "Armenian"]
-    $hz  [~ "Herero"]
-    $ia  [~ "Interlingua"]
-    $id  [~ "Indonesian"]
-    $ie  [~ "Occidental"]
-    $ig  [~ "Igbo"]
-    $ii  [~ "Nuosu"]
-    $ik  [~ "Inupiaq"]
-    $io  [~ "Ido"]
-    $is  [~ "Icelandic"]
-    $it  [~ "Italian"]
-    $iu  [~ "Inuktitut"]
-    $ja  [~ "Japanese"]
-    $jv  [~ "Javanese"]
-    $ka  [~ "Georgian"]
-    $kg  [~ "Kongo"]
-    $ki  [~ "Kikuyu"]
-    $kj  [~ "Kwanyama"]
-    $kk  [~ "Kazakh"]
-    $kl  [~ "Kalaallisut"]
-    $km  [~ "Central Khmer"]
-    $kn  [~ "Kannada"]
-    $ko  [~ "Korean"]
-    $kr  [~ "Kanuri"]
-    $ks  [~ "Kashmiri"]
-    $ku  [~ "Kurdish"]
-    $kv  [~ "Komi"]
-    $kw  [~ "Cornish"]
-    $ky  [~ "Kyrgyz"]
-    $la  [~ "Latin"]
-    $lb  [~ "Luxembourgish"]
-    $lg  [~ "Ganda"]
-    $li  [~ "Limburgish"]
-    $ln  [~ "Lingala"]
-    $lo  [~ "Lao"]
-    $lt  [~ "Lithuanian"]
-    $lu  [~ "Luba-Katanga"]
-    $lv  [~ "Latvian"]
-    $mg  [~ "Malagasy"]
-    $mh  [~ "Marshallese"]
-    $mi  [~ "Maori"]
-    $mk  [~ "Macedonian"]
-    $ml  [~ "Malayalam"]
-    $mn  [~ "Mongolian"]
-    $mr  [~ "Marathi"]
-    $ms  [~ "Malay"]
-    $mt  [~ "Maltese"]
-    $my  [~ "Burmese"]
-    $na  [~ "Nauru"]
-    $nb  [~ "Norwegian Bokmål"]
-    $nd  [~ "North Ndebele"]
-    $ne  [~ "Nepali"]
-    $ng  [~ "Ndonga"]
-    $nl  [~ "Dutch"]
-    $nn  [~ "Norwegian Nynorsk"]
-    $no  [~ "Norwegian"]
-    $nr  [~ "South Ndebele"]
-    $nv  [~ "Navajo"]
-    $ny  [~ "Chichewa"]
-    $oc  [~ "Occitan"]
-    $oj  [~ "Ojibwa"]
-    $om  [~ "Oromo"]
-    $or  [~ "Oriya"]
-    $os  [~ "Ossetian"]
-    $pa  [~ "Punjabi"]
-    $pi  [~ "Pali"]
-    $pl  [~ "Polish"]
-    $ps  [~ "Pashto"]
-    $pt  [~ "Portuguese"]
-    $qu  [~ "Quechua"]
-    $rm  [~ "Romansh"]
-    $rn  [~ "Rundi"]
-    $ro  [~ "Romanian"]
-    $ru  [~ "Russian"]
-    $rw  [~ "Kinyarwanda"]
-    $sa  [~ "Sanskrit"]
-    $sc  [~ "Sardinian"]
-    $sd  [~ "Sindhi"]
-    $se  [~ "Northern Sami"]
-    $sg  [~ "Sango"]
-    $si  [~ "Sinhala"]
-    $sk  [~ "Slovak"]
-    $sl  [~ "Slovenian"]
-    $sm  [~ "Samoan"]
-    $sn  [~ "Shona"]
-    $so  [~ "Somali"]
-    $sq  [~ "Albanian"]
-    $sr  [~ "Serbian"]
-    $ss  [~ "Swati"]
-    $st  [~ "Sotho"]
-    $su  [~ "Sundanese"]
-    $sv  [~ "Swedish"]
-    $sw  [~ "Swahili"]
-    $ta  [~ "Tamil"]
-    $te  [~ "Telugu"]
-    $tg  [~ "Tajik"]
-    $th  [~ "Thai"]
-    $ti  [~ "Tigrinya"]
-    $tk  [~ "Turkmen"]
-    $tl  [~ "Tagalog"]
-    $tn  [~ "Tswana"]
-    $to  [~ "Tonga"]
-    $tr  [~ "Turkish"]
-    $ts  [~ "Tsonga"]
-    $tt  [~ "Tatar"]
-    $tw  [~ "Twi"]
-    $ty  [~ "Tahitian"]
-    $ug  [~ "Uighur"]
-    $uk  [~ "Ukrainian"]
-    $ur  [~ "Urdu"]
-    $uz  [~ "Uzbek"]
-    $ve  [~ "Venda"]
-    $vi  [~ "Vietnamese"]
-    $vo  [~ "Volapük"]
-    $wa  [~ "Walloon"]
-    $wo  [~ "Wolof"]
-    $xh  [~ "Xhosa"]
-    $yi  [~ "Yiddish"]
-    $yo  [~ "Yoruba"]
-    $za  [~ "Zhuang"]
-    $zh  [~ "Chinese"]
-    $zu  [~ "Zulu"]
-  ==
+  (weld "galaxy " (scow %p zar))
 ::
 ++  gnom                                                ::  ship display name
   |=  {{our+@p now+@da} him+@p}  ^-  @t
@@ -1705,7 +1459,7 @@
   (skim (~(tap by sup.hid)) fun)
 ::
 ++  prix                                                ::  filter gate
-  |=  pax=path  |=  sink  ^-  ?
+  |=  pax+path  |=  sink  ^-  ?
   ?~  pax  &  ?~  r.+<  | 
   &(=(i.pax i.r.+<) $(pax t.pax, r.+< t.r.+<))
 ::
@@ -1759,7 +1513,7 @@
 ++  pack                                                ::  light path encoding
   |=  {a+term b+path}  ^-  span
   %+  rap  3  :-  (wack a)
-  (turn b |=(c=span (cat 3 '_' (wack c))))
+  (turn b |=(c+span (cat 3 '_' (wack c))))
 ::
 ++  puck                                                ::  light path decoding
   =+  fel=(most cab (sear wick urt:ab))
@@ -1982,10 +1736,10 @@
 ++  hoke  %+  each   {$localhost $~}                    ::  local host
           ?($.0.0.0.0 $.127.0.0.1)                      ::
 ++  httq                                                ::  raw http request
-          _:  p=meth                                    ::  method
-              q=@t                                      ::  unparsed url
-              r=(list {p=@t q=@t})                      ::  headers
-              s=(unit octs)                             ::  body
+          _:  p+meth                                    ::  method
+              q+@t                                      ::  unparsed url
+              r+(list {p+@t q+@t})                      ::  headers
+              s+(unit octs)                             ::  body
           ==                                            ::
 ++  httr  {p+@ud q+mess r+(unit octs)}                  ::  raw http response
 ++  httx                                                ::  encapsulated http

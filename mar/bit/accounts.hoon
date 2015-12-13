@@ -11,7 +11,7 @@
 ++  grab                          ::  converter arm
   |%
   ++  noun  bit-accounts                  ::  clam from noun
-  ++  json  |=  jon=^json  ^-  bit-accounts
+  ++  json  |=  jon+^json  ^-  bit-accounts
             ~|  jon
             %-  need  %.  jon
             =>  jo

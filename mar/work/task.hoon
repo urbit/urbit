@@ -8,7 +8,7 @@
 [work .]
 |%
 ++  rend
-  |=  a=(list _|(char dime))  ^-  cord
+  |=  a+(list _|(char dime))  ^-  cord
   %-  crip
   |-  ^-  tape
   ?~  a  ~
@@ -34,7 +34,7 @@
   ?^  hed  ;~(pfix (just (crip hed)) (..$ tal))
   =-  ?~(tal had ;~(plug had (..$ tal)))
   =<  had=(sear . nuck:so)
-  |=  a=coin  ^-  (unit (odo:raid hed))
+  |=  a+coin  ^-  (unit (odo:raid hed))
   ?.  &(?=({$$ @ @} a) =(hed p.p.a))  ~
   (some q.p.a)
 ::
@@ -45,13 +45,13 @@
 !:
 ::::
   ::
-|_  taz=task
+|_  taz+task
 ++  grab
   |%  ++  txt
     |=  a+wain  ^+  taz
     =+  ~[id=%uv "_" date-created=%da " " version=%ud date-modified=%da]
     =^  b  a  (advance a ;~(plug (parse -) (punt (parse " " %da ~))))
-    =+  [-.b `date-due=(unit @da)`+.b]
+    =+  [-.b `date-due+(unit @da)`+.b]
     =^  tags   a  (undent a ~(gas in *(set cord)))
     =^  title  a  ?~(a !! a)
     =^  b  a  %+  advance  a
@@ -70,7 +70,7 @@
   --
 ++  grow
   |%
-  ++  elem  ;pre: {(zing `wall`(turn (wash 0^120 >taz<) |=(a=tape ['\0a' a])))}
+  ++  elem  ;pre: {(zing `wall`(turn (wash 0^120 >taz<) |=(a+tape ['\0a' a])))}
   ++  mime  [/text/x-task (taco (role txt))]
   ++  txt
     =+  taz

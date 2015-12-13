@@ -1,4 +1,4 @@
-::  ::  ames (4a), networking  
+!:  ::  ames (4a), networking  
 ::
   |=  pit+vase
   =>  =~
@@ -422,7 +422,7 @@
   ++  kins  |=(tay+@ (snag tay `(list skin)`[%none %open %fast %full ~]))
   ++  ksin  |=(sin+skin `@`?-(sin $none 0, $open 1, $fast 2, $full 3))
   ++  spit                                              ::  cake to packet
-    |=  kec=cake  ^-  @
+    |=  kec+cake  ^-  @
     =+  wim=(met 3 p.p.kec)
     =+  dum=(met 3 q.p.kec)
     =+  yax=?:((lte wim 2) 0 ?:((lte wim 4) 1 ?:((lte wim 8) 2 3)))
@@ -446,7 +446,7 @@
   ::
   |%
   ++  go                                                ::    go
-    |_  ton=town                                        ::  ames state
+    |_  ton+town                                        ::  ames state
     ++  as                                              ::    as:go
       |_  {our+ship saf+sufi}                           ::  per server
       ++  born                                          ::    born:as:go
@@ -586,10 +586,10 @@
           ^-  (list ship)                               ::  route unto
           =+  [fro=xen too=xeno]
           =+  ^=  oot  ^-  (list ship)
-              =|  oot=(list ship)
+              =|  oot+(list ship)
               |-  ^+  oot
               ?~  too  ~
-              ?:  (lien fro |=(a=ship =(a i.too)))  ~
+              ?:  (lien fro |=(a+ship =(a i.too)))  ~
               [i.too $(too t.too)]
           ::  ~&  [%xong-to [our her] (weld oot ?>(?=(^ fro) t.fro))]
           (weld oot ?>(?=(^ fro) t.fro))
@@ -600,7 +600,7 @@
           =<  weft
           |%
           ++  wasp                                      ::  null security
-            ^-({p+skin q=@} [%none (jam ham)])
+            ^-({p+skin q+@} [%none (jam ham)])
           ::
           ++  weft                                      ::  fragment message
             ^-  {p+(list rock) q+__(+>.$)}
@@ -874,7 +874,7 @@
       ?:  =(~ puq)  [~ +>(rtn ~)]
       ?.  (gth caw nif)  [~ +>]
       =+  wid=(sub caw nif)
-      =|  rub=(list rock)
+      =|  rub+(list rock)
       =<  abet  =<  apse
       |%
       ++  abet
@@ -1094,7 +1094,7 @@
       =+  ^=  weg  ^-  corn
           =+  weg=(~(get by zac.fox) our)
           ?^(weg u.weg *corn)
-      =|  bin=(list boon)
+      =|  bin+(list boon)
       |%
       ++  ho                                            ::    ho:um:am
         |=  her+ship                                    ::  per friend
@@ -1385,7 +1385,7 @@
             =+  [nix=0 rax=*(list @)]
             |-  ^-  @
             ?:  =(p.duv nix)
-              (can ?:(fak.ton.fox 16 13) (turn (flop rax) |=(a=@ [1 a])))
+              (can ?:(fak.ton.fox 16 13) (turn (flop rax) |=(a+@ [1 a])))
             $(nix +(nix), rax [(need (~(get by q.duv) nix)) rax])
           --                                            ::  --la:ho:um:am
         ::
@@ -1616,13 +1616,13 @@
           {$$ $ud @}
         %+  bind
           (perm who u.hun q.p.lot [syd t.tyl])
-        |=(a=* [%noun !>(a)])
+        |=(a+* [%noun !>(a)])
       ::
           {$$ $da @}
         ?.  =(now q.p.lot)  ~
         %+  bind
           (temp who u.hun [syd t.tyl])
-        |=(a=* [%noun !>(a)])
+        |=(a+* [%noun !>(a)])
       ==
     ::
     ++  stay  fox

@@ -95,7 +95,7 @@
   |%
   ++  tags
     |=  a+(set @t)
-    [%a (turn (sort (~(tap in a)) aor) |=(b=cord s/b))]
+    [%a (turn (sort (~(tap in a)) aor) |=(b+cord s/b))]
   ::
   ++  task
     |=  ^task
@@ -171,7 +171,7 @@
       =-  ~!  gar  ~!  (need -)  -
       ((sef) jon)
     ::
-    ++  lake  |*(a=__(*) _+(json (unit a)))
+    ++  lake  |*(a+__(*) _+(json (unit a)))
     ++  head-rush
       |*  a+rule
       |*  {b+cord c+*}
@@ -249,7 +249,7 @@
     ++  jode  |=(a+time (jone (div (mul (sub a ~1970.1.1) 1.000) ~s1)))
     ++  jome                                            ::  stringify keys
       |*  {a+__(cord) b+__(json)}
-      |=  c=(map __(+<.a) __(+<.b))
+      |=  c+(map __(+<.a) __(+<.b))
       (jobe (turn (~(tap by c)) (both a b)))
     ::
     ++  both                                            ::  cons two gates
@@ -263,7 +263,7 @@
     ++  audi  (jome parn jove)
     ++  bouq
       |=  a+bouquet
-      a/(turn (~(tap in a)) |=(b=path a/(turn b |=(c=span s/c))))
+      a/(turn (~(tap in a)) |=(b+path a/(turn b |=(c+span s/c))))
     ::
     ++  parn
       |=  a+partner  ^-  cord

@@ -365,7 +365,7 @@
   |=  tac+(list tank)
   ^+  +>
   ?.  se-ably  (se-talk tac)
-  =+  wol=`wall`(zing (turn (flop tac) |=(a=tank (~(win re a) [0 edg]))))
+  =+  wol=`wall`(zing (turn (flop tac) |=(a+tank (~(win re a) [0 edg]))))
   |-  ^+  +>.^$
   ?~  wol  +>.^$
   $(wol t.wol, +>.^$ (se-blit %out (tuba i.wol)))
@@ -520,7 +520,7 @@
       (se-nuke gyl)
     ..ta(fug (~(put by fug) gyl ``target`+<+))
   ::
-  ++  ta-poke  |=(a=pear +>(..ta (se-poke gyl a)))    ::  poke gyl
+  ++  ta-poke  |=(a+pear +>(..ta (se-poke gyl a)))    ::  poke gyl
   ::
   ++  ta-act                                          ::  send action
     |=  act+sole-action
@@ -755,7 +755,7 @@
   ::
   ++  ta-tan                                          ::  print tanks
     |=  tac+(list tank)
-    =+  wol=`wall`(zing (turn (flop tac) |=(a=tank (~(win re a) [0 edg]))))
+    =+  wol=`wall`(zing (turn (flop tac) |=(a+tank (~(win re a) [0 edg]))))
     |-  ^+  +>.^$
     ?~  wol  +>.^$
     $(wol t.wol, +>+>.^$ (se-text i.wol))

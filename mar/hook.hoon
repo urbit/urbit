@@ -3,7 +3,7 @@
   ::
 /?  314
 !:
-|_  own=@t
+|_  own+@t
 ::
 ++  grow                                                ::  convert to
   |%
@@ -43,7 +43,7 @@
   ++  mime  |=({p+mite q+octs} q.q)
   ++  noun  @t                                  ::  clam from %noun
   ++  txt
-    |=  wan=wain
+    |=  wan+wain
     =+  (role wan)
     (end 3 (dec (met 3 -)) -)
   --

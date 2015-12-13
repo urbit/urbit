@@ -46,19 +46,19 @@
           {$&}
         ?:  =(p.i.ali p.i.bob)
           %+  bind  $(ali t.ali, bob t.bob)
-          |=(cud=(urge cord) [i.ali cud])
+          |=(cud+(urge cord) [i.ali cud])
         ?:  (gth p.i.ali p.i.bob)
           %+  bind  $(p.i.ali (sub p.i.ali p.i.bob), bob t.bob)
-          |=(cud=(urge cord) [i.bob cud])
+          |=(cud+(urge cord) [i.bob cud])
         %+  bind  $(ali t.ali, p.i.bob (sub p.i.bob p.i.ali))
-        |=(cud=(urge cord) [i.ali cud])
+        |=(cud+(urge cord) [i.ali cud])
           {$|}
         ?:  =(p.i.ali (lent p.i.bob))
           %+  bind  $(ali t.ali, bob t.bob)
-          |=(cud=(urge cord) [i.bob cud])
+          |=(cud+(urge cord) [i.bob cud])
         ?:  (gth p.i.ali (lent p.i.bob))
           %+  bind  $(p.i.ali (sub p.i.ali (lent p.i.bob)), bob t.bob)
-          |=(cud=(urge cord) [i.bob cud])
+          |=(cud+(urge cord) [i.bob cud])
         ~
       ==
     ::
@@ -68,7 +68,7 @@
           {$&}
         ?:  =(p.i.bob (lent p.i.ali))
           %+  bind  $(ali t.ali, bob t.bob)
-          |=(cud=(urge cord) [i.ali cud])
+          |=(cud+(urge cord) [i.ali cud])
         ?:  (gth p.i.bob (lent p.i.ali))
           %+  bind  $(ali t.ali, p.i.bob (sub p.i.bob (lent p.i.ali)))
           |=(cud+(urge cord) [i.ali cud])
@@ -172,7 +172,7 @@
       ~
     ::
     ++  clean                                          ::  clean
-      |=  wig=(urge cord)
+      |=  wig+(urge cord)
       ^-  (urge cord)
       ?~  wig  ~
       ?~  t.wig  wig

@@ -1,4 +1,4 @@
-::::::  
+!:::::  
 ::  ::  %ford, new execution control
 !?  164
 ::::
@@ -22,7 +22,7 @@
 |%                                                      ::  structures
 ++  axle                                                ::  all %ford state
   _:  $1                                                ::  version for update
-      pol=(map ship baby)                               ::
+      pol+(map ship baby)                               ::
   ==                                                    ::
 ++  baby                                                ::  state by ship
   _:  tad+{p+@ud q+(map @ud task)}                      ::  tasks by number
@@ -70,7 +70,7 @@
 ++  task                                                ::  problem in progress
   _:  nah+duct                                          ::  cause
       {bek+beak kas+silk}                               ::  problem
-      keg=(map (pair term beam) cage)                   ::  block results
+      keg+(map (pair term beam) cage)                   ::  block results
       kig+{p+@ud q+(map @ud {p+care q+beam})}           ::  blocks
   ==                                                    ::
 ++  gagl  (list (pair gage gage))                    
@@ -232,7 +232,7 @@
       :: ~&  writ/tea
       =+  dap=(~(got by deh.bay) dep)
       =-  +>.$(mow mow, deh.bay ?~(dop deh.bay (~(put by deh.bay) dep dop)))
-      ^-  {dop+_|($~ __(dap)) mow=__(mow)}
+      ^-  {dop+_|($~ __(dap)) mow+__(mow)}
       ?-    -.dap
           $done  `mow                ::  writ redundant
           $init  ~|(never-subscribed/dep !!)
@@ -240,7 +240,7 @@
         :-  [%done ~]
         ;:  weld
           (axap dep (~(del in q.dap) bem))              ::  cancel outstanding
-          (turn (~(tap in p.dap)) |=(hen=duct [hen %give %news dep]))
+          (turn (~(tap in p.dap)) |=(hen+duct [hen %give %news dep]))
           mow
     ==  ==
       ==
@@ -871,7 +871,7 @@
           %+  slop
             :(slop [[%atom %p] p.mas] [[%atom %tas] q.mas] q.cay)
           :(slop [[%atom %p] p.mos] [[%atom %tas] q.mos] q.coy)
-        (flux |=(dif=vase [%& u.fom dif]))
+        (flux |=(dif+vase [%& u.fom dif]))
       ==
     ::
     ++  kale                                            ::  mutate
@@ -928,7 +928,7 @@
       ::
       ++  return
         %-  flux
-        |=(a=(map span $~) done(res (~(uni by res) a)))
+        |=(a+(map span $~) done(res (~(uni by res) a)))
       ::
       ++  next
         |=  __(.)  =>  +<
@@ -1113,10 +1113,10 @@
         (turn (sloe p.gab) |=(fro+mark [fro for]))
       ?.  (slob %grow p.vax)  ~
       =+  gow=(slap vax [%cnzy %grow])
-      (turn (sloe p.gow) |=(too=mark [for too]))
+      (turn (sloe p.gow) |=(too+mark [for too]))
     ::
     ++  lyle                                            ::  all mark doors
-      |=  cof=cafe  ^-  (bolt (map mark vase))
+      |=  cof+cafe  ^-  (bolt (map mark vase))
       =|  {sup+path res+(map mark vase)}
       |^  `(bolt (map mark vase))`wide
       ++  here  [bek (welp sup /mar)]
@@ -1351,7 +1351,7 @@
       ::
           $core
         %+  cool  |.(leaf/"ford: core {<(tope p.kas)>}")
-        (cope (lear cof p.kas) (flux |=(a=vase [%& %core a])))
+        (cope (lear cof p.kas) (flux |=(a+vase [%& %core a])))
       ::
           $diff
         %+  cool  |.(leaf/"ford: diff {<`@p`(mug p.kas)>} {<`@p`(mug q.kas)>}")
@@ -1407,7 +1407,7 @@
         (faun cof vax)
       ::
           $tabl
-        %-  cope  :_  (flux |=(rex=(list (pair gage gage)) [%tabl rex]))
+        %-  cope  :_  (flux |=(rex+(list (pair gage gage)) [%tabl rex]))
         !.
         |-  ^-  (bolt (list (pair gage gage)))
         ?~  p.kas  (fine cof ~)
@@ -1808,7 +1808,7 @@
           %^  maul  cof
             (slap (slap pox [%cnzy %grad]) [%cnzy %pact])
           q.coy
-        (flux |=(pat=vase [%& p.cay pat]))
+        (flux |=(pat+vase [%& p.cay pat]))
       ==
     ::
     ++  resp
@@ -1857,18 +1857,18 @@
         :_  $(a (turn a2 tail))
         :-  p.i.i.a
         ?~  -.q.i.i.a  
-          [%& (turn (turn a2 head) |=(b=mass ?~(-.q.b p.q.b !!)))]
-        [%| $(a (turn (turn a2 head) |=(b=mass ?~(-.q.b !! p.q.b))))]
+          [%& (turn (turn a2 head) |=(b+mass ?~(-.q.b p.q.b !!)))]
+        [%| $(a (turn (turn a2 head) |=(b+mass ?~(-.q.b !! p.q.b))))]
     %+  turn  (~(tap by pol))
     |=  {@ baby}
     :~  =<  cache/[%| (turn `(list term)`/hood/bake/lilt/slit/slim/slap/slam .)]
-        =-  |=(a=term [a `(~(get ja dep) a)])
-        =<  `dep=(jar term *)`(~(rep by jav) .)
+        =-  |=(a+term [a `(~(get ja dep) a)])
+        =<  `dep+(jar term *)`(~(rep by jav) .)
         |=({{* a+{term *}} b+(jar term *)} (~(add ja b) a))
     ::
         =<  depends/[%| (turn `(list term)`/init/sent/done .)]
-        =-  |=(a=term [a `(~(get ja dep) a)])
-        =<  `dep=(jar term *)`(~(rep by deh) .)
+        =-  |=(a+term [a `(~(get ja dep) a)])
+        =<  `dep+(jar term *)`(~(rep by deh) .)
         |=({{@ a+{term *}} b+(jar term *)} (~(add ja b) a))
     ::
         tasks/`[dym tad]
@@ -1895,7 +1895,7 @@
   ~
 ::
 ++  load                                                ::  highly forgiving
-  |=  old=axle  
+  |=  old+axle  
   ..^$(+>- old)
   ::  ..^$
   ::=.  old  
@@ -1920,7 +1920,7 @@
   [~ ~]
 ::
 ++  stay                                                ::  save w/o cache
-  `axle`+>-.$(pol (~(run by pol) |=(a=baby [tad.a dym.a deh.a ~])))
+  `axle`+>-.$(pol (~(run by pol) |=(a+baby [tad.a dym.a deh.a ~])))
 ::
 ++  take                                                ::  response
   |=  {tea+wire hen+duct hin+(hypo sign)}

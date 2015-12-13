@@ -15,7 +15,7 @@
   ++  mime  |=({p+mite q+octs} q.q)
   ++  noun  @t
   ++  txt
-    |=  wan=wain
+    |=  wan+wain
     =+  (role wan)
     (end 3 (dec (met 3 -)) -)
   --

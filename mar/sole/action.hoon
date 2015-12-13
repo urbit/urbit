@@ -18,14 +18,14 @@
     |^  (fo %ret (of det/change ~))
     ++  fo
       |*  {a+term b+fist}
-      |=(c=json ?.(=([%s a] c) (b c) (some [a ~])))
+      |=(c+json ?.(=([%s a] c) (b c) (some [a ~])))
     ::
     ++  ra
       |*  {a+{p+term q+fist} b+fist}
-      |=  c=json  %.  c
+      |=  c+json  %.  c
       ?.(=(%a -.c) b (pe p.a (ar q.a)))
     ::
-    ++  change  (ot ler/(at ni ni ~) ted/(cu |*(a=* [0v0 a]) edit) ~)
+    ++  change  (ot ler/(at ni ni ~) ted/(cu |*(a+* [0v0 a]) edit) ~)
     ++  char  (cu turf so)
     ++  edit
       %+  fo  %nop

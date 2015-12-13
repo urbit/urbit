@@ -11,20 +11,20 @@
 |%  ++  json
   =+  jope=|=(a+ship [%s (rsh 3 1 (scot %p a))])
   %-  jobe  :~
-         sort/[%a (turn sort |=(a=@uv [%s (scot %uv a)]))]
+         sort/[%a (turn sort |=(a+@uv [%s (scot %uv a)]))]
     =<  tasks/(jobe (turn (~(tap by tasks)) .))
     |=  {@ client-task}
     =+  tax
     :-  (scot %uv id)
     %-  jobe  :~  id/[%s (scot %uv id)]
-                tags/[%a (turn (^sort (~(tap in tags)) aor) |=(a=cord s/a))]
+                tags/[%a (turn (^sort (~(tap in tags)) aor) |=(a+cord s/a))]
                 doer/?~(doer ~ (jope u.doer))
                title/[%s title]
              creator/(jope creator)
              version/(jone version)
             archived/[%b archived]
         =<  audience/[%a (turn (~(tap in audience)) .)]
-        |=(a=station:talk [%s (crip "{<p.a>}/{(trip q.a)}")])
+        |=(a+station:talk [%s (crip "{<p.a>}/{(trip q.a)}")])
       'date_created'^(jode date-created)
      'date_modified'^(jode date-modified)
          description/[%s description]

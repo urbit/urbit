@@ -11,8 +11,8 @@
     ++  hood-0                                          :: 
       {$0 lac+(map @tas hood-part)}                     ::
     ++  hood-good                                       ::
-      |*  hed=hood-head                                 ::
-      |=  paw=hood-part                                 ::
+      |*  hed+hood-head                                 ::
+      |=  paw+hood-part                                 ::
       ?-  hed                                           ::
         $drum  ?>(?=($drum -.paw) `drum-part`paw)       ::
         $helm  ?>(?=($helm -.paw) `helm-part`paw)       ::

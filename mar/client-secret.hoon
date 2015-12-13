@@ -1,8 +1,8 @@
 ::
-::::  /hoon/term-line/mar
+::::  /hoon/client-secret/mar
   ::
 /?  314 
-|_  txt=cord
+|_  txt+cord
 ::
 ++  grab                                                ::  convert from
   |%

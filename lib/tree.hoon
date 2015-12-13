@@ -10,9 +10,9 @@
   v.i.a.g.i.a
 ::
 ++  getall
-  |=  tag=(list mane)
-  |=  ele=manx  ^-  marl
-  ?:  (lien tag |=(a=mane =(a n.g.ele)))
+  |=  tag+(list mane)
+  |=  ele+manx  ^-  marl
+  ?:  (lien tag |=(a+mane =(a n.g.ele)))
     ~[ele]
   (zing (turn c.ele ..$))
 ::
@@ -32,7 +32,7 @@
 ::
 ++  map-to-json
   |*  {a+_+(* cord) b+_+(* json)}
-  |*  c=(map)  ^-  json
+  |*  c+(map)  ^-  json
   ~!  c
   (jobe (turn (~(tap by c)) |*({k+* v+*} [(a k) (b v)])))
 :: 

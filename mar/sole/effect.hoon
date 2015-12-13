@@ -28,12 +28,12 @@
 ++  wush
   |=  {wid+@u tan+tang}
   ^-  tape
-  =+  rolt=|=(a=wall `tape`?~(a ~ ?~(t.a i.a :(weld i.a "\0a" $(a t.a)))))
-  (rolt (turn (flop tan) |=(a=tank (rolt (wash 0^wid a)))))
+  =+  rolt=|=(a+wall `tape`?~(a ~ ?~(t.a i.a :(weld i.a "\0a" $(a t.a)))))
+  (rolt (turn (flop tan) |=(a+tank (rolt (wash 0^wid a)))))
 ::
 --
 !:
-|_  sef=sole-effect
+|_  sef+sole-effect
 ::
 ++  grab                                                ::  convert from
   |%
@@ -45,7 +45,7 @@
     ^-  ^json
     ?+    -.sef  
               ~|(unsupported-effect/-.sef !!)
-        $mor  [%a (turn p.sef |=(a=sole-effect json(sef a)))]
+        $mor  [%a (turn p.sef |=(a+sole-effect json(sef a)))]
         $err  (joba %hop (jone p.sef))
         $txt  (joba %txt (jape p.sef))
         $tan  (joba %tan (jape (wush 160 p.sef)))

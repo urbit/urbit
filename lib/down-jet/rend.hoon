@@ -69,7 +69,7 @@
       (push (reso ele) ~)
     ::  begin reparsing of html that the spec jankily lets through  ::
     =+  tex=(trip (role p.ele))
-    =^  mar  lum  (chomp tex (sear |=(a=marl ?~(a ~ (some a))) many:poxa))
+    =^  mar  lum  (chomp tex (sear |=(a+marl ?~(a ~ (some a))) many:poxa))
     ?^  mar
       (push u.mar)
     =^  hed  lum  (chomp tex head:poxa)

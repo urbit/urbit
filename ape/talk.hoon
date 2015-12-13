@@ -286,7 +286,7 @@
       $(zoc t.zoc, +>.$ (sh-deal i.zoc))
     ::
     ++  sh-deal                                         ::  apply from shell
-      |=  cod=command
+      |=  cod+command
       ^+  +>
       ?-    -.cod
           $design
@@ -491,8 +491,8 @@
       =|  $^
           _=  ret
           _:  old+(list (pair partner atlas))
-              new=(list (pair partner atlas))
-              cha=(list (pair partner atlas))
+              new+(list (pair partner atlas))
+              cha+(list (pair partner atlas))
           ==
       ^+  ret
       =.  ret
@@ -837,7 +837,7 @@
       ::
       ++  advance  ?~(t.buf ~ $(con +(con), inx +(inx), buf t.buf))
       ++  newline  ?~(t.buf ~ $(con 0, inx +(inx), buf t.buf))
-      ++  fix  |=(cha=@ [%mor [%del inx] [%ins inx `@c`cha] ~])  
+      ++  fix  |=(cha+@ [%mor [%del inx] [%ins inx `@c`cha] ~])  
       --
     ::
     ++  sh-sane                                         ::  sanitize input
@@ -882,7 +882,7 @@
       ^-  audience
       %-  ~(gas by *audience)
       %+  turn  (~(tap in ?~(active.she passive.she u.active.she)))
-      |=(a=partner [a *envelope %pending])
+      |=(a+partner [a *envelope %pending])
     ::
     ++  sh-tell                                         ::  add command
       |=  cod+command
@@ -1311,17 +1311,17 @@
   ::
   ++  ra-diff-talk-report                               ::  subscription update
     |=  {man+span cuz+station rad+report}
-    %-  (ra-know man)  |=  par=__(pa)  =<  pa-abet
+    %-  (ra-know man)  |=  par+__(pa)  =<  pa-abet
     (pa-diff-talk-report:par cuz rad)
   ::
   ++  ra-quit                                           ::  subscription quit
     |=  {man+span cuz+station}
-    %-  (ra-know man)  |=  par=__(pa)  =<  pa-abet
+    %-  (ra-know man)  |=  par+__(pa)  =<  pa-abet
     (pa-quit:par %& cuz)
   ::
   ++  ra-retry                                          ::  subscription resend
     |=  {man+span cuz+station}
-    %-  (ra-know man)  |=  par=__(pa)  =<  pa-abet
+    %-  (ra-know man)  |=  par+__(pa)  =<  pa-abet
     (pa-acquire:par [%& cuz]~)
   ::
   ++  ra-coup-repeat                                    ::
@@ -1347,7 +1347,7 @@
     ^+  +>
     ?.  ?=({@ @ *} pax)
       +>(general (~(del in general) ost.hid))
-    %-  (ra-know i.t.pax)  |=  par=__(pa)  =<  pa-abet
+    %-  (ra-know i.t.pax)  |=  par+__(pa)  =<  pa-abet
     (pa-notify:pa-cancel:par src %gone *human)
   ::
   ++  ra-human                                          ::  look up person
@@ -1408,7 +1408,7 @@
       %+  scag  64
       %-  tufa
       %+  turn  (tuba (trip q.r.r.tip))
-      |=  a=@c
+      |=  a+@c
       ?:  &((gte a 'A') (lte a 'Z'))
         (add a 32)
       ?:  |((lth a 32) (gth a 126))
@@ -1442,7 +1442,7 @@
   ::
   ++  ra-record                                         ::  add to story
     |=  {man+span gam+telegram}
-    %-  (ra-know man)  |=  par=__(pa)  =<  pa-abet
+    %-  (ra-know man)  |=  par+__(pa)  =<  pa-abet
     (pa-learn:par gam)
   ::
   ++  ra-transmit                                       ::  send to neighbor
@@ -1476,7 +1476,7 @@
       &
     ::
     ++  pa-visible                                      ::  display to
-      |=  her=ship
+      |=  her+ship
       ^-  ?
       ?-  p.cordon.shape
         $black  &
@@ -1559,7 +1559,7 @@
       |=  {ost+bone cub+(list card)}
       %_    +>.$
           moves
-        (welp (flop (turn cub |=(a=card [ost a]))) moves)
+        (welp (flop (turn cub |=(a+card [ost a]))) moves)
       ==
     ::
     ++  pa-abjure                                       ::  unsubscribe move
@@ -1607,8 +1607,8 @@
       =+  ^=  dif  ^-  (pair (list partner) (list partner))
           =+  old=`(list partner)`(~(tap in sources.shape) ~)
           =+  new=`(list partner)`(~(tap in sources.cof) ~)
-          :-  (skip new |=(a=partner (~(has in sources.shape) a)))
-          (skip old |=(a=partner (~(has in sources.cof) a)))
+          :-  (skip new |=(a+partner (~(has in sources.shape) a)))
+          (skip old |=(a+partner (~(has in sources.cof) a)))
       =.  +>.$  (pa-acquire p.dif)
       =.  +>.$  (pa-abjure q.dif)
       =.  shape  cof
@@ -1693,8 +1693,8 @@
         (pa-sauce ost.hid [%quit ~]~)
       =+  ^=  ruv  ^-  (unit river)
           %+  biff
-            (zl:jo (turn pax ;~(biff slay |=(a=coin `(unit dime)`?~(-.a a ~)))))
-          |=  paf=(list dime)
+            (zl:jo (turn pax ;~(biff slay |=(a+coin `(unit dime)`?~(-.a a ~)))))
+          |=  paf+(list dime)
           ?~  paf
             $(paf [%ud (sub (max 64 count) 64)]~)
           ?~  t.paf
@@ -1736,7 +1736,7 @@
       $(p.moy t.p.moy, gramsers (~(del by gramsers) i.p.moy))
     ::
     ++  pa-lesson                                       ::  learn multiple
-      |=  gaz=(list telegram)
+      |=  gaz+(list telegram)
       ^+  +>
       ?~  gaz  +>
       $(gaz t.gaz, +> (pa-learn i.gaz))
@@ -1921,7 +1921,7 @@
     (~(ta-show ta man (need te-best)) ~ te-maud)
   ::
   ++  ta-dire                                           ::  direct message
-    |=  pan=partner  ^-  ?
+    |=  pan+partner  ^-  ?
     ?&  ?=($& -.pan)
         =(p.p.pan our.hid)
     ::
@@ -1987,11 +1987,11 @@
     ==
   ::
   ++  tr-rend-tors
-    |=  a=torso  ^-  tang
+    |=  a+torso  ^-  tang
     ?-  -.a
       $name  (welp $(a q.a) leaf/"={(trip p.a)}" ~)
       $tank  +.a
-      $text  (turn (flop +.a) |=(b=cord leaf/(trip b)))
+      $text  (turn (flop +.a) |=(b+cord leaf/(trip b)))
     ==
   ::
   ++  tr-pals
@@ -2152,7 +2152,7 @@
 ++  log-to-file
   |=  man+span
   ^-  move
-  =+  ^-  paf=path
+  =+  ^-  paf+path
       =+  day=(year %*(. (yore now.hid) +.t +:*tarp))
       %+  tope  [our.hid %home da/now.hid]
       /talk-telegrams/(scot %da day)/[man]/talk

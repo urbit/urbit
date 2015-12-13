@@ -5,7 +5,7 @@
 /-    talk
 !:
 [talk .]
-|_  cod=command
+|_  cod+command
 ::
 ++  grab                                                ::  convert from
   |%

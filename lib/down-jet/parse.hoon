@@ -67,7 +67,7 @@
 ++  leas  |*(a+rule ;~(pfix ;~(less (stun 4^4 ace) (stun 0^3 ace)) a))
 ++  pech  
   |*  a+{rule rule}
-  |=  tub=nail  
+  |=  tub+nail  
   ^-  (like (each __((wonk (-.a))) __((wonk (+.a)))))
   %.  tub
   ;~(pose (stag %& -.a) (stag %| +.a))
@@ -345,7 +345,7 @@
   ::
   ++  many
     =>  pars                            ::  XX  
-    |=  tub=nail  ^-  (like kids)
+    |=  tub+nail  ^-  (like kids)
     =-  [[0 0] ~ (reso -<) [0 0] ;;(tape ->)]           ::  XX
     =+  [ins=`?(fens $~)`~ bof=| noz=|]
     ?~  q.tub  [`~ ~]
@@ -386,7 +386,7 @@
       $(+<+ t)
     ::
     ++  flome
-      |=  a=__(+:*nuft)
+      |=  a+__(+:*nuft)
       ^-  {(unit ?($| fens)) tape}
       ?.  ?=({* ?($| fens)} a)
         [~ a]
@@ -554,11 +554,11 @@
   --
 ::
 ++  normalize
-  |=  a=down  ^-  down
+  |=  a+down  ^-  down
   %+  turn  a  |=  b+elem
   ?^  -.b  b(q (turn q.b ..$))
   =-  ?+(-.b b $para b(p (- p.b)), $head b(q (- q.b)))
-  |=  c=kids  ^-  kids
+  |=  c+kids  ^-  kids
   ?~  c  ~
   ?:  ?&  ?=(^ t.c)
           ?=($$ -.i.c)
@@ -646,7 +646,7 @@
     =-  =>  .(cur t.cur, q.p.tub p.i.cur)
         ?~  cur  self(top [hed top])
         self(q.q.i.cur [hed q.q.i.cur])
-    ^-  hed=tops
+    ^-  hed+tops
     =+  cub=q.i.cur
     ?+    -.p.cub  cub
         $list
@@ -787,7 +787,7 @@
         ?.  ?=($item -.p.q.i.cur)
           (. cur)
         [i.cur (. t.cur)]
-    |=  a=__(cur)  ^+  a
+    |=  a+__(cur)  ^+  a
     ~?  >  bug  naro/[debu nil-li a cur]
     ?~  a  a
     ?:  ?=({{$item $~} $~} q.i.a)

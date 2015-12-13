@@ -22,7 +22,7 @@
   ~+  ^-  (map term cord)
   %-  mo  ^-  (list {term cord})
   :-  [%class 'className']
-  =-  (rash - (more next (cook |=(a=tape [(cass a) (crip a)]) (star alf))))
+  =-  (rash - (more next (cook |=(a+tape [(cass a) (crip a)]) (star alf))))
   '''
   accept acceptCharset accessKey action allowFullScreen allowTransparency alt
   async autoComplete autoFocus autoPlay cellPadding cellSpacing charSet checked
@@ -62,7 +62,7 @@
             ;pre
               ;div:"error"
               ;*  %+  turn  p.result
-                  |=  a=tank
+                  |=  a+tank
                   ^-  manx
                   ;div:"{~(ram re a)}"
       ==    ==
@@ -77,7 +77,7 @@
     (fall (~(get by react-attrs) a) a)
   ==
 ::
-++  mane-to-cord  |=(a=mane `cord`?@(a a (rap 3 -.a ':' +.a ~)))
+++  mane-to-cord  |=(a+mane `cord`?@(a a (rap 3 -.a ':' +.a ~)))
 ::  generates React javascript  XX deprecated
 ++  react-to-tape                                    
   |=  src+manx  ^-  tape
@@ -103,7 +103,7 @@
           ;div:"error"
           ;*  %+  turn
                 (scag (dec (lent p.result)) p.result) ::  hide react trace
-              |=  a=tank
+              |=  a+tank
               ^-  manx
               ;div:"{~(ram re a)}"
         ==

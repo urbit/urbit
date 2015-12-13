@@ -47,7 +47,7 @@
     ::
     ++  jome                                            ::  stringify keys
       |*  {a+__(cord) b+__(json)}
-      |=  c=(map __(+<.a) __(+<.b))
+      |=  c+(map __(+<.a) __(+<.b))
       (jobe (turn (~(tap by c)) (both a b)))
     ::
     ++  both                                            ::  cons two gates
@@ -67,7 +67,7 @@
     ++  audi  (jome parn jove)
     ++  bouq
       |=  a+bouquet
-      a/(turn (~(tap in a)) |=(b=path a/(turn b |=(c=span s/c))))
+      a/(turn (~(tap in a)) |=(b+path a/(turn b |=(c+span s/c))))
     ::
     ++  parn
       |=  a+partner  ^-  cord
@@ -129,7 +129,7 @@
     ::
     ++  sorc  
       |=  a+(set partner)  ^-  json
-      [%a (turn (~(tap in a)) |=(b=partner s/(parn b)))]
+      [%a (turn (~(tap in a)) |=(b+partner s/(parn b)))]
     ::
     ++  conf
       |=  config

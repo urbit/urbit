@@ -12,7 +12,7 @@
 |%
 ++  mark
   ~/  %mark
-  |=  p=@t
+  |=  p+@t
   (normalize (rash p parse))
 ::
 ++  print  sing

@@ -178,8 +178,8 @@
 ::
 ++  from-cookies
   |=  {maf+math fil+_+({@t @t} ?)}
-  =+  `cot=(list @t)`(~(get ju maf) 'cookie')
-  =+  `cok=quay`(zing `(list quay)`(murn cot (curr rush cock:epur)))
+  =+  `cot+(list @t)`(~(get ju maf) 'cookie')
+  =+  `cok+quay`(zing `(list quay)`(murn cot (curr rush cock:epur)))
   |-  ^-  (unit cord)
   ?~  cok  ~
   ?:((fil i.cok) [~ q.i.cok] $(cok t.cok))
@@ -187,14 +187,14 @@
 ++  wush
   |=  {wid+@u tan+tang}
   ^-  tape
-  =+  rolt=|=(a=wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
-  (rolt (turn tan |=(a=tank (rolt (wash 0^wid a)))))
+  =+  rolt=|=(a+wall `tape`?~(a ~ :(weld i.a "\0a" $(a t.a))))
+  (rolt (turn tan |=(a+tank (rolt (wash 0^wid a)))))
 ::
 ::
 ++  add-cookies
   |=  {cug+(list @t) hit+httr}  ^-  httr
   ?~  cug  hit
-  =+  cuh=(turn `(list @t)`cug |=(a=@t set-cookie/a))
+  =+  cuh=(turn `(list @t)`cug |=(a+@t set-cookie/a))
   hit(q (weld cuh q.hit))
 ::
 ++  inject                                            ::  inject dependency
@@ -544,7 +544,7 @@
                   our+ship                              ::  current ship
                   sky+_+(* (unit))                      ::  system namespace
               ==                                        ::
-              mow=(list move)                           ::  pending actions
+              mow+(list move)                           ::  pending actions
           ==                                            ::
           bolo                                          ::  all vane state
       ==                                                ::
@@ -773,7 +773,7 @@
         =.  ..axon  $(tee p.tee)
         %_  ..axon
           mow  %+  turn  mow
-               |=  a=move
+               |=  a+move
                ?+  q.a  a
                  {$give $thou *}  a(r.p.p.q ~)
                  {$pass ^}        ?.(=(p.tee p.q.a) a a(p.q tee))
@@ -824,7 +824,7 @@
   ::
   ++  root-beak  `beak`[our %home da/now]               ::  XX
   ++  emule
-    |=  a=__(|?(..emule))  ^+  ..emule
+    |=  a+__(|?(..emule))  ^+  ..emule
     =+  mul=(mule a)
     ?~  -.mul  p.mul
     (fail 500 0v0 >%exit< p.mul)
@@ -1267,7 +1267,7 @@
       ==
     ::
     ++  show-login-page
-      |=  ses=(unit hole)  ^-  (each pest __(done))
+      |=  ses+(unit hole)  ^-  (each pest __(done))
       %-  (slog leaf/"login code for {(scow %p our)}: {(trip load-secret)}" ~)
       ?.  ?=(_|($~ {$~ $html}) p.pok)
         [%& %red ~]
@@ -1288,7 +1288,7 @@
         {$| @}  (cat 3 '; Domain=' (rsh 3 1 (scot %if p.r.hat)))
         {$& $org $urbit *}  '; Domain=.urbit.org'
         {$& @ @ *}  =-  (rap 3 "; Domain={-}{i.p.r.hat ~}")
-                    (turn (flop `path`t.p.r.hat) |=(a=span (cat 3 a '.')))
+                    (turn (flop `path`t.p.r.hat) |=(a+span (cat 3 a '.')))
                     
         {$& *}  ''  ::  XX security?
       ==
@@ -1410,7 +1410,7 @@
         ixor/s/(oryx-to-ixor orx)
         ship/(jape +:<our>)
         user/(jape +:<him>)
-        auth/a/(turn (~(tap in aut)) |=(a=@p (jape +:<a>)))
+        auth/a/(turn (~(tap in aut)) |=(a+@p (jape +:<a>)))
       ==
     --
   ::
@@ -1427,7 +1427,7 @@
       =.  +>  poll-rest
       ..ix(wix (~(del by wix) ire))
     ::
-    ++  teba  |*(a+_+(* ..ix) |*(b=* %_(done ..ix (a b))))
+    ++  teba  |*(a+_+(* ..ix) |*(b+* %_(done ..ix (a b))))
     ++  give-json  (teba ^give-json)
     ++  pass-note  (teba ^pass-note)
     ++  hurl-note 
@@ -1476,7 +1476,7 @@
       (get-even [%rush [[(slav %p p.a) q.a] r.a] (joba %json b)])
     ::
     ++  get-quit
-      |=  a=whir-of  ^+  ..ix
+      |=  a+whir-of  ^+  ..ix
       (get-even [%quit [[(slav %p p.a) q.a] r.a]])
     ::
     ++  get-ack
@@ -1608,7 +1608,7 @@
       __(=+(*stem -(|3 |5.-, q.eve *(map @u even-2))))
   =+  bolo-2=__([%2 %*(+ *bolo wix *(map ixor stem-2))])
   =+  bolo-1=__([%1 +(|4 |5.+)]:*bolo-2)                ::  no lyv
-  |=  old=?(bolo bolo-1 bolo-2)
+  |=  old+?(bolo bolo-1 bolo-2)
   ^+  ..^$
   ?-  -.old
     $3  ..^$(+>- old)

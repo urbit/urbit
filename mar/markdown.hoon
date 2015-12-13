@@ -3,7 +3,7 @@
   ::
 /?  314
 ::
-|_  mud=@t
+|_  mud+@t
 ++  grow
   |%
   ++  mime  [/text/x-markdown (taco mud)]
@@ -17,7 +17,7 @@
   ++  noun  @t
   ++  md  |=(@t +<)
   ++  txt
-    |=  wan=wain
+    |=  wan+wain
     =+  (role wan)
     (end 3 (dec (met 3 -)) -)
   --

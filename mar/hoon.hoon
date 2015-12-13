@@ -3,7 +3,7 @@
   ::
 /?  314
 !:
-|_  own=@t
+|_  own+@t
 ::
 ++  grow                                                ::  convert to
   |%

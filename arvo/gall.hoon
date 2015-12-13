@@ -121,7 +121,7 @@
     :_  +>+(pol.all (~(put by pol.all) our +<+))
     %-  flop
     %+  turn  moz
-    |=  a=move
+    |=  a+move
     ?.  ?=($pass -.q.a)  a
     [p.a %pass [(scot %p our) p.q.a] q.q.a]
   ::
@@ -134,7 +134,7 @@
     %_(+> moz :_(moz [hen %pass pax noh]))
   ::
   ++  mo-give
-    |=  git=gift-gall
+    |=  git+gift-gall
     %_(+> moz :_(moz [hen %give git]))
   ::
   ++  mo-okay                                           ::  valid agent core
@@ -331,7 +331,7 @@
       ?-  -.q.+.sih
         $tabl  ~|(%made-tabl !!)
         {$&}  (mo-give %unto %diff p.q.+>.sih)
-        {$|}  =.  p.q.+>.sih  (turn p.q.+>.sih |=(a=tank rose/[~ "! " ~]^[a]~))
+        {$|}  =.  p.q.+>.sih  (turn p.q.+>.sih |=(a+tank rose/[~ "! " ~]^[a]~))
               ~>  %slog.`%*(. >[%wh %y]< +> [>%mo-cyst-fail< (flop p.q.+>.sih)])
               (mo-give %unto %quit ~)   ::  XX better errors pls
       ==
@@ -443,7 +443,7 @@
                 {$&}  ap-abet:(ap-pout:pap t.t.t.pax %diff +.q.+>.q.hin)
                 {$|}
                     =+  why=p.q.+>.q.hin
-                    =.  why  (turn why |=(a=tank rose/[~ "! " ~]^[a]~))
+                    =.  why  (turn why |=(a+tank rose/[~ "! " ~]^[a]~))
                     ~>  %slog.`rose/["  " "[" "]"]^[>%mo-cook-fail< (flop why)]
                     ~&  [him=q.q.pry our=our pax=pax]
                     ::
@@ -692,7 +692,7 @@
       =+  ton=(mock [q.hav q.+<.pyz] ap-sled)
       ?-  -.ton
         $0  [%& p.+<.pyz p.ton]
-        $1  [%| (turn p.ton |=(a=* (smyt (path a))))]
+        $1  [%| (turn p.ton |=(a+* (smyt (path a))))]
         $2  [%| p.ton]
       ==
     ::
@@ -959,14 +959,14 @@
       ^+  +>
       =+  cug=(ap-find /lame)
       ?~  cug
-        =.  why  [>%ap-lame dap wut< (turn why |=(a=tank rose/[~ "! " ~]^[a]~))]
+        =.  why  [>%ap-lame dap wut< (turn why |=(a+tank rose/[~ "! " ~]^[a]~))]
         ~>  %slog.`rose/["  " "[" "]"]^(flop why)
         +>.$
       =^  cam  +>.$
         %+  ap-call  q.u.cug
         !>([wut why])
       ?^  cam
-        =.  why  [>%ap-lame-lame< (turn u.cam |=(a=tank rose/[~ "! " ~]^[a]~))]
+        =.  why  [>%ap-lame-lame< (turn u.cam |=(a+tank rose/[~ "! " ~]^[a]~))]
         ~>  %slog.`rose/["  " "[" "]"]^(welp (flop why) leaf/"." (flop u.cam))
         +>.$
       +>.$
@@ -1140,7 +1140,7 @@
       =+  ton=(ap-mong [q.gat q.arg] ap-sled)
       ?-  -.ton
         $0  [%& +<.wyz p.ton]
-        $1  [%| (turn p.ton |=(a=* (smyt (path a))))]
+        $1  [%| (turn p.ton |=(a+* (smyt (path a))))]
         $2  [%| p.ton]
       ==
     ::
@@ -1222,15 +1222,15 @@
     :^  hen  %give  %mass
     :-  %gall
     :-  %|
-    %-  |=  a=(list (list mass))  ^-  (list mass)      :: XX single-home
+    %-  |=  a+(list (list mass))  ^-  (list mass)      :: XX single-home
         =+  a2=a
         ?~  a  !!
         ?~  i.a  ~
         :_  $(a (turn a2 tail))
         :-  p.i.i.a
         ?~  -.q.i.i.a  
-          [%& (turn (turn a2 head) |=(b=mass ?~(-.q.b p.q.b !!)))]
-        [%| $(a (turn (turn a2 head) |=(b=mass ?~(-.q.b !! p.q.b))))]
+          [%& (turn (turn a2 head) |=(b+mass ?~(-.q.b p.q.b !!)))]
+        [%| $(a (turn (turn a2 head) |=(b+mass ?~(-.q.b !! p.q.b))))]
     %+  turn  (~(tap by pol.all))
     |=  {@ mast}
     :~  foreign/`sap

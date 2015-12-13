@@ -1,4 +1,4 @@
-::
+!:
 ::  dill (4d), terminal handling   
 ::
 |=  pit+vase
@@ -156,7 +156,7 @@
         |=  {err+@tas tac+(list tank)}
         =+  ^=  wol  ^-  wall
             :-  (trip err)
-            (zing (turn (flop tac) |=(a=tank (~(win re a) [0 wid]))))
+            (zing (turn (flop tac) |=(a+tank (~(win re a) [0 wid]))))
         |-  ^+  +>.^$
         ?~  wol  +>.^$
         $(wol t.wol, +>.^$ (from %out (tuba i.wol)))
@@ -226,7 +226,7 @@
       ++  into                                          ::  preinitialize
         |=  gyl+(list gill)
         %_    +>
-            tem  `(turn gyl |=(a=gill [%yow a]))
+            tem  `(turn gyl |=(a+gill [%yow a]))
             moz
           :_  moz
           :*  hen

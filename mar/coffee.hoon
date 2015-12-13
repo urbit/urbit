@@ -2,7 +2,7 @@
 ::::  /hoon/core/md/pro
   ::
 /?  314
-|_  mud=@t
+|_  mud+@t
 ++  grow
   |%
   ++  mime  [/text/coffeescript (taco mud)]

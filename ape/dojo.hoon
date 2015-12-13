@@ -171,7 +171,7 @@
         (stag %show (cook _?($1 $2 $3) (cook lent (stun [1 3] wut))))
       ==
     ++  dp-hooves                                       ::  hoof list
-      :(stag 0 %ex %clsg (cook |=(a=tusk a) (most ;~(plug com gaw) dp-hoof)))
+      :(stag 0 %ex %clsg (cook |=(a+tusk a) (most ;~(plug com gaw) dp-hoof)))
     ::
     ++  dp-hoof                                         ::  ++ford-hoof twig
       %+  cook  |*(a+* ~!(+.a `twig`a))
@@ -403,7 +403,7 @@
       (dy-diff(per ~) %mor [%det lic] [%err q.q.cag] ~)
     ::
     ++  dy-done                                         ::  dialog submit
-      |=  txt=tape
+      |=  txt+tape
       ?:  |(?=(^ per) ?=(^ pux) ?=($~ pro))
         ~&  %dy-no-prompt
         (dy-diff %bel ~)
@@ -411,7 +411,7 @@
     ::
     ++  dy-cast
       |*  {typ+__(*) bun+vase}
-      |=  a=vase  ^-  typ
+      |=  a+vase  ^-  typ
       ?>  (~(nest ut p.bun) & p.a)
       ;;(typ q.a)
     ::
@@ -492,7 +492,7 @@
         ==
       ==
     ::
-    ++  dy-show  |=(cay=cage (dy-print cay ~))
+    ++  dy-show  |=(cay+cage (dy-print cay ~))
     ++  dy-print
       |=  {cay+cage tan+tang}
       %+  dy-rash  %tan
@@ -501,7 +501,7 @@
         $tang  ;;(tang q.q.cay)
         $httr
           =+  hit=;;(httr q.q.cay)
-          =-  (flop (turn `wall`- |=(a=tape leaf/(dash:ut a ''))))
+          =-  (flop (turn `wall`- |=(a+tape leaf/(dash:ut a ''))))
           :-  "HTTP {<p.hit>}"
           %+  weld
             (turn q.hit |=({a+@t b+@t} "{(trip a)}: {(trip b)}"))
@@ -509,7 +509,7 @@
       ==
     ::
     ++  dy-show-type-noun
-      |=  a=type  ^-  tank
+      |=  a+type  ^-  tank
       =-  >[-]<
       |-  ^-  $^
               _?  _%  {$atom @tas}
@@ -620,7 +620,7 @@
       !>([our=our now=now eny=eny]:hid)
     ::
     ++  dy-made-dial                                    ::  dialog product
-      |=  cag=cage
+      |=  cag+cage
       ^+  +>+>
       ?.  ?=(^ q.q.cag)
         (dy-diff %err q.q.cag)
@@ -746,7 +746,7 @@
     --
   ::
   ++  he-dope                                           ::  sole user of ++dp
-    |=  txt=tape                                        ::
+    |=  txt+tape                                        ::
     ^-  (each (unit (each dojo-command tape)) hair)     ::  prefix/result
     =+  len=+((lent txt))                               ::  line length
     =.  txt  :(weld buf txt "\0a")                      ::
@@ -770,7 +770,7 @@
     ^+  .
     =.  egg  +(egg)
     =-  ?~(msg ..he-diff (he-diff %tan leaf/u.msg ~))
-    ^-  msg=(unit tape)
+    ^-  msg+(unit tape)
     ?+  (clan our.hid)  ~
       $pawn  ?+  egg  ~
         $5  `":: To request a planet, run  |ask 'your@email.co'"
@@ -963,7 +963,7 @@
           {$2 p+(map bone session-1)}
           {$3 p+(map bone session)}
       ==
-  |=  old=(unit ?(house hoze))  ^+  [~ ..prep]
+  |=  old+(unit ?(house hoze))  ^+  [~ ..prep]
   ?~  old  `..prep
   ?+  -.u.old  !!
     $4  `..prep(+<+ u.old)
@@ -975,7 +975,7 @@
   |=  {moz+(list move) ses+session}
   =>  ~(. he moz ses)
   =-  [wrap=- +]
-  |*  he-arm=__(he-type)
+  |*  he-arm+__(he-type)
   |=  __(+<.he-arm)  
   ^-  (quip move ..he)
   he-abet:(he-arm +<)

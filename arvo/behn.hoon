@@ -1,7 +1,7 @@
 ::  ::  %behn, just a timer
 !?  164
-::::
-|=  pit=vase
+!:::
+|=  pit+vase
 =>  =~
 |%
 ++  sqeu  |*  {a+__(*) b+__(*)}                         ::  binary skew queno
@@ -125,7 +125,7 @@
   ++  gas
     |=  b+(list {k+key n+val})
     ^+  a
-    q:(roll b |=({{k+key n+val} q=__(a)} (put(a q) k n)))
+    q:(roll b |=({{k+key n+val} q+__(a)} (put(a q) k n)))
   ::
   ++  tap
     ^-  (list {k+key n+val})

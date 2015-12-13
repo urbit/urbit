@@ -7,8 +7,10 @@
 !:
 |%
 ++  request
-  _:  domain+(list cord)  end-point=path
-      req-type+_?($get {$post p=json})  headers=math
+  _:  domain+(list cord)  
+      end-point+path
+      req-type+_?($get {$post p+json})  
+      headers+math
       queries+quay
   ==
 ++  send
@@ -19,7 +21,7 @@
 ++  request-to-hiss
   |=  request  ^-  hiss
   =-  ~&  hiss=-  -
-  :-  ^-  parsed-url=purl
+  :-  ^-  parsed-url+purl
       :+  :+  security=%.y
             port=~
           host=[%.y [path=domain]]

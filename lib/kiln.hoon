@@ -169,7 +169,7 @@
   %-  emil
   %+  turn
     `(list term)`~[%ames %behn %clay %dill %eyre %ford %gall %zuse %hoon]
-  |=  syd=term
+  |=  syd+term
   ^-  card
   :*  %warp  /kiln/autoload/[syd]  [our our]  %home  ~
       %next  %y  da/now  /arvo/[syd]/hoon
@@ -195,7 +195,7 @@
 ++  take-mere-sync                                    ::
   |=  {way+wire mes+(each (set path) (pair term tang))}
   ?>  ?=({@ @ @ $~} way)
-  =+  ^-  hos=kiln-sync
+  =+  ^-  hos+kiln-sync
       :*  syd=(slav %tas i.way)
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
@@ -205,7 +205,7 @@
 ++  take-writ-sync                                    ::
   |=  {way+wire rot+riot}
   ?>  ?=({@ @ @ $~} way)
-  =+  ^-  hos=kiln-sync
+  =+  ^-  hos+kiln-sync
       :*  syd=(slav %tas i.way)
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
@@ -436,7 +436,7 @@
             =+  bobs=[%file [our syd %da now] (flop pax)]
             =+  dali=[%diff base alis]
             =+  dbob=[%diff base bobs]
-            =+  ^-  for=mark
+            =+  ^-  for+mark
                 =+  (slag (dec (lent pax)) pax)
                 ?~(- %$ i.-)
             [%mash for [her sud dali] [our syd dbob]]
@@ -485,7 +485,7 @@
   ::
   ++  tape-to-tanks
     |=  a+tape  ^-  (list tank)
-    (scan a (more (just '\0a') (cook |=(a=tape leaf/a) (star prn))))
+    (scan a (more (just '\0a') (cook |=(a+tape leaf/a) (star prn))))
   ::
   ++  tanks-if-any
     |=  {a+tape b+(list path) c+tape}  ^-  (list tank)
@@ -498,7 +498,7 @@
     ?:  ?=($| -.reg)
       =+  "failed to mash"
       lose:(spam leaf/- p.reg)
-    =+  ^-  can=(list (pair path (unit miso)))
+    =+  ^-  can+(list (pair path (unit miso)))
         %+  turn  (gage-to-cages reg)
         |=  {pax+cage dif+cage}
         ^-  (pair path (unit miso))
@@ -511,7 +511,7 @@
     =+  annotated=(turn `(list (pair path *))`-.notated head)
     =+  unnotated=(turn `(list (pair path *))`+.notated head)
     =+  `desk`(cat 3 syd '-scratch')
-    =+  ^-  tan=(list tank)
+    =+  ^-  tan+(list tank)
         %-  zing
         ^-  (list (list tank))
         :~  %-  tape-to-tanks
