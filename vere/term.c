@@ -1063,12 +1063,20 @@ static void
 _term_start_spinner(u3_utty* uty_u, u3_noun ovo)
 {
   uty_u->tat_u.sun.diz_o = c3n;
-  uty_u->tat_u.sun.eve_d = _term_msc_out_host();
 
+  c3_d lag_d = _SPIN_WAIT_US;
   u3_noun why = u3h(u3t(u3h(u3t(ovo))));
-  if ( c3__term != why ) {
+  if ( c3__term == why ) {
+    u3_noun eve = u3t(u3t(ovo));
+    if ( c3__belt == u3h(eve) && c3__ret == u3h(u3t(eve)) ) {
+      lag_d = 0;  //  No delay for %ret.
+    }
+  }
+  else {
     uty_u->tat_u.sun.why_c = (c3_c*)u3r_string(why);
   }
+
+  uty_u->tat_u.sun.eve_d = _term_msc_out_host() + lag_d;
 
   uv_mutex_unlock(&uty_u->tat_u.mex_u);
 }
@@ -1109,19 +1117,15 @@ _term_spinner_cb(void* ptr_v)
     }
     else {
       c3_d now_d = _term_msc_out_host();
-      c3_d dif_d;
 
-      if (now_d < eve_d) {  //  shenanigans!
+      if (now_d < eve_d) {
         uv_mutex_unlock(&uty_u->tat_u.mex_u);
-      }
-      else if ( (dif_d = now_d - eve_d) >= _SPIN_WAIT_US ) {
-        _term_show_spinner(uty_u, dif_d - _SPIN_WAIT_US);
-        uv_mutex_unlock(&uty_u->tat_u.mex_u);
-        usleep(_SPIN_RATE_US);
+        usleep(eve_d - now_d);
       }
       else {
+        _term_show_spinner(uty_u, now_d - eve_d);
         uv_mutex_unlock(&uty_u->tat_u.mex_u);
-        usleep(_SPIN_WAIT_US - dif_d);
+        usleep(_SPIN_RATE_US);
       }
     }
   }
