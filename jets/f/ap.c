@@ -715,6 +715,8 @@
     {
       u3_noun p_gen, q_gen, r_gen, s_gen;
 
+      return u3_none;
+
       if ( c3y == u3ud(gen) ) {
         // printf("studly\n");
         // u3_err("stud m", gen);
