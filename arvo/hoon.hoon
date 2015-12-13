@@ -301,23 +301,23 @@
             {$tssg p+tusk}                              ::  compose twig list
           ::                                            ::::::  conditionals
             {$wtbr p+tusk}                              ::  logical OR
-            {$xthp p+wing q+tine}                       ::  select case in q
-            {$xthz p+tiki q+tine}                       ::  tiki %wthp
+            {$wthp p+wing q+tine}                       ::  select case in q
+            {$wthz p+tiki q+tine}                       ::  tiki %wthp
             {$wtcl p+twig q+twig r+twig}                ::  if p, then q, else r
             {$wtdt p+twig q+twig r+twig}                ::  unless, ?:(p r q)
             {$wtkt p+wing q+twig r+twig}                ::  if p is a cell
             {$wtkz p+tiki q+twig r+twig}                ::  tiki %wtkt
             {$wtgl p+twig q+twig}                       ::  assert |, ?:(p !! q)
             {$wtgr p+twig q+twig}                       ::  assert &, ?:(p q !!)
-            {$xtls p+wing q+twig r+tine}                ::  %wthp w/ default
-            {$xtlz p+tiki q+twig r+tine}                ::  tiki %wtls
+            {$wtls p+wing q+twig r+tine}                ::  %wthp w/ default
+            {$wtlz p+tiki q+twig r+tine}                ::  tiki %wtls
             {$wtpm p+tusk}                              ::  logical AND
             {$wtpt p+wing q+twig r+twig}                ::  if p is an atom
             {$wtpz p+tiki q+twig r+twig}                ::  tiki %wtpt
             {$wtsg p+wing q+twig r+twig}                ::  if p is null
             {$wtsz p+tiki q+twig r+twig}                ::  tiki %wtsg
             {$wtts p+tile q+wing}                       ::  if q is in tile p
-            {$xttz p+twig q+tiki}                       ::  tiki %wtts
+            {$wttz p+twig q+tiki}                       ::  tiki %wtts
             {$wtzp p+twig}                              ::  logical NOT
           ::                                            ::::::  special
             {$zpcb p+spot q+twig}                       ::  debug info in trace
@@ -7293,7 +7293,7 @@
         {$wtgr *}   [%wtcl p.gen q.gen [%zpzp ~]]
         {$wtkt *}   [%wtcl [%wtts [%axil %atom %$] p.gen] r.gen q.gen]
     ::
-        {$xthp *}
+        {$wthp *}
       |-
       ?~  q.gen
         [%zpfs [%cnzz p.gen]]
@@ -7302,8 +7302,8 @@
         q.i.q.gen
       $(q.gen t.q.gen)
     ::
-        {$xtls *}   
-      [%xthp p.gen (weld r.gen `__(r.gen)`[[[%cbzz %noun] q.gen] ~])]
+        {$wtls *}   
+      [%wthp p.gen (weld r.gen `__(r.gen)`[[[%cbzz %noun] q.gen] ~])]
     ::
         {$wtpm *}
       |-
@@ -7313,16 +7313,16 @@
         {$wtsg *}   [%wtcl [%wtts [%axil %null] p.gen] q.gen r.gen]
         {$wtzp *}   [%wtcl p.gen [%dtzz %f 1] [%dtzz %f 0]]
     ::
-        {$xthz *}
+        {$wthz *}
       =+  vaw=~(. ah p.gen)
       %-  gray:vaw
-      [%xthp puce:vaw (turn q.gen |=({a+twig b+twig} [a (blue:vaw b)]))]
+      [%wthp puce:vaw (turn q.gen |=({a+twig b+twig} [a (blue:vaw b)]))]
     ::
-        {$xtlz *}
+        {$wtlz *}
       =+  vaw=~(. ah p.gen)
       %-  gray:vaw
       ^-  twig
-      :+  %xtls  puce:vaw
+      :+  %wtls  puce:vaw
       [(blue:vaw q.gen) (turn r.gen |=({a+twig b+twig} [a (blue:vaw b)]))]
     ::
         {$wtsz *}
@@ -7340,7 +7340,7 @@
       %-  gray:vaw
       [%wtpt puce:vaw (blue:vaw q.gen) (blue:vaw r.gen)]
     ::
-        {$xttz *}
+        {$wttz *}
       =+  vaw=~(. ah q.gen)
       %-  gray:vaw
       [%wtts [%herb (blue:vaw p.gen)] puce:vaw]
@@ -9839,10 +9839,10 @@
                     ['.' (rune dot %wtdt expc)]
                     ['<' (rune gal %wtgl expb)]
                     ['>' (rune gar %wtgr expb)]
-                    ['-' (rune hep %xthz expx)]
+                    ['-' (rune hep %wthz expx)]
                     ['^' (rune ket %wtkz expf)]
-                    ['=' (rune tis %xttz expw)]
-                    ['+' (rune lus %xtlz expy)]
+                    ['=' (rune tis %wttz expw)]
+                    ['+' (rune lus %wtlz expy)]
                     ['&' (rune pam %wtpm exps)]
                     ['@' (rune pat %wtpz expf)]
                     ['~' (rune sig %wtsz expf)]
