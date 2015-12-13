@@ -203,30 +203,30 @@
             {$bccm p+tile}                              ::  clam a tile
             {$bcpt p+wing q+tile}                       ::  whip p into q
             {$bctr p+tile}                              ::  bunt a tile w/ ^~
+            {$bckt p+twig}                              ::  temporary
             {$bczp p+base}                              ::  bunt an axil
           ::                                            ::::::  cores
-            {$brcb p+tile q+(map term foot)}            ::  %gold tray, sample p
             {$xrcb p+twig q+(map term foot)}            ::  %gold tray, sample p
+            {$brcb p+twig q+(map term foot)}            ::  %gold tray, sample p
 
             {$brcl p+twig q+twig}                       ::  %brts by example
             {$brcn p+(map term foot)}                   ::  %gold core, natural
             {$brdt p+twig}                              ::  dry %gold trap
 
-            {$brfs p+tile q+(map term foot)}            ::  vulcan. %gold tray
             {$xrfs p+twig q+(map term foot)}            ::  vulcan. %gold tray
+            {$brfs p+twig q+(map term foot)}            ::  vulcan. %gold tray
 
             {$brkt p+twig q+(map term foot)}            ::  %gold book
             {$brhp p+twig}                              ::  kick dry %gold trap
 
-            {$brls p+tile q+twig}                       ::  dry %iron gate
             {$xrls p+twig q+twig}
+            {$brls p+twig q+twig}
 
-            {$brtr p+tile q+twig}                       ::  vulcan. wet gate
+            {$brtr p+twig q+twig}
             {$xrtr p+twig q+twig}
 
-            {$brts p+tile q+twig}                       ::  dry %gold gate
+            {$brts p+twig q+twig}                       ::  dry %gold gate
             {$xrts p+twig q+twig}                       ::  dry %gold gate
-
 
             {$brwt p+twig}                              ::  dry %lead trap
           ::                                            ::::::  molds
@@ -6840,7 +6840,7 @@
         {$weed *}
       (home p.sec)
     ==
-  ++  clam  ^-(twig [%xrts [%cbzz %noun] (whip(gom 7) 6)])
+  ++  clam  ^-(twig [%brts [%cbzz %noun] (whip(gom 7) 6)])
   ++  cloq
     |-  ^-  {p+toga q+tile}
     =.  sec  ?.(?=($herb -.sec) sec ~(boil ap p.sec))
@@ -7032,7 +7032,7 @@
       ==
     ::
         {$cbpm *}  [%bush boil(gen p.gen) boil(gen q.gen)]
-        {$cbls *}  [%weed [%xrls p.gen [%bctr %herb q.gen]]]
+        {$cbls *}  [%weed [%brls p.gen [%bctr %herb q.gen]]]
         {$cbts *}  [%bark p.gen boil(gen q.gen)]
         {$cbwt *}  =+  (turn p.gen |=(a+twig boil(gen a)))
                    ?~(- [%axil %void] [%fern -])
@@ -7047,10 +7047,11 @@
         {$~ *}     [%cnts [gen ~] ~]
         {$bccm *}  ~(clam al p.gen)
         {$bctr *}  [%ktsg ~(bunt al p.gen)]
+        {$bckt *}  p.gen
         {$bczp *}  ~(bunt al %axil p.gen)
 
         {$xrcb *}  [%tsls [%bctr %herb p.gen] [%brcn q.gen]]
-        {$brcb *}  [%tsls [%bctr p.gen] [%brcn q.gen]]
+        {$brcb *}  [%tsls [%bctr %herb p.gen] [%brcn q.gen]]
 
         {$brcl *}  [%tsls [%ktsg p.gen] [%brdt q.gen]]
         {$brdt *}  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
@@ -7071,10 +7072,11 @@
                    :+  %cnts  ~
                    :~  [[[%& 6] ~] [%ktts p.lyg [~ 6]]]
                    ==
-        {$brfs *}  
-                  ~|  %elm-tile
-                   =+  lyg=~(cloq al p.gen)
-                   :+  %brcb  q.lyg
+        {$brfs *}  ~|  %elm-tile
+                   =+  lyg=~(cloq al %herb p.gen)
+                   :+  %tsls
+                     [%bctr q.lyg]
+                   :-  %brcn
                    %-  ~(run by q.gen)
                    |=  a+foot  ^-  foot
                    ?.  ?=($elm -.a)  a
@@ -9730,16 +9732,16 @@
               ;~  pfix  bar
                 %-  stew
                 ^.  stet  ^.  limo
-                :~  ['_' (rune cab %xrcb expr)]
+                :~  ['_' (rune cab %brcb expr)]
                     ['%' (rune cen %brcn expe)]
                     [':' (rune col %brcl expb)]
                     ['.' (rune dot %brdt expa)]
-                    ['/' (rune fas %xrfs expr)]
+                    ['/' (rune fas %brfs expr)]
                     ['-' (rune hep %brhp expa)]
                     ['^' (rune ket %brkt expr)]
-                    ['+' (rune lus %xrls expb)]
-                    ['*' (rune tar %xrtr expb)]
-                    ['=' (rune tis %xrts expb)]
+                    ['+' (rune lus %brls expb)]
+                    ['*' (rune tar %brtr expb)]
+                    ['=' (rune tis %brts expb)]
                     ['?' (rune wut %brwt expa)]
                 ==
               ==
@@ -9766,6 +9768,7 @@
                   :~
                     [',' (rune com %bccm expt)]
                     ['*' (rune tar %bctr expt)]
+                    ['^' (rune ket %bckt expa)]
                     ['@' (rune pat %bcpt expu)]
                   ==
                 ==
