@@ -2011,7 +2011,7 @@
     [i.txt $(txt t.txt)]
   ::
   ++  tr-text
-    |=  oug=?
+    |=  oug+?
     ^-  tape
     ?+    -.sep  ~&(tr-lost/sep "")
         $fat

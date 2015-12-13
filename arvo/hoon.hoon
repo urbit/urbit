@@ -7037,7 +7037,7 @@
         {$~ *}     [%cnts [gen ~] ~]
         {$bccm *}  ~(clam al p.gen)
         {$bctr *}  [%ktsg ~(bunt al p.gen)]
-        {$bczp *}  [%bctr %axil p.gen]
+        {$bczp *}  ~(bunt al %axil p.gen)
         {$brcb *}  [%tsls [%bctr p.gen] [%brcn q.gen]]
         {$brcl *}  [%tsls [%ktsg p.gen] [%brdt q.gen]]
         {$brdt *}  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]

@@ -102,7 +102,7 @@
       ==
     ::
     ++  tors
-      |=  a=torso
+      |=  a+torso
       %+  joba  -.a
       ?-  -.a
         $text  [%s (role +.a)]
