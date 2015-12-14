@@ -11,7 +11,7 @@
 |%                                                      ::  ::
 ++  drum-part  {$drum $0 drum-pith}                     ::
 ++  drum-pith                                           ::
-  _:  eel+(set gill)                                    ::  connect to 
+  $:  eel+(set gill)                                    ::  connect to 
       ray+(set well)                                    ::  
       fur+(map dude (unit server))                      ::  servers
       bin+(map bone source)                             ::  terminals
@@ -21,11 +21,11 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 ++  server                                              ::  running server
-  _:  syd+desk                                          ::  app identity
+  $:  syd+desk                                          ::  app identity
       cas+case                                          ::  boot case
   ==                                                    ::
 ++  source                                              ::  input device
-  _:  edg+__(80)                                        ::  terminal columns
+  $:  edg+$_(80)                                        ::  terminal columns
       off+@ud                                           ::  window offset
       kil+(unit (list @c))                              ::  kill buffer
       inx+@ud                                           ::  ring index
@@ -33,27 +33,27 @@
       mir+(pair @ud (list @c))                          ::  mirrored terminal
   ==                                                    ::
 ++  master                                              ::  master buffer
-  _:  liv+?                                             ::  master is live
+  $:  liv+?                                             ::  master is live
       tar+target                                        ::  master target
   ==                                                    ::
 ++  history                                             ::  past input
-  _:  pos+@ud                                           ::  input position
+  $:  pos+@ud                                           ::  input position
       num+@ud                                           ::  number of entries
       lay+(map @ud (list @c))                           ::  editing overlay
       old+(list (list @c))                              ::  entries proper
   ==                                                    ::
 ++  search                                              ::  reverse-i-search
-  _:  pos+@ud                                           ::  search position
+  $:  pos+@ud                                           ::  search position
       str+(list @c)                                     ::  search string
   ==                                                    ::
 ++  target                                              ::  application target
-  _:  ris+(unit search)                                 ::  reverse-i-search
+  $:  ris+(unit search)                                 ::  reverse-i-search
       hit+history                                       ::  all past input
       pom+sole-prompt                                   ::  static prompt
       inp+sole-command                                  ::  input state
   ==                                                    ::
 ++  ukase                                               ::  master command
-  _%  {$add p+(list gill)}                              ::  attach to
+  $%  {$add p+(list gill)}                              ::  attach to
       {$del p+(list gill)}                              ::  detach from
       {$new p+(list well)}                              ::  create
   ==                                                    ::
@@ -130,14 +130,14 @@
 =*  dev  -
 =>  |%                                                ::  arvo structures
     ++  pear                                          ::  request
-      _%  {$sole-action p+sole-action}                ::
+      $%  {$sole-action p+sole-action}                ::
           {$talk-command command:talk}                ::
       ==                                              ::
     ++  lime                                          ::  update
-      _%  {$dill-blit dill-blit}                      ::
+      $%  {$dill-blit dill-blit}                      ::
       ==                                              ::
     ++  card                                          ::  general card
-      _%  {$conf wire dock $load ship term}           ::
+      $%  {$conf wire dock $load ship term}           ::
           {$diff lime}                                ::
           {$peer wire dock path}                      ::
           {$poke wire dock pear}                      ::
@@ -243,7 +243,7 @@
   ^+  .
   %+  roll  (~(tap in ray))
   =<  .(con +>)
-  |=  {wel+well con+__(..se-adit)}  ^+  con
+  |=  {wel+well con+$_(..se-adit)}  ^+  con
   =.  +>.$  con
   =+  hig=(~(get by fur) q.wel) 
   ?:  &(?=(^ hig) |(?=($~ u.hig) =(p.wel syd.u.u.hig)))  +>.$
@@ -255,7 +255,7 @@
   ^+  .
   %+  roll  (~(tap in eel))
   =<  .(con +>)
-  |=  {gil+gill con+__(.)}  ^+  con
+  |=  {gil+gill con+$_(.)}  ^+  con
   =.  +>.$  con
   ?:  (~(has by fug) gil)
     +>.$
@@ -267,7 +267,7 @@
   ^+  .
   %-  ~(rep by bin)
   =<  .(con +>)
-  |=  {{ost+bone dev+source} con+__(.)}  ^+  con
+  |=  {{ost+bone dev+source} con+$_(.)}  ^+  con
   =+  xeno=se-subze-local:%_(con ost ost, dev dev)
   xeno(ost ost.con, dev dev.con, bin (~(put by bin) ost dev.xeno))
 ::
@@ -275,7 +275,7 @@
   ^+  .
   %-  ~(rep by fug)
   =<  .(con +>)
-  |=  {{gil+gill *} con+__(.)}  ^+  con
+  |=  {{gil+gill *} con+$_(.)}  ^+  con
   =.  +>.$  con
   ?:  (~(has in eel) gil)
     +>.$
@@ -506,7 +506,7 @@
   ta-abet:(ta-fec:(se-tame gyl) fec)
 ::
 ++  ta                                                ::  per target
-  |_  _:  _:  liv+?                                   ::  don't delete
+  |_  $:  $:  liv+?                                   ::  don't delete
               gyl+gill                                ::  target app
           ==                                          ::
           target                                      ::  target state

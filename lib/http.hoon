@@ -7,9 +7,9 @@
 !:
 |%
 ++  request
-  _:  domain+(list cord)  
+  $:  domain+(list cord)  
       end-point+path
-      req-type+_?($get {$post p+json})  
+      req-type+$?($get {$post p+json})  
       headers+math
       queries+quay
   ==

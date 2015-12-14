@@ -8,12 +8,12 @@
 |%                                                      ::  ::
 ++  kiln-part  {$kiln $0 kiln-pith}                     ::  kiln state
 ++  kiln-pith                                           ::
-    _:  rem+(map desk kiln-desk)                        ::
+    $:  rem+(map desk kiln-desk)                        ::
         syn+(map kiln-sync {let+@ud ust+bone})          ::
         autoload+?                                      ::
     ==                                                  ::
 ++  kiln-desk                                           ::  per-desk state
-    _:  auto+?                                          ::  escalate on failure
+    $:  auto+?                                          ::  escalate on failure
         gem+germ                                        ::  strategy
         her+@p                                          ::  from ship
         sud+@tas                                        ::  from desk
@@ -23,22 +23,22 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 ++  kiln-mount                                          ::
-    _:  pax+path                                        ::
+    $:  pax+path                                        ::
         pot+term                                        ::
     ==                                                  ::
-++  kiln-unmount  _|(term {span path})                  ::
+++  kiln-unmount  $@(term {span path})                  ::
 ++  kiln-sync                                           ::
-    _:  syd+desk                                        ::
+    $:  syd+desk                                        ::
         her+ship                                        ::
         sud+desk                                        ::
     ==                                                  ::
 ++  kiln-unsync                                         ::
-    _:  syd+desk                                        ::
+    $:  syd+desk                                        ::
         her+ship                                        ::
         sud+desk                                        ::
     ==                                                  ::
 ++  kiln-merge                                          ::
-    _:  syd+desk                                        ::
+    $:  syd+desk                                        ::
         ali+ship                                        ::
         sud+desk                                        ::
         gim+?($auto germ)                               ::
@@ -53,18 +53,18 @@
 ?>  =(src our)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
-      _%  {$exec wire @p $~ {beak silk}}                ::
+      $%  {$exec wire @p $~ {beak silk}}                ::
           {$drop wire @p @tas}                          ::
           {$info wire @p @tas nori}                     ::
           {$mont wire @tas @p @tas path}                ::
-          {$ogre wire _|(@tas beam)}                    ::
+          {$ogre wire $@(@tas beam)}                    ::
           {$merg wire @p @tas @p @tas case germ}        ::
           {$poke wire dock pear}                        ::
           {$wait wire @da}                              ::
           {$warp wire sock riff}                        ::
       ==                                                ::
     ++  pear                                            ::  poke fruit
-      _%  {$talk-command command:talk}                  ::
+      $%  {$talk-command command:talk}                  ::
           {$kiln-merge kiln-merge}                      ::
           {$helm-reload (list term)}                    ::
           {$helm-reset $~}                              ::

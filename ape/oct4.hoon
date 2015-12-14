@@ -54,7 +54,7 @@
 ::::                                                    ::::::  process tools
   ::                                                    ::  ::
 ++  abet  [(flop moz) .(moz ~)]                         ::  resolve
-++  bike  $+(_. _+>)                                    ::  self-transformer
+++  bike  $+(_. $+>)                                    ::  self-transformer
 ++  dish  |=(cad=card %_(+> moz [[ost cad] moz]))       ::  request
 ++  done  (echo eels |=(_. (dish:+< %quit ~)))          ::  cancel everyone
 ++  echo  |=  [all=(list sink) fun=bike]  =+  old=+>+<- ::  publish to all
@@ -102,8 +102,8 @@
 ++  wild  (flap |=(_. (fact:+< &/gam)) |=(_. show:+<))  ::  full update
 ++  with  |=(? (word(rem ?:(+< rem ~)) "{<[+< src]>}")) ::  
 ++  word  |=  txt=tape  %+  flap                        ::  game message
-          |=(_+> (fact:+< |/txt))                       ::
-          |=(_+> (fect:+< txt/txt))                     ::
+          |=($+> (fact:+< |/txt))                       ::
+          |=($+> (fect:+< txt/txt))                     ::
 ::                                                      ::  ::
 ::::                                                    ::::::  console UI
   ::                                                    ::  ::

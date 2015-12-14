@@ -6,22 +6,22 @@
 ++  atlas  (map ship status)                            ::  presence map
 ++  bouquet  (set flavor)                               ::  complete aroma
 ++  command                                             ::  effect on party
-  _%  {$design (pair span (unit config))}               ::  configure/destroy
+  $%  {$design (pair span (unit config))}               ::  configure/destroy
       {$publish (list thought)}                         ::  originate
       {$review (list thought)}                          ::  deliver
   ==                                                    ::
 ++  cabal                                               ::  metaconfiguration
-  _:  loc+config                                        ::  local config
+  $:  loc+config                                        ::  local config
       ham+(map station config)                          ::  neighborhood configs
   ==                                                    ::
 ++  config                                              ::  party configuration
-  _:  sources+(set partner)                             ::  pulls from
+  $:  sources+(set partner)                             ::  pulls from
       caption+cord                                      ::  about
       cordon+control                                    ::  restricted to
   ==                                                    ::
 ++  control  (pair posture (set ship))                  ::  access control
 ++  delivery                                            ::  delivery state
-  _?  $pending                                          ::  undelivered
+  $?  $pending                                          ::  undelivered
       $received                                         ::  delivered
       $rejected                                         ::  undeliverable
       $released                                         ::  sent one-way
@@ -30,14 +30,14 @@
 ++  envelope  (pair ? (unit partner))                   ::  visible sender
 ++  flavor  path                                        ::  content flavor
 ++  human                                               ::  human identifier
-  _:  true+(unit (trel @t (unit @t) @t))                ::  true name
+  $:  true+(unit (trel @t (unit @t) @t))                ::  true name
       hand+(unit @t)                                    ::  handle
   ==                                                    ::
 ++  passport                                            ::  foreign flow
-  _%  {$twitter p+@t}                                   ::  twitter
+  $%  {$twitter p+@t}                                   ::  twitter
   ==                                                    ::
 ++  posture                                             ::  security posture
-  _?  $black                                            ::  channel
+  $?  $black                                            ::  channel
       $white                                            ::  chamber
       $green                                            ::  journal
       $brown                                            ::  mailbox
@@ -46,7 +46,7 @@
 ++  register  (pair atlas (map partner atlas))          ::  ping me, ping srcs
 ++  shelf  (map span (pair posture cord))               ::  ship shape
 ++  report                                              ::  talk update
-  _%  {$cabal cabal}                                    ::  config neighborhood
+  $%  {$cabal cabal}                                    ::  config neighborhood
   ::  {$folder (list report)}                           ::  multiple
       {$grams (pair @ud (list telegram))}               ::  beginning thoughts
       {$group register}                                 ::  presence
@@ -54,7 +54,7 @@
       {$glyph (jug char (set partner))}                 ::  relevant binding
   ==                                                    ::
 ++  speech                                              ::  narrative action
-  _%  {$lan p+span q+@t}                                ::  local announce
+  $%  {$lan p+span q+@t}                                ::  local announce
       {$exp p+@t}                                       ::  hoon line
       {$non $~}                                         ::  no content (yo)
       {$ext p+@tas q+*}                                 ::  extended action
@@ -75,20 +75,20 @@
 ++  telegram   (pair ship thought)                      ::  who which whom what
 ++  thought    (trel serial audience statement)         ::  which whom what
 ++  torso                                               ::  attachment
-  _%  {$name (pair @t torso)}                           ::  named attachment
+  $%  {$name (pair @t torso)}                           ::  named attachment
       {$text (list @t)}                                 ::  text lines
       {$tank (list tank)}                               ::  tank list
   ==                                                    ::
 ++  work-stuff                                          ::
   |%                                                    ::
   ++  duty                                              ::
-    _%  {$create tax+task}                              ::  create new task
+    $%  {$create tax+task}                              ::  create new task
         {$archive id+@uvH}                              ::  archive task
         {$change id+@uvH meat+flesh}                    ::  request change
         {$update id+@uvH version+@u her+ship meat+flesh}::  broadcast change
     ==                                                  ::
   ++  flesh                                             ::
-    _%  {$set-doer her+(unit @p)}                       ::  set doer
+    $%  {$set-doer her+(unit @p)}                       ::  set doer
         {$set-date-due wen+(unit @da)}                  ::  set due date
         {$set-tags tag+(set @t)}                        ::  set tags
         {$set-title til+@t}                             ::  set title
@@ -97,7 +97,7 @@
         {$add-comment who+@p com+@t}   ::  XX (list @t) ::  add comment
     ==                                                  ::
   ++  task                                              ::
-    _:  id+@uvH                                         ::
+    $:  id+@uvH                                         ::
         date-created+@da                                ::
         version+@u                                      ::
         date-modified+@da                               ::
@@ -111,7 +111,7 @@
         discussion+(list comment)                       ::
     ==                                                  ::
   ++  comment                                           ::
-    _:  date+@da                                        ::
+    $:  date+@da                                        ::
         ship+@p                                         ::
         body+@t                                         ::
     ==                                                  ::

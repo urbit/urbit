@@ -15,7 +15,7 @@
   %-  weld  :_  $(a t.a)
   ^-  tape
   ?~  n.g.i.a
-    ?>(?=(__(:/(**)) i.a) v.i.a.g.i.a)
+    ?>(?=($_(:/(**)) i.a) v.i.a.g.i.a)
   ?+    n.g.i.a  $(a c.i.a)
       $img
     %-  zing  ^-  wall
@@ -60,7 +60,7 @@
       (weld p.a $(lum q.a))
   ::
   ++  apex
-    ^-  {p+marl q+__(lum)}  
+    ^-  {p+marl q+$_(lum)}  
     ?~  lum  
       ?~  had  [~ ~]
       (lose "unclosed {<u.had>}")
@@ -93,7 +93,7 @@
   ++  lose  |=(a+tape [[;lost:"{a}"]~ lum])
   ++  chomp
     |*  {tap+tape fel+rule}
-    ^-  {(unit __((wonk *fel))) __(lum)}  
+    ^-  {(unit $_((wonk *fel))) $_(lum)}  
     =+  vex=(fel 1^1 tap)
     ?~  q.vex  [~ lum]
     :-  [~ (wonk vex)]
@@ -157,7 +157,7 @@
       (weld p.a $(lim q.a))
   ::
   ++  apex
-    ^-  {p+marl q+__(lim)}
+    ^-  {p+marl q+$_(lim)}
     ?~  lim  
       ?~  had  [~ ~]
       (lose "unclosed {<u.had>}")
@@ -188,7 +188,7 @@
   ++  lose  |=(a+tape [[;lost:"{a}"]~ lim])
   ++  chomp
     |*  {tap+tape fel+rule}
-    ^-  {(unit __((wonk *fel))) __(lim)}
+    ^-  {(unit $_((wonk *fel))) $_(lim)}
     =+  vex=(fel 1^1 tap)
     ?~  q.vex  [~ lim]
     :-  [~ (wonk vex)]

@@ -7,7 +7,7 @@
 |_  {access-token+@t req+bit-api-call}
 ::
 ++  wrap
-  |=  {end-point+path req+_|($get {$post p+json})}
+  |=  {end-point+path req+$@($get {$post p+json})}
   [/com/coinbase/sandbox/api v1/end-point req ~ ['access_token' access-token]~]
 ::
 ++  order

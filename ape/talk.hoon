@@ -12,7 +12,7 @@
 =>  |%                                                  ::  data structures
     ++  house  {$5 house-5}                             ::  full state
     ++  house-any                                       ::  app history
-      _%  {$3 house-3}                                  ::  3: talk
+      $%  {$3 house-3}                                  ::  3: talk
           {$4 house-4}                                  ::  4: talk
           {$5 house-5}                                  ::  5: talk
       ==                                                ::
@@ -23,7 +23,7 @@
       %+  cork  house-5  |=  house-5                    ::  modern house with
       +<(shells (~(run by shells) shell-4))             ::  no settings
     ++  house-5                                         ::
-      _:  stories+(map span story)                      ::  conversations
+      $:  stories+(map span story)                      ::  conversations
           general+(set bone)                            ::  meta-subscribe
           outbox+(pair @ud (map @ud thought))           ::  urbit outbox
           folks+(map ship human)                        ::  human identities
@@ -34,7 +34,7 @@
       ==                                                ::
     ++  story-3  (cork story |=(story +<(|10 &11.+<)))  ::  missing glyphers
     ++  story                                           ::  wire content
-      _:  count+@ud                                     ::  (lent grams)
+      $:  count+@ud                                     ::  (lent grams)
           grams+(list telegram)                         ::  all history
           locals+(map ship (pair @da status))           ::  local presence
           remotes+(map partner atlas)                   ::  remote presence
@@ -48,7 +48,7 @@
           glyphers+(set bone)                           ::  glyph followers
       ==                                                ::
     ++  shell                                           ::  console session
-      _:  her+ship                                      ::  client identity
+      $:  her+ship                                      ::  client identity
           man+span                                      ::  mailbox
           count+@ud                                     ::  messages shown
           say+sole-share                                ::  console state
@@ -62,19 +62,19 @@
     ++  shell-4  (cork shell |=(shell +<(|8 &9.+<)))    ::  missing settings
     ++  river  (pair point point)                       ::  stream definition
     ++  point                                           ::  stream endpoint
-      _%  {$ud p+@ud}                                   ::  by number
+      $%  {$ud p+@ud}                                   ::  by number
           {$da p+@da}                                   ::  by date
       ==                                                ::
     ++  move  (pair bone card)                          ::  all actions
     ++  lime                                            ::  diff fruit
-      _%  {$talk-report report}                         ::
+      $%  {$talk-report report}                         ::
           {$sole-effect sole-effect}                    ::
       ==                                                ::
     ++  pear                                            ::  poke fruit
-      _%  {$talk-command command}                       ::
+      $%  {$talk-command command}                       ::
       ==                                                ::
     ++  card                                            ::  general card
-      _%  {$diff lime}                                  ::
+      $%  {$diff lime}                                  ::
           {$info wire @p @tas nori}                     ::
           {$peer wire dock path}                        ::
           {$poke wire dock pear}                        ::
@@ -82,14 +82,14 @@
           {$quit $~}                                    ::
       ==                                                ::
     ++  weir                                            ::  parsed wire
-      _%  {$repeat p+@ud q+@p r+span}                   ::
+      $%  {$repeat p+@ud q+@p r+span}                   ::
           {$friend p+span q+station}                    ::
       ==                                                ::
     ++  work                                            ::  interface action
-      _%  {$number p+_|(@ud {@u @ud})}                  ::  relative/absolute
+      $%  {$number p+$@(@ud {@u @ud})}                  ::  relative/absolute
           {$help $~}                                    ::  print usage info
           {$who p+where}                                ::  presence
-          {$what p+_|(char (set partner))}              ::  show bound glyph
+          {$what p+$@(char (set partner))}              ::  show bound glyph
           {$bind p+char q+(unit where)}                 ::
           {$join p+where}                               ::  
           {$leave p+where}                              ::  
@@ -126,7 +126,7 @@
 ++  ra                                                  ::  per transaction
   |_  moves+(list move)
   ++  sh                                                ::  per console
-    |_  _:  coz+(list command)                          ::  talk actions
+    |_  $:  coz+(list command)                          ::  talk actions
             she+shell
         ==
     ++  sh-scad                                         ::  command parser
@@ -400,8 +400,8 @@
       ::
     ++  sh-repo-house-diff
       |=  {one+shelf two+shelf}
-      =|  _=  ret
-          _:  old+(list (pair span (pair posture cord)))
+      =|  $=  ret
+          $:  old+(list (pair span (pair posture cord)))
               new+(list (pair span (pair posture cord)))
               cha+(list (pair span (pair posture cord)))
           ==
@@ -428,8 +428,8 @@
     ::
     ++  sh-repo-atlas-diff
       |=  {one+atlas two+atlas}
-      =|  _=  ret
-          _:  old+(list (pair ship status))
+      =|  $=  ret
+          $:  old+(list (pair ship status))
               new+(list (pair ship status))
               cha+(list (pair ship status))
           ==
@@ -456,8 +456,8 @@
     ::
     ++  sh-repo-cabal-diff
       |=  {one+(map station config) two+(map station config)}
-      =|  _=  ret
-          _:  old+(list (pair station config))
+      =|  $=  ret
+          $:  old+(list (pair station config))
               new+(list (pair station config))
               cha+(list (pair station config))
           ==
@@ -484,8 +484,8 @@
     ::
     ++  sh-repo-rogue-diff
       |=  {one+(map partner atlas) two+(map partner atlas)}
-      =|  _=  ret
-          _:  old+(list (pair partner atlas))
+      =|  $=  ret
+          $:  old+(list (pair partner atlas))
               new+(list (pair partner atlas))
               cha+(list (pair partner atlas))
           ==
@@ -512,8 +512,8 @@
     ::
     ++  sh-repo-whom-diff
       |=  {one+(set partner) two+(set partner)}
-      =|  _=  ret
-          _:  old+(list partner)
+      =|  $=  ret
+          $:  old+(list partner)
               new+(list partner)
           ==
       ^+  ret
@@ -537,8 +537,8 @@
     ::
     ++  sh-repo-ship-diff
       |=  {one+(set ship) two+(set ship)}
-      =|  _=  ret
-          _:  old+(list ship)
+      =|  $=  ret
+          $:  old+(list ship)
               new+(list ship)
           ==
       ^+  ret
@@ -622,7 +622,7 @@
       (sh-repo-ship-diff q.cordon.laz q.cordon.loc)
     ::
     ++  sh-repo-cabal-changes
-      |=  _:  laz+(map station config)
+      |=  $:  laz+(map station config)
               old+(list (pair station config))
               new+(list (pair station config))
               cha+(list (pair station config))
@@ -695,9 +695,9 @@
       ['%' (trip p.saz)]
     ::
     ++  sh-repo-group-diff-here                         ::  print atlas diff
-      |=  _:  pre+tape 
-            _=  cul
-            _:  old+(list (pair ship status))
+      |=  $:  pre+tape 
+            $=  cul
+            $:  old+(list (pair ship status))
                 new+(list (pair ship status))
                 cha+(list (pair ship status))
             ==
@@ -941,7 +941,7 @@
         %_    ..sh-work
             ..pa
           %-  (ra-know man.she) 
-          |=(__(pa) pa-abet:(pa-report glyphers %glyph nak))
+          |=($_(pa) pa-abet:(pa-report glyphers %glyph nak))
         ==
       ::
       ++  join                                          ::  %join
@@ -964,7 +964,7 @@
         `loc(sources (~(dif in sources.loc) pan))
       ::
       ++  what                                          ::  %what
-        |=  qur+_|(char (set partner))  ^+  ..sh-work
+        |=  qur+$@(char (set partner))  ^+  ..sh-work
         ?^  qur
           =+  cha=(~(get by nik) qur)
           (sh-fact %txt ?~(cha "none" [u.cha]~))
@@ -1091,7 +1091,7 @@
         ?~(woe ..sh-work work(job u.woe))
       ::
       ++  number                                        ::  %number
-        |=  num+_|(@ud {p+@u q+@ud})
+        |=  num+$@(@ud {p+@u q+@ud})
         ^+  ..sh-work
         =+  roy=(~(got by stories) man.she)
         |-
@@ -1168,7 +1168,7 @@
       ==
     ::
     ++  sh-uniq
-      ^-  {serial __(.)}
+      ^-  {serial $_(.)}
       [(shaf %serial eny.hid) .(eny.hid (shax eny.hid))]
     --
   ++  ra-abed                                           ::  resolve core
@@ -1292,7 +1292,7 @@
   ::
   ++  ra-know                                           ::  story monad
     |=  man+span
-    |*  fun+_+(__(pa) __(+>+>))
+    |*  fun+$+($_(pa) $_(+>+>))
     ^+  +>+>
     =+  pur=(~(get by stories) man)
     ?~  pur
@@ -1302,17 +1302,17 @@
   ::
   ++  ra-diff-talk-report                               ::  subscription update
     |=  {man+span cuz+station rad+report}
-    %-  (ra-know man)  |=  par+__(pa)  =<  pa-abet
+    %-  (ra-know man)  |=  par+$_(pa)  =<  pa-abet
     (pa-diff-talk-report:par cuz rad)
   ::
   ++  ra-quit                                           ::  subscription quit
     |=  {man+span cuz+station}
-    %-  (ra-know man)  |=  par+__(pa)  =<  pa-abet
+    %-  (ra-know man)  |=  par+$_(pa)  =<  pa-abet
     (pa-quit:par %& cuz)
   ::
   ++  ra-retry                                          ::  subscription resend
     |=  {man+span cuz+station}
-    %-  (ra-know man)  |=  par+__(pa)  =<  pa-abet
+    %-  (ra-know man)  |=  par+$_(pa)  =<  pa-abet
     (pa-acquire:par [%& cuz]~)
   ::
   ++  ra-coup-repeat                                    ::
@@ -1338,12 +1338,12 @@
     ^+  +>
     ?.  ?=({@ @ *} pax)
       +>(general (~(del in general) ost.hid))
-    %-  (ra-know i.t.pax)  |=  par+__(pa)  =<  pa-abet
+    %-  (ra-know i.t.pax)  |=  par+$_(pa)  =<  pa-abet
     (pa-notify:pa-cancel:par src %gone *human)
   ::
   ++  ra-human                                          ::  look up person
     |=  her+ship
-    ^-  {human __(+>)}
+    ^-  {human $_(+>)}
     =^  who  folks
         =+  who=(~(get by folks) her)
         ?^  who  [u.who folks]
@@ -1433,7 +1433,7 @@
   ::
   ++  ra-record                                         ::  add to story
     |=  {man+span gam+telegram}
-    %-  (ra-know man)  |=  par+__(pa)  =<  pa-abet
+    %-  (ra-know man)  |=  par+$_(pa)  =<  pa-abet
     (pa-learn:par gam)
   ::
   ++  ra-transmit                                       ::  send to neighbor
@@ -1449,7 +1449,7 @@
     +>(p.outbox +(p.outbox), q.outbox (~(put by q.outbox) p.outbox tip))
   ::
   ++  pa                                                ::  story core
-    |_  _:  man+span
+    |_  $:  man+span
             story
         ==
     ++  pa-abet
@@ -1890,7 +1890,7 @@
   ::
   ++  te-maud  ^-  ?                                    ::  multiple audience
     =.  .  te-deaf
-    !?=(_|($~ {* $~ $~}) lix)
+    !?=($@($~ {* $~ $~}) lix)
   ::
   ++  te-prom  ^-  tape                                 ::  render targets
     =.  .  te-deaf
@@ -1931,7 +1931,7 @@
   --
 ::
 ++  tr                                                  ::  telegram renderer
-  |_  _:  man+span
+  |_  $:  man+span
           nob+?
           who+ship
           sen+serial
@@ -2094,12 +2094,12 @@
   ==
 ::
 ++  etch-friend                                         ::
-  |=  {way+wire fun+_+({man+span cuz+station} {(list move) __(+>)})}
+  |=  {way+wire fun+$+({man+span cuz+station} {(list move) $_(+>)})}
   =+  wer=(etch way)
   ?>(?=($friend -.wer) (fun p.wer q.wer))
 ::
 ++  etch-repeat                                         ::
-  |=  {way+wire fun+_+({num+@ud src+@p man+span} {(list move) __(+>)})}
+  |=  {way+wire fun+$+({num+@ud src+@p man+span} {(list move) $_(+>)})}
   =+  wer=(etch way)
   ?>(?=($repeat -.wer) (fun p.wer q.wer r.wer))
 ::

@@ -24,7 +24,7 @@
   ::
 |_  $:  bowl
         client
-        connected=_|                                    ::  subscribed to talk
+        connected=$@                                    ::  subscribed to talk
         count=@ud                                       ::  # messages from talk
         unordered=(map ,[@uvH @u] (pair ship flesh:work-stuff:talk))
     ==
@@ -33,11 +33,11 @@
   =|  moves=(list move)
   |%
   ++  abet
-    ^-  [(list move) _+>.$]
+    ^-  [(list move) $+>.$]
     [(flop moves) +>.$(tasks (~(put by tasks) id.tax +<.$))]
   ::
   ++  abut
-    ^-  [(list move) _+>.$]
+    ^-  [(list move) $+>.$]
     [(flop moves) +>.$]
   ::
   ++  send-audience
@@ -114,11 +114,11 @@
       =<  $
       %-  unit
       $:  client
-          _|
+          $@
           @ud
           (map ,[@uvH @u] (pair ship flesh:work-stuff:talk))
       ==
-  ^-  [(list move) _+>.$]
+  ^-  [(list move) $+>.$]
   initialize(+<+ ?~(old +<+.+>.$ u.old))
 ::
 ++  initialize
@@ -130,10 +130,10 @@
 ::
 ++  process-duty
   |=  [when=@da her=ship from=(set station:talk) action=duty:work-stuff:talk]
-  ^-  [(list move) _+>.$]
+  ^-  [(list move) $+>.$]
   =-  =^  mof  con  mirror-to-web:con
       [(welp mof mos) con]
-  ^-  [mos=(list move) con=_+>.$]
+  ^-  [mos=(list move) con=$+>.$]
   ?-    -.action
       %create
     =+  existing-task=(~(get by tasks) id.tax.action)
@@ -284,14 +284,14 @@
 ++  peer-repo  |=(path [[ost full-report]~ +>.$])
 ++  coup
   |=  [way=wire saw=(unit tang)]
-  ^-  [(list move) _+>.$]
+  ^-  [(list move) $+>.$]
   ?>  ?=(~ saw)
   [~ +>.$]
 ::
 ++  quit-peering  |=(way=wire ?>(?=(~ way) initialize(connected |)))
 ++  reap-peering
   |=  [way=wire saw=(unit tang)]
-  ^-  [(list move) _+>.$]
+  ^-  [(list move) $+>.$]
   ?>  ?=([~ ~] +<)
   [~ +>.$]
 ::
@@ -315,9 +315,9 @@
 ::  XX  test the disconnection case
 ++  diff-talk-report
   |=  [way=wire rep=report:talk]
-  ^-  [(list move) _+>.$]
+  ^-  [(list move) $+>.$]
   ?>  ?=(%grams -.rep)
-  |-  ^-  [(list move) _+>.^$]
+  |-  ^-  [(list move) $+>.^$]
   ?~  q.rep  [~ +>.^$]
   =.  count  +(count)
   =*  her   p.i.q.rep

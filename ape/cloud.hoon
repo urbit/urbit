@@ -211,7 +211,7 @@
 ::                                    
 ++  thou
   |=  [pour-path=path resp=?(httr *)]
-  ^-  [(list move) _+>.$]
+  ^-  [(list move) $+>.$]
   ~&  unhandled-pour-path/resp
   :_  +>.$  ~
 ++  httpreq  
@@ -240,7 +240,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  peer
   |=  pax=path
-  ^-  [(list move) _+>.$]
+  ^-  [(list move) $+>.$]
   :_  +>.$
   =+  lis=(~(tap by insts.vat))
   [ost %diff %json (instance-to-json (turn lis |=(a=[@t instance] +.a)))]~
@@ -277,7 +277,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  poke-cloud-auth
   |=  [cde=cord typ=cord]
-  ^-  [(list move) _+>.$]
+  ^-  [(list move) $+>.$]
   ?:  =(%do typ) 
       =.  authc.do.auth.vat
       [~ cde]
@@ -290,7 +290,7 @@
 ::
 ++  poke-cloud-secret
   |=  [secret=cord typ=cord]
-  ^-  [(list move) _+>.$]
+  ^-  [(list move) $+>.$]
   ?+    typ  ~|(missing-platform=typ !!)
       %do
     =.  client-secret.do.auth.vat
@@ -305,7 +305,7 @@
 ::
 ++  thou-do-auth
   |=  [~ resp=httr]
-  ^-  [(list move) _+>.$]
+  ^-  [(list move) $+>.$]
   ~|  resp
   =+  body=(rash q:(need r.resp) apex:poja)
   ~|  recieve-auth/resp(r body)
@@ -435,7 +435,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  poke-json                         ::  receive action from client
   |=  jon=json
-  ^-  [(list move) _+>.$]
+  ^-  [(list move) $+>.$]
   =+  action=`cloud-command`(need (parse-cloud-command jon))
   :_  +>.$
   ?-  -.action
@@ -527,7 +527,7 @@
 ::
 ++  thou-list-gce-zones  ::  instances
   |=  [pax=path resp=httr]
-  ^-  [(list move) _+>.$]
+  ^-  [(list move) $+>.$]
   =+  parsed=(rash q:(need r.resp) apex:poja)           ::  body httr to json
   ~|  'no list received or bad json'
   =+  items=(need ((ot items/(ar some) ~):jo parsed))
@@ -559,7 +559,7 @@
 ::
 ++  thou-list-gce-global  ::  imgs
   |=  [pax=path resp=httr]
-  ^-  [(list move) _+>.$]
+  ^-  [(list move) $+>.$]
   =+  parsed=(rash q:(need r.resp) apex:poja)
   =+  imgz=(need ((ot items/(ar some) ~):jo parsed))
   =.  images.vat
@@ -596,7 +596,7 @@
 ::
 ++  thou-list-do-droplets
   |=  [pax=path resp=httr]
-  ^-  [(list move) _+>.$]
+  ^-  [(list move) $+>.$]
   =+  parsed=(rash q:(need r.resp) apex:poja)           ::  parse httr to json
   ~|  recieve-list/parsed
   =+  dar=(need ((ot droplets/(ar some) ~):jo parsed))  ::  reparse ar of insts

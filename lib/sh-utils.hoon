@@ -34,13 +34,13 @@
   |*  [con=[* [hide *] *] gat=_,[@ *]]
   %-  args-done
   %^  gate-outs  con
-    |=(a=_+<.gat [%rush (gat a)])
+    |=(a=$+<.gat [%rush (gat a)])
   ,_`con
 ::
 ++  args-into-resp                    ::  compute gifts with gate and exit
   |*  [con=[* [hide *] *] gat=_,(pole ,[@ *])]
   %-  args-done
-  |*  [ost=bone * arg=_+<.gat]
+  |*  [ost=bone * arg=$+<.gat]
   :_  con
   %.  (gat arg)
   |*  a=(pole ,[@ *])
@@ -52,41 +52,41 @@
   =>  .(+<- `[* [hid=hide *] *]`con)
   =+  sus=(~(tap in `(set bone)`(~(get ju pus.hid) /out)))
   =+  mof=(turn sus (append [%give ote]))
-  |=  _+<.ref
+  |=  $+<.ref
   =+  neu=(ref +<)
   neu(- (welp mof -.neu))
 ::
 ++  add-resp                          ::  add response move to requesting bone
   |*  [mof=[@ @ *] ref=_,[(list) ^]]
-  |*  [ost=bone _?@(+<.ref ~ +<+.ref)]
+  |*  [ost=bone $?@(+<.ref ~ +<+.ref)]
   =+  neu=(ref +<)
   neu(- [[ost mof] -.neu])
 ::
 ++  gate-give                         ::  respond with computed gift
   |*  [gat=_,[@ *] ref=_,[(list) ^]]
-  (gate-move |*(_+<.gat [%give (gat +<)]) ref)
+  (gate-move |*($+<.gat [%give (gat +<)]) ref)
 ::
 ++  gate-bang                         ::  respond with computed note
   |*  [gat=_,[@ @ *] ref=_,[(list) ^]]
-  (gate-move |*(_+<.gat [%pass /bang (gat +<)]) ref)
+  (gate-move |*($+<.gat [%pass /bang (gat +<)]) ref)
 ::
 ++  gate-mess                         ::  respond with local message
   |*  [con=[* [hide *] *] gat=_,[@ @ *] ref=_,[(list) ^]]
   =>  .(+<- `[* [hid=hide *] *]`con)
   %-  gate-move  :_  ref
-  |*  _+<.gat
+  |*  $+<.gat
   =+  `[imp=path mez=cage]`(gat +<)
   [%pass /poke %g %mess [our.hid imp] our.hid mez]
 ::
 ++  gate-move                         ::  respond with computed move
   |*  [gat=_,(mold) ref=_,[(list) ^]]
-  |*  [ost=bone * arg=_+<.gat]
+  |*  [ost=bone * arg=$+<.gat]
   ((add-resp (gat arg) ref) +<)
 ::
 ::
 ++  gate-outs                         ::  send computed gift to /out
   |*  [con=[* [hide *] *] gat=_,[@ *] ref=_,[(list) ^]]
-  |*  [ost=bone * arg=_+<.gat]
+  |*  [ost=bone * arg=$+<.gat]
   ((add-output con (gat arg) ref) +<)
 ::
 ++  listen-in                         ::  recieve standard input
@@ -101,7 +101,7 @@
 ++  verify                            ::  type-check with context and move
   |*  [con=^ mof=[@ *]]
   |*  ref=_,[(list ,_mof) _con]
-  |*  _+<.ref
+  |*  $+<.ref
   ^-  [(list ,_mof) _con]
   (ref +<)
 --

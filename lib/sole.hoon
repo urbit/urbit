@@ -14,7 +14,7 @@
   ^+  +>
   ?-    -.ted
     $del  +>.$(buf (weld (scag p.ted buf) (slag +(p.ted) buf)))
-    $ins  +>.$(buf (weld (scag p.ted buf) `__(buf)`[q.ted (slag p.ted buf)]))
+    $ins  +>.$(buf (weld (scag p.ted buf) `$_(buf)`[q.ted (slag p.ted buf)]))
     $mor  |-  ^+  +>.^$
           ?~  p.ted 
             +>.^$ 
@@ -112,7 +112,7 @@
   [dat abet:(apply(his.ven +(his.ven)) dat)]
 ::
 ++  remit                                             ::  conditional accept
-  |=  {cal+sole-change ask+_+((list @c) ?)}
+  |=  {cal+sole-change ask+$+((list @c) ?)}
   ^-  {(unit sole-change) sole-share}
   =+  old=buf
   =^  dat  +>+<.$  (receive cal)

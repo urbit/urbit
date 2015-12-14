@@ -32,7 +32,7 @@
 ::::                                                    ::::::  process tools
   ::                                                    ::  ::
 ++  abet  [(flop moz) .(moz ~)]                         ::  resolve
-++  bike  $+(_. _+>)                                    ::  self-transformer
+++  bike  $+(_. $+>)                                    ::  self-transformer
 ++  dish  |=(cad=card %_(+> moz [[ost cad] moz]))       ::  request
 ++  eels  (~(tap by sup))                               ::  all clients
 ++  echo  |=  [all=(list sink) fun=bike]  =+  old=+>+<- ::
@@ -56,7 +56,7 @@
 ++  show  prom:(fect %mor rend)                         ::  update console
 ++  tame  (flap |=(_. prom:+<))                         ::  light update
 ++  wild  (flap |=(_. show:+<))                         ::  full update
-++  word  |=(tape (flap |=(_+> (fect:+< txt/+>+<))))    ::
+++  word  |=(tape (flap |=($+> (fect:+< txt/+>+<))))    ::
 ::                                                      ::  ::
 ::::                                                    ::::::  process UI
   ::                                                    ::  ::

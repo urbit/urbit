@@ -1,4 +1,4 @@
-!:
+::
 ::  dill (4d), terminal handling   
 ::
 |=  pit+vase
@@ -8,18 +8,18 @@
 =>  |%                                                  ::  console protocol
 ++  all-axle  ?(old-axle axle)                          ::
 ++  old-axle                                            ::  all dill state
-  _:  $2                                                ::
+  $:  $2                                                ::
       ore+(unit ship)                                   ::  identity once set
       hey+(unit duct)                                   ::  default duct
       dug+(map duct axon)                               ::  conversations
   ==                                                    ::
 ++  axle                                                ::
-  _:  $3                                                ::
+  $:  $3                                                ::
       ore+(unit ship)                                   ::  identity once set
       hey+(unit duct)                                   ::  default duct
       dug+(map duct axon)                               ::  conversations
-      _=  hef                                           ::  other weights
-      _:  a+(unit mass)                                 ::
+      $=  hef                                           ::  other weights
+      $:  a+(unit mass)                                 ::
           b+(unit mass)                                 ::
           c+(unit mass)                                 ::
           e+(unit mass)                                 ::
@@ -28,9 +28,9 @@
       ==                                                ::
   ==                                                    ::  
 ++  axon                                                ::  dill per duct
-  _:  ram+term                                          ::  console program
+  $:  ram+term                                          ::  console program
       tem+(unit (list dill-belt))                       ::  pending, reverse
-      wid+__(80)                                        ::  terminal width
+      wid+$_(80)                                        ::  terminal width
       pos+@ud                                           ::  cursor position
       see+(list @c)                                     ::  current line
   ==                                                    ::
@@ -41,19 +41,19 @@
 --  =>                                                  ::
 |%                                                      ::  protocol outward
 ++  mess                                                ::
-  _%  {$dill-belt p+(hypo dill-belt)}                   ::
+  $%  {$dill-belt p+(hypo dill-belt)}                   ::
   ==                                                    ::
 ++  move  {p+duct q+(mold note gift)}                   ::  local move   
 ++  note-ames                                           ::  weird ames move
-  _%  {$make p+(unit @t) q+@ud r+@ s+?}                 ::
+  $%  {$make p+(unit @t) q+@ud r+@ s+?}                 ::
       {$sith p+@p q+@uw r+?}                            ::
   ==                                                    ::
 ++  note-clay                                           ::
-  _%  {$merg p+@p q+@tas r+@p s+@tas t+case u+germ}     ::  merge desks
+  $%  {$merg p+@p q+@tas r+@p s+@tas t+case u+germ}     ::  merge desks
       {$warp p+sock q+riff}                             ::  wait for clay hack
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
-  _%  {$crud p+@tas q+(list tank)}                      ::
+  $%  {$crud p+@tas q+(list tank)}                      ::
       {$heft $~}                                        ::
       {$init p+ship}                                    ::
       {$text p+tape}                                    ::
@@ -62,38 +62,38 @@
       {$verb $~}                                        ::  verbose mode
   ==                                                    ::
 ++  note-gall                                           ::
-  _%  {$conf dock $load ship desk}                      ::
+  $%  {$conf dock $load ship desk}                      ::
       {$deal p+sock q+cush}                             ::
   ==                                                    ::
 ++  note                                                ::  out request $->
-  _?  {?($a $b $c $e $f $g) $wegh $~}                   ::
-  _%  {$a note-ames}                                    ::
+  $?  {?($a $b $c $e $f $g) $wegh $~}                   ::
+  $%  {$a note-ames}                                    ::
       {$c note-clay}                                    ::
       {$d note-dill}                                    ::
       {$g note-gall}                                    ::
   ==  ==                                                ::
 ++  sign-ames                                           ::
-  _%  {$nice $~}                                        ::
+  $%  {$nice $~}                                        ::
       {$init p+ship}                                    ::
   ==                                                    ::
 ++  sign-gall                                           ::  see %gall
-  _%  {$onto p+(unit tang)}                             ::
+  $%  {$onto p+(unit tang)}                             ::
   ==                                                    ::
 ++  sign-clay                                           ::
-  _%  {$mere p+(each (set path) (pair term tang))}      ::
+  $%  {$mere p+(each (set path) (pair term tang))}      ::
       {$note p+@tD q+tank}                              ::
       {$writ p+riot}                                    ::
   ==                                                    ::
 ++  sign-dill                                           ::
-  _%  {$blit p+(list blit)}                             ::
+  $%  {$blit p+(list blit)}                             ::
   ==                                                    ::
 ++  sign-gall                                           ::
-  _%  {$onto p+(each suss tang)}                        ::
+  $%  {$onto p+(each suss tang)}                        ::
       {$unto p+cuft}                                    ::
   ==                                                    ::
 ++  sign                                                ::  in result $<-
-  _?  {?($a $b $c $e $f $g) $mass p+mass}               ::
-  _%  {$a sign-ames}                                    ::
+  $?  {?($a $b $c $e $f $g) $mass p+mass}               ::
+  $%  {$a sign-ames}                                    ::
       {$c sign-clay}                                    ::
       {$d sign-dill}                                    ::  
       {$g sign-gall}                                    ::
@@ -104,7 +104,7 @@
 |=  {now+@da eny+@ ski+sled}                            ::  current invocation
 =>  |%
     ++  as                                              ::  per cause
-      |_  _:  {moz+(list move) hen+duct our+ship}
+      |_  $:  {moz+(list move) hen+duct our+ship}
               axon
           ==
       ++  abet                                          ::  resolve
@@ -377,7 +377,7 @@
     --
 |%                                                      ::  poke/peek pattern
 ++  call                                                ::  handle request
-  |=  _:  hen+duct
+  |=  $:  hen+duct
           hic+(hypo (hobo kiss))
       ==
   ^+  [p=*(list move) q=..^$]

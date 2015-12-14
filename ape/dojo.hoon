@@ -10,12 +10,12 @@
   !:                                                    ::    ::
 =>  |%                                                  ::  external structures
     ++  house                                           ::  all state
-      _:  $4
+      $:  $4
           egg+@u                                        ::  command count
           hoc+(map bone session)                        ::  conversations
       ==                                                ::
     ++  session                                         ::  per conversation
-      _:  say+sole-share                                ::  command-line state
+      $:  say+sole-share                                ::  command-line state
           dir+beam                                      ::  active path
           poy+(unit dojo-project)                       ::  working
           {lib+(list hoof) arc+(list hoof)}             ::  lib/sur
@@ -24,11 +24,11 @@
           buf+tape                                      ::  multiline buffer
       ==                                                ::
     ++  dojo-command                                    ::
-      _&  (pair dojo-sink dojo-source)                  ::  route value
+      $^  (pair dojo-sink dojo-source)                  ::  route value
       {$brev p+term}                                    ::  unbind variable
     ::
     ++  dojo-sink                                       ::
-      _%  {$flat p+path}                                ::  atom to unix
+      $%  {$flat p+path}                                ::  atom to unix
           {$pill p+path}                                ::  noun to unix pill
           ::  {$tree p+path}                            ::  noun to unix tree
           {$file p+beam}                                ::  save to clay
@@ -38,11 +38,11 @@
           {$verb p+term}                                ::  store variable
       ==                                                ::
     ++  dojo-source                                     ::  construction node
-      _:  p+@ud                                         ::  assembly index
+      $:  p+@ud                                         ::  assembly index
           q+dojo-build                                  ::  general build
       ==                                                ::
     ++  dojo-build                                      ::  one ford step
-      _%  {$ur p+purl}                                  ::  http GET request
+      $%  {$ur p+purl}                                  ::  http GET request
           {$ge p+dojo-model}                            ::  generator
           {$dv p+path}                                  ::  core from source
           {$ex p+twig}                                  ::  hoon expression
@@ -51,19 +51,19 @@
           {$tu p+(list dojo-source)}                    ::  tuple
       ==                                                ::
     ++  dojo-model                                      ::  data construction 
-      _:  p+dojo-server                                 ::  core source
+      $:  p+dojo-server                                 ::  core source
           q+dojo-config                                 ::  configuration
       ==                                                ::
     ++  dojo-server                                     ::  numbered device
-      _:  p+@ud                                         ::  assembly index
+      $:  p+@ud                                         ::  assembly index
           q+path                                        ::  gate path
       ==                                                ::
     ++  dojo-config                                     ::  configuration
-      _:  p+(list dojo-source)                          ::  by order
+      $:  p+(list dojo-source)                          ::  by order
           q+(map term (unit dojo-source))               ::  by keyword
       ==                                                ::
     ++  dojo-project                                    ::  construction state
-      _:  mad+dojo-command                              ::  operation
+      $:  mad+dojo-command                              ::  operation
           num+@ud                                       ::  number of tasks
           cud+(unit dojo-source)                        ::  now solving
           pux+(unit path)                               ::  ford working
@@ -75,17 +75,17 @@
     ++  bead  {p+(set beam) q+cage}                     ::  computed result
     ++  goal  {p+ship q+term}                           ::  flat application
     ++  clap                                            ::  action, user
-      _%  {$peer p+path}                                ::  subscribe
+      $%  {$peer p+path}                                ::  subscribe
           {$poke p+(cask)}                              ::  apply
           {$pull $~}                                    ::  unsubscribe
       ==                                                ::
     ++  club                                            ::  action, system
-      _%  {$peer p+path}                                ::  subscribe
+      $%  {$peer p+path}                                ::  subscribe
           {$poke p+cage}                                ::  apply
           {$pull $~}                                    ::  unsubscribe
       ==                                                ::
     ++  card                                            ::  general card
-      _%  {$diff $sole-effect sole-effect}              ::
+      $%  {$diff $sole-effect sole-effect}              ::
           {$send wire {ship term} clap}                 ::
           {$hiss wire mark {$hiss hiss}}                ::
           {$exec wire @p (unit {beak silk})}            ::
@@ -94,14 +94,14 @@
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  sign                                            ::
-      _%  {$made p+@uvH q+gage}                         ::
+      $%  {$made p+@uvH q+gage}                         ::
           {$unto p+cuft}                                ::  
       ==                                                ::
     --                                                  ::
 !:                                                      ::
 ::::                                                    ::
   ::                                                    ::
-|_  _:  hid+bowl                                        ::  system state
+|_  $:  hid+bowl                                        ::  system state
         house                                           ::  program state
     ==                                                  ::
 ++  he                                                  ::  per session
@@ -131,7 +131,7 @@
       ::
         ;~  pfix  col
           %+  cook
-            |=  {a+goal b+_&(dojo-model dojo-source)}
+            |=  {a+goal b+$^(dojo-model dojo-source)}
             ?@  -.b  [[%poke a] b]
             (dp-message a b)
           ;~  plug
@@ -167,7 +167,7 @@
         ;~(plug (cold %pill dot) (most fas sym))
         ;~(plug (cold %http lus) (easy %post) auri:epur)
         ;~(plug (cold %http hep) (easy %put) auri:epur)
-        (stag %show (cook _?($1 $2 $3) (cook lent (stun [1 3] wut))))
+        (stag %show (cook $?($1 $2 $3) (cook lent (stun [1 3] wut))))
       ==
     ++  dp-hooves                                       ::  hoof list
       :(stag 0 %ex %clsg (cook |=(a+tusk a) (most ;~(plug com gaw) dp-hoof)))
@@ -409,7 +409,7 @@
       (dy-slam /dial u.pro !>(txt))
     ::
     ++  dy-cast
-      |*  {typ+__(*) bun+vase}
+      |*  {typ+$_(*) bun+vase}
       |=  a+vase  ^-  typ
       ?>  (~(nest ut p.bun) & p.a)
       ;;(typ q.a)
@@ -422,7 +422,7 @@
         =.  var  (~(del by var) p.mad)
         =<  dy-amok
         ?+  p.mad  . 
-          _?($eny $now $our)  !!
+          $?($eny $now $our)  !!
           $lib  .(lib ~)
           $arc  .(arc ~)
           $dir  .(dir [[our.hid %home ud/0] /])
@@ -510,19 +510,19 @@
     ++  dy-show-type-noun
       |=  a+type  ^-  tank
       =-  >[-]<
-      |-  ^-  _?  _%  {$atom @tas}
-                      {$cell __($) __($)}
-                      {$cube * __($)}
-                      {$face @tas __($)}
-                      {$fork __($) __($)}
-                      {$hold (list {__($) twig})}
+      |-  ^-  $?  $%  {$atom @tas}
+                      {$cell $_($) $_($)}
+                      {$cube * $_($)}
+                      {$face @tas $_($)}
+                      {$fork $_($) $_($)}
+                      {$hold (list {$_($) twig})}
                   ==
                   wain                :: "<|core|>"
-                  _?($noun $void)
+                  $?($noun $void)
               ==
       ?+  a  a
-        {_?($cube $face) ^}  a(q $(a q.a))
-        {_?($cell $fork) ^}  a(p $(a p.a), q $(a q.a))
+        {$?($cube $face) ^}  a(q $(a q.a))
+        {$?($cell $fork) ^}  a(p $(a p.a), q $(a q.a))
         {$bull ^}  $(a q.a)
         {$core ^}  `wain`/core
         {$hold *}  a(p (turn p.a |=({b+type c+twig} [^$(a b) c])))
@@ -532,17 +532,17 @@
       |=  a+dojo-source  ^-  tank
       =-  >[-]<
       =+  `{@ bil+dojo-build}`a
-      |-  ^-  _&  [__($) __($)]
-              _?  twig
-                  _%  {$ur purl}
+      |-  ^-  $^  [$_($) $_($)]
+              $?  twig
+                  $%  {$ur purl}
                       {$dv path}
-                      {$as mark __($)}
-                      {$do twig __($)}
-                      {$ge path (list __($)) (map term (unit __($)))}
+                      {$as mark $_($)}
+                      {$do twig $_($)}
+                      {$ge path (list $_($)) (map term (unit $_($)))}
                   ==
               ==
       ?-  -.bil
-        _?($ur $dv)  bil
+        $?($ur $dv)  bil
         $ex  ?.  ?=({$cltr *} p.bil)  p.bil
                  |-  ^-  twig
                  ?~  p.p.bil  !!
@@ -951,11 +951,11 @@
   --
 ::
 ++  prep
-  =+  session-1==+(*session __(-(poy *(unit))))
-  =+  session-0==+(*session-1 __([__(say) syd=desk * __(|2.-)]))
+  =+  session-1==+(*session $_(-(poy *(unit))))
+  =+  session-0==+(*session-1 $_([$_(say) syd=desk * $_(|2.-)]))
   :: ,_`..prep
   =+  ^=  hoze
-      _%  {$0 p+(map bone session-0)}
+      $%  {$0 p+(map bone session-0)}
           {$1 p+(map bone session-1)}
           {$2 p+(map bone session-1)}
           {$3 p+(map bone session)}
@@ -972,8 +972,8 @@
   |=  {moz+(list move) ses+session}
   =>  ~(. he moz ses)
   =-  [wrap=- +]
-  |*  he-arm+__(he-type)
-  |=  __(+<.he-arm)  
+  |*  he-arm+$_(he-type)
+  |=  $_(+<.he-arm)  
   ^-  (quip move ..he)
   he-abet:(he-arm +<)
 ::

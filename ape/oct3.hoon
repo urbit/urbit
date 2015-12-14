@@ -48,7 +48,7 @@
 ::::                                                    ::::::  process tools
   ::                                                    ::  ::
 ++  abet  [(flop moz) .(moz ~)]                         ::  resolve
-++  bike  $+(_. _+>)                                    ::  self-transformer
+++  bike  $+(_. $+>)                                    ::  self-transformer
 ++  dish  |=(cad=card %_(+> moz [[ost cad] moz]))       ::  request
 ++  echo  |=  [all=(list sink) fun=bike]  =+  old=+>+<- ::  publish to all
           |-  ^+  +>.^$  ?~  all  +>.^$(+<- old)        ::
@@ -82,8 +82,8 @@
 ++  tame  (flap |=(_. (fact:+< &/gam)) |=(_. prom:+<))  ::  light update
 ++  wild  (flap |=(_. (fact:+< &/gam)) |=(_. show:+<))  ::  full update
 ++  word  |=  txt=tape  %+  flap                        ::  game message
-          |=(_+> (fact:+< |/txt))                       ::
-          |=(_+> (fect:+< txt/txt))                     ::
+          |=($+> (fact:+< |/txt))                       ::
+          |=($+> (fect:+< txt/txt))                     ::
 ::                                                      ::  ::
 ::::                                                    ::::::  console UI
   ::                                                    ::  ::

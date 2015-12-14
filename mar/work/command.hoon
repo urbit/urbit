@@ -17,7 +17,7 @@
       :: |*(a+fist (cu sa (ar a)))  ::  XX  types
       |*  a+fist 
       %-  cu  :_  (ar a)
-      ~(gas in *(set __((need *a))))
+      ~(gas in *(set $_((need *a))))
     ++  ot
       |*  a+(pole {@tas fist})
       |=  b+json

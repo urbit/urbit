@@ -1,10 +1,10 @@
 |%
 ++  bit-any
-  _%  {$bit-get-token bit-get-token}
+  $%  {$bit-get-token bit-get-token}
       {$bit-api-call tok+@t bit-api-call}
   ==
 ++  bit-api-call
-  _%  {$send bit-send}
+  $%  {$send bit-send}
       {$txt-send to+@t btc+@t}
       {$buy amount+@t currency+@t}
       {$sell amount+@t currency+@t}

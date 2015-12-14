@@ -14,7 +14,7 @@
     :: |*(a+fist (cu sa (ar a)))  ::  XX  types
     |*  a+fist 
     %-  cu  :_  (ar a)
-    ~(gas in *(set __((need *a))))
+    ~(gas in *(set $_((need *a))))
   ++  ot
     |*  a+(pole {@tas fist})
     |=  b+json
@@ -154,24 +154,24 @@
       |*  {fel+rule wit+fist}
       %+  cu  mo
       %-  ci  :_  (om wit)
-      |=  a+(map cord __((need *wit)))
-      ^-  (unit (list __([(wonk *fel) (need *wit)])))
+      |=  a+(map cord $_((need *wit)))
+      ^-  (unit (list $_([(wonk *fel) (need *wit)])))
       (zl (turn (~(tap by a)) (head-rush fel)))
     ::
     ++  as                                              ::  array as set
       :: |*(a+fist (cu sa (ar a)))  ::  XX  types
       |*  a+fist 
       %-  cu  :_  (ar a)
-      ~(gas in *(set __((need *a))))
+      ~(gas in *(set $_((need *a))))
     ::
     ++  ke                                              ::  callbacks
-      |*  {gar+* sef+__(|.(fist))}
+      |*  {gar+* sef+$_(|.(fist))}
       |=  jon+json
-      ^-  (unit __(gar))
+      ^-  (unit $_(gar))
       =-  ~!  gar  ~!  (need -)  -
       ((sef) jon)
     ::
-    ++  lake  |*(a+__(*) _+(json (unit a)))
+    ++  lake  |*(a+$_(*) $+(json (unit a)))
     ++  head-rush
       |*  a+rule
       |*  {b+cord c+*}
@@ -181,7 +181,7 @@
     ::
     ::
     ++  thot
-      ^-  _+(json (unit thought))
+      ^-  $+(json (unit thought))
       %-  ot  :~
         serial/(ci (slat %uv) so)
         audience/audi 
@@ -194,7 +194,7 @@
     ++  lope  (ot visible/bo sender/(mu (su parn)) ~)
     ::
     ++  parn
-      ^-  _+(nail (like partner))
+      ^-  $+(nail (like partner))
       %+  pick
         ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
       %+  sear  (soft passport)
@@ -248,13 +248,13 @@
     ++  joke  |=(a+tank [%s (role (turn (wash 0^80 a) crip))])
     ++  jode  |=(a+time (jone (div (mul (sub a ~1970.1.1) 1.000) ~s1)))
     ++  jome                                            ::  stringify keys
-      |*  {a+__(cord) b+__(json)}
-      |=  c+(map __(+<.a) __(+<.b))
+      |*  {a+$_(cord) b+$_(json)}
+      |=  c+(map $_(+<.a) $_(+<.b))
       (jobe (turn (~(tap by c)) (both a b)))
     ::
     ++  both                                            ::  cons two gates
-      |*  {a+__(*) b+__(*)}
-      |=(c+__([+<.a +<.b]) [(a -.c) (b +.c)])
+      |*  {a+$_(*) b+$_(*)}
+      |=(c+$_([+<.a +<.b]) [(a -.c) (b +.c)])
     ::
     ++  thot
       |=  thought

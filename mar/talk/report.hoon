@@ -41,18 +41,18 @@
     ++  jode  |=(a+time (jone (div (mul (sub a ~1970.1.1) 1.000) ~s1)))
 ::     ++  jase
 ::       |*  a=,json
-::       |=  b=(set ,_+<.a)  ^-  json
+::       |=  b=(set ,$+<.a)  ^-  json
 ::       ~!  b
 ::       [%a (turn (~(tap in b)) a)]
     ::
     ++  jome                                            ::  stringify keys
-      |*  {a+__(cord) b+__(json)}
-      |=  c+(map __(+<.a) __(+<.b))
+      |*  {a+$_(cord) b+$_(json)}
+      |=  c+(map $_(+<.a) $_(+<.b))
       (jobe (turn (~(tap by c)) (both a b)))
     ::
     ++  both                                            ::  cons two gates
-      |*  {a+__(*) b+__(*)}
-      |=(c+__([+<.a +<.b]) [(a -.c) (b +.c)])
+      |*  {a+$_(*) b+$_(*)}
+      |=(c+$_([+<.a +<.b]) [(a -.c) (b +.c)])
     ::
     ::
     ++  nack  |=(a+(set (set partner)) [%a (turn (~(tap in a)) sorc)])

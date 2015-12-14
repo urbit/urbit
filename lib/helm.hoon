@@ -11,24 +11,24 @@
 |%                                                      ::  ::
 ++  helm-part  {$helm $0 helm-pith}                     ::  helm state
 ++  helm-pith                                           ::  helm content
-  _:  bur+(unit (pair ship mace))                       ::  requesting ticket
+  $:  bur+(unit (pair ship mace))                       ::  requesting ticket
       hoc+(map bone helm-session)                       ::  consoles
   ==                                                    ::  
 ++  helm-session                                        ::
-  _:  say+sole-share                                    ::  console state
+  $:  say+sole-share                                    ::  console state
       mud+(unit (sole-dialog @ud))                      ::  console dialog
   ==                                                    ::  
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
 ++  hood-begin                                          ::  begin command
-  _:  his+@p                                            ::  identity
+  $:  his+@p                                            ::  identity
       tic+@p                                            ::  ticket
       eny+@t                                            ::  entropy
       ges+gens                                          ::  description
   ==                                                    ::
 ++  hood-init                                           ::  report init
-  _:  him+ship                                          ::
+  $:  him+ship                                          ::
   ==                                                    ::
 ++  hood-reset                                          ::  reset command
   $~                                                    ::
@@ -46,7 +46,7 @@
 =+  sez=(fall (~(get by hoc) ost) *helm-session)
 =>  |%                                                ::  arvo structures
     ++  card                                          ::
-      _%  {$cash wire p+@p q+buck}                    ::
+      $%  {$cash wire p+@p q+buck}                    ::
           {$conf wire dock $load ship term}           ::
           {$flog wire flog}                           ::
           {$poke wire dock pear}                      ::
@@ -54,7 +54,7 @@
       ==                                              ::
     ++  move  (pair bone card)                        ::  user-level move
     ++  pear                                          ::  poke fruit
-      _%  {$hood-unsync desk ship desk}               ::
+      $%  {$hood-unsync desk ship desk}               ::
           {$talk-command command:talk}                ::
           {$ask-mail cord}                            ::
           {$helm-hi cord}                             ::

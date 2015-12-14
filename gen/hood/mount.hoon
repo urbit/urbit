@@ -6,8 +6,8 @@
 ::::
   !:
 :-  %say
-|=  _:  {now+@da eny+@uvI bec+beak}
-        {{pax+path pot+_|($~ {v+@tas $~})} $~}
+|=  $:  {now+@da eny+@uvI bec+beak}
+        {{pax+path pot+$@($~ {v+@tas $~})} $~}
     ==
 ?~  pot
   =+  bem=(need (tome pax))

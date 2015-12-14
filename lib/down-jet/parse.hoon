@@ -4,7 +4,7 @@
   ::
 =+  =~
 |%
-++  loca  |*(a+__(*) {p+@u q+a})  
+++  loca  |*(a+$_(*) {p+@u q+a})  
 ++  stack  (list (loca tops))
 --
 |%
@@ -68,7 +68,7 @@
 ++  pech  
   |*  a+{rule rule}
   |=  tub+nail  
-  ^-  (like (each __((wonk (-.a))) __((wonk (+.a)))))
+  ^-  (like (each $_((wonk (-.a))) $_((wonk (+.a)))))
   %.  tub
   ;~(pose (stag %& -.a) (stag %| +.a))
 ::
@@ -85,7 +85,7 @@
   [i.q.tub $(q.tub t.q.tub)]
 ::
 ++  enrule                                              ::  XX
-  |*  a+_+(tape *)
+  |*  a+$+(tape *)
   |=  tub+nail
   ^-  (like a)
   [[0 0] ~ (a q.tub) [0 0] ~]
@@ -93,7 +93,7 @@
   =~
 |%
 ++  strip
-  |=  {a+_+(nail edge) b+tape}
+  |=  {a+$+(nail edge) b+tape}
   ^-  tape
   =+  q:(a 1^1 b)
   ?~(- b q.q.u.-)
@@ -159,7 +159,7 @@
       %-  sear  :_ 
         ;~(pose empt:poxa (pech [head tail]:poxa))
       %-  flit
-      |=  a+_&({marx $~} _%({$& marx} {$| p+mane}))
+      |=  a+$^({marx $~} $%({$& marx} {$| p+mane}))
       ?-  -.a
         ^     (madn n.a) 
         {$&}  (madn n.a) 
@@ -184,7 +184,7 @@
           |=({a+kids b+{tape (unit tape)}} [[%link b] a])
       |%
       ++  apex
-        =+  ^-  rob+_+(nail (like {kids _|(cord {tape (unit tape)})}))
+        =+  ^-  rob+$+(nail (like {kids $@(cord {tape (unit tape)})}))
             ;~(plug text(nol &) labe)
         ::
         |=  tub+nail  
@@ -222,7 +222,7 @@
         |=({a+kids b+{tape (unit tape)}} [[%blot b] a])
       ::
       ++  mail  
-        %+  cook  |=(__([a="" b='' c="" d=*wall]) :(welp a b^c (zing d)))
+        %+  cook  |=($_([a="" b='' c="" d=*wall]) :(welp a b^c (zing d)))
         ;~  plug
           (plus ;~(less (mask "\"\\ (),:;<>@[]") prn))
           pat
@@ -237,7 +237,7 @@
         ::
           =+  cha=;~(pose htm-enty ;~(less (mask "<> ") prn))
           %+  cook
-            |=  a+__(["" ""])
+            |=  a+$_(["" ""])
             [link/[(weld a) ~] ~[`(weld a)]]
           ;~(plug uri-skem col (star cha))
         ==
@@ -294,7 +294,7 @@
     ?+    -.i.a  [i.a $(a t.a)]
         $$
       ?~  t.a  a
-      ?:  ?=(__(-.i.a) -.i.t.a)
+      ?:  ?=($_(-.i.a) -.i.t.a)
         $(a t.a(p.i (weld p.i.a p.i.t.a)))
       [i.a $(a t.a)]
     ==
@@ -310,7 +310,7 @@
           [[%$ -.a] +.a]  
         ::
         ++  veld
-          |=  {a+_|(char inline) __([b c]=*nuft)}
+          |=  {a+$@(char inline) $_([b c]=*nuft)}
           ^-  nuft
           :_  c
           ?@  a
@@ -363,7 +363,7 @@
     ::
     ++  next  (push i)
     ++  push                                            ::  continue with head
-      |=  a+_|(char inline)
+      |=  a+$@(char inline)
       ^-  nuft
       ~?  ?@(a | bug)  fon/a
       ?~  t  (veld a done)
@@ -386,7 +386,7 @@
       $(+<+ t)
     ::
     ++  flome
-      |=  a+__(+:*nuft)
+      |=  a+$_(+:*nuft)
       ^-  {(unit ?($| fens)) tape}
       ?.  ?=({* ?($| fens)} a)
         [~ a]
@@ -422,7 +422,7 @@
       ?.  (ends [p]~ t)
         next
       =+  [a tak]=pull
-      =>  .(t `__("")`t)                                ::  XX  do type stuff
+      =>  .(t `$_("")`t)                                ::  XX  do type stuff
       =^  b  t  (flome tak)
       ?~  b
         (push (empa a))
@@ -440,14 +440,14 @@
 ::::
   ::
 |%
-++  nesting  _%  {$bloq *}                              ::  Used for fishing
+++  nesting  $%  {$bloq *}                              ::  Used for fishing
                  {$item *}
                  {$list {$item $~}}
              ==
 ++  accepting  ?($para $code)
 ++  list-nest                                           ::  can add list item?
   =+  sam=[?>(?=($list -.p..) p..)]:(tops [%list ~]~)   ::  XX do type stuff
-  |=  {a+__(sam) b+__(sam)}  ^-  ?
+  |=  {a+$_(sam) b+$_(sam)}  ^-  ?
   .=  ?@(q.a q.a q.q.a)               ::  by checking delimiter characters
   ?@(q.b q.b q.q.b)
 :: 
@@ -458,7 +458,7 @@
 ::
 ++  closes-code
  =+  sam=[?>(?=($code -) p..)]:(node [%code ~])         ::  XX do type stuff
- |=  {a+__(sam) b+__(sam)}
+ |=  {a+$_(sam) b+$_(sam)}
  ?~  a  ?=($~ b)
  ?~  b  |
  ?^  r.u.b  |
@@ -586,14 +586,14 @@
   =.  q.tub
     %+  scan  q.tub                   ::  tab hackery  ::  XX per line
     (star ;~(pose prn tab nal))
-  =|  _:  _:  top+down                ::  finished toplevel elements
+  =|  $:  $:  top+down                ::  finished toplevel elements
               {sap+@u nod+node}       ::  spacing currrent leaf block
               cur+stack               ::  stack of nested current blocks
           ==
-          {bun+__(|) hat+__(|)}             ::  prev blank? halt?
+          {bun+$_(|) hat+$_(|)}             ::  prev blank? halt?
           ref+(map cord {p+tape q+(unit tape)})        ::  link references
       ==
-  |^  ^-  (like __(top))
+  |^  ^-  (like $_(top))
       ?.  hat
         $:eat-line
       ?^  cur
@@ -609,7 +609,7 @@
   ++  debu  [&2 &2.-]:&2
   ::
   ++  proc-inline                                       ::  parse inline kids
-    |=  pac+__(pars:inli)                               ::  cache
+    |=  pac+$_(pars:inli)                               ::  cache
     |=  a+elem
     ?^  -.a  a(q (flop (turn q.a ..$)))
     ?+  -.a  a
@@ -627,7 +627,7 @@
   ::
   ++  snack                                             ::  advance by parser
     |*  a+rule
-    ^-  {(unit __((wonk (a)))) nail}
+    ^-  {(unit $_((wonk (a)))) nail}
     =+  vex=(a tub)
     ?~  q.vex  [~ tub]
     [`p q]:u.q.vex
@@ -721,7 +721,7 @@
     ==
   ::
   ++  push                                              ::  open block
-    |=  nit+(loca __(p:*tops))  ^+  +>  
+    |=  nit+(loca $_(p:*tops))  ^+  +>  
     =.  self  cull
     =+  toz=[q.nit ~]
     ?.  ?=({$list ^} q.nit)  
@@ -738,7 +738,7 @@
     +>(cur [a cur])
   ::
   ++  pump                                              ::  push leaf block
-    |=  a+_&({p+node q+@u} node)
+    |=  a+$^({p+node q+@u} node)
     ^+  +>
     =+  nex=cull
     ?@  -.a  nex(nod a)
@@ -769,7 +769,7 @@
   ::
   ++  delist  (pop-til top-list):bye
   ++  debloq
-    |=  ruc+__((flop cur))
+    |=  ruc+$_((flop cur))
     ^+  self
     ?~  ruc  self
     ?.  ?=($bloq -.p.q.i.ruc)
@@ -786,7 +786,7 @@
         ?.  ?=($item -.p.q.i.cur)
           (. cur)
         [i.cur (. t.cur)]
-    |=  a+__(cur)  ^+  a
+    |=  a+$_(cur)  ^+  a
     ~?  >  bug  naro/[debu nil-li a cur]
     ?~  a  a
     ?:  ?=({{$item $~} $~} q.i.a)
@@ -832,7 +832,7 @@
   ++  eat
     |%
     ++  sepa                                            ::  consume blank line
-      |=  ruc+__((flop cur))  ^+  self
+      |=  ruc+$_((flop cur))  ^+  self
       ?:  ?=({$code ^ *} nod)                           ::  ignore in blocks
         self
       =^  buf  tub  (snack ;~(sfix (star ace) nal))

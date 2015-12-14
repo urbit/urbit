@@ -18,7 +18,7 @@
     %.  jon  =>  jo  %-  ot
     :~  mod/(cu ^sa (ar (su (perk ~[%ctrl %shift %alt %meta]))))
         :-  %key
-        %+  cu  |*(a+_%({$str @t} {$act @}) ?+(-.a a $str +.a))
+        %+  cu  |*(a+$%({$str @t} {$act @}) ?+(-.a a $str +.a))
         =-  (of str/so act/(su (perk -)) ~)
         :~  %ctrl  %shift  %alt   %meta   %entr  %esc  %caps  %uncap
             %pgup  %pgdn   %home  %end    %baxp  %del  %ins

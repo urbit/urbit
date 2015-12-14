@@ -1,4 +1,4 @@
-!:  ::  %gall, agent execution
+::  ::  %gall, agent execution
 !?  163
 ::::
 |=  pit+vase
@@ -6,13 +6,13 @@
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    rest of arvo
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  volt  ?($low $high)                                 ::  voltage
-++  torc  _|(?($iron $gold) {$lead p+ship})             ::  security control
+++  torc  $@(?($iron $gold) {$lead p+ship})             ::  security control
 ++  roon                                                ::  reverse ames msg
-  _%  {$d p+mark q+*}                                   ::  diff (diff)
+  $%  {$d p+mark q+*}                                   ::  diff (diff)
       {$x $~}                                           ::
   ==                                                    ::
 ++  rook                                                ::  forward ames msg
-  _%  {$m p+mark q+*}                                   ::  message
+  $%  {$m p+mark q+*}                                   ::  message
       {$s p+path}                                       ::  subscribe
       {$u $~}                                           ::  cancel/unsubscribe
   ==                                                    ::
@@ -20,7 +20,7 @@
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    local arvo
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  cote                                                ::  ++ap note
-  _%  {$meta p+@tas q+vase}                             ::  
+  $%  {$meta p+@tas q+vase}                             ::  
       {$send p+ship q+cush}                             ::  
       {$hiss p+mark q+cage}
   ==                                                    ::
@@ -36,37 +36,37 @@
 ++  seat-1                                              ::
   (cork seat |=(seat +<+))                              ::
 ++  axle                                                ::  all state
-  _:  $2                                                ::  state version
+  $:  $2                                                ::  state version
       pol+(map ship mast)                               ::  apps by ship
   ==                                                    ::
 ++  gest                                                ::  subscriber data
-  _:  sup+bitt                                          ::  incoming subscribers
+  $:  sup+bitt                                          ::  incoming subscribers
       neb+boat                                          ::  outgoing subscribers
       qel+(map bone @ud)                               ::  queue meter
   ==                                                    ::
 ++  mast                                                ::  ship state
-  _:  sys+duct                                          ::  system duct
+  $:  sys+duct                                          ::  system duct
       sap+(map ship scad)                               ::  foreign contacts
       bum+(map dude seat)                               ::  running agents
       wub+(map dude sofa)                               ::  waiting queue
   ==                                                    ::
 ++  ffuc                                                ::  new cuff
-    _:  p+(unit (set ship))                             ::  disclosing to
+    $:  p+(unit (set ship))                             ::  disclosing to
         q+ship                                          ::  attributed to
     ==                                                  ::
 ++  prey  (pair volt ffuc)                              ::  privilege
 ++  scad                                                ::  foreign connection
-  _:  p+@ud                                             ::  index
+  $:  p+@ud                                             ::  index
       q+(map duct @ud)                                  ::  by duct
       r+(map @ud duct)                                  ::  by index
   ==                                                    ::
 ++  scar                                                ::  opaque input
-  _:  p+@ud                                             ::  bone sequence
+  $:  p+@ud                                             ::  bone sequence
       q+(map duct bone)                                 ::  by duct
       r+(map bone duct)                                 ::  by bone
   ==                                                    ::
 ++  seat                                                ::  agent state
-  _:  vel+worm                                          ::  cache
+  $:  vel+worm                                          ::  cache
       mom+duct                                          ::  control duct 
       liv+?                                             ::  unstopped
       toc+torc                                          ::  privilege
@@ -78,10 +78,10 @@
       zam+scar                                          ::  opaque ducts
   ==                                                    ::
 ++  sofa                                                ::  queue for blocked
-  _:  kys+(qeu (trel duct prey club))                   ::  queued kisses
+  $:  kys+(qeu (trel duct prey club))                   ::  queued kisses
   ==                                                    ::
 ++  stic                                                ::  statistics
-  _:  act+@ud                                           ::  change number
+  $:  act+@ud                                           ::  change number
       eny+@uvI                                          ::  entropy
       lat+@da                                           ::  time
   ==                                                    ::
@@ -90,7 +90,7 @@
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 .  ==
 =|  all+axle                                            ::  all vane state
-|=  _:  now+@da                                         ::  urban time
+|=  $:  now+@da                                         ::  urban time
         eny+@uvI                                        ::  entropy
         ska+sled                                        ::  activate
     ==                                                  ::  opaque core
@@ -99,7 +99,7 @@
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  mo
   ~%  %gall-mo  +>  ~ 
-  |_  _:  _:  our+@p 
+  |_  $:  $:  our+@p 
               hen+duct
               moz+(list move)
           ==
@@ -263,7 +263,7 @@
   ::
   ++  mo-bale                                           ::  assign outbone
     |=  him+ship 
-    ^-  {@ud __(+>)}
+    ^-  {@ud $_(+>)}
     =+  sad=(fall (~(get by sap) him) `scad`[1 ~ ~])
     =+  nom=(~(get by q.sad) hen)
     ?^  nom  [u.nom +>.$]
@@ -420,7 +420,7 @@
   ++  mo-cook                                           ::  take in /use
     |=  {pax+path hin+(hypo sign-arvo)}
     ^+  +>
-    ?.  ?=({@ @ _?($inn $out $cay) *} pax)
+    ?.  ?=({@ @ $?($inn $out $cay) *} pax)
       ~&  [%mo-cook-bad-pax pax]
       !!
     =+  dap=`@tas`i.pax
@@ -533,7 +533,7 @@
   ::
   ++  ap                                                ::  agent engine
     ~%  %gall-ap  +>  ~
-    |_  _:  _:  dap+dude
+    |_  $:  $:  dap+dude
                 pry+prey
                 ost+bone
                 zip+(list cove)
@@ -620,7 +620,7 @@
     ++  ap-call                                         ::  call into server
       ~/  %ap-call
       |=  {cog+term arg+vase}
-      ^-  {(unit tang) __(+>)}
+      ^-  {(unit tang) $_(+>)}
       =.  +>  ap-bowl 
       =^  arm  +>.$  (ap-farm cog)
       ?:  ?=($| -.arm)  [`p.arm +>.$]
@@ -681,7 +681,7 @@
     ++  ap-farm                                         ::  produce arm
       ~/  %ap-farm
       |=  cog+term
-      ^-  {(each vase tang) __(+>)}
+      ^-  {(each vase tang) $_(+>)}
       =+  pyz=(mule |.((~(mint wa vel) p.hav [%cnzy cog])))
       ?:  ?=($| -.pyz)  
         :_(+>.$ [%| +.pyz])
@@ -694,7 +694,7 @@
       ==
     ::
     ++  ap-fill                                         ::  add to queue
-      ^-  {? __(.)}
+      ^-  {? $_(.)}
       =+  suy=(fall (~(get by qel.ged) ost) 0)
       ?:  =(20 suy)
         ::  ~&  [%ap-fill-full [our dap] q.q.pry ost]
@@ -747,7 +747,7 @@
     ++  ap-move                                         ::  process each move
       ~/  %ap-move
       |=  vax+vase
-      ^-  {(each cove tang) __(+>)}
+      ^-  {(each cove tang) $_(+>)}
       ?@  q.vax    :_(+>.$ [%| (ap-suck "move: invalid move (atom)")])
       ?^  -.q.vax  :_(+>.$ [%| (ap-suck "move: invalid move (bone)")])
       ?@  +.q.vax  :_(+>.$ [%| (ap-suck "move: invalid move (card)")])
@@ -769,14 +769,14 @@
     ::
     ++  ap-move-quit                                    ::  give quit move
       |=  {sto+bone vax+vase}
-      ^-  {(each cove tang) __(+>)}
+      ^-  {(each cove tang) $_(+>)}
       :_  +>
       ?^  q.vax  [%| (ap-suck "quit: improper give")]
       [%& `cove`[sto %give `cuft`[%quit ~]]]
     ::
     ++  ap-move-diff                                    ::  give diff move
       |=  {sto+bone vax+vase}
-      ^-  {(each cove tang) __(+>)}
+      ^-  {(each cove tang) $_(+>)}
       =^  pec  vel  (~(spec wa vel) vax)
       ?.  &(?=(^ q.pec) ?=(@ -.q.pec) ((sane %tas) -.q.pec))
         :_(+>.$ [%| (ap-suck "diff: improper give")])
@@ -785,7 +785,7 @@
     ::
     ++  ap-move-hiss                                    ::  pass %hiss
       |=  {sto+bone vax+vase}
-      ^-  {(each cove tang) __(+>)}
+      ^-  {(each cove tang) $_(+>)}
       ?.  &(?=({p+* q+@ q+^} q.vax) ((sane %tas) q.q.vax))
         :_(+>.$ [%| (ap-suck "hiss: bad hiss ask.[%hiss wire mark cage]")])
       =^  gaw  vel  (~(slot wa vel) 7 vax)
@@ -802,7 +802,7 @@
     ::
     ++  ap-move-mess                                    ::  extract path, target
       |=  vax+vase
-      ^-  {(each (trel path ship term) tang) __(+>)}
+      ^-  {(each (trel path ship term) tang) $_(+>)}
       :_  +>.$
       ?.  ?&  ?=({p+* {q+@ r+@} s+*} q.vax)
               (gte 1 (met 7 q.q.vax))
@@ -815,7 +815,7 @@
     ::
     ++  ap-move-pass                                    ::  pass general move 
       |=  {sto+bone wut+* vax+vase}
-      ^-  {(each cove tang) __(+>)}
+      ^-  {(each cove tang) $_(+>)}
       ?.  &(?=(@ wut) ((sane %tas) wut))
         :_(+>.$ [%| (ap-suck "pass: malformed card")])
       =+  pux=((soft path) -.q.vax)
@@ -831,7 +831,7 @@
     ::
     ++  ap-move-poke                                    ::  pass %poke
       |=  {sto+bone vax+vase}
-      ^-  {(each cove tang) __(+>)}
+      ^-  {(each cove tang) $_(+>)}
       =^  yep  +>.$  (ap-move-mess vax)
       ?:  ?=($| -.yep)  :_(+>.$ yep)
       =^  gaw  vel  (~(slot wa vel) 7 vax)
@@ -845,7 +845,7 @@
     ::
     ++  ap-move-peer                                    ::  pass %peer
       |=  {sto+bone vax+vase}
-      ^-  {(each cove tang) __(+>)}
+      ^-  {(each cove tang) $_(+>)}
       =^  yep  +>.$  (ap-move-mess vax)
       :_  +>.$
       ?:  ?=($| -.yep)  yep
@@ -858,7 +858,7 @@
     ::
     ++  ap-move-pull                                    ::  pass %pull
       |=  {sto+bone vax+vase}
-      ^-  {(each cove tang) __(+>)}
+      ^-  {(each cove tang) $_(+>)}
       =^  yep  +>.$  (ap-move-mess vax)
       :_  +>.$
       ?:  ?=($| -.yep)  yep
@@ -870,7 +870,7 @@
     ::
     ++  ap-move-send                                    ::  pass gall action
       |=  {sto+bone vax+vase}
-      ^-  {(each cove tang) __(+>)}
+      ^-  {(each cove tang) $_(+>)}
       ?.  ?&  ?=({p+* {q+@ r+@} {s+@ t+*}} q.vax)
               (gte 1 (met 7 q.q.vax))
               ((sane %tas) r.q.vax)
@@ -1025,7 +1025,7 @@
     ::
     ++  ap-prop                                         ::  install
       |=  vux+(unit vase)
-      ^-  {(unit tang) __(+>)}
+      ^-  {(unit tang) $_(+>)}
       ?.  (ap-fond %prep) 
         ?~  vux
           `+>.$
@@ -1080,7 +1080,7 @@
     ::
     ++  ap-safe                                         ::  process move list
       |=  vax+vase
-      ^-  {(each (list cove) tang) __(+>)}
+      ^-  {(each (list cove) tang) $_(+>)}
       ?~  q.vax  :_(+>.$ [%& ~])
       ?@  q.vax  :_(+>.$ [%| (ap-suck "move: malformed list")])
       =^  hed  vel  (~(slot wa vel) 2 vax)
@@ -1094,7 +1094,7 @@
     ::
     ++  ap-sake                                         ::  handle result
       |=  vax+vase
-      ^-  {(unit tang) __(+>)}
+      ^-  {(unit tang) $_(+>)}
       ?:  ?=(@ q.vax)
         [`(ap-suck "sake: invalid product (atom)") +>.$]
       =^  hed  vel  (~(slot wa vel) 2 vax)
@@ -1111,7 +1111,7 @@
     ::
     ++  ap-save                                         ::  verify core
       |=  vax+vase
-      ^-  {(each vase tang) __(+>)}
+      ^-  {(each vase tang) $_(+>)}
       =^  gud  vel  (~(nest wa vel) p.hav p.vax)
       :_  +>.$
       ?.  gud
@@ -1120,14 +1120,14 @@
     ::
     ++  ap-mong
       ~/  %ap-mong
-      |=  {{gat+* sam+*} sky+_+(* (unit))}
+      |=  {{gat+* sam+*} sky+$+(* (unit))}
       ^-  toon
       (mong [gat sam] sky)
     ::
     ++  ap-slam                                         ::  virtual slam
       ~/  %ap-slam
       |=  {cog+term gat+vase arg+vase}
-      ^-  {(each vase tang) __(+>)}
+      ^-  {(each vase tang) $_(+>)}
       =+  wyz=(mule |.((~(play wa vel) [%cell p.gat p.arg] [%cncl `2 `3])))
       ?:  ?=($| -.wyz)
         %-  =+  sam=(~(peek ut p.gat) %free 6)

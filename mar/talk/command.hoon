@@ -23,14 +23,14 @@
       |*  {fel+rule wit+fist}
       %+  cu  mo
       %-  ci  :_  (om wit)
-      |=  a+(map cord __((need *wit)))
-      ^-  (unit (list __([(wonk *fel) (need *wit)])))
+      |=  a+(map cord $_((need *wit)))
+      ^-  (unit (list $_([(wonk *fel) (need *wit)])))
       (zl (turn (~(tap by a)) (head-rush fel)))
     ::
     ++  ke                                              ::  callbacks
-      |*  {gar+* sef+__(|.(fist))}
+      |*  {gar+* sef+$_(|.(fist))}
       |=  jon+json
-      ^-  (unit __(gar))
+      ^-  (unit $_(gar))
       =-  ~!  gar  ~!  (need -)  -
       ((sef) jon)
     ::
@@ -38,13 +38,13 @@
       :: |*(a=fist (cu sa (ar a)))  ::  XX  types
       |*  a+fist 
       %-  cu  :_  (ar a)
-      ~(gas in *(set __((need *a))))
+      ~(gas in *(set $_((need *a))))
     ::
-    ++  lake  |*(a+__(*) _+(json (unit a)))
+    ++  lake  |*(a+$_(*) $+(json (unit a)))
     ++  peach
       |*  a+{rule rule}
       |=  tub+nail  
-      ^-  (like (each __((wonk (-.a))) __((wonk (+.a)))))
+      ^-  (like (each $_((wonk (-.a))) $_((wonk (+.a)))))
       %.  tub
       ;~(pose (stag %& -.a) (stag %| +.a))
     ::
@@ -57,7 +57,7 @@
     ::
     ::
     ++  thot
-      ^-  _+(json (unit thought))
+      ^-  $+(json (unit thought))
       %-  ot  :~
         serial/(ci (slat %uv) so)
         audience/audi 
@@ -70,13 +70,13 @@
     ++  lope  (ot visible/bo sender/(mu (su parn)) ~)
     ::
     ++  parn
-      ^-  _+(nail (like partner))
+      ^-  $+(nail (like partner))
       %+  peach
         ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
       %+  sear  (soft passport)
       ;~((glue fas) sym urs:ab)                         ::  XX  [a-z0-9_]{1,15}
     ::
-    ++  speech-or-eval  _?(speech {$eval p+@t} {$mor p+(list speech-or-eval)})
+    ++  speech-or-eval  $?(speech {$eval p+@t} {$mor p+(list speech-or-eval)})
     ++  eval
       |=  a+(trel @da bouquet speech-or-eval)  
       ^-  statement
@@ -91,7 +91,7 @@
       ==
     ::
     ++  stam
-      ^-  _+(json (unit statement))   
+      ^-  $+(json (unit statement))   
       %+  cu  eval
       (ot date/di bouquet/(as (ar so)) speech/spec ~)
     ::
@@ -107,7 +107,7 @@
       ==
     ::
     ++  conf
-      ^-  _+(json (unit config))
+      ^-  $+(json (unit config))
       %-  ot  :~
         sources/(as (su parn))
         caption/so

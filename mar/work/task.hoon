@@ -8,7 +8,7 @@
 [work .]
 |%
 ++  rend
-  |=  a+(list _|(char dime))  ^-  cord
+  |=  a+(list $@(char dime))  ^-  cord
   %-  crip
   |-  ^-  tape
   ?~  a  ~
@@ -18,7 +18,7 @@
 ++  indent  |=(a+wain (turn a |=(b+cord (cat 3 '  ' b))))
 ::
 ++  undent
-  |*  {a+wain b+_+(wain *)}  ^+  [*b a]
+  |*  {a+wain b+$+(wain *)}  ^+  [*b a]
   =^  c  a
     |-  ^-  {c+wain a+wain}
     ?~  a  [~ a]
@@ -29,7 +29,7 @@
 ::
 ++  keen  |*({a+* b+rule} |=(c+nail `(like a)`(b c)))
 ++  parse
-  |*  {hed+_?($~ _|(@tas tape)) tal+(pole)}   
+  |*  {hed+$?($~ $@(@tas tape)) tal+(pole)}   
   ?~  hed  (..$ tal)
   ?^  hed  ;~(pfix (just (crip hed)) (..$ tal))
   =-  ?~(tal had ;~(plug had (..$ tal)))

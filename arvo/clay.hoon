@@ -1,4 +1,4 @@
-!:   
+::   
 ::  clay (4c), revision control
 ::
 ::  This is split in three top-level sections:  structure definitions, main
@@ -13,14 +13,14 @@
 |=  pit+vase
 =>  |%
 ++  cane                                                ::  change set
-          _:  new+(map path lobe)                       ::  new files
+          $:  new+(map path lobe)                       ::  new files
               cal+(map path lobe)                       ::  old diffs
               can+(map path cage)                       ::  new diffs
               old+(map path $~)                         ::  deleted files
           ==                                            ::
 ++  cult  (map duct rove)                               ::  subscriptions
 ++  dojo                                                ::  domestic desk state
-          _:  qyx+cult                                  ::  subscribers
+          $:  qyx+cult                                  ::  subscribers
               dom+dome                                  ::  desk data
               dok+(unit dork)                           ::  outstanding diffs
               mer+(unit mery)                           ::  outstanding merge
@@ -28,7 +28,7 @@
 ++  gift  gift-clay                                     ::  out result <-$
 ++  kiss  kiss-clay                                     ::  in request ->$
 ++  mery                                                ::  merge state
-          _:  sor+(pair ship desk)                      ::  merge source
+          $:  sor+(pair ship desk)                      ::  merge source
               hen+duct                                  ::  formal source
               gem+germ                                  ::  strategy
               wat+wait                                  ::  waiting on
@@ -45,62 +45,62 @@
               erg+(map path ?)                          ::  ergoable changes
               gon+(each (set path) (pair term (list tank))) ::  return value
           ==                                            ::
-++  wait  _?  $null   $ali    $diff-ali   $diff-bob     ::  what are we
+++  wait  $?  $null   $ali    $diff-ali   $diff-bob     ::  what are we
               $merge  $build  $checkout   $ergo         ::  waiting for?
           ==                                            ::
 ++  moot  {p+case q+case r+path s+(map path lobe)}      ::  stored change range
 ++  move  {p+duct q+(mold note gift)}                   ::  local move
-++  nako  _:  gar+(map aeon tako)                       ::  new ids
+++  nako  $:  gar+(map aeon tako)                       ::  new ids
               let+aeon                                  ::  next id
               lar+(set yaki)                            ::  new commits
               bar+(set plop)                            ::  new content
           ==                                            ::
 ++  note                                                ::  out request $->
-          _%  _:  $a                                    ::  to %ames
-          _%  {$wont p+sock q+path r+*}                 ::
+          $%  $:  $a                                    ::  to %ames
+          $%  {$wont p+sock q+path r+*}                 ::
           ==  ==                                        ::
-              _:  $c                                    ::  to %clay
-          _%  {$info p+@p q+@tas r+nori}                ::  internal edit
+              $:  $c                                    ::  to %clay
+          $%  {$info p+@p q+@tas r+nori}                ::  internal edit
               {$merg p+@p q+@tas r+@p s+@tas t+case u+germ}  ::  merge desks
               {$warp p+sock q+riff}                     ::
           ==  ==                                        ::
-              _:  $d                                    ::
-          _%  {$flog p+{$crud p+@tas q+(list tank)}}    ::  to %dill
+              $:  $d                                    ::
+          $%  {$flog p+{$crud p+@tas q+(list tank)}}    ::  to %dill
           ==  ==                                        ::
-              _:  $f                                    ::
-          _%  {$exec p+@p q+(unit {beak silk})}         ::
+              $:  $f                                    ::
+          $%  {$exec p+@p q+(unit {beak silk})}         ::
           ==  ==                                        ::
-              _:  $t                                    ::
-          _%  {$wait p+@da}                             ::
+              $:  $t                                    ::
+          $%  {$wait p+@da}                             ::
               {$rest p+@da}                             ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
-          _?  _:  $a                                    ::  by %ames
-          _%  {$woot p+ship q+coop}                     ::
+          $?  $:  $a                                    ::  by %ames
+          $%  {$woot p+ship q+coop}                     ::
           ==  ==                                        ::
-              _:  $c                                    ::  by %clay
-          _%  {$note p+@tD q+tank}                      ::
+              $:  $c                                    ::  by %clay
+          $%  {$note p+@tD q+tank}                      ::
               {$mere p+(each (set path) (pair term tang))}
               {$writ p+riot}                            ::
           ==  ==                                        ::
-              _:  $f                                    ::
-          _%  {$made p+@uvH q+gage}                     ::
+              $:  $f                                    ::
+          $%  {$made p+@uvH q+gage}                     ::
           ==  ==                                        ::
-              _:  $t                                    ::
-          _%  {$wake $~}                                ::  timer activate
+              $:  $t                                    ::
+          $%  {$wake $~}                                ::  timer activate
           ==  ==                                        ::
-              _:  @tas                                  ::  by any
-          _%  {$crud p+@tas q+(list tank)}              ::
+              $:  @tas                                  ::  by any
+          $%  {$crud p+@tas q+(list tank)}              ::
           ==  ==  ==                                    ::
 ++  raft                                                ::  filesystem
-          _:  fat+(map ship room)                       ::  domestic
+          $:  fat+(map ship room)                       ::  domestic
               hoy+(map ship rung)                       ::  foreign
               ran+rang                                  ::  hashes
               mon+(map term beam)                       ::  mount points
               hez+(unit duct)                           ::  sync duct
           ==                                            ::
 ++  rede                                                ::  universal project
-          _:  lim+@da                                   ::  complete to
+          $:  lim+@da                                   ::  complete to
               ref+(unit rind)                           ::  outgoing requests
               qyx+cult                                  ::  subscribers
               dom+dome                                  ::  revision state
@@ -108,26 +108,26 @@
               mer+(unit mery)                           ::  outstanding merges
           ==                                            ::
 ++  rind                                                ::  request manager
-          _:  nix+@ud                                   ::  request index
+          $:  nix+@ud                                   ::  request index
               bom+(map @ud {p+duct q+rave})             ::  outstanding
               fod+(map duct @ud)                        ::  current requests
               haw+(map mood (unit cage))                ::  simple cache
               nak+(unit nako)                           ::  pending validation
           ==                                            ::
 ++  room                                                ::  fs per ship
-          _:  hun+duct                                  ::  terminal duct
+          $:  hun+duct                                  ::  terminal duct
               dos+(map desk dojo)                       ::  native desk
           ==                                            ::
 ++  rove                                                ::  stored request
-          _%  {$sing p+mood}                            ::  single request
+          $%  {$sing p+mood}                            ::  single request
               {$next p+mood q+(unit (each cage lobe))}  ::  next version
               {$many p+? q+moot}                        ::  change range
           ==                                            ::
-++  rung  _:  rus+(map desk rede)                       ::  neighbor desks
+++  rung  $:  rus+(map desk rede)                       ::  neighbor desks
           ==                                            ::
 ++  tage  {{$tabl p+(list (pair marc marc))} q+vase}    ::  %tabl gage
 ++  dork                                                ::  diff work
-          _:  del+(list path)                           ::  deletes
+          $:  del+(list path)                           ::  deletes
               ink+(list (pair path cage))               ::  hoo{nk}
               ins+(unit (list (pair path cage)))        ::  inserts
               dig+(map path cage)                       ::  store diffs
@@ -567,7 +567,7 @@
       %+  skid  `(list (pair path miso))`ins
       |=  {pax+path mis+miso}
       ?>  ?=($ins -.mis)
-      ?&  ?=({_?($hoon $hook) *} (flop pax))
+      ?&  ?=({$?($hoon $hook) *} (flop pax))
           ?=($mime p.p.mis)
       ==
     =.  +>.$
@@ -917,7 +917,7 @@
     ==
   ::
   ++  apply-foreign-update                              ::  apply subscription
-    |=  _:  lem+(unit @da)                              ::  complete up to
+    |=  $:  lem+(unit @da)                              ::  complete up to
             gar+(map aeon tako)                         ::  new ids
             let+aeon                                    ::  next id
             lar+(set yaki)                              ::  new commits
@@ -1128,7 +1128,7 @@
     (sa lat)
   ::
   ++  mabe                                            ::  maybe fire function
-    |*  {rov+rove fun+_+(@da __(+>.^$))}
+    |*  {rov+rove fun+$+(@da $_(+>.^$))}
     ^+  +>.$
     %-  fall  :_  +>.$
     %-  bind  :_  fun
@@ -1430,7 +1430,7 @@
     ::
     ++  edit                                            ::    edit:ze
       |=  {wen+@da lem+nuri}                            ::  edit
-      ^-  {(unit (map path lobe)) __(..ze)}
+      ^-  {(unit (map path lobe)) $_(..ze)}
       ?-  -.lem
         {$&}
              =^  yak  lat.ran                           ::  merge objects
@@ -1510,7 +1510,7 @@
       (data-twixt-takos (~(get by hit.dom) a) (aeon-to-tako b))
     ::
     ++  query                                           ::    query:ze
-      |=  ren+_?($u $v $x $y $z)                        ::  endpoint query
+      |=  ren+$?($u $v $x $y $z)                        ::  endpoint query
       ^-  (unit cage)
       ?-  ren
         $u  !!  ::  [~ %null [%atom %n] ~]
@@ -1689,7 +1689,7 @@
         (bind (read-y yon r.mun) (curr bind (cury same %&)))
       %+  bind
         (rewind yon)
-      |=  a+(unit __(+>.$))
+      |=  a+(unit $_(+>.$))
       ^-  (unit (each cage lobe))
       ?~  a
         ~
@@ -1697,7 +1697,7 @@
     ::
     ++  rewind                                          ::    rewind:ze
       |=  yon+aeon                                      ::  rewind to aeon
-      ^-  (unit (unit __(+>)))
+      ^-  (unit (unit $_(+>)))
       ?:  =(let.dom yon)  ``+>
       ?:  (gth yon let.dom)  !!                         ::  don't have version
       =+  hat=q:(aeon-to-yaki yon)
@@ -2417,7 +2417,7 @@
         ?:  ?=($| -.tay)
           (error:he %ergo-bad-made leaf/"merge ergo failed" p.tay)
         =+  =|  nac+mode
-            |-  ^-  tan+_&(mode {p+term q+tang})
+            |-  ^-  tan+$^(mode {p+term q+tang})
             ?~  p.tay  nac
             =*  pax  p.i.p.tay
             ?.  ?=($path p.pax)
@@ -2531,14 +2531,14 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    _:  $0                                            ::  vane version
+    $:  $0                                            ::  vane version
         ruf+raft                                      ::  revision tree
     ==                                                ::
 |=  {now+@da eny+@ ski+sled}                          ::  activate
 ^?                                                    ::  opaque core
 |%                                                    ::
 ++  call                                              ::  handle request
-  |=  _:  hen+duct
+  |=  $:  hen+duct
           hic+(hypo (hobo kiss))
       ==
   =>  %=    .                                         ::  XX temporary

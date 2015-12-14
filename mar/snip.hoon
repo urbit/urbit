@@ -24,7 +24,7 @@
     ?~  mal  [lim ~]
     ?~  lim  [0 ~]
     =+  ^-  {lam+@u hed+manx}
-      ?:  ?=(__(:/(**)) i.mal)
+      ?:  ?=($_(:/(**)) i.mal)
         [lim :/(tay)]:(deword lim v.i.a.g.i.mal)
       [rem ele(c res)]:[ele=i.mal $(mal c.i.mal)]
     [rem - res]:[hed $(lim lam, mal t.mal)]

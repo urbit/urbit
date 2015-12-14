@@ -1,20 +1,20 @@
 ::  ::  %behn, just a timer
 !?  164
-!:::
+::::
 |=  pit+vase
 =>  =~
 |%
-++  sqeu  |*  {a+__(*) b+__(*)}                         ::  binary skew queno
-          _:  r+@u                                      ::  rank/depth
+++  sqeu  |*  {a+$_(*) b+$_(*)}                         ::  binary skew queno
+          $:  r+@u                                      ::  rank/depth
               k+a                                       ::  priority
               n+b                                       ::  value
               c+(broq a b)                              ::  children
           ==                                            ::
-++  broq  |*  {a+__(*) b+__(*)}                         ::  brodal skew qeu
+++  broq  |*  {a+$_(*) b+$_(*)}                         ::  brodal skew qeu
           (list (sqeu a b))                             ::
 ++  gift  gift-behn                                     ::  out result <-$
 ++  kiss                                                ::  in request ->$
-          _%  {$rest p+@da}                             ::  cancel alarm
+          $%  {$rest p+@da}                             ::  cancel alarm
               {$wait p+@da}                             ::  set alarm
               {$wake $~}                                ::  timer activate
               {$wegh $~}                                ::  report memory
@@ -125,7 +125,7 @@
   ++  gas
     |=  b+(list {k+key n+val})
     ^+  a
-    q:(roll b |=({{k+key n+val} q+__(a)} (put(a q) k n)))
+    q:(roll b |=({{k+key n+val} q+$_(a)} (put(a q) k n)))
   ::
   ++  tap
     ^-  (list {k+key n+val})
@@ -146,17 +146,17 @@
   --
 --
 .  ==
-=|  _:  $0                                              ::
+=|  $:  $0                                              ::
         tym+{p+clok q+clok}                             ::  positive/negative
     ==                                                  ::
 |=  {now+@da eny+@ ski+sled}                            ::  current invocation
 ^?
 |%                                                      ::  poke/peek pattern
 ++  call                                                ::  handle request
-  |=  _:  hen+duct
+  |=  $:  hen+duct
           hic+(hypo (hobo kiss))
       ==
-  ^-  {p+(list move) q+__(..^$)}
+  ^-  {p+(list move) q+$_(..^$)}
   =>  %=    .                                           ::  XX temporary
           q.hic
         ^-  kiss

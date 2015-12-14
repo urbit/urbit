@@ -5,7 +5,7 @@
   |=  a+marl  ^-  tape
   ?~  a  ~
   %-  weld  :_  $(a t.a)
-  ?.  ?=(__(:/(**)) i.a)
+  ?.  ?=($_(:/(**)) i.a)
     $(a c.i.a)
   v.i.a.g.i.a
 ::
@@ -18,7 +18,7 @@
 ::
 ++  baff  |*({a+(unit) b+(trap)} ?^(a a *b))
 ++  find-in-tree
-  |*  {paz+fist:jo fun+_+(* (unit))}
+  |*  {paz+fist:jo fun+$+(* (unit))}
   |=  jon+json
   =+  a=`(list json)`~[jon]
   |^  (try)
@@ -31,7 +31,7 @@
   --
 ::
 ++  map-to-json
-  |*  {a+_+(* cord) b+_+(* json)}
+  |*  {a+$+(* cord) b+$+(* json)}
   |*  c+(map)  ^-  json
   ~!  c
   (jobe (turn (~(tap by c)) |*({k+* v+*} [(a k) (b v)])))
@@ -49,8 +49,8 @@
 ++  read-schem  
   =<  (cook to-noun (cook to-tree apex))
   |%
-  ++  noun  _|(term [noun noun])       ::  shadow
-  ++  data  _|(term {n+@ l+noun r+data})
+  ++  noun  $@(term [noun noun])       ::  shadow
+  ++  data  $@(term {n+@ l+noun r+data})
   ++  apex  ;~(plug sym (star ;~(plug delim sym)))
   ++  delim  ;~(pose (cold 0 dot) (cook lent (plus cab)))
   ++  to-noun  |=(a+data ?@(a a [l.a $(a r.a)]))

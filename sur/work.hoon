@@ -6,16 +6,16 @@
 /-    talk
 |%
 ++  client
-  _:  tasks+(map @uvH client-task)
+  $:  tasks+(map @uvH client-task)
       sort+(list @uvH)
   ==
 ++  client-task
-  _:  archived+__(|)
+  $:  archived+$_(|)
       audience+(set station:talk)
       tax+task
   ==
 ++  task
-  _:  id+@uvH
+  $:  id+@uvH
       date-created+@da
       version+@u
       date-modified+@da
@@ -29,29 +29,29 @@
       discussion+(list comment)
   ==
 ++  comment
-  _:  date+@da
+  $:  date+@da
       ship+@p
       body+@t   ::  XX (list @t)
   ==
 ++  command
-  _%  {$new audience+(set station:talk) task}
+  $%  {$new audience+(set station:talk) task}
       {$old id+@uvH dif+update}
       {$sort p+(list @uvH)}
   ==
 ++  update    ::  XX rename, web-edit?
-  _%  _:  $set
-  _%  {$audience to+(set station:talk)}
+  $%  $:  $set
+  $%  {$audience to+(set station:talk)}
       {$date-due p+(unit @da)}
       {$title p+@t}
       {$description p+@t}
       {$tags p+(set @t)}
       {$done p+?}
   ==  ==
-      _:  $add
-  _%  {$comment @t}
+      $:  $add
+  $%  {$comment @t}
   ==  ==
-      _:  $doer
-  _%  {$release $~}
+      $:  $doer
+  $%  {$release $~}
       {$claim $~}
   ==  ==
   ==

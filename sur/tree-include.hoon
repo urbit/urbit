@@ -1,5 +1,5 @@
 |-
-_:  body+json
+$:  body+json
     head+json
     snip+json
     meta+json
