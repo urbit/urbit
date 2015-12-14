@@ -46,13 +46,13 @@
 ::       [%a (turn (~(tap in b)) a)]
     ::
     ++  jome                                            ::  stringify keys
-      |*  {a+$_(cord) b+$_(json)}
-      |=  c+(map $_(+<.a) $_(+<.b))
+      |*  {a+_cord b+_json}
+      |=  c+(map _+<.a _+<.b)
       (jobe (turn (~(tap by c)) (both a b)))
     ::
     ++  both                                            ::  cons two gates
-      |*  {a+$_(*) b+$_(*)}
-      |=(c+$_([+<.a +<.b]) [(a -.c) (b +.c)])
+      |*  {a+_* b+_*}
+      |=(c+_[+<.a +<.b] [(a -.c) (b +.c)])
     ::
     ::
     ++  nack  |=(a+(set (set partner)) [%a (turn (~(tap in a)) sorc)])

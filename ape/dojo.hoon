@@ -409,7 +409,7 @@
       (dy-slam /dial u.pro !>(txt))
     ::
     ++  dy-cast
-      |*  {typ+$_(*) bun+vase}
+      |*  {typ+_* bun+vase}
       |=  a+vase  ^-  typ
       ?>  (~(nest ut p.bun) & p.a)
       ;;(typ q.a)
@@ -511,11 +511,11 @@
       |=  a+type  ^-  tank
       =-  >[-]<
       |-  ^-  $?  $%  {$atom @tas}
-                      {$cell $_($) $_($)}
-                      {$cube * $_($)}
-                      {$face @tas $_($)}
-                      {$fork $_($) $_($)}
-                      {$hold (list {$_($) twig})}
+                      {$cell _$ _$}
+                      {$cube * _$}
+                      {$face @tas _$}
+                      {$fork _$ _$}
+                      {$hold (list {_$ twig})}
                   ==
                   wain                :: "<|core|>"
                   $?($noun $void)
@@ -532,13 +532,13 @@
       |=  a+dojo-source  ^-  tank
       =-  >[-]<
       =+  `{@ bil+dojo-build}`a
-      |-  ^-  $^  [$_($) $_($)]
+      |-  ^-  $^  [_$ _$]
               $?  twig
                   $%  {$ur purl}
                       {$dv path}
-                      {$as mark $_($)}
-                      {$do twig $_($)}
-                      {$ge path (list $_($)) (map term (unit $_($)))}
+                      {$as mark _$}
+                      {$do twig _$}
+                      {$ge path (list _$) (map term (unit _$))}
                   ==
               ==
       ?-  -.bil
@@ -951,8 +951,8 @@
   --
 ::
 ++  prep
-  =+  session-1==+(*session $_(-(poy *(unit))))
-  =+  session-0==+(*session-1 $_([$_(say) syd=desk * $_(|2.-)]))
+  =+  session-1==+(*session _-(poy *(unit)))
+  =+  session-0==+(*session-1 _[$_(say) syd=desk * $_(|2.-)])
   :: ,_`..prep
   =+  ^=  hoze
       $%  {$0 p+(map bone session-0)}
@@ -972,8 +972,8 @@
   |=  {moz+(list move) ses+session}
   =>  ~(. he moz ses)
   =-  [wrap=- +]
-  |*  he-arm+$_(he-type)
-  |=  $_(+<.he-arm)  
+  |*  he-arm+_he-type
+  |=  _+<.he-arm  
   ^-  (quip move ..he)
   he-abet:(he-arm +<)
 ::

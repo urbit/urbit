@@ -14,7 +14,7 @@
     :: |*(a+fist (cu sa (ar a)))  ::  XX  types
     |*  a+fist 
     %-  cu  :_  (ar a)
-    ~(gas in *(set $_((need *a))))
+    ~(gas in *(set _(need *a)))
   ++  ot
     |*  a+(pole {@tas fist})
     |=  b+json
@@ -154,24 +154,24 @@
       |*  {fel+rule wit+fist}
       %+  cu  mo
       %-  ci  :_  (om wit)
-      |=  a+(map cord $_((need *wit)))
-      ^-  (unit (list $_([(wonk *fel) (need *wit)])))
+      |=  a+(map cord _(need *wit))
+      ^-  (unit (list _[(wonk *fel) (need *wit)]))
       (zl (turn (~(tap by a)) (head-rush fel)))
     ::
     ++  as                                              ::  array as set
       :: |*(a+fist (cu sa (ar a)))  ::  XX  types
       |*  a+fist 
       %-  cu  :_  (ar a)
-      ~(gas in *(set $_((need *a))))
+      ~(gas in *(set _(need *a)))
     ::
     ++  ke                                              ::  callbacks
-      |*  {gar+* sef+$_(|.(fist))}
+      |*  {gar+* sef+_|.(fist)}
       |=  jon+json
-      ^-  (unit $_(gar))
+      ^-  (unit _gar)
       =-  ~!  gar  ~!  (need -)  -
       ((sef) jon)
     ::
-    ++  lake  |*(a+$_(*) $+(json (unit a)))
+    ++  lake  |*(a+_* $+(json (unit a)))
     ++  head-rush
       |*  a+rule
       |*  {b+cord c+*}
@@ -248,13 +248,13 @@
     ++  joke  |=(a+tank [%s (role (turn (wash 0^80 a) crip))])
     ++  jode  |=(a+time (jone (div (mul (sub a ~1970.1.1) 1.000) ~s1)))
     ++  jome                                            ::  stringify keys
-      |*  {a+$_(cord) b+$_(json)}
-      |=  c+(map $_(+<.a) $_(+<.b))
+      |*  {a+_cord b+_json}
+      |=  c+(map _+<.a _+<.b)
       (jobe (turn (~(tap by c)) (both a b)))
     ::
     ++  both                                            ::  cons two gates
-      |*  {a+$_(*) b+$_(*)}
-      |=(c+$_([+<.a +<.b]) [(a -.c) (b +.c)])
+      |*  {a+_* b+_*}
+      |=(c+_[+<.a +<.b] [(a -.c) (b +.c)])
     ::
     ++  thot
       |=  thought

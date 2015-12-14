@@ -41,14 +41,14 @@
 ::
 ++  react-to-json
   |=  src+manx  ^-  json
-  ?:  ?=($_(:/(**)) src)
+  ?:  ?=(_:/(**) src)
     (jape v.i.a.g.src)
   =+  atr=(mo a.g.src)
   ?:  (~(has by atr) [%urb %codemirror])
-    ?>  ?=({{$pre *} $_(:/(**)) $~} src)
+    ?>  ?=({{$pre *} _:/(**) $~} src)
     $(src ;codemirror(value "{v.i.a.g.i.c.src}");)
   ?:  (~(has by atr) [%urb %exec])           ::  runnable code attribute tag
-    ?>  ?=({{$pre *} $_(:/(**)) $~} src)      ::  verify its only a text node
+    ?>  ?=({{$pre *} _:/(**) $~} src)      ::  verify its only a text node
     =*  code  v.i.a.g.i.c.src
     %_    $
         src
@@ -82,10 +82,10 @@
 ++  react-to-tape                                    
   |=  src+manx  ^-  tape
   ?:  (~(has by (mo a.g.src)) [%urb %codemirror])
-    ?>  ?=({{$pre *} $_(:/(**)) $~} src)
+    ?>  ?=({{$pre *} _:/(**) $~} src)
     $(src ;codemirror(value "{v.i.a.g.i.c.src}");)
   ?:  (~(has by (mo a.g.src)) [%urb %exec])           ::  runnable code attribute tag
-    ?>  ?=({{$pre *} $_(:/(**)) $~} src)     ::  verify its only a text node
+    ?>  ?=({{$pre *} _:/(**) $~} src)     ::  verify its only a text node
     =*  code  v.i.a.g.i.c.src
     =+  ^=  result
       (mule |.((slap !>(.) (ream (crip code)))))      ::  compile and run safely
@@ -124,7 +124,7 @@
     ", "
       =<  ~(ram re %rose [", " "[" "]"] (turn c.src .))
       |=  a+manx
-      ?:  ?=($_(:/(**)) a)
+      ?:  ?=(_:/(**) a)
         leaf/(pojo (jape v.i.a.g.a))
       leaf/^$(src a)
     ")"

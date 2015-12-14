@@ -263,7 +263,7 @@
   ::
   ++  mo-bale                                           ::  assign outbone
     |=  him+ship 
-    ^-  {@ud $_(+>)}
+    ^-  {@ud _+>}
     =+  sad=(fall (~(get by sap) him) `scad`[1 ~ ~])
     =+  nom=(~(get by q.sad) hen)
     ?^  nom  [u.nom +>.$]
@@ -620,7 +620,7 @@
     ++  ap-call                                         ::  call into server
       ~/  %ap-call
       |=  {cog+term arg+vase}
-      ^-  {(unit tang) $_(+>)}
+      ^-  {(unit tang) _+>}
       =.  +>  ap-bowl 
       =^  arm  +>.$  (ap-farm cog)
       ?:  ?=($| -.arm)  [`p.arm +>.$]
@@ -681,7 +681,7 @@
     ++  ap-farm                                         ::  produce arm
       ~/  %ap-farm
       |=  cog+term
-      ^-  {(each vase tang) $_(+>)}
+      ^-  {(each vase tang) _+>}
       =+  pyz=(mule |.((~(mint wa vel) p.hav [%cnzy cog])))
       ?:  ?=($| -.pyz)  
         :_(+>.$ [%| +.pyz])
@@ -694,7 +694,7 @@
       ==
     ::
     ++  ap-fill                                         ::  add to queue
-      ^-  {? $_(.)}
+      ^-  {? _.}
       =+  suy=(fall (~(get by qel.ged) ost) 0)
       ?:  =(20 suy)
         ::  ~&  [%ap-fill-full [our dap] q.q.pry ost]
@@ -747,7 +747,7 @@
     ++  ap-move                                         ::  process each move
       ~/  %ap-move
       |=  vax+vase
-      ^-  {(each cove tang) $_(+>)}
+      ^-  {(each cove tang) _+>}
       ?@  q.vax    :_(+>.$ [%| (ap-suck "move: invalid move (atom)")])
       ?^  -.q.vax  :_(+>.$ [%| (ap-suck "move: invalid move (bone)")])
       ?@  +.q.vax  :_(+>.$ [%| (ap-suck "move: invalid move (card)")])
@@ -769,14 +769,14 @@
     ::
     ++  ap-move-quit                                    ::  give quit move
       |=  {sto+bone vax+vase}
-      ^-  {(each cove tang) $_(+>)}
+      ^-  {(each cove tang) _+>}
       :_  +>
       ?^  q.vax  [%| (ap-suck "quit: improper give")]
       [%& `cove`[sto %give `cuft`[%quit ~]]]
     ::
     ++  ap-move-diff                                    ::  give diff move
       |=  {sto+bone vax+vase}
-      ^-  {(each cove tang) $_(+>)}
+      ^-  {(each cove tang) _+>}
       =^  pec  vel  (~(spec wa vel) vax)
       ?.  &(?=(^ q.pec) ?=(@ -.q.pec) ((sane %tas) -.q.pec))
         :_(+>.$ [%| (ap-suck "diff: improper give")])
@@ -785,7 +785,7 @@
     ::
     ++  ap-move-hiss                                    ::  pass %hiss
       |=  {sto+bone vax+vase}
-      ^-  {(each cove tang) $_(+>)}
+      ^-  {(each cove tang) _+>}
       ?.  &(?=({p+* q+@ q+^} q.vax) ((sane %tas) q.q.vax))
         :_(+>.$ [%| (ap-suck "hiss: bad hiss ask.[%hiss wire mark cage]")])
       =^  gaw  vel  (~(slot wa vel) 7 vax)
@@ -802,7 +802,7 @@
     ::
     ++  ap-move-mess                                    ::  extract path, target
       |=  vax+vase
-      ^-  {(each (trel path ship term) tang) $_(+>)}
+      ^-  {(each (trel path ship term) tang) _+>}
       :_  +>.$
       ?.  ?&  ?=({p+* {q+@ r+@} s+*} q.vax)
               (gte 1 (met 7 q.q.vax))
@@ -815,7 +815,7 @@
     ::
     ++  ap-move-pass                                    ::  pass general move 
       |=  {sto+bone wut+* vax+vase}
-      ^-  {(each cove tang) $_(+>)}
+      ^-  {(each cove tang) _+>}
       ?.  &(?=(@ wut) ((sane %tas) wut))
         :_(+>.$ [%| (ap-suck "pass: malformed card")])
       =+  pux=((soft path) -.q.vax)
@@ -831,7 +831,7 @@
     ::
     ++  ap-move-poke                                    ::  pass %poke
       |=  {sto+bone vax+vase}
-      ^-  {(each cove tang) $_(+>)}
+      ^-  {(each cove tang) _+>}
       =^  yep  +>.$  (ap-move-mess vax)
       ?:  ?=($| -.yep)  :_(+>.$ yep)
       =^  gaw  vel  (~(slot wa vel) 7 vax)
@@ -845,7 +845,7 @@
     ::
     ++  ap-move-peer                                    ::  pass %peer
       |=  {sto+bone vax+vase}
-      ^-  {(each cove tang) $_(+>)}
+      ^-  {(each cove tang) _+>}
       =^  yep  +>.$  (ap-move-mess vax)
       :_  +>.$
       ?:  ?=($| -.yep)  yep
@@ -858,7 +858,7 @@
     ::
     ++  ap-move-pull                                    ::  pass %pull
       |=  {sto+bone vax+vase}
-      ^-  {(each cove tang) $_(+>)}
+      ^-  {(each cove tang) _+>}
       =^  yep  +>.$  (ap-move-mess vax)
       :_  +>.$
       ?:  ?=($| -.yep)  yep
@@ -870,7 +870,7 @@
     ::
     ++  ap-move-send                                    ::  pass gall action
       |=  {sto+bone vax+vase}
-      ^-  {(each cove tang) $_(+>)}
+      ^-  {(each cove tang) _+>}
       ?.  ?&  ?=({p+* {q+@ r+@} {s+@ t+*}} q.vax)
               (gte 1 (met 7 q.q.vax))
               ((sane %tas) r.q.vax)
@@ -1025,7 +1025,7 @@
     ::
     ++  ap-prop                                         ::  install
       |=  vux+(unit vase)
-      ^-  {(unit tang) $_(+>)}
+      ^-  {(unit tang) _+>}
       ?.  (ap-fond %prep) 
         ?~  vux
           `+>.$
@@ -1080,7 +1080,7 @@
     ::
     ++  ap-safe                                         ::  process move list
       |=  vax+vase
-      ^-  {(each (list cove) tang) $_(+>)}
+      ^-  {(each (list cove) tang) _+>}
       ?~  q.vax  :_(+>.$ [%& ~])
       ?@  q.vax  :_(+>.$ [%| (ap-suck "move: malformed list")])
       =^  hed  vel  (~(slot wa vel) 2 vax)
@@ -1094,7 +1094,7 @@
     ::
     ++  ap-sake                                         ::  handle result
       |=  vax+vase
-      ^-  {(unit tang) $_(+>)}
+      ^-  {(unit tang) _+>}
       ?:  ?=(@ q.vax)
         [`(ap-suck "sake: invalid product (atom)") +>.$]
       =^  hed  vel  (~(slot wa vel) 2 vax)
@@ -1111,7 +1111,7 @@
     ::
     ++  ap-save                                         ::  verify core
       |=  vax+vase
-      ^-  {(each vase tang) $_(+>)}
+      ^-  {(each vase tang) _+>}
       =^  gud  vel  (~(nest wa vel) p.hav p.vax)
       :_  +>.$
       ?.  gud
@@ -1127,7 +1127,7 @@
     ++  ap-slam                                         ::  virtual slam
       ~/  %ap-slam
       |=  {cog+term gat+vase arg+vase}
-      ^-  {(each vase tang) $_(+>)}
+      ^-  {(each vase tang) _+>}
       =+  wyz=(mule |.((~(play wa vel) [%cell p.gat p.arg] [%cncl `2 `3])))
       ?:  ?=($| -.wyz)
         %-  =+  sam=(~(peek ut p.gat) %free 6)

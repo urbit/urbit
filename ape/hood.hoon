@@ -18,7 +18,7 @@
         $helm  ?>(?=($helm -.paw) `helm-part`paw)       ::
         $kiln  ?>(?=($kiln -.paw) `kiln-part`paw)       ::
       ==                                                ::
-    ++  hood-head  $_(-:*hood-part)                     ::
+    ++  hood-head  _-:*hood-part                     ::
     ++  hood-make                                       ::
       |*  {our+@p hed+hood-head}                        ::
       ?-  hed                                           ::
@@ -70,17 +70,17 @@
 ++  coup-helm-hi    (wrap coup-hi):from-helm
 ++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
 ++  from-lib
-  |*  $_([%helm ..$ $_(abet)]:(helm))
+  |*  _[%helm ..$ $_(abet)]:(helm)
   =>  .(+< [identity start finish]=+<)
   =-  [wrap=- *start]                 ::  usage (wrap handle-arm):from-foo
-  |*  handle+$_(finish)
-  |=  $_(+<.handle)
+  |*  handle+_finish
+  |=  _+<.handle
   =.  +>.handle  (start hid (able identity))
   (ably (handle +<))
 ::
-++  from-drum  (from-lib %drum [..$ $_(se-abet)]:(drum))
-++  from-helm  (from-lib %helm [..$ $_(abet)]:(helm))
-++  from-kiln  (from-lib %kiln [..$ $_(abet)]:(kiln))
+++  from-drum  (from-lib %drum [..$ _se-abet]:(drum))
+++  from-helm  (from-lib %helm [..$ _abet]:(helm))
+++  from-kiln  (from-lib %kiln [..$ _abet]:(kiln))
 ::
 ++  init-helm                 |=({way+wire *} [~ +>])
 ++  made-kiln                 (wrap take-made):from-kiln

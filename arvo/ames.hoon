@@ -451,7 +451,7 @@
       |_  {our+ship saf+sufi}                           ::  per server
       ++  born                                          ::    born:as:go
         |=  {now+@da her+@p tic+@pG ges+gens pub+pass}  ::  register user
-        ^-  {(unit will) $_(+>)}
+        ^-  {(unit will) _+>}
         ?.  =(our (sein her))  [~ +>.$]
         =+  nes=sen
         =+  ryt=(end 6 1 (shaf %tick (mix her (shax sec:ex:q.nes))))
@@ -491,7 +491,7 @@
         ::
         ++  griz                                        ::    griz:lax:as:go
           |=  now+@da                                   ::  generate key for
-          ^-  {p+code q+$_(+>)}
+          ^-  {p+code q+_+>}
           =+  key=(shas %enty (mix now any.ton))
           :-  key
           %=  +>.$
@@ -507,7 +507,7 @@
         ::
         ++  kuch                                        ::    kuch:lax:as:go
           |=  had+hand                                  ::  hear key tag
-          ^-  (unit {code $_(+>)})
+          ^-  (unit {code _+>})
           =+  wey=(~(get by heg.caq.dur) had)
           ?^  wey
             =+  key=u.wey
@@ -595,14 +595,14 @@
         ::
         ++  zuul                                        ::    zuul:lax:as:go
           |=  {now+@da ham+meal}                        ::  encode message
-          ^-  {p+(list rock) q+$_(+>)}
+          ^-  {p+(list rock) q+_+>}
           =<  weft
           |%
           ++  wasp                                      ::  null security
             ^-({p+skin q+@} [%none (jam ham)])
           ::
           ++  weft                                      ::  fragment message
-            ^-  {p+(list rock) q+$_(+>.$)}
+            ^-  {p+(list rock) q+_+>.$}
             =^  gim  ..weft  wisp
             :_  +>.$
             ^-  (list rock)
@@ -624,7 +624,7 @@
             $(ruv t.ruv, inx +(inx))
           ::
           ++  wisp                                      ::  generate message
-            ^-  {{p+skin q+@} q+$_(..wisp)}
+            ^-  {{p+skin q+@} q+_..wisp}
             ?:  =(%carp -.ham)
               [wasp ..wisp]
             ?:  !=(~ yed.caq.dur)
@@ -671,7 +671,7 @@
         ~(. lax [her ?~(fod (gur her) u.fod)])
       ::
       ++  nux                                           ::  install dore
-        |=  new+$_(lax)
+        |=  new+_lax
         ^+  +>
         +>(hoc.saf (~(put by hoc.saf) her.new dur.new))
       ::
@@ -737,7 +737,7 @@
       ==
     ::
     ++  su                                              ::  install safe
-      |=  new+$_(as)
+      |=  new+_as
       ^-  town
       ton(urb (~(put by urb.ton) our.new saf.new))
     ::
@@ -748,7 +748,7 @@
     ::
     ++  us                                              ::  produce safe
       |=  our+ship
-      ^-  (unit $_(as))
+      ^-  (unit _as)
       =+  goh=(~(get by urb.ton) our)
       ?~  goh  ~
       [~ ~(. as [our u.goh])]
@@ -779,7 +779,7 @@
     ::
     ++  bick                                            ::    bick:pu
       |=  {now+@da fap+flap}                            ::  ack by hash
-      ^-  {{p+(unit soup) q+(list rock)} $_(+>)}
+      ^-  {{p+(unit soup) q+(list rock)} _+>}
       =+  sun=(~(get by diq) fap)
       ?~  sun
         ::  ~&  [%bick-none `@p`(mug fap)]              ::  not a real error
@@ -828,7 +828,7 @@
     ::
     ++  bine                                            ::    bine:pu
       |=  {now+@da num+@ud}                             ::  apply ack
-      ^-  {(unit soup) $_(+>)}
+      ^-  {(unit soup) _+>}
       ?~  puq  !!
       ?.  =(num p.n.puq)
         ?:  (gth num p.n.puq)
@@ -852,7 +852,7 @@
     ::
     ++  bock                                            ::    bock:pu
       |=  {now+@da num+@ud}                             ::  ack by sequence
-      ^-  {(unit soup) $_(+>)}
+      ^-  {(unit soup) _+>}
       =^  gym  +>  (bine now num)
       :-  gym
       ?:  (gth num nep)
@@ -869,7 +869,7 @@
     ::
     ++  harv                                            ::    harv:pu
       |=  now+@da                                       ::  harvest queue
-      ^-  {(list rock) $_(+>)}
+      ^-  {(list rock) _+>}
       ?:  =(~ puq)  [~ +>(rtn ~)]
       ?.  (gth caw nif)  [~ +>]
       =+  wid=(sub caw nif)
@@ -908,7 +908,7 @@
     ::
     ++  wack                                            ::    wack:pu
       |=  now+@da                                       ::  wakeup (timeout)
-      ^-  {(list rock) $_(+>)}
+      ^-  {(list rock) _+>}
       ?.  &(!=(~ rtn) ?>(?=(^ rtn) (gte now u.rtn)))  [~ +>]
       ::  ~&  [%slow (div rto (div ~s1 1.000))]
       =.  +>  (wept 0 nus)
@@ -947,7 +947,7 @@
     ::
     ++  whap                                            ::    whap:pu
       |=  {now+@da gom+soup wyv+(list rock)}            ::  send a message
-      ^-  {(list rock) $_(+>)}
+      ^-  {(list rock) _+>}
       =.  pyz  (~(put by pyz) gom (lent wyv))
       =.  +>
         |-  ^+  +>.^$
@@ -1141,7 +1141,7 @@
         ::
         ++  cook                                        ::    cook:ho:um:am
           |=  {cop+coop cha+path ram+(unit {ryn+lane dam+flap})}
-          ^-  {gud+? con+$_(+>)}                        ::  acknowledgment
+          ^-  {gud+? con+_+>}                        ::  acknowledgment
           ::  ~&  [%cook cop num cha ram]
           =+  rum=(need (~(get by raz.bah) cha))
           =+  lat=(~(get by mis.rum) did.rum)
@@ -1162,7 +1162,7 @@
         ::
         ++  done                                        ::    done:ho:um:am
           |=  {cha+path num+@ud}                        ::  complete outgoing
-          ^-  {(unit duct) $_(+>)}
+          ^-  {(unit duct) _+>}
           =+  rol=(need (~(get by ryl.bah) cha))
           =+  rix=(~(get by san.rol) num)
           ?~  rix  [~ +>.$]
@@ -1573,7 +1573,7 @@
             ~&  [%ames-call-flub (@tas `*`-.q.hic)]
             ((hard kiss-ames) q.hic)
           ==
-      ^-  {p+(list move) q+$_(..^$)}
+      ^-  {p+(list move) q+_..^$}
       =^  duy  ..knob
         (knob hen q.hic)
       [duy ..^$]
@@ -1625,7 +1625,7 @@
     ++  stay  fox
     ++  take                                            ::  accept response
       |=  {tea+wire hen+duct hin+(hypo sign)}
-      ^-  {p+(list move) q+$_(..^$)}
+      ^-  {p+(list move) q+_..^$}
       =^  duy  ..knap
         (knap tea hen q.hin)
       [duy ..^$]
@@ -1746,7 +1746,7 @@
   ::
   ++  knap
     |=  {tea+wire hen+duct sih+sign}
-    ^-  {(list move) $_(+>)}
+    ^-  {(list move) _+>}
     ?-  +<.sih
         $crud  [[[hen [%slip %d %flog +.sih]] ~] +>]
         $went  [~ +>]
@@ -1766,7 +1766,7 @@
           ?-(+<.sih $mean `p.+.sih, $nice ~)
       =>  %_(. fox q.fuy)
       =|  out+(list move)
-      |-  ^-  {p+(list move) q+$_(+>.^$)}
+      |-  ^-  {p+(list move) q+_+>.^$}
       ?~  p.fuy
         [(flop out) +>.^$]
       =^  toe  fox  (clop now hen i.p.fuy)
@@ -1775,7 +1775,7 @@
   ::
   ++  knob
     |=  {hen+duct kyz+kiss-ames}
-    ^-  {(list move) $_(+>)}
+    ^-  {(list move) _+>}
     ?:  ?=($crud -.kyz)
       [[[hen [%slip %d %flog kyz]] ~] +>]
     ?:  ?=($west -.kyz)
@@ -1831,7 +1831,7 @@
         ==
     =>  %_(. fox q.fuy)
     =|  out+(list move)
-    |-  ^-  {p+(list move) q+$_(+>.^$)}
+    |-  ^-  {p+(list move) q+_+>.^$}
     ?~  p.fuy
       [(flop out) +>.^$]
     =^  toe  fox  (clop now hen i.p.fuy)

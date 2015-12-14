@@ -4,13 +4,13 @@
 |=  pit+vase
 =>  =~
 |%
-++  sqeu  |*  {a+$_(*) b+$_(*)}                         ::  binary skew queno
+++  sqeu  |*  {a+_* b+_*}                         ::  binary skew queno
           $:  r+@u                                      ::  rank/depth
               k+a                                       ::  priority
               n+b                                       ::  value
               c+(broq a b)                              ::  children
           ==                                            ::
-++  broq  |*  {a+$_(*) b+$_(*)}                         ::  brodal skew qeu
+++  broq  |*  {a+_* b+_*}                         ::  brodal skew qeu
           (list (sqeu a b))                             ::
 ++  gift  gift-behn                                     ::  out result <-$
 ++  kiss                                                ::  in request ->$
@@ -125,7 +125,7 @@
   ++  gas
     |=  b+(list {k+key n+val})
     ^+  a
-    q:(roll b |=({{k+key n+val} q+$_(a)} (put(a q) k n)))
+    q:(roll b |=({{k+key n+val} q+_a} (put(a q) k n)))
   ::
   ++  tap
     ^-  (list {k+key n+val})
@@ -156,7 +156,7 @@
   |=  $:  hen+duct
           hic+(hypo (hobo kiss))
       ==
-  ^-  {p+(list move) q+$_(..^$)}
+  ^-  {p+(list move) q+_..^$}
   =>  %=    .                                           ::  XX temporary
           q.hic
         ^-  kiss

@@ -23,14 +23,14 @@
       |*  {fel+rule wit+fist}
       %+  cu  mo
       %-  ci  :_  (om wit)
-      |=  a+(map cord $_((need *wit)))
-      ^-  (unit (list $_([(wonk *fel) (need *wit)])))
+      |=  a+(map cord _(need *wit))
+      ^-  (unit (list _[(wonk *fel) (need *wit)]))
       (zl (turn (~(tap by a)) (head-rush fel)))
     ::
     ++  ke                                              ::  callbacks
-      |*  {gar+* sef+$_(|.(fist))}
+      |*  {gar+* sef+_|.(fist)}
       |=  jon+json
-      ^-  (unit $_(gar))
+      ^-  (unit _gar)
       =-  ~!  gar  ~!  (need -)  -
       ((sef) jon)
     ::
@@ -38,13 +38,13 @@
       :: |*(a=fist (cu sa (ar a)))  ::  XX  types
       |*  a+fist 
       %-  cu  :_  (ar a)
-      ~(gas in *(set $_((need *a))))
+      ~(gas in *(set _(need *a)))
     ::
-    ++  lake  |*(a+$_(*) $+(json (unit a)))
+    ++  lake  |*(a+_* $+(json (unit a)))
     ++  peach
       |*  a+{rule rule}
       |=  tub+nail  
-      ^-  (like (each $_((wonk (-.a))) $_((wonk (+.a)))))
+      ^-  (like (each _(wonk (-.a)) _(wonk (+.a))))
       %.  tub
       ;~(pose (stag %& -.a) (stag %| +.a))
     ::

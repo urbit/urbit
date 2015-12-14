@@ -1128,7 +1128,7 @@
     (sa lat)
   ::
   ++  mabe                                            ::  maybe fire function
-    |*  {rov+rove fun+$+(@da $_(+>.^$))}
+    |*  {rov+rove fun+$+(@da _+>.^$)}
     ^+  +>.$
     %-  fall  :_  +>.$
     %-  bind  :_  fun
@@ -1430,7 +1430,7 @@
     ::
     ++  edit                                            ::    edit:ze
       |=  {wen+@da lem+nuri}                            ::  edit
-      ^-  {(unit (map path lobe)) $_(..ze)}
+      ^-  {(unit (map path lobe)) _..ze}
       ?-  -.lem
         {$&}
              =^  yak  lat.ran                           ::  merge objects
@@ -1689,7 +1689,7 @@
         (bind (read-y yon r.mun) (curr bind (cury same %&)))
       %+  bind
         (rewind yon)
-      |=  a+(unit $_(+>.$))
+      |=  a+(unit _+>.$)
       ^-  (unit (each cage lobe))
       ?~  a
         ~
@@ -1697,7 +1697,7 @@
     ::
     ++  rewind                                          ::    rewind:ze
       |=  yon+aeon                                      ::  rewind to aeon
-      ^-  (unit (unit $_(+>)))
+      ^-  (unit (unit _+>))
       ?:  =(let.dom yon)  ``+>
       ?:  (gth yon let.dom)  !!                         ::  don't have version
       =+  hat=q:(aeon-to-yaki yon)

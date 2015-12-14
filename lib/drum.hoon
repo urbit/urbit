@@ -25,7 +25,7 @@
       cas+case                                          ::  boot case
   ==                                                    ::
 ++  source                                              ::  input device
-  $:  edg+$_(80)                                        ::  terminal columns
+  $:  edg+_80                                        ::  terminal columns
       off+@ud                                           ::  window offset
       kil+(unit (list @c))                              ::  kill buffer
       inx+@ud                                           ::  ring index
@@ -243,7 +243,7 @@
   ^+  .
   %+  roll  (~(tap in ray))
   =<  .(con +>)
-  |=  {wel+well con+$_(..se-adit)}  ^+  con
+  |=  {wel+well con+_..se-adit}  ^+  con
   =.  +>.$  con
   =+  hig=(~(get by fur) q.wel) 
   ?:  &(?=(^ hig) |(?=($~ u.hig) =(p.wel syd.u.u.hig)))  +>.$
@@ -255,7 +255,7 @@
   ^+  .
   %+  roll  (~(tap in eel))
   =<  .(con +>)
-  |=  {gil+gill con+$_(.)}  ^+  con
+  |=  {gil+gill con+_.}  ^+  con
   =.  +>.$  con
   ?:  (~(has by fug) gil)
     +>.$
@@ -267,7 +267,7 @@
   ^+  .
   %-  ~(rep by bin)
   =<  .(con +>)
-  |=  {{ost+bone dev+source} con+$_(.)}  ^+  con
+  |=  {{ost+bone dev+source} con+_.}  ^+  con
   =+  xeno=se-subze-local:%_(con ost ost, dev dev)
   xeno(ost ost.con, dev dev.con, bin (~(put by bin) ost dev.xeno))
 ::
@@ -275,7 +275,7 @@
   ^+  .
   %-  ~(rep by fug)
   =<  .(con +>)
-  |=  {{gil+gill *} con+$_(.)}  ^+  con
+  |=  {{gil+gill *} con+_.}  ^+  con
   =.  +>.$  con
   ?:  (~(has in eel) gil)
     +>.$

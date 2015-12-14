@@ -83,7 +83,7 @@
 ++  gate  $+(* *)                                       ::  general gate
 ++  hair  {p+@ud q+@ud}                                 ::  parsing trace
 ++  like  |*  a+$+(* *)                                 ::  generic edge
-          |=  b+$_(`*`[(hair) ~])                       ::
+          |=  b+_`*`[(hair) ~]                       ::
           :-  p=(hair -.b)                              ::
           ^=  q                                         ::
           ?@  +.b  ~                                    ::
@@ -111,8 +111,8 @@
 ++  nail  {p+hair q+tape}                               ::  parsing input
 ++  numb  @                                             ::  just a number
 ++  pair  |*({a+$+(* *) b+$+(* *)} {p+a q+b})           ::  just a pair
-++  quid  |*({a+$+(* *) b+*} {a $_(b)})                 ::  for =^
-++  quip  |*({a+$+(* *) b+*} {(list a) $_(b)})          ::  for =^
+++  quid  |*({a+$+(* *) b+*} {a _b})                 ::  for =^
+++  quip  |*({a+$+(* *) b+*} {(list a) _b})          ::  for =^
 ++  wand  |*  a+(pole $+(* *))                          ::  hetero list
           |=  b+*                                       ::
           ?~  a  ~                                      ::
@@ -143,7 +143,7 @@
 ++  qual  |*  {a+$+(* *) b+$+(* *) c+$+(* *) d+$+(* *)} ::  just a quadruple
           {p+a q+b r+c s+d}                             ::
 ++  ring  @                                             ::  private key
-++  rule  $_(|=(nail *edge))                            ::  parsing rule
+++  rule  _|=(nail *edge)                            ::  parsing rule
 ++  span  @ta                                           ::  text-atom (ASCII)
 ++  spot  {p+path q+pint}                               ::  range in file
 ++  tang  (list tank)                                   ::  bottom-first error
@@ -185,7 +185,7 @@
               {$1 p+term q+toga}                        ::  deep toga
               {$2 p+toga q+toga}                        ::  cell toga
           ==                                            ::
-++  trap  |*(a+$_(*) $_(|?(*a)))                        ::  makes perfect sense
+++  trap  |*(a+_* _|?(*a))                        ::  makes perfect sense
 ++  trel  |*  {a+$+(* *) b+$+(* *) c+$+(* *)}           ::  just a triple
           {p+a q+b r+c}                                 ::
 ++  tuna                                                ::  tagflow
@@ -617,7 +617,7 @@
   [~ u=[u.a u.b]]
 ::
 ++  clap                                                ::  combine
-  |*  {a+(unit) b+(unit) c+$_(|=(^ +<-))}
+  |*  {a+(unit) b+(unit) c+_|=(^ +<-)}
   ?~  a  b
   ?~  b  a
   [~ u=(c u.a u.b)]
@@ -663,7 +663,7 @@
   |*  a+(list)
   =>  .(a (homo a))
   ^+  a
-  =+  b=`$_(a)`~
+  =+  b=`_a`~
   |-
   ?~  a  b
   $(a t.a, b [i.a b])
@@ -720,13 +720,13 @@
 ++  reap                                                ::  replicate
   ~/  %reap
   |*  {a+@ b+*}
-  |-  ^-  (list $_(b))
+  |-  ^-  (list _b)
   ?~  a  ~
   [b $(a (dec a))]
 ::
 ++  reel                                                ::  right fold
   ~/  %reel
-  |*  {a+(list) b+$_(|=({* *} +<+))}
+  |*  {a+(list) b+_|=({* *} +<+)}
   |-  ^+  +<+.b
   ?~  a
     +<+.b
@@ -734,7 +734,7 @@
 ::
 ++  roll                                                ::  left fold
   ~/  %roll
-  |*  {a+(list) b+$_(|=({* *} +<+))}
+  |*  {a+(list) b+_|=({* *} +<+)}
   |-  ^+  +<+.b
   ?~  a
     +<+.b
@@ -795,9 +795,9 @@
   |-  ^+  a
   ?~  a  ~
   %+  weld
-    $(a (skim t.a |=(c+$_(i.a) (b c i.a))))
+    $(a (skim t.a |=(c+_i.a (b c i.a))))
   ^+  t.a
-  [i.a $(a (skim t.a |=(c+$_(i.a) !(b c i.a))))]
+  [i.a $(a (skim t.a |=(c+_i.a !(b c i.a))))]
 ::
 ++  swag                                                ::  infix
   |*  {{a+@ b+@} c+(list)}
@@ -2238,21 +2238,21 @@
 ++  head  |*(^ +<-)                                     ::  get head
 ++  tail  |*(^ +<+)                                     ::  get head
 ++  test  |=(^ =(+<- +<+))                              ::  equality
-++  cork  |*({a+$_(|=(* **)) b+gate} (corl b a))        ::  compose forward
+++  cork  |*({a+_|=(* **) b+gate} (corl b a))        ::  compose forward
 ++  corl                                                ::  compose backwards
-  |*  {a+gate b+$_(|=(* **))}
+  |*  {a+gate b+_|=(* **)}
   =<  +:|.((a (b)))      ::  type check
-  |*  c+$_(+<.b)
+  |*  c+_+<.b
   (a (b c))
 ::
 ++  cury                                                ::  curry left
-  |*  {a+$_(|=(^ **)) b+*}
-  |*  c+$_(+<+.a)
+  |*  {a+_|=(^ **) b+*}
+  |*  c+_+<+.a
   (a b c)
 ::
 ++  curr                                                ::  curry right
-  |*  {a+$_(|=(^ **)) c+*}     
-  |*  b+$_(+<+.a)
+  |*  {a+_|=(^ **) c+*}     
+  |*  b+_+<+.a
   (a b c)
 ::
 ++  gulf                                                ::  range list
@@ -2278,7 +2278,7 @@
 ::
 ++  mean  |=(a+tang (fear (flop a) |.(!!)))             ::  deify stack trace
 ++  fear                                                ::  insert user mean
-  |*  {a+tang $_(|?(**))}
+  |*  {a+tang _|?(**)}
   ^+  (+<+)
   =>  .(a `tang`a)
   ?~  a  (+<+)
@@ -2373,7 +2373,7 @@
       ?:  (hor b n.a)
         [n.a $(a l.a) r.a]
       [n.a l.a $(a r.a)]
-    |-  ^-  {$?($~ $_(a))}
+    |-  ^-  {$?($~ _a)}
     ?~  l.a  r.a
     ?~  r.a  l.a
     ?:  (vor n.l.a n.r.a)
@@ -2382,7 +2382,7 @@
   ::
   +-  dif                                               ::  difference
     ~/  %dif
-    |*  b+$_(a)
+    |*  b+_a
     |-  ^+  a
     ?~  b
       a
@@ -2390,7 +2390,7 @@
     ?>  ?=(^ c)
     =+  d=$(a l.c, b l.b)
     =+  e=$(a r.c, b r.b)
-    |-  ^-  {$?($~ $_(a))}
+    |-  ^-  {$?($~ _a)}
     ?~  d  e
     ?~  e  d
     ?:  (vor n.d n.e)
@@ -2409,7 +2409,7 @@
   ::
   +-  gas                                               ::  concatenate
     ~/  %gas
-    |=  b+(list $_(?>(?=(^ a) n.a)))
+    |=  b+(list _?>(?=(^ a) n.a))
     |-  ^+  a
     ?~  b
       a
@@ -2429,7 +2429,7 @@
   ::
   +-  int                                               ::  intersection
     ~/  %int
-    |*  b+$_(a)
+    |*  b+_a
     |-  ^+  a
     ?~  b
       ~
@@ -2464,14 +2464,14 @@
     [n.c [n.a l.a l.c] r.c]
   ::
   +-  rep                                               ::  replace by product
-    |*  b+$_(|=({* *} +<+))
+    |*  b+_|=({* *} +<+)
     |-
     ?~  a  +<+.b
     $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
   ::
   +-  tap                                               ::  list tiles a set
     ~/  %tap
-    |=  b+(list $_(?>(?=(^ a) n.a)))
+    |=  b+(list _?>(?=(^ a) n.a))
     ^+  b
     ?~  a
       b
@@ -2479,7 +2479,7 @@
   ::
   +-  uni                                               ::  union
     ~/  %uni
-    |*  b+$_(a)
+    |*  b+_a
     ?:  =(a b)  a
     |-  ^+  a
     ?~  b
@@ -2539,7 +2539,7 @@
   ::
   +-  gas                                               ::  concatenate
     |*  b+(list {p+* q+*})
-    =>  .(b `(list $_(?>(?=({{* ^} ^} a) [p=p q=n.q]:n.a)))`b)
+    =>  .(b `(list _?>(?=({{* ^} ^} a) [p=p q=n.q]:n.a))`b)
     |-  ^+  a
     ?~  b
       a
@@ -2611,7 +2611,7 @@
       ?:  (gor b p.n.a)
         [n.a $(a l.a) r.a]
       [n.a l.a $(a r.a)]
-    |-  ^-  {$?($~ $_(a))}
+    |-  ^-  {$?($~ _a)}
     ?~  l.a  r.a
     ?~  r.a  l.a
     ?:  (vor p.n.l.a p.n.r.a)
@@ -2620,7 +2620,7 @@
   ::
   +-  dif                                               ::  difference
     ~/  %dif
-    |*  b+$_(a)
+    |*  b+_a
     |-  ^+  a
     ?~  b
       a
@@ -2628,7 +2628,7 @@
     ?>  ?=(^ c)
     =+  d=$(a l.c, b l.b)
     =+  e=$(a r.c, b r.b)
-    |-  ^-  {$?($~ $_(a))}
+    |-  ^-  {$?($~ _a)}
     ?~  d  e
     ?~  e  d
     ?:  (vor p.n.d p.n.e)
@@ -2648,7 +2648,7 @@
   +-  gas                                               ::  concatenate
     ~/  %gas
     |*  b+(list {p+* q+*})
-    =>  .(b `(list $_(?>(?=(^ a) n.a)))`b)
+    =>  .(b `(list _?>(?=(^ a) n.a))`b)
     |-  ^+  a
     ?~  b
       a
@@ -2657,7 +2657,7 @@
   +-  get                                               ::  grab value by key
     ~/  %get
     |=  b+*
-    ^-  {$@($~ {$~ u+$_(?>(?=(^ a) q.n.a))})}
+    ^-  {$@($~ {$~ u+_?>(?=(^ a) q.n.a)})}
     ?~  a
       ~
     ?:  =(b p.n.a)
@@ -2678,7 +2678,7 @@
   ::
   +-  int                                               ::  intersection
     ~/  %int
-    |*  b+$_(a)
+    |*  b+_a
     |-  ^+  a
     ?~  b
       ~
@@ -2697,7 +2697,7 @@
     %-  uni(+< $(b r.b, a [n.a ~ r.a]))  $(a l.a)
   ::
   +-  mar                                               ::  add with validation
-    |*  {b+$_(?>(?=(^ a) p.n.a)) c+(unit $_(?>(?=(^ a) q.n.a)))}
+    |*  {b+_?>(?=(^ a) p.n.a) c+(unit _?>(?=(^ a) q.n.a))}
     ?~  c
       (del b)
     (put b u.c)
@@ -2725,7 +2725,7 @@
     [n.d [n.a l.a l.d] r.d]
   ::
   +-  rep                                               ::  replace by product
-    |*  b+$_(|=({* *} +<+))
+    |*  b+_|=({* *} +<+)
     |-
     ?~  a  +<+.b
     $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
@@ -2748,7 +2748,7 @@
   ::
   +-  tap                                               ::  listify pairs
     ~/  %tap
-    |=  b+(list $_(?>(?=(^ a) n.a)))
+    |=  b+(list _?>(?=(^ a) n.a))
     ^+  b
     ?~  a
       b
@@ -2756,7 +2756,7 @@
   ::
   +-  uni                                               ::  union, merge
     ~/  %uni
-    |*  b+$_(a)
+    |*  b+_a
     |-  ^+  a
     ?~  b
       a
@@ -2804,12 +2804,12 @@
     +((max $(a l.a) $(a r.a)))
   ::
   +-  gas                                               ::  insert list to que
-    |=  b+(list $_(?>(?=(^ a) n.a)))
+    |=  b+(list _?>(?=(^ a) n.a))
     |-  ^+  a
     ?~(b a $(b t.b, a (put(+< a) i.b)))
   ::
   +-  get                                               ::  head-tail pair
-    |-  ^+  ?>(?=(^ a) [p=n.a q=*(qeu $_(n.a))])
+    |-  ^+  ?>(?=(^ a) [p=n.a q=*(qeu _n.a)])
     ?~  a
       !!
     ?~  r.a
@@ -2834,7 +2834,7 @@
     bal(+< a(l $(a l.a)))
   ::
   +-  tap                                               ::  adds list to end
-    |=  b+(list $_(?>(?=(^ a) n.a)))
+    |=  b+(list _?>(?=(^ a) n.a))
     =+  z=0                                             ::  XX breaks jet match
     ^+  b
     ?~  a
@@ -2842,7 +2842,7 @@
     $(a r.a, b [n.a $(a l.a)])
   ::
   +-  top                                               ::  produces head
-    |-  ^-  (unit $_(?>(?=(^ a) n.a)))
+    |-  ^-  (unit _?>(?=(^ a) n.a))
     ?~  a  ~
     ?~(r.a [~ n.a] $(a r.a))
   --
@@ -2853,20 +2853,20 @@
   |*  a+(pole ^)
   =>  .(a ^.(|*(a+$@($~ ^) ?~(a ~ [i=-.a t=$(a +.a)])) a))
   =>  .(a ^.(homo a))
-  =>  .(a `(list {p+$_(-<.a) q+$_(->.a)})`a)
-  =+  b=*(map $_(?>(?=(^ a) p.i.a)) $_(?>(?=(^ a) q.i.a)))
+  =>  .(a `(list {p+_-<.a q+_->.a})`a)
+  =+  b=*(map _?>(?=(^ a) p.i.a) _?>(?=(^ a) q.i.a))
   (~(gas by b) a)
 ::
 ++  sa                                                  ::  make a set
   |*  a+(list)
-  =>  .(a `$_((homo a))`a)
-  =+  b=*(set $_(?>(?=(^ a) i.a)))
+  =>  .(a `_(homo a)`a)
+  =+  b=*(set _?>(?=(^ a) i.a))
   (~(gas in b) a)
 ::
 ++  qu                                                  ::  qeu from list
   |*  a+(list)
-  =>  .(a `$_((homo a))`a)
-  =+  b=*(qeu $_(?>(?=(^ a) i.a)))
+  =>  .(a `_(homo a)`a)
+  =+  b=*(qeu _?>(?=(^ a) i.a))
   (~(gas to b) a)
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::
 ::::              chapter 2e, miscellaneous libs        ::::
@@ -2983,7 +2983,7 @@
   |*  huf+*
   ~/  %fun
   |=  tub+nail
-  ^-  (like $_(huf))
+  ^-  (like _huf)
   [p=p.tub q=[~ u=[p=huf q=tub]]]
 ::
 ++  fail  |=(tub+nail [p=p.tub q=~])                    ::  never parse
@@ -3000,7 +3000,7 @@
 ::
 ++  here                                                ::  place-based apply
   ~/  %here
-  |*  {hez+$_(|=({a+pint b+*} [a b])) sef+rule}
+  |*  {hez+_|=({a+pint b+*} [a b]) sef+rule}
   ~/  %fun
   |=  tub+nail
   =+  vex=(sef tub)
@@ -3051,9 +3051,9 @@
   (next tub)
 ::
 ++  knee                                                ::  callbacks
-  |*  {gar+* sef+$_(|.(*rule))}
+  |*  {gar+* sef+_|.(*rule)}
   |=  tub+nail
-  ^-  (like $_(gar))
+  ^-  (like _gar)
   ((sef) tub)
 ::
 ++  mask                                                ::  match char in set
@@ -3125,7 +3125,7 @@
         ?@(wan (lth ort wan) (lth ort -.wan))
       ?@(wan (lth +.ort wan) (lth +.ort -.wan))
   =+  ^=  hel                                           ::  build parser map
-      =+  hel=`(tree $_(?>(?=(^ leh) i.leh)))`~
+      =+  hel=`(tree _?>(?=(^ leh) i.leh))`~
       |-  ^+  hel
       ?~  leh
         ~
@@ -3162,10 +3162,10 @@
 ::
 ++  stir
   ~/  %stir
-  |*  {rud+* raq+$_(|*({a+* b+*} [a b])) fel+rule}
+  |*  {rud+* raq+_|*({a+* b+*} [a b]) fel+rule}
   ~/  %fun
   |=  tub+nail
-  ^-  (like $_(rud))
+  ^-  (like _rud)
   =+  vex=(fel tub)
   ?~  q.vex
     [p.vex [~ rud tub]]
@@ -3176,7 +3176,7 @@
 ++  stun                                                ::  parse several times
   |*  {{les+@ mos+@} fel+rule}
   |=  tub+nail
-  ^-  (like (list $_((wonk (fel)))))
+  ^-  (like (list _(wonk (fel))))
   ?:  =(0 mos)
     [p.tub [~ ~ tub]]
   =+  vex=(fel tub)
@@ -3197,7 +3197,7 @@
 ::
 ++  bend                                                ::  conditional comp
   ~/  %bend
-  |*  raq+$_(|*({a+* b+*} [~ u=[a b]]))
+  |*  raq+_|*({a+* b+*} [~ u=[a b]])
   ~/  %fun
   |*  {vex+edge sab+rule}
   ?~  q.vex
@@ -3213,7 +3213,7 @@
 ::
 ++  comp
   ~/  %comp
-  |*  raq+$_(|*({a+* b+*} [a b]))                       ::  arbitrary compose
+  |*  raq+_|*({a+* b+*} [a b])                       ::  arbitrary compose
   ~/  %fun
   |*  {vex+edge sab+rule}
   ?~  q.vex
@@ -3318,13 +3318,13 @@
 ++  plus  |*(fel+rule ;~(plug fel (star fel)))
 ++  punt  |*({a+rule} ;~(pose (stag ~ a) (easy ~)))
 ++  slug
-  |*  raq+$_(|*({a+* b+*} [a b]))
+  |*  raq+_|*({a+* b+*} [a b])
   |*  {bus+rule fel+rule}
   ;~((comp raq) fel (stir +<+.raq raq ;~(pfix bus fel)))
 ::
 ++  star                                                ::  0 or more times
   |*  fel+rule
-  (stir `(list $_((wonk *fel)))`~ |*({a+* b+*} [a b]) fel)
+  (stir `(list _(wonk *fel))`~ |*({a+* b+*} [a b]) fel)
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eF, parsing (ascii)          ::
 ::
@@ -3795,7 +3795,7 @@
         [(runt [tab ' '] hom) lug]
       =>  .(tab (add tab 2), edg (sub edg 2))
       =+  mut=(trim (sub edg tab) hom)
-      :-  (runt [(sub tab 2) ' '] ['\\' '/' (weld p.mut `$_(hom)`['\\' '/' ~])])
+      :-  (runt [(sub tab 2) ' '] ['\\' '/' (weld p.mut `_hom`['\\' '/' ~])])
       =>  .(hom q.mut)
       |-
       ?~  hom
@@ -4698,7 +4698,7 @@
 ::
 ++  mule                                                ::  typed virtual
   ~/  %mule
-  |*  taq+$_(|.(**))
+  |*  taq+_|.(**)
   =+  mud=(mute taq)
   ?-  -.mud
     {$&}  [%& p=$:taq]                                  ::  XX transition
@@ -4706,7 +4706,7 @@
   ==
 ::
 ++  mute                                                ::  untyped virtual
-  |=  taq+$_(^?(|.(**)))
+  |=  taq+_^?(|.(**))
   ^-  (each * (list tank))
   =+  ton=(mock [taq 9 2 0 1] |=(* ~))
   ?-  -.ton
@@ -4745,12 +4745,12 @@
   |*  {hel+(list) hev+(list)}
   |-  ^+  hev
   =+  ^=  sev
-      =+  [inx=0 sev=*(map $_(i.-.hev) (list @ud))]
+      =+  [inx=0 sev=*(map _i.-.hev (list @ud))]
       |-  ^+  sev
       ?~  hev  sev
       =+  guy=(~(get by sev) i.hev)
       $(hev t.hev, inx +(inx), sev (~(put by sev) i.hev [inx ?~(guy ~ u.guy)]))
-  =|  gox+{p+@ud q+(map @ud {p+@ud q+$_(hev)})}
+  =|  gox+{p+@ud q+(map @ud {p+@ud q+_hev})}
   =<  abet
   =<  main
   |%
@@ -4875,7 +4875,7 @@
 ++  lurk                                                ::  apply list patch
   |*  {hel+(list) rug+(urge)}
   ^+  hel
-  =+  war=`$_(hel)`~
+  =+  war=`_hel`~
   |-  ^+  hel
   ?~  rug  (flop war)
   ?-    -.i.rug
@@ -4900,14 +4900,14 @@
 ++  lusk                                                ::  lcs to list patch
   |*  {hel+(list) hev+(list) lcs+(list)}
   =+  ^=  rag
-      ^-  {$%({$& p+@ud} {$| p+$_(lcs) q+$_(lcs)})}      ::  XX translation
+      ^-  {$%({$& p+@ud} {$| p+_lcs q+_lcs})}      ::  XX translation
       [%& 0]
-  =>  .(rag [p=rag q=*(list $_(rag))])
+  =>  .(rag [p=rag q=*(list _rag)])
   =<  abet  =<  main
   |%
   ++  abet  =.(q.rag ?:(=([& 0] p.rag) q.rag [p.rag q.rag]) (flop q.rag))
   ++  done
-    |=  new+$_(p.rag)
+    |=  new+_p.rag
     ^+  rag
     ?-  -.p.rag
       $|   ?-  -.new
@@ -7288,7 +7288,7 @@
       $(q.gen t.q.gen)
     ::
         {$wtls *}   
-      [%wthp p.gen (weld r.gen `$_(r.gen)`[[[%cbzz %noun] q.gen] ~])]
+      [%wthp p.gen (weld r.gen `_r.gen`[[[%cbzz %noun] q.gen] ~])]
     ::
         {$wtpm *}
       |-
@@ -8888,7 +8888,7 @@
     ==
   ::
   ++  reco
-    |*  fuy+$_(|=(p+type p))
+    |*  fuy+_|=(p+type p)
     =+  por=repo
     =+  yot=(fuy por)
     ?:  =(yot por)
@@ -9006,7 +9006,7 @@
       [*(unit axis) ~]
     =+  geq=(tack(sut p.i.men) peh mur)
     =+  mox=$(men t.men)
-    [(mate p.mox `$_(p.mox)`[~ p.geq]) [[q.geq q.i.men] q.mox]]
+    [(mate p.mox `_p.mox`[~ p.geq]) [[q.geq q.i.men] q.mox]]
   ::
   ++  wrap
     ~/  %wrap
@@ -9062,7 +9062,7 @@
       $(gen q.gen)
     ?.  ?=({$clsg *} gen)  ~
     %+  reel  p.gen
-    |=  {a+twig b+$_(`(unit path)`[~ u=/])}
+    |=  {a+twig b+_`(unit path)`[~ u=/]}
     ?~  b  ~
     ?.  ?=($dtzy -.a)  ~
     `[q.a u.b]
@@ -9608,12 +9608,12 @@
         ==
     |%
     ++  toad
-      |*  har+$_(exqa)
+      |*  har+_exqa
       =+  dur=(ifix [pel per] $:har(tol |))
       ?:(tol ;~(pose ;~(pfix gap $:har(tol &)) dur) dur)
     ::
     ++  rung
-      |*  {dif+rule tuq+* har+$_(exqa)}
+      |*  {dif+rule tuq+* har+_exqa}
       ;~(pfix dif (stag tuq (toad har)))
     ::
     ++  gunk  ~+((glue muck))
@@ -9830,12 +9830,12 @@
       (most muck boog)
     ::
     ++  toad                                            ::  untrap parser exp
-      |*  har+$_(expa)
+      |*  har+_expa
       =+  dur=(ifix [pel per] $:har(tol |))
       ?:(tol ;~(pose ;~(pfix gap $:har(tol &)) dur) dur)
     ::
     ++  rune                                            ::  build rune
-      |*  {dif+rule tuq+* har+$_(expa)}
+      |*  {dif+rule tuq+* har+_expa}
       ;~(pfix dif (stag tuq (toad har)))
     ::
     ++  glop  ~+((glue mash))                           ::  separated by space
@@ -10675,7 +10675,7 @@
     ?:  &(?=(^ pux) ?=($~ hen))
       [[[[lal u.pux] (curd +>.hil)]~ ~] niz]
     =+  naf=q.niz
-    |-  ^-  {{p+(list ovum) q+(list muse)} $_(niz)}
+    |-  ^-  {{p+(list ovum) q+(list muse)} _niz}
     ?~  naf  [[~ ~] [p.niz ~]]
     ?.  =(lal p.i.naf)
       =+  tuh=$(naf t.naf)
@@ -10685,7 +10685,7 @@
   ::
   ++  jack                                              ::  dispatch card
     |=  {lac+? gum+muse}
-    ^-  {{p+(list ovum) q+(list muse)} $_(niz)}
+    ^-  {{p+(list ovum) q+(list muse)} _niz}
     ::  =.  lac  |(lac ?=(?(%g %f) p.gum))
     ::  =.  lac  &(lac !?=($b p.gum))
     %+  fire
@@ -10740,13 +10740,13 @@
     ==                                                  ::
 =<  |%
     ++  come  |=  {@ (list ovum) pone}                  ::  11
-              ^-  {(list ovum) $_(+>)}
+              ^-  {(list ovum) _+>}
               ~&  %hoon-come
               =^  rey  +>+  (^come +<)
               [rey +>.$]
     ++  keep  |=(* (^keep ((hard {@da path}) +<)))     ::  4
     ++  load  |=  {@ (list ovum) pane}                  ::  86
-              ^-  {(list ovum) $_(+>)}
+              ^-  {(list ovum) _+>}
               ~&  %hoon-load
               =^  rey  +>+  (^load +<)
               [rey +>.$]
@@ -10825,7 +10825,7 @@
   |=  {now+@da ovo+ovum}
   =.  eny  (mix eny (shax now))
   ::  ~&  [%poke -.q.ovo]
-  ^-  {(list ovum) $_(+>)}
+  ^-  {(list ovum) _+>}
   =^  zef  niz
     (~(hurl (is vil eny bud niz) now) lac ovo)
   [zef +>.$]

@@ -14,7 +14,7 @@
   ^+  +>
   ?-    -.ted
     $del  +>.$(buf (weld (scag p.ted buf) (slag +(p.ted) buf)))
-    $ins  +>.$(buf (weld (scag p.ted buf) `$_(buf)`[q.ted (slag p.ted buf)]))
+    $ins  +>.$(buf (weld (scag p.ted buf) `_buf`[q.ted (slag p.ted buf)]))
     $mor  |-  ^+  +>.^$
           ?~  p.ted 
             +>.^$ 

@@ -10,7 +10,7 @@
       sort+(list @uvH)
   ==
 ++  client-task
-  $:  archived+$_(|)
+  $:  archived+_|
       audience+(set station:talk)
       tax+task
   ==

@@ -741,7 +741,7 @@
         ~&(e/lost/[tee hen] +>.$)
       %+  roll  (~(tap in (~(get ju liz) p.sih)))
       =<  .(con ..axon(liz (~(del by liz) p.sih)))
-      |=  {sus+(each duct ixor) con+$_(..axon)}
+      |=  {sus+(each duct ixor) con+_..axon}
       =.  ..axon  con
       ?-  -.sus
         {$&}  (give-json(hen p.sus) 205 ~ %b &) 
@@ -823,7 +823,7 @@
   ::
   ++  root-beak  `beak`[our %home da/now]               ::  XX
   ++  emule
-    |=  a+$_(|?(..emule))  ^+  ..emule
+    |=  a+_|?(..emule)  ^+  ..emule
     =+  mul=(mule a)
     ?~  -.mul  p.mul
     (fail 500 0v0 >%exit< p.mul)
@@ -1145,14 +1145,14 @@
       --
     ::
     ++  process
-      ^-  (each pest $_(done))
+      ^-  (each pest _done)
       =+  pet=parse
       ?:  ?=($| -.pet)
         [%& ~ p.pet]
       (process-parsed p.pet)
     ::
     ++  process-parsed
-      |=  hem+perk  ^-  (each pest $_(done))
+      |=  hem+perk  ^-  (each pest _done)
       ?-    -.hem
           $auth  (process-auth p.hem)
           $away  [%& %html logout-page:xml]
@@ -1209,7 +1209,7 @@
       ==
     ::
     ++  process-auth
-      |=  ham+perk-auth  ^-  (each pest $_(done))
+      |=  ham+perk-auth  ^-  (each pest _done)
       =+  yac=for-client
       ?-    -.ham
           $js    [%& %js auth:js]
@@ -1265,7 +1265,7 @@
       ==
     ::
     ++  show-login-page
-      |=  ses+(unit hole)  ^-  (each pest $_(done))
+      |=  ses+(unit hole)  ^-  (each pest _done)
       %-  (slog leaf/"login code for {(scow %p our)}: {(trip load-secret)}" ~)
       ?.  ?=($@($~ {$~ $html}) p.pok)
         [%& %red ~]
@@ -1602,9 +1602,9 @@
 ++  load                                                ::  take previous state
   =+  even-2=?(even {$mean p+{dock path} *})            ::  old %quit
   =+  ^=  stem-2                                        ::  no die, sus
-      $_(=+(*stem -(|3 |5.-, q.eve *(map @u even-2))))
-  =+  bolo-2=$_([%2 %*(+ *bolo wix *(map ixor stem-2))])
-  =+  bolo-1=$_([%1 +(|4 |5.+)]:*bolo-2)                ::  no lyv
+      _=+(*stem -(|3 |5.-, q.eve *(map @u even-2)))
+  =+  bolo-2=_[%2 %*(+ *bolo wix *(map ixor stem-2))]
+  =+  bolo-1=_[%1 +(|4 |5.+)]:*bolo-2                ::  no lyv
   |=  old+?(bolo bolo-1 bolo-2)
   ^+  ..^$
   ?-  -.old

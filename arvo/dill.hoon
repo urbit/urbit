@@ -30,7 +30,7 @@
 ++  axon                                                ::  dill per duct
   $:  ram+term                                          ::  console program
       tem+(unit (list dill-belt))                       ::  pending, reverse
-      wid+$_(80)                                        ::  terminal width
+      wid+_80                                        ::  terminal width
       pos+@ud                                           ::  cursor position
       see+(list @c)                                     ::  current line
   ==                                                    ::

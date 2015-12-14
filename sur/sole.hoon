@@ -81,7 +81,7 @@
       {$get $+((sole-args) (sole-request (cask)))}      ::  scraper
   ==                                                    ::
 ++  sole-args                                           ::  generator arguments
-  |*  $_([* *])                                         ::
+  |*  _[* *]                                         ::
   {{now+@da eny+@uvI bek+beak} {+<- +<+}}               ::
 ::                                                      ::
 ::                                                      ::
@@ -99,7 +99,7 @@
   [p=*(list tank) q=[%| p=pom q=mor]]                   ::
 ::                                                      ::
 ++  sole-at                                             ::  fetch url
-  |*  {pul+$_(purl) fun+$+(httr *)}                     ::
+  |*  {pul+_purl fun+$+(httr *)}                     ::
   [p=*(list tank) q=[%| p=[pul %get ~ ~] q=fun]]        ::
 ::                                                      ::
 ++  sole-no                                             ::  empty result

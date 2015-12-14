@@ -941,7 +941,7 @@
         %_    ..sh-work
             ..pa
           %-  (ra-know man.she) 
-          |=($_(pa) pa-abet:(pa-report glyphers %glyph nak))
+          |=(_pa pa-abet:(pa-report glyphers %glyph nak))
         ==
       ::
       ++  join                                          ::  %join
@@ -1168,7 +1168,7 @@
       ==
     ::
     ++  sh-uniq
-      ^-  {serial $_(.)}
+      ^-  {serial _.}
       [(shaf %serial eny.hid) .(eny.hid (shax eny.hid))]
     --
   ++  ra-abed                                           ::  resolve core
@@ -1292,7 +1292,7 @@
   ::
   ++  ra-know                                           ::  story monad
     |=  man+span
-    |*  fun+$+($_(pa) $_(+>+>))
+    |*  fun+$+(_pa _+>+>)
     ^+  +>+>
     =+  pur=(~(get by stories) man)
     ?~  pur
@@ -1302,17 +1302,17 @@
   ::
   ++  ra-diff-talk-report                               ::  subscription update
     |=  {man+span cuz+station rad+report}
-    %-  (ra-know man)  |=  par+$_(pa)  =<  pa-abet
+    %-  (ra-know man)  |=  par+_pa  =<  pa-abet
     (pa-diff-talk-report:par cuz rad)
   ::
   ++  ra-quit                                           ::  subscription quit
     |=  {man+span cuz+station}
-    %-  (ra-know man)  |=  par+$_(pa)  =<  pa-abet
+    %-  (ra-know man)  |=  par+_pa  =<  pa-abet
     (pa-quit:par %& cuz)
   ::
   ++  ra-retry                                          ::  subscription resend
     |=  {man+span cuz+station}
-    %-  (ra-know man)  |=  par+$_(pa)  =<  pa-abet
+    %-  (ra-know man)  |=  par+_pa  =<  pa-abet
     (pa-acquire:par [%& cuz]~)
   ::
   ++  ra-coup-repeat                                    ::
@@ -1338,12 +1338,12 @@
     ^+  +>
     ?.  ?=({@ @ *} pax)
       +>(general (~(del in general) ost.hid))
-    %-  (ra-know i.t.pax)  |=  par+$_(pa)  =<  pa-abet
+    %-  (ra-know i.t.pax)  |=  par+_pa  =<  pa-abet
     (pa-notify:pa-cancel:par src %gone *human)
   ::
   ++  ra-human                                          ::  look up person
     |=  her+ship
-    ^-  {human $_(+>)}
+    ^-  {human _+>}
     =^  who  folks
         =+  who=(~(get by folks) her)
         ?^  who  [u.who folks]
@@ -1433,7 +1433,7 @@
   ::
   ++  ra-record                                         ::  add to story
     |=  {man+span gam+telegram}
-    %-  (ra-know man)  |=  par+$_(pa)  =<  pa-abet
+    %-  (ra-know man)  |=  par+_pa  =<  pa-abet
     (pa-learn:par gam)
   ::
   ++  ra-transmit                                       ::  send to neighbor
@@ -2094,12 +2094,12 @@
   ==
 ::
 ++  etch-friend                                         ::
-  |=  {way+wire fun+$+({man+span cuz+station} {(list move) $_(+>)})}
+  |=  {way+wire fun+$+({man+span cuz+station} {(list move) _+>})}
   =+  wer=(etch way)
   ?>(?=($friend -.wer) (fun p.wer q.wer))
 ::
 ++  etch-repeat                                         ::
-  |=  {way+wire fun+$+({num+@ud src+@p man+span} {(list move) $_(+>)})}
+  |=  {way+wire fun+$+({num+@ud src+@p man+span} {(list move) _+>})}
   =+  wer=(etch way)
   ?>(?=($repeat -.wer) (fun p.wer q.wer r.wer))
 ::

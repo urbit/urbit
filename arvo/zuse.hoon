@@ -51,7 +51,7 @@
 ::
 ++  crua  !:                                            ::  cryptosuite A (RSA)
   ^-  acru
-  =|  {mos+@ pon+(unit {p+@ q+@ r+{p+@ q+@} s+$_(*fu)})}
+  =|  {mos+@ pon+(unit {p+@ q+@ r+{p+@ q+@} s+_*fu})}
   =>  |%
       ++  mx  (dec (met 0 mos))                         ::  bit length
       ++  dap                                           ::  OEAP decode
@@ -426,10 +426,10 @@
 ++  stud    !:                                          ::  parse UTC format
   =<  |=  a+cord                                        ::  expose parsers
       %+  biff  (rush a (more sepa elem))
-      |=  b+(list $_((wonk *elem)))  ^-  (unit date)
+      |=  b+(list _(wonk *elem))  ^-  (unit date)
       =-  ?.((za:jo -) ~ (some (zp:jo -)))
       ^+  =+  [*date u=unit]
-          *{(u $_([a y])) (u $_(m)) (u $_(d.t)) (u $_(+.t)) $~}
+          *{(u _[a y]) (u _m) (u _d.t) (u _+.t) $~}
       :~                                                ::  XX  types
           |-(?~(b ~ ?.(?=($y -.i.b) $(b t.b) `+.i.b)))
           |-(?~(b ~ ?.(?=($m -.i.b) $(b t.b) `+.i.b)))
@@ -630,7 +630,7 @@
 ::
 ++  poxo                                                ::  node to tape
   =<  |=(a+manx `tape`(apex a ~))
-  |_  $_([unq=`?`| cot=`?`|])                           ::  self-close all tags
+  |_  _[unq=`?`| cot=`?`|]                           ::  self-close all tags
   ++  apex                                              ::  top level
     |=  {mex+manx rez+tape}
     ^-  tape
@@ -701,7 +701,7 @@
 ::
 ++  poxa                                                ::  xml parser
   =<  |=(a+cord (rush a apex))
-  |_  ent+$_(`(map term @t)`[[%apos '\''] ~ ~])
+  |_  ent+_`(map term @t)`[[%apos '\''] ~ ~]
   ++  apex
     =+  spa=;~(pose comt whit)
     %+  knee  *manx  |.  ~+
@@ -880,8 +880,8 @@
     |*  {fel+rule wit+fist}
     %+  cu  mo
     %-  ci  :_  (om wit)
-    |=  a+(map cord $_((need *wit)))
-    ^-  (unit (list $_([(wonk *fel) (need *wit)])))
+    |=  a+(map cord _(need *wit))
+    ^-  (unit (list _[(wonk *fel) (need *wit)]))
     =-  (zl (turn (~(tap by a)) -))
     |*  {a+cord b+*}
     =+  nit=(rush a fel) 
@@ -932,7 +932,7 @@
   ::
   ++  zm                                                ::  collapse unit map
     |*  lum+(map term (unit))
-    ?:  (~(rep by lum) |=({{@ a+(unit)} b+$_(|)} |(b ?=($~ a))))
+    ?:  (~(rep by lum) |=({{@ a+(unit)} b+_|} |(b ?=($~ a))))
       ~
     (some (~(run by lum) need))
   --
@@ -974,11 +974,11 @@
   ==
 ::
 ++  scanf                                              ::  formatted scan
-  |*  {tape (pole $_(:/(*{$^(rule tape)})))}
+  |*  {tape (pole _:/(*{$^(rule tape)}))}
   =>  .(+< [a b]=+<)
   (scan a (parsf b))
 ++  parsf                                              ::  make parser from:
-  |^  |*  a+(pole $_(:/(*{$^(rule tape)})))            ::  ;"chars{rule}chars"
+  |^  |*  a+(pole _:/(*{$^(rule tape)}))            ::  ;"chars{rule}chars"
       %-  cook  :_  (bill (norm a))
       |*  (list)
       ?~  +<  ~
@@ -987,7 +987,7 @@
   ::
   ::  .=  (norm [;"{n}, {n}"]:n=dim:ag)  ~[[& dim] [| ", "] [& dim]]:ag
   ++  norm                                             
-    |*  (pole $_(:/(*{$^(rule tape)})))
+    |*  (pole _:/(*{$^(rule tape)}))
     ?~  +<  ~
     =>  .(+< [i=+<- t=+<+])
     :_  t=$(+< t)
@@ -1206,7 +1206,7 @@
   ?~  +.b
     ^-  (unit (odo:raid -.b))
     ?^(+.a ~ hed)
-  ^-  (unit {(odo:raid -.b) $_((need *(..^$ +.b)))})
+  ^-  (unit {(odo:raid -.b) _(need *(..^$ +.b))})
   (both hed ((..^$ +.b) +.a))
 ::
 ++  urle                                                ::  URL encode
