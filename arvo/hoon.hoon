@@ -9424,7 +9424,7 @@
           (stag %zpzp (cold ~ ;~(plug zap zap)))
         ==
       :-  '_'
-        (stag %bccb wide)
+        ;~(pfix cab (stag %bccb wide))
       :-  '$'
         ;~  pose
           ;~  pfix  buc
