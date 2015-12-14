@@ -206,28 +206,16 @@
             {$bckt p+twig}                              ::  temporary
             {$bczp p+base}                              ::  bunt an axil
           ::                                            ::::::  cores
-            {$xrcb p+twig q+(map term foot)}            ::  %gold tray, sample p
             {$brcb p+twig q+(map term foot)}            ::  %gold tray, sample p
-
             {$brcl p+twig q+twig}                       ::  %brts by example
             {$brcn p+(map term foot)}                   ::  %gold core, natural
             {$brdt p+twig}                              ::  dry %gold trap
-
-            {$xrfs p+twig q+(map term foot)}            ::  vulcan. %gold tray
             {$brfs p+twig q+(map term foot)}            ::  vulcan. %gold tray
-
             {$brkt p+twig q+(map term foot)}            ::  %gold book
             {$brhp p+twig}                              ::  kick dry %gold trap
-
-            {$xrls p+twig q+twig}
             {$brls p+twig q+twig}
-
             {$brtr p+twig q+twig}
-            {$xrtr p+twig q+twig}
-
             {$brts p+twig q+twig}                       ::  dry %gold gate
-            {$xrts p+twig q+twig}                       ::  dry %gold gate
-
             {$brwt p+twig}                              ::  dry %lead trap
           ::                                            ::::::  molds
             {$cbbr p+twig q+twig}                       ::  atom fork (reed)
@@ -300,9 +288,11 @@
             {$smdt p+twig q+tusk}                       ::
             {$smdq p+(list beer)}                       ::  assemble string
             {$smsg p+twig q+tusk}                       ::  gonads
-            {$smsm p+tile q+twig}                       ::  make sure q is a p
+
+            {$xmsm p+twig q+twig}                       ::  make sure q is a p
           ::                                            ::::::  compositions
-            {$tsbr p+tile q+twig}                       ::  push bunt: ++(*p q)
+            {$xsbr p+twig q+twig} 
+
             {$tscl p+tram q+twig}                       ::  p changes then q
             {$tsdt p+wing q+twig r+twig}                ::  r with p set to q
             {$tsgl p+twig q+twig}                       ::  +>(q p)
@@ -7049,29 +7039,11 @@
         {$bctr *}  [%ktsg ~(bunt al p.gen)]
         {$bckt *}  p.gen
         {$bczp *}  ~(bunt al %axil p.gen)
-
-        {$xrcb *}  [%tsls [%bctr %herb p.gen] [%brcn q.gen]]
+    ::
         {$brcb *}  [%tsls [%bctr %herb p.gen] [%brcn q.gen]]
-
         {$brcl *}  [%tsls [%ktsg p.gen] [%brdt q.gen]]
         {$brdt *}  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
-
-        {$xrtr *}  [%xrfs p.gen (~(put by *(map term foot)) %$ [%elm q.gen])]
         {$brtr *}  [%brfs p.gen (~(put by *(map term foot)) %$ [%elm q.gen])]
-
-        {$xrfs *}  ~|  %elm-tile
-                   =+  lyg=~(cloq al %herb p.gen)
-                   :+  %tsls
-                     [%bctr q.lyg]
-                   :-  %brcn
-                   %-  ~(run by q.gen)
-                   |=  a+foot  ^-  foot
-                   ?.  ?=($elm -.a)  a
-                   :-  -.a
-                   :+  %tsgl  p.a
-                   :+  %cnts  ~
-                   :~  [[[%& 6] ~] [%ktts p.lyg [~ 6]]]
-                   ==
         {$brfs *}  ~|  %elm-tile
                    =+  lyg=~(cloq al %herb p.gen)
                    :+  %tsls
@@ -7085,17 +7057,10 @@
                    :+  %cnts  ~
                    :~  [[[%& 6] ~] [%ktts p.lyg [~ 6]]]
                    ==
-
         {$brkt *}  [%tsgr [%brcn (~(put by q.gen) %$ [%ash p.gen])] [%cnzy %$]]
-
-        {$xrls *}  [%ktbr [%xrts p.gen q.gen]]
         {$brls *}  [%ktbr [%brts p.gen q.gen]]
-
         {$brhp *}  [%tsgl [%cnzy %$] [%brdt p.gen]]
-
-        {$xrts *}  [%xrcb p.gen (~(put by *(map term foot)) %$ [%ash q.gen])]
         {$brts *}  [%brcb p.gen (~(put by *(map term foot)) %$ [%ash q.gen])]
-
         {$brwt *}  [%ktwt %brdt p.gen]
     ::
         {$cbbr *}  ~(clam al boil)
@@ -7285,17 +7250,17 @@
         [%cnts [%a ~] [[[[%& 6] ~] [%cnzy %c]] ~]]      ::  a(+6 c)
       ==
     ::
-        {$smsm *}                                       ::                  ;;
+        {$xmsm *}                                       ::                  ;;
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
       :+  %tsls  :+  %ktts  %a                          ::  =+  ^=  a
-                 [%tsgr [%cnzy %v] [%bccm p.gen]]       ::      =>(v ,{p.gen})
+                 [%tsgr [%cnzy %v] p.gen]               ::  =>(v {p.gen})
       :+  %tsls  [%ktts %b [%tsgr [%cnzy %v] q.gen]]    ::  =+  b==>(v {q.gen})
       :+  %tsls                                         ::  =+  c=(a b)
         [%ktts %c [%cnhp [%cnzy %a] [%cnzy %b] ~]]      ::
       [%wtgr [%dtts [%cnzy %c] [%cnzy %b]] [%cnzy %c]]  ::  ?>(=(c b) c)
     ::
-        {$tsbr *}
-      [%tsls ~(bunt al p.gen) q.gen]
+        {$xsbr *}
+      [%tsls ~(bunt al %herb p.gen) q.gen]
     ::
         {$tscl *}
       [%tsgr [%cncb [[~ 1] ~] p.gen] q.gen]
@@ -9496,7 +9461,7 @@
         $b  [p.i.lut $(lut t.lut)]
         $c  :_  ~
             :+  %cndt  `twig`[p.i.lut [%cltr $(lut t.lut)]]
-            :+  %tsbr  `tile`[[%axil %noun] [%axil %noun]]
+            :+  %xsbr  [%cbzz %cell]
             :-  %brcn
             ^-  (map term foot)
             :_  [~ ~]
@@ -9851,14 +9816,14 @@
                 :~  [':' (rune col %smcl expi)]
                     ['.' (rune dot %smdt expi)]
                     ['~' (rune sig %smsg expi)]
-                    [';' (rune sem %smsm expo)]
+                    [';' (rune sem %xmsm expb)]
                 ==
               ==
             :-  '='
               ;~  pfix  tis
                 %-  stew
                 ^.  stet  ^.  limo
-                :~  ['|' (rune bar %tsbr expo)]
+                :~  ['|' (rune bar %xsbr expb)]
                     ['.' (rune dot %tsdt expq)]
                     ['^' (rune ket %tskt bono)]
                     [':' (rune col %tscl expp)]
