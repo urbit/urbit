@@ -288,13 +288,9 @@
             {$smdt p+twig q+tusk}                       ::
             {$smdq p+(list beer)}                       ::  assemble string
             {$smsg p+twig q+tusk}                       ::  gonads
-
             {$smsm p+twig q+twig}                       ::  make sure q is a p
-            {$xmsm p+twig q+twig}                       ::  make sure q is a p
           ::                                            ::::::  compositions
-            {$xsbr p+twig q+twig} 
             {$tsbr p+twig q+twig}                       ::  push bunt: ++(*p q)
-
             {$tscl p+tram q+twig}                       ::  p changes then q
             {$tsdt p+wing q+twig r+twig}                ::  r with p set to q
             {$tsgl p+twig q+twig}                       ::  +>(q p)
@@ -307,29 +303,20 @@
           ::                                            ::::::  conditionals
             {$wtbr p+tusk}                              ::  logical OR
             {$wthp p+wing q+tine}                       ::  select case in q
-            {$wthz p+tiki q+tine}                       ::  tiki %wthp
             {$wtcl p+twig q+twig r+twig}                ::  if p, then q, else r
             {$wtdt p+twig q+twig r+twig}                ::  unless, ?:(p r q)
-
             {$wtkt p+wing q+twig r+twig}                ::  if p is a cell
-            {$wtkz p+tiki q+twig r+twig}                ::  tiki %wtkt
-
             {$wtgl p+twig q+twig}                       ::  assert |, ?:(p !! q)
             {$wtgr p+twig q+twig}                       ::  assert &, ?:(p q !!)
             {$wtls p+wing q+twig r+tine}                ::  %wthp w/ default
-            {$wtlz p+tiki q+twig r+tine}                ::  tiki %wtls
             {$wtpm p+tusk}                              ::  logical AND
             {$wtpt p+wing q+twig r+twig}                ::  if p is an atom
-            {$wtpz p+tiki q+twig r+twig}                ::  tiki %wtpt
             {$wtsg p+wing q+twig r+twig}                ::  if p is null
-            {$wtsz p+tiki q+twig r+twig}                ::  tiki %wtsg
             {$wtts p+twig q+wing}                       ::  if q is in p
-            {$wttz p+twig q+tiki}                       ::  tiki %wtts
             {$wtzp p+twig}                              ::  logical NOT
           ::                                            ::::::  special
             {$zpcb p+spot q+twig}                       ::  debug info in trace
             {$zpcm p+twig q+twig}                       ::  q twig with p type
-            {$zpcn $~}                                  ::  obsolete
             {$zpfs p+twig}                              ::  report .. as error
             {$zpgr p+twig}                              ::  vase w/ value p
             {$zpsm p+twig q+twig}                       ::  [type noun] pair
@@ -466,7 +453,6 @@
     %ap    ap
     %ut    ut
     %mute  mute
-    %seed  seed
     %show  show
   ==
 |%
@@ -6553,12 +6539,6 @@
   |=  bon+path
   (rain bon ((hard @t) .^(%cx (weld bon `path`[%hoon ~]))))
 ::
-++  seed                                                ::  hoon/hoon core vase
-  ^-  vase
-  !!
-  :: ~+                               :: trimmed
-  :: !;(*type ..seed)
-::
 ++  seem  |=(toy+typo `type`toy)                        ::  promote typo
 ++  seer  |=(vix+vise `vase`vix)                        ::  promote vise
 ++  sell                                                ::  tank pretty-print
@@ -6759,6 +6739,17 @@
       {$&}  ?~(p.tig q.tig [u.p.tig ~])
       {$|}  [[%& 2] ~]
     ==
+  ::
+  ++  wthp  |=  opt+tine
+            %+  gray  %wthp
+            [puce (turn opt |=({a+twig b+twig} [a (blue b)]))]
+  ++  wtkt  |=({sic+twig non+twig} (gray [%wtkt puce (blue sic) (blue non)]))
+  ++  wtls  |=  {gen+twig opt+tine}
+            %+  gray  %wtls
+            [puce (blue gen) (turn opt |=({a+twig b+twig} [a (blue b)]))]
+  ++  wtpt  |=({sic+twig non+twig} (gray [%wtpt puce (blue sic) (blue non)]))
+  ++  wtsg  |=({sic+twig non+twig} (gray [%wtsg puce (blue sic) (blue non)]))
+  ++  wtts  |=(gen+twig (gray [%wtts (blue gen) puce]))
   --
 ::
 ++  al                                                  ::  tile engine
@@ -7309,38 +7300,6 @@
         {$wtpt *}   [%wtcl [%wtts [%cbzz %atom %$] p.gen] q.gen r.gen]
         {$wtsg *}   [%wtcl [%wtts [%cbzz %null] p.gen] q.gen r.gen]
         {$wtzp *}   [%wtcl p.gen [%dtzz %f 1] [%dtzz %f 0]]
-    ::
-        {$wthz *}
-      =+  vaw=~(. ah p.gen)
-      %-  gray:vaw
-      [%wthp puce:vaw (turn q.gen |=({a+twig b+twig} [a (blue:vaw b)]))]
-    ::
-        {$wtlz *}
-      =+  vaw=~(. ah p.gen)
-      %-  gray:vaw
-      ^-  twig
-      :+  %wtls  puce:vaw
-      [(blue:vaw q.gen) (turn r.gen |=({a+twig b+twig} [a (blue:vaw b)]))]
-    ::
-        {$wtsz *}
-      =+  vaw=~(. ah p.gen)
-      %-  gray:vaw
-      [%wtsg puce:vaw (blue:vaw q.gen) (blue:vaw r.gen)]
-    ::
-        {$wtkz *}
-      =+  vaw=~(. ah p.gen)
-      %-  gray:vaw
-      [%wtkt puce:vaw (blue:vaw q.gen) (blue:vaw r.gen)]
-    ::
-        {$wtpz *}
-      =+  vaw=~(. ah p.gen)
-      %-  gray:vaw
-      [%wtpt puce:vaw (blue:vaw q.gen) (blue:vaw r.gen)]
-    ::
-        {$wttz *}
-      =+  vaw=~(. ah q.gen)
-      %-  gray:vaw
-      [%wtts (blue:vaw p.gen) puce:vaw]
     ::
         {$zpcb *}   q.gen
         {$zpgr *}
@@ -8446,7 +8405,6 @@
       [p.hum [%10 [%spot %1 p.gen] q.hum]]
     ::
         {$zpcm *}   [(nice (play p.gen)) [%1 q.gen]]   ::  XX validate!
-        {$zpcn $~}  =+(pet=seed [(nice p.pet) [%1 q.pet]])
         {$zpfs *}
       ?:  vet
         ~_  (dunk(sut (play p.gen)) 'lost')
@@ -8613,7 +8571,6 @@
     ::
         {$zpcb *}  ~_((show %o p.gen) $(gen q.gen))
         {$zpcm *}  [(nice (play p.gen)) (play(sut dox) p.gen)]
-        {$zpcn *}  =+(pet=seed [(nice p.pet) p.pet])
         {$zpfs *}
       ?:  vet
         ::  ~_  (dunk(sut (play p.gen)) 'also')
@@ -8932,7 +8889,6 @@
       {$wtts *}  bool
       {$zpcb *}  ~_((show %o p.gen) $(gen q.gen))
       {$zpcm *}  (play p.gen)
-      {$zpcn *}  p:seed
       {$zpfs *}  %void
       {$zpsm *}  (cell $(gen p.gen) $(gen q.gen))
       {$zpts *}  %noun
@@ -9479,7 +9435,6 @@
         ;~  pose
           (stag %wtzp ;~(pfix zap wide))
           (stag %zpzp (cold ~ ;~(plug zap zap)))
-          :: (stag %zpcn (cold ~ ;~(plug zap cen)))
         ==
       :-  '$'
         ;~  pose
@@ -9838,13 +9793,13 @@
                     ['.' (rune dot %wtdt expc)]
                     ['<' (rune gal %wtgl expb)]
                     ['>' (rune gar %wtgr expb)]
-                    ['-' (rune hep %wthz expx)]
-                    ['^' (rune ket %wtkz expf)]
-                    ['=' (rune tis %wttz expw)]
-                    ['+' (rune lus %wtlz expy)]
+                    ['-' ;~(pfix hep (toad tkhp))]
+                    ['^' ;~(pfix ket (toad tkkt))]
+                    ['=' ;~(pfix tis (toad tkts))]
+                    ['+' ;~(pfix lus (toad tkls))]
                     ['&' (rune pam %wtpm exps)]
-                    ['@' (rune pat %wtpz expf)]
-                    ['~' (rune sig %wtsz expf)]
+                    ['@' ;~(pfix pat (toad tkpt))]
+                    ['~' ;~(pfix sig (toad tksg))]
                     ['!' (rune zap %wtzp expa)]
                 ==
               ==
@@ -9910,9 +9865,9 @@
     ::
     ++  glop  ~+((glue mash))                           ::  separated by space
     ++  gunk  ~+((glue muck))                           ::  separated list
-    ++  butt  |*  zor+rule                             ::  closing == if tall
+    ++  butt  |*  zor+rule                              ::  closing == if tall
               ?:(tol ;~(sfix zor ;~(plug gap duz)) zor)
-    ++  ulva  |*  zor+rule                             ::  closing -- and tall
+    ++  ulva  |*  zor+rule                              ::  closing -- and tall
               ?.(tol fail ;~(sfix zor ;~(plug gap dun)))
     ++  hank  (most muck loaf)                          ::  gapped twigs
     ++  loaf  ?:(tol tall wide)                         ::  hoon, current width
@@ -9977,10 +9932,28 @@
     ++  expt  |.(lobe)                                  ::  tile
     ++  expu  |.(;~(gunk rope lobe))                    ::  wing and tile
     ++  expv  |.(;~(gunk lobe wisp))                    ::  tile, core tail
-    ++  expw  |.(;~(gunk loaf teak))                    ::  tile and tiki
-    ++  expx  |.((butt ;~(gunk teak rack)))             ::  tiki, [tile twig]s
-    ++  expy  |.((butt ;~(gunk teak loaf rack)))        ::  tk twig [tile twig]s
     ++  expz  |.(loaf(bug &))                           ::  twig with tracing
+    ::
+    ::    tiki expansion for %wt runes
+    ::
+    ++  tkhp  |.  %+  cook  |=  {a+tiki b+tine}
+                            (~(wthp ah a) b)
+                  (butt ;~(gunk teak rack))
+    ++  tkkt  |.  %+  cook  |=  {a+tiki b+twig c+twig}
+                            (~(wtkt ah a) b c)
+                  ;~(gunk teak loaf loaf)
+    ++  tkls  |.  %+  cook  |=  {a+tiki b+twig c+tine}
+                            (~(wtls ah a) b c)
+                  (butt ;~(gunk teak loaf rack))
+    ++  tkpt  |.  %+  cook  |=  {a+tiki b+twig c+twig}
+                            (~(wtpt ah a) b c)
+                  ;~(gunk teak loaf loaf)
+    ++  tksg  |.  %+  cook  |=  {a+tiki b+twig c+twig}
+                            (~(wtsg ah a) b c)
+                  ;~(gunk teak loaf loaf)
+    ++  tkts  |.  %+  cook  |=  {a+twig b+tiki} 
+                            (~(wtts ah b) a)
+                  ;~(gunk loaf teak)
     ::
     ::    hint syntax
     ::
