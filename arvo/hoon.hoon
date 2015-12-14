@@ -9655,7 +9655,7 @@
                     [':' (rune col %bccl exps)]
                     ['%' (rune cen %bccn exps)]
                     ['+' (rune lus %bcls expb)]
-                    ['^' (rune pam %bckt expb)]
+                    ['^' (rune ket %bckt expb)]
                     ['=' (rune tis %bcts expg)]
                     ['?' (rune wut %bcwt exps)]
                 ==
