@@ -554,7 +554,6 @@
 #   define c3__jato   c3_s4('j','a','t','o')
 #   define c3__jet    c3_s3('j','e','t')
 #   define c3__jetd   c3_s4('j','e','t','d')
-#   define c3__jtts   c3_s4('j','t','t','s')
 #   define c3__just   c3_s4('j','u','s','t')
 #   define c3__keep   c3_s4('k','e','e','p')
 #   define c3__kern   c3_s4('k','e','r','n')
