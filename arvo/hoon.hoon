@@ -1,4 +1,4 @@
-::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::   
+::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject
@@ -9654,8 +9654,8 @@
                     ['_' (rune cab %bccb expa)]
                     [':' (rune col %bccl exps)]
                     ['%' (rune cen %bccn exps)]
-                    ['+' (rune lus %bcls expb)]
                     ['^' (rune ket %bckt expb)]
+                    ['+' (rune lus %bcls expb)]
                     ['=' (rune tis %bcts expg)]
                     ['?' (rune wut %bcwt exps)]
                 ==
@@ -9686,20 +9686,6 @@
                     ['-' (rune hep %clhp expb)]
                     ['~' (rune sig %clsg exps)]
                     ['*' (rune tar %cltr exps)]
-                ==
-              ==
-            :-  '_'
-              ;~  pfix  cab
-                %-  stew
-                ^.  stet  ^.  limo
-                :~  ['|' (rune bar %bcpt expb)]
-                    ['_' (rune cab %bccb expa)]
-                    [':' (rune col %bccl exps)]
-                    ['%' (rune cen %bccn exps)]
-                    ['+' (rune lus %bcls expb)]
-                    ['&' (rune pam %bckt expb)]
-                    ['=' (rune tis %bcts expg)]
-                    ['?' (rune wut %bcwt exps)]
                 ==
               ==
             :-  '.'
