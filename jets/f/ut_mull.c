@@ -352,7 +352,8 @@
       case c3__wtts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {
-        u3_noun nob = u3qfl_bunt(van, p_gen);
+        u3_noun heb = u3nc(c3__herb, u3k(p_gen));
+        u3_noun nob = u3qfl_bunt(van, heb);
         u3_noun p_waz = u3qfu_play(van, sut, nob);
         u3_noun q_waz = u3qfu_play(van, dox, nob);
         u3_noun dok   = u3nc(c3__cnzz, u3k(q_gen));
@@ -371,6 +372,7 @@
         u3z(p_pov); u3z(q_pov);
         u3z(nob);
         u3z(dok);
+        u3z(heb);
 
         return _mull_both(van, gol, _mull_bean());
       }
