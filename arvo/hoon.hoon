@@ -26,7 +26,7 @@
 |%                                                      ::
 ++  abel  typo                                          ::  original sin: type
 ++  ache  |*  {a+_+(* *) b+_+(* *)}                     ::  either a or b
-          _%({$| p+b} {$& p+a})                         ::    b default
+          $%({$| p+b} {$& p+a})                         ::    b default
 ++  axis  @                                             ::  tree address
 ++  bank  (list @cF)                                    ::  UTF-32 string
 ++  base                                                ::  base mold
