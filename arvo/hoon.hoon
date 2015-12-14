@@ -199,8 +199,6 @@
 ++  twig  _&  {p+twig q+twig}                           ::
           _%                                            ::
             {$$ p+axis}                                 ::  simple leg
-          ::                                            ::::::  tiling
-            {$bcpt p+wing q+tile}                       ::  whip p into q
           ::                                            ::::::  cores
             {$brcb p+twig q+(map term foot)}            ::  %gold tray, sample p
             {$brcl p+twig q+twig}                       ::  %brts by example
@@ -8316,7 +8314,6 @@
       =+  tal=$(gen q.gen, gol %noun)
       [(nice (cell p.hed p.tal)) (cons q.hed q.tal)]
     ::
-        {$bcpt *}  $(gen (~(whip al q.gen) p:(seep %read p.gen)))
         {$brcn *}  (grow %gold [~ 1] p.gen)
     ::
         {$cnts *}
@@ -8469,12 +8466,6 @@
       =+  hed=$(gen p.gen, gol %noun)
       =+  tal=$(gen q.gen, gol %noun)
       [(nice (cell p.hed p.tal)) (cell q.hed q.tal)]
-    ::
-        {$bcpt *}
-      =+  sep=(seep %read p.gen)
-      =+  pox=(seep(sut dox) %read p.gen)
-      ?.  =(p.pox p.sep)  ~|(%mull-bonk-wing !!)
-      $(gen (~(whip al q.gen) p.sep))
     ::
         {$brcn *}  (grow %gold [~ 1] p.gen)
         {$cnts *}
@@ -8849,7 +8840,6 @@
     ^-  type
     ?-  gen
       {^ *}      (cell $(gen p.gen) $(gen q.gen))
-      {$bcpt *}  $(gen (~(whip al q.gen) p:(seep %read p.gen)))
       {$brcn *}  (core sut %gold sut [[%0 0] p.gen])
       {$cnts *}  =+  lar=(foil (seek %read p.gen))
                  =+  mew=(snub q.gen)
@@ -9997,7 +9987,6 @@
             {$col p+twig}
             {$ket p+twig}
             {$lus p+twig}
-            {$pat p+tile}
             {$pel p+tram}
         ==
     ==
@@ -10010,7 +9999,6 @@
     ?-    -.vil
         $col  [~ %tsgl ros p.vil]
         $pel  (bind ~(reek ap ros) |=(hyp+wing [%cnts hyp p.vil]))
-        $pat  (bind ~(reek ap ros) |=(hyp+wing [%bcpt hyp p.vil]))
         $ket  [~ ros p.vil]
         $lus  =+  tog=~(hock ap ros)
               ?.(?=(@ tog) ~ [~ %cbts tog p.vil])
@@ -10027,7 +10015,6 @@
         ;~(plug (cold %col col) wide)
         ;~(plug (cold %ket ket) wide)
         ;~(plug (cold %lus lus) wide)
-        ;~(plug (cold %pat pat) hill)
         ;~  plug
           (easy %pel)
           (ifix [pel per] lobo)
