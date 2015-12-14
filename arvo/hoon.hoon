@@ -289,9 +289,11 @@
             {$smdq p+(list beer)}                       ::  assemble string
             {$smsg p+twig q+tusk}                       ::  gonads
 
+            {$smsm p+twig q+twig}                       ::  make sure q is a p
             {$xmsm p+twig q+twig}                       ::  make sure q is a p
           ::                                            ::::::  compositions
             {$xsbr p+twig q+twig} 
+            {$tsbr p+twig q+twig}                       ::  push bunt: ++(*p q)
 
             {$tscl p+tram q+twig}                       ::  p changes then q
             {$tsdt p+wing q+twig r+twig}                ::  r with p set to q
@@ -308,8 +310,10 @@
             {$wthz p+tiki q+tine}                       ::  tiki %wthp
             {$wtcl p+twig q+twig r+twig}                ::  if p, then q, else r
             {$wtdt p+twig q+twig r+twig}                ::  unless, ?:(p r q)
+
             {$wtkt p+wing q+twig r+twig}                ::  if p is a cell
             {$wtkz p+tiki q+twig r+twig}                ::  tiki %wtkt
+
             {$wtgl p+twig q+twig}                       ::  assert |, ?:(p !! q)
             {$wtgr p+twig q+twig}                       ::  assert &, ?:(p q !!)
             {$wtls p+wing q+twig r+tine}                ::  %wthp w/ default
@@ -7017,8 +7021,8 @@
               |=(a+twig =+(bile(gen a) ?>(?=($& -<) ->)))
           ==
       ?-  -.def
-        {$&}  [%kelp p.def end]
-        {$|}  ?~(end p.def [%fern p.def [%kelp end] ~])
+        $&  [%kelp p.def end]
+        $|  ?~(end p.def [%fern p.def [%kelp end] ~])
       ==
     ::
         {$cbpm *}  [%bush boil(gen p.gen) boil(gen q.gen)]
@@ -7250,7 +7254,7 @@
         [%cnts [%a ~] [[[[%& 6] ~] [%cnzy %c]] ~]]      ::  a(+6 c)
       ==
     ::
-        {$xmsm *}                                       ::                  ;;
+        {$smsm *}                                       ::                  ;;
       :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
       :+  %tsls  :+  %ktts  %a                          ::  =+  ^=  a
                  [%tsgr [%cnzy %v] p.gen]               ::  =>(v {p.gen})
@@ -7259,7 +7263,7 @@
         [%ktts %c [%cnhp [%cnzy %a] [%cnzy %b] ~]]      ::
       [%wtgr [%dtts [%cnzy %c] [%cnzy %b]] [%cnzy %c]]  ::  ?>(=(c b) c)
     ::
-        {$xsbr *}
+        {$tsbr *}
       [%tsls ~(bunt al %herb p.gen) q.gen]
     ::
         {$tscl *}
@@ -9461,7 +9465,7 @@
         $b  [p.i.lut $(lut t.lut)]
         $c  :_  ~
             :+  %cndt  `twig`[p.i.lut [%cltr $(lut t.lut)]]
-            :+  %xsbr  [%cbzz %cell]
+            :+  %tsbr  [%cbzz %cell]
             :-  %brcn
             ^-  (map term foot)
             :_  [~ ~]
@@ -9816,14 +9820,14 @@
                 :~  [':' (rune col %smcl expi)]
                     ['.' (rune dot %smdt expi)]
                     ['~' (rune sig %smsg expi)]
-                    [';' (rune sem %xmsm expb)]
+                    [';' (rune sem %smsm expb)]
                 ==
               ==
             :-  '='
               ;~  pfix  tis
                 %-  stew
                 ^.  stet  ^.  limo
-                :~  ['|' (rune bar %xsbr expb)]
+                :~  ['|' (rune bar %tsbr expb)]
                     ['.' (rune dot %tsdt expq)]
                     ['^' (rune ket %tskt bono)]
                     [':' (rune col %tscl expp)]
