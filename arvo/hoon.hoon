@@ -200,11 +200,7 @@
           _%                                            ::
             {$$ p+axis}                                 ::  simple leg
           ::                                            ::::::  tiling
-            {$bccm p+tile}                              ::  clam a tile
             {$bcpt p+wing q+tile}                       ::  whip p into q
-            {$bctr p+tile}                              ::  bunt a tile w/ ^~
-            {$bckt p+twig}                              ::  temporary
-            {$bczp p+base}                              ::  bunt an axil
           ::                                            ::::::  cores
             {$brcb p+twig q+(map term foot)}            ::  %gold tray, sample p
             {$brcl p+twig q+twig}                       ::  %brts by example
@@ -226,6 +222,7 @@
             {$cbpm p+twig q+twig}                       ::  pairhead fork (bush)
             {$cbwt p+(list twig)}                       ::  untagged fork
             {$cbts p+term q+twig}                       ::  name
+            {$cbzw p+base}                              ::  bunt base
             {$cbzy p+stem}                              ::  symbol
             {$cbzz p+base}                              ::  base
           ::                                            ::::::  tuples
@@ -239,6 +236,7 @@
             {$cltr p+tusk}                              ::  p as a tuple
             {$clzz p+tusk}                              ::  macro
           ::                                            ::::::  invocations
+            {$cnbc p+twig}                              ::  ^~($.p)
             {$cncb p+wing q+tram}                       ::  %+, then cast to p
             {$cncl p+twig q+twig}                       ::  pull $.p w/ sample q
             {$cndt p+twig q+twig}                       ::  %-(q p)
@@ -6785,13 +6783,13 @@
       [%ktts p.sec $(sec q.sec)]
     ::
         {$bush *}
-      [%wtcl [%bczp %bean] $(sec p.sec) $(sec q.sec)]
+      [%wtcl [%cbzw %bean] $(sec p.sec) $(sec q.sec)]
     ::
         {$fern *}
       |-  ^-  twig
       ?~  t.p.sec
         ^$(sec i.p.sec)
-      [%wtcl [%bczp %bean] ^$(sec i.p.sec) $(p.sec t.p.sec)]
+      [%wtcl [%cbzw %bean] ^$(sec i.p.sec) $(p.sec t.p.sec)]
     ::
         {$herb *}
       =+  cys=~(boil ap p.sec)
@@ -6803,13 +6801,13 @@
       |-  ^-  twig
       ?~  t.p.sec
         ^$(sec i.p.sec)
-      [%wtcl [%bczp %bean] ^$(sec i.p.sec) $(p.sec t.p.sec)]
+      [%wtcl [%cbzw %bean] ^$(sec i.p.sec) $(p.sec t.p.sec)]
     ::
         {$leaf *}
       [%dtzz p.sec q.sec]
     ::
         {$reed *}
-      [%wtcl [%bczp %bean] $(sec p.sec) $(sec q.sec)]
+      [%wtcl [%cbzw %bean] $(sec p.sec) $(sec q.sec)]
     ::
         {$weed *}
       (home p.sec)
@@ -7006,7 +7004,7 @@
       ==
     ::
         {$cbpm *}  [%bush boil(gen p.gen) boil(gen q.gen)]
-        {$cbls *}  [%weed [%brls p.gen [%bctr %herb q.gen]]]
+        {$cbls *}  [%weed [%brls p.gen [%cnbc q.gen]]]
         {$cbts *}  [%bark p.gen boil(gen q.gen)]
         {$cbwt *}  =+  (turn p.gen |=(a+twig boil(gen a)))
                    ?~(- [%axil %void] [%fern -])
@@ -7019,19 +7017,15 @@
     ^-  twig
     ?-    gen
         {$~ *}     [%cnts [gen ~] ~]
-        {$bccm *}  ~(clam al p.gen)
-        {$bctr *}  [%ktsg ~(bunt al p.gen)]
-        {$bckt *}  p.gen
-        {$bczp *}  ~(bunt al %axil p.gen)
     ::
-        {$brcb *}  [%tsls [%bctr %herb p.gen] [%brcn q.gen]]
+        {$brcb *}  [%tsls [%cnbc p.gen] [%brcn q.gen]]
         {$brcl *}  [%tsls [%ktsg p.gen] [%brdt q.gen]]
         {$brdt *}  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
         {$brtr *}  [%brfs p.gen (~(put by *(map term foot)) %$ [%elm q.gen])]
         {$brfs *}  ~|  %elm-tile
                    =+  lyg=~(cloq al %herb p.gen)
                    :+  %tsls
-                     [%bctr q.lyg]
+                     [%ktsg ~(bunt al q.lyg)]
                    :-  %brcn
                    %-  ~(run by q.gen)
                    |=  a+foot  ^-  foot
@@ -7055,6 +7049,7 @@
         {$cbpm *}  ~(clam al boil)
         {$cbwt *}  ~(clam al boil)
         {$cbts *}  ~(clam al boil)
+        {$cbzw *}  ~(bunt al %axil p.gen)
         {$cbzy *}  ~(clam al boil)
         {$cbzz *}  ~(clam al boil)
     ::
@@ -7062,7 +7057,7 @@
         {$clfs *}  =+(zoy=[%dtzz %ta %$] [%clsg [zoy [%clsg [zoy p.gen] ~]] ~])
         {$clls *}  [p.gen q.gen r.gen]
         {$clcb *}  [q.gen p.gen]
-        {$clcn *}  [[%clsg p.gen] [%bczp %null]]
+        {$clcn *}  [[%clsg p.gen] [%cbzw %null]]
         {$clhp *}  [p.gen q.gen]
         {$clsg *}
       |-  ^-  twig
@@ -7078,6 +7073,7 @@
         i.p.gen
       [i.p.gen $(p.gen t.p.gen)]
     ::
+        {$cnbc *}  [%ktsg ~(bunt al %herb p.gen)]
         {$cncb *}  [%ktls [%cnzz p.gen] %cnts p.gen q.gen]
         {$cncl *}
       =+  rem=[%cnsg [%$ ~] p.gen q.gen]
@@ -7141,7 +7137,7 @@
     ::
         {$sgts *}  [%sggr [%germ p.gen] q.gen]
         {$sgwt *}
-      :+  %tsls  [%wtdt q.gen [%bczp %null] [[%bczp %null] r.gen]]
+      :+  %tsls  [%wtdt q.gen [%cbzw %null] [[%cbzw %null] r.gen]]
       :^  %wtsg  [~ 2]~
         [%tsgr [~ 3] s.gen]
       [%sgpm p.gen [~ 5] [%tsgr [~ 3] s.gen]]
@@ -7168,13 +7164,13 @@
       :+  %ktls                                         ::  ^+
         :-  %brhp                                       ::  |-
         :^    %wtcl                                     ::  ?:
-            [%bczp %bean]                               ::  ?
-          [%bczp %null]                                 ::  ~
+            [%cbzw %bean]                               ::  ?
+          [%cbzw %null]                                 ::  ~
         :-  [%ktts %i [%dtzy 'tD' *@]]                  ::  :-  i=~~
         [%ktts %t [%cnzy %$]]                           ::  t=$
       |-  ^-  twig                                      ::
       ?~  p.gen                                         ::
-        [%bczp %null]                                   ::  ~
+        [%cbzw %null]                                   ::  ~
       =+  res=$(p.gen t.p.gen)                          ::
       ^-  twig                                          ::
       ?@  i.p.gen                                       ::
@@ -7203,7 +7199,7 @@
       ?~  q.gen                                         ::
         [%cnzy %a]                                      ::  a
       :^    %wtsg  [%a ~]                               ::  ?~  a
-        [%bczp %null]                                   ::  ~
+        [%cbzw %null]                                   ::  ~
       :+  %tsgr                                         ::  =>
         :+  %cnts  [[~ 1] ~]                            ::  %=  .
         :~  :-  [%a ~]                                  ::  a
@@ -7303,7 +7299,7 @@
     ::
         {$zpcb *}   q.gen
         {$zpgr *}
-      [%cnhp [%cnzy %onan] [%zpsm [%bctr [%herb [%cnzy %abel]]] p.gen] ~]
+      [%cnhp [%cnzy %onan] [%zpsm [%cnbc [%cnzy %abel]] p.gen] ~]
     ::
         {$zpwt *}
       ?:  ?:  ?=(@ p.gen)
@@ -9474,7 +9470,7 @@
         (stag %cbcl (ifix [kel ker] (most ace wide)))
       :-  '*'
         ;~  pose
-          (stag %bctr ;~(pfix tar hill))
+          (stag %cnbc ;~(pfix tar wide))
           (cold [%cbzz %noun] tar)
         ==
       :-  '@'
@@ -9572,7 +9568,7 @@
               ;~(glam rope wide (stag %cltr (most ace wide)))
             ::
               (cook (jock |) twid:so)
-              (easy [%bczp %null])
+              (easy [%cbzw %null])
             ==
           ==
         ==
@@ -9671,19 +9667,6 @@
                     ['*' (rune tar %cntr expm)]
                     ['=' (rune tis %cnts exph)]
                 ==
-              ==
-            :-  '$'
-              ;~  pose
-                ;~  pfix  buc
-                  %-  stew
-                  ^.  stet  ^.  limo
-                  :~
-                    [',' (rune com %bccm expt)]
-                    ['*' (rune tar %bctr expt)]
-                    ['@' (rune pat %bcpt expu)]
-                  ==
-                ==
-                (stag %bccm (noil tol))
               ==
             :-  ':'
               ;~  pfix  col

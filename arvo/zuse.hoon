@@ -2209,7 +2209,7 @@
       {$now p+horn}                                     ::  /&  list by @da
       {$saw p+twig q+horn}                              ::  /;  operate on
       {$see p+beam q+horn}                              ::  /:  relative to
-      {$sic p+tile q+horn}                              ::  /^  cast
+      {$sic p+twig q+horn}                              ::  /^  cast
       {$toy p+mark}                                     ::  /mark/  static
   ==                                                    ::
 ++  milk  (trel ship desk silk)                         ::  sourced silk

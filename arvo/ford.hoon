@@ -781,8 +781,8 @@
           ::
               ++  sic
                 %+  rail  
-                  ;~(plug ;~(sfix toil:vez ket) apex(tol |))
-                ;~(pfix gap ;~(plug howl:vez ;~(pfix gap apex)))
+                  ;~(plug ;~(sfix wide:vez ket) apex(tol |))
+                ;~(pfix gap ;~(plug tall:vez ;~(pfix gap apex)))
           --
         ::
         --
@@ -1623,7 +1623,7 @@
             $sic
           %+  cope  $(hon q.hon)
           |=  {cof+cafe vax+vase}
-          %+  cope  (maim cof bax [%bctr p.hon])
+          %+  cope  (maim cof bax [%cnbc p.hon])
           |=  {cof+cafe tug+vase}
           ?.  (~(nest ut p.tug) | p.vax)
             (flaw cof [%leaf "type error: {<p.hon>} {<q.hon>}"]~)
