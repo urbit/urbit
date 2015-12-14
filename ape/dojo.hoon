@@ -184,7 +184,7 @@
       ==
     ::
     ++  dp-twig-punt                                   ::  twig of unit
-      |*(a+rule ;~(pose (stag [%bczp %null] a) (easy [%bczp %null])))
+      |*(a+rule ;~(pose (stag [%cbzw %null] a) (easy [%cbzw %null])))
     ::
     ++  dp-case-twig
       |=  a+coin  ^-  (unit twig)
