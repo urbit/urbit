@@ -70,7 +70,7 @@
 ++  coup-helm-hi    (wrap coup-hi):from-helm
 ++  diff-sole-effect-drum-phat  (wrap diff-sole-effect-phat):from-drum
 ++  from-lib
-  |*  _[%helm ..$ $_(abet)]:(helm)
+  |*  _[%helm ..$ _abet]:(helm)
   =>  .(+< [identity start finish]=+<)
   =-  [wrap=- *start]                 ::  usage (wrap handle-arm):from-foo
   |*  handle+_finish

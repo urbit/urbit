@@ -952,7 +952,7 @@
 ::
 ++  prep
   =+  session-1==+(*session _-(poy *(unit)))
-  =+  session-0==+(*session-1 _[$_(say) syd=desk * $_(|2.-)])
+  =+  session-0==+(*session-1 _[_say syd=desk * _|2.-])
   :: ,_`..prep
   =+  ^=  hoze
       $%  {$0 p+(map bone session-0)}
