@@ -199,6 +199,19 @@
 ++  twig  _&  {p+twig q+twig}                           ::
           _%                                            ::
             {$$ p+axis}                                 ::  simple leg
+          ::                                            ::::::  molds
+            {$bcpt p+twig q+twig}                       ::  atom fork (reed)
+            {$bccb p+twig}                              ::  example
+            {$bccl p+(list twig)}                       ::  tuple
+            {$bccn p+(list twig)}                       ::  tagged fork (kelp)
+            {$bcls p+twig q+twig}                       ::  function
+            {$bckt p+twig q+twig}                       ::  pairhead fork (bush)
+            {$bcwt p+(list twig)}                       ::  untagged fork
+            {$bcts p+term q+twig}                       ::  name
+          ::
+            {$cbzw p+base}                              ::  bunt base
+            {$cbzy p+stem}                              ::  symbol
+            {$cbzz p+base}                              ::  base
           ::                                            ::::::  cores
             {$brcb p+twig q+(map term foot)}            ::  %gold tray, sample p
             {$brcl p+twig q+twig}                       ::  %brts by example
@@ -211,18 +224,6 @@
             {$brtr p+twig q+twig}
             {$brts p+twig q+twig}                       ::  dry %gold gate
             {$brwt p+twig}                              ::  dry %lead trap
-          ::                                            ::::::  molds
-            {$cbbr p+twig q+twig}                       ::  atom fork (reed)
-            {$cbcb p+twig}                              ::  example
-            {$cbcl p+(list twig)}                       ::  tuple
-            {$cbcn p+(list twig)}                       ::  tagged fork (kelp)
-            {$cbls p+twig q+twig}                       ::  function
-            {$cbpm p+twig q+twig}                       ::  pairhead fork (bush)
-            {$cbwt p+(list twig)}                       ::  untagged fork
-            {$cbts p+term q+twig}                       ::  name
-            {$cbzw p+base}                              ::  bunt base
-            {$cbzy p+stem}                              ::  symbol
-            {$cbzz p+base}                              ::  base
           ::                                            ::::::  tuples
             {$clcb p+twig q+twig}                       ::  [q p]
             {$clcn p+tusk}                              ::  [[p ~] ~]
@@ -6978,15 +6979,15 @@
     ^-  tile
     ?+  gen  [%herb gen]
     ::
-        {$cbbr *}  [%reed boil(gen p.gen) boil(gen q.gen)]
-        {$cbcb *}  [%weed p.gen]
-        {$cbcl *}
+        {$bcpt *}  [%reed boil(gen p.gen) boil(gen q.gen)]
+        {$bccb *}  [%weed p.gen]
+        {$bccl *}
       |-  ^-  tile
       ?~  p.gen  [%axil %null]
       ?~  t.p.gen  boil(gen i.p.gen)
       [boil(gen i.p.gen) $(p.gen t.p.gen)]
     ::
-        {$cbcn *}
+        {$bccn *}
       ?~  p.gen
         [%axil %void]
       ?~  t.p.gen
@@ -7001,11 +7002,12 @@
         $|  ?~(end p.def [%fern p.def [%kelp end] ~])
       ==
     ::
-        {$cbpm *}  [%bush boil(gen p.gen) boil(gen q.gen)]
-        {$cbls *}  [%weed [%brls p.gen [%cnbc q.gen]]]
-        {$cbts *}  [%bark p.gen boil(gen q.gen)]
-        {$cbwt *}  =+  (turn p.gen |=(a+twig boil(gen a)))
+        {$bckt *}  [%bush boil(gen p.gen) boil(gen q.gen)]
+        {$bcls *}  [%weed [%brls p.gen [%cnbc q.gen]]]
+        {$bcts *}  [%bark p.gen boil(gen q.gen)]
+        {$bcwt *}  =+  (turn p.gen |=(a+twig boil(gen a)))
                    ?~(- [%axil %void] [%fern -])
+    ::
         {$cbzy *}  [%leaf p.gen]
         {$cbzz *}  [%axil p.gen]
         {$zpcb *}  boil(gen q.gen)
@@ -7039,14 +7041,15 @@
         {$brts *}  [%brcb p.gen (~(put by *(map term foot)) %$ [%ash q.gen])]
         {$brwt *}  [%ktwt %brdt p.gen]
     ::
-        {$cbbr *}  ~(clam al boil)
-        {$cbcb *}  ~(clam al boil)
-        {$cbcl *}  ~(clam al boil)
-        {$cbcn *}  ~(clam al boil)
-        {$cbls *}  ~(clam al boil)
-        {$cbpm *}  ~(clam al boil)
-        {$cbwt *}  ~(clam al boil)
-        {$cbts *}  ~(clam al boil)
+        {$bcpt *}  ~(clam al boil)
+        {$bccb *}  ~(clam al boil)
+        {$bccl *}  ~(clam al boil)
+        {$bccn *}  ~(clam al boil)
+        {$bcls *}  ~(clam al boil)
+        {$bckt *}  ~(clam al boil)
+        {$bcwt *}  ~(clam al boil)
+        {$bcts *}  ~(clam al boil)
+    ::
         {$cbzw *}  ~(bunt al %axil p.gen)
         {$cbzy *}  ~(clam al boil)
         {$cbzz *}  ~(clam al boil)
@@ -9457,7 +9460,7 @@
       :-  '('
         (stag %cnhp (ifix [pel per] (most ace wide)))
       :-  '{'
-        (stag %cbcl (ifix [kel ker] (most ace wide)))
+        (stag %bccl (ifix [kel ker] (most ace wide)))
       :-  '*'
         ;~  pose
           (stag %cnbc ;~(pfix tar wide))
@@ -9506,7 +9509,7 @@
         (stag %dtts ;~(pfix tis (ifix [pel per] ;~(glam wide wide))))
       :-  '?'
         ;~  pose
-          (stag %cbwt ;~(pfix wut (ifix [pel per] (most ace wide))))
+          (stag %bcwt ;~(pfix wut (ifix [pel per] (most ace wide))))
           (cold [%cbzz %bean] wut)
         ==
       :-  '['
@@ -9643,6 +9646,20 @@
                     ['?' (rune wut %brwt expa)]
                 ==
               ==
+            :-  '$'
+              ;~  pfix  buc
+                %-  stew
+                ^.  stet  ^.  limo
+                :~  ['@' (rune pat %bcpt expb)]
+                    ['_' (rune cab %bccb expa)]
+                    [':' (rune col %bccl exps)]
+                    ['%' (rune cen %bccn exps)]
+                    ['+' (rune lus %bcls expb)]
+                    ['^' (rune pam %bckt expb)]
+                    ['=' (rune tis %bcts expg)]
+                    ['?' (rune wut %bcwt exps)]
+                ==
+              ==
             :-  '%'
               ;~  pfix  cen
                 %-  stew
@@ -9675,14 +9692,14 @@
               ;~  pfix  cab
                 %-  stew
                 ^.  stet  ^.  limo
-                :~  ['|' (rune bar %cbbr expb)]
-                    ['_' (rune cab %cbcb expa)]
-                    [':' (rune col %cbcl exps)]
-                    ['%' (rune cen %cbcn exps)]
-                    ['+' (rune lus %cbls expb)]
-                    ['&' (rune pam %cbpm expb)]
-                    ['=' (rune tis %cbts expg)]
-                    ['?' (rune wut %cbwt exps)]
+                :~  ['|' (rune bar %bcpt expb)]
+                    ['_' (rune cab %bccb expa)]
+                    [':' (rune col %bccl exps)]
+                    ['%' (rune cen %bccn exps)]
+                    ['+' (rune lus %bcls expb)]
+                    ['&' (rune pam %bckt expb)]
+                    ['=' (rune tis %bcts expg)]
+                    ['?' (rune wut %bcwt exps)]
                 ==
               ==
             :-  '.'
@@ -10001,7 +10018,7 @@
         $pel  (bind ~(reek ap ros) |=(hyp+wing [%cnts hyp p.vil]))
         $ket  [~ ros p.vil]
         $lus  =+  tog=~(hock ap ros)
-              ?.(?=(@ tog) ~ [~ %cbts tog p.vil])
+              ?.(?=(@ tog) ~ [~ %bcts tog p.vil])
         $tis  =+  tog=~(hock ap ros)
               ?:(=([%0 ~] tog) ~ [~ %ktts tog p.vil])
     ==
