@@ -323,7 +323,7 @@
             {$wtpz p+tiki q+twig r+twig}                ::  tiki %wtpt
             {$wtsg p+wing q+twig r+twig}                ::  if p is null
             {$wtsz p+tiki q+twig r+twig}                ::  tiki %wtsg
-            {$wtts p+tile q+wing}                       ::  if q is in tile p
+            {$wtts p+twig q+wing}                       ::  if q is in p
             {$wttz p+twig q+tiki}                       ::  tiki %wtts
             {$wtzp p+twig}                              ::  logical NOT
           ::                                            ::::::  special
@@ -6614,7 +6614,7 @@
   ?@  -.q.vax
     ^=  typ
     %-  ~(play ut p.vax)
-    [%wtgr [%wtts [%leaf %tas -.q.vax] [%$ 2]~] [%$ 1]]
+    [%wtgr [%wtts [%cbzy %tas -.q.vax] [%$ 2]~] [%$ 1]]
   (~(fuse ut p.vax) [%cell %noun %noun])
 ::
 ++  slew                                                ::  get axis in vase
@@ -6716,9 +6716,9 @@
     |=  vax+vase
     ^-  {vase worm}
     =+  ^=  gen  ^-  twig
-      ?@  q.vax    [%wtts [%axil [%atom %$]] [%$ 1]~]
-      ?@  -.q.vax  [%wtts [%leaf %tas -.q.vax] [%$ 2]~]
-      [%wtts [%axil %cell] [%$ 1]~]
+      ?@  q.vax    [%wtts [%cbzz [%atom %$]] [%$ 1]~]
+      ?@  -.q.vax  [%wtts [%cbzy %tas -.q.vax] [%$ 2]~]
+      [%wtts [%cbzz %cell] [%$ 1]~]
     =^  typ  +>+<.$  (play p.vax [%wtgr gen [%$ 1]])
     [[typ q.vax] +>+<.$]
   ::
@@ -6744,17 +6744,6 @@
     ^-  twig
     ?.  &(?=($| -.tig) ?=($~ p.tig))  gen
     [%tsgr [~ 3] gen]
-  ::
-  ++  pink
-    |=  tyl+tile
-    ^-  tile
-    ?.  &(?=($| -.tig) ?=($~ p.tig))  tyl
-    ?-  -.tyl
-      ?($leaf $axil)  tyl
-      $herb  [%herb [%tsgr [~ 3] p.tyl]]
-      $weed  [%weed [%tsgr [~ 3] p.tyl]]
-      *      [%herb [%tsgr [~ 3] [%bccm tyl]]]
-    ==
   ::
   ++  gray
     |=  gen+twig
@@ -7299,14 +7288,14 @@
         {$wtdt *}   [%wtcl p.gen r.gen q.gen]
         {$wtgl *}   [%wtcl p.gen [%zpzp ~] q.gen]
         {$wtgr *}   [%wtcl p.gen q.gen [%zpzp ~]]
-        {$wtkt *}   [%wtcl [%wtts [%axil %atom %$] p.gen] r.gen q.gen]
+        {$wtkt *}   [%wtcl [%wtts [%cbzz %atom %$] p.gen] r.gen q.gen]
     ::
         {$wthp *}
       |-
       ?~  q.gen
         [%zpfs [%cnzz p.gen]]
       :^    %wtcl
-          [%wtts [%herb p.i.q.gen] p.gen]
+          [%wtts p.i.q.gen p.gen]
         q.i.q.gen
       $(q.gen t.q.gen)
     ::
@@ -7317,8 +7306,8 @@
       |-
       ?~(p.gen [%dtzz %f 0] [%wtcl i.p.gen $(p.gen t.p.gen) [%dtzz %f 1]])
     ::
-        {$wtpt *}   [%wtcl [%wtts [%axil %atom %$] p.gen] q.gen r.gen]
-        {$wtsg *}   [%wtcl [%wtts [%axil %null] p.gen] q.gen r.gen]
+        {$wtpt *}   [%wtcl [%wtts [%cbzz %atom %$] p.gen] q.gen r.gen]
+        {$wtsg *}   [%wtcl [%wtts [%cbzz %null] p.gen] q.gen r.gen]
         {$wtzp *}   [%wtcl p.gen [%dtzz %f 1] [%dtzz %f 0]]
     ::
         {$wthz *}
@@ -7351,7 +7340,7 @@
         {$wttz *}
       =+  vaw=~(. ah q.gen)
       %-  gray:vaw
-      [%wtts [%herb (blue:vaw p.gen)] puce:vaw]
+      [%wtts (blue:vaw p.gen) puce:vaw]
     ::
         {$zpcb *}   q.gen
         {$zpgr *}
@@ -8305,8 +8294,8 @@
   ++  chip
     ~/  %chip
     |=  {way+? gen+twig}  ^-  type
-    ?:  ?=({$wtts *} gen)
-      (cool way q.gen (play ~(bunt al p.gen)))
+    ?:  ?=({$wtts *} gen)  
+      (cool way q.gen (play ~(bunt al [%herb p.gen])))
     ?:  ?&(way ?=({$wtpm *} gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     ?:  ?&(!way ?=({$wtbr *} gen))
@@ -8448,7 +8437,7 @@
     ::
         {$wtts *}
       :-  (nice bool)
-      %-  fish(sut (play ~(bunt al p.gen)))
+      %-  fish(sut (play ~(bunt al %herb p.gen)))
       (cove q:$(gen [%cnzz q.gen], gol %noun))
     ::
         {$zpcb *}
@@ -8613,7 +8602,7 @@
       [(nice (fork p.hiq p.ran)) (fork q.hiq q.ran)]
     ::
         {$wtts *}
-      =+  nob=~(bunt al p.gen)
+      =+  nob=~(bunt al %herb p.gen)
       =+  waz=[p=(play nob) q=(play(sut dox) nob)]
       =+  ^=  syx  :-  p=(cove q:(mint %noun [%cnzz q.gen]))
                    q=(cove q:(mint(sut dox) %noun [%cnzz q.gen]))
@@ -8940,6 +8929,7 @@
                  %+  fork
                    ?:(=(%void fex) %void $(sut fex, gen q.gen))
                  ?:(=(%void wux) %void $(sut wux, gen r.gen))
+      {$wtts *}  bool
       {$zpcb *}  ~_((show %o p.gen) $(gen q.gen))
       {$zpcm *}  (play p.gen)
       {$zpcn *}  p:seed
