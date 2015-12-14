@@ -35,8 +35,7 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|_  $^
-    _:  hid+bowl                                        ::  system state
+|_  _:  hid+bowl                                        ::  system state
         hood-0                                          ::  server state
     ==                                                  ::
 ++  able                                                ::  find/make part

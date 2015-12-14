@@ -917,8 +917,7 @@
     ==
   ::
   ++  apply-foreign-update                              ::  apply subscription
-    |=  $^
-        _:  lem+(unit @da)                              ::  complete up to
+    |=  _:  lem+(unit @da)                              ::  complete up to
             gar+(map aeon tako)                         ::  new ids
             let+aeon                                    ::  next id
             lar+(set yaki)                              ::  new commits
@@ -2531,7 +2530,7 @@
 ::  --  `hez` is the duct to the unix sync.
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-=|  $^                                                ::  instrument state
+=|                                                    ::  instrument state
     _:  $0                                            ::  vane version
         ruf+raft                                      ::  revision tree
     ==                                                ::
@@ -2539,8 +2538,7 @@
 ^?                                                    ::  opaque core
 |%                                                    ::
 ++  call                                              ::  handle request
-  |=  $^
-      _:  hen+duct
+  |=  _:  hen+duct
           hic+(hypo (hobo kiss))
       ==
   =>  %=    .                                         ::  XX temporary

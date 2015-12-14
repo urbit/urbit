@@ -146,16 +146,14 @@
   --
 --
 .  ==
-=|  $^
-    _:  $0                                              ::
+=|  _:  $0                                              ::
         tym+{p+clok q+clok}                             ::  positive/negative
     ==                                                  ::
 |=  {now+@da eny+@ ski+sled}                            ::  current invocation
 ^?
 |%                                                      ::  poke/peek pattern
 ++  call                                                ::  handle request
-  |=  $^
-      _:  hen+duct
+  |=  _:  hen+duct
           hic+(hypo (hobo kiss))
       ==
   ^-  {p+(list move) q+__(..^$)}

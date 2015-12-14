@@ -104,8 +104,7 @@
 |=  {now+@da eny+@ ski+sled}                            ::  current invocation
 =>  |%
     ++  as                                              ::  per cause
-      |_  $^
-          _:  {moz+(list move) hen+duct our+ship}
+      |_  _:  {moz+(list move) hen+duct our+ship}
               axon
           ==
       ++  abet                                          ::  resolve
@@ -378,8 +377,7 @@
     --
 |%                                                      ::  poke/peek pattern
 ++  call                                                ::  handle request
-  |=  $^
-      _:  hen+duct
+  |=  _:  hen+duct
           hic+(hypo (hobo kiss))
       ==
   ^+  [p=*(list move) q=..^$]

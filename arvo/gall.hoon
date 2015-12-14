@@ -90,8 +90,7 @@
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 .  ==
 =|  all+axle                                            ::  all vane state
-|=  $^
-    _:  now+@da                                         ::  urban time
+|=  _:  now+@da                                         ::  urban time
         eny+@uvI                                        ::  entropy
         ska+sled                                        ::  activate
     ==                                                  ::  opaque core
@@ -100,8 +99,7 @@
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  mo
   ~%  %gall-mo  +>  ~ 
-  |_  $^
-      _:  _:  our+@p 
+  |_  _:  _:  our+@p 
               hen+duct
               moz+(list move)
           ==
@@ -535,8 +533,7 @@
   ::
   ++  ap                                                ::  agent engine
     ~%  %gall-ap  +>  ~
-    |_  $^
-        _:  _:  dap+dude
+    |_  _:  _:  dap+dude
                 pry+prey
                 ost+bone
                 zip+(list cove)

@@ -586,8 +586,7 @@
   =.  q.tub
     %+  scan  q.tub                   ::  tab hackery  ::  XX per line
     (star ;~(pose prn tab nal))
-  =|  $^
-      _:  _:  top+down                ::  finished toplevel elements
+  =|  _:  _:  top+down                ::  finished toplevel elements
               {sap+@u nod+node}       ::  spacing currrent leaf block
               cur+stack               ::  stack of nested current blocks
           ==

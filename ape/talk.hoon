@@ -126,8 +126,7 @@
 ++  ra                                                  ::  per transaction
   |_  moves+(list move)
   ++  sh                                                ::  per console
-    |_  $^
-        _:  coz+(list command)                          ::  talk actions
+    |_  _:  coz+(list command)                          ::  talk actions
             she+shell
         ==
     ++  sh-scad                                         ::  command parser
@@ -401,8 +400,7 @@
       ::
     ++  sh-repo-house-diff
       |=  {one+shelf two+shelf}
-      =|  $^
-          _=  ret
+      =|  _=  ret
           _:  old+(list (pair span (pair posture cord)))
               new+(list (pair span (pair posture cord)))
               cha+(list (pair span (pair posture cord)))
@@ -430,8 +428,7 @@
     ::
     ++  sh-repo-atlas-diff
       |=  {one+atlas two+atlas}
-      =|  $^
-          _=  ret
+      =|  _=  ret
           _:  old+(list (pair ship status))
               new+(list (pair ship status))
               cha+(list (pair ship status))
@@ -459,8 +456,7 @@
     ::
     ++  sh-repo-cabal-diff
       |=  {one+(map station config) two+(map station config)}
-      =|  $^
-          _=  ret
+      =|  _=  ret
           _:  old+(list (pair station config))
               new+(list (pair station config))
               cha+(list (pair station config))
@@ -488,8 +484,7 @@
     ::
     ++  sh-repo-rogue-diff
       |=  {one+(map partner atlas) two+(map partner atlas)}
-      =|  $^
-          _=  ret
+      =|  _=  ret
           _:  old+(list (pair partner atlas))
               new+(list (pair partner atlas))
               cha+(list (pair partner atlas))
@@ -517,8 +512,7 @@
     ::
     ++  sh-repo-whom-diff
       |=  {one+(set partner) two+(set partner)}
-      =|  $^
-          _=  ret
+      =|  _=  ret
           _:  old+(list partner)
               new+(list partner)
           ==
@@ -543,8 +537,7 @@
     ::
     ++  sh-repo-ship-diff
       |=  {one+(set ship) two+(set ship)}
-      =|  $^
-          _=  ret
+      =|  _=  ret
           _:  old+(list ship)
               new+(list ship)
           ==
@@ -629,8 +622,7 @@
       (sh-repo-ship-diff q.cordon.laz q.cordon.loc)
     ::
     ++  sh-repo-cabal-changes
-      |=  $^
-          _:  laz+(map station config)
+      |=  _:  laz+(map station config)
               old+(list (pair station config))
               new+(list (pair station config))
               cha+(list (pair station config))
@@ -703,8 +695,7 @@
       ['%' (trip p.saz)]
     ::
     ++  sh-repo-group-diff-here                         ::  print atlas diff
-      |=  $^
-          _:  pre+tape 
+      |=  _:  pre+tape 
             _=  cul
             _:  old+(list (pair ship status))
                 new+(list (pair ship status))
@@ -1458,8 +1449,7 @@
     +>(p.outbox +(p.outbox), q.outbox (~(put by q.outbox) p.outbox tip))
   ::
   ++  pa                                                ::  story core
-    |_  $^  
-        _:  man+span
+    |_  _:  man+span
             story
         ==
     ++  pa-abet
@@ -1941,8 +1931,7 @@
   --
 ::
 ++  tr                                                  ::  telegram renderer
-  |_  $^
-      _:  man+span
+  |_  _:  man+span
           nob+?
           who+ship
           sen+serial

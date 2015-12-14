@@ -101,8 +101,7 @@
 !:                                                      ::
 ::::                                                    ::
   ::                                                    ::
-|_  $^ 
-    _:  hid+bowl                                        ::  system state
+|_  _:  hid+bowl                                        ::  system state
         house                                           ::  program state
     ==                                                  ::
 ++  he                                                  ::  per session
@@ -511,8 +510,7 @@
     ++  dy-show-type-noun
       |=  a+type  ^-  tank
       =-  >[-]<
-      |-  ^-  $^
-              _?  _%  {$atom @tas}
+      |-  ^-  _?  _%  {$atom @tas}
                       {$cell __($) __($)}
                       {$cube * __($)}
                       {$face @tas __($)}
@@ -520,7 +518,7 @@
                       {$hold (list {__($) twig})}
                   ==
                   wain                :: "<|core|>"
-                  $^(_?($noun $void))
+                  _?($noun $void)
               ==
       ?+  a  a
         {_?($cube $face) ^}  a(q $(a q.a))
@@ -534,8 +532,7 @@
       |=  a+dojo-source  ^-  tank
       =-  >[-]<
       =+  `{@ bil+dojo-build}`a
-      |-  ^-  $^
-              _&  [__($) __($)]
+      |-  ^-  _&  [__($) __($)]
               _?  twig
                   _%  {$ur purl}
                       {$dv path}
@@ -545,7 +542,7 @@
                   ==
               ==
       ?-  -.bil
-        $^(_?($ur $dv))  bil
+        _?($ur $dv)  bil
         $ex  ?.  ?=({$cltr *} p.bil)  p.bil
                  |-  ^-  twig
                  ?~  p.p.bil  !!

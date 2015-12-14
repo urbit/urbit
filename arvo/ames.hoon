@@ -548,8 +548,7 @@
           ==
         ::
         ++  wist                                        ::    wist:lax:as:go
-          |=  $^                                        ::  route via
-              _:  now+@da
+          |=  _:  now+@da                                ::  route via
                   waz+(list @p)
                   ryn+(unit lane)
                   pac+rock
@@ -1555,16 +1554,14 @@
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::              section 4aH, protocol vane            ::
   ::
-  =|  $^
-      _:  fox+fort                                      ::  kernel state
+  =|  _:  fox+fort                                      ::  kernel state
       ==                                                ::
   |=  {now+@da eny+@ ski+sled}                          ::  current invocation
   ^?                                                    ::  opaque core
   =<
     |%                                                  ::  vane interface
     ++  call                                            ::  handle request
-      |=  $^
-          _:  hen+duct
+      |=  _:  hen+duct
               hic+(hypo (hobo kiss-ames))
           ==
       =>  %=    .                                       ::  XX temporary

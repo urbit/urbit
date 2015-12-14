@@ -537,8 +537,7 @@
 --
 |%                                                      ::  functions
 ++  ye                                                  ::  per event
-  =|  $^
-      _:  _:  hen+duct                                  ::  event floor
+  =|  _:  _:  hen+duct                                  ::  event floor
               _:  now+@da                               ::  event date
                   eny+@                                 ::  unique entropy
                   our+ship                              ::  current ship
@@ -928,8 +927,7 @@
   ::
   ::
   ++  handle
-    |=  $^
-        _:  {hat+hart pok+pork quy+quay}                ::  purl parsed url
+    |=  _:  {hat+hart pok+pork quy+quay}                ::  purl parsed url
             {cip+clip aut+?}                            ::  client ip nonymous?
             {mef+meth maf+math bod+(unit octs)}         ::  method/headers/body
         ==
@@ -1563,8 +1561,7 @@
 ^?                                                      ::  opaque core
 |%                                                      ::
 ++  call                                                ::  handle request
-  |=  $^
-      _:  hen+duct
+  |=  _:  hen+duct
           hic+(hypo (hobo kiss))
       ==
   =>  %=    .                                           ::  XX temporary

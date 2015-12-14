@@ -90,8 +90,7 @@
     --
   ::
   ++  mash
-    |=  $^ 
-        _:  {als+ship ald+desk ali+(urge cord)}
+    |=  _:  {als+ship ald+desk ali+(urge cord)}
             {bos+ship bod+desk bob+(urge cord)}
         ==
     ^-  (urge cord)
@@ -141,8 +140,7 @@
     ==
     ::
     ++  annotate                                        ::  annotate conflict
-      |=  $^
-          _:  ali+(list @t)
+      |=  _:  ali+(list @t)
               bob+(list @t)
               bas+(list @t)
           ==
@@ -188,8 +186,7 @@
       |=  {ali+(urge cord) bob+(urge cord)}
       ^-  {fic+{$| p+(list cord) q+(list cord)} ali+(urge cord) bob+(urge cord)}
       =-  [[%| bac (annotate alc boc bac)] ali bob]
-      |-  ^-  $^
-              _:  _:  bac+(list cord)
+      |-  ^-  _:  _:  bac+(list cord)
                       alc+(list cord)
                       boc+(list cord)
                   ==

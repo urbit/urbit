@@ -176,8 +176,7 @@
   ==
 ::
 ++  za                                                  ::  per event
-  =|  $^
-      _:  _:  our+ship                                  ::  computation owner
+  =|  _:  _:  our+ship                                  ::  computation owner
               hen+duct                                  ::  event floor
               _:  now+@da                               ::  event date
                   eny+@                                 ::  unique entropy
@@ -1216,8 +1215,7 @@
       |=  {cof+cafe too+mark fro+(set mark)}
       :: ~&  lion/[too=too fro=(sa fro)]
       ^-  (bolt (list mark))
-      =|  $^
-          _:  war+(map mark (list mark))
+      =|  _:  war+(map mark (list mark))
               pax+(list mark)  
               won+{p+mark q+(qeu mark)}
           ==
@@ -1458,8 +1456,7 @@
     ::
     ++  meow                                            ::  assemble
       |=  {how+beam arg+heel} 
-      =|  $^
-          _:  rop+(map term (pair hoof twig))           ::  structures
+      =|  _:  rop+(map term (pair hoof twig))           ::  structures
               bil+(map term (pair hoof twig))           ::  libraries
               boy+(list twig)                           ::  body stack
           ==

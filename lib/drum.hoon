@@ -506,8 +506,7 @@
   ta-abet:(ta-fec:(se-tame gyl) fec)
 ::
 ++  ta                                                ::  per target
-  |_  $^
-      _:  _:  liv+?                                   ::  don't delete
+  |_  _:  _:  liv+?                                   ::  don't delete
               gyl+gill                                ::  target app
           ==                                          ::
           target                                      ::  target state
