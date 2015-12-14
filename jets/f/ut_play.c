@@ -183,19 +183,6 @@
     else switch ( u3h(gen) ) {
       default: goto open;
 
-      case c3__bcpt: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _play_used();
-      {
-        u3_noun sep = u3qfu_seep(van, sut, c3__read, p_gen);
-        u3_noun axe = u3h(sep);
-        u3_noun rex = u3qfl_whip(van, q_gen, axe);
-        u3_noun ret = _play_x(van, sut, rex);
-
-        u3z(sep);
-        u3z(rex);
-
-        return ret;
-      }
       case c3__wtts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
