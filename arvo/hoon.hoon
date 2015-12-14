@@ -7839,8 +7839,7 @@
       :+  %list
         (cat 3 p.i.p.i.t.p.u.may p.i.t.p.i.t.p.u.may)
       q.i.p.i.t.p.u.may
-    ?:  ?&  ?=  $^
-                _:  _:  $plot
+    ?:  ?&  ?=  _:  _:  $plot
                         {$face *}
                         {$face * $stop *}
                         {{$face * $stop *} $~}
@@ -8637,8 +8636,7 @@
     ~/  %nest
     |=  {tel+? ref+type}
     ^-  ?
-    =|  $^
-        _:  gem+(set {p+type q+type})                ::  prune ref
+    =|  _:  gem+(set {p+type q+type})                ::  prune ref
             gul+(set {p+type q+type})                ::  assume match
             meg+(set {p+type q+type})                ::  prune sut
         ==
@@ -9682,7 +9680,6 @@
                   :~
                     [',' (rune com %bccm expt)]
                     ['*' (rune tar %bctr expt)]
-                    ['^' (rune ket %bckt expa)]
                     ['@' (rune pat %bcpt expu)]
                   ==
                 ==
@@ -10563,8 +10560,7 @@
     ::
     ++  scry                                            ::  read namespace
       ~/  %scry
-      |=  $^
-          _:  fur+(unit (set monk))
+      |=  _:  fur+(unit (set monk))
               ren+care
               bed+beam
           ==
@@ -10594,8 +10590,7 @@
     ::
     ++  swim
       ~/  %swim
-      |=  $^
-          _:  org+@tas
+      |=  _:  org+@tas
               pux+(unit wire)
               hen+duct
               hil+mill
@@ -10764,8 +10759,7 @@
 =+  pit=`vase`!>(.)                                     ::
 =+  bud=pit                                             ::  becomes tang
 =+  vil=(viol p.bud)                                    ::  cached reflexives
-=|  $^
-    _:  lac+?                                           ::  laconic bit
+=|  _:  lac+?                                           ::  laconic bit
         eny+@                                           ::  entropy
         niz+(pair worm (list {p+@tas q+vase}))          ::  modules
     ==                                                  ::
