@@ -113,8 +113,8 @@
   |=  {a+cafe b+gage}  ^-  (bolt cage)
   ?-  -.b
     $tabl  (flaw a >%bad-marc< ~)
-    {$|}   (flaw a p.b)
-    {$&}   (fine a p.b)
+    $|     (flaw a p.b)
+    $&     (fine a p.b)
   ==
 ::
 ++  fret                                                ::  lift error
@@ -430,12 +430,12 @@
         $0  [%0 p=*(set beam) q=(fun p.ton)]
         $1  ::  ~&  [%coup-need ((list path) p.ton)]
             =-  ?-  -.faw
-                  {$&}  :-  %1
-                        ^=  p
-                        %-  sa
-                        %+  turn  p.faw
-                        |=(a+{care beam} [-.a +.a *tang])
-                  {$|}  [%2 p=*(set beam) q=p.faw]
+                  $&  :-  %1
+                      ^=  p
+                      %-  sa
+                      %+  turn  p.faw
+                      |=(a+{care beam} [-.a +.a *tang])
+                  $|  [%2 p=*(set beam) q=p.faw]
                 ==
             ^=  faw
             |-  ^-  (each (list (pair care beam)) tang)
@@ -453,8 +453,8 @@
             ?~  zis
               (err "blocking not beam")
             ?-  -.nex
-              {$&}  [%& [u.ren u.zis] p.nex]
-              {$|}  nex
+              $&  [%& [u.ren u.zis] p.nex]
+              $|  nex
             ==
       ==
     ::
@@ -463,8 +463,8 @@
       |*  {tod+(each * tang) fun+$+(* *)}
       %+  (coup cof)
         ?-  -.tod
-          {$&}  [%0 p=p.tod]
-          {$|}  [%2 p=p.tod]
+          $&  [%0 p=p.tod]
+          $|  [%2 p=p.tod]
         ==
       fun
     ::
@@ -1249,8 +1249,8 @@
       |=  {cof+cafe sut+type gen+twig}
       =+  puz=(mule |.((~(mint ut sut) [%noun gen])))
       ?-  -.puz
-        {$|}  (flaw cof p.puz)
-        {$&}  (fine cof p.puz)
+        $|  (flaw cof p.puz)
+        $&  (fine cof p.puz)
       ==
     ::
     ++  maim                                            ::  slap
@@ -1442,8 +1442,8 @@
       %+  cool  |.(%.(%want ~(dunk ut (~(peek ut gat) %free 6))))
       =+  top=(mule |.((slit gat sam)))
       ?-  -.top
-        {$|}  (flaw cof p.top)
-        {$&}  (fine cof p.top)
+        $|  (flaw cof p.top)
+        $&  (fine cof p.top)
       ==
     ::
     ++  maul                                            ::  slam
@@ -1721,8 +1721,8 @@
         |=  {cof+cafe hop+hoop}
         ^-  (bolt _..wilt)
         ?-    -.hop
-            {$&}  (fine cof ..wilt(boy [p.hop boy]))
-            {$|}
+            $&  (fine cof ..wilt(boy [p.hop boy]))
+            $|
           =.  r.p.hop  ?:(?=({$ud $0} r.p.hop) r.how r.p.hop)
           %+  cool  |.(leaf/"ford: wilt {<[(tope p.hop)]>}")
           %+  cope  (lend cof p.hop)

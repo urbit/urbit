@@ -257,8 +257,8 @@
       (ford-fail ?-(-.key $| p.key, $tabl [>%strange-gage<]~))
     ?-  -.val
       $tabl  (ford-fail >%strange-gage< ~)
-      {$&}   (some [p.key p.val])
-      {$|}   =.  p.val  [(sell q.p.key) p.val]
+      $&     (some [p.key p.val])
+      $|     =.  p.val  [(sell q.p.key) p.val]
              ~>  %slog.[0 %*(. >%ford-fail syd %her %why< |2.+> p.val)]
              ~
     ==
@@ -275,11 +275,11 @@
     =*  hed  i.p.gag
     ?-  -.p.hed
       $tabl  (mule |.(`$~`(ford-fail >%strange-gage< ~)))
-      {$|}   (mule |.(`$~`(ford-fail p.p.hed)))
-      {$&}   ?-  -.q.hed
+      $|     (mule |.(`$~`(ford-fail p.p.hed)))
+      $&     ?-  -.q.hed
         $tabl  (mule |.(`$~`(ford-fail >%strange-gage< ~)))
-        {$|}   (mule |.(`$~`(ford-fail p.q.hed)))
-        {$&}   =+  $(p.gag t.p.gag)
+        $|     (mule |.(`$~`(ford-fail p.q.hed)))
+        $&     =+  $(p.gag t.p.gag)
                ?+(- [[p.p p.q]:hed -] {@ *} -)
     ==       ==
   ::
@@ -477,19 +477,19 @@
     ^+  +>
     =+  pre=`path`~[(scot %p her) syd (scot %ud let.dom)]
     ?-  -.lem
-      {$|}  (print-to-dill '=' %leaf :(weld (trip p.lem) " " (spud pre)))
-      {$&}  |-  ^+  +>.^$
-            ?~  p.lem  +>.^$
-            =.  +>.^$
-              %+  print-to-dill
-                ?-(-.q.i.p.lem $del '-', $ins '+', $dif ':')
-              :+  %rose  ["/" "/" ~]
-              %+  turn  (weld pre p.i.p.lem)
-              |=  a+cord
-              ?:  ((sane %ta) a)
-                [%leaf (trip a)]
-              [%leaf (dash:ut (trip a) '\'')]
-            $(p.lem t.p.lem)
+      $|  (print-to-dill '=' %leaf :(weld (trip p.lem) " " (spud pre)))
+      $&  |-  ^+  +>.^$
+          ?~  p.lem  +>.^$
+          =.  +>.^$
+            %+  print-to-dill
+              ?-(-.q.i.p.lem $del '-', $ins '+', $dif ':')
+            :+  %rose  ["/" "/" ~]
+            %+  turn  (weld pre p.i.p.lem)
+            |=  a+cord
+            ?:  ((sane %ta) a)
+              [%leaf (trip a)]
+            [%leaf (dash:ut (trip a) '\'')]
+          $(p.lem t.p.lem)
     ==
   ::
   ::  This is the entry point to the commit flow.  It deserves some
@@ -1432,26 +1432,26 @@
       |=  {wen+@da lem+nuri}                            ::  edit
       ^-  {(unit (map path lobe)) _..ze}
       ?-  -.lem
-        {$&}
-             =^  yak  lat.ran                           ::  merge objects
-                 %+  forge-yaki  wen
-                 ?:  =(let.dom 0)                       ::  initial import
-                   [~ p.lem]
-                 [(some r:(aeon-to-yaki let.dom)) p.lem]
-             ?.  ?|  =(0 let.dom)
-                     !=((lent p.yak) 1)
-                     !(equiv q.yak q:(aeon-to-yaki let.dom))
-                 ==
-               `..ze                                    ::  silently ignore
-             =:  let.dom  +(let.dom)
-                 hit.dom  (~(put by hit.dom) +(let.dom) r.yak)
-                 hut.ran  (~(put by hut.ran) r.yak yak)
-             ==
-             [`q.yak ..ze]
-             ::  +>.$(ank (checkout-ankh q.yak))
-        {$|}
-             ?<  (~(has by lab.dom) p.lem)
-             [~ ..ze(lab.dom (~(put by lab.dom) p.lem let.dom))]
+        $&
+           =^  yak  lat.ran                             ::  merge objects
+               %+  forge-yaki  wen
+               ?:  =(let.dom 0)                         ::  initial import
+                 [~ p.lem]
+               [(some r:(aeon-to-yaki let.dom)) p.lem]
+           ?.  ?|  =(0 let.dom)
+                   !=((lent p.yak) 1)
+                   !(equiv q.yak q:(aeon-to-yaki let.dom))
+               ==
+             `..ze                                      ::  silently ignore
+           =:  let.dom  +(let.dom)
+               hit.dom  (~(put by hit.dom) +(let.dom) r.yak)
+               hut.ran  (~(put by hut.ran) r.yak yak)
+           ==
+           [`q.yak ..ze]
+           ::  +>.$(ank (checkout-ankh q.yak))
+        $|
+           ?<  (~(has by lab.dom) p.lem)
+           [~ ..ze(lab.dom (~(put by lab.dom) p.lem let.dom))]
       ==
     ::
     ++  equiv                                           ::  test paths

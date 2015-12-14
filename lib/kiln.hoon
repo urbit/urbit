@@ -365,15 +365,15 @@
     ?~  p.gag  ~
     =*  hed  i.p.gag
     ?-    -.p.hed
-        {$tabl}  (mule |.(`$~`(ford-fail >%strange-gage< ~)))
-        {$|}     (mule |.(`$~`(ford-fail p.p.hed)))
-        {$&}     
+        $tabl  (mule |.(`$~`(ford-fail >%strange-gage< ~)))
+        $|     (mule |.(`$~`(ford-fail p.p.hed)))
+        $&
       ?-  -.q.hed
         $tabl  (mule |.(`$~`(ford-fail >%strange-gage< ~)))
-        {$|}   (mule |.(`$~`(ford-fail p.q.hed)))
-        {$&}   =+  $(p.gag t.p.gag)
+        $|     (mule |.(`$~`(ford-fail p.q.hed)))
+        $&     =+  $(p.gag t.p.gag)
                ?+(- [[p.p p.q]:hed -] {@ *} -)
-        ==
+      ==
     ==
   ::
   ++  perform                                         ::  

@@ -268,11 +268,11 @@
     ++  parn
       |=  a+partner  ^-  cord
       ?-  -.a
-        {$&}  (stat p.a)
-        {$|}  %-  crip
-              ?-  -.p.a
-                $twitter  "{(trip -.p.a)}/{(trip p.p.a)}"
-              ==
+        $&  (stat p.a)
+        $|  %-  crip
+            ?-  -.p.a
+              $twitter  "{(trip -.p.a)}/{(trip p.p.a)}"
+            ==
       ==
     ::
     ++  stat

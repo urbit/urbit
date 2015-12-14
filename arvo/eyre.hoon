@@ -576,10 +576,10 @@
       =+  maf=(eat-headers r.heq)
       =+  ^=  pul  ^-  purl
           ?-  -.ryp
-            {$&}  ?>(=(sec p.p.p.ryp) p.ryp)
-            {$|}  =+  hot=(~(get ja maf) %host)
-                  ?>  ?=({@ $~} hot)
-                  [[sec (rash i.hot thor:epur)] p.ryp q.ryp]
+            $&  ?>(=(sec p.p.p.ryp) p.ryp)
+            $|  =+  hot=(~(get ja maf) %host)
+                ?>  ?=({@ $~} hot)
+                [[sec (rash i.hot thor:epur)] p.ryp q.ryp]
           ==
       =.  p.p.pul  |(p.p.pul ?=(hoke r.p.pul))
       =+  her=(host-to-ship r.p.pul)
@@ -744,8 +744,8 @@
       |=  {sus+(each duct ixor) con+_..axon}
       =.  ..axon  con
       ?-  -.sus
-        {$&}  (give-json(hen p.sus) 205 ~ %b &) 
-        {$|}  (get-even:(ire-ix p.sus) +.sih)
+        $&  (give-json(hen p.sus) 205 ~ %b &) 
+        $|  (get-even:(ire-ix p.sus) +.sih)
       ==
     ::
         $made

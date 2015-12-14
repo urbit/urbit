@@ -161,9 +161,9 @@
       %-  flit
       |=  a+$^({marx $~} $%({$& marx} {$| p+mane}))
       ?-  -.a
-        ^     (madn n.a) 
-        {$&}  (madn n.a) 
-        {$|}  (madn p.a)
+        ^   (madn n.a) 
+        $&  (madn n.a) 
+        $|  (madn p.a)
       ==
     ::
     ++  line 

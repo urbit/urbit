@@ -182,8 +182,8 @@
         ^-  (set partner)
         ?~  a  ~
         ?-  -.i.a
-          {$&}  (~(put in $(a t.a)) p.i.a)
-          {$|}  (~(uni in $(a t.a)) p.i.a)
+          $&  (~(put in $(a t.a)) p.i.a)
+          $|  (~(uni in $(a t.a)) p.i.a)
         ==
       ::
       ++  para                                          ::  partners alias
@@ -1420,15 +1420,15 @@
     ^+  +>
     ::  ~&  [%ra-conduct pub her tay]
     ?-  -.tay
-      {$&}  ?:  pub
-              =.  her  our.hid                          ::  XX security!
-              ?:  =(her p.p.tay)
-                (ra-record q.p.tay p.p.tay tip)
-              (ra-transmit p.tay tip)
-            ?.  =(our.hid p.p.tay)
-              +>
-            (ra-record q.p.tay her tip)
-      {$|}  !!
+      $&  ?:  pub
+            =.  her  our.hid                            ::  XX security!
+            ?:  =(her p.p.tay)
+              (ra-record q.p.tay p.p.tay tip)
+            (ra-transmit p.tay tip)
+          ?.  =(our.hid p.p.tay)
+            +>
+          (ra-record q.p.tay her tip)
+      $|  !!
     ==
   ::
   ++  ra-record                                         ::  add to story
@@ -1560,16 +1560,16 @@
       |=  tay+partner
       ^-  (list card)
       ?-  -.tay
-        {$|}  ~&  tweet-abjure/p.p.tay
-              !!
+        $|  ~&  tweet-abjure/p.p.tay
+            !!
       ::
-        {$&}  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
-              :_  ~
-              :*  %pull
-                  /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
-                  [p.p.tay %talk]
-                  ~
-              ==
+        $&  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
+            :_  ~
+            :*  %pull
+                /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
+                [p.p.tay %talk]
+                ~
+            ==
       ==
     ::
     ++  pa-acquire                                      ::  subscribe to
@@ -1582,14 +1582,14 @@
       :: =+  num=(fall (~(get by sequence) tay) 0) :: XX unused
       =+  old=(sub now.hid ~d1)
       ?-  -.tay
-        {$|}  !!
-        {$&}  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
-              :_  ~
-              :*  %peer
-                  /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
-                  [p.p.tay %talk] 
-                  /afx/[q.p.tay]/(scot %da old)
-              ==
+        $|  !!
+        $&  ::  ~&  [%pa-acquire [our.hid man] [p.p.tay q.p.tay]]
+            :_  ~
+            :*  %peer
+                /friend/show/[man]/(scot %p p.p.tay)/[q.p.tay]
+                [p.p.tay %talk] 
+                /afx/[q.p.tay]/(scot %da old)
+            ==
       ==
     ::
     ++  pa-reform                                       ::  reconfigure, ugly
@@ -1832,18 +1832,18 @@
   ++  ta-beat                                           ::  more relevant
     |=  two+partner  ^-  ?
     ?-    -.one
-        {$&}
+        $&
       ?-  -.two
-        {$|}  %&
-        {$&}  (~(sn-best sn man p.one) p.two)
+        $|  %&
+        $&  (~(sn-best sn man p.one) p.two)
       ==
     ::
-        {$|}
+        $|
       ?-  -.two
-        {$&}  %|
-        {$|}  ?:  =(-.p.two -.p.one)
-                (lth (mug +.p.one) (mug +.p.two))
-              (lth -.p.two -.p.one)
+        $&  %|
+        $|  ?:  =(-.p.two -.p.one)
+              (lth (mug +.p.one) (mug +.p.two))
+            (lth -.p.two -.p.one)
       ==
     ==
   ++  ta-best                                           ::  most relevant 
@@ -1854,14 +1854,14 @@
     |=  moy+(unit ?)
     ^-  tape
     ?-    -.one
-        {$&}
+        $&
       ?~  moy
         =+  cha=(~(get by nik) one ~ ~)
         =-  ?~(cha - "'{u.cha ~}' {-}")
         ~(sn-phat sn man p.one)
       (~(sn-curt sn man p.one) u.moy)
     ::
-        {$|}
+        $|
       =+  ^=  pre  ^-  tape
           ?-  -.p.one
             $twitter  "@t:"

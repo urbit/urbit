@@ -41,9 +41,9 @@
     ?~  ali  `bob
     ?~  bob  `ali
     ?-    -.i.ali
-        {$&}
+        $&
       ?-    -.i.bob
-          {$&}
+          $&
         ?:  =(p.i.ali p.i.bob)
           %+  bind  $(ali t.ali, bob t.bob)
           |=(cud+(urge cord) [i.ali cud])
@@ -52,7 +52,8 @@
           |=(cud+(urge cord) [i.bob cud])
         %+  bind  $(ali t.ali, p.i.bob (sub p.i.bob p.i.ali))
         |=(cud+(urge cord) [i.ali cud])
-          {$|}
+    ::
+          $|
         ?:  =(p.i.ali (lent p.i.bob))
           %+  bind  $(ali t.ali, bob t.bob)
           |=(cud+(urge cord) [i.bob cud])
@@ -62,10 +63,10 @@
         ~
       ==
     ::
-        {$|}
+        $|
       ?-  -.i.bob
-          {$|}  ~
-          {$&}
+          $|  ~
+          $&
         ?:  =(p.i.bob (lent p.i.ali))
           %+  bind  $(ali t.ali, bob t.bob)
           |=(cud+(urge cord) [i.ali cud])
@@ -101,16 +102,16 @@
     ?~  ali  bob
     ?~  bob  ali
     ?-    -.i.ali
-        {$&}
+        $&
       ?-    -.i.bob
-          {$&}
+          $&
         ?:  =(p.i.ali p.i.bob)
           [i.ali $(ali t.ali, bob t.bob)]
         ?:  (gth p.i.ali p.i.bob)
           [i.bob $(p.i.ali (sub p.i.ali p.i.bob), bob t.bob)]
         [i.ali $(ali t.ali, p.i.bob (sub p.i.bob p.i.ali))]
       ::
-          {$|}
+          $|
         ?:  =(p.i.ali (lent p.i.bob))
           [i.bob $(ali t.ali, bob t.bob)]
         ?:  (gth p.i.ali (lent p.i.bob))
@@ -121,14 +122,14 @@
         ::  ~   ::  here, alice is good for a while, but not for the whole
       ==    ::  length of bob's changes
     ::
-        {$|}
+        $|
       ?-  -.i.bob
-          {$|}
+          $|
         =+  ^-  {fic+(unce cord) ali+(urge cord) bob+(urge cord)}
             (resolve ali bob)
         [fic $(ali ali, bob bob)]
       ::
-          {$&}
+          $&
         ?:  =(p.i.bob (lent p.i.ali))
           [i.ali $(ali t.ali, bob t.bob)]
         ?:  (gth p.i.bob (lent p.i.ali))
@@ -196,10 +197,10 @@
       ?~  ali  [[~ ~ ~] ali bob]
       ?~  bob  [[~ ~ ~] ali bob]
       ?-    -.i.ali
-          {$&}
+          $&
         ?-    -.i.bob
-            {$&}  [[~ ~ ~] ali bob]                       ::  no conflict
-            {$|}
+            $&  [[~ ~ ~] ali bob]                       ::  no conflict
+            $|
           =+  lob=(lent p.i.bob)
           ?:  =(lob p.i.ali)
             [[p.i.bob p.i.bob q.i.bob] t.ali t.bob]
@@ -220,9 +221,9 @@
           ==
         ==
       ::
-          {$|}
+          $|
         ?-    -.i.bob
-            {$&}
+            $&
           =+  loa=(lent p.i.ali)
           ?:  =(loa p.i.bob)
             [[p.i.ali q.i.ali p.i.ali] t.ali t.bob]
@@ -242,7 +243,7 @@
               bob.res
           ==
         ::
-            {$|}
+            $|
           =+  loa=(lent p.i.ali)
           =+  lob=(lent p.i.bob)
           ?:  =(loa lob)

@@ -298,8 +298,8 @@
             {$g $onto *}
           ::  ~&  [%take-gall-onto +>.sih]
           ?-  -.+>.sih
-            {$|}  (crud %onto p.p.+>.sih)
-            {$&}  (done %blit [%lin (tuba "{<p.p.sih>}")]~)
+            $|  (crud %onto p.p.+>.sih)
+            $&  (done %blit [%lin (tuba "{<p.p.sih>}")]~)
           ==
         ::
             {$g $unto *}

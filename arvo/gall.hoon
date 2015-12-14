@@ -147,11 +147,11 @@
     ^+  +>
     ?-    -.gux
         $tabl  ~|(%made-tabl !!)
-        {$|}
+        $|
       =.  +>  (mo-bold byk dap dep)
       =.  +>  (mo-give %onto %| p.gux)
       +>
-        {$&}
+        $&
       ?>  ?=(@ p.p.gux)
       ?.  (mo-okay q.p.gux)
         (mo-give %onto %| [%leaf "{<dap>}: bogus core"]~)
@@ -193,8 +193,8 @@
     =.  +>.$  (mo-bold byk dap dep)
     ?-  -.gux
       $tabl  ~|(%made-tabl !!)
-      {$|}  (mo-give %onto %| p.gux)
-      {$&}  ?>  ?=(@ p.p.gux)
+      $|     (mo-give %onto %| p.gux)
+      $&     ?>  ?=(@ p.p.gux)
              ap-abet:(ap-peep:(ap-abed:ap dap [%high [~ our]]) q.p.gux)
     ==
   ::
@@ -328,8 +328,8 @@
       ?>  ?=({$f $made *} sih)
       ?-  -.q.+.sih
         $tabl  ~|(%made-tabl !!)
-        {$&}  (mo-give %unto %diff p.q.+>.sih)
-        {$|}  =.  p.q.+>.sih  (turn p.q.+>.sih |=(a+tank rose/[~ "! " ~]^[a]~))
+        $&    (mo-give %unto %diff p.q.+>.sih)
+        $|     =.  p.q.+>.sih  (turn p.q.+>.sih |=(a+tank rose/[~ "! " ~]^[a]~))
               ~>  %slog.`%*(. >[%wh %y]< +> [>%mo-cyst-fail< (flop p.q.+>.sih)])
               (mo-give %unto %quit ~)   ::  XX better errors pls
       ==
@@ -359,9 +359,9 @@
           ==
       ?-  -.q.+>.sih
         $tabl  ~|(%made-tabl !!)
-        {$|}  (mo-give %mack `p.q.+>.sih)                  ::  XX should crash
-        {$&}  =.  +>.$  (mo-give %mack ~)             ::  XX pump should ack
-              (mo-give(hen (mo-ball him num)) %unto %diff `cage`p.q.+>.sih)
+        $|     (mo-give %mack `p.q.+>.sih)                  ::  XX should crash
+        $&     =.  +>.$  (mo-give %mack ~)             ::  XX pump should ack
+               (mo-give(hen (mo-ball him num)) %unto %diff `cage`p.q.+>.sih)
       ==
     ::
         $req                                            ::  inbound request
@@ -373,8 +373,8 @@
       ?:  ?=({$f $made *} sih)
         ?-  -.q.+>.sih
           $tabl  ~|(%made-tabl !!)
-          {$|}  (mo-give %mack `p.q.+>.sih)               ::  XX should crash
-          {$&}  (mo-pass [%sys pax] %g %deal [him our] i.t.t.pax %poke p.q.+>.sih)
+          $|  (mo-give %mack `p.q.+>.sih)               ::  XX should crash
+          $&  (mo-pass [%sys pax] %g %deal [him our] i.t.t.pax %poke p.q.+>.sih)
         ==
       ?:  ?=({$a $woot *} sih)  +>.$                    ::  quit ack, boring
       ?>  ?=({$g $unto *} sih)
@@ -395,8 +395,8 @@
       ?>  ?=({$f $made *} sih)
       ?-  -.q.+>.sih
         $tabl  !!
-        {$|}   (mo-give %unto %coup `p.q.+>.sih)        ::  XX invalid, crash
-        {$&}   (mo-clip dap `prey`[%high ~ him] %poke p.q.sih)
+        $|     (mo-give %unto %coup `p.q.+>.sih)        ::  XX invalid, crash
+        $&     (mo-clip dap `prey`[%high ~ him] %poke p.q.sih)
       ==
     ::
         $way                                            ::  outbound request
@@ -438,8 +438,8 @@
       $out  ?:  ?=({$f $made *} q.hin)
               ?-  -.q.+>.q.hin  
                 $tabl  ~|(%made-tabl !!)
-                {$&}  ap-abet:(ap-pout:pap t.t.t.pax %diff +.q.+>.q.hin)
-                {$|}
+                $&     ap-abet:(ap-pout:pap t.t.t.pax %diff +.q.+>.q.hin)
+                $|
                     =+  why=p.q.+>.q.hin
                     =.  why  (turn why |=(a+tank rose/[~ "! " ~]^[a]~))
                     ~>  %slog.`rose/["  " "[" "]"]^[>%mo-cook-fail< (flop why)]

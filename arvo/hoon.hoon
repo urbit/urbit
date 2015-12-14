@@ -4701,7 +4701,7 @@
   |*  taq+_|.(**)
   =+  mud=(mute taq)
   ?-  -.mud
-    {$&}  [%& p=$:taq]                                  ::  XX transition
+    $&  [%& p=$:taq]                                  ::  XX transition
     $|  [%| p=p.mud]
   ==
 ::
@@ -4724,8 +4724,8 @@
   ?~  bur  ~
   :_  $(bur t.bur)
   ?-  -.i.bur
-    {$&}  i.bur
-    {$|}  [%| q.i.bur p.i.bur]
+    $&  i.bur
+    $|  [%| q.i.bur p.i.bur]
   ==
 ::
 ++  diff                                                ::  generate patch
@@ -4879,14 +4879,14 @@
   |-  ^+  hel
   ?~  rug  (flop war)
   ?-    -.i.rug
-      {$&}
+      $&
     %=   $
       rug  t.rug
       hel  (slag p.i.rug hel)
       war  (weld (flop (scag p.i.rug hel)) war)
     ==
   ::
-      {$|}
+      $|
     %=  $
       rug  t.rug
       hel  =+  gur=(flop p.i.rug)
@@ -4911,12 +4911,12 @@
     ^+  rag
     ?-  -.p.rag
       $|   ?-  -.new
-            {$|}  [[%| (weld p.new p.p.rag) (weld q.new q.p.rag)] q.rag]
-            {$&}  [new [p.rag q.rag]]
+            $|  [[%| (weld p.new p.p.rag) (weld q.new q.p.rag)] q.rag]
+            $&  [new [p.rag q.rag]]
           ==
       $&   ?-  -.new
-            {$|}  [new ?:(=(0 p.p.rag) q.rag [p.rag q.rag])]
-            {$&}  [[%& (add p.p.rag p.new)] q.rag]
+            $|  [new ?:(=(0 p.p.rag) q.rag [p.rag q.rag])]
+            $&  [[%& (add p.p.rag p.new)] q.rag]
           ==
     ==
   ::
@@ -6305,8 +6305,8 @@
   ^-  {p+axis q+type}
   :-  p.pok
   ?-  -.q.pok
-    {$&}  p.q.pok
-    {$|}  (roll q.q.pok =+([p=[p=*type q=*foot] q=`type`%void] |.((fork p.p q))))
+    $&  p.q.pok
+    $|  (roll q.q.pok =+([p=[p=*type q=*foot] q=`type`%void] |.((fork p.p q))))
   ==
 ::
 ++  flee
@@ -6323,8 +6323,8 @@
   |=  pok+port
   ^-  prop
   ?-  -.q.pok
-    {$&}  [p.pok [~ [[p.q.pok [%elm ~ 1]] ~]]]
-    {$|}  [p.pok [p.q.pok q.q.pok]]
+    $&  [p.pok [~ [[p.q.pok [%elm ~ 1]] ~]]]
+    $|  [p.pok [p.q.pok q.q.pok]]
   ==
 ::
 ++  fork                                                ::  make %fork type
@@ -6726,15 +6726,15 @@
     |=  gen+twig
     ^-  twig
     ?-  -.tig
-      {$&}  ?~(p.tig gen [%tstr u.p.tig q.tig gen])
-      {$|}  [%tsls ?~(p.tig q.tig [%ktts u.p.tig q.tig]) gen]
+      $&  ?~(p.tig gen [%tstr u.p.tig q.tig gen])
+      $|  [%tsls ?~(p.tig q.tig [%ktts u.p.tig q.tig]) gen]
     ==
   ::
   ++  puce
     ^-  wing
     ?-  -.tig
-      {$&}  ?~(p.tig q.tig [u.p.tig ~])
-      {$|}  [[%& 2] ~]
+      $&  ?~(p.tig q.tig [u.p.tig ~])
+      $|  [[%& 2] ~]
     ==
   ::
   ++  wthp  |=  opt+tine
@@ -6919,10 +6919,10 @@
     ::
         {$reed *}
       ?-  nag
-        {$&}  [%wtpt [[%& axe] ~] $(sec p.sec, nag |) $(sec q.sec, nag [& &])]
-        {$|}  $(sec p.sec)
-        ^     $(sec q.sec)
-        *     !!
+        $&  [%wtpt [[%& axe] ~] $(sec p.sec, nag |) $(sec q.sec, nag [& &])]
+        $|  $(sec p.sec)
+        ^   $(sec q.sec)
+        *   !!
       ==
     ::
         {$weed *}
@@ -7495,15 +7495,15 @@
     =>  .(i.peh ?^(i.peh i.peh [%| p=0 q=i.peh]))
     =+  ^=  poz  ^-  post
         ?-  -.i.peh
-          {$&}  [p.i.peh %& (peek %both p.i.peh)]
-          {$|}  (finq p.i.peh %both q.i.peh)
+          $&  [p.i.peh %& (peek %both p.i.peh)]
+          $|  (finq p.i.peh %both q.i.peh)
         ==
     |-  ^-  type
     ?:  =(1 p.poz)
       ?-  -.q.poz
         $0  ?-  -.i.peh
-               {$&}  ^$(peh t.peh)
-               {$|}  (face q.i.peh ^$(peh t.peh, sut p.q.poz))
+              $&  ^$(peh t.peh)
+              $|  (face q.i.peh ^$(peh t.peh, sut p.q.poz))
             ==
         $1  ^$(peh t.peh)
         $2  %+  bull
@@ -8932,8 +8932,8 @@
     =+  zar=$(hyp t.hyp)
     =+  ^=  syp
         ?-  -.q.zar
-          {$&}  p.q.zar
-          {$|}  (fire (turn q.q.zar |=({p+type q+foot} [p [%ash ~ 1]])))
+          $&  p.q.zar
+          $|  (fire (turn q.q.zar |=({p+type q+foot} [p [%ash ~ 1]])))
         ==
     ?-    i.hyp
         {$& *}
@@ -10412,8 +10412,8 @@
       |=  hil+mill
       ^-  mill
       ?-  -.hil
-        {$&}  [%& (slop [typ.vil p.p.hil] p.hil)]
-        {$|}  [%| [%cell typ.vil p.p.hil] p.hil]
+        $&  [%& (slop [typ.vil p.p.hil] p.hil)]
+        $|  [%| [%cell typ.vil p.p.hil] p.hil]
       ==
     ::
     ++  slur                                            ::  call gate on
@@ -10422,8 +10422,8 @@
       =+  sam=(slot 6 gat)
       =+  ^=  hig
         ?-  -.hil
-          {$&}  (~(nest wa p.sew) p.sam p.p.hil)
-          {$|}  (~(nets wa p.sew) p.sam p.p.hil)
+          $&  (~(nest wa p.sew) p.sam p.p.hil)
+          $|  (~(nets wa p.sew) p.sam p.p.hil)
         ==
       ?.(-.hig ~ `[(slym gat +>.hil) +.hig])
     ::
@@ -10479,8 +10479,8 @@
       |=  a+duct
       %-  bind  :_  |=(b+(pair arvo worm) [`move`[a p.b] q.b])
       =-  ?-  -.har
-            {$|}  ~&  [%dead-card p.har]  ~                ::  XX properly log?
-            {$&}  (some p.har)
+            $|  ~&  [%dead-card p.har]  ~                ::  XX properly log?
+            $&  (some p.har)
           ==
       ^=  har  ^-  (each (pair arvo worm) term)
       =^  caq  p.sew  (~(spot wa p.sew) 3 wec)
