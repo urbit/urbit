@@ -1,14 +1,19 @@
 `$_`
 ====
 
-Unbunt (any noun to specific value)
+Unbunt (create mold from example)
 
-Uses a [++twig]() `p` to produce a [mold]() that takes an arbitrary noun and produces the value of `p`. Used when you want the default value of a mold to be anything other than the standard default value ([bunt]()).
+Uses a [++twig]() `p` to produce a [mold]() for the type (span)
+of `p`.  The validator function has a default value of `p`. Used
+when either (1) you want the default value of a mold to be
+anything other than the standard default value ([bunt]()), or (2)
+you are referring to a type (span) that is difficult or
+cumbersome to describe in any way other than by example.
 
 Produces
 --------
 
-A validator function that takes an arbitrary noun and produces the value of `p`.
+A mold whose span is the span of `p`.
 
 Accepts
 -------
@@ -43,4 +48,5 @@ Examples
     ~zod/try=> ^-(_(add 2 2) 'a')
     97
 
-Here, see how the default value of `_12` is 12, whereas the default value of `@`--the type ([span]()) of `12`--is `0`.
+Here, see how the default value of `_12` is 12, whereas the
+default value of `@`--the type ([span]()) of `12`--is `0`.
