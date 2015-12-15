@@ -184,7 +184,8 @@ Run it with these commands:
 >=
 ```
 
-Replace `~sampel-sipnym` with another urbit.  Don't forget to
+Replace `~sampel-sipnym` with another urbit. The easiest thing to do is to start a [moon](),
+a sub-identity of your urbit. Don't forget to
 start the `%pong` app on that urbit too.  You should see, on the
 foreign urbit, this output:
 
