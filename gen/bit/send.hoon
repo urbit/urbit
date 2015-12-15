@@ -6,7 +6,7 @@
 :::::::
   !:
 :-  %say
-|=  [^ [to=@uc amo=@t ~] ~]
+|=  {^ {to+@uc amo+@t $~} $~}
 [%bit-send to amo]
 
 

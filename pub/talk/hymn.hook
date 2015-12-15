@@ -5,18 +5,18 @@
 /+  talk
 /=  gas  /$  fuel                                       ::  get request info
 =+  aut=?=(~ but.gas)
-=+  ^-  man=span
+=+  ^-  man+span
     ~|  bad-path/but.gas
     %-  need
     ?+  but.gas  ~
-      [@ ~]  ((sand %ta) i.but.gas)
-      ~      (some (main:talk (slav %p -:%)))
+      {@ $~}  ((sand %ta) i.but.gas)
+      $~      (some (main:talk (slav %p -:%)))
     ==
 |%
 ++  cdnj
-  |=  a=wall  ^-  marl
+  |=  a+wall  ^-  marl
   %+  turn  a
-  |=  lib=tape
+  |=  lib+tape
   ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/{lib}");
 --
 ::

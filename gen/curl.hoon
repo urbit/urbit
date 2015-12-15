@@ -1,6 +1,6 @@
 /-  sole
 [sole]
-:-  %get  |=  [^ [a=tape ~] ~]
+:-  %get  |=  {^ {a+tape $~} $~}
 %+  sole-at  (scan a auri:epur)
-|=  hit=httr
+|=  hit+httr
 (sole-so %httr hit)

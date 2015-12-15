@@ -9,8 +9,8 @@
 ::::                                                    ::::::  interfaces
   !:                                                    ::  ::
 =>  |%                                                  ::
-    ++  axon  ,[%0 eye=face gam=game]                   ::  agent state
-    ++  card  ,[%diff %sole-effect sole-effect]         ::  update
+    ++  axon  {$0 eye+face gam+game}                    ::  agent state
+    ++  card  {$diff $sole-effect sole-effect}          ::  update
     ++  face  (map bone sole-share)                     ::  console state
     ++  move  (pair bone card)                          ::  cause and action
     --                                                  ::
@@ -18,28 +18,28 @@
 ::::                                                    ::::::  parsers
   ::                                                    ::  ::
 =>  |%                                                  ::
-    ++  colm  (cook |=(a=@ (sub a '1')) (shim '1' '3')) ::  row or column
+    ++  colm  (cook |=(a+@ (sub a '1')) (shim '1' '3')) ::  row or column
     ++  come  ;~(plug colm ;~(pfix fas colm))           ::  coordinate
     --                                                  ::
 ::                                                      ::  ::
 ::::                                                    ::::::  process core
   ::                                                    ::  ::
 |_  $:  bowl                                            ::  system state
-        moz=(list move)                                 ::  pending actions
+        moz+(list move)                                 ::  pending actions
         axon                                            ::  server state, v0
     ==                                                  ::
 ::                                                      ::  ::
 ::::                                                    ::::::  process tools
   ::                                                    ::  ::
 ++  abet  [(flop moz) .(moz ~)]                         ::  resolve
-++  bike  $+(_. $+>)                                    ::  self-transformer
-++  dish  |=(cad=card %_(+> moz [[ost cad] moz]))       ::  request
+++  bike  $+(_. _+>)                                    ::  self-transformer
+++  dish  |=(cad+card %_(+> moz [[ost cad] moz]))       ::  request
 ++  eels  (~(tap by sup))                               ::  all clients
-++  echo  |=  [all=(list sink) fun=bike]  =+  old=+>+<- ::
+++  echo  |=  {all+(list sink) fun+bike}  =+  old=+>+<- ::
           |-  ^+  +>.^$  ?~  all  +>.^$(+<- old)        ::
           =.  ost  p.i.all                              ::
           $(all t.all, +>.^$ (fun +>.^$))               ::
-++  flap  |=(con=bike (echo eels con))                  ::  update all clients
+++  flap  |=(con+bike (echo eels con))                  ::  update all clients
 ++  here  ~(. go gam)                                   ::  game core
 ::                                                      ::  ::
 ::::                                                    ::::::  process logic
@@ -56,21 +56,21 @@
 ++  show  prom:(fect %mor rend)                         ::  update console
 ++  tame  (flap |=(_. prom:+<))                         ::  light update
 ++  wild  (flap |=(_. show:+<))                         ::  full update
-++  word  |=(tape (flap |=($+> (fect:+< txt/+>+<))))    ::
+++  word  |=(tape (flap |=(_+> (fect:+< txt/+>+<))))    ::
 ::                                                      ::  ::
 ::::                                                    ::::::  process UI
   ::                                                    ::  ::
 ++  work                                                ::  console action
   |=  act=sole-action                                   ::  
   =+  say=(~(got by eye) ost)                           ::
-  |^  ?+(-.act abet %det (delt +.act), %ret dive)       ::
+  |^  ?+(-.act abet $det (delt +.act), $ret dive)       ::
   ++  abet  ..work(eye (~(put by eye) ost say))         ::  resolve
   ++  delt  |=  cal=sole-change                         ::  edit command line
             =^  cul  say  (~(remit sole say) cal good)  ::
             ?~(cul abet fail:(fect:abet det/u.cul))     ::
   ++  dive  =+  (rust (tufa buf.say) (punt come))       ::  apply command line
             ?~(- fail ?~(-> show (kick:wipe ->+)))      ::
-  ++  good  |=((list ,@c) -:(rose (tufa +<) come))      ::  validate input
+  ++  good  |=((list @c) -:(rose (tufa +<) come))       ::  validate input
   ++  wipe  =^  cal  say  (~(transmit sole say) set/~)  ::  clear line
             (fect:abet %det cal)                        ::
   --                                                    ::

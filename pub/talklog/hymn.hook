@@ -7,10 +7,10 @@
   /:    /===/talk
   /%    2
   /;    pojo
-  /;    |=(a=(list ,[@ p=json]) =.(a (flop a) ?~(a [%a ~] p.i.a)))
+  /;    |=(a+(list {@ p+json}) =.(a (flop a) ?~(a [%a ~] p.i.a)))
   /&    /json/
 |%
-++  cdnj  |=(a=tape ;script(src "//cdnjs.cloudflare.com/ajax/libs/{a}");)
+++  cdnj  |=(a+tape ;script(src "//cdnjs.cloudflare.com/ajax/libs/{a}");)
 --
 ::
 ::::

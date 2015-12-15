@@ -4,7 +4,7 @@
   ::
 /?    310
 |%
-++  cdnj  |=(a=tape ;script(src "//cdnjs.cloudflare.com/ajax/libs/{a}");)
+++  cdnj  |=(a+tape ;script(src "//cdnjs.cloudflare.com/ajax/libs/{a}");)
 --
 ::
 ::::

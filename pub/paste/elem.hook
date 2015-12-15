@@ -1,4 +1,4 @@
-/=  all  /;  flop  /^  (list (pair time ,*))  /:  /%%/  /&  /mime/
+/=  all  /;  flop  /^  (list (pair time *))  /:  /%%/  /&  /mime/
 ;div
   ;link(rel "stylesheet", href "/home/lib/base.css");
   ;link(rel "stylesheet", href "/home/pub/paste/main.css");

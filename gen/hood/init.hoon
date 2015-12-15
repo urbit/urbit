@@ -6,8 +6,8 @@
 ::::
   !:
 :-  %say
-|=  $:  [now=@da eny=@uvI bec=beak]
-        [~ ~]
+|=  $:  {now+@da eny+@uvI bec+beak}
+        {$~ $~}
     ==
 :-  %hood-init
 p.bec

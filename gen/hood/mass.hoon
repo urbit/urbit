@@ -6,7 +6,7 @@
 ::::
   !:
 :-  %say
-|=  $:  [now=@da eny=@uvI bec=beak]
-        [arg=~ ~]
+|=  $:  {now+@da eny+@uvI bec+beak}
+        {arg+$~ $~}
     ==
 [%helm-mass ~]

@@ -8,10 +8,10 @@
 ::::
   ::
 :-  %say
-|=  [^ [arg=(list path)] ~]
+|=  {^ {arg+(list path)} $~}
 =-  tang/(flop `tang`(zing -))
 %+  turn  arg
-|=  pax=path
+|=  pax+path
 ^-  tang
 =+  ark=;;(arch .^(%cy pax))
 ?^  fil.ark
@@ -19,10 +19,12 @@
     [>;;((map ,@da cord) .^(%cx pax))<]~
   [leaf/(spud pax) (pretty-file .^(%cx pax))]
 ?-     dir.ark                                          ::  handle ambiguity
-    ~
+    $~
   [rose/[" " `~]^~[leaf/"~" (smyt pax)]]~
-    [[@t ~] ~ ~]
+::
+    {{@t $~} $~ $~}
   $(pax (welp pax /[p.n.dir.ark]))
+::
     *
   =-  [palm/[": " ``~]^-]~
   :~  rose/[" " `~]^~[leaf/"*" (smyt pax)] 

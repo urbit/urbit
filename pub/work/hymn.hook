@@ -4,9 +4,9 @@
   ::
 |%
 ++  cdnj
-  |=  a=wall  ^-  marl
+  |=  a+wall  ^-  marl
   %+  turn  a
-  |=  lib=tape
+  |=  lib+tape
   ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/{lib}");
 --
 ::

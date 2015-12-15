@@ -9,21 +9,21 @@
 ::::                                                    ::::::  interfaces
   !:                                                    ::  ::
 =>  |%                                                  ::
-    ++  axle  ,[eye=face gam=game]                      ::  agent state
-    ++  card  $%  [%diff lime]                          ::  update
-                  [%quit ~]                             ::  cancel
+    ++  axle  {eye+face gam+game}                      ::  agent state
+    ++  card  $%  {$diff lime}                          ::  update
+                  {$quit ~}                             ::  cancel
               ==                                        ::
     ++  face  (map bone sole-share)                     ::  console state
-    ++  lime  ,[%sole-effect sole-effect]               ::  :sole update
+    ++  lime  {$sole-effect sole-effect}               ::  :sole update
     ++  move  (pair bone card)                          ::  cause and action
     --                                                  ::
 ::                                                      ::  ::
 ::::                                                    ::::::  past state
   ::                                                    ::  ::
 =>  |%                                                  ::  
-    ++  axon     $%([%1 axle] [%0 axle-0])              ::  all states
-    ++  axle-0  ,[eye=face gam=game-0]                  ::  old axle
-    ++  game-0  ,[who=? box=board boo=board]            ::  old game
+    ++  axon    $$%{$1 axle} {$0 axle-0})              ::  all states
+    ++  axle-0  {eye+face gam+game-0}                  ::  old axle
+    ++  game-0  {who+? box+board boo+board}            ::  old game
     ++  wake    |=  axon  :-  %1  ?-  +<-  %1  +<+      ::  rough upgrade
                 %0  [eye [who ~^~ ~ box boo]:gam]:+<+   ::
     ==  --                                              ::
@@ -31,7 +31,7 @@
 ::::                                                    ::::::  parsers
   ::                                                    ::  ::
 =>  |%                                                  ::
-    ++  colm  (cook |=(a=@ (sub a '1')) (shim '1' '3')) ::  row or column
+    ++  colm  (cook |=(a+@ (sub a '1')) (shim '1' '3')) ::  row or column
     ++  come  ;~(plug colm ;~(pfix fas colm))           ::  coordinate
     ++  cope  |=(? ?:(+< (stag %| (cold ~ sig)) come))  ::  with wait mode
     --                                                  ::
@@ -39,20 +39,20 @@
 ::::                                                    ::::::  process core
   ::                                                    ::  ::
 |_  $:  bowl                                            ::
-        moz=(list move)                                 ::  pending actions
-        [%1 axle]                                       ::  process state, v1
+        moz+(list move)                                 ::  pending actions
+        {$1 axle}                                       ::  process state v1
     ==                                                  ::
 ::                                                      ::  ::
 ::::                                                    ::::::  process tools
   ::                                                    ::  ::
 ++  abet  [(flop moz) .(moz ~)]                         ::  resolve
-++  bike  $+(_. $+>)                                    ::  self-transformer
-++  dish  |=(cad=card %_(+> moz [[ost cad] moz]))       ::  request
-++  echo  |=  [all=(list sink) fun=bike]  =+  old=+>+<- ::  publish to all
+++  bike  $+(_. _+>)                                    ::  self-transformer
+++  dish  |=(cad+card %_(+> moz [[ost cad] moz]))       ::  request
+++  echo  |=  [all+(list sink) fun+bike]  =+  old=+>+<- ::  publish to all
           |-  ^+  +>.^$  ?~  all  +>.^$(+<- old)        ::
           =>  .(ost p.i.all, src q.i.all)               ::
           $(all t.all, +>.^$ (fun +>.^$))               ::
-++  flap  |=(con=bike (echo (~(tap by sup)) con))       ::  update all clients
+++  flap  |=(con+bike (echo (~(tap by sup)) con))       ::  update all clients
 ++  here  ~(. go src gam)                               ::  game core
 ::                                                      ::  ::
 ::::                                                    ::::::  server logic
@@ -73,14 +73,14 @@
 ++  show  prom:(fect %mor rend)                         ::  update console
 ++  tame  (flap |=(_. prom:+<))                         ::  light update
 ++  wild  (flap |=(_. show:+<))                         ::  full update
-++  word  |=(tape (flap |=($+> (fect:+< txt/+>+<))))    ::
+++  word  |=(tape (flap |=(_+> (fect:+< txt/+>+<))))    ::
 ::                                                      ::  ::
 ::::                                                    ::::::  console UI
   ::                                                    ::  ::
 ++  work                                                ::  console action
   |=  act=sole-action                                   ::  
   =+  say=(~(got by eye) ost)                           ::
-  |^  ?+(-.act abet %det (delt +.act), %ret dive)       ::
+  |^  ?+(-.act abet $det (delt +.act), $ret dive)       ::
   ++  abet  ..work(eye (~(put by eye) ost say))         ::  resolve
   ++  cusp  (cope !ept:here)                            ::  parsing rule
   ++  delt  |=  cal=sole-change                         ::  edit command line

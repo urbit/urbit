@@ -1,6 +1,6 @@
 /+    tree
 /:    /%%/    /%
-  /^    [tip=marl sub=(map span marl) ~]
+  /^    {tip+marl sub+(map span marl) $~}
   /.    /;    (getall:tree %h1 ~)    /elem/
         /_    /;    (getall:tree %h1 ~)    /elem/
   ==

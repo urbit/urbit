@@ -15,44 +15,55 @@
 [talk .]
 |%
 ++  instance
-  $:  plat=?(%do %gce)  name=@t  id=@t  status=@t  created=@da  snapshot=name=@t  ::disk=@u  region=@t  
-::ip=(list ,@if)
-==
+  $:  plat+?($do $gce)  
+      name+@t  
+      id+@t  
+      status+@t  
+      created+@da  
+      snapshot+name+@t  
+  ==
 ++  image
-  $:  plat=?(%do %gce)  name=@t  id=@t
-==
+  $:  plat+?($do $gce)  
+      name+@t  
+      id+@t
+  ==
 ++  create-req-do
-  $:
-  name=@t  ::region=@t
-  size=@t  image=@t  ssh=(list cord)
-  backups=(unit ,?)  ipv6=(unit ,?)
-  private-networking=(unit ,?)  user-data=(unit ,@t)
+  $:  name+@t
+      size+@t  
+      image+@t  
+      ssh+(list cord)
+      backups+(unit ?)  
+      ipv6+(unit ?)
+      private-networking+(unit ?)  
+      user-data+(unit @t)
   ==
-++  create-req-gce  ,[project=@t zone=@t name=@t machine-type=@t]
+++  create-req-gce  {project+@t zone+@t name+@t machine-type+@t}
 ++  axle
-  $:  auth=[do=keys gce=keys]  toke=[do=tokens gce=tokens]
-      insts=(map ,@t instance)  images=(map [,[@t @t] image])
+  $:  auth+{do+keys gce+keys}  
+      toke+{do+tokens gce+tokens}
+      insts+(map @t instance)  
+      images+(map {{@t @t} image})
   ==
-++  keys  ,[authc=(unit ,@t) client-secret=(unit ,@t)]
-++  tokens  ,[access=@t refresh=@t]
-++  move  ,[bone card]
+++  keys  {authc+(unit @t) client-secret+(unit @t)}
+++  tokens  {access+@t refresh+@t}
+++  move  {bone card}
 ++  card
-  $%  [%diff %json json]
-      [%wait wire @da]
-      [%send wire [ship term] %poke %talk-command command]
-      [%them wire (unit hiss)]
+  $%  {$diff $json json}
+      {$wait wire @da}
+      {$send wire {ship term} $poke $talk-command command}
+      {$them wire (unit hiss)}
   ==
 ++  droplet-action
-  $%  [%start ~]
-      [%stop ~]
-      [%reboot ~]
-      [%delete ~]
-      [%snapshot p=@t]
+  $%  {$start $~}
+      {$stop $~}
+      {$reboot $~}
+      {$delete $~}
+      {$snapshot p+@t}
   ==
 ++  cloud-command
-  $%  [%action id=@t name=@t act=droplet-action]
-      [%create-do p=json]
-      [%create-gce p=json]
+  $%  {$action id+@t name+@t act+droplet-action}
+      {$create-do p+json}
+      {$create-gce p+json}
   ==
 --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -61,7 +72,7 @@
 !:
 |%
 ++  auth-queries  
-    |=  code=cord
+    |=  code+cord
     :~  'grant_type'^'authorization_code'
         'code'^code
         :-  'client_id'
@@ -73,7 +84,7 @@
   =<  (cook to-time (parsf ;"{parse-day}T{parse-seconds}{parse-zone}"))
   |%
   ++  to-time
-     |=  [[y=@u m=@u d=@u] t=[h=@u m=@u s=@u ms=@u] [syn=? zh=@u zm=@u]]
+     |=  {{y+@u m+@u d+@u} t+{h+@u m+@u s+@u ms+@u} {syn+? zh+@u zm+@u}}
      ^-  @da
      %-  year
      ^-  date
@@ -83,7 +94,7 @@
      [[& y] m d h.t m.t s.t (div (mul ms.t 0x1.0000) 1.000) ~]
   ++  parse-day    (parsf ;"{dem}\-{dem}\-{dem}")
   ++  parse-seconds  (parsf ;"{dem}:{dem}:{dem}{(optional ;~(pfix dot dem))}")
-  ++  optional  |*(fel=rule ;~(pose fel (easy 0)))
+  ++  optional  |*(fel+rule ;~(pose fel (easy 0)))
   ++  parse-zone
     ;~  pose 
       (cold [& 0 0] (jest 'Z')) 
@@ -113,7 +124,7 @@
   (mo [%start 'power_on'] [%stop 'shutdown'] [%reboot 'power_cycle'] ~)
 ::
 ++  adapter-do
-  |=  a=cord
+  |=  a+cord
   (~(got by key-do) a)
 ::
 ++  parse-ip-do
@@ -123,11 +134,11 @@
 ::
 ++  parse-ip-gce
   =>  jo
-  %+  cu  |=(a=(list (list ,@if)) `(list ,@if)`(zing a))
+  %+  cu  |=(a+(list (list @if)) `(list @if)`(zing a))
   (ar (ot 'accessConfigs'^(ar (ot 'natIP'^(su lip:ag) ~)) ~))
 ::
 ++  tail-url
-  |=  a=cord
+  |=  a+cord
   -:(flop q.q:(need (epur a)))
 ::
 ++  parse-region
@@ -136,35 +147,43 @@
 ::
 ++  parse-id-text
   |=  jon=json
-  ?.(?=([?(%n %s) *] jon) ~ (some p.jon))
+  ?.(?=({?($n $s) *} jon) ~ (some p.jon))
 ::
 ++  create-do-body
-  |=  $:  name=@t  ::region=@t
-      size=@t  image=@t  ssh-keys=(list cord)
-      backups=(unit ,?)  ipv6=(unit ,?)  private-networking=(unit ,?)  user-data=(unit ,@t)  
+  |=  $:  name+@t  
+          size+@t  
+          image+@t  
+          ssh-keys+(list cord)
+          backups+(unit ?)  
+          ipv6+(unit ?)  
+          private-networking+(unit ?)  
+          user-data+(unit @t)  
   ==
   %-  jobe
-  :~  name/s/name  ::region/s/region
-      size/s/size  image/s/image ::(jone image)
-       backups/?~(backups ~ b/u.backups)  ipv6/?~(ipv6 ~ b/u.ipv6)
-      'user_data'^?~(user-data ~ s/u.user-data)  'private_networking'^?~(private-networking ~ b/u.private-networking)
+  :~  name/s/name 
+      size/s/size  
+      image/s/image 
+      backups/?~(backups ~ b/u.backups)  
+      ipv6/?~(ipv6 ~ b/u.ipv6)
+      'user_data'^?~(user-data ~ s/u.user-data)  
+      'private_networking'^?~(private-networking ~ b/u.private-networking)
   ==
 ::
 ++  convert-do
-  |=  a=?(%start %stop %reboot %snapshot)
+  |=  a+?($start $stop $reboot $snapshot)
   ?-  a
-    %start
+    $start
   'power_on'
-    %stop
+    $stop
   'shutdown'
-    %reboot
+    $reboot
   'power_cycle'
-    %snapshot
+    $snapshot
   'snapshot'
   ==
 ::
 ++  instance-to-json
-  |=  a=(list instance)
+  |=  a+(list instance)
   ^-  json
   %+  joba  'instances'
   :-  %a
@@ -176,19 +195,16 @@
       id/s/id
       status/s/status
       created/s/(crip (dust (yore created)))
-      ::region/s/region
       snapshot/s/snapshot
-      ::disk/`json`(jone disk)
-      ::ip/a/(turn ip |=(a=@if s/(rsh 3 1 (scot %if a))))
   ==
 ++  map-to-list
-  |=  a=(map [,[@t @t] image])
+  |=  a+(map {{@t @t} image})
   ^-  liz=(list image)
-  %+  turn  (~(tap by a) *(list ,[[@t @t] image]))
-  |=(a=[[@t @t] image] `image`+.a)
+  %+  turn  (~(tap by a) *(list {{@t @t} image}))
+  |=(a+{{@t @t} image} `image`+.a)
 ::
 ++  image-to-json
-  |=  a=(list image)
+  |=  a+(list image)
   %+  joba  'images'
   :-  %a
   %+  turn  a
@@ -201,34 +217,34 @@
 ::  main door :: 
 ::::::::::::::::
 !:
-|_  [bowl vat=axle]
+|_  {bowl vat+axle}
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::  miscellaneous arms that have to be in main door for scope reasons       ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-::
-::++  prep  ,_`.
 ::                                    
 ++  thou
-  |=  [pour-path=path resp=?(httr *)]
-  ^-  [(list move) $+>.$]
+  |=  {pour-path+path resp+?(httr *)}
+  ^-  {(list move) _+>.$}
   ~&  unhandled-pour-path/resp
   :_  +>.$  ~
+::
 ++  httpreq  
-  |=  $:  pour-path=wire    ::  must be in main door because of scope
-            domain=(list cord)  end-point=path
-          req-type=$?(%get %delt [%post json])  headers=math
-        queries=quay
-        ==
+  |=  $:  pour-path+wire    ::  must be in main door because of scope
+          domain+(list cord)  
+          end-point+path
+          req-type+$?($get $delt {$post json})  
+          headers+math
+          queries+quay
+      ==
     ^-  move
-    =+  ^-  parsed-url=purl
+    =+  ^-  parsed-url+purl
         :+  ^=  host-port                               ::  ++hart
             :+  security=%.y
               port=~
             host=[%.y [path=[%com domain]]]
           endpoint=[extensions=~ point=end-point]       ::  ++pork,
         q-strings=queries                               ::  ++quay
-    =+  ^-  request=hiss                                ::  cast to hiss
+    =+  ^-  request+hiss                                ::  cast to hiss
         :-  parsed-url
         ?@  req-type
           [req-type headers ~]
@@ -239,25 +255,25 @@
 ::  manage supscriptions and publish to talk                                ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  peer
-  |=  pax=path
-  ^-  [(list move) $+>.$]
+  |=  pax+path
+  ^-  {(list move) _+>.$}
   :_  +>.$
   =+  lis=(~(tap by insts.vat))
   [ost %diff %json (instance-to-json (turn lis |=(a=[@t instance] +.a)))]~
 ::
 ++  spam
-  |=  jon=json
+  |=  jon+json
   %+  turn  (~(tap by sup))
-  |=  [sub=bone @ pax=path]
+  |=  {sub+bone @ pax+path}
   ^-  move
   [sub %diff %json jon]
 ::
 ++  publish
-  |=  [act=(list speech)]
+  |=  {act+(list speech)}
   ^-  move
   =+  ^=  spchz
       %+  turn  act
-      |=  sp=speech
+      |=  sp+speech
       =+  ^=  tail
       :-  ^-  audience
           :+  :-  `partner`[%& our ?+((clan our) !! %czar %court, %duke %porch)]
@@ -276,8 +292,8 @@
 ::  authentication                                                            ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  poke-cloud-auth
-  |=  [cde=cord typ=cord]
-  ^-  [(list move) $+>.$]
+  |=  {cde+cord typ+cord}
+  ^-  {(list move) _+>.$}
   ?:  =(%do typ) 
       =.  authc.do.auth.vat
       [~ cde]
@@ -289,8 +305,8 @@
   (publish [%lin & 'successfully authenticated to gce']~)
 ::
 ++  poke-cloud-secret
-  |=  [secret=cord typ=cord]
-  ^-  [(list move) $+>.$]
+  |=  {secret+cord typ+cord}
+  ^-  {(list move) _+>.$}
   ?+    typ  ~|(missing-platform=typ !!)
       %do
     =.  client-secret.do.auth.vat
@@ -304,11 +320,11 @@
   ==
 ::
 ++  thou-do-auth
-  |=  [~ resp=httr]
-  ^-  [(list move) $+>.$]
+  |=  {$~ resp+httr}
+  ^-  {(list move) _+>.$}
   ~|  resp
   =+  body=(rash q:(need r.resp) apex:poja)
-  ~|  recieve-auth/resp(r body)
+  ~|  receive-auth/resp(r body)
   =+  [ac re]=(need ((ot 'access_token'^so 'refresh_token'^so ~):jo body))
   =:  access.do.toke.vat   ac
       refresh.do.toke.vat  re
@@ -320,20 +336,31 @@
 ::  create digital ocean droplets                                             ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  create-do
-  |=  act=json
+  |=  act+json
   =+  ^-  deets=create-req-do
       %-  need
       %.  act
       =>  jo
       %-  ot
-      :~  name/so  size/so  image/so ::  id key:img object  region/so  
-      ssh/(ar so)  backups/(mu bo)
-      'ipv6'^(mu bo)  'priv_networking'^(mu bo)  'user_data'^(mu so)
+      :~  name/so  
+          size/so  
+          image/so
+          ssh/(ar so)  
+          backups/(mu bo)
+          'ipv6'^(mu bo)  
+          'priv_networking'^(mu bo)  
+          'user_data'^(mu so)
       ==
   =+  ^-  body=json
-      %-  create-do-body  :*
-        name.deets  size.deets  image.deets  ssh.deets  backups.deets  ::region.deets  
-        ipv6.deets  private-networking.deets  user-data.deets 
+      %-  create-do-body  
+      :*  name.deets  
+          size.deets  
+          image.deets  
+          ssh.deets  
+          backups.deets
+          ipv6.deets  
+          private-networking.deets  
+          user-data.deets 
       ==
   %-  httpreq  :*
     /create-do
@@ -350,7 +377,7 @@
 ::  create google instances                                                   ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  reserve-ip
-  |=  name=json
+  |=  name+json
   =+  nam=(need ((ot name/so ~):jo name))
   %-  httpreq
   :*  /reserve-ip/[nam]
@@ -364,17 +391,18 @@
   ==     
 ::
 ++  thou-reserve-ip  
-  |=  [pax=path resp=httr]
+  |=  {pax+path resp+httr}
   ~&  resp
   ~|  r.resp
   =+  parsed=(rash q:(need r.resp) apex:poja)
   =+  ur=(need ((ot 'targetLink'^so ~):jo parsed))
   ~&  initial-response/parsed
   =+  name=-:(flop q.q:(need (epur ur)))
-  =+(buf=`@da`(add ~s10 now) :_(+>.$ [ost %wait `path`/check-ip-status/[name] buf]~))
+  =+  buf=`@da`(add ~s10 now) 
+  :_(+>.$ [ost %wait `path`/check-ip-status/[name] buf]~)
 ::
 ++  wake-check-ip-status
-  |=  [name=path ~]
+  |=  {name+path $~}
   ~&  this-is-the-name/name
   =+  nam=?~(name !! -.name)
   :_  +>.$
@@ -390,16 +418,14 @@
       *quay
   ==
 ++  thou-check-ip-status
-  |=  [name=path resp=httr]
+  |=  {name+path resp+httr}
   ~&  api-resp/resp
   =+  parsed=(rash q:(need r.resp) apex:poja)
   !!
   ::?.  =('RESERVED' (need ((ot status/so ~):jo parsed)))
 ::
-
-
 ++  create-gce
-  |=  jon=json
+  |=  jon+json
   =+  ^-  [name=@t image=@t number=@ud]
       (need ((ot name/so 'instance_img'^so number/ni ~):jo jon))
   |-  ^-  (list move) 
@@ -408,7 +434,8 @@
   =+  nam=(cat 3 name (scot %ud number))
   =+  ^-  body=json
       %-  jobe
-      :~  name/s/nam  'machineType'^s/'zones/us-central1-a/machineTypes/n1-standard-1'
+      :~  name/s/nam  
+          'machineType'^s/'zones/us-central1-a/machineTypes/n1-standard-1'
       :-  %disks  :-  %a  :_  ~
       %-  jobe   
       :+  'initializeParams'^`json`(joba 'sourceImage'^s/image)
@@ -420,7 +447,8 @@
   ^-  move
   %-  httpreq
   :*  `path`/create-gce
-      `(list cord)`~['googleapis' 'www']  `path`/compute/v1/projects/urbcloud/zones/us-central1-a/'instances'
+      `(list cord)`~['googleapis' 'www']  
+      `path`/compute/v1/projects/urbcloud/zones/us-central1-a/'instances'
       [%post `json`body]
      %^  mo  ['Content-Type' 'application/json' ~]
        ['Authorization' (cat 3 'Bearer ' access.gce.toke.vat) ~]
@@ -428,33 +456,34 @@
       `quay`[%key access.gce.toke.vat]~
   ==
 ::
-++  thou-create-gce  |=([path resp=httr] ~&(resp :_(+>.$ ~)))
-
+++  thou-create-gce  |=({path resp+httr} ~&(resp :_(+>.$ ~)))
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::  perform actions on instances (both kinds)                                 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  poke-json                         ::  receive action from client
-  |=  jon=json
-  ^-  [(list move) $+>.$]
+  |=  jon+json
+  ^-  {(list move) _+>.$}
   =+  action=`cloud-command`(need (parse-cloud-command jon))
   :_  +>.$
   ?-  -.action
-    %create-gce  [(reserve-ip p.action)]~
-    %create-do   [(create-do p.action)]~
-    ::%create-gce  [(create-gce p.action)]
-    %action      [(instance-action [id name act]:action)]~
+    $create-gce  [(reserve-ip p.action)]~
+    $create-do   [(create-do p.action)]~
+    ::$create-gce  [(create-gce p.action)]
+    $action      [(instance-action [id name act]:action)]~
   ==
 ++  instance-action
-  |=  [id=@t name=@t action=droplet-action]
+  |=  {id+@t name+@t action+droplet-action}
   =+  d=(~(got by insts.vat) id)
   ~|  'can\'t find id'
   =+  typ=?~(d !! -.d)
   ?-  typ
-      %do
+      $do
     =+  ^=  meth
         ?:  ?=(%delete -.action)  
-          %delt  
-        [%post (jobe type/s/(convert-do -.action) ?.(?=(%snapshot -.action) ~ [name/s/p.action ~]))]
+          %delt 
+        :-  %post
+        %+  jobe   type/s/(convert-do -.action) 
+        ?.(?=($snapshot -.action) ~ [name/s/p.action ~])
     ^-  move
     =+  ^=  req
     %-  httpreq  :*
@@ -468,13 +497,13 @@
      ==
     req
   ::
-      %gce
+      $gce
     =+  ^=  head-query
     :-  %^  mo  ['Content-Type' 'application/json' ~]
     ['Authorization' (cat 3 'Bearer ' access.gce.toke.vat) ~]  ~
     *quay
     ?-    -.action
-        ?(%start %stop %reboot %'snapshot')
+        ?($start $stop $reboot $'snapshot')
       =+  end=/compute/v1/projects/urbcloud/zones/us-central1-a/instances/[name]
       %-  httpreq
       :*  /gce-act/[-.action]    ~['googleapis' 'www']
@@ -483,7 +512,7 @@
           head-query
       ==
     ::
-        %delete
+        $delete
       =+  end=/compute/v1/projects/urbcloud/zones/us-central1-a/instances/[name]
       %-  httpreq
       :*  /gce-act/[-.action]    ~['googleapis' 'www']
@@ -494,12 +523,12 @@
     ==
   ==
 ++  thou-do-act
-  |=  [pax=path resp=httr]
+  |=  {pax+path resp+httr}
   ~&  [resp act/pax]
   :_  +>.$  ~
 ::
 ++  thou-gce-act
-  |=  [pax=path resp=httr]
+  |=  {pax+path resp+httr}
   ~&  [resp act/pax]
   :_  +>.$  ~
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -512,7 +541,7 @@
     ~
 ::
 ++  list-something-gce 
-  |=  endpoint=path
+  |=  endpoint+path
   =+  ^=  lis
       :*
       /list-gce/[-.endpoint]
@@ -526,15 +555,15 @@
   (httpreq lis)
 ::
 ++  thou-list-gce-zones  ::  instances
-  |=  [pax=path resp=httr]
-  ^-  [(list move) $+>.$]
+  |=  {pax+path resp+httr}
+  ^-  [(list move) _+>.$]
   =+  parsed=(rash q:(need r.resp) apex:poja)           ::  body httr to json
   ~|  'no list received or bad json'
   =+  items=(need ((ot items/(ar some) ~):jo parsed))
-  =+  ^-  ins=(list ,[@t instance])
+  =+  ^-  ins+(list {@t instance})
   ~|  'bad-json'^items
   %+  turn  items
-  |=  in=json
+  |=  in+json
   =<  [id .]
   ^-  instance
   :-  %gce
@@ -549,26 +578,26 @@
     %-  mo
     %+  weld  ins
     %+  skip  (~(tap by insts.vat))   :: keep non-gce
-    |=  a=[@t instance]  ?=(%gce +<.a)
+    |=  a+{@t instance}  ?=($gce +<.a)
   =+  buf=`@da`(add ~s10 now)
   =+  liz=(~(tap by insts.vat))
-  =+  tail=(turn liz |=(a=[@t instance] +.a))
+  =+  tail=(turn liz |=(a+{@t instance} +.a))
   :_  +>.$ ::
   :-  [ost %wait /refresh-gce buf]
   (spam (instance-to-json tail))
 ::
 ++  thou-list-gce-global  ::  imgs
-  |=  [pax=path resp=httr]
-  ^-  [(list move) $+>.$]
+  |=  {pax+path resp+httr}
+  ^-  [(list move) _+>.$]
   =+  parsed=(rash q:(need r.resp) apex:poja)
   =+  imgz=(need ((ot items/(ar some) ~):jo parsed))
   =.  images.vat
   %-  mo
   %+  weld  
   %+  skip  (~(tap by images.vat) *(list ,[[@t @t] image]))
-  |=(a=[[@t @t] image] ?=(%gce ->.a))
+  |=(a+{{@t @t} image} ?=($gce ->.a))
   %+  turn  imgz
-  |=  a=json
+  |=  a+json
   =<  [[name %gce] .]
   ^-  image
   :-  %gce
@@ -585,7 +614,7 @@
 ++  list-do
 :+((list-something-do %droplets) (list-something-do %images) ~)
 ++  list-something-do
-  |=  som=@tas
+  |=  som+@tas
   =+  ^=  lis
       :~  /list-do/[som]
       ~[%digitalocean %api]  /v2/[som]
@@ -595,15 +624,15 @@
     (httpreq lis)
 ::
 ++  thou-list-do-droplets
-  |=  [pax=path resp=httr]
-  ^-  [(list move) $+>.$]
+  |=  {pax+path resp+httr}
+  ^-  [(list move) _+>.$]
   =+  parsed=(rash q:(need r.resp) apex:poja)           ::  parse httr to json
-  ~|  recieve-list/parsed
+  ~|  receive-list/parsed
   =+  dar=(need ((ot droplets/(ar some) ~):jo parsed))  ::  reparse ar of insts
-  =+  ^-  dropz=(list ,[@t instance])
+  =+  ^-  dropz+(list {@t instance})
       ~|  bad-json/-.dar
       %+  turn  dar
-      |=  drp=json    ^-  [@t instance]
+      |=  drp+json    ^-  {@t instance}
       =-  ~!  -  -
       =<  [id .]
       ^-  instance
@@ -619,7 +648,7 @@
   %-  mo
   %+  weld  dropz
   %+  skip  (~(tap by insts.vat) *(list ,[@t instance]))
-  |=(a=[@t instance] ?=(%do +>.$))
+  |=(a+{@t instance} ?=($do +>.$))
   =+  buf=`@da`(add ~s10 now)
   :_  +>.$
   :-  [ost %wait /refresh-do buf]
@@ -629,21 +658,21 @@
   |=(a=[@t instance] +.a)
 ::
 ++  thou-list-do-images
-  |=  [pax=path resp=httr] 
+  |=  {pax+path resp+httr} 
   =+  parsed=(rash q:(need r.resp) apex:poja)
   ~|  crashed-do-images/parsed
   =+  imgz=(need ((ot images/(ar (ot [name/so distribution/so id/no ~])) ~):jo parsed))
-  =+  ^-  images=(list ,[[@t @t] image])
+  =+  ^-  images+(list {{@t @t} image})
       %+  turn  imgz
-      |=  [name=@t dist=@t id=@t]
+      |=  {name+@t dist+@t id+@t}
       =+  nom=(cat 3 name dist)
       [[%do nom] `image`[%do nom id]]
   =.  images.vat
   %-  mo
   %+  weld  images
   %+  skip  (~(tap by images.vat) *(list ,[[@t @t] image]))
-  |=(a=[[@t @t] image] ?=(%do ->.a))
+  |=(a+{{@t @t} image} ?=($do ->.a))
   :_  +>.$  ~[(spam `json`(image-to-json `(list image)`(map-to-list images.vat)))]
 ::
-++  wake-refresh-do  |=([path ~] [list-do +>.$])
+++  wake-refresh-do  |=({path $~} [list-do +>.$])
 --

@@ -8,7 +8,6 @@
   ::
   !:
 ^-  manx
-
 =+  authcode=(fall (~(get by qix.gas) %'code') '')
 ;html
   ;head

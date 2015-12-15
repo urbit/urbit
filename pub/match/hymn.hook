@@ -8,10 +8,10 @@
 ::::  ~sondel-forsut
   ::
 |%
-++  conv  $&  [conv conv]
+++  conv  $^  [conv conv]
               [%0 @ub]
 ::
-++  expr  $|  @tas
+++  expr  $@  @tas
               (list expr)
 --
 ::
@@ -20,8 +20,8 @@
 =+  `nock`*conv  :: extraneous typecheck
 |%
 ++  build-from
-  |=  [hay=expr man=expr]
-  =|  axe=(list ?(%0 %1))                               ::  axis acummulator
+  |=  {hay+expr man+expr}
+  =|  axe=(list ?($0 $1))                               ::  axis acummulator
   |-  ^-  (unit conv)
   ?:  =(man hay)
     [~ u=[%0 (join axe)]]
@@ -43,30 +43,30 @@
   [~ u=[u.car u.cdr]]
 ::
 ++  join
-  |=  axe=(list ?(%0 %1))  
+  |=  axe+(list ?($0 $1))  
   ^-  axis
-  %+  reel  axe  |=  [a=?(%0 %1) b=_1]
+  %+  reel  axe  |=  {a+?($0 $1) b+_1}
   (add a (lsh 0 1 b))
 ::
 ++  fetch                                               ::  (unit expr) by term
   ;~  biff  
-        ~(get by qix.gas)                               ::  get from query string
+        ~(get by qix.gas)                               ::  get from querystring
       slay                                              ::  parse as coin
     |=  con=coin
     ^-  (unit expr)
     ?-    -.con
-        %$                                              ::  single atom
+        $$                                              ::  single atom
       ?.  ?=(%tas p.p.con)  ~
       [~ u=q.p.con]                                     ::  (some) if is term
-        %blob                                           ::  noun literal, ignore
+        $blob                                           ::  noun literal, ignore
       ~
-        %many                                           ::  list of coin
+        $many                                           ::  list of coin
       (zl:jo (turn p.con ..$))                          ::  when-for
     ==
   ==
-++  print  |=(a=expr ~(ram re (rend a)))
+++  print  |=(a+expr ~(ram re (rend a)))
 ++  rend
-  |=  a=expr
+  |=  a+expr
   ^-  tank
   ?~  a  [%leaf "()"]
   ?@  a  [%leaf (trip a)]
