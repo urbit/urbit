@@ -416,3 +416,13 @@ trusted to provide updates.  Sometimes, it's useful to sync two
 desks to each other, so that changes to one or the other are
 mirrored.  Cyclical sync structures are normal and healthy.
 Also, one desk can be the target of multiple autosyncs.
+
+### Cancelling a merge
+
+Sometimes you start a merge that isn't going to finish quickly
+enough to suit your taste. If you find yourself in this awkward
+position,
+
+    |cancel %local-desk
+
+will get you out of it.
