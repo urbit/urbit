@@ -426,7 +426,7 @@
 ::
 ++  create-gce
   |=  jon+json
-  =+  ^-  [name=@t image=@t number=@ud]
+  ++  ^-  {name+@t image+@t number+@ud}
       (need ((ot name/so 'instance_img'^so number/ni ~):jo jon))
   |-  ^-  (list move) 
   ?~  number  ~
