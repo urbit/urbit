@@ -1981,12 +1981,22 @@ u3_raft_work(void)
       ova = u3kb_flop(u3A->roe);
       u3A->roe = u3_nul;
 
+      u3_noun hed = (u3_nul == ova) ? u3_nul : u3h(ova);
+
+      if ( u3_nul != hed ) {
+        u3_term_ef_blit(0, u3nc(u3nc(c3__bee, u3k(hed)), u3_nul));
+      }
+
       while ( u3_nul != ova ) {
         _raft_punk(u3k(u3t(u3h(ova))));
         c3_assert(u3_nul == u3h(u3h(ova)));
 
         nex = u3k(u3t(ova));
         u3z(ova); ova = nex;
+      }
+
+      if ( u3_nul != hed ) {
+        u3_term_ef_blit(0, u3nc(u3nc(c3__bee, u3_nul), u3_nul));
       }
     }
 
