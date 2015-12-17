@@ -1103,6 +1103,14 @@ _term_stop_spinner(u3_utty* uty_u)
 static void
 _term_spinner_cb(void* ptr_v)
 {
+  //  This thread shouldn't receive signals.
+  //
+  {
+    sigset_t set;
+    sigfillset(&set);
+    pthread_sigmask(SIG_BLOCK, &set, NULL);
+  }
+
   u3_utty* uty_u = (u3_utty*)ptr_v;
 
   for ( uv_mutex_lock(&uty_u->tat_u.mex_u);
