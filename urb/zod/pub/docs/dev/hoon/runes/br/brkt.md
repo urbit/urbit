@@ -3,9 +3,9 @@
 
 Same as `|-` except that it can contain internal arms.
 
-`|^` is a synthetic rune that produces and then calls a [`%gold`]()
-[book]() with sample `p` as a [`%$(p)`](), and a list of [arm]()s `q`.
-`q` must be closed with a `--`.
+`|^` is a synthetic rune that produces and then calls a
+[`%gold`]() [door]() with sample `p` as the `$` arm and a list of
+other [arm]()s `q`.  `q` must be closed with a `--`.
 
 Produces
 --------

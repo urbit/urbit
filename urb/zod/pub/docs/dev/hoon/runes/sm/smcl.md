@@ -3,14 +3,8 @@
 
 Fold over tuple
 
-Apply a binary function `p` to a tuple `q` with n elements. Similar to folding over the tuple `q`.
-
-Syntax
-======
-
-`;:` is a synthetic rune that applies `p`, a binary gate, to the n-ary
-tuple `q`. `;:` is similar to folding over the tuple `q`, producing the
-final result.
+Apply a binary function `p` to a tuple `q` with `n` elements.
+Statically folds over the tuple `q`.
 
 Produces
 --------

@@ -3,7 +3,11 @@
 
 Show nock
 
-`!=` is a natural rune that produces the formula of `p` as a noun.
+`!=` is a natural rune that produces the nock formula of `p` as a
+noun.
+
+Note that `!=(a)` is this rune while `!=(a b)` is a combination
+of the irregular forms of `?!` and `.=`.
 
 Accepts
 -------

@@ -3,11 +3,14 @@
 
 `|_` with well typed output
 
-Similar to `|_` except that it takes and produces well-typed output. XX
+Similar to `|_` except that it takes and produces well-typed
+output.  More specifically, the children must be wet (with `+-`),
+and they are compiled with the actual type of `p`, not the
+declared type.
 
-`|/` is a synthetic rune that produces a [`%gold`]() [door]() with
-[sample]() `[%bctr p]` and list of  [wet or %ash]() [arm]()s `q`. The list of arms must be
-closed with a `--`.
+`|/` is a synthetic rune that produces a [`%gold`]() [door]()
+with [sample]() `[%bctr p]` and list of  [wet or %elm]() [arm]()s
+`q`. The list of arms must be closed with a `--`.
 
 Produces
 --------

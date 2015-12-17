@@ -18,7 +18,7 @@ Accepts
 Tall form
 ---------
 
-    :~  i.p
+    :*  i.p
         i.t.p
         i.t.t.p
     ==

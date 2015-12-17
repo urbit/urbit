@@ -1,14 +1,14 @@
 `=<`
 ====
 
-An inverted `=<`. Uses the product of `q` as the subject of formula
-`p`. Allows us to keep the heavier of `p` `q` as the bottom expression, which
-makes for more readable code. Please see the section on [backstep]().
+An inverted `=>`. Uses `q` as the subject of formula `p`.
 
+Allows us to keep the heavier of `p` and `q` as the bottom
+expression, which makes for more readable code. Please see the
+section on [backstep]().
 
-`=<` is a synthetic rune that uses the product of `q` as the subject of
-`p`. `=<` is the inverse of `=>`. Use `=<` when your computation, `q` is
-lengthier and `=<` makes for more readable code.
+Technically, `=<` is a synthetic rune that uses `q` as the
+subject of `p`. `=<` is the inverse of `=>`.
 
 Produces
 --------
@@ -24,7 +24,7 @@ Tall form
 ---------
 
     =<  p
-        q
+    q
 
 Wide form
 ---------

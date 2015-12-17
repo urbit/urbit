@@ -3,9 +3,9 @@
 
 Hint to product
 
-`~<` is a synthetic rune that applies arbitrary [hint]() `p` to the
-product of `q`. `~<` is similar to `~>`, but computes `q` before
-applying the hint `p`.
+`~<` is a synthetic rune that applies arbitrary [hint]() `p` to
+the product of `q`. `~<` is similar to `~>`, but computes `q`
+before applying the hint `p`.
 
 Produces
 --------

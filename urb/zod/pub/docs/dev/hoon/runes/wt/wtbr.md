@@ -3,7 +3,8 @@
 
 Logical 'or'
 
-Computes the logical 'or' operation on a list of boolean expressions `p`.
+Computes the logical 'or' operation on a list of boolean
+expressions `p`.
 
 Produces
 --------

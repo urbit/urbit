@@ -3,6 +3,8 @@
 
 If `p` is cell-then-else
 
+Tests if `p` is a cell.  If so, produce `q`.  Else, produce `r`.
+
 Produces
 --------
 
@@ -28,8 +30,6 @@ Wide form
 Examples
 --------
 
-    ~zod/try=> =(*@tas "")
-    %.y
     ~zod/try=> ?^  ""
                  %full
                %empty
@@ -39,11 +39,8 @@ Examples
                %empty
     %full
 
-Here we show that `*@tas`, the [bunt]() of `@tas` is equivalent to the empty
-[`++tape`]() `""`, then use it in two `?^` cases.
+Here we show that `""` is an atom while `"asd"` is a cell.
 
-    ~zod/try=> *(unit)
-    ~
     ~zod/try=> ?^  `(unit)`~
                  %full
                %empty
@@ -53,8 +50,7 @@ Here we show that `*@tas`, the [bunt]() of `@tas` is equivalent to the empty
                %empty
     %full
 
-Similar to the above case, we show the bunt of a [`++unit`](), which is
-`~`, and test against it.
+Similarly, `~` is an atom and `[~ u=20]` is a cell.
 
 Equivalent to
 -------------

@@ -1,13 +1,16 @@
 `=+`
 ====
 
+Declare a variable and define it
+
 Easiest way to declare variables. Pushes a new variable `p` onto the
-subject and then executes `q` against it.
+subject and then executes `q` against the new subject.
 
 
-`=+` is a synthetic rune that pushes `p` on the subject and sends it to
-`q`. `=+` is the inverse of `=-`. Use `=+` when your `p` isn't too long
-and `=+` makes for more readable code.
+Technically, `=+` is a synthetic rune that pushes `p` on the
+subject and sends it to `q`. `=+` is the inverse of `=-`. Use
+`=+` when your `p` isn't too long and `=+` makes for more
+readable code.
 
 Produces
 --------
@@ -23,7 +26,7 @@ Tall form
 ---------
 
     =+  p
-        q
+    q
 
 Wide form
 ---------

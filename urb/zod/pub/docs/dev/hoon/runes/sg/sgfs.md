@@ -1,10 +1,12 @@
 `~/`
 ====
 
-XX
+Hint that jet exists
 
-`~/` is a synthetic rune that implements one common case - a function arm in
-a [book](), i.e. a library function - of the [`~%`]() [jet]() hint. Assumes the parent axis is `7` and that there are no children.
+`~/` is a synthetic rune that implements one common case - a
+function arm in a [book](), i.e. a library function - of the
+[`~%`]() [jet]() hint. Assumes the parent axis is `7` and that
+there are no children.
 
 Produces
 --------
@@ -20,7 +22,7 @@ Tall form
 ---------
 
     ~/  p
-        q
+    q
 
 Wide form
 ---------

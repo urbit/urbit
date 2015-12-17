@@ -3,9 +3,10 @@
 
 Wet function
 
-Similar to `|=` except that it does type checking at
-call time, and that the product type is checked to be the same as
-the input type (in other words it's [wet]()), rather than the input ([sample]()) [mold]().
+Similar to `|=` except that it does type checking at call time
+with the type of the actual arguments rather than at define time.
+The output type is thus dependent on the input type.  This allows
+the definition of generic functions.
 
 Produces
 --------

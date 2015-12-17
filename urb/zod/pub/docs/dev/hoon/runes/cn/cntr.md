@@ -1,9 +1,12 @@
-centar, `%*`, %cntr
+`%*`
 ============================
 
-`%~` call arm from [door]() w/context changes
+`%*` call arm from [door]() w/context changes
 
-The same as `%~` but can make changes anywhere in the [context](), not just within the input data ([sample]()). Evaluates the expression `p` within core `q` with changes `r` to the context.
+The same as `%~` but can make changes anywhere in the
+[context](), not just within the input data ([sample]()).
+Evaluates the expression `p` within core `q` with changes `r` to
+the context.
 
 Produces
 --------

@@ -3,7 +3,8 @@
 
 Logical 'and'
 
-Computes the logical 'and' operation on a list of boolean expressions.
+Computes the logical 'and' operation on a list of boolean
+expressions.
 
 Produces
 --------

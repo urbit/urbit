@@ -3,6 +3,8 @@
 
 If-then-else
 
+If `p` is true, produce `q`, else produce `r`.
+
 Produces
 --------
 

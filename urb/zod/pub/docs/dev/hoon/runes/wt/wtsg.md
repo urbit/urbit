@@ -3,8 +3,8 @@
 
 If-null-then-else
 
-If-then-else statement that tests whether `p` is null, producing `q` if true
-and `r` if false.
+If-then-else statement that tests whether `p` is null, producing
+`q` if true and `r` if false.
 
 Produces
 --------

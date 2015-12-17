@@ -1,11 +1,11 @@
 ketwut, `^?`, %ktwt
 ============================
 
-Used to convert a [core]() whose context is unreadable (aka
-a %gold core) to a core both of whose context and sample are
-unreadable (aka a %lead core). XX
-
-
+Used to convert a [core]() to a core whose both context and
+sample are unreadable (aka a `%lead` core).  This is primarily
+used on cores which have no sample, in which case it's equivalent
+to `^|` and `^&`.  It's useful in allowing cores with different
+contexts to be considered of the same type.
 
 Produces
 --------

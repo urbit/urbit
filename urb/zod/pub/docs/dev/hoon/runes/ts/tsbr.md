@@ -1,12 +1,13 @@
 `=|`
 ====
 
-Produces the default value of input type (aka mold) `p` and makes it
-available/pushes it onto `q`.
+Declare a variable with default value.
 
+Produces the default value of input type (aka mold) `p` and makes
+it available/pushes it onto the subject for `q`.
 
-`=|` is a synthetic rune that pushes the [bunt](), or default value, of
-`p` on the subject and sends it to `q`.
+Technically, `=|` is a synthetic rune that pushes the [bunt](),
+or default value, of `p` on the subject and sends it to `q`.
 
 Produces
 --------

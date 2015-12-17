@@ -1,10 +1,11 @@
 `~?`
 ====
 
-PrintF if `q` true
+printf if `q` true
 
-Same as `~&` except for that `r` is printed to the console if and only
-if `q` evaluates to true.
+Same as `~&` except for that `r` is printed to the console if and
+only if `q` evaluates to true.  In either case, `s` is executed
+and the result is produced.
 
 Produces
 --------
@@ -22,28 +23,32 @@ Tall form
 
 Priority 0 (debug):
 
-        ~&  q
-        r
+        ~?  q
+          r
+        s
 
 Priority 1 (notice):
 
-        ~&  >  q
-        r
+        ~?  >  q
+          r
+        s
 
 Priority 2 (warning):
 
-        ~&  >>  q
-        r
+        ~?  >>  q
+          r
+        s
 
 Priority 3 (alarm):
 
-        ~&  >>>  q
-        r
+        ~?  >>>  q
+          r
+        s
 
 Wide form
 ---------
 
-    ~&(>> q r)
+    ~&(>> q r s)
 
 Examples
 --------

@@ -3,12 +3,12 @@
 
 Compute nock
 
-Computes nock expressions. Runs nock formula `q` on
-nock subject `p`.
+Computes nock expressions. Runs nock formula `q` on nock subject
+`p`.
 
-`.*` is a natural rune that calculates the nock of subject `p` and
-formula `q`. `.*` makes it possible to compute nock formulas in user
-space.
+`.*` is a natural rune that calculates the nock of subject `p`
+and formula `q`. `.*` makes it possible to compute nock formulas
+in user space.
 
 Produces
 --------

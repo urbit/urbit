@@ -3,9 +3,9 @@
 
 Try executing `p` at compile time
 
-Tries to execute `p` statically at compile time. If this
-fails, `p` remains dynamic. Primarily useful for
-optimization: when a value is static, `^~` can simplify the compilation.
+Tries to execute `p` statically at compile time. If this fails,
+`p` remains dynamic. Primarily useful for optimization: when a
+value is static, `^~` can simplify the compilation.
 
 Produces
 --------

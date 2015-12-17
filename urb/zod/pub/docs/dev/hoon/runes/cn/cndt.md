@@ -3,10 +3,10 @@
 
 Inverted function call 
 
-Inverts the order of [`%-`](), so the argument is the first
-element and the second element is the function. Exists primarily
-for code readability and organization. See the [backstep
-section]() for more information.
+Inverts the order of [`%-`](), so the argument is the first child
+and the second child is the function. Exists primarily for code
+readability and organization. See the [backstep section]() for
+more information.
 
 Produces
 --------
@@ -16,13 +16,14 @@ Twig: `[%cndt p=twig q=twig]`
 Accepts
 -------
 
-`p` and `q` are [`++twig`]()s. `p` is the argument and `q` is the function (that's a twig).
+`p` and `q` are [`++twig`]()s. `p` is the argument and `q` is the
+function.
 
 Tall form
 ---------
 
     %.  p
-        q
+    q
 
 Wide form
 ---------

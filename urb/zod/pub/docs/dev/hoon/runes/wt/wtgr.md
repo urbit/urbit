@@ -3,7 +3,8 @@
 
 Assert `p` is true
 
-Asserts that `p` is true before evaluating `q`. Crashes if `p` evaluates to true.
+Asserts that `p` is true before evaluating `q`. Crashes if `p`
+evaluates to false.
 
 Produces
 --------
@@ -19,7 +20,7 @@ Tall form
 ---------
 
     ?>  p
-        q
+    q
 
 Wide form
 ---------

@@ -3,6 +3,11 @@
 
 Tuple of molds
 
+Note that this is one of the few molds that does "partial
+validation".  If a value matches the first few elements of the
+tuple, but not the later ones, then the validator keeps the
+matches and defaults the later ones.
+
 Produces
 --------
 

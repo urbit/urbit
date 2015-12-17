@@ -3,10 +3,10 @@
 
 `|-` with hidden context
 
-Similar to `|-` except for that the [sample]() and
-[context]() of the core being passed is hidden in order to avoid
-type conflicts with a core that has a different [sample]() and
-context. In urbit language, `|?` produces a [dry]() [%lead]() trap. 
+Similar to `|-` except for that the [context]() of the core being
+passed is hidden in order to avoid type conflicts with a core
+that has a different context. In urbit language, `|?` produces a
+[dry]() [%lead]() trap. 
 
 Produces
 --------
@@ -45,4 +45,4 @@ Examples
       <250.yum 41.int 414.hhh 100.xkc 1.ypj %164>
     ]
 
-A lead core's payload cannot be read or written.
+A lead core's context cannot be read or written.

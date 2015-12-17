@@ -1,7 +1,7 @@
 `;-`
 ====
 
-Interpolate string
+Interpolate string in `++sail`
 
 Interpolates a string (aka [++tape]()) into a [`++marl`](), our datastructure for XML.
 

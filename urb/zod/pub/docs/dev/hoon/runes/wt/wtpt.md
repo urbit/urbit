@@ -18,8 +18,6 @@ Accepts
 Tall form
 ---------
 
-Kingside:
-
     ?@  p
       q
     r

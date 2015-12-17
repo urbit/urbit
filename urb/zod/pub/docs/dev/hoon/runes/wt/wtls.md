@@ -3,9 +3,12 @@
 
 Switch w/default value
 
-Identical to [`?-`]() except for that it takes a default case `q` if none of the cases in `r` match the type of `p`. More specifically, the labels in `q` must match the [span]() of `p`. `q` must be terminated with a `==`.
+Identical to [`?-`]() except for that it takes a default case `q`
+if none of the cases in `r` match the type of `p`.  `r` must be
+terminated with a `==`.
 
-As with `?-`, the most common type used to switch on is the [cube](), which begins with `%` followed by text.
+As with `?-`, the most common type used to switch on is the
+[cube](), which begins with `%` followed by text.
 
 Produces
 --------
@@ -22,8 +25,7 @@ Tall form
 
 Kingside:
 
-    ?+  p
-      q
+    ?+  p  q
       p.i.r      q.i.r
       p.i.t.r    q.i.t.r
       p.i.t.t.r  q.i.t.t.r
@@ -44,7 +46,7 @@ Queenside:
 Wide form
 ---------
 
-    ?+(p p.i.r q.i.r, p.i.t.r q.i.t.r, p.i.t.t.r q.i.t.t.r)
+    ?+(p q p.i.r q.i.r, p.i.t.r q.i.t.r, p.i.t.t.r q.i.t.t.r)
 
 Examples
 --------
@@ -52,8 +54,8 @@ Examples
     ~zod/try=> 
       =cor  |=  typ=@ta
             ?+  typ  0
-            %a  1
-            %b  2
+              %a  1
+              %b  2
             ==
     new var %cor
     ~zod/try=> 
@@ -71,13 +73,13 @@ covered, or the default.
 
     ~zod/try=> 
       ?+  'a'  0
-          %a  1
-          ==
+        %a  1
+      ==
     1
     ~zod/try=> 
       ?+  [0 'a']  0
-          %a  1
-          ==
+        %a  1
+      ==
     ! poke-mack-fail
     ! /~zod/try/~2014.11.2..16.45.31..7b2a:<[1 1].[3 7]>
     ! mint-vain
@@ -86,8 +88,8 @@ covered, or the default.
     ! error in app %shell on ~zod at instance /shell/terminal
     ~zod/try=> 
       ?+  [0 1]  0
-          [0 %a]  1
-          ==
+        [0 %a]  1
+      ==
     0
 
 This example shows how `?+` can fail. Our input span must match the span

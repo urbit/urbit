@@ -1,16 +1,17 @@
 `=^`
 ====
 
-Used to both push a new variable on the subject as well as change the
-value of another.Similar to `=+` in that it pushes a value on the stack with
-variable name (face) `p`. However, in addition to pushing a new variable onto
-the subject, it also modifies whatever value is tied to `q` within the subject.
-`r` is the cell of [new-product-p updated-value-1]. You can think of `=^` like
-a state monad. 
+Declare variable with side effects
 
+Used to both push a new variable on the subject as well as change
+the value of another.  Similar to `=+` in that it pushes a value
+on the stack with variable name (face) `p`. However, in addition
+to pushing a new variable onto the subject, it also modifies `q`
+within the subject.  `r` is the cell of `[new-product-p
+updated-value-1]`. You can think of `=^` like a state monad. 
 
-`=^` is a synthetic rune that handles a product which is a cell of a new
-result, and a mutation to the subject.
+Technically, `=^` is a synthetic rune that handles a product
+which is a cell of a new result, and a mutation to the subject.
 
 Produces
 --------
@@ -25,14 +26,10 @@ Accepts
 Tall form
 ---------
 
-Kingside:
-
     =^    p 
         q
       r
     s
-
-Queenside:
 
     =^  p  q
       r

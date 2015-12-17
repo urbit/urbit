@@ -1,10 +1,11 @@
 `~_`
 ====
 
-Pre-formatted stackframe into stacktrace
+Put pre-formatted stackframe into stacktrace
 
-Inserts pre-formatted stackframe `p` into the stacktrace of `q`. 
-In hoon terminology, inserts `p`, a [trap]() producing a [++`tank`]() (pretty printed text), in the trace of `q`.
+Inserts pre-formatted stackframe `p` into the stacktrace of `q`.
+In hoon terminology, inserts `p`, a [trap]() producing a
+[++`tank`]() (pretty printed text), in the trace of `q`.
 
 Produces
 --------
@@ -20,7 +21,7 @@ Tall form
 ---------
 
     ~_  p
-        q
+    q
 
 Wide form
 ---------

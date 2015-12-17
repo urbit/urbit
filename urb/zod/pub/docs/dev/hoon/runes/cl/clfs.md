@@ -1,7 +1,7 @@
 `:/`
 ====
 
-String to XML XX
+Interpolation structure
 
 `:/`, `colfas`, is a synthetic rune that produces `[%$ [%$ p ~] ~]`,
 i.e., `[0 [0 p 0] 0]`.

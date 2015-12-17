@@ -3,9 +3,9 @@
 
 Call arm in door w/argument
 
-Evaluates the expression addressed at `p` within core
-`q` whose input data ([sample]()) is set to `r`. Used frequently with
-[`++map`]()s and [`++set`]()s, etc.
+Evaluates the expression addressed at `p` within core `q` whose
+input data ([sample]()) is set to `r`. Used frequently with
+[`++map`](), [`++set`](), and [`++qeu`]() operations.
 
 Produces
 --------

@@ -1,7 +1,7 @@
 `:~`
 ====
 
-Null-terminated tuple of n elements
+Null-terminated tuple of `n` elements
 
 Closed with `==`.
 
@@ -48,7 +48,8 @@ Examples
                 ==
     [5 3 4 2 1 ~]
 
-This is the most straightforward case of `:~`, producing a tuple in wide, irregular and tall form.
+This is the most straightforward case of `:~`, producing a tuple
+in wide, irregular and tall form.
 
     /~zod/try=> %-  flop
                 %-  limo
@@ -60,8 +61,8 @@ This is the most straightforward case of `:~`, producing a tuple in wide, irregu
                     ==
     ~[1 2 4 3 5]
 
-In this example we use `%-` to pass the results of our previous example
-to [`++limo`](), which creates a [`++list`](), and [`++flop`](), which
-reverses its order. This example shows how `:~` is commonly useful.
-Null-terminated tuples are easily converted to lists, which are
-frequently encountered in hoon.
+In this example we use `%-` to pass the results of our previous
+example to [`++limo`](), which creates a [`++list`](), and
+[`++flop`](), which reverses its order. This example shows how
+`:~` is commonly useful.  Null-terminated tuples are easily
+converted to lists, which are frequently encountered in hoon.

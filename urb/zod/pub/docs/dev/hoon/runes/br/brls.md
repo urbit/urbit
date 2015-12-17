@@ -3,8 +3,16 @@
 
 Function with unreadable sample
 
-`|+` is a synthetic rune that produces a [dry]() [`%iron`]() function
-with argument (aka [sample]()) [`$*(p)`]() and [arm]()s `q`. `|+` is similar to `|=`, but differs in that its input (sample) cannot be read and thus cannot interfere with the type system.
+`|+` is a synthetic rune that produces a [dry]() [`%iron`]()
+function with argument (aka [sample]()) [`$*(p)`]() and [arm]()s
+`q`. `|+` is similar to `|=`, but differs in that its input
+(sample) and context cannot be read.
+
+Because of this, the type of a `|+` function is fairly general.
+A gate may be defined in a different context or have a more
+general input type while still being within the type.  One of the
+most common usages of iron functions is as input to another
+function, where `$+` is used in the type definition.
 
 Produces
 --------
@@ -20,7 +28,7 @@ Tall form
 ---------
 
     |+  p
-        q
+    q
 
 Wide form
 ---------
@@ -37,7 +45,10 @@ Examples
     ~zod/try=> +<:|=(a=@ a)
     a=0
 
-Here we're trying to read the sample, using the [head]() of the [tail]() of two different kinds of functions. With `|+` you can see we cause an error, whereas with `|=` our default sample is `a=0`.
+Here we're trying to read the sample, using the [head]() of the
+[tail]() of two different kinds of functions. With `|+` you can
+see we cause an error, whereas with `|=` our default sample is
+`a=0`.
 
     ~zod/try=> %.(20 |+(a=@ a))
     20

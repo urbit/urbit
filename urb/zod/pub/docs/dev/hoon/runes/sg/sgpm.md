@@ -1,16 +1,13 @@
 sigpam, `~&`, %sgpm
 ============================
 
-PrintF
+printf
 
-'PrintF' or 'log' in other languages. Often used for debugging.
+'printf' or 'log' in other languages. Often used for debugging.
 
-More specifically in hoon terminology, prints `q` on the console
-before computing `r`. `p` is the log priority, 0-3 defaulting to 0. `~&`
-is similar to `printf` or `log` in other languages, and is very commonly
-used for debugging.
-
-`p` is optional and is rarely used.
+More specifically, prints `q` on the console before computing
+`r`. `p` is the log priority, 0-3 defaulting to 0.  `p` is
+optional and is rarely used.
 
 Produces
 --------

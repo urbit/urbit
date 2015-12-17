@@ -21,7 +21,7 @@ Tall form
 `p=%foo`:
 
     ~>  %foo
-        q
+    q
 
 `p=[p=%foo q=bar]`:
 

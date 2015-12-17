@@ -3,9 +3,9 @@
 
 Cast `q` to product type of `p`
 
-Casts `q` to the product of calling `p` on `q`. The same
-as casting `q` to the product type of `p`. Useful when you want
-to cast to the type of a function that you don't want to actually
+Casts `q` to the product of calling `p` on any data. The same as
+casting `q` to the product type of `p`. Useful when you want to
+cast to the type of a function that you don't want to actually
 run at runtime.
 
 Produces
@@ -22,7 +22,7 @@ Tall form
 ---------
 
     ^.  p
-        q
+    q
 
 Examples
 --------

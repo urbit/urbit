@@ -3,8 +3,9 @@ haxgal, `#<`, %hxgl
 
 Prettyprint string [`++tape`]()
 
-`#<` is a synthetic rune that calls the function [`++noah`]() with argument `p`. Used to produce a [`++tape`]() of the expression passed to it, and
-is only used in the irregular form.
+`#<` is a synthetic rune that calls the function [`++noah`]()
+with argument `p`. Used to produce a [`++tape`]() of the
+expression passed to it, and is only used in the irregular form.
 
 Produces
 --------

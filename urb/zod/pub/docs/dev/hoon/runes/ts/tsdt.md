@@ -1,12 +1,14 @@
 `=.`
 ====
 
-Produces `r` with `p` in the subject set to `q`. Allows you to change
-a value in your subject before executing more code against it.
+Produces `r` with `p` in the subject set to `q`.
 
+Allows you to change a value in your subject before executing
+more code against it.  Even though hoon is purely functional, and
+thus has no true mutation, this is essentially variable mutation.
 
-`=.` is a synthetic rune that produces `r` with `p` in the subject set
-to `q`.
+Technically, `=.` is a synthetic rune that produces `r` with `p` in the
+subject set to `q`.
 
 Produces
 --------
@@ -21,13 +23,9 @@ Accepts
 Tall form
 ---------
 
-Kingside:
-
     =.  p 
       q
     r
-
-Queenside:
 
     =.  p  q
     r

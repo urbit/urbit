@@ -1,7 +1,7 @@
 `:^`
 ====
 
-Tuple of four
+Quadruple. Tuple of four.
 
 Produces
 --------
@@ -17,14 +17,10 @@ twig.
 Tall form
 ---------
 
-Kingside:
-
     :^    p
         q
       r
     s
-
-Queenside:
 
     :^  p  q
       r

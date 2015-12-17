@@ -3,8 +3,8 @@
 
 Test if noun is cell or atom
 
-Nock operator 3: tests whether a noun is a cell or an
-atom, producing true if it is the former and false if the latter.
+Nock operator 3: tests whether a noun is a cell or an atom,
+producing true if it is the former and false if the latter.
 
 Produces
 --------

@@ -1,7 +1,7 @@
 `:+`
 ====
 
-Tuple of 3
+Triple. Tuple of three.
 
 Produces
 --------
@@ -16,13 +16,9 @@ Accepts
 Tall form
 ---------
 
-Kingside:
-
     :+  p
       q
     r
-
-Queenside:
 
     :+  p  q
     r

@@ -1,13 +1,12 @@
 `^+`
 ====
 
-Cast `q` to an unbunted `p`
+Cast `q` to the type of the value `p`
 
-Casts `q` to the type of `p`, verifying that it contains
-the type of `q`. Similar to `^+`, but doesn't bunt `p`. Used to
-cast to types that have previously been made into validator
-functions (clams) with `$,`. For example, the arguments to a [`|=`]() are
-automatically bunted with a [`=|`](), so `^+` is used. Most often we use `^+` to cast when our type is already defined by something inside our context.
+Casts `q` to the type of `p`, verifying that it contains the type
+of `q`. Similar to `^+`, but `p` isn't a mold but rather another
+value.  Most often we use `^+` to cast when our type is already
+defined by something inside our context.
 
 Produces
 --------
@@ -23,7 +22,7 @@ Tall form
 ---------
 
     ^+  p
-        q
+    q
 
 Wide form
 ---------

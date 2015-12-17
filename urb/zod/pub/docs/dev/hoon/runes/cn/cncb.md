@@ -3,10 +3,14 @@
 
 `%=`, but product cast to `p`
 
-The same as [`%=`](), except for that the product is cast
-back to the type of `p`. Evaluates `p` with the changes specified in `q`, then casts the product back to the type of `p`. `%_` is used to change a batch of [`++wing`]()s all at once, ensuring that the resulting product is type checked.
+The same as [`%=`](), except for that the product is cast back to
+the type of `p`. Evaluates `p` with the changes specified in `q`,
+then casts the product back to the type of `p`. `%_` is used to
+change a batch of [`++wing`]()s all at once, ensuring that the
+resulting product is type checked.
 
-You generally want to use `%_` unless you are intentionally trying to change the type.
+You generally want to use `%_` unless you are intentionally
+trying to change the type.
 
 Produces
 --------
@@ -22,9 +26,20 @@ list of key value pairs of [`++wing`]()s to twigs.
 Tall form
 ---------
 
+Kingside:
+
     %_  p
-      p.i.q  q.i.q
+      p.i.q    q.i.q
       p.i.t.q  q.i.t.q
+    ==
+
+Queenside:
+
+    %_    p
+        p.i.q
+      q.i.q
+        p.i.t.q
+      q.i.t.q
     ==
 
 Wide form

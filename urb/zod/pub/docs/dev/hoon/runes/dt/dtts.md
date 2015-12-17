@@ -3,7 +3,8 @@
 
 Test equality
 
-Nock operator 5: tests two nouns `p` and `q` for equality, producing a boolean.
+Nock operator 5: tests two nouns `p` and `q` for equality,
+producing a boolean.
 
 Produces
 --------
@@ -19,7 +20,7 @@ Tall form
 ---------
 
     .=  p
-        q
+    q
 
 Wide form
 ---------

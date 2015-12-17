@@ -3,7 +3,11 @@
 
 Cast
 
-Casts `q` to the [span]() of `p`. The same as `^+`, except for that `q` is actually cast to the bunt of `q` (`$,(q)`). The easiest way to make a basic cast. Used when you already have already created a validator function ([mold]()) for a span.
+Casts `q` to the [span]() of the [mold]() `p`. The same as `^+`,
+except for that `q` is actually cast to the bunt of `p`
+(`$*(p)`). The easiest way to make a basic cast. Used when you
+already have already created a validator function (mold) for a
+span.
 
 Produces
 --------

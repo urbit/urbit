@@ -4,11 +4,17 @@
 Tagged union
 
 Produces a [mold]() of a tagged union of a list of case pairs.
+Each of its children must be a cell of molds whose head is a
+cube -- the tag.  The same tag should not be repeated.
+
+This is commonly used to create structures that can be easily
+pattern matched.
 
 Produces
 --------
 
-A validator function that uses the value's [head]() as a tag to select a mold validate the tail of the value.
+A validator function that uses the value's [head]() as a tag to
+select a mold validate the tail of the value.
 
 Accepts
 -------

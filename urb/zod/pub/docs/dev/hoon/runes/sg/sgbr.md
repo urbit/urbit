@@ -1,10 +1,10 @@
 `~|`
 ====
 
-`p` in stack trace if `q` crashes
+Put `p` in stack trace if `q` crashes
 
-Presents the product of `p` in the stack trace if `q` crashes. `p` is only
-evaluated if `q` crashes.
+Presents the product of `p` in the stack trace if `q` crashes.
+`p` is only evaluated if `q` crashes.
 
 Produces
 --------

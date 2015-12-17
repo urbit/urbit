@@ -1,11 +1,11 @@
 `$|`
 ====
 
-Union between atom and cell
+Union type between atom and cell
 
-[mold]() that's a union of an atom `p` and cell `q`.
-`$|` is similar to [`$?`](), but is more strict in that in
-only contains one atom mold and one cell mold.
+[mold]() that's a union of an atom `p` and cell `q`.  `$|` is
+similar to [`$?`]() but is more strict in that it only contains
+one atom mold and one cell mold.
 
 ### Produces
 
@@ -18,7 +18,7 @@ A validator function that validates atoms as mold `p` and cells as mold `q`.
 ### Tall form
 
     $|  p
-        q
+    q
 
 ### Wide form
 

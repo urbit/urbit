@@ -3,7 +3,10 @@
 
 Switch
 
-Different from the traditional switch statement in that it switches on a type instead of a value. More specifically, the labels in `q` must match the [span]() of `p`. `q` must be terminated with a `==`.
+Different from the traditional switch statement in that it
+switches on a type instead of a value. More specifically, the
+labels in `q` must match the [span]() of `p`. `q` must be
+terminated with a `==`.
 
 Produces
 --------
@@ -48,8 +51,8 @@ Examples
     ~zod/try=> 
       =cor  |=  typ=$?(%a %b)
             ?-  typ
-            %a  1
-            %b  2
+              %a  1
+              %b  2
             ==
     new var %cor
     ~zod/try=> 
@@ -66,17 +69,17 @@ defined type for which all of the cases are covered. We create a core,
 
     ~zod/try=> 
       ?-  'a'
-          %a  0
-          %b  1
-          ==
+        %a  0
+        %b  1
+      ==
     ! /~zod/try/~2014.11.2..16.56.40..fca2:<[1 1].[4 7]>
     ! -lost.@t
     ! mint-lost
     ~zod/try=> 
       ?-  (?(%a %b) 0)
-          %a  'a'
-          %b  'b'
-          ==
+        %a  'a'
+        %b  'b'
+      ==
     'b'
 
 Here we can see a common failure case with `?-`. In the first example

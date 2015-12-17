@@ -1,13 +1,16 @@
 `=:`
 ====
 
-Makes a list of changes `p` to the subject and then evaluates `q`.
-Allows you to change values in your context (not in the hoon sense).
+Make a list of changes `p` to the subject and then evaluate `q`
 
+Allows you to change values in your context.  This is almost
+equivalent to a series of `=.`, but all the changes happen in
+parallel.
 
-`=:` is a synthetic rune that produces `q` with the subject modified by
-the list of changes in `p` which must be terminated by a `==`. `=:` is
-useful when you need to make a batch of changes to your subject.
+Technically, `=:` is a synthetic rune that produces `q` with the
+subject modified by the list of changes in `p` which must be
+terminated by a `==`. `=:` is useful when you need to make a
+batch of changes to your subject.
 
 Produces
 --------
@@ -27,7 +30,7 @@ Tall form
         p.i.t.p    q.i.t.p
         p.i.t.t.p  q.i.t.t.p
       ==
-      q
+    q
 
 Examples
 --------

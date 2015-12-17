@@ -1,7 +1,7 @@
 `:-`
 ====
 
-Tuple of two
+Cell. Pair. Tuple of two.
 
 Produces
 --------
@@ -17,7 +17,7 @@ Tall form
 ---------
 
     :-  p
-        q
+    q
 
 Wide form
 ---------
@@ -66,14 +66,18 @@ Some obscure `:-` irregular forms
     ~zod/main=/app> a/'twig'
     [%a 'twig']
 
-Like `^`, but first item must be a [`++term`](), and is [cube]()d. Used to construct [`path`]()s and [frond]().
+Like `^`, but first item must be a [`++term`](), and is
+[cube]()d. Used to construct [`path`]()s and [frond]().
 
-### Prefix `` ` ``, postfix `~`
+### Prefix `` ` ``, pre/postfix `~`
 
     ~zod/main=/app> ````20
     [~ ~ ~ ~ 20]
+    ~zod/main=/app> ~[42 30]
+    [42 30 ~]
     ~zod/main=/app> [42 30]~
     [[42 30] ~]
 
-Complimenting each other, these construct pairs with `~` in the [head]() and
-[`tail`]() respectively. Multiple postfix `~` do not work for unknown reasons.
+Complementing each other, these construct pairs with `~` in the
+[head]() and [`tail`]().  Technically, prefix `~` is an irregular
+form of `:~`.

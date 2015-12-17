@@ -3,7 +3,8 @@
 
 Inverted tuple of `p` `q`
 
-Exists for code readability and organization. See the [backstep]() convention.
+Exists for code readability and organization. See the
+[backstep]() convention.
 
 Produces
 --------
@@ -19,7 +20,7 @@ Tall form
 ---------
 
     :_  p
-        q
+    q
 
 Wide form
 ---------

@@ -3,12 +3,16 @@
 
 Union of types
 
-Produce a union between a non-empty list of [mold]()s `p`. The default value ([bunt]()) is the value of the first element.
+Produce a union between a non-empty list of [mold]()s `p`. The
+default value ([bunt]()) is the value of the first element.
 
 Produces
 --------
 
-A validator function that keeps trying to validate a value using every mold in `p` from left to right. On a success, the value is produced. If no mold in `p` succeeds, the default value of the last element in `p` is produced.
+A validator function that keeps trying to validate a value using
+every mold in `p` from left to right. On a success, the value is
+produced. If no mold in `p` succeeds, the default value of the
+first element in `p` is produced.
 
 Accepts
 -------
@@ -20,12 +24,13 @@ Tall form
 
     $?  p
         q
+        ...
     ==
 
 Irregular form
 --------------
 
-    ?(p q)
+    ?(p q ...)
 
 Examples
 --------

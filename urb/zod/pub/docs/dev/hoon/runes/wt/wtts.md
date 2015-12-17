@@ -1,9 +1,9 @@
 `?=`
 ====
 
-Is `q` within [span]() `p` 
+Test whether `q` is within type `p` 
 
-Tests whether `q` is of type (mold) `p`.
+Tests whether `q` is of type `p`.
 
 Produces
 --------

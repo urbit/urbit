@@ -4,9 +4,10 @@
 Door: core with sample (input values)
 
 Similar to [`|%`](), but also takes input data (aka [sample]())
-available within the entire core. Cores of this type are called doors.
-Moreover, `|_` only accepts [dry or `%elm`]() arms--in other words,
-type checking on these arms is performed on the input before computation.
+available within the entire core. Cores of this type are called
+doors.  Moreover, `|_` only accepts [dry or `%elm`]() arms--in
+other words, type checking on these arms is performed on the
+input before computation.
 
 Produces
 --------
@@ -40,11 +41,12 @@ Examples
     /~zod/try=> ~(succ mol ~(succ mol ~(prev mol 5)))
     6
 
-In this example we create a door `mol` that operates on a [`@ud`](),
-`a`. We add two arms to our door, `++succ` and `++prev`, and invoke them
-with the irregular form of [`%~`](). Doors are commonly invoked with
-`%~`, irregular form `~(arm door sample)`, which replaces the door's
-sample and calls the specified arm.
+In this example we create a door `mol` that operates on a
+[`@ud`](), `a`. We add two arms to our door, `++succ` and
+`++prev`, and invoke them with the irregular form of [`%~`]().
+Doors are commonly invoked with `%~`, irregular form `~(arm door
+sample)`, which replaces the door's sample and calls the
+specified arm.
 
     /~zod/try=> =kom
                       |_  a=(list)
@@ -67,10 +69,11 @@ sample and calls the specified arm.
     /~zod/try=> ~(tal kom [1 2 3 ~])
     t=~[2 3]
 
-Here we're demonstrating the difference between `|_` and `|/`. We create
-a nearly identical door using both runes, each with an arm that produces
-the tail of the sample `a`. You can see that [wet]() functions use the
-sample as a mold to produce well-typed output.
+Here we're demonstrating the difference between `|_` and `|/`. We
+create a nearly identical door using both runes, each with an arm
+that produces the tail of the sample `a`. You can see that
+[wet]() functions use the sample as a mold to produce well-typed
+output.
 
     ++  ne
       |_  tig=@
@@ -81,10 +84,10 @@ sample as a mold to produce well-typed output.
       --
     ::
 
-`++ne` is used to print a single digit in base 10, 16, 32, or 64 and is
-a part of the hoon standard library. You can find it in `hoon.hoon`.
-`|_` is very commonly used throughout our standard library for groups of
-arms who all take the same sample.
+`++ne` is used to print a single digit in base 10, 16, 32, or 64
+and is a part of the hoon standard library. You can find it in
+`hoon.hoon`.  `|_` is very commonly used throughout our standard
+library for groups of arms who all take the same sample.
 
     ~zod/try=> ~(x ne 12)
     99

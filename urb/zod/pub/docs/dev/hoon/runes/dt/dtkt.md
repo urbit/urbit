@@ -3,8 +3,8 @@
 
 Nock 11
 
-Generates nock operator `11`, which--in virtual userspace
-nock, [`++mock`]()--loads a file from the global namespace, [%clay]().
+Generates nock operator `11`, which--in virtual userspace nock,
+[`++mock`]()--pulls data from the global namespace.
 
 
 Produces

@@ -3,8 +3,10 @@
 
 Generic core
 
-Constructs a generic core with n named expressions, closed with `--`. Cores are
-similar to an object with named properties (aka [arms]()) that can contain either functions or data. Accepts both [dry or `%elm`]() and [wet or `%ash`]() arms.
+Constructs a generic core with n named expressions, closed with
+`--`. Cores are similar to an object with named properties (aka
+[arms]()) that can contain either functions or data. Accepts both
+[dry or `%elm`]() and [wet or `%ash`]() arms.
 
 Produces
 --------
@@ -14,8 +16,8 @@ Twig: `[%brcn p=(map term foot)]`
 Accepts
 -------
 
-`p` is a [`++map`]() with [`++term`]() keys and [`++foot`]() values, which
-are called arms.
+`p` is a [`++map`]() with [`++term`]() keys and [`++foot`]()
+values, which are called arms.
 
 Tall form
 ---------
@@ -41,8 +43,9 @@ Examples
     (g.a 1)
     101
 
-Here we create a core with two arms `n`, a constant, and `g`, a simple
-function. `g` adds our constant `n` to whatever is passed to it.
+Here we create a core with two arms `n`, a constant, and `g`, a
+simple function. `g` adds our constant `n` to whatever is passed
+to it.
 
     /~zod/try=> 
     =a  |%
@@ -58,10 +61,10 @@ function. `g` adds our constant `n` to whatever is passed to it.
     (g.a 4)
     26
 
-Extending our previous example a bit, we nest a core inside our arm `l`
-and make our function `g` a bit more complicated. `g` now computes the
-sum of its argument and the arm `r` inside `l`, and divides that by `s`
-inside `l`.
+Extending our previous example a bit, we nest a core inside our
+arm `l` and make our function `g` a bit more complicated. `g` now
+computes the sum of its argument and the arm `r` inside `l`, and
+divides that by `s` inside `l`.
 
     ++  yo
           |%  ++  cet  36.524                 ::  (add 24 (mul 100 365))
@@ -76,9 +79,10 @@ inside `l`.
               ++  yer  31.536.000             ::  (mul 365 day)
           --
 
-[`++yo`](), found in `hoon.hoon`, uses `|%` to create a core whose arms
-contain constant data for calculating time. As the following examples
-shows, `|%` is also used to encapsulate arms that perform calculations.
+[`++yo`](), found in `hoon.hoon`, uses `|%` to create a core
+whose arms contain constant data for calculating time. As the
+following examples shows, `|%` is also used to encapsulate arms
+that perform calculations.
 
         ++  si                                                  ::  signed integer
           |%
@@ -110,6 +114,7 @@ shows, `|%` is also used to encapsulate arms that perform calculations.
           ++  syn  |=(a=@s =(0 (end 0 1 a)))
           --
 
-[`++si`](), found in `hoon.hoon`, uses `|%` to create a core whose arms
-contain functions used to calculate with signed integers, [`@s`](). In this
-case our core is made up entirely of functions.
+[`++si`](), found in `hoon.hoon`, uses `|%` to create a core
+whose arms contain functions used to calculate with signed
+integers, [`@s`](). In this case our core is made up entirely of
+functions.
