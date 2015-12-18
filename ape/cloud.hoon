@@ -570,15 +570,18 @@
   %-  need
   %.  in  =+  jo
   %-  ot
-  :~  name/so  id/so  status/so  'creationTimestamp'^(su parse-iso8601)  ::zone/so
+  :~  name/so  
+      id/so  
+      status/so  
+      'creationTimestamp'^(su parse-iso8601)  ::zone/so
       'machineType'^(cu tail-url so)
-::          'networkInterfaces'^parse-ip-gce
+::    'networkInterfaces'^parse-ip-gce
   ==
   =.  insts.vat
     %-  mo
     %+  weld  ins
     %+  skip  (~(tap by insts.vat))   :: keep non-gce
-    |=  a+{@t instance}  ?=($gce +<.a)
+    |=(a+{@t instance} ?=($gce +<.a))
   =+  buf=`@da`(add ~s10 now)
   =+  liz=(~(tap by insts.vat))
   =+  tail=(turn liz |=(a+{@t instance} +.a))
@@ -588,13 +591,13 @@
 ::
 ++  thou-list-gce-global  ::  imgs
   |=  {pax+path resp+httr}
-  ^-  [(list move) _+>.$]
+  ^-  {(list move) _+>.$}
   =+  parsed=(rash q:(need r.resp) apex:poja)
   =+  imgz=(need ((ot items/(ar some) ~):jo parsed))
   =.  images.vat
   %-  mo
   %+  weld  
-  %+  skip  (~(tap by images.vat) *(list ,[[@t @t] image]))
+  %+  skip  (~(tap by images.vat) *(list {{@t @t} image}))
   |=(a+{{@t @t} image} ?=($gce ->.a))
   %+  turn  imgz
   |=  a+json
@@ -607,7 +610,7 @@
   [name/so id/so ~]
   :_  +>.$  [(spam `json`(image-to-json `(list image)`(map-to-list images.vat)))]
 ::
-++  wake-refresh-gce  |=([path ~] [list-gce +>.$])
+++  wake-refresh-gce  |=({path $~} [list-gce +>.$])
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::  list digital ocean droplets and images                                   ::
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -619,13 +622,15 @@
       :~  /list-do/[som]
       ~[%digitalocean %api]  /v2/[som]
       %get
-      (mo ['Content-Type' 'application/json' ~] ['Authorization' (cat 3 'Bearer ' access.do.toke.vat) ~] ~)
+      %-  mo
+      :~  ['Content-Type' 'application/json' ~] 
+          ['Authorization' (cat 3 'Bearer ' access.do.toke.vat) ~]
       ==
     (httpreq lis)
 ::
 ++  thou-list-do-droplets
   |=  {pax+path resp+httr}
-  ^-  [(list move) _+>.$]
+  ^-  {(list move) _+>.$}
   =+  parsed=(rash q:(need r.resp) apex:poja)           ::  parse httr to json
   ~|  receive-list/parsed
   =+  dar=(need ((ot droplets/(ar some) ~):jo parsed))  ::  reparse ar of insts
@@ -641,8 +646,11 @@
       %.  drp
       =+  jo
       %-  ot
-      :~  name/so  id/parse-id-text  status/so  'created_at'^(su parse-iso8601)  ::region/parse-region
-          image/(ot name/so ~)  ::disk/ni  networks/parse-ip-do 
+      :~  name/so  
+          id/parse-id-text  
+          status/so  
+          'created_at'^(su parse-iso8601) 
+          image/(ot name/so ~)
       ==
   =.  insts.vat
   %-  mo
@@ -661,7 +669,9 @@
   |=  {pax+path resp+httr} 
   =+  parsed=(rash q:(need r.resp) apex:poja)
   ~|  crashed-do-images/parsed
-  =+  imgz=(need ((ot images/(ar (ot [name/so distribution/so id/no ~])) ~):jo parsed))
+  =+  ^=  imgz
+      %-  need
+      ((ot images/(ar (ot [name/so distribution/so id/no ~])) ~):jo parsed)
   =+  ^-  images+(list {{@t @t} image})
       %+  turn  imgz
       |=  {name+@t dist+@t id+@t}

@@ -61,11 +61,11 @@
 ::::                                                    ::::::  process UI
   ::                                                    ::  ::
 ++  work                                                ::  console action
-  |=  act=sole-action                                   ::  
+  |=  act+sole-action                                   ::  
   =+  say=(~(got by eye) ost)                           ::
   |^  ?+(-.act abet $det (delt +.act), $ret dive)       ::
   ++  abet  ..work(eye (~(put by eye) ost say))         ::  resolve
-  ++  delt  |=  cal=sole-change                         ::  edit command line
+  ++  delt  |=  cal+sole-change                         ::  edit command line
             =^  cul  say  (~(remit sole say) cal good)  ::
             ?~(cul abet fail:(fect:abet det/u.cul))     ::
   ++  dive  =+  (rust (tufa buf.say) (punt come))       ::  apply command line
