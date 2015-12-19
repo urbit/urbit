@@ -33,7 +33,7 @@ $:  cred+(unit {app-secret+@t client-id+@t})
       {$unto $coup p+(unit tang)}
   ==
 ++  mesa
-  $%  {$bit-addr-request ~}
+  $%  {$bit-addr-request $~}
       {$bit-addr-made @t}
       {$talk-command command}
   ==
@@ -46,7 +46,7 @@ $:  cred+(unit {app-secret+@t client-id+@t})
 ++  redirect-uri  [hostname `/~~/home/pub/bit/fab ~]
 ++  hostname  ^-  hart
   ?+  (clan our.hid)  !!
-     $czar  [| ?+(our.hid `8.443 %~fyr `8.444) `/localhost]
+     $czar  [| ?+(our.hid `8.443 $~fyr `8.444) `/localhost]
      $duke  [| `8.444 `/org/urbit/(crip +:<our.hid>)]
   ==
 ++  auth-url
@@ -134,7 +134,7 @@ $:  cred+(unit {app-secret+@t client-id+@t})
   |=  code+cord
   =.  oauth-code.vat
     [~ code]
-  ?<  ?=(~ cred.vat)
+  ?<  ?=($~ cred.vat)  
   =+  req=[code [client-id app-secret]:u.cred.vat redirect-uri]
   [[ost.hid %hiss / %oauth-tokens bit-get-token/req]~ +>.$]
 ::
@@ -161,11 +161,14 @@ $:  cred+(unit {app-secret+@t client-id+@t})
       ?~  nt.arg
         :*  to/s/to.arg 
             'amount_currency_iso'^s/(need cur.arg) 
-            'amount_string'^s/(need amtwo.arg) ~]
-            :*  to/s/to.arg 
-                amount/s/(need amtwo.arg) 
-                'amount_string'^s/(need amtwo.arg) ~
-            ==
+            'amount_string'^s/(need amtwo.arg) 
+            ~
+        ==
+      :*  to/s/to.arg 
+          amount/s/(need amtwo.arg) 
+          'amount_string'^s/(need amtwo.arg)
+          ~
+      ==
   =+  ^=  pst
       (jobe transaction/(jobe info) ~)
   [[(old-api /send /transactions/'send_money' %post pst) ~] +>.$]
@@ -201,7 +204,7 @@ $:  cred+(unit {app-secret+@t client-id+@t})
   ^-  move
   =+  ^=  thotz
       %+  turn  act
-      |=  sp=speech  ^-  thought
+      |=  sp+speech  ^-  thought
       =+  ^=  tail
       :-  ^-  audience
           :+  :-  ^-  partner
