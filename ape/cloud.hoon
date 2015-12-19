@@ -42,7 +42,7 @@
   $:  auth+{do+keys gce+keys}  
       toke+{do+tokens gce+tokens}
       insts+(map @t instance)  
-      images+(map {{@t @t} image})
+      images+(map {@t @t} image)
   ==
 ++  keys  {authc+(unit @t) client-secret+(unit @t)}
 ++  tokens  {access+@t refresh+@t}
@@ -146,7 +146,7 @@
   (ot name/so ~)
 ::
 ++  parse-id-text
-  |=  jon=json
+  |=  jon+json
   ?.(?=({?($n $s) *} jon) ~ (some p.jon))
 ::
 ++  create-do-body
@@ -198,8 +198,8 @@
       snapshot/s/snapshot
   ==
 ++  map-to-list
-  |=  a+(map {{@t @t} image})
-  ^-  liz=(list image)
+  |=  a+(map {@t @t} image)
+  ^-  liz+(list image)
   %+  turn  (~(tap by a) *(list {{@t @t} image}))
   |=(a+{{@t @t} image} `image`+.a)
 ::
@@ -259,7 +259,7 @@
   ^-  {(list move) _+>.$}
   :_  +>.$
   =+  lis=(~(tap by insts.vat))
-  [ost %diff %json (instance-to-json (turn lis |=(a=[@t instance] +.a)))]~
+  [ost %diff %json (instance-to-json (turn lis |=(a+{@t instance} +.a)))]~
 ::
 ++  spam
   |=  jon+json
@@ -276,7 +276,7 @@
       |=  sp+speech
       =+  ^=  tail
       :-  ^-  audience
-          :+  :-  `partner`[%& our ?+((clan our) !! %czar %court, %duke %porch)]
+          :+  :-  `partner`[%& our ?+((clan our) !! $czar %court, $duke %porch)]
               ^-  (pair envelope delivery)
               [`envelope`[& ~] %pending]
             ~
@@ -287,7 +287,7 @@
       tail
   =+  mez=[%talk-command [%publish `(list thought)`spchz]]
   [ost %send /pub [our %talk] %poke mez]
-++  thou-pub  |=(~ :_(+>.$ ~))
+++  thou-pub  |=($~ :_(+>.$ ~))
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::  authentication                                                            ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -308,7 +308,7 @@
   |=  {secret+cord typ+cord}
   ^-  {(list move) _+>.$}
   ?+    typ  ~|(missing-platform=typ !!)
-      %do
+      $do
     =.  client-secret.do.auth.vat
       [~ secret]
     :_  +>.$
@@ -337,7 +337,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  create-do
   |=  act+json
-  =+  ^-  deets=create-req-do
+  =+  ^-  deets+create-req-do
       %-  need
       %.  act
       =>  jo
@@ -351,7 +351,7 @@
           'priv_networking'^(mu bo)  
           'user_data'^(mu so)
       ==
-  =+  ^-  body=json
+  =+  ^-  body+json
       %-  create-do-body  
       :*  name.deets  
           size.deets  
@@ -372,7 +372,7 @@
     ~
   ==
 ::
-++  thou-create-do  |=([path resp=httr] ~&(resp :_(+>.$ ~)))
+++  thou-create-do  |=({path resp+httr} ~&(resp :_(+>.$ ~)))
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::  create google instances                                                   ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -426,13 +426,13 @@
 ::
 ++  create-gce
   |=  jon+json
-  ++  ^-  {name+@t image+@t number+@ud}
+  =+  ^-  {name+@t image+@t number+@ud}
       (need ((ot name/so 'instance_img'^so number/ni ~):jo jon))
   |-  ^-  (list move) 
   ?~  number  ~
   :_  $(number (dec number))
   =+  nam=(cat 3 name (scot %ud number))
-  =+  ^-  body=json
+  =+  ^-  body+json
       %-  jobe
       :~  name/s/nam  
           'machineType'^s/'zones/us-central1-a/machineTypes/n1-standard-1'
@@ -479,7 +479,7 @@
   ?-  typ
       $do
     =+  ^=  meth
-        ?:  ?=(%delete -.action)  
+        ?:  ?=($delete -.action)  
           %delt 
         :-  %post
         %+  jobe   type/s/(convert-do -.action) 
@@ -489,7 +489,7 @@
     %-  httpreq  :*
        /do/[-.action]
       ~[%digitalocean %api]  
-      ?:(?=(%delt meth) /v2/droplets/[id] /v2/droplets/[id]/actions)
+      ?:(?=($delt meth) /v2/droplets/[id] /v2/droplets/[id]/actions)
       meth
       %^  mo  ['Content-Type' 'application/json' ~]
       ['Authorization' (cat 3 'Bearer ' access.do.toke.vat) ~]  ~
@@ -507,7 +507,7 @@
       =+  end=/compute/v1/projects/urbcloud/zones/us-central1-a/instances/[name]
       %-  httpreq
       :*  /gce-act/[-.action]    ~['googleapis' 'www']
-          (welp end [?:(?=(%reboot -.action) 'reset' -.action) ~])
+          (welp end [?:(?=($reboot -.action) 'reset' -.action) ~])
           [%post ~]           
           head-query
       ==
@@ -556,7 +556,7 @@
 ::
 ++  thou-list-gce-zones  ::  instances
   |=  {pax+path resp+httr}
-  ^-  [(list move) _+>.$]
+  ^-  {(list move) _+>.$}
   =+  parsed=(rash q:(need r.resp) apex:poja)           ::  body httr to json
   ~|  'no list received or bad json'
   =+  items=(need ((ot items/(ar some) ~):jo parsed))
@@ -615,18 +615,20 @@
 ::  list digital ocean droplets and images                                   ::
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  list-do
-:+((list-something-do %droplets) (list-something-do %images) ~)
+  :+((list-something-do %droplets) (list-something-do %images) ~)
 ++  list-something-do
   |=  som+@tas
   =+  ^=  lis
       :~  /list-do/[som]
-      ~[%digitalocean %api]  /v2/[som]
-      %get
-      %-  mo
-      :~  ['Content-Type' 'application/json' ~] 
-          ['Authorization' (cat 3 'Bearer ' access.do.toke.vat) ~]
+          ~[%digitalocean %api]  
+          /v2/[som]
+          %get
+          %-  mo
+          :~  ['Content-Type' 'application/json' ~] 
+              ['Authorization' (cat 3 'Bearer ' access.do.toke.vat) ~]
+          ==
       ==
-    (httpreq lis)
+  (httpreq lis)
 ::
 ++  thou-list-do-droplets
   |=  {pax+path resp+httr}
@@ -663,7 +665,7 @@
   %-  spam
   %-  instance-to-json  
   %+  turn  (~(tap by insts.vat) *(list {@t instance}))
-  |=(a=[@t instance] +.a)
+  |=(a+{@t instance} +.a)
 ::
 ++  thou-list-do-images
   |=  {pax+path resp+httr} 
@@ -680,9 +682,10 @@
   =.  images.vat
   %-  mo
   %+  weld  images
-  %+  skip  (~(tap by images.vat) *(list ,[[@t @t] image]))
+  %+  skip  (~(tap by images.vat) *(list {{@t @t} image}))
   |=(a+{{@t @t} image} ?=($do ->.a))
-  :_  +>.$  ~[(spam `json`(image-to-json `(list image)`(map-to-list images.vat)))]
+  :_  +>.$  
+      ~[(spam `json`(image-to-json `(list image)`(map-to-list images.vat)))]
 ::
 ++  wake-refresh-do  |=({path $~} [list-do +>.$])
 --
