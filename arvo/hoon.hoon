@@ -322,11 +322,11 @@
             {$zpzp $~}                                  ::  always crash
           ==                                            ::
 ++  stem  (pair term @)                                 ::
-++  tine  (list (pair twig twig))
+++  tine  (list (pair twig twig))                       ::
 ++  tusk  (list twig)                                   ::
-++  tyre  (list {p+term q+twig})                       ::
+++  tyre  (list {p+term q+twig})                        ::
 ++  tyke  (list (unit twig))                            ::
-++  tram  (list {p+wing q+twig})                       ::
+++  tram  (list {p+wing q+twig})                        ::
 ::                                                      ::::::  virtual nock
 ++  nock  $^  {p+nock q+nock}                           ::  autocons
           $%  {$0 p+@}                                  ::  axis select
@@ -352,9 +352,9 @@
           ==                                            ::
 ++  tune  $%  {$0 p+vase}                               ::
               {$1 p+(list)}                             ::
-              {$2 p+(list {@ta *})}                    ::
+              {$2 p+(list {@ta *})}                     ::
           ==                                            ::
-++  twin  {p+term q+wing r+axis s+type}                ::  alias info
+++  twin  {p+term q+wing r+axis s+type}                 ::  alias info
 ++  type  $@  ?($noun $void)                            ::  set all or set none
           $%  {$atom p+term}                            ::  number and format
               {$bull p+twin q+type}                     ::  wing synonym
@@ -363,7 +363,7 @@
               {$cube p+* q+type}                        ::  constant
               {$face p+term q+type}                     ::  name
               {$fork p+type q+type}                     ::  union/branch
-              {$hold p+(list {p+type q+twig})}         ::  infinite genrator
+              {$hold p+(list {p+type q+twig})}          ::  infinite genrator
           ==                                            ::
 ++  typo  type                                          ::  old type
 ++  udal                                                ::  atomic change (%b)

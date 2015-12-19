@@ -26,8 +26,8 @@
     ++  axon    $%({$1 axle} {$0 axle-0})               ::  all states
     ++  axle-0  {eye+face gam+game-0}                   ::  old axle
     ++  game-0  {who+? box+board boo+board}             ::  old game
-    ++  wake    |=  axon  :-  %1  ?-  +<-  %1  +<+      ::  coarse upgrade
-                %0  [eye [who ~^~ ~ box boo]:gam]:+<+   ::
+    ++  wake    |=  axon  :-  %1  ?-  +<-  $1  +<+      ::  coarse upgrade
+                $0  [eye [who ~^~ ~ box boo]:gam]:+<+   ::
     ==  --                                              ::
 ::                                                      ::  ::
 ::::                                                    ::::::  parsers
@@ -48,9 +48,9 @@
 ::::                                                    ::::::  process tools
   ::                                                    ::  ::
 ++  abet  [(flop moz) .(moz ~)]                         ::  resolve
-++  bike  $+(_. $+>)                                    ::  self-transformer
-++  dish  |=(cad=card %_(+> moz [[ost cad] moz]))       ::  request
-++  echo  |=  [all=(list sink) fun=bike]  =+  old=+>+<- ::  publish to all
+++  bike  $+(_. _+>)                                    ::  self-transformer
+++  dish  |=(cad+card %_(+> moz [[ost cad] moz]))       ::  request
+++  echo  |=  {all+(list sink) fun+bike}  =+  old=+>+<- ::  publish to all
           |-  ^+  +>.^$  ?~  all  +>.^$(+<- old)        ::
           =>  .(ost p.i.all, src q.i.all)               ::
           $(all t.all, +>.^$ (fun +>.^$))               ::
@@ -82,15 +82,15 @@
 ++  tame  (flap |=(_. (fact:+< &/gam)) |=(_. prom:+<))  ::  light update
 ++  wild  (flap |=(_. (fact:+< &/gam)) |=(_. show:+<))  ::  full update
 ++  word  |=  txt+tape  %+  flap                        ::  game message
-          |=($+> (fact:+< |/txt))                       ::
-          |=($+> (fect:+< txt/txt))                     ::
+          |=(_+> (fact:+< |/txt))                       ::
+          |=(_+> (fect:+< txt/txt))                     ::
 ::                                                      ::  ::
 ::::                                                    ::::::  console UI
   ::                                                    ::  ::
 ++  work                                                ::  console action
   |=  act+sole-action                                   ::  
   =+  say=(~(got by eye) ost)                           ::
-  |^  ?+(-.act abet %det (delt +.act), %ret dive)       ::
+  |^  ?+(-.act abet $det (delt +.act), $ret dive)       ::
   ++  abet  ..work(eye (~(put by eye) ost say))         ::  resolve
   ++  cusp  (cope !ept:here)                            ::  parsing rule
   ++  delt  |=  cal+sole-change                         ::  edit command line

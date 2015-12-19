@@ -655,14 +655,14 @@
   =.  insts.vat
   %-  mo
   %+  weld  dropz
-  %+  skip  (~(tap by insts.vat) *(list ,[@t instance]))
+  %+  skip  (~(tap by insts.vat) *(list {@t instance}))
   |=(a+{@t instance} ?=($do +>.$))
   =+  buf=`@da`(add ~s10 now)
   :_  +>.$
   :-  [ost %wait /refresh-do buf]
   %-  spam
   %-  instance-to-json  
-  %+  turn  (~(tap by insts.vat) *(list ,[@t instance]))
+  %+  turn  (~(tap by insts.vat) *(list {@t instance}))
   |=(a=[@t instance] +.a)
 ::
 ++  thou-list-do-images
