@@ -406,6 +406,7 @@ static u3j_harm _mood__hoon__ut_a[] =
     {}
   };
 
+#if 0
 static u3j_harm _mood__hoon__ap_a[] = 
   { // {"hack", u3wfp_open},
     // {"late", u3wfp_open},
@@ -413,7 +414,6 @@ static u3j_harm _mood__hoon__ap_a[] =
     {"rake", u3wfp_rake},
     {}
   };
-#if 0
 static u3j_harm _mood__hoon__al_a[] = 
   { {"bunt", u3wfl_bunt},
     {"whip", u3wfl_whip},
@@ -559,7 +559,7 @@ static u3j_core _mood__hoon_d[] =
     { "hike", _mood__hoon_hike_a },
     { "look", _mood__hoon_look_a },
 
-    { "ap", _mood__hoon__ap_a },
+    // { "ap", _mood__hoon__ap_a },
     // { "al", _mood__hoon__al_a },
     { "ut", _mood__hoon__ut_a, _mood__hoon__ut_d },
     { "arvo", 0, _arvo_d },
@@ -572,6 +572,10 @@ static u3j_core _mood_d[] =
     {}
   };
 
+static u3j_core _k161_d[] =
+  { { "mood", 0, _mood_d },
+    {}
+  };
 static u3j_core _k162_d[] =
   { { "mood", 0, _mood_d },
     {}
@@ -582,6 +586,7 @@ static u3j_core _k163_d[] =
   };
 
 static u3j_core _d[] = {
+  { "k161", 0, _k161_d},
   { "k162", 0, _k162_d},
   { "k163", 0, _k163_d},
   {}
