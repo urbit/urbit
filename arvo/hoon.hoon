@@ -8271,8 +8271,7 @@
         ref
       |-  ^-  type
       ?-    sut
-          {$bull *}   ~&  %heal-bull
-                      ?:  =(u.qog p.p.sut)
+          {$bull *}   ?:  =(u.qog p.p.sut)
                         ref
                       (busk(sut $(sut q.sut)) p.p.sut q.p.sut)
           {$core *}   ref
