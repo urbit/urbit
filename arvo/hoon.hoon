@@ -9145,7 +9145,7 @@
     %+  sear
       |=  {a/wing b/(unit twig)}  ^-  (unit twig)
       ?~(b [~ %cnzz a] ?.(?=({@ $~} a) ~ [~ [%dtzz %tas i.a] u.b]))
-    ;~(plug rope ;~(pose (stag ~ ;~(pfix hax wide)) (easy ~)))
+    ;~(plug rope ;~(pose (stag ~ ;~(pfix ;~(pose hax lus) wide)) (easy ~)))
   ::
   ++  rood
     ;~  pfix  fas
