@@ -182,7 +182,7 @@
         if ( c3n == u3r_cell(u3t(yip), &p_yip, &q_yip) ) {
           return u3m_bail(c3__fail);
         }
-        hud = u3qfu_fink(van, syp, p_yip, way, q_yip);
+        hud = u3qfu_fink(van, syp, p_yip, way, u3t(q_yip));
         {
           u3_noun p_hud, q_hud;
 
