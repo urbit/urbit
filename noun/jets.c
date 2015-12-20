@@ -407,7 +407,7 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
         return u3m_bail(c3__fail);
       }
       else {
-#if 1
+#if 0
         fprintf(stderr, "test: %s %s\r\n",
                cop_u->cos_c,
                (!strcmp(".2", ham_u->fcs_c)) ? "$" : ham_u->fcs_c);
