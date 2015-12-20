@@ -357,7 +357,7 @@ static u3j_harm _mood__hoon__ut_fire_a[] = {{".2", u3wfu_fire}, {}};
 static u3j_harm _mood__hoon__ut_firm_a[] = {{".2", u3wfu_firm}, {}};
 static u3j_harm _mood__hoon__ut_fish_a[] = {{".2", u3wfu_fish}, {}};
 static u3j_harm _mood__hoon__ut_fuse_a[] = {{".2", u3wfu_fuse}, {}};
-static u3j_harm _mood__hoon__ut_heal_a[] = {{".2", u3wfu_heal}, {}};
+// static u3j_harm _mood__hoon__ut_heal_a[] = {{".2", u3wfu_heal}, {}};
 static u3j_harm _mood__hoon__ut_mint_a[] = {{".2", u3wfu_mint}, {}};
 static u3j_harm _mood__hoon__ut_mull_a[] = {{".2", u3wfu_mull}, {}};
 static u3j_harm _mood__hoon__ut_nest_a[] = {{".2", u3wfu_nest}, {}};
@@ -383,7 +383,7 @@ static u3j_core _mood__hoon__ut_d[] =
     { "firm", _mood__hoon__ut_firm_a },
     { "fish", _mood__hoon__ut_fish_a },
     { "fuse", _mood__hoon__ut_fuse_a },
-    { "heal", _mood__hoon__ut_heal_a },
+    // { "heal", _mood__hoon__ut_heal_a },
     { "mint", _mood__hoon__ut_mint_a },
     { "mull", _mood__hoon__ut_mull_a },
     { "nest", _mood__hoon__ut_nest_a },
