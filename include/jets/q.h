@@ -202,6 +202,7 @@
     u3_noun u3qfu_dunq(u3_noun, const c3_c*, u3_noun);
     u3_noun u3qfu_find(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_fino(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
+    u3_noun u3qfu_finc(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_fink(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_fire(u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_firm(u3_noun, u3_noun, u3_noun);
