@@ -193,6 +193,23 @@
           u3z(hud);
         }
       }
+      else if ( 2 == u3h(yip) ) {
+        u3_noun p_yip, q_yip, hud;
+
+        if ( c3n == u3r_cell(u3t(yip), &p_yip, &q_yip) ) {
+          return u3m_bail(c3__fail);
+        }
+        hud = u3qfu_fink(van, syp, p_yip, way, u3t(q_yip));
+        {
+          u3_noun p_hud, q_hud;
+
+          u3r_cell(hud, &p_hud, &q_hud);
+
+          ret = u3nc(u3qc_peg(p_zar, p_hud),
+                     u3k(q_hud));
+          u3z(hud);
+        }
+      }
       else {
         u3_noun p_yip = u3t(yip);
 
