@@ -8,7 +8,7 @@
 ::
 ++  wrap
   |=  {end-point+path req+$@($get {$post p+json})}
-  [/com/coinbase/sandbox/api v1/end-point req ~ ['access_token' access-token]~]
+  [/com/coinbase/sandbox/api v1#end-point req ~ ['access_token' access-token]~]
 ::
 ++  order
   |=  {amount+@t currency+@t}  ^-  json
