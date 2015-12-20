@@ -9991,6 +9991,7 @@
         $%  {$tis p+twig}
             {$col p+twig}
             {$ket p+twig}
+            {$fas p+twig}
             {$lus p+twig}
             {$pel p+tram}
         ==
@@ -10005,6 +10006,8 @@
         $col  [~ %tsgl ros p.vil]
         $pel  (bind ~(reek ap ros) |=(hyp+wing [%cnts hyp p.vil]))
         $ket  [~ ros p.vil]
+        $fas  =+  tog=~(hock ap ros)
+              ?.(?=(@ tog) ~ [~ %bcts tog p.vil])
         $lus  =+  tog=~(hock ap ros)
               ?.(?=(@ tog) ~ [~ %bcts tog p.vil])
         $tis  =+  tog=~(hock ap ros)
@@ -10020,6 +10023,7 @@
         ;~(plug (cold %col col) wide)
         ;~(plug (cold %ket ket) wide)
         ;~(plug (cold %lus lus) wide)
+        ;~(plug (cold %fas fas) wide)
         ;~  plug
           (easy %pel)
           (ifix [pel per] lobo)
