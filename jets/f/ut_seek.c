@@ -142,7 +142,7 @@
       if ( c3y == u3du(i_hyp) ) {
         yip = u3k(i_hyp);
       } else {
-        yip = u3nt(c3n, 0, u3k(i_hyp));
+        yip = u3nt(2, 0, u3nc(u3_nul, u3k(i_hyp)));
       }
 
       zar = _cqfu_seek(van, sut, way, t_hyp);
