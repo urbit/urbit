@@ -62,7 +62,7 @@
 ++  clue  {p+chum q+nock r+(list (pair term nock))}     ::  battery definition
 ++  coil  $:  p+?($gold $iron $lead $zinc)              ::  core type
               q+type                                    ::
-              r+{p+?($~ ^) q+(map term foot)}            ::
+              r+{p+?($~ ^) q+(map term foot)}           ::
           ==                                            ::
 ++  coin  $%  {$$ p+dime}                               ::
               {$blob p+*}                               ::
@@ -70,7 +70,7 @@
           ==                                            ::
 ++  cord  @t                                            ::  text atom (UTF-8)
 ++  date  {{a+? y+@ud} m+@ud t+tarp}                    ::  parsed date
-++  dime  {p+@ta q+@}                                  ::
+++  dime  {p+@ta q+@}                                   ::
 ++  dock  (pair @p term)                                ::  message target
 ++  each  |*  {a+$+(* *) b+$+(* *)}                     ::  either a or b
           $%({$& p+a} {$| p+b})                         ::    a default
@@ -83,7 +83,7 @@
 ++  gate  $+(* *)                                       ::  general gate
 ++  hair  {p+@ud q+@ud}                                 ::  parsing trace
 ++  like  |*  a+$+(* *)                                 ::  generic edge
-          |=  b+_`*`[(hair) ~]                       ::
+          |=  b+_`*`[(hair) ~]                          ::
           :-  p=(hair -.b)                              ::
           ^=  q                                         ::
           ?@  +.b  ~                                    ::
@@ -111,8 +111,8 @@
 ++  nail  {p+hair q+tape}                               ::  parsing input
 ++  numb  @                                             ::  just a number
 ++  pair  |*({a+$+(* *) b+$+(* *)} {p+a q+b})           ::  just a pair
-++  quid  |*({a+$+(* *) b+*} {a _b})                 ::  for =^
-++  quip  |*({a+$+(* *) b+*} {(list a) _b})          ::  for =^
+++  quid  |*({a+$+(* *) b+*} {a _b})                    ::  for =^
+++  quip  |*({a+$+(* *) b+*} {(list a) _b})             ::  for =^
 ++  wand  |*  a+(pole $+(* *))                          ::  hetero list
           |=  b+*                                       ::
           ?~  a  ~                                      ::
@@ -436,7 +436,7 @@
 ++  qeu  |*  a+$+(* *)                                  ::  queue
          $@($~ {n+a l+(qeu a) r+(qeu a)})               ::
 ++  set  |*  a+$+(* *)                                  ::  set
-         $@($~ {n+a l+(set a) r+(set a)})                ::
+         $@($~ {n+a l+(set a) r+(set a)})               ::
 ++  jar  |*({a+$+(* *) b+$+(* *)} (map a (list b)))     ::  map of lists
 ++  jug  |*({a+$+(* *) b+$+(* *)} (map a (set b)))      ::  map of sets
 --                                                      ::
@@ -9145,7 +9145,7 @@
     %+  sear
       |=  {a+wing b+(unit twig)}  ^-  (unit twig)
       ?~(b [~ %cnzz a] ?.(?=({@ $~} a) ~ [~ [%dtzz %tas i.a] u.b]))
-    ;~(plug rope ;~(pose (stag ~ ;~(pfix fas wide)) (easy ~)))
+    ;~(plug rope ;~(pose (stag ~ ;~(pfix ;~(pose fas hax) wide)) (easy ~)))
   ::
   ++  rood
     ;~  pfix  fas
