@@ -796,7 +796,7 @@
     ::  ~&  %taking-patch
     ?:  ?=($| -.res)
       =.  dok  ~
-      (print-to-dill '!' %rose [" " "" ""] leaf#"clay patch failed" p.res)
+      (print-to-dill '!' %rose [" " "" ""] leaf+"clay patch failed" p.res)
     ::  ~&  %editing
     =+  ^-  sim/(list (pair path misu))
         ?~  dok
@@ -879,7 +879,7 @@
     |=  res/gage
     ^+  +>
     ?:  ?=($| -.res)
-      (print-to-dill '!' %rose [" " "" ""] leaf#"clay ergo failed" p.res)
+      (print-to-dill '!' %rose [" " "" ""] leaf+"clay ergo failed" p.res)
     ?~  hez  ~|(%no-sync-duct !!)
     =+  ^-  can/(map path (unit mime))
         %-  mo  ^-  mode
@@ -977,7 +977,7 @@
     ^+  +>
     (edit wen lem)
   ::
-  ::  Be careful to call ++wake if#when necessary.  Every case
+  ::  Be careful to call ++wake if+when necessary.  Every case
   ::  must call it individually.
   ::
   ++  take-foreign-update                              ::  external change
@@ -1301,7 +1301,7 @@
       =+  bol=(~(got by lat.ran) lob)
       ?-  -.bol
         $direct     [%volt q.bol]
-        $delta      ~|  delta#q.q.bol
+        $delta      ~|  delta+q.q.bol
                     [%pact $(lob q.q.bol) [%volt r.bol]]
       ==
     ::
@@ -1637,7 +1637,7 @@
       =+  yak=(tako-to-yaki u.tak)
       =+  len=(lent pax)
       :^  ~  ~  %arch
-      ::  ~&  cy#pax
+      ::  ~&  cy+pax
       :-  -:!>(*arch)
       ^-  arch
       =+  ^-  descendants/(list (pair path lobe))
@@ -2095,7 +2095,7 @@
         ^+  +>
         =+  tay=(gage-to-tage res)
         ?:  ?=($| -.tay)
-          (error:he %diff-ali-bad-made leaf#"merge diff ali failed" p.tay)
+          (error:he %diff-ali-bad-made leaf+"merge diff ali failed" p.tay)
         =+  can=(cages-to-map p.tay)
         ?:  ?=($| -.can)
           (error:he %diff-ali p.can)
@@ -2131,14 +2131,14 @@
       ::
       ++  diff-bob
         ^+  .
-        (diff-bas(wat.dat %diff-bob) %bob bob.dat [p.bob q.bob da#now] ali.dat)
+        (diff-bas(wat.dat %diff-bob) %bob bob.dat [p.bob q.bob da+now] ali.dat)
       ::
       ++  diffed-bob
         |=  res/gage
         ^+  +>
         =+  tay=(gage-to-tage res)
         ?:  ?=($| -.tay)
-          (error:he %diff-bob-bad-made leaf#"merge diff bob failed" p.tay)
+          (error:he %diff-bob-bad-made leaf+"merge diff bob failed" p.tay)
         =+  can=(cages-to-map p.tay)
         ?:  ?=($| -.can)
           (error:he %diff-bob p.can)
@@ -2180,7 +2180,7 @@
           %-  emit(wat.dat %merge)
           :*  hen  %pass
               [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %merge ~]
-              %f  %exec  p.bob  ~  [p.bob q.bob da#now]  %tabl
+              %f  %exec  p.bob  ~  [p.bob q.bob da+now]  %tabl
               ^-  (list (pair silk silk))
               %+  turn  (~(tap by (~(int by can.dal.dat) can.dob.dat)))
               |=  {pax/path *}
@@ -2199,7 +2199,7 @@
         |=  res/gage
         =+  tay=(gage-to-tage res)
         ?:  ?=($| -.tay)
-          (error:he %merge-bad-made leaf#"merging failed" p.tay)
+          (error:he %merge-bad-made leaf+"merging failed" p.tay)
         =+  can=(cages-to-map p.tay)
         ?:  ?=($| -.can)
           (error:he %merge p.can)
@@ -2214,7 +2214,7 @@
         %-  emit(wat.dat %build)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %build ~]
-            %f  %exec  p.bob  ~  [p.bob q.bob da#now]  %tabl
+            %f  %exec  p.bob  ~  [p.bob q.bob da+now]  %tabl
             ^-  (list (pair silk silk))
             %+  murn  (~(tap by bof.dat))
             |=  {pax/path cay/(unit cage)}
@@ -2235,7 +2235,7 @@
         ^+  +>
         =+  tay=(gage-to-tage res)
         ?:  ?=($| -.tay)
-          (error:he %build-bad-made leaf#"delta building failed" p.tay)
+          (error:he %build-bad-made leaf+"delta building failed" p.tay)
         =+  bop=(cages-to-map p.tay)
         ?:  ?=($| -.bop)
           (error:he %built p.bop)
@@ -2250,7 +2250,7 @@
             %-  ~(urn by con)
             |=  {pax/path *}
             (~(got by q.bas.dat) pax)
-        =.  con                                         ::  change#del conflict
+        =.  con                                         ::  change+del conflict
           %-  ~(uni by con)
           %-  mo  ^-  (list {path *})
           %+  skim  (~(tap by old.dal.dat))
@@ -2259,7 +2259,7 @@
             ~|  %strange-add-and-del
             !!
           (~(has by can.dob.dat) pax)
-        =.  con                                         ::  change#del conflict
+        =.  con                                         ::  change+del conflict
           %-  ~(uni by con)
           %-  mo  ^-  (list {path *})
           %+  skim  (~(tap by old.dob.dat))
@@ -2268,7 +2268,7 @@
             ~|  %strange-del-and-add
             !!
           (~(has by can.dal.dat) pax)
-        =.  con                                         ::  add#add conflict
+        =.  con                                         ::  add+add conflict
           %-  ~(uni by con)
           %-  mo  ^-  (list {path *})
           %+  skip  (~(tap by (~(int by new.dal.dat) new.dob.dat)))
@@ -2343,7 +2343,7 @@
         =+  ^-  val/beak
             ?:  ?=($init gem.dat)
               [p.ali q.ali cas.dat]
-            [p.bob q.bob da#now]
+            [p.bob q.bob da+now]
         %-  emit(wat.dat %checkout)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout ~]
@@ -2362,7 +2362,7 @@
         ^+  +>
         =+  tay=(gage-to-tage res)
         ?:  ?=($| -.tay)
-          (error:he %checkout-bad-made leaf#"merge checkout failed" p.tay)
+          (error:he %checkout-bad-made leaf+"merge checkout failed" p.tay)
         =+  can=(cages-to-map p.tay)
         ?:  ?=($| -.can)
           (error:he %checkout p.can)
@@ -2393,7 +2393,7 @@
         =+  ^-  val/beak
             ?:  ?=($init gem.dat)
               [p.ali q.ali cas.dat]
-            [p.bob q.bob da#now]
+            [p.bob q.bob da+now]
         %-  emit(wat.dat %ergo)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ergo ~]
@@ -2415,7 +2415,7 @@
         ^+  +>
         =+  tay=(gage-to-tage res)
         ?:  ?=($| -.tay)
-          (error:he %ergo-bad-made leaf#"merge ergo failed" p.tay)
+          (error:he %ergo-bad-made leaf+"merge ergo failed" p.tay)
         =+  =|  nac/mode
             |-  ^-  tan/$^(mode {p/term q/tang})
             ?~  p.tay  nac
@@ -2583,7 +2583,7 @@
     =+  [bos=(sein p.q.hic) can=(clan p.q.hic)]
     %-  zing  ^-  (list (list move))
     :~  ?:  =(bos p.q.hic)  ~
-        [hen %pass /init-merge %c %merg p.q.hic %base bos %kids da#now %init]~
+        [hen %pass /init-merge %c %merg p.q.hic %base bos %kids da+now %init]~
     ::
         ~
     ==
@@ -2708,11 +2708,11 @@
     :^  hen  %give  %mass
     :-  %clay
     :-  %|
-    :~  domestic#`fat.ruf
-        foreign#`hoy.ruf
+    :~  domestic+`fat.ruf
+        foreign+`hoy.ruf
         :-  %object-store  :-  %|
-        :~  commits#`hut.ran.ruf
-            blobs#`lat.ran.ruf
+        :~  commits+`hut.ran.ruf
+            blobs+`lat.ran.ruf
         ==
     ==
   ==
@@ -2731,7 +2731,7 @@
 ++  scry                                              ::  inspect
   |=  {fur/(unit (set monk)) ren/@tas his/ship syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
-  ::  ~&  scry#[ren `path`[(scot %p his) syd ~(rent co lot) tyl]]
+  ::  ~&  scry+[ren `path`[(scot %p his) syd ~(rent co lot) tyl]]
   ::  =-  ~&  %scry-done  -
   =+  got=(~(has by fat.ruf) his)
   =+  luk=?.(?=($$ -.lot) ~ ((soft case) p.lot))
@@ -2882,8 +2882,8 @@
       [~ ..^$]
     ~>  %slog.
         :^  0  %rose  [" " "[" "]"]
-        :^    leaf#"initial merge failed"
-            leaf#"my most sincere apologies"
+        :^    leaf+"initial merge failed"
+            leaf+"my most sincere apologies"
           >p.p.p.+.q.hin<
         q.p.p.+.q.hin
     [~ ..^$]

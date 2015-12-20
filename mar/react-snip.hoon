@@ -18,8 +18,8 @@
   ++  react-snips-json
     ::?>  ?=([[%div ~] [[%h1 ~] *] [[%div ~] *] ~]] own)  :: xx mystery fish-loop
     %^  jobe
-      head#react-head-json
-      body#react-snip-json
+      head+react-head-json
+      body+react-snip-json
     ~
   ::
   ++  react-head-json  (react-to-json ;h1:"*{hed}")

@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hoon#hood#ape                                    ::  ::
+::::  /hoon+hood+ape                                    ::  ::
   ::                                                    ::  ::
 /?  314                                                 ::  zuse version
 /+  sole, talk, helm, kiln, drum                        ::  libraries
@@ -38,7 +38,7 @@
 |_  $:  hid/bowl                                        ::  system state
         hood-0                                          ::  server state
     ==                                                  ::
-++  able                                                ::  find#make part
+++  able                                                ::  find+make part
   |*  hed/hood-head
   =+  rep=(~(get by lac) hed)
   =+  par=?^(rep u.rep `hood-part`(hood-make our.hid hed))

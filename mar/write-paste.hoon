@@ -1,5 +1,5 @@
 ::   
-::::  /hoon#core#save#mar
+::::  /hoon+core+save+mar
   ::
 !:
 |_  {typ/?($hoon $md $txt) txt/@t}
@@ -7,6 +7,6 @@
   |%
   ++  noun  {?($hoon $md $txt) @t}
   ++  json  
-    (corl need =>(jo (ot typ#(ci (soft ?($hoon $md $txt)) so) txt#so ~)))
+    (corl need =>(jo (ot typ+(ci (soft ?($hoon $md $txt)) so) txt+so ~)))
   --
 --

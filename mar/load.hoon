@@ -1,5 +1,5 @@
 ::
-::::  /hoon#core#load#mar
+::::  /hoon+core+load+mar
   ::
 !:
 |_  man/span

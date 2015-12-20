@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hoon#oct2/lib                                    ::::::  dependencies
+::::  /hoon+oct2/lib                                    ::::::  dependencies
   ::                                                    ::  ::
 /?    310                                               ::  arvo version
 /-    oct2                                              ::  structures
@@ -32,7 +32,7 @@
           ++  y  .(box (~(set bo box) +<), p.sag `src)  ::  play at x
           --                                            ::
   ++  ept  =+(own |(&(=(~ -) !=(oth `src)) =(`src -)))  ::  we can play
-  ++  hey  |=(? +>+<+(aud ((stat ship) +< src aud)))    ::  enter#leave
+  ++  hey  |=(? +>+<+(aud ((stat ship) +< src aud)))    ::  enter+leave
   ++  muy  |=  (list ship)  ?~  +<  +>+<+               ::  many in audience
            $(+< t.+<, aud ((stat ship) & i.+< aud))     ::
   ++  nam  =+  ?:  =(p.sag `src)  ['=' (icon &) ~]      ::  print name
@@ -54,6 +54,6 @@
            ?~  dow  ~  =+  mor=$(dow t.dow)             ::
            :(weld nam(src p.i.dow) ?~(mor "" ", ") mor) ::
   ++  voy   =+  ~[(icon who)]  %+  weld  vew            ::  print prompt
-            ?.(ept " ({-}'s turn) " ": {-} (row#col): ")::
+            ?.(ept " ({-}'s turn) " ": {-} (row+col): ")::
   --
 --

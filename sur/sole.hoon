@@ -1,5 +1,5 @@
 ::
-::::  /hoon#sole#sur
+::::  /hoon+sole+sur
   !:
 |%
 ++  sole-action                                         ::  sole to app
@@ -24,7 +24,7 @@
   ==                                                    ::
 ++  sole-effect                                         ::  app to sole
   $%  {$bel $~}                                         ::  beep
-      {$blk p/@ud q/@c}                                 ::  blink#match char at
+      {$blk p/@ud q/@c}                                 ::  blink+match char at
       {$clr $~}                                         ::  clear screen
       {$det sole-change}                                ::  edit command
       {$err p/@ud}                                      ::  error point

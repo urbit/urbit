@@ -49,29 +49,29 @@
   ++  ship  (su fed:ag)
   ++  dute
     %-  of  :~
-      create#task  change#(ot id#id meat#uppd ~)
-      archive#id   update#(ot id#id version#ni her#(su fed:ag) meat#uppd ~)
+      create+task  change+(ot id+id meat+uppd ~)
+      archive+id   update+(ot id+id version+ni her+(su fed:ag) meat+uppd ~)
     ==
   ++  task
     %-  ot  :~
-      id#id           'date_created'^di
-      version#ni      'date_modified'^di
-      creator#ship    doer#(mu ship)
-      tags#(as so)    'date_due'^(mu di)
-      done#(mu di)    title#so
-      description#so  discussion#(ar (ot date#di ship#ship body#so ~))
+      id+id           'date_created'^di
+      version+ni      'date_modified'^di
+      creator+ship    doer+(mu ship)
+      tags+(as so)    'date_due'^(mu di)
+      done+(mu di)    title+so
+      description+so  discussion+(ar (ot date+di ship+ship body+so ~))
     ==
   ++  audi  (as stan)
   ++  stan  (su ;~((glue fas) ;~(pfix sig fed:ag) urs:ab))
   ++  uppd
     %-  of  :~
-      set-doer#(mu (su fed:ag))
-      set-date-due#(mu di)
-      set-tags#(as so)
-      set-title#so
-      set-description#so
-      set-done#bo
-      add-comment#(ot ship#(su fed:ag) com#so ~)
+      set-doer+(mu (su fed:ag))
+      set-date-due+(mu di)
+      set-tags+(as so)
+      set-title+so
+      set-description+so
+      set-done+bo
+      add-comment+(ot ship+(su fed:ag) com+so ~)
     ==
   --
 ++  grow-work-duty
@@ -83,35 +83,35 @@
       ?-  +<-
         $create   (task tax)
         $archive  (jove id)
-        $change   (jobe id#(jove id) meat#(flesh meat) ~)
+        $change   (jobe id+(jove id) meat+(flesh meat) ~)
         $update
           %-  jobe  :~ 
-            id#(jove id)
-            version#(jone version)
-            her#(jope her)
-            meat#(flesh meat)
+            id+(jove id)
+            version+(jone version)
+            her+(jope her)
+            meat+(flesh meat)
           ==
       ==
   |%
   ++  tags
     |=  a/(set @t)
-    [%a (turn (sort (~(tap in a)) aor) |=(b/cord s#b))]
+    [%a (turn (sort (~(tap in a)) aor) |=(b/cord s+b))]
   ::
   ++  task
     |=  ^task
-    %-  jobe  :~  id#[%s (scot %uv id)]
-                tags#(^tags tags)
-                doer#?~(doer ~ (jope u.doer))
-               title#[%s title]
-             creator#(jope creator)
-             version#(jone version)
+    %-  jobe  :~  id+[%s (scot %uv id)]
+                tags+(^tags tags)
+                doer+?~(doer ~ (jope u.doer))
+               title+[%s title]
+             creator+(jope creator)
+             version+(jone version)
       'date_created'^(jode date-created)
      'date_modified'^(jode date-modified)
-         description#[%s description]
-      =<  discussion#[%a (turn discussion .)]
-      |=(comment (jobe date#(jode date) ship#(jope ship) body#[%s body] ~))
+         description+[%s description]
+      =<  discussion+[%a (turn discussion .)]
+      |=(comment (jobe date+(jode date) ship+(jope ship) body+[%s body] ~))
           'date_due'^?~(date-due ~ (jode u.date-due))
-                done#?~(done ~ (jode u.done))
+                done+?~(done ~ (jode u.done))
     ==
   ++  flesh  
     |=  ^flesh
@@ -123,7 +123,7 @@
       $set-title        [%s til]
       $set-description  [%s des]
       $set-done         [%b don]
-      $add-comment      (jobe ship#(jope who) com#[%s com] ~)
+      $add-comment      (jobe ship+(jope who) com+[%s com] ~)
     ==
   --
 ++  grab
@@ -133,7 +133,7 @@
   ++  json
     =>  [jo ..telegram dute=grab-work-duty]
     |=  a/json  ^-  (list telegram)
-    =-  (need ((ar (ot ship#(su fed:ag) thought#thot ~)) a))
+    =-  (need ((ar (ot ship+(su fed:ag) thought+thot ~)) a))
     |%
     ++  of
       |*  a/(pole {@tas fist})
@@ -183,15 +183,15 @@
     ++  thot
       ^-  $+(json (unit thought))
       %-  ot  :~
-        serial#(ci (slat %uv) so)
-        audience#audi 
-        statement#stam
+        serial+(ci (slat %uv) so)
+        audience+audi 
+        statement+stam
       ==
     ::
     ++  audi  (op parn memb)                            ::  audience
     ++  auri  (op parn (ci (soft presence) so))
-    ++  memb  (ot envelope#lope delivery#(ci (soft delivery) so) ~)
-    ++  lope  (ot visible#bo sender#(mu (su parn)) ~)
+    ++  memb  (ot envelope+lope delivery+(ci (soft delivery) so) ~)
+    ++  lope  (ot visible+bo sender+(mu (su parn)) ~)
     ::
     ++  parn
       ^-  $+(nail (like partner))
@@ -200,26 +200,26 @@
       %+  sear  (soft passport)
       ;~((glue fas) sym urs:ab)                         ::  XX  [a-z0-9_]{1,15}
     ::
-    ++  stam  (ot date#di bouquet#(as (ar so)) speech#spec ~)
+    ++  stam  (ot date+di bouquet+(as (ar so)) speech+spec ~)
     ++  spec
       %+  ke  *speech  |.  ~+
       %-  of  :~
-        lin#(ot say#bo txt#so ~) 
-        url#(ot txt#(su aurf:urlp) ~)
-        exp#(ot txt#so ~)
-        tax#(ot xat#dute ~)
-        app#(ot txt#so src#so ~)
-        fat#(ot tor#tors taf#spec ~)
-        ext#(ot nom#so txe#blob ~)
-        non#ul
-        ::  inv#(ot ship#(su fed:ag) party#(su urs:ab) ~)
+        lin+(ot say+bo txt+so ~) 
+        url+(ot txt+(su aurf:urlp) ~)
+        exp+(ot txt+so ~)
+        tax+(ot xat+dute ~)
+        app+(ot txt+so src+so ~)
+        fat+(ot tor+tors taf+spec ~)
+        ext+(ot nom+so txe+blob ~)
+        non+ul
+        ::  inv+(ot ship+(su fed:ag) party+(su urs:ab) ~)
       ==
     ++  tors  
       %+  ke  *torso  |.  ~+
       %-  of  :~
-        name#(ot nom#so mon#tors ~) 
-        text#(cu lore so)
-        tank#(ot dat#(cu (hard (list tank)) blob) ~)
+        name+(ot nom+so mon+tors ~) 
+        text+(cu lore so)
+        tank+(ot dat+(cu (hard (list tank)) blob) ~)
       ==
     ::
     ++  blob  (cu cue (su fel:ofis))
@@ -235,13 +235,13 @@
     :-  %a
     %+  turn  gam
     |=  telegram
-    (jobe ship#(jope p) thought#(thot q) ~)
+    (jobe ship+(jope p) thought+(thot q) ~)
     ::
     ++  jove
       |=  {a/envelope b/delivery}
       %-  jobe  :~
-        envelope#(jobe visible#[%b p.a] sender#?~(q.a ~ s#(parn u.q.a)) ~)
-        delivery#[%s b]
+        envelope+(jobe visible+[%b p.a] sender+?~(q.a ~ s+(parn u.q.a)) ~)
+        delivery+[%s b]
       ==
     ::
     ++  jope  |=(a/ship (jape +:<a>)) ::[%s (crip +:(scow %p a))])
@@ -258,12 +258,12 @@
     ::
     ++  thot
       |=  thought
-      (jobe serial#(jape <p>) audience#(audi q) statement#(stam r) ~)
+      (jobe serial+(jape <p>) audience+(audi q) statement+(stam r) ~)
     ::
     ++  audi  (jome parn jove)
     ++  bouq
       |=  a/bouquet
-      a#(turn (~(tap in a)) |=(b/path a#(turn b |=(c/span s#c))))
+      a+(turn (~(tap in a)) |=(b/path a+(turn b |=(c/span s+c))))
     ::
     ++  parn
       |=  a/partner  ^-  cord
@@ -281,21 +281,21 @@
     ::
     ++  stam
       |=  statement
-      (jobe date#(jode p) bouquet#(bouq q) speech#(spec r) ~)
+      (jobe date+(jode p) bouquet+(bouq q) speech+(spec r) ~)
     ::
     ++  spec
       |=  a/speech
       %+  joba  -.a
-      ?+  -.a  ~|(stub#-.a !!)
-        $lin  (jobe txt#[%s q.a] say#[%b p.a] ~)
-        $url  (joba txt#(jape (earf p.a)))
-        $exp  (joba txt#[%s p.a])
-        $tax  (jobe txt#(jape (rend-work-duty p.a)) xat#(grow-work-duty p.a) ~)
-        $app  (jobe txt#[%s q.a] src#[%s p.a] ~)
-        $fat  (jobe tor#(tors p.a) taf#$(a q.a) ~)
-        $ext  (jobe nom#[%s p.a] txe#(jape (sifo (jam +.a))) ~)
+      ?+  -.a  ~|(stub+-.a !!)
+        $lin  (jobe txt+[%s q.a] say+[%b p.a] ~)
+        $url  (joba txt+(jape (earf p.a)))
+        $exp  (joba txt+[%s p.a])
+        $tax  (jobe txt+(jape (rend-work-duty p.a)) xat+(grow-work-duty p.a) ~)
+        $app  (jobe txt+[%s q.a] src+[%s p.a] ~)
+        $fat  (jobe tor+(tors p.a) taf+$(a q.a) ~)
+        $ext  (jobe nom+[%s p.a] txe+(jape (sifo (jam +.a))) ~)
         $non  ~
-        ::  $inv  (jobe ship#(jope p.a) party#[%s q.a] ~)
+        ::  $inv  (jobe ship+(jope p.a) party+[%s q.a] ~)
       ==
     ::
     ++  tors
@@ -303,8 +303,8 @@
       %+  joba  -.a
       ?-  -.a
         $text  [%s (role +.a)]
-        $tank  (jobe txt#[%a (turn +.a joke)] dat#(jape (sifo (jam +.a))) ~)
-        $name  (jobe nom#s#p.a mon#$(a q.a) ~)
+        $tank  (jobe txt+[%a (turn +.a joke)] dat+(jape (sifo (jam +.a))) ~)
+        $name  (jobe nom+s+p.a mon+$(a q.a) ~)
       ==
     ::
     --

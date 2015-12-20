@@ -1,12 +1,12 @@
 ::  
-::::  /hoon#talk#sur
+::::  /hoon+talk+sur
   !:
 |%
-++  audience  (map partner (pair envelope delivery))    ::  destination#state
+++  audience  (map partner (pair envelope delivery))    ::  destination+state
 ++  atlas  (map ship status)                            ::  presence map
 ++  bouquet  (set flavor)                               ::  complete aroma
 ++  command                                             ::  effect on party
-  $%  {$design (pair span (unit config))}               ::  configure#destroy
+  $%  {$design (pair span (unit config))}               ::  configure+destroy
       {$publish (list thought)}                         ::  originate
       {$review (list thought)}                          ::  deliver
   ==                                                    ::

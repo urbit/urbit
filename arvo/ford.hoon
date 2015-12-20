@@ -34,9 +34,9 @@
   |*  a/$+(* *)                                         ::  product clam
   $:  p/cafe                                            ::  cache
     $=  q                                               ::
-      $%  {$0 p/(set beam) q/a}                         ::  depends#product
+      $%  {$0 p/(set beam) q/a}                         ::  depends+product
           {$1 p/(set {p/care q/beam r/tang})}           ::  blocks
-          {$2 p/(set beam) q/tang}                      ::  depends#error
+          {$2 p/(set beam) q/tang}                      ::  depends+error
       ==                                                ::
   ==                                                    ::
 ::                                                      ::
@@ -170,7 +170,7 @@
     r  ?:  ?=($ud -.r.bem)  r.bem
        =+  num=(ska ~ %cw bem(s ~))
        ?.  ?=({$~ $~ * * @u} num)
-         ~&  norm-lost#(tope bem(s ~))
+         ~&  norm-lost+(tope bem(s ~))
          r.bem  ::  XX
        [%ud q.q.u.u.num]
   ==
@@ -228,13 +228,13 @@
     ?-    -.+.sih
         $writ
       ?~  p.sih  +>.$ 
-      :: ~&  writ#tea
+      :: ~&  writ+tea
       =+  dap=(~(got by deh.bay) dep)
       =-  +>.$(mow mow, deh.bay ?~(dop deh.bay (~(put by deh.bay) dep dop)))
       ^-  {dop/$@($~ _dap) mow/_mow}
       ?-    -.dap
           $done  `mow                ::  writ redundant
-          $init  ~|(never-subscribed#dep !!)
+          $init  ~|(never-subscribed+dep !!)
           $sent
         :-  [%done ~]
         ;:  weld
@@ -255,12 +255,12 @@
     ~%  %ford-w  ..is  ~
     |=  {dep/@uvH ask/?}
     ?~  dep
-      ~&(dep-empty#hen +>.$)
+      ~&(dep-empty+hen +>.$)
     ?:  =(dep 0vtest)                 ::  upstream testing
       +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
     =+  dap=(~(get by deh.bay) dep)
-    ?~  dap  ~&(dep-missed#dep +>.$)  ::  XX  ~|  !!
-    :: ~&  awap#[dep u.dap]
+    ?~  dap  ~&(dep-missed+dep +>.$)  ::  XX  ~|  !!
+    :: ~&  awap+[dep u.dap]
     ?-  -.u.dap
       $done  +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
       $sent
@@ -273,7 +273,7 @@
         +>.$(deh.bay (~(put by deh.bay) dep [%init q.u.dap]))
     ::
       $init
-        ?.  ask  ~&(awap-kill-empty#dep +>.$)  :: crash?
+        ?.  ask  ~&(awap-kill-empty+dep +>.$)  :: crash?
         %_    +>.$
             deh.bay 
           (~(put by deh.bay) dep [%sent [hen ~ ~] p.u.dap])
@@ -441,7 +441,7 @@
             |-  ^-  (each (list (pair care beam)) tang)
             ?~  p.ton  [%& ~]
             =+  nex=$(p.ton t.p.ton)
-            =+  err=|=(a/tape [%| leaf#a ?:(?=($& -.nex) ~ p.nex)])
+            =+  err=|=(a/tape [%| leaf+a ?:(?=($& -.nex) ~ p.nex)])
             =+  pax=(path i.p.ton)
             ?~  pax  (err "blocking empty")
             ?.  ?=($c (end 3 1 i.pax))
@@ -535,25 +535,25 @@
         |=  {cof/cafe cay/cage coy/cage}  ^-  (bolt gage)
         ?.  =(p.cay p.coy)
           %+  flaw  cof  :_  ~
-          leaf#"diff on data of different marks: {(trip p.cay)} {(trip p.coy)}"
+          leaf+"diff on data of different marks: {(trip p.cay)} {(trip p.coy)}"
         ?:  =(q.q.cay q.q.coy)
           (fine cof %& %null [%atom %n] ~)
         ::
         %+  cope  (fang cof p.cay)
         |=  {cof/cafe pro/vase}
         ?.  (slab %grad p.pro)
-          (flaw cof leaf#"no ++grad" ~)
+          (flaw cof leaf+"no ++grad" ~)
         =+  gar=(slap pro [%cnzy %grad])
         ?@  q.gar
           =+  for=((sand %tas) q.gar)
-          ?~  for  (flaw cof leaf#"bad mark ++grad" ~)
+          ?~  for  (flaw cof leaf+"bad mark ++grad" ~)
           %^  make  cof  %diff
           :-  [%cast u.for `cay]
           [%cast u.for `coy]
         ?.  (slab %form p.gar)
-          (flaw cof leaf#"no ++form:grad" ~)
+          (flaw cof leaf+"no ++form:grad" ~)
         ?.  (slab %diff p.gar)
-          (flaw cof leaf#"no ++diff:grad" ~)
+          (flaw cof leaf+"no ++diff:grad" ~)
         %+  cope  (keel cof pro [[%& 6]~ q.cay]~)
         |=  {cof/cafe pox/vase}
         %+  cope
@@ -563,7 +563,7 @@
         |=  {cof/cafe dif/vase}
         =+  for=((soft @tas) q:(slap gar [%cnzy %form]))
         ?~  for
-          (flaw cof leaf#"bad ++form:grad" ~)
+          (flaw cof leaf+"bad ++form:grad" ~)
         (fine cof %& u.for dif)
       ==
     ::
@@ -605,14 +605,14 @@
     ++  fade                                            ::  compile to hood
       |=  {cof/cafe for/mark bem/beam}
       ^-  (bolt hood)
-      %+  cool  |.(leaf#"ford: fade {<[(tope bem)]>}")
+      %+  cool  |.(leaf+"ford: fade {<[(tope bem)]>}")
       %+  cope  (cope (make cof [%bake for bem ~]) furl)
       |=  {cof/cafe cay/cage}
       %+  (clef %hood)  (fine cof bem(r [%ud 0]) cay)
       ^-  (burg (pair beam cage) hood)
       |=  {cof/cafe bum/beam cay/cage}
-      ~|  fade#(tope bum)
-      :: ~&  fade#clef-miss#bem
+      ~|  fade+(tope bum)
+      :: ~&  fade+clef-miss+bem
       =+  rul=(fair bum)
       ?.  ?=(@ q.q.cay)
         (flaw cof ~)
@@ -802,25 +802,25 @@
         %+  cope  (fang cof for)
         |=  {cof/cafe pro/vase}
         ?.  (slab %grad p.pro)
-          (flaw cof leaf#"no ++grad" ~)
+          (flaw cof leaf+"no ++grad" ~)
         =+  gar=(slap pro [%cnzy %grad])
         ?@  q.gar
           =+  too=((sand %tas) q.gar)
-          ?~  too  (flaw cof leaf#"bad mark ++grad" ~)
+          ?~  too  (flaw cof leaf+"bad mark ++grad" ~)
           (make cof %join u.too `cay `coy)
         ?.  (slab %form p.gar)
-          (flaw cof leaf#"no ++form:grad" ~)
+          (flaw cof leaf+"no ++form:grad" ~)
         =+  fom=((soft @tas) q:(slap gar [%cnzy %form]))
         ?~  fom
-          (flaw cof leaf#"bad ++form:grad" ~)
+          (flaw cof leaf+"bad ++form:grad" ~)
         ?.  &(=(u.fom p.cay) =(u.fom p.coy))
           %+  flaw  cof  :_  :_  ~
-            leaf#"join on data of bad marks: {(trip p.cay)} {(trip p.coy)}"
-          leaf#"expected mark {(trip u.fom)}"
+            leaf+"join on data of bad marks: {(trip p.cay)} {(trip p.coy)}"
+          leaf+"expected mark {(trip u.fom)}"
         ?:  =(q.q.cay q.q.coy)
           (fine cof %& cay)
         ?.  (slab %join p.gar)
-          (flaw cof leaf#"no ++join:grad" ~)
+          (flaw cof leaf+"no ++join:grad" ~)
         %+  cope
           %^  maul  cof
             (slap (slap pro [%cnzy %grad]) [%cnzy %join])
@@ -844,22 +844,22 @@
         %+  cope  (fang cof for)
         |=  {cof/cafe pro/vase}
         ?.  (slab %grad p.pro)
-          (flaw cof leaf#"no ++grad" ~)
+          (flaw cof leaf+"no ++grad" ~)
         =+  gar=(slap pro [%cnzy %grad])
         ?@  q.gar
           =+  too=((sand %tas) q.gar)
-          ?~  too  (flaw cof leaf#"bad mark ++grad" ~)
+          ?~  too  (flaw cof leaf+"bad mark ++grad" ~)
           %+  make  cof
           [%mash u.too [p.mas q.mas `cay] [p.mos q.mos `coy]]
         ?.  (slab %form p.gar)
-          (flaw cof leaf#"no ++form:grad" ~)            
+          (flaw cof leaf+"no ++form:grad" ~)            
         =+  fom=((soft @tas) q:(slap gar [%cnzy %form]))
         ?~  fom
-          (flaw cof leaf#"bad ++form:grad" ~)
+          (flaw cof leaf+"bad ++form:grad" ~)
         ?.  &(=(u.fom p.cay) =(u.fom p.coy))
           %+  flaw  cof  :_  :_  ~
-            leaf#"mash on data of bad marks: {(trip p.cay)} {(trip p.coy)}"
-          leaf#"expected mark {(trip u.fom)}"
+            leaf+"mash on data of bad marks: {(trip p.cay)} {(trip p.coy)}"
+          leaf+"expected mark {(trip u.fom)}"
         ?:  =(q.q.cay q.q.coy)
           (fine cof %& cay)
         ?.  (slab %mash p.gar)
@@ -894,9 +894,9 @@
     ++  keel                                            ::  apply mutations
       |=  {cof/cafe suh/vase yom/(list (pair wing vase))}
       ^-  (bolt vase)
-      %+  cool  =<  |.(leaf#"ford: keel {<(murn yom +)>}")
+      %+  cool  =<  |.(leaf+"ford: keel {<(murn yom +)>}")
                 |=  {a/wing b/type *}
-                =+  c=p:(slap suh cnzz#a)
+                =+  c=p:(slap suh cnzz+a)
                 ?:  (~(nest ut c) | b)  ~
                 (some [a c b])
       %^  maim  cof 
@@ -936,7 +936,7 @@
           $(s.bem t.s.bem, arg [i.s.bem arg])
         ?:  =(~ new)  (fine cof res)
         =^  bem  new  ~(get to new)
-        ~|  next-beam#(tope bem)
+        ~|  next-beam+(tope bem)
         ?<  (gth (lent +.bem) 10)
         $(bem bem, arg ~)
       ::
@@ -990,26 +990,26 @@
       ^-  (bolt vase)
       =.  s.bem  [for s.bem]
       ?:  lit
-        %+  cool  |.(leaf#"ford: load {<for>} {<(tope bem)>}")
+        %+  cool  |.(leaf+"ford: load {<for>} {<(tope bem)>}")
         %+  cope  (liar cof bem)
         |=  {cof/cafe cay/cage}
         ?.  =(for p.cay)
-          (flaw cof leaf#"unexpected mark {<p.cay>}" ~)
+          (flaw cof leaf+"unexpected mark {<p.cay>}" ~)
         ((lake for) cof q.cay)
-      %+  cool  |.(leaf#"ford: hook {<for>} {<(tope bem)>}")
+      %+  cool  |.(leaf+"ford: hook {<for>} {<(tope bem)>}")
       %+  cope  (fade cof %hook bem)
       |=  {cof/cafe hyd/hood}
       (cope (abut:(meow bem arg) cof hyd) (lake for))
     ::
-    ++  lake                                            ::  check#coerce
+    ++  lake                                            ::  check+coerce
       |=  for/mark
       |=  {cof/cafe sam/vase}
       ^-  (bolt vase)
-      %+  cool  |.(leaf#"ford: check {<[for bek `@p`(mug q.sam)]>}")
+      %+  cool  |.(leaf+"ford: check {<[for bek `@p`(mug q.sam)]>}")
       ?:  ?=(?($hoon $hook) for)
         =+  mas=((soft @t) q.sam)
         ?~  mas
-          (flaw cof [leaf#"ford: bad hoon or hook: {<[for bek]>}"]~)
+          (flaw cof [leaf+"ford: bad hoon or hook: {<[for bek]>}"]~)
         (fine cof [%atom %t] u.mas)
       %+  cope  (fang cof for)
       |=  {cof/cafe tux/vase}
@@ -1039,7 +1039,7 @@
         (fine cof bem(r [%ud ((hard @) +.+:(need u.von))]))
       |=  {cof/cafe bem/{{ship desk $ud r/@u} s/spur}}
       ?:  =(0 r.bem)
-        (flaw cof [leaf#"ford: no data: {<(tope bem(s ~))>}"]~)
+        (flaw cof [leaf+"ford: no data: {<(tope bem(s ~))>}"]~)
       (fine cof bem)
     ::
     ++  lave                                            ::  validate
@@ -1081,7 +1081,7 @@
       ?~  von
         [p=*cafe q=[%1 [[%x bem ~] ~ ~]]]
       ?~  u.von
-        (flaw cof leaf#"file not found" (smyt (tope bem)) ~)
+        (flaw cof leaf+"file not found" (smyt (tope bem)) ~)
       (fine cof u.u.von)
     ::
     ++  lily                                            ::  translation targets
@@ -1152,7 +1152,7 @@
         ?:  ?~  -  |                      ::  error if level above built
             (~(has by res) (tack i.pax (scag (dec -) t.pax)))
           ~
-        :_(q.q.raf leaf#"! {<`mark`for>} build failed, ignoring.")
+        :_(q.q.raf leaf+"! {<`mark`for>} build failed, ignoring.")
       --
     ::
     ++  lima                                            ::  load at depth
@@ -1183,13 +1183,13 @@
       ?^  vux  (fine cof u.vux)
       ?~  s.mob
         %+  flaw  cof
-        ~[leaf#"build {<for>}" leaf#"no usable ancestors" (smyt (tope bem))]
+        ~[leaf+"build {<for>}" leaf+"no usable ancestors" (smyt (tope bem))]
       ^$(s.mob t.s.mob, mer [i.s.mob mer])
     ::
     ++  link                                            ::  translate
       |=  {cof/cafe too/mark for/mark vax/vase}
       ^-  (bolt vase)
-      :: %+  cool   |.(leaf#"ford: link {<too>} {<for>} {<p.vax>}")
+      :: %+  cool   |.(leaf+"ford: link {<too>} {<for>} {<p.vax>}")
       ?:  =(too for)  (fine cof vax)
       ?:  |(=(%noun for) =(%$ for))
         ((lake too) cof vax)
@@ -1213,7 +1213,7 @@
     ::
     ++  lion                                            ::  translation search
       |=  {cof/cafe too/mark fro/(set mark)}
-      :: ~&  lion#[too=too fro=(sa fro)]
+      :: ~&  lion+[too=too fro=(sa fro)]
       ^-  (bolt (list mark))
       =|  $:  war/(map mark (list mark))
               pax/(list mark)  
@@ -1290,16 +1290,16 @@
           $$  (fine cof %& p.kas)
           $bake
         ::  ~&  >  [p.kas (tope q.kas)]
-        ::  %+  cool  |.(leaf#"ford: bake {<p.kas>} {<(tope q.kas)>}")
+        ::  %+  cool  |.(leaf+"ford: bake {<p.kas>} {<(tope q.kas)>}")
         %+  cope  (lima cof p.kas q.kas r.kas)
         |=  {cof/cafe vux/(unit vase)}
         ?~  vux
-          (flaw cof leaf#"file not found" (smyt (tope q.kas)) ~)
+          (flaw cof leaf+"file not found" (smyt (tope q.kas)) ~)
         (fine cof [%& p.kas u.vux])
       ::
           $boil
         ^-  (bolt gage)
-        %+  cool  |.(leaf#"ford: boil {<p.kas>} {<(tope q.kas)>} {<r.kas>}")
+        %+  cool  |.(leaf+"ford: boil {<p.kas>} {<(tope q.kas)>} {<r.kas>}")
         %+  cope  (lamp cof q.kas)
         |=  {cof/cafe bem/beam}
         %+  cope  (lime cof p.kas bem r.kas)
@@ -1307,7 +1307,7 @@
         (fine cof `gage`[%& p.kas vax])
       ::
           $bunt
-        %+  cool  |.(leaf#"ford: bunt {<p.kas>}")
+        %+  cool  |.(leaf+"ford: bunt {<p.kas>}")
         ?:  ?=(?($hoon $hook) p.kas)
           (fine cof %& p.kas [%atom %t] '')
         %+  cope  (fang cof p.kas)
@@ -1317,7 +1317,7 @@
         (fine cof [%& p.kas [typ val]])
       ::
           $call
-        ::  %+  cool  |.(leaf#"ford: call {<`@p`(mug kas)>}")
+        ::  %+  cool  |.(leaf+"ford: call {<`@p`(mug kas)>}")
         %.  [cof p.kas q.kas]
         ;~  cope
           ;~  coax
@@ -1333,12 +1333,12 @@
         ==
       ::
           $cast
-        %+  cool  |.(leaf#"ford: cast {<p.kas>}")
+        %+  cool  |.(leaf+"ford: cast {<p.kas>}")
         %+  cope  $(kas q.kas)
         %-  tabl-run
         |=  {cof/cafe cay/cage}
         ^-  (bolt gage)
-        %+  cool  |.(leaf#"ford: casting {<p.cay>} to {<p.kas>}")
+        %+  cool  |.(leaf+"ford: casting {<p.cay>} to {<p.kas>}")
         %+  cope  (lion cof p.kas p.cay `~)
         |=  {cof/cafe wuy/(list @tas)}
         %+  cope
@@ -1348,16 +1348,16 @@
         (flux |=(vax/vase [%& p.kas vax]))
       ::
           $core
-        %+  cool  |.(leaf#"ford: core {<(tope p.kas)>}")
+        %+  cool  |.(leaf+"ford: core {<(tope p.kas)>}")
         (cope (lear cof p.kas) (flux |=(a/vase [%& %core a])))
       ::
           $diff
-        %+  cool  |.(leaf#"ford: diff {<`@p`(mug p.kas)>} {<`@p`(mug q.kas)>}")
+        %+  cool  |.(leaf+"ford: diff {<`@p`(mug p.kas)>} {<`@p`(mug q.kas)>}")
         (diff cof p.kas q.kas)
       ::
           $dude  (cool p.kas $(kas q.kas))
           $file
-        %+  cool  |.(leaf#"ford: file {<p.kas>}")
+        %+  cool  |.(leaf+"ford: file {<p.kas>}")
         %+  cope  (liar cof p.kas)
         (flux |=(cay/cage [%& cay]))
       ::
@@ -1372,31 +1372,31 @@
         ?^  n.p.kas
           (~(put in p.q.rez) n.p.kas)
         =+  dap=(~(get by deh.bay) n.p.kas)
-        ?~  dap    ~&(flag-missed#n.p.kas p.q.rez)
+        ?~  dap    ~&(flag-missed+n.p.kas p.q.rez)
         %-  ~(uni in p.q.rez)  ^-  (set beam)
         ?-(-.u.dap $init p.u.dap, $sent q.u.dap, $done [[bek ~] ~ ~])
       ::                              XX revisit ^ during dependency review
           $join
         %+  cool
           |.
-          leaf#"ford: join {<p.kas>} {<`@p`(mug q.kas)>} {<`@p`(mug r.kas)>}"
+          leaf+"ford: join {<p.kas>} {<`@p`(mug q.kas)>} {<`@p`(mug r.kas)>}"
         (join cof p.kas q.kas r.kas)
       ::
           $mash
         %+  cool
           |.
-          leaf#"ford: mash {<p.kas>} {<`@p`(mug q.kas)>} {<`@p`(mug r.kas)>}"
+          leaf+"ford: mash {<p.kas>} {<`@p`(mug q.kas)>} {<`@p`(mug r.kas)>}"
         (mash cof p.kas q.kas r.kas)
       ::
           $mute  (kale cof p.kas q.kas)
           $pact
-        %+  cool  |.(leaf#"ford: pact {<`@p`(mug p.kas)>} {<`@p`(mug q.kas)>}")
+        %+  cool  |.(leaf+"ford: pact {<`@p`(mug p.kas)>} {<`@p`(mug q.kas)>}")
         (pact cof p.kas q.kas)
       ::
           $plan  (cope (abut:(meow p.kas q.kas) cof r.kas) faun)
           $reef  (faun cof pit)
           $ride
-        %+  cool  |.(leaf#"ford: build failed")
+        %+  cool  |.(leaf+"ford: build failed")
         %+  cope  $(kas q.kas)
         %-  tabl-run
         |=  {cof/cafe cay/cage}
@@ -1420,12 +1420,12 @@
         ==
       ::
           $vale  
-        %+  cool  |.(leaf#"ford: vale {<p.kas>} {<`@p`(mug q.kas)>}")
+        %+  cool  |.(leaf+"ford: vale {<p.kas>} {<`@p`(mug q.kas)>}")
         %+  cope  (lave cof p.kas q.kas)
         (flux |=(vax/vase `gage`[%& p.kas vax]))
       ::
           $volt
-        %+  cool  |.(leaf#"ford: volt {<p.p.kas>}")
+        %+  cool  |.(leaf+"ford: volt {<p.p.kas>}")
         %+  cope  $(kas [%bunt p.p.kas])
         %-  tabl-run
         |=  {cof/cafe cay/cage}
@@ -1724,7 +1724,7 @@
             $&  (fine cof ..wilt(boy [p.hop boy]))
             $|
           =.  r.p.hop  ?:(?=({$ud $0} r.p.hop) r.how r.p.hop)
-          %+  cool  |.(leaf#"ford: wilt {<[(tope p.hop)]>}")
+          %+  cool  |.(leaf+"ford: wilt {<[(tope p.hop)]>}")
           %+  cope  (lend cof p.hop)
           |=  {cof/cafe arc/arch}
           ?:  (~(has by dir.arc) %hoon)
@@ -1768,13 +1768,13 @@
         |=  {cof/cafe cay/cage coy/cage}  ^-  (bolt gage)
         ?:  ?=(?($hoon $hook) p.cay)
           ?.  ?=($txt-diff p.coy)
-            (flaw cof leaf#"{<p.cay>} mark with bad diff type: {<p.coy>}" ~)
+            (flaw cof leaf+"{<p.cay>} mark with bad diff type: {<p.coy>}" ~)
           =+  txt=((soft @t) q.q.cay)
           ?~  txt
-            (flaw cof leaf#"{<p.cay>} mark on bad data" ~)
+            (flaw cof leaf+"{<p.cay>} mark on bad data" ~)
           =+  dif=((soft (urge cord)) q.q.coy)
           ?~  dif
-            =-  (flaw cof leaf#"{<p.cay>} data with bad diff" -)
+            =-  (flaw cof leaf+"{<p.cay>} data with bad diff" -)
             [>type=p.q.coy< >want=p:!>(*(urge cord))< ~]
           =+  pac=(role (lurk (lore (cat 3 u.txt '\0a')) u.dif))
           (fine cof %& p.cay [%atom %t] (end 3 (dec (met 3 pac)) pac))
@@ -1782,23 +1782,23 @@
         %+  cope  (fang cof p.cay)
         |=  {cof/cafe pro/vase}
         ?.  (slab %grad p.pro)
-          (flaw cof leaf#"no ++grad" ~)
+          (flaw cof leaf+"no ++grad" ~)
         =+  gar=(slap pro [%cnzy %grad])
         ?@  q.gar
           =+  for=((sand %tas) q.gar)
-          ?~  for  (flaw cof leaf#"bad mark ++grad" ~)
+          ?~  for  (flaw cof leaf+"bad mark ++grad" ~)
           (make cof %cast p.cay %pact [%cast u.for `cay] `coy)
         ?.  (slab %form p.gar)
-          (flaw cof leaf#"no ++form:grad" ~)
+          (flaw cof leaf+"no ++form:grad" ~)
         =+  for=((soft @tas) q:(slap gar [%cnzy %form]))
         ?~  for
-          (flaw cof leaf#"bad ++form:grad" ~)
+          (flaw cof leaf+"bad ++form:grad" ~)
         ?.  =(u.for p.coy)
           %+  flaw  cof  :_  ~
-          =<  leaf#"pact on data with wrong form: {-} {+<} {+>}"
+          =<  leaf+"pact on data with wrong form: {-} {+<} {+>}"
           [(trip p.cay) (trip u.for) (trip p.coy)]
         ?.  (slab %pact p.gar)
-          (flaw cof leaf#"no ++pact:grad" ~)
+          (flaw cof leaf+"no ++pact:grad" ~)
         %+  cope  (keel cof pro [[%& 6]~ q.cay]~)
         |=  {cof/cafe pox/vase}
         %+  cope
@@ -1858,17 +1858,17 @@
         [%| $(a (turn (turn a2 head) |=(b/mass ?~(-.q.b !! p.q.b))))]
     %+  turn  (~(tap by pol))
     |=  {@ baby}
-    :~  =<  cache#[%| (turn `(list term)`/hood/bake/lilt/slit/slim/slap/slam .)]
+    :~  =<  cache+[%| (turn `(list term)`/hood/bake/lilt/slit/slim/slap/slam .)]
         =-  |=(a/term [a `(~(get ja dep) a)])
         =<  `dep/(jar term *)`(~(rep by jav) .)
         |=({{* a/{term *}} b/(jar term *)} (~(add ja b) a))
     ::
-        =<  depends#[%| (turn `(list term)`/init/sent/done .)]
+        =<  depends+[%| (turn `(list term)`/init/sent/done .)]
         =-  |=(a/term [a `(~(get ja dep) a)])
         =<  `dep/(jar term *)`(~(rep by deh) .)
         |=({{@ a/{term *}} b/(jar term *)} (~(add ja b) a))
     ::
-        tasks#`[dym tad]
+        tasks+`[dym tad]
     ==
   =+  our=p.q.hic
   =+  ^=  bay  ^-  baby
@@ -1916,7 +1916,7 @@
   ^-  (unit (unit cage))
   [~ ~]
 ::
-++  stay                                                ::  save w#o cache
+++  stay                                                ::  save w+o cache
   `axle`+>-.$(pol (~(run by pol) |=(a/baby [tad.a dym.a deh.a ~])))
 ::
 ++  take                                                ::  response

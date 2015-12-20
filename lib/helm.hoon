@@ -80,7 +80,7 @@
 ::
 ++  poke-init                                         ::  initialize
   |=  him/ship  =<  abet
-  (emit %flog /helm %crud %hax-init leaf#(scow %p him) ~)
+  (emit %flog /helm %crud %hax-init leaf+(scow %p him) ~)
 ::
 ++  poke-mass
   |=  $~  =<  abet

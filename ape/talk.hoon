@@ -978,7 +978,7 @@
         =<  (sh-fact %mor (murn (sort (~(tap by q.owners.she)) aor) .))
         |=  {pon/partner alt/atlas}  ^-  (unit sole-effect)
         ?.  |(=(~ pan) (~(has in pan) pon))  ~
-        =-  `[%tan rose#[", " `~]^- leaf#~(ta-full ta man.she pon) ~]
+        =-  `[%tan rose+[", " `~]^- leaf+~(ta-full ta man.she pon) ~]
         =<  (murn (sort (~(tap by alt)) aor) .)
         |=  {a/ship b/presence c/human}  ^-  (unit tank) :: XX names
         ?-  b
@@ -1125,7 +1125,7 @@
         |=  {txt/cord exe/twig}
         =>  |.([(sell (slap (slop sh-twig-head seed) exe))]~)
         =+  tan=p:(mule .)
-        (say [%fat tank#tan exp#txt] ~)
+        (say [%fat tank+tan exp+txt] ~)
       ::
       ++  say                                           ::  publish
         |=  sep/(list speech)
@@ -1383,7 +1383,7 @@
     =.  soy  (pa-notify:soy her %hear who)
     pa-abet:soy
   ::
-  ++  ra-think                                          ::  publish#review
+  ++  ra-think                                          ::  publish+review
     |=  {pub/? her/ship tiz/(list thought)}
     ^+  +>
     ?~  tiz  +>
@@ -1560,7 +1560,7 @@
       |=  tay/partner
       ^-  (list card)
       ?-  -.tay
-        $|  ~&  tweet-abjure#p.p.tay
+        $|  ~&  tweet-abjure+p.p.tay
             !!
       ::
         $&  ~&  [%pa-abjure [our.hid man] [p.p.tay q.p.tay]]
@@ -1956,31 +1956,31 @@
   ::
   ++  tr-meta  ^-  tang
     =.  wen  (sub wen (mod wen (div wen ~s0..0001)))     :: round
-    =+  hed=leaf#"{(scow %uv sen)} at {(scow %da wen)}"
+    =+  hed=leaf+"{(scow %uv sen)} at {(scow %da wen)}"
     =+  =<  paz=(turn (~(tap by aud)) .)
-        |=({a/partner *} leaf#~(ta-full ta man a))
+        |=({a/partner *} leaf+~(ta-full ta man a))
     =+  bok=(turn (sort (~(tap in bou)) aor) smyt)
     [%rose [" " ~ ~] [hed >who< [%rose [", " "to " ~] paz] bok]]~
   ::
   ++  tr-body
     |-  ^-  sole-effect
-    ?+  -.sep  tan#[>sep<]~
-      $exp  tan#~[leaf#"# {(trip p.sep)}"]
-      $lin  tan#~[leaf#"{?:(p.sep "" "@ ")}{(trip q.sep)}"]
-      $non  tan#~
-      $app  tan#~[rose#[": " ~ ~]^~[leaf#"[{(trip p.sep)}]" leaf#(trip q.sep)]]
-      $tax  tan#~[leaf#(rend-work-duty p.sep)]
-      $url  url#(crip (earf p.sep))
-      $mor  mor#(turn p.sep |=(speech ^$(sep +<)))
-      $fat  [%mor tan#(tr-rend-tors p.sep) $(sep q.sep) ~]
+    ?+  -.sep  tan+[>sep<]~
+      $exp  tan+~[leaf+"# {(trip p.sep)}"]
+      $lin  tan+~[leaf+"{?:(p.sep "" "@ ")}{(trip q.sep)}"]
+      $non  tan+~
+      $app  tan+~[rose+[": " ~ ~]^~[leaf+"[{(trip p.sep)}]" leaf+(trip q.sep)]]
+      $tax  tan+~[leaf+(rend-work-duty p.sep)]
+      $url  url+(crip (earf p.sep))
+      $mor  mor+(turn p.sep |=(speech ^$(sep +<)))
+      $fat  [%mor tan+(tr-rend-tors p.sep) $(sep q.sep) ~]
     ==
   ::
   ++  tr-rend-tors
     |=  a/torso  ^-  tang
     ?-  -.a
-      $name  (welp $(a q.a) leaf#"={(trip p.a)}" ~)
+      $name  (welp $(a q.a) leaf+"={(trip p.a)}" ~)
       $tank  +.a
-      $text  (turn (flop +.a) |=(b/cord leaf#(trip b)))
+      $text  (turn (flop +.a) |=(b/cord leaf+(trip b)))
     ==
   ::
   ++  tr-pals
@@ -2002,7 +2002,7 @@
   ++  tr-text
     |=  oug/?
     ^-  tape
-    ?+    -.sep  ~&(tr-lost#sep "")
+    ?+    -.sep  ~&(tr-lost+sep "")
         $fat
       =+  rem=$(sep q.sep)
       ?:  (gth (lent rem) 62)  (chow 64 rem)
@@ -2143,7 +2143,7 @@
   ^-  move
   =+  ^-  paf/path
       =+  day=(year %*(. (yore now.hid) +.t +:*tarp))
-      %+  tope  [our.hid %home da#now.hid]
+      %+  tope  [our.hid %home da+now.hid]
       /talk-telegrams/(scot %da day)/[man]/talk
   =+  grams:(~(got by stories) man)
   [ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]

@@ -1,5 +1,5 @@
 ::  
-::::  /hoon#sole#lib
+::::  /hoon+sole+lib
   ::  
 /?    310
 /-    sole
@@ -101,14 +101,14 @@
   |=  sole-change
   ^-  {sole-edit sole-share}
   ?.  &(=(his.ler his.ven) (lte own.ler own.ven))
-    ~&  [%receive-sync his#[his.ler his.ven] own#[own.ler own.ven]]
+    ~&  [%receive-sync his+[his.ler his.ven] own+[own.ler own.ven]]
     !!
   ?>  &(=(his.ler his.ven) (lte own.ler own.ven))
   ?>  |(!=(own.ler own.ven) =(0 haw) =(haw (sham buf)))
   =.  leg  (scag (sub own.ven own.ler) leg)
   ::  ~?  !=(own.ler own.ven)  [%miss-leg leg]
   =+  dat=(transmute [%mor leg] ted)
-  ::  ~?  !=(~ leg)  [%transmute from#ted to#dat ~]
+  ::  ~?  !=(~ leg)  [%transmute from+ted to+dat ~]
   [dat abet:(apply(his.ven +(his.ven)) dat)]
 ::
 ++  remit                                             ::  conditional accept

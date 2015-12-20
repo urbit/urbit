@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hoon#oct2/ape                                    ::::::  dependencies
+::::  /hoon+oct2/ape                                    ::::::  dependencies
   ::                                                    ::  ::
 /?  310                                                 ::  arvo version
 /-  sole, oct2                                          ::  structures
@@ -67,13 +67,13 @@
 ++  kind  =+(res:here ?~(- + (word(gam new:here) ->)))  ::  move result
 ++  hail  |=(? tame(gam (hey:here +<)))                 ::  toggle subscriber
 ++  prom  (fect %pro %& %oct2 voy:here)                 ::  update prompt
-++  rend  (turn `wall`tab:here |=(tape txt#+<))         ::  table print
+++  rend  (turn `wall`tab:here |=(tape txt++<))         ::  table print
 ++  sawn  (hail(eye (~(del by eye) ost)) |)             ::  console unsubscribe
 ++  seen  (hail(eye (~(put by eye) ost *sole-share)) &) ::  console subscribe
 ++  show  prom:(fect %mor rend)                         ::  update console
 ++  tame  (flap |=(_. prom:+<))                         ::  light update
 ++  wild  (flap |=(_. show:+<))                         ::  full update
-++  word  |=(tape (flap |=(_+> (fect:+< txt#+>+<))))    ::
+++  word  |=(tape (flap |=(_+> (fect:+< txt++>+<))))    ::
 ::                                                      ::  ::
 ::::                                                    ::::::  console UI
   ::                                                    ::  ::
@@ -85,11 +85,11 @@
   ++  cusp  (cope !ept:here)                            ::  parsing rule
   ++  delt  |=  cal/sole-change                         ::  edit command line
             =^  cul  say  (~(remit sole say) cal good)  ::
-            ?~(cul abet fail:(fect:abet det#u.cul))     ::
+            ?~(cul abet fail:(fect:abet det+u.cul))     ::
   ++  dive  =+  (rust (tufa buf.say) (punt come))       ::  apply command line
             ?~(- fail ?~(-> show (kick:wipe ->+)))      ::
   ++  good  |=((list @c) -:(rose (tufa +<) cusp))       ::  validate input
-  ++  wipe  =^  cal  say  (~(transmit sole say) set#~)  ::  clear line
+  ++  wipe  =^  cal  say  (~(transmit sole say) set+~)  ::  clear line
             (fect:abet %det cal)                        ::
   --                                                    ::
 ::                                                      ::  ::

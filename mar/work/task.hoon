@@ -74,17 +74,17 @@
   ++  mime  [/text/x-task (taco (role txt))]
   ++  txt
     =+  taz
-    =+  due=?~(date-due ~ ~[' ' da#u.date-due])
-    :-  (rend uv#id '_' da#date-created ' ' ud#version da#date-modified due)
+    =+  due=?~(date-due ~ ~[' ' da+u.date-due])
+    :-  (rend uv+id '_' da+date-created ' ' ud+version da+date-modified due)
     %+  welp  (indent (sort (~(tap in tags)) aor))
     :-  title
-    =+  do=[=-(?~(doer - ['>' p#u.doer -]) ?~(done ~ ~['X' da#u.done]))]
-    :-  (rend p#creator do)
+    =+  do=[=-(?~(doer - ['>' p+u.doer -]) ?~(done ~ ~['X' da+u.done]))]
+    :-  (rend p+creator do)
     %-  zing  ^-  (list wain)
     :-  (indent (lore description))
     %+  turn  discussion
     |=  comment  ^-  wain
-    [(rend p#ship ' ' da#date ~) (indent (lore body))]
+    [(rend p+ship ' ' da+date ~) (indent (lore body))]
   --
 ++  grad  %txt
 --

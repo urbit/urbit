@@ -1,5 +1,5 @@
 ::
-::::  /hoon#command#work#mar
+::::  /hoon+command+work+mar
   ::
 /-    work
 !:
@@ -52,34 +52,34 @@
     ++  ship  (su fed:ag)
     ++  coma
       %-  of  :~
-        new#task      old#(ot id#id dif#uppd ~)
-        sort#(ar id)
+        new+task      old+(ot id+id dif+uppd ~)
+        sort+(ar id)
       ==
     ++  task
       %-  ot  :~
-        ::index#ni
-        audience#audi
-        id#id           'date_created'^di
-        version#ni      'date_modified'^di
-        creator#ship    doer#(mu ship)
-        tags#(as so)    'date_due'^(mu di)
-        done#(mu di)    title#so
-        description#so  discussion#(ar (ot date#di ship#ship body#so ~))
+        ::index+ni
+        audience+audi
+        id+id           'date_created'^di
+        version+ni      'date_modified'^di
+        creator+ship    doer+(mu ship)
+        tags+(as so)    'date_due'^(mu di)
+        done+(mu di)    title+so
+        description+so  discussion+(ar (ot date+di ship+ship body+so ~))
       ==
     ++  audi  (as stan)
     ++  stan  (su ;~((glue fas) ;~(pfix sig fed:ag) urs:ab))
     ++  uppd
       %-  of  :~
-        doer#(of release#ul claim#ul ~)
-        add#(of comment#so ~)
+        doer+(of release+ul claim+ul ~)
+        add+(of comment+so ~)
         :-  %set
         %-  of  :~
-          audience#audi
-          date-due#(mu di)
-          title#so
-          description#so
-          tags#(as so)
-          done#bo
+          audience+audi
+          date-due+(mu di)
+          title+so
+          description+so
+          tags+(as so)
+          done+bo
         ==
       ==
     --

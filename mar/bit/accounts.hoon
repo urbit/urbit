@@ -1,6 +1,6 @@
 ::    this mark is used to receive a confirmed transaction
 ::
-::::  /hoon#bit-accounts#mar
+::::  /hoon+bit-accounts+mar
   ::
 /?    310
 /-    bit-api
@@ -15,7 +15,7 @@
             ~|  jon
             %-  need  %.  jon
             =>  jo
-            =+  bal=(ot amount#so currency#(cu cass sa) ~)
-            (ot accounts#(ar (ot id#so name#so balance#bal ~)) ~)
+            =+  bal=(ot amount+so currency+(cu cass sa) ~)
+            (ot accounts+(ar (ot id+so name+so balance+bal ~)) ~)
   --
 --

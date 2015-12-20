@@ -1,15 +1,15 @@
 ::  ConCATenate file listings
 ::  
-::::  /hoon#gen#cat
+::::  /hoon+gen+cat
   ::
-//  /%%/ls#subdir
+//  /%%/ls+subdir
 //  /%/pretty
 !:
 ::::
   ::
 :-  %say
 |=  {^ {arg/(list path)} $~}
-=-  tang#(flop `tang`(zing -))
+=-  tang+(flop `tang`(zing -))
 %+  turn  arg
 |=  pax/path
 ^-  tang
@@ -17,17 +17,17 @@
 ?^  fil.ark
   ?:  =(%sched -:(flop pax))
     [>;;((map ,@da cord) .^(%cx pax))<]~
-  [leaf#(spud pax) (pretty-file .^(%cx pax))]
+  [leaf+(spud pax) (pretty-file .^(%cx pax))]
 ?-     dir.ark                                          ::  handle ambiguity
     $~
-  [rose#[" " `~]^~[leaf#"~" (smyt pax)]]~
+  [rose+[" " `~]^~[leaf+"~" (smyt pax)]]~
 ::
     {{@t $~} $~ $~}
   $(pax (welp pax /[p.n.dir.ark]))
 ::
     *
-  =-  [palm#[": " ``~]^-]~
-  :~  rose#[" " `~]^~[leaf#"*" (smyt pax)] 
+  =-  [palm+[": " ``~]^-]~
+  :~  rose+[" " `~]^~[leaf+"*" (smyt pax)] 
       `tank`(subdir pax dir.ark)
   ==
 ==

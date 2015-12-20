@@ -1,5 +1,5 @@
 ::
-::::  /hoon#frontmatter#lib
+::::  /hoon+frontmatter+lib
   ::
 /?  314
 !:
@@ -28,7 +28,7 @@
   ?^  (rush i.t.wan (star ace))
     $(wan t.wan)
   =-  $(wan t.wan, atr (~(put by atr) (crip key) (crip val)))
-  ~|  malformed-attribute#i.t.wan
+  ~|  malformed-attribute+i.t.wan
   ^-  {key/tape ^ val/tape}
   +>:(atr-key 1^1 (trip i.t.wan))
 --
