@@ -92,7 +92,7 @@
 ++  limb  $@  term 
           $%  {$& p/axis} 
               {$| p/@ud q/term}
-              {$2 p/@ud q/[~ term]}
+              {$2 p/@ud q/{$~ term}}
           ==
 ++  line  {p/{$leaf p/odor q/@} q/tile}                 ::  %kelp case
 ++  list  |*  a/$+(* *)                                 ::  null-term list
@@ -8950,7 +8950,7 @@
       =+  hud=(fink p.i.hyp way q.i.hyp)
       [(peg p.zar p.hud) q.hud]
     ::
-        [$2 *]
+        {$2 *}
       =>  .(sut syp)
       =+  hud=(fink p.i.hyp way +.q.i.hyp)
       [(peg p.zar p.hud) q.hud]
@@ -9005,7 +9005,7 @@
       =+  gav=$(peh t.peh, sut q.wuf, axe (peg axe p.wuf))
       [p.gav (heal [~ q.i.peh] p.wuf q.gav)]
     ::
-        [$2 *]
+        {$2 *}
       =+  dob=`post`(need q:(fino p.i.peh %rite +.q.i.peh))
       ~|  [%tack-limb q.i.peh]
       ?:  ?=($2 -.q.dob)
@@ -10067,7 +10067,7 @@
       dot
     ;~  pose
       %+  cook
-        |=({a+(list) b+term} ?~(a b [%2 (lent a) `b]))
+        |=({a/(list) b/term} ?~(a b [%2 (lent a) `b]))
       ;~(plug (star ket) ;~(pose sym (cold %$ buc)))
     ::
       %+  cook
