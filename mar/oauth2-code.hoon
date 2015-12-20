@@ -4,7 +4,7 @@
   ::
 /?  310
 !:
-|_  cod+cord
+|_  cod/cord
 ::
 ++  grab                          ::  converter arm
   |%

@@ -5,7 +5,7 @@
 /-    bit-api
 /+    http
 [bit-api .]
-|_  req+bit-get-token
+|_  req/bit-get-token
 ::
 ++  grow  
   |%  ++  httpreq

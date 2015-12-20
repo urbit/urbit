@@ -1,5 +1,5 @@
 !:
-|_  cod+cord
+|_  cod/cord
 ::
 ++  grab                          ::  converter am
   |%

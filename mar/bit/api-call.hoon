@@ -4,14 +4,14 @@
 /?    314
 /-    bit-api
 [bit-api .]
-|_  {access-token+@t req+bit-api-call}
+|_  {access-token/@t req/bit-api-call}
 ::
 ++  wrap
-  |=  {end-point+path req+$@($get {$post p+json})}
+  |=  {end-point/path req/$@($get {$post p/json})}
   [/com/coinbase/sandbox/api v1#end-point req ~ ['access_token' access-token]~]
 ::
 ++  order
-  |=  {amount+@t currency+@t}  ^-  json
+  |=  {amount/@t currency/@t}  ^-  json
   (jobe qty#s#amount ?~(currency ~ [currency#s#currency ~]))
 ++  grow  
   |%  ++  httpreq

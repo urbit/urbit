@@ -4,7 +4,7 @@
 /?  314
 ::::  A minimal urbit mark
 !:
-|_  her+@p
+|_  her/@p
 ++  grab
   |%
   ++  noun  @p

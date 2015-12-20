@@ -1,7 +1,7 @@
 ::
 ::  dill (4d), terminal handling   
 ::
-|=  pit+vase
+|=  pit/vase
 =>  |%                                                  ::  interface tiles
 ++  gill  (pair ship term)                              ::  general contact
 --                                                      ::
@@ -9,30 +9,30 @@
 ++  all-axle  ?(old-axle axle)                          ::
 ++  old-axle                                            ::  all dill state
   $:  $2                                                ::
-      ore+(unit ship)                                   ::  identity once set
-      hey+(unit duct)                                   ::  default duct
-      dug+(map duct axon)                               ::  conversations
+      ore/(unit ship)                                   ::  identity once set
+      hey/(unit duct)                                   ::  default duct
+      dug/(map duct axon)                               ::  conversations
   ==                                                    ::
 ++  axle                                                ::
   $:  $3                                                ::
-      ore+(unit ship)                                   ::  identity once set
-      hey+(unit duct)                                   ::  default duct
-      dug+(map duct axon)                               ::  conversations
+      ore/(unit ship)                                   ::  identity once set
+      hey/(unit duct)                                   ::  default duct
+      dug/(map duct axon)                               ::  conversations
       $=  hef                                           ::  other weights
-      $:  a+(unit mass)                                 ::
-          b+(unit mass)                                 ::
-          c+(unit mass)                                 ::
-          e+(unit mass)                                 ::
-          f+(unit mass)                                 ::
-          g+(unit mass)                                 ::
+      $:  a/(unit mass)                                 ::
+          b/(unit mass)                                 ::
+          c/(unit mass)                                 ::
+          e/(unit mass)                                 ::
+          f/(unit mass)                                 ::
+          g/(unit mass)                                 ::
       ==                                                ::
   ==                                                    ::  
 ++  axon                                                ::  dill per duct
-  $:  ram+term                                          ::  console program
-      tem+(unit (list dill-belt))                       ::  pending, reverse
-      wid+_80                                        ::  terminal width
-      pos+@ud                                           ::  cursor position
-      see+(list @c)                                     ::  current line
+  $:  ram/term                                          ::  console program
+      tem/(unit (list dill-belt))                       ::  pending, reverse
+      wid/_80                                        ::  terminal width
+      pos/@ud                                           ::  cursor position
+      see/(list @c)                                     ::  current line
   ==                                                    ::
 --  =>                                                  ::
 |%                                                      ::  protocol below
@@ -41,29 +41,29 @@
 --  =>                                                  ::
 |%                                                      ::  protocol outward
 ++  mess                                                ::
-  $%  {$dill-belt p+(hypo dill-belt)}                   ::
+  $%  {$dill-belt p/(hypo dill-belt)}                   ::
   ==                                                    ::
-++  move  {p+duct q+(mold note gift)}                   ::  local move   
+++  move  {p/duct q/(mold note gift)}                   ::  local move   
 ++  note-ames                                           ::  weird ames move
-  $%  {$make p+(unit @t) q+@ud r+@ s+?}                 ::
-      {$sith p+@p q+@uw r+?}                            ::
+  $%  {$make p/(unit @t) q/@ud r/@ s/?}                 ::
+      {$sith p/@p q/@uw r/?}                            ::
   ==                                                    ::
 ++  note-clay                                           ::
-  $%  {$merg p+@p q+@tas r+@p s+@tas t+case u+germ}     ::  merge desks
-      {$warp p+sock q+riff}                             ::  wait for clay hack
+  $%  {$merg p/@p q/@tas r/@p s/@tas t/case u/germ}     ::  merge desks
+      {$warp p/sock q/riff}                             ::  wait for clay hack
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
-  $%  {$crud p+@tas q+(list tank)}                      ::
+  $%  {$crud p/@tas q/(list tank)}                      ::
       {$heft $~}                                        ::
-      {$init p+ship}                                    ::
-      {$text p+tape}                                    ::
-      {$veer p+@ta q+path r+@t}                         ::  install vane
-      {$vega p+path}                                    ::  reboot by path
+      {$init p/ship}                                    ::
+      {$text p/tape}                                    ::
+      {$veer p/@ta q/path r/@t}                         ::  install vane
+      {$vega p/path}                                    ::  reboot by path
       {$verb $~}                                        ::  verbose mode
   ==                                                    ::
 ++  note-gall                                           ::
   $%  {$conf dock $load ship desk}                      ::
-      {$deal p+sock q+cush}                             ::
+      {$deal p/sock q/cush}                             ::
   ==                                                    ::
 ++  note                                                ::  out request $->
   $?  {?($a $b $c $e $f $g) $wegh $~}                   ::
@@ -74,25 +74,25 @@
   ==  ==                                                ::
 ++  sign-ames                                           ::
   $%  {$nice $~}                                        ::
-      {$init p+ship}                                    ::
+      {$init p/ship}                                    ::
   ==                                                    ::
 ++  sign-gall                                           ::  see %gall
-  $%  {$onto p+(unit tang)}                             ::
+  $%  {$onto p/(unit tang)}                             ::
   ==                                                    ::
 ++  sign-clay                                           ::
-  $%  {$mere p+(each (set path) (pair term tang))}      ::
-      {$note p+@tD q+tank}                              ::
-      {$writ p+riot}                                    ::
+  $%  {$mere p/(each (set path) (pair term tang))}      ::
+      {$note p/@tD q/tank}                              ::
+      {$writ p/riot}                                    ::
   ==                                                    ::
 ++  sign-dill                                           ::
-  $%  {$blit p+(list blit)}                             ::
+  $%  {$blit p/(list blit)}                             ::
   ==                                                    ::
 ++  sign-gall                                           ::
-  $%  {$onto p+(each suss tang)}                        ::
-      {$unto p+cuft}                                    ::
+  $%  {$onto p/(each suss tang)}                        ::
+      {$unto p/cuft}                                    ::
   ==                                                    ::
 ++  sign                                                ::  in result $<-
-  $?  {?($a $b $c $e $f $g) $mass p+mass}               ::
+  $?  {?($a $b $c $e $f $g) $mass p/mass}               ::
   $%  {$a sign-ames}                                    ::
       {$c sign-clay}                                    ::
       {$d sign-dill}                                    ::  
@@ -100,11 +100,11 @@
   ==  ==                                                ::
 ::::::::                                                ::  dill tiles
 --
-=|  all+axle
-|=  {now+@da eny+@ ski+sled}                            ::  current invocation
+=|  all/axle
+|=  {now/@da eny/@ ski/sled}                            ::  current invocation
 =>  |%
     ++  as                                              ::  per cause
-      |_  $:  {moz+(list move) hen+duct our+ship}
+      |_  $:  {moz/(list move) hen/duct our/ship}
               axon
           ==
       ++  abet                                          ::  resolve
@@ -112,7 +112,7 @@
         [(flop moz) all(dug (~(put by dug.all) hen +<+))]
       ::
       ++  call                                          ::  receive input
-        |=  kyz+kiss
+        |=  kyz/kiss
         ^+  +>
         ?+    -.kyz  ~&  [%strange-kiss -.kyz]  +>
           $flow  +>
@@ -139,7 +139,7 @@
                        $pawn  [%pawn ~]
                      ==
                  =+  yen=(scot %p (shax :(mix %ticket eny now)))
-                 =+  ^=  beg  ^-  {his+@p tic+@p yen+@t ges+gens}
+                 =+  ^=  beg  ^-  {his/@p tic/@p yen/@t ges/gens}
                      [p.kyz q.kyz yen ges]
                  =+  cmd=[%hood %poke `cage`[%helm-begin !>(beg)]]
                  %=    +>.$
@@ -152,25 +152,25 @@
         ==
       ::
       ++  crud
-        |=  {err+@tas tac+(list tank)}
+        |=  {err/@tas tac/(list tank)}
         =+  ^=  wol  ^-  wall
             :-  (trip err)
-            (zing (turn (flop tac) |=(a+tank (~(win re a) [0 wid]))))
+            (zing (turn (flop tac) |=(a/tank (~(win re a) [0 wid]))))
         |-  ^+  +>.^$
         ?~  wol  +>.^$
         $(wol t.wol, +>.^$ (from %out (tuba i.wol)))
       ::
       ++  dump                                          ::  pass down to hey
-        |=  git+gift
+        |=  git/gift
         ?>  ?=(^ hey.all)
         +>(moz [[u.hey.all %give git] moz])
       ::
       ++  done                                          ::  return gift
-        |=  git+gift
+        |=  git/gift
         +>(moz :_(moz [hen %give git])) 
       ::
       ++  from                                          ::  receive belt
-        |=  bit+dill-blit
+        |=  bit/dill-blit
         ^+  +>
         ?:  ?=($mor -.bit)
           |-  ^+  +>.^$
@@ -223,9 +223,9 @@
         $(myt t.myt, +>+ (send i.myt))
       ::
       ++  into                                          ::  preinitialize
-        |=  gyl+(list gill)
+        |=  gyl/(list gill)
         %_    +>
-            tem  `(turn gyl |=(a+gill [%yow a]))
+            tem  `(turn gyl |=(a/gill [%yow a]))
             moz
           :_  moz
           :*  hen
@@ -237,7 +237,7 @@
         ==
       ::
       ++  send                                          ::  send action
-        |=  bet+dill-belt
+        |=  bet/dill-belt
         ?^  tem
           +>(tem `[bet u.tem])
         %_    +>
@@ -252,7 +252,7 @@
         ==
       ::
       ++  sync
-        |=  syn+{desk ship desk}
+        |=  syn/{desk ship desk}
         %_    +>.$
             moz
           :_  moz
@@ -277,7 +277,7 @@
         ==
       ::
       ++  take                                          ::  receive
-        |=  sih+sign
+        |=  sih/sign
         ^+  +>
         ?-    sih
             {?($a $b $c $e $f $g) $mass *}
@@ -332,7 +332,7 @@
         ==
       ::
       ++  wegt
-        |=  {lal+?($a $b $c $e $f $g) mas+mass}
+        |=  {lal/?($a $b $c $e $f $g) mas/mass}
         ^+  +>
         =.  hef.all
           ?-  lal
@@ -358,7 +358,7 @@
       --
     ::
     ++  ax                                              ::  make ++as
-      |=  {hen+duct kyz+kiss}                           ::
+      |=  {hen/duct kyz/kiss}                           ::
       ?~  ore.all  ~
       =+  nux=(~(get by dug.all) hen)
       ?^  nux  
@@ -377,8 +377,8 @@
     --
 |%                                                      ::  poke#peek pattern
 ++  call                                                ::  handle request
-  |=  $:  hen+duct
-          hic+(hypo (hobo kiss))
+  |=  $:  hen/duct
+          hic/(hypo (hobo kiss))
       ==
   ^+  [p=*(list move) q=..^$]
   =>  %=    .                                           ::  XX temporary
@@ -420,12 +420,12 @@
   [moz ..^$]
 ::
 ++  doze
-  |=  {now+@da hen+duct}
+  |=  {now/@da hen/duct}
   ^-  (unit @da)
   ~
 ::
 ++  load                                                ::  trivial
-  |=  old+all-axle
+  |=  old/all-axle
   ?:  ?=($2 -.old)
     $(old [%3 ore hey dug ~ ~ ~ ~ ~ ~]:old)
   ..^$(all old)
@@ -433,14 +433,14 @@
   ::  ..^$(ore.all `~zod)
 ::
 ++  scry
-  |=  {fur+(unit (set monk)) ren+@tas his+ship syd+desk lot+coin tyl+path}
+  |=  {fur/(unit (set monk)) ren/@tas his/ship syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
   [~ ~]
 ::
 ++  stay  all 
 ::
 ++  take                                                ::  process move
-  |=  {tea+wire hen+duct hin+(hypo sign)}
+  |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [p=*(list move) q=..^$]
   ?:  =(~ ore.all)
     ?:  ?=({$a $init *} q.hin)

@@ -9,10 +9,10 @@
   !:                                                    ::  ::
 =>  |%                                                  ::  module boilerplate
     ++  hood-0                                          :: 
-      {$0 lac+(map @tas hood-part)}                     ::
+      {$0 lac/(map @tas hood-part)}                     ::
     ++  hood-good                                       ::
-      |*  hed+hood-head                                 ::
-      |=  paw+hood-part                                 ::
+      |*  hed/hood-head                                 ::
+      |=  paw/hood-part                                 ::
       ?-  hed                                           ::
         $drum  ?>(?=($drum -.paw) `drum-part`paw)       ::
         $helm  ?>(?=($helm -.paw) `helm-part`paw)       ::
@@ -20,7 +20,7 @@
       ==                                                ::
     ++  hood-head  _-:*hood-part                     ::
     ++  hood-make                                       ::
-      |*  {our+@p hed+hood-head}                        ::
+      |*  {our/@p hed/hood-head}                        ::
       ?-  hed                                           ::
         $drum  (drum-port our)                          ::
         $helm  *helm-part                               ::
@@ -35,34 +35,34 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|_  $:  hid+bowl                                        ::  system state
+|_  $:  hid/bowl                                        ::  system state
         hood-0                                          ::  server state
     ==                                                  ::
 ++  able                                                ::  find#make part
-  |*  hed+hood-head
+  |*  hed/hood-head
   =+  rep=(~(get by lac) hed)
   =+  par=?^(rep u.rep `hood-part`(hood-make our.hid hed))
   ((hood-good hed) par)
 ::
 ++  ably                                                ::  save part
-  |*  {moz+(list) rep+hood-part}
+  |*  {moz/(list) rep/hood-part}
   [(flop moz) %_(+> lac (~(put by lac) -.rep rep))]
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
 ++  coup-kiln-fancy  (wrap take-coup-fancy):from-kiln
 ++  coup-kiln-spam                                      ::
-  |=  {way+wire saw+(unit tang)}
+  |=  {way/wire saw/(unit tang)}
   ~?  ?=(^ saw)  [%kiln-spam-lame u.saw]
   [~ +>]
 ::
 ++  coup-kiln-reload                                    ::
-  |=  {way+wire saw+(unit tang)}
+  |=  {way/wire saw/(unit tang)}
   ~?  ?=(^ saw)  [%kiln-reload-lame u.saw]
   [~ +>]
 ::
 ++  coup-kiln-overload                                  ::
-  |=  {way+wire saw+(unit tang)}
+  |=  {way/wire saw/(unit tang)}
   ~?  ?=(^ saw)  [%kiln-overload-lame u.saw]
   [~ +>]
 ::
@@ -73,7 +73,7 @@
   |*  _[%helm ..$ _abet]:(helm)
   =>  .(+< [identity start finish]=+<)
   =-  [wrap=- *start]                 ::  usage (wrap handle-arm):from-foo
-  |*  handle+_finish
+  |*  handle/_finish
   |=  _+<.handle
   =.  +>.handle  (start hid (able identity))
   (ably (handle +<))
@@ -82,7 +82,7 @@
 ++  from-helm  (from-lib %helm [..$ _abet]:(helm))
 ++  from-kiln  (from-lib %kiln [..$ _abet]:(kiln))
 ::
-++  init-helm                 |=({way+wire *} [~ +>])
+++  init-helm                 |=({way/wire *} [~ +>])
 ++  made-kiln                 (wrap take-made):from-kiln
 ++  mere-kiln                 (wrap take-mere):from-kiln
 ++  mere-kiln-sync            (wrap take-mere-sync):from-kiln

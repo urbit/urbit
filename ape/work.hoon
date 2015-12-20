@@ -24,13 +24,13 @@
   ::
 |_  $:  bowl
         client
-        connected+?                                     ::  subscribed to talk
-        count+@ud                                       ::  # messages from talk
-        unordered+(map {@uvH @u} (pair ship flesh:work-stuff:talk))
+        connected/?                                     ::  subscribed to talk
+        count/@ud                                       ::  # messages from talk
+        unordered/(map {@uvH @u} (pair ship flesh:work-stuff:talk))
     ==
 ++  at
   |=  client-task
-  =|  moves+(list move)
+  =|  moves/(list move)
   |%
   ++  abet
     ^-  {(list move) _+>.$}
@@ -41,7 +41,7 @@
     [(flop moves) +>.$]
   ::
   ++  send-audience
-    |=  {to+(set station:talk) action+duty:work-stuff:talk}
+    |=  {to/(set station:talk) action/duty:work-stuff:talk}
     %_    +>.$
         eny    (sham eny action)
         moves
@@ -58,17 +58,17 @@
           :+  (shaf %task eny)
             %-  mo  ^-  (list {partner envelope delivery})
             %+  turn  (~(tap in to))
-            |=(sat+station [[%& sat] [*envelope %pending]])
+            |=(sat/station [[%& sat] [*envelope %pending]])
           [now *bouquet [%tax action]]
       ==
     ==
   ::
   ++  send
-    |=  action+duty:work-stuff:talk
+    |=  action/duty:work-stuff:talk
     (send-audience audience action)
   ::
   ++  send-archive
-    |=  to+(set station:talk)
+    |=  to/(set station:talk)
     (send-audience to %archive id.tax)
   ::
   ++  send-create       (send %create tax)
@@ -80,7 +80,7 @@
                         [%change id.tax +<]
   ++  send-update       |*(* (send %update id.tax +<))
   ++  process-update
-    |=  up+update
+    |=  up/update
     ^+  +>
     ?-    -.up
         $add  ?>(?=($comment +<.up) (send-change %add-comment our +>.up))
@@ -101,7 +101,7 @@
       ==
     ==
   ++  process-audience
-    |=  to+(set station:talk)
+    |=  to/(set station:talk)
     ^+  +>
     =.  +>.$  (send-archive (~(dif in audience) to))
     =.  +>.$  (send-audience (~(dif in to) audience) %create tax)
@@ -129,11 +129,11 @@
   [ost %peer /peering [our %talk] /f#(main:talk our)/(scot %ud count)]
 ::
 ++  process-duty
-  |=  {when+@da her+ship from+(set station:talk) action+duty:work-stuff:talk}
+  |=  {when/@da her/ship from/(set station:talk) action/duty:work-stuff:talk}
   ^-  {(list move) _+>.$}
   =-  =^  mof  con  mirror-to-web:con
       [(welp mof mos) con]
-  ^-  {mos+(list move) con+_+>.$}
+  ^-  {mos/(list move) con/_+>.$}
   ?-    -.action
       $create
     =+  existing-task=(~(get by tasks) id.tax.action)
@@ -273,30 +273,30 @@
 ::
 ++  mirror-to-web
   ^-  {(list move) _.}
-  ~&  [%mirroring sort=(turn sort |=(a+@uv `@uv`(rsh 2 25 a)))]
+  ~&  [%mirroring sort=(turn sort |=(a/@uv `@uv`(rsh 2 25 a)))]
   :_  .
   %+  murn  (~(tap by sup))
-  |=  {ust+bone her+ship pax+path}
+  |=  {ust/bone her/ship pax/path}
   ^-  (unit move)
   ?:(?=({$sole *} pax) ~ `[ust full-report])
 ::
 ++  full-report  [%diff %work-report tasks sort]
 ++  peer-repo  |=(path [[ost full-report]~ +>.$])
 ++  coup
-  |=  {way+wire saw+(unit tang)}
+  |=  {way/wire saw/(unit tang)}
   ^-  {(list move) _+>.$}
   ?>  ?=($~ saw)
   [~ +>.$]
 ::
-++  quit-peering  |=(way+wire ?>(?=($~ way) initialize(connected |)))
+++  quit-peering  |=(way/wire ?>(?=($~ way) initialize(connected |)))
 ++  reap-peering
-  |=  {way+wire saw+(unit tang)}
+  |=  {way/wire saw/(unit tang)}
   ^-  {(list move) _+>.$}
   ?>  ?=({$~ $~} +<)
   [~ +>.$]
 ::
 ++  poke-work-command
-  |=  cod+command
+  |=  cod/command
   ?.  =(our src)
     ~|([%wrong-user our=our src=src] !!)
   ?-  -.cod
@@ -314,7 +314,7 @@
 ::
 ::  XX  test the disconnection case
 ++  diff-talk-report
-  |=  {way+wire rep+report:talk}
+  |=  {way/wire rep/report:talk}
   ^-  {(list move) _+>.$}
   ?>  ?=($grams -.rep)
   |-  ^-  {(list move) _+>.^$}
@@ -325,11 +325,11 @@
   =*  said  r.r.q.i.q.rep
   ?.  ?=($tax -.said)
     $(p.rep +(p.rep), q.rep t.q.rep)
-  =+  ^-  from+(set station:talk)
+  =+  ^-  from/(set station:talk)
       %-  sa  ^-  (list station:talk)
       %+  murn  (~(tap by q.q.i.q.rep))
       =>  talk
-      |=  {par+partner *}
+      |=  {par/partner *}
       `(unit station)`?.(?=($& -.par) ~ `p.par)
   =^  mos  +>.^$  (process-duty when her from +.said)
   =^  mof  +>.^$  $(p.rep +(p.rep), q.rep t.q.rep)

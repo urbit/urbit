@@ -1,25 +1,25 @@
 ::  ::  %behn, just a timer
 !?  164
 ::::
-|=  pit+vase
+|=  pit/vase
 =>  =~
 |%
-++  sqeu  |*  {a+_* b+_*}                         ::  binary skew queno
-          $:  r+@u                                      ::  rank#depth
-              k+a                                       ::  priority
-              n+b                                       ::  value
-              c+(broq a b)                              ::  children
+++  sqeu  |*  {a/_* b/_*}                         ::  binary skew queno
+          $:  r/@u                                      ::  rank#depth
+              k/a                                       ::  priority
+              n/b                                       ::  value
+              c/(broq a b)                              ::  children
           ==                                            ::
-++  broq  |*  {a+_* b+_*}                         ::  brodal skew qeu
+++  broq  |*  {a/_* b/_*}                         ::  brodal skew qeu
           (list (sqeu a b))                             ::
 ++  gift  gift-behn                                     ::  out result <-$
 ++  kiss                                                ::  in request ->$
-          $%  {$rest p+@da}                             ::  cancel alarm
-              {$wait p+@da}                             ::  set alarm
+          $%  {$rest p/@da}                             ::  cancel alarm
+              {$wait p/@da}                             ::  set alarm
               {$wake $~}                                ::  timer activate
               {$wegh $~}                                ::  report memory
           ==                                            ::
-++  move  {p+duct q+(mold note gift)}                   ::  local move
+++  move  {p/duct q/(mold note gift)}                   ::  local move
 ++  note  $~                                            ::  out request $->
 ++  sign  $~                                            ::  in result $<-
 ++  clok  (broq @da duct)                               ::  stored timers
@@ -27,7 +27,7 @@
 ::
 |%
 ++  raze
-  |=  tym+{p+clok q+clok}
+  |=  tym/{p/clok q/clok}
   ^+  tym
   ?~  p.tym  tym
   ?~  q.tym  tym
@@ -43,7 +43,7 @@
   =+  cmp=lte                                           ::  lte=min, gte=max
   =>  |%
       ++  link
-        |=  {p+(sqeu key val) q+(sqeu key val)}         ::  link eq rank
+        |=  {p/(sqeu key val) q/(sqeu key val)}         ::  link eq rank
         ^-  (sqeu key val)
         ?>  =(r.p r.q)
           ?:  (cmp k.p k.q)
@@ -51,7 +51,7 @@
           [r=+(r.q) k=k.q n=n.q c=[i=p t=c.q]]
       ::
       ++  sink                                          ::  skew link
-        |=  {p+(sqeu key val) q+(sqeu key val) r+(sqeu key val)}
+        |=  {p/(sqeu key val) q/(sqeu key val) r/(sqeu key val)}
         ^-  (sqeu key val)
         ?:  &((cmp k.q k.p) (cmp k.q k.r))
           [r=+(r.q) k=k.q n=n.q c=[i=p t=[i=r t=c.q]]]
@@ -60,7 +60,7 @@
         [r=+(r.q) k=k.p n=n.p c=[i=q t=[i=r t=~]]]
       ::
       ++  sert                                          ::  internal ins op
-        |=  {p+(sqeu key val) q+(broq key val)}
+        |=  {p/(sqeu key val) q/(broq key val)}
         ^-  (broq key val)
         ?~  q  [p ~]
         ?>  (lte r.p r.i.q)
@@ -69,12 +69,12 @@
         $(p (link p i.q), q t.q)
       ::
       ++  uniq                                          ::  remove init dup
-        |=  q+(broq key val)
+        |=  q/(broq key val)
         ?~  q  ~
         (sert i.q t.q)
       ::
       ++  meek                                          ::  unique meld
-        |=  {p+(broq key val) q+(broq key val)}
+        |=  {p/(broq key val) q/(broq key val)}
         ^-  (broq key val)
         ?~  p  q
         ?~  q  p
@@ -85,8 +85,8 @@
         (sert (link i.p i.q) $(p t.p, q t.q))
       ::
       ++  mini                                           ::  getmin
-        |=  q+(broq key val)
-        ^-  p+{(sqeu key val) (broq key val)}
+        |=  q/(broq key val)
+        ^-  p/{(sqeu key val) (broq key val)}
         ?~  q  ~|(%fatal-mini-empty !!)
         ?~  t.q  [i=i.q t=~]
         =+  [l r]=$(q t.q)
@@ -95,17 +95,17 @@
         [l [i.q r]]
       ::
       ++  spit                                          ::  split
-        |=  {p+(broq key val) q+(list {k+key n+val}) r+(broq key val)}
-        ^-  {t+(broq key val) x+(list {k+key n+val})}
+        |=  {p/(broq key val) q/(list {k/key n/val}) r/(broq key val)}
+        ^-  {t/(broq key val) x/(list {k/key n/val})}
         ?~  r
           [t=p x=q]
         ?:  =(0 r.i.r)
           $(q [[k=k.i.r n=n.i.r] q], r t.r)
         $(p [i.r p], r t.r)
       --
-  |_  a+(broq key val)                                  ::  public interface
+  |_  a/(broq key val)                                  ::  public interface
   ++  put                                               ::  insert element
-    |=  {k+key n+val}
+    |=  {k/key n/val}
     ^+  a
     ?~  a  [i=[r=0 k=k n=n c=~] t=~]
     ?~  t.a  [i=[r=0 k=k n=n c=~] t=a]
@@ -123,40 +123,40 @@
     (gas x)
   ::
   ++  gas
-    |=  b+(list {k+key n+val})
+    |=  b/(list {k/key n/val})
     ^+  a
-    q:(roll b |=({{k+key n+val} q+_a} (put(a q) k n)))
+    q:(roll b |=({{k/key n/val} q/_a} (put(a q) k n)))
   ::
   ++  tap
-    ^-  (list {k+key n+val})
+    ^-  (list {k/key n/val})
     ?~  a  ~
     [get tap(a pop)]
   ::
   ++  get                                               ::  retrieve top
-    ^-  {p+key q+val}
+    ^-  {p/key q/val}
     ?~  a  ~|(%empty-broq-peek !!)
     ?~  t.a  [k n]:i.a
     =+  m=get(a t.a)
     ?.((cmp k.i.a p.m) m [k n]:i.a)
   ::
   ++  uni                                               ::  merge
-    |=  q+(broq key val)
+    |=  q/(broq key val)
     ^+  a
     (meek (uniq a) (uniq q))
   --
 --
 .  ==
 =|  $:  $0                                              ::
-        tym+{p+clok q+clok}                             ::  positive#negative
+        tym/{p/clok q/clok}                             ::  positive#negative
     ==                                                  ::
-|=  {now+@da eny+@ ski+sled}                            ::  current invocation
+|=  {now/@da eny/@ ski/sled}                            ::  current invocation
 ^?
 |%                                                      ::  poke#peek pattern
 ++  call                                                ::  handle request
-  |=  $:  hen+duct
-          hic+(hypo (hobo kiss))
+  |=  $:  hen/duct
+          hic/(hypo (hobo kiss))
       ==
-  ^-  {p+(list move) q+_..^$}
+  ^-  {p/(list move) q/_..^$}
   =>  %=    .                                           ::  XX temporary
           q.hic
         ^-  kiss
@@ -201,18 +201,18 @@
   [mof ..^$]
 ::
 ++  doze
-  |=  {now+@da hen+duct}
+  |=  {now/@da hen/duct}
   ^-  (unit @da)
   ?~  p.tym  ~
   (some p:[~(get up p.tym)])
 ::
 ++  load
-  |=  old+{$0 tym+{clok clok}}
+  |=  old/{$0 tym/{clok clok}}
   ^+  ..^$
   ..^$(tym tym.old)
 ::
 ++  scry
-  |=  {fur+(unit (set monk)) ren+@tas his+ship syd+desk lot+coin tyl+path}
+  |=  {fur/(unit (set monk)) ren/@tas his/ship syd/desk lot/coin tyl/path}
   ^-  (unit (unit (pair mark *)))
   =+  ^=  liz
       |-  ^-  (list {@da duct})
@@ -223,7 +223,7 @@
 ::
 ++  stay  [%0 tym]
 ++  take                                                ::  process move
-  |=  {tea+wire hen+duct hin+(hypo sign)}
+  |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [p=*(list move) q=..^$]
   !!
 --

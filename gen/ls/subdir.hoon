@@ -1,14 +1,14 @@
 |%
 ++  subdir
-  |=  {pax+path des+(map @t $~)}
+  |=  {pax/path des/(map @t $~)}
   ^-  tank
   :+  %rose  [" " `~]
   %+  turn  (sort (~(tap by des)) aor)
-  |=  {kid+@ta $~}
+  |=  {kid/@ta $~}
   =+  paf=`path`/[kid]
   =-  :+  %rose  ["/" ~ ?:(dir "/" ~)]
-      (turn paf |=(a+span leaf#(trip a)))
-  |-  ^-  {dir+? paf+path}
+      (turn paf |=(a/span leaf#(trip a)))
+  |-  ^-  {dir/? paf/path}
   =+  arf=;;(arch .^(%cy (weld pax paf)))
   ?^  fil.arf  
     [| paf]

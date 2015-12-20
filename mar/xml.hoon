@@ -5,7 +5,7 @@
   ::
 ::::  compute
   ::
-|_  htm+@t
+|_  htm/@t
 ::
 ++  grow                                                ::  convert to
   |%                                                    ::
@@ -14,5 +14,5 @@
   --                                                    ::
 ++  grab  |%                                            ::  convert from
           ++  noun  @t                                  ::  clam from %noun
-          ++  mime  |=({p+mite q+octs} q.q)             ::  retrieve form $mime
+          ++  mime  |=({p/mite q/octs} q.q)             ::  retrieve form $mime
 --        --

@@ -6,7 +6,7 @@
 ::::
   !:
 :-  %say
-|=  $:  {now+@da eny+@uvI bec+beak}
+|=  $:  {now/@da eny/@uvI bec/beak}
         {$~ $~}
     ==
 :-  %noun
@@ -19,7 +19,7 @@
 ~&  %solid-compiled
 :-  ken
 =+  all=.*(0 ken)
-=+  ^=  vay  ^-  (list {p+@tas q+@tas})
+=+  ^=  vay  ^-  (list {p/@tas q/@tas})
     :~  [%$ %zuse]
         [%g %gall]
         [%f %ford]

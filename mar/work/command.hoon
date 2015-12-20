@@ -6,27 +6,27 @@
 ::::
   ::
 [work .]
-|_  mad+command
+|_  mad/command
 ++  grab
   |%  ++  noun  command
       ++  json
     =>  [jo ..command]
-    =<  (corl need (cu |=(a+command a) coma))
+    =<  (corl need (cu |=(a/command a) coma))
     |%
     ++  as
-      :: |*(a+fist (cu sa (ar a)))  ::  XX  types
-      |*  a+fist 
+      :: |*(a/fist (cu sa (ar a)))  ::  XX  types
+      |*  a/fist 
       %-  cu  :_  (ar a)
       ~(gas in *(set _(need *a)))
     ++  ot
-      |*  a+(pole {@tas fist})
-      |=  b+json
+      |*  a/(pole {@tas fist})
+      |=  b/json
       %.  ((^ot a) b)
       %-  slog
       ?+  b  ~
           {$o *} 
         %+  murn  `(list {@tas fist})`a
-        |=  {c+term d+fist}  ^-  (unit tank)
+        |=  {c/term d/fist}  ^-  (unit tank)
         =+  (~(get by p.b) c)
         ?~  -  (some >[c (turn (~(tap by p.b)) head)]<)
         =+  (d u)
@@ -34,14 +34,14 @@
         ~
       ==
     ++  of
-      |*  a+(pole {@tas fist})
-      |=  b+json
+      |*  a/(pole {@tas fist})
+      |=  b/json
       %.  ((of:jo a) b)
       %-  slog
       ?+  b  ~
           {$o *} 
         %+  murn  `(list {@tas fist})`a
-        |=  {c+term d+fist}  ^-  (unit tank)
+        |=  {c/term d/fist}  ^-  (unit tank)
         =+  (~(get by p.b) c)
         ?~  -  ~
         =+  (d u)
@@ -86,7 +86,7 @@
   --
 ++  grow
   |%
-  ++  elem  ;pre: {(zing `wall`(turn (wash 0^120 >mad<) |=(a+tape ['\0a' a])))}
+  ++  elem  ;pre: {(zing `wall`(turn (wash 0^120 >mad<) |=(a/tape ['\0a' a])))}
   --
 --
 :: {new: {

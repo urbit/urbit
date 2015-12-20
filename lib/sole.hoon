@@ -10,7 +10,7 @@
 |_  sole-share                                          ::  shared-state engine
 ++  abet  +<
 ++  apply
-  |=  ted+sole-edit 
+  |=  ted/sole-edit 
   ^+  +>
   ?-    -.ted
     $del  +>.$(buf (weld (scag p.ted buf) (slag +(p.ted) buf)))
@@ -33,7 +33,7 @@
 ::          (apply:(apply b) y)
 ::
 ++  transmute                                         ::  dex as after sin
-  |=  {sin+sole-edit dex+sole-edit}
+  |=  {sin/sole-edit dex/sole-edit}
   ~|  [%transmute sin dex]
   ^-  sole-edit
   ?:  ?=($mor -.sin)
@@ -69,7 +69,7 @@
   ==   
 ::
 ++  commit                                            ::  local change
-  |=  ted+sole-edit
+  |=  ted/sole-edit
   ^-  sole-share
   abet:(apply(own.ven +(own.ven), leg [ted leg]) ted)
 ::
@@ -81,7 +81,7 @@
 ::      =(+> (apply:(apply a) (inverse a)))
 ::
 ++  inverse                                           ::  relative inverse
-  |=  ted+sole-edit
+  |=  ted/sole-edit
   ^-  sole-edit
   =.  ted  ?.(?=({$mor * $~} ted) ted i.p.ted)
   ?-  -.ted
@@ -112,7 +112,7 @@
   [dat abet:(apply(his.ven +(his.ven)) dat)]
 ::
 ++  remit                                             ::  conditional accept
-  |=  {cal+sole-change ask+$+((list @c) ?)}
+  |=  {cal/sole-change ask/$+((list @c) ?)}
   ^-  {(unit sole-change) sole-share}
   =+  old=buf
   =^  dat  +>+<.$  (receive cal)
@@ -122,7 +122,7 @@
   [`lic +>+<.$]
 ::
 ++  transmit                                          ::  outgoing change
-  |=  ted+sole-edit
+  |=  ted/sole-edit
   ^-  {sole-change sole-share}
   [[[his.ven own.ven] (sham buf) ted] (commit ted)]
 ::
@@ -134,7 +134,7 @@
   [(inverse(buf old) dat) +>+<.$]
 ::
 ++  transpose                                         ::  adjust position
-  |=  pos+@ud
+  |=  pos/@ud
   =+  dat=(transmute [%mor leg] [%ins pos `@c`0])
   ?>  ?=($ins -.dat)
   p.dat

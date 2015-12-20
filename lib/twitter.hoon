@@ -10,15 +10,15 @@
   ::
 |%
 ++  fass                                                ::  rewrite path
-  |=  a+path
+  |=  a/path
   %-  trip
   %^  gsub  '-'  '_'
   %+  reel  a
-  |=  {p+@t q+@t}
+  |=  {p/@t q/@t}
   (cat 3 '/' (cat 3 p q))
 ::
 ++  gsub                                                ::  replace chars
-  |=  {a+@t b+@t t+@t}
+  |=  {a/@t b/@t t/@t}
   ^-  @t
   ?~  t  t
   %+  add  (lsh 3 1 $(t (rsh 3 1 t)))
@@ -26,21 +26,21 @@
   ?:(=(a c) b c)
 ::
 ++  oauth                                               ::  OAuth 1.0 header
-  |=  $:  med+meth 
-          url+tape 
-          pas+(list tape) 
-          key+keys 
-          zet+@ 
-          ken+@
+  |=  $:  med/meth 
+          url/tape 
+          pas/(list tape) 
+          key/keys 
+          zet/@ 
+          ken/@
       ==
   ^-  @t
-  =+  non=(turn (rip 2 (shaw zet 128 ken)) |=(a+@ ~(x ne a)))
+  =+  non=(turn (rip 2 (shaw zet 128 ken)) |=(a/@ ~(x ne a)))
   =+  tim=(slag 2 (scow %ui (unt zet)))
   =+  sky=(crip :(weld (urle (trip sec.con.key)) "&" (urle (trip sec.acc.key))))
   =+  ^=  bas  
       ^-  tape
       =+  ^=  hds
-          %-  reel  :_  |=({p+tape q+tape} :(weld p "&" q))
+          %-  reel  :_  |=({p/tape q/tape} :(weld p "&" q))
           %-  sort  :_  aor
           %-  weld  :-  pas
           ^-  (list tape)
@@ -69,27 +69,27 @@
   ==
 ::
 ++  valve                                               ::  produce request
-  |=  $:  med+meth 
-          {rus+tape quy+quay} 
-          key+keys 
-          est+time 
-          eny+@
+  |=  $:  med/meth 
+          {rus/tape quy/quay} 
+          key/keys 
+          est/time 
+          eny/@
       ==
   ^-  hiss
   =+  url="https://api.twitter.com#1.1{rus}.json"
-  =+  req=|=(a+tape (scan a auri:epur))
+  =+  req=|=(a/tape (scan a auri:epur))
   =+  ^=  help
-      |=  quy+(list {tape tape})
+      |=  quy/(list {tape tape})
       ^-  (list tape)
       %+  turn  quy 
-        |=  a+{p+tape q+tape} 
+        |=  a/{p/tape q/tape} 
         :(weld (urle p.a) "=" (urle q.a))
-  =+  tan=(turn quy |=({p+@t q+@t} [(trip p) (trip q)]))
-  =+  har=(help (turn tan |=(p+{p+tape q+tape} [p.p (urle q.p)])))
+  =+  tan=(turn quy |=({p/@t q/@t} [(trip p) (trip q)]))
+  =+  har=(help (turn tan |=(p/{p/tape q/tape} [p.p (urle q.p)])))
   =+  hab=(help tan)
-  =+  lav=(reel har |=({p+tape q+tape} :(weld p "&" q)))
+  =+  lav=(reel har |=({p/tape q/tape} :(weld p "&" q)))
   =+  voy=?:(=(0 (lent lav)) ~ (scag (dec (lent lav)) `tape`lav))
-  =+  vab=(reel hab |=({p+tape q+tape} :(weld p "&" q)))
+  =+  vab=(reel hab |=({p/tape q/tape} :(weld p "&" q)))
   =+  vur=(crip ?:(=(0 (lent vab)) ~ (scag (dec (lent vab)) `tape`vab)))
   =+  ^=  head
       %-  ~(gas by *math)
@@ -109,17 +109,17 @@
 ++  twip                                                ::  response printers
   |%
   ++  mean
-    |=  {msg+@t num+@ud}  ^-  tank
+    |=  {msg/@t num/@ud}  ^-  tank
     rose#[": " `~]^~[leaf#"Error {<num>}" leaf#(trip msg)]
   --
 ++  twir                                                ::  response parsers
   |%
-  ++  fasp  |*({a+@tas b+*} [(gsub '-' '_' a) b])
+  ++  fasp  |*({a/@tas b/*} [(gsub '-' '_' a) b])
   ++  user  (cook crip (plus ;~(pose aln cab)))
   ++  mean  (ot errors#(ar (ot message#so code#ni ~)) ~):jo
   ++  stat
     =+  jo
-    ^-  $+(json (unit {id+@u who+@ta now+@da txt+@t}))
+    ^-  $+(json (unit {id/@u who/@ta now/@da txt/@t}))
     %-  ot
     :~  id#ni
         user#(ot (fasp screen-name#(su user)) ~)
@@ -128,7 +128,7 @@
     ==
   ++  usel
     =+  jo
-    ^-  $+(json (unit (list who+@ta)))
+    ^-  $+(json (unit (list who/@ta)))
     =-  (ot users#(ar -) ~)
     (ot (fasp screen-name#(su user)) ~)
   --
@@ -149,57 +149,57 @@
       ++  tok  @t                                       ::  oauth token
       ++  url  @t                                       ::  callback url
       ::
-      ++  at  {$access-token p+tok}
-      ++  de  {$device p+dev}
-      ++  fo  {$follow p+lid}
-      ++  gr  {$grant-type p+gat}
-      ++  id  {$id p+tid}
-      ++  ii  {$'!inline' p+@t}
-      ++  is  {$id p+lid}
-      ++  la  {$lat p+lat}
-      ++  lo  {$long p+lon}
-      ++  na  {$name p+lid}
-      ++  oa  {$oauth-callback p+url}
-      ++  os  {$source-screen-name p+scr}
-      ++  pl  {$place-id p+pla}
-      ++  qq  {$q p+@t}
-      ++  sc  {$screen-name p+scr}
+      ++  at  {$access-token p/tok}
+      ++  de  {$device p/dev}
+      ++  fo  {$follow p/lid}
+      ++  gr  {$grant-type p/gat}
+      ++  id  {$id p/tid}
+      ++  ii  {$'!inline' p/@t}
+      ++  is  {$id p/lid}
+      ++  la  {$lat p/lat}
+      ++  lo  {$long p/lon}
+      ++  na  {$name p/lid}
+      ++  oa  {$oauth-callback p/url}
+      ++  os  {$source-screen-name p/scr}
+      ++  pl  {$place-id p/pla}
+      ++  qq  {$q p/@t}
+      ++  sc  {$screen-name p/scr}
       ++  sd  ?(ui sc)
-      ++  ss  {$screen-name p+lsc} 
-      ++  sl  {$slug p+slu}
-      ++  si  {$source-id p+tid}
-      ++  st  {$status p+@t}
-      ++  te  {$text p+@t}
-      ++  ti  {$target-id p+tid}
-      ++  ts  {$target-screen-name p+scr}
-      ++  tr  {$track p+lst}
-      ++  ur  {$url p+url}
-      ++  ui  {$user-id p+tid}
-      ++  us  {$user-id p+lid}
+      ++  ss  {$screen-name p/lsc} 
+      ++  sl  {$slug p/slu}
+      ++  si  {$source-id p/tid}
+      ++  st  {$status p/@t}
+      ++  te  {$text p/@t}
+      ++  ti  {$target-id p/tid}
+      ++  ts  {$target-screen-name p/scr}
+      ++  tr  {$track p/lst}
+      ++  ur  {$url p/url}
+      ++  ui  {$user-id p/tid}
+      ++  us  {$user-id p/lid}
       --
-  |_  {key+keys est+time eny+@uw}
+  |_  {key/keys est/time eny/@uw}
   ++  lutt  |=(@ `@t`(rsh 3 2 (scot %ui +<)))
   ++  llsc  
     |=  (list scr) 
-    (roll +< |=({p+scr q+@t} (cat 3 (cat 3 q ',') p)))
+    (roll +< |=({p/scr q/@t} (cat 3 (cat 3 q ',') p)))
   ::
   ++  llst  
     |=  (list @t) 
-    (roll +< |=({p+@t q+@t} (cat 3 (cat 3 q ',') p)))
+    (roll +< |=({p/@t q/@t} (cat 3 (cat 3 q ',') p)))
   ::
   ++  llid
     |=  (list tid) 
-    (roll +< |=({p+tid q+@t} (cat 3 (cat 3 q ',') (lutt p))))
+    (roll +< |=({p/tid q/@t} (cat 3 (cat 3 q ',') (lutt p))))
   ::
   ++  mold                                        ::  construct request
-    |*  {med+meth pax+path a+$+(* *)}
-    |=  {args+a quy+quay}
+    |*  {med/meth pax/path a/$+(* *)}
+    |=  {args/a quy/quay}
     (valve med (cowl pax args quy) key est eny)
   ::
   ++  cowl                                        ::  handle parameters
-    |=  $:  pax+path 
-            ban+(list {p+@t q+?(@ (list @))}) 
-            quy+quay
+    |=  $:  pax/path 
+            ban/(list {p/@t q/?(@ (list @))}) 
+            quy/quay
         ==
     ^-  {path quay}
     ?~  ban
@@ -210,8 +210,8 @@
       !!
     :-  (fass pax)
     %+  welp  quy
-    %+  turn  `(list {p+@t q+?(@ (list @))})`ban
-    |=  {p+@t q+?(@ (list @))}
+    %+  turn  `(list {p/@t q/?(@ (list @))})`ban
+    |=  {p/@t q/?(@ (list @))}
     ^-  {@t @t}
     :-  (gsub '-' '_' p)
     ?@  q

@@ -4,7 +4,7 @@
 /?  314
 /+  frontmatter
 !:
-|_  {atr+(map cord cord) mud+@t}
+|_  {atr/(map cord cord) mud/@t}
 ++  grow
   |%
   ++  front  atr

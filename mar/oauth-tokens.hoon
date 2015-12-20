@@ -4,7 +4,7 @@
   ::
 /?  310
 !:
-|_  {tok+@t ref+@t}
+|_  {tok/@t ref/@t}
 ::
 ++  grab                          ::  converter arm
   |%

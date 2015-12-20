@@ -11,77 +11,77 @@
 =>  |%                                                  ::  external structures
     ++  house                                           ::  all state
       $:  $4
-          egg+@u                                        ::  command count
-          hoc+(map bone session)                        ::  conversations
+          egg/@u                                        ::  command count
+          hoc/(map bone session)                        ::  conversations
       ==                                                ::
     ++  session                                         ::  per conversation
-      $:  say+sole-share                                ::  command-line state
-          dir+beam                                      ::  active path
-          poy+(unit dojo-project)                       ::  working
-          {lib+(list hoof) arc+(list hoof)}             ::  lib#sur
-          var+(map term cage)                           ::  variable state
-          old+(set term)                                ::  used TLVs
-          buf+tape                                      ::  multiline buffer
+      $:  say/sole-share                                ::  command-line state
+          dir/beam                                      ::  active path
+          poy/(unit dojo-project)                       ::  working
+          {lib/(list hoof) arc/(list hoof)}             ::  lib#sur
+          var/(map term cage)                           ::  variable state
+          old/(set term)                                ::  used TLVs
+          buf/tape                                      ::  multiline buffer
       ==                                                ::
     ++  dojo-command                                    ::
       $^  (pair dojo-sink dojo-source)                  ::  route value
-      {$brev p+term}                                    ::  unbind variable
+      {$brev p/term}                                    ::  unbind variable
     ::
     ++  dojo-sink                                       ::
-      $%  {$flat p+path}                                ::  atom to unix
-          {$pill p+path}                                ::  noun to unix pill
-          ::  {$tree p+path}                            ::  noun to unix tree
-          {$file p+beam}                                ::  save to clay
-          {$http p+?($post $put) q+purl}                ::  http outbound
-          {$poke p+goal}                                ::  poke app
-          {$show p+?($0 $1 $2 $3)}                      ::  print val#type#twig
-          {$verb p+term}                                ::  store variable
+      $%  {$flat p/path}                                ::  atom to unix
+          {$pill p/path}                                ::  noun to unix pill
+          ::  {$tree p/path}                            ::  noun to unix tree
+          {$file p/beam}                                ::  save to clay
+          {$http p/?($post $put) q/purl}                ::  http outbound
+          {$poke p/goal}                                ::  poke app
+          {$show p/?($0 $1 $2 $3)}                      ::  print val#type#twig
+          {$verb p/term}                                ::  store variable
       ==                                                ::
     ++  dojo-source                                     ::  construction node
-      $:  p+@ud                                         ::  assembly index
-          q+dojo-build                                  ::  general build
+      $:  p/@ud                                         ::  assembly index
+          q/dojo-build                                  ::  general build
       ==                                                ::
     ++  dojo-build                                      ::  one ford step
-      $%  {$ur p+purl}                                  ::  http GET request
-          {$ge p+dojo-model}                            ::  generator
-          {$dv p+path}                                  ::  core from source
-          {$ex p+twig}                                  ::  hoon expression
-          {$as p+mark q+dojo-source}                    ::  simple transmute
-          {$do p+twig q+dojo-source}                    ::  gate apply
-          {$tu p+(list dojo-source)}                    ::  tuple
+      $%  {$ur p/purl}                                  ::  http GET request
+          {$ge p/dojo-model}                            ::  generator
+          {$dv p/path}                                  ::  core from source
+          {$ex p/twig}                                  ::  hoon expression
+          {$as p/mark q/dojo-source}                    ::  simple transmute
+          {$do p/twig q/dojo-source}                    ::  gate apply
+          {$tu p/(list dojo-source)}                    ::  tuple
       ==                                                ::
     ++  dojo-model                                      ::  data construction 
-      $:  p+dojo-server                                 ::  core source
-          q+dojo-config                                 ::  configuration
+      $:  p/dojo-server                                 ::  core source
+          q/dojo-config                                 ::  configuration
       ==                                                ::
     ++  dojo-server                                     ::  numbered device
-      $:  p+@ud                                         ::  assembly index
-          q+path                                        ::  gate path
+      $:  p/@ud                                         ::  assembly index
+          q/path                                        ::  gate path
       ==                                                ::
     ++  dojo-config                                     ::  configuration
-      $:  p+(list dojo-source)                          ::  by order
-          q+(map term (unit dojo-source))               ::  by keyword
+      $:  p/(list dojo-source)                          ::  by order
+          q/(map term (unit dojo-source))               ::  by keyword
       ==                                                ::
     ++  dojo-project                                    ::  construction state
-      $:  mad+dojo-command                              ::  operation
-          num+@ud                                       ::  number of tasks
-          cud+(unit dojo-source)                        ::  now solving
-          pux+(unit path)                               ::  ford working
-          pro+(unit vase)                               ::  prompting loop
-          per+(unit sole-edit)                          ::  pending reverse
-          job+(map @ud dojo-build)                      ::  problems
-          rez+(map @ud cage)                            ::  results
+      $:  mad/dojo-command                              ::  operation
+          num/@ud                                       ::  number of tasks
+          cud/(unit dojo-source)                        ::  now solving
+          pux/(unit path)                               ::  ford working
+          pro/(unit vase)                               ::  prompting loop
+          per/(unit sole-edit)                          ::  pending reverse
+          job/(map @ud dojo-build)                      ::  problems
+          rez/(map @ud cage)                            ::  results
       ==                                                ::
-    ++  bead  {p+(set beam) q+cage}                     ::  computed result
-    ++  goal  {p+ship q+term}                           ::  flat application
+    ++  bead  {p/(set beam) q/cage}                     ::  computed result
+    ++  goal  {p/ship q/term}                           ::  flat application
     ++  clap                                            ::  action, user
-      $%  {$peer p+path}                                ::  subscribe
-          {$poke p+(cask)}                              ::  apply
+      $%  {$peer p/path}                                ::  subscribe
+          {$poke p/(cask)}                              ::  apply
           {$pull $~}                                    ::  unsubscribe
       ==                                                ::
     ++  club                                            ::  action, system
-      $%  {$peer p+path}                                ::  subscribe
-          {$poke p+cage}                                ::  apply
+      $%  {$peer p/path}                                ::  subscribe
+          {$poke p/cage}                                ::  apply
           {$pull $~}                                    ::  unsubscribe
       ==                                                ::
     ++  card                                            ::  general card
@@ -94,30 +94,30 @@
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  sign                                            ::
-      $%  {$made p+@uvH q+gage}                         ::
-          {$unto p+cuft}                                ::  
+      $%  {$made p/@uvH q/gage}                         ::
+          {$unto p/cuft}                                ::  
       ==                                                ::
     --                                                  ::
 !:                                                      ::
 ::::                                                    ::
   ::                                                    ::
-|_  $:  hid+bowl                                        ::  system state
+|_  $:  hid/bowl                                        ::  system state
         house                                           ::  program state
     ==                                                  ::
 ++  he                                                  ::  per session
-  |_  {moz+(list move) session}              ::
+  |_  {moz/(list move) session}              ::
   ++  dp                                                ::  dojo parser
     |%  
     ++  dp-default-app  %hood
     ++  dp-message                                      ::  %poke
-      |=  {gol+goal mod+dojo-model}  ^-  dojo-command
+      |=  {gol/goal mod/dojo-model}  ^-  dojo-command
       [[%poke gol] [0 [%ge mod(q.p [q.gol q.p.mod])]]]
     ::
     ++  dp-command-line  ;~(sfix dp-command (just '\0a'))
     ++  dp-variable                                     ::  %verb or %brev
-      |*  {sym+rule src+rule}
+      |*  {sym/rule src/rule}
       %-  cook  :_  ;~(plug sym (punt src))
-      |=  {a+term b+(unit dojo-source)}  ^-  dojo-command
+      |=  {a/term b/(unit dojo-source)}  ^-  dojo-command
       ?~(b [%brev a] [[%verb a] u.b])
     ::
     ++  dp-command                                      ::  ++dojo-command
@@ -131,7 +131,7 @@
       ::
         ;~  pfix  col
           %+  cook
-            |=  {a+goal b+$^(dojo-model dojo-source)}
+            |=  {a/goal b/$^(dojo-model dojo-source)}
             ?@  -.b  [[%poke a] b]
             (dp-message a b)
           ;~  plug
@@ -170,10 +170,10 @@
         (stag %show (cook $?($1 $2 $3) (cook lent (stun [1 3] wut))))
       ==
     ++  dp-hooves                                       ::  hoof list
-      :(stag 0 %ex %clsg (cook |=(a+tusk a) (most ;~(plug com gaw) dp-hoof)))
+      :(stag 0 %ex %clsg (cook |=(a/tusk a) (most ;~(plug com gaw) dp-hoof)))
     ::
     ++  dp-hoof                                         ::  ++ford-hoof twig
-      %+  cook  |*(a+* ~!(+.a `twig`a))
+      %+  cook  |*(a/* ~!(+.a `twig`a))
       ;~  plug
         :(stag %dtzy %tas sym)
         %-  dp-twig-punt
@@ -184,10 +184,10 @@
       ==
     ::
     ++  dp-twig-punt                                   ::  twig of unit
-      |*(a+rule ;~(pose (stag [%cbzw %null] a) (easy [%cbzw %null])))
+      |*(a/rule ;~(pose (stag [%cbzw %null] a) (easy [%cbzw %null])))
     ::
     ++  dp-case-twig
-      |=  a+coin  ^-  (unit twig)
+      |=  a/coin  ^-  (unit twig)
       ?.  ?=({$~ case} a)  ~
       %+  some
         [%dtzz %tas p.p.a]
@@ -205,7 +205,7 @@
       ==
     :: 
     ++  dp-goal                                          ::  ++goal
-      %+  cook  |=(a+goal a)
+      %+  cook  |=(a/goal a)
       ;~  pose
         ;~  plug
           ;~(pfix sig fed:ag)
@@ -215,7 +215,7 @@
         ;~(pose sym (easy dp-default-app))
       ==
     ++  dp-beam                                         ::  ++beam
-      %+  cook  |=(a+path =+((tome a) ?^(- u [he-beak (flop a)])))
+      %+  cook  |=(a/path =+((tome a) ?^(- u [he-beak (flop a)])))
       =+  vez=(vang | dp-path)
       (sear plex:vez (stag %clsg poor:vez))
     ::
@@ -229,10 +229,10 @@
         rood
       ::
         =-  ;~(pfix cen (stag %clsg -))                 ::  XX refactor ++scat
-        %+  sear  |=({a+@ud b+tyke} (posh ~ ~ a b))
+        %+  sear  |=({a/@ud b/tyke} (posh ~ ~ a b))
         ;~  pose
           porc
-          (cook |=(a+(list) [(lent a) ~]) (star cen))
+          (cook |=(a/(list) [(lent a) ~]) (star cen))
         ==
       ==
     ++  dp-value                                        ::  ++dojo-source
@@ -259,13 +259,13 @@
     ++  dy-abet  +>(poy `+<)                            ::  resolve
     ++  dy-amok  +>(poy ~)                              ::  terminate
     ++  dy-ford                                         ::  send work to ford
-      |=  {way+wire kas+silk}
+      |=  {way/wire kas/silk}
       ^+  +>+>
       ?>  ?=($~ pux)
       (he-card(poy `+>+<(pux `way)) %exec way our.hid `[he-beak kas])
     ::
     ++  dy-eyre                                         ::  send work to eyre
-      |=  {way+wire req+hiss}
+      |=  {way/wire req/hiss}
       ^+  +>+>
       ?>  ?=($~ pux)
       (he-card(poy `+>+<(pux `way)) %hiss way %httr %hiss req)
@@ -278,22 +278,22 @@
       he-diff:(he-card %exec u.pux our.hid ~)
     ::
     ++  dy-slam                                         ::  call by ford
-      |=  {way+wire gat+vase sam+vase}
+      |=  {way/wire gat/vase sam/vase}
       ^+  +>+>
       (dy-ford way %call [%$ %noun gat] [%$ %noun sam])
     ::
     ++  dy-diff                                         ::  send effects, abet
-      |=  fec+sole-effect
+      |=  fec/sole-effect
       ^+  +>+>
       (he-diff(poy `+>+<) fec)
     ::
     ++  dy-rash                                         ::  send effects, amok
-      |=  fec+sole-effect
+      |=  fec/sole-effect
       ^+  +>+>
       (he-diff(poy ~) fec)
     ::
     ++  dy-init-command                                 ::  ++dojo-command
-      |=  mad+dojo-command
+      |=  mad/dojo-command
       ^+  [mad +>]
       ?@  -.mad  [mad +>.$]
       =.  q.mad
@@ -302,7 +302,7 @@
       [mad(q src) +>.$]
     ::
     ++  dy-init-source                                  ::  ++dojo-source
-      |=  src+dojo-source
+      |=  src/dojo-source
       ^+  [src +>]
       =^  bul  +>  (dy-init-build q.src)
       =:  p.src  num
@@ -311,14 +311,14 @@
       [src +>.$(num +(num), job (~(put by job) src))]
     ::
     ++  dy-init-source-unit                             ::  (unit dojo-source)
-      |=  urc+(unit dojo-source)
+      |=  urc/(unit dojo-source)
       ^+  [urc +>]
       ?~  urc  [~ +>]
       =^  src  +>  (dy-init-source u.urc)
       [`src +>.$]
     ::
     ++  dy-init-build                                   ::  ++dojo-build
-      |=  bul+dojo-build
+      |=  bul/dojo-build
       ^+  [bul +>]
       ?-    -.bul
         $ex  [bul +>.$]
@@ -337,26 +337,26 @@
       ==
     ::
     ++  dy-init-model                                   ::  ++dojo-model
-      |=  mol+dojo-model
+      |=  mol/dojo-model
       ^+  [mol +>]
       =^  one  +>.$  (dy-init-server p.mol)
       =^  two  +>.$  (dy-init-config q.mol)
       [[one two] +>.$]
     ::
     ++  dy-init-server                                  ::  ++dojo-server
-      |=  srv+dojo-server
+      |=  srv/dojo-server
       =.  p.srv  num
       [srv +>.$(num +(num), job (~(put by job) num [%dv [%gen q.srv]]))]
     ::
     ++  dy-init-config                                  ::  prepare config
-      |=  cig+dojo-config
+      |=  cig/dojo-config
       ^+  [cig +>]
       =^  ord  +>.$  (dy-init-ordered p.cig)
       =^  key  +>.$  (dy-init-named q.cig)
       [[ord key] +>.$]
     ::
     ++  dy-init-ordered                                 ::  (list dojo-source)
-      |=  ord+(list dojo-source)
+      |=  ord/(list dojo-source)
       ^+  [ord +>]
       ?~  ord  [~ +>.$]
       =^  fir  +>.$  (dy-init-source i.ord)
@@ -364,7 +364,7 @@
       [[fir mor] +>.$]
     ::
     ++  dy-init-named                                   ::  (map @tas dojo-src)
-      |=  key+(map term (unit dojo-source))
+      |=  key/(map term (unit dojo-source))
       ^+  [key +>.$]
       ?~  key  [~ +>.$]
       =^  top  +>.$  (dy-init-source-unit q.n.key)
@@ -377,20 +377,20 @@
       =^(dam . (dy-init-command mad) +(mad dam))
     ::
     ++  dy-hand                                         ::  complete step
-      |=  cag+cage
+      |=  cag/cage
       ^+  +>+>
       ?>  ?=(^ cud)
       (dy-step(cud ~, rez (~(put by rez) p.u.cud cag)) +(p.u.cud))
     ::
     ++  dy-meal                                         ::  vase to cage
-      |=  vax+vase
+      |=  vax/vase
       ?.  &(?=(@ -.q.vax) ((sane %tas) -.q.vax))
         ~&  %dy-meal-cage
         (dy-rash %bel ~)
       (dy-hand -.q.vax (slot 3 vax))
     ::
     ++  dy-made-edit                                    ::  sole edit
-      |=  cag+cage
+      |=  cag/cage
       ^+  +>+>
       ?>  ?=(^ per)
       ?:  ?|  ?=(^ q.q.cag) 
@@ -402,15 +402,15 @@
       (dy-diff(per ~) %mor [%det lic] [%err q.q.cag] ~)
     ::
     ++  dy-done                                         ::  dialog submit
-      |=  txt+tape
+      |=  txt/tape
       ?:  |(?=(^ per) ?=(^ pux) ?=($~ pro))
         ~&  %dy-no-prompt
         (dy-diff %bel ~)
       (dy-slam /dial u.pro !>(txt))
     ::
     ++  dy-cast
-      |*  {typ+_* bun+vase}
-      |=  a+vase  ^-  typ
+      |*  {typ/_* bun/vase}
+      |=  a/vase  ^-  typ
       ?>  (~(nest ut p.bun) & p.a)
       ;;(typ q.a)
     ::
@@ -491,24 +491,24 @@
         ==
       ==
     ::
-    ++  dy-show  |=(cay+cage (dy-print cay ~))
+    ++  dy-show  |=(cay/cage (dy-print cay ~))
     ++  dy-print
-      |=  {cay+cage tan+tang}
+      |=  {cay/cage tan/tang}
       %+  dy-rash  %tan
       %-  welp  :_  tan
       ?+  p.cay  [(sell q.cay)]~
         $tang  ;;(tang q.q.cay)
         $httr
           =+  hit=;;(httr q.q.cay)
-          =-  (flop (turn `wall`- |=(a+tape leaf#(dash:ut a ''))))
+          =-  (flop (turn `wall`- |=(a/tape leaf#(dash:ut a ''))))
           :-  "HTTP {<p.hit>}"
           %+  weld
-            (turn q.hit |=({a+@t b+@t} "{(trip a)}: {(trip b)}"))
+            (turn q.hit |=({a/@t b/@t} "{(trip a)}: {(trip b)}"))
           (turn `wain`?~(r.hit ~ (lore q.u.r.hit)) trip)
       ==
     ::
     ++  dy-show-type-noun
-      |=  a+type  ^-  tank
+      |=  a/type  ^-  tank
       =-  >[-]<
       |-  ^-  $?  $%  {$atom @tas}
                       {$cell _$ _$}
@@ -525,13 +525,13 @@
         {$?($cell $fork) ^}  a(p $(a p.a), q $(a q.a))
         {$bull ^}  $(a q.a)
         {$core ^}  `wain`/core
-        {$hold *}  a(p (turn p.a |=({b+type c+twig} [^$(a b) c])))
+        {$hold *}  a(p (turn p.a |=({b/type c/twig} [^$(a b) c])))
       ==
     ::
     ++  dy-show-source
-      |=  a+dojo-source  ^-  tank
+      |=  a/dojo-source  ^-  tank
       =-  >[-]<
-      =+  `{@ bil+dojo-build}`a
+      =+  `{@ bil/dojo-build}`a
       |-  ^-  $^  [_$ _$]
               $?  twig
                   $%  {$ur purl}
@@ -559,7 +559,7 @@
       ==
     ::
     ++  dy-edit                                         ::  handle edit
-      |=  cal+sole-change
+      |=  cal/sole-change
       ^+  +>+>
       =^  dat  say  (~(transceive sole say) cal)
       ?:  |(?=(^ per) ?=(^ pux) ?=($~ pro))
@@ -569,25 +569,25 @@
       (dy-slam(per `dat) /edit u.pro !>((tufa buf.say)))
     ::
     ++  dy-type                                         ::  sole action
-      |=  act+sole-action
+      |=  act/sole-action
       ?-  -.act
         $det  (dy-edit +.act)
         $ret  (dy-done (tufa buf.say))
         $clr  dy-stop
       ==
     ::
-    ++  dy-cage       |=(num+@ud (~(got by rez) num))   ::  known cage
-    ++  dy-vase       |=(num+@ud q:(dy-cage num))       ::  known vase
-    ++  dy-silk-vase  |=(vax+vase [%$ %noun vax])       ::  vase to silk
+    ++  dy-cage       |=(num/@ud (~(got by rez) num))   ::  known cage
+    ++  dy-vase       |=(num/@ud q:(dy-cage num))       ::  known vase
+    ++  dy-silk-vase  |=(vax/vase [%$ %noun vax])       ::  vase to silk
     ++  dy-silk-sources                                 ::  sources to silk
-      |=  src+(list dojo-source)  ^-  silk
+      |=  src/(list dojo-source)  ^-  silk
       %-  dy-silk-vase
       |-
       ?~  src  !>(~)
       (slop (dy-vase p.i.src) $(src t.src))
     ::
     ++  dy-silk-config                                  ::  configure
-      |=  {cay+cage cig+dojo-config}
+      |=  {cay/cage cig/dojo-config}
       ^-  {wire silk}
       :-  ?+  -.q.q.cay  ~|(%bad-gen ~_((sell (slot 2 q.cay)) !!))
             $say  /gent
@@ -600,7 +600,7 @@
         (dy-silk-sources p.cig)
       :+  %mute  (dy-silk-vase (fall (slew 27 gat) !>(~)))
       %+  turn  (~(tap by q.cig))
-      |=  {a+term b+(unit dojo-source)}
+      |=  {a/term b/(unit dojo-source)}
       ^-  (pair wing silk)
       :-  [a ~]
       %-  dy-silk-vase
@@ -609,15 +609,15 @@
     ++  dy-twig-head                                    ::  dynamic state
       ^-  cage
       :-  %noun
-      =+  sloop=|=({a+vase b+vase} ?:(=(*vase a) b ?:(=(*vase b) a (slop a b))))
+      =+  sloop=|=({a/vase b/vase} ?:(=(*vase a) b ?:(=(*vase b) a (slop a b))))
       %+  sloop
         %-  ~(rep by var)
-        |=  {{a+term @ b+vase} c+vase}  ^-  vase
+        |=  {{a/term @ b/vase} c/vase}  ^-  vase
         (sloop b(p face#[a p.b]) c)
       !>([our=our now=now eny=eny]:hid)
     ::
     ++  dy-made-dial                                    ::  dialog product
-      |=  cag+cage
+      |=  cag/cage
       ^+  +>+>
       ?.  ?=(^ q.q.cag)
         (dy-diff %err q.q.cag)
@@ -639,7 +639,7 @@
       ==
     ::
     ++  dy-made-scar                                    ::  scraper product
-      |=  cag+cage
+      |=  cag/cage
       ^+  +>+>
       ?.  ?=(^ q.q.cag)
         (dy-diff %err q.q.cag)
@@ -661,14 +661,14 @@
       ==
     ::
     ++  dy-sigh-scar                                    ::  scraper result
-      |=  dat+cage
+      |=  dat/cage
       ?~  pro
         ~&  %dy-no-scraper
         (dy-show dat)
       (dy-slam(pux ~) /scar u.pro q.dat) 
     ::
     ++  dy-made-gent                                    ::  generator product
-      |=  cag+cage
+      |=  cag/cage
       (dy-meal q.cag)
     ::
     ++  dy-make                                         ::  build step
@@ -697,12 +697,12 @@
     ::
     ++  dy-twig-mark                                    ::  XX architect
       =+  ^=  ope
-          |=  gen+twig  ^-  twig
+          |=  gen/twig  ^-  twig
           ?:  ?=(?($sggl $sggr) -.gen)
             $(gen q.gen)
           =+  ~(open ap gen)
           ?.(=(gen -) $(gen -) gen)
-      |=  gen+twig  ^-  (unit mark)
+      |=  gen/twig  ^-  (unit mark)
       =.  gen  (ope gen)
       ?:  ?=({$cnts {@ $~} $~} gen)
         (bind (~(get by var) i.p.gen) head)
@@ -723,7 +723,7 @@
       ==
     ::
     ++  dy-mare                                         ::  build expression
-      |=  gen+twig
+      |=  gen/twig
       ^-  silk
       =+  too=(dy-twig-mark gen)
       =-  ?~(too - [%cast u.too -])
@@ -732,7 +732,7 @@
       [%plan he-beam / zuse arc lib ~ ~]
     ::
     ++  dy-step                                         ::  advance project
-      |=  nex+@ud
+      |=  nex/@ud
       ^+  +>+>
       ?>  ?=($~ cud)
       ?:  ?=({$show $3} -.mad)
@@ -743,19 +743,19 @@
     --
   ::
   ++  he-dope                                           ::  sole user of ++dp
-    |=  txt+tape                                        ::
+    |=  txt/tape                                        ::
     ^-  (each (unit (each dojo-command tape)) hair)     ::  prefix#result
     =+  len=+((lent txt))                               ::  line length
     =.  txt  :(weld buf txt "\0a")                      ::
     =+  vex=((full dp-command-line):dp [1 1] txt)       ::
     ?:  =(q.p.vex len)                                  ::  matched to line end
       [%& ~]                                            ::
-    ?:  =(p.p.vex +((lent (skim txt |=(a+@ =(10 a)))))) ::  parsed all lines
+    ?:  =(p.p.vex +((lent (skim txt |=(a/@ =(10 a)))))) ::  parsed all lines
       [%& ~ ?~(q.vex [%| txt] `p.u.q.vex)]              ::  new buffer#complete
     [%| p.p.vex (dec q.p.vex)]                          ::  syntax error
   ::
   ++  he-duke                                           ::  ++he-dope variant
-    |=  txt+tape
+    |=  txt/tape
     ^-  (each (unit (each dojo-command tape)) @ud)
     =+  foy=(he-dope txt)
     ?-  -.foy
@@ -767,7 +767,7 @@
     ^+  .
     =.  egg  +(egg)
     =-  ?~(msg ..he-diff (he-diff %tan leaf#u.msg ~))
-    ^-  msg+(unit tape)
+    ^-  msg/(unit tape)
     ?+  (clan our.hid)  ~
       $pawn  ?+  egg  ~
                 $5  `":: To request a planet, run  |ask 'your@email.co'"
@@ -787,17 +787,17 @@
     dir(r [%da now.hid])
   ::
   ++  he-card                                           ::  emit gift
-    |=  cad+card
+    |=  cad/card
     ^+  +>
     %_(+> moz [[ost.hid cad] moz])
   ::
   ++  he-send
-    |=  {way+wire him+ship dap+term cop+clap}
+    |=  {way/wire him/ship dap/term cop/clap}
     ^+  +>
     (he-card %send way [him dap] cop)
   ::
   ++  he-diff                                           ::  emit update
-    |=  fec+sole-effect
+    |=  fec/sole-effect
     ^+  +>
     (he-card %diff %sole-effect fec)
   ::
@@ -806,7 +806,7 @@
     ?~(poy . ~(dy-stop dy u.poy))
   ::
   ++  he-peer                                           ::  subscribe to
-    |=(pax+path ?>(=(~ pax) he-prom))
+    |=(pax/path ?>(=(~ pax) he-prom))
   ::
   ++  he-pine                                           ::  restore prompt
     ^+  .
@@ -837,7 +837,7 @@
     [& %$ (weld he-prow ?~(buf "> " "< "))]
   ::
   ++  he-made                                           ::  result from ford
-    |=  {way+wire dep+@uvH reg+gage}
+    |=  {way/wire dep/@uvH reg/gage}
     ^+  +>
     ?>  ?=(^ poy)
     =<  he-pine
@@ -856,7 +856,7 @@
     ==
   ::
   ++  he-sigh                                           ::  result from eyre
-    |=  {way+wire hit+httr}
+    |=  {way/wire hit/httr}
     ^+  +>
     ?>  ?=(^ poy)
     =<  he-pine
@@ -869,7 +869,7 @@
     ==
   ::
   ++  he-unto                                           ::  result from behn
-    |=  {way+wire cit+cuft}
+    |=  {way/wire cit/cuft}
     ^+  +>
     ?.  ?=($coup -.cit)
       ~&  [%strange-unto cit]
@@ -879,11 +879,11 @@
     (he-diff %tan u.p.cit)
   ::
   ++  he-like                                           ::  accept line
-    |=  buf+(list @c)
+    |=  buf/(list @c)
     =(%& -:(he-dope (tufa buf)))
   ::
   ++  he-stir                                           ::  apply change
-    |=  cal+sole-change
+    |=  cal/sole-change
     ^+  +>
     ::  ~&  [%his-clock ler.cal]
     ::  ~&  [%our-clock ven.say]
@@ -900,13 +900,13 @@
     (he-diff %mor [%det lic] [%err q.p.foy] ~)
   ::
   ++  he-plan                                           ::  execute command
-    |=  mad+dojo-command
+    |=  mad/dojo-command
     ^+  +>
     ?>  ?=($~ poy)
     he-pine:(dy-step:~(dy-init dy %*(. *dojo-project mad mad)) 0)
   ::
   ++  he-done                                           ::  parse command
-    |=  txt+tape
+    |=  txt/tape
     ^+  +>
     ?~  txt
       =<  he-prom(buf ~)
@@ -931,7 +931,7 @@
     ==
   ::
   ++  he-type                                           ::  apply input
-    |=  act+sole-action
+    |=  act/sole-action
     ^+  +>
     ?^  poy
       he-pine:(~(dy-type dy u.poy) act)
@@ -942,7 +942,7 @@
     ==
   ::
   ++  he-lame                                           ::  handle error
-    |=  {wut+term why+tang}
+    |=  {wut/term why/tang}
     ^+  +>
     %-  (slog (flop `tang`[>%dojo-lame wut< why]))
     ?^  poy
@@ -955,12 +955,12 @@
   =+  session-0==+(*session-1 _[_say syd=desk * _|2.-])
   :: ,_`..prep
   =+  ^=  hoze
-      $%  {$0 p+(map bone session-0)}
-          {$1 p+(map bone session-1)}
-          {$2 p+(map bone session-1)}
-          {$3 p+(map bone session)}
+      $%  {$0 p/(map bone session-0)}
+          {$1 p/(map bone session-1)}
+          {$2 p/(map bone session-1)}
+          {$3 p/(map bone session)}
       ==
-  |=  old+(unit ?(house hoze))  ^+  [~ ..prep]
+  |=  old/(unit ?(house hoze))  ^+  [~ ..prep]
   ?~  old  `..prep
   ?+  -.u.old  !!
     $4  `..prep(+<+ u.old)
@@ -969,10 +969,10 @@
 ::  pattern:  ++  foo  |=(data he-abet:(~(he-foo he (~(got by hoc) ost)) data))
 ++  arm  (arm-session ~ (~(got by hoc) ost.hid))
 ++  arm-session
-  |=  {moz+(list move) ses+session}
+  |=  {moz/(list move) ses/session}
   =>  ~(. he moz ses)
   =-  [wrap=- +]
-  |*  he-arm+_he-type
+  |*  he-arm/_he-type
   |=  _+<.he-arm  
   ^-  (quip move ..he)
   he-abet:(he-arm +<)
@@ -988,15 +988,15 @@
   (wrap he-peer):(arm-session moz ses)
 ::
 ++  poke-sole-action
-  |=  act+sole-action  ~|  poke#act  %.  act
+  |=  act/sole-action  ~|  poke#act  %.  act
   (wrap he-type):arm
 ++  made       (wrap he-made):arm
 ++  sigh-httr  (wrap he-sigh):arm
-++  sigh-tang  |=({a+wire b+tang} ~|(`term`(cat 3 'sigh-' -.a) (mean b)))
+++  sigh-tang  |=({a/wire b/tang} ~|(`term`(cat 3 'sigh-' -.a) (mean b)))
 ++  lame       (wrap he-lame):arm
 ++  unto       (wrap he-unto):arm
 ++  pull
-  |=  {pax+path}
+  |=  {pax/path}
   ^-  (quip move +>)
   =^  moz  +>  ~(he-abut he ~ (~(got by hoc) ost.hid))
   [moz +>.$(hoc (~(del by hoc) ost.hid))]

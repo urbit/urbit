@@ -6,8 +6,8 @@
 ::::
   !:
 :-  %say
-|=  $:  {now+@da eny+@uvI bec+beak}
-        {{mon+$@(term {span path}) $~} $~}
+|=  $:  {now/@da eny/@uvI bec/beak}
+        {{mon/$@(term {span path}) $~} $~}
     ==
 :-  %kiln-unmount
 mon

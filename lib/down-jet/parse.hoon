@@ -4,15 +4,15 @@
   ::
 =+  =~
 |%
-++  loca  |*(a+_* {p+@u q+a})  
+++  loca  |*(a/_* {p/@u q/a})  
 ++  stack  (list (loca tops))
 --
 |%
 ++  htm-enty                                            ::  XX belongs in zuse
   ~+  
-  =-  |=  tub+nail  ^-  (like @t)  %.  tub              ::  export context
+  =-  |=  tub/nail  ^-  (like @t)  %.  tub              ::  export context
       =+(poxa enty(ent mapping))
-  ^-  mapping+(map span @tF)
+  ^-  mapping/(map span @tF)
   =+  pax=/==5%%/html5-entities/json                    ::  XX  %%/
   =+  maf=%.(pax ;~(biff file (soft json) (om so):jo))
   ?^  maf  u.maf
@@ -40,7 +40,7 @@
   view-source webcal wtai wyciwyg xfire xri ymsgr
   '''
 ::
-++  uri-skem   (sear (flit |=(a+tape (~(has in skem-set) (cass a)))) skem-symb)
+++  uri-skem   (sear (flit |=(a/tape (~(has in skem-set) (cass a)))) skem-symb)
 --
 ::
 ::::
@@ -49,10 +49,10 @@
 ++  nal  (just `@`10)
 ++  end  (full (easy ~))
 ++  eol  ;~(pose (cold ~ nal) end)
-::++  match  |=(a+rege (curr scan (ra a)))
+::++  match  |=(a/rege (curr scan (ra a)))
 ::
 ++  tab
-  |=  tub+nail
+  |=  tub/nail
   ^-  (like cord)  
   ?.  ?=({$9 *} q.tub)
     (fail tub)
@@ -60,21 +60,21 @@
   =+  neu=(weld (reap sto ' ') t.q.tub)
   (next tub(q neu))
 ::
-++  whif  |*(a+rule ;~(sfix a (star ace)))
-++  ahed  |*(a+rule ;~(simu a (easy ~)))
-++  opts  |*(a+rule ;~((bend) (easy ~) a))
-++  lots  |*({a+@u b+rule} ;~(pfix (stun [a a] b) (star b)))
-++  leas  |*(a+rule ;~(pfix ;~(less (stun 4^4 ace) (stun 0^3 ace)) a))
+++  whif  |*(a/rule ;~(sfix a (star ace)))
+++  ahed  |*(a/rule ;~(simu a (easy ~)))
+++  opts  |*(a/rule ;~((bend) (easy ~) a))
+++  lots  |*({a/@u b/rule} ;~(pfix (stun [a a] b) (star b)))
+++  leas  |*(a/rule ;~(pfix ;~(less (stun 4^4 ace) (stun 0^3 ace)) a))
 ++  pech  
-  |*  a+{rule rule}
-  |=  tub+nail  
+  |*  a/{rule rule}
+  |=  tub/nail  
   ^-  (like (each _(wonk (-.a)) _(wonk (+.a))))
   %.  tub
   ;~(pose (stag %& -.a) (stag %| +.a))
 ::
 ++  lite                                                ::  literal matched
-  |*  a+rule
-  |=  tub+nail  ^-  (like tape)
+  |*  a/rule
+  |=  tub/nail  ^-  (like tape)
   =+  vex=(a tub)
   ?~  q.vex  vex
   =+  tap=q.q.u.q.vex
@@ -85,24 +85,24 @@
   [i.q.tub $(q.tub t.q.tub)]
 ::
 ++  enrule                                              ::  XX
-  |*  a+$+(tape *)
-  |=  tub+nail
+  |*  a/$+(tape *)
+  |=  tub/nail
   ^-  (like a)
   [[0 0] ~ (a q.tub) [0 0] ~]
 --  ==
   =~
 |%
 ++  strip
-  |=  {a+$+(nail edge) b+tape}
+  |=  {a/$+(nail edge) b/tape}
   ^-  tape
   =+  q:(a 1^1 b)
   ?~(- b q.q.u.-)
 ::
 ++  inli                                                ::  inline parsers
   =+  [bug=| rec="" nol=|]
-  |_  ref+(map cord {p+tape q+(unit tape)})
+  |_  ref/(map cord {p/tape q/(unit tape)})
   ++  unesc
-    |=  a+tape
+    |=  a/tape
     (scan a (star ;~(pose nore(rec ~) nal)))          ::  XX
   ::
   ++  esc
@@ -114,26 +114,26 @@
   ++  nore  ~+  ;~(pose htm-enty norc)
   ::
   ++  trim-sp
-    |=  a+tape
+    |=  a/tape
     ^-  tape
     %+  strip   (star gah)
     (flop (strip (star gah) (flop a)))
   ::
   ++  child
-    =<  |=  tub+nail  ^-  (like inline)  %.  tub        ::  expose parsers
-        %+  cook  |=(a+inline ~?(bug a a))
+    =<  |=  tub/nail  ^-  (like inline)  %.  tub        ::  expose parsers
+        %+  cook  |=(a/inline ~?(bug a a))
         ;~(pose code line link blot:link htmt)
     |%
     ++  fens
-      |=  a+tape
+      |=  a/tape
       %+  knee  *tape  |.  ~+
-      |=  tub+nail  ^-  (like tape)
+      |=  tub/nail  ^-  (like tape)
       =+  vex=((plus tec) tub)
       ?~  q.vex
         (plug (codc tub) ^^$)
       ?:  =(a p.u.q.vex)
         vex(p.u.q ~)
-      =+  neu=|=(b+tape (weld `tape`p.u.q.vex b))
+      =+  neu=|=(b/tape (weld `tape`p.u.q.vex b))
       ((cook neu ^^$) q.u.q.vex)
     ::
     ++  codc  ;~(pose (cold ' ' (plus gah)) prn)
@@ -141,15 +141,15 @@
       =-  ;~(pose - (stag %$ (plus tec)))
       %+  stag  %code
       %+  cook  trim-sp
-      |=  tub+nail
+      |=  tub/nail
       ?.  ?=({$'`' ^} q.tub)
         (fail tub)
       =+  vex=((plus tec) tub)
       (pfix vex (fens (wonk vex)))
     ::
     ++  madn
-      |=  a+mane  ^-  ?
-      =>  |=(b+span ?=(^ (rush b ;~(plug alf (star aln)))))
+      |=  a/mane  ^-  ?
+      =>  |=(b/span ?=(^ (rush b ;~(plug alf (star aln)))))
       ?@  a  (. a)  
       &((. -.a) (. +.a))
     ::
@@ -159,7 +159,7 @@
       %-  sear  :_ 
         ;~(pose empt:poxa (pech [head tail]:poxa))
       %-  flit
-      |=  a+$^({marx $~} $%({$& marx} {$| p+mane}))
+      |=  a/$^({marx $~} $%({$& marx} {$| p/mane}))
       ?-  -.a
         ^   (madn n.a) 
         $&  (madn n.a) 
@@ -171,30 +171,30 @@
       ;~(plug ;~(pose (lots 2 ace) bas) nal)  
     ::
     ++  empty
-      |=  a+inline
+      |=  a/inline
       ^-  ?
       ?&  ?=($$ -.a)
           ?=($~ (strip (star ;~(pose ace nal)) p.a))
       ==
     ::
     ++  link  ::=+(blot=fail |=(nail (fail +<)))
-      =<  =-  |=(tub+nail (pra tub))                      ::  expose parsers
+      =<  =-  |=(tub/nail (pra tub))                      ::  expose parsers
           ?:  nol  pra=auto ::;~(pose auto pexp)
           =-  pra=;~(pose auto (cook - apex))
-          |=({a+kids b+{tape (unit tape)}} [[%link b] a])
+          |=({a/kids b/{tape (unit tape)}} [[%link b] a])
       |%
       ++  apex
-        =+  ^-  rob+$+(nail (like {kids $@(cord {tape (unit tape)})}))
+        =+  ^-  rob/$+(nail (like {kids $@(cord {tape (unit tape)})}))
             ;~(plug text(nol &) labe)
         ::
-        |=  tub+nail  
+        |=  tub/nail  
         ^-  (like (pair kids {tape (unit tape)}))
         ::  (fail tub)
         =+  vex=(rob tub)
         ?~  q.vex
           vex
         =-  ?~(rez vex(q ~) vex(+.p.u.q u.rez))
-        ^-  rez+(unit {tape (unit tape)})
+        ^-  rez/(unit {tape (unit tape)})
         =+  [~ atr]=(wonk vex)
         ?^  atr
           `atr
@@ -219,7 +219,7 @@
       ::
       ++  blot
         %-  cook  :_  ;~(pfix zap [.(rob ;~(plug text labe))]:apex)
-        |=({a+kids b+{tape (unit tape)}} [[%blot b] a])
+        |=({a/kids b/{tape (unit tape)}} [[%blot b] a])
       ::
       ++  mail  
         %+  cook  |=(_[a="" b='' c="" d=*wall] :(welp a b^c (zing d)))
@@ -233,23 +233,23 @@
       ++  auto
         %+  ifix  gal^gar
         ;~  pose
-          (cook |=(a+tape [link#["mailto:{a}" ~] ~[`a]]) mail)
+          (cook |=(a/tape [link#["mailto:{a}" ~] ~[`a]]) mail)
         ::
           =+  cha=;~(pose htm-enty ;~(less (mask "<> ") prn))
           %+  cook
-            |=  a+_["" ""]
+            |=  a/_["" ""]
             [link#[(weld a) ~] ~[`(weld a)]]
           ;~(plug uri-skem col (star cha))
         ==
       ::
       ++  pexp                                          ::  XX non-link nested
         %-  cook  :_  (ifix sel^ser many)
-        |=(a+kids (reso:many "[" (welp a `"]" ~)))
+        |=(a/kids (reso:many "[" (welp a `"]" ~)))
       --
     --
   ::
   ++  href
-    =<  |=  tub+nail  %.  tub                           ::  expose parsers
+    =<  |=  tub/nail  %.  tub                           ::  expose parsers
         ;~  plug
           ;~(sfix text col (star gah))
           (sear (flit |=(tape ?=(^ +<))) dest)
@@ -262,7 +262,7 @@
         (pexp nore(rec " "))
       ==
     ++  pexp
-      |*  cha+rule
+      |*  cha/rule
       =+  chu=;~(less pel per cha)
       |-                                                ::  XX  Chesterton fence
       %+  knee  *tape  |.  ~+
@@ -274,13 +274,13 @@
     ++  text  
       =-  (ifix sel^ser (cook cass (star -)))
       ;~  pose
-        (cook |=(a+char (cat 3 '\\' a)) esc)
+        (cook |=(a/char (cat 3 '\\' a)) esc)
         (cold ' ' (plus gah))
         ;~(less sel ser prn)
       ==
     ++  titl
       %.  ~[soq^soq doq^doq pel^per]
-      |*  a+(pole {rule rule})
+      |*  a/(pole {rule rule})
       ?~  a  fail
       ;~  pose
       (ifix -.a (star ;~(pose esc htm-enty ;~(less ->.a prn))))
@@ -288,7 +288,7 @@
       ==
     --
   ++  consol
-    |=  a+kids
+    |=  a/kids
     ^-  kids
     ?~  a  ~
     ?+    -.i.a  [i.a $(a t.a)]
@@ -304,13 +304,13 @@
         ++  fens  ?($'*' $'_')
         ++  nuft  {nufh ?(tape {tape ?($| fens)})}
         ++  reso
-          |=  a+nufh
+          |=  a/nufh
           ^-  kids
           ?~  -.a  +.a
           [[%$ -.a] +.a]  
         ::
         ++  veld
-          |=  {a+$@(char inline) _[b c]=*nuft}
+          |=  {a/$@(char inline) _[b c]=*nuft}
           ^-  nuft
           :_  c
           ?@  a
@@ -320,9 +320,9 @@
           [~ a (reso b)]
         ::
         ++  rend
-          |=  nuf+nufh
+          |=  nuf/nufh
           %.  (reso nuf)
-          |=  a+kids
+          |=  a/kids
           ^-  tape
           ?~  a  ~
           %-  weld  :_  $(a t.a)
@@ -335,7 +335,7 @@
             $emph  "({$(a q)})"
           ==
         --
-    |=  tap+tape  ^-  kids
+    |=  tap/tape  ^-  kids
     =.  tap  (trim-sp tap)
     =+  vex=(many 1^1 tap)
     ?~  q.vex
@@ -345,7 +345,7 @@
   ::
   ++  many
     =>  pars                            ::  XX  
-    |=  tub+nail  ^-  (like kids)
+    |=  tub/nail  ^-  (like kids)
     =-  [[0 0] ~ (reso -<) [0 0] ;;(tape ->)]           ::  XX
     =+  [ins=`?(fens $~)`~ bof=| noz=|]
     ?~  q.tub  [`~ ~]
@@ -363,7 +363,7 @@
     ::
     ++  next  (push i)
     ++  push                                            ::  continue with head
-      |=  a+$@(char inline)
+      |=  a/$@(char inline)
       ^-  nuft
       ~?  ?@(a | bug)  fon#a
       ?~  t  (veld a done)
@@ -386,19 +386,19 @@
       $(+<+ t)
     ::
     ++  flome
-      |=  a+_+:*nuft
+      |=  a/_+:*nuft
       ^-  {(unit ?($| fens)) tape}
       ?.  ?=({* ?($| fens)} a)
         [~ a]
       [[~ +.a] -.a]
     ::
     ++  empa
-      |=  a+nufh
+      |=  a/nufh
       ^-  inline
       [[%emph |] (reso a)]
     ::
     ++  ends
-      |=  {a+tape b+tape}
+      |=  {a/tape b/tape}
       ?:  &(?=(^ b) =(i i.b))
         $(b t.b)
       ?:  &(?=(^ a) =(i i.a))
@@ -447,7 +447,7 @@
 ++  accepting  ?($para $code)
 ++  list-nest                                           ::  can add list item?
   =+  sam=[?>(?=($list -.p..) p..)]:(tops [%list ~]~)   ::  XX do type stuff
-  |=  {a+_sam b+_sam}  ^-  ?
+  |=  {a/_sam b/_sam}  ^-  ?
   .=  ?@(q.a q.a q.q.a)               ::  by checking delimiter characters
   ?@(q.b q.b q.q.b)
 :: 
@@ -458,7 +458,7 @@
 ::
 ++  closes-code
  =+  sam=[?>(?=($code -) p..)]:(node [%code ~])         ::  XX do type stuff
- |=  {a+_sam b+_sam}
+ |=  {a/_sam b/_sam}
  ?~  a  ?=($~ b)
  ?~  b  |
  ?^  r.u.b  |
@@ -467,18 +467,18 @@
  ==
 ::
 ++  blank
-   |=  a+tape  ^-  ?
+   |=  a/tape  ^-  ?
    ?~  a  &
    &(=(' ' i.a) $(a t.a))
 ::
 ++  dehax                                                ::  strip trailing hax
   =+  nobas=;~(sfix (plus hax) ;~(pose ace end))
-  |=  a+tape
+  |=  a/tape
   %-  flop
   :(strip nobas (star ace) (flop a))
 ::
 ++  scab
-  |*  {a+tape b+rule}
+  |*  {a/tape b/rule}
   (wonk (b [1 1] a))
 ::
 ++  donp
@@ -503,13 +503,13 @@
                 ==
   ++  leaf  (leas ;~(pose head hrul fcode))             ::  any node
   ++  head  
-    %+  cook  |=(a+tape [%head (lent a) ~]) 
+    %+  cook  |=(a/tape [%head (lent a) ~]) 
     ;~(sfix (stun 1^6 hax) ;~(pose ace (ahed eol)))
   ::
   ++  hrul
     %+  cold  [%hrul ~]
     %.  ~[tar hep cab]  ::  (vary "*-_")
-    |*  a+(pole rule)
+    |*  a/(pole rule)
     ?~  a   fail
     ;~(pose ;~(plug (lots 3 (whif -.a)) (ahed eol)) $(a +.a))
   ::
@@ -539,7 +539,7 @@
   ++  icode  (cold `node`[%code ~ ~] (stun 4^4 ace))
   ++  fcode
     %.  ~['`' '~']   ::  (vary "`~")
-    |*  a+(pole char) 
+    |*  a/(pole char) 
     ?~  a   fail
     =-  ;~(pose fel $(a +.a))
     ^=  fel
@@ -548,17 +548,17 @@
                     (star ;~(less tec prn))
                     (ahed eol)
                   ==
-    |=  {b+(list) c+tape $~}
+    |=  {b/(list) c/tape $~}
     ^+  [?>(?=($code -) .)]:*node                       ::  XX do type stuff
     [%code `[-.a (add 3 (lent b)) c] ~]
   --
 ::
 ++  normalize
-  |=  a+down  ^-  down
-  %+  turn  a  |=  b+elem
+  |=  a/down  ^-  down
+  %+  turn  a  |=  b/elem
   ?^  -.b  b(q (turn q.b ..$))
   =-  ?+(-.b b $para b(p (- p.b)), $head b(q (- q.b)))
-  |=  c+kids  ^-  kids
+  |=  c/kids  ^-  kids
   ?~  c  ~
   ?:  ?&  ?=(^ t.c)
           ?=($$ -.i.c)
@@ -582,16 +582,16 @@
 ++  parseb  =>(parse .(bug &))
 ++  parse
   =+  [bug=| bugi=|]
-  |=  tub+nail
+  |=  tub/nail
   =.  q.tub
     %+  scan  q.tub                   ::  tab hackery  ::  XX per line
     (star ;~(pose prn tab nal))
-  =|  $:  $:  top+down                ::  finished toplevel elements
-              {sap+@u nod+node}       ::  spacing currrent leaf block
-              cur+stack               ::  stack of nested current blocks
+  =|  $:  $:  top/down                ::  finished toplevel elements
+              {sap/@u nod/node}       ::  spacing currrent leaf block
+              cur/stack               ::  stack of nested current blocks
           ==
-          {bun+_| hat+_|}             ::  prev blank? halt?
-          ref+(map cord {p+tape q+(unit tape)})        ::  link references
+          {bun/_| hat/_|}             ::  prev blank? halt?
+          ref/(map cord {p/tape q/(unit tape)})        ::  link references
       ==
   |^  ^-  (like _top)
       ?.  hat
@@ -609,8 +609,8 @@
   ++  debu  [&2 &2.-]:&2
   ::
   ++  proc-inline                                       ::  parse inline kids
-    |=  pac+_pars:inli                               ::  cache
-    |=  a+elem
+    |=  pac/_pars:inli                               ::  cache
+    |=  a/elem
     ?^  -.a  a(q (flop (turn q.a ..$)))
     ?+  -.a  a
       $code  
@@ -626,16 +626,16 @@
     ==
   ::
   ++  snack                                             ::  advance by parser
-    |*  a+rule
+    |*  a/rule
     ^-  {(unit _(wonk (a))) nail}
     =+  vex=(a tub)
     ?~  q.vex  [~ tub]
     [`p q]:u.q.vex
   ::
   ++  snake                                             ::  advance with trace
-    |*  fel+rule
+    |*  fel/rule
     =-  (snack (here - fel))
-    |*({{{@ a+@u} {@ b+@u}} c+*} [p=(sub b a) q=c])
+    |*({{{@ a/@u} {@ b/@u}} c/*} [p=(sub b a) q=c])
   ::
   ::
   ++  pop                                               ::  resolve container
@@ -645,7 +645,7 @@
     =-  =>  .(cur t.cur, q.p.tub p.i.cur)
         ?~  cur  self(top [hed top])
         self(q.q.i.cur [hed q.q.i.cur])
-    ^-  hed+tops
+    ^-  hed/tops
     =+  cub=q.i.cur
     ?+    -.p.cub  cub
         $list
@@ -667,7 +667,7 @@
       self(q.q.i.cur [nol q.q.i.cur])
     ::
     ++  pop-til                                         ::  unwind stack
-      |=  a+stack
+      |=  a/stack
       ^+  self
       ?~  cur  self
       ?:  =(a cur)  self
@@ -708,8 +708,8 @@
       =.  q.tub
         =-  (trip (role -))
         %+  turn 
-          ;;((list {$$ p+tape}) (flop p.nod))         ::  XX do type stuff  
-        |=({@ a+tape} (crip a))  
+          ;;((list {$$ p/tape}) (flop p.nod))         ::  XX do type stuff  
+        |=({@ a/tape} (crip a))  
       |-  ^+  self
       =^  ren  tub  (snack (leas href):inli)
       ?^  ren
@@ -721,7 +721,7 @@
     ==
   ::
   ++  push                                              ::  open block
-    |=  nit+(loca _p:*tops)  ^+  +>  
+    |=  nit/(loca _p:*tops)  ^+  +>  
     =.  self  cull
     =+  toz=[q.nit ~]
     ?.  ?=({$list ^} q.nit)  
@@ -730,7 +730,7 @@
     (shove p.nit [%item ~]~)
   ::
   ++  shove
-    |=  a+(loca tops)  ^+  +>
+    |=  a/(loca tops)  ^+  +>
     ?~  cur  +>(cur [a cur])
     ::  =*  cub  q.i.cur
     ?.  ?=(nesting [-.p.q.i.cur -.q.a])
@@ -738,20 +738,20 @@
     +>(cur [a cur])
   ::
   ++  pump                                              ::  push leaf block
-    |=  a+$^({p+node q+@u} node)
+    |=  a/$^({p/node q/@u} node)
     ^+  +>
     =+  nex=cull
     ?@  -.a  nex(nod a)
     nex(nod p.a, sap q.a)
   ::
   ++  match                                             ::  check top element
-    |=  a+elem  ^-  ?
+    |=  a/elem  ^-  ?
     ?~  cur  |
     =(-.a -.q.i.cur)
   ::
   ::
   ++  collapse                                          ::  skim elems off top
-    |=  a+(list (pair @ tops))  ^+  +>
+    |=  a/(list (pair @ tops))  ^+  +>
     ?~  a  +>
     :: ?:  ?=([[@ *] ~] a)  +>
     ~?  bug  yank#[i.a blos]
@@ -769,7 +769,7 @@
   ::
   ++  delist  (pop-til top-list):bye
   ++  debloq
-    |=  ruc+_(flop cur)
+    |=  ruc/_(flop cur)
     ^+  self
     ?~  ruc  self
     ?.  ?=($bloq -.p.q.i.ruc)
@@ -786,7 +786,7 @@
         ?.  ?=($item -.p.q.i.cur)
           (. cur)
         [i.cur (. t.cur)]
-    |=  a+_cur  ^+  a
+    |=  a/_cur  ^+  a
     ~?  >  bug  naro#[debu nil-li a cur]
     ?~  a  a
     ?:  ?=({{$item $~} $~} q.i.a)
@@ -796,7 +796,7 @@
     a(p.p.q.i |)
   ::
   ++  blos                                              ::  extract elem list
-    (flop (turn cur |*({@ a+tops} a)))
+    (flop (turn cur |*({@ a/tops} a)))
   ::
   ++  eat-line                                          ::  high-level line nom
     ^+  .  
@@ -832,7 +832,7 @@
   ++  eat
     |%
     ++  sepa                                            ::  consume blank line
-      |=  ruc+_(flop cur)  ^+  self
+      |=  ruc/_(flop cur)  ^+  self
       ?:  ?=({$code ^ *} nod)                           ::  ignore in blocks
         self
       =^  buf  tub  (snack ;~(sfix (star ace) nal))
@@ -894,10 +894,10 @@
         !!
       ==
     ::
-    ++  aces  |=(a+@u ^+(tub +:(snack (stun 0^a ace)))) ::  nom optional leading
+    ++  aces  |=(a/@u ^+(tub +:(snack (stun 0^a ace)))) ::  nom optional leading
     ::
     ++  lazy                                            ::  errant prev bloqs
-      |=  ruc+(list (pair @ tops))
+      |=  ruc/(list (pair @ tops))
       ^+  self
       ~?  bug  laze#[debu ruc]
       ?.  ?=($para -.nod)

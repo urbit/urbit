@@ -7,7 +7,7 @@
 :::::::
   !:
 :-  %say
-|=  {^ arg+{contact+@t address+@t $~} $~}
+|=  {^ arg/{contact/@t address/@t $~} $~}
 :-  %bit-contact
 [contact.arg address.arg]
 

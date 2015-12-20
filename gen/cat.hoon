@@ -8,10 +8,10 @@
 ::::
   ::
 :-  %say
-|=  {^ {arg+(list path)} $~}
+|=  {^ {arg/(list path)} $~}
 =-  tang#(flop `tang`(zing -))
 %+  turn  arg
-|=  pax+path
+|=  pax/path
 ^-  tang
 =+  ark=;;(arch .^(%cy pax))
 ?^  fil.ark

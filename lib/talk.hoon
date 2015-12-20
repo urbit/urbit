@@ -11,7 +11,7 @@
 [. ^talk]
 |%
 ++  main                                                ::  main story
-  |=  our+ship  ^-  cord
+  |=  our/ship  ^-  cord
   =+  can=(clan our)
   ?+  can  %porch
     $czar  %court
@@ -19,7 +19,7 @@
   == 
 ::
 ++  said                                                ::  app message
-  |=  {our+@p dap+term now+@da eny+@uvI mes+(list tank)}
+  |=  {our/@p dap/term now/@da eny/@uvI mes/(list tank)}
   :-  %talk-command
   ^-  command
   :-  %publish
@@ -33,7 +33,7 @@
 ::
 ++  rend-work-duty
   =+  work-stuff
-  |^  |=  due+duty  ^-  tape
+  |^  |=  due/duty  ^-  tape
       ?-    -.due
           $archive  =+(due " -{(tr-id id)} fin.")
           $create   =+(due " -{(tr-id id.tax)} new: {<title.tax>}")
@@ -42,10 +42,10 @@
         =+  due
         " -{(tr-id id)} v{<version>} by {<her>} {(tr-meat meat.due)}"
       ==
-  ++  tr-id  |=(a+@uv (scow %uv (rsh 2 25 a)))
+  ++  tr-id  |=(a/@uv (scow %uv (rsh 2 25 a)))
   ++  tr-term  
-    |=  a+term
-    =+  ^-  {typ+tape key+tape}
+    |=  a/term
+    =+  ^-  {typ/tape key/tape}
         %+  rash  a
         ;~  (glue hep)
           (plus aln)
@@ -56,7 +56,7 @@
       $add  "+{key}"
     ==
   ++  tr-meat
-    |=  feh+flesh  ^-  tape
+    |=  feh/flesh  ^-  tape
     ?-  -.feh
       $set-done         =+(feh ?:(don (tr-term -.feh) (tr-term %set-undone)))
       $set-doer         =+(feh "{(tr-term -.feh)} {?~(her "none" <u.her>)}")

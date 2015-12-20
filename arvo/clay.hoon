@@ -10,132 +10,132 @@
 ::  worth noting that many of the clay-related structures are defined in zuse.
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-|=  pit+vase
+|=  pit/vase
 =>  |%
 ++  cane                                                ::  change set
-          $:  new+(map path lobe)                       ::  new files
-              cal+(map path lobe)                       ::  old diffs
-              can+(map path cage)                       ::  new diffs
-              old+(map path $~)                         ::  deleted files
+          $:  new/(map path lobe)                       ::  new files
+              cal/(map path lobe)                       ::  old diffs
+              can/(map path cage)                       ::  new diffs
+              old/(map path $~)                         ::  deleted files
           ==                                            ::
 ++  cult  (map duct rove)                               ::  subscriptions
 ++  dojo                                                ::  domestic desk state
-          $:  qyx+cult                                  ::  subscribers
-              dom+dome                                  ::  desk data
-              dok+(unit dork)                           ::  outstanding diffs
-              mer+(unit mery)                           ::  outstanding merge
+          $:  qyx/cult                                  ::  subscribers
+              dom/dome                                  ::  desk data
+              dok/(unit dork)                           ::  outstanding diffs
+              mer/(unit mery)                           ::  outstanding merge
           ==                                            ::
 ++  gift  gift-clay                                     ::  out result <-$
 ++  kiss  kiss-clay                                     ::  in request ->$
 ++  mery                                                ::  merge state
-          $:  sor+(pair ship desk)                      ::  merge source
-              hen+duct                                  ::  formal source
-              gem+germ                                  ::  strategy
-              wat+wait                                  ::  waiting on
-              cas+case                                  ::  ali's case
-              ali+yaki                                  ::  ali's commit
-              bob+yaki                                  ::  bob's commit
-              bas+yaki                                  ::  mergebase
-              dal+cane                                  ::  diff(bas,ali)
-              dob+cane                                  ::  diff(bas,bob)
-              bof+(map path (unit cage))                ::  conflict diffs
-              bop+(map path cage)                       ::  conflict patches
-              new+yaki                                  ::  merge(dal,dob)
-              ank+ankh                                  ::  new state
-              erg+(map path ?)                          ::  ergoable changes
-              gon+(each (set path) (pair term (list tank))) ::  return value
+          $:  sor/(pair ship desk)                      ::  merge source
+              hen/duct                                  ::  formal source
+              gem/germ                                  ::  strategy
+              wat/wait                                  ::  waiting on
+              cas/case                                  ::  ali's case
+              ali/yaki                                  ::  ali's commit
+              bob/yaki                                  ::  bob's commit
+              bas/yaki                                  ::  mergebase
+              dal/cane                                  ::  diff(bas,ali)
+              dob/cane                                  ::  diff(bas,bob)
+              bof/(map path (unit cage))                ::  conflict diffs
+              bop/(map path cage)                       ::  conflict patches
+              new/yaki                                  ::  merge(dal,dob)
+              ank/ankh                                  ::  new state
+              erg/(map path ?)                          ::  ergoable changes
+              gon/(each (set path) (pair term (list tank))) ::  return value
           ==                                            ::
 ++  wait  $?  $null   $ali    $diff-ali   $diff-bob     ::  what are we
               $merge  $build  $checkout   $ergo         ::  waiting for?
           ==                                            ::
-++  moot  {p+case q+case r+path s+(map path lobe)}      ::  stored change range
-++  move  {p+duct q+(mold note gift)}                   ::  local move
-++  nako  $:  gar+(map aeon tako)                       ::  new ids
-              let+aeon                                  ::  next id
-              lar+(set yaki)                            ::  new commits
-              bar+(set plop)                            ::  new content
+++  moot  {p/case q/case r/path s/(map path lobe)}      ::  stored change range
+++  move  {p/duct q/(mold note gift)}                   ::  local move
+++  nako  $:  gar/(map aeon tako)                       ::  new ids
+              let/aeon                                  ::  next id
+              lar/(set yaki)                            ::  new commits
+              bar/(set plop)                            ::  new content
           ==                                            ::
 ++  note                                                ::  out request $->
           $%  $:  $a                                    ::  to %ames
-          $%  {$wont p+sock q+path r+*}                 ::
+          $%  {$wont p/sock q/path r/*}                 ::
           ==  ==                                        ::
               $:  $c                                    ::  to %clay
-          $%  {$info p+@p q+@tas r+nori}                ::  internal edit
-              {$merg p+@p q+@tas r+@p s+@tas t+case u+germ}  ::  merge desks
-              {$warp p+sock q+riff}                     ::
+          $%  {$info p/@p q/@tas r/nori}                ::  internal edit
+              {$merg p/@p q/@tas r/@p s/@tas t/case u/germ}  ::  merge desks
+              {$warp p/sock q/riff}                     ::
           ==  ==                                        ::
               $:  $d                                    ::
-          $%  {$flog p+{$crud p+@tas q+(list tank)}}    ::  to %dill
+          $%  {$flog p/{$crud p/@tas q/(list tank)}}    ::  to %dill
           ==  ==                                        ::
               $:  $f                                    ::
-          $%  {$exec p+@p q+(unit {beak silk})}         ::
+          $%  {$exec p/@p q/(unit {beak silk})}         ::
           ==  ==                                        ::
               $:  $t                                    ::
-          $%  {$wait p+@da}                             ::
-              {$rest p+@da}                             ::
+          $%  {$wait p/@da}                             ::
+              {$rest p/@da}                             ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $?  $:  $a                                    ::  by %ames
-          $%  {$woot p+ship q+coop}                     ::
+          $%  {$woot p/ship q/coop}                     ::
           ==  ==                                        ::
               $:  $c                                    ::  by %clay
-          $%  {$note p+@tD q+tank}                      ::
-              {$mere p+(each (set path) (pair term tang))}
-              {$writ p+riot}                            ::
+          $%  {$note p/@tD q/tank}                      ::
+              {$mere p/(each (set path) (pair term tang))}
+              {$writ p/riot}                            ::
           ==  ==                                        ::
               $:  $f                                    ::
-          $%  {$made p+@uvH q+gage}                     ::
+          $%  {$made p/@uvH q/gage}                     ::
           ==  ==                                        ::
               $:  $t                                    ::
           $%  {$wake $~}                                ::  timer activate
           ==  ==                                        ::
               $:  @tas                                  ::  by any
-          $%  {$crud p+@tas q+(list tank)}              ::
+          $%  {$crud p/@tas q/(list tank)}              ::
           ==  ==  ==                                    ::
 ++  raft                                                ::  filesystem
-          $:  fat+(map ship room)                       ::  domestic
-              hoy+(map ship rung)                       ::  foreign
-              ran+rang                                  ::  hashes
-              mon+(map term beam)                       ::  mount points
-              hez+(unit duct)                           ::  sync duct
+          $:  fat/(map ship room)                       ::  domestic
+              hoy/(map ship rung)                       ::  foreign
+              ran/rang                                  ::  hashes
+              mon/(map term beam)                       ::  mount points
+              hez/(unit duct)                           ::  sync duct
           ==                                            ::
 ++  rede                                                ::  universal project
-          $:  lim+@da                                   ::  complete to
-              ref+(unit rind)                           ::  outgoing requests
-              qyx+cult                                  ::  subscribers
-              dom+dome                                  ::  revision state
-              dok+(unit dork)                           ::  outstanding diffs
-              mer+(unit mery)                           ::  outstanding merges
+          $:  lim/@da                                   ::  complete to
+              ref/(unit rind)                           ::  outgoing requests
+              qyx/cult                                  ::  subscribers
+              dom/dome                                  ::  revision state
+              dok/(unit dork)                           ::  outstanding diffs
+              mer/(unit mery)                           ::  outstanding merges
           ==                                            ::
 ++  rind                                                ::  request manager
-          $:  nix+@ud                                   ::  request index
-              bom+(map @ud {p+duct q+rave})             ::  outstanding
-              fod+(map duct @ud)                        ::  current requests
-              haw+(map mood (unit cage))                ::  simple cache
-              nak+(unit nako)                           ::  pending validation
+          $:  nix/@ud                                   ::  request index
+              bom/(map @ud {p/duct q/rave})             ::  outstanding
+              fod/(map duct @ud)                        ::  current requests
+              haw/(map mood (unit cage))                ::  simple cache
+              nak/(unit nako)                           ::  pending validation
           ==                                            ::
 ++  room                                                ::  fs per ship
-          $:  hun+duct                                  ::  terminal duct
-              dos+(map desk dojo)                       ::  native desk
+          $:  hun/duct                                  ::  terminal duct
+              dos/(map desk dojo)                       ::  native desk
           ==                                            ::
 ++  rove                                                ::  stored request
-          $%  {$sing p+mood}                            ::  single request
-              {$next p+mood q+(unit (each cage lobe))}  ::  next version
-              {$many p+? q+moot}                        ::  change range
+          $%  {$sing p/mood}                            ::  single request
+              {$next p/mood q/(unit (each cage lobe))}  ::  next version
+              {$many p/? q/moot}                        ::  change range
           ==                                            ::
-++  rung  $:  rus+(map desk rede)                       ::  neighbor desks
+++  rung  $:  rus/(map desk rede)                       ::  neighbor desks
           ==                                            ::
-++  tage  {{$tabl p+(list (pair marc marc))} q+vase}    ::  %tabl gage
+++  tage  {{$tabl p/(list (pair marc marc))} q/vase}    ::  %tabl gage
 ++  dork                                                ::  diff work
-          $:  del+(list path)                           ::  deletes
-              ink+(list (pair path cage))               ::  hoo{nk}
-              ins+(unit (list (pair path cage)))        ::  inserts
-              dig+(map path cage)                       ::  store diffs
-              dif+(unit (list (trel path lobe cage)))   ::  changes
-              muc+(map path cage)                       ::  store mutations
-              muh+(map path lobe)                       ::  store hashes
-              mut+(unit (list (trel path lobe cage)))   ::  mutations
-              mim+(map path mime)                       ::  mime cache
+          $:  del/(list path)                           ::  deletes
+              ink/(list (pair path cage))               ::  hoo{nk}
+              ins/(unit (list (pair path cage)))        ::  inserts
+              dig/(map path cage)                       ::  store diffs
+              dif/(unit (list (trel path lobe cage)))   ::  changes
+              muc/(map path cage)                       ::  store mutations
+              muh/(map path lobe)                       ::  store hashes
+              mut/(unit (list (trel path lobe cage)))   ::  mutations
+              mim/(map path mime)                       ::  mime cache
           ==                                            ::
 --  =>
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -189,10 +189,10 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |%
 ++  de                                                  ::  per desk
-  |=  {now+@da hen+duct raft}
-  |=  {{our+@p her+@p} syd+desk}
+  |=  {now/@da hen/duct raft}
+  |=  {{our/@p her/@p} syd/desk}
   =*  ruf  +>+<+>
-  =+  ^-  {hun+(unit duct) rede}
+  =+  ^-  {hun/(unit duct) rede}
       =+  rom=(~(get by fat.ruf) her)
       ?~  rom
         :-  ~
@@ -215,7 +215,7 @@
           mer=mer.jod
       ==
   =*  red  ->
-  =|  mow+(list move)
+  =|  mow/(list move)
   |%
   ++  abet
     ^-  {(list move) raft}
@@ -228,7 +228,7 @@
     (flop mow)
   ::
   ++  aver                                              ::  read
-    |=  mun+mood
+    |=  mun/mood
     ^-  (unit (unit (each cage lobe)))
     =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
     ?^  ezy
@@ -237,22 +237,22 @@
     ::  ~&  [%aver-mun nao [%from syd lim q.mun]]
     ?~(nao ~ (read-at-aeon:ze u.nao mun))
   ::
-  ++  ford-fail  |=(tan+tang ~|(%ford-fail (mean tan)))
+  ++  ford-fail  |=(tan/tang ~|(%ford-fail (mean tan)))
   ++  unwrap-tang
-    |*  res+(each * tang)
+    |*  res/(each * tang)
     ?:(?=($& -.res) p.res (mean p.res))
   ::
   ++  gage-to-cages
-    |=  gag+gage  ^-  (list (pair cage cage))
+    |=  gag/gage  ^-  (list (pair cage cage))
     (unwrap-tang (gage-to-tage gag))
   ::
   ++  gage-to-success-cages
-    |=  gag+gage
+    |=  gag/gage
     ^-  (list (pair cage cage))
     ?.  ?=($tabl -.gag)
       (ford-fail ?-(-.gag $| p.gag, $& [>%strange-gage p.p.gag<]~))
     %+  murn  p.gag
-    |=  {key+gage val+gage}  ^-  (unit {cage cage})
+    |=  {key/gage val/gage}  ^-  (unit {cage cage})
     ?.  ?=($& -.key)
       (ford-fail ?-(-.key $| p.key, $tabl [>%strange-gage<]~))
     ?-  -.val
@@ -264,7 +264,7 @@
     ==
   ::
   ++  gage-to-tage
-    |=  gag+gage
+    |=  gag/gage
     ^-  (each (list (pair cage cage)) tang)
     ?:  ?=($| -.gag)  (mule |.(`$~`(ford-fail p.gag)))
     ?.  ?=($tabl -.gag)
@@ -284,8 +284,8 @@
     ==       ==
   ::
   ++  cages-to-map
-    |=  tay+(list (pair cage cage))
-    =|  can+(map path cage)
+    |=  tay/(list (pair cage cage))
+    =|  can/(map path cage)
     |-  ^-  (each (map path cage) tang)
     ?~  tay   [%& can]
     =*  pax  p.i.tay
@@ -294,29 +294,29 @@
     $(tay t.tay, can (~(put by can) ((hard path) q.q.pax) q.i.tay))
   ::
   ++  emit
-    |=  mof+move
+    |=  mof/move
     %_(+> mow [mof mow])
   ::
   ++  emil
-    |=  mof+(list move)
+    |=  mof/(list move)
     %_(+> mow (welp mof mow))
   ::
   ++  balk                                              ::  read and send
-    |=  {hen+duct cay+(unit (each cage lobe)) mun+mood}
+    |=  {hen/duct cay/(unit (each cage lobe)) mun/mood}
     ^+  +>
     ?~  cay  (blub hen)
     (blab hen mun u.cay)
   ::
   ++  bait
-    |=  {hen+duct tym+@da}
+    |=  {hen/duct tym/@da}
     (emit hen %pass /tyme %t %wait tym)
   ::
   ++  best
-    |=  {hen+duct tym+@da}
+    |=  {hen/duct tym/@da}
     (emit hen %pass /tyme %t %rest tym)
   ::
   ++  blab                                              ::  ship result
-    |=  {hen+duct mun+mood dat+(each cage lobe)}
+    |=  {hen/duct mun/mood dat/(each cage lobe)}
     ^+  +>
     ?:  ?=($& -.dat)
       (emit hen %give %writ ~ [p.mun q.mun syd] r.mun p.dat)
@@ -326,7 +326,7 @@
     ==
   ::
   ++  bleb                                              ::  ship sequence
-    |=  {hen+duct ins+@ud hip+(unit (pair aeon aeon))}
+    |=  {hen/duct ins/@ud hip/(unit (pair aeon aeon))}
     ^+  +>
     %^  blab  hen  [%w [%ud ins] ~]
     :-  %&
@@ -335,19 +335,19 @@
     [%nako !>((make-nako:ze u.hip))]
   ::
   ++  blub                                              ::  ship stop
-    |=  hen+duct
+    |=  hen/duct
     (emit hen %give %writ ~)
   ::
   ++  print-to-dill
-    |=  {car+@tD tan+tank}
+    |=  {car/@tD tan/tank}
     (emit (need hun) %give %note car tan)
   ::
   ++  send-over-ames
-    |=  {a+duct b+path c+ship d+{p+@ud q+riff}}
+    |=  {a/duct b/path c/ship d/{p/@ud q/riff}}
     (emit a %pass b %a %wont [our c] [%c %question p.q.d (scot %ud p.d) ~] q.d)
   ::
   ++  duce                                              ::  produce request
-    |=  rov+rove
+    |=  rov/rove
     ^+  +>
     =.  qyx  (~(put by qyx) hen rov)
     ?~  ref
@@ -368,22 +368,22 @@
     ==
   ::
   ++  must-ergo
-    |=  can+(list path)
+    |=  can/(list path)
     ^-  (map term (pair @ud (set path)))
     %-  mo  ^-  (list (trel term @ud (set path)))
     %+  murn  (~(tap by mon))
-    |=  {nam+term bem+beam}
+    |=  {nam/term bem/beam}
     ^-  (unit (trel term @ud (set path)))
     =-  ?~(- ~ `[nam (lent s.bem) (sa -)])
     %+  skim  can
-    |=  pax+path
+    |=  pax/path
     &(=(p.bem her) =(q.bem syd) =((flop s.bem) (scag (lent s.bem) pax)))
   ::
   ++  mont
-    |=  {pot+term pax+path}
+    |=  {pot/term pax/path}
     ^+  +>
     =+  can=(turn (~(tap by q:(aeon-to-yaki:ze let.dom))) head)
-    =+  mus=(skim can |=(paf+path =(pax (scag (lent pax) paf))))
+    =+  mus=(skim can |=(paf/path =(pax (scag (lent pax) paf))))
     ?~  mus
       +>.$
     %-  emit
@@ -391,7 +391,7 @@
         %exec  our  ~  [her syd %da now]  %tabl
         ^-  (list (pair silk silk))
         %+  turn  `(list path)`mus
-        |=  a+path
+        |=  a/path
         ^-  (pair silk silk)
         :-  [%$ %path !>(a)]
         :+  %cast  %mime
@@ -421,7 +421,7 @@
     ==
   ::
   ++  eave                                              ::  subscribe
-    |=  rav+rave
+    |=  rav/rave
     ^+  +>
     ?-    -.rav
         $sing
@@ -473,7 +473,7 @@
     ==
   ::
   ++  echo                                              ::  announce changes
-    |=  {wen+@da lem+nuri}
+    |=  {wen/@da lem/nuri}
     ^+  +>
     =+  pre=`path`~[(scot %p her) syd (scot %ud let.dom)]
     ?-  -.lem
@@ -485,7 +485,7 @@
               ?-(-.q.i.p.lem $del '-', $ins '+', $dif ':')
             :+  %rose  ["/" "/" ~]
             %+  turn  (weld pre p.i.p.lem)
-            |=  a+cord
+            |=  a/cord
             ?:  ((sane %ta) a)
               [%leaf (trip a)]
             [%leaf (dash:ut (trip a) '\'')]
@@ -548,7 +548,7 @@
   ::  again.
   ::
   ++  edit                                              ::  apply changes
-    |=  {wen+@da lem+nori}
+    |=  {wen/@da lem/nori}
     ^+  +>
     ?:  ?=($| -.lem)
       =^  hat  +>.$
@@ -565,7 +565,7 @@
     =^  ink  ins
       ^-  {(list (pair path miso)) (list (pair path miso))}
       %+  skid  `(list (pair path miso))`ins
-      |=  {pax+path mis+miso}
+      |=  {pax/path mis/miso}
       ?>  ?=($ins -.mis)
       ?&  ?=({$?($hoon $hook) *} (flop pax))
           ?=($mime p.p.mis)
@@ -578,7 +578,7 @@
               %f  %exec  our  ~  [her syd %da wen]  %tabl
               ^-  (list (pair silk silk))
               %+  turn  ins
-              |=  {pax+path mis+miso}
+              |=  {pax/path mis/miso}
               ?>  ?=($ins -.mis)
               :-  [%$ %path -:!>(*path) pax]
               =+  =>((flop pax) ?~(. %$ i))
@@ -589,7 +589,7 @@
               %f  %exec  our  ~  [her syd %da wen]  %tabl
               ^-  (list (pair silk silk))
               %+  turn  dif
-              |=  {pax+path mis+miso}
+              |=  {pax/path mis/miso}
               ?>  ?=($dif -.mis)
               =+  (need (need (read-x:ze let.dom pax)))
               ?>  ?=($& -<)
@@ -601,7 +601,7 @@
               %f  %exec  our  ~  [her syd %da wen]  %tabl
               ^-  (list (pair silk silk))
               %+  turn  mut
-              |=  {pax+path mis+miso}
+              |=  {pax/path mis/miso}
               ?>  ?=($mut -.mis)
               :-  [%$ %path -:!>(*path) pax]
               =+  (lobe-to-mark:ze (~(got by q:(aeon-to-yaki:ze let.dom)) pax))
@@ -611,10 +611,10 @@
     %_    +>.$
         dok
       :-  ~
-      :*  (turn del |=({pax+path mis+miso} ?>(?=($del -.mis) pax)))
+      :*  (turn del |=({pax/path mis/miso} ?>(?=($del -.mis) pax)))
       ::
           %+  turn  ink
-          |=  {pax+path mis+miso}
+          |=  {pax/path mis/miso}
           ^-  (pair path cage)
           ?>  ?=($ins -.mis)
           =+  =>((flop pax) ?~(. %$ i))
@@ -622,11 +622,11 @@
       ::
           ~
       ::
-          (mo (turn dif |=({pax+path mis+miso} ?>(?=($dif -.mis) [pax p.mis]))))
+          (mo (turn dif |=({pax/path mis/miso} ?>(?=($dif -.mis) [pax p.mis]))))
       ::
           ~
       ::
-          (mo (turn mut |=({pax+path mis+miso} ?>(?=($mut -.mis) [pax p.mis]))))
+          (mo (turn mut |=({pax/path mis/miso} ?>(?=($mut -.mis) [pax p.mis]))))
       ::
           ~
       ::
@@ -636,7 +636,7 @@
           ;:  welp
             ^-  (list (pair path mime))
             %+  murn  ins
-            |=  {pax+path mis+miso}
+            |=  {pax/path mis/miso}
             ^-  (unit (pair path mime))
             ?>  ?=($ins -.mis)
             ?.  ?=($mime p.p.mis)
@@ -645,7 +645,7 @@
           ::
             ^-  (list (pair path mime))
             %+  murn  ink
-            |=  {pax+path mis+miso}
+            |=  {pax/path mis/miso}
             ^-  (unit (pair path mime))
             ?>  ?=($ins -.mis)
             ?>  ?=($mime p.p.mis)
@@ -653,7 +653,7 @@
           ::
             ^-  (list (pair path mime))
             %+  murn  mut
-            |=  {pax+path mis+miso}
+            |=  {pax/path mis/miso}
             ^-  (unit (pair path mime))
             ?>  ?=($mut -.mis)
             ?.  ?=($mime p.p.mis)
@@ -664,9 +664,9 @@
     ==
   ::
   ++  apply-edit
-    |=  wen+@da
+    |=  wen/@da
     ^+  +>
-    =+  ^-  sim+(list (pair path misu))
+    =+  ^-  sim/(list (pair path misu))
         ?~  dok
           ~|(%no-changes !!)
         ?>  ?=(^ ins.u.dok)
@@ -674,19 +674,19 @@
         ?>  ?=(^ mut.u.dok)
         ;:  welp
           ^-  (list (pair path misu))
-          (turn del.u.dok |=(pax+path [pax %del ~]))
+          (turn del.u.dok |=(pax/path [pax %del ~]))
         ::
           ^-  (list (pair path misu))
-          (turn ink.u.dok |=({pax+path cay+cage} [pax %ins cay]))
+          (turn ink.u.dok |=({pax/path cay/cage} [pax %ins cay]))
         ::
           ^-  (list (pair path misu))
-          (turn u.ins.u.dok |=({pax+path cay+cage} [pax %ins cay]))
+          (turn u.ins.u.dok |=({pax/path cay/cage} [pax %ins cay]))
         ::
           ^-  (list (pair path misu))
-          (turn u.dif.u.dok |=({pax+path cal+{lobe cage}} [pax %dif cal]))
+          (turn u.dif.u.dok |=({pax/path cal/{lobe cage}} [pax %dif cal]))
         ::
           ^-  (list (pair path misu))
-          (turn u.mut.u.dok |=({pax+path cal+{lobe cage}} [pax %dif cal]))
+          (turn u.mut.u.dok |=({pax/path cal/{lobe cage}} [pax %dif cal]))
         ==
     =+  hat=(edit:ze wen %& sim)
     ?~  dok  ~&  %no-changes  !!
@@ -695,7 +695,7 @@
     (checkout-ankh(lat.ran lat.ran.+.hat) u.-.hat)
   ::
   ++  take-inserting
-    |=  {wen+@da res+gage}
+    |=  {wen/@da res/gage}
     ^+  +>
     ?~  dok
       ~&  %clay-take-inserting-unexpected-made  +>.$
@@ -709,13 +709,13 @@
         +>.$
     ^-  (list (pair path cage))
     %+  turn  (gage-to-success-cages res)
-    |=  {pax+cage cay+cage}
+    |=  {pax/cage cay/cage}
     ?.  ?=($path p.pax)
       ~|(%clay-take-inserting-strange-path-mark !!)
     [((hard path) q.q.pax) cay]
   ::
   ++  take-diffing
-    |=  {wen+@da res+gage}
+    |=  {wen/@da res/gage}
     ^+  +>
     ?~  dok
       ~&  %clay-take-diffing-unexpected-made  +>.$
@@ -729,7 +729,7 @@
         +>.$
     ^-  (list (trel path lobe cage))
     %+  turn  (gage-to-cages res)
-    |=  {pax+cage cay+cage}
+    |=  {pax/cage cay/cage}
     ^-  (pair path (pair lobe cage))
     ?.  ?=($path p.pax)
       ~|(%clay-take-diffing-strange-path-mark !!)
@@ -737,22 +737,22 @@
     [paf (page-to-lobe:ze [p q.q]:cay) (~(got by dig.u.dok) paf)]
   ::
   ++  take-castify
-    |=  {wen+@da res+gage}
+    |=  {wen/@da res/gage}
     ^+  +>
     ?~  dok
       ~&  %clay-take-castifying-unexpected-made  +>.$
     ?.  =(~ muh.u.dok)
       ~&  %clay-take-castifying-redundant-made  +>.$
-    =+  ^-  cat+(list (pair path cage))
+    =+  ^-  cat/(list (pair path cage))
         %+  turn  (gage-to-cages res)
-        |=  {pax+cage cay+cage}
+        |=  {pax/cage cay/cage}
         ?.  ?=($path p.pax)
           ~|(%castify-bad-path-mark !!)
         [((hard path) q.q.pax) cay]
     =.  muh.u.dok
           %-  mo
           %+  turn  cat
-          |=  {pax+path cay+cage}
+          |=  {pax/path cay/cage}
           [pax (page-to-lobe:ze [p q.q]:cay)]
     %-  emit
     :*  hen  %pass
@@ -760,14 +760,14 @@
         %f  %exec  our  ~  [her syd %da wen]  %tabl
         ^-  (list (pair silk silk))
         %+  turn  cat
-        |=  {pax+path cay+cage}
+        |=  {pax/path cay/cage}
         :-  [%$ %path -:!>(*path) pax]
         =+  (lobe-to-silk:ze pax (~(got by q:(aeon-to-yaki:ze let.dom)) pax))
         [%diff - [%$ cay]]
     ==
   ::
   ++  take-mutating
-    |=  {wen+@da res+gage}
+    |=  {wen/@da res/gage}
     ^+  +>
     ?~  dok
       ~&  %clay-take-mutating-unexpected-made  +>.$
@@ -781,7 +781,7 @@
         +>.$
     ^-  (list (trel path lobe cage))
     %+  murn  (gage-to-cages res)
-    |=  {pax+cage cay+cage}
+    |=  {pax/cage cay/cage}
     ^-  (unit (pair path (pair lobe cage)))
     ?.  ?=($path p.pax)
       ~|(%clay-take-mutating-strange-path-mark !!)
@@ -791,14 +791,14 @@
     `[paf (~(got by muh.u.dok) paf) cay]
   ::
   ++  take-patch
-    |=  res+gage
+    |=  res/gage
     ^+  +>
     ::  ~&  %taking-patch
     ?:  ?=($| -.res)
       =.  dok  ~
       (print-to-dill '!' %rose [" " "" ""] leaf#"clay patch failed" p.res)
     ::  ~&  %editing
-    =+  ^-  sim+(list (pair path misu))
+    =+  ^-  sim/(list (pair path misu))
         ?~  dok
           ~|(%no-changes !!)
         ?>  ?=(^ ins.u.dok)
@@ -806,19 +806,19 @@
         ?>  ?=(^ mut.u.dok)
         ;:  welp
           ^-  (list (pair path misu))
-          (turn del.u.dok |=(pax+path [pax %del ~]))
+          (turn del.u.dok |=(pax/path [pax %del ~]))
         ::
           ^-  (list (pair path misu))
-          (turn ink.u.dok |=({pax+path cay+cage} [pax %ins cay]))
+          (turn ink.u.dok |=({pax/path cay/cage} [pax %ins cay]))
         ::
           ^-  (list (pair path misu))
-          (turn u.ins.u.dok |=({pax+path cay+cage} [pax %ins cay]))
+          (turn u.ins.u.dok |=({pax/path cay/cage} [pax %ins cay]))
         ::
           ^-  (list (pair path misu))
-          (turn u.dif.u.dok |=({pax+path cal+{lobe cage}} [pax %dif cal]))
+          (turn u.dif.u.dok |=({pax/path cal/{lobe cage}} [pax %dif cal]))
         ::
           ^-  (list (pair path misu))
-          (turn u.mut.u.dok |=({pax+path cal+{lobe cage}} [pax %dif cal]))
+          (turn u.mut.u.dok |=({pax/path cal/{lobe cage}} [pax %dif cal]))
         ==
     =^  hat  +>.$  (edit:ze now %& sim)  ::  XX  do same in ++apply-edit
     ?~  dok  ~&  %no-dok  +>.$
@@ -829,9 +829,9 @@
         (echo now %& sim)
       ==
     ?~  dok  ~&  %no-dok  +>.$
-    =+  ^-  cat+(list (trel path lobe cage))
+    =+  ^-  cat/(list (trel path lobe cage))
         %+  turn  (gage-to-cages res)
-        |=  {pax+cage cay+cage}
+        |=  {pax/cage cay/cage}
         ?.  ?=($path-hash p.pax)
           ~|(%patch-bad-path-mark !!)
         [-< -> +]:[((hard {path lobe}) q.q.pax) cay]
@@ -846,10 +846,10 @@
     =+  mus=(must-ergo (turn sim head))
     ?:  =(~ mus)
       +>.$(dok ~)
-    =+  ^-  sum+(set path)
+    =+  ^-  sum/(set path)
         =+  (turn (~(tap by mus)) (corl tail tail))
         %+  roll  -
-        |=  {pak+(set path) acc+(set path)}
+        |=  {pak/(set path) acc/(set path)}
         (~(uni in acc) pak)
     =+  can=(mo sim)
     ::  ~&  %forming-ergo
@@ -859,7 +859,7 @@
         %exec  our  ~  [her syd %da now]  %tabl
         ^-  (list (pair silk silk))
         %+  turn  (~(tap in sum))
-        |=  a+path
+        |=  a/path
         ^-  (pair silk silk)
         :-  [%$ %path !>(a)]
         =+  b=(~(got by can) a)
@@ -876,15 +876,15 @@
   ::
   ::  See ++edit for a description of the commit flow.
   ++  take-ergo
-    |=  res+gage
+    |=  res/gage
     ^+  +>
     ?:  ?=($| -.res)
       (print-to-dill '!' %rose [" " "" ""] leaf#"clay ergo failed" p.res)
     ?~  hez  ~|(%no-sync-duct !!)
-    =+  ^-  can+(map path (unit mime))
+    =+  ^-  can/(map path (unit mime))
         %-  mo  ^-  mode
         %+  turn  (gage-to-cages res)
-        |=  {pax+cage mim+cage}
+        |=  {pax/cage mim/cage}
         ?.  ?=($path p.pax)
           ~|(%ergo-bad-path-mark !!)
         :-  ((hard path) q.q.pax)
@@ -894,46 +894,46 @@
     =+  mus=(must-ergo (turn (~(tap by can)) head))
     %-  emil
     %+  turn  (~(tap by mus))
-    |=  {pot+term len+@ud pak+(set path)}
+    |=  {pot/term len/@ud pak/(set path)}
     :*  u.hez  %give  %ergo  pot
         %+  turn  (~(tap in pak))
-        |=  pax+path
+        |=  pax/path
         [(slag len pax) (~(got by can) pax)]
     ==
   ::
   ::  See ++edit for a description of the commit flow.
   ++  checkout-ankh
-    |=  hat+(map path lobe)
+    |=  hat/(map path lobe)
     ^+  +>
     %-  emit
     :*  hen  %pass  [%patching (scot %p her) syd ~]  %f
         %exec  our  :^  ~  [her syd %da now]  %tabl
         ^-  (list (pair silk silk))
         %+  turn  (~(tap by hat))
-        |=  {a+path b+lobe}
+        |=  {a/path b/lobe}
         ^-  (pair silk silk)
         :-  [%$ %path-hash !>([a b])]
         (lobe-to-silk:ze a b)
     ==
   ::
   ++  apply-foreign-update                              ::  apply subscription
-    |=  $:  lem+(unit @da)                              ::  complete up to
-            gar+(map aeon tako)                         ::  new ids
-            let+aeon                                    ::  next id
-            lar+(set yaki)                              ::  new commits
-            bar+(set blob)                              ::  new content
+    |=  $:  lem/(unit @da)                              ::  complete up to
+            gar/(map aeon tako)                         ::  new ids
+            let/aeon                                    ::  next id
+            lar/(set yaki)                              ::  new commits
+            bar/(set blob)                              ::  new content
         ==
     ^+  +>
     =<  wake
-    =+  ^-  nut+(map tako yaki)
+    =+  ^-  nut/(map tako yaki)
         %-  mo  ^-  (list (pair tako yaki))
         %+  turn  (~(tap in lar))
-        |=  yak+yaki
+        |=  yak/yaki
         [r.yak yak]
-    =+  ^-  nat+(map lobe blob)
+    =+  ^-  nat/(map lobe blob)
         %-  mo  ^-  (list (pair lobe blob))
         %+  turn  (~(tap in bar))
-        |=  bol+blob
+        |=  bol/blob
         [p.bol bol]
     ~|  :*  %bad-foreign-update
             :*  gar=gar
@@ -958,7 +958,7 @@
         =+  tak=(~(got by hit) yon)
         =+  yak=(~(got by hut) tak)
         =+  %-  ~(urn by q.yak)
-            |=  {pax+path lob+lobe}
+            |=  {pax/path lob/lobe}
             ~|  [pax=path lob=lobe]
             (~(got by lat) lob)
         ?:  =(let yon)
@@ -973,7 +973,7 @@
     ==
   ::
   ++  exec                                            ::  change and update
-    |=  {wen+@da lem+nori}
+    |=  {wen/@da lem/nori}
     ^+  +>
     (edit wen lem)
   ::
@@ -981,7 +981,7 @@
   ::  must call it individually.
   ::
   ++  take-foreign-update                              ::  external change
-    |=  {inx+@ud rut+(unit rand)}
+    |=  {inx/@ud rut/(unit rand)}
     ^+  +>
     ?>  ?=(^ ref)
     |-  ^+  +>+.$
@@ -1066,7 +1066,7 @@
     ==
   ::
   ++  validate-x
-    |=  {car+care cas+case pax+path peg+page}
+    |=  {car/care cas/case pax/path peg/page}
     ^+  +>
     %-  emit
     :*  hen  %pass
@@ -1076,7 +1076,7 @@
     ==
   ::
   ++  take-foreign-x
-    |=  {car+care cas+case pax+path res+gage}
+    |=  {car/care cas/case pax/path res/gage}
     ^+  +>
     ?>  ?=(^ ref)
     ?.  ?=($& -.res)
@@ -1088,7 +1088,7 @@
     wake(haw.u.ref (~(put by haw.u.ref) [car cas pax] `p.res))
   ::
   ++  validate-plops
-    |=  {cas+case lem+(unit @da) pop+(set plop)}
+    |=  {cas/case lem/(unit @da) pop/(set plop)}
     ^+  +>
     =+  lum=(scot %da (fall lem *@da))
     %-  emit
@@ -1097,7 +1097,7 @@
         %f  %exec  our  ~  [her syd cas]  %tabl
         ^-  (list (pair silk silk))
         %+  turn  (~(tap in pop))
-        |=  a+plop
+        |=  a/plop
         ?-  -.a
           $delta   [[%$ %blob !>([%delta p.a q.a *page])] [%vale p.r.a q.r.a]]
           $direct  [[%$ %blob !>([%direct p.a *page])] [%vale p.q.a q.q.a]]
@@ -1105,13 +1105,13 @@
     ==
   ::
   ++  take-foreign-plops
-    |=  {lem+(unit @da) res+gage}
+    |=  {lem/(unit @da) res/gage}
     ^+  +>
     ?>  ?=(^ ref)
     ?>  ?=(^ nak.u.ref)
-    =+  ^-  lat+(list blob)
+    =+  ^-  lat/(list blob)
         %+  turn  ~|("validate foreign plops failed" (gage-to-cages res))
-        |=  {bob+cage cay+cage}
+        |=  {bob/cage cay/cage}
         ?.  ?=($blob p.bob)
           ~|  %plop-not-blob
           !!
@@ -1128,7 +1128,7 @@
     (sa lat)
   ::
   ++  mabe                                            ::  maybe fire function
-    |*  {rov+rove fun+$+(@da _+>.^$)}
+    |*  {rov/rove fun/$+(@da _+>.^$)}
     ^+  +>.$
     %-  fall  :_  +>.$
     %-  bind  :_  fun
@@ -1149,7 +1149,7 @@
     ==
   ::
   ++  reve
-    |=  rov+rove
+    |=  rov/rove
     ^-  rave
     ?-  -.rov
       $sing  rov
@@ -1158,14 +1158,14 @@
     ==
   ::
   ++  rive
-    |=  rav+{$many p+? q+moat}
+    |=  rav/{$many p/? q/moat}
     ^-  rove
     [%many p.rav p.q.rav q.q.rav r.q.rav ~]
   ::
   ++  wake                                            ::  update subscribers
     ^+  .
     =+  xiq=(~(tap by qyx) ~)
-    =|  xaq+(list {p+duct q+rove})
+    =|  xaq/(list {p/duct q/rove})
     |-  ^+  ..wake
     ?~  xiq
       ..wake(qyx (~(gas by *cult) xaq))
@@ -1279,16 +1279,16 @@
     ++  lobe-to-blob  ~(got by lat.ran)
     ++  tako-to-yaki  ~(got by hut.ran)
     ++  lobe-to-mark
-      |=  a+lobe
+      |=  a/lobe
       =>  (lobe-to-blob a)
       ?-  -
         $delta      p.q
         $direct     p.q
       ==
     ++  lobe-to-silk                  ::  XX  maybe move hoo{n,k} stuff here
-      |=  {pax+path lob+lobe}
+      |=  {pax/path lob/lobe}
       ^-  silk
-      =+  ^-  hat+(map path lobe)
+      =+  ^-  hat/(map path lobe)
           ?:  =(let.dom 0)
             ~
           q:(aeon-to-yaki let.dom)
@@ -1307,7 +1307,7 @@
     ::
     ++  page-to-lobe  |=(page (shax (jam +<)))
     ++  equivalent-data
-      |=  {one+(each cage lobe) two+(each cage lobe)}
+      |=  {one/(each cage lobe) two/(each cage lobe)}
       ^-  ?
       ?:  ?=($& -.one)
         ?:  ?=($& -.two)
@@ -1318,17 +1318,17 @@
       =(p.one p.two)
     ::
     ++  make-direct                                     ::  make blob
-      |=  p+page
+      |=  p/page
       ^-  blob
       [%direct (page-to-lobe p) p]
     ::
     ++  make-delta                                      ::  make blob delta
-      |=  {p+lobe q+{p+mark q+lobe} r+page}
+      |=  {p/lobe q/{p/mark q/lobe} r/page}
       ^-  blob
       [%delta p q r]
     ::
     ++  make-yaki                                       ::  make yaki
-      |=  {p+(list tako) q+(map path lobe) t+@da}
+      |=  {p/(list tako) q/(map path lobe) t/@da}
       ^-  yaki
       =+  ^=  has
           %^  cat  7  (sham [%yaki (roll p add) q t])
@@ -1336,7 +1336,7 @@
       [p q has t]
     ::
     ++  apply-changes                                   ::   apply-changes:ze
-      |=  lar+(list {p+path q+misu})                   ::  store changes
+      |=  lar/(list {p/path q/misu})                   ::  store changes
       ^-  (map path blob)
       =+  ^=  hat                                       ::  current state
           ?:  =(let.dom 0)                              ::  initial commit
@@ -1344,10 +1344,10 @@
           =<  q
           %-  aeon-to-yaki
           let.dom
-      =-  =+  sar=(sa (turn lar |=({p+path *} p)))      ::  changed paths
+      =-  =+  sar=(sa (turn lar |=({p/path *} p)))      ::  changed paths
           %+  roll  (~(tap by hat) ~)                   ::  find unchanged
           =<  .(bat bar)
-          |=  {{pax+path gar+lobe} bat+(map path blob)}
+          |=  {{pax/path gar/lobe} bat/(map path blob)}
           ?:  (~(has in sar) pax)                       ::  has update
             bat
           %+  ~(put by bat)  pax
@@ -1355,7 +1355,7 @@
           (lobe-to-blob gar)                            ::  use original
       ^=  bar  ^-  (map path blob)
       %+  roll  lar
-      |=  {{pax+path mys+misu} bar+(map path blob)}
+      |=  {{pax/path mys/misu} bar/(map path blob)}
       ^+  bar
       ?-    -.mys
           $ins                                          ::  insert if not exist
@@ -1392,7 +1392,7 @@
       ==
     ::
     ++  case-to-aeon                                    ::    case-to-aeon:ze
-      |=  lok+case                                      ::  act count through
+      |=  lok/case                                      ::  act count through
       ^-  (unit aeon)
       ?-    -.lok
           $da
@@ -1413,11 +1413,11 @@
       ==
     ::
     ++  checkout-ankh
-      |=  hat+(map path (pair lobe cage))
+      |=  hat/(map path (pair lobe cage))
       ^-  ankh
       ::  %-  cosh
       %+  roll  (~(tap by hat) ~)
-      |=  {{pat+path lob+lobe zar+cage} ank+ankh}
+      |=  {{pat/path lob/lobe zar/cage} ank/ankh}
       ^-  ankh
       ::  %-  cosh
       ?~  pat
@@ -1429,7 +1429,7 @@
       ==
     ::
     ++  edit                                            ::    edit:ze
-      |=  {wen+@da lem+nuri}                            ::  edit
+      |=  {wen/@da lem/nuri}                            ::  edit
       ^-  {(unit (map path lobe)) _..ze}
       ?-  -.lem
         $&
@@ -1455,22 +1455,22 @@
       ==
     ::
     ++  equiv                                           ::  test paths
-      |=  {p+(map path lobe) q+(map path lobe)}
+      |=  {p/(map path lobe) q/(map path lobe)}
       ^-  ?
       =-  ?.  qat  %.n
           %+  levy  (~(tap by q) ~)
-          |=  {pat+path lob+lobe}
+          |=  {pat/path lob/lobe}
           (~(has by p) pat)
       ^=  qat
       %+  levy  (~(tap by p) ~)
-      |=  {pat+path lob+lobe}
+      |=  {pat/path lob/lobe}
       =+  zat=(~(get by q) pat)
       ?~  zat  %.n
       =(u.zat lob)
       ::  =((lobe-to-cage u.zat) (lobe-to-cage lob))
     ::
     ++  forge-yaki                                      ::    forge-yaki:ze
-      |=  {wen+@da par+(unit tako) lem+suba}            ::  forge yaki
+      |=  {wen/@da par/(unit tako) lem/suba}            ::  forge yaki
       =+  ^=  per
           ?~  par  ~
           ~[u.par]
@@ -1479,7 +1479,7 @@
       -.gar                                             ::  fix lat
     ::
     ++  lobes-at-path                                   ::    lobes-at-path:ze
-      |=  {yon+aeon pax+path}                           ::  data at path
+      |=  {yon/aeon pax/path}                           ::  data at path
       ^-  (map path lobe)
       ?:  =(0 yon)  ~
       %-  mo
@@ -1489,7 +1489,7 @@
         =<  q
         %-  aeon-to-yaki
         yon
-      |=  {p+path q+lobe}
+      |=  {p/path q/lobe}
       ?|  ?=($~ pax)
           ?&  !?=($~ p)
               =(-.pax -.p)
@@ -1497,7 +1497,7 @@
       ==  ==
     ::
     ++  make-nako
-      |=  {a+aeon b+aeon}
+      |=  {a/aeon b/aeon}
       ^-  nako
       :+  ?>  (lte b let.dom)
           |-
@@ -1510,7 +1510,7 @@
       (data-twixt-takos (~(get by hit.dom) a) (aeon-to-tako b))
     ::
     ++  query                                           ::    query:ze
-      |=  ren+$?($u $v $x $y $z)                        ::  endpoint query
+      |=  ren/$?($u $v $x $y $z)                        ::  endpoint query
       ^-  (unit cage)
       ?-  ren
         $u  !!  ::  [~ %null [%atom %n] ~]
@@ -1521,15 +1521,15 @@
       ==
     ::
     ++  new-lobes                                       ::  object hash set
-      |=  {b+(set lobe) a+(set tako)}                   ::  that aren't in b
+      |=  {b/(set lobe) a/(set tako)}                   ::  that aren't in b
       ^-  (set lobe)
       %+  roll  (~(tap in a) ~)
-      |=  {tak+tako bar+(set lobe)}
+      |=  {tak/tako bar/(set lobe)}
       ^-  (set lobe)
       =+  yak=(tako-to-yaki tak)
       %+  roll  (~(tap by q.yak) ~)
       =<  .(far bar)
-      |=  {{path lob+lobe} far+(set lobe)}
+      |=  {{path lob/lobe} far/(set lobe)}
       ^-  (set lobe)
       ?~  (~(has in b) lob)                             ::  don't need
         far
@@ -1540,30 +1540,30 @@
       ==
     ::
     ++  data-twixt-takos
-      |=  {a+(unit tako) b+tako}
+      |=  {a/(unit tako) b/tako}
       ^-  {(set yaki) (set plop)}
       =+  old=?~(a ~ (reachable-takos u.a))
-      =+  ^-  yal+(set tako)
+      =+  ^-  yal/(set tako)
           %-  sa
           %+  skip
             (~(tap in (reachable-takos b)))
-          |=(tak+tako (~(has in old) tak))
+          |=(tak/tako (~(has in old) tak))
       :-  (sa (turn (~(tap in yal)) tako-to-yaki))
       (sa (turn (~(tap in (new-lobes (new-lobes ~ old) yal))) lobe-to-blob))
     ::
     ++  reachable-takos                                 ::  reachable
-      |=  p+tako                                        ::  XX slow
+      |=  p/tako                                        ::  XX slow
       ^-  (set tako)
       =+  y=(tako-to-yaki p)
       %+  roll  p.y
       =<  .(s (~(put in *(set tako)) p))
-      |=  {q+tako s+(set tako)}
+      |=  {q/tako s/(set tako)}
       ?:  (~(has in s) q)                               ::  already done
         s                                               ::  hence skip
       (~(uni in s) ^$(p q))                             ::  otherwise traverse
     ::
     ++  read                                            ::    read:ze
-      |=  mun+mood                                      ::  read at point
+      |=  mun/mood                                      ::  read at point
       ^-  (unit cage)
       ?:  ?=($v p.mun)
         [~ %dome !>(dom)]
@@ -1577,7 +1577,7 @@
       (query(ank.dom ank:(descend-path:(zu ank.dom) r.mun)) p.mun)
     ::
     ++  read-u
-      |=  {yon+aeon pax+path}
+      |=  {yon/aeon pax/path}
       ^-  (unit (unit (each {$null (hypo $~)} lobe)))
       =+  tak=(~(get by hit.dom) yon)
       ?~  tak
@@ -1585,7 +1585,7 @@
       ```[%null [%atom %n] ~]
     ::
     ++  read-v
-      |=  {yon+aeon pax+path}
+      |=  {yon/aeon pax/path}
       ^-  (unit (unit {$dome (hypo dome)}))
       ?:  (lth yon let.dom)
         ~
@@ -1594,7 +1594,7 @@
       ``[%dome -:!>(*dome) dom]
     ::
     ++  read-x
-      |=  {yon+aeon pax+path}
+      |=  {yon/aeon pax/path}
       ^-  (unit (unit (each cage lobe)))
       ?:  =(0 yon)
         [~ ~]
@@ -1627,7 +1627,7 @@
       (end 3 (dec (met 3 pac)) pac)
     ::
     ++  read-y
-      |=  {yon+aeon pax+path}
+      |=  {yon/aeon pax/path}
       ^-  (unit (unit {$arch (hypo arch)}))
       ?:  =(0 yon)
         ``[%arch -:!>(*arch) *arch]
@@ -1640,16 +1640,16 @@
       ::  ~&  cy#pax
       :-  -:!>(*arch)
       ^-  arch
-      =+  ^-  descendants+(list (pair path lobe))
+      =+  ^-  descendants/(list (pair path lobe))
           ::  ~&  %turning
           ::  =-  ~&  %turned  -
           %+  turn
             ::  ~&  %skimming
             ::  =-  ~&  %skimmed  -
             %+  skim  (~(tap by (~(del by q.yak) pax)))
-            |=  {paf+path lob+lobe}
+            |=  {paf/path lob/lobe}
             =(pax (scag len paf))
-          |=  {paf+path lob+lobe}
+          |=  {paf/path lob/lobe}
           [(slag len paf) lob]
       =+  us=(~(get by q.yak) pax)
       :+  ?:  &(?=($~ descendants) ?=($~ us))
@@ -1662,11 +1662,11 @@
       ^-  (map span $~)
       %-  mo  ^-  (list (pair span $~))
       %+  turn  descendants
-      |=  {paf+path lob+lobe}
+      |=  {paf/path lob/lobe}
       [?>(?=(^ paf) i.paf) ~]
     ::
     ++  read-at-aeon                                    ::    read-at-aeon:ze
-      |=  {yon+aeon mun+mood}                           ::  seek and read
+      |=  {yon/aeon mun/mood}                           ::  seek and read
       ^-  (unit (unit (each cage lobe)))
       ?:  &(?=($w p.mun) !?=($ud -.q.mun))              ::  NB only her speed
         ?^(r.mun [~ ~] [~ ~ %& %aeon !>(yon)])
@@ -1689,19 +1689,19 @@
         (bind (read-y yon r.mun) (curr bind (cury same %&)))
       %+  bind
         (rewind yon)
-      |=  a+(unit _+>.$)
+      |=  a/(unit _+>.$)
       ^-  (unit (each cage lobe))
       ?~  a
         ~
       `(unit (each cage lobe))`(bind (read:u.a mun) (cury same %&))
     ::
     ++  rewind                                          ::    rewind:ze
-      |=  yon+aeon                                      ::  rewind to aeon
+      |=  yon/aeon                                      ::  rewind to aeon
       ^-  (unit (unit _+>))
       ?:  =(let.dom yon)  ``+>
       ?:  (gth yon let.dom)  !!                         ::  don't have version
       =+  hat=q:(aeon-to-yaki yon)
-      ?:  (~(any by hat) |=(a+lobe ?=($delta [-:(lobe-to-blob a)])))
+      ?:  (~(any by hat) |=(a/lobe ?=($delta [-:(lobe-to-blob a)])))
         ~
       ~
       ::=+  ^-  (map path cage)
@@ -1712,28 +1712,28 @@
       ::`+>.$(ank.dom (checkout-ankh -), let.dom yon)
     ::
     ++  update-lat                                      ::   update-lat:ze
-      |=  {lag+(map path blob) sta+(map lobe blob)}     ::  fix lat
+      |=  {lag/(map path blob) sta/(map lobe blob)}     ::  fix lat
       ^-  {(map lobe blob) (map path lobe)}
       %+  roll  (~(tap by lag) ~)
       =<  .(lut sta)
-      |=  {{pat+path bar+blob} {lut+(map lobe blob) gar+(map path lobe)}}
+      |=  {{pat/path bar/blob} {lut/(map lobe blob) gar/(map path lobe)}}
       ?~  (~(has by lut) p.bar)
         [lut (~(put by gar) pat p.bar)]
       :-  (~(put by lut) p.bar bar)
       (~(put by gar) pat p.bar)
     ::
     ++  zu                                              ::  filesystem
-      |=  ank+ankh                                      ::  filesystem state
-      =|  ram+path                                      ::  reverse path into
+      |=  ank/ankh                                      ::  filesystem state
+      =|  ram/path                                      ::  reverse path into
       |%
       ++  descend                                       ::  descend
-        |=  lol+@ta
+        |=  lol/@ta
         ^+  +>
         =+  you=(~(get by dir.ank) lol)
         +>.$(ram [lol ram], ank ?~(you [~ ~] u.you))
       ::
       ++  descend-path                                  ::  descend recursively
-        |=  way+path
+        |=  way/path
         ^+  +>
         ?~(way +> $(way t.way, +> (descend i.way)))
       --
@@ -1791,9 +1791,9 @@
     ::
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     ++  me                                              ::  merge ali into bob
-      |=  {ali+(pair ship desk) alh+(unit ankh) new+?}  ::  from
+      |=  {ali/(pair ship desk) alh/(unit ankh) new/?}  ::  from
       =+  bob=`(pair ship desk)`[our syd]               ::  to
-      =+  ^-  dat+(each mery term)
+      =+  ^-  dat/(each mery term)
           ?~  mer
             ?:  new
               =+  *mery
@@ -1825,7 +1825,7 @@
       ?:  ?=($| -.dat)
         ~|(p.dat !!)
       =+  dat=p.dat
-      =|  don+?                                         ::  keep going
+      =|  don/?                                         ::  keep going
       |%
       ++  abet
         ^+  ..me
@@ -1844,7 +1844,7 @@
         %_(+> ..ze (^emil +<))
       ::
       ++  route
-        |=  {sat+term res+(each riot gage)}
+        |=  {sat/term res/(each riot gage)}
         ^+  +>.$
         ?.  =(sat wat.dat)
           ~|  :*  %hold-your-horses-merge-out-of-order
@@ -1866,7 +1866,7 @@
         ==
       ::
       ++  start
-        |=  {cas+case gem+germ}
+        |=  {cas/case gem/germ}
         ^+  +>
         ?:  &(=(0 let.dom) !?=(?($init $that) gem))
           (error:he %no-bob-desk ~)
@@ -1892,12 +1892,12 @@
         ==
       ::
       ++  fetched-ali
-        |=  rot+riot
+        |=  rot/riot
         ^+  +>
         ?~  rot
           (error:he %bad-fetch-ali ~)
         =+  ^=  dum
-            %-  (hard {ank+* let+@ud hit+(map @ud tako) lab+(map @tas @ud)})
+            %-  (hard {ank/* let/@ud hit/(map @ud tako) lab/(map @tas @ud)})
             q.q.r.u.rot
         ?:  =(0 let.dum)
           (error:he %no-ali-desk ~)
@@ -1931,7 +1931,7 @@
           =.  erg.dat
             %-  mo  ^-  (list {path ?})
             %+  murn  (~(tap by (~(uni by q.bob.dat) q.ali.dat)))
-            |=  {pax+path lob+lobe}
+            |=  {pax/path lob/lobe}
             ^-  (unit {path ?})
             =+  a=(~(get by q.ali.dat) pax)
             =+  b=(~(get by q.bob.dat) pax)
@@ -1955,7 +1955,7 @@
           =.  erg.dat
             %-  mo  ^-  (list {path ?})
             %+  murn  (~(tap by (~(uni by q.bob.dat) q.ali.dat)))
-            |=  {pax+path lob+lobe}
+            |=  {pax/path lob/lobe}
             ^-  (unit {path ?})
             =+  a=(~(get by q.ali.dat) pax)
             =+  b=(~(get by q.bob.dat) pax)
@@ -1985,12 +1985,12 @@
           =.  new.dal.dat
             %-  mo
             %+  skip  (~(tap by q.ali.dat))
-            |=  {pax+path lob+lobe}
+            |=  {pax/path lob/lobe}
             (~(has by q.bas.dat) pax)
           =.  cal.dal.dat
             %-  mo
             %+  skip  (~(tap by q.ali.dat))
-            |=  {pax+path lob+lobe}
+            |=  {pax/path lob/lobe}
             =+  (~(get by q.bas.dat) pax)
             |(=(~ -) =([~ lob] -))
           =.  can.dal.dat
@@ -1998,7 +1998,7 @@
           =.  old.dal.dat
             %-  mo  ^-  (list {path $~})
             %+  murn  (~(tap by q.bas.dat))
-            |=  {pax+path lob+lobe}
+            |=  {pax/path lob/lobe}
             ^-  (unit (pair path $~))
             ?.  =(~ (~(get by q.ali.dat) pax))
               ~
@@ -2006,12 +2006,12 @@
           =.  new.dob.dat
             %-  mo
             %+  skip  (~(tap by q.bob.dat))
-            |=  {pax+path lob+lobe}
+            |=  {pax/path lob/lobe}
             (~(has by q.bas.dat) pax)
           =.  cal.dob.dat
             %-  mo
             %+  skip  (~(tap by q.bob.dat))
-            |=  {pax+path lob+lobe}
+            |=  {pax/path lob/lobe}
             =+  (~(get by q.bas.dat) pax)
             |(=(~ -) =([~ lob] -))
           =.  can.dob.dat
@@ -2019,7 +2019,7 @@
           =.  old.dob.dat
             %-  mo  ^-  (list {path $~})
             %+  murn  (~(tap by q.bas.dat))
-            |=  {pax+path lob+lobe}
+            |=  {pax/path lob/lobe}
             ^-  (unit (pair path $~))
             ?.  =(~ (~(get by q.bob.dat) pax))
               ~
@@ -2036,10 +2036,10 @@
               `(map path *)`old.dob.dat
           ?^  bof
             (error:he %meet-conflict >(~(run by `(map path *)`bof) $~)< ~)
-          =+  ^-  old+(map path lobe)
+          =+  ^-  old/(map path lobe)
               %+  roll  (~(tap by (~(uni by old.dal.dat) old.dob.dat)))
               =<  .(old q.bas.dat)
-              |=  {{pax+path $~} old+(map path lobe)}
+              |=  {{pax/path $~} old/(map path lobe)}
               (~(del by old) pax)
           =+  ^=  hat
               %-  ~(uni by old)
@@ -2047,7 +2047,7 @@
               %-  ~(uni by new.dob.dat)
               %-  ~(uni by cal.dal.dat)
               cal.dob.dat
-          =+  ^-  del+(map path ?)
+          =+  ^-  del/(map path ?)
               (~(run by (~(uni by old.dal.dat) old.dob.dat)) |=($~ %|))
           =.  new.dat
             (make-yaki [r.ali.dat r.bob.dat ~] hat now)
@@ -2060,7 +2060,7 @@
         ==
       ::
       ++  diff-bas
-        |=  {nam+term yak+yaki oth+(trel ship desk case) yuk+yaki}
+        |=  {nam/term yak/yaki oth/(trel ship desk case) yuk/yaki}
         ^+  +>
         %-  emit
         :*  hen  %pass
@@ -2069,7 +2069,7 @@
             %f  %exec  p.bob  ~  [p.oth q.oth r.oth]  %tabl
             ^-  (list (pair silk silk))
             %+  murn  (~(tap by q.bas.dat))
-            |=  {pax+path lob+lobe}
+            |=  {pax/path lob/lobe}
             ^-  (unit (pair silk silk))
             =+  a=(~(get by q.yak) pax)
             ?~  a
@@ -2091,7 +2091,7 @@
         (diff-bas(wat.dat %diff-ali) %ali ali.dat [p.ali q.ali cas.dat] bob.dat)
       ::
       ++  diffed-ali
-        |=  res+gage
+        |=  res/gage
         ^+  +>
         =+  tay=(gage-to-tage res)
         ?:  ?=($| -.tay)
@@ -2104,12 +2104,12 @@
         =.  new.dal.dat
           %-  mo
           %+  skip  (~(tap by q.ali.dat))
-          |=  {pax+path lob+lobe}
+          |=  {pax/path lob/lobe}
           (~(has by q.bas.dat) pax)
         =.  cal.dal.dat
           %-  mo  ^-  (list (pair path lobe))
           %+  murn  (~(tap by q.bas.dat))
-          |=  {pax+path lob+lobe}
+          |=  {pax/path lob/lobe}
           ^-  (unit (pair path lobe))
           =+  a=(~(get by q.ali.dat) pax)
           =+  b=(~(get by q.bob.dat) pax)
@@ -2123,7 +2123,7 @@
         =.  old.dal.dat
           %-  mo  ^-  (list {path $~})
           %+  murn  (~(tap by q.bas.dat))
-          |=  {pax+path lob+lobe}
+          |=  {pax/path lob/lobe}
           ?.  =(~ (~(get by q.ali.dat) pax))
             ~
           (some pax ~)
@@ -2134,7 +2134,7 @@
         (diff-bas(wat.dat %diff-bob) %bob bob.dat [p.bob q.bob da#now] ali.dat)
       ::
       ++  diffed-bob
-        |=  res+gage
+        |=  res/gage
         ^+  +>
         =+  tay=(gage-to-tage res)
         ?:  ?=($| -.tay)
@@ -2147,12 +2147,12 @@
         =.  new.dob.dat
           %-  mo
           %+  skip  (~(tap by q.bob.dat))
-          |=  {pax+path lob+lobe}
+          |=  {pax/path lob/lobe}
           (~(has by q.bas.dat) pax)
         =.  cal.dob.dat
           %-  mo  ^-  (list (pair path lobe))
           %+  murn  (~(tap by q.bas.dat))
-          |=  {pax+path lob+lobe}
+          |=  {pax/path lob/lobe}
           ^-  (unit (pair path lobe))
           =+  a=(~(get by q.ali.dat) pax)
           =+  b=(~(get by q.bob.dat) pax)
@@ -2166,7 +2166,7 @@
         =.  old.dob.dat
           %-  mo  ^-  (list {path $~})
           %+  murn  (~(tap by q.bas.dat))
-          |=  {pax+path lob+lobe}
+          |=  {pax/path lob/lobe}
           ?.  =(~ (~(get by q.bob.dat) pax))
             ~
           (some pax ~)
@@ -2183,7 +2183,7 @@
               %f  %exec  p.bob  ~  [p.bob q.bob da#now]  %tabl
               ^-  (list (pair silk silk))
               %+  turn  (~(tap by (~(int by can.dal.dat) can.dob.dat)))
-              |=  {pax+path *}
+              |=  {pax/path *}
               ^-  (pair silk silk)
               =+  cal=(~(got by can.dal.dat) pax)
               =+  cob=(~(got by can.dob.dat) pax)
@@ -2196,14 +2196,14 @@
         ==
       ::
       ++  merged
-        |=  res+gage
+        |=  res/gage
         =+  tay=(gage-to-tage res)
         ?:  ?=($| -.tay)
           (error:he %merge-bad-made leaf#"merging failed" p.tay)
         =+  can=(cages-to-map p.tay)
         ?:  ?=($| -.can)
           (error:he %merge p.can)
-        =+  bof=(~(run by p.can) (flit |=({a+mark ^} !?=($null a))))
+        =+  bof=(~(run by p.can) (flit |=({a/mark ^} !?=($null a))))
         ?:  ?=($| -.gon.dat)
           +>.$
         =.  bof.dat  bof
@@ -2217,7 +2217,7 @@
             %f  %exec  p.bob  ~  [p.bob q.bob da#now]  %tabl
             ^-  (list (pair silk silk))
             %+  murn  (~(tap by bof.dat))
-            |=  {pax+path cay+(unit cage)}
+            |=  {pax/path cay/(unit cage)}
             ^-  (unit (pair silk silk))
             ?~  cay
               ~
@@ -2231,7 +2231,7 @@
         ==
       ::
       ++  built
-        |=  res+gage
+        |=  res/gage
         ^+  +>
         =+  tay=(gage-to-tage res)
         ?:  ?=($| -.tay)
@@ -2242,19 +2242,19 @@
         ?:  ?=($| -.gon.dat)
           +>.$
         =.  bop.dat  p.bop
-        =+  ^-  con+(map path *)                        ::  2-change conflict
+        =+  ^-  con/(map path *)                        ::  2-change conflict
             %-  mo
             %+  skim  (~(tap by bof.dat))
-            |=({pax+path cay+(unit cage)} ?=($~ cay))
-        =+  ^-  cas+(map path lobe)                     ::  conflict base
+            |=({pax/path cay/(unit cage)} ?=($~ cay))
+        =+  ^-  cas/(map path lobe)                     ::  conflict base
             %-  ~(urn by con)
-            |=  {pax+path *}
+            |=  {pax/path *}
             (~(got by q.bas.dat) pax)
         =.  con                                         ::  change#del conflict
           %-  ~(uni by con)
           %-  mo  ^-  (list {path *})
           %+  skim  (~(tap by old.dal.dat))
-          |=  {pax+path $~}
+          |=  {pax/path $~}
           ?:  (~(has by new.dob.dat) pax)
             ~|  %strange-add-and-del
             !!
@@ -2263,7 +2263,7 @@
           %-  ~(uni by con)
           %-  mo  ^-  (list {path *})
           %+  skim  (~(tap by old.dob.dat))
-          |=  {pax+path $~}
+          |=  {pax/path $~}
           ?:  (~(has by new.dal.dat) pax)
             ~|  %strange-del-and-add
             !!
@@ -2272,21 +2272,21 @@
           %-  ~(uni by con)
           %-  mo  ^-  (list {path *})
           %+  skip  (~(tap by (~(int by new.dal.dat) new.dob.dat)))
-          |=  {pax+path *}
+          |=  {pax/path *}
           =((~(got by new.dal.dat) pax) (~(got by new.dob.dat) pax))
         ?:  &(?=($mate gem.dat) ?=(^ con))
           =+  (turn (~(tap by `(map path *)`con)) |=({path *} >[+<-]<))
           (error:he %mate-conflict -)
-        =+  ^-  old+(map path lobe)                     ::  oldies but goodies
+        =+  ^-  old/(map path lobe)                     ::  oldies but goodies
             %+  roll  (~(tap by (~(uni by old.dal.dat) old.dob.dat)))
             =<  .(old q.bas.dat)
-            |=  {{pax+path $~} old+(map path lobe)}
+            |=  {{pax/path $~} old/(map path lobe)}
             (~(del by old) pax)
-        =+  ^-  can+(map path cage)                     ::  content changes
+        =+  ^-  can/(map path cage)                     ::  content changes
             %-  mo
             ^-  (list (pair path cage))
             %+  murn  (~(tap by bof.dat))
-            |=  {pax+path cay+(unit cage)}
+            |=  {pax/path cay/(unit cage)}
             ^-  (unit (pair path cage))
             ?~  cay
               ~
@@ -2295,7 +2295,7 @@
           ^-  {(map path lobe) (map lobe blob)}
           %+  roll  (~(tap by can))
           =<  .(lat lat.ran)
-          |=  {{pax+path cay+cage} hat+(map path lobe) lat+(map lobe blob)}
+          |=  {{pax/path cay/cage} hat/(map path lobe) lat/(map lobe blob)}
           =+  ^=  bol
               =+  (~(get by q.bas.dat) pax)
               ?~  -
@@ -2313,7 +2313,7 @@
         ::  ~&  caldob=(~(run by cal.dob.dat) mug)
         ::  ~&  hot=(~(run by hot) mug)
         ::  ~&  cas=(~(run by cas) mug)
-        =+  ^-  hat+(map path lobe)                     ::  all the content
+        =+  ^-  hat/(map path lobe)                     ::  all the content
           %-  ~(uni by old)
           %-  ~(uni by new.dal.dat)
           %-  ~(uni by new.dob.dat)
@@ -2322,7 +2322,7 @@
           %-  ~(uni by hot)
           cas
         ::  ~&  >  hat=(~(run by hat) mug)
-        =+  ^-  del+(map path ?)
+        =+  ^-  del/(map path ?)
             (~(run by (~(uni by old.dal.dat) old.dob.dat)) |=($~ %|))
         =.  gon.dat  [%& (sa (turn (~(tap by con)) head))]
         =.  new.dat
@@ -2340,7 +2340,7 @@
       ::
       ++  checkout
         ^+  .
-        =+  ^-  val+beak
+        =+  ^-  val/beak
             ?:  ?=($init gem.dat)
               [p.ali q.ali cas.dat]
             [p.bob q.bob da#now]
@@ -2350,7 +2350,7 @@
             %f  %exec  p.bob  ~  val  %tabl
             ^-  (list (pair silk silk))
             %+  murn  (~(tap by q.new.dat))
-            |=  {pax+path lob+lobe}
+            |=  {pax/path lob/lobe}
             ^-  (unit (pair silk silk))
             ?:  (~(has by bop.dat) pax)
               ~
@@ -2358,7 +2358,7 @@
         ==
       ::
       ++  checked-out
-        |=  res+gage
+        |=  res/gage
         ^+  +>
         =+  tay=(gage-to-tage res)
         ?:  ?=($| -.tay)
@@ -2383,14 +2383,14 @@
       ::
       ++  ergo
         ^+  .
-        =+  ^-  sum+(set path)
+        =+  ^-  sum/(set path)
             =+  (must-ergo (turn (~(tap by erg.dat)) head))
             =+  (turn (~(tap by -)) (corl tail tail))
             %+  roll  -
-            |=  {pak+(set path) acc+(set path)}
+            |=  {pak/(set path) acc/(set path)}
             (~(uni in acc) pak)
         =+  zez=ze(ank.dom ank.dat)
-        =+  ^-  val+beak
+        =+  ^-  val/beak
             ?:  ?=($init gem.dat)
               [p.ali q.ali cas.dat]
             [p.bob q.bob da#now]
@@ -2400,7 +2400,7 @@
             %f  %exec  p.bob  ~  val  %tabl
             ^-  (list (pair silk silk))
             %+  turn  (~(tap in sum))
-            |=  a+path
+            |=  a/path
             ^-  (pair silk silk)
             :-  [%$ %path !>(a)]
             =+  b=(~(got by erg.dat) a)
@@ -2411,13 +2411,13 @@
         ==
       ::
       ++  ergoed
-        |=  res+gage
+        |=  res/gage
         ^+  +>
         =+  tay=(gage-to-tage res)
         ?:  ?=($| -.tay)
           (error:he %ergo-bad-made leaf#"merge ergo failed" p.tay)
-        =+  =|  nac+mode
-            |-  ^-  tan+$^(mode {p+term q+tang})
+        =+  =|  nac/mode
+            |-  ^-  tan/$^(mode {p/term q/tang})
             ?~  p.tay  nac
             =*  pax  p.i.p.tay
             ?.  ?=($path p.pax)
@@ -2426,7 +2426,7 @@
             =+  mit=?.(?=($mime p.mim) ~ `((hard mime) q.q.mim))
             $(p.tay t.p.tay, nac :_(nac [((hard path) q.q.pax) mit]))
         ?:  ?=({@ *} tan)  (error:he tan)
-        =+  `can+(map path (unit mime))`(mo tan)
+        =+  `can/(map path (unit mime))`(mo tan)
         ?~  hez
           (error:he %ergo-no-hez ~)
         ?:  ?=($| -.gon.dat)
@@ -2435,10 +2435,10 @@
         =<  done:he
         %-  emil
         %+  turn  (~(tap by mus))
-        |=  {pot+term len+@ud pak+(set path)}
+        |=  {pot/term len/@ud pak/(set path)}
         :*  u.hez  %give  %ergo  pot
             %+  turn  (~(tap in pak))
-            |=  pax+path
+            |=  pax/path
             [(slag len pax) (~(got by can) pax)]
         ==
       ::
@@ -2455,31 +2455,31 @@
           ..he(don |)
         ::
         ++  error
-          |=  {err+term tan+(list tank)}
+          |=  {err/term tan/(list tank)}
           ^+  ..he
           ..he(don |, gon.dat [%| err >ali< >bob< >cas.dat< >gem.dat< tan])
         ::
         ++  find-merge-points
-          |=  {p+yaki q+yaki}                           ::  maybe need jet
+          |=  {p/yaki q/yaki}                           ::  maybe need jet
           ^-  (set yaki)
           %-  reduce-merge-points
           =+  r=(reachable-takos r.p)
           |-  ^-  (set yaki)
           ?:  (~(has in r) r.q)  (~(put in *(set yaki)) q)
           %+  roll  p.q
-          |=  {t+tako s+(set yaki)}
+          |=  {t/tako s/(set yaki)}
           ?:  (~(has in r) t)
             (~(put in s) (tako-to-yaki t))              ::  found
           (~(uni in s) ^$(q (tako-to-yaki t)))          ::  traverse
         ::
         ++  merge-lobe-to-silk
-          |=  {pax+path lob+lobe}
+          |=  {pax/path lob/lobe}
           ^-  silk
           =+  hat=q.ali.dat
           =+  hot=q.bob.dat
           =+  ^=  lal
               %+  biff  alh
-              |=  hal+ankh
+              |=  hal/ankh
               (~(get by hat) pax)
           =+  lol=(~(get by hot) pax)
           |-  ^-  silk
@@ -2496,19 +2496,19 @@
           ==
         ::
         ++  reduce-merge-points
-          |=  unk+(set yaki)                            ::  maybe need jet
-          =|  gud+(set yaki)
+          |=  unk/(set yaki)                            ::  maybe need jet
+          =|  gud/(set yaki)
           =+  ^=  zar
               ^-  (map tako (set tako))
               %+  roll  (~(tap in unk))
-              |=  {yak+yaki qar+(map tako (set tako))}
+              |=  {yak/yaki qar/(map tako (set tako))}
               (~(put by qar) r.yak (reachable-takos r.yak))
           |-
           ^-  (set yaki)
           ?~  unk  gud
           =+  bun=(~(del in `(set yaki)`unk) n.unk)
           ?:  %+  levy  (~(tap by (~(uni in gud) bun)) ~)
-              |=  yak+yaki
+              |=  yak/yaki
               !(~(has in (~(got by zar) r.yak)) r.n.unk)
             $(gud (~(put in gud) n.unk), unk bun)
           $(unk bun)
@@ -2532,14 +2532,14 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
     $:  $0                                            ::  vane version
-        ruf+raft                                      ::  revision tree
+        ruf/raft                                      ::  revision tree
     ==                                                ::
-|=  {now+@da eny+@ ski+sled}                          ::  activate
+|=  {now/@da eny/@ ski/sled}                          ::  activate
 ^?                                                    ::  opaque core
 |%                                                    ::
 ++  call                                              ::  handle request
-  |=  $:  hen+duct
-          hic+(hypo (hobo kiss))
+  |=  $:  hen/duct
+          hic/(hypo (hobo kiss))
       ==
   =>  %=    .                                         ::  XX temporary
           q.hic
@@ -2594,7 +2594,7 @@
     =+  bem=(~(get by mon.ruf) p.q.hic)
     ?:  &(?=($~ bem) !=(%$ p.q.hic))
       ~|([%bad-mount-point-from-unix p.q.hic] !!)
-    =+  ^-  bem+beam
+    =+  ^-  bem/beam
         ?^  bem
           u.bem
         [[?>(?=(^ fat.ruf) p.n.fat.ruf) %base %ud 1] ~]
@@ -2606,9 +2606,9 @@
       ~
     ?:  =(0 let.dom.u.dos)
       =+  cos=(mode-to-soba ~ s.bem q.q.hic r.q.hic)
-      =+  ^-  {one+(list {path miso}) two+(list {path miso})}
+      =+  ^-  {one/(list {path miso}) two/(list {path miso})}
           %+  skid  cos
-          |=  {a+path b+miso}
+          |=  {a/path b/miso}
           ?&  ?=($ins -.b)
               ?=($mime p.p.b)
               =+  (slag (dec (lent a)) a)
@@ -2667,7 +2667,7 @@
         ==
     %+  turn
       (skim (~(tap by mon.ruf)) (corl (cury test p.q.hic) tail))
-    |=  {pot+term bem+beam}
+    |=  {pot/term bem/beam}
     [u.hez.ruf %give %ogre pot]
   ::
       $warp
@@ -2719,17 +2719,17 @@
 ::
 ::  All timers are handled by `%behn` nowadays.
 ++  doze
-  |=  {now+@da hen+duct}
+  |=  {now/@da hen/duct}
   ^-  (unit @da)
   ~
 ::
 ++  load
-  |=  old+{$0 ruf+raft}
+  |=  old/{$0 ruf/raft}
   ^+  ..^$
   ..^$(ruf ruf.old)
 ::
 ++  scry                                              ::  inspect
-  |=  {fur+(unit (set monk)) ren+@tas his+ship syd+desk lot+coin tyl+path}
+  |=  {fur/(unit (set monk)) ren/@tas his/ship syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
   ::  ~&  scry#[ren `path`[(scot %p his) syd ~(rent co lot) tyl]]
   ::  =-  ~&  %scry-done  -
@@ -2749,7 +2749,7 @@
 ::
 ++  stay  [%0 ruf]
 ++  take                                              ::  accept response
-  |=  {tea+wire hen+duct hin+(hypo sign)}
+  |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [p=*(list move) q=..^$]
   ?:  ?=({$merge @ @ @ @ @ $~} tea)
     ?>  ?=(?($writ $made) +<.q.hin)
@@ -2759,7 +2759,7 @@
     =*  sud  i.t.t.t.t.tea
     =*  sat  i.t.t.t.t.t.tea
     =+  dat=?-(+<.q.hin $writ [%& p.q.hin], $made [%| q.q.hin])
-    =+  ^-  kan+(unit ankh)
+    =+  ^-  kan/(unit ankh)
         %+  biff  (~(get by fat.ruf) her)
         |=  room
         %+  bind  (~(get by dos) sud)
@@ -2865,7 +2865,7 @@
       =+  her=(slav %p i.t.t.tea)
       =+  syd=(slav %tas i.t.t.t.tea)
       =+  car=((hard care) i.t.t.t.t.tea)
-      =+  ^-  cas+case
+      =+  ^-  cas/case
           =+  (slay i.t.t.t.t.t.tea)
           ?>  ?=({$~ $$ case} -)
           ->+
@@ -2924,7 +2924,7 @@
   [p q [p q.q]:r]
 ::
 ++  mode-to-soba
-  |=  {hat+(map path lobe) pax+path all+? mod+mode}
+  |=  {hat/(map path lobe) pax/path all/? mod/mode}
   ^-  soba
   %+  welp
     ^-  (list (pair path miso))
@@ -2932,23 +2932,23 @@
       ~
     =+  mad=(mo mod)
     =+  len=(lent pax)
-    =+  ^-  descendants+(list path)
+    =+  ^-  descendants/(list path)
         %+  turn
           %+  skim  (~(tap by hat))
-          |=  {paf+path lob+lobe}
+          |=  {paf/path lob/lobe}
           =(pax (scag len paf))
-        |=  {paf+path lob+lobe}
+        |=  {paf/path lob/lobe}
         (slag len paf)
     %+  murn
       descendants
-    |=  pat+path
+    |=  pat/path
     ^-  (unit (pair path {$del $~}))
     ?:  (~(has by mad) pat)
       ~
     `[(weld pax pat) %del ~]
   ^-  (list (pair path miso))
   %+  murn  mod
-  |=  {pat+path mim+(unit mime)}
+  |=  {pat/path mim/(unit mime)}
   ^-  (unit (pair path miso))
   =+  paf=(weld pax pat)
   ?~  mim

@@ -7,7 +7,7 @@
 ::::
   ::
 [. react]
-|_  {hed+marl tal+marl}
+|_  {hed/marl tal/marl}
 ::
 ++  grow                                                ::  convert to
   |%
@@ -27,5 +27,5 @@
   --
 ++  grab  |%                                            ::  convert from
           ++  noun  manx                                ::  clam from %noun
-          ++  snip  |=(a+{marl marl} a)
+          ++  snip  |=(a/{marl marl} a)
 --        --

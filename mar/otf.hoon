@@ -5,7 +5,7 @@
   ::
 ::::  compute
   ::
-|_  otf+mime
+|_  otf/mime
 ::
 ++  grow                                                ::  convert to
   |%
@@ -13,7 +13,7 @@
   --
 ++  grab
   |%
-  ++  mime  |=({mite p+octs} [/font/otf p])
+  ++  mime  |=({mite p/octs} [/font/otf p])
   ++  noun  ^mime
   --
 ++  grad  %mime

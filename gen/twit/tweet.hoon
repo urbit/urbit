@@ -8,6 +8,6 @@
     |=([a=span b=cord ~] [/twit %twit-do !>([a %post eny b])])
   ,_`.
 ++  posh-twit-stat
-  (args-into-gate . |=({@ @ a+@da @} tang#~[leaf#"tweet received {<a>}"]))
-++  pour  |*({ost+@ * sih+{@ ^}} :_(+>.$ [ost %give +.sih]~))
+  (args-into-gate . |=({@ @ a/@da @} tang#~[leaf#"tweet received {<a>}"]))
+++  pour  |*({ost/@ * sih/{@ ^}} :_(+>.$ [ost %give +.sih]~))
 -- 

@@ -22,7 +22,7 @@
   ~+  ^-  (map term cord)
   %-  mo  ^-  (list {term cord})
   :-  [%class 'className']
-  =-  (rash - (more next (cook |=(a+tape [(cass a) (crip a)]) (star alf))))
+  =-  (rash - (more next (cook |=(a/tape [(cass a) (crip a)]) (star alf))))
   '''
   accept acceptCharset accessKey action allowFullScreen allowTransparency alt
   async autoComplete autoFocus autoPlay cellPadding cellSpacing charSet checked
@@ -40,7 +40,7 @@
   ~(has in react-elems)
 ::
 ++  react-to-json
-  |=  src+manx  ^-  json
+  |=  src/manx  ^-  json
   ?:  ?=(_:/(**) src)
     (jape v.i.a.g.src)
   =+  atr=(mo a.g.src)
@@ -62,7 +62,7 @@
             ;pre
               ;div:"error"
               ;*  %+  turn  p.result
-                  |=  a+tank
+                  |=  a/tank
                   ^-  manx
                   ;div:"{~(ram re a)}"
       ==    ==
@@ -71,16 +71,16 @@
     c#a#(turn c.src ..$)
     gn#s#(mane-to-cord n.g.src)
     =<  ga#(jobe (turn a.g.src .))
-    |=  {a+mane b+tape}  ^-  {cord json}
+    |=  {a/mane b/tape}  ^-  {cord json}
     :_  (jape b)
     ?^  a  (mane-to-cord a)
     (fall (~(get by react-attrs) a) a)
   ==
 ::
-++  mane-to-cord  |=(a+mane `cord`?@(a a (rap 3 -.a ':' +.a ~)))
+++  mane-to-cord  |=(a/mane `cord`?@(a a (rap 3 -.a ':' +.a ~)))
 ::  generates React javascript  XX deprecated
 ++  react-to-tape                                    
-  |=  src+manx  ^-  tape
+  |=  src/manx  ^-  tape
   ?:  (~(has by (mo a.g.src)) [%urb %codemirror])
     ?>  ?=({{$pre *} _:/(**) $~} src)
     $(src ;codemirror(value "{v.i.a.g.i.c.src}");)
@@ -103,7 +103,7 @@
           ;div:"error"
           ;*  %+  turn
                 (scag (dec (lent p.result)) p.result) ::  hide react trace
-              |=  a+tank
+              |=  a/tank
               ^-  manx
               ;div:"{~(ram re a)}"
         ==
@@ -118,12 +118,12 @@
       (trip tan)
     ", "
       =-  (pojo (jobe (turn a.g.src -)))
-      |=  {a+mane b+tape}
+      |=  {a/mane b/tape}
       =.  a  ?+(a a $class 'className')
       ?^(a !! [a (jape b)])
     ", "
       =<  ~(ram re %rose [", " "[" "]"] (turn c.src .))
-      |=  a+manx
+      |=  a/manx
       ?:  ?=(_:/(**) a)
         leaf#(pojo (jape v.i.a.g.a))
       leaf#^$(src a)

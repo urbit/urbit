@@ -6,24 +6,24 @@
 /+  talk
 !:
 =+  talk
-|_  gam+(list telegram)
+|_  gam/(list telegram)
 ::
 ++  grab-work-duty  =>  [jo work-stuff]
   |^  dute
   ++  as
-    :: |*(a+fist (cu sa (ar a)))  ::  XX  types
-    |*  a+fist 
+    :: |*(a/fist (cu sa (ar a)))  ::  XX  types
+    |*  a/fist 
     %-  cu  :_  (ar a)
     ~(gas in *(set _(need *a)))
   ++  ot
-    |*  a+(pole {@tas fist})
-    |=  b+json
+    |*  a/(pole {@tas fist})
+    |=  b/json
     %.  ((^ot a) b)
     %-  slog
     ?+  b  ~
         {$o *} 
       %+  murn  `(list {@tas fist})`a
-      |=  {c+term d+fist}  ^-  (unit tank)
+      |=  {c/term d/fist}  ^-  (unit tank)
       =+  (~(get by p.b) c)
       ?~  -  (some >[c (turn (~(tap by p.b)) head)]<)
       =+  (d u)
@@ -31,14 +31,14 @@
       ~
     ==
   ++  of
-    |*  a+(pole {@tas fist})
-    |=  b+json
+    |*  a/(pole {@tas fist})
+    |=  b/json
     %.  ((of:jo a) b)
     %-  slog
     ?+  b  ~
         {$o *}
       %+  murn  `(list {@tas fist})`a
-      |=  {c+term d+fist}  ^-  (unit tank)
+      |=  {c/term d/fist}  ^-  (unit tank)
       =+  (~(get by p.b) c)
       ?~  -  ~
       =+  (d u)
@@ -76,8 +76,8 @@
   --
 ++  grow-work-duty
   =>  work-stuff
-  =+  jope=|=(a+ship [%s (rsh 3 1 (scot %p a))])
-  =+  jove=|=(a+@uvI [%s (scot %uv a)])
+  =+  jope=|=(a/ship [%s (rsh 3 1 (scot %p a))])
+  =+  jove=|=(a/@uvI [%s (scot %uv a)])
   =<  |=  duty
       %+  joba  +<-
       ?-  +<-
@@ -94,8 +94,8 @@
       ==
   |%
   ++  tags
-    |=  a+(set @t)
-    [%a (turn (sort (~(tap in a)) aor) |=(b+cord s#b))]
+    |=  a/(set @t)
+    [%a (turn (sort (~(tap in a)) aor) |=(b/cord s#b))]
   ::
   ++  task
     |=  ^task
@@ -132,18 +132,18 @@
   ++  mime  |=(^mime (json (rash q.q apex:poja)))
   ++  json
     =>  [jo ..telegram dute=grab-work-duty]
-    |=  a+json  ^-  (list telegram)
+    |=  a/json  ^-  (list telegram)
     =-  (need ((ar (ot ship#(su fed:ag) thought#thot ~)) a))
     |%
     ++  of
-      |*  a+(pole {@tas fist})
-      |=  b+json
+      |*  a/(pole {@tas fist})
+      |=  b/json
       %.  ((of:jo a) b)
       %-  slog
       ?+  b  ~
           {$o *} 
         %+  murn  `(list {@tas fist})`a
-        |=  {c+term d+fist}  ^-  (unit tank)
+        |=  {c/term d/fist}  ^-  (unit tank)
         =+  (~(get by p.b) c)
         ?~  -  ~
         =+  (d u)
@@ -151,30 +151,30 @@
         ~
       ==
     ++  op                                              ::  parse keys of map
-      |*  {fel+rule wit+fist}
+      |*  {fel/rule wit/fist}
       %+  cu  mo
       %-  ci  :_  (om wit)
-      |=  a+(map cord _(need *wit))
+      |=  a/(map cord _(need *wit))
       ^-  (unit (list _[(wonk *fel) (need *wit)]))
       (zl (turn (~(tap by a)) (head-rush fel)))
     ::
     ++  as                                              ::  array as set
-      :: |*(a+fist (cu sa (ar a)))  ::  XX  types
-      |*  a+fist 
+      :: |*(a/fist (cu sa (ar a)))  ::  XX  types
+      |*  a/fist 
       %-  cu  :_  (ar a)
       ~(gas in *(set _(need *a)))
     ::
     ++  ke                                              ::  callbacks
-      |*  {gar+* sef+_|.(fist)}
-      |=  jon+json
+      |*  {gar/* sef/_|.(fist)}
+      |=  jon/json
       ^-  (unit _gar)
       =-  ~!  gar  ~!  (need -)  -
       ((sef) jon)
     ::
-    ++  lake  |*(a+_* $+(json (unit a)))
+    ++  lake  |*(a/_* $+(json (unit a)))
     ++  head-rush
-      |*  a+rule
-      |*  {b+cord c+*}
+      |*  a/rule
+      |*  {b/cord c/*}
       =+  nit=(rush b a) 
       ?~  nit  ~
       (some [u.nit c])
@@ -238,23 +238,23 @@
     (jobe ship#(jope p) thought#(thot q) ~)
     ::
     ++  jove
-      |=  {a+envelope b+delivery}
+      |=  {a/envelope b/delivery}
       %-  jobe  :~
         envelope#(jobe visible#[%b p.a] sender#?~(q.a ~ s#(parn u.q.a)) ~)
         delivery#[%s b]
       ==
     ::
-    ++  jope  |=(a+ship (jape +:<a>)) ::[%s (crip +:(scow %p a))])
-    ++  joke  |=(a+tank [%s (role (turn (wash 0^80 a) crip))])
-    ++  jode  |=(a+time (jone (div (mul (sub a ~1970.1.1) 1.000) ~s1)))
+    ++  jope  |=(a/ship (jape +:<a>)) ::[%s (crip +:(scow %p a))])
+    ++  joke  |=(a/tank [%s (role (turn (wash 0^80 a) crip))])
+    ++  jode  |=(a/time (jone (div (mul (sub a ~1970.1.1) 1.000) ~s1)))
     ++  jome                                            ::  stringify keys
-      |*  {a+_cord b+_json}
-      |=  c+(map _+<.a _+<.b)
+      |*  {a/_cord b/_json}
+      |=  c/(map _+<.a _+<.b)
       (jobe (turn (~(tap by c)) (both a b)))
     ::
     ++  both                                            ::  cons two gates
-      |*  {a+_* b+_*}
-      |=(c+_[+<.a +<.b] [(a -.c) (b +.c)])
+      |*  {a/_* b/_*}
+      |=(c/_[+<.a +<.b] [(a -.c) (b +.c)])
     ::
     ++  thot
       |=  thought
@@ -262,11 +262,11 @@
     ::
     ++  audi  (jome parn jove)
     ++  bouq
-      |=  a+bouquet
-      a#(turn (~(tap in a)) |=(b+path a#(turn b |=(c+span s#c))))
+      |=  a/bouquet
+      a#(turn (~(tap in a)) |=(b/path a#(turn b |=(c/span s#c))))
     ::
     ++  parn
-      |=  a+partner  ^-  cord
+      |=  a/partner  ^-  cord
       ?-  -.a
         $&  (stat p.a)
         $|  %-  crip
@@ -276,7 +276,7 @@
       ==
     ::
     ++  stat
-      |=  a+station  ^-  cord
+      |=  a/station  ^-  cord
       (crip "{<p.a>}/{(trip q.a)}")
     ::
     ++  stam
@@ -284,7 +284,7 @@
       (jobe date#(jode p) bouquet#(bouq q) speech#(spec r) ~)
     ::
     ++  spec
-      |=  a+speech
+      |=  a/speech
       %+  joba  -.a
       ?+  -.a  ~|(stub#-.a !!)
         $lin  (jobe txt#[%s q.a] say#[%b p.a] ~)
@@ -299,7 +299,7 @@
       ==
     ::
     ++  tors
-      |=  a+torso
+      |=  a/torso
       %+  joba  -.a
       ?-  -.a
         $text  [%s (role +.a)]

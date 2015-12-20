@@ -4,12 +4,12 @@
   ::
 |%
 ++  into-inner
-  |=  {a+marl b+manx}
+  |=  {a/marl b/manx}
   ?~  c.b  b(c a)
   $(b i.c.b)
 ::
 ++  flat
-  |=  a+marl
+  |=  a/marl
   ^-  tape
   ?~  a  ~
   %-  weld  :_  $(a t.a)
@@ -19,20 +19,20 @@
   ?+    n.g.i.a  $(a c.i.a)
       $img
     %-  zing  ^-  wall
-    %+  murn  a.g.i.a   |=  {a+mane b+tape}  
+    %+  murn  a.g.i.a   |=  {a/mane b/tape}  
     ^-  (unit tape)
     ?+  a  ~
       $alt  [~ b]
     ==
   ==
 ++  sanitize
- |=  a+marl  ^-  tape
+ |=  a/marl  ^-  tape
  =-  (zing `wall`(scan (flat a) fel))
  =<  fel=;~(sfix (star ;~(plug (cold '-' -) (plus +))) (star next)) 
- [(star ;~(less aln prn)) ;~(pose nud low (cook |=(a+@ (add a ' ')) hig))]
+ [(star ;~(less aln prn)) ;~(pose nud low (cook |=(a/@ (add a ' ')) hig))]
 ::
 ++  sang                                                ::  tight item children
-  |=  a+(list elem)
+  |=  a/(list elem)
   ^-  marl
   ?~  a  ~
   %-  weld  :_  $(a t.a)
@@ -43,7 +43,7 @@
 ++  sing                                                ::  elem to manx
   =>  |%
       ++  first-word
-        |=  a+tape
+        |=  a/tape
         =.  a  (trip (crip a))                          ::  XX valid tapes
         ^-  (unit tape)
         =.  a  q.q:(need q:((star ace) [1 1] a))
@@ -52,7 +52,7 @@
         (some (wonk vex))
       --
   =+  [tig=| had=*(unit mane)]
-  |=  lum+(list elem)
+  |=  lum/(list elem)
   |^  ^-  marl
       =+  a=apex
       ?~  q.a
@@ -60,7 +60,7 @@
       (weld p.a $(lum q.a))
   ::
   ++  apex
-    ^-  {p+marl q+_lum}  
+    ^-  {p/marl q/_lum}  
     ?~  lum  
       ?~  had  [~ ~]
       (lose "unclosed {<u.had>}")
@@ -69,7 +69,7 @@
       (push (reso ele) ~)
     ::  begin reparsing of html that the spec jankily lets through  ::
     =+  tex=(trip (role p.ele))
-    =^  mar  lum  (chomp tex (sear |=(a+marl ?~(a ~ (some a))) many:poxa))
+    =^  mar  lum  (chomp tex (sear |=(a/marl ?~(a ~ (some a))) many:poxa))
     ?^  mar
       (push u.mar)
     =^  hed  lum  (chomp tex head:poxa)
@@ -90,9 +90,9 @@
     (lose "close {<u.tal>}")
     ::  end reparsing of html that the spec jankily lets through  ::
   ::
-  ++  lose  |=(a+tape [[;lost:"{a}"]~ lum])
+  ++  lose  |=(a/tape [[;lost:"{a}"]~ lum])
   ++  chomp
-    |*  {tap+tape fel+rule}
+    |*  {tap/tape fel/rule}
     ^-  {(unit _(wonk *fel)) _lum}  
     =+  vex=(fel 1^1 tap)
     ?~  q.vex  [~ lum]
@@ -100,13 +100,13 @@
     ?~(q.q.u.q.vex lum [[%html (lore (crip q.q.u.q.vex))] lum])
   ::
   ++  push
-    |=  a+marl
+    |=  a/marl
     ^+  apex
     ?~  a  apex
     [[b p] q]:[b=i.a (push t.a)]
   ::
   ++  reso
-    |=  a+elem
+    |=  a/elem
     ?^  -.a
       =.  tig  ?.(?=($list -.p.a) tig p.p.a)
       ?:  &(tig ?=($item -.p.a))
@@ -148,7 +148,7 @@
   --
 ::  
 ++  sung
-  |=  lim+kids
+  |=  lim/kids
   =+  had=*(unit mane)
   |^  ^-  marl
       =+  a=apex
@@ -157,7 +157,7 @@
       (weld p.a $(lim q.a))
   ::
   ++  apex
-    ^-  {p+marl q+_lim}
+    ^-  {p/marl q/_lim}
     ?~  lim  
       ?~  had  [~ ~]
       (lose "unclosed {<u.had>}")
@@ -185,9 +185,9 @@
       (lose "unclosed {<u.had>}")
     (lose "unopened {<u.tal>}")
   ::
-  ++  lose  |=(a+tape [[;lost:"{a}"]~ lim])
+  ++  lose  |=(a/tape [[;lost:"{a}"]~ lim])
   ++  chomp
-    |*  {tap+tape fel+rule}
+    |*  {tap/tape fel/rule}
     ^-  {(unit _(wonk *fel)) _lim}
     =+  vex=(fel 1^1 tap)
     ?~  q.vex  [~ lim]
@@ -195,13 +195,13 @@
     ?~(q.q.u.q.vex lim [[%htmt (crip q.q.u.q.vex)] lim])
   ::
   ++  push
-    |=  a+marl
+    |=  a/marl
     ^+  apex
     ?~  a  apex
     [[b p] q]:[b=i.a (push t.a)]
   ::
   ++  urly
-    |=  a+tape  ^-  tape
+    |=  a/tape  ^-  tape
     ?~  a  ~
     :: ?:  (gth i.a 0xff)  "XX"                       ::  XX  
     ?:  ?|  [?=(^ q)]:(alp 1^1 a)
@@ -211,7 +211,7 @@
     (weld (urle (trip i.a)) $(a t.a))
   ::
   ++  reso
-    |=  b+inline
+    |=  b/inline
     ^-  manx
     ?@  -.b
       ?-  -.b

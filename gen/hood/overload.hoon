@@ -6,8 +6,8 @@
 ::::
   !:
 :-  %say
-|=  $:  {now+@da eny+@uvI bec+beak}
-        {{arg+term $~} $~}
+|=  $:  {now/@da eny/@uvI bec/beak}
+        {{arg/term $~} $~}
     ==
 :-  %kiln-overload
 arg

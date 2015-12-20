@@ -7,7 +7,7 @@
 :::::::
   !:
 :-  %say
-|=  {^ arg+{address+@t contact+@t $~} $~}
+|=  {^ arg/{address/@t contact/@t $~} $~}
 :-  %address-contact
 [address.arg contact.arg]
 

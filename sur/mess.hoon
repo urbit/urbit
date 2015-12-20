@@ -1,5 +1,5 @@
-$%  {$do p+@t}
-    {$exp p+@t q+tank}
-    {$say p+@t}
+$%  {$do p/@t}
+    {$exp p/@t q/tank}
+    {$say p/@t}
 ==
 

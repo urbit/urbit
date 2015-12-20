@@ -8,43 +8,43 @@
 |%                                                      ::  ::
 ++  kiln-part  {$kiln $0 kiln-pith}                     ::  kiln state
 ++  kiln-pith                                           ::
-    $:  rem+(map desk kiln-desk)                        ::
-        syn+(map kiln-sync {let+@ud ust+bone})          ::
-        autoload+?                                      ::
+    $:  rem/(map desk kiln-desk)                        ::
+        syn/(map kiln-sync {let/@ud ust/bone})          ::
+        autoload/?                                      ::
     ==                                                  ::
 ++  kiln-desk                                           ::  per-desk state
-    $:  auto+?                                          ::  escalate on failure
-        gem+germ                                        ::  strategy
-        her+@p                                          ::  from ship
-        sud+@tas                                        ::  from desk
-        cas+case                                        ::  at case
+    $:  auto/?                                          ::  escalate on failure
+        gem/germ                                        ::  strategy
+        her/@p                                          ::  from ship
+        sud/@tas                                        ::  from desk
+        cas/case                                        ::  at case
     ==                                                  ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
 ++  kiln-mount                                          ::
-    $:  pax+path                                        ::
-        pot+term                                        ::
+    $:  pax/path                                        ::
+        pot/term                                        ::
     ==                                                  ::
 ++  kiln-unmount  $@(term {span path})                  ::
 ++  kiln-sync                                           ::
-    $:  syd+desk                                        ::
-        her+ship                                        ::
-        sud+desk                                        ::
+    $:  syd/desk                                        ::
+        her/ship                                        ::
+        sud/desk                                        ::
     ==                                                  ::
 ++  kiln-unsync                                         ::
-    $:  syd+desk                                        ::
-        her+ship                                        ::
-        sud+desk                                        ::
+    $:  syd/desk                                        ::
+        her/ship                                        ::
+        sud/desk                                        ::
     ==                                                  ::
 ++  kiln-merge                                          ::
-    $:  syd+desk                                        ::
-        ali+ship                                        ::
-        sud+desk                                        ::
-        gim+?($auto germ)                               ::
+    $:  syd/desk                                        ::
+        ali/ship                                        ::
+        sud/desk                                        ::
+        gim/?($auto germ)                               ::
     ==                                                  ::
-++  kiln-cp  {input+path output+path}                   ::
-++  kiln-mv  {input+path output+path}                   ::
+++  kiln-cp  {input/path output/path}                   ::
+++  kiln-mv  {input/path output/path}                   ::
 --                                                      ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -71,7 +71,7 @@
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     --
-|_  moz+(list move)
+|_  moz/(list move)
 ++  abet                                                ::  resolve
   [(flop moz) `kiln-part`+>+>->]
 ::
@@ -82,7 +82,7 @@
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
 ++  render
-  |=  {mez+tape sud+desk who+ship syd+desk}
+  |=  {mez/tape sud/desk who/ship syd/desk}
   :^  %palm  [" " ~ ~ ~]  leaf#mez
   ~[leaf#"from {<sud>}" leaf#"on {<who>}" leaf#"to {<syd>}"]
 ::
@@ -95,7 +95,7 @@
   abet:(emit %mont /mount pot p.u.bem q.u.bem (flop s.u.bem))
 ::
 ++  poke-unmount
-  |=  mon+kiln-unmount
+  |=  mon/kiln-unmount
   ?^  mon
     =+  bem=(tome mon)
     ?~  bem
@@ -105,13 +105,13 @@
   abet:(emit %ogre /unmount-point mon)
 ::
 ++  poke-sync                                         ::
-  |=  hos+kiln-sync
+  |=  hos/kiln-sync
   ?:  (~(has by syn) hos)
     abet:(spam (render "already syncing" [sud her syd]:hos) ~)
   abet:abet:start:(auto hos)
 ::
 ++  poke-unsync                                         ::
-  |=  hus+kiln-unsync
+  |=  hus/kiln-unsync
   ?.  (~(has by syn) hus)
     abet:(spam (render "not syncing" [sud her syd]:hus) ~)
   %*  .  abet:abet:stop:(auto hus)
@@ -123,41 +123,41 @@
   abet:abet:(merge:(work syd) ali sud gim)
 ::
 ++  poke-cancel
-  |=  syd+desk
+  |=  syd/desk
   abet:(emit %drop /cancel our syd)
 ::
 ++  do-info
-  |=  {mez+tape tor+toro}
+  |=  {mez/tape tor/toro}
   abet:(emit:(spam leaf#mez ~) %info /kiln our tor)
 ::
-++  poke-rm  |=(a+path (do-info "removed" (fray a)))
+++  poke-rm  |=(a/path (do-info "removed" (fray a)))
 ++  poke-cp
-  |=  {input+path output+path}
+  |=  {input/path output/path}
   %+  do-info  "copied"
   ?>  =(-:(flop input) -:(flop output))
   (foal output -:(flop input) atom#%t .^(%cx input))    ::  XX type
 ::
 ++  poke-mv
-  |=  {input+path output+path} 
+  |=  {input/path output/path} 
   %+  do-info  "moved"
   ?>  =(-:(flop input) -:(flop output))
   %+  furl  (fray output)
   (foal output -:(flop input) %noun .^(%cx input))
 ::
 ++  poke-label
-  |=  {syd+desk lab+@tas}
+  |=  {syd/desk lab/@tas}
   =+  pax=/(scot %p our)/[syd]/[lab]
   (do-info "labeled {(spud pax)}" [syd %| lab])
 ::
 ++  poke-schedule
-  |=  {where+path tym+@da eve+@t}
+  |=  {where/path tym/@da eve/@t}
   =.  where  (welp where /sched)
   %+  do-info  "scheduled"
   =+  old=;;((map @da cord) (fall (file where) ~))
   (foal where %sched !>((~(put by old) tym eve)))
 ::
 ++  poke-autoload
-  |=  lod+(unit ?)
+  |=  lod/(unit ?)
   ?^  lod
     abet(autoload u.lod)
   =<  abet(autoload !autoload)
@@ -169,33 +169,33 @@
   %-  emil
   %+  turn
     `(list term)`~[%ames %behn %clay %dill %eyre %ford %gall %zuse %hoon]
-  |=  syd+term
+  |=  syd/term
   ^-  card
   :*  %warp  /kiln/autoload/[syd]  [our our]  %home  ~
       %next  %y  da#now  /arvo/[syd]/hoon
   ==
 ::
 ++  poke-overload
-  |=  syd+term
+  |=  syd/term
   abet:(emit %wait /kiln/overload/[syd] (add ~s10 now))
 ::
-++  take  |=(way+wire ?>(?=({@ $~} way) (work i.way))) ::  general handler
+++  take  |=(way/wire ?>(?=({@ $~} way) (work i.way))) ::  general handler
 ++  take-mere                                         ::
-  |=  {way+wire are+(each (set path) (pair term tang))}
+  |=  {way/wire are/(each (set path) (pair term tang))}
   abet:abet:(mere:(take way) are)
 ::
 ++  take-made                                         ::
-  |=  {way+wire dep+@uvH reg+gage}
+  |=  {way/wire dep/@uvH reg/gage}
   abet:abet:(made:(take way) dep reg) 
 ::
 ++  take-coup-fancy                                   ::
-  |=  {way+wire saw+(unit tang)}
+  |=  {way/wire saw/(unit tang)}
   abet:abet:(coup-fancy:(take way) saw)
 ::
 ++  take-mere-sync                                    ::
-  |=  {way+wire mes+(each (set path) (pair term tang))}
+  |=  {way/wire mes/(each (set path) (pair term tang))}
   ?>  ?=({@ @ @ $~} way)
-  =+  ^-  hos+kiln-sync
+  =+  ^-  hos/kiln-sync
       :*  syd=(slav %tas i.way)
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
@@ -203,9 +203,9 @@
   abet:abet:(mere:(auto hos) mes)
 ::
 ++  take-writ-sync                                    ::
-  |=  {way+wire rot+riot}
+  |=  {way/wire rot/riot}
   ?>  ?=({@ @ @ $~} way)
-  =+  ^-  hos+kiln-sync
+  =+  ^-  hos/kiln-sync
       :*  syd=(slav %tas i.way)
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
@@ -213,7 +213,7 @@
   abet:abet:(writ:(auto hos) rot)
 ::
 ++  take-writ-autoload
-  |=  {way+wire rot+riot}
+  |=  {way/wire rot/riot}
   ?>  ?=({@ $~} way)
   ?>  ?=(^ rot)
   =+  syd=(slav %tas i.way)
@@ -231,7 +231,7 @@
   abet
 ::
 ++  take-wake-overload
-  |=  {way+wire $~}
+  |=  {way/wire $~}
   ?>  ?=({@ $~} way)
   =+  syd=(slav %tas i.way)
   =.  +>.$
@@ -241,7 +241,7 @@
   abet
 ::
 ++  spam
-  |=  mes+(list tank)
+  |=  mes/(list tank)
   ((slog mes) ..spam)
 ::     %-  emit :: XX not displayed/immediately
 ::     [%poke /kiln/spam [our %talk] (said our %kiln now eny mes)]
@@ -254,7 +254,7 @@
     ..auto(syn (~(put by syn) [syd her sud] let ust))
   ::
   ++  blab
-    |=  new+(list move)
+    |=  new/(list move)
     ^+  +>
     +>.$(moz (welp new moz))
   ::
@@ -277,7 +277,7 @@
     ==  ==
   ::
   ++  writ
-    |=  rot+riot
+    |=  rot/riot
     ?~  rot
       %^    spam
           leaf#"bad %writ response"
@@ -294,7 +294,7 @@
     ==
   ::
   ++  mere
-    |=  mes+(each (set path) (pair term tang))
+    |=  mes/(each (set path) (pair term tang))
     =.  let  +(let)
     =.  +>.$
       %-  spam
@@ -322,7 +322,7 @@
   --
 ::
 ++  work                                              ::  state machine
-  |=  syd+desk
+  |=  syd/desk
   =+  ^-  kiln-desk
       %+  fall  (~(get by rem) syd)
       =+  *kiln-desk
@@ -332,7 +332,7 @@
     ..work(rem (~(put by rem) syd auto gem her sud cas))
   ::
   ++  blab
-    |=  new+(list move)
+    |=  new/(list move)
     ^+  +>
     +>.$(moz (welp new moz))
   ::
@@ -343,20 +343,20 @@
     .
   ::
   ++  ford-fail
-    |=(tan+tang ~|(%ford-fail (mean tan)))
+    |=(tan/tang ~|(%ford-fail (mean tan)))
   ::
   ++  unwrap-tang
-    |*  res+(each * tang)
+    |*  res/(each * tang)
     ?:  ?=($& -.res)
       p.res
     (ford-fail p.res)
   ::
   ++  gage-to-cages
-    |=  gag+gage  ^-  (list (pair cage cage))
+    |=  gag/gage  ^-  (list (pair cage cage))
     (unwrap-tang (gage-to-tage gag))
   ::
   ++  gage-to-tage
-    |=  gag+gage
+    |=  gag/gage
     ^-  (each (list (pair cage cage)) tang)
     ?.  ?=($tabl -.gag)
       (mule |.(`$~`(ford-fail >%strange-gage< ~)))
@@ -381,7 +381,7 @@
     (blab [ost %merg /kiln/[syd] our syd her sud cas gem] ~)
   ::
   ++  fancy-merge                                     ::  send to self
-    |=  {syd+desk her+@p sud+desk gem+?($auto germ)}
+    |=  {syd/desk her/@p sud/desk gem/?($auto germ)}
     ^+  +>
     %-  blab  :_  ~
     [ost %poke /kiln/fancy/[^syd] [our %hood] %kiln-merge [syd her sud gem]]
@@ -389,7 +389,7 @@
   ++  spam  ::|=(tang ((slog +<) ..spam))
             |*(* +>(..work (^spam +<)))
   ++  merge
-    |=  {her+@p sud+@tas gim+?($auto germ)}
+    |=  {her/@p sud/@tas gim/?($auto germ)}
     ^+  +>
     =.  cas  [%da now]
     ?.  ?=($auto gim)
@@ -401,7 +401,7 @@
     .(auto &)
   ::
   ++  coup-fancy
-    |=  saw+(unit tang) 
+    |=  saw/(unit tang) 
     ?~  saw
       =>  (spam leaf#"%melding %{(trip sud)} into scratch space" ~)
       %-  blab  :_  ~
@@ -411,7 +411,7 @@
     lose:(spam leaf#-< leaf#-> u.saw)
   ::
   ++  mere
-    |=  are+(each (set path) (pair term tang)) 
+    |=  are/(each (set path) (pair term tang)) 
     ^+  +>
     ?:  =(%meld gem)
       ?:  ?=($& -.are)
@@ -428,7 +428,7 @@
             ^-  (list (pair silk silk))
             :: ~&  >  kiln-mashing#[p.are syd=syd +<.abet]
             %+  turn  (~(tap in p.are))
-            |=  pax+path
+            |=  pax/path
             ^-  (pair silk silk)
             :-  [%$ %path -:!>(*path) pax]
             =+  base=[%file [our tic %da now] (flop pax)]
@@ -436,7 +436,7 @@
             =+  bobs=[%file [our syd %da now] (flop pax)]
             =+  dali=[%diff base alis]
             =+  dbob=[%diff base bobs]
-            =+  ^-  for+mark
+            =+  ^-  for/mark
                 =+  (slag (dec (lent pax)) pax)
                 ?~(- %$ i.-)
             [%mash for [her sud dali] [our syd dbob]]
@@ -484,34 +484,34 @@
     ==
   ::
   ++  tape-to-tanks
-    |=  a+tape  ^-  (list tank)
-    (scan a (more (just '\0a') (cook |=(a+tape leaf#a) (star prn))))
+    |=  a/tape  ^-  (list tank)
+    (scan a (more (just '\0a') (cook |=(a/tape leaf#a) (star prn))))
   ::
   ++  tanks-if-any
-    |=  {a+tape b+(list path) c+tape}  ^-  (list tank)
+    |=  {a/tape b/(list path) c/tape}  ^-  (list tank)
     ?:  =(~ b)  ~
     (welp (tape-to-tanks "\0a{c}{a}") >b< ~)
   ::
   ++  made
-    |=  {dep+@uvH reg+gage}
+    |=  {dep/@uvH reg/gage}
     ^+  +>
     ?:  ?=($| -.reg)
       =+  "failed to mash"
       lose:(spam leaf#- p.reg)
-    =+  ^-  can+(list (pair path (unit miso)))
+    =+  ^-  can/(list (pair path (unit miso)))
         %+  turn  (gage-to-cages reg)
-        |=  {pax+cage dif+cage}
+        |=  {pax/cage dif/cage}
         ^-  (pair path (unit miso))
         ?.  ?=($path p.pax)
           ~|  "strange path mark: {<p.pax>}"
           !!
         [((hard path) q.q.pax) ?:(?=($null p.dif) ~ `[%dif dif])]
     :: ~&  >  kiln-made#[(turn can head) syd=syd +<.abet]
-    =+  notated=(skid can |=({path a+(unit miso)} ?=(^ a)))
+    =+  notated=(skid can |=({path a/(unit miso)} ?=(^ a)))
     =+  annotated=(turn `(list (pair path *))`-.notated head)
     =+  unnotated=(turn `(list (pair path *))`+.notated head)
     =+  `desk`(cat 3 syd '-scratch')
-    =+  ^-  tan+(list tank)
+    =+  ^-  tan/(list tank)
         %-  zing
         ^-  (list (list tank))
         :~  %-  tape-to-tanks
@@ -539,7 +539,7 @@
     :*  ost  %info  /kiln/[syd]  our
         (cat 3 syd '-scratch')  %&
         %+  murn  can
-        |=  {p+path q+(unit miso)}
+        |=  {p/path q/(unit miso)}
         `(unit (pair path miso))`?~(q ~ `[p u.q])
     ==
   --

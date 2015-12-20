@@ -9,7 +9,7 @@
 ::::                                                    ::::::  interfaces
   !:                                                    ::  ::
 =>  |%                                                  ::
-    ++  axle  {eye+face rem+(unit ship) gam+game}       ::  agent state
+    ++  axle  {eye/face rem/(unit ship) gam/game}       ::  agent state
     ++  card  $%  {$diff lime}                          ::  update
                   {$quit $~}                            ::  cancel
                   {$peer wire dock path}                ::  subscribe
@@ -29,8 +29,8 @@
 =>  |%                                                  ::  
     ++  agon    (unit {(list move) axon})               ::  boot argument
     ++  axon     $%({$1 axle} {$0 axle-0})              ::  all states
-    ++  axle-0  {eye+face gam+game-0}                   ::  old axle
-    ++  game-0  {who+? box+board boo+board}             ::  old game
+    ++  axle-0  {eye/face gam/game-0}                   ::  old axle
+    ++  game-0  {who/? box/board boo/board}             ::  old game
     ++  wake    |=  axon  :-  %1  ?-  +<-  $1  +<+      ::  coarse upgrade
                 $0  [eye ~ [who ~^~ ~ box boo]:gam]:+<+ ::
     ==  --                                              ::
@@ -38,7 +38,7 @@
 ::::                                                    ::::::  parsers
   ::                                                    ::  ::
 =>  |%                                                  ::
-    ++  colm  (cook |=(a+@ (sub a '1')) (shim '1' '3')) ::  row or column
+    ++  colm  (cook |=(a/@ (sub a '1')) (shim '1' '3')) ::  row or column
     ++  come  ;~(plug colm ;~(pfix fas colm))           ::  coordinate
     ++  comb  (pick come ;~(pfix sig (punt fed:ag)))    ::  all command input
     ++  cope  |=(? ?:(+< (stag %| (cold ~ sig)) comb))  ::  with wait mode
@@ -47,7 +47,7 @@
 ::::                                                    ::::::  process core
   ::                                                    ::  ::
 |_  $:  bowl                                            ::  
-        moz+(list move)                                 ::  pending actions
+        moz/(list move)                                 ::  pending actions
         {$1 axle}                                       ::  process state v1
     ==                                                  ::
 ::                                                      ::  ::
@@ -55,9 +55,9 @@
   ::                                                    ::  ::
 ++  abet  [(flop moz) .(moz ~)]                         ::  resolve
 ++  bike  $+(_. _+>)                                    ::  self-transformer
-++  dish  |=(cad+card %_(+> moz [[ost cad] moz]))       ::  request
+++  dish  |=(cad/card %_(+> moz [[ost cad] moz]))       ::  request
 ++  done  (echo eels |=(_. (dish:+< %quit ~)))          ::  cancel everyone
-++  echo  |=  {all+(list sink) fun+bike}  =+  old=+>+<- ::  publish to all
+++  echo  |=  {all/(list sink) fun/bike}  =+  old=+>+<- ::  publish to all
           |-  ^+  +>.^$  ?~  all  +>.^$(+<- old)        ::
           =>  .(ost p.i.all, src q.i.all)               ::
           $(all t.all, +>.^$ (fun +>.^$))               ::
@@ -65,7 +65,7 @@
 ++  elfs  (prey /oct4 +<-)                              ::  network clients
 ++  elks  (prey /sole +<-)                              ::  console clients
 ++  emit  |=(lime (dish %diff +<))                      ::  publish
-++  flap  |=  {net+bike con+bike}                       ::  update all clients
+++  flap  |=  {net/bike con/bike}                       ::  update all clients
           (echo:(echo elks con) elfs net)               ::
 ++  here  ~(. go src gam)                               ::  game core
 ::                                                      ::  ::
@@ -76,7 +76,7 @@
 ++  fact  |=(play (emit %oct4-update +<))               ::  update partner
 ++  hail  |=(? ?^(rem +> tame(gam (hey:here +<))))      ::  toggle subscriber
 ++  harp  |=(game ?:(=(gam +<) +> wild(gam +<)))        ::  update game
-++  heal  |=  old+axon  =.  +>+<+>  (wake old)          ::  complete update
+++  heal  |=  old/axon  =.  +>+<+>  (wake old)          ::  complete update
           =-  +>.$(gam -)  ?.  !=(1 +<-)  gam           ::
           (muy:here (turn eels |=(sink q)))             ::
 ++  hear  |=(play ?-(+<- $| (word +<+), $& (harp +<+))) ::  network update
@@ -101,19 +101,19 @@
 ++  tame  (flap |=(_. (fact:+< &/gam)) |=(_. prom:+<))  ::  light update
 ++  wild  (flap |=(_. (fact:+< &/gam)) |=(_. show:+<))  ::  full update
 ++  with  |=(? (word(rem ?:(+< rem ~)) "{<[+< src]>}")) ::  
-++  word  |=  txt+tape  %+  flap                        ::  game message
+++  word  |=  txt/tape  %+  flap                        ::  game message
           |=(_+> (fact:+< |/txt))                       ::
           |=(_+> (fect:+< txt#txt))                     ::
 ::                                                      ::  ::
 ::::                                                    ::::::  console UI
   ::                                                    ::  ::
 ++  work                                                ::  console action
-  |=  act+sole-action                                   ::  
+  |=  act/sole-action                                   ::  
   =+  say=(~(got by eye) ost)                           ::
   |^  ?+(-.act abet $det (delt +.act), $ret dive)       ::
   ++  abet  ..work(eye (~(put by eye) ost say))         ::  resolve
   ++  cusp  (cope !ept:here)                            ::  parsing rule
-  ++  delt  |=  cal+sole-change                         ::  edit command line
+  ++  delt  |=  cal/sole-change                         ::  edit command line
             =^  cul  say  (~(remit sole say) cal good)  ::
             ?~(cul abet fail:(fect:abet det#u.cul))     ::
   ++  dive  =+  (rust (tufa buf.say) (punt comb))       ::  apply command line

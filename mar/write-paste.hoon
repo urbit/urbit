@@ -2,7 +2,7 @@
 ::::  /hoon#core#save#mar
   ::
 !:
-|_  {typ+?($hoon $md $txt) txt+@t}
+|_  {typ/?($hoon $md $txt) txt/@t}
 ++  grab
   |%
   ++  noun  {?($hoon $md $txt) @t}

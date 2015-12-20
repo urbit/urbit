@@ -3,36 +3,36 @@
 ++  kids  (list inline)
 ++  inline
   =+  ^=  inlik
-      $%  {$emph p+?}                                   ::  strong?
+      $%  {$emph p/?}                                   ::  strong?
           {$delt $~}                                    ::  strikethrough
-          {$link p+tape q+(unit tape)}
-          {$blot p+tape q+(unit tape)}                  ::  image
+          {$link p/tape q/(unit tape)}
+          {$blot p/tape q/(unit tape)}                  ::  image
       ==
   =+  ^=  inlin
-      $%  {$$ p+tape}                                    
+      $%  {$$ p/tape}                                    
           {$line $~}
-          {$code p+tape}
-          {$htmt p+cord}                                ::  XX  (each marx mane)
+          {$code p/tape}
+          {$htmt p/cord}                                ::  XX  (each marx mane)
       ==
-  $^({p+inlik q+kids} inlin)
+  $^({p/inlik q/kids} inlin)
 ::
 ::
 ++  elem  $^(tops node)
 ++  tops                                                ::  childful block
   $:  $=  p
       $%  {$bloq $~}
-          {$list p+? q+$@(char {p+@u q+char})}          ::  tight ordered?
+          {$list p/? q/$@(char {p/@u q/char})}          ::  tight ordered?
           {$item $~}
       ==
-      q+down
+      q/down
   ==
 ++  node                                                ::  childless block
-  $%  {$para p+kids}
-      {$meta p+(map cord cord)}                         ::  front matter
+  $%  {$para p/kids}
+      {$meta p/(map cord cord)}                         ::  front matter
       {$hrul $~}
-      {$head p+@u q+kids}
-      {$code p+(unit {p+char q+@u r+tape}) q+wain}      ::  info contents
-      {$html p+wain}
+      {$head p/@u q/kids}
+      {$code p/(unit {p/char q/@u r/tape}) q/wain}      ::  info contents
+      {$html p/wain}
       {$defn $~}                                        ::  empty para
   ==
 --

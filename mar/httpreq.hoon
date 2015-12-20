@@ -4,6 +4,6 @@
 /?    314
 /+    http
 ::
-|_  req+request:http
+|_  req/request:http
 ++  grow  |%  ++  tank  >req<
 --        --

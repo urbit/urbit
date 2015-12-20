@@ -7,10 +7,10 @@
   ::                                                    ::  ::
 |%                                                      ::
 ++  board   @                                           ::  one-player bitfield
-++  point   {x+@ y+@}                                   ::  coordinate
+++  point   {x/@ y/@}                                   ::  coordinate
 ++  game                                                ::  game state
-            $:  who+?                                   ::  whose turn
-                box+board                               ::  X board
-                boo+board                               ::  O board
+            $:  who/?                                   ::  whose turn
+                box/board                               ::  X board
+                boo/board                               ::  O board
             ==                                          ::
 --

@@ -5,14 +5,14 @@
 /-    talk
 !:
 [talk .]
-|_  cod+command
+|_  cod/command
 ::
 ++  grab                                                ::  convert from
   |%
   ++  noun  command                                     ::  clam from %noun
   ++  json 
     =>  [jo ..command]
-    |=  a+json  ^-  command
+    |=  a/json  ^-  command
     =-  (need ((of -) a))
     =<  :~  publish#(ar thot)
             review#(ar thot)
@@ -20,37 +20,37 @@
         ==
     |%
     ++  op                                              ::  parse keys of map
-      |*  {fel+rule wit+fist}
+      |*  {fel/rule wit/fist}
       %+  cu  mo
       %-  ci  :_  (om wit)
-      |=  a+(map cord _(need *wit))
+      |=  a/(map cord _(need *wit))
       ^-  (unit (list _[(wonk *fel) (need *wit)]))
       (zl (turn (~(tap by a)) (head-rush fel)))
     ::
     ++  ke                                              ::  callbacks
-      |*  {gar+* sef+_|.(fist)}
-      |=  jon+json
+      |*  {gar/* sef/_|.(fist)}
+      |=  jon/json
       ^-  (unit _gar)
       =-  ~!  gar  ~!  (need -)  -
       ((sef) jon)
     ::
     ++  as                                              ::  array as set
       :: |*(a=fist (cu sa (ar a)))  ::  XX  types
-      |*  a+fist 
+      |*  a/fist 
       %-  cu  :_  (ar a)
       ~(gas in *(set _(need *a)))
     ::
-    ++  lake  |*(a+_* $+(json (unit a)))
+    ++  lake  |*(a/_* $+(json (unit a)))
     ++  peach
-      |*  a+{rule rule}
-      |=  tub+nail  
+      |*  a/{rule rule}
+      |=  tub/nail  
       ^-  (like (each _(wonk (-.a)) _(wonk (+.a))))
       %.  tub
       ;~(pose (stag %& -.a) (stag %| +.a))
     ::
     ++  head-rush
-      |*  a+rule
-      |*  {b+cord c+*}
+      |*  a/rule
+      |*  {b/cord c/*}
       =+  nit=(rush b a) 
       ?~  nit  ~
       (some [u.nit c])
@@ -76,14 +76,14 @@
       %+  sear  (soft passport)
       ;~((glue fas) sym urs:ab)                         ::  XX  [a-z0-9_]{1,15}
     ::
-    ++  speech-or-eval  $?(speech {$eval p+@t} {$mor p+(list speech-or-eval)})
+    ++  speech-or-eval  $?(speech {$eval p/@t} {$mor p/(list speech-or-eval)})
     ++  eval
-      |=  a+(trel @da bouquet speech-or-eval)  
+      |=  a/(trel @da bouquet speech-or-eval)  
       ^-  statement
       %=  a  r  ^-  speech
         |-
         ?:  ?=($mor -.r.a)
-          [%mor (turn p.r.a |=(b+speech-or-eval ^$(r.a b)))]
+          [%mor (turn p.r.a |=(b/speech-or-eval ^$(r.a b)))]
         ?.  ?=($eval -.r.a)  r.a
         =-  [%fat tank#- %exp p.r.a]
         =+  pax=[&1:% &2:% (scot %da p.a) |3:%]

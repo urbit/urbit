@@ -3,7 +3,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject
 %.  .                                                   ::  fun with subject
-|=  cud+@                                               ::  call it cud
+|=  cud/@                                               ::  call it cud
 =-  ?:  =(0 cud)                                        ::  if cud is 0
       all                                               ::  then return engine
     (make:all cud)                                      ::  else simple compile
@@ -25,12 +25,12 @@
   ~
 |%                                                      ::
 ++  abel  typo                                          ::  original sin: type
-++  ache  |*  {a+$+(* *) b+$+(* *)}                     ::  either a or b
-          $%({$| p+b} {$& p+a})                         ::    b default
+++  ache  |*  {a/$+(* *) b/$+(* *)}                     ::  either a or b
+          $%({$| p/b} {$& p/a})                         ::    b default
 ++  axis  @                                             ::  tree address
 ++  bank  (list @cF)                                    ::  UTF-32 string
 ++  base                                                ::  base mold
-          $?  {$atom p+odor}                            ::  atom
+          $?  {$atom p/odor}                            ::  atom
               $noun                                     ::  any noun
               $cell                                     ::  any cell
               $bean                                     ::  loobean
@@ -38,345 +38,345 @@
               $null                                     ::  ~ == 0
           ==                                            ::
 ++  bean  ?                                             ::  0=&=yes, 1=|=no
-++  beer  $@(@ {$~ p+twig})                             ::  simple embed
+++  beer  $@(@ {$~ p/twig})                             ::  simple embed
 ++  beet  $@  @                                         ::  advanced embed
-          $%  {$a p+twig}                               ::  take tape
-              {$b p+twig}                               ::  take manx
-              {$c p+twig}                               ::  take marl
-              {$d p+twig}                               ::  take $+(marl marl)
-              {$e p+twig q+(list tuna)}                 ::  element literal
+          $%  {$a p/twig}                               ::  take tape
+              {$b p/twig}                               ::  take manx
+              {$c p/twig}                               ::  take marl
+              {$d p/twig}                               ::  take $+(marl marl)
+              {$e p/twig q/(list tuna)}                 ::  element literal
           ==                                            ::
 ++  bloq  @                                             ::  blockclass
-++  calf  {p+(map @ud wine) q+wine}                     ::
+++  calf  {p/(map @ud wine) q/wine}                     ::
 ++  char  @tD                                           ::  UTF-8 byte
 ++  chub                                                ::  registered battery
-          $:  p+(pair chum tyre)                        ::  definition
-              q+*                                       ::  battery
-              r+(unit (pair axis chub))                 ::  parent
+          $:  p/(pair chum tyre)                        ::  definition
+              q/*                                       ::  battery
+              r/(unit (pair axis chub))                 ::  parent
           ==                                            ::
-++  chum  $?  lef+term                                  ::  jet name
-              {std+term kel+@}                          ::  kelvin version
-              {ven+term pro+term kel+@}                 ::  vendor and product
-              {ven+term pro+term ver+@ kel+@}           ::  all of the above
+++  chum  $?  lef/term                                  ::  jet name
+              {std/term kel/@}                          ::  kelvin version
+              {ven/term pro/term kel/@}                 ::  vendor and product
+              {ven/term pro/term ver/@ kel/@}           ::  all of the above
           ==                                            ::
-++  clue  {p+chum q+nock r+(list (pair term nock))}     ::  battery definition
-++  coil  $:  p+?($gold $iron $lead $zinc)              ::  core type
-              q+type                                    ::
-              r+{p+?($~ ^) q+(map term foot)}           ::
+++  clue  {p/chum q/nock r/(list (pair term nock))}     ::  battery definition
+++  coil  $:  p/?($gold $iron $lead $zinc)              ::  core type
+              q/type                                    ::
+              r/{p/?($~ ^) q/(map term foot)}           ::
           ==                                            ::
-++  coin  $%  {$$ p+dime}                               ::
-              {$blob p+*}                               ::
-              {$many p+(list coin)}                     ::
+++  coin  $%  {$$ p/dime}                               ::
+              {$blob p/*}                               ::
+              {$many p/(list coin)}                     ::
           ==                                            ::
 ++  cord  @t                                            ::  text atom (UTF-8)
-++  date  {{a+? y+@ud} m+@ud t+tarp}                    ::  parsed date
-++  dime  {p+@ta q+@}                                   ::
+++  date  {{a/? y/@ud} m/@ud t/tarp}                    ::  parsed date
+++  dime  {p/@ta q/@}                                   ::
 ++  dock  (pair @p term)                                ::  message target
-++  each  |*  {a+$+(* *) b+$+(* *)}                     ::  either a or b
-          $%({$& p+a} {$| p+b})                         ::    a default
-++  edge  {p+hair q+(unit {p+* q+nail})}                ::  parsing output
-++  foot  $%  {$ash p+twig}                             ::  dry arm, geometric
-              {$elm p+twig}                             ::  wet arm, generic
+++  each  |*  {a/$+(* *) b/$+(* *)}                     ::  either a or b
+          $%({$& p/a} {$| p/b})                         ::    a default
+++  edge  {p/hair q/(unit {p/* q/nail})}                ::  parsing output
+++  foot  $%  {$ash p/twig}                             ::  dry arm, geometric
+              {$elm p/twig}                             ::  wet arm, generic
               {$oak $~}                                 ::  XX not used
-              {$yew p+(map term foot)}                  ::  XX not used
+              {$yew p/(map term foot)}                  ::  XX not used
           ==                                            ::
 ++  gate  $+(* *)                                       ::  general gate
-++  hair  {p+@ud q+@ud}                                 ::  parsing trace
-++  like  |*  a+$+(* *)                                 ::  generic edge
-          |=  b+_`*`[(hair) ~]                          ::
+++  hair  {p/@ud q/@ud}                                 ::  parsing trace
+++  like  |*  a/$+(* *)                                 ::  generic edge
+          |=  b/_`*`[(hair) ~]                          ::
           :-  p=(hair -.b)                              ::
           ^=  q                                         ::
           ?@  +.b  ~                                    ::
           :-  ~                                         ::
           u=[p=(a +>-.b) q=[p=(hair -.b) q=(tape +.b)]] ::
-++  limb  $@(term $%({$& p+axis} {$| p+@ud q+term}))    ::
-++  line  {p+{$leaf p+odor q+@} q+tile}                 ::  %kelp case
-++  list  |*  a+$+(* *)                                 ::  null-term list
-          $@($~ {i+a t+(list a)})                       ::
-++  lone  |*(a+$+(* *) p+a)                             ::  just one thing
+++  limb  $@(term $%({$& p/axis} {$| p/@ud q/term}))    ::
+++  line  {p/{$leaf p/odor q/@} q/tile}                 ::  %kelp case
+++  list  |*  a/$+(* *)                                 ::  null-term list
+          $@($~ {i/a t/(list a)})                       ::
+++  lone  |*(a/$+(* *) p/a)                             ::  just one thing
 ++  mane  $@(@tas {@tas @tas})                          ::  XML name#space
-++  manx  {g+marx c+marl}                               ::  XML node
+++  manx  {g/marx c/marl}                               ::  XML node
 ++  marl  (list manx)                                   ::  XML node list
-++  mars  {t+{n+$$ a+{i+{n+$$ v+tape} t+$~}} c+$~}      ::  XML cdata
-++  mart  (list {n+mane v+tape})                        ::  XML attributes
-++  marx  {n+mane a+mart}                               ::  XML tag
+++  mars  {t/{n/$$ a/{i/{n/$$ v/tape} t/$~}} c/$~}      ::  XML cdata
+++  mart  (list {n/mane v/tape})                        ::  XML attributes
+++  marx  {n/mane a/mart}                               ::  XML tag
 ++  metl  ?($gold $iron $zinc $lead)                    ::  core variance
 ++  noun  *                                             ::  any noun
 ++  null  $~                                            ::  null, nil, etc
 ++  odor  @ta                                           ::  atom format
-++  tarp  {d+@ud h+@ud m+@ud s+@ud f+(list @ux)}        ::  parsed time
+++  tarp  {d/@ud h/@ud m/@ud s/@ud f/(list @ux)}        ::  parsed time
 ++  time  @da                                           ::  galactic time
-++  tree  |*  a+$+(* *)                                 ::  binary tree
-          $@($~ {n+a l+(tree a) r+(tree a)})            ::
-++  nail  {p+hair q+tape}                               ::  parsing input
+++  tree  |*  a/$+(* *)                                 ::  binary tree
+          $@($~ {n/a l/(tree a) r/(tree a)})            ::
+++  nail  {p/hair q/tape}                               ::  parsing input
 ++  numb  @                                             ::  just a number
-++  pair  |*({a+$+(* *) b+$+(* *)} {p+a q+b})           ::  just a pair
-++  quid  |*({a+$+(* *) b+*} {a _b})                    ::  for =^
-++  quip  |*({a+$+(* *) b+*} {(list a) _b})             ::  for =^
-++  wand  |*  a+(pole $+(* *))                          ::  hetero list
-          |=  b+*                                       ::
+++  pair  |*({a/$+(* *) b/$+(* *)} {p/a q/b})           ::  just a pair
+++  quid  |*({a/$+(* *) b/*} {a _b})                    ::  for =^
+++  quip  |*({a/$+(* *) b/*} {(list a) _b})             ::  for =^
+++  wand  |*  a/(pole $+(* *))                          ::  hetero list
+          |=  b/*                                       ::
           ?~  a  ~                                      ::
           ?@  b  ~                                      ::
           [i=(-.a -.b) t=$(a +.a, b +.b)]               ::
 ++  pass  @                                             ::  public key
 ++  path  (list span)                                   ::  filesys location
-++  pint  {p+{p+@ q+@} q+{p+@ q+@}}                     ::  line#column range
-++  pole  |*  a+$+(* *)                                 ::  nameless list
+++  pint  {p/{p/@ q/@} q/{p/@ q/@}}                     ::  line#column range
+++  pole  |*  a/$+(* *)                                 ::  nameless list
           $@($~ {a (pole a)})                           ::
-++  port  $:  p+axis                                    ::
+++  port  $:  p/axis                                    ::
               $=  q                                     ::
-              $%  {$& p+type}                           ::
-                  {$| p+axis q+(list {p+type q+foot})}  ::
+              $%  {$& p/type}                           ::
+                  {$| p/axis q/(list {p/type q/foot})}  ::
               ==                                        ::
           ==                                            ::
-++  post  $:  p+axis                                    ::
+++  post  $:  p/axis                                    ::
               $=  q                                     ::
-              $%  {$0 p+type}                           ::
-                  {$1 p+axis q+(list {p+type q+foot})}  ::
-                  {$2 p+twin q+type}                    ::
+              $%  {$0 p/type}                           ::
+                  {$1 p/axis q/(list {p/type q/foot})}  ::
+                  {$2 p/twin q/type}                    ::
               ==                                        ::
           ==                                            ::
-++  prop  $:  p+axis                                    ::
+++  prop  $:  p/axis                                    ::
               $=  q                                     ::
-              {p+?($~ axis) q+(list {p+type q+foot})}   ::
+              {p/?($~ axis) q/(list {p/type q/foot})}   ::
           ==                                            ::
-++  qual  |*  {a+$+(* *) b+$+(* *) c+$+(* *) d+$+(* *)} ::  just a quadruple
-          {p+a q+b r+c s+d}                             ::
+++  qual  |*  {a/$+(* *) b/$+(* *) c/$+(* *) d/$+(* *)} ::  just a quadruple
+          {p/a q/b r/c s/d}                             ::
 ++  ring  @                                             ::  private key
 ++  rule  _|=(nail *edge)                            ::  parsing rule
 ++  span  @ta                                           ::  text-atom (ASCII)
-++  spot  {p+path q+pint}                               ::  range in file
+++  spot  {p/path q/pint}                               ::  range in file
 ++  tang  (list tank)                                   ::  bottom-first error
-++  tank  $%  {$leaf p+tape}                            ::  printing formats
+++  tank  $%  {$leaf p/tape}                            ::  printing formats
               $:  $palm                                 ::  backstep list
-                  p+{p+tape q+tape r+tape s+tape}       ::
-                  q+(list tank)                         ::
+                  p/{p/tape q/tape r/tape s/tape}       ::
+                  q/(list tank)                         ::
               ==                                        ::
               $:  $rose                                 ::  flat list
-                  p+{p+tape q+tape r+tape}              ::  mid open close
-                  q+(list tank)                         ::
+                  p/{p/tape q/tape r/tape}              ::  mid open close
+                  q/(list tank)                         ::
               ==                                        ::
           ==                                            ::
 ++  tanq                                                ::  future tank   
-          $?  {$~ p+(list tanq)}                        ::  list of printables
-              {$~ $~ p+tape}                            ::  simple string
+          $?  {$~ p/(list tanq)}                        ::  list of printables
+              {$~ $~ p/tape}                            ::  simple string
               (pair @tas tanq)                          ::  captioned
           ==                                            ::
 ++  tape  (list char)                                   ::  string as list
 ++  term  @tas                                          ::  ascii symbol
 ++  tiki                                                ::  test case
-          $%  {$& p+(unit term) q+wing}                 ::  simple wing
-              {$| p+(unit term) q+twig}                 ::  named wing
+          $%  {$& p/(unit term) q/wing}                 ::  simple wing
+              {$| p/(unit term) q/twig}                 ::  named wing
           ==                                            ::
-++  tile  $^  {p+tile q+tile}                           ::  ordered pair
-          $%  {$axil p+base}                            ::  base type
-              {$bark p+term q+tile}                     ::  name
-              {$bush p+tile q+tile}                     ::  pair#tag
-              {$fern p+{i+tile t+(list tile)}}          ::  plain selection
-              {$herb p+twig}                            ::  gate
-              {$kelp p+{i+line t+(list line)}}          ::  tag selection
-              {$leaf p+term q+@}                        ::  constant atom
-              {$reed p+tile q+tile}                     ::  atom#cell
-              {$weed p+twig}                            ::  example
+++  tile  $^  {p/tile q/tile}                           ::  ordered pair
+          $%  {$axil p/base}                            ::  base type
+              {$bark p/term q/tile}                     ::  name
+              {$bush p/tile q/tile}                     ::  pair#tag
+              {$fern p/{i/tile t/(list tile)}}          ::  plain selection
+              {$herb p/twig}                            ::  gate
+              {$kelp p/{i/line t/(list line)}}          ::  tag selection
+              {$leaf p/term q/@}                        ::  constant atom
+              {$reed p/tile q/tile}                     ::  atom#cell
+              {$weed p/twig}                            ::  example
           ==                                            ::
 ++  toga                                                ::  face control
-          $@  p+term                                    ::  two togas
+          $@  p/term                                    ::  two togas
           $%  {$0 $~}                                   ::  no toga
-              {$1 p+term q+toga}                        ::  deep toga
-              {$2 p+toga q+toga}                        ::  cell toga
+              {$1 p/term q/toga}                        ::  deep toga
+              {$2 p/toga q/toga}                        ::  cell toga
           ==                                            ::
-++  trap  |*(a+_* _|?(*a))                        ::  makes perfect sense
-++  trel  |*  {a+$+(* *) b+$+(* *) c+$+(* *)}           ::  just a triple
-          {p+a q+b r+c}                                 ::
+++  trap  |*(a/_* _|?(*a))                        ::  makes perfect sense
+++  trel  |*  {a/$+(* *) b/$+(* *) c/$+(* *)}           ::  just a triple
+          {p/a q/b r/c}                                 ::
 ++  tuna                                                ::  tagflow
-          $%  {$a p+twig}                               ::  plain text
-              {$b p+twig}                               ::  single tag
-              {$c p+twig}                               ::  simple list
-              {$d p+twig}                               ::  dynamic list
-              {$e p+twig q+(list tuna)}                 ::  element
-              {$f p+(list tuna)}                        ::  subflow
+          $%  {$a p/twig}                               ::  plain text
+              {$b p/twig}                               ::  single tag
+              {$c p/twig}                               ::  simple list
+              {$d p/twig}                               ::  dynamic list
+              {$e p/twig q/(list tuna)}                 ::  element
+              {$f p/(list tuna)}                        ::  subflow
           ==                                            ::
-++  twig  $^  {p+twig q+twig}                           ::
+++  twig  $^  {p/twig q/twig}                           ::
           $%                                            ::
-            {$$ p+axis}                                 ::  simple leg
+            {$$ p/axis}                                 ::  simple leg
           ::                                            ::::::  molds
-            {$bcpt p+twig q+twig}                       ::  atom fork (reed)
-            {$bccb p+twig}                              ::  example
-            {$bccl p+(list twig)}                       ::  tuple
-            {$bccn p+(list twig)}                       ::  tagged fork (kelp)
-            {$bcls p+twig q+twig}                       ::  function
-            {$bckt p+twig q+twig}                       ::  pairhead fork (bush)
-            {$bcwt p+(list twig)}                       ::  untagged fork
-            {$bcts p+term q+twig}                       ::  name
+            {$bcpt p/twig q/twig}                       ::  atom fork (reed)
+            {$bccb p/twig}                              ::  example
+            {$bccl p/(list twig)}                       ::  tuple
+            {$bccn p/(list twig)}                       ::  tagged fork (kelp)
+            {$bcls p/twig q/twig}                       ::  function
+            {$bckt p/twig q/twig}                       ::  pairhead fork (bush)
+            {$bcwt p/(list twig)}                       ::  untagged fork
+            {$bcts p/term q/twig}                       ::  name
           ::
-            {$cbzw p+base}                              ::  bunt base
-            {$cbzy p+stem}                              ::  symbol
-            {$cbzz p+base}                              ::  base
+            {$cbzw p/base}                              ::  bunt base
+            {$cbzy p/stem}                              ::  symbol
+            {$cbzz p/base}                              ::  base
           ::                                            ::::::  cores
-            {$brcb p+twig q+(map term foot)}            ::  %gold tray, sample p
-            {$brcl p+twig q+twig}                       ::  %brts by example
-            {$brcn p+(map term foot)}                   ::  %gold core, natural
-            {$brdt p+twig}                              ::  dry %gold trap
-            {$brfs p+twig q+(map term foot)}            ::  vulcan. %gold tray
-            {$brkt p+twig q+(map term foot)}            ::  %gold book
-            {$brhp p+twig}                              ::  kick dry %gold trap
-            {$brls p+twig q+twig}
-            {$brtr p+twig q+twig}
-            {$brts p+twig q+twig}                       ::  dry %gold gate
-            {$brwt p+twig}                              ::  dry %lead trap
+            {$brcb p/twig q/(map term foot)}            ::  %gold tray, sample p
+            {$brcl p/twig q/twig}                       ::  %brts by example
+            {$brcn p/(map term foot)}                   ::  %gold core, natural
+            {$brdt p/twig}                              ::  dry %gold trap
+            {$brfs p/twig q/(map term foot)}            ::  vulcan. %gold tray
+            {$brkt p/twig q/(map term foot)}            ::  %gold book
+            {$brhp p/twig}                              ::  kick dry %gold trap
+            {$brls p/twig q/twig}
+            {$brtr p/twig q/twig}
+            {$brts p/twig q/twig}                       ::  dry %gold gate
+            {$brwt p/twig}                              ::  dry %lead trap
           ::                                            ::::::  tuples
-            {$clcb p+twig q+twig}                       ::  [q p]
-            {$clcn p+tusk}                              ::  [[p ~] ~]
-            {$clfs p+twig}                              ::  {$$ {$$ p ~] ~]
-            {$clkt p+twig q+twig r+twig s+twig}         ::  [p q r s]
-            {$clhp p+twig q+twig}                       ::  [p q]
-            {$clls p+twig q+twig r+twig}                ::  [p q r]
-            {$clsg p+tusk}                              ::  [p ~]
-            {$cltr p+tusk}                              ::  p as a tuple
-            {$clzz p+tusk}                              ::  macro
+            {$clcb p/twig q/twig}                       ::  [q p]
+            {$clcn p/tusk}                              ::  [[p ~] ~]
+            {$clfs p/twig}                              ::  {$$ {$$ p ~] ~]
+            {$clkt p/twig q/twig r/twig s/twig}         ::  [p q r s]
+            {$clhp p/twig q/twig}                       ::  [p q]
+            {$clls p/twig q/twig r/twig}                ::  [p q r]
+            {$clsg p/tusk}                              ::  [p ~]
+            {$cltr p/tusk}                              ::  p as a tuple
+            {$clzz p/tusk}                              ::  macro
           ::                                            ::::::  invocations
-            {$cnbc p+twig}                              ::  ^~($.p)
-            {$cncb p+wing q+tram}                       ::  %+, then cast to p
-            {$cncl p+twig q+twig}                       ::  pull $.p w# sample q
-            {$cndt p+twig q+twig}                       ::  %-(q p)
-            {$cnhp p+twig q+tusk}                       ::  slam p w# sample q
-            {$cntr p+wing q+twig r+tram}                ::  pull p.q w# changes
-            {$cnkt p+twig q+twig r+twig s+twig}         ::  slam p w# :*(q r s)
-            {$cnls p+twig q+twig r+twig}                ::  slam p w# :*(q r)
-            {$cnsg p+wing q+twig r+twig}                ::  pull p from q with r
-            {$cnts p+wing q+tram}                       ::  eval. p w# q changes
-            {$cnzy p+term}                              ::  pulls limb p
-            {$cnzz p+wing}                              ::  pulls p
+            {$cnbc p/twig}                              ::  ^~($.p)
+            {$cncb p/wing q/tram}                       ::  %+, then cast to p
+            {$cncl p/twig q/twig}                       ::  pull $.p w# sample q
+            {$cndt p/twig q/twig}                       ::  %-(q p)
+            {$cnhp p/twig q/tusk}                       ::  slam p w# sample q
+            {$cntr p/wing q/twig r/tram}                ::  pull p.q w# changes
+            {$cnkt p/twig q/twig r/twig s/twig}         ::  slam p w# :*(q r s)
+            {$cnls p/twig q/twig r/twig}                ::  slam p w# :*(q r)
+            {$cnsg p/wing q/twig r/twig}                ::  pull p from q with r
+            {$cnts p/wing q/tram}                       ::  eval. p w# q changes
+            {$cnzy p/term}                              ::  pulls limb p
+            {$cnzz p/wing}                              ::  pulls p
           ::                                            ::::::  nock
-            {$dtkt p+twig}                              ::  nock 11 data skyhook
-            {$dtls p+twig}                              ::  nock 4 increment
-            {$dtzy p+term q+@}                          ::  atom constant
-            {$dtzz p+term q+*}                          ::  cubical constant
-            {$dttr p+twig q+twig}                       ::  nock p w# formula q
-            {$dtts p+twig q+twig}                       ::  nock 5 equality test
-            {$dtwt p+twig}                              ::  nock 3 cell test
+            {$dtkt p/twig}                              ::  nock 11 data skyhook
+            {$dtls p/twig}                              ::  nock 4 increment
+            {$dtzy p/term q/@}                          ::  atom constant
+            {$dtzz p/term q/*}                          ::  cubical constant
+            {$dttr p/twig q/twig}                       ::  nock p w# formula q
+            {$dtts p/twig q/twig}                       ::  nock 5 equality test
+            {$dtwt p/twig}                              ::  nock 3 cell test
           ::                                            ::::::  prettyprinting
-            {$hxgl p+tusk}                              ::  prettyprint tape
-            {$hxgr p+tusk}                              ::  prettyprint tank
+            {$hxgl p/tusk}                              ::  prettyprint tape
+            {$hxgr p/tusk}                              ::  prettyprint tank
           ::                                            ::::::  type conversion
-            {$ktbr p+twig}                              ::  %gold core to %iron
-            {$ktdt p+twig q+twig}                       ::  cast q to type (p q)
-            {$ktls p+twig q+twig}                       ::  cast q to p, verify
-            {$kthp p+twig q+twig}                       ::  cast q to icon of p
-            {$ktpm p+twig}                              ::  %gold core to %zinc
-            {$ktsg p+twig}                              ::  p as static constant
-            {$ktts p+toga q+twig}                       ::  wrap q in toga p
-            {$ktwt p+twig}                              ::  %gold core to %lead
+            {$ktbr p/twig}                              ::  %gold core to %iron
+            {$ktdt p/twig q/twig}                       ::  cast q to type (p q)
+            {$ktls p/twig q/twig}                       ::  cast q to p, verify
+            {$kthp p/twig q/twig}                       ::  cast q to icon of p
+            {$ktpm p/twig}                              ::  %gold core to %zinc
+            {$ktsg p/twig}                              ::  p as static constant
+            {$ktts p/toga q/twig}                       ::  wrap q in toga p
+            {$ktwt p/twig}                              ::  %gold core to %lead
           ::                                            ::::::  hints
-            {$sgbr p+twig q+twig}                       ::  print p if q fails
-            {$sgcb p+twig q+twig}                       ::  put p in q's trace
-            {$sgcn p+chum q+twig r+tyre s+twig}         ::  mark core for jets
-            {$sgfs p+chum q+twig}                       ::  jet arm in ~% core
-            {$sggl p+$@(term {p+term q+twig}) q+twig}   ::  hint p to product q
-            {$sggr p+$@(term {p+term q+twig}) q+twig}   ::  hint p to q
-            {$sgbc p+term q+twig}                       ::  label q, profiling
-            {$sgls p+@ q+twig}                          ::  cache#memoize
-            {$sgpm p+@ud q+twig r+twig}                 ::  print q w#priority
-            {$sgts p+twig q+twig}                       ::  avoid duplication
-            {$sgwt p+@ud q+twig r+twig s+twig}          ::  hint iff q is yes
-            {$sgzp p+twig q+twig}                       ::  type in stacktrace
+            {$sgbr p/twig q/twig}                       ::  print p if q fails
+            {$sgcb p/twig q/twig}                       ::  put p in q's trace
+            {$sgcn p/chum q/twig r/tyre s/twig}         ::  mark core for jets
+            {$sgfs p/chum q/twig}                       ::  jet arm in ~% core
+            {$sggl p/$@(term {p/term q/twig}) q/twig}   ::  hint p to product q
+            {$sggr p/$@(term {p/term q/twig}) q/twig}   ::  hint p to q
+            {$sgbc p/term q/twig}                       ::  label q, profiling
+            {$sgls p/@ q/twig}                          ::  cache#memoize
+            {$sgpm p/@ud q/twig r/twig}                 ::  print q w#priority
+            {$sgts p/twig q/twig}                       ::  avoid duplication
+            {$sgwt p/@ud q/twig r/twig s/twig}          ::  hint iff q is yes
+            {$sgzp p/twig q/twig}                       ::  type in stacktrace
           ::                                            ::::::  miscellaneous
-            {$smcl p+twig q+tusk}                       ::  binary to n-ary
-            {$smdt p+twig q+tusk}                       ::
-            {$smdq p+(list beer)}                       ::  assemble string
-            {$smsg p+twig q+tusk}                       ::  gonads
-            {$smsm p+twig q+twig}                       ::  make sure q is a p
+            {$smcl p/twig q/tusk}                       ::  binary to n-ary
+            {$smdt p/twig q/tusk}                       ::
+            {$smdq p/(list beer)}                       ::  assemble string
+            {$smsg p/twig q/tusk}                       ::  gonads
+            {$smsm p/twig q/twig}                       ::  make sure q is a p
           ::                                            ::::::  compositions
-            {$tsbr p+twig q+twig}                       ::  push bunt: ++(*p q)
-            {$tscl p+tram q+twig}                       ::  p changes then q
-            {$tsdt p+wing q+twig r+twig}                ::  r with p set to q
-            {$tsgl p+twig q+twig}                       ::  +>(q p)
-            {$tshp p+twig q+twig}                       ::  flip push: ++(q p)
-            {$tsgr p+twig q+twig}                       ::  use p as .. of q
-            {$tskt p+twig q+twig r+twig s+twig}         ::  state machine wing
-            {$tsls p+twig q+twig}                       ::  push p on .. of q
-            {$tstr p+term q+wing r+twig}                ::  make a $bull#alias
-            {$tssg p+tusk}                              ::  compose twig list
+            {$tsbr p/twig q/twig}                       ::  push bunt: ++(*p q)
+            {$tscl p/tram q/twig}                       ::  p changes then q
+            {$tsdt p/wing q/twig r/twig}                ::  r with p set to q
+            {$tsgl p/twig q/twig}                       ::  +>(q p)
+            {$tshp p/twig q/twig}                       ::  flip push: ++(q p)
+            {$tsgr p/twig q/twig}                       ::  use p as .. of q
+            {$tskt p/twig q/twig r/twig s/twig}         ::  state machine wing
+            {$tsls p/twig q/twig}                       ::  push p on .. of q
+            {$tstr p/term q/wing r/twig}                ::  make a $bull#alias
+            {$tssg p/tusk}                              ::  compose twig list
           ::                                            ::::::  conditionals
-            {$wtbr p+tusk}                              ::  logical OR
-            {$wthp p+wing q+tine}                       ::  select case in q
-            {$wtcl p+twig q+twig r+twig}                ::  if p, then q, else r
-            {$wtdt p+twig q+twig r+twig}                ::  unless, ?:(p r q)
-            {$wtkt p+wing q+twig r+twig}                ::  if p is a cell
-            {$wtgl p+twig q+twig}                       ::  assert |, ?:(p !! q)
-            {$wtgr p+twig q+twig}                       ::  assert &, ?:(p q !!)
-            {$wtls p+wing q+twig r+tine}                ::  %wthp w# default
-            {$wtpm p+tusk}                              ::  logical AND
-            {$wtpt p+wing q+twig r+twig}                ::  if p is an atom
-            {$wtsg p+wing q+twig r+twig}                ::  if p is null
-            {$wtts p+twig q+wing}                       ::  if q is in p
-            {$wtzp p+twig}                              ::  logical NOT
+            {$wtbr p/tusk}                              ::  logical OR
+            {$wthp p/wing q/tine}                       ::  select case in q
+            {$wtcl p/twig q/twig r/twig}                ::  if p, then q, else r
+            {$wtdt p/twig q/twig r/twig}                ::  unless, ?:(p r q)
+            {$wtkt p/wing q/twig r/twig}                ::  if p is a cell
+            {$wtgl p/twig q/twig}                       ::  assert |, ?:(p !! q)
+            {$wtgr p/twig q/twig}                       ::  assert &, ?:(p q !!)
+            {$wtls p/wing q/twig r/tine}                ::  %wthp w# default
+            {$wtpm p/tusk}                              ::  logical AND
+            {$wtpt p/wing q/twig r/twig}                ::  if p is an atom
+            {$wtsg p/wing q/twig r/twig}                ::  if p is null
+            {$wtts p/twig q/wing}                       ::  if q is in p
+            {$wtzp p/twig}                              ::  logical NOT
           ::                                            ::::::  special
-            {$zpcb p+spot q+twig}                       ::  debug info in trace
-            {$zpcm p+twig q+twig}                       ::  q twig with p type
-            {$zpfs p+twig}                              ::  report .. as error
-            {$zpgr p+twig}                              ::  vase w# value p
-            {$zpsm p+twig q+twig}                       ::  [type noun] pair
-            {$zpts p+twig}                              ::  Nock formula of p
-            {$zpwt p+$@(p+@ {p+@ q+@}) q+twig}          ::  restrict hoon vers.
+            {$zpcb p/spot q/twig}                       ::  debug info in trace
+            {$zpcm p/twig q/twig}                       ::  q twig with p type
+            {$zpfs p/twig}                              ::  report .. as error
+            {$zpgr p/twig}                              ::  vase w# value p
+            {$zpsm p/twig q/twig}                       ::  [type noun] pair
+            {$zpts p/twig}                              ::  Nock formula of p
+            {$zpwt p/$@(p/@ {p/@ q/@}) q/twig}          ::  restrict hoon vers.
             {$zpzp $~}                                  ::  always crash
           ==                                            ::
 ++  stem  (pair term @)                                 ::
 ++  tine  (list (pair twig twig))                       ::
 ++  tusk  (list twig)                                   ::
-++  tyre  (list {p+term q+twig})                        ::
+++  tyre  (list {p/term q/twig})                        ::
 ++  tyke  (list (unit twig))                            ::
-++  tram  (list {p+wing q+twig})                        ::
+++  tram  (list {p/wing q/twig})                        ::
 ::                                                      ::::::  virtual nock
-++  nock  $^  {p+nock q+nock}                           ::  autocons
-          $%  {$0 p+@}                                  ::  axis select
-              {$1 p+*}                                  ::  constant
-              {$2 p+nock q+nock}                        ::  compose
-              {$3 p+nock}                               ::  cell test
-              {$4 p+nock}                               ::  increment
-              {$5 p+nock q+nock}                        ::  equality test
-              {$6 p+nock q+nock r+nock}                 ::  if, then, else
-              {$7 p+nock q+nock}                        ::  serial compose
-              {$8 p+nock q+nock}                        ::  push onto subject
-              {$9 p+@ q+nock}                           ::  select arm and fire
-              {$10 p+$@(@ {p+@ q+nock}) q+nock}         ::  hint
-              {$11 p+nock}                              ::  grab data from sky
+++  nock  $^  {p/nock q/nock}                           ::  autocons
+          $%  {$0 p/@}                                  ::  axis select
+              {$1 p/*}                                  ::  constant
+              {$2 p/nock q/nock}                        ::  compose
+              {$3 p/nock}                               ::  cell test
+              {$4 p/nock}                               ::  increment
+              {$5 p/nock q/nock}                        ::  equality test
+              {$6 p/nock q/nock r/nock}                 ::  if, then, else
+              {$7 p/nock q/nock}                        ::  serial compose
+              {$8 p/nock q/nock}                        ::  push onto subject
+              {$9 p/@ q/nock}                           ::  select arm and fire
+              {$10 p/$@(@ {p/@ q/nock}) q/nock}         ::  hint
+              {$11 p/nock}                              ::  grab data from sky
           ==                                            ::
-++  tone  $%  {$0 p+*}                                  ::  success
-              {$1 p+(list)}                             ::  blocks
-              {$2 p+(list {@ta *})}                     ::  error ~_s
+++  tone  $%  {$0 p/*}                                  ::  success
+              {$1 p/(list)}                             ::  blocks
+              {$2 p/(list {@ta *})}                     ::  error ~_s
           ==                                            ::
-++  toon  $%  {$0 p+*}                                  ::  success
-              {$1 p+(list)}                             ::  blocks
-              {$2 p+(list tank)}                        ::  stack trace
+++  toon  $%  {$0 p/*}                                  ::  success
+              {$1 p/(list)}                             ::  blocks
+              {$2 p/(list tank)}                        ::  stack trace
           ==                                            ::
-++  tune  $%  {$0 p+vase}                               ::
-              {$1 p+(list)}                             ::
-              {$2 p+(list {@ta *})}                     ::
+++  tune  $%  {$0 p/vase}                               ::
+              {$1 p/(list)}                             ::
+              {$2 p/(list {@ta *})}                     ::
           ==                                            ::
-++  twin  {p+term q+wing r+axis s+type}                 ::  alias info
+++  twin  {p/term q/wing r/axis s/type}                 ::  alias info
 ++  type  $@  ?($noun $void)                            ::  set all or set none
-          $%  {$atom p+term}                            ::  number and format
-              {$bull p+twin q+type}                     ::  wing synonym
-              {$cell p+type q+type}                     ::  ordered pair
-              {$core p+type q+coil}                     ::
-              {$cube p+* q+type}                        ::  constant
-              {$face p+term q+type}                     ::  name
-              {$fork p+type q+type}                     ::  union#branch
-              {$hold p+(list {p+type q+twig})}          ::  infinite genrator
+          $%  {$atom p/term}                            ::  number and format
+              {$bull p/twin q/type}                     ::  wing synonym
+              {$cell p/type q/type}                     ::  ordered pair
+              {$core p/type q/coil}                     ::
+              {$cube p/* q/type}                        ::  constant
+              {$face p/term q/type}                     ::  name
+              {$fork p/type q/type}                     ::  union#branch
+              {$hold p/(list {p/type q/twig})}          ::  infinite genrator
           ==                                            ::
 ++  typo  type                                          ::  old type
 ++  udal                                                ::  atomic change (%b)
-          $:  p+@ud                                     ::  blockwidth
-              q+(list {p+@ud q+(unit {p+@ q+@})})      ::  indels
+          $:  p/@ud                                     ::  blockwidth
+              q/(list {p/@ud q/(unit {p/@ q/@})})      ::  indels
           ==                                            ::
 ++  udon                                                ::  abstract delta
-          $:  p+umph                                    ::  preprocessor
+          $:  p/umph                                    ::  preprocessor
               $=  q                                     ::  patch
-              $%  {$a p+* q+*}                          ::  trivial replace
-                  {$b p+udal}                           ::  atomic indel
-                  {$c p+(urge)}                         ::  list indel
-                  {$d p+upas q+upas}                    ::  tree edit
+              $%  {$a p/* q/*}                          ::  trivial replace
+                  {$b p/udal}                           ::  atomic indel
+                  {$c p/(urge)}                         ::  list indel
+                  {$d p/upas q/upas}                    ::  tree edit
               ==                                        ::
           ==                                            ::
 ++  umph                                                ::  change filter
@@ -384,23 +384,23 @@
                   $b                                    ::  jamfile
                   $c                                    ::  LF text
               ==                                        ::
-          $%  {$d p+@ud}                                ::  blocklist
+          $%  {$d p/@ud}                                ::  blocklist
           ==                                            ::
-++  unce  |*  a+$+(* *)                                 ::  change part
-          $%  {$& p+@ud}                                ::  skip[copy]
-              {$| p+(list a) q+(list a)}                ::  p -> q[chunk]
+++  unce  |*  a/$+(* *)                                 ::  change part
+          $%  {$& p/@ud}                                ::  skip[copy]
+              {$| p/(list a) q/(list a)}                ::  p -> q[chunk]
           ==                                            ::
-++  unit  |*  a+$+(* *)                                 ::  maybe
-          $@($~ {$~ u+a})                               ::
+++  unit  |*  a/$+(* *)                                 ::  maybe
+          $@($~ {$~ u/a})                               ::
 ++  upas                                                ::  tree change (%d)
-          $^  {p+upas q+upas}                           ::  cell
-          $%  {$0 p+axis}                               ::  copy old
-              {$1 p+*}                                  ::  insert new
-              {$2 p+axis q+udon}                        ::  mutate!
+          $^  {p/upas q/upas}                           ::  cell
+          $%  {$0 p/axis}                               ::  copy old
+              {$1 p/*}                                  ::  insert new
+              {$2 p/axis q/udon}                        ::  mutate!
           ==                                            ::
-++  urge  |*(a+$+(* *) (list (unce a)))                 ::  list change
-++  vase  {p+type q+*}                                  ::  type-value pair
-++  vise  {p+typo q+*}                                  ::  old vase
+++  urge  |*(a/$+(* *) (list (unce a)))                 ::  list change
+++  vase  {p/type q/*}                                  ::  type-value pair
+++  vise  {p/typo q/*}                                  ::  old vase
 ++  wall  (list tape)                                   ::  text lines (no \n)
 ++  wain  (list cord)                                   ::  text lines (no \n)
 ++  wing  (list limb)                                   ::
@@ -413,32 +413,32 @@
                   $wool                                 ::
                   $yarn                                 ::
               ==                                        ::
-          $%  {$atom p+term}                            ::
-              {$core p+(list @ta) q+wine}               ::
-              {$face p+term q+wine}                     ::
-              {$list p+term q+wine}                     ::
-              {$pear p+term q+@}                        ::
-              {$pick p+(list wine)}                     ::
-              {$plot p+(list wine)}                     ::
-              {$stop p+@ud}                             ::
-              {$tree p+term q+wine}                     ::
-              {$unit p+term q+wine}                     ::
+          $%  {$atom p/term}                            ::
+              {$core p/(list @ta) q/wine}               ::
+              {$face p/term q/wine}                     ::
+              {$list p/term q/wine}                     ::
+              {$pear p/term q/@}                        ::
+              {$pick p/(list wine)}                     ::
+              {$plot p/(list wine)}                     ::
+              {$stop p/@ud}                             ::
+              {$tree p/term q/wine}                     ::
+              {$unit p/term q/wine}                     ::
           ==                                            ::
-++  wonk  |*(veq+edge ?~(q.veq !! p.u.q.veq))           ::
+++  wonk  |*(veq/edge ?~(q.veq !! p.u.q.veq))           ::
 ++  worm                                                ::  compiler cache
-  $:  nes+(set ^)                                       ::  ++nest
-      pay+(map (pair type twig) type)                   ::  ++play
-      mit+(map (pair type twig) (pair type nock))       ::  ++mint
+  $:  nes/(set ^)                                       ::  ++nest
+      pay/(map (pair type twig) type)                   ::  ++play
+      mit/(map (pair type twig) (pair type nock))       ::  ++mint
   ==                                                    ::
 ::                                                      ::
-++  map  |*  {a+$+(* *) b+$+(* *)}                      ::  associative tree
-         $@($~ {n+{p+a q+b} l+(map a b) r+(map a b)})   ::
-++  qeu  |*  a+$+(* *)                                  ::  queue
-         $@($~ {n+a l+(qeu a) r+(qeu a)})               ::
-++  set  |*  a+$+(* *)                                  ::  set
-         $@($~ {n+a l+(set a) r+(set a)})               ::
-++  jar  |*({a+$+(* *) b+$+(* *)} (map a (list b)))     ::  map of lists
-++  jug  |*({a+$+(* *) b+$+(* *)} (map a (set b)))      ::  map of sets
+++  map  |*  {a/$+(* *) b/$+(* *)}                      ::  associative tree
+         $@($~ {n/{p/a q/b} l/(map a b) r/(map a b)})   ::
+++  qeu  |*  a/$+(* *)                                  ::  queue
+         $@($~ {n/a l/(qeu a) r/(qeu a)})               ::
+++  set  |*  a/$+(* *)                                  ::  set
+         $@($~ {n/a l/(set a) r/(set a)})               ::
+++  jar  |*({a/$+(* *) b/$+(* *)} (map a (list b)))     ::  map of lists
+++  jug  |*({a/$+(* *) b/$+(* *)} (map a (set b)))      ::  map of sets
 --                                                      ::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 2, Hoon libraries and compiler ::::::
@@ -458,14 +458,14 @@
 ::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  add                                                 ::  add
   ~/  %add
-  |=  {a+@ b+@}
+  |=  {a/@ b/@}
   ^-  @
   ?:  =(0 a)  b
   $(a (dec a), b +(b))
 ::
 ++  cap                                                 ::  tree head
   ~/  %cap
-  |=  a+@
+  |=  a/@
   ^-  ?($2 $3)
   ?-  a
     $2        %2
@@ -476,7 +476,7 @@
 ::
 ++  dec                                                 ::  decrement
   ~/  %dec
-  |=  a+@
+  |=  a/@
   ~|  %decrement-underflow
   ?<  =(0 a)
   =+  b=0
@@ -497,31 +497,31 @@
 ::
 ++  fac                                                 ::  factorial
   ~/  %fac
-  |=  a+@
+  |=  a/@
   ^-  @
   ?:  =(0 a)  1
   (mul a $(a (dec a)))
 ::
 ++  gte                                                 ::  greater-equal
   ~/  %gte
-  |=  {a+@ b+@}
+  |=  {a/@ b/@}
   ^-  ?
   !(lth a b)
 ::
 ++  gth                                                 ::  greater-than
   ~/  %gth
-  |=  {a+@ b+@}
+  |=  {a/@ b/@}
   ^-  ?
   !(lte a b)
 ::
 ++  lte                                                 ::  less-equal
   ~/  %lte
-  |=  {a+@ b+@}
+  |=  {a/@ b/@}
   |(=(a b) (lth a b))
 ::
 ++  lth                                                 ::  less-than
   ~/  %lth
-  |=  {a+@ b+@}
+  |=  {a/@ b/@}
   ^-  ?
   ?&  !=(a b)
       |-
@@ -532,7 +532,7 @@
 ::
 ++  mas                                                 ::  tree body
   ~/  %mas
-  |=  a+@
+  |=  a/@
   ^-  @
   ?-  a
     $1   !!
@@ -543,14 +543,14 @@
 ::
 ++  max                                                 ::  maximum
   ~/  %max
-  |=  {a+@ b+@}
+  |=  {a/@ b/@}
   ^-  @
   ?:  (gth a b)  a
   b
 ::
 ++  min                                                 ::  minimum
   ~/  %min
-  |=  {a+@ b+@}
+  |=  {a/@ b/@}
   ^-  @
   ?:  (lth a b)  a
   b
@@ -573,7 +573,7 @@
 ::
 ++  peg                                                 ::  tree connect
   ~/  %peg
-  |=  {a+@ b+@}
+  |=  {a/@ b/@}
   ^-  @
   ?-  b
     $1  a
@@ -584,7 +584,7 @@
 ::
 ++  sub                                                 ::  subtract
   ~/  %sub
-  |=  {a+@ b+@}
+  |=  {a/@ b/@}
   ~|  %subtract-underflow
   ^-  @
   ?:  =(0 b)  a
@@ -595,72 +595,72 @@
 ::                Section 2bA, units                    ::
 ::
 ++  biff                                                ::  apply
-  |*  {a+(unit) b+$+(* (unit))}
+  |*  {a/(unit) b/$+(* (unit))}
   ?~  a  ~
   (b u.a)
 ::
 ++  bind                                                ::  argue
-  |*  {a+(unit) b+gate}
+  |*  {a/(unit) b/gate}
   ?~  a  ~
   [~ u=(b u.a)]
 ::
 ++  bond                                                ::  replace
-  |*  a+(trap)
-  |*  b+(unit)
+  |*  a/(trap)
+  |*  b/(unit)
   ?~  b  $:a
   u.b
 ::
 ++  both                                                ::  all the above
-  |*  {a+(unit) b+(unit)}
+  |*  {a/(unit) b/(unit)}
   ?~  a  ~
   ?~  b  ~
   [~ u=[u.a u.b]]
 ::
 ++  clap                                                ::  combine
-  |*  {a+(unit) b+(unit) c+_|=(^ +<-)}
+  |*  {a/(unit) b/(unit) c/_|=(^ +<-)}
   ?~  a  b
   ?~  b  a
   [~ u=(c u.a u.b)]
 ::
 ++  drop                                                ::  enlist
-  |*  a+(unit)
+  |*  a/(unit)
   ?~  a  ~
   [i=u.a t=~]
 ::
 ++  fall                                                ::  default
-  |*  {a+(unit) b+*}
+  |*  {a/(unit) b/*}
   ?~(a b u.a)
 ::
 ++  flit                                                ::  make filter
-  |*  a+$+(* ?)
-  |*  b+*
+  |*  a/$+(* ?)
+  |*  b/*
   ?.((a b) ~ [~ u=b])
 ::
 ++  lift                                                ::  lift gate (fmap)
-  |*  a+gate                                            ::  flipped
-  |*  b+(unit)                                          ::  curried
+  |*  a/gate                                            ::  flipped
+  |*  b/(unit)                                          ::  curried
   (bind b a)                                            ::  bind
 ::
 ++  mate                                                ::  choose
-  |*  {a+(unit) b+(unit)}
+  |*  {a/(unit) b/(unit)}
   ?~  b  a
   ?~  a  b
   ?.(=(u.a u.b) ~|('mate' !!) a)
 ::
 ++  need                                                ::  demand
-  |*  a+(unit)
+  |*  a/(unit)
   ?~  a  ~|(%need !!)
   u.a
 ::
 ++  some                                                ::  lift (pure)
-  |*  a+*
+  |*  a/*
   [~ u=a]
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                Section 2bB, lists                    ::
 ::
 ++  flop                                                ::  reverse
   ~/  %flop
-  |*  a+(list)
+  |*  a/(list)
   =>  .(a (homo a))
   ^+  a
   =+  b=`_a`~
@@ -669,14 +669,14 @@
   $(a t.a, b [i.a b])
 ::
 ++  homo                                                ::  homogenize
-  |*  a+(list)
+  |*  a/(list)
   ^+  =<  $
     |%  +-  $  ?:(*? ~ [i=(snag 0 a) t=$])
     --
   a
 ::
 ++  limo                                                ::  listify
-  |*  a+*
+  |*  a/*
   ^+  =<  $
     |%  +-  $  ?~(a ~ ?:(*? [i=-.a t=$] $(a +.a)))
     --
@@ -684,7 +684,7 @@
 ::
 ++  lent                                                ::  length
   ~/  %lent
-  |=  a+(list)
+  |=  a/(list)
   ^-  @
   =+  b=0
   |-
@@ -693,7 +693,7 @@
 ::
 ++  levy
   ~/  %levy                                             ::  all of
-  |*  {a+(list) b+$+(* ?)}
+  |*  {a/(list) b/$+(* ?)}
   |-  ^-  ?
   ?~  a  &
   ?.  (b i.a)  |
@@ -701,7 +701,7 @@
 ::
 ++  lien                                                ::  some of
   ~/  %lien
-  |*  {a+(list) b+$+(* ?)}
+  |*  {a/(list) b/$+(* ?)}
   |-  ^-  ?
   ?~  a  |
   ?:  (b i.a)  &
@@ -709,7 +709,7 @@
 ::
 ++  murn                                                ::  maybe transform
   ~/  %murn
-  |*  {a+(list) b+$+(* (unit))}
+  |*  {a/(list) b/$+(* (unit))}
   |-
   ?~  a  ~
   =+  c=(b i.a)
@@ -719,14 +719,14 @@
 ::
 ++  reap                                                ::  replicate
   ~/  %reap
-  |*  {a+@ b+*}
+  |*  {a/@ b/*}
   |-  ^-  (list _b)
   ?~  a  ~
   [b $(a (dec a))]
 ::
 ++  reel                                                ::  right fold
   ~/  %reel
-  |*  {a+(list) b+_|=({* *} +<+)}
+  |*  {a/(list) b/_|=({* *} +<+)}
   |-  ^+  +<+.b
   ?~  a
     +<+.b
@@ -734,7 +734,7 @@
 ::
 ++  roll                                                ::  left fold
   ~/  %roll
-  |*  {a+(list) b+_|=({* *} +<+)}
+  |*  {a/(list) b/_|=({* *} +<+)}
   |-  ^+  +<+.b
   ?~  a
     +<+.b
@@ -742,7 +742,7 @@
 ::
 ++  skid                                                ::  separate
   ~/  %skid
-  |*  {a+(list) b+$+(* ?)}
+  |*  {a/(list) b/$+(* ?)}
   |-  ^+  [p=a q=a]
   ?~  a  [~ ~]
   =+  c=$(a t.a)
@@ -750,7 +750,7 @@
 ::
 ++  skim                                                ::  only
   ~/  %skim
-  |*  {a+(list) b+$+(* ?)}
+  |*  {a/(list) b/$+(* ?)}
   |-
   ^+  a
   ?~  a  ~
@@ -758,7 +758,7 @@
 ::
 ++  skip                                                ::  except
   ~/  %skip
-  |*  {a+(list) b+$+(* ?)}
+  |*  {a/(list) b/$+(* ?)}
   |-
   ^+  a
   ?~  a  ~
@@ -766,14 +766,14 @@
 ::
 ++  scag                                                ::  prefix
   ~/  %scag
-  |*  {a+@ b+(list)}
+  |*  {a/@ b/(list)}
   |-  ^+  b
   ?:  |(?=($~ b) =(0 a))  ~
   [i.b $(b t.b, a (dec a))]
 ::
 ++  slag                                                ::  suffix
   ~/  %slag
-  |*  {a+@ b+(list)}
+  |*  {a/@ b/(list)}
   |-  ^+  b
   ?:  =(0 a)  b
   ?~  b  ~
@@ -781,7 +781,7 @@
 ::
 ++  snag                                                ::  index
   ~/  %snag
-  |*  {a+@ b+(list)}
+  |*  {a/@ b/(list)}
   |-
   ?~  b
     ~|('snag-fail' !!)
@@ -790,29 +790,29 @@
 ::
 ++  sort                                                ::  quicksort
   ~/  %sort
-  |*  {a+(list) b+$+([* *] ?)}
+  |*  {a/(list) b/$+([* *] ?)}
   =>  .(a ^.(homo a))
   |-  ^+  a
   ?~  a  ~
   %+  weld
-    $(a (skim t.a |=(c+_i.a (b c i.a))))
+    $(a (skim t.a |=(c/_i.a (b c i.a))))
   ^+  t.a
-  [i.a $(a (skim t.a |=(c+_i.a !(b c i.a))))]
+  [i.a $(a (skim t.a |=(c/_i.a !(b c i.a))))]
 ::
 ++  swag                                                ::  infix
-  |*  {{a+@ b+@} c+(list)}
+  |*  {{a/@ b/@} c/(list)}
   (scag b (slag a c))
 ::
 ++  turn                                                ::  transform
   ~/  %turn
-  |*  {a+(list) b+$+(* *)}
+  |*  {a/(list) b/$+(* *)}
   |-
   ?~  a  ~
   [i=(b i.a) t=$(a t.a)]
 ::
 ++  weld                                                ::  concatenate
   ~/  %weld
-  |*  {a+(list) b+(list)}
+  |*  {a/(list) b/(list)}
   =>  .(a ^.(homo a), b ^.(homo b))
   |-  ^+  b
   ?~  a  b
@@ -842,41 +842,41 @@
 ::
 ++  bex                                                 ::  binary exponent
   ~/  %bex
-  |=  a+@
+  |=  a/@
   ^-  @
   ?:  =(0 a)  1
   (mul 2 $(a (dec a)))
 ::
 ++  xeb                                                 ::  binary logarithm
   ~/  %xeb
-  |=  a+@
+  |=  a/@
   ^-  @
   (met 0 a)
 ::
 ++  can                                                 ::  assemble
   ~/  %can
-  |=  {a+bloq b+(list {p+@u q+@})}
+  |=  {a/bloq b/(list {p/@u q/@})}
   ^-  @
   ?~  b  0
   (mix (end a p.i.b q.i.b) (lsh a p.i.b $(b t.b)))
 ::
 ++  cat                                                 ::  concatenate
   ~/  %cat
-  |=  {a+bloq b+@ c+@}
+  |=  {a/bloq b/@ c/@}
   (add (lsh a (met a b) c) b)
 ::
 ++  cut                                                 ::  slice
   ~/  %cut
-  |=  {a+bloq {b+@u c+@u} d+@}
+  |=  {a/bloq {b/@u c/@u} d/@}
   (end a c (rsh a b d))
 ::
 ++  end                                                 ::  tail
   ~/  %end
-  |=  {a+bloq b+@u c+@}
+  |=  {a/bloq b/@u c/@}
   (mod c (bex (mul (bex a) b)))
 ::
 ++  fil                                                 ::  fill bloqstream
-  |=  {a+bloq b+@u c+@}
+  |=  {a/bloq b/@u c/@}
   =+  n=0
   =+  d=c
   |-  ^-  @
@@ -886,12 +886,12 @@
 ::
 ++  lsh                                                 ::  left-shift
   ~/  %lsh
-  |=  {a+bloq b+@u c+@}
+  |=  {a/bloq b/@u c/@}
   (mul (bex (mul (bex a) b)) c)
 ::
 ++  met                                                 ::  measure
   ~/  %met
-  |=  {a+bloq b+@}
+  |=  {a/bloq b/@}
   ^-  @
   =+  c=0
   |-
@@ -900,14 +900,14 @@
 ::
 ++  rap                                                 ::  assemble nonzero
   ~/  %rap
-  |=  {a+bloq b+(list @)}
+  |=  {a/bloq b/(list @)}
   ^-  @
   ?~  b  0
   (cat a i.b $(b t.b))
 ::
 ++  rep                                                 ::  assemble single
   ~/  %rep
-  |=  {a+bloq b+(list @)}
+  |=  {a/bloq b/(list @)}
   ^-  @
   =+  c=0
   |-
@@ -916,24 +916,24 @@
 ::
 ++  rip                                                 ::  disassemble
   ~/  %rip
-  |=  {a+bloq b+@}
+  |=  {a/bloq b/@}
   ^-  (list @)
   ?:  =(0 b)  ~
   [(end a 1 b) $(b (rsh a 1 b))]
 ::
 ++  rsh                                                 ::  right-shift
   ~/  %rsh
-  |=  {a+bloq b+@u c+@}
+  |=  {a/bloq b/@u c/@}
   (div c (bex (mul (bex a) b)))
 ::
-++  swap  |=({a+bloq b+@} (rep a (flop (rip a b))))     ::  reverse bloq order
+++  swap  |=({a/bloq b/@} (rep a (flop (rip a b))))     ::  reverse bloq order
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cB, bit logic                ::
 ::
 ++  con                                                 ::  binary or
   ~/  %con
-  |=  {a+@ b+@}
+  |=  {a/@ b/@}
   =+  [c=0 d=0]
   |-  ^-  @
   ?:  ?&(=(0 a) =(0 b))  d
@@ -950,8 +950,8 @@
 ::
 ++  dis                                                 ::  binary and
   ~/  %dis
-  |=  {a+@ b+@}
-  =|  {c+@ d+@}
+  |=  {a/@ b/@}
+  =|  {c/@ d/@}
   |-  ^-  @
   ?:  ?|(=(0 a) =(0 b))  d
   %=  $
@@ -967,7 +967,7 @@
 ::
 ++  mix                                                 ::  binary xor
   ~/  %mix
-  |=  {a+@ b+@}
+  |=  {a/@ b/@}
   ^-  @
   =+  [c=0 d=0]
   |-
@@ -979,7 +979,7 @@
     d   (add d (lsh 0 c =((end 0 1 a) (end 0 1 b))))
   ==
 ::
-++  not  |=  {a+bloq b+@ c+@}                           ::  binary not (sized)
+++  not  |=  {a/bloq b/@ c/@}                           ::  binary not (sized)
   (mix c (dec (bex (mul b (bex a)))))
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -987,7 +987,7 @@
 ::
 ++  aor                                                 ::  a-order
   ~/  %aor
-  |=  {a+* b+*}
+  |=  {a/* b/*}
   ^-  ?
   ?:  =(a b)  &
   ?.  ?=(@ a)
@@ -1004,7 +1004,7 @@
 ::
 ++  dor                                                 ::  d-order
   ~/  %dor
-  |=  {a+* b+*}
+  |=  {a/* b/*}
   ^-  ?
   ?:  =(a b)  &
   ?.  ?=(@ a)
@@ -1017,7 +1017,7 @@
 ::
 ++  gor                                                 ::  g-order
   ~/  %gor
-  |=  {a+* b+*}
+  |=  {a/* b/*}
   ^-  ?
   =+  [c=(mug a) d=(mug b)]
   ?:  =(c d)
@@ -1026,7 +1026,7 @@
 ::
 ++  hor                                                 ::  h-order
   ~/  %hor
-  |=  {a+* b+*}
+  |=  {a/* b/*}
   ^-  ?
   ?:  ?=(@ a)
     ?.  ?=(@ b)  &
@@ -1038,7 +1038,7 @@
 ::
 ++  lor                                                 ::  l-order
   ~/  %lor
-  |=  {a+* b+*}
+  |=  {a/* b/*}
   ^-  ?
   ?:  =(a b)  &
   ?@  a
@@ -1050,7 +1050,7 @@
 ::
 ++  vor                                                 ::  v-order
   ~/  %vor
-  |=  {a+* b+*}
+  |=  {a/* b/*}
   ^-  ?
   =+  [c=(mug (mug a)) d=(mug (mug b))]
   ?:  =(c d)
@@ -1059,19 +1059,19 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cD, insecure hashing         ::
 ::
-++  fnv  |=(a+@ (end 5 1 (mul 16.777.619 a)))           ::  FNV scrambler
+++  fnv  |=(a/@ (end 5 1 (mul 16.777.619 a)))           ::  FNV scrambler
 ::
 ++  mum                                                 ::  mug with murmur3
   ~/  %mum
-  |=  a+*
+  |=  a/*
   |^  (trim ?@(a a (mix $(a -.a) (mix 0x7fff.ffff $(a +.a)))))
   ++  spec                                              ::  standard murmur3
-    |=  {syd+@ key+@}
+    |=  {syd/@ key/@}
     ?>  (lte (met 5 syd) 1)
     =+  ^=  row
-        |=  {a+@ b+@}
+        |=  {a/@ b/@}
         (con (end 5 1 (lsh 0 a b)) (rsh 0 (sub 32 a) b))
-    =+  mow=|=({a+@ b+@} (end 5 1 (mul a b)))
+    =+  mow=|=({a/@ b/@} (end 5 1 (mul a b)))
     =+  len=(met 5 key)
     =-  =.  goc  (mix goc len)
         =.  goc  (mix goc (rsh 4 1 goc))
@@ -1093,7 +1093,7 @@
     $(inx +(inx))
   ::
   ++  trim                                              ::  31-bit nonzero
-    |=  key+@
+    |=  key/@
     =+  syd=0xcafe.babe
     |-  ^-  @
     =+  haz=(spec syd key)
@@ -1103,7 +1103,7 @@
 ::
 ++  mug                                                 ::  31bit nonzero FNV1a
   ~/  %mug
-  |=  a+*
+  |=  a/*
   ?^  a
     =+  b=[p=$(a -.a) q=$(a +.a)]
     |-  ^-  @
@@ -1162,39 +1162,39 @@
       /lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes'
   |%
   ++  ins  ~/  %ins                                     ::  parse prefix
-           |=  a+@tas
+           |=  a/@tas
            =+  b=0
            |-  ^-  (unit @)
            ?:(=(256 b) ~ ?:(=(a (tos b)) [~ b] $(b +(b))))
   ++  ind  ~/  %ind                                     ::  parse suffix
-           |=  a+@tas
+           |=  a/@tas
            =+  b=0
            |-  ^-  (unit @)
            ?:(=(256 b) ~ ?:(=(a (tod b)) [~ b] $(b +(b))))
   ++  tos  ~/  %tos                                     ::  fetch prefix
-           |=(a+@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] sis)))
+           |=(a/@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] sis)))
   ++  tod  ~/  %tod                                     ::  fetch suffix
-           |=(a+@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] dex)))
+           |=(a/@ ?>((lth a 256) (cut 3 [(mul 3 a) 3] dex)))
   --
 ::
 ++  fa                                                  ::  base58check
   =+  key='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
-  =+  ^-  yek+@ux  ~+
+  =+  ^-  yek/@ux  ~+
       =-  yek:(roll (trip key) -)
       |:  [a=*char b=*@ yek=`@ux`(fil 3 256 0xff)]
       [+(b) (mix yek (lsh 3 `@u`a (~(inv fe 3) b)))]
   |%
-  ++  cha  |=(a+char `(unit @uF)`=+(b=(cut 3 [`@`a 1] yek) ?:(=(b 0xff) ~ `b)))
+  ++  cha  |=(a/char `(unit @uF)`=+(b=(cut 3 [`@`a 1] yek) ?:(=(b 0xff) ~ `b)))
   ++  tok
-    |=  a+@ux  ^-  @ux
+    |=  a/@ux  ^-  @ux
     =+  b=(pad a)
     =-  (~(net fe 5) (end 3 4 (shay 32 -)))
     (shay (add b (met 3 a)) (lsh 3 b (swap 3 a)))
   ::
-  ++  pad  |=(a+@ =+(b=(met 3 a) ?:((gte b 21) 0 (sub 21 b))))
-  ++  enc  |=(a+@ux `@ux`(mix (lsh 3 4 a) (tok a)))
+  ++  pad  |=(a/@ =+(b=(met 3 a) ?:((gte b 21) 0 (sub 21 b))))
+  ++  enc  |=(a/@ux `@ux`(mix (lsh 3 4 a) (tok a)))
   ++  den
-    |=  a+@ux  ^-  (unit @ux)
+    |=  a/@ux  ^-  (unit @ux)
     =+  b=(rsh 3 4 a)
     ?.  =((tok b) (end 3 4 a))
       ~
@@ -1205,20 +1205,20 @@
 ::
 ++  si  !:                                              ::  signed integer
   |%
-  ++  abs  |=(a+@s (add (end 0 1 a) (rsh 0 1 a)))       ::  absolute value
-  ++  dif  |=  {a+@s b+@s}                              ::  subtraction
+  ++  abs  |=(a/@s (add (end 0 1 a) (rsh 0 1 a)))       ::  absolute value
+  ++  dif  |=  {a/@s b/@s}                              ::  subtraction
            (sum a (new !(syn b) (abs b)))
-  ++  dul  |=  {a+@s b+@}                               ::  modulus
+  ++  dul  |=  {a/@s b/@}                               ::  modulus
            =+(c=(old a) ?:(-.c (mod +.c b) (sub b +.c)))
-  ++  fra  |=  {a+@s b+@s}                              ::  divide
+  ++  fra  |=  {a/@s b/@s}                              ::  divide
            (new =(0 (mix (syn a) (syn b))) (div (abs a) (abs b)))
-  ++  new  |=  {a+? b+@}                                ::  [sign value] to @s
+  ++  new  |=  {a/? b/@}                                ::  [sign value] to @s
            `@s`?:(a (mul 2 b) ?:(=(0 b) 0 +((mul 2 (dec b)))))
-  ++  old  |=(a+@s [(syn a) (abs a)])                   ::  [sign value]
-  ++  pro  |=  {a+@s b+@s}                              ::  multiplication
+  ++  old  |=(a/@s [(syn a) (abs a)])                   ::  [sign value]
+  ++  pro  |=  {a/@s b/@s}                              ::  multiplication
            (new =(0 (mix (syn a) (syn b))) (mul (abs a) (abs b)))
-  ++  rem  |=({a+@s b+@s} (dif a (pro b (fra a b))))    ::  remainder
-  ++  sum  |=  {a+@s b+@s}                              ::  addition
+  ++  rem  |=({a/@s b/@s} (dif a (pro b (fra a b))))    ::  remainder
+  ++  sum  |=  {a/@s b/@s}                              ::  addition
            ~|  %si-sum
            =+  [c=(old a) d=(old b)]
            ?:  -.c
@@ -1232,9 +1232,9 @@
                (new | (sub +.c +.d))
              (new & (sub +.d +.c))
            (new | (add +.c +.d))
-  ++  sun  |=(a+@u (mul 2 a))                           ::  @u to @s
-  ++  syn  |=(a+@s =(0 (end 0 1 a)))                    ::  sign test
-  ++  cmp  |=  {a+@s b+@s}                              ::  compare
+  ++  sun  |=(a/@u (mul 2 a))                           ::  @u to @s
+  ++  syn  |=(a/@s =(0 (end 0 1 a)))                    ::  sign test
+  ++  cmp  |=  {a/@s b/@s}                              ::  compare
            ^-  @s
            ?:  =(a b)
              --0
@@ -1251,10 +1251,10 @@
           --1
   --
 ++  fe                                                  ::  modulo bloq
-  |_  a+bloq
-  ++  dif  |=({b+@ c+@} (sit (sub (add out (sit b)) (sit c))))  ::  difference
-  ++  inv  |=(b+@ (sub (dec out) (sit b)))              ::  inverse
-  ++  net  |=  b+@  ^-  @                               ::  flip byte endianness
+  |_  a/bloq
+  ++  dif  |=({b/@ c/@} (sit (sub (add out (sit b)) (sit c))))  ::  difference
+  ++  inv  |=(b/@ (sub (dec out) (sit b)))              ::  inverse
+  ++  net  |=  b/@  ^-  @                               ::  flip byte endianness
            =>  .(b (sit b))
            ?:  (lte a 3)
              b
@@ -1263,22 +1263,22 @@
              (lsh c 1 $(a c, b (cut c [0 1] b)))
            $(a c, b (cut c [1 1] b))
   ++  out  (bex (bex a))                                ::  mod value
-  ++  rol  |=  {b+bloq c+@ d+@}  ^-  @                  ::  roll left
+  ++  rol  |=  {b/bloq c/@ d/@}  ^-  @                  ::  roll left
            =+  e=(sit d)
            =+  f=(bex (sub a b))
            =+  g=(mod c f)
            (sit (con (lsh b g e) (rsh b (sub f g) e)))
-  ++  ror  |=  {b+bloq c+@ d+@}  ^-  @                  ::  roll right
+  ++  ror  |=  {b/bloq c/@ d/@}  ^-  @                  ::  roll right
            =+  e=(sit d)
            =+  f=(bex (sub a b))
            =+  g=(mod c f)
            (sit (con (rsh b g e) (lsh b (sub f g) e)))
-  ++  sum  |=({b+@ c+@} (sit (add b c)))                ::  wrapping add
-  ++  sit  |=(b+@ (end a 1 b))                          ::  enforce modulo
+  ++  sum  |=({b/@ c/@} (sit (add b c)))                ::  wrapping add
+  ++  sit  |=(b/@ (end a 1 b))                          ::  enforce modulo
   --
 ::
 ++  stat                                                ::  positive counter
-  |*  a+$+(* *)
+  |*  a/$+(* *)
   |=  (trel ? a (map a @ud))
   ^+  r
   =+  (~(get by r) q)
@@ -1292,27 +1292,27 @@
 ++  fn  ::  float, infinity, or NaN
         ::  s=sign, e=exponent, a=arithmetic form
         ::  (-1)^s * a * 2^e
-        $%  {$f s+? e+@s a+@u}
-            {$i s+?}
+        $%  {$f s/? e/@s a/@u}
+            {$i s/?}
             {$n $~}
         ==
 ::
 ++  dn  ::  decimal float, infinity, or NaN
         ::  (-1)^s * a * 10^e
-        $%  {$d s+? e+@s a+@u}
-            {$i s+?}
+        $%  {$d s/? e/@s a/@u}
+            {$i s/?}
             {$n $~}
         ==
 ::
 ++  rn  ::  parsed decimal float
         ::
-        $%  {$d a+? b+{c+@ {d+@ e+@} f+? i+@}}
-            {$i a+?}
+        $%  {$d a/? b/{c/@ {d/@ e/@} f/? i/@}}
+            {$i a/?}
             {$n $~}
         == 
 ::
 ++  fl                                                  ::  arb. precision fp
-  =+  ^-  {{p+@u v+@s w+@u} r+$?($n $u $d $z $a) d+$?($d $f $i)}
+  =+  ^-  {{p/@u v/@s w/@u} r/$?($n $u $d $z $a) d/$?($d $f $i)}
     [[113 -16.494 32.765] %n %d]
   ::  p=precision:     number of bits in arithmetic form; must be at least 2
   ::  v=min exponent:  minimum value of e
@@ -1322,14 +1322,14 @@
   ::                   infinite exponent range
   =>
     ~%  %cofl  +>  ~
-    ::  internal functions; mostly operating on {e+@s a+@u}, in other words
+    ::  internal functions; mostly operating on {e/@s a/@u}, in other words
     ::  positive numbers. many of these have undefined behavior if a=0.
     |%
     ++  rou
-      |=  {a+{e+@s a+@u}}  ^-  fn  (rau a &)
+      |=  {a/{e/@s a/@u}}  ^-  fn  (rau a &)
     ::
     ++  rau
-      |=  {a+{e+@s a+@u} t+?}  ^-  fn
+      |=  {a/{e/@s a/@u} t/?}  ^-  fn
       ?-  r
         $z  (lug %fl a t)  $d  (lug %fl a t)
         $a  (lug %ce a t)  $u  (lug %ce a t)
@@ -1337,7 +1337,7 @@
       ==
     ::
     ++  add                                             ::  add; exact if e
-      |=  {a+{e+@s a+@u} b+{e+@s a+@u} e+?}  ^-  fn
+      |=  {a/{e/@s a/@u} b/{e/@s a/@u} e/?}  ^-  fn
       =+  q=(dif:si e.a e.b)
       |-  ?.  (syn:si q)  $(b a, a b, q +(q))           ::  a has larger exp
       ?:  e
@@ -1355,7 +1355,7 @@
       (rou [e.b (^add (lsh 0 (abs:si q) a.a) a.b)])
     ::
     ++  sub                                             ::  subtract; exact if e
-      |=  {a+{e+@s a+@u} b+{e+@s a+@u} e+?}  ^-  fn
+      |=  {a/{e/@s a/@u} b/{e/@s a/@u} e/?}  ^-  fn
       =+  q=(dif:si e.a e.b)
       |-  ?.  (syn:si q)
         (fli $(b a, a b, q +(q), r swr))
@@ -1377,11 +1377,11 @@
       ?:  e  [%f & e.b i]  (rou [e.b i])
     ::
     ++  mul                                             ::  multiply
-      |=  {a+{e+@s a+@u} b+{e+@s a+@u}}  ^-  fn
+      |=  {a/{e/@s a/@u} b/{e/@s a/@u}}  ^-  fn
       (rou (sum:si e.a e.b) (^mul a.a a.b))
     ::
     ++  div                                             ::  divide
-      |=  {a+{e+@s a+@u} b+{e+@s a+@u}}  ^-  fn
+      |=  {a/{e/@s a/@u} b/{e/@s a/@u}}  ^-  fn
       =+  [ma=(met 0 a.a) mb=(met 0 a.b)]
       =+  v=(dif:si (sun:si ma) (sun:si +((^add mb prc))))
       =.  a  ?:  (syn:si v)  a
@@ -1390,7 +1390,7 @@
       (rau [j p.q] =(q.q 0))
     ::
     ++  sqt                                             ::  square root
-      |=  {a+{e+@s a+@u}}  ^-  fn
+      |=  {a/{e/@s a/@u}}  ^-  fn
       =.  a
         =+  [w=(met 0 a.a) x=(^mul +(prc) 2)]
         =+  ?:((^lth w x) (^sub x w) 0)
@@ -1401,7 +1401,7 @@
       (rau [z p.y] =(q.y 0))
     ::
     ++  lth                                             ::  less-than
-      |=  {a+{e+@s a+@u} b+{e+@s a+@u}}  ^-  ?
+      |=  {a/{e/@s a/@u} b/{e/@s a/@u}}  ^-  ?
       ?:  =(e.a e.b)  (^lth a.a a.b)
       =+  c=(cmp:si (ibl a) (ibl b))
       ?:  =(c -1)  &  ?:  =(c --1)  |
@@ -1410,7 +1410,7 @@
       (^lth (lsh 0 (abs:si (dif:si e.a e.b)) a.a) a.b)
     ::
     ++  lte                                             ::  less-equals
-      |=  {a+{e+@s a+@u} b+{e+@s a+@u}}  ^-  ?
+      |=  {a/{e/@s a/@u} b/{e/@s a/@u}}  ^-  ?
       ?:  =(e.a e.b)  (^lte a.a a.b)
       =+  c=(cmp:si (ibl a) (ibl b))
       ?:  =(c -1)  &  ?:  =(c --1)  |
@@ -1419,7 +1419,7 @@
       (^lte (lsh 0 (abs:si (dif:si e.a e.b)) a.a) a.b)
     ::
     ++  equ                                             ::  equals
-      |=  {a+{e+@s a+@u} b+{e+@s a+@u}}  ^-  ?
+      |=  {a/{e/@s a/@u} b/{e/@s a/@u}}  ^-  ?
       ?.  =((ibl a) (ibl b))  |
       ?:  =((cmp:si e.a e.b) -1)
         =((lsh 0 (abs:si (dif:si e.a e.b)) a.b) a.a)
@@ -1427,19 +1427,19 @@
     ::
     ::  integer binary logarithm: 2^ibl(a) <= |a| < 2^(ibl(a)+1)
     ++  ibl
-      |=  {a+{e+@s a+@u}}  ^-  @s
+      |=  {a/{e/@s a/@u}}  ^-  @s
       (sum:si (sun:si (dec (met 0 a.a))) e.a)
     ::
     ::  change to a representation where a.a is odd
     ::  every fn has a unique representation of this kind
     ++  uni
-      |=  {a+{e+@s a+@u}}
+      |=  {a/{e/@s a/@u}}
       |-  ?:  =((end 0 1 a.a) 1)  a
       $(a.a (rsh 0 1 a.a), e.a (sum:si e.a --1))
     ::
     ::  expands to either full precision or to denormalized
     ++  xpd
-      |=  {a+{e+@s a+@u}}
+      |=  {a/{e/@s a/@u}}
       =+  ma=(met 0 a.a)
       ?:  (gte ma prc)  a
       =+  ?:  =(den %i)  (^sub prc ma)
@@ -1455,7 +1455,7 @@
     ::  s is sticky bit: represents a value less than ulp(a) = 2^(e.a)
     ++  lug
       ~/  %lug
-      |=  {t+$?($fl $ce $sm $lg $ne $na $nt) a+{e+@s a+@u} s+?}  ^-  fn
+      |=  {t/$?($fl $ce $sm $lg $ne $na $nt) a/{e/@s a/@u} s/?}  ^-  fn
       ?<  =(a.a 0)
       =-
         ?.  =(den %f)  -                                ::  flush denormals
@@ -1523,7 +1523,7 @@
     ::
     ++  drg                                             ::  dragon4;
       ~/  %drg                                          ::  convert to decimal
-      |=  {a+{e+@s a+@u}}  ^-  {@s @u}
+      |=  {a/{e/@s a/@u}}  ^-  {@s @u}
       ?<  =(a.a 0)
       =.  a  (xpd a)
       =+  r=(lsh 0 ?:((syn:si e.a) (abs:si e.a) 0) a.a)
@@ -1559,7 +1559,7 @@
       [k o]
     ::
     ++  toj                                             ::  round to integer
-      |=  {a+{e+@s a+@u}}  ^-  fn
+      |=  {a/{e/@s a/@u}}  ^-  fn
       ?.  =((cmp:si e.a --0) -1)  [%f & a]
       =+  x=(abs:si e.a)
       =+  y=(rsh 0 x a.a)
@@ -1571,17 +1571,17 @@
       ?:  (^lth z i)  [%f & --0 y]  [%f & --0 +(y)]
     ::
     ++  ned                                             ::  require ?=({$f *} a)
-      |=  {a+fn}  ^-  {$f s+? e+@s a+@u}
+      |=  {a/fn}  ^-  {$f s/? e/@s a/@u}
       ?:  ?=({$f *} a)  a
       ~|  %need-float  !!
     ::
     ++  shf                                             ::  a * 2^b; no rounding
-      |=  {a+fn b+@s}
+      |=  {a/fn b/@s}
       ?:  |(?=({$n *} a) ?=({$i *} a))  a
       a(e (sum:si e.a b))
     ::
     ++  fli                                             ::  flip sign
-      |=  {a+fn}  ^-  fn
+      |=  {a/fn}  ^-  fn
       ?-(-.a $f a(s !s.a), $i a(s !s.a), $n a)
     ::
     ++  swr  ?+(r r $d %u, $u %d)                       ::  flipped rounding
@@ -1597,23 +1597,23 @@
     --
   |%
   ++  rou                                               ::  round
-    |=  {a+fn}  ^-  fn
+    |=  {a/fn}  ^-  fn
     ?.  ?=({$f *} a)  a
     ?~  a.a  [%f s.a zer]
     ?:  s.a  (^rou +>.a)
     =.(r swr (fli (^rou +>.a)))
   ::
   ++  syn                                               ::  get sign
-    |=  {a+fn}  ^-  ?
+    |=  {a/fn}  ^-  ?
     ?-(-.a $f s.a, $i s.a, $n &)
   ::
   ++  abs                                               ::  absolute value
-    |=  {a+fn}  ^-  fn
+    |=  {a/fn}  ^-  fn
     ?:  ?=({$f *} a)  [%f & e.a a.a]
     ?:  ?=({$i *} a)  [%i &]  [%n ~]
   ::
   ++  add                                               ::  add
-    |=  {a+fn b+fn}  ^-  fn
+    |=  {a/fn b/fn}  ^-  fn
     ?:  |(?=({$n *} a) ?=({$n *} b))  [%n ~]
     ?:  |(?=({$i *} a) ?=({$i *} b))
       ?:  &(?=({$i *} a) ?=({$i *} b))
@@ -1622,7 +1622,7 @@
     ?:  |(=(a.a 0) =(a.b 0))
       ?.  &(=(a.a 0) =(a.b 0))  %-  rou  ?~(a.a b a)
       [%f ?:(=(r %d) &(s.a s.b) |(s.a s.b)) zer]
-    %-  |=  {a+fn}
+    %-  |=  {a/fn}
         ?.  ?=({$f *} a)  a
         ?.  =(a.a 0)  a
         [%f !=(r %d) zer]
@@ -1633,7 +1633,7 @@
     (^sub +>.b +>.a |)
   ::
   ++  ead                                               ::  exact add
-    |=  {a+fn b+fn}  ^-  fn
+    |=  {a/fn b/fn}  ^-  fn
     ?:  |(?=({$n *} a) ?=({$n *} b))  [%n ~]
     ?:  |(?=({$i *} a) ?=({$i *} b))
       ?:  &(?=({$i *} a) ?=({$i *} b))
@@ -1642,7 +1642,7 @@
     ?:  |(=(a.a 0) =(a.b 0))
       ?.  &(=(a.a 0) =(a.b 0))  ?~(a.a b a)
       [%f ?:(=(r %d) &(s.a s.b) |(s.a s.b)) zer]
-    %-  |=  {a+fn}
+    %-  |=  {a/fn}
         ?.  ?=({$f *} a)  a
         ?.  =(a.a 0)  a
         [%f !=(r %d) zer]
@@ -1653,10 +1653,10 @@
     (^sub +>.b +>.a &)
   ::
   ++  sub                                               ::  subtract
-    |=  {a+fn b+fn}  ^-  fn  (add a (fli b))
+    |=  {a/fn b/fn}  ^-  fn  (add a (fli b))
   ::
   ++  mul                                               ::  multiply
-    |=  {a+fn b+fn}  ^-  fn
+    |=  {a/fn b/fn}  ^-  fn
     ?:  |(?=({$n *} a) ?=({$n *} b))  [%n ~]
     ?:  ?=({$i *} a)
       ?:  ?=({$i *} b)  
@@ -1669,7 +1669,7 @@
     =.(r swr (fli (^mul +>.a +>.b)))
   ::
   ++  emu                                               ::  exact multiply
-    |=  {a+fn b+fn}  ^-  fn
+    |=  {a/fn b/fn}  ^-  fn
     ?:  |(?=({$n *} a) ?=({$n *} b))  [%n ~]
     ?:  ?=({$i *} a)
       ?:  ?=({$i *} b)  
@@ -1681,7 +1681,7 @@
     [%f =(s.a s.b) (sum:si e.a e.b) (^^mul a.a a.b)]
   ::
   ++  div                                               ::  divide
-    |=  {a+fn b+fn}  ^-  fn
+    |=  {a/fn b/fn}  ^-  fn
     ?:  |(?=({$n *} a) ?=({$n *} b))  [%n ~]
     ?:  ?=({$i *} a)
       ?:  ?=({$i *} b)  [%n ~]  [%i =(s.a s.b)]
@@ -1692,32 +1692,32 @@
     =.(r swr (fli (^div +>.a +>.b)))
   ::
   ++  fma                                               ::  fused multiply-add
-    |=  {a+fn b+fn c+fn}  ^-  fn                        ::  (a * b) + c
+    |=  {a/fn b/fn c/fn}  ^-  fn                        ::  (a * b) + c
     (add (emu a b) c)
   ::
   ++  sqt                                               ::  square root
-    |=  {a+fn}  ^-  fn
+    |=  {a/fn}  ^-  fn
     ?:  ?=({$n *} a)  [%n ~]
     ?:  ?=({$i *} a)  ?:(s.a a [%n ~])
     ?~  a.a  [%f s.a zer]
     ?:  s.a  (^sqt +>.a)  [%n ~]
   ::
   ++  inv                                               ::  inverse
-    |=  {a+fn}  ^-  fn
+    |=  {a/fn}  ^-  fn
     (div [%f & --0 1] a)
   ::
   ++  sun                                               ::  uns integer to float
-    |=  {a+@u}  ^-  fn
+    |=  {a/@u}  ^-  fn
     (rou [%f & --0 a])
   ::
   ++  san                                               ::  sgn integer to float
-    |=  {a+@s}  ^-  fn
+    |=  {a/@s}  ^-  fn
     =+  b=(old:si a)
     (rou [%f -.b --0 +.b])
   ::
   ::  comparisons return ~ in the event of a NaN
   ++  lth                                               ::  less-than
-    |=  {a+fn b+fn}  ^-  (unit ?)
+    |=  {a/fn b/fn}  ^-  (unit ?)
     ?:  |(?=({$n *} a) ?=({$n *} b))  ~  :-  ~
     ?:  =(a b)  |
     ?:  ?=({$i *} a)  !s.a  ?:  ?=({$i *} b)  s.b
@@ -1728,7 +1728,7 @@
     ?:  s.a  (^lth +>.a +>.b)  (^lth +>.b +>.a)
   ::
   ++  lte                                               ::  less-equal
-    |=  {a+fn b+fn}  ^-  (unit ?)
+    |=  {a/fn b/fn}  ^-  (unit ?)
     ?:  |(?=({$n *} a) ?=({$n *} b))  ~  :-  ~
     ?:  =(a b)  &
     ?:  ?=({$i *} a)  !s.a  ?:  ?=({$i *} b)  s.b
@@ -1739,7 +1739,7 @@
     ?:  s.a  (^lte +>.a +>.b)  (^lte +>.b +>.a)
   ::
   ++  equ                                               ::  equal
-    |=  {a+fn b+fn}  ^-  (unit ?)
+    |=  {a/fn b/fn}  ^-  (unit ?)
     ?:  |(?=({$n *} a) ?=({$n *} b))  ~  :-  ~
     ?:  =(a b)  &
     ?:  |(?=({$i *} a) ?=({$i *} b))  |
@@ -1749,20 +1749,20 @@
     (^equ +>.a +>.b)
   ::
   ++  gte                                               ::  greater-equal
-    |=  {a+fn b+fn}  ^-  (unit ?)  (lte b a)
+    |=  {a/fn b/fn}  ^-  (unit ?)  (lte b a)
   ::
   ++  gth                                               ::  greater-than
-    |=  {a+fn b+fn}  ^-  (unit ?)  (lth b a)
+    |=  {a/fn b/fn}  ^-  (unit ?)  (lth b a)
   ::
   ++  drg                                               ::  float to decimal
-    |=  {a+fn}  ^-  dn
+    |=  {a/fn}  ^-  dn
     ?:  ?=({$n *} a)  [%n ~]
     ?:  ?=({$i *} a)  [%i s.a]
     ?~  a.a  [%d s.a --0 0]
     [%d s.a (^drg +>.a)]
   ::
   ++  grd                                               ::  decimal to float
-    |=  {a+dn}  ^-  fn
+    |=  {a/dn}  ^-  fn
     ?:  ?=({$n *} a)  [%n ~]
     ?:  ?=({$i *} a)  [%i s.a]
     =>  .(r %n)
@@ -1772,14 +1772,14 @@
     (div [%f s.a --0 a.a] [%f & (sun:si q) (pow 5 q)])
   ::
   ++  toi                                               ::  round to integer @s
-    |=  {a+fn}  ^-  (unit @s)
+    |=  {a/fn}  ^-  (unit @s)
     =+  b=(toj a)
     ?.  ?=({$f *} b)  ~  :-  ~
     =+  c=(^^mul (bex (abs:si e.b)) a.b)
     (new:si s.b c)
   ::
   ++  toj                                               ::  round to integer fn
-    |=  {a+fn}  ^-  fn
+    |=  {a/fn}  ^-  fn
     ?.  ?=({$f *} a)  a
     ?~  a.a  [%f s.a zer]
     ?:  s.a  (^toj +>.a)
@@ -1787,7 +1787,7 @@
   --
 ::
 ++  ff                                                  ::  ieee 754 format fp
-  |_  {{w+@u p+@u b+@s} r+$?($n $u $d $z $a)}
+  |_  {{w/@u p/@u b/@s} r/$?($n $u $d $z $a)}
   ::  this core has no use outside of the functionality
   ::  provided to ++rd, ++rs, ++rq, and ++rh
   ::
@@ -1803,7 +1803,7 @@
     %*(. fl p +(p), v me, w (^sub (bex w) 3), d %d, r r)
   ::
   ++  sea                                               ::  @r to fn
-    |=  {a+@r}  ^-  fn
+    |=  {a/@r}  ^-  fn
     =+  [f=(cut 0 [0 p] a) e=(cut 0 [p w] a)]
     =+  s=(sig a)
     ?:  =(e 0)
@@ -1814,10 +1814,10 @@
     =+  r=(^add f (bex p))
     [%f s q r]
   ::
-  ++  bit  |=  {a+fn}  (bif (rou:pa a))                 ::  fn to @r w# rounding
+  ++  bit  |=  {a/fn}  (bif (rou:pa a))                 ::  fn to @r w# rounding
   ::
   ++  bif                                               ::  fn to @r no rounding
-    |=  {a+fn}  ^-  @r
+    |=  {a/fn}  ^-  @r
     ?:  ?=({$i *} a)
       =+  q=(lsh 0 p (fil 0 w 1))
       ?:  s.a  q  (^add q sb)
@@ -1833,285 +1833,285 @@
     ?:  s.a  r  (^add r sb)
   ::
   ++  sig                                               ::  get sign
-    |=  {a+@r}  ^-  ?
+    |=  {a/@r}  ^-  ?
     =(0 (cut 0 [(^add p w) 1] a))
   ::
   ++  exp                                               ::  get exponent
-    |=  {a+@r}  ^-  @s
+    |=  {a/@r}  ^-  @s
     (dif:si (sun:si (cut 0 [p w] a)) b)
   ::
   ++  add                                               ::  add
-    |=  {a+@r b+@r}
+    |=  {a/@r b/@r}
     (bif (add:pa (sea a) (sea b)))
   ::
   ++  sub                                               ::  subtract
-    |=  {a+@r b+@r}
+    |=  {a/@r b/@r}
     (bif (sub:pa (sea a) (sea b)))
   ::
   ++  mul                                               ::  multiply
-    |=  {a+@r b+@r}
+    |=  {a/@r b/@r}
     (bif (mul:pa (sea a) (sea b)))
   ::
   ++  div                                               ::  divide
-    |=  {a+@r b+@r}
+    |=  {a/@r b/@r}
     (bif (div:pa (sea a) (sea b)))
   ::
   ++  fma                                               ::  fused multiply-add
-    |=  {a+@r b+@r c+@r}
+    |=  {a/@r b/@r c/@r}
     (bif (fma:pa (sea a) (sea b) (sea c)))
   ::
   ++  sqt                                               ::  square root
-    |=  {a+@r}
+    |=  {a/@r}
     (bif (sqt:pa (sea a)))
   ::
   ++  lth                                               ::  less-than
-    |=  {a+@r b+@r}  (fall (lth:pa (sea a) (sea b)) |)
+    |=  {a/@r b/@r}  (fall (lth:pa (sea a) (sea b)) |)
   ++  lte                                               ::  less-equals
-    |=  {a+@r b+@r}  (fall (lte:pa (sea a) (sea b)) |)
+    |=  {a/@r b/@r}  (fall (lte:pa (sea a) (sea b)) |)
   ++  equ                                               ::  equals
-    |=  {a+@r b+@r}  (fall (equ:pa (sea a) (sea b)) |)
+    |=  {a/@r b/@r}  (fall (equ:pa (sea a) (sea b)) |)
   ++  gte                                               ::  greater-equals
-    |=  {a+@r b+@r}  (fall (gte:pa (sea a) (sea b)) |)
+    |=  {a/@r b/@r}  (fall (gte:pa (sea a) (sea b)) |)
   ++  gth                                               ::  greater-than
-    |=  {a+@r b+@r}  (fall (gth:pa (sea a) (sea b)) |)
+    |=  {a/@r b/@r}  (fall (gth:pa (sea a) (sea b)) |)
   ++  sun                                               ::  uns integer to @r
-    |=  {a+@u}  (bit [%f & --0 a])
+    |=  {a/@u}  (bit [%f & --0 a])
   ++  san                                               ::  signed integer to @r
-    |=  {a+@s}  (bit [%f (syn:si a) --0 (abs:si a)])
+    |=  {a/@s}  (bit [%f (syn:si a) --0 (abs:si a)])
   ++  toi                                               ::  round to integer
-    |=  {a+@r}  (toi:pa (sea a))
+    |=  {a/@r}  (toi:pa (sea a))
   ++  drg                                               ::  @r to decimal float
-    |=  {a+@r}  (drg:pa (sea a))
+    |=  {a/@r}  (drg:pa (sea a))
   ++  grd                                               ::  decimal float to @r
-    |=  {a+dn}  (bif (grd:pa a))
+    |=  {a/dn}  (bif (grd:pa a))
   --
 ::
-++  rlyd  |=  a+@rd  ^-  dn  (drg:rd a)                 ::  prep @rd for print
-++  rlys  |=  a+@rs  ^-  dn  (drg:rs a)                 ::  prep @rs for print
-++  rlyh  |=  a+@rh  ^-  dn  (drg:rh a)                 ::  prep @rh for print
-++  rlyq  |=  a+@rq  ^-  dn  (drg:rq a)                 ::  prep @rq for print
-++  ryld  |=  a+dn  ^-  @rd  (grd:rd a)                 ::  finish parsing @rd
-++  ryls  |=  a+dn  ^-  @rs  (grd:rs a)                 ::  finish parsing @rs
-++  rylh  |=  a+dn  ^-  @rh  (grd:rh a)                 ::  finish parsing @rh
-++  rylq  |=  a+dn  ^-  @rq  (grd:rq a)                 ::  finish parsing @rq
+++  rlyd  |=  a/@rd  ^-  dn  (drg:rd a)                 ::  prep @rd for print
+++  rlys  |=  a/@rs  ^-  dn  (drg:rs a)                 ::  prep @rs for print
+++  rlyh  |=  a/@rh  ^-  dn  (drg:rh a)                 ::  prep @rh for print
+++  rlyq  |=  a/@rq  ^-  dn  (drg:rq a)                 ::  prep @rq for print
+++  ryld  |=  a/dn  ^-  @rd  (grd:rd a)                 ::  finish parsing @rd
+++  ryls  |=  a/dn  ^-  @rs  (grd:rs a)                 ::  finish parsing @rs
+++  rylh  |=  a/dn  ^-  @rh  (grd:rh a)                 ::  finish parsing @rh
+++  rylq  |=  a/dn  ^-  @rq  (grd:rq a)                 ::  finish parsing @rq
 ::
 ++  rd                                                  ::  double precision fp
   ~%  %rd  +>  ~
-  |_  r+$?($n $u $d $z)
+  |_  r/$?($n $u $d $z)
   ::  round to nearest, round up, round down, round to zero
   ::
   ++  ma
     %*(. ff w 11, p 52, b --1.023, r r)
   ::
   ++  sea                                               ::  @rd to fn
-    |=  {a+@rd}  (sea:ma a)
+    |=  {a/@rd}  (sea:ma a)
   ::
   ++  bit                                               ::  fn to @rd
-    |=  {a+fn}  ^-  @rd  (bit:ma a)
+    |=  {a/fn}  ^-  @rd  (bit:ma a)
   ::
   ++  add  ~/  %add                                     ::  add
-    |=  {a+@rd b+@rd}  ^-  @rd  ~|  %rd-fail
+    |=  {a/@rd b/@rd}  ^-  @rd  ~|  %rd-fail
     (add:ma a b)
   ::
   ++  sub  ~/  %sub                                     ::  subtract
-    |=  {a+@rd b+@rd}  ^-  @rd  ~|  %rd-fail
+    |=  {a/@rd b/@rd}  ^-  @rd  ~|  %rd-fail
     (sub:ma a b)
   ::
   ++  mul  ~/  %mul                                     ::  multiply
-    |=  {a+@rd b+@rd}  ^-  @rd  ~|  %rd-fail
+    |=  {a/@rd b/@rd}  ^-  @rd  ~|  %rd-fail
     (mul:ma a b)
   ::
   ++  div  ~/  %div                                     ::  divide
-    |=  {a+@rd b+@rd}  ^-  @rd  ~|  %rd-fail
+    |=  {a/@rd b/@rd}  ^-  @rd  ~|  %rd-fail
     (div:ma a b)
   ::
   ++  fma  ~/  %fma                                     ::  fused multiply-add
-    |=  {a+@rd b+@rd c+@rd}  ^-  @rd  ~|  %rd-fail
+    |=  {a/@rd b/@rd c/@rd}  ^-  @rd  ~|  %rd-fail
     (fma:ma a b c)
   ::
   ++  sqt  ~/  %sqt                                     ::  square root
-    |=  {a+@rd}  ^-  @rd  ~|  %rd-fail
+    |=  {a/@rd}  ^-  @rd  ~|  %rd-fail
     (sqt:ma a)
   ::
   ++  lth  ~/  %lth                                     ::  less-than
-    |=  {a+@rd b+@rd}  ~|  %rd-fail  (lth:ma a b)
+    |=  {a/@rd b/@rd}  ~|  %rd-fail  (lth:ma a b)
   ++  lte  ~/  %lte                                     ::  less-equals
-    |=  {a+@rd b+@rd}  ~|  %rd-fail  (lte:ma a b)
+    |=  {a/@rd b/@rd}  ~|  %rd-fail  (lte:ma a b)
   ++  equ  ~/  %equ                                     ::  equals
-    |=  {a+@rd b+@rd}  ~|  %rd-fail  (equ:ma a b)
+    |=  {a/@rd b/@rd}  ~|  %rd-fail  (equ:ma a b)
   ++  gte  ~/  %gte                                     ::  greater-equals
-    |=  {a+@rd b+@rd}  ~|  %rd-fail  (gte:ma a b)
+    |=  {a/@rd b/@rd}  ~|  %rd-fail  (gte:ma a b)
   ++  gth  ~/  %gth                                     ::  greater-than
-    |=  {a+@rd b+@rd}  ~|  %rd-fail  (gth:ma a b)
+    |=  {a/@rd b/@rd}  ~|  %rd-fail  (gth:ma a b)
   ::
-  ++  sun  |=  {a+@u}  ^-  @rd  (sun:ma a)              ::  uns integer to @rd
-  ++  san  |=  {a+@s}  ^-  @rd  (san:ma a)              ::  sgn integer to @rd
-  ++  sig  |=  {a+@rd}  ^-  ?  (sig:ma a)               ::  get sign
-  ++  exp  |=  {a+@rd}  ^-  @s  (exp:ma a)              ::  get exponent
-  ++  toi  |=  {a+@rd}  ^-  (unit @s)  (toi:ma a)       ::  round to integer
-  ++  drg  |=  {a+@rd}  ^-  dn  (drg:ma a)              ::  @rd to decimal float
-  ++  grd  |=  {a+dn}  ^-  @rd  (grd:ma a)              ::  decimal float to @rd
+  ++  sun  |=  {a/@u}  ^-  @rd  (sun:ma a)              ::  uns integer to @rd
+  ++  san  |=  {a/@s}  ^-  @rd  (san:ma a)              ::  sgn integer to @rd
+  ++  sig  |=  {a/@rd}  ^-  ?  (sig:ma a)               ::  get sign
+  ++  exp  |=  {a/@rd}  ^-  @s  (exp:ma a)              ::  get exponent
+  ++  toi  |=  {a/@rd}  ^-  (unit @s)  (toi:ma a)       ::  round to integer
+  ++  drg  |=  {a/@rd}  ^-  dn  (drg:ma a)              ::  @rd to decimal float
+  ++  grd  |=  {a/dn}  ^-  @rd  (grd:ma a)              ::  decimal float to @rd
   --
 ::
 ++  rs                                                  ::  single precision fp
   ~%  %rs  +>  ~
-  |_  r+$?($n $u $d $z)
+  |_  r/$?($n $u $d $z)
   ::  round to nearest, round up, round down, round to zero
   ::
   ++  ma
     %*(. ff w 8, p 23, b --127, r r)
   ::
   ++  sea                                               ::  @rs to fn
-    |=  {a+@rs}  (sea:ma a)
+    |=  {a/@rs}  (sea:ma a)
   ::
   ++  bit                                               ::  fn to @rs
-    |=  {a+fn}  ^-  @rs  (bit:ma a)
+    |=  {a/fn}  ^-  @rs  (bit:ma a)
   ::
   ++  add  ~/  %add                                     ::  add
-    |=  {a+@rs b+@rs}  ^-  @rs  ~|  %rs-fail
+    |=  {a/@rs b/@rs}  ^-  @rs  ~|  %rs-fail
     (add:ma a b)
   ::
   ++  sub  ~/  %sub                                     ::  subtract
-    |=  {a+@rs b+@rs}  ^-  @rs  ~|  %rs-fail
+    |=  {a/@rs b/@rs}  ^-  @rs  ~|  %rs-fail
     (sub:ma a b)
   ::
   ++  mul  ~/  %mul                                     ::  multiply
-    |=  {a+@rs b+@rs}  ^-  @rs  ~|  %rs-fail
+    |=  {a/@rs b/@rs}  ^-  @rs  ~|  %rs-fail
     (mul:ma a b)
   ::
   ++  div  ~/  %div                                     ::  divide
-    |=  {a+@rs b+@rs}  ^-  @rs  ~|  %rs-fail
+    |=  {a/@rs b/@rs}  ^-  @rs  ~|  %rs-fail
     (div:ma a b)
   ::
   ++  fma  ~/  %fma                                     ::  fused multiply-add
-    |=  {a+@rs b+@rs c+@rs}  ^-  @rs  ~|  %rs-fail
+    |=  {a/@rs b/@rs c/@rs}  ^-  @rs  ~|  %rs-fail
     (fma:ma a b c)
   ::
   ++  sqt  ~/  %sqt                                     ::  square root
-    |=  {a+@rs}  ^-  @rs  ~|  %rs-fail
+    |=  {a/@rs}  ^-  @rs  ~|  %rs-fail
     (sqt:ma a)
   ::
   ++  lth  ~/  %lth                                     ::  less-than
-    |=  {a+@rs b+@rs}  ~|  %rs-fail  (lth:ma a b)
+    |=  {a/@rs b/@rs}  ~|  %rs-fail  (lth:ma a b)
   ++  lte  ~/  %lte                                     ::  less-equals
-    |=  {a+@rs b+@rs}  ~|  %rs-fail  (lte:ma a b)
+    |=  {a/@rs b/@rs}  ~|  %rs-fail  (lte:ma a b)
   ++  equ  ~/  %equ                                     ::  equals
-    |=  {a+@rs b+@rs}  ~|  %rs-fail  (equ:ma a b)
+    |=  {a/@rs b/@rs}  ~|  %rs-fail  (equ:ma a b)
   ++  gte  ~/  %gte                                     ::  greater-equals
-    |=  {a+@rs b+@rs}  ~|  %rs-fail  (gte:ma a b)
+    |=  {a/@rs b/@rs}  ~|  %rs-fail  (gte:ma a b)
   ++  gth  ~/  %gth                                     ::  greater-than
-    |=  {a+@rs b+@rs}  ~|  %rs-fail  (gth:ma a b)
+    |=  {a/@rs b/@rs}  ~|  %rs-fail  (gth:ma a b)
   ::
-  ++  sun  |=  {a+@u}  ^-  @rs  (sun:ma a)              ::  uns integer to @rs
-  ++  san  |=  {a+@s}  ^-  @rs  (san:ma a)              ::  sgn integer to @rs
-  ++  sig  |=  {a+@rs}  ^-  ?  (sig:ma a)               ::  get sign
-  ++  exp  |=  {a+@rs}  ^-  @s  (exp:ma a)              ::  get exponent
-  ++  toi  |=  {a+@rs}  ^-  (unit @s)  (toi:ma a)       ::  round to integer
-  ++  drg  |=  {a+@rs}  ^-  dn  (drg:ma a)              ::  @rs to decimal float
-  ++  grd  |=  {a+dn}  ^-  @rs  (grd:ma a)              ::  decimal float to @rs
+  ++  sun  |=  {a/@u}  ^-  @rs  (sun:ma a)              ::  uns integer to @rs
+  ++  san  |=  {a/@s}  ^-  @rs  (san:ma a)              ::  sgn integer to @rs
+  ++  sig  |=  {a/@rs}  ^-  ?  (sig:ma a)               ::  get sign
+  ++  exp  |=  {a/@rs}  ^-  @s  (exp:ma a)              ::  get exponent
+  ++  toi  |=  {a/@rs}  ^-  (unit @s)  (toi:ma a)       ::  round to integer
+  ++  drg  |=  {a/@rs}  ^-  dn  (drg:ma a)              ::  @rs to decimal float
+  ++  grd  |=  {a/dn}  ^-  @rs  (grd:ma a)              ::  decimal float to @rs
   --
 ::
 ++  rq                                                  ::  quad precision fp
   ~%  %rq  +>  ~
-  |_  r+$?($n $u $d $z)
+  |_  r/$?($n $u $d $z)
   ::  round to nearest, round up, round down, round to zero
   ::
   ++  ma
     %*(. ff w 15, p 112, b --16.383, r r)
   ::
   ++  sea                                               ::  @rq to fn
-    |=  {a+@rq}  (sea:ma a)
+    |=  {a/@rq}  (sea:ma a)
   ::
   ++  bit                                               ::  fn to @rq
-    |=  {a+fn}  ^-  @rq  (bit:ma a)
+    |=  {a/fn}  ^-  @rq  (bit:ma a)
   ::
   ++  add  ~/  %add                                     ::  add
-    |=  {a+@rq b+@rq}  ^-  @rq  ~|  %rq-fail
+    |=  {a/@rq b/@rq}  ^-  @rq  ~|  %rq-fail
     (add:ma a b)
   ::
   ++  sub  ~/  %sub                                     ::  subtract
-    |=  {a+@rq b+@rq}  ^-  @rq  ~|  %rq-fail
+    |=  {a/@rq b/@rq}  ^-  @rq  ~|  %rq-fail
     (sub:ma a b)
   ::
   ++  mul  ~/  %mul                                     ::  multiply
-    |=  {a+@rq b+@rq}  ^-  @rq  ~|  %rq-fail
+    |=  {a/@rq b/@rq}  ^-  @rq  ~|  %rq-fail
     (mul:ma a b)
   ::
   ++  div  ~/  %div                                     ::  divide
-    |=  {a+@rq b+@rq}  ^-  @rq  ~|  %rq-fail
+    |=  {a/@rq b/@rq}  ^-  @rq  ~|  %rq-fail
     (div:ma a b)
   ::
   ++  fma  ~/  %fma                                     ::  fused multiply-add
-    |=  {a+@rq b+@rq c+@rq}  ^-  @rq  ~|  %rq-fail
+    |=  {a/@rq b/@rq c/@rq}  ^-  @rq  ~|  %rq-fail
     (fma:ma a b c)
   ::
   ++  sqt  ~/  %sqt                                     ::  square root
-    |=  {a+@rq}  ^-  @rq  ~|  %rq-fail
+    |=  {a/@rq}  ^-  @rq  ~|  %rq-fail
     (sqt:ma a)
   ::
   ++  lth  ~/  %lth                                     ::  less-than
-    |=  {a+@rq b+@rq}  ~|  %rq-fail  (lth:ma a b)
+    |=  {a/@rq b/@rq}  ~|  %rq-fail  (lth:ma a b)
   ++  lte  ~/  %lte                                     ::  less-equals
-    |=  {a+@rq b+@rq}  ~|  %rq-fail  (lte:ma a b)
+    |=  {a/@rq b/@rq}  ~|  %rq-fail  (lte:ma a b)
   ++  equ  ~/  %equ                                     ::  equals
-    |=  {a+@rq b+@rq}  ~|  %rq-fail  (equ:ma a b)
+    |=  {a/@rq b/@rq}  ~|  %rq-fail  (equ:ma a b)
   ++  gte  ~/  %gte                                     ::  greater-equals
-    |=  {a+@rq b+@rq}  ~|  %rq-fail  (gte:ma a b)
+    |=  {a/@rq b/@rq}  ~|  %rq-fail  (gte:ma a b)
   ++  gth  ~/  %gth                                     ::  greater-than
-    |=  {a+@rq b+@rq}  ~|  %rq-fail  (gth:ma a b)
+    |=  {a/@rq b/@rq}  ~|  %rq-fail  (gth:ma a b)
   ::
-  ++  sun  |=  {a+@u}  ^-  @rq  (sun:ma a)              ::  uns integer to @rq
-  ++  san  |=  {a+@s}  ^-  @rq  (san:ma a)              ::  sgn integer to @rq
-  ++  sig  |=  {a+@rq}  ^-  ?  (sig:ma a)               ::  get sign
-  ++  exp  |=  {a+@rq}  ^-  @s  (exp:ma a)              ::  get exponent
-  ++  toi  |=  {a+@rq}  ^-  (unit @s)  (toi:ma a)       ::  round to integer
-  ++  drg  |=  {a+@rq}  ^-  dn  (drg:ma a)              ::  @rq to decimal float
-  ++  grd  |=  {a+dn}  ^-  @rq  (grd:ma a)              ::  decimal float to @rq
+  ++  sun  |=  {a/@u}  ^-  @rq  (sun:ma a)              ::  uns integer to @rq
+  ++  san  |=  {a/@s}  ^-  @rq  (san:ma a)              ::  sgn integer to @rq
+  ++  sig  |=  {a/@rq}  ^-  ?  (sig:ma a)               ::  get sign
+  ++  exp  |=  {a/@rq}  ^-  @s  (exp:ma a)              ::  get exponent
+  ++  toi  |=  {a/@rq}  ^-  (unit @s)  (toi:ma a)       ::  round to integer
+  ++  drg  |=  {a/@rq}  ^-  dn  (drg:ma a)              ::  @rq to decimal float
+  ++  grd  |=  {a/dn}  ^-  @rq  (grd:ma a)              ::  decimal float to @rq
   --
 ::
 ++  rh                                                  ::  half precision fp
-  |_  r+$?($n $u $d $z)
+  |_  r/$?($n $u $d $z)
   ::  round to nearest, round up, round down, round to zero
   ::
   ++  ma
     %*(. ff w 5, p 10, b --15, r r)
   ::
   ++  sea                                               ::  @rh to fn
-    |=  {a+@rh}  (sea:ma a)
+    |=  {a/@rh}  (sea:ma a)
   ::
   ++  bit                                               ::  fn to @rh
-    |=  {a+fn}  ^-  @rh  (bit:ma a)
+    |=  {a/fn}  ^-  @rh  (bit:ma a)
   ::
   ++  tos                                               ::  @rh to @rs
-    |=  {a+@rh}  (bit:rs (sea a))
+    |=  {a/@rh}  (bit:rs (sea a))
   ::
   ++  fos                                               ::  @rs to @rh
-    |=  {a+@rs}  (bit (sea:rs a))
+    |=  {a/@rs}  (bit (sea:rs a))
   ::
   ++  lth  ~/  %lth                                     ::  less-than
-    |=  {a+@rh b+@rh}  ~|  %rh-fail  (lth:ma a b)
+    |=  {a/@rh b/@rh}  ~|  %rh-fail  (lth:ma a b)
   ++  lte  ~/  %lte                                     ::  less-equals
-    |=  {a+@rh b+@rh}  ~|  %rh-fail  (lte:ma a b)
+    |=  {a/@rh b/@rh}  ~|  %rh-fail  (lte:ma a b)
   ++  equ  ~/  %equ                                     ::  equals
-    |=  {a+@rh b+@rh}  ~|  %rh-fail  (equ:ma a b)
+    |=  {a/@rh b/@rh}  ~|  %rh-fail  (equ:ma a b)
   ++  gte  ~/  %gte                                     ::  greater-equals
-    |=  {a+@rh b+@rh}  ~|  %rh-fail  (gte:ma a b)
+    |=  {a/@rh b/@rh}  ~|  %rh-fail  (gte:ma a b)
   ++  gth  ~/  %gth                                     ::  greater-than
-    |=  {a+@rh b+@rh}  ~|  %rh-fail  (gth:ma a b)
+    |=  {a/@rh b/@rh}  ~|  %rh-fail  (gth:ma a b)
   ::
-  ++  sun  |=  {a+@u}  ^-  @rh  (sun:ma a)              ::  uns integer to @rh
-  ++  san  |=  {a+@s}  ^-  @rh  (san:ma a)              ::  sgn integer to @rh
-  ++  sig  |=  {a+@rh}  ^-  ?  (sig:ma a)               ::  get sign
-  ++  exp  |=  {a+@rh}  ^-  @s  (exp:ma a)              ::  get exponent
-  ++  toi  |=  {a+@rh}  ^-  (unit @s)  (toi:ma a)       ::  round to integer
-  ++  drg  |=  {a+@rh}  ^-  dn  (drg:ma a)              ::  @rh to decimal float
-  ++  grd  |=  {a+dn}  ^-  @rh  (grd:ma a)              ::  decimal float to @rh
+  ++  sun  |=  {a/@u}  ^-  @rh  (sun:ma a)              ::  uns integer to @rh
+  ++  san  |=  {a/@s}  ^-  @rh  (san:ma a)              ::  sgn integer to @rh
+  ++  sig  |=  {a/@rh}  ^-  ?  (sig:ma a)               ::  get sign
+  ++  exp  |=  {a/@rh}  ^-  @s  (exp:ma a)              ::  get exponent
+  ++  toi  |=  {a/@rh}  ^-  (unit @s)  (toi:ma a)       ::  round to integer
+  ++  drg  |=  {a/@rh}  ^-  dn  (drg:ma a)              ::  @rh to decimal float
+  ++  grd  |=  {a/dn}  ^-  @rh  (grd:ma a)              ::  decimal float to @rh
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cH, urbit time               ::
 ::
 ++  year                                                ::  date to @d
-  |=  det+date
+  |=  det/date
   ^-  @da
   =+  ^=  yer
       ?:  a.det
@@ -2121,7 +2121,7 @@
   (yule day h.t.det m.t.det s.t.det f.t.det)
 ::
 ++  yore                                                ::  @d to date
-  |=  now+@da
+  |=  now/@da
   ^-  date
   =+  rip=(yell now)
   =+  ger=(yall d.rip)
@@ -2131,7 +2131,7 @@
   [m.ger d.ger h.rip m.rip s.rip f.rip]
 ::
 ++  yell                                                ::  tarp from @d
-  |=  now+@d
+  |=  now/@d
   ^-  tarp
   =+  sec=(rsh 6 1 now)
   =+  ^=  fan
@@ -2150,7 +2150,7 @@
   [day hor mit sec fan]
 ::
 ++  yule                                                ::  time atom
-  |=  rip+tarp
+  |=  rip/tarp
   ^-  @d
   =+  ^=  sec  ;:  add
                  (mul d.rip day:yo)
@@ -2167,8 +2167,8 @@
   (con (lsh 6 1 sec) fac)
 ::
 ++  yall                                                ::  day # to day of year
-  |=  day+@ud
-  ^-  {y+@ud m+@ud d+@ud}
+  |=  day/@ud
+  ^-  {y/@ud m/@ud d/@ud}
   =+  [era=0 cet=0 lep=*?]
   =>  .(era (div day era:yo), day (mod day era:yo))
   =>  ^+  .
@@ -2177,21 +2177,21 @@
       =>  .(lep |, cet 1, day (sub day +(cet:yo)))
       .(cet (add cet (div day cet:yo)), day (mod day cet:yo))
   =+  yer=(add (mul 400 era) (mul 100 cet))
-  |-  ^-  {y+@ud m+@ud d+@ud}
+  |-  ^-  {y/@ud m/@ud d/@ud}
   =+  dis=?:(lep 366 365)
   ?.  (lth day dis)
     =+  ner=+(yer)
     $(yer ner, day (sub day dis), lep =(0 (end 0 2 ner)))
-  |-  ^-  {y+@ud m+@ud d+@ud}
+  |-  ^-  {y/@ud m/@ud d/@ud}
   =+  [mot=0 cah=?:(lep moy:yo moh:yo)]
-  |-  ^-  {y+@ud m+@ud d+@ud}
+  |-  ^-  {y/@ud m/@ud d/@ud}
   =+  zis=(snag mot cah)
   ?:  (lth day zis)
     [yer +(mot) +(day)]
   $(mot +(mot), day (sub day zis))
 ::
 ++  yawn                                                ::  days since Jesus
-  |=  {yer+@ud mot+@ud day+@ud}
+  |=  {yer/@ud mot/@ud day/@ud}
   ^-  @ud
   =>  .(mot (dec mot), day (dec day))
   =>  ^+  .
@@ -2216,7 +2216,7 @@
   (add day (mul (div yer 400) (add 1 (mul 4 36.524))))
 ::
 ++  yelp                                                ::  leap year
-  |=  yer+@ud  ^-  ?
+  |=  yer/@ud  ^-  ?
   &(=(0 (mod yer 4)) |(!=(0 (mod yer 100)) =(0 (mod yer 400))))
 ::
 ++  yo                                                  ::  time constants
@@ -2238,47 +2238,47 @@
 ++  head  |*(^ +<-)                                     ::  get head
 ++  tail  |*(^ +<+)                                     ::  get head
 ++  test  |=(^ =(+<- +<+))                              ::  equality
-++  cork  |*({a+_|=(* **) b+gate} (corl b a))        ::  compose forward
+++  cork  |*({a/_|=(* **) b/gate} (corl b a))        ::  compose forward
 ++  corl                                                ::  compose backwards
-  |*  {a+gate b+_|=(* **)}
+  |*  {a/gate b/_|=(* **)}
   =<  +:|.((a (b)))      ::  type check
-  |*  c+_+<.b
+  |*  c/_+<.b
   (a (b c))
 ::
 ++  cury                                                ::  curry left
-  |*  {a+_|=(^ **) b+*}
-  |*  c+_+<+.a
+  |*  {a/_|=(^ **) b/*}
+  |*  c/_+<+.a
   (a b c)
 ::
 ++  curr                                                ::  curry right
-  |*  {a+_|=(^ **) c+*}     
-  |*  b+_+<+.a
+  |*  {a/_|=(^ **) c/*}     
+  |*  b/_+<+.a
   (a b c)
 ::
 ++  gulf                                                ::  range list
-  |=({a+@ b+@} `(list @)`?:(=(a +(b)) ~ [a $(a +(a))]))
+  |=({a/@ b/@} `(list @)`?:(=(a +(b)) ~ [a $(a +(a))]))
 ::
 ++  hard                                                ::  force coerce to type
-  |*  han+$+(* *)
-  |=  fud+*  ^-  han
+  |*  han/$+(* *)
+  |=  fud/*  ^-  han
   ~|  %hard
   =+  gol=(han fud)
   ?>(=(gol fud) gol)
 ::
 ++  soft                                                ::  maybe coerce to type
-  |*  han+$+(* *)
-  |=  fud+*  ^-  (unit han)
+  |*  han/$+(* *)
+  |=  fud/*  ^-  (unit han)
   =+  gol=(han fud)
   ?.(=(gol fud) ~ [~ gol])
 ::
 ++  slog                                                ::  deify printf
-  =|  pri+@                                             ::  priority level
-  |=  a+tang  ^+  same                                  ::  .=  ~&(%a 1)
+  =|  pri/@                                             ::  priority level
+  |=  a/tang  ^+  same                                  ::  .=  ~&(%a 1)
   ?~(a same ~>(%slog.[pri i.a] $(a t.a)))               ::  ((slog ~[>%a<]) 1)
 ::
-++  mean  |=(a+tang (fear (flop a) |.(!!)))             ::  deify stack trace
+++  mean  |=(a/tang (fear (flop a) |.(!!)))             ::  deify stack trace
 ++  fear                                                ::  insert user mean
-  |*  {a+tang _|?(**)}
+  |*  {a/tang _|?(**)}
   ^+  (+<+)
   =>  .(a `tang`a)
   ?~  a  (+<+)
@@ -2288,7 +2288,7 @@
 ::
 ++  sqt                                                 ::  sqrt w#remainder
   ~/  %sqt
-  |=  a+@  ^-  {p+@ q+@}
+  |=  a/@  ^-  {p/@ q/@}
   ?~  a  [0 0]
   =+  [q=(div (dec (xeb a)) 2) r=0]
   =-  [-.b (sub a +.b)]
@@ -2301,13 +2301,13 @@
 ::
 ++  dvr
   ~/  %dvr
-  |=  {a+@ b+@}  ^-  {p+@ q+@}
+  |=  {a/@ b/@}  ^-  {p/@ q/@}
   ?<  =(0 b)
   [(div a b) (mod a b)]
 ::
 ++  pow
   ~/  %pow
-  |=  {a+@ b+@}
+  |=  {a/@ b/@}
   ?:  =(b 0)  1
   |-  ?:  =(b 1)  a
   =+  c=$(b (div b 2))
@@ -2319,7 +2319,7 @@
 ::                section 2dA, sets                     ::
 ::
 ++  apt                                                 ::  set invariant
-  |=  a+(tree)
+  |=  a/(tree)
   ?~  a
     &
   ?&  ?~(l.a & ?&((vor n.a n.l.a) (hor n.l.a n.a) $(a l.a)))
@@ -2328,10 +2328,10 @@
 ::
 ++  in                                                  ::  set engine
   ~/  %in
-  |/  a+(set)
+  |/  a/(set)
   +-  all                                               ::  logical AND
     ~/  %all
-    |*  b+$+(* ?)
+    |*  b/$+(* ?)
     |-  ^-  ?
     ?~  a
       &
@@ -2339,7 +2339,7 @@
   ::
   +-  any                                               ::  logical OR
     ~/  %any
-    |*  b+$+(* ?)
+    |*  b/$+(* ?)
     |-  ^-  ?
     ?~  a
       |
@@ -2347,7 +2347,7 @@
   ::
   +-  bif                                               ::  splits a by b
     ~/  %bif
-    |*  b+*
+    |*  b/*
     ^+  [l=a r=a]
     =<  [+< +>]
     |-  ^+  a
@@ -2365,7 +2365,7 @@
   ::
   +-  del                                               ::  b without any a
     ~/  %del
-    |*  b+*
+    |*  b/*
     |-  ^+  a
     ?~  a
       ~
@@ -2382,7 +2382,7 @@
   ::
   +-  dif                                               ::  difference
     ~/  %dif
-    |*  b+_a
+    |*  b/_a
     |-  ^+  a
     ?~  b
       a
@@ -2398,7 +2398,7 @@
     [n.e $(e l.e) r.e]
   ::
   +-  dig                                               ::  axis of a in b
-    |=  b+*
+    |=  b/*
     =+  c=1
     |-  ^-  (unit @)
     ?~  a  ~
@@ -2409,7 +2409,7 @@
   ::
   +-  gas                                               ::  concatenate
     ~/  %gas
-    |=  b+(list _?>(?=(^ a) n.a))
+    |=  b/(list _?>(?=(^ a) n.a))
     |-  ^+  a
     ?~  b
       a
@@ -2417,7 +2417,7 @@
   ::
   +-  has                                               ::  b exists in a check
     ~/  %has
-    |*  b+*
+    |*  b/*
     |-  ^-  ?
     ?~  a
       |
@@ -2429,7 +2429,7 @@
   ::
   +-  int                                               ::  intersection
     ~/  %int
-    |*  b+_a
+    |*  b/_a
     |-  ^+  a
     ?~  b
       ~
@@ -2445,7 +2445,7 @@
   ::
   +-  put                                               ::  puts b in a, sorted
     ~/  %put
-    |*  b+*
+    |*  b/*
     |-  ^+  a
     ?~  a
       [b ~ ~]
@@ -2464,14 +2464,14 @@
     [n.c [n.a l.a l.c] r.c]
   ::
   +-  rep                                               ::  replace by product
-    |*  b+_|=({* *} +<+)
+    |*  b/_|=({* *} +<+)
     |-
     ?~  a  +<+.b
     $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
   ::
   +-  tap                                               ::  list tiles a set
     ~/  %tap
-    |=  b+(list _?>(?=(^ a) n.a))
+    |=  b/(list _?>(?=(^ a) n.a))
     ^+  b
     ?~  a
       b
@@ -2479,7 +2479,7 @@
   ::
   +-  uni                                               ::  union
     ~/  %uni
-    |*  b+_a
+    |*  b/_a
     ?:  =(a b)  a
     |-  ^+  a
     ?~  b
@@ -2506,7 +2506,7 @@
 ::                section 2dB, maps                     ::
 ::
 ++  ept                                                 ::  map invariant
-  |=  a+(tree {p+* q+*})
+  |=  a/(tree {p/* q/*})
   ?~  a
     &
   ?&  ?~(l.a & ?&((vor p.n.a p.n.l.a) (gor p.n.l.a p.n.a) $(a l.a)))
@@ -2514,22 +2514,22 @@
   ==
 ::
 ++  ja                                                  ::  jar engine
-  |/  a+(jar)
+  |/  a/(jar)
   +-  get                                               ::  gets list by key
-    |*  b+*
+    |*  b/*
     =+  c=(~(get by a) b)
     ?~(c ~ u.c)
   ::
   +-  add                                               ::  adds key-list pair
-    |*  {b+* c+*}
+    |*  {b/* c/*}
     =+  d=(get(+< a) b)
     (~(put by a) b [c d])
   --
 ::
 ++  ju                                                  ::  jug engine
-  |/  a+(jug)
+  |/  a/(jug)
   +-  del                                               ::  del key-set pair
-    |*  {b+* c+*}
+    |*  {b/* c/*}
     ^+  a
     =+  d=(get(+< a) b)
     =+  e=(~(del in d) c)
@@ -2538,7 +2538,7 @@
     (~(put by a) b e)
   ::
   +-  gas                                               ::  concatenate
-    |*  b+(list {p+* q+*})
+    |*  b/(list {p/* q/*})
     =>  .(b `(list _?>(?=({{* ^} ^} a) [p=p q=n.q]:n.a))`b)
     |-  ^+  a
     ?~  b
@@ -2546,17 +2546,17 @@
     $(b t.b, a (put(+< a) p.i.b q.i.b))
   ::
   +-  get                                               ::  gets set by key
-    |*  b+*
+    |*  b/*
     =+  c=(~(get by a) b)
     ?~(c ~ u.c)
   ::
   +-  has                                               ::  existence check
-    |*  {b+* c+*}
+    |*  {b/* c/*}
     ^-  ?
     (~(has in (get(+< a) b)) c)
   ::
   +-  put                                               ::  add key-set pair
-    |*  {b+* c+*}
+    |*  {b/* c/*}
     ^+  a
     =+  d=(get(+< a) b)
     (~(put by a) b (~(put in d) c))
@@ -2564,10 +2564,10 @@
 ::
 ++  by                                                  ::  map engine
   ~/  %by
-  |/  a+(map)
+  |/  a/(map)
   +-  all                                               ::  logical AND
     ~/  %all
-    |*  b+$+(* ?)
+    |*  b/$+(* ?)
     |-  ^-  ?
     ?~  a
       &
@@ -2575,7 +2575,7 @@
   ::
   +-  any                                               ::  logical OR
     ~/  %any
-    |*  b+$+(* ?)
+    |*  b/$+(* ?)
     |-  ^-  ?
     ?~  a
       |
@@ -2583,7 +2583,7 @@
   ::
   +-  bif                                               ::  splits a by b
     ~/  %bif
-    |*  {b+* c+*}
+    |*  {b/* c/*}
     ^+  [l=a r=a]
     =<  [+< +>]
     |-  ^+  a
@@ -2603,7 +2603,7 @@
   ::
   +-  del                                               ::  delete at key b
     ~/  %del
-    |*  b+*
+    |*  b/*
     |-  ^+  a
     ?~  a
       ~
@@ -2620,7 +2620,7 @@
   ::
   +-  dif                                               ::  difference
     ~/  %dif
-    |*  b+_a
+    |*  b/_a
     |-  ^+  a
     ?~  b
       a
@@ -2636,7 +2636,7 @@
     [n.e $(e l.e) r.e]
   ::
   +-  dig                                               ::  axis of b key
-    |=  b+*
+    |=  b/*
     =+  c=1
     |-  ^-  (unit @)
     ?~  a  ~
@@ -2647,7 +2647,7 @@
   ::
   +-  gas                                               ::  concatenate
     ~/  %gas
-    |*  b+(list {p+* q+*})
+    |*  b/(list {p/* q/*})
     =>  .(b `(list _?>(?=(^ a) n.a))`b)
     |-  ^+  a
     ?~  b
@@ -2656,8 +2656,8 @@
   ::
   +-  get                                               ::  grab value by key
     ~/  %get
-    |=  b+*
-    ^-  {$@($~ {$~ u+_?>(?=(^ a) q.n.a)})}
+    |=  b/*
+    ^-  {$@($~ {$~ u/_?>(?=(^ a) q.n.a)})}
     ?~  a
       ~
     ?:  =(b p.n.a)
@@ -2667,18 +2667,18 @@
     $(a r.a)
   ::
   +-  got
-    |*  b+*
+    |*  b/*
     %-  need
     %-  get(+< a)  b
   ::
   +-  has                                               ::  key existence check
     ~/  %has
-    |*  b+*
+    |*  b/*
     !=(~ (get(+< a) b))
   ::
   +-  int                                               ::  intersection
     ~/  %int
-    |*  b+_a
+    |*  b/_a
     |-  ^+  a
     ?~  b
       ~
@@ -2697,14 +2697,14 @@
     %-  uni(+< $(b r.b, a [n.a ~ r.a]))  $(a l.a)
   ::
   +-  mar                                               ::  add with validation
-    |*  {b+_?>(?=(^ a) p.n.a) c+(unit _?>(?=(^ a) q.n.a))}
+    |*  {b/_?>(?=(^ a) p.n.a) c/(unit _?>(?=(^ a) q.n.a))}
     ?~  c
       (del b)
     (put b u.c)
   ::
   +-  put                                               ::  adds key-value pair
     ~/  %put
-    |*  {b+* c+*}
+    |*  {b/* c/*}
     |-  ^+  a
     ?~  a
       [[b c] ~ ~]
@@ -2725,13 +2725,13 @@
     [n.d [n.a l.a l.d] r.d]
   ::
   +-  rep                                               ::  replace by product
-    |*  b+_|=({* *} +<+)
+    |*  b/_|=({* *} +<+)
     |-
     ?~  a  +<+.b
     $(a r.a, +<+.b $(a l.a, +<+.b (b n.a +<+.b)))
   ::
   +-  rib                                               ::  transform + product
-    |*  {b+* c+$+(* *)}
+    |*  {b/* c/$+(* *)}
     |-  ^+  [b a]
     ?~  a  [b ~]
     =+  d=(c n.a b)
@@ -2741,14 +2741,14 @@
     [-.f [n.a +.e +.f]]
   ::
   +-  run                                               ::  apply gate to values
-    |*  b+$+(* *)
+    |*  b/$+(* *)
     |-
     ?~  a  a
     [n=[p=p.n.a q=(b q.n.a)] l=$(a l.a) r=$(a r.a)]
   ::
   +-  tap                                               ::  listify pairs
     ~/  %tap
-    |=  b+(list _?>(?=(^ a) n.a))
+    |=  b/(list _?>(?=(^ a) n.a))
     ^+  b
     ?~  a
       b
@@ -2756,7 +2756,7 @@
   ::
   +-  uni                                               ::  union, merge
     ~/  %uni
-    |*  b+_a
+    |*  b/_a
     |-  ^+  a
     ?~  b
       a
@@ -2775,7 +2775,7 @@
     $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
   ::
   +-  urn                                               ::  apply gate to nodes
-    |*  b+$+({* *} *)
+    |*  b/$+({* *} *)
     |-
     ?~  a  ~
     [n=[p=p.n.a q=(b p.n.a q.n.a)] l=$(a l.a) r=$(a r.a)]
@@ -2788,7 +2788,7 @@
 ::                section 2dC, queues                   ::
 ::
 ++  to                                                  ::  queue engine
-  |/  a+(qeu)
+  |/  a/(qeu)
   +-  bal
     |-  ^+  a
     ?~  a  ~
@@ -2804,7 +2804,7 @@
     +((max $(a l.a) $(a r.a)))
   ::
   +-  gas                                               ::  insert list to que
-    |=  b+(list _?>(?=(^ a) n.a))
+    |=  b/(list _?>(?=(^ a) n.a))
     |-  ^+  a
     ?~(b a $(b t.b, a (put(+< a) i.b)))
   ::
@@ -2827,14 +2827,14 @@
     bal(+< ^+(a [p.b q.b r.a]))
   ::
   +-  put                                               ::  insert new tail
-    |*  b+*
+    |*  b/*
     |-  ^+  a
     ?~  a
       [b ~ ~]
     bal(+< a(l $(a l.a)))
   ::
   +-  tap                                               ::  adds list to end
-    |=  b+(list _?>(?=(^ a) n.a))
+    |=  b/(list _?>(?=(^ a) n.a))
     =+  z=0                                             ::  XX breaks jet match
     ^+  b
     ?~  a
@@ -2850,21 +2850,21 @@
 ::                section 2dD, casual containers        ::
 ::
 ++  mo                                                  ::  make a map
-  |*  a+(pole ^)
-  =>  .(a ^.(|*(a+$@($~ ^) ?~(a ~ [i=-.a t=$(a +.a)])) a))
+  |*  a/(pole ^)
+  =>  .(a ^.(|*(a/$@($~ ^) ?~(a ~ [i=-.a t=$(a +.a)])) a))
   =>  .(a ^.(homo a))
-  =>  .(a `(list {p+_-<.a q+_->.a})`a)
+  =>  .(a `(list {p/_-<.a q/_->.a})`a)
   =+  b=*(map _?>(?=(^ a) p.i.a) _?>(?=(^ a) q.i.a))
   (~(gas by b) a)
 ::
 ++  sa                                                  ::  make a set
-  |*  a+(list)
+  |*  a/(list)
   =>  .(a `_(homo a)`a)
   =+  b=*(set _?>(?=(^ a) i.a))
   (~(gas in b) a)
 ::
 ++  qu                                                  ::  qeu from list
-  |*  a+(list)
+  |*  a/(list)
   =>  .(a `_(homo a)`a)
   =+  b=*(qeu _?>(?=(^ a) i.a))
   (~(gas to b) a)
@@ -2875,12 +2875,12 @@
 ::
 ++  cue                                                 ::  unpack
   ~/  %cue
-  |=  a+@
+  |=  a/@
   ^-  *
   =+  b=0
   =+  m=`(map @ *)`~
   =<  q
-  |-  ^-  {p+@ q+* r+(map @ *)}
+  |-  ^-  {p/@ q/* r/(map @ *)}
   ?:  =(0 (cut 0 [b 1] a))
     =+  c=(rub +(b) a)
     [+(p.c) q.c (~(put by m) b q.c)]
@@ -2895,12 +2895,12 @@
 ::
 ++  jam                                                 ::  pack
   ~/  %jam
-  |=  a+*
+  |=  a/*
   ^-  @
   =+  b=0
   =+  m=`(map * @)`~
   =<  q
-  |-  ^-  {p+@ q+@ r+(map * @)}
+  |-  ^-  {p/@ q/@ r/(map * @)}
   =+  c=(~(get by m) a)
   ?~  c
     =>  .(m (~(put by m) a b))
@@ -2919,8 +2919,8 @@
 ::
 ++  mat                                                 ::  length-encode
   ~/  %mat
-  |=  a+@
-  ^-  {p+@ q+@}
+  |=  a/@
+  ^-  {p/@ q/@}
   ?:  =(0 a)
     [1 1]
   =+  b=(met 0 a)
@@ -2930,8 +2930,8 @@
 ::
 ++  rub                                                 ::  length-decode
   ~/  %rub
-  |=  {a+@ b+@}
-  ^-  {p+@ q+@}
+  |=  {a/@ b/@}
+  ^-  {p/@ q/@}
   =+  ^=  c
       =+  [c=0 m=(met 0 b)]
       |-  ?<  (gth c m)
@@ -2946,13 +2946,13 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eB, parsing (tracing)        ::
 ::
-++  last  |=  {zyc+hair naz+hair}                       ::  farther trace
+++  last  |=  {zyc/hair naz/hair}                       ::  farther trace
           ^-  hair
           ?:  =(p.zyc p.naz)
             ?:((gth q.zyc q.naz) zyc naz)
           ?:((gth p.zyc p.naz) zyc naz)
 ::
-++  lust  |=  {weq+char naz+hair}                       ::  detect newline
+++  lust  |=  {weq/char naz/hair}                       ::  detect newline
           ^-  hair
           ?:(=(10 weq) [+(p.naz) 1] [p.naz +(q.naz)])
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -2960,9 +2960,9 @@
 ::
 ++  cold                                                ::  replace w# constant
   ~/  %cold
-  |*  {cus+* sef+rule}
+  |*  {cus/* sef/rule}
   ~/  %fun
-  |=  tub+nail
+  |=  tub/nail
   =+  vex=(sef tub)
   ?~  q.vex
     vex
@@ -2970,9 +2970,9 @@
 ::
 ++  cook                                                ::  apply gate
   ~/  %cook
-  |*  {poq+$+(* *) sef+rule}
+  |*  {poq/$+(* *) sef/rule}
   ~/  %fun
-  |=  tub+nail
+  |=  tub/nail
   =+  vex=(sef tub)
   ?~  q.vex
     vex
@@ -2980,35 +2980,35 @@
 ::
 ++  easy                                                ::  always parse
   ~/  %easy
-  |*  huf+*
+  |*  huf/*
   ~/  %fun
-  |=  tub+nail
+  |=  tub/nail
   ^-  (like _huf)
   [p=p.tub q=[~ u=[p=huf q=tub]]]
 ::
-++  fail  |=(tub+nail [p=p.tub q=~])                    ::  never parse
+++  fail  |=(tub/nail [p=p.tub q=~])                    ::  never parse
 ++  full                                                ::  has to fully parse
-  |*  sef+rule
-  |=  tub+nail
+  |*  sef/rule
+  |=  tub/nail
   =+  vex=(sef tub)
   ?~(q.vex vex ?:(=(~ q.q.u.q.vex) vex [p=p.vex q=~]))
 ::
 ++  funk                                                ::  add to tape first
-  |*  {pre+tape sef+rule}
-  |=  tub+nail
+  |*  {pre/tape sef/rule}
+  |=  tub/nail
   (sef p.tub (weld pre q.tub))
 ::
 ++  here                                                ::  place-based apply
   ~/  %here
-  |*  {hez+_|=({a+pint b+*} [a b]) sef+rule}
+  |*  {hez/_|=({a/pint b/*} [a b]) sef/rule}
   ~/  %fun
-  |=  tub+nail
+  |=  tub/nail
   =+  vex=(sef tub)
   ?~  q.vex
     vex
   [p=p.vex q=[~ u=[p=(hez [p.tub p.q.u.q.vex] p.u.q.vex) q=q.u.q.vex]]]
 ::
-++  inde  |*  sef+rule                                 :: indentation block
+++  inde  |*  sef/rule                                 :: indentation block
   |=  nail  ^+  (sef)
   =+  [har tap]=[p q]:+<
   =+  lev=(fil 3 (dec q.har) ' ')
@@ -3028,8 +3028,8 @@
   (welp [`@t`10 (trip lev)] $(res +.res))
 ::
 ++  jest                                                ::  match a cord
-  |=  daf+@t
-  |=  tub+nail
+  |=  daf/@t
+  |=  tub/nail
   =+  fad=daf
   |-  ^-  (like @t)
   ?:  =(0 daf)
@@ -3040,9 +3040,9 @@
 ::
 ++  just                                                ::  XX redundant, jest
   ~/  %just                                             ::  match a char
-  |=  daf+char
+  |=  daf/char
   ~/  %fun
-  |=  tub+nail
+  |=  tub/nail
   ^-  (like char)
   ?~  q.tub
     (fail tub)
@@ -3051,25 +3051,25 @@
   (next tub)
 ::
 ++  knee                                                ::  callbacks
-  |*  {gar+* sef+_|.(*rule)}
-  |=  tub+nail
+  |*  {gar/* sef/_|.(*rule)}
+  |=  tub/nail
   ^-  (like _gar)
   ((sef) tub)
 ::
 ++  mask                                                ::  match char in set
   ~/  %mask
-  |=  bud+(list char)
+  |=  bud/(list char)
   ~/  %fun
-  |=  tub+nail
+  |=  tub/nail
   ^-  (like char)
   ?~  q.tub
     (fail tub)
-  ?.  (lien bud |=(a+char =(i.q.tub a)))
+  ?.  (lien bud |=(a/char =(i.q.tub a)))
     (fail tub)
   (next tub)
 ::
 ++  next                                                ::  consume a char
-  |=  tub+nail
+  |=  tub/nail
   ^-  (like char)
   ?~  q.tub
     (fail tub)
@@ -3077,8 +3077,8 @@
   [zac [~ i.q.tub [zac t.q.tub]]]
 ::
 ++  sear                                                ::  conditional cook
-  |*  {pyq+$+(* (unit)) sef+rule}
-  |=  tub+nail
+  |*  {pyq/$+(* (unit)) sef/rule}
+  |=  tub/nail
   =+  vex=(sef tub)
   ?~  q.vex
     vex
@@ -3089,9 +3089,9 @@
 ::
 ++  shim                                                ::  match char in range
   ~/  %shim
-  |=  {les+@ mos+@}
+  |=  {les/@ mos/@}
   ~/  %fun
-  |=  tub+nail
+  |=  tub/nail
   ^-  (like char)
   ?~  q.tub
     (fail tub)
@@ -3101,16 +3101,16 @@
 ::
 ++  stag                                                ::  add a label
   ~/  %stag
-  |*  {gob+* sef+rule}
+  |*  {gob/* sef/rule}
   ~/  %fun
-  |=  tub+nail
+  |=  tub/nail
   =+  vex=(sef tub)
   ?~  q.vex
     vex
   [p=p.vex q=[~ u=[p=[gob p.u.q.vex] q=q.u.q.vex]]]
 ::
 ++  stet
-  |*  leh+(list {?(@ {@ @}) rule})
+  |*  leh/(list {?(@ {@ @}) rule})
   |-
   ?~  leh
     ~
@@ -3118,9 +3118,9 @@
 ::
 ++  stew                                                ::  switch by first char
   ~/  %stew
-  |*  leh+(list {p+?(@ {@ @}) q+rule})                  ::  char#range keys
+  |*  leh/(list {p/?(@ {@ @}) q/rule})                  ::  char#range keys
   =+  ^=  wor                                           ::  range complete lth
-      |=  {ort+?(@ {@ @}) wan+?(@ {@ @})}
+      |=  {ort/?(@ {@ @}) wan/?(@ {@ @})}
       ?@  ort
         ?@(wan (lth ort wan) (lth ort -.wan))
       ?@(wan (lth +.ort wan) (lth +.ort -.wan))
@@ -3145,7 +3145,7 @@
         [n.yal l.yal nuc]
       [n.nuc [n.yal l.yal l.nuc] r.nuc]
   ~%  %fun  ..^$  ~
-  |=  tub+nail
+  |=  tub/nail
   ?~  q.tub
     (fail tub)
   |-
@@ -3162,9 +3162,9 @@
 ::
 ++  stir
   ~/  %stir
-  |*  {rud+* raq+_|*({a+* b+*} [a b]) fel+rule}
+  |*  {rud/* raq/_|*({a/* b/*} [a b]) fel/rule}
   ~/  %fun
-  |=  tub+nail
+  |=  tub/nail
   ^-  (like _rud)
   =+  vex=(fel tub)
   ?~  q.vex
@@ -3174,8 +3174,8 @@
   [(last p.vex p.wag) [~ (raq p.u.q.vex p.u.q.wag) q.u.q.wag]]
 ::
 ++  stun                                                ::  parse several times
-  |*  {{les+@ mos+@} fel+rule}
-  |=  tub+nail
+  |*  {{les/@ mos/@} fel/rule}
+  |=  tub/nail
   ^-  (like (list _(wonk (fel))))
   ?:  =(0 mos)
     [p.tub [~ ~ tub]]
@@ -3197,9 +3197,9 @@
 ::
 ++  bend                                                ::  conditional comp
   ~/  %bend
-  |*  raq+_|*({a+* b+*} [~ u=[a b]])
+  |*  raq/_|*({a/* b/*} [~ u=[a b]])
   ~/  %fun
-  |*  {vex+edge sab+rule}
+  |*  {vex/edge sab/rule}
   ?~  q.vex
     vex
   =+  yit=(sab q.u.q.vex)
@@ -3213,9 +3213,9 @@
 ::
 ++  comp
   ~/  %comp
-  |*  raq+_|*({a+* b+*} [a b])                       ::  arbitrary compose
+  |*  raq/_|*({a/* b/*} [a b])                       ::  arbitrary compose
   ~/  %fun
-  |*  {vex+edge sab+rule}
+  |*  {vex/edge sab/rule}
   ?~  q.vex
     vex
   =+  yit=(sab q.u.q.vex)
@@ -3226,13 +3226,13 @@
 ::
 ++  glue                                                ::  add rule
   ~/  %glue
-  |*  bus+rule
+  |*  bus/rule
   ~/  %fun
-  |*  {vex+edge sab+rule}
+  |*  {vex/edge sab/rule}
   (plug vex ;~(pfix bus sab))
 ::
 ++  less                                                ::  no first and second
-  |*  {vex+edge sab+rule}
+  |*  {vex/edge sab/rule}
   ?~  q.vex
     =+  roq=(sab)
     [p=(last p.vex p.roq) q=q.roq]
@@ -3240,11 +3240,11 @@
 ::
 ++  pfix                                                ::  discard first rule
   ~/  %pfix
-  (comp |*({a+* b+*} b))
+  (comp |*({a/* b/*} b))
 ::
 ++  plug                                                ::  first then second
   ~/  %plug
-  |*  {vex+edge sab+rule}
+  |*  {vex/edge sab/rule}
   ?~  q.vex
     vex
   =+  yit=(sab q.u.q.vex)
@@ -3255,14 +3255,14 @@
 ::
 ++  pose                                                ::  first or second
   ~/  %pose
-  |*  {vex+edge sab+rule}
+  |*  {vex/edge sab/rule}
   ?~  q.vex
     =+  roq=(sab)
     [p=(last p.vex p.roq) q=q.roq]
   vex
 ::
 ++  simu                                                ::  first and second
-  |*  {vex+edge sab+rule}
+  |*  {vex/edge sab/rule}
   ?~  q.vex
     vex
   =+  roq=(sab)
@@ -3270,61 +3270,61 @@
 ::
 ++  sfix                                                ::  discard second rule
   ~/  %sfix
-  (comp |*({a+* b+*} a))
+  (comp |*({a/* b/*} a))
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eE, parsing (composers)      ::
 ::
 ++  bass
-  |*  {wuc+@ tyd+rule}
+  |*  {wuc/@ tyd/rule}
   %+  cook
-    |=  waq+(list @)
+    |=  waq/(list @)
     %+  roll
       waq
-    =|({p+@ q+@} |.((add p (mul wuc q))))
+    =|({p/@ q/@} |.((add p (mul wuc q))))
   tyd
 ::
 ++  boss
-  |*  {wuc+@ tyd+rule}
+  |*  {wuc/@ tyd/rule}
   %+  cook
-    |=  waq+(list @)
+    |=  waq/(list @)
     %+  reel
       waq
-    =|({p+@ q+@} |.((add p (mul wuc q))))
+    =|({p/@ q/@} |.((add p (mul wuc q))))
   tyd
 ::
 ++  flag
-  |=  {sic+@t non+@t}
+  |=  {sic/@t non/@t}
   ;~(pose (cold %& (jest sic)) (cold %| (jest non)))
 ::
 ++  ifix
-  |*  {fel+{p+rule q+rule} hof+rule}
+  |*  {fel/{p/rule q/rule} hof/rule}
   ;~(pfix p.fel ;~(sfix hof q.fel))
 ::
 ++  more
-  |*  {bus+rule fel+rule}
+  |*  {bus/rule fel/rule}
   ;~(pose (most bus fel) (easy ~))
 ::
 ++  most
-  |*  {bus+rule fel+rule}
+  |*  {bus/rule fel/rule}
   ;~(plug fel (star ;~(pfix bus fel)))
 ::
 ++  pick
-  |*  {a+rule b+rule}
+  |*  {a/rule b/rule}
   ;~  pose
     (stag %& a)
     (stag %| b)
   ==
 ::
-++  plus  |*(fel+rule ;~(plug fel (star fel)))
-++  punt  |*({a+rule} ;~(pose (stag ~ a) (easy ~)))
+++  plus  |*(fel/rule ;~(plug fel (star fel)))
+++  punt  |*({a/rule} ;~(pose (stag ~ a) (easy ~)))
 ++  slug
-  |*  raq+_|*({a+* b+*} [a b])
-  |*  {bus+rule fel+rule}
+  |*  raq/_|*({a/* b/*} [a b])
+  |*  {bus/rule fel/rule}
   ;~((comp raq) fel (stir +<+.raq raq ;~(pfix bus fel)))
 ::
 ++  star                                                ::  0 or more times
-  |*  fel+rule
-  (stir `(list _(wonk *fel))`~ |*({a+* b+*} [a b]) fel)
+  |*  fel/rule
+  (stir `(list _(wonk *fel))`~ |*({a/* b/*} [a b]) fel)
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eF, parsing (ascii)          ::
 ::
@@ -3390,22 +3390,22 @@
 ++  alp  ;~(pose low hig nud hep)                       ::  alphanumeric and -
 ++  bet  ;~(pose (cold 2 hep) (cold 3 lus))             ::  axis syntax - +
 ++  bin  (bass 2 (most gon but))                        ::  binary to atom
-++  but  (cook |=(a+@ (sub a '0')) (shim '0' '1'))      ::  binary digit
-++  cit  (cook |=(a+@ (sub a '0')) (shim '0' '7'))      ::  octal digit
+++  but  (cook |=(a/@ (sub a '0')) (shim '0' '1'))      ::  binary digit
+++  cit  (cook |=(a/@ (sub a '0')) (shim '0' '7'))      ::  octal digit
 ++  dem  (bass 10 (most gon dit))                       ::  decimal to atom
-++  dit  (cook |=(a+@ (sub a '0')) (shim '0' '9'))      ::  decimal digit
+++  dit  (cook |=(a/@ (sub a '0')) (shim '0' '9'))      ::  decimal digit
 ++  gul  ;~(pose (cold 2 gal) (cold 3 gar))             ::  axis syntax < >
 ++  gon  ;~(pose ;~(plug bas gay fas) (easy ~))         ::  long numbers \ /
 ++  hex  (bass 16 (most gon hit))                       ::  hex to atom
 ++  hig  (shim 'A' 'Z')                                 ::  uppercase
 ++  hit  ;~  pose                                       ::  hex digits
            dit
-           (cook |=(a+char (sub a 87)) (shim 'a' 'f'))
-           (cook |=(a+char (sub a 55)) (shim 'A' 'F'))
+           (cook |=(a/char (sub a 87)) (shim 'a' 'f'))
+           (cook |=(a/char (sub a 55)) (shim 'A' 'F'))
          ==
 ++  low  (shim 'a' 'z')                                 ::  lowercase
 ++  mes  %+  cook                                       ::  hexbyte
-           |=({a+@ b+@} (add (mul 16 a) b))
+           |=({a/@ b/@} (add (mul 16 a) b))
          ;~(plug hit hit)
 ++  nix  (boss 256 (star ;~(pose aln cab)))             ::
 ++  nud  (shim '0' '9')                                 ::  numeric
@@ -3434,13 +3434,13 @@
 ++  soqs  ;~(plug soq soq soq)                          ::  delimiting '''
 ++  sym                                                 ::  symbol
   %+  cook
-    |=(a+tape (rap 3 ^-((list @) a)))
+    |=(a/tape (rap 3 ^-((list @) a)))
   ;~(plug low (star ;~(pose nud low hep)))
 ::
-++  ven  ;~  (comp |=({a+@ b+@} (peg a b)))             ::  +>- axis syntax
+++  ven  ;~  (comp |=({a/@ b/@} (peg a b)))             ::  +>- axis syntax
            bet
            =+  hom=`?`|
-           |=  tub+nail
+           |=  tub/nail
            ^-  (like axis)
            =+  vex=?:(hom (bet tub) (gul tub))
            ?~  q.vex
@@ -3451,28 +3451,28 @@
          ==
 ++  vit                                                 ::  base64 digit
   ;~  pose
-    (cook |=(a+@ (sub a 65)) (shim 'A' 'Z'))
-    (cook |=(a+@ (sub a 71)) (shim 'a' 'z'))
-    (cook |=(a+@ (add a 4)) (shim '0' '9'))
+    (cook |=(a/@ (sub a 65)) (shim 'A' 'Z'))
+    (cook |=(a/@ (sub a 71)) (shim 'a' 'z'))
+    (cook |=(a/@ (add a 4)) (shim '0' '9'))
     (cold 62 (just '-'))
     (cold 63 (just '+'))
   ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eI, parsing (external)       ::
 ::
-++  rash  |*({naf+@ sab+rule} (scan (trip naf) sab))   ::
-++  rose  |*  {los+tape sab+rule}
+++  rash  |*({naf/@ sab/rule} (scan (trip naf) sab))   ::
+++  rose  |*  {los/tape sab/rule}
           =+  vex=(sab [[1 1] los])
           =+  len=(lent los)
           ?.  =(+(len) q.p.vex)  [%| p=(dec q.p.vex)]
           ?~  q.vex
             [%& p=~]
           [%& p=[~ u=p.u.q.vex]]
-++  rush  |*({naf+@ sab+rule} (rust (trip naf) sab))
-++  rust  |*  {los+tape sab+rule}
+++  rush  |*({naf/@ sab/rule} (rust (trip naf) sab))
+++  rust  |*  {los/tape sab/rule}
           =+  vex=((full sab) [[1 1] los])
           ?~(q.vex ~ [~ u=p.u.q.vex])
-++  scan  |*  {los+tape sab+rule}
+++  scan  |*  {los/tape sab/rule}
           =+  vex=((full sab) [[1 1] los])
           ?~  q.vex
             ~_  (show [%m '{%d %d}'] p.p.vex q.p.vex ~)
@@ -3482,20 +3482,20 @@
 ::                section 2eJ, formatting (basic text)  ::
 ::
 ++  cass                                                ::  lowercase
-  |=  vib+tape
+  |=  vib/tape
   %+  rap  3
-  (turn vib |=(a+@ ?.(&((gte a 'A') (lte a 'Z')) a (add 32 a))))
+  (turn vib |=(a/@ ?.(&((gte a 'A') (lte a 'Z')) a (add 32 a))))
 ::
 ++  cuss                                                ::  uppercase
-  |=  vib+tape
+  |=  vib/tape
   ^-  @t
   %+  rap  3
-  (turn vib |=(a+@ ?.(&((gte a 'a') (lte a 'z')) a (sub a 32))))
+  (turn vib |=(a/@ ?.(&((gte a 'a') (lte a 'z')) a (sub a 32))))
 ::
-++  crip  |=(a+tape `@t`(rap 3 a))                      ::  tape to cord
+++  crip  |=(a/tape `@t`(rap 3 a))                      ::  tape to cord
 ::
 ++  mesc                                                ::  ctrl code escape
-  |=  vib+tape
+  |=  vib/tape
   ^-  tape
   ?~  vib
     ~
@@ -3506,19 +3506,19 @@
   [i.vib $(vib t.vib)]
 ::
 ++  runt                                                ::  prepend repeatedly
-  |=  {{a+@ b+@} c+tape}
+  |=  {{a/@ b/@} c/tape}
   ^-  tape
   ?:  =(0 a)
     c
   [b $(a (dec a))]
 ::
 ++  sand                                                ::  atom sanity
-  |=  a+@ta
+  |=  a/@ta
   (flit (sane a))
 ::
 ++  sane                                                ::  atom sanity
-  |=  a+@ta
-  |=  b+@  ^-  ?
+  |=  a/@ta
+  |=  b/@  ^-  ?
   ?.  =(%t (end 3 1 a))
     ~|(%sane-stub !!)
   =+  [inx=0 len=(met 3 b)]
@@ -3552,8 +3552,8 @@
   ==
 ::
 ++  trim                                                ::  tape split
-  |=  {a+@ b+tape}
-  ^-  {p+tape q+tape}
+  |=  {a/@ b/tape}
+  ^-  {p/tape q/tape}
   ?~  b
     [~ ~]
   ?:  =(0 a)
@@ -3563,13 +3563,13 @@
 ::
 ++  trip                                                ::  cord to tape
   ~/  %trip
-  |=  a+@  ^-  tape
+  |=  a/@  ^-  tape
   ?:  =(0 (met 3 a))
     ~
   [^-(@ta (end 3 1 a)) $(a (rsh 3 1 a))]
 ::
 ++  teff                                                ::  length utf8
-  |=  a+@t  ^-  @
+  |=  a/@t  ^-  @
   =+  b=(end 3 1 a)
   ~|  %bad-utf8
   ?:  =(0 b)
@@ -3578,7 +3578,7 @@
   ?:((lte b 127) 1 ?:((lte b 223) 2 ?:((lte b 239) 3 4)))
 ::
 ++  turf                                                ::  utf8 to utf32
-  |=  a+@t
+  |=  a/@t
   ^-  @c
   %+  rap  5
   |-  ^-  (list @c)
@@ -3586,29 +3586,29 @@
   ?:  =(0 b)  ~
   :-  %+  can  0
       %+  turn
-        ^-  (list {p+@ q+@})
+        ^-  (list {p/@ q/@})
         ?+  b  !!
           $1  [[0 7] ~]
           $2  [[8 6] [0 5] ~]
           $3  [[16 6] [8 6] [0 4] ~]
           $4  [[24 6] [16 6] [8 6] [0 3] ~]
         ==
-      |=({p+@ q+@} [q (cut 0 [p q] a)])
+      |=({p/@ q/@} [q (cut 0 [p q] a)])
   $(a (rsh 3 b a))
 ::
 ++  tuba                                                ::  utf8 to utf32 tape
-  |=  a+tape
+  |=  a/tape
   ^-  (list @c)
   (rip 5 (turf (rap 3 a)))                              ::  XX horrible
 ::
 ++  tufa                                                ::  utf32 to utf8 tape
-  |=  a+(list @c)
+  |=  a/(list @c)
   ^-  tape
   ?~  a  ""
   (weld (rip 3 (tuft i.a)) $(a t.a))
 ::
 ++  tuft                                                ::  utf32 to utf8 text
-  |=  a+@c
+  |=  a/@c
   ^-  @t
   %+  rap  3
   |-  ^-  (list @)
@@ -3637,7 +3637,7 @@
   ==
 ::
 ++  wack                                                ::  span format
-  |=  a+@ta
+  |=  a/@ta
   ^-  @ta
   =+  b=(rip 3 a)
   %+  rap  3
@@ -3649,12 +3649,12 @@
   [i.b $(b t.b)]
 ::
 ++  wick                                                ::  span format
-  |=  a+@
+  |=  a/@
   ^-  (unit @ta)
   =+  b=(rip 3 a)
   =-  ?^(b ~ (some (rap 3 (flop c))))
-  =|  c+tape
-  |-  ^-  {b+tape c+tape}
+  =|  c/tape
+  |-  ^-  {b/tape c/tape}
   ?~  b  [~ c]
   ?.  =('~' i.b)
     $(b t.b, c [i.b c])
@@ -3666,7 +3666,7 @@
   ==
 ::
 ++  woad                                                ::  cord format
-  |=  a+@ta
+  |=  a/@ta
   ^-  @t
   %+  rap  3
   |-  ^-  (list @)
@@ -3682,7 +3682,7 @@
   ?+  b  =-  (weld (rip 3 (tuft p.d)) $(a q.d))
          ^=  d
          =+  d=0
-         |-  ^-  {p+@ q+@}
+         |-  ^-  {p/@ q/@}
          ?:  =('.' b)
            [d c]
          ?<  =(0 c)
@@ -3699,7 +3699,7 @@
   ==
 ::
 ++  wood                                                ::  cord format
-  |=  a+@t
+  |=  a/@t
   ^-  @ta
   %+  rap  3
   |-  ^-  (list @)
@@ -3731,7 +3731,7 @@
 ::                section 2eK, formatting (layout)      ::
 ::
 ++  re
-  |_  tac+tank
+  |_  tac/tank
   ++  ram
     ^-  tape
     ?-    -.tac
@@ -3748,7 +3748,7 @@
     ==
   ::
   ++  win
-    |=  {tab+@ edg+@}
+    |=  {tab/@ edg/@}
     =+  lug=`wall`~
     |^  |-  ^-  wall
         ?-    -.tac
@@ -3789,7 +3789,7 @@
     ++  din  (mod (add 2 tab) (mul 2 (div edg 3)))
     ++  fit  (lte (lent ram) (sub edg tab))
     ++  rig
-      |=  hom+tape
+      |=  hom/tape
       ^-  wall
       ?:  (lte (lent hom) (sub edg tab))
         [(runt [tab ' '] hom) lug]
@@ -3807,7 +3807,7 @@
       [(runt [tab ' '] p.mut) $(hom q.mut)]
     ::
     ++  wig
-      |=  hom+tape
+      |=  hom/tape
       ^-  wall
       ?~  lug
         (rig hom)
@@ -3827,10 +3827,10 @@
 ++  ab
   |%
   ++  bix  (bass 16 (stun [2 2] six))
-  ++  fem  (sear |=(a+@ (cha:fa a)) aln)
+  ++  fem  (sear |=(a/@ (cha:fa a)) aln)
   ++  hif  (boss 256 ;~(plug tip tiq (easy ~)))
   ++  huf  %+  cook
-             |=({a+@ b+@} (wred:un ~(zug mu ~(zag mu [a b]))))
+             |=({a/@ b/@} (wred:un ~(zug mu ~(zag mu [a b]))))
            ;~(plug hif ;~(pfix hep hif))
   ++  hyf  (bass 0x1.0000.0000 ;~(plug huf ;~(pfix hep huf) (easy ~)))
   ++  pev  (bass 32 ;~(plug sev (stun [0 4] siv)))
@@ -3842,36 +3842,36 @@
   ++  qib  (bass 2 (stun [4 4] sib))
   ++  qix  (bass 16 (stun [4 4] six))
   ++  seb  (cold 1 (just '1'))
-  ++  sed  (cook |=(a+@ (sub a '0')) (shim '1' '9'))
+  ++  sed  (cook |=(a/@ (sub a '0')) (shim '1' '9'))
   ++  sev  ;~(pose sed sov)
   ++  sew  ;~(pose sed sow)
   ++  sex  ;~(pose sed sox)
-  ++  sib  (cook |=(a+@ (sub a '0')) (shim '0' '1'))
-  ++  sid  (cook |=(a+@ (sub a '0')) (shim '0' '9'))
+  ++  sib  (cook |=(a/@ (sub a '0')) (shim '0' '1'))
+  ++  sid  (cook |=(a/@ (sub a '0')) (shim '0' '9'))
   ++  siv  ;~(pose sid sov)
   ++  siw  ;~(pose sid sow)
   ++  six  ;~(pose sid sox)
-  ++  sov  (cook |=(a+@ (sub a 87)) (shim 'a' 'v'))
+  ++  sov  (cook |=(a/@ (sub a 87)) (shim 'a' 'v'))
   ++  sow  ;~  pose
-             (cook |=(a+@ (sub a 87)) (shim 'a' 'z'))
-             (cook |=(a+@ (sub a 29)) (shim 'A' 'Z'))
+             (cook |=(a/@ (sub a 87)) (shim 'a' 'z'))
+             (cook |=(a/@ (sub a 29)) (shim 'A' 'Z'))
              (cold 62 (just '-'))
              (cold 63 (just '~'))
            ==
-  ++  sox  (cook |=(a+@ (sub a 87)) (shim 'a' 'f'))
+  ++  sox  (cook |=(a/@ (sub a 87)) (shim 'a' 'f'))
   ++  ted  (bass 10 ;~(plug sed (stun [0 2] sid)))
-  ++  tip  (sear |=(a+@ (ins:po a)) til)
-  ++  tiq  (sear |=(a+@ (ind:po a)) til)
+  ++  tip  (sear |=(a/@ (ins:po a)) til)
+  ++  tiq  (sear |=(a/@ (ind:po a)) til)
   ++  tid  (bass 10 (stun [3 3] sid))
   ++  til  (boss 256 (stun [3 3] low))
   ++  urs  %+  cook
-             |=(a+tape (rap 3 ^-((list @) a)))
+             |=(a/tape (rap 3 ^-((list @) a)))
            (star ;~(pose nud low hep dot sig cab))
   ++  urt  %+  cook
-             |=(a+tape (rap 3 ^-((list @) a)))
+             |=(a/tape (rap 3 ^-((list @) a)))
            (star ;~(pose nud low hep dot sig))
   ++  urx  %+  cook
-             |=(a+tape (rap 3 ^-((list @) a)))
+             |=(a/tape (rap 3 ^-((list @) a)))
            %-  star
            ;~  pose 
              nud
@@ -3886,7 +3886,7 @@
   --
 ++  ag
   |%
-  ++  ape  |*(fel+rule ;~(pose (cold 0 (just '0')) fel))
+  ++  ape  |*(fel/rule ;~(pose (cold 0 (just '0')) fel))
   ++  bay  (ape (bass 16 ;~(plug qeb:ab (star ;~(pfix dog qib:ab)))))
   ++  bip  =+  tod=(ape qex:ab)
            (bass 0x1.0000 ;~(plug tod (stun [7 7] ;~(pfix dog tod))))
@@ -3913,8 +3913,8 @@
 ::
 ++  co
   ~%  %co  ..co  ~
-  =<  |_  lot+coin
-      ++  rear  |=(rom+tape =>(.(rex rom) rend))
+  =<  |_  lot/coin
+      ++  rear  |=(rom/tape =>(.(rex rom) rend))
       ++  rent  `@ta`(rap 3 rend)
       ++  rend
         ^-  tape
@@ -3970,8 +3970,8 @@
             $n   ['~' rex]
             $i
           ?+  hay  (z-co q.p.lot)
-            $f  ((ro-co [3 10 4] |=(a+@ ~(d ne a))) q.p.lot)
-            $s  ((ro-co [4 16 8] |=(a+@ ~(x ne a))) q.p.lot)
+            $f  ((ro-co [3 10 4] |=(a/@ ~(d ne a))) q.p.lot)
+            $s  ((ro-co [4 16 8] |=(a/@ ~(x ne a))) q.p.lot)
           ==
         ::
             $p
@@ -4021,13 +4021,13 @@
             %+  welp  ['0' 'c' (reap (pad:fa q.p.lot) '1')]
             (c-co (enc:fa q.p.lot))
           =-  (weld p.gam ?:(=(0 q.p.lot) `tape`['0' ~] q.gam))
-          ^=  gam  ^-  {p+tape q+tape}
-          ?+  hay  [~ ((ox-co [10 3] |=(a+@ ~(d ne a))) q.p.lot)]
-            $b  [['0' 'b' ~] ((ox-co [2 4] |=(a+@ ~(d ne a))) q.p.lot)]
+          ^=  gam  ^-  {p/tape q/tape}
+          ?+  hay  [~ ((ox-co [10 3] |=(a/@ ~(d ne a))) q.p.lot)]
+            $b  [['0' 'b' ~] ((ox-co [2 4] |=(a/@ ~(d ne a))) q.p.lot)]
             $i  [['0' 'i' ~] ((d-co 1) q.p.lot)]
-            $x  [['0' 'x' ~] ((ox-co [16 4] |=(a+@ ~(x ne a))) q.p.lot)]
-            $v  [['0' 'v' ~] ((ox-co [32 5] |=(a+@ ~(x ne a))) q.p.lot)]
-            $w  [['0' 'w' ~] ((ox-co [64 5] |=(a+@ ~(w ne a))) q.p.lot)]
+            $x  [['0' 'x' ~] ((ox-co [16 4] |=(a/@ ~(x ne a))) q.p.lot)]
+            $v  [['0' 'v' ~] ((ox-co [32 5] |=(a/@ ~(x ne a))) q.p.lot)]
+            $w  [['0' 'w' ~] ((ox-co [64 5] |=(a/@ ~(w ne a))) q.p.lot)]
           ==
         ::
             $s
@@ -4045,15 +4045,15 @@
       --
   =+  rex=*tape
   =<  |%
-      ++  a-co  |=(dat+@ ((d-co 1) dat))
-      ++  c-co  (em-co [58 1] |=({? b+@ c+tape} [~(c ne b) c]))
-      ++  d-co  |=(min+@ (em-co [10 min] |=({? b+@ c+tape} [~(d ne b) c])))
+      ++  a-co  |=(dat/@ ((d-co 1) dat))
+      ++  c-co  (em-co [58 1] |=({? b/@ c/tape} [~(c ne b) c]))
+      ++  d-co  |=(min/@ (em-co [10 min] |=({? b/@ c/tape} [~(d ne b) c])))
       ++  r-co
-        |=  a+dn
+        |=  a/dn
         ?:  ?=({$i *} a)  (weld ?:(s.a "inf" "-inf") rex)
         ?:  ?=({$n *} a)  (weld "nan" rex)
         =+  ^=  e  %+  ed-co  [10 1]
-          |=  {a+? b+@ c+tape}
+          |=  {a/? b/@ c/tape}
           ?:  a  [~(d ne b) '.' c]
           [~(d ne b) c]
         =+  ^=  f
@@ -4065,23 +4065,23 @@
         ?:(s.a rex ['-' rex])
       ::
       ++  s-co
-        |=  esc+(list @)  ^-  tape
+        |=  esc/(list @)  ^-  tape
         ~|  [%so-co esc]
         ?~  esc
           rex
         :-  '.'
         =>(.(rex $(esc t.esc)) ((x-co 4) i.esc))
       ::
-      ++  v-co  |=(min+@ (em-co [32 min] |=({? b+@ c+tape} [~(v ne b) c])))
-      ++  w-co  |=(min+@ (em-co [64 min] |=({? b+@ c+tape} [~(w ne b) c])))
-      ++  x-co  |=(min+@ (em-co [16 min] |=({? b+@ c+tape} [~(x ne b) c])))
-      ++  y-co  |=(dat+@ ((d-co 2) dat))
-      ++  z-co  |=(dat+@ `tape`['0' 'x' ((x-co 1) dat)])
+      ++  v-co  |=(min/@ (em-co [32 min] |=({? b/@ c/tape} [~(v ne b) c])))
+      ++  w-co  |=(min/@ (em-co [64 min] |=({? b/@ c/tape} [~(w ne b) c])))
+      ++  x-co  |=(min/@ (em-co [16 min] |=({? b/@ c/tape} [~(x ne b) c])))
+      ++  y-co  |=(dat/@ ((d-co 2) dat))
+      ++  z-co  |=(dat/@ `tape`['0' 'x' ((x-co 1) dat)])
       --
   |%
   ++  em-co
-    |=  {{bas+@ min+@} par+$+({? @ tape} tape)}
-    |=  hol+@
+    |=  {{bas/@ min/@} par/$+({? @ tape} tape)}
+    |=  hol/@
     ^-  tape
     ?:  &(=(0 hol) =(0 min))
       rex
@@ -4093,9 +4093,9 @@
     ==
   ::
   ++  ed-co
-    |=  {{bas+@ min+@} par+$+({? @ tape} tape)}
+    |=  {{bas/@ min/@} par/$+({? @ tape} tape)}
     =+  [fir=& cou=0]
-    |=  hol+@
+    |=  hol/@
     ^-  {tape @}
     ?:  &(=(0 hol) =(0 min))
       [rex cou]
@@ -4109,31 +4109,31 @@
     ==
   ::
   ++  ox-co
-    |=  {{bas+@ gop+@} dug+$+(@ @)}
+    |=  {{bas/@ gop/@} dug/$+(@ @)}
     %+  em-co
       [|-(?:(=(0 gop) 1 (mul bas $(gop (dec gop))))) 0]
-    |=  {top+? seg+@ res+tape}
+    |=  {top/? seg/@ res/tape}
     %+  weld
       ?:(top ~ `tape`['.' ~])
     %.  seg
     %+  em-co(rex res)
       [bas ?:(top 0 gop)]
-    |=({? b+@ c+tape} [(dug b) c])
+    |=({? b/@ c/tape} [(dug b) c])
   ::
   ++  ro-co
-    |=  {{buz+@ bas+@ dop+@} dug+$+(@ @)}
-    |=  hol+@
+    |=  {{buz/@ bas/@ dop/@} dug/$+(@ @)}
+    |=  hol/@
     ^-  tape
     ?:  =(0 dop)
       rex
     =>  .(rex $(dop (dec dop)))
     :-  '.'
-    %-  (em-co [bas 1] |=({? b+@ c+tape} [(dug b) c]))
+    %-  (em-co [bas 1] |=({? b/@ c/tape} [(dug b) c]))
     [(cut buz [(dec dop) 1] hol)]
   --
 ::
 ++  ne
-  |_  tig+@
+  |_  tig/@
   ++  c  (cut 3 [tig 1] key:fa)
   ++  d  (add tig '0')
   ++  x  ?:((gte tig 10) (add tig 87) d)
@@ -4142,7 +4142,7 @@
   --
 ::
 ++  mu
-  |_  {top+@ bot+@}
+  |_  {top/@ bot/@}
   ++  zag  [p=(end 4 1 (add top bot)) q=bot]
   ++  zig  [p=(end 4 1 (add top (sub 0x1.0000 bot))) q=bot]
   ++  zug  (mix (lsh 4 1 top) bot)
@@ -4170,10 +4170,10 @@
     ~+
     ;~  pose
       %+  cook
-        |=(det+date `dime`[%da (year det)])
+        |=(det/date `dime`[%da (year det)])
       ;~  plug
         %+  cook
-          |=({a+@ b+?} [b a])
+          |=({a/@ b/?} [b a])
         ;~(plug dim:ag ;~(pose (cold | hep) (easy &)))
         ;~(pfix dot dim:ag)   ::  month
         ;~(pfix dot dim:ag)   ::  day
@@ -4192,7 +4192,7 @@
       ==
     ::
       %+  cook
-        |=  {a+(list {p+?($d $h $m $s) q+@}) b+(list @)}
+        |=  {a/(list {p/?($d $h $m $s) q/@}) b/(list @)}
         =+  rop=`tarp`[0 0 0 0 b]
         |-  ^-  dime
         ?~  a
@@ -4221,11 +4221,11 @@
       ;~(pfix hep (stag %c (cook turf urx:ab)))
     ==
   ++  nuck
-    ~/  %nuck  |=  a+nail  %.  a
+    ~/  %nuck  |=  a/nail  %.  a
     %+  knee  *coin  |.  ~+
     %-  stew
     ^.  stet  ^.  limo
-    :~  :-  ['a' 'z']  (cook |=(a+@ta [~ %tas a]) sym)
+    :~  :-  ['a' 'z']  (cook |=(a/@ta [~ %tas a]) sym)
         :-  ['0' '9']  (stag ~ bisk)
         :-  '-'        (stag ~ tash)
         :-  '.'        ;~(pfix dot perd)
@@ -4233,7 +4233,7 @@
     ==
   ++  nusk
     ~+
-    :(sear |=(a+@ta (rush a nuck)) wick urt:ab)
+    :(sear |=(a/@ta (rush a nuck)) wick urt:ab)
   ++  perd
     ~+
     ;~  pose
@@ -4243,7 +4243,7 @@
   ++  royl
     ~+
     =+  ^=  moo
-      |=  a+tape
+      |=  a/tape
       :-  (lent a)
       (scan a (bass 10 (plus sid:ab)))
     =+  ^=  voy
@@ -4296,20 +4296,20 @@
   ++  tash
     ~+
     =+  ^=  neg
-        |=  {syn+? mol+dime}  ^-  dime
+        |=  {syn/? mol/dime}  ^-  dime
         ?>  =('u' (end 3 1 p.mol))
         [(cat 3 's' (rsh 3 1 p.mol)) (new:si syn q.mol)]
     ;~  pfix  hep
       ;~  pose
-        (cook |=(a+dime (neg | a)) bisk)
-        ;~(pfix hep (cook |=(a+dime (neg & a)) bisk))
+        (cook |=(a/dime (neg | a)) bisk)
+        ;~(pfix hep (cook |=(a/dime (neg & a)) bisk))
       ==
     ==
   ::
   ++  twid
     ~+
     ;~  pose
-      (cook |=(a+@ [%blob (cue a)]) ;~(pfix (just '0') vum:ag))
+      (cook |=(a/@ [%blob (cue a)]) ;~(pfix (just '0') vum:ag))
       (stag ~ crub)
     ==
   ::
@@ -4322,19 +4322,19 @@
       royl
     ==
   --
-++  scot  ~/  %scot  |=(mol+dime ~(rent co %$ mol))
-++  scow  |=(mol+dime ~(rend co %$ mol))
-++  slat  |=(mod+@tas |=(txt+@ta (slaw mod txt)))
-++  slav  |=({mod+@tas txt+@ta} (need (slaw mod txt)))
+++  scot  ~/  %scot  |=(mol/dime ~(rent co %$ mol))
+++  scow  |=(mol/dime ~(rend co %$ mol))
+++  slat  |=(mod/@tas |=(txt/@ta (slaw mod txt)))
+++  slav  |=({mod/@tas txt/@ta} (need (slaw mod txt)))
 ++  slaw
   ~/  %slaw
-  |=  {mod+@tas txt+@ta}
+  |=  {mod/@tas txt/@ta}
   ^-  (unit @)
   =+  con=(slay txt)
   ?.(&(?=({$~ $$ @ @} con) =(p.p.u.con mod)) ~ [~ q.p.u.con])
 ::
 ++  slay
-  |=  txt+@ta  ^-  (unit coin)
+  |=  txt/@ta  ^-  (unit coin)
   =+  ^=  vex
       ?:  (gth 0x7fff.ffff txt)                         ::  XX  petty cache
         ~+  ((full nuck:so) [[1 1] (trip txt)])
@@ -4344,22 +4344,22 @@
   [~ p.u.q.vex]
 ::
 ++  smyt                                                ::  pretty print path
-  |=  bon+path  ^-  tank
+  |=  bon/path  ^-  tank
   :+  %rose  [['/' ~] ['/' ~] ~]
-  (turn bon |=(a+@ [%leaf (trip a)]))
+  (turn bon |=(a/@ [%leaf (trip a)]))
 ::
-++  spat  |=(pax+path (crip (spud pax)))                ::  render path to cord
-++  spud  |=(pax+path ~(ram re (smyt pax)))             ::  render path to tape
+++  spat  |=(pax/path (crip (spud pax)))                ::  render path to cord
+++  spud  |=(pax/path ~(ram re (smyt pax)))             ::  render path to tape
 ++  stab                                                ::  parse cord to path
   =+  fel=;~(pfix fas (more fas urs:ab))
-  |=(zep+@t `path`(rash zep fel))
+  |=(zep/@t `path`(rash zep fel))
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eN, pseudo-cryptography      ::
 ::
 ++  un                                                  ::  =(x (wred (wren x)))
   |%
   ++  wren                                              ::  conceal structure
-    |=  pyn+@  ^-  @
+    |=  pyn/@  ^-  @
     =+  len=(met 3 pyn)
     ?:  =(0 len)
       0
@@ -4376,7 +4376,7 @@
     [[1 mog] $(mig mog)]
   ::
   ++  wred                                              ::  restore structure
-    |=  cry+@  ^-  @
+    |=  cry/@  ^-  @
     =+  len=(met 3 cry)
     ?:  =(0 len)
       0
@@ -4392,11 +4392,11 @@
     =+  mog=(cut 3 [len 1] cry)
     [[1 :(mix mig (end 3 1 len) (zyrt mog))] $(mig mog)]
   ::
-  ++  xafo  |=({a+@ b+@} +((mod (add (dec b) a) 255)))
-  ++  xaro  |=({a+@ b+@} +((mod (add (dec b) (sub 255 (mod a 255))) 255)))
+  ++  xafo  |=({a/@ b/@} +((mod (add (dec b) a) 255)))
+  ++  xaro  |=({a/@ b/@} +((mod (add (dec b) (sub 255 (mod a 255))) 255)))
   ::
   ++  zaft                                              ::  forward 255-sbox
-    |=  a+@D
+    |=  a/@D
     =+  ^=  b
         0xcc.75bc.86c8.2fb1.9a42.f0b3.79a0.92ca.21f6.1e41.cde5.fcc0.
         7e85.51ae.1005.c72d.1246.07e8.7c64.a914.8d69.d9f4.59c2.8038.
@@ -4412,7 +4412,7 @@
     (cut 3 [(dec a) 1] b)
   ::
   ++  zart                                              ::  reverse 255-sbox
-    |=  a+@D
+    |=  a/@D
     =+  ^=  b
         0x68.4f07.ea1c.73c9.75c2.efc8.d559.5125.f621.a7a8.8591.5613.
         dd52.40eb.65a2.60b7.4bcb.1123.ceb0.1bd6.3c84.2906.b164.19b3.
@@ -4428,7 +4428,7 @@
     (cut 3 [(dec a) 1] b)
   ::
   ++  zyft                                              ::  forward 256-sbox
-    |=  a+@D
+    |=  a/@D
     =+  ^=  b
         0xbb49.b71f.b881.b402.17e4.6b86.69b5.1647.115f.dddb.7ca5.
           8371.4bd5.19a9.b092.605d.0d9b.e030.a0cc.78ba.5706.4d2d.
@@ -4445,7 +4445,7 @@
     (cut 3 [a 1] b)
   ::
   ++  zyrt                                              ::  reverse 256-sbox
-    |=  a+@D
+    |=  a/@D
     =+  ^=  b
         0x9fc8.2753.6e02.8fcf.8b35.2b20.5598.7caa.c9a9.30b0.9b48.
           47ce.6371.80f6.407d.00dd.0aa5.ed10.ecb7.0f5a.5c3a.e605.
@@ -4465,7 +4465,7 @@
 ++  ob
   |%
   ++  feen                                              ::  conceal structure v2
-    |=  pyn+@  ^-  @
+    |=  pyn/@  ^-  @
     ?:  &((gte pyn 0x1.0000) (lte pyn 0xffff.ffff))
       (add 0x1.0000 (fice (sub pyn 0x1.0000)))
     ?:  &((gte pyn 0x1.0000.0000) (lte pyn 0xffff.ffff.ffff.ffff))
@@ -4476,7 +4476,7 @@
     pyn
   ::
   ++  fend                                              ::  restore structure v2
-    |=  cry+@  ^-  @
+    |=  cry/@  ^-  @
     ?:  &((gte cry 0x1.0000) (lte cry 0xffff.ffff))
       (add 0x1.0000 (teil (sub cry 0x1.0000)))
     ?:  &((gte cry 0x1.0000.0000) (lte cry 0xffff.ffff.ffff.ffff))
@@ -4487,7 +4487,7 @@
     cry
   ::
   ++  fice                                              ::  adapted from
-    |=  nor+@                                           ::  black and rogaway
+    |=  nor/@                                           ::  black and rogaway
     ^-  @                                               ::  "ciphers with
     =+  ^=  sel                                         ::   arbitrary finite
     %+  rynd  2                                         ::   domains", 2002
@@ -4497,7 +4497,7 @@
     (add (mul 65.535 -.sel) +.sel)
   ::
   ++  teil                                              ::  reverse ++fice
-    |=  vip+@
+    |=  vip/@
     ^-  @
     =+  ^=  sel
     %+  rund  0
@@ -4507,7 +4507,7 @@
     (add (mul 65.535 -.sel) +.sel)
   ::
   ++  rynd                                              ::  feistel round
-    |=  {n+@ l+@ r+@}
+    |=  {n/@ l/@ r/@}
     ^-  {@ @}
     :-  r
     ?~  (mod n 2)
@@ -4515,7 +4515,7 @@
     (~(sum fo 65.536) l (en:aesc (snag n raku) r))
   ::
   ++  rund                                              ::  reverse round
-    |=  {n+@ l+@ r+@}
+    |=  {n/@ l/@ r/@}
     ^-  {@ @}
     :-  r
     ?~  (mod n 2)
@@ -4536,14 +4536,14 @@
 ::                section 2eO, virtualization           ::
 ::
 ++  mack
-  |=  {sub+* fol+*}
+  |=  {sub/* fol/*}
   ^-  (unit)
   =+  ton=(mink [sub fol] |+(* ~))
   ?.(?=({$0 *} ton) ~ [~ p.ton])
 ::
 ++  mink
   ~/  %mink
-  |=  {{sub+* fol+*} sky+$+(* (unit))}
+  |=  {{sub/* fol/*} sky/$+(* (unit))}
   =+  tax=*(list {@ta *})
   |-  ^-  tone
   ?@  fol
@@ -4561,54 +4561,54 @@
   ?+    fol
     [%2 tax]
   ::
-      {$0 b+@}
+      {$0 b/@}
     ?:  =(0 b.fol)  [%2 tax]
     ?:  =(1 b.fol)  [%0 sub]
     ?:  ?=(@ sub)   [%2 tax]
     =+  [now=(cap b.fol) lat=(mas b.fol)]
     $(b.fol lat, sub ?:(=(2 now) -.sub +.sub))
   ::
-      {$1 b+*}
+      {$1 b/*}
     [%0 b.fol]
   ::
-      {$2 b+{^ *}}
+      {$2 b/{^ *}}
     =+  ben=$(fol b.fol)
     ?.  ?=($0 -.ben)  ben
     ?>(?=(^ p.ben) $(sub -.p.ben, fol +.p.ben))
     ::?>(?=(^ p.ben) $([sub fol] p.ben)
   ::
-      {$3 b+*}
+      {$3 b/*}
     =+  ben=$(fol b.fol)
     ?.  ?=($0 -.ben)  ben
     [%0 .?(p.ben)]
   ::
-      {$4 b+*}
+      {$4 b/*}
     =+  ben=$(fol b.fol)
     ?.  ?=($0 -.ben)  ben
     ?.  ?=(@ p.ben)  [%2 tax]
     [%0 .+(p.ben)]
   ::
-      {$5 b+*}
+      {$5 b/*}
     =+  ben=$(fol b.fol)
     ?.  ?=($0 -.ben)  ben
     ?.  ?=(^ p.ben)  [%2 tax]
     [%0 =(-.p.ben +.p.ben)]
   ::
-      {$6 b+* c+* d+*}
+      {$6 b/* c/* d/*}
     $(fol =>(fol [2 [0 1] 2 [1 c d] [1 0] 2 [1 2 3] [1 0] 4 4 b]))
   ::
-      {$7 b+* c+*}       $(fol =>(fol [2 b 1 c]))
-      {$8 b+* c+*}       $(fol =>(fol [7 [[0 1] b] c]))
-      {$9 b+* c+*}       $(fol =>(fol [7 c 0 b]))
-      {$10 @ c+*}        $(fol c.fol)
-      {$10 {b+* c+*} d+*}
+      {$7 b/* c/*}       $(fol =>(fol [2 b 1 c]))
+      {$8 b/* c/*}       $(fol =>(fol [7 [[0 1] b] c]))
+      {$9 b/* c/*}       $(fol =>(fol [7 c 0 b]))
+      {$10 @ c/*}        $(fol c.fol)
+      {$10 {b/* c/*} d/*}
     =+  ben=$(fol c.fol)
     ?.  ?=($0 -.ben)  ben
     ?:  ?=(?($hunk $hand $lose $mean $spot) b.fol)
       $(fol d.fol, tax [[b.fol p.ben] tax])
     $(fol d.fol)
   ::
-      {$11 b+*}
+      {$11 b/*}
     =+  ben=$(fol b.fol)
     ?.  ?=($0 -.ben)  ben
     =+  val=(sky p.ben)
@@ -4617,11 +4617,11 @@
   ==
 ::
 ++  mock
-  |=  {{sub+* fol+*} sky+$+(* (unit))}
+  |=  {{sub/* fol/*} sky/$+(* (unit))}
   (mook (mink [sub fol] sky))
 ::
 ++  moop
-  |=  pon+(list {@ta *})  ^+  pon
+  |=  pon/(list {@ta *})  ^+  pon
   ?~  pon  ~
   :-  i.pon
   ?.  ?=({$spot * ^} i.pon)
@@ -4642,7 +4642,7 @@
   [[%spot sot] ^$(pon t.pon)]
 ::
 ++  mook
-  |=  ton+tone
+  |=  ton/tone
   ^-  toon
   ?.  ?=({$2 *} ton)  ton
   :-  %2
@@ -4672,25 +4672,25 @@
              =+  sot=(spot +.i.p.ton)
              :+  %rose  [":" ~ ~]
              :~  (smyt p.sot)
-                 =>  [ud=|=(a+@u (scow %ud a)) q.sot]
+                 =>  [ud=|=(a/@u (scow %ud a)) q.sot]
                  leaf#"<[{(ud p.p)} {(ud q.p)}].[{(ud p.q)} {(ud q.q)}]>"
   ==         ==
 ::
 ++  mang
-  |=  {{gat+* sam+*} sky+$+(* (unit))}
+  |=  {{gat/* sam/*} sky/$+(* (unit))}
   ^-  (unit)
   =+  ton=(mong [[gat sam] sky])
   ?.(?=({$0 *} ton) ~ [~ p.ton])
 ::
 ++  mong
-  |=  {{gat+* sam+*} sky+$+(* (unit))}
+  |=  {{gat/* sam/*} sky/$+(* (unit))}
   ^-  toon
   ?.  &(?=(^ gat) ?=(^ +.gat))
     [%2 ~]
   (mock [[-.gat [sam +>.gat]] -.gat] sky)
 ::
 ++  mung
-  |=  {{gat+* sam+*} sky+$+(* (unit))}
+  |=  {{gat/* sam/*} sky/$+(* (unit))}
   ^-  tone
   ?.  &(?=(^ gat) ?=(^ +.gat))
     [%2 ~]
@@ -4698,7 +4698,7 @@
 ::
 ++  mule                                                ::  typed virtual
   ~/  %mule
-  |*  taq+_|.(**)
+  |*  taq/_|.(**)
   =+  mud=(mute taq)
   ?-  -.mud
     $&  [%& p=$:taq]                                  ::  XX transition
@@ -4706,12 +4706,12 @@
   ==
 ::
 ++  mute                                                ::  untyped virtual
-  |=  taq+_^?(|.(**))
+  |=  taq/_^?(|.(**))
   ^-  (each * (list tank))
   =+  ton=(mock [taq 9 2 0 1] |=(* ~))
   ?-  -.ton
     $0  [%& p.ton]
-    $1  [%| (turn p.ton |=(a+* (smyt (path a))))]
+    $1  [%| (turn p.ton |=(a/* (smyt (path a))))]
     $2  [%| p.ton]
   ==
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -4719,7 +4719,7 @@
 ::
 ::
 ++  berk                                                ::  invert diff patch
-  |*  bur+(urge)
+  |*  bur/(urge)
   |-  ^+  bur
   ?~  bur  ~
   :_  $(bur t.bur)
@@ -4729,8 +4729,8 @@
   ==
 ::
 ++  diff                                                ::  generate patch
-  |=  pum+umph
-  |=  {old+* new+*}  ^-  udon
+  |=  pum/umph
+  |=  {old/* new/*}  ^-  udon
   :-  pum
   ?+  pum  ~|(%unsupported !!)
     $a  [%d (nude old new)]
@@ -4742,7 +4742,7 @@
 ::
 ++  loss                                                ::  longest subsequence
   ~/  %loss
-  |*  {hel+(list) hev+(list)}
+  |*  {hel/(list) hev/(list)}
   |-  ^+  hev
   =+  ^=  sev
       =+  [inx=0 sev=*(map _i.-.hev (list @ud))]
@@ -4750,7 +4750,7 @@
       ?~  hev  sev
       =+  guy=(~(get by sev) i.hev)
       $(hev t.hev, inx +(inx), sev (~(put by sev) i.hev [inx ?~(guy ~ u.guy)]))
-  =|  gox+{p+@ud q+(map @ud {p+@ud q+_hev})}
+  =|  gox/{p/@ud q/(map @ud {p/@ud q/_hev})}
   =<  abet
   =<  main
   |%
@@ -4760,15 +4760,15 @@
     (flop q:(need (~(get by q.gox) (dec p.gox))))
   ::
   ++  hink                                              ::  extend fits top
-    |=  {inx+@ud goy+@ud}  ^-  ?
+    |=  {inx/@ud goy/@ud}  ^-  ?
     |(=(p.gox inx) (lth goy p:(need (~(get by q.gox) inx))))
   ::
   ++  lonk                                              ::  extend fits bottom
-    |=  {inx+@ud goy+@ud}  ^-  ?
+    |=  {inx/@ud goy/@ud}  ^-  ?
     |(=(0 inx) (gth goy p:(need (~(get by q.gox) (dec inx)))))
   ::
   ++  lune                                              ::  extend
-    |=  {inx+@ud goy+@ud}
+    |=  {inx/@ud goy/@ud}
     ^+  +>
     %_    +>.$
         gox
@@ -4778,10 +4778,10 @@
     ==
   ::
   ++  merg                                              ::  merge all matches
-    |=  gay+(list @ud)
+    |=  gay/(list @ud)
     ^+  +>
     =+  ^=  zes
-        =+  [inx=0 zes=*(list {p+@ud q+@ud})]
+        =+  [inx=0 zes=*(list {p/@ud q/@ud})]
         |-  ^+  zes
         ?:  |(?=($~ gay) (gth inx p.gox))  zes
         ?.  (lonk inx i.gay)  $(gay t.gay)
@@ -4800,8 +4800,8 @@
 ::
 ++  lore                                                ::  atom to line list
   ~/  %lore
-  |=  lub+@
-  =|  tez+(list @t)
+  |=  lub/@
+  =|  tez/(list @t)
   |-  ^+  tez
   ?:  =(0 lub)  (flop tez)
   =+  ^=  meg
@@ -4815,11 +4815,11 @@
   $(lub res, tez [(end 3 meg lub) tez])
 ::
 ++  role                                                ::  line list to atom
-  |=  tez+(list @t)
-  (rap 3 (turn tez |=(a+@t (cat 3 a 10))))
+  |=  tez/(list @t)
+  (rap 3 (turn tez |=(a/@t (cat 3 a 10))))
 ::
 ++  lump                                                ::  apply patch
-  |=  {don+udon src+*}
+  |=  {don/udon src/*}
   ^-  *
   ?+    p.don  ~|(%unsupported !!)
       $a
@@ -4839,7 +4839,7 @@
   ==
 ::
 ++  lure                                                ::  apply tree diff
-  |=  {a+* b+upas}
+  |=  {a/* b/upas}
   ^-  *
   ?^  -.b
     [$(b -.b) $(b +.b)]
@@ -4848,7 +4848,7 @@
     $1  .*(a [1 p.b])
   ==
 ++  limp                                                ::  invert patch
-  |=  don+udon  ^-  udon
+  |=  don/udon  ^-  udon
   :-  p.don
   ?+  -.q.don  ~|(%unsupported !!)
     $a  [%a q.q.don p.q.don]
@@ -4857,7 +4857,7 @@
   ==
 ::
 ++  hump                                                ::  general prepatch
-  |=  {pum+umph src+*}  ^-  *
+  |=  {pum/umph src/*}  ^-  *
   ?+  pum  ~|(%unsupported !!)
     $a  src
     $b  (cue ((hard @) src))
@@ -4865,7 +4865,7 @@
   ==
 ::
 ++  husk                                                ::  unprepatch
-  |=  {pum+umph dst+*}  ^-  *
+  |=  {pum/umph dst/*}  ^-  *
   ?+  pum  ~|(%unsupported !!)
     $a  dst
     $b  (jam dst)
@@ -4873,7 +4873,7 @@
   ==
 ::
 ++  lurk                                                ::  apply list patch
-  |*  {hel+(list) rug+(urge)}
+  |*  {hel/(list) rug/(urge)}
   ^+  hel
   =+  war=`_hel`~
   |-  ^+  hel
@@ -4898,16 +4898,16 @@
   ==
 ::
 ++  lusk                                                ::  lcs to list patch
-  |*  {hel+(list) hev+(list) lcs+(list)}
+  |*  {hel/(list) hev/(list) lcs/(list)}
   =+  ^=  rag
-      ^-  {$%({$& p+@ud} {$| p+_lcs q+_lcs})}      ::  XX translation
+      ^-  {$%({$& p/@ud} {$| p/_lcs q/_lcs})}      ::  XX translation
       [%& 0]
   =>  .(rag [p=rag q=*(list _rag)])
   =<  abet  =<  main
   |%
   ++  abet  =.(q.rag ?:(=([& 0] p.rag) q.rag [p.rag q.rag]) (flop q.rag))
   ++  done
-    |=  new+_p.rag
+    |=  new/_p.rag
     ^+  rag
     ?-  -.p.rag
       $|   ?-  -.new
@@ -4939,11 +4939,11 @@
     $(hel t.hel, hev t.hev, rag (done %| [i.hel ~] [i.hev ~]))
   --
 ++  nude                                                ::  tree change
-  =<  |=  {a+* b+*}  ^-  {p+upas q+upas}
+  =<  |=  {a/* b/*}  ^-  {p/upas q/upas}
       [p=(tred a b) q=(tred b a)]
   |%
   ++  axes                                              ::  locs of nouns
-    |=  {a+@ b+*}  ^-  (map * axis)
+    |=  {a/@ b/*}  ^-  (map * axis)
     =+  c=*(map * axis)
     |-  ^-  (map * axis)
     =>  .(c (~(put by c) b a))
@@ -4954,8 +4954,8 @@
     $(a +((mul 2 a)), b +.b)
   ::
   ++  tred                                              ::  diff a->b
-    |=  {a+* b+*}  ^-  upas
-    =|  c+(unit *)
+    |=  {a/* b/*}  ^-  upas
+    =|  c/(unit *)
     =+  d=(axes 1 a)
     |-  ^-  upas
     =>  .(c (~(get by d) b))
@@ -4973,11 +4973,11 @@
 ::            section 2eW, lite number theory           ::
 ::
 ++  egcd  !:                                            ::  schneier's egcd
-  |=  {a+@ b+@}
+  |=  {a/@ b/@}
   =+  si
   =+  [c=(sun a) d=(sun b)]
   =+  [u=[c=(sun 1) d=--0] v=[c=--0 d=(sun 1)]]
-  |-  ^-  {d+@ u+@s v+@s}
+  |-  ^-  {d/@ u/@s v/@s}
   ?:  =(--0 c)
     [(abs d) d.u d.v]
   ::  ?>  ?&  =(c (sum (pro (sun a) c.u) (pro (sun b) c.v)))
@@ -4992,7 +4992,7 @@
   ==
 ::
 ++  pram                                                ::  rabin-miller
-  |=  a+@  ^-  ?
+  |=  a/@  ^-  ?
   ?:  ?|  =(0 (end 0 1 a))
           =(1 a)
           =+  b=1
@@ -5004,7 +5004,7 @@
     |
   =+  ^=  b
       =+  [s=(dec a) t=0]
-      |-  ^-  {s+@ t+@}
+      |-  ^-  {s/@ t/@}
       ?:  =(0 (end 0 1 s))
         $(s (rsh 0 1 s), t +(t))
       [s t]
@@ -5028,25 +5028,25 @@
   ==
 ::
 ++  ramp                                                ::  make r-m prime
-  |=  {a+@ b+(list @) c+@}  ^-  @ux                     ::  {bits snags seed}
+  |=  {a/@ b/(list @) c/@}  ^-  @ux                     ::  {bits snags seed}
   =>  .(c (shas %ramp c))
   =+  d=*@
   |-
   ?:  =((mul 100 a) d)
     ~|(%ar-ramp !!)
   =+  e=(~(raw og c) a)
-  ?:  &((levy b |=(f+@ !=(1 (mod e f)))) (pram e))
+  ?:  &((levy b |=(f/@ !=(1 (mod e f)))) (pram e))
     e
   $(c +(c), d (shax d))
 ::
 ++  fo                                                  ::  modulo prime
-  |_  a+@
+  |_  a/@
   ++  dif
-    |=  {b+@ c+@}
+    |=  {b/@ c/@}
     (sit (sub (add a b) (sit c)))
   ::
   ++  exp
-    |=  {b+@ c+@}
+    |=  {b/@ c/@}
     ?:  =(0 b)
       1
     =+  d=$(b (rsh 0 1 b))
@@ -5054,40 +5054,40 @@
     ?:(=(0 (end 0 1 b)) e (pro c e))
   ::
   ++  fra
-    |=  {b+@ c+@}
+    |=  {b/@ c/@}
     (pro b (inv c))
   ::
   ++  inv
-    |=  b+@
+    |=  b/@
     =+  c=(dul:si u:(egcd b a) a)
     c
   ::
   ++  pro
-    |=  {b+@ c+@}
+    |=  {b/@ c/@}
     (sit (mul b c))
   ::
   ++  sit
-    |=  b+@
+    |=  b/@
     (mod b a)
   ::
   ++  sum
-    |=  {b+@ c+@}
+    |=  {b/@ c/@}
     (sit (add b c))
   --
 ::
 ++  ga                                                  ::  GF (bex p.a)
-  |=  a+{p+@ q+@ r+@}                                   ::  dim poly gen
+  |=  a/{p/@ q/@ r/@}                                   ::  dim poly gen
   =+  si=(bex p.a)
   =+  ma=(dec si)
   =>  |%
       ++  dif                                           ::  add and sub
-        |=  {b+@ c+@}
+        |=  {b/@ c/@}
         ~|  [%dif-ga a]
         ?>  &((lth b si) (lth c si))
         (mix b c)
       ::
       ++  dub                                           ::  mul by x
-        |=  b+@
+        |=  b/@
         ~|  [%dub-ga a]
         ?>  (lth b si)
         ?:  =(1 (cut 0 [(dec p.a) 1] b))
@@ -5095,7 +5095,7 @@
         (lsh 0 1 b)
       ::
       ++  pro                                           ::  slow multiply
-        |=  {b+@ c+@}
+        |=  {b/@ c/@}
         ?:  =(0 b)
           0
         ?:  =(1 (dis 1 b))
@@ -5104,7 +5104,7 @@
       ::
       ++  toe                                           ::  exp#log tables
         =+  ^=  nu
-            |=  {b+@ c+@}
+            |=  {b/@ c/@}
             ^-  (map @ @)
             =+  d=*(map @ @)
             |-
@@ -5116,7 +5116,7 @@
             ==
         =+  [p=(nu 0 (bex p.a)) q=(nu ma ma)]
         =+  [b=1 c=0]
-        |-  ^-  {p+(map @ @) q+(map @ @)}
+        |-  ^-  {p/(map @ @) q/(map @ @)}
         ?:  =(ma c)
           [(~(put by p) c b) q]
         %=  $
@@ -5127,17 +5127,17 @@
         ==
       ::
       ++  sit                                           ::  reduce
-        |=  b+@
+        |=  b/@
         (mod b (bex p.a))
       --
   =+  toe
   |%
   ++  fra                                               ::  divide
-    |=  {b+@ c+@}
+    |=  {b/@ c/@}
     (pro b (inv c))
   ::
   ++  inv                                               ::  invert
-    |=  b+@
+    |=  b/@
     ~|  [%inv-ga a]
     =+  c=(~(get by q) b)
     ?~  c  !!
@@ -5145,7 +5145,7 @@
     (need d)
   ::
   ++  pow                                               ::  exponent
-    |=  {b+@ c+@}
+    |=  {b/@ c/@}
     =+  [d=1 e=c f=0]
     |-
     ?:  =(p.a f)
@@ -5155,7 +5155,7 @@
     $(e (pro e e), f +(f))
   ::
   ++  pro                                               ::  multiply
-    |=  {b+@ c+@}
+    |=  {b/@ c/@}
     ~|  [%pro-ga a]
     =+  d=(~(get by q) b)
     ?~  d  0
@@ -5172,12 +5172,12 @@
   |%
   ++  en                                                ::  ECB enc
     ~/  %en
-    |=  {a+@I b+@H}  ^-  @uxH
+    |=  {a/@I b/@H}  ^-  @uxH
     =+  ahem
     (be & (ex a) b)
   ++  de                                                ::  ECB dec
     ~/  %de
-    |=  {a+@I b+@H}  ^-  @uxH
+    |=  {a/@I b/@H}  ^-  @uxH
     =+  ahem
     (be | (ix (ex a)) b)
   --
@@ -5190,9 +5190,9 @@
     =>  |%
         ++  cipa                                        ::  AES params
           $_  ^?  |%
-          ++  co  *{p+@ q+@ r+@ s+@}                    ::  col coefs
-          ++  ix  |+(a+@ *@)                            ::  key index
-          ++  ro  *{p+@ q+@ r+@ s+@}                    ::  row shifts
+          ++  co  *{p/@ q/@ r/@ s/@}                    ::  col coefs
+          ++  ix  |+(a/@ *@)                            ::  key index
+          ++  ro  *{p/@ q/@ r/@ s/@}                    ::  row shifts
           ++  su  *@                                    ::  s-box
           --
         --
@@ -5201,7 +5201,7 @@
       ^-  cipa
       |%
       ++  co  [0x2 0x3 1 1]
-      ++  ix  |+(a+@ a)
+      ++  ix  |+(a/@ a)
       ++  ro  [0 1 2 3]
       ++  su  0x16bb.54b0.0f2d.9941.6842.e6bf.0d89.a18c.
                 df28.55ce.e987.1e9b.948e.d969.1198.f8e1.
@@ -5225,7 +5225,7 @@
       ^-  cipa
       |%
       ++  co  [0xe 0xb 0xd 0x9]
-      ++  ix  |+(a+@ (sub nnr a))
+      ++  ix  |+(a/@ (sub nnr a))
       ++  ro  [0 3 2 1]
       ++  su  0x7d0c.2155.6314.69e1.26d6.77ba.7e04.2b17.
                 6199.5383.3cbb.ebc8.b0f5.2aae.4d3b.e0a0.
@@ -5246,7 +5246,7 @@
       --
     ::
     ++  mcol
-      |=  {a+(list @) b+{p+@ q+@ r+@ s+@}}  ^-  (list @)
+      |=  {a/(list @) b/{p/@ q/@ r/@ s/@}}  ^-  (list @)
       =+  c=[p=*@ q=*@ r=*@ s=*@]
       |-  ^-  (list @)
       ?~  a  ~
@@ -5263,11 +5263,11 @@
             [[p.c r.b] [q.c s.b] [r.c p.b] [s.c q.b]]
             [[p.c q.b] [q.c r.b] [r.c s.b] [s.c p.b]]
         ==
-      |=  {a+{@ @} b+{@ @} c+{@ @} d+{@ @}}
+      |=  {a/{@ @} b/{@ @} c/{@ @} d/{@ @}}
       :(dif (pro a) (pro b) (pro c) (pro d))
     ::
     ++  pode                                            ::  explode to block
-      |=  {a+bloq b+@ c+@}  ^-  (list @)
+      |=  {a/bloq b/@ c/@}  ^-  (list @)
       =+  d=(rip a c)
       =+  m=(met a c)
       |-
@@ -5275,27 +5275,27 @@
         d
       $(m +(m), d (weld d (limo [0 ~])))
     ++  sube                                            ::  s-box word
-      |=  {a+@ b+@}  ^-  @
-      (rep 3 (turn (pode 3 4 a) |=(c+@ (cut 3 [c 1] b))))
+      |=  {a/@ b/@}  ^-  @
+      (rep 3 (turn (pode 3 4 a) |=(c/@ (cut 3 [c 1] b))))
     --
   |%
   ++  be                                                ::  block cipher
-    |=  {a+? b+@ c+@H}  ^-  @uxH
+    |=  {a/? b/@ c/@H}  ^-  @uxH
     ~|  %be-aesc
     =>  %=    .
             +
           =>  +
           |%
           ++  ankh
-            |=  {a+cipa b+@ c+@}
+            |=  {a/cipa b/@ c/@}
             (pode 5 nnb (cut 5 [(mul (ix.a b) nnb) nnb] c))
           ++  sark
-            |=  {c+(list @) d+(list @)}  ^-  (list @)
+            |=  {c/(list @) d/(list @)}  ^-  (list @)
             ?~  c  ~
             ?~  d  !!
             [(mix i.c i.d) $(c t.c, d t.d)]
           ++  srow
-            |=  {a+cipa b+(list @)}  ^-  (list @)
+            |=  {a/cipa b/(list @)}  ^-  (list @)
             =+  [c=0 d=~ e=ro.a]
             |-
             ?:  =(c nnb)
@@ -5304,10 +5304,10 @@
             %+  rep  3
             %+  turn
               (limo [0 p.e] [1 q.e] [2 r.e] [3 s.e] ~)
-            |=  {f+@ g+@}
+            |=  {f/@ g/@}
             (cut 3 [f 1] (snag (mod (add g c) nnb) b))
           ++  subs
-            |=  {a+cipa b+(list @)}  ^-  (list @)
+            |=  {a/cipa b/(list @)}  ^-  (list @)
             ?~  b  ~
             [(sube i.b su.a) $(b t.b)]
           --
@@ -5327,7 +5327,7 @@
     (rep 5 e)
   ::
   ++  ex                                                ::  key expand
-    |=  a+@I  ^-  @
+    |=  a/@I  ^-  @
     =+  [b=a c=0 d=su:pen i=nnk]
     |-
     ?:  =(i (mul nnb +(nnr)))
@@ -5345,7 +5345,7 @@
     $(i +(i))
   ::
   ++  ix                                                ::  key expand, inv
-    |=  a+@  ^-  @
+    |=  a/@  ^-  @
     =+  [i=1 j=*@ b=*@ c=co:pin]
     |-
     ?:  =(nnr i)
@@ -5365,7 +5365,7 @@
   --
 ::
 ++  curt                                                ::  curve25519
-  |=  {a+@ b+@}
+  |=  {a/@ b/@}
   =>  %=    .
           +
         =>  +
@@ -5374,15 +5374,15 @@
             [p=p q=q fq=fq]
         |%
         ++  cla
-          |=  raw+@
+          |=  raw/@
           =+  low=(dis 248 (cut 3 [0 1] raw))
           =+  hih=(con 64 (dis 127 (cut 3 [31 1] raw)))
           =+  mid=(cut 3 [1 30] raw)
           (can 3 [[1 low] [30 mid] [1 hih] ~])
-        ++  sqr  |=(a+@ (mul a a))
-        ++  inv  |=(a+@ (~(exp fo q) (sub q 2) a))
+        ++  sqr  |=(a/@ (mul a a))
+        ++  inv  |=(a/@ (~(exp fo q) (sub q 2) a))
         ++  cad
-          |=  {n+{x+@ z+@} m+{x+@ z+@} d+{x+@ z+@}}
+          |=  {n/{x/@ z/@} m/{x/@ z/@} d/{x/@ z/@}}
           =+  ^=  xx
               ;:  mul  4  z.d
                 %-  sqr  %-  abs:si
@@ -5399,7 +5399,7 @@
               ==
           [(sit.fq xx) (sit.fq zz)]
         ++  cub
-          |=  {x+@ z+@}
+          |=  {x/@ z/@}
           =+  ^=  xx
               %+  mul
                 %-  sqr  %-  abs:si
@@ -5438,10 +5438,10 @@
         [b=b q=q fq=fq l=l d=d ii=ii]
     ~%  %coed  +>  ~
     |%
-    ++  norm  |=(x+@ ?:(=(0 (mod x 2)) x (sub q x)))
+    ++  norm  |=(x/@ ?:(=(0 (mod x 2)) x (sub q x)))
     ::
     ++  xrec                                            ::  recover x-coord
-      |=  y+@  ^-  @
+      |=  y/@  ^-  @
       =+  ^=  xx
           %+  mul  (dif.fq (mul y y) 1)
                    (inv.fq +(:(mul d y y)))
@@ -5451,7 +5451,7 @@
       (norm x)
     ::
     ++  ward                                            ::  edwards multiply
-      |=  {pp+{@ @} qq+{@ @}}  ^-  {@ @}
+      |=  {pp/{@ @} qq/{@ @}}  ^-  {@ @}
       =+  dp=:(pro.fq d -.pp -.qq +.pp +.qq)
       =+  ^=  xt
           %+  pro.fq
@@ -5468,7 +5468,7 @@
       [xt yt]
     ::
     ++  scam                                            ::  scalar multiply
-      |=  {pp+{@ @} e+@}  ^-  {@ @}
+      |=  {pp/{@ @} e/@}  ^-  {@ @}
       ?:  =(0 e)
         [0 1]
       =+  qq=$(e (div e 2))
@@ -5478,11 +5478,11 @@
       qq
     ::
     ++  etch                                            ::  encode point
-      |=  pp+{@ @}  ^-  @
+      |=  pp/{@ @}  ^-  @
       (can 0 ~[[(sub b 1) +.pp] [1 (dis 1 -.pp)]])
     ::
     ++  curv                                            ::  point on curve?
-      |=  {x+@ y+@}  ^-  ?
+      |=  {x/@ y/@}  ^-  ?
       .=  0
           %+  dif.fq
             %+  sum.fq
@@ -5491,7 +5491,7 @@
           (sum.fq 1 :(pro.fq d x x y y))
     ::
     ++  deco                                            ::  decode point
-      |=  s+@  ^-  (unit {@ @})
+      |=  s/@  ^-  (unit {@ @})
       =+  y=(cut 0 [0 (dec b)] s)
       =+  si=(cut 0 [(dec b) 1] s)
       =+  x=(xrec y)
@@ -5510,7 +5510,7 @@
   |%
   ++  puck                                              ::  public key
     ~/  %puck
-    |=  sk+@I  ^-  @
+    |=  sk/@I  ^-  @
     ?:  (gth (met 3 sk) 32)  !!
     =+  h=(shal (rsh 0 3 b) sk)
     =+  ^=  a
@@ -5520,13 +5520,13 @@
     =+  aa=(scam bb a)
     (etch aa)
   ++  suck                                              ::  keypair from seed
-    |=  se+@I  ^-  @uJ
+    |=  se/@I  ^-  @uJ
     =+  pu=(puck se)
     (can 0 ~[[b se] [b pu]])
   ::
   ++  sign                                              ::  certify
     ~/  %sign
-    |=  {m+@ se+@}  ^-  @
+    |=  {m/@ se/@}  ^-  @
     =+  sk=(suck se)
     =+  pk=(cut 0 [b b] sk)
     =+  h=(shal (rsh 0 3 b) sk)
@@ -5556,7 +5556,7 @@
   ::
   ++  veri                                              ::  validate
     ~/  %veri
-    |=  {s+@ m+@ pk+@}  ^-  ?
+    |=  {s/@ m/@ pk/@}  ^-  ?
     ?:  (gth (div b 4) (met 3 s))  |
     ?:  (gth (div b 8) (met 3 pk))  |
     =+  cb=(rsh 0 3 b)
@@ -5575,25 +5575,25 @@
   ~%  %scr  +  ~
   |%
   ++  sal
-    |=  {x+@ r+@}                                       ::  salsa20 hash
+    |=  {x/@ r/@}                                       ::  salsa20 hash
     ?>  =((mod r 2) 0)                                  ::  with r rounds
     =+  few==>(fe .(a 5))
     =+  ^=  rot
-      |=  {a+@ b+@}
+      |=  {a/@ b/@}
       (mix (end 5 1 (lsh 0 a b)) (rsh 0 (sub 32 a) b))
     =+  ^=  lea
-      |=  {a+@ b+@}
+      |=  {a/@ b/@}
       (net:few (sum:few (net:few a) (net:few b)))
     =>  |%
         ++  qr                                          ::  quarterround
-          |=  y+{@ @ @ @ $~}
+          |=  y/{@ @ @ @ $~}
           =+  zb=(mix &2.y (rot 7 (sum:few &1.y &4.y)))
           =+  zc=(mix &3.y (rot 9 (sum:few zb &1.y)))
           =+  zd=(mix &4.y (rot 13 (sum:few zc zb)))
           =+  za=(mix &1.y (rot 18 (sum:few zd zc)))
           ~[za zb zc zd]
         ++  rr                                          ::  rowround
-          |=  {y+(list @)}
+          |=  {y/(list @)}
           =+  za=(qr ~[&1.y &2.y &3.y &4.y])
           =+  zb=(qr ~[&6.y &7.y &8.y &5.y])
           =+  zc=(qr ~[&11.y &12.y &9.y &10.y])
@@ -5604,7 +5604,7 @@
             &3.zc  &4.zc  &1.zc  &2.zc
             &2.zd  &3.zd  &4.zd  &1.zd  ==
         ++  cr                                          ::  columnround
-          |=  {x+(list @)}
+          |=  {x/(list @)}
           =+  ya=(qr ~[&1.x &5.x &9.x &13.x])
           =+  yb=(qr ~[&6.x &10.x &14.x &2.x])
           =+  yc=(qr ~[&11.x &15.x &3.x &7.x])
@@ -5615,10 +5615,10 @@
             &3.ya  &2.yb  &1.yc  &4.yd
             &4.ya  &3.yb  &2.yc  &1.yd  ==
         ++  dr                                          ::  doubleround
-          |=  {x+(list @)}
+          |=  {x/(list @)}
           (rr (cr x))
         ++  al                                          ::  add two lists
-          |=  {a+(list @) b+(list @)}
+          |=  {a/(list @) b/(list @)}
           |-  ^-  (list @)
           ?~  a  ~  ?~  b  ~
           [i=(sum:few -.a -.b) t=$(a +.a, b +.b)]
@@ -5630,7 +5630,7 @@
     (rep 5 (al xw ow))
   ::
   ++  rpp
-    |=  {a+bloq b+@ c+@}                                ::  rip w#filler blocks
+    |=  {a/bloq b/@ c/@}                                ::  rip w#filler blocks
     =+  q=(rip a c)
     =+  w=(lent q)
     ?.  =(w b)
@@ -5639,23 +5639,23 @@
     q
   ::
   ++  bls
-    |=  {a+@ b+(list @)}                                ::  split to sublists
+    |=  {a/@ b/(list @)}                                ::  split to sublists
     ?>  =((mod (lent b) a) 0)
     |-  ^-  (list (list @))
     ?~  b  ~
     [i=(scag a `(list @)`b) t=$(b (slag a `(list @)`b))]
   ::
   ++  slb
-    |=  {a+(list (list @))}
+    |=  {a/(list (list @))}
     |-  ^-  (list @)
     ?~  a  ~
     (weld `(list @)`-.a $(a +.a))
   ::
   ++  sbm
-    |=  {r+@ b+(list @)}                                ::  scryptBlockMix
+    |=  {r/@ b/(list @)}                                ::  scryptBlockMix
     ?>  =((lent b) (mul 2 r))
     =+  [x=(snag (dec (mul 2 r)) b) c=0]
-    =|  {ya+(list @) yb+(list @)}
+    =|  {ya/(list @) yb/(list @)}
     |-  ^-  (list @)
     ?~  b  (flop (weld yb ya))
     =.  x  (sal (mix x -.b) 8)
@@ -5664,7 +5664,7 @@
     $(c +(c), b +.b, yb [i=x t=yb])
   ::
   ++  srm
-    |=  {r+@ b+(list @) n+@}                            ::  scryptROMix
+    |=  {r/@ b/(list @) n/@}                            ::  scryptROMix
     ?>  ?&  =((lent b) (mul 2 r))
             =(n (bex (dec (xeb n))))
             (lth n (bex (mul r 16)))
@@ -5686,11 +5686,11 @@
     $(x (sbm r w), c +(c))
   ::
   ++  hmc
-    |=  {k+@ t+@}                                       ::  HMAC-SHA-256
+    |=  {k/@ t/@}                                       ::  HMAC-SHA-256
     (hml k (met 3 k) t (met 3 t))
   ::
   ++  hml
-    |=  {k+@ kl+@ t+@ tl+@}                             ::  w#length
+    |=  {k/@ kl/@ t/@ tl/@}                             ::  w#length
     =>  .(k (end 3 kl k), t (end 3 tl t))
     =+  b=64
     =.  k  ?.  (gth kl b)  k  (shay kl k)
@@ -5701,12 +5701,12 @@
   ::
   ++  pbk                                               :: PBKDF2-HMAC-SHA256
     ~/  %pbk
-    |=  {p+@ s+@ c+@ d+@}
+    |=  {p/@ s/@ c/@ d/@}
     (pbl p (met 3 p) s (met 3 s) c d)
   ::
   ++  pbl                                               :: w#length
     ~/  %pbl
-    |=  {p+@ pl+@ s+@ sl+@ c+@ d+@}
+    |=  {p/@ pl/@ s/@ sl/@ c/@ d/@}
     =>  .(p (end 3 pl p), s (end 3 sl s))
     =+  h=32
     ?>  ?&  (lte d (bex 30))                            :: max key length 1GB
@@ -5730,13 +5730,13 @@
   ::
   ++  hsh                                               ::  scrypt
     ~/  %hsh
-    |=  {p+@ s+@ n+@ r+@ z+@ d+@}
+    |=  {p/@ s/@ n/@ r/@ z/@ d/@}
     (hsl p (met 3 p) s (met 3 s) n r z d)
   ::
   ++  hsl                                               ::  w#length
     ~/  %hsl
-    |=  {p+@ pl+@ s+@ sl+@ n+@ r+@ z+@ d+@}
-    =|  v+(list (list @))
+    |=  {p/@ pl/@ s/@ sl/@ n/@ r/@ z/@ d/@}
+    =|  v/(list (list @))
     =>  .(p (end 3 pl p), s (end 3 sl s))
     =+  u=(mul (mul 128 r) z)
     ?>  ?&  =(n (bex (dec (xeb n))))                    ::  n is power of 2
@@ -5749,49 +5749,49 @@
         ==
     =+  ^=  b  =+  (rpp 3 u (pbl p pl s sl 1 u))
       %+  turn  (bls (mul 128 r) -)
-      |=(a+(list @) (rpp 9 (mul 2 r) (rep 3 a)))
+      |=(a/(list @) (rpp 9 (mul 2 r) (rep 3 a)))
     ?>  =((lent b) z)
     =+  ^=  q
       =+  |-  ?~  b  (flop v)
           $(b +.b, v [i=(srm r -.b n) t=v])
       %+  turn  `(list (list @))`-
-      |=(a+(list @) (rpp 3 (mul 128 r) (rep 9 a)))
+      |=(a/(list @) (rpp 3 (mul 128 r) (rep 9 a)))
     (pbl p pl (rep 3 (slb q)) u 1 d)
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eY, SHA-256 (move me)        ::
 ::
-++  shad  |=(ruz+@ (shax (shax ruz)))                   ::  double sha-256
+++  shad  |=(ruz/@ (shax (shax ruz)))                   ::  double sha-256
 ++  shaf                                                ::  half sha-256
-  |=  {sal+@ ruz+@}
+  |=  {sal/@ ruz/@}
   =+  haz=(shas sal ruz)
   (mix (end 7 1 haz) (rsh 7 1 haz))
 ::
 ++  shak                                                ::  XX shd be PBKDF
-  |=  {who+@p wud+@}
+  |=  {who/@p wud/@}
   (shas (mix %shak who) wud)
 ::
 ++  sham                                                ::  128bit noun hash
-  |=  yux+*  ^-  @uvH  ^-  @
+  |=  yux/*  ^-  @uvH  ^-  @
   ?@  yux
     (shaf %mash yux)
   (shaf %sham (jam yux))
 ::
 ++  shas                                                ::  salted hash
-  |=  {sal+@ ruz+@}
+  |=  {sal/@ ruz/@}
   (shax (mix sal (shax ruz)))
 ::
 ++  shax                                                ::  sha-256
   ~/  %shax
-  |=  ruz+@  ^-  @
+  |=  ruz/@  ^-  @
   (shay [(met 3 ruz) ruz])
 ::
 ++  shay                                                ::  sha-256 with length
   ~/  %shay
-  |=  {len+@u ruz+@}  ^-  @
+  |=  {len/@u ruz/@}  ^-  @
   ~|  %sha
   =>  .(ruz (cut 3 [0 len] ruz))
-  =+  [few==>(fe .(a 5)) wac=|=({a+@ b+@} (cut 5 [a 1] b))]
+  =+  [few==>(fe .(a 5)) wac=|=({a/@ b/@} (cut 5 [a 1] b))]
   =+  [sum=sum.few ror=ror.few net=net.few inv=inv.few]
   =+  ral=(lsh 0 3 len)
   =+  ^=  ful
@@ -5874,25 +5874,25 @@
   $(j +(j), a (sum q n), b a, c b, d c, e (sum d q), f e, g f, h g)
 ::
 ++  shaw                                                ::  hash to nbits
-  |=  {sal+@ len+@ ruz+@}
+  |=  {sal/@ len/@ ruz/@}
   (~(raw og (shas sal (mix len ruz))) len)
 ::
 ++  og                                                  ::  shax-powered rng
   ~/  %og
-  |_  a+@
+  |_  a/@
   ++  rad                                               ::  random in range
-    |=  b+@  ^-  @
+    |=  b/@  ^-  @
     =+  c=(raw (met 0 b))
     ?:((lth c b) c $(a +(a)))
   ::
   ++  rads                                              ::  random continuation
-    |=  b+@
+    |=  b/@
     =+  r=(rad b)
     [r +>.$(a (shas %og-s r))]
   ::
   ++  raw                                               ::  random bits
     ~/  %raw
-    |=  b+@  ^-  @
+    |=  b/@  ^-  @
     %+  can
       0
     =+  c=(shas %og-a (mix b a))
@@ -5905,19 +5905,19 @@
     [[256 d] $(c d, b (sub b 256))]
   ::
   ++  raws                                              ::  random bits
-    |=  b+@                                             ::  continuation
+    |=  b/@                                             ::  continuation
     =+  r=(raw b)
     [r +>.$(a (shas %og-s r))]
   --
 ++  shaz                                                ::  sha-512
-  |=  ruz+@  ^-  @
+  |=  ruz/@  ^-  @
   (shal [(met 3 ruz) ruz])
 ::
 ++  shal                                                ::  sha-512 with length
   ~/  %shal
-  |=  {len+@ ruz+@}  ^-  @
+  |=  {len/@ ruz/@}  ^-  @
   =>  .(ruz (cut 3 [0 len] ruz))
-  =+  [few==>(fe .(a 6)) wac=|=({a+@ b+@} (cut 6 [a 1] b))]
+  =+  [few==>(fe .(a 6)) wac=|=({a/@ b/@} (cut 6 [a 1] b))]
   =+  [sum=sum.few ror=ror.few net=net.few inv=inv.few]
   =+  ral=(lsh 0 3 len)
   =+  ^=  ful
@@ -6026,8 +6026,8 @@
   $(j +(j), a (sum q n), b a, c b, d c, e (sum d q), f e, g f, h g)
 ::
 ++  shan                                                ::  sha-1 (deprecated)
-  |=  ruz+@
-  =+  [few==>(fe .(a 5)) wac=|=({a+@ b+@} (cut 5 [a 1] b))]
+  |=  ruz/@
+  =+  [few==>(fe .(a 5)) wac=|=({a/@ b/@} (cut 5 [a 1] b))]
   =+  [sum=sum.few ror=ror.few rol=rol.few net=net.few inv=inv.few]
   =+  ral=(lsh 0 3 (met 3 ruz))
   =+  ^=  ful
@@ -6095,49 +6095,49 @@
 ::                section 2eZ, OLD rendering (kill me)  ::
 ::
 ++  show                            ::  XX deprecated, use type
-  |=  vem+*
+  |=  vem/*
   |^  ^-  tank
       ?:  ?=(@ vem)
         [%leaf (mesc (trip vem))]
       ?-    vem
-          {s+$~ c+*}
+          {s/$~ c/*}
         [%leaf '\'' (weld (mesc (tape +.vem)) `tape`['\'' ~])]
       ::
-          {s+$a c+@}        [%leaf (mesc (trip c.vem))]
-          {s+$b c+*}        (shop c.vem |=(a+@ ~(rub at a)))
-          {s+{$c p+@} c+*}
+          {s/$a c/@}        [%leaf (mesc (trip c.vem))]
+          {s/$b c/*}        (shop c.vem |=(a/@ ~(rub at a)))
+          {s/{$c p/@} c/*}
         :+  %palm
           [['.' ~] ['-' ~] ~ ~]
         [[%leaf (mesc (trip p.s.vem))] $(vem c.vem) ~]
       ::
-          {s+$d c+*}        (shop c.vem |=(a+@ ~(rud at a)))
-          {s+$k c+*}        (tank c.vem)
-          {s+$h c+*}
+          {s/$d c/*}        (shop c.vem |=(a/@ ~(rud at a)))
+          {s/$k c/*}        (tank c.vem)
+          {s/$h c/*}
         ?:  =(0 c.vem)      ::  XX remove after 220
           [%leaf '#' ~]
         :+  %rose
           [['/' ~] ['/' ~] ~]
         =+  yol=((list @ta) c.vem)
-        (turn yol |=(a+@ta [%leaf (trip a)]))
+        (turn yol |=(a/@ta [%leaf (trip a)]))
       ::
-          {s+$o c+*}
+          {s/$o c/*}
         %=    $
             vem
           :-  [%m '%h:<[%d %d].[%d %d]>']
           [-.c.vem +<-.c.vem +<+.c.vem +>-.c.vem +>+.c.vem ~]
         ==
       ::
-          {s+$p c+*}        (shop c.vem |=(a+@ ~(rup at a)))
-          {s+$q c+*}        (shop c.vem |=(a+@ ~(r at a)))
-          {s+$r c+*}        $(vem [[%r ' ' '{' '}'] c.vem])
-          {s+$t c+*}        (shop c.vem |=(a+@ ~(rt at a)))
-          {s+$v c+*}        (shop c.vem |=(a+@ ~(ruv at a)))
-          {s+$x c+*}        (shop c.vem |=(a+@ ~(rux at a)))
-          {s+{$m p+@} c+*}  (shep p.s.vem c.vem)
-          {s+{$r p+@} c+*}
+          {s/$p c/*}        (shop c.vem |=(a/@ ~(rup at a)))
+          {s/$q c/*}        (shop c.vem |=(a/@ ~(r at a)))
+          {s/$r c/*}        $(vem [[%r ' ' '{' '}'] c.vem])
+          {s/$t c/*}        (shop c.vem |=(a/@ ~(rt at a)))
+          {s/$v c/*}        (shop c.vem |=(a/@ ~(ruv at a)))
+          {s/$x c/*}        (shop c.vem |=(a/@ ~(rux at a)))
+          {s/{$m p/@} c/*}  (shep p.s.vem c.vem)
+          {s/{$r p/@} c/*}
         $(vem [[%r ' ' (cut 3 [0 1] p.s.vem) (cut 3 [1 1] p.s.vem)] c.vem])
       ::
-          {s+{$r p+@ q+@ r+@} c+*}
+          {s/{$r p/@ q/@ r/@} c/*}
         :+  %rose
           :*  p=(mesc (trip p.s.vem))
               q=(mesc (trip q.s.vem))
@@ -6148,11 +6148,11 @@
           ~
         [^$(vem -.c.vem) $(c.vem +.c.vem)]
       ::
-          {s+$z c+*}        $(vem [[%r %$ %$ %$] c.vem])
+          {s/$z c/*}        $(vem [[%r %$ %$ %$] c.vem])
           *                 !!
       ==
   ++  shep
-    |=  {fom+@ gar+*}
+    |=  {fom/@ gar/*}
     ^-  tank
     =+  l=(met 3 fom)
     =+  i=0
@@ -6169,7 +6169,7 @@
     (weld ~(ram re (show d -.gar)) $(i (add 2 i), gar +.gar))
   ::
   ++  shop
-    |=  {aug+* vel+$+(a+@ tape)}
+    |=  {aug/* vel/$+(a/@ tape)}
     ^-  tank
     ?:  ?=(@ aug)
       [%leaf (vel aug)]
@@ -6182,7 +6182,7 @@
     [^$(aug -.aug) $(aug +.aug)]
   --
 ++  at
-  |_  a+@
+  |_  a/@
   ++  r
     ?:  ?&  (gte (met 3 a) 2)
             |-
@@ -6203,10 +6203,10 @@
   ++  rt    `tape`['\'' (weld (mesc (trip a)) `tape`['\'' ~])]
   ++  rta   rt
   ++  rtam  `tape`['%' (trip a)]
-  ++  rub   `tape`['0' 'b' (rum 2 ~ |=(b+@ (add '0' b)))]
-  ++  rud   (rum 10 ~ |=(b+@ (add '0' b)))
+  ++  rub   `tape`['0' 'b' (rum 2 ~ |=(b/@ (add '0' b)))]
+  ++  rud   (rum 10 ~ |=(b/@ (add '0' b)))
   ++  rum
-    |=  {b+@ c+tape d+$+(@ @)}
+    |=  {b/@ c/tape d/$+(@ @)}
     ^-  tape
     ?:  =(0 a)
       [(d 0) c]
@@ -6250,14 +6250,14 @@
     %^    rum
         64
       ~
-    |=  b+@
+    |=  b/@
     ?:  =(63 b)
       '+'
     ?:  =(62 b)
       '-'
     ?:((lth b 26) (add 65 b) ?:((lth b 52) (add 71 b) (sub b 4)))
   ::
-  ++  rux  `tape`['0' 'x' (rum 16 ~ |=(b+@ (add b ?:((lth b 10) 48 87))))]
+  ++  rux  `tape`['0' 'x' (rum 16 ~ |=(b/@ (add b ?:((lth b 10) 48 87))))]
   --
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::
 ::::              chapter 2f, Hoon proper               ::::
@@ -6265,26 +6265,26 @@
 ::                section 2fA, miscellaneous funs       ::
 ::                                                      ::
 ++  bull                                                ::  make %bull type
-  |=  {bid+twin der+type}
+  |=  {bid/twin der/type}
   ^-  type
   ?:(|(=(%void der) =(%void s.bid)) %void [%bull bid der])
 ::
-++  cain  |=(vax+vase (sell vax))                       ::  $+(vase tank) for #>
+++  cain  |=(vax/vase (sell vax))                       ::  $+(vase tank) for #>
 ++  cell                                                ::  make %cell type
   ~/  %cell
-  |=  {hed+type tal+type}
+  |=  {hed/type tal/type}
   ^-  type
   ?:(=(%void hed) %void ?:(=(%void tal) %void [%cell hed tal]))
 ::
 ++  core                                                ::  make %core type
   ~/  %core
-  |=  {pac+type con+coil}
+  |=  {pac/type con/coil}
   ^-  type
   ?:(=(%void pac) %void [%core pac con])
 ::
 ++  cube                                                ::  make %cube type
   ~/  %cube
-  |=  {dil+* goq+type}
+  |=  {dil/* goq/type}
   ^-  type
   ?:  =(%void goq)
     %void
@@ -6292,7 +6292,7 @@
 ::
 ++  face                                                ::  make %face type
   ~/  %face
-  |=  {cog+term der+type}
+  |=  {cog/term der/type}
   ^-  type
   ?:  =(%void der)
     %void
@@ -6301,8 +6301,8 @@
 ++  bool  ^-(type [%fork [%cube 0 %atom %f] [%cube 1 %atom %f]])  :: -:!>(*?)
 ++  flay
   ~/  %flay
-  |=  pok+port
-  ^-  {p+axis q+type}
+  |=  pok/port
+  ^-  {p/axis q/type}
   :-  p.pok
   ?-  -.q.pok
     $&  p.q.pok
@@ -6310,7 +6310,7 @@
   ==
 ::
 ++  flee
-  |=  poy+post
+  |=  poy/post
   ^-  port
   ?-  -.q.poy
     $0  [p.poy %& p.q.poy]
@@ -6320,7 +6320,7 @@
 ::
 ++  foil
   ~/  %foil
-  |=  pok+port
+  |=  pok/port
   ^-  prop
   ?-  -.q.pok
     $&  [p.pok [~ [[p.q.pok [%elm ~ 1]] ~]]]
@@ -6329,7 +6329,7 @@
 ::
 ++  fork                                                ::  make %fork type
   ~/  %fork
-  |=  {hoz+type bur+type}
+  |=  {hoz/type bur/type}
   ^-  type
   ?:  =(hoz bur)
     hoz
@@ -6340,7 +6340,7 @@
   [%fork hoz bur]
 ::
 ++  cove                                                ::  extract [0 *] axis
-  |=  nug+nock
+  |=  nug/nock
   ?-    nug
       {$0 *}   p.nug
       {$10 *}  $(nug q.nug)
@@ -6348,7 +6348,7 @@
   ==
 ++  comb                                                ::  combine two formulas
   ~/  %comb
-  |=  {mal+nock buz+nock}
+  |=  {mal/nock buz/nock}
   ^-  nock
   ?:  ?&(?=({$0 *} mal) !=(0 p.mal))
     ?:  ?&(?=({$0 *} buz) !=(0 p.buz))
@@ -6364,7 +6364,7 @@
 ::
 ++  cond                                                ::  ?:  compile
   ~/  %cond
-  |=  {pex+nock yom+nock woq+nock}
+  |=  {pex/nock yom/nock woq/nock}
   ^-  nock
   ?-  pex
     {$1 $0}  yom
@@ -6374,7 +6374,7 @@
 ::
 ++  cons                                                ::  make formula cell
   ~/  %cons
-  |=  {vur+nock sed+nock}
+  |=  {vur/nock sed/nock}
   ^-  nock
   ?:  ?=({{$0 *} {$0 *}} +<)
     ?:  ?&(=(+(p.vur) p.sed) =((div p.vur 2) (div p.sed 2)))
@@ -6386,9 +6386,9 @@
 ::
 ++  fitz                                                ::  odor compatibility
   ~/  %fitz
-  |=  {yaz+term wix+term}
+  |=  {yaz/term wix/term}
   =+  ^=  fiz
-      |=  mot+@ta  ^-  {p+@ q+@ta}
+      |=  mot/@ta  ^-  {p/@ q/@ta}
       =+  len=(met 3 mot)
       ?:  =(0 len)
         [0 %$]
@@ -6411,7 +6411,7 @@
 ::
 ++  flan                                                ::  loobean  &
   ~/  %flan
-  |=  {bos+nock nif+nock}
+  |=  {bos/nock nif/nock}
   ^-  nock
   ?-    bos
       {$1 $1}   bos
@@ -6426,12 +6426,12 @@
 ::
 ++  flip                                                ::  loobean negation
   ~/  %flip
-  |=  dyr+nock
+  |=  dyr/nock
   [%6 dyr [%1 1] [%1 0]]
 ::
 ++  flor                                                ::  loobean  |
   ~/  %flor
-  |=  {bos+nock nif+nock}
+  |=  {bos/nock nif/nock}
   ^-  nock
   ?-  bos
       {$1 $1}   nif
@@ -6446,28 +6446,28 @@
 ::
 ++  hike
   ~/  %hike
-  |=  {axe+axis pac+(list {p+axis q+nock})}
+  |=  {axe/axis pac/(list {p/axis q/nock})}
   ^-  nock
   ?~  pac
     [%0 axe]
-  =+  zet=(skim pac.$ |=({p+axis q+nock} [=(1 p)]))
+  =+  zet=(skim pac.$ |=({p/axis q/nock} [=(1 p)]))
   ?~  zet
-    =+  tum=(skim pac.$ |=({p+axis q+nock} ?&(!=(1 p) =(2 (cap p)))))
-    =+  gam=(skim pac.$ |=({p+axis q+nock} ?&(!=(1 p) =(3 (cap p)))))
+    =+  tum=(skim pac.$ |=({p/axis q/nock} ?&(!=(1 p) =(2 (cap p)))))
+    =+  gam=(skim pac.$ |=({p/axis q/nock} ?&(!=(1 p) =(3 (cap p)))))
     %+  cons
       %=  $
         axe  (peg axe 2)
-        pac  (turn tum |=({p+axis q+nock} [(mas p) q]))
+        pac  (turn tum |=({p/axis q/nock} [(mas p) q]))
       ==
     %=  $
       axe  (peg axe 3)
-      pac  (turn gam |=({p+axis q+nock} [(mas p) q]))
+      pac  (turn gam |=({p/axis q/nock} [(mas p) q]))
     ==
   ?>(?=({* $~} zet) q.i.zet)
 ::
 ++  jock
-  |=  rad+?
-  |=  lot+coin  ^-  twig
+  |=  rad/?
+  |=  lot/coin  ^-  twig
   ?-    -.lot
       $~      
     ?:(rad [%dtzz p.lot] [%dtzy p.lot])
@@ -6478,14 +6478,14 @@
     ?@(p.lot [%dtzy %$ p.lot] [$(p.lot -.p.lot) $(p.lot +.p.lot)])
   ::
       $many
-    [%cltr (turn p.lot |=(a+coin ^$(lot a)))]
+    [%cltr (turn p.lot |=(a/coin ^$(lot a)))]
   ==
 ::
 ++  look
   ~/  %look
-  |=  {cog+term dab+(map term foot)}
+  |=  {cog/term dab/(map term foot)}
   =+  axe=1
-  |-  ^-  (unit {p+axis q+foot})
+  |-  ^-  (unit {p/axis q/foot})
   ?-  dab
       $~  ~
   ::
@@ -6515,40 +6515,40 @@
   ==
 ::
 ++  make                                                ::  compile cord to nock
-  |=  txt+@
+  |=  txt/@
   q:(~(mint ut %noun) %noun (ream txt))
 ::
-++  noah  |=(vax+vase (pave vax))                       ::  $+(vase tape) for #<
-++  onan  |=(vix+vise (seer vix))                       ::  $+(vise vase) for !>
+++  noah  |=(vax/vase (pave vax))                       ::  $+(vase tape) for #<
+++  onan  |=(vix/vise (seer vix))                       ::  $+(vise vase) for !>
 ++  rain                                                ::  parse with % path
-  |=  {bon+path txt+@}
+  |=  {bon/path txt/@}
   ^-  twig
   =+  vaz=vast
   ~|  bon
   (scan (trip txt) (full (ifix [gay gay] tall:vaz(wer bon))))
 ::
 ++  ream                                                ::  parse cord to twig
-  |=  txt+@
+  |=  txt/@
   ^-  twig
   (rash txt vest)
 ::
 ++  reck                                                ::  parse hoon file
-  |=  bon+path
+  |=  bon/path
   (rain bon ((hard @t) .^(%cx (weld bon `path`[%hoon ~]))))
 ::
-++  seem  |=(toy+typo `type`toy)                        ::  promote typo
-++  seer  |=(vix+vise `vase`vix)                        ::  promote vise
+++  seem  |=(toy/typo `type`toy)                        ::  promote typo
+++  seer  |=(vix/vise `vase`vix)                        ::  promote vise
 ++  sell                                                ::  tank pretty-print
-  |=  vax+vase  ^-  tank
+  |=  vax/vase  ^-  tank
   ~|  %sell
   (~(deal ut p.vax) q.vax)
 ::
 ++  pave                                                ::  tape pretty-print
-  |=  vax+vase  ^-  tape
+  |=  vax/vase  ^-  tape
   ~(ram re (sell vax))
 ::
 ++  slam                                                ::  slam a gate
-  |=  {gat+vase sam+vase}  ^-  vase
+  |=  {gat/vase sam/vase}  ^-  vase
   =+  :-  ^=  typ  ^-  type
           [%cell p.gat p.sam]
       ^=  gen  ^-  twig
@@ -6557,34 +6557,34 @@
   [p.gun .*([q.gat q.sam] q.gun)]
 ::
 ++  slim                                                ::  identical to seer?
-  |=  old+vise  ^-  vase
+  |=  old/vise  ^-  vase
   old
 ::
 ++  slit                                                ::  type of slam
-  |=  {gat+type sam+type}
+  |=  {gat/type sam/type}
   ?>  (~(nest ut (~(peek ut gat) %free 6)) & sam)
   (~(play ut [%cell gat sam]) [%cncl [~ 2] [~ 3]])
 ::
 ++  slym                                                ::  slam w#o sample-type
-  |=  {gat+vase sam+*}  ^-  vase
+  |=  {gat/vase sam/*}  ^-  vase
   (slap gat(+<.q sam) [%cnzy %$])
 ::
 ++  slap
-  |=  {vax+vase gen+twig}  ^-  vase                     ::  untyped vase .*
+  |=  {vax/vase gen/twig}  ^-  vase                     ::  untyped vase .*
   =+  gun=(~(mint ut p.vax) %noun gen)
   [p.gun .*(q.vax q.gun)]
 ::
 ++  slop                                                ::  cons two vases
-  |=  {hed+vase tal+vase}
+  |=  {hed/vase tal/vase}
   ^-  vase
   [[%cell p.hed p.tal] [q.hed q.tal]]
 ::
 ++  skol                                                ::  $+(type tank) for ~!
-  |=  typ+type  ^-  tank
+  |=  typ/type  ^-  tank
   ~(duck ut typ)
 ::
 ++  spec                                                ::  reconstruct type
-  |=  vax+vase
+  |=  vax/vase
   ^-  vase
   :_  q.vax
   ?@  q.vax  (~(fuse ut p.vax) [%atom %$])
@@ -6595,7 +6595,7 @@
   (~(fuse ut p.vax) [%cell %noun %noun])
 ::
 ++  slew                                                ::  get axis in vase
-  |=  {axe+@ vax+vase}  ^-  (unit vase)
+  |=  {axe/@ vax/vase}  ^-  (unit vase)
   ?.  |-  ^-  ?
       ?:  =(1 axe)  &
       ?.  ?=(^ q.vax)  |
@@ -6604,11 +6604,11 @@
   `[(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
 ::
 ++  slab
-  |=  {cog+@tas typ+type}
+  |=  {cog/@tas typ/type}
   !=(~ q:(~(fino ut typ) 0 %free cog))
 ::
 ++  slob                                                ::  superficial arm
-  |=  {cog+@tas typ+type}
+  |=  {cog/@tas typ/type}
   ^-  ?
   ?+  typ  |
     {$hold *}  $(typ ~(repo ut typ))
@@ -6616,27 +6616,27 @@
   ==
 ::
 ++  sloe                                                ::  get arms in core
-  |=  typ+type
+  |=  typ/type
   ^-  (list term)
   ?+    typ  ~
       {$hold *}  $(typ ~(repo ut typ))
       {$bull *}  $(typ ~(repo ut typ))
       {$core *}
-    (turn (~(tap by q.r.q.typ) ~) |=({a+term *} a))
+    (turn (~(tap by q.r.q.typ) ~) |=({a/term *} a))
   ==
 ++  slot                                                ::  got axis in vase
-  |=  {axe+@ vax+vase}  ^-  vase
+  |=  {axe/@ vax/vase}  ^-  vase
   [(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
 ::
 ++  wash                                                ::  render tank at width
-  |=  {{tab+@ edg+@} tac+tank}  ^-  wall
+  |=  {{tab/@ edg/@} tac/tank}  ^-  wall
   (~(win re tac) tab edg)
 ::
 ++  wa  !:                                              ::  cached compile
   |_  worm
-  ++  nell  |=(ref+type (nest [%cell %noun %noun] ref)) ::  nest in cell
+  ++  nell  |=(ref/type (nest [%cell %noun %noun] ref)) ::  nest in cell
   ++  nest                                              ::  nest:ut
-    |=  {sut+type ref+type}
+    |=  {sut/type ref/type}
     ^-  {? worm}
     ?:  (~(has in nes) [sut ref])  [& +>+<]
     ?.  (~(nest ut sut) | ref)
@@ -6645,10 +6645,10 @@
     [& +>+<(nes (~(put in nes) [sut ref]))]
   ::
   ++  nets                                              ::  typeless nest
-    |=  {sut+type ref+*}
+    |=  {sut/type ref/*}
     ^-  {? worm}
     ?:  (~(has in nes) [sut ref])  [& +>+<]
-    =+  gat=|=({a+type b+type} (~(nest ut a) | b))
+    =+  gat=|=({a/type b/type} (~(nest ut a) | b))
     ?.  (? .*(gat(+< [sut ref]) -.gat))
       ::  ~&  %nets-failed
       ::  =+  tag=`*`skol
@@ -6662,7 +6662,7 @@
     [& +>+<.$(nes (~(put in nes) [sut ref]))]
   ::
   ++  play                                              ::  play:ut
-    |=  {sut+type gen+twig}
+    |=  {sut/type gen/twig}
     ^-  {type worm}
     =+  old=(~(get by pay) [sut gen])
     ?^  old  [u.old +>+<.$]
@@ -6670,7 +6670,7 @@
     [new +>+<.$(pay (~(put by pay) [sut gen] new))]
   ::
   ++  mint                                              ::  mint:ut to noun
-    |=  {sut+type gen+twig}
+    |=  {sut/type gen/twig}
     ^-  {(pair type nock) worm}
     =+  old=(~(get by mit) [sut gen])
     ?^  old  [u.old +>+<.$]
@@ -6678,19 +6678,19 @@
     [new +>+<.$(mit (~(put by mit) [sut gen] new))]
   ::
   ++  slap                                              ::  ++slap, cached
-    |=  {vax+vase gen+twig}
+    |=  {vax/vase gen/twig}
     ^-  {vase worm}
     =^  gun  +>+<  (mint p.vax gen)
     [[p.gun .*(q.vax q.gun)] +>+<.$]
   ::
   ++  slot                                              ::  ++slot, cached
-    |=  {axe+@ vax+vase}
+    |=  {axe/@ vax/vase}
     ^-  {vase worm}
     =^  gun  +>+<  (mint p.vax [%$ axe])
     [[p.gun .*(q.vax [0 axe])] +>+<.$]
   ::
   ++  spec                                              ::  specialize vase
-    |=  vax+vase
+    |=  vax/vase
     ^-  {vase worm}
     =+  ^=  gen  ^-  twig
       ?@  q.vax    [%wtts [%cbzz [%atom %$]] [%$ 1]~]
@@ -6700,13 +6700,13 @@
     [[typ q.vax] +>+<.$]
   ::
   ++  spot                                              ::  slot then spec
-    |=  {axe+@ vax+vase}
+    |=  {axe/@ vax/vase}
     ^-  {vase worm}
     =^  xav  +>+<  (slot axe vax)
     (spec xav)
   ::
   ++  stop                                              ::  spec then slot
-    |=  {axe+@ vax+vase}
+    |=  {axe/@ vax/vase}
     ^-  {vase worm}
     =^  xav  +>+<  (spec vax)
     (slot axe xav)
@@ -6715,15 +6715,15 @@
 ::                section 2fB, macro expansion          ::
 ::
 ++  ah                                                  ::  tiki engine
-  |_  tig+tiki
+  |_  tig/tiki
   ++  blue
-    |=  gen+twig
+    |=  gen/twig
     ^-  twig
     ?.  &(?=($| -.tig) ?=($~ p.tig))  gen
     [%tsgr [~ 3] gen]
   ::
   ++  gray
-    |=  gen+twig
+    |=  gen/twig
     ^-  twig
     ?-  -.tig
       $&  ?~(p.tig gen [%tstr u.p.tig q.tig gen])
@@ -6737,16 +6737,16 @@
       $|  [[%& 2] ~]
     ==
   ::
-  ++  wthp  |=  opt+tine
+  ++  wthp  |=  opt/tine
             %+  gray  %wthp
-            [puce (turn opt |=({a+twig b+twig} [a (blue b)]))]
-  ++  wtkt  |=({sic+twig non+twig} (gray [%wtkt puce (blue sic) (blue non)]))
-  ++  wtls  |=  {gen+twig opt+tine}
+            [puce (turn opt |=({a/twig b/twig} [a (blue b)]))]
+  ++  wtkt  |=({sic/twig non/twig} (gray [%wtkt puce (blue sic) (blue non)]))
+  ++  wtls  |=  {gen/twig opt/tine}
             %+  gray  %wtls
-            [puce (blue gen) (turn opt |=({a+twig b+twig} [a (blue b)]))]
-  ++  wtpt  |=({sic+twig non+twig} (gray [%wtpt puce (blue sic) (blue non)]))
-  ++  wtsg  |=({sic+twig non+twig} (gray [%wtsg puce (blue sic) (blue non)]))
-  ++  wtts  |=(gen+twig (gray [%wtts (blue gen) puce]))
+            [puce (blue gen) (turn opt |=({a/twig b/twig} [a (blue b)]))]
+  ++  wtpt  |=({sic/twig non/twig} (gray [%wtpt puce (blue sic) (blue non)]))
+  ++  wtsg  |=({sic/twig non/twig} (gray [%wtsg puce (blue sic) (blue non)]))
+  ++  wtts  |=(gen/twig (gray [%wtts (blue gen) puce]))
   --
 ::
 ++  al                                                  ::  tile engine
@@ -6757,10 +6757,10 @@
       %whip  whip
     ==
   =+  [nag=`*`& gom=`axis`1]
-  |_  sec+tile
+  |_  sec/tile
   ::::
   ++  blah  ^~  [%dtzz %$ 0]
-  ++  home  |=(gen+twig ^-(twig ?:(=(1 gom) gen [%tsgr [~ gom] gen])))
+  ++  home  |=(gen/twig ^-(twig ?:(=(1 gom) gen [%tsgr [~ gom] gen])))
   ::::
   ++  bunt
     |-  ^-  twig
@@ -6813,7 +6813,7 @@
     ==
   ++  clam  ^-(twig [%brts [%cbzz %noun] (whip(gom 7) 6)])
   ++  cloq
-    |-  ^-  {p+toga q+tile}
+    |-  ^-  {p/toga q/tile}
     =.  sec  ?.(?=($herb -.sec) sec ~(boil ap p.sec))
     ?:  ?=(^ -.sec)
       =+  [one=$(sec p.sec) two=$(sec q.sec)]
@@ -6824,9 +6824,9 @@
     ?:(?=({$0 $~} p.got) p.sec [%1 p.sec p.got])
   ::
   ++  whip
-    |=  axe+axis
+    |=  axe/axis
     =+  ^=  tun
-        |=  noy+$+(* twig)
+        |=  noy/$+(* twig)
         ^-  twig
         ?@  nag
           =+  luz=[%cnts [[~ 1] ~] [[[%& axe] ~] bunt(sec [%axil %cell])] ~]
@@ -6837,7 +6837,7 @@
     ^-  twig
     ?-    sec
         {^ *}
-      %-  tun  |=  gon+*  =>  .(nag gon)  ^-  twig
+      %-  tun  |=  gon/*  =>  .(nag gon)  ^-  twig
       :-  ^$(sec -.sec, nag -.nag, axe (peg axe 2))
       ^$(sec +.sec, nag +.nag, axe (peg axe 3))
     ::
@@ -6877,7 +6877,7 @@
       [%ktts p.sec $(sec q.sec)]
     ::
         {$bush *}
-      %-  tun  |=  gon+*  =>  .(nag gon)  ^-  twig
+      %-  tun  |=  gon/*  =>  .(nag gon)  ^-  twig
       ?@  -.nag
         ?:  =(& -.nag)
           [%wtpt [[%& (peg axe 2)] ~] ^$(sec q.sec) ^$(sec p.sec)]
@@ -6903,7 +6903,7 @@
       $(sec cys)
     ::
         {$kelp *}
-      %-  tun  |=  gon+*  =>  .(nag gon)
+      %-  tun  |=  gon/*  =>  .(nag gon)
       |-  ^-  twig
       ?~  t.p.sec
         :-  [%dtzz +.p.i.p.sec]
@@ -6938,7 +6938,7 @@
       %open  open
       %rake  rake
     ==
-  |_  gen+twig
+  |_  gen/twig
   ++  etch
     ~|  %etch
     |-  ^-  term
@@ -6995,7 +6995,7 @@
       =+  :*  def=bile(gen i.p.gen)
               ^=  end  ^-  (list line)
               %+  turn  `(list twig)`t.p.gen
-              |=(a+twig =+(bile(gen a) ?>(?=($& -<) ->)))
+              |=(a/twig =+(bile(gen a) ?>(?=($& -<) ->)))
           ==
       ?-  -.def
         $&  [%kelp p.def end]
@@ -7005,7 +7005,7 @@
         {$bckt *}  [%bush boil(gen p.gen) boil(gen q.gen)]
         {$bcls *}  [%weed [%brls p.gen [%cnbc q.gen]]]
         {$bcts *}  [%bark p.gen boil(gen q.gen)]
-        {$bcwt *}  =+  (turn p.gen |=(a+twig boil(gen a)))
+        {$bcwt *}  =+  (turn p.gen |=(a/twig boil(gen a)))
                    ?~(- [%axil %void] [%fern -])
     ::
         {$cbzy *}  [%leaf p.gen]
@@ -7028,7 +7028,7 @@
                      [%ktsg ~(bunt al q.lyg)]
                    :-  %brcn
                    %-  ~(run by q.gen)
-                   |=  a+foot  ^-  foot
+                   |=  a/foot  ^-  foot
                    ?.  ?=($elm -.a)  a
                    :-  -.a
                    :+  %tsgl  p.a
@@ -7079,7 +7079,7 @@
         {$cncl *}
       =+  rem=[%cnsg [%$ ~] p.gen q.gen]
       ?.  ?=({$zpcb ^ $cnzz @ $~} p.gen)  rem
-      =>  .(p.gen `{@ ^ @ p+@tas $~}`p.gen)
+      =>  .(p.gen `{@ ^ @ p/@tas $~}`p.gen)
       :+  %sgzp  [[%dtzz %tas 'slam'] [%dtzz %tas p.p.gen]]
       rem
     ::
@@ -7095,7 +7095,7 @@
         q.gen
       :+  %cnts
         (weld p.gen `wing`[[~ 2] ~])
-      (turn r.gen |=({p+wing q+twig} [p [%tsgr [~ 3] q]]))
+      (turn r.gen |=({p/wing q/twig} [p [%tsgr [~ 3] q]]))
     ::
         {$cnzy *}  [%cnts [p.gen ~] ~]
         {$cnzz *}  [%cnts p.gen ~]
@@ -7397,12 +7397,12 @@
   ::
   ++  busk
     ~/  %busk
-    |=  {cog+term hyp+wing}
+    |=  {cog/term hyp/wing}
     ^-  type
     (bull [cog hyp (seep %both hyp)] sut)
   ::
   ++  conk
-    |=  got+toga
+    |=  got/toga
     ^-  type
     ?@  got  [%face got sut]
     ?-  -.got
@@ -7416,7 +7416,7 @@
   ::
   ++  crop
     ~/  %crop
-    |=  ref+type
+    |=  ref/type
     =+  bix=*(set {type type})
     =<  dext
     |%
@@ -7467,9 +7467,9 @@
           {$hold *}
         ?:  (~(has in bix) [sut ref])
           ~|(%crop-loop !!)
-        (reco |=(a+type dext(sut a, bix (~(put in bix) [sut ref]))))
+        (reco |=(a/type dext(sut a, bix (~(put in bix) [sut ref]))))
       ::
-          $noun       (reco |=(a+type dext(sut a)))
+          $noun       (reco |=(a/type dext(sut a)))
           $void       %void
       ==
     ::
@@ -7486,7 +7486,7 @@
     --
   ::
   ++  cool
-    |=  {pol+? hyp+wing ref+type}
+    |=  {pol/? hyp/wing ref/type}
     ^-  type
     =+  peh=`wing`(flop hyp)
     |-  ^-  type
@@ -7515,28 +7515,28 @@
     |-  ^-  type
     ?-    sut
         {$atom *}   %void
-        {$bull *}   (reco |=(p+type (bull p.sut ^$(sut p))))
+        {$bull *}   (reco |=(p/type (bull p.sut ^$(sut p))))
         {$cell *}
       ?:  =(2 now)
         (cell ^$(p.poz lat, sut p.sut) q.sut)
       (cell p.sut ^$(p.poz lat, sut q.sut))
     ::
         {$core *}   ?.(=(3 now) sut (core ^$(p.poz lat, sut p.sut) q.sut))
-        {$cube *}   (reco |=(p+type ^$(sut p)))
-        {$face *}   (reco |=(p+type (face p.sut ^$(sut p))))
+        {$cube *}   (reco |=(p/type ^$(sut p)))
+        {$face *}   (reco |=(p/type (face p.sut ^$(sut p))))
         {$fork *}
       ?:  (~(has in vil) sut)
         %void
       =>  .(vil (~(put in vil) sut))
       (fork $(sut p.sut) $(sut q.sut))
     ::
-        {$hold *}   (reco |=(p+type ^$(sut p)))
-        $noun       (reco |=(p+type ^$(sut p)))
+        {$hold *}   (reco |=(p/type ^$(sut p)))
+        $noun       (reco |=(p/type ^$(sut p)))
         $void       %void
     ==
   ::
   ++  dash
-      |=  {mil+tape lim+char}  ^-  tape
+      |=  {mil/tape lim/char}  ^-  tape
       :-  lim
       |-  ^-  tape
       ?~  mil  [lim ~]
@@ -7545,14 +7545,14 @@
       ?:  (lte ' ' i.mil)  [i.mil $(mil t.mil)]
       ['\\' ~(x ne (rsh 2 1 i.mil)) ~(x ne (end 2 1 i.mil)) $(mil t.mil)]
   ::
-  ++  deal  |=(lum+* (dish dole lum))
+  ++  deal  |=(lum/* (dish dole lum))
   ++  dial
-    |=  ham+calf
+    |=  ham/calf
     =+  gid=*(set @ud)
     =<  `tank`-:$
     |%  
     ++  many
-      |=  haz+(list wine)
+      |=  haz/(list wine)
       ^-  {(list tank) (set @ud)}
       ?~  haz  [~ gid]
       =^  mor  gid  $(haz t.haz)
@@ -7620,12 +7620,12 @@
     --
   ::
   ++  dish
-    |=  {ham+calf lum+*}  ^-  tank
+    |=  {ham/calf lum/*}  ^-  tank
     ~|  [%dish-h ?@(q.ham q.ham -.q.ham)]
     ~|  [%lump lum]
     ~|  [%ham ham]
     %-  need
-    =|  gil+(set {@ud *})
+    =|  gil/(set {@ud *})
     |-  ^-  (unit tank)
     ?-    q.ham
         $noun
@@ -7782,7 +7782,7 @@
       |-  ^-  (unit (list tank))
       ?:  =(~ lum)
         [~ tuk]
-      ?.  ?=({n+* l+* r+*} lum)
+      ?.  ?=({n/* l/* r/*} lum)
         ~
       =+  rol=$(lum r.lum)
       ?~  rol
@@ -7804,7 +7804,7 @@
     ==
   ::
   ++  doge
-    |=  ham+calf
+    |=  ham/calf
     =-  ?+  woz  woz
           {$list * {$atom $'ta'}}  %path
           {$list * {$atom $'t'}}   %wall
@@ -7863,10 +7863,10 @@
     =+  gil=*(set type)
     =+  dex=[p=*(map type @) q=*(map @ wine)]
     =<  [q.p q]
-    |-  ^-  {p+{p+(map type @) q+(map @ wine)} q+wine}
+    |-  ^-  {p/{p/(map type @) q/(map @ wine)} q/wine}
     =-  [p.tez (doge q.p.tez q.tez)]
     ^=  tez
-    ^-  {p+{p+(map type @) q+(map @ wine)} q+wine}
+    ^-  {p/{p/(map type @) q/(map @ wine)} q/wine}
     ?-    sut
         $noun      [dex sut]
         $void      [dex sut]
@@ -7882,7 +7882,7 @@
         {$core *}
       =+  yad=$(sut p.sut)
       :-  p.yad
-      =+  ^=  doy  ^-  {p+(list @ta) q+wine}
+      =+  ^=  doy  ^-  {p/(list @ta) q/wine}
           ?:  ?=({$core *} q.yad)
             [p.q.yad q.q.yad]
           [~ q.yad]
@@ -7955,15 +7955,15 @@
   ++  duck  ^-(tank (dial dole))
   ++  dune  |.(duck)
   ++  dunk
-    |=  paz+term  ^-  tank
+    |=  paz/term  ^-  tank
     :+  %palm
       [['.' ~] ['-' ~] ~ ~]
     [[%leaf (mesc (trip paz))] duck ~]
   ::
   ++  fino
-    |=  {dep+@ud way+?($read $rite $both $free) cog+term}
+    |=  {dep/@ud way/?($read $rite $both $free) cog/term}
     =+  gil=*(set type)
-    |-  ^-  {p+@ud q+(unit post)}
+    |-  ^-  {p/@ud q/(unit post)}
     ?+    sut  [dep ~]
         {$bull *}
       ?.  =(cog p.p.sut)
@@ -8045,7 +8045,7 @@
   ::
   ++  fink
     ~/  %fink
-    |=  {dep+@ud way+?($read $rite $both $free) cog+term}
+    |=  {dep/@ud way/?($read $rite $both $free) cog/term}
     ^-  port
     ::  ~_  (dunk 'type')
     ~_  (show [%c 'find-limb'] ?:(=(%$ cog) '$' [%a cog]))
@@ -8055,7 +8055,7 @@
     (flee u.q.hoq)
   ::
   ++  finq
-    |=  {dep+@ud way+?($read $rite $both $free) cog+term}
+    |=  {dep/@ud way/?($read $rite $both $free) cog/term}
     ^-  post
     ::  ~_  (dunk 'type')
     ~_  (show [%c 'find-limb'] ?:(=(%$ cog) '$' [%a cog]))
@@ -8066,14 +8066,14 @@
   ::
   ++  fire
     ~/  %fire
-    |=  hag+(list {p+type q+foot})
+    |=  hag/(list {p/type q/foot})
     ^-  type
     ?:  ?=({{* {$elm $~ $1}} $~} hag)
       p.i.hag
     :-  %hold
     %+  turn
       hag.$
-    |=  {p+type q+foot}
+    |=  {p/type q/foot}
     ?.  ?=({$core *} p)
       ~|(%fire-core !!)
     =+  dox=[%core q.q.p q.p]
@@ -8094,7 +8094,7 @@
   ::
   ++  firm
     ~/  %firm
-    |=  dib+*
+    |=  dib/*
     =+  bix=*(set {type *})
     |-  ^-  ?
     ?-    sut
@@ -8121,7 +8121,7 @@
   ::
   ++  fish
     ~/  %fish
-    |=  axe+axis
+    |=  axe/axis
     =+  vot=*(set type)
     |-  ^-  nock
     ?-  sut
@@ -8147,7 +8147,7 @@
   ::
   ++  fuse
     ~/  %fuse
-    |=  ref+type
+    |=  ref/type
     =+  bix=*(set {type type})
     |-  ^-  type
     ?:  ?|(=(sut ref) =(%noun ref))
@@ -8178,7 +8178,7 @@
         {$hold *}
       ?:  (~(has in bix) [sut ref])
         ~|(%fuse-loop !!)
-      (reco |=(a+type ^$(sut a, bix (~(put in bix) [sut ref]))))
+      (reco |=(a/type ^$(sut a, bix (~(put in bix) [sut ref]))))
     ::
         $noun       ref
         $void       %void
@@ -8186,12 +8186,12 @@
   ::
   ++  gain
     ~/  %gain
-    |=  gen+twig  ^-  type
+    |=  gen/twig  ^-  type
     (chip & gen)
   ::
   ++  hang
     ~/  %hang
-    |=  {dab+(map term foot) rud+(map term foot)}
+    |=  {dab/(map term foot) rud/(map term foot)}
     ^-  (map term foot)
     =+  goy=(~(tap by rud) ~)
     =+  waf=dab
@@ -8225,7 +8225,7 @@
     ==
   ::
   ++  harp
-    |=  dab+(map term foot)
+    |=  dab/(map term foot)
     ^-  ?($~ ^)
     ?:  ?=($~ dab)
       ~
@@ -8243,12 +8243,12 @@
   ::
   ++  lose
     ~/  %lose
-    |=  gen+twig  ^-  type
+    |=  gen/twig  ^-  type
     (chip | gen)
   ::
   ++  chip
     ~/  %chip
-    |=  {way+? gen+twig}  ^-  type
+    |=  {way/? gen/twig}  ^-  type
     ?:  ?=({$wtts *} gen)  
       (cool way q.gen (play ~(bunt al [%herb p.gen])))
     ?:  ?&(way ?=({$wtpm *} gen))
@@ -8260,7 +8260,7 @@
   ::
   ++  heal
     ~/  %heal
-    |=  {qog+(unit term) axe+axis ref+type}
+    |=  {qog/(unit term) axe/axis ref/type}
     ^-  type
     ?:  =(1 axe)
       ?~  qog
@@ -8303,9 +8303,9 @@
   ::
   ++  mint
     ~/  %mint
-    |=  {gol+type gen+twig}
-    ^-  {p+type q+nock}
-    |^  ^-  {p+type q+nock}
+    |=  {gol/type gen/twig}
+    ^-  {p/type q/nock}
+    |^  ^-  {p/type q/nock}
     ?:  ?&(=(%void sut) !?=({$zpcb *} gen))
       ?.  |(!vet ?=({$zpfs *} gen) ?=({$zpzp *} gen))
         ~|(%mint-vain !!)
@@ -8324,8 +8324,8 @@
       =+  mew=(snub q.gen)
       =-  [(nice p.yom) ?:(=(0 p.q.lar) q.yom [%9 p.q.lar q.yom])]
       ^=  yom
-      =+  hej=*(list {p+axis q+nock})
-      |-  ^-  {p+type q+nock}
+      =+  hej=*(list {p/axis q/nock})
+      |-  ^-  {p/type q/nock}
       ?~  mew
         [(fire q.q.lar) (hike p.lar hej)]
       =+  zil=^$(gen q.i.mew, gol %noun)
@@ -8422,14 +8422,14 @@
     ==
     ::
     ++  nice
-      |=  typ+type
+      |=  typ/type
       ~|  %mint-nice
       ?>  ?|(!vet (nest(sut gol) & typ))
       typ
     ::
     ++  grow
-      |=  {mel+?($gold $iron $lead $zinc) ruf+twig dab+(map term foot)}
-      ^-  {p+type q+nock}
+      |=  {mel/?($gold $iron $lead $zinc) ruf/twig dab/(map term foot)}
+      ^-  {p/type q/nock}
       =+  dan=^$(gen ruf, gol %noun)
       =+  toc=(core p.dan [%gold p.dan [~ dab]])
       =+  dez=(harp(sut toc) dab)
@@ -8455,12 +8455,12 @@
   ::
   ++  mull
     ~/  %mull
-    |=  {gol+type dox+type gen+twig}
+    |=  {gol/type dox/type gen/twig}
     ^-  ?
     ?.  vet
       &
     =<  &
-    |^  ^-  {p+type q+type}
+    |^  ^-  {p/type q/type}
     ?:  =(%void sut)
       ~|(%mull-none !!)
     ?-    gen
@@ -8479,7 +8479,7 @@
       =+  mew=(snub q.gen)
       =-  [(nice (fire p.yom)) (fire(vet |) q.yom)]
       ^=  yom
-      |-  ^-  {p+(list {p+type q+foot}) q+(list {p+type q+foot})}
+      |-  ^-  {p/(list {p/type q/foot}) q/(list {p/type q/foot})}
       ?~  mew
         [q.q.lar q.q.vug]
       =+  zil=^$(gen q.i.mew, gol %noun)
@@ -8532,14 +8532,14 @@
     ::
         {$wtcl *}
       =+  nor=$(gen p.gen, gol bool)
-      =+  ^=  hiq  ^-  {p+type q+type}
+      =+  ^=  hiq  ^-  {p/type q/type}
           =+  fex=[p=(gain p.gen) q=(gain(sut dox) p.gen)]
           ?:  =(%void p.fex)
             [%void ?:(=(%void q.fex) %void ~|(%wtcl-z (play(sut q.fex) q.gen)))]
           ?:  =(%void q.fex)
             ~|(%mull-bonk-b !!)
           $(sut p.fex, dox q.fex, gen q.gen)
-      =+  ^=  ran  ^-  {p+type q+type}
+      =+  ^=  ran  ^-  {p/type q/type}
           =+  wux=[p=(lose p.gen) q=(lose(sut dox) p.gen)]
           ?:  =(%void p.wux)
             [%void ?:(=(%void q.wux) %void ~|(%wtcl-a (play(sut q.wux) r.gen)))]
@@ -8581,11 +8581,11 @@
     ==
     ::
     ++  beth
-      |=  typ+type
+      |=  typ/type
       [(nice typ) typ]
     ::
     ++  nice
-      |=  typ+type
+      |=  typ/type
       ::  ~_  (dunk(sut gol) 'need')
       ::  ~_  (dunk(sut typ) 'have')
       ~|  %mull-nice
@@ -8593,9 +8593,9 @@
       typ
     ::
     ++  grow
-      |=  {mel+?($gold $iron $lead $zinc) ruf+twig dab+(map term foot)}
+      |=  {mel/?($gold $iron $lead $zinc) ruf/twig dab/(map term foot)}
       ~|  %mull-grow
-      ^-  {p+type q+type}
+      ^-  {p/type q/type}
       =+  dan=^$(gen ruf, gol %noun)
       =+  ^=  toc  :-  p=(core p.dan [%gold p.dan [~ dab]])
                    q=(core q.dan [%gold q.dan [~ dab]])
@@ -8604,7 +8604,7 @@
       (core q.dan [mel q.dan [[%0 0] dab]])
     ::
     ++  bake
-      |=  dab+(map term foot)
+      |=  dab/(map term foot)
       ^-  *
       ?:  ?=($~ dab)
         ~
@@ -8621,14 +8621,14 @@
       ==
     --
   ::
-  ++  meet  |=(ref+type &((nest | ref) (nest(sut ref) | sut)))
+  ++  meet  |=(ref/type &((nest | ref) (nest(sut ref) | sut)))
   ++  nest
     ~/  %nest
-    |=  {tel+? ref+type}
+    |=  {tel/? ref/type}
     ^-  ?
-    =|  $:  gem+(set {p+type q+type})                ::  prune ref
-            gul+(set {p+type q+type})                ::  assume match
-            meg+(set {p+type q+type})                ::  prune sut
+    =|  $:  gem/(set {p/type q/type})                ::  prune ref
+            gul/(set {p/type q/type})                ::  assume match
+            meg/(set {p/type q/type})                ::  prune sut
         ==
     =<  dext
     |%
@@ -8674,7 +8674,7 @@
       ==
     ::
     ++  cram
-      |=  {dab+(map term foot) hem+(map term foot)}
+      |=  {dab/(map term foot) hem/(map term foot)}
       ^-  ?
       ?-    dab
           $~  =(hem ~)
@@ -8778,7 +8778,7 @@
   ::
   ++  park
     ~/  %park
-    |=  {way+?($read $rite $both $free) axe+axis}
+    |=  {way/?($read $rite $both $free) axe/axis}
     ^-  ?
     ?>  ?=({$core *} sut)
     ?|
@@ -8806,7 +8806,7 @@
   ::
   ++  peek
     ~/  %peek
-    |=  {way+?($read $rite $both $free) axe+axis}
+    |=  {way/?($read $rite $both $free) axe/axis}
     ^-  type
     ?:  =(1 axe)
       sut
@@ -8839,7 +8839,7 @@
   ++  play
     ~/  %play
     =>  .(vet |)
-    |=  gen+twig
+    |=  gen/twig
     ^-  type
     ?-  gen
       {^ *}      (cell $(gen p.gen) $(gen q.gen))
@@ -8848,7 +8848,7 @@
                  =+  mew=(snub q.gen)
                  =+  rag=q.q.lar
                  %-  fire
-                 |-  ^-  (list {p+type q+foot})
+                 |-  ^-  (list {p/type q/foot})
                  ?~  mew
                    rag
                  $(mew t.mew, rag q:(tock p.i.mew ^$(gen q.i.mew) rag))
@@ -8888,7 +8888,7 @@
     ==
   ::
   ++  reco
-    |*  fuy+_|=(p+type p)
+    |*  fuy/_|=(p/type p)
     =+  por=repo
     =+  yot=(fuy por)
     ?:  =(yot por)
@@ -8909,22 +8909,22 @@
   ::
   ++  rest
     ~/  %rest
-    |=  leg+(list {p+type q+twig})
+    |=  leg/(list {p/type q/twig})
     ^-  type
-    ?:  (lien leg |=({p+type q+twig} (~(has in fan) [p q])))
+    ?:  (lien leg |=({p/type q/twig} (~(has in fan) [p q])))
       ~|(%rest-loop !!)
     =>  .(fan (~(gas in fan) leg))
     %+  roll
       %-  %~  tap
             in
           %-  ~(gas in *(set type))
-          (turn leg |=({p+type q+twig} (play(sut p) q)))
+          (turn leg |=({p/type q/twig} (play(sut p) q)))
       ~
     =+([p=*type q=`type`%void] |.((fork p q)))
   ::
   ++  seek
     ~/  %seek
-    |=  {way+?($read $rite $both $free) hyp+wing}
+    |=  {way/?($read $rite $both $free) hyp/wing}
     ^-  port
     ?~  hyp
       [1 %& sut]
@@ -8933,7 +8933,7 @@
     =+  ^=  syp
         ?-  -.q.zar
           $&  p.q.zar
-          $|  (fire (turn q.q.zar |=({p+type q+foot} [p [%ash ~ 1]])))
+          $|  (fire (turn q.q.zar |=({p/type q/foot} [p [%ash ~ 1]])))
         ==
     ?-    i.hyp
         {$& *}
@@ -8946,13 +8946,13 @@
     ==
   ::
   ++  seep
-    |=  {way+?($read $rite $both $free) hyp+wing}
-    ^-  {p+axis q+type}
+    |=  {way/?($read $rite $both $free) hyp/wing}
+    ^-  {p/axis q/type}
     =+  zar=(seek way hyp)
     ?>(?=($& -.q.zar) [p.zar p.q.zar])
   ::
   ++  sift
-    |=  ref+type
+    |=  ref/type
     ~+
     ^-  type
     !!
@@ -8960,15 +8960,15 @@
   ::
   ++  snub
     ~/  %snub
-    |=  har+(list {p+wing q+twig})
-    ^-  (list {p+wing q+twig})
-    (turn har |=({a+wing b+twig} [(flop a) b]))
+    |=  har/(list {p/wing q/twig})
+    ^-  (list {p/wing q/twig})
+    (turn har |=({a/wing b/twig} [(flop a) b]))
   ::
   ++  tack
     ~/  %tack
-    |=  {peh+wing mur+type}
+    |=  {peh/wing mur/type}
     =+  axe=1
-    |-  ^-  {p+axis q+type}
+    |-  ^-  {p/axis q/type}
     ?~  peh
       [axe mur]
     =>  .(i.peh ?^(i.peh i.peh [%| p=0 q=i.peh]))
@@ -8997,11 +8997,11 @@
   ::
   ++  tock
     ~/  %tock
-    |=  {peh+wing mur+type men+(list {p+type q+foot})}
-    ^-  {p+axis q+(list {p+type q+foot})}
+    |=  {peh/wing mur/type men/(list {p/type q/foot})}
+    ^-  {p/axis q/(list {p/type q/foot})}
     =-  [(need p.wib) q.wib]
     ^=  wib
-    |-  ^-  {p+(unit axis) q+(list {p+type q+foot})}
+    |-  ^-  {p/(unit axis) q/(list {p/type q/foot})}
     ?~  men
       [*(unit axis) ~]
     =+  geq=(tack(sut p.i.men) peh mur)
@@ -9010,7 +9010,7 @@
   ::
   ++  wrap
     ~/  %wrap
-    |=  yoz+?($lead $iron $zinc)
+    |=  yoz/?($lead $iron $zinc)
     ^-  type
     ?-  sut
       {$core *}  ?.(=(%gold p.q.sut) ~|(%wrap-metl !!) sut(p.q yoz))
@@ -9023,25 +9023,25 @@
 ::                section 2fD, grammar                  ::
 ::
 ++  vang
-  |=  {bug+? wer+path}
+  |=  {bug/? wer/path}
   %*(. vast bug bug, wer wer)
 ::
 ++  vast
   =+  [bug=`?`| was=*(set path) wer=*path]
   |%
   ++  gash  %+  cook
-              |=  a+(list tyke)  ^-  tyke
+              |=  a/(list tyke)  ^-  tyke
               ?~(a ~ (weld i.a $(a t.a)))
             (more fas gasp)
   ++  gasp  ;~  pose
               %+  cook
-                |=({a+tyke b+tyke c+tyke} :(weld a b c))
+                |=({a/tyke b/tyke c/tyke} :(weld a b c))
               ;~  plug
-                (cook |=(a+(list) (turn a |=(b+* ~))) (star tis))
-                (cook |=(a+twig [[~ a] ~]) hasp)
-                (cook |=(a+(list) (turn a |=(b+* ~))) (star tis))
+                (cook |=(a/(list) (turn a |=(b/* ~))) (star tis))
+                (cook |=(a/twig [[~ a] ~]) hasp)
+                (cook |=(a/(list) (turn a |=(b/* ~))) (star tis))
               ==
-              (cook |=(a+(list) (turn a |=(b+* ~))) (plus tis))
+              (cook |=(a/(list) (turn a |=(b/* ~))) (plus tis))
             ==
   ++  glam  ~+((glue ace))
   ++  hasp  ;~  pose
@@ -9049,26 +9049,26 @@
               (stag %cnhp (ifix [pel per] (most ace wide)))
               (stag %dtzy (stag %t qut))
               %+  cook
-                |=(a+coin [%dtzy ?:(?=({$~ $tas *} a) %tas %ta) ~(rent co a)])
+                |=(a/coin [%dtzy ?:(?=({$~ $tas *} a) %tas %ta) ~(rent co a)])
               nuck:so
             ==
   ++  mota  %+  cook
-              |=({a+tape b+tape} (rap 3 (weld a b)))
+              |=({a/tape b/tape} (rap 3 (weld a b)))
             ;~(plug (star low) (star hig))
   ::
   ++  plex
-    |=  gen+twig  ^-  (unit path)
+    |=  gen/twig  ^-  (unit path)
     ?:  ?=({$zpcb *} gen)
       $(gen q.gen)
     ?.  ?=({$clsg *} gen)  ~
     %+  reel  p.gen
-    |=  {a+twig b+_`(unit path)`[~ u=/]}
+    |=  {a/twig b/_`(unit path)`[~ u=/]}
     ?~  b  ~
     ?.  ?=($dtzy -.a)  ~
     `[q.a u.b]
   ::
   ++  pray
-    |=  gen+twig  ~|  %pray  ^-  (unit twig)
+    |=  gen/twig  ~|  %pray  ^-  (unit twig)
     =+  rev=(plex gen)
     ?~  rev  ~
     :-  ~
@@ -9083,17 +9083,17 @@
     ::  (ifix [gay gay] tall(was (~(put in was) u.rev), wer u.rev, bug |))
   ::
   ++  prey
-    |=  gun+(list twig)  ^-  (unit twig)
+    |=  gun/(list twig)  ^-  (unit twig)
     ?~  gun  `[~ 1]
     =+  gup=(pray i.gun)
     ?~  gup  ~
     ?~  t.gun  gup
-    (bind $(gun t.gun) |=(a+twig [%tsgr u.gup a]))
+    (bind $(gun t.gun) |=(a/twig [%tsgr u.gup a]))
   ::
   ++  phax
-    |=  ruw+(list (list beer))
+    |=  ruw/(list (list beer))
     =+  [yun=*(list twig) cah=*(list @)]
-    =+  wod=|=({a+tape b+(list twig)} ^+(b ?~(a b [[%clfs %smdq (flop a)] b])))
+    =+  wod=|=({a/tape b/(list twig)} ^+(b ?~(a b [[%clfs %smdq (flop a)] b])))
     |-  ^+  yun
     ?~  ruw
       (flop (wod cah yun))
@@ -9103,25 +9103,25 @@
     $(i.ruw t.i.ruw, cah ~, yun [p.i.i.ruw (wod cah yun)])
   ::
   ++  posh  !:
-    |=  {pre+(unit tyke) pof+(unit {p+@ud q+tyke})}
+    |=  {pre/(unit tyke) pof/(unit {p/@ud q/tyke})}
     ^-  (unit (list twig))
     =-  ?^(- - ~&(%posh-fail -))
     =+  wom=(poof wer)
     %+  biff
       ?~  pre  `u=wom
       %+  bind  (poon wom u.pre)
-      |=  moz+(list twig)
+      |=  moz/(list twig)
       ?~(pof moz (weld moz (slag (lent u.pre) wom)))
-    |=  yez+(list twig)
+    |=  yez/(list twig)
     ?~  pof  `yez
     =+  zey=(flop yez)
     =+  [moz=(scag p.u.pof zey) gul=(slag p.u.pof zey)]
     =+  zom=(poon (flop moz) q.u.pof)
     ?~(zom ~ `(weld (flop gul) u.zom))
   ::
-  ++  poof  |=(pax+path ^-(tusk (turn pax |=(a+@ta [%dtzy %ta a]))))
+  ++  poof  |=(pax/path ^-(tusk (turn pax |=(a/@ta [%dtzy %ta a]))))
   ++  poon
-    |=  {pag+tusk goo+tyke}
+    |=  {pag/tusk goo/tyke}
     ^-  (unit tusk)
     ?~  goo  `~
     %+  both
@@ -9137,13 +9137,13 @@
   ::
   ++  porc
     ;~  plug
-      (cook |=(a+(list) (lent a)) (star cen))
+      (cook |=(a/(list) (lent a)) (star cen))
       ;~(pfix fas gash)
     ==
   ::
   ++  rump
     %+  sear
-      |=  {a+wing b+(unit twig)}  ^-  (unit twig)
+      |=  {a/wing b/(unit twig)}  ^-  (unit twig)
       ?~(b [~ %cnzz a] ?.(?=({@ $~} a) ~ [~ [%dtzz %tas i.a] u.b]))
     ;~(plug rope ;~(pose (stag ~ ;~(pfix hax wide)) (easy ~)))
   ::
@@ -9154,7 +9154,7 @@
   ::
   ++  rupl
     %+  cook
-      |=  {a+? b+(list twig) c+?}
+      |=  {a/? b/(list twig) c/?}
       ?:  a
         ?:  c
           [%clsg [%clsg b] ~]
@@ -9180,12 +9180,12 @@
     ==
   ::
   ++  sail                                              ::  template language
-    |=  tol+?  =|  lin+?
+    |=  tol/?  =|  lin/?
     |%
     ++  ape                                             ::  product twig
       %-  cook
       :_  amp
-      |=  tum+tuna  ^-  twig
+      |=  tum/tuna  ^-  twig
       ?:  ?=({$e *} tum)
         [p.tum (sag q.tum)]
       (sag tum ~)
@@ -9228,21 +9228,21 @@
     ::
     ++  fry                                             ::  mane as twig
       %+  cook
-        |=  {a+@tas b+(unit @tas)}
+        |=  {a/@tas b/(unit @tas)}
         ?~  b
           [%dtzz %tas a]
         [[%dtzz %tas a] [%dtzz %tas u.b]]
       ;~(plug sym ;~(pose (stag ~ ;~(pfix cab sym)) (easy ~)))
     ::
     ++  hag                                             ::  script or style
-      %+  cook  |=(a+twig a)
+      %+  cook  |=(a/twig a)
       ;~  plug
         (stag %dtzz (stag %tas ;~(pose (jest %script) (jest %style))))
         (stag %clsg jaw)
       ==
     ::
     ++  hig                                             ::  simple head
-      (cook |=({a+twig b+(list twig)} [a %clsg b]) hog)
+      (cook |=({a/twig b/(list twig)} [a %clsg b]) hog)
     ::
     ++  hog                                             ::  tag head
       %+  cook
@@ -9250,9 +9250,9 @@
         ^-  {twig (list twig)}
         =-  [a (welp - ?~(c d [[[%dtzz %tas p.c] q.c] d]))]
         =-  (~(tap by -))
-        %.  |=(e+(list tank) [%smdq ~(ram re %rose [" " `~] e)])
+        %.  |=(e/(list tank) [%smdq ~(ram re %rose [" " `~] e)])
         =<  ~(run by f:(reel b .))
-        |=  {e+{p+term q+term} f+(jar twig tank)}
+        |=  {e/{p/term q/term} f/(jar twig tank)}
         (~(add ja f) [[%dtzz %tas p.e] [%leaf (trip q.e)]])
       ;~  plug
         fry
@@ -9276,15 +9276,15 @@
       ==
     ::
     ++  hug                                             ::  head shape
-      $:  a+twig                                        ::  XX translation
-          b+(list {@tas @tas})
-          c+$@($~ {p+@tas q+twig})
-          d+(list twig)
+      $:  a/twig                                        ::  XX translation
+          b/(list {@tas @tas})
+          c/$@($~ {p/@tas q/twig})
+          d/(list twig)
       ==
     ::
     ++  hul                                             ::  tall preface
       %+  cook
-        |=  {a+{p+twig q+(list twig)} b+(list twig) c+(list tuna)}
+        |=  {a/{p/twig q/(list twig)} b/(list twig) c/(list tuna)}
         ^-  {twig (list tuna)}
         [[p.a %clsg (weld q.a b)] c]
       ;~(plug hog hoy nol)
@@ -9299,22 +9299,22 @@
       ==
     ::
     ++  lif                                             ::  wide elements
-      %+  cook  |=(a+(list tuna) a)
+      %+  cook  |=(a/(list tuna) a)
       ;~(pose ;~(pfix col pep) (cold ~ sem) (easy ~))
     ::
     ++  luf                                             ::  wide elements
-      %+  cook  |=(a+(list tuna) a)
+      %+  cook  |=(a/(list tuna) a)
       (star ;~(pfix ace bet))
     ::
     ++  nal                                             ::  unescaped tall tail
-      %+  cook  |=(a+(list tuna) a)
+      %+  cook  |=(a/(list tuna) a)
       %+  ifix  [gap ;~(plug gap duz)]
       %+  most  gap
       ;~  pfix  sem
         ;~  pose
           ;~  pfix  ace
             %+  cook
-              |=  a+tape
+              |=  a/tape
               [%a %smdq (weld a `tape`[`@`10 ~])]
             (star (shim 32 255))
           ==
@@ -9324,7 +9324,7 @@
     ::
     ++  nol                                             ::  tall tail
       ?>  tol
-      %+  cook  |=(a+(list tuna) a)
+      %+  cook  |=(a/(list tuna) a)
       ;~  pose
         (cold ~ sem)
         ;~(pfix col pep(tol |))
@@ -9333,7 +9333,7 @@
       ==
     ::
     ++  nup                                             ::  wide quote
-      %+  cook  |=(a+(list tuna) a)
+      %+  cook  |=(a/(list tuna) a)
       ;~  pose
         ;~(less (jest '"""') (ifix [doq doq] (cook rab puv)))
         (inde (ifix [(jest '"""\0a') (jest '\0a"""')] (cook rab puv(lin |))))
@@ -9341,11 +9341,11 @@
     ::
     ++  pab  (ifix [kel ker] ;~(plug hig luf))          ::  bracketed element
     ++  ped                                             ::  wide flow
-      %+  cook  |=(a+(list tuna) a)
+      %+  cook  |=(a/(list tuna) a)
       (ifix [pel per] (more ace bet))
     ::
     ++  pep                                             ::  wrapped tuna
-      %+  cook  |=(a+(list tuna) a)
+      %+  cook  |=(a/(list tuna) a)
       ;~  pose
         ped
         (ifix [pel per] (more ace bet))
@@ -9357,7 +9357,7 @@
       ==
     ::
     ++  puv                                             ::  wide#tall flow
-      %+  cook  |=(a+(list beet) a)
+      %+  cook  |=(a/(list beet) a)
       %-  star
       ;~  pose
         ;~(pfix bas ;~(pose (mask "-+*%;\{") bas doq bix:ab))
@@ -9372,9 +9372,9 @@
       ==
     ::
     ++  rab                                             ::  beet to tuna
-      |=  reb+(list beet)
+      |=  reb/(list beet)
       ^-  (list tuna)
-      =|  {sim+(list @) tuz+(list tuna)}
+      =|  {sim/(list @) tuz/(list tuna)}
       |-  ^-  (list tuna)
       ?~  reb
         =.  sim
@@ -9388,7 +9388,7 @@
       [[%a %smdq (flop sim)] i.reb zut]
     ::
     ++  sag                                             ::  tuna to twig
-      |=  lut+(list tuna)
+      |=  lut/(list tuna)
       ^-  twig
       :-  %cltr
       |-  ^-  (list twig)
@@ -9433,7 +9433,7 @@
               (stag %cbzy (stag %f (cold & pam)))
               (stag %cbzy (stag %f (cold | bar)))
               (stag %cbzy (stag %t qut))
-              (stag %cbzy (sear |=(a+coin ?:(?=($$ -.a) (some +.a) ~)) nuck:so))
+              (stag %cbzy (sear |=(a/coin ?:(?=($$ -.a) (some +.a) ~)) nuck:so))
             ==
           ==
           rump
@@ -9441,18 +9441,18 @@
       :-  '%'
         ;~  pfix  cen
           ;~  pose
-            (stag %clsg (sear |+({a+@ud b+tyke} (posh ~ ~ a b)) porc))
+            (stag %clsg (sear |+({a/@ud b/tyke} (posh ~ ~ a b)) porc))
             (stag %dtzz (stag %tas (cold %$ buc)))
             (stag %dtzz (stag %f (cold & pam)))
             (stag %dtzz (stag %f (cold | bar)))
             (stag %dtzz (stag %t qut))
             (cook (jock &) nuck:so)
-            (stag %clsg (sear |=(a+(list) (posh ~ ~ (lent a) ~)) (star cen)))
+            (stag %clsg (sear |=(a/(list) (posh ~ ~ (lent a) ~)) (star cen)))
           ==
         ==
       :-  '&'
         ;~  pose
-          (cook |=(a+wing [%cnts a ~]) rope)
+          (cook |=(a/wing [%cnts a ~]) rope)
           (stag %wtpm ;~(pfix pam (ifix [pel per] (most ace wide))))
           ;~(plug (stag %dtzz (stag %f (cold & pam))) ;~(pfix fas wide))
           (stag %dtzy (stag %f (cold & pam)))
@@ -9475,28 +9475,28 @@
           (stag %dtls ;~(pfix lus (ifix [pel per] wide)))
         ::
           %+  cook
-            |=  a+(list (list beer))
+            |=  a/(list (list beer))
             :-  %clfs
             [%smdq |-(?~(a ~ (weld i.a $(a t.a))))]
           (most dog ;~(pfix lus soil))
         ::
-          (cook |=(a+wing [%cnts a ~]) rope)
+          (cook |=(a/wing [%cnts a ~]) rope)
         ==
       :-  '-'
         ;~  pose
           (stag %dtzy tash:so)
         ::
           %+  cook
-            |=  a+(list (list beer))
+            |=  a/(list (list beer))
             [%clsg (phax a)]
           (most dog ;~(pfix hep soil))
         ::
-          (cook |=(a+wing [%cnts a ~]) rope)
+          (cook |=(a/wing [%cnts a ~]) rope)
         ==
       :-  '.'
         ;~  pose
           (cook (jock |) ;~(pfix dot perd:so))
-          (cook |=(a+wing [%cnts a ~]) rope)
+          (cook |=(a/wing [%cnts a ~]) rope)
         ==
       :-  ['0' '9']
         (stag %dtzy bisk:so)
@@ -9525,26 +9525,26 @@
         ;~  pfix  tec
           ;~  pose
             %+  cook
-              |=({a+@ta b+twig} [%ktls [%dtzy a 0] [%ktls [%dtzy %$ 0] b]])
+              |=({a/@ta b/twig} [%ktls [%dtzy a 0] [%ktls [%dtzy %$ 0] b]])
             ;~(pfix pat ;~(plug mota ;~(pfix tec wide)))
             ;~  pfix  tar
               (stag %kthp (stag [%cbzz %noun] ;~(pfix tec wide)))
             ==
             (stag %kthp ;~(plug wide ;~(pfix tec wide)))
             (stag %ktls ;~(pfix lus ;~(plug wide ;~(pfix tec wide))))
-            (cook |=(a+twig [[%dtzz %n ~] a]) wide)
+            (cook |=(a/twig [[%dtzz %n ~] a]) wide)
           ==
         ==
       :-  '"'
         %+  cook
-          |=  a+(list (list beer))
+          |=  a/(list (list beer))
           [%smdq |-(?~(a ~ (weld i.a $(a t.a))))]
         (most dog soil)
       :-  ['a' 'z']
         rump
       :-  '|'
         ;~  pose
-          (cook |=(a+wing [%cnts a ~]) rope)
+          (cook |=(a/wing [%cnts a ~]) rope)
           (stag %wtbr ;~(pfix bar (ifix [pel per] (most ace wide))))
           ;~(plug (stag %dtzz (stag %f (cold | bar))) ;~(pfix fas wide))
           (stag %dtzy (stag %f (cold | bar)))
@@ -9598,7 +9598,7 @@
     ==
   ++  sump  (ifix [kel ker] (stag %cltr (most ace wide)))
   ++  noil
-    |=  tol+?
+    |=  tol/?
     =<  ;~  pfix  buc
           %-  stew
           ^.  stet  ^.  limo
@@ -9608,17 +9608,17 @@
         ==
     |%
     ++  toad
-      |*  har+_exqa
+      |*  har/_exqa
       =+  dur=(ifix [pel per] $:har(tol |))
       ?:(tol ;~(pose ;~(pfix gap $:har(tol &)) dur) dur)
     ::
     ++  rung
-      |*  {dif+rule tuq+* har+_exqa}
+      |*  {dif/rule tuq/* har/_exqa}
       ;~(pfix dif (stag tuq (toad har)))
     ::
     ++  gunk  ~+((glue muck))
     ++  muck  ?:(tol gap ace)
-    ++  butt  |*(zor+rule ?:(tol ;~(sfix zor ;~(plug gap duz)) zor))
+    ++  butt  |*(zor/rule ?:(tol ;~(sfix zor ;~(plug gap duz)) zor))
     ++  loaf  ?:(tol howl toil)
     ++  lobe  ?:(tol tall wide)
     ++  exqa  |.(loaf)
@@ -9628,7 +9628,7 @@
     ++  exqe  |.(;~(gunk sym loaf))
     --
   ++  norm                                              ::  rune regular form
-    |=  tol+?  
+    |=  tol/?  
     =<  %-  stew
         ^.  stet  ^.  limo
         :~  :-  '|'
@@ -9799,7 +9799,7 @@
       ;~  pfix  lus
         ;~  pose
           %+  cook
-            |=({a+$ash b+term c+twig} [b a c])
+            |=({a/$ash b/term c/twig} [b a c])
           ;~  gunk
             (cold %ash (just '+'))
             ;~(pose (cold %$ buc) sym)
@@ -9807,7 +9807,7 @@
           ==
         ::
           %+  cook
-            |=({a+$elm b+term c+twig} [b a c])
+            |=({a/$elm b/term c/twig} [b a c])
           ;~  gunk
             (cold %elm (just '-'))
             ;~(pose (cold %$ buc) sym)
@@ -9815,7 +9815,7 @@
           ==
         ::
           %+  cook
-            |=({a+$oak b+term} [b a ~])
+            |=({a/$oak b/term} [b a ~])
           ;~  gunk
             (cold %oak (just '|'))
             ;~(pose (cold %$ buc) sym)
@@ -9826,23 +9826,23 @@
     ++  wisp                                            ::  core tail
       %-  ulva
       %+  cook
-        |=(a+(list {p+term q+foot}) (~(gas by *(map term foot)) a))
+        |=(a/(list {p/term q/foot}) (~(gas by *(map term foot)) a))
       (most muck boog)
     ::
     ++  toad                                            ::  untrap parser exp
-      |*  har+_expa
+      |*  har/_expa
       =+  dur=(ifix [pel per] $:har(tol |))
       ?:(tol ;~(pose ;~(pfix gap $:har(tol &)) dur) dur)
     ::
     ++  rune                                            ::  build rune
-      |*  {dif+rule tuq+* har+_expa}
+      |*  {dif/rule tuq/* har/_expa}
       ;~(pfix dif (stag tuq (toad har)))
     ::
     ++  glop  ~+((glue mash))                           ::  separated by space
     ++  gunk  ~+((glue muck))                           ::  separated list
-    ++  butt  |*  zor+rule                              ::  closing == if tall
+    ++  butt  |*  zor/rule                              ::  closing == if tall
               ?:(tol ;~(sfix zor ;~(plug gap duz)) zor)
-    ++  ulva  |*  zor+rule                              ::  closing -- and tall
+    ++  ulva  |*  zor/rule                              ::  closing -- and tall
               ?.(tol fail ;~(sfix zor ;~(plug gap dun)))
     ++  hank  (most muck loaf)                          ::  gapped twigs
     ++  loaf  ?:(tol tall wide)                         ::  hoon, current width
@@ -9851,7 +9851,7 @@
     ++  muck  ?:(tol gap ace)                           ::  general separator
     ++  teak  %+  knee  *tiki  |.  ~+                   ::  wing or twig
               =+  ^=  gub
-                  |=  {a+term b+$%({$& p+wing} {$| p+twig})}
+                  |=  {a/term b/$%({$& p/wing} {$| p/twig})}
                   ^-  tiki
                   ?-(-.b $& [%& [~ a] p.b], $| [%| [~ a] p.b])
               =+  ^=  wyp
@@ -9911,22 +9911,22 @@
     ::
     ::    tiki expansion for %wt runes
     ::
-    ++  tkhp  |.  %+  cook  |=  {a+tiki b+tine}
+    ++  tkhp  |.  %+  cook  |=  {a/tiki b/tine}
                             (~(wthp ah a) b)
                   (butt ;~(gunk teak rack))
-    ++  tkkt  |.  %+  cook  |=  {a+tiki b+twig c+twig}
+    ++  tkkt  |.  %+  cook  |=  {a/tiki b/twig c/twig}
                             (~(wtkt ah a) b c)
                   ;~(gunk teak loaf loaf)
-    ++  tkls  |.  %+  cook  |=  {a+tiki b+twig c+tine}
+    ++  tkls  |.  %+  cook  |=  {a/tiki b/twig c/tine}
                             (~(wtls ah a) b c)
                   (butt ;~(gunk teak loaf rack))
-    ++  tkpt  |.  %+  cook  |=  {a+tiki b+twig c+twig}
+    ++  tkpt  |.  %+  cook  |=  {a/tiki b/twig c/twig}
                             (~(wtpt ah a) b c)
                   ;~(gunk teak loaf loaf)
-    ++  tksg  |.  %+  cook  |=  {a+tiki b+twig c+twig}
+    ++  tksg  |.  %+  cook  |=  {a/tiki b/twig c/twig}
                             (~(wtsg ah a) b c)
                   ;~(gunk teak loaf loaf)
-    ++  tkts  |.  %+  cook  |=  {a+twig b+tiki} 
+    ++  tkts  |.  %+  cook  |=  {a/twig b/tiki} 
                             (~(wtts ah b) a)
                   ;~(gunk loaf teak)
     ::
@@ -9966,8 +9966,8 @@
         ==
     ++  bono  |.                                        ::  term, wing, 2 twigs
         ;~  gunk                                        ::  (as twigs)
-          (cook |=(cog+term [%cnzz [cog ~]]) sym)
-          (cook |=(hyp+wing [%cnzz hyp]) rope)
+          (cook |=(cog/term [%cnzz [cog ~]]) sym)
+          (cook |=(hyp/wing [%cnzz hyp]) rope)
           loaf
           loaf
         ==
@@ -9975,7 +9975,7 @@
                 ;~(pfix cen sym)
                 ;~(pfix dot ;~(pose wide ;~(pfix muck loaf)))
               ==
-    ++  bony  (cook |=(a+(list) (lent a)) (plus tis))   ::  base 1 =en count
+    ++  bony  (cook |=(a/(list) (lent a)) (plus tis))   ::  base 1 =en count
     ++  bonz                                            ::  term-labelled twigs
       ;~  pose
         (cold ~ sig)
@@ -9986,14 +9986,13 @@
     --
   ::
   ++  lang                                              ::  lung sample
-    $:  ros+twig                                        ::  XX translation
+    $:  ros/twig                                        ::  XX translation
         $=  vil
-        $%  {$tis p+twig}
-            {$col p+twig}
-            {$ket p+twig}
-            {$fas p+twig}
-            {$lus p+twig}
-            {$pel p+tram}
+        $%  {$tis p/twig}
+            {$col p/twig}
+            {$ket p/twig}
+            {$fas p/twig}
+            {$pel p/tram}
         ==
     ==
   ::
@@ -10004,11 +10003,9 @@
     ^-  (unit twig)
     ?-    -.vil
         $col  [~ %tsgl ros p.vil]
-        $pel  (bind ~(reek ap ros) |=(hyp+wing [%cnts hyp p.vil]))
+        $pel  (bind ~(reek ap ros) |=(hyp/wing [%cnts hyp p.vil]))
         $ket  [~ ros p.vil]
         $fas  =+  tog=~(hock ap ros)
-              ?.(?=(@ tog) ~ [~ %bcts tog p.vil])
-        $lus  =+  tog=~(hock ap ros)
               ?.(?=(@ tog) ~ [~ %bcts tog p.vil])
         $tis  =+  tog=~(hock ap ros)
               ?:(=([%0 ~] tog) ~ [~ %ktts tog p.vil])
@@ -10022,7 +10019,6 @@
         ;~(plug (cold %tis tis) wide)
         ;~(plug (cold %col col) wide)
         ;~(plug (cold %ket ket) wide)
-        ;~(plug (cold %lus lus) wide)
         ;~(plug (cold %fas fas) wide)
         ;~  plug
           (easy %pel)
@@ -10043,19 +10039,19 @@
   ++  rope                                              ::  wing form
     %+  knee  *wing
     |.  ~+
-    %+  (slug |=({a+limb b+wing} [a b]))
+    %+  (slug |=({a/limb b/wing} [a b]))
       dot
     ;~  pose
       %+  cook
-        |=({a+(list) b+term} ?~(a b [%| (lent a) b]))
+        |=({a/(list) b/term} ?~(a b [%| (lent a) b]))
       ;~(plug (star ket) ;~(pose sym (cold %$ buc)))
     ::
       %+  cook
-        |=(a+axis [%& a])
+        |=(a/axis [%& a])
       ;~  pose
         ;~(pfix lus dim:ag)
-        ;~(pfix pam (cook |=(a+@ ?:(=(0 a) 0 (mul 2 +($(a (dec a)))))) dim:ag))
-        ;~(pfix bar (cook |=(a+@ ?:(=(0 a) 1 +((mul 2 $(a (dec a)))))) dim:ag))
+        ;~(pfix pam (cook |=(a/@ ?:(=(0 a) 0 (mul 2 +($(a (dec a)))))) dim:ag))
+        ;~(pfix bar (cook |=(a/@ ?:(=(0 a) 1 +((mul 2 $(a (dec a)))))) dim:ag))
         ven
         (cold 1 dot)
       ==
@@ -10099,7 +10095,7 @@
       :-  ['a' 'z']
         ;~  pose
           %+  sear
-            |=(a+tile `(unit tile)`~)
+            |=(a/tile `(unit tile)`~)
           (stag %bark ;~(plug sym ;~(pfix tis toil)))
           (stag %herb wide)
         ==
@@ -10111,16 +10107,16 @@
         fail
     ==
   ++  wart
-    |*  zor+rule
+    |*  zor/rule
     %+  here
-      |=  {a+pint b+twig}
+      |=  {a/pint b/twig}
       ?:(bug [%zpcb [wer a] b] b)
     zor
   --
 ::
 ++  vest
   ~/  %vest
-  |=  tub+nail
+  |=  tub/nail
   ~|  %vest
   ^-  (like twig)
   %.  tub
@@ -10128,42 +10124,42 @@
   (ifix [gay gay] tall:vast)
 ::
 ++  vice
-  |=  txt+@ta
+  |=  txt/@ta
   ^-  twig
   (rash txt wide:vast)
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    profiling support; move me            ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  doss
-  $:  mon+moan                                          ::  sample count
-      hit+(map term @ud)                                ::  hit points
-      cut+(map path hump)                               ::  cut points
+  $:  mon/moan                                          ::  sample count
+      hit/(map term @ud)                                ::  hit points
+      cut/(map path hump)                               ::  cut points
   ==
 ++  moan                                                ::  sample metric
-  $:  fun+@ud                                           ::  samples in C
-      noc+@ud                                           ::  samples in nock
-      glu+@ud                                           ::  samples in glue
-      mal+@ud                                           ::  samples in alloc
-      far+@ud                                           ::  samples in frag
-      coy+@ud                                           ::  samples in copy
-      euq+@ud                                           ::  samples in equal
+  $:  fun/@ud                                           ::  samples in C
+      noc/@ud                                           ::  samples in nock
+      glu/@ud                                           ::  samples in glue
+      mal/@ud                                           ::  samples in alloc
+      far/@ud                                           ::  samples in frag
+      coy/@ud                                           ::  samples in copy
+      euq/@ud                                           ::  samples in equal
   ==                                                    ::
 ::
 ++  hump
-  $:  mon+moan                                          ::  sample count
-      out+(map path @ud)                                ::  calls out of
-      inn+(map path @ud)                                ::  calls into
+  $:  mon/moan                                          ::  sample count
+      out/(map path @ud)                                ::  calls out of
+      inn/(map path @ud)                                ::  calls into
   ==
 ::
 ++  pi-heck
-    |=  {nam+@tas day+doss}
+    |=  {nam/@tas day/doss}
     ^-  doss
     =+  lam=(~(get by hit.day) nam)
     day(hit (~(put by hit.day) nam ?~(lam 1 +(u.lam))))
 ::
 ++  pi-noon                                             ::  sample trace
-  |=  {mot+term paz+(list path) day+doss}
-  =|  lax+(unit path)
+  |=  {mot/term paz/(list path) day/doss}
+  =|  lax/(unit path)
   |-  ^-  doss
   ?~  paz  day(mon (pi-mope mot mon.day))
   %=    $
@@ -10183,7 +10179,7 @@
     (~(put by inn.hup) u.nax ?~(hag 1 +(u.hag)))
   ==
 ++  pi-mope                                             ::  add sample
-  |=  {mot+term mon+moan}
+  |=  {mot/term mon/moan}
   ?+  mot  mon
     $fun  mon(fun +(fun.mon))
     $noc  mon(noc +(noc.mon))
@@ -10194,11 +10190,11 @@
     $euq  mon(euq +(euq.mon))
   ==
 ++  pi-moth                                             ::  count sample
-  |=  mon+moan  ^-  @ud
+  |=  mon/moan  ^-  @ud
   :(add fun.mon noc.mon glu.mon mal.mon far.mon coy.mon euq.mon)
 ::
 ++  pi-mumm                                             ::  print sample
-  |=  mon+moan  ^-  tape
+  |=  mon/moan  ^-  tape
   =+  tot=(pi-moth mon)
   ;:  welp
     ^-  tape
@@ -10231,7 +10227,7 @@
   ==
 ::
 ++  pi-tell                                             ::  produce dump
-  |=  day+doss
+  |=  day/doss
   ^-  (list tape)
   =+  tot=(pi-moth mon.day)
   ;:  welp
@@ -10239,7 +10235,7 @@
   ::
     %+  turn
       (~(tap by hit.day) ~)
-    |=  {nam+term num+@ud}
+    |=  {nam/term num/@ud}
     :(welp (trip nam) ": " (scow %ud num))
     ["" ~]
   ::
@@ -10247,9 +10243,9 @@
     ^-  (list (list tape))
     %+  turn
       %+  sort  (~(tap by cut.day))
-      |=  {one+(pair path hump) two+(pair path hump)}
+      |=  {one/(pair path hump) two/(pair path hump)}
       (gth (pi-moth mon.q.one) (pi-moth mon.q.two))
-    |=  {pax+path hup+hump}
+    |=  {pax/path hup/hump}
     =+  ott=(pi-moth mon.hup)
     ;:  welp
       [(welp "label: " (spud pax)) ~]
@@ -10260,7 +10256,7 @@
       :-  "into:"
       %+  turn
         (~(tap by out.hup) ~)
-      |=  {pax+path num+@ud}
+      |=  {pax/path num/@ud}
       ^-  tape
       :(welp "  " (spud pax) ": " (scow %ud num))
     ::
@@ -10268,7 +10264,7 @@
       :-  "from:"
       %+  turn
         (~(tap by inn.hup) ~)
-      |=  {pax+path num+@ud}
+      |=  {pax/path num/@ud}
       ^-  tape
       :(welp "  " (spud pax) ": " (scow %ud num))
     ::
@@ -10282,29 +10278,29 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ~%  %arvo  +  ~
 |%
-++  arch  {hax+@uvI fil+(unit @uvI) dir+(map @ta $~)}   ::  fundamental node
-++  arvo  (mold {p+term q+mill} mill)                   ::  arvo card
-++  beam  {{p+ship q+desk r+case} s+path}               ::  global name
-++  beak  {p+ship q+desk r+case}                        ::  garnish with beak
+++  arch  {hax/@uvI fil/(unit @uvI) dir/(map @ta $~)}   ::  fundamental node
+++  arvo  (mold {p/term q/mill} mill)                   ::  arvo card
+++  beam  {{p/ship q/desk r/case} s/path}               ::  global name
+++  beak  {p/ship q/desk r/case}                        ::  garnish with beak
 ++  bone  @ud                                           ::  opaque duct
 ++  care  $?($$ $u $v $w $x $y $z)                      ::  namespace mode
 ++  case                                                ::  version
-          $%  {$da p+@da}                               ::  date
-              {$tas p+@tas}                             ::  label
-              {$ud p+@ud}                               ::  sequence
+          $%  {$da p/@da}                               ::  date
+              {$tas p/@tas}                             ::  label
+              {$ud p/@ud}                               ::  sequence
           ==                                            ::
 ++  desk  @tas                                          ::  ship desk case spur
 ++  cage  (cask vase)                                   ::  global metadata
-++  cask  |*(a+$+(* *) (pair mark a))                   ::  global data
+++  cask  |*(a/$+(* *) (pair mark a))                   ::  global data
 ++  cuff                                                ::  permissions
-          $:  p+(unit (set monk))                       ::  can be read by
-              q+(set monk)                              ::  caused or created by
+          $:  p/(unit (set monk))                       ::  can be read by
+              q/(set monk)                              ::  caused or created by
           ==                                            ::
-++  curd  {p+@tas q+*}                                  ::  typeless card
+++  curd  {p/@tas q/*}                                  ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
-++  hypo  |*(a+$+(* *) (pair type a))                   ::  type associated
-++  hobo  |*  a+$+(* *)                                 ::  kiss wrapper
-          $?  $%  {$soft p+*}                           ::
+++  hypo  |*(a/$+(* *) (pair type a))                   ::  type associated
+++  hobo  |*  a/$+(* *)                                 ::  kiss wrapper
+          $?  $%  {$soft p/*}                           ::
               ==                                        ::
               a                                         ::
           ==                                            ::
@@ -10320,26 +10316,26 @@
   --                                                    ::
 ++  marc                                                ::  structured mark
   $@  mark                                              ::  plain mark
-  $%  {$tabl p+(list (pair marc marc))}                 ::  map
+  $%  {$tabl p/(list (pair marc marc))}                 ::  map
   ==                                                    ::
 ++  mark  @tas                                          ::  content type
 ++  mash  |=(* (mass +<))                               ::  producing mass
 ++  mass  (pair cord (each noun (list mash)))           ::  memory usage
 ++  mill  (each vase milt)                              ::  vase#metavase
-++  milt  {p+* q+*}                                     ::  metavase
-++  monk  (each ship {p+@tas q+@ta})                    ::  general identity
+++  milt  {p/* q/*}                                     ::  metavase
+++  monk  (each ship {p/@tas q/@ta})                    ::  general identity
 ++  mold                                                ::  new kernel action
-          |*  {a+$+(* *) b+$+(* *)}                     ::  forward#reverse
-          $%  {$pass p+path q+a}                        ::  advance
-              {$slip p+a}                               ::  lateral
-              {$sick p+b}                               ::  lame refactoring
-              {$give p+b}                               ::  retreat
+          |*  {a/$+(* *) b/$+(* *)}                     ::  forward#reverse
+          $%  {$pass p/path q/a}                        ::  advance
+              {$slip p/a}                               ::  lateral
+              {$sick p/b}                               ::  lame refactoring
+              {$give p/b}                               ::  retreat
           ==                                            ::
-++  muse  {p+@tas q+duct r+arvo}                        ::  sourced move
-++  move  {p+duct q+arvo}                               ::  arvo move
-++  ovum  {p+wire q+curd}                               ::  typeless ovum
-++  pane  (list {p+@tas q+vase})                        ::  kernel modules
-++  pone  (list {p+@tas q+vise})                        ::  kernel modules old
+++  muse  {p/@tas q/duct r/arvo}                        ::  sourced move
+++  move  {p/duct q/arvo}                               ::  arvo move
+++  ovum  {p/wire q/curd}                               ::  typeless ovum
+++  pane  (list {p/@tas q/vase})                        ::  kernel modules
+++  pone  (list {p/@tas q/vise})                        ::  kernel modules old
 ++  ship  @p                                            ::  network identity
 ++  sink  (trel bone ship path)                         ::  subscription
 ++  sled  $+  {(unit (set monk)) term beam}             ::  namespace function
@@ -10348,17 +10344,17 @@
           (unit (unit (cask)))                          ::
 ++  slut  $+(* (unit (unit)))                           ::  old namespace
 ++  vile                                                ::  reflexive constants
-          $:  typ+type                                  ::  -:!>(*type)
-              duc+type                                  ::  -:!>(*duct)
-              pah+type                                  ::  -:!>(*path)
-              mev+type                                  ::  -:!>([%meta *vase])
+          $:  typ/type                                  ::  -:!>(*type)
+              duc/type                                  ::  -:!>(*duct)
+              pah/type                                  ::  -:!>(*path)
+              mev/type                                  ::  -:!>([%meta *vase])
           ==                                            ::
 ++  wire  path                                          ::  event pretext
 ::::: hacks and tools
 ++  slod
-  |=  sed+slad
+  |=  sed/slad
   ^-  slut
-  |=  raw+*
+  |=  raw/*
   =+  pux=((soft path) raw)
   ?~  pux  ~
   ?.  ?=({@ @ @ @ *} u.pux)  ~
@@ -10382,11 +10378,11 @@
 ::                section 3bE, Arvo core                ::
 ::
 ++  vent                                                ::  vane core
-  |=  {lal+@tas vil+vile bud+vase sew+(pair worm vase)}
+  |=  {lal/@tas vil/vile bud/vase sew/(pair worm vase)}
   ~%  %vent  +>+  ~
   |%
   ++  ruck                                              ::  update vase
-    |=  {pax+path txt+@ta}
+    |=  {pax/path txt/@ta}
     ^+  +>
     =+  arg=[~2000.1.1 0 =>(~ |+(* ~))]
     =+  rig=(slym q.sew arg)
@@ -10396,24 +10392,24 @@
     +>.$(q.sew (slam (slap syg [%cnzy %load]) (slap rig [%cnzy %stay])))
   ::
   ++  wink                                              ::  deploy
-    |=  {now+@da eny+@ ski+slad}
+    |=  {now/@da eny/@ ski/slad}
     =+  rig=(slym q.sew +<)                             ::  activate vane
     ~%  %wink  +>+>  ~
     |%
     ++  doze
-      |=  {now+@da hen+duct}
+      |=  {now/@da hen/duct}
       ^-  (unit @da)
       ((hard (unit @da)) q:(slym (slap rig [%cnzy %doze]) +<))
     ::
     ++  slid
-      |=  {hed+mill tal+mill}
+      |=  {hed/mill tal/mill}
       ^-  mill
       ?:  &(?=($& -.hed) ?=($& -.tal))
         [%& (slop p.hed p.tal)]
       [%| [%cell p.p.hed p.p.tal] [q.p.hed q.p.tal]]
     ::
     ++  slix
-      |=  hil+mill
+      |=  hil/mill
       ^-  mill
       ?-  -.hil
         $&  [%& (slop [typ.vil p.p.hil] p.hil)]
@@ -10421,7 +10417,7 @@
       ==
     ::
     ++  slur                                            ::  call gate on
-      |=  {gat+vase hil+mill}
+      |=  {gat/vase hil/mill}
       ^-  (unit (pair vase worm))
       =+  sam=(slot 6 gat)
       =+  ^=  hig
@@ -10431,18 +10427,18 @@
         ==
       ?.(-.hig ~ `[(slym gat +>.hil) +.hig])
     ::
-    ++  slur-a  ~/(%slur-a |=({gat+vase hil+mill} =+(%a (slur gat hil))))
-    ++  slur-b  ~/(%slur-b |=({gat+vase hil+mill} =+(%b (slur gat hil))))
-    ++  slur-c  ~/(%slur-c |=({gat+vase hil+mill} =+(%c (slur gat hil))))
-    ++  slur-d  ~/(%slur-d |=({gat+vase hil+mill} =+(%d (slur gat hil))))
-    ++  slur-e  ~/(%slur-e |=({gat+vase hil+mill} =+(%e (slur gat hil))))
-    ++  slur-f  ~/(%slur-f |=({gat+vase hil+mill} =+(%f (slur gat hil))))
-    ++  slur-g  ~/(%slur-g |=({gat+vase hil+mill} =+(%g (slur gat hil))))
-    ++  slur-z  ~/(%slur-z |=({gat+vase hil+mill} =+(%z (slur gat hil))))
+    ++  slur-a  ~/(%slur-a |=({gat/vase hil/mill} =+(%a (slur gat hil))))
+    ++  slur-b  ~/(%slur-b |=({gat/vase hil/mill} =+(%b (slur gat hil))))
+    ++  slur-c  ~/(%slur-c |=({gat/vase hil/mill} =+(%c (slur gat hil))))
+    ++  slur-d  ~/(%slur-d |=({gat/vase hil/mill} =+(%d (slur gat hil))))
+    ++  slur-e  ~/(%slur-e |=({gat/vase hil/mill} =+(%e (slur gat hil))))
+    ++  slur-f  ~/(%slur-f |=({gat/vase hil/mill} =+(%f (slur gat hil))))
+    ++  slur-g  ~/(%slur-g |=({gat/vase hil/mill} =+(%g (slur gat hil))))
+    ++  slur-z  ~/(%slur-z |=({gat/vase hil/mill} =+(%z (slur gat hil))))
     ::
     ++  slur-pro                                        ::  profiling slur
       ~/  %slur-pro
-      |=  {lal+@tas gat+vase hil+mill}
+      |=  {lal/@tas gat/vase hil/mill}
       ?+  lal  (slur-z gat hil)
         $a  (slur-a gat hil)
         $b  (slur-b gat hil)
@@ -10455,7 +10451,7 @@
     ::
     ++  song                                            ::  reduce metacard
       ~/  %song                                         ::
-      |=  mex+vase                                      ::  mex: vase of card
+      |=  mex/vase                                      ::  mex: vase of card
       ^-  (unit (pair mill worm))                       ::
       =^  hip  p.sew  (~(nell wa p.sew) p.mex)          ::
       ?.  hip  ~                                        ::  a card is a cell
@@ -10467,21 +10463,21 @@
       =^  hip  p.sew  (~(nest wa p.sew) typ.vil p.vax)  ::
       ?.  hip  ~                                        ::  vase head is type
       %-  biff                                          ::
-      :_  |=(a+(pair milt worm) `[[%| p.a] q.a])        ::  milt to mill
+      :_  |=(a/(pair milt worm) `[[%| p.a] q.a])        ::  milt to mill
       =+  mut=(milt q.tiv)                              ::  card type, value
       |-  ^-  (unit (pair milt worm))                   ::
-      ?.  ?=({$meta p+* q+milt} q.mut)  `[mut p.sew]    ::  ordinary metacard
+      ?.  ?=({$meta p/* q/milt} q.mut)  `[mut p.sew]    ::  ordinary metacard
       =^  hip  p.sew  (~(nets wa p.sew) mev.vil p.mut)  ::
       ?.  hip  ~                                        ::  meta-metacard
       $(mut +.q.mut)                                    ::  descend into meta
     ::
     ++  sump                                            ::  vase to move
       ~/  %sump
-      |=  wec+vase
+      |=  wec/vase
       ^-  (unit (pair move worm))
       %+  biff  ((soft duct) -.q.wec)
-      |=  a+duct
-      %-  bind  :_  |=(b+(pair arvo worm) [`move`[a p.b] q.b])
+      |=  a/duct
+      %-  bind  :_  |=(b/(pair arvo worm) [`move`[a p.b] q.b])
       =-  ?-  -.har
             $|  ~&  [%dead-card p.har]  ~                ::  XX properly log?
             $&  (some p.har)
@@ -10490,45 +10486,45 @@
       =^  caq  p.sew  (~(spot wa p.sew) 3 wec)
       ?+    q.caq   [%| (cat 3 %funk (@tas q.caq))]
       ::
-          {$pass p+* q+@tas r+{p+@tas q+*}}
+          {$pass p/* q/@tas r/{p/@tas q/*}}
         %-  (bond |.([%| p.r.q.caq]))
         %+  biff  ((soft @) q.q.caq)
-        |=  lal+@tas
+        |=  lal/@tas
         ?.  ((sane %tas) lal)  ~
         %+  biff  ((soft path) p.q.caq)
-        |=  pax+path
+        |=  pax/path
         =^  yav  p.sew  (~(spot wa p.sew) 15 caq)
         %+  bind  (song yav)
-        |=  {hil+mill vel+worm}
+        |=  {hil/mill vel/worm}
         [%& [%pass pax lal hil] vel]
       ::
-          {$give p+{p+@tas q+*}}
+          {$give p/{p/@tas q/*}}
         %-  (bond |.([%| p.p.q.caq]))
         =^  yav  p.sew  (~(spot wa p.sew) 3 caq)
         %+  bind  (song yav)
-        |=  {hil+mill vel+worm}
+        |=  {hil/mill vel/worm}
         [%& [%give hil] vel]
       ::
-          {$sick p+{p+@tas q+*}}
+          {$sick p/{p/@tas q/*}}
         %-  (bond |.([%| p.p.q.caq]))
         =^  yav  p.sew  (~(spot wa p.sew) 3 caq)
         %+  bind  (song yav)
-        |=  {hil+mill vel+worm}
+        |=  {hil/mill vel/worm}
         [%& [%sick hil] vel]
       ::
-          {$slip p+@tas q+{p+@tas q+*}}
+          {$slip p/@tas q/{p/@tas q/*}}
         %-  (bond |.([%| p.q.q.caq]))
         %+  biff  ((soft @) p.q.caq)
-        |=  lal+@tas
+        |=  lal/@tas
         ?.  ((sane %tas) lal)  ~
         =^  yav  p.sew  (~(spot wa p.sew) 7 caq)
         %+  bind  (song yav)
-        |=  {hil+mill vel+worm}
+        |=  {hil/mill vel/worm}
         [%& [%slip lal hil] vel]
       ==
     ::
     ++  said                                            ::  vase to (list move)
-      |=  vud+vase
+      |=  vud/vase
       |-  ^-  (pair (list move) worm)
       ?:  =(~ q.vud)  [~ p.sew]
       =^  hed  p.sew  (~(slot wa p.sew) 2 vud)
@@ -10539,9 +10535,9 @@
     ::
     ++  scry                                            ::  read namespace
       ~/  %scry
-      |=  $:  fur+(unit (set monk))
-              ren+care
-              bed+beam
+      |=  $:  fur/(unit (set monk))
+              ren/care
+              bed/beam
           ==
       ^-  (unit (unit (cask)))
       ::  ~&  [%arvo-scry ren bed]
@@ -10561,7 +10557,7 @@
       [~ ~ (mark -.q.dat) +.q.dat]
     ::
     ++  soar                                            ::  scrub vane
-      |=  sev+vase
+      |=  sev/vase
       ^-  vase
       ?:  &(=(-.q.q.sew -.q.sev) =(+>.q.q.sew +>.q.sev))
         q.sew                                           ::  unchanged, use old
@@ -10569,12 +10565,12 @@
     ::
     ++  swim
       ~/  %swim
-      |=  $:  org+@tas
-              pux+(unit wire)
-              hen+duct
-              hil+mill
+      |=  $:  org/@tas
+              pux/(unit wire)
+              hen/duct
+              hil/mill
           ==
-      ^-  {{p+(list move) q+worm} q+vase}
+      ^-  {{p/(list move) q/worm} q/vase}
       ::  ~&  [%swim-wyt `@ud`~(wyt in p.sew)]
       =+  ^=  pru
           ?~  pux
@@ -10601,13 +10597,13 @@
   --
 ::
 ++  vint                                                ::  create vane
-  |=  {lal+@tas vil+vile bud+vase pax+path txt+@ta}     ::
+  |=  {lal/@tas vil/vile bud/vase pax/path txt/@ta}     ::
   (vent lal vil bud *worm (slym (slap bud (rain pax txt)) bud))
 ::
 ++  viol                                                ::  vane tools
-  |=  but+type
+  |=  but/type
   ^-  vile
-  =+  pal=|=(a+@t ^-(type (~(play ut but) (vice a))))
+  =+  pal=|=(a/@t ^-(type (~(play ut but) (vice a))))
   :*  typ=(pal '*type')
       duc=(pal '*duct')
       pah=(pal '*path')
@@ -10615,11 +10611,11 @@
   ==
 ::
 ++  is                                                  ::  operate in time
-  |=  {vil+vile eny+@ bud+vase niz+(pair worm (list {p+@tas q+vase}))}
-  |_  now+@da
+  |=  {vil/vile eny/@ bud/vase niz/(pair worm (list {p/@tas q/vase}))}
+  |_  now/@da
   ++  beck
     ^-  slad
-    |=  {fur+(unit (set monk)) ron+term bed+beam}
+    |=  {fur/(unit (set monk)) ron/term bed/beam}
     ^-  (unit (unit (cask)))
     =>  .(fur ?^(fur fur `[[%& p.bed] ~ ~]))            ::  XX heinous
     =+  lal=(end 3 1 ron)
@@ -10631,11 +10627,11 @@
     [fur ren bed]
   ::
   ++  dink                                              ::  vase by char
-    |=  din+@tas  ^-  vase
+    |=  din/@tas  ^-  vase
     ?~(q.niz !! ?:(=(din p.i.q.niz) q.i.q.niz $(q.niz t.q.niz)))
   ::
   ++  dint                                              ::  input routing
-    |=  hap+path  ^-  @tas
+    |=  hap/path  ^-  @tas
     ?+  hap  !!
       {@ $ames *}  %a
       {@ $boat *}  %c
@@ -10647,14 +10643,14 @@
     ==
   ::
   ++  doos                                              ::  sleep until
-    |=  hap+path  ^-  (unit @da)
+    |=  hap/path  ^-  (unit @da)
     =+  lal=(dint hap)
     (doze:(wink:(vent lal vil bud p.niz (dink lal)) now 0 beck) now [hap ~])
   ::
   ++  hurl                                              ::  start loop
-    |=  {lac+? ovo+ovum}
+    |=  {lac/? ovo/ovum}
     ~?  &(!lac !=(%belt -.q.ovo))  [%unix -.q.ovo p.ovo]
-    ^-  {p+(list ovum) q+(pair worm (list {p+@tas q+vase}))}
+    ^-  {p/(list ovum) q/(pair worm (list {p/@tas q/vase}))}
     ?>  ?=(^ p.ovo)
     %+  kick  lac
     :~  :*  i.p.ovo
@@ -10668,28 +10664,28 @@
     ==
   ::
   ++  race                                              ::  take
-    |=  {org+@tas lal+@tas pux+(unit wire) hen+duct hil+mill ves+vase}
-    ^-  {p+{p+(list move) q+worm} q+vase}
+    |=  {org/@tas lal/@tas pux/(unit wire) hen/duct hil/mill ves/vase}
+    ^-  {p/{p/(list move) q/worm} q/vase}
     =+  ven=(vent lal vil bud [p.niz ves])
     =+  win=(wink:ven now (shax now) beck)
     (swim:win org pux hen hil)
   ::
   ++  fire                                              ::  execute
-    |=  {org+term lal+term pux+(unit wire) hen+duct hil+mill}
+    |=  {org/term lal/term pux/(unit wire) hen/duct hil/mill}
     ?:  &(?=(^ pux) ?=($~ hen))
       [[[[lal u.pux] (curd +>.hil)]~ ~] niz]
     =+  naf=q.niz
-    |-  ^-  {{p+(list ovum) q+(list muse)} _niz}
+    |-  ^-  {{p/(list ovum) q/(list muse)} _niz}
     ?~  naf  [[~ ~] [p.niz ~]]
     ?.  =(lal p.i.naf)
       =+  tuh=$(naf t.naf)
       [-.tuh [+<.tuh [i.naf +>.tuh]]]
     =+  fiq=(race org lal pux hen hil q.i.naf)
-    [[~ (turn p.p.fiq |=(a+move [lal a]))] [q.p.fiq [[p.i.naf q.fiq] t.naf]]]
+    [[~ (turn p.p.fiq |=(a/move [lal a]))] [q.p.fiq [[p.i.naf q.fiq] t.naf]]]
   ::
   ++  jack                                              ::  dispatch card
-    |=  {lac+? gum+muse}
-    ^-  {{p+(list ovum) q+(list muse)} _niz}
+    |=  {lac/? gum/muse}
+    ^-  {{p/(list ovum) q/(list muse)} _niz}
     ::  =.  lac  |(lac ?=(?(%g %f) p.gum))
     ::  =.  lac  &(lac !?=($b p.gum))
     %+  fire
@@ -10724,9 +10720,9 @@
     ==
   ::
   ++  kick                                              ::  new main loop
-    |=  {lac+? mor+(list muse)}
-    =|  ova+(list ovum)
-    |-  ^-  {p+(list ovum) q+(pair worm (list {p+@tas q+vase}))}
+    |=  {lac/? mor/(list muse)}
+    =|  ova/(list ovum)
+    |-  ^-  {p/(list ovum) q/(pair worm (list {p/@tas q/vase}))}
     ?~  mor  [(flop ova) niz]
     =^  nyx  niz  (jack lac i.mor)
     $(ova (weld p.nyx ova), mor (weld q.nyx t.mor))
@@ -10738,9 +10734,9 @@
 =+  pit=`vase`!>(.)                                     ::
 =+  bud=pit                                             ::  becomes tang
 =+  vil=(viol p.bud)                                    ::  cached reflexives
-=|  $:  lac+?                                           ::  laconic bit
-        eny+@                                           ::  entropy
-        niz+(pair worm (list {p+@tas q+vase}))          ::  modules
+=|  $:  lac/?                                           ::  laconic bit
+        eny/@                                           ::  entropy
+        niz/(pair worm (list {p/@tas q/vase}))          ::  modules
     ==                                                  ::
 =<  |%
     ++  come  |=  {@ (list ovum) pone}                  ::  11
@@ -10757,7 +10753,7 @@
     ++  peek  |=(* (^peek ((hard {@da path}) +<)))     ::  87
     ++  poke  |=  *                                     ::  42
               ^-  {(list ovum) *}
-              =>  .(+< ((hard {now+@da ovo+ovum}) +<))
+              =>  .(+< ((hard {now/@da ovo/ovum}) +<))
               ?:  =(%verb -.q.ovo)
                 [~ +>.$(lac !lac)]
               ?:  ?=($veer -.q.ovo)
@@ -10792,17 +10788,17 @@
     --
 |%
 ++  come                                                ::  load incompatible
-  |=  {yen+@ ova+(list ovum) nyf+pone}
+  |=  {yen/@ ova/(list ovum) nyf/pone}
   ^+  [ova +>]
-  (load yen ova (turn nyf |=({a+@tas b+vise} [a (slim b)])))
+  (load yen ova (turn nyf |=({a/@tas b/vise} [a (slim b)])))
 ::
 ++  keep                                                ::  wakeup delay
-  |=  {now+@da hap+path}
-  =>  .(+< ((hard {now+@da hap+path}) +<))
+  |=  {now/@da hap/path}
+  =>  .(+< ((hard {now/@da hap/path}) +<))
   (~(doos (is vil eny bud niz) now) hap)
 ::
 ++  load                                                ::  load compatible
-  |=  {yen+@ ova+(list ovum) nyf+pane}
+  |=  {yen/@ ova/(list ovum) nyf/pane}
   ^+  [ova +>]
   =:  eny  yen
       q.niz  nyf
@@ -10817,7 +10813,7 @@
   =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
 ::
 ++  peek                                                ::  external inspect
-  |=  {now+@da hap+path}
+  |=  {now/@da hap/path}
   ^-  (unit)
   ?~  hap  [~ hoon]
   =+  rob=((slod ~(beck (is vil eny bud niz) now)) hap)
@@ -10826,7 +10822,7 @@
   [~ u.u.rob]
 ::
 ++  poke                                                ::  external apply
-  |=  {now+@da ovo+ovum}
+  |=  {now/@da ovo/ovum}
   =.  eny  (mix eny (shax now))
   ::  ~&  [%poke -.q.ovo]
   ^-  {(list ovum) _+>}
@@ -10835,8 +10831,8 @@
   [zef +>.$]
 ::
 ++  vega                                                ::  reboot kernel
-  |=  {now+@da ova+(list ovum) hap+path}
-  ^-  {p+(list ovum) q+*}
+  |=  {now/@da ova/(list ovum) hap/path}
+  ^-  {p/(list ovum) q/*}
   =+  pax=(weld hap `path`[%hoon ~])
   ~&  [%vega-start hap]
   =+  src=((hard @t) (need (peek now cx#pax)))
@@ -10855,8 +10851,8 @@
   [[[~ %vega hap] ((list ovum) -.raw)] +.raw]
 ::
 ++  veer                                                ::  install vane#tang
-  |=  {now+@da fav+curd}
-  =>  .(fav ((hard {$veer lal+@ta pax+path txt+@t}) fav))
+  |=  {now/@da fav/curd}
+  =>  .(fav ((hard {$veer lal/@ta pax/path txt/@t}) fav))
   ?:  =(%$ lal.fav)
     ~&  [%tang pax.fav `@p`(mug txt.fav)]
     =+  gen=(rain pax.fav txt.fav)
@@ -10877,7 +10873,7 @@
   ==
 ::
 ++  wish                                                ::  external compute
- |=  txt+@
+ |=  txt/@
   q:(slap bud (ream txt))
 --
 .  ==
