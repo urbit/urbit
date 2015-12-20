@@ -205,7 +205,7 @@
     ?~  a  ~
     :: ?:  (gth i.a 0xff)  "XX"                       ::  XX  
     ?:  ?|  [?=(^ q)]:(alp 1^1 a)
-            (~(has in (sa "!*'();:@&=+$,/?#%.~_")) i.a) ::  XX  reparse
+            (~(has in (sa "!*'();:@&=+$,/?/%.~_")) i.a) ::  XX  reparse
         ==
       [i.a $(a t.a)]
     (weld (urle (trip i.a)) $(a t.a))

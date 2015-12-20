@@ -1002,7 +1002,7 @@
     ++  czar  !:                                        ::    czar:am
       |=  {our/ship ger/@uw fak/?}                      ::  instantiate emperor
       ^-  {p/(list boon) q/fort}
-      =+  loy=?:(fak (bruw 2.048 our) (bruw 2.048 ger)) ::  fake uses carrier #
+      =+  loy=?:(fak (bruw 2.048 our) (bruw 2.048 ger)) ::  fake uses carrier /
       =+  fim==(fig:ex:loy (zeno our))
       ?:  &(!fak !fim)  !!                              ::  not fake & bad fig
       =+  mac=`mace`[[0 sec:ex:loy] ~]

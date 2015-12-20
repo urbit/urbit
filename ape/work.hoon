@@ -25,7 +25,7 @@
 |_  $:  bowl
         client
         connected/?                                     ::  subscribed to talk
-        count/@ud                                       ::  # messages from talk
+        count/@ud                                       ::  / messages from talk
         unordered/(map {@uvH @u} (pair ship flesh:work-stuff:talk))
     ==
 ++  at

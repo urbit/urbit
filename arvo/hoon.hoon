@@ -2166,7 +2166,7 @@
                (add (lsh 4 muc i.f.rip) $(f.rip t.f.rip))
   (con (lsh 6 1 sec) fac)
 ::
-++  yall                                                ::  day # to day of year
+++  yall                                                ::  day / to day of year
   |=  day/@ud
   ^-  {y/@ud m/@ud d/@ud}
   =+  [era=0 cet=0 lep=*?]
@@ -6269,7 +6269,7 @@
   ^-  type
   ?:(|(=(%void der) =(%void s.bid)) %void [%bull bid der])
 ::
-++  cain  |=(vax/vase (sell vax))                       ::  $+(vase tank) for #>
+++  cain  |=(vax/vase (sell vax))                       ::  $+(vase tank) for />
 ++  cell                                                ::  make %cell type
   ~/  %cell
   |=  {hed/type tal/type}
@@ -6518,7 +6518,7 @@
   |=  txt/@
   q:(~(mint ut %noun) %noun (ream txt))
 ::
-++  noah  |=(vax/vase (pave vax))                       ::  $+(vase tape) for #<
+++  noah  |=(vax/vase (pave vax))                       ::  $+(vase tape) for /<
 ++  onan  |=(vix/vise (seer vix))                       ::  $+(vise vase) for !>
 ++  rain                                                ::  parse with % path
   |=  {bon/path txt/@}
