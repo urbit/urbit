@@ -1,4 +1,4 @@
-!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::   
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject
@@ -9,13 +9,13 @@
     (make:all cud)                                      ::  else simple compile
 ^=  all                                                 ::  assemble engine
   =~                                                    ::  volume stack
-%162                                                    ::  version constant
+%161                                                    ::  version constant
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 0, version stub                ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::   
-~%  %k.162  ~  ~                                        ::
+~%  %k.161  ~  ~                                        ::
 |%                                                      ::
-++  hoon  %162                                          ::  version stub
+++  hoon  %161                                          ::  version stub
 --                                                      ::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 1, Hoon models                 ::::::
@@ -92,7 +92,6 @@
 ++  limb  $@  term 
           $%  {$& p/axis} 
               {$| p/@ud q/(unit term)}
-              {$2 p/@ud q/{$~ term}}
           ==
 ++  line  {p/{$leaf p/odor q/@} q/tile}                 ::  %kelp case
 ++  list  |*  a/$+(* *)                                 ::  null-term list
@@ -7501,7 +7500,6 @@
         ?-  -.i.peh
           $&  [p.i.peh %& (peek %both p.i.peh)]
           $|  (finq p.i.peh %both +.q.i.peh)
-          $2  (finq p.i.peh %both +.q.i.peh)
         ==
     |-  ^-  type
     ?:  =(1 p.poz)
@@ -7509,7 +7507,6 @@
         $0  ?-  -.i.peh
               $&  ^$(peh t.peh)
               $|  (face +.q.i.peh ^$(peh t.peh, sut p.q.poz))
-              $2  (face +.q.i.peh ^$(peh t.peh, sut p.q.poz))
             ==
         $1  ^$(peh t.peh)
         $2  %+  bull
@@ -8949,11 +8946,6 @@
       =>  .(sut syp)
       =+  hud=(fink p.i.hyp way +.q.i.hyp)
       [(peg p.zar p.hud) q.hud]
-    ::
-        {$2 *}
-      =>  .(sut syp)
-      =+  hud=(fink p.i.hyp way +.q.i.hyp)
-      [(peg p.zar p.hud) q.hud]
     ==
   ::
   ++  seep
@@ -8993,19 +8985,6 @@
       [p.gav ?~(sap heh (face u.sap heh))]
     ::
         {$| *}
-      =+  dob=`post`(need q:(fino p.i.peh %rite +.q.i.peh))
-      ~|  [%tack-limb q.i.peh]
-      ?:  ?=($2 -.q.dob)
-        =+  hoc=(peg axe p.dob)
-        =+  guh=$(peh t.peh, sut s.p.q.dob, axe (peg hoc r.p.q.dob))
-        =+  zig=$(peh q.p.q.dob, sut q.q.dob, mur q.guh)
-        =+  zug=(heal [~ +.q.i.peh] p.dob (busk(sut q.zig) p.p.q.dob q.p.q.dob))
-        [p.guh zug]
-      =+  wuf=(flay (flee dob))
-      =+  gav=$(peh t.peh, sut q.wuf, axe (peg axe p.wuf))
-      [p.gav (heal [~ +.q.i.peh] p.wuf q.gav)]
-    ::
-        {$2 *}
       =+  dob=`post`(need q:(fino p.i.peh %rite +.q.i.peh))
       ~|  [%tack-limb q.i.peh]
       ?:  ?=($2 -.q.dob)
