@@ -1,5 +1,5 @@
 ::
-::::  /hoon/sync/hood/gen
+::::  /hoon#sync#hood#gen
   ::
 /?  314
 ::

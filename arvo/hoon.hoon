@@ -94,7 +94,7 @@
 ++  list  |*  a+$+(* *)                                 ::  null-term list
           $@($~ {i+a t+(list a)})                       ::
 ++  lone  |*(a+$+(* *) p+a)                             ::  just one thing
-++  mane  $@(@tas {@tas @tas})                          ::  XML name/space
+++  mane  $@(@tas {@tas @tas})                          ::  XML name#space
 ++  manx  {g+marx c+marl}                               ::  XML node
 ++  marl  (list manx)                                   ::  XML node list
 ++  mars  {t+{n+$$ a+{i+{n+$$ v+tape} t+$~}} c+$~}      ::  XML cdata
@@ -120,7 +120,7 @@
           [i=(-.a -.b) t=$(a +.a, b +.b)]               ::
 ++  pass  @                                             ::  public key
 ++  path  (list span)                                   ::  filesys location
-++  pint  {p+{p+@ q+@} q+{p+@ q+@}}                     ::  line/column range
+++  pint  {p+{p+@ q+@} q+{p+@ q+@}}                     ::  line#column range
 ++  pole  |*  a+$+(* *)                                 ::  nameless list
           $@($~ {a (pole a)})                           ::
 ++  port  $:  p+axis                                    ::
@@ -171,12 +171,12 @@
 ++  tile  $^  {p+tile q+tile}                           ::  ordered pair
           $%  {$axil p+base}                            ::  base type
               {$bark p+term q+tile}                     ::  name
-              {$bush p+tile q+tile}                     ::  pair/tag
+              {$bush p+tile q+tile}                     ::  pair#tag
               {$fern p+{i+tile t+(list tile)}}          ::  plain selection
               {$herb p+twig}                            ::  gate
               {$kelp p+{i+line t+(list line)}}          ::  tag selection
               {$leaf p+term q+@}                        ::  constant atom
-              {$reed p+tile q+tile}                     ::  atom/cell
+              {$reed p+tile q+tile}                     ::  atom#cell
               {$weed p+twig}                            ::  example
           ==                                            ::
 ++  toga                                                ::  face control
@@ -237,14 +237,14 @@
           ::                                            ::::::  invocations
             {$cnbc p+twig}                              ::  ^~($.p)
             {$cncb p+wing q+tram}                       ::  %+, then cast to p
-            {$cncl p+twig q+twig}                       ::  pull $.p w/ sample q
+            {$cncl p+twig q+twig}                       ::  pull $.p w# sample q
             {$cndt p+twig q+twig}                       ::  %-(q p)
-            {$cnhp p+twig q+tusk}                       ::  slam p w/ sample q
-            {$cntr p+wing q+twig r+tram}                ::  pull p.q w/ changes
-            {$cnkt p+twig q+twig r+twig s+twig}         ::  slam p w/ :*(q r s)
-            {$cnls p+twig q+twig r+twig}                ::  slam p w/ :*(q r)
+            {$cnhp p+twig q+tusk}                       ::  slam p w# sample q
+            {$cntr p+wing q+twig r+tram}                ::  pull p.q w# changes
+            {$cnkt p+twig q+twig r+twig s+twig}         ::  slam p w# :*(q r s)
+            {$cnls p+twig q+twig r+twig}                ::  slam p w# :*(q r)
             {$cnsg p+wing q+twig r+twig}                ::  pull p from q with r
-            {$cnts p+wing q+tram}                       ::  eval. p w/ q changes
+            {$cnts p+wing q+tram}                       ::  eval. p w# q changes
             {$cnzy p+term}                              ::  pulls limb p
             {$cnzz p+wing}                              ::  pulls p
           ::                                            ::::::  nock
@@ -252,7 +252,7 @@
             {$dtls p+twig}                              ::  nock 4 increment
             {$dtzy p+term q+@}                          ::  atom constant
             {$dtzz p+term q+*}                          ::  cubical constant
-            {$dttr p+twig q+twig}                       ::  nock p w/ formula q
+            {$dttr p+twig q+twig}                       ::  nock p w# formula q
             {$dtts p+twig q+twig}                       ::  nock 5 equality test
             {$dtwt p+twig}                              ::  nock 3 cell test
           ::                                            ::::::  prettyprinting
@@ -275,8 +275,8 @@
             {$sggl p+$@(term {p+term q+twig}) q+twig}   ::  hint p to product q
             {$sggr p+$@(term {p+term q+twig}) q+twig}   ::  hint p to q
             {$sgbc p+term q+twig}                       ::  label q, profiling
-            {$sgls p+@ q+twig}                          ::  cache/memoize
-            {$sgpm p+@ud q+twig r+twig}                 ::  print q w/priority
+            {$sgls p+@ q+twig}                          ::  cache#memoize
+            {$sgpm p+@ud q+twig r+twig}                 ::  print q w#priority
             {$sgts p+twig q+twig}                       ::  avoid duplication
             {$sgwt p+@ud q+twig r+twig s+twig}          ::  hint iff q is yes
             {$sgzp p+twig q+twig}                       ::  type in stacktrace
@@ -295,7 +295,7 @@
             {$tsgr p+twig q+twig}                       ::  use p as .. of q
             {$tskt p+twig q+twig r+twig s+twig}         ::  state machine wing
             {$tsls p+twig q+twig}                       ::  push p on .. of q
-            {$tstr p+term q+wing r+twig}                ::  make a $bull/alias
+            {$tstr p+term q+wing r+twig}                ::  make a $bull#alias
             {$tssg p+tusk}                              ::  compose twig list
           ::                                            ::::::  conditionals
             {$wtbr p+tusk}                              ::  logical OR
@@ -305,7 +305,7 @@
             {$wtkt p+wing q+twig r+twig}                ::  if p is a cell
             {$wtgl p+twig q+twig}                       ::  assert |, ?:(p !! q)
             {$wtgr p+twig q+twig}                       ::  assert &, ?:(p q !!)
-            {$wtls p+wing q+twig r+tine}                ::  %wthp w/ default
+            {$wtls p+wing q+twig r+tine}                ::  %wthp w# default
             {$wtpm p+tusk}                              ::  logical AND
             {$wtpt p+wing q+twig r+twig}                ::  if p is an atom
             {$wtsg p+wing q+twig r+twig}                ::  if p is null
@@ -315,7 +315,7 @@
             {$zpcb p+spot q+twig}                       ::  debug info in trace
             {$zpcm p+twig q+twig}                       ::  q twig with p type
             {$zpfs p+twig}                              ::  report .. as error
-            {$zpgr p+twig}                              ::  vase w/ value p
+            {$zpgr p+twig}                              ::  vase w# value p
             {$zpsm p+twig q+twig}                       ::  [type noun] pair
             {$zpts p+twig}                              ::  Nock formula of p
             {$zpwt p+$@(p+@ {p+@ q+@}) q+twig}          ::  restrict hoon vers.
@@ -362,7 +362,7 @@
               {$core p+type q+coil}                     ::
               {$cube p+* q+type}                        ::  constant
               {$face p+term q+type}                     ::  name
-              {$fork p+type q+type}                     ::  union/branch
+              {$fork p+type q+type}                     ::  union#branch
               {$hold p+(list {p+type q+twig})}          ::  infinite genrator
           ==                                            ::
 ++  typo  type                                          ::  old type
@@ -1586,7 +1586,7 @@
     ::
     ++  swr  ?+(r r $d %u, $u %d)                       ::  flipped rounding
     ++  prc  ?>((gth p 1) p)                            ::  force >= 2 precision
-    ++  den  d                                          ::  denorm/flush/inf exp
+    ++  den  d                                          ::  denorm#flush#inf exp
     ++  emn  v                                          ::  minimum exponent
     ++  emx  (sum:si emn (sun:si w))                    ::  maximum exponent
     ++  spd  [e=emn a=1]                                ::  smallest denormal
@@ -1814,7 +1814,7 @@
     =+  r=(^add f (bex p))
     [%f s q r]
   ::
-  ++  bit  |=  {a+fn}  (bif (rou:pa a))                 ::  fn to @r w/ rounding
+  ++  bit  |=  {a+fn}  (bif (rou:pa a))                 ::  fn to @r w# rounding
   ::
   ++  bif                                               ::  fn to @r no rounding
     |=  {a+fn}  ^-  @r
@@ -2286,7 +2286,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2cJ, extra math               ::
 ::
-++  sqt                                                 ::  sqrt w/remainder
+++  sqt                                                 ::  sqrt w#remainder
   ~/  %sqt
   |=  a+@  ^-  {p+@ q+@}
   ?~  a  [0 0]
@@ -2958,7 +2958,7 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eC, parsing (custom rules)   ::
 ::
-++  cold                                                ::  replace w/ constant
+++  cold                                                ::  replace w# constant
   ~/  %cold
   |*  {cus+* sef+rule}
   ~/  %fun
@@ -3118,7 +3118,7 @@
 ::
 ++  stew                                                ::  switch by first char
   ~/  %stew
-  |*  leh+(list {p+?(@ {@ @}) q+rule})                  ::  char/range keys
+  |*  leh+(list {p+?(@ {@ @}) q+rule})                  ::  char#range keys
   =+  ^=  wor                                           ::  range complete lth
       |=  {ort+?(@ {@ @}) wan+?(@ {@ @})}
       ?@  ort
@@ -4673,7 +4673,7 @@
              :+  %rose  [":" ~ ~]
              :~  (smyt p.sot)
                  =>  [ud=|=(a+@u (scow %ud a)) q.sot]
-                 leaf/"<[{(ud p.p)} {(ud q.p)}].[{(ud p.q)} {(ud q.q)}]>"
+                 leaf#"<[{(ud p.p)} {(ud q.p)}].[{(ud p.q)} {(ud q.q)}]>"
   ==         ==
 ::
 ++  mang
@@ -5102,7 +5102,7 @@
           (dif c $(b (rsh 0 1 b), c (dub c)))
         $(b (rsh 0 1 b), c (dub c))
       ::
-      ++  toe                                           ::  exp/log tables
+      ++  toe                                           ::  exp#log tables
         =+  ^=  nu
             |=  {b+@ c+@}
             ^-  (map @ @)
@@ -5630,7 +5630,7 @@
     (rep 5 (al xw ow))
   ::
   ++  rpp
-    |=  {a+bloq b+@ c+@}                                ::  rip w/filler blocks
+    |=  {a+bloq b+@ c+@}                                ::  rip w#filler blocks
     =+  q=(rip a c)
     =+  w=(lent q)
     ?.  =(w b)
@@ -5690,7 +5690,7 @@
     (hml k (met 3 k) t (met 3 t))
   ::
   ++  hml
-    |=  {k+@ kl+@ t+@ tl+@}                             ::  w/length
+    |=  {k+@ kl+@ t+@ tl+@}                             ::  w#length
     =>  .(k (end 3 kl k), t (end 3 tl t))
     =+  b=64
     =.  k  ?.  (gth kl b)  k  (shay kl k)
@@ -5704,7 +5704,7 @@
     |=  {p+@ s+@ c+@ d+@}
     (pbl p (met 3 p) s (met 3 s) c d)
   ::
-  ++  pbl                                               :: w/length
+  ++  pbl                                               :: w#length
     ~/  %pbl
     |=  {p+@ pl+@ s+@ sl+@ c+@ d+@}
     =>  .(p (end 3 pl p), s (end 3 sl s))
@@ -5733,7 +5733,7 @@
     |=  {p+@ s+@ n+@ r+@ z+@ d+@}
     (hsl p (met 3 p) s (met 3 s) n r z d)
   ::
-  ++  hsl                                               ::  w/length
+  ++  hsl                                               ::  w#length
     ~/  %hsl
     |=  {p+@ pl+@ s+@ sl+@ n+@ r+@ z+@ d+@}
     =|  v+(list (list @))
@@ -6565,7 +6565,7 @@
   ?>  (~(nest ut (~(peek ut gat) %free 6)) & sam)
   (~(play ut [%cell gat sam]) [%cncl [~ 2] [~ 3]])
 ::
-++  slym                                                ::  slam w/o sample-type
+++  slym                                                ::  slam w#o sample-type
   |=  {gat+vase sam+*}  ^-  vase
   (slap gat(+<.q sam) [%cnzy %$])
 ::
@@ -7923,7 +7923,7 @@
       [p.yad [%face p.sut q.yad]]
     ::
         {$fork *}
-      ?:  =(p.sut fork/[cube/[%noun atom/%tas]]^[cube/[%void atom/%tas]])
+      ?:  =(p.sut fork#[cube#[%noun atom#%tas]]^[cube#[%void atom#%tas]])
         [dex %type]                    ::  XX  proper print
       =+  hin=$(sut p.sut)
       =+  yon=$(dex p.hin, sut q.sut)
@@ -9356,7 +9356,7 @@
         ==
       ==
     ::
-    ++  puv                                             ::  wide/tall flow
+    ++  puv                                             ::  wide#tall flow
       %+  cook  |=(a+(list beet) a)
       %-  star
       ;~  pose
@@ -10321,11 +10321,11 @@
 ++  mark  @tas                                          ::  content type
 ++  mash  |=(* (mass +<))                               ::  producing mass
 ++  mass  (pair cord (each noun (list mash)))           ::  memory usage
-++  mill  (each vase milt)                              ::  vase/metavase
+++  mill  (each vase milt)                              ::  vase#metavase
 ++  milt  {p+* q+*}                                     ::  metavase
 ++  monk  (each ship {p+@tas q+@ta})                    ::  general identity
 ++  mold                                                ::  new kernel action
-          |*  {a+$+(* *) b+$+(* *)}                     ::  forward/reverse
+          |*  {a+$+(* *) b+$+(* *)}                     ::  forward#reverse
           $%  {$pass p+path q+a}                        ::  advance
               {$slip p+a}                               ::  lateral
               {$sick p+b}                               ::  lame refactoring
@@ -10776,11 +10776,11 @@
                     q.q
                   :-  %userspace
                   :-  %|
-                  :~  hoon/`pit
-                      zuse/`bud
-                      hoon-cache/`p.niz
+                  :~  hoon#`pit
+                      zuse#`bud
+                      hoon-cache#`p.niz
                       q.q.i.ova
-                      dot/`.
+                      dot#`.
                   ==
                 ==
               =+(avo=$(ova t.ova) [[i.ova -.avo] +.avo])
@@ -10835,7 +10835,7 @@
   ^-  {p+(list ovum) q+*}
   =+  pax=(weld hap `path`[%hoon ~])
   ~&  [%vega-start hap]
-  =+  src=((hard @t) (need (peek now cx/pax)))
+  =+  src=((hard @t) (need (peek now cx#pax)))
   =+  saz=(shax src)
   =+  gen=(rain hap src)
   ~&  %vega-parsed
@@ -10850,7 +10850,7 @@
   =+  raw=.*([-.gat [sam +>.gat]] -.gat)
   [[[~ %vega hap] ((list ovum) -.raw)] +.raw]
 ::
-++  veer                                                ::  install vane/tang
+++  veer                                                ::  install vane#tang
   |=  {now+@da fav+curd}
   =>  .(fav ((hard {$veer lal+@ta pax+path txt+@t}) fav))
   ?:  =(%$ lal.fav)

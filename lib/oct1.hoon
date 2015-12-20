@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hoon/oct1/lib                                    ::::::  dependencies  
+::::  /hoon#oct1/lib                                    ::::::  dependencies  
   ::                                                    ::  ::
 /?    310                                               ::  arvo version
 /-    oct1                                              ::  structures
@@ -38,6 +38,6 @@
   ++  row  |=  y+@  :-  (add y '1')  %-  zing           ::  print row
            (turn (gulf 0 3) |=(@ ~[' ' ~(v at y +<)]))  ::
   ++  tab  ~["+ 1 2 3" (row 0) (row 1) (row 2)]         ::  print table
-  ++  voy   ": {<~[(icon who)]>} (row/col): "           ::  print prompt
+  ++  voy   ": {<~[(icon who)]>} (row#col): "           ::  print prompt
   --
 --

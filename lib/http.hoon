@@ -1,5 +1,5 @@
 ::
-::::  /hoon/http/lib
+::::  /hoon#http#lib
   ::
   ::
   ::

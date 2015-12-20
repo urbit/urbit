@@ -15,17 +15,6 @@
   |%                                                    ::  convert from
   ++  noun  manx                                        ::  clam from %noun
   ++  hymn                                              ::  inject into %hymn
-    |=  old+manx  old                 ::  moved to %eyre
-    :: ~|  hymn//mal-formed
-    :: ::  ~|  old
-    :: ?>  ?=([[%html ~] [[%head ~] *] [[%body ~] ^] ~] old) ::  XX static
-    :: ::  =+  bek=(sa (turn (turn dep) |=(a=beam (tope a(s ~)))))
-    :: %_    old
-    ::     c.i.c
-    ::   :-  ;meta(charset "utf-8", urb_injected "");
-    ::   ?~  dep  c.i.c.old
-    ::   :-  ;script@"/~/on/{<dep>}.js";
-    ::   c.i.c.old
-    :: ==
+    |=  old+manx  old                                   ::  moved to %eyre
   --
 --

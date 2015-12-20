@@ -125,10 +125,10 @@
       $para  [/p (sung p.a)]
       $head  
         =+  [hed=(add %h0 (lsh 3 1 p.a)) kid=(sung q.a)]
-        [[hed id/(sanitize kid) ~] kid]
+        [[hed id#(sanitize kid) ~] kid]
     ::
       $hrul  ;hr;
-      $meta  =+  jon=`json`o/(~(run by p.a) |=(cord s/+<))
+      $meta  =+  jon=`json`o#(~(run by p.a) |=(cord s#+<))
              ;meta(value "{(pojo jon)}", name "frontmatter", urb_front "");
   ::     %html  
              ::=+  tex=(role (turn p.a crip))
@@ -224,7 +224,7 @@
       =+  res=`manx`;img(src (urly p.p.b), alt (flat (turn q.b ..$)));
         :: ;img@"{p.p.b}";
       ?~  q.p.b  res
-      res(a.g (welp a.g.res title/u.q.p.b ~))
+      res(a.g (welp a.g.res title#u.q.p.b ~))
     =+  kid=(sung q.b)
     %+  into-inner  kid
     ?-  p.b

@@ -1,5 +1,5 @@
 ::
-::::  /hoon/merge/hood/gen
+::::  /hoon#merge#hood#gen
   ::
 /?  314
 !:

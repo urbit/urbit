@@ -1,5 +1,5 @@
 ::
-::::  /hoon/mount/hood/gen
+::::  /hoon#mount#hood#gen
   ::
 /?  314
 ::

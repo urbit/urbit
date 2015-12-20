@@ -5,7 +5,7 @@
 =>  =~
 |%
 ++  sqeu  |*  {a+_* b+_*}                         ::  binary skew queno
-          $:  r+@u                                      ::  rank/depth
+          $:  r+@u                                      ::  rank#depth
               k+a                                       ::  priority
               n+b                                       ::  value
               c+(broq a b)                              ::  children
@@ -147,11 +147,11 @@
 --
 .  ==
 =|  $:  $0                                              ::
-        tym+{p+clok q+clok}                             ::  positive/negative
+        tym+{p+clok q+clok}                             ::  positive#negative
     ==                                                  ::
 |=  {now+@da eny+@ ski+sled}                            ::  current invocation
 ^?
-|%                                                      ::  poke/peek pattern
+|%                                                      ::  poke#peek pattern
 ++  call                                                ::  handle request
   |=  $:  hen+duct
           hic+(hypo (hobo kiss))
@@ -195,7 +195,7 @@
       :^  hen  %give  %mass
       :-  %behn
       :-  %|
-      :~  tym/`tym
+      :~  tym#`tym
       ==
     ==
   [mof ..^$]

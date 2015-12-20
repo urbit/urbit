@@ -1,6 +1,6 @@
 ::  Twitter daemon
 ::
-::::  /hook/core/twit/app
+::::  /hook#core#twit#app
   ::
 /-    twitter
 /+    twitter, talk
@@ -69,7 +69,7 @@
   ^-  {(unit time) _ran}
   =+  cur=(~(get by ran) pax)
   =+  tym=(add now (mul ~s8 (bex ?~(cur 0 p.u.cur))))
-  :: ~&  dely/`@dr`(sub tym now)
+  :: ~&  dely#`@dr`(sub tym now)
   ?:  &(?=(^ cur) (gte tym q.u.cur) (gth q.u.cur now))
     [~ ran]
   [`tym (~(put by ran) pax ?~(cur 0 (min 5 +(p.u.cur))) tym)]
@@ -79,9 +79,9 @@
   =^  tym  ran  (dely pax)
   :_  +>.$
   ?~  tym  
-    :: ~&  no-wait/ran
+    :: ~&  no-wait#ran
     mof
-  :: ~&  will-wait/u.tym
+  :: ~&  will-wait#u.tym
   :-  [ost %wait pax u.tym]
   mof
 ::
@@ -94,24 +94,24 @@
     +>.$(kes (~(put by kes) p.act p.q.act))             ::  XX verify key
       $post
     =:  out  (~(put by out) p.q.act %& p.act q.q.act)
-        ran  (~(del by ran) /peer/home)
+        ran  (~(del by ran) /peer#home)
       ==
-    %+  wait  /peer/home
+    %+  wait  /peer#home
     =+  mez=(stat-upda:(auth p.act) [%status q.q.act]~ ~)
-    [ost %them /post/(scot %uv p.q.act) ~ mez]~
+    [ost %them /post#(scot %uv p.q.act) ~ mez]~
   ==
 ::
 ++  wake-peer
   |=  {pax+path ~}  ^+  done
-  ~&  twit-wake/peer/pax
+  ~&  twit-wake#peer#pax
   :_  +>.$
-  ?.  (~(has by ran) peer/pax)                           ::  ignore if retracted
+  ?.  (~(has by ran) peer#pax)                           ::  ignore if retracted
     ~
   =+  =>  |=({a+bone @ b+path} [b a]) 
       pus=(~(gas ju *(jug path bone)) (turn (~(tap by sup)) .))
   ?~  (~(get ju pus) pax)
     ~
-  ~&  peer-again/[pax ran]
+  ~&  peer-again#[pax ran]
   (pear | our pax)
 ::
 ++  thou
@@ -121,12 +121,12 @@
     =.  ran  (~(put by ran) pax 6 now)
     =+  lim=%.(%x-rate-limit-reset ;~(biff ~(get by (mo q.hit)) poja ni:jo))
     =+  tym=?~(lim (add ~m7.s30 now) (add ~1970.1.1 (mul ~s1 u.lim)))
-    ~&  retrying-in/`@dr`(sub tym now)
+    ~&  retrying-in#`@dr`(sub tym now)
     :_(+>.$ [ost %wait pax tym]~)
   ::
       200                           ::  OK
     =+  jon=(need (poja q:(need r.hit)))
-    :: ~&  twit-resp/%.(jon ?+(-.jon !! %o stat:twir, %a (ar:jo stat:twir)))
+    :: ~&  twit-resp#%.(jon ?+(-.jon !! %o stat:twir, %a (ar:jo stat:twir)))
     ?+    pax  ~|([%http-missed pax] !!)
         {$post @ $~}                                    ::  post acknowledged
       =+  ^=  rep
@@ -134,30 +134,30 @@
           (need %.(jon stat:twir))
       =.  out  (~(put by out) (slav %uv i.t.pax) %| rep)
       :_  +>.$
-      =+  pax=/[who.rep]/status/(rsh 3 2 (scot %ui id.rep))
-      :-  (print (earn [& ~ `/com/twitter] `pax ~))
+      =+  pax=/[who.rep]/status#(rsh 3 2 (scot %ui id.rep))
+      :-  (print (earn [& ~ `/com#twitter] `pax ~))
       (spam pax (tweet-good rep))
     ::
         {$peer *}                                     ::  feed data
       =+  ^=  rep
           ~|  [%bad-feed jon]
           (need %.(jon (ar:jo stat:twir)))
-      :: ~&  got-feed/[(scag 5 (turn rep |=(stat id))) fed]
+      :: ~&  got-feed#[(scag 5 (turn rep |=(stat id))) fed]
       =+  ren=(cull t.pax rep)                       ::  new messages
       ?~  ren
         (wait pax ~)                              ::  pump polling
-      :: ~&  spam-feed/ren
+      :: ~&  spam-feed#ren
       =:  ran  (~(del by ran) pax)                    ::  clear poll delay
           fed  (~(put by fed) t.pax rep)              ::  saw last message
         ==
-      (wait pax (spam t.pax [%diff twit-feed/(flop ren)] ~))
+      (wait pax (spam t.pax [%diff twit-feed#(flop ren)] ~))
     ==
   ::
       ?($400 $401 $403 $404)            ::  Err
     =+  ^-  git+gift
         =+  err=%.(q:(need r.hit) ;~(biff poja mean:twir))
         :^  %diff  %ares  %bad-http
-        [leaf/"HTTP Code {<p.hit>}" (turn (need err) mean:twip)]
+        [leaf#"HTTP Code {<p.hit>}" (turn (need err) mean:twip)]
     ?+    pax  [[ost git]~ +>.$]
       {$post @ ~}
         [(spam pax git ~) +>.$]
@@ -182,7 +182,7 @@
       ?.  ver  ~
       ?~  ole  ~
       [ost %diff %twit-feed (flop ole)]~
-  =-  `move`[ost %them peer/pax ~ `hiss`-]
+  =-  `move`[ost %them peer#pax ~ `hiss`-]
   =+  opt=?~(ole ~ ['since_id' (lutt:twit id.i.ole)]~)
   =+  aut=any-auth
   ?-    -.pax
@@ -190,7 +190,7 @@
 ::     $home  (stat-home:auth ~ opt)
   ==
 ::
-++  to-sd                                               ::  parse user name/numb
+++  to-sd                                               ::  parse user name#numb
   |=  a+span  ^-  sd:twit
   ~|  [%not-user a]
   %+  rash  a
@@ -217,5 +217,5 @@
 ::
 ++  print
   |=  mes+tape 
-  [ost %poke / [our %talk] (said:^talk our %twit now eny leaf/mes ~)]
+  [ost %poke / [our %talk] (said:^talk our %twit now eny leaf#mes ~)]
 --

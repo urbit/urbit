@@ -43,14 +43,14 @@ $:  cred+(unit {app-secret+@t client-id+@t})
 |_  {hid+bowl vat+axle}
 :: ++  prep  ~&(%bit-prep-wipe ,_`.)
 ++  return  [*(list move) .]
-++  redirect-uri  [hostname `/~~/home/pub/bit/fab ~]
+++  redirect-uri  [hostname `/~~/home#pub#bit#fab ~]
 ++  hostname  ^-  hart
   ?+  (clan our.hid)  !!
      $czar  [| ?+(our.hid `8.443 $~fyr `8.444) `/localhost]
-     $duke  [| `8.444 `/org/urbit/(crip +:<our.hid>)]
+     $duke  [| `8.444 `/org#urbit#(crip +:<our.hid>)]
   ==
 ++  auth-url
-  %+  weld  "https://sandbox.coinbase.com/oauth/authorize"
+  %+  weld  "https://sandbox.coinbase.com#oauth#authorize"
   %-  tail:earn  :~
     'response_type'^%code
     'client_id'^client-id:(need cred.vat)
@@ -64,15 +64,15 @@ $:  cred+(unit {app-secret+@t client-id+@t})
   |=  {pour-path+wire end-point+path req+$@($get {$post p+json})}
   ^-  move
   %^  send:http  ost.hid  pour-path 
-  [/com/coinbase/api v1/end-point req ~ ['access_token' access:(need auth.vat)]~]
+  [/com#coinbase#api v1/end-point req ~ ['access_token' access:(need auth.vat)]~]
 ::
 ++  api-call
   |=  {res+mark req+bit-api-call}  ^+  return
   ~|  %missing-access-token
-  [[ost.hid %hiss / res bit-api-call/[access:(need auth.vat) req]]~ +>.$]
+  [[ost.hid %hiss / res bit-api-call#[access:(need auth.vat) req]]~ +>.$]
 ::
 ++  print  |=(msg+tape [[(publish [%lin & (crip msg)]~)]~ +>.$])
-++  callback-uri  [hostname [`%json /~/to/[dap.hid]/json] ~[anon/'' wire/'/']]
+++  callback-uri  [hostname [`%json /~/to#[dap.hid]/json] ~[anon#'' wire#'/']]
 ++  poke-auth
   |=  arg+{secr+cord id+cord}
   =.  cred.vat  `arg
@@ -91,7 +91,7 @@ $:  cred+(unit {app-secret+@t client-id+@t})
   ^-  move
   [ost.hid %send way [his dap.hid] %poke mez]
 ::
-++  poke-bit-send  |=(req+bit-send (api-call %bit-transaction send/req))
+++  poke-bit-send  |=(req+bit-send (api-call %bit-transaction send#req))
 ++  sigh-bit-transaction
   |=({* trid+@t} (print "transaction success {(trip trid)}"))
 ::
@@ -106,17 +106,17 @@ $:  cred+(unit {app-secret+@t client-id+@t})
   |=  $~                              ::  gen new address with callback
   :_  +>.$
   :_  ~
-  %+  old-api  /addr-request/(scot %p src.hid) 
+  %+  old-api  /addr-request#(scot %p src.hid) 
   :+  /addresses  %post
   %+  joba  %address
   %-  jobe  :~
-    label/(jape "address for {<src.hid>}")
+    label#(jape "address for {<src.hid>}")
     'callback_url'^(jape (earn callback-uri))
   ==
   ::
 ++  pour-addr-request             ::  send new address to sender
   |=  {pax+path rez+json}
-  =+  adr=(need ((ot address/so ~):jo rez))
+  =+  adr=(need ((ot address#so ~):jo rez))
   =+  his=(slav %p +<.pax)
   ~!  incoming.vat
   =.  incoming.vat
@@ -128,7 +128,7 @@ $:  cred+(unit {app-secret+@t client-id+@t})
 ++  poke-bit-addr-made             ::  receive address for sending
   |=  addr+@t
   =+  amount=(~(got by outgoing.vat) src.hid)             ::  get amount to send
-  (api-call %bit-transaction txt-send/[addr amount])
+  (api-call %bit-transaction txt-send#[addr amount])
 ::
 ++  poke-oauth2-code
   |=  code+cord
@@ -136,7 +136,7 @@ $:  cred+(unit {app-secret+@t client-id+@t})
     [~ code]
   ?<  ?=($~ cred.vat)  
   =+  req=[code [client-id app-secret]:u.cred.vat redirect-uri]
-  [[ost.hid %hiss / %oauth-tokens bit-get-token/req]~ +>.$]
+  [[ost.hid %hiss / %oauth-tokens bit-get-token#req]~ +>.$]
 ::
 ++  sigh-oauth-tokens
   |=  {wire toke+{access+@t refresh+@t}}
@@ -157,29 +157,29 @@ $:  cred+(unit {app-secret+@t client-id+@t})
       ~&('contact-exists' (~(get by contacts.vat) to.arg))
   =+  ^=  info
       ?~  cur.arg  
-        [to/s/to.arg amount/s/(need amone.arg) ~]
+        [to#s#to.arg amount#s#(need amone.arg) ~]
       ?~  nt.arg
-        :*  to/s/to.arg 
-            'amount_currency_iso'^s/(need cur.arg) 
-            'amount_string'^s/(need amtwo.arg) 
+        :*  to#s#to.arg 
+            'amount_currency_iso'^s#(need cur.arg) 
+            'amount_string'^s#(need amtwo.arg) 
             ~
         ==
-      :*  to/s/to.arg 
-          amount/s/(need amtwo.arg) 
-          'amount_string'^s/(need amtwo.arg)
+      :*  to#s#to.arg 
+          amount#s#(need amtwo.arg) 
+          'amount_string'^s#(need amtwo.arg)
           ~
       ==
   =+  ^=  pst
-      (jobe transaction/(jobe info) ~)
-  [[(old-api /send /transactions/'send_money' %post pst) ~] +>.$]
+      (jobe transaction#(jobe info) ~)
+  [[(old-api /send /transactions#'send_money' %post pst) ~] +>.$]
 ::
 ++  poke-json
   |=  arg+json
   ~&  arg
-  =+  [adr amo]=(need %.(arg (ot address/so amount/no ~):jo))
+  =+  [adr amo]=(need %.(arg (ot address#so amount#no ~):jo))
   =+  frm=(~(get by incoming.vat) adr)
   (print "just received {(trip amo)} BTC from {<frm>}")
-  ::(old-api /get-id /transactions/[transaction-id] %get)
+  ::(old-api /get-id /transactions#[transaction-id] %get)
 ::
 ++  pour-get-id             ::  display transaction info
   |=  {pax+path rez+json}

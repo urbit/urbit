@@ -1,5 +1,5 @@
 ::
-::::  /hoon/unix/hood/gen
+::::  /hoon#unix#hood#gen
   ::
 /?  314
 ::

@@ -1,5 +1,5 @@
 ::
-::::  /hoon/autoload/hood/gen
+::::  /hoon#autoload#hood#gen
   ::
 /?  314
 ::

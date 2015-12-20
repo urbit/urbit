@@ -1,5 +1,5 @@
 ::
-::::  /hoon/core/log/mar
+::::  /hoon#core#log#mar
   ::
 !:
 |_  man+span

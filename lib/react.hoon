@@ -68,9 +68,9 @@
       ==    ==
     ==
   %-  jobe  :~
-    c/a/(turn c.src ..$)
-    gn/s/(mane-to-cord n.g.src)
-    =<  ga/(jobe (turn a.g.src .))
+    c#a#(turn c.src ..$)
+    gn#s#(mane-to-cord n.g.src)
+    =<  ga#(jobe (turn a.g.src .))
     |=  {a+mane b+tape}  ^-  {cord json}
     :_  (jape b)
     ?^  a  (mane-to-cord a)
@@ -125,8 +125,8 @@
       =<  ~(ram re %rose [", " "[" "]"] (turn c.src .))
       |=  a+manx
       ?:  ?=(_:/(**) a)
-        leaf/(pojo (jape v.i.a.g.a))
-      leaf/^$(src a)
+        leaf#(pojo (jape v.i.a.g.a))
+      leaf#^$(src a)
     ")"
   ==
 --

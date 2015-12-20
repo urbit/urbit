@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hoon/oct3/lib                                    ::::::  dependencies
+::::  /hoon#oct3/lib                                    ::::::  dependencies
   ::                                                    ::  ::
 /?    310                                               ::  arvo version
 /-    oct3                                              ::  structures
@@ -13,7 +13,7 @@
   |_  bud+board                                         ::
   ++  bit  |=(@ =(1 (cut 0 [+< 1] bud)))                ::  moved at address
   ++  get  |=(point (bit (off +<)))                     ::  get point
-  ++  jon  a/(turn (gulf 0 9) |=(@ b/(bit +<)))         ::  to json
+  ++  jon  a#(turn (gulf 0 9) |=(@ b#(bit +<)))         ::  to json
   ++  off  |=(point (add x (mul 3 y)))                  ::  bitfield address
   ++  set  |=(point (con bud (bex (off +<))))           ::  set point
   ++  win  %-  lien  :_  |=(a+@ =(a (dis a bud)))       ::  test for win
@@ -33,7 +33,7 @@
           ++  y  .(box (~(set bo box) +<), p.sag `src)  ::  play at x
           --                                            ::
   ++  ept  =+(own |(&(=(~ -) !=(oth `src)) =(`src -)))  ::  we can play
-  ++  hey  |=(? +>+<+(aud ((stat ship) +< src aud)))    ::  enter/leave
+  ++  hey  |=(? +>+<+(aud ((stat ship) +< src aud)))    ::  enter#leave
   ++  muy  |=  (list ship)  ?~  +<  +>+<+               ::  many in audience
            $(+< t.+<, aud ((stat ship) & i.+< aud))     ::
   ++  nam  =+  ?:  =(p.sag `src)  ['=' (icon &) ~]      ::  print name
@@ -55,6 +55,6 @@
            ?~  dow  ~  =+  mor=$(dow t.dow)             ::
            :(weld nam(src p.i.dow) ?~(mor "" ", ") mor) ::
   ++  voy   =+  ~[(icon who)]  %+  weld  vew            ::  print prompt
-            ?.(ept " ({-}'s turn) " ": {-} (row/col): ")::
+            ?.(ept " ({-}'s turn) " ": {-} (row#col): ")::
   --
 --

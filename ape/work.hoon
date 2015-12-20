@@ -48,7 +48,7 @@
       :_  moves
       ^-  move
       :*  ost  %poke
-          /sending/(scot %uv id.tax)/(scot %ud version.tax)
+          /sending#(scot %uv id.tax)/(scot %ud version.tax)
           [our %talk]
           %talk-command
           =>  [. talk]  ^-  command:talk
@@ -126,7 +126,7 @@
   ?:  connected
     [~ .]
   :_  .(connected %&)  :_  ~
-  [ost %peer /peering [our %talk] /f/(main:talk our)/(scot %ud count)]
+  [ost %peer /peering [our %talk] /f#(main:talk our)/(scot %ud count)]
 ::
 ++  process-duty
   |=  {when+@da her+ship from+(set station:talk) action+duty:work-stuff:talk}

@@ -1,6 +1,6 @@
-::    this mark is used to receive incoming oauth2 refresh/access tokens
+::    this mark is used to receive incoming oauth2 refresh#access tokens
 ::
-::::  /hoon/oauth-tokens/mar
+::::  /hoon#oauth-tokens#mar
   ::
 /?  310
 !:

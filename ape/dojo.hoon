@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hoon/dojo/app                                    ::  ::::
+::::  /hoon#dojo#app                                    ::  ::::
   ::                                                    ::    ::
 /?  314                                                 ::  arvo kelvin
 /-  sole                                                ::  console structures
@@ -18,7 +18,7 @@
       $:  say+sole-share                                ::  command-line state
           dir+beam                                      ::  active path
           poy+(unit dojo-project)                       ::  working
-          {lib+(list hoof) arc+(list hoof)}             ::  lib/sur
+          {lib+(list hoof) arc+(list hoof)}             ::  lib#sur
           var+(map term cage)                           ::  variable state
           old+(set term)                                ::  used TLVs
           buf+tape                                      ::  multiline buffer
@@ -34,7 +34,7 @@
           {$file p+beam}                                ::  save to clay
           {$http p+?($post $put) q+purl}                ::  http outbound
           {$poke p+goal}                                ::  poke app
-          {$show p+?($0 $1 $2 $3)}                      ::  print val/type/twig
+          {$show p+?($0 $1 $2 $3)}                      ::  print val#type#twig
           {$verb p+term}                                ::  store variable
       ==                                                ::
     ++  dojo-source                                     ::  construction node
@@ -425,13 +425,13 @@
           $?($eny $now $our)  !!
           $lib  .(lib ~)
           $arc  .(arc ~)
-          $dir  .(dir [[our.hid %home ud/0] /])
+          $dir  .(dir [[our.hid %home ud#0] /])
         ==
       =+  cay=(~(got by rez) p.q.mad)
       ?-    -.p.mad
           $verb
         =.  var  (~(put by var) p.p.mad cay)
-        ~|  bad-set/[p.p.mad p.q.cay]
+        ~|  bad-set#[p.p.mad p.q.cay]
         =<  dy-amok
         ?+  p.p.mad  .
           $eny  ~|(%entropy-is-eternal !!)
@@ -447,7 +447,7 @@
                     pax
                 =.  dir  (need (tome pax))
                 =-  +>(..dy (he-diff %tan - ~))
-                rose/[" " `~]^~[leaf/"=%" (smyt (tope he-beak s.dir))]
+                rose#[" " `~]^~[leaf#"=%" (smyt (tope he-beak s.dir))]
         ==
       ::
           $poke       
@@ -479,7 +479,7 @@
           $http
         ?>  ?=($mime p.cay)
         =+  mim=;;(mime q.q.cay)
-        =+  maf=(~(add ja *math) content-type/(moon p.mim))
+        =+  maf=(~(add ja *math) content-type#(moon p.mim))
         (dy-eyre /show [q.p.mad p.p.mad maf ~ q.mim])
       ::
           $show
@@ -500,7 +500,7 @@
         $tang  ;;(tang q.q.cay)
         $httr
           =+  hit=;;(httr q.q.cay)
-          =-  (flop (turn `wall`- |=(a+tape leaf/(dash:ut a ''))))
+          =-  (flop (turn `wall`- |=(a+tape leaf#(dash:ut a ''))))
           :-  "HTTP {<p.hit>}"
           %+  weld
             (turn q.hit |=({a+@t b+@t} "{(trip a)}: {(trip b)}"))
@@ -613,7 +613,7 @@
       %+  sloop
         %-  ~(rep by var)
         |=  {{a+term @ b+vase} c+vase}  ^-  vase
-        (sloop b(p face/[a p.b]) c)
+        (sloop b(p face#[a p.b]) c)
       !>([our=our now=now eny=eny]:hid)
     ::
     ++  dy-made-dial                                    ::  dialog product
@@ -656,8 +656,8 @@
       ::
           $|
         =+  hiz=;;(hiss +<.q.vax)
-        =.  ..dy  (he-diff %tan leaf/"< {(earn p.hiz)}" ~)
-        (dy-eyre(pro `(slap (slot 7 vax) cnzy/%q)) /scar hiz)
+        =.  ..dy  (he-diff %tan leaf#"< {(earn p.hiz)}" ~)
+        (dy-eyre(pro `(slap (slot 7 vax) cnzy#%q)) /scar hiz)
       ==
     ::
     ++  dy-sigh-scar                                    ::  scraper result
@@ -744,14 +744,14 @@
   ::
   ++  he-dope                                           ::  sole user of ++dp
     |=  txt+tape                                        ::
-    ^-  (each (unit (each dojo-command tape)) hair)     ::  prefix/result
+    ^-  (each (unit (each dojo-command tape)) hair)     ::  prefix#result
     =+  len=+((lent txt))                               ::  line length
     =.  txt  :(weld buf txt "\0a")                      ::
     =+  vex=((full dp-command-line):dp [1 1] txt)       ::
     ?:  =(q.p.vex len)                                  ::  matched to line end
       [%& ~]                                            ::
     ?:  =(p.p.vex +((lent (skim txt |=(a+@ =(10 a)))))) ::  parsed all lines
-      [%& ~ ?~(q.vex [%| txt] `p.u.q.vex)]              ::  new buffer/complete
+      [%& ~ ?~(q.vex [%| txt] `p.u.q.vex)]              ::  new buffer#complete
     [%| p.p.vex (dec q.p.vex)]                          ::  syntax error
   ::
   ++  he-duke                                           ::  ++he-dope variant
@@ -766,7 +766,7 @@
   ++  he-easter                                         ::  hint messages
     ^+  .
     =.  egg  +(egg)
-    =-  ?~(msg ..he-diff (he-diff %tan leaf/u.msg ~))
+    =-  ?~(msg ..he-diff (he-diff %tan leaf#u.msg ~))
     ^-  msg+(unit tape)
     ?+  (clan our.hid)  ~
       $pawn  ?+  egg  ~
@@ -783,7 +783,7 @@
   ++  he-beak  -:he-beam
   ++  he-beam                                           ::  logical beam
     ^-  beam
-    ?.  =(ud/0 r.dir)  dir
+    ?.  =(ud#0 r.dir)  dir
     dir(r [%da now.hid])
   ::
   ++  he-card                                           ::  emit gift
@@ -923,7 +923,7 @@
         (he-diff [%err (lent txt)])
       =+  old=(weld ?~(buf "> " "  ") (tufa buf.say))
       =^  cal  say  (~(transmit sole say) [%set ~])
-      =.  +>.$   (he-diff %mor txt/old nex/~ det/cal ~)
+      =.  +>.$   (he-diff %mor txt#old nex#~ det#cal ~)
       ?-  -.u.p.doy
         $&  (he-plan(buf ~) p.u.p.doy)
         $|  he-prom(buf p.u.p.doy)
@@ -984,11 +984,11 @@
     ?.  (~(has by hoc) ost.hid)  [~ .]
     ~&  [%dojo-peer-replaced ost.hid]
     ~(he-abut he ~ (~(got by hoc) ost.hid))
-  =+  ses=%*(. *session -.dir [our.hid %home ud/0])
+  =+  ses=%*(. *session -.dir [our.hid %home ud#0])
   (wrap he-peer):(arm-session moz ses)
 ::
 ++  poke-sole-action
-  |=  act+sole-action  ~|  poke/act  %.  act
+  |=  act+sole-action  ~|  poke#act  %.  act
   (wrap he-type):arm
 ++  made       (wrap he-made):arm
 ++  sigh-httr  (wrap he-sigh):arm

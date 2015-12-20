@@ -40,7 +40,7 @@
   |=  a+json  ^-  json
   =-  (fall `(unit json)`- ~)
   %.  a
-  %+  find-in-tree  (ot c/(ar some) gn/so ga/(om so) ~):jo
+  %+  find-in-tree  (ot c#(ar some) gn#so ga#(om so) ~):jo
   |=  {nom+span atr+(map span cord)}  ^-  (unit json)
   ?.  (~(has by atr) 'urb:front')  ~
   ?>  ?=($meta nom)

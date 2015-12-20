@@ -1,6 +1,6 @@
 ::    this mark is used to receive a confirmed transaction
 ::
-::::  /hoon/bit-transaction/mar
+::::  /hoon#bit-transaction#mar
   ::
 /?  310
 !:
@@ -11,7 +11,7 @@
   ++  noun  @t                   ::  clam from noun
   ++  json  |=  jon+^json
             ~|  jon
-            (need ((ot transaction/(ot id/so ~) ~):jo jon))
+            (need ((ot transaction#(ot id#so ~) ~):jo jon))
   --
 --
 

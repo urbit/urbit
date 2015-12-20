@@ -14,7 +14,7 @@
 ++  rook                                                ::  forward ames msg
   $%  {$m p+mark q+*}                                   ::  message
       {$s p+path}                                       ::  subscribe
-      {$u $~}                                           ::  cancel/unsubscribe
+      {$u $~}                                           ::  cancel#unsubscribe
   ==                                                    ::
 --                                                      ::
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    local arvo
@@ -125,7 +125,7 @@
   ::
   ++  mo-conf                                           ::  configure
     |=  {dap+dude lum+culm}
-    (mo-boot dap ?:((~(has by bum) dap) %old %new) p.p.lum q.p.lum da/now)
+    (mo-boot dap ?:((~(has by bum) dap) %old %new) p.p.lum q.p.lum da#now)
   ::
   ++  mo-pass                                           ::  standard pass
     |=  {pax+path noh+note-arvo}
@@ -299,7 +299,7 @@
     |=  pax+path
     ^-  beak
     ?>  ?=({@ @ @ $~} pax)
-    [(slav %p i.pax) i.t.pax da/(slav %da i.t.t.pax)]
+    [(slav %p i.pax) i.t.pax da#(slav %da i.t.t.pax)]
   ::
   ++  mo-cyst                                           ::  take in /sys
     |=  {pax+path sih+sign-arvo}
@@ -329,7 +329,7 @@
       ?-  -.q.+.sih
         $tabl  ~|(%made-tabl !!)
         $&    (mo-give %unto %diff p.q.+>.sih)
-        $|     =.  p.q.+>.sih  (turn p.q.+>.sih |=(a+tank rose/[~ "! " ~]^[a]~))
+        $|     =.  p.q.+>.sih  (turn p.q.+>.sih |=(a+tank rose#[~ "! " ~]^[a]~))
               ~>  %slog.`%*(. >[%wh %y]< +> [>%mo-cyst-fail< (flop p.q.+>.sih)])
               (mo-give %unto %quit ~)   ::  XX better errors pls
       ==
@@ -441,8 +441,8 @@
                 $&     ap-abet:(ap-pout:pap t.t.t.pax %diff +.q.+>.q.hin)
                 $|
                     =+  why=p.q.+>.q.hin
-                    =.  why  (turn why |=(a+tank rose/[~ "! " ~]^[a]~))
-                    ~>  %slog.`rose/["  " "[" "]"]^[>%mo-cook-fail< (flop why)]
+                    =.  why  (turn why |=(a+tank rose#[~ "! " ~]^[a]~))
+                    ~>  %slog.`rose#["  " "[" "]"]^[>%mo-cook-fail< (flop why)]
                     ~&  [him=q.q.pry our=our pax=pax]
                     ::
                     ::  here we should crash because the right thing
@@ -956,15 +956,15 @@
       ^+  +>
       =+  cug=(ap-find /lame)
       ?~  cug
-        =.  why  [>%ap-lame dap wut< (turn why |=(a+tank rose/[~ "! " ~]^[a]~))]
-        ~>  %slog.`rose/["  " "[" "]"]^(flop why)
+        =.  why  [>%ap-lame dap wut< (turn why |=(a+tank rose#[~ "! " ~]^[a]~))]
+        ~>  %slog.`rose#["  " "[" "]"]^(flop why)
         +>.$
       =^  cam  +>.$
         %+  ap-call  q.u.cug
         !>([wut why])
       ?^  cam
-        =.  why  [>%ap-lame-lame< (turn u.cam |=(a+tank rose/[~ "! " ~]^[a]~))]
-        ~>  %slog.`rose/["  " "[" "]"]^(welp (flop why) leaf/"." (flop u.cam))
+        =.  why  [>%ap-lame-lame< (turn u.cam |=(a+tank rose#[~ "! " ~]^[a]~))]
+        ~>  %slog.`rose#["  " "[" "]"]^(welp (flop why) leaf#"." (flop u.cam))
         +>.$
       +>.$
     ::
@@ -1230,9 +1230,9 @@
         [%| $(a (turn (turn a2 head) |=(b+mass ?~(-.q.b !! p.q.b))))]
     %+  turn  (~(tap by pol.all))
     |=  {@ mast}
-    :~  foreign/`sap
-        blocked/[%| (sort :_(aor (~(tap by (~(run by wub) |=(sofa `+<))))))]
-        active/[%| (sort :_(aor (~(tap by (~(run by bum) |=(seat `+<))))))]
+    :~  foreign#`sap
+        blocked#[%| (sort :_(aor (~(tap by (~(run by wub) |=(sofa `+<))))))]
+        active#[%| (sort :_(aor (~(tap by (~(run by bum) |=(seat `+<))))))]
     ==
   ==
 ::
@@ -1256,7 +1256,7 @@
   ^-  (unit (unit (pair mark *)))
   [~ ~]
 ::
-++  stay                                                ::  save w/o cache
+++  stay                                                ::  save w#o cache
   `axle`all
 ::
 ++  take                                                ::  response

@@ -7,7 +7,7 @@
   |=  {kid+@ta $~}
   =+  paf=`path`/[kid]
   =-  :+  %rose  ["/" ~ ?:(dir "/" ~)]
-      (turn paf |=(a+span leaf/(trip a)))
+      (turn paf |=(a+span leaf#(trip a)))
   |-  ^-  {dir+? paf+path}
   =+  arf=;;(arch .^(%cy (weld pax paf)))
   ?^  fil.arf  

@@ -83,15 +83,15 @@
 ::
 ++  render
   |=  {mez+tape sud+desk who+ship syd+desk}
-  :^  %palm  [" " ~ ~ ~]  leaf/mez
-  ~[leaf/"from {<sud>}" leaf/"on {<who>}" leaf/"to {<syd>}"]
+  :^  %palm  [" " ~ ~ ~]  leaf#mez
+  ~[leaf#"from {<sud>}" leaf#"on {<who>}" leaf#"to {<syd>}"]
 ::
 ++  poke-mount
   |=  kiln-mount
   =+  bem=(tome pax)
   ?~  bem
     =+  "can't mount bad path: {<pax>}"
-    abet:(spam leaf/- ~)
+    abet:(spam leaf#- ~)
   abet:(emit %mont /mount pot p.u.bem q.u.bem (flop s.u.bem))
 ::
 ++  poke-unmount
@@ -100,7 +100,7 @@
     =+  bem=(tome mon)
     ?~  bem
       =+  "can't unmount bad path: {<mon>}"
-      abet:(spam leaf/- ~)
+      abet:(spam leaf#- ~)
     abet:(emit %ogre /unmount-beam [[p q %ud 0] s]:u.bem)
   abet:(emit %ogre /unmount-point mon)
 ::
@@ -128,14 +128,14 @@
 ::
 ++  do-info
   |=  {mez+tape tor+toro}
-  abet:(emit:(spam leaf/mez ~) %info /kiln our tor)
+  abet:(emit:(spam leaf#mez ~) %info /kiln our tor)
 ::
 ++  poke-rm  |=(a+path (do-info "removed" (fray a)))
 ++  poke-cp
   |=  {input+path output+path}
   %+  do-info  "copied"
   ?>  =(-:(flop input) -:(flop output))
-  (foal output -:(flop input) atom/%t .^(%cx input))    ::  XX type
+  (foal output -:(flop input) atom#%t .^(%cx input))    ::  XX type
 ::
 ++  poke-mv
   |=  {input+path output+path} 
@@ -161,7 +161,7 @@
   ?^  lod
     abet(autoload u.lod)
   =<  abet(autoload !autoload)
-  (spam leaf/"turning autoload o{?:(autoload "ff" "n")}" ~)
+  (spam leaf#"turning autoload o{?:(autoload "ff" "n")}" ~)
 ::
 ++  poke-start-autoload
   |=  $~
@@ -172,7 +172,7 @@
   |=  syd+term
   ^-  card
   :*  %warp  /kiln/autoload/[syd]  [our our]  %home  ~
-      %next  %y  da/now  /arvo/[syd]/hoon
+      %next  %y  da#now  /arvo/[syd]/hoon
   ==
 ::
 ++  poke-overload
@@ -226,7 +226,7 @@
   =.  +>.$
     %-  emit  :*
       %warp  /kiln/autoload/[syd]  [our our]  %home  ~
-      %next  %y  da/now  /arvo/[syd]/hoon
+      %next  %y  da#now  /arvo/[syd]/hoon
     ==
   abet
 ::
@@ -280,14 +280,14 @@
     |=  rot+riot
     ?~  rot
       %^    spam
-          leaf/"bad %writ response"
+          leaf#"bad %writ response"
         (render "on sync" sud her syd)
       ~
     =.  let  ?.  ?=($w p.p.u.rot)  let  ((hard @ud) q.q.r.u.rot)
     %-  blab  :_  ~
     :*  ost  %merg
         /kiln/sync/[syd]/(scot %p her)/[sud]
-        our  syd  her  sud  ud/let
+        our  syd  her  sud  ud#let
         ?:  =(0 .^(%cw /(scot %p our)/[syd]/(scot %da now)))
           %init
         %mate
@@ -302,16 +302,16 @@
         [(render "sync succeeded" sud her syd) ~]
       ?+  p.p.mes
         :*  (render "sync failed" sud her syd)
-            leaf/"please manually merge the desks with"
-            leaf/"|merge %{(trip syd)} {(scow %p her)} %{(trip sud)}"
-            leaf/""
-            leaf/"error code: {<p.p.mes>}"
+            leaf#"please manually merge the desks with"
+            leaf#"|merge %{(trip syd)} {(scow %p her)} %{(trip sud)}"
+            leaf#""
+            leaf#"error code: {<p.p.mes>}"
             q.p.mes
         ==
       ::
           $no-ali-desk
         :~  (render "sync activated" sud her syd)  
-            leaf/"note: blank desk {<sud>} on {<her>}"
+            leaf#"note: blank desk {<sud>} on {<her>}"
         ==
       ==
     %-  blab  :_  ~
@@ -403,12 +403,12 @@
   ++  coup-fancy
     |=  saw+(unit tang) 
     ?~  saw
-      =>  (spam leaf/"%melding %{(trip sud)} into scratch space" ~)
+      =>  (spam leaf#"%melding %{(trip sud)} into scratch space" ~)
       %-  blab  :_  ~
       [ost %merg /kiln/[syd] our (cat 3 syd '-scratch') her sud cas gem]
     =+  :-  "failed to set up conflict resolution scratch space"
         "I'm out of ideas"
-    lose:(spam leaf/-< leaf/-> u.saw)
+    lose:(spam leaf#-< leaf#-> u.saw)
   ::
   ++  mere
     |=  are+(each (set path) (pair term tang)) 
@@ -417,16 +417,16 @@
       ?:  ?=($& -.are)
         ?.  auto
           =+  "merged with strategy {<gem>}"
-          win:(spam leaf/- ?~(p.are ~ [>`(set path)`p.are< ~]))
+          win:(spam leaf#- ?~(p.are ~ [>`(set path)`p.are< ~]))
         :: ~?  >  =(~ p.are)  [%mere-no-conflict syd]
         =+  "mashing conflicts"
-        =>  .(+>.$ (spam leaf/- ~))
+        =>  .(+>.$ (spam leaf#- ~))
         =+  tic=(cat 3 syd '-scratch')
         %-  blab  :_  ~
         :*  ost  %exec  /kiln/[syd]
             our  ~  [our tic %da now]  %tabl
             ^-  (list (pair silk silk))
-            :: ~&  >  kiln-mashing/[p.are syd=syd +<.abet]
+            :: ~&  >  kiln-mashing#[p.are syd=syd +<.abet]
             %+  turn  (~(tap in p.are))
             |=  pax+path
             ^-  (pair silk silk)
@@ -442,50 +442,50 @@
             [%mash for [her sud dali] [our syd dbob]]
         ==
       =+  "failed to merge with strategy meld"
-      lose:(spam leaf/- >p.p.are< q.p.are)
+      lose:(spam leaf#- >p.p.are< q.p.are)
     ?:  ?=($& -.are)
       =+  "merged with strategy {<gem>}"
-      win:(spam leaf/- ?~(p.are ~ [>`(set path)`p.are< ~]))
+      win:(spam leaf#- ?~(p.are ~ [>`(set path)`p.are< ~]))
     ?.  auto
       =+  "failed to merge with strategy {<gem>}"
-      lose:(spam leaf/- >p.p.are< q.p.are)
+      lose:(spam leaf#- >p.p.are< q.p.are)
     ?+    gem
-      (spam leaf/"strange auto" >gem< ~)
+      (spam leaf#"strange auto" >gem< ~)
     ::
         $init
       =+  :-  "auto merge failed on strategy %init"
           "I'm out of ideas"
-      lose:(spam leaf/-< leaf/-> [>p.p.are< q.p.are])
+      lose:(spam leaf#-< leaf#-> [>p.p.are< q.p.are])
     ::
         $fine
       ?.  ?=($bad-fine-merge p.p.are)
         =+  "auto merge failed on strategy %fine"
-        lose:(spam leaf/- >p.p.are< q.p.are)
-      =>  (spam leaf/"%fine merge failed, trying %meet" ~)
+        lose:(spam leaf#- >p.p.are< q.p.are)
+      =>  (spam leaf#"%fine merge failed, trying %meet" ~)
       perform(gem %meet)
     ::
         $meet
       ?.  ?=($meet-conflict p.p.are)
         =+  "auto merge failed on strategy %meet"
-        lose:(spam leaf/- >p.p.are< q.p.are)
-      =>  (spam leaf/"%meet merge failed, trying %mate" ~)
+        lose:(spam leaf#- >p.p.are< q.p.are)
+      =>  (spam leaf#"%meet merge failed, trying %mate" ~)
       perform(gem %mate)
     ::
         $mate
       ?.  ?=($mate-conflict p.p.are)
         =+  "auto merge failed on strategy %mate"
-        lose:(spam leaf/- >p.p.are< q.p.are)
+        lose:(spam leaf#- >p.p.are< q.p.are)
       =>  .(gem %meld)
       =+  tic=(cat 3 syd '-scratch')
       =>  =+  :-  "%mate merge failed with conflicts,"
               "setting up scratch space at %{(trip tic)}"
-          [tic=tic (spam leaf/-< leaf/-> q.p.are)]
+          [tic=tic (spam leaf#-< leaf#-> q.p.are)]
       (fancy-merge tic our syd %init)
     ==
   ::
   ++  tape-to-tanks
     |=  a+tape  ^-  (list tank)
-    (scan a (more (just '\0a') (cook |=(a+tape leaf/a) (star prn))))
+    (scan a (more (just '\0a') (cook |=(a+tape leaf#a) (star prn))))
   ::
   ++  tanks-if-any
     |=  {a+tape b+(list path) c+tape}  ^-  (list tank)
@@ -497,7 +497,7 @@
     ^+  +>
     ?:  ?=($| -.reg)
       =+  "failed to mash"
-      lose:(spam leaf/- p.reg)
+      lose:(spam leaf#- p.reg)
     =+  ^-  can+(list (pair path (unit miso)))
         %+  turn  (gage-to-cages reg)
         |=  {pax+cage dif+cage}
@@ -506,7 +506,7 @@
           ~|  "strange path mark: {<p.pax>}"
           !!
         [((hard path) q.q.pax) ?:(?=($null p.dif) ~ `[%dif dif])]
-    :: ~&  >  kiln-made/[(turn can head) syd=syd +<.abet]
+    :: ~&  >  kiln-made#[(turn can head) syd=syd +<.abet]
     =+  notated=(skid can |=({path a+(unit miso)} ?=(^ a)))
     =+  annotated=(turn `(list (pair path *))`-.notated head)
     =+  unnotated=(turn `(list (pair path *))`+.notated head)

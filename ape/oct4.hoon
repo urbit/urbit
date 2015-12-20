@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hoon/oct4/ape                                    ::::::  dependencies
+::::  /hoon#oct4/ape                                    ::::::  dependencies
   ::                                                    ::  ::
 /?  310                                                 ::  arvo version
 /-  sole, oct4                                          ::  structures
@@ -83,27 +83,27 @@
 ++  kick  |=  point  =^  dud  gam  ~(m at:here +<)      ::
           ?.(dud fail wild:?~(rem kind (send +>-)))     ::
 ++  kind  =+(res:here ?~(- + (word(gam new:here) ->)))  ::  move result
-++  plan  |=  (unit ship)  ?~  +<  stop(gam new:here)   ::  link/unlink
+++  plan  |=  (unit ship)  ?~  +<  stop(gam new:here)   ::  link#unlink
           ?^(rem fail link(rem +<))                     ::
 ++  plot  |=  (each point (unit ship))                  ::  apply command
           ?-(+<- $& (kick +<+), $| (plan +<+))          ::
 ++  like  |*(* [/oct4 [+.rem dap] +<])                  ::  friend message
-++  link  (dish peer/(like /oct4))                      ::  subscribe to friend
+++  link  (dish peer#(like /oct4))                      ::  subscribe to friend
 ++  prom  (fect %pro %& %oct4 stat)                     ::  update prompt
-++  rend  (turn `wall`tab:here |=(tape txt/+<))         ::  table print
+++  rend  (turn `wall`tab:here |=(tape txt#+<))         ::  table print
 ++  sawn  (hail(eye (~(del by eye) ost)) |)             ::  console unsubscribe
 ++  seen  (hail(eye (~(put by eye) ost *sole-share)) &) ::  console subscribe
-++  send  |=(point (dish poke/(like %oct4-move +<)))    ::  send move
+++  send  |=(point (dish poke#(like %oct4-move +<)))    ::  send move
 ++  show  prom:(fect %mor rend)                         ::  update console
 ++  soul  =+((~(get by sup) ost) ?=([~ * %sole *] -))   ::  is console
-++  stat  (weld ?~(rem ~ "@{(scow p/u.rem)}") voy:here) ::  prompt line
-++  stop  ?~(rem done wild:(dish pull/(like ~)))        ::  unsubscribe
+++  stat  (weld ?~(rem ~ "@{(scow p#u.rem)}") voy:here) ::  prompt line
+++  stop  ?~(rem done wild:(dish pull#(like ~)))        ::  unsubscribe
 ++  tame  (flap |=(_. (fact:+< &/gam)) |=(_. prom:+<))  ::  light update
 ++  wild  (flap |=(_. (fact:+< &/gam)) |=(_. show:+<))  ::  full update
 ++  with  |=(? (word(rem ?:(+< rem ~)) "{<[+< src]>}")) ::  
 ++  word  |=  txt+tape  %+  flap                        ::  game message
           |=(_+> (fact:+< |/txt))                       ::
-          |=(_+> (fect:+< txt/txt))                     ::
+          |=(_+> (fect:+< txt#txt))                     ::
 ::                                                      ::  ::
 ::::                                                    ::::::  console UI
   ::                                                    ::  ::
@@ -115,11 +115,11 @@
   ++  cusp  (cope !ept:here)                            ::  parsing rule
   ++  delt  |=  cal+sole-change                         ::  edit command line
             =^  cul  say  (~(remit sole say) cal good)  ::
-            ?~(cul abet fail:(fect:abet det/u.cul))     ::
+            ?~(cul abet fail:(fect:abet det#u.cul))     ::
   ++  dive  =+  (rust (tufa buf.say) (punt comb))       ::  apply command line
             ?~(- fail ?~(-> show (plot:wipe ->+)))      ::
   ++  good  |=((list @c) -:(rose (tufa +<) cusp))       ::  validate input
-  ++  wipe  =^  cal  say  (~(transmit sole say) set/~)  ::  clear line
+  ++  wipe  =^  cal  say  (~(transmit sole say) set#~)  ::  clear line
             (fect:abet %det cal)                        ::
   --                                                    ::
 ::                                                      ::  ::

@@ -1,2 +1,2 @@
 :-  %say
-|=({^ {input+path output+path $~} $~} kiln-cp/[input output])
+|=({^ {input+path output+path $~} $~} kiln-cp#[input output])

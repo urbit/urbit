@@ -1,5 +1,5 @@
 ::
-::::  /hoon/dill-blit/mar
+::::  /hoon#dill-blit#mar
   ::
 /?    314
 /-    sole
@@ -14,7 +14,7 @@
   |%
   ++  json
     ^-  ^json
-    ?+  -.dib  ~|(unsupported-blit/-.dib !!)
+    ?+  -.dib  ~|(unsupported-blit#-.dib !!)
       $mor  [%a (turn p.dib |=(a+dill-blit json(dib a)))]
       $hop  (joba %hop (jone p.dib))
       ?($pro $out)  (joba -.dib (jape (tufa p.dib)))

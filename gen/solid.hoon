@@ -1,5 +1,5 @@
 ::
-::::  /hoon/solid/gen
+::::  /hoon#solid#gen
   ::
 /?  314
 ::

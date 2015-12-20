@@ -16,12 +16,12 @@
   =+  pax=/==5%%/html5-entities/json                    ::  XX  %%/
   =+  maf=%.(pax ;~(biff file (soft json) (om so):jo))
   ?^  maf  u.maf
-  ~&  no-enty/pax
-  (mo amp/'&' quot/'"' apos/'\'' lt/'<' gt/'>' ~)       ::  fallback
+  ~&  no-enty#pax
+  (mo amp#'&' quot#'"' apos#'\'' lt#'<' gt#'>' ~)       ::  fallback
 ::
 ++  skem-symb  (star ;~(pose dot alp))
 ++  skem-set  ~+  ^-  (set cord)                        ::  URI schemes
-  ::     (sa `wain`/http/https/javascript)
+  ::     (sa `wain`/http#https#javascript)
   =-  (sa `wain`(rash - (more gah (cook crip skem-symb))))
   '''
   coap doi javascript aaa aaas about acap cap cid crid data dav dict dns file
@@ -233,12 +233,12 @@
       ++  auto
         %+  ifix  gal^gar
         ;~  pose
-          (cook |=(a+tape [link/["mailto:{a}" ~] ~[`a]]) mail)
+          (cook |=(a+tape [link#["mailto:{a}" ~] ~[`a]]) mail)
         ::
           =+  cha=;~(pose htm-enty ;~(less (mask "<> ") prn))
           %+  cook
             |=  a+_["" ""]
-            [link/[(weld a) ~] ~[`(weld a)]]
+            [link#[(weld a) ~] ~[`(weld a)]]
           ;~(plug uri-skem col (star cha))
         ==
       ::
@@ -365,7 +365,7 @@
     ++  push                                            ::  continue with head
       |=  a+$@(char inline)
       ^-  nuft
-      ~?  ?@(a | bug)  fon/a
+      ~?  ?@(a | bug)  fon#a
       ?~  t  (veld a done)
       =:  noz  &
           i  i ::?+(i i fens p)
@@ -426,7 +426,7 @@
       =^  b  t  (flome tak)
       ?~  b
         (push (empa a))
-      ~?  >  bug  clot/[a i t]
+      ~?  >  bug  clot#[a i t]
       ?:  =(i u.b)
         (push (empa a))
       ?~  ins                                           ::  outermost
@@ -662,7 +662,7 @@
       =^  nol  nod
         [nod [%defn ~]]
       ?:  ?=($defn -.nol)  self
-      ~?  >  bug  clod/[nol tub]
+      ~?  >  bug  clod#[nol tub]
       ?~  cur  self(top [nol top])
       self(q.q.i.cur [nol q.q.i.cur])
     ::
@@ -754,7 +754,7 @@
     |=  a+(list (pair @ tops))  ^+  +>
     ?~  a  +>
     :: ?:  ?=([[@ *] ~] a)  +>
-    ~?  bug  yank/[i.a blos]
+    ~?  bug  yank#[i.a blos]
     ?>  (match q.i.a)
      :: ~&  [%no-match a cur]
      :: !!
@@ -787,7 +787,7 @@
           (. cur)
         [i.cur (. t.cur)]
     |=  a+_cur  ^+  a
-    ~?  >  bug  naro/[debu nil-li a cur]
+    ~?  >  bug  naro#[debu nil-li a cur]
     ?~  a  a
     ?:  ?=({{$item $~} $~} q.i.a)
       a
@@ -800,12 +800,12 @@
   ::
   ++  eat-line                                          ::  high-level line nom
     ^+  .  
-    ~?  >>  bug  line/curlin
+    ~?  >>  bug  line#curlin
      :: =>  [bup=bun sepa:eat]
      :: ?:  bun:+  +                                      ::  blank line nommed
      :: =<  .(bun |)
      :: =.  bun  bup
-    ~?  bug  line-stat/[debu cur]
+    ~?  bug  line-stat#[debu cur]
     ?:  ?=($html -.nod)
       =+  sep=(sepa:eat)
       ?:  bun.sep  sep
@@ -815,7 +815,7 @@
       code:eat
     =+  sep=(sepa:eat ruc)
     ?:  bun.sep
-      ~?  bug  nilli/[debu nil-li nod cur]:sep
+      ~?  bug  nilli#[debu nil-li nod cur]:sep
       =.  bun.sep
         ?^(ruc & ?^(cur | !nil-li:sep))       ::  XX  Chesterton fence
       sep
@@ -825,7 +825,7 @@
       news:eat 
       node:eat
       span:eat
-    ::  ~?  bug  seated/[nod blos]  .
+    ::  ~?  bug  seated#[nod blos]  .
     ==
   ::
   ++  curlin  (scab q.tub (star prn))
@@ -838,7 +838,7 @@
       =^  buf  tub  (snack ;~(sfix (star ace) nal))
       ?~  buf
         self(bun |)
-      ~?  bug  seat/cur
+      ~?  bug  seat#cur
       =.  self
         ?:  bun  
           delist
@@ -864,7 +864,7 @@
       ?:  =(~ q.tub)
         [~ halt]
       ?~  ruc  [ruc self]
-      ~?  bug  heat/[debu q.i.ruc cur]
+      ~?  bug  heat#[debu q.i.ruc cur]
       ?-    -.p.q.i.ruc
           $bloq
         =^  neu  tub  (snack blomar:donp)
@@ -875,7 +875,7 @@
         ?~  t.ruc  !! 
           :: $(t.ruc [p.i.ruc [%item ~] ~]~)               ::  XX  why this
         ?>  ?=($item -.p.q.i.t.ruc)
-        ~?  bug  leat/[p.i.t.ruc debu]
+        ~?  bug  leat#[p.i.t.ruc debu]
         =^  den  tub  (snack (stun [p p]:i.t.ruc ace))
         ?^  den  $(ruc t.t.ruc)
         ?.  =(self horz)  [ruc self]                    ::  XX  efficiency  
@@ -899,7 +899,7 @@
     ++  lazy                                            ::  errant prev bloqs
       |=  ruc+(list (pair @ tops))
       ^+  self
-      ~?  bug  laze/[debu ruc]
+      ~?  bug  laze#[debu ruc]
       ?.  ?=($para -.nod)
         (collapse (flop ruc))
       ?:  |([?=(^ -)]:lead [?=(^ -)]:(snack leaf:donp))     ::  XX  efficiency
@@ -931,7 +931,7 @@
     ::
     ++  node                                            ::  consume leaf node
       ^+  self
-      ~?  bug  neat/curlin  
+      ~?  bug  neat#curlin  
       ::=.  self  ?.(bun self cull)
       ?^  [q]:((leas htm-head):donp tub)                ::  XX  efficiency
         (pump [%html ~])  
@@ -944,7 +944,7 @@
       =+  saf=q.p.+:(snack (star ace))          ::  XX  efficiency
       =^  neu  tub  
         (snack ;~(pose hez ico leaf:donp))
-      ~?  bug  feat/[bun saf blos neu]
+      ~?  bug  feat#[bun saf blos neu]
       =.  cur  
         ?.(bun cur widen)
       ?~  neu
@@ -964,7 +964,7 @@
     ++  code
       ^+  self
       ?>  ?=({$code ^ *} nod)                          ::  XX  do type stuff
-      ~?  bug  ceas/[sap]
+      ~?  bug  ceas#[sap]
       =.  tub  (aces sap)
       =+  [neu tup]=(snack ;~(sfix (leas fcode):donp eol))
       ?:  &(?=(^ neu) (closes-code p.nod p.u.neu))
@@ -982,14 +982,14 @@
         (snack line:donp)
       ?~  lin 
         halt
-      ~?  bug  adva/u.lin
+      ~?  bug  adva#u.lin
       |-
       ?~  u.lin
         ?+  -.nod  cull
           $code  self
           $html  self(p.nod ['' p.nod])
         ==
-      ?+  -.nod  (pump para/~[`u.lin])
+      ?+  -.nod  (pump para#~[`u.lin])
         $para  self(p.nod :_(p.nod `u.lin))
         $head  ?^  q.nod  $(self cull)
                self(q.nod [`(dehax u.lin)]~)

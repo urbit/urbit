@@ -1,5 +1,5 @@
 ::
-::::  /hoon/dill-belt/mar
+::::  /hoon#dill-belt#mar
   ::
 /?    314
 /-    kyev, sole
@@ -16,17 +16,17 @@
     |=  jon+^json  ^-  ^kyev
     %-  need
     %.  jon  =>  jo  %-  ot
-    :~  mod/(cu ^sa (ar (su (perk ~[%ctrl %shift %alt %meta]))))
+    :~  mod#(cu ^sa (ar (su (perk ~[%ctrl %shift %alt %meta]))))
         :-  %key
         %+  cu  |*(a+$%({$str @t} {$act @}) ?+(-.a a $str +.a))
-        =-  (of str/so act/(su (perk -)) ~)
+        =-  (of str#so act#(su (perk -)) ~)
         :~  %ctrl  %shift  %alt   %meta   %entr  %esc  %caps  %uncap
             %pgup  %pgdn   %home  %end    %baxp  %del  %ins
             %up    %down   %left  %right
     ==  ==
   ++  kyev
     |=  kev+^kyev  ^-  dill-belt
-    ~|  dill-belt-incomplete/kev
+    ~|  dill-belt-incomplete#kev
     ?:  ?=({$act ?($ctrl $shift $alt $meta)} q.kev)
       [%txt ~]                        ::  ignore
     =+  mod=(~(del in p.kev) %shift)

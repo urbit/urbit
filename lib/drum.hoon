@@ -87,7 +87,7 @@
   :*  %&
       *(unit search)
       *history
-      [%& %sole "{(scow %p our)}# "]
+      [%& %sole "{(scow %p our)}/ "]
       *sole-command
   ==
 ::
@@ -159,7 +159,7 @@
   ?.  ?|  =(our src)                                  ::  ourself
           &(=(%duke (clan our)) =(our (sein src)))    ::  or our own yacht
       ==                                              ::
-    ~|  [%drum-unauthorized our/our src/src]          ::  very simplistic
+    ~|  [%drum-unauthorized our#our src#src]          ::  very simplistic
     !!
   se-view:(se-text "[{<src>}, driving {<our>}]")
 ::
@@ -305,7 +305,7 @@
 ++  se-anon                                           ::  rotate index
   =+  wag=se-amor
   ?~  wag  +
-  ::  ~&  [%se-anon inx/inx wag/wag nex/(mod +(inx) (lent se-amor))]
+  ::  ~&  [%se-anon inx#inx wag#wag nex#(mod +(inx) (lent se-amor))]
   +(inx (mod +(inx) (lent se-amor)))
 ::
 ++  se-agon                                           ::  current gill
@@ -515,7 +515,7 @@
     ^+  ..ta
     ?.  liv  
       ?:   (~(has in (deft-fish our)) gyl)
-        (se-blit qit/~)
+        (se-blit qit#~)
       (se-nuke gyl)
     ..ta(fug (~(put by fug) gyl ``target`+<+))
   ::

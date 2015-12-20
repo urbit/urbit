@@ -1,5 +1,5 @@
 ::
-::::  /hoon/client-secret/mar
+::::  /hoon#client-secret#mar
   ::
 /?  314 
 |_  txt+cord

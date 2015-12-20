@@ -10,5 +10,5 @@
           ++  mime  |=({* p+octs} q.p)
           --
 ++  grow  |%
-          ++  mime  [/aplication/x-urb-unknown (taco ato)]
+          ++  mime  [/application/x-urb-unknown (taco ato)]
 --        --

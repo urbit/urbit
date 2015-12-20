@@ -1,5 +1,5 @@
 ::                                                      ::  ::
-::::  /hoon/oct3/sur                                    ::::::  dependencies
+::::  /hoon#oct3/sur                                    ::::::  dependencies
   ::                                                    ::  ::
 /?    310                                               ::  arvo version
 ::                                                      ::  ::
