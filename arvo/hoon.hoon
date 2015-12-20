@@ -1,4 +1,4 @@
-!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::     
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject
@@ -91,7 +91,6 @@
           u=[p=(a +>-.b) q=[p=(hair -.b) q=(tape +.b)]] ::
 ++  limb  $@  term 
           $%  {$& p/axis} 
-              {$| p/@ud q/term}
               {$2 p/@ud q/{$~ term}}
           ==
 ++  line  {p/{$leaf p/odor q/@} q/tile}                 ::  %kelp case
@@ -7500,7 +7499,6 @@
     =+  ^=  poz  ^-  post
         ?-  -.i.peh
           $&  [p.i.peh %& (peek %both p.i.peh)]
-          $|  (finq p.i.peh %both q.i.peh)
           $2  (finq p.i.peh %both +.q.i.peh)
         ==
     |-  ^-  type
@@ -7508,7 +7506,6 @@
       ?-  -.q.poz
         $0  ?-  -.i.peh
               $&  ^$(peh t.peh)
-              $|  (face q.i.peh ^$(peh t.peh, sut p.q.poz))
               $2  (face +.q.i.peh ^$(peh t.peh, sut p.q.poz))
             ==
         $1  ^$(peh t.peh)
@@ -8945,11 +8942,6 @@
         {$& *}
       [(peg p.zar p.i.hyp) %& (peek(sut syp) way p.i.hyp)]
     ::
-        {$| *}
-      =>  .(sut syp)
-      =+  hud=(fink p.i.hyp way q.i.hyp)
-      [(peg p.zar p.hud) q.hud]
-    ::
         {$2 *}
       =>  .(sut syp)
       =+  hud=(fink p.i.hyp way +.q.i.hyp)
@@ -8982,7 +8974,7 @@
     |-  ^-  {p/axis q/type}
     ?~  peh
       [axe mur]
-    =>  .(i.peh ?^(i.peh i.peh [%| p=0 q=i.peh]))
+    =>  .(i.peh ?^(i.peh i.peh [%2 p=0 q=`i.peh]))
     ?-    i.peh
         {$& *}
       =+  ^=  sap  ^-  (unit term)
@@ -8991,19 +8983,6 @@
       =+  gav=$(peh t.peh, sut vas, axe (peg axe p.i.peh))
       =+  heh=(heal ~ p.i.peh q.gav)
       [p.gav ?~(sap heh (face u.sap heh))]
-    ::
-        {$| *}
-      =+  dob=`post`(need q:(fino p.i.peh %rite q.i.peh))
-      ~|  [%tack-limb q.i.peh]
-      ?:  ?=($2 -.q.dob)
-        =+  hoc=(peg axe p.dob)
-        =+  guh=$(peh t.peh, sut s.p.q.dob, axe (peg hoc r.p.q.dob))
-        =+  zig=$(peh q.p.q.dob, sut q.q.dob, mur q.guh)
-        =+  zug=(heal [~ q.i.peh] p.dob (busk(sut q.zig) p.p.q.dob q.p.q.dob))
-        [p.guh zug]
-      =+  wuf=(flay (flee dob))
-      =+  gav=$(peh t.peh, sut q.wuf, axe (peg axe p.wuf))
-      [p.gav (heal [~ q.i.peh] p.wuf q.gav)]
     ::
         {$2 *}
       =+  dob=`post`(need q:(fino p.i.peh %rite +.q.i.peh))
