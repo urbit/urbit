@@ -1,4 +1,4 @@
-::   
+!:   
 ::  clay (4c), revision control
 ::
 ::  This is split in three top-level sections:  structure definitions, main
@@ -346,12 +346,17 @@
     |=  {a/duct b/path c/ship d/{p/@ud q/riff}}
     (emit a %pass b %a %wont [our c] [%c %question p.q.d (scot %ud p.d) ~] q.d)
   ::
+  ++  foon
+    |=  @da
+    ^+  +>
+    ((cury bait hen) +<)
+  ::
   ++  duce                                              ::  produce request
     |=  rov/rove
     ^+  +>
     =.  qyx  (~(put by qyx) hen rov)
     ?~  ref
-      (mabe rov (cury bait hen))
+      (mabe rov |=(@da (bait hen +<)))
     |-  ^+  +>+.$
     =+  rav=(reve rov)
     =+  ^=  vaw  ^-  rave
@@ -407,7 +412,7 @@
       =+  rov=(~(get by qyx) hen)
       ?~  rov  +                                        ::  XX handle?
       =.  qyx  (~(del by qyx) hen)
-      (mabe u.rov (cury best hen))
+      (mabe u.rov |=(@da (best hen +<)))
     =.  qyx  (~(del by qyx) hen)
     |-  ^+  +.$
     =+  nux=(~(get by fod.u.ref) hen)
@@ -1128,7 +1133,7 @@
     (sa lat)
   ::
   ++  mabe                                            ::  maybe fire function
-    |*  {rov/rove fun/$+(@da _+>.^$)}
+    |=  {rov/rove fun/$+(@da _+>)}
     ^+  +>.$
     %-  fall  :_  +>.$
     %-  bind  :_  fun

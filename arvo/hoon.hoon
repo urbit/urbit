@@ -8023,7 +8023,7 @@
     ==
   ::
   ++  fink
-    ~/  ::  %fink XX disable for devulc
+    ~/  %fink ::  XX disable for devulc
     |=  {dep/@ud way/?($read $rite $both $free) cug/(unit term)}
     ^-  port
     ::  ~_  (dunk 'type')
