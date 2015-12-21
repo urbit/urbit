@@ -1133,7 +1133,7 @@
     (sa lat)
   ::
   ++  mabe                                            ::  maybe fire function
-    |=  {rov/rove fun/$+(@da _+>)}
+    |=  {rov/rove fun/$+(@da _.)}
     ^+  +>.$
     %-  fall  :_  +>.$
     %-  bind  :_  fun

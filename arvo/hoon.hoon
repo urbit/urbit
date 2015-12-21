@@ -6999,7 +6999,7 @@
       ==
     ::
         {$bckt *}  [%bush boil(gen p.gen) boil(gen q.gen)]
-        {$bcls *}  [%weed [%brls p.gen [%cnbc q.gen]]]
+        {$bcls *}  [%weed [%brls p.gen [%cnbc [%tsgr [~ 7] q.gen]]]]  
         {$bcts *}  [%bark p.gen boil(gen q.gen)]
         {$bcwt *}  =+  (turn p.gen |=(a/twig boil(gen a)))
                    ?~(- [%axil %void] [%fern -])
