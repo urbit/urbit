@@ -150,7 +150,7 @@
              u3_noun sut,
              u3_noun axe)
   {
-    c3_m    fun_m = c3__fish;
+    c3_m    fun_m = c3__fish + !!u3r_at(u3qfu_van_vet, van);
     u3_noun pro   = u3z_find_2(fun_m, sut, axe);
 
     if ( u3_none != pro ) {

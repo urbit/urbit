@@ -237,7 +237,7 @@
              u3_noun way,
              u3_noun hyp)
   {
-    c3_m    fun_m = c3__seek;
+    c3_m    fun_m = c3__seek + !!u3r_at(u3qfu_van_vet, van);
     u3_noun pro   = u3z_find_3(fun_m, sut, way, hyp);
 
     if ( u3_none != pro ) {

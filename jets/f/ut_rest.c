@@ -116,7 +116,7 @@
              u3_noun sut,
              u3_noun leg)
   {
-    c3_m    fun_m = c3__rest;
+    c3_m    fun_m = c3__rest + !!u3r_at(u3qfu_van_vet, van);
     u3_noun pro   = u3z_find_2(fun_m, sut, leg);
 
     if ( u3_none != pro ) {

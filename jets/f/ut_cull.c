@@ -189,7 +189,7 @@
              u3_noun axe,
              u3_noun ref)
   {
-    c3_m    fun_m = c3__cull;
+    c3_m    fun_m = c3__cull + !!u3r_at(u3qfu_van_vet, van);
     u3_noun pro   = u3z_find_4(fun_m, sut, pol, axe, ref);
 
     if ( u3_none != pro ) {
