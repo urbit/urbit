@@ -175,23 +175,23 @@
     ++  dp-hoof                                         ::  ++ford-hoof twig
       %+  cook  |*(a/* ~!(+.a `twig`a))
       ;~  plug
-        :(stag %dtzy %tas sym)
+        :(stag %rock %tas sym)
         %-  dp-twig-punt
         ;~  (glue fas) 
           ;~(pfix fas (sear dp-case-twig nuck:so))
-          (stag %dtzy ;~(plug (cold %p sig) fed:ag))
+          (stag %rock ;~(plug (cold %p sig) fed:ag))
         ==
       ==
     ::
     ++  dp-twig-punt                                   ::  twig of unit
-      |*(a/rule ;~(pose (stag [%cbzw %null] a) (easy [%cbzw %null])))
+      |*(a/rule ;~(pose (stag [%bust %null] a) (easy [%bust %null])))
     ::
     ++  dp-case-twig
       |=  a/coin  ^-  (unit twig)
       ?.  ?=({$~ case} a)  ~
       %+  some
-        [%dtzz %tas p.p.a]
-      [%dtzy p.a]
+        [%blob %tas p.p.a]
+      [%rock p.a]
     ::
     ++  dp-source  (stag 0 dp-build)                    ::  ++dojo-source
     ++  dp-build                                        ::  ++dojo-build
@@ -633,7 +633,7 @@
       ::
           $|
         =<  he-pone
-        %-  dy-diff(pro `(slap (slot 7 vax) [%cnzy %q]))
+        %-  dy-diff(pro `(slap (slot 7 vax) [%limb %q]))
         =+  pom=(sole-prompt +<.q.vax)
         [%pro pom(cad [':' ' ' cad.pom])]
       ==
@@ -657,7 +657,7 @@
           $|
         =+  hiz=;;(hiss +<.q.vax)
         =.  ..dy  (he-diff %tan leaf+"< {(earn p.hiz)}" ~)
-        (dy-eyre(pro `(slap (slot 7 vax) cnzy+%q)) /scar hiz)
+        (dy-eyre(pro `(slap (slot 7 vax) limb+%q)) /scar hiz)
       ==
     ::
     ++  dy-sigh-scar                                    ::  scraper result
@@ -717,7 +717,7 @@
         =.  q.gin  (ope q.gin)
         ?^  -.q.gin  $(gin q.gin)
         =.  p.gin  (ope p.gin)
-        ?.  ?=({{?($dtzz $dtzy) @ @} {$dtzz $n $~}} gin)
+        ?.  ?=({{?($blob $rock) @ @} {$blob $n $~}} gin)
           ~
         (some q.p.gin)
       ==

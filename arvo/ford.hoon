@@ -1,4 +1,4 @@
-::::::  
+!:::::  
 ::  ::  %ford, new execution control
 !?  164
 ::::
@@ -543,7 +543,7 @@
         |=  {cof/cafe pro/vase}
         ?.  (slab %grad p.pro)
           (flaw cof leaf+"no ++grad" ~)
-        =+  gar=(slap pro [%cnzy %grad])
+        =+  gar=(slap pro [%limb %grad])
         ?@  q.gar
           =+  for=((sand %tas) q.gar)
           ?~  for  (flaw cof leaf+"bad mark ++grad" ~)
@@ -558,10 +558,10 @@
         |=  {cof/cafe pox/vase}
         %+  cope
           %^  maul  cof
-            (slap (slap pox [%cnzy %grad]) [%cnzy %diff])
+            (slap (slap pox [%limb %grad]) [%limb %diff])
           q.coy
         |=  {cof/cafe dif/vase}
-        =+  for=((soft @tas) q:(slap gar [%cnzy %form]))
+        =+  for=((soft @tas) q:(slap gar [%limb %form]))
         ?~  for
           (flaw cof leaf+"bad ++form:grad" ~)
         (fine cof %& u.for dif)
@@ -803,14 +803,14 @@
         |=  {cof/cafe pro/vase}
         ?.  (slab %grad p.pro)
           (flaw cof leaf+"no ++grad" ~)
-        =+  gar=(slap pro [%cnzy %grad])
+        =+  gar=(slap pro [%limb %grad])
         ?@  q.gar
           =+  too=((sand %tas) q.gar)
           ?~  too  (flaw cof leaf+"bad mark ++grad" ~)
           (make cof %join u.too `cay `coy)
         ?.  (slab %form p.gar)
           (flaw cof leaf+"no ++form:grad" ~)
-        =+  fom=((soft @tas) q:(slap gar [%cnzy %form]))
+        =+  fom=((soft @tas) q:(slap gar [%limb %form]))
         ?~  fom
           (flaw cof leaf+"bad ++form:grad" ~)
         ?.  &(=(u.fom p.cay) =(u.fom p.coy))
@@ -823,7 +823,7 @@
           (flaw cof leaf+"no ++join:grad" ~)
         %+  cope
           %^  maul  cof
-            (slap (slap pro [%cnzy %grad]) [%cnzy %join])
+            (slap (slap pro [%limb %grad]) [%limb %join])
           (slop q.cay q.coy)
         |=  {cof/cafe dif/vase}
         ?@  q.dif
@@ -845,7 +845,7 @@
         |=  {cof/cafe pro/vase}
         ?.  (slab %grad p.pro)
           (flaw cof leaf+"no ++grad" ~)
-        =+  gar=(slap pro [%cnzy %grad])
+        =+  gar=(slap pro [%limb %grad])
         ?@  q.gar
           =+  too=((sand %tas) q.gar)
           ?~  too  (flaw cof leaf+"bad mark ++grad" ~)
@@ -853,7 +853,7 @@
           [%mash u.too [p.mas q.mas `cay] [p.mos q.mos `coy]]
         ?.  (slab %form p.gar)
           (flaw cof leaf+"no ++form:grad" ~)            
-        =+  fom=((soft @tas) q:(slap gar [%cnzy %form]))
+        =+  fom=((soft @tas) q:(slap gar [%limb %form]))
         ?~  fom
           (flaw cof leaf+"bad ++form:grad" ~)
         ?.  &(=(u.fom p.cay) =(u.fom p.coy))
@@ -866,7 +866,7 @@
           (fine cof %& %null [%atom %n] ~)
         %+  cope
           %^  maul  cof
-            (slap (slap pro [%cnzy %grad]) [%cnzy %mash])
+            (slap (slap pro [%limb %grad]) [%limb %mash])
           %+  slop
             :(slop [[%atom %p] p.mas] [[%atom %tas] q.mas] q.cay)
           :(slop [[%atom %p] p.mos] [[%atom %tas] q.mos] q.coy)
@@ -896,7 +896,7 @@
       ^-  (bolt vase)
       %+  cool  =<  |.(leaf+"ford: keel {<(murn yom +)>}")
                 |=  {a/wing b/type *}
-                =+  c=p:(slap suh cnzz+a)
+                =+  c=p:(slap suh wing+a)
                 ?:  (~(nest ut c) | b)  ~
                 (some [a c b])
       %^  maim  cof 
@@ -1019,10 +1019,10 @@
         (fine cof typ q.sam)
       ?.  (slob %grab p.tux)
         (flaw cof [%leaf "ford: no grab: {<[for bek]>}"]~)
-      =+  gab=(slap tux [%cnzy %grab])
+      =+  gab=(slap tux [%limb %grab])
       ?.  (slob %noun p.gab)
         (flaw cof [%leaf "ford: no noun: {<[for bek]>}"]~)
-      %+  cope  (maul cof (slap gab [%cnzy %noun]) [%noun q.sam])
+      %+  cope  (maul cof (slap gab [%limb %noun]) [%noun q.sam])
       |=  {cof/cafe pro/vase}
       ?>  (~(nest ut typ) | p.pro)
       ?:  =(q.pro q.sam) 
@@ -1107,11 +1107,11 @@
       %+  weld
         ^-  (list {mark mark})
         ?.  (slob %grab p.vax)  ~
-        =+  gab=(slap vax [%cnzy %grab])
+        =+  gab=(slap vax [%limb %grab])
         :: =+  opt=(skip (sloe p.gap) |=(fro/mark =(fro %noun)))
         (turn (sloe p.gab) |=(fro/mark [fro for]))
       ?.  (slob %grow p.vax)  ~
-      =+  gow=(slap vax [%cnzy %grow])
+      =+  gow=(slap vax [%limb %grow])
       (turn (sloe p.gow) |=(too/mark [for too]))
     ::
     ++  lyle                                            ::  all mark doors
@@ -1195,17 +1195,17 @@
         ((lake too) cof vax)
       %+  cope  (fang cof for)
       |=  {cof/cafe pro/vase}  ^-  (bolt vase)
-      ?:  &((slob %grow p.pro) (slob too p:(slap pro [%cnzy %grow])))
+      ?:  &((slob %grow p.pro) (slob too p:(slap pro [%limb %grow])))
         %+  cope  (keel cof pro [[%& 6]~ vax]~)
         |=  {cof/cafe pox/vase}
-        (maim cof pox [%tsgr [%cnzy %grow] [%cnzy too]])
+        (maim cof pox [%tsgr [%limb %grow] [%limb too]])
       %+  cope  (fang cof too)
       |=  {cof/cafe pro/vase}
       =+  ^=  zat  ^-  (unit vase)
           ?.  (slob %grab p.pro)  ~
-          =+  gab=(slap pro [%cnzy %grab])
+          =+  gab=(slap pro [%limb %grab])
           ?.  (slob for p.gab)  ~
-          `(slap gab [%cnzy for])
+          `(slap gab [%limb for])
       ?~  zat
         (flaw cof [%leaf "ford: no link: {<[for too]>}"]~)
       ~|  [%link-maul for too] 
@@ -1783,14 +1783,14 @@
         |=  {cof/cafe pro/vase}
         ?.  (slab %grad p.pro)
           (flaw cof leaf+"no ++grad" ~)
-        =+  gar=(slap pro [%cnzy %grad])
+        =+  gar=(slap pro [%limb %grad])
         ?@  q.gar
           =+  for=((sand %tas) q.gar)
           ?~  for  (flaw cof leaf+"bad mark ++grad" ~)
           (make cof %cast p.cay %pact [%cast u.for `cay] `coy)
         ?.  (slab %form p.gar)
           (flaw cof leaf+"no ++form:grad" ~)
-        =+  for=((soft @tas) q:(slap gar [%cnzy %form]))
+        =+  for=((soft @tas) q:(slap gar [%limb %form]))
         ?~  for
           (flaw cof leaf+"bad ++form:grad" ~)
         ?.  =(u.for p.coy)
@@ -1803,7 +1803,7 @@
         |=  {cof/cafe pox/vase}
         %+  cope
           %^  maul  cof
-            (slap (slap pox [%cnzy %grad]) [%cnzy %pact])
+            (slap (slap pox [%limb %grad]) [%limb %pact])
           q.coy
         (flux |=(pat/vase [%& p.cay pat]))
       ==

@@ -682,7 +682,7 @@
       ~/  %ap-farm
       |=  cog/term
       ^-  {(each vase tang) _+>}
-      =+  pyz=(mule |.((~(mint wa vel) p.hav [%cnzy cog])))
+      =+  pyz=(mule |.((~(mint wa vel) p.hav [%limb cog])))
       ?:  ?=($| -.pyz)  
         :_(+>.$ [%| +.pyz])
       :_  +>.$(vel `worm`+>.pyz)
