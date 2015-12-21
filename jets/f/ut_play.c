@@ -234,7 +234,7 @@
       {
         return u3nc(c3__atom, u3_blip);
       }
-      case c3__dtzz: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__blob: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         u3_noun boc = (c3n == u3ud(q_gen))
@@ -250,7 +250,7 @@
       {
         return c3__noun;
       }
-      case c3__dtzy: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__rock: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         if ( 'f' == p_gen ) {
@@ -427,7 +427,7 @@
       {
         return _play_x(van, sut, p_gen);
       }
-      case c3__zpcb: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__dbug: u3x_cell(u3t(gen), &p_gen, &q_gen);
       {
         u3_noun ret;
 
@@ -459,7 +459,7 @@
 
         return ret;
       }
-      case c3__zpfs:
+      case c3__lost:
       case c3__zpzp:
       _play_used();
       {

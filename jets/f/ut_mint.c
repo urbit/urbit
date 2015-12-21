@@ -318,11 +318,13 @@ int FOO;
     u3_noun ret;
 
     if ( (c3__void == sut) &&
-         !((c3y == u3du(gen)) && (c3__zpcb == u3h(gen))) )
+         !((c3y == u3du(gen)) && ((c3__zpcb == u3h(gen)) || (c3__dbug == u3h(gen)))) )
     {
       if ( (c3n == _mint_vet(van))
            || ((c3y == u3du(gen)) &&
-               ((c3__zpfs == u3h(gen)) || (c3__zpzp == u3h(gen)))) )
+               ((c3__zpfs == u3h(gen)) || 
+                (c3__lost == u3h(gen)) || 
+                (c3__zpzp == u3h(gen)))) )
       {
         return u3nt(c3__void, 0, 0);
       }
@@ -383,7 +385,7 @@ int FOO;
       {
         u3_noun heb = u3nc(c3__herb, u3k(p_gen));
         u3_noun nob = u3qfl_bunt(van, heb);
-        u3_noun dok = u3nc(c3__cnzz, u3k(q_gen));
+        u3_noun dok = u3nc(c3__wing, u3k(q_gen));
         u3_noun vol = _mint_corn(van, sut, dok);
         u3_noun axe = _mint_coke(vol);
         u3_noun wam = u3qfu_play(van, sut, nob);
@@ -489,7 +491,7 @@ int FOO;
         u3z(sam);
         return ret;
       }
-      case c3__dtzz: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__blob: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         u3_noun boc = (c3n == u3ud(q_gen))
@@ -511,7 +513,7 @@ int FOO;
         return u3nc(_mint_nice(van, gol, c3__noun),
                     u3nt(2, one, two));
       }
-      case c3__dtzy: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__rock: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         u3_noun typ = u3qfu_play(van, sut, gen);
@@ -758,7 +760,7 @@ int FOO;
                                u3qfu_play(van, sut, p_gen)),
                     u3nc(1, u3k(q_gen)));
       }
-      case c3__zpcb: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__dbug: u3x_cell(u3t(gen), &p_gen, &q_gen);
       {
         u3t_push(u3nc(c3__mean, _mint_loc(van, p_gen)));
         {
@@ -807,7 +809,7 @@ int FOO;
 
         return ret;
       }
-      case c3__zpfs: p_gen = u3t(gen);
+      case c3__lost: p_gen = u3t(gen);
       _mint_used();
       {
         if ( c3y == _mint_vet(van) ) {

@@ -78,6 +78,7 @@
 #   define c3__blew   c3_s4('b','l','e','w')
 #   define c3__blin   c3_s4('b','l','i','n')
 #   define c3__blit   c3_s4('b','l','i','t')
+#   define c3__blob   c3_s4('b','l','o','b')
 #   define c3__blog   c3_s4('b','l','o','g')
 #   define c3__bloq   c3_s4('b','l','o','q')
 #   define c3__blot   c3_s4('b','l','o','t')

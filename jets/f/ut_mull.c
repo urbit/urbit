@@ -334,7 +334,7 @@
         u3_noun nob = u3qfl_bunt(van, heb);
         u3_noun p_waz = u3qfu_play(van, sut, nob);
         u3_noun q_waz = u3qfu_play(van, dox, nob);
-        u3_noun dok   = u3nc(c3__cnzz, u3k(q_gen));
+        u3_noun dok   = u3nc(c3__wing, u3k(q_gen));
         u3_noun p_syx = _mull_doke(van, sut, dok);
         u3_noun q_syx = _mull_doke(van, dox, dok);
         u3_noun p_pov = u3qfu_fish(van, p_waz, p_syx);
@@ -455,7 +455,7 @@
         u3z(vay);
         return _mull_both(van, gol, wuq);
       }
-      case c3__dtzz: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__blob: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {
         u3_noun tof = u3nt(c3__cube,
@@ -477,7 +477,7 @@
 
         return _mull_both(van, gol, c3__noun);
       }
-      case c3__dtzy: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__rock: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {
         u3_noun typ = u3qfu_play(van, sut, gen);
@@ -700,7 +700,7 @@
         return u3nc(_mull_nice(van, gol, p_ret),
                     q_ret);
       }
-      case c3__zpcb: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__dbug: u3x_cell(u3t(gen), &p_gen, &q_gen);
       {
         u3_noun ret;
 
@@ -741,7 +741,7 @@
         return u3nc
           (_mull_nice(van, gol, p_ret), q_ret);
       }
-      case c3__zpfs:
+      case c3__lost:
       case c3__zpzp:
       _mull_used();
       {
