@@ -170,7 +170,7 @@
         (stag %show (cook $?($1 $2 $3) (cook lent (stun [1 3] wut))))
       ==
     ++  dp-hooves                                       ::  hoof list
-      :(stag 0 %ex %clsg (cook |=(a/tusk a) (most ;~(plug com gaw) dp-hoof)))
+      :(stag 0 %ex %clsg (most ;~(plug com gaw) dp-hoof))
     ::
     ++  dp-hoof                                         ::  ++ford-hoof twig
       %+  cook  |*(a/* ~!(+.a `twig`a))

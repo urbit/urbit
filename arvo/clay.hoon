@@ -1140,12 +1140,11 @@
     ::
         $next  ~
         $many
-      =*  mot  q.rov
       %+  hunt
-        ?.  ?=($da -.p.mot)  ~
-        ?.((lth now p.p.mot) ~ [~ p.p.mot])
-      ?.  ?=($da -.q.mot)  ~
-      ?.((lth now p.q.mot) [~ now] [~ p.q.mot])
+        ?.  ?=($da -.p.q.rov)  ~
+        ?.((lth now p.p.q.rov) ~ [~ p.p.q.rov])
+      ?.  ?=($da -.q.q.rov)  ~
+      ?.((lth now p.q.q.rov) [~ now] [~ p.q.q.rov])
     ==
   ::
   ++  reve
