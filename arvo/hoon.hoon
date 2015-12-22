@@ -2235,7 +2235,7 @@
 ++  head  |*(^ +<-)                                     ::  get head
 ++  tail  |*(^ +<+)                                     ::  get head
 ++  test  |=(^ =(+<- +<+))                              ::  equality
-++  cork  |*({a/_|=(* **) b/gate} (corl b a))        ::  compose forward
+++  cork  |*({a/_|=(* **) b/gate} (corl b a))           ::  compose forward
 ++  corl                                                ::  compose backwards
   |*  {a/gate b/_|=(* **)}
   =<  +:|.((a (b)))      ::  type check
@@ -7939,7 +7939,7 @@
     [[%leaf (mesc (trip paz))] duck ~]
   ::
   ++  find
-    ~/  %find   :: XX disable for devulc  
+    ::  ~/  %find   :: XX disable for devulc  
     |=  {dep/@ud way/?($read $rite $both $free) cug/(unit term)}
     =+  gil=*(set type)
     |-  ^-  {p/@ud q/(unit post)}
@@ -8023,7 +8023,7 @@
     ==
   ::
   ++  fink
-    ~/  %fink ::  XX disable for devulc
+    ::  ~/  %fink ::  XX disable for devulc  
     |=  {dep/@ud way/?($read $rite $both $free) cug/(unit term)}
     ^-  port
     ::  ~_  (dunk 'type')
@@ -8238,7 +8238,7 @@
     ?:(=(neg gen) sut $(gen neg))
   ::
   ++  heal
-    ~/  %heal  :: XX disable for devulc
+    ::  ~/  %heal  :: XX disable for devulc
     |=  {qug/(unit (unit term)) axe/axis ref/type}
     ^-  type
     ?:  =(1 axe)
@@ -8903,7 +8903,7 @@
     =+([p=*type q=`type`%void] |.((fork p q)))
   ::
   ++  seek
-    ~/  %seek   ::  XX disable for devulc  
+    ::  ~/  %seek   ::  XX disable for devulc  
     |=  {way/?($read $rite $both $free) hyp/wing}
     ^-  port
     ?~  hyp
@@ -8945,7 +8945,6 @@
     (turn har |=({a/wing b/twig} [(flop a) b]))
   ::
   ++  tack
-    ~/  %tack :: XX disable for devulc
     |=  {peh/wing mur/type}
     =+  axe=1
     |-  ^-  {p/axis q/type}
@@ -8976,7 +8975,6 @@
     ==
   ::
   ++  tock
-    ~/  %tock  :: XX disable for devulc
     |=  {peh/wing mur/type men/(list {p/type q/foot})}
     ^-  {p/axis q/(list {p/type q/foot})}
     =-  [(need p.wib) q.wib]
