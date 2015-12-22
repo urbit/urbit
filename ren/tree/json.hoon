@@ -4,13 +4,9 @@
 /?    314
 /+    tree
 /=    gas    /$    fuel
-/=    dat    /^    tree-include
-             /:    /===/tree-gen    /%
-             /tree-include/
-::
+/=    dat    /^    tree-include    /tree-include/
 /=    kid    /^    (map span tree-include)
-             /:    /===/tree-gen    /%  2    /_
-             /tree-include/
+             /_    /tree-include/
 !:
 ::::
   ::

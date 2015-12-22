@@ -1,13 +1,12 @@
 ::    Talk log front-end
 ::
-::::  /hook/hymn/talklog/pub
+::::  /hoon/hymn/talklog/ren
   ::
 /?    310
+:: /&    |=([beam path] ~&(+< ~))
 /=    mez
-  /:    /===/talk
-  /%    2
   /;    pojo
-  /;    |=(a=(list ,[@ p=json]) =.(a (flop a) ?~(a [%a ~] p.i.a)))
+  /;    |=(a=(list ,[@ p=json]) =.(a (flop a) ?~(a !! p.i.a)))
   /&    /json/
 |%
 ++  cdnj  |=(a=tape ;script(src "//cdnjs.cloudflare.com/ajax/libs/{a}");)
@@ -29,9 +28,9 @@
     ;script(type "text/javascript", src "/~/at/home/lib/urb.js");
     ;link/"/home/pub/talk/src/css/main.css"(type "text/css", rel "stylesheet");
     ;script: window.MessageData = {mez}
-    ;script@"src/MessagesComponent.coffee"(type "text/coffeescript");
-    ;script@"src/util.coffee"(type "text/coffeescript");
-    ;script@"src/main.coffee"(type "text/coffeescript");
+    ;script@"/home/pub/talklog/src/MessagesComponent.coffee"(type "text/coffeescript");
+    ;script@"/home/pub/talklog/src/util.coffee"(type "text/coffeescript");
+    ;script@"/home/pub/talklog/src/main.coffee"(type "text/coffeescript");
     ;+  (cdnj "coffee-script/1.7.1/coffee-script.min.js")
   ==  
 ==

@@ -1,7 +1,7 @@
 ::
 /?    314
 /-    tree-include
-/=    dat    /:  /%%/    /%  /json/ :: default include
+/=    dat    /%  /tree-json/ :: default include
 /=    aut    /;  |=(gas=epic (~(has ju aut.ced.gas) %$ (scot %p p.bem.gas)))
              /$    fuel
 ::

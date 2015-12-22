@@ -4631,7 +4631,7 @@
   ^-  toon
   ?.  ?=([2 *] ton)  ton
   :-  %2
-  =.  p.ton  (moop p.ton)
+  :: =.  p.ton  (moop p.ton)
   =+  yel=(lent p.ton)
   =.  p.ton
     ?.  (gth yel 256)  p.ton

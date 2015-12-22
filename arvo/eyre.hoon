@@ -944,10 +944,9 @@
       |=  [wir=whir ext=term bem=beam]
       =+  yac=for-client
       =.  him.yac  ?.(aut anon him.yac)
-      =:  r.bem  ?+(r.bem r.bem [%ud %0] da/now)
-          s.bem  [%web ~(rent co (fcgi quy fcgi-cred.yac)) s.bem]
-        ==
-      (execute wir -.bem [%boil ext bem ~])
+      =+  arg=/web/[~(rent co (fcgi quy fcgi-cred.yac))]
+      =.  r.bem  ?+(r.bem r.bem [%ud %0] da/now)
+      (execute wir -.bem [%boil ext bem arg])
     ::
     ::
     ++  apex                                              

@@ -1602,7 +1602,7 @@ $(function() {
   };
   TreeActions = require('./actions/TreeActions.coffee');
   TreePersistence = require('./persistence/TreePersistence.coffee');
-  frag = window.tree.fragpath(window.location.pathname);
+  frag = window.tree.fragpath(window.location.pathname.replace(/\.[^\/]*$/, ''));
   TreeActions.setCurr(frag);
   TreeActions.loadPath(frag, window.tree.data);
   rend(head({}, ""), $('#nav')[0]);
@@ -2139,7 +2139,7 @@ module.exports = {
     if (query == null) {
       query = "no-query";
     }
-    url = (window.tree.basepath(path)) + ".json?q=" + (this.encode(query));
+    url = (window.tree.basepath(path)) + ".tree-json?q=" + (this.encode(query));
     if (dedup[url]) {
       return;
     }

@@ -22,7 +22,7 @@
 --                                                      ::
 |%                                                      ::  structures
 ++  axle                                                ::  all %ford state
-  $:  %1                                                ::  version for update
+  $:  %2                                                ::  version for update
       pol=(map ship baby)                               ::
   ==                                                    ::
 ++  baby                                                ::  state by ship
@@ -106,7 +106,7 @@
 ++  chub                                                ::  cache merge
   |=  [a=cafe b=cafe]                                   ::
   ^-  cafe                                              ::
-  [(grom p.a p.b) (grum q.a q.b)]                       ::
+  [(~(uni in p.a) p.b) (~(uni by q.a) q.b)]             ::
 ::                                                      ::
 ++  faun  (flux |=(a=vase [%& %noun a]))                ::  vase to gage
 ++  feel  (flux |=(a=cage q.a))                         ::  cage to vase
@@ -136,15 +136,6 @@
 ++  flue  |=(a=cafe (fine a ~))                         ::  cafe to empty
 ++  flux  |*  a=_,*                                     ::  bolt lift (fmap)
           |*([b=cafe c=_+<.a] (fine b (a c)))           ::
-++  grom                                                ::  merge sets
-  |*  [one=(set) two=(set)]
-  ^+  one
-  (~(gas in one) (~(tap in two) ~))                     ::  XX ugh
-::
-++  grum                                                ::  merge maps
-  |*  [one=(map) two=(map)]
-  ^+  one
-  (~(gas by one) (~(tap by two) ~))                     ::  XX ugh
 ::
 ++  lark                                                ::  filter arch names
   |=  [wox=$+(span (unit ,@)) arc=arch]
@@ -373,7 +364,7 @@
             :-  p=p.nuf
             ^=  q
             ?-  -.q.nuf
-              %0  [%0 p=(grom p.q.hoc p.q.nuf) q=[q.q.hoc q.q.nuf]]
+              %0  [%0 p=(~(uni in p.q.hoc) p.q.nuf) q=[q.q.hoc q.q.nuf]]
               %1  q.nuf
               %2  q.nuf
             ==
@@ -382,7 +373,7 @@
             ^=  q
             ?-  -.q.nuf
               %0  q.hoc
-              %1  [%1 p=(grom p.q.nuf p.q.hoc)]
+              %1  [%1 p=(~(uni in p.q.nuf) p.q.hoc)]
               %2  q.nuf
             ==
         %2  hoc
@@ -403,23 +394,23 @@
             ^=  q
             ?-  -.q.nuf
               %1  q.nuf
-              %2  [%2 p=(grom `_p.q.nuf`p.q.hoc p.q.nuf) q=q.q.nuf]
-              %0  [%0 p=(grom `_p.q.nuf`p.q.hoc p.q.nuf) q=q.q.nuf]
+              %2  [%2 p=(~(uni in `_p.q.nuf`p.q.hoc) p.q.nuf) q=q.q.nuf]
+              %0  [%0 p=(~(uni in `_p.q.nuf`p.q.hoc) p.q.nuf) q=q.q.nuf]
       ==    ==
     ::
     ++  coop                                            ::  bolt alter
-      |*  [hoc=(bolt) fun=(burg)]
+      |*  [hoc=(bolt) fun=$+(cafe (bolt))]
       ?-  -.q.hoc
         %1  hoc
         %0  hoc
-        %2  =+  nuf=(fun(+<- p.hoc))
+        %2  =+  nuf=(fun p.hoc)
             :-  p=p.nuf
             ^=  q
             ?-  -.q.nuf
               %1  q.nuf
-              %0  [%0 p=(grom `_p.q.nuf`p.q.hoc p.q.nuf) q=q.q.nuf]
+              %0  [%0 p=(~(uni in `_p.q.nuf`p.q.hoc) p.q.nuf) q=q.q.nuf]
               %2  =.  q.q.nuf  (welp q.q.nuf q.q.hoc)
-                  [%2 p=(grom `_p.q.nuf`p.q.hoc p.q.nuf) q=q.q.nuf]
+                  [%2 p=(~(uni in `_p.q.nuf`p.q.hoc) p.q.nuf) q=q.q.nuf]
       ==    ==
     ::
     ++  coup                                            ::  toon to bolt
@@ -705,17 +696,19 @@
         =|  tol=?
         |%
         ++  apex
+          ~!  -:*^horn
           %+  knee  *^horn  |.  ~+
           ;~  pfix  fas
             ;~  pose
               (stag %toy ;~(sfix sym fas))
               (stag %ape ;~(pfix sig ape:read))
               (stag %arg ;~(pfix buc ape:read))
+              (stag %alt ;~(pfix hax fan:read))
               (stag %day ;~(pfix bar day:read))
               (stag %dub ;~(pfix tis dub:read))
               (stag %fan ;~(pfix dot fan:read))
               (stag %for ;~(pfix com for:read))
-              (stag %hel ;~(pfix cen hel:read))
+              (stag %hel ;~(pfix cen day:read))
               (stag %hub ;~(pfix pat day:read))
               (stag %man ;~(pfix tar man:read))
               (stag %nap ;~(pfix cab day:read))
@@ -755,11 +748,6 @@
                 %+  rail
                   ;~(plug (ifix [sel ser] hath) apex(tol |))
                 ;~(pfix gap ;~(plug hath ;~(pfix gap apex)))
-          ::
-              ++  hel
-                %+  rail
-                  ;~(plug ;~(pose ;~(sfix dem:ag cen) (easy 0)) apex(tol |))
-                ;~(pfix gap ;~(plug ;~(pose ;~(sfix dem:ag gap) (easy 0)) apex))
           ::
               ++  man
                 %+  rail  fail
@@ -1185,10 +1173,18 @@
       %+  cope  (lima cof for mob (flop mer))
       |=  [cof=cafe vux=(unit vase)]
       ?^  vux  (fine cof u.vux)
-      ?~  s.mob
-        %+  flaw  cof
-        ~[leaf/"build {<for>}" leaf/"no usable ancestors" (smyt (tope bem))]
+      ?~  s.mob  (limp cof for bem arg)
       ^$(s.mob t.s.mob, mer [i.s.mob mer])
+    ::
+    ++  limp                                            ::  render
+      |=  [cof=cafe for=mark bem=beam arg=heel]
+      %+  cope  (fame cof -.bem /[for]/ren)
+      |=  [cof=cafe bom=beam]
+      (cope (fade cof %hoon bom) abut:(meow bem arg))
+      
+::       |=  [cof=cafe vax=vase]
+::       %+  flaw  cof
+::       ~[leaf/"build {<for>}" leaf/"no usable ancestors" (smyt (tope bem))]
     ::
     ++  link                                            ::  translate
       |=  [cof=cafe too=mark for=mark vax=vase]
@@ -1462,6 +1458,7 @@
       =|  $:  rop=(map term (pair hoof twig))           ::  structures
               bil=(map term (pair hoof twig))           ::  libraries
               boy=(list twig)                           ::  body stack
+              lit=?                                     ::  drop arguments
           ==
       ~%  %meow  ..meow
         ==
@@ -1568,6 +1565,12 @@
           |=  [cof=cafe gat=vase]
           (maul cof gat !>([how arg]))
         ::
+            %alt
+          %.  cof
+          |=  cof=cafe  ^-  (bolt vase)
+          ?~  p.hon  (flaw cof leaf/"ford: out of options" ~)
+          (coop ^$(cof cof, hon i.p.hon) ..$(p.hon t.p.hon))
+        ::
             %day  (chad cof bax %dr p.hon)
             %dub 
           %+  cope  $(hon q.hon)
@@ -1588,12 +1591,7 @@
           (slop i.tev $(tev t.tev))
         ::
             %for  $(hon q.hon, s.how (weld (flop p.hon) s.how))
-            %hel    
-          %=  $  
-            hon    q.hon
-            arg    (scag p.hon arg)
-            s.how  (weld (slag p.hon arg) s.how)
-          ==
+            %hel  $(hon p.hon, lit |)
             %hub  (chad cof bax %ud p.hon)
             %man
           |-  ^-  (bolt vase)
@@ -1631,7 +1629,7 @@
             (flaw cof [%leaf "type error: {<p.hon>} {<q.hon>}"]~)
           (fine cof [p.tug q.vax])
         ::
-            %toy  (cope (cope (make cof %boil p.hon how ~) furl) feel)
+            %toy  (cope (cope (make cof %boil p.hon how ?:(lit ~ arg)) furl) feel)
         ==
       ::
       ++  chop                                          ::  possible subpaths
@@ -1639,6 +1637,7 @@
         =+  acc=[new=*(set beam) old=old]
         |-  ^+  acc
         ?-    -.hon
+            %hel  $(hon p.hon)
             ?(%ape %arg %toy)  acc
             ?(%dub %sic %saw)  $(hon q.hon)
             ?(%day %hub %nap %now)  acc                 ::  drop to avoid cycles
@@ -1647,12 +1646,7 @@
           =.  r.p.hon  ?:(?=([%ud 0] r.p.hon) r.how r.p.hon)
           $(hon q.hon, how p.hon)
         ::
-            %hel
-          =.  s.how  (weld (slag p.hon arg) s.how)
-          ?:  (~(has in old.acc) how)  acc
-          [(~(put in new.acc) how) (~(put in old.acc) how)]
-        ::
-            %fan
+            ?(%fan %alt)
           |-  ^+  acc
           ?~  p.hon  acc
           ^$(hon i.p.hon, acc $(p.hon t.p.hon))
@@ -1894,8 +1888,81 @@
   ~
 ::
 ++  load                                                ::  highly forgiving
-  |=  old=axle
-  ..^$(+>- old)
+  =<  |=  old=?(axle [%1 pol=(map ship baby-1)])
+      ?-  -.old
+        %2  ..^$(+>- old)
+        %1  ..^$(+>- [%1 (~(run by pol.old) baby-load)])
+      ==
+  |%
+  ++  horn-1
+    $_
+    =+  hon=*horn
+    ~|  hon
+    |-
+    ?-  -.hon
+      %hel  [%hel *@ q=$(hon p.hon)]
+    ::
+      ?(%ape %arg %toy %alt)  hon
+      ?(%day %hub %nap %now)  hon(p $(hon p.hon))
+      ?(%dub %for %saw %see %sic)  hon(q $(hon q.hon))
+      %fan  hon(p (turn p.hon ..$))
+      %man  hon(p (~(run by p.hon) ..$))
+    ==
+  ++  horn-load
+    |=  hon=horn-1  ^-  horn
+    ?-  -.hon
+      %hel  [%hel $(hon q.hon)]
+    ::
+      ?(%ape %arg %toy %alt)  hon
+      ?(%day %hub %nap %now)  hon(p $(hon p.hon))
+      ?(%dub %for %saw %see %sic)  hon(q $(hon q.hon))
+      %fan  hon(p (turn p.hon ..$))
+      %man  hon(p (~(run by p.hon) ..$))
+    ==
+  ++  hood-1     ,_%*(. *hood fan *(list horn-1))
+  ++  hood-load  |=(hood-1 +<(fan (turn fan horn-load)))
+  ++  calx-1     ,_=+(cal=*calx ?+(-.cal cal %hood cal(r *hood-1)))
+  ++  calx-load  |=(cal=calx-1 ?+(-.cal cal %hood cal(r (hood-load r.cal))))
+  ::
+  ++  silk-1
+    $_
+    =+  sil=*silk
+    |-
+    ?-  -.sil
+      %plan  sil(r *hood-1)
+    ::
+      ^  sil(p $(sil p.sil), q $(sil q.sil))
+      ?(%$ %bake %boil %bunt %core %file %reef %vale %volt)  sil
+      ?(%cast %dude %flag %ride)  sil(q $(sil q.sil))
+      ?(%call %diff %pact)  sil(p $(sil p.sil), q $(sil q.sil))
+      %join  sil(q $(sil q.sil), r $(sil r.sil))
+      %mash  sil(r.q $(sil r.q.sil), r.r $(sil r.r.sil))
+      %tabl  sil(p (turn p.sil |=([a=silk b=silk] [^$(sil a) ^$(sil b)])))
+      %mute  
+        sil(p $(sil p.sil), q (turn q.sil |=([a=wing b=silk] [a ^$(sil b)])))
+    ==
+  ++  silk-load
+    |=  sil=silk-1  ^-  silk
+    ?-  -.sil
+      %plan  sil(r (hood-load r.sil))
+    ::
+      ^  [$(sil p.sil) $(sil q.sil)]
+      ?(%$ %bake %boil %bunt %core %file %reef %vale %volt)  sil
+      ?(%cast %dude %flag %ride)  sil(q $(sil q.sil))
+      ?(%call %diff %pact)  sil(p $(sil p.sil), q $(sil q.sil))
+      %join  sil(q $(sil q.sil), r $(sil r.sil))
+      %mash  sil(r.q $(sil r.q.sil), r.r $(sil r.r.sil))
+      %tabl  sil(p (turn p.sil |=([a=silk-1 b=silk-1] [^$(sil a) ^$(sil b)])))
+      %mute
+        sil(p $(sil p.sil), q (turn q.sil |=([a=wing b=silk-1] [a ^$(sil b)])))
+    ==
+  ++  task-1     ,_%*(. *task kas *silk-1)
+  ++  task-load  |=(task-1 +<(kas (silk-load kas)))
+  ++  baby-1     ,_%*(. *baby jav *(map ,* calx-1), q.tad *(map ,@ task-1))
+  ++  baby-load
+    |=  baby-1
+    +<(jav (~(run by jav) calx-load), q.tad (~(run by q.tad) task-load))
+  --
   ::=.  old  
   ::    ?.  ?=([%0 *] old)  old                           ::  remove at 1
   ::    :-  %1 

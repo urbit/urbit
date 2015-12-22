@@ -1,9 +1,9 @@
 /+    tree, react
-/=    mime    /:  /===    /%    /^  mime    /mime/
-/=    body    /:  /===    /%    /elem/
-/=    snip    /:  /===    /%    /snip/
-/=    meta    /:  /===    /%    /front/
-/=    sect    /:  /===    /%    /index/
+/=    mime    /mime/
+/=    body    /elem/
+/=    snip    /snip/
+/=    meta    /front/
+/=    sect    /index/
 !:
 ^-    tree-include
 =+  rj=react-to-json:react
