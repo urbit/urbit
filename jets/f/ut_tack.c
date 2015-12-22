@@ -3,7 +3,6 @@
 */
 #include "all.h"
 
-
   u3_noun
   u3qfu_tack(u3_noun van,
              u3_noun sut,
@@ -20,3 +19,4 @@
                                 u3k(mur),
                                 0));
   }
+
