@@ -696,18 +696,17 @@
         =|  tol=?
         |%
         ++  apex
-          ~!  -:*^horn
           %+  knee  *^horn  |.  ~+
           ;~  pfix  fas
             ;~  pose
               (stag %toy ;~(sfix sym fas))
               (stag %ape ;~(pfix sig ape:read))
               (stag %arg ;~(pfix buc ape:read))
-              (stag %alt ;~(pfix hax fan:read))
+              (stag %alt ;~(pfix com alt:read))
               (stag %day ;~(pfix bar day:read))
               (stag %dub ;~(pfix tis dub:read))
               (stag %fan ;~(pfix dot fan:read))
-              (stag %for ;~(pfix com for:read))
+            ::  (stag %for ;~(pfix com for:read))
               (stag %hel ;~(pfix cen day:read))
               (stag %hub ;~(pfix pat day:read))
               (stag %man ;~(pfix tar man:read))
@@ -730,6 +729,10 @@
                   (ifix [sel ser] (stag %cltr (most ace wide:vez)))
                 ;~(pfix gap tall:vez)
           ::
+              ++  alt
+                %+  rail  fail
+                ;~(sfix (star for) gap duz)
+          ::
               ++  day  
                 %+  rail
                   apex(tol |) 
@@ -737,43 +740,39 @@
           ::
               ++  dub
                 %+  rail  
-                  ;~(plug sym ;~(pfix tis apex(tol |)))
-                ;~(pfix gap ;~(plug sym ;~(pfix gap apex)))
+                  ;~(plug sym ;~(pfix tis day))
+                ;~(pfix gap ;~(plug sym day))
           ::
               ++  fan
                 %+  rail  fail 
-                ;~(sfix (star ;~(pfix gap apex)) ;~(plug gap duz))
+                ;~(sfix (star day) gap duz)
           ::
               ++  for
                 %+  rail
-                  ;~(plug (ifix [sel ser] hath) apex(tol |))
-                ;~(pfix gap ;~(plug hath ;~(pfix gap apex)))
+                  ;~(plug (ifix [sel ser] hath) day)
+                ;~(pfix gap fas ;~(plug hath day))
           ::
               ++  man
                 %+  rail  fail
-                %-  sear
-                :_  ;~(sfix (star ;~(pfix gap apex)) ;~(plug gap duz))
-                |=  fan=(list ^horn)
-                =|  naf=(list (pair term ^horn))
-                |-  ^-  (unit (map term ^horn))
-                ?~  fan  (some (~(gas by *(map term ^horn)) naf))
-                ?.  ?=(%dub -.i.fan)  ~
-                $(fan t.fan, naf [[p.i.fan q.i.fan] naf])
+                %+  cook  ~(gas by *(map term ^horn))
+                =<  ;~(sfix (star (sear . day)) gap duz)
+                |=  a=^horn  ^-  (unit ,[term ^horn])
+                ?+(-.a ~ %dub `[p.a q.a])
           ::
               ++  saw
                 %+  rail
-                  ;~(plug ;~(sfix wide:vez sem) apex(tol |))
-                ;~(pfix gap ;~(plug tall:vez ;~(pfix gap apex)))
+                  ;~(plug ;~(sfix wide:vez sem) day)
+                ;~(pfix gap ;~(plug tall:vez day))
           ::
               ++  see
                 %+  rail  
-                  ;~(plug ;~(sfix have col) apex(tol |))
-                ;~(pfix gap ;~(plug have ;~(pfix gap apex)))
+                  ;~(plug ;~(sfix have col) day)
+                ;~(pfix gap ;~(plug have day))
           ::
               ++  sic
                 %+  rail  
-                  ;~(plug ;~(sfix toil:vez ket) apex(tol |))
-                ;~(pfix gap ;~(plug howl:vez ;~(pfix gap apex)))
+                  ;~(plug ;~(sfix toil:vez ket) day)
+                ;~(pfix gap ;~(plug howl:vez day))
           --
         ::
         --
@@ -1566,10 +1565,12 @@
           (maul cof gat !>([how arg]))
         ::
             %alt
-          %.  cof
-          |=  cof=cafe  ^-  (bolt vase)
-          ?~  p.hon  (flaw cof leaf/"ford: out of options" ~)
-          (coop ^$(cof cof, hon i.p.hon) ..$(p.hon t.p.hon))
+          =+  opt=|.(>(turn p.hon |=([a=path ^] a))<)
+          |-  ^-  (bolt vase)
+          ?~  p.hon  (flaw cof leaf/"ford: out of options" *opt ~)
+          ?:  =(p.i.p.hon (scag (lent p.i.p.hon) (flop s.how)))
+            ^$(hon q.i.p.hon)
+          $(p.hon t.p.hon)
         ::
             %day  (chad cof bax %dr p.hon)
             %dub 
@@ -1646,10 +1647,17 @@
           =.  r.p.hon  ?:(?=([%ud 0] r.p.hon) r.how r.p.hon)
           $(hon q.hon, how p.hon)
         ::
-            ?(%fan %alt)
+            %fan
           |-  ^+  acc
           ?~  p.hon  acc
           ^$(hon i.p.hon, acc $(p.hon t.p.hon))
+        ::
+            %alt
+          |-  ^+  acc
+          ?~  p.hon  acc
+          ?:  =(p.i.p.hon (scag (lent p.i.p.hon) (flop s.how)))
+            ^$(hon q.i.p.hon)
+          $(p.hon t.p.hon)
         ::
             %man
           |-  ^+  acc
@@ -1888,6 +1896,7 @@
   ~
 ::
 ++  load                                                ::  highly forgiving
+  =-  =>  +  |=(old=axle ..^$(+>- old))
   =<  |=  old=?(axle [%1 pol=(map ship baby-1)])
       ?-  -.old
         %2  ..^$(+>- old)

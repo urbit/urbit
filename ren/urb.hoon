@@ -1,5 +1,5 @@
-/%  /#
-  /talklog-hymn/
-  /tree-hymn/
-    ==
+/%    /#
+    /talk  /talklog-hymn/
+    /      /tree-hymn/
+      ==
 `manx`-<
