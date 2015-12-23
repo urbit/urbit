@@ -13,6 +13,7 @@
   {
     u3_noun p_sut, q_sut;
 
+    c3_assert(0);
     if ( c3y == u3ud(sut) ) {
       return u3nc(u3k(dep), u3_nul);
     }

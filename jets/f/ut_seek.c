@@ -125,6 +125,8 @@
              u3_noun way,
              u3_noun hyp)
   {
+    c3_assert(0);
+
     if ( u3_nul == hyp ) {
       return u3nt
         (1, c3y, u3k(sut));
