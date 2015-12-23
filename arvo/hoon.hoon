@@ -1,4 +1,4 @@
-!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::   
+::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::   
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject
@@ -184,6 +184,7 @@
           $%  {$axil p/base}                            ::  base type
               {$bark p/term q/tile}                     ::  name
               {$bush p/tile q/tile}                     ::  pair+tag
+              {$dbug p/spot q/tile}                     ::  set debug
               {$fern p/{i/tile t/(list tile)}}          ::  plain selection
               {$herb p/twig}                            ::  gate
               {$kelp p/{i/line t/(list line)}}          ::  tag selection
@@ -6795,6 +6796,9 @@
         {$bush *}
       [%wtcl [%bust %bean] $(sec p.sec) $(sec q.sec)]
     ::
+        {$dbug *}
+      [%dbug p.sec $(sec q.sec)]
+    ::
         {$fern *}
       |-  ^-  twig
       ?~  t.p.sec
@@ -6826,6 +6830,7 @@
   ++  cloq
     |-  ^-  {p/toga q/tile}
     =.  sec  ?.(?=($herb -.sec) sec ~(boil ap p.sec))
+    ?:  ?=($dbug -.sec)  $(sec q.sec)
     ?:  ?=(^ -.sec)
       =+  [one=$(sec p.sec) two=$(sec q.sec)]
       [[%2 p.one p.two] [q.one q.two]]
@@ -6894,6 +6899,9 @@
           [%wtpt [[%& (peg axe 2)] ~] ^$(sec q.sec) ^$(sec p.sec)]
         ^$(sec q.sec)
       ^$(sec p.sec)
+    ::
+        {$dbug *}
+      [%dbug p.sec $(sec q.sec)]
     ::
         {$fern *}
       |-  ^-  twig
@@ -6979,15 +6987,23 @@
     ==
   ::
   ++  bile
-    ^-  (each line tile)
-    =+  boil
-    ?:  ?=({{$leaf *} *} -)
-      [%& [%leaf p.p.- q.p.-] q.-]
-    [%| -]
+    =+  tyl=boil
+    |-  ^-  (each line tile)
+    ?:  ?=({$dbug *} tyl)
+      $(tyl q.tyl)
+    ?:  ?=({{$dbug *} *} tyl)
+      $(p.tyl q.p.tyl)
+    ?:  ?=({{$leaf *} *} tyl)
+      [%& [%leaf p.p.tyl q.p.tyl] q.tyl]
+    [%| tyl]
   ::
   ++  boil
     ^-  tile
-    ?+  gen  [%herb gen]
+    ?+  gen        [%herb gen]
+        {$base *}  [%axil p.gen]
+    ::  {$dbug *}  [%dbug p.gen boil(gen q.gen)]
+        {$dbug *}  boil(gen q.gen)
+        {$leaf *}  [%leaf p.gen]
     ::
         {$bcpt *}  [%reed boil(gen p.gen) boil(gen q.gen)]
         {$bccb *}  [%weed p.gen]
@@ -7017,10 +7033,6 @@
         {$bcts *}  [%bark p.gen boil(gen q.gen)]
         {$bcwt *}  =+  (turn p.gen |=(a/twig boil(gen a)))
                    ?~(- [%axil %void] [%fern -])
-    ::
-        {$leaf *}  [%leaf p.gen]
-        {$base *}  [%axil p.gen]
-        {$dbug *}  boil(gen q.gen)
     ==
   ::
   ++  open  
