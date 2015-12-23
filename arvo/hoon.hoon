@@ -1,4 +1,4 @@
-::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::   
+!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::   
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject
@@ -126,6 +126,15 @@
 ++  pint  {p/{p/@ q/@} q/{p/@ q/@}}                     ::  line+column range
 ++  pole  |*  a/$+(* *)                                 ::  nameless list
           $@($~ {a (pole a)})                           ::
+++  pont  %+  each                                      ::  new pull result
+            %+  pair                                    ::  normal
+              (list (unit axis))                        ::  normalized wing
+            $%  {$& p/type}                             ::  leg
+                {$| p/axis q/(set {p/type q/foot})}     ::  arm
+            ==                                          ::
+          %+  each                                      ::  abnormal
+            @ud                                         ::  unmatched, skips
+          (pair type nock)                              ::  functional
 ++  port  $:  p/axis                                    ::
               $=  q                                     ::
               $%  {$& p/type}                           ::
@@ -146,7 +155,7 @@
 ++  qual  |*  {a/$+(* *) b/$+(* *) c/$+(* *) d/$+(* *)} ::  just a quadruple
           {p/a q/b r/c s/d}                             ::
 ++  ring  @                                             ::  private key
-++  rule  _|=(nail *edge)                            ::  parsing rule
+++  rule  _|=(nail *edge)                               ::  parsing rule
 ++  span  @ta                                           ::  text-atom (ASCII)
 ++  spot  {p/path q/pint}                               ::  range in file
 ++  tang  (list tank)                                   ::  bottom-first error
@@ -233,6 +242,7 @@
     {$brfs p/twig q/(map term foot)}                    ::  vulcan. %gold tray
     {$brkt p/twig q/(map term foot)}                    ::  %gold book
     {$brhp p/twig}                                      ::  kick dry %gold trap
+    {$brtx p/twig q/twig}                               ::  advanced %brtr
     {$brls p/twig q/twig}                               ::  %iron gate
     {$brtr p/twig q/twig}                               ::  wet %gold gate
     {$brts p/twig q/twig}                               ::  dry %gold gate
@@ -252,6 +262,7 @@
     {$cncl p/twig q/twig}                               ::  pull $.p w+ sample q
     {$cndt p/twig q/twig}                               ::  %-(q p)
     {$cnhp p/twig q/(list twig)}                        ::  slam p w+ sample q
+    ::  {$cnhx p/twig q/(list twig)}                        ::  advanced slam
     {$cntr p/wing q/twig r/(list (pair wing twig))}     ::  pull p.q w+ changes
     {$cnkt p/twig q/twig r/twig s/twig}                 ::  slam p w+ :*(q r s)
     {$cnls p/twig q/twig r/twig}                        ::  slam p w+ :*(q r)
@@ -292,6 +303,7 @@
   ::                                            ::::::  compositions
     {$tsbr p/twig q/twig}                               ::  push bunt: ++(*p q)
     {$tscl p/(list (pair wing twig)) q/twig}            ::  p changes then q
+    {$tscn p/twig q/twig r/twig}                        ::  typed variable
     {$tsdt p/wing q/twig r/twig}                        ::  r with p set to q
     {$tsgl p/twig q/twig}                               ::  +>(q p)
     {$tshp p/twig q/twig}                               ::  flip push: ++(q p)
@@ -352,20 +364,22 @@
               {$2 p/(list {@ta *})}                     ::
           ==                                            ::
 ++  twin  {p/term q/wing r/axis s/type}                 ::  alias info
-++  type  $@  ?($noun $void)                            ::  set all or set none
+++  type  $@  $?  $noun                                 ::  any nouns
+                  $void                                 ::  no noun
+              ==                                        ::
           $%  {$atom p/term}                            ::  number and format
-              {$bull p/twin q/type}                     ::  wing synonym
+              {$bull p/twin q/type}                     ::  alias
               {$cell p/type q/type}                     ::  ordered pair
-              {$core p/type q/coil}                     ::
+              {$core p/type q/coil}                     ::  object
               {$cube p/* q/type}                        ::  constant
               {$face p/term q/type}                     ::  name
-              {$fork p/type q/type}                     ::  union+branch
-              {$hold p/(list {p/type q/twig})}          ::  infinite genrator
+              {$fork p/type q/type}                     ::  union
+              {$hold p/(list {p/type q/twig})}          ::  lazy evaluation
           ==                                            ::
 ++  typo  type                                          ::  old type
 ++  udal                                                ::  atomic change (%b)
           $:  p/@ud                                     ::  blockwidth
-              q/(list {p/@ud q/(unit {p/@ q/@})})      ::  indels
+              q/(list {p/@ud q/(unit {p/@ q/@})})       ::  indels
           ==                                            ::
 ++  udon                                                ::  abstract delta
           $:  p/umph                                    ::  preprocessor
@@ -6712,25 +6726,25 @@
 ::                section 2fB, macro expansion          ::
 ::
 ++  ah                                                  ::  tiki engine
-  |_  tig/tiki
+  |_  tik/tiki
   ++  blue
     |=  gen/twig
     ^-  twig
-    ?.  &(?=($| -.tig) ?=($~ p.tig))  gen
+    ?.  &(?=($| -.tik) ?=($~ p.tik))  gen
     [%tsgr [~ 3] gen]
   ::
   ++  gray
     |=  gen/twig
     ^-  twig
-    ?-  -.tig
-      $&  ?~(p.tig gen [%tstr u.p.tig q.tig gen])
-      $|  [%tsls ?~(p.tig q.tig [%ktts u.p.tig q.tig]) gen]
+    ?-  -.tik
+      $&  ?~(p.tik gen [%tstr u.p.tik q.tik gen])
+      $|  [%tsls ?~(p.tik q.tik [%ktts u.p.tik q.tik]) gen]
     ==
   ::
   ++  puce
     ^-  wing
-    ?-  -.tig
-      $&  ?~(p.tig q.tig [u.p.tig ~])
+    ?-  -.tik
+      $&  ?~(p.tik q.tik [u.p.tik ~])
       $|  [[%& 2] ~]
     ==
   ::
@@ -7225,6 +7239,9 @@
     ::
         {$tscl *}
       [%tsgr [%cncb [[~ 1] ~] p.gen] q.gen]
+    ::
+        {$tscn *}
+      [%tsls [%kthp p.gen q.gen] r.gen]
     ::
         {$tsdt *}
       [%tsgr [%cncb [[~ 1] ~] [[p.gen q.gen] ~]] r.gen]
@@ -7936,7 +7953,130 @@
     |=  paz/term  ^-  tank
     :+  %palm
       [['.' ~] ['-' ~] ~ ~]
-    [[%leaf (mesc (trip paz))] duck ~]
+    [[%leaf (mesc (trip paz))] duck ~]  
+  ::
+  ++  feel
+    !:
+    |=  {way/?($read $rite $both $free) hyp/wing}
+    =|  nol/(list (unit axis))
+    |-  ^-  pont
+    ?~  hyp  
+      [%& nol %& sut]
+    =+  mor=$(hyp t.hyp)
+    ?-    -.mor
+        $|
+      ?-    -.p.mor
+          $&  mor
+          $|
+        =+  fex=(mint(sut p.p.p.mor) %noun [%cnts [i.hyp ~] ~])
+        [%| %| p.fex (comb q.p.p.mor q.fex)]
+      ==
+    ::
+        $&
+      =>  :_  +
+          :*  axe=`axis`1
+              lon=(weld p.p.mor nol)
+              heg=?^(i.hyp i.hyp [%| p=0 q=(some i.hyp)])
+              ^-  ref/type
+              ?-  -.q.p.mor
+                $&  p.q.p.mor
+              ::%|  hold+(turn (~(tap by q.q.mor) |=({a/type b/foot} [a ~ 1])))
+                $|  ::  
+                    ::  XX  don't know why we're "firing" here; test code above
+                    ::
+                    %-  fire
+                    %+  turn  (~(tap in q.q.p.mor))
+                    |=  {a/type b/foot}
+                    [a [%ash ~ 1]]
+              ==
+          ==
+      ?:  ?=($& -.heg)
+        [%& [`p.heg lon] %& (peek(sut ref) way p.heg)]
+      =|  gil/(set type)
+      =<  $
+      |%  ++  $
+            ^-  pont
+            ?-    ref
+                $void       lose
+                $noun       stop
+                {$atom *}   stop
+                {$bull *}
+              ?~  q.heg  [%& [~ `axe lon] %& q.ref]
+              =^  hit  p.heg  
+                  ?.  =(u.q.heg p.p.ref)  [%| p.heg] 
+                  ?:  =(0 p.heg)  [%& 0]  [%| (dec p.heg)]
+              ?.  hit
+                $(ref q.ref, axe 1, lon [~ `axe lon])
+              ^$(sut q.ref, hyp q.p.ref, nol [~ `axe lon])
+            :: 
+                {$cell *} 
+              ?~  q.heg  here
+              =+  taf=$(axe (peg axe 2), ref p.ref)
+              ?:  |(?=($& -.taf) ?=($| -.p.taf))
+                taf
+              $(axe (peg axe 3), ref q.ref)
+            :: 
+                {$core *}
+              ?~  q.heg  here
+              =^  zem  p.heg
+                  =+  zem=(look u.q.heg q.r.q.ref)
+                  ?~  zem  [~ p.heg]
+                  ?:(=(0 p.heg) [zem p.heg] [~ (dec p.heg)])
+              ?^  zem
+                [%& [`axe lon] %| p.u.zem [[ref(p.q %gold) q.u.zem] ~ ~]]
+              =+  ^-  {sam/? con/?}
+                  ?:  ?=($gold p.q.ref)  [& &]
+                  ?-  way
+                    $both  [| |]
+                    $free  [& &]
+                    $read  [?=($zinc p.q.ref) |]
+                    $rite  [?=($iron p.q.ref) |]
+                  ==
+              ?.  sam  lose
+              ?:  con  $(axe (peg axe 3))
+              $(axe (peg axe 6))
+            ::
+                {$cube *}
+              ::
+              ::  XX is this right?  arguably should revisit.
+              ::
+              $(ref q.ref)
+            ::
+                {$face *}
+              ?:  |(?=($~ q.heg) =(u.q.heg p.ref))
+                ?.  =(0 p.heg)
+                  [%| %& (dec p.heg)]
+                [%& [~ `axe lon] %& q.ref]
+              lose
+            ::
+                {$fork *}
+              =+  [lef ryt]=[(~(has in gil) p.ref) (~(has in gil) q.ref)]
+              ?:  lef  ?:  ryt  [%| %& p.heg]  
+                       $(ref q.ref)
+              ?:  ryt  $(ref p.ref)
+              =+  [hax yor]=[$(ref p.ref) $(ref q.ref)]
+              ~|  %find-fork
+              ?:  ?=($| -.hax)  
+                ?>(=(hax yor) hax)
+              ?<  ?=($| -.yor)
+              ?>  =(p.p.hax p.p.yor)
+              :+  %&  p.p.hax
+              ?:  &(?=($& -.q.p.hax) ?=($& -.q.p.yor))
+                [%& (fork p.q.p.hax p.q.p.yor)]
+              ?>  &(?=($| -.q.p.hax) ?=($| -.q.p.yor))
+              ?>  =(p.q.p.hax p.q.p.yor)
+              [%| p.q.p.hax (~(uni by q.q.p.hax) q.q.p.yor)]
+            ::
+                {$hold *}
+              ?:  (~(has in gil) ref)
+                [%| %& p.heg]
+              $(gil (~(put in gil) ref), sut repo)
+            ==
+          ++  here  [%& [`axe lon] %& ref]
+          ++  lose  [%| %& p.heg]
+          ++  stop  ?~(q.heg here lose)
+      --
+    ==
   ::
   ++  find
     ::  ~/  %find   :: XX disable for devulc  
@@ -7945,13 +8085,14 @@
     |-  ^-  {p/@ud q/(unit post)}
     ?+    sut  [dep ~]
         {$bull *}
-      ?.  &(?=(^ cug) =(u.cug p.p.sut))
+      ?.  =(cug `p.p.sut)
         $(sut q.sut)
       ?.  ?=($0 dep)
         $(dep (dec dep), sut q.sut)
       [0 ~ 1 %2 p.sut q.sut]
     ::
         {$cell *}
+      ?~  cug  [0 ~ 1 %0 sut]
       =+  taf=$(sut p.sut)
       ?~  q.taf
         =+  bov=$(dep p.taf, sut q.sut)
@@ -7961,7 +8102,8 @@
       [p.taf ~ (peg 2 p.u.q.taf) q.u.q.taf]
     ::
         {$core *}
-      =+  zem=?~(cug ~ (look u.cug q.r.q.sut))
+      ?~  cug  [0 ~ 1 %0 sut]
+      =+  zem=(look u.cug q.r.q.sut)
       =>  ^+(. ?:(|(=(~ zem) =(0 dep)) . .(dep (dec dep), zem ~)))
       ?^  zem
         [dep ~ 1 [%1 (peg 2 p.u.zem) [[sut(p.q %gold) q.u.zem] ~]]]
@@ -7983,7 +8125,6 @@
       [dep ~]
     ::
         {$fork *}
-      ~|  %fork
       ?:  (~(has in gil) q.sut)
         $(sut p.sut)
       ?:  (~(has in gil) p.sut)
@@ -8027,7 +8168,7 @@
     |=  {dep/@ud way/?($read $rite $both $free) cug/(unit term)}
     ^-  port
     ::  ~_  (dunk 'type')
-    ~_  |.((show [%c 'find-limb'] ?~(cug '*' ?:(=(%$ u.cug) '$' [%a u.cug]))))
+    ~|  [%find-limb-a [dep way] cug]
     =+  hoq=(find dep way cug)
     ?~  q.hoq
       ~|(%find-none !!)
@@ -8037,7 +8178,7 @@
     |=  {dep/@ud way/?($read $rite $both $free) cug/(unit term)}
     ^-  post
     ::  ~_  (dunk 'type')
-    ~_  (show [%c 'find-limb'] ?~(cug '*' ?:(=(%$ u.cug) '$' [%a u.cug])))
+    ~|  [%find-limb-b [dep way] cug]
     =+  hoq=(find dep way cug)
     ?~  q.hoq
       ~|(%find-none !!)
@@ -8237,26 +8378,28 @@
     =+  neg=~(open ap gen)
     ?:(=(neg gen) sut $(gen neg))
   ::
+  ++  hale
+    |=  {cug/(unit term) ref/type}
+    |-  ^-  type
+    ?+  sut       ref
+      {$bull *}   ?:  &(=(cug `p.p.sut))
+                    ref
+                  (busk(sut $(sut q.sut)) p.p.sut q.p.sut)
+      {$face *}   ?.  |(?=($~ cug) =(u.cug p.sut))
+                    ~|('heal-name' !!) 
+                  (face p.sut ref)
+      {$fork *}   (fork $(sut p.sut) $(sut q.sut))
+      {$hold *}   $(sut repo)
+    ==
+  ::
   ++  heal
     ::  ~/  %heal  :: XX disable for devulc
     |=  {qug/(unit (unit term)) axe/axis ref/type}
     ^-  type
     ?:  =(1 axe)
-      ?~  qug
-        ref
-      |-  ^-  type
-      ?-    sut
-          {$bull *}   ?:  &(?=(^ u.qug) =(u.u.qug p.p.sut))
-                        ref
-                      (busk(sut $(sut q.sut)) p.p.sut q.p.sut)
-          {$core *}   ref
-          {$face *}   ?.  |(?=($~ u.qug) =(u.u.qug p.sut))
-                        ~|('heal-name' !!) 
-                      (face p.sut ref)
-          {$fork *}   (fork $(sut p.sut) $(sut q.sut))
-          {$hold *}   $(sut repo)
-          *           ~|([%name u.qug] ~|('heal-name' !!))
-      ==
+      ?~  qug 
+        ref 
+      (hale u.qug ref)
     =+  [now=(cap axe) lat=(mas axe)]
     =+  gil=*(set type)
     |-  ^-  type
@@ -8799,9 +8942,7 @@
         {$core *}
       ?:  =(3 now)
         ?.  (park way lat)
-          ::  ~_  (dunk 'type')
-          ~_  (show [%c 'axis'] [%d axe])
-          ~|(%peek-park !!)
+          %noun
         ^$(sut p.sut, axe lat)
       %noun
     ::
@@ -8902,6 +9043,32 @@
       ~
     =+([p=*type q=`type`%void] |.((fork p q)))
   ::
+  ++  seel
+    |=  {way/?($read $rite $both $free) hyp/wing}
+    ^-  port
+    =+  ^-  old/port  (seek way hyp)
+    =+  ^-  new/port
+        ~|  [%seek-miss [way hyp] ~]
+        =+  fid=(feel way hyp)
+        ?.  ?=($& -.fid)
+          ~&  [%seek-fail fid]
+          !!
+        :-  |-  ^-  axis
+            ?~  p.p.fid  1 
+            (peg $(p.p.fid t.p.p.fid) ?~(i.p.p.fid 1 u.i.p.p.fid))
+        ?-  -.q.p.fid
+          $&  q.p.fid
+          $|  [%| p.q.p.fid (~(tap by q.q.p.fid) ~)]
+        ==
+    ~?  !=(p.old p.new)  [%axis-mismatch [way hyp] p.old p.new]
+    old
+  ::
+  ++  seep
+    |=  {way/?($read $rite $both $free) hyp/wing}
+    ^-  {p/axis q/type}
+    =+  zar=(seek way hyp)
+    ?>(?=($& -.q.zar) [p.zar p.q.zar])
+  ::
   ++  seek
     ::  ~/  %seek   ::  XX disable for devulc  
     |=  {way/?($read $rite $both $free) hyp/wing}
@@ -8924,12 +9091,6 @@
       =+  hud=(fink p.i.hyp way q.i.hyp)
       [(peg p.zar p.hud) q.hud]
     ==
-  ::
-  ++  seep
-    |=  {way/?($read $rite $both $free) hyp/wing}
-    ^-  {p/axis q/type}
-    =+  zar=(seek way hyp)
-    ?>(?=($& -.q.zar) [p.zar p.q.zar])
   ::
   ++  sift
     |=  ref/type
@@ -9728,6 +9889,7 @@
                     ['.' (rune dot %tsdt expq)]
                     ['^' (rune ket %tskt bono)]
                     [':' (rune col %tscl expp)]
+                    ['%' (rune col %tscn expc)]
                     ['<' (rune gal %tsgl expb)]
                     ['>' (rune gar %tsgr expb)]
                     ['-' (rune hep %tshp expb)]
