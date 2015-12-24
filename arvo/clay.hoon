@@ -273,14 +273,14 @@
     |-  ^-  ?((list {cage cage}) (each $~ tang))
     ?~  p.gag  ~
     =*  hed  i.p.gag
-    ?-  -.p.hed
+    ?-  -.p.i.p.gag
       $tabl  (mule |.(`$~`(ford-fail >%strange-gage< ~)))
-      $|     (mule |.(`$~`(ford-fail p.p.hed)))
-      $&     ?-  -.q.hed
+      $|     (mule |.(`$~`(ford-fail p.p.i.p.gag)))
+      $&     ?-  -.q.i.p.gag
         $tabl  (mule |.(`$~`(ford-fail >%strange-gage< ~)))
-        $|     (mule |.(`$~`(ford-fail p.q.hed)))
+        $|     (mule |.(`$~`(ford-fail p.q.i.p.gag)))
         $&     =+  $(p.gag t.p.gag)
-               ?+(- [[p.p p.q]:hed -] {@ *} -)
+               ?+(- [[p.p p.q]:i.p.gag -] {@ *} -)
     ==       ==
   ::
   ++  cages-to-map
@@ -1197,8 +1197,8 @@
     ::
         $next
       =*  mun  p.q.i.xiq
-      =*  dat  q.q.i.xiq
-      ?~  dat
+      ::  =*  dat  q.q.i.xiq    XX can't fuse right now
+      ?~  q.q.i.xiq
         =+  ver=(aver mun)
         ?~  ver
           $(xiq t.xiq, xaq [i.xiq xaq])
@@ -1211,7 +1211,7 @@
         $(xiq t.xiq)
       ?~  u.var
         $(xiq t.xiq, ..wake (blab p.i.xiq mun %& %null [%atom %n] ~))
-      ?:  (equivalent-data:ze u.dat u.u.var)
+      ?:  (equivalent-data:ze u.q.q.i.xiq u.u.var)
         $(xiq t.xiq, xaq [i.xiq xaq])
       $(xiq t.xiq, ..wake (blab p.i.xiq mun u.u.var))
     ::

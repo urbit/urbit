@@ -363,16 +363,15 @@
     =<  ?+(. [%& .] {@ *} .)
     |-  ^-  ?((list {cage cage}) (each $~ tang))
     ?~  p.gag  ~
-    =*  hed  i.p.gag
-    ?-    -.p.hed
+    ?-    -.p.i.p.gag
         $tabl  (mule |.(`$~`(ford-fail >%strange-gage< ~)))
-        $|     (mule |.(`$~`(ford-fail p.p.hed)))
+        $|     (mule |.(`$~`(ford-fail p.p.i.p.gag)))
         $&
-      ?-  -.q.hed
+      ?-  -.q.i.p.gag
         $tabl  (mule |.(`$~`(ford-fail >%strange-gage< ~)))
-        $|     (mule |.(`$~`(ford-fail p.q.hed)))
+        $|     (mule |.(`$~`(ford-fail p.q.i.p.gag)))
         $&     =+  $(p.gag t.p.gag)
-               ?+(- [[p.p p.q]:hed -] {@ *} -)
+               ?+(- [[p.p p.q]:i.p.gag -] {@ *} -)
       ==
     ==
   ::

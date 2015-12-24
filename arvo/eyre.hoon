@@ -1,4 +1,4 @@
-::  ::  %eyre, http servant
+!:  ::  %eyre, http servant
 !?  164
 ::::
 |=  pit/vase
@@ -764,9 +764,8 @@
           {$hi ^}
         ?:  ?=($| -.q.sih)
           (give-sigh q.sih)  ::  XX crash?
-        =*  cay  p.q.sih
-        ?>  ?=($hiss p.cay)
-        (pass-note tee [%e %meta :(slop !>(%them) !>(~) q.cay)])
+        ?>  ?=($hiss p.p.q.sih)
+        (pass-note tee [%e %meta :(slop !>(%them) !>(~) q.p.q.sih)])
       ::
           {$he *}                     ::  XX hack
         =.  ..axon  $(tee p.tee)
@@ -782,40 +781,37 @@
         ?:  ?=($| -.q.sih)
           ((slog p.q.sih) +>.^$)             ::  XX get-even %mean
         %+  get-rush:(ire-ix p.tee)  q.tee
-        =*  cay  p.q.sih
-        ?>  ?=($json p.cay)                    ::  XX others
-        ((hard json) q.q.cay)
+        ?>  ?=($json p.p.q.sih)                    ::  XX others
+        ((hard json) q.q.p.q.sih)
       ::
           {$at ^}
         ?.  ?=({$& $js ^} q.sih)
           ~&  e+at-lost+p.tee
           $(tee q.tee)
-        =*  cay  p.q.sih
-        ?>  ?=(@ q.q.cay)
+        ?>  ?=(@ q.q.p.q.sih)
         =+  cyz=(~(got by wup) p.tee)
         =^  jon  ..ya  ~(stat-json ya p.tee cyz)
-        $(tee q.tee, q.q.p.q.sih (add-json jon q.q.cay))
+        $(tee q.tee, q.q.p.q.sih (add-json jon q.q.p.q.sih))
       ::
           {$ha *}
         %-  emule  |.  ^+  ..apex
         ?.  ?=($& -.q.sih)
           (fail 404 p.sih p.q.sih)
-        =*  cay  p.q.sih
-        ?.  ?=($mime p.cay)
+        ?.  ?=($mime p.p.q.sih)
           =+  bek=-:(need (tome p.tee))
           =+  bik=?+(r.bek bek {$ud $0} bek(r da+now))
           =-  (execute tee bik [%flag [p.sih `~] -])
-          =-  `silk`[%cast %mime `[p.cay -]]
-          ?.  ?=({$ud $0} r.bek)  q.cay
-          ?+  p.cay  q.cay          :: inject dependency long-poll
-            $urb  =<  (slam !>(.) q.cay)
+          =-  `silk`[%cast %mime `[p.p.q.sih -]]
+          ?.  ?=({$ud $0} r.bek)  q.p.q.sih
+          ?+  p.p.q.sih  q.p.q.sih          :: inject dependency long-poll
+            $urb  =<  (slam !>(.) q.p.q.sih)
                   |=  urb/manx
                   ~|  [%malformed-urb urb]
                   ?>  ?=({{$html $~} {{$head $~} *} {{$body $~} *} $~} urb)
                   (inject p.sih urb)
           ==
-        ~|  q.q.cay
-        =+  ((hard {mit/mite rez/octs}) q.q.cay)
+        ~|  q.q.p.q.sih
+        =+  ((hard {mit/mite rez/octs}) q.q.p.q.sih)
         =+  dep=(crip "W/{(pojo %s (scot %uv p.sih))}")
         (give-thou 200 ~[etag+dep content-type+(moon mit)] ~ rez)
       ==

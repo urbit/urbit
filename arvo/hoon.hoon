@@ -7979,8 +7979,7 @@
     ?-    -.mor
         $|
       ?-    -.p.mor
-          $&  ~&  [%feel-lose mor]
-              mor
+          $&  mor
           $|
         =+  fex=(mint(sut p.p.p.mor) %noun [%cnts [i.hyp ~] ~])
         [%| %| p.fex (comb q.p.p.mor q.fex)]
@@ -7989,7 +7988,7 @@
         $&
       =>  :_  +
           :*  axe=`axis`1
-              lon=(weld p.p.mor nol)
+              lon=p.p.mor
               heg=?^(i.hyp i.hyp [%| p=0 q=(some i.hyp)])
               ^-  ref/type
               ?-  -.q.p.mor
@@ -8038,20 +8037,21 @@
                   =+  zem=(look u.q.heg q.r.q.ref)
                   ?~  zem  [~ p.heg]
                   ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
-              ~?  =(%nu u.q.heg)  [%core-zem zem]
               ?^  zem
-                [%& [`axe lon] %| p.u.zem [[ref(p.q %gold) q.u.zem] ~ ~]]
-              =+  ^-  {sam/? con/?}
-                  ?:  ?=($gold p.q.ref)  [& &]
-                  ?-  way
-                    $both  [| |]
-                    $free  [& &]
-                    $read  [?=($zinc p.q.ref) |]
-                    $rite  [?=($iron p.q.ref) |]
-                  ==
-              ?.  sam  lose
-              ?:  con  $(ref p.ref, axe (peg axe 3))
-              $(ref (peek(sut p.ref) way 2), axe (peg axe 6))
+                :+  %&  [`axe lon] 
+                [%| (peg 2 p.u.zem) [[ref(p.q %gold) q.u.zem] ~ ~]]
+              $(ref p.ref, axe (peg axe 3))
+              ::  =+  ^-  {sam/? con/?}
+              ::      ?:  ?=($gold p.q.ref)  [& &]
+              ::      ?-  way
+              ::        $both  [| |]
+              ::        $free  [& &]
+              ::        $read  [?=($zinc p.q.ref) |]
+              ::        $rite  [?=($iron p.q.ref) |]
+              ::      ==
+              ::  ?.  sam  lose
+              ::  ?:  con  $(ref p.ref, axe (peg axe 3))
+              ::  $(ref (peek(sut p.ref) way 2), axe (peg axe 6))
             ::
                 {$cube *}
               ::
@@ -8086,7 +8086,6 @@
             ::
                 {$hold *}
               ?:  (~(has in gil) ref)
-                ~&  [%hold-stop ref]
                 [%| %& p.heg]
               $(gil (~(put in gil) ref), ref repo(sut ref))
             ==
@@ -9065,12 +9064,18 @@
     |=  {way/?($read $rite $both $free) hyp/wing}
     ^-  port
     =+  ^-  old/port  (seel way hyp)
+    =.  old
+      ?-  -.q.old
+          $&  old
+          $|  
+        :^  p.old  %|  p.q.old
+        (~(tap in (~(gas in *(set (pair type foot))) q.q.old)) ~)
+      ==
     =+  ^-  new/port
         ~|  [%seek-miss [way hyp] ~]
         =+  fid=(feel way hyp)
         ?.  ?=($& -.fid)
           ~&  [%seek-hyp hyp]
-          ~&  [%seek-old old]
           ~&  [%seek-fid fid]
           ~&  [%seek-fail fid]
           !!
@@ -9079,9 +9084,13 @@
             (peg $(p.p.fid t.p.p.fid) ?~(i.p.p.fid 1 u.i.p.p.fid))
         ?-  -.q.p.fid
           $&  q.p.fid
-          $|  [%| p.q.p.fid (~(tap by q.q.p.fid) ~)]
+          $|  [%| p.q.p.fid (~(tap in q.q.p.fid) ~)]
         ==
     ~?  !=(p.old p.new)  [%axis-mismatch [way hyp] p.old p.new]
+    ~?  !=(old new)  [%full-mismatch [way hyp]]
+    ~?  !=(old new)  [%full-old old]
+    ~?  !=(old new)  [%full-new new]
+    ?>  =(old new)
     old
   ::
   ++  seep
