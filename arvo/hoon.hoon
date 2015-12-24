@@ -8039,19 +8039,6 @@
               ?^  zem
                 :+  %&  [`axe lon] 
                 [%| (peg 2 p.u.zem) [[ref(p.q %gold) q.u.zem] ~ ~]]
-              =+  foo=$(ref p.ref, axe (peg axe 3))
-              =-  ?:  |(?=($| -.foo) =(foo bar))
-                    foo
-                  ::  ~&  [%old foo]
-                  ::  ~&  [%new bar]
-                  ~&  [%ref ref]
-                  =+  ^-  sax/axis
-                      |-  ^-  axis
-                      ?~  p.p.foo  1 
-                      (peg $(p.p.foo t.p.p.foo) ?~(i.p.p.foo 1 u.i.p.p.foo))
-                  ~&  [%foo-axis vet sax (cap sax) (mas sax) (park(sut ref) way sax) way p.q.ref]
-                  foo
-              ^=  bar
               =+  ^-  {sam/? con/?}
                   ?:  ?=($gold p.q.ref)  [& &]
                   ?-  way

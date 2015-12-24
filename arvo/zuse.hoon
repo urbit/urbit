@@ -82,7 +82,7 @@
         ?~  pon  !!
         (out.s.u.pon (exp.s.u.pon q.r.u.pon (sit.s.u.pon a)))
       --
-  |%
+  |%                                                    ::  opaque object
   ++  as
     =>  |%
         ++  haul                                        ::  revealing haul
@@ -204,7 +204,8 @@
           =+  b=((hard {p/@ q/@}) (cue a))
           ..nu(mos (mul p.b q.b), pon [~ (ersa p.b q.b)])
     --
-  --
+  --                                                    ::
+:: 
 ++  bruw                                                ::  create keypair
   |=  {a/@ b/@}                                         ::  width seed
   ^-  acru
@@ -1560,7 +1561,7 @@
              |%  ++  pit  |+({a/@ b/@} ^?(..nu))        ::  from [width seed]
                  ++  nol  |+(a/@ ^?(..nu))              ::  from naked ring
                  ++  com  |+(a/@ ^?(..nu))              ::  from naked pass
-             --                                          ::
+             --                                         ::
           --                                            ::
 ++  aeon  @ud                                          ::
 ++  agon  (map {p/ship q/desk} {p/@ud q/@ud r/waks})    ::  mergepts
