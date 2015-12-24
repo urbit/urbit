@@ -1541,10 +1541,10 @@
 ++  acru                                                ::  asym cryptosuite
           $_  ^?  |%                                    ::  opaque object
           ++  as  ^?                                    ::  asym ops
-            |%  ++  seal  |=({a/pass b/@ c/@} *@)       ::  encrypt to a
-                ++  sign  |=({a/@ b/@} *@)              ::  certify as us
-                ++  sure  |=({a/@ b/@} *(unit @))       ::  authenticate from us
-                ++  tear  |=  {a/pass b/@}              ::  accept from a 
+            |%  ++  seal  |+({a/pass b/@ c/@} *@)       ::  encrypt to a
+                ++  sign  |+({a/@ b/@} *@)              ::  certify as us
+                ++  sure  |+({a/@ b/@} *(unit @))       ::  authenticate from us
+                ++  tear  |+  {a/pass b/@}              ::  accept from a 
                           *(unit {p/@ q/@})             ::
             --                                          ::
           ++  de  |+({a/@ b/@} *(unit @))               ::  symmetric de, soft
@@ -1560,7 +1560,7 @@
              |%  ++  pit  |=({a/@ b/@} ^?(..nu))        ::  from [width seed]
                  ++  nol  |=(a/@ ^?(..nu))              ::  from naked ring
                  ++  com  |=(a/@ ^?(..nu))              ::  from naked pass
-            --                                          ::
+             --                                          ::
           --                                            ::
 ++  aeon  @ud                                          ::
 ++  agon  (map {p/ship q/desk} {p/@ud q/@ud r/waks})    ::  mergepts
