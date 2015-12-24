@@ -117,13 +117,24 @@
         }
         else {
           u3_noun zoc = u3qdi_put(gil, hud);
+#if 0
           u3_noun tus = u3nt(c3__core,
                              u3k(qq_sut),
                              u3k(q_sut));
           u3_noun fer = u3nt(c3__core,
                              u3k(qq_ref),
                              u3k(q_ref));
+#else
+          u3_noun tus = u3nt(c3__core,
+                             u3k(qq_sut),
+                             u3nc(c3__gold,
+                                  u3k(u3t(q_sut))));
 
+          u3_noun fer = u3nt(c3__core,
+                             u3k(qq_ref),
+                             u3nc(c3__gold,
+                                  u3k(u3t(q_ref))));
+#endif
           ret = _nest_cram(van, tus, tel, fer, qrq_sut, qrq_ref, zoc);
           u3z(fer);
           u3z(tus);
