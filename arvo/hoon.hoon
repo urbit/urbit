@@ -6615,7 +6615,7 @@
     ~
   `[(~(peek ut p.vax) %free axe) .*(q.vax [0 axe])]
 ::
-++  slab
+++  slab                                                ::  test if contains
   |=  {cog/@tas typ/type}
   !=(~ q:(~(find ut typ) 0 %free `cog))
 ::
@@ -7370,7 +7370,6 @@
       %peek   peek
       %repo   repo
       %rest   rest
-      %sift   sift
       %seek   seek
       %tack   tack
       %tock   tock
@@ -8944,6 +8943,34 @@
       ==
     ==
   ::
+  ++  pork
+    ~/  %park
+    |=  {way/?($read $rite $both $free) axe/axis}
+    ^-  ?
+    ?>  ?=({$core *} sut)
+    ?|
+      !vet
+      ?-    way
+          $both  =(%gold p.q.sut)
+          $free  &
+          $read
+        ?-    p.q.sut
+            $gold   &
+            $iron   |
+            $lead   |
+            $zinc   =(2 (cap axe))
+        ==
+      ::
+          $rite
+        ?-    p.q.sut
+            $gold   &
+            $iron   =(2 (cap axe))
+            $lead   |
+            $zinc   |
+        ==
+      ==
+    ==
+  ::
   ++  peek
     ~/  %peek
     |=  {way/?($read $rite $both $free) axe/axis}
@@ -9063,71 +9090,33 @@
   ++  seek
     |=  {way/?($read $rite $both $free) hyp/wing}
     ^-  port
-    =+  ^-  old/port  (seel way hyp)
-    =.  old
-      ?-  -.q.old
-          $&  old
-          $|  
-        :^  p.old  %|  p.q.old
-        (~(tap in (~(gas in *(set (pair type foot))) q.q.old)) ~)
-      ==
-    =+  ^-  new/port
-        ~|  [%seek-miss [way hyp] ~]
-        =+  fid=(feel way hyp)
-        ?.  ?=($& -.fid)
-          ~&  [%seek-hyp hyp]
-          ~&  [%seek-fid fid]
-          ~&  [%seek-fail fid]
-          !!
-        :-  |-  ^-  axis
-            ?~  p.p.fid  1 
-            (peg $(p.p.fid t.p.p.fid) ?~(i.p.p.fid 1 u.i.p.p.fid))
-        ?-  -.q.p.fid
-          $&  q.p.fid
-          $|  [%| p.q.p.fid (~(tap in q.q.p.fid) ~)]
-        ==
-    ~?  !=(p.old p.new)  [%axis-mismatch [way hyp] p.old p.new]
-    ~?  !=(old new)  [%full-mismatch [way hyp]]
-    ~?  !=(old new)  [%full-old old]
-    ~?  !=(old new)  [%full-new new]
-    ?>  =(old new)
-    old
+    ::  =+  ^-  old/port  (seel way hyp)
+    ::  =.  old
+    ::    ?-  -.q.old
+    ::        $&  old
+    ::        $|  
+    ::      :^  p.old  %|  p.q.old
+    ::    (~(tap in (~(gas in *(set (pair type foot))) q.q.old)) ~)
+    ~|  [%seek-miss [way hyp] ~]
+    =+  fid=(feel way hyp)
+    ?.  ?=($& -.fid)
+      ~&  [%seek-hyp hyp]
+      ~&  [%seek-fid fid]
+      ~&  [%seek-fail fid]
+      !!
+    :-  |-  ^-  axis
+        ?~  p.p.fid  1 
+        (peg $(p.p.fid t.p.p.fid) ?~(i.p.p.fid 1 u.i.p.p.fid))
+    ?-  -.q.p.fid
+      $&  q.p.fid
+      $|  [%| p.q.p.fid (~(tap in q.q.p.fid) ~)]
+    ==
   ::
   ++  seep
     |=  {way/?($read $rite $both $free) hyp/wing}
     ^-  {p/axis q/type}
     =+  zar=(seek way hyp)
     ?>(?=($& -.q.zar) [p.zar p.q.zar])
-  ::
-  ++  seel
-    ::  ~/  %seek   ::  XX disable for devulc  
-    |=  {way/?($read $rite $both $free) hyp/wing}
-    ^-  port
-    ?~  hyp
-      [1 %& sut]
-    =>  .(i.hyp ?^(i.hyp i.hyp [%| p=0 q=`i.hyp]))
-    =+  zar=$(hyp t.hyp)
-    =+  ^=  syp
-        ?-  -.q.zar
-          $&  p.q.zar
-          $|  (fire (turn q.q.zar |=({p/type q/foot} [p [%ash ~ 1]])))
-        ==
-    ?-    i.hyp
-        {$& *}
-      [(peg p.zar p.i.hyp) %& (peek(sut syp) way p.i.hyp)]
-    ::
-        {$| *}
-      =>  .(sut syp)
-      =+  hud=(fink p.i.hyp way q.i.hyp)
-      [(peg p.zar p.hud) q.hud]
-    ==
-  ::
-  ++  sift
-    |=  ref/type
-    ~+
-    ^-  type
-    !!
-    :: ~|(%sift-lose ?>((nest(sut ref) & -:!>(*typo)) ref))
   ::
   ++  snub
     ~/  %snub
