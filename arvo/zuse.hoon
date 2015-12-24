@@ -1557,9 +1557,9 @@
                 ++  sec  *ring                          ::  private key
             --                                          ::
           ++  nu  ^?                                    ::  reconstructors
-             |%  ++  pit  |=({a/@ b/@} ^?(..nu))        ::  from [width seed]
-                 ++  nol  |=(a/@ ^?(..nu))              ::  from naked ring
-                 ++  com  |=(a/@ ^?(..nu))              ::  from naked pass
+             |%  ++  pit  |+({a/@ b/@} ^?(..nu))        ::  from [width seed]
+                 ++  nol  |+(a/@ ^?(..nu))              ::  from naked ring
+                 ++  com  |+(a/@ ^?(..nu))              ::  from naked pass
              --                                          ::
           --                                            ::
 ++  aeon  @ud                                          ::
