@@ -8039,18 +8039,30 @@
               ?^  zem
                 :+  %&  [`axe lon] 
                 [%| (peg 2 p.u.zem) [[ref(p.q %gold) q.u.zem] ~ ~]]
-              $(ref p.ref, axe (peg axe 3))
-              ::  =+  ^-  {sam/? con/?}
-              ::      ?:  ?=($gold p.q.ref)  [& &]
-              ::      ?-  way
-              ::        $both  [| |]
-              ::        $free  [& &]
-              ::        $read  [?=($zinc p.q.ref) |]
-              ::        $rite  [?=($iron p.q.ref) |]
-              ::      ==
-              ::  ?.  sam  lose
-              ::  ?:  con  $(ref p.ref, axe (peg axe 3))
-              ::  $(ref (peek(sut p.ref) way 2), axe (peg axe 6))
+              =+  foo=$(ref p.ref, axe (peg axe 3))
+              =-  ?:  |(?=($| -.foo) =(foo bar))
+                    foo
+                  ::  ~&  [%old foo]
+                  ::  ~&  [%new bar]
+                  ~&  [%ref ref]
+                  =+  ^-  sax/axis
+                      |-  ^-  axis
+                      ?~  p.p.foo  1 
+                      (peg $(p.p.foo t.p.p.foo) ?~(i.p.p.foo 1 u.i.p.p.foo))
+                  ~&  [%foo-axis vet sax (cap sax) (mas sax) (park(sut ref) way sax) way p.q.ref]
+                  foo
+              ^=  bar
+              =+  ^-  {sam/? con/?}
+                  ?:  ?=($gold p.q.ref)  [& &]
+                  ?-  way
+                    $both  [| |]
+                    $free  [& &]
+                    $read  [?=($zinc p.q.ref) |]
+                    $rite  [?=($iron p.q.ref) |]
+                  ==
+              ?.  sam  lose
+              ?:  con  $(ref p.ref, axe (peg axe 3))
+              $(ref (peek(sut p.ref) way 2), axe (peg axe 6))
             ::
                 {$cube *}
               ::
@@ -8787,8 +8799,8 @@
         ?|  (~(has in gul) [sut ref])
             %+  %=  cram
                   gul  (~(put in gul) [sut ref])
-                  sut  sut(p q.q.sut)
-                  ref  ref(p q.q.ref)
+                  sut  sut(p q.q.sut, p.q %gold)
+                  ref  ref(p q.q.ref, p.q %gold)
                 ==
               q.r.q.sut
             q.r.q.ref
@@ -8944,12 +8956,10 @@
     ==
   ::
   ++  pork
-    ~/  %park
     |=  {way/?($read $rite $both $free) axe/axis}
     ^-  ?
     ?>  ?=({$core *} sut)
     ?|
-      !vet
       ?-    way
           $both  =(%gold p.q.sut)
           $free  &
@@ -9755,36 +9765,6 @@
       ==
     ==
   ++  sump  (ifix [kel ker] (stag %cltr (most ace wide)))
-  ++  noil
-    |=  tol/?
-    =<  ;~  pfix  buc
-          %-  stew
-          ^.  stet  ^.  limo
-          :~
-            ['^' (rung ket %herb exqd)]
-          ==
-        ==
-    |%
-    ++  toad
-      |*  har/_exqa
-      =+  dur=(ifix [pel per] $:har(tol |))
-      ?:(tol ;~(pose ;~(pfix gap $:har(tol &)) dur) dur)
-    ::
-    ++  rung
-      |*  {dif/rule tuq/* har/_exqa}
-      ;~(pfix dif (stag tuq (toad har)))
-    ::
-    ++  gunk  ~+((glue muck))
-    ++  muck  ?:(tol gap ace)
-    ++  butt  |*(zor/rule ?:(tol ;~(sfix zor ;~(plug gap duz)) zor))
-    ++  loaf  ?:(tol howl toil)
-    ++  lobe  ?:(tol tall wide)
-    ++  exqa  |.(loaf)
-    ++  exqb  |.(;~(gunk loaf loaf))
-    ++  exqc  |.((butt (most muck loaf)))
-    ++  exqd  |.(lobe)
-    ++  exqe  |.(;~(gunk sym loaf))
-    --
   ++  norm                                              ::  rune regular form
     |=  tol/?  
     =<  %-  stew
@@ -10004,7 +9984,6 @@
               ?.(tol fail ;~(sfix zor ;~(plug gap dun)))
     ++  hank  (most muck loaf)                          ::  gapped twigs
     ++  loaf  ?:(tol tall wide)                         ::  hoon, current width
-    ++  lobe  ?:(tol howl toil)                         ::  tile form
     ++  mash  ?:(tol gap ;~(plug com ace))              ::  list separator
     ++  muck  ?:(tol gap ace)                           ::  general separator
     ++  teak  %+  knee  *tiki  |.  ~+                   ::  wing or twig
@@ -10038,7 +10017,6 @@
               ::
                 (stag %| (stag ~ tall))
               ==
-    ++  race  (most mash ;~(gunk lobe loaf))            ::  list [tile twig]
     ++  rack  (most mash ;~(gunk loaf loaf))            ::  list [twig twig]
     ++  rick  (most mash ;~(gunk rope loaf))            ::  list [wing twig]
     ::
@@ -10049,7 +10027,6 @@
     ++  expc  |.(;~(gunk loaf loaf loaf))               ::  three twigs
     ++  expd  |.(;~(gunk loaf loaf loaf loaf))          ::  four twigs
     ++  expe  |.(wisp)                                  ::  core tail
-    ++  expf  |.(;~(gunk teak loaf loaf))               ::  tiki and two twigs
     ++  expg  |.(;~(gunk sym loaf))                     ::  term and twig
     ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [tile twig]s
     ++  expi  |.((butt ;~(gunk loaf hank)))             ::  one or more twigs
@@ -10057,14 +10034,10 @@
     ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))  ::  list of two twigs
     ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [tile twig]s
     ++  expn  |.((stag %cltr (butt hank)))              ::  autoconsed twigs
-    ++  expo  |.(;~(gunk lobe loaf))                    ::  tile and twig
     ++  expp  |.(;~(gunk (butt rick) loaf))             ::  [wing twig]s, twig
     ++  expq  |.(;~(gunk rope loaf loaf))               ::  wing and two twigs
     ++  expr  |.(;~(gunk loaf wisp))                    ::  twig and core tail
     ++  exps  |.((butt hank))                           ::  closed gapped twigs
-    ++  expt  |.(lobe)                                  ::  tile
-    ++  expu  |.(;~(gunk rope lobe))                    ::  wing and tile
-    ++  expv  |.(;~(gunk lobe wisp))                    ::  tile, core tail
     ++  expz  |.(loaf(bug &))                           ::  twig with tracing
     ::
     ::    tiki expansion for %wt runes
@@ -10219,51 +10192,6 @@
             |.(~+((wart ;~(pose (norm &) long lute ape:(sail &)))))
   ++  wide  %+  knee  *twig                             ::  full wide form
             |.(~+((wart ;~(pose (norm |) long ape:(sail |)))))
-  ++  hill  (knee *tile |.(~+(;~(pose (noil |) toil))))
-  ++  howl  (knee *tile |.(~+(;~(pose (noil &) toil))))
-  ++  toil
-    %+  knee  *tile  |.  ~+
-    %-  stew
-    ^.  stet  ^.  limo
-    :~
-      :-  '%'
-        fail
-      :-  '&'
-        fail
-      :-  '*'
-        (stag %herb wide)
-      :-  '?'
-        (stag %herb wide)
-      :-  '@'
-        (stag %herb wide)
-      :-  '^'
-        (stag %herb wide)
-      :-  '('
-        (stag %herb wide)
-      :-  '{'
-        (stag %herb wide)
-      :-  '.'
-        (stag %herb wide)
-      :-  '['
-        fail
-      :-  '_'
-        (stag %herb wide)
-      :-  ['0' '9']
-        fail
-      :-  ['a' 'z']
-        ;~  pose
-          %+  sear
-            |=(a/tile `(unit tile)`~)
-          (stag %bark ;~(plug sym ;~(pfix tis toil)))
-          (stag %herb wide)
-        ==
-      :-  '$'
-        (stag %herb wide)
-      :-  '|'
-        fail
-      :-  '~'
-        fail
-    ==
   ++  wart
     |*  zor/rule
     %+  here
