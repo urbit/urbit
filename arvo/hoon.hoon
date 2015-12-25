@@ -7491,6 +7491,30 @@
       ==
     --
   ::
+  ++  cola
+    |=  {pol/? hyp/wing ref/type}
+    ^-  type
+    =<  q
+    (tuck %both hyp |=(a/type ?:(pol (fuse(sut a) ref) (crop(sut a) ref))))
+  ::
+  ++  colo
+    |=  {pol/? hyp/wing ref/type}
+    ^-  type
+    =+  old=(cool pol hyp ref)
+    =+  new=(cola pol hyp ref)
+    ?.  ?|  =(old new)
+            ?&  (nest(sut old) | new)
+                (nest(sut new) | old)                
+            ==
+        ==  
+      ~&  [%colo pol hyp]
+      ~&  [%colo-sut sut]
+      ~&  [%colo-ref ref]
+      ~&  [%colo-old old]
+      ~&  [%colo-new new]
+      !!
+    old
+  ::
   ++  cool
     |=  {pol/? hyp/wing ref/type}
     ^-  type
@@ -8335,7 +8359,7 @@
     ~/  %chip
     |=  {way/? gen/twig}  ^-  type
     ?:  ?=({$wtts *} gen)  
-      (cool way q.gen (play ~(bunt al [%herb p.gen])))
+      (cola way q.gen (play ~(bunt al [%herb p.gen])))
     ?:  ?&(way ?=({$wtpm *} gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     ?:  ?&(!way ?=({$wtbr *} gen))
@@ -9021,12 +9045,13 @@
     ?~  i.vit
       |-  ^-  type
       ?+  sut  !!
-        {$bull *}  [%bull p.sut ^$(vit t.vit, sut q.sut)]
+        {$bull *}  (bull p.sut ^$(vit t.vit, sut q.sut))
         {$cube *}  [%cube p.sut ^$(vit t.vit, sut q.sut)]
-        {$face *}  [%face p.sut ^$(vit t.vit, sut q.sut)]
+        {$face *}  (face p.sut ^$(vit t.vit, sut q.sut))
         {$fork *}  (fork $(sut p.sut) $(sut q.sut))
         {$hold *}  $(sut repo) 
       ==
+    =|  vil/(set type)
     |-  ^-  type
     ?:  =(1 u.i.vit)
       ^$(vit t.vit)
@@ -9035,14 +9060,16 @@
       $noun      $(sut [%cell %noun %noun])
       $void      ^$(vit t.vit)
       {$atom *}  %void
-      {$bull *}  [%bull p.sut $(sut q.sut)]
+      {$bull *}  (bull p.sut $(sut q.sut))
       {$cell *}  ?:  =(2 now)
-                   [%cell $(sut p.sut, u.i.vit lat) q.sut]
-                  [%cell p.sut $(sut q.sut, u.i.vit lat)]
-      {$core *}  ?>(=(3 now) [%core $(sut p.sut, u.i.vit lat) q.sut])
+                   (cell $(sut p.sut, u.i.vit lat) q.sut)
+                  (cell p.sut $(sut q.sut, u.i.vit lat))
+      {$core *}  ?>(=(3 now) (core $(sut p.sut, u.i.vit lat) q.sut))
       {$cube *}  ^$(vit t.vit, sut q.sut)
-      {$face *}  [%face p.sut $(sut q.sut)]
-      {$fork *}  (fork $(sut p.sut) $(sut q.sut))
+      {$face *}  (face p.sut $(sut q.sut))
+      {$fork *}  ::  ?:  (~(has in vil) sut)  %void
+                 =.  vil  (~(put in vil) sut)
+                 (fork $(sut p.sut) $(sut q.sut))
       {$hold *}  $(sut repo)
     ==
   ::
