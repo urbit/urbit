@@ -89,7 +89,7 @@
         u3_noun pi_mew = u3h(i_mew);
         u3_noun qi_mew = u3t(i_mew);
         u3_noun laf = _play_in(van, sut, qi_mew);
-        u3_noun ruz = u3qfu_tock(van, sut, pi_mew, laf, rag);
+        u3_noun ruz = u3qfu_toss(van, sut, pi_mew, laf, rag);
 
         u3z(laf);
         u3z(rag);
@@ -346,25 +346,13 @@
         u3_noun lar = _play_foil(sec);
         u3_noun q_lar = u3t(lar);
         u3_noun qq_lar = u3t(q_lar);
-        u3_noun mew = u3qfu_snub(van, sut, q_gen);
+        u3_noun mew = q_gen;
         u3_noun rag = _play_edit(van, sut, mew, u3k(qq_lar));
         u3_noun ret = u3qfu_fire(van, sut, rag);
 
         u3z(rag);
-        u3z(mew);
         u3z(lar);
 
-        return ret;
-      }
-      case c3__pmcl: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _play_used();
-      {
-        u3_noun ruf = u3nt(c3__clhp,
-                           u3nc(u3_nul, 1),
-                           u3k(p_gen));
-        u3_noun ret = _play_grow(van, sut, c3__zinc, ruf, q_gen);
-
-        u3z(ruf);
         return ret;
       }
       case c3__brcn: p_gen = u3t(gen);
@@ -372,26 +360,6 @@
       {
         u3_noun ruf = u3nc(u3_nul, 1);
         u3_noun ret = _play_grow(van, sut, c3__gold, ruf, p_gen);
-
-        u3z(ruf);
-        return ret;
-      }
-      case c3__pmcn: p_gen = u3t(gen);
-      _play_used();
-      {
-        u3_noun ruf = u3nc(u3_nul, 1);
-        u3_noun ret = _play_grow(van, sut, c3__lead, ruf, p_gen);
-
-        u3z(ruf);
-        return ret;
-      }
-      case c3__pmls: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _play_used();
-      {
-        u3_noun ruf = u3nt(c3__clhp,
-                           u3nc(u3_nul, 1),
-                           u3k(p_gen));
-        u3_noun ret = _play_grow(van, sut, c3__iron, ruf, q_gen);
 
         u3z(ruf);
         return ret;

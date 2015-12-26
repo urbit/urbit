@@ -226,5 +226,5 @@
     u3_noun u3qfu_sift(u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_snub(u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_tack(u3_noun, u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_tock(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
+    u3_noun u3qfu_toss(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_wrap(u3_noun, u3_noun, u3_noun);

@@ -368,7 +368,7 @@ static u3j_harm _mood__hoon__ut_rest_a[] = {{".2", u3wfu_rest}, {}};
 static u3j_harm _mood__hoon__ut_seek_a[] = {{".2", u3wfu_seek}, {}};
 static u3j_harm _mood__hoon__ut_seep_a[] = {{".2", u3wfu_seep}, {}};
 static u3j_harm _mood__hoon__ut_snub_a[] = {{".2", u3wfu_snub}, {}};
-static u3j_harm _mood__hoon__ut_tock_a[] = {{".2", u3wfu_tock}, {}};
+static u3j_harm _mood__hoon__ut_toss_a[] = {{".2", u3wfu_toss}, {}};
 static u3j_harm _mood__hoon__ut_wrap_a[] = {{".2", u3wfu_wrap}, {}};
 
 static u3j_core _mood__hoon__ut_d[] =
@@ -394,7 +394,7 @@ static u3j_core _mood__hoon__ut_d[] =
     { "seek", _mood__hoon__ut_seek_a },
     { "seep", _mood__hoon__ut_seep_a },
     { "snub", _mood__hoon__ut_snub_a },
-    { "tock", _mood__hoon__ut_tock_a },
+    { "toss", _mood__hoon__ut_toss_a },
     { "wrap", _mood__hoon__ut_wrap_a },
     {}
   };

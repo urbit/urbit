@@ -247,8 +247,8 @@
         u3_noun zil = _mull_in(van, sut, c3__noun, dox, qi_mew);
         u3_noun p_zil = u3h(zil);
         u3_noun q_zil = u3t(zil);
-        u3_noun cuf = u3qfu_tock(van, sut, pi_mew, p_zil, p_yom);
-        u3_noun dof = u3qfu_tock(van, sut, pi_mew, q_zil, q_yom);
+        u3_noun cuf = u3qfu_toss(van, sut, pi_mew, p_zil, p_yom);
+        u3_noun dof = u3qfu_toss(van, sut, pi_mew, q_zil, q_yom);
 
         if ( u3r_sing(u3h(cuf), u3h(dof)) ) {
           u3m_error("mull-bonk-a");
@@ -611,7 +611,7 @@
           u3m_error("mull-bonk-e");
         }
         {
-          u3_noun mew = u3qfu_snub(van, sut, q_gen);
+          u3_noun mew = q_gen;
           u3_noun yom = _mull_edit
             (van, sut, dox, mew, u3k(qq_lar),
                                         u3k(qq_vug));
@@ -621,23 +621,11 @@
 
           u3z(von);
           u3z(yom);
-          u3z(mew);
           u3z(vug);
           u3z(lar);
 
           return u3nc(_mull_nice(van, gol, p_ret), q_ret);
         }
-      }
-      case c3__pmcl: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _mull_used();
-      {
-        u3_noun ruf = u3nt(c3__clhp,
-                           u3nc(u3_nul, 1),
-                           u3k(p_gen));
-        u3_noun ret = _mull_grow(van, sut, gol, dox, c3__zinc, ruf, q_gen);
-
-        u3z(ruf);
-        return ret;
       }
       case c3__brcn: p_gen = u3t(gen);
       _mull_used();
@@ -647,27 +635,6 @@
         ret = _mull_grow(van, sut, gol, dox, c3__gold, ruf, p_gen);
         u3z(ruf);
 
-        return ret;
-      }
-      case c3__pmcn: p_gen = u3t(gen);
-      _mull_used();
-      {
-        u3_noun ruf = u3nc(u3_nul, 1);
-
-        ret = _mull_grow(van, sut, gol, dox, c3__lead, ruf, p_gen);
-        u3z(ruf);
-
-        return ret;
-      }
-      case c3__pmls: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _mull_used();
-      {
-        u3_noun ruf = u3nt(c3__clhp,
-                           u3nc(u3_nul, 1),
-                           u3k(p_gen));
-        u3_noun ret = _mull_grow(van, sut, gol, dox, c3__iron, ruf, q_gen);
-
-        u3z(ruf);
         return ret;
       }
       case c3__sgzp: u3x_cell(u3t(gen), &p_gen, &q_gen);

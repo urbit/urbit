@@ -168,7 +168,7 @@ int FOO;
         u3_noun zil = u3qfu_mint(van, sut, c3__noun, qi_mew);
         u3_noun p_zil = u3h(zil);
         u3_noun q_zil = u3t(zil);
-        u3_noun wip = u3qfu_tock(van, sut, pi_mew, p_zil, rag);
+        u3_noun wip = u3qfu_toss(van, sut, pi_mew, p_zil, rag);
 
         u3z(rag);
         rag = u3k(u3t(wip));
@@ -648,7 +648,7 @@ int FOO;
         u3_noun q_lar = u3t(lar);
         u3_noun pq_lar = u3h(q_lar);
         u3_noun qq_lar = u3t(q_lar);
-        u3_noun mew = u3qfu_snub(van, sut, q_gen);
+        u3_noun mew = q_gen;
         u3_noun yom = _mint_edit(van, sut, mew, p_lar, u3k(qq_lar), u3_nul);
         u3_noun p_yom = u3h(yom);
         u3_noun q_yom = u3t(yom);
@@ -657,20 +657,8 @@ int FOO;
                                          : u3nt(9, u3k(pq_lar), u3k(q_yom)));
 
         u3z(yom);
-        u3z(mew);
         u3z(lar);
 
-        return ret;
-      }
-      case c3__pmcl: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _mint_used();
-      {
-        u3_noun ruf = u3nt(c3__clhp,
-                           u3nc(u3_nul, 1),
-                           u3k(p_gen));
-        u3_noun ret = _mint_grow(van, sut, gol, c3__zinc, ruf, q_gen);
-
-        u3z(ruf);
         return ret;
       }
       case c3__brcn: p_gen = u3t(gen);
@@ -681,27 +669,6 @@ int FOO;
         ret = _mint_grow(van, sut, gol, c3__gold, ruf, p_gen);
         u3z(ruf);
 
-        return ret;
-      }
-      case c3__pmcn: p_gen = u3t(gen);
-      _mint_used();
-      {
-        u3_noun ruf = u3nc(u3_nul, 1);
-
-        ret = _mint_grow(van, sut, gol, c3__lead, ruf, p_gen);
-        u3z(ruf);
-
-        return ret;
-      }
-      case c3__pmls: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _mint_used();
-      {
-        u3_noun ruf = u3nt(c3__clhp,
-                           u3nc(u3_nul, 1),
-                           u3k(p_gen));
-        u3_noun ret = _mint_grow(van, sut, gol, c3__iron, ruf, q_gen);
-
-        u3z(ruf);
         return ret;
       }
       case c3__sgzp: u3x_cell(u3t(gen), &p_gen, &q_gen);

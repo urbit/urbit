@@ -316,7 +316,7 @@ J_F_OFILES_UT=\
        jets/f/ut_seek.o \
        jets/f/ut_swab.o \
        jets/f/ut_tack.o \
-       jets/f/ut_tock.o \
+       jets/f/ut_toss.o \
        jets/f/ut_wrap.o
 
 J_G_OFILES=\
