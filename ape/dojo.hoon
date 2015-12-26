@@ -500,7 +500,7 @@
         $tang  ;;(tang q.q.cay)
         $httr
           =+  hit=;;(httr q.q.cay)
-          =-  (flop (turn `wall`- |=(a/tape leaf+(dash:ut a ''))))
+          =-  (flop (turn `wall`- |=(a/tape leaf+(dash:us a ''))))
           :-  "HTTP {<p.hit>}"
           %+  weld
             (turn q.hit |=({a/@t b/@t} "{(trip a)}: {(trip b)}"))

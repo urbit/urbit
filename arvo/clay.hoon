@@ -493,7 +493,7 @@
             |=  a/cord
             ?:  ((sane %ta) a)
               [%leaf (trip a)]
-            [%leaf (dash:ut (trip a) '\'')]
+            [%leaf (dash:us (trip a) '\'')]
           $(p.lem t.p.lem)
     ==
   ::

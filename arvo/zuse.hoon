@@ -726,7 +726,7 @@
     ==
   ::
   ++  chrd                                              ::  character data
-    %+  cook  |=(a/tape ^-(mars :/(a)))
+    %+  cook  |=(a/tape ^-(mars ;/(a)))
     (plus ;~(less doq ;~(pose (just `@`10) escp)))
   ::
   ++  comt                                              ::  comments 
@@ -975,11 +975,11 @@
   ==
 ::
 ++  scanf                                              ::  formatted scan
-  |*  {tape (pole _:/(*{$^(rule tape)}))}
+  |*  {tape (pole _;/(*{$^(rule tape)}))}
   =>  .(+< [a b]=+<)
   (scan a (parsf b))
 ++  parsf                                              ::  make parser from:
-  |^  |*  a/(pole _:/(*{$^(rule tape)}))            ::  ;"chars{rule}chars"
+  |^  |*  a/(pole _;/(*{$^(rule tape)}))            ::  ;"chars{rule}chars"
       %-  cook  :_  (bill (norm a))
       |*  (list)
       ?~  +<  ~
@@ -988,7 +988,7 @@
   ::
   ::  .=  (norm [;"{n}, {n}"]:n=dim:ag)  ~[[& dim] [| ", "] [& dim]]:ag
   ++  norm                                             
-    |*  (pole _:/(*{$^(rule tape)}))
+    |*  (pole _;/(*{$^(rule tape)}))
     ?~  +<  ~
     =>  .(+< [i=+<- t=+<+])
     :_  t=$(+< t)
