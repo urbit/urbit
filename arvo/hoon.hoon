@@ -82,6 +82,7 @@
           ==                                            ::
 ++  gate  $+(* *)                                       ::  general gate
 ++  hair  {p/@ud q/@ud}                                 ::  parsing trace
+++  knot  @ta                                           ::  ASCII text
 ++  like  |*  a/$+(* *)                                 ::  generic edge
           |=  b/_`*`[(hair) ~]                          ::
           :-  p=(hair -.b)                              ::
@@ -122,7 +123,7 @@
           ?@  b  ~                                      ::
           [i=(-.a -.b) t=$(a +.a, b +.b)]               ::
 ++  pass  @                                             ::  public key
-++  path  (list span)                                   ::  filesys location
+++  path  (list knot)                                   ::  filesys location
 ++  pint  {p/{p/@ q/@} q/{p/@ q/@}}                     ::  line+column range
 ++  pole  |*  a/$+(* *)                                 ::  nameless list
           $@($~ {a (pole a)})                           ::
@@ -156,7 +157,6 @@
           {p/a q/b r/c s/d}                             ::
 ++  ring  @                                             ::  private key
 ++  rule  _|=(nail *edge)                               ::  parsing rule
-++  span  @ta                                           ::  text-atom (ASCII)
 ++  spot  {p/path q/pint}                               ::  range in file
 ++  tang  (list tank)                                   ::  bottom-first error
 ++  tank  $%  {$leaf p/tape}                            ::  printing formats
@@ -3649,7 +3649,7 @@
       c
   ==
 ::
-++  wack                                                ::  span format
+++  wack                                                ::  knot format
   |=  a/@ta
   ^-  @ta
   =+  b=(rip 3 a)
@@ -3661,7 +3661,7 @@
   ?:  =('_' i.b)  ['~' '-' $(b t.b)]
   [i.b $(b t.b)]
 ::
-++  wick                                                ::  span format
+++  wick                                                ::  knot format
   |=  a/@
   ^-  (unit @ta)
   =+  b=(rip 3 a)
@@ -8886,6 +8886,7 @@
         {$fork *}  (fork $(sut p.sut) $(sut q.sut))
         {$hold *}  $(sut repo) 
       ==
+    =+  vil=*(set type)
     |-  ^-  type
     ?:  =(1 u.i.vit)
       ^$(vit t.vit)
@@ -8901,7 +8902,10 @@
       {$core *}  ?>(=(3 now) (core $(sut p.sut, u.i.vit lat) q.sut))
       {$cube *}  $(sut q.sut)
       {$face *}  (face p.sut $(sut q.sut))
-      {$fork *}  (fork $(sut p.sut) $(sut q.sut))
+      {$fork *}  ?:  (~(has in vil) sut)
+                   %void
+                 =>  .(vil (~(put in vil) sut))
+                 (fork $(sut p.sut) $(sut q.sut))
       {$hold *}  $(sut repo)
     ==
   ::

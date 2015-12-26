@@ -23,12 +23,12 @@
       %+  cork  house-5  |=  house-5                    ::  modern house with
       +<(shells (~(run by shells) shell-4))             ::  no settings
     ++  house-5                                         ::
-      $:  stories/(map span story)                      ::  conversations
+      $:  stories/(map knot story)                      ::  conversations
           general/(set bone)                            ::  meta-subscribe
           outbox/(pair @ud (map @ud thought))           ::  urbit outbox
           folks/(map ship human)                        ::  human identities
           shells/(map bone shell)                       ::  interaction state
-          log/(map span @ud)                            ::  logged to clay
+          log/(map knot @ud)                            ::  logged to clay
           nik/(map (set partner) char)                  ::  bound station glyphs
           nak/(jug char (set partner))                  ::  station glyph lookup
       ==                                                ::
@@ -49,15 +49,15 @@
       ==                                                ::
     ++  shell                                           ::  console session
       $:  her/ship                                      ::  client identity
-          man/span                                      ::  mailbox
+          man/knot                                      ::  mailbox
           count/@ud                                     ::  messages shown
           say/sole-share                                ::  console state
           active/(unit (set partner))                   ::  active targets
           passive/(set partner)                         ::  passive targets
           owners/register                               ::  presence mirror
-          harbor/(map span (pair posture cord))         ::  stations mirror
+          harbor/(map knot (pair posture cord))         ::  stations mirror
           system/cabal                                  ::  config mirror
-          settings/(set span)                           ::  frontend settings
+          settings/(set knot)                           ::  frontend settings
       ==                                                ::
     ++  shell-4  (cork shell |=(shell +<(|8 &9.+<)))    ::  missing settings
     ++  river  (pair point point)                       ::  stream definition
@@ -82,8 +82,8 @@
           {$quit $~}                                    ::
       ==                                                ::
     ++  weir                                            ::  parsed wire
-      $%  {$repeat p/@ud q/@p r/span}                   ::
-          {$friend p/span q/station}                    ::
+      $%  {$repeat p/@ud q/@p r/knot}                   ::
+          {$friend p/knot q/station}                    ::
       ==                                                ::
     ++  work                                            ::  interface action
       $%  {$number p/$@(@ud {@u @ud})}                  ::  relative/absolute
@@ -95,16 +95,16 @@
           {$leave p/where}                              ::  
           {$say p/(list speech)}                        ::
           {$eval p/cord q/twig}                         ::
-          {$invite p/span q/(list partner)}             ::  whitelist add
-          {$banish p/span q/(list partner)}             ::  blacklist add
-          {$block p/span q/(list partner)}              ::  blacklist add
-          {$author p/span q/(list partner)}             ::  whitelist add
+          {$invite p/knot q/(list partner)}             ::  whitelist add
+          {$banish p/knot q/(list partner)}             ::  blacklist add
+          {$block p/knot q/(list partner)}              ::  blacklist add
+          {$author p/knot q/(list partner)}             ::  whitelist add
           {$nick p/(unit ship) q/(unit cord)}           ::
-          {$set p/span}                                 ::
-          {$unset p/span}                               ::
+          {$set p/knot}                                 ::
+          {$unset p/knot}                               ::
           {$target p/where q/(unit work)}               ::  set active targets
-          ::  {$destroy p/span}                         ::
-          {$create p/posture q/span r/cord}             ::
+          ::  {$destroy p/knot}                         ::
+          {$create p/posture q/knot r/cord}             ::
           {$probe p/station}                            ::
       ==                                                ::
     ++  where  (set partner)                            ::  non-empty audience 
@@ -401,9 +401,9 @@
     ++  sh-repo-house-diff
       |=  {one/shelf two/shelf}
       =|  $=  ret
-          $:  old/(list (pair span (pair posture cord)))
-              new/(list (pair span (pair posture cord)))
-              cha/(list (pair span (pair posture cord)))
+          $:  old/(list (pair knot (pair posture cord)))
+              new/(list (pair knot (pair posture cord)))
+              cha/(list (pair knot (pair posture cord)))
           ==
       ^+  ret
       =.  ret
@@ -655,7 +655,7 @@
       (sh-repo-config-show "" loc.laz loc.bal)
     ::
     ++  sh-repo-house
-      |=  awl/(map span (pair posture cord))
+      |=  awl/(map knot (pair posture cord))
       ^+  +>
       =+  dif=(sh-repo-house-diff harbor.she awl) 
       =.  harbor.she  awl
@@ -995,27 +995,27 @@
         (sh-note:(set-glyph cha u.pan) "bound {<cha>} {<u.pan>}")
       ::
       ++  invite                                        ::  %invite
-        |=  {nom/span tal/(list partner)}
+        |=  {nom/knot tal/(list partner)}
         ^+  ..sh-work
         !!
       ::
       ++  block                                         ::  %block
-        |=  {nom/span tal/(list partner)}
+        |=  {nom/knot tal/(list partner)}
         ^+  ..sh-work
         !!
       ::
       ++  author                                        ::  %author
-        |=  {nom/span tal/(list partner)}
+        |=  {nom/knot tal/(list partner)}
         ^+  ..sh-work
         !!
       ::
       ++  banish                                        ::  %banish
-        |=  {nom/span tal/(list partner)}
+        |=  {nom/knot tal/(list partner)}
         ^+  ..sh-work
         !!
       ::
       ++  create                                        ::  %create
-        |=  {por/posture nom/span txt/cord}
+        |=  {por/posture nom/knot txt/cord}
         ^+  ..sh-work
         ?:  (~(has in stories) nom) 
           (sh-lame "{(trip nom)}: already exists")
@@ -1028,7 +1028,7 @@
         (join [[%& our.hid nom] ~ ~])
       ::
       ++  reverse-folks
-        |=  nym/span
+        |=  nym/knot
         ^-  (list ship)
         %+  murn  (~(tap by folks))
         |=  {p/ship q/human}
@@ -1066,19 +1066,19 @@
         ==
       ::
       ++  wo-set                                        ::  %set
-        |=  seg/span
+        |=  seg/knot
         ^+  ..sh-work
         ?~  seg
           %+  sh-fact  %mor
           %+  turn  (~(tap in settings.she))
-          |=  s/span
+          |=  s/knot
           [%txt (trip s)]
         %=  ..sh-work
           settings.she  (~(put in settings.she) seg)
         ==
       ::
       ++  unset                                         ::  %unset
-        |=  neg/span
+        |=  neg/knot
         ^+  ..sh-work
         %=  ..sh-work
           settings.she  (~(del in settings.she) neg)
@@ -1246,9 +1246,9 @@
     %+  ra-emit  ost.hid
     :+  %diff  %talk-report
     :-  %house
-    %-  ~(gas in *(map span (pair posture cord)))
+    %-  ~(gas in *(map knot (pair posture cord)))
     %+  turn  (~(tap by stories)) 
-    |=({a/span b/story} [a p.cordon.shape.b caption.shape.b])
+    |=({a/knot b/story} [a p.cordon.shape.b caption.shape.b])
   ::
   ++  ra-homes                                          ::  update partners
     =+  gel=general
@@ -1283,7 +1283,7 @@
     ==
   ::
   ++  ra-config                                         ::  configure story
-    |=  {man/span con/config}
+    |=  {man/knot con/config}
     ^+  +>
     =+  :-  neu=(~(has by stories) man)
         pur=(fall (~(get by stories) man) *story)
@@ -1291,7 +1291,7 @@
     ?:(neu +>.$ ra-homes)
   ::
   ++  ra-know                                           ::  story monad
-    |=  man/span
+    |=  man/knot
     |*  fun/$+(_pa _+>)
     ^+  +>+>
     =+  pur=(~(get by stories) man)
@@ -1301,22 +1301,22 @@
     (fun ~(. pa man u.pur))
   ::
   ++  ra-diff-talk-report                               ::  subscription update
-    |=  {man/span cuz/station rad/report}
+    |=  {man/knot cuz/station rad/report}
     %-  (ra-know man)  |=  par/_pa  =<  pa-abet
     (pa-diff-talk-report:par cuz rad)
   ::
   ++  ra-quit                                           ::  subscription quit
-    |=  {man/span cuz/station}
+    |=  {man/knot cuz/station}
     %-  (ra-know man)  |=  par/_pa  =<  pa-abet
     (pa-quit:par %& cuz)
   ::
   ++  ra-retry                                          ::  subscription resend
-    |=  {man/span cuz/station}
+    |=  {man/knot cuz/station}
     %-  (ra-know man)  |=  par/_pa  =<  pa-abet
     (pa-acquire:par [%& cuz]~)
   ::
   ++  ra-coup-repeat                                    ::
-    |=  {{num/@ud her/@p man/span} saw/(unit tang)}
+    |=  {{num/@ud her/@p man/knot} saw/(unit tang)}
     (ra-repeat num [%& her man] saw)
   ::
   ++  ra-repeat                                         ::  remove from outbox 
@@ -1354,7 +1354,7 @@
   ++  ra-console                                        ::  console subscribe
     |=  {her/ship pax/path}
     ^+  +>
-    =+  man=`span`?~(pax (main her) ?>(?=($~ t.pax) i.pax))
+    =+  man=`knot`?~(pax (main her) ?>(?=($~ t.pax) i.pax))
     =+  ^=  she  ^-  shell
         [her man 0 *sole-share ~ [[%& our.hid man] ~ ~] [~ ~] ~ *cabal ~]
     sh-abet:~(sh-peer sh ~ she)
@@ -1432,7 +1432,7 @@
     ==
   ::
   ++  ra-record                                         ::  add to story
-    |=  {man/span gam/telegram}
+    |=  {man/knot gam/telegram}
     %-  (ra-know man)  |=  par/_pa  =<  pa-abet
     (pa-learn:par gam)
   ::
@@ -1449,7 +1449,7 @@
     +>(p.outbox +(p.outbox), q.outbox (~(put by q.outbox) p.outbox tip))
   ::
   ++  pa                                                ::  story core
-    |_  $:  man/span
+    |_  $:  man/knot
             story
         ==
     ++  pa-abet
@@ -1766,7 +1766,7 @@
   --
 ::
 ++  sn                                                  ::  station render core
-  |_  {man/span one/station} 
+  |_  {man/knot one/station} 
   ++  sn-best                                           ::  best to show
     |=  two/station
     ^-  ?
@@ -1828,7 +1828,7 @@
   --
 ::
 ++  ta                                                  ::  partner core
-  |_  {man/span one/partner}
+  |_  {man/knot one/partner}
   ++  ta-beat                                           ::  more relevant
     |=  two/partner  ^-  ?
     ?-    -.one
@@ -1874,7 +1874,7 @@
   --
 ::
 ++  te                                                  ::  audience renderer
-  |_  {man/span lix/(set partner)}
+  |_  {man/knot lix/(set partner)}
   ++  te-best  ^-  (unit partner)
     ?~  lix  ~
     :-  ~
@@ -1931,7 +1931,7 @@
   --
 ::
 ++  tr                                                  ::  telegram renderer
-  |_  $:  man/span
+  |_  $:  man/knot
           nob/?
           who/ship
           sen/serial
@@ -2020,7 +2020,7 @@
               =-  (swag [(sub (max 64 (lent -)) 64) 64] -)
               ^-  tape
               =<  ?~(-.hok (reel p.hok .) +:(scow %if p.hok))
-              |=({a/span b/tape} ?~(b (trip a) (welp b '.' (trip a))))
+              |=({a/knot b/tape} ?~(b (trip a) (welp b '.' (trip a))))
     ::
         $lin
       =+  txt=(trip q.sep)
@@ -2070,14 +2070,14 @@
   |=  {way/wire rad/report}
   ^-  (quip move +>)
   =^  mos  +>.$
-      %+  etch-friend  way  |=  {man/span cuz/station}
+      %+  etch-friend  way  |=  {man/knot cuz/station}
       ra-abet:(ra-diff-talk-report:ra man cuz rad)
   =^  mow  +>.$  log-all-to-file
   [(welp mos mow) +>.$]
 ::
 ++  coup-repeat                                         ::
   |=  {way/wire saw/(unit tang)}
-  %+  etch-repeat  [%repeat way]  |=  {num/@ud src/@p man/span}
+  %+  etch-repeat  [%repeat way]  |=  {num/@ud src/@p man/knot}
   ra-abet:(ra-coup-repeat:ra [num src man] saw)
 ::
 ++  etch                                                ::  parse wire
@@ -2094,12 +2094,12 @@
   ==
 ::
 ++  etch-friend                                         ::
-  |=  {way/wire fun/$+({man/span cuz/station} {(list move) _.})}
+  |=  {way/wire fun/$+({man/knot cuz/station} {(list move) _.})}
   =+  wer=(etch way)
   ?>(?=($friend -.wer) (fun p.wer q.wer))
 ::
 ++  etch-repeat                                         ::
-  |=  {way/wire fun/$+({num/@ud src/@p man/span} {(list move) _.})}
+  |=  {way/wire fun/$+({num/@ud src/@p man/knot} {(list move) _.})}
   =+  wer=(etch way)
   ?>(?=($repeat -.wer) (fun p.wer q.wer r.wer))
 ::
@@ -2107,14 +2107,14 @@
   |=  {way/wire saw/(unit tang)}
   ^-  (quip move +>)
   ?~  saw  [~ +>]
-  %+  etch-friend  [%friend way]  |=  {man/span cuz/station}
+  %+  etch-friend  [%friend way]  |=  {man/knot cuz/station}
   =.  u.saw  [>%reap-friend-fail man cuz< u.saw]
   %-  (slog (flop u.saw))
   ra-abet:(ra-quit:ra man cuz)
 ::
 ++  quit-friend                                         ::
   |=  way/wire
-  %+  etch-friend  [%friend way]  |=  {man/span cuz/station}
+  %+  etch-friend  [%friend way]  |=  {man/knot cuz/station}
   ra-abet:(ra-retry:ra man cuz)
 ::
 ++  pull                                                ::
@@ -2129,17 +2129,17 @@
   ?:  &  [~ .]  ::  XXX!!!!
   :_  %_  .
         log   %-  ~(urn by log)
-              |=({man/span len/@ud} count:(~(got by stories) man))
+              |=({man/knot len/@ud} count:(~(got by stories) man))
       ==
   %+  murn  (~(tap by log))
-  |=  {man/span len/@ud}
+  |=  {man/knot len/@ud}
   ^-  (unit move)
   ?:  (gte len count:(~(got by stories) man))
     ~
   `(log-to-file man)
 ::
 ++  log-to-file
-  |=  man/span
+  |=  man/knot
   ^-  move
   =+  ^-  paf/path
       =+  day=(year %*(. (yore now.hid) +.t +:*tarp))
@@ -2149,14 +2149,14 @@
   [ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]
 ::
 ++  poke-save
-  |=  man/span
+  |=  man/knot
   ^-  (quip move +>)
   =+  paf=/(scot %p our.hid)/home/(scot %da now.hid)/talk/[man]/talk-telegrams
   =+  grams:(~(got by stories) man)
   [[ost.hid %info /jamfile our.hid (foal paf [%talk-telegrams !>(-)])]~ +>.$]
 ::
 ++  poke-load
-  |=  man/span
+  |=  man/knot
   =+  ^=  grams
       %-  (hard (list telegram))
       .^  %cx
@@ -2166,7 +2166,7 @@
   [~ +>.$(stories (~(put by stories) man toy(grams grams, count (lent grams))))]
 ::
 ++  poke-log
-  |=  man/span
+  |=  man/knot
   ~&  %poke-log
 
   ^-  (quip move +>)
@@ -2174,7 +2174,7 @@
   +>.$(log (~(put by log) man count:(~(got by stories) man)))
 ::
 ++  poke-unlog
-  |=  man/span
+  |=  man/knot
   ^-  (quip move +>)
   :-  ~
   +>.$(log (~(del by log) man))
@@ -2188,7 +2188,7 @@
   ?-  -.u.old
     $5  [~ ..prep(+<+ u.old)]
     $4  =<  ^$(-.u.old %5, shells.u.old (~(run by shells.u.old) .))
-        |=(shell-4 `shell`+<(system [system settings=*(set span)]))
+        |=(shell-4 `shell`+<(system [system settings=*(set knot)]))
     $3  =<  ^$(-.u.old %4, stories.u.old (~(run by stories.u.old) .))
         |=(story-3 `story`+<(cabalers [cabalers glyphers=*(set bone)]))
   ==

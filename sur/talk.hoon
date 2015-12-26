@@ -6,7 +6,7 @@
 ++  atlas  (map ship status)                            ::  presence map
 ++  bouquet  (set flavor)                               ::  complete aroma
 ++  command                                             ::  effect on party
-  $%  {$design (pair span (unit config))}               ::  configure+destroy
+  $%  {$design (pair knot (unit config))}               ::  configure+destroy
       {$publish (list thought)}                         ::  originate
       {$review (list thought)}                          ::  deliver
   ==                                                    ::
@@ -44,7 +44,7 @@
   ==                                                    ::
 ++  presence   ?($gone $hear $talk)                     ::  status type
 ++  register  (pair atlas (map partner atlas))          ::  ping me, ping srcs
-++  shelf  (map span (pair posture cord))               ::  ship shape
+++  shelf  (map knot (pair posture cord))               ::  ship shape
 ++  report                                              ::  talk update
   $%  {$cabal cabal}                                    ::  config neighborhood
   ::  {$folder (list report)}                           ::  multiple
@@ -54,7 +54,7 @@
       {$glyph (jug char (set partner))}                 ::  relevant binding
   ==                                                    ::
 ++  speech                                              ::  narrative action
-  $%  {$lan p/span q/@t}                                ::  local announce
+  $%  {$lan p/knot q/@t}                                ::  local announce
       {$exp p/@t}                                       ::  hoon line
       {$non $~}                                         ::  no content (yo)
       {$ext p/@tas q/*}                                 ::  extended action
@@ -71,7 +71,7 @@
 ++  partner    (each station passport)                  ::  interlocutor
 ++  status     (pair presence human)                    ::  participant
 ++  statement  (trel @da bouquet speech)                ::  when this
-++  station    (pair ship span)                         ::  domestic flow
+++  station    (pair ship knot)                         ::  domestic flow
 ++  telegram   (pair ship thought)                      ::  who which whom what
 ++  thought    (trel serial audience statement)         ::  which whom what
 ++  torso                                               ::  attachment

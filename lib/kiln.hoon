@@ -26,7 +26,7 @@
     $:  pax/path                                        ::
         pot/term                                        ::
     ==                                                  ::
-++  kiln-unmount  $@(term {span path})                  ::
+++  kiln-unmount  $@(term {knot path})                  ::
 ++  kiln-sync                                           ::
     $:  syd/desk                                        ::
         her/ship                                        ::

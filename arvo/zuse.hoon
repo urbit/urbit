@@ -1512,13 +1512,13 @@
 ::   (mule |.((slam p.mud sam)))
 :: ::
 ++  pack                                                ::  light path encoding
-  |=  {a/term b/path}  ^-  span
+  |=  {a/term b/path}  ^-  knot
   %+  rap  3  :-  (wack a)
-  (turn b |=(c/span (cat 3 '_' (wack c))))
+  (turn b |=(c/knot (cat 3 '_' (wack c))))
 ::
 ++  puck                                                ::  light path decoding
   =+  fel=(most cab (sear wick urt:ab))
-  |=(a/span `(unit {p/term q/path})`(rush a fel))
+  |=(a/knot `(unit {p/term q/path})`(rush a fel))
 ::
 ++  saxo                                                ::  autocanon
   |=  who/ship
@@ -2205,7 +2205,7 @@
       {$for p/path q/horn}                              ::  /,  descend
       {$hel p/@ud q/horn}                               ::  /%  propagate heel
       {$hub p/horn}                                     ::  /@  list by @ud
-      {$man p/(map span horn)}                          ::  /*  hetero map
+      {$man p/(map knot horn)}                          ::  /*  hetero map
       {$nap p/horn}                                     ::  /_  homo map
       {$now p/horn}                                     ::  /&  list by @da
       {$saw p/twig q/horn}                              ::  /;  operate on

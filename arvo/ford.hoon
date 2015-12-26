@@ -146,10 +146,10 @@
   (~(gas by one) (~(tap by two) ~))                     ::  XX ugh
 ::
 ++  lark                                                ::  filter arch names
-  |=  {wox/$+(span (unit @)) arc/arch}
-  ^-  (map @ span)
-  %-  ~(gas by *(map @ span))
-  =|  rac/(list (pair @ span))
+  |=  {wox/$+(knot (unit @)) arc/arch}
+  ^-  (map @ knot)
+  %-  ~(gas by *(map @ knot))
+  =|  rac/(list (pair @ knot))
   |-  ^+  rac
   ?~  dir.arc  rac
   =.  rac  $(dir.arc l.dir.arc, rac $(dir.arc r.dir.arc))
@@ -487,10 +487,10 @@
       ==
     ::
     ++  some-in-map
-      |*  fun/(burg span (unit))
+      |*  fun/(burg knot (unit))
       =+  res=_(need [?+(-.q !! $0 q.q)]:*fun)
-      =+  marv=(map span res)
-      |=  {cof/cafe sud/(map span $~)}  ^-  (bolt marv)
+      =+  marv=(map knot res)
+      |=  {cof/cafe sud/(map knot $~)}  ^-  (bolt marv)
       ?~  sud  (flue cof)
       %.  [cof sud]
       ;~  cope
@@ -502,7 +502,7 @@
           (flux (lift |*(* [dir +<])))
         ==
         %-  flux
-        |=  {lam/marv ram/marv nod/(unit {span res})}
+        |=  {lam/marv ram/marv nod/(unit {knot res})}
         ?^(nod [u.nod lam ram] (~(uni by lam) ram))
       ==
     ++  dash                                          ::  process cache
@@ -914,8 +914,8 @@
     ::
     ++  lads                                            ::  possible children
       |=  {cof/cafe bem/beam arg/heel}
-      ^-  (bolt (map span $~))
-      =|  {res/(map span $~) new/(qeu beam)}
+      ^-  (bolt (map knot $~))
+      =|  {res/(map knot $~) new/(qeu beam)}
       =+  all=`(set beam)`[bem `~]
       |^  %+  with  (cope ?^(arg (flue cof) kids) return)
           |=(_. (with (cope marks look) next))
@@ -927,11 +927,11 @@
       ::
       ++  return
         %-  flux
-        |=(a/(map span $~) done(res (~(uni by res) a)))
+        |=(a/(map knot $~) done(res (~(uni by res) a)))
       ::
       ++  next
         |=  _.  =>  +<
-        ^-  (bolt (map span $~))
+        ^-  (bolt (map knot $~))
         ?^  s.bem
           $(s.bem t.s.bem, arg [i.s.bem arg])
         ?:  =(~ new)  (fine cof res)
@@ -942,7 +942,7 @@
       ::
       ++  kids
         %^  lash  cof  bem
-        |=  {cof/cafe dir/span}
+        |=  {cof/cafe dir/knot}
         %+  cope  (lend cof bem(s [dir s.bem]))
         (flux |=(a/arch ?~(dir.a ~ (some ~))))
       ::
@@ -1053,7 +1053,7 @@
       |=(ref/type ref)
     ::
     ++  lash                                            ::  filter at beam
-      |*  {cof/cafe bem/beam fun/(burg span (unit))}
+      |*  {cof/cafe bem/beam fun/(burg knot (unit))}
       %+  cope  (lend cof bem)
       |=({cof/cafe arc/arch} ((some-in-map fun) cof dir.arc))
     ::
@@ -1521,8 +1521,8 @@
         |=  {cof/cafe bax/vase doe/term hon/horn}
         ^-  (bolt vase)
         %+  cope  (lash cof how (flux (slat doe)))
-        |=  {cof/cafe yep/(map span @)}
-        =+  ^=  poy  ^-  (list (pair span @))
+        |=  {cof/cafe yep/(map knot @)}
+        =+  ^=  poy  ^-  (list (pair knot @))
             %+  sort  (~(tap by yep) ~)
             |=({{* a/@} {* b/@}} (lth a b))
         %+  cope
@@ -1543,7 +1543,7 @@
         %+  cope
           %+  cope  (lads cof how ~)
           %-  some-in-map
-          |=  {cof/cafe dir/span}
+          |=  {cof/cafe dir/knot}
           =+  nod=(chap(s.how [dir s.how]) cof bax hon)
           ?:  ?=($2 -.q.nod)
             (flue cof)

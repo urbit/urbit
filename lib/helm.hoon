@@ -115,7 +115,7 @@
   =.  nam
     ?.  =(1 (met 3 nam))
       nam
-    =+  ^-  zaz/(list {p/span $~})
+    =+  ^-  zaz/(list {p/knot $~})
         (skim van |=({a/term $~} =(nam (end 3 1 a))))
     ?>  ?=({{@ $~} $~} zaz)
     `term`p.i.zaz

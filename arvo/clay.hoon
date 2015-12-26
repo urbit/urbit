@@ -527,7 +527,7 @@
   ::  definitions are themselves `%hoon` files.
   ::
   ::  For the other files, we make a `%tabl` compound ford request to convert
-  ::  the data for the new file to the the mark indicated by the last span in
+  ::  the data for the new file to the the mark indicated by the last knot in
   ::  the path.
   ::
   ::  For diffs, we make a `%tabl` compound ford request to apply the diff to
@@ -1663,8 +1663,8 @@
             [[~ ?~(us *lobe u.us)] descendants]
           |=({{path lobe} @uvI} (shax (jam +<)))
         us
-      ^-  (map span $~)
-      %-  mo  ^-  (list (pair span $~))
+      ^-  (map knot $~)
+      %-  mo  ^-  (list (pair knot $~))
       %+  turn  descendants
       |=  {paf/path lob/lobe}
       [?>(?=(^ paf) i.paf) ~]

@@ -53,7 +53,7 @@
 ++  ixor  @t                                            ::  oryx hash
 ++  whir  $@  $~                                        ::  wire subset
           $%  {$at p/hole q/whir}                       ::  authenticated
-              {$ay p/span:ship q/span:@uvH $~}          ::  remote duct
+              {$ay p/knot:ship q/knot:@uvH $~}          ::  remote duct
               {$ha p/path:beak}                         ::  GET request
               {$he p/whir}                              ::  HEAD request
               {$hi p/mark $~}                           ::  outbound HTTP
@@ -62,7 +62,7 @@
               {$ow p/ixor $~}                           ::  dying view
               {$on $~}                                  ::  dependency
           ==                                            ::
-++  whir-of  {p/span:ship q/term r/wire}                ::  path in dock
+++  whir-of  {p/knot:ship q/term r/wire}                ::  path in dock
 --                                                      ::
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
@@ -460,7 +460,7 @@
     ;=  ;h1: Please log in
         ;p.ship 
           ;div.sig: ~
-          ;span#ship(contenteditable "");
+          ;knot#ship(contenteditable "");
         ==
         ;input#pass(type "password");
         ;h2.advice: (Your login code has been printed to your console.)
@@ -499,7 +499,7 @@
   ::
   ++  logout-page
     %+  titl  'Log out'
-    ;=  ;h1: Goodbye ~;{span#ship}.
+    ;=  ;h1: Goodbye ~;{knot#ship}.
         ;button#act(onclick "urb.away()"): Log out
         ;pre:code#err;
         ;script@"/~/at/~/auth.js";
@@ -1282,7 +1282,7 @@
         {$| @}  (cat 3 '; Domain=' (rsh 3 1 (scot %if p.r.hat)))
         {$& $org $urbit *}  '; Domain=.urbit.org'
         {$& @ @ *}  =-  (rap 3 "; Domain={-}{i.p.r.hat ~}")
-                    (turn (flop `path`t.p.r.hat) |=(a/span (cat 3 a '.')))
+                    (turn (flop `path`t.p.r.hat) |=(a/knot (cat 3 a '.')))
                     
         {$& *}  ''  ::  XX security?
       ==
