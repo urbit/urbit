@@ -6618,7 +6618,7 @@
 ::
 ++  slab                                                ::  test if contains
   |=  {cog/@tas typ/span}
-  =(& -:(~(feel ut typ) %free [cog ~]))
+  =(& -:(~(find ut typ) %free [cog ~]))
 ::
 ++  slob                                                ::  superficial arm
   |=  {cog/@tas typ/span}
@@ -7365,13 +7365,12 @@
       %mull   mull
       %nest   nest
       %play   play
-      %park   park
       %peek   peek
       %repo   repo
       %rest   rest
       %seek   seek
       %tack   tack
-      %tock   tock
+      %toss   toss  
       %wrap   wrap
     ==
   =+  :*  fan=*(set {span twig})
@@ -7549,7 +7548,7 @@
       ::
           {$pick *}
         =^  coz  gid  (many p.q.ham)
-        :_(gid [%rose [[' ' ~] ['{' ~] ['}' ~]] coz])
+        :_(gid [%rose [[' ' ~] ['?(' ~] [')' ~]] coz])
       ::
           {$plot *}
         =^  coz  gid  (many p.q.ham)
@@ -7920,7 +7919,7 @@
       [['.' ~] ['-' ~] ~ ~]
     [[%leaf (mesc (trip paz))] duck ~]  
   ::
-  ++  feel
+  ++  find
     |=  {way/?($read $rite $both $free) hyp/wing}
     =|  nol/vein
     |-  ^-  pont
@@ -7989,16 +7988,9 @@
               ?^  zem
                 :+  %&  [`axe lon] 
                 [%| (peg 2 p.u.zem) [[ref(p.q %gold) q.u.zem] ~ ~]]
-              =+  ^-  {sam/? con/?}
-                  ?:  ?=($gold p.q.ref)  [& &]
-                  ?-  way
-                    $both  [| |]
-                    $free  [& &]
-                    $read  [?=($zinc p.q.ref) |]
-                    $rite  [?=($iron p.q.ref) |]
-                  ==
-              ?.  sam  lose
-              ?:  con  $(ref p.ref, axe (peg axe 3))
+              =+  pec=(perk way p.q.ref)
+              ?.  sam.pec  lose
+              ?:  con.pec  $(ref p.ref, axe (peg axe 3))
               $(ref (peek(sut p.ref) way 2), axe (peg axe 6))
             ::
                 {$cube *}
@@ -8222,16 +8214,15 @@
     ::
         {$cnts *}
       =+  lar=(foil (seek %read p.gen))
-      =+  mew=(snub q.gen)
       =-  [(nice p.yom) ?:(=(0 p.q.lar) q.yom [%9 p.q.lar q.yom])]
       ^=  yom
       =+  hej=*(list {p/axis q/nock})
       |-  ^-  {p/span q/nock}
-      ?~  mew
+      ?~  q.gen
         [(fire q.q.lar) (hike p.lar hej)]
-      =+  zil=^$(gen q.i.mew, gol %noun)
-      =+  wip=(tock p.i.mew p.zil q.q.lar)
-      $(mew t.mew, q.q.lar q.wip, hej [[p.wip q.zil] hej])
+      =+  zil=^$(gen q.i.q.gen, gol %noun)
+      =+  wip=(toss p.i.q.gen p.zil q.q.lar)
+      $(q.gen t.q.gen, q.q.lar q.wip, hej [[p.wip q.zil] hej])
     ::
         {$dtkt *}  [(nice %noun) [%11 q:$(gen p.gen, gol %noun)]]
         {$dtls *}  [(nice [%atom %$]) [%4 q:$(gen p.gen, gol [%atom %$])]]
@@ -8377,18 +8368,17 @@
       =+  vug=(foil (seek(sut dox) %read p.gen))
       ?.  &(=(p.lar p.vug) =(p.q.lar p.q.vug))
         ~|(%mull-bonk-e !!)
-      =+  mew=(snub q.gen)
       =-  [(nice (fire p.yom)) (fire(vet |) q.yom)]
       ^=  yom
       |-  ^-  {p/(list {p/span q/foot}) q/(list {p/span q/foot})}
-      ?~  mew
+      ?~  q.gen
         [q.q.lar q.q.vug]
-      =+  zil=^$(gen q.i.mew, gol %noun)
-      =+  cuf=(tock p.i.mew p.zil q.q.lar)
-      =+  dof=(tock p.i.mew q.zil q.q.vug)
+      =+  zil=^$(gen q.i.q.gen, gol %noun)
+      =+  cuf=(toss p.i.q.gen p.zil q.q.lar)
+      =+  dof=(toss p.i.q.gen q.zil q.q.vug)
       ?.  .=(p.cuf p.dof)
         ~|(%mull-bonk-f !!)
-      $(mew t.mew, q.q.lar q.cuf, q.q.vug q.dof)
+      $(q.gen t.q.gen, q.q.lar q.cuf, q.q.vug q.dof)
     ::
         {$dtkt *}  =+($(gen p.gen, gol %noun) (beth %noun))
         {$dtls *}  =+($(gen p.gen, gol [%atom %$]) (beth [%atom %$]))
@@ -8677,32 +8667,15 @@
       ==
     --
   ::
-  ++  park
-    ~/  %park
-    |=  {way/?($read $rite $both $free) axe/axis}
-    ^-  ?
-    ?>  ?=({$core *} sut)
-    ?|
-      !vet
-      ?-    way
-          $both  =(%gold p.q.sut)
-          $free  &
-          $read
-        ?-    p.q.sut
-            $gold   &
-            $iron   |
-            $lead   |
-            $zinc   =(2 (cap axe))
-        ==
-      ::
-          $rite
-        ?-    p.q.sut
-            $gold   &
-            $iron   =(2 (cap axe))
-            $lead   |
-            $zinc   |
-        ==
-      ==
+  ++  perk
+    |=  {way/?($read $rite $both $free) met/?($gold $iron $lead $zinc)}
+    ^-  {sam/? con/?}
+    ?:  ?=($gold met)  [& &]
+    ?-  way
+      $both  [| |]
+      $free  [& &]
+      $read  [?=($zinc met) |]
+      $rite  [?=($iron met) |]
     ==
   ::
   ++  peek
@@ -8718,11 +8691,16 @@
         {$atom *}   %void
         {$cell *}   ?:(=(2 now) ^$(sut p.sut, axe lat) ^$(sut q.sut, axe lat))
         {$core *}
-      ?:  =(3 now)
-        ?.  (park way lat)
-          %noun
-        ^$(sut p.sut, axe lat)
-      %noun
+      ?.  =(3 now)  %noun
+      =+  pec=(perk way p.q.sut)
+      %=    ^$
+          axe  lat
+          sut
+        ?:  =([& &] pec)  p.sut
+        %+  cell
+          ?.(sam.pec %noun ^$(sut p.sut, axe 2))
+        ?.(con.pec %noun ^$(sut p.sut, axe 3))
+      ==
     ::
         {$fork *}   (fork $(sut p.sut) $(sut q.sut))
         {$hold *}
@@ -8744,13 +8722,12 @@
       {^ *}      (cell $(gen p.gen) $(gen q.gen))
       {$brcn *}  (core sut %gold sut [[%0 0] p.gen])
       {$cnts *}  =+  lar=(foil (seek %read p.gen))
-                 =+  mew=(snub q.gen)
                  =+  rag=q.q.lar
                  %-  fire
                  |-  ^-  (list {p/span q/foot})
-                 ?~  mew
+                 ?~  q.gen
                    rag
-                 $(mew t.mew, rag q:(tock p.i.mew ^$(gen q.i.mew) rag))
+                 $(q.gen t.q.gen, rag q:(toss p.i.q.gen ^$(gen q.i.q.gen) rag))
       {$dtkt *}  %noun
       {$dtls *}  [%atom %$]
       {$rock *}  ?:(=(%f p.gen) ?>((lte q.gen 1) bool) [%atom p.gen])
@@ -8824,7 +8801,7 @@
     ::      :^  p.old  %|  p.q.old
     ::    (~(tap in (~(gas in *(set (pair span foot))) q.q.old)) ~)
     ~|  [%seek-miss [way hyp] ~]
-    =+  fid=(feel way hyp)
+    =+  fid=(find way hyp)
     ?.  ?=($& -.fid)
       ~&  [%seek-hyp hyp]
       ~&  [%seek-fid fid]
@@ -8852,7 +8829,7 @@
     |=  {way/?($read $rite $both $free) hyp/wing}
     ^-  vein
     ~|  [%need-wing hyp]
-    =+  taf=(feel %rite hyp)
+    =+  taf=(find %rite hyp)
     ?>(?=($& -.taf) p.p.taf)
   ::
   ++  tonk
@@ -8902,18 +8879,18 @@
     ==
   ::
   ++  tack
-    |=  {peh/wing mur/span}
-    (tuck %rite (flop peh) |=(span mur))
+    |=  {hyp/wing mur/span}
+    (tuck %rite hyp |=(span mur))
   ::
-  ++  tock
-    |=  {peh/wing mur/span men/(list {p/span q/foot})}
+  ++  toss
+    |=  {hyp/wing mur/span men/(list {p/span q/foot})}
     ^-  {p/axis q/(list {p/span q/foot})}
     =-  [(need p.wib) q.wib]
     ^=  wib
     |-  ^-  {p/(unit axis) q/(list {p/span q/foot})}
     ?~  men
       [*(unit axis) ~]
-    =+  geq=(tack(sut p.i.men) peh mur)
+    =+  geq=(tack(sut p.i.men) hyp mur)
     =+  mox=$(men t.men)
     [(mate p.mox `_p.mox`[~ p.geq]) [[q.geq q.i.men] q.mox]]
   ::
@@ -9088,7 +9065,7 @@
       ==
     ==
   ::
-  ++  sail                                              ::  template language
+  ++  sail                                              ::  xml template 
     |=  tol/?  =|  lin/?
     |%
     ++  ape                                             ::  product twig
