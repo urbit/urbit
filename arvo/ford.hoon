@@ -57,8 +57,8 @@
   $%  {$hood p/calm q/(pair beam cage) r/hood}          ::  compile
       {$bake p/calm q/(trel mark beam heel) r/(unit vase)}::  load
       {$lilt p/calm q/beak r/(jug mark mark)}           ::  translation graph
-      {$slit p/calm q/{p/type q/type} r/type}           ::  slam type
-      {$slim p/calm q/{p/type q/twig} r/(pair type nock)}::  mint
+      {$slit p/calm q/{p/span q/span} r/span}           ::  slam span
+      {$slim p/calm q/{p/span q/twig} r/(pair span nock)}::  mint
       {$slap p/calm q/{p/vase q/twig} r/vase}           ::  compute
       {$slam p/calm q/{p/vase q/vase} r/vase}           ::  compute
   ==                                                    ::
@@ -77,7 +77,7 @@
 --                                                      ::
 |%                                                      ::
 ++  calf                                                ::  reduce calx
-  |*  sem/*                                             ::  a typesystem hack
+  |*  sem/*                                             ::  a spansystem hack
   |=  cax/calx
   ?+  sem  !!
     $hood  ?>(?=($hood -.cax) r.cax)
@@ -895,7 +895,7 @@
       |=  {cof/cafe suh/vase yom/(list (pair wing vase))}
       ^-  (bolt vase)
       %+  cool  =<  |.(leaf+"ford: keel {<(murn yom +)>}")
-                |=  {a/wing b/type *}
+                |=  {a/wing b/span *}
                 =+  c=p:(slap suh wing+a)
                 ?:  (~(nest ut c) | b)  ~
                 (some [a c b])
@@ -1047,10 +1047,10 @@
       ^-  (bolt vase)
       ((lake for) cof [%noun som])
     ::
-    ++  lane                                            ::  type infer
-      |=  {cof/cafe typ/type gen/twig}
+    ++  lane                                            ::  span infer
+      |=  {cof/cafe typ/span gen/twig}
       %+  (cowl cof)  (mule |.((~(play ut typ) gen)))
-      |=(ref/type ref)
+      |=(ref/span ref)
     ::
     ++  lash                                            ::  filter at beam
       |*  {cof/cafe bem/beam fun/(burg knot (unit))}
@@ -1243,10 +1243,10 @@
       ^$(cof cof, for i.yaw, yaw t.yaw, vax yed)
     ::
     ++  mail                                            ::  cached mint
-      |=  {cof/cafe sut/type gen/twig}
-      ^-  (bolt (pair type nock))
+      |=  {cof/cafe sut/span gen/twig}
+      ^-  (bolt (pair span nock))
       %+  (clef %slim)  (fine cof sut gen)
-      |=  {cof/cafe sut/type gen/twig}
+      |=  {cof/cafe sut/span gen/twig}
       =+  puz=(mule |.((~(mint ut sut) [%noun gen])))
       ?-  -.puz
         $|  (flaw cof p.puz)
@@ -1257,7 +1257,7 @@
       |=  {cof/cafe vax/vase gen/twig}
       ^-  (bolt vase)
       %+  cope  (mail cof p.vax gen)
-      |=  {cof/cafe typ/type fol/nock}
+      |=  {cof/cafe typ/span fol/nock}
       %+  (coup cof)  (mock [q.vax fol] (mole (slod save)))
       |=(val/* `vase`[typ val])
     ::
@@ -1434,10 +1434,10 @@
       ==
     ::
     ++  malt                                            ::  cached slit
-      |=  {cof/cafe gat/type sam/type}
-      ^-  (bolt type)
+      |=  {cof/cafe gat/span sam/span}
+      ^-  (bolt span)
       %+  (clef %slit)  (fine cof gat sam)
-      |=  {cof/cafe gat/type sam/type}
+      |=  {cof/cafe gat/span sam/span}
       %+  cool  |.(%.(%have ~(dunk ut sam)))
       %+  cool  |.(%.(%want ~(dunk ut (~(peek ut gat) %free 6))))
       =+  top=(mule |.((slit gat sam)))
@@ -1450,7 +1450,7 @@
       |=  {cof/cafe gat/vase sam/vase}
       ^-  (bolt vase)
       %+  cope  (malt cof p.gat p.sam)
-      |=  {cof/cafe typ/type}
+      |=  {cof/cafe typ/span}
       %+  (coup cof)  (mong [q.gat q.sam] (mole (slod save)))
       |=(val/* `vase`[typ val])
     ::
@@ -1626,7 +1626,7 @@
           %+  cope  (maim cof bax [%cnbc p.hon])
           |=  {cof/cafe tug/vase}
           ?.  (~(nest ut p.tug) | p.vax)
-            (flaw cof [%leaf "type error: {<p.hon>} {<q.hon>}"]~)
+            (flaw cof [%leaf "span error: {<p.hon>} {<q.hon>}"]~)
           (fine cof [p.tug q.vax])
         ::
             $toy  (cope (cope (make cof %boil p.hon how ~) furl) feel)
@@ -1768,14 +1768,14 @@
         |=  {cof/cafe cay/cage coy/cage}  ^-  (bolt gage)
         ?:  ?=(?($hoon $hook) p.cay)
           ?.  ?=($txt-diff p.coy)
-            (flaw cof leaf+"{<p.cay>} mark with bad diff type: {<p.coy>}" ~)
+            (flaw cof leaf+"{<p.cay>} mark with bad diff span: {<p.coy>}" ~)
           =+  txt=((soft @t) q.q.cay)
           ?~  txt
             (flaw cof leaf+"{<p.cay>} mark on bad data" ~)
           =+  dif=((soft (urge cord)) q.q.coy)
           ?~  dif
             =-  (flaw cof leaf+"{<p.cay>} data with bad diff" -)
-            [>type=p.q.coy< >want=p:!>(*(urge cord))< ~]
+            [>span=p.q.coy< >want=p:!>(*(urge cord))< ~]
           =+  pac=(role (lurk (lore (cat 3 u.txt '\0a')) u.dif))
           (fine cof %& p.cay [%atom %t] (end 3 (dec (met 3 pac)) pac))
         ::

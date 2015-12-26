@@ -25,7 +25,7 @@
       {$hiss p/mark q/cage}
   ==                                                    ::
 ++  cove  (pair bone (mold cote cuft))                  ::  internal move
-++  move  {p/duct q/(mold note-arvo gift-arvo)}        ::  typed move
+++  move  {p/duct q/(mold note-arvo gift-arvo)}         ::  typed move
 --                                                      ::
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    %gall state
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::

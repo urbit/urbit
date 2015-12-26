@@ -34,7 +34,7 @@
           {$file p/beam}                                ::  save to clay
           {$http p/?($post $put) q/purl}                ::  http outbound
           {$poke p/goal}                                ::  poke app
-          {$show p/?($0 $1 $2 $3)}                      ::  print val+type+twig
+          {$show p/?($0 $1 $2 $3)}                      ::  print val+span+twig
           {$verb p/term}                                ::  store variable
       ==                                                ::
     ++  dojo-source                                     ::  construction node
@@ -479,7 +479,7 @@
           $http
         ?>  ?=($mime p.cay)
         =+  mim=;;(mime q.q.cay)
-        =+  maf=(~(add ja *math) content-type+(moon p.mim))
+        =+  maf=(~(add ja *math) content-span+(moon p.mim))
         (dy-eyre /show [q.p.mad p.p.mad maf ~ q.mim])
       ::
           $show
@@ -487,7 +487,7 @@
         ?-  p.p.mad
           $0  ~
           $1  [%rose [~ "  " ~] (skol p.q.cay) ~]~ 
-          $2  [%rose [~ "  " ~] (dy-show-type-noun p.q.cay) ~]~
+          $2  [%rose [~ "  " ~] (dy-show-span-noun p.q.cay) ~]~
         ==
       ==
     ::
@@ -507,8 +507,8 @@
           (turn `wain`?~(r.hit ~ (lore q.u.r.hit)) trip)
       ==
     ::
-    ++  dy-show-type-noun
-      |=  a/type  ^-  tank
+    ++  dy-show-span-noun
+      |=  a/span  ^-  tank
       =-  >[-]<
       |-  ^-  $?  $%  {$atom @tas}
                       {$cell _$ _$}
@@ -525,7 +525,7 @@
         {$?($cell $fork) ^}  a(p $(a p.a), q $(a q.a))
         {$bull ^}  $(a q.a)
         {$core ^}  `wain`/core
-        {$hold *}  a(p (turn p.a |=({b/type c/twig} [^$(a b) c])))
+        {$hold *}  a(p (turn p.a |=({b/span c/twig} [^$(a b) c])))
       ==
     ::
     ++  dy-show-source
@@ -568,7 +568,7 @@
         (dy-diff %mor [%det lic] [%bel ~] ~)
       (dy-slam(per `dat) /edit u.pro !>((tufa buf.say)))
     ::
-    ++  dy-type                                         ::  sole action
+    ++  dy-span                                         ::  sole action
       |=  act/sole-action
       ?-  -.act
         $det  (dy-edit +.act)
@@ -930,11 +930,11 @@
       ==
     ==
   ::
-  ++  he-type                                           ::  apply input
+  ++  he-span                                           ::  apply input
     |=  act/sole-action
     ^+  +>
     ?^  poy
-      he-pine:(~(dy-type dy u.poy) act)
+      he-pine:(~(dy-span dy u.poy) act)
     ?-  -.act
       $det  (he-stir +.act)
       $ret  (he-done (tufa buf.say))
@@ -972,7 +972,7 @@
   |=  {moz/(list move) ses/session}
   =>  ~(. he moz ses)
   =-  [wrap=- +]
-  |*  he-arm/_he-type
+  |*  he-arm/_he-span
   |=  _+<.he-arm  
   ^-  (quip move ..he)
   he-abet:(he-arm +<)
@@ -989,7 +989,7 @@
 ::
 ++  poke-sole-action
   |=  act/sole-action  ~|  poke+act  %.  act
-  (wrap he-type):arm
+  (wrap he-span):arm
 ++  made       (wrap he-made):arm
 ++  sigh-httr  (wrap he-sigh):arm
 ++  sigh-tang  |=({a/wire b/tang} ~|(`term`(cat 3 'sigh-' -.a) (mean b)))

@@ -692,7 +692,7 @@
   ::    [%of @ ^]  (get-ack:(ire-ix p.tee) q.tee hon)
   ::  ==
   ++  axon                                              ::  accept response
-    |=  {tee/whir typ/type sih/sign}
+    |=  {tee/whir typ/span sih/sign}
     ^+  +>
     =.  our  ?~(hov our u.hov)  ::  XX
     ?:  &(?=({?($of $ow) ^} tee) !(~(has by wix) p.tee))

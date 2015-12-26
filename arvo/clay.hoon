@@ -1340,7 +1340,7 @@
       [p q has t]
     ::
     ++  apply-changes                                   ::   apply-changes:ze
-      |=  lar/(list {p/path q/misu})                   ::  store changes
+      |=  lar/(list {p/path q/misu})                    ::  store changes
       ^-  (map path blob)
       =+  ^=  hat                                       ::  current state
           ?:  =(let.dom 0)                              ::  initial commit
