@@ -6618,7 +6618,7 @@
 ::
 ++  slab                                                ::  test if contains
   |=  {cog/@tas typ/type}
-  !=(~ q:(~(find ut typ) 0 %free `cog))
+  =(& -:(~(feel ut typ) %free [cog ~]))
 ::
 ++  slob                                                ::  superficial arm
   |=  {cog/@tas typ/type}
@@ -7354,7 +7354,6 @@
       %duck   duck
       %dune   dune
       %dunk   dunk
-      %find   find
       %fire   fire
       %firm   firm
       %fish   fish
@@ -7494,52 +7493,7 @@
   ++  cool
     |=  {pol/? hyp/wing ref/type}
     ^-  type
-    =+  peh=`wing`(flop hyp)
-    |-  ^-  type
-    ?~  peh
-      ?:(pol (fuse ref) (crop ref))
-    =>  .(i.peh ?^(i.peh i.peh [%| p=0 q=`i.peh]))
-    =+  ^=  poz  ^-  post
-        ?-  -.i.peh
-          $&  [p.i.peh %& (peek %both p.i.peh)]
-          $|  (finq p.i.peh %both q.i.peh)
-        ==
-    |-  ^-  type
-    ?:  =(1 p.poz)
-      ?-  -.q.poz
-        $0  ?-  -.i.peh
-              $&  ^$(peh t.peh)
-              $|  (face +.q.i.peh ^$(peh t.peh, sut p.q.poz))
-            ==
-        $1  ^$(peh t.peh)
-        $2  %+  bull
-              [p.p.q.poz q.p.q.poz r.p.q.poz ^$(peh t.peh, sut s.p.q.poz)]
-            q.q.poz
-      ==
-    =+  [now=(cap p.poz) lat=(mas p.poz)]
-    =+  vil=*(set type)
-    |-  ^-  type
-    ?-    sut
-        {$atom *}   %void
-        {$bull *}   (reco |=(p/type (bull p.sut ^$(sut p))))
-        {$cell *}
-      ?:  =(2 now)
-        (cell ^$(p.poz lat, sut p.sut) q.sut)
-      (cell p.sut ^$(p.poz lat, sut q.sut))
-    ::
-        {$core *}   ?.(=(3 now) sut (core ^$(p.poz lat, sut p.sut) q.sut))
-        {$cube *}   (reco |=(p/type ^$(sut p)))
-        {$face *}   (reco |=(p/type (face p.sut ^$(sut p))))
-        {$fork *}
-      ?:  (~(has in vil) sut)
-        %void
-      =>  .(vil (~(put in vil) sut))
-      (fork $(sut p.sut) $(sut q.sut))
-    ::
-        {$hold *}   (reco |=(p/type ^$(sut p)))
-        $noun       (reco |=(p/type ^$(sut p)))
-        $void       %void
-    ==
+    q:(tuck %both hyp |=(a/type ?:(pol (fuse(sut a) ref) (crop(sut a) ref))))
   ::
   ++  dash
       |=  {mil/tape lim/char}  ^-  tape
@@ -8089,101 +8043,6 @@
       --
     ==
   ::
-  ++  find
-    ::  ~/  %find   :: XX disable for devulc  
-    |=  {dep/@ud way/?($read $rite $both $free) cug/(unit term)}
-    =+  gil=*(set type)
-    |-  ^-  {p/@ud q/(unit post)}
-    ?+    sut  [dep ~]
-        {$bull *}
-      ?.  =(cug `p.p.sut)
-        $(sut q.sut)
-      ?.  ?=($0 dep)
-        $(dep (dec dep), sut q.sut)
-      [0 ~ 1 %2 p.sut q.sut]
-    ::
-        {$cell *}
-      ?~  cug  [0 ~ 1 %0 sut]
-      =+  taf=$(sut p.sut)
-      ?~  q.taf
-        =+  bov=$(dep p.taf, sut q.sut)
-        ?~  q.bov
-          bov
-        [p.bov ~ (peg 3 p.u.q.bov) q.u.q.bov]
-      [p.taf ~ (peg 2 p.u.q.taf) q.u.q.taf]
-    ::
-        {$core *}
-      ?~  cug  [0 ~ 1 %0 sut]
-      =+  zem=(look u.cug q.r.q.sut)
-      =>  ^+(. ?:(|(=(~ zem) =(0 dep)) . .(dep (dec dep), zem ~)))
-      ?^  zem
-        [dep ~ 1 [%1 (peg 2 p.u.zem) [[sut(p.q %gold) q.u.zem] ~]]]
-      =+  taf=$(sut p.sut)
-      ?~  q.taf
-        taf
-      ?.  (park way p.u.q.taf)
-        ~|(%find-park !!)
-      [p.taf ~ (peg 3 p.u.q.taf) q.u.q.taf]
-    ::
-        {$cube *}
-      $(sut repo)
-    ::
-        {$face *}
-      ?:  |(?=($~ cug) =(u.cug p.sut))
-        ?.  =(0 dep)
-          [(dec dep) ~]
-        [0 ~ 1 %0 q.sut]
-      [dep ~]
-    ::
-        {$fork *}
-      ?:  (~(has in gil) q.sut)
-        $(sut p.sut)
-      ?:  (~(has in gil) p.sut)
-        $(sut q.sut)
-      =+  [hax=$(sut p.sut) yor=$(sut q.sut)]
-      ~|  %find-fork
-      ?:  =(hax yor)
-        hax
-      ?>  &(?=(^ q.hax) ?=(^ q.yor) =(p.hax p.yor) =(p.u.q.hax p.u.q.yor))
-      :-   p.hax
-      ?-  -.q.u.q.hax
-        $0  ?>  ?=($0 -.q.u.q.yor)
-            [~ p.u.q.hax %0 (fork p.q.u.q.hax p.q.u.q.yor)]
-        $1  ?>  &(?=($1 -.q.u.q.yor) =(p.q.u.q.yor p.q.u.q.hax))
-            [~ p.u.q.hax %1 p.q.u.q.hax (weld q.q.u.q.hax q.q.u.q.yor)]
-        $2  ?>  ?&  ?=($2 -.q.u.q.yor)
-                    =(p.p.q.u.q.hax p.p.q.u.q.yor)
-                    =(q.p.q.u.q.hax q.p.q.u.q.yor)
-                    =(r.p.q.u.q.hax r.p.q.u.q.yor)
-                ==
-            :*  ~
-                p.u.q.hax
-                %2
-                :*  p.p.q.u.q.hax
-                    q.p.q.u.q.hax
-                    r.p.q.u.q.hax
-                    (fork s.p.q.u.q.hax s.p.q.u.q.yor)
-                ==
-                (fork q.q.u.q.hax q.q.u.q.yor)
-            ==
-      ==
-    ::
-        {$hold *}
-      ?:  (~(has in gil) sut)
-        [dep ~]
-      $(gil (~(put in gil) sut), sut repo)
-    ==
-  ::
-  ++  finq
-    |=  {dep/@ud way/?($read $rite $both $free) cug/(unit term)}
-    ^-  post
-    ::  ~_  (dunk 'type')
-    ~|  [%find-limb-b [dep way] cug]
-    =+  hoq=(find dep way cug)
-    ?~  q.hoq
-      ~|(%find-none !!)
-    u.q.hoq
-  ::
   ++  fire
     ~/  %fire
     |=  hag/(list {p/type q/foot})
@@ -8335,7 +8194,7 @@
     ~/  %chip
     |=  {how/? gen/twig}  ^-  type
     ?:  ?=({$wtts *} gen)  
-      (cool how q.gen (play ~(bunt al [%herb p.gen])))
+      (cool how q.gen (play ~(bunt al [%herb p.gen])))  
     ?:  ?&(how ?=({$wtpm *} gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     ?:  ?&(!how ?=({$wtbr *} gen))
@@ -9008,30 +8867,6 @@
     |=  vit/vein
     ^-  axis
     ?~(vit 1 (peg $(vit t.vit) ?~(i.vit 1 u.i.vit)))
-  ::
-  ++  cola
-    |=  {pol/? hyp/wing ref/type}
-    ^-  type
-    =<  q
-    (tuck %both hyp |=(a/type ?:(pol (fuse(sut a) ref) (crop(sut a) ref))))
-  ::
-  ++  colo
-    |=  {pol/? hyp/wing ref/type}
-    ^-  type
-    =+  old=(cool pol hyp ref)
-    =+  new=(cola pol hyp ref)
-    ?.  ?|  =(old new)
-            ?&  (nest(sut old) | new)
-                (nest(sut new) | old)                
-            ==
-        ==  
-      ~&  [%colo pol hyp]
-      ~&  [%colo-sut sut]
-      ~&  [%colo-ref ref]
-      ~&  [%colo-old old]
-      ~&  [%colo-new new]
-      !!
-    old
   ::
   ++  tuck
     |=  {way/?($read $rite $both $free) hyp/wing duz/$+(type type)}
