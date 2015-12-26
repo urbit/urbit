@@ -352,6 +352,18 @@
               {$10 p/$@(@ {p/@ q/nock}) q/nock}         ::  hint
               {$11 p/nock}                              ::  grab data from sky
           ==                                            ::
+++  span  $@  $?  $noun                                 ::  any nouns
+                  $void                                 ::  no noun
+              ==                                        ::
+          $%  {$atom p/term}                            ::  number and format
+              {$bull p/twin q/type}                     ::  alias
+              {$cell p/type q/type}                     ::  ordered pair
+              {$core p/type q/coil}                     ::  object
+              {$cube p/* q/type}                        ::  constant
+              {$face p/term q/type}                     ::  name
+              {$fork p/type q/type}                     ::  union
+              {$hold p/(list {p/type q/twig})}          ::  lazy evaluation
+          ==                                            ::
 ++  tone  $%  {$0 p/*}                                  ::  success
               {$1 p/(list)}                             ::  blocks
               {$2 p/(list {@ta *})}                     ::  error ~_s
@@ -7472,9 +7484,9 @@
           {$hold *}
         ?:  (~(has in bix) [sut ref])
           ~|(%crop-loop !!)
-        (reco |=(a/type dext(sut a, bix (~(put in bix) [sut ref]))))
+        dext(sut repo, bix (~(put in bix) [sut ref]))
       ::
-          $noun       (reco |=(a/type dext(sut a)))
+          $noun       dext(sut repo)
           $void       %void
       ==
     ::
@@ -8157,7 +8169,7 @@
         {$hold *}
       ?:  (~(has in bix) [sut ref])
         ~|(%fuse-loop !!)
-      (reco |=(a/type ^$(sut a, bix (~(put in bix) [sut ref]))))
+      $(sut repo, bix (~(put in bix) [sut ref]))
     ::
         $noun       ref
         $void       %void
@@ -8785,14 +8797,6 @@
                    ~|(%play-open !!)
                  $(gen doz)
     ==
-  ::
-  ++  reco
-    |*  fuy/_|=(p/type p)
-    =+  por=repo
-    =+  yot=(fuy por)
-    ?:  =(yot por)
-      ?:(=(%void por) por sut)
-    yot
   ::
   ++  repo
     ^-  type
