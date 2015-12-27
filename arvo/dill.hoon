@@ -266,7 +266,7 @@
             moz
           :_  moz
           :*  hen  %pass  /autoload  %g  %deal  [our our]
-              ram  %poke  %kiln-start-autoload  [%cube ~ [%moat %n ~]]  ~
+              ram  %poke  %kiln-start-autoload  [%cube ~ [%atom %n ~]]  ~
           ==
         ==
       ::

@@ -1150,7 +1150,7 @@
     ++  ap-term                                         ::  atomic vase
       |=  {a/@tas b/@}  
       ^-  vase
-      [[%cube b %moat a ~] b]
+      [[%cube b %atom a ~] b]
     ::
     ++  ap-vain                                         ::  card to vane
       |=  sep/@tas
