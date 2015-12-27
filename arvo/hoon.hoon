@@ -7931,6 +7931,7 @@
   ::
   ++  find
     |=  {way/?($read $rite $both $free) hyp/wing}
+    ~+
     =|  nol/vein
     |-  ^-  pont
     ?~  hyp  
