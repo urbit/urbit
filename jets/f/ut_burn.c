@@ -25,10 +25,6 @@
       default: return u3m_bail(c3__fail);
 
       case c3__atom: return 0;
-      case c3__bull: u3x_cell(u3t(sut), &p_sut, &q_sut);
-      {
-        return _burn_in(van, q_sut, gil);
-      }
       case c3__cell: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         return u3nc

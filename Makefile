@@ -272,7 +272,6 @@ J_E_OFILES_ED=\
 J_F_OFILES=\
        jets/f/al.o \
        jets/f/ap.o \
-       jets/f/bull.o \
        jets/f/cell.o \
        jets/f/comb.o \
        jets/f/cons.o \

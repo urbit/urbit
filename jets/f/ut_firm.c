@@ -32,10 +32,6 @@
       {
         return u3ud(dib);
       }
-      case c3__bull: u3x_cell(u3t(sut), &p_sut, &q_sut);
-      {
-        return _cqfu_firm(van, q_sut, dib);
-      }
       case c3__cell: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         return c3a(u3du(dib),

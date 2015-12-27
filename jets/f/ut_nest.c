@@ -208,13 +208,6 @@
         }
         else return _nest_sint(van, sut, tel, ref, gil);
       }
-      case c3__bull: {
-        if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
-          return u3m_bail(c3__fail);
-        } else {
-          return _nest_dext(van, q_sut, tel, ref, gil);
-        }
-      }
       case c3__cell: {
         if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u3m_bail(c3__fail);
@@ -373,13 +366,6 @@
           return u3m_bail(c3__fail);
         }
         case c3__atom: return c3n;
-        case c3__bull: {
-          if ( c3n == u3r_trel(ref, 0, &p_ref, &q_ref) ) {
-            return u3m_bail(c3__fail);
-          } else {
-            return _nest_dext(van, sut, tel, q_ref, gil);
-          }
-        }
         case c3__cell: return c3n;
         case c3__core: {
           u3_noun gam = u3qfu_repo(van, ref);

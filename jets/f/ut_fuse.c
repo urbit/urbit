@@ -72,14 +72,6 @@
         }
         return _fuse_in(van, ref, sut, bix);
       }
-      case c3__bull: u3x_cell(u3t(sut), &p_sut, &q_sut);
-      {
-        u3_noun vot = _fuse_in(van, q_sut, ref, bix);
-        u3_noun ret = u3qf_bull(p_sut, vot);
-
-        u3z(vot);
-        return ret;
-      }
       case c3__cell: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         u3_noun p_ref, q_ref;
