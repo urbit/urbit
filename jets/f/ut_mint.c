@@ -629,14 +629,14 @@ int FOO;
       case c3__tstr: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
       _mint_used();
       {
-        u3_noun sep = u3qfu_seep(van, sut, c3__both, q_gen);
-        u3_noun bid = u3nt(u3k(p_gen), u3k(q_gen), sep);
-        u3_noun boc = u3qf_bull(bid, sut);
+        u3_noun sag = u3nt(u3nt(u3nc(u3k(p_gen), u3k(q_gen)), u3_nul, u3_nul),
+                           u3_nul,
+                           u3_nul);
+        u3_noun boc = u3qf_face(sag, sut);
         u3_noun ret = _mint_in(van, boc, gol, r_gen);
 
-        u3z(bid);
+        u3z(sag);
         u3z(boc);
-
         return ret;
       }
       case c3__cnts: u3x_cell(u3t(gen), &p_gen, &q_gen);
