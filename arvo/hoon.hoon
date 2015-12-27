@@ -359,7 +359,7 @@
               {$cell p/span q/span}                     ::  ordered pair
               {$core p/span q/coil}                     ::  object
               {$cube p/* q/span}                        ::  constant
-              {$face p/term q/span}                     ::  name
+              {$face p/tusk q/span}                     ::  name
               {$fork p/span q/span}                     ::  union
               {$hold p/(list {p/span q/twig})}          ::  lazy evaluation
           ==                                            ::
@@ -375,7 +375,12 @@
               {$1 p/(list)}                             ::
               {$2 p/(list {@ta *})}                     ::
           ==                                            ::
-++  tusk  $@(term {$~ (list (pair term wing))})         ::  generalized face
+++  tusk                                                ::  general face control
+          $@  term                                      ::  simple label
+          $:  p/(map term wing)                         ::  aliases
+              q/(set term)                              ::  blocks
+              r/(list (pair term twig))                 ::  bridges
+          ==                                            ::
 ++  twin  {p/term q/wing r/axis s/span}                 ::  alias info
 ++  typo  span                                          ::  old span
 ++  udal                                                ::  atomic change (%b)
@@ -6285,11 +6290,11 @@
 ::
 ++  face                                                ::  make %face span
   ~/  %face
-  |=  {cog/term der/span}
+  |=  {sag/tusk der/span}
   ^-  span
   ?:  =(%void der)
     %void
-  [%face cog der]
+  [%face sag der]
 ::
 ++  bool  ^-(span [%fork [%cube 0 %atom %f] [%cube 1 %atom %f]])  :: -:!>(*?)
 ++  flay
@@ -7730,7 +7735,7 @@
     ::
         {$face *}
       =+  yad=$(sut q.sut)
-      [p.yad [%face p.sut q.yad]]
+      ?^(p.sut yad [p.yad [%face p.sut q.yad]])
     ::
         {$fork *}
       ?:  =(p.sut fork+[cube+[%noun atom+%tas]]^[cube+[%void atom+%tas]])
@@ -8011,11 +8016,25 @@
               $(ref q.ref)
             ::
                 {$face *}
-              ?:  |(?=($~ q.heg) =(u.q.heg p.ref))
+              ?@  p.ref
+                ?:  |(?=($~ q.heg) =(u.q.heg p.ref))
+                  ?.  =(0 p.heg)
+                    [%| %& (dec p.heg)]
+                  [%& [~ `axe lon] %& q.ref]
+                lose
+              ?~  q.heg
                 ?.  =(0 p.heg)
                   [%| %& (dec p.heg)]
                 [%& [~ `axe lon] %& q.ref]
-              lose
+              ?:  (~(has in q.p.ref) u.q.heg)
+                lose
+              =^  hit  p.heg  
+                  =+  hit=(~(get by p.p.ref) u.q.heg)
+                  ?~  hit  [~ p.heg] 
+                  ?:  =(0 p.heg)  [hit 0]  [~ (dec p.heg)]
+              ?~  hit
+                $(ref q.ref, axe 1, lon [~ `axe lon])
+              ^$(sut q.ref, hyp u.hit, nol [~ `axe lon])  
             ::
                 {$fork *}
               =+  [lef ryt]=[(~(has in gil) p.ref) (~(has in gil) q.ref)]

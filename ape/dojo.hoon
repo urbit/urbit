@@ -513,7 +513,7 @@
       |-  ^-  $?  $%  {$atom @tas}
                       {$cell _$ _$}
                       {$cube * _$}
-                      {$face @tas _$}
+                      {$face tusk _$}
                       {$fork _$ _$}
                       {$hold (list {_$ twig})}
                   ==
