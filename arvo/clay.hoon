@@ -331,7 +331,7 @@
     %^  blab  hen  [%w [%ud ins] ~]
     :-  %&
     ?~  hip
-      [%null [%atom %n] ~]
+      [%null [%moat %n ~] ~]
     [%nako !>((make-nako:ze u.hip))]
   ::
   ++  blub                                              ::  ship stop
@@ -452,7 +452,7 @@
         ~&  [%oh-no rave=rav aeon=yon letdom=let.dom]
         +>.^$
       ?~  u.var
-        (blab hen p.rav %& %null [%atom %n] ~)          ::  only her %x
+        (blab hen p.rav %& %null [%moat %n ~] ~)          ::  only her %x
       ?:  (equivalent-data:ze u.u.ver u.u.var)
         $(yon +(yon))
       (blab hen p.rav u.u.var)
@@ -623,7 +623,7 @@
           ^-  (pair path cage)
           ?>  ?=($ins -.mis)
           =+  =>((flop pax) ?~(. %$ i))
-          [pax - [%atom %t] ((hard @t) +>.q.q.p.mis)]
+          [pax - [%moat %t ~] ((hard @t) +>.q.q.p.mis)]
       ::
           ~
       ::
@@ -1029,7 +1029,7 @@
           p.r.u.rut
         ?+  p.r.u.rut  ~|  %strange-w-over-nextwork  !!
           $aeon  !>(((hard aeon) q.r.u.rut))
-          $null  [[%atom %n] ~]
+          $null  [[%moat %n ~] ~]
           $nako  !>(~|([%harding [&1 &2 &3]:q.r.u.rut] ((hard nako) q.r.u.rut)))
         ==
       ?.  ?=($nako p.r.u.rut)  [?>(?=(^ ref) .)]:wake
@@ -1210,7 +1210,7 @@
         ~&  [%oh-noes mood=mun letdom=let.dom]
         $(xiq t.xiq)
       ?~  u.var
-        $(xiq t.xiq, ..wake (blab p.i.xiq mun %& %null [%atom %n] ~))
+        $(xiq t.xiq, ..wake (blab p.i.xiq mun %& %null [%moat %n ~] ~))
       ?:  (equivalent-data:ze u.q.q.i.xiq u.u.var)
         $(xiq t.xiq, xaq [i.xiq xaq])
       $(xiq t.xiq, ..wake (blab p.i.xiq mun u.u.var))
@@ -1517,7 +1517,7 @@
       |=  ren/$?($u $v $x $y $z)                        ::  endpoint query
       ^-  (unit cage)
       ?-  ren
-        $u  !!  ::  [~ %null [%atom %n] ~]
+        $u  !!  ::  [~ %null [%moat %n ~] ~]
         $v  [~ %dome !>(dom)]
         $x  !!  ::  ?~(q.ank.dom ~ [~ q.u.q.ank.dom])
         $y  !!  ::  [~ %arch !>(as-arch)]
@@ -1586,7 +1586,7 @@
       =+  tak=(~(get by hit.dom) yon)
       ?~  tak
         ~
-      ```[%null [%atom %n] ~]
+      ```[%null [%moat %n ~] ~]
     ::
     ++  read-v
       |=  {yon/aeon pax/path}
@@ -1618,7 +1618,7 @@
       ?.  ?=(?($hoon $hook) mar)
         [~ ~ %| u.lob]
       :^  ~  ~  %&
-      :+  mar  [%atom %t]
+      :+  mar  [%moat %t ~]
       |-  ^-  @t                      ::  (urge cord) would be faster
       =+  bol=(lobe-to-blob u.lob)
       ?:  ?=($direct -.bol)

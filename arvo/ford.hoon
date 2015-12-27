@@ -537,7 +537,7 @@
           %+  flaw  cof  :_  ~
           leaf+"diff on data of different marks: {(trip p.cay)} {(trip p.coy)}"
         ?:  =(q.q.cay q.q.coy)
-          (fine cof %& %null [%atom %n] ~)
+          (fine cof %& %null [%moat %n ~] ~)
         ::
         %+  cope  (fang cof p.cay)
         |=  {cof/cafe pro/vase}
@@ -863,13 +863,13 @@
         ?:  =(q.q.cay q.q.coy)
           (fine cof %& cay)
         ?.  (slab %mash p.gar)
-          (fine cof %& %null [%atom %n] ~)
+          (fine cof %& %null [%moat %n ~] ~)
         %+  cope
           %^  maul  cof
             (slap (slap pro [%limb %grad]) [%limb %mash])
           %+  slop
-            :(slop [[%atom %p] p.mas] [[%atom %tas] q.mas] q.cay)
-          :(slop [[%atom %p] p.mos] [[%atom %tas] q.mos] q.coy)
+            :(slop [[%moat %p ~] p.mas] [[%moat %tas ~] q.mas] q.cay)
+          :(slop [[%moat %p ~] p.mos] [[%moat %tas ~] q.mos] q.coy)
         (flux |=(dif/vase [%& u.fom dif]))
       ==
     ::
@@ -902,7 +902,7 @@
       %^  maim  cof 
         %+  slop  suh
         |-  ^-  vase
-        ?~  yom  [[%atom %n] ~]
+        ?~  yom  [[%moat %n ~] ~]
         (slop q.i.yom $(yom t.yom))
       ^-  twig
       :+  %cncb  [%& 2]~
@@ -1010,7 +1010,7 @@
         =+  mas=((soft @t) q.sam)
         ?~  mas
           (flaw cof [leaf+"ford: bad hoon or hook: {<[for bek]>}"]~)
-        (fine cof [%atom %t] u.mas)
+        (fine cof [%moat %t ~] u.mas)
       %+  cope  (fang cof for)
       |=  {cof/cafe tux/vase}
       =+  typ=p:(slot 6 tux)
@@ -1309,7 +1309,7 @@
           $bunt
         %+  cool  |.(leaf+"ford: bunt {<p.kas>}")
         ?:  ?=(?($hoon $hook) p.kas)
-          (fine cof %& p.kas [%atom %t] '')
+          (fine cof %& p.kas [%moat %t ~] '')
         %+  cope  (fang cof p.kas)
         |=  {cof/cafe tux/vase}
         =+  [typ=p val=q]:(slot 6 tux)
@@ -1534,8 +1534,8 @@
           (flux |=(elt/vase [[q.i.poy elt] nex]))
         %-  flux
         |=  yal/(list (pair @ vase))  ^-  vase
-        ?~  yal  [[%cube 0 [%atom %n]] 0]
-        (slop (slop [[%atom doe] p.i.yal] q.i.yal) $(yal t.yal))
+        ?~  yal  [[%cube 0 [%moat %n ~]] 0]
+        (slop (slop [[%moat doe ~] p.i.yal] q.i.yal) $(yal t.yal))
       ::
       ++  chai                                          ::  atomic map
         |=  {cof/cafe bax/vase hon/horn}
@@ -1550,9 +1550,9 @@
           (cope nod (flux some))
         %-  flux
         |=  doy/(map @ vase)  ^-  vase
-        ?~  doy  [[%cube 0 [%atom %n]] 0]
+        ?~  doy  [[%cube 0 [%moat %n ~]] 0]
         %+  slop
-          (slop [[%atom %ta] p.n.doy] q.n.doy)
+          (slop [[%moat %ta ~] p.n.doy] q.n.doy)
         (slop $(doy l.doy) $(doy r.doy))
       ::
       ++  chap                                          ::  produce resources
@@ -1581,7 +1581,7 @@
           |=  {cof/cafe tev/(list vase)}
           %+  fine  cof
           |-  ^-  vase
-          ?~  tev  [[%cube 0 [%atom %n]] 0]
+          ?~  tev  [[%cube 0 [%moat %n ~]] 0]
           (slop i.tev $(tev t.tev))
         ::
             $for  $(hon q.hon, s.how (weld (flop p.hon) s.how))
@@ -1595,7 +1595,7 @@
             $hub  (chad cof bax %ud p.hon)
             $man
           |-  ^-  (bolt vase)
-          ?~  p.hon  (fine cof [[%cube 0 [%atom %n]] 0])
+          ?~  p.hon  (fine cof [[%cube 0 [%moat %n ~]] 0])
           %+  cope  $(p.hon l.p.hon)
           |=  {cof/cafe lef/vase}
           %+  cope  ^$(cof cof, p.hon r.p.hon)
@@ -1604,7 +1604,7 @@
           |=  {cof/cafe vax/vase}
           %+  fine  cof
           %+  slop
-            (slop [[%atom %tas] p.n.p.hon] vax)
+            (slop [[%moat %tas ~] p.n.p.hon] vax)
           (slop lef rig)
         ::
             $now  (chad cof bax %da p.hon)
@@ -1777,7 +1777,7 @@
             =-  (flaw cof leaf+"{<p.cay>} data with bad diff" -)
             [>span=p.q.coy< >want=p:!>(*(urge cord))< ~]
           =+  pac=(role (lurk (lore (cat 3 u.txt '\0a')) u.dif))
-          (fine cof %& p.cay [%atom %t] (end 3 (dec (met 3 pac)) pac))
+          (fine cof %& p.cay [%moat %t ~] (end 3 (dec (met 3 pac)) pac))
         ::
         %+  cope  (fang cof p.cay)
         |=  {cof/cafe pro/vase}

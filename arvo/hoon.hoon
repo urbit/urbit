@@ -352,8 +352,7 @@
 ++  span  $@  $?  $noun                                 ::  any nouns
                   $void                                 ::  no noun
               ==                                        ::
-          $%  {$atom p/term}                            ::  number and format
-              {$moat p/term q/(unit @)}                 ::  atom 
+          $%  {$moat p/term q/(unit @)}                 ::  atom / constant
               {$cell p/span q/span}                     ::  ordered pair
               {$core p/span q/coil}                     ::  object
               {$cube p/* q/span}                        ::  constant
@@ -7678,7 +7677,6 @@
     ?-    sut
         $noun      [dex sut]
         $void      [dex sut]
-        {$atom *}  [dex [%mato p.sut]]
         {$moat *}  [dex [%mato p.sut]]
         {$cell *}
       =+  hin=$(sut p.sut)
@@ -7809,7 +7807,6 @@
     =+  gil=*(set span)
     |-  ^-  *
     ?-    sut
-        {$atom *}   0
         {$moat *}   0
         {$cell *}   [$(sut p.sut) $(sut q.sut)]
         {$core *}   [p.r.q.sut $(sut p.sut)]
@@ -7859,16 +7856,8 @@
       ?:  =(%void ref)
         sut
       ?-    sut
-          {$atom *}
-        ?-    ref
-            {$atom *}   %void
-            {$moat *}   %void
-            {$cell *}   sut
-            *           sint
-        ==
           {$moat *}
         ?-    ref
-            {$atom *}   %void
             {$moat *}   %void
             {$cell *}   sut
             *           sint
@@ -7876,7 +7865,6 @@
       ::
           {$cell *}
         ?-  ref
-          {$atom *}  sut
           {$moat *}  sut
           {$cell *}  ?:  (nest(sut p.ref) | p.sut)
                        (cell p.sut dext(sut q.sut, ref q.ref))
@@ -7885,14 +7873,14 @@
         ==
       ::
           {$core *}
-        ?:  ?=(?({$atom *} {$moat *} {$cell *}) ref)
+        ?:  ?=(?({$moat *} {$cell *}) ref)
           sut
         sint
       ::
           {$cube *}
         ?:  &(?=({$cube *} ref) =(p.sut p.ref))
           %void
-        ?:  ?=(?({$atom *} {$moat *} {$cell *}) ref)
+        ?:  ?=(?({$moat *} {$cell *}) ref)
           =+  foz=dext(sut q.sut)
           ?:  (firm(sut foz) p.sut)
             (cube p.sut foz)
@@ -7975,7 +7963,6 @@
             ?-    ref
                 $void       lose
                 $noun       stop
-                {$atom *}   stop
                 {$moat *}   stop
                 {$cell *} 
               ?~  q.heg  here
@@ -8088,7 +8075,6 @@
     =+  bix=*(set {span *})
     |-  ^-  ?
     ?-    sut
-        {$atom *}  !.?(dib)
         {$moat *}  !.?(dib)
         {$cell *}  &(.?(dib) $(sut p.sut, dib -.dib) $(sut q.sut, dib +.dib))
         {$core *}
@@ -8117,7 +8103,6 @@
     ?-  sut
         $void       [%1 1]
         $noun       [%1 0]
-        {$atom *}   (flip [%3 %0 axe])
         {$moat *}   (flip [%3 %0 axe])
         {$cell *}
       %+  flan
@@ -8143,17 +8128,9 @@
     ?:  ?|(=(sut ref) =(%noun ref))
       sut
     ?-    sut
-        {$atom *}
-      ?-    ref
-          {$moat *}   ?:((fitz p.ref p.sut) sut ref)
-          {$atom *}   ?:((fitz p.ref p.sut) sut ref)
-          {$cell *}   %void
-          *           $(sut ref, ref sut)
-      ==
         {$moat *}
       ?-    ref
           {$moat *}   ?:((fitz p.ref p.sut) sut ref)
-          {$atom *}   ?:((fitz p.ref p.sut) sut ref)
           {$cell *}   %void
           *           $(sut ref, ref sut)
       ==
@@ -8359,7 +8336,6 @@
     =+  gil=*(set span)
     |-  ^-  ?
     ?-  sut
-      {$atom *}  |
       {$moat *}  |
       {$cell *}  |($(sut p.sut) $(sut q.sut))
       {$core *}  $(sut p.sut)
@@ -8622,15 +8598,6 @@
           $noun       &
       ::
           {$moat *}
-        ?:  ?=({$atom *} ref)
-          (fitz p.sut p.ref)
-        ?:  ?=({$moat *} ref)
-          (fitz p.sut p.ref)
-        sint
-      ::
-          {$atom *}
-        ?:  ?=({$atom *} ref)
-          (fitz p.sut p.ref)
         ?:  ?=({$moat *} ref)
           (fitz p.sut p.ref)
         sint
@@ -8655,7 +8622,7 @@
       ::
           {$face *}   dext(sut q.sut)
           {$fork *}
-        ?.  ?=(?({$atom *} {$moat *} $noun {$cell *} {$cube *} {$core *}) ref)
+        ?.  ?=(?({$moat *} $noun {$cell *} {$cube *} {$core *}) ref)
           sint
         |(dare(sut p.sut) dare(sut q.sut))
       ::
@@ -8683,7 +8650,6 @@
     ++  sint
       ^-  ?
       ?-  ref
-          {$atom *}   |
           {$moat *}   |
           {$cell *}   |
           {$fork *}   &(sext(ref p.ref) sext(ref q.ref))
@@ -8715,7 +8681,6 @@
     =+  gil=*(set span)
     |-  ^-  span
     ?-    sut
-        {$atom *}   %void
         {$moat *}   %void
         {$cell *}   ?:(=(2 now) ^$(sut p.sut, axe lat) ^$(sut q.sut, axe lat))
         {$core *}
@@ -8866,7 +8831,6 @@
     ?-  sut
       $noun      $(sut [%cell %noun %noun])
       $void      %void
-      {$atom *}  %void
       {$moat *}  %void
       {$cell *}  ?:  =(2 now)
                    (cell $(sut p.sut, u.i.vit lat) q.sut)
