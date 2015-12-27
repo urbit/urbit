@@ -375,6 +375,7 @@
               {$1 p/(list)}                             ::
               {$2 p/(list {@ta *})}                     ::
           ==                                            ::
+:: ++  tusk  $@(term {~ (list (pair term wing))})          ::  generalized face
 ++  twin  {p/term q/wing r/axis s/span}                 ::  alias info
 ++  typo  span                                          ::  old span
 ++  udal                                                ::  atomic change (%b)
@@ -7331,7 +7332,7 @@
                         $wool                           ::
                         $yarn                           ::
                     ==                                  ::
-                $%  {$atom p/term}                      ::
+                $%  {$mato p/term}                      ::
                     {$core p/(list @ta) q/wine}         ::
                     {$face p/term q/wine}               ::
                     {$list p/term q/wine}               ::
@@ -7378,7 +7379,7 @@
           $wool      :_(gid [%leaf '*' '"' '"' ~])
           $wall      :_(gid [%leaf '*' '\'' '\'' ~])
           $yarn      :_(gid [%leaf '"' '"' ~])
-          {$atom *}  :_(gid [%leaf '@' (trip p.q.ham)])
+          {$mato *}  :_(gid [%leaf '@' (trip p.q.ham)])
           {$core *}
         =^  cox  gid  $(q.ham q.q.ham)
         :_  gid
@@ -7441,10 +7442,10 @@
       %=    $
           q.ham
         ?:  ?=(@ lum)
-          [%atom %$]
+          [%mato %$]
         :-  %plot
         |-  ^-  (list wine)
-        [%noun ?:(?=(@ +.lum) [[%atom %$] ~] $(lum +.lum))]
+        [%noun ?:(?=(@ +.lum) [[%mato %$] ~] $(lum +.lum))]
       ==
     ::
         $path
@@ -7487,7 +7488,7 @@
         $void
       ~
     ::
-        {$atom *}
+        {$mato *}
       ?.  ?=(@ lum)
         ~
       :+  ~
@@ -7569,7 +7570,7 @@
         ~
       =.  p.q.ham
         (rash p.q.ham ;~(sfix (cook crip (star low)) (star hig)))
-      =+  fox=$(q.ham [%atom p.q.ham])
+      =+  fox=$(q.ham [%mato p.q.ham])
       ?>  ?=({$~ $leaf ^} fox)
       ?:  ?=(?($n $tas) p.q.ham)
         fox
@@ -7615,9 +7616,9 @@
   ++  doge
     |=  ham/calf
     =-  ?+  woz  woz
-          {$list * {$atom $'ta'}}  %path
-          {$list * {$atom $'t'}}   %wall
-          {$list * {$atom $'tD'}}  %yarn
+          {$list * {$mato $'ta'}}  %path
+          {$list * {$mato $'t'}}   %wall
+          {$list * {$mato $'tD'}}  %yarn
           {$list * $yarn}          %wool
         ==
     ^=  woz
@@ -7679,7 +7680,7 @@
     ?-    sut
         $noun      [dex sut]
         $void      [dex sut]
-        {$atom *}  [dex sut]
+        {$atom *}  [dex [%mato p.sut]]
         {$bull *}  $(sut q.sut)   ::  something better here
         {$cell *}
       =+  hin=$(sut p.sut)
@@ -7724,7 +7725,7 @@
       ?.  ?=(@ p.sut)
         $(sut ~(repo ut sut))
       =+  pum=$(sut q.sut)
-      ?>  ?=({$atom *} q.pum)
+      ?>  ?=({$mato *} q.pum)
       [p.pum [%pear p.q.pum p.sut]]
     ::
         {$face *}
@@ -8827,12 +8828,6 @@
     ^-  {p/axis q/span}
     =+  zar=(seek way hyp)
     ?>(?=($& -.q.zar) [p.zar p.q.zar])
-  ::
-  ++  snub
-    ~/  %snub
-    |=  har/(list {p/wing q/twig})
-    ^-  (list {p/wing q/twig})
-    (turn har |=({a/wing b/twig} [(flop a) b]))
   ::  
   ++  tech
     |=  {way/?($read $rite $both $free) hyp/wing}
