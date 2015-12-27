@@ -76,8 +76,6 @@
 ++  edge  {p/hair q/(unit {p/* q/nail})}                ::  parsing output
 ++  foot  $%  {$ash p/twig}                             ::  dry arm, geometric
               {$elm p/twig}                             ::  wet arm, generic
-              {$oak $~}                                 ::  XX not used
-              {$yew p/(map term foot)}                  ::  XX not used
           ==                                            ::
 ++  gate  $+(* *)                                       ::  general gate
 ++  hair  {p/@ud q/@ud}                                 ::  parsing trace
@@ -310,7 +308,7 @@
     {$tsgr p/twig q/twig}                               ::  use p as .. of q
     {$tskt p/twig q/twig r/twig s/twig}                 ::  state machine wing
     {$tsls p/twig q/twig}                               ::  push p on .. of q
-    {$tstr p/term q/wing r/twig}                        ::  make a $bull+alias
+    {$tstr p/term q/wing r/twig}                        ::  make an alias
     {$tssg p/(list twig)}                               ::  compose twig list
   ::                                            ::::::  conditionals
     {$wtbr p/(list twig)}                               ::  logical OR
@@ -355,7 +353,6 @@
                   $void                                 ::  no noun
               ==                                        ::
           $%  {$atom p/term}                            ::  number and format
-              {$bull p/twin q/span}                     ::  alias
               {$cell p/span q/span}                     ::  ordered pair
               {$core p/span q/coil}                     ::  object
               {$cube p/* q/span}                        ::  constant
@@ -6262,11 +6259,6 @@
 ::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2fA, miscellaneous funs       ::
 ::                                                      ::
-++  bull                                                ::  make %bull span
-  |=  {bid/twin der/span}
-  ^-  span
-  ?:(=(%void der) %void [%bull bid der])
-::
 ++  cain  |=(vax/vase (sell vax))                       ::  $+(vase tank) for />
 ++  cell                                                ::  make %cell span
   ~/  %cell
@@ -6618,7 +6610,6 @@
   ^-  (list term)
   ?+    typ  ~
       {$hold *}  $(typ ~(repo ut typ))
-      {$bull *}  $(typ ~(repo ut typ))
       {$core *}
     (turn (~(tap by q.r.q.typ) ~) |=({a/term *} a))
   ==
@@ -7686,7 +7677,6 @@
         $noun      [dex sut]
         $void      [dex sut]
         {$atom *}  [dex [%mato p.sut]]
-        {$bull *}  $(sut q.sut)
         {$cell *}
       =+  hin=$(sut p.sut)
       =+  yon=$(dex p.hin, sut q.sut)
@@ -7817,7 +7807,6 @@
     |-  ^-  *
     ?-    sut
         {$atom *}   0
-        {$bull *}   $(sut repo)
         {$cell *}   [$(sut p.sut) $(sut q.sut)]
         {$core *}   [p.r.q.sut $(sut p.sut)]
         {$cube *}   p.sut
@@ -7873,7 +7862,6 @@
             *           sint
         ==
       ::
-          {$bull *}   (bull p.sut dext(sut q.sut))
           {$cell *}
         ?-  ref
           {$atom *}  sut
@@ -7979,15 +7967,6 @@
                 $void       lose
                 $noun       stop
                 {$atom *}   stop
-                {$bull *}
-              ?~  q.heg  [%& [~ `axe lon] %& q.ref]
-              =^  hit  p.heg  
-                  ?.  =(u.q.heg p.p.ref)  [%| p.heg] 
-                  ?:  =(0 p.heg)  [%& 0]  [%| (dec p.heg)]
-              ?.  hit
-                $(ref q.ref, axe 1, lon [~ `axe lon])
-              ^$(sut q.ref, hyp q.p.ref, nol [~ `axe lon])
-            :: 
                 {$cell *} 
               ?~  q.heg  here
               =+  taf=$(axe (peg axe 2), ref p.ref)
@@ -8100,7 +8079,6 @@
     |-  ^-  ?
     ?-    sut
         {$atom *}  !.?(dib)
-        {$bull *}  $(sut q.sut)
         {$cell *}  &(.?(dib) $(sut p.sut, dib -.dib) $(sut q.sut, dib +.dib))
         {$core *}
       ?&  .?(dib)
@@ -8129,7 +8107,6 @@
         $void       [%1 1]
         $noun       [%1 0]
         {$atom *}   (flip [%3 %0 axe])
-        {$bull *}   $(sut q.sut)
         {$cell *}
       %+  flan
         [%3 %0 axe]
@@ -8160,7 +8137,6 @@
           {$cell *}   %void
           *           $(sut ref, ref sut)
       ==
-        {$bull *}   (bull p.sut $(sut q.sut))
         {$cell *}
       ?-  ref
         {$cell *}   (cell $(sut p.sut, ref p.ref) $(sut q.sut, ref q.ref))
@@ -8196,7 +8172,7 @@
     ?:  ?=($~ dab)
       ~
     =+  ^=  vad
-        ?+  -.q.n.dab  !!
+        ?-  -.q.n.dab
           $ash  q:(mint %noun p.q.n.dab)
           $elm  q:(mint(vet |) %noun p.q.n.dab)
         ==
@@ -8364,7 +8340,6 @@
     |-  ^-  ?
     ?-  sut
       {$atom *}  |
-      {$bull *}  $(sut q.sut)
       {$cell *}  |($(sut p.sut) $(sut q.sut))
       {$core *}  $(sut p.sut)
       {$cube *}  |
@@ -8530,7 +8505,7 @@
       ?:  ?=($~ dab)
         ~
       =+  ^=  vad
-          ?+  -.q.n.dab  !!
+          ?-  -.q.n.dab
             $ash  ^$(gol %noun, gen p.q.n.dab)
             $elm  ~
           ==
@@ -8610,11 +8585,6 @@
                   dext(sut (play p.q.n.dab), ref (play(sut ref) p.q.n.hem))
               ==
                 $elm  =(q.n.dab q.n.hem)
-                $oak  ?=(?($oak $yew) -.q.n.hem)
-                $yew
-              ?&  ?=($yew -.q.n.hem)
-                  $(dab p.q.n.dab, hem p.q.n.hem)
-              ==
             ==
         ==
       ==
@@ -8653,7 +8623,6 @@
           =(p.sut p.ref)
         sint
       ::
-          {$bull *}   dext(sut q.sut)
           {$face *}   dext(sut q.sut)
           {$fork *}
         ?.  ?=(?({$atom *} $noun {$cell *} {$cube *} {$core *}) ref)
@@ -8793,7 +8762,6 @@
   ++  repo
     ^-  span
     ?-  sut
-      {$bull *}   q.sut
       {$core *}   [%cell %noun p.sut]
       {$cube *}   q.sut
       {$face *}   q.sut
@@ -8820,31 +8788,14 @@
   ++  seek
     |=  {way/?($read $rite $both $free) hyp/wing}
     ^-  port
-    ::  =+  ^-  old/port  (seel way hyp)
-    ::  =.  old
-    ::    ?-  -.q.old
-    ::        $&  old
-    ::        $|  
-    ::      :^  p.old  %|  p.q.old
-    ::    (~(tap in (~(gas in *(set (pair span foot))) q.q.old)) ~)
-    ~|  [%seek-miss [way hyp] ~]
+    ~|  [%seek hyp]
     =+  fid=(find way hyp)
-    ?.  ?=($& -.fid)
-      ~&  [%seek-hyp hyp]
-      ~&  [%seek-fid fid]
-      ~&  [%seek-fail fid]
-      !!
+    ?>  ?=($& -.fid)
     :-  (tonk p.p.fid)
     ?-  -.q.p.fid
       $&  q.p.fid
       $|  [%| p.q.p.fid (~(tap in q.q.p.fid) ~)]
     ==
-  ::
-  ++  seep
-    |=  {way/?($read $rite $both $free) hyp/wing}
-    ^-  {p/axis q/span}
-    =+  zar=(seek way hyp)
-    ?>(?=($& -.q.zar) [p.zar p.q.zar])
   ::  
   ++  tech
     |=  {way/?($read $rite $both $free) hyp/wing}
@@ -8870,7 +8821,6 @@
     ?~  i.vit
       |-  ^-  span
       ?+  sut  !!
-        {$bull *}  (bull p.sut ^$(vit t.vit, sut q.sut))
         {$cube *}  [%cube p.sut ^$(vit t.vit, sut q.sut)]
         {$face *}  (face p.sut ^$(vit t.vit, sut q.sut))
         {$fork *}  (fork $(sut p.sut) $(sut q.sut))
@@ -8885,7 +8835,6 @@
       $noun      $(sut [%cell %noun %noun])
       $void      %void
       {$atom *}  %void
-      {$bull *}  (bull p.sut $(sut q.sut))
       {$cell *}  ?:  =(2 now)
                    (cell $(sut p.sut, u.i.vit lat) q.sut)
                   (cell p.sut $(sut q.sut, u.i.vit lat))
@@ -9689,13 +9638,6 @@
             (cold %elm (just '-'))
             ;~(pose (cold %$ buc) sym)
             loaf
-          ==
-        ::
-          %+  cook
-            |=({a/$oak b/term} [b a ~])
-          ;~  gunk
-            (cold %oak (just '|'))
-            ;~(pose (cold %$ buc) sym)
           ==
         ==
       ==

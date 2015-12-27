@@ -523,7 +523,6 @@
       ?+  a  a
         {$?($cube $face) ^}  a(q $(a q.a))
         {$?($cell $fork) ^}  a(p $(a p.a), q $(a q.a))
-        {$bull ^}  $(a q.a)
         {$core ^}  `wain`/core
         {$hold *}  a(p (turn p.a |=({b/span c/twig} [^$(a b) c])))
       ==
