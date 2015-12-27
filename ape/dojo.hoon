@@ -510,7 +510,7 @@
     ++  dy-show-span-noun
       |=  a/span  ^-  tank
       =-  >[-]<
-      |-  ^-  $?  $%  {$atom @tas}
+      |-  ^-  $?  $%  {$atom @tas (unit @)}
                       {$moat @tas (unit @)}
                       {$cell _$ _$}
                       {$cube * _$}

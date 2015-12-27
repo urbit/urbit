@@ -353,6 +353,7 @@
                   $void                                 ::  no noun
               ==                                        ::
           $%  {$moat p/term q/(unit @)}                 ::  atom / constant
+              {$atom p/term q/(unit @)}                 ::  atom / constant
               {$cell p/span q/span}                     ::  ordered pair
               {$core p/span q/coil}                     ::  object
               {$cube p/* q/span}                        ::  constant
@@ -6289,7 +6290,7 @@
   [%face sag der]
 ::
 ++  bool  ^-  span 
-          [%fork [%cube 0 %moat %f ~] [%cube 1 %moat %f ~]]
+          [%fork [%cube 0 %atom %f ~] [%cube 1 %atom %f ~]]
 ++  flay
   ~/  %flay
   |=  pok/port
@@ -6578,7 +6579,7 @@
   |=  vax/vase
   ^-  vase
   :_  q.vax
-  ?@  q.vax  (~(fuse ut p.vax) [%moat %$ ~])
+  ?@  q.vax  (~(fuse ut p.vax) [%atom %$ ~])
   ?@  -.q.vax
     ^=  typ
     %-  ~(play ut p.vax)
@@ -7677,6 +7678,7 @@
     ?-    sut
         $noun      [dex sut]
         $void      [dex sut]
+        {$atom *}  [dex [%mato p.sut]]
         {$moat *}  [dex [%mato p.sut]]
         {$cell *}
       =+  hin=$(sut p.sut)
@@ -7807,6 +7809,7 @@
     =+  gil=*(set span)
     |-  ^-  *
     ?-    sut
+        {$atom *}   0
         {$moat *}   0
         {$cell *}   [$(sut p.sut) $(sut q.sut)]
         {$core *}   [p.r.q.sut $(sut p.sut)]
@@ -7856,6 +7859,12 @@
       ?:  =(%void ref)
         sut
       ?-    sut
+          {$atom *}
+        ?-    ref
+            {$atom *}   %void
+            {$cell *}   sut
+            *           sint
+        ==
           {$moat *}
         ?-    ref
             {$moat *}   %void
@@ -7865,6 +7874,7 @@
       ::
           {$cell *}
         ?-  ref
+          {$atom *}  sut
           {$moat *}  sut
           {$cell *}  ?:  (nest(sut p.ref) | p.sut)
                        (cell p.sut dext(sut q.sut, ref q.ref))
@@ -7873,14 +7883,14 @@
         ==
       ::
           {$core *}
-        ?:  ?=(?({$moat *} {$cell *}) ref)
+        ?:  ?=(?({$atom *} {$moat *} {$cell *}) ref)
           sut
         sint
       ::
           {$cube *}
         ?:  &(?=({$cube *} ref) =(p.sut p.ref))
           %void
-        ?:  ?=(?({$moat *} {$cell *}) ref)
+        ?:  ?=(?({$atom *} {$moat *} {$cell *}) ref)
           =+  foz=dext(sut q.sut)
           ?:  (firm(sut foz) p.sut)
             (cube p.sut foz)
@@ -7963,6 +7973,7 @@
             ?-    ref
                 $void       lose
                 $noun       stop
+                {$atom *}   stop
                 {$moat *}   stop
                 {$cell *} 
               ?~  q.heg  here
@@ -8075,6 +8086,7 @@
     =+  bix=*(set {span *})
     |-  ^-  ?
     ?-    sut
+        {$atom *}  !.?(dib)
         {$moat *}  !.?(dib)
         {$cell *}  &(.?(dib) $(sut p.sut, dib -.dib) $(sut q.sut, dib +.dib))
         {$core *}
@@ -8103,6 +8115,7 @@
     ?-  sut
         $void       [%1 1]
         $noun       [%1 0]
+        {$atom *}   (flip [%3 %0 axe])
         {$moat *}   (flip [%3 %0 axe])
         {$cell *}
       %+  flan
@@ -8128,8 +8141,16 @@
     ?:  ?|(=(sut ref) =(%noun ref))
       sut
     ?-    sut
+        {$atom *}
+      ?-    ref
+          {$atom *}   ?:((fitz p.ref p.sut) sut ref)
+          {$moat *}   ?:((fitz p.ref p.sut) sut ref)
+          {$cell *}   %void
+          *           $(sut ref, ref sut)
+      ==
         {$moat *}
       ?-    ref
+          {$atom *}   ?:((fitz p.ref p.sut) sut ref)
           {$moat *}   ?:((fitz p.ref p.sut) sut ref)
           {$cell *}   %void
           *           $(sut ref, ref sut)
@@ -8228,7 +8249,7 @@
       $(q.gen t.q.gen, q.q.lar q.wip, hej [[p.wip q.zil] hej])
     ::
         {$dtkt *}  [(nice %noun) [%11 q:$(gen p.gen, gol %noun)]]
-        {$dtls *}  [(nice [%moat %$ ~]) [%4 q:$(gen p.gen, gol [%moat %$ ~])]]
+        {$dtls *}  [(nice [%atom %$ ~]) [%4 q:$(gen p.gen, gol [%atom %$ ~])]]
         {$rock *}  [(nice (play gen)) [%1 q.gen]]
         {$blob *}  [(nice (play gen)) [%1 q.gen]]
         {$dttr *}
@@ -8336,6 +8357,7 @@
     =+  gil=*(set span)
     |-  ^-  ?
     ?-  sut
+      {$atom *}  |
       {$moat *}  |
       {$cell *}  |($(sut p.sut) $(sut q.sut))
       {$core *}  $(sut p.sut)
@@ -8383,7 +8405,7 @@
       $(q.gen t.q.gen, q.q.lar q.cuf, q.q.vug q.dof)
     ::
         {$dtkt *}  =+($(gen p.gen, gol %noun) (beth %noun))
-        {$dtls *}  =+($(gen p.gen, gol [%moat %$ ~]) (beth [%moat %$ ~]))
+        {$dtls *}  =+($(gen p.gen, gol [%atom %$ ~]) (beth [%atom %$ ~]))
         {$rock *}  (beth (play gen))
         {$blob *}  (beth (play gen))
         {$dttr *}
@@ -8597,7 +8619,16 @@
           $void       sint
           $noun       &
       ::
+          {$atom *}
+        ?:  ?=({$atom *} ref)
+          (fitz p.sut p.ref)
+        ?:  ?=({$moat *} ref)
+          (fitz p.sut p.ref)
+        sint
+      ::
           {$moat *}
+        ?:  ?=({$atom *} ref)
+          (fitz p.sut p.ref)
         ?:  ?=({$moat *} ref)
           (fitz p.sut p.ref)
         sint
@@ -8622,7 +8653,7 @@
       ::
           {$face *}   dext(sut q.sut)
           {$fork *}
-        ?.  ?=(?({$moat *} $noun {$cell *} {$cube *} {$core *}) ref)
+        ?.  ?=(?({$moat *} {$atom *} $noun {$cell *} {$cube *} {$core *}) ref)
           sint
         |(dare(sut p.sut) dare(sut q.sut))
       ::
@@ -8650,6 +8681,7 @@
     ++  sint
       ^-  ?
       ?-  ref
+          {$atom *}   |
           {$moat *}   |
           {$cell *}   |
           {$fork *}   &(sext(ref p.ref) sext(ref q.ref))
@@ -8681,6 +8713,7 @@
     =+  gil=*(set span)
     |-  ^-  span
     ?-    sut
+        {$atom *}   %void
         {$moat *}   %void
         {$cell *}   ?:(=(2 now) ^$(sut p.sut, axe lat) ^$(sut q.sut, axe lat))
         {$core *}
@@ -8722,9 +8755,9 @@
                    rag
                  $(q.gen t.q.gen, rag q:(toss p.i.q.gen ^$(gen q.i.q.gen) rag))
       {$dtkt *}  %noun
-      {$dtls *}  [%moat %$ ~]
-      {$rock *}  ?:(=(%f p.gen) ?>((lte q.gen 1) bool) [%moat p.gen ~])
-      {$blob *}  [%cube q.gen ?:(.?(q.gen) %noun [%moat p.gen ~])]
+      {$dtls *}  [%atom %$ ~]
+      {$rock *}  ?:(=(%f p.gen) ?>((lte q.gen 1) bool) [%atom p.gen ~])
+      {$blob *}  [%cube q.gen ?:(.?(q.gen) %noun [%atom p.gen ~])]
       {$dttr *}  %noun
       {$dtts *}  bool
       {$dtwt *}  bool
@@ -8763,7 +8796,7 @@
       {$cube *}   q.sut
       {$face *}   q.sut
       {$hold *}   (rest p.sut)
-      $noun       [%fork [%moat %$ ~] [%cell %noun %noun]]
+      $noun       [%fork [%atom %$ ~] [%cell %noun %noun]]
       *           ~|(%repo-fltt !!)
     ==
   ::
@@ -8831,6 +8864,7 @@
     ?-  sut
       $noun      $(sut [%cell %noun %noun])
       $void      %void
+      {$atom *}  %void
       {$moat *}  %void
       {$cell *}  ?:  =(2 now)
                    (cell $(sut p.sut, u.i.vit lat) q.sut)
@@ -10348,7 +10382,7 @@
           ;:  slid
             [%& pah.vil u.pux]
             [%& duc.vil hen]
-            (slix (slid [%& [%cube org %moat %tas ~] org] hil))
+            (slix (slid [%& [%cube org %atom %tas ~] org] hil))
           ==
       ?~  pru
         ~&  [%swim-lost lal (@tas +>-.hil)]
@@ -10422,7 +10456,7 @@
             :^  %pass  t.p.ovo
               (dint p.ovo)
             :+  %&
-              [%cell [%cube %soft [%moat %tas ~]] %noun]
+              [%cell [%cube %soft [%atom %tas ~]] %noun]
             [%soft q.ovo]
         ==
     ==
