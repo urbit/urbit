@@ -7835,7 +7835,7 @@
     ~/  %busk
     |=  {cog/term hyp/wing}
     ^-  span
-    (bull [cog hyp 0 %void] sut)
+    (face [[[cog hyp] ~ ~] ~ ~] sut)
   ::
   ++  conk
     |=  got/toga
