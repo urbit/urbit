@@ -17,7 +17,7 @@
 
       case c3__noun:
         return u3nt(c3__fork,
-                    u3nc(c3__atom, u3_blip),
+                    u3nt(c3__moat, u3_blip, u3_nul),
                     u3nt(c3__cell, c3__noun, c3__noun));
     }
     else switch ( u3h(sut) ) {
