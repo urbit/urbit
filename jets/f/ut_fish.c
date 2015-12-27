@@ -35,7 +35,11 @@
         return pro;
       }
       case c3__bull: {
-        return u3m_error("bull-fish");
+        if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
+          return u3m_bail(c3__fail);
+        } else {
+          return _fish_in(van, q_sut, axe, vit);
+        }
       }
       case c3__cell: {
         if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {

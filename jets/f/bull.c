@@ -10,8 +10,7 @@
   u3qf_bull(u3_noun bid,
             u3_noun der)
   {
-    if ( (c3__void == der) ||
-         (c3__void == u3t(u3t(u3t(bid)))) )
+    if ( c3__void == der )
     {
       return c3__void;
     }

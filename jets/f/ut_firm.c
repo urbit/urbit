@@ -34,15 +34,7 @@
       }
       case c3__bull: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
-        u3_noun nun = u3r_at(u3h(u3t(u3t(p_sut))), dib);
-
-        if ( u3_none == nun ) {
-          return c3n;
-        } else {
-          return c3a(_cqfu_firm(van, q_sut, dib),
-                     _cqfu_firm(van, u3t(u3t(u3t(p_sut))),
-                                nun));
-        }
+        return _cqfu_firm(van, q_sut, dib);
       }
       case c3__cell: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
