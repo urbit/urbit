@@ -511,6 +511,7 @@
       |=  a/span  ^-  tank
       =-  >[-]<
       |-  ^-  $?  $%  {$atom @tas}
+                      {$moat @tas (unit @)}
                       {$cell _$ _$}
                       {$cube * _$}
                       {$face tusk _$}
