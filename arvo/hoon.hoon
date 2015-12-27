@@ -375,7 +375,7 @@
               {$1 p/(list)}                             ::
               {$2 p/(list {@ta *})}                     ::
           ==                                            ::
-:: ++  tusk  $@(term {~ (list (pair term wing))})          ::  generalized face
+++  tusk  $@(term {$~ (list (pair term wing))})         ::  generalized face
 ++  twin  {p/term q/wing r/axis s/span}                 ::  alias info
 ++  typo  span                                          ::  old span
 ++  udal                                                ::  atomic change (%b)
@@ -6260,7 +6260,7 @@
 ++  bull                                                ::  make %bull span
   |=  {bid/twin der/span}
   ^-  span
-  ?:(|(=(%void der) =(%void s.bid)) %void [%bull bid der])
+  ?:(=(%void der) %void [%bull bid der])
 ::
 ++  cain  |=(vax/vase (sell vax))                       ::  $+(vase tank) for />
 ++  cell                                                ::  make %cell span
@@ -7681,7 +7681,7 @@
         $noun      [dex sut]
         $void      [dex sut]
         {$atom *}  [dex [%mato p.sut]]
-        {$bull *}  $(sut q.sut)   ::  something better here
+        {$bull *}  $(sut q.sut)
         {$cell *}
       =+  hin=$(sut p.sut)
       =+  yon=$(dex p.hin, sut q.sut)
@@ -7830,7 +7830,7 @@
     ~/  %busk
     |=  {cog/term hyp/wing}
     ^-  span
-    (bull [cog hyp (seep %both hyp)] sut)
+    (bull [cog hyp 0 %void] sut)
   ::
   ++  conk
     |=  got/toga
@@ -8081,7 +8081,7 @@
     |-  ^-  ?
     ?-    sut
         {$atom *}  !.?(dib)
-        {$bull *}  &($(sut q.sut) $(sut s.p.sut, dib .*(dib [0 r.p.sut])))
+        {$bull *}  $(sut q.sut)
         {$cell *}  &(.?(dib) $(sut p.sut, dib -.dib) $(sut q.sut, dib +.dib))
         {$core *}
       ?&  .?(dib)
@@ -8110,7 +8110,7 @@
         $void       [%1 1]
         $noun       [%1 0]
         {$atom *}   (flip [%3 %0 axe])
-        {$bull *}   ~|(%bull-fish !!)
+        {$bull *}   $(sut q.sut)
         {$cell *}
       %+  flan
         [%3 %0 axe]
@@ -8634,10 +8634,7 @@
           =(p.sut p.ref)
         sint
       ::
-          {$bull *}
-        ?&  dext(sut q.sut)
-            dext(sut s.p.sut, ref (peek(sut ref) %free r.p.sut))
-        ==
+          {$bull *}   dext(sut q.sut)
           {$face *}   dext(sut q.sut)
           {$fork *}
         ?.  ?=(?({$atom *} $noun {$cell *} {$cube *} {$core *}) ref)
