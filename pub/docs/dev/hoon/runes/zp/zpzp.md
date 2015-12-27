@@ -3,7 +3,7 @@ zapzap, `!!`, %zpzp
 
 Crash
 
-`!?` is a natural rune that always crashes.
+`!!` is a natural rune that always crashes.
 
 Produces
 --------
