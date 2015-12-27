@@ -32,6 +32,10 @@
       {
         return u3ud(dib);
       }
+      case c3__moat: u3x_cell(u3t(sut), &p_sut, &q_sut);
+      {
+        return u3ud(dib);
+      }
       case c3__cell: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         return c3a(u3du(dib),
