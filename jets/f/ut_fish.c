@@ -34,13 +34,6 @@
         u3z(ton);
         return pro;
       }
-      case c3__moat: {
-        u3_noun ton = u3nt(3, 0, u3k(axe));
-        u3_noun pro = u3qf_flip(ton);
-
-        u3z(ton);
-        return pro;
-      }
       case c3__bull: {
         if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u3m_bail(c3__fail);

@@ -25,7 +25,6 @@
       default: return u3m_bail(c3__fail);
 
       case c3__atom: return 0;
-      case c3__moat: return 0;
       case c3__cell: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         return u3nc

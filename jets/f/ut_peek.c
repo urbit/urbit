@@ -35,9 +35,6 @@
       case c3__atom: {
         return c3__void;
       }
-      case c3__moat: {
-        return c3__void;
-      }
       case c3__cell: {
         if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u3m_bail(c3__fail);

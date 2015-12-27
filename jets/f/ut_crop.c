@@ -66,22 +66,6 @@
         if ( c3__atom == u3h(ref) ) {
           return c3__void;
         }
-        else if ( c3__moat == u3h(ref) ) {
-          return c3__void;
-        }
-        else if ( c3__cell == u3h(ref) ) {
-          return u3k(sut);
-        }
-        else return _crop_sint(van, sut, ref, bix);
-      }
-      case c3__moat:
-      {
-        if ( c3__atom == u3h(ref) ) {
-          return c3__void;
-        }
-        else if ( c3__moat == u3h(ref) ) {
-          return c3__void;
-        }
         else if ( c3__cell == u3h(ref) ) {
           return u3k(sut);
         }
@@ -90,9 +74,6 @@
       case c3__cell: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         if ( c3__atom == u3h(ref) ) {
-          return u3k(sut);
-        }
-        else if ( c3__moat == u3h(ref) ) {
           return u3k(sut);
         }
         else if ( c3__cell == u3h(ref) ) {
@@ -113,7 +94,6 @@
       case c3__core:
       {
         if ( (c3__atom == u3h(ref)) || 
-             (c3__moat == u3h(ref)) ||
              (c3__cell == u3h(ref)) ) {
           return u3k(sut);
         }
@@ -127,7 +107,6 @@
           return c3__void;
         }
         else if ( (c3__atom == u3h(ref)) || 
-                  (c3__moat == u3h(ref)) ||
                   (c3__cell == u3h(ref)) ) {
           u3_noun foz = _crop_dext(van, q_sut, ref, bix);
           u3_noun ret;

@@ -62,30 +62,6 @@
       {
         if ( c3y == u3du(ref) ) {
           if ( c3__atom == u3h(ref) ) {
-            if ( c3y == u3qf_fitz(u3t(ref), u3t(sut)) ) {
-              return u3k(sut);
-            } else return u3k(ref);
-          }
-          else if ( c3__moat == u3h(ref) ) {
-            if ( c3y == u3qf_fitz(u3h(u3t(ref)), u3t(sut)) ) {
-              return u3k(sut);
-            } else return u3k(ref);
-          }
-          else if ( c3__cell == u3h(ref) ) {
-            return c3__void;
-          }
-        }
-        return _fuse_in(van, ref, sut, bix);
-      }
-      case c3__moat:
-      {
-        if ( c3y == u3du(ref) ) {
-          if ( c3__atom == u3h(ref) ) {
-            if ( c3y == u3qf_fitz(u3t(ref), u3h(u3t(sut))) ) {
-              return u3k(sut);
-            } else return u3k(ref);
-          }
-          else if ( c3__moat == u3h(ref) ) {
             if ( c3y == u3qf_fitz(u3h(u3t(ref)), u3h(u3t(sut))) ) {
               return u3k(sut);
             } else return u3k(ref);

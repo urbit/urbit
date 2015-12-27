@@ -28,11 +28,7 @@
     else switch ( u3h(sut) ) {
       default: return u3m_bail(c3__fail);
 
-      case c3__atom: p_sut = u3t(sut);
-      {
-        return u3ud(dib);
-      }
-      case c3__moat: u3x_cell(u3t(sut), &p_sut, &q_sut);
+      case c3__atom: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         return u3ud(dib);
       }
