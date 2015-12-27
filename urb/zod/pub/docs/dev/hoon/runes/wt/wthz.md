@@ -14,7 +14,7 @@ Produces
 Sample
 ------
 
-[`p` is a * `q` is a *]
+[`p` is a \* `q` is a \*]
 
 Tall form
 ---------
