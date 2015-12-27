@@ -291,19 +291,13 @@ J_F_OFILES=\
 J_F_OFILES_UT=\
        jets/f/ut.o \
        jets/f/ut_burn.o \
-       jets/f/ut_busk.o \
-       jets/f/ut_bust.o \
        jets/f/ut_conk.o \
        jets/f/ut_crop.o \
-       jets/f/ut_cull.o \
-       jets/f/ut_find.o \
-       jets/f/ut_fink.o \
        jets/f/ut_fire.o \
        jets/f/ut_firm.o \
        jets/f/ut_fish.o \
        jets/f/ut_fuse.o \
        jets/f/ut_gain.o \
-       jets/f/ut_heal.o \
        jets/f/ut_lose.o \
        jets/f/ut_mint.o \
        jets/f/ut_mull.o \
@@ -314,7 +308,6 @@ J_F_OFILES_UT=\
        jets/f/ut_repo.o \
        jets/f/ut_rest.o \
        jets/f/ut_seek.o \
-       jets/f/ut_swab.o \
        jets/f/ut_tack.o \
        jets/f/ut_toss.o \
        jets/f/ut_wrap.o

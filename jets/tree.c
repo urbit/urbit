@@ -347,17 +347,13 @@ static u3j_harm _mood__hoon_fork_a[] = {{".2", u3wf_fork}, {}};
 static u3j_harm _mood__hoon_hike_a[] = {{".2", u3wf_hike}, {}};
 static u3j_harm _mood__hoon_look_a[] = {{".2", u3wf_look}, {}};
 
-static u3j_harm _mood__hoon__ut_busk_a[] = {{".2", u3wfu_busk}, {}};
-static u3j_harm _mood__hoon__ut_bust_a[] = {{".2", u3wfu_bust}, {}};
+static u3j_harm _mood__hoon__ut_burn_a[] = {{".2", u3wfu_burn}, {}};
 static u3j_harm _mood__hoon__ut_conk_a[] = {{".2", u3wfu_conk}, {}};
 static u3j_harm _mood__hoon__ut_crop_a[] = {{".2", u3wfu_crop}, {}};
-static u3j_harm _mood__hoon__ut_cull_a[] = {{".2", u3wfu_cull}, {}};
-static u3j_harm _mood__hoon__ut_find_a[] = {{".2", u3wfu_find}, {}};
 static u3j_harm _mood__hoon__ut_fire_a[] = {{".2", u3wfu_fire}, {}};
 static u3j_harm _mood__hoon__ut_firm_a[] = {{".2", u3wfu_firm}, {}};
 static u3j_harm _mood__hoon__ut_fish_a[] = {{".2", u3wfu_fish}, {}};
 static u3j_harm _mood__hoon__ut_fuse_a[] = {{".2", u3wfu_fuse}, {}};
-static u3j_harm _mood__hoon__ut_heal_a[] = {{".2", u3wfu_heal}, {}};
 static u3j_harm _mood__hoon__ut_mint_a[] = {{".2", u3wfu_mint}, {}};
 static u3j_harm _mood__hoon__ut_mull_a[] = {{".2", u3wfu_mull}, {}};
 static u3j_harm _mood__hoon__ut_nest_a[] = {{".2", u3wfu_nest}, {}};
@@ -365,25 +361,18 @@ static u3j_harm _mood__hoon__ut_park_a[] = {{".2", u3wfu_park}, {}};
 static u3j_harm _mood__hoon__ut_peek_a[] = {{".2", u3wfu_peek}, {}};
 static u3j_harm _mood__hoon__ut_play_a[] = {{".2", u3wfu_play}, {}};
 static u3j_harm _mood__hoon__ut_rest_a[] = {{".2", u3wfu_rest}, {}};
-static u3j_harm _mood__hoon__ut_seek_a[] = {{".2", u3wfu_seek}, {}};
-static u3j_harm _mood__hoon__ut_seep_a[] = {{".2", u3wfu_seep}, {}};
-static u3j_harm _mood__hoon__ut_snub_a[] = {{".2", u3wfu_snub}, {}};
 static u3j_harm _mood__hoon__ut_toss_a[] = {{".2", u3wfu_toss}, {}};
 static u3j_harm _mood__hoon__ut_wrap_a[] = {{".2", u3wfu_wrap}, {}};
 
 static u3j_core _mood__hoon__ut_d[] =
   { 
-    { "busk", _mood__hoon__ut_busk_a },
-    { "bust", _mood__hoon__ut_bust_a },
+    { "burn", _mood__hoon__ut_burn_a },
     { "conk", _mood__hoon__ut_conk_a },
     { "crop", _mood__hoon__ut_crop_a },
-    { "cull", _mood__hoon__ut_cull_a },
-    { "find", _mood__hoon__ut_find_a },
     { "fire", _mood__hoon__ut_fire_a },
     { "firm", _mood__hoon__ut_firm_a },
     { "fish", _mood__hoon__ut_fish_a },
     { "fuse", _mood__hoon__ut_fuse_a },
-    { "heal", _mood__hoon__ut_heal_a },
     { "mint", _mood__hoon__ut_mint_a },
     { "mull", _mood__hoon__ut_mull_a },
     { "nest", _mood__hoon__ut_nest_a },
@@ -391,9 +380,6 @@ static u3j_core _mood__hoon__ut_d[] =
     { "peek", _mood__hoon__ut_peek_a },
     { "play", _mood__hoon__ut_play_a },
     { "rest", _mood__hoon__ut_rest_a },
-    { "seek", _mood__hoon__ut_seek_a },
-    { "seep", _mood__hoon__ut_seep_a },
-    { "snub", _mood__hoon__ut_snub_a },
     { "toss", _mood__hoon__ut_toss_a },
     { "wrap", _mood__hoon__ut_wrap_a },
     {}

@@ -695,12 +695,6 @@ int FOO;
           if ( c3y == u3ud(p_gen) ) {
             bez = u3k(p_gen);
           } else {
-            #ifdef HUSH
-            bez = u3h(p_gen);
-            if(!(bez == c3__fast || bez == c3__memo)){
-              return hum;
-            }
-            #endif
             bez = u3nc(u3k(u3h(p_gen)),
                        _mint_corn(van, sut, u3t(p_gen)));
           }
