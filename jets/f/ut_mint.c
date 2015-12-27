@@ -3,20 +3,17 @@
 */
 #include "all.h"
 
-
-int FOO;
-
 /* logic
 */
   static u3_noun
   _mint_in(u3_noun, u3_noun, u3_noun, u3_noun);
 
   static u3_noun
-  _mint_bean(void)
+  _mint_bean()
   {
     return u3nt(c3__fork,
-                u3nq(c3__cube, 0, c3__atom, 'f'),
-                u3nq(c3__cube, 1, c3__atom, 'f'));
+                u3nt(c3__cube, 0, u3nt(c3__moat, 'f', u3_nul)),
+                u3nt(c3__cube, 1, u3nt(c3__moat, 'f', u3_nul)));
   }
 
   static u3_noun
@@ -482,7 +479,7 @@ int FOO;
       case c3__dtls: p_gen = u3t(gen);
       _mint_used();
       {
-        u3_noun tom = u3nc(c3__atom, u3_blip);
+        u3_noun tom = u3nt(c3__moat, u3_blip, u3_nul);
         u3_noun sam = _mint_in(van, sut, tom, p_gen);
 
         ret = u3nc(_mint_nice(van, gol, tom),
@@ -496,7 +493,7 @@ int FOO;
       {
         u3_noun boc = (c3n == u3ud(q_gen))
                         ? c3__noun
-                        : u3nc(c3__atom, u3k(p_gen));
+                        : u3nt(c3__moat, u3k(p_gen), u3_nul);
         u3_noun typ = u3qf_cube(q_gen, boc);
         u3_noun ret = u3nc(_mint_nice(van, gol, typ),
                            u3nc(1, u3k(q_gen)));

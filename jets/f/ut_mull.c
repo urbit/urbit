@@ -37,8 +37,8 @@
   _mull_bean()
   {
     return u3nt(c3__fork,
-                u3nq(c3__cube, 0, c3__atom, 'f'),
-                u3nq(c3__cube, 1, c3__atom, 'f'));
+                u3nt(c3__cube, 0, u3nt(c3__moat, 'f', u3_nul)),
+                u3nt(c3__cube, 1, u3nt(c3__moat, 'f', u3_nul)));
   }
 
   static u3_noun
@@ -449,7 +449,7 @@
       case c3__dtls: p_gen = u3t(gen);
       _mull_used();
       {
-        u3_noun wuq = u3nc(c3__atom, u3_blip);
+        u3_noun wuq = u3nt(c3__moat, u3_blip, u3_nul);
         u3_noun vay = _mull_in(van, sut, wuq, dox, p_gen);
 
         u3z(vay);
@@ -462,7 +462,7 @@
                            u3k(q_gen),
                            (c3y == u3du(q_gen))
                              ? c3__noun
-                             : u3nc(c3__atom, u3k(p_gen)));
+                             : u3nt(c3__moat, u3k(p_gen), u3_nul));
 
         return _mull_both(van, gol, tof);
       }
