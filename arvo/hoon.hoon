@@ -355,7 +355,6 @@
           $%  {$atom p/term q/(unit @)}                 ::  atom / constant
               {$cell p/span q/span}                     ::  ordered pair
               {$core p/span q/coil}                     ::  object
-              {$cube p/* q/span}                        ::  constant
               {$face p/tusk q/span}                     ::  namespace
               {$fork p/span q/span}                     ::  union
               {$hold p/(list {p/span q/twig})}          ::  lazy evaluation
@@ -489,13 +488,6 @@
   |-
   ?:  (lth a b)  c
   $(a (sub a b), c +(c))
-::
-++  fac                                                 ::  factorial
-  ~/  %fac
-  |=  a/@
-  ^-  @
-  ?:  =(0 a)  1
-  (mul a $(a (dec a)))
 ::
 ++  gte                                                 ::  greater-equal
   ~/  %gte
@@ -6272,14 +6264,6 @@
   ^-  span
   ?:(=(%void pac) %void [%core pac con])
 ::
-++  cube                                                ::  make %cube span
-  ~/  %cube
-  |=  {dil/* goq/span}
-  ^-  span
-  ?:  =(%void goq)
-    %void
-  [%cube dil goq]
-::
 ++  face                                                ::  make %face span
   ~/  %face
   |=  {sag/tusk der/span}
@@ -7699,19 +7683,12 @@
           [1 (add 'a' (mod (div gum 676) 26))]
       ==
     ::
-        {$cube *}
-      ?.  ?=(@ p.sut)
-        $(sut ~(repo ut sut))
-      =+  pum=$(sut q.sut)
-      ?>  ?=({$mato *} q.pum)
-      [p.pum [%pear p.q.pum p.sut]]
-    ::
         {$face *}
       =+  yad=$(sut q.sut)
       ?^(p.sut yad [p.yad [%face p.sut q.yad]])
     ::
         {$fork *}
-      ?:  =(p.sut fork+[cube+[%noun atom+%tas]]^[cube+[%void atom+%tas]])
+      ?:  =(p.sut fork+[%atom %tas `%noun]^[%atom %tas `%void])
         [dex %span]                    ::  XX  proper print
       =+  hin=$(sut p.sut)
       =+  yon=$(dex p.hin, sut q.sut)
@@ -7760,7 +7737,6 @@
       %dune   dune
       %dunk   dunk
       %fire   fire
-      %firm   firm
       %fish   fish
       %fuse   fuse
       %gain   gain
@@ -7789,10 +7765,9 @@
     =+  gil=*(set span)
     |-  ^-  *
     ?-    sut
-        {$atom *}   0
+        {$atom *}   ?~(q.sut 0 u.q.sut)
         {$cell *}   [$(sut p.sut) $(sut q.sut)]
         {$core *}   [p.r.q.sut $(sut p.sut)]
-        {$cube *}   p.sut
         {$face *}   $(sut repo)
         {$fork *}   $(sut p.sut)
         {$hold *}   ?:  (~(has in gil) sut)
@@ -7863,18 +7838,6 @@
           sut
         sint
       ::
-          {$cube *}
-        ?:  &(?=({$cube *} ref) =(p.sut p.ref))
-          %void
-        ?:  &(?=({$atom *} ref) =(`p.sut q.ref))
-          %void
-        ?:  ?=(?({$atom *} {$cell *}) ref)
-          =+  foz=dext(sut q.sut)
-          ?:  (firm(sut foz) p.sut)
-            (cube p.sut foz)
-          %void
-        sint
-      ::
           {$face *}   (face p.sut dext(sut q.sut))
           {$fork *}   (fork dext(sut p.sut) dext(sut q.sut))
           {$hold *}
@@ -7890,7 +7853,6 @@
       ^-  span
       ?-    ref
         {$core *}  sut
-        {$cube *}  sut
         {$face *}  dext(ref repo(sut ref))
         {$fork *}  dext(sut dext(ref p.ref), ref q.ref)
         {$hold *}  dext(ref repo(sut ref))
@@ -7973,12 +7935,6 @@
               ?:  con.pec  $(ref p.ref, axe (peg axe 3))
               $(ref (peek(sut p.ref) way 2), axe (peg axe 6))
             ::
-                {$cube *}
-              ::
-              ::  XX is this right?  arguably should revisit.
-              ::
-              $(ref q.ref)
-            ::
                 {$face *}
               ?@  p.ref
                 ?:  |(?=($~ q.heg) =(u.q.heg p.ref))
@@ -8057,34 +8013,6 @@
         ==
     [p p.q]
   ::
-  ++  firm
-    ~/  %firm
-    |=  dib/*
-    =+  bix=*(set {span *})
-    |-  ^-  ?
-    ?-    sut
-        {$atom *}  ?&  !.?(dib)
-                       |(?=($~ q.sut) =(dib u.q.sut))
-                   ==
-        {$cell *}  &(.?(dib) $(sut p.sut, dib -.dib) $(sut q.sut, dib +.dib))
-        {$core *}
-      ?&  .?(dib)
-          $(sut p.sut, dib -.dib)
-          =(+.dib ?:(=(~ p.r.q.sut) ~|(%firm-core !!) p.r.q.sut))
-      ==
-    ::
-        {$cube *}  =(dib p.sut)
-        {$face *}  $(sut q.sut)
-        {$fork *}  |($(sut p.sut) $(sut q.sut))
-        {$hold *}
-      ?|  (~(has in bix) [sut dib])
-          $(bix (~(put in bix) [sut dib]), sut repo)
-      ==
-    ::
-        $noun      &
-        $void      |
-    ==
-  ::
   ++  fish
     ~/  %fish
     |=  axe/axis
@@ -8093,14 +8021,15 @@
     ?-  sut
         $void       [%1 1]
         $noun       [%1 0]
-        {$atom *}   (flip [%3 %0 axe])
+        {$atom *}   ?~  q.sut
+                      (flip [%3 %0 axe])
+                    [%5 [%1 u.q.sut] [%0 axe]]
         {$cell *}
       %+  flan
         [%3 %0 axe]
       (flan $(sut p.sut, axe (peg axe 2)) $(sut q.sut, axe (peg axe 3)))
     ::
         {$core *}   [%0 0]
-        {$cube *}   [%5 [%1 p.sut] [%0 axe]]
         {$face *}   $(sut q.sut)
         {$fork *}   (flor $(sut p.sut) $(sut q.sut))
         {$hold *}
@@ -8128,9 +8057,6 @@
                           %void
                         [%atom foc q.sut]
                       [%atom foc q.ref]
-          :: {$cube *}   ?:  &(?=(^ q.sut) !=(u.q.sut p.ref))
-          ::              %void
-          ::            $(sut ref, ref sut)
           {$cell *}   %void
           *           $(sut ref, ref sut)
       ==
@@ -8141,12 +8067,6 @@
       ==
     ::
         {$core *}     $(sut repo)
-        {$cube *}
-      =+  foz=$(sut q.sut)
-      ?:  (firm(sut foz) p.sut)
-        (cube p.sut foz)
-      %void
-    ::
         {$face *}     (face p.sut $(sut q.sut))
         {$fork *}     (fork $(sut p.sut) $(sut q.sut))
         {$hold *}
@@ -8339,7 +8259,6 @@
       {$atom *}  |
       {$cell *}  |($(sut p.sut) $(sut q.sut))
       {$core *}  $(sut p.sut)
-      {$cube *}  |
       {$face *}  $(sut q.sut)
       {$fork *}  &($(sut p.sut) $(sut q.sut))
       {$hold *}  |((~(has in gil) sut) $(gil (~(put in gil) sut), sut repo))
@@ -8617,14 +8536,9 @@
           sint
         cong
       ::
-          {$cube *}
-        ?:  ?=({$cube *} ref)
-          =(p.sut p.ref)
-        sint
-      ::
           {$face *}   dext(sut q.sut)
           {$fork *}
-        ?.  ?=(?({$atom *} $noun {$cell *} {$cube *} {$core *}) ref)
+        ?.  ?=(?({$atom *} $noun {$cell *} {$core *}) ref)
           sint
         |(dare(sut p.sut) dare(sut q.sut))
       ::
@@ -8765,7 +8679,6 @@
     ^-  span
     ?-  sut
       {$core *}   [%cell %noun p.sut]
-      {$cube *}   q.sut
       {$face *}   q.sut
       {$hold *}   (rest p.sut)
       $noun       [%fork [%atom %$ ~] [%cell %noun %noun]]
@@ -8823,7 +8736,6 @@
     ?~  i.vit
       |-  ^-  span
       ?+  sut  !!
-        {$cube *}  [%cube p.sut ^$(vit t.vit, sut q.sut)]
         {$face *}  (face p.sut ^$(vit t.vit, sut q.sut))
         {$fork *}  (fork $(sut p.sut) $(sut q.sut))
         {$hold *}  $(sut repo) 
@@ -8841,7 +8753,6 @@
                    (cell $(sut p.sut, u.i.vit lat) q.sut)
                   (cell p.sut $(sut q.sut, u.i.vit lat))
       {$core *}  ?>(=(3 now) (core $(sut p.sut, u.i.vit lat) q.sut))
-      {$cube *}  $(sut q.sut)
       {$face *}  (face p.sut $(sut q.sut))
       {$fork *}  ?:  (~(has in vil) sut)
                    %void

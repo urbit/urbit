@@ -516,7 +516,7 @@
   ?:  =(~ t.myn)  (trip i.myn)
   (weld (trip i.myn) `tape`['/' $(myn t.myn)])
 ::
-++  perk                                                ::  pars cube fork
+++  perk                                                ::  parse cube fork 
   |*  a/(pole @tas)
   ?~  a  fail
   ;~  pose 
