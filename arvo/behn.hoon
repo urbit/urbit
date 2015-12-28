@@ -195,7 +195,7 @@
       :^  hen  %give  %mass
       :-  %behn
       :-  %|
-      :~  tym+`tym
+      :~  tym+[%& tym]
       ==
     ==
   [mof ..^$]

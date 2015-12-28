@@ -801,7 +801,7 @@
           =+  bek=-:(need (tome p.tee))
           =+  bik=?+(r.bek bek {$ud $0} bek(r da+now))
           =-  (execute tee bik [%flag [p.sih `~] -])
-          =-  `silk`[%cast %mime `[p.p.q.sih -]]
+          =-  `silk`[%cast %mime [%$ p.p.q.sih -]]
           ?.  ?=({$ud $0} r.bek)  q.p.q.sih
           ?+  p.p.q.sih  q.p.q.sih          :: inject dependency long-poll
             $urb  =<  (slam !>(.) q.p.q.sih)
@@ -835,7 +835,7 @@
     (~(has in aut.u.cyz) our)
   ::
   ++  ses-ya  |=(ses/hole ~(. ya ses (~(got by wup) ses)))
-  ++  our-host  `hart`[& ~ `/org/urbit/(rsh 3 1 (scot %p our))]
+  ++  our-host  `hart`[& ~ %& /org/urbit/(rsh 3 1 (scot %p our))]
   ::                  [| [~ 8.445] `/localhost]       :: XX testing
   ::
   ++  ames-gram
@@ -843,11 +843,11 @@
   ::
   ++  back                                              ::  %ford bounce
     |=  {tea/whir mar/mark cay/cage}
-    (pass-note tea (ford-req root-beak [%cast mar `cay]))
+    (pass-note tea (ford-req root-beak [%cast mar [%$ cay]]))
   ::
   ++  del-deps
     |=  {a/@uvH b/(each duct ixor)}  ^+  +>.$
-    ?~  a  +>.$
+    ?:  =(0 a)  +>.$
     =.  liz  (~(del ju liz) a b)
     :: ~&  del-deps+[a (~(get ju liz) a)]
     ?:  (~(has by liz) a)  +>.$
@@ -857,7 +857,7 @@
   ++  new-deps
     |=  {a/@uvH b/(each duct ixor)}  ^+  +>.$
     :: ~&  new-deps+[a b]
-    ?~  a  +>.$
+    ?:  =(0 a)  +>.$
     =+  had=(~(has by liz) a)
     =.  liz  (~(put ju liz) a b)
     ?:  had  +>.$
@@ -965,7 +965,7 @@
       ?~  pez  done
       ?-  -.pez
           $~     (give-thou (add-cookies cug p.pez))
-          $js    $(pez [~ (resp 200 text+/javascript p.pez)])
+          $js    $(pez [%$ (resp 200 text+/javascript p.pez)])
           $json  (give-json 200 cug p.pez)
           $html  (give-html 200 cug p.pez)
           $htme  (give-html 401 cug p.pez)
@@ -1144,7 +1144,7 @@
       ^-  (each pest _done)
       =+  pet=parse
       ?:  ?=($| -.pet)
-        [%& ~ p.pet]
+        [%& %$ p.pet]
       (process-parsed p.pet)
     ::
     ++  process-parsed
@@ -1575,10 +1575,10 @@
     :^  hen  %give  %mass
     :-  %eyre
     :-  %|
-    :~  dependencies+`liz  sessions+`wup  views+`wix
-        ducts+[%| ~[dead+`ded proxy+`pox outgoing+`ask]]
-        hosts+`dop
-        misc+`bol
+    :~  dependencies+[%& liz]  sessions+[%& wup]  views+[%& wix]
+        ducts+[%| ~[dead+[%& ded] proxy+[%& pox] outgoing+[%& ask]]]
+        hosts+[%& dop]
+        misc+[%& bol]
     ==
   =+  our=`@p`0x100  ::  XX  sentinel
   =+  ska=(slod ski)

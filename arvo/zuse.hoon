@@ -1252,7 +1252,7 @@
   pul(q.q [(rsh 3 1 (scot %p who)) q.q.pul])
 ::
 ++  earn                                                ::  purl to tape
-  =<  |=(pul/purl `tape`(apex ~ pul))
+  =<  |=(pul/purl `tape`(apex %& pul))
   |%
   ++  apex
     |=  qur/quri

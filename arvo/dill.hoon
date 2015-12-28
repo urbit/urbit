@@ -1,4 +1,4 @@
-::
+!:
 ::  dill (4d), terminal handling   
 ::
 |=  pit/vase
@@ -328,7 +328,7 @@
         ^-  mass
         :-  %dill
         :-  %|
-        :~  all+`[ore hey dug]:all
+        :~  all+[%& [ore hey dug]:all]
         ==
       ::
       ++  wegt

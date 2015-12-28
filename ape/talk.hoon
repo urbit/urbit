@@ -462,7 +462,7 @@
               cha/(list (pair station config))
           ==
       ^+  ret
-      =.  ret
+      =.  ret  
         =+  eno=(~(tap by one))
         |-  ^+  ret
         ?~  eno  ret
@@ -1155,7 +1155,7 @@
           [%det cal]
           ?.  ?=({$';' *} buf)  ~ 
           :_  ~
-          [%txt (runt [14 '-'] `tape`['|' ' ' (tufa buf)])]
+          [%txt (runt [14 '-'] `tape`['|' ' ' (tufa `(list @)`buf)])]  
       ==
     ::
     ++  sh-sole                                         ::  apply edit
@@ -2019,7 +2019,7 @@
               ~!  hok
               =-  (swag [(sub (max 64 (lent -)) 64) 64] -)
               ^-  tape
-              =<  ?~(-.hok (reel p.hok .) +:(scow %if p.hok))
+              =<  ?:(?=($& -.hok) (reel p.hok .) +:(scow %if p.hok))
               |=({a/knot b/tape} ?~(b (trip a) (welp b '.' (trip a))))
     ::
         $lin

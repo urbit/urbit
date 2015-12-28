@@ -1,4 +1,4 @@
-!:   
+::   
 ::  clay (4c), revision control
 ::
 ::  This is split in three top-level sections:  structure definitions, main
@@ -1586,7 +1586,7 @@
       =+  tak=(~(get by hit.dom) yon)
       ?~  tak
         ~
-      ```[%null [%atom %n ~] ~]
+      ``[%& %null [%atom %n ~] ~]
     ::
     ++  read-v
       |=  {yon/aeon pax/path}
@@ -1801,11 +1801,11 @@
           ?~  mer
             ?:  new
               =+  *mery
-              `-(sor ali:+, hen hen:+, wat %null)
+              [%& -(sor ali:+, hen hen:+, wat %null)]
             [%| %not-actually-merging]
           ?.  new
             ?:  =(ali sor.u.mer)
-              `u.mer
+              [%& u.mer]
             ~&  :*  %already-merging-from-somewhere-else
                     ali=ali
                     sor=sor.u.mer
@@ -2712,11 +2712,11 @@
     :^  hen  %give  %mass
     :-  %clay
     :-  %|
-    :~  domestic+`fat.ruf
-        foreign+`hoy.ruf
+    :~  domestic+[%& fat.ruf]
+        foreign+[%& hoy.ruf]
         :-  %object-store  :-  %|
-        :~  commits+`hut.ran.ruf
-            blobs+`lat.ran.ruf
+        :~  commits+[%& hut.ran.ruf]
+            blobs+[%& lat.ran.ruf]
         ==
     ==
   ==

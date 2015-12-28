@@ -750,9 +750,9 @@
     ?:  =(q.p.vex len)                                  ::  matched to line end
       [%& ~]                                            ::
     ?:  =(p.p.vex +((lent (skim txt |=(a/@ =(10 a)))))) ::  parsed all lines
-      [%& ~ ?~(q.vex [%| txt] `p.u.q.vex)]              ::  new buffer+complete
+      [%& ~ ?~(q.vex [%| txt] [%& p.u.q.vex])]          ::  new buffer+complete
     [%| p.p.vex (dec q.p.vex)]                          ::  syntax error
-  ::
+  ::  
   ++  he-duke                                           ::  ++he-dope variant
     |=  txt/tape
     ^-  (each (unit (each dojo-command tape)) @ud)

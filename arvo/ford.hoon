@@ -1,4 +1,4 @@
-!:::::  
+::::::  
 ::  ::  %ford, new execution control
 !?  164
 ::::
@@ -254,7 +254,7 @@
   ++  awap                                              ::  get next revision
     ~%  %ford-w  ..is  ~
     |=  {dep/@uvH ask/?}
-    ?~  dep
+    ?:  =(0 dep)
       ~&(dep-empty+hen +>.$)
     ?:  =(dep 0vtest)                 ::  upstream testing
       +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
@@ -548,8 +548,8 @@
           =+  for=((sand %tas) q.gar)
           ?~  for  (flaw cof leaf+"bad mark ++grad" ~)
           %^  make  cof  %diff
-          :-  [%cast u.for `cay]
-          [%cast u.for `coy]
+          :-  [%cast u.for [%$ cay]]
+          [%cast u.for [%$ coy]]
         ?.  (slab %form p.gar)
           (flaw cof leaf+"no ++form:grad" ~)
         ?.  (slab %diff p.gar)
@@ -807,7 +807,7 @@
         ?@  q.gar
           =+  too=((sand %tas) q.gar)
           ?~  too  (flaw cof leaf+"bad mark ++grad" ~)
-          (make cof %join u.too `cay `coy)
+          (make cof %join u.too [%$ cay] [%$ coy])
         ?.  (slab %form p.gar)
           (flaw cof leaf+"no ++form:grad" ~)
         =+  fom=((soft @tas) q:(slap gar [%limb %form]))
@@ -850,7 +850,7 @@
           =+  too=((sand %tas) q.gar)
           ?~  too  (flaw cof leaf+"bad mark ++grad" ~)
           %+  make  cof
-          [%mash u.too [p.mas q.mas `cay] [p.mos q.mos `coy]]
+          [%mash u.too [p.mas q.mas [%$ cay]] [p.mos q.mos [%$ coy]]]
         ?.  (slab %form p.gar)
           (flaw cof leaf+"no ++form:grad" ~)            
         =+  fom=((soft @tas) q:(slap gar [%limb %form]))
@@ -1787,7 +1787,7 @@
         ?@  q.gar
           =+  for=((sand %tas) q.gar)
           ?~  for  (flaw cof leaf+"bad mark ++grad" ~)
-          (make cof %cast p.cay %pact [%cast u.for `cay] `coy)
+          (make cof %cast p.cay %pact [%cast u.for %$ cay] %$ coy)
         ?.  (slab %form p.gar)
           (flaw cof leaf+"no ++form:grad" ~)
         =+  for=((soft @tas) q:(slap gar [%limb %form]))
@@ -1859,16 +1859,16 @@
     %+  turn  (~(tap by pol))
     |=  {@ baby}
     :~  =<  cache+[%| (turn `(list term)`/hood/bake/lilt/slit/slim/slap/slam .)]
-        =-  |=(a/term [a `(~(get ja dep) a)])
+        =-  |=(a/term [a %& (~(get ja dep) a)])
         =<  `dep/(jar term *)`(~(rep by jav) .)
         |=({{* a/{term *}} b/(jar term *)} (~(add ja b) a))
     ::
         =<  depends+[%| (turn `(list term)`/init/sent/done .)]
-        =-  |=(a/term [a `(~(get ja dep) a)])
+        =-  |=(a/term [a %& (~(get ja dep) a)])
         =<  `dep/(jar term *)`(~(rep by deh) .)
         |=({{@ a/{term *}} b/(jar term *)} (~(add ja b) a))
     ::
-        tasks+`[dym tad]
+        tasks+[%& dym tad]
     ==
   =+  our=p.q.hic
   =+  ^=  bay  ^-  baby
