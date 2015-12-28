@@ -212,14 +212,14 @@
     {$$ p/axis}                                         ::  simple leg
   ::                                                    ::
     {$base p/base}                                      ::  base
-    {$blob p/term q/*}                                  ::  cubical constant
+    {$blob p/term q/*}                                  ::  fixed constant
     {$bust p/base}                                      ::  bunt base
     {$dbug p/spot q/twig}                               ::  debug info in trace
     {$knit p/(list beer)}                               ::  assemble string
     {$leaf p/(pair term @)}                             ::  symbol
     {$limb p/term}                                      ::  pulls limb p
     {$lost p/twig}                                      ::  not to be taken
-    {$rock p/term q/@}                                  ::  atom constant
+    {$rock p/term q/@}                                  ::  unfixed constant
     {$tell p/(list twig)}                               ::  render as tape
     {$wing p/wing}                                      ::  pulls p
     {$yell p/(list twig)}                               ::  render as tank
@@ -4220,11 +4220,11 @@
     %+  knee  *coin  |.  ~+
     %-  stew
     ^.  stet  ^.  limo
-    :~  :-  ['a' 'z']  (cook |=(a/@ta [~ %tas a]) sym)
-        :-  ['0' '9']  (stag ~ bisk)
-        :-  '-'        (stag ~ tash)
+    :~  :-  ['a' 'z']  (cook |=(a/@ta [%$ %tas a]) sym)
+        :-  ['0' '9']  (stag %$ bisk)
+        :-  '-'        (stag %$ tash)
         :-  '.'        ;~(pfix dot perd)
-        :-  '~'        ;~(pfix sig ;~(pose twid (easy [~ %n 0])))
+        :-  '~'        ;~(pfix sig ;~(pose twid (easy [%$ %n 0])))
     ==
   ++  nusk
     ~+
@@ -4232,7 +4232,7 @@
   ++  perd
     ~+
     ;~  pose
-      (stag ~ zust)
+      (stag %$ zust)
       (stag %many (ifix [cab ;~(plug cab cab)] (more cab nusk)))
     ==
   ++  royl
@@ -4305,7 +4305,7 @@
     ~+
     ;~  pose
       (cook |=(a/@ [%blob (cue a)]) ;~(pfix (just '0') vum:ag))
-      (stag ~ crub)
+      (stag %$ crub)
     ==
   ::
   ++  zust
@@ -6289,32 +6289,14 @@
   [%face sag der]
 ::
 ++  bool  ^-  span 
-          [%fork [%cube 0 %atom %f ~] [%cube 1 %atom %f ~]]
-++  flay
-  ~/  %flay
-  |=  pok/port
-  ^-  {p/axis q/span}
-  :-  p.pok
-  ?-  -.q.pok
-    $&  p.q.pok
-    $|  (roll q.q.pok =+([p=[p=*span q=*foot] q=`span`%void] |.((fork p.p q))))
-  ==
-::
-++  flee
-  |=  poy/post
-  ^-  port
-  ?-  -.q.poy
-    $0  [p.poy %& p.q.poy]
-    $1  [p.poy %| p.q.poy q.q.poy]
-    $2  [(peg p.poy r.p.q.poy) %& s.p.q.poy]
-  ==
+          [%fork [%atom %f `0] [%atom %f `1]]
 ::
 ++  foil
   ~/  %foil
   |=  pok/port
   ^-  prop
   ?-  -.q.pok
-    $&  [p.pok [~ [[p.q.pok [%elm ~ 1]] ~]]]
+    $&  [p.pok [~ [[p.q.pok [%elm %$ 1]] ~]]]
     $|  [p.pok [p.q.pok q.q.pok]]
   ==
 ::
@@ -6543,7 +6525,7 @@
   =+  :-  ^=  typ  ^-  span
           [%cell p.gat p.sam]
       ^=  gen  ^-  twig
-      [%cncl [~ 2] [~ 3]]
+      [%cncl [%$ 2] [%$ 3]]
   =+  gun=(~(mint ut typ) %noun gen)
   [p.gun .*([q.gat q.sam] q.gun)]
 ::
@@ -6554,7 +6536,7 @@
 ++  slit                                                ::  span of slam
   |=  {gat/span sam/span}
   ?>  (~(nest ut (~(peek ut gat) %free 6)) & sam)
-  (~(play ut [%cell gat sam]) [%cncl [~ 2] [~ 3]])
+  (~(play ut [%cell gat sam]) [%cncl [%$ 2] [%$ 3]])
 ::
 ++  slym                                                ::  slam w+o sample-span
   |=  {gat/vase sam/*}  ^-  vase
@@ -6582,7 +6564,7 @@
   ?@  -.q.vax
     ^=  typ
     %-  ~(play ut p.vax)
-    [%wtgr [%wtts [%leaf %tas -.q.vax] [%$ 2]~] [%$ 1]]
+    [%wtgr [%wtts [%leaf %tas -.q.vax] [%& 2]~] [%$ 1]]
   (~(fuse ut p.vax) [%cell %noun %noun])
 ::
 ++  slew                                                ::  get axis in vase
@@ -6683,9 +6665,9 @@
     |=  vax/vase
     ^-  {vase worm}
     =+  ^=  gen  ^-  twig
-      ?@  q.vax    [%wtts [%base [%amot %$]] [%$ 1]~]
-      ?@  -.q.vax  [%wtts [%leaf %tas -.q.vax] [%$ 2]~]
-      [%wtts [%base %cell] [%$ 1]~]
+      ?@  q.vax    [%wtts [%base [%amot %$]] [%& 1]~]
+      ?@  -.q.vax  [%wtts [%leaf %tas -.q.vax] [%& 2]~]
+      [%wtts [%base %cell] [%& 1]~]
     =^  typ  +>+<.$  (play p.vax [%wtgr gen [%$ 1]])
     [[typ q.vax] +>+<.$]
   ::
@@ -6710,7 +6692,7 @@
     |=  gen/twig
     ^-  twig
     ?.  &(?=($| -.tik) ?=($~ p.tik))  gen
-    [%tsgr [~ 3] gen]
+    [%tsgr [%$ 3] gen]
   ::
   ++  gray
     |=  gen/twig
@@ -6750,7 +6732,7 @@
   |_  sec/tile
   ::::
   ++  blah  ^~  [%blob %$ 0]
-  ++  home  |=(gen/twig ^-(twig ?:(=(1 gom) gen [%tsgr [~ gom] gen])))
+  ++  home  |=(gen/twig ^-(twig ?:(=(1 gom) gen [%tsgr [%$ gom] gen])))
   ::::
   ++  bunt
     |-  ^-  twig
@@ -6823,9 +6805,9 @@
         |=  noy/$+(* twig)
         ^-  twig
         ?@  nag
-          =+  luz=[%cnts [[~ 1] ~] [[[%& axe] ~] bunt(sec [%axil %cell])] ~]
+          =+  luz=[%cnts [[%& 1] ~] [[[%& axe] ~] bunt(sec [%axil %cell])] ~]
           ?:  =(& nag)
-            [%tsgr [%wtpt [[%& axe] ~] luz [~ 1]] (noy [& &])]
+            [%tsgr [%wtpt [[%& axe] ~] luz [%$ 1]] (noy [& &])]
           [%tsgr luz (noy [& &])]
         (noy nag)
     ^-  twig
@@ -6841,22 +6823,22 @@
         =+  buv=bunt
         |-  ^-  twig
         ?@  nag
-          ?:(=(& nag) [%wtpt [[%& axe] ~] $(nag |) buv] [%ktls buv [~ axe]])
+          ?:(=(& nag) [%wtpt [[%& axe] ~] $(nag |) buv] [%ktls buv [%$ axe]])
         buv
       ::
           $noun
-        [%kthp [%base %noun] [~ axe]]
+        [%kthp [%base %noun] [%$ axe]]
       ::
           $cell
         =+  buv=bunt
         |-  ^-  twig
         ?@  nag
           ?:(=(& nag) [%wtpt [[%& axe] ~] buv $(nag [& &])] buv)
-        [%ktls buv [~ axe]]
+        [%ktls buv [%$ axe]]
       ::
           $bean
         :^    %wtcl
-            [%dtts [%blob %$ |] [~ axe]]
+            [%dtts [%blob %$ |] [%$ axe]]
           [%blob %f |]
         [%blob %f &]
       ::
@@ -6889,14 +6871,14 @@
         ^$(sec i.p.sec)
       =>  .(axe (peg 3 axe), gom (peg 3 gom))
       :^    %wtcl
-          [%dtts [~ axe] [~ 2]]
-        [~ 2]
+          [%dtts [%$ axe] [%$ 2]]
+        [%$ 2]
       $(i.p.sec i.t.p.sec, t.p.sec t.t.p.sec)
     ::
         {$herb *}
       =+  cys=~(boil ap p.sec)
       ?:  ?=($herb -.cys)
-        [%cnhp (home p.sec) [~ axe] ~]
+        [%cnhp (home p.sec) [%$ axe] ~]
       $(sec cys)
     ::
         {$kelp *}
@@ -6906,7 +6888,7 @@
         :-  [%blob +.p.i.p.sec]
         ^^$(axe (peg axe 3), sec q.i.p.sec, nag &)
       :^    %wtcl
-          [%dtts [~ (peg axe 2)] [%blob +.p.i.p.sec]]
+          [%dtts [%$ (peg axe 2)] [%blob +.p.i.p.sec]]
         :-  [%blob +.p.i.p.sec]
         ^^$(axe (peg axe 3), sec q.i.p.sec, nag &)
       $(i.p.sec i.t.p.sec, t.p.sec t.t.p.sec)
@@ -7007,7 +6989,7 @@
       ==
     ::
         {$bckt *}  [%bush boil(gen p.gen) boil(gen q.gen)]
-        {$bcls *}  [%weed [%brls p.gen [%cnbc [%tsgr [~ 7] q.gen]]]]  
+        {$bcls *}  [%weed [%brls p.gen [%cnbc [%tsgr [%$ 7] q.gen]]]]  
         {$bcts *}  [%bark p.gen boil(gen q.gen)]
         {$bcwt *}  =+  (turn p.gen |=(a/twig boil(gen a)))
                    ?~(- [%axil %void] [%fern -])
@@ -7016,14 +6998,14 @@
   ++  open  
     ^-  twig
     ?-    gen
-        {$~ *}     [%cnts [gen ~] ~]
+        {$~ *}     [%cnts [[%& p.gen] ~] ~]
     ::
         {$base *}  ~(clam al boil)
         {$bust *}  ~(bunt al %axil p.gen)
         {$dbug *}   q.gen
     ::
         {$knit *}                                       ::
-      :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
+      :+  %tsgr  [%ktts %v %$ 1]                        ::  =>  v=.
       :-  %brhp                                         ::  |-
       :+  %ktls                                         ::  ^+
         :-  %brhp                                       ::  |-
@@ -7051,10 +7033,10 @@
       :^    %wtpt                                       ::  ?@
           [%a ~]                                        ::  a
         [%limb %b]                                      ::  b
-      :-  [%tsgl [~ 2] [%limb %a]]                      ::  :-  -.a
+      :-  [%tsgl [%$ 2] [%limb %a]]                     ::  :-  -.a
       :+  %cnts                                         ::  %=
         [%$ ~]                                          ::  $
-      [[[%a ~] [%tsgl [~ 3] [%limb %a]]] ~]             ::  a  +.a
+      [[[%a ~] [%tsgl [%$ 3] [%limb %a]]] ~]            ::  a  +.a
     ::
         {$leaf *}  ~(clam al boil)
         {$limb *}  [%cnts [p.gen ~] ~]
@@ -7077,7 +7059,7 @@
                    :-  -.a
                    :+  %tsgl  p.a
                    :+  %cnts  ~
-                   :~  [[[%& 6] ~] [%ktts p.lyg [~ 6]]]
+                   :~  [[[%& 6] ~] [%ktts p.lyg [%$ 6]]]
                    ==
         {$brkt *}  [%tsgr [%brcn (~(put by q.gen) %$ [%ash p.gen])] [%limb %$]]
         {$brls *}  [%ktbr [%brts p.gen q.gen]]
@@ -7133,8 +7115,8 @@
       :+  %tsls
         q.gen
       :+  %cnts
-        (weld p.gen `wing`[[~ 2] ~])
-      (turn r.gen |=({p/wing q/twig} [p [%tsgr [~ 3] q]]))
+        (weld p.gen `wing`[[%& 2] ~])
+      (turn r.gen |=({p/wing q/twig} [p [%tsgr [%$ 3] q]]))
     ::
         {$ktdt *}  [%ktls [%cnhp p.gen q.gen ~] q.gen]
         {$kthp *}  [%ktls ~(bunt al [%herb p.gen]) q.gen]
@@ -7143,7 +7125,7 @@
         :-  %mean
         =+  fek=~(feck ap p.gen)
         ?^  fek  [%blob %tas u.fek]
-        [%brdt [%cnhp [%limb %cain] [%zpgr [%tsgr [~ 3] p.gen]] ~]]
+        [%brdt [%cnhp [%limb %cain] [%zpgr [%tsgr [%$ 3] p.gen]] ~]]
       q.gen
     ::
         {$sgcb *}  [%sggr [%mean [%brdt p.gen]] q.gen]
@@ -7161,8 +7143,8 @@
         [[[%blob %$ p.i.r.gen] [%zpts q.i.r.gen]] $(r.gen t.r.gen)]
       s.gen
     ::
-        {$sgfs *}  [%sgcn p.gen [~ 7] ~ q.gen]
-        {$sggl *}  [%tsgl [%sggr p.gen [~ 1]] q.gen]
+        {$sgfs *}  [%sgcn p.gen [%$ 7] ~ q.gen]
+        {$sggl *}  [%tsgl [%sggr p.gen [%$ 1]] q.gen]
         {$sgbc *}  [%sggr [%live [%blob %$ p.gen]] q.gen]
         {$sgls *}  [%sggr [%memo %blob %$ p.gen] q.gen]
         {$sgpm *}
@@ -7173,9 +7155,9 @@
         {$sgts *}  [%sggr [%germ p.gen] q.gen]
         {$sgwt *}
       :+  %tsls  [%wtdt q.gen [%bust %null] [[%bust %null] r.gen]]
-      :^  %wtsg  [~ 2]~
-        [%tsgr [~ 3] s.gen]
-      [%sgpm p.gen [~ 5] [%tsgr [~ 3] s.gen]]
+      :^  %wtsg  [%& 2]~
+        [%tsgr [%$ 3] s.gen]
+      [%sgpm p.gen [%$ 5] [%tsgr [%$ 3] s.gen]]
     ::
         {$smcl *}
       ?-    q.gen
@@ -7187,8 +7169,8 @@
         =+  yex=`(list twig)`q.gen
         |-  ^-  twig
         ?-  yex
-          {* $~}  [%tsgr [~ 3] i.yex]
-          {* ^}   [%cnhp [~ 2] [%tsgr [~ 3] i.yex] $(yex t.yex) ~]
+          {* $~}  [%tsgr [%$ 3] i.yex]
+          {* ^}   [%cnhp [%$ 2] [%tsgr [%$ 3] i.yex] $(yex t.yex) ~]
           $~      !!
         ==
       ==
@@ -7199,7 +7181,7 @@
       ?-  q.gen
           $~      ~|(%open-smsg !!)
           ^
-        :+  %tsgr  [%ktts %v ~ 1]                       ::  =>  v=.
+        :+  %tsgr  [%ktts %v %$ 1]                      ::  =>  v=.
         |-  ^-  twig                                    ::
         ?:  ?=($~ t.q.gen)                              ::
           [%tsgr [%limb %v] i.q.gen]                    ::  =>(v {i.q.gen})
@@ -7207,7 +7189,7 @@
         :+  %tsls                                       ::    {$(q.gen t.q.gen)}
           [%ktts %b [%tsgr [%limb %v] i.q.gen]]         ::  =+  ^=  b
         :+  %tsls                                       ::    =>(v {i.q.gen})
-          [%ktts %c [%tsgl [~ 6] [%limb %b]]]           ::  =+  c=+6.b
+          [%ktts %c [%tsgl [%$ 6] [%limb %b]]]          ::  =+  c=+6.b
         :-  %brdt                                       ::  |.
         :^    %cnls                                     ::  %+
             [%tsgr [%limb %v] p.gen]                    ::      =>(v {p.gen})
@@ -7216,7 +7198,7 @@
       ==
     ::
         {$smsm *}                                       ::                  ;;
-      :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
+      :+  %tsgr  [%ktts %v %$ 1]                        ::  =>  v=.
       :+  %tsls  :+  %ktts  %a                          ::  =+  ^=  a
                  [%tsgr [%limb %v] p.gen]               ::  =>(v {p.gen})
       :+  %tsls  [%ktts %b [%tsgr [%limb %v] q.gen]]    ::  =+  b==>(v {q.gen})
@@ -7228,27 +7210,27 @@
       [%tsls ~(bunt al %herb p.gen) q.gen]
     ::
         {$tscl *}
-      [%tsgr [%cncb [[~ 1] ~] p.gen] q.gen]
+      [%tsgr [%cncb [[%& 1] ~] p.gen] q.gen]
     ::
         {$tscn *}
       [%tsls [%kthp p.gen q.gen] r.gen]
     ::
         {$tsdt *}
-      [%tsgr [%cncb [[~ 1] ~] [[p.gen q.gen] ~]] r.gen]
+      [%tsgr [%cncb [[%& 1] ~] [[p.gen q.gen] ~]] r.gen]
     ::
         {$tskt *}                                       ::                  =^
       =+  cog=rusk(gen p.gen)                           ::
       =+  wuy=(weld rake(gen q.gen) `wing`[%v ~])       ::
-      :+  %tsgr  [%ktts %v ~ 1]                         ::  =>  v=.
+      :+  %tsgr  [%ktts %v %$ 1]                        ::  =>  v=.
       :+  %tsls  [%ktts %a %tsgr [%limb %v] r.gen]      ::  =+  a==>(v \r.gen)
-      :^  %tsdt  wuy  [%tsgl [~ 3] [%limb %a]]          ::  =.  \wuy  +.a
+      :^  %tsdt  wuy  [%tsgl [%$ 3] [%limb %a]]         ::  =.  \wuy  +.a
       :+  %tsgr  :-  :+  %ktts  cog                     ::  =>  :-  ^=  \cog
-                     [%tsgl [~ 2] [%limb %a]]           ::          -.a
+                     [%tsgl [%$ 2] [%limb %a]]          ::          -.a
                  [%limb %v]                             ::      v
       s.gen                                             ::  s.gen
     ::
         {$tsgl *}  [%tsgr q.gen p.gen]
-        {$tsls *}  [%tsgr [p.gen [~ 1]] q.gen]
+        {$tsls *}  [%tsgr [p.gen [%$ 1]] q.gen]
         {$tshp *}  [%tsls q.gen p.gen]
         {$tssg *}
       |-  ^-  twig
@@ -7301,7 +7283,7 @@
   ++  reek
     ^-  (unit wing)
     ?+  gen  ~
-      {$~ *}        `[gen ~]
+      {$~ *}        `[[%& p.gen] ~]
       {$limb *}     `[p.gen ~]
       {$wing *}     `p.gen
       {$cnts * $~}  `p.gen
@@ -7403,10 +7385,10 @@
         :_(gid [%rose [[' ' ~] ['[' ~] [']' ~]] coz])
       ::
           {$pear *}
-        :_(gid [%leaf '%' ~(rend co [~ p.q.ham q.q.ham])])
+        :_(gid [%leaf '%' ~(rend co [%$ p.q.ham q.q.ham])])
       ::
           {$stop *}
-        =+  num=~(rend co [~ %ud p.q.ham])
+        =+  num=~(rend co [%$ %ud p.q.ham])
         ?:  (~(has in gid) p.q.ham)
           :_(gid [%leaf '$' num])
         =^  cox  gid
@@ -7491,8 +7473,8 @@
       :+  ~
         %leaf
       ?+    (rash p.q.ham ;~(sfix (cook crip (star low)) (star hig)))
-          ~(rend co [~ p.q.ham lum])
-        $$    ~(rend co [~ %ud lum])
+          ~(rend co [%$ p.q.ham lum])
+        $$    ~(rend co [%$ %ud lum])
         $t    (dash (rip 3 lum) '\'')
         $tas  ['%' ?.(=(0 lum) (rip 3 lum) ['$' ~])]
       ==
@@ -7677,7 +7659,7 @@
     ?-    sut
         $noun      [dex sut]
         $void      [dex sut]
-        {$atom *}  [dex [%mato p.sut]]
+        {$atom *}  [dex ?~(q.sut [%mato p.sut] [%pear p.sut u.q.sut])]
         {$cell *}
       =+  hin=$(sut p.sut)
       =+  yon=$(dex p.hin, sut q.sut)
@@ -7697,7 +7679,7 @@
       :_  p.doy
       %^  cat  3
         %~  rent  co
-        :+  ~  %ud
+        :+  %$  %ud
         |-  ^-  @
         ?-  q.r.q.sut
           $~         0
@@ -7957,7 +7939,7 @@
                 $|  %-  fire
                     %+  turn  (~(tap in q.q.p.mor))
                     |=  {a/span b/foot}
-                    [a [%ash ~ 1]]
+                    [a [%ash %$ 1]]
               ==
           ==
       ?:  ?=($& -.heg)
@@ -8231,7 +8213,7 @@
       =+  tal=$(gen q.gen, gol %noun)
       [(nice (cell p.hed p.tal)) (cons q.hed q.tal)]
     ::
-        {$brcn *}  (grow %gold [~ 1] p.gen)
+        {$brcn *}  (grow %gold [%$ 1] p.gen)
     ::
         {$cnts *}
       =+  lar=(foil (seek %read p.gen))
@@ -8382,7 +8364,7 @@
       =+  tal=$(gen q.gen, gol %noun)
       [(nice (cell p.hed p.tal)) (cell q.hed q.tal)]
     ::
-        {$brcn *}  (grow %gold [~ 1] p.gen)
+        {$brcn *}  (grow %gold [%$ 1] p.gen)
         {$cnts *}
       =+  lar=(foil (seek %read p.gen))
       =+  vug=(foil (seek(sut dox) %read p.gen))
@@ -8744,7 +8726,10 @@
       {$dtkt *}  %noun
       {$dtls *}  [%atom %$ ~]
       {$rock *}  ?:(=(%f p.gen) ?>((lte q.gen 1) bool) [%atom p.gen ~])
-      {$blob *}  [%cube q.gen ?:(.?(q.gen) %noun [%atom p.gen ~])]
+      {$blob *}  |-  ^-  span
+                 ?@  q.gen 
+                   [%atom p.gen `q.gen]
+                 [%cell $(q.gen -.q.gen) $(q.gen +.q.gen)]
       {$dttr *}  %noun
       {$dtts *}  bool
       {$dtwt *}  bool
@@ -8957,7 +8942,7 @@
   ::
   ++  prey
     |=  gun/(list twig)  ^-  (unit twig)
-    ?~  gun  `[~ 1]
+    ?~  gun  `[%$ 1]
     =+  gup=(pray i.gun)
     ?~  gup  ~
     ?~  t.gun  gup
@@ -9278,8 +9263,8 @@
             =+  sug=[[%& 12] ~]
             :+  %$  %elm
             :^  %wtsg  sug
-              [%cnts sug [[[[%& 1] ~] [~ 13]] ~]]
-            [%cnts sug [[[[%& 3] ~] [%cnts [%$ ~] [[sug [~ 25]] ~]]] ~]]
+              [%cnts sug [[[[%& 1] ~] [%$ 13]] ~]]
+            [%cnts sug [[[[%& 3] ~] [%cnts [%$ ~] [[sug [%$ 25]] ~]]] ~]]
         $d  [[%cnhp p.i.lut [%cltr $(lut t.lut)] ~] ~]
         $e  [[p.i.lut ^$(lut [[%f q.i.lut] ~])] $(lut t.lut)]
         $f  $(lut (weld p.i.lut t.lut))
@@ -10368,7 +10353,7 @@
           ;:  slid
             [%& pah.vil u.pux]
             [%& duc.vil hen]
-            (slix (slid [%& [%cube org %atom %tas ~] org] hil))
+            (slix (slid [%& [%atom %tas `org] org] hil))
           ==
       ?~  pru
         ~&  [%swim-lost lal (@tas +>-.hil)]
@@ -10442,7 +10427,7 @@
             :^  %pass  t.p.ovo
               (dint p.ovo)
             :+  %&
-              [%cell [%cube %soft [%atom %tas ~]] %noun]
+              [%cell [%atom %tas `%soft] %noun]
             [%soft q.ovo]
         ==
     ==
@@ -10638,7 +10623,7 @@
   |=  {now/@da fav/curd}
   =>  .(fav ((hard {$veer lal/@ta pax/path txt/@t}) fav))
   ?:  =(%$ lal.fav)
-    ~&  [%tang pax.fav `@p`(mug txt.fav)]
+    ::  ~&  [%tang pax.fav `@p`(mug txt.fav)]
     =+  gen=(rain pax.fav txt.fav)
     =+  vax=(slap pit gen)
     +>.$(bud vax)
@@ -10646,11 +10631,11 @@
       q.niz
     |-  ^+  q.niz
     ?~  q.niz
-      ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
+      ::  ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
       [[lal.fav q.sew:(vint lal.fav vil bud pax.fav txt.fav)] q.niz]
     ?.  =(lal.fav p.i.q.niz)
       [i.q.niz $(q.niz t.q.niz)]
-      ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
+      ::  ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
     :_  t.q.niz
     :-  p.i.q.niz
     q.sew:(ruck:(vent lal.fav vil bud [p.niz q.i.q.niz]) pax.fav txt.fav)

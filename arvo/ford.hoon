@@ -1534,7 +1534,7 @@
           (flux |=(elt/vase [[q.i.poy elt] nex]))
         %-  flux
         |=  yal/(list (pair @ vase))  ^-  vase
-        ?~  yal  [[%cube 0 [%atom %n ~]] 0]
+        ?~  yal  [[%atom %n `~] 0]
         (slop (slop [[%atom doe ~] p.i.yal] q.i.yal) $(yal t.yal))
       ::
       ++  chai                                          ::  atomic map
@@ -1550,7 +1550,7 @@
           (cope nod (flux some))
         %-  flux
         |=  doy/(map @ vase)  ^-  vase
-        ?~  doy  [[%cube 0 [%atom %n ~]] 0]
+        ?~  doy  [[%atom %n `~] 0]
         %+  slop
           (slop [[%atom %ta ~] p.n.doy] q.n.doy)
         (slop $(doy l.doy) $(doy r.doy))
@@ -1581,7 +1581,7 @@
           |=  {cof/cafe tev/(list vase)}
           %+  fine  cof
           |-  ^-  vase
-          ?~  tev  [[%cube 0 [%atom %n ~]] 0]
+          ?~  tev  [[%atom %n `~] 0]
           (slop i.tev $(tev t.tev))
         ::
             $for  $(hon q.hon, s.how (weld (flop p.hon) s.how))
@@ -1595,7 +1595,7 @@
             $hub  (chad cof bax %ud p.hon)
             $man
           |-  ^-  (bolt vase)
-          ?~  p.hon  (fine cof [[%cube 0 [%atom %n ~]] 0])
+          ?~  p.hon  (fine cof [[%atom %n `~] 0])
           %+  cope  $(p.hon l.p.hon)
           |=  {cof/cafe lef/vase}
           %+  cope  ^$(cof cof, p.hon r.p.hon)
