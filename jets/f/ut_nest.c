@@ -198,15 +198,23 @@
       default: return u3m_bail(c3__fail);
 
       case c3__atom: {
-        if ( (c3y == u3du(ref)) && (c3__atom == u3h(ref)) ) {
-          if ( c3n == u3qf_fitz(u3h(u3t(sut)), u3h(u3t(ref))) ) {
-            // u3_err("fitz: need", u3h(u3t(sut)));
-            // u3_err("fitz: have", u3h(u3t(ref)));
-            return c3n;
+        if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
+          return u3m_bail(c3__fail);
+        } 
+        else {
+          if ( (c3y == u3du(ref)) && (c3__atom == u3h(ref)) ) {
+            if ( (c3n == u3qf_fitz(u3h(u3t(sut)), u3h(u3t(ref)))) ||
+                 ( (c3y == u3du(q_sut)) && 
+                   (c3n == u3r_sing(q_sut, u3t(u3t(ref)))) ) )
+            {
+              // u3_err("fitz: need", u3h(u3t(sut)));
+              // u3_err("fitz: have", u3h(u3t(ref)));
+              return c3n;
+            }
+            return c3y;
           }
-          return c3y;
+          else return _nest_sint(van, sut, tel, ref, gil);
         }
-        else return _nest_sint(van, sut, tel, ref, gil);
       }
       case c3__cell: {
         if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {

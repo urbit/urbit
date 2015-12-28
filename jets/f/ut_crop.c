@@ -61,10 +61,28 @@
     else switch ( u3h(sut) ) {
       default: return u3m_bail(c3__fail);
 
-      case c3__atom:
+      case c3__atom: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         if ( c3__atom == u3h(ref) ) {
-          return c3__void;
+          u3x_cell(u3t(ref), &p_ref, &q_ref);
+
+          if ( c3y == u3du(q_sut) ) {
+            if ( c3y == u3du(q_ref) ) {
+              if ( c3y == u3r_sing(q_sut, q_ref) ) {
+                return c3__void;
+              } else {
+                return u3k(sut);
+              }
+            } else {
+              return c3__void;
+            }
+          }
+          else {
+            if ( c3y == u3du(q_ref) ) {
+              return u3k(sut);
+            }
+            else return c3__void;
+          }
         }
         else if ( c3__cell == u3h(ref) ) {
           return u3k(sut);
@@ -103,6 +121,12 @@
       {
         if ( (c3__cube == u3h(ref)) &&
              (c3y == u3r_sing(p_sut, u3h(u3t(ref)))) )
+        {
+          return c3__void;
+        }
+        else if ( (c3__atom == u3h(ref)) &&
+                  (c3y == u3du(u3t(u3t(ref)))) &&
+                  (c3y == u3r_sing(p_sut, u3t(u3t(u3t(ref))))) )
         {
           return c3__void;
         }

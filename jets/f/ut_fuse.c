@@ -58,13 +58,35 @@
     else switch ( u3h(sut) ) {
       default: return u3m_bail(c3__fail);
 
-      case c3__atom:
+      case c3__atom: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         if ( c3y == u3du(ref) ) {
           if ( c3__atom == u3h(ref) ) {
-            if ( c3y == u3qf_fitz(u3h(u3t(ref)), u3h(u3t(sut))) ) {
-              return u3k(sut);
-            } else return u3k(ref);
+            u3_noun p_ref, q_ref;
+
+            u3x_cell(u3t(ref), &p_ref, &q_ref);
+            {
+              u3_noun foc = (c3y == u3qf_fitz(p_ref, p_sut))
+                              ? u3k(p_sut)
+                              : u3k(p_ref);
+
+              if ( c3y == u3du(q_sut) ) {
+                if ( c3y == u3du(q_ref) ) {
+                  if ( c3y == u3r_sing(q_ref, q_sut) ) {
+                    return u3nt(c3__atom, foc, u3k(q_sut));
+                  }
+                  else { 
+                    u3z(foc);
+                    return c3__void;
+                  }
+                }
+                else {
+                  return u3nt(c3__atom, foc, u3k(q_sut));
+                }
+              } else {
+                return u3nt(c3__atom, foc, u3k(q_ref));
+              }
+            }
           }
           else if ( c3__cell == u3h(ref) ) {
             return c3__void;
