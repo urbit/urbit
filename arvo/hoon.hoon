@@ -4317,7 +4317,7 @@
       royl
     ==
   --
-++  scot  ~/  %scot  |=(mol/dime ~(rent co %$ mol))
+++  scot  |=(mol/dime ~(rent co %$ mol))
 ++  scow  |=(mol/dime ~(rend co %$ mol))
 ++  slat  |=(mod/@tas |=(txt/@ta (slaw mod txt)))
 ++  slav  |=({mod/@tas txt/@ta} (need (slaw mod txt)))
@@ -10623,7 +10623,7 @@
   |=  {now/@da fav/curd}
   =>  .(fav ((hard {$veer lal/@ta pax/path txt/@t}) fav))
   ?:  =(%$ lal.fav)
-    ::  ~&  [%tang pax.fav `@p`(mug txt.fav)]
+    ~&  [%tang pax.fav `@p`(mug txt.fav)]
     =+  gen=(rain pax.fav txt.fav)
     =+  vax=(slap pit gen)
     +>.$(bud vax)
@@ -10631,11 +10631,11 @@
       q.niz
     |-  ^+  q.niz
     ?~  q.niz
-      ::  ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
+      ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
       [[lal.fav q.sew:(vint lal.fav vil bud pax.fav txt.fav)] q.niz]
     ?.  =(lal.fav p.i.q.niz)
       [i.q.niz $(q.niz t.q.niz)]
-      ::  ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
+      ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
     :_  t.q.niz
     :-  p.i.q.niz
     q.sew:(ruck:(vent lal.fav vil bud [p.niz q.i.q.niz]) pax.fav txt.fav)
