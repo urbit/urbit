@@ -202,18 +202,23 @@
           return u3m_bail(c3__fail);
         } 
         else {
-          if ( (c3y == u3du(ref)) && (c3__atom == u3h(ref)) ) {
-            if ( (c3n == u3qf_fitz(u3h(u3t(sut)), u3h(u3t(ref)))) ||
+          if ( c3y == u3r_pq(ref, c3__atom, &p_ref, &q_ref) ) {
+            if ( // (c3n == u3qf_fitz(p_sut, p_ref)) ||
                  ( (c3y == u3du(q_sut)) && 
-                   (c3n == u3r_sing(q_sut, u3t(u3t(ref)))) ) )
+                   ( (c3n == u3du(q_ref)) ||
+                     (c3n == u3r_sing(q_sut, q_ref)))) ) 
             {
-              // u3_err("fitz: need", u3h(u3t(sut)));
-              // u3_err("fitz: have", u3h(u3t(ref)));
               return c3n;
             }
             return c3y;
           }
-          else return _nest_sint(van, sut, tel, ref, gil);
+          if ( (c3y == u3r_pq(ref, c3__cube, &p_ref, &q_ref)) ) {
+            if ( (c3y == u3du(q_sut)) && 
+                 (c3y == u3r_sing(u3t(q_sut), p_ref)) ) {
+              return c3y;
+            }
+          }
+          return _nest_sint(van, sut, tel, ref, gil);
         }
       }
       case c3__cell: {
@@ -243,6 +248,10 @@
         } else {
           if ( c3y == u3r_pq(ref, c3__cube, &p_ref, &q_ref) ) {
             return u3r_sing(p_sut, p_ref);
+          }
+          else if ( (c3y == u3r_pq(ref, c3__atom, &p_ref, &q_ref)) &&
+                    (c3y == u3du(q_ref)) ) {
+            return u3r_sing(p_sut, u3t(q_ref));
           }
           else return _nest_sint(van, sut, tel, ref, gil);
         }
