@@ -28,17 +28,20 @@
       default: return u3m_bail(c3__fail);
 
       case c3__atom: {
-        u3_noun ton = u3nt(3, 0, u3k(axe));
-        u3_noun pro = u3qf_flip(ton);
-
-        u3z(ton);
-        return pro;
-      }
-      case c3__bull: {
         if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u3m_bail(c3__fail);
         } else {
-          return _fish_in(van, q_sut, axe, vit);
+          if ( c3n == u3du(q_sut) ) {
+            u3_noun ton = u3nt(3, 0, u3k(axe));
+            u3_noun pro = u3qf_flip(ton);
+
+            u3z(ton);
+            return pro;
+          } else {
+            return u3nt(5,
+                        u3nc(1, u3k(u3t(q_sut))),
+                        u3nc(0, u3k(axe)));
+          }
         }
       }
       case c3__cell: {
@@ -65,15 +68,6 @@
       }
       case c3__core: {
         return u3nc(0, 0);
-      }
-      case c3__cube: {
-        if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
-          return u3m_bail(c3__fail);
-        } else {
-          return u3nt(5,
-                      u3nc(1, u3k(p_sut)),
-                      u3nc(0, u3k(axe)));
-        }
       }
       case c3__face: {
         if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {

@@ -212,12 +212,6 @@
             }
             return c3y;
           }
-          if ( (c3y == u3r_pq(ref, c3__cube, &p_ref, &q_ref)) ) {
-            if ( (c3y == u3du(q_sut)) && 
-                 (c3y == u3r_sing(u3t(q_sut), p_ref)) ) {
-              return c3y;
-            }
-          }
           return _nest_sint(van, sut, tel, ref, gil);
         }
       }
@@ -238,20 +232,6 @@
         } else {
           if ( (c3y == u3r_pq(ref, c3__core, &p_ref, &q_ref)) ) {
             return _nest_cong(van, sut, tel, ref, gil);
-          }
-          else return _nest_sint(van, sut, tel, ref, gil);
-        }
-      }
-      case c3__cube: {
-        if ( c3n == u3r_trel(sut, 0, &p_sut, &q_sut) ) {
-          return u3m_bail(c3__fail);
-        } else {
-          if ( c3y == u3r_pq(ref, c3__cube, &p_ref, &q_ref) ) {
-            return u3r_sing(p_sut, p_ref);
-          }
-          else if ( (c3y == u3r_pq(ref, c3__atom, &p_ref, &q_ref)) &&
-                    (c3y == u3du(q_ref)) ) {
-            return u3r_sing(p_sut, u3t(q_ref));
           }
           else return _nest_sint(van, sut, tel, ref, gil);
         }
@@ -279,7 +259,6 @@
 
             case c3__atom:
             case c3__cell:
-            case c3__cube:
             case c3__core:
               break;
           }
@@ -390,13 +369,6 @@
 
           u3z(gam);
           return hiv;
-        }
-        case c3__cube: {
-          if ( c3n == u3r_trel(ref, 0, &p_ref, &q_ref) ) {
-            return u3m_bail(c3__fail);
-          } else {
-            return _nest_dext(van, sut, tel, q_ref, gil);
-          }
         }
         case c3__face: {
           if ( c3n == u3r_trel(ref, 0, &p_ref, &q_ref) ) {

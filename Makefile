@@ -276,7 +276,6 @@ J_F_OFILES=\
        jets/f/comb.o \
        jets/f/cons.o \
        jets/f/core.o \
-       jets/f/cube.o \
        jets/f/face.o \
        jets/f/fitz.o \
        jets/f/flan.o \
@@ -293,7 +292,6 @@ J_F_OFILES_UT=\
        jets/f/ut_conk.o \
        jets/f/ut_crop.o \
        jets/f/ut_fire.o \
-       jets/f/ut_firm.o \
        jets/f/ut_fish.o \
        jets/f/ut_fuse.o \
        jets/f/ut_gain.o \

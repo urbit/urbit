@@ -335,7 +335,6 @@ static u3j_harm _mood__hoon_cell_a[] = {{".2", u3wf_cell}, {}};
 static u3j_harm _mood__hoon_comb_a[] = {{".2", u3wf_comb}, {}};
 static u3j_harm _mood__hoon_cons_a[] = {{".2", u3wf_cons}, {}};
 static u3j_harm _mood__hoon_core_a[] = {{".2", u3wf_core}, {}};
-static u3j_harm _mood__hoon_cube_a[] = {{".2", u3wf_cube}, {}};
 static u3j_harm _mood__hoon_face_a[] = {{".2", u3wf_face}, {}};
 static u3j_harm _mood__hoon_fitz_a[] = {{".2", u3wf_fitz}, {}};
 static u3j_harm _mood__hoon_flan_a[] = {{".2", u3wf_flan}, {}};
@@ -350,7 +349,6 @@ static u3j_harm _mood__hoon__ut_burn_a[] = {{".2", u3wfu_burn}, {}};
 static u3j_harm _mood__hoon__ut_conk_a[] = {{".2", u3wfu_conk}, {}};
 static u3j_harm _mood__hoon__ut_crop_a[] = {{".2", u3wfu_crop}, {}};
 static u3j_harm _mood__hoon__ut_fire_a[] = {{".2", u3wfu_fire}, {}};
-static u3j_harm _mood__hoon__ut_firm_a[] = {{".2", u3wfu_firm}, {}};
 static u3j_harm _mood__hoon__ut_fish_a[] = {{".2", u3wfu_fish}, {}};
 static u3j_harm _mood__hoon__ut_fuse_a[] = {{".2", u3wfu_fuse}, {}};
 static u3j_harm _mood__hoon__ut_mint_a[] = {{".2", u3wfu_mint}, {}};
@@ -369,7 +367,6 @@ static u3j_core _mood__hoon__ut_d[] =
     { "conk", _mood__hoon__ut_conk_a },
     { "crop", _mood__hoon__ut_crop_a },
     { "fire", _mood__hoon__ut_fire_a },
-    { "firm", _mood__hoon__ut_firm_a },
     { "fish", _mood__hoon__ut_fish_a },
     { "fuse", _mood__hoon__ut_fuse_a },
     { "mint", _mood__hoon__ut_mint_a },
@@ -530,7 +527,6 @@ static u3j_core _mood__hoon_d[] =
     { "comb", _mood__hoon_comb_a },
     { "cons", _mood__hoon_cons_a },
     { "core", _mood__hoon_core_a },
-    { "cube", _mood__hoon_cube_a },
     { "face", _mood__hoon_face_a },
     { "fitz", _mood__hoon_fitz_a },
     { "flan", _mood__hoon_flan_a },

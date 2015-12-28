@@ -117,34 +117,6 @@
         }
         else return _crop_sint(van, sut, ref, bix);
       }
-      case c3__cube: u3x_cell(u3t(sut), &p_sut, &q_sut);
-      {
-        if ( (c3__cube == u3h(ref)) &&
-             (c3y == u3r_sing(p_sut, u3h(u3t(ref)))) )
-        {
-          return c3__void;
-        }
-        else if ( (c3__atom == u3h(ref)) &&
-                  (c3y == u3du(u3t(u3t(ref)))) &&
-                  (c3y == u3r_sing(p_sut, u3t(u3t(u3t(ref))))) )
-        {
-          return c3__void;
-        }
-        else if ( (c3__atom == u3h(ref)) || 
-                  (c3__cell == u3h(ref)) ) {
-          u3_noun foz = _crop_dext(van, q_sut, ref, bix);
-          u3_noun ret;
-
-          if ( c3y == u3qfu_firm(van, foz, p_sut) ) {
-            ret = u3qf_cube(p_sut, foz);
-          }
-          else ret = c3__void;
-
-          u3z(foz);
-          return ret;
-        }
-        else return _crop_sint(van, sut, ref, bix);
-      }
       case c3__face: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         u3_noun foz = _crop_dext(van, q_sut, ref, bix);
@@ -201,9 +173,6 @@
       default: return u3m_bail(c3__fail);
 
       case c3__core:
-      case c3__cube: {
-        return u3k(sut);
-      }
       case c3__face: u3x_cell(u3t(ref), &p_ref, &q_ref);
       {
         return _crop_dext(van, sut, q_ref, bix);

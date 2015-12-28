@@ -24,7 +24,14 @@
     else switch ( u3h(sut) ) {
       default: return u3m_bail(c3__fail);
 
-      case c3__atom: return 0;
+      case c3__atom: u3x_cell(u3t(sut), &p_sut, &q_sut);
+      {
+        if ( c3y == u3du(q_sut) ) {
+          return u3k(u3t(q_sut));
+        } else {
+          return 0;
+        }
+      }
       case c3__cell: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
         return u3nc
@@ -38,10 +45,6 @@
         return u3nc
           (u3k(prq_sut),
                   _burn_in(van, p_sut, gil));
-      }
-      case c3__cube: u3x_cell(u3t(sut), &p_sut, &q_sut);
-      {
-        return u3k(p_sut);
       }
       case c3__face: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {

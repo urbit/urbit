@@ -15,8 +15,18 @@
   _play_bean()
   {
     return u3nt(c3__fork,
-                u3nt(c3__cube, 0, u3nt(c3__atom, 'f', u3_nul)),
-                u3nt(c3__cube, 1, u3nt(c3__atom, 'f', u3_nul)));
+                u3nq(c3__atom, 'f', u3_nul, 0),
+                u3nq(c3__atom, 'f', u3_nul, 1));
+  }
+
+  static u3_noun
+  _play_blob(u3_noun odo, u3_noun bob)
+  { 
+    if ( c3y == u3ud(bob) ) {
+      return u3nq(c3__atom, u3k(odo), u3_nul, u3k(bob));
+    }
+    else return u3nt(c3__cell, _play_blob(odo, u3h(bob)), 
+                               _play_blob(odo, u3t(bob)));
   }
 
   static u3_noun
@@ -237,13 +247,7 @@
       case c3__blob: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
-        u3_noun boc = (c3n == u3ud(q_gen))
-                        ? c3__noun
-                        : u3nt(c3__atom, u3k(p_gen), u3_nul);
-        u3_noun ret = u3qf_cube(q_gen, boc);
-
-        u3z(boc);
-        return ret;
+        return _play_blob(p_gen, q_gen);
       }
       case c3__dttr: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();

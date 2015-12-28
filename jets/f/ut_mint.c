@@ -12,8 +12,8 @@
   _mint_bean()
   {
     return u3nt(c3__fork,
-                u3nt(c3__cube, 0, u3nt(c3__atom, 'f', u3_nul)),
-                u3nt(c3__cube, 1, u3nt(c3__atom, 'f', u3_nul)));
+                u3nq(c3__atom, 'f', u3_nul, 0),
+                u3nq(c3__atom, 'f', u3_nul, 1));
   }
 
   static u3_noun
@@ -491,14 +491,10 @@
       case c3__blob: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
-        u3_noun boc = (c3n == u3ud(q_gen))
-                        ? c3__noun
-                        : u3nt(c3__atom, u3k(p_gen), u3_nul);
-        u3_noun typ = u3qf_cube(q_gen, boc);
+        u3_noun typ = u3qfu_play(van, sut, gen);
         u3_noun ret = u3nc(_mint_nice(van, gol, typ),
                            u3nc(1, u3k(q_gen)));
 
-        u3z(boc);
         return ret;
       }
       case c3__dttr: u3x_cell(u3t(gen), &p_gen, &q_gen);

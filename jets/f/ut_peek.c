@@ -90,13 +90,6 @@
           return pro;
         }
       }
-      case c3__cube: {
-        if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
-          return u3m_bail(c3__fail);
-        } else {
-          return _peek_in(van, q_sut, way, axe, gil);
-        }
-      }
       case c3__face: {
         if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u3m_bail(c3__fail);

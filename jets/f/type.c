@@ -29,9 +29,6 @@
     case c3__core: u3x_cell(u3t(sut), &p_sut, &q_sut);
     {
     }
-    case c3__cube: u3x_cell(u3t(sut), &p_sut, &q_sut);
-    {
-    }
     case c3__face: u3x_cell(u3t(sut), &p_sut, &q_sut);
     {
     }

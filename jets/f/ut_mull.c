@@ -37,8 +37,8 @@
   _mull_bean()
   {
     return u3nt(c3__fork,
-                u3nt(c3__cube, 0, u3nt(c3__atom, 'f', u3_nul)),
-                u3nt(c3__cube, 1, u3nt(c3__atom, 'f', u3_nul)));
+                u3nq(c3__atom, 'f', u3_nul, 0),
+                u3nq(c3__atom, 'f', u3_nul, 1));
   }
 
   static u3_noun
@@ -458,13 +458,9 @@
       case c3__blob: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {
-        u3_noun tof = u3nt(c3__cube,
-                           u3k(q_gen),
-                           (c3y == u3du(q_gen))
-                             ? c3__noun
-                             : u3nt(c3__atom, u3k(p_gen), u3_nul));
+        u3_noun typ = u3qfu_play(van, sut, gen);
 
-        return _mull_both(van, gol, tof);
+        return _mull_both(van, gol, typ);
       }
       case c3__dttr: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
