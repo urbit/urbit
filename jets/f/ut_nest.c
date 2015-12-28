@@ -203,7 +203,7 @@
         } 
         else {
           if ( c3y == u3r_pq(ref, c3__atom, &p_ref, &q_ref) ) {
-            if ( // (c3n == u3qf_fitz(p_sut, p_ref)) ||
+            if ( (c3n == u3qf_fitz(p_sut, p_ref)) ||
                  ( (c3y == u3du(q_sut)) && 
                    ( (c3n == u3du(q_ref)) ||
                      (c3n == u3r_sing(q_sut, q_ref)))) ) 
