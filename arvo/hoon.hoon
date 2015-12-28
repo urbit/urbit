@@ -7858,7 +7858,11 @@
       ?-    sut
           {$atom *}
         ?-    ref
-            {$atom *}   %void
+            {$atom *}   ?^  q.sut
+                          ?^  q.ref
+                            ?:(=(q.ref q.sut) %void sut)
+                          %void
+                        ?^(q.ref sut %void)
             {$cell *}   sut
             *           sint
         ==
@@ -7879,6 +7883,8 @@
       ::
           {$cube *}
         ?:  &(?=({$cube *} ref) =(p.sut p.ref))
+          %void
+        ?:  &(?=({$atom *} ref) =(`p.sut q.ref))
           %void
         ?:  ?=(?({$atom *} {$cell *}) ref)
           =+  foz=dext(sut q.sut)
@@ -8075,7 +8081,9 @@
     =+  bix=*(set {span *})
     |-  ^-  ?
     ?-    sut
-        {$atom *}  !.?(dib)
+        {$atom *}  ?&  !.?(dib)
+                       |(?=($~ q.sut) =(dib u.q.sut))
+                   ==
         {$cell *}  &(.?(dib) $(sut p.sut, dib -.dib) $(sut q.sut, dib +.dib))
         {$core *}
       ?&  .?(dib)
@@ -8130,7 +8138,17 @@
     ?-    sut
         {$atom *}
       ?-    ref
-          {$atom *}   ?:((fitz p.ref p.sut) sut ref)
+          {$atom *}   =+  foc=?:((fitz p.ref p.sut) p.sut p.ref)
+                      ?^  q.sut
+                        ?^  q.ref
+                          ?:  =(q.sut q.ref)
+                            [%atom foc q.sut]
+                          %void
+                        [%atom foc q.sut]
+                      [%atom foc q.ref]
+          :: {$cube *}   ?:  &(?=(^ q.sut) !=(u.q.sut p.ref))
+          ::              %void
+          ::            $(sut ref, ref sut)
           {$cell *}   %void
           *           $(sut ref, ref sut)
       ==
@@ -8599,7 +8617,9 @@
       ::
           {$atom *}
         ?:  ?=({$atom *} ref)
-          (fitz p.sut p.ref)
+          ?&  (fitz p.sut p.ref)
+              |(?=($~ q.sut) =(q.sut q.ref))
+          ==
         sint
       ::
           {$cell *}
