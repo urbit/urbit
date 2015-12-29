@@ -338,7 +338,6 @@ static u3j_harm _mood__hoon_core_a[] = {{".2", u3wf_core}, {}};
 static u3j_harm _mood__hoon_face_a[] = {{".2", u3wf_face}, {}};
 static u3j_harm _mood__hoon_fitz_a[] = {{".2", u3wf_fitz}, {}};
 static u3j_harm _mood__hoon_flan_a[] = {{".2", u3wf_flan}, {}};
-static u3j_harm _mood__hoon_flay_a[] = {{".2", u3wf_flay}, {}};
 static u3j_harm _mood__hoon_flip_a[] = {{".2", u3wf_flip}, {}};
 static u3j_harm _mood__hoon_flor_a[] = {{".2", u3wf_flor}, {}};
 static u3j_harm _mood__hoon_fork_a[] = {{".2", u3wf_fork}, {}};
@@ -530,7 +529,6 @@ static u3j_core _mood__hoon_d[] =
     { "face", _mood__hoon_face_a },
     { "fitz", _mood__hoon_fitz_a },
     { "flan", _mood__hoon_flan_a },
-    { "flay", _mood__hoon_flay_a },
     { "flip", _mood__hoon_flip_a },
     { "flor", _mood__hoon_flor_a },
     { "fork", _mood__hoon_fork_a },
