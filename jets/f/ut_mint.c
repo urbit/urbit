@@ -488,7 +488,7 @@
         u3z(sam);
         return ret;
       }
-      case c3__blob: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__rock: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         u3_noun typ = u3qfu_play(van, sut, gen);
