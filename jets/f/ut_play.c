@@ -254,7 +254,7 @@
       {
         return c3__noun;
       }
-      case c3__rock: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__sand: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         if ( 'f' == p_gen ) {

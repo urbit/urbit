@@ -506,7 +506,7 @@
         return u3nc(_mint_nice(van, gol, c3__noun),
                     u3nt(2, one, two));
       }
-      case c3__rock: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      case c3__sand: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
         u3_noun typ = u3qfu_play(van, sut, gen);
