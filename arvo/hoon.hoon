@@ -212,14 +212,14 @@
     {$$ p/axis}                                         ::  simple leg
   ::                                                    ::
     {$base p/base}                                      ::  base
-    {$blob p/term q/*}                                  ::  fixed constant
     {$bust p/base}                                      ::  bunt base
     {$dbug p/spot q/twig}                               ::  debug info in trace
     {$knit p/(list beer)}                               ::  assemble string
     {$leaf p/(pair term @)}                             ::  symbol
     {$limb p/term}                                      ::  pulls limb p
     {$lost p/twig}                                      ::  not to be taken
-    {$sand p/term q/@}                                  ::  unfixed constant
+    {$rock p/term q/*}                                  ::  fixed constant
+    {$sand p/term q/*}                                  ::  unfixed constant
     {$tell p/(list twig)}                               ::  render as tape
     {$wing p/wing}                                      ::  pulls p
     {$yell p/(list twig)}                               ::  render as tank
@@ -6427,11 +6427,11 @@
   |=  lot/coin  ^-  twig
   ?-    -.lot
       $~      
-    ?:(rad [%blob p.lot] [%sand p.lot])
+    ?:(rad [%rock p.lot] [%sand p.lot])
   ::
       $blob
     ?:  rad
-      [%blob %$ p.lot]
+      [%rock %$ p.lot]
     ?@(p.lot [%sand %$ p.lot] [$(p.lot -.p.lot) $(p.lot +.p.lot)])
   ::
       $many
@@ -6715,7 +6715,6 @@
   =+  [nag=`*`& gom=`axis`1]
   |_  sec/tile
   ::::
-  ++  blah  ^~  [%blob %$ 0]
   ++  home  |=(gen/twig ^-(twig ?:(=(1 gom) gen [%tsgr [%$ gom] gen])))
   ::::
   ++  bunt
@@ -6727,11 +6726,11 @@
         {$axil *}
       ?-  p.sec
         {$amot *}  [%sand p.p.sec 0]
-        $noun      [%dttr [%blob %$ 0] [[%blob %$ 0] [%blob %$ 1]]]
+        $noun      [%dttr [%rock %$ 0] [[%rock %$ 0] [%rock %$ 1]]]
         $cell      =+(nec=$(sec [%axil %noun]) [nec nec])
-        $bean      [%dtts [%blob %$ 0] [%blob %$ 0]]
+        $bean      [%dtts [%rock %$ 0] [%rock %$ 0]]
         $void      [%zpzp ~]
-        $null      [%blob %n %$]
+        $null      [%rock %n %$]
       ==
     ::
         {$bark *}
@@ -6762,7 +6761,7 @@
       [%wtcl [%bust %bean] ^$(sec i.p.sec) $(p.sec t.p.sec)]
     ::
         {$leaf *}
-      [%blob p.sec q.sec]
+      [%rock p.sec q.sec]
     ::
         {$reed *}
       [%wtcl [%bust %bean] $(sec p.sec) $(sec q.sec)]
@@ -6822,9 +6821,9 @@
       ::
           $bean
         :^    %wtcl
-            [%dtts [%blob %$ |] [%$ axe]]
-          [%blob %f |]
-        [%blob %f &]
+            [%dtts [%rock %$ |] [%$ axe]]
+          [%rock %f |]
+        [%rock %f &]
       ::
           $void
         bunt
@@ -6869,16 +6868,16 @@
       %-  tun  |=  gon/*  =>  .(nag gon)
       |-  ^-  twig
       ?~  t.p.sec
-        :-  [%blob +.p.i.p.sec]
+        :-  [%rock +.p.i.p.sec]
         ^^$(axe (peg axe 3), sec q.i.p.sec, nag &)
       :^    %wtcl
-          [%dtts [%$ (peg axe 2)] [%blob +.p.i.p.sec]]
-        :-  [%blob +.p.i.p.sec]
+          [%dtts [%$ (peg axe 2)] [%rock +.p.i.p.sec]]
+        :-  [%rock +.p.i.p.sec]
         ^^$(axe (peg axe 3), sec q.i.p.sec, nag &)
       $(i.p.sec i.t.p.sec, t.p.sec t.t.p.sec)
     ::
         {$leaf *}
-      [%blob p.sec q.sec]
+      [%rock p.sec q.sec]
     ::
         {$reed *}
       ?-  nag
@@ -7068,7 +7067,7 @@
         {$clsg *}
       |-  ^-  twig
       ?~  p.gen
-        [%blob %n ~]
+        [%rock %n ~]
       [i.p.gen $(p.gen t.p.gen)]
     ::
         {$cltr *}
@@ -7085,7 +7084,7 @@
       =+  rem=[%cnsg [%$ ~] p.gen q.gen]
       ?.  ?=({$dbug ^ $wing @ $~} p.gen)  rem
       =>  .(p.gen `{@ ^ @ p/@tas $~}`p.gen)
-      :+  %sgzp  [[%blob %tas 'slam'] [%blob %tas p.p.gen]]
+      :+  %sgzp  [[%rock %tas 'slam'] [%rock %tas p.p.gen]]
       rem
     ::
         {$cndt *}  [%cnhp q.gen [p.gen ~]]
@@ -7108,7 +7107,7 @@
       :+  %sggr
         :-  %mean
         =+  fek=~(feck ap p.gen)
-        ?^  fek  [%blob %tas u.fek]
+        ?^  fek  [%rock %tas u.fek]
         [%brdt [%cnhp [%limb %cain] [%zpgr [%tsgr [%$ 3] p.gen]] ~]]
       q.gen
     ::
@@ -7117,20 +7116,20 @@
       :+  %sggl
         :-  %fast
         :-  %clls
-        :+  [%blob %$ p.gen]
+        :+  [%rock %$ p.gen]
           [%zpts q.gen]
         :-  %clsg
         =+  nob=`(list twig)`~
         |-  ^-  (list twig)
         ?~  r.gen
           nob
-        [[[%blob %$ p.i.r.gen] [%zpts q.i.r.gen]] $(r.gen t.r.gen)]
+        [[[%rock %$ p.i.r.gen] [%zpts q.i.r.gen]] $(r.gen t.r.gen)]
       s.gen
     ::
         {$sgfs *}  [%sgcn p.gen [%$ 7] ~ q.gen]
         {$sggl *}  [%tsgl [%sggr p.gen [%$ 1]] q.gen]
-        {$sgbc *}  [%sggr [%live [%blob %$ p.gen]] q.gen]
-        {$sgls *}  [%sggr [%memo %blob %$ p.gen] q.gen]
+        {$sgbc *}  [%sggr [%live [%rock %$ p.gen]] q.gen]
+        {$sgls *}  [%sggr [%memo %rock %$ p.gen] q.gen]
         {$sgpm *}
       :+  %sggr
         [%slog [%sand %$ p.gen] [%cnhp [%limb %cain] [%zpgr q.gen] ~]]
@@ -7159,7 +7158,7 @@
         ==
       ==
     ::
-        {$smfs *}  =+(zoy=[%blob %ta %$] [%clsg [zoy [%clsg [zoy p.gen] ~]] ~])
+        {$smfs *}  =+(zoy=[%rock %ta %$] [%clsg [zoy [%clsg [zoy p.gen] ~]] ~])
         {$smsg *}                                       ::                  ;~
       |-  ^-  twig
       ?-  q.gen
@@ -7224,7 +7223,7 @@
     ::
         {$wtbr *}
       |-
-      ?~(p.gen [%blob %f 1] [%wtcl i.p.gen [%blob %f 0] $(p.gen t.p.gen)])
+      ?~(p.gen [%rock %f 1] [%wtcl i.p.gen [%rock %f 0] $(p.gen t.p.gen)])
     ::
         {$wtdt *}   [%wtcl p.gen r.gen q.gen]
         {$wtgl *}   [%wtcl p.gen [%zpzp ~] q.gen]
@@ -7245,11 +7244,11 @@
     ::
         {$wtpm *}
       |-
-      ?~(p.gen [%blob %f 0] [%wtcl i.p.gen $(p.gen t.p.gen) [%blob %f 1]])
+      ?~(p.gen [%rock %f 0] [%wtcl i.p.gen $(p.gen t.p.gen) [%rock %f 1]])
     ::
         {$wtpt *}   [%wtcl [%wtts [%base %amot %$] p.gen] q.gen r.gen]
         {$wtsg *}   [%wtcl [%wtts [%base %null] p.gen] q.gen r.gen]
-        {$wtzp *}   [%wtcl p.gen [%blob %f 1] [%blob %f 0]]
+        {$wtzp *}   [%wtcl p.gen [%rock %f 1] [%rock %f 0]]
         {$zpgr *}
       [%cnhp [%limb %onan] [%zpsm [%cnbc [%limb %abel]] p.gen] ~]
     ::
@@ -8150,7 +8149,7 @@
         {$dtkt *}  [(nice %noun) [%11 q:$(gen p.gen, gol %noun)]]
         {$dtls *}  [(nice [%atom %$ ~]) [%4 q:$(gen p.gen, gol [%atom %$ ~])]]
         {$sand *}  [(nice (play gen)) [%1 q.gen]]
-        {$blob *}  [(nice (play gen)) [%1 q.gen]]
+        {$rock *}  [(nice (play gen)) [%1 q.gen]]
         {$dttr *}
       [(nice %noun) [%2 q:$(gen p.gen, gol %noun) q:$(gen q.gen, gol %noun)]]
     ::
@@ -8304,7 +8303,7 @@
         {$dtkt *}  =+($(gen p.gen, gol %noun) (beth %noun))
         {$dtls *}  =+($(gen p.gen, gol [%atom %$ ~]) (beth [%atom %$ ~]))
         {$sand *}  (beth (play gen))
-        {$blob *}  (beth (play gen))
+        {$rock *}  (beth (play gen))
         {$dttr *}
       =+([$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)] (beth %noun))
     ::
@@ -8644,10 +8643,12 @@
                  $(q.gen t.q.gen, rag q:(toss p.i.q.gen ^$(gen q.i.q.gen) rag))
       {$dtkt *}  %noun
       {$dtls *}  [%atom %$ ~]
-      {$sand *}  ?:(=(%f p.gen) ?>((lte q.gen 1) bool) [%atom p.gen ~])
-      {$blob *}  |-  ^-  span
-                 ?@  q.gen 
-                   [%atom p.gen `q.gen]
+      {$rock *}  |-  ^-  span
+                 ?@  q.gen  [%atom p.gen `q.gen]
+                 [%cell $(q.gen -.q.gen) $(q.gen +.q.gen)]
+      {$sand *}  |-  ^-  span
+                 ?@  q.gen
+                   ?:(=(%f p.gen) ?>((lte q.gen 1) bool) [%atom p.gen ~])
                  [%cell $(q.gen -.q.gen) $(q.gen +.q.gen)]
       {$dttr *}  %noun
       {$dtts *}  bool
@@ -8918,7 +8919,7 @@
   ++  rump
     %+  sear
       |=  {a/wing b/(unit twig)}  ^-  (unit twig)
-      ?~(b [~ %wing a] ?.(?=({@ $~} a) ~ [~ [%blob %tas i.a] u.b]))
+      ?~(b [~ %wing a] ?.(?=({@ $~} a) ~ [~ [%rock %tas i.a] u.b]))
     ;~(plug rope ;~(pose (stag ~ ;~(pfix lus wide)) (easy ~)))
   ::
   ++  rood
@@ -9004,14 +9005,14 @@
       %+  cook
         |=  {a/@tas b/(unit @tas)}
         ?~  b
-          [%blob %tas a]
-        [[%blob %tas a] [%blob %tas u.b]]
+          [%rock %tas a]
+        [[%rock %tas a] [%rock %tas u.b]]
       ;~(plug sym ;~(pose (stag ~ ;~(pfix cab sym)) (easy ~)))
     ::
     ++  hag                                             ::  script or style
       %+  cook  |=(a/twig a)
       ;~  plug
-        (stag %blob (stag %tas ;~(pose (jest %script) (jest %style))))
+        (stag %rock (stag %tas ;~(pose (jest %script) (jest %style))))
         (stag %clsg jaw)
       ==
     ::
@@ -9022,12 +9023,12 @@
       %+  cook
         |=  hug
         ^-  {twig (list twig)}
-        =-  [a (welp - ?~(c d [[[%blob %tas p.c] q.c] d]))]
+        =-  [a (welp - ?~(c d [[[%rock %tas p.c] q.c] d]))]
         =-  (~(tap by -))
         %.  |=(e/(list tank) [%knit ~(ram re %rose [" " `~] e)])
         =<  ~(run by f:(reel b .))
         |=  {e/{p/term q/term} f/(jar twig tank)}
-        (~(add ja f) [[%blob %tas p.e] [%leaf (trip q.e)]])
+        (~(add ja f) [[%rock %tas p.e] [%leaf (trip q.e)]])
       ;~  plug
         fry
         =-  (star ;~(plug - sym))
@@ -9166,7 +9167,7 @@
       ^-  twig
       :-  %cltr
       |-  ^-  (list twig)
-      ?~  lut  [[%blob %n ~] ~]
+      ?~  lut  [[%rock %n ~] ~]
       ?-  -.i.lut
         $a  [[%smfs p.i.lut] $(lut t.lut)]
         $b  [p.i.lut $(lut t.lut)]
@@ -9216,10 +9217,10 @@
         ;~  pfix  cen
           ;~  pose
             (stag %clsg (sear |+({a/@ud b/tyke} (posh ~ ~ a b)) porc))
-            (stag %blob (stag %tas (cold %$ buc)))
-            (stag %blob (stag %f (cold & pam)))
-            (stag %blob (stag %f (cold | bar)))
-            (stag %blob (stag %t qut))
+            (stag %rock (stag %tas (cold %$ buc)))
+            (stag %rock (stag %f (cold & pam)))
+            (stag %rock (stag %f (cold | bar)))
+            (stag %rock (stag %t qut))
             (cook (jock &) nuck:so)
             (stag %clsg (sear |=(a/(list) (posh ~ ~ (lent a) ~)) (star cen)))
           ==
@@ -9228,7 +9229,7 @@
         ;~  pose
           (cook |=(a/wing [%cnts a ~]) rope)
           (stag %wtpm ;~(pfix pam (ifix [pel per] (most ace wide))))
-          ;~(plug (stag %blob (stag %f (cold & pam))) ;~(pfix fas wide))
+          ;~(plug (stag %rock (stag %f (cold & pam))) ;~(pfix fas wide))
           (stag %sand (stag %f (cold & pam)))
         ==
       :-  '\''
@@ -9306,7 +9307,7 @@
             ==
             (stag %kthp ;~(plug wide ;~(pfix tec wide)))
             (stag %ktls ;~(pfix lus ;~(plug wide ;~(pfix tec wide))))
-            (cook |=(a/twig [[%blob %n ~] a]) wide)
+            (cook |=(a/twig [[%rock %n ~] a]) wide)
           ==
         ==
       :-  '"'
@@ -9320,7 +9321,7 @@
         ;~  pose
           (cook |=(a/wing [%cnts a ~]) rope)
           (stag %wtbr ;~(pfix bar (ifix [pel per] (most ace wide))))
-          ;~(plug (stag %blob (stag %f (cold | bar))) ;~(pfix fas wide))
+          ;~(plug (stag %rock (stag %f (cold | bar))) ;~(pfix fas wide))
           (stag %sand (stag %f (cold | bar)))
         ==
       :-  '~'

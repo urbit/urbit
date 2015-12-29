@@ -190,7 +190,7 @@
       |=  a/coin  ^-  (unit twig)
       ?.  ?=({$~ case} a)  ~
       %+  some
-        [%blob %tas p.p.a]
+        [%rock %tas p.p.a]
       [%sand p.a]
     ::
     ++  dp-source  (stag 0 dp-build)                    ::  ++dojo-source
@@ -716,7 +716,7 @@
         =.  q.gin  (ope q.gin)
         ?^  -.q.gin  $(gin q.gin)
         =.  p.gin  (ope p.gin)
-        ?.  ?=({{?($blob $rock) @ @} {$blob $n $~}} gin)
+        ?.  ?=({{?($rock $sand) @ @} {$rock $n $~}} gin)
           ~
         (some q.p.gin)
       ==
