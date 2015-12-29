@@ -175,11 +175,11 @@
     ++  dp-hoof                                         ::  ++ford-hoof twig
       %+  cook  |*(a/* ~!(+.a `twig`a))
       ;~  plug
-        :(stag %rock %tas sym)
+        :(stag %sand %tas sym)
         %-  dp-twig-punt
         ;~  (glue fas) 
           ;~(pfix fas (sear dp-case-twig nuck:so))
-          (stag %rock ;~(plug (cold %p sig) fed:ag))
+          (stag %sand ;~(plug (cold %p sig) fed:ag))
         ==
       ==
     ::
@@ -191,7 +191,7 @@
       ?.  ?=({$~ case} a)  ~
       %+  some
         [%blob %tas p.p.a]
-      [%rock p.a]
+      [%sand p.a]
     ::
     ++  dp-source  (stag 0 dp-build)                    ::  ++dojo-source
     ++  dp-build                                        ::  ++dojo-build

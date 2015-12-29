@@ -219,7 +219,7 @@
     {$leaf p/(pair term @)}                             ::  symbol
     {$limb p/term}                                      ::  pulls limb p
     {$lost p/twig}                                      ::  not to be taken
-    {$rock p/term q/@}                                  ::  unfixed constant
+    {$sand p/term q/@}                                  ::  unfixed constant
     {$tell p/(list twig)}                               ::  render as tape
     {$wing p/wing}                                      ::  pulls p
     {$yell p/(list twig)}                               ::  render as tank
@@ -6427,12 +6427,12 @@
   |=  lot/coin  ^-  twig
   ?-    -.lot
       $~      
-    ?:(rad [%blob p.lot] [%rock p.lot])
+    ?:(rad [%blob p.lot] [%sand p.lot])
   ::
       $blob
     ?:  rad
       [%blob %$ p.lot]
-    ?@(p.lot [%rock %$ p.lot] [$(p.lot -.p.lot) $(p.lot +.p.lot)])
+    ?@(p.lot [%sand %$ p.lot] [$(p.lot -.p.lot) $(p.lot +.p.lot)])
   ::
       $many
     [%cltr (turn p.lot |=(a/coin ^$(lot a)))]
@@ -6726,7 +6726,7 @@
     ::
         {$axil *}
       ?-  p.sec
-        {$amot *}  [%rock p.p.sec 0]
+        {$amot *}  [%sand p.p.sec 0]
         $noun      [%dttr [%blob %$ 0] [[%blob %$ 0] [%blob %$ 1]]]
         $cell      =+(nec=$(sec [%axil %noun]) [nec nec])
         $bean      [%dtts [%blob %$ 0] [%blob %$ 0]]
@@ -6913,7 +6913,7 @@
   ++  feck
     |-  ^-  (unit term)
     ?-  gen
-      {$rock $tas *}  [~ q.gen]
+      {$sand $tas *}  [~ q.gen]
       {$dbug *}       $(gen q.gen)
       *               ~
     ==
@@ -6996,7 +6996,7 @@
         :^    %wtcl                                     ::  ?:
             [%bust %bean]                               ::  ?
           [%bust %null]                                 ::  ~
-        :-  [%ktts %i [%rock 'tD' *@]]                  ::  :-  i=~~
+        :-  [%ktts %i [%sand 'tD' *@]]                  ::  :-  i=~~
         [%ktts %t [%limb %$]]                           ::  t=$
       |-  ^-  twig                                      ::
       ?~  p.gen                                         ::
@@ -7004,7 +7004,7 @@
       =+  res=$(p.gen t.p.gen)                          ::
       ^-  twig                                          ::
       ?@  i.p.gen                                       ::
-        [[%rock 'tD' i.p.gen] res]                      ::  [~~{i.p.gen} {res}]
+        [[%sand 'tD' i.p.gen] res]                      ::  [~~{i.p.gen} {res}]
       :+  %tsls                                         ::
         :-  :+  %ktts                                   ::  ^=
               %a                                        ::  a
@@ -7133,7 +7133,7 @@
         {$sgls *}  [%sggr [%memo %blob %$ p.gen] q.gen]
         {$sgpm *}
       :+  %sggr
-        [%slog [%rock %$ p.gen] [%cnhp [%limb %cain] [%zpgr q.gen] ~]]
+        [%slog [%sand %$ p.gen] [%cnhp [%limb %cain] [%zpgr q.gen] ~]]
       r.gen
     ::
         {$sgts *}  [%sggr [%germ p.gen] q.gen]
@@ -8149,7 +8149,7 @@
     ::
         {$dtkt *}  [(nice %noun) [%11 q:$(gen p.gen, gol %noun)]]
         {$dtls *}  [(nice [%atom %$ ~]) [%4 q:$(gen p.gen, gol [%atom %$ ~])]]
-        {$rock *}  [(nice (play gen)) [%1 q.gen]]
+        {$sand *}  [(nice (play gen)) [%1 q.gen]]
         {$blob *}  [(nice (play gen)) [%1 q.gen]]
         {$dttr *}
       [(nice %noun) [%2 q:$(gen p.gen, gol %noun) q:$(gen q.gen, gol %noun)]]
@@ -8303,7 +8303,7 @@
     ::
         {$dtkt *}  =+($(gen p.gen, gol %noun) (beth %noun))
         {$dtls *}  =+($(gen p.gen, gol [%atom %$ ~]) (beth [%atom %$ ~]))
-        {$rock *}  (beth (play gen))
+        {$sand *}  (beth (play gen))
         {$blob *}  (beth (play gen))
         {$dttr *}
       =+([$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)] (beth %noun))
@@ -8434,10 +8434,9 @@
     --
   ::
   ++  meet  |=(ref/span &((nest | ref) (nest(sut ref) | sut)))
-  ++  nest
+  ++  nost
     ~/  %nest
     |=  {tel/? ref/span}
-    ^-  ?
     =|  $:  gem/(set {p/span q/span})                ::  prune ref
             gul/(set {p/span q/span})                ::  assume match
             meg/(set {p/span q/span})                ::  prune sut
@@ -8575,6 +8574,12 @@
           *           dext(ref repo(sut ref))
       ==
     --
+
+  ++  nest
+    ~/  %nest
+    |=  {tel/? ref/span}
+    ^-  ?
+    !!
   ::
   ++  perk
     |=  {way/?($read $rite $both $free) met/?($gold $iron $lead $zinc)}
@@ -8639,7 +8644,7 @@
                  $(q.gen t.q.gen, rag q:(toss p.i.q.gen ^$(gen q.i.q.gen) rag))
       {$dtkt *}  %noun
       {$dtls *}  [%atom %$ ~]
-      {$rock *}  ?:(=(%f p.gen) ?>((lte q.gen 1) bool) [%atom p.gen ~])
+      {$sand *}  ?:(=(%f p.gen) ?>((lte q.gen 1) bool) [%atom p.gen ~])
       {$blob *}  |-  ^-  span
                  ?@  q.gen 
                    [%atom p.gen `q.gen]
@@ -8816,9 +8821,9 @@
   ++  hasp  ;~  pose
               (ifix [sel ser] wide)
               (stag %cnhp (ifix [pel per] (most ace wide)))
-              (stag %rock (stag %t qut))
+              (stag %sand (stag %t qut))
               %+  cook
-                |=(a/coin [%rock ?:(?=({$~ $tas *} a) %tas %ta) ~(rent co a)])
+                |=(a/coin [%sand ?:(?=({$~ $tas *} a) %tas %ta) ~(rent co a)])
               nuck:so
             ==
   ++  mota  %+  cook
@@ -8833,7 +8838,7 @@
     %+  reel  p.gen
     |=  {a/twig b/_`(unit path)`[~ u=/]}
     ?~  b  ~
-    ?.  ?=($rock -.a)  ~
+    ?.  ?=($sand -.a)  ~
     `[q.a u.b]
   ::
   ++  pray
@@ -8888,7 +8893,7 @@
     =+  zom=(poon (flop moz) q.u.pof)
     ?~(zom ~ `(weld (flop gul) u.zom))
   ::
-  ++  poof  |=(pax/path ^-((list twig) (turn pax |=(a/@ta [%rock %ta a]))))
+  ++  poof  |=(pax/path ^-((list twig) (turn pax |=(a/@ta [%sand %ta a]))))
   ++  poon
     |=  {pag/(list twig) goo/tyke}
     ^-  (unit (list twig))
@@ -9224,10 +9229,10 @@
           (cook |=(a/wing [%cnts a ~]) rope)
           (stag %wtpm ;~(pfix pam (ifix [pel per] (most ace wide))))
           ;~(plug (stag %blob (stag %f (cold & pam))) ;~(pfix fas wide))
-          (stag %rock (stag %f (cold & pam)))
+          (stag %sand (stag %f (cold & pam)))
         ==
       :-  '\''
-        (stag %rock (stag %t qut))
+        (stag %sand (stag %t qut))
       :-  '('
         (stag %cnhp (ifix [pel per] (most ace wide)))
       :-  '{'
@@ -9253,7 +9258,7 @@
         ==
       :-  '-'
         ;~  pose
-          (stag %rock tash:so)
+          (stag %sand tash:so)
         ::
           %+  cook
             |=  a/(list (list beer))
@@ -9268,7 +9273,7 @@
           (cook |=(a/wing [%cnts a ~]) rope)
         ==
       :-  ['0' '9']
-        (stag %rock bisk:so)
+        (stag %sand bisk:so)
       :-  ':'
         ;~  pfix  col
           ;~  pose
@@ -9294,7 +9299,7 @@
         ;~  pfix  tec
           ;~  pose
             %+  cook
-              |=({a/@ta b/twig} [%ktls [%rock a 0] [%ktls [%rock %$ 0] b]])
+              |=({a/@ta b/twig} [%ktls [%sand a 0] [%ktls [%sand %$ 0] b]])
             ;~(pfix pat ;~(plug mota ;~(pfix tec wide)))
             ;~  pfix  tar
               (stag %kthp (stag [%base %noun] ;~(pfix tec wide)))
@@ -9316,7 +9321,7 @@
           (cook |=(a/wing [%cnts a ~]) rope)
           (stag %wtbr ;~(pfix bar (ifix [pel per] (most ace wide))))
           ;~(plug (stag %blob (stag %f (cold | bar))) ;~(pfix fas wide))
-          (stag %rock (stag %f (cold | bar)))
+          (stag %sand (stag %f (cold | bar)))
         ==
       :-  '~'
         ;~  pose
