@@ -279,7 +279,6 @@ J_F_OFILES=\
        jets/f/face.o \
        jets/f/fitz.o \
        jets/f/flan.o \
-       jets/f/flay.o \
        jets/f/flip.o \
        jets/f/flor.o \
        jets/f/fork.o \
