@@ -738,6 +738,7 @@
 #   define c3__nop    c3_s3('n','o','p')
 #   define c3__noop   c3_s4('n','o','o','p')
 #   define c3__norm   c3_s4('n','o','r','m')
+#   define c3__nost   c3_s4('n','o','s','t')
 #   define c3__not    c3_s3('n','o','t')
 #   define c3__note   c3_s4('n','o','t','e')
 #   define c3__noun   c3_s4('n','o','u','n')

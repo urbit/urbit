@@ -109,6 +109,7 @@
   {
     if ( (c3y == _mint_vet(van)) &&
          (c3n == u3qfu_nest(van, gol, c3y, typ)) )
+         // (c3n == u3qfu_nost(van, gol, c3y, typ)) )
     {
       // u3_noun dun = u3qfu_dunq(van, "need", gol);
       // u3_noun niz = u3qfu_dunq(van, "have", typ);
@@ -601,6 +602,24 @@
 
         u3z(zel);
         return ret;
+      }
+      case c3__kthx: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _mint_used();
+      {
+        u3_noun huz = u3qfu_play(van, sut, p_gen);
+        u3_noun hif = _mint_nice(van, gol, huz);
+        u3_noun zel = _mint_in(van, sut, c3__noun, q_gen);
+        u3_noun kek = u3qfu_nost(van, hif, c3y, u3h(zel));
+
+        if ( c3n == kek ) {
+          return u3m_bail(c3__exit);
+        }
+        else {
+          u3_noun ret = u3nc(hif, u3k(u3t(zel)));
+
+          u3z(zel);
+          return ret;
+        }
       }
       case c3__tsgr: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
