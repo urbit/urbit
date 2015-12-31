@@ -1,4 +1,4 @@
-::   
+!:   
 ::  clay (4c), revision control
 ::
 ::  This is split in three top-level sections:  structure definitions, main
@@ -299,7 +299,7 @@
   ::
   ++  emil
     |=  mof/(list move)
-    %_(+> mow (welp mof mow))
+    %_(+> mow (weld mof mow))
   ::
   ++  balk                                              ::  read and send
     |=  {hen/duct cay/(unit (each cage lobe)) mun/mood}
@@ -638,7 +638,7 @@
           ~
       ::
           %-  mo  ^-  (list (pair path mime))
-          ;:  welp
+          ;:  weld
             ^-  (list (pair path mime))
             %+  murn  ins
             |=  {pax/path mis/miso}
@@ -677,7 +677,7 @@
         ?>  ?=(^ ins.u.dok)
         ?>  ?=(^ dif.u.dok)
         ?>  ?=(^ mut.u.dok)
-        ;:  welp
+        ;:  weld
           ^-  (list (pair path misu))
           (turn del.u.dok |=(pax/path [pax %del ~]))
         ::
@@ -809,7 +809,7 @@
         ?>  ?=(^ ins.u.dok)
         ?>  ?=(^ dif.u.dok)
         ?>  ?=(^ mut.u.dok)
-        ;:  welp
+        ;:  weld
           ^-  (list (pair path misu))
           (turn del.u.dok |=(pax/path [pax %del ~]))
         ::
@@ -2930,7 +2930,7 @@
 ++  mode-to-soba
   |=  {hat/(map path lobe) pax/path all/? mod/mode}
   ^-  soba
-  %+  welp
+  %+  weld
     ^-  (list (pair path miso))
     ?.  all
       ~

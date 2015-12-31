@@ -275,6 +275,7 @@
     {$ktbr p/twig}                                      ::  %gold core to %iron
     {$ktdt p/twig q/twig}                               ::  cast q to span (p q)
     {$ktls p/twig q/twig}                               ::  cast q to p, verify
+    {$kthx p/twig q/twig}                               ::  experimental cast
     {$kthp p/twig q/twig}                               ::  cast q to icon of p
     {$ktpm p/twig}                                      ::  %gold core to %zinc
     {$ktsg p/twig}                                      ::  p as static constant
@@ -4820,8 +4821,11 @@
     =+  dst=(lore ((hard @) src))
     %-  role
     ?+  -.q.don  ~|(%unsupported !!)
+      ::
+      ::  XX  these hards should not be needed; udon needs parameterized
+      ::
       $a  ((hard (list @t)) q.q.don)
-      $c  (lurk dst p.q.don)
+      $c  ((hard (list @t)) (lurk `(list *)`dst p.q.don))
     ==
   ==
 ::
@@ -6912,7 +6916,7 @@
   ++  feck
     |-  ^-  (unit term)
     ?-  gen
-      {$sand $tas *}  [~ q.gen]
+      {$sand $tas @}  [~ q.gen]
       {$dbug *}       $(gen q.gen)
       *               ~
     ==
@@ -7744,6 +7748,7 @@
       %moot   moot
       %mull   mull
       %nest   nest
+      %nost   nost
       %play   play
       %peek   peek
       %repo   repo
@@ -8162,6 +8167,12 @@
         {$ktls *}
       =+(hif=(nice (play p.gen)) [hif q:$(gen q.gen, gol hif)])
     ::
+        {$kthx *}
+      =+  hif=(nice (play p.gen)) 
+      =+  fid=$(gen q.gen, gol %noun)
+      ?>  (nost(sut hif) & p.fid)
+      [hif q.fid]
+    ::
         {$ktpm *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %zinc) q.vat])
         {$ktsg *}
       =+  nef=$(gen p.gen)
@@ -8318,6 +8329,10 @@
       =+  hif=[p=(nice (play p.gen)) q=(play(sut dox) p.gen)]
       =+($(gen q.gen, gol p.hif) hif)
     ::
+        {$kthx *}
+      =+  hif=[p=(nice (play p.gen)) q=(play(sut dox) p.gen)]
+      =+($(gen q.gen, gol p.hif) hif)
+    ::
         {$ktpm *}
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %zinc) (wrap(sut q.vat) %zinc)])
     ::
@@ -8434,8 +8449,9 @@
   ::
   ++  meet  |=(ref/span &((nest | ref) (nest(sut ref) | sut)))
   ++  nost
-    ~/  %nest
+    ~/  %nost
     |=  {tel/? ref/span}
+    ~&  %nost
     =|  $:  gem/(set {p/span q/span})                ::  prune ref
             gul/(set {p/span q/span})                ::  assume match
             meg/(set {p/span q/span})                ::  prune sut
@@ -8548,15 +8564,15 @@
       =-  ?:  tyn
             &
           ?:  tel
-            ::  ~_  (dunk %need)
-            ::  ~_  (dunk(sut ref) %have)
-            ~|(%span-fail !!)
+            ~_  (dunk %need)
+            ~_  (dunk(sut ref) %have)
+            ~|(%nost-fail !!)
           |
       ^=  tyn
       ?:  =(sut ref)  &
       dear
     ::
-    ++  sext
+    ++  sore
       ?|  (~(has in gem) [sut ref])
           dext(gem (~(put in gem) [sut ref]))
       ==
@@ -8566,7 +8582,7 @@
       ?-  ref
           {$atom *}   |
           {$cell *}   |
-          {$fork *}   &(sext(ref p.ref) sext(ref q.ref))
+          {$fork *}   &(sore(ref p.ref) sore(ref q.ref))
           {$hold *}   dext(ref repo(sut ref))
           $noun       |
           $void       &
@@ -8655,6 +8671,7 @@
       {$dtwt *}  bool
       {$ktbr *}  (wrap(sut $(gen p.gen)) %iron)
       {$ktls *}  $(gen p.gen)
+      {$kthx *}  $(gen p.gen)
       {$ktpm *}  (wrap(sut $(gen p.gen)) %zinc)
       {$ktsg *}  $(gen p.gen)
       {$ktts *}  (conk(sut $(gen q.gen)) p.gen)
@@ -8839,23 +8856,13 @@
     %+  reel  p.gen
     |=  {a/twig b/_`(unit path)`[~ u=/]}
     ?~  b  ~
-    ?.  ?=($sand -.a)  ~
+    ?.  ?=({$sand $tas @} a)  ~
     `[q.a u.b]
   ::
   ++  pray
     |=  gen/twig  ~|  %pray  ^-  (unit twig)
-    =+  rev=(plex gen)
-    ?~  rev  ~
-    :-  ~
-    ?:  (~(has in was) u.rev)
-      ~|(%pray-loop !!)
-    =+  ruv=`path`(weld u.rev `path`[%hoon ~])
-    ~&  [%pray-disabled ruv]
+    ~&  [%pray-disabled gen]
     !!
-    ::  =+  txt=(@ta .^(%cx ruv))
-    ::  ~|  ruv
-    ::  %+  rash  txt
-    ::  (ifix [gay gay] tall(was (~(put in was) u.rev), wer u.rev, bug |))
   ::
   ++  prey
     |=  gun/(list twig)  ^-  (unit twig)
@@ -9252,7 +9259,7 @@
           %+  cook
             |=  a/(list (list beer))
             :-  %smfs
-            [%knit |-(?~(a ~ (weld i.a $(a t.a))))]
+            [%knit |-(^-((list beer) ?~(a ~ (weld i.a $(a t.a)))))]
           (most dog ;~(pfix lus soil))
         ::
           (cook |=(a/wing [%cnts a ~]) rope)
@@ -9313,7 +9320,7 @@
       :-  '"'
         %+  cook
           |=  a/(list (list beer))
-          [%knit |-(?~(a ~ (weld i.a $(a t.a))))]
+          [%knit |-(^-((list beer) ?~(a ~ (weld i.a $(a t.a)))))]
         (most dog soil)
       :-  ['a' 'z']
         rump
@@ -9453,6 +9460,7 @@
                     ['.' (rune dot %ktdt expb)]
                     ['-' (rune hep %kthp expb)]
                     ['+' (rune lus %ktls expb)]
+                    ['#' (rune hax %kthx expb)]
                     ['&' (rune pam %ktpm expa)]
                     ['~' (rune sig %ktsg expa)]
                     ['=' (rune tis %ktts expg)]
@@ -9531,7 +9539,6 @@
                     ['.' ;~(pfix dot (toad |.(loaf(bug |))))]
                     [',' (rune com %zpcm expb)]
                     [';' (rune sem %zpsm expb)]
-                    ['^' ;~(pfix ket (sear prey (toad exps)))]
                     ['>' (rune gar %zpgr expa)]
                     ['=' (rune tis %zpts expa)]
                     ['?' (rune wut %zpwt hinh)]
