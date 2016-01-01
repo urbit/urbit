@@ -2839,15 +2839,31 @@
 ::
 ++  mo                                                  ::  make a map
   |*  a/(pole ^)
-  =>  .(a ^.(|*(a/$@($~ ^) ?~(a ~ [i=-.a t=$(a +.a)])) a))
-  =>  .(a ^.(homo a))
+  =>  .(a ^.(homo (limo a)))
   =>  .(a `(list {p/_-<.a q/_->.a})`a)
   =+  b=*(map _?>(?=(^ a) p.i.a) _?>(?=(^ a) q.i.a))
   (~(gas by b) a)
 ::
+++  ro                                                  ::  make a map
+  |*  a/(pole ^)
+  =>  .(a ^.(|*(a/$@($~ ^) ?~(a ~ [i=-.a t=$(a +.a)])) a))
+  =>  .(a ^#((homo a) a))
+  a
+::
+++  ry                                                  ::  make a map
+  |*  a/(pole ^)
+  =>  .(a ^.(|*(a/$@($~ ^) ?~(a ~ [i=-.a t=$(a +.a)])) a))
+  a
+::
 ++  sa                                                  ::  make a set
   |*  a/(list)
   =>  .(a `_(homo a)`a)
+  =+  b=*(set _?>(?=(^ a) i.a))
+  (~(gas in b) a)
+::
+++  sy                                                  ::  make a set
+  |*  a/(list)
+  =.  a  ^#((homo a) a)
   =+  b=*(set _?>(?=(^ a) i.a))
   (~(gas in b) a)
 ::
@@ -7425,7 +7441,9 @@
       [[%leaf (rip 3 -.lum)] $(lum +.lum)]
     ::
         $span
-      =+  cis=((hard tank) .*(.(sut lum) (dial dole)))
+      =+  tyr=|.((dial dole))
+      =+  vol=tyr(sut lum)
+      =+  cis=((hard tank) .*(vol -:vol))
       :^  ~   %palm
         [~ ~ ~ ~]
       [[%leaf '#' 't' '/' ~] cis ~]
