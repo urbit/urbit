@@ -331,6 +331,11 @@
       {
         return _play_x(van, sut, p_gen);
       }
+      case c3__kthx: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _play_used();
+      {
+        return _play_x(van, sut, p_gen);
+      }
       case c3__tsgr: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {

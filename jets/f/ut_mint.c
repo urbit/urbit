@@ -612,6 +612,8 @@
         u3_noun kek = u3qfu_nost(van, hif, c3y, u3h(zel));
 
         if ( c3n == kek ) {
+          u3z(hif);
+          u3z(zel);
           return u3m_bail(c3__exit);
         }
         else {
