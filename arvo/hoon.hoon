@@ -275,7 +275,6 @@
     {$ktbr p/twig}                                      ::  %gold core to %iron
     {$ktdt p/twig q/twig}                               ::  cast q to span (p q)
     {$ktls p/twig q/twig}                               ::  cast q to p, verify
-    {$kthx p/twig q/twig}                               ::  experimental cast
     {$kthp p/twig q/twig}                               ::  cast q to icon of p
     {$ktpm p/twig}                                      ::  %gold core to %zinc
     {$ktsg p/twig}                                      ::  p as static constant
@@ -658,14 +657,14 @@
 ::
 ++  homo                                                ::  homogenize
   |*  a/(list)
-  ^#  =<  $
+  ^+  =<  $
     |%  +-  $  ?:(*? ~ [i=(snag 0 a) t=$])
     --
   a
 ::
 ++  limo                                                ::  listify
   |*  a/*
-  ^#  =<  $
+  ^+  =<  $
     |%  +-  $  ?~(a ~ ?:(*? [i=-.a t=$] $(a +.a)))
     --
   a
@@ -2839,19 +2838,19 @@
 ::
 ++  li                                                  ::  list from raw noun
   |*  a/*
-  ^#((homo (limo a)) a)
+  ^+((homo (limo a)) a)
 ::
 ++  mo                                                  ::  map from raw noun
   |*  a/* 
-  (malt ^#((homo (limo a)) a))
+  (malt ^+((homo (limo a)) a))
 ::
 ++  malt                                                ::  map from raw list
   |*  a/(list) 
-  (molt ^#(*(list {p/_-<.a q/_->.a}) a))
+  (molt `(list {p/_-<.a q/_->.a})`a)
 ::
 ++  molt                                                ::  map from pair list
   |*  a/(list (pair))
-  (~(gas by ^#(*(map _p.i.-.a _q.i.-.a) ~)) a)
+  (~(gas by `(map _p.i.-.a _q.i.-.a)`~) a)
 ::
 ++  sa                                                  ::  make a set
   |*  a/(list)
@@ -7758,7 +7757,6 @@
       %moot   moot
       %mull   mull
       %nest   nest
-      %nost   nost
       %play   play
       %peek   peek
       %repo   repo
@@ -8178,12 +8176,6 @@
         {$ktls *}
       =+(hif=(nice (play p.gen)) [hif q:$(gen q.gen, gol hif)])
     ::
-        {$kthx *}
-      =+  hif=(nice (play p.gen)) 
-      =+  fid=$(gen q.gen, gol %noun)
-      ?>  (nost(sut hif) & p.fid)
-      [hif q.fid]
-    ::
         {$ktpm *}  =+(vat=$(gen p.gen) [(wrap(sut p.vat) %zinc) q.vat])
         {$ktsg *}
       =+  nef=$(gen p.gen)
@@ -8340,10 +8332,6 @@
       =+  hif=[p=(nice (play p.gen)) q=(play(sut dox) p.gen)]
       =+($(gen q.gen, gol p.hif) hif)
     ::
-        {$kthx *}
-      =+  hif=[p=(nice (play p.gen)) q=(play(sut dox) p.gen)]
-      =+($(gen q.gen, gol p.hif) hif)
-    ::
         {$ktpm *}
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %zinc) (wrap(sut q.vat) %zinc)])
     ::
@@ -8459,10 +8447,14 @@
     --
   ::
   ++  meet  |=(ref/span &((nest | ref) (nest(sut ref) | sut)))
-  ++  nost
-    ~/  %nost
+  ++  mite  |=(ref/span |((nest | ref) (nest(sut ref) | sut)))
+  ++  nest
+    ~/  %nest
     |=  {tel/? ref/span}
-    ~&  %nost
+    =|  $:  seg/(set span)                              ::  degenerate sut
+            reg/(set span)                              ::  degenerate ref
+            gil/(set {p/span q/span})                   ::  assume nest
+        ==
     =<  dext
     |%
     ++  cong
@@ -8478,9 +8470,9 @@
       ?&
         ?|(=(p.q.sut p.q.ref) =(%gold p.q.ref))
       ::
-        ?|  (~(has in gul) [sut ref])
+        ?|  (~(has in gil) [sut ref])
             %+  %=  cram
-                  gul  (~(put in gul) [sut ref])
+                  gil  (~(put in gil) [sut ref])
                   sut  sut(p q.q.sut, p.q %gold)
                   ref  ref(p q.q.ref, p.q %gold)
                 ==
@@ -8526,13 +8518,15 @@
         ==
       ==
     ::
-    ++  dare
-      ?&  !(~(has in meg) [sut ref])
-          dext(tel |, meg (~(put in meg) [sut ref]))
-      ==
-    ::
-    ++  dear
+    ++  dext
       ^-  ?
+      =-  ?:  -  &
+          ?:  tel
+            ::  ~_  (dunk %need)
+            ::  ~_  (dunk(sut ref) %have)
+            ~|(%nest-fail !!)
+          |
+      ?:  =(sut ref)  &
       ?-    sut
           $void       sint
           $noun       &
@@ -8548,60 +8542,46 @@
         ?.  ?=({$cell *} ref)
           sint
         ?&
-          dext(sut p.sut, ref p.ref)
-          dext(sut q.sut, ref q.ref)
+          dext(sut p.sut, ref p.ref, seg ~, reg ~)
+          dext(sut q.sut, ref q.ref, seg ~, reg ~)
         ==
       ::
           {$core *}
         ?.  ?=({$core *} ref)
           sint
-        cong
+        cong(seg ~, reg ~)
       ::
           {$face *}   dext(sut q.sut)
           {$fork *}
         ?.  ?=(?({$atom *} $noun {$cell *} {$core *}) ref)
           sint
-        |(dare(sut p.sut) dare(sut q.sut))
+        |(dext(sut p.sut) dext(sut q.sut))
       ::
-          {$hold *}  dext(sut repo)
-      ==
-    ::
-    ++  dext
-      ^-  ?
-      =-  ?:  tyn
-            &
-          ?:  tel
-            ~_  (dunk %need)
-            ~_  (dunk(sut ref) %have)
-            ~|(%nost-fail !!)
-          |
-      ^=  tyn
-      ?:  =(sut ref)  &
-      dear
-    ::
-    ++  sore
-      ?|  (~(has in gem) [sut ref])
-          dext(gem (~(put in gem) [sut ref]))
+          {$hold *}  
+        ?:  (~(has in seg) sut)  |
+        ?:  (~(has in gil) [sut ref])  &
+        dext(sut repo, seg (~(put in seg) sut), gil (~(put in gil) [sut ref]))
       ==
     ::
     ++  sint
       ^-  ?
       ?-  ref
-          {$atom *}   |
-          {$cell *}   |
-          {$fork *}   &(sore(ref p.ref) sore(ref q.ref))
-          {$hold *}   dext(ref repo(sut ref))
           $noun       |
           $void       &
-          *           dext(ref repo(sut ref))
+          {$atom *}   |
+          {$cell *}   |
+          {$core *}   dext(ref repo(sut ref))
+          {$face *}   dext(ref q.ref)
+          {$fork *}   &(sint(ref p.ref) sint(ref q.ref))
+          {$hold *}   ?:  (~(has in reg) ref)  &
+                      ?:  (~(has in gil) [sut ref])  &
+                      %=  dext
+                        ref  repo(sut ref)
+                        reg  (~(put in reg) ref)
+                        gil  (~(put in gil) [sut ref])
+                      ==
       ==
     --
-
-  ++  nest
-    ~/  %nest
-    |=  {tel/? ref/span}
-    ^-  ?
-    !!
   ::
   ++  perk
     |=  {way/?($read $rite $both $free) met/?($gold $iron $lead $zinc)}
@@ -8678,7 +8658,6 @@
       {$dtwt *}  bool
       {$ktbr *}  (wrap(sut $(gen p.gen)) %iron)
       {$ktls *}  $(gen p.gen)
-      {$kthx *}  $(gen p.gen)
       {$ktpm *}  (wrap(sut $(gen p.gen)) %zinc)
       {$ktsg *}  $(gen p.gen)
       {$ktts *}  (conk(sut $(gen q.gen)) p.gen)
@@ -9467,7 +9446,6 @@
                     ['.' (rune dot %ktdt expb)]
                     ['-' (rune hep %kthp expb)]
                     ['+' (rune lus %ktls expb)]
-                    ['#' (rune hax %kthx expb)]
                     ['&' (rune pam %ktpm expa)]
                     ['~' (rune sig %ktsg expa)]
                     ['=' (rune tis %ktts expg)]
