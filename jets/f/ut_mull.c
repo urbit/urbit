@@ -119,7 +119,7 @@
              u3_noun gol,
              u3_noun typ)
   {
-    if ( c3n == u3qfu_nost(van, gol, c3y, typ) ) {
+    if ( c3n == u3qfu_nest(van, gol, c3y, typ) ) {
       // u3_noun dun = u3qfu_dunq(van, "need", gol);
       // u3_noun niz = u3qfu_dunq(van, "have", typ);
 
@@ -553,7 +553,7 @@
         u3_noun p_hif = _mull_nice(van, gol, u3qfu_play(van, sut, p_gen));
         u3_noun q_hif = u3qfu_play(van, dox, p_gen);
         u3_noun zel = _mull_in(van, sut, c3__noun, dox, q_gen);
-        u3_noun kek = u3qfu_nost(van, p_hif, c3y, u3h(zel));
+        u3_noun kek = u3qfu_nest(van, p_hif, c3y, u3h(zel));
  
         if ( c3n == kek ) {
           u3z(p_hif);

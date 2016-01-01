@@ -298,7 +298,6 @@ J_F_OFILES_UT=\
        jets/f/ut_mint.o \
        jets/f/ut_mull.o \
        jets/f/ut_nest.o \
-       jets/f/ut_nost.o \
        jets/f/ut_park.o \
        jets/f/ut_peek.o \
        jets/f/ut_play.o \
