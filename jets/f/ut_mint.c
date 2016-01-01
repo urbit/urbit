@@ -108,8 +108,8 @@
              u3_noun typ)
   {
     if ( (c3y == _mint_vet(van)) &&
-         (c3n == u3qfu_nest(van, gol, c3y, typ)) )
-         // (c3n == u3qfu_nost(van, gol, c3y, typ)) )
+        //  (c3n == u3qfu_nest(van, gol, c3y, typ)) )
+         (c3n == u3qfu_nost(van, gol, c3y, typ)) )
     {
       // u3_noun dun = u3qfu_dunq(van, "need", gol);
       // u3_noun niz = u3qfu_dunq(van, "have", typ);
@@ -609,9 +609,10 @@
         u3_noun huz = u3qfu_play(van, sut, p_gen);
         u3_noun hif = _mint_nice(van, gol, huz);
         u3_noun zel = _mint_in(van, sut, c3__noun, q_gen);
-        u3_noun kek = u3qfu_nost(van, hif, c3y, u3h(zel));
 
-        if ( c3n == kek ) {
+        if ( (c3y == _mint_vet(van)) && 
+             (c3n == u3qfu_nost(van, hif, c3y, u3h(zel))) )
+        {
           u3z(hif);
           u3z(zel);
           return u3m_bail(c3__exit);
