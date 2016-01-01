@@ -59,7 +59,7 @@
 
       if ( c3__ash == u3h(gat) ) {
         if ( (c3y == vet) &&
-             (c3n == u3qfu_nest(van, qq_typ, c3y, p_typ)) )
+             (c3n == u3qfu_nost(van, qq_typ, c3y, p_typ)) )
         {
 #if 0
           u3_noun dun = u3qfu_dunq(van, "need", qq_typ);

@@ -119,7 +119,7 @@
              u3_noun gol,
              u3_noun typ)
   {
-    if ( c3n == u3qfu_nest(van, gol, c3y, typ) ) {
+    if ( c3n == u3qfu_nost(van, gol, c3y, typ) ) {
       // u3_noun dun = u3qfu_dunq(van, "need", gol);
       // u3_noun niz = u3qfu_dunq(van, "have", typ);
 

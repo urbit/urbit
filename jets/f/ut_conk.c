@@ -34,7 +34,7 @@
         if ( c3y == vet ) {
           u3_noun cel = u3nt(c3__cell, c3__noun, c3__noun);
 
-          if ( c3n == u3qfu_nest(van, cel, c3y, sut) ) {
+          if ( c3n == u3qfu_nost(van, cel, c3y, sut) ) {
             return u3m_bail(c3__fail);
           }
           u3z(cel);
