@@ -375,7 +375,7 @@
   ++  must-ergo
     |=  can/(list path)
     ^-  (map term (pair @ud (set path)))
-    %-  mo  ^-  (list (trel term @ud (set path)))
+    %-  malt  ^-  (list (trel term @ud (set path)))
     %+  murn  (~(tap by mon))
     |=  {nam/term bem/beam}
     ^-  (unit (trel term @ud (set path)))
@@ -627,17 +627,19 @@
       ::
           ~
       ::
-          (mo (turn dif |=({pax/path mis/miso} ?>(?=($dif -.mis) [pax p.mis]))))
+          %-  malt
+          (turn dif |=({pax/path mis/miso} ?>(?=($dif -.mis) [pax p.mis])))
       ::
           ~
       ::
-          (mo (turn mut |=({pax/path mis/miso} ?>(?=($mut -.mis) [pax p.mis]))))
+          %-  malt 
+          (turn mut |=({pax/path mis/miso} ?>(?=($mut -.mis) [pax p.mis])))
       ::
           ~
       ::
           ~
       ::
-          %-  mo  ^-  (list (pair path mime))
+          %-  molt  ^-  (list (pair path mime))
           ;:  weld
             ^-  (list (pair path mime))
             %+  murn  ins
@@ -755,7 +757,7 @@
           ~|(%castify-bad-path-mark !!)
         [((hard path) q.q.pax) cay]
     =.  muh.u.dok
-          %-  mo
+          %-  malt
           %+  turn  cat
           |=  {pax/path cay/cage}
           [pax (page-to-lobe:ze [p q.q]:cay)]
@@ -842,7 +844,7 @@
         [-< -> +]:[((hard {path lobe}) q.q.pax) cay]
     ::  ~&  %canned
     ::  ~&  %checking-out
-    =.  ank.dom  (checkout-ankh:ze (mo cat))
+    =.  ank.dom  (checkout-ankh:ze (malt cat))
     ::  ~&  %checked-out
     ::  ~&  %waking
     =.  +>.$  =>(wake ?>(?=(^ dok) .))
@@ -856,7 +858,7 @@
         %+  roll  -
         |=  {pak/(set path) acc/(set path)}
         (~(uni in acc) pak)
-    =+  can=(mo sim)
+    =+  can=(malt sim)
     ::  ~&  %forming-ergo
     ::  =-  ~&  %formed-ergo  -
     %-  emit(dok ~)
@@ -887,7 +889,7 @@
       (print-to-dill '!' %rose [" " "" ""] leaf+"clay ergo failed" p.res)
     ?~  hez  ~|(%no-sync-duct !!)
     =+  ^-  can/(map path (unit mime))
-        %-  mo  ^-  mode
+        %-  malt  ^-  mode
         %+  turn  (gage-to-cages res)
         |=  {pax/cage mim/cage}
         ?.  ?=($path p.pax)
@@ -931,12 +933,12 @@
     ^+  +>
     =<  wake
     =+  ^-  nut/(map tako yaki)
-        %-  mo  ^-  (list (pair tako yaki))
+        %-  molt  ^-  (list (pair tako yaki))
         %+  turn  (~(tap in lar))
         |=  yak/yaki
         [r.yak yak]
     =+  ^-  nat/(map lobe blob)
-        %-  mo  ^-  (list (pair lobe blob))
+        %-  molt  ^-  (list (pair lobe blob))
         %+  turn  (~(tap in bar))
         |=  bol/blob
         [p.bol bol]
@@ -1486,7 +1488,7 @@
       |=  {yon/aeon pax/path}                           ::  data at path
       ^-  (map path lobe)
       ?:  =(0 yon)  ~
-      %-  mo
+      %-  malt
       %+  skim
         %.  ~
         %~  tap  by
@@ -1664,7 +1666,7 @@
           |=({{path lobe} @uvI} (shax (jam +<)))
         us
       ^-  (map knot $~)
-      %-  mo  ^-  (list (pair knot $~))
+      %-  molt  ^-  (list (pair knot $~))
       %+  turn  descendants
       |=  {paf/path lob/lobe}
       [?>(?=(^ paf) i.paf) ~]
@@ -1933,7 +1935,7 @@
           =.  new.dat  (make-yaki [r.ali.dat r.bob.dat ~] q.ali.dat now)
           =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)
           =.  erg.dat
-            %-  mo  ^-  (list {path ?})
+            %-  malt  ^-  (list {path ?})
             %+  murn  (~(tap by (~(uni by q.bob.dat) q.ali.dat)))
             |=  {pax/path lob/lobe}
             ^-  (unit {path ?})
@@ -1957,7 +1959,7 @@
           ::  ~&  [%fine-lets-go ali=<ali> bob=<bob>]
           =.  new.dat  ali.dat
           =.  erg.dat
-            %-  mo  ^-  (list {path ?})
+            %-  malt  ^-  (list {path ?})
             %+  murn  (~(tap by (~(uni by q.bob.dat) q.ali.dat)))
             |=  {pax/path lob/lobe}
             ^-  (unit {path ?})
@@ -1987,12 +1989,12 @@
           ?:  ?=(?($mate $meld) gem.dat)
             diff-ali
           =.  new.dal.dat
-            %-  mo
+            %-  molt
             %+  skip  (~(tap by q.ali.dat))
             |=  {pax/path lob/lobe}
             (~(has by q.bas.dat) pax)
           =.  cal.dal.dat
-            %-  mo
+            %-  molt
             %+  skip  (~(tap by q.ali.dat))
             |=  {pax/path lob/lobe}
             =+  (~(get by q.bas.dat) pax)
@@ -2000,7 +2002,7 @@
           =.  can.dal.dat
             ~
           =.  old.dal.dat
-            %-  mo  ^-  (list {path $~})
+            %-  malt  ^-  (list {path $~})
             %+  murn  (~(tap by q.bas.dat))
             |=  {pax/path lob/lobe}
             ^-  (unit (pair path $~))
@@ -2008,12 +2010,12 @@
               ~
             `[pax ~]
           =.  new.dob.dat
-            %-  mo
+            %-  molt
             %+  skip  (~(tap by q.bob.dat))
             |=  {pax/path lob/lobe}
             (~(has by q.bas.dat) pax)
           =.  cal.dob.dat
-            %-  mo
+            %-  molt
             %+  skip  (~(tap by q.bob.dat))
             |=  {pax/path lob/lobe}
             =+  (~(get by q.bas.dat) pax)
@@ -2021,7 +2023,7 @@
           =.  can.dob.dat
             ~
           =.  old.dob.dat
-            %-  mo  ^-  (list {path $~})
+            %-  malt  ^-  (list {path $~})
             %+  murn  (~(tap by q.bas.dat))
             |=  {pax/path lob/lobe}
             ^-  (unit (pair path $~))
@@ -2106,12 +2108,12 @@
         ?:  ?=($| -.gon.dat)
           +>.$
         =.  new.dal.dat
-          %-  mo
+          %-  molt
           %+  skip  (~(tap by q.ali.dat))
           |=  {pax/path lob/lobe}
           (~(has by q.bas.dat) pax)
         =.  cal.dal.dat
-          %-  mo  ^-  (list (pair path lobe))
+          %-  molt  ^-  (list (pair path lobe))
           %+  murn  (~(tap by q.bas.dat))
           |=  {pax/path lob/lobe}
           ^-  (unit (pair path lobe))
@@ -2125,7 +2127,7 @@
           `[pax +.a]
         =.  can.dal.dat  p.can
         =.  old.dal.dat
-          %-  mo  ^-  (list {path $~})
+          %-  malt  ^-  (list {path $~})
           %+  murn  (~(tap by q.bas.dat))
           |=  {pax/path lob/lobe}
           ?.  =(~ (~(get by q.ali.dat) pax))
@@ -2149,12 +2151,12 @@
         ?:  ?=($| -.gon.dat)
           +>.$
         =.  new.dob.dat
-          %-  mo
+          %-  molt
           %+  skip  (~(tap by q.bob.dat))
           |=  {pax/path lob/lobe}
           (~(has by q.bas.dat) pax)
         =.  cal.dob.dat
-          %-  mo  ^-  (list (pair path lobe))
+          %-  molt  ^-  (list (pair path lobe))
           %+  murn  (~(tap by q.bas.dat))
           |=  {pax/path lob/lobe}
           ^-  (unit (pair path lobe))
@@ -2168,7 +2170,7 @@
           `[pax +.b]
         =.  can.dob.dat  p.can
         =.  old.dob.dat
-          %-  mo  ^-  (list {path $~})
+          %-  malt  ^-  (list {path $~})
           %+  murn  (~(tap by q.bas.dat))
           |=  {pax/path lob/lobe}
           ?.  =(~ (~(get by q.bob.dat) pax))
@@ -2247,7 +2249,7 @@
           +>.$
         =.  bop.dat  p.bop
         =+  ^-  con/(map path *)                        ::  2-change conflict
-            %-  mo
+            %-  molt
             %+  skim  (~(tap by bof.dat))
             |=({pax/path cay/(unit cage)} ?=($~ cay))
         =+  ^-  cas/(map path lobe)                     ::  conflict base
@@ -2256,7 +2258,7 @@
             (~(got by q.bas.dat) pax)
         =.  con                                         ::  change+del conflict
           %-  ~(uni by con)
-          %-  mo  ^-  (list {path *})
+          %-  malt  ^-  (list {path *})
           %+  skim  (~(tap by old.dal.dat))
           |=  {pax/path $~}
           ?:  (~(has by new.dob.dat) pax)
@@ -2265,7 +2267,7 @@
           (~(has by can.dob.dat) pax)
         =.  con                                         ::  change+del conflict
           %-  ~(uni by con)
-          %-  mo  ^-  (list {path *})
+          %-  malt  ^-  (list {path *})
           %+  skim  (~(tap by old.dob.dat))
           |=  {pax/path $~}
           ?:  (~(has by new.dal.dat) pax)
@@ -2274,7 +2276,7 @@
           (~(has by can.dal.dat) pax)
         =.  con                                         ::  add+add conflict
           %-  ~(uni by con)
-          %-  mo  ^-  (list {path *})
+          %-  malt  ^-  (list {path *})
           %+  skip  (~(tap by (~(int by new.dal.dat) new.dob.dat)))
           |=  {pax/path *}
           =((~(got by new.dal.dat) pax) (~(got by new.dob.dat) pax))
@@ -2287,7 +2289,7 @@
             |=  {{pax/path $~} old/(map path lobe)}
             (~(del by old) pax)
         =+  ^-  can/(map path cage)                     ::  content changes
-            %-  mo
+            %-  molt
             ^-  (list (pair path cage))
             %+  murn  (~(tap by bof.dat))
             |=  {pax/path cay/(unit cage)}
@@ -2430,7 +2432,7 @@
             =+  mit=?.(?=($mime p.mim) ~ `((hard mime) q.q.mim))
             $(p.tay t.p.tay, nac :_(nac [((hard path) q.q.pax) mit]))
         ?:  ?=({@ *} tan)  (error:he tan)
-        =+  `can/(map path (unit mime))`(mo tan)
+        =+  `can/(map path (unit mime))`(malt tan)
         ?~  hez
           (error:he %ergo-no-hez ~)
         ?:  ?=($| -.gon.dat)
@@ -2665,7 +2667,7 @@
       [u.hez.ruf %give %ogre p.q.hic]~
     :_  %_    ..^$
             mon.ruf
-          %-  mo
+          %-  molt
           %+  skip  (~(tap by mon.ruf))
           (corl (cury test p.q.hic) tail)
         ==
@@ -2934,7 +2936,7 @@
     ^-  (list (pair path miso))
     ?.  all
       ~
-    =+  mad=(mo mod)
+    =+  mad=(malt mod)
     =+  len=(lent pax)
     =+  ^-  descendants/(list path)
         %+  turn

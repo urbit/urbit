@@ -981,7 +981,7 @@
       ==
     ::
     ::
-    ++  is-anon  =([~ ''] (~(get by (mo quy)) 'anon'))
+    ++  is-anon  =([~ ''] (~(get by (molt quy)) 'anon'))
     ++  check-oryx                    ::  | if json with bad oryx
       ^-  ?
       ?.  &(?=({$~ $json} p.pok) ?=($post mef) ?=(^ bod) !is-anon)  &
@@ -1001,7 +1001,7 @@
       ^-  (unit oryx)
       =+  oxe=(biff grab-json (ot oryx+so ~):jo)
       ?^  oxe  oxe
-      (~(get by (mo quy)) %oryx)
+      (~(get by (molt quy)) %oryx)
     ::
     ::
     ++  parse
@@ -1094,7 +1094,7 @@
                 {@ @ @ $~}  (raid but %p %tas %tas ~)
               ==
           :^  %mess  [p q]:dir  r.dir
-          =+  wir=(~(get by (mo quy)) 'wire')
+          =+  wir=(~(get by (molt quy)) 'wire')
           ?^  wir  [(stab u.wir) (need grab-json)]         ::  XX distinguish
           (need-body (ot wire+(cu stab so) xyro+some ~):jo)
         ::

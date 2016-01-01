@@ -544,7 +544,7 @@
   ::  JSON objects
   ++  pair  ;~(plug ;~(sfix (ws stri) (ws col)) apex)
   ++  obje  (ifix [(ws kel) (ws ker)] (more (ws com) pair))
-  ++  obox  (stag %o (cook mo obje))
+  ++  obox  (stag %o (cook malt obje))
   ::  JSON booleans
   ++  bool  ;~(pose (cold & (jest 'true')) (cold | (jest 'false')))
   ::  JSON strings

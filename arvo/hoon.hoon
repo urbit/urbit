@@ -658,14 +658,14 @@
 ::
 ++  homo                                                ::  homogenize
   |*  a/(list)
-  ^+  =<  $
+  ^#  =<  $
     |%  +-  $  ?:(*? ~ [i=(snag 0 a) t=$])
     --
   a
 ::
 ++  limo                                                ::  listify
   |*  a/*
-  ^+  =<  $
+  ^#  =<  $
     |%  +-  $  ?~(a ~ ?:(*? [i=-.a t=$] $(a +.a)))
     --
   a
@@ -2837,33 +2837,25 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2dD, casual containers        ::
 ::
-++  mo                                                  ::  make a map
-  |*  a/(pole ^)
-  =>  .(a ^.(homo (limo a)))
-  =>  .(a `(list {p/_-<.a q/_->.a})`a)
-  =+  b=*(map _?>(?=(^ a) p.i.a) _?>(?=(^ a) q.i.a))
-  (~(gas by b) a)
+++  li                                                  ::  list from raw noun
+  |*  a/*
+  ^#((homo (limo a)) a)
 ::
-++  ro                                                  ::  make a map
-  |*  a/(pole ^)
-  =>  .(a ^.(|*(a/$@($~ ^) ?~(a ~ [i=-.a t=$(a +.a)])) a))
-  =>  .(a ^#((homo a) a))
-  a
+++  mo                                                  ::  map from raw noun
+  |*  a/* 
+  (malt ^#((homo (limo a)) a))
 ::
-++  ry                                                  ::  make a map
-  |*  a/(pole ^)
-  =>  .(a ^.(|*(a/$@($~ ^) ?~(a ~ [i=-.a t=$(a +.a)])) a))
-  a
+++  malt                                                ::  map from raw list
+  |*  a/(list) 
+  (molt ^#(*(list {p/_-<.a q/_->.a}) a))
+::
+++  molt                                                ::  map from pair list
+  |*  a/(list (pair))
+  (~(gas by ^#(*(map _p.i.-.a _q.i.-.a) ~)) a)
 ::
 ++  sa                                                  ::  make a set
   |*  a/(list)
   =>  .(a `_(homo a)`a)
-  =+  b=*(set _?>(?=(^ a) i.a))
-  (~(gas in b) a)
-::
-++  sy                                                  ::  make a set
-  |*  a/(list)
-  =.  a  ^#((homo a) a)
   =+  b=*(set _?>(?=(^ a) i.a))
   (~(gas in b) a)
 ::
@@ -8018,6 +8010,7 @@
       hag.$
     |=  {p/span q/foot}
     ?.  ?=({$core *} p)
+      ~_  (dunk %fire-span)
       ~|(%fire-core !!)
     =+  dox=[%core q.q.p q.p]
     ?:  ?=($ash -.q)
