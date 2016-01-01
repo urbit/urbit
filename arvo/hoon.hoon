@@ -8463,10 +8463,6 @@
     ~/  %nost
     |=  {tel/? ref/span}
     ~&  %nost
-    =|  $:  gem/(set {p/span q/span})                ::  prune ref
-            gul/(set {p/span q/span})                ::  assume match
-            meg/(set {p/span q/span})                ::  prune sut
-        ==
     =<  dext
     |%
     ++  cong

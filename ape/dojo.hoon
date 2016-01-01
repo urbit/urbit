@@ -527,19 +527,22 @@
         {$hold *}  a(p (turn p.a |=({b/span c/twig} [^$(a b) c])))
       ==
     ::
+    ++  dy-shown
+      $?  twig
+          $^  {dy-shown dy-shown}
+          $%  {$ur purl}
+              {$dv path}
+              {$as mark dy-shown}
+              {$do twig dy-shown}
+              {$ge path (list dy-shown) (map term (unit dy-shown))}
+          ==
+      ==
+    ::
     ++  dy-show-source
       |=  a/dojo-source  ^-  tank
       =-  >[-]<
       =+  `{@ bil/dojo-build}`a
-      |-  ^-  $^  [_$ _$]
-              $?  twig
-                  $%  {$ur purl}
-                      {$dv path}
-                      {$as mark _$}
-                      {$do twig _$}
-                      {$ge path (list _$) (map term (unit _$))}
-                  ==
-              ==
+      |-  ^-  dy-shown
       ?-  -.bil
         $?($ur $dv)  bil
         $ex  ?.  ?=({$cltr *} p.bil)  p.bil
