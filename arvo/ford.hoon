@@ -432,7 +432,7 @@
             =-  ?-  -.faw
                   $&  :-  %1
                       ^=  p
-                      %-  sa
+                      %-  silt
                       %+  turn  p.faw
                       |=(a/{care beam} [-.a +.a *tang])
                   $|  [%2 p=*(set beam) q=p.faw]
@@ -571,7 +571,7 @@
       |=  dep/(set beam)
       ^+  [*@uvH deh.bay]
       =.  dep
-        =<  (sa (skip (~(tap in dep)) .))
+        =<  (silt (skip (~(tap in dep)) .))
         |=  dap/beam  ^-  ?
         ?~  s.dap  |
         =>(.(s.dap t.s.dap) |((~(has in dep) dap) $))
@@ -1165,7 +1165,7 @@
       =+  lit=(~(get by mal) for)
       ?^  lit
         (cope (lace cof for bem arg u.lit) (flux some))
-      =+  opt=(sa (turn (~(tap by mal)) head))          ::  XX asymptotics  
+      =+  opt=(silt (turn (~(tap by mal)) head))        ::  XX asymptotics  
       %+  cope  (lion cof for opt)
       |=  {cof/cafe wuy/(list @tas)}
       ?~  wuy  (flue cof)
@@ -1213,7 +1213,7 @@
     ::
     ++  lion                                            ::  translation search
       |=  {cof/cafe too/mark fro/(set mark)}
-      :: ~&  lion+[too=too fro=(sa fro)]
+      :: ~&  lion+[too=too fro=(silt fro)]
       ^-  (bolt (list mark))
       =|  $:  war/(map mark (list mark))
               pax/(list mark)  

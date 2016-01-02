@@ -379,7 +379,7 @@
     %+  murn  (~(tap by mon))
     |=  {nam/term bem/beam}
     ^-  (unit (trel term @ud (set path)))
-    =-  ?~(- ~ `[nam (lent s.bem) (sa -)])
+    =-  ?~(- ~ `[nam (lent s.bem) (silt `(list path)`-)])
     %+  skim  can
     |=  pax/path
     &(=(p.bem her) =(q.bem syd) =((flop s.bem) (scag (lent s.bem) pax)))
@@ -1132,7 +1132,7 @@
       gar.u.nak.u.ref
     :+  let.u.nak.u.ref
       lar.u.nak.u.ref
-    (sa lat)
+    (silt lat)
   ::
   ++  mabe                                            ::  maybe fire function
     |=  {rov/rove fun/$+(@da _.)}
@@ -1350,7 +1350,7 @@
           =<  q
           %-  aeon-to-yaki
           let.dom
-      =-  =+  sar=(sa (turn lar |=({p/path *} p)))      ::  changed paths
+      =-  =+  sar=(silt (turn lar |=({p/path *} p)))    ::  changed paths
           %+  roll  (~(tap by hat) ~)                   ::  find unchanged
           =<  .(bat bar)
           |=  {{pax/path gar/lobe} bat/(map path blob)}
@@ -1550,12 +1550,12 @@
       ^-  {(set yaki) (set plop)}
       =+  old=?~(a ~ (reachable-takos u.a))
       =+  ^-  yal/(set tako)
-          %-  sa
+          %-  silt
           %+  skip
             (~(tap in (reachable-takos b)))
           |=(tak/tako (~(has in old) tak))
-      :-  (sa (turn (~(tap in yal)) tako-to-yaki))
-      (sa (turn (~(tap in (new-lobes (new-lobes ~ old) yal))) lobe-to-blob))
+      :-  (silt (turn (~(tap in yal)) tako-to-yaki))
+      (silt (turn (~(tap in (new-lobes (new-lobes ~ old) yal))) lobe-to-blob))
     ::
     ++  reachable-takos                                 ::  reachable
       |=  p/tako                                        ::  XX slow
@@ -2330,7 +2330,7 @@
         ::  ~&  >  hat=(~(run by hat) mug)
         =+  ^-  del/(map path ?)
             (~(run by (~(uni by old.dal.dat) old.dob.dat)) |=($~ %|))
-        =.  gon.dat  [%& (sa (turn (~(tap by con)) head))]
+        =.  gon.dat  [%& (silt (turn (~(tap by con)) head))]
         =.  new.dat
           (make-yaki [r.ali.dat r.bob.dat ~] hat now)
         =.  hut.ran  (~(put by hut.ran) r.new.dat new.dat)

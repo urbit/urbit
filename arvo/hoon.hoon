@@ -259,7 +259,7 @@
     {$cncl p/twig q/twig}                               ::  pull $.p w+ sample q
     {$cndt p/twig q/twig}                               ::  %-(q p)
     {$cnhp p/twig q/(list twig)}                        ::  slam p w+ sample q
-    ::  {$cnhx p/twig q/(list twig)}                        ::  advanced slam
+    {$cnhx p/twig q/(list twig)}                        ::  advanced slam
     {$cntr p/wing q/twig r/(list (pair wing twig))}     ::  pull p.q w+ changes
     {$cnkt p/twig q/twig r/twig s/twig}                 ::  slam p w+ :*(q r s)
     {$cnls p/twig q/twig r/twig}                        ::  slam p w+ :*(q r)
@@ -2836,11 +2836,11 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2dD, casual containers        ::
 ::
-++  li                                                  ::  list from raw noun
+++  ly                                                  ::  list from raw noun
   |*  a/*
   ^+((homo (limo a)) a)
 ::
-++  mo                                                  ::  map from raw noun
+++  my                                                  ::  map from raw noun
   |*  a/* 
   (malt ^+((homo (limo a)) a))
 ::
@@ -2852,17 +2852,14 @@
   |*  a/(list (pair))
   (~(gas by `(map _p.i.-.a _q.i.-.a)`~) a)
 ::
-++  sa                                                  ::  make a set
+++  sy                                                  ::  set from raw noun
+  |*  a/*
+  (silt ^+((homo (limo a)) a))
+::
+++  silt                                                ::  make a set
   |*  a/(list)
-  =>  .(a `_(homo a)`a)
   =+  b=*(set _?>(?=(^ a) i.a))
   (~(gas in b) a)
-::
-++  qu                                                  ::  qeu from list
-  |*  a/(list)
-  =>  .(a `_(homo a)`a)
-  =+  b=*(qeu _?>(?=(^ a) i.a))
-  (~(gas to b) a)
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::  ::
 ::::              chapter 2e, miscellaneous libs        ::::
 ::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -7093,7 +7090,8 @@
         {$cncb *}  [%ktls [%wing p.gen] %cnts p.gen q.gen]
         {$cncl *}
       =+  rem=[%cnsg [%$ ~] p.gen q.gen]
-      ?.  ?=({$dbug ^ $wing @ $~} p.gen)  rem
+      ?.  ?=({$dbug ^ $wing @ $~} p.gen)  
+        rem
       =>  .(p.gen `{@ ^ @ p/@tas $~}`p.gen)
       :+  %sgzp  [[%rock %tas 'slam'] [%rock %tas p.p.gen]]
       rem

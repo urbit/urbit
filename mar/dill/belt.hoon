@@ -16,7 +16,7 @@
     |=  jon/^json  ^-  ^kyev
     %-  need
     %.  jon  =>  jo  %-  ot
-    :~  mod+(cu ^sa (ar (su (perk ~[%ctrl %shift %alt %meta]))))
+    :~  mod+(cu silt (ar (su (perk ~[%ctrl %shift %alt %meta]))))
         :-  %key
         %+  cu  |*(a/$%({$str @t} {$act @}) ?+(-.a a $str +.a))
         =-  (of str+so act+(su (perk -)) ~)

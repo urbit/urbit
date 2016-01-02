@@ -394,7 +394,7 @@
       =+  grams=grams:(~(got by stories) man.she)
       |-  ^-  (unit (set partner))
       ?~  grams  ~
-      =+  pan=(sa (turn :_(head (~(tap by q.q.i.grams)))))
+      =+  pan=(silt (turn :_(head (~(tap by q.q.i.grams)))))
       ?:  (~(has in lax) pan)  `pan
       $(grams t.grams)
       ::
