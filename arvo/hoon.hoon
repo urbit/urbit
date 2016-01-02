@@ -240,7 +240,7 @@
     {$brfs p/twig q/(map term foot)}                    ::  vulcan. %gold tray
     {$brkt p/twig q/(map term foot)}                    ::  %gold book
     {$brhp p/twig}                                      ::  kick dry %gold trap
-    {$brtx p/twig q/twig}                               ::  advanced %brtr
+    {$brhx p/twig q/twig}                               ::  advanced %brtr
     {$brls p/twig q/twig}                               ::  %iron gate
     {$brtr p/twig q/twig}                               ::  wet %gold gate
     {$brts p/twig q/twig}                               ::  dry %gold gate
@@ -264,6 +264,7 @@
     {$cnkt p/twig q/twig r/twig s/twig}                 ::  slam p w+ :*(q r s)
     {$cnls p/twig q/twig r/twig}                        ::  slam p w+ :*(q r)
     {$cnsg p/wing q/twig r/twig}                        ::  pull p from q with r
+    {$cnsx p/wing q/twig r/(list twig)}                 ::  new cnsg
     {$cnts p/wing q/(list (pair wing twig))}            ::  eval. p w+ q changes
   ::                                            ::::::  nock
     {$dtkt p/twig}                                      ::  nock 11 data skyhook
@@ -7035,10 +7036,18 @@
         {$wing *}  [%cnts p.gen ~]
         {$yell *}  [%cnhp [%limb %cain] [%zpgr [%cltr p.gen]] ~]
     ::
+        {$bcpt *}  ~(clam al boil)
+        {$bccb *}  ~(clam al boil)
+        {$bccl *}  ~(clam al boil)
+        {$bccn *}  ~(clam al boil)
+        {$bcls *}  ~(clam al boil)
+        {$bckt *}  ~(clam al boil)
+        {$bcwt *}  ~(clam al boil)
+        {$bcts *}  ~(clam al boil)
+    ::
         {$brcb *}  [%tsls [%cnbc p.gen] [%brcn q.gen]]
         {$brcl *}  [%tsls [%ktsg p.gen] [%brdt q.gen]]
         {$brdt *}  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
-        {$brtr *}  [%brfs p.gen (~(put by *(map term foot)) %$ [%elm q.gen])]
         {$brfs *}  ~|  %elm-tile
                    =+  lyg=~(cloq al %herb p.gen)
                    :+  %tsls
@@ -7055,17 +7064,11 @@
         {$brkt *}  [%tsgr [%brcn (~(put by q.gen) %$ [%ash p.gen])] [%limb %$]]
         {$brls *}  [%ktbr [%brts p.gen q.gen]]
         {$brhp *}  [%tsgl [%limb %$] [%brdt p.gen]]
+        {$brhx *}  :+  %tsls  [%cnbc p.gen] 
+                   [%brcn (~(put by *(map term foot)) %$ [%elm q.gen])]
+        {$brtr *}  [%brfs p.gen (~(put by *(map term foot)) %$ [%elm q.gen])]
         {$brts *}  [%brcb p.gen (~(put by *(map term foot)) %$ [%ash q.gen])]
         {$brwt *}  [%ktwt %brdt p.gen]
-    ::
-        {$bcpt *}  ~(clam al boil)
-        {$bccb *}  ~(clam al boil)
-        {$bccl *}  ~(clam al boil)
-        {$bccn *}  ~(clam al boil)
-        {$bcls *}  ~(clam al boil)
-        {$bckt *}  ~(clam al boil)
-        {$bcwt *}  ~(clam al boil)
-        {$bcts *}  ~(clam al boil)
     ::
         {$clkt *}  [p.gen q.gen r.gen s.gen]
         {$clls *}  [p.gen q.gen r.gen]
@@ -7099,11 +7102,23 @@
         {$cndt *}  [%cnhp q.gen [p.gen ~]]
         {$cnkt *}  [%cnhp p.gen q.gen r.gen s.gen ~]
         {$cnls *}  [%cnhp p.gen q.gen r.gen ~]
+        {$cnhx *}  [%cnsx [%$ ~] p.gen q.gen]
         {$cnhp *}
       ?~(q.gen [%tsgr p.gen [%limb %$]] [%cncl p.gen [%cltr q.gen]])
     ::
         {$cnsg *}  [%cntr p.gen q.gen [[[[%& 6] ~] r.gen] ~]]
+        {$cnsx *}
+      :^  %cntr  p.gen  q.gen
+      =+  axe=6
+      |-  ^-  (list {wing twig})
+      ?~  r.gen  ~
+      ?~  t.r.gen  [[[[%| 0 ~] [%& axe] ~] i.r.gen] ~]
+      :-  [[[%| 0 ~] [%& (peg axe 2)] ~] i.r.gen] 
+      $(axe (peg axe 3), r.gen t.r.gen)
+    ::
         {$cntr *}
+      ?:  =(~ r.gen)
+        [%tsgr q.gen [%wing p.gen]]
       :+  %tsls
         q.gen
       :+  %cnts
@@ -9227,6 +9242,8 @@
         (stag %sand (stag %t qut))
       :-  '('
         (stag %cnhp (ifix [pel per] (most ace wide)))
+      :-  '#'
+        ;~(pfix hax (stag %cnhx (ifix [pel per] (most ace wide))))
       :-  '{'
         (stag %bccl (ifix [kel ker] (most ace wide)))
       :-  '*'
@@ -9380,6 +9397,7 @@
                     ['^' (rune ket %brkt expr)]
                     ['+' (rune lus %brls expb)]
                     ['*' (rune tar %brtr expb)]
+                    ['#' (rune hax %brhx expb)]
                     ['=' (rune tis %brts expb)]
                     ['?' (rune wut %brwt expa)]
                 ==
