@@ -1358,7 +1358,7 @@
   ++  tosk  ;~(pose tock (ifix [doq doq] tock))         ::  6265 cookie-value
   ++  toke  (cook crip (plus ptok))                     ::  2616 token
   ++  thor                                              ::  2396 host+port
-    %+  cook  |*(a/{* *} [+.a -.a])
+    %+  cook  |*({* *} [+<+ +<-])
     ;~  plug
       thos
       ;~((bend) (easy ~) ;~(pfix col dim:ag))

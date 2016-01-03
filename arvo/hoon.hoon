@@ -417,6 +417,8 @@
 ++  vise  {p/typo q/*}                                  ::  old vase
 ++  wall  (list tape)                                   ::  text lines (no \n)
 ++  wain  (list cord)                                   ::  text lines (no \n)
+++  vial  ?($read $rite $both $free)                    ::  co/contra/in/bi
+++  vair  ?($gold $iron $lead $zinc)                    ::  in/contra/bi/co
 ++  vein  (list (unit axis))                            ::  search trace
 ++  wing  (list limb)                                   ::  search path
 ++  wonk  |*(veq/edge ?~(q.veq !! p.u.q.veq))           ::
@@ -7830,7 +7832,7 @@
     |%
     ++  dext
       ^-  span
-      ~|  %crop-dext
+      ~|  %crop
       ::  ~_  (dunk 'dext: sut')
       ::  ~_  (dunk(sut ref) 'dext: ref')
       ?:  |(=(sut ref) =(%noun ref))
@@ -7839,49 +7841,36 @@
         sut
       ?-    sut
           {$atom *}
-        ?-    ref
-            {$atom *}   ?^  q.sut
-                          ?^  q.ref
-                            ?:(=(q.ref q.sut) %void sut)
-                          %void
-                        ?^(q.ref sut %void)
-            {$cell *}   sut
-            *           sint
+        ?+  ref      sint
+          {$atom *}  ?^  q.sut
+                       ?^(q.ref ?:(=(q.ref q.sut) %void sut) %void)
+                     ?^(q.ref sut %void)
+          {$cell *}  sut
         ==
       ::
           {$cell *}
-        ?-  ref
+        ?+  ref      sint
           {$atom *}  sut
-          {$cell *}  ?:  (nest(sut p.ref) | p.sut)
-                       (cell p.sut dext(sut q.sut, ref q.ref))
-                     sut
-          *          sint
+          {$cell *}  ?.  (nest(sut p.ref) | p.sut)  sut
+                     (cell p.sut dext(sut q.sut, ref q.ref))
         ==
       ::
-          {$core *}
-        ?:  ?=(?({$atom *} {$cell *}) ref)
-          sut
-        sint
-      ::
-          {$face *}   (face p.sut dext(sut q.sut))
-          {$fork *}   (fork dext(sut p.sut) dext(sut q.sut))
-          {$hold *}
-        ?:  (~(has in bix) [sut ref])
-          ~|(%crop-loop !!)
-        dext(sut repo, bix (~(put in bix) [sut ref]))
-      ::
-          $noun       dext(sut repo)
-          $void       %void
+          {$core *}  ?:(?=(?({$atom *} {$cell *}) ref) sut sint)
+          {$face *}  (face p.sut dext(sut q.sut))
+          {$fork *}  (fork dext(sut p.sut) dext(sut q.sut))
+          {$hold *}  ?<  (~(has in bix) [sut ref])
+                     dext(sut repo, bix (~(put in bix) [sut ref]))
+          $noun      dext(sut repo)
+          $void      %void
       ==
     ::
     ++  sint
       ^-  span
-      ?-    ref
+      ?+    ref    !!
         {$core *}  sut
         {$face *}  dext(ref repo(sut ref))
         {$fork *}  dext(sut dext(ref p.ref), ref q.ref)
         {$hold *}  dext(ref repo(sut ref))
-        *          !!
       ==
     --
   ::
@@ -7899,7 +7888,7 @@
     [[%leaf (mesc (trip paz))] duck ~]  
   ::
   ++  find
-    |=  {way/?($read $rite $both $free) hyp/wing}
+    |=  {way/vial hyp/wing}
     ~+
     =|  nol/vein
     |-  ^-  pont
@@ -7933,7 +7922,11 @@
         [%& [`p.heg lon] %& (peek(sut ref) way p.heg)]
       =|  gil/(set span)
       =<  $
-      |%  ++  $
+      |%  ++  here  [%& [~ `axe lon] %& ref]
+          ++  lose  [%| %& p.heg]
+          ++  stop  ?~(q.heg here lose)
+          ++  fake  !!
+          ++  $
             ^-  pont
             ?-    ref
                 $void       lose
@@ -8004,9 +7997,6 @@
                 [%| %& p.heg]
               $(gil (~(put in gil) ref), ref repo(sut ref))
             ==
-          ++  here  [%& [`axe lon] %& ref]
-          ++  lose  [%| %& p.heg]
-          ++  stop  ?~(q.heg here lose)
       --
     ==
   ::
@@ -8269,7 +8259,7 @@
       typ
     ::
     ++  grow
-      |=  {mel/?($gold $iron $lead $zinc) ruf/twig dab/(map term foot)}
+      |=  {mel/vair ruf/twig dab/(map term foot)}
       ^-  {p/span q/nock}
       =+  dan=^$(gen ruf, gol %noun)
       =+  toc=(core p.dan [%gold p.dan [~ dab]])
@@ -8431,7 +8421,7 @@
       typ
     ::
     ++  grow
-      |=  {mel/?($gold $iron $lead $zinc) ruf/twig dab/(map term foot)}
+      |=  {mel/vair ruf/twig dab/(map term foot)}
       ~|  %mull-grow
       ^-  {p/span q/span}
       =+  dan=^$(gen ruf, gol %noun)
@@ -8451,11 +8441,11 @@
             $ash  ^$(gol %noun, gen p.q.n.dab)
             $elm  ~
           ==
-      ?-    dab
-          {* $~ $~}   vad
-          {* $~ *}    [vad $(dab r.dab)]
-          {* * $~}    [vad $(dab l.dab)]
-          {* * *}    [vad $(dab l.dab) $(dab r.dab)]
+      ?-  dab
+        {* $~ $~}  vad
+        {* $~ *}   [vad $(dab r.dab)]
+        {* * $~}   [vad $(dab l.dab)]
+        {* * *}    [vad $(dab l.dab) $(dab r.dab)]
       ==
     --
   ::
@@ -8470,134 +8460,96 @@
         ==
     =<  dext
     |%
-    ++  cong
+    ++  deem
+      |=  {mel/vair ram/vair}
       ^-  ?
-      ?>  ?&(?=({$core *} sut) ?=({$core *} ref))
-      ?:  =(q.sut q.ref)
-        dext(sut p.sut, ref p.ref)
-      ?.  ?&  dext(sut q.q.sut, ref p.sut)
-              dext(sut p.sut, ref q.q.sut)
-              dext(sut q.q.ref, ref p.ref)
-          ==
-        |
-      ?&
-        ?|(=(p.q.sut p.q.ref) =(%gold p.q.ref))
-      ::
-        ?|  (~(has in gil) [sut ref])
-            %+  %=  cram
-                  gil  (~(put in gil) [sut ref])
-                  sut  sut(p q.q.sut, p.q %gold)
-                  ref  ref(p q.q.ref, p.q %gold)
-                ==
-              q.r.q.sut
-            q.r.q.ref
-        ==
-      ::
-        ?-    p.q.sut
-            $gold
-          =+  pac=[s=q.q.sut r=q.q.ref]
-          ?&  dext(sut s.pac, ref r.pac)
-              dext(sut r.pac, ref s.pac)
-          ==
-        ::
-            $iron
-          =+  sam=[s=(peek(sut q.q.sut) %rite 2) r=(peek(sut q.q.ref) %rite 2)]
-          dext(sut r.sam, ref s.sam)
-        ::
-            $lead  &
-            $zinc
-          =+  pal=[s=(peek(sut q.q.sut) %read 2) r=(peek(sut q.q.ref) %read 2)]
-          dext(sut s.pal, ref r.pal)
-        ==
-      ==
+      ?.  |(=(mel ram) =(%lead mel) =(%gold ram))  |
+      ?:  ?=($lead mel)  &
+      ?:  ?=($gold mel)  meet
+      =+  vay=?-(mel $iron %rite, $zinc %read)
+      dext(sut (peek vay 2), ref (peek(sut ref) vay 2))
     ::
-    ++  cram
+    ++  deep
       |=  {dab/(map term foot) hem/(map term foot)}
       ^-  ?
-      ?-    dab
-          $~  =(hem ~)
-          ^
-        ?&  ?=(^ hem)
-            =(p.n.dab p.n.hem)
-            $(dab l.dab, hem l.hem)
-            $(dab r.dab, hem r.hem)
-            ?-    -.q.n.dab
-                $ash
-              ?&  ?=($ash -.q.n.hem)
-                  dext(sut (play p.q.n.dab), ref (play(sut ref) p.q.n.hem))
-              ==
-                $elm  =(q.n.dab q.n.hem)
-            ==
-        ==
-      ==
+      ?:  ?=($~ dab)  =(hem ~)
+      ?:  ?=($~ hem)  =(dab ~)
+      ?&  =(p.n.dab p.n.hem)
+          $(dab l.dab, hem l.hem)
+          $(dab r.dab, hem r.hem)
+          ?-  -.q.n.dab
+            $elm  =(q.n.dab q.n.hem)
+            $ash  ?&  ?=($ash -.q.n.hem)
+                      %=  dext
+                        sut  (play p.q.n.dab) 
+                        ref  (play(sut ref) p.q.n.hem)
+      ==  ==      ==  ==
     ::
     ++  dext
       ^-  ?
       =-  ?:  -  &
-          ?:  tel
-            ::  ~_  (dunk %need)
-            ::  ~_  (dunk(sut ref) %have)
-            ~|(%nest-fail !!)
-          |
+          ?.  tel  |
+          ::  ~_  (dunk %need)
+          ::  ~_  (dunk(sut ref) %have)
+          ~|(%nest-fail !!)
       ?:  =(sut ref)  &
-      ?-    sut
-          $void       sint
-          $noun       &
-      ::
-          {$atom *}
-        ?:  ?=({$atom *} ref)
-          ?&  (fitz p.sut p.ref)
-              |(?=($~ q.sut) =(q.sut q.ref))
-          ==
-        sint
-      ::
-          {$cell *}
-        ?.  ?=({$cell *} ref)
-          sint
-        ?&
-          dext(sut p.sut, ref p.ref, seg ~, reg ~)
-          dext(sut q.sut, ref q.ref, seg ~, reg ~)
-        ==
-      ::
-          {$core *}
-        ?.  ?=({$core *} ref)
-          sint
-        cong(seg ~, reg ~)
-      ::
-          {$face *}   dext(sut q.sut)
-          {$fork *}
-        ?.  ?=(?({$atom *} $noun {$cell *} {$core *}) ref)
-          sint
-        |(dext(sut p.sut) dext(sut q.sut))
-      ::
-          {$hold *}  
-        ?:  (~(has in seg) sut)  |
-        ?:  (~(has in gil) [sut ref])  &
-        dext(sut repo, seg (~(put in seg) sut), gil (~(put in gil) [sut ref]))
-      ==
+      ?-  sut
+        $void      sint
+        $noun      &
+        {$atom *}  ?.  ?=({$atom *} ref)  sint
+                   ?&  (fitz p.sut p.ref)
+                       |(?=($~ q.sut) =(q.sut q.ref))
+                   ==
+        {$cell *}  ?.  ?=({$cell *} ref)  sint
+                   ?&  dext(sut p.sut, ref p.ref, seg ~, reg ~)
+                       dext(sut q.sut, ref q.ref, seg ~, reg ~)
+                   ==
+        {$core *}  ?.  ?=({$core *} ref)  sint
+                   ?:  =(q.sut q.ref)  dext(sut p.sut, ref p.ref)
+                   ?&  meet(sut q.q.sut, ref p.sut)
+                       dext(sut q.q.ref, ref p.ref)
+                       (deem(sut q.q.sut, ref q.q.ref) p.q.sut p.q.ref)
+                       ?|  (~(has in gil) [sut ref])
+                           %.  [q.r.q.sut q.r.q.ref]
+                           %=  deep
+                             gil  (~(put in gil) [sut ref])
+                             sut  sut(p q.q.sut, p.q %gold)
+                             ref  ref(p q.q.ref, p.q %gold)
+                       ==  ==
+                   ==
+        {$face *}  dext(sut q.sut)
+        {$fork *}  ?.  ?=(?({$atom *} $noun {$cell *} {$core *}) ref)  sint
+                   |(dext(sut p.sut) dext(sut q.sut))
+        {$hold *}  ?:  (~(has in seg) sut)  |
+                   ?:  (~(has in gil) [sut ref])  &
+                   %=  dext
+                     sut  repo 
+                     seg  (~(put in seg) sut)
+                     gil  (~(put in gil) [sut ref])
+      ==           ==
     ::
+    ++  meet  &(dext dext(sut ref, ref sut))
     ++  sint
       ^-  ?
       ?-  ref
-          $noun       |
-          $void       &
-          {$atom *}   |
-          {$cell *}   |
-          {$core *}   dext(ref repo(sut ref))
-          {$face *}   dext(ref q.ref)
-          {$fork *}   &(sint(ref p.ref) sint(ref q.ref))
-          {$hold *}   ?:  (~(has in reg) ref)  &
-                      ?:  (~(has in gil) [sut ref])  &
-                      %=  dext
-                        ref  repo(sut ref)
-                        reg  (~(put in reg) ref)
-                        gil  (~(put in gil) [sut ref])
-                      ==
-      ==
+        $noun       |
+        $void       &
+        {$atom *}   |
+        {$cell *}   |
+        {$core *}   dext(ref repo(sut ref))
+        {$face *}   dext(ref q.ref)
+        {$fork *}   &(sint(ref p.ref) sint(ref q.ref))
+        {$hold *}   ?:  (~(has in reg) ref)  &
+                    ?:  (~(has in gil) [sut ref])  &
+                    %=  dext
+                      ref  repo(sut ref)
+                      reg  (~(put in reg) ref)
+                      gil  (~(put in gil) [sut ref])
+      ==            ==
     --
   ::
   ++  perk
-    |=  {way/?($read $rite $both $free) met/?($gold $iron $lead $zinc)}
+    |=  {way/vial met/?($gold $iron $lead $zinc)}
     ^-  {sam/? con/?}
     ?:  ?=($gold met)  [& &]
     ?-  way
