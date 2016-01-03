@@ -14,7 +14,7 @@
     _nest_dext(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
 
   static u3_noun
-  _nest_cram(u3_noun van,
+  _nest_clip(u3_noun van,
              u3_noun sut,
              u3_noun tel,
              u3_noun ref,
@@ -34,8 +34,8 @@
       u3x_trel(dab, &n_dab, &l_dab, &r_dab);
       u3x_trel(hem, &n_hem, &l_hem, &r_hem);
 
-      if ( (c3n == _nest_cram(van, sut, tel, ref, l_dab, l_hem, gil)) ||
-           (c3n == _nest_cram(van, sut, tel, ref, r_dab, r_hem, gil)) ) 
+      if ( (c3n == _nest_clip(van, sut, tel, ref, l_dab, l_hem, gil)) ||
+           (c3n == _nest_clip(van, sut, tel, ref, r_dab, r_hem, gil)) ) 
       {
         return c3n;
       }
@@ -109,7 +109,10 @@
       return c3n;
     }
     else {
-      if ( (pq_sut != pq_ref) && (c3__gold != pq_ref) ) {
+      if ( (pq_sut != pq_ref) && 
+           (c3__lead != pq_sut) &&
+           (c3__gold != pq_ref) ) 
+      {
         return c3n;
       }
       else {
@@ -132,7 +135,7 @@
                              u3nc(c3__gold,
                                   u3k(u3t(q_ref))));
 
-          ret = _nest_cram(van, tus, tel, fer, qrq_sut, qrq_ref, zoc);
+          ret = _nest_clip(van, tus, tel, fer, qrq_sut, qrq_ref, zoc);
           u3z(fer);
           u3z(tus);
           u3z(zoc);
