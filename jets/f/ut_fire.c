@@ -76,22 +76,24 @@
       }
       else {
         c3_assert(c3__elm == u3h(gat));
+#if 0
+        u3_noun dun = u3qfu_dunq(van, "wild", typ);
+        u3_noun niz = u3qfu_dunq(van, "tame", dox);
 
+        u3t_push(u3nc(c3__mean, dun));
+        u3t_push(u3nc(c3__mean, niz));
+#endif
         if ( (c3y == vet) &&
-             // (c3n == u3r_sing(p_typ, qq_typ)) &&
              (c3n == _fire_mull(van, typ, dox, t_gat)) )
         {
-#if 0
-          u3_noun dun = u3qfu_dunq(van, "wild", typ);
-          u3_noun niz = u3qfu_dunq(van, "tame", dox);
-
-          u3t_push(u3nc(c3__mean, dun));
-          u3t_push(u3nc(c3__mean, niz));
-#endif
           return u3m_error("fire-wet");
         }
         else {
           u3z(dox);
+#if 0
+          u3t_drop();
+          u3t_drop();
+#endif
           return u3nc(u3k(typ), u3k(t_gat));
         }
       }
