@@ -1,4 +1,4 @@
-::::::  
+!:::::  
 ::  ::  %ford, new execution control
 !?  164
 ::::
@@ -133,8 +133,9 @@
   b
 ::                                                      ::
 ++  flue  |=(a/cafe (fine a ~))                         ::  cafe to empty
-++  flux  |*  a/_*                                   ::  bolt lift (fmap)
-          |*({b/cafe c/_+<.a} (fine b (a c)))        ::
+++  flux  |*  a/_*                                      ::  bolt lift (fmap)
+          |*  {cafe _#.+<.a}
+          (fine +<- (a +<+))
 ++  grom                                                ::  merge sets
   |*  {one/(set) two/(set)}
   ^+  one
@@ -367,7 +368,7 @@
     ++  coax  !.                                        ::  bolt across
       |*  {hoc/(bolt) fun/(burg)}
       ?-  -.q.hoc
-        $0  =+  nuf=$:fun(+<- p.hoc)
+        $0  =+  nuf=$:fun(#.+<- p.hoc)
             :-  p=p.nuf
             ^=  q
             ?-  -.q.nuf
@@ -375,7 +376,7 @@
               $1  q.nuf
               $2  q.nuf
             ==
-        $1  =+  nuf=$:fun(+<- p.hoc)
+        $1  =+  nuf=$:fun(#.+<- p.hoc)
             :-  p=p.nuf
             ^=  q
             ?-  -.q.nuf
@@ -410,7 +411,7 @@
       ?-  -.q.hoc
         $1  hoc
         $0  hoc
-        $2  =+  nuf=(fun(+<- p.hoc))
+        $2  =+  nuf=(fun(#.+<- p.hoc))
             :-  p=p.nuf
             ^=  q
             ?-  -.q.nuf
@@ -474,17 +475,18 @@
       ^-  (bolt gage)
       ?.  ?=($tabl -.gag)
         (cope (furl cof gag) fun)
-      %-  cope  :_  (flux |=(rex/gagl [%tabl rex]))
-      |-  ^-  (bolt (list (pair gage gage)))
-      ?~  p.gag  (fine cof ~)
-      %.  [cof p.gag]
-      ;~  cope
-        ;~  coax
-          |=({cof/cafe {^ q/gage} t/gagl} (fret ^^$(cof cof, gag q)))
-          |=({cof/cafe ^ t/gagl} ^$(cof cof, p.gag t))
+      %+  cope  
+        |-  ^-  (bolt (list (pair gage gage)))
+        ?~  p.gag  (fine cof ~)
+        %.  [cof p.gag]
+        ;~  cope
+          ;~  coax
+            |=({cof/cafe {^ q/gage} t/gagl} (fret ^^$(cof cof, gag q)))
+            |=({cof/cafe ^ t/gagl} ^$(cof cof, p.gag t))
+          ==
+          (flux |=({v/gage t/gagl} [[p.i.p.gag v] t]))
         ==
-        (flux |=({v/gage t/gagl} [[p.i.p.gag v] t]))
-      ==
+      (flux |=(rex/gagl [%tabl rex]))
     ::
     ++  some-in-map
       |*  fun/(burg knot (unit))
@@ -621,23 +623,24 @@
         (flaw cof [%leaf "syntax error: {<p.p.vex>} {<q.p.vex>}"] ~)
       (fine cof p.u.q.vex)
     ::
-    ++  fame
-      |=  {cof/cafe bem/beam}                          ::  beam with - as /
+    ++  fame                                            ::  beam with - as /
+      |=  {cof/cafe bem/beam}
       ^-  (bolt beam)
-      %-  cope  :_  (flux |=(a/(unit beam) (fall a bem)))
-      ?~  s.bem  (flue cof)
-      =+  opt=`(list term)`(fall (tear i.s.bem) ~)
-      ?~  opt  (flue cof)
-      |-  ^-  (bolt (unit beam))
-      =.  i.s.bem  (tack opt)
-      %+  cope  (lima cof %hoon bem ~)
-      |=  {cof/cafe vax/(unit vase)}  ^-  (bolt (unit beam))
-      ?^  vax  (fine cof `bem)
-      ?~  t.opt  (flue cof)
-      %+  cope  ^$(opt t.opt, t.s.bem :_(t.s.bem i.opt), cof cof)
-      |=  {cof/cafe bem/(unit beam)}  ^-  (bolt (unit beam))
-      ?^  bem  (fine cof bem)
-      ^$(opt :_(t.t.opt (tack i.opt i.t.opt ~)), cof cof)
+      %+  cope
+        ?~  s.bem  (flue cof)
+        =+  opt=`(list term)`(fall (tear i.s.bem) ~)
+        ?~  opt  (flue cof)
+        |-  ^-  (bolt (unit beam))
+        =.  i.s.bem  (tack opt)
+        %+  cope  (lima cof %hoon bem ~)
+        |=  {cof/cafe vax/(unit vase)}  ^-  (bolt (unit beam))
+        ?^  vax  (fine cof `bem)
+        ?~  t.opt  (flue cof)
+        %+  cope  ^$(opt t.opt, t.s.bem :_(t.s.bem i.opt), cof cof)
+        |=  {cof/cafe bem/(unit beam)}  ^-  (bolt (unit beam))
+        ?^  bem  (fine cof bem)
+        ^$(opt :_(t.t.opt (tack i.opt i.t.opt ~)), cof cof)
+      (flux |=(a/(unit beam) (fall a bem)))
     ::
     ++  fang                                            ::  protocol door
       |=  {cof/cafe for/mark}  ^-  (bolt vase)
@@ -1405,19 +1408,19 @@
         (faun cof vax)
       ::
           $tabl
-        %-  cope  :_  (flux |=(rex/(list (pair gage gage)) [%tabl rex]))
-        !.
-        |-  ^-  (bolt (list (pair gage gage)))
-        ?~  p.kas  (fine cof ~)
-        %.  [cof p.kas]
-        ;~  cope
-          ;~  coax
-            |=({cof/cafe _p.kas} (fret ^^$(cof cof, kas p.i)))
-            |=({cof/cafe _p.kas} (fret ^^$(cof cof, kas q.i)))
-            |=({cof/cafe _p.kas} ^$(cof cof, p.kas t))
+        %+  cope
+          |-  ^-  (bolt (list (pair gage gage)))
+          ?~  p.kas  (fine cof ~)
+          %.  [cof p.kas]
+          ;~  cope
+            ;~  coax
+              |=({cof/cafe _p.kas} (fret ^^$(cof cof, kas p.i)))
+              |=({cof/cafe _p.kas} (fret ^^$(cof cof, kas q.i)))
+              |=({cof/cafe _p.kas} ^$(cof cof, p.kas t))
+            ==
+            (flux |=({k/gage v/gage t/(list {gage gage})} [[k v] t]))
           ==
-          (flux |=({k/gage v/gage t/(list {gage gage})} [[k v] t]))
-        ==
+        (flux |=(rex/(list (pair gage gage)) [%tabl rex]))
       ::
           $vale  
         %+  cool  |.(leaf+"ford: vale {<p.kas>} {<`@p`(mug q.kas)>}")

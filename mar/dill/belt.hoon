@@ -19,7 +19,7 @@
     :~  mod+(cu silt (ar (su (perk ~[%ctrl %shift %alt %meta]))))
         :-  %key
         %+  cu  |*(a/$%({$str @t} {$act @}) ?+(-.a a $str +.a))
-        =-  (of str+so act+(su (perk -)) ~)
+        =-  (of [str+so act+(su (perk -)) ~])
         :~  %ctrl  %shift  %alt   %meta   %entr  %esc  %caps  %uncap
             %pgup  %pgdn   %home  %end    %baxp  %del  %ins
             %up    %down   %left  %right

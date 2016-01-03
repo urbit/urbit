@@ -823,9 +823,10 @@
     (bind (stud p.jon) |=(a/date (year a)))
   ::
   ++  di                                                ::  millisecond date
-    %-  cu  :_  ni
-    |=  a/@u  ^-  @da
-    (add ~1970.1.1 (div (mul ~s1 a) 1.000))
+    %+  cu
+      |=  a/@u  ^-  @da
+      (add ~1970.1.1 (div (mul ~s1 a) 1.000))
+    ni
   ::
   ++  mu                                                ::  true unit
     |*  wit/fist
@@ -1172,15 +1173,13 @@
      (cold 63 (just '/'))
    ==
 ::
-::  .=  ~[p=~.ack q=~.~sarnel r=~..y]
-::  (dray ~[p=%tas q=%p r=%f] %ack ~sarnel &)
 ++  dray                                                ::  load tuple into path
   =-  |*  {a/{@tas (pole @tas)} b/*}  ^-  (paf a)
-      =>  .(b `(tup a)`b)
+      =>  .(b `(tup -.a +.a)`b)
       ?~  +.a  [(scot -.a b) ~]
       [(scot -.a -.b) `(paf +.a)`(..$ +.a +.b)]
   :-  paf=|*(a/(pole) ?~(a $~ {(odo:raid -.a(. %ta)) (..$ +.a)}))
-  tup=|*({a/@tas b/(pole @tas)} =+(c=(odo:raid a) ?~(b c {c (..$ b)})))
+  tup=|*({a/@tas b/(pole @tas)} =+(c=(odo:raid a) ?~(b c {c (..$ -.b +.b)})))
 ::
 ::  .=  [p=%ack q=~sarnel r=&]
 ::  (raid /ack+~sarnel+.y p=%tas q=%p r=%f ~)
