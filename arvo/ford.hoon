@@ -134,7 +134,7 @@
 ::                                                      ::
 ++  flue  |=(a/cafe (fine a ~))                         ::  cafe to empty
 ++  flux  |*  a/_*                                      ::  bolt lift (fmap)
-          |*  {cafe _#.+<.a}
+          |*  {cafe _,.+<.a}
           (fine +<- (a +<+))
 ++  grom                                                ::  merge sets
   |*  {one/(set) two/(set)}
@@ -368,7 +368,7 @@
     ++  coax  !.                                        ::  bolt across
       |*  {hoc/(bolt) fun/(burg)}
       ?-  -.q.hoc
-        $0  =+  nuf=$:fun(#.+<- p.hoc)
+        $0  =+  nuf=$:fun(,.+<- p.hoc)
             :-  p=p.nuf
             ^=  q
             ?-  -.q.nuf
@@ -376,7 +376,7 @@
               $1  q.nuf
               $2  q.nuf
             ==
-        $1  =+  nuf=$:fun(#.+<- p.hoc)
+        $1  =+  nuf=$:fun(,.+<- p.hoc)
             :-  p=p.nuf
             ^=  q
             ?-  -.q.nuf
@@ -411,7 +411,7 @@
       ?-  -.q.hoc
         $1  hoc
         $0  hoc
-        $2  =+  nuf=(fun(#.+<- p.hoc))
+        $2  =+  nuf=$:fun(,.+<- p.hoc)
             :-  p=p.nuf
             ^=  q
             ?-  -.q.nuf

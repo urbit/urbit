@@ -7,7 +7,7 @@
 [. sole]
 ::                                                      ::  ::
 ::::                                                    ::  ::::
-  !:                                                    ::    ::
+  ::                                                    ::    ::
 =>  |%                                                  ::  external structures
     ++  house                                           ::  all state
       $:  $4
@@ -116,9 +116,11 @@
     ++  dp-command-line  ;~(sfix dp-command (just '\0a'))
     ++  dp-variable                                     ::  %verb or %brev
       |*  {sym/rule src/rule}
-      %-  cook  :_  ;~(plug sym (punt src))
-      |=  {a/term b/(unit dojo-source)}  ^-  dojo-command
-      ?~(b [%brev a] [[%verb a] u.b])
+      %+  cook  
+        |=  {a/term b/(unit dojo-source)}  
+        ^-  dojo-command
+        ?~(b [%brev a] [[%verb a] u.b])
+      ;~(plug sym (punt src))
     ::
     ++  dp-command                                      ::  ++dojo-command
       :: =<  ;~(less |-(;~(pose (jest '|*') ;~(pfix next (knee ** |.(^$))))) .)
@@ -173,7 +175,6 @@
       :(stag 0 %ex %clsg (most ;~(plug com gaw) dp-hoof))
     ::
     ++  dp-hoof                                         ::  ++ford-hoof twig
-      %+  cook  |*(a/* ~!(+.a `twig`a))
       ;~  plug
         :(stag %sand %tas sym)
         %-  dp-twig-punt

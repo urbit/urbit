@@ -1,4 +1,4 @@
-::                                                      ::  ::
+::                                                      ::  ::  
 ::::  /hoon+hood+ape                                    ::  ::
   ::                                                    ::  ::
 /?  314                                                 ::  zuse version
@@ -45,8 +45,8 @@
   ((hood-good hed) par)
 ::
 ++  ably                                                ::  save part
-  |*  {moz/(list) rep/hood-part}
-  [(flop moz) %_(+> lac (~(put by lac) -.rep rep))]
+  |*  {(list) hood-part}
+  [(flop +<-) %_(+> lac (~(put by lac) +<+< +<+))]
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
