@@ -264,6 +264,7 @@
     {$cnkt p/twig q/twig r/twig s/twig}                 ::  slam p w+ :*(q r s)
     {$cnls p/twig q/twig r/twig}                        ::  slam p w+ :*(q r)
     {$cnsg p/wing q/twig r/twig}                        ::  pull p from q with r
+    {$cnsq p/wing q/twig r/(list twig)}                 ::  new cnsg
     {$cnsx p/wing q/twig r/(list twig)}                 ::  new cnsg
     {$cnts p/wing q/(list (pair wing twig))}            ::  eval. p w+ q changes
   ::                                            ::::::  nock
@@ -6531,7 +6532,7 @@
 ++  slit                                                ::  span of slam
   |=  {gat/span sam/span}
   ?>  (~(nest ut (~(peek ut gat) %free 6)) & sam)
-  (~(play ut [%cell gat sam]) [%cncl [%$ 2] [%$ 3]])
+  (~(play ut [%cell gat sam]) [%cnsg [%$ ~] [%$ 2] [%$ 3]])
 ::
 ++  slym                                                ::  slam w+o sample-span
   |=  {gat/vase sam/*}  ^-  vase
@@ -7093,20 +7094,13 @@
     ::
         {$cnbc *}  [%ktsg ~(bunt al %herb p.gen)]
         {$cncb *}  [%ktls [%wing p.gen] %cnts p.gen q.gen]
-        {$cncl *}
-      =+  rem=[%cnsg [%$ ~] p.gen q.gen]
-      ?.  ?=({$dbug ^ $wing @ $~} p.gen)  
-        rem
-      =>  .(p.gen `{@ ^ @ p/@tas $~}`p.gen)
-      :+  %sgzp  [[%rock %tas 'slam'] [%rock %tas p.p.gen]]
-      rem
-    ::
+        {$cncl *}  [%cnsg [%$ ~] p.gen q.gen]
         {$cndt *}  [%cnhp q.gen [p.gen ~]]
         {$cnkt *}  [%cnhp p.gen q.gen r.gen s.gen ~]
         {$cnls *}  [%cnhp p.gen q.gen r.gen ~]
         {$cnhx *}  [%cnsx [%$ ~] p.gen q.gen]
         {$cnhp *}
-      ?~(q.gen [%tsgr p.gen [%limb %$]] [%cncl p.gen [%cltr q.gen]])
+      ?~(q.gen [%tsgr p.gen [%limb %$]] [%cnsg [%$ ~] p.gen [%cltr q.gen]])
     ::
         {$cnsg *}  [%cntr p.gen q.gen [[[[%& 6] ~] r.gen] ~]]
         {$cnsx *}
@@ -9381,7 +9375,6 @@
                 %-  stew
                 ^.  stet  ^.  limo
                 :~  ['_' (rune cab %cncb exph)]
-                    [':' (rune col %cncl expb)]
                     ['.' (rune dot %cndt expb)]
                     ['^' (rune ket %cnkt expd)]
                     ['+' (rune lus %cnls expc)]
