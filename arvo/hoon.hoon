@@ -1,4 +1,4 @@
-::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::   
+!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::   
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject
@@ -7198,13 +7198,17 @@
         :+  %tsls                                       ::    {$(q.gen t.q.gen)}
           [%ktts %b [%tsgr [%limb %v] i.q.gen]]         ::  =+  ^=  b
         :+  %tsls                                       ::    =>(v {i.q.gen})
-          [%ktts %c [%tsgl [%$ 6] [%limb %b]]]          ::  =+  c=+6.b
+          :+  %ktts  %c                                 ::  =+  c=,.+6.b
+          :+  %tsgl                                     ::
+            [%wing [%| 0 ~] [%& 6] ~]                   ::
+          [%limb %b]                                    ::
         :-  %brdt                                       ::  |.
         :^    %cnls                                     ::  %+
             [%tsgr [%limb %v] p.gen]                    ::      =>(v {p.gen})
           [%cnhp [%limb %b] [%limb %c] ~]               ::    (b c)
-        [%cnts [%a ~] [[[[%& 6] ~] [%limb %c]] ~]]      ::  a(+6 c)
-      ==
+        :+  %cnts  [%a ~]                               ::  a(,.+6 c)
+        [[[[%| 0 ~] [%& 6] ~] [%limb %c]] ~]            ::
+      ==                                                ::
     ::
         {$smsm *}                                       ::                  ;;
       :+  %tsgr  [%ktts %v %$ 1]                        ::  =>  v=.
@@ -7922,14 +7926,16 @@
         [%& [`p.heg lon] %& (peek(sut ref) way p.heg)]
       =|  gil/(set span)
       =<  $
-      |%  ++  here  [%& [~ `axe lon] %& ref]
+      |%  ++  here  ?:  =(0 p.heg)
+                      [%& [~ `axe lon] %& ref]
+                    [%| %& (dec p.heg)]
           ++  lose  [%| %& p.heg]
           ++  stop  ?~(q.heg here lose)
           ++  fake  !!
           ++  $
             ^-  pont
             ?-    ref
-                $void       lose
+                $void       stop
                 $noun       stop
                 {$atom *}   stop
                 {$cell *} 
@@ -8709,7 +8715,7 @@
     ?~  vit  (duz sut)
     ?~  i.vit
       |-  ^-  span
-      ?+  sut  !!
+      ?+  sut      ^$(vit t.vit)
         {$face *}  (face p.sut ^$(vit t.vit, sut q.sut))
         {$fork *}  (fork $(sut p.sut) $(sut q.sut))
         {$hold *}  $(sut repo) 
