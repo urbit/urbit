@@ -1232,8 +1232,8 @@
     %+  turn  (~(tap by pol.all))
     |=  {@ mast}
     :~  foreign+[%& sap]
-        blocked+[%| (sort :_(aor (~(tap by (~(run by wub) |=(sofa [%& +<]))))))]
-        active+[%| (sort :_(aor (~(tap by (~(run by bum) |=(seat [%& +<]))))))]
+        blocked+[%| (sort (~(tap by (~(run by wub) |=(sofa [%& +<])))) aor)]
+        active+[%| (sort (~(tap by (~(run by bum) |=(seat [%& +<])))) aor)] 
     ==
   ==
 ::

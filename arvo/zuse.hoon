@@ -700,6 +700,8 @@
     ==  ==
   --
 ::
+++  foo
+    ;~(plug fas fas fas)
 ++  poxa                                                ::  xml parser
   =<  |=(a/cord (rush a apex))
   |_  ent/_`(map term @t)`[[%apos '\''] ~ ~]

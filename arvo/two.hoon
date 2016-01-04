@@ -124,12 +124,12 @@
 ++  pint  {p/{p/@ q/@} q/{p/@ q/@}}                     ::  line+column range
 ++  pole  |*  a/$+(* *)                                 ::  nameless list
           $@($~ {a (pole a)})                           ::
-++  pong  $%                                            ::  wing target
-              {$& p/span}                               ::  leg
-              {$| p/axis q/(set {p/span q/foot})}       ::  arm
-          ==                                            ::
 ++  pont  %+  each                                      ::  new pull result
-            (pair vein pong)                            ::  normal
+            %+  pair                                    ::  normal
+              vein                                      ::  wing trace
+            $%  {$& p/span}                             ::  leg
+                {$| p/axis q/(set {p/span q/foot})}     ::  arm
+            ==                                          ::
           %+  each                                      ::  abnormal
             @ud                                         ::  unmatched, skips
           (pair span nock)                              ::  functional
@@ -256,15 +256,14 @@
   ::                                            ::::::  invocations
     {$cnbc p/twig}                                      ::  ^~($.p)
     {$cncb p/wing q/(list (pair wing twig))}            ::  %+, then cast to p
-    {$cncl p/twig q/twig}                               ::  pull $.p w+ sample q
     {$cndt p/twig q/twig}                               ::  %-(q p)
     {$cnhp p/twig q/(list twig)}                        ::  slam p w+ sample q
     {$cnhx p/twig q/(list twig)}                        ::  advanced slam
     {$cntr p/wing q/twig r/(list (pair wing twig))}     ::  pull p.q w+ changes
     {$cnkt p/twig q/twig r/twig s/twig}                 ::  slam p w+ :*(q r s)
     {$cnls p/twig q/twig r/twig}                        ::  slam p w+ :*(q r)
-    {$cnsg p/wing q/twig r/twig}                        ::  pull p from q with r
-    {$cnsx p/wing q/twig r/(list twig)}                 ::  new cnsg
+    {$cnsq p/wing q/twig r/(list twig)}                 ::  new cnsg
+    {$cnsg p/wing q/twig r/(list twig)}                 ::  new cnsg
     {$cnts p/wing q/(list (pair wing twig))}            ::  eval. p w+ q changes
   ::                                            ::::::  nock
     {$dtkt p/twig}                                      ::  nock 11 data skyhook
@@ -2658,13 +2657,12 @@
   ::
   +-  got
     |*  b/*
-    %-  need
-    %-  get(+< a)  b
+    (need (get b))
   ::
   +-  has                                               ::  key existence check
     ~/  %has
     |*  b/*
-    !=(~ (get(+< a) b))
+    !=(~ (get b))
   ::
   +-  int                                               ::  intersection
     ~/  %int
@@ -2678,13 +2676,13 @@
       ?:  =(p.n.b p.n.a)
         [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
       ?:  (gor p.n.b p.n.a)
-        %-  uni(+< $(a l.a, b [n.b l.b ~]))  $(b r.b)
-      %-  uni(+< $(a r.a, b [n.b ~ r.b]))  $(b l.b)
+        %-  uni(a $(a l.a, b [n.b l.b ~]))  $(b r.b)
+      %-  uni(a $(a r.a, b [n.b ~ r.b]))  $(b l.b)
     ?:  =(p.n.a p.n.b)
       [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
     ?:  (gor p.n.a p.n.b)
-      %-  uni(+< $(b l.b, a [n.a l.a ~]))  $(a r.a)
-    %-  uni(+< $(b r.b, a [n.a ~ r.a]))  $(a l.a)
+      %-  uni(a $(b l.b, a [n.a l.a ~]))  $(a r.a)
+    %-  uni(a $(b r.b, a [n.a ~ r.a]))  $(a l.a)
   ::
   +-  mar                                               ::  add with validation
     |*  {b/_?>(?=(^ a) p.n.a) c/(unit _?>(?=(^ a) q.n.a))}
@@ -3169,19 +3167,19 @@
   [(last p.vex p.wag) [~ (raq p.u.q.vex p.u.q.wag) q.u.q.wag]]
 ::
 ++  stun                                                ::  parse several times
-  |*  {{les/@ mos/@} fel/rule}
+  |*  {lig/{@ @} fel/rule}
   |=  tub/nail
   ^-  (like (list _(wonk (fel))))
-  ?:  =(0 mos)
+  ?:  =(0 +.lig)
     [p.tub [~ ~ tub]]
   =+  vex=(fel tub)
   ?~  q.vex
-    ?:  =(0 les)
+    ?:  =(0 -.lig)
       [p.vex [~ ~ tub]]
     vex
   =+  ^=  wag  %=  $
-                 les  ?:(=(0 les) 0 (dec les))
-                 mos  ?:(=(0 mos) 0 (dec mos))
+                 -.lig  ?:(=(0 -.lig) 0 (dec -.lig))
+                 +.lig  ?:(=(0 +.lig) 0 (dec +.lig))
                  tub  q.u.q.vex
                ==
   ?~  q.wag
@@ -3292,8 +3290,9 @@
   ;~(pose (cold %& (jest sic)) (cold %| (jest non)))
 ::
 ++  ifix
-  |*  {fel/{p/rule q/rule} hof/rule}
-  ;~(pfix p.fel ;~(sfix hof q.fel))
+  |*  {fel/{rule rule} hof/rule}
+  ~!  +<
+  ;~(pfix -.fel ;~(sfix hof +.fel))
 ::
 ++  more
   |*  {bus/rule fel/rule}
@@ -6520,7 +6519,7 @@
   =+  :-  ^=  typ  ^-  span
           [%cell p.gat p.sam]
       ^=  gen  ^-  twig
-      [%cnsg [%$ ~] [%$ 2] [%$ 3]]
+      [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
   =+  gun=(~(mint ut typ) %noun gen)
   [p.gun .*([q.gat q.sam] q.gun)]
 ::
@@ -6531,7 +6530,7 @@
 ++  slit                                                ::  span of slam
   |=  {gat/span sam/span}
   ?>  (~(nest ut (~(peek ut gat) %free 6)) & sam)
-  (~(play ut [%cell gat sam]) [%cnsg [%$ ~] [%$ 2] [%$ 3]])
+  (~(play ut [%cell gat sam]) [%cnsg [%$ ~] [%$ 2] [%$ 3] ~])
 ::
 ++  slym                                                ::  slam w+o sample-span
   |=  {gat/vase sam/*}  ^-  vase
@@ -7068,7 +7067,7 @@
         {$brhp *}  [%tsgl [%limb %$] [%brdt p.gen]]
         {$brhx *}  :+  %tsls  [%cnbc p.gen] 
                    [%brcn (~(put by *(map term foot)) %$ [%elm q.gen])]
-        {$brtr *}  [%brfs p.gen (~(put by *(map term foot)) %$ [%elm q.gen])]
+        {$brtr *}  [%brcb p.gen (~(put by *(map term foot)) %$ [%elm q.gen])]
         {$brts *}  [%brcb p.gen (~(put by *(map term foot)) %$ [%ash q.gen])]
         {$brwt *}  [%ktwt %brdt p.gen]
     ::
@@ -7093,22 +7092,19 @@
     ::
         {$cnbc *}  [%ktsg ~(bunt al %herb p.gen)]
         {$cncb *}  [%ktls [%wing p.gen] %cnts p.gen q.gen]
-        {$cncl *}
-      =+  rem=[%cnsg [%$ ~] p.gen q.gen]
-      ?.  ?=({$dbug ^ $wing @ $~} p.gen)  
-        rem
-      =>  .(p.gen `{@ ^ @ p/@tas $~}`p.gen)
-      :+  %sgzp  [[%rock %tas 'slam'] [%rock %tas p.p.gen]]
-      rem
-    ::
         {$cndt *}  [%cnhx q.gen [p.gen ~]]
         {$cnkt *}  [%cnhx p.gen q.gen r.gen s.gen ~]
         {$cnls *}  [%cnhx p.gen q.gen r.gen ~]
+        {$cnhx *}  [%cnsg [%$ ~] p.gen q.gen]
         {$cnhp *}
-      ?~(q.gen [%tsgr p.gen [%limb %$]] [%cncl p.gen [%cltr q.gen]])
-        {$cnhx *}  [%cnsx [%$ ~] p.gen q.gen]
-        {$cnsg *}  [%cntr p.gen q.gen [[[[%& 6] ~] r.gen] ~]]
-        {$cnsx *}
+      ?~(q.gen [%tsgr p.gen [%limb %$]] [%cnsg [%$ ~] p.gen q.gen])
+    ::
+        {$cnsq *}  
+      ?~  r.gen
+        [%tsgr q.gen [%wing p.gen]]
+      [%cntr p.gen q.gen [[[[%& 6] ~] [%cltr r.gen]] ~]]
+    ::
+        {$cnsg *}
       :^  %cntr  p.gen  q.gen
       =+  axe=6
       |-  ^-  (list {wing twig})
@@ -7197,13 +7193,17 @@
         :+  %tsls                                       ::    {$(q.gen t.q.gen)}
           [%ktts %b [%tsgr [%limb %v] i.q.gen]]         ::  =+  ^=  b
         :+  %tsls                                       ::    =>(v {i.q.gen})
-          [%ktts %c [%tsgl [%$ 6] [%limb %b]]]          ::  =+  c=+6.b
+          :+  %ktts  %c                                 ::  =+  c=,.+6.b
+          :+  %tsgl                                     ::
+            [%wing [%| 0 ~] [%& 6] ~]                   ::
+          [%limb %b]                                    ::
         :-  %brdt                                       ::  |.
         :^    %cnls                                     ::  %+
             [%tsgr [%limb %v] p.gen]                    ::      =>(v {p.gen})
           [%cnhx [%limb %b] [%limb %c] ~]               ::    (b c)
-        [%cnts [%a ~] [[[[%& 6] ~] [%limb %c]] ~]]      ::  a(+6 c)
-      ==
+        :+  %cnts  [%a ~]                               ::  a(,.+6 c)
+        [[[[%| 0 ~] [%& 6] ~] [%limb %c]] ~]            ::
+      ==                                                ::
     ::
         {$smsm *}                                       ::                  ;;
       :+  %tsgr  [%ktts %v %$ 1]                        ::  =>  v=.
@@ -7688,18 +7688,18 @@
       :_  q.doy
       :_  p.doy
       %^  cat  3
-        %~  rent  co
-        :+  %$  %ud
-        |-  ^-  @
-        ?-  q.r.q.sut
-          $~         0
-          {* $~ $~}  1
-          {* $~ *}   +($(q.r.q.sut r.q.r.q.sut))
-          {* * $~}   +($(q.r.q.sut l.q.r.q.sut))
-          {* * *}    .+  %+  add
-                           $(q.r.q.sut l.q.r.q.sut)
-                         $(q.r.q.sut r.q.r.q.sut)
-        ==
+        %~  rent  co  
+            :+  %$  %ud
+            |-  ^-  @
+            ?-  q.r.q.sut
+              $~         0
+              {* $~ $~}  1
+              {* $~ *}   +($(q.r.q.sut r.q.r.q.sut))
+              {* * $~}   +($(q.r.q.sut l.q.r.q.sut))
+              {* * *}    .+  %+  add
+                               $(q.r.q.sut l.q.r.q.sut)
+                             $(q.r.q.sut r.q.r.q.sut)
+        ==  ==
       %^  cat  3
         ?-(p.q.sut $gold '.', $iron '|', $lead '?', $zinc '&')
       =+  gum=(mug q.r.q.sut)
@@ -8668,10 +8668,10 @@
       ~|(%rest-loop !!)
     =>  .(fan (~(gas in fan) leg))
     %+  roll
-      %-  %~  tap
-            in
-          %-  ~(gas in *(set span))
-          (turn leg |=({p/span q/twig} (play(sut p) q)))
+      %-  %~  tap  in
+            %-  ~(gas in *(set span))
+            (turn leg |=({p/span q/twig} (play(sut p) q)))
+          ==
       ~
     =+([p=*span q=`span`%void] |.((fork p q)))
   ::
@@ -9152,6 +9152,8 @@
     %-  stew
     ^.  stet  ^.  limo
     :~
+      :-  ','
+        (stag %wing rope)
       :-  '!'
         ;~  pose
           (stag %wtzp ;~(pfix zap wide))
@@ -9243,8 +9245,6 @@
             ;~(pfix fas (stag %smfs wide))
           ==
         ==
-      :-  ','
-        (stag %wing rope)
       :-  '='
         (stag %dtts ;~(pfix tis (ifix [pel per] ;~(glam wide wide))))
       :-  '?'
@@ -9298,7 +9298,7 @@
               %+  stag  %cnsg
               %+  ifix
                 [pel per]
-              ;~(glam rope wide (stag %cltr (most ace wide)))
+              ;~(glam rope wide (most ace wide))
             ::
               (cook (jock |) twid:so)
               (easy [%bust %null])
@@ -9380,7 +9380,7 @@
                     ['^' (rune ket %cnkt expd)]
                     ['+' (rune lus %cnls expc)]
                     ['-' (rune hep %cnhx expk)]
-                    ['~' (rune sig %cnsg expq)]
+                    ['~' (rune sig %cnsg expu)]
                     ['*' (rune tar %cntr expm)]
                     ['=' (rune tis %cnts exph)]
                 ==
@@ -9598,6 +9598,7 @@
     ++  expn  |.((stag %cltr (butt hank)))              ::  autoconsed twigs
     ++  expp  |.(;~(gunk (butt rick) loaf))             ::  [wing twig]s, twig
     ++  expq  |.(;~(gunk rope loaf loaf))               ::  wing and two twigs
+    ++  expu  |.(;~(gunk rope loaf (butt hank)))        ::  wing, twig, twigs
     ++  expr  |.(;~(gunk loaf wisp))                    ::  twig and core tail
     ++  exps  |.((butt hank))                           ::  closed gapped twigs
     ++  expz  |.(loaf(bug &))                           ::  twig with tracing
@@ -9735,7 +9736,7 @@
     %+  (slug |=({a/limb b/wing} [a b]))
       dot
     ;~  pose
-      (cold [%| %0 ~] com)
+      (cold [%| 0 ~] com)
       %+  cook
         |=({a/(list) b/term} ?~(a b [%| (lent a) `b]))
       ;~(plug (star ket) ;~(pose sym (cold %$ buc)))

@@ -34,6 +34,10 @@
   $~                                                    ::
 ++  hood-deset                                          ::  reset command
   $~                                                    ::
+++  hood-deone                                          ::  reset command
+  $~                                                    ::
+++  hood-detwo                                          ::  reset command
+  $~                                                    ::
 ++  helm-verb                                           ::  reset command
   $~                                                    ::
 ++  hood-reload                                         ::  reload command
@@ -158,6 +162,22 @@
   %-  flop  ^-  (list card) 
   =+  top=`path`/(scot %p our)/home/(scot %da now)/arvo
   :-  [%flog /deset %vega (weld top `path`/hoon)]
+  ~
+::
+++  poke-deone                                        ::  deset system
+  |=  hood-deone  =<  abet
+  %-  emil
+  %-  flop  ^-  (list card) 
+  =+  top=`path`/(scot %p our)/home/(scot %da now)/arvo
+  :-  [%flog /deset %vega (weld top `path`/one)]
+  ~
+::
+++  poke-detwo                                        ::  deset system
+  |=  hood-detwo  =<  abet
+  %-  emil
+  %-  flop  ^-  (list card) 
+  =+  top=`path`/(scot %p our)/home/(scot %da now)/arvo
+  :-  [%flog /deset %vega (weld top `path`/two)]
   ~
 ::
 ++  poke-will                                         ::  hear certificate
