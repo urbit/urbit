@@ -169,8 +169,9 @@
   %-  emil
   %-  flop  ^-  (list card) 
   =+  top=`path`/(scot %p our)/home/(scot %da now)/arvo
-  :-  [%flog /deset %vega (weld top `path`/one)]
-  ~
+  :~  [%flog /deset %vega (weld top `path`/one)] 
+      [%flog /deset %vega (weld top `path`/two)] 
+  ==
 ::
 ++  poke-detwo                                        ::  deset system
   |=  hood-detwo  =<  abet

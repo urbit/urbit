@@ -9,4 +9,4 @@
 |=  $:  {now/@da eny/@uvI bec/beak}
         {arg/$~ $~}
     ==
-[%helm-deonet ~]
+[%helm-deone ~]
