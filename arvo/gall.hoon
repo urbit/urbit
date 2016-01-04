@@ -1128,8 +1128,8 @@
       ~/  %ap-slam
       |=  {cog/term gat/vase arg/vase}
       ^-  {(each vase tang) _+>}
-      =+  ^=  wyz
-          (mule |.((~(play wa vel) [%cell p.gat p.arg] [%cncl [%$ 2] [%$ 3]])))
+      =+  ^=  wyz  %-  mule  |.
+          (~(play wa vel) [%cell p.gat p.arg] [%cnsq [%$ ~] [%$ 2] [%$ 3] ~])
       ?:  ?=($| -.wyz)
         %-  =+  sam=(~(peek ut p.gat) %free 6)
             (slog >%ap-slam-mismatch< ~(duck ut p.arg) ~(duck ut sam) ~)

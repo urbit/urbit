@@ -1492,9 +1492,10 @@
       %+  skim
         %.  ~
         %~  tap  by
-        =<  q
-        %-  aeon-to-yaki
-        yon
+          =<  q
+          %-  aeon-to-yaki
+          yon
+        ==
       |=  {p/path q/lobe}
       ?|  ?=($~ pax)
           ?&  !?=($~ p)
@@ -2032,10 +2033,11 @@
             `[pax ~]
           =+  ^=  bof
               %-  %~  int  by
-                  %-  ~(uni by `(map path *)`new.dal.dat)
-                  %-  ~(uni by `(map path *)`cal.dal.dat)
-                  %-  ~(uni by `(map path *)`can.dal.dat)
-                  `(map path *)`old.dal.dat
+                    %-  ~(uni by `(map path *)`new.dal.dat)
+                    %-  ~(uni by `(map path *)`cal.dal.dat)
+                    %-  ~(uni by `(map path *)`can.dal.dat)
+                    `(map path *)`old.dal.dat
+                  ==
               %-  ~(uni by `(map path *)`new.dob.dat)
               %-  ~(uni by `(map path *)`cal.dob.dat)
               %-  ~(uni by `(map path *)`can.dob.dat)
@@ -2338,10 +2340,11 @@
                      ^-  (map path ?)
                      %.  |=(lobe %&)
                      %~  run  by
-                     %-  ~(uni by new.dal.dat)
-                     %-  ~(uni by cal.dal.dat)
-                     %-  ~(uni by cas)
-                     hot
+                       %-  ~(uni by new.dal.dat)
+                       %-  ~(uni by cal.dal.dat)
+                       %-  ~(uni by cas)
+                       hot
+                     ==
         checkout
       ::
       ++  checkout

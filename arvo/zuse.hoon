@@ -694,10 +694,10 @@
   ::
   ++  clot  ~+                                          ::  self-closing tags
     %~  has  in
-    %-  silt  ^-  (list term)  :~
-      %area  %base  %br  %col  %command  %embed  %hr  %img  %input  %keygen
-      %link  %meta  %param     %source   %track  %wbr 
-    ==
+        %-  silt  ^-  (list term)  :~
+          %area  %base  %br  %col  %command  %embed  %hr  %img  %input  %keygen
+          %link  %meta  %param     %source   %track  %wbr 
+    ==  ==
   --
 ::
 ++  poxa                                                ::  xml parser

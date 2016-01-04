@@ -520,9 +520,10 @@
       ::         =+  dewe=|=(beam +<(s ?+(s s {@ $web *} t.t.s)))
       ::         f=|=(b/calx [-.b ?+(-.b ~ %bake [p.q.b (tope (dewe q.q.b))])])
       ::     %~  run  by
-      ::     =<  `(jar term calx)`(~(rep by q.cof) .)
-      ::     |=  {{* a/calx} b/(jar term calx)}
-      ::     (~(add ja b) -.a a)
+      ::       =<  `(jar term calx)`(~(rep by q.cof) .)
+      ::       |=  {{* a/calx} b/(jar term calx)}
+      ::       (~(add ja b) -.a a)
+      ::     ==
       %_(+> jav.bay q.cof)
     ::
     ++  diff                                            ::  diff
