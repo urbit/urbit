@@ -152,9 +152,9 @@
 ++  eat-headers
   |=  hed/(list {p/@t q/@t})  ^-  math
   %+  roll  hed
-  |=  {a/{p/cord cord} b/math} 
+  |=  {a/{p/cord q/cord} b/math} 
   =.  p.a  (cass (trip p.a))
-  (~(add ja b) a)
+  (~(add ja b) p.a q.a)
 ::
 ++  fcgi                                                ::  credential caboose
   |=  {quy/quay ced/cred}  ^-  coin

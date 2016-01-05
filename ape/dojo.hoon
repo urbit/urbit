@@ -309,7 +309,7 @@
       =:  p.src  num
           q.src  bul
         ==
-      [src +>.$(num +(num), job (~(put by job) src))]
+      [src +>.$(num +(num), job (~(put by job) -.src +.src))]
     ::
     ++  dy-init-source-unit                             ::  (unit dojo-source)
       |=  urc/(unit dojo-source)
@@ -480,7 +480,7 @@
           $http
         ?>  ?=($mime p.cay)
         =+  mim=;;(mime q.q.cay)
-        =+  maf=(~(add ja *math) content-span+(moon p.mim))
+        =+  maf=(~(add ja *math) %content-span (moon p.mim))
         (dy-eyre /show [q.p.mad p.p.mad maf ~ q.mim])
       ::
           $show

@@ -1137,22 +1137,24 @@
   ++  mabe                                            ::  maybe fire function
     |=  {rov/rove fun/$+(@da _.)}
     ^+  +>.$
-    %-  fall  :_  +>.$
-    %-  bind  :_  fun
-    ^-  (unit @da)
-    ?-    -.rov
-        $sing
-      ?.  ?=($da -.q.p.rov)  ~
-      `p.q.p.rov
-    ::
-        $next  ~
-        $many
-      %+  hunt
-        ?.  ?=($da -.p.q.rov)  ~
-        ?.((lth now p.p.q.rov) ~ [~ p.p.q.rov])
-      ?.  ?=($da -.q.q.rov)  ~
-      ?.((lth now p.q.q.rov) [~ now] [~ p.q.q.rov])
-    ==
+    %+  fall
+      %+  bind
+        ^-  (unit @da)
+        ?-    -.rov
+            $sing
+          ?.  ?=($da -.q.p.rov)  ~
+          `p.q.p.rov
+        ::
+            $next  ~
+            $many
+          %+  hunt
+            ?.  ?=($da -.p.q.rov)  ~
+            ?.((lth now p.p.q.rov) ~ [~ p.p.q.rov])
+          ?.  ?=($da -.q.q.rov)  ~
+          ?.((lth now p.q.q.rov) [~ now] [~ p.q.q.rov])
+        ==
+      fun
+    +>.$
   ::
   ++  reve
     |=  rov/rove

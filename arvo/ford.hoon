@@ -654,11 +654,11 @@
       =<  hood
       |%  
       ++  case
-        %-  sear  
-        :_  nuck:so
-        |=  a/coin
-        ?.  ?=({$$ ?($da $ud $tas) *} a)  ~
-        [~ u=(^case a)]
+        %+  sear  
+          |=  a/coin
+          ?.  ?=({$$ ?($da $ud $tas) *} a)  ~
+          [~ u=(^case a)]
+        nuck:so
       ::
       ++  hath  (sear plex:vez (stag %clsg poor:vez))   ::  hood path
       ++  have  (sear tome ;~(pfix fas hath))           ::  hood beam
@@ -764,14 +764,14 @@
           ::
               ++  man
                 %+  rail  fail
-                %-  sear
-                :_  ;~(sfix (star ;~(pfix gap apex)) ;~(plug gap duz))
-                |=  fan/(list ^horn)
-                =|  naf/(list (pair term ^horn))
-                |-  ^-  (unit (map term ^horn))
-                ?~  fan  (some (~(gas by *(map term ^horn)) naf))
-                ?.  ?=($dub -.i.fan)  ~
-                $(fan t.fan, naf [[p.i.fan q.i.fan] naf])
+                %+  sear
+                  |=  fan/(list ^horn)
+                  =|  naf/(list (pair term ^horn))
+                  |-  ^-  (unit (map term ^horn))
+                  ?~  fan  (some (~(gas by *(map term ^horn)) naf))
+                  ?.  ?=($dub -.i.fan)  ~
+                  $(fan t.fan, naf [[p.i.fan q.i.fan] naf])
+                ;~(sfix (star ;~(pfix gap apex)) ;~(plug gap duz))
           ::
               ++  saw
                 %+  rail
@@ -953,7 +953,7 @@
       ++  marks
         =<  (cope (laze cof bem) (flux .))
         |=  a/(map mark ?)  ^-  (list mark)
-        (turn :_(head (skip :_(tail (~(tap by a))))))   ::  | = %hook
+        (turn (skip (~(tap by a)) tail) head)
       ::
       ++  look
         |=  {cof/cafe hok/(list mark)}  ^-  (bolt _done)
@@ -1865,12 +1865,12 @@
     :~  =<  cache+[%| (turn `(list term)`/hood/bake/lilt/slit/slim/slap/slam .)]
         =-  |=(a/term [a %& (~(get ja dep) a)])
         =<  `dep/(jar term *)`(~(rep by jav) .)
-        |=({{* a/{term *}} b/(jar term *)} (~(add ja b) a))
+        |=({{* a/{term *}} b/(jar term *)} (~(add ja b) -.a +.a))
     ::
         =<  depends+[%| (turn `(list term)`/init/sent/done .)]
         =-  |=(a/term [a %& (~(get ja dep) a)])
         =<  `dep/(jar term *)`(~(rep by deh) .)
-        |=({{@ a/{term *}} b/(jar term *)} (~(add ja b) a))
+        |=({{@ a/{term *}} b/(jar term *)} (~(add ja b) -.a +.a))
     ::
         tasks+[%& dym tad]
     ==

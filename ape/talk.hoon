@@ -394,7 +394,7 @@
       =+  grams=grams:(~(got by stories) man.she)
       |-  ^-  (unit (set partner))
       ?~  grams  ~
-      =+  pan=(silt (turn :_(head (~(tap by q.q.i.grams)))))
+      =+  pan=(silt (turn (~(tap by q.q.i.grams)) head))
       ?:  (~(has in lax) pan)  `pan
       $(grams t.grams)
       ::
@@ -2017,7 +2017,7 @@
               :+  '/'  '_' 
               =+  hok=r.p.p.p.sep
               ~!  hok
-              =-  (swag [(sub (max 64 (lent -)) 64) 64] -)
+              =-  (swag [a=(sub (max 64 (lent -)) 64) b=64] -)
               ^-  tape
               =<  ?:(?=($& -.hok) (reel p.hok .) +:(scow %if p.hok))
               |=({a/knot b/tape} ?~(b (trip a) (welp b '.' (trip a))))
