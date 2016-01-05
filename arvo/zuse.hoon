@@ -2491,11 +2491,11 @@
 ++  horn                                                ::  resource tree
   $%  [%ape p=twig]                                     ::  /~  twig by hand
       [%arg p=twig]                                     ::  /$  argument
-      [%alt p=(list (pair path:spur horn))]             ::  /#  options
-      [%day p=horn]                                     ::  /|  list by @dr
+      [%alt p=(list horn)]                              ::  /|  options
+      :: [%day p=horn]                                     ::      list by @dr
       [%dub p=term q=horn]                              ::  /=  apply face
       [%fan p=(list horn)]                              ::  /.  list
-      [%for p=path q=horn]                              ::  /,  descend
+      [%for p=(list (pair path:spur horn))]             ::  /,  switch by path
       [%hel p=horn]                                     ::  /%  propagate args
       [%hub p=horn]                                     ::  /@  list by @ud
       [%man p=(map span horn)]                          ::  /*  hetero map
