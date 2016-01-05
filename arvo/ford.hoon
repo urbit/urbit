@@ -56,7 +56,7 @@
   ==                                                    ::
 ++  calx                                                ::  concrete cache line
   $%  [%hood p=calm q=(pair beam cage) r=hood]          ::  compile
-      [%bake p=calm q=(trel mark beam heel) r=(unit vase)]::  load
+      [%bake p=calm q=(trel mark coin beam) r=(unit vase)] ::  load
       [%lilt p=calm q=beak r=(jug mark mark)]           ::  translation graph
       [%slit p=calm q=[p=type q=type] r=type]           ::  slam type
       [%slim p=calm q=[p=type q=twig] r=(pair type nock)]::  mint
@@ -279,9 +279,7 @@
     ==  ==
   ::
   ++  zo
-    ~%    %ford-z
-        ..is
-      ~
+    ~%  %ford-z  ..is  ~
     |_  [num=@ud task]
     ++  abet  %_(..zo q.tad.bay (~(put by q.tad.bay) num +<+))
     ++  amok  
@@ -575,7 +573,7 @@
       |=  [cof=cafe for=mark bem=beam]
       ^-  (bolt hood)
       %+  cool  |.(leaf/"ford: fade {<[(tope bem)]>}")
-      %+  cope  (cope (make cof [%bake for bem ~]) furl)
+      %+  cope  (liar cof %*(. bem s [for s.bem]))
       |=  [cof=cafe cay=cage]
       %+  (clef %hood)  (fine cof bem(r [%ud 0]) cay)
       ^-  (burg (pair beam cage) hood)
@@ -599,7 +597,7 @@
       ?~  opt  (flue cof)
       |-  ^-  (bolt (unit beam))
       =.  i.s.bem  (tack opt)
-      %+  cope  (lima cof %hoon bem ~)
+      %+  cope  (lima cof %hoon many/~ bem)
       |=  [cof=cafe vax=(unit vase)]  ^-  (bolt (unit beam))
       ?^  vax  (fine cof `bem)
       ?~  t.opt  (flue cof)
@@ -905,7 +903,7 @@
       (fine cof (some |))
     ::
     ++  lace                                            ::  load real or virtual
-      |=  [cof=cafe for=mark bem=beam arg=heel lit=?]
+      |=  [cof=cafe for=mark arg=coin bem=beam lit=?]
       ^-  (bolt vase)
       =.  s.bem  [for s.bem]
       ?:  lit
@@ -980,7 +978,7 @@
       |=  [cof=cafe bem=beam]  ^-  (bolt vase)
       %+  cope  (fame cof bem)
       |=  [cof=cafe bem=beam]
-      (cope (fade cof %hoon bem) abut:(meow bem ~))
+      (cope (fade cof %hoon bem) abut:(meow bem many/~))
     ::
     ++  lend                                            ::  load arch
       |=  [cof=cafe bem=beam]
@@ -1075,36 +1073,34 @@
       --
     ::
     ++  lima                                            ::  load at depth
-      |=  [cof=cafe for=mark bem=beam arg=heel]
-      %+  (clef %bake)  [p=cof q=[%0 p=[bem `~] q=[for bem arg]]]
-      |=  [cof=cafe for=mark bem=beam arg=heel]
+      |=  [cof=cafe for=mark arg=coin bem=beam]
+      %+  (clef %bake)  [p=cof q=[%0 p=[bem `~] q=[for arg bem]]]
+      |=  [cof=cafe for=mark arg=coin bem=beam]
       ^-  (bolt (unit vase))
       %+  cope  (laze cof bem)
       |=  [cof=cafe mal=(map mark ,?)]
       =+  lit=(~(get by mal) for)
       ?^  lit
-        (cope (lace cof for bem arg u.lit) (flux some))
+        (cope (lace cof for arg bem u.lit) (flux some))
       =+  opt=(sa (turn (~(tap by mal)) head))          ::  XX asymptotics  
       %+  cope  (lion cof for opt)
       |=  [cof=cafe wuy=(list ,@tas)]
       ?~  wuy  (flue cof)
       %+  cope  
-        (lace cof i.wuy bem arg (~(got by mal) i.wuy))
+        (lace cof i.wuy arg bem (~(got by mal) i.wuy))
       |=  [cof=cafe hoc=vase]
       (cope (lope cof i.wuy t.wuy hoc) (flux some))
     ::
     ++  lime                                            ::  load beam
-      |=  [cof=cafe for=mark bem=beam arg=heel]
-      =+  [mob=bem mer=(flop arg)]
-      |-  ^-  (bolt vase)
-      %+  cope  (lima cof for mob (flop mer))
+      |=  [cof=cafe for=mark arg=coin bem=beam]
+      ^-  (bolt vase)
+      %+  cope  (lima cof for arg bem)
       |=  [cof=cafe vux=(unit vase)]
       ?^  vux  (fine cof u.vux)
-      ?~  s.mob  (limp cof for bem arg)
-      ^$(s.mob t.s.mob, mer [i.s.mob mer])
+      (limp cof for arg bem)
     ::
     ++  limp                                            ::  render
-      |=  [cof=cafe for=mark bem=beam arg=heel]
+      |=  [cof=cafe for=mark arg=coin bem=beam]
       %+  cope  (fame cof -.bem /[for]/ren)
       |=  [cof=cafe bom=beam]
       (cope (fade cof %hoon bom) abut:(meow bem arg))
@@ -1192,7 +1188,7 @@
       :: =+  ^=  pre
       ::     ?+  -.kas  -.kas
       ::       ^  %cell
-      ::       %boil  [-.kas p.kas (tope q.kas)]
+      :: ::      %boil  [-.kas p.kas (tope q.kas)]
       ::       %bake  [-.kas p.kas (tope q.kas)]
       ::       %core  [-.kas (tope p.kas)]
       ::     ==
@@ -1214,21 +1210,21 @@
         ==
       ::
           %$  (fine cof %& p.kas)
+::           %bake
+::         ::  ~&  >  [p.kas (tope q.kas)]
+::         ::  %+  cool  |.(leaf/"ford: bake {<p.kas>} {<(tope q.kas)>}")
+::         %+  cope  (lima cof p.kas q.kas r.kas s.kas)
+::         |=  [cof=cafe vux=(unit vase)]
+::         ?~  vux
+::           (flaw cof leaf/"file not found" (smyt (tope r.kas)) ~)
+::         (fine cof [%& p.kas u.vux])
+::       ::
           %bake
-        ::  ~&  >  [p.kas (tope q.kas)]
-        ::  %+  cool  |.(leaf/"ford: bake {<p.kas>} {<(tope q.kas)>}")
-        %+  cope  (lima cof p.kas q.kas r.kas)
-        |=  [cof=cafe vux=(unit vase)]
-        ?~  vux
-          (flaw cof leaf/"file not found" (smyt (tope q.kas)) ~)
-        (fine cof [%& p.kas u.vux])
-      ::
-          %boil
         ^-  (bolt gage)
-        %+  cool  |.(leaf/"ford: boil {<p.kas>} {<(tope q.kas)>} {<r.kas>}")
-        %+  cope  (lamp cof q.kas)
+        %+  cool  |.(leaf/"ford: bake {<p.kas>} {<(tope r.kas)>} {~(rend co q.kas)}")
+        %+  cope  (lamp cof r.kas)
         |=  [cof=cafe bem=beam]
-        %+  cope  (lime cof p.kas bem r.kas)
+        %+  cope  (lime cof p.kas q.kas bem)
         |=  [cof=cafe vax=vase]
         (fine cof `gage`[%& p.kas vax])
       ::
@@ -1381,14 +1377,13 @@
       |=(val=* `vase`[typ val])
     ::
     ++  meow                                            ::  assemble
-      |=  [how=beam arg=heel] 
+      |=  [how=beam arg=coin] 
       =|  $:  rop=(map term (pair hoof twig))           ::  structures
               bil=(map term (pair hoof twig))           ::  libraries
               boy=(list twig)                           ::  body stack
               lit=?                                     ::  drop arguments
           ==
-      ~%  %meow  ..meow
-        ~
+      ~%  %meow  ..meow  ~
       |%
       ++  able                                          ::  assemble preamble
         ^-  twig
@@ -1478,7 +1473,9 @@
             %arg  
           %+  cope  (maim cof bax p.hon)
           |=  [cof=cafe gat=vase]
-          (maul cof gat !>([how arg]))
+          %+  cope  (maim cof !>(~) ((jock |) arg))
+          |=  [cof=cafe val=vase]
+          (maul cof gat (slop !>(how) val))
         ::
             %alt
           =+  opt=|.(>(turn p.hon |=([a=path ^] a))<)
@@ -1546,7 +1543,9 @@
             (flaw cof [%leaf "type error: {<p.hon>} {<q.hon>}"]~)
           (fine cof [p.tug q.vax])
         ::
-            %toy  (cope (cope (make cof %boil p.hon how ?:(lit ~ arg)) furl) feel)
+            %toy
+          =+  [%bake p.hon ?:(lit many/~ arg) how]
+          (cope (cope (make cof -) furl) feel)
         ==
       ::
       ++  head                                          ::  consume structures

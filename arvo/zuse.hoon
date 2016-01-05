@@ -1117,32 +1117,11 @@
   ?:(=(~ fyl) ~ [(crip (flop fyl)) ~])
 ::
 ++  fuel                                                ::  parse fcgi
-  |=  [bem=beam but=path]
+  =+  packed-quay=|-($|(~ [p=@t q=@t t=$]))
+  |=  [bem=beam ced=noun:cred quy=packed-quay]
   ^-  epic
-  ?>  ?=([%web @ *] but)
-  =+  dyb=(slay i.t.but)
-  ?>  ?&  ?=([~ %many *] dyb)
-          ?=([* * *] p.u.dyb)
-          ?=([%$ %ta *] i.p.u.dyb)
-          ?=([%blob *] i.t.p.u.dyb)
-      ==
-  =+  ced=((hard cred) p.i.t.p.u.dyb)
-  ::  =+  nep=q.p.i.p.u.dyb
-  =+  ^=  gut  ^-  (list ,@t)
-      %+  turn  t.t.p.u.dyb
-      |=  a=coin  ^-  @t
-      ?>  ?=([%$ %t @] a)
-      ?>(((sane %t) q.p.a) q.p.a)
-  =+  ^=  quy
-      |-  ^-  (list ,[p=@t q=@t])
-      ?~  gut  ~
-      ?>  ?=(^ t.gut)
-      [[i.gut i.t.gut] $(gut t.t.gut)]
-  :*  (~(gas by *(map cord cord)) quy)
-      ced
-      bem
-      t.t.but
-  ==
+  =+  qix=|-(`quay`?~(quy quy [[p q]:quy $(quy t.quy)]))
+  [(mo qix) ((hard cred) ced) bem /]
 ::
 ++  sifo                                                ::  64-bit encode
   |=  tig=@
@@ -2531,8 +2510,7 @@
 ++  silk                                                ::  construction layer
   $&  [p=silk q=silk]                                   ::  cons
   $%  [%$ p=cage]                                       ::  literal
-      [%bake p=mark q=beam r=path]                      ::  local synthesis
-      [%boil p=mark q=beam r=path]                      ::  general synthesis
+      [%bake p=mark q=coin r=beam]                      ::  local synthesis
       [%bunt p=mark]                                    ::  example of mark
       [%call p=silk q=silk]                             ::  slam
       [%cast p=mark q=silk]                             ::  translate
@@ -2545,7 +2523,7 @@
       [%mash p=mark q=milk r=milk]                      ::  annotate
       [%mute p=silk q=(list (pair wing silk))]          ::  mutant
       [%pact p=silk q=silk]                             ::  patch
-      [%plan p=beam q=spur r=hood]                      ::  structured assembly
+      [%plan p=beam q=coin r=hood]                      ::  structured assembly
       [%reef ~]                                         ::  kernel reef
       [%ride p=twig q=silk]                             ::  silk thru twig
       [%tabl p=(list (pair silk silk))]                 ::  list

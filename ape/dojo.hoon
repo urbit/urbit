@@ -729,7 +729,7 @@
       =-  ?~(too - [%cast u.too -])
       :+  %ride  gen
       :-  [%$ dy-twig-head]
-      [%plan he-beam / zuse arc lib ~ ~]
+      [%plan he-beam blob/** zuse arc lib ~ ~]
     ::
     ++  dy-step                                         ::  advance project
       |=  nex=@ud

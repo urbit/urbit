@@ -141,7 +141,7 @@
   $|  ~
   $%  [%$ p=httr]                                       ::  direct response
       [%red ~]                                          ::  parent redirect
-      [%boil p=whir q=term r=beam]                      ::  ford request
+      [%bake p=whir q=term r=beam]                      ::  ford request
   :: 
       [%js p=@t]                                        ::  script
       [%json p=json]                                    ::  data
@@ -159,13 +159,11 @@
 ::
 ++  fcgi                                                ::  credential caboose
   |=  [quy=quay ced=cred]  ^-  coin
-  :*  %many
-      [%$ %ta ~]
-      [%blob ced]
-      |-  ^-  (list coin)
-      ?~  quy  ~
-      [[%$ %t p.i.quy] [%$ %t q.i.quy] $(quy t.quy)]
-  ==
+  :+  %many
+    [%blob ced]
+  |-  ^-  (list coin)
+  ?~  quy  [%$ %n ~]~
+  [[%$ %t p.i.quy] [%$ %t q.i.quy] $(quy t.quy)]
 ::
 ++  gsig  |=([a=dock b=path] [(scot %p p.a) q.a b])
 ++  session-from-cookies
@@ -940,13 +938,13 @@
     ++  nice-json  (teba ^nice-json)
     ++  pass-note  (teba ^pass-note)
     ::
-    ++  ford-boil
+    ++  ford-bake
       |=  [wir=whir ext=term bem=beam]
       =+  yac=for-client
       =.  him.yac  ?.(aut anon him.yac)
-      =+  arg=/web/[~(rent co (fcgi quy fcgi-cred.yac))]
+      =+  arg=(fcgi quy fcgi-cred.yac)
       =.  r.bem  ?+(r.bem r.bem [%ud %0] da/now)
-      (execute wir -.bem [%boil ext bem arg])
+      (execute wir -.bem [%bake ext arg bem])
     ::
     ::
     ++  apex                                              
@@ -967,7 +965,7 @@
           %json  (give-json 200 cug p.pez)
           %html  (give-html 200 cug p.pez)
           %htme  (give-html 401 cug p.pez)
-          %boil  (ford-boil +.pez)
+          %bake  (ford-bake +.pez)
           %red
         =+  url=(earn hat pok(p [~ %html]) quy)
         ?+    p.pok  ~|(bad-redirect/[p.pok url] !!)
@@ -1158,7 +1156,7 @@
         ~|  bad-beam/q.bem
         ?<  =([~ 0] (sky %cw (tope bem(+ ~, r [%da now]))))
         =+  [wir ext bem]
-        ?.(aut [%& %boil -] [%| (ford-boil -)])  ::  XX properly
+        ?.(aut [%& %bake -] [%| (ford-bake -)])  ::  XX properly
       ::
           %bugs  
         ?-  p.hem
@@ -1218,7 +1216,7 @@
         ?~  p.pez  pez
         ?+    -.p.pez  ~&(bad-inject/p.pez !!)
             %red  pez
-            %boil
+            %bake
           =.  ya  abet.yac 
           [%| (resolve ~ p.pez(p [%at ses.yac p.p.pez]))]
         ::
@@ -1633,3 +1631,4 @@
     q.hin
   [mos ..^$]
 --
+
