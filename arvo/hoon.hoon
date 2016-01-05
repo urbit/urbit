@@ -8984,6 +8984,7 @@
                  [%cell $(q.gen -.q.gen) $(q.gen +.q.gen)]
       {$sand *}  |-  ^-  span
                  ?@  q.gen
+                   ?:  =(%n p.gen)  ?>(=(0 q.gen) [%atom p.gen ~ q.gen])
                    ?:(=(%f p.gen) ?>((lte q.gen 1) bool) [%atom p.gen ~])
                  [%cell $(q.gen -.q.gen) $(q.gen +.q.gen)]
       {$nock *}  %noun
