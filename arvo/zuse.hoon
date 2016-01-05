@@ -145,7 +145,7 @@
     --
   ::
   ++  de
-    |+  {key/@ cep/@}  ^-  (unit @)
+    |~  {key/@ cep/@}  ^-  (unit @)
     =+  toh=(met 8 cep)
     ?:  (lth toh 2)
       ~
@@ -156,9 +156,9 @@
       ~
     [~ msg]
   ::
-  ++  dy  |+({a/@ b/@} (need (de a b)))
+  ++  dy  |~({a/@ b/@} (need (de a b)))
   ++  en
-    |+  {key/@ msg/@}  ^-  @ux
+    |~  {key/@ msg/@}  ^-  @ux
     =+  len=(met 8 msg)
     =+  adj=?:(=(0 len) 1 len)
     =+  hax=(shax (mix key (shax (mix adj msg))))
@@ -287,14 +287,14 @@
     --
   ::
   ++  de
-    |+  {key/@ cep/@}  ^-  (unit @)
+    |~  {key/@ cep/@}  ^-  (unit @)
     !!
   ::
   ++  dy
-    |+  {a/@ b/@}  ^-  @
+    |~  {a/@ b/@}  ^-  @
     !!
   ++  en
-    |+  {key/@ msg/@}  ^-  @ux
+    |~  {key/@ msg/@}  ^-  @ux
     !!
   ::
   ++  ex  ^?
@@ -1167,7 +1167,7 @@
 ::
 ++  ofis  ::  XX broken
   =-  |=(a/cord (rash a fel))
-  =<  fel=(cook |+(a/@ `@t`(swap 3 a)) (bass 64 .))
+  =<  fel=(cook |~(a/@ `@t`(swap 3 a)) (bass 64 .))
   =-  (cook welp ;~(plug (plus siw) (stun 0^2 (cold %0 tis))))
   ^=  siw
   ;~  pose
@@ -1310,7 +1310,7 @@
     %+  cook  deft
     (ifix [fas ;~(pose fas (easy ~))] (more fas smeg))
   ++  aurf                                              ::  2396 with fragment
-    %+  cook  |+(a/purf a)
+    %+  cook  |~(a/purf a)
     ;~(plug auri (punt ;~(pfix hax (cook crip (star pque)))))
   ++  auri                                              ::  2396 URL
     %+  cook
@@ -1546,15 +1546,15 @@
 ++  acru                                                ::  asym cryptosuite
           $_  ^?  |%                                    ::  opaque object
           ++  as  ^?                                    ::  asym ops
-            |%  ++  seal  |+({a/pass b/@ c/@} *@)       ::  encrypt to a
-                ++  sign  |+({a/@ b/@} *@)              ::  certify as us
-                ++  sure  |+({a/@ b/@} *(unit @))       ::  authenticate from us
-                ++  tear  |+  {a/pass b/@}              ::  accept from a 
+            |%  ++  seal  |~({a/pass b/@ c/@} *@)       ::  encrypt to a
+                ++  sign  |~({a/@ b/@} *@)              ::  certify as us
+                ++  sure  |~({a/@ b/@} *(unit @))       ::  authenticate from us
+                ++  tear  |~  {a/pass b/@}              ::  accept from a 
                           *(unit {p/@ q/@})             ::
             --                                          ::
-          ++  de  |+({a/@ b/@} *(unit @))               ::  symmetric de, soft
-          ++  dy  |+({a/@ b/@} *@)                      ::  symmetric de, hard
-          ++  en  |+({a/@ b/@} *@)                      ::  symmetric en
+          ++  de  |~({a/@ b/@} *(unit @))               ::  symmetric de, soft
+          ++  dy  |~({a/@ b/@} *@)                      ::  symmetric de, hard
+          ++  en  |~({a/@ b/@} *@)                      ::  symmetric en
           ++  ex  ^?                                    ::  export
             |%  ++  fig  *@uvH                          ::  fingerprint
                 ++  pac  *@uvG                          ::  default passcode
@@ -1562,9 +1562,9 @@
                 ++  sec  *ring                          ::  private key
             --                                          ::
           ++  nu  ^?                                    ::  reconstructors
-             |%  ++  pit  |+({a/@ b/@} ^?(..nu))        ::  from [width seed]
-                 ++  nol  |+(a/@ ^?(..nu))              ::  from naked ring
-                 ++  com  |+(a/@ ^?(..nu))              ::  from naked pass
+             |%  ++  pit  |~({a/@ b/@} ^?(..nu))        ::  from [width seed]
+                 ++  nol  |~(a/@ ^?(..nu))              ::  from naked ring
+                 ++  com  |~(a/@ ^?(..nu))              ::  from naked pass
              --                                         ::
           --                                            ::
 ++  aeon  @ud                                          ::

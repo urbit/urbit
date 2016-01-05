@@ -239,7 +239,7 @@
     {$brdt p/twig}                                      ::  dry %gold trap
     {$brkt p/twig q/(map term foot)}                    ::  %gold book
     {$brhp p/twig}                                      ::  kick dry %gold trap
-    {$brls p/twig q/twig}                               ::  %iron gate
+    {$brsg p/twig q/twig}                               ::  %iron gate
     {$brtr p/twig q/twig}                               ::  wet %gold gate
     {$brts p/twig q/twig}                               ::  dry %gold gate
     {$brwt p/twig}                                      ::  dry %lead trap
@@ -2997,7 +2997,7 @@
     vex
   [p=p.vex q=[~ u=[p=(hez [p.tub p.q.u.q.vex] p.u.q.vex) q=q.u.q.vex]]]
 ::
-++  inde  |*  sef/rule                                 :: indentation block
+++  inde  |*  sef/rule                                  :: indentation block
   |=  nail  ^+  (sef)
   =+  [har tap]=[p q]:+<
   =+  lev=(fil 3 (dec q.har) ' ')
@@ -4531,7 +4531,7 @@
 ++  mack
   |=  {sub/* fol/*}
   ^-  (unit)
-  =+  ton=(mink [sub fol] |+(* ~))
+  =+  ton=(mink [sub fol] |~(* ~))
   ?.(?=({$0 *} ton) ~ [~ p.ton])
 ::
 ++  mink
@@ -5187,7 +5187,7 @@
         ++  cipa                                        ::  AES params
           $_  ^?  |%
           ++  co  *{p/@ q/@ r/@ s/@}                    ::  col coefs
-          ++  ix  |+(a/@ *@)                            ::  key index
+          ++  ix  |~(a/@ *@)                            ::  key index
           ++  ro  *{p/@ q/@ r/@ s/@}                    ::  row shifts
           ++  su  *@                                    ::  s-box
           --
@@ -5197,7 +5197,7 @@
       ^-  cipa
       |%
       ++  co  [0x2 0x3 1 1]
-      ++  ix  |+(a/@ a)
+      ++  ix  |~(a/@ a)
       ++  ro  [0 1 2 3]
       ++  su  0x16bb.54b0.0f2d.9941.6842.e6bf.0d89.a18c.
                 df28.55ce.e987.1e9b.948e.d969.1198.f8e1.
@@ -5221,7 +5221,7 @@
       ^-  cipa
       |%
       ++  co  [0xe 0xb 0xd 0x9]
-      ++  ix  |+(a/@ (sub nnr a))
+      ++  ix  |~(a/@ (sub nnr a))
       ++  ro  [0 3 2 1]
       ++  su  0x7d0c.2155.6314.69e1.26d6.77ba.7e04.2b17.
                 6199.5383.3cbb.ebc8.b0f5.2aae.4d3b.e0a0.
@@ -7004,7 +7004,7 @@
       ==
     ::
         {$bckt *}  [%bush boil(gen p.gen) boil(gen q.gen)]
-        {$bcls *}  [%weed [%brls p.gen [%cnbc [%tsgr [%$ 7] q.gen]]]]  
+        {$bcls *}  [%weed [%brsg p.gen [%cnbc [%tsgr [%$ 7] q.gen]]]]  
         {$bcts *}  [%bark p.gen boil(gen q.gen)]
         {$bcwt *}  =+  (turn p.gen |=(a/twig boil(gen a)))
                    ?~(- [%axil %void] [%fern -])
@@ -7072,8 +7072,8 @@
         {$brcl *}  [%tsls [%ktsg p.gen] [%brdt q.gen]]
         {$brdt *}  [%brcn (~(put by *(map term foot)) %$ [%ash p.gen])]
         {$brkt *}  [%tsgr [%brcn (~(put by q.gen) %$ [%ash p.gen])] [%limb %$]]
-        {$brls *}  [%ktbr [%brts p.gen q.gen]]
         {$brhp *}  [%tsgl [%limb %$] [%brdt p.gen]]
+        {$brsg *}  [%ktbr [%brts p.gen q.gen]]
         {$brtr *}  :+  %tsls  [%cnbc p.gen] 
                    [%brcn (~(put by *(map term foot)) %$ [%elm q.gen])]
         {$brts *}  [%brcb p.gen (~(put by *(map term foot)) %$ [%ash q.gen])]
@@ -9177,7 +9177,7 @@
       :-  '%'
         ;~  pfix  cen
           ;~  pose
-            (stag %clsg (sear |+({a/@ud b/tyke} (posh ~ ~ a b)) porc))
+            (stag %clsg (sear |~({a/@ud b/tyke} (posh ~ ~ a b)) porc))
             (stag %rock (stag %tas (cold %$ buc)))
             (stag %rock (stag %f (cold & pam)))
             (stag %rock (stag %f (cold | bar)))
@@ -9190,7 +9190,7 @@
         ;~  pose
           (cook |=(a/wing [%cnts a ~]) rope)
           (stag %wtpm ;~(pfix pam (ifix [pel per] (most ace wide))))
-          ;~(plug (stag %rock (stag %f (cold & pam))) ;~(pfix fas wide))
+          ;~(plug (stag %rock (stag %f (cold & pam))) ;~(pfix lus wide))
           (stag %sand (stag %f (cold & pam)))
         ==
       :-  '\''
@@ -9235,7 +9235,10 @@
           (cook |=(a/wing [%cnts a ~]) rope)
         ==
       :-  ['0' '9']
-        (stag %sand bisk:so)
+        %+  cook
+          |=  {a/dime b/(unit twig)}
+          ?~(b [%sand a] [[%rock a] u.b])
+        ;~(plug bisk:so (punt ;~(pfix lus wide)))
       :-  ':'
         ;~  pfix  col
           ;~  pose
@@ -9282,7 +9285,7 @@
         ;~  pose
           (cook |=(a/wing [%cnts a ~]) rope)
           (stag %wtbr ;~(pfix bar (ifix [pel per] (most ace wide))))
-          ;~(plug (stag %rock (stag %f (cold | bar))) ;~(pfix fas wide))
+          ;~(plug (stag %rock (stag %f (cold | bar))) ;~(pfix lus wide))
           (stag %sand (stag %f (cold | bar)))
         ==
       :-  '~'
@@ -9299,7 +9302,8 @@
               ;~(glam rope wide (most ace wide))
             ::
               (cook (jock |) twid:so)
-              (easy [%bust %null])
+              (stag [%bust %null] ;~(pfix lus wide))
+              (easy [%bust %null])  
             ==
           ==
         ==
@@ -9348,7 +9352,7 @@
                     ['/' (rune fas %brcb expr)]
                     ['-' (rune hep %brhp expa)]
                     ['^' (rune ket %brkt expr)]
-                    ['+' (rune lus %brls expb)]
+                    ['~' (rune sig %brsg expb)]
                     ['*' (rune tar %brtr expb)]
                     ['=' (rune tis %brts expb)]
                     ['?' (rune wut %brwt expa)]
@@ -10031,7 +10035,7 @@
   ++  ruck                                              ::  update vase
     |=  {pax/path txt/@ta}
     ^+  +>
-    =+  arg=[~2000.1.1 0 =>(~ |+(* ~))]
+    =+  arg=[~2000.1.1 0 =>(~ |~(* ~))]
     =+  rig=(slym q.sew arg)
     =+  rev=(slym (slap bud (rain pax txt)) bud)
     =+  syg=(slym rev arg)
@@ -10209,7 +10213,7 @@
       ^-  vase
       ?:  &(=(-.q.q.sew -.q.sev) =(+>.q.q.sew +>.q.sev))
         q.sew                                           ::  unchanged, use old
-      sev(+<.q [*@da *@ =>(~ |+(* ~))])                 ::  clear to stop leak
+      sev(+<.q [*@da *@ =>(~ |~(* ~))])                 ::  clear to stop leak
     ::
     ++  swim
       ~/  %swim
