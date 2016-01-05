@@ -548,13 +548,13 @@ static u3j_core _mood_d[] =
     {}
   };
 
-static u3j_core _k161_d[] =
+static u3j_core _k151_d[] =
   { { "mood", 0, _mood_d },
     {}
   };
 
 static u3j_core _d[] = {
-  { "k161", 0, _k161_d},
+  { "k151", 0, _k151_d},
   {}
 };
 
