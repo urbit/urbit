@@ -672,7 +672,6 @@
           %+  knee  *^horn  |.  ~+
           ;~  pfix  fas
             ;~  pose
-              (stag %toy ;~(sfix sym fas))
               (stag %ape ;~(pfix sig ape:read))
               (stag %arg ;~(pfix buc ape:read))
               (stag %alt ;~(pfix bar alt:read))
@@ -687,6 +686,7 @@
               (stag %saw ;~(pfix sem saw:read))
               (stag %see ;~(pfix col see:read))
               (stag %sic ;~(pfix ket sic:read))
+              (stag %toy ;~(sfix toy:read fas))
             ==
           ==
         ::
@@ -745,6 +745,8 @@
                 %+  rail  
                   ;~(plug ;~(sfix toil:vez ket) day)
                 ;~(pfix gap ;~(plug howl:vez day))
+          ::
+              ++  toy  ;~(plug ;~(pose (cold | zap) (easy &)) sym)
           --
         ::
         --
@@ -1547,8 +1549,13 @@
           (fine cof [p.tug q.vax])
         ::
             %toy
-          =+  [%bake p.hon ?:(lit many/~ arg) how]
-          (cope (cope (make cof -) furl) feel)
+          ?:  p.hon
+            =.  arg  ?.(lit arg many/~)
+            (cope (cope (make cof %bake q.hon arg how) furl) feel)
+          %+  cool  |.(leaf/"ford: hook {<q.hon>} {<(tope how)>}")
+          %+  cope  (fade cof %hoon how)
+          |=  [cof=cafe hyd=hood]
+          (cope (abut:(meow how arg) cof hyd) (lake q.hon))
         ==
       ::
       ++  head                                          ::  consume structures
