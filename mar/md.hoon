@@ -20,5 +20,5 @@
     (end 3 (dec (met 3 -)) -)
   --
 ++  grad  %txt
-++  garb  %down
+++  garb  /down
 --

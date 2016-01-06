@@ -10,6 +10,7 @@
   ++  html  (crip (poxo hymn))                          ::  convert to %html
   ++  mime  [/text/html (taco html)]                    ::  convert to %mime
   --
+++  garb  /snip                                         ::  grabbed by
 ++  grab  |%                                            ::  convert from
           ++  noun  manx                                ::  clam from %noun
 --        --
