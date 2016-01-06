@@ -1,4 +1,4 @@
-/=  all  /;  flop  /^  (list (pair time ,*))  /:  /%%/  /&  /mime/
+/=  all  /;  flop  /^  (list (pair time ,*))  /&  /mime/
 ;html
   ;head:title:"Pastebin"
   ;body

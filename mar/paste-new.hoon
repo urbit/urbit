@@ -7,17 +7,8 @@
   ::
 |_  jon=json
 ::
-++  grow                                                ::  convert to
-  |%
-  ++  mime  [/text/'paste-new+json' (taco txt)]         ::  convert to %mime
-  ++  txt   (crip (pojo jon))
-  --
-++  grab
-  |%                                                    ::  convert from
-  :: ++  mime  |=([p=mite q=octs] (fall (rush (,@t q.q) apex:poja) *json))
-  ++  noun  json                                        ::  clam from %noun
-  ++  numb  jone
-  ++  time  jode
-  --
-++  grad  %mime
---
+++  grow  |%  ++  mime                                  ::  convert to %mime
+  [/text/'paste-new+json' (tact (pojo jon))]
+          --
+++  grab  |%  ++  noun  json                            ::  clam from %noun
+--        --

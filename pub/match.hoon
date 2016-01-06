@@ -3,7 +3,7 @@
 ::::  /hook/hymn/match
   ::
 /=  gas  /$  fuel                                       ::  get request info
-/=  src  /:  /%/  /hook/                                ::  current source file
+/=  src  /:  /%/  /hoon/                                ::  current source file
 ::
 ::::  ~sondel-forsut
   ::

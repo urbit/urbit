@@ -3,12 +3,12 @@
 ::::  /hook/hymn/unparse/pub
   ::
 /=   gas  /$  fuel
-/=   src  /:  /%%/mear  /hoon/
-/=   src2  /:  /%/  /hook/
+/=   src  /:  /%/mear  /hoon/
+/=   src2  /:  /%/  /hoon/
 ::
 ::::    ~sondel-forsut
   ::
-//    /%%/mear
+//    /%/mear
 !:
 ::::
   ::
