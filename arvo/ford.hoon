@@ -889,45 +889,33 @@
       |=  [cof=cafe bem=beam]
       %^  lash  cof  bem
       |=  [cof=cafe for=mark]
-      ^-  (bolt (unit ,?))
+      ^-  (bolt (unit ,~))
       ?.  ((sane %tas) for)  (flue cof)
       =.  s.bem  [for s.bem]
       %+  cope  (lend cof bem)
       |=  [cof=cafe arc=arch]
-      ?^  fil.arc  (fine cof (some &))
-      ?.  (~(has by dir.arc) %hook)
-        (flue cof)
-      %+  cope  (lend cof bem(s [%hook s.bem]))
-      |=  [cof=cafe arc=arch]
-      ?~  fil.arc
-        (flue cof)
-      (fine cof (some |))
+      (fine cof (bind fil.arc ,~))
     ::
     ++  lace                                            ::  load real or virtual
-      |=  [cof=cafe for=mark arg=coin bem=beam lit=?]
+      |=  [cof=cafe for=mark arg=coin bem=beam]
       ^-  (bolt vase)
+      %+  cool  |.(leaf/"ford: load {<for>} {<(tope bem)>}")
       =.  s.bem  [for s.bem]
-      ?:  lit
-        %+  cool  |.(leaf/"ford: load {<for>} {<(tope bem)>}")
-        %+  cope  (liar cof bem)
-        |=  [cof=cafe cay=cage]
-        ?.  =(for p.cay)
-          (flaw cof leaf/"unexpected mark {<p.cay>}" ~)
-        ((lake for) cof q.cay)
-      %+  cool  |.(leaf/"ford: hook {<for>} {<(tope bem)>}")
-      %+  cope  (fade cof %hook bem)
-      |=  [cof=cafe hyd=hood]
-      (cope (abut:(meow bem arg) cof hyd) (lake for))
+      %+  cope  (liar cof bem)
+      |=  [cof=cafe cay=cage]
+      ?.  =(for p.cay)
+        (flaw cof leaf/"unexpected mark {<p.cay>}" ~)
+      ((lake for) cof q.cay)
     ::
     ++  lake                                            ::  check/coerce
       |=  for=mark
       |=  [cof=cafe sam=vase]
       ^-  (bolt vase)
       %+  cool  |.(leaf/"ford: check {<[for bek `@p`(mug q.sam)]>}")
-      ?:  ?=(?(%hoon %hook) for)
+      ?:  ?=(%hoon for)
         =+  mas=((soft ,@t) q.sam)
         ?~  mas
-          (flaw cof [leaf/"ford: bad hoon or hook: {<[for bek]>}"]~)
+          (flaw cof [leaf/"ford: bad hoon: {<[for bek]>}"]~)
         (fine cof [%atom %t] u.mas)
       %+  cope  (fang cof for)
       |=  [cof=cafe tux=vase]
@@ -1079,16 +1067,15 @@
       |=  [cof=cafe for=mark arg=coin bem=beam]
       ^-  (bolt (unit vase))
       %+  cope  (laze cof bem)
-      |=  [cof=cafe mal=(map mark ,?)]
-      =+  lit=(~(get by mal) for)
-      ?^  lit
-        (cope (lace cof for arg bem u.lit) (flux some))
+      |=  [cof=cafe mal=(map mark ,~)]
+      ?:  (~(has by mal) for)
+        (cope (lace cof for arg bem) (flux some))
       =+  opt=(sa (turn (~(tap by mal)) head))          ::  XX asymptotics  
       %+  cope  (lion cof for opt)
       |=  [cof=cafe wuy=(list ,@tas)]
       ?~  wuy  (flue cof)
       %+  cope  
-        (lace cof i.wuy arg bem (~(got by mal) i.wuy))
+        (lace cof i.wuy arg bem)
       |=  [cof=cafe hoc=vase]
       (cope (lope cof i.wuy t.wuy hoc) (flux some))
     ::
@@ -1231,7 +1218,7 @@
       ::
           %bunt
         %+  cool  |.(leaf/"ford: bunt {<p.kas>}")
-        ?:  ?=(?(%hoon %hook) p.kas)
+        ?:  ?=(%hoon p.kas)
           (fine cof %& p.kas [%atom %t] '')
         %+  cope  (fang cof p.kas)
         |=  [cof=cafe tux=vase]
@@ -1662,7 +1649,7 @@
           |=([cof=cafe p=silk q=silk] (cope (make cof q) furl))
         ==
         |=  [cof=cafe cay=cage coy=cage]  ^-  (bolt gage)
-        ?:  ?=(?(%hoon %hook) p.cay)
+        ?:  ?=(%hoon p.cay)
           ?.  ?=(%txt-diff p.coy)
             (flaw cof leaf/"{<p.cay>} mark with bad diff type: {<p.coy>}" ~)
           =+  txt=((soft ,@t) q.q.cay)
