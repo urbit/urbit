@@ -7104,13 +7104,14 @@
         {$cnkt *}  [%cnhp p.gen q.gen r.gen s.gen ~]
         {$cnls *}  [%cnhp p.gen q.gen r.gen ~]
         {$cnhp *}  [%cnsg [%$ ~] p.gen q.gen]
-        {$cnsg *}
+        {$cnsg *}  :: [%cntr p.gen q.gen (hail(gen [%cltr r.gen]) 6)]
       :^  %cntr  p.gen  q.gen
+      ::  ?:(=(~ r.gen) ~ (hail(gen [%cltr r.gen]) 6))
       =+  axe=6
       |-  ^-  (list {wing twig})
       ?~  r.gen  ~
       ?~  t.r.gen  [[[[%| 0 ~] [%& axe] ~] i.r.gen] ~]
-      :-  [[[%| 0 ~] [%& (peg axe 2)] ~] i.r.gen] 
+      :-  [[[%| 0 ~] [%& (peg axe 2)] ~] i.r.gen]
       $(axe (peg axe 3), r.gen t.r.gen)
     ::
         {$cntr *}
@@ -7666,6 +7667,8 @@
     =-  [p.tez (doge q.p.tez q.tez)]
     ^=  tez
     ^-  {p/{p/(map span @) q/(map @ wine)} q/wine}
+    ?:  (~(meet ut sut) -:!>(*span))
+      [dex %span]
     ?-    sut
         $noun      [dex sut]
         $void      [dex sut]
@@ -7714,8 +7717,6 @@
       ?^(p.sut yad [p.yad [%face p.sut q.yad]])
     ::
         {$fork *}
-      ?:  =(p.sut fork+[%atom %tas `%noun]^[%atom %tas `%void])
-        [dex %span]                    ::  XX  proper print
       =+  hin=$(sut p.sut)
       =+  yon=$(dex p.hin, sut q.sut)
       :-  p.yon
@@ -8727,7 +8728,9 @@
       {$cell *}  ?:  =(2 now)
                    (cell $(sut p.sut, u.i.vit lat) q.sut)
                   (cell p.sut $(sut q.sut, u.i.vit lat))
-      {$core *}  ?>(=(3 now) (core $(sut p.sut, u.i.vit lat) q.sut))
+      {$core *}  ?.  =(3 now) 
+                   (cell %noun p.sut)
+                 (core $(sut p.sut, u.i.vit lat) q.sut)
       {$face *}  (face p.sut $(sut q.sut))
       {$fork *}  ?:  (~(has in vil) sut)
                    %void

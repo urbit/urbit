@@ -1161,7 +1161,8 @@
     ::
     ++  lima                                            ::  load at depth
       |=  {cof/cafe for/mark bem/beam arg/heel}
-      %+  (clef %bake)  [p=cof q=[%0 p=[bem `~] q=[for bem arg]]]
+      %+  (clef %bake)  
+         `(bolt {mark beam heel})`[cof [%0 [bem ~ ~] [for bem arg]]]
       |=  {cof/cafe for/mark bem/beam arg/heel}
       ^-  (bolt (unit vase))
       %+  cope  (laze cof bem)
@@ -1791,7 +1792,7 @@
         ?@  q.gar
           =+  for=((sand %tas) q.gar)
           ?~  for  (flaw cof leaf+"bad mark ++grad" ~)
-          (make cof %cast p.cay %pact [%cast u.for %$ cay] %$ coy)
+          (make cof `silk`[%cast p.cay %pact [%cast u.for %$ cay] %$ coy])
         ?.  (slab %form p.gar)
           (flaw cof leaf+"no ++form:grad" ~)
         =+  for=((soft @tas) q:(slap gar [%limb %form]))
