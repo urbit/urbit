@@ -1,20 +1,19 @@
-wuttis, `?=`, %wtts
-============================
+`?=`
+====
 
-Is in tile
+Test whether `q` is within type `p` 
 
-`?=` is a natural rune that produces true if the leg at wing `q` is in
-tile `p`.
+Tests whether `q` is of type `p`.
 
 Produces
 --------
 
-Twig: `[%wtts p=tile q=wing]`
+Twig: `[%wtts p=mold q=wing]`
 
 Sample
 ------
 
-`p` is a [tile](). `q` is a [`++wing`]().
+`p` is a mold], `q` is a [`++wing`]().
 
 Tall form
 ---------
@@ -26,11 +25,6 @@ Wide form
 ---------
 
     ?=(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

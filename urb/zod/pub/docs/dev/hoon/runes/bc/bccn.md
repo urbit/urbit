@@ -1,21 +1,25 @@
-buccen `$%` %bccn
-==========================
+`$%` 
+====
 
 Tagged union
 
-`$%` is a tile rune that produces a [`%kelp`](), the tile of the
-discriminated union. `$%` takes a list of lines which are labeled cases,
-called fronds, closed by `==`. Commonly used for pattern matching.
+Produces a [mold]() of a tagged union of a list of case pairs.
+Each of its children must be a cell of molds whose head is a
+cube -- the tag.  The same tag should not be repeated.
+
+This is commonly used to create structures that can be easily
+pattern matched.
 
 Produces
 --------
 
-[Twig](): `[%kelp p=[i=line t=(list line)]]`
+A validator function that uses the value's [head]() as a tag to
+select a mold validate the tail of the value.
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [`++list`]() of [`++line`]()s.
+A list of cells of molds whose heads must be a [cube]().
 
 Tall form
 ---------
@@ -23,16 +27,6 @@ Tall form
     $%  p
         q
     ==
-
-Wide form
----------
-
-None
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

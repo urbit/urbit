@@ -1,54 +1,54 @@
-sigwut, `~?`, %sgwt
-============================
+`~?`
+====
 
-Conditional printf
+printf if `q` true
 
-`~?` is a synthetic rune with the same hint effect as `~&`, printing `r`
-if and only if `q` produces `&`, loobean yes.
+Same as `~&` except for that `r` is printed to the console if and
+only if `q` evaluates to true.  In either case, `s` is executed
+and the result is produced.
 
 Produces
 --------
 
 Twig: `[%sgwt p=@ud q=twig r=twig s=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [`@ud`](). `q` is a [twig](). `r` is a [twig](). `s` is a
-[twig]().
+`p` is a [`@ud`](). `q` is a [`++twig`](). `r` is a twig. `s` is a
+twig.
 
 Tall form
 ---------
 
 Priority 0 (debug):
 
-        ~&  q
-        r
+        ~?  q
+          r
+        s
 
 Priority 1 (notice):
 
-        ~&  >  q
-        r
+        ~?  >  q
+          r
+        s
 
 Priority 2 (warning):
 
-        ~&  >>  q
-        r
+        ~?  >>  q
+          r
+        s
 
 Priority 3 (alarm):
 
-        ~&  >>>  q
-        r
+        ~?  >>>  q
+          r
+        s
 
 Wide form
 ---------
 
-    ~&(>> q r)
-
-Irregular form
---------------
-
-None
+    ~&(>> q r s)
 
 Examples
 --------
@@ -60,5 +60,5 @@ Examples
     ~
 
 A simple case of the conditional printf. When our condition evaluates to
-`&` we print our `r`. Most useful in computation dealing with dynamic
+true we print our `r`. Most useful in computation dealing with dynamic
 data.

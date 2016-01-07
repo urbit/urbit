@@ -1,25 +1,24 @@
-coltar, `:*`, %cltr
-============================
+`:*`
+====
 
-Tuple
+Tuple of n elements
 
-`:*`, `coltar`, `[%cltr p=tusk]` is a synthetic rune that produces a
-tuple.
+Closed with `==`.
 
 Produces
 --------
 
 Twig: `[%cltr p=tusk]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [`++tusk`](), a list of twigs.
+`p` is a [`++tusk`](), a list of [++twig]()s.
 
 Tall form
 ---------
 
-    :~  i.p
+    :*  i.p
         i.t.p
         i.t.t.p
     ==
@@ -53,5 +52,5 @@ Examples
                 ==
     [5 3 4 1 4 9 0 ~ 'a']
 
-This is the most straightforward case of `:*`, producing a tuple of n
-values in wide, irregular and tall form.
+This is the most straightforward case of `:*`, producing tuples of n
+values in wide, irregular and tall forms.

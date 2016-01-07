@@ -1,20 +1,20 @@
-wutpam, `?&`, %wtpm
-============================
+`?&`
+====
 
-AND
+Logical 'and'
 
-`?&` is a synthetic rune that computes the "and" of the loobeans in `p`.
-`?&` is commonly used as a control-flow mechanism.
+Computes the logical 'and' operation on a list of boolean
+expressions.
 
 Produces
 --------
 
 Twig: `[%wtpm p=tusk]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [`++tusk`](), a list of [twig]()s.
+`p` is a [`++tusk`](), a list of [++twig]()s.
 
 Tall form
 ---------

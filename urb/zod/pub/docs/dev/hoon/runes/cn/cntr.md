@@ -1,24 +1,20 @@
-centar, `%*`, %cntr
+`%*`
 ============================
 
-Pull with changes
+`%*` call arm from [door]() w/context changes
 
-`%*` is a synthetic rune that [pull]()s the wing `p` from a [door]() `q`
-with changes `r`, terminated by `==`. `%*` is used to specify changes in
-the context of a wing when it is pulled.
-
-See also
---------
-
-`%~`, which changes the sample specifically
+The same as `%~` but can make changes anywhere in the
+[context](), not just within the input data ([sample]()).
+Evaluates the expression `p` within core `q` with changes `r` to
+the context.
 
 Produces
 --------
 
 Twig: `[%cntr p=wing q=twig r=tram]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [++wing](). `q` is a [++twig](). `r` is a [++tram]().
 
@@ -34,11 +30,6 @@ Wide form
 ---------
 
     %*(p q p.i.r q.i.r, p.i.t.r q.i.t.r)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

@@ -1,42 +1,31 @@
-wutgal, `?<`, %wtgl
-============================
+`?<`
+====
 
-Assert no
+Assert `p` is false
 
-`?<` is a synthetic rune that produces `q`, asserting that `p` is no
-(`|`, 1).
-
-See also
---------
-
-wutgar, `?>`, %wtgr
-============================
+Asserts that `p` is false before evaluating `q`. Crashes if `p`
+evaluates to true.
 
 Produces
 --------
 
 Twig: `[%wtgl p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` and `q` are [twig]()s.
+`p` and `q` are [`++twig`]()s.
 
 Tall form
 ---------
 
     ?<  p
-        q
+    q
 
 Wide form
 ---------
 
     ?<(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

@@ -1,48 +1,38 @@
-bartis, `|=`, %brts
-============================
+`|=`
+====
 
-Dry gate
+Function with argument(s)
 
-`|=`, is a synthetic rune that produces a [dry]() [`%gold`]() gate with
-sample [`$*(p)`](), arm `q`. A gate is a core with one arm, [`$`](), the
-empty name. `|=` checks its input sample against its tile, `p`.
+`|=`, is a synthetic rune that produces a [dry]() [`%gold`]()
+gate with sample [`$*(p)`](), arm `q`. A gate is a core with one
+arm, [`$`](), the empty name. `|=` checks its input sample
+against its [mold](), `p`.
 
-`|=` is similar to a function that takes a defined input and produces
-the result of some computation. `|=` differs from `|*` in that its
-typechecking occurs at compile-time to ensure that all inputs match its
-sample tile.
-
-See also
---------
-
-bartar, `|*`, %brtr
-============================
+`|=` is a function that takes a defined input and produces the
+result of some computation. `|=` differs from `|*` in that its
+typechecking occurs at compile-time to ensure that all inputs
+match its sample mold.
 
 Produces
 --------
 
-Twig: `[%brts p=tile q=twig]`
+Twig: `[%brts p=mold q=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [tile](). `q` is a [twig]().
+`p` is a mold. `q` is a twig.
 
 Tall form
 ---------
 
     |=  p
-        q
+    q
 
 Wide form
 ---------
 
     |=(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

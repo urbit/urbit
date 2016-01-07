@@ -1,31 +1,22 @@
-bartar, `|*`, %brtr
-============================
+`|*`
+====
 
-Wet gate
+Wet function
 
-`|*` is a synthetic rune that produces a [wet]() [gate]() with sample
-[`$*(p)`](), arm `q`. A gate is a core with one arm, [`$`](), the empty
-name.
-
-`|*` is similar to a function in the same way that `|=` is, but differs
-in that it does type checking at runtime. With `|*`, the product type is
-checked to be the same as the input type, rather than the sample tile.
-
-See also
---------
-
-bartis, `|=`, %brts
-============================
+Similar to `|=` except that it does type checking at call time
+with the type of the actual arguments rather than at define time.
+The output type is thus dependent on the input type.  This allows
+the definition of generic functions.
 
 Produces
 --------
 
-Twig: `[%brtr p=tile q=twig]`
+Twig: `[%brtr p=mold q=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [tile](). `q` is a [twig]().
+`p` is a mold. `q` is a [++twig]().
 
 Tall form
 ---------
@@ -38,11 +29,6 @@ Wide form
 
     |*(p q)
 
-Irregular form
---------------
-
-None
-
 Examples
 --------
 
@@ -53,7 +39,7 @@ Examples
 
 This is a concise way of understanding the difference between `|*` and
 `|=`. We use `%.` in both cases to slam each gate with the sample `'c'`.
-`|=` uses its tile `a=@` to cast `'c'` to an atom (`99` is the ASCII
+`|=` uses its mold `a=@` to cast `'c'` to an atom (`99` is the ASCII
 code for `'c'`). `|*` simply ensures that the product type matches the
 input sample type.
 

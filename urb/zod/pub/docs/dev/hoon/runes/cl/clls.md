@@ -1,30 +1,24 @@
-collus, `:+`, %clls
-============================
+`:+`
+====
 
-Tuple of three
-
-`:+` is a synthetic rune that produces a cell `[p q r]`.
+Triple. Tuple of three.
 
 Produces
 --------
 
 Twig: `[%clls p=twig q=twig r=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [twig](). `q` is a [twig](). `r` is a [twig]().
+`p` is a [++twig](). `q` is a twig. `r` is a twig.
 
 Tall form
 ---------
 
-Kingside:
-
     :+  p
       q
     r
-
-Queenside:
 
     :+  p  q
     r
@@ -33,11 +27,6 @@ Wide form
 ---------
 
     :+(p q r)
-
-Irregular form
---------------
-
-undefined
 
 Examples
 --------
@@ -49,7 +38,7 @@ Examples
     /~zod/try=> :+(%a ~ 'b')
     [%a ~ 'b']
 
-This is the most straightforward case of `:+`, producing a tuple of four
+This is the most straightforward case of `:+`, producing a tuple of three
 values in both tall and wide form.
 
     /~zod/try=> 

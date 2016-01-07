@@ -1,32 +1,26 @@
-colket, `:^`, %clkt
-============================
+`:^`
+====
 
-Tuple of four
-
-`:^` is a synthetic rune that produces a cell `[p q r s]`.
+Quadruple. Tuple of four.
 
 Produces
 --------
 
 Twig: `[%clkt p=twig q=twig r=twig s=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [twig](). `q` is a [twig](). `r` is a [twig](). `s` is a
-[twig]().
+`p` is a [++twig](). `q` is a twig. `r` is a twig. `s` is a
+twig.
 
 Tall form
 ---------
-
-Kingside:
 
     :^    p
         q
       r
     s
-
-Queenside:
 
     :^  p  q
       r
@@ -40,11 +34,6 @@ Wide form
 
     :^(p q r s)
 
-Irregular form
---------------
-
-undefined
-
 Examples
 --------
 
@@ -55,8 +44,8 @@ Examples
                 8
     [5 6 7 8]
 
-This is the most straightforward case of `:^`, producing a tuple of four
-values in both tall and wide form.
+These are the most straightforward cases of `:^`, producing a tuple of four
+values in both tall and wide forms respectively.
 
     /~zod/try=> 
     :^  (add 2 4)  (add 2 6)

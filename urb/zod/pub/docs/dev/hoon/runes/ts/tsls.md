@@ -1,25 +1,24 @@
-tislus, `=+`, %tsls
-============================
+`=+`
+====
 
-Push on
+Declare a variable and define it
 
-`=+` is a synthetic rune that pushes `p` on the subject and sends it to
-`q`. `=+` is the inverse of `=-`. Use `=+` when your `p` isn't too long
-and `=+` makes for more readable code.
+Easiest way to declare variables. Pushes a new variable `p` onto the
+subject and then executes `q` against the new subject.
 
-See also
---------
 
-tishep, `=-`, %tshp
-============================
+Technically, `=+` is a synthetic rune that pushes `p` on the
+subject and sends it to `q`. `=+` is the inverse of `=-`. Use
+`=+` when your `p` isn't too long and `=+` makes for more
+readable code.
 
 Produces
 --------
 
 Twig: `[%tsls p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` and `q` are [twig]()s.
 
@@ -27,17 +26,12 @@ Tall form
 ---------
 
     =+  p
-        q
+    q
 
 Wide form
 ---------
 
     =+(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

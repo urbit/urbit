@@ -1,21 +1,23 @@
-buclus `$+` %bcls
-==========================
+`$+`
+====
 
-Signature
+Type of function (type signature)
 
-`$+` a tile for a gate which accepts `p` and produces `q`. `$+` is
-similar to a function signature. `$+(p q)` is a `%bark` of a `%weed`, or
-`$_(|+(p _q))`.
+Produces a [mold]() for a function that accepts `p` and produces
+`q`. Used when we want to use the type of a function that we do
+not want to immediately execute.
+
+Reduces to `$_(|+(p *q))`.
 
 Produces
 --------
 
-Tile: `$_(|+(p _q))`
+A mold whose [span]() is used to validate the types of functions.
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [tile]() `q` is a [tile]()
+`p` is the mold of the [argument]() ([sample]()) and `q` is a mold of the product.
 
 Tall form
 ---------
@@ -26,11 +28,6 @@ Wide form
 ---------
 
       $+(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------
@@ -47,7 +44,7 @@ Examples
             ^+  t.a
             [i.a $(a (skim t.a |=(c=_i.a !(b c i.a))))]
 
-In ++sort, `$+` is a tile for a comparator gate, which takes two nouns
+In ++sort, `$+` is a mold for a comparator gate, which takes two nouns
 and produces a loobean.
 
     ~zod/try=> |=(a=@ (add 2 a))

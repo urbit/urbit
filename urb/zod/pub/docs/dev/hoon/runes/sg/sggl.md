@@ -1,21 +1,21 @@
-siggal, `~<`, %sggl
-============================
+`~<`
+====
 
 Hint to product
 
-`~<` is a synthetic rune that applies arbitrary [hint]() `p` to the
-product of `q`. `~<` is similar to `~>`, but computes `q` before
-applying the hint `p`.
+`~<` is a synthetic rune that applies arbitrary [hint]() `p` to
+the product of `q`. `~<` is similar to `~>`, but computes `q`
+before applying the hint `p`.
 
 Produces
 --------
 
 Twig: `[%sggl p=$|(term [p=term q=twig]) q=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is either a [`++term`]() or a `++term` twig pair. `q` is a [twig]()
+`p` is either a [`++term`]() or a `++term` twig pair. `q` is a twig.
 
 Tall form
 ---------
@@ -35,11 +35,6 @@ Wide form
 
     ~<(%foo q)
     ~<(%foo.bar q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

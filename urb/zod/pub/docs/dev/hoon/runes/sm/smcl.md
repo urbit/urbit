@@ -1,24 +1,20 @@
-semcol, `;:`, %smcl
-============================
+`;:`
+====
 
-Apply fold
+Fold over tuple
 
-Syntax
-======
-
-`;:` is a synthetic rune that applies `p`, a binary gate, to the n-ary
-tuple `q`. `;:` is similar to folding over the tuple `q`, producing the
-final result.
+Apply a binary function `p` to a tuple `q` with `n` elements.
+Statically folds over the tuple `q`.
 
 Produces
 --------
 
 Twig: `[%smcl p=twig q=tusk]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [twig](). `q` is a [`++tusk`]().
+`p` is a [`++twig`](). `q` is a [`++tusk`](), a list of twigs.
 
 Tall form
 ---------

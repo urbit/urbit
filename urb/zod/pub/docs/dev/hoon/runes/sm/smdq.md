@@ -1,9 +1,10 @@
-semdoq, %smdq
-======================
+`;"`
+====
 
-String
+Make string
 
-`semdoq` is a synthetic rune used to make strings, interpreted or not.
+`semdoq` is a synthetic rune used to make strings, with or
+without interpolation.
 
 Produces
 --------
@@ -13,17 +14,7 @@ Twig: `[%smdq p=(list beer)]`
 Sample
 ------
 
-`p` is a [list]() of [`++beer`]().
-
-Tall form
----------
-
-None
-
-Wide form
----------
-
-None
+`p` is a [`++list`]() of [`++beer`]()s.
 
 Irregular form
 --------------
@@ -38,7 +29,7 @@ Examples
     ~zod/try=> "bar"
     "bar"
 
-Here we see our most common case of `semdoq`, producing [`++tape`]s.
+Here we see our most common case of `semdoq`, producing strings ([`++tape`]()s).
 
     ~zod/try=> "ba{<+(2)>}r"
     "ba3r"

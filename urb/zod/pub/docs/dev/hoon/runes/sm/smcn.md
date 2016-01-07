@@ -1,26 +1,21 @@
-semcen, `;%`
-=====================
+`;%`
+====
 
-`++sail` list
+[`++sail`] version of `%-`
 
-`;%` is a virtual rune used within [`++sail`]() for passing a list of
-child nodes to a gate. `;%` is used for transforming a list of child
-elements inside a [`++manx`]().
-
-See also
---------
-
-The `%e` case inside of [`++tuna`]().
+Performs the same function as `%-`, except within XML template
+syntax (aka sail). Passes `q`, a list of n arguments, to function
+`p`.
 
 Produces
 --------
 
 Twig: [`++marl`]()
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [twig]().
+`p` is a [`++twig`]().
 
 Tall form
 ---------
@@ -33,11 +28,6 @@ Wide form
     %{p}
 
 (within quoted form)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------
@@ -54,7 +44,7 @@ Examples
     (poxo ;div:"%{|=(a=marl (weld a a))} repeat")
     "<div> repeat repeat</div>"
 
-In this simple example we use a gate, `|=(a=marl (weld a a))` that
+In this simple example we use a function, `|=(a=marl (weld a a))` that
 produces a `++marl` twice. Using the irregular form of `;%` we produce a
 repeated child node `'repeat'`. [`++poxo`]() prints our result in XML.
 

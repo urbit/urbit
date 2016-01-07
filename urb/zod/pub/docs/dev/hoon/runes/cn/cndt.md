@@ -1,37 +1,34 @@
-cendot, `%.`, %cndt
-============================
+`%.`
+====
 
-Slam, reverse order
+Inverted function call 
 
-`%.` is a synthetic rune that reverses the order of [`%-`](). `%.`
-exists primarily for code readability and organization, see the [style
-guide]().
+Inverts the order of [`%-`](), so the argument is the first child
+and the second child is the function. Exists primarily for code
+readability and organization. See the [backstep section]() for
+more information.
 
 Produces
 --------
 
 Twig: `[%cndt p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` and `q` are [twig]()s.
+`p` and `q` are [`++twig`]()s. `p` is the argument and `q` is the
+function.
 
 Tall form
 ---------
 
     %.  p
-        q
+    q
 
 Wide form
 ---------
 
     %.(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------
@@ -55,8 +52,3 @@ Here we add `2` to the product of `2` and `20`, and use `%.` to
 decrement our result. As you can see, `%.` is most useful for code
 organization, when you need to compute intermediate products for your
 final result.
-
-Equivalent to
--------------
-
-    %-(q p)

@@ -1,22 +1,28 @@
-cenhep, `%-`, %cnhp
-============================
+`%-`
+====
 
-Slam, n-arguments
+Call function w/one argument
 
-Slam, 1 (or n) argument(s)
+Call function with one argument. Has an irregular wideform
+syntax: `(function [arg0 arg1...])`, which takes `n` arguments
+enclosed within the `()`. Note that one can also pass a function
+`n` arguments with regular tall or wide form `%-` with a tuple
+with `n` elements.
 
-%- is a synthetic rune that that pulls $ from the door p with its sample set to [%cltr q]. %- in both its tall and wide forms is like a function call with one argument. However, %-is most commonly used in its irregular form, where p and q are enclosed within () where q is a list of n arguments.
+`%-` is a synthetic rune that that pulls `$` from the door `p`
+with its `%sample` set to `[%cltr q]`.
 
 Produces
 --------
 
 Twig: `[%cnhp p=twig q=tusk]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [twig](), most commonly a [gate]() `q` is a [tusk](), a list of
-twigs
+`p` is a [++twig](), most commonly a function, and in tall form
+`q` is a twig. In irregular wide form, `q` is a [`++tusk`](), a
+list of twigs.
 
 Tall form
 ---------
@@ -37,3 +43,10 @@ Irregular form
 
 Examples
 --------
+
+    > %-(dec 4)
+    3
+
+    > (add 2 2)
+    4
+

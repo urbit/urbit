@@ -1,36 +1,30 @@
-sigbuc, `~$`, %sgbc
-============================
+`~$`
+====
 
 Label for profiling
 
-`~$`, `sigbuc`, `[%sgbc p=term q=twig]` is a synthetic rune that labels
-computation `q` as `p` for profiling.
+Labels computation `q` as `p` for profiling.
 
 Produces
 --------
 
 Twig: `[%sgbc p=term q=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [term](). `q` is a [twig]().
+`p` is a [`++term`](). `q` is a [`++twig`]().
 
 Tall form
 ---------
 
     ~$  p
-        q
+    q
 
 Wide form
 ---------
 
     ~$(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

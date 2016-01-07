@@ -1,7 +1,10 @@
-zapcom, `!,`, %zpcm
-============================
+`!,`
+====
 
-Insert as constant
+XX
+
+Inserts twig `q` as a constant, typed with the type of twig `p`. XX??
+
 
 `!,` is a natural rune that inserts twig `q` as a constant, typed with
 the type of twig `p`.
@@ -11,26 +14,18 @@ Produces
 
 Twig: `[%zpcm p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` and `q` are [twig]()s.
+`p` and `q` are [`++twig`]()s.
 
 Tall form
 ---------
 
     !,  p
-        q
+    q
 
 Wide form
 ---------
 
     !,(p q)
-
-Irregular form
---------------
-
-None
-
-Examples
---------

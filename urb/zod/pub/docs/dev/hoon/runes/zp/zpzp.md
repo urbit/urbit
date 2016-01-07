@@ -1,39 +1,34 @@
-zapzap, `!!`, %zpzp
-============================
+`!!`
+====
 
 Crash
 
-`!?` is a natural rune that always crashes.
+Always causes a crash. Useful when testing unfinished code so
+that you don't have to worry about type stuff for different
+conditional cases you have yet to cover.
+
+Frequently used as sentinel, especially when you don't want the
+type system to give you type fails before you've written every
+possible branch of the computation.  The type of `!!` is `%void`,
+which nests within every other type.
 
 Produces
 --------
 
 Twig: `[%zpzp ~]`
 
-Sample
-------
+Accepts
+-------
 
-Always ignored
-
-Tall form
----------
-
-None
+N/A (always ignored)
 
 Wide form
 ---------
 
     !!
 
-Irregular form
---------------
-
-None
-
 Examples
 --------
-
-Frequently used as sentinel
 
     ~zod/try=> !!
     ! exit

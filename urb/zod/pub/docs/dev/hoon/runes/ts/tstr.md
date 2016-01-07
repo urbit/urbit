@@ -1,17 +1,23 @@
-tistar, `=*`, %tstr
-============================
+`=*`
+====
 
 Alias
 
-`=*` is a natural rune that creates a `%bull`, or alias, type.
+Makes `p` an alias of value `q`. Useful when you don't want to
+write out a long address multiple times, for example
+`p.s.+.variable`, which translates to `p` within `s` within the
+tail of `variable`.
+
+Technically, `=*` is a natural rune that creates a `%bull`, or
+alias, type.
 
 Produces
 --------
 
 Twig: `[%tstr p=term q=wing r=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [`term`](). `q` is a [`++wing`](). `r` is a [twig]().
 
@@ -19,17 +25,12 @@ Tall form
 ---------
 
     =*  p  q
-        r
+    r
 
 Wide form
 ---------
 
     =*(p q r)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

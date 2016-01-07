@@ -17,7 +17,7 @@ Hoon](hoon/principles).
 
 If you want to jump into building things right away and prefer to
 learn from the top down, check out [Leap into
-Hoon](hoon/leap-in/1-basic).
+Hoon](hoon/leap-in/basic).
 
 Both of these are under active development.
 

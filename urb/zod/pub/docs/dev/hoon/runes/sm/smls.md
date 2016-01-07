@@ -1,16 +1,11 @@
-semlus, `;+`
-=====================
+`;+`
+====
 
-`++sail` manx
+Interpolate [`++manx`]() in `++sail`
 
-`;+` is a virtual rune used within [`++sail`]() to interpolate a manx.
-`;+` is useful when you need to dynamically produce a tag in a `++sail`
-block.
-
-See also
---------
-
-The `%b` case inside of [`++tuna`]().
+`;+` is a virtual rune used within [`++sail`]() to interpolate a
+manx.  `;+` is useful when you need to dynamically produce a tag
+in a `++sail` block.
 
 Produces
 --------
@@ -33,11 +28,6 @@ Wide form
     +{a}
 
 (within quoted form)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

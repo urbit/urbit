@@ -1,17 +1,17 @@
-semsig, `;~`, %smsg
-============================
+`;~`
+====
 
 Monad composer
 
-`;!` is a synthetic rune used to compose functions under a monad.
+`;~` is a synthetic rune used to compose functions under a monad.
 
 Produces
 --------
 
 Twig: `[%smsg p=(list beer)]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [`++list`]() of [`++beer`]().
 
@@ -29,11 +29,6 @@ Wide form
 
     ;~(p i.q i.t.q i.t.t.q)
 
-Irregular form
---------------
-
-None
-
 Examples
 --------
 
@@ -43,7 +38,7 @@ Examples
     ~zod/try=> (;~(cmp trip) 'a')
     "a"
 
-`;~` accepts a composer and a nonempty list of gates; at one gate, the
+`;~` accepts a composer and a nonempty list of functions; at one gate, the
 composer is ignored, and the gate applied directly.
 
     ~zod/try=> (;~(cmp trip |=(a=@ ~[a a])) 'a')

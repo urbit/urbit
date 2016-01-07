@@ -1,32 +1,35 @@
-tisket, `=^`, %tskt
-============================
+`=^`
+====
 
-State machine
+Declare variable with side effects
 
-`=^` is a synthetic rune that handles a product which is a cell of a new
-result, and a mutation to the subject.
+Used to both push a new variable on the subject as well as change
+the value of another.  Similar to `=+` in that it pushes a value
+on the stack with variable name (face) `p`. However, in addition
+to pushing a new variable onto the subject, it also modifies `q`
+within the subject.  `r` is the cell of `[new-product-p
+updated-value-1]`. You can think of `=^` like a state monad. 
+
+Technically, `=^` is a synthetic rune that handles a product
+which is a cell of a new result, and a mutation to the subject.
 
 Produces
 --------
 
 Twig: `[%tskt p=twig q=twig r=twig s=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p`, `q`, `r` and `s` are [twig]()s.
 
 Tall form
 ---------
 
-Kingside:
-
     =^    p 
         q
       r
     s
-
-Queenside:
 
     =^  p  q
       r
@@ -36,11 +39,6 @@ Wide form
 ---------
 
     =^(p q r s)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

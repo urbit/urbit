@@ -1,25 +1,19 @@
-semtar, `;*`
-=====================
+`;*`
+====
 
-`++sail` list `++manx`
+Interpolate list of XML nodes
 
-`;*` is a virtual rune used within [`++sail`]() to interpolate a list of
-marl.
-
-See also
---------
-
-The `%c` case inside of [`++tuna`]().
+Interpolates a list of XML nodes within our XML template syntax (aka sail)
 
 Produces
 --------
 
 Twig: [`++marl`]()
 
-Sample
-------
+Accepts
+-------
 
-`p` is a twig
+`p` is a [`++twig`]()
 
 Tall form
 ---------
@@ -32,11 +26,6 @@ Wide form
     *{a}
 
 (within quoted form)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

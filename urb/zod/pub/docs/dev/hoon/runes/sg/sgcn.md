@@ -1,20 +1,20 @@
-sigcen, `~%`, %sgcn
-============================
+`~%`
+====
 
-Core jet
+Register jet
 
-`~%` is a synthetic rune, identifies a core for specific optimization.
+Registers a jet in core `s` so that it can be called when that code is run.
 
 Produces
 --------
 
 Twig: `[%sgcn p=term q=twig r=tyre s=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [`++term`]() `q` is a [twig]() `r` is a [`++tyre`]() `s` is a
-[twig]()
+`p` is a [`++term`]() `q` is a [`++twig`]() `r` is a [`++tyre`]() `s` is a
+twig.
 
 Tall form
 ---------
@@ -32,15 +32,6 @@ Tall form
       ~
     s
 
-Wide form
----------
-
-None
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

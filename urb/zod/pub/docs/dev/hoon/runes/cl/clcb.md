@@ -1,36 +1,31 @@
-colcab, `:_`, %clcb
-============================
+`:_`
+====
 
-Cell, backwards
+Inverted tuple of `p` `q`
 
-`:_`, `colcab`, `[%clcb p=twig q=twig]` is a synthetic rune that
-produces the cell `[q p]`.
+Exists for code readability and organization. See the
+[backstep]() convention.
 
 Produces
 --------
 
 Twig: `[%clcb p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [twig](). `q` is a [twig]().
+`p` is a [++twig](). `q` is a twig.
 
 Tall form
 ---------
 
     :_  p
-        q
+    q
 
 Wide form
 ---------
 
     :_(p q)
-
-Irregular form
---------------
-
-undefined
 
 Examples
 --------

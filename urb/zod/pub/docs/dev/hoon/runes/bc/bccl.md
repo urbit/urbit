@@ -1,42 +1,47 @@
-buccol `$:` %bccl
-==========================
+`$:`
+====
 
-Tile autocons
+Tuple of molds
 
-`$:` is a tile rune that constructs the tile of a tuple from a tuple of
-tiles.
+Note that this is one of the few molds that does "partial
+validation".  If a value matches the first few elements of the
+tuple, but not the later ones, then the validator keeps the
+matches and defaults the later ones.
 
 Produces
 --------
 
-[Tile](): `[p=tile q=tile]`
+A validator function that validates a tuple of nouns against a tuple of [mold]()s.
 
-Sample
-------
+Accepts
+--------
 
-`p` is a [tile](). `q` is a [tile]().
+`p` is a list of molds.
 
 Tall form
 ---------
 
-    $:  p
-        q
+    $:  i.p
+        i.t.p
+        i.t.t.p
     ==
 
 Wide form
 ---------
 
-    $:(p q)
+    $:(i.p i.t.p i.t.t.p)
 
 Irregular form
 --------------
 
-    [p q]
+    {i.p i.t.p i.t.t.p}
 
 Examples
 --------
 
     ~zod/try=> *[1 2]
+    [%1 %2]
+    ~zod/try=> (,$:(1 2) "ham")
     [%1 %2]
     ~zod/try=> (,[1 2] "ham")
     [%1 %2]

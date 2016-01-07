@@ -1,33 +1,44 @@
-centis, `%=`, %cnts
-============================
+`%=`
+====
 
-Evaluate with changes
+Eval `p` w/changes
 
-`%=` is a natural rune that evaluates `p` with the changes specified in
-`q`. `%=` is used to change a batch of [wing]()s inside a [`++wing`]()
-all at once, ensuring that the product is type checked.
+Evaluates `p` with the changes specified in `q`, where `q` is a
+list of addresses ([`++wing`]()) followed by the values that will
+replace whatever value currently lies at that address. Makes the
+changes all at once to ensure that the product type is checked.
 
-See also
---------
-
-`%_`
+`%=` has an addtional, irregular wifeform syntax that is
+frequently used: `a(p q.p, q p.a)`, where `a` is the code to be
+executed with the changes specified within the `()`.
 
 Produces
 --------
 
 Twig: `[%cnts p=wing q=tram]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [++wing](). `q` is a [++tram]().
+`p` is a `++wing`. `q` is a [++tram]().
 
 Tall form
 ---------
 
+Kingside:
+
     %=  p
       p.i.q    q.i.q
       p.i.t.q  q.i.t.q
+    ==
+
+Queenside:
+
+    %=    p
+        p.i.q
+      q.i.q
+        p.i.t.q
+      q.i.t.q
     ==
 
 Wide form

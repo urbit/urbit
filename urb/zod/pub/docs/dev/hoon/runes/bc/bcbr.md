@@ -1,48 +1,37 @@
-bucbar `$|` %bcbr
-=================
+`$|`
+====
 
-<div class="short">
+Union type between atom and cell
 
-Atom or cell
-------------
+[mold]() that's a union of an atom `p` and cell `q`.  `$|` is
+similar to [`$?`]() but is more strict in that it only contains
+one atom mold and one cell mold.
 
-`$|` is a tile rune that produces a [`%reed`](), a tile whose [icon]()
-is a [fork]() between two nouns: an [atom]() of `tile` `p` and a cell of
-`tile` `q`. `$|` is similar to [`$?`](), but is more strict in that in
-only contains one atom tile and one cell tile.
-
-</div>
-
-<hr>
-</hr>
 ### Produces
 
-[`Tile`](): `[%reed p=tile q=tile]`
+A validator function that validates atoms as mold `p` and cells as mold `q`.
 
-### Sample
+### Accepts
 
-`p` is a [`tile`]() `q` is a [`tile`]()
+`p` is a `mold` of an atom and `q` is a `mold` of a cell.
 
 ### Tall form
 
     $|  p
-        q
+    q
 
 ### Wide form
 
     $|(p q)
 
-### Irregular form
-
-None
-
 ### Examples
 
+    ~zod/try=> ($|(@t [@ud @ux]) 'hello')
+    'hello'
+    ~zod/try=> (,$|(@ [@t @ud]) 44 44)
+    [',' 44]
     ~zod/try=> *$|(~ [~ u=@])
     ~
-    ~zod/try=> :type; *$|(~ [~ u=@])
-    ~
-    u(@)
 
     ++  list  |*  a=_,*                                     ::  null-terminated list
               $|(~ [i=a t=(list a)])                        ::

@@ -1,5 +1,5 @@
-zapsem, `!;`, %zpsm
-============================
+`!;`
+====
 
 `[type noun]` pair
 
@@ -11,10 +11,10 @@ Produces
 
 Twig: `[%zpsm p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` and `q` are [twig]()s.
+`p` and `q` are [`++twig`]()s.
 
 Tall form
 ---------
@@ -26,11 +26,6 @@ Wide form
 ---------
 
     !;(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

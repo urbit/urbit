@@ -1,43 +1,39 @@
-barlus, `|+`, %brls
-============================
+`|+`
+====
 
-`%iron` gate
+Function with unreadable sample
 
-`|+` is a synthetic rune that produces a [dry]() [`%iron`]() [gate]()
-with sample [`$*(p)`]() and [arm]()s `q`. `|+` is similar to `|=`, but
-differs in that its sample cannot be read. It can be thought of as
-similar to a private function.
+`|+` is a synthetic rune that produces a [dry]() [`%iron`]()
+function with argument (aka [sample]()) [`$*(p)`]() and [arm]()s
+`q`. `|+` is similar to `|=`, but differs in that its input
+(sample) and context cannot be read.
 
-See also
---------
-
-bartis, `|=`, %brts
+Because of this, the type of a `|+` function is fairly general.
+A gate may be defined in a different context or have a more
+general input type while still being within the type.  One of the
+most common usages of iron functions is as input to another
+function, where `$+` is used in the type definition.
 
 Produces
 --------
 
-Twig: `[%brls p=tile q=twig]`
+Twig: `[%brls p=mold q=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [tile](). `q` is a [twig]().
+`p` is a [mold](). `q` is a [`++twig`]().
 
 Tall form
 ---------
 
     |+  p
-        q
+    q
 
 Wide form
 ---------
 
     |+(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------
@@ -49,9 +45,10 @@ Examples
     ~zod/try=> +<:|=(a=@ a)
     a=0
 
-Here we're trying to read the sample, using `+<` of two different kinds
-of gates. With `|+` you can see we cause an error, whereas with `|=` our
-default sample is `a=0`.
+Here we're trying to read the sample, using the [head]() of the
+[tail]() of two different kinds of functions. With `|+` you can
+see we cause an error, whereas with `|=` our default sample is
+`a=0`.
 
     ~zod/try=> %.(20 |+(a=@ a))
     20

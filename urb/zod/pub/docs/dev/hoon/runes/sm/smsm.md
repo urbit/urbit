@@ -1,11 +1,16 @@
-semsem, `;;`, %smsm
-============================
+`;;`
+====
 
-Fixpoint
+Fixpoint, assert type.
 
-`;;` is a synthetic rune that types `q` as a fixpoint of `p`. More
-specifically, `;;` slams `q` through gate `p`, asserting that the
-resulting noun [`.=`]() the original, and produces it.
+The most common usage is to assert that a value is of a
+particular type, crashing if we're wrong.  This is equivalent to
+[`++hard`]().
+
+Technicaly, `;;` is a synthetic rune that types `q` as a fixpoint
+of `p`.  More specifically, `;;` slams `q` through gate `p`,
+asserting that the resulting noun [`.=`]() the original, and
+produces it.
 
 See also
 --------
@@ -17,26 +22,21 @@ Produces
 
 Twig: `[%smsm p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [twig](). `q` is a [twig]().
+`p` is a [`++twig`](). `q` is a twig.
 
 Tall form
 ---------
 
     ;;  p
-        q
+    q
 
 Wide form
 ---------
 
     ;;(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

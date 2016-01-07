@@ -1,20 +1,20 @@
-wutbar, `?|`, %wtbr
-============================
+`?|`
+====
 
-OR
+Logical 'or'
 
-`?|` is a synthetic rune that computes the "or" of the loobeans in `p`.
-`?|` is commonly used as a control-flow mechanism.
+Computes the logical 'or' operation on a list of boolean
+expressions `p`.
 
 Produces
 --------
 
 Twig: `[%wtbr p=tusk]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [`++tusk`](), a list of [twig]()s.
+`p` is a [`++tusk`](), a list of [`++twig`]()s.
 
 Tall form
 ---------

@@ -1,20 +1,19 @@
-wutket, `?^`, %wtkt
-============================
+`?^`
+====
 
-Is bunt, inverse
+If `p` is cell-then-else
 
-`?^` is a synthetic rune that evaluates `r` if `p` is equal to the
-[bunt]() for its [tile](), otherwise `q` is evaluated.
+Tests if `p` is a cell.  If so, produce `q`.  Else, produce `r`.
 
 Produces
 --------
 
 Twig: `[%wtkt p=wing q=twig r=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [`++wing`](). `q` and `r` are [twig]()s.
+`p` is a [`++wing`](). `q` and `r` are [`++twig`]()s.
 
 Tall form
 ---------
@@ -28,16 +27,9 @@ Wide form
 
     ?^(p q r)
 
-Irregular form
---------------
-
-None
-
 Examples
 --------
 
-    ~zod/try=> =(*@tas "")
-    %.y
     ~zod/try=> ?^  ""
                  %full
                %empty
@@ -47,11 +39,8 @@ Examples
                %empty
     %full
 
-Here we show that `*@tas`, the bunt of `@tas` is equivalent to the empty
-[`++tape`]() `""`, then use it in two `?^` cases.
+Here we show that `""` is an atom while `"asd"` is a cell.
 
-    ~zod/try=> *(unit)
-    ~
     ~zod/try=> ?^  `(unit)`~
                  %full
                %empty
@@ -61,8 +50,7 @@ Here we show that `*@tas`, the bunt of `@tas` is equivalent to the empty
                %empty
     %full
 
-Similar to the above case, we show the bunt of a [`++unit`](), which is
-`~`, and test against it.
+Similarly, `~` is an atom and `[~ u=20]` is a cell.
 
 Equivalent to
 -------------

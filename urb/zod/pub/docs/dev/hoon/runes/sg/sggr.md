@@ -1,7 +1,7 @@
-siggar, `~>`, %sggr
-============================
+`~>`
+====
 
-Hint
+Arbitrary hint
 
 `~>` is a natural rune that applies arbitrary hint `p` to `q`.
 
@@ -10,10 +10,10 @@ Produces
 
 Twig: `[%sggr p=$|(term [p=term q=twig]) q=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is either a [`++term`]() or a `++term` twig pair. `q` is a [twig]()
+`p` is either a [`++term`]() or a term [`++twig`] pair. `q` is a twig.
 
 Tall form
 ---------
@@ -21,7 +21,7 @@ Tall form
 `p=%foo`:
 
     ~>  %foo
-        q
+    q
 
 `p=[p=%foo q=bar]`:
 
@@ -33,11 +33,6 @@ Wide form
 
     ~>(%foo q)
     ~>(%foo.bar q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

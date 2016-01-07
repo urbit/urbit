@@ -1,25 +1,22 @@
-tisgal, `=<`, %tsgl
-============================
+`=<`
+====
 
-Product as subject, inverse
+An inverted `=>`. Uses `q` as the subject of formula `p`.
 
-`=<` is a synthetic rune that uses the product of `q` as the subject of
-`p`. `=<` is the inverse of `=>`. Use `=<` when your computation, `q` is
-lengthier and `=<` makes for more readable code.
+Allows us to keep the heavier of `p` and `q` as the bottom
+expression, which makes for more readable code. Please see the
+section on [backstep]().
 
-See also
---------
-
-tisgar, `=>`, %tsgr
-============================
+Technically, `=<` is a synthetic rune that uses `q` as the
+subject of `p`. `=<` is the inverse of `=>`.
 
 Produces
 --------
 
 Twig: `[%tsgl p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` and `q` are [twig]()s.
 
@@ -27,7 +24,7 @@ Tall form
 ---------
 
     =<  p
-        q
+    q
 
 Wide form
 ---------

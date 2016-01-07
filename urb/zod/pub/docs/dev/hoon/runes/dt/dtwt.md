@@ -1,21 +1,20 @@
-dotwut,`.?`, %dtwt
-===========================
+`.?`
+====
 
-Noun or cell
+Test if noun is cell or atom
 
-`.?`, `dotwut`, `[%dtwt p=twig]` is a natural rune that applies nock `3`
-to a noun: if the noun is a cell, it returns the loobean `&` (true); if
-the noun is an atom, it returns the loobean `|` (false).
+Nock operator 3: tests whether a noun is a cell or an atom,
+producing true if it is the former and false if the latter.
 
 Produces
 --------
 
 Twig: `[%dtwt p=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [twig]().
+`p` is a [`++twig`]().
 
 Tall form
 ---------
@@ -26,11 +25,6 @@ Wide form
 ---------
 
     .?(p)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

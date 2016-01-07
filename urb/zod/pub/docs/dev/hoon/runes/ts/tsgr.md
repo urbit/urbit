@@ -1,25 +1,19 @@
-tisgar, `=>`, %tsgr
-============================
+`=>`
+====
 
-Product as subject
+Replace subject
 
 `=>` is a natural rune that uses the product of `p` as the subject of
 `q`. `=>` is the inverse of `=<`. Use `=>` when your `p` isn't too long
 and `=>` makes for more readable code.
-
-See also
---------
-
-tisgal, `=<`, %tsgl
-============================
 
 Produces
 --------
 
 Twig: `[%tsgr p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` and `q` are [twig]()s.
 
@@ -27,17 +21,12 @@ Tall form
 ---------
 
     =>  p
-        q
+    q
 
 Wide form
 ---------
 
     =>(p q)
-
-Irregular form
---------------
-
-None
 
 Examples
 --------

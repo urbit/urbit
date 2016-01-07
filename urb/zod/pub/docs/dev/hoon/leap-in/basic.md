@@ -239,8 +239,7 @@ every argument.
 > If you're familiar with Clojure, `|-` is `loop` and `$()` is
 > recur.
 
-
-## Excercises
+**Exercises**:
 
 Please tweak your code to complete the following excercises.
 
@@ -248,15 +247,15 @@ There are a few runes and some syntax that we have yet to cover that
 you will need to complete the excercises below. For these, please
 refer to our cheatsheat at the bottom.
 
-1.  Read and understand `++five` line by line.
+- Read and understand `++five` line by line.
 
-2.  Change `++sum` to accept two variables, `a` and `b`. Pass `a`
-    to three and `b` to five. Then run the code with `a` set to
-    `1.000` and b set to `2.000`.
+- Change `++sum` to accept two variables, `a` and `b`. Pass `a`
+  to three and `b` to five. Then run the code with `a` set to
+  `1.000` and b set to `2.000`.
 
-3.  Check if this new result is under one thousand. If it is,
-    return the string 'result is less than one thousand'. If not,
-    return 'result is greater than or equal to one thousand'.
+- Check if this new result is under one thousand. If it is,
+  return the string 'result is less than one thousand'. If not,
+  return 'result is greater than or equal to one thousand'.
 
 ```
 Review
@@ -383,20 +382,18 @@ don't throw away the subject (i.e. the standard library); rather,
 we stack the new core on top of the old subject so that both are
 accessible.
 
-## Exercises:
+**Exercises**:
 
-4. Pass `++sum` its arguments (`2000` and `3000`) from the
-   commandline.
+- Pass `++sum` its arguments (`2000` and `3000`) from the
+  commandline.
 
-5. Comment out all of the arms of the `|%`. Now add another arm
-   and call it `++add`, have it accept two arguments and procduce
-   42 (regardless of input).  Change the `=<` line to `[(add 5 7)
-   (^add 5 7)]`.  Can you recognize what's happening?
+- Comment out all of the arms of the `|%`. Now add another arm
+  and call it `++add`, have it accept two arguments and procduce
+  42 (regardless of input).  Change the `=<` line to `[(add 5 7)
+  (^add 5 7)]`.  Can you recognize what's happening?
 
-6. Write fizbuzz:
-
-  Write a program that prints the numbers from 1 to 100
-  (entered from the command line). But for multiples of three
+- Write a program that prints the numbers from 1 to 100 (entered
+  from the command line), except that for multiples of three
   print 'Fizz' instead of the number and for the multiples of
   five print 'Buzz'. For numbers which are multiples of both
   three and five print 'FizzBuzz'.

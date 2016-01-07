@@ -1,26 +1,23 @@
-colhep, `:-`, %clhp
-============================
+`:-`
+====
 
-Cell
-
-`:-`, `colhep`, `[%clhp p=twig q=twig]` is a synthetic rune that
-produces the cell `[p q]`.
+Cell. Pair. Tuple of two.
 
 Produces
 --------
 
 Twig: `[%clhp p=twig q=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [twig](). `q` is a [twig]().
+`p` is a [++twig](). `q` is a twig.
 
 Tall form
 ---------
 
     :-  p
-        q
+    q
 
 Wide form
 ---------
@@ -52,10 +49,8 @@ static data in either tall or wide form.
 Most commonly `:-` helps to organize code, allowing you to produce a
 cell from nested computation.
 
-Some obscure `:-` irregular forms.
+Some obscure `:-` irregular forms
 ==================================
-
-Moveme: irregular form doc
 
 ### Infix `^`
 
@@ -71,15 +66,18 @@ Moveme: irregular form doc
     ~zod/main=/app> a/'twig'
     [%a 'twig']
 
-Like `^`, but first item must be a term, and is cubed. Used to construct
-paths and fronds.
+Like `^`, but first item must be a [`++term`](), and is
+[cube]()d. Used to construct [`path`]()s and [frond]().
 
-### Prefix `` ` ``, postfix `~`
+### Prefix `` ` ``, pre/postfix `~`
 
     ~zod/main=/app> ````20
     [~ ~ ~ ~ 20]
+    ~zod/main=/app> ~[42 30]
+    [42 30 ~]
     ~zod/main=/app> [42 30]~
     [[42 30] ~]
 
-Complimenting each other, these construct pairs with nil in the head and
-tail respectively. Multiple postfix `~` do not work for unknown reasons.
+Complementing each other, these construct pairs with `~` in the
+[head]() and [`tail`]().  Technically, prefix `~` is an irregular
+form of `:~`.

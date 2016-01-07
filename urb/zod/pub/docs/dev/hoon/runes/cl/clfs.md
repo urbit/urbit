@@ -1,25 +1,20 @@
-colfas, `:/`, %clfs
-============================
+`:/`
+====
 
-Internal interpolation
+Interpolation structure
 
 `:/`, `colfas`, is a synthetic rune that produces `[%$ [%$ p ~] ~]`,
 i.e., `[0 [0 p 0] 0]`.
-
-See also
---------
-
-[`++manx`]() [`%smdq`](#smdq)
 
 Produces
 --------
 
 Twig: `[%clfs p=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [twig]()
+`p` is a [`++twig`]()
 
 Tall form
 ---------
@@ -31,11 +26,6 @@ Wide form
 
     :/(p)
 
-Irregular form
---------------
-
-undefined
-
 Examples
 --------
 
@@ -44,4 +34,4 @@ Examples
     ~zod/try=> :/(add 2 2)
     [[%~. [%~. 4] ~] ~]
 
-Wraps twig in `[%$ [%$ .] ~]~`, used for interpolation.
+Wraps `++twig` in `[%$ [%$ .] ~]~`, used for interpolation.

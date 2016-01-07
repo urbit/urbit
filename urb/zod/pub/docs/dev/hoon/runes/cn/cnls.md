@@ -1,22 +1,20 @@
-cenlus, `%+`, %cnls
-============================
+`%+`
+====
 
-Slam, two arguments
+Call function w/two arguments
 
-`%+` is a synthetic rune that that [pull]()s [`$`] from the [door]() `p`
-with its sample set to `[%cntr q r]`. `%+` in the most common case
-simply [slam]()s `p` with `q` and `r`, similar to a function call with
-two arguments.
+Calls the arm `$` from the [door]() `p` with its [sample]() set to `[q r]`.
 
 Produces
 --------
 
 Twig: `[%cnls p=twig q=twig r=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [twig](), most commonly a [gate](). `q` and `r` are [twig]()s.
+`p` is a [`++twig`](), most commonly a function. The arguments `q` and `r` are
+twigs as well
 
 Tall form
 ---------
@@ -48,12 +46,7 @@ Examples
     /~zod/try=> %+(a 2 3)
     5
 
-First we set a shell variable `a` to be a gate that takes two arguments
+First we set a shell variable `a` to be a function that takes two arguments
 and produces their sum. Then we use `%+` to pass values to our gate.
 `%+` is most useful for code organization, when you need to compute
 intermediate products for your final computation.
-
-Equivalent to
--------------
-
-    %-(p [q r])

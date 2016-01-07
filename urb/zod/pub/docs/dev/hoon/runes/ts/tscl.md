@@ -1,25 +1,24 @@
-tiscol, `=:`, %tscl
-============================
+`=:`
+====
 
-Batch change subject
+Make a list of changes `p` to the subject and then evaluate `q`
 
-`=:` is a synthetic rune that produces `q` with the subject modified by
-the list of changes in `p` which must be terminated by a `==`. `=:` is
-useful when you need to make a batch of changes to your subject.
+Allows you to change values in your context.  This is almost
+equivalent to a series of `=.`, but all the changes happen in
+parallel.
 
-See also
---------
-
-tisdot, `=.`, %tsdt
-============================
+Technically, `=:` is a synthetic rune that produces `q` with the
+subject modified by the list of changes in `p` which must be
+terminated by a `==`. `=:` is useful when you need to make a
+batch of changes to your subject.
 
 Produces
 --------
 
 Twig: `[%tscl p=tram q=twig]`
 
-Sample
-------
+Accepts
+-------
 
 `p` is a [`++tram`](), a list of [`++wing`]()s and twigs. `q` is a
 [twig]().
@@ -31,17 +30,7 @@ Tall form
         p.i.t.p    q.i.t.p
         p.i.t.t.p  q.i.t.t.p
       ==
-      q
-
-Wide form
----------
-
-None
-
-Irregular form
---------------
-
-None
+    q
 
 Examples
 --------

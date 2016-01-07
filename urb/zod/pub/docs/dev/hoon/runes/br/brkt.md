@@ -1,29 +1,21 @@
-barket, `|^`, %brkt
-============================
+`|^`
+====
 
-Kicked book
+Same as `|-` except that it can contain internal arms.
 
-`|^` is a synthetic rune that produces and then kicks a [`%gold`]()
-[book]() with sample `p` as a [`%$(p)`](), and a list of [arm]()s `q`.
-The list must be closed with a `--`.
-
-`|^` is similar to `|-`, but differs in that it can contain internal
-arms.
-
-See also
---------
-
-barhep, `|-`, %brhp](#brhp) [barcab, `|_`, %brcb
+`|^` is a synthetic rune that produces and then calls a
+[`%gold`]() [door]() with sample `p` as the `$` arm and a list of
+other [arm]()s `q`.  `q` must be closed with a `--`.
 
 Produces
 --------
 
 Twig: `[%brkt p=twig q=(map term foot)]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [twig](). `q` is a [`map`]() with [`++term`]() keys and
+`p` is a [++twig](). `q` is a [`map`]() with [`++term`]() keys and
 [`++foot`]() values, which are called arms.
 
 Tall form
@@ -33,16 +25,6 @@ Tall form
     ++  p.n.q
       q.n.q
     --
-
-Wide form
----------
-
-None
-
-Irregular form
---------------
-
-None
 
 Examples
 --------
@@ -99,5 +81,5 @@ commonly used inside another gate or core.
       --
     ::
 
-[`++mum`]() is a hashing gate, which uses two helper arms to computes
+[`++mum`]() is a hashing gate, which uses two helper arms to compute
 its results. The `|^` at the top performs the computation.

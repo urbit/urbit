@@ -1,20 +1,21 @@
-zapcap, %zpcb
-======================
+`!_`
+====
 
-Path / location trace
+Put path & range in stack trace
 
-`!_` is a virtual natural rune that traces the stack if debugging is
-enabled, putting the current path and location range of each rune.
+Traces the stack if debugging is enabled, putting the current
+path and location range of each rune.  To do this on every rune,
+use `!:`.
 
 Produces
 --------
 
 Twig: `[%zpcb p=spot q=twig]`
 
-Sample
-------
+Accepts
+-------
 
-`p` is a [`++spot`](). `q` is a [twig]().
+`p` is a [`++spot`](). `q` is a [`++twig`]().
 
 Tall form
 ---------
