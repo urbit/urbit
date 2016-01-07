@@ -10227,7 +10227,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ~%  %arvo  +  ~
 |%
-++  arch  ,[hax=@uvI fil=(unit ,@uvI) dir=(map ,@ta ,~)]::  fundamental node
+++  arch  ,[fil=(unit ,@uvI) dir=(map ,@ta ,~)]         ::  fundamental node
 ++  arvo  (mold ,[p=term q=mill] mill)                  ::  arvo card
 ++  beam  ,[[p=ship q=desk r=case] s=path]              ::  global name
 ++  beak  ,[p=ship q=desk r=case]                       ::  garnish with beak

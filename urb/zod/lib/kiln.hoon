@@ -173,7 +173,7 @@
   |=  syd=term
   ^-  card
   :*  %warp  /kiln/autoload/[syd]  [our our]  %home  ~
-      %next  %y  da/now  /arvo/[syd]/hoon
+      %next  %z  da/now  /arvo/[syd]/hoon
   ==
 ::
 ++  poke-overload
