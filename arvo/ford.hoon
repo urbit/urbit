@@ -57,7 +57,6 @@
 ++  calx                                                ::  concrete cache line
   $%  [%hood p=calm q=(pair beam cage) r=hood]          ::  compile
       [%bake p=calm q=(trel mark coin beam) r=(unit vase)] ::  load
-      [%lilt p=calm q=beak r=(jug mark mark)]           ::  translation graph
       [%slit p=calm q=[p=type q=type] r=type]           ::  slam type
       [%slim p=calm q=[p=type q=twig] r=(pair type nock)]::  mint
       [%slap p=calm q=[p=vase q=twig] r=vase]           ::  compute
@@ -83,7 +82,6 @@
   ?+  sem  !!
     %hood  ?>(?=(%hood -.cax) r.cax)
     %bake  ?>(?=(%bake -.cax) r.cax)
-    %lilt  ?>(?=(%lilt -.cax) r.cax)
     %slap  ?>(?=(%slap -.cax) r.cax)
     %slam  ?>(?=(%slam -.cax) r.cax)
     %slim  ?>(?=(%slim -.cax) r.cax)
@@ -990,76 +988,17 @@
         (flaw cof leaf/"file not found" (smyt (tope bem)) ~)
       (fine cof u.u.von)
     ::
-    ++  lily                                            ::  translation targets
+    ++  lily
       |=  [cof=cafe for=mark]  ^-  (bolt (set ,@tas))
-      %+  cope  (lilt cof)
-      |=  [cof=cafe lil=(jug mark mark)]
-      (fine cof (~(get ju lil) for))
-    ::
-    ++  lilt
-      |=  cof=cafe  ^-  (bolt (jug mark mark))
-      %+  (clef %lilt)  (fine cof bek)
-      ^-  (burg beak (jug mark mark))
-      |=  [cof=cafe bek=beak]
-      %+  cope  (lyle(bek bek) cof)
+      %+  cope  (coop (fang cof for) |=(cof=cafe (fine cof %void ~)))
       %-  flux
-      |=  mav=(map mark vase)
-      =+  all=(~(tap by mav))
-      |-  ^-  (jug mark mark)
-      ?~  all  ~
-      %-  ~(gas ju $(all t.all))
-      =+  `[for=mark vax=vase]`i.all
-      ~|  weg=(jam 3 p.vax)
-      %+  weld
-        ^-  (list ,[mark mark])
-        ?.  (slob %grab p.vax)  ~
-        =+  gab=(slap vax [%cnzy %grab])
-        :: =+  opt=(skip (sloe p.gap) |=(fro=mark =(fro %noun)))
-        (turn (sloe p.gab) |=(fro=mark [fro for]))
-      ?.  (slob %grow p.vax)  ~
-      =+  gow=(slap vax [%cnzy %grow])
-      (turn (sloe p.gow) |=(too=mark [for too]))
-    ::
-    ++  lyle                                            ::  all mark doors
-      |=  cof=cafe  ^-  (bolt (map mark vase))
-      =|  [sup=path res=(map mark vase)]
-      |^  `(bolt (map mark vase))`wide
-      ++  here  [bek (welp sup /mar)]
-      ++  wide
-        %+  cope  (lend cof here)
-        |=  [cof=cafe arc=arch]
-        =+  all=(skim (turn (~(tap by dir.arc)) head) (sane %tas))
-        =.  all  (sort all gth)                         ::  short-deepest
-        |-  ^-  (bolt (map mark vase))
-        ?~  all  (fine cof res)
-        %+  cope  $(all t.all)
-        |=  [cof=cafe res=(map mark vase)]
-        =.  ^res  res
-        =-  (cope - (tall i.all))
-        ?.  (~(has by dir.arc) %hoon)  (flue cof)
-        node(cof cof)
-      ::
-      ++  tall
-        |=  for=term
-        |=  [cof=cafe new=(unit ,[mark vase])]
-        wide(cof cof, sup [for sup], res (~(gas by res) (drop new)))
-      ::
-      ++  node
-        ^-  (bolt (unit ,[mark vase]))
-        =+  pax=(flop sup)
-        ?~  pax  (flue cof)
-        =+  for=(tack pax)
-        ?:  (~(has by res) for)  (flue cof)
-        =+  raf=(lear cof here)
-        ?.  ?=(%2 -.q.raf)
-          (cope raf (flux |=(vax=vase (some [for vax]))))
-        =-  ((slog (flop `tang`-)) (flue cof))
-        =+  (lent t.pax)
-        ?:  ?~  -  |                      ::  error if level above built
-            (~(has by res) (tack i.pax (scag (dec -) t.pax)))
-          ~
-        :_(q.q.raf leaf/"! {<`mark`for>} build failed, ignoring.")
-      --
+      |=  vax=vase  ^-  (set mark)
+      %-  =-  ~(gas in `(set mark)`-)
+          ?.  (slob %grow p.vax)  ~
+          (sa (sloe p:(slap vax [%cnzy %grow])))
+      ?.  (slob %garb p.vax)  ~
+      =+  (slap vax [%cnzy %garb])
+      (fall ((soft (list mark)) q) ~)
     ::
     ++  lima                                            ::  load at depth
       |=  [cof=cafe for=mark arg=coin bem=beam]
@@ -1126,12 +1065,22 @@
       |=  [cof=cafe too=mark fro=(set mark)]
       :: ~&  lion/[too=too fro=(sa fro)]
       ^-  (bolt (list mark))
+      =-  %+  coop  (gro cof too `~)                    :: XX better grab layer
+          |=  cof=cafe
+          %+  cope  (fang cof too)
+          |=  [cof=cafe vax=vase]  ^-  (bolt (list mark))
+          ?.  (slob %grab p.vax)  (flue cof)
+          %+  cope
+            (gro cof (sa (sloe p:(slap vax [%cnzy %grab]))))
+          (flux |=(a=path (welp a /[too])))
+      ^=  gro
+      |=  [cof=cafe tag=(set mark)]
       =|  $:  war=(map mark (list mark))
               pax=(list mark)  won=[p=mark q=(qeu mark)]
           ==
       %.  [cof fro]
       |=  [cof=cafe fro=(set mark)]  ^-  (bolt (list mark))
-      ?:  =(too p.won)
+      ?:  (~(has in tag) p.won)
         (fine cof (flop pax))
       =+  for=(skip (~(tap by fro)) ~(has by war))
       =.  for  (sort for aor)         ::  XX useful?
@@ -1741,7 +1690,7 @@
         [%| $(a (turn (turn a2 head) |=(b=mass ?~(-.q.b !! p.q.b))))]
     %+  turn  (~(tap by pol))
     |=  [@ baby]
-    :~  =<  cache/[%| (turn `(list term)`/hood/bake/lilt/slit/slim/slap/slam .)]
+    :~  =<  cache/[%| (turn `(list term)`/hood/bake/slit/slim/slap/slam .)]
         =-  |=(a=term [a `(~(get ja dep) a)])
         =<  `dep=(jar term ,*)`(~(rep by jav) .)
         |=([[* a=[term *]] b=(jar term ,*)] (~(add ja b) a))
