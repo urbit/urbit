@@ -550,8 +550,9 @@
         ?@  q.gar
           =+  for=((sand %tas) q.gar)
           ?~  for  (flaw cof leaf+"bad mark ++grad" ~)
-          %^  make  cof  %diff
-          :-  [%cast u.for [%$ cay]]
+          %+  make  cof  ^-  silk
+          :+  %diff
+            [%cast u.for [%$ cay]]
           [%cast u.for [%$ coy]]
         ?.  (slab %form p.gar)
           (flaw cof leaf+"no ++form:grad" ~)
@@ -609,7 +610,7 @@
       |=  {cof/cafe for/mark bem/beam}
       ^-  (bolt hood)
       %+  cool  |.(leaf+"ford: fade {<[(tope bem)]>}")
-      %+  cope  (cope (make cof [%bake for bem ~]) furl)
+      %+  cope  (cope (make cof `silk`[%bake for bem ~]) furl)
       |=  {cof/cafe cay/cage}
       %+  (clef %hood)  (fine cof bem(r [%ud 0]) cay)
       ^-  (burg (pair beam cage) hood)
@@ -854,7 +855,7 @@
           =+  too=((sand %tas) q.gar)
           ?~  too  (flaw cof leaf+"bad mark ++grad" ~)
           %+  make  cof
-          [%mash u.too [p.mas q.mas [%$ cay]] [p.mos q.mos [%$ coy]]]
+          `silk`[%mash u.too [p.mas q.mas [%$ cay]] [p.mos q.mos [%$ coy]]]
         ?.  (slab %form p.gar)
           (flaw cof leaf+"no ++form:grad" ~)            
         =+  fom=((soft @tas) q:(slap gar [%limb %form]))
@@ -1634,7 +1635,7 @@
             (flaw cof [%leaf "span error: {<p.hon>} {<q.hon>}"]~)
           (fine cof [p.tug q.vax])
         ::
-            $toy  (cope (cope (make cof %boil p.hon how ~) furl) feel)
+            $toy  (cope (cope (make cof `silk`[%boil p.hon how ~]) furl) feel)
         ==
       ::
       ++  chop                                          ::  possible subpaths

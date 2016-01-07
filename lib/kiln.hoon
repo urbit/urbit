@@ -284,7 +284,7 @@
         (render "on sync" sud her syd)
       ~
     =.  let  ?.  ?=($w p.p.u.rot)  let  ((hard @ud) q.q.r.u.rot)
-    %-  blab  :_  ~
+    %-  blab  ^-  (list move)  :_  ~
     :*  ost  %merg
         /kiln/sync/[syd]/(scot %p her)/[sud]
         our  syd  her  sud  ud+let

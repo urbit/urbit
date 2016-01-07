@@ -800,7 +800,7 @@
         ?.  ?=($mime p.p.q.sih)
           =+  bek=-:(need (tome p.tee))
           =+  bik=?+(r.bek bek {$ud $0} bek(r da+now))
-          =-  (execute tee bik [%flag [p.sih `~] -])
+          =-  (execute tee bik `silk`[%flag [p.sih `~] -])
           =-  `silk`[%cast %mime [%$ p.p.q.sih -]]
           ?.  ?=({$ud $0} r.bek)  q.p.q.sih
           ?+  p.p.q.sih  q.p.q.sih          :: inject dependency long-poll

@@ -4536,7 +4536,7 @@
 ::
 ++  mink
   ~/  %mink
-  |=  {{sub/* fol/*} sky/$+(* (unit))}
+  |=  {{sub/* fol/*} sky/$+(^ (unit))}
   =+  tax=*(list {@ta *})
   |-  ^-  tone
   ?@  fol
@@ -4604,7 +4604,7 @@
       {$11 b/*}
     =+  ben=$(fol b.fol)
     ?.  ?=($0 -.ben)  ben
-    =+  val=(sky p.ben)
+    =+  val=(sky %noun p.ben)
     ?~(val [%1 p.ben ~] [%0 u.val])
   ::
   ==
@@ -4694,7 +4694,7 @@
   |*  taq/_|.(**)
   =+  mud=(mute taq)
   ?-  -.mud
-    $&  [%& p=$:taq]                                  ::  XX transition
+    $&  [%& p=$:taq]                                    ::  XX transition
     $|  [%| p=p.mud]
   ==
 ::
@@ -6927,28 +6927,30 @@
       *               ~
     ==
   ::
-  ++  hail
-    |=  axe/axis
-    =|  air/(list (pair wing twig))
-    |-  ^+  air
-    =+  hav=half
-    ?~  hav  [[[[%| 0 ~] [%& axe] ~] gen] air]
-    $(gen p.u.hav, axe (peg axe 2), air $(gen q.u.hav, axe (peg axe 3)))
-  ::
-  ++  half
-    |-  ^-  (unit (pair twig twig))
-    ?+  gen  ~
-      {^ *}       `[p.gen q.gen]
-      {$dbug *}   $(gen q.gen)
-      {$clcb *}   `[q.gen p.gen]
-      {$clcn *}   `[[%clsg p.gen] [%bust %null]]
-      {$clhp *}   `[p.gen q.gen]
-      {$clkt *}   `[p.gen %clls q.gen r.gen s.gen]
-      {$clsg *}   ?~(p.gen ~ `[i.p.gen %clsg t.p.gen])
-      {$cltr *}   ?~  p.gen  ~ 
-                  ?~(t.p.gen $(gen i.p.gen) `[i.p.gen %cltr t.p.gen])
-    == 
-  ::
+  ::  not used at present; see comment at $csng in ++open
+::::
+::++  hail
+::  |=  axe/axis
+::  =|  air/(list (pair wing twig))
+::  |-  ^+  air
+::  =+  hav=half
+::  ?~  hav  [[[[%| 0 ~] [%& axe] ~] gen] air]
+::  $(gen p.u.hav, axe (peg axe 2), air $(gen q.u.hav, axe (peg axe 3)))
+::::
+::++  half
+::  |-  ^-  (unit (pair twig twig))
+::  ?+  gen  ~
+::    {^ *}       `[p.gen q.gen]
+::    {$dbug *}   $(gen q.gen)
+::    {$clcb *}   `[q.gen p.gen]
+::    {$clcn *}   `[[%clsg p.gen] [%bust %null]]
+::    {$clhp *}   `[p.gen q.gen]
+::    {$clkt *}   `[p.gen %clls q.gen r.gen s.gen]
+::    {$clsg *}   ?~(p.gen ~ `[i.p.gen %clsg t.p.gen])
+::    {$cltr *}   ?~  p.gen  ~ 
+::                ?~(t.p.gen $(gen i.p.gen) `[i.p.gen %cltr t.p.gen])
+::  == 
+::::
   ++  hock
     |-  ^-  toga
     ?-  gen
@@ -7106,7 +7108,11 @@
         {$cnhp *}  [%cnsg [%$ ~] p.gen q.gen]
         {$cnsg *}  :: [%cntr p.gen q.gen (hail(gen [%cltr r.gen]) 6)]
       :^  %cntr  p.gen  q.gen
-      ::  ?:(=(~ r.gen) ~ (hail(gen [%cltr r.gen]) 6))
+      ::
+      ::  the use of ++hail is probably the right language design, but
+      ::  it's impractically slow with the present ++tuck approach.
+      ::
+::    ?:(=(~ r.gen) ~ (hail(gen [%cltr r.gen]) 6))
       =+  axe=6
       |-  ^-  (list {wing twig})
       ?~  r.gen  ~
@@ -8241,6 +8247,7 @@
     ::
         {$zpsm *}
       =+  vos=$(gol %noun, gen q.gen)       ::  XX validate!
+
       ::  [(nice (cell (sift (play p.gen)) p.vos)) (cons [%1 p.vos] q.vos)]
       [(nice (cell (play p.gen) p.vos)) (cons [%1 p.vos] q.vos)]
     ::
@@ -8728,8 +8735,8 @@
       {$cell *}  ?:  =(2 now)
                    (cell $(sut p.sut, u.i.vit lat) q.sut)
                   (cell p.sut $(sut q.sut, u.i.vit lat))
-      {$core *}  ?.  =(3 now) 
-                   (cell %noun p.sut)
+      {$core *}  ?:  =(2 now)
+                   $(sut repo)
                  (core $(sut p.sut, u.i.vit lat) q.sut)
       {$face *}  (face p.sut $(sut q.sut))
       {$fork *}  ?:  (~(has in vil) sut)

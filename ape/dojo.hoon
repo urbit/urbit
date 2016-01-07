@@ -281,7 +281,7 @@
     ++  dy-slam                                         ::  call by ford
       |=  {way/wire gat/vase sam/vase}
       ^+  +>+>
-      (dy-ford way %call [%$ %noun gat] [%$ %noun sam])
+      (dy-ford way `silk`[%call [%$ %noun gat] [%$ %noun sam]])
     ::
     ++  dy-diff                                         ::  send effects, abet
       |=  fec/sole-effect

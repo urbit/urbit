@@ -1476,22 +1476,6 @@
   ?~  two  one
   ?:((lth u.one u.two) one two)
 ::
-:: ++  mojo                                                ::  compiling load
-::   |=  [pax=path src=*]
-::   ^-  (each twig (list tank))
-::   ?.  ?=(@ src)
-::     [%| ~[[leaf+"musk: malformed: {<pax>}"]]]
-::   =+  ^=  mud
-::       %-  mule  |.
-::       ((full vest) [1 1] (trip src))
-::   ?:  ?=(| -.mud)  mud
-::   ?~  q.p.mud
-::     :~  %|
-::         leaf+"musk: syntax error: {<pax>}"
-::         leaf+"musk: line {<p.p.p.mud>}, column {<q.p.p.mud>}"
-::     ==
-::   [%& p.u.q.p.mud]
-:: ::
 ++  mole                                                ::  new to old sky
   |=  ska/$+(* (unit (unit)))
   |=  a/*
@@ -1500,21 +1484,7 @@
   ?~  b  ~
   ?~  u.b  ~
   [~ u.u.b]
-:: ::
-:: ++  much                                                ::  constructing load
-::   |=  [pax=path src=*]
-::   ^-  gank
-::    =+  moj=(mojo pax src)
-::   ?:  ?=(| -.moj)  moj
-::   (mule |.((slap !>(+>.$) `twig`p.moj)))
-:: ::
-:: ++  musk                                                ::  compiling apply
-::   |=  [pax=path src=* sam=vase]
-::   ^-  gank
-::   =+  mud=(much pax src)
-::   ?:  ?=(| -.mud)  mud
-::   (mule |.((slam p.mud sam)))
-:: ::
+::
 ++  pack                                                ::  light path encoding
   |=  {a/term b/path}  ^-  knot
   %+  rap  3  :-  (wack a)
@@ -2229,6 +2199,29 @@
       {$core p/beam}                                    ::  build program
       {$diff p/silk q/silk}                             ::  diff
       {$dude p/(trap tank) q/silk}                      ::  error wrap
+      {$file p/beam}                                    ::  from clay
+      {$flag p/(set $@(@uvH beam)) q/silk}              ::  add dependencies
+      {$join p/mark q/silk r/silk}                      ::  merge
+      {$mash p/mark q/milk r/milk}                      ::  annotate
+      {$mute p/silk q/(list (pair wing silk))}          ::  mutant
+      {$pact p/silk q/silk}                             ::  patch
+      {$plan p/beam q/spur r/hood}                      ::  structured assembly
+      {$reef $~}                                        ::  kernel reef
+      {$ride p/twig q/silk}                             ::  silk thru twig
+      {$tabl p/(list (pair silk silk))}                 ::  list
+      {$vale p/mark q/*}                                ::  validate
+      {$volt p/(cask *)}                                ::  unsafe add type
+  ==                                                    ::
+++  solk                                                ::  construction layer
+  $^  {p/silk q/silk}                                   ::  cons
+  $%  {$$ p/cage}                                       ::  literal
+      {$bake p/mark q/beam r/path}                      ::  local synthesis
+      {$boil p/mark q/beam r/path}                      ::  general synthesis
+      {$bunt p/mark}                                    ::  example of mark
+      {$call p/silk q/silk}                             ::  slam
+      {$cast p/mark q/silk}                             ::  translate
+      {$core p/beam}                                    ::  build program
+      {$diff p/silk q/silk}                             ::  diff
       {$file p/beam}                                    ::  from clay
       {$flag p/(set $@(@uvH beam)) q/silk}              ::  add dependencies
       {$join p/mark q/silk r/silk}                      ::  merge
