@@ -323,12 +323,13 @@
     if ( (c3y == tyn) || (c3n == tel) ) {
       return tyn;
     } else {
+#if 0
       u3_noun dun = u3qfu_dunq(van, "need", sut);
       u3_noun niz = u3qfu_dunq(van, "have", ref);
 
       u3t_push(u3nc(c3__mean, dun));
       u3t_push(u3nc(c3__mean, niz));
-
+#endif
       return u3m_error("nest-fail");
     }
   }
