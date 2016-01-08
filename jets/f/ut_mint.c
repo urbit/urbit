@@ -628,7 +628,7 @@
       case c3__cnts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
       {
-        u3_noun lar = u3qfu_sick(van, sut, c3__read, p_gen);
+        u3_noun lar = u3qfu_seek(van, sut, c3__read, p_gen);
         u3_noun p_lar = u3h(lar);
         u3_noun q_lar = u3t(lar);
         u3_noun pq_lar = u3h(q_lar);
