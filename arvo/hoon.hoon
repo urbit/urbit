@@ -297,7 +297,7 @@
   ::                                            ::::::  compositions
     {$tsbr p/twig q/twig}                               ::  push bunt: ++(*p q)
     {$tscl p/(list (pair wing twig)) q/twig}            ::  p changes then q
-    {$tscn p/twig q/twig r/twig}                        ::  spand variable
+    {$tscn p/twig q/twig r/twig}                        ::  typed variable
     {$tsdt p/wing q/twig r/twig}                        ::  r with p set to q
     {$tsgl p/twig q/twig}                               ::  +>(q p)
     {$tshp p/twig q/twig}                               ::  flip push: ++(q p)
@@ -7777,6 +7777,7 @@
       %repo   repo
       %rest   rest
       %seek   seek
+      %sick   sick
       %tack   tack
       %toss   toss  
       %wrap   wrap
@@ -8154,7 +8155,7 @@
         {$brcn *}  (grow %gold [%$ 1] p.gen)
     ::
         {$cnts *}
-      =+  lar=(foil (seek %read p.gen))
+      =+  lar=(sick %read p.gen)
       =-  [(nice p.yom) ?:(=(0 p.q.lar) q.yom [%9 p.q.lar q.yom])]
       ^=  yom
       =+  hej=*(list {p/axis q/nock})
@@ -8303,8 +8304,8 @@
     ::
         {$brcn *}  (grow %gold [%$ 1] p.gen)
         {$cnts *}
-      =+  lar=(foil (seek %read p.gen))
-      =+  vug=(foil (seek(sut dox) %read p.gen))
+      =+  lar=(sick %read p.gen)
+      =+  vug=(sick(sut dox) %read p.gen)
       ?.  &(=(p.lar p.vug) =(p.q.lar p.q.vug))
         ~|(%mull-bonk-e !!)
       =-  [(nice (fire p.yom)) (fire(vet |) q.yom)]
@@ -8604,7 +8605,7 @@
     ?-  gen
       {^ *}      (cell $(gen p.gen) $(gen q.gen))
       {$brcn *}  (core sut %gold sut [[%0 0] p.gen])
-      {$cnts *}  =+  lar=(foil (seek %read p.gen))
+      {$cnts *}  =+  lar=(sick %read p.gen)
                  =+  rag=q.q.lar
                  %-  fire
                  |-  ^-  (list {p/span q/foot})
@@ -8677,7 +8678,7 @@
     =+([p=*span q=`span`%void] |.((fork p q)))
   ::
   ++  seek
-    |=  {way/?($read $rite $both $free) hyp/wing}
+    |=  {way/vial hyp/wing}
     ^-  port
     ~|  [%seek hyp]
     =+  fid=(find way hyp)
@@ -8687,6 +8688,18 @@
       $&  q.p.fid
       $|  [%| p.q.p.fid (~(tap in q.q.p.fid) ~)]
     ==
+  ::
+  ++  sick
+    ~/  %sick
+    |=  {way/vial hyp/wing}
+    ^-  prop
+    (foil (seek way hyp))
+  ::
+  ++  suck
+    ~/  %suck
+    |=  {way/vial hyp/wing}
+    ^-  prop
+    !!
   ::  
   ++  tech
     |=  {way/?($read $rite $both $free) hyp/wing}
