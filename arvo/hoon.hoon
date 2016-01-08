@@ -297,7 +297,7 @@
   ::                                            ::::::  compositions
     {$tsbr p/twig q/twig}                               ::  push bunt: ++(*p q)
     {$tscl p/(list (pair wing twig)) q/twig}            ::  p changes then q
-    {$tscn p/twig q/twig r/twig}                        ::  spand variable
+    {$tscn p/twig q/twig r/twig}                        ::  typed variable
     {$tsdt p/wing q/twig r/twig}                        ::  r with p set to q
     {$tsgl p/twig q/twig}                               ::  +>(q p)
     {$tshp p/twig q/twig}                               ::  flip push: ++(q p)
@@ -7769,6 +7769,9 @@
       %duck   duck
       %dune   dune
       %dunk   dunk
+      %epla   epla
+      %emin   emin
+      %emul   emul
       %fire   fire
       %fish   fish
       %fuse   fuse
@@ -7783,6 +7786,7 @@
       %repo   repo
       %rest   rest
       %seek   seek
+      %sick   sick
       %tack   tack
       %toss   toss  
       %wrap   wrap
@@ -7892,6 +7896,59 @@
     :+  %palm
       [['.' ~] ['-' ~] ~ ~]
     [[%leaf (mesc (trip paz))] duck ~]  
+  ::
+  ++  et
+    |_  {hyp/wing rig/(list (pair wing twig))}
+    ++  play
+      ^-  span
+      =+  lar=(seek %read hyp)
+      =+  rag=q.q.lar
+      %-  fire
+      |-  ^-  (list {p/span q/foot})
+      ?~  rig
+        rag
+      $(rig t.rig, rag q:(toss p.i.rig (^play q.i.rig) rag))
+    ::
+    ++  mint 
+      |=  gol/span 
+      ^-  {p/span q/nock}
+      =+  lar=(seek %read hyp)
+      =-  :-  ?>(?|(!vet (nest(sut gol) & p.yom)) p.yom)
+          ?:(=(0 p.q.lar) q.yom [%9 p.q.lar q.yom])
+      ^=  yom
+      =+  hej=*(list {p/axis q/nock})
+      |-  ^-  {p/span q/nock}
+      ?~  rig
+        [(fire q.q.lar) (hike p.lar hej)]
+      =+  zil=(^mint %noun q.i.rig)
+      =+  wip=(toss p.i.rig p.zil q.q.lar)
+      $(rig t.rig, q.q.lar q.wip, hej [[p.wip q.zil] hej])
+    ::
+    ++  mull  
+      |=  {gol/span dox/span}
+      ^-  {span span}
+      =+  lar=(seek %read hyp)
+      =+  vug=(seek(sut dox) %read hyp)
+      ?.  &(=(p.lar p.vug) =(p.q.lar p.q.vug))
+        ~|(%mull-bonk-e !!)
+      =-  :-  =+  typ=(fire p.muy)
+              ?>(?|(!vet (nest(sut gol) & typ)) typ)
+          (fire(vet |) q.muy)
+      ^=  muy
+      |-  ^-  {p/(list {p/span q/foot}) q/(list {p/span q/foot})}
+      ?~  rig
+        [q.q.lar q.q.vug]
+      =+  zil=(^mull %noun dox q.i.rig)
+      =+  cuf=(toss p.i.rig p.zil q.q.lar)
+      =+  dof=(toss p.i.rig q.zil q.q.vug)
+      ?.  .=(p.cuf p.dof)
+        ~|(%mull-bonk-f !!)
+      $(rig t.rig, q.q.lar q.cuf, q.q.vug q.dof)
+    --
+  ::
+  ++  epla  ~/(%epla |=({wing (list (pair wing twig))} ~(play et +<)))
+  ++  emin  ~/(%emin |=({wing (list (pair wing twig))} ~(mint et +<)))
+  ++  emul  ~/(%emul |=({wing (list (pair wing twig))} ~(mull et +<)))
   ::
   ++  find
     |=  {way/vial hyp/wing}
@@ -8033,7 +8090,7 @@
     ::  ~_  (dunk(sut [%cell q.q.p p.p]) %fire-wet)
     ?>  ?|  !vet
             (~(has in rib) [sut dox p.q])
-            (mull(sut p, rib (~(put in rib) [sut dox p.q])) %noun dox p.q)
+            !=(~ (mull(sut p, rib (~(put in rib) [sut dox p.q])) %noun dox p.q))
         ==
     [p p.q]
   ::
@@ -8159,18 +8216,7 @@
     ::
         {$brcn *}  (grow %gold [%$ 1] p.gen)
     ::
-        {$cnts *}
-      =+  lar=(foil (seek %read p.gen))
-      =-  [(nice p.yom) ?:(=(0 p.q.lar) q.yom [%9 p.q.lar q.yom])]
-      ^=  yom
-      =+  hej=*(list {p/axis q/nock})
-      |-  ^-  {p/span q/nock}
-      ?~  q.gen
-        [(fire q.q.lar) (hike p.lar hej)]
-      =+  zil=^$(gen q.i.q.gen, gol %noun)
-      =+  wip=(toss p.i.q.gen p.zil q.q.lar)
-      $(q.gen t.q.gen, q.q.lar q.wip, hej [[p.wip q.zil] hej])
-    ::
+        {$cnts *}  (~(mint et p.gen q.gen) gol)
         {$dtkt *}  [(nice %noun) [%11 q:$(gen p.gen, gol %noun)]]
         {$dtls *}  [(nice [%atom %$ ~]) [%4 q:$(gen p.gen, gol [%atom %$ ~])]]
         {$sand *}  [(nice (play gen)) [%1 q.gen]]
@@ -8294,10 +8340,6 @@
   ++  mull
     ~/  %mull
     |=  {gol/span dox/span gen/twig}
-    ^-  ?
-    ?.  vet
-      &
-    =<  &
     |^  ^-  {p/span q/span}
     ?:  =(%void sut)
       ~|(%mull-none !!)
@@ -8309,23 +8351,7 @@
       [(nice (cell p.hed p.tal)) (cell q.hed q.tal)]
     ::
         {$brcn *}  (grow %gold [%$ 1] p.gen)
-        {$cnts *}
-      =+  lar=(foil (seek %read p.gen))
-      =+  vug=(foil (seek(sut dox) %read p.gen))
-      ?.  &(=(p.lar p.vug) =(p.q.lar p.q.vug))
-        ~|(%mull-bonk-e !!)
-      =-  [(nice (fire p.yom)) (fire(vet |) q.yom)]
-      ^=  yom
-      |-  ^-  {p/(list {p/span q/foot}) q/(list {p/span q/foot})}
-      ?~  q.gen
-        [q.q.lar q.q.vug]
-      =+  zil=^$(gen q.i.q.gen, gol %noun)
-      =+  cuf=(toss p.i.q.gen p.zil q.q.lar)
-      =+  dof=(toss p.i.q.gen q.zil q.q.vug)
-      ?.  .=(p.cuf p.dof)
-        ~|(%mull-bonk-f !!)
-      $(q.gen t.q.gen, q.q.lar q.cuf, q.q.vug q.dof)
-    ::
+        {$cnts *}  (~(mull et p.gen q.gen) gol dox)
         {$dtkt *}  =+($(gen p.gen, gol %noun) (beth %noun))
         {$dtls *}  =+($(gen p.gen, gol [%atom %$ ~]) (beth [%atom %$ ~]))
         {$sand *}  (beth (play gen))
@@ -8611,7 +8637,7 @@
     ?-  gen
       {^ *}      (cell $(gen p.gen) $(gen q.gen))
       {$brcn *}  (core sut %gold sut [[%0 0] p.gen])
-      {$cnts *}  =+  lar=(foil (seek %read p.gen))
+      {$cnts *}  =+  lar=(seek %read p.gen)
                  =+  rag=q.q.lar
                  %-  fire
                  |-  ^-  (list {p/span q/foot})
@@ -8684,7 +8710,15 @@
     =+([p=*span q=`span`%void] |.((fork p q)))
   ::
   ++  seek
-    |=  {way/?($read $rite $both $free) hyp/wing}
+    ~/  %seek
+    |=  {way/vial hyp/wing}
+    (sick way hyp)
+  ::
+  ++  sick
+    ~/  %sick
+    |=  {way/vial hyp/wing}
+    ^-  prop
+    %-  foil
     ^-  port
     ~|  [%seek hyp]
     =+  fid=(find way hyp)
@@ -8751,6 +8785,7 @@
     (tuck %rite hyp |=(span mur))
   ::
   ++  toss
+    ~/  %toss
     |=  {hyp/wing mur/span men/(list {p/span q/foot})}
     ^-  {p/axis q/(list {p/span q/foot})}
     =-  [(need p.wib) q.wib]
