@@ -7,6 +7,19 @@
 /* logic
 */
   static u3_noun
+  _fire_vet(u3_noun van)
+  {
+    // u3_noun vet = u3j_hook(u3k(van), "vet");
+    u3_noun vet = u3r_at(u3qfu_van_vet, van);
+
+    switch ( vet ) {
+      case c3n:
+      case c3y: return vet;
+      default: return u3m_bail(c3__fail);
+    }
+  }
+
+  static u3_noun
   _fire_mull(u3_noun van,
              u3_noun sut,
              u3_noun dox,
@@ -18,6 +31,9 @@
                        u3k(gen));
     u3_noun ret;
 
+    if ( c3n == _fire_vet(van) ) {
+      ret = c3y;
+    }
     if ( c3y == u3qdi_has(rib, key) ) {
       ret = c3y;
     }
@@ -27,8 +43,11 @@
                              u3qfu_van_rib,
                              u3k(rob),
                              0);
-      ret = u3qfu_mull(von, sut, c3__noun, dox, gen);
+      u3_noun mul = u3qfu_mull(von, sut, c3__noun, dox, gen);
 
+      ret = c3y;
+  
+      u3z(mul);
       u3z(von);
       u3z(rob);
     }

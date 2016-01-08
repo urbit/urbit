@@ -10,19 +10,6 @@
   _mull_in(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
 
   static u3_noun
-  _mull_vet(u3_noun van)
-  {
-    // u3_noun vet = u3j_hook(u3k(van), "vet");
-    u3_noun vet = u3r_at(u3qfu_van_vet, van);
-
-    switch ( vet ) {
-      case c3n:
-      case c3y: return vet;
-      default: return u3m_bail(c3__fail);
-    }
-  }
-
-  static u3_noun
   _mull_core(u3_noun pac,
              u3_noun con)
   {
@@ -698,14 +685,7 @@
              u3_noun dox,
              u3_noun gen)
   {
-    if ( c3n == _mull_vet(van) ) {
-      return c3y;
-    } else {
-      u3_noun mul = _mull_in(van, sut, gol, dox, gen);
-
-      u3z(mul);
-      return c3y;
-    }
+    return _mull_in(van, sut, gol, dox, gen);
   }
 
 /* boilerplate
