@@ -8155,7 +8155,7 @@
         {$brcn *}  (grow %gold [%$ 1] p.gen)
     ::
         {$cnts *}
-      =+  lar=(sick %read p.gen)
+      =+  lar=(seek %read p.gen)
       =-  [(nice p.yom) ?:(=(0 p.q.lar) q.yom [%9 p.q.lar q.yom])]
       ^=  yom
       =+  hej=*(list {p/axis q/nock})
@@ -8304,8 +8304,8 @@
     ::
         {$brcn *}  (grow %gold [%$ 1] p.gen)
         {$cnts *}
-      =+  lar=(sick %read p.gen)
-      =+  vug=(sick(sut dox) %read p.gen)
+      =+  lar=(seek %read p.gen)
+      =+  vug=(seek(sut dox) %read p.gen)
       ?.  &(=(p.lar p.vug) =(p.q.lar p.q.vug))
         ~|(%mull-bonk-e !!)
       =-  [(nice (fire p.yom)) (fire(vet |) q.yom)]
@@ -8605,7 +8605,7 @@
     ?-  gen
       {^ *}      (cell $(gen p.gen) $(gen q.gen))
       {$brcn *}  (core sut %gold sut [[%0 0] p.gen])
-      {$cnts *}  =+  lar=(sick %read p.gen)
+      {$cnts *}  =+  lar=(seek %read p.gen)
                  =+  rag=q.q.lar
                  %-  fire
                  |-  ^-  (list {p/span q/foot})
@@ -8678,7 +8678,15 @@
     =+([p=*span q=`span`%void] |.((fork p q)))
   ::
   ++  seek
+    ~/  %seek
     |=  {way/vial hyp/wing}
+    (sick way hyp)
+  ::
+  ++  sick
+    ~/  %sick
+    |=  {way/vial hyp/wing}
+    ^-  prop
+    %-  foil
     ^-  port
     ~|  [%seek hyp]
     =+  fid=(find way hyp)
@@ -8688,18 +8696,6 @@
       $&  q.p.fid
       $|  [%| p.q.p.fid (~(tap in q.q.p.fid) ~)]
     ==
-  ::
-  ++  sick
-    ~/  %sick
-    |=  {way/vial hyp/wing}
-    ^-  prop
-    (foil (seek way hyp))
-  ::
-  ++  suck
-    ~/  %suck
-    |=  {way/vial hyp/wing}
-    ^-  prop
-    !!
   ::  
   ++  tech
     |=  {way/?($read $rite $both $free) hyp/wing}
