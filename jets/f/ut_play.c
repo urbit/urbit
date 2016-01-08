@@ -74,34 +74,6 @@
   }
 
   static u3_noun
-  _play_foil(u3_noun pok)
-  {
-    u3_noun p_pok = u3h(pok);
-    u3_noun q_pok = u3t(pok);
-    u3_noun ret;
-
-    if ( c3y == u3h(q_pok) ) {
-      u3_noun pq_pok = u3t(q_pok);
-
-      ret = u3nc(u3k(p_pok),
-                 u3nc(u3_nul,
-                      u3nc(u3nc(u3k(pq_pok),
-                                u3nt(c3__elm, u3_nul, 1)),
-                           u3_nul)));
-    }
-    else {
-      u3_noun pq_pok = u3h(u3t(q_pok));
-      u3_noun qq_pok = u3t(u3t(q_pok));
-
-      ret = u3nc(u3k(p_pok),
-                 u3nc(u3k(pq_pok),
-                      u3k(qq_pok)));
-    }
-    u3z(pok);
-    return ret;
-  }
-
-  static u3_noun
   _play_edit(u3_noun van,
              u3_noun sut,
              u3_noun mew,
@@ -362,8 +334,7 @@
       case c3__cnts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
-        u3_noun sec = u3qfu_seek(van, sut, c3__read, p_gen);
-        u3_noun lar = _play_foil(sec);
+        u3_noun lar = u3qfu_seek(van, sut, c3__read, p_gen);
         u3_noun q_lar = u3t(lar);
         u3_noun qq_lar = u3t(q_lar);
         u3_noun mew = q_gen;

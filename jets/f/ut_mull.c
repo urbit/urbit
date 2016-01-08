@@ -10,19 +10,6 @@
   _mull_in(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
 
   static u3_noun
-  _mull_vet(u3_noun van)
-  {
-    // u3_noun vet = u3j_hook(u3k(van), "vet");
-    u3_noun vet = u3r_at(u3qfu_van_vet, van);
-
-    switch ( vet ) {
-      case c3n:
-      case c3y: return vet;
-      default: return u3m_bail(c3__fail);
-    }
-  }
-
-  static u3_noun
   _mull_core(u3_noun pac,
              u3_noun con)
   {
@@ -52,34 +39,6 @@
     u3z(mol);
     u3z(sho);
 
-    return ret;
-  }
-
-  static u3_noun
-  _mull_foil(u3_noun pok)
-  {
-    u3_noun p_pok = u3h(pok);
-    u3_noun q_pok = u3t(pok);
-    u3_noun ret;
-
-    if ( c3y == u3h(q_pok) ) {
-      u3_noun pq_pok = u3t(q_pok);
-
-      ret = u3nc(u3k(p_pok),
-                 u3nc(u3_nul,
-                      u3nc(u3nc(u3k(pq_pok),
-                                u3nt(c3__elm, u3_nul, 1)),
-                           u3_nul)));
-    }
-    else {
-      u3_noun pq_pok = u3h(u3t(q_pok));
-      u3_noun qq_pok = u3t(u3t(q_pok));
-
-      ret = u3nc(u3k(p_pok),
-                 u3nc(u3k(pq_pok),
-                      u3k(qq_pok)));
-    }
-    u3z(pok);
     return ret;
   }
 
@@ -598,14 +557,12 @@
       case c3__cnts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
       {
-        u3_noun sec = u3qfu_seek(van, sut, c3__read, p_gen);
-        u3_noun suc = u3qfu_seek(van, dox, c3__read, p_gen);
-        u3_noun lar = _mull_foil(sec);
+        u3_noun lar = u3qfu_seek(van, sut, c3__read, p_gen);
+        u3_noun vug = u3qfu_seek(van, dox, c3__read, p_gen);
         u3_noun p_lar = u3h(lar);
         u3_noun q_lar = u3t(lar);
         u3_noun pq_lar = u3h(q_lar);
         u3_noun qq_lar = u3t(q_lar);
-        u3_noun vug = _mull_foil(suc);
         u3_noun p_vug = u3h(vug);
         u3_noun q_vug = u3t(vug);
         u3_noun pq_vug = u3h(q_vug);
@@ -728,14 +685,7 @@
              u3_noun dox,
              u3_noun gen)
   {
-    if ( c3n == _mull_vet(van) ) {
-      return c3y;
-    } else {
-      u3_noun mul = _mull_in(van, sut, gol, dox, gen);
-
-      u3z(mul);
-      return c3y;
-    }
+    return _mull_in(van, sut, gol, dox, gen);
   }
 
 /* boilerplate

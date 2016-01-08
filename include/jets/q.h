@@ -221,7 +221,7 @@
     u3_noun u3qfu_repo(u3_noun, u3_noun);
     u3_noun u3qfu_rest(u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_seek(u3_noun, u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_seep(u3_noun, u3_noun, u3_noun, u3_noun);
+    u3_noun u3qfu_sick(u3_noun, u3_noun, u3_noun, u3_noun);
     u3_noun u3qfu_shep(u3_noun, const c3_c*, u3_noun, u3_noun);
     u3_noun u3qfu_shew(u3_noun, u3_noun); 
     u3_noun u3qfu_sift(u3_noun, u3_noun, u3_noun);
