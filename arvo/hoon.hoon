@@ -7946,9 +7946,23 @@
       $(rig t.rig, q.q.lar q.cuf, q.q.vug q.dof)
     --
   ::
-  ++  epla  ~/(%epla |=({wing (list (pair wing twig))} ~(play et +<)))
-  ++  emin  ~/(%emin |=({wing (list (pair wing twig))} ~(mint et +<)))
-  ++  emul  ~/(%emul |=({wing (list (pair wing twig))} ~(mull et +<)))
+  ++  epla  
+    ~/  %epla 
+    |=  {hyp/wing rig/(list (pair wing twig))} 
+    ^-  span
+    ~(play et hyp rig)
+  ::
+  ++  emin  
+    ~/  %emin 
+    |=  {gol/span hyp/wing rig/(list (pair wing twig))}
+    ^-  (pair span nock)
+    (~(mint et hyp rig) gol)  
+  ::
+  ++  emul
+    ~/  %emul
+    |=  {gol/span dox/span hyp/wing rig/(list (pair wing twig))}
+    ^-  (pair span span)
+    (~(mull et hyp rig) gol dox)
   ::
   ++  find
     |=  {way/vial hyp/wing}
@@ -9742,13 +9756,13 @@
     |=  lang
     ^-  (unit twig)
     ?-    -.vil
-        $col  [~ %tsgl ros p.vil]
-        $pel  (bind ~(reek ap ros) |=(hyp/wing [%cnts hyp p.vil]))
-        $ket  [~ ros p.vil]
-        $fas  =+  tog=~(hock ap ros)
-              ?.(?=(@ tog) ~ [~ %bcts tog p.vil])
-        $tis  =+  tog=~(hock ap ros)
-              ?:(=([%0 ~] tog) ~ [~ %ktts tog p.vil])
+      $col  ?:(=([%base %bean] ros) ~ [~ %tsgl ros p.vil])
+      $pel  (bind ~(reek ap ros) |=(hyp/wing [%cnts hyp p.vil]))
+      $ket  [~ ros p.vil]
+      $fas  =+  tog=~(hock ap ros)
+            ?.(?=(@ tog) ~ [~ %bcts tog p.vil])
+      $tis  =+  tog=~(hock ap ros)
+            ?:(=([%0 ~] tog) ~ [~ %ktts tog p.vil])
     ==
   ::
   ++  long
