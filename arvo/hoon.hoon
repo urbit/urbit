@@ -7909,6 +7909,36 @@
         rag
       $(rig t.rig, rag q:(toss p.i.rig (^play q.i.rig) rag))
     ::
+    ++  moth
+      |=  {axe/axis arm/(unit axis) mil/(list (pair span foot))}
+      =|  hej/(list (pair axis nock))
+      |-  ^-  (pair span nock)
+      ?~  rig
+        [(fire mil) =+((hike axe hej) ?~(arm - [%9 u.arm -]))]
+      =+  zil=(^mint %noun q.i.rig)
+      =+  wip=(toss p.i.rig p.zil mil)
+      $(rig t.rig, mil q.wip, hej [[p.wip q.zil] hej])
+    ::
+    ++  moda
+      |=  gol/span 
+      ^-  {p/span q/nock}
+      =+  toc=moin
+      ?>(?|(!vet (nest(sut gol) & p.toc)) toc)
+    ::
+    ++  moin
+      ^-  {p/span q/nock}
+      =+  fid=(find %read hyp)
+      ?-    -.fid
+          $&  %+  moth  `axis`(tonk p.p.fid)
+              ?-  -.q.p.fid
+                $&  [~ [`span`p.q.p.fid `foot`[%elm %$ 1]]~]
+                $|  [`p.q.p.fid (~(tap in q.q.p.fid))]
+              ==
+          $|  ?-  -.p.fid
+                $|  ?^(rig ~|([%mute hyp] !!) p.p.fid)
+                $&  ~|([%find hyp] !!)
+      ==      ==
+    ::
     ++  mint 
       |=  gol/span 
       ^-  {p/span q/nock}
