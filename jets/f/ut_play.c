@@ -3,6 +3,7 @@
 */
 #include "all.h"
 
+#define CNTS
 
 /* logic
 */
@@ -73,6 +74,24 @@
     return ret;
   }
 
+#ifdef CNTS
+  static u3_noun
+  _play_cnts_new(u3_noun van,
+                 u3_noun sut,
+                 u3_noun hyp,
+                 u3_noun rig)
+  {
+    u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
+    u3_noun gat = u3j_hook(von, "epla");
+
+    return u3n_kick_on(u3i_molt(gat, 
+                                u3x_sam_2, 
+                                u3k(hyp), 
+                                u3x_sam_3, 
+                                u3k(rig),
+                                0));
+  }
+#else
   static u3_noun
   _play_edit(u3_noun van,
              u3_noun sut,
@@ -99,6 +118,25 @@
       }
     }
   }
+  static u3_noun
+  _play_cnts_old(u3_noun van,
+                 u3_noun sut,
+                 u3_noun hyp,
+                 u3_noun rig)
+  {
+    u3_noun lar = u3qfu_seek(van, sut, c3__read, hyp);
+    u3_noun q_lar = u3t(lar);
+    u3_noun qq_lar = u3t(q_lar);
+    u3_noun mew = rig;
+    u3_noun rag = _play_edit(van, sut, mew, u3k(qq_lar));
+    u3_noun ret = u3qfu_fire(van, sut, rag);
+
+    u3z(rag);
+    u3z(lar);
+
+    return ret;
+  }
+#endif
 
   static u3_noun
   _play_grow(u3_noun van,
@@ -333,19 +371,11 @@
       }
       case c3__cnts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
-      {
-        u3_noun lar = u3qfu_seek(van, sut, c3__read, p_gen);
-        u3_noun q_lar = u3t(lar);
-        u3_noun qq_lar = u3t(q_lar);
-        u3_noun mew = q_gen;
-        u3_noun rag = _play_edit(van, sut, mew, u3k(qq_lar));
-        u3_noun ret = u3qfu_fire(van, sut, rag);
-
-        u3z(rag);
-        u3z(lar);
-
-        return ret;
-      }
+#ifdef CNTS
+      return _play_cnts_new(van, sut, p_gen, q_gen);
+#else
+      return _play_cnts_old(van, sut, p_gen, q_gen);
+#endif
       case c3__brcn: p_gen = u3t(gen);
       _play_used();
       {

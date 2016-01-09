@@ -3,6 +3,8 @@
 */
 #include "all.h"
 
+#define CNTS
+
 /* logic
 */
   static u3_noun
@@ -110,48 +112,6 @@
     }
     u3z(nug);
     return axe;
-  }
-
-  static u3_noun
-  _mint_edit(u3_noun van,
-             u3_noun sut,
-             u3_noun mew,
-             u3_noun p_lar,
-             u3_noun rag,
-             u3_noun hej)
-  {
-    while ( 1 ) {
-      if ( c3n == u3du(mew) ) {
-        u3_noun gim = u3qfu_fire(van, sut, rag);
-        u3_noun fol = u3qf_hike(p_lar, hej);
-
-        u3z(rag);
-        u3z(hej);
-
-        return u3nc(gim, fol);
-      } else {
-        u3_noun i_mew = u3h(mew);
-        u3_noun t_mew = u3t(mew);
-        u3_noun pi_mew = u3h(i_mew);
-        u3_noun qi_mew = u3t(i_mew);
-        u3_noun zil = u3qfu_mint(van, sut, c3__noun, qi_mew);
-        u3_noun p_zil = u3h(zil);
-        u3_noun q_zil = u3t(zil);
-        u3_noun wip = u3qfu_toss(van, sut, pi_mew, p_zil, rag);
-
-        u3z(rag);
-        rag = u3k(u3t(wip));
-
-        hej = u3nc(u3nc(u3k(u3h(wip)),
-                        u3k(q_zil)),
-                   hej);
-
-        u3z(zil);
-        u3z(wip);
-
-        mew = t_mew;
-      }
-    }
   }
 
   static u3_noun
@@ -275,6 +235,95 @@
     return ret;
   }
 
+#ifdef CNTS
+  static u3_noun
+  _mint_cnts_new(u3_noun van,
+                 u3_noun sut,
+                 u3_noun gol,
+                 u3_noun hyp,
+                 u3_noun rig)
+  {
+    u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
+    u3_noun gat = u3j_hook(von, "emin");
+
+    return u3n_kick_on(u3i_molt(gat, 
+                                u3x_sam_2, 
+                                u3k(gol), 
+                                u3x_sam_6, 
+                                u3k(hyp),
+                                u3x_sam_7,
+                                u3k(rig),
+                                0));
+  }
+#else
+  static u3_noun
+  _mint_edit(u3_noun van,
+             u3_noun sut,
+             u3_noun mew,
+             u3_noun p_lar,
+             u3_noun rag,
+             u3_noun hej)
+  {
+    while ( 1 ) {
+      if ( c3n == u3du(mew) ) {
+        u3_noun gim = u3qfu_fire(van, sut, rag);
+        u3_noun fol = u3qf_hike(p_lar, hej);
+
+        u3z(rag);
+        u3z(hej);
+
+        return u3nc(gim, fol);
+      } else {
+        u3_noun i_mew = u3h(mew);
+        u3_noun t_mew = u3t(mew);
+        u3_noun pi_mew = u3h(i_mew);
+        u3_noun qi_mew = u3t(i_mew);
+        u3_noun zil = u3qfu_mint(van, sut, c3__noun, qi_mew);
+        u3_noun p_zil = u3h(zil);
+        u3_noun q_zil = u3t(zil);
+        u3_noun wip = u3qfu_toss(van, sut, pi_mew, p_zil, rag);
+
+        u3z(rag);
+        rag = u3k(u3t(wip));
+
+        hej = u3nc(u3nc(u3k(u3h(wip)),
+                        u3k(q_zil)),
+                   hej);
+
+        u3z(zil);
+        u3z(wip);
+
+        mew = t_mew;
+      }
+    }
+  }
+  static u3_noun
+  _mint_cnts_old(u3_noun van,
+                 u3_noun sut,
+                 u3_noun gol,
+                 u3_noun hyp,
+                 u3_noun rig)
+  {
+    u3_noun lar = u3qfu_seek(van, sut, c3__read, hyp);
+    u3_noun p_lar = u3h(lar);
+    u3_noun q_lar = u3t(lar);
+    u3_noun pq_lar = u3h(q_lar);
+    u3_noun qq_lar = u3t(q_lar);
+    u3_noun mew = rig;
+    u3_noun yom = _mint_edit(van, sut, mew, p_lar, u3k(qq_lar), u3_nul);
+    u3_noun p_yom = u3h(yom);
+    u3_noun q_yom = u3t(yom);
+    u3_noun ret = u3nc(_mint_nice(van, gol, u3k(p_yom)),
+                       (0 == pq_lar) ? u3k(q_yom)
+                                     : u3nt(9, u3k(pq_lar), u3k(q_yom)));
+
+    u3z(yom);
+    u3z(lar);
+
+    return ret;
+  }
+#endif
+
 # define _mint_used()
 
   static u3_noun
@@ -287,7 +336,7 @@
     u3_noun ret;
 
     if ( (c3__void == sut) &&
-         !((c3y == u3du(gen)) && ((c3__zpcb == u3h(gen)) || (c3__dbug == u3h(gen)))) )
+         !((c3y == u3du(gen)) && (c3__dbug == u3h(gen))) )
     {
       if ( (c3n == _mint_vet(van))
            || ((c3y == u3du(gen)) &&
@@ -627,25 +676,12 @@
       }
       case c3__cnts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
-      {
-        u3_noun lar = u3qfu_seek(van, sut, c3__read, p_gen);
-        u3_noun p_lar = u3h(lar);
-        u3_noun q_lar = u3t(lar);
-        u3_noun pq_lar = u3h(q_lar);
-        u3_noun qq_lar = u3t(q_lar);
-        u3_noun mew = q_gen;
-        u3_noun yom = _mint_edit(van, sut, mew, p_lar, u3k(qq_lar), u3_nul);
-        u3_noun p_yom = u3h(yom);
-        u3_noun q_yom = u3t(yom);
-        u3_noun ret = u3nc(_mint_nice(van, gol, u3k(p_yom)),
-                           (0 == pq_lar) ? u3k(q_yom)
-                                         : u3nt(9, u3k(pq_lar), u3k(q_yom)));
+#ifdef CNTS
+      return _mint_cnts_new(van, sut, gol, p_gen, q_gen);
+#else
+      return _mint_cnts_old(van, sut, gol, p_gen, q_gen);
+#endif
 
-        u3z(yom);
-        u3z(lar);
-
-        return ret;
-      }
       case c3__brcn: p_gen = u3t(gen);
       _mint_used();
       {

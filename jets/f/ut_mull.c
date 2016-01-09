@@ -3,6 +3,7 @@
 */
 #include "all.h"
 
+#define CNTS
 
 /* functions
 */
@@ -187,6 +188,30 @@
                 typ);
   }
 
+#ifdef CNTS
+  static u3_noun
+  _mull_cnts_new(u3_noun van,
+                 u3_noun sut,
+                 u3_noun gol,
+                 u3_noun dox,
+                 u3_noun hyp,
+                 u3_noun rig)
+  {
+    u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
+    u3_noun gat = u3j_hook(von, "emul");
+
+    return u3n_kick_on(u3i_molt(gat, 
+                                u3x_sam_2, 
+                                u3k(gol), 
+                                u3x_sam_6, 
+                                u3k(dox),
+                                u3x_sam_14,
+                                u3k(hyp),
+                                u3x_sam_15,
+                                u3k(rig),
+                                0));
+  }
+#else
   static u3_noun
   _mull_edit(u3_noun van,
              u3_noun sut,
@@ -227,6 +252,47 @@
       }
     }
   }
+
+  static u3_noun
+  _mull_cnts_old(u3_noun van,
+                 u3_noun sut,
+                 u3_noun gol,
+                 u3_noun dox,
+                 u3_noun hyp,
+                 u3_noun rig)
+  {
+    u3_noun lar = u3qfu_seek(van, sut, c3__read, hyp);
+    u3_noun vug = u3qfu_seek(van, dox, c3__read, hyp);
+    u3_noun p_lar = u3h(lar);
+    u3_noun q_lar = u3t(lar);
+    u3_noun pq_lar = u3h(q_lar);
+    u3_noun qq_lar = u3t(q_lar);
+    u3_noun p_vug = u3h(vug);
+    u3_noun q_vug = u3t(vug);
+    u3_noun pq_vug = u3h(q_vug);
+    u3_noun qq_vug = u3t(q_vug);
+
+    if ( c3a(u3r_sing(p_lar, p_vug), u3r_sing(pq_lar, pq_vug)) ) {
+      u3m_error("mull-bonk-e");
+    }
+    {
+      u3_noun mew = rig;
+      u3_noun yom = _mull_edit
+        (van, sut, dox, mew, u3k(qq_lar),
+                                    u3k(qq_vug));
+      u3_noun von = u3i_molt(u3k(van), u3qfu_van_vet, c3n, 0);
+      u3_noun p_ret = u3qfu_fire(van, sut, u3h(yom));
+      u3_noun q_ret = u3qfu_fire(von, sut, u3t(yom));
+
+      u3z(von);
+      u3z(yom);
+      u3z(vug);
+      u3z(lar);
+
+      return u3nc(_mull_nice(van, gol, p_ret), q_ret);
+    }
+  }
+#endif
 
 # define _mull_used()
 
@@ -556,38 +622,11 @@
       }
       case c3__cnts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
-      {
-        u3_noun lar = u3qfu_seek(van, sut, c3__read, p_gen);
-        u3_noun vug = u3qfu_seek(van, dox, c3__read, p_gen);
-        u3_noun p_lar = u3h(lar);
-        u3_noun q_lar = u3t(lar);
-        u3_noun pq_lar = u3h(q_lar);
-        u3_noun qq_lar = u3t(q_lar);
-        u3_noun p_vug = u3h(vug);
-        u3_noun q_vug = u3t(vug);
-        u3_noun pq_vug = u3h(q_vug);
-        u3_noun qq_vug = u3t(q_vug);
-
-        if ( c3a(u3r_sing(p_lar, p_vug), u3r_sing(pq_lar, pq_vug)) ) {
-          u3m_error("mull-bonk-e");
-        }
-        {
-          u3_noun mew = q_gen;
-          u3_noun yom = _mull_edit
-            (van, sut, dox, mew, u3k(qq_lar),
-                                        u3k(qq_vug));
-          u3_noun von = u3i_molt(u3k(van), u3qfu_van_vet, c3n, 0);
-          u3_noun p_ret = u3qfu_fire(van, sut, u3h(yom));
-          u3_noun q_ret = u3qfu_fire(von, sut, u3t(yom));
-
-          u3z(von);
-          u3z(yom);
-          u3z(vug);
-          u3z(lar);
-
-          return u3nc(_mull_nice(van, gol, p_ret), q_ret);
-        }
-      }
+#ifdef CNTS
+      return _mull_cnts_new(van, sut, gol, dox, p_gen, q_gen);
+#else
+      return _mull_cnts_old(van, sut, gol, dox, p_gen, q_gen);
+#endif
       case c3__brcn: p_gen = u3t(gen);
       _mull_used();
       {
