@@ -516,6 +516,7 @@
                       {$cube * _$}
                       {$face tusk _$}
                       {$fork _$ _$}
+                      {$frog (list _$)}
                       {$hold (list {_$ twig})}
                   ==
                   wain                :: "<|core|>"
@@ -524,6 +525,7 @@
       ?+  a  a
         {$?($cube $face) ^}  a(q $(a q.a))
         {$?($cell $fork) ^}  a(p $(a p.a), q $(a q.a))
+        {$frog *}  a(p (turn p.a |=(b/span ^$(a b))))
         {$core ^}  `wain`/core
         {$hold *}  a(p (turn p.a |=({b/span c/twig} [^$(a b) c])))
       ==
