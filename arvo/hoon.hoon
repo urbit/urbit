@@ -319,6 +319,7 @@
     {$wtpt p/wing q/twig r/twig}                        ::  if p is an atom
     {$wtsg p/wing q/twig r/twig}                        ::  if p is null
     {$wtts p/twig q/wing}                               ::  if q is in p
+    {$wttx p/twig q/twig}                               ::  if q is in p
     {$wtzp p/twig}                                      ::  logical NOT
   ::                                            ::::::  special
     {$zpcm p/twig q/twig}                               ::  q twig with p span
@@ -6908,7 +6909,8 @@
     ==
       %etch  etch
       %open  open
-      %rake  rake
+      %bear  bear
+      %bare  bare
     ==
   |_  gen/twig
   ++  etch
@@ -7235,7 +7237,7 @@
     ::
         {$tskt *}                                       ::                  =^
       =+  cog=rusk(gen p.gen)                           ::
-      =+  wuy=(weld rake(gen q.gen) `wing`[%v ~])       ::
+      =+  wuy=(weld bear(gen q.gen) `wing`[%v ~])       ::
       :+  %tsgr  [%ktts %v %$ 1]                        ::  =>  v=.
       :+  %tsls  [%ktts %a %tsgr [%limb %v] r.gen]      ::  =+  a==>(v \r.gen)
       :^  %tsdt  wuy  [%tsgl [%$ 3] [%limb %a]]         ::  =.  \wuy  +.a
@@ -7294,19 +7296,19 @@
         *           gen
     ==
   ::
-  ++  rake  ~|(%rake-twig (need reek))
-  ++  reek
+  ++  bear  ~|(%bear-twig (need bare))
+  ++  bare
     ^-  (unit wing)
     ?+  gen  ~
       {$~ *}        `[[%& p.gen] ~]
       {$limb *}     `[p.gen ~]
       {$wing *}     `p.gen
       {$cnts * $~}  `p.gen
-      {$dbug *}     reek(gen q.gen)
+      {$dbug *}     bare(gen q.gen)
     ==
   ++  rusk
     ^-  term
-    =+  wig=rake
+    =+  wig=bear
     ?.  ?=({@ $~} wig)
       ~|(%rusk-twig !!)
     i.wig
@@ -7882,6 +7884,13 @@
       ==
     --
   ::
+  ++  coal
+    |=  {pol/? gen/twig ref/span}
+    ^-  span
+    =+  hup=~(bare ap gen)
+    ?~  hup  sut
+    q:(tuck %both u.hup |=(a/span ?:(pol (fuse(sut a) ref) (crop(sut a) ref))))
+  ::
   ++  cool
     |=  {pol/? hyp/wing ref/span}
     ^-  span
@@ -8206,7 +8215,9 @@
     ~/  %chip
     |=  {how/? gen/twig}  ^-  span
     ?:  ?=({$wtts *} gen)  
-      (cool how q.gen (play ~(bunt al [%herb p.gen])))  
+      (coal how [%wing q.gen] (play ~(bunt al [%herb p.gen])))  
+    ?:  ?=({$wttx *} gen)  
+      (coal how q.gen (play ~(bunt al [%herb p.gen])))  
     ?:  ?&(how ?=({$wtpm *} gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     ?:  ?&(!how ?=({$wtbr *} gen))
@@ -8295,6 +8306,15 @@
       %-  fish(sut (play ~(bunt al %herb p.gen)))
       (cove q:$(gen [%wing q.gen], gol %noun))
     ::
+        {$wttx *}
+      =+  hup=~(bare ap q.gen)
+      ?~  hup
+        $(gen [%tsls q.gen [%wttx [%tsgr [%$ 3] p.gen] [%$ 2]]])
+      :-  (nice bool)
+      =+  ref=(play ~(bunt al %herb p.gen))
+      %-  fish(sut ref)
+      (cove q:$(gen [%wing u.hup], gol %noun))
+    ::
         {$dbug *}
       ~_  (show %o p.gen)
       =+  hum=$(gen q.gen)
@@ -8378,7 +8398,7 @@
         {$dtts *}
       =+([$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)] (beth bool))
     ::
-        {$dtwt *}  =+($(gen p.gen, gol %noun) (beth bool))    ::  XX  =|
+        {$dtwt *}  =+($(gen p.gen, gol %noun) (beth bool))
         {$ktbr *}
       =+(vat=$(gen p.gen) [(wrap(sut p.vat) %iron) (wrap(sut q.vat) %iron)])
     ::
@@ -8748,11 +8768,9 @@
     ^-  axis
     ?~(vit 1 (peg $(vit t.vit) ?~(i.vit 1 u.i.vit)))
   ::
-  ++  tuck
-    |=  {way/?($read $rite $both $free) hyp/wing duz/$+(span span)}
-    ~|  [%tuck hyp]
+  ++  teck
+    |=  {vit/vein duz/$+(span span)}
     ^-  (pair axis span)
-    =+  ^-  vit/vein  (tech %rite hyp)
     :-  (tonk vit)
     =.  vit  (flop vit)
     |-  ^-  span
@@ -8786,6 +8804,11 @@
                  (fork $(sut p.sut) $(sut q.sut))
       {$hold *}  $(sut repo)
     ==
+  ::
+  ++  tuck
+    |=  {way/?($read $rite $both $free) hyp/wing duz/$+(span span)}
+    ~|  [%tuck hyp]
+    (teck (tech way hyp) duz)
   ::
   ++  tack
     |=  {hyp/wing mur/span}
@@ -9750,7 +9773,7 @@
     ^-  (unit twig)
     ?-    -.vil
       $col  ?:(=([%base %bean] ros) ~ [~ %tsgl ros p.vil])
-      $pel  (bind ~(reek ap ros) |=(hyp/wing [%cnts hyp p.vil]))
+      $pel  (bind ~(bare ap ros) |=(hyp/wing [%cnts hyp p.vil]))
       $ket  [~ ros p.vil]
       $fas  =+  tog=~(hock ap ros)
             ?.(?=(@ tog) ~ [~ %bcts tog p.vil])
