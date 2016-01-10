@@ -234,8 +234,6 @@
     u3_noun u3wfu_play(u3_noun);
     u3_noun u3wfu_repo(u3_noun);
     u3_noun u3wfu_rest(u3_noun);
-    u3_noun u3wfu_seek(u3_noun);
-    u3_noun u3wfu_seep(u3_noun);
     u3_noun u3wfu_snub(u3_noun);
     u3_noun u3wfu_toss(u3_noun);
     u3_noun u3wfu_wrap(u3_noun);

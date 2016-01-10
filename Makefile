@@ -303,7 +303,6 @@ J_F_OFILES_UT=\
        jets/f/ut_play.o \
        jets/f/ut_repo.o \
        jets/f/ut_rest.o \
-       jets/f/ut_seek.o \
        jets/f/ut_tack.o \
        jets/f/ut_toss.o \
        jets/f/ut_wrap.o
