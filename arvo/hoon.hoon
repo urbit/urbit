@@ -124,7 +124,7 @@
 ++  pint  {p/{p/@ q/@} q/{p/@ q/@}}                     ::  line+column range
 ++  pole  |*  a/$+(* *)                                 ::  nameless list
           $@($~ {a (pole a)})                           ::
-++  pont  %+  each                                      ::  new pull result
+++  pony  %+  each                                      ::  new pull result
             %+  pair                                    ::  normal
               vein                                      ::  wing trace
             $%  {$& p/span}                             ::  leg
@@ -138,17 +138,6 @@
               $%  {$& p/span}                           ::
                   {$| p/axis q/(list {p/span q/foot})}  ::
               ==                                        ::
-          ==                                            ::
-++  post  $:  p/axis                                    ::
-              $=  q                                     ::
-              $%  {$0 p/span}                           ::
-                  {$1 p/axis q/(list {p/span q/foot})}  ::
-                  {$2 p/twin q/span}                    ::
-              ==                                        ::
-          ==                                            ::
-++  prop  $:  p/axis                                    ::
-              $=  q                                     ::
-              {p/?($~ axis) q/(list {p/span q/foot})}   ::
           ==                                            ::
 ++  qual  |*  {a/$+(* *) b/$+(* *) c/$+(* *) d/$+(* *)} ::  just a quadruple
           {p/a q/b r/c s/d}                             ::
@@ -7101,7 +7090,7 @@
       :^  %cntr  p.gen  q.gen
       ::
       ::  the use of ++hail is probably the right language design, but
-      ::  it's impractically slow with the present ++tuck approach.
+      ::  it's impractically slow without validating %=.
       ::
 ::    ?:(=(~ r.gen) ~ (hail(gen [%cltr r.gen]) 6))
       =+  axe=6
@@ -7877,7 +7866,12 @@
     |=  {pol/? hyp/wing ref/span}
     ^-  span
     =+  fid=(find %both hyp)
-    q:(tuck %both hyp |=(a/span ?:(pol (fuse(sut a) ref) (crop(sut a) ref))))
+    ?-  -.fid
+      $|  sut
+      $&  =<  q
+          %+  take  p.p.fid 
+          |=(a/span ?:(pol (fuse(sut a) ref) (crop(sut a) ref)))
+    ==
   ::
   ++  duck  ^-(tank ~(duck us sut))
   ++  dune  |.(duck)
@@ -7962,7 +7956,7 @@
     |=  {way/vial hyp/wing}
     ~+
     =|  nol/vein
-    |-  ^-  pont
+    |-  ^-  pony
     ?~  hyp  
       [%& nol %& sut]
     =+  mor=$(hyp t.hyp)
@@ -8000,7 +7994,7 @@
           ++  stop  ?~(q.heg here lose)
           ++  fake  !!
           ++  $
-            ^-  pont
+            ^-  pony
             ?-    ref
                 $void       stop
                 $noun       stop
@@ -8284,8 +8278,13 @@
     ::
         {$wtts *}
       :-  (nice bool)
-      %-  fish(sut (play ~(bunt al %herb p.gen)))
-      (cove q:$(gen [%wing q.gen], gol %noun))
+      =+  ref=(play ~(bunt al %herb p.gen))
+      =+  fid=(find %read q.gen)
+      ~|  [%find q.gen]
+      ?-  -.fid
+        $&  ?>(?=($& -.q.p.fid) (fish(sut ref) (tend p.p.fid)))
+        $|  ?>(?=($| -.p.fid) [%7 q.p.p.fid (fish(sut ref) 1)])
+      ==
     ::
         {$dbug *}
       ~_  (show %o p.gen)
@@ -8718,7 +8717,7 @@
         (pair span nock)
     =+  fid=(find %read hyp)
     ?-    -.fid
-      $&  :+  %&  (tonk p.p.fid)
+      $&  :+  %&  (tend p.p.fid)
           ?-  -.q.p.fid
             $&  [~ [`span`p.q.p.fid `foot`[%elm %$ 1]]~]
             $|  [`p.q.p.fid (~(tap in q.q.p.fid))]
@@ -8727,23 +8726,11 @@
             $|  [%| p.p.fid]
             $&  ~|([%find hyp] !!)
     ==    ==
-  ::  
-  ++  tech
-    |=  {way/?($read $rite $both $free) hyp/wing}
-    ^-  vein
-    ~|  [%need-wing hyp]
-    =+  taf=(find %rite hyp)
-    ?>(?=($& -.taf) p.p.taf)
   ::
-  ++  tonk
-    |=  vit/vein
-    ^-  axis
-    ?~(vit 1 (peg $(vit t.vit) ?~(i.vit 1 u.i.vit)))
-  ::
-  ++  teck
+  ++  take
     |=  {vit/vein duz/$+(span span)}
     ^-  (pair axis span)
-    :-  (tonk vit)
+    :-  (tend vit)
     =.  vit  (flop vit)
     |-  ^-  span
     ?~  vit  (duz sut)
@@ -8777,14 +8764,17 @@
       {$hold *}  $(sut repo)
     ==
   ::
-  ++  tuck
-    |=  {way/?($read $rite $both $free) hyp/wing duz/$+(span span)}
-    ~|  [%tuck hyp]
-    (teck (tech way hyp) duz)
-  ::
   ++  tack
     |=  {hyp/wing mur/span}
-    (tuck %rite hyp |=(span mur))
+    ~|  [%tack hyp]
+    =+  fid=(find %rite hyp)
+    ?>  ?=($& -.fid)
+    (take p.p.fid |=(span mur))
+  ::
+  ++  tend
+    |=  vit/vein
+    ^-  axis
+    ?~(vit 1 (peg $(vit t.vit) ?~(i.vit 1 u.i.vit)))
   ::
   ++  toss
     ~/  %toss
@@ -8802,12 +8792,14 @@
   ++  wrap
     ~/  %wrap
     |=  yoz/?($lead $iron $zinc)
+    ~|  %wrap
     ^-  span
-    ?-  sut
-      {$core *}  ?.(=(%gold p.q.sut) ~|(%wrap-metl !!) sut(p.q yoz))
+    ?+  sut  sut
+      {$cell *}  (cell $(sut p.sut) $(sut q.sut)) 
+      {$core *}  ?>(|(=(%gold p.q.sut) =(%lead yoz)) sut(p.q yoz))
+      {$face *}  (face p.sut $(sut q.sut))
       {$fork *}  (fork $(sut p.sut) $(sut q.sut))
       {$hold *}  $(sut repo)
-      *          ~|(%wrap-span !!)
     ==
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
