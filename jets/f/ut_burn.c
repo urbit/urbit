@@ -50,6 +50,14 @@
       {
         return _burn_in(van, q_sut, gil);
       }
+      case c3__fork: p_sut = u3t(sut);
+      {
+        u3_noun fop = u3qfu_repo(van, sut);
+        u3_noun ret = _burn_in(van, fop, gil);
+
+        u3z(fop);
+        return ret;
+      }
       case c3__frog: p_sut = u3t(sut);
       {
         return _burn_in(van, u3h(p_sut), gil);

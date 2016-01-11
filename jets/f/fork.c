@@ -52,6 +52,20 @@
   }
 
   u3_noun
+  u3qf_grof(u3_noun bez)
+  {
+    return u3nc(c3__frog, u3qdi_tap(bez, u3_nul));
+  }
+  u3_noun
+  u3kf_grof(u3_noun bez)
+  {
+    u3_noun ret = u3qf_grof(bez);
+
+    u3z(bez);
+    return ret;
+  }
+
+  u3_noun
   u3wf_frog(u3_noun cor)
   {
     u3_noun yed;

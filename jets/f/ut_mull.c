@@ -24,10 +24,9 @@
   static u3_noun
   _mull_bean()
   {
-    return u3nq(c3__frog,
-                u3nq(c3__atom, 'f', u3_nul, 0),
-                u3nq(c3__atom, 'f', u3_nul, 1),
-                u3_nul);
+    return u3kf_frog(u3nt(u3nq(c3__atom, 'f', u3_nul, 0),
+                          u3nq(c3__atom, 'f', u3_nul, 1),
+                          u3_nul));
   }
 
   static u3_noun

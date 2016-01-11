@@ -40,6 +40,7 @@
           return u3k(q_sut);
         }
       }
+      case c3__fork: return u3qf_grof(u3t(sut));
       case c3__hold: {
         if ( c3n == u3r_cell(u3t(sut), &p_sut, &q_sut)) {
           return u3m_bail(c3__fail);

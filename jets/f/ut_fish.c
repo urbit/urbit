@@ -99,20 +99,13 @@
           return _fish_in(van, q_sut, axe, vit);
         }
       }
-      case c3__fork: {
-        if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
-          return u3m_bail(c3__fail);
-        }
-        else {
-          u3_noun hed = _fish_in(van, p_sut, axe, vit);
-          u3_noun tal = _fish_in(van, q_sut, axe, vit);
-          u3_noun pro = u3qf_flor(hed, tal);
+      case c3__fork: p_sut = u3t(sut);
+      {
+        u3_noun fop = u3qfu_repo(van, sut);
+        u3_noun ret = _fish_in(van, fop, axe, vit);
 
-          u3z(hed);
-          u3z(tal);
-
-          return pro;
-        }
+        u3z(fop);
+        return ret;
       }
       case c3__frog: {
         p_sut = u3t(sut);
