@@ -6270,6 +6270,7 @@
     %void
   [%face sag der]
 ::
+::  ++  bool  `span`[%frog [%atom %f `0] [%atom %f `1] ~]
 ++  bool  ^-  span 
           [%fork [%atom %f `0] [%atom %f `1]]
 ::
@@ -8803,15 +8804,11 @@
                    $(sut repo)
                  (core $(sut p.sut, u.i.vit lat) q.sut)
       {$face *}  (face p.sut $(sut q.sut))
-      {$fork *}  ?:  (~(has in vil) sut)
+      {$fork *}  (fork $(sut p.sut) $(sut q.sut))
+      {$frog *}  (frog (turn p.sut |=(span ^$(sut +<))))
+      {$hold *}  ?:  (~(has in vil) sut)
                    %void
-                 =>  .(vil (~(put in vil) sut))
-                 (fork $(sut p.sut) $(sut q.sut))
-      {$frog *}  ?:  (~(has in vil) sut)
-                   %void
-                 =>  .(vil (~(put in vil) sut))
-                 (frog (turn p.sut |=(span ^$(sut +<))))
-      {$hold *}  $(sut repo)
+                 $(sut repo, vil (~(put in vil) sut))
     ==
   ::
   ++  tack
