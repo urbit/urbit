@@ -516,7 +516,7 @@
                       {$cube * _$}
                       {$face tusk _$}
                       {$frog (list _$)}
-                      {$holt _$ twig}
+                      {$hold _$ twig}
                   ==
                   wain                :: "<|core|>"
                   $?($noun $void)
@@ -526,7 +526,7 @@
         {$cell ^}  a(p $(a p.a), q $(a q.a))
         {$frog *}  a(p (turn p.a |=(b/span ^$(a b))))
         {$core ^}  `wain`/core
-        {$holt *}  a(p $(a p.a))
+        {$hold *}  a(p $(a p.a))
       ==
     ::
     ++  dy-shown
