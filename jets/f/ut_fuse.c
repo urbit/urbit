@@ -3,8 +3,6 @@
 */
 #include "all.h"
 
-#define FROG
-
 /* logic
 */
   static u3_noun
@@ -33,7 +31,6 @@
     }
   }
 
-#ifdef FROG
   static u3_noun
   _fuse_in_frog(u3_noun van, u3_noun p_sut, u3_noun ref, u3_noun bix)
   {
@@ -45,7 +42,6 @@
                   _fuse_in_frog(van, u3t(p_sut), ref, bix));
     }
   }
-#endif
 
   static u3_noun
   _fuse_in(u3_noun van,
@@ -136,31 +132,10 @@
         u3z(vot);
         return ret;
       }
-      case c3__fork: u3x_cell(u3t(sut), &p_sut, &q_sut);
-      {
-        u3_noun dis = _fuse_in(van, p_sut, ref, bix);
-        u3_noun dat = _fuse_in(van, q_sut, ref, bix);
-        u3_noun ret = u3qf_fork(dis, dat);
-
-        u3z(dis);
-        u3z(dat);
-        return ret;
-      }
-#ifdef FROG
       case c3__frog: p_sut = u3t(sut);
       {
         return u3kf_frog(_fuse_in_frog(van, p_sut, ref, bix));
       }
-#else
-      case c3__frog: p_sut = u3t(sut);
-      {
-        u3_noun fag = u3qf_grof(p_sut);
-        u3_noun ret = _fuse_in(van, fag, ref, bix);
-
-        u3z(fag);
-        return ret;
-      }
-#endif
       case c3__hold: p_sut = u3t(sut);
       {
         u3_noun hud = u3nc(u3k(sut), u3k(ref));

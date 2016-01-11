@@ -3,8 +3,6 @@
 */
 #include "all.h"
 
-#define FROG
-
 /* logic
 */
   static u3_noun
@@ -35,7 +33,6 @@
     }
   }
 
-#ifdef FROG
   static u3_noun
   _crop_dext_frog(u3_noun van, u3_noun p_sut, u3_noun ref, u3_noun bix)
   {
@@ -61,7 +58,6 @@
       return zat;
     }
   }
-#endif
 
   static u3_noun
   _crop_dext(u3_noun van,
@@ -154,33 +150,10 @@
         u3z(foz);
         return ret;
       }
-      case c3__fork: u3x_cell(u3t(sut), &p_sut, &q_sut);
-      {
-        u3_noun dis = _crop_dext(van, p_sut, ref, bix);
-        u3_noun dat = _crop_dext(van, q_sut, ref, bix);
-        u3_noun ret = u3qf_forq(dis, dat);
-
-        u3z(dis);
-        u3z(dat);
-        return ret;
-      }
-
-#ifdef FROG
       case c3__frog: p_sut = u3t(sut);
       {
         return u3kf_frog(_crop_dext_frog(van, p_sut, ref, bix));
       }
-#else
-      case c3__frog: p_sut = u3t(sut);
-      {
-        u3_noun fag = u3qf_grof(p_sut);
-        u3_noun ret = _crop_dext(van, fag, ref, bix);
-
-        u3z(fag);
-        return ret;
-      }
-#endif
-
       case c3__hold: p_sut = u3t(sut);
       {
         u3_noun hud = u3nc(u3k(sut), u3k(ref));
@@ -231,21 +204,10 @@
         u3z(hin);
         return ret;
       }
-#ifdef FROG
       case c3__frog: p_ref = u3t(ref);
       {
         return _crop_sint_frog(van, sut, p_ref, bix);
       }
-#else
-      case c3__frog: p_ref = u3t(ref);
-      {
-        u3_noun fag = u3qf_grof(p_ref);
-        u3_noun ret = _crop_sint(van, sut, fag, bix);
-
-        u3z(fag);
-        return ret;
-      }
-#endif
       case c3__hold: p_ref = u3t(ref);
       {
         u3_noun rep = u3qfu_repo(van, ref);

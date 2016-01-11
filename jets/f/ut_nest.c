@@ -3,8 +3,6 @@
 */
 #include "all.h"
 
-#define FROG
-
 /* logic
 */
   /* forward
@@ -255,31 +253,6 @@
           return _nest_dext(van, q_sut, tel, ref, seg, reg, gil);
         }
       }
-      case c3__fork: {
-        if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
-          return u3m_bail(c3__fail);
-        }
-        else {
-          if ( c3n == u3du(ref) ) switch ( ref ) {
-            default: return _nest_sint(van, sut, tel, ref, seg, reg, gil);
-
-            case c3__noun:
-              break;
-          }
-          else switch ( u3h(ref) ) {
-            default: return _nest_sint(van, sut, tel, ref, seg, reg, gil);
-
-            case c3__atom:
-            case c3__cell:
-            case c3__core:
-              break;
-          }
-
-          return c3o(_nest_dext(van, p_sut, c3n, ref, seg, reg, gil),
-                     _nest_dext(van, q_sut, c3n, ref, seg, reg, gil));
-        }
-      }
-#ifdef FROG
       case c3__frog: p_sut = u3t(sut);
       {
         if ( c3n == u3du(ref) ) switch ( ref ) {
@@ -306,16 +279,6 @@
         }
         return c3n;
       }
-#else
-      case c3__frog: p_sut = u3t(sut);
-      {
-        u3_noun fag = u3qf_grof(p_sut);
-        u3_noun ret = _nest_dext(van, fag, tel, ref, seg, reg, gil);
-
-        u3z(fag);
-        return ret;
-      }
-#endif
       case c3__hold: p_sut = u3t(sut);
       {
         if ( c3y == u3qdi_has(seg, sut) ) {
@@ -361,7 +324,7 @@
     if ( (c3y == tyn) || (c3n == tel) ) {
       return tyn;
     } else {
-#ifdef FROG
+#if 0
       u3_noun dun = u3qfu_dunq(van, "need", sut);
       u3_noun niz = u3qfu_dunq(van, "have", ref);
 
@@ -441,14 +404,6 @@
             return _nest_dext(van, sut, tel, q_ref, seg, reg, gil);
           }
         }
-        case c3__fork: {
-          if ( (c3y == u3r_mean(ref, 6, &p_ref, 7, &q_ref, 0)) ) {
-            return c3a(_nest_dext(van, sut, tel, p_ref, seg, reg, gil),
-                       _nest_dext(van, sut, tel, q_ref, seg, reg, gil));
-          }
-          else return u3m_bail(c3__fail);
-        }
-#ifdef FROG
         case c3__frog: {
           p_ref = u3t(ref);
 
@@ -461,16 +416,6 @@
           }
           return c3y;
         }
-#else
-        case c3__frog: p_ref = u3t(ref);
-        {
-          u3_noun fag = u3qf_grof(p_ref);
-          u3_noun ret = _nest_dext(van, sut, tel, fag, seg, reg, gil);
-
-          u3z(fag);
-          return ret;
-        }
-#endif
         case c3__hold: {
           if ( c3y == u3qdi_has(reg, ref) ) {
             return c3y;

@@ -50,25 +50,10 @@
       {
         return _burn_in(van, q_sut, gil);
       }
-      case c3__fork: u3x_cell(u3t(sut), &p_sut, &q_sut);
-      {
-        return _burn_in(van, p_sut, gil);
-      }
-#if 0
       case c3__frog: p_sut = u3t(sut);
       {
         return _burn_in(van, u3h(p_sut), gil);
       }
-#else
-      case c3__frog: p_sut = u3t(sut);
-      {
-        u3_noun fag = u3qf_grof(p_sut);
-        u3_noun ret = _burn_in(van, fag, gil);
-
-        u3z(fag);
-        return ret;
-      }
-#endif
       case c3__hold: p_sut = u3t(sut);
       {
         if ( (c3y == u3qdi_has(gil, sut)) ) {

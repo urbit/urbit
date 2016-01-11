@@ -15,9 +15,10 @@
   static u3_noun
   _play_bean()
   {
-    return u3nt(c3__fork,
+    return u3nq(c3__frog,
                 u3nq(c3__atom, 'f', u3_nul, 0),
-                u3nq(c3__atom, 'f', u3_nul, 1));
+                u3nq(c3__atom, 'f', u3_nul, 1),
+                u3_nul);
   }
 
   static u3_noun

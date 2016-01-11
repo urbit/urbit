@@ -32,7 +32,7 @@
     case c3__face: u3x_cell(u3t(sut), &p_sut, &q_sut);
     {
     }
-    case c3__fork: u3x_cell(u3t(sut), &p_sut, &q_sut);
+    case c3__frog: p_sut = u3t(sut);
     {
     }
     case c3__hold: p_sut = u3t(sut);

@@ -3,7 +3,6 @@
 */
 #include "all.h"
 
-#define FROG
 
 /* logic
 */
@@ -13,7 +12,6 @@
   static u3_noun
   _peek_in(u3_noun, u3_noun, u3_noun, u3_atom, u3_noun);
 
-#ifdef FROG
   static u3_noun
   _peek_frog(u3_noun van, u3_noun p_sut, u3_noun way, u3_noun axe, u3_noun gil)
   {
@@ -25,7 +23,6 @@
                   _peek_frog(van, u3t(p_sut), way, axe, gil));
     }
   }
-#endif
 
   static u3_noun
   _peek_in(u3_noun van,
@@ -115,37 +112,11 @@
           return _peek_in(van, q_sut, way, axe, gil);
         }
       }
-      case c3__fork: {
-        if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
-          return u3m_bail(c3__fail);
-        } else {
-          u3_noun hed = _peek_in(van, p_sut, way, axe, gil);
-          u3_noun tal = _peek_in(van, q_sut, way, axe, gil);
-
-          pro = u3qf_forq(hed, tal);
-
-          u3z(hed);
-          u3z(tal);
-
-          return pro;
-        }
-      }
-#ifdef FROG
       case c3__frog: {
         p_sut = u3t(sut);
 
         return u3kf_frog(_peek_frog(van, p_sut, way, axe, gil));
       }
-#else
-      case c3__frog: p_sut = u3t(sut);
-      {
-        u3_noun fag = u3qf_grof(p_sut);
-        u3_noun ret = _peek_in(van, fag, way, axe, gil);
-
-        u3z(fag);
-        return ret;
-      }
-#endif
       case c3__hold: {
         p_sut = u3t(sut);
         if ( (c3y == u3qdi_has(gil, sut)) ) {
