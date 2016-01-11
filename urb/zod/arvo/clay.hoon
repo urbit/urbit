@@ -1517,7 +1517,7 @@
         %v  [~ %dome !>(dom)]
         %x  !!  ::  ?~(q.ank.dom ~ [~ q.u.q.ank.dom])
         %y  !!  ::  [~ %arch !>(as-arch)]
-        %z  [~ %ankh !>(ank.dom)]
+        %z  !!  ::  [~ %ankh !>(ank.dom)]
       ==
     ::
     ++  new-lobes                                       ::  object hash set
@@ -1645,6 +1645,28 @@
       ::  ~&  cy/pax
       :-  -:!>(*arch)
       ^-  arch
+      :-  (~(get by q.yak) pax)
+      ^-  (map span ,~)
+      %-  mo  ^-  (list (pair span ,~))
+      %+  turn
+        ^-  (list (pair path lobe))
+        %+  skim  (~(tap by (~(del by q.yak) pax)))
+        |=  [paf=path lob=lobe]
+        =(pax (scag len paf))
+      |=  [paf=path lob=lobe]
+      =+  pat=(slag len paf)
+      [?>(?=(^ pat) i.pat) ~]
+    ::
+    ++  read-z
+      |=  [yon=aeon pax=path]
+      ^-  (unit (unit ,[%uvi (hypo ,@uvI)]))
+      ?:  =(0 yon)
+        ``uvi/[-:!>(*@uvI) *@uvI]
+      =+  tak=(~(get by hit.dom) yon)
+      ?~  tak
+        ~
+      =+  yak=(tako-to-yaki u.tak)
+      =+  len=(lent pax)
       =+  ^-  descendants=(list (pair path lobe))
           ::  ~&  %turning
           ::  =-  ~&  %turned  -
@@ -1657,18 +1679,15 @@
           |=  [paf=path lob=lobe]
           [(slag len paf) lob]
       =+  us=(~(get by q.yak) pax)
-      :+  ?:  &(?=(~ descendants) ?=(~ us))
-            *@uvI
-          %+  roll
-            ^-  (list (pair path lobe))
-            [[~ ?~(us *lobe u.us)] descendants]
-          |=([[path lobe] @uvI] (shax (jam +<)))
-        us
-      ^-  (map span ,~)
-      %-  mo  ^-  (list (pair span ,~))
-      %+  turn  descendants
-      |=  [paf=path lob=lobe]
-      [?>(?=(^ paf) i.paf) ~]
+      ^-  (unit (unit ,[%uvi (hypo ,@uvI)]))
+      :^  ~  ~  %uvi
+      :-  -:!>(*@uvI)
+      ?:  &(?=(~ descendants) ?=(~ us))
+        *@uvI
+      %+  roll
+        ^-  (list (pair path lobe))
+        [[~ ?~(us *lobe u.us)] descendants]
+      |=([[path lobe] @uvI] (shax (jam +<)))
     ::
     ++  read-at-aeon                                    ::    read-at-aeon:ze
       |=  [yon=aeon mun=mood]                           ::  seek and read
@@ -1692,6 +1711,8 @@
         ::          ==
         ::      -
         (bind (read-y yon r.mun) (curr bind (cury same %&)))
+      ?:  ?=(%z p.mun)
+        (bind (read-z yon r.mun) (curr bind (cury same %&)))
       %+  bind
         (rewind yon)
       |=  a=(unit ,_+>.$)
