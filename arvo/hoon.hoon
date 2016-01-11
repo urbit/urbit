@@ -8602,9 +8602,9 @@
                    ==
         {$face *}  dext(sut q.sut)
         {$fork *}  ?.  ?=(?({$atom *} $noun {$cell *} {$core *}) ref)  sint
-                   |(dext(sut p.sut) dext(sut q.sut))
+                   |(dext(tel |, sut p.sut) dext(tel |, sut q.sut))
         {$frog *}  ?.  ?=(?({$atom *} $noun {$cell *} {$core *}) ref)  sint
-                   (lien p.sut |=(span dext(sut +<)))
+                   (lien p.sut |=(span dext(tel |, sut +<)))
         {$hold *}  ?:  (~(has in seg) sut)  |
                    ?:  (~(has in gil) [sut ref])  &
                    %=  dext
