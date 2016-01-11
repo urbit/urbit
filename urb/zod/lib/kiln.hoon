@@ -42,6 +42,7 @@
     $:  syd=desk                                        ::
         ali=ship                                        ::
         sud=desk                                        ::
+        cas=case                                        ::
         gim=?(%auto germ)                               ::
     ==                                                  ::
 ++  kiln-cp  [input=path output=path]                   ::
@@ -102,14 +103,20 @@
     ?~  bem
       =+  "can't unmount bad path: {<mon>}"
       abet:(spam leaf/- ~)
-    abet:(emit %ogre /unmount-beam [[p q %ud 0] s]:u.bem)
+    abet:(emit %ogre /unmount-beam [[p q ud/0] s]:u.bem)
   abet:(emit %ogre /unmount-point mon)
+::
+++  poke-track                                        ::
+  |=  hos=kiln-sync
+  ?:  (~(has by syn) hos)
+    abet:(spam (render "already syncing" [sud her syd]:hos) ~)
+  abet:abet:start-track:(auto hos)
 ::
 ++  poke-sync                                         ::
   |=  hos=kiln-sync
   ?:  (~(has by syn) hos)
     abet:(spam (render "already syncing" [sud her syd]:hos) ~)
-  abet:abet:start:(auto hos)
+  abet:abet:start-sync:(auto hos)
 ::
 ++  poke-unsync                                         ::
   |=  hus=kiln-unsync
@@ -121,7 +128,7 @@
 ::
 ++  poke-merge                                        ::
   |=  kiln-merge
-  abet:abet:(merge:(work syd) ali sud gim)
+  abet:abet:(merge:(work syd) ali sud cas gim)
 ::
 ++  poke-cancel
   |=  syd=desk
@@ -268,11 +275,19 @@
         [our her]  sud  ~
     ==
   ::
-  ++  start
+  ++  start-track
+    =>  (spam (render "activated track" sud her syd) ~)
+    =.  let  1
+    %-  blab
+    :~  :*  ost  %warp
+            /kiln/sync/[syd]/(scot %p her)/[sud]
+            [our her]  sud  ~  %sing  %y  ud/let  /
+    ==  ==
+  ::
+  ++  start-sync
     =>  (spam (render "activated sync" sud her syd) ~)
     %-  blab
-    :~  ::  [ost %mont /mount syd our syd /]
-        :*  ost  %warp
+    :~  :*  ost  %warp
             /kiln/sync/[syd]/(scot %p her)/[sud]
             [our her]  sud  ~  %sing  %w  [%da now]  /
     ==  ==
@@ -318,7 +333,7 @@
     %-  blab  :_  ~
     :*  ost  %warp
         /kiln/sync/[syd]/(scot %p her)/[sud]
-        [our her]  sud  ~  %sing  %y  [%ud let]  /
+        [our her]  sud  ~  %sing  %y  ud/let  /
     ==
   --
 ::
@@ -377,22 +392,21 @@
   ::
   ++  perform                                         ::  
     ^+  .
-    (blab [ost %merg /kiln/[syd] our syd her sud cas gem] ~)
+    (blab =-(~&([%blabbing -] -) [ost %merg /kiln/[syd] our syd her sud cas gem]) ~)
   ::
   ++  fancy-merge                                     ::  send to self
     |=  [syd=desk her=@p sud=desk gem=?(%auto germ)]
     ^+  +>
     %-  blab  :_  ~
-    [ost %poke /kiln/fancy/[^syd] [our %hood] %kiln-merge [syd her sud gem]]
+    [ost %poke /kiln/fancy/[^syd] [our %hood] %kiln-merge [syd her sud cas gem]]
   ::
   ++  spam  ::|=(tang ((slog +<) ..spam))
             |*(* +>(..work (^spam +<)))
   ++  merge
-    |=  [her=@p sud=@tas gim=?(%auto germ)]
+    |=  [her=@p sud=@tas cas=case gim=?(%auto germ)]
     ^+  +>
-    =.  cas  [%da now]
     ?.  ?=(%auto gim)
-      perform(auto |, gem gim, her her, sud sud)
+      perform(auto |, gem gim, her her, cas cas, sud sud)
     ?:  =(0 .^(%cw /(scot %p our)/[syd]/(scot %da now)))
       =>  $(gim %init)
       .(auto &)

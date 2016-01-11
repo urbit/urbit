@@ -33,7 +33,7 @@ Queenside:
 Wide form
 ---------
 
-None
+    =~(i.p i.t.p i.t.t.p)
 
 Irregular form
 --------------
