@@ -515,19 +515,18 @@
                       {$cell _$ _$}
                       {$cube * _$}
                       {$face tusk _$}
-                      {$fork _$ _$}
                       {$frog (list _$)}
-                      {$hold (list {_$ twig})}
+                      {$holt _$ twig}
                   ==
                   wain                :: "<|core|>"
                   $?($noun $void)
               ==
       ?+  a  a
-        {$?($cube $face) ^}  a(q $(a q.a))
-        {$?($cell $fork) ^}  a(p $(a p.a), q $(a q.a))
+        {?($cube $face) ^}  a(q $(a q.a))
+        {$cell ^}  a(p $(a p.a), q $(a q.a))
         {$frog *}  a(p (turn p.a |=(b/span ^$(a b))))
         {$core ^}  `wain`/core
-        {$hold *}  a(p (turn p.a |=({b/span c/twig} [^$(a b) c])))
+        {$holt *}  a(p $(a p.a))
       ==
     ::
     ++  dy-shown
