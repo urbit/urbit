@@ -47,7 +47,8 @@
       return ret;
     }
     else {
-      return u3nc(c3__frog, u3kdi_tap(lez, u3_nul));
+      // return u3nc(c3__frog, u3kdi_tap(lez, u3_nul));
+      return u3nc(c3__fork, lez);
     }
   }
 
