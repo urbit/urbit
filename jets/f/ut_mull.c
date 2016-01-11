@@ -413,8 +413,8 @@
         }
         else ran = _mull_in(van, p_wux, gol, q_wux, r_gen);
 
-        dis = u3qf_fork(u3h(hiq), u3h(ran));
-        dat = u3qf_fork(u3t(hiq), u3t(ran));
+        dis = u3qf_forq(u3h(hiq), u3h(ran));
+        dat = u3qf_forq(u3t(hiq), u3t(ran));
 
         ret = u3nc(_mull_nice(van, gol, dis), dat);
 

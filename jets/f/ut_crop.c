@@ -158,7 +158,7 @@
       {
         u3_noun dis = _crop_dext(van, p_sut, ref, bix);
         u3_noun dat = _crop_dext(van, q_sut, ref, bix);
-        u3_noun ret = u3qf_fork(dis, dat);
+        u3_noun ret = u3qf_forq(dis, dat);
 
         u3z(dis);
         u3z(dat);

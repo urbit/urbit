@@ -437,7 +437,7 @@
         u3_noun hiq = _mint_in(van, fex, gol, q_gen);
         u3_noun ran = _mint_in(van, wux, gol, r_gen);
 
-        ret = u3nc(u3qf_fork(u3h(hiq),
+        ret = u3nc(u3qf_forq(u3h(hiq),
                    u3h(ran)),
                    _mint_cond(duy,
                               u3k(u3t(hiq)),
