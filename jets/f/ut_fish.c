@@ -118,8 +118,7 @@
         p_sut = u3t(sut);
         return _fish_frog(van, p_sut, axe, vit);
       }
-      case c3__hold: 
-      case c3__holt: {
+      case c3__hold: {
         p_sut = u3t(sut);
         {
           if ( (c3y == u3qdi_has(vit, sut)) ) {

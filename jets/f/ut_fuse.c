@@ -137,7 +137,6 @@
         return u3kf_frog(_fuse_in_frog(van, p_sut, ref, bix));
       }
       case c3__hold:
-      case c3__holt:
       {
         u3_noun hud = u3nc(u3k(sut), u3k(ref));
 

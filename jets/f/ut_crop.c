@@ -155,7 +155,6 @@
         return u3kf_frog(_crop_dext_frog(van, p_sut, ref, bix));
       }
       case c3__hold:
-      case c3__holt:
       {
         u3_noun hud = u3nc(u3k(sut), u3k(ref));
 
@@ -210,7 +209,6 @@
         return _crop_sint_frog(van, sut, p_ref, bix);
       }
       case c3__hold:
-      case c3__holt:
       {
         u3_noun rep = u3qfu_repo(van, ref);
         u3_noun ret = _crop_dext(van, sut, rep, bix);
