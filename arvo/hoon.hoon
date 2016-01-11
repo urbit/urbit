@@ -8774,13 +8774,12 @@
     ?:  (lien leg |=({p/span q/twig} (~(has in fan) [p q])))
       ~|(%rest-loop !!)
     =>  .(fan (~(gas in fan) leg))
-    %+  roll
-      %-  %~  tap  in
-            %-  ~(gas in *(set span))
-            (turn leg |=({p/span q/twig} (play(sut p) q)))
-          ==
-      ~
-    =+([p=*span q=`span`%void] |.((fork p q)))
+    %-  frog
+    %-  %~  tap  in
+          %-  ~(gas in *(set span))
+          (turn leg |=({p/span q/twig} (play(sut p) q)))
+        ==
+    ~
   ::
   ++  seek
     |=  hyp/wing
