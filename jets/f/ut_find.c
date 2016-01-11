@@ -8,9 +8,10 @@
               u3_noun sut,
               u3_noun dep,
               u3_noun way,
-              u3_noun cug,
+              u3_noun hyp,
               u3_noun gil)
   {
+    
   }
 
 {
@@ -55,7 +56,7 @@
            u3_noun sut,
            u3_noun dep,
            u3_noun way,
-           u3_noun cug,
+           u3_noun hyp,
            u3_noun gil)
   {
     u3_noun p_sut, q_sut;

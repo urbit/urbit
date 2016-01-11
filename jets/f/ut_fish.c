@@ -3,12 +3,14 @@
 */
 #include "all.h"
 
+#undef FROG
 
 /* functions
 */
   static u3_noun
   _fish_in(u3_noun, u3_noun, u3_atom, u3_noun);
 
+#ifdef FROG
   static u3_noun
   _fish_frog(u3_noun van,
              u3_noun p_sut,
@@ -29,6 +31,7 @@
       return pro;
     }
   }
+#endif
 
   static u3_noun
   _fish_in(u3_noun van,
@@ -115,10 +118,21 @@
           return pro;
         }
       }
+#ifdef FROG
       case c3__frog: {
         p_sut = u3t(sut);
         return _fish_frog(van, p_sut, axe, vit);
       }
+#else
+      case c3__frog: p_sut = u3t(sut);
+      {
+        u3_noun fag = u3qf_grof(p_sut);
+        u3_noun ret = _fish_in(van, fag, axe, vit);
+
+        u3z(fag);
+        return ret;
+      }
+#endif
       case c3__hold: {
         p_sut = u3t(sut);
         {

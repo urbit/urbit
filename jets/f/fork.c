@@ -63,6 +63,24 @@
   }
 
   u3_noun
+  u3qf_grof(u3_noun yed)
+  {
+    if ( u3_nul == yed ) {
+      return c3__void;
+    }
+    else if ( u3_nul == u3t(yed) ) {
+      return u3k(u3h(yed));
+    }
+    else {
+      u3_noun nex = u3qf_grof(u3t(yed));
+      u3_noun ret = u3qf_fork(u3h(yed), nex);
+
+      u3z(nex);
+      return ret;
+    }
+  }
+
+  u3_noun
   u3qf_frog(u3_noun yed)
   {
     u3_noun lez = u3_nul;

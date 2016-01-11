@@ -3,8 +3,11 @@
 */
 #include "all.h"
 
+#undef FROG
+
   static u3_noun _cqfu_wrap(u3_noun, u3_noun, u3_noun);
 
+#ifdef FROG
   static u3_noun
   _wrap_frog(u3_noun van, u3_noun p_sut, u3_noun yoz)
   {
@@ -16,6 +19,7 @@
                   _wrap_frog(van, u3t(p_sut), yoz));
     }
   }
+#endif
 
   static u3_noun
   _cqfu_wrap(u3_noun van,
@@ -50,13 +54,24 @@
       }
       case c3__fork: u3x_cell(u3t(sut), &p_sut, &q_sut);
       {
-        return u3qf_fork(_cqfu_wrap(van, p_sut, yoz),
+        return u3qf_forq(_cqfu_wrap(van, p_sut, yoz),
                          _cqfu_wrap(van, q_sut, yoz));
       }
+#ifdef FROG
       case c3__frog: p_sut = u3t(sut);
       {
         return u3qf_frog(_wrap_frog(van, p_sut, yoz));
       }
+#else
+      case c3__frog: p_sut = u3t(sut);
+      {
+        u3_noun fag = u3qf_grof(p_sut);
+        u3_noun ret = _cqfu_wrap(van, fag, yoz);
+
+        u3z(fag);
+        return ret;
+      }
+#endif
       case c3__hold:
       {
         u3_noun fop = u3qfu_repo(van, sut);

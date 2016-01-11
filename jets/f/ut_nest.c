@@ -3,6 +3,7 @@
 */
 #include "all.h"
 
+#undef FROG
 
 /* logic
 */
@@ -278,6 +279,7 @@
                      _nest_dext(van, q_sut, c3n, ref, seg, reg, gil));
         }
       }
+#ifdef FROG
       case c3__frog: p_sut = u3t(sut);
       {
         if ( c3n == u3du(ref) ) switch ( ref ) {
@@ -304,6 +306,16 @@
         }
         return c3n;
       }
+#else
+      case c3__frog: p_sut = u3t(sut);
+      {
+        u3_noun fag = u3qf_grof(p_sut);
+        u3_noun ret = _nest_dext(van, fag, tel, ref, seg, reg, gil);
+
+        u3z(fag);
+        return ret;
+      }
+#endif
       case c3__hold: p_sut = u3t(sut);
       {
         if ( c3y == u3qdi_has(seg, sut) ) {
@@ -349,7 +361,7 @@
     if ( (c3y == tyn) || (c3n == tel) ) {
       return tyn;
     } else {
-#if 0
+#ifdef FROG
       u3_noun dun = u3qfu_dunq(van, "need", sut);
       u3_noun niz = u3qfu_dunq(van, "have", ref);
 
