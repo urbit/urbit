@@ -40,9 +40,18 @@
           return u3k(q_sut);
         }
       }
-      case c3__hold: {
-        p_sut = u3t(sut);
-        return u3qfu_rest(van, sut, p_sut);
+      case c3__hold:
+      case c3__holt: {
+        if ( c3n == u3r_cell(u3t(sut), &p_sut, &q_sut)) {
+          return u3m_bail(c3__fail);
+        } else {
+          u3_noun old = u3nc(u3nc(u3k(p_sut), u3k(q_sut)), u3_nul);
+          u3_noun ret;
+ 
+          ret = u3qfu_rest(van, sut, old);
+          u3z(old);
+          return ret;
+        }
       }
     }
   }

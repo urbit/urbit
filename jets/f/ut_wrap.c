@@ -53,6 +53,7 @@
         return u3kf_frog(_wrap_frog(van, p_sut, yoz));
       }
       case c3__hold:
+      case c3__holt:
       {
         u3_noun fop = u3qfu_repo(van, sut);
         u3_noun pro = _cqfu_wrap(van, fop, yoz);

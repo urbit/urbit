@@ -118,7 +118,8 @@
         p_sut = u3t(sut);
         return _fish_frog(van, p_sut, axe, vit);
       }
-      case c3__hold: {
+      case c3__hold: 
+      case c3__holt: {
         p_sut = u3t(sut);
         {
           if ( (c3y == u3qdi_has(vit, sut)) ) {
@@ -132,7 +133,7 @@
             return u3m_error("fish-loop");
           } else {
             u3_noun zoc = u3qdi_put(vit, sut);
-            u3_noun fop = u3qfu_rest(van, sut, p_sut);
+            u3_noun fop = u3qfu_repo(van, sut);
             u3_noun pro = _fish_in(van, fop, axe, zoc);
 
             u3z(fop);

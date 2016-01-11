@@ -503,6 +503,7 @@
 #   define c3__hit    c3_s3('h','i','t')
 #   define c3__hmal   c3_s4('h','m','a','l')
 #   define c3__hold   c3_s4('h','o','l','d')
+#   define c3__holt   c3_s4('h','o','l','t')
 #   define c3__hole   c3_s4('h','o','l','e')
 #   define c3__home   c3_s4('h','o','m','e')
 #   define c3__homp   c3_s4('h','o','m','p')

@@ -38,5 +38,8 @@
     case c3__hold: p_sut = u3t(sut);
     {
     }
+    case c3__holt: u3x_cell(u3t(sut), &p_sut, &q_sut);
+    {
+    }
   }
 }

@@ -117,8 +117,8 @@
 
         return u3kf_frog(_peek_frog(van, p_sut, way, axe, gil));
       }
-      case c3__hold: {
-        p_sut = u3t(sut);
+      case c3__hold:
+      case c3__holt: {
         if ( (c3y == u3qdi_has(gil, sut)) ) {
           return c3__void;
         }

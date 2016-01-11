@@ -279,7 +279,8 @@
         }
         return c3n;
       }
-      case c3__hold: p_sut = u3t(sut);
+      case c3__hold:
+      case c3__holt:
       {
         if ( c3y == u3qdi_has(seg, sut) ) {
           return c3n;
@@ -416,7 +417,8 @@
           }
           return c3y;
         }
-        case c3__hold: {
+        case c3__hold:
+        case c3__holt: {
           if ( c3y == u3qdi_has(reg, ref) ) {
             return c3y;
           }

@@ -147,6 +147,7 @@
   {
     u3_noun vet = u3r_at(u3qfu_van_vet, van);
 
+    c3_assert(!"not live");
     {
       if ( (c3y == u3du(hag)) && (u3_nul == u3t(hag)) ) {
         u3_noun i_hag = u3h(hag);
