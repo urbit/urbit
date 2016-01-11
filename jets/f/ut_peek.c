@@ -122,7 +122,7 @@
           u3_noun hed = _peek_in(van, p_sut, way, axe, gil);
           u3_noun tal = _peek_in(van, q_sut, way, axe, gil);
 
-          pro = u3qf_fork(hed, tal);
+          pro = u3qf_forq(hed, tal);
 
           u3z(hed);
           u3z(tal);

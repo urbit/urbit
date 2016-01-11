@@ -234,7 +234,7 @@
                                         : _play_x(van, fex, q_gen);
         u3_noun doz = (wux == c3__void) ? c3__void
                                         : _play_x(van, wux, r_gen);
-        u3_noun ret = u3qf_fork(dez, doz);
+        u3_noun ret = u3qf_forq(dez, doz);
 
         u3z(dez); u3z(doz);
         u3z(fex); u3z(wux);

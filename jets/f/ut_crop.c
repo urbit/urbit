@@ -231,7 +231,7 @@
         u3z(hin);
         return ret;
       }
-#if 0
+#ifdef FROG
       case c3__frog: p_ref = u3t(ref);
       {
         return _crop_sint_frog(van, sut, p_ref, bix);
@@ -240,7 +240,7 @@
       case c3__frog: p_ref = u3t(ref);
       {
         u3_noun fag = u3qf_grof(p_ref);
-        u3_noun ret = _crop_sint(van, sut, p_ref, bix);
+        u3_noun ret = _crop_sint(van, sut, fag, bix);
 
         u3z(fag);
         return ret;
