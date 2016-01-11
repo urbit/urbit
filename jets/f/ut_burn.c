@@ -54,6 +54,10 @@
       {
         return _burn_in(van, p_sut, gil);
       }
+      case c3__frog: p_sut = u3t(sut);
+      {
+        return _burn_in(van, u3h(p_sut), gil);
+      }
       case c3__hold: p_sut = u3t(sut);
       {
         if ( (c3y == u3qdi_has(gil, sut)) ) {

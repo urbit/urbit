@@ -278,6 +278,32 @@
                      _nest_dext(van, q_sut, c3n, ref, seg, reg, gil));
         }
       }
+      case c3__frog: p_sut = u3t(sut);
+      {
+        if ( c3n == u3du(ref) ) switch ( ref ) {
+          default: return _nest_sint(van, sut, tel, ref, seg, reg, gil);
+
+          case c3__noun:
+            break;
+        }
+        else switch ( u3h(ref) ) {
+          default: return _nest_sint(van, sut, tel, ref, seg, reg, gil);
+
+          case c3__atom:
+          case c3__cell:
+          case c3__core:
+            break;
+        }
+
+        while ( u3_nul != p_sut ) {
+          if ( c3y == _nest_dext(van, u3h(p_sut), c3n, ref, seg, reg, gil) ) {
+            return c3y;
+          } else {
+            p_sut = u3t(p_sut);
+          }
+        }
+        return c3n;
+      }
       case c3__hold: p_sut = u3t(sut);
       {
         if ( c3y == u3qdi_has(seg, sut) ) {
@@ -405,10 +431,22 @@
         }
         case c3__fork: {
           if ( (c3y == u3r_mean(ref, 6, &p_ref, 7, &q_ref, 0)) ) {
-            return c3a(_nest_dext(van, sut, c3n, p_ref, seg, reg, gil),
-                       _nest_dext(van, sut, c3n, q_ref, seg, reg, gil));
+            return c3a(_nest_dext(van, sut, tel, p_ref, seg, reg, gil),
+                       _nest_dext(van, sut, tel, q_ref, seg, reg, gil));
           }
           else return u3m_bail(c3__fail);
+        }
+        case c3__frog: {
+          p_ref = u3t(ref);
+
+          while ( u3_nul != p_ref ) {
+            if ( c3n == _nest_dext(van, sut, c3n, u3h(p_ref), seg, reg, gil) ) {
+              return c3n;
+            } else {
+              p_ref = u3t(p_ref);
+            }
+          }
+          return c3y;
         }
         case c3__hold: {
           if ( c3y == u3qdi_has(reg, ref) ) {

@@ -33,3 +33,31 @@
       return u3qf_fork(hoz, bur);
     }
   }
+
+  u3_noun
+  u3qf_frog(u3_noun yed)
+  {
+    u3_noun lez = u3_nul;
+
+    while ( u3_nul != yed ) {
+      u3_noun i_yed = u3h(yed);
+
+      if ( c3__void != i_yed ) {
+        lez = u3kdi_put(lez, u3k(u3h(yed)));
+      }
+      yed = u3t(yed);
+    }
+    
+    if ( u3_nul == lez ) {
+      return c3__void;
+    }
+    else if ( (u3_nul == u3h(u3t(lez))) && (u3_nul == u3t(u3t(lez))) ) {
+      u3_noun ret = u3k(u3h(lez));
+
+      u3z(lez);
+      return ret;
+    }
+    else {
+      return u3nc(c3__frog, u3kdi_tap(lez, u3_nul));
+    }
+  }

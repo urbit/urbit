@@ -10,6 +10,21 @@
   _cqfu_peek(u3_noun, u3_noun, u3_noun, u3_atom);
 
   static u3_noun
+  _peek_in(u3_noun, u3_noun, u3_noun, u3_atom, u3_noun);
+
+  static u3_noun
+  _peek_frog(u3_noun van, u3_noun p_sut, u3_noun way, u3_noun axe, u3_noun gil)
+  {
+    if ( u3_nul == p_sut ) {
+      return u3_nul;
+    } 
+    else {
+      return u3nc(_peek_in(van, u3h(p_sut), way, axe, gil),
+                  _peek_frog(van, u3t(p_sut), way, axe, gil));
+    }
+  }
+
+  static u3_noun
   _peek_in(u3_noun van,
            u3_noun sut,
            u3_noun way,
@@ -111,6 +126,11 @@
 
           return pro;
         }
+      }
+      case c3__frog: {
+        p_sut = u3t(sut);
+
+        return _peek_frog(van, p_sut, way, axe, gil);
       }
       case c3__hold: {
         p_sut = u3t(sut);

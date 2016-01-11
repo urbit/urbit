@@ -407,6 +407,7 @@
 #   define c3__frez   c3_s4('f','r','e','z')
 #   define c3__frit   c3_s4('f','r','i','t')
 #   define c3__from   c3_s4('f','r','o','m')
+#   define c3__frog   c3_s4('f','r','o','g')
 #   define c3__fron   c3_s4('f','r','o','n')
 #   define c3__fry    c3_s3('f','r','y')
 #   define c3__fuge   c3_s4('f','u','g','e')

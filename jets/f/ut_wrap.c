@@ -3,6 +3,19 @@
 */
 #include "all.h"
 
+  static u3_noun _cqfu_wrap(u3_noun, u3_noun, u3_noun);
+
+  static u3_noun
+  _wrap_frog(u3_noun van, u3_noun p_sut, u3_noun yoz)
+  {
+    if ( u3_nul == p_sut ) {
+      return u3_nul;
+    } 
+    else {
+      return u3nc(_cqfu_wrap(van, u3h(p_sut), yoz),
+                  _wrap_frog(van, u3t(p_sut), yoz));
+    }
+  }
 
   static u3_noun
   _cqfu_wrap(u3_noun van,
@@ -39,6 +52,10 @@
       {
         return u3qf_fork(_cqfu_wrap(van, p_sut, yoz),
                          _cqfu_wrap(van, q_sut, yoz));
+      }
+      case c3__frog: p_sut = u3t(sut);
+      {
+        return u3qf_frog(_wrap_frog(van, p_sut, yoz));
       }
       case c3__hold:
       {

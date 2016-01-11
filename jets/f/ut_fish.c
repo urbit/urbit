@@ -7,6 +7,30 @@
 /* functions
 */
   static u3_noun
+  _fish_in(u3_noun, u3_noun, u3_atom, u3_noun);
+
+  static u3_noun
+  _fish_frog(u3_noun van,
+             u3_noun p_sut,
+             u3_atom axe,
+             u3_noun vit)
+  {
+    if ( u3_nul == p_sut ) {
+      return u3nc(1, 1);
+    } 
+    else {
+      u3_noun hed = _fish_in(van, u3h(p_sut), axe, vit);
+      u3_noun tal = _fish_frog(van, u3t(p_sut), axe, vit);
+      u3_noun pro = u3qf_flor(hed, tal);
+
+      u3z(hed);
+      u3z(tal);
+
+      return pro;
+    }
+  }
+
+  static u3_noun
   _fish_in(u3_noun van,
            u3_noun sut,
            u3_atom axe,
@@ -90,6 +114,10 @@
 
           return pro;
         }
+      }
+      case c3__frog: {
+        p_sut = u3t(sut);
+        return _fish_frog(van, p_sut, axe, vit);
       }
       case c3__hold: {
         p_sut = u3t(sut);
