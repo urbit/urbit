@@ -3,7 +3,7 @@ semsig, `;~`, %smsg
 
 Monad composer
 
-`;!` is a synthetic rune used to compose functions under a monad.
+`;~` is a synthetic rune used to compose functions under a monad.
 
 Produces
 --------
