@@ -284,7 +284,7 @@
           =<  (welp :_(mow (turn (~(tap in p.u.dap)) .)))
           |=  bem=beam 
           :^  hen  %pass  [(scot %p our) (scot %uv dep) (tope bem)]
-          [%c [%warp [our p.bem] q.bem ~ [%next %y r.bem (flop s.bem)]]]
+          [%c [%warp [our p.bem] q.bem ~ [%next %z r.bem (flop s.bem)]]]
     ==  ==
   ::
   ++  zo
