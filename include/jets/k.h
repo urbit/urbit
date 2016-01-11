@@ -89,8 +89,12 @@
     u3_atom
     u3ke_jam(u3_noun a);
 
-  /* u3ke_trip: atom to tape.
+  /* u3ke_trip(): atom to tape.
   */
     u3_noun
     u3ke_trip(u3_noun a);
 
+  /* u3kf_frog(): build %fork span.
+  */
+    u3_noun
+    u3kf_frog(u3_noun yed);

@@ -107,3 +107,12 @@
       return u3nc(c3__frog, u3kdi_tap(lez, u3_nul));
     }
   }
+
+  u3_noun
+  u3kf_frog(u3_noun yed)
+  {
+    u3_noun ret = u3qf_frog(yed);
+
+    u3z(yed);
+    return ret;
+  }

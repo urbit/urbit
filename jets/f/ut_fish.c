@@ -3,7 +3,7 @@
 */
 #include "all.h"
 
-#undef FROG
+#define FROG
 
 /* functions
 */

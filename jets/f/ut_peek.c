@@ -3,7 +3,7 @@
 */
 #include "all.h"
 
-#undef FROG
+#define FROG
 
 /* logic
 */
@@ -134,7 +134,7 @@
       case c3__frog: {
         p_sut = u3t(sut);
 
-        return _peek_frog(van, p_sut, way, axe, gil);
+        return u3kf_frog(_peek_frog(van, p_sut, way, axe, gil));
       }
 #else
       case c3__frog: p_sut = u3t(sut);

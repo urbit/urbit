@@ -3,7 +3,7 @@
 */
 #include "all.h"
 
-#undef FROG
+#define FROG
 
   static u3_noun _cqfu_wrap(u3_noun, u3_noun, u3_noun);
 
@@ -60,7 +60,7 @@
 #ifdef FROG
       case c3__frog: p_sut = u3t(sut);
       {
-        return u3qf_frog(_wrap_frog(van, p_sut, yoz));
+        return u3kf_frog(_wrap_frog(van, p_sut, yoz));
       }
 #else
       case c3__frog: p_sut = u3t(sut);
