@@ -152,10 +152,10 @@
       }
       case c3__fork: p_sut = u3t(sut);
       {
-        u3_noun fop = u3qfu_repo(van, sut);
-        u3_noun ret = _crop_dext(van, fop, ref, bix);
+        u3_noun yed = u3qdi_tap(p_sut, u3_nul);
+        u3_noun ret = u3kf_frog(_crop_dext_frog(van, yed, ref, bix));
 
-        u3z(fop);
+        u3z(yed);
         return ret;
       }
       case c3__frog: p_sut = u3t(sut);
@@ -206,10 +206,10 @@
       }
       case c3__fork: p_ref = u3t(ref);
       {
-        u3_noun gif = u3qfu_repo(van, ref);
-        u3_noun ret = _crop_dext(van, sut, gif, bix);
+        u3_noun yed = u3qdi_tap(p_ref, u3_nul);
+        u3_noun ret = _crop_sint_frog(van, sut, yed, bix);
 
-        u3z(gif);
+        u3z(yed);
         return ret;
       }
       case c3__frog: p_ref = u3t(ref);

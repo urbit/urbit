@@ -101,10 +101,10 @@
       }
       case c3__fork: p_sut = u3t(sut);
       {
-        u3_noun fop = u3qfu_repo(van, sut);
-        u3_noun ret = _fish_in(van, fop, axe, vit);
+        u3_noun yed = u3qdi_tap(p_sut, u3_nul);
+        u3_noun ret = _fish_frog(van, yed, axe, vit);
 
-        u3z(fop);
+        u3z(yed);
         return ret;
       }
       case c3__frog: {
