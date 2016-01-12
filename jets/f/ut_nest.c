@@ -255,11 +255,36 @@
       }
       case c3__fork: p_sut = u3t(sut);
       {
-        u3_noun fop = u3qfu_repo(van, sut);
-        u3_noun ret = _nest_dext(van, fop, tel, ref, seg, reg, gil);
+        if ( c3n == u3du(ref) ) switch ( ref ) {
+          default: return _nest_sint(van, sut, tel, ref, seg, reg, gil);
 
-        u3z(fop);
-        return ret;
+          case c3__noun:
+            break;
+        }
+        else switch ( u3h(ref) ) {
+          default: return _nest_sint(van, sut, tel, ref, seg, reg, gil);
+
+          case c3__atom:
+          case c3__cell:
+          case c3__core:
+            break;
+        }
+
+        {
+          u3_noun dey = u3qdi_tap(p_sut, u3_nul);
+          u3_noun yed = dey;
+
+          while ( u3_nul != yed ) {
+            if ( c3y == _nest_dext(van, u3h(yed), c3n, ref, seg, reg, gil) ) {
+              u3z(dey);
+              return c3y;
+            } else {
+              yed = u3t(yed);
+            }
+          }
+          u3z(dey);
+          return c3n;
+        }
       }
       case c3__frog: p_sut = u3t(sut);
       {
@@ -414,11 +439,19 @@
         }
         case c3__fork: p_ref = u3t(ref);
         {
-          u3_noun gif = u3qfu_repo(van, ref);
-          u3_noun ret = _nest_sint(van, sut, tel, gif, seg, reg, gil);
+          u3_noun dey = u3qdi_tap(p_ref, u3_nul);
+          u3_noun yed = dey;
 
-          u3z(gif);
-          return ret;
+          while ( u3_nul != yed ) {
+            if ( c3n == _nest_dext(van, sut, c3n, u3h(yed), seg, reg, gil) ) {
+              u3z(dey);
+              return c3n;
+            } else {
+              yed = u3t(yed);
+            }
+          }
+          u3z(dey);
+          return c3y;
         }
         case c3__frog: {
           p_ref = u3t(ref);
