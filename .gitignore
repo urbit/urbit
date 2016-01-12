@@ -22,6 +22,7 @@ GRTAGS
 /zod/
 # dependencies
 node_modules/
+.sass-cache
 # OS
 .DS_Store
 # ??
