@@ -403,6 +403,7 @@
 ++  wain  (list cord)                                   ::  text lines (no \n)
 ++  vial  ?($read $rite $both $free)                    ::  co/contra/in/bi
 ++  vair  ?($gold $iron $lead $zinc)                    ::  in/contra/bi/co
+
 ++  vein  (list (unit axis))                            ::  search trace
 ++  wing  (list limb)                                   ::  search path
 ++  wonk  |*(veq/edge ?~(q.veq !! p.u.q.veq))           ::
@@ -8735,7 +8736,6 @@
     ^-  span
     ?-  sut
       {$core *}   [%cell %noun p.sut]
-      {$fork *}   (grof p.sut)
       {$face *}   q.sut
       {$hold *}   (rest [[p.sut q.sut] ~])
       $noun       [%frog [%atom %$ ~] [%cell %noun %noun] ~]
