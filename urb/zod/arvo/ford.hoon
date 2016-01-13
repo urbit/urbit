@@ -1778,7 +1778,7 @@
           ?~  dif
             =-  (flaw cof leaf/"{<p.cay>} data with bad diff" -)
             [>type=p.q.coy< >want=p:!>(*(urge cord))< ~]
-          =+  pac=(role (lurk (lore (cat 3 u.txt '\0a')) u.dif))
+          =+  pac=(role (lurk (lore u.txt) u.dif))
           (fine cof %& p.cay [%atom %t] (end 3 (dec (met 3 pac)) pac))
         ::
         %+  cope  (fang cof p.cay)
