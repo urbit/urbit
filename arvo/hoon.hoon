@@ -403,7 +403,6 @@
 ++  wain  (list cord)                                   ::  text lines (no \n)
 ++  vial  ?($read $rite $both $free)                    ::  co/contra/in/bi
 ++  vair  ?($gold $iron $lead $zinc)                    ::  in/contra/bi/co
-
 ++  vein  (list (unit axis))                            ::  search trace
 ++  wing  (list limb)                                   ::  search path
 ++  wonk  |*(veq/edge ?~(q.veq !! p.u.q.veq))           ::
@@ -6277,8 +6276,8 @@
     %void
   [%face sag der]
 ::
-++  bool  `span`[%frog [%atom %f `0] [%atom %f `1] ~]   ::  make loobeal
-++  frog                                                ::  make %frog span
+++  bool  `span`(frog [%atom %f `0] [%atom %f `1] ~)    ::  make loobeal
+++  frog                                                ::  make %fork span
   ~/  %frog
   |=  yed/(list span)
   =|  lez/(set span)
@@ -6286,11 +6285,9 @@
   ?~  yed
     ?~  lez  %void
     ?:  ?=({* $~ $~} lez)  n.lez
-    ::  [%frog (~(tap in `(set span)`lez))] 
     [%fork lez]
   $(yed t.yed, lez ?:(=(%void i.yed) lez (~(put in lez) i.yed)))
 ::
-++  grof  |=((set span) [%frog (~(tap in +<))])
 ++  cove                                                ::  extract [0 *] axis
   |=  nug/nock
   ?-    nug
@@ -7804,6 +7801,33 @@
         $noun       0
         $void       ~|(%burn-void !!)
     ==
+::++  burn
+::  =+  gil=*(set span)
+::  ~|  %burn
+::  %-  need
+::  |-  ^-  (unit)
+::  ?-    sut
+::      {$atom *}   `?~(q.sut 0 u.q.sut)
+::      {$cell *}   %+  biff  $(sut p.sut) 
+::                  |=(* (biff ^$(sut q.sut) |=(* `[+>+< +<])))
+::      {$core *}   (biff $(sut p.sut) |=(* `[p.r.q.sut +<]))
+::      {$face *}   $(sut repo)
+::      {$fork *}   =+  yed=(~(tap in p.sut))
+::                  |-  ^-  (unit) 
+::                  ?~  yed  ~
+::                  =+  [dis=^$(sut i.yed) mor=$(yed t.yed)]
+::                  ?~  dis  mor
+::                  ?~  mor  dis
+::                  ?:  =(.?(u.mor) .?(u.dis))
+::                    ?:((gor u.mor u.dis) mor dis)
+::                  ?@(u.mor mor dis)
+::      {$frog *}   $(sut -.p.sut)
+::      {$hold *}   ?:  (~(has in gil) sut)
+::                    ~
+::                  $(sut repo, gil (~(put in gil) sut))
+::      $noun       `0
+::      $void       ~
+::  ==
   ::
   ++  busk
     ~/  %busk
@@ -8738,7 +8762,7 @@
       {$core *}   [%cell %noun p.sut]
       {$face *}   q.sut
       {$hold *}   (rest [[p.sut q.sut] ~])
-      $noun       [%frog [%atom %$ ~] [%cell %noun %noun] ~]
+      $noun       (frog [%atom %$ ~] [%cell %noun %noun] ~)
       *           ~|(%repo-fltt !!)
     ==
   ::
