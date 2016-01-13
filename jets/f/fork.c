@@ -19,6 +19,7 @@
     else if ( c3__void == hoz ) {
       return u3k(bur);
     }
+    // else return u3kf_frog(u3nt(u3k(hoz), u3k(bur), u3_nul));
     else return u3nq
       (c3__frog, u3k(hoz), u3k(bur), u3_nul);
   }
@@ -47,23 +48,8 @@
       return ret;
     }
     else {
-      // return u3nc(c3__frog, u3kdi_tap(lez, u3_nul));
       return u3nc(c3__fork, lez);
     }
-  }
-
-  u3_noun
-  u3qf_grof(u3_noun bez)
-  {
-    return u3nc(c3__frog, u3qdi_tap(bez, u3_nul));
-  }
-  u3_noun
-  u3kf_grof(u3_noun bez)
-  {
-    u3_noun ret = u3qf_grof(bez);
-
-    u3z(bez);
-    return ret;
   }
 
   u3_noun

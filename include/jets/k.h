@@ -99,11 +99,6 @@
     u3_noun
     u3kf_frog(u3_noun yed);
 
-  /* u3kf_grof(): build %fork span.
-  */
-    u3_noun
-    u3kf_grof(u3_noun yed);
-
   /* u3kfu_repo(): 
   */
     u3_noun 

@@ -15,14 +15,15 @@
     if ( c3n == u3du(sut) ) switch ( sut ) {
       default: return u3k(sut);
 
-      case c3__noun:
-        return u3nq(c3__frog,
-                    u3nt(c3__atom, u3_blip, u3_nul),
-                    u3nt(c3__cell, c3__noun, c3__noun),
-                    u3_nul);
+      case c3__noun: {
+        return u3kf_frog(u3nt(u3nt(c3__atom, u3_blip, u3_nul),
+                              u3nt(c3__cell, c3__noun, c3__noun),
+                              u3_nul));
+      }
     }
     else switch ( u3h(sut) ) {
       default: {
+        u3m_p("head", u3h(sut));
         return u3m_error("repo-flat");
       }
 
