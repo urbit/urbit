@@ -14,6 +14,7 @@
 |=  $:  [now=@da eny=@uvI bek=beak]
         [arg=[?(sorc [syd=$|(desk beaky) sorc])] cas=case gem=?(%auto germ)]
     ==
+=.  ?:(=(*case cas) da/now cas)
 =*  our  p.bek
 |^  :-  %kiln-merge
     ^-  [syd=desk her=ship sud=desk cas=case gem=?(%auto germ)]

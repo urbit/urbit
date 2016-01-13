@@ -392,7 +392,7 @@
   ::
   ++  perform                                         ::  
     ^+  .
-    (blab =-(~&([%blabbing -] -) [ost %merg /kiln/[syd] our syd her sud cas gem]) ~)
+    (blab [ost %merg /kiln/[syd] our syd her sud cas gem] ~)
   ::
   ++  fancy-merge                                     ::  send to self
     |=  [syd=desk her=@p sud=desk gem=?(%auto germ)]
