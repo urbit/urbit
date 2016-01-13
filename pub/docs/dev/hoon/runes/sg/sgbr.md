@@ -3,7 +3,7 @@ sigbar, `~|`, %sgbr
 
 Add to stacktrace
 
-`~|` is a synthetic hoon that presents the product of `p` in the stack
+`~|` is a synthetic rune that presents the product of `p` in the stack
 trace if `q` crashes. The computation is only performed if needed.
 
 Produces

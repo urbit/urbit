@@ -1,11 +1,16 @@
 $(() ->
-  StationActions = require './actions/StationActions.coffee'
+  StationActions = require './actions/StationActions.coffee' #start poll
 
   rend = React.render
   
-  window.talk = {}
-  window.talk.MessagePersistence = require './persistence/MessagePersistence.coffee'
-  window.talk.StationPersistence = require './persistence/StationPersistence.coffee'
+  window.talk.online = yes
+
+  setInterval (->
+    window.talk.online = window.urb.poll.dely < 500
+    if window.talk.online
+      $('body').removeClass 'offline'
+    else $('body').addClass 'offline'
+  ), 300
 
   require './util.coffee'
   require './move.coffee'
@@ -16,8 +21,9 @@ $(() ->
   #   else
   #     $('#nav').removeClass 'scrolling'
   # setInterval checkScroll, 500
+  
 
-  window.talk.StationPersistence.listen()
+  StationActions.listen()
 
   StationComponent    = require './components/StationComponent.coffee'
   MessagesComponent   = require './components/MessagesComponent.coffee'
@@ -25,15 +31,11 @@ $(() ->
 
   $c = $('#c')
 
-  clean = ->
-    React.unmountComponentAtNode $('#station-container')[0]
-    React.unmountComponentAtNode $('#messages-container')[0]
-    React.unmountComponentAtNode $('#writing-container')[0]
+  # clean = ->  # ??
+  #   React.unmountComponentAtNode $('#station-container')[0]
+  #   React.unmountComponentAtNode $('#messages-container')[0]
+  #   React.unmountComponentAtNode $('#writing-container')[0]
 
-  $c.append "<div id='station-container'></div>"
-  $c.append "<div id='messages-container'></div>"
-  $c.append "<div id='writing-container'></div>"
-  $c.append "<div id='scrolling'>BOTTOM</div>"
   rend (React.createElement(StationComponent, {})),$('#station-container')[0]
   rend (React.createElement(MessagesComponent, {})),$('#messages-container')[0]
   rend (React.createElement(WritingComponent, {})),$('#writing-container')[0]

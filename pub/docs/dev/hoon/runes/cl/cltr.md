@@ -3,7 +3,7 @@ coltar, `:*`, %cltr
 
 Tuple
 
-`:*`, `coltar`, `[%cltr p=tusk]` is a synthetic hoon that produces a
+`:*`, `coltar`, `[%cltr p=tusk]` is a synthetic rune that produces a
 tuple.
 
 Produces

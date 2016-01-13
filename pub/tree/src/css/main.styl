@@ -85,7 +85,7 @@ pre
   background-color #f5f5f5
   padding .3rem
   margin-left -.3rem
-  white-space pre-line
+  overflow-y scroll
 
 code
   line-height 1.2rem
@@ -93,6 +93,20 @@ code
   margin-top -.05rem
   padding .2rem
   display inline-block
+  white-space pre
+
+blockquote
+  background-color #f5f5f5
+  margin 0
+  padding 1rem
+  font-style italic
+  margin-left 3rem
+
+blockquote p
+  margin 0
+
+blockquote em
+  font-style normal
 
 ul
   list-style none
@@ -123,7 +137,6 @@ li:before
   z-index 0
   margin-left -32rem
   overflow hidden
-  opacity 0
   transition opacity 1s ease-in-out
 
 #nav.moving
@@ -368,6 +381,21 @@ div.toc
     font-size 2rem
     text-decoration none
     margin-bottom 2rem
+
+#body .spam
+  width 9rem
+  background-color #555
+  padding 1rem
+  letter-spacing 1px
+  font-weight 500
+  margin-bottom 2rem
+
+#body .spam
+#body .spam a
+  color #fff
+
+#body .spam a
+  border-color #fff
 
 #body .CodeMirror
   font-size .8rem

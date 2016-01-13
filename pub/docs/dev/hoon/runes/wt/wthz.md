@@ -3,7 +3,7 @@ wuthaz, %wthz
 
 [Short description]
 
-`wuthaz`, `[%wthz p=wing q=tine]` is a synthetic hoon that selects a
+`wuthaz`, `[%wthz p=wing q=tine]` is a synthetic rune that selects a
 case in `q` for the actual type of `p`.
 
 Produces
@@ -14,7 +14,7 @@ Produces
 Sample
 ------
 
-[`p` is a * `q` is a *]
+[`p` is a \* `q` is a \*]
 
 Tall form
 ---------

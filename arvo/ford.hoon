@@ -232,39 +232,50 @@
       ?~  p.sih  +>.$ 
       :: ~&  writ/tea
       =+  dap=(~(got by deh.bay) dep)
-      =-  ?~(dop con con(deh.bay (~(put by deh.bay) dep dop)))
-      ^-  [dop=$|(~ _dap) con=_+>.$]
+      =-  +>.$(mow mow, deh.bay ?~(dop deh.bay (~(put by deh.bay) dep dop)))
+      ^-  [dop=$|(~ _dap) mow=_mow]
       ?-    -.dap
-          %done  `+>.$                ::  writ redundant
+          %done  `mow                ::  writ redundant
           %init  ~|(never-subscribed/dep !!)
           %sent
-        =-  [[%done ~] +>.$(mow (weld - mow))]
-        ^-  (list move)
-        %+  weld  (turn (~(tap in p.dap)) |=(hen=duct [hen %give %news dep]))
-        =.  q.dap  (~(del in q.dap) bem)
-        %+  turn  (~(tap in q.dap))                     ::  cancel outstanding
-        |=  bem=beam
-        =.  tea  [(scot %p our) (scot %uv dep) (tope bem)]
-        [hen %pass tea %c %warp [our p.bem] q.bem ~]
+        :-  [%done ~]
+        ;:  weld
+          (axap dep (~(del in q.dap) bem))              ::  cancel outstanding
+          (turn (~(tap in p.dap)) |=(hen=duct [hen %give %news dep]))
+          mow
+    ==  ==
       ==
-    ==
+  ::
+  ++  axap                                              ::  unsubscribe beams
+    |=  [dep=@uvH dap=(set beam)]
+    %+  turn  (~(tap in dap))
+    |=  bem=beam
+    :^  hen  %pass  [(scot %p our) (scot %uv dep) (tope bem)]
+    [%c %warp [our p.bem] q.bem ~]
   ::
   ++  awap                                              ::  get next revision
     ~%  %ford-w  ..is  ~
-    |=  dep=@uvH
+    |=  [dep=@uvH ask=?]
     ?~  dep
       ~&(dep-empty/hen +>.$)
     ?:  =(dep 0vtest)                 ::  upstream testing
-      +>.$(mow :_(mow [hen %give %news dep]))
+      +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
     =+  dap=(~(get by deh.bay) dep)
     ?~  dap  ~&(dep-missed/dep +>.$)  ::  XX  ~|  !!
     :: ~&  awap/[dep u.dap]
     ?-  -.u.dap
-      %done  +>.$(mow :_(mow [hen %give %news dep]))
+      %done  +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
       %sent
-        =.  p.u.dap  (~(put in p.u.dap) hen)
-        +>.$(deh.bay (~(put by deh.bay) dep u.dap))
+        =.  p.u.dap  
+          ?:  ask  (~(put in p.u.dap) hen)
+          (~(del in p.u.dap) hen)
+        ?^  p.u.dap
+          +>.$(deh.bay (~(put by deh.bay) dep u.dap))
+        =.  mow  (weld (axap dep q.u.dap) mow)
+        +>.$(deh.bay (~(put by deh.bay) dep [%init q.u.dap]))
+    ::
       %init
+        ?.  ask  ~&(awap-kill-empty/dep +>.$)  :: crash?
         %_    +>.$
             deh.bay 
           (~(put by deh.bay) dep [%sent [hen ~ ~] p.u.dap])
@@ -273,7 +284,7 @@
           =<  (welp :_(mow (turn (~(tap in p.u.dap)) .)))
           |=  bem=beam 
           :^  hen  %pass  [(scot %p our) (scot %uv dep) (tope bem)]
-          [%c [%warp [our p.bem] q.bem ~ [%next %y r.bem (flop s.bem)]]]
+          [%c [%warp [our p.bem] q.bem ~ [%next %z r.bem (flop s.bem)]]]
     ==  ==
   ::
   ++  zo
@@ -1032,7 +1043,7 @@
         (fine cof bem(r [%ud ((hard ,@) +.+:(need u.von))]))
       |=  [cof=cafe bem=[[ship desk %ud r=@u] s=spur]]
       ?:  =(0 r.bem)
-        (flaw cof [leaf/"ford: no data: {(tope bem(s ~))}"]~)
+        (flaw cof [leaf/"ford: no data: {<(tope bem(s ~))>}"]~)
       (fine cof bem)
     ::
     ++  lave                                            ::  validate
@@ -1388,7 +1399,7 @@
           %plan  (cope (abut:(meow p.kas q.kas) cof r.kas) faun)
           %reef  (faun cof pit)
           %ride
-        %+  cool  |.(leaf/"ford: ride {<`@p`(mug kas)>}")
+        %+  cool  |.(leaf/"ford: build failed")
         %+  cope  $(kas q.kas)
         %-  tabl-run
         |=  [cof=cafe cay=cage]
@@ -1767,7 +1778,7 @@
           ?~  dif
             =-  (flaw cof leaf/"{<p.cay>} data with bad diff" -)
             [>type=p.q.coy< >want=p:!>(*(urge cord))< ~]
-          =+  pac=(role (lurk (lore (cat 3 u.txt '\0a')) u.dif))
+          =+  pac=(role (lurk (lore u.txt) u.dif))
           (fine cof %& p.cay [%atom %t] (end 3 (dec (met 3 pac)) pac))
         ::
         %+  cope  (fang cof p.cay)

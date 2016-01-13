@@ -272,7 +272,7 @@
             [%smsg p=twig q=tusk]                       ::  gonads
             [%smsm p=tile q=twig]                       ::  make sure q is a p
           ::                                            ::::::  compositions
-            [%tsbr p=tile q=twig]                       ::  push bunt: =+(_p q)
+            [%tsbr p=tile q=twig]                       ::  push bunt: =+(*p q)
             [%tscl p=tram q=twig]                       ::  p changes, then q
             [%tscn p=twig q=twig]                       ::  XX not used
             [%tsdt p=wing q=twig r=twig]                ::  r with p set to q
@@ -1023,6 +1023,18 @@
   ?:  =(-.a -.b)
     (gor +.a +.b)
   (gor -.a -.b)
+::
+++  lor                                                 ::  l-order
+  ~/  %lor
+  |=  [a=* b=*]
+  ^-  ?
+  ?:  =(a b)  &
+  ?@  a
+    ?^  b  &
+    (lth a b)
+  ?:  =(-.a -.b)
+    $(a +.a, b +.b)
+  $(a -.a, b -.b)
 ::
 ++  vor                                                 ::  v-order
   ~/  %vor
@@ -3548,7 +3560,8 @@
   |-  ^-  (list ,@c)
   =+  b=(teff a)
   ?:  =(0 b)  ~
-  :-  %+  can  0
+  =+  ^=  c
+      %+  can  0
       %+  turn
         ^-  (list ,[p=@ q=@])
         ?+  b  !!
@@ -3558,7 +3571,8 @@
           4  [[24 6] [16 6] [8 6] [0 3] ~]
         ==
       |=([p=@ q=@] [q (cut 0 [p q] a)])
-  $(a (rsh 3 b a))
+  ?.  =((tuft c) (end 3 b a))  ~|(%bad-utf8 !!)
+  [c $(a (rsh 3 b a))]
 ::
 ++  tuba                                                ::  utf8 to utf32 tape
   |=  a=tape
@@ -3580,14 +3594,14 @@
     ~
   =+  b=(end 5 1 a)
   =+  c=$(a (rsh 5 1 a))
-  ?:  (lth b 0x7f)
+  ?:  (lte b 0x7f)
     [b c]
-  ?:  (lth b 0x7ff)
+  ?:  (lte b 0x7ff)
     :*  (mix 0b1100.0000 (cut 0 [6 5] b))
         (mix 0b1000.0000 (end 0 6 b))
         c
     ==
-  ?:  (lth b 0xffff)
+  ?:  (lte b 0xffff)
     :*  (mix 0b1110.0000 (cut 0 [12 4] b))
         (mix 0b1000.0000 (cut 0 [6 6] b))
         (mix 0b1000.0000 (end 0 6 b))
@@ -4312,14 +4326,11 @@
 ::
 ++  smyt                                                ::  pretty print path
   |=  bon=path  ^-  tank
-  :+  %rose  [['/' ~] ['/' ~] ['/' ~]]
+  :+  %rose  [['/' ~] ['/' ~] ~]
   (turn bon |=(a=@ [%leaf (trip a)]))
 ::
 ++  spat  |=(pax=path (crip (spud pax)))                ::  render path to cord
-++  spud                                                ::  render path to tape
-  |=  pax=path  ^-  tape
-  =-  ~(ram re %rose ["/" "/" ~] -)
-  (turn pax |=(a=span [%leaf (trip a)]))
+++  spud  |=(pax=path ~(ram re (smyt pax)))             ::  render path to tape
 ++  stab                                                ::  parse cord to path
   =+  fel=;~(pfix fas (more fas urs:ab))
   |=(zep=@t `path`(rash zep fel))
@@ -4594,11 +4605,33 @@
   |=  [[sub=* fol=*] sky=$+(* (unit))]
   (mook (mink [sub fol] sky))
 ::
+++  moop
+  |=  pon=(list ,[@ta *])  ^+  pon
+  ?~  pon  ~
+  :-  i.pon
+  ?.  ?=([%spot * ^] i.pon)
+    $(pon t.pon)
+  ?.  ?=([[%spot * ^] *] t.pon)
+    $(pon t.pon)
+  =>  .(pon t.pon)
+  =+  sot=+.i.pon
+  |-  ^-  (list ,[@ta *])
+  ?.  ?=([[%spot * ^] *] t.pon)
+    [[%spot sot] ^$(pon t.pon)]
+  =+  sop=+.i.pon
+  ?:  ?&  =(-.sop -.sot)
+          (lor +<.sop +<.sot)
+          (lor +>.sot +>.sop)
+        ==
+    $(sot sop, pon t.pon)
+  [[%spot sot] ^$(pon t.pon)]
+::
 ++  mook
   |=  ton=tone
   ^-  toon
   ?.  ?=([2 *] ton)  ton
   :-  %2
+  =.  p.ton  (moop p.ton)
   =+  yel=(lent p.ton)
   =.  p.ton
     ?.  (gth yel 256)  p.ton
@@ -4608,38 +4641,25 @@
     :_  (slag (sub yel 128) p.ton)
     :-  %lose
     %+  rap  3
-    ;:  weld
-      "[skipped "
-      ~(rend co %$ %ud (sub yel 256))
-      " frames]"
-    ==
+    "[skipped {(scow %ud (sub yel 256))} frames]"
   |-  ^-  (list tank)
   ?~  p.ton  ~
   =+  rex=$(p.ton t.p.ton)
   ?+    -.i.p.ton  rex
       %hunk  [(tank +.i.p.ton) rex]
       %lose  [[%leaf (rip 3 (,@ +.i.p.ton))] rex]
-      %hand  :_(rex [%leaf (scow %p (mug +.i.p.ton))])
+      %hand  [[%leaf (scow %p (mug +.i.p.ton))] rex]
       %mean  :_  rex
              ?@  +.i.p.ton  [%leaf (rip 3 (,@ +.i.p.ton))]
              =+  mac=(mack +.i.p.ton +<.i.p.ton)
              ?~(mac [%leaf "####"] (tank u.mac))
       %spot  :_  rex
              =+  sot=(spot +.i.p.ton)
-             :-  %leaf
-             ;:  weld
-               ~(ram re (smyt p.sot))
-               ":<["
-               ~(rend co ~ %ud p.p.q.sot)
-               " "
-               ~(rend co ~ %ud q.p.q.sot)
-               "].["
-               ~(rend co ~ %ud p.q.q.sot)
-               " "
-               ~(rend co ~ %ud q.q.q.sot)
-               "]>"
-             ==
-  ==
+             :+  %rose  [":" ~ ~]
+             :~  (smyt p.sot)
+                 =>  [ud=|=(a=@u (scow %ud a)) q.sot]
+                 leaf/"<[{(ud p.p)} {(ud q.p)}].[{(ud p.q)} {(ud q.q)}]>"
+  ==         ==
 ::
 ++  mang
   |=  [[gat=* sam=*] sky=$+(* (unit))]
@@ -7246,15 +7266,15 @@
         *           gen
     ==
   ::
-  ++  rake
-    ^-  wing
-    ?-  gen
-      [~ *]         [gen ~]
-      [%cnzy *]     [p.gen ~]
-      [%cnzz *]     p.gen
-      [%cnts * ~]   p.gen
-      [%zpcb *]     rake(gen q.gen)
-      *             ~|(%rake-twig !!)
+  ++  rake  ~|(%rake-twig (need reek))
+  ++  reek
+    ^-  (unit wing)
+    ?+  gen  ~
+      [~ *]         `[gen ~]
+      [%cnzy *]     `[p.gen ~]
+      [%cnzz *]     `p.gen
+      [%cnts * ~]   `p.gen
+      [%zpcb *]     reek(gen q.gen)
     ==
   ++  rusk
     ^-  term
@@ -7469,7 +7489,6 @@
         %void       %void
     ==
   ::
-  ++  dank  |=(pax=path ^-(tank (dish [~ %path] pax)))
   ++  dash
       |=  [mil=tape lim=char]  ^-  tape
       :-  lim
@@ -9689,7 +9708,7 @@
                 ^.  stet  ^.  limo
                 :~  ['|' (rune bar %tsbr expo)]
                     ['.' (rune dot %tsdt expq)]
-                    ['^' (rune ket %tskt expd)]
+                    ['^' (rune ket %tskt bono)]
                     [':' (rune col %tscl expp)]
                     ['<' (rune gal %tsgl expb)]
                     ['>' (rune gar %tsgr expb)]
@@ -9882,6 +9901,13 @@
           ==
           loaf
         ==
+    ++  bono  |.                                        ::  term, wing, 2 twigs
+        ;~  gunk                                        ::  (as twigs)
+          (cook |=(cog=term [%cnzz [cog ~]]) sym)
+          (cook |=(hyp=wing [%cnzz hyp]) rope)
+          loaf
+          loaf
+        ==
     ++  bont  ;~  (bend)                                ::  term, optional twig
                 ;~(pfix cen sym)
                 ;~(pfix dot ;~(pose wide ;~(pfix muck loaf)))
@@ -9911,8 +9937,8 @@
     ^-  (unit twig)
     ?-    -.vil
         %col  [~ %tsgl ros p.vil]
-        %pel  [~ %cnts ~(rake ap ros) p.vil]
-        %pat  [~ %bcpt ~(rake ap ros) p.vil]
+        %pel  (bind ~(reek ap ros) |=(hyp=wing [%cnts hyp p.vil]))
+        %pat  (bind ~(reek ap ros) |=(hyp=wing [%bcpt hyp p.vil]))
         %ket  [~ ros p.vil]
         %tis  =+  tog=~(hock ap ros)
               ?:(=([%0 ~] tog) ~ [~ %ktts tog p.vil])
@@ -10212,7 +10238,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ~%  %arvo  +  ~
 |%
-++  arch  ,[hax=@uvI fil=(unit ,@uvI) dir=(map ,@ta ,~)]::  fundamental node
+++  arch  ,[fil=(unit ,@uvI) dir=(map ,@ta ,~)]         ::  fundamental node
 ++  arvo  (mold ,[p=term q=mill] mill)                  ::  arvo card
 ++  beam  ,[[p=ship q=desk r=case] s=path]              ::  global name
 ++  beak  ,[p=ship q=desk r=case]                       ::  garnish with beak
@@ -10317,12 +10343,14 @@
   ++  ruck                                              ::  update vase
     |=  [pax=path txt=@ta]
     ^+  +>
+    =-  ?:(?=(%| -.res) ((slog p.res) +>.$) p.res)
+    ^=  res  %-  mule  |.
     =+  arg=[~2000.1.1 0 =>(~ |+(* ~))]
     =+  rig=(slym q.sew arg)
     =+  rev=(slym (slap bud (rain pax txt)) bud)
     =+  syg=(slym rev arg)
     ~|  %load-lost
-    +>.$(q.sew (slam (slap syg [%cnzy %load]) (slap rig [%cnzy %stay])))
+    +>.^$(q.sew (slam (slap syg [%cnzy %load]) (slap rig [%cnzy %stay])))
   ::
   ++  wink                                              ::  deploy
     |=  [now=@da eny=@ ski=slad]
@@ -10531,6 +10559,8 @@
 ::
 ++  vint                                                ::  create vane
   |=  [lal=@tas vil=vile bud=vase pax=path txt=@ta]     ::
+  =-  ?:(?=(%| -.res) ((slog p.res) ~) (some p.res))
+  ^=  res  %-  mule  |.
   (vent lal vil bud *worm (slym (slap bud (rain pax txt)) bud))
 ::
 ++  viol                                                ::  vane tools
@@ -10665,6 +10695,7 @@
 ::::::  ::::::    Postface                              ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =+  pit=`vase`!>(.)                                     ::
+!:
 =+  bud=pit                                             ::  becomes tang
 =+  vil=(viol p.bud)                                    ::  cached reflexives
 =|  $:  lac=?                                           ::  laconic bit
@@ -10700,7 +10731,7 @@
               ?:  ?=(%veer -.q.i.ova)
                 $(ova t.ova, +>+.^$ (veer now q.i.ova))
               ?:  ?=(%vega -.q.i.ova)
-                (vega now t.ova (path +.q.i.ova))
+                (fall (vega now t.ova (path +.q.i.ova)) [~ +>.^$])
               ?:  ?=(%mass -.q.i.ova)
                 =+  avo=$(ova t.ova)
                 :_  +.avo
@@ -10765,7 +10796,9 @@
 ::
 ++  vega                                                ::  reboot kernel
   |=  [now=@da ova=(list ovum) hap=path]
-  ^-  [p=(list ovum) q=*]
+  ^-  (unit ,[p=(list ovum) q=*])
+  =-  ?:(?=(%| -.res) ((slog p.res) ~) `p.res)
+  ^=  res  %-  mule  |.
   =+  pax=(weld hap `path`[%hoon ~])
   ~&  [%vega-start hap]
   =+  src=((hard ,@t) (need (peek now cx/pax)))
@@ -10786,17 +10819,22 @@
 ++  veer                                                ::  install vane/tang
   |=  [now=@da fav=curd]
   =>  .(fav ((hard ,[%veer lal=@ta pax=path txt=@t]) fav))
+  =-  ?:(?=(%| -.res) ((slog p.res) +>.$) p.res)
+  ^=  res  %-  mule  |.
   ?:  =(%$ lal.fav)
     ~&  [%tang pax.fav `@p`(mug txt.fav)]
     =+  gen=(rain pax.fav txt.fav)
     =+  vax=(slap pit gen)
-    +>.$(bud vax)
-  %_    +>
+    +>.^$(bud vax)
+  %_    +>.^$
       q.niz
     |-  ^+  q.niz
     ?~  q.niz
       ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
-      [[lal.fav q.sew:(vint lal.fav vil bud pax.fav txt.fav)] q.niz]
+      =+  vin=(vint lal.fav vil bud pax.fav txt.fav)
+      ?~  vin
+        q.niz
+      [[lal.fav q.sew:u.vin] q.niz]
     ?.  =(lal.fav p.i.q.niz)
       [i.q.niz $(q.niz t.q.niz)]
       ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]

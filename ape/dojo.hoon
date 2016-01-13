@@ -1,8 +1,8 @@
 ::                                                      ::  ::
-::::  /hoon/dojo/app                               ::  ::::
+::::  /hoon/dojo/app                                    ::  ::::
   ::                                                    ::    ::
 /?  314                                                 ::  arvo kelvin
-/-  sole                                               ::  console structures
+/-  sole                                                ::  console structures
 /+  sole                                                ::  console library
 [. sole]
 ::                                                      ::  ::
@@ -10,7 +10,8 @@
   !:                                                    ::    ::
 =>  |%                                                  ::  external structures
     ++  house                                           ::  all state
-      $:  %3
+      $:  %4
+          egg=@u                                        ::  command count
           hoc=(map bone session)                        ::  conversations
       ==                                                ::
     ++  session                                         ::  per conversation
@@ -141,12 +142,17 @@
           ==
         ==
       ::
-        ;~(pfix tis (dp-variable sym ;~(pfix ace dp-source)))
+        ;~  pfix  tis
+          ;~  pose
+            (dp-variable (jest %dir) ;~(pfix ace :(stag 0 %ex dp-rood)))
+            (dp-variable sym ;~(pfix ace dp-source))
+          ==
+        ==
+      ::
         ;~  pfix  fas 
           ;~  pose
             (dp-variable (cold %arc hep) ;~(pfix gap dp-hooves))
             (dp-variable (cold %lib lus) ;~(pfix gap dp-hooves))
-            :(stag [%verb %dir] 0 %ex %clsg dp-poor)
           ==
         ==
       ::
@@ -156,7 +162,7 @@
     ++  dp-sink
       ;~  pose
         ;~(plug (cold %file tar) dp-beam)
-        ;~(plug (cold %flat pat) (most fas sym))
+        ;~(plug (cold %flat pat) (most fas qut))
         ;~(plug (cold %pill dot) (most fas sym))
         ;~(plug (cold %http lus) (easy %post) auri:epur)
         ;~(plug (cold %http hep) (easy %put) auri:epur)
@@ -216,7 +222,18 @@
     ++  dp-path    (tope he-beam)                       ::  ++path
     ++  dp-server  (stag 0 (most fas sym))              ::  ++dojo-server
     ++  dp-twig    tall:(vang | dp-path)                ::  ++twig
-    ++  dp-poor    poor:(vang | (tope dir))             ::  (list ++twig)
+    ++  dp-rood                                         ::  'dir' twig
+      =>  (vang | (tope dir))
+      ;~  pose
+        rood
+      ::
+        =-  ;~(pfix cen (stag %clsg -))                 ::  XX refactor ++scat
+        %+  sear  |=([a=@ud b=tyke] (posh ~ ~ a b))
+        ;~  pose
+          porc
+          (cook |=(a=(list) [(lent a) ~]) (star cen))
+        ==
+      ==
     ++  dp-value                                        ::  ++dojo-source
       ;~  pose
         (stag %ex dp-twig)
@@ -421,8 +438,14 @@
           %our  ~|(%self-is-immutable !!)
           %lib  .(lib ((dy-cast (list hoof) !>(*(list hoof))) q.cay))
           %arc  .(arc ((dy-cast (list hoof) !>(*(list hoof))) q.cay))
-          %dir  =.  dir  (need (tome ((dy-cast path !>(*path)) q.cay)))
-                =-  +(..dy (he-diff %tan - ~))
+          %dir  =+  ^=  pax  ^-  path
+                    =+  pax=((dy-cast path !>(*path)) q.cay)
+                    ?:  ?=(~ pax)  ~[(scot %p our.hid) %home '0']
+                    ?:  ?=([@ ~] pax)  ~[i.pax %home '0']
+                    ?:  ?=([@ @ ~] pax)  ~[i.pax i.t.pax '0']
+                    pax
+                =.  dir  (need (tome pax))
+                =-  +>(..dy (he-diff %tan - ~))
                 rose/[" " `~]^~[leaf/"=%" (smyt (tope he-beak s.dir))]
         ==
       ::
@@ -460,10 +483,11 @@
       ::
           %show
         %+  dy-print  cay
+        =+  mar=|.(?:(=(%noun p.cay) ~ [%rose [~ "    " ~] >p.cay< ~]~))
         ?-  p.p.mad
           0  ~
-          1  [%rose [~ "  " ~] (skol p.q.cay) ~]~ :: [%rose [~ "    " ~] >p.cay< ~]
-          2  [%rose [~ "  " ~] (dy-show-type-noun p.q.cay) ~]~
+          1  [[%rose [~ "  " ~] (skol p.q.cay) ~] (mar)]
+          2  [[%rose [~ "  " ~] (dy-show-type-noun p.q.cay) ~] (mar)]
         ==
       ==
     ::
@@ -519,7 +543,11 @@
               ==
       ?-  -.bil
         ?(%ur %dv)  bil
-        %ex  p.bil
+        %ex  ?.  ?=([%cltr *] p.bil)  p.bil
+                 |-  ^-  twig
+                 ?~  p.p.bil  !!
+                 ?~  t.p.p.bil  i.p.p.bil
+                 [i.p.p.bil $(p.p.bil t.p.p.bil)]
         %tu  ?~  p.bil  !!
              |-
              ?~  t.p.bil  ^$(bil q.i.p.bil)
@@ -697,7 +725,8 @@
     ++  dy-mare                                         ::  build expression
       |=  gen=twig
       ^-  silk
-      :+  %cast  (fall (dy-twig-mark gen) %noun)
+      =+  too=(dy-twig-mark gen)
+      =-  ?~(too - [%cast u.too -])
       :+  %ride  gen
       :-  [%$ dy-twig-head]
       [%plan he-beam / zuse arc lib ~ ~]
@@ -707,9 +736,9 @@
       ^+  +>+>
       ?>  ?=(~ cud)
       ?:  ?=([%show 3] -.mad)
-        dy-over
+        he-easter:dy-over
       ?:  =(nex num)
-        dy-over
+        he-easter:dy-over
       dy-make(cud `[nex (~(got by job) nex)])
     --
   ::
@@ -719,7 +748,7 @@
     =+  len=+((lent txt))                               ::  line length
     =.  txt  :(weld buf txt "\0a")                      ::
     =+  vex=((full dp-command-line):dp [1 1] txt)       ::
-    ?:  =(q.p.vex len)                                  ::  matched until line end
+    ?:  =(q.p.vex len)                                  ::  matched to line end
       [%& ~]                                            ::
     ?:  =(p.p.vex +((lent (skim txt |=(a=@ =(10 a)))))) ::  parsed all lines
       [%& ~ ?~(q.vex [%| txt] `p.u.q.vex)]              ::  new buffer/complete
@@ -733,6 +762,16 @@
       %|  [%| q.p.foy]
       %&  [%& p.foy]
     ==
+  ::
+  ++  he-easter                                         ::  hint messages
+    ^+  .
+    =.  egg  +(egg)
+    =-  ?~(msg ..he-diff (he-diff %tan leaf/u.msg ~))
+    ^-  msg=(unit tape)
+    ?+  (clan our.hid)  ~
+      %pawn  ?+  egg  ~
+        5  `":: To request a planet, run  |ask 'your@email.co'"
+    ==       ==  
   ::
   ++  he-abet                                           ::  resolve
     [(flop moz) %_(+> hoc (~(put by hoc) ost.hid +<+))]
@@ -779,10 +818,23 @@
     =^  cal  say  (~(transmit sole say) [%set ~])
     (he-diff %mor [%det cal] ~)
   ::
+  ++  he-prow                                           ::  where we are
+    ^-  tape
+    ?:  &(=(our.hid p.dir) =(%home q.dir) =([%ud 0] r.dir) =(~ s.dir))  ~
+    %+  weld
+      ?:  &(=(our.hid p.dir) =([%ud 0] r.dir))
+        (weld "/" (trip q.dir))
+      ;:  weld
+        "/"  ?:(=(our.hid p.dir) "=" (scow %p p.dir))
+        "/"  ?:(=(%home q.dir) "=" (trip q.dir))
+        "/"  ?:(=([%ud 0] r.dir) "=" (scow r.dir))
+      == 
+    ?:(=(~ s.dir) "" (spud (flop s.dir)))
+  ::
   ++  he-prom                                           ::  send prompt
     %-  he-diff
     :-  %pro
-    [& %$ ?~(buf "> " "< ")]
+    [& %$ (weld he-prow ?~(buf "> " "< "))]
   ::
   ++  he-made                                           ::  result from ford
     |=  [way=wire dep=@uvH reg=gage]
@@ -906,13 +958,15 @@
       $%  [%0 p=(map bone session-0)]
           [%1 p=(map bone session-1)]
           [%2 p=(map bone session-1)]
+          [%3 p=(map bone session)]
       ==
   |=  old=(unit ?(house hoze))  ^+  [~ ..prep]
   ?~  old  `..prep
   ?-  -.u.old
-    %3  `..prep(+<+ u.old)
-    %2  `..prep(+<+ [%3 (~(run by p.u.old) |=(session-1 +<(poy ~)))])
-    %1  `..prep(+<+ [%3 (~(run by p.u.old) |=(session-1 +<(poy ~)))])
+    %4  `..prep(+<+ u.old)
+    %3  $(u.old %*(. *house hoc p.u.old))
+    %2  $(u.old [%3 (~(run by p.u.old) |=(session-1 +<(poy ~)))])
+    %1  $(u.old [%3 (~(run by p.u.old) |=(session-1 +<(poy ~)))])
     %0  =<  ^$(u.old [%1 (~(run by p.u.old) .)])
         |=  sos=session-0  ^-  session-1
         [-.sos [[our.hid syd.sos ud/0] /] |3.sos]

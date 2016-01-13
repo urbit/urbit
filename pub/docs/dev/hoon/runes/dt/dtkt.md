@@ -3,7 +3,7 @@ dotket, `.^`, %dtkt
 
 Load from `%clay`
 
-`.^`, `dotket`, `[%dtkt p=twig]` is a natural hoon that generates nock
+`.^`, `dotket`, `[%dtkt p=twig]` is a natural rune that generates nock
 operator `11`, which in virtual userspace nock, [`++mock`]() loads a
 file from the global namespace.
 

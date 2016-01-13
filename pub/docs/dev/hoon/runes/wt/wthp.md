@@ -3,7 +3,7 @@ wuthep, `?-`, %wthp
 
 Switch
 
-`?-` is a synthetic hoon that selects a case in `q` for the value of
+`?-` is a synthetic rune that selects a case in `q` for the value of
 `p`. The labels in `q` must match the [icon]() of `p`. The list of
 cases, `q` must be terminated by `==`.
 
@@ -94,6 +94,6 @@ defined type for which all of the cases are covered. We create a core,
 
 Here we can see a common failure case with `?-`. In the first example
 all of our possible input cases are not covered when we pass in a `@t`,
-so we fail with `mint-vain` – a parsing error. When we construct a well
+so we fail with `mint-vain` – a compilation error. When we construct a well
 typed input and select a case from it `?-` in fact has all of the cases
 covered and produces correct output.

@@ -62,7 +62,7 @@ Examples
     101
 
 Here we create a core with two arms `n`, a constant and `g`, a simple
-funciton. `g` adds our constant `n` to whatever is passed to it.
+function. `g` adds our constant `n` to whatever is passed to it.
 
     /~zod/try=> 
     =a  |%

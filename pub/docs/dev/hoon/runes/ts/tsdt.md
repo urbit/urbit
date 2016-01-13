@@ -3,7 +3,7 @@ tisdot, `=.`, %tsdt
 
 Single change subject
 
-`=.` is a synthetic hoon that produces `r` with `p` in the subject set
+`=.` is a synthetic rune that produces `r` with `p` in the subject set
 to `q`.
 
 Produces

@@ -42,4 +42,4 @@ module.exports = recl
       ]
     else
       cont = [(div {className:"submitted"},"Got it. Thanks!")]
-    (p {className:"email"}, cont)
+    (p {className:"email",id:"sign-up"}, cont)

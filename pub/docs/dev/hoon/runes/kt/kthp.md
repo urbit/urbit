@@ -3,7 +3,7 @@ kethep, `^-`, %kthp
 
 Cast to bunt
 
-`^-` is a synthetic hoon that casts `q` to `~(bunt al p)`, i.e. the icon
+`^-` is a synthetic rune that casts `q` to `~(bunt al p)`, i.e. the icon
 of `p`.
 
 See also
@@ -63,3 +63,8 @@ In this case we see a very common use of `^-`, at the top of a [gate]().
 This pattern is considered good hoon style for two reasons: it gives the
 reader a clear pattern for understanding what your code produces, and it
 helps ensure type-safety.
+
+Equivalent to
+-------------
+
+    ^+(*p q)

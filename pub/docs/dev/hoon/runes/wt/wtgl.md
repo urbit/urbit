@@ -3,7 +3,7 @@ wutgal, `?<`, %wtgl
 
 Assert no
 
-`?<` is a synthetic hoon that produces `q`, asserting that `p` is no
+`?<` is a synthetic rune that produces `q`, asserting that `p` is no
 (`|`, 1).
 
 See also
@@ -45,3 +45,8 @@ Examples
     %foo
     ~zod/try=> ?<(=(0x1 1) %foo)
     ! exit
+
+Equivalent to
+-------------
+
+    ?:(p !! q)

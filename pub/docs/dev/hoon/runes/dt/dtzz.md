@@ -3,7 +3,7 @@ dotzaz, %dtzz
 
 Cube
 
-`dotzaz` is a natural hoon that produces a cubed noun constant of value
+`dotzaz` is a natural rune that produces a cubed noun constant of value
 `q` and odor `p`, if `q` is an atom. A cube is an atom whose type
 contains only itself.
 

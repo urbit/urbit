@@ -3,7 +3,7 @@ centis, `%=`, %cnts
 
 Evaluate with changes
 
-`%=` is a natural hoon thatevaluates `p` with the changes specified in
+`%=` is a natural rune that evaluates `p` with the changes specified in
 `q`. `%=` is used to change a batch of [wing]()s inside a [`++wing`]()
 all at once, ensuring that the product is type checked.
 

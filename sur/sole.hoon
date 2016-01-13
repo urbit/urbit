@@ -1,4 +1,4 @@
-::
+ ::
 ::::  /hoon/sole/sur
   !:
 |%
@@ -36,6 +36,7 @@
       [%tan p=(list tank)]                              ::  classic tank
   ::  [%taq p=tanq]                                     ::  modern tank
       [%txt p=tape]                                     ::  text line
+      [%url p=@t]                                       ::  activate url
   ==                                                    ::
 ++  sole-command                                        ::  command state
   $:  pos=@ud                                           ::  cursor position
@@ -102,7 +103,7 @@
   [p=*(list tank) q=[%| p=[pul %get ~ ~] q=fun]]        ::
 ::                                                      ::
 ++  sole-no                                             ::  empty result
-  [p=*(list tank) q=~]                                  ::
+  [p=*(list tank) q=[%& ~]]                             ::
 ::                                                      ::
 ++  sole-go                                             ::  parse by rule
   |*  [sef=_rule fun=$+(* *)]                           ::

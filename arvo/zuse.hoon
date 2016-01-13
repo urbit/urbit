@@ -588,44 +588,44 @@
   --
 ::
 ++  pojo                                                ::  print json
+  =|  rez=tape
   |=  val=json
   ^-  tape
-  ?~  val  "null"
+  ?~  val  (weld "null" rez)
   ?-    -.val
       %a
-    ;:  weld
-      "["
-      =|  rez=tape
-      |-  ^+  rez
-      ?~  p.val  rez
-      $(p.val t.p.val, rez :(weld rez ^$(val i.p.val) ?~(t.p.val ~ ",")))
-      "]"
-    ==
+    :-  '['
+    =.  rez  [']' rez]
+    !.
+    ?~  p.val  rez
+    |-
+    ?~  t.p.val  ^$(val i.p.val)
+    ^$(val i.p.val, rez [',' $(p.val t.p.val)])
  ::
-      %b  ?:(p.val "true" "false")
-      %n  (trip p.val)
+      %b  (weld ?:(p.val "true" "false") rez)
+      %n  (weld (trip p.val) rez)
       %s
-    ;:  welp
-      "\""
-      %+  reel
-        (turn (trip p.val) jesc)
-      |=([p=tape q=tape] (welp +<))
-      "\""
-    ==
+    :-  '"'
+    =.  rez  ['"' rez]
+    =+  viz=(trip p.val)
+    !.
+    |-  ^-  tape
+    ?~  viz  rez
+    =+  hed=(jesc i.viz)
+    ?:  ?=([@ ~] hed)                 :: common case
+      [i.hed $(viz t.viz)]            :: cons-and-tail
+    (weld hed $(viz t.viz))
+ ::
       %o
-    ;:  welp
-      "\{"
-      =+  viz=(~(tap by p.val) ~)
-      =|  rez=tape
-      |-  ^+  rez
-      ?~  viz  rez
-      %=    $
-          viz  t.viz
-          rez
-        :(welp rez "\"" (trip p.i.viz) "\":" ^$(val q.i.viz) ?~(t.viz ~ ","))
-      ==
-      "}"
-    ==
+    :-  '{'
+    =.  rez  ['}' rez]
+    =+  viz=(~(tap by p.val))
+    ?~  viz  rez
+    !.
+    |-  ^+  rez
+    ?~  t.viz  ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
+    =.  rez  [',' $(viz t.viz)]
+    ^$(val [%s p.i.viz], rez [':' ^$(val q.i.viz)])
   ==
 ::
 ::
@@ -2392,6 +2392,7 @@
       [%mor ~]                                          ::  newline
       [%sag p=path q=*]                                 ::  save to jamfile
       [%sav p=path q=@]                                 ::  save to file
+      [%url p=@t]                                       ::  activate url
   ==                                                    ::
 ++  dill-belt                                           ::  new belt
   $%  [%aro p=?(%d %l %r %u)]                           ::  arrow key
@@ -2416,6 +2417,7 @@
       [%out p=(list ,@c)]                               ::  send output line
       [%sag p=path q=*]                                 ::  save to jamfile
       [%sav p=path q=@]                                 ::  save to file
+      [%url p=@t]                                       ::  activate url
   ==                                                    ::
 ++  flog                                                ::  sent to %dill
   $%  [%crud p=@tas q=(list tank)]                      ::
@@ -2430,6 +2432,7 @@
 ++  gift-dill                                           ::  out result <-$
   $%  [%bbye ~]                                         ::  reset prompt
       [%blit p=(list blit)]                             ::  terminal output
+      [%burl p=@t]                                      ::  activate url
       [%init p=@p]                                      ::  set owner
       [%logo ~]                                         ::  logout
       [%mass p=mass]                                    ::  memory usage
@@ -2467,6 +2470,7 @@
       [[%hat ~] p=hole q=hart]                          ::  login redirect
       [[%get ~] p=@uvH q=[? clip httq]]                 ::  remote request
       [[%got ~] p=@uvH q=httr]                          ::  remote response
+      [[%gib ~] p=@uvH]                                 ::  remote cancel
   ==                                                    ::
 ::::                                                    ::
 ++  kiss-eyre                                           ::  in request ->$
@@ -2561,7 +2565,7 @@
           ==                                            ::
 ++  kiss-ford                                           ::  in request ->$
           $%  [%exec p=@p q=(unit bilk)]                ::  make / kill
-              [%wasp p=@p q=@uvH]                       ::  depends query
+              [%wasp p=@p q=[@uvH ?]]                   ::  depends ask / kill
               [%wegh ~]                                 ::  report memory
           ==                                            ::
 ::
