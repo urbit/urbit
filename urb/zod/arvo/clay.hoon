@@ -1,6 +1,15 @@
 !:
 ::  clay (4c), revision control
 ::
+::  This is split in three top-level sections:  structure definitions, main
+::  logic, and arvo interface.
+::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::
+::  Here are the structures.  `++raft` is the formal arvo state.  It's also
+::  worth noting that many of the clay-related structures are defined in zuse.
+::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |=  pit=vase
 =>  |%
 ++  cane                                                ::  change set
@@ -123,17 +132,61 @@
               ins=(unit (list (pair path cage)))        ::  inserts
               dig=(map path cage)                       ::  store diffs
               dif=(unit (list (trel path lobe cage)))   ::  changes
-              muc=(map path cage)                       ::  store miso
+              muc=(map path cage)                       ::  store mutations
               muh=(map path lobe)                       ::  store hashes
               mut=(unit (list (trel path lobe cage)))   ::  mutations
               mim=(map path mime)                       ::  mime cache
           ==                                            ::
 --  =>
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::              section 4cA, filesystem logic           ::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::  section 4cA, filesystem logic
 ::
+::  This core contains the main logic of clay.  Besides `++ze`, this directly
+::  contains the logic for commiting new revisions (local urbits), managing
+::  and notifying subscribers (reactivity), and pulling and validating content
+::  (remote urbits).
 ::
+::  The state includes:
 ::
+::  --  current time `now`
+::  --  current duct `hen`
+::  --  local urbit `our`
+::  --  target urbit `her`
+::  --  target desk `syd`
+::  --  all vane state `++raft` (rarely used, except for the object store)
+::
+::  For local desks, `our` == `her` is one of the urbits on our pier.  For
+::  foreign desks, `her` is the urbit the desk is on and `our` is the local
+::  urbit that's managing the relationship with the foreign urbit.  Don't mix
+::  up those two, or there will be wailing and gnashing of teeth.
+::
+::  While setting up `++de`, we check if the given `her` is a local urbit.  If
+::  so, we pull the room from `fat` in the raft and get the desk information
+::  from `dos` in there.  Otherwise, we get the rung from `hoy` and get the
+::  desk information from `rus` in there.  In either case, we normalize the
+::  desk information to a `++rede`, which is all the desk-specific data that
+::  we utilize in `++de`.  Because it's effectively a part of the `++de`
+::  state, let's look at what we've got:
+::
+::  --  `lim` is the most recent date we're confident we have all the
+::      information for.  For local desks, this is always `now`.  For foreign
+::      desks, this is the last time we got a full update from the foreign
+::      urbit.
+::  --  `ref` is a possible request manager.  For local desks, this is null.
+::      For foreign desks, this keeps track of all pending foreign requests
+::      plus a cache of the responses to previous requests.
+::  --  `qyx` is the set of subscriptions, keyed by duct.  These subscriptions
+::      exist only until they've been filled.
+::  --  `dom` is the actual state of the filetree.  Since this is used almost
+::      exclusively in `++ze`, we describe it there.
+::  --  `dok` is a possible set of outstanding requests to ford to perform
+::      various tasks on commit.  This is null iff we're not in the middle of
+::      a commit.
+::  --  `mer` is the state of a possible pending merge.  This is null iff
+::      we're not in the middle of a merge.  Since this is used almost
+::      exclusively in `++me`, we describe it there.
+::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |%
 ++  de                                                  ::  per desk
   |=  [now=@da hen=duct raft]
@@ -299,7 +352,7 @@
     =.  qyx  (~(put by qyx) hen rov)
     ?~  ref
       (mabe rov (cury bait hen))
-    |-  ^+  +>+.$                                       ::  XX  why?
+    |-  ^+  +>+.$
     =+  rav=(reve rov)
     =+  ^=  vaw  ^-  rave
       ?.  ?=([%sing %v *] rav)  rav
@@ -430,10 +483,69 @@
           =.  +>.^$
             %+  print-to-dill
               ?-(-.q.i.p.lem %del '-', %ins '+', %dif ':')
-            [%leaf (spud (weld pre p.i.p.lem))]
+            :+  %rose  ["/" "/" ~]
+            %+  turn  (weld pre p.i.p.lem)
+            |=  a=cord
+            ?:  ((sane %ta) a)
+              [%leaf (trip a)]
+            [%leaf (dash:ut (trip a) '\'')]
           $(p.lem t.p.lem)
     ==
   ::
+  ::  This is the entry point to the commit flow.  It deserves some
+  ::  explaining, since it's rather long and convoluted.
+  ::
+  ::  We take a `++nori`, which is either a label-add request or a `++soba`,
+  ::  which is a list of changes.  If it's a label, it's easy and we just pass
+  ::  it to `++edit:ze`.
+  ::
+  ::  If the given `++nori` is a list of file changes, then we our goal is to
+  ::  convert the list of `++miso` changes to `++misu` changes.  In other
+  ::  words, turn the `++nori` into a `++nuri`.  Then, we pass it to
+  ::  `++edit:ze`, which applies the changes to our state, and then we
+  ::  check out the new revision.  XX  reword
+  ::
+  ::  Anyhow, enough of high-level wishy-washy talk.  It's time to get down to
+  ::  the nitty-gritty.
+  ::
+  ::  When we get a list of `++miso` changes, we split them into four types:
+  ::  deletions, insertions, diffs (i.e. change from diff), and mutations
+  ::  (i.e. change from new data).  We do four different things with them.
+  ::
+  ::  For deletions, we just fill in `del` in `++dork` with a list of the
+  ::  deleted files.
+  ::
+  ::  For insertions, we distinguish bewtween `%hoon` files and all other
+  ::  files.  For `%hoon` files, we just store them to `ink` in `++dork` so
+  ::  that we add diff them directly.  `%hoon` files have to be treated
+  ::  specially to make the bootstrapping sequence work, since the mark
+  ::  definitions are themselves `%hoon` files.
+  ::
+  ::  For the other files, we make a `%tabl` compound ford request to convert
+  ::  the data for the new file to the the mark indicated by the last span in
+  ::  the path.
+  ::
+  ::  For diffs, we make a `%tabl` compound ford request to apply the diff to
+  ::  the existing content.  We also store the diffs in `dig` in `++dork`.
+  ::
+  ::  For mutations, we make a `%tabl` compound ford request to convert the
+  ::  given new data to the mark of the already-existing file.  Later on in
+  ::  `++take-castify` we'll create the ford request to actually perform the
+  ::  diff.  We also store the mutations in `muc` in `++dork`.  I'm pretty
+  ::  sure that's useless because who cares about the original data.
+  ::  XX delete `muc`.
+  ::
+  ::  Finally, for performance reasons we cache any of the data that came in
+  ::  as a `%mime` cage.  We do this because many commits come from unix,
+  ::  where they're passed in as `%mime` and need to be turned back into it
+  ::  for the ergo.  We cache both `%hoon` and non-`%hoon` inserts and
+  ::  mutations.
+  ::
+  ::  At this point, the flow of control goes through the three ford requests
+  ::  back to `++take-inserting`, `++take-diffing`, and `++take-castifying`,
+  ::  which itself leads to `++take-mutating`.  Once each of those has
+  ::  completed, we end up at `++apply-edit`, where our unified story picks up
+  ::  again.
   ++  edit                                              ::  apply changes
     |=  [wen=@da lem=nori]
     ^+  +>
@@ -550,31 +662,7 @@
       ==
     ==
   ::
-  ++  silkify
-    |=  [wen=@da pax=path mis=miso]
-    ^-  [duct path note]
-    ~|  [%silkifying pax -.mis]
-    :-  hen
-    ?+    -.mis   !!
-        %mut
-      :-  [%diffing (scot %p her) syd (scot %da wen) pax]
-      :^  %f  %exec  our  :+  ~  [her syd %da wen]
-      ^-  silk
-      :+  %diff
-        (lobe-to-silk:ze pax (~(got by q:(aeon-to-yaki:ze let.dom)) pax))
-      =+  (slag (dec (lent pax)) pax)
-      =+  ?~(- %$ i.-)
-      [%cast - [%$ p.mis]]
-    ::
-        %ins
-      :-  [%casting (scot %p her) syd (scot %da wen) pax]
-      :^  %f  %exec  our  :+  ~  [her syd %da wen]
-      ^-  silk
-      =+  (slag (dec (lent pax)) pax)
-      =+  ?~(- %$ i.-)
-      [%cast - [%$ p.mis]]
-    ==
-  ::
+  ::  See ++edit for a description of the commit flow.
   ++  apply-edit
     |=  wen=@da
     ^+  +>
@@ -606,6 +694,7 @@
       ([echo(dok ~)]:.(+>.$ +.hat) wen %& sim)
     (checkout-ankh(lat.ran lat.ran.+.hat) u.-.hat)
   ::
+  ::  See ++edit for a description of the commit flow.
   ++  take-inserting
     |=  [wen=@da res=gage]
     ^+  +>
@@ -626,6 +715,7 @@
       ~|(%clay-take-inserting-strange-path-mark !!)
     [((hard path) q.q.pax) cay]
   ::
+  ::  See ++edit for a description of the commit flow.
   ++  take-diffing
     |=  [wen=@da res=gage]
     ^+  +>
@@ -648,6 +738,7 @@
     =+  paf=((hard path) q.q.pax)
     [paf (page-to-lobe:ze [p q.q]:cay) (~(got by dig.u.dok) paf)]
   ::
+  ::  See ++edit for a description of the commit flow.
   ++  take-castify
     |=  [wen=@da res=gage]
     ^+  +>
@@ -678,6 +769,7 @@
         [%diff - [%$ cay]]
     ==
   ::
+  ::  See ++edit for a description of the commit flow.
   ++  take-mutating
     |=  [wen=@da res=gage]
     ^+  +>
@@ -702,6 +794,7 @@
     =+  paf=((hard path) q.q.pax)
     `[paf (~(got by muh.u.dok) paf) cay]
   ::
+  ::  See ++edit for a description of the commit flow.
   ++  take-patch
     |=  res=gage
     ^+  +>
@@ -786,6 +879,7 @@
         (lobe-to-silk:ze a p.-)
     ==
   ::
+  ::  See ++edit for a description of the commit flow.
   ++  take-ergo
     |=  res=gage
     ^+  +>
@@ -812,6 +906,7 @@
         [(slag len pax) (~(got by can) pax)]
     ==
   ::
+  ::  See ++edit for a description of the commit flow.
   ++  checkout-ankh
     |=  hat=(map path lobe)
     ^+  +>
@@ -1154,6 +1249,33 @@
       >sor.u.mer<  >our<  >cas.u.mer<  >gem.u.mer<  ~
     ==
   ::
+  ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  ::
+  ::  This core has no additional state, and the distinction exists purely for
+  ::  documentation.  The overarching theme is that `++de` directly contains
+  ::  logic for metadata about the desk, while `++ze` is composed primarily
+  ::  of helper functions for manipulating the desk state (`++dome`) itself.
+  ::  Functions include:
+  ::
+  ::  --  converting between cases, commit hashes, commits, content hashes,
+  ::      and conent
+  ::  --  creating commits and content and adding them to the tree
+  ::  --  finding which data needs to be sent over the network to keep the
+  ::  --  other urbit up-to-date
+  ::  --  reading from the file tree through different `++care` options
+  ::  --  the `++me` core for merging.
+  ::
+  ::  The dome is composed of the following:
+  ::
+  ::  --  `ank` is the ankh, which is the file data itself.  An ankh is both
+  ::      a possible file and a possible directory.  An ankh has both:
+  ::      --  `fil`, a possible file, stored as both a cage and its hash
+  ::      --  `dir`, a map of @ta to more ankhs.
+  ::  --  `let` is the number of the most recent revision.
+  ::  --  `hit` is a map of revision numbers to commit hashes.
+  ::  --  `lab` is a map of labels to revision numbers.
+  ::
+  ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ++  ze
     |%
     ++  aeon-to-tako  ~(got by hit.dom)
@@ -1395,7 +1517,7 @@
         %v  [~ %dome !>(dom)]
         %x  !!  ::  ?~(q.ank.dom ~ [~ q.u.q.ank.dom])
         %y  !!  ::  [~ %arch !>(as-arch)]
-        %z  [~ %ankh !>(ank.dom)]
+        %z  !!  ::  [~ %ankh !>(ank.dom)]
       ==
     ::
     ++  new-lobes                                       ::  object hash set
@@ -1466,9 +1588,14 @@
       |=  [yon=aeon pax=path]
       ^-  (unit (unit ,[%dome (hypo dome)]))
       ?:  (lth yon let.dom)
-        ~
+        :*  ~  ~  %dome  -:!>(%dome)
+            ank=`[[%ank-in-old-v-not-implemented *ankh] ~ ~]
+            let=yon
+            hit=(mo (skim (~(tap by hit.dom)) |=([p=@ud *] (lte p yon))))
+            lab=(mo (skim (~(tap by lab.dom)) |=([* p=@ud] (lte p yon))))
+        ==
       ?:  (gth yon let.dom)
-        `~
+        ~
       ``[%dome -:!>(*dome) dom]
     ::
     ++  read-x
@@ -1518,6 +1645,28 @@
       ::  ~&  cy/pax
       :-  -:!>(*arch)
       ^-  arch
+      :-  (~(get by q.yak) pax)
+      ^-  (map span ,~)
+      %-  mo  ^-  (list (pair span ,~))
+      %+  turn
+        ^-  (list (pair path lobe))
+        %+  skim  (~(tap by (~(del by q.yak) pax)))
+        |=  [paf=path lob=lobe]
+        =(pax (scag len paf))
+      |=  [paf=path lob=lobe]
+      =+  pat=(slag len paf)
+      [?>(?=(^ pat) i.pat) ~]
+    ::
+    ++  read-z
+      |=  [yon=aeon pax=path]
+      ^-  (unit (unit ,[%uvi (hypo ,@uvI)]))
+      ?:  =(0 yon)
+        ``uvi/[-:!>(*@uvI) *@uvI]
+      =+  tak=(~(get by hit.dom) yon)
+      ?~  tak
+        ~
+      =+  yak=(tako-to-yaki u.tak)
+      =+  len=(lent pax)
       =+  ^-  descendants=(list (pair path lobe))
           ::  ~&  %turning
           ::  =-  ~&  %turned  -
@@ -1530,18 +1679,15 @@
           |=  [paf=path lob=lobe]
           [(slag len paf) lob]
       =+  us=(~(get by q.yak) pax)
-      :+  ?:  &(?=(~ descendants) ?=(~ us))
-            *@uvI
-          %+  roll
-            ^-  (list (pair path lobe))
-            [[~ ?~(us *lobe u.us)] descendants]
-          |=([[path lobe] @uvI] (shax (jam +<)))
-        us
-      ^-  (map span ,~)
-      %-  mo  ^-  (list (pair span ,~))
-      %+  turn  descendants
-      |=  [paf=path lob=lobe]
-      [?>(?=(^ paf) i.paf) ~]
+      ^-  (unit (unit ,[%uvi (hypo ,@uvI)]))
+      :^  ~  ~  %uvi
+      :-  -:!>(*@uvI)
+      ?:  &(?=(~ descendants) ?=(~ us))
+        *@uvI
+      %+  roll
+        ^-  (list (pair path lobe))
+        [[~ ?~(us *lobe u.us)] descendants]
+      |=([[path lobe] @uvI] (shax (jam +<)))
     ::
     ++  read-at-aeon                                    ::    read-at-aeon:ze
       |=  [yon=aeon mun=mood]                           ::  seek and read
@@ -1565,6 +1711,8 @@
         ::          ==
         ::      -
         (bind (read-y yon r.mun) (curr bind (cury same %&)))
+      ?:  ?=(%z p.mun)
+        (bind (read-z yon r.mun) (curr bind (cury same %&)))
       %+  bind
         (rewind yon)
       |=  a=(unit ,_+>.$)
@@ -1616,8 +1764,60 @@
         ?~(way +> $(way t.way, +> (descend i.way)))
       --
     ::
+    ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    ::
+    ::  This core is specific to any currently running merge.  This is
+    ::  basically a simple (DAG-shaped) state machine.  We always say we're
+    ::  merging from 'ali' to 'bob.  The basic steps, not all of which are
+    ::  always needed, are:
+    ::
+    ::  --  fetch ali's desk
+    ::  --  diff ali's desk against the mergebase
+    ::  --  diff bob's desk against the mergebase
+    ::  --  merge the diffs
+    ::  --  build the new state
+    ::  --  "checkout" (apply to actual `++dome`) the new state
+    ::  --  "ergo" (tell unix about) any changes
+    ::
+    ::  The state filled in order through each step:
+    ::
+    ::  --  `sor` is the urbit and desk of ali.
+    ::  --  `hen` is the duct that instigated the merge.
+    ::  --  `gem` is the merge strategy.  These are described in
+    ::      `++fetched-ali`.
+    ::  --  `wat` is the current step of the merge process.
+    ::  --  `cas` is the case in ali's desk that we're merging from.
+    ::  --  `ali` is the commit from ali's desk.
+    ::  --  `bob` is the commit from bob's desk.
+    ::  --  `bas` is the commit from the mergebase.
+    ::  --  `dal` is the set of changes from the mergebase to ali's desk.
+    ::  --  `dob` is the set of changes from the mergebase to bob's desk.
+    ::      These two merit slightly more explanation.  There are four kinds
+    ::      of changes:
+    ::      --  `new` is the set of files in the new desk and not in the
+    ::          mergebase.
+    ::      --  `cal` is the set of changes in the new desk from the mergebase
+    ::          except for any that are also in the other new desk.
+    ::      --  `can` is the set of changes in the new desk from the mergebase
+    ::          and that are also in the other new desk (potential conflicts).
+    ::      --  `old` is the set of files in the mergebase and not in the new
+    ::          desk.
+    ::  --  `bof` is the set of changes to the same files in ali and bob.
+    ::      Null for a file means a conflict while a cage means the diffs
+    ::      have been merged.
+    ::  --  `bop` is the result of patching the original files with the above
+    ::      merged diffs.
+    ::  --  `new` is the newly-created commit.
+    ::  --  `ank` is the ankh for the new state.
+    ::  --  `erg` is the sets of files that should be told to unix.  True
+    ::      means to write the file while false means to delete the file.
+    ::  --  `gon` is the return value of the merge.  On success we produce a
+    ::      set of the paths that had conflicting changes.  On failure we
+    ::      produce an error code and message.
+    ::
+    ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     ++  me                                              ::  merge ali into bob
-      |=  [ali=(pair ship desk) alh=(unit ankh) new=?]  ::  from
+      |=  [ali=(pair ship desk) alh=(unit dome) new=?]  ::  from
       =+  bob=`(pair ship desk)`[our syd]               ::  to
       =+  ^-  dat=(each mery term)
           ?~  mer
@@ -2268,6 +2468,11 @@
             [(slag len pax) (~(got by can) pax)]
         ==
       ::
+      ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+      ::
+      ::  This core is a small set of helper functions to assist in merging.
+      ::
+      ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       ++  he
         |%
         ++  done
@@ -2300,8 +2505,8 @@
           =+  hot=q.bob.dat
           =+  ^=  lal
               %+  biff  alh
-              |=  hal=ankh
-              (~(get by hat) pax)
+              |=  had=dome
+              (~(get by q:(tako-to-yaki (~(got by hit.had) let.had))) pax)
           =+  lol=(~(get by hot) pax)
           |-  ^-  silk
           ?:  =([~ lob] lol)
@@ -2309,7 +2514,7 @@
             ?>  ?=(%& -<)
             [%$ p.-]
           ?:  =([~ lob] lal)
-            [%$ +:(need fil.ank:(descend-path:(zu (need alh)) pax))]
+            [%$ +:(need fil.ank:(descend-path:(zu ank:(need alh)) pax))]
           =+  bol=(~(got by lat.ran) lob)
           ?-  -.bol
             %direct     [%volt q.bol]
@@ -2338,9 +2543,19 @@
     --
   --
 --
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::              section 4cA, filesystem vane          ::
-::                                                    ::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::              section 4cA, filesystem vane
+::
+::  This is the arvo interface vane.  Our formal state is a `++raft`, which
+::  has five components:
+::
+::  --  `fat` is the state for all local desks.
+::  --  `hoy` is the state for all foreign desks.
+::  --  `ran` is the global, hash-addressed object store.
+::  --  `mon` is the set of mount points in unix.
+::  --  `hez` is the duct to the unix sync.
+::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
     $:  %0                                            ::  vane version
         ruf=raft                                      ::  revision tree
@@ -2528,6 +2743,7 @@
     ==
   ==
 ::
+::  All timers are handled by `%behn` nowadays.
 ++  doze
   |=  [now=@da hen=duct]
   ^-  (unit ,@da)
@@ -2569,12 +2785,12 @@
     =*  sud  i.t.t.t.t.tea
     =*  sat  i.t.t.t.t.t.tea
     =+  dat=?-(+<.q.hin %writ [%& p.q.hin], %made [%| q.q.hin])
-    =+  ^-  kan=(unit ankh)
+    =+  ^-  kan=(unit dome)
         %+  biff  (~(get by fat.ruf) her)
         |=  room
         %+  bind  (~(get by dos) sud)
         |=  dojo
-        ank.dom
+        dom
     =^  mos  ruf
       =+  den=((de now hen ruf) [. .]:our syd)
       abet:abet:(route:(me:ze:den [her sud] kan |) sat dat)

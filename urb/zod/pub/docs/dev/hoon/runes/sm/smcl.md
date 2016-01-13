@@ -6,7 +6,7 @@ Apply fold
 Syntax
 ======
 
-`;:` is a synthetic hoon that applies `p`, a binary gate, to the n-ary
+`;:` is a synthetic rune that applies `p`, a binary gate, to the n-ary
 tuple `q`. `;:` is similar to folding over the tuple `q`, producing the
 final result.
 

@@ -50,7 +50,7 @@ Queenside:
 Wide form
 ---------
 
-    ?+(p p.i.r q.i.r, p.i.t.r q.i.t.r, p.i.t.t.r q.i.t.t.r)
+    ?+(p q p.i.r q.i.r, p.i.t.r q.i.t.r, p.i.t.t.r q.i.t.t.r)
 
 Irregular form
 --------------
@@ -101,5 +101,15 @@ covered, or the default.
           ==
     0
 
-This example shows how `?-` can fail. Our input icon must match the icon
+This example shows how `?+` can fail. Our input icon must match the icon
 of our cases.
+
+Equivalent to
+-------------
+
+    ?-  p
+      p.i.r      q.i.r
+      p.i.t.r    q.i.t.r
+      p.i.t.t.r  q.i.t.t.r
+      *          q
+    ==

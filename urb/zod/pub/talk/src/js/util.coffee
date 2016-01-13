@@ -2,10 +2,10 @@ if not window.util then window.util = {}
 _.merge window.util,
   mainStations: ["court","floor","porch"]
   
-  mainStationPath: (user) -> "~#{user}/#{window.util.mainStation(user)}"
+  mainStationPath: (user = window.urb.user) -> 
+    "~#{user}/#{window.util.mainStation(user)}"
 
-  mainStation: (user) ->
-    if not user then user = window.urb.user
+  mainStation: (user = window.urb.ship) ->
     switch user.length
       when 3
         return "court"
@@ -14,16 +14,24 @@ _.merge window.util,
       when 13
         return "porch"
 
+  getGlyph: (glyphs, audi)->
+    glyphs[audi.join " "] or switch
+      when not _.contains audi, window.util.mainStationPath()
+        "*"
+      when audi.length is 1
+        ":"
+      else ";"
+      
   clipAudi: (audi) ->
     audi = audi.join " "
-    ms = window.util.mainStationPath window.urb.user
+    ms = window.util.mainStationPath()
     regx = new RegExp "/#{ms}","g"
     audi = audi.replace regx,""
     audi.split " "
 
   expandAudi: (audi) ->
     audi = audi.join " "
-    ms = window.util.mainStationPath window.urb.user
+    ms = window.util.mainStationPath()
     if audi.indexOf(ms) is -1 
       if audi.length > 0
         audi += " "

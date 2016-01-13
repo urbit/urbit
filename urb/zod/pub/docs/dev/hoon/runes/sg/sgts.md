@@ -3,7 +3,7 @@ sigtis, `~=`, %sgts
 
 Equality hint
 
-`~=` is a synthetic hoon that hints to the interpreter that `q` may
+`~=` is a synthetic rune that hints to the interpreter that `q` may
 produce a noun equal to the already existing `p`, avoiding duplication.
 
 Produces

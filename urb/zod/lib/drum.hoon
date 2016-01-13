@@ -537,13 +537,11 @@
           ?:  =(0 (lent buf.say.inp))
             ta-bel
           (ta-hom:ta-nex %set ~)
-      %l  ?^  ris  ta-bel
-          ?:  =(0 pos.inp)  ta-bel 
-          +>(pos.inp (dec pos.inp))
-      %r  ?^  ris  ta-bel
-          ?:  =((lent buf.say.inp) pos.inp) 
+      %l  ?:  =(0 pos.inp)  ta-bel
+          +>(pos.inp (dec pos.inp), ris ~)
+      %r  ?:  =((lent buf.say.inp) pos.inp)
             ta-bel
-          +>(pos.inp +(pos.inp))
+          +>(pos.inp +(pos.inp), ris ~)
       %u  =.  ris  ~
           ?:(=(0 pos.hit) ta-bel (ta-mov (dec pos.hit)))
     ==
@@ -584,7 +582,7 @@
     |=  key=@ud
     ^+  +>
     ?+    key  ta-bel
-        %a  +>(pos.inp 0)
+        %a  +>(pos.inp 0, ris ~)
         %b  (ta-aro %l)
         %c  ta-bel(ris ~)
         %d  ?:  &(=(0 pos.inp) =(0 (lent buf.say.inp)))
@@ -592,11 +590,12 @@
             ta-del
         %e  +>(pos.inp (lent buf.say.inp))
         %f  (ta-aro %r)
-        %g  ta-bel(ris ~)
+        %g  ?~  ris  ta-bel
+            (ta-hom(pos.hit num.hit, ris ~) [%set ~])
         %k  =+  len=(lent buf.say.inp)
             ?:  =(pos.inp len)
               ta-bel 
-            %-  ta-hom(kil `(slag pos.inp buf.say.inp))
+            %-  ta-hom(kil `(slag pos.inp buf.say.inp), ris ~)
             (ta-cut pos.inp (sub len pos.inp))
         %l  +>(+> (se-blit %clr ~))
         %n  (ta-aro %d)
@@ -611,6 +610,7 @@
               ta-bel
             =+  sop=?:(=(len pos.inp) (dec pos.inp) pos.inp) 
             =.  pos.inp  +(sop)
+            =.  ris  ~
             %-  ta-hom
             :~  %mor
                 [%del sop]
@@ -618,12 +618,12 @@
             ==
         %u  ?:  =(0 pos.inp)
               ta-bel
-            %-  ta-hom(kil `(scag pos.inp buf.say.inp))
+            %-  ta-hom(kil `(scag pos.inp buf.say.inp), ris ~)
             (ta-cut 0 pos.inp)
         %v  ta-bel
         %x  +>(+> se-anon)
         %y  ?~  kil  ta-bel
-            (ta-hom (ta-cat pos.inp u.kil))
+            (ta-hom(ris ~) (ta-cat pos.inp u.kil))
     ==
   ::
   ++  ta-cru                                          ::  hear crud
@@ -663,6 +663,7 @@
       %sag  +>(+> (se-blit fec))
       %sav  +>(+> (se-blit fec))
       %txt  $(fec [%tan [%leaf p.fec]~])
+      %url  +>(+> (se-blit fec))
     ==
   ::
   ++  ta-dog                                          ::  change cursor
@@ -734,9 +735,9 @@
     |=  ext=(list ,@c)
     ^+  +>
     ?:  |(?=(~ ris) =(0 pos.u.ris))  ta-bel
+    =+  sop=?~(ext (dec pos.u.ris) pos.u.ris)
     =+  tot=(weld str.u.ris ext)
-    =+  dol=(slag (sub num.hit pos.u.ris) old.hit)
-    =+  sop=pos.u.ris
+    =+  dol=(slag (sub num.hit sop) old.hit)
     =+  ^=  ser
         =+  ^=  beg
             |=  [a=(list ,@c) b=(list ,@c)]  ^-  ?
@@ -750,7 +751,7 @@
           `sop
         $(sop (dec sop), dol t.dol)
     ?~  sup  ta-bel
-    (ta-mov(str.u.ris tot, pos.u.ris (dec u.sup)) (dec u.sup))
+    (ta-mov(str.u.ris tot, pos.u.ris u.sup) (dec u.sup))
   ::
   ++  ta-tan                                          ::  print tanks
     |=  tac=(list tank)

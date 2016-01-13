@@ -3,7 +3,7 @@ bartar, `|*`, %brtr
 
 Wet gate
 
-`|*` is a synthetic hoon that produces a [wet]() [gate]() with sample
+`|*` is a synthetic rune that produces a [wet]() [gate]() with sample
 [`$*(p)`](), arm `q`. A gate is a core with one arm, [`$`](), the empty
 name.
 

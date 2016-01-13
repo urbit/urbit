@@ -3,7 +3,7 @@ zaptis, `!=`, %zpts
 
 Show nock
 
-`!=` is a natural hoon that produces the formula of twig p as a noun.
+`!=` is a natural rune that produces the formula of twig p as a noun.
 
 Produces
 --------

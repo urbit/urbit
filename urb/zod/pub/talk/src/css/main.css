@@ -441,12 +441,12 @@ a {
   content: "~";
 }
 .type.private:before {
-  content: "•";
+  content: attr(data-glyph);
   font-size: 1rem;
   line-height: 1.1rem;
 }
 .type.public:before {
-  content: "▒";
+  content: attr(data-glyph);
   font-size: 0.8rem;
   line-height: 1.2rem;
 }
@@ -534,6 +534,8 @@ a {
 #writing {
   min-height: 1.6rem;
   min-width: 1.3rem;
+  max-width: 32rem;
+  line-height: 2rem;
   outline: none;
   padding: 0.3rem 0.1rem;
   margin-top: -0.3rem;
@@ -588,6 +590,15 @@ a {
   font-weight: 500;
   font-size: 0.8rem;
   text-transform: uppercase;
+}
+body:not(.offline) #offline {
+  display: none;
+}
+#offline {
+  transition: color 0.25s ease;
+}
+#offline.error {
+  color: #f00;
 }
 @media only screen and (min-width: 1024px) {
   #station-container:hover {

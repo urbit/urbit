@@ -950,20 +950,26 @@ _http_respond(u3_hrep* rep_u)
   u3_hreq* req_u;
 
   if ( !(htp_u = _http_serv_find(rep_u->sev_l)) ) {
-    uL(fprintf(uH, "http: server not found: %x\r\n", rep_u->sev_l));
+    if ( (u3C.wag_w & u3o_verbose) ) {
+      uL(fprintf(uH, "http: server not found: %x\r\n", rep_u->sev_l));
+    }
     return;
   }
   if ( !(hon_u = _http_conn_find(htp_u, rep_u->coq_l)) ) {
-    uL(fprintf(uH, "http: connection not found: %x/%d\r\n",
-                   rep_u->sev_l,
-                   rep_u->coq_l));
+    if ( (u3C.wag_w & u3o_verbose) ) {
+      uL(fprintf(uH, "http: connection not found: %x/%d\r\n",
+                     rep_u->sev_l,
+                     rep_u->coq_l));
+    }
     return;
   }
   if ( !(req_u = _http_req_find(hon_u, rep_u->seq_l)) ) {
-    uL(fprintf(uH, "http: request not found: %x/%d/%d\r\n",
+    if ( (u3C.wag_w & u3o_verbose) ) {
+      uL(fprintf(uH, "http: request not found: %x/%d/%d\r\n",
                     rep_u->sev_l,
                     rep_u->coq_l,
                     rep_u->seq_l));
+    }
     return;
   }
 #if 0

@@ -3,7 +3,7 @@ semsem, `;;`, %smsm
 
 Fixpoint
 
-`;;` is a synthetic hoon that types `q` as a fixpoint of `p`. More
+`;;` is a synthetic rune that types `q` as a fixpoint of `p`. More
 specifically, `;;` slams `q` through gate `p`, asserting that the
 resulting noun [`.=`]() the original, and produces it.
 

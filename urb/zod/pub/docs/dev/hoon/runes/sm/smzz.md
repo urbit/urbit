@@ -3,7 +3,7 @@ semzaz
 
 `++sail` tag
 
-`semzaz`, is a virtual hoon frequently referred to as [`++sail`]() in
+`semzaz`, is a virtual rune frequently referred to as [`++sail`]() in
 reference to `++sail`:vast which parses it. It is the most basic part of
 the templating structure frequently used to produce [`++manx`](). In its
 simplest and most common form we see `semzaz` as
@@ -80,5 +80,5 @@ Examples
     ~zod/try=> (poxo ;html:";{head meta(charset "utf-8")};{body p p}")
     "<html><head><meta charset="utf-8"></meta></head><body><p></p><p></p></body></html>"
 
-Here we create the most basic HTML structure using nested `dotzaz`, and
+Here we create the most basic HTML structure using nested `semzaz`, and
 eventually print it properly using [`++poxo`]().

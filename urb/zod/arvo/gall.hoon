@@ -202,7 +202,7 @@
     |=  [byk=beak dap=dude dep=@uvH]
     ^+  +>
     %+  mo-pass  [%sys %dep (scot %p p.byk) q.byk dap ~] 
-    [%f %wasp our dep]
+    [%f %wasp our dep &] 
   ::
   ++  mo-boot                                           ::  create ship
     |=  [dap=dude how=?(%new %old) byk=beak]
@@ -574,22 +574,18 @@
       ^+  .
       =+  [pyz=zip ful=*(set bone)]
       |-  ^+  +>
-      ?~  pyz
-        =+  ded=(~(tap in ful) ~)
-        |-  ^+  +>.^$
-        ?~  ded  +>.^$
-        %=    $
-            ded   t.ded
-            +>.^$
-          %=  ap-kill
-            ost      i.ded
-            q.q.pry  p:(~(got by sup.ged) i.ded)
-          ==
-        ==
-      ?.  ?=([%give %diff *] q.i.pyz)
-        $(pyz t.pyz)
-      =^  vad  +>  ap-fill(ost p.i.pyz)
-      $(pyz t.pyz, ful ?:(vad ful (~(put in ful) p.i.pyz)))
+      ?^  pyz
+        ?.  ?=([%give %diff *] q.i.pyz)
+          $(pyz t.pyz)
+        =^  vad  +>  ap-fill(ost p.i.pyz)
+        $(pyz t.pyz, ful ?:(vad ful (~(put in ful) p.i.pyz)))
+      =+  ded=(~(tap in ful) ~)
+      |-  ^+  +>.^$
+      ?~  ded  +>.^$
+      =>  %*(. $(ded t.ded) ost i.ded)
+      =+  tib=(~(get by sup.ged) ost)
+      ?~  tib  ~&([%ap-abut-bad-bone dap ost] ..ap-kill)
+      ap-kill(q.q.pry p.u.tib)
     ::
     ++  ap-aver                                         ::  cove to move
       |=  cov=cove
@@ -673,7 +669,7 @@
       ?.  (~(has by sup.ged) ost)  .
       =+  soy=(~(get by qel.ged) ost)
       ?:  |(?=(~ soy) =(0 u.soy))  
-        ~&  [%ap-fill-under [our dap] q.q.pry ost]
+        ::  ~&  [%ap-fill-under [our dap] q.q.pry ost]
         +
       =.  u.soy  (dec u.soy)
       ::  ~&  [%ap-fill-sub [[our dap] q.q.pry ost] u.soy]
@@ -700,7 +696,7 @@
       ^-  [? _.]
       =+  suy=(fall (~(get by qel.ged) ost) 0)
       ?:  =(20 suy)
-        ~&  [%ap-fill-full [our dap] q.q.pry ost]
+        ::  ~&  [%ap-fill-full [our dap] q.q.pry ost]
         [%| +]
       ::  ~?  !=(20 suy)  [%ap-fill-add [[our dap] q.q.pry ost] +(suy)]
       [%& +(qel.ged (~(put by qel.ged) ost +(suy)))]
@@ -978,6 +974,8 @@
         (ap-lame %pour (ap-suck "pour: malformed card"))
       =+  cug=(ap-find [-.q.vax pax])
       ?~  cug
+        ?:  =(-.q.vax %went)
+          +>.$
         (ap-lame -.q.vax (ap-suck "pour: no {(trip -.q.vax)}: {<pax>}"))
       =^  tel  vel  (~(slot wa vel) 3 vax)
       =^  cam  +>.$
@@ -1049,7 +1047,7 @@
     ::
     ++  ap-pull                                         ::  load delete
       =+  wim=(~(get by sup.ged) ost)
-      ?~  wim  ~&(%ap-pull-none +)
+      ?~  wim  +  ::  ~&(%ap-pull-none +)
       =:  sup.ged  (~(del by sup.ged) ost)
           qel.ged  (~(del by qel.ged) ost)
         ==
@@ -1062,7 +1060,7 @@
       +>+
     ::
     ++  ap-kill                                         ::  queue kill
-      ~&  [%ap-kill dap ost]
+      ::  ~&  [%ap-kill dap ost]
       (ap-give:ap-pull %quit ~)
     ::
     ++  ap-take                                         ::  non-diff gall take
@@ -1070,7 +1068,7 @@
       ^+  +>
       =+  cug=(ap-find cog pax)
       ?~  cug
-        ~&  [%ap-take-none cog pax]
+        ::  ~&  [%ap-take-none cog pax]
         +>.$
       =^  cam  +>.$  
         %+  ap-call  q.u.cug
@@ -1220,17 +1218,9 @@
     :^  hen  %give  %mass
     :-  %gall
     :-  %|
-    %-  |=  a=(list (list mass))  ^-  (list mass)      :: XX single-home
-        =+  a2=a
-        ?~  a  !!
-        ?~  i.a  ~
-        :_  $(a (turn a2 tail))
-        :-  p.i.i.a
-        ?~  -.q.i.i.a  
-          [%& (turn (turn a2 head) |=(b=mass ?~(-.q.b p.q.b !!)))]
-        [%| $(a (turn (turn a2 head) |=(b=mass ?~(-.q.b !! p.q.b))))]
-    %+  turn  (~(tap by pol.all))
-    |=  [@ mast]
+    %+  turn  (~(tap by pol.all))     :: XX single-home
+    |=  [our=@ mast]  ^-  mass
+    :+  (scot %p our)  %|
     :~  foreign/`sap
         blocked/[%| (sort :_(aor (~(tap by (~(run by wub) |=(sofa `+<))))))]
         active/[%| (sort :_(aor (~(tap by (~(run by bum) |=(seat `+<))))))]

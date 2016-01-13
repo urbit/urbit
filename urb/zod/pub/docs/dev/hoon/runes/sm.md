@@ -34,7 +34,7 @@ quotes).
 
 #### [++sail] runes:
 
-`;-`, `;+`, `;*`, `;%`, and `%cnzy` all compose a tree structure. See
+`;-`, `;+`, `;*`, `;%`, and `%smzz` all compose a tree structure. See
 also: [`++sail`]().
 
 <hr></hr>

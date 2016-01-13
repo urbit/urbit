@@ -253,6 +253,15 @@
           c3_w len_w;                       //  present length
           c3_w wid_w;                       //  total width
         } fut;
+
+        struct {
+          uv_thread_t* sit_u;               //  spinner thread
+          c3_o         diz_o;               //  spinner activated
+          c3_d         eve_d;               //  spinner start tick (unix μs)
+          c3_c*        why_c;               //  spinner event wire (root only)
+        } sun;
+
+        uv_mutex_t     mex_u;               //  mutex for non-daemon term state
       } u3_utat;
 
     /* u3_uled: event log header.
@@ -542,6 +551,7 @@
         c3_o    qui;                        //  -q, quiet
         c3_o    vno;                        //  -V, turn on +verb
         c3_o    mem;                        //  -M, memory madness
+        c3_o    rep;                        //  -R, report build info
       } u3_opts;
 
     /* u3_host: entire host.

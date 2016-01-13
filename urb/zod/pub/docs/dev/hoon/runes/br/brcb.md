@@ -3,7 +3,7 @@ barcab, `|_`, %brcb
 
 Door: core with sample
 
-`|_` is a synthetic hoon that produces a [`%gold`]() [door]() with
+`|_` is a synthetic rune that produces a [`%gold`]() [door]() with
 sample `p` and [arms]() `q`. The list must be closed with a `--`.
 
 `|_` is similar to `|%`, but defines a sample for the set of arms it

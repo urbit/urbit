@@ -3,7 +3,7 @@ ketdot, `^.`, %ktdt
 
 Cast to product type
 
-`^.` is a synthetic hoon that casts `q` to the type of `(p q)`. `^.` is
+`^.` is a synthetic rune that casts `q` to the type of `(p q)`. `^.` is
 the same as casting `q` to the product type of `p` and comes in handy
 when you don't want to run the contents of `p`.
 

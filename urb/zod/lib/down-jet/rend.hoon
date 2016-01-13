@@ -67,16 +67,20 @@
     =>  [ele=i.lum .(lum t.lum)]
     ?.  ?=(%html -.ele)
       (push (reso ele) ~)
+    ::  begin reparsing of html that the spec jankily lets through  ::
     =+  tex=(trip (role p.ele))
-    =^  mar  tex  [p q.q]:(need q:(many:poxa 1^1 tex))
+    =^  mar  lum  (chomp tex (sear |=(a=marl ?~(a ~ (some a))) many:poxa))
     ?^  mar
-      (push mar)
+      (push u.mar)
     =^  hed  lum  (chomp tex head:poxa)
     ?^  hed
       =+  max=`marx`u.hed
       (push(lum q) [max p] ~):[apex(had `n.max) .]
     =^  tal  lum  (chomp tex tail:poxa)
     ?~  tal
+      =^  cha  lum  (chomp tex prn)
+      ?^  cha
+        (push :/([u.cha]~) ~)
       (push ;lost:"{tex}" ~)
     ?:  =(had tal)
       [~ lum]
@@ -84,6 +88,7 @@
       =.  lum  [ele lum]
       (lose "unclosed {<u.had>}")
     (lose "close {<u.tal>}")
+    ::  end reparsing of html that the spec jankily lets through  ::
   ::
   ++  lose  |=(a=tape [[;lost:"{a}"]~ lum])
   ++  chomp
@@ -92,7 +97,7 @@
     =+  vex=(fel 1^1 tap)
     ?~  q.vex  [~ lum]
     :-  [~ (wonk vex)]
-    ?~(q.q.u.q.vex lum [[%html (crip q.q.u.q.vex) ~] lum])
+    ?~(q.q.u.q.vex lum [[%html (lore (crip q.q.u.q.vex))] lum])
   ::
   ++  push
     |=  a=marl
@@ -123,6 +128,8 @@
         [[hed id/(sanitize kid) ~] kid]
     ::
       %hrul  ;hr;
+      %meta  =+  jon=`json`o/(~(run by p.a) |=(cord s/+<))
+             ;meta(value "{(pojo jon)}", name "frontmatter", urb_front "");
   ::     %html  
              ::=+  tex=(role (turn p.a crip))
              ::=+  (poxa tex)

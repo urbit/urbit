@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/actions/TreeActions.coffee":[function(require,module,exports){
 var TreeDispatcher, TreePersistence;
 
 TreeDispatcher = require('../dispatcher/Dispatcher.coffee');
@@ -35,7 +35,8 @@ module.exports = {
 };
 
 
-},{"../dispatcher/Dispatcher.coffee":14,"../persistence/TreePersistence.coffee":20}],2:[function(require,module,exports){
+
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/dispatcher/Dispatcher.coffee","../persistence/TreePersistence.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/AnchorComponent.coffee":[function(require,module,exports){
 var BodyComponent, CLICK, Links, TreeActions, TreeStore, a, clas, div, query, reactify, recl, ref;
 
 clas = require('classnames');
@@ -311,10 +312,11 @@ module.exports = query({
       sein: this.props.sein
     }));
   }
-}), div);
+}), "div");
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./Async.coffee":3,"./BodyComponent.coffee":4,"./Reactify.coffee":11,"classnames":16}],3:[function(require,module,exports){
+
+},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/stores/TreeStore.coffee","./Async.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/Async.coffee","./BodyComponent.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/BodyComponent.coffee","./Reactify.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/Reactify.coffee","classnames":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/node_modules/classnames/index.js"}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/Async.coffee":[function(require,module,exports){
 var TreeActions, TreeStore, _load, code, div, recl, ref, span;
 
 _load = require('./LoadComponent.coffee');
@@ -424,8 +426,9 @@ module.exports = function(queries, Child, load) {
 };
 
 
-},{"../actions/TreeActions.coffee":1,"../stores/TreeStore.coffee":21,"./LoadComponent.coffee":10}],4:[function(require,module,exports){
-var Logo, Next, a, clas, div, img, p, query, reactify, recl, ref;
+
+},{"../actions/TreeActions.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/actions/TreeActions.coffee","../stores/TreeStore.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/stores/TreeStore.coffee","./LoadComponent.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/LoadComponent.coffee"}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/BodyComponent.coffee":[function(require,module,exports){
+var a, clas, div, extras, img, p, query, reactify, recl, ref, rele;
 
 clas = require('classnames');
 
@@ -435,62 +438,88 @@ reactify = require('./Reactify.coffee');
 
 recl = React.createClass;
 
+rele = React.createElement;
+
 ref = React.DOM, div = ref.div, p = ref.p, img = ref.img, a = ref.a;
 
-Logo = React.createFactory(recl({
-  render: function() {
-    var color, src;
-    color = this.props.color;
-    if (color === "white" || color === "black") {
-      src = "//storage.googleapis.com/urbit-extra/logo/logo-" + color + "-100x100.png";
-    }
-    return a({
-      href: "http://urbit.org",
-      style: {
-        border: "none"
+extras = {
+  spam: recl({
+    displayName: "Spam",
+    render: function() {
+      if (document.location.hostname !== 'urbit.org') {
+        return div({});
       }
-    }, [
-      img({
+      return div({
+        className: 'spam'
+      }, a({
+        href: "http://urbit.org#sign-up"
+      }, "Sign up"), " for our newsletter.");
+    }
+  }),
+  logo: recl({
+    displayName: "Logo",
+    render: function() {
+      var color, src;
+      color = this.props.color;
+      if (color === "white" || color === "black") {
+        src = "//storage.googleapis.com/urbit-extra/logo/logo-" + color + "-100x100.png";
+      }
+      return a({
+        href: "http://urbit.org",
+        style: {
+          border: "none"
+        }
+      }, img({
         src: src,
         className: "logo"
-      })
-    ]);
-  }
-}));
-
-Next = React.createFactory(query({
-  path: 't',
-  kids: {
-    name: 't',
-    head: 'r',
-    meta: 'j'
-  }
-}, recl({
-  displayName: "Links",
-  render: function() {
-    var curr, index, keys, next, ref1;
-    curr = this.props.kids[this.props.curr];
-    if (curr != null ? (ref1 = curr.meta) != null ? ref1.next : void 0 : void 0) {
-      keys = window.tree.util.getKeys(this.props.kids);
-      if (keys.length > 1) {
-        index = keys.indexOf(this.props.curr);
-        next = index + 1;
-        if (next === keys.length) {
-          next = 0;
-        }
-        next = keys[next];
-        next = this.props.kids[next];
-        return div({
-          className: "link-next"
-        }, [
-          a({
-            href: this.props.path + "/" + next.name
-          }, "Next: " + next.meta.title)
-        ]);
-      }
+      }));
     }
-  }
-})));
+  }),
+  next: query({
+    path: 't',
+    kids: {
+      name: 't',
+      head: 'r',
+      meta: 'j'
+    }
+  }, recl({
+    displayName: "Next",
+    render: function() {
+      var curr, index, keys, next, ref1;
+      curr = this.props.kids[this.props.curr];
+      if (curr != null ? (ref1 = curr.meta) != null ? ref1.next : void 0 : void 0) {
+        keys = window.tree.util.getKeys(this.props.kids);
+        if (keys.length > 1) {
+          index = keys.indexOf(this.props.curr);
+          next = index + 1;
+          if (next === keys.length) {
+            next = 0;
+          }
+          next = keys[next];
+          next = this.props.kids[next];
+          if (next) {
+            return div({
+              className: "link-next"
+            }, [
+              a({
+                href: this.props.path + "/" + next.name
+              }, "Next: " + next.meta.title)
+            ]);
+          }
+        }
+      }
+      return div({}, "");
+    }
+  })),
+  footer: recl({
+    displayName: "Footer",
+    render: function() {
+      return div({
+        className: "footer"
+      }, p({}, "This page was served by Urbit."));
+    }
+  })
+};
 
 module.exports = query({
   body: 'r',
@@ -501,35 +530,34 @@ module.exports = query({
 }, recl({
   displayName: "Body",
   render: function() {
-    var body, className, ref1;
-    className = ((ref1 = this.props.meta.layout) != null ? ref1.replace(/,/g, " ") : void 0) || "";
-    body = [reactify(this.props.body)];
-    if (this.props.meta.logo != null) {
-      body.unshift(Logo({
-        color: this.props.meta.logo
-      }));
-    }
-    if (this.props.meta.next != null) {
-      body.push(Next({
-        dataPath: this.props.sein,
-        curr: this.props.name
-      }));
-    }
-    if (this.props.meta.footer != null) {
-      body.push(div({
-        className: "footer"
-      }, [p({}, "This page was served by Urbit.")]));
-    }
+    var className, extra, ref1;
+    className = clas((ref1 = this.props.meta.layout) != null ? ref1.split(',') : void 0);
+    extra = (function(_this) {
+      return function(name, props) {
+        if (props == null) {
+          props = {};
+        }
+        if (_this.props.meta[name] != null) {
+          return React.createElement(extras[name], props);
+        }
+      };
+    })(this);
     return div({
       id: 'body',
       key: "body" + this.props.path,
       className: className
-    }, body);
+    }, extra('spam'), extra('logo', {
+      color: this.props.meta.logo
+    }), reactify(this.props.body), extra('next', {
+      dataPath: this.props.sein,
+      curr: this.props.name
+    }), extra('footer'));
   }
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":11,"classnames":16}],5:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/Reactify.coffee","classnames":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/node_modules/classnames/index.js"}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/CodeMirror.coffee":[function(require,module,exports){
 var div, recl, ref, textarea;
 
 recl = React.createClass;
@@ -552,7 +580,8 @@ module.exports = recl({
 });
 
 
-},{}],6:[function(require,module,exports){
+
+},{}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/Components.coffee":[function(require,module,exports){
 var div, recl;
 
 recl = React.createClass;
@@ -574,7 +603,8 @@ module.exports = {
 };
 
 
-},{"./CodeMirror.coffee":5,"./EmailComponent.coffee":7,"./KidsComponent.coffee":8,"./ListComponent.coffee":9,"./SearchComponent.coffee":12,"./TocComponent.coffee":13}],7:[function(require,module,exports){
+
+},{"./CodeMirror.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/CodeMirror.coffee","./EmailComponent.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/EmailComponent.coffee","./KidsComponent.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/KidsComponent.coffee","./ListComponent.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/ListComponent.coffee","./SearchComponent.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/SearchComponent.coffee","./TocComponent.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/TocComponent.coffee"}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/EmailComponent.coffee":[function(require,module,exports){
 var button, div, input, p, reactify, recl, ref;
 
 reactify = require('./Reactify.coffee');
@@ -648,13 +678,15 @@ module.exports = recl({
       ];
     }
     return p({
-      className: "email"
+      className: "email",
+      id: "sign-up"
     }, cont);
   }
 });
 
 
-},{"./Reactify.coffee":11}],8:[function(require,module,exports){
+
+},{"./Reactify.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/KidsComponent.coffee":[function(require,module,exports){
 var a, div, hr, li, query, reactify, recl, ref, ul;
 
 reactify = require('./Reactify.coffee');
@@ -673,13 +705,13 @@ module.exports = query({
 }, recl({
   displayName: "Kids",
   render: function() {
-    var _k, _keys, elem, item, k, klass, ref1, ref2, ref3, ref4, sorted, v;
+    var _k, d, elem, k, keyed, keys, klass, ref1, ref2, ref3, ref4, sorted, str, v;
     klass = "kids";
     if (this.props.dataType) {
       klass += " " + this.props.dataType;
     }
     sorted = true;
-    _keys = [];
+    keyed = {};
     ref1 = this.props.kids;
     for (k in ref1) {
       v = ref1[k];
@@ -687,35 +719,45 @@ module.exports = query({
         if (this.props.sortBy === 'date') {
           if (((ref2 = v.meta) != null ? ref2.date : void 0) == null) {
             sorted = false;
+            continue;
           }
-          _k = Number(v.meta.date.slice(1).replace(/\./g, ""));
-          _keys[_k] = k;
+          d = v.meta.date.slice(1).split(".");
+          if (d.length < 3) {
+            sorted = false;
+            continue;
+          }
+          str = d[0] + "-" + d[1] + "-" + d[2];
+          if (d.length > 3) {
+            str += " " + d[3] + ":" + d[4] + ":" + d[5];
+          }
+          _k = Number(new Date(str));
+          keyed[_k] = k;
         }
       } else {
         if (((ref3 = v.meta) != null ? ref3.sort : void 0) == null) {
           sorted = false;
         }
-        _keys[Number((ref4 = v.meta) != null ? ref4.sort : void 0)] = k;
+        keyed[Number((ref4 = v.meta) != null ? ref4.sort : void 0)] = k;
       }
     }
-    if (this.props.sortBy === 'date') {
-      _keys.reverse();
+    if (sorted === false) {
+      keyed = _.keys(this.props.kids);
     }
-    if (sorted !== true) {
-      _keys = _.keys(this.props.kids).sort();
+    keys = _.keys(keyed).sort();
+    if (this.props.sortBy === 'date') {
+      keys.reverse();
     }
     return div({
       className: klass
     }, (function() {
       var i, len, ref5, results;
-      ref5 = _.values(_keys);
       results = [];
-      for (i = 0, len = ref5.length; i < len; i++) {
-        item = ref5[i];
-        elem = this.props.kids[item];
+      for (i = 0, len = keys.length; i < len; i++) {
+        k = keys[i];
+        elem = (ref5 = this.props.kids[keyed[k]]) != null ? ref5 : "";
         results.push([
           div({
-            key: item
+            key: keyed[k]
           }, reactify(elem.body)), hr({}, "")
         ]);
       }
@@ -725,8 +767,9 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":11}],9:[function(require,module,exports){
-var a, clas, div, h1, li, query, reactify, recl, ref, ul;
+
+},{"./Async.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/ListComponent.coffee":[function(require,module,exports){
+var a, clas, div, h1, li, pre, query, reactify, recl, ref, span, ul;
 
 clas = require('classnames');
 
@@ -736,7 +779,7 @@ query = require('./Async.coffee');
 
 recl = React.createClass;
 
-ref = React.DOM, div = ref.div, a = ref.a, ul = ref.ul, li = ref.li, h1 = ref.h1;
+ref = React.DOM, div = ref.div, pre = ref.pre, span = ref.span, a = ref.a, ul = ref.ul, li = ref.li, h1 = ref.h1;
 
 module.exports = query({
   path: 't',
@@ -748,16 +791,24 @@ module.exports = query({
 }, recl({
   displayName: "List",
   render: function() {
-    var k;
+    var k, kids;
     k = clas({
       list: true
     }, this.props.dataType, {
       posts: this.props.dataType === 'post',
       "default": this.props['data-source'] === 'default'
     });
-    return ul({
+    kids = this.renderList();
+    if (!(kids.length === 0 && (this.props.is404 != null))) {
+      return ul({
+        className: k
+      }, kids);
+    }
+    return div({
       className: k
-    }, this.renderList());
+    }, h1({
+      className: 'error'
+    }, 'Error: Empty path'), div({}, pre({}, this.props.path), span({}, 'is either empty or does not exist.')));
   },
   renderList: function() {
     var _date, _k, _keys, date, elem, href, i, item, k, len, parts, path, preview, ref1, ref2, ref3, ref4, ref5, ref6, ref7, results, sorted, title, v;
@@ -872,7 +923,8 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":11,"classnames":16}],10:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/Reactify.coffee","classnames":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/node_modules/classnames/index.js"}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/LoadComponent.coffee":[function(require,module,exports){
 var div, input, recl, ref, textarea;
 
 recl = React.createClass;
@@ -912,7 +964,8 @@ module.exports = recl({
 });
 
 
-},{}],11:[function(require,module,exports){
+
+},{}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/Reactify.coffee":[function(require,module,exports){
 var Virtual, div, load, reactify, recl, ref, rele, span, walk;
 
 recl = React.createClass;
@@ -979,7 +1032,8 @@ module.exports = _.extend(reactify, {
 });
 
 
-},{"./LoadComponent.coffee":10}],12:[function(require,module,exports){
+
+},{"./LoadComponent.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/LoadComponent.coffee"}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/SearchComponent.coffee":[function(require,module,exports){
 var a, div, input, query, reactify, recl, ref,
   slice = [].slice;
 
@@ -1117,7 +1171,8 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":11}],13:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/TocComponent.coffee":[function(require,module,exports){
 var div, query, reactify, recl,
   slice = [].slice;
 
@@ -1245,7 +1300,8 @@ module.exports = query({
 }));
 
 
-},{"./Async.coffee":3,"./Reactify.coffee":11}],14:[function(require,module,exports){
+
+},{"./Async.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/Async.coffee","./Reactify.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/Reactify.coffee"}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/dispatcher/Dispatcher.coffee":[function(require,module,exports){
 var Dispatcher;
 
 Dispatcher = require('flux').Dispatcher;
@@ -1266,7 +1322,8 @@ module.exports = _.extend(new Dispatcher(), {
 });
 
 
-},{"flux":17}],15:[function(require,module,exports){
+
+},{"flux":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/node_modules/flux/index.js"}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/main.coffee":[function(require,module,exports){
 var rend;
 
 rend = React.render;
@@ -1439,7 +1496,8 @@ $(function() {
 });
 
 
-},{"./actions/TreeActions.coffee":1,"./components/AnchorComponent.coffee":2,"./components/BodyComponent.coffee":4,"./components/Components.coffee":6,"./persistence/TreePersistence.coffee":20}],16:[function(require,module,exports){
+
+},{"./actions/TreeActions.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/actions/TreeActions.coffee","./components/AnchorComponent.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/AnchorComponent.coffee","./components/BodyComponent.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/BodyComponent.coffee","./components/Components.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/components/Components.coffee","./persistence/TreePersistence.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/persistence/TreePersistence.coffee"}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/node_modules/classnames/index.js":[function(require,module,exports){
 /*!
   Copyright (c) 2015 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -1489,7 +1547,7 @@ $(function() {
 	}
 }());
 
-},{}],17:[function(require,module,exports){
+},{}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/node_modules/flux/index.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -1501,7 +1559,7 @@ $(function() {
 
 module.exports.Dispatcher = require('./lib/Dispatcher')
 
-},{"./lib/Dispatcher":18}],18:[function(require,module,exports){
+},{"./lib/Dispatcher":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js"}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/node_modules/flux/lib/Dispatcher.js":[function(require,module,exports){
 /*
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1753,7 +1811,7 @@ var _prefix = 'ID_';
 
 module.exports = Dispatcher;
 
-},{"./invariant":19}],19:[function(require,module,exports){
+},{"./invariant":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/node_modules/flux/lib/invariant.js"}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/node_modules/flux/lib/invariant.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
@@ -1808,7 +1866,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],20:[function(require,module,exports){
+},{}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/persistence/TreePersistence.coffee":[function(require,module,exports){
 var dedup;
 
 dedup = {};
@@ -1866,7 +1924,8 @@ module.exports = {
 };
 
 
-},{}],21:[function(require,module,exports){
+
+},{}],"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/stores/TreeStore.coffee":[function(require,module,exports){
 var EventEmitter, MessageDispatcher, QUERIES, TreeStore, _curr, _data, _tree, clog;
 
 EventEmitter = require('events').EventEmitter;
@@ -1924,7 +1983,7 @@ TreeStore = _.extend(EventEmitter.prototype, {
         data[k] = have[k];
       }
       if (query.kids) {
-        if (have.EMPTY) {
+        if (have.kids === false) {
           data.kids = {};
         } else {
           for (k in tree) {
@@ -1987,7 +2046,7 @@ TreeStore = _.extend(EventEmitter.prototype, {
       this.loadValues(tree[k], path + "/" + k, v);
     }
     if (data.kids && _.isEmpty(data.kids)) {
-      old.EMPTY = true;
+      old.kids = false;
     }
     return _data[path] = old;
   },
@@ -2091,7 +2150,8 @@ TreeStore.dispatchToken = MessageDispatcher.register(function(payload) {
 module.exports = TreeStore;
 
 
-},{"../dispatcher/Dispatcher.coffee":14,"events":22}],22:[function(require,module,exports){
+
+},{"../dispatcher/Dispatcher.coffee":"/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/dispatcher/Dispatcher.coffee","events":"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js"}],"/usr/local/lib/node_modules/watchify/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2151,8 +2211,10 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
+      } else {
+        throw TypeError('Uncaught, unspecified "error" event.');
       }
-      throw TypeError('Uncaught, unspecified "error" event.');
+      return false;
     }
   }
 
@@ -2394,4 +2456,4 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}]},{},[15]);
+},{}]},{},["/Users/galen/src/urbit-master/urb/zod/pub/tree/src/js/main.coffee"]);
