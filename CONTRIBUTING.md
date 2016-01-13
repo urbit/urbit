@@ -60,20 +60,19 @@ This is good practice for any project that uses git. You will pull
 upstream branches from urbit/urbit and push to your personal urbit fork
 by default.
 
-Next, check out `test`, which is the mainline development branch, and
+Next, check out `master`, which is the mainline development branch, and
 base a new branch on it to do your work on:
 
-    git checkout test
+    git checkout master
     git checkout -b [branch name]
 
 Now you are free to do your work on this branch. When finished, you may
 want to clean up your commits:
 
-    git rebase -i test
+    git rebase -i master
 
 Then you can push to your public fork with `git push` and make a pull
-request via the GitHub UI. Make sure you request to merge your branch
-into `test`, not `master`.
+request via the GitHub UI.
 
 After your changes are merged upstream, you can delete your branch (via
 github UI or `git push :[branch]` remotely, and with `git branch -d`

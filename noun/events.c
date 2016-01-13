@@ -113,6 +113,11 @@ _ce_mapfree(void* map_v)
 c3_i
 u3e_fault(void* adr_v, c3_i ser_i)
 {
+  //  Let the stack overflow handler run.
+  if ( 0 == ser_i ) {
+    return 0;
+  }
+
   c3_w* adr_w = (c3_w*) adr_v;
 
   if ( (adr_w < u3_Loom) || (adr_w >= (u3_Loom + u3a_words)) ) {

@@ -1,22 +1,29 @@
+# autoconf
+/.MAKEFILE-VERSION
+/make.conf
+/.make.conf
+# intermediate
 *.swo
 *.swp
 *.o
 /outside/**/*.a
-.DS_Store
-/bin/urbit
-/urb/*/
-!/urb/zod/
 /outside/re2/obj
-/inst
-/cmpil
+# build
+/bin/urbit
 /vere.pkg
-/.MAKEFILE-VERSION
-/make.conf
-/.make.conf
-node_modules/
 .tags
 .etags
 GPATH
 GTAGS
 GRTAGS
+# scratch
+/urb/*/
+!/urb/zod/
+/zod/
+# dependencies
+node_modules/
+# OS
+.DS_Store
+# ??
+/inst
 cscope.*

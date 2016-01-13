@@ -211,7 +211,7 @@ int FOO;
   }
 
   static u3_noun
-  _mint_bake(u3_noun van,
+  _mint_harp(u3_noun van,
              u3_noun sut,
              u3_noun dab)
   {
@@ -245,15 +245,15 @@ int FOO;
           return vad;
         }
         else if ( (u3_nul == l_dab) ) {
-          return u3nc(vad, _mint_bake(van, sut, r_dab));
+          return u3nc(vad, _mint_harp(van, sut, r_dab));
         }
         else if ( (u3_nul == r_dab) ) {
-          return u3nc(vad, _mint_bake(van, sut, l_dab));
+          return u3nc(vad, _mint_harp(van, sut, l_dab));
         }
         else {
           return u3nt(vad,
-                      _mint_bake(van, sut, l_dab),
-                      _mint_bake(van, sut, r_dab));
+                      _mint_harp(van, sut, l_dab),
+                      _mint_harp(van, sut, r_dab));
         }
       }
     }
@@ -275,7 +275,7 @@ int FOO;
                                   u3k(p_dan),
                                   u3nc(u3_nul,
                                        u3k(dab))));
-    u3_noun dez = _mint_bake(van, toc, dab);
+    u3_noun dez = _mint_harp(van, toc, dab);
     u3_noun zod = u3nc(1, dez);
     u3_noun cot = _mint_core(u3k(p_dan),
                              u3nt(mel,
