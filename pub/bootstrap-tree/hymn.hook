@@ -1,0 +1,54 @@
+/=  body  /:  /===/pub/bootstrap-tree/contributing  /elem/
+::
+^-  manx
+::
+;html
+  ;head
+    ;title: Bootstrap Test - ~2016.1
+    ;link(rel "stylesheet", href "/home/lib/fonts.css");
+    ;link(rel "stylesheet", href "/home/lib/bootstrap.css");
+    ;script(src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js");
+  ==
+  ;body
+    ;div.container
+      ;div.row
+        ;div.col-md-2.ctrl
+          ;div.mine;
+          ;div.icon
+            ;div.home;
+            ;div.up;
+            ;div.prev;
+            ;div.next;
+            ;button.navbar-toggler(type "button"): ☰
+          ==
+          ;ul.nav
+            ;li.nav-item
+              ;a.nav-link: Nock
+            ==
+            ;li.nav-item
+              ;a.nav-link: Hoon
+            ==
+            ;li.nav-item
+              ;a.nav-link: Arvo
+            ==
+            ;li.nav-item.selected
+              ;a.nav-link: Contributing
+            ==
+          ==
+        ==
+      ==
+      ;div.row
+        ;div.col-md-10.col-md-offset-2.body
+          ;+  body
+        ==
+      ==
+    ==
+    ;script(type "text/javascript"):'''
+                                    $(function() {
+                                      $('.navbar-toggler').click(function() {
+                                          $('.ctrl').toggleClass('open')
+                                        })
+                                    })
+                                    '''
+  ==
+==
