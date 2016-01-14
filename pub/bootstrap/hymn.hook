@@ -1,4 +1,4 @@
-::/=  body  /:  /===/pub/bootstrap-talk/chat  /elem/
+/=  body  /:  /===/pub/bootstrap-talk/body  /elem/
 ::
 ^-  manx
 ::
@@ -39,14 +39,7 @@
       ==
       ;div.row
         ;div.col-md-10.col-md-offset-2.body
-          ;div.gram
-            ;div.meta
-              ;div.icon.public;
-              ;div.author: ~talsur-todres
-              ;div.path;
-            ==
-            ;div.body: Including the black townships?
-          ==
+          ;+  body
         ==
       ==
     ==
