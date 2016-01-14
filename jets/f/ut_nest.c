@@ -253,7 +253,7 @@
           return _nest_dext(van, q_sut, tel, ref, seg, reg, gil);
         }
       }
-#if 1
+#if 0
       case c3__fork: p_sut = u3t(sut);
       {
         u3_noun fop = u3nc(c3__frog, u3qdi_tap(p_sut, u3_nul));
@@ -453,7 +453,7 @@
             return _nest_dext(van, sut, tel, q_ref, seg, reg, gil);
           }
         }
-#if 1
+#if 0
         case c3__fork: p_ref = u3t(ref);
         {
           u3_noun gif = u3nc(c3__frog, u3qdi_tap(p_ref, u3_nul));
