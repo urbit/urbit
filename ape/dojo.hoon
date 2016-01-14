@@ -752,7 +752,7 @@
     |=  txt/tape                                        ::
     ^-  (each (unit (each dojo-command tape)) hair)     ::  prefix+result
     =+  len=+((lent txt))                               ::  line length
-    =.  txt  :(weld buf txt "\0a")                      ::
+    =.  txt  (weld buf `tape`(weld txt "\0a"))          ::
     =+  vex=((full dp-command-line):dp [1 1] txt)       ::
     ?:  =(q.p.vex len)                                  ::  matched to line end
       [%& ~]                                            ::

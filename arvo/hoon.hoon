@@ -7656,8 +7656,8 @@
     =-  [p.tez (doge q.p.tez q.tez)]
     ^=  tez
     ^-  {p/{p/(map span @) q/(map @ wine)} q/wine}
-    ?:  (~(meet ut sut) -:!>(*span))
-      [dex %span]
+    ::  ?:  (~(meet ut sut) -:!>(*span))
+    ::    [dex %span]
     ?-    sut
         $noun      [dex sut]
         $void      [dex sut]
@@ -7784,50 +7784,50 @@
       ==
   =+  sut=`span`%noun
   |%
-  ++  burn
-    =+  gil=*(set span)
-    |-  ^-  *
-    ?-    sut
-        {$atom *}   ?~(q.sut 0 u.q.sut)
-        {$cell *}   [$(sut p.sut) $(sut q.sut)]
-        {$core *}   [p.r.q.sut $(sut p.sut)]
-        {$face *}   $(sut repo)
-        {$fork *}   $(sut -.p.sut)
-        {$frog *}   $(sut -.p.sut)
-        {$hold *}   ?:  (~(has in gil) sut)
-                      ~_  (dunk %span)
-                      ~|(%burn-loop !!)
-                    $(sut repo, gil (~(put in gil) sut))
-        $noun       0
-        $void       ~|(%burn-void !!)
-    ==
 ::++  burn
 ::  =+  gil=*(set span)
-::  ~|  %burn
-::  %-  need
-::  |-  ^-  (unit)
+::  |-  ^-  *
 ::  ?-    sut
-::      {$atom *}   `?~(q.sut 0 u.q.sut)
-::      {$cell *}   %+  biff  $(sut p.sut) 
-::                  |=(* (biff ^$(sut q.sut) |=(* `[+>+< +<])))
-::      {$core *}   (biff $(sut p.sut) |=(* `[p.r.q.sut +<]))
+::      {$atom *}   ?~(q.sut 0 u.q.sut)
+::      {$cell *}   [$(sut p.sut) $(sut q.sut)]
+::      {$core *}   [p.r.q.sut $(sut p.sut)]
 ::      {$face *}   $(sut repo)
-::      {$fork *}   =+  yed=(~(tap in p.sut))
-::                  |-  ^-  (unit) 
-::                  ?~  yed  ~
-::                  =+  [dis=^$(sut i.yed) mor=$(yed t.yed)]
-::                  ?~  dis  mor
-::                  ?~  mor  dis
-::                  ?:  =(.?(u.mor) .?(u.dis))
-::                    ?:((gor u.mor u.dis) mor dis)
-::                  ?@(u.mor mor dis)
+::      {$fork *}   $(sut -.p.sut)
 ::      {$frog *}   $(sut -.p.sut)
 ::      {$hold *}   ?:  (~(has in gil) sut)
-::                    ~
+::                    ~_  (dunk %span)
+::                    ~|(%burn-loop !!)
 ::                  $(sut repo, gil (~(put in gil) sut))
-::      $noun       `0
-::      $void       ~
-::  ==
+::      $noun       0
+::      $void       ~|(%burn-void !!)
+::  ==  
+  ++  burn
+    =+  gil=*(set span)
+    ~|  %burn
+    %-  need
+    |-  ^-  (unit)
+    ?-    sut
+        {$atom *}   `?~(q.sut 0 u.q.sut)
+        {$cell *}   %+  biff  $(sut p.sut) 
+                    |=(* (biff ^$(sut q.sut) |=(* `[+>+< +<])))
+        {$core *}   (biff $(sut p.sut) |=(* `[p.r.q.sut +<]))
+        {$face *}   $(sut repo)
+        {$fork *}   =+  yed=(~(tap in p.sut))
+                    |-  ^-  (unit) 
+                    ?~  yed  ~
+                    =+  [dis=^$(sut i.yed) mor=$(yed t.yed)]
+                    ?~  dis  mor
+                    ?~  mor  dis
+                    ?:  =(.?(u.mor) .?(u.dis))
+                      ?:((gor u.mor u.dis) mor dis)
+                    ?@(u.mor mor dis)
+        {$frog *}   $(sut -.p.sut)
+        {$hold *}   ?:  (~(has in gil) sut)
+                      ~
+                    $(sut repo, gil (~(put in gil) sut))
+        $noun       `0
+        $void       ~
+    ==
   ::
   ++  busk
     ~/  %busk
