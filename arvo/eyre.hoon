@@ -57,6 +57,8 @@
               [%ha p=path:beak]                         ::  GET request
               [%he p=whir]                              ::  HEAD request
               [%hi p=mark ~]                            ::  outbound HTTP
+              [%ho p=mark ~]                            ::  authed HTTP out
+              [%se p=(list ,@t)]                        ::  security driver
               [%si ~]                                   ::  response done
               [%of p=ixor q=$|(~ whir-of)]              ::  associated view
               [%ow p=ixor ~]                            ::  dying view
@@ -66,7 +68,7 @@
 --                                                      ::
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
-  $:  %3                                                ::  version
+  $:  %4                                                ::  version
       gub=@t                                            ::  random identity
       hov=(unit ship)                                   ::  master for remote
       ged=duct                                          ::  client interface
@@ -81,8 +83,10 @@
       wup=(map hole cyst)                               ::  secure sessions
       sop=(map hole ,[ship ?])                          ::  foreign sess names
       wix=(map ixor stem)                               ::  open views
+      sec=(map (list ,@t) driv)                         ::  security drivers
   ==                                                    ::
 ::
+++  driv  (pair (unit vase) (qeu (pair mark vase:hiss)))::  driver state
 ++  live                                                ::  in flight
   $%  [%exec p=whir]                                    ::  ford build
       [%wasp p=(list ,@uvH)]                            ::  ford deps
@@ -615,10 +619,7 @@
       ::    kes    (~(del by kes) hen)
       ::  ==
       ::  ~&  eyre-them/(earn p.u.p.kyz)
-      =+  wir=hi//[p.kyz]
-      ?:  ?=(%hiss p.q.kyz)
-        (pass-note wir [%e %meta :(slop !>(%them) !>(~) q.q.kyz)])
-      (back wir %hiss q.kyz)
+      (back ho//[p.kyz] %hiss q.kyz)
     ::
         %they                                           ::  inbound response
       =+  kas=(need (~(get by q.ask) p.kyz))
@@ -738,6 +739,8 @@
       (give-json 200 ~ (joba %beat %b &))
     ::
         %news                                         ::  dependency updated
+      ?:  ?=([%se *] tee)
+        rebuild:(dom-vi p.tee)
       ?.  ?=([%on ~] tee)
         ~&(e/lost/[tee hen] +>.$)
       %+  roll  (~(tap in (~(get ju liz) p.sih)))
@@ -757,12 +760,28 @@
           $|(~ [?(%on %ay %ow) *])  ~|(e/ford/lost/tee !!)
           [%of @ ~]  ~|(e/ford/lost/tee !!)
           [%si ~]  (give-sigh q.sih)
+          [%se *]
+        ?:  ?=(%| -.q.sih)
+          ((slog >%sec-failed< >`path`p.tee< p.q.sih) ..axon)
+        (get-upd:(dom-vi p.tee) p.sih q.p.q.sih)
+      ::
+          [%ho ^]
+        ?:  ?=(%| -.q.sih)
+          (give-sigh q.sih)  ::  XX crash?
+        =*  cay  p.q.sih
+        ?>  ?=(%hiss p.cay)
+        =+  ((hard ,[pul=purl ^]) q.q.cay)
+        ?.  ?=(%& -.r.p.pul)
+          (pass-note hi//[p.tee] [%e %meta :(slop !>(%them) !>(~) q.cay)])
+        (get-req:(dom-vi p.r.p.pul) p.tee q.cay)
+      ::
           [%hi ^]
         ?:  ?=(%| -.q.sih)
           (give-sigh q.sih)  ::  XX crash?
         =*  cay  p.q.sih
         ?>  ?=(%hiss p.cay)
         (pass-note tee [%e %meta :(slop !>(%them) !>(~) q.cay)])
+      ::
           [%he *]                     ::  XX hack
         =.  ..axon  $(tee p.tee)
         %_  ..axon
@@ -824,6 +843,7 @@
     (fail 500 0v0 >%exit< p.mul)
   ::
   ++  ire-ix  |=(ire=ixor ~(. ix ire (~(got by wix) ire)))
+  ++  dom-vi  |=(dom=path ~(. vi dom (fall (~(get by sec) dom) *driv)))
   ::
   ++  ses-authed 
     |=  ses=hole
@@ -1547,6 +1567,34 @@
     ++  wake  ^+(..ix abet(ude ~))  ::  XX other effects?
     ::  XX unused
     ++  print-subs  |=([a=dock b=path] "{<p.a>}/{(trip q.a)}{(spud b)}")
+    --
+  ++  vi                                                ::  auth engine
+    |_  [dom=path cor=(unit vase) req=(qeu ,[p=mark q=vase:hiss])]
+    ++  abet  +>(sec (~(put by sec) +<))
+    ++  pump
+      ^+  abet
+      ?~  cor
+        build
+      ?:  =(~ req)  abet
+      =^  ole  req  ~(get to req)
+      =>  .(ole `[p=mark q=vase]`ole)
+      =-  (pass-note:abet hi//[p.ole] (ford-req root-beak -))
+      cast/hiss/call/[`core/u.cor `hiss/q.ole]
+    ::
+    ++  get-upd  
+      |=  [dep=@uvH roc=vase]
+      ~&  got-upd/dep
+      %_  pump
+        cor  `roc
+        ..vi  (pass-note se/dom %f [%wasp our dep &])
+      ==
+    ::
+    ++  rebuild  build(cor ~)
+    ++  build
+      =+  bem=[root-beak (flop %_(dom . sec/dom))]
+      (pass-note:abet se/dom (ford-req root-beak core/bem))
+    ::
+    ++  get-req  |=(a=[mark vase:hiss] pump(req (~(put to req) a)))
 --  --
 --
 .   ==
@@ -1595,15 +1643,17 @@
   ~
 ::
 ++  load                                                ::  take previous state
+  =+  bolo-3=,_[%3 %*(+ *bolo |13 &14.+.bol)]
   =+  even-2=?(even [%mean p=[dock path] *])            ::  old %quit
   =+  ^=  stem-2                                        ::  no die, sus
       ,_=+(*stem -(|3 |5.-, q.eve *(map ,@u even-2)))
-  =+  bolo-2=,_[%2 %*(+ *bolo wix *(map ixor stem-2))]
+  =+  bolo-2=,_[%2 %*(+ *bolo-3 wix *(map ixor stem-2))]
   =+  bolo-1=,_[%1 +(|4 |5.+)]:*bolo-2                  ::  no lyv
-  |=  old=?(bolo bolo-1 bolo-2)
+  |=  old=?(bolo bolo-3 bolo-2 bolo-1)
   ^+  ..^$
   ?-  -.old
-    %3  ..^$(+>- old)
+    %4  ..^$(+>- old)
+    %3  $(old [%4 +(wix [wix ~])]:old)
     %2  =+  evn=|=(a=even-2 ?+(-.a a %mean [%quit p.a]))
         =+  stm=|=(a=stem-2 a(|3 [now ~ |3.a(q.eve (~(run by q.eve.a) evn))]))
         $(old [%3 +.old(wix (~(run by wix.old) stm))])
