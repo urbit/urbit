@@ -7612,11 +7612,13 @@
     =+  may=(~(get by p.ham) p.q.ham)
     ?~  may
       q.ham
+    =+  nul=[%pear %n 0]
     ?.  ?&  ?=({$pick *} u.may)
-            ?=(^ p.u.may)
-            =([%pear %n 0] i.p.u.may)
+            ?=([* * ~] p.u.may)
+            |(=(nul i.p.u.may) =(nul i.t.p.u.may)))
         ==
       q.ham
+    =+  din=?:(=([%pear 
     ?:  ?&  ?=({{$plot {$face *} {$face * $stop *} $~} $~} t.p.u.may)
             =(p.q.ham p.q.i.t.p.i.t.p.u.may)
             =(1 (met 3 p.i.p.i.t.p.u.may))
@@ -7656,8 +7658,8 @@
     =-  [p.tez (doge q.p.tez q.tez)]
     ^=  tez
     ^-  {p/{p/(map span @) q/(map @ wine)} q/wine}
-    ::  ?:  (~(meet ut sut) -:!>(*span))
-    ::    [dex %span]
+    ?:  (~(meet ut sut) -:!>(*span))
+      [dex %span]
     ?-    sut
         $noun      [dex sut]
         $void      [dex sut]
