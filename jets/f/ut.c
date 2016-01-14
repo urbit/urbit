@@ -3,6 +3,9 @@
 */
 #include "all.h"
 
+  extern void
+  u3_lo_tank(c3_l tab_l, u3_noun tac);
+
 
   //  duck: create a duck core for mean.
   //
@@ -49,6 +52,16 @@
     u3z(duq);
     u3z(von);
     return ret;
+  }
+
+  //  dump: dump a type.
+  //
+  void
+  u3qfu_dump(u3_noun     van,
+             const c3_c* paz_c,
+             u3_noun     typ)
+  {
+    u3_lo_tank(0, u3n_kick_on(u3qfu_dunq(van, paz_c, typ)));
   }
 
   //  shew: create a show core for mean

@@ -253,6 +253,16 @@
           return _nest_dext(van, q_sut, tel, ref, seg, reg, gil);
         }
       }
+#if 1
+      case c3__fork: p_sut = u3t(sut);
+      {
+        u3_noun fop = u3nc(c3__frog, u3qdi_tap(p_sut, u3_nul));
+        u3_noun ret = _nest_dext(van, fop, tel, ref, seg, reg, gil);
+
+        u3z(fop);
+        return ret;
+      }
+#else
       case c3__fork: p_sut = u3t(sut);
       {
         if ( c3n == u3du(ref) ) switch ( ref ) {
@@ -286,6 +296,7 @@
           return c3n;
         }
       }
+#endif
       case c3__frog: p_sut = u3t(sut);
       {
         if ( c3n == u3du(ref) ) switch ( ref ) {
@@ -315,6 +326,7 @@
       case c3__hold:
       {
         if ( c3y == u3qdi_has(seg, sut) ) {
+          u3qfu_dump(van, "segd", u3nt(c3__cell, u3k(sut), u3k(ref)));
           return c3n;
         }
         else {
@@ -355,9 +367,12 @@
     u3_noun tyn = _nest_dext_in(van, sut, tel, ref, seg, reg, gil);
 
     if ( (c3y == tyn) || (c3n == tel) ) {
+      if ( c3n == tyn ) {
+        u3qfu_dump(van, "dext", u3nt(c3__cell, u3k(sut), u3k(ref)));
+      }
       return tyn;
     } else {
-#if 0
+#if 1
       u3_noun dun = u3qfu_dunq(van, "need", sut);
       u3_noun niz = u3qfu_dunq(van, "have", ref);
 
@@ -437,6 +452,16 @@
             return _nest_dext(van, sut, tel, q_ref, seg, reg, gil);
           }
         }
+#if 1
+        case c3__fork: p_ref = u3t(ref);
+        {
+          u3_noun gif = u3nc(c3__frog, u3qdi_tap(p_ref, u3_nul));
+          u3_noun ret = _nest_sint(van, sut, tel, gif, seg, reg, gil);
+
+          u3z(gif);
+          return ret;
+        }
+#else
         case c3__fork: p_ref = u3t(ref);
         {
           u3_noun dey = u3qdi_tap(p_ref, u3_nul);
@@ -453,13 +478,17 @@
           u3z(dey);
           return c3y;
         }
+#endif
         case c3__frog: {
           p_ref = u3t(ref);
 
           while ( u3_nul != p_ref ) {
-            if ( c3n == _nest_dext(van, sut, c3n, u3h(p_ref), seg, reg, gil) ) {
+            if ( c3n == _nest_dext(van, sut, tel, u3h(p_ref), seg, reg, gil) ) {
+              u3qfu_dump(van, "fail", 
+                         u3nt(c3__cell, u3k(sut), u3k(u3h(p_ref))));
               return c3n;
-            } else {
+            } 
+            else {
               p_ref = u3t(p_ref);
             }
           }
