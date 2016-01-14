@@ -6,14 +6,14 @@
   static u3_noun _cqfu_wrap(u3_noun, u3_noun, u3_noun);
 
   static u3_noun
-  _wrap_frog(u3_noun van, u3_noun p_sut, u3_noun yoz)
+  _wrap_fork(u3_noun van, u3_noun p_sut, u3_noun yoz)
   {
     if ( u3_nul == p_sut ) {
       return u3_nul;
     } 
     else {
       return u3nc(_cqfu_wrap(van, u3h(p_sut), yoz),
-                  _wrap_frog(van, u3t(p_sut), yoz));
+                  _wrap_fork(van, u3t(p_sut), yoz));
     }
   }
 
@@ -51,14 +51,10 @@
       case c3__fork: p_sut = u3t(sut);
       {
         u3_noun yed = u3qdi_tap(p_sut, u3_nul);
-        u3_noun ret = u3kf_frog(_wrap_frog(van, yed, yoz));
+        u3_noun ret = u3kf_fork(_wrap_fork(van, yed, yoz));
 
         u3z(yed);
         return ret;
-      }
-      case c3__frog: p_sut = u3t(sut);
-      {
-        return u3kf_frog(_wrap_frog(van, p_sut, yoz));
       }
       case c3__hold:
       {

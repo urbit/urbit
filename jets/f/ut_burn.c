@@ -10,7 +10,7 @@
   _burn_in(u3_noun van, u3_noun sut, u3_noun gil);
 
   static u3_noun
-  _burn_frog(u3_noun van,
+  _burn_fork(u3_noun van,
              u3_noun yed,
              u3_noun gil)
   {
@@ -18,7 +18,7 @@
       return u3_nul;
     } else {
       u3_noun dis = _burn_in(van, u3h(yed), gil);
-      u3_noun mor = _burn_frog(van, u3t(yed), gil);
+      u3_noun mor = _burn_fork(van, u3t(yed), gil);
 
       if ( u3_nul == dis ) return mor;
       if ( u3_nul == mor ) return dis;
@@ -120,14 +120,10 @@
       case c3__fork: p_sut = u3t(sut);
       {
         u3_noun yed = u3qdi_tap(p_sut, u3_nul);
-        u3_noun ret = _burn_frog(van, yed, gil);
+        u3_noun ret = _burn_fork(van, yed, gil);
 
         u3z(yed);
         return ret;
-      }
-      case c3__frog: p_sut = u3t(sut);
-      {
-        return _burn_in(van, u3h(p_sut), gil);
       }
       case c3__hold:
       {

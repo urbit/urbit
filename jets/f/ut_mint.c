@@ -13,7 +13,7 @@
   static u3_noun
   _mint_bean()
   {
-    return u3kf_frog(u3nt(u3nq(c3__atom, 'f', u3_nul, 0),
+    return u3kf_fork(u3nt(u3nq(c3__atom, 'f', u3_nul, 0),
                           u3nq(c3__atom, 'f', u3_nul, 1),
                           u3_nul));
   }

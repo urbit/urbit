@@ -13,14 +13,14 @@
   _peek_in(u3_noun, u3_noun, u3_noun, u3_atom, u3_noun);
 
   static u3_noun
-  _peek_frog(u3_noun van, u3_noun p_sut, u3_noun way, u3_noun axe, u3_noun gil)
+  _peek_fork(u3_noun van, u3_noun p_sut, u3_noun way, u3_noun axe, u3_noun gil)
   {
     if ( u3_nul == p_sut ) {
       return u3_nul;
     } 
     else {
       return u3nc(_peek_in(van, u3h(p_sut), way, axe, gil),
-                  _peek_frog(van, u3t(p_sut), way, axe, gil));
+                  _peek_fork(van, u3t(p_sut), way, axe, gil));
     }
   }
 
@@ -115,15 +115,10 @@
       case c3__fork: p_sut = u3t(sut);
       {
         u3_noun yed = u3qdi_tap(p_sut, u3_nul);
-        u3_noun ret = u3kf_frog(_peek_frog(van, yed, way, axe, gil));
+        u3_noun ret = u3kf_fork(_peek_fork(van, yed, way, axe, gil));
 
         u3z(yed);
         return ret;
-      }
-      case c3__frog: {
-        p_sut = u3t(sut);
-
-        return u3kf_frog(_peek_frog(van, p_sut, way, axe, gil));
       }
       case c3__hold: {
         if ( (c3y == u3qdi_has(gil, sut)) ) {

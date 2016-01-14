@@ -9,7 +9,7 @@
   _fish_in(u3_noun, u3_noun, u3_atom, u3_noun);
 
   static u3_noun
-  _fish_frog(u3_noun van,
+  _fish_fork(u3_noun van,
              u3_noun p_sut,
              u3_atom axe,
              u3_noun vit)
@@ -19,7 +19,7 @@
     } 
     else {
       u3_noun hed = _fish_in(van, u3h(p_sut), axe, vit);
-      u3_noun tal = _fish_frog(van, u3t(p_sut), axe, vit);
+      u3_noun tal = _fish_fork(van, u3t(p_sut), axe, vit);
       u3_noun pro = u3qf_flor(hed, tal);
 
       u3z(hed);
@@ -102,14 +102,10 @@
       case c3__fork: p_sut = u3t(sut);
       {
         u3_noun yed = u3qdi_tap(p_sut, u3_nul);
-        u3_noun ret = _fish_frog(van, yed, axe, vit);
+        u3_noun ret = _fish_fork(van, yed, axe, vit);
 
         u3z(yed);
         return ret;
-      }
-      case c3__frog: {
-        p_sut = u3t(sut);
-        return _fish_frog(van, p_sut, axe, vit);
       }
       case c3__hold: {
         p_sut = u3t(sut);

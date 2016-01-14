@@ -19,11 +19,11 @@
     else if ( c3__void == hoz ) {
       return u3k(bur);
     }
-    else return u3kf_frog(u3nt(u3k(hoz), u3k(bur), u3_nul));
+    else return u3kf_fork(u3nt(u3k(hoz), u3k(bur), u3_nul));
   }
 
   u3_noun
-  u3qf_frog(u3_noun yed)
+  u3qf_fork(u3_noun yed)
   {
     u3_noun lez = u3_nul;
 
@@ -51,21 +51,21 @@
   }
 
   u3_noun
-  u3wf_frog(u3_noun cor)
+  u3wf_fork(u3_noun cor)
   {
     u3_noun yed;
 
     if ( c3n == u3r_mean(cor, u3x_sam, &yed, 0) ) {
       return u3m_bail(c3__fail);
     } else {
-      return u3qf_frog(yed);
+      return u3qf_fork(yed);
     }
   }
 
   u3_noun
-  u3kf_frog(u3_noun yed)
+  u3kf_fork(u3_noun yed)
   {
-    u3_noun ret = u3qf_frog(yed);
+    u3_noun ret = u3qf_fork(yed);
 
     u3z(yed);
     return ret;

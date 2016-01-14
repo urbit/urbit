@@ -16,7 +16,7 @@
       default: return u3k(sut);
 
       case c3__noun: {
-        return u3kf_frog(u3nt(u3nt(c3__atom, u3_blip, u3_nul),
+        return u3kf_fork(u3nt(u3nt(c3__atom, u3_blip, u3_nul),
                               u3nt(c3__cell, c3__noun, c3__noun),
                               u3_nul));
       }

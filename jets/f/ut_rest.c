@@ -38,7 +38,7 @@
   {
     u3_noun gar = _rest_in_list(van, leg);
     u3_noun yed = _rest_in_stil(van, gar);
-    u3_noun fub = u3qf_frog(yed);
+    u3_noun fub = u3qf_fork(yed);
 
     u3z(gar);
     u3z(yed);

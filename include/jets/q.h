@@ -171,9 +171,8 @@
     u3_noun u3qf_flay(u3_noun);
     u3_noun u3qf_flip(u3_noun);
     u3_noun u3qf_flor(u3_noun, u3_noun);
-    u3_noun u3qf_fork(u3_noun);
     u3_noun u3qf_forq(u3_noun, u3_noun);
-    u3_noun u3qf_frog(u3_noun);
+    u3_noun u3qf_fork(u3_noun);
     u3_noun u3qf_grof(u3_noun);
     u3_noun u3qf_hike(u3_noun, u3_noun);
     u3_noun u3qf_look(u3_noun, u3_noun);

@@ -94,10 +94,10 @@
     u3_noun
     u3ke_trip(u3_noun a);
 
-  /* u3kf_frog(): build %fork span.
+  /* u3kf_fork(): build %fork span.
   */
     u3_noun
-    u3kf_frog(u3_noun yed);
+    u3kf_fork(u3_noun yed);
 
   /* u3kfu_repo(): 
   */

@@ -253,16 +253,6 @@
           return _nest_dext(van, q_sut, tel, ref, seg, reg, gil);
         }
       }
-#if 0
-      case c3__fork: p_sut = u3t(sut);
-      {
-        u3_noun fop = u3nc(c3__frog, u3qdi_tap(p_sut, u3_nul));
-        u3_noun ret = _nest_dext(van, fop, tel, ref, seg, reg, gil);
-
-        u3z(fop);
-        return ret;
-      }
-#else
       case c3__fork: p_sut = u3t(sut);
       {
         if ( c3n == u3du(ref) ) switch ( ref ) {
@@ -295,33 +285,6 @@
           u3z(dey);
           return c3n;
         }
-      }
-#endif
-      case c3__frog: p_sut = u3t(sut);
-      {
-        if ( c3n == u3du(ref) ) switch ( ref ) {
-          default: return _nest_sint(van, sut, tel, ref, seg, reg, gil);
-
-          case c3__noun:
-            break;
-        }
-        else switch ( u3h(ref) ) {
-          default: return _nest_sint(van, sut, tel, ref, seg, reg, gil);
-
-          case c3__atom:
-          case c3__cell:
-          case c3__core:
-            break;
-        }
-
-        while ( u3_nul != p_sut ) {
-          if ( c3y == _nest_dext(van, u3h(p_sut), c3n, ref, seg, reg, gil) ) {
-            return c3y;
-          } else {
-            p_sut = u3t(p_sut);
-          }
-        }
-        return c3n;
       }
       case c3__hold:
       {
@@ -453,16 +416,6 @@
             return _nest_dext(van, sut, tel, q_ref, seg, reg, gil);
           }
         }
-#if 0
-        case c3__fork: p_ref = u3t(ref);
-        {
-          u3_noun gif = u3nc(c3__frog, u3qdi_tap(p_ref, u3_nul));
-          u3_noun ret = _nest_sint(van, sut, tel, gif, seg, reg, gil);
-
-          u3z(gif);
-          return ret;
-        }
-#else
         case c3__fork: p_ref = u3t(ref);
         {
           u3_noun dey = u3qdi_tap(p_ref, u3_nul);
@@ -477,20 +430,6 @@
             }
           }
           u3z(dey);
-          return c3y;
-        }
-#endif
-        case c3__frog: {
-          p_ref = u3t(ref);
-
-          while ( u3_nul != p_ref ) {
-            if ( c3n == _nest_dext(van, sut, tel, u3h(p_ref), seg, reg, gil) ) {
-              return c3n;
-            } 
-            else {
-              p_ref = u3t(p_ref);
-            }
-          }
           return c3y;
         }
         case c3__hold: {
