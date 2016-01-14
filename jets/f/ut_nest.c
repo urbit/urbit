@@ -326,7 +326,6 @@
       case c3__hold:
       {
         if ( c3y == u3qdi_has(seg, sut) ) {
-          u3qfu_dump(van, "segd", u3nt(c3__cell, u3k(sut), u3k(ref)));
           return c3n;
         }
         else {
@@ -367,12 +366,9 @@
     u3_noun tyn = _nest_dext_in(van, sut, tel, ref, seg, reg, gil);
 
     if ( (c3y == tyn) || (c3n == tel) ) {
-      if ( c3n == tyn ) {
-        u3qfu_dump(van, "dext", u3nt(c3__cell, u3k(sut), u3k(ref)));
-      }
       return tyn;
     } else {
-#if 1
+#if 0
       u3_noun dun = u3qfu_dunq(van, "need", sut);
       u3_noun niz = u3qfu_dunq(van, "have", ref);
 
@@ -407,7 +403,12 @@
       else {
         pro = _nest_dext_to(van, sut, tel, ref, seg, reg, gil);
 
-        return u3z_save_2(fun_m, sut, ref, pro);
+        if ( ((c3y == pro) && (u3_nul == reg)) || 
+             ((c3n == pro) && (u3_nul == seg)) ) 
+        {
+          return u3z_save_2(fun_m, sut, ref, pro);
+        }
+        else return pro;
       }
     }
   }
@@ -484,8 +485,6 @@
 
           while ( u3_nul != p_ref ) {
             if ( c3n == _nest_dext(van, sut, tel, u3h(p_ref), seg, reg, gil) ) {
-              u3qfu_dump(van, "fail", 
-                         u3nt(c3__cell, u3k(sut), u3k(u3h(p_ref))));
               return c3n;
             } 
             else {
