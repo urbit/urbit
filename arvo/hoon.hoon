@@ -762,7 +762,7 @@
   ?:  =(0 a)  i.b
   $(b t.b, a (dec a))
 ::
-++  sort                                                ::  quicksort
+++  sort   !.                                           ::  quicksort
   ~/  %sort
   |*  {a/(list) b/$+([* *] ?)}
   =>  .(a ^.(homo a))
@@ -3899,7 +3899,7 @@
   ++  wiz  (ape (bass 0x4000.0000 ;~(plug pew:ab (star ;~(pfix dog piw:ab)))))
   --
 ::
-++  co
+++  co  !.
   ~%  %co  ..co  ~
   =<  |_  lot/coin
       ++  rear  |=(rom/tape =>(.(rex rom) rend))
@@ -8881,7 +8881,7 @@
   |=  {bug/? wer/path}
   %*(. vast bug bug, wer wer)
 ::
-++  vast
+++  vast  !.
   =+  [bug=`?`| was=*(set path) wer=*path]
   |%
   ++  gash  %+  cook
@@ -8947,7 +8947,7 @@
       $(i.ruw t.i.ruw, cah [i.i.ruw cah])
     $(i.ruw t.i.ruw, cah ~, yun [p.i.i.ruw (wod cah yun)])
   ::
-  ++  posh  !:
+  ++  posh
     |=  {pre/(unit tyke) pof/(unit {p/@ud q/tyke})}
     ^-  (unit (list twig))
     =-  ?^(- - ~&(%posh-fail -))
@@ -9919,7 +9919,7 @@
     =+  lam=(~(get by hit.day) nam)
     day(hit (~(put by hit.day) nam ?~(lam 1 +(u.lam))))
 ::
-++  pi-noon                                             ::  sample trace
+++  pi-noon  !.                                           ::  sample trace
   |=  {mot/term paz/(list path) day/doss}
   =|  lax/(unit path)
   |-  ^-  doss
