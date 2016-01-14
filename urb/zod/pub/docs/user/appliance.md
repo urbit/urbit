@@ -83,7 +83,7 @@ possible; it's not well-optimized.
 
 There's a web interface to `:talk` at
 
-    http://localhost:8080/~~/home/pub/talk/fab
+    http://localhost:8080/~~/home/pub/talk
 
 and a dojo interface at
 
