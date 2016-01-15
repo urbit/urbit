@@ -301,6 +301,7 @@
     {$tskt p/twig q/twig r/twig s/twig}                 ::  state machine wing
     {$tsls p/twig q/twig}                               ::  push p on .. of q
     {$tstr p/term q/wing r/twig}                        ::  make an alias
+    {$tstx p/term q/twig r/twig}                        ::  make an alias
     {$tssg p/(list twig)}                               ::  compose twig list
   ::                                            ::::::  conditionals
     {$wtbr p/(list twig)}                               ::  logical OR
@@ -348,11 +349,11 @@
               {$cell p/span q/span}                     ::  ordered pair
               {$core p/span q/coil}                     ::  object
               {$face p/tusk q/span}                     ::  namespace (old)
-              {$fuss p/?@(term tool) q/span}            ::  namespace (new)
+              {$fuss p/$@(term tool) q/span}            ::  namespace (new)
               {$fork p/(set span)}                      ::  union
               {$hold p/span q/twig}                     ::  lazy evaluation
           ==                                            ::
-++  tart  (each (pair vein span) (pair span nock))      ::  true/false alias
+++  tart  (each (pair vein opal) (pair span nock))      ::  true/false alias
 ++  tone  $%  {$0 p/*}                                  ::  success
               {$1 p/(list)}                             ::  blocks
               {$2 p/(list {@ta *})}                     ::  error ~_s
@@ -6299,7 +6300,7 @@
 ::
 ++  fuss                                                ::  make %face span
   ~/  %fuss
-  |=  {giz/?@(term tool) der/span}
+  |=  {giz/$@(term tool) der/span}
   ^-  span
   ?:  =(%void der)
     %void
@@ -7777,6 +7778,7 @@
       %vet    vet
       %fab    fab
       %burn   burn
+      %buss   buss
       %busk   busk
       %crop   crop
       %duck   duck
@@ -7842,6 +7844,30 @@
     |=  {cog/term hyp/wing}
     ^-  span
     (face [[[cog hyp] ~ ~] ~ ~] sut)
+  ::
+  ++  buss
+    ~/  %buss
+    |=  {cog/term gen/twig}
+    ^-  span
+    :-  %fuss
+    :_  sut
+    ^-  tool
+    :_  ~
+    ^-  (map term (unit tart))
+    :_  [~ ~]
+    :+  cog  ~
+    ^-  tart
+    =+  hup=~(reek ap gen)
+    ?~  hup
+       `tart`[%| (mint %noun gen)] 
+    =+  fid=(find %both u.hup)
+    ?-  -.fid
+      $&  `tart`[%& p.fid]
+      $|  ?-  -.p.fid
+            $&  ~|([%find u.hup] !!)
+            $|  `tart`[%| p.p.fid]
+          ==
+    ==
   ::
   ++  conk
     |=  got/toga
@@ -8107,29 +8133,30 @@
               ^$(sut q.ref, hyp u.hit, nol [~ `axe lon])  
             ::
                 {$fuss *}
+              ?:  ?=($~ q.heg)  here(ref q.ref)
+              ?@  p.ref
+                ?:(=(u.q.heg p.ref) here(ref q.ref) lose)
               =<  main
               |%
               ++  done  here(ref q.ref)
               ++  main
-                ?:  ?=($~ q.heg)  done 
-                ?@  p.ref
-                  ?:(=(u.q.heg p.ref) done lose)
+                ^-  pony
                 =%  tyr/(unit (unit tart))  (~(get by p.p.ref) u.q.heg)
                 ?~  tyr  next
                 ?~  u.tyr  skip
                 ?.  =(0 p.heg)  next(p.heg (dec p.heg))
                 ?-  -.u.u.tyr
-                  $&  [%& (weld p.p.u.u.tyr `vein`[~ `axe lon])] 
-                  $|  [%| p.p.u.u.tyr (comb [%0 axe] q.p.u.u.tyr)]
+                  $&  [%& (weld p.p.u.u.tyr `vein`[~ `axe lon]) q.p.u.u.tyr]
+                  $|  [%| %| p.p.u.u.tyr (comb [%0 axe] q.p.u.u.tyr)]
                 ==
               ++  next
                 |-  ^-  pony
-                ?~  q.p.u.u.tyr  done
-                =+  fid=$(ref p.i.q.p.u.u.tyr, lon ~, axe 1) 
+                ?~  q.p.ref  done
+                =+  fid=^$(ref p.i.q.p.ref, lon ~, axe 1) 
                 ?:  ?=({$| $& *} fid)
-                  $(q.p.u.u.tyr t.q.p.u.u.tyr, p.heg p.p.fid)
-                =+  vat=(fine (ride fid))
-                [%| %| p.vat (comb q.vat (comb [%0 axe] q.i.q.p.u.u.tyr))]
+                  $(q.p.ref t.q.p.ref, p.heg p.p.fid)
+                =+  vat=(fine (ride fid) ~)
+                [%| %| p.vat (comb q.vat (comb [%0 axe] q.i.q.p.ref))]
               ::
               ++  skip  $(ref q.ref, p.heg +(p.heg))
               --
@@ -8158,9 +8185,9 @@
     |=  {luc/polo hej/(list (pair axis nock))}
     ^-  (pair span nock)
     ?-    -.luc
-      %|  p.luc
-      %&  :-  (fire r.p.luc)
-          =+  (hike p.p.luc hec) 
+      $|  p.luc
+      $&  :-  (fire r.p.luc)
+          =+  (hike p.p.luc hej) 
           ?~(q.p.luc - [%9 u.q.p.luc -])
     == 
   ::
@@ -8826,13 +8853,13 @@
           ==
       $|  ?-  -.p.fid
             $|  [%| p.p.fid]
-            $&  ~|([%find hyp] !!)
+            $&  !!
     ==    ==
   ::
   ++  seek
     |=  hyp/wing
     ^-  polo
-    (ride (find %read hyp))
+    (ride ~|([%find hyp] (find %read hyp)))
   ::
   ++  take
     |=  {vit/vein duz/$+(span span)}

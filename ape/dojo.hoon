@@ -514,6 +514,7 @@
       |-  ^-  $?  $%  {$atom @tas (unit @)}
                       {$cell _$ _$}
                       {$cube * _$}
+                      {$fuss $@(term tool) _$}
                       {$face tusk _$}
                       {$fork (set _$)}
                       {$hold _$ twig}
@@ -522,7 +523,7 @@
                   $?($noun $void)
               ==
       ?+  a  a
-        {?($cube $face) ^}  a(q $(a q.a))
+        {?($cube $face $fuss) ^}  a(q $(a q.a))
         {$cell ^}  a(p $(a p.a), q $(a q.a))
         {$fork *}  a(p (silt (turn (~(tap in p.a)) |=(b/span ^$(a b)))))
         {$core ^}  `wain`/core
