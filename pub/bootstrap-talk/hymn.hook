@@ -1,4 +1,4 @@
-::/=  body  /:  /===/pub/bootstrap-talk/chat  /elem/
+/=  body  /:  /===/pub/bootstrap-talk/chat  /elem/
 ::
 ^-  manx
 ::
@@ -13,40 +13,48 @@
     ;div.container
       ;div.row
         ;div.col-md-2.ctrl
-          ;div.mine;
           ;div.icon
             ;div.home;
-            ;div.up;
-            ;div.prev;
-            ;div.next;
-            ;button.navbar-toggler(type "button"): ☰
+            ;div.app: Talk
           ==
-          ;ul.nav
-            ;li.nav-item
-              ;a.nav-link: Nock
-            ==
-            ;li.nav-item
-              ;a.nav-link: Hoon
-            ==
-            ;li.nav-item
-              ;a.nav-link: Arvo
-            ==
-            ;li.nav-item.selected
-              ;a.nav-link: Contributing
-            ==
+          ;div.context
+            ;div.name: Home
+            ;div.arrow;
+          ==
+        ==
+      ==
+      ;div.row.submenu-1
+        ;div.col-md-2
+          ;div.close;
+          ;h2
+            ; Direct
+            ;label.sum: 3
+          ==
+          ;div.row
+            ;div.col.name: Galen
+            ;div.col.planet: ~talsur-todres
+          ==
+          ;div.row
+            ;div.col.name: Curtis
+            ;div.col.planet: ~tasfyn-partyv
+          ==
+          ;div.row
+            ;div.col.name: Anton
+            ;div.col.planet: ~pittyp-pittyp
+          ==
+          ;div.action
+            ; Message
+            ;label.action;
+          ==
+          ;h2
+            ; Stations
+            ;label.sum: 4
           ==
         ==
       ==
       ;div.row
         ;div.col-md-10.col-md-offset-2.body
-          ;div.gram
-            ;div.meta
-              ;div.icon.public;
-              ;div.author: ~talsur-todres
-              ;div.path;
-            ==
-            ;div.body: Including the black townships?
-          ==
+          ;+  body
         ==
       ==
     ==
