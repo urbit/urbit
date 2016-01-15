@@ -57,14 +57,18 @@
               [%ha p=path:beak]                         ::  GET request
               [%he p=whir]                              ::  HEAD request
               [%hi p=mark ~]                            ::  outbound HTTP
-              [%ho p=mark ~]                            ::  authed HTTP out
-              [%se p=(list ,@t)]                        ::  security driver
+              [%se p=whir-se]                           ::  outbound to domain 
               [%si ~]                                   ::  response done
               [%of p=ixor q=$|(~ whir-of)]              ::  associated view
               [%ow p=ixor ~]                            ::  dying view
               [%on ~]                                   ::  dependency
           ==                                            ::
 ++  whir-of  ,[p=span:ship q=term r=wire]               ::  path in dock
+++  whir-se
+  $%  [%core p=(list ,@t)]                              ::  build agent
+      [%reqs p=(list ,@t)]                              ::  attempted filtered outbound request
+::       [%resp p=mark q=(list ,@t)]
+  ==
 --                                                      ::
 |%                                                      ::  models
 ++  bolo                                                ::  eyre state
@@ -619,7 +623,7 @@
       ::    kes    (~(del by kes) hen)
       ::  ==
       ::  ~&  eyre-them/(earn p.u.p.kyz)
-      (back ho//[p.kyz] %hiss q.kyz)
+      (back hi//[p.kyz] %hiss q.kyz)
     ::
         %they                                           ::  inbound response
       =+  kas=(need (~(get by q.ask) p.kyz))
@@ -712,6 +716,7 @@
         %hi  =+  cay=[%httr !>(`httr`p.sih)]
              ?:  ?=(%httr p.tee)  (give-sigh %& cay)
              (back si/~ p.tee cay)
+        :: %se  (get-sigh:(dom-vi
       ==
     ::
         %unto                                           ::  app response
@@ -740,7 +745,7 @@
     ::
         %news                                         ::  dependency updated
       ?:  ?=([%se *] tee)
-        rebuild:(dom-vi p.tee)
+        rebuild:(dom-vi p.p.tee)
       ?.  ?=([%on ~] tee)
         ~&(e/lost/[tee hen] +>.$)
       %+  roll  (~(tap in (~(get ju liz) p.sih)))
@@ -760,27 +765,28 @@
           $|(~ [?(%on %ay %ow) *])  ~|(e/ford/lost/tee !!)
           [%of @ ~]  ~|(e/ford/lost/tee !!)
           [%si ~]  (give-sigh q.sih)
-          [%se *]
-        ?:  ?=(%| -.q.sih)
-          ((slog >%sec-failed< >`path`p.tee< p.q.sih) ..axon)
-        (get-upd:(dom-vi p.tee) p.sih q.p.q.sih)
-      ::
-          [%ho ^]
-        ?:  ?=(%| -.q.sih)
-          (give-sigh q.sih)  ::  XX crash?
-        =*  cay  p.q.sih
-        ?>  ?=(%hiss p.cay)
-        =+  ((hard ,[pul=purl ^]) q.q.cay)
-        ?.  ?=(%& -.r.p.pul)
-          (pass-note hi//[p.tee] [%e %meta :(slop !>(%them) !>(~) q.cay)])
-        (get-req:(dom-vi p.r.p.pul) p.tee q.cay)
+          [%se ^]
+        ?-  -.p.tee
+            %core  (get-upd:(dom-vi p.p.tee) [p q]:sih)
+            %reqs  (get-res:(dom-vi p.p.tee) q.sih)
+        ==
       ::
           [%hi ^]
         ?:  ?=(%| -.q.sih)
           (give-sigh q.sih)  ::  XX crash?
         =*  cay  p.q.sih
         ?>  ?=(%hiss p.cay)
-        (pass-note tee [%e %meta :(slop !>(%them) !>(~) q.cay)])
+        =+  ((hard ,[pul=purl ^]) q.q.cay)
+        ?.  ?=(%& -.r.p.pul)
+          (eyre-them p.tee q.cay)
+        (get-req:(dom-vi p.r.p.pul) p.tee q.cay)
+      ::
+::           [%hi ^]
+::         ?:  ?=(%| -.q.sih)
+::           (give-sigh q.sih)  ::  XX crash?
+::         =*  cay  p.q.sih
+::         ?>  ?=(%hiss p.cay)
+::         (eyre-them p.tee q.cay)
       ::
           [%he *]                     ::  XX hack
         =.  ..axon  $(tee p.tee)
@@ -843,7 +849,9 @@
     (fail 500 0v0 >%exit< p.mul)
   ::
   ++  ire-ix  |=(ire=ixor ~(. ix ire (~(got by wix) ire)))
-  ++  dom-vi  |=(dom=path ~(. vi dom (fall (~(get by sec) dom) *driv)))
+  ++  dom-vi  
+    |=  dom=path  ^+  vi
+    ~(. vi dom (fall (~(get by sec) dom) *driv))
   ::
   ++  ses-authed 
     |=  ses=hole
@@ -856,6 +864,10 @@
   ++  ses-ya  |=(ses=hole ~(. ya ses (~(got by wup) ses)))
   ++  our-host  `hart`[& ~ `/org/urbit/(rsh 3 1 (scot %p our))]
   ::                  [| [~ 8.445] `/localhost]       :: XX testing
+  ::
+  ++  eyre-them
+    |=  [mar=mark vax=vase:hiss]
+    (pass-note hi//[mar] [%e %meta :(slop !>(%them) !>(~) vax)])
   ::
   ++  ames-gram
     |=([him=ship gam=gram] (pass-note ~ %a %wont [our him] [%e -.gam] +.gam))
@@ -1571,28 +1583,57 @@
   ++  vi                                                ::  auth engine
     |_  [dom=path cor=(unit vase) req=(qeu ,[p=mark q=vase:hiss])]
     ++  abet  +>(sec (~(put by sec) +<))
+    ++  dead  |=(a=tang (give-sigh:abet %| a))
     ++  pump
       ^+  abet
       ?~  cor
         build
-      ?:  =(~ req)  abet
-      =^  ole  req  ~(get to req)
-      =>  .(ole `[p=mark q=vase]`ole)
-      =-  (pass-note:abet hi//[p.ole] (ford-req root-beak -))
-      cast/hiss/call/[`core/u.cor `hiss/q.ole]
+      =+  ole=~(top to req)
+      ?~  ole  abet
+      ::  operate on the each-hiss-purl
+      =+  call/[`core/u.cor `hiss/q.u.ole]
+      (pass-note:abet se/reqs/dom (ford-req root-beak -))
     ::
     ++  get-upd  
-      |=  [dep=@uvH roc=vase]
+      |=  [dep=@uvH gag=(each cage tang)]
       ~&  got-upd/dep
-      %_  pump
-        cor  `roc
-        ..vi  (pass-note se/dom %f [%wasp our dep &])
+      =.  ..vi  (pass-note se/core/dom %f [%wasp our dep &])
+      ?-  -.gag
+        %&  pump(cor `q.p.gag)
+        %|  ((slog p.gag) abet)
       ==
     ::
+    ++  auth-tank
+      =>  rose/["." `~]^(turn (flop dom) |=(a=cord leaf/(trip a)))
+      rose/[" " `~]^~[leaf/"To authenticate" . leaf/"visit:"]
+    ::
+    ::    XX formal dill-blit %url via hood
+    ++  auth-print  |=([%| a=purl] (slog auth-tank leaf/(earn a) ~))
+    ++  get-res
+      |=  a=(each cage tang)  ^+  abet
+      ?:  ?=(%| -.a)
+        (dead(req ~(nap to req)) p.a)
+      =+  (mule |.((get-vase q.p.a)))
+      ?-  -.-
+        %&  p.-
+        %|  ((slog (flop p.-)) abet)  :: XX block until correct core?
+      ==
+    ::
+    ++  get-vase
+      |=  res=vase  ^+  abet
+      ~|  bad-res/p.res
+      =.  res  (spec res)
+      ?+  -.q.res  !!                           :: bad type
+        %|  =+((slam !>(auth-print) res) abet)
+        %&  =^  ole  req  ~(get to req)
+            =>  .(ole `[p=mark q=*]`ole)  :: XX types
+            %+  eyre-them:abet  p.ole
+            (slam !>(|=([%& a=hiss] a)) res)
+      ==
     ++  rebuild  build(cor ~)
     ++  build
       =+  bem=[root-beak (flop %_(dom . sec/dom))]
-      (pass-note:abet se/dom (ford-req root-beak core/bem))
+      (pass-note:abet se/core/dom (ford-req root-beak core/bem))
     ::
     ++  get-req  |=(a=[mark vase:hiss] pump(req (~(put to req) a)))
 --  --
