@@ -1156,6 +1156,12 @@
 ::           (flaw cof leaf/"file not found" (smyt (tope r.kas)) ~)
 ::         (fine cof [%& p.kas u.vux])
 ::       ::
+          %alts
+        %.  cof
+        |=  cof=cafe  ^-  (bolt gage)
+        ?~  p.kas  (flaw cof leaf/"ford: out of options" ~)
+        (coop ^$(cof cof, kas i.p.kas) ..$(p.kas t.p.kas))
+      ::
           %bake
         ^-  (bolt gage)
         %+  cool  |.(leaf/"ford: bake {<p.kas>} {<(tope r.kas)>} {~(rend co q.kas)}")
