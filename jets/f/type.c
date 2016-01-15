@@ -32,6 +32,9 @@
     case c3__face: u3x_cell(u3t(sut), &p_sut, &q_sut);
     {
     }
+    case c3__fuss: u3x_cell(u3t(sut), &p_sut, &q_sut);
+    {
+    }
     case c3__fork: p_sut = u3t(sut);
     {
     }

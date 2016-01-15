@@ -418,6 +418,7 @@
 #   define c3__fung   c3_s4('f','u','n','g')
 #   define c3__funk   c3_s4('f','u','n','k')
 #   define c3__fuse   c3_s4('f','u','s','e')
+#   define c3__fuss   c3_s4('f','u','s','s')
 #   define c3__gab    c3_s3('g','a','b')
 #   define c3__galb   c3_s4('g','a','l','b')
 #   define c3__gald   c3_s4('g','a','l','d')
