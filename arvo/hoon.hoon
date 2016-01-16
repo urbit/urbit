@@ -300,9 +300,9 @@
     {$tsgr p/twig q/twig}                               ::  use p as .. of q
     {$tskt p/twig q/twig r/twig s/twig}                 ::  state machine wing
     {$tsls p/twig q/twig}                               ::  push p on .. of q
-    {$tstr p/term q/wing r/twig}                        ::  make an alias
     {$tshx p/term q/twig r/twig}                        ::  make an alias
     {$tssg p/(list twig)}                               ::  compose twig list
+    {$tstr p/term q/twig r/twig}                        ::  make an alias
   ::                                            ::::::  conditionals
     {$wtbr p/(list twig)}                               ::  logical OR
     {$wthp p/wing q/(list (pair twig twig))}            ::  select case in q
@@ -6706,7 +6706,7 @@
     |=  gen/twig
     ^-  twig
     ?-  -.tik
-      $&  ?~(p.tik gen [%tstr u.p.tik q.tik gen])
+      $&  ?~(p.tik gen [%tshx u.p.tik [%wing q.tik] gen])
       $|  [%tsls ?~(p.tik q.tik [%ktts u.p.tik q.tik]) gen]
     ==
   ::
@@ -7779,7 +7779,6 @@
       %fab    fab
       %burn   burn
       %buss   buss
-      %busk   busk
       %crop   crop
       %duck   duck
       %dune   dune
@@ -7838,12 +7837,6 @@
         $noun       `0
         $void       ~
     ==
-  ::
-  ++  busk
-    ~/  %busk
-    |=  {cog/term hyp/wing}
-    ^-  span
-    (face [[[cog hyp] ~ ~] ~ ~] sut)
   ::
   ++  buss
     ~/  %buss
@@ -8138,27 +8131,29 @@
                 ?:(=(u.q.heg p.ref) here(ref q.ref) lose)
               =<  main
               |%
-              ++  done  here(ref q.ref)
+              ++  fear  $(ref q.ref, lon [~ lon])
               ++  main
                 ^-  pony
                 =%  tyr/(unit (unit tart))  (~(get by p.p.ref) u.q.heg)
-                ?~  tyr  next
-                ?~  u.tyr  skip
-                ?.  =(0 p.heg)  next(p.heg (dec p.heg))
+                ?~  tyr  
+                  next
+                ?~  u.tyr  
+                  fear(p.heg +(p.heg))
+                ?.  =(0 p.heg)  
+                  next(p.heg (dec p.heg))
                 ?-  -.u.u.tyr
                   $&  [%& (weld p.p.u.u.tyr `vein`[~ `axe lon]) q.p.u.u.tyr]
                   $|  [%| %| p.p.u.u.tyr (comb [%0 axe] q.p.u.u.tyr)]
                 ==
               ++  next
                 |-  ^-  pony
-                ?~  q.p.ref  done
+                ?~  q.p.ref
+                  ^$(ref q.ref, lon [~ lon])
                 =+  fid=^$(ref p.i.q.p.ref, lon ~, axe 1) 
                 ?:  ?=({$| $& *} fid)
                   $(q.p.ref t.q.p.ref, p.heg p.p.fid)
                 =+  vat=(fine (ride fid) ~)
                 [%| %| p.vat (comb q.vat (comb [%0 axe] q.i.q.p.ref))]
-              ::
-              ++  skip  $(ref q.ref, p.heg +(p.heg))
               --
             ::
                 {$fork *}
@@ -8389,9 +8384,6 @@
       =+  dov=$(sut p.fid, gen q.gen)
       [p.dov (comb q.fid q.dov)]
     ::
-        {$tstr *}
-      $(gen r.gen, sut (busk p.gen q.gen))
-    ::
         {$tshx *}
       $(gen r.gen, sut (buss p.gen q.gen))
     ::
@@ -8524,13 +8516,6 @@
         {$tsgr *}
       =+  lem=$(gen p.gen, gol %noun)
       $(gen q.gen, sut p.lem, dox q.lem)
-    ::
-        {$tstr *}
-      %=  $
-        gen  r.gen
-        sut  (busk p.gen q.gen)
-        dox  (busk(sut dox) p.gen q.gen)
-      ==
     ::
         {$tshx *}
       %=  $
@@ -8807,7 +8792,6 @@
       {$sgzp *}  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
       {$sggr *}  $(gen q.gen)
       {$tsgr *}  $(gen q.gen, sut $(gen p.gen))
-      {$tstr *}  $(gen r.gen, sut (busk p.gen q.gen))
       {$tshx *}  $(gen r.gen, sut (buss p.gen q.gen))
       {$wtcl *}  =+  [fex=(gain p.gen) wux=(lose p.gen)]
                  %-  fork  :~
@@ -9649,7 +9633,7 @@
                     ['<' (rune gal %tsgl expb)]
                     ['>' (rune gar %tsgr expb)]
                     ['-' (rune hep %tshp expb)]
-                    ['*' (rune tar %tstr expj)]
+                    ['*' (rune tar %tshx expl)]
                     ['#' (rune hax %tshx expl)]
                     ['+' (rune lus %tsls expb)]
                     ['~' (rune sig %tssg expi)]
