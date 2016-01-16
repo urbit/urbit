@@ -1100,6 +1100,7 @@
 #   define c3__tsgl   c3_s4('t','s','g','l')
 #   define c3__tsgr   c3_s4('t','s','g','r')
 #   define c3__tshp   c3_s4('t','s','h','p')
+#   define c3__tshx   c3_s4('t','s','h','x')
 #   define c3__tsls   c3_s4('t','s','l','s')
 #   define c3__tsms   c3_s4('t','s','m','s')
 #   define c3__tssg   c3_s4('t','s','s','g')

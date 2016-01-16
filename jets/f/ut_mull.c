@@ -3,8 +3,6 @@
 */
 #include "all.h"
 
-#define CNTS
-
 /* functions
 */
   static u3_noun
@@ -188,14 +186,14 @@
                 typ);
   }
 
-#ifdef CNTS
+#if 1
   static u3_noun
-  _mull_cnts_new(u3_noun van,
-                 u3_noun sut,
-                 u3_noun gol,
-                 u3_noun dox,
-                 u3_noun hyp,
-                 u3_noun rig)
+  _mull_cnts(u3_noun van,
+             u3_noun sut,
+             u3_noun gol,
+             u3_noun dox,
+             u3_noun hyp,
+             u3_noun rig)
   {
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
     u3_noun gat = u3j_hook(von, "emul");
@@ -620,13 +618,23 @@
 
         return ret;
       }
+      case c3__tshx: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
+      _mull_used();
+      {
+        u3_noun boc = u3qfu_buss(van, sut, p_gen, q_gen);
+        u3_noun nuf = u3qfu_buss(van, dox, p_gen, q_gen);
+        u3_noun ret = _mull_in(van, boc, gol, nuf, r_gen);
+
+        u3z(boc);
+        u3z(nuf);
+
+        return ret;
+      }
       case c3__cnts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mull_used();
-#ifdef CNTS
-      return _mull_cnts_new(van, sut, gol, dox, p_gen, q_gen);
-#else
-      return _mull_cnts_old(van, sut, gol, dox, p_gen, q_gen);
-#endif
+      {
+        return _mull_cnts(van, sut, gol, dox, p_gen, q_gen);
+      }
       case c3__brcn: p_gen = u3t(gen);
       _mull_used();
       {

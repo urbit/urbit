@@ -3,8 +3,6 @@
 */
 #include "all.h"
 
-#define CNTS
-
 /* logic
 */
   static u3_noun
@@ -235,13 +233,13 @@
     return ret;
   }
 
-#ifdef CNTS
+#if 1
   static u3_noun
-  _mint_cnts_new(u3_noun van,
-                 u3_noun sut,
-                 u3_noun gol,
-                 u3_noun hyp,
-                 u3_noun rig)
+  _mint_cnts(u3_noun van,
+             u3_noun sut,
+             u3_noun gol,
+             u3_noun hyp,
+             u3_noun rig)
   {
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
     u3_noun gat = u3j_hook(von, "emin");
@@ -674,14 +672,20 @@
         u3z(boc);
         return ret;
       }
+      case c3__tshx: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
+      _mint_used();
+      {
+        u3_noun boc = u3qfu_buss(van, sut, p_gen, q_gen);
+        u3_noun ret = _mint_in(van, boc, gol, r_gen);
+
+        u3z(boc);
+        return ret;
+      }
       case c3__cnts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
-#ifdef CNTS
-      return _mint_cnts_new(van, sut, gol, p_gen, q_gen);
-#else
-      return _mint_cnts_old(van, sut, gol, p_gen, q_gen);
-#endif
-
+      {
+        return _mint_cnts(van, sut, gol, p_gen, q_gen);
+      }
       case c3__brcn: p_gen = u3t(gen);
       _mint_used();
       {
