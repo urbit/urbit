@@ -659,20 +659,7 @@
         u3z(dov);
         return ret;
       }
-      case c3__tstr: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
-      _mint_used();
-      {
-        u3_noun sag = u3nt(u3nt(u3nc(u3k(p_gen), u3k(q_gen)), u3_nul, u3_nul),
-                           u3_nul,
-                           u3_nul);
-        u3_noun boc = u3qf_face(sag, sut);
-        u3_noun ret = _mint_in(van, boc, gol, r_gen);
-
-        u3z(sag);
-        u3z(boc);
-        return ret;
-      }
-      case c3__tshx: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
+      case c3__tstr: case c3__tshx: u3x_trel(u3t(gen), &p_gen, &q_gen, &r_gen);
       _mint_used();
       {
         u3_noun boc = u3qfu_buss(van, sut, p_gen, q_gen);
