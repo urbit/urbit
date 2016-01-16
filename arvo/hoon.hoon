@@ -301,7 +301,7 @@
     {$tskt p/twig q/twig r/twig s/twig}                 ::  state machine wing
     {$tsls p/twig q/twig}                               ::  push p on .. of q
     {$tstr p/term q/wing r/twig}                        ::  make an alias
-    {$tstx p/term q/twig r/twig}                        ::  make an alias
+    {$tshx p/term q/twig r/twig}                        ::  make an alias
     {$tssg p/(list twig)}                               ::  compose twig list
   ::                                            ::::::  conditionals
     {$wtbr p/(list twig)}                               ::  logical OR
@@ -7407,7 +7407,7 @@
       ::
           {$pick *}
         =^  coz  gid  (many p.q.ham)
-        :_(gid [%rose [[' ' ~] ['?(' ~] [')' ~]] coz])
+        :_(gid [%rose [[' ' ~] ['?' '(' ~] [')' ~]] coz])
       ::
           {$plot *}
         =^  coz  gid  (many p.q.ham)
@@ -8392,6 +8392,9 @@
         {$tstr *}
       $(gen r.gen, sut (busk p.gen q.gen))
     ::
+        {$tshx *}
+      $(gen r.gen, sut (buss p.gen q.gen))
+    ::
         {$wtcl *}
       =+  nor=$(gen p.gen, gol bool)
       =+  fex=(gain p.gen)
@@ -8527,6 +8530,13 @@
         gen  r.gen
         sut  (busk p.gen q.gen)
         dox  (busk(sut dox) p.gen q.gen)
+      ==
+    ::
+        {$tshx *}
+      %=  $
+        gen  r.gen
+        sut  (buss p.gen q.gen)
+        dox  (buss(sut dox) p.gen q.gen)
       ==
     ::
         {$wtcl *}
@@ -8798,6 +8808,7 @@
       {$sggr *}  $(gen q.gen)
       {$tsgr *}  $(gen q.gen, sut $(gen p.gen))
       {$tstr *}  $(gen r.gen, sut (busk p.gen q.gen))
+      {$tshx *}  $(gen r.gen, sut (buss p.gen q.gen))
       {$wtcl *}  =+  [fex=(gain p.gen) wux=(lose p.gen)]
                  %-  fork  :~
                    ?:(=(%void fex) %void $(sut fex, gen q.gen))
@@ -9639,6 +9650,7 @@
                     ['>' (rune gar %tsgr expb)]
                     ['-' (rune hep %tshp expb)]
                     ['*' (rune tar %tstr expj)]
+                    ['#' (rune hax %tshx expl)]
                     ['+' (rune lus %tsls expb)]
                     ['~' (rune sig %tssg expi)]
                 ==
@@ -9770,6 +9782,7 @@
     ++  expi  |.((butt ;~(gunk loaf hank)))             ::  one or more twigs
     ++  expj  |.(;~(gunk sym rope loaf))                ::  term, wing, and twig
     ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))  ::  list of two twigs
+    ++  expl  |.(;~(gunk sym loaf loaf))                ::  term, two twigs 
     ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [tile twig]s
     ++  expn  |.((stag %cltr (butt hank)))              ::  autoconsed twigs
     ++  expp  |.(;~(gunk (butt rick) loaf))             ::  [wing twig]s, twig
