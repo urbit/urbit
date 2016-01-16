@@ -10,7 +10,7 @@
     ;script(src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js");
   ==
   ;body
-    ;div.container
+    ;div.container.nav
       ;div.row
         ;div.col-md-2.ctrl
           ;div.icon
@@ -22,36 +22,45 @@
             ;div.arrow;
           ==
         ==
-      ==
-      ;div.row.submenu-1
-        ;div.col-md-2
-          ;div.close;
+        ;div.col-md-4.menu.depth-1
+          ;div.close: ✕
           ;h2
             ; Direct
             ;label.sum: 3
           ==
-          ;div.row
-            ;div.col.name: Galen
-            ;div.col.planet: ~talsur-todres
+          ;div
+            ;div.name: Galen
+            ;div.planet: ~talsur-todres
           ==
-          ;div.row
-            ;div.col.name: Curtis
-            ;div.col.planet: ~tasfyn-partyv
+          ;div
+            ;div.name: Curtis
+            ;div.planet: ~tasfyn-partyv
           ==
-          ;div.row
-            ;div.col.name: Anton
-            ;div.col.planet: ~pittyp-pittyp
+          ;div
+            ;div.name: Anton
+            ;div.planet: ~pittyp-pittyp
           ==
-          ;div.action
+          ;div.action.create
+            ;label;
             ; Message
-            ;label.action;
           ==
           ;h2
             ; Stations
             ;label.sum: 4
           ==
+          ;div
+            ;div.room: /meta
+            ;div.room: /help
+            ;div.room: ~talsur-todres/music
+            ;div.action.add
+              ;label;
+              ; Listen
+            ==
+          ==
         ==
       ==
+    ==
+    ;div.container
       ;div.row
         ;div.col-md-10.col-md-offset-2.body
           ;+  body
