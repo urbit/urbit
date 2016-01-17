@@ -165,7 +165,6 @@
     u3_noun u3qf_core(u3_noun, u3_noun);
     u3_noun u3qf_cube(u3_noun, u3_noun);
     u3_noun u3qf_face(u3_noun, u3_noun);
-    u3_noun u3qf_fuss(u3_noun, u3_noun);
     u3_noun u3qf_fine(u3_noun, u3_noun, u3_noun);
     u3_noun u3qf_fitz(u3_noun, u3_noun);
     u3_noun u3qf_flan(u3_noun, u3_noun);

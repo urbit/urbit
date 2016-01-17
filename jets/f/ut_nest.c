@@ -246,7 +246,6 @@
           else return _nest_sint(van, sut, tel, ref, seg, reg, gil);
         }
       }
-      case c3__fuss:
       case c3__face: {
         if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u3m_bail(c3__fail);
@@ -410,7 +409,6 @@
           u3z(gam);
           return hiv;
         }
-        case c3__fuss:
         case c3__face: {
           if ( c3n == u3r_trel(ref, 0, &p_ref, &q_ref) ) {
             return u3m_bail(c3__fail);
