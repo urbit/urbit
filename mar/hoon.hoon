@@ -37,17 +37,13 @@
       ==
     ==
   ++  txt
-    (lore (cat 3 own '\0a'))
+    (lore own)
   --
 ++  grab
   |%                                            ::  convert from
   ++  mime  |=([p=mite q=octs] q.q)
   ++  noun  ,@t                                 ::  clam from %noun
-  ++  txt
-    |=  wan=wain
-    ^-  @t
-    =+  (role wan)
-    (end 3 (dec (met 3 -)) -)
+  ++  txt   role
   --
 ++  grad  %txt
 --
