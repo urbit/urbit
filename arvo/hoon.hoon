@@ -7972,6 +7972,11 @@
       hej  [[p.dix q.zil] hej]
     ==
   ::
+  ++  endo
+    |=  {lop/{pair palo palo} rig/(list (pair wing twig))}
+    ^-  (pair span span)
+    !!
+  ::
   ++  et
     |_  {hyp/wing rig/(list (pair wing twig))}
     ++  play
