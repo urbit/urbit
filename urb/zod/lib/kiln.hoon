@@ -11,6 +11,9 @@
     $:  rem=(map desk kiln-desk)                        ::
         syn=(map kiln-sync ,[let=@ud ust=bone])         ::
         autoload=?                                      ::
+        cur-hoon=@uvI                                   ::
+        cur-zuse=@uvI                                   ::
+        cur-vanes=(map ,@tas ,@uvI)                     ::
     ==                                                  ::
 ++  kiln-desk                                           ::  per-desk state
     $:  auto=?                                          ::  escalate on failure
@@ -173,14 +176,21 @@
 ::
 ++  poke-start-autoload
   |=  ~
+  =.  cur-hoon
+    ((hard ,@uvI) .^(%cz /(scot %p our)/home/(scot %da now)/arvo/hoon/hoon))
+  =.  cur-zuse
+    ((hard ,@uvI) .^(%cz /(scot %p our)/home/(scot %da now)/arvo/zuse/hoon))
+  =.  cur-vanes
+    %-  mo
+    %+  turn  `(list ,@tas)`~[%ames %behn %clay %dill %eyre %ford %gall]
+    |=  syd=@tas
+    :-  syd
+    ((hard ,@uvI) .^(%cz /(scot %p our)/home/(scot %da now)/arvo/[syd]/hoon))
   =<  abet
-  %-  emil
-  %+  turn
-    `(list term)`~[%ames %behn %clay %dill %eyre %ford %gall %zuse %hoon]
-  |=  syd=term
+  %-  emit
   ^-  card
-  :*  %warp  /kiln/autoload/[syd]  [our our]  %home  ~
-      %next  %z  da/now  /arvo/[syd]/hoon
+  :*  %warp  /kiln/autoload  [our our]  %home  ~
+      %next  %z  da/now  /arvo
   ==
 ::
 ++  poke-overload
@@ -222,19 +232,55 @@
 ::
 ++  take-writ-autoload
   |=  [way=wire rot=riot]
-  ?>  ?=([@ ~] way)
+  ?>  ?=(~ way)
   ?>  ?=(^ rot)
-  =+  syd=(slav %tas i.way)
+  =+  vanes=`(list ,@tas)`~[%ames %behn %clay %dill %eyre %ford %gall]
   =.  +>.$
     ?.  autoload
       +>.$
-    ?:  ?=(%hoon syd)
-      (emit %poke /kiln/reload/[syd] [our %hood] %helm-reset ~)
-    (emit %poke /kiln/reload/[syd] [our %hood] %helm-reload ~[syd])
+    =+  ^=  new-hoon
+        ((hard ,@uvI) .^(%cz /(scot %p our)/home/(scot %da now)/arvo/hoon/hoon))
+    ?:  !=(new-hoon cur-hoon)
+      =.  cur-hoon  new-hoon
+      =.  cur-vanes
+        %-  mo
+        %+  turn  `(list ,@tas)`(turn (~(tap by cur-vanes)) head)
+        |=  syd=@tas
+        :-  syd
+        %-  (hard ,@uvI)
+        .^(%cz /(scot %p our)/home/(scot %da now)/arvo/[syd]/hoon)
+      (emit %poke /kiln/reload/hoon [our %hood] %helm-reset ~)
+      ::  XX  updates cur-vanes?
+    =+  ^=  new-zuse
+        ((hard ,@uvI) .^(%cz /(scot %p our)/home/(scot %da now)/arvo/zuse/hoon))
+    ?:  !=(new-zuse cur-zuse)
+      =.  cur-zuse  new-zuse
+      =.  cur-vanes
+        %-  mo
+        %+  turn  `(list ,@tas)`(turn (~(tap by cur-vanes)) head)
+        |=  syd=@tas
+        :-  syd
+        %-  (hard ,@uvI)
+        .^(%cz /(scot %p our)/home/(scot %da now)/arvo/[syd]/hoon)
+      (emit %poke /kiln/reload/zuse [our %hood] %helm-reload [%zuse vanes])
+      ::  XX  updates cur-vanes?
+    =-  =.  ^cur-vanes  cur-vanes
+        (emil cards)
+    %+  roll  `(list ,@tas)`vanes
+    =<  %_(. cur-vanes ^cur-vanes)
+    ::^-  $+([@tas _+>.^$] _+>.^$)
+    |=  [syd=@tas cur-vanes=(map ,@tas ,@uvI) cards=(list card)]
+    =+  ^=  new-vane
+        %-  (hard ,@uvI)
+        .^(%cz /(scot %p our)/home/(scot %da now)/arvo/[syd]/hoon)
+    ?:  =(`new-vane (~(get by cur-vanes) syd))
+      [cur-vanes cards]
+    :-  (~(put by cur-vanes) syd new-vane)
+    [[%poke /kiln/reload/[syd] [our %hood] %helm-reload ~[syd]] cards]
   =.  +>.$
     %-  emit  :*
-      %warp  /kiln/autoload/[syd]  [our our]  %home  ~
-      %next  %z  da/now  /arvo/[syd]/hoon
+      %warp  /kiln/autoload  [our our]  %home  ~
+      %next  %z  da/now  /arvo
     ==
   abet
 ::
@@ -392,7 +438,7 @@
   ::
   ++  perform                                         ::  
     ^+  .
-    (blab =-(~&([%blabbing -] -) [ost %merg /kiln/[syd] our syd her sud cas gem]) ~)
+    (blab [ost %merg /kiln/[syd] our syd her sud cas gem] ~)
   ::
   ++  fancy-merge                                     ::  send to self
     |=  [syd=desk her=@p sud=desk gem=?(%auto germ)]
