@@ -1,7 +1,7 @@
 !:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-?>  ?=(@ .)                                             ::  atom subject
+?>  ?=(@ .)                                             ::  atom subject 
 %.  .                                                   ::  fun with subject
 |=  cud/@                                               ::  call it cud
 =-  ?:  =(0 cud)                                        ::  if cud is 0
@@ -349,7 +349,6 @@
               {$cell p/span q/span}                     ::  ordered pair
               {$core p/span q/coil}                     ::  object
               {$face p/$@(term tool) q/span}            ::  namespace (new)
-              {$fuss p/$@(term tool) q/span}            ::  namespace (new)
               {$fork p/(set span)}                      ::  union
               {$hold p/span q/twig}                     ::  lazy evaluation
           ==                                            ::
@@ -7718,10 +7717,6 @@
       =+  yad=$(sut q.sut)
       ?^(p.sut yad [p.yad [%face p.sut q.yad]])
     ::
-        {$fuss *}
-      =+  yad=$(sut q.sut)
-      ?^(p.sut yad [p.yad [%face p.sut q.yad]])
-    ::
         {$fork *}
       =+  yed=(~(tap in p.sut))
       =-  [p [%pick q]]
@@ -7803,7 +7798,6 @@
                     |=(* (biff ^$(sut q.sut) |=(* `[+>+< +<])))
         {$core *}   (biff $(sut p.sut) |=(* `[p.r.q.sut +<]))
         {$face *}   $(sut repo)
-        {$fuss *}   $(sut repo)
         {$fork *}   =+  yed=(~(tap in p.sut))
                     |-  ^-  (unit) 
                     ?~  yed  ~
@@ -7890,7 +7884,6 @@
       ::
           {$core *}  ?:(?=(?({$atom *} {$cell *}) ref) sut sint)
           {$face *}  (face p.sut dext(sut q.sut))
-          {$fuss *}  (face p.sut dext(sut q.sut))
           {$fork *}  (fork (turn (~(tap in p.sut)) |=(span dext(sut +<))))
           {$hold *}  ?<  (~(has in bix) [sut ref])
                      dext(sut repo, bix (~(put in bix) [sut ref]))
@@ -7903,7 +7896,6 @@
       ?+    ref    !!
         {$core *}  sut
         {$face *}  dext(ref repo(sut ref))
-        {$fuss *}  dext(ref repo(sut ref))
         {$fork *}  =+  yed=(~(tap in p.ref))
                    |-  ^-  span
                    ?~  yed  sut
@@ -8117,37 +8109,6 @@
                 [%| %| p.vat (comb q.vat (comb [%0 axe] q.i.q.p.ref))]
               --
             ::
-                {$fuss *}
-              ?:  ?=($~ q.heg)  here(ref q.ref)
-              ?@  p.ref
-                ?:(=(u.q.heg p.ref) here(ref q.ref) lose)
-              =<  main
-              |%
-              ++  fear  $(ref q.ref, lon [~ lon])
-              ++  main
-                ^-  pony
-                =%  tyr/(unit (unit tart))  (~(get by p.p.ref) u.q.heg)
-                ?~  tyr  
-                  next
-                ?~  u.tyr  
-                  fear(p.heg +(p.heg))
-                ?.  =(0 p.heg)  
-                  next(p.heg (dec p.heg))
-                ?-  -.u.u.tyr
-                  $&  [%& (weld p.p.u.u.tyr `vein`[~ `axe lon]) q.p.u.u.tyr]
-                  $|  [%| %| p.p.u.u.tyr (comb [%0 axe] q.p.u.u.tyr)]
-                ==
-              ++  next
-                |-  ^-  pony
-                ?~  q.p.ref
-                  ^$(ref q.ref, lon [~ lon])
-                =+  fid=^$(ref p.i.q.p.ref, lon ~, axe 1) 
-                ?:  ?=({$| $& *} fid)
-                  $(q.p.ref t.q.p.ref, p.heg p.p.fid)
-                =+  vat=(fine (ride fid) ~)
-                [%| %| p.vat (comb q.vat (comb [%0 axe] q.i.q.p.ref))]
-              --
-            ::
                 {$fork *}
               =+  yed=(~(tap in p.ref))
               =+  ^=  wiz  |-  ^-  (list pony)
@@ -8225,7 +8186,6 @@
     ::
         {$core *}   [%0 0]
         {$face *}   $(sut q.sut)
-        {$fuss *}   $(sut q.sut)
         {$fork *}   =+  yed=(~(tap in p.sut))
                     |-  ^-  nock
                     ?~(yed [%1 1] (flor ^$(sut i.yed) $(yed t.yed)))
@@ -8265,7 +8225,6 @@
     ::
         {$core *}  $(sut repo)
         {$face *}  (face p.sut $(sut q.sut))
-        {$fuss *}  (face p.sut $(sut q.sut))
         {$fork *}  (fork (turn (~(tap in p.sut)) |=(span ^$(sut +<))))
         {$hold *}
       ?:  (~(has in bix) [sut ref])
@@ -8456,7 +8415,6 @@
       {$cell *}  |($(sut p.sut) $(sut q.sut))
       {$core *}  $(sut p.sut)
       {$face *}  $(sut q.sut)
-      {$fuss *}  $(sut q.sut)
       {$fork *}  (lien (~(tap in p.sut)) |=(span ^$(sut +<)))
       {$hold *}  |((~(has in gil) sut) $(gil (~(put in gil) sut), sut repo))
       $noun      |
@@ -8686,7 +8644,6 @@
                        ==  ==
                    ==
         {$face *}  dext(sut q.sut)
-        {$fuss *}  dext(sut q.sut)
         {$fork *}  ?.  ?=(?({$atom *} $noun {$cell *} {$core *}) ref)  sint
                    (lien (~(tap in p.sut)) |=(span dext(tel |, sut +<)))
         {$hold *}  ?:  (~(has in seg) sut)  |
@@ -8707,7 +8664,6 @@
         {$cell *}   |
         {$core *}   dext(ref repo(sut ref))
         {$face *}   dext(ref q.ref)
-        {$fuss *}   dext(ref q.ref)
         {$fork *}   (levy (~(tap in p.ref)) |=(span sint(ref +<)))
         {$hold *}   ?:  (~(has in reg) ref)  &
                     ?:  (~(has in gil) [sut ref])  &
@@ -8820,7 +8776,6 @@
     ?-  sut
       {$core *}   [%cell %noun p.sut]
       {$face *}   q.sut
-      {$fuss *}   q.sut
       {$hold *}   (rest [[p.sut q.sut] ~])
       $noun       (fork [%atom %$ ~] [%cell %noun %noun] ~)
       *           ~|(%repo-fltt !!)
@@ -8869,7 +8824,6 @@
     ?~  i.vit
       |-  ^-  span
       ?+  sut      ^$(vit t.vit)
-        {$fuss *}  (face p.sut ^$(vit t.vit, sut q.sut))
         {$face *}  (face p.sut ^$(vit t.vit, sut q.sut))
         {$fork *}  (fork (turn (~(tap in p.sut)) |=(span ^$(sut +<))))
         {$hold *}  $(sut repo) 
@@ -8890,7 +8844,6 @@
                    $(sut repo)
                  (core $(sut p.sut, u.i.vit lat) q.sut)
       {$face *}  (face p.sut $(sut q.sut))
-      {$fuss *}  (face p.sut $(sut q.sut))
       {$fork *}  (fork (turn (~(tap in p.sut)) |=(span ^$(sut +<))))
       {$hold *}  ?:  (~(has in vil) sut)
                    %void
@@ -8931,7 +8884,6 @@
       {$cell *}  (cell $(sut p.sut) $(sut q.sut)) 
       {$core *}  ?>(|(=(%gold p.q.sut) =(%lead yoz)) sut(p.q yoz))
       {$face *}  (face p.sut $(sut q.sut))
-      {$fuss *}  (face p.sut $(sut q.sut))
       {$fork *}  (fork (turn (~(tap in p.sut)) |=(span ^$(sut +<))))
       {$hold *}  $(sut repo)
     ==
