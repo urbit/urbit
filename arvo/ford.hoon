@@ -1019,7 +1019,7 @@
       %+  cope  (fang cof for)
       |=  {cof/cafe tux/vase}
       =+  typ=p:(slot 6 tux)
-      =.  typ  ?+(-.typ typ $fuss q.typ)
+      =.  typ  ?+(-.typ typ $face q.typ)
       ?:  (~(nest ut typ) | p.sam)
         (fine cof typ q.sam)
       ?.  (slob %grab p.tux)
@@ -1319,7 +1319,7 @@
         %+  cope  (fang cof p.kas)
         |=  {cof/cafe tux/vase}
         =+  [typ=p val=q]:(slot 6 tux)
-        =.  typ  ?+(-.typ typ $fuss q.typ)
+        =.  typ  ?+(-.typ typ $face q.typ)
         (fine cof [%& p.kas [typ val]])
       ::
           $call
@@ -1574,7 +1574,7 @@
             $day  (chad cof bax %dr p.hon)
             $dub 
           %+  cope  $(hon q.hon)
-          (flux |=(vax/vase [[%fuss p.hon p.vax] q.vax]))
+          (flux |=(vax/vase [[%face p.hon p.vax] q.vax]))
         ::
             $fan
           %+  cope
