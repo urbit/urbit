@@ -13,7 +13,7 @@
     if ( c3__void == tip ) {
       return c3__void;
     }
-    else return u3nt(c3__face,
+    else return u3nt(c3__fuss,
                      u3k(sag),
                      u3k(tip));
   }
