@@ -127,7 +127,6 @@
 ++  path  (list knot)                                   ::  filesys location
 ++  pint  {p/{p/@ q/@} q/{p/@ q/@}}                     ::  line+column range
 ++  palo  (pair vein opal)                              ::  wing trace, match
-++  pale  (pair axis palo)                              ::  natural match
 ++  pole  |*  a/$+(* *)                                 ::  nameless list
           $@($~ {a (pole a)})                           ::
 ++  poll                                                ::  natural activation
@@ -135,17 +134,12 @@
             (unit axis)                                 ::  call axis
           (list (pair span foot))                       ::  
 ++  polo  (each poll (pair span nock))                  ::  general match
+++  port  (each palo (pair span nock))                  ::  successful match
 ++  pony  %+  each                                      ::  new pull result
             palo                                        ::  natural result
           %+  each                                      ::  abnormal
             @ud                                         ::  unmatched / skips
           (pair span nock)                              ::  synthetic match
-++  port  $:  p/axis                                    ::
-              $=  q                                     ::
-              $%  {$& p/span}                           ::
-                  {$| p/axis q/(list {p/span q/foot})}  ::
-              ==                                        ::
-          ==                                            ::
 ++  qual  |*  {a/$+(* *) b/$+(* *) c/$+(* *) d/$+(* *)} ::  just a quadruple
           {p/a q/b r/c s/d}                             ::
 ++  ring  @                                             ::  private key
@@ -7923,34 +7917,76 @@
       [['.' ~] ['-' ~] ~ ~]
     [[%leaf (mesc (trip paz))] duck ~]  
   ::
+  ++  elbo
+    |=  {lop/palo rig/(list (pair wing twig))}
+    ^-  span
+    ?:  ?=($& -.q.lop)
+      |-  ^-  span
+      ?~  rig  
+        p.q.lop
+      =+  zil=(play q.i.rig)
+      =+  dar=(tack(sut p.q.lop) p.i.rig zil)
+      %=  $
+        rig      t.rig
+        p.q.lop  q.dar
+      ==
+    =+  hag=(~(tap in q.q.lop))
+    %-  fire
+    |-  ^+  hag
+    ?~  rig
+      hag
+    =+  zil=(play q.i.rig)
+    =+  dix=(toss p.i.rig zil hag)
+    %=  $
+      rig  t.rig
+      hag  q.dix
+    ==
+  ::
+  ++  ergo
+    |=  {lop/palo rig/(list (pair wing twig))}
+    ^-  (pair span nock)
+    =+  axe=(tend p.lop)
+    =|  hej/(list (pair axis nock))
+    ?:  ?=($& -.q.lop)
+      =-  [p.- (hike axe q.-)]
+      |-  ^-  (pair span (list (pair axis nock)))
+      ?~  rig
+        [p.q.lop hej]
+      =+  zil=(mint %noun q.i.rig)
+      =+  dar=(tack(sut p.q.lop) p.i.rig p.zil)
+      %=  $
+        rig      t.rig
+        p.q.lop  q.dar
+        hej      [[p.dar q.zil] hej]
+      ==
+    =+  hag=(~(tap in q.q.lop))
+    =-  [(fire p.-) [%9 p.q.lop (hike axe q.-)]]
+    |-  ^-  (pair (list (pair span foot)) (list (pair axis nock)))
+    ?~  rig
+      [hag hej]
+    =+  zil=(mint %noun q.i.rig)
+    =+  dix=(toss p.i.rig p.zil hag)
+    %=  $
+      rig  t.rig
+      hag  q.dix
+      hej  [[p.dix q.zil] hej]
+    ==
+  ::
   ++  et
     |_  {hyp/wing rig/(list (pair wing twig))}
     ++  play
-      ~|  %play-cents
       ^-  span
-      =+  lar=(seek hyp)
-      ?:  ?=($| -.lar)  ?>(?=($~ rig) p.p.lar)
-      %-  fire
-      |-  ^-  (list {p/span q/foot})
-      ?~  rig
-        r.p.lar
-      $(rig t.rig, r.p.lar q:(toss p.i.rig (^play q.i.rig) r.p.lar))
+      =+  lug=(seed hyp)
+      ?:  ?=($| -.lug)  ~|(%twig ?>(?=($~ rig) p.p.lug))
+      (elbo p.lug rig)
     ::
     ++  mint
       |=  gol/span 
-      ~|  %mint-cents
       ^-  (pair span nock)
-      =+  lar=(seek hyp)
-      ?:  ?=($| -.lar)  ?>(?=($~ rig) p.lar)
-      =-  ?>(?|(!vet (nest(sut gol) & p.toc)) toc)
-      =|  hej/(list (pair axis nock))
-      |-  ^-  toc/(pair span nock)
-      ?~  rig
-        :-  (fire r.p.lar) 
-        =+((hike p.p.lar hej) ?~(q.p.lar - [%9 u.q.p.lar -]))
-      =+  zil=(^mint %noun q.i.rig)
-      =+  wip=(toss p.i.rig p.zil r.p.lar)
-      $(rig t.rig, r.p.lar q.wip, hej [[p.wip q.zil] hej])
+      =+  lug=(seed hyp)
+      ?:  ?=($| -.lug)  ~|(%twig ?>(?=($~ rig) p.lug))
+      =-  ?>(?|(!vet (nest(sut gol) & p.-)) -)
+      (ergo p.lug rig)
     ::
     ++  mull  
       |=  {gol/span dox/span}
@@ -8808,6 +8844,26 @@
             $|  [%| p.p.fid]
             $&  !!
     ==    ==
+  ::
+  ++  rude
+    |=  fid/pony
+    ^-  port
+    ?-    -.fid
+      $&  [%& p.fid]
+      $|  ?-  -.p.fid
+            $|  [%| p.p.fid]
+            $&  !!
+    ==    ==
+  ::
+  ++  seek
+    |=  hyp/wing
+    ^-  polo
+    ~|([%find hyp] (ride (find %read hyp)))
+  ::
+  ++  seed
+    |=  hyp/wing
+    ^-  port
+    ~|([%find hyp] (rude (find %read hyp)))
   ::
   ++  seek
     |=  hyp/wing
