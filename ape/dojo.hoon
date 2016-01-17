@@ -515,7 +515,6 @@
                       {$cell _$ _$}
                       {$cube * _$}
                       {$fuss $@(term tool) _$}
-                      {$face tusk _$}
                       {$fork (set _$)}
                       {$hold _$ twig}
                   ==
@@ -523,7 +522,7 @@
                   $?($noun $void)
               ==
       ?+  a  a
-        {?($cube $face $fuss) ^}  a(q $(a q.a))
+        {?($cube $fuss) ^}  a(q $(a q.a))
         {$cell ^}  a(p $(a p.a), q $(a q.a))
         {$fork *}  a(p (silt (turn (~(tap in p.a)) |=(b/span ^$(a b)))))
         {$core ^}  `wain`/core
@@ -618,7 +617,7 @@
       %+  sloop
         %-  ~(rep by var)
         |=  {{a/term @ b/vase} c/vase}  ^-  vase
-        (sloop b(p face+[a p.b]) c)
+        (sloop b(p fuss+[a p.b]) c)
       !>([our=our now=now eny=eny]:hid)
     ::
     ++  dy-made-dial                                    ::  dialog product
