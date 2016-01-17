@@ -7973,9 +7973,39 @@
     ==
   ::
   ++  endo
-    |=  {lop/{pair palo palo} rig/(list (pair wing twig))}
+    |=  {lop/(pair palo palo) dox/span rig/(list (pair wing twig))}
     ^-  (pair span span)
-    !!
+    ~|  %mull
+    ?:  ?=($& -.q.p.lop)
+      ?>  ?=($& -.q.q.lop)
+      |-  ^-  (pair span span)
+      ?~  rig  
+        [p.q.p.lop p.q.q.lop]
+      =+  zil=(mull %noun dox q.i.rig)
+      =+  ^=  dar
+          :-  p=(tack(sut p.q.p.lop) p.i.rig p.zil)
+              q=(tack(sut p.q.q.lop) p.i.rig q.zil)
+      ?>  =(p.p.dar p.q.dar)
+      %=  $
+        rig        t.rig
+        p.q.p.lop  q.p.dar
+        p.q.q.lop  q.q.dar
+      ==
+    ?>  ?=($| -.q.q.lop)
+    =+  hag=[p=(~(tap in q.q.p.lop)) q=(~(tap in q.q.q.lop))]
+    =-  [(fire p.-) (fire(vet |) q.-)] 
+    |-  ^-  (pair (list (pair span foot)) (list (pair span foot)))
+    ?~  rig
+      hag
+    =+  zil=(mull %noun dox q.i.rig)
+    =+  ^=  dix 
+        :-  p=(toss p.i.rig p.zil p.hag)
+            q=(toss p.i.rig q.zil q.hag)
+    ?>  =(p.p.dix p.q.dix)
+    %=  $
+      rig  t.rig
+      hag  [q.p.dix q.q.dix]
+    ==
   ::
   ++  et
     |_  {hyp/wing rig/(list (pair wing twig))}
@@ -7996,25 +8026,14 @@
     ++  mull  
       |=  {gol/span dox/span}
       ^-  {span span}
-      ~|  %mull-cents
-      =+  lar=(seek hyp)
-      =+  vug=(seek(sut dox) hyp)
-      ?.  &(?=($& -.lar) ?=($& -.vug))
-        ?>  &(?=($| -.lar) ?=($| -.vug) =(q.p.lar q.p.vug))
-        ?>(?=($~ rig) [p.p.lar p.p.vug])
-      ?>  &(=(p.p.lar p.p.vug) =(q.p.lar q.p.vug))
-      =-  :-  =+  typ=(fire p.muy)
-              ?>(?|(!vet (nest(sut gol) & typ)) typ)
-          (fire(vet |) q.muy)
-      ^=  muy
-      |-  ^-  {p/(list {p/span q/foot}) q/(list {p/span q/foot})}
-      ?~  rig
-        [r.p.lar r.p.vug]
-      =+  zil=(^mull %noun dox q.i.rig)
-      =+  cuf=(toss p.i.rig p.zil r.p.lar)
-      =+  dof=(toss p.i.rig q.zil r.p.vug)
-      ?>  =(p.cuf p.dof)
-      $(rig t.rig, r.p.lar q.cuf, r.p.vug q.dof)
+      ~|  %mull
+      =+  lug=[p=(seed hyp) q=(seed(sut dox) hyp)]
+      ?:  ?=($| -.p.lug) 
+        ?>   &(?=($| -.q.lug) ?=($~ rig)) 
+        [p.p.p.lug p.p.q.lug]
+      ?>  ?=($& -.q.lug)
+      =-  ?>(?|(!vet (nest(sut gol) & p.-)) -)
+      (endo [p.p.lug p.q.lug] dox rig)
     --
   ::
   ++  epla  
@@ -8079,7 +8098,6 @@
                     [%| %& (dec p.heg)]
           ++  lose  [%| %& p.heg]
           ++  stop  ?~(q.heg here lose)
-          ++  fake  !!
           ++  twin  |=  {hax/pony yor/pony}
                     ~|  %find-fork
                     ?:  ?=($| -.hax)  
