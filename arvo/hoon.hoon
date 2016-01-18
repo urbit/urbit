@@ -119,6 +119,7 @@
           ?~  a  ~                                      ::
           ?@  b  ~                                      ::
           [i=(-.a -.b) t=$(a +.a, b +.b)]               ::
+++  onyx  (list (pair span foot))                       ::  arm activation
 ++  opal                                                ::  limb match
           $%  {$& p/span}                               ::  leg
               {$| p/axis q/(set {p/span q/foot})}       ::  arm
@@ -8010,35 +8011,44 @@
   ++  oc
     |*  $_  ^|                                          ::  structures
         |%  
+        ++  borm  span                                  ::  typestate
+        ++  burk  (pair axis borm)                      ::  leg change
+        ++  clow  onyx                                  ::  type manifest
         ++  glub  palo                                  ::  general response
-        ++  gleg  (pair vein {$& p/span})               ::  leg response
-        ++  garm  %+  pair  vein                        ::  arm response
-                  {$| p/axis q/(set (pair span foot))}  ::
-        ++  dorp  (pair span nock)                      ::  result
-        ++  ract  (list (pair axis nock))               ::  baggage
-        ++  resh  |*($+(* *) (pair +< ract))            ::  add baggage
+        ++  dink  nock                                  ::  mint product
+        ++  ract  (list (pair axis nock))               ::  mint manifest
+        ++  resh  |*($+(* *) (pair +< ract))            ::  wrap mint manifest
+        ++  prod  |*($+(* *) (pair +< dink))            ::  wrap mint product
+        ++  stup  head                                  ::  unwrap
+        --
+    =>  |%
+        ++  rath  |~(clow `(resh clow)`[+< ~])          ::  working clow
+        ++  renk  (prod borm)                           ::  general result
+        ++  rowt  |~(borm `(resh borm)`[+< ~])          ::  working borm
         --
     |*  $_  ^|
-        |%                                              ::  operations
-        ++  foo  %bar
+        |%                                              ::  functions
+        ++  halp  |~(twig `renk`(mint %noun +<))        ::  compile
+        ++  terp  |~  {a/span b/wing c/span}
+                  ^-  burk
+                  (tack(sut a) b c)
         --
     |%  
     ++  echo
-      |=  {lop/gleg rig/(list (pair wing twig))}
+      |=  {rum/borm rig/(list (pair wing twig))}
       |-  ^-  (resh span)
       ?~  rig
-        [p.q.lop ~]
+        [rum ~]
       =+  mor=$(rig t.rig)
       =+  zil=(mint %noun q.i.rig)
       =+  dar=(tack(sut p.mor) p.i.rig p.zil)
       [q.dar [[p.dar q.zil] q.mor]]
     ::
     ++  ecmo
-      |=  {lop/garm rig/(list (pair wing twig))}
+      |=  {hag/onyx rig/(list (pair wing twig))}
       ^-  (resh span)
-      =+  hag=(~(tap in q.q.lop))
       =-  [(fire p.-) q.-]
-      |-  ^-  (resh (list (pair span foot)))
+      |-  ^-  (resh onyx)
       ?~  rig
         [hag ~]
       =+  mor=$(rig t.rig)
@@ -8048,14 +8058,14 @@
     ::
     ++  ecto
       |=  {lop/glub rig/(list (pair wing twig))}
-      ^-  dorp 
+      ^-  (pair span nock)
       =.  rig  (flop rig)         ::  XX this unbreaks, void order in devulc
       =+  axe=(tend p.lop)
       ?:  ?=($& -.q.lop)
         =-  [p.- (hike axe q.-)]
-        (echo lop rig)
+        (echo p.q.lop rig)
       =-  [p.- [%9 p.q.lop (hike axe q.-)]]
-      (ecmo lop rig)
+      (ecmo (~(tap in q.q.lop)) rig)
     --
   ::
   ++  et
