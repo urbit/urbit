@@ -19,6 +19,15 @@
       u3_noun i_hyp = u3h(hyp);
       u3_noun t_hyp = u3t(hyp);
       u3_noun mor = _find_outer(van, sut, dep, way, t_hyp, nol, gil);
+
+      if ( c3n == u3h(mor) ) {
+        return _find_outer_sint(
+
+        u3_noun t_mor = u3t(mor);
+      }
+      else {
+        u3_noun ref = c3__
+      }
     }
   }
 
