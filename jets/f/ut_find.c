@@ -9,9 +9,17 @@
               u3_noun dep,
               u3_noun way,
               u3_noun hyp,
+              u3_noun nol,
               u3_noun gil)
   {
-    
+    if ( u3_nul == hyp ) {
+      return u3nq(c3y, u3k(nol), c3y, u3k(sut));
+    }
+    else {
+      u3_noun i_hyp = u3h(hyp);
+      u3_noun t_hyp = u3t(hyp);
+      u3_noun mor = _find_outer(van, sut, dep, way, t_hyp, nol, gil);
+    }
   }
 
 {
