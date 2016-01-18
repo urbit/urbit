@@ -8010,70 +8010,113 @@
       hag  [q.p.dix q.q.dix]
     ==
   ::
-  ++  inca
-    |%  
-    ++  borm  span                                      ::  typestate
-    ++  clow  onyx                                      ::  type manifest
-    ++  rosh  |*(* [p=+< q=*(list (pair axis nock))])   ::  wrap mint changes
-    ++  pord  |*(* [p=+< q=*nock])                      ::  wrap mint formula
-    ++  stup  head                                      ::  mint filling
-    ++  pust  tail                                      ::  mint wrap
-    ++  fleg  _(pord *borm)                             ::  leg with formula
-    ++  fram  _(pord *clow)                             ::  arm with formula
-    ++  foat  _(rosh *borm)                             ::  leg with changes
-    ++  fult  _(rosh *clow)                             ::  arm with changes
-    ++  halp  |~  a/twig 
-              ^-  fleg
-              (mint %noun a)
-    ++  terp  |~  {a/borm b/wing c/borm}
-              ^-  (pair axis borm)
-              (tack(sut a) b c)
-    ++  toda  |~  {a/(pair axis clow) b/fleg c/fult}
-              ^+  (rosh *clow)
-              [q.a [[p.a (pust b)] (pust c)]]
-    ++  todt  |~  {a/(pair axis borm) b/fleg c/foat}
-              ^+  (rosh *borm)
-              [q.a [[p.a (pust b)] (pust c)]]
-    ++  tusp  |~  {a/clow b/wing c/borm}
-              ^-  (pair axis clow)
-              (toss b c a)
-    ++  tyte  |~  fult
-              ^-  foat
-              [(fire +<-) +<+]
+  ++  ad
+    |%
+    ++  sur
+      |%
+      ++  arch                                          ::  generic
+        |%
+        ++  borm  *                                     ::  leg
+        ++  clow  *                                     ::  arm
+        ++  pord  same                                  ::  wrap mint formula
+        ++  pust  same                                  ::  mint wrap
+        ++  rosh  same                                  ::  wrap mint changes
+        ++  stup  same                                  ::  mint filling
+        --
+      ++  make                                          ::  for mint
+        |%  
+        ++  borm  span                                  ::  leg
+        ++  clow  onyx                                  ::  arm
+        ++  pord  |*(* [p=+< q=*nock])                  ::  wrap mint formula
+        ++  pust  tail                                  ::  unwrap baggage
+        ++  rosh  |*  *                                 ::
+                  [p=+< q=*(list (pair axis nock))]     ::  wrap mint changes
+        ++  stup  head                                  ::  unwrap filling
+        --
+      --
+    ++  def
+      =+  arch:sur
+      |%  +-  $
+      =>  +<
+      |%
+      ++  fleg  _(pord *borm)                             ::  leg with formula
+      ++  fram  _(pord *clow)                             ::  arm with formula
+      ++  foat  _(rosh *borm)                             ::  leg with changes
+      ++  fult  _(rosh *clow)                             ::  arm with changes
+      --  --
+    ::
+    ++  lib
+      |%
+      ++  arch
+        =+  (def)
+        |%  +-  $
+        =>  +<
+        |%
+        ++  halp  $+(twig fleg)
+        ++  terp  $+({borm wing borm} (pair axis borm))
+        ++  toda  $+({{axis clow} fleg fult} fult)
+        ++  todt  $+({{axis borm} fleg foat} foat)
+        ++  tusp  $+({clow wing borm} {axis clow})
+        ++  tyte  $+(fult foat)
+        --  --
+      ::
+      ++  make
+        =+  (def make:sur)
+        |%  +-  $
+        =>  +<
+        |%
+        ++  halp  |~  a/twig 
+                  ^-  fleg
+                  (mint %noun a)
+        ++  terp  |~  {a/borm b/wing c/borm}
+                  ^-  (pair axis borm)
+                  (tack(sut a) b c)
+        ++  toda  |~  {a/(pair axis clow) b/fleg c/fult}
+                  ^-  fult
+                  [q.a [[p.a (pust b)] (pust c)]]
+        ++  todt  |~  {a/(pair axis borm) b/fleg c/foat}
+                  ^-  foat
+                  [q.a [[p.a (pust b)] (pust c)]]
+        ++  tusp  |~  {a/clow b/wing c/borm}
+                  ^-  (pair axis clow)
+                  (toss b c a)
+        ++  tyte  |~  fult
+                  ^-  foat
+                  [(fire +<-) +<+]
+        --  --
+      --
     --
   ::
   ++  oc
-    =+  inc=inca
+    =+  inc=(arch:lib:ad)
+    |%  +-  $
+    =>  inc
     |%
-    +-  $
-      =>  inc
-      |%
-      ++  echo
-        |=  {rum/borm rig/(list (pair wing twig))}
-        |-  ^-  foat
-        ?~  rig  (rosh rum)
-        =+  mor=$(rig t.rig)
-        =+  zil=(halp q.i.rig)
-        =+  dar=(terp (stup mor) p.i.rig (stup zil))
-        (todt dar zil mor)
-      ::
-      ++  ecmo
-        |=  {hag/clow rig/(list (pair wing twig))}
-        ^-  foat
-        %-  tyte
-        |-  ^-  fult
-        ?~  rig  (rosh hag)
-        =+  mor=$(rig t.rig)
-        =+  zil=(halp q.i.rig)
-        =+  dar=(tusp (stup mor) p.i.rig (stup zil))
-        (toda dar zil mor)
-      --
-    --
+    ++  echo
+      |=  {rum/borm rig/(list (pair wing twig))}
+      |-  ^-  foat
+      ?~  rig  (rosh rum)
+      =+  mor=$(rig t.rig)
+      =+  zil=(halp q.i.rig)
+      =+  dar=(terp (stup mor) p.i.rig (stup zil))
+      (todt dar zil mor)
+    ::
+    ++  ecmo
+      |=  {hag/clow rig/(list (pair wing twig))}
+      ^-  foat
+      %-  tyte
+      |-  ^-  fult
+      ?~  rig  (rosh hag)
+      =+  mor=$(rig t.rig)
+      =+  zil=(halp q.i.rig)
+      =+  dar=(tusp (stup mor) p.i.rig (stup zil))
+      (toda dar zil mor)
+    --  --
   ::
   ++  etco
     |=  {lop/palo rig/(list (pair wing twig))}
     ^-  (pair span nock)
-    =+  cin=(oc inca)
+    =+  cin=(oc (make:lib:ad))
     =.  rig  (flop rig)         ::  XX this unbreaks, void order in devulc
     =+  axe=(tend p.lop)
     ?:  ?=($& -.q.lop)
@@ -8084,6 +8127,7 @@
   ::
   ++  et
     |_  {hyp/wing rig/(list (pair wing twig))}
+    ::
     ++  play
       ^-  span
       =+  lug=(seed hyp)
