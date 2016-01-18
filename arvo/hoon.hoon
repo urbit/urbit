@@ -8007,6 +8007,57 @@
       hag  [q.p.dix q.q.dix]
     ==
   ::
+  ++  oc
+    |*  $_  ^|                                          ::  structures
+        |%  
+        ++  glub  palo                                  ::  general response
+        ++  gleg  (pair vein {$& p/span})               ::  leg response
+        ++  garm  %+  pair  vein                        ::  arm response
+                  {$| p/axis q/(set (pair span foot))}  ::
+        ++  dorp  (pair span nock)                      ::  result
+        ++  ract  (list (pair axis nock))               ::  baggage
+        ++  resh  |*($+(* *) (pair +< ract))            ::  add baggage
+        --
+    |*  $_  ^|
+        |%                                              ::  operations
+        ++  foo  %bar
+        --
+    |%  
+    ++  echo
+      |=  {lop/gleg rig/(list (pair wing twig))}
+      |-  ^-  (resh span)
+      ?~  rig
+        [p.q.lop ~]
+      =+  mor=$(rig t.rig)
+      =+  zil=(mint %noun q.i.rig)
+      =+  dar=(tack(sut p.mor) p.i.rig p.zil)
+      [q.dar [[p.dar q.zil] q.mor]]
+    ::
+    ++  ecmo
+      |=  {lop/garm rig/(list (pair wing twig))}
+      ^-  (resh span)
+      =+  hag=(~(tap in q.q.lop))
+      =-  [(fire p.-) q.-]
+      |-  ^-  (resh (list (pair span foot)))
+      ?~  rig
+        [hag ~]
+      =+  mor=$(rig t.rig)
+      =+  zil=(mint %noun q.i.rig)
+      =+  dix=(toss p.i.rig p.zil p.mor)
+      [q.dix [[p.dix q.zil] q.mor]]
+    ::
+    ++  ecto
+      |=  {lop/glub rig/(list (pair wing twig))}
+      ^-  dorp 
+      =.  rig  (flop rig)         ::  XX this unbreaks, void order in devulc
+      =+  axe=(tend p.lop)
+      ?:  ?=($& -.q.lop)
+        =-  [p.- (hike axe q.-)]
+        (echo lop rig)
+      =-  [p.- [%9 p.q.lop (hike axe q.-)]]
+      (ecmo lop rig)
+    --
+  ::
   ++  et
     |_  {hyp/wing rig/(list (pair wing twig))}
     ++  play
@@ -8021,7 +8072,7 @@
       =+  lug=(seed hyp)
       ?:  ?=($| -.lug)  ~|(%twig ?>(?=($~ rig) p.lug))
       =-  ?>(?|(!vet (nest(sut gol) & p.-)) -)
-      (ergo p.lug rig)
+      (ecto:**oc p.lug rig)
     ::
     ++  mull  
       |=  {gol/span dox/span}
