@@ -8116,32 +8116,29 @@
         --  --
       --
     ::
-    ++  ram
+    ++  nib
       =+  (deft:lib)
-      |%  +-  $
-      =>  +<
-      =>  vant
-      |%  ++  clom  borm
-          ++  chog  fleg
-          ++  ceut  foat
-      --  --
-    ::
-    ++  gel
-      =+  (deft:lib)
-      |%  +-  $
-      =>  +<
-      =>  vunt
-      |%  ++  clom  clow
-          ++  chog  fram
-          ++  ceut  fult
-      --  --
-    ::
-    ++  god
-      =+  (gel)
       |%  +-  $
       =>  +<
       |%  
+      ++  rame
+        =>  vant
+        |%  ++  clom  borm
+            ++  chog  fleg
+            ++  ceut  foat
+        --
+      ++  gelp
+        =>  vunt
+        |%  ++  clom  clow
+            ++  chog  fram
+            ++  ceut  fult
+        --
+      ++  ecbo  (ecco rame)
+      ++  eclo  (ecco gelp)
       ++  ecco
+        =+  rame
+        |%  +-  $
+        =>  +<
         |=  {rum/clom rig/(list (pair wing twig))}
         ^-  foat
         %-  tyle
@@ -8151,16 +8148,18 @@
         =+  zil=(halp q.i.rig)
         =+  dar=(trep (stup mor) p.i.rig (stup zil))
         (tasp dar zil mor)
-      --  --
+      --  --  --
     --
   ::
   ++  oc
-    =+  inc=(deft:lib:ad)
+    =+  inc=(nib:ad)
     |%  +-  $
     =>  inc
     |%
     ++  echo
       |=  {rum/borm rig/(list (pair wing twig))}
+      ::  =+  moo=`voat`(ecbo rum rig)
+      ^-  foat
       %-  tyle:vant
       |-  ^-  foat
       ?~  rig  (rosh rum)
@@ -8184,7 +8183,7 @@
   ++  etco
     |=  {lop/palo rig/(list (pair wing twig))}
     ^-  (pair span nock)
-    =+  cin=(oc (make:lib:ad))
+    =+  cin=(oc (nib:ad (make:lib:ad)))
     =.  rig  (flop rig)         ::  XX this unbreaks, void order in devulc
     =+  axe=(tend p.lop)
     ?:  ?=($& -.q.lop)
