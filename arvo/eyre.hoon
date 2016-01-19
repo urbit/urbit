@@ -752,7 +752,7 @@
     ::
         %news                                         ::  dependency updated
       ?:  ?=([%se *] tee)
-        rebuild:(dom-vi q.tee)
+        build:(dom-vi q.tee)
       ?.  ?=([%on ~] tee)
         ~&(e/lost/[tee hen] +>.$)
       %+  roll  (~(tap in (~(get ju liz) p.sih)))
@@ -1690,8 +1690,14 @@
     ::
     ++  rebuild  build(cor ~)
     ++  build
-      =+  bem=[root-beak (flop %_(dom . sec/dom))]
-      (pass-note:abet se/core/dom (ford-req root-beak core/bem))
+      =-  (pass-note:abet se/core/dom (ford-req root-beak -))
+      =+  req=core/[root-beak (flop %_(dom . sec/dom))]
+      ?~  cor
+        req
+      =+  usr=(mule |.((slot 13 u.cor)))
+      ?:  ?=(%| -.usr)
+        ~&(no-samp/dom req)
+      mute/[req [~[`13] `noun/p.usr]~]
     ::
     ++  get-req  |=(a=[mark vase:hiss] pump(req (~(put to req) a)))
 --  --
