@@ -8053,11 +8053,6 @@
         =>  +<
         |%
         ++  halp  $+(twig fleg)
-        ++  terp  $+({borm wing borm} (pair axis borm))
-        ++  toda  $+({{axis clow} fleg fult} fult)
-        ++  todt  $+({{axis borm} fleg foat} foat)
-        ++  tusp  $+({clow wing borm} {axis clow})
-        ++  tyte  $+(fult foat)
         ++  vant
           |%  ++  trep  $+({borm wing borm} {axis borm})
               ++  tasp  $+({{axis borm} fleg foat} foat)
@@ -8078,21 +8073,6 @@
         ++  halp  |~  a/twig 
                   ^-  fleg
                   (mint %noun a)
-        ++  terp  |~  {a/borm b/wing c/borm}
-                  ^-  (pair axis borm)
-                  (tack(sut a) b c)
-        ++  toda  |~  {a/(pair axis clow) b/fleg c/fult}
-                  ^-  fult
-                  [q.a [[p.a (pust b)] (pust c)]]
-        ++  todt  |=  {a/(pair axis borm) b/fleg c/foat}
-                  ^-  foat
-                  [q.a [[p.a (pust b)] (pust c)]]
-        ++  tusp  |~  {a/clow b/wing c/borm}
-                  ^-  (pair axis clow)
-                  (toss b c a)
-        ++  tyte  |~  fult
-                  ^-  foat
-                  [(fire +<-) +<+]
         ++  vant
           |%  ++  trep  |=  {a/borm b/wing c/borm}
                         ^-  {axis borm}
@@ -9050,20 +9030,10 @@
             $&  !!
     ==    ==
   ::
-  ++  seek
-    |=  hyp/wing
-    ^-  polo
-    ~|([%find hyp] (ride (find %read hyp)))
-  ::
   ++  seed
     |=  hyp/wing
     ^-  port
     ~|([%find hyp] (rude (find %read hyp)))
-  ::
-  ++  seek
-    |=  hyp/wing
-    ^-  polo
-    ~|([%find hyp] (ride (find %read hyp)))
   ::
   ++  take
     |=  {vit/vein duz/$+(span span)}
