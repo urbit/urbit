@@ -3,7 +3,7 @@
 */
 #include "all.h"
 
-  u3_noun
+ u3_noun
   u3qfu_tack(u3_noun van,
              u3_noun sut,
              u3_noun hyp,
@@ -18,4 +18,4 @@
                                 u3x_sam_3, 
                                 u3k(mur),
                                 0));
-  }
+  } 
