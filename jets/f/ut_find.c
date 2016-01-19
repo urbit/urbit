@@ -4,32 +4,159 @@
 #include "all.h"
 
   static u3_noun
+  u3qfu_felt(u3_noun van,
+             u3_noun sut,
+             u3_noun lap)
+  {
+    u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
+    u3_noun gat = u3j_hook(von, "felt");
+
+    return u3n_kick_on(u3i_molt(gat, 
+                                u3x_sam, 
+                                u3k(lap), 
+                                0));
+  }
+
+  static u3_noun
+  _find_no(u3_noun van,
+           u3_noun sut,
+           u3_noun way,
+           u3_noun hyp,
+           u3_noun p_mor)
+  {
+  }
+
+  static u3_noun
+  _find_buck_stop(u3_noun van,
+                  u3_noun sut,
+                  u3_noun way,
+                  u3_noun p_heg,
+                  u3_noun q_heg,
+                  u3_noun gil)
+                  
+  static u3_noun
+  _find_buck(u3_noun van,
+             u3_noun sut,
+             u3_noun way,
+             u3_noun p_heg,
+             u3_noun q_heg,
+             u3_noun gil)
+  {
+    u3_noun p_sut, q_sut, r_sut;
+
+    if ( c3n == u3du(sut) ) switch ( sut ) {
+      default: return u3m_bail(c3__fail);
+
+      case c3__noun:
+      {
+      }
+      case c3__void:
+      {
+      }
+    }
+    else switch ( u3h(sut) ) {
+      default: return u3m_bail(c3__fail);
+
+      case c3__atom: u3x_cell(u3t(sut), &p_sut, &q_sut);
+      {
+      }
+      case c3__cell: u3x_cell(u3t(sut), &p_sut, &q_sut);
+      {
+      }
+      case c3__core: u3x_cell(u3t(sut), &p_sut, &q_sut);
+      {
+      }
+      case c3__face: u3x_cell(u3t(sut), &p_sut, &q_sut);
+      {
+      }
+      case c3__fuss: u3x_cell(u3t(sut), &p_sut, &q_sut);
+      {
+      }
+      case c3__fork: p_sut = u3t(sut);
+      {
+      }
+      case c3__hold: p_sut = u3t(sut);
+      {
+      }
+    }
+  }
+
+
+  static u3_noun
+  _find_yes(u3_noun van,
+            u3_noun sut,                  //  span
+            u3_noun way,                  //  ?(%read %rite %free %both)
+            u3_noun i_hyp,                //  limb
+            u3_noun p_mor)                //  palo
+  {
+    u3_noun pp_mor = u3h(p_mor);          //  vein
+    u3_noun qp_mor = u3t(p_mor);          //  opal
+    {
+      u3_noun ref    = u3qfu_felt(van, sut, qp_mor);
+      u3_noun lon    = u3k(pp_mor);
+      u3_noun heg    = (c3y == u3du(i_hyp))
+                         ? u3k(i_hyp)
+                         : u3nq(c3n, 0, u3_nul, u3k(i_hyp));
+      u3_noun ret;
+      
+      if ( c3y == u3h(heg) ) {
+        u3_noun p_heg = u3(heg);          //  axis
+
+        ret = u3nq
+          (c3y,
+           u3nc(u3nc(u3_nul, u3k(p_heg)), u3k(lon)),
+           c3y,
+           u3qfu_peek(van, ref, way, p_heg);
+      }
+      else {
+        u3_noun p_heg = u3h(u3t(heg));    //  @ud
+        u3_noun q_heg = u3h(u3t(heg));    //  (unit term)
+
+        ret = _find_buck
+                (van, ref, way, lon, p_heg, q_heg, u3_nul);
+      }
+      u3z(heg);
+      u3z(lon);
+      u3z(ref);
+
+      return ret;
+    }
+  }
+
+  static u3_noun
   _find_outer(u3_noun van,
               u3_noun sut,
-              u3_noun dep,
               u3_noun way,
-              u3_noun hyp,
-              u3_noun nol,
-              u3_noun gil)
+              u3_noun hyp)
   {
     if ( u3_nul == hyp ) {
-      return u3nq(c3y, u3k(nol), c3y, u3k(sut));
+      return u3nq(c3y, u3_nul, c3y, u3k(sut));
     }
     else {
       u3_noun i_hyp = u3h(hyp);
       u3_noun t_hyp = u3t(hyp);
-      u3_noun mor = _find_outer(van, sut, dep, way, t_hyp, nol, gil);
+      u3_noun mor = _find_outer(van, sut, way, t_hyp);
+      u3_noun p_mor = u3t(mor);
 
       if ( c3n == u3h(mor) ) {
-        u3_noun ret = _find_outer_sint(
+        u3_noun ret = _find_no(van, sut, way, i_hyp, p_mor);
 
-        u3_noun t_mor = u3t(mor);
+        u3z(mor);
+        return ret;
       }
       else {
-        
+        u3_noun ret = _find_yes(van, sut, way, i_hyp, p_mor);
+
+        u3z(mor);
+        return ret;
       }
     }
   }
+
+
+
+
+
 
 {
   u3_noun p_sut, q_sut, r_sut;
