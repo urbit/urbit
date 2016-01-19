@@ -32,7 +32,11 @@
                   u3_noun way,
                   u3_noun p_heg,
                   u3_noun q_heg,
+                  u3_noun axe,
+                  u3_noun lon,
                   u3_noun gil)
+  {
+  }
                   
   static u3_noun
   _find_buck(u3_noun van,
@@ -113,7 +117,7 @@
         u3_noun q_heg = u3h(u3t(heg));    //  (unit term)
 
         ret = _find_buck
-                (van, ref, way, lon, p_heg, q_heg, u3_nul);
+                (van, ref, way, 1, lon, p_heg, q_heg, u3_nul);
       }
       u3z(heg);
       u3z(lon);
