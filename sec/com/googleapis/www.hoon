@@ -68,5 +68,24 @@
       grant-type/'authorization_code'
   ==
 ::
-++  bak  !!
+++  parse-bak
+  |=  [@u a=@t]
+  %.  a
+  ;~  biff
+    poja
+    =>  jo  %-  ot  :~
+      'token_type'^(su (jest 'Bearer'))
+      'access_token'^so
+      'refresh_token'^so
+      'expires_in'^ni
+    ==
+  ==
+::
+++  bak
+  |=  res=httr  ^-  [(each ,_!! ,%retry) _+>]
+  =+  ~|  bad-json/r.res
+      ^-  [@ ber=@t ref=@t tim=@u]
+      (need (parse-bak (need r.res)))
+  :-  [%| %retry]  :: XX refresh
+  +>.$(ber ber)
 --

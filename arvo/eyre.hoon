@@ -66,6 +66,7 @@
 ++  whir-of  ,[p=span:ship q=term r=wire]               ::  path in dock
 ++  whir-se
   $?  %core                                             ::  build agent
+      %bak                                              ::  ++bak auth response
       %out                                              ::  ++out mod request
       %in                                               ::  ++in handle code 
   ==                                                    ::
@@ -90,7 +91,9 @@
       sec=(map (list ,@t) driv)                         ::  security drivers
   ==                                                    ::
 ::
-++  driv  (pair (unit vase) (qeu (pair mark vase:hiss)))::  driver state
+++  driv  %+  pair  (unit vase)                         ::  driver state
+          (qeu (trel duct mark vase:hiss))              ::  waiting requests
+::
 ++  live                                                ::  in flight
   $%  [%exec p=whir]                                    ::  ford build
       [%wasp p=(list ,@uvH)]                            ::  ford deps
@@ -772,14 +775,7 @@
           $|(~ [?(%on %ay %ow) *])  ~|(e/ford/lost/tee !!)
           [%of @ ~]  ~|(e/ford/lost/tee !!)
           [%si ~]  (give-sigh q.sih)
-          [%se ^]
-        =+  iv=(dom-vi q.tee)
-        ?-  p.tee
-            %core  (get-upd:iv [p q]:sih)
-            %out   (res-out:iv q.sih)
-            %in    (res-in:iv q.sih)
-        ==
-      ::
+          [%se ^]  (get-made:(dom-vi q.tee) p.tee [p q]:sih)
           [%hi ^]
         ?:  ?=(%| -.q.sih)
           (give-sigh q.sih)  ::  XX crash?
@@ -1602,12 +1598,12 @@
     ++  print-subs  |=([a=dock b=path] "{<p.a>}/{(trip q.a)}{(spud b)}")
     --
   ++  vi                                                ::  auth engine
-    |_  [dom=path cor=(unit vase) req=(qeu ,[p=mark q=vase:hiss])]
+    |_  [dom=path cor=(unit vase) req=(qeu ,[p=duct q=mark r=vase:hiss])]
     ++  abet  +>(sec (~(put by sec) +<))
     ++  dead-hiss  |=(a=tang (give-sigh:abet %| a))
     ++  dead-this  |=(a=tang (fail:abet 500 0v0 a))
     ::  XX block reqs until correct core checked in?
-    ++  warn  |=([%| a=tang] ((slog (flop a)) abet))
+    ++  warn  |=(a=tang ((slog (flop a)) abet))
     ++  pump
       ^+  abet
       ?~  cor
@@ -1615,10 +1611,10 @@
       =+  ole=~(top to req)
       ?~  ole  abet
       ::  process hiss
-      (call %out hiss/q.u.ole)
+      (call(hen p.u.ole) %out hiss/r.u.ole)
     ::
     ++  call
-      |=  [arm=?(%out %in) sam=cage]
+      |=  [arm=?(%bak %out %in) sam=cage]
       ?~  cor  ~|(%no-core !!)
       =.  u.cor  (slap u.cor cncb/[[`1]~ [[`12]~ bczp/%null]~])
       =+  call/[ride/[cnzy/arm `core/u.cor] `sam]
@@ -1628,17 +1624,21 @@
       |=  [dep=@uvH gag=(each cage tang)]
       ~&  got-upd/dep
       =.  ..vi  (pass-note se/core/dom %f [%wasp our dep &])
-      ?-(-.gag %| (warn gag), %& pump(cor `q.p.gag))
+      ?-(-.gag %| (warn p.gag), %& pump(cor `q.p.gag))
+    ::
+    ++  get-made
+      |=  [wir=whir-se dep=@uvH res=(each cage tang)]  ^+  abet
+      ?-  wir
+        %core  (get-upd dep res)
+        %bak   (res-bak res)
+        %out   (res-out res)
+        %in    (res-in res)
+      ==
     ::
     ++  get-thou
       |=  [wir=whir-se hit=httr]
-      %^  give-html  200  ~           :: XX handle
-      %+  titl:xml  'Thou'
-      =+  hed=(turn q.hit |=([a=@t b=@t] (rap 3 a ': ' b ~)))      
-      =.  hed  [(crip <p.hit>) hed]
-      ;=  ;h1:"Got ;{code "{<wir>}"} response"
-          ;pre:code:"{(trip (role hed))}\0a{?~(r.hit ~ (trip q.u.r.hit))}"
-      ==
+      ?>  ?=(%in wir)                 :: XX handle %out errors
+      (call %bak httr/!>(hit))
     ::
     ++  auth-tank
       =>  rose/["." `~]^(turn (flop dom) |=(a=cord leaf/(trip a)))
@@ -1646,16 +1646,17 @@
     ::
     ::    XX formal dill-blit %url via hood
     ++  auth-print  |=([%| a=purl] (slog auth-tank leaf/(earn a) ~))
-    ++  res-in
-      |=  a=(each cage tang)  ^+  abet
-      ?:  ?=(%| -.a)
-        (dead-this p.a)
-      =+  (mule |.((in-vase q.p.a)))
-      ?-(-.- %& p.-, %| (dead-this p.-))
     ::
-    ++  in-vase
+    ++  on-error
+      |=  [err=$+(tang _abet) try=$+(vase _abet)]
+      |=  a=(each cage tang)  ^+  abet
+      ?:  ?=(%| -.a)  (err p.a)
+      =-  ?-(-.- %& p.-, %| (err p.-))
+      (mule |.(~|(driver/dom ~|(bad-res/p.q.p.a (try q.p.a)))))
+    ::
+    ++  res-in
+      %+  on-error  dead-this
       |=  res=vase  ^+  abet
-      ~|  bad-res/p.res
       =.  res  (spec res)
       ?+  -.q.res  !!                           :: bad type
         %|  ?>(?=(%retry +.p.res) ~|(%retry-stub !!))
@@ -1663,22 +1664,35 @@
             (slam !>(|=([%& a=hiss] a)) res)
       ==
     ::
+    ++  res-bak
+      %+  on-error  dead-this
+      |=  res=vase  ^+  abet
+      =+  ~|(%split [mow=(slot 2 res) cor=(slot 3 res)])
+      =.  ^cor
+        ?~  ^cor  ~|(%lost-core !!)
+        (some cor)
+      =.  mow  (spec mow)
+      ?+  -.q.mow  !!                           :: bad type
+        %&  ~|(unexpected-hiss/%bak !!)
+        %|  ?>  ?=(%retry +.q.mow)
+            =.  ..vi  (give-html 200 ~ exit:xml)
+            pump
+      ==
+    ::
     ++  res-out
       |=  a=(each cage tang)  ^+  abet
       ?:  ?=(%| -.a)
         (dead-hiss(req ~(nap to req)) p.a)
-      =+  (mule |.((out-vase q.p.a)))
-      ?-(-.- %& p.-, %| (warn -))
-    ::
-    ++  out-vase
+      %.  a
+      %+  on-error  warn
       |=  res=vase  ^+  abet
-      ~|  bad-res/p.res
       =.  res  (spec res)
       ?+  -.q.res  !!                           :: bad type
         %|  =+((slam !>(auth-print) res) abet)
         %&  =^  ole  req  ~(get to req)
-            =>  .(ole `[p=mark q=*]`ole)  :: XX types
-            %+  eyre-them:abet  hi//[p.ole]
+            =>  .(ole `[p=duct q=mark *]`ole)  :: XX types
+            =.  hen  p.ole
+            %+  eyre-them:abet  hi//[q.ole]
             (slam !>(|=([%& a=hiss] a)) res)
       ==
     ::
@@ -1691,15 +1705,15 @@
     ++  rebuild  build(cor ~)
     ++  build
       =-  (pass-note:abet se/core/dom (ford-req root-beak -))
-      =+  req=core/[root-beak (flop %_(dom . sec/dom))]
+      =+  sil=core/[root-beak (flop %_(dom . sec/dom))]
       ?~  cor
-        req
+        sil
       =+  usr=(mule |.((slot 13 u.cor)))
       ?:  ?=(%| -.usr)
-        ~&(no-samp/dom req)
-      mute/[req [~[`13] `noun/p.usr]~]
+        ~&(no-samp/dom sil)
+      mute/[sil [~[`13] `noun/p.usr]~]
     ::
-    ++  get-req  |=(a=[mark vase:hiss] pump(req (~(put to req) a)))
+    ++  get-req  |=(a=[mark vase:hiss] pump(req (~(put to req) hen a)))
 --  --
 --
 .   ==
