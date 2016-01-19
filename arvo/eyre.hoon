@@ -66,7 +66,7 @@
 ++  whir-of  ,[p=span:ship q=term r=wire]               ::  path in dock
 ++  whir-se
   $%  [%core p=(list ,@t)]                              ::  build agent
-      [%reqs p=(list ,@t)]                              ::  attempted filtered outbound request
+      [%reqs p=(list ,@t)]                              ::  filter request
 ::       [%resp p=mark q=(list ,@t)]
   ==
 --                                                      ::
@@ -125,6 +125,7 @@
 ++  perk                                                ::  parsed request
   $%  [%auth p=perk-auth]
       [%away ~]
+      [%oath p=(list ,@t)]
       [%bugs p=?(%as %to) ~]
       [%beam p=beam]
       [%deps p=?(%put %delt) q=@uvH]
@@ -464,6 +465,12 @@
   --
 ++  xml
   |%
+  ++  exit
+    ;html
+      ;head:title:"Accepted"
+      ;body:"You may now close this window."
+    ==
+  ::
   ++  login-page
     %+  titl  'Log in :urbit'
     ;=  ;h1: Please log in
@@ -1093,6 +1100,13 @@
         ?+    pef  ~|(pfix-lost/`path`/~/[pef] !!)
             %debug  ;;(perk [%bugs but])
             %away  [%away ~]
+            %ac
+          ?~  but  ~|(no-host/`path`/~/[pef] !!)
+          =+  `dom=host`~|(bad-host/i.but (rash i.but thos:urlp))
+          ?>  ?=([%auth ~] t.but)
+          ?:  ?=(%| -.dom)  ~|(auth-ip/dom !!)
+          [%oath p.dom]
+        ::
             %at  [%auth %at pok(q but)]
             %am  ?~(but !! [%auth %xen i.but pok(q t.but)])
             %as
@@ -1213,6 +1227,12 @@
         =^  orx  ..ya   ?:(is-anon new-view:for-client [(need grab-oryx) ..ya])
         =+  vew=(ire-ix (oryx-to-ixor orx))
         ((teba new-mess.vew) p.hem r.hem q.hem %json !>(`json`s.hem))
+      ::
+          %oath
+        ?.  (~(has by sec) p.hem)
+          ~|(no-driver/p.hem !!)
+        =.  ..ya  %.(quy get-quay:(dom-vi p.hem))
+        [%| (resolve ~ %html exit:xml)]
       ::
           %poll
         ?:  ?=([~ %js] p.pok)  ::  XX treat non-json cases?
@@ -1584,24 +1604,24 @@
     |_  [dom=path cor=(unit vase) req=(qeu ,[p=mark q=vase:hiss])]
     ++  abet  +>(sec (~(put by sec) +<))
     ++  dead  |=(a=tang (give-sigh:abet %| a))
+    ::  XX block reqs until correct core checked in?
+    ++  warn  |=([%| a=tang] ((slog (flop a)) abet))
     ++  pump
       ^+  abet
       ?~  cor
         build
       =+  ole=~(top to req)
       ?~  ole  abet
-      ::  operate on the each-hiss-purl
-      =+  call/[`core/u.cor `hiss/q.u.ole]
+      ::  process hiss
+      =.  u.cor  (slap u.cor cncb/[[`1]~ [[`12]~ bczp/%null]~])
+      =+  call/[ride/[cnzy/%out `core/u.cor] `hiss/q.u.ole]
       (pass-note:abet se/reqs/dom (ford-req root-beak -))
     ::
     ++  get-upd  
       |=  [dep=@uvH gag=(each cage tang)]
       ~&  got-upd/dep
       =.  ..vi  (pass-note se/core/dom %f [%wasp our dep &])
-      ?-  -.gag
-        %&  pump(cor `q.p.gag)
-        %|  ((slog p.gag) abet)
-      ==
+      ?-(-.gag %| (warn gag), %& pump(cor `q.p.gag))
     ::
     ++  auth-tank
       =>  rose/["." `~]^(turn (flop dom) |=(a=cord leaf/(trip a)))
@@ -1614,10 +1634,7 @@
       ?:  ?=(%| -.a)
         (dead(req ~(nap to req)) p.a)
       =+  (mule |.((get-vase q.p.a)))
-      ?-  -.-
-        %&  p.-
-        %|  ((slog (flop p.-)) abet)  :: XX block until correct core?
-      ==
+      ?-(-.- %& p.-, %| (warn -))
     ::
     ++  get-vase
       |=  res=vase  ^+  abet
@@ -1630,6 +1647,10 @@
             %+  eyre-them:abet  p.ole
             (slam !>(|=([%& a=hiss] a)) res)
       ==
+    ++  get-quay
+      |=  quy=quay  ^+  abet
+      ~|  %quy-stub
+      !!
     ++  rebuild  build(cor ~)
     ++  build
       =+  bem=[root-beak (flop %_(dom . sec/dom))]
