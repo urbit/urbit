@@ -10,13 +10,14 @@
 ::
 =+  ^=  type  (fall (~(get by qix.gas) %type) 'tree')
 =+  ^=  body  ?:  =(type 'tree')  tree-body  talk-body
-=+  ^=  nav  ?:  =(type 'tree')  tree-nav  talk-nav
+=+  ^=  nav   ?:  =(type 'tree')  tree-nav   talk-nav
 ::
 ^-  manx
 ::
 ;html
   ;head
     ;title: Bootstrap Test - ~2016.1
+    ;meta(name "viewport", content "width=device-width, initial-scale=1");
     ;link(rel "stylesheet", href "/home/lib/fonts.css");
     ;link(rel "stylesheet", href "/home/lib/bootstrap.css");
     ;script(src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js");
@@ -35,12 +36,10 @@
     ;script(type "text/javascript"):'''
                                     $(function() {
                                       $('.navbar-toggler').click(function() {
+                                          $('.navbar-toggler').toggleClass('open')
                                           $('.ctrl').toggleClass('open')
-                                        })
-                                      $('.context .name').click(
-                                        function() {
-                                          $('.menu.depth-1').toggleClass('open')
-                                          $('.context .arrow').toggleClass('open')
+                                          if($('.navbar-toggler').hasClass('show'))
+                                            $('.menu.depth-1').toggleClass('open')
                                         })
                                       $('.room').click(
                                         function() {

@@ -3,10 +3,11 @@
     ;div.icon
       ;div.home;
       ;div.app: Talk
+      ;div.dpad;
+      ;button.navbar-toggler.show(type "button"): ☰
     ==
     ;div.context
-      ;div.name: Home
-      ;div.arrow;
+      ;div.name: /home
     ==
   ==
   ;div.col-md-4.menu.depth-1

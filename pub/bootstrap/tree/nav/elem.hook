@@ -1,11 +1,13 @@
 ;div.row
   ;div.col-md-2.ctrl
-    ;div.mine;
     ;div.icon
       ;div.home;
-      ;div.up;
-      ;div.prev;
-      ;div.next;
+      ;div.app;
+      ;div.dpad
+        ;div.up;
+        ;div.prev;
+        ;div.next;
+      ==
       ;button.navbar-toggler(type "button"): ☰
     ==
     ;ul.nav
