@@ -131,11 +131,6 @@
 ++  pock  (pair axis nock)                              ::  changes
 ++  pole  |*  a/$+(* *)                                 ::  nameless list
           $@($~ {a (pole a)})                           ::
-++  poll                                                ::  natural activation
-          %^  trel  axis                                ::  leg activated
-            (unit axis)                                 ::  call axis
-          (list (pair span foot))                       ::  
-++  polo  (each poll (pair span nock))                  ::  general match
 ++  port  (each palo (pair span nock))                  ::  successful match
 ++  pony  %+  each                                      ::  new pull result
             palo                                        ::  natural result
@@ -8219,10 +8214,9 @@
   ++  find
     |=  {way/vial hyp/wing}
     ~+
-    =|  nol/vein
     |-  ^-  pony
     ?~  hyp  
-      [%& nol %& sut]
+      [%& ~ %& sut]
     =+  mor=$(hyp t.hyp)
     ?-    -.mor
         $|
@@ -8315,7 +8309,7 @@
                 =+  fid=^$(sut p.i.q.p.sut, lon ~, axe 1) 
                 ?:  ?=({$| $& *} fid)
                   $(q.p.sut t.q.p.sut, p.heg p.p.fid)
-                =+  vat=(fine (ride fid) ~)
+                =+  vat=(fine (ride fid))
                 [%| %| p.vat (comb q.vat (comb [%0 axe] q.i.q.p.sut))]
               --
             ::
@@ -8340,14 +8334,15 @@
     ==
   ::
   ++  fine
-    |=  {luc/polo hej/(list (pair axis nock))}
+    |=  tor/port
     ^-  (pair span nock)
-    ?-    -.luc
-      $|  p.luc
-      $&  :-  (fire r.p.luc)
-          =+  (hike p.p.luc hej) 
-          ?~(q.p.luc - [%9 u.q.p.luc -])
-    == 
+    ?-  -.tor
+      $|  p.tor
+      $&  =+  axe=(tend p.p.tor)
+          ?-  -.q.p.tor
+            $&  [`span`p.q.p.tor %0 axe]
+            $|  [(fire (~(tap in q.q.p.tor))) [%9 p.q.p.tor %0 axe]]
+    ==    == 
   ::
   ++  fire
     |=  hag/(list {p/span q/foot})
@@ -9008,20 +9003,6 @@
   ::
   ++  ride
     |=  fid/pony
-    ^-  polo
-    ?-    -.fid
-      $&  :+  %&  (tend p.p.fid)
-          ?-  -.q.p.fid
-            $&  [~ [`span`p.q.p.fid `foot`[%elm %$ 1]]~]
-            $|  [`p.q.p.fid (~(tap in q.q.p.fid))]
-          ==
-      $|  ?-  -.p.fid
-            $|  [%| p.p.fid]
-            $&  !!
-    ==    ==
-  ::
-  ++  rude
-    |=  fid/pony
     ^-  port
     ?-    -.fid
       $&  [%& p.fid]
@@ -9033,7 +9014,7 @@
   ++  seed
     |=  hyp/wing
     ^-  port
-    ~|([%find hyp] (rude (find %read hyp)))
+    ~|([%find hyp] (ride (find %read hyp)))
   ::
   ++  take
     |=  {vit/vein duz/$+(span span)}
