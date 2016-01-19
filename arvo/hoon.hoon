@@ -8053,11 +8053,6 @@
         =>  +<
         |%
         ++  halp  $+(twig fleg)
-        ++  terp  $+({borm wing borm} (pair axis borm))
-        ++  toda  $+({{axis clow} fleg fult} fult)
-        ++  todt  $+({{axis borm} fleg foat} foat)
-        ++  tusp  $+({clow wing borm} {axis clow})
-        ++  tyte  $+(fult foat)
         ++  vant
           |%  ++  trep  $+({borm wing borm} {axis borm})
               ++  tasp  $+({{axis borm} fleg foat} foat)
@@ -8078,18 +8073,6 @@
         ++  halp  |~  a/twig 
                   ^-  fleg
                   (mint %noun a)
-        ++  terp  |~  {a/borm b/wing c/borm}
-                  ^-  (pair axis borm)
-                  (tack(sut a) b c)
-        ++  toda  |~  {a/(pair axis clow) b/fleg c/fult}
-                  ^-  fult
-                  [q.a [[p.a (pust b)] (pust c)]]
-        ++  todt  |=  {a/(pair axis borm) b/fleg c/foat}
-                  ^-  foat
-                  [q.a [[p.a (pust b)] (pust c)]]
-        ++  tusp  |~  {a/clow b/wing c/borm}
-                  ^-  (pair axis clow)
-                  (toss b c a)
         ++  tyte  |~  fult
                   ^-  foat
                   [(fire +<-) +<+]
@@ -8149,6 +8132,9 @@
         =+  dar=(trep (stup mor) p.i.rig (stup zil))
         (tasp dar zil mor)
       --  --  --
+    ::
+    ++  make  (nib make:lib)
+    ::  ++  type  
     --
   ::
   ++  oc
@@ -8158,26 +8144,11 @@
     |%
     ++  echo
       |=  {rum/borm rig/(list (pair wing twig))}
-      ::  =+  moo=`voat`(ecbo rum rig)
-      ^-  foat
-      %-  tyle:vant
-      |-  ^-  foat
-      ?~  rig  (rosh rum)
-      =+  mor=$(rig t.rig)
-      =+  zil=(halp q.i.rig)
-      =+  dar=(trep:vant (stup mor) p.i.rig (stup zil))
-      (tasp:vant dar zil mor)
+      (ecbo rum rig)
     ::
     ++  ecmo
       |=  {hag/clow rig/(list (pair wing twig))}
-      ^-  foat
-      %-  tyle:vunt
-      |-  ^-  fult
-      ?~  rig  (rosh hag)
-      =+  mor=$(rig t.rig)
-      =+  zil=(halp q.i.rig)
-      =+  dar=(trep:vunt (stup mor) p.i.rig (stup zil))
-      (tasp:vunt dar zil mor)
+      (eclo hag rig)
     --  --
   ::
   ++  etco
