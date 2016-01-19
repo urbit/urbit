@@ -128,6 +128,7 @@
 ++  path  (list knot)                                   ::  filesys location
 ++  pint  {p/{p/@ q/@} q/{p/@ q/@}}                     ::  line+column range
 ++  palo  (pair vein opal)                              ::  wing trace, match
+++  pock  (pair axis nock)                              ::  changes
 ++  pole  |*  a/$+(* *)                                 ::  nameless list
           $@($~ {a (pole a)})                           ::
 ++  poll                                                ::  natural activation
@@ -8014,7 +8015,7 @@
     |%
     ++  sur
       |%
-      ++  arch                                          ::  generic
+      ++  deft                                          ::  generic
         |%
         ++  borm  *                                     ::  leg
         ++  clow  *                                     ::  arm
@@ -8029,13 +8030,12 @@
         ++  clow  onyx                                  ::  arm
         ++  pord  |*(* [p=+< q=*nock])                  ::  wrap mint formula
         ++  pust  tail                                  ::  unwrap baggage
-        ++  rosh  |*  *                                 ::
-                  [p=+< q=*(list (pair axis nock))]     ::  wrap mint changes
+        ++  rosh  |*(* [p=+< q=*(list pock)])           ::  wrap mint changes
         ++  stup  head                                  ::  unwrap filling
         --
       --
     ++  def
-      =+  arch:sur
+      =+  deft:sur
       |%  +-  $
       =>  +<
       |%
@@ -8047,7 +8047,7 @@
     ::
     ++  lib
       |%
-      ++  arch
+      ++  deft
         =+  (def)
         |%  +-  $
         =>  +<
@@ -8058,6 +8058,16 @@
         ++  todt  $+({{axis borm} fleg foat} foat)
         ++  tusp  $+({clow wing borm} {axis clow})
         ++  tyte  $+(fult foat)
+        ++  vant
+          |%  ++  trep  $+({borm wing borm} {axis borm})
+              ++  tasp  $+({{axis borm} fleg foat} foat)
+              ++  tyle  $+(foat foat)
+          --
+        ++  vunt  
+          |%  ++  trep  $+({clow wing borm} {axis clow})
+              ++  tasp  $+({{axis clow} fleg fult} fult)
+              ++  tyle  $+(fult foat)
+          --
         --  --
       ::
       ++  make
@@ -8074,7 +8084,7 @@
         ++  toda  |~  {a/(pair axis clow) b/fleg c/fult}
                   ^-  fult
                   [q.a [[p.a (pust b)] (pust c)]]
-        ++  todt  |~  {a/(pair axis borm) b/fleg c/foat}
+        ++  todt  |=  {a/(pair axis borm) b/fleg c/foat}
                   ^-  foat
                   [q.a [[p.a (pust b)] (pust c)]]
         ++  tusp  |~  {a/clow b/wing c/borm}
@@ -8083,34 +8093,92 @@
         ++  tyte  |~  fult
                   ^-  foat
                   [(fire +<-) +<+]
+        ++  vant
+          |%  ++  trep  |=  {a/borm b/wing c/borm}
+                        ^-  {axis borm}
+                        (tack(sut a) b c)
+              ++  tasp  |=  {a/(pair axis borm) b/fleg c/foat}
+                        ^-  foat
+                        [q.a [[p.a (pust b)] (pust c)]]
+              ++  tyle  |=(foat +<)
+          --
+        ++  vunt  
+          |%  ++  trep  |=  {a/clow b/wing c/borm}
+                        ^-  (pair axis clow)
+                        (toss b c a)
+              ++  tasp  |~  {a/(pair axis clow) b/fleg c/fult}
+                        ^-  fult
+                        [q.a [[p.a (pust b)] (pust c)]]
+              ++  tyle  |~  fult
+                        ^-  foat
+                        [(fire +<-) +<+]
+          --
         --  --
       --
+    ::
+    ++  ram
+      =+  (deft:lib)
+      |%  +-  $
+      =>  +<
+      =>  vant
+      |%  ++  clom  borm
+          ++  chog  fleg
+          ++  ceut  foat
+      --  --
+    ::
+    ++  gel
+      =+  (deft:lib)
+      |%  +-  $
+      =>  +<
+      =>  vunt
+      |%  ++  clom  clow
+          ++  chog  fram
+          ++  ceut  fult
+      --  --
+    ::
+    ++  god
+      =+  (gel)
+      |%  +-  $
+      =>  +<
+      |%  
+      ++  ecco
+        |=  {rum/clom rig/(list (pair wing twig))}
+        ^-  foat
+        %-  tyle
+        |-  ^-  ceut
+        ?~  rig  (rosh rum)
+        =+  mor=$(rig t.rig)
+        =+  zil=(halp q.i.rig)
+        =+  dar=(trep (stup mor) p.i.rig (stup zil))
+        (tasp dar zil mor)
+      --  --
     --
   ::
   ++  oc
-    =+  inc=(arch:lib:ad)
+    =+  inc=(deft:lib:ad)
     |%  +-  $
     =>  inc
     |%
     ++  echo
       |=  {rum/borm rig/(list (pair wing twig))}
+      %-  tyle:vant
       |-  ^-  foat
       ?~  rig  (rosh rum)
       =+  mor=$(rig t.rig)
       =+  zil=(halp q.i.rig)
-      =+  dar=(terp (stup mor) p.i.rig (stup zil))
-      (todt dar zil mor)
+      =+  dar=(trep:vant (stup mor) p.i.rig (stup zil))
+      (tasp:vant dar zil mor)
     ::
     ++  ecmo
       |=  {hag/clow rig/(list (pair wing twig))}
       ^-  foat
-      %-  tyte
+      %-  tyle:vunt
       |-  ^-  fult
       ?~  rig  (rosh hag)
       =+  mor=$(rig t.rig)
       =+  zil=(halp q.i.rig)
-      =+  dar=(tusp (stup mor) p.i.rig (stup zil))
-      (toda dar zil mor)
+      =+  dar=(trep:vunt (stup mor) p.i.rig (stup zil))
+      (tasp:vunt dar zil mor)
     --  --
   ::
   ++  etco
@@ -8202,18 +8270,18 @@
       ==
     ::
         $&
+      =.  sut  (felt q.p.mor)
       =>  :_  +
-          :*  ref=(felt q.p.mor)
-              axe=`axis`1
+          :*  axe=`axis`1
               lon=p.p.mor
               heg=?^(i.hyp i.hyp [%| p=0 q=(some i.hyp)])
           ==
       ?:  ?=($& -.heg)
-        [%& [`p.heg lon] %& (peek(sut ref) way p.heg)]
+        [%& [`p.heg lon] %& (peek way p.heg)]
       =|  gil/(set span)
       =<  $
       |%  ++  here  ?:  =(0 p.heg)
-                      [%& [~ `axe lon] %& ref]
+                      [%& [~ `axe lon] %& sut]
                     [%| %& (dec p.heg)]
           ++  lose  [%| %& p.heg]
           ++  stop  ?~(q.heg here lose)
@@ -8231,41 +8299,41 @@
                     [%| p.q.p.hax (~(uni by q.q.p.hax) q.q.p.yor)]
           ++  $
             ^-  pony
-            ?-    ref
+            ?-    sut
                 $void       stop
                 $noun       stop
                 {$atom *}   stop
                 {$cell *} 
               ?~  q.heg  here
-              =+  taf=$(axe (peg axe 2), ref p.ref)
+              =+  taf=$(axe (peg axe 2), sut p.sut)
               ?:  |(?=($& -.taf) ?=($| -.p.taf))
                 taf
-              $(axe (peg axe 3), p.heg p.p.taf, ref q.ref)
+              $(axe (peg axe 3), p.heg p.p.taf, sut q.sut)
             :: 
                 {$core *}
               ?~  q.heg  here
               =^  zem  p.heg
-                  =+  zem=(look u.q.heg q.r.q.ref)
+                  =+  zem=(look u.q.heg q.r.q.sut)
                   ?~  zem  [~ p.heg]
                   ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
               ?^  zem
                 :+  %&  [`axe lon] 
-                [%| (peg 2 p.u.zem) [[ref(p.q %gold) q.u.zem] ~ ~]]
-              =+  pec=(perk way p.q.ref)
+                [%| (peg 2 p.u.zem) [[sut(p.q %gold) q.u.zem] ~ ~]]
+              =+  pec=(perk way p.q.sut)
               ?.  sam.pec  lose
-              ?:  con.pec  $(ref p.ref, axe (peg axe 3))
-              $(ref (peek(sut p.ref) way 2), axe (peg axe 6))
+              ?:  con.pec  $(sut p.sut, axe (peg axe 3))
+              $(sut (peek(sut p.sut) way 2), axe (peg axe 6))
             ::
                 {$face *}
-              ?:  ?=($~ q.heg)  here(ref q.ref)
-              ?@  p.ref
-                ?:(=(u.q.heg p.ref) here(ref q.ref) lose)
+              ?:  ?=($~ q.heg)  here(sut q.sut)
+              ?@  p.sut
+                ?:(=(u.q.heg p.sut) here(sut q.sut) lose)
               =<  main
               |%
-              ++  fear  $(ref q.ref, lon [~ lon])
+              ++  fear  $(sut q.sut, lon [~ lon])
               ++  main
                 ^-  pony
-                =%  tyr/(unit (unit tart))  (~(get by p.p.ref) u.q.heg)
+                =%  tyr/(unit (unit tart))  (~(get by p.p.sut) u.q.heg)
                 ?~  tyr  
                   next
                 ?~  u.tyr  
@@ -8278,31 +8346,31 @@
                 ==
               ++  next
                 |-  ^-  pony
-                ?~  q.p.ref
-                  ^$(ref q.ref, lon [~ lon])
-                =+  fid=^$(ref p.i.q.p.ref, lon ~, axe 1) 
+                ?~  q.p.sut
+                  ^$(sut q.sut, lon [~ lon])
+                =+  fid=^$(sut p.i.q.p.sut, lon ~, axe 1) 
                 ?:  ?=({$| $& *} fid)
-                  $(q.p.ref t.q.p.ref, p.heg p.p.fid)
+                  $(q.p.sut t.q.p.sut, p.heg p.p.fid)
                 =+  vat=(fine (ride fid) ~)
-                [%| %| p.vat (comb q.vat (comb [%0 axe] q.i.q.p.ref))]
+                [%| %| p.vat (comb q.vat (comb [%0 axe] q.i.q.p.sut))]
               --
             ::
                 {$fork *}
-              =+  yed=(~(tap in p.ref))
+              =+  yed=(~(tap in p.sut))
               =+  ^=  wiz  |-  ^-  (list pony)
                            ?~  yed  ~
                            =+  mor=$(yed t.yed)
                            ?:  (~(has in gil) i.yed)  mor
-                           [^$(ref i.yed) mor]
+                           [^$(sut i.yed) mor]
               ?~  wiz  [%| %& p.heg] 
               |-  ^-  pony
               ?~  t.wiz  i.wiz
               (twin i.wiz $(wiz t.wiz))
             ::
                 {$hold *}
-              ?:  (~(has in gil) ref)
+              ?:  (~(has in gil) sut)
                 [%| %& p.heg]
-              $(gil (~(put in gil) ref), ref repo(sut ref))
+              $(gil (~(put in gil) sut), sut repo)
             ==
       --
     ==
