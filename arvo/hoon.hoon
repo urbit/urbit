@@ -132,7 +132,8 @@
 ++  pole  |*  a/$+(* *)                                 ::  nameless list
           $@($~ {a (pole a)})                           ::
 ++  port  (each palo (pair span nock))                  ::  successful match
-++  pony  %+  each                                      ::  new pull result
+++  pony                                                ::  raw 
+          %+  each                                      ::  new pull result
             palo                                        ::  natural result
           %+  each                                      ::  abnormal
             @ud                                         ::  unmatched / skips
@@ -343,13 +344,12 @@
               {$fork p/(set span)}                      ::  union
               {$hold p/span q/twig}                     ::  lazy evaluation
           ==                                            ::
-++  tart  (each (pair vein opal) (pair span nock))      ::  true/false alias
 ++  tone  $%  {$0 p/*}                                  ::  success
               {$1 p/(list)}                             ::  blocks
               {$2 p/(list {@ta *})}                     ::  error ~_s
           ==                                            ::
 ++  tool                                                ::  complex 
-          $:  p/(map term (unit tart))                  ::  definitions
+          $:  p/(map term (unit port))                  ::  definitions
               q/(list (pair span nock))                 ::  bridges
           ==                                            ::
 ++  toon  $%  {$0 p/*}                                  ::  success
@@ -7815,21 +7815,14 @@
     :_  sut
     ^-  tool
     :_  ~
-    ^-  (map term (unit tart))
+    ^-  (map term (unit port))
     :_  [~ ~]
     :+  cog  ~
-    ^-  tart
+    ^-  port
     =+  hup=~(reek ap gen)
     ?~  hup
-       `tart`[%| (mint %noun gen)] 
-    =+  fid=(find %both u.hup)
-    ?-  -.fid
-      $&  `tart`[%& p.fid]
-      $|  ?-  -.p.fid
-            $&  ~|([%find u.hup] !!)
-            $|  `tart`[%| p.p.fid]
-          ==
-    ==
+       `port`[%| (mint %noun gen)] 
+    (find %both u.hup)
   ::
   ++  conk
     |=  got/toga
@@ -8157,14 +8150,14 @@
     ::
     ++  play
       ^-  span
-      =+  lug=(seed hyp)
+      =+  lug=(find %read hyp)
       ?:  ?=($| -.lug)  ~|(%twig ?>(?=($~ rig) p.p.lug))
       (elbo p.lug rig)
     ::
     ++  mint
       |=  gol/span 
       ^-  (pair span nock)
-      =+  lug=(seed hyp)
+      =+  lug=(find %read hyp)
       ?:  ?=($| -.lug)  ~|(%twig ?>(?=($~ rig) p.lug))
       =-  ?>(?|(!vet (nest(sut gol) & p.-)) -)
       (etco p.lug rig)
@@ -8173,7 +8166,7 @@
       |=  {gol/span dox/span}
       ^-  {span span}
       ~|  %mull
-      =+  lug=[p=(seed hyp) q=(seed(sut dox) hyp)]
+      =+  lug=[p=(find %read hyp) q=(find(sut dox) %read hyp)]
       ?:  ?=($| -.p.lug) 
         ?>   &(?=($| -.q.lug) ?=($~ rig)) 
         [p.p.p.lug p.p.q.lug]
@@ -8213,7 +8206,14 @@
   ::
   ++  find
     |=  {way/vial hyp/wing}
-    ~+
+    ^-  port
+    ~|  [%find hyp]
+    =-  ?-    -<
+          $&  [%& p.-]
+          $|  ?-  -.p.-
+                $|  [%| p.p.-]
+                $&  !!
+        ==    ==
     |-  ^-  pony
     ?~  hyp  
       [%& ~ %& sut]
@@ -8291,7 +8291,7 @@
               ++  fear  $(sut q.sut, lon [~ lon])
               ++  main
                 ^-  pony
-                =%  tyr/(unit (unit tart))  (~(get by p.p.sut) u.q.heg)
+                =%  tyr/(unit (unit port))  (~(get by p.p.sut) u.q.heg)
                 ?~  tyr  
                   next
                 ?~  u.tyr  
@@ -8309,7 +8309,7 @@
                 =+  fid=^$(sut p.i.q.p.sut, lon ~, axe 1) 
                 ?:  ?=({$| $& *} fid)
                   $(q.p.sut t.q.p.sut, p.heg p.p.fid)
-                =+  vat=(fine (ride fid))
+                =+  vat=(fine `port`?-(-.fid $& fid, $| [%| p.p.fid]))
                 [%| %| p.vat (comb q.vat (comb [%0 axe] q.i.q.p.sut))]
               --
             ::
@@ -8563,10 +8563,14 @@
       :-  (nice bool)
       =+  ref=(play ~(bunt al %herb p.gen))
       =+  fid=(find %read q.gen)
-      ~|  [%find q.gen]
+      ~|  [%test q.gen]
+      |-  ^-  nock
       ?-  -.fid
-        $&  ?>(?=($& -.q.p.fid) (fish(sut ref) (tend p.p.fid)))
-        $|  ?>(?=($| -.p.fid) [%7 q.p.p.fid (fish(sut ref) 1)])
+        $&  ?-  -.q.p.fid
+              $&  (fish(sut ref) (tend p.p.fid))
+              $|  $(fid [%| (fine fid)])
+            ==
+        $|  [%7 q.p.fid (fish(sut ref) 1)]
       ==
     ::
         {$dbug *}
@@ -9000,21 +9004,6 @@
           (turn leg |=({p/span q/twig} (play(sut p) q)))
         ==
     ~
-  ::
-  ++  ride
-    |=  fid/pony
-    ^-  port
-    ?-    -.fid
-      $&  [%& p.fid]
-      $|  ?-  -.p.fid
-            $|  [%| p.p.fid]
-            $&  !!
-    ==    ==
-  ::
-  ++  seed
-    |=  hyp/wing
-    ^-  port
-    ~|([%find hyp] (ride (find %read hyp)))
   ::
   ++  take
     |=  {vit/vein duz/$+(span span)}
