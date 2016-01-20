@@ -723,9 +723,7 @@
         %thou
       ?+    -.tee  !!
         %ay  (ames-gram (slav %p p.tee) got/~ (slav %uv q.tee) |2.sih)
-        %hi  =+  cay=[%httr !>(`httr`p.sih)]
-             ?:  ?=(%httr p.tee)  (give-sigh %& cay)
-             (back si/~ p.tee cay)
+        %hi  (cast-thou p.tee p.sih)
         %se  (get-thou:(dom-vi q.tee) p.tee p.sih)
       ==
     ::
@@ -880,6 +878,12 @@
   ++  back                                              ::  %ford bounce
     |=  [tea=whir mar=mark cay=cage]
     (pass-note tea (ford-req root-beak [%cast mar `cay]))
+  ::
+  ++  cast-thou
+    |=  [mar=mark hit=httr]
+    =+  cay=[%httr !>(`httr`hit)]
+    ?:  ?=(%httr mar)  (give-sigh %& cay)
+    (back si/~ mar cay)
   ::
   ++  del-deps
     |=  [a=@uvH b=(each duct ixor)]  ^+  +>.$
@@ -1602,6 +1606,8 @@
     ++  abet  +>(sec (~(put by sec) +<))
     ++  dead-hiss  |=(a=tang (give-sigh:abet %| a))
     ++  dead-this  |=(a=tang (fail:abet 500 0v0 a))
+    ++  pass-note  |=([a=whir-se b=note] (pass-note:abet se/[a dom] b))
+    ++  eyre-them  |=([a=whir-se b=vase] (eyre-them:abet se/[a dom] b))
     ::  XX block reqs until correct core checked in?
     ++  warn  |=(a=tang ((slog (flop a)) abet))
     ++  pump
@@ -1618,12 +1624,12 @@
       ?~  cor  ~|(%no-core !!)
       =.  u.cor  (slap u.cor cncb/[[`1]~ [[`12]~ bczp/%null]~])
       =+  call/[ride/[cnzy/arm `core/u.cor] `sam]
-      (pass-note:abet se/[arm dom] (ford-req root-beak -))
+      (pass-note arm (ford-req root-beak -))
     ::
     ++  get-upd  
       |=  [dep=@uvH gag=(each cage tang)]
       ~&  got-upd/dep
-      =.  ..vi  (pass-note se/core/dom %f [%wasp our dep &])
+      =.  ..vi  (pass-note %core [%f [%wasp our dep &]])
       ?-(-.gag %| (warn p.gag), %& pump(cor `q.p.gag))
     ::
     ++  get-made
@@ -1637,8 +1643,14 @@
     ::
     ++  get-thou
       |=  [wir=whir-se hit=httr]
-      ?>  ?=(%in wir)                 :: XX handle %out errors
-      (call %bak httr/!>(hit))
+      ?+  wir  !!
+        %in  (call %bak httr/!>(hit))
+        %out
+          =^  ole  req  ~(get to req)
+          =>  .(ole `[p=duct q=mark *]`ole)             :: XX types
+          =.  ..vi  (cast-thou(hen p.ole) q.ole hit)    :: error?
+          pump
+      ==
     ::
     ++  auth-tank
       =>  rose/["." `~]^(turn (flop dom) |=(a=cord leaf/(trip a)))
@@ -1658,10 +1670,9 @@
       %+  on-error  dead-this
       |=  res=vase  ^+  abet
       =.  res  (spec res)
-      ?+  -.q.res  !!                           :: bad type
+      ?+  -.q.res  !!                                   :: bad type
         %|  ?>(?=(%retry +.p.res) ~|(%retry-stub !!))
-        %&  %+  eyre-them:abet  se/in/dom
-            (slam !>(|=([%& a=hiss] a)) res)
+        %&  (eyre-them %in (slam !>(|=([%& a=hiss] a)) res))
       ==
     ::
     ++  res-bak
@@ -1672,7 +1683,7 @@
         ?~  ^cor  ~|(%lost-core !!)
         (some cor)
       =.  mow  (spec mow)
-      ?+  -.q.mow  !!                           :: bad type
+      ?+  -.q.mow  !!                                   :: bad type
         %&  ~|(unexpected-hiss/%bak !!)
         %|  ?>  ?=(%retry +.q.mow)
             =.  ..vi  (give-html 200 ~ exit:xml)
@@ -1687,13 +1698,9 @@
       %+  on-error  warn
       |=  res=vase  ^+  abet
       =.  res  (spec res)
-      ?+  -.q.res  !!                           :: bad type
+      ?+  -.q.res  !!                                   :: bad type
         %|  =+((slam !>(auth-print) res) abet)
-        %&  =^  ole  req  ~(get to req)
-            =>  .(ole `[p=duct q=mark *]`ole)  :: XX types
-            =.  hen  p.ole
-            %+  eyre-them:abet  hi//[q.ole]
-            (slam !>(|=([%& a=hiss] a)) res)
+        %&  (eyre-them %out (slam !>(|=([%& a=hiss] a)) res))
       ==
     ::
     ++  get-quay
