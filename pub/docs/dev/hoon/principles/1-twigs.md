@@ -36,7 +36,7 @@ function is the `formula`.  The input to the function is the
 
 ## From Hoon to Nock
 
-The Hoon parser turns an source expression (even one as simple as
+The Hoon parser turns a source expression (even one as simple as
 `42` from the last chapter) into a noun called a `twig`.  If you
 know what an AST is, a twig is an AST.  (If you don't know what
 an AST is, it's not necessarily worth the student loans.)
