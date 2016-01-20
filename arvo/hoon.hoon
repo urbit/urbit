@@ -132,8 +132,9 @@
 ++  pole  |*  a/$+(* *)                                 ::  nameless list
           $@($~ {a (pole a)})                           ::
 ++  port  (each palo (pair span nock))                  ::  successful match
-++  pony                                                ::  raw 
-          %+  each                                      ::  new pull result
+++  pony                                                ::  raw match
+          $@  $~                                        ::  void / invalid
+          %+  each                                      ::
             palo                                        ::  natural result
           %+  each                                      ::  abnormal
             @ud                                         ::  unmatched / skips
@@ -8208,7 +8209,8 @@
     |=  {way/vial hyp/wing}
     ^-  port
     ~|  [%find hyp]
-    =-  ?-    -<
+    =-  ?@  -  !!
+        ?-    -<
           $&  [%& p.-]
           $|  ?-  -.p.-
                 $|  [%| p.p.-]
@@ -8245,6 +8247,8 @@
           ++  stop  ?~(q.heg here lose)
           ++  twin  |=  {hax/pony yor/pony}
                     ~|  %find-fork
+                    ?~  hax  yor
+                    ?~  yor  hax
                     ?:  ?=($| -.hax)  
                       ?>(=(hax yor) hax)
                     ?<  ?=($| -.yor)
@@ -8264,6 +8268,7 @@
                 {$cell *} 
               ?~  q.heg  here
               =+  taf=$(axe (peg axe 2), sut p.sut)
+              ?~  taf  ~
               ?:  |(?=($& -.taf) ?=($| -.p.taf))
                 taf
               $(axe (peg axe 3), p.heg p.p.taf, sut q.sut)
@@ -8307,6 +8312,7 @@
                 ?~  q.p.sut
                   ^$(sut q.sut, lon [~ lon])
                 =+  fid=^$(sut p.i.q.p.sut, lon ~, axe 1) 
+                ?~  fid  ~
                 ?:  ?=({$| $& *} fid)
                   $(q.p.sut t.q.p.sut, p.heg p.p.fid)
                 =+  vat=(fine `port`?-(-.fid $& fid, $| [%| p.p.fid]))
@@ -8314,20 +8320,15 @@
               --
             ::
                 {$fork *}
-              =+  yed=(~(tap in p.sut))
-              =+  ^=  wiz  |-  ^-  (list pony)
-                           ?~  yed  ~
-                           =+  mor=$(yed t.yed)
-                           ?:  (~(has in gil) i.yed)  mor
-                           [^$(sut i.yed) mor]
-              ?~  wiz  [%| %& p.heg] 
+              =+  wiz=(turn (~(tap in p.sut)) |=(a/span ^$(sut a)))
+              ?~  wiz  ~
               |-  ^-  pony
               ?~  t.wiz  i.wiz
               (twin i.wiz $(wiz t.wiz))
             ::
                 {$hold *}
               ?:  (~(has in gil) sut)
-                [%| %& p.heg]
+                ~
               $(gil (~(put in gil) sut), sut repo)
             ==
       --
