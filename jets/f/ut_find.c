@@ -52,33 +52,49 @@
         goto error;
       }
       else {
-        u3_noun p_hax = u3t(hax);
-        u3_noun p_yor = u3t(yor);
+        u3_noun p_hax = u3t(hax);                   //  (each @ud {span nock})
+        u3_noun p_yor = u3t(yor);                   //  (each @ud {span nock})
 
-        if ( (c3n != u3h(p_hax)) ||
-             (c3n != u3h(p_yor)) ) 
-        {
+        if ( (c3n != u3h(p_hax)) || (c3n != u3h(p_yor)) ) {
+          goto error;
+        }
+        else {
+          u3_noun pp_hax = u3t(p_hax);              //  {span nock}
+          u3_noun pp_yor = u3t(p_yor);              //  {span nock}
+          u3_noun ppp_hax = u3h(pp_hax);            //  span
+          u3_noun ppp_yor = u3h(pp_yor);            //  span
+          u3_noun qpp_hax = u3h(pp_hax);            //  nock
+          u3_noun qpp_yor = u3h(pp_yor);            //  nock
+
+          if ( c3n == u3r_sing(qpp_hax, qpp_yor) ) {
+            goto error;
+          }
+          return u3nq(c3n,
+                      c3n,
+                      u3kf_fork(u3nt(u3k(ppp_hax), u3k(ppp_yor), u3_nul)),
+                      u3k(qpp_hax));
         }
       }
     }
-    if ( c3n == u3h(hax) ) {
-      return u3m_error("find-fork");
-    }
     else {
-      u3_noun p_hax = u3t(hax);
-      u3_noun p_yor = u3t(yor);
-      u3_noun pp_hax = u3h(u3t(hax));
-      u3_noun pp_yor = u3h(u3t(yor));
-      u3_noun qp_hax = u3t(u3t(hax));
-      u3_noun qp_yor = u3t(u3t(yor));
-   
-      if ( c3n == u3r_sing(pp_hax, pp_yor) ) {
+      if ( c3n == u3h(yor) ) {
         return u3m_error("find-fork");
       }
       else {
-          
+        u3_noun p_hax = u3t(hax);
+        u3_noun p_yor = u3t(yor);
+        u3_noun pp_hax = u3h(u3t(hax));
+        u3_noun pp_yor = u3h(u3t(yor));
+        u3_noun qp_hax = u3t(u3t(hax));
+        u3_noun qp_yor = u3t(u3t(yor));
+     
+        if ( c3n == u3r_sing(pp_hax, pp_yor) ) {
+          return u3m_error("find-fork");
+        }
+        else {
+            
+        }
       }
-    }
         pq_hax, pp_yor, pq_yor;
 
       u3x_cell(u3t_
