@@ -8002,34 +8002,36 @@
   ::
   ++  ad
     |%
-    ++  sur
+    ++  arc
       |%
       ++  deft                                          ::  generic
         |%
-        ++  borm  *                                     ::  leg
-        ++  clow  *                                     ::  arm
-        ++  pord  same                                  ::  wrap mint formula
-        ++  pust  same                                  ::  mint wrap
-        ++  rosh  same                                  ::  wrap mint changes
-        ++  stup  same                                  ::  mint filling
+        ++  borm  *                                     ::  leg match span
+        ++  clow  *                                     ::  arm match span
+        ++  form  head                                  ::  wrap with build
+        ++  skin  same                                  ::  unwrap build
+        ++  meat  same                                  ::  
+        ++  pord  same
+        ++  rosh  same
         --
       ++  make                                          ::  for mint
         |%  
-        ++  borm  span                                  ::  leg
+        ++  borm  span                                  ::  leg match span
         ++  clow  onyx                                  ::  arm
+        ++  form  same
+        ++  skin  tail                                  ::  unwrap baggage
+        ++  meat  head                                  ::  unwrap filling
         ++  pord  |*(* [p=+< q=*nock])                  ::  wrap mint formula
-        ++  pust  tail                                  ::  unwrap baggage
         ++  rosh  |*(* [p=+< q=*(list pock)])           ::  wrap mint changes
-        ++  stup  head                                  ::  unwrap filling
         --
       --
     ++  def
-      =+  deft:sur
+      =+  deft:arc
       |%  +-  $
       =>  +<
       |%
-      ++  fleg  _(pord *borm)                             ::  leg with formula
-      ++  fram  _(pord *clow)                             ::  arm with formula
+      ++  fleg  _(pord *borm)                             ::  legmatch + code
+      ++  fram  _(pord *clow)                             ::  armmatch + 
       ++  foat  _(rosh *borm)                             ::  leg with changes
       ++  fult  _(rosh *clow)                             ::  arm with changes
       --  --
@@ -8037,9 +8039,7 @@
     ++  lib
       |%
       ++  deft
-        =+  (def)
-        |%  +-  $
-        =>  +<
+        =>  (def deft:arc)
         |%
         ++  halp  $+(twig fleg)
         ++  vant
@@ -8051,24 +8051,21 @@
           |%  ++  trep  $+({clow wing borm} {axis clow})
               ++  tasp  $+({{axis clow} fleg fult} fult)
               ++  tyle  $+(fult foat)
-          --
         --  --
       ::
       ++  make
-        =+  (def make:sur)
-        |%  +-  $
-        =>  +<
+        =>  (def make:arc)
         |%
         ++  halp  |~  a/twig 
                   ^-  fleg
                   (mint %noun a)
         ++  vant
-          |%  ++  trep  |=  {a/borm b/wing c/borm}
-                        ^-  {axis borm}
+          |%  ++  trep  |=  {a/span b/wing c/span}
+                        ^-  {axis span}
                         (tack(sut a) b c)
-              ++  tasp  |=  {a/(pair axis borm) b/fleg c/foat}
+              ++  tasp  |=  {a/(pair axis span) b/fleg c/foat}
                         ^-  foat
-                        [q.a [[p.a (pust b)] (pust c)]]
+                        [q.a [[p.a (skin b)] (skin c)]]
               ++  tyle  |=(foat +<)
           --
         ++  vunt  
@@ -8077,28 +8074,26 @@
                         (toss b c a)
               ++  tasp  |~  {a/(pair axis clow) b/fleg c/fult}
                         ^-  fult
-                        [q.a [[p.a (pust b)] (pust c)]]
+                        [q.a [[p.a (skin b)] (skin c)]]
               ++  tyle  |~  fult
                         ^-  foat
                         [(fire +<-) +<+]
-          --
-        --  --
-      --
+      --  --  --
     ::
-    ++  nib
-      =+  (deft:lib)
+    ++  bin
+      =+  deft:lib
       |%  +-  $
       =>  +<
-      |%  
+      |%
       ++  rame
-        =>  vant
-        |%  ++  clom  borm
+        =>  vant  |%  
+            ++  clom  borm
             ++  chog  fleg
             ++  ceut  foat
         --
       ++  gelp
-        =>  vunt
-        |%  ++  clom  clow
+        =>  vunt  |%  
+            ++  clom  clow
             ++  chog  fram
             ++  ceut  fult
         --
@@ -8115,13 +8110,12 @@
         ?~  rig  (rosh rum)
         =+  mor=$(rig t.rig)
         =+  zil=(halp q.i.rig)
-        =+  dar=(trep (stup mor) p.i.rig (stup zil))
+        =+  dar=(trep (meat mor) p.i.rig (meat zil))
         (tasp dar zil mor)
-      --  --  --
-    --
+      --  --  --  --
   ::
   ++  oc
-    =+  inc=(nib:ad)
+    =+  inc=(bin:ad)
     |%  +-  $
     =>  inc
     |%
@@ -8137,7 +8131,7 @@
   ++  etco
     |=  {lop/palo rig/(list (pair wing twig))}
     ^-  (pair span nock)
-    =+  cin=(oc (nib:ad (make:lib:ad)))
+    =+  cin=(oc (bin:ad make:lib:ad))
     =.  rig  (flop rig)         ::  XX this unbreaks, void order in devulc
     =+  axe=(tend p.lop)
     ?:  ?=($& -.q.lop)
@@ -8208,6 +8202,15 @@
   ++  find
     |=  {way/vial hyp/wing}
     ^-  port
+    =>  |%
+        ++  pony                                        ::  raw match
+                  $@  $~                                ::  void
+                  %+  each                              ::  natural/abnormal
+                    palo                                ::  arm or leg
+                  %+  each                              ::  abnormal
+                    @ud                                 ::  unmatched
+                  (pair span nock)                      ::  synthetic
+        --
     ~|  [%find hyp]
     =-  ?@  -  !!
         ?-    -<
@@ -8246,12 +8249,19 @@
           ++  lose  [%| %& p.heg]
           ++  stop  ?~(q.heg here lose)
           ++  twin  |=  {hax/pony yor/pony}
+                    ^-  pony
                     ~|  %find-fork
+                    ?:  =(hax yor)  hax
                     ?~  hax  yor
                     ?~  yor  hax
                     ?:  ?=($| -.hax)  
-                      ?>(=(hax yor) hax)
-                    ?<  ?=($| -.yor)
+                      ?>  ?&  ?=($| -.yor)
+                              ?=($| -.p.hax)
+                              ?=($| -.p.yor) 
+                              =(q.p.p.hax q.p.p.yor)
+                          ==
+                      [%| %| (fork p.p.p.hax p.p.p.yor ~) q.p.p.hax]
+                    ?>  ?=($& -.yor)
                     ?>  =(p.p.hax p.p.yor)
                     :+  %&  p.p.hax
                     ?:  &(?=($& -.q.p.hax) ?=($& -.q.p.yor))
