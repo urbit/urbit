@@ -39,7 +39,27 @@
              u3_noun yor)
   {
     if ( c3y == u3r_sing(hax, yor) ) {
-      return hax;
+      return u3k(hax);
+    }
+    else if ( u3_nul == hax ) {
+      return u3k(yor);
+    }
+    else if ( u3_nul == yor ) {
+      return u3k(hax);
+    }
+    else if ( c3n == u3h(hax) ) {
+      if ( (c3n != u3h(yor)) ) {
+        goto error;
+      }
+      else {
+        u3_noun p_hax = u3t(hax);
+        u3_noun p_yor = u3t(yor);
+
+        if ( (c3n != u3h(p_hax)) ||
+             (c3n != u3h(p_yor)) ) 
+        {
+        }
+      }
     }
     if ( c3n == u3h(hax) ) {
       return u3m_error("find-fork");
@@ -56,7 +76,7 @@
         return u3m_error("find-fork");
       }
       else {
-        
+          
       }
     }
         pq_hax, pp_yor, pq_yor;
@@ -66,6 +86,9 @@
     }
     else {
     }
+
+    error:
+      return u3m_error("find-fork");
   }
 
   static u3_noun
