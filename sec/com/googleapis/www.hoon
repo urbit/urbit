@@ -51,7 +51,6 @@
 ::
 |_  [bowl-ish user-state]
 ++  out
-  ::  XX dynamic
   |=  a=hiss  ^-  (each hiss purl)
   ?~  ber  [%| (auth-url client-id 'userinfo.email' 'plus.me' ~)]
   [%& %_(a q.q (~(add ja q.q.a) %authorization (cat 3 'Bearer ' ber)))]
@@ -86,6 +85,6 @@
   =+  ~|  bad-json/r.res
       ^-  [@ ber=@t ref=@t tim=@u]
       (need (parse-bak (need r.res)))
-  :-  [%| %retry]  :: XX refresh
+  :-  [%| %retry]  :: XX schedule token refresh
   +>.$(ber ber)
 --
