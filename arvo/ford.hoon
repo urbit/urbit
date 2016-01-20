@@ -13,10 +13,16 @@
 ++  note                                                ::  out request $->
           $%  $:  %c                                    ::  to %clay
           $%  [%warp p=sock q=riff]                     ::
+          ==  ==                                        ::
+              $:  %g                                    ::  to %clay
+          $%  [%deal p=sock q=cush]                     ::
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $%  $:  %c                                    ::  by %clay
           $%  [%writ p=riot]                            ::
+          ==  ==                                        ::
+              $:  %g                                    ::  by %gall
+          $%  [%unto p=cuft]                            ::
           ==  ==  ==                                    ::
 ++  trap  |*(a=_,* ,_|?(*a))          ::  XX in h/h
 --                                                      ::
@@ -36,7 +42,7 @@
   $:  p=cafe                                            ::  cache
     $=  q                                               ::
       $%  [%0 p=(set beam) q=a]                         ::  depends/product
-          [%1 p=(set ,[p=care q=beam r=tang])]          ::  blocks
+          [%1 p=(set ,[van=vane ren=care bem=beam tan=tang])] ::  blocks
           [%2 p=(set beam) q=tang]                      ::  depends/error
       ==                                                ::
   ==                                                    ::
@@ -72,9 +78,10 @@
   $:  nah=duct                                          ::  cause
       [bek=beak kas=silk]                               ::  problem
       keg=(map (pair term beam) cage)                   ::  block results
-      kig=[p=@ud q=(map ,@ud ,[p=care q=beam])]         ::  blocks
+      kig=[p=@ud q=(map ,@ud ,[van=vane ren=care bem=beam])] ::  blocks
   ==                                                    ::
-++  gagl  (list (pair gage gage))                    
+++  gagl  (list (pair gage gage))                       ::
+++  vane  ?(%a %b %c %d %e %f %g)                       ::
 --                                                      ::
 |%                                                      ::
 ++  calf                                                ::  reduce calx
@@ -222,12 +229,21 @@
         ~&  [%ford-lost num]
         +>.$
       (~(resp zo [num u.tus]) tik p.+.sih)
+    ::
+        %unto
+      =+  tus=(~(get by q.tad.bay) num)
+      ?~  tus
+        ~&  [%ford-lost num]
+        +>.$
+      ?.  ?=(%diff -.p.+.sih)
+        +>.$
+      (~(resd zo [num u.tus]) tik p.p.+.sih)
     ==
   ::
   ++  axun                                              ::  take rev update
     |=  [tea=wire dep=@uvH bem=beam sih=sign]
     ^+  +>
-    ?-    -.+.sih
+    ?+    -.+.sih  ~|(%bad-axun !!)
         %writ
       ?~  p.sih  +>.$ 
       :: ~&  writ/tea
@@ -312,9 +328,10 @@
       ==
     ++  camo                                            ::  stop requests
       ^+  .
-      =+  kiz=(~(tap by q.kig) *(list ,[p=@ud q=[p=care q=beam]]))
+      =+  kiz=(~(tap by q.kig) *(list ,[p=@ud q=[van=vane ren=care bem=beam]]))
       |-  ^+  +>
       ?~  kiz  +>
+      ?.  ?=(%c van.q.i.kiz)  +>
       %=    $
           kiz  t.kiz
           mow
@@ -323,23 +340,37 @@
         :^    %pass
             [(scot %p our) (scot %ud num) (scot %ud p.i.kiz) ~]
           %c
-        [%warp [our p.q.q.i.kiz] q.q.q.i.kiz ~]
+        [%warp [our p.bem.q.i.kiz] q.bem.q.i.kiz ~]
       ==
     ::
     ++  camp                                            ::  request a file
-      |=  [ren=care bem=beam]
+      |=  [van=vane ren=care bem=beam]
       ^+  +>
-      %=    +>
-          kig  [+(p.kig) (~(put by q.kig) p.kig [ren bem])]
-          mow
-        :_  mow
-        :-  hen
-        :^    %pass
-            [(scot %p our) (scot %ud num) (scot %ud p.kig) ~]
-          %c
-        ~&  >>  [%camping ren bem]
-        [%warp [our p.bem] q.bem [~ %sing ren r.bem (flop s.bem)]]
-      ==
+      ?:  ?=(%g van)
+        %=    +>.$
+            kig  [+(p.kig) (~(put by q.kig) p.kig [%g ren bem])]
+            mow
+          :_  mow
+          :-  hen
+          :^    %pass
+              [(scot %p our) (scot %ud num) (scot %ud p.kig) ~]
+            %g
+          ~&  >>  [%camping van ren bem]
+          [%deal [our p.bem] q.bem [%peer %scry ren (flop s.bem)]]
+        ==
+      ?:  ?=(%c van)
+        %=    +>.$
+            kig  [+(p.kig) (~(put by q.kig) p.kig [%c ren bem])]
+            mow
+          :_  mow
+          :-  hen
+          :^    %pass
+              [(scot %p our) (scot %ud num) (scot %ud p.kig) ~]
+            %c
+          ~&  >>  [%camping van ren bem]
+          [%warp [our p.bem] q.bem [~ %sing ren r.bem (flop s.bem)]]
+        ==
+      +>.$
     ::
     ++  clef                                            ::  cache a result
       |*  sem=*
@@ -436,28 +467,33 @@
                      ^=  p
                      %-  sa
                      %+  turn  p.faw
-                     |=(a=[care beam] [-.a +.a *tang])
+                     |=(a=[vane care beam] [-.a +<.a +>.a *tang])
                   |  [%2 p=*(set beam) q=p.faw]
                 ==
             ^=  faw
-            |-  ^-  (each (list (pair care beam)) tang)
+            |-  ^-  (each (list (trel vane care beam)) tang)
             ?~  p.ton  [%& ~]
             =+  nex=$(p.ton t.p.ton)
             =+  err=|=(a=tape [%| leaf/a ?:(?=(& -.nex) ~ p.nex)])
             =+  pax=(path i.p.ton)
             ?~  pax  (err "blocking empty")
-            ?.  ?=(%c (end 3 1 i.pax))
-              (err "blocking not clay")
             =+  ren=((soft care) (rsh 3 1 i.pax))
             ?~  ren
               (err "blocking not care")
             =+  zis=(tome t.pax)
             ?~  zis
               (err "blocking not beam")
-            ?-  -.nex
-              &  [%& [u.ren u.zis] p.nex]
-              |  nex
-            ==
+            ?:  ?=(%g (end 3 1 i.pax))
+              ?-  -.nex
+                &  [%& [%g u.ren u.zis] p.nex]
+                |  nex
+              ==
+            ?:  ?=(%c (end 3 1 i.pax))
+              ?-  -.nex
+                &  [%& [%c u.ren u.zis] p.nex]
+                |  nex
+              ==
+            (err "blocking bad vane")
       ==
     ::
     ++  cowl                                            ::  each to bolt
@@ -597,7 +633,7 @@
             =<  abet
             |-  ^+  ..exec
             ?~  zuk  ..exec
-            =+  foo=`_..exec`(camp p.i.zuk q.i.zuk)
+            =+  foo=`_..exec`(camp van.i.zuk ren.i.zuk bem.i.zuk)
             $(zuk t.zuk, ..exec foo)
       ==
     ::
@@ -1039,7 +1075,7 @@
       %+  cope
         ?:  ?=(%ud -.r.bem)  (fine cof bem)
         =+  von=(save ~ %cw bem(s ~))
-        ?~  von  [p=cof q=[%1 [%w bem ~] ~ ~]]
+        ?~  von  [p=cof q=[%1 [%c %w bem ~] ~ ~]]
         (fine cof bem(r [%ud ((hard ,@) +.+:(need u.von))]))
       |=  [cof=cafe bem=[[ship desk %ud r=@u] s=spur]]
       ?:  =(0 r.bem)
@@ -1071,7 +1107,7 @@
       |=  [cof=cafe bem=beam]
       ^-  (bolt arch)
       =+  von=(save ~ %cy bem)
-      ?~  von  [p=cof q=[%1 [%y bem ~] ~ ~]]
+      ?~  von  [p=cof q=[%1 [%c %y bem ~] ~ ~]]
       ?>  ?=([~ %arch ^] u.von)
       =+  arc=((hard arch) q.q.u.u.von)
       %+  cope  (lamp cof bem)
@@ -1083,7 +1119,7 @@
       ^-  (bolt cage)
       =+  von=(save ~ %cx bem)
       ?~  von
-        [p=*cafe q=[%1 [[%x bem ~] ~ ~]]]
+        [p=*cafe q=[%1 [[%c %x bem ~] ~ ~]]]
       ?~  u.von
         (flaw cof leaf/"file not found" (smyt (tope bem)) ~)
       (fine cof u.u.von)
@@ -1814,12 +1850,20 @@
       |=  [tik=@ud rot=riot]
       ^+  ..zo
       ?>  (~(has by q.kig) tik)
-      =+  `[ren=care bem=beam]`(~(got by q.kig) tik)
+      =+  `[van=vane ren=care bem=beam]`(~(got by q.kig) tik)
       ?~  rot
         =^  dep  deh.bay  (daze ~)                      ::  dependencies?
         amok:(expo [%made dep %| (smyt ren (tope bem)) ~])
       =+  (cat 3 'c' ren)
       exec(q.kig (~(del by q.kig) tik), keg (~(put by keg) [- bem] r.u.rot))
+    ::
+    ++  resd
+      |=  [tik=@ud cag=cage]
+      ^+  ..zo
+      ?>  (~(has by q.kig) tik)
+      =+  `[van=vane ren=care bem=beam]`(~(got by q.kig) tik)
+      =+  (cat 3 'g' ren)
+      exec(q.kig (~(del by q.kig) tik), keg (~(put by keg) [- bem] cag))
     ::
     ++  save
       ^-  sled
