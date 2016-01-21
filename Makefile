@@ -291,6 +291,7 @@ J_F_OFILES_UT=\
 			 jets/f/ut_buss.o \
        jets/f/ut_conk.o \
        jets/f/ut_crop.o \
+			 jets/f/ut_find.o \
        jets/f/ut_fire.o \
        jets/f/ut_fish.o \
        jets/f/ut_fuse.o \
