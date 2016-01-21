@@ -1622,7 +1622,8 @@
     ++  call
       |=  [arm=?(%bak %out %in) sam=cage]
       ?~  cor  ~|(%no-core !!)
-      =.  u.cor  (slap u.cor cncb/[[`1]~ [[`12]~ bczp/%null]~])
+      =.  +12.q.u.cor
+        `(bale)`[[our now (shas %bale eny) root-beak] dom ~ ''] :: XX jael
       =+  call/[ride/[cnzy/arm `core/u.cor] `sam]
       (pass-note arm (ford-req root-beak -))
     ::
@@ -1652,13 +1653,6 @@
           pump
       ==
     ::
-    ++  auth-tank
-      =>  rose/["." `~]^(turn (flop dom) |=(a=cord leaf/(trip a)))
-      rose/[" " `~]^~[leaf/"To authenticate" . leaf/"visit:"]
-    ::
-    ::    XX formal dill-blit %url via hood
-    ++  auth-print  |=([%| a=purl] (slog auth-tank leaf/(earn a) ~))
-    ::
     ++  on-error
       |=  [err=$+(tang _abet) try=$+(vase _abet)]
       |=  a=(each cage tang)  ^+  abet
@@ -1666,29 +1660,35 @@
       =-  ?-(-.- %& p.-, %| (err p.-))
       (mule |.(~|(driver/dom ~|(bad-res/p.q.p.a (try q.p.a)))))
     ::
+    ++  allow
+      |=  a=(list ,[p=term q=$+(vase _abet)])
+      |=  b=vase
+      =+  ~|  %bad-sec-move  :: XX move ~| into ?> properly
+          ?>((~(nest ut p:!>(*sec-move)) %& p.b) ~)
+      =+  opt=|.((sa (turn a head)))
+      |-
+      ?~  a  ~|(allowed=*opt !!)
+      ?:  =(p.i.a -.q.b)
+        (q.i.a (spec b))
+      $(a t.a)
+    ::
     ++  res-in
       %+  on-error  dead-this
-      |=  res=vase  ^+  abet
-      =.  res  (spec res)
-      ?+  -.q.res  !!                                   :: bad type
-        %|  ?>(?=(%retry +.p.res) ~|(%retry-stub !!))
-        %&  (eyre-them %in (slam !>(|=([%& a=hiss] a)) res))
-      ==
+      (allow send/(to-eyre %in) ~)
+    ::
+    ++  to-eyre
+      |=  wir=whir-se  ^-  $+(vase _abet)
+      |=  res=vase
+      (eyre-them wir (slam !>(|=([%send a=hiss] a)) res))
     ::
     ++  res-bak
       %+  on-error  dead-this
       |=  res=vase  ^+  abet
-      =+  ~|(%split [mow=(slot 2 res) cor=(slot 3 res)])
-      =.  ^cor
-        ?~  ^cor  ~|(%lost-core !!)
-        (some cor)
-      =.  mow  (spec mow)
-      ?+  -.q.mow  !!                                   :: bad type
-        %&  ~|(unexpected-hiss/%bak !!)
-        %|  ?>  ?=(%retry +.q.mow)
-            =.  ..vi  (give-html 200 ~ exit:xml)
-            pump
-      ==
+      ?~  cor  ~|(%lost-core !!)
+      =^  mow  u.cor
+        ~|(%split [mow=(slot 2 res) cor=(slot 3 res)])
+      =<  ((allow redo/. ~) mow)
+      ,_pump(..vi (give-html 200 ~ exit:xml))
     ::
     ++  res-out
       |=  a=(each cage tang)  ^+  abet
@@ -1696,12 +1696,21 @@
         (dead-hiss(req ~(nap to req)) p.a)
       %.  a
       %+  on-error  warn
-      |=  res=vase  ^+  abet
-      =.  res  (spec res)
-      ?+  -.q.res  !!                                   :: bad type
-        %|  =+((slam !>(auth-print) res) abet)
-        %&  (eyre-them %out (slam !>(|=([%& a=hiss] a)) res))
+      %-  allow  :~
+        send/(to-eyre %out)
+        show/(discard-with !>(auth-print))
       ==
+    ::
+    ++  discard-with
+      |=  a=vase:gate  ^-  $+(vase _abet)
+      |=(b=vase =+((slam a b) abet))
+    ::
+    ::    XX formal dill-blit %url via hood
+    ++  auth-print  |=([%show a=purl] (slog auth-tank leaf/(earn a) ~))
+    ++  auth-tank
+      =>  rose/["." `~]^(turn (flop dom) |=(a=cord leaf/(trip a)))
+      rose/[" " `~]^~[leaf/"To authenticate" . leaf/"visit:"]
+    ::
     ::
     ++  get-quay
       |=  quy=quay  ^+  abet
@@ -1711,14 +1720,12 @@
     ::
     ++  rebuild  build(cor ~)
     ++  build
-      =-  (pass-note:abet se/core/dom (ford-req root-beak -))
-      =+  sil=core/[root-beak (flop %_(dom . sec/dom))]
-      ?~  cor
-        sil
-      =+  usr=(mule |.((slot 13 u.cor)))
-      ?:  ?=(%| -.usr)
-        ~&(no-samp/dom sil)
-      mute/[sil [~[`13] `noun/p.usr]~]
+      =-  (pass-note %core (ford-req root-beak -))
+      :::+  %dude  [|.(+)]:>%mod-samp<
+      :^  %mute  core/[root-beak (flop %_(dom . sec/dom))]
+        [~[`12] `bale/!>(*(bale ,@))]  :: XX specify on type?
+      ?~  cor  ~
+      [~[`13] `noun/(slot 13 u.cor)]~
     ::
     ++  get-req  |=(a=[mark vase:hiss] pump(req (~(put to req) hen a)))
 --  --

@@ -1817,6 +1817,17 @@
           ==                                            ::
 ++  apex  ,[p=@uvI q=(map ,@ta ,@uvI) r=(map ,@ta ,~)]  ::  node report (old)
 ++  ares  (unit ,[p=term q=(list tank)])                ::  possible error
+++  bale                                                ::  driver state
+  |*  a=_,*                                             ::  %jael keys type
+  $:  [our=ship now=@da eny=@uvI byk=beak]              ::  base info
+      dom=(list ,@t)                                    ::  intercepted domain
+      [usr=?(~ span) key=a]                             ::  req user, secrets
+  ==                                                    ::
+++  sec-move                                            ::  driver effect
+  $%  [%send p=hiss]                                    ::  http out
+      [%show p=purl]                                    ::  direct user to url
+      [%redo ~]                                         ::  restart request qeu
+  ==                                                    ::
 ++  ball  ,@uw                                          ::  statement payload
 ++  bait  ,[p=skin q=@ud r=dove]                        ::  fmt nrecvd spec
 ++  bath                                                ::  convo per client

@@ -1,5 +1,4 @@
 |%
-++  bowl-ish  ,~
 ++  fass                                                ::  rewrite quay
   |=  a=quay
   %+  turn  a
@@ -49,17 +48,17 @@
 =+  :-  client-id='483346752999-oj6s0hrcrtc8c0sgahr5m8cijmopth0b.apps.googleusercontent.com'
     client-secret=XX  ::  XX dynamic
 ::
-|_  [bowl-ish user-state]
+|_  [(bale ,@t) user-state]
 ++  out
-  |=  a=hiss  ^-  (each hiss purl)
-  ?~  ber  [%| (auth-url client-id 'userinfo.email' 'plus.me' ~)]
-  [%& %_(a q.q (~(add ja q.q.a) %authorization (cat 3 'Bearer ' ber)))]
+  |=  a=hiss  ^-  sec-move 
+  ?~  ber  [%show (auth-url client-id 'userinfo.email' 'plus.me' ~)]
+  [%send %_(a q.q (~(add ja q.q.a) %authorization (cat 3 'Bearer ' ber)))]
 ::
 ++  in
-  |=  a=quay  ^-  (each hiss ,_!!)
+  |=  a=quay  ^-  sec-move
   =+  cod=~|(%no-code (~(got by (mo a)) %code))
   =+  hed=(mo ~[content-type/~['application/x-www-form-urlencoded']])
-  =-  [%& toke-url %post hed `(tact +:(tail:earn code/cod -))]
+  =-  [%send toke-url %post hed `(tact +:(tail:earn code/cod -))]
   %-  fass
   :~  client-id/client-id
       client-secret/client-secret
@@ -67,7 +66,7 @@
       grant-type/'authorization_code'
   ==
 ::
-++  parse-bak
+++  parse-auth
   |=  [@u a=@t]
   %.  a
   ;~  biff
@@ -81,10 +80,13 @@
   ==
 ::
 ++  bak
-  |=  res=httr  ^-  [(each ,_!! ,%retry) _+>]
+  |=  res=httr  ^-  [sec-move _+>]
+  ?.  ?=(2 (div p.res 100))    :: bad response
+    ~&  bad-httr/p.res
+    [[%redo ~] +>.$]
   =+  ~|  bad-json/r.res
       ^-  [@ ber=@t ref=@t tim=@u]
-      (need (parse-bak (need r.res)))
-  :-  [%| %retry]  :: XX schedule token refresh
+      (need (parse-auth (need r.res)))
+  :-  [%redo ~]
   +>.$(ber ber)
 --
