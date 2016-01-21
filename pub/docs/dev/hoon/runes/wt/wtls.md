@@ -50,7 +50,7 @@ Queenside:
 Wide form
 ---------
 
-    ?+(p p.i.r q.i.r, p.i.t.r q.i.t.r, p.i.t.t.r q.i.t.t.r)
+    ?+(p q p.i.r q.i.r, p.i.t.r q.i.t.r, p.i.t.t.r q.i.t.t.r)
 
 Irregular form
 --------------

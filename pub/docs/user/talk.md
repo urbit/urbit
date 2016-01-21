@@ -75,7 +75,7 @@ You'll see:
     ---------:talk|   don't be rude
     ---------:talk|   urbit-meta is politically correct and safe for work
            ~doznec= ~fintud-macrep admitted to %urbit-meta
-    ~fintud-macrep:talk=
+    ~fintud-macrep:talk>
 
 Notice the character assignment - stations you're subscribed to are
 assigned [consistent ASCII glyphs](#-station-glyphs), which you'll 
@@ -84,16 +84,16 @@ when you're talking to them.
 
 Post a line to `/urbit-meta`:
 
-    ~fintud-macrep:talk= hello, world
+    ~fintud-macrep:talk> hello, world
 
 You'll see, echoed back at you through `~doznec`:
 
-    ~fintud-macrep:talk= hello, world
+    ~fintud-macrep> hello, world
 
 And of course, anyone else in `/urbit-meta` will see it as well.
 But you don't care about `/urbit-meta`, so leave it:
 
-    ~fintud-macrep:talk= ;leave
+    ~fintud-macrep:talk> ;leave >
 
 You'll see:
 
@@ -102,7 +102,6 @@ You'll see:
 Everyone else will see:
 
     ~doznec= ~fintud-macrep has left %urbit-meta
-
 
 Now you're ready to use `:talk` for real! For general discussion
 about Urbit, we recommend `/urbit-meta`.
@@ -234,7 +233,7 @@ most recent; etc.
 
 ### Nicknames
 
-<mark>Partially implemented</mark>
+<mark>Implemented, no autocompletion</mark>
 
 Sometimes you know your Urbit friends by other names, on or
 offline.   Use the `;nick` command to assign or look up

@@ -4788,20 +4788,31 @@
   |=  lub=@
   =|  tez=(list ,@t)
   |-  ^+  tez
+  =+  ^=  wor
+    =+  [meg=0 i=0]
+    |-  ^-  [meg=@ i=@ end=@f]
+    =+  gam=(cut 3 [i 1] lub)
+    ?:  =(0 gam)
+      [meg i %.y]
+    ?:  =(10 gam)
+      [meg i %.n]
+    $(meg (cat 3 meg gam), i +(i))
+  ?:  end.wor
+    (flop ^+(tez [meg.wor tez]))
   ?:  =(0 lub)  (flop tez)
-  =+  ^=  meg
-      =+  meg=0
-      |-  ^-  @ud
-      =+  gam=(cut 3 [meg 1] lub)
-      ?:(|(=(10 gam) =(0 gam)) meg $(meg +(meg)))
-  =+  res=(rsh 3 +(meg) lub)
-  ?:  &(=(0 (cut 3 [meg 1] lub)) !=(0 res))
-    !!
-  $(lub res, tez [(end 3 meg lub) tez])
+  $(lub (rsh 3 +(i.wor) lub), tez [meg.wor tez])
 ::
 ++  role                                                ::  line list to atom
   |=  tez=(list ,@t)
-  (rap 3 (turn tez |=(a=@t (cat 3 a 10))))
+  =|  [our=@ i=@ud]
+  |-  ^-  @
+    ?~  tez
+      our
+    ?:  =(0 i.tez)
+      $(i +(i), tez t.tez, our (cat 3 our 10))
+    ?:  =(0 i)
+      $(i +(i), tez t.tez, our i.tez)
+    $(i +(i), tez t.tez, our (cat 3 (cat 3 our 10) i.tez))
 ::
 ++  lump                                                ::  apply patch
   |=  [don=udon src=*]
@@ -10227,7 +10238,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ~%  %arvo  +  ~
 |%
-++  arch  ,[hax=@uvI fil=(unit ,@uvI) dir=(map ,@ta ,~)]::  fundamental node
+++  arch  ,[fil=(unit ,@uvI) dir=(map ,@ta ,~)]         ::  fundamental node
 ++  arvo  (mold ,[p=term q=mill] mill)                  ::  arvo card
 ++  beam  ,[[p=ship q=desk r=case] s=path]              ::  global name
 ++  beak  ,[p=ship q=desk r=case]                       ::  garnish with beak
@@ -10332,12 +10343,14 @@
   ++  ruck                                              ::  update vase
     |=  [pax=path txt=@ta]
     ^+  +>
+    =-  ?:(?=(%| -.res) ((slog p.res) +>.$) p.res)
+    ^=  res  %-  mule  |.
     =+  arg=[~2000.1.1 0 =>(~ |+(* ~))]
     =+  rig=(slym q.sew arg)
     =+  rev=(slym (slap bud (rain pax txt)) bud)
     =+  syg=(slym rev arg)
     ~|  %load-lost
-    +>.$(q.sew (slam (slap syg [%cnzy %load]) (slap rig [%cnzy %stay])))
+    +>.^$(q.sew (slam (slap syg [%cnzy %load]) (slap rig [%cnzy %stay])))
   ::
   ++  wink                                              ::  deploy
     |=  [now=@da eny=@ ski=slad]
@@ -10546,6 +10559,8 @@
 ::
 ++  vint                                                ::  create vane
   |=  [lal=@tas vil=vile bud=vase pax=path txt=@ta]     ::
+  =-  ?:(?=(%| -.res) ((slog p.res) ~) (some p.res))
+  ^=  res  %-  mule  |.
   (vent lal vil bud *worm (slym (slap bud (rain pax txt)) bud))
 ::
 ++  viol                                                ::  vane tools
@@ -10680,6 +10695,7 @@
 ::::::  ::::::    Postface                              ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =+  pit=`vase`!>(.)                                     ::
+!:
 =+  bud=pit                                             ::  becomes tang
 =+  vil=(viol p.bud)                                    ::  cached reflexives
 =|  $:  lac=?                                           ::  laconic bit
@@ -10715,7 +10731,7 @@
               ?:  ?=(%veer -.q.i.ova)
                 $(ova t.ova, +>+.^$ (veer now q.i.ova))
               ?:  ?=(%vega -.q.i.ova)
-                (vega now t.ova (path +.q.i.ova))
+                (fall (vega now t.ova (path +.q.i.ova)) [~ +>.^$])
               ?:  ?=(%mass -.q.i.ova)
                 =+  avo=$(ova t.ova)
                 :_  +.avo
@@ -10780,7 +10796,9 @@
 ::
 ++  vega                                                ::  reboot kernel
   |=  [now=@da ova=(list ovum) hap=path]
-  ^-  [p=(list ovum) q=*]
+  ^-  (unit ,[p=(list ovum) q=*])
+  =-  ?:(?=(%| -.res) ((slog p.res) ~) `p.res)
+  ^=  res  %-  mule  |.
   =+  pax=(weld hap `path`[%hoon ~])
   ~&  [%vega-start hap]
   =+  src=((hard ,@t) (need (peek now cx/pax)))
@@ -10801,17 +10819,22 @@
 ++  veer                                                ::  install vane/tang
   |=  [now=@da fav=curd]
   =>  .(fav ((hard ,[%veer lal=@ta pax=path txt=@t]) fav))
+  =-  ?:(?=(%| -.res) ((slog p.res) +>.$) p.res)
+  ^=  res  %-  mule  |.
   ?:  =(%$ lal.fav)
     ~&  [%tang pax.fav `@p`(mug txt.fav)]
     =+  gen=(rain pax.fav txt.fav)
     =+  vax=(slap pit gen)
-    +>.$(bud vax)
-  %_    +>
+    +>.^$(bud vax)
+  %_    +>.^$
       q.niz
     |-  ^+  q.niz
     ?~  q.niz
       ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
-      [[lal.fav q.sew:(vint lal.fav vil bud pax.fav txt.fav)] q.niz]
+      =+  vin=(vint lal.fav vil bud pax.fav txt.fav)
+      ?~  vin
+        q.niz
+      [[lal.fav q.sew:u.vin] q.niz]
     ?.  =(lal.fav p.i.q.niz)
       [i.q.niz $(q.niz t.q.niz)]
       ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]

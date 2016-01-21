@@ -61,4 +61,4 @@ Examples
       --
 
 Here we label the entire `++aesc` core for optimization. You can see the
-jet in `gen164/5/aesc.c`.
+jet in `jets/e/aesc.c`.
