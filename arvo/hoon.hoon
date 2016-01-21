@@ -8228,7 +8228,7 @@
       ?-    -.p.mor
           $&  mor
           $|
-        =+  fex=(mint(sut p.p.p.mor) %noun [%cnts [i.hyp ~] ~])
+        =+  fex=(mint(sut p.p.p.mor) %noun [%wing i.hyp ~])
         [%| %| p.fex (comb q.p.p.mor q.fex)]
       ==
     ::
@@ -8303,14 +8303,13 @@
                 ?:(=(u.q.heg p.sut) here(sut q.sut) lose)
               =<  main
               |%
-              ++  fear  $(sut q.sut, lon [~ lon])
               ++  main
                 ^-  pony
-                =%  tyr/(unit (unit port))  (~(get by p.p.sut) u.q.heg)
+                =+  tyr=(~(get by p.p.sut) u.q.heg)
                 ?~  tyr  
                   next
                 ?~  u.tyr  
-                  fear(p.heg +(p.heg))
+                  $(sut q.sut, lon [~ lon], p.heg +(p.heg))
                 ?.  =(0 p.heg)  
                   next(p.heg (dec p.heg))
                 ?-  -.u.u.tyr
@@ -8321,7 +8320,7 @@
                 |-  ^-  pony
                 ?~  q.p.sut
                   ^$(sut q.sut, lon [~ lon])
-                =+  fid=^$(sut p.i.q.p.sut, lon ~, axe 1) 
+                =+  fid=^$(sut p.i.q.p.sut, lon ~, axe 1, gil ~)
                 ?~  fid  ~
                 ?:  ?=({$| $& *} fid)
                   $(q.p.sut t.q.p.sut, p.heg p.p.fid)
