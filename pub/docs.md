@@ -4,7 +4,7 @@ layout: no-anchor
 logo: black
 ---
 
-<div class="short">
+<div class="short lead">
 
 # Urbit documentation
 
@@ -19,6 +19,6 @@ user doc; it doesn't assume any prior knowledge.
 The most fun thing to do with Urbit is code, but the developer
 doc remains under construction.  Sorry.  We'll have more soon.
 
-<list dataSort="true"></list>
+<list dataSort="true" class="children"></list>
 
 </div>
