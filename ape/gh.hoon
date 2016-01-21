@@ -7,24 +7,22 @@
     ++  card  
       $%  [%diff sub-result]
           [%them wire (unit hiss)]
+          [%hiss wire %httr [%hiss hiss]]
       ==
     --
 |_  [hid=bowl cnt=@ hook=(unit ,@t)]
 ++  gh
   |_  [style=@tas pax=path]
-  ++  real-pax  (scan "https://api.github.com{<`path`pax>}" auri:epur)
-  ++  auth
-    ['Authorization' 'Basic cGhpbGlwY21vbmt0ZXN0OjEzMzdwYXNzd29yZA==' ~]
+  ++  req-url  `purl`[[& ~ `/com/github/api] [~ pax] ~]
   ++  scry
-    ^-  hiss
+    ^-  [? hiss]
     =-  ~&  [%requesting -]  -
     ?+  style  ~|(%invalid-style !!)
-      %read-unauth  read-unauth
-      %read-auth    read-auth
-      %listen       listen
+      %read-unauth  [| read]
+      %read-auth    [& read]
+      %listen       [& listen]
     ==
-  ++  read-unauth  `hiss`[real-pax %get ~ ~]
-  ++  read-auth  `hiss`[real-pax %get [auth ~ ~] ~]
+  ++  read  `hiss`[req-url %get ~ ~]
   ++  listen
     ^-  hiss
     ?~  hook
@@ -32,11 +30,8 @@
     update-hook
   ++  create-hook
     ?>  ?=([@ @ @ *] pax)
-    :*  %+  scan
-          =+  [(trip i.pax) (trip i.t.pax)]
-          "https://api.github.com/repos/{-<}/{->}/hooks"
-        auri:epur
-        %post  [auth ~ ~]  ~
+    :*  req-url(pax /[i.pax]/[i.t.pax]/hooks)
+        %post  ~  ~
         %-  taco  %-  crip  %-  pojo  %-  jobe  :~
           name/s/%web
           active/b/&
@@ -50,11 +45,8 @@
     ==
   ++  update-hook
     ?>  ?=([@ @ @ *] pax)
-    :*  %+  scan
-          =+  [(trip i.pax) (trip i.t.pax)]
-          "https://api.github.com/repos/{-<}/{->}/hooks/{(trip (need hook))}"
-        auri:epur
-        %post  [auth ~ ~]  ~
+    :*  req-url(pax /[i.pax]/[i.t.pax]/hooks/(need hook))
+        %post  ~  ~
         %-  taco  %-  crip  %-  pojo  %-  jobe  :~
           [%'add_events' a/(turn `(list ,@t)`t.t.pax |=(a=@t s/a))]
         ==
@@ -78,21 +70,25 @@
   :_  +>.$(cnt now.hid)  :_  ~
   ?>  ?=(^ pax)
   =-  ~&  [%peered -]  -
-  [ost.hid %them [%x (scot %ud cnt) pax] ~ ~(scry gh i.pax t.pax)]
+  =+  wir=[%x (scot %ud cnt) pax]
+  =+  [aut hiz]=~(scry gh i.pax t.pax)
+  ?.  aut  [ost.hid %them wir ~ hiz]
+  [ost.hid %hiss wir %httr [%hiss hiz]]
 ::
+++  sigh-httr-x  thou-x
 ++  thou-x
   |=  [way=wire res=httr]
   ^-  [(list move) _+>.$]
   ?>  ?=([@ *] way)
   :_  +>.$  :_  ~
-  :^  ost.hid  %diff  %json 
-  ?.  &((gte p.res 200) (lth p.res 300))
-    (jape "bad response {<p.res>} {<r.res>}")
+  :^  ost.hid  %diff  %json
   ?~  r.res
-    (jape "empty response {<p.res>}")
+    (jobe err/s/%empty-response code/(jone p.res) ~)
   =+  (rush q.u.r.res apex:poja)
   ?~  -
-    (jape "bad json {<p.res>} {<u.r.res>}")
+    (jobe err/s/%bad-json code/(jone p.res) body/s/q.u.r.res ~)
+  ?.  =(2 (div p.res 100))
+    (jobe err/s/%request-rejected code/(jone p.res) msg/u.- ~)
   u.-
 ::
 ++  peek
