@@ -396,6 +396,7 @@
 #   define c3__flot   c3_s4('f','l','o','t')
 #   define c3__flow   c3_s4('f','l','o','w')
 #   define c3__fon    c3_s3('f','o','n')
+#   define c3__fond   c3_s4('f','o','n','d')
 #   define c3__for    c3_s3('f','o','r')
 #   define c3__forb   c3_s4('f','o','r','b')
 #   define c3__fore   c3_s4('f','o','r','e')

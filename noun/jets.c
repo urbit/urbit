@@ -402,7 +402,7 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
                (!strcmp(".2", ham_u->fcs_c)) ? "$" : ham_u->fcs_c,
                u3r_mug(ame), 
                u3r_mug(pro));
-       
+      
         c3_assert(0);
         return u3m_bail(c3__fail);
       }
