@@ -1,5 +1,4 @@
 |%
-++  bowl-ish  ,~
 ++  fass                                                ::  rewrite quay
   |=  a=quay
   %+  turn  a
@@ -17,33 +16,37 @@
 ::
 ::::
   ::
-=+  :-  client-id='255263714659582'
-    client-secret=XX
-|_  [bowl-ish ber=@t]
+|_  [(bale ,@t) access-token=@t]
+++  decode-key                        :: XX from bale w/ typed %jael
+  ((hard ,[client-id=@t client-secret=@t ~]) (lore key))
+::
 ++  redirect-uri  'http://localhost:8443/~/ac/graph.facebook.com/auth'
 ++  aut
+  =+  key=decode-key :: XX
   ^-  quay
   %-  fass
-  :~  client-id/client-id
+  :~  client-id/client-id.key
       redirect-uri/redirect-uri
       scope/'user_about_me user_posts'
   ==
 ::
 ++  out
-  |=  a=hiss
-  ?~  ber  [%| [& ~ `/com/facebook/www] `/dialog/oauth aut]
-  [%& %_(a r.p :_(r.p.a 'access_token'^ber))]
+  |=  a=hiss  ^-  sec-move
+  ?~  access-token
+    [%show [& ~ `/com/facebook/www] `/dialog/oauth aut]
+  [%send %_(a r.p :_(r.p.a 'access_token'^access-token))]
 ::
 ::
 ++  graph  [& ~ `/com/facebook/graph]
 ++  in
-  |=  a=quay  ^-  (each hiss ,_!!)
+  =+  key=decode-key :: XX
+  |=  a=quay  ^-  sec-move
   =+  cod=~|(%no-code (~(got by (mo a)) %code))
-  =-  [%& [graph `/'v2.3'/oauth/'access_token' -] %get ~ ~]
+  =-  [%send [graph `/'v2.3'/oauth/'access_token' -] %get ~ ~]
   %-  fass
   :~  code/cod
-      client-id/client-id
-      client-secret/client-secret
+      client-id/client-id.key
+      client-secret/client-secret.key
       redirect-uri/redirect-uri
       grant-type/'authorization_code'
   ==
@@ -61,10 +64,13 @@
   ==
 ::
 ++  bak
-  |=  res=httr  ^-  [(each ,_!! ,%retry) _+>]
+  |=  res=httr  ^-  [sec-move _+>]
   =+  ~|  bad-json/r.res
-      ^-  [ber=@t tim=@u]
+      ^-  [access-token=@t expires-in=@u]
       (need (parse-bak (need r.res)))
-  :-  [%| %retry]  :: XX handle timeout
-  +>.$(ber ber)
+  ~&  res
+  =+  token-expires=`@da`(add now (mul ~s1 expires-in))
+  ~&  authenticated-until/token-expires   :: XX handle timeout
+  :-  [%redo ~]
+  +>.$(access-token access-token)
 --

@@ -1623,7 +1623,9 @@
       |=  [arm=?(%bak %out %in) sam=cage]
       ?~  cor  ~|(%no-core !!)
       =.  +12.q.u.cor
-        `(bale)`[[our now (shas %bale eny) root-beak] dom ~ ''] :: XX jael
+        =+  ato=(sky %cx (tope root-beak [%atom (flop %_(dom . sec/dom))]))
+        =+  key=?~(ato '' ;;(@t u.ato))  ::  XX jael
+        `(bale)`[[our now (shas %bale eny) root-beak] dom ~ key]
       =+  call/[ride/[cnzy/arm `core/u.cor] `sam]
       (pass-note arm (ford-req root-beak -))
     ::
@@ -1663,8 +1665,9 @@
     ++  allow
       |=  a=(list ,[p=term q=$+(vase _abet)])
       |=  b=vase
-      =+  ~|  %bad-sec-move  :: XX move ~| into ?> properly
-          ?>((~(nest ut p:!>(*sec-move)) %& p.b) ~)
+      ~>  %nil.
+        ~|  %bad-sec-move  :: XX move ~| into ?> properly
+        ?>((~(nest ut p:!>(*sec-move)) %& p.b) ~)
       =+  opt=|.((sa (turn a head)))
       |-
       ?~  a  ~|(allowed=*opt !!)

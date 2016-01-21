@@ -45,12 +45,12 @@
 ::
 ::::
   ::
-=+  :-  client-id='483346752999-oj6s0hrcrtc8c0sgahr5m8cijmopth0b.apps.googleusercontent.com'
-    client-secret=XX  ::  XX dynamic
-::
 |_  [(bale ,@t) user-state]
+++  decode-keys  ((hard ,[cid=@t cis=@t ~]) (lore key)) :: XX typed %jael
+++  client-id      cid:decode-keys
+++  client-secret  cis:decode-keys
 ++  out
-  |=  a=hiss  ^-  sec-move 
+  |=  a=hiss  ^-  sec-move
   ?~  ber  [%show (auth-url client-id 'userinfo.email' 'plus.me' ~)]
   [%send %_(a q.q (~(add ja q.q.a) %authorization (cat 3 'Bearer ' ber)))]
 ::
