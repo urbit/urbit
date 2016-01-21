@@ -635,7 +635,7 @@
     ++  ap-peek
       |=  [ren=@tas tyl=path]
       ^-  (unit (unit cage))
-      =+  cug=(ap-find %peek tyl)
+      =+  cug=(ap-find %peek ren tyl)
       ?~  cug
         ((slog leaf/"peek find fail" >tyl< ~) [~ ~])
       =^  arm  +>.$  (ap-farm q.u.cug)

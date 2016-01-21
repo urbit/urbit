@@ -9,8 +9,7 @@
           [%them wire (unit hiss)]
       ==
     --
-|_  [hid=bowl cnt=@ hook=_`(unit ,@t)``'6998961']
-++  prep  ,_`.
+|_  [hid=bowl cnt=@ hook=(unit ,@t)]
 ++  gh
   |_  [style=@tas pax=path]
   ++  real-pax  (scan "https://api.github.com{<`path`pax>}" auri:epur)
@@ -44,7 +43,7 @@
           events/a/(turn `(list ,@t)`t.t.pax |=(a=@t s/a))
           :-  %config
           %-  jobe  :~
-            [%url s/'http://107.170.195.5']
+            [%url s/'http://107.170.195.5:8445/~/to/gh/json.json?anon&wire=/']
             [%'content_type' s/%json]
           ==
         ==
@@ -61,6 +60,17 @@
         ==
     ==
   --
+::
+++  poke-json
+  |=  jon=json
+  ^-  [(list move) _+>.$]
+  =+  ^-  [repo=json sender=json hok=json hook-id=@t zen=json]
+      %-  need
+      %.  jon
+      =>  jo
+      (ot repository/some sender/some hook/some 'hook_id'^no zen/some ~)
+  ~&  [%id hook-id]
+  [~ +>.$(hook `hook-id)]
 ::
 ++  peer-scry-x
   |=  pax=path
@@ -88,6 +98,5 @@
 ++  peek
   |=  [ren=@tas tyl=path]
   ^-  (unit (unit (pair mark ,*)))
-  ~
-  ::``noun/[ren tyl]
+  ~ ::``noun/[ren tyl]
 --
