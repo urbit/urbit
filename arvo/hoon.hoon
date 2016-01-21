@@ -7758,9 +7758,11 @@
       %emin   emin
       %emul   emul
       %felt   felt
-      %find   find
+      %fond   fond
+      %fund   fund
       %fire   fire
       %fish   fish
+      %funk   funk
       %fuse   fuse
       %gain   gain
       %lose   lose
@@ -8200,11 +8202,16 @@
           |=  {a/span b/foot}
           [a [%ash %$ 1]]
     ==
+  ++  funk
+    ~/  %funk
+    |=  pony
+    ^-  tank
+    (sell !>(+<))
   ::
-  ++  find
-    ~/  %find
+  ++  fund
+    ~/  %fund
     |=  {way/vial hyp/wing}
-    ^-  port
+    ^-  pony
     =>  |%
         ++  pony                                        ::  raw match
                   $@  $~                                ::  void
@@ -8214,15 +8221,6 @@
                     @ud                                 ::  unmatched
                   (pair span nock)                      ::  synthetic
         --
-    ~|  [%find hyp]
-    =-  ?@  -  !!
-        ?-    -<
-          $&  [%& p.-]
-          $|  ?-  -.p.-
-                $|  [%| p.p.-]
-                $&  !!
-        ==    ==
-    |-  ^-  pony
     ?~  hyp  
       [%& ~ %& sut]
     =+  mor=$(hyp t.hyp)
@@ -8345,6 +8343,25 @@
             ==
       --
     ==
+
+  ++  fond
+    ~/  %fond
+    |=  {way/vial hyp/wing}
+    (fund way hyp)
+  ::
+  ++  find
+    ~/  %find
+    |=  {way/vial hyp/wing}
+    ^-  port
+    ~|  [%find hyp]
+    =-  ?@  -  !!
+        ?-    -<
+          $&  [%& p.-]
+          $|  ?-  -.p.-
+                $|  [%| p.p.-]
+                $&  !!
+        ==    ==
+    (fond way hyp)
   ::
   ++  fine
     |=  tor/port
