@@ -7757,6 +7757,8 @@
       %epla   epla
       %emin   emin
       %emul   emul
+      %felt   felt
+      %find   find
       %fire   fire
       %fish   fish
       %fuse   fuse
@@ -7985,6 +7987,7 @@
         p.q.q.lop  q.q.dar
       ==
     ?>  ?=($| -.q.q.lop)
+    ?>  =(p.q.p.lop p.q.q.lop)
     =+  hag=[p=(~(tap in q.q.p.lop)) q=(~(tap in q.q.q.lop))]
     =-  [(fire p.-) (fire(vet |) q.-)] 
     |-  ^-  (pair (list (pair span foot)) (list (pair span foot)))
@@ -8006,23 +8009,19 @@
       |%
       ++  deft                                          ::  generic
         |%
-        ++  borm  *                                     ::  leg match span
-        ++  clow  *                                     ::  arm match span
-        ++  form  head                                  ::  wrap with build
-        ++  skin  same                                  ::  unwrap build
-        ++  meat  same                                  ::  
-        ++  pord  same
-        ++  rosh  same
+        ++  bath  *                                     ::  leg match span
+        ++  claw  *                                     ::  arm match span
+        ++  form  |*({* *} p=+<-)                       ::  attach build state
+        ++  skin  |*(p/* p)                             ::  reveal build state
+        ++  meat  |*(p/* p)                             ::  remove build state
         --
       ++  make                                          ::  for mint
         |%  
-        ++  borm  span                                  ::  leg match span
-        ++  clow  onyx                                  ::  arm
-        ++  form  same
-        ++  skin  tail                                  ::  unwrap baggage
-        ++  meat  head                                  ::  unwrap filling
-        ++  pord  |*(* [p=+< q=*nock])                  ::  wrap mint formula
-        ++  rosh  |*(* [p=+< q=*(list pock)])           ::  wrap mint changes
+        ++  bath  span                                  ::  leg match span
+        ++  claw  onyx                                  ::  arm
+        ++  form  |*({* *} [p=+<- q=+<+])               ::
+        ++  skin  |*({p/* q/*} q)                       ::  unwrap baggage
+        ++  meat  |*({p/* q/*} p)                       ::  unwrap filling
         --
       --
     ++  def
@@ -8030,10 +8029,12 @@
       |%  +-  $
       =>  +<
       |%
-      ++  fleg  _(pord *borm)                             ::  legmatch + code
-      ++  fram  _(pord *clow)                             ::  armmatch + 
-      ++  foat  _(rosh *borm)                             ::  leg with changes
-      ++  fult  _(rosh *clow)                             ::  arm with changes
+      ++  pord  |*(* (form +< *nock))                 ::  wrap mint formula
+      ++  rosh  |*(* (form +< *(list pock)))          ::  wrap mint changes
+      ++  fleg  _(pord *bath)                           ::  legmatch + code
+      ++  fram  _(pord *claw)                           ::  armmatch + 
+      ++  foat  _(rosh *bath)                           ::  leg with changes
+      ++  fult  _(rosh *claw)                           ::  arm with changes
       --  --
     ::
     ++  lib
@@ -8043,13 +8044,13 @@
         |%
         ++  halp  $+(twig fleg)
         ++  vant
-          |%  ++  trep  $+({borm wing borm} {axis borm})
-              ++  tasp  $+({{axis borm} fleg foat} foat)
+          |%  ++  trep  $+({bath wing bath} {axis bath})
+              ++  tasp  $+({{axis bath} fleg foat} foat)
               ++  tyle  $+(foat foat)
           --
         ++  vunt  
-          |%  ++  trep  $+({clow wing borm} {axis clow})
-              ++  tasp  $+({{axis clow} fleg fult} fult)
+          |%  ++  trep  $+({claw wing bath} {axis claw})
+              ++  tasp  $+({{axis claw} fleg fult} fult)
               ++  tyle  $+(fult foat)
         --  --
       ::
@@ -8069,10 +8070,10 @@
               ++  tyle  |=(foat +<)
           --
         ++  vunt  
-          |%  ++  trep  |=  {a/clow b/wing c/borm}
-                        ^-  (pair axis clow)
+          |%  ++  trep  |=  {a/claw b/wing c/bath}
+                        ^-  (pair axis claw)
                         (toss b c a)
-              ++  tasp  |~  {a/(pair axis clow) b/fleg c/fult}
+              ++  tasp  |~  {a/(pair axis claw) b/fleg c/fult}
                         ^-  fult
                         [q.a [[p.a (skin b)] (skin c)]]
               ++  tyle  |~  fult
@@ -8087,13 +8088,13 @@
       |%
       ++  rame
         =>  vant  |%  
-            ++  clom  borm
+            ++  clom  bath
             ++  chog  fleg
             ++  ceut  foat
         --
       ++  gelp
         =>  vunt  |%  
-            ++  clom  clow
+            ++  clom  claw
             ++  chog  fram
             ++  ceut  fult
         --
@@ -8120,11 +8121,11 @@
     =>  inc
     |%
     ++  echo
-      |=  {rum/borm rig/(list (pair wing twig))}
+      |=  {rum/bath rig/(list (pair wing twig))}
       (ecbo rum rig)
     ::
     ++  ecmo
-      |=  {hag/clow rig/(list (pair wing twig))}
+      |=  {hag/claw rig/(list (pair wing twig))}
       (eclo hag rig)
     --  --
   ::
@@ -8189,6 +8190,7 @@
     (~(mull et hyp rig) gol dox)
   ::
   ++  felt
+    ~/  %felt
     |=  lap/opal
     ^-  span
     ?-  -.lap
@@ -8200,6 +8202,7 @@
     ==
   ::
   ++  find
+    ~/  %find
     |=  {way/vial hyp/wing}
     ^-  port
     =>  |%
