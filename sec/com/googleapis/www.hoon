@@ -77,15 +77,15 @@
 ++  res
   |=  a=httr  ^-  [sec-move _+>]
   ?:  need-refresh
-    ?.  ?=(2 (div p.a 100))    :: bad response
-      ~&  bad-httr/p.a
-      [[%redo ~] +>.$]
+    ?:  (bad-response p.a)  [[%redo ~] +>.$]  ::  handle 4xx?
     ~|  %refreshed-token
-    [[%redo ~] (new-token (grab a parse-toke))]
+    [[%redo ~] (new-token a)]
   [[%give a] +>.$]
 ::
+++  bad-response  |=(a=@u ?:(=(2 (div a 100)) | ~&(bad-httr/a &)))
 ++  new-token
-  |=  [typ=term ber=@t tim=@u]
+  |=  a=httr  ^+  +>
+  =+  `[typ=term ber=@t tim=@u]`(grab a parse-toke)
   ?>  ?=(%bearer typ)
   +>.$(ber ber, ded (add now (mul ~s1 tim)))
 ::
@@ -103,10 +103,7 @@
 ::
 ++  bak
   |=  a=httr  ^-  [sec-move _+>]
-  ?.  ?=(2 (div p.a 100))    :: bad response
-    ~&  bad-httr/p.a
-    [[%redo ~] +>.$]
-  :-  [%redo ~]
+  ?:  (bad-response p.a)  [[%redo ~] +>.$]  ::  handle 4xx?
   =.  ref  (grab a (ot 'refresh_token'^so ~):jo)
-  (new-token (grab a parse-toke))
+  [[%redo ~] (new-token a)]
 --
