@@ -56,8 +56,8 @@
               [%ay p=span:ship q=span:,@uvH ~]          ::  remote duct
               [%ha p=path:beak]                         ::  GET request
               [%he p=whir]                              ::  HEAD request
-              [%hi p=mark ~]                            ::  outbound HTTP
-              [%se p=whir-se q=(list ,@t)]              ::  outbound to domain 
+              [%hi p=span:(unit span) q=mark ~]         ::  outbound HTTP
+              [%se p=whir-se q=[span (list ,@t)]]       ::  outbound to domain 
               [%si ~]                                   ::  response done
               [%of p=ixor q=$|(~ whir-of)]              ::  associated view
               [%ow p=ixor ~]                            ::  dying view
@@ -89,7 +89,7 @@
       wup=(map hole cyst)                               ::  secure sessions
       sop=(map hole ,[ship ?])                          ::  foreign sess names
       wix=(map ixor stem)                               ::  open views
-      sec=(map (list ,@t) driv)                         ::  security drivers
+      sec=(map ,[span (list ,@t)] driv)                 ::  security drivers
   ==                                                    ::
 ::
 ++  driv  %+  pair  (unit vase)                         ::  driver state
@@ -129,7 +129,7 @@
 ++  perk                                                ::  parsed request
   $%  [%auth p=perk-auth]
       [%away ~]
-      [%oath p=(list ,@t)]
+      [%oath p=span q=(list ,@t)]
       [%bugs p=?(%as %to) ~]
       [%beam p=beam]
       [%deps p=?(%put %delt) q=@uvH]
@@ -634,7 +634,8 @@
       ::    kes    (~(del by kes) hen)
       ::  ==
       ::  ~&  eyre-them/(earn p.u.p.kyz)
-      (back hi//[p.kyz] %hiss q.kyz)
+      =+  usr=?~(p.kyz '~' (scot %ta u.p.kyz))
+      (back hi//[usr]/[q.kyz] %hiss r.kyz)
     ::
         %they                                           ::  inbound response
       =+  kas=(need (~(get by q.ask) p.kyz))
@@ -724,7 +725,7 @@
         %thou
       ?+    -.tee  !!
         %ay  (ames-gram (slav %p p.tee) got/~ (slav %uv q.tee) |2.sih)
-        %hi  (cast-thou p.tee httr/!>(p.sih))
+        %hi  (cast-thou q.tee httr/!>(p.sih))
         %se  (get-thou:(dom-vi q.tee) p.tee p.sih)
       ==
     ::
@@ -780,10 +781,14 @@
           (give-sigh q.sih)  ::  XX crash?
         =*  cay  p.q.sih
         ?>  ?=(%hiss p.cay)
+        ?:  =('~' p.tee)
+          (eyre-them tee q.cay)
+        =+  usr=(slav %ta p.tee)
         =+  ((hard ,[pul=purl ^]) q.q.cay)
         ?.  ?=(%& -.r.p.pul)
-          (eyre-them hi//[p.tee] q.cay)
-        (get-req:(dom-vi p.r.p.pul) p.tee q.cay)
+          ~&  [%auth-lost usr p.r.p.pul]
+          (eyre-them tee q.cay)
+        (get-req:(dom-vi usr p.r.p.pul) q.tee q.cay)
       ::
 ::           [%hi ^]
 ::         ?:  ?=(%| -.q.sih)
@@ -854,8 +859,8 @@
   ::
   ++  ire-ix  |=(ire=ixor ~(. ix ire (~(got by wix) ire)))
   ++  dom-vi  
-    |=  dom=path  ^+  vi
-    ~(. vi dom (fall (~(get by sec) dom) *driv))
+    |=  [usr=span dom=path]  ^+  vi    :: XX default to initialized user?
+    ~(. vi [usr dom] (fall (~(get by sec) usr dom) *driv))
   ::
   ++  ses-authed 
     |=  ses=hole
@@ -1105,9 +1110,9 @@
             %ac
           ?~  but  ~|(no-host/`path`/~/[pef] !!)
           =+  `dom=host`~|(bad-host/i.but (rash i.but thos:urlp))
-          ?>  ?=([%auth ~] t.but)
           ?:  ?=(%| -.dom)  ~|(auth-ip/dom !!)
-          [%oath p.dom]
+          =+  usr=~|(bad-user/t.but (raid t.but %ta ~))
+          [%oath usr p.dom]
         ::
             %at  [%auth %at pok(q but)]
             %am  ?~(but !! [%auth %xen i.but pok(q t.but)])
@@ -1231,9 +1236,9 @@
         ((teba new-mess.vew) p.hem r.hem q.hem %json !>(`json`s.hem))
       ::
           %oath
-        ?.  (~(has by sec) p.hem)
-          ~|(no-driver/p.hem !!)
-        [%| %.(quy (teba get-quay:(dom-vi p.hem)))]
+        ?.  (~(has by sec) [p q]:hem)
+          ~|(no-driver/[p q]:hem !!)
+        [%| %.(quy (teba get-quay:(dom-vi [p q]:hem)))]
       ::
           %poll
         ?:  ?=([~ %js] p.pok)  ::  XX treat non-json cases?
@@ -1602,13 +1607,16 @@
     ++  print-subs  |=([a=dock b=path] "{<p.a>}/{(trip q.a)}{(spud b)}")
     --
   ++  vi                                                ::  auth engine
-    |_  [dom=path cor=(unit vase) req=(qeu ,[p=duct q=mark r=vase:hiss])]
+    |_  $:  [usr=span dom=path]
+            cor=(unit vase)
+            req=(qeu ,[p=duct q=mark r=vase:hiss])
+        ==
     ++  self  .
     ++  abet  +>(sec (~(put by sec) +<))
     ++  dead-hiss  |=(a=tang (give-sigh:abet %| a))
     ++  dead-this  |=(a=tang (fail:abet 500 0v0 a))
-    ++  pass-note  |=([a=whir-se b=note] (pass-note:abet se/[a dom] b))
-    ++  eyre-them  |=([a=whir-se b=vase] (eyre-them:abet se/[a dom] b))
+    ++  pass-note  |=([a=whir-se b=note] (pass-note:abet se/[a usr dom] b))
+    ++  eyre-them  |=([a=whir-se b=vase] (eyre-them:abet se/[a usr dom] b))
     ::  XX block reqs until correct core checked in?
     ++  warn  |=(a=tang ((slog (flop a)) abet))
     ++  pump
@@ -1626,7 +1634,7 @@
       =.  +12.q.u.cor
         =+  ato=(sky %cx (tope root-beak [%atom (flop %_(dom . sec/dom))]))
         =+  key=?~(ato '' ;;(@t u.ato))  ::  XX jael
-        `(bale)`[[our now (shas %bale eny) root-beak] dom ~ key]
+        `(bale)`[[our now (shas %bale eny) root-beak] [usr dom] key]
       =+  call/[ride/[cnzy/arm `core/u.cor] `sam]
       (pass-note arm (ford-req root-beak -))
     ::

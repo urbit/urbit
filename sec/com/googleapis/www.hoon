@@ -39,7 +39,7 @@
   ::
     redirect-uri/redirect-uri
   ==
-++  redirect-uri  'http://localhost:8443/~/ac/www.googleapis.com/auth'
+++  redirect-uri  'http://localhost:8443/~/ac/www.googleapis.com/~.'
 ++  user-state  ,[ber=@t ref=@t ded=@da]
 --
 ::
@@ -67,7 +67,6 @@
   :~  client-id/client-id
       client-secret/client-secret
       redirect-uri/redirect-uri
-      
   ==
 ++  in
   |=  a=quay  ^-  sec-move
