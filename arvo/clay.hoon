@@ -340,6 +340,9 @@
   ::
   ++  print-to-dill
     |=  {car/@tD tan/tank}
+    =+  bar=emit
+    =+  foo=+26.bar
+    =+  moo=,.+26.bar
     (emit (need hun) %give %note car tan)
   ::
   ++  send-over-ames

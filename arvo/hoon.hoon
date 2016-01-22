@@ -7770,6 +7770,7 @@
       %moot   moot
       %mull   mull
       %nest   nest
+      %perk   perk
       %play   play
       %peek   peek
       %repo   repo
