@@ -366,7 +366,7 @@ static u3j_core _mood__hoon__ut_d[] =
     { "burn", _mood__hoon__ut_burn_a },
     { "conk", _mood__hoon__ut_conk_a },
     { "crop", _mood__hoon__ut_crop_a },
-    { "fond", _mood__hoon__ut_fond_a },
+  //  { "fond", _mood__hoon__ut_fond_a },
   //  { "fire", _mood__hoon__ut_fire_a },
     { "fish", _mood__hoon__ut_fish_a },
     { "fuse", _mood__hoon__ut_fuse_a },
