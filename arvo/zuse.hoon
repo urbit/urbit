@@ -1826,6 +1826,7 @@
 ++  sec-move                                            ::  driver effect
   $%  [%send p=hiss]                                    ::  http out
       [%show p=purl]                                    ::  direct user to url
+      [%give p=httr]                                    ::  respond immediately
       [%redo ~]                                         ::  restart request qeu
   ==                                                    ::
 ++  ball  ,@uw                                          ::  statement payload

@@ -502,8 +502,9 @@
           =+  hit=;;(httr q.q.cay)
           =-  (flop (turn `wall`- |=(a=tape leaf/(dash:ut a ''))))
           :-  "HTTP {<p.hit>}"
-          %+  weld
+          %+  welp
             (turn q.hit |=([a=@t b=@t] "{(trip a)}: {(trip b)}"))
+          :-  ""
           (turn `wain`?~(r.hit ~ (lore q.u.r.hit)) trip)
       ==
     ::
