@@ -586,6 +586,8 @@
              u3_noun lon,
              u3_noun gil)
   {
+    fprintf(stderr, "fond %x\r\n", u3r_mug(sut));
+
     if ( c3n == u3du(sut) ) switch ( sut ) {
       default: return u3m_bail(c3__fail);
 
