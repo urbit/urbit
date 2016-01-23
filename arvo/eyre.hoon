@@ -1111,8 +1111,14 @@
           ?~  but  ~|(no-host/`path`/~/[pef] !!)
           =+  `dom=host`~|(bad-host/i.but (rash i.but thos:urlp))
           ?:  ?=(%| -.dom)  ~|(auth-ip/dom !!)
-          =+  usr=~|(bad-user/t.but (raid t.but %ta ~))
-          [%oath usr p.dom]
+          =-  [%oath - p.dom]
+          ~|  bad-user/`path`t.but
+          ?>  ?=([@ ~] t.but)
+          =+  in-quy=(rush i.t.but ;~(pfix cab fque:urlp))
+          ?~  in-quy
+            (slav %ta i.t.but)
+          =+  src=~|(no/u.in-quy (~(got by (mo quy)) u.in-quy))
+          p:(need (puck src))  ::  allow state=usr_other-data
         ::
             %at  [%auth %at pok(q but)]
             %am  ?~(but !! [%auth %xen i.but pok(q t.but)])

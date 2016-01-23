@@ -28,18 +28,20 @@
 ++  toke-url  (endpoint /oauth2/v4/token)
 ++  dbg-post  `purl`[[| `6.000 `/localhost] `/testing /]
 ++  auth-url
-  |=  [cid=@t sop=(list cord)]  ^-  purl
+  |=  [usr=@t cid=@t sop=(list cord)]  ^-  purl
   :+  [& ~ `/com/google/accounts]  [~ /o/oauth2/v2/auth]
   %-  fass  :~
+    state/(pack usr /'')
+    login-hint/?~(usr '' (cat 3 usr '@gmail.com'))
     client-id/cid
     access-type/%offline
     response-type/%code
+    redirect-uri/redirect-uri
     =<  scope/(crip ~(ram re (join " " (turn sop .))))
     |=(a=cord leaf/(earn (endpoint /auth/[a])))
   ::
-    redirect-uri/redirect-uri
   ==
-++  redirect-uri  'http://localhost:8443/~/ac/www.googleapis.com/~.'
+++  redirect-uri  'http://localhost:8443/~/ac/www.googleapis.com/_state'
 ++  user-state  ,[ber=@t ref=@t ded=@da]
 --
 ::
@@ -53,7 +55,7 @@
 ++  need-refresh  (lth ded (add now ~m1))
 ++  out
   |=  a=hiss  ^-  sec-move
-  ?~  ber  [%show (auth-url client-id 'userinfo.email' 'plus.me' ~)]
+  ?~  ber  [%show (auth-url usr client-id 'userinfo.email' 'plus.me' ~)]
   ?:  need-refresh
     [%send toke-url (toke-req refresh-token/ref grant-type/'refresh_token' ~)]
   [%send %_(a q.q (~(add ja q.q.a) %authorization (cat 3 'Bearer ' ber)))]

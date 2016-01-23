@@ -1820,7 +1820,7 @@
 ++  bale                                                ::  driver state
   |*  a=_,*                                             ::  %jael keys type
   $:  [our=ship now=@da eny=@uvI byk=beak]              ::  base info
-      [usr=?(~ span) dom=(list ,@t)]                    ::  req user, domain
+      [usr=span dom=(list ,@t)]                         ::  req user, domain
       key=a                                             ::  secrets from %jael
   ==                                                    ::
 ++  sec-move                                            ::  driver effect

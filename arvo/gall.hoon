@@ -812,7 +812,7 @@
       =^  gaw  vel  (~(slot wa vel) 15 vax)
       ?.  &(?=([p=@ q=^] q.gaw) ((sane %tas) p.q.gaw))
         :_(+>.$ [%| (ap-suck "hiss: malformed cage")])
-      =+  usr=((soft (unit span)) p.q.vax)
+      =+  usr=((soft (unit span)) q.q.vax)
       ?.  &(?=(^ usr) ?~(u.usr & ((sane %ta) u.u.usr)))
         :_(+>.$ [%| (ap-suck "hiss: malformed (unit span)")])
       =+  pux=((soft path) p.q.vax)
@@ -822,7 +822,9 @@
       :_  +>.$
       :^  %&  sto  %pass
       :-  [(scot %p q.q.pry) %cay u.pux]
-      [%hiss u.usr q.q.vax [p.q.gaw paw]]
+      ~!  *cote
+      =-  ~!  -  `cote`-
+      [%hiss u.usr r.q.vax [p.q.gaw paw]]
     ::
     ++  ap-move-mess                                    ::  extract path, target
       |=  vax=vase

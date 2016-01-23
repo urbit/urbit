@@ -20,12 +20,13 @@
 ++  decode-key                        :: XX from bale w/ typed %jael
   ((hard ,[client-id=@t client-secret=@t ~]) (lore key))
 ::
-++  redirect-uri  'http://localhost:8443/~/ac/graph.facebook.com/auth'
+++  redirect-uri  'http://localhost:8443/~/ac/graph.facebook.com/_state'
 ++  aut
   =+  key=decode-key :: XX
   ^-  quay
   %-  fass
-  :~  client-id/client-id.key
+  :~  state/(pack usr /'')
+      client-id/client-id.key
       redirect-uri/redirect-uri
       scope/'user_about_me user_posts'
   ==

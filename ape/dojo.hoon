@@ -86,7 +86,7 @@
     ++  card                                            ::  general card
       $%  [%diff %sole-effect sole-effect]              ::
           [%send wire [ship term] clap]                 ::
-          [%hiss wire mark [%hiss hiss]]                ::
+          [%hiss wire [~ ~] %httr [%hiss hiss]]         ::
           [%exec wire @p (unit ,[beak silk])]           ::
           [%deal wire sock term club]                   ::
           [%info wire @p toro]                          ::
@@ -267,7 +267,7 @@
       |=  [way=wire req=hiss]
       ^+  +>+>
       ?>  ?=(~ pux)
-      (he-card(poy `+>+<(pux `way)) %hiss way %httr %hiss req)
+      (he-card(poy `+>+<(pux `way)) %hiss way `~ %httr %hiss req)
     ::
     ++  dy-stop                                         ::  stop work
       ^+  +>

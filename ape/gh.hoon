@@ -7,7 +7,7 @@
     ++  card  
       $%  [%diff sub-result]
           [%them wire (unit hiss)]
-          [%hiss wire %httr [%hiss hiss]]
+          [%hiss wire [~ ~] %httr [%hiss hiss]]
       ==
     --
 |_  [hid=bowl cnt=@ hook=(unit ,@t)]
@@ -73,7 +73,7 @@
   =+  wir=[%x (scot %ud cnt) pax]
   =+  [aut hiz]=~(scry gh i.pax t.pax)
   ?.  aut  [ost.hid %them wir ~ hiz]
-  [ost.hid %hiss wir %httr [%hiss hiz]]
+  [ost.hid %hiss wir `~ %httr [%hiss hiz]]
 ::
 ++  sigh-httr-x  thou-x
 ++  thou-x
