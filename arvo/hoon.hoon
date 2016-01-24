@@ -132,13 +132,6 @@
 ++  pole  |*  a/$+(* *)                                 ::  nameless list
           $@($~ {a (pole a)})                           ::
 ++  port  (each palo (pair span nock))                  ::  successful match
-++  pony                                                ::  raw match
-          $@  $~                                        ::  void / invalid
-          %+  each                                      ::
-            palo                                        ::  natural result
-          %+  each                                      ::  abnormal
-            @ud                                         ::  unmatched / skips
-          (pair span nock)                              ::  synthetic match
 ++  qual  |*  {a/$+(* *) b/$+(* *) c/$+(* *) d/$+(* *)} ::  just a quadruple
           {p/a q/b r/c s/d}                             ::
 ++  ring  @                                             ::  private key
@@ -6292,7 +6285,13 @@
     ?~  lez  %void
     ?:  ?=({* $~ $~} lez)  n.lez
     [%fork lez]
-  $(yed t.yed, lez ?:(=(%void i.yed) lez (~(put in lez) i.yed)))
+  %=    $
+      yed  t.yed
+      lez
+    ?:  =(%void i.yed)  lez
+    ?:  ?=({$fork *} i.yed)  (~(uni in lez) p.i.yed)
+    (~(put in lez) i.yed)
+  ==
 ::
 ++  cove                                                ::  extract [0 *] axis
   |=  nug/nock
@@ -7759,7 +7758,6 @@
       %emul   emul
       %felt   felt
       %fond   fond
-      %fund   fund
       %fire   fire
       %fish   fish
       %funk   funk
@@ -8203,16 +8201,10 @@
           |=  {a/span b/foot}
           [a [%ash %$ 1]]
     ==
-  ++  funk
-    ~/  %funk
-    |=  pony
-    ^-  tank
-    (sell !>(+<))
   ::
-  ++  fund
-    ~/  %fund
+  ++  fond
+    ~/  %fond
     |=  {way/vial hyp/wing}
-    ^-  pony
     =>  |%
         ++  pony                                        ::  raw match
                   $@  $~                                ::  void
@@ -8222,6 +8214,7 @@
                     @ud                                 ::  unmatched
                   (pair span nock)                      ::  synthetic
         --
+    ^-  pony
     ?~  hyp  
       [%& ~ %& sut]
     =+  mor=$(hyp t.hyp)
@@ -8345,10 +8338,6 @@
             ==
       --
     ==
-  ++  fond
-    ~/  %fond
-    |=  {way/vial hyp/wing}
-    (fund way hyp)
   ::
   ++  find
     ~/  %find
