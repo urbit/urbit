@@ -41,36 +41,6 @@
                                 0));
   }
 
-#if 0
-  static u3_noun
-  u3qfu_funk(u3_noun van,
-             u3_noun fid)
-  {
-    u3_noun gat = u3j_hook(u3k(van), "funk");
-
-    return u3n_kick_on(u3i_molt(gat, 
-                                u3x_sam, 
-                                u3k(fid), 
-                                0));
-  }
-
-  extern void
-  u3_lo_tank(c3_l tab_l, u3_noun tac);
-
-  void
-  _funk_dump(u3_noun van,
-             c3_c*   cap_c,
-             u3_noun fid)
-  {
-    u3_noun foj;
-
-    fprintf(stderr, "%s\r\n", cap_c);
-    
-    foj = u3qfu_funk(van, fid);
-    u3_lo_tank(1, foj);
-  }
-#endif
-
   static u3_noun
   u3qfu_perk(u3_noun van,
              u3_noun sut,
@@ -740,50 +710,6 @@
     }
   }
 
-#if 0
-  static u3_noun
-  u3qfu_fund(u3_noun van,
-             u3_noun sut,
-             u3_noun way,
-             u3_noun hyp)
-  {
-    u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
-    u3_noun gat = u3j_hook(von, "fund");
-
-    return u3n_kick_on(u3i_molt(gat, 
-                                u3x_sam_2,
-                                u3k(way), 
-                                u3x_sam_3,
-                                u3k(hyp), 
-                                0));
-  }
-#endif
-
-  void
-  find_error(u3_noun cor,
-             u3_noun old,
-             u3_noun new)
-  {
-    u3_noun sut, way, hyp, van;
-
-    if ( (c3n == u3r_mean(cor, u3x_sam_2, &way,
-                               u3x_sam_3, &hyp,
-                               u3x_con, &van,
-                               0)) ||
-         (u3_none == (sut = u3r_at(u3x_sam, van))) )
-    {
-      c3_assert(0);
-    }
-    u3m_p("hyp", hyp);
-    u3a_wash(old);
-    u3a_wash(new);
-    fprintf(stderr, "old mug %x, new mug %x\r\n", 
-                    u3r_mug(old), u3r_mug(new));
-    u3qfu_dump(van, "sut", sut);
-    // _funk_dump(van, "old", old);
-    // _funk_dump(van, "new", new);
-  }
-
   static u3_noun
   _cqfu_fond(u3_noun van,
              u3_noun sut,
@@ -791,28 +717,6 @@
              u3_noun hyp)
   {
     return _find_pony(van, sut, way, hyp);
-#if 0
-    u3_noun old = u3qfu_fund(van, sut, way, hyp);
-    u3_noun new = _find_pony(van, sut, way, hyp);
-
-    u3z(new);
-    return old;
-
-    u3_noun old = u3qfu_fund(van, sut, way, hyp);
-    u3_noun new = _find_pony(van, sut, way, hyp);
-
-    if ( c3n == u3r_sing(old, new) ) {
-      u3m_p("hyp", hyp);
-      u3qfu_dump(van, "sut", sut);
-      _funk_dump(van, "old", old);
-      _funk_dump(van, "new", new);
-
-      exit(1);
-    }
-    else fprintf(stderr, "correct\r\n");
-    u3z(new);
-    return old;
-#endif
   }
 
   u3_noun
