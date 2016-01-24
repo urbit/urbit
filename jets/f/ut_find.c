@@ -541,6 +541,7 @@
 
             u3z(dep);
             u3z(nol);
+            u3z(tyr);
             return ret;
           }
           else {
@@ -556,6 +557,7 @@
  
               ret = u3nt(c3y, u3qb_weld(ppuu_tyr, nol), u3k(qpuu_tyr));
               u3z(nol);
+              u3z(tyr);
               return ret;
             }
             else {
@@ -567,6 +569,7 @@
 
               ret = u3nq(c3n, c3n, u3k(ppuu_tyr), u3qf_comb(dog, qpuu_tyr));
               u3z(dog);
+              u3z(tyr);
 
               return ret;
             }
