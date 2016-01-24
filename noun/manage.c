@@ -9,6 +9,8 @@
 
 #include "all.h"
 
+#define NO_OVERFLOW
+
       /* (u3_noun)setjmp(u3R->esc.buf): setjmp within road.
       */
 #if 0
@@ -73,7 +75,9 @@ static sigjmp_buf u3_Signal;
 #ifndef SIGSTKSZ
 # define SIGSTKSZ 16384
 #endif
+#ifndef NO_OVERFLOW
 static uint8_t Sigstk[SIGSTKSZ];
+#endif
 
 void u3_unix_ef_hold(void);         //  suspend system signal regime
 void u3_unix_ef_move(void);         //  restore system signal regime
@@ -131,11 +135,13 @@ _cm_signal_handle(c3_l sig_l)
   }
 }
 
+#ifndef NO_OVERFLOW
 static void
 _cm_signal_handle_over(int emergency, stackoverflow_context_t scp)
 {
   _cm_signal_handle(c3__over);
 }
+#endif
 
 static void
 _cm_signal_handle_term(int x)
@@ -294,7 +300,9 @@ _cm_signal_deep(c3_w sec_w)
 {
   u3_unix_ef_hold();
 
+#ifndef NO_OVERFLOW
   stackoverflow_install_handler(_cm_signal_handle_over, Sigstk, SIGSTKSZ);
+#endif
   signal(SIGINT, _cm_signal_handle_intr);
   signal(SIGTERM, _cm_signal_handle_term);
 
