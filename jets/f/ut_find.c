@@ -41,6 +41,7 @@
                                 0));
   }
 
+#if 0
   static u3_noun
   u3qfu_funk(u3_noun van,
              u3_noun fid)
@@ -68,6 +69,7 @@
     foj = u3qfu_funk(van, fid);
     u3_lo_tank(1, foj);
   }
+#endif
 
   static u3_noun
   u3qfu_perk(u3_noun van,
@@ -589,8 +591,6 @@
              u3_noun lon,
              u3_noun gil)
   {
-    fprintf(stderr, "fond %x\r\n", u3r_mug(sut));
-
     if ( c3n == u3du(sut) ) switch ( sut ) {
       default: return u3m_bail(c3__fail);
 
@@ -635,7 +635,7 @@
       {
         // fprintf(stderr, "hold\r\n");
         if ( (c3y == u3qdi_has(gil, sut)) ) {
-          return u3nt(c3n, c3y, u3k(p_heg));
+          return u3_nul;
         }
         else {
           u3_noun zoc = u3qdi_put(gil, sut);
@@ -780,8 +780,8 @@
     fprintf(stderr, "old mug %x, new mug %x\r\n", 
                     u3r_mug(old), u3r_mug(new));
     u3qfu_dump(van, "sut", sut);
-    _funk_dump(van, "old", old);
-    _funk_dump(van, "new", new);
+    // _funk_dump(van, "old", old);
+    // _funk_dump(van, "new", new);
   }
 
   static u3_noun

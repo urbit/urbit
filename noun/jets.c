@@ -408,7 +408,6 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
                u3r_mug(ame), 
                u3r_mug(pro));
         ham_u->liv = c3n;
-        find_error(cor, ame, pro);
 
         c3_assert(0);
         return u3m_bail(c3__fail);

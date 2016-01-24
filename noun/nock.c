@@ -5,6 +5,24 @@
 
 static u3_noun _n_nock_on(u3_noun bus, u3_noun fol);
 
+      /* u3_term_io_hija(): hijack console for cooked print.
+      */
+        FILE*
+        u3_term_io_hija(void);
+
+      /* u3_term_io_loja(): release console from cooked print.
+      */
+        void
+        u3_term_io_loja(int x);
+
+      /* uL, uH: wrap hijack/lojack around fprintf.
+      **
+      **  uL(fprintf(uH, ...));
+      */
+#       define uH    u3_term_io_hija()
+#       define uL(x) u3_term_io_loja(x)
+
+
 /* _n_hint(): process hint.
 */
 static u3_noun
@@ -31,12 +49,22 @@ _n_hint(u3_noun zep,
 
       u3t_push(tac);
 #if 0
-      if ( c3__spot == zep ) {
-        printf("spot %d/%d : %d/%d\r\n",
-               u3h(u3h(u3t(hod))),
-               u3t(u3h(u3t(hod))),
-               u3h(u3t(u3t(hod))),
-               u3t(u3t(u3t(hod))));
+      {
+        static int low_i;
+
+        if ( !low_i ) {
+          low_i = 1;
+          if ( 0 == (u3R->pro.nox_d % 65536ULL) ) {
+            if ( c3__spot == zep ) {
+              uL(fprintf(uH, "spot %d/%d : %d/%d\r\n",
+                             u3h(u3h(u3t(hod))),
+                             u3t(u3h(u3t(hod))),
+                             u3h(u3t(u3t(hod))),
+                             u3t(u3t(u3t(hod)))));
+            }
+          }
+          low_i = 0;
+        }
       }
 #endif
       pro = _n_nock_on(bus, nex);
