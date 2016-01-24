@@ -7327,9 +7327,6 @@
                     {$unit p/term q/wine}               ::
                 ==                                      ::
       --
-  ~&  %us-crash
-  ~|  %us-crashed
-  ?>  |
   |_  sut/span
   ++  dash
       |=  {mil/tape lim/char}  ^-  tape
