@@ -279,12 +279,12 @@
   ::                                            ::::::  compositions
     {$tsbr p/twig q/twig}                               ::  push bunt: ++(*p q)
     {$tscl p/(list (pair wing twig)) q/twig}            ::  p changes then q
-    {$tscn p/twig q/twig r/twig}                        ::  typed variable
+    {$tssm p/taco q/twig r/twig}                        ::  typed variable
     {$tsdt p/wing q/twig r/twig}                        ::  r with p set to q
     {$tsgl p/twig q/twig}                               ::  +>(q p)
     {$tshp p/twig q/twig}                               ::  flip push: ++(q p)
     {$tsgr p/twig q/twig}                               ::  use p as .. of q
-    {$tskt p/twig q/twig r/twig s/twig}                 ::  state machine wing
+    {$tskt p/taco q/wing r/twig s/twig}                 ::  state machine wing
     {$tsls p/twig q/twig}                               ::  push p on .. of q
     {$tshx p/term q/twig r/twig}                        ::  make an alias
     {$tssg p/(list twig)}                               ::  compose twig list
@@ -311,6 +311,7 @@
     {$zpwt p/$@(p/@ {p/@ q/@}) q/twig}                  ::  restrict hoon vers.
     {$zpzp $~}                                          ::  always crash
   ==                                                    ::
+++  taco  $@(term (pair term twig))                     ::
 ++  tyre  (list {p/term q/twig})                        ::
 ++  tyke  (list (unit twig))                            ::
 ::                                                      ::::::  virtual nock
@@ -7215,19 +7216,23 @@
         {$tscl *}
       [%tsgr [%cncb [[%& 1] ~] p.gen] q.gen]
     ::
-        {$tscn *}
-      [%tsls [%kthp p.gen q.gen] r.gen]
+        {$tssm *}
+      ?@  p.gen
+        [%tsls [%ktts p.gen q.gen] r.gen]
+      [%tsls [%kthp [%bcts p.gen] q.gen] r.gen]
     ::
         {$tsdt *}
       [%tsgr [%cncb [[%& 1] ~] [[p.gen q.gen] ~]] r.gen]
     ::
         {$tskt *}                                       ::                  =^
-      =+  cog=rusk(gen p.gen)                           ::
-      =+  wuy=(weld rake(gen q.gen) `wing`[%v ~])       ::
+      =+  wuy=(weld q.gen `wing`[%v ~])                 ::
       :+  %tsgr  [%ktts %v %$ 1]                        ::  =>  v=.
       :+  %tsls  [%ktts %a %tsgr [%limb %v] r.gen]      ::  =+  a==>(v \r.gen)
       :^  %tsdt  wuy  [%tsgl [%$ 3] [%limb %a]]         ::  =.  \wuy  +.a
-      :+  %tsgr  :-  :+  %ktts  cog                     ::  =>  :-  ^=  \cog
+      :+  %tsgr  :-  ?@  p.gen                          ::
+                       :+  %ktts  p.gen                 ::  =>  :-  ^=  \p.gen
+                       [%tsgl [%$ 2] [%limb %a]]        ::          -.a
+                     :+  %kthp  [%bcts p.gen]           ::  =>  :-  ^-  \p.gen
                      [%tsgl [%$ 2] [%limb %a]]          ::          -.a
                  [%limb %v]                             ::      v
       s.gen                                             ::  s.gen
@@ -8379,13 +8384,10 @@
       ~|(%fire-core !!)
     =+  dox=[%core q.q.p q.p]
     ?:  ?=($ash -.q)
-      ~|  %fire-ash
       ::  ~_  (dunk(sut [%cell q.q.p p.p]) %fire-dry)
       ?>  ?|(!vet (nest(sut q.q.p) & p.p))
       [dox p.q]
-    ~|  [%fire-odd -.q]
     ?>  ?=($elm -.q)
-    ~|  %fire-elm
     ::  ~_  (dunk(sut [%cell q.q.p p.p]) %fire-wet)
     ?>  ?|  !vet
             (~(has in rib) [sut dox p.q])
@@ -9490,7 +9492,10 @@
     ^.  stet  ^.  limo
     :~
       :-  ','
-        (stag %wing rope)
+        ;~  pose
+          (stag %wing rope)
+          ;~(pfix com (stag %ktsg wide))
+        ==
       :-  '!'
         ;~  pose
           (stag %wtzp ;~(pfix zap wide))
@@ -9794,9 +9799,8 @@
                 ^.  stet  ^.  limo
                 :~  ['|' (rune bar %tsbr expb)]
                     ['.' (rune dot %tsdt expq)]
-                    ['^' (rune ket %tskt bono)]
+                    ['^' (rune ket %tskt expt)]
                     [':' (rune col %tscl expp)]
-                    ['%' (rune cen %tscn expc)]
                     ['<' (rune gal %tsgl expb)]
                     ['>' (rune gar %tsgr expb)]
                     ['-' (rune hep %tshp expb)]
@@ -9936,11 +9940,13 @@
     ++  expl  |.(;~(gunk sym loaf loaf))                ::  term, two twigs 
     ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [tile twig]s
     ++  expn  |.((stag %cltr (butt hank)))              ::  autoconsed twigs
+    ++  expo  |.(;~(gunk wise loaf loaf))               ::  =;
     ++  expp  |.(;~(gunk (butt rick) loaf))             ::  [wing twig]s, twig
     ++  expq  |.(;~(gunk rope loaf loaf))               ::  wing and two twigs
-    ++  expu  |.(;~(gunk rope loaf (butt hank)))        ::  wing, twig, twigs
     ++  expr  |.(;~(gunk loaf wisp))                    ::  twig and core tail
     ++  exps  |.((butt hank))                           ::  closed gapped twigs
+    ++  expt  |.(;~(gunk wise rope loaf loaf))          ::  =^
+    ++  expu  |.(;~(gunk rope loaf (butt hank)))        ::  wing, twig, twigs
     ++  expz  |.(loaf(bug &))                           ::  twig with tracing
     ::
     ::    tiki expansion for %wt runes
@@ -9996,13 +10002,6 @@
             dem
             (ifix [sel ser] ;~(plug dem ;~(pfix ace dem)))
           ==
-          loaf
-        ==
-    ++  bono  |.                                        ::  term, wing, 2 twigs
-        ;~  gunk                                        ::  (as twigs)
-          (cook |=(cog/term [%wing [cog ~]]) sym)
-          (cook |=(hyp/wing [%wing hyp]) rope)
-          loaf
           loaf
         ==
     ++  bont  ;~  (bend)                                ::  term, optional twig
@@ -10092,6 +10091,9 @@
       ==
     ==
   ::
+  ++  wise  %+  cook
+              |=({a/term b/(unit twig)} ?~(b a [a u.b]))
+            ;~(plug sym (punt ;~(pfix fas wide)))
   ++  tall  %+  knee  *twig                             ::  full tall form
             |.(~+((wart ;~(pose (norm &) long lute ape:(sail &)))))
   ++  wide  %+  knee  *twig                             ::  full wide form
