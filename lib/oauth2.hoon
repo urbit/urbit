@@ -16,7 +16,7 @@
 ++  join  
   |=  [a=cord b=(list cord)]
   ?~  b  ''
-  (rap 3 |-([i.b ?~(t.b ~ ['.' $(b t.b)])]))
+  (rap 3 |-([i.b ?~(t.b ~ [a $(b t.b)])]))
 ::
 ++  bad-response  |=(a=@u ?:(=(2 (div a 100)) | ~&(bad-httr/a &)))
 ++  grab-json
@@ -36,7 +36,8 @@
 ::
 ::::
   ::
-|=  [dialog=[p=host q=path r=quay] code-exchange=path]    
+|=  [dialog=[p=host q=path r=quay] code-exchange=path]
+=+  state-usr=&
 |_  [(bale keys) scope=(list cord)]
 ++  client-id      cid:(decode-keys key)
 ++  client-secret  cis:(decode-keys key)
@@ -49,7 +50,7 @@
   :+  [& ~ p.dialog]  [~ q.dialog]
   %-  fass  
   %+  welp  r.dialog
-  :~  state/(pack usr /'')
+  :~  state/?.(state-usr '' (pack usr /''))
       client-id/client-id
       redirect-uri/redirect-uri
       scope/(join ' ' scope)
@@ -57,7 +58,8 @@
 ::
 ++  redirect-uri  
   %-    crip    %-  earn
-  [urb-hart `/~/ac/(join '.' (flop dom))/'_state' ~]
+  =+  usr-span=?:(state-usr '_state' (scot %ta usr))
+  [urb-hart `/~/ac/(join '.' (flop dom))/[usr-span] ~]
 ::
 ++  refresh-expiring
   |=  [[expires=@da refresh=token] otherwise=$+(hiss sec-move)]
@@ -106,8 +108,8 @@
 ++  refresh-token  'refresh_token'^so:jo
 ++  bak-parse-access
   |*  [done=* parse=(pole ,[span fist]:jo)]
-  |=  handle=$+([token _(need *(ot:jo parse))] _done)
-  |=  a=httr  ^-  [sec-move _done]
+  |=  handle=$+(_?~(parse *token [*token (need *(ot:jo parse))]) _done)
+  |=  a=httr  ^-  [sec-move _done] 
   :-  [%redo ~]
   ?:  (bad-response p.a)  done  ::  handle 4xx?
   (handle (grab-json a (ot:jo access-token parse)))
