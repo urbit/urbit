@@ -1,6 +1,6 @@
-main = {
-  mount: function() { console.log('mount.') },
-  unmount: function() { console.log('unmount.') }
-}
-
-window.tree.modules.talk = main
+window.tree.components.talk = React.createClass({
+  render: function() {
+    return (React.DOM.div({}, "rendered."));
+  }
+})
+  

@@ -29,7 +29,7 @@
     ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js");
     ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.js");
     ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/libs/codemirror/4.3.0/codemirror.js");
-    ;script(type "text/javascript", src "/{dez}/lib/js/urb.js");
+    ;script(type "text/javascript", src "/~/at/{dez}/lib/js/urb.js");
     ;script(type "text/javascript", src "/{dez}/lib/js/hoon.js");
     ;script(type "text/javascript", src "/{dez}/pub/tree/main.js");
     ::;script(type "text/javascript", src "http://localhost:8000/docs/pub/tree/src/js/main.js");
