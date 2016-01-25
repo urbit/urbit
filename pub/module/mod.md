@@ -1,0 +1,1 @@
+<module path="/home/pub/module/main.js" name="talk" />

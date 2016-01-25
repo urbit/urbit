@@ -18,8 +18,8 @@
   ;head
     ;title: Bootstrap Test - ~2016.1
     ;meta(name "viewport", content "width=device-width, initial-scale=1");
-    ;link(rel "stylesheet", href "/home/lib/fonts.css");
-    ;link(rel "stylesheet", href "/home/lib/bootstrap.css");
+    ;link(rel "stylesheet", href "/home/lib/css/fonts.css");
+    ;link(rel "stylesheet", href "/home/lib/css/bootstrap.css");
     ;script(src "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js");
   ==
   ;body
