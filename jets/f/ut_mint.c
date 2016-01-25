@@ -470,10 +470,21 @@
       _mint_used();
       {
         u3_noun typ = _mint_nice(van, gol, _mint_bean());
-        u3_noun one = _mint_corn(van, sut, p_gen);
-        u3_noun two = _mint_corn(van, sut, q_gen);
+        u3_noun one = _mint_in(van, sut, c3__noun, p_gen);
+        u3_noun two = _mint_in(van, sut, c3__noun, q_gen);
+        u3_noun ret;
 
-        return u3nc(typ, u3nt(5, one, two));
+        if ( (c3y == _mint_vet(van)) &&
+             (c3n == u3qfu_nest(van, u3h(one), c3n, u3h(two))) &&
+             (c3n == u3qfu_nest(van, u3h(two), c3y, u3h(one))) )
+        {
+          return u3m_error("nest");
+        }
+        ret = u3nc(typ, u3nt(5, u3k(u3t(one)), u3k(u3t(two))));
+        u3z(one);
+        u3z(two);
+
+        return ret;
       }
       case c3__dtwt: p_gen = u3t(gen);
       _mint_used();
@@ -620,27 +631,6 @@
 
         u3z(zel);
         return ret;
-      }
-      case c3__kthx: u3x_cell(u3t(gen), &p_gen, &q_gen);
-      _mint_used();
-      {
-        u3_noun huz = u3qfu_play(van, sut, p_gen);
-        u3_noun hif = _mint_nice(van, gol, huz);
-        u3_noun zel = _mint_in(van, sut, c3__noun, q_gen);
-
-        if ( (c3y == _mint_vet(van)) && 
-             (c3n == u3qfu_nest(van, hif, c3y, u3h(zel))) )
-        {
-          u3z(hif);
-          u3z(zel);
-          return u3m_bail(c3__exit);
-        }
-        else {
-          u3_noun ret = u3nc(hif, u3k(u3t(zel)));
-
-          u3z(zel);
-          return ret;
-        }
       }
       case c3__tsgr: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();
