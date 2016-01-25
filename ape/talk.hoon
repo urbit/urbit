@@ -812,7 +812,7 @@
           ?:  =(i.buf (turf '•'))
             ?.  =(0 con)  newline
             [[%del inx] ?~(t.buf ~ $(buf t.buf))]
-          ?:  =(i.buf ' ')
+          ?:  =(i.buf `@`' ')
             ?.  =(64 con)  advance(sap inx)
             [(fix (turf '•')) newline]
           ?:  =(64 con)

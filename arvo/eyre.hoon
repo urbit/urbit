@@ -847,7 +847,7 @@
   ::
   ++  del-deps
     |=  {a/@uvH b/(each duct ixor)}  ^+  +>.$
-    ?:  =(0 a)  +>.$
+    ?:  =(`@`0 a)  +>.$
     =.  liz  (~(del ju liz) a b)
     :: ~&  del-deps+[a (~(get ju liz) a)]
     ?:  (~(has by liz) a)  +>.$
@@ -857,7 +857,7 @@
   ++  new-deps
     |=  {a/@uvH b/(each duct ixor)}  ^+  +>.$
     :: ~&  new-deps+[a b]
-    ?:  =(0 a)  +>.$
+    ?:  =(`@`0 a)  +>.$
     =+  had=(~(has by liz) a)
     =.  liz  (~(put ju liz) a b)
     ?:  had  +>.$
@@ -1060,7 +1060,7 @@
         =*  pef  i.t.q.pok
         =+  but=t.t.q.pok                 ::  XX  =*
         ?+    pef  ~|(pfix-lost+`path`/~/[pef] !!)
-            $debug  ;;(perk [%bugs but])
+            $debug  ((hard perk) [%bugs but])
             $away  [%away ~]
             $at  [%auth %at pok(q but)]
             $am  ?~(but !! [%auth %xen i.but pok(q t.but)])
@@ -1383,7 +1383,7 @@
       ?~  her  abut
       =.  aut  (~(del in aut) u.her)
       ?~  aut  abut
-      abet(him ?.(=(her him) him n.aut))
+      abet(him ?.(=(u.her him) him n.aut))
     ::
     ++  new-view
       ^+  [*oryx ..ya]
@@ -1585,7 +1585,7 @@
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
   ^+  [p=*(list move) q=..^$]
-  =.  gub  ?.(=(0 gub) gub (cat 3 (rsh 3 1 (scot %p (end 6 1 eny))) '-'))
+  =.  gub  ?.(=(`@`0 gub) gub (cat 3 (rsh 3 1 (scot %p (end 6 1 eny))) '-'))
   =^  mos  bol
     abet:(apex:~(adit ye [hen [now eny our sky] ~] bol) q.hic)
   [mos ..^$]
@@ -1625,7 +1625,7 @@
   =+  sky=|=(* `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
   =.  ney  (shax :(mix (shax now) +(eny) ney))          ::  XX!!  shd not need
   ^+  [p=*(list move) q=..^$]
-  =.  gub  ?.(=(0 gub) gub (cat 3 (rsh 3 1 (scot %p (end 6 1 eny))) '-'))
+  =.  gub  ?.(=(`@`0 gub) gub (cat 3 (rsh 3 1 (scot %p (end 6 1 eny))) '-'))
   =+  tee=((soft whir) tea)
   ?~  tee  ~&  [%e %lost -.q.hin hen]  [~ ..^$]
   =^  mos  bol

@@ -1,4 +1,4 @@
-::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Preface                               ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ?>  ?=(@ .)                                             ::  atom subject 
@@ -2937,7 +2937,7 @@
 ::
 ++  lust  |=  {weq/char naz/hair}                       ::  detect newline
           ^-  hair
-          ?:(=(10 weq) [+(p.naz) 1] [p.naz +(q.naz)])
+          ?:(=(`@`10 weq) [+(p.naz) 1] [p.naz +(q.naz)])
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 2eC, parsing (custom rules)   ::
 ::
@@ -3015,7 +3015,7 @@
   |=  tub/nail
   =+  fad=daf
   |-  ^-  (like @t)
-  ?:  =(0 daf)
+  ?:  =(`@`0 daf)
     [p=p.tub q=[~ u=[p=fad q=tub]]]
   ?:  |(?=($~ q.tub) !=((end 3 1 daf) i.q.tub))
     (fail tub)
@@ -3488,7 +3488,7 @@
     ~
   ?:  =('\\' i.vib)
     ['\\' '\\' $(vib t.vib)]
-  ?:  ?|((gth i.vib 126) (lth i.vib 32) =(39 i.vib))
+  ?:  ?|((gth i.vib 126) (lth i.vib 32) =(`@`39 i.vib))
     ['\\' (welp ~(rux at i.vib) '/' $(vib t.vib))]
   [i.vib $(vib t.vib)]
 ::
@@ -3560,7 +3560,7 @@
   =+  b=(end 3 1 a)
   ~|  %bad-utf8
   ?:  =(0 b)
-    ?>(=(0 a) 0)
+    ?>(=(`@`0 a) 0)
   ?>  |((gte b 32) =(10 b))
   ?:((lte b 127) 1 ?:((lte b 223) 2 ?:((lte b 239) 3 4)))
 ::
@@ -3599,7 +3599,7 @@
   ^-  @t
   %+  rap  3
   |-  ^-  (list @)
-  ?:  =(0 a)
+  ?:  =(`@`0 a)
     ~
   =+  b=(end 5 1 a)
   =+  c=$(a (rsh 5 1 a))
@@ -3657,7 +3657,7 @@
   ^-  @t
   %+  rap  3
   |-  ^-  (list @)
-  ?:  =(0 a)
+  ?:  =(`@`0 a)
     ~
   =+  b=(end 3 1 a)
   =+  c=(rsh 3 1 a)
@@ -3690,14 +3690,14 @@
   ^-  @ta
   %+  rap  3
   |-  ^-  (list @)
-  ?:  =(0 a)
+  ?:  =(`@`0 a)
     ~
   =+  b=(teff a)
   =+  c=(turf (end 3 b a))
   =+  d=$(a (rsh 3 b a))
   ?:  ?|  &((gte c 'a') (lte c 'z'))
           &((gte c '0') (lte c '9'))
-          =('-' c)
+          =(`@`'-' c)
       ==
     [c d]
   ?+  c
@@ -3766,9 +3766,9 @@
           =.  lug
             |-  ^-  wall
             ?~  q.tac
-              ?:(=(%$ r.p.tac) lug (rig r.p.tac))
+              ?:(=(~ r.p.tac) lug (rig r.p.tac))
             ^$(tac i.q.tac, lug $(q.tac t.q.tac), tab din)
-          ?:  =(%$ q.p.tac)
+          ?:  =(~ q.p.tac)
             lug
           (wig q.p.tac)
         ==
@@ -6312,7 +6312,7 @@
     [%7 mal buz]
   ?:  ?=({^ {$0 $1}} mal)
     [%8 p.mal buz]
-  ?:  =({$0 $1} buz)
+  ?:  =([%0 %1] buz)
     mal
   [%7 mal buz]
 ::
@@ -8389,7 +8389,7 @@
     ::  ~_  (dunk(sut [%cell q.q.p p.p]) %fire-wet)
     ?>  ?|  !vet
             (~(has in rib) [sut dox p.q])
-            !=(~ (mull(sut p, rib (~(put in rib) [sut dox p.q])) %noun dox p.q))
+            !=(** (mull(sut p, rib (~(put in rib) sut dox p.q)) %noun dox p.q))
         ==
     [p p.q]
   ::
@@ -8527,6 +8527,7 @@
       [(nice %noun) [%2 q:$(gen p.gen, gol %noun) q:$(gen q.gen, gol %noun)]]
     ::
         {$dtts *}
+      =+  [one two]=[$(gen p.gen, gol %noun) $(gen q.gen, gol %noun)]
       [(nice bool) [%5 q:$(gen p.gen, gol %noun) q:$(gen q.gen, gol %noun)]]
     ::
         {$dtwt *}  [(nice bool) [%3 q:$(gen p.gen, gol %noun)]]
@@ -8806,7 +8807,7 @@
     --
   ::
   ++  meet  |=(ref/span &((nest | ref) (nest(sut ref) | sut)))
-  ++  mite  |=(ref/span |((nest | ref) (nest(sut ref) | sut)))
+  ++  mite  |=(ref/span |((nest | ref) (nest(sut ref) & sut)))
   ++  nest
     ~/  %nest
     |=  {tel/? ref/span}
@@ -8829,7 +8830,7 @@
       |=  {dab/(map term foot) hem/(map term foot)}
       ^-  ?
       ?:  ?=($~ dab)  =(hem ~)
-      ?:  ?=($~ hem)  =(dab ~)
+      ?:  ?=($~ hem)  |
       ?&  =(p.n.dab p.n.hem)
           $(dab l.dab, hem l.hem)
           $(dab r.dab, hem r.hem)

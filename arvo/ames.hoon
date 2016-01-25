@@ -1,4 +1,4 @@
-::  ::  ames (4a), networking  
+!:  ::  ames (4a), networking  
 ::
   |=  pit/vase
   =>  =~
@@ -91,7 +91,7 @@
     %-  flop
     |-  ^-  will
     ?~  ouf  wal
-    ?~  wal  ?>(=(~ ouf) ~)
+    ?~  wal  !!
     ?.  =(i.wal i.ouf)  ouf
     $(wal t.wal, ouf t.ouf)
   ::
@@ -1608,7 +1608,7 @@
       =-  ?~  old  ~
           [~ ~ u.old]
       ^=  old
-      ?.  =(0 ren)  ~
+      ?.  =(`@`0 ren)  ~
       ?+    lot  ~
           {$$ $ud @}
         %+  bind

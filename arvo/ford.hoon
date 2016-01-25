@@ -1,4 +1,4 @@
-::::::  
+!:::::  
 ::  ::  %ford, new execution control
 !?  164
 ::::
@@ -255,7 +255,7 @@
   ++  awap                                              ::  get next revision
     ~%  %ford-w  ..is  ~
     |=  {dep/@uvH ask/?}
-    ?:  =(0 dep)
+    ?:  =(`@`0 dep)
       ~&(dep-empty+hen +>.$)
     ?:  =(dep 0vtest)                 ::  upstream testing
       +>.$(mow ?.(ask mow :_(mow [hen %give %news dep])))
