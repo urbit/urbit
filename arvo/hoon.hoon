@@ -245,6 +245,7 @@
     {$cnts p/wing q/(list (pair wing twig))}            ::  eval. p w+ q changes
   ::                                            ::::::  nock
     {$dtkt p/twig}                                      ::  nock 11 data skyhook
+    {$dthx p/twig q/twig}                               ::  nock 12 data skyhook
     {$dtls p/twig}                                      ::  nock 4 increment
     {$dttr p/twig q/twig}                               ::  nock p w+ formula q
     {$dtts p/twig q/twig}                               ::  nock 5 equality test
@@ -328,6 +329,7 @@
               {$9 p/@ q/nock}                           ::  select arm and fire
               {$10 p/$@(@ {p/@ q/nock}) q/nock}         ::  hint
               {$11 p/nock}                              ::  grab data from sky
+              {$12 p/nock q/nock}                       ::  typed data from sky
           ==                                            ::
 ++  span  $@  $?  $noun                                 ::  any nouns
                   $void                                 ::  no noun
@@ -4531,7 +4533,7 @@
 ::
 ++  mink
   ~/  %mink
-  |=  {{sub/* fol/*} sky/$+(^ (unit))}
+  |=  {{sub/* fol/*} sky/$+(* (unit))}
   =+  tax=*(list {@ta *})
   |-  ^-  tone
   ?@  fol
@@ -4599,9 +4601,16 @@
       {$11 b/*}
     =+  ben=$(fol b.fol)
     ?.  ?=($0 -.ben)  ben
-    =+  val=(sky %noun p.ben)
+    =+  val=(sky p.ben)
     ?~(val [%1 p.ben ~] [%0 u.val])
   ::
+      {$12 b/* c/*}
+    =+  ref=$(fol b.fol)
+    =+  ben=$(fol c.fol)
+    ?.  ?=($0 -.ref)  ref
+    ?.  ?=($0 -.ben)  ben
+    =+  val=(sky p.ben)
+    ?~(val [%1 p.ben ~] [%0 u.val])
   ==
 ::
 ++  mock
@@ -8522,6 +8531,10 @@
     ::
         {$cnts *}  (~(mint et p.gen q.gen) gol)
         {$dtkt *}  [(nice %noun) [%11 q:$(gen p.gen, gol %noun)]]
+        {$dthx *}
+      =+  nef=$(gen [%cnbc p.gen])
+      [p.nef [%12 [%1 p.nef] q:$(gen q.gen, gol %noun)]]
+    ::
         {$dtls *}  [(nice [%atom %$ ~]) [%4 q:$(gen p.gen, gol [%atom %$ ~])]]
         {$sand *}  [(nice (play gen)) [%1 q.gen]]
         {$rock *}  [(nice (play gen)) [%1 q.gen]]
@@ -8610,7 +8623,6 @@
     ::
         {$zpsm *}
       =+  vos=$(gol %noun, gen q.gen)       ::  XX validate!
-
       ::  [(nice (cell (sift (play p.gen)) p.vos)) (cons [%1 p.vos] q.vos)]
       [(nice (cell (play p.gen) p.vos)) (cons [%1 p.vos] q.vos)]
     ::
@@ -8670,6 +8682,7 @@
         {$brcn *}  (grow %gold [%$ 1] p.gen)
         {$cnts *}  (~(mull et p.gen q.gen) gol dox)
         {$dtkt *}  =+($(gen p.gen, gol %noun) (beth %noun))
+        {$dthx *}  =+($(gen q.gen, gol %noun) $(gen [%cnbc p.gen]))
         {$dtls *}  =+($(gen p.gen, gol [%atom %$ ~]) (beth [%atom %$ ~]))
         {$sand *}  (beth (play gen))
         {$rock *}  (beth (play gen))
@@ -8963,6 +8976,7 @@
       {$brcn *}  (core sut %gold sut [[%0 0] p.gen])
       {$cnts *}  ~(play et p.gen q.gen)
       {$dtkt *}  %noun
+      {$dthx *}  $(gen [%cnbc p.gen])
       {$dtls *}  [%atom %$ ~]
       {$rock *}  |-  ^-  span
                  ?@  q.gen  [%atom p.gen `q.gen]
@@ -9749,6 +9763,7 @@
                     ['=' (rune tis %dtts expb)]
                     ['?' (rune wut %dtwt expa)]
                     ['^' (rune ket %dtkt expn)]
+                    ['#' (rune hax %dthx expx)]
                 ==
               ==
             :-  '^'
@@ -9940,6 +9955,7 @@
     ++  expl  |.(;~(gunk sym loaf loaf))                ::  term, two twigs 
     ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [tile twig]s
     ++  expn  |.((stag %cltr (butt hank)))              ::  autoconsed twigs
+    ++  expx  |.(;~(gunk loaf (stag %cltr (butt hank))))::  autoconsed twigs
     ++  expo  |.(;~(gunk wise loaf loaf))               ::  =;
     ++  expp  |.(;~(gunk (butt rick) loaf))             ::  [wing twig]s, twig
     ++  expq  |.(;~(gunk rope loaf loaf))               ::  wing and two twigs
