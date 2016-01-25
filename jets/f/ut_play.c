@@ -254,6 +254,15 @@
       {
         return c3__noun;
       }
+      case c3__dthx: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _play_used();
+      {
+        u3_noun nog = u3nc(c3__cnbc, p_gen);
+        u3_noun ret = _play_x(van, sut, nog);
+
+        u3z(nog);
+        return ret;
+      }
       case c3__dtwt: p_gen = u3t(gen);
       _play_used();
       {

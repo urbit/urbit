@@ -616,6 +616,16 @@ u3m_bail(u3_noun how)
     case c3__fail:
     case c3__meme:
 #endif
+    case c3__exit: {
+      static c3_w xuc_w = 0;
+
+      {
+        // fprintf(stderr, "exit %d\r\n", xuc_w);
+        // if ( 49 == xuc_w ) { abort(); }
+        xuc_w++;
+        break;
+      }
+    }
     case c3__foul:
     case c3__oops:
       abort();
