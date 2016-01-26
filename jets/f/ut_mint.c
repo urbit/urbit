@@ -502,8 +502,7 @@
         u3_noun viz = _mint_in(van, sut, c3__noun, q_gen);
        
         ret = u3nc(u3k(u3h(nef)), 
-                    u3nt(12, u3nc(1, 0), u3k(u3t(viz))));
-                   // u3nt(12, u3nc(1, u3k(u3h(nef))), u3k(u3t(viz))));
+                   u3nt(12, u3nc(1, u3k(u3h(nef))), u3k(u3t(viz))));
 
         u3z(viz); 
         u3z(nef);
@@ -548,6 +547,11 @@
                            u3nc(1, u3k(q_gen)));
 
         return ret;
+      }
+      case c3__hand:
+      _mint_used();
+      {
+        return u3k(u3t(gen));
       }
       case c3__ktbr: p_gen = u3t(gen);
       _mint_used();

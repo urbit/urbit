@@ -288,6 +288,11 @@
       {
         return _play_sand(p_gen, q_gen);
       }
+      case c3__hand: u3x_cell(u3t(gen), &p_gen, &q_gen);
+      _play_used();
+      {
+        return u3k(p_gen);
+      }
       case c3__ktbr: p_gen = u3t(gen);
       _play_used();
       {

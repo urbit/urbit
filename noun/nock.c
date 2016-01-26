@@ -345,10 +345,12 @@ _n_nock_on(u3_noun bus, u3_noun fol)
       }
 
       case 11: {
-        u3_noun gof = _n_nock_on(bus, u3k(gal));
+        u3_noun ref = _n_nock_on(u3k(bus), u3k(u3h(gal)));
+        u3_noun gof = _n_nock_on(bus, u3k(u3t(gal)));
         u3_noun val;
 
         u3t_off(noc_o);
+        u3z(ref);
         val = u3m_soft_esc(u3k(gof));
         u3t_on(noc_o);
 
